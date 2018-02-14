@@ -14,21 +14,6 @@ Author: 1985 Thomas L. Quarles
 
 
 void
-BJTdestroy(GENmodel **inModel)
+BJTdestroy(void)
 {
-    BJTmodel *mod = *(BJTmodel**) inModel;
-
-    while (mod) {
-        BJTmodel *next_mod = mod->BJTnextModel;
-        BJTinstance *inst = mod->BJTinstances;
-        while (inst) {
-            BJTinstance *next_inst = inst->BJTnextInstance;
-            FREE(inst);
-            inst = next_inst;
-        }
-        FREE(mod);
-        mod = next_mod;
-    }
-
-    *inModel = NULL;
 }

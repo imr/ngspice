@@ -9,21 +9,6 @@ Modified: Paolo Nenzi
 
 
 void
-HFETAdestroy(GENmodel **inModel)
+HFETAdestroy(void)
 {
-    HFETAmodel *mod = *(HFETAmodel**) inModel;
-
-    while (mod) {
-        HFETAmodel *next_mod = mod->HFETAnextModel;
-        HFETAinstance *inst = mod->HFETAinstances;
-        while (inst) {
-            HFETAinstance *next_inst = inst->HFETAnextInstance;
-            FREE(inst);
-            inst = next_inst;
-        }
-        FREE(mod);
-        mod = next_mod;
-    }
-
-    *inModel = NULL;
 }

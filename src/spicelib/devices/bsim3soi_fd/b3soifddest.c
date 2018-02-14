@@ -16,21 +16,6 @@ File: b3soifddest.c          98/5/01
 
 
 void
-B3SOIFDdestroy(GENmodel **inModel)
+B3SOIFDdestroy(void)
 {
-    B3SOIFDmodel *mod = *(B3SOIFDmodel**) inModel;
-
-    while (mod) {
-        B3SOIFDmodel *next_mod = mod->B3SOIFDnextModel;
-        B3SOIFDinstance *inst = mod->B3SOIFDinstances;
-        while (inst) {
-            B3SOIFDinstance *next_inst = inst->B3SOIFDnextInstance;
-            FREE(inst);
-            inst = next_inst;
-        }
-        FREE(mod);
-        mod = next_mod;
-    }
-
-    *inModel = NULL;
 }

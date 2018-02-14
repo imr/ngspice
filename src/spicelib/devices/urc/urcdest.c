@@ -9,21 +9,6 @@ Author: 1987 Thomas L. Quarles
 
 
 void
-URCdestroy(GENmodel **inModel)
+URCdestroy(void)
 {
-    URCmodel *mod = *(URCmodel **) inModel;
-
-    while (mod) {
-        URCmodel *next_mod = mod->URCnextModel;
-        URCinstance *inst = mod->URCinstances;
-        while (inst) {
-            URCinstance *next_inst = inst->URCnextInstance;
-            FREE(inst);
-            inst = next_inst;
-        }
-        FREE(mod);
-        mod = next_mod;
-    }
-
-    *inModel = NULL;
 }

@@ -9,21 +9,6 @@ Modified: Apr 2000 - Paolo Nenzi
 
 
 void
-RESdestroy(GENmodel **inModel)
+RESdestroy(void)
 {
-    RESmodel *mod = *(RESmodel **) inModel;
-
-    while (mod) {
-        RESmodel *next_mod = mod->RESnextModel;
-        RESinstance *inst = mod->RESinstances;
-        while (inst) {
-            RESinstance *next_inst = inst->RESnextInstance;
-            FREE(inst);
-            inst = next_inst;
-        }
-        FREE(mod);
-        mod = next_mod;
-    }
-
-    *inModel = NULL;
 }

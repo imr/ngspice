@@ -7,7 +7,7 @@ Modified: 2000 AlansFixes
 extern int MOS1acLoad(GENmodel *,CKTcircuit*);
 extern int MOS1ask(CKTcircuit*,GENinstance*,int,IFvalue*,IFvalue*);
 extern int MOS1delete(GENinstance*);
-extern void MOS1destroy(GENmodel**);
+extern void MOS1destroy(void);
 extern int MOS1getic(GENmodel*,CKTcircuit*);
 extern int MOS1load(GENmodel*,CKTcircuit*);
 extern int MOS1mAsk(CKTcircuit *,GENmodel *,int,IFvalue*);

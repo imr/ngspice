@@ -5,7 +5,7 @@ Author: 1985 Thomas L. Quarles
 
 extern int CCVSask(CKTcircuit*,GENinstance*,int,IFvalue*,IFvalue*);
 extern int CCVSdelete(GENinstance*);
-extern void CCVSdestroy(GENmodel**);
+extern void CCVSdestroy(void);
 extern int CCVSfindBr(CKTcircuit*,GENmodel*,IFuid);
 extern int CCVSload(GENmodel*,CKTcircuit*);
 extern int CCVSmDelete(GENmodel*);

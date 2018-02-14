@@ -6,7 +6,7 @@ Author: 1985 Thomas L. Quarles
 extern int ASRCask(CKTcircuit *, GENinstance *, int, IFvalue *, IFvalue*);
 extern int ASRCconvTest(GENmodel *, CKTcircuit *);
 extern int ASRCdelete(GENinstance *);
-extern void ASRCdestroy(GENmodel **);
+extern void ASRCdestroy(void);
 extern int ASRCfindBr(CKTcircuit *, GENmodel *, IFuid);
 extern int ASRCload(GENmodel *, CKTcircuit *);
 extern int ASRCmDelete(GENmodel *);

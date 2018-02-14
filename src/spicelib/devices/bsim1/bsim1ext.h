@@ -9,7 +9,7 @@ extern int B1acLoad(GENmodel *,CKTcircuit*);
 extern int B1ask(CKTcircuit *,GENinstance*,int,IFvalue*,IFvalue*);
 extern int B1convTest(GENmodel *,CKTcircuit*);
 extern int B1delete(GENinstance*);
-extern void B1destroy(GENmodel**);
+extern void B1destroy(void);
 extern int B1getic(GENmodel*,CKTcircuit*);
 extern int B1load(GENmodel*,CKTcircuit*);
 extern int B1mAsk(CKTcircuit*,GENmodel *,int, IFvalue*);

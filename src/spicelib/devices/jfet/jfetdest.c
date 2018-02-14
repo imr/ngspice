@@ -9,21 +9,6 @@ Author: 1985 Thomas L. Quarles
 
 
 void
-JFETdestroy(GENmodel **inModel)
+JFETdestroy(void)
 {
-    JFETmodel *mod = *(JFETmodel**) inModel;
-
-    while (mod) {
-        JFETmodel *next_mod = mod->JFETnextModel;
-        JFETinstance *inst = mod->JFETinstances;
-        while (inst) {
-            JFETinstance *next_inst = inst->JFETnextInstance;
-            FREE(inst);
-            inst = next_inst;
-        }
-        FREE(mod);
-        mod = next_mod;
-    }
-
-    *inModel = NULL;
 }

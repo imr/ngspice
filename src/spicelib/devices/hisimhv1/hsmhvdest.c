@@ -21,21 +21,6 @@
 
 
 void
-HSMHVdestroy(GENmodel **inModel)
+HSMHVdestroy(void)
 {
-    HSMHVmodel *mod = *(HSMHVmodel**) inModel;
-
-    while (mod) {
-        HSMHVmodel *next_mod = mod->HSMHVnextModel;
-        HSMHVinstance *inst = mod->HSMHVinstances;
-        while (inst) {
-            HSMHVinstance *next_inst = inst->HSMHVnextInstance;
-            FREE(inst);
-            inst = next_inst;
-        }
-        FREE(mod);
-        mod = next_mod;
-    }
-
-    *inModel = NULL;
 }

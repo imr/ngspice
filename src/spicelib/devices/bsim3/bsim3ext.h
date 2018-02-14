@@ -9,7 +9,7 @@ extern int BSIM3acLoad(GENmodel *,CKTcircuit*);
 extern int BSIM3ask(CKTcircuit *,GENinstance*,int,IFvalue*,IFvalue*);
 extern int BSIM3convTest(GENmodel *,CKTcircuit*);
 extern int BSIM3delete(GENinstance*);
-extern void BSIM3destroy(GENmodel**);
+extern void BSIM3destroy(void);
 extern int BSIM3getic(GENmodel*,CKTcircuit*);
 extern int BSIM3load(GENmodel*,CKTcircuit*);
 extern int BSIM3mAsk(CKTcircuit*,GENmodel *,int, IFvalue*);

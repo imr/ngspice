@@ -20,22 +20,6 @@
 
 
 void
-B4SOIdestroy(GENmodel **inModel)
+B4SOIdestroy(void)
 {
-    B4SOImodel *mod = *(B4SOImodel**) inModel;
-
-    while (mod) {
-        B4SOImodel *next_mod = mod->B4SOInextModel;
-        B4SOIinstance *inst = mod->B4SOIinstances;
-        while (inst) {
-            B4SOIinstance *next_inst = inst->B4SOInextInstance;
-            FREE(inst);
-            inst = next_inst;
-        }
-
-        FREE(mod);
-        mod = next_mod;
-    }
-
-    *inModel = NULL;
 }

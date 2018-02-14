@@ -9,21 +9,6 @@ Author: 1985 Thomas L. Quarles
 
 
 void
-VCVSdestroy(GENmodel **inModel)
+VCVSdestroy(void)
 {
-    VCVSmodel *mod = *(VCVSmodel **) inModel;
-
-    while (mod) {
-        VCVSmodel *next_mod = mod->VCVSnextModel;
-        VCVSinstance *inst = mod->VCVSinstances;
-        while (inst) {
-            VCVSinstance *next_inst = inst->VCVSnextInstance;
-            FREE(inst);
-            inst = next_inst;
-        }
-        FREE(mod);
-        mod = next_mod;
-    }
-
-    *inModel = NULL;
 }

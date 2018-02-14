@@ -9,21 +9,6 @@ Author: Trond Ytterdal
 
 
 void
-MESAdestroy(GENmodel **inModel)
+MESAdestroy(void)
 {
-    MESAmodel *mod = *(MESAmodel**) inModel;
-
-    while (mod) {
-        MESAmodel *next_mod = mod->MESAnextModel;
-        MESAinstance *inst = mod->MESAinstances;
-        while (inst) {
-            MESAinstance *next_inst = inst->MESAnextInstance;
-            FREE(inst);
-            inst = next_inst;
-        }
-        FREE(mod);
-        mod = next_mod;
-    }
-
-    *inModel = NULL;
 }

@@ -9,21 +9,6 @@ Author: 1985 Thomas L. Quarles
 
 
 void
-MOS3destroy(GENmodel **inModel)
+MOS3destroy(void)
 {
-    MOS3model *mod = *(MOS3model **) inModel;
-
-    while (mod) {
-        MOS3model *next_mod = mod->MOS3nextModel;
-        MOS3instance *inst = mod->MOS3instances;
-        while (inst) {
-            MOS3instance *next_inst = inst->MOS3nextInstance;
-            FREE(inst);
-            inst = next_inst;
-        }
-        FREE(mod);
-        mod = next_mod;
-    }
-
-    *inModel = NULL;
 }
