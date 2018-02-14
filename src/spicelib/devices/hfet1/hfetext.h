@@ -6,7 +6,7 @@ Modified: Paolo Nenzi
 extern int HFETAacLoad(GENmodel*,CKTcircuit*);
 extern int HFETAask(CKTcircuit*,GENinstance*,int,IFvalue*,IFvalue*);
 extern int HFETAdelete(GENinstance*);
-extern void HFETAdestroy(GENmodel**);
+extern void HFETAdestroy(void);
 extern int HFETAgetic(GENmodel*,CKTcircuit*);
 extern int HFETAload(GENmodel*,CKTcircuit*);
 extern int HFETAmAsk(CKTcircuit*,GENmodel*,int,IFvalue*);

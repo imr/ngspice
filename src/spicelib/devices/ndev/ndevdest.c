@@ -10,21 +10,6 @@ University of Science and Technology of China
 
 
 void
-NDEVdestroy(GENmodel **inModel)
+NDEVdestroy(void)
 {
-    NDEVmodel *mod = *(NDEVmodel **) inModel;
-
-    while (mod) {
-        NDEVmodel *next_mod = mod->NDEVnextModel;
-        NDEVinstance *inst = mod->NDEVinstances;
-        while (inst) {
-            NDEVinstance *next_inst = inst->NDEVnextInstance;
-            FREE(inst);
-            inst = next_inst;
-        }
-        FREE(mod);
-        mod = next_mod;
-    }
-
-    *inModel = NULL;
 }

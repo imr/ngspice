@@ -12,7 +12,7 @@ extern int VBICacLoad(GENmodel *,CKTcircuit*);
 extern int VBICask(CKTcircuit *,GENinstance*,int,IFvalue*,IFvalue*);
 extern int VBICconvTest(GENmodel*,CKTcircuit*);
 extern int VBICdelete(GENinstance*);
-extern void VBICdestroy(GENmodel**);
+extern void VBICdestroy(void);
 extern int VBICgetic(GENmodel*,CKTcircuit*);
 extern int VBICload(GENmodel*,CKTcircuit*);
 extern int VBICmAsk(CKTcircuit*,GENmodel*,int,IFvalue*);

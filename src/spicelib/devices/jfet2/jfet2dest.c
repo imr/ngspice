@@ -13,21 +13,6 @@ Modified to jfet2 for PS model definition ( Anthony E. Parker )
 
 
 void
-JFET2destroy(GENmodel **inModel)
+JFET2destroy(void)
 {
-    JFET2model *mod = *(JFET2model**) inModel;
-
-    while (mod) {
-        JFET2model *next_mod = mod->JFET2nextModel;
-        JFET2instance *inst = mod->JFET2instances;
-        while (inst) {
-            JFET2instance *next_inst = inst->JFET2nextInstance;
-            FREE(inst);
-            inst = next_inst;
-        }
-        FREE(mod);
-        mod = next_mod;
-    }
-
-    *inModel = NULL;
 }

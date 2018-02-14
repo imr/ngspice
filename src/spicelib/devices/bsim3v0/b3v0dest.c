@@ -10,21 +10,6 @@ File: b3v0dest.c
 
 
 void
-BSIM3v0destroy(GENmodel **inModel)
+BSIM3v0destroy(void)
 {
-    BSIM3v0model *mod = *(BSIM3v0model**) inModel;
-
-    while (mod) {
-        BSIM3v0model *next_mod = mod->BSIM3v0nextModel;
-        BSIM3v0instance *inst = mod->BSIM3v0instances;
-        while (inst) {
-            BSIM3v0instance *next_inst = inst->BSIM3v0nextInstance;
-            FREE(inst);
-            inst = next_inst;
-        }
-        FREE(mod);
-        mod = next_mod;
-    }
-
-    *inModel = NULL;
 }

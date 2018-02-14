@@ -14,21 +14,6 @@ Author: 1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 
 
 void
-NUMD2destroy(GENmodel **inModel)
+NUMD2destroy(void)
 {
-    NUMD2model *mod = *(NUMD2model **) inModel;
-
-    while (mod) {
-        NUMD2model *next_mod  = mod->NUMD2nextModel;
-        NUMD2instance *inst = mod->NUMD2instances;
-        while (inst) {
-            NUMD2instance *next_inst = inst->NUMD2nextInstance;
-            FREE(inst);
-            inst = next_inst;
-        }
-        FREE(mod);
-        mod = next_mod;
-    }
-
-    *inModel = NULL;
 }

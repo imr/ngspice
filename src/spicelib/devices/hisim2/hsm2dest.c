@@ -60,22 +60,6 @@ to others."
 
 
 void
-HSM2destroy(GENmodel **inModel)
+HSM2destroy(void)
 {
-    HSM2model *mod = *(HSM2model**) inModel;
-
-    while (mod) {
-        HSM2model *next_mod = mod->HSM2nextModel;
-        HSM2instance *inst = mod->HSM2instances;
-        while (inst) {
-            HSM2instance *next_inst = inst->HSM2nextInstance;
-            FREE(inst);
-            inst = next_inst;
-        }
-
-        FREE(mod);
-        mod = next_mod;
-    }
-
-    *inModel = NULL;
 }

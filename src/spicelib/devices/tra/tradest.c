@@ -9,21 +9,6 @@ Author: 1985 Thomas L. Quarles
 
 
 void
-TRAdestroy(GENmodel **inModel)
+TRAdestroy(void)
 {
-    TRAmodel *mod = *(TRAmodel **) inModel;
-
-    while (mod) {
-        TRAmodel *next_mod = mod->TRAnextModel;
-        TRAinstance *inst = mod->TRAinstances;
-        while (inst) {
-            TRAinstance *next_inst = inst->TRAnextInstance;
-            FREE(inst);
-            inst = next_inst;
-        }
-        FREE(mod);
-        mod = next_mod;
-    }
-
-    *inModel = NULL;
 }

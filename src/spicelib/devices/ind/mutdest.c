@@ -11,23 +11,8 @@ Author: 1985 Thomas L. Quarles
 #ifdef MUTUAL
 
 void
-MUTdestroy(GENmodel **inModel)
+MUTdestroy(void)
 {
-    MUTmodel *mod = *(MUTmodel**) inModel;
-
-    while (mod) {
-        MUTmodel *next_mod = mod->MUTnextModel;
-        MUTinstance *inst = mod->MUTinstances;
-        while (inst) {
-            MUTinstance *next_inst = inst->MUTnextInstance;
-            FREE(inst);
-            inst = next_inst;
-        }
-        FREE(mod);
-        mod = next_mod;
-    }
-
-    *inModel = NULL;
 }
 
 #endif

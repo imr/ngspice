@@ -9,21 +9,6 @@ Author: 1985 Hong J. Park, Thomas L. Quarles
 
 
 void
-B2destroy(GENmodel **inModel)
+B2destroy(void)
 {
-    B2model *mod = *(B2model**) inModel;
-
-    while (mod) {
-        B2model *next_mod = mod->B2nextModel;
-        B2instance *inst = mod->B2instances;
-        while (inst) {
-            B2instance *next_inst = inst->B2nextInstance;
-            FREE(inst);
-            inst = next_inst;
-        }
-        FREE(mod);
-        mod = next_mod;
-    }
-
-    *inModel = NULL;
 }

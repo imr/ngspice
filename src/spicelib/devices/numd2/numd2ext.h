@@ -10,7 +10,7 @@ Author: 1987 Karti Mayaram
 extern int NUMD2acLoad(GENmodel *, CKTcircuit *);
 extern int NUMD2ask(CKTcircuit *, GENinstance *, int, IFvalue *, IFvalue *);
 extern int NUMD2delete(GENinstance *);
-extern void NUMD2destroy(GENmodel **);
+extern void NUMD2destroy(void);
 extern int NUMD2getic(GENmodel *, CKTcircuit *);
 extern int NUMD2load(GENmodel *, CKTcircuit *);
 extern int NUMD2mDelete(GENmodel *);

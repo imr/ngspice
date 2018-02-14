@@ -9,21 +9,6 @@ Author: 1985 Thomas L. Quarles
 
 
 void
-VSRCdestroy(GENmodel **inModel)
+VSRCdestroy(void)
 {
-    VSRCmodel *mod = *(VSRCmodel**) inModel;
-
-    while (mod) {
-        VSRCmodel *next_mod = mod->VSRCnextModel;
-        VSRCinstance *inst = mod->VSRCinstances;
-        while (inst) {
-            VSRCinstance *next_inst = inst->VSRCnextInstance;
-            FREE(inst);
-            inst = next_inst;
-        }
-        FREE(mod);
-        mod = next_mod;
-    }
-
-    *inModel = NULL;
 }

@@ -10,21 +10,6 @@ Modified: September 2003 Paolo Nenzi
 
 
 void
-CAPdestroy(GENmodel **inModel)
+CAPdestroy(void)
 {
-    CAPmodel *mod = *(CAPmodel**) inModel;
-
-    while (mod) {
-        CAPmodel *next_mod = mod->CAPnextModel;
-        CAPinstance *inst = mod->CAPinstances;
-        while (inst) {
-            CAPinstance *next_inst = inst->CAPnextInstance;
-            FREE(inst);
-            inst = next_inst;
-        }
-        FREE(mod);
-        mod = next_mod;
-    }
-
-    *inModel = NULL;
 }

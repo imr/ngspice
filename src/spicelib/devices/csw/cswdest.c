@@ -9,21 +9,6 @@ Author: 1985 Gordon Jacobs
 
 
 void
-CSWdestroy(GENmodel **inModel)
+CSWdestroy(void)
 {
-    CSWmodel *mod = *(CSWmodel**) inModel;
-
-    while (mod) {
-        CSWmodel *next_mod = mod->CSWnextModel;
-        CSWinstance *inst = mod->CSWinstances;
-        while (inst) {
-            CSWinstance *next_inst = inst->CSWnextInstance;
-            FREE(inst);
-            inst = next_inst;
-        }
-        FREE(mod);
-        mod = next_mod;
-    }
-
-    *inModel = NULL;
 }

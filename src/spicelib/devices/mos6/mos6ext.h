@@ -6,7 +6,7 @@ Author: 1985 Thomas L. Quarles
 extern int MOS6acLoad(GENmodel *,CKTcircuit*);
 extern int MOS6ask(CKTcircuit*,GENinstance*,int,IFvalue*,IFvalue*);
 extern int MOS6delete(GENinstance*);
-extern void MOS6destroy(GENmodel**);
+extern void MOS6destroy(void);
 extern int MOS6getic(GENmodel*,CKTcircuit*);
 extern int MOS6load(GENmodel*,CKTcircuit*);
 extern int MOS6mAsk(CKTcircuit *,GENmodel *,int,IFvalue*);

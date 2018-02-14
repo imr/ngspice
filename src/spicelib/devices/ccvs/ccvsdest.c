@@ -9,21 +9,6 @@ Author: 1985 Thomas L. Quarles
 
 
 void
-CCVSdestroy(GENmodel **inModel)
+CCVSdestroy(void)
 {
-    CCVSmodel *mod = *(CCVSmodel**) inModel;
-
-    while (mod) {
-        CCVSmodel *next_mod = mod->CCVSnextModel;
-        CCVSinstance *inst = mod->CCVSinstances;
-        while (inst) {
-            CCVSinstance *next_inst = inst->CCVSnextInstance;
-            FREE(inst);
-            inst = next_inst;
-        }
-        FREE(mod);
-        mod = next_mod;
-    }
-
-    *inModel = NULL;
 }

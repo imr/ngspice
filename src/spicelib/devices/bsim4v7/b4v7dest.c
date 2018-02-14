@@ -16,22 +16,6 @@
 
 
 void
-BSIM4v7destroy(GENmodel **inModel)
+BSIM4v7destroy(void)
 {
-    BSIM4v7model *mod = *(BSIM4v7model**) inModel;
-
-    while (mod) {
-        BSIM4v7model *next_mod = mod->BSIM4v7nextModel;
-        BSIM4v7instance *inst = mod->BSIM4v7instances;
-        while (inst) {
-            BSIM4v7instance *next_inst = inst->BSIM4v7nextInstance;
-            FREE(inst);
-            inst = next_inst;
-        }
-
-        FREE(mod);
-        mod = next_mod;
-    }
-
-    *inModel = NULL;
 }

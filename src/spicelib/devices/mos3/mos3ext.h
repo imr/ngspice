@@ -8,7 +8,7 @@ extern int MOS3acLoad(GENmodel*,CKTcircuit*);
 extern int MOS3ask(CKTcircuit*,GENinstance*,int,IFvalue*,IFvalue*);
 extern int MOS3convTest(GENmodel *,CKTcircuit *);
 extern int MOS3delete(GENinstance*);
-extern void MOS3destroy(GENmodel**);
+extern void MOS3destroy(void);
 extern int MOS3getic(GENmodel*,CKTcircuit*);
 extern int MOS3load(GENmodel*,CKTcircuit*);
 extern int MOS3mAsk(CKTcircuit*,GENmodel*,int,IFvalue*);

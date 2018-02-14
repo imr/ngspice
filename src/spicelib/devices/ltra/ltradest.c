@@ -9,21 +9,6 @@ Author: 1990 Jaijeet S. Roychowdhury
 
 
 void
-LTRAdestroy(GENmodel **inModel)
+LTRAdestroy(void)
 {
-    LTRAmodel *mod = *(LTRAmodel **) inModel;
-
-    while (mod) {
-        LTRAmodel *next_mod = mod->LTRAnextModel;
-        LTRAinstance *inst = mod->LTRAinstances;
-        while (inst) {
-            LTRAinstance *next_inst = inst->LTRAnextInstance;
-            FREE(inst);
-            inst = next_inst;
-        }
-        FREE(mod);
-        mod = next_mod;
-    }
-
-    *inModel = NULL;
 }
