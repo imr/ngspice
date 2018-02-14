@@ -19,11 +19,13 @@ Author: 1985 Thomas L. Quarles
 /* information needed for each instance */
 
 typedef struct sISRCinstance {
-    struct sISRCmodel *ISRCmodPtr;  /* backpointer to model */
-    struct sISRCinstance *ISRCnextInstance;  /* pointer to next instance of
-                                              *current model */
-    IFuid ISRCname; /* pointer to character string naming this instance */
-    int ISRCstate;  /* not used */
+
+    struct GENinstance gen;
+
+#define ISRCmodPtr(inst) ((struct sISRCmodel *)((inst)->gen.GENmodPtr))
+#define ISRCnextInstance(inst) ((struct sISRCinstance *)((inst)->gen.GENnextInstance))
+#define ISRCname gen.GENname
+#define ISRCstate gen.GENstate
 
     const int ISRCnegNode;    /* number of negative node of source */
     const int ISRCposNode;    /* number of positive node of source */
@@ -72,14 +74,13 @@ typedef struct sISRCinstance {
 /* per model data */
 
 typedef struct sISRCmodel {
-    int ISRCmodType;    /* type index of this device type */
-    struct sISRCmodel *ISRCnextModel;    /* pointer to next possible model
-                                          *in linked list */
-    ISRCinstance * ISRCinstances;    /* pointer to list of instances
-                                      * that have this model */
-    IFuid ISRCmodName;       /* pointer to character string naming this model */
 
-    /* --- end of generic struct GENmodel --- */
+    struct GENmodel gen;
+
+#define ISRCmodType gen.GENmodType
+#define ISRCnextModel(inst) ((struct sISRCmodel *)((inst)->gen.GENnextModel))
+#define ISRCinstances(inst) ((ISRCinstance *)((inst)->gen.GENinstances))
+#define ISRCmodName gen.GENmodName
 
 } ISRCmodel;
 

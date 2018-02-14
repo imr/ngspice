@@ -24,12 +24,14 @@ University of Science and Technology of China
 
 /* information needed per instance */
 typedef struct sNDEVinstance {
-  struct sNDEVmodel *NDEVmodPtr;/* back pointer to model */
-  struct sNDEVinstance *NDEVnextInstance;	/* pointer to next instance
-						 * of current model */
-  IFuid NDEVname;		/* pointer to character string naming this
-				 * instance */
-  int NDEVstate;		/* pointer to start of state vector for diode */
+
+  struct GENinstance gen;
+
+#define NDEVmodPtr(inst) ((struct sNDEVmodel *)((inst)->gen.GENmodPtr))
+#define NDEVnextInstance(inst) ((struct sNDEVinstance *)((inst)->gen.GENnextInstance))
+#define NDEVname gen.GENname
+#define NDEVstate gen.GENstate
+
   const int pin[7];                   /* max 7 terminals are allowed */
   int  term;                    /* the real number of terminals */
   CKTnode *node[7];		/* the array of CKT node's node pointer */
@@ -44,16 +46,14 @@ typedef struct sNDEVinstance {
 /* per model data */
 
 typedef struct sNDEVmodel {	/* model structure for a diode */
-  /* the following 4 entries should always exist */
-  int NDEVmodType;		/* type index of this device type */
-  struct sNDEVmodel *NDEVnextModel;	/* pointer to next possible model in linked list */
-  NDEVinstance *NDEVinstances;	/* pointer to list of instances that have this model */
-  IFuid NDEVmodName;		/* pointer to character string naming this model */
 
-  /* --- end of generic struct GENmodel --- */
+  struct GENmodel gen;
 
-  /* here can be freely defined as your wish*/
-  
+#define NDEVmodType gen.GENmodType
+#define NDEVnextModel(inst) ((struct sNDEVmodel *)((inst)->gen.GENnextModel))
+#define NDEVinstances(inst) ((NDEVinstance *)((inst)->gen.GENinstances))
+#define NDEVmodName gen.GENmodName
+
   char * NDEVmodelfile;
   char * host;
   int    port;              /* Port number. */

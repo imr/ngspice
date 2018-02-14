@@ -37,12 +37,12 @@ ngspice integration
 
 typedef struct sSOI3instance {
 
-    struct sSOI3model *SOI3modPtr; /* backpointer to model */
-    struct sSOI3instance *SOI3nextInstance;  /* pointer to next instance of
-                                              *current model*/
-    IFuid SOI3name;     /* pointer to character string naming this instance */
-    int SOI3states;     /* index into state table for this device */
+    struct GENinstance gen;
 
+#define SOI3modPtr(inst) ((struct sSOI3model *)((inst)->gen.GENmodPtr))
+#define SOI3nextInstance(inst) ((struct sSOI3instance *)((inst)->gen.GENnextInstance))
+#define SOI3name gen.GENname
+#define SOI3states gen.GENstate
 
     const int SOI3dNode;  /* number of the drain node of the mosfet */
     const int SOI3gfNode;  /* number of the front gate node of the mosfet */
@@ -416,14 +416,12 @@ typedef struct sSOI3instance {
 
 typedef struct sSOI3model {       /* model structure for an SOI3 MOSFET  */
 
-    int SOI3modType;    /* type index to this device type */
-    struct sSOI3model *SOI3nextModel;    /* pointer to next possible model
-                                          *in linked list */
-    SOI3instance * SOI3instances; /* pointer to list of instances
-                                   * that have this model */
-    IFuid SOI3modName;       /* pointer to character string naming this model */
+    struct GENmodel gen;
 
-    /* --- end of generic struct GENmodel --- */
+#define SOI3modType gen.GENmodType
+#define SOI3nextModel(inst) ((struct sSOI3model *)((inst)->gen.GENnextModel))
+#define SOI3instances(inst) ((SOI3instance *)((inst)->gen.GENinstances))
+#define SOI3modName gen.GENmodName
 
     int SOI3type;       /* device type : 1 = nsoi,  -1 = psoi */
     double SOI3tnom;        /* temperature at which parameters measured */

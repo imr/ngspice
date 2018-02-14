@@ -261,11 +261,13 @@ typedef struct sHSMHV2hereMKSParam {
 
 /* information needed for each instance */
 typedef struct sHSMHV2instance {
-  struct sHSMHV2model *HSMHV2modPtr;           /* pointer to model */
-  struct sHSMHV2instance *HSMHV2nextInstance;  /* pointer to next instance of 
-                                              current model*/
-  IFuid HSMHV2name; /* pointer to character string naming this instance */
-  int HSMHV2states; /* index into state table for this device */
+
+  struct GENinstance gen;
+
+#define HSMHV2modPtr(inst) ((struct sHSMHV2model *)((inst)->gen.GENmodPtr))
+#define HSMHV2nextInstance(inst) ((struct sHSMHV2instance *)((inst)->gen.GENnextInstance))
+#define HSMHV2name gen.GENname
+#define HSMHV2states gen.GENstate
 
   const int HSMHV2dNode;      /* number of the drain node of the mosfet */
   const int HSMHV2gNode;      /* number of the gate node of the mosfet */
@@ -1021,14 +1023,13 @@ typedef struct sHSMHV2instance {
 /* per model data */
 
 typedef struct sHSMHV2model {     /* model structure for a resistor */
-  int HSMHV2modType;    		/* type index of this device type */
-  struct sHSMHV2model *HSMHV2nextModel; /* pointer to next possible model 
-					 in linked list */
-  HSMHV2instance * HSMHV2instances;	/* pointer to list of instances 
-				   that have this model */
-  IFuid HSMHV2modName;       	/* pointer to the name of this model */
 
-  /* --- end of generic struct GENmodel --- */
+  struct GENmodel gen;
+
+#define HSMHV2modType gen.GENmodType
+#define HSMHV2nextModel(inst) ((struct sHSMHV2model *)((inst)->gen.GENnextModel))
+#define HSMHV2instances(inst) ((HSMHV2instance *)((inst)->gen.GENinstances))
+#define HSMHV2modName gen.GENmodName
 
   int HSMHV2_type;      		/* device type: 1 = nmos,  -1 = pmos */
   int HSMHV2_level;               /* level */

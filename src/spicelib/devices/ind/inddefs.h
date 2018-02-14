@@ -27,11 +27,14 @@ typedef struct sMUTmodel MUTmodel;
 /* information needed for each instance */
 
 struct sINDinstance {
-    INDmodel *INDmodPtr;          /* backpointer to model */
-    INDinstance *INDnextInstance; /* pointer to next instance of
-                                   * current model */
-    IFuid INDname;  /* pointer to character string naming this instance */
-    int INDstate;   /* pointer to beginning of state vector for inductor */
+
+    struct GENinstance gen;
+
+#define INDmodPtr(inst) ((INDmodel *)((inst)->gen.GENmodPtr))
+#define INDnextInstance(inst) ((INDinstance *)((inst)->gen.GENnextInstance))
+#define INDname gen.GENname
+#define INDstate gen.GENstate
+
     const int INDposNode; /* number of positive node of inductor */
     const int INDnegNode; /* number of negative node of inductor */
 
@@ -84,14 +87,13 @@ struct sINDinstance {
 /* per model data */
 
 struct sINDmodel {             /* model structure for an inductor */
-    int INDmodType;            /* type index of this device type */
-    INDmodel *INDnextModel;    /* pointer to next possible model in
-                                * linked list */
-    INDinstance *INDinstances; /* pointer to list of instances that have this
-                                * model */
-    IFuid INDmodName;          /* pointer to character string naming this model */
 
-    /* --- end of generic struct GENmodel --- */
+    struct GENmodel gen;
+
+#define INDmodType gen.GENmodType
+#define INDnextModel(inst) ((INDmodel *)((inst)->gen.GENnextModel))
+#define INDinstances(inst) ((INDinstance *)((inst)->gen.GENinstances))
+#define INDmodName gen.GENmodName
 
     double INDmInd;        /* Model inductance */
     double INDtnom;        /* temperature at which inductance measured */
@@ -123,11 +125,14 @@ struct sINDmodel {             /* model structure for an inductor */
 /* information needed for each instance */
 
 struct sMUTinstance {
-    MUTmodel *MUTmodPtr;          /* backpointer to model */
-    MUTinstance *MUTnextInstance; /* pointer to next instance of
-                                   * current model */
-    IFuid MUTname;        /* pointer to character string naming this instance */
-    int MUTstates;        /* state info, unused */
+
+    struct GENinstance gen;
+
+#define MUTmodPtr(inst) ((MUTmodel *)((inst)->gen.GENmodPtr))
+#define MUTnextInstance(inst) ((MUTinstance *)((inst)->gen.GENnextInstance))
+#define MUTname gen.GENname
+#define MUTstates gen.GENstate
+
     double MUTcoupling;   /* mutual inductance input by user */
     double MUTfactor;     /* mutual inductance scaled for internal use */
     IFuid MUTindName1;    /* name of coupled inductor 1 */
@@ -148,14 +153,14 @@ struct sMUTinstance {
 /* per model data */
 
 struct sMUTmodel {             /* model structure for a mutual inductor */
-    int MUTmodType;            /* type index of this device type */
-    MUTmodel *MUTnextModel;    /* pointer to next possible model in
-                                * linked list */
-    MUTinstance *MUTinstances; /* pointer to list of instances that have this
-                                * model */
-    IFuid MUTmodName;          /* pointer to character string naming this model */
 
-/* --- end of generic struct GENmodel --- */
+    struct GENmodel gen;
+
+#define MUTmodType gen.GENmodType
+#define MUTnextModel(inst) ((MUTmodel *)((inst)->gen.GENnextModel))
+#define MUTinstances(inst) ((MUTinstance *)((inst)->gen.GENinstances))
+#define MUTmodName gen.GENmodName
+
 };
 
 

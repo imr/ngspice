@@ -16,12 +16,13 @@ reserved.
 /* information used to describe a single instance */
 
 typedef struct sCPLinstance {
-    struct sCPLmodel *CPLmodPtr;    /* backpointer to model */
-    struct sCPLinstance *CPLnextInstance;   /* pointer to next instance of 
-                                             * current model*/
 
-    IFuid CPLname;  /* pointer to character string naming this instance */
-    int CPLstate;   /* not used */
+    struct GENinstance gen;
+
+#define CPLmodPtr(inst) ((struct sCPLmodel *)((inst)->gen.GENmodPtr))
+#define CPLnextInstance(inst) ((struct sCPLinstance *)((inst)->gen.GENnextInstance))
+#define CPLname gen.GENname
+#define CPLstate gen.GENstate
 
 	int *CPLposNodes;
 	int *CPLnegNodes;
@@ -63,14 +64,13 @@ typedef struct sCPLinstance {
 /* per model data */
 
 typedef struct sCPLmodel {       /* model structure for a cpl */
-    int CPLmodType; /* type index of this device type */
-    struct sCPLmodel *CPLnextModel; /* pointer to next possible model in 
-                                     * linked list */
-    CPLinstance * CPLinstances; /* pointer to list of instances that have this
-                                 * model */
-    IFuid CPLmodName;       /* pointer to character string naming this model */
 
-    /* --- end of generic struct GENmodel --- */
+    struct GENmodel gen;
+
+#define CPLmodType gen.GENmodType
+#define CPLnextModel(inst) ((struct sCPLmodel *)((inst)->gen.GENnextModel))
+#define CPLinstances(inst) ((CPLinstance *)((inst)->gen.GENinstances))
+#define CPLmodName gen.GENmodName
 
 	double *Rm;
         int Rm_counter;

@@ -22,12 +22,13 @@ Authors: 1987 Karti Mayaram, 1991 David Gates
 
 /* information needed per instance */
 typedef struct sNUMD2instance {
-  struct sNUMD2model *NUMD2modPtr;	/* back pointer to model */
-  struct sNUMD2instance *NUMD2nextInstance;	/* pointer to next instance
-						 * of current model */
-  IFuid NUMD2name;		/* pointer to character string naming this
-				 * instance */
-  int NUMD2state;		/* pointer to start of state vector for diode */
+
+  struct GENinstance gen;
+
+#define NUMD2modPtr(inst) ((struct sNUMD2model *)((inst)->gen.GENmodPtr))
+#define NUMD2nextInstance(inst) ((struct sNUMD2instance *)((inst)->gen.GENnextInstance))
+#define NUMD2name gen.GENname
+#define NUMD2state gen.GENstate
 
 #define NUMD2voltage NUMD2state
 #define NUMD2id NUMD2state+1
@@ -70,17 +71,14 @@ typedef struct sNUMD2instance {
 /* per model data */
 
 typedef struct sNUMD2model {	/* model structure for a diode */
-  int NUMD2modType;		/* type index of this device type */
-  struct sNUMD2model *NUMD2nextModel;	/* pointer to next possible model in
-					 * linked list */
-  NUMD2instance *NUMD2instances;/* pointer to list of instances that have
-				 * this model */
-  IFuid NUMD2modName;		/* pointer to character string naming this
-				 * model */
 
-  /* --- end of generic struct GENmodel --- */
+  struct GENmodel gen;
 
-  /* Everything below here is numerical-device-specific */
+#define NUMD2modType gen.GENmodType
+#define NUMD2nextModel(inst) ((struct sNUMD2model *)((inst)->gen.GENnextModel))
+#define NUMD2instances(inst) ((NUMD2instance *)((inst)->gen.GENinstances))
+#define NUMD2modName gen.GENmodName
+
   MESHcard *NUMD2xMeshes;	/* list of xmesh cards */
   MESHcard *NUMD2yMeshes;	/* list of ymesh cards */
   DOMNcard *NUMD2domains;	/* list of domain cards */

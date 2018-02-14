@@ -16,11 +16,13 @@ Author: 1985 Thomas L. Quarles
 /* information needed for each instance */
 
 typedef struct sCCCSinstance {
-    struct sCCCSmodel *CCCSmodPtr;  /* backpointer to model */
-    struct sCCCSinstance *CCCSnextInstance;  /* pointer to next instance of 
-                                             *current model*/
-    IFuid CCCSname; /* pointer to character string naming this instance */
-    int CCCSstate; /* not used */
+
+    struct GENinstance gen;
+
+#define CCCSmodPtr(inst) ((struct sCCCSmodel *)((inst)->gen.GENmodPtr))
+#define CCCSnextInstance(inst) ((struct sCCCSinstance *)((inst)->gen.GENnextInstance))
+#define CCCSname gen.GENname
+#define CCCSstate gen.GENstate
 
     const int CCCSposNode; /* number of positive node of source */
     const int CCCSnegNode; /* number of negative node of source */
@@ -47,14 +49,13 @@ typedef struct sCCCSinstance {
 /* per model data */
 
 typedef struct sCCCSmodel {       /* model structure for a source */
-    int CCCSmodType;    /* type index of this device type */
-    struct sCCCSmodel *CCCSnextModel;   /* pointer to next possible model 
-                                         *in linked list */
-    CCCSinstance * CCCSinstances;       /* pointer to list of instances 
-                                             that have this model */
-    IFuid CCCSmodName;       /* pointer to character string naming this model */
 
-    /* --- end of generic struct GENmodel --- */
+    struct GENmodel gen;
+
+#define CCCSmodType gen.GENmodType
+#define CCCSnextModel(inst) ((struct sCCCSmodel *)((inst)->gen.GENnextModel))
+#define CCCSinstances(inst) ((CCCSinstance *)((inst)->gen.GENinstances))
+#define CCCSmodName gen.GENmodName
 
 } CCCSmodel;
 

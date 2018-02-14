@@ -18,11 +18,14 @@ Modified by Paolo Nenzi 2003 and Dietmar Warning 2012
 /* information needed per instance */
 
 typedef struct sDIOinstance {
-    struct sDIOmodel *DIOmodPtr;    /* backpointer to model */
-    struct sDIOinstance *DIOnextInstance;   /* pointer to next instance of 
-                                             * current model*/
-    IFuid DIOname;      /* pointer to character string naming this instance */
-    int DIOstate;   /* pointer to start of state vector for diode */
+
+    struct GENinstance gen;
+
+#define DIOmodPtr(inst) ((struct sDIOmodel *)((inst)->gen.GENmodPtr))
+#define DIOnextInstance(inst) ((struct sDIOinstance *)((inst)->gen.GENnextInstance))
+#define DIOname gen.GENname
+#define DIOstate gen.GENstate
+
     const int DIOposNode;     /* number of positive node of diode */
     const int DIOnegNode;     /* number of negative node of diode */
     int DIOposPrimeNode;    /* number of positive prime node of diode */
@@ -164,14 +167,13 @@ typedef struct sDIOinstance {
 /* per model data */
 
 typedef struct sDIOmodel {       /* model structure for a diode */
-    int DIOmodType; /* type index of this device type */
-    struct sDIOmodel *DIOnextModel; /* pointer to next possible model in 
-                                     * linked list */
-    DIOinstance * DIOinstances; /* pointer to list of instances 
-                                * that have this model */
-    IFuid DIOmodName; /* pointer to character string naming this model */
 
-    /* --- end of generic struct GENmodel --- */
+    struct GENmodel gen;
+
+#define DIOmodType gen.GENmodType
+#define DIOnextModel(inst) ((struct sDIOmodel *)((inst)->gen.GENnextModel))
+#define DIOinstances(inst) ((DIOinstance *)((inst)->gen.GENinstances))
+#define DIOmodName gen.GENmodName
 
     unsigned DIOlevelGiven : 1;
     unsigned DIOsatCurGiven : 1;

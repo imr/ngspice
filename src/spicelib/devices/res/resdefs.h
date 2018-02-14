@@ -19,12 +19,14 @@ Modified: 2000 AlansFixes
 /* information used to describe a single instance */
 
 typedef struct sRESinstance {
-    struct sRESmodel *RESmodPtr;            /* backpointer to model */
-    struct sRESinstance *RESnextInstance;   /* pointer to next instance of
-                                             * current model*/
 
-    IFuid RESname;      /* pointer to character string naming this instance */
-    int RESstate;       /* not used but needed for sructure consistency */
+    struct GENinstance gen;
+
+#define RESmodPtr(inst) ((struct sRESmodel *)((inst)->gen.GENmodPtr))
+#define RESnextInstance(inst) ((struct sRESinstance *)((inst)->gen.GENnextInstance))
+#define RESname gen.GENname
+#define RESstate gen.GENstate
+
     const int RESposNode;     /* number of positive node of resistor */
     const int RESnegNode;     /* number of negative node of resistor */
 
@@ -92,14 +94,13 @@ typedef struct sRESinstance {
 /* per model data */
 
 typedef struct sRESmodel {       /* model structure for a resistor */
-    int RESmodType; /* type index of this device type */
-    struct sRESmodel *RESnextModel; /* pointer to next possible model in
-                                     * linked list */
-    RESinstance * RESinstances; /* pointer to list of instances that have this
-                                 * model */
-    IFuid RESmodName;       /* pointer to character string naming this model */
 
-    /* --- end of generic struct GENmodel --- */
+    struct GENmodel gen;
+
+#define RESmodType gen.GENmodType
+#define RESnextModel(inst) ((struct sRESmodel *)((inst)->gen.GENnextModel))
+#define RESinstances(inst) ((RESinstance *)((inst)->gen.GENinstances))
+#define RESmodName gen.GENmodName
 
     double REStnom;         /* temperature at which resistance measured */
     double REStempCoeff1;   /* first temperature coefficient of resistors */

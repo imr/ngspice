@@ -19,11 +19,13 @@ Modified: 2000 AlansFixes
 /* information to describe each instance */
 
 typedef struct sSWinstance {
-    struct sSWmodel *SWmodPtr;  /* backpointer to model */
-    struct sSWinstance *SWnextInstance;   /* pointer to next instance of 
-                                             * current model*/
-    IFuid SWname;  /* pointer to character string naming this instance */
-    int SWstate;   /* pointer to start of switch's section of state vector */
+
+    struct GENinstance gen;
+
+#define SWmodPtr(inst) ((struct sSWmodel *)((inst)->gen.GENmodPtr))
+#define SWnextInstance(inst) ((struct sSWinstance *)((inst)->gen.GENnextInstance))
+#define SWname gen.GENname
+#define SWstate gen.GENstate
 
     const int SWposNode; /* number of positive node of switch */
     const int SWnegNode; /* number of negative node of switch */
@@ -56,14 +58,13 @@ typedef struct sSWinstance {
 #define SW_NUM_STATES 2   
 
 typedef struct sSWmodel {      /* model structure for a switch */
-    int SWmodType;  /* type index of this device type */
-    struct sSWmodel *SWnextModel; /* pointer to next possible model in 
-                                     * linked list */
-    SWinstance *SWinstances; /* pointer to list of instances that have this
-                                 * model */
-    IFuid SWmodName;   /* pointer to character string naming this model */
 
-    /* --- end of generic struct GENmodel --- */
+    struct GENmodel gen;
+
+#define SWmodType gen.GENmodType
+#define SWnextModel(inst) ((struct sSWmodel *)((inst)->gen.GENnextModel))
+#define SWinstances(inst) ((SWinstance *)((inst)->gen.GENinstances))
+#define SWmodName gen.GENmodName
 
     double SWonResistance;  /* switch "on" resistance */
     double SWoffResistance; /* switch "off" resistance */

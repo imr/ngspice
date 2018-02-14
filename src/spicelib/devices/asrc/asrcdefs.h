@@ -18,11 +18,14 @@ Author: 1985 Thomas L. Quarles
 /* information to describe a single instance */
 
 typedef struct sASRCinstance {
-    struct sASRCmodel *ASRCmodPtr;          /* backpointer to model */
-    struct sASRCinstance *ASRCnextInstance; /* pointer to next instance of
-                                             * current model */
-    IFuid ASRCname;            /* pointer to character string naming this instance */
-    int ASRCstates;            /* state info */
+
+    struct GENinstance gen;
+
+#define ASRCmodPtr(inst) ((struct sASRCmodel *)((inst)->gen.GENmodPtr))
+#define ASRCnextInstance(inst) ((struct sASRCinstance *)((inst)->gen.GENnextInstance))
+#define ASRCname gen.GENname
+#define ASRCstates gen.GENstate
+
     const int ASRCposNode;     /* number of positive node of source */
     const int ASRCnegNode;     /* number of negative node of source */
 
@@ -56,14 +59,13 @@ typedef struct sASRCinstance {
 /* per model data */
 
 typedef struct sASRCmodel {       /* model structure for a source */
-    int ASRCmodType;              /* type index of this device */
-    struct sASRCmodel *ASRCnextModel;   /* pointer to next possible model
-                                         * in linked list */
-    ASRCinstance *ASRCinstances;  /* pointer to list of instances
-                                   * that have this model */
-    IFuid ASRCmodName;            /* pointer to character string naming this model */
 
-    /* --- end of generic struct GENmodel --- */
+    struct GENmodel gen;
+
+#define ASRCmodType gen.GENmodType
+#define ASRCnextModel(inst) ((struct sASRCmodel *)((inst)->gen.GENnextModel))
+#define ASRCinstances(inst) ((ASRCinstance *)((inst)->gen.GENinstances))
+#define ASRCmodName gen.GENmodName
 
 } ASRCmodel;
 

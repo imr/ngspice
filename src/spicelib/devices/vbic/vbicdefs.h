@@ -19,11 +19,13 @@ Spice3 Implementation: 2003 Dietmar Warning DAnalyse GmbH
 /* data needed to describe a single instance */
 
 typedef struct sVBICinstance {
-    struct sVBICmodel *VBICmodPtr;    /* backpointer to model */
-    struct sVBICinstance *VBICnextInstance;   /* pointer to next instance of
-                                                 current model*/
-    IFuid VBICname;  /* pointer to character string naming this instance */
-    int VBICstate;   /* pointer to start of state vector for vbic */
+
+    struct GENinstance gen;
+
+#define VBICmodPtr(inst) ((struct sVBICmodel *)((inst)->gen.GENmodPtr))
+#define VBICnextInstance(inst) ((struct sVBICinstance *)((inst)->gen.GENnextInstance))
+#define VBICname gen.GENname
+#define VBICstate gen.GENstate
 
     const int VBICcollNode;   /* number of collector node of vbic */
     const int VBICbaseNode;   /* number of base node of vbic */
@@ -350,15 +352,13 @@ typedef struct sVBICinstance {
 
 /* per model data */
 typedef struct sVBICmodel {           /* model structure for a vbic */
-    int VBICmodType;                  /* type index of this device type */
-    struct sVBICmodel *VBICnextModel; /* pointer to next possible model in 
-                                         linked list */
-    VBICinstance * VBICinstances;     /* pointer to list of instances that have
-                                         this model */
-    IFuid VBICmodName;                /* pointer to character string naming 
-                                         this model */
 
-    /* --- end of generic struct GENmodel --- */
+    struct GENmodel gen;
+
+#define VBICmodType gen.GENmodType
+#define VBICnextModel(inst) ((struct sVBICmodel *)((inst)->gen.GENnextModel))
+#define VBICinstances(inst) ((VBICinstance *)((inst)->gen.GENinstances))
+#define VBICmodName gen.GENmodName
 
     int VBICtype;
 

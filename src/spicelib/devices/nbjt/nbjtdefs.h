@@ -22,14 +22,14 @@ Authors: 1987 Karti Mayaram, 1991 David Gates
 
 /* information needed per instance */
 typedef struct sNBJTinstance {
-  struct sNBJTmodel *NBJTmodPtr;/* back pointer to model */
-  struct sNBJTinstance *NBJTnextInstance;	/* pointer to next instance
-						 * of current model */
-  IFuid NBJTname;		/* pointer to character string naming this
-				 * instance */
-  int NBJTstate;		/* pointer to start of state vector for bjt */
 
-  /* entries in the state vector for bjt: */
+  struct GENinstance gen;
+
+#define NBJTmodPtr(inst) ((struct sNBJTmodel *)((inst)->gen.GENmodPtr))
+#define NBJTnextInstance(inst) ((struct sNBJTinstance *)((inst)->gen.GENnextInstance))
+#define NBJTname gen.GENname
+#define NBJTstate gen.GENstate
+
 #define NBJTvbe NBJTstate
 #define NBJTvce NBJTstate+1
 #define NBJTic NBJTstate+2
@@ -87,17 +87,14 @@ typedef struct sNBJTinstance {
 
 /* per model data */
 typedef struct sNBJTmodel {	/* model structure for a bjt */
-  int NBJTmodType;		/* type index of this device type */
-  struct sNBJTmodel *NBJTnextModel;	/* pointer to next possible model in
-					 * linked list */
-  NBJTinstance *NBJTinstances;	/* pointer to list of instances that have
-				 * this model */
-  IFuid NBJTmodName;		/* pointer to character string naming this
-				 * model */
 
-  /* --- end of generic struct GENmodel --- */
+  struct GENmodel gen;
 
-  /* Everything below here is numerical-device-specific */
+#define NBJTmodType gen.GENmodType
+#define NBJTnextModel(inst) ((struct sNBJTmodel *)((inst)->gen.GENnextModel))
+#define NBJTinstances(inst) ((NBJTinstance *)((inst)->gen.GENinstances))
+#define NBJTmodName gen.GENmodName
+
   MESHcard *NBJTxMeshes;	/* list of xmesh cards */
   MESHcard *NBJTyMeshes;	/* list of ymesh cards */
   DOMNcard *NBJTdomains;	/* list of domain cards */

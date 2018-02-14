@@ -19,11 +19,13 @@ Modified: 2000 AlansFixes
 /* information to describe each instance */
 
 typedef struct sCSWinstance {
-    struct sCSWmodel *CSWmodPtr;    /* backpointer to model */
-    struct sCSWinstance *CSWnextInstance;   /* pointer to next instance of 
-                                             * current model*/
-    IFuid CSWname;  /* pointer to character string naming this instance */
-    int CSWstate;   /* pointer to start of switch's section of state vector */
+
+    struct GENinstance gen;
+
+#define CSWmodPtr(inst) ((struct sCSWmodel *)((inst)->gen.GENmodPtr))
+#define CSWnextInstance(inst) ((struct sCSWinstance *)((inst)->gen.GENnextInstance))
+#define CSWname gen.GENname
+#define CSWstate gen.GENstate
 
     const int CSWposNode; /* number of positive node of switch */
     const int CSWnegNode; /* number of negative node of switch */
@@ -57,14 +59,13 @@ typedef struct sCSWinstance {
 #define CSW_NUM_STATES 2   
 
 typedef struct sCSWmodel {      /* model structure for a switch */
-    int CSWmodType; /* type index of this device type */
-    struct sCSWmodel *CSWnextModel; /* pointer to next possible model in 
-                                     * linked list */
-    CSWinstance *CSWinstances; /* pointer to list of instances that have this
-                                 * model */
-    IFuid CSWmodName;   /* pointer to character string naming this model */
 
-    /* --- end of generic struct GENmodel --- */
+    struct GENmodel gen;
+
+#define CSWmodType gen.GENmodType
+#define CSWnextModel(inst) ((struct sCSWmodel *)((inst)->gen.GENnextModel))
+#define CSWinstances(inst) ((CSWinstance *)((inst)->gen.GENinstances))
+#define CSWmodName gen.GENmodName
 
     double CSWonResistance;  /* switch "on" resistance */
     double CSWoffResistance; /* switch "off" resistance */

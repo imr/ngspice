@@ -22,14 +22,14 @@ Authors: 1987 Karti Mayaram, 1991 David Gates
 
 /* information needed per instance */
 typedef struct sNBJT2instance {
-  struct sNBJT2model *NBJT2modPtr;	/* back pointer to model */
-  struct sNBJT2instance *NBJT2nextInstance;	/* pointer to next instance
-						 * of current model */
-  IFuid NBJT2name;		/* pointer to character string naming this
-				 * instance */
-  int NBJT2state;		/* pointer to start of state vector for bjt */
 
-  /* entries in the state vector for bjt: */
+  struct GENinstance gen;
+
+#define NBJT2modPtr(inst) ((struct sNBJT2model *)((inst)->gen.GENmodPtr))
+#define NBJT2nextInstance(inst) ((struct sNBJT2instance *)((inst)->gen.GENnextInstance))
+#define NBJT2name gen.GENname
+#define NBJT2state gen.GENstate
+
 #define NBJT2vbe NBJT2state
 #define NBJT2vce NBJT2state+1
 #define NBJT2ic NBJT2state+2
@@ -89,17 +89,14 @@ typedef struct sNBJT2instance {
 
 /* per model data */
 typedef struct sNBJT2model {	/* model structure for a bjt */
-  int NBJT2modType;		/* type index of this device type */
-  struct sNBJT2model *NBJT2nextModel;	/* pointer to next possible model in
-					 * linked list */
-  NBJT2instance *NBJT2instances;/* pointer to list of instances that have
-				 * this model */
-  IFuid NBJT2modName;		/* pointer to character string naming this
-				 * model */
 
-  /* --- end of generic struct GENmodel --- */
+  struct GENmodel gen;
 
-  /* Everything below here is numerical-device-specific */
+#define NBJT2modType gen.GENmodType
+#define NBJT2nextModel(inst) ((struct sNBJT2model *)((inst)->gen.GENnextModel))
+#define NBJT2instances(inst) ((NBJT2instance *)((inst)->gen.GENinstances))
+#define NBJT2modName gen.GENmodName
+
   MESHcard *NBJT2xMeshes;	/* list of xmesh cards */
   MESHcard *NBJT2yMeshes;	/* list of ymesh cards */
   DOMNcard *NBJT2domains;	/* list of domain cards */

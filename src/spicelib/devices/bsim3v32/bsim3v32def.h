@@ -18,10 +18,14 @@ File: bsim3v32def.h
 
 typedef struct sBSIM3v32instance
 {
-    struct sBSIM3v32model *BSIM3v32modPtr;
-    struct sBSIM3v32instance *BSIM3v32nextInstance;
-    IFuid BSIM3v32name;
-    int BSIM3v32states;     /* index into state table for this device */
+
+    struct GENinstance gen;
+
+#define BSIM3v32modPtr(inst) ((struct sBSIM3v32model *)((inst)->gen.GENmodPtr))
+#define BSIM3v32nextInstance(inst) ((struct sBSIM3v32instance *)((inst)->gen.GENnextInstance))
+#define BSIM3v32name gen.GENname
+#define BSIM3v32states gen.GENstate
+
     const int BSIM3v32dNode;
     const int BSIM3v32gNode;
     const int BSIM3v32sNode;
@@ -396,12 +400,13 @@ struct bsim3v32SizeDependParam
 
 typedef struct sBSIM3v32model
 {
-    int BSIM3v32modType;
-    struct sBSIM3v32model *BSIM3v32nextModel;
-    BSIM3v32instance *BSIM3v32instances;
-    IFuid BSIM3v32modName;
 
-    /* --- end of generic struct GENmodel --- */
+    struct GENmodel gen;
+
+#define BSIM3v32modType gen.GENmodType
+#define BSIM3v32nextModel(inst) ((struct sBSIM3v32model *)((inst)->gen.GENnextModel))
+#define BSIM3v32instances(inst) ((BSIM3v32instance *)((inst)->gen.GENinstances))
+#define BSIM3v32modName gen.GENmodName
 
     int BSIM3v32type;
 

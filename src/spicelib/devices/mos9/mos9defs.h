@@ -18,11 +18,14 @@ Modified: Alan Gillespie
 /* information needed for each instance */
 
 typedef struct sMOS9instance {
-    struct sMOS9model *MOS9modPtr;  /* backpointer to model */
-    struct sMOS9instance *MOS9nextInstance;  /* pointer to next instance of 
-                                              *current model*/
-    IFuid MOS9name; /* pointer to character string naming this instance */
-    int MOS9states;     /* index into state table for this device */
+
+    struct GENinstance gen;
+
+#define MOS9modPtr(inst) ((struct sMOS9model *)((inst)->gen.GENmodPtr))
+#define MOS9nextInstance(inst) ((struct sMOS9instance *)((inst)->gen.GENnextInstance))
+#define MOS9name gen.GENname
+#define MOS9states gen.GENstate
+
     const int MOS9dNode;  /* number of the gate node of the mosfet */
     const int MOS9gNode;  /* number of the gate node of the mosfet */
     const int MOS9sNode;  /* number of the source node of the mosfet */
@@ -318,14 +321,13 @@ typedef struct sMOS9instance {
      */
 
 typedef struct sMOS9model {       /* model structure for a resistor */
-    int MOS9modType;    /* type index of this device type */
-    struct sMOS9model *MOS9nextModel;    /* pointer to next possible model 
-                                          *in linked list */
-    MOS9instance * MOS9instances; /* pointer to list of instances 
-                                   * that have this model */
-    IFuid MOS9modName;       /* pointer to character string naming this model */
 
-    /* --- end of generic struct GENmodel --- */
+    struct GENmodel gen;
+
+#define MOS9modType gen.GENmodType
+#define MOS9nextModel(inst) ((struct sMOS9model *)((inst)->gen.GENnextModel))
+#define MOS9instances(inst) ((MOS9instance *)((inst)->gen.GENinstances))
+#define MOS9modName gen.GENmodName
 
     int MOS9type;       /* device type : 1 = nmos,  -1 = pmos */
     double MOS9tnom;        /* temperature at which parameters measured */

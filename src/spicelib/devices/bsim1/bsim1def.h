@@ -20,11 +20,13 @@ Author: 1985      Hong June Park, Thomas L. Quarles
 /* information needed for each instance */
 
 typedef struct sBSIM1instance {
-    struct sBSIM1model *B1modPtr;      /* pointer to model */
-    struct sBSIM1instance *B1nextInstance;  /* pointer to next instance of 
-                                              *current model*/
-    IFuid B1name; /* pointer to character string naming this instance */
-    int B1states;     /* index into state table for this device */
+
+    struct GENinstance gen;
+
+#define B1modPtr(inst) ((struct sBSIM1model *)((inst)->gen.GENmodPtr))
+#define B1nextInstance(inst) ((struct sBSIM1instance *)((inst)->gen.GENnextInstance))
+#define B1name gen.GENname
+#define B1states gen.GENstate
 
     const int B1dNode;  /* number of the gate node of the mosfet */
     const int B1gNode;  /* number of the gate node of the mosfet */
@@ -315,14 +317,13 @@ typedef struct sBSIM1instance {
 /* per model data */
 
 typedef struct sBSIM1model {       /* model structure for a resistor */
-    int B1modType;    /* type index of this device type */
-    struct sBSIM1model *B1nextModel;    /* pointer to next possible model 
-                                          *in linked list */
-    B1instance * B1instances; /* pointer to list of instances 
-                                   * that have this model */
-    IFuid B1modName;       /* pointer to character string naming this model */
 
-    /* --- end of generic struct GENmodel --- */
+    struct GENmodel gen;
+
+#define B1modType gen.GENmodType
+#define B1nextModel(inst) ((struct sBSIM1model *)((inst)->gen.GENnextModel))
+#define B1instances(inst) ((B1instance *)((inst)->gen.GENinstances))
+#define B1modName gen.GENmodName
 
     int B1type;       /* device type : 1 = nmos,  -1 = pmos */
 
