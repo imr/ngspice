@@ -10,24 +10,8 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-TRAdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
+TRAdelete(GENinstance *gen_inst)
 {
-    TRAinstance **fast = (TRAinstance **) kill;
-    TRAmodel *model = (TRAmodel *) inModel;
-    TRAinstance **prev = NULL;
-    TRAinstance *here;
-
-    for (; model; model = model->TRAnextModel) {
-        prev = &(model->TRAinstances);
-        for (here = *prev; here; here = *prev) {
-            if (here->TRAname == name || (fast && here == *fast)) {
-                *prev = here->TRAnextInstance;
-                FREE(here);
-                return(OK);
-            }
-            prev = &(here->TRAnextInstance);
-        }
-    }
-
-    return(E_NODEV);
+    NG_IGNORE(gen_inst);
+    return OK;
 }

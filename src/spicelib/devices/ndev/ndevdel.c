@@ -11,27 +11,8 @@ University of Science and Technology of China
 
 
 int
-NDEVdelete(
-           GENmodel *inModel,
-           IFuid name,
-           GENinstance **kill)
+NDEVdelete(GENinstance *gen_inst)
 {
-    NDEVmodel *model = (NDEVmodel *) inModel;
-    NDEVinstance **fast = (NDEVinstance **) kill;
-    NDEVinstance **prev = NULL;
-    NDEVinstance *here;
-
-    for (; model; model = model->NDEVnextModel) {
-        prev = &(model->NDEVinstances);
-        for (here = *prev; here; here = *prev) {
-            if (here->NDEVname == name || (fast && here == *fast)) {
-                *prev = here->NDEVnextInstance;
-                FREE(here);
-                return(OK);
-            }
-            prev = &(here->NDEVnextInstance);
-        }
-    }
-
-    return(E_NODEV);
+    NG_IGNORE(gen_inst);
+    return OK;
 }

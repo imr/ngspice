@@ -23,27 +23,8 @@
 
 
 int
-HSMHVdelete(
-                GENmodel *inModel,
-                IFuid name,
-                GENinstance **inInst)
+HSMHVdelete(GENinstance *gen_inst)
 {
-    HSMHVinstance **fast = (HSMHVinstance **) inInst;
-    HSMHVmodel *model = (HSMHVmodel *) inModel;
-    HSMHVinstance **prev = NULL;
-    HSMHVinstance *here;
-
-    for (; model; model = model->HSMHVnextModel) {
-        prev = &(model->HSMHVinstances);
-        for (here = *prev; here; here = *prev) {
-            if (here->HSMHVname == name || (fast && here == *fast)) {
-                *prev = here->HSMHVnextInstance;
-                FREE(here);
-                return(OK);
-            }
-            prev = &(here->HSMHVnextInstance);
-        }
-    }
-
-    return(E_NODEV);
+    NG_IGNORE(gen_inst);
+    return OK;
 }

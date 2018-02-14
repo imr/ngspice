@@ -11,24 +11,8 @@ Author: 1985 Hong J. Park, Thomas L. Quarles
 
 
 int
-B2delete(GENmodel *inModel, IFuid name, GENinstance **inInst)
+B2delete(GENinstance *gen_inst)
 {
-    B2instance **fast = (B2instance **) inInst;
-    B2model *model = (B2model *) inModel;
-    B2instance **prev = NULL;
-    B2instance *here;
-
-    for (; model; model = model->B2nextModel) {
-        prev = &(model->B2instances);
-        for (here = *prev; here; here = *prev) {
-            if (here->B2name == name || (fast && here == *fast)) {
-                *prev = here->B2nextInstance;
-                FREE(here);
-                return(OK);
-            }
-            prev = &(here->B2nextInstance);
-        }
-    }
-
-    return(E_NODEV);
+    NG_IGNORE(gen_inst);
+    return OK;
 }

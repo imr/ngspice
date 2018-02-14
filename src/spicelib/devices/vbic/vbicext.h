@@ -11,7 +11,7 @@ Spice3 Implementation: 2003 Dietmar Warning DAnalyse GmbH
 extern int VBICacLoad(GENmodel *,CKTcircuit*);
 extern int VBICask(CKTcircuit *,GENinstance*,int,IFvalue*,IFvalue*);
 extern int VBICconvTest(GENmodel*,CKTcircuit*);
-extern int VBICdelete(GENmodel*,IFuid,GENinstance**);
+extern int VBICdelete(GENinstance*);
 extern void VBICdestroy(GENmodel**);
 extern int VBICgetic(GENmodel*,CKTcircuit*);
 extern int VBICload(GENmodel*,CKTcircuit*);

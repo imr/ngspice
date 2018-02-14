@@ -10,24 +10,8 @@ Modified: Apr 2000 - Paolo Nenzi
 
 
 int
-RESdelete(GENmodel *inModel, IFuid name, GENinstance **inst)
+RESdelete(GENinstance *gen_inst)
 {
-    RESmodel *model = (RESmodel *) inModel;
-    RESinstance **fast = (RESinstance **) inst;
-    RESinstance **prev = NULL;
-    RESinstance *here;
-
-    for (; model; model = model->RESnextModel) {
-        prev = &(model->RESinstances);
-        for (here = *prev; here; here = *prev) {
-            if (here->RESname == name || (fast && here == *fast)) {
-                *prev = here->RESnextInstance;
-                FREE(here);
-                return(OK);
-            }
-            prev = &(here->RESnextInstance);
-        }
-    }
-
-    return(E_NODEV);
+    NG_IGNORE(gen_inst);
+    return OK;
 }

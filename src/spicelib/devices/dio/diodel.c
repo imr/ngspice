@@ -10,24 +10,8 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-DIOdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
+DIOdelete(GENinstance *gen_inst)
 {
-    DIOmodel *model = (DIOmodel *) inModel;
-    DIOinstance **fast = (DIOinstance **) kill;
-    DIOinstance **prev = NULL;
-    DIOinstance *here;
-
-    for (; model; model = model->DIOnextModel) {
-        prev = &(model->DIOinstances);
-        for (here = *prev; here; here = *prev) {
-            if (here->DIOname == name || (fast && here == *fast)) {
-                *prev = here->DIOnextInstance;
-                FREE(here);
-                return(OK);
-            }
-            prev = &(here->DIOnextInstance);
-        }
-    }
-
-    return(E_NODEV);
+    NG_IGNORE(gen_inst);
+    return OK;
 }

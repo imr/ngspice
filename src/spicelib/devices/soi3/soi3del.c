@@ -27,24 +27,8 @@ ngspice integration
 
 
 int
-SOI3delete(GENmodel *inModel, IFuid name, GENinstance **inst)
+SOI3delete(GENinstance *gen_inst)
 {
-    SOI3model *model = (SOI3model *) inModel;
-    SOI3instance **fast = (SOI3instance **) inst;
-    SOI3instance **prev = NULL;
-    SOI3instance *here;
-
-    for (; model; model = model->SOI3nextModel) {
-        prev = &(model->SOI3instances);
-        for (here = *prev; here; here = *prev) {
-            if (here->SOI3name == name || (fast && here == *fast)) {
-                *prev = here->SOI3nextInstance;
-                FREE(here);
-                return(OK);
-            }
-            prev = &(here->SOI3nextInstance);
-        }
-    }
-
-    return(E_NODEV);
+    NG_IGNORE(gen_inst);
+    return OK;
 }

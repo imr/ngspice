@@ -10,24 +10,8 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-CCCSdelete(GENmodel *inModel, IFuid name, GENinstance **inst)
+CCCSdelete(GENinstance *gen_inst)
 {
-    CCCSmodel *model = (CCCSmodel *) inModel;
-    CCCSinstance **fast = (CCCSinstance **) inst;
-    CCCSinstance **prev = NULL;
-    CCCSinstance *here;
-
-    for (; model; model = model->CCCSnextModel) {
-        prev = &(model->CCCSinstances);
-        for (here = *prev; here; here = *prev) {
-            if (here->CCCSname == name || (fast && here == *fast)) {
-                *prev = here->CCCSnextInstance;
-                FREE(here);
-                return(OK);
-            }
-            prev = &(here->CCCSnextInstance);
-        }
-    }
-
-    return(E_NODEV);
+    NG_IGNORE(gen_inst);
+    return OK;
 }

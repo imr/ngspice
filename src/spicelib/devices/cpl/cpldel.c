@@ -11,24 +11,8 @@ Author: 1992 Charles Hough
 
 
 int
-CPLdelete(GENmodel *inModel, IFuid name, GENinstance **inst)
+CPLdelete(GENinstance *gen_inst)
 {
-    CPLmodel *model = (CPLmodel *) inModel;
-    CPLinstance **fast = (CPLinstance **) inst;
-    CPLinstance **prev = NULL;
-    CPLinstance *here;
-
-    for (; model; model = model->CPLnextModel) {
-        prev = &(model->CPLinstances);
-        for (here = *prev; here; here = *prev) {
-            if (here->CPLname == name || (fast && here == *fast)) {
-                *prev = here->CPLnextInstance;
-                FREE(here);
-                return(OK);
-            }
-            prev = &(here->CPLnextInstance);
-        }
-    }
-
-    return(E_NODEV);
+    NG_IGNORE(gen_inst);
+    return OK;
 }

@@ -11,24 +11,8 @@ Modified: September 2003 Paolo Nenzi
 
 
 int
-CAPdelete(GENmodel *inModel, IFuid name, GENinstance **inst)
+CAPdelete(GENinstance *gen_inst)
 {
-    CAPinstance **fast = (CAPinstance **) inst;
-    CAPmodel *model = (CAPmodel *) inModel;
-    CAPinstance **prev = NULL;
-    CAPinstance *here;
-
-    for (; model; model = model->CAPnextModel) {
-        prev = &(model->CAPinstances);
-        for (here = *prev; here; here = *prev) {
-            if (here->CAPname == name || (fast && here == *fast)) {
-                *prev = here->CAPnextInstance;
-                FREE(here);
-                return(OK);
-            }
-            prev = &(here->CAPnextInstance);
-        }
-    }
-
-    return(E_NODEV);
+    NG_IGNORE(gen_inst);
+    return OK;
 }

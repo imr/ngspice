@@ -10,24 +10,8 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-VCVSdelete(GENmodel *inModel, IFuid name, GENinstance **inst)
+VCVSdelete(GENinstance *gen_inst)
 {
-    VCVSmodel *model = (VCVSmodel *) inModel;
-    VCVSinstance **fast = (VCVSinstance **) inst;
-    VCVSinstance **prev = NULL;
-    VCVSinstance *here;
-
-    for (; model; model = model->VCVSnextModel) {
-        prev = &(model->VCVSinstances);
-        for (here = *prev; here; here = *prev) {
-            if (here->VCVSname == name || (fast && here == *fast)) {
-                *prev = here->VCVSnextInstance;
-                FREE(here);
-                return(OK);
-            }
-            prev = &(here->VCVSnextInstance);
-        }
-    }
-
-    return(E_NODEV);
+    NG_IGNORE(gen_inst);
+    return OK;
 }

@@ -15,24 +15,8 @@ Author: 1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 
 
 int
-NBJT2delete(GENmodel *inModel, IFuid name, GENinstance **kill)
+NBJT2delete(GENinstance *gen_inst)
 {
-    NBJT2model *model = (NBJT2model *) inModel;
-    NBJT2instance **fast = (NBJT2instance **) kill;
-    NBJT2instance **prev = NULL;
-    NBJT2instance *inst;
-
-    for (; model; model = model->NBJT2nextModel) {
-        prev = &(model->NBJT2instances);
-        for (inst = *prev; inst; inst = *prev) {
-            if (inst->NBJT2name == name || (fast && inst == *fast)) {
-                *prev = inst->NBJT2nextInstance;
-                FREE(inst);
-                return(OK);
-            }
-            prev = &(inst->NBJT2nextInstance);
-        }
-    }
-
-    return(E_NODEV);
+    NG_IGNORE(gen_inst);
+    return OK;
 }

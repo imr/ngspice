@@ -14,24 +14,8 @@ Author: 1985 S. Hwang
 
 
 int
-HFET2delete(GENmodel *inModel, IFuid name, GENinstance **inst)
+HFET2delete(GENinstance *gen_inst)
 {
-    HFET2model *model = (HFET2model *) inModel;
-    HFET2instance **fast = (HFET2instance **) inst;
-    HFET2instance **prev = NULL;
-    HFET2instance *here;
-
-    for (; model; model = model->HFET2nextModel) {
-        prev = &(model->HFET2instances);
-        for (here = *prev; here; here = *prev) {
-            if (here->HFET2name == name || (fast && here == *fast)) {
-                *prev = here->HFET2nextInstance;
-                FREE(here);
-                return(OK);
-            }
-            prev = &(here->HFET2nextInstance);
-        }
-    }
-
-    return(E_NODEV);
+    NG_IGNORE(gen_inst);
+    return OK;
 }

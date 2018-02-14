@@ -15,24 +15,8 @@ Author: 1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 
 
 int
-NUMOSdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
+NUMOSdelete(GENinstance *gen_inst)
 {
-    NUMOSmodel *model = (NUMOSmodel *) inModel;
-    NUMOSinstance **fast = (NUMOSinstance **) kill;
-    NUMOSinstance **prev = NULL;
-    NUMOSinstance *inst;
-
-    for (; model; model = model->NUMOSnextModel) {
-        prev = &(model->NUMOSinstances);
-        for (inst = *prev; inst; inst = *prev) {
-            if (inst->NUMOSname == name || (fast && inst == *fast)) {
-                *prev = inst->NUMOSnextInstance;
-                FREE(inst);
-                return(OK);
-            }
-            prev = &(inst->NUMOSnextInstance);
-        }
-    }
-
-    return(E_NODEV);
+    NG_IGNORE(gen_inst);
+    return OK;
 }

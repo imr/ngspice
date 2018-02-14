@@ -11,25 +11,9 @@ Author: 1985 Thomas L. Quarles
 
 #ifdef MUTUAL
 int
-MUTdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
+MUTdelete(GENinstance *gen_inst)
 {
-    MUTmodel *model = (MUTmodel *) inModel;
-    MUTinstance **fast = (MUTinstance **) kill;
-    MUTinstance **prev = NULL;
-    MUTinstance *here;
-
-    for (; model; model = model->MUTnextModel) {
-        prev = &(model->MUTinstances);
-        for (here = *prev; here; here = *prev) {
-            if (here->MUTname == name || (fast && here == *fast)) {
-                *prev = here->MUTnextInstance;
-                FREE(here);
-                return(OK);
-            }
-            prev = &(here->MUTnextInstance);
-        }
-    }
-
-    return(E_NODEV);
+    NG_IGNORE(gen_inst);
+    return OK;
 }
 #endif /*MUTUAL*/

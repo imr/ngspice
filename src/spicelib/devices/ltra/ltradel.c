@@ -10,24 +10,8 @@ Author: 1990 Jaijeet S. Roychowdhury
 
 
 int
-LTRAdelete(GENmodel *inModel, IFuid name, GENinstance **kill)
+LTRAdelete(GENinstance *gen_inst)
 {
-    LTRAinstance **fast = (LTRAinstance **) kill;
-    LTRAmodel *model = (LTRAmodel *) inModel;
-    LTRAinstance **prev = NULL;
-    LTRAinstance *here;
-
-    for (; model; model = model->LTRAnextModel) {
-        prev = &(model->LTRAinstances);
-        for (here = *prev; here; here = *prev) {
-            if (here->LTRAname == name || (fast && here == *fast)) {
-                *prev = here->LTRAnextInstance;
-                FREE(here);
-                return(OK);
-            }
-            prev = &(here->LTRAnextInstance);
-        }
-    }
-
-    return(E_NODEV);
+    NG_IGNORE(gen_inst);
+    return OK;
 }

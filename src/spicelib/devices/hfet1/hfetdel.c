@@ -14,24 +14,8 @@ Author: 1985 S. Hwang
 
 
 int
-HFETAdelete(GENmodel *inModel, IFuid name, GENinstance **inst)
+HFETAdelete(GENinstance *gen_inst)
 {
-    HFETAmodel *model = (HFETAmodel *) inModel;
-    HFETAinstance **fast = (HFETAinstance **) inst;
-    HFETAinstance **prev = NULL;
-    HFETAinstance *here;
-
-    for (; model; model = model->HFETAnextModel) {
-        prev = &(model->HFETAinstances);
-        for (here = *prev; here; here = *prev) {
-            if (here->HFETAname == name || (fast && here == *fast)) {
-                *prev = here->HFETAnextInstance;
-                FREE(here);
-                return(OK);
-            }
-            prev = &(here->HFETAnextInstance);
-        }
-    }
-
-    return(E_NODEV);
+    NG_IGNORE(gen_inst);
+    return OK;
 }
