@@ -8,7 +8,7 @@ extern int VCVSdelete(GENinstance*);
 extern void VCVSdestroy(GENmodel**);
 extern int VCVSfindBr(CKTcircuit*,GENmodel*,IFuid);
 extern int VCVSload(GENmodel*,CKTcircuit*);
-extern int VCVSmDelete(GENmodel**,IFuid,GENmodel*);
+extern int VCVSmDelete(GENmodel*);
 extern int VCVSparam(int,IFvalue*,GENinstance*,IFvalue*);
 extern int VCVSpzLoad(GENmodel*,CKTcircuit*,SPcomplex*);
 extern int VCVSsAcLoad(GENmodel*,CKTcircuit*);

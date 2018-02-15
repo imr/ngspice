@@ -14,30 +14,8 @@ Author: 1985 S. Hwang
 
 
 int
-HFETAmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
+HFETAmDelete(GENmodel *gen_model)
 {
-    HFETAmodel **model = (HFETAmodel **) inModel;
-    HFETAmodel *modfast = (HFETAmodel *) kill;
-    HFETAinstance *here;
-    HFETAinstance *prev = NULL;
-    HFETAmodel **oldmod;
-
-    oldmod = model;
-    for (; *model; model = &((*model)->HFETAnextModel)) {
-        if ((*model)->HFETAmodName == modname ||
-            (modfast && *model == modfast)) goto delgot;
-        oldmod = model;
-    }
-
-    return(E_NOMOD);
-
- delgot:
-    *oldmod = (*model)->HFETAnextModel; /* cut deleted device out of list */
-    for (here = (*model)->HFETAinstances; here; here = here->HFETAnextInstance) {
-        if (prev) FREE(prev);
-        prev = here;
-    }
-    if (prev) FREE(prev);
-    FREE(*model);
-    return(OK);
+    NG_IGNORE(gen_model);
+    return OK;
 }

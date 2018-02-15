@@ -9,7 +9,7 @@ extern int CPLdelete(GENinstance*);
 extern void CPLdestroy(GENmodel**);
 extern int CPLload(GENmodel*, CKTcircuit*);
 extern int CPLmAsk(CKTcircuit*, GENmodel*, int, IFvalue*);
-extern int CPLmDelete(GENmodel**, IFuid,GENmodel*);
+extern int CPLmDelete(GENmodel*);
 extern int CPLmParam(int,IFvalue*, GENmodel*);
 extern int CPLparam(int,IFvalue*, GENinstance*, IFvalue*);
 extern int CPLsetup(SMPmatrix*, GENmodel*, CKTcircuit*, int*);

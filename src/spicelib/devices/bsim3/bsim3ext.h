@@ -13,7 +13,7 @@ extern void BSIM3destroy(GENmodel**);
 extern int BSIM3getic(GENmodel*,CKTcircuit*);
 extern int BSIM3load(GENmodel*,CKTcircuit*);
 extern int BSIM3mAsk(CKTcircuit*,GENmodel *,int, IFvalue*);
-extern int BSIM3mDelete(GENmodel**,IFuid,GENmodel*);
+extern int BSIM3mDelete(GENmodel*);
 extern int BSIM3mParam(int,IFvalue*,GENmodel*);
 extern void BSIM3mosCap(CKTcircuit*, double, double, double, double,
         double, double, double, double, double, double, double,

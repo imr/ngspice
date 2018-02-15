@@ -21,35 +21,8 @@
 
 
 int
-B4SOImDelete(
-             GENmodel **inModel,
-             IFuid modname,
-             GENmodel *kill)
+B4SOImDelete(GENmodel *gen_model)
 {
-    B4SOImodel **model = (B4SOImodel **) inModel;
-    B4SOImodel *modfast = (B4SOImodel *) kill;
-    B4SOIinstance *here;
-    B4SOIinstance *prev = NULL;
-    B4SOImodel **oldmod;
-
-    oldmod = model;
-    for (; *model; model = &((*model)->B4SOInextModel))
-    {   if ((*model)->B4SOImodName == modname ||
-            (modfast && *model == modfast))
-            goto delgot;
-        oldmod = model;
-    }
-
-    return(E_NOMOD);
-
- delgot:
-    *oldmod = (*model)->B4SOInextModel; /* cut deleted device out of list */
-    for (here = (*model)->B4SOIinstances; here; here = here->B4SOInextInstance)
-    {
-        if (prev) FREE(prev);
-        prev = here;
-    }
-    if (prev) FREE(prev);
-    FREE(*model);
-    return(OK);
+    NG_IGNORE(gen_model);
+    return OK;
 }

@@ -10,30 +10,8 @@ Modified: Apr 2000 - Paolo Nenzi
 
 
 int
-RESmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
+RESmDelete(GENmodel *gen_model)
 {
-    RESmodel **model = (RESmodel **) inModel;
-    RESmodel *modfast = (RESmodel *) kill;
-    RESinstance *here;
-    RESinstance *prev = NULL;
-    RESmodel **oldmod;
-
-    oldmod = model;
-    for (; *model; model = &((*model)->RESnextModel)) {
-        if ((*model)->RESmodName == modname ||
-            (modfast && *model == modfast)) goto delgot;
-        oldmod = model;
-    }
-
-    return(E_NOMOD);
-
- delgot:
-    *oldmod = (*model)->RESnextModel; /* cut deleted device out of list */
-    for (here = (*model)->RESinstances; here; here = here->RESnextInstance) {
-        if (prev) FREE(prev);
-        prev = here;
-    }
-    if (prev) FREE(prev);
-    FREE(*model);
-    return(OK);
+    NG_IGNORE(gen_model);
+    return OK;
 }

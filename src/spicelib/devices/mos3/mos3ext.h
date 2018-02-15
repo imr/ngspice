@@ -12,7 +12,7 @@ extern void MOS3destroy(GENmodel**);
 extern int MOS3getic(GENmodel*,CKTcircuit*);
 extern int MOS3load(GENmodel*,CKTcircuit*);
 extern int MOS3mAsk(CKTcircuit*,GENmodel*,int,IFvalue*);
-extern int MOS3mDelete(GENmodel**,IFuid,GENmodel*);
+extern int MOS3mDelete(GENmodel*);
 extern int MOS3mParam(int,IFvalue*,GENmodel*);
 extern int MOS3param(int,IFvalue*,GENinstance*,IFvalue*);
 extern int MOS3pzLoad(GENmodel*,CKTcircuit*,SPcomplex*);

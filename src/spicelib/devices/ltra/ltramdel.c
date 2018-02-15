@@ -10,33 +10,8 @@ Author: 1990 Jaijeet S. Roychowdhury
 
 
 int
-LTRAmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
+LTRAmDelete(GENmodel *gen_model)
 {
-    LTRAmodel **model = (LTRAmodel **) inModel;
-    LTRAmodel *modfast = (LTRAmodel *) kill;
-    LTRAinstance *here;
-    LTRAinstance *prev = NULL;
-    LTRAmodel **oldmod;
-
-    oldmod = model;
-    for (; *model; model = &((*model)->LTRAnextModel)) {
-        if ((*model)->LTRAmodName == modname ||
-            (modfast && *model == modfast))
-            goto delgot;
-        oldmod = model;
-    }
-
-    return(E_NOMOD);
-
- delgot:
-    *oldmod = (*model)->LTRAnextModel;    /* cut deleted device out of list */
-    for (here = (*model)->LTRAinstances; here; here = here->LTRAnextInstance) {
-        if (prev)
-            FREE(prev);
-        prev = here;
-    }
-    if (prev)
-        FREE(prev);
-    FREE(*model);
-    return(OK);
+    NG_IGNORE(gen_model);
+    return OK;
 }

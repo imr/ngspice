@@ -10,7 +10,7 @@ extern int SWdelete(GENinstance*);
 extern void SWdestroy(GENmodel**);
 extern int SWload(GENmodel*,CKTcircuit*);
 extern int SWmAsk(CKTcircuit*,GENmodel*,int,IFvalue*);
-extern int SWmDelete(GENmodel**,IFuid,GENmodel*);
+extern int SWmDelete(GENmodel*);
 extern int SWmParam(int,IFvalue*,GENmodel*);
 extern int SWparam(int,IFvalue*,GENinstance*,IFvalue*);
 extern int SWpzLoad(GENmodel*,CKTcircuit*,SPcomplex*);

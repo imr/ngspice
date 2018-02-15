@@ -12,7 +12,7 @@ extern int LTRAdelete(GENinstance*);
 extern void LTRAdestroy(GENmodel**);
 extern int LTRAload(GENmodel*,CKTcircuit*);
 extern int LTRAmAsk(CKTcircuit*,GENmodel*,int,IFvalue*);
-extern int LTRAmDelete(GENmodel**,IFuid,GENmodel*);
+extern int LTRAmDelete(GENmodel*);
 extern int LTRAparam(int,IFvalue*,GENinstance*,IFvalue*);
 extern int LTRAmParam(int,IFvalue*,GENmodel*);
 extern int LTRAsetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);

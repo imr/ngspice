@@ -27,30 +27,8 @@ Acknowledgements : Rupert Howes and Pete Mole.
 
 
 int
-SOI3mDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
+SOI3mDelete(GENmodel *gen_model)
 {
-    SOI3model **model = (SOI3model **) inModel;
-    SOI3model *modfast = (SOI3model *) kill;
-    SOI3instance *here;
-    SOI3instance *prev = NULL;
-    SOI3model **oldmod;
-
-    oldmod = model;
-    for (; *model; model = &((*model)->SOI3nextModel)) {
-        if ((*model)->SOI3modName == modname ||
-            (modfast && *model == modfast)) goto delgot;
-        oldmod = model;
-    }
-
-    return(E_NOMOD);
-
- delgot:
-    *oldmod = (*model)->SOI3nextModel; /* cut deleted device out of list */
-    for (here = (*model)->SOI3instances; here; here = here->SOI3nextInstance) {
-        if (prev) FREE(prev);
-        prev = here;
-    }
-    if (prev) FREE(prev);
-    FREE(*model);
-    return(OK);
+    NG_IGNORE(gen_model);
+    return OK;
 }

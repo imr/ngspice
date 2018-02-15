@@ -10,7 +10,7 @@ extern int TRAdelete(GENinstance*);
 extern void TRAdestroy(GENmodel**);
 extern int TRAload(GENmodel*,CKTcircuit*);
 extern int TRAmAsk(CKTcircuit*,GENmodel*,int,IFvalue*);
-extern int TRAmDelete(GENmodel**,IFuid,GENmodel*);
+extern int TRAmDelete(GENmodel*);
 extern int TRAparam(int,IFvalue*,GENinstance*,IFvalue*);
 extern int TRAsetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 extern int TRAunsetup(GENmodel*,CKTcircuit*);

@@ -12,7 +12,7 @@ extern int NBJTdelete(GENinstance *);
 extern void NBJTdestroy(GENmodel **);
 extern int NBJTgetic(GENmodel *, CKTcircuit *);
 extern int NBJTload(GENmodel *, CKTcircuit *);
-extern int NBJTmDelete(GENmodel **, IFuid, GENmodel *);
+extern int NBJTmDelete(GENmodel *);
 extern int NBJTmParam(int, IFvalue *, GENmodel *);
 extern int NBJTparam(int, IFvalue *, GENinstance *, IFvalue *);
 extern int NBJTpzLoad(GENmodel *, CKTcircuit *, SPcomplex *);

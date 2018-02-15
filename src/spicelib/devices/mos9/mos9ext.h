@@ -12,7 +12,7 @@ extern void MOS9destroy(GENmodel**);
 extern int MOS9getic(GENmodel*,CKTcircuit*);
 extern int MOS9load(GENmodel*,CKTcircuit*);
 extern int MOS9mAsk(CKTcircuit*,GENmodel*,int,IFvalue*);
-extern int MOS9mDelete(GENmodel**,IFuid,GENmodel*);
+extern int MOS9mDelete(GENmodel*);
 extern int MOS9mParam(int,IFvalue*,GENmodel*);
 extern int MOS9param(int,IFvalue*,GENinstance*,IFvalue*);
 extern int MOS9pzLoad(GENmodel*,CKTcircuit*,SPcomplex*);

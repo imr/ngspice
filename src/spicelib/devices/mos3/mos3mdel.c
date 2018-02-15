@@ -10,30 +10,8 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-MOS3mDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
+MOS3mDelete(GENmodel *gen_model)
 {
-    MOS3model **model = (MOS3model **) inModel;
-    MOS3model *modfast = (MOS3model *) kill;
-    MOS3instance *here;
-    MOS3instance *prev = NULL;
-    MOS3model **oldmod;
-
-    oldmod = model;
-    for (; *model; model = &((*model)->MOS3nextModel)) {
-        if ((*model)->MOS3modName == modname ||
-            (modfast && *model == modfast)) goto delgot;
-        oldmod = model;
-    }
-
-    return(E_NOMOD);
-
- delgot:
-    *oldmod = (*model)->MOS3nextModel; /* cut deleted device out of list */
-    for (here = (*model)->MOS3instances; here; here = here->MOS3nextInstance) {
-        if (prev) FREE(prev);
-        prev = here;
-    }
-    if (prev) FREE(prev);
-    FREE(*model);
-    return(OK);
+    NG_IGNORE(gen_model);
+    return OK;
 }

@@ -17,31 +17,8 @@ File: b3soifdmdel.c          98/5/01
 
 
 int
-B3SOIFDmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
+B3SOIFDmDelete(GENmodel *gen_model)
 {
-    B3SOIFDmodel **model = (B3SOIFDmodel **) inModel;
-    B3SOIFDmodel *modfast = (B3SOIFDmodel *) kill;
-    B3SOIFDinstance *here;
-    B3SOIFDinstance *prev = NULL;
-    B3SOIFDmodel **oldmod;
-
-    oldmod = model;
-    for (; *model; model = &((*model)->B3SOIFDnextModel))
-    {   if ((*model)->B3SOIFDmodName == modname ||
-            (modfast && *model == modfast))
-            goto delgot;
-        oldmod = model;
-    }
-
-    return(E_NOMOD);
-
- delgot:
-    *oldmod = (*model)->B3SOIFDnextModel; /* cut deleted device out of list */
-    for (here = (*model)->B3SOIFDinstances; here; here = here->B3SOIFDnextInstance)
-    {   if (prev) FREE(prev);
-        prev = here;
-    }
-    if (prev) FREE(prev);
-    FREE(*model);
-    return(OK);
+    NG_IGNORE(gen_model);
+    return OK;
 }

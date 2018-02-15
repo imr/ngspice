@@ -13,7 +13,7 @@ extern void B3SOIDDdestroy(GENmodel**);
 extern int B3SOIDDgetic(GENmodel*,CKTcircuit*);
 extern int B3SOIDDload(GENmodel*,CKTcircuit*);
 extern int B3SOIDDmAsk(CKTcircuit*,GENmodel *,int, IFvalue*);
-extern int B3SOIDDmDelete(GENmodel**,IFuid,GENmodel*);
+extern int B3SOIDDmDelete(GENmodel*);
 extern int B3SOIDDmParam(int,IFvalue*,GENmodel*);
 extern void B3SOIDDmosCap(CKTcircuit*, double, double, double, double,
         double, double, double, double, double, double, double,

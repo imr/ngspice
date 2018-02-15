@@ -10,39 +10,8 @@ Author: 1987 Kanwar Jit Singh
 
 
 int
-ASRCmDelete(GENmodel **modList, IFuid modname, GENmodel *killModel)
+ASRCmDelete(GENmodel *gen_model)
 {
-    ASRCmodel **model = (ASRCmodel **) modList;
-    ASRCmodel *modfast = (ASRCmodel *) killModel;
-    ASRCinstance *here;
-    ASRCinstance *prev = NULL;
-    ASRCmodel **oldmod;
-
-    oldmod = model;
-    for (; *model; model = &((*model)->ASRCnextModel)) {
-        if ((*model)->ASRCmodName == modname || (modfast && *model == modfast))
-            goto delgot;
-        oldmod = model;
-    }
-
-    return(E_NOMOD);
-
- delgot:
-
-    *oldmod = (*model)->ASRCnextModel; /* cut deleted device out of list */
-
-    for (here = (*model)->ASRCinstances; here; here = here->ASRCnextInstance) {
-        if (prev) {
-            ASRCdelete((GENinstance *) prev);
-            FREE(prev);
-        }
-        prev = here;
-    }
-
-    if (prev) {
-        ASRCdelete((GENinstance *) prev);
-        FREE(prev);
-    }
-    FREE(*model);
-    return(OK);
+    NG_IGNORE(gen_model);
+    return OK;
 }
