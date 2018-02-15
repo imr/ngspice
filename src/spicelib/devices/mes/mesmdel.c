@@ -10,30 +10,8 @@ Author: 1985 S. Hwang
 
 
 int
-MESmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
+MESmDelete(GENmodel *gen_model)
 {
-    MESmodel **model = (MESmodel **) inModel;
-    MESmodel *modfast = (MESmodel *) kill;
-    MESinstance *here;
-    MESinstance *prev = NULL;
-    MESmodel **oldmod;
-
-    oldmod = model;
-    for (; *model; model = &((*model)->MESnextModel)) {
-        if ((*model)->MESmodName == modname ||
-            (modfast && *model == modfast)) goto delgot;
-        oldmod = model;
-    }
-
-    return(E_NOMOD);
-
- delgot:
-    *oldmod = (*model)->MESnextModel; /* cut deleted device out of list */
-    for (here = (*model)->MESinstances; here; here = here->MESnextInstance) {
-        if (prev) FREE(prev);
-        prev = here;
-    }
-    if (prev) FREE(prev);
-    FREE(*model);
-    return(OK);
+    NG_IGNORE(gen_model);
+    return OK;
 }

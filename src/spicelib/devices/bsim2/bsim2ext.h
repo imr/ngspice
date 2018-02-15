@@ -11,7 +11,7 @@ extern void B2destroy(GENmodel**);
 extern int B2getic(GENmodel*,CKTcircuit*);
 extern int B2load(GENmodel*,CKTcircuit*);
 extern int B2mAsk(CKTcircuit*,GENmodel *,int, IFvalue*);
-extern int B2mDelete(GENmodel**,IFuid,GENmodel*);
+extern int B2mDelete(GENmodel*);
 extern int B2mParam(int,IFvalue*,GENmodel*);
 extern void B2mosCap(CKTcircuit*, double, double, double, double*,
         double, double, double, double, double, double,

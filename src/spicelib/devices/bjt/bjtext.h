@@ -15,7 +15,7 @@ extern void BJTdestroy(GENmodel**);
 extern int BJTgetic(GENmodel*,CKTcircuit*);
 extern int BJTload(GENmodel*,CKTcircuit*);
 extern int BJTmAsk(CKTcircuit*,GENmodel*,int,IFvalue*);
-extern int BJTmDelete(GENmodel**,IFuid,GENmodel*);
+extern int BJTmDelete(GENmodel*);
 extern int BJTmParam(int,IFvalue*,GENmodel*);
 extern int BJTparam(int,IFvalue*,GENinstance*,IFvalue*);
 extern int BJTpzLoad(GENmodel*,CKTcircuit*,SPcomplex*);

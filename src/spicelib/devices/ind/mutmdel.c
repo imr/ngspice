@@ -11,31 +11,9 @@ Author: 1985 Thomas L. Quarles
 
 #ifdef MUTUAL
 int
-MUTmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
+MUTmDelete(GENmodel *gen_model)
 {
-    MUTmodel **model = (MUTmodel **) inModel;
-    MUTmodel *modfast = (MUTmodel *) kill;
-    MUTinstance *here;
-    MUTinstance *prev = NULL;
-    MUTmodel **oldmod;
-
-    oldmod = model;
-    for (; *model; model = &((*model)->MUTnextModel)) {
-        if ((*model)->MUTmodName == modname ||
-            (modfast && *model == modfast)) goto delgot;
-        oldmod = model;
-    }
-
-    return(E_NOMOD);
-
- delgot:
-    *oldmod = (*model)->MUTnextModel; /* cut deleted device out of list */
-    for (here = (*model)->MUTinstances; here; here = here->MUTnextInstance) {
-        if (prev) FREE(prev);
-        prev = here;
-    }
-    if (prev) FREE(prev);
-    FREE(*model);
-    return(OK);
+    NG_IGNORE(gen_model);
+    return OK;
 }
 #endif /* MUTUAL */

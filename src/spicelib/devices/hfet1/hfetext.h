@@ -10,7 +10,7 @@ extern void HFETAdestroy(GENmodel**);
 extern int HFETAgetic(GENmodel*,CKTcircuit*);
 extern int HFETAload(GENmodel*,CKTcircuit*);
 extern int HFETAmAsk(CKTcircuit*,GENmodel*,int,IFvalue*);
-extern int HFETAmDelete(GENmodel**,IFuid,GENmodel*);
+extern int HFETAmDelete(GENmodel*);
 extern int HFETAmParam(int,IFvalue*,GENmodel*);
 extern int HFETAparam(int,IFvalue*,GENinstance*,IFvalue*);
 extern int HFETApzLoad(GENmodel*, CKTcircuit*, SPcomplex*);

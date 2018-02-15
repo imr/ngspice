@@ -66,7 +66,7 @@ extern void BSIM4destroy(GENmodel**);
 extern int BSIM4getic(GENmodel*,CKTcircuit*);
 extern int BSIM4load(GENmodel*,CKTcircuit*);
 extern int BSIM4mAsk(CKTcircuit*,GENmodel *,int, IFvalue*);
-extern int BSIM4mDelete(GENmodel**,IFuid,GENmodel*);
+extern int BSIM4mDelete(GENmodel*);
 extern int BSIM4mParam(int,IFvalue*,GENmodel*);
 extern void BSIM4mosCap(CKTcircuit*, double, double, double, double,
         double, double, double, double, double, double, double,

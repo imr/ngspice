@@ -18,31 +18,8 @@ Modified by Paolo Nenzi 2002
 
 
 int
-B3SOIDDmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
+B3SOIDDmDelete(GENmodel *gen_model)
 {
-    B3SOIDDmodel **model = (B3SOIDDmodel **) inModel;
-    B3SOIDDmodel *modfast = (B3SOIDDmodel *) kill;
-    B3SOIDDinstance *here;
-    B3SOIDDinstance *prev = NULL;
-    B3SOIDDmodel **oldmod;
-
-    oldmod = model;
-    for (; *model; model = &((*model)->B3SOIDDnextModel))
-    {   if ((*model)->B3SOIDDmodName == modname ||
-            (modfast && *model == modfast))
-            goto delgot;
-        oldmod = model;
-    }
-
-    return(E_NOMOD);
-
- delgot:
-    *oldmod = (*model)->B3SOIDDnextModel; /* cut deleted device out of list */
-    for (here = (*model)->B3SOIDDinstances; here; here = here->B3SOIDDnextInstance)
-    {   if (prev) FREE(prev);
-        prev = here;
-    }
-    if (prev) FREE(prev);
-    FREE(*model);
-    return(OK);
+    NG_IGNORE(gen_model);
+    return OK;
 }

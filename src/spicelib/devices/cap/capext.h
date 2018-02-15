@@ -10,7 +10,7 @@ extern void CAPdestroy(GENmodel**);
 extern int CAPgetic(GENmodel*,CKTcircuit*);
 extern int CAPload(GENmodel*,CKTcircuit*);
 extern int CAPmAsk(CKTcircuit*,GENmodel*,int,IFvalue*);
-extern int CAPmDelete(GENmodel**,IFuid,GENmodel*);
+extern int CAPmDelete(GENmodel*);
 extern int CAPmParam(int,IFvalue*,GENmodel*);
 extern int CAPparam(int,IFvalue*,GENinstance*,IFvalue*);
 extern int CAPpzLoad(GENmodel*,CKTcircuit*,SPcomplex*);

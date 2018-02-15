@@ -12,7 +12,7 @@ extern int MOS2delete(GENinstance*);
 extern void MOS2destroy(GENmodel**);
 extern int MOS2getic(GENmodel*,CKTcircuit*);
 extern int MOS2load(GENmodel*,CKTcircuit*);
-extern int MOS2mDelete(GENmodel**,IFuid,GENmodel*);
+extern int MOS2mDelete(GENmodel*);
 extern int MOS2mParam(int,IFvalue*,GENmodel*);
 extern int MOS2param(int,IFvalue*,GENinstance*,IFvalue*);
 extern int MOS2pzLoad(GENmodel*,CKTcircuit*,SPcomplex*);

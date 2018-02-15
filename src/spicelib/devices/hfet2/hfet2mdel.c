@@ -14,30 +14,8 @@ Author: 1985 S. Hwang
 
 
 int
-HFET2mDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
+HFET2mDelete(GENmodel *gen_model)
 {
-    HFET2model **model = (HFET2model **) inModel;
-    HFET2model *modfast = (HFET2model *) kill;
-    HFET2instance *here;
-    HFET2instance *prev = NULL;
-    HFET2model **oldmod;
-
-    oldmod = model;
-    for (; *model; model = &((*model)->HFET2nextModel)) {
-        if ((*model)->HFET2modName == modname ||
-            (modfast && *model == modfast)) goto delgot;
-        oldmod = model;
-    }
-
-    return(E_NOMOD);
-
- delgot:
-    *oldmod = (*model)->HFET2nextModel; /* cut deleted device out of list */
-    for (here = (*model)->HFET2instances; here; here = here->HFET2nextInstance) {
-        if (prev) FREE(prev);
-        prev = here;
-    }
-    if (prev) FREE(prev);
-    FREE(*model);
-    return(OK);
+    NG_IGNORE(gen_model);
+    return OK;
 }

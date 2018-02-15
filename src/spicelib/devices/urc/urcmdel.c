@@ -10,30 +10,8 @@ Author: 1987 Thomas L. Quarles
 
 
 int
-URCmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
+URCmDelete(GENmodel *gen_model)
 {
-    URCmodel **model = (URCmodel **) inModel;
-    URCmodel *modfast = (URCmodel *) kill;
-    URCinstance *here;
-    URCinstance *prev = NULL;
-    URCmodel **oldmod;
-
-    oldmod = model;
-    for (; *model; model = &((*model)->URCnextModel)) {
-        if ((*model)->URCmodName == modname ||
-            (modfast && *model == modfast)) goto delgot;
-        oldmod = model;
-    }
-
-    return(E_NOMOD);
-
- delgot:
-    *oldmod = (*model)->URCnextModel; /* cut deleted device out of list */
-    for (here = (*model)->URCinstances; here; here = here->URCnextInstance) {
-        if (prev) FREE(prev);
-        prev = here;
-    }
-    if (prev) FREE(prev);
-    FREE(*model);
-    return(OK);
+    NG_IGNORE(gen_model);
+    return OK;
 }

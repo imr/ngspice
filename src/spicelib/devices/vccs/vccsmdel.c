@@ -10,30 +10,8 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-VCCSmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
+VCCSmDelete(GENmodel *gen_model)
 {
-    VCCSmodel **model = (VCCSmodel **) inModel;
-    VCCSmodel *modfast = (VCCSmodel *) kill;
-    VCCSinstance *here;
-    VCCSinstance *prev = NULL;
-    VCCSmodel **oldmod;
-
-    oldmod = model;
-    for (; *model; model = &((*model)->VCCSnextModel)) {
-        if ((*model)->VCCSmodName == modname ||
-            (modfast && *model == modfast)) goto delgot;
-        oldmod = model;
-    }
-
-    return(E_NOMOD);
-
- delgot:
-    *oldmod = (*model)->VCCSnextModel; /* cut deleted device out of list */
-    for (here = (*model)->VCCSinstances; here; here = here->VCCSnextInstance) {
-        if (prev) FREE(prev);
-        prev = here;
-    }
-    if (prev) FREE(prev);
-    FREE(*model);
-    return(OK);
+    NG_IGNORE(gen_model);
+    return OK;
 }

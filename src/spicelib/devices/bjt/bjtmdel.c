@@ -16,24 +16,8 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-BJTmDelete(GENmodel **inModels, IFuid modname, GENmodel *kill)
+BJTmDelete(GENmodel *gen_model)
 {
-    BJTmodel **model = (BJTmodel **) inModels;
-    BJTmodel *modfast = (BJTmodel *) kill;
-    BJTmodel **oldmod;
-
-    oldmod = model;
-    for (; *model; model = &((*model)->BJTnextModel)) {
-        if ((*model)->BJTmodName == modname ||
-            (modfast && *model == modfast)) goto delgot;
-        oldmod = model;
-    }
-
-    return(E_NOMOD);
-
- delgot:
-    if ((*model)->BJTinstances) return(E_NOTEMPTY);
-    *oldmod = (*model)->BJTnextModel; /* cut deleted device out of list */
-    FREE(*model);
-    return(OK);
+    NG_IGNORE(gen_model);
+    return OK;
 }

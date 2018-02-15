@@ -23,7 +23,7 @@ extern void HSMHVdestroy(GENmodel**);
 extern int HSMHVgetic(GENmodel*,CKTcircuit*);
 extern int HSMHVload(GENmodel*,CKTcircuit*);
 extern int HSMHVmAsk(CKTcircuit*,GENmodel *,int, IFvalue*);
-extern int HSMHVmDelete(GENmodel**,IFuid,GENmodel*);
+extern int HSMHVmDelete(GENmodel*);
 extern int HSMHVmParam(int,IFvalue*,GENmodel*);
 extern void HSMHVmosCap(CKTcircuit*, double, double, double, double*,
         double, double, double, double, double, double,

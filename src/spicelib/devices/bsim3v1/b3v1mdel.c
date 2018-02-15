@@ -17,31 +17,8 @@
 
 
 int
-BSIM3v1mDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
+BSIM3v1mDelete(GENmodel *gen_model)
 {
-    BSIM3v1model **model = (BSIM3v1model **) inModel;
-    BSIM3v1model *modfast = (BSIM3v1model *) kill;
-    BSIM3v1instance *here;
-    BSIM3v1instance *prev = NULL;
-    BSIM3v1model **oldmod;
-
-    oldmod = model;
-    for (; *model; model = &((*model)->BSIM3v1nextModel))
-    {   if ((*model)->BSIM3v1modName == modname ||
-            (modfast && *model == modfast))
-            goto delgot;
-        oldmod = model;
-    }
-
-    return(E_NOMOD);
-
- delgot:
-    *oldmod = (*model)->BSIM3v1nextModel; /* cut deleted device out of list */
-    for (here = (*model)->BSIM3v1instances; here; here = here->BSIM3v1nextInstance)
-    {   if (prev) FREE(prev);
-        prev = here;
-    }
-    if (prev) FREE(prev);
-    FREE(*model);
-    return(OK);
+    NG_IGNORE(gen_model);
+    return OK;
 }

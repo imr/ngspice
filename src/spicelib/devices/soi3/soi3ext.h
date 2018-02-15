@@ -28,7 +28,7 @@ extern void SOI3destroy(GENmodel**);
 extern int SOI3getic(GENmodel*,CKTcircuit*);
 extern int SOI3load(GENmodel*,CKTcircuit*);
 extern int SOI3mAsk(CKTcircuit *,GENmodel *,int,IFvalue*);
-extern int SOI3mDelete(GENmodel**,IFuid,GENmodel*);
+extern int SOI3mDelete(GENmodel*);
 extern int SOI3mParam(int,IFvalue*,GENmodel*);
 extern void SOI3cap(double,double,double,
                     	double*,double*,double*,double*,

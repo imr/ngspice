@@ -64,34 +64,8 @@ June 2008 (revised October 2011)
 
 
 int
-HSMHV2mDelete(
-                  GENmodel **inModel,
-                  IFuid modname,
-                  GENmodel *kill)
+HSMHV2mDelete(GENmodel *gen_model)
 {
-    HSMHV2model **model = (HSMHV2model **) inModel;
-    HSMHV2model *modfast = (HSMHV2model *) kill;
-    HSMHV2instance *here;
-    HSMHV2instance *prev = NULL;
-    HSMHV2model **oldmod;
-
-    oldmod = model;
-    for (; *model; model = &((*model)->HSMHV2nextModel)) {
-        if ((*model)->HSMHV2modName == modname ||
-             (modfast && *model == modfast)) goto delgot;
-        oldmod = model;
-    }
-
-    return(E_NOMOD);
-
- delgot:
-    *oldmod = (*model)->HSMHV2nextModel; /* cut deleted device out of list */
-    for (here = (*model)->HSMHV2instances;
-         here; here = here->HSMHV2nextInstance) {
-        if (prev) FREE(prev);
-        prev = here;
-    }
-    if (prev) FREE(prev);
-    FREE(*model);
-    return(OK);
+    NG_IGNORE(gen_model);
+    return OK;
 }

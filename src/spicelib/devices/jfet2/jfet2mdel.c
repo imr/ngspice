@@ -14,30 +14,8 @@ Modified to jfet2 for PS model definition ( Anthony E. Parker )
 
 
 int
-JFET2mDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
+JFET2mDelete(GENmodel *gen_model)
 {
-    JFET2model **model = (JFET2model **) inModel;
-    JFET2model *modfast = (JFET2model *) kill;
-    JFET2instance *here;
-    JFET2instance *prev = NULL;
-    JFET2model **oldmod;
-
-    oldmod = model;
-    for (; *model; model = &((*model)->JFET2nextModel)) {
-        if ((*model)->JFET2modName == modname ||
-            (modfast && *model == modfast)) goto delgot;
-        oldmod = model;
-    }
-
-    return(E_NOMOD);
-
- delgot:
-    *oldmod = (*model)->JFET2nextModel; /* cut deleted device out of list */
-    for (here = (*model)->JFET2instances; here; here = here->JFET2nextInstance) {
-        if (prev) FREE(prev);
-        prev = here;
-    }
-    if (prev) FREE(prev);
-    FREE(*model);
-    return(OK);
+    NG_IGNORE(gen_model);
+    return OK;
 }

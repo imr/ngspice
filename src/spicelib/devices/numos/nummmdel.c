@@ -15,26 +15,8 @@ Author: 1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 
 
 int
-NUMOSmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
+NUMOSmDelete(GENmodel *gen_model)
 {
-    NUMOSmodel **model = (NUMOSmodel **) inModel;
-    NUMOSmodel *modfast = (NUMOSmodel *) kill;
-    NUMOSmodel **oldmod;
-
-    oldmod = model;
-    for (; *model; model = &((*model)->NUMOSnextModel)) {
-        if ((*model)->NUMOSmodName == modname ||
-            (modfast && *model == modfast))
-            goto delgot;
-        oldmod = model;
-    }
-
-    return(E_NOMOD);
-
- delgot:
-    if ((*model)->NUMOSinstances)
-        return(E_NOTEMPTY);
-    *oldmod = (*model)->NUMOSnextModel;   /* cut deleted device out of list */
-    FREE(*model);
-    return(OK);
+    NG_IGNORE(gen_model);
+    return OK;
 }

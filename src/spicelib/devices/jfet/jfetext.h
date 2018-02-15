@@ -11,7 +11,7 @@ extern void JFETdestroy(GENmodel**);
 extern int JFETgetic(GENmodel*,CKTcircuit*);
 extern int JFETload(GENmodel*,CKTcircuit*);
 extern int JFETmAsk(CKTcircuit*,GENmodel*,int,IFvalue*);
-extern int JFETmDelete(GENmodel**,IFuid,GENmodel*);
+extern int JFETmDelete(GENmodel*);
 extern int JFETmParam(int,IFvalue*,GENmodel*);
 extern int JFETparam(int,IFvalue*,GENinstance*,IFvalue*);
 extern int JFETpzLoad(GENmodel*,CKTcircuit*,SPcomplex*);

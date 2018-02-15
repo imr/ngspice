@@ -10,30 +10,8 @@ Author: 1985 Thomas L. Quarles
 
 
 int
-INDmDelete(GENmodel **inModel, IFuid modname, GENmodel *kill)
+INDmDelete(GENmodel *gen_model)
 {
-    INDmodel **model = (INDmodel **) inModel;
-    INDmodel *modfast = (INDmodel *) kill;
-    INDinstance *here;
-    INDinstance *prev = NULL;
-    INDmodel **oldmod;
-
-    oldmod = model;
-    for (; *model; model = &((*model)->INDnextModel)) {
-        if ((*model)->INDmodName == modname ||
-            (modfast && *model == modfast)) goto delgot;
-        oldmod = model;
-    }
-
-    return(E_NOMOD);
-
- delgot:
-    *oldmod = (*model)->INDnextModel; /* cut deleted device out of list */
-    for (here = (*model)->INDinstances; here; here = here->INDnextInstance) {
-        if (prev) FREE(prev);
-        prev = here;
-    }
-    if (prev) FREE(prev);
-    FREE(*model);
-    return(OK);
+    NG_IGNORE(gen_model);
+    return OK;
 }
