@@ -24,7 +24,8 @@ asubst(wordlist *wlist)
 
     word = wlist->wl_word;
     if (*word == '\\') {
-        wlist->wl_word++;       /* FIXME !!!, free() will fail !!! */
+        while ((word[0] = word[1]) != '\0')
+            word++;
         return (NULL);
     }
 
