@@ -5169,8 +5169,9 @@ replace_token(char *string, char *token, int wherereplace, int total)
 }
 
 
-/* lines for B sources: no parsing in numparam code, just replacement of parameters.
-   Parsing done in B source parser.
+/* lines for B sources (except for pwl lines): no parsing in numparam code,
+   just replacement of parameters. pwl lines are still handled in numparam.
+   Parsing for all other B source lines are done in the B source parser.
    To achive this, do the following:
    Remove all '{' and '}' --> no parsing of equations in numparam
    Place '{' and '}' directly around all potential parameters,
@@ -5204,6 +5205,9 @@ inp_bsource_compat(struct card *card)
             /* remove white spaces of everything inside {}*/
             card->line = inp_remove_ws(card->line);
             curr_line = card->line;
+            /* exclude special pwl lines */
+            if (strstr(curr_line, "=pwl("))
+                continue;
             /* store starting point for later parsing, beginning of {expression} */
             equal_ptr = strchr(curr_line, '=');
             /* check for errors */
