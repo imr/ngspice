@@ -35,75 +35,72 @@
 #include &quot;$(module)init.h&quot;
 
 SPICEdev $(module)info = {
-  {   &quot;$module&quot;,
-      &quot;$module created by adms&quot;,
-      &amp;$(module)nSize,
-      &amp;$(module)nSize,
-      $(module)names,
-      &amp;$(module)pTSize,
-      $(module)pTable,
-      &amp;$(module)mPTSize,
-      $(module)mPTable,
+    .DEVpublic = {
+        .name = &quot;$module&quot;,
+        .description = &quot;$module created by adms&quot;,
+        .terms = &amp;$(module)nSize,
+        .numNames = &amp;$(module)nSize,
+        .termNames = $(module)names,
+        .numInstanceParms = &amp;$(module)pTSize,
+        .instanceParms = $(module)pTable,
+        .numModelParms = &amp;$(module)mPTSize,
+        .modelParms = $(module)mPTable,
+        .flags = DEV_DEFAULT,
+
 #ifdef XSPICE
-/*----  Fixed by SDB 5.2.2003 to enable XSPICE/tclspice integration  -----*/
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-/*---------------------------  End of SDB fix   -------------------------*/
+        .cm_func = NULL,
+        .num_conn = 0,
+        .conn = NULL,
+        .num_param = 0,
+        .param = NULL,
+        .num_inst_var = 0,
+        .inst_var = NULL,
 #endif
-      DEV_DEFAULT
-  },
+    },
 
-    $(module)par,    /* DEVparam       */
-    $(module)mParam,   /* DEVmodParam    */
-    $(module)load,     /* DEVload        */
-    $(module)setup,    /* DEVsetup       */
-    $(module)unsetup,  /* DEVunsetup     */
-    $(module)setup,    /* DEVpzSetup     */
-    $(module)temp,     /* DEVtemperature */
-    $(module)trunc,    /* DEVtrunc       */
-    NULL,         /* DEVfindBranch  */
-    $(module)acLoad,   /* DEVacLoad      */
-    NULL,         /* DEVaccept      */
-    $(module)destroy,  /* DEVdestroy     */
-    $(module)mDelete,  /* DEVmodDelete   */
-    $(module)delete,   /* DEVdelete      */
-    NULL,    /* DEVsetic       */
-    $(module)ask,      /* DEVask         */
-    $(module)mAsk,     /* DEVmodAsk      */
-    $(module)pzLoad,   /* DEVpzLoad      */
-    NULL, /* DEVconvTest    */
-    NULL,         /* DEVsenSetup    */
-    NULL,         /* DEVsenLoad     */
-    NULL,         /* DEVsenUpdate   */
-    NULL,         /* DEVsenAcLoad   */
-    NULL,         /* DEVsenPrint    */
-    NULL,         /* DEVsenTrunc    */
-    NULL,         /* DEVdisto       */
-    NULL,         /* DEVnoise       */
-    NULL,         /* DEVsoaCheck    */
+    .DEVparam = $(module)par,
+    .DEVmodParam = $(module)mParam,
+    .DEVload = $(module)load,
+    .DEVsetup = $(module)setup,
+    .DEVunsetup = $(module)unsetup,
+    .DEVpzSetup = $(module)setup,
+    .DEVtemperature = $(module)temp,
+    .DEVtrunc = $(module)trunc,
+    .DEVfindBranch = NULL,
+    .DEVacLoad = $(module)acLoad,
+    .DEVaccept = NULL,
+    .DEVdestroy = $(module)destroy,
+    .DEVmodDelete = $(module)mDelete,
+    .DEVdelete = $(module)delete,
+    .DEVsetic = NULL,
+    .DEVask = $(module)ask,
+    .DEVmodAsk = $(module)mAsk,
+    .DEVpzLoad = $(module)pzLoad,
+    .DEVconvTest = NULL,
+    .DEVsenSetup = NULL,
+    .DEVsenLoad = NULL,
+    .DEVsenUpdate = NULL,
+    .DEVsenAcLoad = NULL,
+    .DEVsenPrint = NULL,
+    .DEVsenTrunc = NULL,
+    .DEVdisto = NULL,
+    .DEVnoise = NULL,
+    .DEVsoaCheck = NULL,
+    .DEVinstSize = &amp;$(module)iSize,
+    .DEVmodSize = &amp;$(module)mSize,
+
 #ifdef CIDER
-    NULL,         /* DEVdump       */
-    NULL,         /* DEVacct       */
-#endif                                                         
-    &amp;$(module)iSize,   /* DEVinstSize    */
-    &amp;$(module)mSize    /* DEVmodSize     */
-
+    .DEVdump = NULL,
+    .DEVacct = NULL,
+#endif
 };
+
 
 SPICEdev *
 get_$(module)_info(void)
 {
     return &amp;$(module)info;
 }
-
 </admst:template>
 
 
