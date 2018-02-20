@@ -6,6 +6,7 @@
 #include "hsm2itf.h"
 #include "hsm2init.h"
 
+
 SPICEdev HSM2info = {
     .DEVpublic = {
         .name = "HiSIM2",

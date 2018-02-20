@@ -6,6 +6,7 @@
 #include "cplext.h"
 #include "cplinit.h"
 
+
 SPICEdev CPLinfo = {
     .DEVpublic = {
 	.name = "CplLines",
@@ -66,6 +67,7 @@ SPICEdev CPLinfo = {
     .DEVacct = NULL,
 #endif
 };
+
 
 SPICEdev *
 get_cpl_info(void)

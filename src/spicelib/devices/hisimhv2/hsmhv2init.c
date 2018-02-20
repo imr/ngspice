@@ -6,6 +6,7 @@
 #include "hsmhv2itf.h"
 #include "hsmhv2init.h"
 
+
 SPICEdev HSMHV2info = {
     .DEVpublic = {
         .name = "HiSIMHV2",

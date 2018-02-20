@@ -66,6 +66,7 @@ SPICEdev B4SOIinfo = {
 #endif
 };
 
+
 SPICEdev *
 get_b4soi_info (void)
 {

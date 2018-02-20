@@ -73,6 +73,7 @@ SPICEdev TXLinfo = {
 #endif
 };
 
+
 SPICEdev *
 get_txl_info(void)
 {

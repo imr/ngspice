@@ -66,6 +66,7 @@ SPICEdev B3SOIDDinfo = {
 #endif
 };
 
+
 SPICEdev *
 get_b3soidd_info (void)
 {
