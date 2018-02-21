@@ -4280,87 +4280,85 @@ inp_compat(struct card *card)
                         title_tok, node1, node2, title_tok);
                 // skip "table"
                 cut_line = skip_ws(cut_line);
-                if (!ciprefix("table", cut_line)) {
-                    fprintf(stderr, "Error: bad syntax in line %d\n  %s\n",
-                            card->linenum_orig, card->line);
-                    controlled_exit(EXIT_BAD);
-                }
-                cut_line += 5;
-                // compatibility, allow table = {expr} {pairs}
-                if (*cut_line == '=')
-                    *cut_line++ = ' ';
-                // get the expression
-                str_ptr =  gettok_char(&cut_line, '{', FALSE, FALSE);
-                expression = gettok_char(&cut_line, '}', TRUE, TRUE); /* expression */
-                if (!expression || !str_ptr) {
-                    fprintf(stderr, "Error: bad syntax in line %d\n  %s\n",
-                            card->linenum_orig, card->line);
-                    controlled_exit(EXIT_BAD);
-                }
-                tfree(str_ptr);
-                /* remove '{' and '}' from expression */
-                if ((str_ptr = strchr(expression, '{')) != NULL)
-                    *str_ptr = ' ';
-                if ((str_ptr = strchr(expression, '}')) != NULL)
-                    *str_ptr = ' ';
-                /* cut_line may now have a '=', if yes, it will have '{' and '}'
-                   (braces around token after '=') */
-                if ((str_ptr = strchr(cut_line, '=')) != NULL)
-                    *str_ptr = ' ';
-                if ((str_ptr = strchr(cut_line, '{')) != NULL)
-                    *str_ptr = ' ';
-                if ((str_ptr = strchr(cut_line, '}')) != NULL)
-                    *str_ptr = ' ';
-                /* get first two numbers to establish extrapolation */
-                str_ptr = cut_line;
-                ffirstno = gettok_node(&cut_line);
-                if (!ffirstno) {
-                    fprintf(stderr, "Error: bad syntax in line %d\n  %s\n",
-                            card->linenum_orig, card->line);
-                    controlled_exit(EXIT_BAD);
-                }
-                firstno = copy(ffirstno);
-                fnumber = INPevaluate(&ffirstno, &nerror, TRUE);
-                secondno = gettok_node(&cut_line);
-                midline = cut_line;
-                cut_line = strrchr(str_ptr, '(');
-                if (!cut_line) {
-                    fprintf(stderr, "Error: bad syntax in line %d (missing parentheses)\n  %s\n",
-                            card->linenum_orig, card->line);
-                    controlled_exit(EXIT_BAD);
-                }
-                /* replace '(' with ',' and ')' with ' ' */
-                for (; *str_ptr; str_ptr++)
-                    if (*str_ptr == '(')
-                        *str_ptr = ',';
-                    else if (*str_ptr == ')')
+                if (ciprefix("table", cut_line)) {
+                    /* a regular TABLE line */
+                    cut_line += 5;
+                    // compatibility, allow table = {expr} {pairs}
+                    if (*cut_line == '=')
+                        *cut_line++ = ' ';
+                    // get the expression
+                    str_ptr =  gettok_char(&cut_line, '{', FALSE, FALSE);
+                    expression = gettok_char(&cut_line, '}', TRUE, TRUE); /* expression */
+                    if (!expression || !str_ptr) {
+                        fprintf(stderr, "Error: bad syntax in line %d\n  %s\n",
+                                card->linenum_orig, card->line);
+                        controlled_exit(EXIT_BAD);
+                    }
+                    tfree(str_ptr);
+                    /* remove '{' and '}' from expression */
+                    if ((str_ptr = strchr(expression, '{')) != NULL)
                         *str_ptr = ' ';
-                /* scan for last two numbers */
-                lastno = gettok_node(&cut_line);
-                lnumber = INPevaluate(&lastno, &nerror, FALSE);
-                /* check for max-min and take half the difference for delta */
-                delta = (lnumber-fnumber)/2.;
-                lastlastno = gettok_node(&cut_line);
-                if (!secondno || (*midline == '\0') || (delta <= 0.) || !lastlastno) {
-                    fprintf(stderr, "Error: bad syntax in line %d\n  %s\n",
-                            card->linenum_orig, card->line);
-                    controlled_exit(EXIT_BAD);
+                    if ((str_ptr = strchr(expression, '}')) != NULL)
+                        *str_ptr = ' ';
+                    /* cut_line may now have a '=', if yes, it will have '{' and '}'
+                       (braces around token after '=') */
+                    if ((str_ptr = strchr(cut_line, '=')) != NULL)
+                        *str_ptr = ' ';
+                    if ((str_ptr = strchr(cut_line, '{')) != NULL)
+                        *str_ptr = ' ';
+                    if ((str_ptr = strchr(cut_line, '}')) != NULL)
+                        *str_ptr = ' ';
+                    /* get first two numbers to establish extrapolation */
+                    str_ptr = cut_line;
+                    ffirstno = gettok_node(&cut_line);
+                    if (!ffirstno) {
+                        fprintf(stderr, "Error: bad syntax in line %d\n  %s\n",
+                                card->linenum_orig, card->line);
+                        controlled_exit(EXIT_BAD);
+                    }
+                    firstno = copy(ffirstno);
+                    fnumber = INPevaluate(&ffirstno, &nerror, TRUE);
+                    secondno = gettok_node(&cut_line);
+                    midline = cut_line;
+                    cut_line = strrchr(str_ptr, '(');
+                    if (!cut_line) {
+                        fprintf(stderr, "Error: bad syntax in line %d (missing parentheses)\n  %s\n",
+                                card->linenum_orig, card->line);
+                        controlled_exit(EXIT_BAD);
+                    }
+                    /* replace '(' with ',' and ')' with ' ' */
+                    for (; *str_ptr; str_ptr++)
+                        if (*str_ptr == '(')
+                            *str_ptr = ',';
+                        else if (*str_ptr == ')')
+                            *str_ptr = ' ';
+                    /* scan for last two numbers */
+                    lastno = gettok_node(&cut_line);
+                    lnumber = INPevaluate(&lastno, &nerror, FALSE);
+                    /* check for max-min and take half the difference for delta */
+                    delta = (lnumber-fnumber)/2.;
+                    lastlastno = gettok_node(&cut_line);
+                    if (!secondno || (*midline == '\0') || (delta <= 0.) || !lastlastno) {
+                        fprintf(stderr, "Error: bad syntax in line %d\n  %s\n",
+                                card->linenum_orig, card->line);
+                        controlled_exit(EXIT_BAD);
+                    }
+                    ckt_array[1] = tprintf("b%s %s_int1 0 v = pwl(%s, %e, %s, %s, %s, %s, %e, %s)",
+                            title_tok, title_tok, expression, fnumber-delta, secondno, firstno, secondno,
+                            midline, lnumber + delta, lastlastno);
+
+                    // comment out current variable e line
+                    *(card->line) = '*';
+                    // insert new B source line immediately after current line
+                    for (i = 0; i < 2; i++)
+                        card = insert_new_line(card, ckt_array[i], 0, 0);
+
+                    tfree(firstno);
+                    tfree(lastlastno);
+                    tfree(title_tok);
+                    tfree(node1);
+                    tfree(node2);
                 }
-                ckt_array[1] = tprintf("b%s %s_int1 0 v = pwl(%s, %e, %s, %s, %s, %s, %e, %s)",
-                        title_tok, title_tok, expression, fnumber-delta, secondno, firstno, secondno,
-                        midline, lnumber + delta, lastlastno);
-
-                // comment out current variable e line
-                *(card->line) = '*';
-                // insert new B source line immediately after current line
-                for (i = 0; i < 2; i++)
-                    card = insert_new_line(card, ckt_array[i], 0, 0);
-
-                tfree(firstno);
-                tfree(lastlastno);
-                tfree(title_tok);
-                tfree(node1);
-                tfree(node2);
             }
             /* Exxx n1 n2 VOL = {equation}
                -->
