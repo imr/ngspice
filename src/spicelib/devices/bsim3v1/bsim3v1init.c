@@ -7,72 +7,64 @@
 #include "bsim3v1init.h"
 
 SPICEdev BSIM3v1info = {
-    {   "BSIM3v1",
-        "Berkeley Short Channel IGFET Model Version-3 (3.1)",
-
-        &BSIM3v1nSize,
-        &BSIM3v1nSize,
-        BSIM3v1names,
-
-        &BSIM3v1pTSize,
-        BSIM3v1pTable,
-
-        &BSIM3v1mPTSize,
-        BSIM3v1mPTable,
+    .DEVpublic = {
+        .name = "BSIM3v1",
+        .description = "Berkeley Short Channel IGFET Model Version-3 (3.1)",
+        .terms = &BSIM3v1nSize,
+        .numNames = &BSIM3v1nSize,
+        .termNames = BSIM3v1names,
+        .numInstanceParms = &BSIM3v1pTSize,
+        .instanceParms = BSIM3v1pTable,
+        .numModelParms = &BSIM3v1mPTSize,
+        .modelParms = BSIM3v1mPTable,
+        .flags = DEV_DEFAULT,
 
 #ifdef XSPICE
-/*----  Fixed by SDB 5.2.2003 to enable XSPICE/tclspice integration  -----*/
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-/*---------------------------  End of SDB fix   -------------------------*/
+        .cm_func = NULL,
+        .num_conn = 0,
+        .conn = NULL,
+        .num_param = 0,
+        .param = NULL,
+        .num_inst_var = 0,
+        .inst_var = NULL,
 #endif
-	
-        DEV_DEFAULT
     },
 
- /* DEVparam      */ BSIM3v1param,
- /* DEVmodParam   */ BSIM3v1mParam,
- /* DEVload       */ BSIM3v1load,
- /* DEVsetup      */ BSIM3v1setup,  
- /* DEVunsetup    */ BSIM3v1unsetup,
- /* DEVpzSetup    */ BSIM3v1setup,
- /* DEVtemperature*/ BSIM3v1temp,
- /* DEVtrunc      */ BSIM3v1trunc,
- /* DEVfindBranch */ NULL,
- /* DEVacLoad     */ BSIM3v1acLoad,
- /* DEVaccept     */ NULL,
- /* DEVdestroy    */ BSIM3v1destroy, 
- /* DEVmodDelete  */ BSIM3v1mDelete,
- /* DEVdelete     */ BSIM3v1delete,  
- /* DEVsetic      */ BSIM3v1getic,
- /* DEVask        */ BSIM3v1ask,
- /* DEVmodAsk     */ BSIM3v1mAsk, 
- /* DEVpzLoad     */ BSIM3v1pzLoad,    
- /* DEVconvTest   */ BSIM3v1convTest,
- /* DEVsenSetup   */ NULL,
- /* DEVsenLoad    */ NULL,
- /* DEVsenUpdate  */ NULL,
- /* DEVsenAcLoad  */ NULL,
- /* DEVsenPrint   */ NULL,
- /* DEVsenTrunc   */ NULL,
- /* DEVdisto      */ NULL,        
- /* DEVnoise      */ BSIM3v1noise,
- /* DEVsoaCheck   */ NULL,
-#ifdef CIDER    
- /* DEVdump       */ NULL,
- /* DEVacct       */ NULL,
-#endif                    
- /* DEVinstSize   */ &BSIM3v1iSize,
- /* DEVmodSize    */ &BSIM3v1mSize
+    .DEVparam = BSIM3v1param,
+    .DEVmodParam = BSIM3v1mParam,
+    .DEVload = BSIM3v1load,
+    .DEVsetup = BSIM3v1setup,
+    .DEVunsetup = BSIM3v1unsetup,
+    .DEVpzSetup = BSIM3v1setup,
+    .DEVtemperature = BSIM3v1temp,
+    .DEVtrunc = BSIM3v1trunc,
+    .DEVfindBranch = NULL,
+    .DEVacLoad = BSIM3v1acLoad,
+    .DEVaccept = NULL,
+    .DEVdestroy = BSIM3v1destroy,
+    .DEVmodDelete = BSIM3v1mDelete,
+    .DEVdelete = BSIM3v1delete,
+    .DEVsetic = BSIM3v1getic,
+    .DEVask = BSIM3v1ask,
+    .DEVmodAsk = BSIM3v1mAsk,
+    .DEVpzLoad = BSIM3v1pzLoad,
+    .DEVconvTest = BSIM3v1convTest,
+    .DEVsenSetup = NULL,
+    .DEVsenLoad = NULL,
+    .DEVsenUpdate = NULL,
+    .DEVsenAcLoad = NULL,
+    .DEVsenPrint = NULL,
+    .DEVsenTrunc = NULL,
+    .DEVdisto = NULL,
+    .DEVnoise = BSIM3v1noise,
+    .DEVsoaCheck = NULL,
+    .DEVinstSize = &BSIM3v1iSize,
+    .DEVmodSize = &BSIM3v1mSize,
 
+#ifdef CIDER
+    .DEVdump = NULL,
+    .DEVacct = NULL,
+#endif
 };
 
 

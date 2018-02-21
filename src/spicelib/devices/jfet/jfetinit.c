@@ -8,73 +8,64 @@
 
 
 SPICEdev JFETinfo = {
-    {
-        "JFET",
-        "Junction Field effect transistor",
-
-        &JFETnSize,
-        &JFETnSize,
-        JFETnames,
-
-        &JFETpTSize,
-        JFETpTable,
-
-        &JFETmPTSize,
-        JFETmPTable,
+    .DEVpublic = {
+        .name = "JFET",
+        .description = "Junction Field effect transistor",
+        .terms = &JFETnSize,
+        .numNames = &JFETnSize,
+        .termNames = JFETnames,
+        .numInstanceParms = &JFETpTSize,
+        .instanceParms = JFETpTable,
+        .numModelParms = &JFETmPTSize,
+        .modelParms = JFETmPTable,
+        .flags = DEV_DEFAULT,
 
 #ifdef XSPICE
-/*----  Fixed by SDB 5.2.2003 to enable XSPICE/tclspice integration  -----*/
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-/*---------------------------  End of SDB fix   -------------------------*/
+        .cm_func = NULL,
+        .num_conn = 0,
+        .conn = NULL,
+        .num_param = 0,
+        .param = NULL,
+        .num_inst_var = 0,
+        .inst_var = NULL,
 #endif
-
-	DEV_DEFAULT
     },
 
- /* DEVparam      */ JFETparam,
- /* DEVmodParam   */ JFETmParam,
- /* DEVload       */ JFETload,
- /* DEVsetup      */ JFETsetup,
- /* DEVunsetup    */ JFETunsetup,
- /* DEVpzSetup    */ JFETsetup,
- /* DEVtemperature*/ JFETtemp,
- /* DEVtrunc      */ JFETtrunc,
- /* DEVfindBranch */ NULL,
- /* DEVacLoad     */ JFETacLoad,
- /* DEVaccept     */ NULL,
- /* DEVdestroy    */ JFETdestroy,
- /* DEVmodDelete  */ JFETmDelete,
- /* DEVdelete     */ JFETdelete,
- /* DEVsetic      */ JFETgetic,
- /* DEVask        */ JFETask,
- /* DEVmodAsk     */ JFETmAsk,
- /* DEVpzLoad     */ JFETpzLoad,
- /* DEVconvTest   */ NULL,
- /* DEVsenSetup   */ NULL,
- /* DEVsenLoad    */ NULL,
- /* DEVsenUpdate  */ NULL,
- /* DEVsenAcLoad  */ NULL,
- /* DEVsenPrint   */ NULL,
- /* DEVsenTrunc   */ NULL,
- /* DEVdisto      */ JFETdisto,
- /* DEVnoise      */ JFETnoise,
- /* DEVsoaCheck   */ NULL,
-#ifdef CIDER
- /* DEVdump       */ NULL,
- /* DEVacct       */ NULL,
-#endif                        
- /* DEVinstSize   */ &JFETiSize,
- /* DEVmodSize    */ &JFETmSize
+    .DEVparam = JFETparam,
+    .DEVmodParam = JFETmParam,
+    .DEVload = JFETload,
+    .DEVsetup = JFETsetup,
+    .DEVunsetup = JFETunsetup,
+    .DEVpzSetup = JFETsetup,
+    .DEVtemperature = JFETtemp,
+    .DEVtrunc = JFETtrunc,
+    .DEVfindBranch = NULL,
+    .DEVacLoad = JFETacLoad,
+    .DEVaccept = NULL,
+    .DEVdestroy = JFETdestroy,
+    .DEVmodDelete = JFETmDelete,
+    .DEVdelete = JFETdelete,
+    .DEVsetic = JFETgetic,
+    .DEVask = JFETask,
+    .DEVmodAsk = JFETmAsk,
+    .DEVpzLoad = JFETpzLoad,
+    .DEVconvTest = NULL,
+    .DEVsenSetup = NULL,
+    .DEVsenLoad = NULL,
+    .DEVsenUpdate = NULL,
+    .DEVsenAcLoad = NULL,
+    .DEVsenPrint = NULL,
+    .DEVsenTrunc = NULL,
+    .DEVdisto = JFETdisto,
+    .DEVnoise = JFETnoise,
+    .DEVsoaCheck = NULL,
+    .DEVinstSize = &JFETiSize,
+    .DEVmodSize = &JFETmSize,
 
+#ifdef CIDER
+    .DEVdump = NULL,
+    .DEVacct = NULL,
+#endif
 };
 
 

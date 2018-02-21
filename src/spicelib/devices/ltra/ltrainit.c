@@ -8,73 +8,64 @@
 
 
 SPICEdev LTRAinfo = {
-    {
-	"LTRA",
-        "Lossy transmission line",
-
-        &LTRAnSize,
-	&LTRAnSize,
-	LTRAnames,
-
-        &LTRApTSize,
-        LTRApTable,
-
-        &LTRAmPTSize,
-        LTRAmPTable,
+    .DEVpublic = {
+        .name = "LTRA",
+        .description = "Lossy transmission line",
+        .terms = &LTRAnSize,
+        .numNames = &LTRAnSize,
+        .termNames = LTRAnames,
+        .numInstanceParms = &LTRApTSize,
+        .instanceParms = LTRApTable,
+        .numModelParms = &LTRAmPTSize,
+        .modelParms = LTRAmPTable,
+        .flags = 0,
 
 #ifdef XSPICE
-/*----  Fixed by SDB 5.2.2003 to enable XSPICE/tclspice integration  -----*/
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-/*---------------------------  End of SDB fix   -------------------------*/
+        .cm_func = NULL,
+        .num_conn = 0,
+        .conn = NULL,
+        .num_param = 0,
+        .param = NULL,
+        .num_inst_var = 0,
+        .inst_var = NULL,
 #endif
-
-	0
     },
 
- /* DEVparam      */ LTRAparam,
- /* DEVmodParam   */ LTRAmParam,
- /* DEVload       */ LTRAload,
- /* DEVsetup      */ LTRAsetup,
- /* DEVunsetup    */ LTRAunsetup,
- /* DEVpzSetup    */ LTRAsetup,
- /* DEVtemperature*/ LTRAtemp,
- /* DEVtrunc      */ LTRAtrunc,
- /* DEVfindBranch */ NULL,
- /* DEVacLoad     */ LTRAacLoad /*LTRAacLoad*/,
- /* DEVaccept     */ LTRAaccept,
- /* DEVdestroy    */ LTRAdestroy,
- /* DEVmodDelete  */ LTRAmDelete,
- /* DEVdelete     */ LTRAdelete,
- /* DEVsetic      */ NULL, 	/* getic */
- /* DEVask        */ LTRAask,
- /* DEVmodAsk     */ LTRAmAsk, 	/* */
- /* DEVpzLoad     */ NULL,	/* pzLoad */
- /* DEVconvTest   */ NULL,	/* convTest */
- /* DEVsenSetup   */ NULL,	/* sSetup */
- /* DEVsenLoad    */ NULL,	/* sLoad */
- /* DEVsenUpdate  */ NULL,	/* sUpdate */
- /* DEVsenAcLoad  */ NULL,	/* sAcLoad */
- /* DEVsenPrint   */ NULL,	/* sPrint */
- /* DEVsenTrunc   */ NULL,	/* */
- /* DEVdisto      */ NULL,	/* disto */
- /* DEVnoise      */ NULL,	/* noise */
- /* DEVsoaCheck   */ NULL,
-#ifdef CIDER
- /* DEVdump       */ NULL,
- /* DEVacct       */ NULL,
-#endif                        
- /* DEVinstSize   */ &LTRAiSize,
- /* DEVmodSize    */ &LTRAmSize
+    .DEVparam = LTRAparam,
+    .DEVmodParam = LTRAmParam,
+    .DEVload = LTRAload,
+    .DEVsetup = LTRAsetup,
+    .DEVunsetup = LTRAunsetup,
+    .DEVpzSetup = LTRAsetup,
+    .DEVtemperature = LTRAtemp,
+    .DEVtrunc = LTRAtrunc,
+    .DEVfindBranch = NULL,
+    .DEVacLoad = LTRAacLoad,
+    .DEVaccept = LTRAaccept,
+    .DEVdestroy = LTRAdestroy,
+    .DEVmodDelete = LTRAmDelete,
+    .DEVdelete = LTRAdelete,
+    .DEVsetic = NULL,
+    .DEVask = LTRAask,
+    .DEVmodAsk = LTRAmAsk,
+    .DEVpzLoad = NULL,
+    .DEVconvTest = NULL,
+    .DEVsenSetup = NULL,
+    .DEVsenLoad = NULL,
+    .DEVsenUpdate = NULL,
+    .DEVsenAcLoad = NULL,
+    .DEVsenPrint = NULL,
+    .DEVsenTrunc = NULL,
+    .DEVdisto = NULL,
+    .DEVnoise = NULL,
+    .DEVsoaCheck = NULL,
+    .DEVinstSize = &LTRAiSize,
+    .DEVmodSize = &LTRAmSize,
 
+#ifdef CIDER
+    .DEVdump = NULL,
+    .DEVacct = NULL,
+#endif
 };
 
 

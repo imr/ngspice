@@ -9,72 +9,64 @@
 
 
 SPICEdev DIOinfo = {
-    {
-        "Diode",
-        "Junction Diode model",
-
-        &DIOnSize,
-        &DIOnSize,
-        DIOnames,
-
-        &DIOpTSize,
-        DIOpTable,
-
-        &DIOmPTSize,
-        DIOmPTable,
+    .DEVpublic = {
+        .name = "Diode",
+        .description = "Junction Diode model",
+        .terms = &DIOnSize,
+        .numNames = &DIOnSize,
+        .termNames = DIOnames,
+        .numInstanceParms = &DIOpTSize,
+        .instanceParms = DIOpTable,
+        .numModelParms = &DIOmPTSize,
+        .modelParms = DIOmPTable,
+        .flags = DEV_DEFAULT,
 
 #ifdef XSPICE
-/*----  Fixed by SDB 5.2.2003 to enable XSPICE/tclspice integration  -----*/
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-/*---------------------------  End of SDB fix   -------------------------*/
+        .cm_func = NULL,
+        .num_conn = 0,
+        .conn = NULL,
+        .num_param = 0,
+        .param = NULL,
+        .num_inst_var = 0,
+        .inst_var = NULL,
 #endif
-
-	DEV_DEFAULT
     },
 
- /* DEVparam      */ DIOparam,
- /* DEVmodParam   */ DIOmParam,
- /* DEVload       */ DIOload,
- /* DEVsetup      */ DIOsetup,
- /* DEVunsetup    */ DIOunsetup,
- /* DEVpzSetup    */ DIOsetup,
- /* DEVtemperature*/ DIOtemp,
- /* DEVtrunc      */ DIOtrunc,
- /* DEVfindBranch */ NULL,
- /* DEVacLoad     */ DIOacLoad,
- /* DEVaccept     */ NULL,
- /* DEVdestroy    */ DIOdestroy,
- /* DEVmodDelete  */ DIOmDelete,
- /* DEVdelete     */ DIOdelete,
- /* DEVsetic      */ DIOgetic,
- /* DEVask        */ DIOask,
- /* DEVmodAsk     */ DIOmAsk,
- /* DEVpzLoad     */ DIOpzLoad,
- /* DEVconvTest   */ DIOconvTest,
- /* DEVsenSetup   */ DIOsSetup,
- /* DEVsenLoad    */ DIOsLoad,
- /* DEVsenUpdate  */ DIOsUpdate,
- /* DEVsenAcLoad  */ DIOsAcLoad,
- /* DEVsenPrint   */ DIOsPrint,
- /* DEVsenTrunc   */ NULL,
- /* DEVdisto      */ DIOdisto,
- /* DEVnoise      */ DIOnoise,
- /* DEVsoaCheck   */ DIOsoaCheck,
+    .DEVparam = DIOparam,
+    .DEVmodParam = DIOmParam,
+    .DEVload = DIOload,
+    .DEVsetup = DIOsetup,
+    .DEVunsetup = DIOunsetup,
+    .DEVpzSetup = DIOsetup,
+    .DEVtemperature = DIOtemp,
+    .DEVtrunc = DIOtrunc,
+    .DEVfindBranch = NULL,
+    .DEVacLoad = DIOacLoad,
+    .DEVaccept = NULL,
+    .DEVdestroy = DIOdestroy,
+    .DEVmodDelete = DIOmDelete,
+    .DEVdelete = DIOdelete,
+    .DEVsetic = DIOgetic,
+    .DEVask = DIOask,
+    .DEVmodAsk = DIOmAsk,
+    .DEVpzLoad = DIOpzLoad,
+    .DEVconvTest = DIOconvTest,
+    .DEVsenSetup = DIOsSetup,
+    .DEVsenLoad = DIOsLoad,
+    .DEVsenUpdate = DIOsUpdate,
+    .DEVsenAcLoad = DIOsAcLoad,
+    .DEVsenPrint = DIOsPrint,
+    .DEVsenTrunc = NULL,
+    .DEVdisto = DIOdisto,
+    .DEVnoise = DIOnoise,
+    .DEVsoaCheck = DIOsoaCheck,
+    .DEVinstSize = &DIOiSize,
+    .DEVmodSize = &DIOmSize,
+
 #ifdef CIDER
- /* DEVdump       */ NULL,
- /* DEVacct       */ NULL,
-#endif                     
- /* DEVinstSize   */ &DIOiSize,
- /* DEVmodSize    */ &DIOmSize
+    .DEVdump = NULL,
+    .DEVacct = NULL,
+#endif
 };
 
 

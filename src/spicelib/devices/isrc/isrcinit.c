@@ -8,72 +8,64 @@
 
 
 SPICEdev ISRCinfo = {
-    {
-        "Isource",  
-        "Independent current source",
-
-        &ISRCnSize,
-        &ISRCnSize,
-        ISRCnames,
-
-        &ISRCpTSize,
-        ISRCpTable,
-
-        NULL,
-        NULL,
+    .DEVpublic = {
+        .name = "Isource",
+        .description = "Independent current source",
+        .terms = &ISRCnSize,
+        .numNames = &ISRCnSize,
+        .termNames = ISRCnames,
+        .numInstanceParms = &ISRCpTSize,
+        .instanceParms = ISRCpTable,
+        .numModelParms = NULL,
+        .modelParms = NULL,
+        .flags = DEV_DEFAULT,
 
 #ifdef XSPICE
-/*----  Fixed by SDB 5.2.2003 to enable XSPICE/tclspice integration  -----*/
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-/*---------------------------  End of SDB fix   -------------------------*/
+        .cm_func = NULL,
+        .num_conn = 0,
+        .conn = NULL,
+        .num_param = 0,
+        .param = NULL,
+        .num_inst_var = 0,
+        .inst_var = NULL,
 #endif
-
-	DEV_DEFAULT
     },
 
- /* DEVparam      */ ISRCparam,
- /* DEVmodParam   */ NULL,
- /* DEVload       */ ISRCload,
- /* DEVsetup      */ NULL,
- /* DEVunsetup    */ NULL,
- /* DEVpzSetup    */ NULL,
- /* DEVtemperature*/ ISRCtemp,
- /* DEVtrunc      */ NULL,
- /* DEVfindBranch */ NULL,
- /* DEVacLoad     */ ISRCacLoad,
- /* DEVaccept     */ ISRCaccept,
- /* DEVdestroy    */ ISRCdestroy,
- /* DEVmodDelete  */ ISRCmDelete,
- /* DEVdelete     */ ISRCdelete,
- /* DEVsetic      */ NULL,
- /* DEVask        */ ISRCask,
- /* DEVmodAsk     */ NULL,
- /* DEVpzLoad     */ NULL,
- /* DEVconvTest   */ NULL,
- /* DEVsenSetup   */ NULL,
- /* DEVsenLoad    */ NULL,
- /* DEVsenUpdate  */ NULL,
- /* DEVsenAcLoad  */ NULL,
- /* DEVsenPrint   */ NULL,
- /* DEVsenTrunc   */ NULL,
- /* DEVdisto      */ NULL,	/* DISTO */
- /* DEVnoise      */ NULL,	/* NOISE */
- /* DEVsoaCheck   */ NULL,
+    .DEVparam = ISRCparam,
+    .DEVmodParam = NULL,
+    .DEVload = ISRCload,
+    .DEVsetup = NULL,
+    .DEVunsetup = NULL,
+    .DEVpzSetup = NULL,
+    .DEVtemperature = ISRCtemp,
+    .DEVtrunc = NULL,
+    .DEVfindBranch = NULL,
+    .DEVacLoad = ISRCacLoad,
+    .DEVaccept = ISRCaccept,
+    .DEVdestroy = ISRCdestroy,
+    .DEVmodDelete = ISRCmDelete,
+    .DEVdelete = ISRCdelete,
+    .DEVsetic = NULL,
+    .DEVask = ISRCask,
+    .DEVmodAsk = NULL,
+    .DEVpzLoad = NULL,
+    .DEVconvTest = NULL,
+    .DEVsenSetup = NULL,
+    .DEVsenLoad = NULL,
+    .DEVsenUpdate = NULL,
+    .DEVsenAcLoad = NULL,
+    .DEVsenPrint = NULL,
+    .DEVsenTrunc = NULL,
+    .DEVdisto = NULL,
+    .DEVnoise = NULL,
+    .DEVsoaCheck = NULL,
+    .DEVinstSize = &ISRCiSize,
+    .DEVmodSize = &ISRCmSize,
+
 #ifdef CIDER
- /* DEVdump       */ NULL,
- /* DEVacct       */ NULL,
-#endif                        
- /* DEVinstSize   */ &ISRCiSize,
- /* DEVmodSize    */ &ISRCmSize
+    .DEVdump = NULL,
+    .DEVacct = NULL,
+#endif
 };
 
 

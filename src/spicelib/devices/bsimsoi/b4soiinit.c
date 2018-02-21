@@ -6,73 +6,66 @@
 #include "b4soiinit.h"
 
 SPICEdev B4SOIinfo = {
-    {   "B4SOI",
-        "Berkeley SOI MOSFET model version 4.4.0",
+    .DEVpublic = {
+        .name = "B4SOI",
+        .description = "Berkeley SOI MOSFET model version 4.4.0",
+        .terms = &B4SOInSize,
+        .numNames = &B4SOInSize,
+        .termNames = B4SOInames,
+        .numInstanceParms = &B4SOIpTSize,
+        .instanceParms = B4SOIpTable,
+        .numModelParms = &B4SOImPTSize,
+        .modelParms = B4SOImPTable,
+        .flags = DEV_DEFAULT,
 
-        &B4SOInSize,
-        &B4SOInSize,
-        B4SOInames,
-
-        &B4SOIpTSize,
-        B4SOIpTable,
-
-        &B4SOImPTSize,
-        B4SOImPTable,
-        
 #ifdef XSPICE
-/*----  Fixed by SDB 5.2.2003 to enable XSPICE/tclspice integration  -----*/
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-/*---------------------------  End of SDB fix   -------------------------*/
+        .cm_func = NULL,
+        .num_conn = 0,
+        .conn = NULL,
+        .num_param = 0,
+        .param = NULL,
+        .num_inst_var = 0,
+        .inst_var = NULL,
 #endif
-        
-        DEV_DEFAULT
-        
     },
 
- /* DEVparam      */ B4SOIparam,
- /* DEVmodParam   */ B4SOImParam,
- /* DEVload       */ B4SOIload,
- /* DEVsetup      */ B4SOIsetup,
- /* DEVunsetup    */ B4SOIunsetup,
- /* DEVpzSetup    */ B4SOIsetup,
- /* DEVtemperature*/ B4SOItemp,
- /* DEVtrunc      */ B4SOItrunc,
- /* DEVfindBranch */ NULL,
- /* DEVacLoad     */ B4SOIacLoad,
- /* DEVaccept     */ NULL,
- /* DEVdestroy    */ B4SOIdestroy,
- /* DEVmodDelete  */ B4SOImDelete,
- /* DEVdelete     */ B4SOIdelete, 
- /* DEVsetic      */ B4SOIgetic,
- /* DEVask        */ B4SOIask,
- /* DEVmodAsk     */ B4SOImAsk,
- /* DEVpzLoad     */ B4SOIpzLoad,
- /* DEVconvTest   */ B4SOIconvTest,
- /* DEVsenSetup   */ NULL,
- /* DEVsenLoad    */ NULL,
- /* DEVsenUpdate  */ NULL,
- /* DEVsenAcLoad  */ NULL,
- /* DEVsenPrint   */ NULL,
- /* DEVsenTrunc   */ NULL,
- /* DEVdisto      */ NULL,
- /* DEVnoise      */ B4SOInoise,
- /* DEVsoaCheck   */ B4SOIsoaCheck,
+    .DEVparam = B4SOIparam,
+    .DEVmodParam = B4SOImParam,
+    .DEVload = B4SOIload,
+    .DEVsetup = B4SOIsetup,
+    .DEVunsetup = B4SOIunsetup,
+    .DEVpzSetup = B4SOIsetup,
+    .DEVtemperature = B4SOItemp,
+    .DEVtrunc = B4SOItrunc,
+    .DEVfindBranch = NULL,
+    .DEVacLoad = B4SOIacLoad,
+    .DEVaccept = NULL,
+    .DEVdestroy = B4SOIdestroy,
+    .DEVmodDelete = B4SOImDelete,
+    .DEVdelete = B4SOIdelete,
+    .DEVsetic = B4SOIgetic,
+    .DEVask = B4SOIask,
+    .DEVmodAsk = B4SOImAsk,
+    .DEVpzLoad = B4SOIpzLoad,
+    .DEVconvTest = B4SOIconvTest,
+    .DEVsenSetup = NULL,
+    .DEVsenLoad = NULL,
+    .DEVsenUpdate = NULL,
+    .DEVsenAcLoad = NULL,
+    .DEVsenPrint = NULL,
+    .DEVsenTrunc = NULL,
+    .DEVdisto = NULL,
+    .DEVnoise = B4SOInoise,
+    .DEVsoaCheck = B4SOIsoaCheck,
+    .DEVinstSize = &B4SOIiSize,
+    .DEVmodSize = &B4SOImSize,
+
 #ifdef CIDER
- /* DEVdump       */ NULL,
- /* DEVacct       */ NULL,
+    .DEVdump = NULL,
+    .DEVacct = NULL,
 #endif
- /* DEVinstSize   */ &B4SOIiSize,
- /* DEVmodSize    */ &B4SOImSize
 };
+
 
 SPICEdev *
 get_b4soi_info (void)

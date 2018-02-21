@@ -6,73 +6,66 @@
 #include "hsm2itf.h"
 #include "hsm2init.h"
 
-SPICEdev HSM2info = {
-  {   "HiSIM2",
-      "Hiroshima University STARC IGFET Model 2.8.0",
-      
-      &HSM2nSize,
-      &HSM2nSize,
-      HSM2names,
 
-      &HSM2pTSize,
-      HSM2pTable,
-      
-      &HSM2mPTSize,
-      HSM2mPTable,
+SPICEdev HSM2info = {
+    .DEVpublic = {
+        .name = "HiSIM2",
+        .description = "Hiroshima University STARC IGFET Model 2.8.0",
+        .terms = &HSM2nSize,
+        .numNames = &HSM2nSize,
+        .termNames = HSM2names,
+        .numInstanceParms = &HSM2pTSize,
+        .instanceParms = HSM2pTable,
+        .numModelParms = &HSM2mPTSize,
+        .modelParms = HSM2mPTable,
+        .flags = DEV_DEFAULT,
 
 #ifdef XSPICE
-/*----  Fixed by SDB 5.2.2003 to enable XSPICE/tclspice integration  -----*/
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-/*---------------------------  End of SDB fix   -------------------------*/
+        .cm_func = NULL,
+        .num_conn = 0,
+        .conn = NULL,
+        .num_param = 0,
+        .param = NULL,
+        .num_inst_var = 0,
+        .inst_var = NULL,
 #endif
+    },
 
-	DEV_DEFAULT
-  },
+    .DEVparam = HSM2param,
+    .DEVmodParam = HSM2mParam,
+    .DEVload = HSM2load,
+    .DEVsetup = HSM2setup,
+    .DEVunsetup = HSM2unsetup,
+    .DEVpzSetup = HSM2setup,
+    .DEVtemperature = HSM2temp,
+    .DEVtrunc = HSM2trunc,
+    .DEVfindBranch = NULL,
+    .DEVacLoad = HSM2acLoad,
+    .DEVaccept = NULL,
+    .DEVdestroy = HSM2destroy,
+    .DEVmodDelete = HSM2mDelete,
+    .DEVdelete = HSM2delete,
+    .DEVsetic = HSM2getic,
+    .DEVask = HSM2ask,
+    .DEVmodAsk = HSM2mAsk,
+    .DEVpzLoad = HSM2pzLoad,
+    .DEVconvTest = HSM2convTest,
+    .DEVsenSetup = NULL,
+    .DEVsenLoad = NULL,
+    .DEVsenUpdate = NULL,
+    .DEVsenAcLoad = NULL,
+    .DEVsenPrint = NULL,
+    .DEVsenTrunc = NULL,
+    .DEVdisto = NULL,
+    .DEVnoise = HSM2noise,
+    .DEVsoaCheck = HSM2soaCheck,
+    .DEVinstSize = &HSM2iSize,
+    .DEVmodSize = &HSM2mSize,
 
- /* DEVparam      */ HSM2param,
- /* DEVmodParam   */ HSM2mParam,
- /* DEVload       */ HSM2load,
- /* DEVsetup      */ HSM2setup,
- /* DEVunsetup    */ HSM2unsetup,
- /* DEVpzSetup    */ HSM2setup,
- /* DEVtemperature*/ HSM2temp,
- /* DEVtrunc      */ HSM2trunc,
- /* DEVfindBranch */ NULL,
- /* DEVacLoad     */ HSM2acLoad,
- /* DEVaccept     */ NULL,
- /* DEVdestroy    */ HSM2destroy,
- /* DEVmodDelete  */ HSM2mDelete,
- /* DEVdelete     */ HSM2delete, 
- /* DEVsetic      */ HSM2getic,
- /* DEVask        */ HSM2ask,
- /* DEVmodAsk     */ HSM2mAsk,
- /* DEVpzLoad     */ HSM2pzLoad,
- /* DEVconvTest   */ HSM2convTest,
- /* DEVsenSetup   */ NULL,
- /* DEVsenLoad    */ NULL,
- /* DEVsenUpdate  */ NULL,
- /* DEVsenAcLoad  */ NULL,
- /* DEVsenPrint   */ NULL,
- /* DEVsenTrunc   */ NULL,
- /* DEVdisto      */ NULL,
- /* DEVnoise      */ HSM2noise,
- /* DEVsoaCheck   */ HSM2soaCheck,
 #ifdef CIDER
- /* DEVdump       */ NULL,
- /* DEVacct       */ NULL,
+    .DEVdump = NULL,
+    .DEVacct = NULL,
 #endif
- /* DEVinstSize   */ &HSM2iSize,
- /* DEVmodSize    */ &HSM2mSize
-
 };
 
 

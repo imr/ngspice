@@ -8,74 +8,64 @@
 
 
 SPICEdev NBJT2info = {
-    {
-	"NBJT2",
-        "2D Numerical Bipolar Junction Transistor model",
+    .DEVpublic = {
+        .name = "NBJT2",
+        .description = "2D Numerical Bipolar Junction Transistor model",
+        .terms = &NBJT2nSize,
+        .numNames = &NBJT2nSize,
+        .termNames = NBJT2names,
+        .numInstanceParms = &NBJT2pTSize,
+        .instanceParms = NBJT2pTable,
+        .numModelParms = &NBJT2mPTSize,
+        .modelParms = NBJT2mPTable,
+        .flags = DEV_DEFAULT,
 
-        &NBJT2nSize,
-        &NBJT2nSize,
-        NBJT2names,
-
-        &NBJT2pTSize,
-        NBJT2pTable,
-
-        &NBJT2mPTSize,
-        NBJT2mPTable,
-	
 #ifdef XSPICE
-/*----  Fixed by SDB 5.2.2003 to enable XSPICE/tclspice integration  -----*/
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-/*---------------------------  End of SDB fix   -------------------------*/
+        .cm_func = NULL,
+        .num_conn = 0,
+        .conn = NULL,
+        .num_param = 0,
+        .param = NULL,
+        .num_inst_var = 0,
+        .inst_var = NULL,
 #endif
-	
-	DEV_DEFAULT
     },
 
- /* DEVparam      */ NBJT2param,
- /* DEVmodParam   */ NBJT2mParam,
- /* DEVload       */ NBJT2load,
- /* DEVsetup      */ NBJT2setup,
- /* DEVunsetup    */ NULL,
- /* DEVpzSetup    */ NBJT2setup,
- /* DEVtemperature*/ NBJT2temp,
- /* DEVtrunc      */ NBJT2trunc,
- /* DEVfindBranch */ NULL,
- /* DEVacLoad     */ NBJT2acLoad,
- /* DEVaccept     */ NULL,
- /* DEVdestroy    */ NBJT2destroy,
- /* DEVmodDelete  */ NBJT2mDelete,
- /* DEVdelete     */ NBJT2delete,
- /* DEVsetic      */ NULL,
- /* DEVask        */ NBJT2ask,
- /* DEVmodAsk     */ NULL,
- /* DEVpzLoad     */ NBJT2pzLoad,
- /* DEVconvTest   */ NULL,
- /* DEVsenSetup   */ NULL,
- /* DEVsenLoad    */ NULL,
- /* DEVsenUpdate  */ NULL,
- /* DEVsenAcLoad  */ NULL,
- /* DEVsenPrint   */ NULL,
- /* DEVsenTrunc   */ NULL,
- /* DEVdisto      */ NULL,
- /* DEVnoise      */ NULL,
- /* DEVsoaCheck   */ NULL,
-#ifdef CIDER
- /* DEVdump       */ NBJT2dump,
- /* DEVacct       */ NBJT2acct,
-#endif  
-                    
- /* DEVinstSize   */ &NBJT2iSize,
- /* DEVmodSize    */ &NBJT2mSize
+    .DEVparam = NBJT2param,
+    .DEVmodParam = NBJT2mParam,
+    .DEVload = NBJT2load,
+    .DEVsetup = NBJT2setup,
+    .DEVunsetup = NULL,
+    .DEVpzSetup = NBJT2setup,
+    .DEVtemperature = NBJT2temp,
+    .DEVtrunc = NBJT2trunc,
+    .DEVfindBranch = NULL,
+    .DEVacLoad = NBJT2acLoad,
+    .DEVaccept = NULL,
+    .DEVdestroy = NBJT2destroy,
+    .DEVmodDelete = NBJT2mDelete,
+    .DEVdelete = NBJT2delete,
+    .DEVsetic = NULL,
+    .DEVask = NBJT2ask,
+    .DEVmodAsk = NULL,
+    .DEVpzLoad = NBJT2pzLoad,
+    .DEVconvTest = NULL,
+    .DEVsenSetup = NULL,
+    .DEVsenLoad = NULL,
+    .DEVsenUpdate = NULL,
+    .DEVsenAcLoad = NULL,
+    .DEVsenPrint = NULL,
+    .DEVsenTrunc = NULL,
+    .DEVdisto = NULL,
+    .DEVnoise = NULL,
+    .DEVsoaCheck = NULL,
+    .DEVinstSize = &NBJT2iSize,
+    .DEVmodSize = &NBJT2mSize,
 
+#ifdef CIDER
+    .DEVdump = NBJT2dump,
+    .DEVacct = NBJT2acct,
+#endif
 };
 
 

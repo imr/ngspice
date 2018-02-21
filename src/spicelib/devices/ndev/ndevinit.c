@@ -8,74 +8,64 @@
 
 
 SPICEdev NDEVinfo = {
-    {
-	"NDEV",
-        "Numerical Device",
+    .DEVpublic = {
+        .name = "NDEV",
+        .description = "Numerical Device",
+        .terms = &NDEVnSize,
+        .numNames = &NDEVnSize,
+        .termNames = NDEVnames,
+        .numInstanceParms = &NDEVpTSize,
+        .instanceParms = NDEVpTable,
+        .numModelParms = &NDEVmPTSize,
+        .modelParms = NDEVmPTable,
+        .flags = DEV_DEFAULT,
 
-        &NDEVnSize, /* number of terminals */ 
-        &NDEVnSize,
-        NDEVnames,  /* the name of terminals*/
-
-        &NDEVpTSize, /*number of instance parameters */
-        NDEVpTable,  /*the array of instance parameters */
-
-        &NDEVmPTSize, /* number of model parameter, NDEV does not have this parameter */
-        NDEVmPTable,  /*the array of model parameters */
-	
 #ifdef XSPICE
-/*----  Fixed by SDB 5.2.2003 to enable XSPICE/tclspice integration  -----*/
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-/*---------------------------  End of SDB fix   -------------------------*/
+        .cm_func = NULL,
+        .num_conn = 0,
+        .conn = NULL,
+        .num_param = 0,
+        .param = NULL,
+        .num_inst_var = 0,
+        .inst_var = NULL,
 #endif
-	
-	DEV_DEFAULT
     },
 
- /* DEVparam      */ NDEVparam,
- /* DEVmodParam   */ NDEVmParam,
- /* DEVload       */ NDEVload,
- /* DEVsetup      */ NDEVsetup,
- /* DEVunsetup    */ NULL,
- /* DEVpzSetup    */ NDEVsetup,
- /* DEVtemperature*/ NDEVtemp,
- /* DEVtrunc      */ NDEVtrunc,
- /* DEVfindBranch */ NULL,
- /* DEVacLoad     */ NDEVacLoad,
- /* DEVaccept     */ NDEVaccept,
- /* DEVdestroy    */ NDEVdestroy,
- /* DEVmodDelete  */ NDEVmDelete,
- /* DEVdelete     */ NDEVdelete,
- /* DEVsetic      */ NDEVgetic,
- /* DEVask        */ NDEVask,
- /* DEVmodAsk     */ NULL,
- /* DEVpzLoad     */ NDEVpzLoad,
- /* DEVconvTest   */ NDEVconvTest,
- /* DEVsenSetup   */ NULL,
- /* DEVsenLoad    */ NULL,
- /* DEVsenUpdate  */ NULL,
- /* DEVsenAcLoad  */ NULL,
- /* DEVsenPrint   */ NULL,
- /* DEVsenTrunc   */ NULL,
- /* DEVdisto      */ NULL,
- /* DEVnoise      */ NULL,
- /* DEVsoaCheck   */ NULL,
-#ifdef CIDER
- /* DEVdump       */ NULL,
- /* DEVacct       */ NULL,
-#endif               
-                    
- /* DEVinstSize   */ &NDEViSize,
- /* DEVmodSize    */ &NDEVmSize
+    .DEVparam = NDEVparam,
+    .DEVmodParam = NDEVmParam,
+    .DEVload = NDEVload,
+    .DEVsetup = NDEVsetup,
+    .DEVunsetup = NULL,
+    .DEVpzSetup = NDEVsetup,
+    .DEVtemperature = NDEVtemp,
+    .DEVtrunc = NDEVtrunc,
+    .DEVfindBranch = NULL,
+    .DEVacLoad = NDEVacLoad,
+    .DEVaccept = NDEVaccept,
+    .DEVdestroy = NDEVdestroy,
+    .DEVmodDelete = NDEVmDelete,
+    .DEVdelete = NDEVdelete,
+    .DEVsetic = NDEVgetic,
+    .DEVask = NDEVask,
+    .DEVmodAsk = NULL,
+    .DEVpzLoad = NDEVpzLoad,
+    .DEVconvTest = NDEVconvTest,
+    .DEVsenSetup = NULL,
+    .DEVsenLoad = NULL,
+    .DEVsenUpdate = NULL,
+    .DEVsenAcLoad = NULL,
+    .DEVsenPrint = NULL,
+    .DEVsenTrunc = NULL,
+    .DEVdisto = NULL,
+    .DEVnoise = NULL,
+    .DEVsoaCheck = NULL,
+    .DEVinstSize = &NDEViSize,
+    .DEVmodSize = &NDEVmSize,
 
+#ifdef CIDER
+    .DEVdump = NULL,
+    .DEVacct = NULL,
+#endif
 };
 
 

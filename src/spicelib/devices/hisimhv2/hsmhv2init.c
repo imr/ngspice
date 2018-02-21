@@ -6,73 +6,66 @@
 #include "hsmhv2itf.h"
 #include "hsmhv2init.h"
 
-SPICEdev HSMHV2info = {
-  {   "HiSIMHV2",
-      "Hiroshima University STARC IGFET Model - HiSIM_HV v.2",
-      
-      &HSMHV2nSize,
-      &HSMHV2nSize,
-      HSMHV2names,
 
-      &HSMHV2pTSize,
-      HSMHV2pTable,
-      
-      &HSMHV2mPTSize,
-      HSMHV2mPTable,
+SPICEdev HSMHV2info = {
+    .DEVpublic = {
+        .name = "HiSIMHV2",
+        .description = "Hiroshima University STARC IGFET Model - HiSIM_HV v.2",
+        .terms = &HSMHV2nSize,
+        .numNames = &HSMHV2nSize,
+        .termNames = HSMHV2names,
+        .numInstanceParms = &HSMHV2pTSize,
+        .instanceParms = HSMHV2pTable,
+        .numModelParms = &HSMHV2mPTSize,
+        .modelParms = HSMHV2mPTable,
+        .flags = DEV_DEFAULT,
 
 #ifdef XSPICE
-/*----  Fixed by SDB 5.2.2003 to enable XSPICE/tclspice integration  -----*/
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-/*---------------------------  End of SDB fix   -------------------------*/
+        .cm_func = NULL,
+        .num_conn = 0,
+        .conn = NULL,
+        .num_param = 0,
+        .param = NULL,
+        .num_inst_var = 0,
+        .inst_var = NULL,
 #endif
+    },
 
-	DEV_DEFAULT
-  },
+    .DEVparam = HSMHV2param,
+    .DEVmodParam = HSMHV2mParam,
+    .DEVload = HSMHV2load,
+    .DEVsetup = HSMHV2setup,
+    .DEVunsetup = HSMHV2unsetup,
+    .DEVpzSetup = HSMHV2setup,
+    .DEVtemperature = HSMHV2temp,
+    .DEVtrunc = HSMHV2trunc,
+    .DEVfindBranch = NULL,
+    .DEVacLoad = HSMHV2acLoad,
+    .DEVaccept = NULL,
+    .DEVdestroy = HSMHV2destroy,
+    .DEVmodDelete = HSMHV2mDelete,
+    .DEVdelete = HSMHV2delete,
+    .DEVsetic = HSMHV2getic,
+    .DEVask = HSMHV2ask,
+    .DEVmodAsk = HSMHV2mAsk,
+    .DEVpzLoad = HSMHV2pzLoad,
+    .DEVconvTest = HSMHV2convTest,
+    .DEVsenSetup = NULL,
+    .DEVsenLoad = NULL,
+    .DEVsenUpdate = NULL,
+    .DEVsenAcLoad = NULL,
+    .DEVsenPrint = NULL,
+    .DEVsenTrunc = NULL,
+    .DEVdisto = NULL,
+    .DEVnoise = HSMHV2noise,
+    .DEVsoaCheck = HSMHV2soaCheck,
+    .DEVinstSize = &HSMHV2iSize,
+    .DEVmodSize = &HSMHV2mSize,
 
- /* DEVparam      */ HSMHV2param,
- /* DEVmodParam   */ HSMHV2mParam,
- /* DEVload       */ HSMHV2load,
- /* DEVsetup      */ HSMHV2setup,
- /* DEVunsetup    */ HSMHV2unsetup,
- /* DEVpzSetup    */ HSMHV2setup,
- /* DEVtemperature*/ HSMHV2temp,
- /* DEVtrunc      */ HSMHV2trunc,
- /* DEVfindBranch */ NULL,
- /* DEVacLoad     */ HSMHV2acLoad,
- /* DEVaccept     */ NULL,
- /* DEVdestroy    */ HSMHV2destroy,
- /* DEVmodDelete  */ HSMHV2mDelete,
- /* DEVdelete     */ HSMHV2delete, 
- /* DEVsetic      */ HSMHV2getic,
- /* DEVask        */ HSMHV2ask,
- /* DEVmodAsk     */ HSMHV2mAsk,
- /* DEVpzLoad     */ HSMHV2pzLoad,
- /* DEVconvTest   */ HSMHV2convTest,
- /* DEVsenSetup   */ NULL,
- /* DEVsenLoad    */ NULL,
- /* DEVsenUpdate  */ NULL,
- /* DEVsenAcLoad  */ NULL,
- /* DEVsenPrint   */ NULL,
- /* DEVsenTrunc   */ NULL,
- /* DEVdisto      */ NULL,
- /* DEVnoise      */ HSMHV2noise,
- /* DEVsoaCheck   */ HSMHV2soaCheck,
 #ifdef CIDER
- /* DEVdump       */ NULL,
- /* DEVacct       */ NULL,
+    .DEVdump = NULL,
+    .DEVacct = NULL,
 #endif
- /* DEVinstSize   */ &HSMHV2iSize,
- /* DEVmodSize    */ &HSMHV2mSize
-
 };
 
 

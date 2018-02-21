@@ -6,72 +6,66 @@
 #include "b3soiddinit.h"
 
 SPICEdev B3SOIDDinfo = {
-    {   "B3SOIDD",
-        "Berkeley SOI MOSFET (DD) model version 2.1",
+    .DEVpublic = {
+        .name = "B3SOIDD",
+        .description = "Berkeley SOI MOSFET (DD) model version 2.1",
+        .terms = &B3SOIDDnSize,
+        .numNames = &B3SOIDDnSize,
+        .termNames = B3SOIDDnames,
+        .numInstanceParms = &B3SOIDDpTSize,
+        .instanceParms = B3SOIDDpTable,
+        .numModelParms = &B3SOIDDmPTSize,
+        .modelParms = B3SOIDDmPTable,
+        .flags = DEV_DEFAULT,
 
-        &B3SOIDDnSize,
-        &B3SOIDDnSize,
-        B3SOIDDnames,
-
-        &B3SOIDDpTSize,
-        B3SOIDDpTable,
-
-        &B3SOIDDmPTSize,
-        B3SOIDDmPTable,
-	
 #ifdef XSPICE
-/*----  Fixed by SDB 5.2.2003 to enable XSPICE/tclspice integration  -----*/
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-/*---------------------------  End of SDB fix   -------------------------*/
-#endif	
-	DEV_DEFAULT
-	
+        .cm_func = NULL,
+        .num_conn = 0,
+        .conn = NULL,
+        .num_param = 0,
+        .param = NULL,
+        .num_inst_var = 0,
+        .inst_var = NULL,
+#endif
     },
 
- /* DEVparam      */ B3SOIDDparam,
- /* DEVmodParam   */ B3SOIDDmParam,
- /* DEVload       */ B3SOIDDload,
- /* DEVsetup      */ B3SOIDDsetup,
- /* DEVunsetup    */ B3SOIDDunsetup,
- /* DEVpzSetup    */ B3SOIDDsetup,
- /* DEVtemperature*/ B3SOIDDtemp,
- /* DEVtrunc      */ B3SOIDDtrunc,
- /* DEVfindBranch */ NULL,
- /* DEVacLoad     */ B3SOIDDacLoad,
- /* DEVaccept     */ NULL,
- /* DEVdestroy    */ B3SOIDDdestroy,
- /* DEVmodDelete  */ B3SOIDDmDelete,
- /* DEVdelete     */ B3SOIDDdelete, 
- /* DEVsetic      */ B3SOIDDgetic,
- /* DEVask        */ B3SOIDDask,
- /* DEVmodAsk     */ B3SOIDDmAsk,
- /* DEVpzLoad     */ B3SOIDDpzLoad,
- /* DEVconvTest   */ B3SOIDDconvTest,
- /* DEVsenSetup   */ NULL,
- /* DEVsenLoad    */ NULL,
- /* DEVsenUpdate  */ NULL,
- /* DEVsenAcLoad  */ NULL,
- /* DEVsenPrint   */ NULL,
- /* DEVsenTrunc   */ NULL,
- /* DEVdisto      */ NULL,
- /* DEVnoise      */ B3SOIDDnoise,
- /* DEVsoaCheck   */ NULL,
+    .DEVparam = B3SOIDDparam,
+    .DEVmodParam = B3SOIDDmParam,
+    .DEVload = B3SOIDDload,
+    .DEVsetup = B3SOIDDsetup,
+    .DEVunsetup = B3SOIDDunsetup,
+    .DEVpzSetup = B3SOIDDsetup,
+    .DEVtemperature = B3SOIDDtemp,
+    .DEVtrunc = B3SOIDDtrunc,
+    .DEVfindBranch = NULL,
+    .DEVacLoad = B3SOIDDacLoad,
+    .DEVaccept = NULL,
+    .DEVdestroy = B3SOIDDdestroy,
+    .DEVmodDelete = B3SOIDDmDelete,
+    .DEVdelete = B3SOIDDdelete,
+    .DEVsetic = B3SOIDDgetic,
+    .DEVask = B3SOIDDask,
+    .DEVmodAsk = B3SOIDDmAsk,
+    .DEVpzLoad = B3SOIDDpzLoad,
+    .DEVconvTest = B3SOIDDconvTest,
+    .DEVsenSetup = NULL,
+    .DEVsenLoad = NULL,
+    .DEVsenUpdate = NULL,
+    .DEVsenAcLoad = NULL,
+    .DEVsenPrint = NULL,
+    .DEVsenTrunc = NULL,
+    .DEVdisto = NULL,
+    .DEVnoise = B3SOIDDnoise,
+    .DEVsoaCheck = NULL,
+    .DEVinstSize = &B3SOIDDiSize,
+    .DEVmodSize = &B3SOIDDmSize,
+
 #ifdef CIDER
- /* DEVdump       */ NULL,
- /* DEVacct       */ NULL,
+    .DEVdump = NULL,
+    .DEVacct = NULL,
 #endif
- /* DEVinstSize   */ &B3SOIDDiSize,
- /* DEVmodSize    */ &B3SOIDDmSize
 };
+
 
 SPICEdev *
 get_b3soidd_info (void)

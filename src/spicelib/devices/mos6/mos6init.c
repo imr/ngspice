@@ -8,72 +8,64 @@
 
 
 SPICEdev MOS6info = {
-    {
-        "Mos6",
-        "Level 6 MOSfet model with Meyer capacitance model",
-
-        &MOS6nSize,
-        &MOS6nSize,
-        MOS6names,
-
-        &MOS6pTSize,
-        MOS6pTable,
-
-        &MOS6mPTSize,
-        MOS6mPTable,
+    .DEVpublic = {
+        .name = "Mos6",
+        .description = "Level 6 MOSfet model with Meyer capacitance model",
+        .terms = &MOS6nSize,
+        .numNames = &MOS6nSize,
+        .termNames = MOS6names,
+        .numInstanceParms = &MOS6pTSize,
+        .instanceParms = MOS6pTable,
+        .numModelParms = &MOS6mPTSize,
+        .modelParms = MOS6mPTable,
+        .flags = DEV_DEFAULT,
 
 #ifdef XSPICE
-/*----  Fixed by SDB 5.2.2003 to enable XSPICE/tclspice integration  -----*/
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-/*---------------------------  End of SDB fix   -------------------------*/
+        .cm_func = NULL,
+        .num_conn = 0,
+        .conn = NULL,
+        .num_param = 0,
+        .param = NULL,
+        .num_inst_var = 0,
+        .inst_var = NULL,
 #endif
-
-	DEV_DEFAULT
     },
 
- /* DEVparam      */ MOS6param,
- /* DEVmodParam   */ MOS6mParam,
- /* DEVload       */ MOS6load,
- /* DEVsetup      */ MOS6setup,
- /* DEVunsetup    */ MOS6unsetup,
- /* DEVpzSetup    */ NULL, /* PZsetup routine */
- /* DEVtemperature*/ MOS6temp,
- /* DEVtrunc      */ MOS6trunc,
- /* DEVfindBranch */ NULL,
- /* DEVacLoad     */ NULL, /* MOS6acLoad, XXX */
- /* DEVaccept     */ NULL,
- /* DEVdestroy    */ MOS6destroy,
- /* DEVmodDelete  */ MOS6mDelete,
- /* DEVdelete     */ MOS6delete,
- /* DEVsetic      */ MOS6getic,
- /* DEVask        */ MOS6ask,
- /* DEVmodAsk     */ MOS6mAsk,
- /* DEVpzLoad     */ NULL, /*MOS6pzLoad, XXX */
- /* DEVconvTest   */ MOS6convTest,
- /* DEVsenSetup   */ NULL /* MOS6sSetup */,
- /* DEVsenLoad    */ NULL /* MOS6sLoad */,
- /* DEVsenUpdate  */ NULL /* MOS6sUpdate */,
- /* DEVsenAcLoad  */ NULL /* MOS6sAcLoad */,
- /* DEVsenPrint   */ NULL /* MOS6sPrint */,
- /* DEVsenTrunc   */ NULL,
- /* DEVdisto      */ NULL, /* Distortion routine */
- /* DEVnoise      */ NULL, /* Noise routine */
- /* DEVsoaCheck   */ NULL,
+    .DEVparam = MOS6param,
+    .DEVmodParam = MOS6mParam,
+    .DEVload = MOS6load,
+    .DEVsetup = MOS6setup,
+    .DEVunsetup = MOS6unsetup,
+    .DEVpzSetup = NULL,
+    .DEVtemperature = MOS6temp,
+    .DEVtrunc = MOS6trunc,
+    .DEVfindBranch = NULL,
+    .DEVacLoad = NULL,
+    .DEVaccept = NULL,
+    .DEVdestroy = MOS6destroy,
+    .DEVmodDelete = MOS6mDelete,
+    .DEVdelete = MOS6delete,
+    .DEVsetic = MOS6getic,
+    .DEVask = MOS6ask,
+    .DEVmodAsk = MOS6mAsk,
+    .DEVpzLoad = NULL,
+    .DEVconvTest = MOS6convTest,
+    .DEVsenSetup = NULL,
+    .DEVsenLoad = NULL,
+    .DEVsenUpdate = NULL,
+    .DEVsenAcLoad = NULL,
+    .DEVsenPrint = NULL,
+    .DEVsenTrunc = NULL,
+    .DEVdisto = NULL,
+    .DEVnoise = NULL,
+    .DEVsoaCheck = NULL,
+    .DEVinstSize = &MOS6iSize,
+    .DEVmodSize = &MOS6mSize,
+
 #ifdef CIDER
- /* DEVdump       */ NULL,
- /* DEVacct       */ NULL,
-#endif                        
- /* DEVinstSize   */ &MOS6iSize,
- /* DEVmodSize    */ &MOS6mSize
+    .DEVdump = NULL,
+    .DEVacct = NULL,
+#endif
 };
 
 

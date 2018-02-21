@@ -8,73 +8,64 @@
 
 
 SPICEdev HFETAinfo = {
-    {
-        "HFET1",
-        "HFET1 Model",
-
-        &HFETAnSize,
-        &HFETAnSize,
-        HFETAnames,
-
-        &HFETApTSize,
-        HFETApTable,
-
-        &HFETAmPTSize,
-        HFETAmPTable,
+    .DEVpublic = {
+        .name = "HFET1",
+        .description = "HFET1 Model",
+        .terms = &HFETAnSize,
+        .numNames = &HFETAnSize,
+        .termNames = HFETAnames,
+        .numInstanceParms = &HFETApTSize,
+        .instanceParms = HFETApTable,
+        .numModelParms = &HFETAmPTSize,
+        .modelParms = HFETAmPTable,
+        .flags = DEV_DEFAULT,
 
 #ifdef XSPICE
-/*----  Fixed by SDB 5.2.2003 to enable XSPICE/tclspice integration  -----*/
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-/*---------------------------  End of SDB fix   -------------------------*/
+        .cm_func = NULL,
+        .num_conn = 0,
+        .conn = NULL,
+        .num_param = 0,
+        .param = NULL,
+        .num_inst_var = 0,
+        .inst_var = NULL,
 #endif
-
-	DEV_DEFAULT
     },
 
- /* DEVparam      */ HFETAparam,
- /* DEVmodParam   */ HFETAmParam,
- /* DEVload       */ HFETAload,
- /* DEVsetup      */ HFETAsetup,
- /* DEVunsetup    */ HFETAunsetup,
- /* DEVpzSetup    */ HFETAsetup,
- /* DEVtemperature*/ HFETAtemp,
- /* DEVtrunc      */ HFETAtrunc,
- /* DEVfindBranch */ NULL,
- /* DEVacLoad     */ HFETAacLoad,
- /* DEVaccept     */ NULL,
- /* DEVdestroy    */ HFETAdestroy,
- /* DEVmodDelete  */ HFETAmDelete,
- /* DEVdelete     */ HFETAdelete,
- /* DEVsetic      */ HFETAgetic,
- /* DEVask        */ HFETAask,
- /* DEVmodAsk     */ HFETAmAsk,
- /* DEVpzLoad     */ HFETApzLoad,
- /* DEVconvTest   */ NULL,
- /* DEVsenSetup   */ NULL,
- /* DEVsenLoad    */ NULL,
- /* DEVsenUpdate  */ NULL,
- /* DEVsenAcLoad  */ NULL,
- /* DEVsenPrint   */ NULL,
- /* DEVsenTrunc   */ NULL,
- /* DEVdisto      */ NULL,
- /* DEVnoise      */ NULL,
- /* DEVsoaCheck   */ NULL,
-#ifdef CIDER
- /* DEVdump       */ NULL,
- /* DEVacct       */ NULL,
-#endif    
- /* DEVinstSize   */ &HFETAiSize,
- /* DEVmodSize    */ &HFETAmSize
+    .DEVparam = HFETAparam,
+    .DEVmodParam = HFETAmParam,
+    .DEVload = HFETAload,
+    .DEVsetup = HFETAsetup,
+    .DEVunsetup = HFETAunsetup,
+    .DEVpzSetup = HFETAsetup,
+    .DEVtemperature = HFETAtemp,
+    .DEVtrunc = HFETAtrunc,
+    .DEVfindBranch = NULL,
+    .DEVacLoad = HFETAacLoad,
+    .DEVaccept = NULL,
+    .DEVdestroy = HFETAdestroy,
+    .DEVmodDelete = HFETAmDelete,
+    .DEVdelete = HFETAdelete,
+    .DEVsetic = HFETAgetic,
+    .DEVask = HFETAask,
+    .DEVmodAsk = HFETAmAsk,
+    .DEVpzLoad = HFETApzLoad,
+    .DEVconvTest = NULL,
+    .DEVsenSetup = NULL,
+    .DEVsenLoad = NULL,
+    .DEVsenUpdate = NULL,
+    .DEVsenAcLoad = NULL,
+    .DEVsenPrint = NULL,
+    .DEVsenTrunc = NULL,
+    .DEVdisto = NULL,
+    .DEVnoise = NULL,
+    .DEVsoaCheck = NULL,
+    .DEVinstSize = &HFETAiSize,
+    .DEVmodSize = &HFETAmSize,
 
+#ifdef CIDER
+    .DEVdump = NULL,
+    .DEVacct = NULL,
+#endif
 };
 
 
