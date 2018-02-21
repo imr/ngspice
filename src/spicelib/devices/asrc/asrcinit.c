@@ -8,73 +8,64 @@
 
 
 SPICEdev ASRCinfo = {
-    {
-        "ASRC",
-        "Arbitrary Source ",
-
-        &ASRCnSize,
-        &ASRCnSize,
-        ASRCnames,
-
-        &ASRCpTSize,
-        ASRCpTable,
-
-        NULL,
-        NULL,
+    .DEVpublic = {
+        .name = "ASRC",
+        .description = "Arbitrary Source ",
+        .terms = &ASRCnSize,
+        .numNames = &ASRCnSize,
+        .termNames = ASRCnames,
+        .numInstanceParms = &ASRCpTSize,
+        .instanceParms = ASRCpTable,
+        .numModelParms = NULL,
+        .modelParms = NULL,
+        .flags = DEV_DEFAULT,
 
 #ifdef XSPICE
-/*----  Fixed by SDB 5.2.2003 to enable XSPICE/tclspice integration  -----*/
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-/*---------------------------  End of SDB fix   -------------------------*/
+        .cm_func = NULL,
+        .num_conn = 0,
+        .conn = NULL,
+        .num_param = 0,
+        .param = NULL,
+        .num_inst_var = 0,
+        .inst_var = NULL,
 #endif
-
-
-        DEV_DEFAULT
     },
 
-    /* DEVparam      */ ASRCparam,
-    /* DEVmodParam   */ NULL,
-    /* DEVload       */ ASRCload,
-    /* DEVsetup      */ ASRCsetup,
-    /* DEVunsetup    */ ASRCunsetup,
-    /* DEVpzSetup    */ ASRCsetup,
-    /* DEVtemperature*/ ASRCtemp,
-    /* DEVtrunc      */ NULL,
-    /* DEVfindBranch */ ASRCfindBr,
-    /* DEVacLoad     */ ASRCacLoad,   /* ac and normal load functions NOT identical */
-    /* DEVaccept     */ NULL,
-    /* DEVdestroy    */ ASRCdestroy,
-    /* DEVmodDelete  */ ASRCmDelete,
-    /* DEVdelete     */ ASRCdelete,
-    /* DEVsetic      */ NULL,
-    /* DEVask        */ ASRCask,
-    /* DEVmodAsk     */ NULL,
-    /* DEVpzLoad     */ ASRCpzLoad,
-    /* DEVconvTest   */ ASRCconvTest,
-    /* DEVsenSetup   */ NULL,
-    /* DEVsenLoad    */ NULL,
-    /* DEVsenUpdate  */ NULL,
-    /* DEVsenAcLoad  */ NULL,
-    /* DEVsenPrint   */ NULL,
-    /* DEVsenTrunc   */ NULL,
-    /* DEVdisto      */ NULL,      /* DISTO */
-    /* DEVnoise      */ NULL,      /* NOISE */
-    /* DEVsoaCheck   */ NULL,
+    .DEVparam = ASRCparam,
+    .DEVmodParam = NULL,
+    .DEVload = ASRCload,
+    .DEVsetup = ASRCsetup,
+    .DEVunsetup = ASRCunsetup,
+    .DEVpzSetup = ASRCsetup,
+    .DEVtemperature = ASRCtemp,
+    .DEVtrunc = NULL,
+    .DEVfindBranch = ASRCfindBr,
+    .DEVacLoad = ASRCacLoad,
+    .DEVaccept = NULL,
+    .DEVdestroy = ASRCdestroy,
+    .DEVmodDelete = ASRCmDelete,
+    .DEVdelete = ASRCdelete,
+    .DEVsetic = NULL,
+    .DEVask = ASRCask,
+    .DEVmodAsk = NULL,
+    .DEVpzLoad = ASRCpzLoad,
+    .DEVconvTest = ASRCconvTest,
+    .DEVsenSetup = NULL,
+    .DEVsenLoad = NULL,
+    .DEVsenUpdate = NULL,
+    .DEVsenAcLoad = NULL,
+    .DEVsenPrint = NULL,
+    .DEVsenTrunc = NULL,
+    .DEVdisto = NULL,
+    .DEVnoise = NULL,
+    .DEVsoaCheck = NULL,
+    .DEVinstSize = &ASRCiSize,
+    .DEVmodSize = &ASRCmSize,
+
 #ifdef CIDER
-    /* DEVdump       */ NULL,
-    /* DEVacct       */ NULL,
+    .DEVdump = NULL,
+    .DEVacct = NULL,
 #endif
-    /* DEVinstSize   */ &ASRCiSize,
-    /* DEVmodSize    */ &ASRCmSize
 };
 
 

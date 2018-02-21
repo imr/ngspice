@@ -8,73 +8,64 @@
 
 
 SPICEdev TRAinfo = {
-    {
-        "Tranline",
-        "Lossless transmission line",
-
-        &TRAnSize,
-        &TRAnSize,
-        TRAnames,
-
-        &TRApTSize,
-        TRApTable,
-
-        NULL,
-        NULL,
+    .DEVpublic = {
+        .name = "Tranline",
+        .description = "Lossless transmission line",
+        .terms = &TRAnSize,
+        .numNames = &TRAnSize,
+        .termNames = TRAnames,
+        .numInstanceParms = &TRApTSize,
+        .instanceParms = TRApTable,
+        .numModelParms = NULL,
+        .modelParms = NULL,
+        .flags = 0,
 
 #ifdef XSPICE
-/*----  Fixed by SDB 5.2.2003 to enable XSPICE/tclspice integration  -----*/
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-/*---------------------------  End of SDB fix   -------------------------*/
+        .cm_func = NULL,
+        .num_conn = 0,
+        .conn = NULL,
+        .num_param = 0,
+        .param = NULL,
+        .num_inst_var = 0,
+        .inst_var = NULL,
 #endif
-
-	0
     },
 
- /* DEVparam      */ TRAparam,
- /* DEVmodParam   */ NULL,
- /* DEVload       */ TRAload,
- /* DEVsetup      */ TRAsetup,
- /* DEVunsetup    */ TRAunsetup,
- /* DEVpzSetup    */ TRAsetup,
- /* DEVtemperature*/ TRAtemp,
- /* DEVtrunc      */ TRAtrunc,
- /* DEVfindBranch */ NULL,
- /* DEVacLoad     */ TRAacLoad,
- /* DEVaccept     */ TRAaccept,
- /* DEVdestroy    */ TRAdestroy,
- /* DEVmodDelete  */ TRAmDelete,
- /* DEVdelete     */ TRAdelete,
- /* DEVsetic      */ NULL,
- /* DEVask        */ TRAask,
- /* DEVmodAsk     */ NULL,
- /* DEVpzLoad     */ NULL,
- /* DEVconvTest   */ NULL,
- /* DEVsenSetup   */ NULL,
- /* DEVsenLoad    */ NULL,
- /* DEVsenUpdate  */ NULL,
- /* DEVsenAcLoad  */ NULL,
- /* DEVsenPrint   */ NULL,
- /* DEVsenTrunc   */ NULL,
- /* DEVdisto      */ NULL,	/* DISTO */
- /* DEVnoise      */ NULL,	/* NOISE */
- /* DEVsoaCheck   */ NULL,
-#ifdef CIDER
- /* DEVdump       */ NULL,
- /* DEVacct       */ NULL,
-#endif                        
- /* DEVinstSize   */ &TRAiSize,
- /* DEVmodSize    */ &TRAmSize
+    .DEVparam = TRAparam,
+    .DEVmodParam = NULL,
+    .DEVload = TRAload,
+    .DEVsetup = TRAsetup,
+    .DEVunsetup = TRAunsetup,
+    .DEVpzSetup = TRAsetup,
+    .DEVtemperature = TRAtemp,
+    .DEVtrunc = TRAtrunc,
+    .DEVfindBranch = NULL,
+    .DEVacLoad = TRAacLoad,
+    .DEVaccept = TRAaccept,
+    .DEVdestroy = TRAdestroy,
+    .DEVmodDelete = TRAmDelete,
+    .DEVdelete = TRAdelete,
+    .DEVsetic = NULL,
+    .DEVask = TRAask,
+    .DEVmodAsk = NULL,
+    .DEVpzLoad = NULL,
+    .DEVconvTest = NULL,
+    .DEVsenSetup = NULL,
+    .DEVsenLoad = NULL,
+    .DEVsenUpdate = NULL,
+    .DEVsenAcLoad = NULL,
+    .DEVsenPrint = NULL,
+    .DEVsenTrunc = NULL,
+    .DEVdisto = NULL,
+    .DEVnoise = NULL,
+    .DEVsoaCheck = NULL,
+    .DEVinstSize = &TRAiSize,
+    .DEVmodSize = &TRAmSize,
 
+#ifdef CIDER
+    .DEVdump = NULL,
+    .DEVacct = NULL,
+#endif
 };
 
 

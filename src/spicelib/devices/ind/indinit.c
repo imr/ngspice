@@ -8,143 +8,126 @@
 
 
 SPICEdev INDinfo = {
-    {
-        "Inductor",
-        "Fixed inductor",
-
-        &INDnSize,
-        &INDnSize,
-        INDnames,
-
-        &INDpTSize,
-        INDpTable,
-
-        &INDmPTSize,
-        INDmPTable,
+    .DEVpublic = {
+        .name = "Inductor",
+        .description = "Fixed inductor",
+        .terms = &INDnSize,
+        .numNames = &INDnSize,
+        .termNames = INDnames,
+        .numInstanceParms = &INDpTSize,
+        .instanceParms = INDpTable,
+        .numModelParms = &INDmPTSize,
+        .modelParms = INDmPTable,
+        .flags = 0,
 
 #ifdef XSPICE
-/*----  Fixed by SDB 5.2.2003 to enable XSPICE/tclspice integration  -----*/
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-/*---------------------------  End of SDB fix   -------------------------*/
+        .cm_func = NULL,
+        .num_conn = 0,
+        .conn = NULL,
+        .num_param = 0,
+        .param = NULL,
+        .num_inst_var = 0,
+        .inst_var = NULL,
 #endif
-	0
     },
 
- /* DEVparam      */ INDparam,
- /* DEVmodParam   */ INDmParam,
- /* DEVload       */ INDload,
- /* DEVsetup      */ INDsetup,
- /* DEVunsetup    */ INDunsetup,
- /* DEVpzSetup    */ INDsetup,
- /* DEVtemperature*/ INDtemp,
- /* DEVtrunc      */ INDtrunc,
- /* DEVfindBranch */ NULL,
- /* DEVacLoad     */ INDacLoad,
- /* DEVaccept     */ NULL,
- /* DEVdestroy    */ INDdestroy,
- /* DEVmodDelete  */ INDmDelete,
- /* DEVdelete     */ INDdelete,
- /* DEVsetic      */ NULL,
- /* DEVask        */ INDask,
- /* DEVmodAsk     */ INDmAsk,
- /* DEVpzLoad     */ INDpzLoad,
- /* DEVconvTest   */ NULL,
- /* DEVsenSetup   */ INDsSetup,
- /* DEVsenLoad    */ INDsLoad,
- /* DEVsenUpdate  */ INDsUpdate,
- /* DEVsenAcLoad  */ INDsAcLoad,
- /* DEVsenPrint   */ INDsPrint,
- /* DEVsenTrunc   */ NULL,
- /* DEVdisto      */ NULL,	/* DISTO */
- /* DEVnoise      */ NULL,	/* NOISE */
- /* DEVsoaCheck   */ NULL,
-#ifdef CIDER
- /* DEVdump       */ NULL,
- /* DEVacct       */ NULL,
-#endif                       
- /* DEVinstSize   */ &INDiSize,
- /* DEVmodSize    */ &INDmSize
+    .DEVparam = INDparam,
+    .DEVmodParam = INDmParam,
+    .DEVload = INDload,
+    .DEVsetup = INDsetup,
+    .DEVunsetup = INDunsetup,
+    .DEVpzSetup = INDsetup,
+    .DEVtemperature = INDtemp,
+    .DEVtrunc = INDtrunc,
+    .DEVfindBranch = NULL,
+    .DEVacLoad = INDacLoad,
+    .DEVaccept = NULL,
+    .DEVdestroy = INDdestroy,
+    .DEVmodDelete = INDmDelete,
+    .DEVdelete = INDdelete,
+    .DEVsetic = NULL,
+    .DEVask = INDask,
+    .DEVmodAsk = INDmAsk,
+    .DEVpzLoad = INDpzLoad,
+    .DEVconvTest = NULL,
+    .DEVsenSetup = INDsSetup,
+    .DEVsenLoad = INDsLoad,
+    .DEVsenUpdate = INDsUpdate,
+    .DEVsenAcLoad = INDsAcLoad,
+    .DEVsenPrint = INDsPrint,
+    .DEVsenTrunc = NULL,
+    .DEVdisto = NULL,
+    .DEVnoise = NULL,
+    .DEVsoaCheck = NULL,
+    .DEVinstSize = &INDiSize,
+    .DEVmodSize = &INDmSize,
 
+#ifdef CIDER
+    .DEVdump = NULL,
+    .DEVacct = NULL,
+#endif
 };
 
 
 SPICEdev MUTinfo = {
-    {   
-        "mutual",
-        "Mutual inductors",
-
-        NULL,
-        NULL,
-        NULL,
-
-        &MUTpTSize,
-        MUTpTable,
-
-        NULL,
-        NULL,
+    .DEVpublic = {
+        .name = "mutual",
+        .description = "Mutual inductors",
+        .terms = NULL,
+        .numNames = NULL,
+        .termNames = NULL,
+        .numInstanceParms = &MUTpTSize,
+        .instanceParms = MUTpTable,
+        .numModelParms = NULL,
+        .modelParms = NULL,
+        .flags = 0,
 
 #ifdef XSPICE
-/*----  Fixed by SDB 5.2.2003 to enable XSPICE/tclspice integration  -----*/
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-/*---------------------------  End of SDB fix   -------------------------*/
+        .cm_func = NULL,
+        .num_conn = 0,
+        .conn = NULL,
+        .num_param = 0,
+        .param = NULL,
+        .num_inst_var = 0,
+        .inst_var = NULL,
 #endif
-
-	0
     },
 
- /* DEVparam      */ MUTparam,
- /* DEVmodParam   */ NULL,
- /* DEVload       */ NULL,/* load handled by INDload */
- /* DEVsetup      */ MUTsetup,
- /* DEVunsetup    */ NULL,
- /* DEVpzSetup    */ MUTsetup,
- /* DEVtemperature*/ MUTtemp,
- /* DEVtrunc      */ NULL,
- /* DEVfindBranch */ NULL,
- /* DEVacLoad     */ MUTacLoad,
- /* DEVaccept     */ NULL,
- /* DEVdestroy    */ MUTdestroy,
- /* DEVmodDelete  */ MUTmDelete,
- /* DEVdelete     */ MUTdelete,
- /* DEVsetic      */ NULL,
- /* DEVask        */ MUTask,
- /* DEVmodAsk     */ NULL,
- /* DEVpzLoad     */ MUTpzLoad,
- /* DEVconvTest   */ NULL,
- /* DEVsenSetup   */ MUTsSetup,
- /* DEVsenLoad    */ NULL,
- /* DEVsenUpdate  */ NULL,
- /* DEVsenAcLoad  */ NULL,
- /* DEVsenPrint   */ MUTsPrint,
- /* DEVsenTrunc   */ NULL,
- /* DEVdisto      */ NULL,	/* DISTO */
- /* DEVnoise      */ NULL,	/* NOISE */
- /* DEVsoaCheck   */ NULL,
-#ifdef CIDER
- /* DEVdump       */ NULL,
- /* DEVacct       */ NULL,
-#endif  
-    &MUTiSize,
-    &MUTmSize
+    .DEVparam = MUTparam,
+    .DEVmodParam = NULL,
+    .DEVload = NULL,
+    .DEVsetup = MUTsetup,
+    .DEVunsetup = NULL,
+    .DEVpzSetup = MUTsetup,
+    .DEVtemperature = MUTtemp,
+    .DEVtrunc = NULL,
+    .DEVfindBranch = NULL,
+    .DEVacLoad = MUTacLoad,
+    .DEVaccept = NULL,
+    .DEVdestroy = MUTdestroy,
+    .DEVmodDelete = MUTmDelete,
+    .DEVdelete = MUTdelete,
+    .DEVsetic = NULL,
+    .DEVask = MUTask,
+    .DEVmodAsk = NULL,
+    .DEVpzLoad = MUTpzLoad,
+    .DEVconvTest = NULL,
+    .DEVsenSetup = MUTsSetup,
+    .DEVsenLoad = NULL,
+    .DEVsenUpdate = NULL,
+    .DEVsenAcLoad = NULL,
+    .DEVsenPrint = MUTsPrint,
+    .DEVsenTrunc = NULL,
+    .DEVdisto = NULL,
+    .DEVnoise = NULL,
+    .DEVsoaCheck = NULL,
+    .DEVinstSize = &MUTiSize,
+    .DEVmodSize = &MUTmSize,
 
+#ifdef CIDER
+    .DEVdump = NULL,
+    .DEVacct = NULL,
+#endif
 };
 
 

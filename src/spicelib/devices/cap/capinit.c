@@ -8,71 +8,64 @@
 
 
 SPICEdev CAPinfo = {
-    {   "Capacitor",
-        "Fixed capacitor",
-
-        &CAPnSize,
-        &CAPnSize,
-        CAPnames,
-
-        &CAPpTSize,
-        CAPpTable,
-
-        &CAPmPTSize,
-        CAPmPTable,
+    .DEVpublic = {
+        .name = "Capacitor",
+        .description = "Fixed capacitor",
+        .terms = &CAPnSize,
+        .numNames = &CAPnSize,
+        .termNames = CAPnames,
+        .numInstanceParms = &CAPpTSize,
+        .instanceParms = CAPpTable,
+        .numModelParms = &CAPmPTSize,
+        .modelParms = CAPmPTable,
+        .flags = 0,
 
 #ifdef XSPICE
-/*----  Fixed by SDB 5.2.2003 to enable XSPICE/tclspice integration  -----*/
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-/*---------------------------  End of SDB fix   -------------------------*/
+        .cm_func = NULL,
+        .num_conn = 0,
+        .conn = NULL,
+        .num_param = 0,
+        .param = NULL,
+        .num_inst_var = 0,
+        .inst_var = NULL,
 #endif
-
-	0
     },
 
- /* DEVparam      */ CAPparam,
- /* DEVmodParam   */ CAPmParam,
- /* DEVload       */ CAPload,
- /* DEVsetup      */ CAPsetup,
- /* DEVunsetup    */ NULL,
- /* DEVpzSetup    */ CAPsetup,
- /* DEVtemperature*/ CAPtemp,
- /* DEVtrunc      */ CAPtrunc,
- /* DEVfindBranch */ NULL,
- /* DEVacLoad     */ CAPacLoad,
- /* DEVaccept     */ NULL,
- /* DEVdestroy    */ CAPdestroy,
- /* DEVmodDelete  */ CAPmDelete,
- /* DEVdelete     */ CAPdelete,
- /* DEVsetic      */ CAPgetic,
- /* DEVask        */ CAPask,
- /* DEVmodAsk     */ CAPmAsk,
- /* DEVpzLoad     */ CAPpzLoad,
- /* DEVconvTest   */ NULL,
- /* DEVsenSetup   */ CAPsSetup,
- /* DEVsenLoad    */ CAPsLoad,
- /* DEVsenUpdate  */ CAPsUpdate,
- /* DEVsenAcLoad  */ CAPsAcLoad,
- /* DEVsenPrint   */ CAPsPrint,
- /* DEVsenTrunc   */ NULL,
- /* DEVdisto      */ NULL,	/* DISTO */
- /* DEVnoise      */ NULL,	/* NOISE */
- /* DEVsoaCheck   */ CAPsoaCheck,
+    .DEVparam = CAPparam,
+    .DEVmodParam = CAPmParam,
+    .DEVload = CAPload,
+    .DEVsetup = CAPsetup,
+    .DEVunsetup = NULL,
+    .DEVpzSetup = CAPsetup,
+    .DEVtemperature = CAPtemp,
+    .DEVtrunc = CAPtrunc,
+    .DEVfindBranch = NULL,
+    .DEVacLoad = CAPacLoad,
+    .DEVaccept = NULL,
+    .DEVdestroy = CAPdestroy,
+    .DEVmodDelete = CAPmDelete,
+    .DEVdelete = CAPdelete,
+    .DEVsetic = CAPgetic,
+    .DEVask = CAPask,
+    .DEVmodAsk = CAPmAsk,
+    .DEVpzLoad = CAPpzLoad,
+    .DEVconvTest = NULL,
+    .DEVsenSetup = CAPsSetup,
+    .DEVsenLoad = CAPsLoad,
+    .DEVsenUpdate = CAPsUpdate,
+    .DEVsenAcLoad = CAPsAcLoad,
+    .DEVsenPrint = CAPsPrint,
+    .DEVsenTrunc = NULL,
+    .DEVdisto = NULL,
+    .DEVnoise = NULL,
+    .DEVsoaCheck = CAPsoaCheck,
+    .DEVinstSize = &CAPiSize,
+    .DEVmodSize = &CAPmSize,
+
 #ifdef CIDER
- /* DEVdump       */ NULL,
- /* DEVacct       */ NULL,
-#endif    
- /* DEVinstSize   */ &CAPiSize,
- /* DEVmodSize    */ &CAPmSize
+    .DEVdump = NULL,
+    .DEVacct = NULL,
+#endif
 };
 
 

@@ -872,90 +872,87 @@ static void  write_SPICEdev(
 
     /* Write the IFdevice structure */
 
-    fprintf(fp, "    { \"%s\",\n", ifs_table->name.model_name);
-    fprintf(fp, "      \"%s\",\n", ifs_table->name.description);
-    fprintf(fp, "      &val_terms,\n");
-    fprintf(fp, "      &val_numNames,\n");
-    fprintf(fp, "      NULL,\n");
+    fprintf(fp, "    .DEVpublic = {\n");
+    fprintf(fp, "        .name = \"%s\",\n", ifs_table->name.model_name);
+    fprintf(fp, "        .description = \"%s\",\n", ifs_table->name.description);
+    fprintf(fp, "        .terms = &val_terms,\n");
+    fprintf(fp, "        .numNames = &val_numNames,\n");
+    fprintf(fp, "        .termNames = NULL,\n");
 
-    fprintf(fp, "      &val_numInstanceParms,\n");
+    fprintf(fp, "        .numInstanceParms = &val_numInstanceParms,\n");
     if(ifs_table->num_inst_var > 0)
-        fprintf(fp, "      MIFpTable,\n");
+        fprintf(fp, "        .instanceParms = MIFpTable,\n");
     else
-        fprintf(fp, "      NULL,\n");
+        fprintf(fp, "        .instanceParms = NULL,\n");
 
-    fprintf(fp, "      &val_numModelParms,\n");
+    fprintf(fp, "        .numModelParms = &val_numModelParms,\n");
     if(ifs_table->num_param > 0)
-        fprintf(fp, "      MIFmPTable,\n");
+        fprintf(fp, "        .modelParms = MIFmPTable,\n");
     else
-        fprintf(fp, "      NULL,\n");
+        fprintf(fp, "        .modelParms = NULL,\n");
+    fprintf(fp, "        .flags = 0,\n\n");
 
-    fprintf(fp, "      %s,\n", ifs_table->name.c_fcn_name);
+    fprintf(fp, "        .cm_func = %s,\n", ifs_table->name.c_fcn_name);
 
-    fprintf(fp, "      %d,\n", ifs_table->num_conn);
+    fprintf(fp, "        .num_conn = %d,\n", ifs_table->num_conn);
     if(ifs_table->num_conn > 0)
-        fprintf(fp, "      MIFconnTable,\n");
+        fprintf(fp, "        .conn = MIFconnTable,\n");
     else
-        fprintf(fp, "      NULL,\n");
+        fprintf(fp, "        .conn = NULL,\n");
 
-    fprintf(fp, "      %d,\n", ifs_table->num_param);
+    fprintf(fp, "        .num_param = %d,\n", ifs_table->num_param);
     if(ifs_table->num_param > 0)
-        fprintf(fp, "      MIFparamTable,\n");
+        fprintf(fp, "        .param = MIFparamTable,\n");
     else
-        fprintf(fp, "      NULL,\n");
+        fprintf(fp, "        .param = NULL,\n");
 
-    fprintf(fp, "      %d,\n", ifs_table->num_inst_var);
+    fprintf(fp, "        .num_inst_var = %d,\n", ifs_table->num_inst_var);
     if(ifs_table->num_inst_var > 0)
-        fprintf(fp, "      MIFinst_varTable,\n");
+        fprintf(fp, "        .inst_var = MIFinst_varTable,\n");
     else
-        fprintf(fp, "      NULL,\n");
-    fprintf(fp, "      0,         /* flags */\n");
+        fprintf(fp, "        .inst_var = NULL,\n");
 
-    fprintf(fp, "    },\n");
+    fprintf(fp, "    },\n\n");
 
     /* Write the names of the generic code model functions */
 
-    fprintf(fp, "NULL,          \n");  /* DEVparam */
-    fprintf(fp, "MIFmParam,     \n");  /* DEVmodParam */
-    fprintf(fp, "MIFload,       \n");  /* DEVload */
-    fprintf(fp, "MIFsetup,      \n");  /* DEVsetup */
-    fprintf(fp, "MIFunsetup,    \n");  /* DEVunsetup */
-    fprintf(fp, "NULL,          \n");  /* DEVpzSetup */
-    fprintf(fp, "NULL,          \n");  /* DEVtemperature */
-    fprintf(fp, "MIFtrunc,      \n");  /* DEVtrunc */
-    fprintf(fp, "NULL,          \n");  /* DEVfindBranch */
-    fprintf(fp, "MIFload,       \n");  /* DEVacLoad */
-    fprintf(fp, "NULL,          \n");  /* DEVaccept */
-    fprintf(fp, "MIFdestroy,    \n");  /* DEVdestroy */
-    fprintf(fp, "MIFmDelete,    \n");  /* DEVmodDelete */
-    fprintf(fp, "MIFdelete,     \n");  /* DEVdelete */
-    fprintf(fp, "NULL,          \n");  /* DEVsetic */
-    fprintf(fp, "MIFask,        \n");  /* DEVask */
-    fprintf(fp, "MIFmAsk,       \n");  /* DEVmodAsk */
-    fprintf(fp, "NULL,          \n");  /* DEVpzLoad */
-    fprintf(fp, "MIFconvTest,   \n");  /* DEVconvTest */
-    fprintf(fp, "NULL,          \n");  /* DEVsenSetup */
-    fprintf(fp, "NULL,          \n");  /* DEVsenLoad */
-    fprintf(fp, "NULL,          \n");  /* DEVSenUpdate */
-    fprintf(fp, "NULL,          \n");  /* DEVsenAcLoad */
-    fprintf(fp, "NULL,          \n");  /* DEVsenPrint */
-    fprintf(fp, "NULL,          \n");  /* DEVsenTrunc */
-    fprintf(fp, "NULL,          \n");  /* DEVdisto */
-    fprintf(fp, "NULL,          \n");  /* DEVnoise */
-    fprintf(fp, "NULL,          \n");  /* DEVsoaCheck */
-    fprintf(fp, "#ifdef CIDER   \n");  /* CIDER enhancements */
-    fprintf(fp, "NULL,          \n");  /* DEVdump */
-    fprintf(fp, "NULL,          \n");  /* DEVacct */
-    fprintf(fp, "#endif         \n");  /* CIDER enhancements */    
-
-    /* Write the sizeof stuff used in dynamic allocation of inst/model structs */
-
-    fprintf(fp, "&val_sizeofMIFinstance,\n");
-    fprintf(fp, "&val_sizeofMIFmodel,\n");
+    fprintf(fp, "    .DEVparam = NULL,\n");
+    fprintf(fp, "    .DEVmodParam = MIFmParam,\n");
+    fprintf(fp, "    .DEVload = MIFload,\n");
+    fprintf(fp, "    .DEVsetup = MIFsetup,\n");
+    fprintf(fp, "    .DEVunsetup = MIFunsetup,\n");
+    fprintf(fp, "    .DEVpzSetup = NULL,\n");
+    fprintf(fp, "    .DEVtemperature = NULL,\n");
+    fprintf(fp, "    .DEVtrunc = MIFtrunc,\n");
+    fprintf(fp, "    .DEVfindBranch = NULL,\n");
+    fprintf(fp, "    .DEVacLoad = MIFload,\n");
+    fprintf(fp, "    .DEVaccept = NULL,\n");
+    fprintf(fp, "    .DEVdestroy = MIFdestroy,\n");
+    fprintf(fp, "    .DEVmodDelete = MIFmDelete,\n");
+    fprintf(fp, "    .DEVdelete = MIFdelete,\n");
+    fprintf(fp, "    .DEVsetic = NULL,\n");
+    fprintf(fp, "    .DEVask = MIFask,\n");
+    fprintf(fp, "    .DEVmodAsk = MIFmAsk,\n");
+    fprintf(fp, "    .DEVpzLoad = NULL,\n");
+    fprintf(fp, "    .DEVconvTest = MIFconvTest,\n");
+    fprintf(fp, "    .DEVsenSetup = NULL,\n");
+    fprintf(fp, "    .DEVsenLoad = NULL,\n");
+    fprintf(fp, "    .DEVsenUpdate = NULL,\n");
+    fprintf(fp, "    .DEVsenAcLoad = NULL,\n");
+    fprintf(fp, "    .DEVsenPrint = NULL,\n");
+    fprintf(fp, "    .DEVsenTrunc = NULL,\n");
+    fprintf(fp, "    .DEVdisto = NULL,\n");
+    fprintf(fp, "    .DEVnoise = NULL,\n");
+    fprintf(fp, "    .DEVsoaCheck = NULL,\n");
+    fprintf(fp, "    .DEVinstSize = &val_sizeofMIFinstance,\n");
+    fprintf(fp, "    .DEVmodSize = &val_sizeofMIFmodel,\n");
     fprintf(fp, "\n");
+    fprintf(fp, "#ifdef CIDER\n");
+    fprintf(fp, "    .DEVdump = NULL,\n");
+    fprintf(fp, "    .DEVacct = NULL,\n");
+    fprintf(fp, "#endif\n");
     fprintf(fp, "};\n");
     fprintf(fp, "\n");
-
 }
 
 

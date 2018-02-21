@@ -8,73 +8,64 @@
 
 
 SPICEdev MOS9info = {
-    {
-        "Mos9",
-        "Modified Level 3 MOSfet model",
-
-        &MOS9nSize,
-        &MOS9nSize,
-        MOS9names,
-
-        &MOS9pTSize,
-        MOS9pTable,
-
-        &MOS9mPTSize,
-        MOS9mPTable,
+    .DEVpublic = {
+        .name = "Mos9",
+        .description = "Modified Level 3 MOSfet model",
+        .terms = &MOS9nSize,
+        .numNames = &MOS9nSize,
+        .termNames = MOS9names,
+        .numInstanceParms = &MOS9pTSize,
+        .instanceParms = MOS9pTable,
+        .numModelParms = &MOS9mPTSize,
+        .modelParms = MOS9mPTable,
+        .flags = DEV_DEFAULT,
 
 #ifdef XSPICE
-/*----  Fixed by SDB 5.2.2003 to enable XSPICE/tclspice integration  -----*/
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-/*---------------------------  End of SDB fix   -------------------------*/
+        .cm_func = NULL,
+        .num_conn = 0,
+        .conn = NULL,
+        .num_param = 0,
+        .param = NULL,
+        .num_inst_var = 0,
+        .inst_var = NULL,
 #endif
-
-	DEV_DEFAULT
     },
 
- /* DEVparam      */ MOS9param,
- /* DEVmodParam   */ MOS9mParam,
- /* DEVload       */ MOS9load,
- /* DEVsetup      */ MOS9setup,
- /* DEVunsetup    */ MOS9unsetup,
- /* DEVpzSetup    */ MOS9setup,
- /* DEVtemperature*/ MOS9temp,
- /* DEVtrunc      */ MOS9trunc,
- /* DEVfindBranch */ NULL,
- /* DEVacLoad     */ MOS9acLoad,
- /* DEVaccept     */ NULL,
- /* DEVdestroy    */ MOS9destroy,
- /* DEVmodDelete  */ MOS9mDelete,
- /* DEVdelete     */ MOS9delete,
- /* DEVsetic      */ MOS9getic,
- /* DEVask        */ MOS9ask,
- /* DEVmodAsk     */ MOS9mAsk,
- /* DEVpzLoad     */ MOS9pzLoad,
- /* DEVconvTest   */ MOS9convTest,
- /* DEVsenSetup   */ MOS9sSetup,
- /* DEVsenLoad    */ MOS9sLoad,
- /* DEVsenUpdate  */ MOS9sUpdate,
- /* DEVsenAcLoad  */ MOS9sAcLoad,
- /* DEVsenPrint   */ MOS9sPrint,
- /* DEVsenTrunc   */ NULL,
- /* DEVdisto      */ MOS9disto,
- /* DEVnoise      */ MOS9noise,
- /* DEVsoaCheck   */ NULL,
-#ifdef CIDER
- /* DEVdump       */ NULL,
- /* DEVacct       */ NULL,
-#endif                        
- /* DEVinstSize   */ &MOS9iSize,
- /* DEVmodSize    */ &MOS9mSize
+    .DEVparam = MOS9param,
+    .DEVmodParam = MOS9mParam,
+    .DEVload = MOS9load,
+    .DEVsetup = MOS9setup,
+    .DEVunsetup = MOS9unsetup,
+    .DEVpzSetup = MOS9setup,
+    .DEVtemperature = MOS9temp,
+    .DEVtrunc = MOS9trunc,
+    .DEVfindBranch = NULL,
+    .DEVacLoad = MOS9acLoad,
+    .DEVaccept = NULL,
+    .DEVdestroy = MOS9destroy,
+    .DEVmodDelete = MOS9mDelete,
+    .DEVdelete = MOS9delete,
+    .DEVsetic = MOS9getic,
+    .DEVask = MOS9ask,
+    .DEVmodAsk = MOS9mAsk,
+    .DEVpzLoad = MOS9pzLoad,
+    .DEVconvTest = MOS9convTest,
+    .DEVsenSetup = MOS9sSetup,
+    .DEVsenLoad = MOS9sLoad,
+    .DEVsenUpdate = MOS9sUpdate,
+    .DEVsenAcLoad = MOS9sAcLoad,
+    .DEVsenPrint = MOS9sPrint,
+    .DEVsenTrunc = NULL,
+    .DEVdisto = MOS9disto,
+    .DEVnoise = MOS9noise,
+    .DEVsoaCheck = NULL,
+    .DEVinstSize = &MOS9iSize,
+    .DEVmodSize = &MOS9mSize,
 
+#ifdef CIDER
+    .DEVdump = NULL,
+    .DEVacct = NULL,
+#endif
 };
 
 

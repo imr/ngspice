@@ -8,73 +8,64 @@
 
 
 SPICEdev URCinfo = {
-    {
-        "URC",      /* MUST precede both resistors and capacitors */
-        "Uniform R.C. line",
-
-        &URCnSize,
-        &URCnSize,
-        URCnames,
-
-        &URCpTSize,
-        URCpTable,
-
-        &URCmPTSize,
-        URCmPTable,
+    .DEVpublic = {
+        .name = "URC",
+        .description = "Uniform R.C. line",
+        .terms = &URCnSize,
+        .numNames = &URCnSize,
+        .termNames = URCnames,
+        .numInstanceParms = &URCpTSize,
+        .instanceParms = URCpTable,
+        .numModelParms = &URCmPTSize,
+        .modelParms = URCmPTable,
+        .flags = 0,
 
 #ifdef XSPICE
-/*----  Fixed by SDB 5.2.2003 to enable XSPICE/tclspice integration  -----*/
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-/*---------------------------  End of SDB fix   -------------------------*/
+        .cm_func = NULL,
+        .num_conn = 0,
+        .conn = NULL,
+        .num_param = 0,
+        .param = NULL,
+        .num_inst_var = 0,
+        .inst_var = NULL,
 #endif
-
-	0
     },
 
- /* DEVparam      */ URCparam,
- /* DEVmodParam   */ URCmParam,
- /* DEVload       */ NULL,
- /* DEVsetup      */ URCsetup,
- /* DEVunsetup    */ URCunsetup,
- /* DEVpzSetup    */ URCsetup,
- /* DEVtemperature*/ NULL,
- /* DEVtrunc      */ NULL,
- /* DEVfindBranch */ NULL,
- /* DEVacLoad     */ NULL,
- /* DEVaccept     */ NULL,
- /* DEVdestroy    */ URCdestroy,
- /* DEVmodDelete  */ URCmDelete,
- /* DEVdelete     */ URCdelete,
- /* DEVsetic      */ NULL,
- /* DEVask        */ URCask,
- /* DEVmodAsk     */ URCmAsk,
- /* DEVpzLoad     */ NULL,
- /* DEVconvTest   */ NULL,
- /* DEVsenSetup   */ NULL,
- /* DEVsenLoad    */ NULL,
- /* DEVsenUpdate  */ NULL,
- /* DEVsenAcLoad  */ NULL,
- /* DEVsenPrint   */ NULL,
- /* DEVsenTrunc   */ NULL,
- /* DEVdisto      */ NULL,	/* DISTO */
- /* DEVnoise      */ NULL,	/* NOISE */
- /* DEVsoaCheck   */ NULL,
-#ifdef CIDER
- /* DEVdump       */ NULL,
- /* DEVacct       */ NULL,
-#endif                        
- /* DEVinstSize   */ &URCiSize,
- /* DEVmodSize    */ &URCmSize
+    .DEVparam = URCparam,
+    .DEVmodParam = URCmParam,
+    .DEVload = NULL,
+    .DEVsetup = URCsetup,
+    .DEVunsetup = URCunsetup,
+    .DEVpzSetup = URCsetup,
+    .DEVtemperature = NULL,
+    .DEVtrunc = NULL,
+    .DEVfindBranch = NULL,
+    .DEVacLoad = NULL,
+    .DEVaccept = NULL,
+    .DEVdestroy = URCdestroy,
+    .DEVmodDelete = URCmDelete,
+    .DEVdelete = URCdelete,
+    .DEVsetic = NULL,
+    .DEVask = URCask,
+    .DEVmodAsk = URCmAsk,
+    .DEVpzLoad = NULL,
+    .DEVconvTest = NULL,
+    .DEVsenSetup = NULL,
+    .DEVsenLoad = NULL,
+    .DEVsenUpdate = NULL,
+    .DEVsenAcLoad = NULL,
+    .DEVsenPrint = NULL,
+    .DEVsenTrunc = NULL,
+    .DEVdisto = NULL,
+    .DEVnoise = NULL,
+    .DEVsoaCheck = NULL,
+    .DEVinstSize = &URCiSize,
+    .DEVmodSize = &URCmSize,
 
+#ifdef CIDER
+    .DEVdump = NULL,
+    .DEVacct = NULL,
+#endif
 };
 
 

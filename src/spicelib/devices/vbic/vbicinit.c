@@ -13,73 +13,64 @@
 
 
 SPICEdev VBICinfo = {
-    {
-	"VBIC",
-        "Vertical Bipolar Inter-Company Model",
-
-        &VBICnSize,
-        &VBICnSize,
-        VBICnames,
-
-        &VBICpTSize,
-        VBICpTable,
-
-        &VBICmPTSize,
-        VBICmPTable,
+    .DEVpublic = {
+        .name = "VBIC",
+        .description = "Vertical Bipolar Inter-Company Model",
+        .terms = &VBICnSize,
+        .numNames = &VBICnSize,
+        .termNames = VBICnames,
+        .numInstanceParms = &VBICpTSize,
+        .instanceParms = VBICpTable,
+        .numModelParms = &VBICmPTSize,
+        .modelParms = VBICmPTable,
+        .flags = DEV_DEFAULT,
 
 #ifdef XSPICE
-/*----  Fixed by SDB 5.2.2003 to enable XSPICE/tclspice integration  -----*/
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-/*---------------------------  End of SDB fix   -------------------------*/
+        .cm_func = NULL,
+        .num_conn = 0,
+        .conn = NULL,
+        .num_param = 0,
+        .param = NULL,
+        .num_inst_var = 0,
+        .inst_var = NULL,
 #endif
-
-	DEV_DEFAULT
     },
 
-    VBICparam,    /* DEVparam       */
-    VBICmParam,   /* DEVmodParam    */
-    VBICload,     /* DEVload        */
-    VBICsetup,    /* DEVsetup       */
-    VBICunsetup,  /* DEVunsetup     */
-    VBICsetup,    /* DEVpzSetup     */
-    VBICtemp,     /* DEVtemperature */
-    VBICtrunc,    /* DEVtrunc       */
-    NULL,         /* DEVfindBranch  */
-    VBICacLoad,   /* DEVacLoad      */
-    NULL,         /* DEVaccept      */
-    VBICdestroy,  /* DEVdestroy     */
-    VBICmDelete,  /* DEVmodDelete   */
-    VBICdelete,   /* DEVdelete      */
-    VBICgetic,    /* DEVsetic       */
-    VBICask,      /* DEVask         */
-    VBICmAsk,     /* DEVmodAsk      */
-    VBICpzLoad,   /* DEVpzLoad      */
-    VBICconvTest, /* DEVconvTest    */
-    NULL,         /* DEVsenSetup    */
-    NULL,         /* DEVsenLoad     */
-    NULL,         /* DEVsenUpdate   */
-    NULL,         /* DEVsenAcLoad   */
-    NULL,         /* DEVsenPrint    */
-    NULL,         /* DEVsenTrunc    */
-    NULL,         /* DEVdisto       */
-    VBICnoise,    /* DEVnoise       */
-    VBICsoaCheck, /* DEVsoaCheck    */
-#ifdef CIDER
-    NULL,         /* DEVdump       */
-    NULL,         /* DEVacct       */
-#endif                                                         
-    &VBICiSize,   /* DEVinstSize    */
-    &VBICmSize    /* DEVmodSize     */
+    .DEVparam = VBICparam,
+    .DEVmodParam = VBICmParam,
+    .DEVload = VBICload,
+    .DEVsetup = VBICsetup,
+    .DEVunsetup = VBICunsetup,
+    .DEVpzSetup = VBICsetup,
+    .DEVtemperature = VBICtemp,
+    .DEVtrunc = VBICtrunc,
+    .DEVfindBranch = NULL,
+    .DEVacLoad = VBICacLoad,
+    .DEVaccept = NULL,
+    .DEVdestroy = VBICdestroy,
+    .DEVmodDelete = VBICmDelete,
+    .DEVdelete = VBICdelete,
+    .DEVsetic = VBICgetic,
+    .DEVask = VBICask,
+    .DEVmodAsk = VBICmAsk,
+    .DEVpzLoad = VBICpzLoad,
+    .DEVconvTest = VBICconvTest,
+    .DEVsenSetup = NULL,
+    .DEVsenLoad = NULL,
+    .DEVsenUpdate = NULL,
+    .DEVsenAcLoad = NULL,
+    .DEVsenPrint = NULL,
+    .DEVsenTrunc = NULL,
+    .DEVdisto = NULL,
+    .DEVnoise = VBICnoise,
+    .DEVsoaCheck = VBICsoaCheck,
+    .DEVinstSize = &VBICiSize,
+    .DEVmodSize = &VBICmSize,
 
+#ifdef CIDER
+    .DEVdump = NULL,
+    .DEVacct = NULL,
+#endif
 };
 
 

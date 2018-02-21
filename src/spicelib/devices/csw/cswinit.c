@@ -10,73 +10,64 @@
 
 
 SPICEdev CSWinfo = {
-    {
-	"CSwitch",
-        "Current controlled ideal switch",
-
-        &CSWnSize,
-        &CSWnSize,
-        CSWnames,
-
-        &CSWpTSize,
-        CSWpTable,
-
-        &CSWmPTSize,
-        CSWmPTable,
+    .DEVpublic = {
+        .name = "CSwitch",
+        .description = "Current controlled ideal switch",
+        .terms = &CSWnSize,
+        .numNames = &CSWnSize,
+        .termNames = CSWnames,
+        .numInstanceParms = &CSWpTSize,
+        .instanceParms = CSWpTable,
+        .numModelParms = &CSWmPTSize,
+        .modelParms = CSWmPTable,
+        .flags = 0,
 
 #ifdef XSPICE
-/*----  Fixed by SDB 5.2.2003 to enable XSPICE/tclspice integration  -----*/
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-/*---------------------------  End of SDB fix   -------------------------*/
+        .cm_func = NULL,
+        .num_conn = 0,
+        .conn = NULL,
+        .num_param = 0,
+        .param = NULL,
+        .num_inst_var = 0,
+        .inst_var = NULL,
 #endif
-
-	0
     },
 
- /* DEVparam      */ CSWparam,
- /* DEVmodParam   */ CSWmParam,
- /* DEVload       */ CSWload,
- /* DEVsetup      */ CSWsetup,
- /* DEVunsetup    */ NULL,
- /* DEVpzSetup    */ CSWsetup,
- /* DEVtemperature*/ NULL,
- /* DEVtrunc      */ CSWtrunc,
- /* DEVfindBranch */ NULL,
- /* DEVacLoad     */ CSWacLoad,
- /* DEVaccept     */ NULL,
- /* DEVdestroy    */ CSWdestroy,
- /* DEVmodDelete  */ CSWmDelete,
- /* DEVdelete     */ CSWdelete,
- /* DEVsetic      */ NULL,
- /* DEVask        */ CSWask,
- /* DEVmodAsk     */ CSWmAsk,
- /* DEVpzLoad     */ CSWpzLoad,
- /* DEVconvTest   */ NULL,
- /* DEVsenSetup   */ NULL,
- /* DEVsenLoad    */ NULL,
- /* DEVsenUpdate  */ NULL,
- /* DEVsenAcLoad  */ NULL,
- /* DEVsenPrint   */ NULL,
- /* DEVsenTrunc   */ NULL,
- /* DEVdisto      */ NULL,	/* DISTO */
- /* DEVnoise      */ CSWnoise,
- /* DEVsoaCheck   */ NULL,
-#ifdef CIDER
- /* DEVdump       */ NULL,
- /* DEVacct       */ NULL,
-#endif
- /* DEVinstSize   */ &CSWiSize,
- /* DEVmodSize    */ &CSWmSize
+    .DEVparam = CSWparam,
+    .DEVmodParam = CSWmParam,
+    .DEVload = CSWload,
+    .DEVsetup = CSWsetup,
+    .DEVunsetup = NULL,
+    .DEVpzSetup = CSWsetup,
+    .DEVtemperature = NULL,
+    .DEVtrunc = CSWtrunc,
+    .DEVfindBranch = NULL,
+    .DEVacLoad = CSWacLoad,
+    .DEVaccept = NULL,
+    .DEVdestroy = CSWdestroy,
+    .DEVmodDelete = CSWmDelete,
+    .DEVdelete = CSWdelete,
+    .DEVsetic = NULL,
+    .DEVask = CSWask,
+    .DEVmodAsk = CSWmAsk,
+    .DEVpzLoad = CSWpzLoad,
+    .DEVconvTest = NULL,
+    .DEVsenSetup = NULL,
+    .DEVsenLoad = NULL,
+    .DEVsenUpdate = NULL,
+    .DEVsenAcLoad = NULL,
+    .DEVsenPrint = NULL,
+    .DEVsenTrunc = NULL,
+    .DEVdisto = NULL,
+    .DEVnoise = CSWnoise,
+    .DEVsoaCheck = NULL,
+    .DEVinstSize = &CSWiSize,
+    .DEVmodSize = &CSWmSize,
 
+#ifdef CIDER
+    .DEVdump = NULL,
+    .DEVacct = NULL,
+#endif
 };
 
 

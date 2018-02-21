@@ -8,74 +8,64 @@
 
 
 SPICEdev VCCSinfo = {
-    {
-        "VCCS",
-        "Voltage controlled current source",
-
-        &VCCSnSize,
-        &VCCSnSize,
-        VCCSnames,
-
-        &VCCSpTSize,
-        VCCSpTable,
-
-        NULL,
-        NULL,
+    .DEVpublic = {
+        .name = "VCCS",
+        .description = "Voltage controlled current source",
+        .terms = &VCCSnSize,
+        .numNames = &VCCSnSize,
+        .termNames = VCCSnames,
+        .numInstanceParms = &VCCSpTSize,
+        .instanceParms = VCCSpTable,
+        .numModelParms = NULL,
+        .modelParms = NULL,
+        .flags = DEV_DEFAULT,
 
 #ifdef XSPICE
-/*----  Fixed by SDB 5.2.2003 to enable XSPICE/tclspice integration  -----*/
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-
-        0,     /* This is a SPICE device, it has no MIF info data */
-        NULL,  /* This is a SPICE device, it has no MIF info data */
-/*---------------------------  End of SDB fix   -------------------------*/
+        .cm_func = NULL,
+        .num_conn = 0,
+        .conn = NULL,
+        .num_param = 0,
+        .param = NULL,
+        .num_inst_var = 0,
+        .inst_var = NULL,
 #endif
-
-	DEV_DEFAULT
     },
 
- /* DEVparam      */ VCCSparam,
- /* DEVmodParam   */ NULL,
- /* DEVload       */ VCCSload,
- /* DEVsetup      */ VCCSsetup,
- /* DEVunsetup    */ NULL,
- /* DEVpzSetup    */ VCCSsetup,
- /* DEVtemperature*/ NULL,
- /* DEVtrunc      */ NULL,
- /* DEVfindBranch */ NULL,
- /* DEVacLoad     */ VCCSload,   /* ac and normal loads are identical */
- /* DEVaccept     */ NULL,
- /* DEVdestroy    */ VCCSdestroy,
- /* DEVmodDelete  */ VCCSmDelete,
- /* DEVdelete     */ VCCSdelete,
- /* DEVsetic      */ NULL,
- /* DEVask        */ VCCSask,
- /* DEVmodAsk     */ NULL,
- /* DEVpzLoad     */ VCCSpzLoad,
- /* DEVconvTest   */ NULL,
- /* DEVsenSetup   */ VCCSsSetup,
- /* DEVsenLoad    */ VCCSsLoad,
- /* DEVsenUpdate  */ NULL,
- /* DEVsenAcLoad  */ VCCSsAcLoad,
- /* DEVsenPrint   */ VCCSsPrint,
- /* DEVsenTrunc   */ NULL,
- /* DEVdisto      */ NULL,	/* DISTO */
- /* DEVnoise      */ NULL,	/* NOISE */
- /* DEVsoaCheck   */ NULL,
+    .DEVparam = VCCSparam,
+    .DEVmodParam = NULL,
+    .DEVload = VCCSload,
+    .DEVsetup = VCCSsetup,
+    .DEVunsetup = NULL,
+    .DEVpzSetup = VCCSsetup,
+    .DEVtemperature = NULL,
+    .DEVtrunc = NULL,
+    .DEVfindBranch = NULL,
+    .DEVacLoad = VCCSload,
+    .DEVaccept = NULL,
+    .DEVdestroy = VCCSdestroy,
+    .DEVmodDelete = VCCSmDelete,
+    .DEVdelete = VCCSdelete,
+    .DEVsetic = NULL,
+    .DEVask = VCCSask,
+    .DEVmodAsk = NULL,
+    .DEVpzLoad = VCCSpzLoad,
+    .DEVconvTest = NULL,
+    .DEVsenSetup = VCCSsSetup,
+    .DEVsenLoad = VCCSsLoad,
+    .DEVsenUpdate = NULL,
+    .DEVsenAcLoad = VCCSsAcLoad,
+    .DEVsenPrint = VCCSsPrint,
+    .DEVsenTrunc = NULL,
+    .DEVdisto = NULL,
+    .DEVnoise = NULL,
+    .DEVsoaCheck = NULL,
+    .DEVinstSize = &VCCSiSize,
+    .DEVmodSize = &VCCSmSize,
+
 #ifdef CIDER
- /* DEVdump       */ NULL,
- /* DEVacct       */ NULL,
-#endif                        
- /* DEVinstSize   */ &VCCSiSize,
- /* DEVmodSize    */ &VCCSmSize
-
-
+    .DEVdump = NULL,
+    .DEVacct = NULL,
+#endif
 };
 
 
