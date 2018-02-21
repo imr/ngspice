@@ -17,6 +17,8 @@ SPICEdev HSMHV2info = {
         .instanceParms = HSMHV2pTable,
         .numModelParms = &HSMHV2mPTSize,
         .modelParms = HSMHV2mPTable,
+        .flags = DEV_DEFAULT,
+
 #ifdef XSPICE
         .cm_func = NULL,
         .num_conn = 0,
@@ -26,8 +28,8 @@ SPICEdev HSMHV2info = {
         .num_inst_var = 0,
         .inst_var = NULL,
 #endif
-        .flags = DEV_DEFAULT,
     },
+
     .DEVparam = HSMHV2param,
     .DEVmodParam = HSMHV2mParam,
     .DEVload = HSMHV2load,
@@ -56,12 +58,13 @@ SPICEdev HSMHV2info = {
     .DEVdisto = NULL,
     .DEVnoise = HSMHV2noise,
     .DEVsoaCheck = HSMHV2soaCheck,
+    .DEVinstSize = &HSMHV2iSize,
+    .DEVmodSize = &HSMHV2mSize,
+
 #ifdef CIDER
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
-    .DEVinstSize = &HSMHV2iSize,
-    .DEVmodSize = &HSMHV2mSize,
 };
 
 

@@ -18,6 +18,8 @@ SPICEdev URCinfo = {
         .instanceParms = URCpTable,
         .numModelParms = &URCmPTSize,
         .modelParms = URCmPTable,
+        .flags = 0,
+
 #ifdef XSPICE
         .cm_func = NULL,
         .num_conn = 0,
@@ -27,8 +29,8 @@ SPICEdev URCinfo = {
         .num_inst_var = 0,
         .inst_var = NULL,
 #endif
-        .flags = 0,
     },
+
     .DEVparam = URCparam,
     .DEVmodParam = URCmParam,
     .DEVload = NULL,
@@ -57,12 +59,13 @@ SPICEdev URCinfo = {
     .DEVdisto = NULL,
     .DEVnoise = NULL,
     .DEVsoaCheck = NULL,
+    .DEVinstSize = &URCiSize,
+    .DEVmodSize = &URCmSize,
+
 #ifdef CIDER
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
-    .DEVinstSize = &URCiSize,
-    .DEVmodSize = &URCmSize,
 };
 
 

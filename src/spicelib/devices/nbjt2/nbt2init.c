@@ -18,6 +18,8 @@ SPICEdev NBJT2info = {
         .instanceParms = NBJT2pTable,
         .numModelParms = &NBJT2mPTSize,
         .modelParms = NBJT2mPTable,
+        .flags = DEV_DEFAULT,
+
 #ifdef XSPICE
         .cm_func = NULL,
         .num_conn = 0,
@@ -27,8 +29,8 @@ SPICEdev NBJT2info = {
         .num_inst_var = 0,
         .inst_var = NULL,
 #endif
-        .flags = DEV_DEFAULT,
     },
+
     .DEVparam = NBJT2param,
     .DEVmodParam = NBJT2mParam,
     .DEVload = NBJT2load,
@@ -57,12 +59,13 @@ SPICEdev NBJT2info = {
     .DEVdisto = NULL,
     .DEVnoise = NULL,
     .DEVsoaCheck = NULL,
+    .DEVinstSize = &NBJT2iSize,
+    .DEVmodSize = &NBJT2mSize,
+
 #ifdef CIDER
     .DEVdump = NBJT2dump,
     .DEVacct = NBJT2acct,
 #endif
-    .DEVinstSize = &NBJT2iSize,
-    .DEVmodSize = &NBJT2mSize,
 };
 
 

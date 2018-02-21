@@ -18,6 +18,8 @@ SPICEdev HFET2info = {
         .instanceParms = HFET2pTable,
         .numModelParms = &HFET2mPTSize,
         .modelParms = HFET2mPTable,
+        .flags = DEV_DEFAULT,
+
 #ifdef XSPICE
         .cm_func = NULL,
         .num_conn = 0,
@@ -27,8 +29,8 @@ SPICEdev HFET2info = {
         .num_inst_var = 0,
         .inst_var = NULL,
 #endif
-        .flags = DEV_DEFAULT,
     },
+
     .DEVparam = HFET2param,
     .DEVmodParam = HFET2mParam,
     .DEVload = HFET2load,
@@ -57,12 +59,13 @@ SPICEdev HFET2info = {
     .DEVdisto = NULL,
     .DEVnoise = NULL,
     .DEVsoaCheck = NULL,
+    .DEVinstSize = &HFET2iSize,
+    .DEVmodSize = &HFET2mSize,
+
 #ifdef CIDER
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
-    .DEVinstSize = &HFET2iSize,
-    .DEVmodSize = &HFET2mSize,
 };
 
 

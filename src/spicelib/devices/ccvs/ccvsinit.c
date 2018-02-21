@@ -18,6 +18,8 @@ SPICEdev CCVSinfo = {
         .instanceParms = CCVSpTable,
         .numModelParms = NULL,
         .modelParms = NULL,
+        .flags = DEV_DEFAULT,
+
 #ifdef XSPICE
         .cm_func = NULL,
         .num_conn = 0,
@@ -27,8 +29,8 @@ SPICEdev CCVSinfo = {
         .num_inst_var = 0,
         .inst_var = NULL,
 #endif
-        .flags = DEV_DEFAULT,
     },
+
     .DEVparam = CCVSparam,
     .DEVmodParam = NULL,
     .DEVload = CCVSload,
@@ -57,12 +59,13 @@ SPICEdev CCVSinfo = {
     .DEVdisto = NULL,
     .DEVnoise = NULL,
     .DEVsoaCheck = NULL,
+    .DEVinstSize = &CCVSiSize,
+    .DEVmodSize = &CCVSmSize,
+
 #ifdef CIDER
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
-    .DEVinstSize = &CCVSiSize,
-    .DEVmodSize = &CCVSmSize,
 };
 
 

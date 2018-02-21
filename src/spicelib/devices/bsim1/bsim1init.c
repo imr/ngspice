@@ -18,6 +18,8 @@ SPICEdev B1info = {
         .instanceParms = B1pTable,
         .numModelParms = &B1mPTSize,
         .modelParms = B1mPTable,
+        .flags = DEV_DEFAULT,
+
 #ifdef XSPICE
         .cm_func = NULL,
         .num_conn = 0,
@@ -27,8 +29,8 @@ SPICEdev B1info = {
         .num_inst_var = 0,
         .inst_var = NULL,
 #endif
-        .flags = DEV_DEFAULT,
     },
+
     .DEVparam = B1param,
     .DEVmodParam = B1mParam,
     .DEVload = B1load,
@@ -57,12 +59,13 @@ SPICEdev B1info = {
     .DEVdisto = B1disto,
     .DEVnoise = B1noise,
     .DEVsoaCheck = NULL,
+    .DEVinstSize = &B1iSize,
+    .DEVmodSize = &B1mSize,
+
 #ifdef CIDER
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
-    .DEVinstSize = &B1iSize,
-    .DEVmodSize = &B1mSize,
 };
 
 

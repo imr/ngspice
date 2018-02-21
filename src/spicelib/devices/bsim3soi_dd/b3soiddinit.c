@@ -16,6 +16,8 @@ SPICEdev B3SOIDDinfo = {
         .instanceParms = B3SOIDDpTable,
         .numModelParms = &B3SOIDDmPTSize,
         .modelParms = B3SOIDDmPTable,
+        .flags = DEV_DEFAULT,
+
 #ifdef XSPICE
         .cm_func = NULL,
         .num_conn = 0,
@@ -25,8 +27,8 @@ SPICEdev B3SOIDDinfo = {
         .num_inst_var = 0,
         .inst_var = NULL,
 #endif
-        .flags = DEV_DEFAULT,
     },
+
     .DEVparam = B3SOIDDparam,
     .DEVmodParam = B3SOIDDmParam,
     .DEVload = B3SOIDDload,
@@ -55,12 +57,13 @@ SPICEdev B3SOIDDinfo = {
     .DEVdisto = NULL,
     .DEVnoise = B3SOIDDnoise,
     .DEVsoaCheck = NULL,
+    .DEVinstSize = &B3SOIDDiSize,
+    .DEVmodSize = &B3SOIDDmSize,
+
 #ifdef CIDER
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
-    .DEVinstSize = &B3SOIDDiSize,
-    .DEVmodSize = &B3SOIDDmSize,
 };
 
 SPICEdev *

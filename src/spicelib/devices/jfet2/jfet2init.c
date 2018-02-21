@@ -18,6 +18,8 @@ SPICEdev JFET2info = {
         .instanceParms = JFET2pTable,
         .numModelParms = &JFET2mPTSize,
         .modelParms = JFET2mPTable,
+        .flags = DEV_DEFAULT,
+
 #ifdef XSPICE
         .cm_func = NULL,
         .num_conn = 0,
@@ -27,8 +29,8 @@ SPICEdev JFET2info = {
         .num_inst_var = 0,
         .inst_var = NULL,
 #endif
-        .flags = DEV_DEFAULT,
     },
+
     .DEVparam = JFET2param,
     .DEVmodParam = JFET2mParam,
     .DEVload = JFET2load,
@@ -57,12 +59,13 @@ SPICEdev JFET2info = {
     .DEVdisto = NULL,
     .DEVnoise = JFET2noise,
     .DEVsoaCheck = NULL,
+    .DEVinstSize = &JFET2iSize,
+    .DEVmodSize = &JFET2mSize,
+
 #ifdef CIDER
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
-    .DEVinstSize = &JFET2iSize,
-    .DEVmodSize = &JFET2mSize,
 };
 
 

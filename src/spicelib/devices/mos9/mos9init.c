@@ -18,6 +18,8 @@ SPICEdev MOS9info = {
         .instanceParms = MOS9pTable,
         .numModelParms = &MOS9mPTSize,
         .modelParms = MOS9mPTable,
+        .flags = DEV_DEFAULT,
+
 #ifdef XSPICE
         .cm_func = NULL,
         .num_conn = 0,
@@ -27,8 +29,8 @@ SPICEdev MOS9info = {
         .num_inst_var = 0,
         .inst_var = NULL,
 #endif
-        .flags = DEV_DEFAULT,
     },
+
     .DEVparam = MOS9param,
     .DEVmodParam = MOS9mParam,
     .DEVload = MOS9load,
@@ -57,12 +59,13 @@ SPICEdev MOS9info = {
     .DEVdisto = MOS9disto,
     .DEVnoise = MOS9noise,
     .DEVsoaCheck = NULL,
+    .DEVinstSize = &MOS9iSize,
+    .DEVmodSize = &MOS9mSize,
+
 #ifdef CIDER
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
-    .DEVinstSize = &MOS9iSize,
-    .DEVmodSize = &MOS9mSize,
 };
 
 

@@ -18,6 +18,8 @@ SPICEdev CAPinfo = {
         .instanceParms = CAPpTable,
         .numModelParms = &CAPmPTSize,
         .modelParms = CAPmPTable,
+        .flags = 0,
+
 #ifdef XSPICE
         .cm_func = NULL,
         .num_conn = 0,
@@ -27,8 +29,8 @@ SPICEdev CAPinfo = {
         .num_inst_var = 0,
         .inst_var = NULL,
 #endif
-        .flags = 0,
     },
+
     .DEVparam = CAPparam,
     .DEVmodParam = CAPmParam,
     .DEVload = CAPload,
@@ -57,12 +59,13 @@ SPICEdev CAPinfo = {
     .DEVdisto = NULL,
     .DEVnoise = NULL,
     .DEVsoaCheck = CAPsoaCheck,
+    .DEVinstSize = &CAPiSize,
+    .DEVmodSize = &CAPmSize,
+
 #ifdef CIDER
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
-    .DEVinstSize = &CAPiSize,
-    .DEVmodSize = &CAPmSize,
 };
 
 

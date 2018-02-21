@@ -18,6 +18,8 @@ SPICEdev BJTinfo = {
 	.instanceParms = BJTpTable,
 	.numModelParms = &BJTmPTSize,
 	.modelParms = BJTmPTable,
+	.flags = DEV_DEFAULT,
+
 #ifdef XSPICE
 	.cm_func = NULL,
 	.num_conn = 0,
@@ -27,8 +29,8 @@ SPICEdev BJTinfo = {
 	.num_inst_var = 0,
 	.inst_var = NULL,
 #endif
-	.flags = DEV_DEFAULT,
     },
+
     .DEVparam = BJTparam,
     .DEVmodParam = BJTmParam,
     .DEVload = BJTload,
@@ -57,12 +59,13 @@ SPICEdev BJTinfo = {
     .DEVdisto = BJTdisto,
     .DEVnoise = BJTnoise,
     .DEVsoaCheck = BJTsoaCheck,
+    .DEVinstSize = &BJTiSize,
+    .DEVmodSize = &BJTmSize,
+
 #ifdef CIDER
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
-    .DEVinstSize = &BJTiSize,
-    .DEVmodSize = &BJTmSize,
 };
 
 

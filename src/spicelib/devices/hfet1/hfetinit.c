@@ -18,6 +18,8 @@ SPICEdev HFETAinfo = {
         .instanceParms = HFETApTable,
         .numModelParms = &HFETAmPTSize,
         .modelParms = HFETAmPTable,
+        .flags = DEV_DEFAULT,
+
 #ifdef XSPICE
         .cm_func = NULL,
         .num_conn = 0,
@@ -27,8 +29,8 @@ SPICEdev HFETAinfo = {
         .num_inst_var = 0,
         .inst_var = NULL,
 #endif
-        .flags = DEV_DEFAULT,
     },
+
     .DEVparam = HFETAparam,
     .DEVmodParam = HFETAmParam,
     .DEVload = HFETAload,
@@ -57,12 +59,13 @@ SPICEdev HFETAinfo = {
     .DEVdisto = NULL,
     .DEVnoise = NULL,
     .DEVsoaCheck = NULL,
+    .DEVinstSize = &HFETAiSize,
+    .DEVmodSize = &HFETAmSize,
+
 #ifdef CIDER
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
-    .DEVinstSize = &HFETAiSize,
-    .DEVmodSize = &HFETAmSize,
 };
 
 

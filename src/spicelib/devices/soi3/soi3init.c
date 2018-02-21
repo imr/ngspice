@@ -18,6 +18,8 @@ SPICEdev SOI3info = {
         .instanceParms = SOI3pTable,
         .numModelParms = &SOI3mPTSize,
         .modelParms = SOI3mPTable,
+        .flags = DEV_DEFAULT,
+
 #ifdef XSPICE
         .cm_func = NULL,
         .num_conn = 0,
@@ -27,8 +29,8 @@ SPICEdev SOI3info = {
         .num_inst_var = 0,
         .inst_var = NULL,
 #endif
-        .flags = DEV_DEFAULT,
     },
+
     .DEVparam = SOI3param,
     .DEVmodParam = SOI3mParam,
     .DEVload = SOI3load,
@@ -57,12 +59,13 @@ SPICEdev SOI3info = {
     .DEVdisto = NULL,
     .DEVnoise = SOI3noise,
     .DEVsoaCheck = NULL,
+    .DEVinstSize = &SOI3iSize,
+    .DEVmodSize = &SOI3mSize,
+
 #ifdef CIDER
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
-    .DEVinstSize = &SOI3iSize,
-    .DEVmodSize = &SOI3mSize,
 };
 
 

@@ -18,6 +18,8 @@ SPICEdev NUMDinfo = {
         .instanceParms = NUMDpTable,
         .numModelParms = &NUMDmPTSize,
         .modelParms = NUMDmPTable,
+        .flags = DEV_DEFAULT,
+
 #ifdef XSPICE
         .cm_func = NULL,
         .num_conn = 0,
@@ -27,8 +29,8 @@ SPICEdev NUMDinfo = {
         .num_inst_var = 0,
         .inst_var = NULL,
 #endif
-        .flags = DEV_DEFAULT,
     },
+
     .DEVparam = NUMDparam,
     .DEVmodParam = NUMDmParam,
     .DEVload = NUMDload,
@@ -57,12 +59,13 @@ SPICEdev NUMDinfo = {
     .DEVdisto = NULL,
     .DEVnoise = NULL,
     .DEVsoaCheck = NULL,
+    .DEVinstSize = &NUMDiSize,
+    .DEVmodSize = &NUMDmSize,
+
 #ifdef CIDER
     .DEVdump = NUMDdump,
     .DEVacct = NUMDacct,
 #endif
-    .DEVinstSize = &NUMDiSize,
-    .DEVmodSize = &NUMDmSize,
 };
 
 

@@ -18,6 +18,8 @@ SPICEdev VCCSinfo = {
         .instanceParms = VCCSpTable,
         .numModelParms = NULL,
         .modelParms = NULL,
+        .flags = DEV_DEFAULT,
+
 #ifdef XSPICE
         .cm_func = NULL,
         .num_conn = 0,
@@ -27,8 +29,8 @@ SPICEdev VCCSinfo = {
         .num_inst_var = 0,
         .inst_var = NULL,
 #endif
-        .flags = DEV_DEFAULT,
     },
+
     .DEVparam = VCCSparam,
     .DEVmodParam = NULL,
     .DEVload = VCCSload,
@@ -57,12 +59,13 @@ SPICEdev VCCSinfo = {
     .DEVdisto = NULL,
     .DEVnoise = NULL,
     .DEVsoaCheck = NULL,
+    .DEVinstSize = &VCCSiSize,
+    .DEVmodSize = &VCCSmSize,
+
 #ifdef CIDER
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
-    .DEVinstSize = &VCCSiSize,
-    .DEVmodSize = &VCCSmSize,
 };
 
 

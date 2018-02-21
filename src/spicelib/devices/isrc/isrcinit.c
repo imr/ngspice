@@ -18,6 +18,8 @@ SPICEdev ISRCinfo = {
         .instanceParms = ISRCpTable,
         .numModelParms = NULL,
         .modelParms = NULL,
+        .flags = DEV_DEFAULT,
+
 #ifdef XSPICE
         .cm_func = NULL,
         .num_conn = 0,
@@ -27,8 +29,8 @@ SPICEdev ISRCinfo = {
         .num_inst_var = 0,
         .inst_var = NULL,
 #endif
-        .flags = DEV_DEFAULT,
     },
+
     .DEVparam = ISRCparam,
     .DEVmodParam = NULL,
     .DEVload = ISRCload,
@@ -57,12 +59,13 @@ SPICEdev ISRCinfo = {
     .DEVdisto = NULL,
     .DEVnoise = NULL,
     .DEVsoaCheck = NULL,
+    .DEVinstSize = &ISRCiSize,
+    .DEVmodSize = &ISRCmSize,
+
 #ifdef CIDER
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
-    .DEVinstSize = &ISRCiSize,
-    .DEVmodSize = &ISRCmSize,
 };
 
 

@@ -19,6 +19,8 @@ SPICEdev DIOinfo = {
         .instanceParms = DIOpTable,
         .numModelParms = &DIOmPTSize,
         .modelParms = DIOmPTable,
+        .flags = DEV_DEFAULT,
+
 #ifdef XSPICE
         .cm_func = NULL,
         .num_conn = 0,
@@ -28,8 +30,8 @@ SPICEdev DIOinfo = {
         .num_inst_var = 0,
         .inst_var = NULL,
 #endif
-        .flags = DEV_DEFAULT,
     },
+
     .DEVparam = DIOparam,
     .DEVmodParam = DIOmParam,
     .DEVload = DIOload,
@@ -58,12 +60,13 @@ SPICEdev DIOinfo = {
     .DEVdisto = DIOdisto,
     .DEVnoise = DIOnoise,
     .DEVsoaCheck = DIOsoaCheck,
+    .DEVinstSize = &DIOiSize,
+    .DEVmodSize = &DIOmSize,
+
 #ifdef CIDER
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
-    .DEVinstSize = &DIOiSize,
-    .DEVmodSize = &DIOmSize,
 };
 
 

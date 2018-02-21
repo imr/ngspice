@@ -18,6 +18,8 @@ SPICEdev BSIM4v6info = {
         .instanceParms = BSIM4v6pTable,
         .numModelParms = &BSIM4v6mPTSize,
         .modelParms = BSIM4v6mPTable,
+        .flags = DEV_DEFAULT,
+
 #ifdef XSPICE
         .cm_func = NULL,
         .num_conn = 0,
@@ -27,8 +29,8 @@ SPICEdev BSIM4v6info = {
         .num_inst_var = 0,
         .inst_var = NULL,
 #endif
-        .flags = DEV_DEFAULT,
     },
+
     .DEVparam = BSIM4v6param,
     .DEVmodParam = BSIM4v6mParam,
     .DEVload = BSIM4v6load,
@@ -57,12 +59,13 @@ SPICEdev BSIM4v6info = {
     .DEVdisto = NULL,
     .DEVnoise = BSIM4v6noise,
     .DEVsoaCheck = BSIM4v6soaCheck,
+    .DEVinstSize = &BSIM4v6iSize,
+    .DEVmodSize = &BSIM4v6mSize,
+
 #ifdef CIDER
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
-    .DEVinstSize = &BSIM4v6iSize,
-    .DEVmodSize = &BSIM4v6mSize,
 };
 
 

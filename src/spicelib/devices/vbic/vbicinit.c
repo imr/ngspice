@@ -23,6 +23,8 @@ SPICEdev VBICinfo = {
         .instanceParms = VBICpTable,
         .numModelParms = &VBICmPTSize,
         .modelParms = VBICmPTable,
+        .flags = DEV_DEFAULT,
+
 #ifdef XSPICE
         .cm_func = NULL,
         .num_conn = 0,
@@ -32,8 +34,8 @@ SPICEdev VBICinfo = {
         .num_inst_var = 0,
         .inst_var = NULL,
 #endif
-        .flags = DEV_DEFAULT,
     },
+
     .DEVparam = VBICparam,
     .DEVmodParam = VBICmParam,
     .DEVload = VBICload,
@@ -62,12 +64,13 @@ SPICEdev VBICinfo = {
     .DEVdisto = NULL,
     .DEVnoise = VBICnoise,
     .DEVsoaCheck = VBICsoaCheck,
+    .DEVinstSize = &VBICiSize,
+    .DEVmodSize = &VBICmSize,
+
 #ifdef CIDER
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
-    .DEVinstSize = &VBICiSize,
-    .DEVmodSize = &VBICmSize,
 };
 
 

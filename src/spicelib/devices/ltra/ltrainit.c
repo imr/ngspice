@@ -18,6 +18,8 @@ SPICEdev LTRAinfo = {
         .instanceParms = LTRApTable,
         .numModelParms = &LTRAmPTSize,
         .modelParms = LTRAmPTable,
+        .flags = 0,
+
 #ifdef XSPICE
         .cm_func = NULL,
         .num_conn = 0,
@@ -27,8 +29,8 @@ SPICEdev LTRAinfo = {
         .num_inst_var = 0,
         .inst_var = NULL,
 #endif
-        .flags = 0,
     },
+
     .DEVparam = LTRAparam,
     .DEVmodParam = LTRAmParam,
     .DEVload = LTRAload,
@@ -57,12 +59,13 @@ SPICEdev LTRAinfo = {
     .DEVdisto = NULL,
     .DEVnoise = NULL,
     .DEVsoaCheck = NULL,
+    .DEVinstSize = &LTRAiSize,
+    .DEVmodSize = &LTRAmSize,
+
 #ifdef CIDER
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
-    .DEVinstSize = &LTRAiSize,
-    .DEVmodSize = &LTRAmSize,
 };
 
 

@@ -18,6 +18,8 @@ SPICEdev MOS1info = {
         .instanceParms = MOS1pTable,
         .numModelParms = &MOS1mPTSize,
         .modelParms = MOS1mPTable,
+        .flags = DEV_DEFAULT,
+
 #ifdef XSPICE
         .cm_func = NULL,
         .num_conn = 0,
@@ -27,8 +29,8 @@ SPICEdev MOS1info = {
         .num_inst_var = 0,
         .inst_var = NULL,
 #endif
-        .flags = DEV_DEFAULT,
     },
+
     .DEVparam = MOS1param,
     .DEVmodParam = MOS1mParam,
     .DEVload = MOS1load,
@@ -57,12 +59,13 @@ SPICEdev MOS1info = {
     .DEVdisto = MOS1disto,
     .DEVnoise = MOS1noise,
     .DEVsoaCheck = NULL,
+    .DEVinstSize = &MOS1iSize,
+    .DEVmodSize = &MOS1mSize,
+
 #ifdef CIDER
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
-    .DEVinstSize = &MOS1iSize,
-    .DEVmodSize = &MOS1mSize,
 };
 
 

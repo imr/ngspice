@@ -18,6 +18,8 @@ SPICEdev MESinfo = {
         .instanceParms = MESpTable,
         .numModelParms = &MESmPTSize,
         .modelParms = MESmPTable,
+        .flags = DEV_DEFAULT,
+
 #ifdef XSPICE
         .cm_func = NULL,
         .num_conn = 0,
@@ -27,8 +29,8 @@ SPICEdev MESinfo = {
         .num_inst_var = 0,
         .inst_var = NULL,
 #endif
-        .flags = DEV_DEFAULT,
     },
+
     .DEVparam = MESparam,
     .DEVmodParam = MESmParam,
     .DEVload = MESload,
@@ -57,12 +59,13 @@ SPICEdev MESinfo = {
     .DEVdisto = MESdisto,
     .DEVnoise = MESnoise,
     .DEVsoaCheck = NULL,
+    .DEVinstSize = &MESiSize,
+    .DEVmodSize = &MESmSize,
+
 #ifdef CIDER
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
-    .DEVinstSize = &MESiSize,
-    .DEVmodSize = &MESmSize,
 };
 
 

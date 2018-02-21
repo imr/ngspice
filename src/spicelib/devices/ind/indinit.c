@@ -18,6 +18,8 @@ SPICEdev INDinfo = {
         .instanceParms = INDpTable,
         .numModelParms = &INDmPTSize,
         .modelParms = INDmPTable,
+        .flags = 0,
+
 #ifdef XSPICE
         .cm_func = NULL,
         .num_conn = 0,
@@ -27,8 +29,8 @@ SPICEdev INDinfo = {
         .num_inst_var = 0,
         .inst_var = NULL,
 #endif
-        .flags = 0,
     },
+
     .DEVparam = INDparam,
     .DEVmodParam = INDmParam,
     .DEVload = INDload,
@@ -57,12 +59,13 @@ SPICEdev INDinfo = {
     .DEVdisto = NULL,
     .DEVnoise = NULL,
     .DEVsoaCheck = NULL,
+    .DEVinstSize = &INDiSize,
+    .DEVmodSize = &INDmSize,
+
 #ifdef CIDER
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
-    .DEVinstSize = &INDiSize,
-    .DEVmodSize = &INDmSize,
 };
 
 
@@ -77,6 +80,8 @@ SPICEdev MUTinfo = {
         .instanceParms = MUTpTable,
         .numModelParms = NULL,
         .modelParms = NULL,
+        .flags = 0,
+
 #ifdef XSPICE
         .cm_func = NULL,
         .num_conn = 0,
@@ -86,8 +91,8 @@ SPICEdev MUTinfo = {
         .num_inst_var = 0,
         .inst_var = NULL,
 #endif
-        .flags = 0,
     },
+
     .DEVparam = MUTparam,
     .DEVmodParam = NULL,
     .DEVload = NULL,
@@ -116,12 +121,13 @@ SPICEdev MUTinfo = {
     .DEVdisto = NULL,
     .DEVnoise = NULL,
     .DEVsoaCheck = NULL,
+    .DEVinstSize = &MUTiSize,
+    .DEVmodSize = &MUTmSize,
+
 #ifdef CIDER
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
-    .DEVinstSize = &MUTiSize,
-    .DEVmodSize = &MUTmSize,
 };
 
 

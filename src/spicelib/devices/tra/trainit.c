@@ -18,6 +18,8 @@ SPICEdev TRAinfo = {
         .instanceParms = TRApTable,
         .numModelParms = NULL,
         .modelParms = NULL,
+        .flags = 0,
+
 #ifdef XSPICE
         .cm_func = NULL,
         .num_conn = 0,
@@ -27,8 +29,8 @@ SPICEdev TRAinfo = {
         .num_inst_var = 0,
         .inst_var = NULL,
 #endif
-        .flags = 0,
     },
+
     .DEVparam = TRAparam,
     .DEVmodParam = NULL,
     .DEVload = TRAload,
@@ -57,12 +59,13 @@ SPICEdev TRAinfo = {
     .DEVdisto = NULL,
     .DEVnoise = NULL,
     .DEVsoaCheck = NULL,
+    .DEVinstSize = &TRAiSize,
+    .DEVmodSize = &TRAmSize,
+
 #ifdef CIDER
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
-    .DEVinstSize = &TRAiSize,
-    .DEVmodSize = &TRAmSize,
 };
 
 

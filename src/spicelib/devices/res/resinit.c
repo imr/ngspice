@@ -18,6 +18,8 @@ SPICEdev RESinfo = {
         .instanceParms = RESpTable,
         .numModelParms = &RESmPTSize,
         .modelParms = RESmPTable,
+        .flags = 0,
+
 #ifdef XSPICE
         .cm_func = NULL,
         .num_conn = 0,
@@ -27,8 +29,8 @@ SPICEdev RESinfo = {
         .num_inst_var = 0,
         .inst_var = NULL,
 #endif
-        .flags = 0,
     },
+
     .DEVparam = RESparam,
     .DEVmodParam = RESmParam,
     .DEVload = RESload,
@@ -57,12 +59,13 @@ SPICEdev RESinfo = {
     .DEVdisto = NULL,
     .DEVnoise = RESnoise,
     .DEVsoaCheck = RESsoaCheck,
+    .DEVinstSize = &RESiSize,
+    .DEVmodSize = &RESmSize,
+
 #ifdef CIDER
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
-    .DEVinstSize = &RESiSize,
-    .DEVmodSize = &RESmSize,
 };
 
 

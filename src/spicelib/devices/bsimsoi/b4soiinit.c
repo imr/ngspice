@@ -16,6 +16,8 @@ SPICEdev B4SOIinfo = {
         .instanceParms = B4SOIpTable,
         .numModelParms = &B4SOImPTSize,
         .modelParms = B4SOImPTable,
+        .flags = DEV_DEFAULT,
+
 #ifdef XSPICE
         .cm_func = NULL,
         .num_conn = 0,
@@ -25,8 +27,8 @@ SPICEdev B4SOIinfo = {
         .num_inst_var = 0,
         .inst_var = NULL,
 #endif
-        .flags = DEV_DEFAULT,
     },
+
     .DEVparam = B4SOIparam,
     .DEVmodParam = B4SOImParam,
     .DEVload = B4SOIload,
@@ -55,12 +57,13 @@ SPICEdev B4SOIinfo = {
     .DEVdisto = NULL,
     .DEVnoise = B4SOInoise,
     .DEVsoaCheck = B4SOIsoaCheck,
+    .DEVinstSize = &B4SOIiSize,
+    .DEVmodSize = &B4SOImSize,
+
 #ifdef CIDER
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
-    .DEVinstSize = &B4SOIiSize,
-    .DEVmodSize = &B4SOImSize,
 };
 
 SPICEdev *

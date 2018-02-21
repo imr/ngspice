@@ -20,6 +20,8 @@ SPICEdev CSWinfo = {
         .instanceParms = CSWpTable,
         .numModelParms = &CSWmPTSize,
         .modelParms = CSWmPTable,
+        .flags = 0,
+
 #ifdef XSPICE
         .cm_func = NULL,
         .num_conn = 0,
@@ -29,8 +31,8 @@ SPICEdev CSWinfo = {
         .num_inst_var = 0,
         .inst_var = NULL,
 #endif
-        .flags = 0,
     },
+
     .DEVparam = CSWparam,
     .DEVmodParam = CSWmParam,
     .DEVload = CSWload,
@@ -59,12 +61,13 @@ SPICEdev CSWinfo = {
     .DEVdisto = NULL,
     .DEVnoise = CSWnoise,
     .DEVsoaCheck = NULL,
+    .DEVinstSize = &CSWiSize,
+    .DEVmodSize = &CSWmSize,
+
 #ifdef CIDER
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
-    .DEVinstSize = &CSWiSize,
-    .DEVmodSize = &CSWmSize,
 };
 
 

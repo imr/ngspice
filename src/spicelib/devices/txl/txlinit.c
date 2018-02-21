@@ -23,6 +23,8 @@ SPICEdev TXLinfo = {
 	.instanceParms = TXLpTable,
 	.numModelParms = &TXLmPTSize,
 	.modelParms = TXLmPTable,
+	.flags = 0,
+
 #ifdef XSPICE
 	.cm_func = NULL,
 	.num_conn = 0,
@@ -32,8 +34,8 @@ SPICEdev TXLinfo = {
 	.num_inst_var = 0,
 	.inst_var = NULL,
 #endif
-	.flags = 0,
     },
+
     .DEVparam = TXLparam,
     .DEVmodParam = TXLmParam,
     .DEVload = TXLload,
@@ -62,12 +64,13 @@ SPICEdev TXLinfo = {
     .DEVdisto = NULL,
     .DEVnoise = NULL,
     .DEVsoaCheck = NULL,
+    .DEVinstSize = &TXLiSize,
+    .DEVmodSize = &TXLmSize,
+
 #ifdef CIDER
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
-    .DEVinstSize = &TXLiSize,
-    .DEVmodSize = &TXLmSize,
 };
 
 SPICEdev *

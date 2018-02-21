@@ -19,6 +19,8 @@ SPICEdev SWinfo = {
         .instanceParms = SWpTable,
         .numModelParms = &SWmPTSize,
         .modelParms = SWmPTable,
+        .flags = 0,
+
 #ifdef XSPICE
         .cm_func = NULL,
         .num_conn = 0,
@@ -28,8 +30,8 @@ SPICEdev SWinfo = {
         .num_inst_var = 0,
         .inst_var = NULL,
 #endif
-        .flags = 0,
     },
+
     .DEVparam = SWparam,
     .DEVmodParam = SWmParam,
     .DEVload = SWload,
@@ -58,12 +60,13 @@ SPICEdev SWinfo = {
     .DEVdisto = NULL,
     .DEVnoise = SWnoise,
     .DEVsoaCheck = NULL,
+    .DEVinstSize = &SWiSize,
+    .DEVmodSize = &SWmSize,
+
 #ifdef CIDER
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
-    .DEVinstSize = &SWiSize,
-    .DEVmodSize = &SWmSize,
 };
 
 
