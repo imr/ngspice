@@ -684,7 +684,6 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
 }
 
 
-/* ARGSUSED */ /* until some code gets written */
 int
 OUTwReference(void *plotPtr, IFvalue *valuePtr, void **refPtr)
 {
@@ -696,7 +695,6 @@ OUTwReference(void *plotPtr, IFvalue *valuePtr, void **refPtr)
 }
 
 
-/* ARGSUSED */ /* until some code gets written */
 int
 OUTwData(runDesc *plotPtr, int dataIndex, IFvalue *valuePtr, void *refPtr)
 {
@@ -709,7 +707,6 @@ OUTwData(runDesc *plotPtr, int dataIndex, IFvalue *valuePtr, void *refPtr)
 }
 
 
-/* ARGSUSED */ /* until some code gets written */
 int
 OUTwEnd(runDesc *plotPtr)
 {
@@ -738,7 +735,6 @@ OUTendPlot(runDesc *plotPtr)
 }
 
 
-/* ARGSUSED */ /* until some code gets written */
 int
 OUTbeginDomain(runDesc *plotPtr, IFuid refName, int refType, IFvalue *outerRefValue)
 {
@@ -751,7 +747,6 @@ OUTbeginDomain(runDesc *plotPtr, IFuid refName, int refType, IFvalue *outerRefVa
 }
 
 
-/* ARGSUSED */ /* until some code gets written */
 int
 OUTendDomain(runDesc *plotPtr)
 {
@@ -761,7 +756,6 @@ OUTendDomain(runDesc *plotPtr)
 }
 
 
-/* ARGSUSED */ /* until some code gets written */
 int
 OUTattributes(runDesc *plotPtr, IFuid varName, int param, IFvalue *value)
 {
@@ -970,7 +964,6 @@ fileAddComplexValue(FILE *fp, bool bin, IFcomplex value)
 }
 
 
-/* ARGSUSED */ /* until some code gets written */
 static void
 fileEndPoint(FILE *fp, bool bin)
 {
@@ -1104,7 +1097,6 @@ plotAddComplexValue(dataDesc *desc, IFcomplex value)
 }
 
 
-/* ARGSUSED */ /* until some code gets written */
 static void
 plotEnd(runDesc *run)
 {
