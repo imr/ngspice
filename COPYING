@@ -28,7 +28,7 @@ unnamed, compatible to DFSG
 * ngspice/src/tclspice.c
 LGPLv2
 
-* all files in ngspice\src\maths\sparse
+* all files in ngspice/src/maths/sparse
 unnamed MIT license, compatible to New BSD
 
 * ngspice/src/spicelib/devices/adms/ekv
@@ -40,22 +40,22 @@ copyright info, but no license information given, vendor specific licenses
 ngspice/src/spicelib/devices/adms/mextram
 Educational Community License version 1.0
 
-ngspice\src\spicelib\devices\adms\admst
+ngspice/src/spicelib/devices/adms/admst
 LGPLv2.1
 
-ngspice\src\spicelib\devices\ndev
+ngspice/src/spicelib/devices/ndev
 public domain
 
-ngspice\src\xspice
+ngspice/src/xspice
 public domain
 except for
-ngspice\src\xspice\icm\table\
+ngspice/src/xspice/icm/table
 GPLv2 or newer
 
-ngspice\src\frontend\numparam
+ngspice/src/frontend/numparam
 LGPLv2 or newer
 
-ngspice\src\ciderlib
+ngspice/src/ciderlib
 CIDER is distributed with its own license (see below) that is not compatible
 to DFSG (https://embedded.eecs.berkeley.edu/pubs/downloads/cider/index.htm).
 CIDER shall be covered New BSD according to UCB officials, but this
