@@ -299,7 +299,6 @@ static char *two2three_translate(
 
     char  type;
 
-    char  *tok;
     char  *name;
     char  **out_conn;
     char  **in_conn;
@@ -385,8 +384,8 @@ static char *two2three_translate(
         printf("In two2three_translate, found poly!!!  dim = %d \n", dim);
 #endif
 
-        tok = MIFgettok(&card); /* read and discard POLY */
-        tok = MIFgettok(&card); /* read and discard dimension */
+        txfree(MIFgettok(&card)); /* read and discard POLY */
+        txfree(MIFgettok(&card)); /* read and discard dimension */
     }
 
 
