@@ -4355,10 +4355,15 @@ inp_compat(struct card *card)
 
                     tfree(firstno);
                     tfree(lastlastno);
-                    tfree(title_tok);
-                    tfree(node1);
-                    tfree(node2);
+
                 }
+                else {
+                    /* not used */
+                    tfree(ckt_array[0]);
+                }
+                tfree(title_tok);
+                tfree(node1);
+                tfree(node2);
             }
             /* Exxx n1 n2 VOL = {equation}
                -->
