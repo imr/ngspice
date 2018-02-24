@@ -1,0 +1,76 @@
+* switch as negative resistance oscillator
+
+* compare the transient simulation of this
+*   switch based relaxation oscillator
+*   with the analytic solution
+* show off the precision which can be achieved
+*   even though switching the time-constant by 7 orders of magnitude
+
+I1  1 0  -100u
+C1  1 0  1n
+SW1 1 0  1 0 SWITCH1
+
+.MODEL SWITCH1 SW VT=2.5 VH=2.0 RON=1 ROFF=10MEG
+
+.option method=trap
+
+.control
+
+* two e-t/T shapes
+* one is tau1 = 10Meg*1nF = 10ms
+*   rising from 0 to 100u*10Meg = 1000V
+* second is tau2 = 1Ohm*1nF = 1ns
+*   falling down to 100u*1 = 100uV
+* first upper switch point t1 is
+*   4.5v = 1000v * (1 - e^-t/tau1)
+* first crossing of 0.5 point is t0
+* first crossing of 4.5 point is t1
+*
+* tr and tf, 0.5 to 4.5 and back to 0.5
+* 4.5 = 0.5 + (1000 - 0.5) * (1 - e(-tr/tau1))
+*  tr = tau1 * log((1000 - 0.5)/(4.5 - 0.5))
+* 0.5 = 100u + (4.5 - 100u) * e(-tf/tau2)
+*  tf = tau2 * log((4.5 - 100u)/(0.5 - 100u))
+
+let tau1 = 10ms
+let tau2 = 1ns
+let t0 = -tau1 * log(1 - 0.5/1000)
+let t1 = -tau1 * log(1 - 4.5/1000)
+let tr = tau1 * log((1000 - 0.5)/(1000 - 4.5))
+let tf = tau2 * log((4.5 - 100u)/(0.5 - 100u))
+let Tperiod = tr + tf
+
+tran 10us 300us uic
+
+let len = length(time)
+let gold = vector(len)
+let steps = vector(len)
+
+let kk = 0
+repeat $&len
+  let tt = time[kk] - t0
+  let tt = tt lt 0 ? tt : tt - Tperiod * floor(tt/Tperiod)
+  let tt = tt + t0;
+  let gold[kk] = (tt lt t1) ? 1000*(1-exp(-tt/tau1)) : (100u + (4.5-100u)*exp(-(tt-t1)/tau2))
+  let steps[kk] = time[kk] - time[vecmax(kk-1, 0)]
+  let kk = kk + 1
+end
+
+
+plot v(1) gold
+plot (v(1) - gold) ylimit -1mV 1mV
+* the first discharge in more detail:
+plot v(1) gold xlimit 45.095e-6 45.110e-6
+
+* compare the golden first discharge time
+*   with the timesteps choosen in the following print
+* the last step is 1ns before the ideal switch,
+* the following is 100ps after the ideal switch
+* one can readily see the timestep truncation in action
+*   when aproaching the discharge time point
+
+print (time - t1) steps
+
+.endc
+
+.end
