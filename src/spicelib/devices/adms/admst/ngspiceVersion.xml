@@ -2140,7 +2140,7 @@
           </admst:new>
         </admst:if>
       </admst:when>
-      <admst:when test="[lower-case(name)='bsim6']">
+      <admst:when test="[lower-case(name)='bsimbulk']">
         <admst:if test="[nilled(variable[name='nmos'])]">
           <admst:value-of select="analog"/>
           <admst:value-of select="."/>
