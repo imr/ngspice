@@ -1,0 +1,20 @@
+* switch as negative resistance oscillator
+I1  1 0  -100u
+C1  1 0  1n
+SW1 1 0  1 0 SWITCH1
+
+.MODEL SWITCH1 SW VT=2.5 VH=2.475 RON=1 ROFF=10MEG
+
+.option method=trap
+
+.control
+
+tran 10us 300us 100ns uic
+print v(1)
+plot v(1)
+
+*wrdata swtest v(1)
+
+.endc
+
+.end
