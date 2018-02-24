@@ -14,4 +14,4 @@ EXTRA_DIST = \
 MAINTAINERCLEANFILES = Makefile.in
 
 clean-local:
-	rm -rf nmos/results pmos/results ngspiceCkt bsim6.out
+	rm -rf nmos/results pmos/results ngspiceCkt bsimbulk.out

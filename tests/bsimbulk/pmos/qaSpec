@@ -1,6 +1,6 @@
 
 //
-// test specification for bsim6 (version 6.1.1_beta1)
+// test specification for bsim6 (version 6.1.1_beta1) now bsimbulk
 //
 
 //
@@ -19,8 +19,8 @@ nTypeSelectionArguments nmos level=77 version=6.1.1
 pTypeSelectionArguments pmos level=77 version=6.1.1
 `endif
 `ifdef ngspice
-nTypeSelectionArguments nmos level=16
-pTypeSelectionArguments pmos level=16
+nTypeSelectionArguments nmos level=77
+pTypeSelectionArguments pmos level=77
 `endif
 
 //
@@ -29,7 +29,7 @@ pTypeSelectionArguments pmos level=16
 
 keyLetter                   m
 pins                        d g s b
-//verilogaFile               code/bsim6.1.1_beta1.va
+//verilogaFile               code/bsim6.1.1_beta1.va now bsimbulk
 //linearScale                 w l ps pd
 //areaScale                   as ad
 temperature                 27 -50 150
