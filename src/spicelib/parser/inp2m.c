@@ -32,7 +32,7 @@ model_numnodes(int type)
     }
 
 #ifdef ADMS
-    if (type == INPtypelook("BSIM6") ||     /* bsim6.va with __THERMAL_NODE__ */
+    if (type == INPtypelook("BSIMBULK") ||  /* bsimbulk.va */
         type == INPtypelook("BSIMCMG"))     /* bsimcmg.va */
     {
         return 5;
@@ -133,7 +133,7 @@ INP2M(CKTcircuit *ckt, INPtables *tab, card *current)
 #ifdef ADMS
         thismodel->INPmodType != INPtypelook("ekv") &&
         thismodel->INPmodType != INPtypelook("psp102") &&
-        thismodel->INPmodType != INPtypelook("bsim6") &&
+        thismodel->INPmodType != INPtypelook("bsimbulk") &&
         thismodel->INPmodType != INPtypelook("bsimcmg") &&
 #endif
         thismodel->INPmodType != INPtypelook("HiSIM2") &&

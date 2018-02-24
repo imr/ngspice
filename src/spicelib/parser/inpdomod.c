@@ -331,11 +331,11 @@ char *INPdomodel(CKTcircuit *ckt, card * image, INPtables * tab)
 #ifdef ADMS
 			case 16:
 			case 77:
-			    type = INPtypelook("BSIM6");
+			    type = INPtypelook("BSIMBULK");
 			    if (type < 0) {
 				    err =
 				    INPmkTemp
-				    ("Device type BSIM6 not available in this binary\n");}
+				    ("Device type BSIMBULK not available in this binary\n");}
 			    break;
 			case 17:
 			case 72:
