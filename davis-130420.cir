@@ -1,19 +1,75 @@
 * switch as negative resistance oscillator
+
+* compare the transient simulation of this
+*   switch based relaxatation oscillator
+*   with the analytical solution
+* after the first step, I see a 20mV difference
+*  perhaps caused by inaccurate timestep truncation
+
 I1  1 0  -100u
 C1  1 0  1n
 SW1 1 0  1 0 SWITCH1
 
-.MODEL SWITCH1 SW VT=2.5 VH=2.475 RON=1 ROFF=10MEG
+.MODEL SWITCH1 SW VT=2.5 VH=2.0 RON=1 ROFF=10MEG
 
 .option method=trap
 
 .control
 
-tran 10us 300us 100ns uic
-print v(1)
-plot v(1)
+* two e-t/T shapes
+* one is tau1 = 10Meg*1nF = 10ms
+*            rising from 0 to 100u*10Meg = 1000V
+* second is tau2 = 1Ohm*1nF = 1ns
+*            falling to 0
+* first upper switch point t1 is
+*   4.5v = 1000v * (1- e^-t/tau1)
+* first crossing of 0.5 point is t0
+*  repeated rising delta = t1 - t0
+*  repeated falling delta  = tf
+*   0.5 = 4.5 * e^-tf/tau2
+let tau1 = 10ms
+let tau2 = 1ns
+let t1 = -tau1 * log(1 - 4.5/1000)
+let t0 = -tau1 * log(1 - 0.5/1000)
+let tr = t1 - t0
+let tf = -tau2 * log(0.5/4.5)
+let Tperiod = tr + tf
 
-*wrdata swtest v(1)
+tran 10us 300us uic
+
+let len = length(time)
+let gold = vector(len)
+let steps = vector(len)
+
+let kk = 0
+repeat $&len
+  let tt = time[kk] - t0
+  let tt = tt lt 0 ? tt : tt - Tperiod * floor(tt/Tperiod)
+  let tt = tt + t0;
+  let gold[kk] = (tt lt t1) ? 1000*(1-exp(-tt/tau1)) : 4.5*exp(-(tt-t1)/tau2)
+  let steps[kk] = time[kk] - time[vecmax(kk-1, 0)]
+  let kk = kk + 1
+end
+
+* error is 20mV after the first step, without alan fix #1,
+* with too
+* and with the 100ns 0 timesteps too
+
+plot v(1)
+plot gold
+plot v(1) - gold
+
+* compare the golden first discharge time
+*   with the timesteps choosen in the following print
+* the last step is 1ns before the ideal switch,
+* the following is 100ps after the ideal switch
+* one can readily see the timestep truncation in action
+*   when aproaching the discharge time point
+
+print time - t1 steps
+
+* the first discharge in more detail:
+plot v(1) gold xlimit 45.095e-6 45.110e-6
 
 .endc
 

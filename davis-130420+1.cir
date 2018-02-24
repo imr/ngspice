@@ -1,0 +1,26 @@
+* switch as negative resistance oscillator
+
+* plot the hystersis loop for verifications
+
+v1  2 0  dc=0 pwl(0 0 100u 6 200u 0)
+I1  1 0  -100u
+SW1 1 0  2 0 SWITCH1
+
+* hysterisis switch on @ 4.5, switch off @ 0.5
+.MODEL SWITCH1 SW VT=2.5 VH=2.0 RON=1 ROFF=10MEG
+
+.option method=trap
+
+.control
+
+tran 10us 300us 0 100ns uic
+
+plot v(2)
+plot v(1)
+plot v(1) vs v(2)
+
+*wrdata swtest v(1)
+
+.endc
+
+.end
