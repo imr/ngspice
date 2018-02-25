@@ -47,7 +47,7 @@ repeat $&len
   let tt = tt lt 0 ? tt : tt - Tperiod * floor(tt/Tperiod)
   let tt = tt + t0;
   let gold[kk] = (tt lt t1) ? 1000*(1-exp(-tt/tau1)) : 4.5*exp(-(tt-t1)/tau2)
-  let steps[kk] = time[kk] - time[kk > 0 ? kk-1 : 0]
+  let steps[kk] = time[kk] - time[kk ? kk-1 : 0]
   let kk = kk + 1
 end
 
