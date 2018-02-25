@@ -1,0 +1,43 @@
+* expose time step truncation
+
+v1  1 0  pwl(0s 0 1s 0 2s 1)
+I1  2 0  -1mA
+SW1 2 0  1 0 SWITCH1
+
+* vforce 3 0 pwl(0s 0 1.599s 0 1.600s 1.0)
+
+.MODEL SWITCH1 SW VT=0.5 VH=0.1 RON=1k ROFF=2k
+
+.option method=trap
+
+.control
+
+tran 10ms 4s
+
+let t_gold = 1.6s
+
+let len = length(time)
+let steps = vector(len)
+
+let kk = 0
+repeat $&len
+  let steps[kk] = time[kk] - time[kk ? kk-1 : 0]
+  let kk = kk + 1
+end
+
+
+plot v(1)
+plot v(2)
+
+print  steps  time - t_gold
+plot log(steps)
+
+plot xlimit 1.590 1.610  v(2)
+plot xlimit 1.590 1.610  log(steps)
+
+** the first discharge in more detail:
+*plot v(1) gold xlimit 45.095e-6 45.110e-6
+
+.endc
+
+.end
