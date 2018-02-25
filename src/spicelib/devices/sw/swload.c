@@ -20,19 +20,15 @@ SWload(GENmodel *inModel, CKTcircuit *ckt)
     SWinstance *here;
     double g_now;
     double v_ctrl;
-    double previous_state = -1;
-    double current_state = -1;
-    double old_current_state = -1;
-    double REALLY_OFF = 0, REALLY_ON = 1;   // switch is on or off, not in hysteresis region.
-    double HYST_OFF = 2, HYST_ON = 3;       // switch is on or off while control value is in hysteresis region.
-//    double previous_region = -1;
-//    double current_region = -1;
+    int previous_state;
+    int current_state;
+    int old_current_state;
 
     for (; model; model = SWnextModel(model)) {
         for (here = SWinstances(model); here; here=SWnextInstance(here)) {
 
-            old_current_state = ckt->CKTstate0[here->SWswitchstate];
-            previous_state = ckt->CKTstate1[here->SWswitchstate];
+            old_current_state = (int) ckt->CKTstate0[here->SWswitchstate];
+            previous_state = (int) ckt->CKTstate1[here->SWswitchstate];
 
             v_ctrl =
                 ckt->CKTrhsOld [here->SWposCntrlNode] -
@@ -89,11 +85,12 @@ SWload(GENmodel *inModel, CKTcircuit *ckt)
                             current_state = HYST_ON;
                         } else {
                             internalerror("bad value for previous state in swload");
+                            controlled_exit(1);
                         }
                     }
                 }
 
-                if (current_state != old_current_state) {
+                if ((current_state > 0) != (old_current_state > 0)) {
                     ckt->CKTnoncon++;       /* ensure one more iteration */
                     ckt->CKTtroubleElt = (GENinstance *) here;
                 }
@@ -119,10 +116,16 @@ SWload(GENmodel *inModel, CKTcircuit *ckt)
                             current_state = REALLY_OFF;
                         else if (previous_state == REALLY_OFF)
                             current_state = REALLY_ON;
-                        else
-                            current_state = 0.0;
+                        else {
+                            internalerror("bad value for state in swload");
+                            controlled_exit(1);
+                        }
                     }
                 }
+
+            } else {
+                internalerror("bad things in swload");
+                controlled_exit(1);
             }
 
 // code added to force the state to be updated.
@@ -135,7 +138,7 @@ SWload(GENmodel *inModel, CKTcircuit *ckt)
             ckt->CKTstate0[here->SWswitchstate] = current_state;
             ckt->CKTstate0[here->SWctrlvalue] = v_ctrl;
 
-            if ((current_state == REALLY_ON) || (current_state == HYST_ON))
+            if (current_state > 0)
                 g_now = model->SWonConduct;
             else
                 g_now = model->SWoffConduct;

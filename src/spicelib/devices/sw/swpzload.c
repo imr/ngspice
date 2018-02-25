@@ -24,7 +24,6 @@ SWpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
     SWmodel *model = (SWmodel *)inModel;
     SWinstance *here;
     double g_now;
-    int current_state;
 
     NG_IGNORE(s);
 
@@ -37,9 +36,10 @@ SWpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 
             /* In AC analysis, just propogate the state... */
 
-            current_state = (int) ckt->CKTstate0[here->SWswitchstate];
-
-            g_now = current_state?(model->SWonConduct):(model->SWoffConduct);
+            if (ckt->CKTstate0[here->SWswitchstate] > 0)
+                g_now = model->SWonConduct;
+            else
+                g_now = model->SWoffConduct;
 
             *(here->SWposPosPtr) += g_now;
             *(here->SWposNegPtr) -= g_now;

@@ -24,11 +24,13 @@ SWparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
         case SW_IC_ON:
             if(value->iValue) {
                 here->SWzero_stateGiven = TRUE;
+                // FIXME, need to set the state somewhere too !
             }
             break;
         case SW_IC_OFF:
             if(value->iValue) {
                 here->SWzero_stateGiven = FALSE;
+                // FIXME, need to set the state somewhere too !
             }
             break;
         default:

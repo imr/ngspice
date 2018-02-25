@@ -22,7 +22,6 @@ SWacLoad(GENmodel *inModel, CKTcircuit *ckt)
     SWmodel *model = (SWmodel *)inModel;
     SWinstance *here;
     double g_now;
-    int current_state;
 
     /*  loop through all the switch models */
     for( ; model != NULL; model = SWnextModel(model)) {
@@ -33,9 +32,10 @@ SWacLoad(GENmodel *inModel, CKTcircuit *ckt)
 
             /* In AC analysis, just propogate the state... */
 
-            current_state = (int) ckt->CKTstate0[here->SWswitchstate];
-
-            g_now = current_state?(model->SWonConduct):(model->SWoffConduct);
+            if (ckt->CKTstate0[here->SWswitchstate] > 0)
+                g_now = model->SWonConduct;
+            else
+                g_now = model->SWoffConduct;
 
             *(here->SWposPosPtr) += g_now;
             *(here->SWposNegPtr) -= g_now;

@@ -83,6 +83,13 @@ typedef struct sSWmodel {      /* model structure for a switch */
     unsigned SWhystGiven : 1; /* flag to indicate hysteresis volt was given */
 } SWmodel;
 
+enum {
+    REALLY_OFF = -2,    // switch definitely off
+    HYST_OFF = -1,      // switch is off and in the hysteresis region
+    HYST_ON = 1,        // switch is on and in the hysteresis region
+    REALLY_ON = 2,      // switch definitely on
+};
+
 /* device parameters */
 #define SW_IC_ON 1
 #define SW_IC_OFF 2
