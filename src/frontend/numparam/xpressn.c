@@ -514,7 +514,7 @@ nupa_define(dico_t *dico,
                  && (newlevel[1] > 0) && (oldlevel[1] == newlevel[1])
                  && (newlevel[2] > 0) && (oldlevel[2] > 1)
                  && (newlevel[3] == 0) && (oldlevel[3] == 0))
-            fprintf(stderr, "Warning: %s is already used,\n cannot be redefined\n", t);
+            fprintf(stderr, "Warning: subckt %s is already used,\n cannot be redefined\n", t);
 #endif
     }
 
