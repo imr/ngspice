@@ -90,7 +90,7 @@ create_model(CKTcircuit *ckt, INPmodel *modtmp, INPtables *tab)
 
     INPgetTok(&line, &parm, 1);        /* throw away '.model' */
     tfree(parm);
-    INPgetTok(&line, &parm, 1);        /* throw away 'modname' */
+    INPgetNetTok(&line, &parm, 1);        /* throw away 'modname' */
     tfree(parm);
 
     while (*line) {

@@ -51,7 +51,7 @@ void INP2W(CKTcircuit *ckt, INPtables * tab, struct card *current)
     parm = INPgetValue(ckt, &line, IF_INSTANCE, tab);
     ptemp.uValue = parm->uValue;
 
-    INPgetTok(&line, &model, 1);
+    INPgetNetTok(&line, &model, 1);
     INPinsert(&model, tab);
     current->error = INPgetMod(ckt, model, &thismodel, tab);
     if (thismodel != NULL) {

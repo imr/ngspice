@@ -137,7 +137,7 @@ void INP2R(CKTcircuit *ckt, INPtables * tab, struct card *current)
 
     saveline = line;		/* save then old pointer */
 
-    INPgetTok(&line, &model, 1);
+    INPgetNetTok(&line, &model, 1);
 
     if (*model && (strcmp(model, "r") != 0)) {
       /* token isn't null */

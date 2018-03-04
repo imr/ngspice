@@ -58,7 +58,7 @@ void INP2L(CKTcircuit *ckt, INPtables * tab, struct card *current)
     
     saveline = line;
     
-    INPgetTok(&line, &model, 1);
+    INPgetNetTok(&line, &model, 1);
     
     if (*model && (strcmp(model, "l") != 0)) {
     /* token isn't null */

@@ -54,7 +54,7 @@ void INP2O(CKTcircuit *ckt, INPtables * tab, struct card *current)
     INPtermInsert(ckt, &nname3, tab, &node3);
     INPgetNetTok(&line, &nname4, 1);
     INPtermInsert(ckt, &nname4, tab, &node4);
-    INPgetTok(&line, &model, 1);
+    INPgetNetTok(&line, &model, 1);
     if (INPlookMod(model)) {
 	/* do nothing for now */
 	/* no action required */
@@ -62,7 +62,7 @@ void INP2O(CKTcircuit *ckt, INPtables * tab, struct card *current)
 	/*
 	   nname4 = model;
 	   INPtermInsert(ckt,&nname4,tab,&node4);
-	   INPgetTok(&line,&model,1);
+	   INPgetNetTok(&line, &model, 1);
 	 */
     }
     INPinsert(&model, tab);

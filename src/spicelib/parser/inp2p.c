@@ -80,7 +80,7 @@ int num, i;
     INPgetTok(&line,&ground,1);
     INPtermInsert(ckt,&ground,tab,&groundnode);
 
-    INPgetTok(&line,&model,1);
+    INPgetNetTok(&line, &model, 1);
     if(*model) { /* token isn't null */
             INPinsert(&model,tab);
             current->error = INPgetMod(ckt,model,&thismodel,tab);

@@ -69,7 +69,7 @@ int lenvalgiven = 0;
     INPgetNetTok(&line,&ground2,1);
     INPtermInsert(ckt,&ground2,tab,&gnode2);
 
-    INPgetTok(&line,&model,1);
+    INPgetNetTok(&line, &model, 1);
     if(*model) { /* token isn't null */
             INPinsert(&model,tab);
             current->error = INPgetMod(ckt,model,&thismodel,tab);

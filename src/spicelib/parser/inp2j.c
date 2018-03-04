@@ -44,7 +44,7 @@ void INP2J(CKTcircuit *ckt, INPtables * tab, struct card *current)
     INPtermInsert(ckt, &nname2, tab, &node2);
     INPgetNetTok(&line, &nname3, 1);
     INPtermInsert(ckt, &nname3, tab, &node3);
-    INPgetTok(&line, &model, 1);
+    INPgetNetTok(&line, &model, 1);
     INPinsert(&model, tab);
     current->error = INPgetMod(ckt, model, &thismodel, tab);
     if (thismodel != NULL) {

@@ -38,7 +38,7 @@ char *INPdomodel(CKTcircuit *ckt, struct card *image, INPtables * tab)
 
     INPgetTok(&line, &modname, 1);	/* throw away '.model' */
     tfree(modname);
-    INPgetTok(&line, &modname, 1);      /* get model name */
+    INPgetNetTok(&line, &modname, 1);      /* get model name */
     INPinsert(&modname, tab);	   /* stick model name into table */
     INPgetTok(&line, &type_name, 1);     /* get model type */
 

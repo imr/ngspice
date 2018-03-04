@@ -47,7 +47,7 @@ void INP2D(CKTcircuit *ckt, INPtables * tab, struct card *current)
     INPtermInsert(ckt, &nname1, tab, &node1);
     INPgetNetTok(&line, &nname2, 1);
     INPtermInsert(ckt, &nname2, tab, &node2);
-    INPgetTok(&line, &model, 1);
+    INPgetNetTok(&line, &model, 1);
     INPinsert(&model, tab);
     current->error = INPgetMod(ckt, model, &thismodel, tab);
     if (thismodel != NULL) {
