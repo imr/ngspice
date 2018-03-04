@@ -55,6 +55,7 @@ static struct type types[NUMTYPES] = {
     { "decibel", "dB" } ,         /* Added by A.Roldan */
     { "capacitance", "F" } ,
     { "charge", "C" } ,
+    { "temperature", "Celsius" } ,
 };
 
 /* The stuff for plot names. */
