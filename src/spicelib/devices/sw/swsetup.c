@@ -25,12 +25,10 @@ SWsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     /*  loop through all the current source models */
     for( ; model; model = SWnextModel(model)) {
         /* Default Value Processing for Switch Model */
-        if (!model->SWthreshGiven) {
+        if (!model->SWthreshGiven)
             model->SWvThreshold = 0;
-        } 
-        if (!model->SWhystGiven) {
+        if (!model->SWhystGiven)
             model->SWvHysteresis = 0;
-        } 
         if (!model->SWonGiven)  {
             model->SWonConduct = SW_ON_CONDUCTANCE;
             model->SWonResistance = 1.0/model->SWonConduct;

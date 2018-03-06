@@ -25,14 +25,12 @@ CSWparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->CSWcontName = value->uValue;
             break;
         case CSW_IC_ON:
-            if(value->iValue) {
+            if(value->iValue)
                 here->CSWzero_stateGiven = TRUE;
-            }
             break;
         case CSW_IC_OFF:
-            if(value->iValue) {
+            if(value->iValue)
                 here->CSWzero_stateGiven = FALSE;
-            }
             break;
         default:
             return E_BADPARM;

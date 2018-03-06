@@ -25,12 +25,10 @@ CSWsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     /*  loop through all the current source models */
     for( ; model; model = CSWnextModel(model)) {
         /* Default Value Processing for Switch Model */
-        if (!model->CSWthreshGiven) {
+        if (!model->CSWthreshGiven)
             model->CSWiThreshold = 0;
-        }
-        if (!model->CSWhystGiven) {
+        if (!model->CSWhystGiven)
             model->CSWiHysteresis = 0;
-        }
         if (!model->CSWonGiven)  {
             model->CSWonConduct = CSW_ON_CONDUCTANCE;
             model->CSWonResistance = 1.0/model->CSWonConduct;

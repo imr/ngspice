@@ -26,7 +26,7 @@ CSWacLoad(GENmodel *inModel, CKTcircuit *ckt)
     int current_state;
 
     /*  loop through all the switch models */
-    for( ; model; model = CSWnextModel(model)) {
+    for( ; model; model = CSWnextModel(model))
 
         /* loop through all the instances of the model */
         for (here = CSWinstances(model); here;
@@ -41,6 +41,5 @@ CSWacLoad(GENmodel *inModel, CKTcircuit *ckt)
             *(here->CSWnegPosPtr) -= g_now;
             *(here->CSWnegNegPtr) += g_now;
         }
-    }
     return OK;
 }

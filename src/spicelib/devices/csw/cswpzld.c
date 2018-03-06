@@ -30,7 +30,7 @@ CSWpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
     NG_IGNORE(s);
 
     /*  loop through all the switch models */
-    for( ; model; model = CSWnextModel(model)) {
+    for( ; model; model = CSWnextModel(model))
 
         /* loop through all the instances of the model */
         for (here = CSWinstances(model); here;
@@ -45,6 +45,5 @@ CSWpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
             *(here->CSWnegPosPtr) -= g_now;
             *(here->CSWnegNegPtr) += g_now;
         }
-    }
     return OK;
 }

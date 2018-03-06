@@ -31,7 +31,7 @@ CSWload(GENmodel *inModel, CKTcircuit *ckt)
 	/* switch is on or off while control value is in hysteresis region. */
 
     /*  loop through all the switch models */
-    for( ; model; model = CSWnextModel(model)) {
+    for( ; model; model = CSWnextModel(model))
 
         /* loop through all the instances of the model */
         for (here = CSWinstances(model); here;
@@ -70,30 +70,29 @@ CSWload(GENmodel *inModel, CKTcircuit *ckt)
                 /* use state0 since INITTRAN or INITPRED already called */
 
 				if (model->CSWiHysteresis > 0) {
-					if (i_ctrl > (model->CSWiThreshold + model->CSWiHysteresis)) {
+					if (i_ctrl > (model->CSWiThreshold + model->CSWiHysteresis))
 						current_state = REALLY_ON;
-					} else if (i_ctrl < (model->CSWiThreshold -  model->CSWiHysteresis)) {
+					else if (i_ctrl < (model->CSWiThreshold -  model->CSWiHysteresis))
 						current_state = REALLY_OFF;
-					} else {
+					else
 						current_state = previous_state;
-					}
 				} else {
-					if (i_ctrl > (model->CSWiThreshold - model->CSWiHysteresis)) 					{
+					if (i_ctrl > (model->CSWiThreshold - model->CSWiHysteresis)) 					
 						current_state = REALLY_ON;
-					} else if (i_ctrl < (model->CSWiThreshold +  model->CSWiHysteresis)) {
+					else if (i_ctrl < (model->CSWiThreshold +  model->CSWiHysteresis))
 						current_state = REALLY_OFF;
-					} else {	
+					else {	
 					/* in hysteresis... change value if going from low to hysteresis, 
 					 * or from hi to hysteresis. */
 					 
 						/* if previous state was in hysteresis, then don't change the state.. */
-						if ((previous_state == HYST_OFF) || (previous_state == HYST_ON)) {
+						if ((previous_state == HYST_OFF) || (previous_state == HYST_ON))
 							current_state = previous_state;
-						} else if (previous_state == REALLY_ON) {
+						else if (previous_state == REALLY_ON)
 							current_state = HYST_OFF;
-						} else if (previous_state == REALLY_OFF) {
+						else if (previous_state == REALLY_OFF)
 							current_state = HYST_ON;
-						} else
+						else
 							internalerror("bad value for previous region in swload");
 					}
 				}
@@ -106,30 +105,29 @@ CSWload(GENmodel *inModel, CKTcircuit *ckt)
             } else if (ckt->CKTmode & (MODEINITTRAN|MODEINITPRED)) {
 
 				if (model->CSWiHysteresis > 0) {
-					if (i_ctrl > (model->CSWiThreshold + model->CSWiHysteresis)) {
+					if (i_ctrl > (model->CSWiThreshold + model->CSWiHysteresis))
 						current_state = REALLY_ON;
-					} else if (i_ctrl < (model->CSWiThreshold -  model->CSWiHysteresis)) {
+					else if (i_ctrl < (model->CSWiThreshold -  model->CSWiHysteresis))
 						current_state = REALLY_OFF;
-					} else {
+					else
 						current_state = previous_state;
-					}
 				} else {
-					if (i_ctrl > (model->CSWiThreshold - model->CSWiHysteresis)) 					{
+					if (i_ctrl > (model->CSWiThreshold - model->CSWiHysteresis))
 						current_state = REALLY_ON;
-					} else if (i_ctrl < (model->CSWiThreshold +  model->CSWiHysteresis)) {
+					else if (i_ctrl < (model->CSWiThreshold +  model->CSWiHysteresis))
 						current_state = REALLY_OFF;
-					} else {	
+					else {	
 					/* in hysteresis... change value if going from low to hysteresis, 
 					 * or from hi to hysteresis. */
 					 
 						/* if previous state was in hysteresis, then don't change the state.. */
-						if ((previous_state == HYST_OFF) || (previous_state == HYST_ON)) {
+						if ((previous_state == HYST_OFF) || (previous_state == HYST_ON))
 							current_state = previous_state;
-						} else if (previous_state == REALLY_ON) {
+						else if (previous_state == REALLY_ON)
 							current_state = HYST_OFF;
-						} else if (previous_state == REALLY_OFF) {
+						else if (previous_state == REALLY_OFF)
 							current_state = HYST_ON;
-						} else
+						else
 							internalerror("bad value for previous region in cswload");
 					}
 				}
@@ -148,6 +146,5 @@ CSWload(GENmodel *inModel, CKTcircuit *ckt)
             *(here->CSWnegPosPtr) -= g_now;
             *(here->CSWnegNegPtr) += g_now;
         }
-    }
     return OK;
 }

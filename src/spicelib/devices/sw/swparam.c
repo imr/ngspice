@@ -22,14 +22,12 @@ SWparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 
     switch(param) {
         case SW_IC_ON:
-            if(value->iValue) {
+            if(value->iValue)
                 here->SWzero_stateGiven = TRUE;
-            }
             break;
         case SW_IC_OFF:
-            if(value->iValue) {
+            if(value->iValue)
                 here->SWzero_stateGiven = FALSE;
-            }
             break;
         default:
             return E_BADPARM;

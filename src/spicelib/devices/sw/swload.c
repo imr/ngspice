@@ -31,7 +31,7 @@ SWload(GENmodel *inModel, CKTcircuit *ckt)
 //    double current_region = -1;
 
     /*  loop through all the switch models */
-    for( ; model; model = SWnextModel(model)) {
+    for( ; model; model = SWnextModel(model))
 
         /* loop through all the instances of the model */
         for (here = SWinstances(model); here;
@@ -72,29 +72,26 @@ SWload(GENmodel *inModel, CKTcircuit *ckt)
 
                 /* use state0 since INITTRAN or INITPRED already called */
 				if (model->SWvHysteresis > 0) {
-					if (v_ctrl > (model->SWvThreshold + model->SWvHysteresis)) {
+					if (v_ctrl > (model->SWvThreshold + model->SWvHysteresis))
 						current_state = REALLY_ON;
-					} else if (v_ctrl < (model->SWvThreshold -  model->SWvHysteresis)) {
+					else if (v_ctrl < (model->SWvThreshold -  model->SWvHysteresis))
 						current_state = REALLY_OFF;
-					} else {
+					else
 						current_state = old_current_state;
-					}
 				} else {	// negative hysteresis case.
 					if (v_ctrl > (model->SWvThreshold - model->SWvHysteresis))
-					{
 						current_state = REALLY_ON;
-					} else if (v_ctrl < (model->SWvThreshold +  model->SWvHysteresis))
-					{
+					else if (v_ctrl < (model->SWvThreshold +  model->SWvHysteresis))
 						current_state = REALLY_OFF;
-					} else {	// in hysteresis... change value if going from low to hysteresis, or from hi to hysteresis.
+					else {	// in hysteresis... change value if going from low to hysteresis, or from hi to hysteresis.
 						// if previous state was in hysteresis, then don't change the state..
-						if ((previous_state == HYST_OFF) || (previous_state == HYST_ON)) {
+						if ((previous_state == HYST_OFF) || (previous_state == HYST_ON))
 							current_state = previous_state;
-						} else if (previous_state == REALLY_ON) {
+						else if (previous_state == REALLY_ON)
 							current_state = HYST_OFF;
-						} else if (previous_state == REALLY_OFF) {
+						else if (previous_state == REALLY_OFF)
 							current_state = HYST_ON;
-						} else
+						else
 							internalerror("bad value for previous state in swload");
 					}
 				}
@@ -121,13 +118,12 @@ SWload(GENmodel *inModel, CKTcircuit *ckt)
 						current_state = REALLY_OFF;
 					else {
 						current_state = 0.0;
-						if ((previous_state == HYST_ON) || (previous_state == HYST_OFF)) {
+						if ((previous_state == HYST_ON) || (previous_state == HYST_OFF))
 							current_state = previous_state;
-						} else if (previous_state == REALLY_ON) {
+						else if (previous_state == REALLY_ON)
 							current_state = REALLY_OFF;
-						} else if (previous_state == REALLY_OFF) {
+						else if (previous_state == REALLY_OFF)
 							current_state = REALLY_ON;
-						}
 					}
 				}
            }
@@ -151,6 +147,5 @@ SWload(GENmodel *inModel, CKTcircuit *ckt)
             *(here->SWnegPosPtr) -= g_now;
             *(here->SWnegNegPtr) += g_now;
         }
-    }
     return OK;
 }

@@ -36,7 +36,7 @@ SWnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *da
     int current_state;
 
 
-    for (model=firstModel; model; model=SWnextModel(model)) {
+    for (model=firstModel; model; model=SWnextModel(model))
 	for (inst=SWinstances(model); inst; inst=SWnextInstance(inst)) {
 
 	    switch (operation) {
@@ -46,7 +46,7 @@ SWnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *da
 		/* see if we have to to produce a summary report */
 		/* if so, name the noise generator */
 
-		if (job->NStpsSm != 0) {
+		if (job->NStpsSm != 0)
 		    switch (mode) {
 
 		    case N_DENS:
@@ -58,7 +58,6 @@ SWnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *da
 			NOISE_ADD_OUTVAR(ckt, data, "inoise_total_%s%s", inst->SWname, "");
 			break;
 		    }
-		}
 		break;
 
 	    case N_CALC:
@@ -81,9 +80,8 @@ SWnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *da
 
 			/* clear out our integration variable if it's the first pass */
 
-			if (data->freq == job->NstartFreq) {
+			if (data->freq == job->NstartFreq)
 			    inst->SWnVar[OUTNOIZ] = 0.0;
-			}
 		    } else {   /* data->delFreq != 0.0 (we have to integrate) */
 			tempOutNoise = Nintegrate(noizDens, lnNdens,
 			       inst->SWnVar[LNLSTDENS], data);
@@ -97,9 +95,8 @@ SWnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *da
 			data->inNoise += tempInNoise;
 			inst->SWnVar[LNLSTDENS] = lnNdens;
 		    }
-		    if (data->prtSummary) {
+		    if (data->prtSummary)
 			data->outpVector[data->outNumber++] = noizDens;
-		    }
 		    break;
 
 		case INT_NOIZ:        /* already calculated, just output */
@@ -116,7 +113,6 @@ SWnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *da
 		break;               /* the plots */
 	    }    /* switch (operation) */
 	}    /* for inst */
-    }    /* for model */
 
 return OK;
 }
