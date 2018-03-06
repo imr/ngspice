@@ -11,6 +11,12 @@ Author: 1985 Gordon Jacobs
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
+#define TSTALLOC(ptr, first, second)                                    \
+    do {                                                                \
+        if (!(here->ptr = SMPmakeElt(matrix, here->first, here->second))) \
+            return E_NOMEM;                                             \
+    } while(0)
+
 
 int
 CSWsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
@@ -52,12 +58,6 @@ CSWsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                         "%s: unknown controlling source %s", here->CSWname, here->CSWcontName);
                 return E_BADPARM;
             }
-
-/* macro to make elements with built in test for out of memory */
-#define TSTALLOC(ptr,first,second) \
-do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
-    return(E_NOMEM);\
-} } while(0)
 
             TSTALLOC(CSWposPosPtr, CSWposNode, CSWposNode);
             TSTALLOC(CSWposNegPtr, CSWposNode, CSWnegNode);

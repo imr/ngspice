@@ -12,6 +12,12 @@ Author: 1985 Gordon Jacobs
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
+#define TSTALLOC(ptr, first, second)                                    \
+    do {                                                                \
+        if (!(here->ptr = SMPmakeElt(matrix, here->first, here->second))) \
+            return E_NOMEM;                                             \
+    } while (0)
+
 
 int
 SWsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
@@ -47,12 +53,6 @@ SWsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
             /* Default Value Processing for Switch Instance */
                     /* none */
-
-/* macro to make elements with built in test for out of memory */
-#define TSTALLOC(ptr,first,second) \
-do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
-    return(E_NOMEM);\
-} } while(0)
 
             TSTALLOC(SWposPosPtr, SWposNode, SWposNode);
             TSTALLOC(SWposNegPtr, SWposNode, SWnegNode);
