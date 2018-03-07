@@ -174,7 +174,7 @@ char *MIFgetMod(
                 line = modtmp->INPmodLine->line;
                 INPgetTok(&line,&parm,1);     /* throw away '.model' */
                 tfree(parm);
-                INPgetTok(&line,&parm,1);     /* throw away 'modname' */
+                INPgetNetTok(&line,&parm,1);     /* throw away 'modname' */
                 tfree(parm);
 
                 /* throw away the modtype - we don't treat it as a parameter */
