@@ -17,6 +17,7 @@ int
 CSWmParam(int param, IFvalue *value, GENmodel *inModel)
 {
     CSWmodel *model = (CSWmodel*)inModel;
+
     switch(param) {
         case CSW_CSW:
             /* just says that this is a switch */
@@ -44,5 +45,6 @@ CSWmParam(int param, IFvalue *value, GENmodel *inModel)
         default:
             return E_BADPARM;
     }
+
     return OK;
 }

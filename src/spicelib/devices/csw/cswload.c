@@ -12,9 +12,9 @@ Modified: 2001 Jon Engelbert
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
+
 int
 CSWload(GENmodel *inModel, CKTcircuit *ckt)
-
         /* actually load the current values into the 
          * sparse matrix previously provided 
          */
@@ -32,7 +32,6 @@ CSWload(GENmodel *inModel, CKTcircuit *ckt)
 
     /*  loop through all the switch models */
     for( ; model; model = CSWnextModel(model))
-
         /* loop through all the instances of the model */
         for (here = CSWinstances(model); here; here=CSWnextInstance(here)) {
 			
@@ -134,10 +133,12 @@ CSWload(GENmodel *inModel, CKTcircuit *ckt)
 
 			ckt->CKTstates[0][here->CSWstate + 0] = current_state;
 			ckt->CKTstates[1][here->CSWstate + 0] = previous_state;
+
             if (current_state == REALLY_ON || current_state == HYST_ON) 
 				g_now = model->CSWonConduct;
 			else 
 				g_now = model->CSWoffConduct;
+
             here->CSWcond = g_now;
 
             *(here->CSWposPosPtr) += g_now;
@@ -145,5 +146,6 @@ CSWload(GENmodel *inModel, CKTcircuit *ckt)
             *(here->CSWnegPosPtr) -= g_now;
             *(here->CSWnegNegPtr) += g_now;
         }
+
     return OK;
 }

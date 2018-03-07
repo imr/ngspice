@@ -30,7 +30,6 @@ SWpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 
     /*  loop through all the switch models */
     for( ; model; model = SWnextModel(model))
-
         /* loop through all the instances of the model */
         for (here = SWinstances(model); here; here=SWnextInstance(here)) {
 
@@ -45,5 +44,6 @@ SWpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
             *(here->SWnegPosPtr) -= g_now;
             *(here->SWnegNegPtr) += g_now;
         }
+
     return OK;
 }

@@ -9,6 +9,7 @@ Author: 1987 Thomas L. Quarles
 #include "cswdefs.h"
 #include "ngspice/suffix.h"
 
+
 IFparm CSWpTable[] = { /* parameters */ 
  IOP( "control",CSW_CONTROL, IF_INSTANCE, "Name of controlling source"),
  IP( "on",  CSW_IC_ON,   IF_FLAG    , "Initially closed"),

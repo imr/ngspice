@@ -35,7 +35,6 @@ SWnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *da
     double lnNdens;
     int current_state;
 
-
     for (model=firstModel; model; model=SWnextModel(model))
 	for (inst=SWinstances(model); inst; inst=SWnextInstance(inst)) {
 
@@ -48,11 +47,9 @@ SWnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *da
 
 		if (job->NStpsSm != 0)
 		    switch (mode) {
-
 		    case N_DENS:
 			NOISE_ADD_OUTVAR(ckt, data, "onoise_%s%s", inst->SWname, "");
 			break;
-
 		    case INT_NOIZ:
 			NOISE_ADD_OUTVAR(ckt, data, "onoise_total_%s%s", inst->SWname, "");
 			NOISE_ADD_OUTVAR(ckt, data, "inoise_total_%s%s", inst->SWname, "");

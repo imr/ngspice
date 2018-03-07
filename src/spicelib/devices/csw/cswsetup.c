@@ -23,13 +23,13 @@ CSWsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         /* load the switch conductance with those pointers needed later 
          * for fast matrix loading 
          */
-
 {
     CSWmodel *model = (CSWmodel*)inModel;
     CSWinstance *here;
 
     /*  loop through all the current source models */
     for( ; model; model = CSWnextModel(model)) {
+
         /* Default Value Processing for Switch Model */
         if (!model->CSWthreshGiven)
             model->CSWiThreshold = 0;
@@ -64,5 +64,6 @@ CSWsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             TSTALLOC(CSWnegNegPtr, CSWnegNode, CSWnegNode);
         }
     }
+
     return OK;
 }

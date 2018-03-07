@@ -14,7 +14,6 @@ Author: 1985 Gordon Jacobs
 
 int
 CSWacLoad(GENmodel *inModel, CKTcircuit *ckt)
-
         /* load the current values into the 
          * sparse matrix previously provided 
          * during AC analysis
@@ -27,7 +26,6 @@ CSWacLoad(GENmodel *inModel, CKTcircuit *ckt)
 
     /*  loop through all the switch models */
     for( ; model; model = CSWnextModel(model))
-
         /* loop through all the instances of the model */
         for (here = CSWinstances(model); here; here=CSWnextInstance(here)) {
 
@@ -40,5 +38,6 @@ CSWacLoad(GENmodel *inModel, CKTcircuit *ckt)
             *(here->CSWnegPosPtr) -= g_now;
             *(here->CSWnegNegPtr) += g_now;
         }
+
     return OK;
 }

@@ -35,7 +35,6 @@ CSWnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *d
     double lnNdens;
     int current_state;
 
-
     for (model=firstModel; model; model=CSWnextModel(model))
 	for (inst=CSWinstances(model); inst; inst=CSWnextInstance(inst)) {
 
@@ -48,11 +47,9 @@ CSWnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *d
 
 		if (job->NStpsSm != 0)
 		    switch (mode) {
-
 		    case N_DENS:
 			NOISE_ADD_OUTVAR(ckt, data, "onoise_%s%s", inst->CSWname, "");
 			break;
-
 		    case INT_NOIZ:
 			NOISE_ADD_OUTVAR(ckt, data, "onoise_total_%s%s", inst->CSWname, "");
 			NOISE_ADD_OUTVAR(ckt, data, "inoise_total_%s%s", inst->CSWname, "");

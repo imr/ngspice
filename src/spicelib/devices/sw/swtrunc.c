@@ -12,6 +12,7 @@ Modified: 2000 AlansFixes
 #include "ngspice/suffix.h"
 #include "swdefs.h"
 
+
 int
 SWtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
 {
@@ -46,5 +47,6 @@ SWtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
               }
             }
         }
+
     return OK;
 }

@@ -30,6 +30,7 @@ SWsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
     /*  loop through all the current source models */
     for( ; model; model = SWnextModel(model)) {
+
         /* Default Value Processing for Switch Model */
         if (!model->SWthreshGiven)
             model->SWvThreshold = 0;
@@ -59,5 +60,6 @@ SWsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             TSTALLOC(SWnegNegPtr, SWnegNode, SWnegNode);
         }
     }
+
     return OK;
 }

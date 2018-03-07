@@ -35,5 +35,6 @@ CSWparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
         default:
             return E_BADPARM;
     }
+
     return OK;
 }

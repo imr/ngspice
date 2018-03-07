@@ -16,7 +16,6 @@ Author: 1985 Gordon Jacobs
 /* ARGSUSED */
 int
 CSWpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
-
         /* load the current values into the 
          * sparse matrix previously provided 
          * during AC analysis
@@ -31,7 +30,6 @@ CSWpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 
     /*  loop through all the switch models */
     for( ; model; model = CSWnextModel(model))
-
         /* loop through all the instances of the model */
         for (here = CSWinstances(model); here; here=CSWnextInstance(here)) {
 
@@ -44,5 +42,6 @@ CSWpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
             *(here->CSWnegPosPtr) -= g_now;
             *(here->CSWnegNegPtr) += g_now;
         }
+
     return OK;
 }

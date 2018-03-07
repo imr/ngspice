@@ -17,6 +17,7 @@ int
 SWmParam(int param, IFvalue *value, GENmodel *inModel)
 {
     SWmodel *model = (SWmodel *)inModel;
+
     switch(param) {
         case SW_MOD_SW:
             /* just says that this is a switch */

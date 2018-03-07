@@ -13,6 +13,7 @@ Modified: 2000 AlansFixes
 
 #include "cswdefs.h"
 
+
 int
 CSWtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
 {
@@ -48,5 +49,6 @@ CSWtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
               }
             }
         }
+
     return OK;
 }
