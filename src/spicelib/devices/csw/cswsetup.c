@@ -2,8 +2,6 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Gordon Jacobs
 **********/
-/*
- */
 
 #include "ngspice/ngspice.h"
 #include "ngspice/cktdefs.h"
@@ -20,14 +18,10 @@ Author: 1985 Gordon Jacobs
 
 int
 CSWsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
-/* load the switch conductance with those pointers needed later
- * for fast matrix loading
- */
 {
     CSWmodel *model = (CSWmodel *) inModel;
     CSWinstance *here;
 
-    /*  loop through all the current source models */
     for (; model; model = CSWnextModel(model)) {
 
         /* Default Value Processing for Switch Model */
@@ -44,7 +38,6 @@ CSWsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             model->CSWoffResistance = 1.0 / model->CSWoffConduct;
         }
 
-        /* loop through all the instances of the model */
         for (here = CSWinstances(model); here; here = CSWnextInstance(here)) {
 
             /* Default Value Processing for Switch Instance */

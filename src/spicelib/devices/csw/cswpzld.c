@@ -2,8 +2,6 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Gordon Jacobs
 **********/
-/*
- */
 
 #include "ngspice/ngspice.h"
 #include "ngspice/cktdefs.h"
@@ -13,13 +11,8 @@ Author: 1985 Gordon Jacobs
 #include "ngspice/suffix.h"
 
 
-/* ARGSUSED */
 int
 CSWpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
-/* load the current values into the
- * sparse matrix previously provided
- * during AC analysis
- */
 {
     CSWmodel *model = (CSWmodel *) inModel;
     CSWinstance *here;
@@ -28,9 +21,7 @@ CSWpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 
     NG_IGNORE(s);
 
-    /*  loop through all the switch models */
     for (; model; model = CSWnextModel(model))
-        /* loop through all the instances of the model */
         for (here = CSWinstances(model); here; here = CSWnextInstance(here)) {
 
             current_state = (int) ckt->CKTstates[0][here->CSWstate + 0];

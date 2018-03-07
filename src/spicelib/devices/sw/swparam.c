@@ -2,8 +2,6 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Gordon Jacobs
 **********/
-/*
- */
 
 #include "ngspice/ngspice.h"
 #include "swdefs.h"
@@ -12,7 +10,6 @@ Author: 1985 Gordon Jacobs
 #include "ngspice/suffix.h"
 
 
-/*ARGSUSED*/
 int
 SWparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {

@@ -2,8 +2,6 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1987 Thomas L. Quarles
 **********/
-/*
- */
 
 /*
  * This routine gives access to the internal model parameters
@@ -19,7 +17,6 @@ Author: 1987 Thomas L. Quarles
 #include "ngspice/suffix.h"
 
 
-/* ARGSUSED */
 int
 CSWmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
 {
@@ -49,5 +46,4 @@ CSWmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
     default:
         return E_BADPARM;
     }
-    /* NOTREACHED */
 }

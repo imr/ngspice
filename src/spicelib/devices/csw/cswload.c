@@ -15,9 +15,6 @@ Modified: 2001 Jon Engelbert
 
 int
 CSWload(GENmodel *inModel, CKTcircuit *ckt)
-/* actually load the current values into the
- * sparse matrix previously provided
- */
 {
     CSWmodel *model = (CSWmodel *) inModel;
     CSWinstance *here;
@@ -30,9 +27,7 @@ CSWload(GENmodel *inModel, CKTcircuit *ckt)
     double HYST_OFF = 2, HYST_ON = 3;
     /* switch is on or off while control value is in hysteresis region. */
 
-    /*  loop through all the switch models */
     for (; model; model = CSWnextModel(model))
-        /* loop through all the instances of the model */
         for (here = CSWinstances(model); here; here = CSWnextInstance(here)) {
 
             old_current_state = ckt->CKTstates[0][here->CSWstate + 0];

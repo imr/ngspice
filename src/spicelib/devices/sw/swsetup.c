@@ -2,8 +2,6 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Gordon Jacobs
 **********/
-/*
- */
 
 #include "ngspice/ngspice.h"
 #include "ngspice/smpdefs.h"
@@ -21,14 +19,10 @@ Author: 1985 Gordon Jacobs
 
 int
 SWsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
-/* load the switch conductance with those pointers needed later
- * for fast matrix loading
- */
 {
     SWmodel *model = (SWmodel *) inModel;
     SWinstance *here;
 
-    /*  loop through all the current source models */
     for (; model; model = SWnextModel(model)) {
 
         /* Default Value Processing for Switch Model */
@@ -45,7 +39,6 @@ SWsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             model->SWoffResistance = 1.0 / model->SWoffConduct;
         }
 
-        /* loop through all the instances of the model */
         for (here = SWinstances(model); here; here = SWnextInstance(here)) {
 
             here->SWstate = *states;

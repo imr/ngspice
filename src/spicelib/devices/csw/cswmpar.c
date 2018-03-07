@@ -3,8 +3,6 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Gordon Jacobs
 Modified: 2001 Jon Englebert
 **********/
-/*
- */
 
 #include "ngspice/ngspice.h"
 #include "ngspice/ifsim.h"

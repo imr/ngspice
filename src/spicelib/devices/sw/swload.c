@@ -15,9 +15,6 @@ Modified: 2001 Jon Engelbert
 
 int
 SWload(GENmodel *inModel, CKTcircuit *ckt)
-/* actually load the current values into the
- * sparse matrix previously provided
- */
 {
     SWmodel *model = (SWmodel *) inModel;
     SWinstance *here;
@@ -31,9 +28,7 @@ SWload(GENmodel *inModel, CKTcircuit *ckt)
     //    double previous_region = -1;
     //    double current_region = -1;
 
-    /*  loop through all the switch models */
     for (; model; model = SWnextModel(model))
-        /* loop through all the instances of the model */
         for (here = SWinstances(model); here; here = SWnextInstance(here)) {
 
             old_current_state = ckt->CKTstates[0][here->SWstate + 0];

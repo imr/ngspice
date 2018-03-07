@@ -2,8 +2,6 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1987 Thomas L. Quarles
 **********/
-/*
- */
 
 /*
  * This routine gives access to the internal device parameters
@@ -19,7 +17,6 @@ Author: 1987 Thomas L. Quarles
 #include "ngspice/suffix.h"
 
 
-/* ARGSUSED */
 int
 CSWask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *select)
 {
@@ -69,5 +66,4 @@ CSWask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *s
     default:
         return E_BADPARM;
     }
-    /* NOTREACHED */
 }
