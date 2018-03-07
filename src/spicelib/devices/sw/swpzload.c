@@ -32,8 +32,7 @@ SWpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
     for( ; model; model = SWnextModel(model))
 
         /* loop through all the instances of the model */
-        for (here = SWinstances(model); here;
-                here=SWnextInstance(here)) {
+        for (here = SWinstances(model); here; here=SWnextInstance(here)) {
 
             /* In AC analysis, just propogate the state... */
 

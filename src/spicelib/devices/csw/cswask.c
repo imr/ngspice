@@ -45,8 +45,9 @@ CSWask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *s
                 strcpy(errMsg,msg);
                 return E_ASKCURRENT;
             } else {
-                value->rValue = (ckt->CKTrhsOld[here->CSWposNode]
-                        - ckt->CKTrhsOld[here->CSWnegNode]) *
+                value->rValue =
+                    (ckt->CKTrhsOld[here->CSWposNode] -
+                     ckt->CKTrhsOld[here->CSWnegNode]) *
                         here->CSWcond;
             }
             return OK;
@@ -57,10 +58,11 @@ CSWask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *s
                 strcpy(errMsg,msg);
                 return E_ASKPOWER;
             } else {
-                value->rValue = (ckt->CKTrhsOld[here->CSWposNode]
-                        - ckt->CKTrhsOld[here->CSWnegNode]) *
-                        (ckt->CKTrhsOld[here->CSWposNode]
-                        - ckt->CKTrhsOld[here->CSWnegNode]) *
+                value->rValue =
+                        (ckt->CKTrhsOld[here->CSWposNode] -
+                         ckt->CKTrhsOld[here->CSWnegNode]) *
+                        (ckt->CKTrhsOld[here->CSWposNode] -
+                         ckt->CKTrhsOld[here->CSWnegNode]) *
                         here->CSWcond;
             }
             return OK;

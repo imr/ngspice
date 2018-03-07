@@ -48,8 +48,9 @@ SWask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *se
                 strcpy(errMsg,msg);
                 return E_ASKCURRENT;
             } else {
-                value->rValue = (ckt->CKTrhsOld[here->SWposNode]
-                        - ckt->CKTrhsOld[here->SWnegNode]) *
+                value->rValue =
+                    (ckt->CKTrhsOld[here->SWposNode] -
+                     ckt->CKTrhsOld[here->SWnegNode]) *
                         here->SWcond;
             }
             return OK;
@@ -60,10 +61,11 @@ SWask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *se
                 strcpy(errMsg,msg);
                 return E_ASKPOWER;
             } else {
-                value->rValue = (ckt->CKTrhsOld[here->SWposNode]
-                        - ckt->CKTrhsOld[here->SWnegNode]) *
-                        (ckt->CKTrhsOld[here->SWposNode]
-                        - ckt->CKTrhsOld[here->SWnegNode]) *
+                value->rValue =
+                    (ckt->CKTrhsOld[here->SWposNode] -
+                     ckt->CKTrhsOld[here->SWnegNode]) *
+                        (ckt->CKTrhsOld[here->SWposNode] -
+                         ckt->CKTrhsOld[here->SWnegNode]) *
                         here->SWcond;
             }
             return OK;

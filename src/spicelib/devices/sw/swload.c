@@ -34,14 +34,14 @@ SWload(GENmodel *inModel, CKTcircuit *ckt)
     for( ; model; model = SWnextModel(model))
 
         /* loop through all the instances of the model */
-        for (here = SWinstances(model); here;
-                here=SWnextInstance(here)) {
+        for (here = SWinstances(model); here; here=SWnextInstance(here)) {
 	     
 			old_current_state = ckt->CKTstates[0][here->SWstate + 0];
 			previous_state = ckt->CKTstates[1][here->SWstate + 0];
 
-			v_ctrl = ckt->CKTrhsOld[here->SWposCntrlNode]
-                         - ckt->CKTrhsOld[here->SWnegCntrlNode];
+			v_ctrl =
+                           ckt->CKTrhsOld[here->SWposCntrlNode] -
+                           ckt->CKTrhsOld[here->SWnegCntrlNode];
 		  
 		  /* decide the state of the switch */
 		  
