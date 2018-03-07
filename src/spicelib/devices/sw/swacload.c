@@ -35,7 +35,7 @@ SWacLoad(GENmodel *inModel, CKTcircuit *ckt)
 
             current_state = (int) ckt->CKTstates[0][here->SWstate + 0];
 
-            g_now = current_state?(model->SWonConduct):(model->SWoffConduct);
+            g_now = current_state ? model->SWonConduct : model->SWoffConduct;
 
             *(here->SWposPosPtr) += g_now;
             *(here->SWposNegPtr) -= g_now;

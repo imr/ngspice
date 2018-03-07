@@ -49,16 +49,16 @@ SWload(GENmodel *inModel, CKTcircuit *ckt)
 
                 if(here->SWzero_stateGiven) {
                         /* switch specified "on" */
-					if ((model->SWvHysteresis >= 0) && (v_ctrl > (model->SWvThreshold + model->SWvHysteresis))) 
+					if (model->SWvHysteresis >= 0 && v_ctrl > model->SWvThreshold + model->SWvHysteresis) 
 						current_state = REALLY_ON;
-					else if ((model->SWvHysteresis < 0) && (v_ctrl > (model->SWvThreshold - model->SWvHysteresis))) 
+					else if (model->SWvHysteresis < 0 && v_ctrl > model->SWvThreshold - model->SWvHysteresis) 
 						current_state = REALLY_ON;
 					else 
 						current_state = HYST_ON;
                 } else {
-					if ((model->SWvHysteresis >= 0) && (v_ctrl < (model->SWvThreshold - model->SWvHysteresis))) 
+					if (model->SWvHysteresis >= 0 && v_ctrl < model->SWvThreshold - model->SWvHysteresis) 
 						current_state = REALLY_OFF;
-					else if ((model->SWvHysteresis < 0) && (v_ctrl < (model->SWvThreshold + model->SWvHysteresis))) 
+					else if (model->SWvHysteresis < 0 && v_ctrl < model->SWvThreshold + model->SWvHysteresis) 
 						current_state = REALLY_OFF;
 					else 
 						current_state = HYST_OFF;
@@ -85,7 +85,7 @@ SWload(GENmodel *inModel, CKTcircuit *ckt)
 						current_state = REALLY_OFF;
 					else {	// in hysteresis... change value if going from low to hysteresis, or from hi to hysteresis.
 						// if previous state was in hysteresis, then don't change the state..
-						if ((previous_state == HYST_OFF) || (previous_state == HYST_ON))
+						if (previous_state == HYST_OFF || previous_state == HYST_ON)
 							current_state = previous_state;
 						else if (previous_state == REALLY_ON)
 							current_state = HYST_OFF;
@@ -118,7 +118,7 @@ SWload(GENmodel *inModel, CKTcircuit *ckt)
 						current_state = REALLY_OFF;
 					else {
 						current_state = 0.0;
-						if ((previous_state == HYST_ON) || (previous_state == HYST_OFF))
+						if (previous_state == HYST_ON || previous_state == HYST_OFF)
 							current_state = previous_state;
 						else if (previous_state == REALLY_ON)
 							current_state = REALLY_OFF;
@@ -136,7 +136,7 @@ SWload(GENmodel *inModel, CKTcircuit *ckt)
 			ckt->CKTstates[0][here->SWstate + 0] = current_state;
 			ckt->CKTstates[0][here->SWstate + 1] = v_ctrl;
 
-            if ((current_state == REALLY_ON) || (current_state == HYST_ON)) 
+            if (current_state == REALLY_ON || current_state == HYST_ON) 
 				g_now = model->SWonConduct;
 			else 
 				g_now = model->SWoffConduct;

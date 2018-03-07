@@ -23,12 +23,12 @@ CSWmParam(int param, IFvalue *value, GENmodel *inModel)
             break;
         case CSW_RON:
             model->CSWonResistance = value->rValue;
-            model->CSWonConduct = 1.0/(value->rValue);
+            model->CSWonConduct = 1.0/value->rValue;
             model->CSWonGiven = TRUE;
             break;
         case CSW_ROFF:
             model->CSWoffResistance = value->rValue;
-            model->CSWoffConduct = 1.0/(value->rValue);
+            model->CSWoffConduct = 1.0/value->rValue;
             model->CSWoffGiven = TRUE;
             break;
         case CSW_ITH:

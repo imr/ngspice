@@ -38,7 +38,7 @@ CSWpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 
             current_state = (int) ckt->CKTstates[0][here->CSWstate + 0];
 
-            g_now = current_state?(model->CSWonConduct):(model->CSWoffConduct);
+            g_now = current_state ? model->CSWonConduct : model->CSWoffConduct;
 
             *(here->CSWposPosPtr) += g_now;
             *(here->CSWposNegPtr) -= g_now;

@@ -23,12 +23,12 @@ SWmParam(int param, IFvalue *value, GENmodel *inModel)
             break;
         case SW_MOD_RON:
             model->SWonResistance = value->rValue;
-            model->SWonConduct = 1.0/(value->rValue);
+            model->SWonConduct = 1.0/value->rValue;
             model->SWonGiven = TRUE;
             break;
         case SW_MOD_ROFF:
             model->SWoffResistance = value->rValue;
-            model->SWoffConduct = 1.0/(value->rValue);
+            model->SWoffConduct = 1.0/value->rValue;
             model->SWoffGiven = TRUE;
             break;
         case SW_MOD_VTH:
