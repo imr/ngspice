@@ -13,7 +13,7 @@ Modified: 2000 AlansFixes
 #include "ngspice/complex.h"
 #include "ngspice/noisedef.h"
 
-    /* structures used to describe voltage controlled switches */
+/* structures used to describe voltage controlled switches */
 
 
 /* information to describe each instance */
@@ -33,13 +33,13 @@ typedef struct sSWinstance {
     const int SWnegCntrlNode; /* number of negative controlling node of switch */
 
     double *SWposPosPtr;  /* pointer to sparse matrix diagonal at
-                                (positive,positive) for switch conductance */
+                             (positive,positive) for switch conductance */
     double *SWnegPosPtr;  /* pointer to sparse matrix offdiagonal at
-                                (neagtive,positive) for switch conductance */
+                             (neagtive,positive) for switch conductance */
     double *SWposNegPtr;  /* pointer to sparse matrix offdiagonal at
-                                (positive,neagtive) for switch conductance */
+                             (positive,neagtive) for switch conductance */
     double *SWnegNegPtr;  /* pointer to sparse matrix diagonal at
-                                (neagtive,neagtive) for switch conductance */
+                             (neagtive,neagtive) for switch conductance */
 
     double SWcond;      /* conductance of the switch now */
 
@@ -49,13 +49,13 @@ typedef struct sSWinstance {
 #else /* NONOISE */
     double *SWnVar;
 #endif /* NONOISE */
-} SWinstance ;
+} SWinstance;
 
 /* data per model */
 
 #define SW_ON_CONDUCTANCE 1.0   /* default on conductance = 1 mho */
 #define SW_OFF_CONDUCTANCE ckt->CKTgmin   /* default off conductance */
-#define SW_NUM_STATES 2   
+#define SW_NUM_STATES 2
 
 typedef struct sSWmodel {      /* model structure for a switch */
 
@@ -63,7 +63,7 @@ typedef struct sSWmodel {      /* model structure for a switch */
 
 #define SWmodType gen.GENmodType
 #define SWnextModel(inst) ((struct sSWmodel *)((inst)->gen.GENnextModel))
-#define SWinstances(inst) ((SWinstance *)((inst)->gen.GENinstances))
+#define SWinstances(inst) ((SWinstance *) ((inst)->gen.GENinstances))
 #define SWmodName gen.GENmodName
 
     double SWonResistance;  /* switch "on" resistance */

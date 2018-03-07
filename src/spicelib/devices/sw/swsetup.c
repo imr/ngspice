@@ -21,15 +21,15 @@ Author: 1985 Gordon Jacobs
 
 int
 SWsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
-        /* load the switch conductance with those pointers needed later 
-         * for fast matrix loading 
-         */
+/* load the switch conductance with those pointers needed later
+ * for fast matrix loading
+ */
 {
-    SWmodel *model = (SWmodel *)inModel;
+    SWmodel *model = (SWmodel *) inModel;
     SWinstance *here;
 
     /*  loop through all the current source models */
-    for( ; model; model = SWnextModel(model)) {
+    for (; model; model = SWnextModel(model)) {
 
         /* Default Value Processing for Switch Model */
         if (!model->SWthreshGiven)
@@ -38,21 +38,21 @@ SWsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             model->SWvHysteresis = 0;
         if (!model->SWonGiven)  {
             model->SWonConduct = SW_ON_CONDUCTANCE;
-            model->SWonResistance = 1.0/model->SWonConduct;
-        } 
+            model->SWonResistance = 1.0 / model->SWonConduct;
+        }
         if (!model->SWoffGiven)  {
             model->SWoffConduct = SW_OFF_CONDUCTANCE;
-            model->SWoffResistance = 1.0/model->SWoffConduct;
+            model->SWoffResistance = 1.0 / model->SWoffConduct;
         }
 
         /* loop through all the instances of the model */
-        for (here = SWinstances(model); here; here=SWnextInstance(here)) {
+        for (here = SWinstances(model); here; here = SWnextInstance(here)) {
 
             here->SWstate = *states;
             *states += SW_NUM_STATES;
 
             /* Default Value Processing for Switch Instance */
-                    /* none */
+            /* none */
 
             TSTALLOC(SWposPosPtr, SWposNode, SWposNode);
             TSTALLOC(SWposNegPtr, SWposNode, SWnegNode);

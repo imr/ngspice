@@ -14,20 +14,20 @@ Author: 1985 Gordon Jacobs
 
 int
 SWacLoad(GENmodel *inModel, CKTcircuit *ckt)
-        /* load the current values into the 
-         * sparse matrix previously provided 
-         * during AC analysis.
-         */
+/* load the current values into the
+ * sparse matrix previously provided
+ * during AC analysis.
+ */
 {
-    SWmodel *model = (SWmodel *)inModel;
+    SWmodel *model = (SWmodel *) inModel;
     SWinstance *here;
     double g_now;
     int current_state;
 
     /*  loop through all the switch models */
-    for( ; model; model = SWnextModel(model))
+    for (; model; model = SWnextModel(model))
         /* loop through all the instances of the model */
-        for (here = SWinstances(model); here; here=SWnextInstance(here)) {
+        for (here = SWinstances(model); here; here = SWnextInstance(here)) {
 
             /* In AC analysis, just propogate the state... */
 

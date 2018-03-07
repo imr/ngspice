@@ -22,7 +22,7 @@ Author: 1987 Gary W. Ng
 
 
 int
-CSWnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *data, double *OnDens)
+CSWnoise(int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *data, double *OnDens)
 {
     NOISEAN *job = (NOISEAN *) ckt->CKTcurJob;
 
@@ -35,83 +35,81 @@ CSWnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *d
     double lnNdens;
     int current_state;
 
-    for (model=firstModel; model; model=CSWnextModel(model))
-	for (inst=CSWinstances(model); inst; inst=CSWnextInstance(inst)) {
+    for (model = firstModel; model; model = CSWnextModel(model))
+        for (inst = CSWinstances(model); inst; inst = CSWnextInstance(inst)) {
 
-	    switch (operation) {
+            switch (operation) {
 
-	    case N_OPEN:
+            case N_OPEN:
 
-		/* see if we have to to produce a summary report */
-		/* if so, name the noise generator */
+                /* see if we have to to produce a summary report */
+                /* if so, name the noise generator */
 
-		if (job->NStpsSm != 0)
-		    switch (mode) {
-		    case N_DENS:
-			NOISE_ADD_OUTVAR(ckt, data, "onoise_%s%s", inst->CSWname, "");
-			break;
-		    case INT_NOIZ:
-			NOISE_ADD_OUTVAR(ckt, data, "onoise_total_%s%s", inst->CSWname, "");
-			NOISE_ADD_OUTVAR(ckt, data, "inoise_total_%s%s", inst->CSWname, "");
-			break;
-		    }
-		break;
+                if (job->NStpsSm != 0)
+                    switch (mode) {
+                    case N_DENS:
+                        NOISE_ADD_OUTVAR(ckt, data, "onoise_%s%s", inst->CSWname, "");
+                        break;
+                    case INT_NOIZ:
+                        NOISE_ADD_OUTVAR(ckt, data, "onoise_total_%s%s", inst->CSWname, "");
+                        NOISE_ADD_OUTVAR(ckt, data, "inoise_total_%s%s", inst->CSWname, "");
+                        break;
+                    }
+                break;
 
-	    case N_CALC:
-		switch (mode) {
+            case N_CALC:
+                switch (mode) {
 
-		case N_DENS:
-		    current_state = (int) ckt->CKTstates[0][inst->CSWstate + 0];
-		    NevalSrc(&noizDens,&lnNdens,ckt,THERMNOISE,
-				 inst->CSWposNode,inst->CSWnegNode,
-				 current_state ? model->CSWonConduct : model->CSWoffConduct);
+                case N_DENS:
+                    current_state = (int) ckt->CKTstates[0][inst->CSWstate + 0];
+                    NevalSrc(&noizDens, &lnNdens, ckt, THERMNOISE,
+                             inst->CSWposNode, inst->CSWnegNode,
+                             current_state ? model->CSWonConduct : model->CSWoffConduct);
 
-		    *OnDens += noizDens;
+                    *OnDens += noizDens;
 
-		    if (data->delFreq == 0.0) { 
+                    if (data->delFreq == 0.0) {
 
-			/* if we haven't done any previous integration, we need to */
-			/* initialize our "history" variables                      */
+                        /* if we haven't done any previous integration, we need to */
+                        /* initialize our "history" variables                      */
 
-			inst->CSWnVar[LNLSTDENS] = lnNdens;
+                        inst->CSWnVar[LNLSTDENS] = lnNdens;
 
-			/* clear out our integration variable if it's the first pass */
+                        /* clear out our integration variable if it's the first pass */
 
-			if (data->freq == job->NstartFreq)
-			    inst->CSWnVar[OUTNOIZ] = 0.0;
-		    } else {   /* data->delFreq != 0.0 (we have to integrate) */
-			tempOutNoise = Nintegrate(noizDens, lnNdens,
-			       inst->CSWnVar[LNLSTDENS], data);
-			tempInNoise = Nintegrate(noizDens * 
-			       data->GainSqInv ,lnNdens + data->lnGainInv,
-			       inst->CSWnVar[LNLSTDENS] + data->lnGainInv,
-			       data);
-			inst->CSWnVar[OUTNOIZ] += tempOutNoise;
-			inst->CSWnVar[INNOIZ] += tempInNoise;
-			data->outNoiz += tempOutNoise;
-			data->inNoise += tempInNoise;
-			inst->CSWnVar[LNLSTDENS] = lnNdens;
-		    }
-		    if (data->prtSummary)
-			data->outpVector[data->outNumber++] = noizDens;
-		    break;
+                        if (data->freq == job->NstartFreq)
+                            inst->CSWnVar[OUTNOIZ] = 0.0;
+                    } else {   /* data->delFreq != 0.0 (we have to integrate) */
+                        tempOutNoise = Nintegrate(noizDens, lnNdens,
+                                                  inst->CSWnVar[LNLSTDENS], data);
+                        tempInNoise = Nintegrate(noizDens *
+                                                 data->GainSqInv, lnNdens + data->lnGainInv,
+                                                 inst->CSWnVar[LNLSTDENS] + data->lnGainInv,
+                                                 data);
+                        inst->CSWnVar[OUTNOIZ] += tempOutNoise;
+                        inst->CSWnVar[INNOIZ] += tempInNoise;
+                        data->outNoiz += tempOutNoise;
+                        data->inNoise += tempInNoise;
+                        inst->CSWnVar[LNLSTDENS] = lnNdens;
+                    }
+                    if (data->prtSummary)
+                        data->outpVector[data->outNumber++] = noizDens;
+                    break;
 
-		case INT_NOIZ:        /* already calculated, just output */
-		    if (job->NStpsSm != 0) {
-			data->outpVector[data->outNumber++] = inst->CSWnVar[OUTNOIZ];
-			data->outpVector[data->outNumber++] = inst->CSWnVar[INNOIZ];
-		    }    /* if */
-		    break;
-		}    /* switch (mode) */
-		break;
+                case INT_NOIZ:        /* already calculated, just output */
+                    if (job->NStpsSm != 0) {
+                        data->outpVector[data->outNumber++] = inst->CSWnVar[OUTNOIZ];
+                        data->outpVector[data->outNumber++] = inst->CSWnVar[INNOIZ];
+                    }    /* if */
+                    break;
+                }    /* switch (mode) */
+                break;
 
-	    case N_CLOSE:
-		return OK;         /* do nothing, the main calling routine will close */
-		break;               /* the plots */
-	    }    /* switch (operation) */
-	}    /* for inst */
+            case N_CLOSE:
+                return OK;         /* do nothing, the main calling routine will close */
+                break;               /* the plots */
+            }    /* switch (operation) */
+        }    /* for inst */
 
-return OK;
+    return OK;
 }
-            
-

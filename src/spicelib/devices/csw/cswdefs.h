@@ -13,7 +13,7 @@ Modified: 2000 AlansFixes
 #include "ngspice/noisedef.h"
 #include "ngspice/complex.h"
 
-    /* structures used to describe current controlled switches */
+/* structures used to describe current controlled switches */
 
 
 /* information to describe each instance */
@@ -34,13 +34,13 @@ typedef struct sCSWinstance {
     IFuid CSWcontName; /* name of controlling source */
 
     double *CSWposPosPtr;  /* pointer to sparse matrix diagonal at
-                                (positive,positive) for switch conductance */
+                              (positive,positive) for switch conductance */
     double *CSWnegPosPtr;  /* pointer to sparse matrix offdiagonal at
-                                (neagtive,positive) for switch conductance */
+                              (neagtive,positive) for switch conductance */
     double *CSWposNegPtr;  /* pointer to sparse matrix offdiagonal at
-                                (positive,neagtive) for switch conductance */
+                              (positive,neagtive) for switch conductance */
     double *CSWnegNegPtr;  /* pointer to sparse matrix diagonal at
-                                (neagtive,neagtive) for switch conductance */
+                              (neagtive,neagtive) for switch conductance */
 
     double CSWcond;     /* current conductance of switch */
 
@@ -48,15 +48,15 @@ typedef struct sCSWinstance {
 #ifndef NONOISE
     double CSWnVar[NSTATVARS];
 #else /* NONOISE */
-	double *CSWnVar;
+    double *CSWnVar;
 #endif /* NONOISE */
-} CSWinstance ;
+} CSWinstance;
 
 /* data per model */
 
 #define CSW_ON_CONDUCTANCE 1.0   /* default on conductance = 1 mho */
 #define CSW_OFF_CONDUCTANCE ckt->CKTgmin   /* default off conductance */
-#define CSW_NUM_STATES 2   
+#define CSW_NUM_STATES 2
 
 typedef struct sCSWmodel {      /* model structure for a switch */
 
@@ -64,7 +64,7 @@ typedef struct sCSWmodel {      /* model structure for a switch */
 
 #define CSWmodType gen.GENmodType
 #define CSWnextModel(inst) ((struct sCSWmodel *)((inst)->gen.GENnextModel))
-#define CSWinstances(inst) ((CSWinstance *)((inst)->gen.GENinstances))
+#define CSWinstances(inst) ((CSWinstance *) ((inst)->gen.GENinstances))
 #define CSWmodName gen.GENmodName
 
     double CSWonResistance;  /* switch "on" resistance */
@@ -75,8 +75,8 @@ typedef struct sCSWmodel {      /* model structure for a switch */
     double CSWoffConduct;    /* switch "off" conductance  */
 
     unsigned CSWonGiven : 1; /* flag to indicate on-resistance was specified */
-    unsigned CSWoffGiven : 1;/* flag to indicate off-resistance was  "   */
-    unsigned CSWthreshGiven : 1;/* flag to indicate threshold volt was given */
+    unsigned CSWoffGiven : 1; /* flag to indicate off-resistance was  "   */
+    unsigned CSWthreshGiven : 1; /* flag to indicate threshold volt was given */
     unsigned CSWhystGiven : 1; /* flag to indicate hysteresis volt was given */
 } CSWmodel;
 
