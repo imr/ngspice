@@ -61,7 +61,7 @@ CSWnoise(int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *da
                 switch (mode) {
 
                 case N_DENS:
-                    current_state = (int) ckt->CKTstates[0][inst->CSWstate + 0];
+                    current_state = (int) ckt->CKTstate0[inst->CSWswitchstate];
                     NevalSrc(&noizDens, &lnNdens, ckt, THERMNOISE,
                              inst->CSWposNode, inst->CSWnegNode,
                              current_state ? model->CSWonConduct : model->CSWoffConduct);

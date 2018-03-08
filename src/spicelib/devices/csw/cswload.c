@@ -30,8 +30,8 @@ CSWload(GENmodel *inModel, CKTcircuit *ckt)
     for (; model; model = CSWnextModel(model))
         for (here = CSWinstances(model); here; here = CSWnextInstance(here)) {
 
-            old_current_state = ckt->CKTstates[0][here->CSWstate + 0];
-            previous_state = ckt->CKTstates[1][here->CSWstate + 0];
+            old_current_state = ckt->CKTstate0[here->CSWswitchstate];
+            previous_state = ckt->CKTstate1[here->CSWswitchstate];
             i_ctrl = ckt->CKTrhsOld[here->CSWcontBranch];
 
             /* decide the state of the switch */
@@ -126,8 +126,8 @@ CSWload(GENmodel *inModel, CKTcircuit *ckt)
                 }
             }
 
-            ckt->CKTstates[0][here->CSWstate + 0] = current_state;
-            ckt->CKTstates[1][here->CSWstate + 0] = previous_state;
+            ckt->CKTstate0[here->CSWswitchstate] = current_state;
+            ckt->CKTstate1[here->CSWswitchstate] = previous_state;
 
             if (current_state == REALLY_ON || current_state == HYST_ON)
                 g_now = model->CSWonConduct;
