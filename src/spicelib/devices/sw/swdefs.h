@@ -27,8 +27,8 @@ typedef struct sSWinstance {
 #define SWname gen.GENname
 #define SWstate gen.GENstate
 
-    const int SWposNode; /* number of positive node of switch */
-    const int SWnegNode; /* number of negative node of switch */
+    const int SWposNode;      /* number of positive node of switch */
+    const int SWnegNode;      /* number of negative node of switch */
     const int SWposCntrlNode; /* number of positive controlling node of switch */
     const int SWnegCntrlNode; /* number of negative controlling node of switch */
 
@@ -41,14 +41,14 @@ typedef struct sSWinstance {
     double *SWnegNegPtr;  /* pointer to sparse matrix diagonal at
                              (neagtive,neagtive) for switch conductance */
 
-    double SWcond;      /* conductance of the switch now */
+    double SWcond;        /* conductance of the switch now */
 
     unsigned SWzero_stateGiven : 1;  /* flag to indicate initial state */
 #ifndef NONOISE
     double SWnVar[NSTATVARS];
-#else /* NONOISE */
+#else
     double *SWnVar;
-#endif /* NONOISE */
+#endif
 } SWinstance;
 
 /* data per model */
@@ -73,10 +73,10 @@ typedef struct sSWmodel {      /* model structure for a switch */
     double SWonConduct;     /* switch "on" conductance  */
     double SWoffConduct;    /* switch "off" conductance  */
 
-    unsigned SWonGiven : 1;   /* flag to indicate on-resistance was specified */
-    unsigned SWoffGiven : 1;  /* flag to indicate off-resistance was  "   */
+    unsigned SWonGiven : 1;     /* flag to indicate on-resistance was specified */
+    unsigned SWoffGiven : 1;    /* flag to indicate off-resistance was  "   */
     unsigned SWthreshGiven : 1; /* flag to indicate threshold volt was given */
-    unsigned SWhystGiven : 1; /* flag to indicate hysteresis volt was given */
+    unsigned SWhystGiven : 1;   /* flag to indicate hysteresis volt was given */
 } SWmodel;
 
 /* device parameters */
@@ -104,4 +104,4 @@ typedef struct sSWmodel {      /* model structure for a switch */
 
 #include "swext.h"
 
-#endif /*SW*/
+#endif

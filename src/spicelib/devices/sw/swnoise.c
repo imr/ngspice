@@ -100,16 +100,16 @@ SWnoise(int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *dat
                     if (job->NStpsSm != 0) {
                         data->outpVector[data->outNumber++] = inst->SWnVar[OUTNOIZ];
                         data->outpVector[data->outNumber++] = inst->SWnVar[INNOIZ];
-                    }    /* if */
+                    }
                     break;
-                }    /* switch (mode) */
+                }
                 break;
 
             case N_CLOSE:
                 return OK;         /* do nothing, the main calling routine will close */
-                break;               /* the plots */
-            }    /* switch (operation) */
-        }    /* for inst */
+                break;             /* the plots */
+            }
+        }
 
     return OK;
 }

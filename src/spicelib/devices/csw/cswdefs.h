@@ -27,11 +27,11 @@ typedef struct sCSWinstance {
 #define CSWname gen.GENname
 #define CSWstate gen.GENstate
 
-    const int CSWposNode; /* number of positive node of switch */
-    const int CSWnegNode; /* number of negative node of switch */
-    int CSWcontBranch; /* number of branch of controlling current */
+    const int CSWposNode;  /* number of positive node of switch */
+    const int CSWnegNode;  /* number of negative node of switch */
+    int CSWcontBranch;     /* number of branch of controlling current */
 
-    IFuid CSWcontName; /* name of controlling source */
+    IFuid CSWcontName;     /* name of controlling source */
 
     double *CSWposPosPtr;  /* pointer to sparse matrix diagonal at
                               (positive,positive) for switch conductance */
@@ -42,14 +42,14 @@ typedef struct sCSWinstance {
     double *CSWnegNegPtr;  /* pointer to sparse matrix diagonal at
                               (neagtive,neagtive) for switch conductance */
 
-    double CSWcond;     /* current conductance of switch */
+    double CSWcond;        /* current conductance of switch */
 
     unsigned CSWzero_stateGiven : 1;  /* flag to indicate initial state */
 #ifndef NONOISE
     double CSWnVar[NSTATVARS];
-#else /* NONOISE */
+#else
     double *CSWnVar;
-#endif /* NONOISE */
+#endif
 } CSWinstance;
 
 /* data per model */
@@ -74,10 +74,10 @@ typedef struct sCSWmodel {      /* model structure for a switch */
     double CSWonConduct;     /* switch "on" conductance  */
     double CSWoffConduct;    /* switch "off" conductance  */
 
-    unsigned CSWonGiven : 1; /* flag to indicate on-resistance was specified */
-    unsigned CSWoffGiven : 1; /* flag to indicate off-resistance was  "   */
+    unsigned CSWonGiven : 1;     /* flag to indicate on-resistance was specified */
+    unsigned CSWoffGiven : 1;    /* flag to indicate off-resistance was  "   */
     unsigned CSWthreshGiven : 1; /* flag to indicate threshold volt was given */
-    unsigned CSWhystGiven : 1; /* flag to indicate hysteresis volt was given */
+    unsigned CSWhystGiven : 1;   /* flag to indicate hysteresis volt was given */
 } CSWmodel;
 
 /* device parameters */
@@ -104,4 +104,4 @@ typedef struct sCSWmodel {      /* model structure for a switch */
 
 #include "cswext.h"
 
-#endif /*CSW*/
+#endif

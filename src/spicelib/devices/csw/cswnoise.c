@@ -100,16 +100,16 @@ CSWnoise(int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *da
                     if (job->NStpsSm != 0) {
                         data->outpVector[data->outNumber++] = inst->CSWnVar[OUTNOIZ];
                         data->outpVector[data->outNumber++] = inst->CSWnVar[INNOIZ];
-                    }    /* if */
+                    }
                     break;
-                }    /* switch (mode) */
+                }
                 break;
 
             case N_CLOSE:
                 return OK;         /* do nothing, the main calling routine will close */
-                break;               /* the plots */
-            }    /* switch (operation) */
-        }    /* for inst */
+                break;             /* the plots */
+            }
+        }
 
     return OK;
 }
