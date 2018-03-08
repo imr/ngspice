@@ -21,7 +21,7 @@ CSWacLoad(GENmodel *inModel, CKTcircuit *ckt)
     for (; model; model = CSWnextModel(model))
         for (here = CSWinstances(model); here; here = CSWnextInstance(here)) {
 
-            current_state = (int) ckt->CKTstates[0][here->CSWstate + 0];
+            current_state = (int) ckt->CKTstate0[here->CSWswitchstate];
 
             g_now = current_state ? model->CSWonConduct : model->CSWoffConduct;
 
