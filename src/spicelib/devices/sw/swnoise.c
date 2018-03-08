@@ -36,8 +36,8 @@ SWnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *da
     int current_state;
 
 
-    for (model=firstModel; model != NULL; model=SWnextModel(model)) {
-	for (inst=SWinstances(model); inst != NULL; inst=SWnextInstance(inst)) {
+    for (model=firstModel; model; model=SWnextModel(model)) {
+	for (inst=SWinstances(model); inst; inst=SWnextInstance(inst)) {
 
 	    switch (operation) {
 
@@ -65,7 +65,7 @@ SWnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *da
 		switch (mode) {
 
 		case N_DENS:
-		    current_state = (int)*(ckt->CKTstate0 + inst->SWstate);
+		    current_state = (int) ckt->CKTstates[0][inst->SWstate + 0];
 		    NevalSrc(&noizDens,&lnNdens,ckt,THERMNOISE,
 				 inst->SWposNode,inst->SWnegNode,
 				 current_state?(model->SWonConduct):(model->SWoffConduct));
@@ -112,11 +112,11 @@ SWnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *da
 		break;
 
 	    case N_CLOSE:
-		return (OK);         /* do nothing, the main calling routine will close */
+		return OK;         /* do nothing, the main calling routine will close */
 		break;               /* the plots */
 	    }    /* switch (operation) */
 	}    /* for inst */
     }    /* for model */
 
-return(OK);
+return OK;
 }

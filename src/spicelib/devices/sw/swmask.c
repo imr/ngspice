@@ -30,24 +30,24 @@ SWmAsk(CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
     switch(which) {
         case SW_MOD_RON:
             value->rValue = model->SWonResistance;
-            return (OK);
+            return OK;
         case SW_MOD_ROFF:
             value->rValue = model->SWoffResistance;
-            return (OK);
+            return OK;
         case SW_MOD_VTH:
             value->rValue = model->SWvThreshold;
-            return (OK);
+            return OK;
         case SW_MOD_VHYS:
             value->rValue = model->SWvHysteresis;
-            return (OK);
+            return OK;
         case SW_MOD_GON:
             value->rValue = model->SWonConduct;
-            return (OK);
+            return OK;
         case SW_MOD_GOFF:
             value->rValue = model->SWoffConduct;
-            return (OK);
+            return OK;
         default:
-            return (E_BADPARM);
+            return E_BADPARM;
     }
     /* NOTREACHED */
 }

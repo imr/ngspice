@@ -31,17 +31,17 @@ SWload(GENmodel *inModel, CKTcircuit *ckt)
 //    double current_region = -1;
 
     /*  loop through all the switch models */
-    for( ; model != NULL; model = SWnextModel(model)) {
+    for( ; model; model = SWnextModel(model)) {
 
         /* loop through all the instances of the model */
-        for (here = SWinstances(model); here != NULL ;
+        for (here = SWinstances(model); here;
                 here=SWnextInstance(here)) {
 	     
-			old_current_state = *(ckt->CKTstates[0] + here->SWstate);
-			previous_state = *(ckt->CKTstates[1] + here->SWstate);
+			old_current_state = ckt->CKTstates[0][here->SWstate + 0];
+			previous_state = ckt->CKTstates[1][here->SWstate + 0];
 
-			v_ctrl = *(ckt->CKTrhsOld + here->SWposCntrlNode)
-                         - *(ckt->CKTrhsOld + here->SWnegCntrlNode);
+			v_ctrl = ckt->CKTrhsOld[here->SWposCntrlNode]
+                         - ckt->CKTrhsOld[here->SWnegCntrlNode];
 		  
 		  /* decide the state of the switch */
 		  
@@ -137,8 +137,8 @@ SWload(GENmodel *inModel, CKTcircuit *ckt)
 // distant and then the time is pushed back to a time before the switch changed states.   
 // After analyzing the transient code, it seems that this is not a problem because state updating
 // occurs before the convergence loop in transient processing.
-			*(ckt->CKTstates[0] + here->SWstate) = current_state;
-			*(ckt->CKTstates[0] + here->SWstate + 1) = v_ctrl;
+			ckt->CKTstates[0][here->SWstate + 0] = current_state;
+			ckt->CKTstates[0][here->SWstate + 1] = v_ctrl;
 
             if ((current_state == REALLY_ON) || (current_state == HYST_ON)) 
 				g_now = model->SWonConduct;
@@ -152,5 +152,5 @@ SWload(GENmodel *inModel, CKTcircuit *ckt)
             *(here->SWnegNegPtr) += g_now;
         }
     }
-    return(OK);
+    return OK;
 }

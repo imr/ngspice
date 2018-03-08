@@ -30,24 +30,24 @@ CSWmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
     switch(which) {
         case CSW_RON:
             value->rValue = here->CSWonResistance;
-            return (OK);
+            return OK;
         case CSW_ROFF:
             value->rValue = here->CSWoffResistance;
-            return (OK);
+            return OK;
         case CSW_ITH:
             value->rValue = here->CSWiThreshold;
-            return (OK);
+            return OK;
         case CSW_IHYS:
             value->rValue = here->CSWiHysteresis;
-            return (OK);
+            return OK;
         case CSW_GON:
             value->rValue = here->CSWonConduct;
-            return (OK);
+            return OK;
         case CSW_GOFF:
             value->rValue = here->CSWoffConduct;
-            return (OK);
+            return OK;
         default:
-            return (E_BADPARM);
+            return E_BADPARM;
     }
     /* NOTREACHED */
 }

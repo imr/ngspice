@@ -31,44 +31,44 @@ SWask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *se
     switch(which) {
         case SW_POS_NODE:
             value->iValue = here->SWposNode;
-            return (OK);
+            return OK;
         case SW_NEG_NODE:
             value->iValue = here->SWnegNode;
-            return (OK);
+            return OK;
         case SW_POS_CONT_NODE:
             value->iValue = here->SWposCntrlNode;
-            return (OK);
+            return OK;
         case SW_NEG_CONT_NODE:
             value->iValue = here->SWnegCntrlNode;
-            return (OK);
+            return OK;
         case SW_CURRENT:
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
                 errMsg = TMALLOC(char, strlen(msg) + 1);
                 errRtn = "SWask";
                 strcpy(errMsg,msg);
-                return(E_ASKCURRENT);
+                return E_ASKCURRENT;
             } else {
-                value->rValue = (*(ckt->CKTrhsOld + here->SWposNode)
-                        - *(ckt->CKTrhsOld + here->SWnegNode)) *
+                value->rValue = (ckt->CKTrhsOld[here->SWposNode]
+                        - ckt->CKTrhsOld[here->SWnegNode]) *
                         here->SWcond;
             }
-            return(OK);
+            return OK;
         case SW_POWER:
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
                 errMsg = TMALLOC(char, strlen(msg) + 1);
                 errRtn = "SWask";
                 strcpy(errMsg,msg);
-                return(E_ASKPOWER);
+                return E_ASKPOWER;
             } else {
-                value->rValue = (*(ckt->CKTrhsOld + here->SWposNode)
-                        - *(ckt->CKTrhsOld + here->SWnegNode)) *
-                        (*(ckt->CKTrhsOld + here->SWposNode)
-                        - *(ckt->CKTrhsOld + here->SWnegNode)) *
+                value->rValue = (ckt->CKTrhsOld[here->SWposNode]
+                        - ckt->CKTrhsOld[here->SWnegNode]) *
+                        (ckt->CKTrhsOld[here->SWposNode]
+                        - ckt->CKTrhsOld[here->SWnegNode]) *
                         here->SWcond;
             }
-            return(OK);
+            return OK;
         default:
-            return (E_BADPARM);
+            return E_BADPARM;
     }
     /* NOTREACHED */
 }

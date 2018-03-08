@@ -31,41 +31,41 @@ CSWask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *s
     switch(which) {
         case CSW_CONTROL:
             value->uValue = here->CSWcontName;
-            return (OK);
+            return OK;
         case CSW_POS_NODE:
             value->iValue = here->CSWposNode;
-            return (OK);
+            return OK;
         case CSW_NEG_NODE:
             value->iValue = here->CSWnegNode;
-            return (OK);
+            return OK;
         case CSW_CURRENT:
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
                 errMsg = TMALLOC(char, strlen(msg) + 1);
                 errRtn = "CSWask";
                 strcpy(errMsg,msg);
-                return(E_ASKCURRENT);
+                return E_ASKCURRENT;
             } else {
-                value->rValue = (*(ckt->CKTrhsOld+here->CSWposNode)
-                        - *(ckt->CKTrhsOld + here->CSWnegNode)) *
+                value->rValue = (ckt->CKTrhsOld[here->CSWposNode]
+                        - ckt->CKTrhsOld[here->CSWnegNode]) *
                         here->CSWcond;
             }
-            return(OK);
+            return OK;
         case CSW_POWER:
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
                 errMsg = TMALLOC(char, strlen(msg) + 1);
                 errRtn = "CSWask";
                 strcpy(errMsg,msg);
-                return(E_ASKPOWER);
+                return E_ASKPOWER;
             } else {
-                value->rValue = (*(ckt->CKTrhsOld+here->CSWposNode)
-                        - *(ckt->CKTrhsOld + here->CSWnegNode)) *
-                        (*(ckt->CKTrhsOld + here->CSWposNode)
-                        - *(ckt->CKTrhsOld + here->CSWnegNode)) *
+                value->rValue = (ckt->CKTrhsOld[here->CSWposNode]
+                        - ckt->CKTrhsOld[here->CSWnegNode]) *
+                        (ckt->CKTrhsOld[here->CSWposNode]
+                        - ckt->CKTrhsOld[here->CSWnegNode]) *
                         here->CSWcond;
             }
-            return(OK);
+            return OK;
         default:
-            return (E_BADPARM);
+            return E_BADPARM;
     }
     /* NOTREACHED */
 }

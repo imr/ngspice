@@ -31,16 +31,15 @@ CSWload(GENmodel *inModel, CKTcircuit *ckt)
 	/* switch is on or off while control value is in hysteresis region. */
 
     /*  loop through all the switch models */
-    for( ; model != NULL; model = CSWnextModel(model)) {
+    for( ; model; model = CSWnextModel(model)) {
 
         /* loop through all the instances of the model */
-        for (here = CSWinstances(model); here != NULL ;
+        for (here = CSWinstances(model); here;
                 here=CSWnextInstance(here)) {
 			
-			old_current_state = *(ckt->CKTstates[0] + here->CSWstate);
-			previous_state = *(ckt->CKTstates[1] + here->CSWstate);
-            i_ctrl = *(ckt->CKTrhsOld + 
-                    here->CSWcontBranch);
+			old_current_state = ckt->CKTstates[0][here->CSWstate + 0];
+			previous_state = ckt->CKTstates[1][here->CSWstate + 0];
+            i_ctrl = ckt->CKTrhsOld[here->CSWcontBranch];
 
             /* decide the state of the switch */
 
@@ -136,8 +135,8 @@ CSWload(GENmodel *inModel, CKTcircuit *ckt)
 				}
              }
 
-			*(ckt->CKTstates[0] + here->CSWstate) = current_state;
-			*(ckt->CKTstates[1] + here->CSWstate) = previous_state;
+			ckt->CKTstates[0][here->CSWstate + 0] = current_state;
+			ckt->CKTstates[1][here->CSWstate + 0] = previous_state;
             if ((current_state == REALLY_ON) || (current_state == HYST_ON)) 
 				g_now = model->CSWonConduct;
 			else 
@@ -150,5 +149,5 @@ CSWload(GENmodel *inModel, CKTcircuit *ckt)
             *(here->CSWnegNegPtr) += g_now;
         }
     }
-    return(OK);
+    return OK;
 }

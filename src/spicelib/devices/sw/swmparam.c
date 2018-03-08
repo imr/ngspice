@@ -44,8 +44,8 @@ SWmParam(int param, IFvalue *value, GENmodel *inModel)
             model->SWhystGiven = TRUE;
             break;
         default:
-            return(E_BADPARM);
+            return E_BADPARM;
     }
 
-    return(OK);
+    return OK;
 }

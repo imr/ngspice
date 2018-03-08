@@ -42,7 +42,7 @@ CSWmParam(int param, IFvalue *value, GENmodel *inModel)
             model->CSWhystGiven = TRUE;
             break;
         default:
-            return(E_BADPARM);
+            return E_BADPARM;
     }
-    return(OK);
+    return OK;
 }

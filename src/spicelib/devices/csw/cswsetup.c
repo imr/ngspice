@@ -23,7 +23,7 @@ CSWsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     CSWinstance *here;
 
     /*  loop through all the current source models */
-    for( ; model != NULL; model = CSWnextModel(model)) {
+    for( ; model; model = CSWnextModel(model)) {
         /* Default Value Processing for Switch Model */
         if (!model->CSWthreshGiven) {
             model->CSWiThreshold = 0;
@@ -41,7 +41,7 @@ CSWsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         }
 
         /* loop through all the instances of the model */
-        for (here = CSWinstances(model); here != NULL ;
+        for (here = CSWinstances(model); here;
                 here=CSWnextInstance(here)) {
 
             /* Default Value Processing for Switch Instance */
@@ -52,7 +52,7 @@ CSWsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             if(here->CSWcontBranch == 0) {
                 SPfrontEnd->IFerrorf (ERR_FATAL,
                         "%s: unknown controlling source %s", here->CSWname, here->CSWcontName);
-                return(E_BADPARM);
+                return E_BADPARM;
             }
 
 /* macro to make elements with built in test for out of memory */
@@ -67,5 +67,5 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
             TSTALLOC(CSWnegNegPtr, CSWnegNode, CSWnegNode);
         }
     }
-    return(OK);
+    return OK;
 }

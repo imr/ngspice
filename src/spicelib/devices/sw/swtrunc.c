@@ -19,23 +19,23 @@ SWtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
     SWinstance *here;
     double   lastChange, maxChange, maxStep, ref;
 
-    for( ; model!= NULL; model = SWnextModel(model)) {
-        for(here = SWinstances(model); here != NULL ;
+    for( ; model; model = SWnextModel(model)) {
+        for(here = SWinstances(model); here;
                 here = SWnextInstance(here)) {
-            lastChange = *(ckt->CKTstate0+(here->SWstate+1)) -
-                          *(ckt->CKTstate1+(here->SWstate+1));
-            if (*(ckt->CKTstate0+(here->SWstate))==0) {
+            lastChange = ckt->CKTstates[0][here->SWstate + 1] -
+                          ckt->CKTstates[1][here->SWstate + 1];
+            if (ckt->CKTstates[0][here->SWstate + 0]==0) {
               ref = (model->SWvThreshold + model->SWvHysteresis);
-              if ((*(ckt->CKTstate0+(here->SWstate+1))<ref) && (lastChange>0)) {
-                   maxChange = (ref - *(ckt->CKTstate0+(here->SWstate+1))) *
+              if ((ckt->CKTstates[0][here->SWstate + 1]<ref) && (lastChange>0)) {
+                   maxChange = (ref - ckt->CKTstates[0][here->SWstate + 1]) *
                                 0.75 + 0.05;
                    maxStep = maxChange/lastChange * ckt->CKTdeltaOld[0];
                    if (*timeStep > maxStep) { *timeStep = maxStep; }
               }
             } else {
               ref = (model->SWvThreshold - model->SWvHysteresis);
-              if ((*(ckt->CKTstate0+(here->SWstate+1))>ref) && (lastChange<0)) {
-                   maxChange = (ref - *(ckt->CKTstate0+(here->SWstate+1))) *
+              if ((ckt->CKTstates[0][here->SWstate + 1]>ref) && (lastChange<0)) {
+                   maxChange = (ref - ckt->CKTstates[0][here->SWstate + 1]) *
                                 0.75 - 0.05;
                    maxStep = maxChange/lastChange * ckt->CKTdeltaOld[0];
                    if (*timeStep > maxStep) { *timeStep = maxStep; }
@@ -43,5 +43,5 @@ SWtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
             }
         }
     }
-    return(OK);
+    return OK;
 }
