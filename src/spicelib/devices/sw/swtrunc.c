@@ -21,13 +21,13 @@ SWtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
     for (; model; model = SWnextModel(model))
         for (here = SWinstances(model); here; here = SWnextInstance(here)) {
             lastChange =
-                ckt->CKTstates[0][here->SWstate + 1] -
-                ckt->CKTstates[1][here->SWstate + 1];
-            if (ckt->CKTstates[0][here->SWstate + 0] == 0) {
+                ckt->CKTstate0[here->SWctrlvalue] -
+                ckt->CKTstate1[here->SWctrlvalue];
+            if (ckt->CKTstate0[here->SWswitchstate] == 0) {
                 ref = model->SWvThreshold + model->SWvHysteresis;
-                if (ckt->CKTstates[0][here->SWstate + 1] < ref && lastChange > 0) {
+                if (ckt->CKTstate0[here->SWctrlvalue] < ref && lastChange > 0) {
                     maxChange =
-                        (ref - ckt->CKTstates[0][here->SWstate + 1]) * 0.75
+                        (ref - ckt->CKTstate0[here->SWctrlvalue]) * 0.75
                         + 0.05;
                     maxStep = maxChange / lastChange * ckt->CKTdeltaOld[0];
                     if (*timeStep > maxStep)
@@ -35,9 +35,9 @@ SWtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
                 }
             } else {
                 ref = model->SWvThreshold - model->SWvHysteresis;
-                if (ckt->CKTstates[0][here->SWstate + 1] > ref && lastChange < 0) {
+                if (ckt->CKTstate0[here->SWctrlvalue] > ref && lastChange < 0) {
                     maxChange =
-                        (ref - ckt->CKTstates[0][here->SWstate + 1]) * 0.75
+                        (ref - ckt->CKTstate0[here->SWctrlvalue]) * 0.75
                         - 0.05;
                     maxStep = maxChange / lastChange * ckt->CKTdeltaOld[0];
                     if (*timeStep > maxStep)
