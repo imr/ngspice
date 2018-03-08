@@ -65,6 +65,10 @@ typedef struct sSWinstance {
 #define SW_OFF_CONDUCTANCE ckt->CKTgmin   /* default off conductance */
 #define SW_NUM_STATES 2
 
+#define SWswitchstate SWstate+0
+#define SWctrlvalue   SWstate+1
+
+
 typedef struct sSWmodel {      /* model structure for a switch */
 
     struct GENmodel gen;
