@@ -23,7 +23,7 @@ SWacLoad(GENmodel *inModel, CKTcircuit *ckt)
 
             /* In AC analysis, just propogate the state... */
 
-            current_state = (int) ckt->CKTstates[0][here->SWstate + 0];
+            current_state = (int) ckt->CKTstate0[here->SWswitchstate];
 
             g_now = current_state ? model->SWonConduct : model->SWoffConduct;
 

@@ -31,8 +31,8 @@ SWload(GENmodel *inModel, CKTcircuit *ckt)
     for (; model; model = SWnextModel(model))
         for (here = SWinstances(model); here; here = SWnextInstance(here)) {
 
-            old_current_state = ckt->CKTstates[0][here->SWstate + 0];
-            previous_state = ckt->CKTstates[1][here->SWstate + 0];
+            old_current_state = ckt->CKTstate0[here->SWswitchstate];
+            previous_state = ckt->CKTstate1[here->SWswitchstate];
 
             v_ctrl =
                 ckt->CKTrhsOld[here->SWposCntrlNode] -
@@ -129,8 +129,8 @@ SWload(GENmodel *inModel, CKTcircuit *ckt)
             // After analyzing the transient code, it seems that this is not a problem because state updating
             // occurs before the convergence loop in transient processing.
 
-            ckt->CKTstates[0][here->SWstate + 0] = current_state;
-            ckt->CKTstates[0][here->SWstate + 1] = v_ctrl;
+            ckt->CKTstate0[here->SWswitchstate] = current_state;
+            ckt->CKTstate0[here->SWctrlvalue] = v_ctrl;
 
             if (current_state == REALLY_ON || current_state == HYST_ON)
                 g_now = model->SWonConduct;
