@@ -40,16 +40,12 @@ CSWload(GENmodel *inModel, CKTcircuit *ckt)
 
                 if (here->CSWzero_stateGiven) {
                     /* switch specified "on" */
-                    if (model->CSWiHysteresis >= 0 && i_ctrl > model->CSWiThreshold + model->CSWiHysteresis)
-                        current_state = REALLY_ON;
-                    else if (model->CSWiHysteresis < 0 && i_ctrl > model->CSWiThreshold - model->CSWiHysteresis)
+                    if (i_ctrl > model->CSWiThreshold + fabs(model->CSWiHysteresis))
                         current_state = REALLY_ON;
                     else
                         current_state = HYST_ON;
                 } else {
-                    if (model->CSWiHysteresis >= 0 && i_ctrl < model->CSWiThreshold - model->CSWiHysteresis)
-                        current_state = REALLY_OFF;
-                    else if (model->CSWiHysteresis < 0 && i_ctrl < model->CSWiThreshold + model->CSWiHysteresis)
+                    if (i_ctrl < model->CSWiThreshold - fabs(model->CSWiHysteresis))
                         current_state = REALLY_OFF;
                     else
                         current_state = HYST_OFF;
@@ -63,16 +59,16 @@ CSWload(GENmodel *inModel, CKTcircuit *ckt)
                 /* use state0 since INITTRAN or INITPRED already called */
 
                 if (model->CSWiHysteresis > 0) {
-                    if (i_ctrl > (model->CSWiThreshold + model->CSWiHysteresis))
+                    if (i_ctrl > (model->CSWiThreshold + fabs(model->CSWiHysteresis)))
                         current_state = REALLY_ON;
-                    else if (i_ctrl < (model->CSWiThreshold - model->CSWiHysteresis))
+                    else if (i_ctrl < (model->CSWiThreshold - fabs(model->CSWiHysteresis)))
                         current_state = REALLY_OFF;
                     else
                         current_state = previous_state;
                 } else {
-                    if (i_ctrl > (model->CSWiThreshold - model->CSWiHysteresis))
+                    if (i_ctrl > (model->CSWiThreshold + fabs(model->CSWiHysteresis)))
                         current_state = REALLY_ON;
-                    else if (i_ctrl < (model->CSWiThreshold + model->CSWiHysteresis))
+                    else if (i_ctrl < (model->CSWiThreshold - fabs(model->CSWiHysteresis)))
                         current_state = REALLY_OFF;
                     else {
                         /* in hysteresis... change value if going from low to hysteresis,
@@ -98,16 +94,16 @@ CSWload(GENmodel *inModel, CKTcircuit *ckt)
             } else if (ckt->CKTmode & (MODEINITTRAN | MODEINITPRED)) {
 
                 if (model->CSWiHysteresis > 0) {
-                    if (i_ctrl > (model->CSWiThreshold + model->CSWiHysteresis))
+                    if (i_ctrl > (model->CSWiThreshold + fabs(model->CSWiHysteresis)))
                         current_state = REALLY_ON;
-                    else if (i_ctrl < (model->CSWiThreshold - model->CSWiHysteresis))
+                    else if (i_ctrl < (model->CSWiThreshold - fabs(model->CSWiHysteresis)))
                         current_state = REALLY_OFF;
                     else
                         current_state = previous_state;
                 } else {
-                    if (i_ctrl > (model->CSWiThreshold - model->CSWiHysteresis))
+                    if (i_ctrl > (model->CSWiThreshold + fabs(model->CSWiHysteresis)))
                         current_state = REALLY_ON;
-                    else if (i_ctrl < (model->CSWiThreshold + model->CSWiHysteresis))
+                    else if (i_ctrl < (model->CSWiThreshold - fabs(model->CSWiHysteresis)))
                         current_state = REALLY_OFF;
                     else {
                         /* in hysteresis... change value if going from low to hysteresis,

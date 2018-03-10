@@ -37,8 +37,7 @@ SWmParam(int param, IFvalue *value, GENmodel *inModel)
         break;
     case SW_MOD_VHYS:
         /* take absolute value of hysteresis voltage */
-        //            model->SWvHysteresis = (value->rValue < 0) ? -(value->rValue) :
-        //                    value->rValue;
+        /* model->SWvHysteresis = fabs(value->rValue) */
         model->SWvHysteresis = value->rValue;
         model->SWhystGiven = TRUE;
         break;
