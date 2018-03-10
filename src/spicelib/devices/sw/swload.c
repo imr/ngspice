@@ -61,20 +61,17 @@ SWload(GENmodel *inModel, CKTcircuit *ckt)
 
             } else if (ckt->CKTmode & (MODEINITFLOAT)) {
 
+                /* fixme, missleading comment: */
                 /* use state0 since INITTRAN or INITPRED already called */
-                if (model->SWvHysteresis > 0) {
-                    if (v_ctrl > (model->SWvThreshold + fabs(model->SWvHysteresis)))
-                        current_state = REALLY_ON;
-                    else if (v_ctrl < (model->SWvThreshold - fabs(model->SWvHysteresis)))
-                        current_state = REALLY_OFF;
-                    else
+                if (v_ctrl > (model->SWvThreshold + fabs(model->SWvHysteresis)))
+                    current_state = REALLY_ON;
+                else if (v_ctrl < (model->SWvThreshold - fabs(model->SWvHysteresis)))
+                    current_state = REALLY_OFF;
+                else
+                    if (model->SWvHysteresis > 0) {
                         current_state = old_current_state;
-                } else {        // negative hysteresis case.
-                    if (v_ctrl > (model->SWvThreshold + fabs(model->SWvHysteresis)))
-                        current_state = REALLY_ON;
-                    else if (v_ctrl < (model->SWvThreshold - fabs(model->SWvHysteresis)))
-                        current_state = REALLY_OFF;
-                    else {  // in hysteresis... change value if going from low to hysteresis, or from hi to hysteresis.
+                    } else {
+                        // in hysteresis... change value if going from low to hysteresis, or from hi to hysteresis.
                         // if previous state was in hysteresis, then don't change the state..
                         if (previous_state == HYST_OFF || previous_state == HYST_ON)
                             current_state = previous_state;
@@ -85,7 +82,6 @@ SWload(GENmodel *inModel, CKTcircuit *ckt)
                         else
                             internalerror("bad value for previous state in swload");
                     }
-                }
 
                 if (current_state != old_current_state) {
                     ckt->CKTnoncon++;       /* ensure one more iteration */
@@ -94,19 +90,14 @@ SWload(GENmodel *inModel, CKTcircuit *ckt)
 
             } else if (ckt->CKTmode & (MODEINITTRAN | MODEINITPRED)) {
 
-                if (model->SWvHysteresis > 0) {
-                    if (v_ctrl > (model->SWvThreshold + fabs(model->SWvHysteresis)))
-                        current_state = REALLY_ON;
-                    else if (v_ctrl < (model->SWvThreshold - fabs(model->SWvHysteresis)))
-                        current_state = REALLY_OFF;
-                    else
+                if (v_ctrl > (model->SWvThreshold + fabs(model->SWvHysteresis)))
+                    current_state = REALLY_ON;
+                else if (v_ctrl < (model->SWvThreshold - fabs(model->SWvHysteresis)))
+                    current_state = REALLY_OFF;
+                else
+                    if (model->SWvHysteresis > 0) {
                         current_state = previous_state;
-                } else {        // negative hysteresis case.
-                    if (v_ctrl > (model->SWvThreshold + fabs(model->SWvHysteresis)))
-                        current_state = REALLY_ON;
-                    else if (v_ctrl < (model->SWvThreshold - fabs(model->SWvHysteresis)))
-                        current_state = REALLY_OFF;
-                    else {
+                    } else {
                         if (previous_state == HYST_ON || previous_state == HYST_OFF)
                             current_state = previous_state;
                         else if (previous_state == REALLY_ON)
@@ -114,7 +105,6 @@ SWload(GENmodel *inModel, CKTcircuit *ckt)
                         else if (previous_state == REALLY_OFF)
                             current_state = REALLY_ON;
                     }
-                }
             }
 
             // code added to force the state to be updated.

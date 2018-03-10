@@ -56,21 +56,17 @@ CSWload(GENmodel *inModel, CKTcircuit *ckt)
                 current_state = previous_state;
 
             } else if (ckt->CKTmode & (MODEINITFLOAT)) {
+                /* fixme, missleading comment: */
                 /* use state0 since INITTRAN or INITPRED already called */
 
-                if (model->CSWiHysteresis > 0) {
-                    if (i_ctrl > (model->CSWiThreshold + fabs(model->CSWiHysteresis)))
-                        current_state = REALLY_ON;
-                    else if (i_ctrl < (model->CSWiThreshold - fabs(model->CSWiHysteresis)))
-                        current_state = REALLY_OFF;
-                    else
+                if (i_ctrl > (model->CSWiThreshold + fabs(model->CSWiHysteresis)))
+                    current_state = REALLY_ON;
+                else if (i_ctrl < (model->CSWiThreshold - fabs(model->CSWiHysteresis)))
+                    current_state = REALLY_OFF;
+                else
+                    if (model->CSWiHysteresis > 0) {
                         current_state = previous_state;
-                } else {
-                    if (i_ctrl > (model->CSWiThreshold + fabs(model->CSWiHysteresis)))
-                        current_state = REALLY_ON;
-                    else if (i_ctrl < (model->CSWiThreshold - fabs(model->CSWiHysteresis)))
-                        current_state = REALLY_OFF;
-                    else {
+                    } else {
                         /* in hysteresis... change value if going from low to hysteresis,
                          * or from hi to hysteresis. */
 
@@ -84,7 +80,6 @@ CSWload(GENmodel *inModel, CKTcircuit *ckt)
                         else
                             internalerror("bad value for previous region in swload");
                     }
-                }
 
                 if (current_state != old_current_state) {
                     ckt->CKTnoncon++;    /* ensure one more iteration */
@@ -93,19 +88,14 @@ CSWload(GENmodel *inModel, CKTcircuit *ckt)
 
             } else if (ckt->CKTmode & (MODEINITTRAN | MODEINITPRED)) {
 
-                if (model->CSWiHysteresis > 0) {
-                    if (i_ctrl > (model->CSWiThreshold + fabs(model->CSWiHysteresis)))
-                        current_state = REALLY_ON;
-                    else if (i_ctrl < (model->CSWiThreshold - fabs(model->CSWiHysteresis)))
-                        current_state = REALLY_OFF;
-                    else
+                if (i_ctrl > (model->CSWiThreshold + fabs(model->CSWiHysteresis)))
+                    current_state = REALLY_ON;
+                else if (i_ctrl < (model->CSWiThreshold - fabs(model->CSWiHysteresis)))
+                    current_state = REALLY_OFF;
+                else
+                    if (model->CSWiHysteresis > 0) {
                         current_state = previous_state;
-                } else {
-                    if (i_ctrl > (model->CSWiThreshold + fabs(model->CSWiHysteresis)))
-                        current_state = REALLY_ON;
-                    else if (i_ctrl < (model->CSWiThreshold - fabs(model->CSWiHysteresis)))
-                        current_state = REALLY_OFF;
-                    else {
+                    } else {
                         /* in hysteresis... change value if going from low to hysteresis,
                          * or from hi to hysteresis. */
 
@@ -119,7 +109,6 @@ CSWload(GENmodel *inModel, CKTcircuit *ckt)
                         else
                             internalerror("bad value for previous region in cswload");
                     }
-                }
             }
 
             ckt->CKTstate0[here->CSWswitchstate] = current_state;
