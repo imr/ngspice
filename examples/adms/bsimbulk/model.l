@@ -1,4 +1,5 @@
-.model nch bsimbulk
+.model nch NMOS
++level=77
 +TYPE = 1
 +GEOMOD = 0
 +RGEOMOD = 0
@@ -210,7 +211,8 @@
 +SCC = 0
 +SC = 0
 
-.model pch bsimbulk
+.model pch PMOS
++level=77
 +TYPE = -1
 +GEOMOD = 0
 +RGEOMOD = 0
