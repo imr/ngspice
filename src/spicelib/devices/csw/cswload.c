@@ -69,9 +69,9 @@ CSWload(GENmodel *inModel, CKTcircuit *ckt)
                         /* if previous state was in hysteresis, then don't change the state.. */
                         if (previous_state == HYST_OFF || previous_state == HYST_ON)
                             current_state = previous_state;
-                        else if (previous_state == REALLY_ON)
-                            current_state = HYST_OFF;
                         else if (previous_state == REALLY_OFF)
+                            current_state = HYST_OFF;
+                        else if (previous_state == REALLY_ON)
                             current_state = HYST_ON;
                         else
                             internalerror("bad value for previous region in swload");
@@ -99,9 +99,9 @@ CSWload(GENmodel *inModel, CKTcircuit *ckt)
                         if (previous_state == HYST_OFF || previous_state == HYST_ON)
                             current_state = previous_state;
                         else if (previous_state == REALLY_ON)
-                            current_state = HYST_OFF;
-                        else if (previous_state == REALLY_OFF)
                             current_state = HYST_ON;
+                        else if (previous_state == REALLY_OFF)
+                            current_state = HYST_OFF;
                         else
                             internalerror("bad value for previous region in cswload");
                     }

@@ -74,9 +74,9 @@ SWload(GENmodel *inModel, CKTcircuit *ckt)
                         if (previous_state == HYST_OFF || previous_state == HYST_ON)
                             current_state = previous_state;
                         else if (previous_state == REALLY_ON)
-                            current_state = HYST_OFF;
-                        else if (previous_state == REALLY_OFF)
                             current_state = HYST_ON;
+                        else if (previous_state == REALLY_OFF)
+                            current_state = HYST_OFF;
                         else
                             internalerror("bad value for previous state in swload");
                     }
@@ -99,9 +99,9 @@ SWload(GENmodel *inModel, CKTcircuit *ckt)
                         if (previous_state == HYST_ON || previous_state == HYST_OFF)
                             current_state = previous_state;
                         else if (previous_state == REALLY_ON)
-                            current_state = REALLY_OFF;
+                            current_state = HYST_ON;
                         else if (previous_state == REALLY_OFF)
-                            current_state = REALLY_ON;
+                            current_state = HYST_OFF;
                     }
             }
 
