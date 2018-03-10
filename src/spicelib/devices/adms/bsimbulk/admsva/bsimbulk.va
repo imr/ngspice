@@ -1896,6 +1896,9 @@ real T0a, T0b, T0c, T0d, T0e, Swi_h, t_tot, CF_ch, CF_h, LeffnoiH;
 // Self Heating
 real gth, cth;
 
+real Ggate, Gnoise;
+
+
 // OPERATING POINT VARIABLES
 `OPM( QBI,          "C",    "Intrinsic body charge")
 `OPM( QSI,          "C",    "Intrinsic source charge")
@@ -4338,7 +4341,6 @@ analog begin
     if (RGATEMOD == 0) begin
         V(g, gm) <+ 0.0;
     end else begin: rgate
-        real Ggate, Gnoise;
         if (RGATEMOD == 2) begin
             Ggate = Gcrg;
             Gnoise = Gcrg * Gcrg / Grgeltd;
