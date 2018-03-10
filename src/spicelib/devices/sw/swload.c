@@ -12,6 +12,20 @@ Modified: 2001 Jon Engelbert
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
+static void
+verify(int state, char *msg)
+{
+    switch (state) {
+    case REALLY_ON:
+    case REALLY_OFF:
+    case HYST_ON:
+    case HYST_OFF:
+        break;
+    default:
+        internalerror(msg);
+    }
+}
+
 
 int
 SWload(GENmodel *inModel, CKTcircuit *ckt)
@@ -70,15 +84,16 @@ SWload(GENmodel *inModel, CKTcircuit *ckt)
                         current_state = old_current_state;
                     } else {
                         // in hysteresis... change value if going from low to hysteresis, or from hi to hysteresis.
+
+                        verify(previous_state, "bad value for previous_state in swload");
+
                         // if previous state was in hysteresis, then don't change the state..
-                        if (previous_state == HYST_OFF || previous_state == HYST_ON)
-                            current_state = previous_state;
-                        else if (previous_state == REALLY_ON)
+                        if (previous_state == REALLY_ON)
                             current_state = HYST_ON;
                         else if (previous_state == REALLY_OFF)
                             current_state = HYST_OFF;
                         else
-                            internalerror("bad value for previous state in swload");
+                            current_state = previous_state;
                     }
 
                 if ((current_state == REALLY_ON || current_state == HYST_ON) != (old_current_state == REALLY_ON || old_current_state == HYST_ON)) {
@@ -96,12 +111,15 @@ SWload(GENmodel *inModel, CKTcircuit *ckt)
                     if (model->SWvHysteresis > 0) {
                         current_state = previous_state;
                     } else {
-                        if (previous_state == HYST_ON || previous_state == HYST_OFF)
-                            current_state = previous_state;
-                        else if (previous_state == REALLY_ON)
+
+                        verify(previous_state, "bad value for previous_state in swload");
+
+                        if (previous_state == REALLY_ON)
                             current_state = HYST_ON;
                         else if (previous_state == REALLY_OFF)
                             current_state = HYST_OFF;
+                        else
+                            current_state = previous_state;
                     }
             }
 
