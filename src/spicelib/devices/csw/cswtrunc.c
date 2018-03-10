@@ -26,7 +26,7 @@ CSWtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
                 ckt->CKTstate0[here->CSWctrlvalue] -
                 ckt->CKTstate1[here->CSWctrlvalue];
             if (ckt->CKTstate0[here->CSWswitchstate] == 0) {
-                ref = model->CSWiThreshold + model->CSWiHysteresis;
+                ref = model->CSWiThreshold + fabs(model->CSWiHysteresis);
                 if (ckt->CKTstate0[here->CSWctrlvalue] < ref && lastChange > 0) {
                     maxChange =
                         (ref - ckt->CKTstate0[here->CSWctrlvalue]) * 0.75
@@ -36,7 +36,7 @@ CSWtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
                         *timeStep = maxStep;
                 }
             } else {
-                ref = model->CSWiThreshold - model->CSWiHysteresis;
+                ref = model->CSWiThreshold - fabs(model->CSWiHysteresis);
                 if (ckt->CKTstate0[here->CSWctrlvalue] > ref && lastChange < 0) {
                     maxChange =
                         (ref - ckt->CKTstate0[here->CSWctrlvalue]) * 0.75

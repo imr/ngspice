@@ -24,7 +24,7 @@ SWtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
                 ckt->CKTstate0[here->SWctrlvalue] -
                 ckt->CKTstate1[here->SWctrlvalue];
             if (ckt->CKTstate0[here->SWswitchstate] == 0) {
-                ref = model->SWvThreshold + model->SWvHysteresis;
+                ref = model->SWvThreshold + fabs(model->SWvHysteresis);
                 if (ckt->CKTstate0[here->SWctrlvalue] < ref && lastChange > 0) {
                     maxChange =
                         (ref - ckt->CKTstate0[here->SWctrlvalue]) * 0.75
@@ -34,7 +34,7 @@ SWtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
                         *timeStep = maxStep;
                 }
             } else {
-                ref = model->SWvThreshold - model->SWvHysteresis;
+                ref = model->SWvThreshold - fabs(model->SWvHysteresis);
                 if (ckt->CKTstate0[here->SWctrlvalue] > ref && lastChange < 0) {
                     maxChange =
                         (ref - ckt->CKTstate0[here->SWctrlvalue]) * 0.75
