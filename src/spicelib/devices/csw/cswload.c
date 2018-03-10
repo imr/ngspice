@@ -22,10 +22,6 @@ CSWload(GENmodel *inModel, CKTcircuit *ckt)
     double i_ctrl;
     double previous_state = -1;
     double current_state = -1, old_current_state = -1;
-    double REALLY_OFF = 0, REALLY_ON = 1;
-    /* switch is on or off, not in hysteresis region. */
-    double HYST_OFF = 2, HYST_ON = 3;
-    /* switch is on or off while control value is in hysteresis region. */
 
     for (; model; model = CSWnextModel(model))
         for (here = CSWinstances(model); here; here = CSWnextInstance(here)) {
@@ -81,7 +77,7 @@ CSWload(GENmodel *inModel, CKTcircuit *ckt)
                             internalerror("bad value for previous region in swload");
                     }
 
-                if (current_state != old_current_state) {
+                if ((current_state == REALLY_ON || current_state == HYST_ON) != (old_current_state == REALLY_ON || old_current_state == HYST_ON)) {
                     ckt->CKTnoncon++;    /* ensure one more iteration */
                     ckt->CKTtroubleElt = (GENinstance *) here;
                 }

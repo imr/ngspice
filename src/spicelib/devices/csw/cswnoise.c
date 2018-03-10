@@ -64,7 +64,7 @@ CSWnoise(int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *da
                     current_state = (int) ckt->CKTstate0[inst->CSWswitchstate];
                     NevalSrc(&noizDens, &lnNdens, ckt, THERMNOISE,
                              inst->CSWposNode, inst->CSWnegNode,
-                             current_state ? model->CSWonConduct : model->CSWoffConduct);
+                             (current_state == REALLY_ON || current_state == HYST_ON) ? model->CSWonConduct : model->CSWoffConduct);
 
                     *OnDens += noizDens;
 
