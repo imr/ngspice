@@ -47,7 +47,7 @@ CSWload(GENmodel *inModel, CKTcircuit *ckt)
 
             if (ckt->CKTmode & (MODEINITFIX | MODEINITJCT)) {
 
-                if (here->CSWzero_stateGiven) {
+                if (here->CSWzero_state) {
                     /* switch specified "on" */
                     if (i_ctrl > model->CSWiThreshold + fabs(model->CSWiHysteresis))
                         current_state = REALLY_ON;

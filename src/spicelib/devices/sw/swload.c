@@ -49,7 +49,7 @@ SWload(GENmodel *inModel, CKTcircuit *ckt)
 
             if (ckt->CKTmode & (MODEINITFIX | MODEINITJCT)) {
 
-                if (here->SWzero_stateGiven) {
+                if (here->SWzero_state) {
                     /* switch specified "on" */
                     if (v_ctrl > model->SWvThreshold + fabs(model->SWvHysteresis))
                         current_state = REALLY_ON;

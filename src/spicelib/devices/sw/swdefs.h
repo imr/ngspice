@@ -43,7 +43,7 @@ typedef struct sSWinstance {
 
     double SWcond;        /* conductance of the switch now */
 
-    unsigned SWzero_stateGiven : 1;  /* flag to indicate initial state */
+    unsigned SWzero_state : 1;  /* flag to indicate initial state */
 #ifndef NONOISE
     double SWnVar[NSTATVARS];
 #else

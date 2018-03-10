@@ -44,7 +44,7 @@ typedef struct sCSWinstance {
 
     double CSWcond;        /* current conductance of switch */
 
-    unsigned CSWzero_stateGiven : 1;  /* flag to indicate initial state */
+    unsigned CSWzero_state : 1;  /* flag to indicate initial state */
 #ifndef NONOISE
     double CSWnVar[NSTATVARS];
 #else
