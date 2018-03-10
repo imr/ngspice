@@ -17,16 +17,16 @@ CSWpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
     CSWmodel *model = (CSWmodel *) inModel;
     CSWinstance *here;
     double g_now;
-    int current_state;
 
     NG_IGNORE(s);
 
     for (; model; model = CSWnextModel(model))
         for (here = CSWinstances(model); here; here = CSWnextInstance(here)) {
 
-            current_state = (int) ckt->CKTstate0[here->CSWswitchstate];
-
-            g_now = (current_state == REALLY_ON || current_state == HYST_ON) ? model->CSWonConduct : model->CSWoffConduct;
+            if (ckt->CKTstate0[here->CSWswitchstate] > 0)
+                g_now = model->CSWonConduct;
+            else
+                g_now = model->CSWoffConduct;
 
             *(here->CSWposPosPtr) += g_now;
             *(here->CSWposNegPtr) -= g_now;

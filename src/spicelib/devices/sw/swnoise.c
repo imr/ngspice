@@ -33,7 +33,7 @@ SWnoise(int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *dat
     double tempInNoise;
     double noizDens;
     double lnNdens;
-    int current_state;
+    double conductance;
 
     for (model = firstModel; model; model = SWnextModel(model))
         for (inst = SWinstances(model); inst; inst = SWnextInstance(inst)) {
@@ -61,10 +61,13 @@ SWnoise(int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata *dat
                 switch (mode) {
 
                 case N_DENS:
-                    current_state = (int) ckt->CKTstate0[inst->SWswitchstate];
+                    if (ckt->CKTstate0[inst->SWswitchstate] > 0)
+                        conductance = model->SWonConduct;
+                    else
+                        conductance = model->SWoffConduct;
                     NevalSrc(&noizDens, &lnNdens, ckt, THERMNOISE,
                              inst->SWposNode, inst->SWnegNode,
-                             (current_state == REALLY_ON || current_state == HYST_ON) ? model->SWonConduct : model->SWoffConduct);
+                             conductance);
 
                     *OnDens += noizDens;
 

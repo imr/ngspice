@@ -32,21 +32,16 @@ SWload(GENmodel *inModel, CKTcircuit *ckt)
 {
     SWmodel *model = (SWmodel *) inModel;
     SWinstance *here;
-    double g_now;
-    double v_ctrl;
-    double previous_state = -1;
-    double current_state = -1;
-    double old_current_state = -1;
-    //    double previous_region = -1;
-    //    double current_region = -1;
 
     for (; model; model = SWnextModel(model))
         for (here = SWinstances(model); here; here = SWnextInstance(here)) {
 
-            old_current_state = ckt->CKTstate0[here->SWswitchstate];
-            previous_state = ckt->CKTstate1[here->SWswitchstate];
+            int old_current_state = (int) ckt->CKTstate0[here->SWswitchstate];
+            int previous_state = (int) ckt->CKTstate1[here->SWswitchstate];
+            int current_state;
 
-            v_ctrl =
+            double g_now;
+            double v_ctrl =
                 ckt->CKTrhsOld[here->SWposCntrlNode] -
                 ckt->CKTrhsOld[here->SWnegCntrlNode];
 
@@ -96,7 +91,7 @@ SWload(GENmodel *inModel, CKTcircuit *ckt)
                             current_state = previous_state;
                     }
 
-                if ((current_state == REALLY_ON || current_state == HYST_ON) != (old_current_state == REALLY_ON || old_current_state == HYST_ON)) {
+                if ((current_state > 0) != (old_current_state > 0)) {
                     ckt->CKTnoncon++;       /* ensure one more iteration */
                     ckt->CKTtroubleElt = (GENinstance *) here;
                 }
@@ -121,6 +116,10 @@ SWload(GENmodel *inModel, CKTcircuit *ckt)
                         else
                             current_state = previous_state;
                     }
+
+            } else {
+                internalerror("bad things in swload");
+                controlled_exit(1);
             }
 
             // code added to force the state to be updated.
@@ -133,7 +132,7 @@ SWload(GENmodel *inModel, CKTcircuit *ckt)
             ckt->CKTstate0[here->SWswitchstate] = current_state;
             ckt->CKTstate0[here->SWctrlvalue] = v_ctrl;
 
-            if (current_state == REALLY_ON || current_state == HYST_ON)
+            if (current_state > 0)
                 g_now = model->SWonConduct;
             else
                 g_now = model->SWoffConduct;

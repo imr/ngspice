@@ -84,10 +84,10 @@ typedef struct sSWmodel {      /* model structure for a switch */
 } SWmodel;
 
 enum {
-    REALLY_OFF = 0,     // switch definitely off
-    REALLY_ON = 1,      // switch definitely on
-    HYST_OFF = 2,       // switch is off and in the hysteresis region
-    HYST_ON = 3,        // switch is on and in the hysteresis region
+    REALLY_OFF = -2,    // switch definitely off
+    HYST_OFF = -1,      // switch is off and in the hysteresis region
+    HYST_ON = 1,        // switch is on and in the hysteresis region
+    REALLY_ON = 2,      // switch definitely on
 };
 
 /* device parameters */

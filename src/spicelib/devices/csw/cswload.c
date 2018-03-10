@@ -32,17 +32,16 @@ CSWload(GENmodel *inModel, CKTcircuit *ckt)
 {
     CSWmodel *model = (CSWmodel *) inModel;
     CSWinstance *here;
-    double g_now;
-    double i_ctrl;
-    double previous_state = -1;
-    double current_state = -1, old_current_state = -1;
 
     for (; model; model = CSWnextModel(model))
         for (here = CSWinstances(model); here; here = CSWnextInstance(here)) {
 
-            old_current_state = ckt->CKTstate0[here->CSWswitchstate];
-            previous_state = ckt->CKTstate1[here->CSWswitchstate];
-            i_ctrl = ckt->CKTrhsOld[here->CSWcontBranch];
+            int old_current_state = (int) ckt->CKTstate0[here->CSWswitchstate];
+            int previous_state = (int) ckt->CKTstate1[here->CSWswitchstate];
+            int current_state;
+
+            double g_now;
+            double i_ctrl = ckt->CKTrhsOld[here->CSWcontBranch];
 
             /* decide the state of the switch */
 
@@ -91,7 +90,7 @@ CSWload(GENmodel *inModel, CKTcircuit *ckt)
                             current_state = previous_state;
                     }
 
-                if ((current_state == REALLY_ON || current_state == HYST_ON) != (old_current_state == REALLY_ON || old_current_state == HYST_ON)) {
+                if ((current_state > 0) != (old_current_state > 0)) {
                     ckt->CKTnoncon++;    /* ensure one more iteration */
                     ckt->CKTtroubleElt = (GENinstance *) here;
                 }
@@ -119,12 +118,15 @@ CSWload(GENmodel *inModel, CKTcircuit *ckt)
                         else
                             current_state = previous_state;
                     }
+            } else {
+                internalerror("bad things in swload");
+                controlled_exit(1);
             }
 
             ckt->CKTstate0[here->CSWswitchstate] = current_state;
             ckt->CKTstate1[here->CSWswitchstate] = previous_state;
 
-            if (current_state == REALLY_ON || current_state == HYST_ON)
+            if (current_state > 0)
                 g_now = model->CSWonConduct;
             else
                 g_now = model->CSWoffConduct;
