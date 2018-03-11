@@ -5810,10 +5810,8 @@ tprint(struct card *t, int numb)
     }
     tfree(filename);
     for (tmp = t; tmp; tmp = tmp->nextcard)
-        if (*(tmp->line) != '*') {
-            fprintf(fd, "%6d  %6d  %s", tmp->linenum_orig, tmp->linenum, tmp->line);
-            fprintf(fd, "\n");
-        }
+        if (*(tmp->line) != '*')
+            fprintf(fd, "%6d  %6d  %s\n", tmp->linenum_orig, tmp->linenum, tmp->line);
     fprintf(fd, "\n*********************************************************************************\n");
     fprintf(fd, "*********************************************************************************\n");
     fprintf(fd, "*********************************************************************************\n\n");
