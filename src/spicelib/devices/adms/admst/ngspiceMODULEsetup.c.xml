@@ -139,7 +139,7 @@ int $(module)setup (SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *
       {
         int error;
         CKTnode *tmp;
-<admst:for-each select="node[location='internal']">
+<admst:for-each select="node[location!='ground']">
 <admst:variable name="info" select="no info"/>
 <admst:for-each select="attribute[name='info']">
   <admst:value-of select="value"/>
