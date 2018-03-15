@@ -3069,6 +3069,11 @@ DevTemp = $temperature + DTEMP;
 		end
 
 	end
+    else begin
+     		local_sca = 0;
+		local_scb = 0;
+		local_scc = 0;
+    end
 	vth0_well = KVTH0WE_i*(local_sca + WEB*local_scb + WEC*local_scc);
 	k2_well = K2WE_i*(local_sca + WEB*local_scb + WEC*local_scc);
 	mu_well = 1.0 + KU0WE_i*(local_sca + WEB*local_scb + WEC*local_scc);
