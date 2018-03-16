@@ -4475,10 +4475,11 @@ end
 `ifdef __SHMOD__
 	if (SHMOD !=0 && RTH0 > 0) begin
 		if (RDSMOD != 2) begin
-			Pwr(t) <+ -(devsign * sigvds * ids * V(`IntrinsicDrain, `IntrinsicSource) + V(d,`IntrinsicDrain) * V(d,`IntrinsicDrain) / Rdrain + V(s,`IntrinsicSource) * V(s,`IntrinsicSource) / Rsource) + ddt(delTemp1 * cth) + delTemp1 * gth;
+			Pwr(t) <+ -(devsign * sigvds * ids * V(`IntrinsicDrain, `IntrinsicSource) + V(d,`IntrinsicDrain) * V(d,`IntrinsicDrain) / Rdrain + V(s,`IntrinsicSource) * V(s,`IntrinsicSource) / Rsource) + delTemp1 * gth;
 		end else begin
-			Pwr(t) <+ -(devsign * sigvds * ids * V(`IntrinsicDrain, `IntrinsicSource))  + ddt(delTemp1 * cth) + delTemp1 * gth;
+			Pwr(t) <+ -(devsign * sigvds * ids * V(`IntrinsicDrain, `IntrinsicSource))  + delTemp1 * gth;
 		end
+		Pwr(t) <+ ddt(delTemp1 * cth);
 	end
 `endif
 
