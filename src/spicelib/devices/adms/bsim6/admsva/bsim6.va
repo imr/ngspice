@@ -4480,6 +4480,8 @@ end
 			Pwr(t) <+ -(devsign * sigvds * ids * V(`IntrinsicDrain, `IntrinsicSource))  + delTemp1 * gth;
 		end
 		Pwr(t) <+ ddt(delTemp1 * cth);
+	end else begin
+		Temp(t) <+ 0;
 	end
 `endif
 
