@@ -1,3 +1,37 @@
+/* COPYRIGHT NOTE for HICUM Models
+downloaded 17.03.2018 from
+https://www.iee.et.tu-dresden.de/iee/eb/hic_new/hic_source.html
+
+The terms under which the HICUM software is provided are as follows:
+
+Software is distributed as is, completely without warranty or service support.
+The Model Owner and his team members are not liable for the condition or
+performance of the software.
+
+Michael Schroter (Model Owner) owns the copyright but shall not be liable
+for any infringement of copyright or other proprietary rights brought by
+third parties against the users of the software.
+
+The Model Owner hereby disclaims all implied warranties.
+
+The Model Owner grants the users the right to modify, copy, and redistribute
+the software and documentation, both within the user's organization and
+externally, subject to the following restrictions:
+
+    The users agree not to charge for the HICUM code itself but may charge
+    for additions, extensions, or support.
+
+    In any product based on the software, the users agree to acknowledge
+    the Model Owner that developed the software. This acknowledgment
+    shall appear in the product documentation.
+
+    The users agree to reproduce any copyright notice which appears on
+    the software on any copy or modification of such made available to
+    others.
+*/
+
+
+
 //HICUM Level_2 Version_2.24: A Verilog-A Description
 
 //dw 09/10: Modifications for ngspice and adms:
