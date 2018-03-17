@@ -2658,7 +2658,7 @@
       <admst:text format="printf(&quot;\\n&quot;);\n"/>
     </admst:when>
     <admst:when test="function[name='\$finish']">
-      <admst:text format="exit("/>
+      <admst:text format="controlled_exit("/>
       <admst:join select="function/arguments" separator=",">
       <admst:text format="%(e(tree))"/>
       </admst:join>
