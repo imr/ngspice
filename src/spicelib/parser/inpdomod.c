@@ -343,6 +343,7 @@ char *INPdomodel(CKTcircuit *ckt, struct card *image, INPtables * tab)
 			    break;
 #ifdef ADMS
 			case 16:
+			case 77:
 			    type = INPtypelook("BSIM6");
 			    if (type < 0) {
 				    err =
@@ -350,6 +351,7 @@ char *INPdomodel(CKTcircuit *ckt, struct card *image, INPtables * tab)
 				    ("Device type BSIM6 not available in this binary\n");}
 			    break;
 			case 17:
+			case 72:
 			    type = INPtypelook("BSIMCMG");
 			    if (type < 0) {
 				    err =
@@ -365,6 +367,7 @@ char *INPdomodel(CKTcircuit *ckt, struct card *image, INPtables * tab)
 			    }
 			    break;
 			case 45:
+			case 69:
 				type = INPtypelook("psp102");
 				if (type < 0) {
 				    err =
@@ -397,7 +400,7 @@ char *INPdomodel(CKTcircuit *ckt, struct card *image, INPtables * tab)
 				    ("Device type B3SOIPD not available in this binary\n");
 			    }
 			    break;
-			case 10: case 58:
+			case 10: case 70:
 			    type = INPtypelook("B4SOI");
 			    if (type < 0) {
 				    err =
@@ -436,10 +439,10 @@ char *INPdomodel(CKTcircuit *ckt, struct card *image, INPtables * tab)
 			default:		/* placeholder; use level xxx for the next model */
 #ifdef ADMS
 			    err = INPmkTemp
-				("Only MOS device levels 1-6,8-10,14,44,45,49,54-58,60,68,73 are supported in this binary\n");
+				("Only MOS device levels 1-6,8-10,14,16,17,44,45,49,54-57,60,68,69,70,72,73,77 are supported in this binary\n");
 #else
 			    err = INPmkTemp
-				("Only MOS device levels 1-6,8-10,14,49,54-58,60,68,73 are supported in this binary\n");
+				("Only MOS device levels 1-6,8-10,14,49,54-57,60,68,70,73 are supported in this binary\n");
 #endif
 			    break;
 			}

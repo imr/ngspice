@@ -31,11 +31,13 @@ model_numnodes(int type)
         return 6;
     }
 
+#ifdef ADMS
     if (type == INPtypelook("BSIM6") ||     /* bsim6.va with __THERMAL_NODE__ */
         type == INPtypelook("BSIMCMG"))     /* bsimcmg.va */
     {
         return 5;
     }
+#endif
 
     if (type == INPtypelook("VDMOS"))       /* 3 ; VDMOSnames */
     {
