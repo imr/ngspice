@@ -4358,10 +4358,11 @@ analog begin
     end
     if ((SHMOD != 0) && (RTH0 > 0.0)) begin
         if (RDSMOD != 2) begin
-            Pwr(t) <+ -(devsign * sigvds * ids * V(di, si) + V(d,di) * V(d,di) / Rdrain + V(s,si) * V(s,si) / Rsource) + ddt(delTemp1 * cth) + delTemp1 * gth;
+            Pwr(t) <+ -(devsign * sigvds * ids * V(di, si) + V(d,di) * V(d,di) / Rdrain + V(s,si) * V(s,si) / Rsource) + delTemp1 * gth;
         end else begin
-            Pwr(t) <+ -(devsign * sigvds * ids * V(di, si))  + ddt(delTemp1 * cth) + delTemp1 * gth;
+            Pwr(t) <+ -(devsign * sigvds * ids * V(di, si))  + delTemp1 * gth;
         end
+        Pwr(t) <+ ddt(delTemp1 * cth);
     end else begin
         Temp(t) <+ 0.0;
     end
