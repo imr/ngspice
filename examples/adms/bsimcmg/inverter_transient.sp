@@ -3,7 +3,7 @@
 
 .option abstol=1e-6 reltol=1e-6 post ingold
 
-.hdl "bsimcmg.va"
+*.hdl "bsimcmg.va"
 .include "modelcard.nmos"
 .include "modelcard.pmos"
 
@@ -13,8 +13,8 @@ vsig  vi  0 dc=0.5 sin (0.5 0.5 1MEG)
 
 * --- Inverter Subcircuit ---
 .subckt mg_inv vin vout vdd gnd
-    Xp1 vout vin vdd gnd pmos1 TFIN=15n L=30n NFIN=10 ASEO=1.5e-14 ADEO=1.5e-14 NRS=1 NRD=1
-    Xn1 vout vin gnd gnd nmos1 TFIN=15n L=30n NFIN=10 ASEO=1.5e-14 ADEO=1.5e-14 NRS=1 NRD=1
+    mp1 vout vin vdd gnd pmos1 TFIN=15n L=30n NFIN=10 ASEO=1.5e-14 ADEO=1.5e-14 NRS=1 NRD=1
+    mn1 vout vin gnd gnd nmos1 TFIN=15n L=30n NFIN=10 ASEO=1.5e-14 ADEO=1.5e-14 NRS=1 NRD=1
 .ends
 
 * --- Inverter ---
@@ -28,5 +28,10 @@ Xinv5  4 vo supply 0 mg_inv
 .tran 10n 5u
 
 .print tran v(vi) v(vo)
+
+.control
+run
+plot v(vi) v(vo)
+.endc
 
 .end

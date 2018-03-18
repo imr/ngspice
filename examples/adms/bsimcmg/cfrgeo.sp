@@ -4,11 +4,11 @@
 .option abstol=1e-6 reltol=1e-6 post ingold
 .temp 27
 
-.hdl "bsimcmg.va"
+*.hdl "bsimcmg.va"
 
 .param hfin=30n
 
-.model nmos2 bsimcmg
+.model nmos2 NMOS level=72
 + DEVTYPE=1
 + CGEOMOD=2
 + HEPI=10n
@@ -28,22 +28,37 @@ vgs gate  0 dc=0
 vbs bulk  0 dc=0
 
 * --- Transistor ---
-X1 supply gate 0 bulk nmos2 TFIN=10n L=30n NFIN=1 FPITCH=20n LRSD=40n
-X2 supply gate 0 bulk nmos2 TFIN=10n L=30n NFIN=1 FPITCH=40n LRSD=40n
-X3 supply gate 0 bulk nmos2 TFIN=10n L=30n NFIN=1 FPITCH=60n LRSD=40n
-X4 supply gate 0 bulk nmos2 TFIN=10n L=30n NFIN=1 FPITCH=80n LRSD=40n
+M1 supply gate 0 bulk nmos2 TFIN=10n L=30n NFIN=1 FPITCH=20n LRSD=40n
+M2 supply gate 0 bulk nmos2 TFIN=10n L=30n NFIN=1 FPITCH=40n LRSD=40n
+M3 supply gate 0 bulk nmos2 TFIN=10n L=30n NFIN=1 FPITCH=60n LRSD=40n
+M4 supply gate 0 bulk nmos2 TFIN=10n L=30n NFIN=1 FPITCH=80n LRSD=40n
 
 * --- DC Analysis ---
-.dc vgs 0.0 1.0 1.5
-.print dc par'hfin' X1:CFGEO X2:CFGEO X3:CFGEO X4:CFGEO
+.dc vgs 0.0 1.0 0.1
+*.print dc par'hfin' M1:CFGEO M2:CFGEO M3:CFGEO M4:CFGEO
 
-.alter
-.param hfin=40n
+.control
+save @m1[CFGEO] @m2[CFGEO] @m3[CFGEO] @m4[CFGEO]
 
-.alter
-.param hfin=50n
+showmod #nmos2 : HFIN
+run
+plot @m1[CFGEO] @m2[CFGEO] @m3[CFGEO] @m4[CFGEO]
 
-.alter
-.param hfin=60n
+altermod nmos2 hfin = 40n
+showmod #nmos2 : HFIN
+run
+plot @m1[CFGEO] @m2[CFGEO] @m3[CFGEO] @m4[CFGEO]
+
+altermod nmos2 hfin = 50n
+showmod #nmos2 : HFIN
+run
+plot @m1[CFGEO] @m2[CFGEO] @m3[CFGEO] @m4[CFGEO]
+
+altermod nmos2 hfin = 60n
+showmod #nmos2 : HFIN
+run
+plot @m1[CFGEO] @m2[CFGEO] @m3[CFGEO] @m4[CFGEO]
+
+.endc
 
 .end
