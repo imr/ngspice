@@ -956,7 +956,6 @@ if test "x$enable_adms" = xyes ; then
     AC_DEFINE([ADMS], [1], [Support for Verilog-A models])
 
     VLADEVDIR=" adms/bsimbulk \
-                adms/bsimcmg \
                 adms/ekv \
                 adms/hicum0 \
                 adms/hicum2 \
@@ -965,7 +964,6 @@ if test "x$enable_adms" = xyes ; then
 
 # The makefiles for adms (to be added to AC_CONFIG_FILES by ./autogen.sh --adms)
 #VLAMKF    src/spicelib/devices/adms/bsimbulk/Makefile
-#VLAMKF    src/spicelib/devices/adms/bsimcmg/Makefile
 #VLAMKF    src/spicelib/devices/adms/ekv/Makefile
 #VLAMKF    src/spicelib/devices/adms/hicum0/Makefile
 #VLAMKF    src/spicelib/devices/adms/hicum2/Makefile
@@ -975,7 +973,6 @@ if test "x$enable_adms" = xyes ; then
     NOTVLADEVDIR=""
 
     VLADEV=" spicelib/devices/adms/bsimbulk/libbsimbulk.la \
-             spicelib/devices/adms/bsimcmg/libbsimcmg.la \
              spicelib/devices/adms/ekv/libekv.la \
              spicelib/devices/adms/hicum0/libhicum0.la \
              spicelib/devices/adms/hicum2/libhicum2.la \
