@@ -33,14 +33,15 @@ unnamed MIT license, compatible to DFSG
 
 * ngspice/src/spicelib/devices/adms/hicum0
 * ngspice/src/spicelib/devices/adms/hicum2
-unnamed TUD license, compatible to New BSD
+* ngspice/src/spicelib/devices/adms/bsimbulk
+* ngspice/src/spicelib/devices/adms/bsimcmg
+license not compatible to FSF, DFSG
 
-* ngspice/src/spicelib/devices/adms/ekv
 * ngspice/src/spicelib/devices/adms/psp102
 copyright info, but no license information given
 
 ngspice/src/spicelib/devices/adms/mextram
-Unnamed Auburn license, not compatible to DFSG
+license not compatible to FSF, DFSG
 
 ngspice/src/spicelib/devices/adms/admst
 GPL 2 or newer
