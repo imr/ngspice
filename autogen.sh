@@ -105,9 +105,39 @@ check_adms()
     }
 }
 
+
+# check if verilog-a files exist in every adms device directory
+check_adms_va()
+{
+    echo
+    for adms_dir in `ls $ADMSDIR` ; do
+        if [ -d "$ADMSDIR/$adms_dir" ]; then
+
+            case "$adms_dir" in
+
+                "admst")
+                    ;;
+
+                *)
+                    ls $ADMSDIR/$adms_dir/admsva/*.va  > /dev/null 2>&1
+                    exitcode=${PIPESTATUS[0]}
+                    if [ $exitcode -ne 0 ]; then
+                       DIE=1
+                       echo "Error: no *.va file found in $adms_dir/admsva"
+                       echo "Please download patch from ..."
+                       echo "and install with command '...'"
+                       echo
+                    fi
+                    ;;
+            esac
+        fi
+    done
+}
+
 case "$1" in
     "--adms" | "-a")
         check_adms
+        check_adms_va
         ADMS=1
         ;;
 
@@ -167,7 +197,7 @@ $znew
             case "$adms_dir" in
 
                 "admst")
-                    echo "Skipping scripts dir"
+#                    echo "Skipping admst dir"
                     ;;
 
                 *)
