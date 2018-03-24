@@ -124,8 +124,9 @@ check_adms_va()
                     if [ $exitcode -ne 0 ]; then
                        DIE=1
                        echo "Error: no *.va file found in $adms_dir/admsva"
-                       echo "Please download patch from ..."
-                       echo "and install with command '...'"
+                       echo "Please download patch file ng-adms-va.tar.gz from"
+                       echo "http://ngspice.sourceforge.net/experimental/ng-adms-va.tar.gz"
+                       echo "and expand it into the ngspice directory"
                        echo
                     fi
                     ;;
