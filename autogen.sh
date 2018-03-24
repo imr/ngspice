@@ -110,27 +110,28 @@ check_adms()
 check_adms_va()
 {
     echo
-    for adms_dir in `ls $ADMSDIR` ; do
-        if [ -d "$ADMSDIR/$adms_dir" ]; then
+    # get the devices directories from configure.ac
+    admsdirs=`awk '$1 ~ /#VLAMKF/ { print $2 }' < configure.ac`
+    admsdirs=`echo $admsdirs | sed "s/\/Makefile//g"`
 
-            case "$adms_dir" in
-
-                "admst")
-                    ;;
-
-                *)
-                    ls $ADMSDIR/$adms_dir/admsva/*.va  > /dev/null 2>&1
+    for adms_dir in $admsdirs ; do
+        FOK=0
+        if [ -d "$adms_dir" ]; then
+                    ls $adms_dir/admsva/*.va  > /dev/null 2>&1
                     exitcode=${PIPESTATUS[0]}
                     if [ $exitcode -ne 0 ]; then
-                       DIE=1
-                       echo "Error: no *.va file found in $adms_dir/admsva"
-                       echo "Please download patch file ng-adms-va.tar.gz from"
-                       echo "http://ngspice.sourceforge.net/experimental/ng-adms-va.tar.gz"
-                       echo "and expand it into the ngspice directory"
-                       echo
+                       FOK=1
                     fi
-                    ;;
-            esac
+        else
+           FOK=1
+        fi
+        if [ "$FOK" -eq 1 ]; then
+            echo "Error: No *.va file found in $adms_dir/admsva"
+            echo "Please download patch file ng-adms-va.tar.gz from"
+            echo "http://ngspice.sourceforge.net/experimental/ng-adms-va.tar.gz"
+            echo "and expand it into the ngspice directory"
+            echo
+            DIE=1
         fi
     done
 }
