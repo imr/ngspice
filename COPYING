@@ -1,7 +1,8 @@
-12345678901234567890123456789012345678901234567890123456789012345678901234567890
-Ngspice 27+
-Copyright (c) 2018,
+Ngspice Circuit Simulator
+
+Copyright (c) 2018, ngspice maintainers
 All rights reserved.
+
 license for this document: CC-BY-SA v4.0
 
 **************************** ngspice license **********************************
@@ -30,18 +31,6 @@ LGPLv2
 
 * all files in ngspice/src/maths/sparse
 unnamed MIT license, compatible to DFSG
-
-* ngspice/src/spicelib/devices/adms/hicum0
-* ngspice/src/spicelib/devices/adms/hicum2
-* ngspice/src/spicelib/devices/adms/bsimbulk
-* ngspice/src/spicelib/devices/adms/bsimcmg
-license not compatible to FSF, DFSG
-
-* ngspice/src/spicelib/devices/adms/psp102
-copyright info, but no license information given
-
-ngspice/src/spicelib/devices/adms/mextram
-license not compatible to FSF, DFSG
 
 ngspice/src/spicelib/devices/adms/admst
 GPL 2 or newer
