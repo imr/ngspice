@@ -16,10 +16,6 @@ its source code, test and example files except for the files listed below.
 
 ************** files with licenses different to 'Modified BSD' ****************
 
-* ngspice/doc
-SPICEDOC, not compatible to DFSG
-considered outdated
-
 * ngspice/contrib
 GPL, Public Domain
 
@@ -103,7 +99,6 @@ BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A
 FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER PROGRAMS).
 
 
-
 ----------------------------------- m4 -------------------------------------
 
 LICENSE
@@ -114,33 +109,7 @@ LICENSE
  permitted in any medium without royalty provided the copyright notice
  and this notice are preserved. This file is offered as-is, without any
  warranty.
- 
- ----------------------------------- TUD -------------------------------------
-
-Software is distributed as is, completely without warranty or service support.
-The Model Owner and his team members are not liable for the condition or
-performance of the software.
-
-Michael Schroter (Model Owner) owns the copyright but shall not be liable
-for any infringement of copyright or other proprietary rights brought by
-third parties against the users of the software.
-
-The Model Owner hereby disclaims all implied warranties.
-
-The Model Owner grants the users the right to modify, copy, and redistribute
-the software and documentation, both within the user's organization and
-externally, subject to the following restrictions:
-
-    The users agree not to charge for the HICUM code itself but may charge
-    for additions, extensions, or support.
-
-    In any product based on the software, the users agree to acknowledge
-    the Model Owner that developed the software. This acknowledgment shall
-    appear in the product documentation.
-
-    The users agree to reproduce any copyright notice which appears on the
-    software on any copy or modification of such made available to others.
- 
+  
  
  ----------------------------------- MIT -------------------------------------
  
