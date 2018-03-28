@@ -4,8 +4,8 @@ Author: 1987 Thomas L. Quarles
 **********/
 
 #include "ngspice/ngspice.h"
-#include "ngspice/ifsim.h"
 #include "ngspice/devdefs.h"
+#include "ngspice/ifsim.h"
 #include "cswdefs.h"
 #include "ngspice/suffix.h"
 

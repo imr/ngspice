@@ -4,7 +4,6 @@ Author: 1985 Gordon Jacobs
 **********/
 
 #include "ngspice/ngspice.h"
-#include "ngspice/smpdefs.h"
 #include "ngspice/cktdefs.h"
 #include "swdefs.h"
 #include "ngspice/sperror.h"
@@ -43,9 +42,6 @@ SWsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
             here->SWstate = *states;
             *states += SW_NUM_STATES;
-
-            /* Default Value Processing for Switch Instance */
-            /* none */
 
             TSTALLOC(SWposPosPtr, SWposNode, SWposNode);
             TSTALLOC(SWposNegPtr, SWposNode, SWnegNode);

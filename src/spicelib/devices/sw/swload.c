@@ -78,11 +78,12 @@ SWload(GENmodel *inModel, CKTcircuit *ckt)
                     if (model->SWvHysteresis > 0) {
                         current_state = old_current_state;
                     } else {
-                        // in hysteresis... change value if going from low to hysteresis, or from hi to hysteresis.
+                        /* in hysteresis... change value if going from low to hysteresis,
+                         * or from hi to hysteresis. */
 
                         verify(previous_state, "bad value for previous_state in swload");
 
-                        // if previous state was in hysteresis, then don't change the state..
+                        /* if previous state was in hysteresis, then don't change the state.. */
                         if (previous_state == REALLY_ON)
                             current_state = HYST_ON;
                         else if (previous_state == REALLY_OFF)

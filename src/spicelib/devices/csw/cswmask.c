@@ -5,7 +5,7 @@ Author: 1987 Thomas L. Quarles
 
 /*
  * This routine gives access to the internal model parameters
- * of Current controlled SWitch
+ * of current controlled SWitch
  */
 
 #include "ngspice/ngspice.h"
@@ -18,9 +18,9 @@ Author: 1987 Thomas L. Quarles
 
 
 int
-CSWmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
+CSWmAsk(CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
 {
-    CSWmodel *here = (CSWmodel *) inst;
+    CSWmodel *here = (CSWmodel *) inModel;
 
     NG_IGNORE(ckt);
 

@@ -6,8 +6,8 @@ Modified: 2001 Jon Engelbert
 
 #include "ngspice/ngspice.h"
 #include "ngspice/cktdefs.h"
-#include "cswdefs.h"
 #include "ngspice/fteext.h"
+#include "cswdefs.h"
 #include "ngspice/trandefs.h"
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
@@ -65,9 +65,9 @@ CSWload(GENmodel *inModel, CKTcircuit *ckt)
                 current_state = previous_state;
 
             } else if (ckt->CKTmode & (MODEINITFLOAT)) {
+
                 /* fixme, missleading comment: */
                 /* use state0 since INITTRAN or INITPRED already called */
-
                 if (i_ctrl > (model->CSWiThreshold + fabs(model->CSWiHysteresis)))
                     current_state = REALLY_ON;
                 else if (i_ctrl < (model->CSWiThreshold - fabs(model->CSWiHysteresis)))
@@ -105,12 +105,9 @@ CSWload(GENmodel *inModel, CKTcircuit *ckt)
                     if (model->CSWiHysteresis > 0) {
                         current_state = previous_state;
                     } else {
-                        /* in hysteresis... change value if going from low to hysteresis,
-                         * or from hi to hysteresis. */
 
                         verify(previous_state, "bad value for previous_state in cswload");
 
-                        /* if previous state was in hysteresis, then don't change the state.. */
                         if (previous_state == REALLY_ON)
                             current_state = HYST_ON;
                         else if (previous_state == REALLY_OFF)
@@ -118,6 +115,7 @@ CSWload(GENmodel *inModel, CKTcircuit *ckt)
                         else
                             current_state = previous_state;
                     }
+
             } else {
                 internalerror("bad things in swload");
                 controlled_exit(1);

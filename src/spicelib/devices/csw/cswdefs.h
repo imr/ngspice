@@ -8,10 +8,10 @@ Modified: 2000 AlansFixes
 #define CSW
 
 #include "ngspice/ifsim.h"
-#include "ngspice/gendefs.h"
 #include "ngspice/cktdefs.h"
-#include "ngspice/noisedef.h"
+#include "ngspice/gendefs.h"
 #include "ngspice/complex.h"
+#include "ngspice/noisedef.h"
 
 /* structures used to describe current controlled switches */
 

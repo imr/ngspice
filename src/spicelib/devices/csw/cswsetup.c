@@ -40,7 +40,6 @@ CSWsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
         for (here = CSWinstances(model); here; here = CSWnextInstance(here)) {
 
-            /* Default Value Processing for Switch Instance */
             here->CSWstate = *states;
             *states += CSW_NUM_STATES;
 

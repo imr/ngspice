@@ -8,7 +8,6 @@ Modified: 2000 AlansFixes
 #include "ngspice/cktdefs.h"
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
-
 #include "cswdefs.h"
 
 
@@ -17,7 +16,6 @@ CSWtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
 {
     CSWmodel *model = (CSWmodel *) inModel;
     CSWinstance *here;
-
     double   lastChange, maxChange, maxStep, ref;
 
     for (; model; model = CSWnextModel(model))

@@ -5,7 +5,7 @@ Author: 1987 Thomas L. Quarles
 
 /*
  * This routine gives access to the internal device parameters
- * of Current controlled SWitch
+ * of current controlled SWitch
  */
 
 #include "ngspice/ngspice.h"

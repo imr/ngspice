@@ -4,7 +4,7 @@ Author: 1987 Thomas L. Quarles
 **********/
 
 /*
- * This routine gives access to the internal model parameter
+ * This routine gives access to the internal model parameters
  * of voltage controlled SWitch
  */
 

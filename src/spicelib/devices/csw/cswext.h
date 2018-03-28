@@ -4,8 +4,8 @@ Author: 1985 Gordon M. Jacobs
 Modified: 2000 AlansFixes
 **********/
 
-extern int CSWask(CKTcircuit *, GENinstance *, int, IFvalue *, IFvalue *);
 extern int CSWacLoad(GENmodel *, CKTcircuit *);
+extern int CSWask(CKTcircuit *, GENinstance *, int, IFvalue *, IFvalue *);
 extern int CSWdelete(GENinstance *);
 extern void CSWdestroy(void);
 extern int CSWload(GENmodel *, CKTcircuit *);
