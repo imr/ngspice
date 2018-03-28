@@ -124,7 +124,7 @@ CSWload(GENmodel *inModel, CKTcircuit *ckt)
             }
 
             ckt->CKTstate0[here->CSWswitchstate] = current_state;
-            ckt->CKTstate1[here->CSWswitchstate] = previous_state;
+            ckt->CKTstate0[here->CSWctrlvalue] = i_ctrl;
 
             if (current_state > 0)
                 g_now = model->CSWonConduct;
