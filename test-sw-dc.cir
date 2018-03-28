@@ -1,0 +1,52 @@
+* test hysteresis in a dc sweep
+
+* test both implementations
+*   the regular one, and the Jon Engelbert variant
+*     (which is selected by a negative VH parameter)
+
+v1  11 0  dc=0
+b1  1 0 v= 0.5 + 0.2*cos(v(11))
+
+I2  2 0  -1mA
+SW2 2 0  1 0 SWITCH1A
+
+I3  3 0  -1mA
+SW3 3 0  1 0 SWITCH1B
+
+.MODEL SWITCH1A SW VT=0.5 VH=0.1 RON=100 ROFF=1400
+.MODEL SWITCH1B SW VT=0.5 VH=-0.1 RON=100 ROFF=1400
+
+.control
+
+dc v1 -7 7 0.01
+
+showmod all
+
+let v_thp = 0.5 + 0.1
+let v_thm = 0.5 - 0.1
+
+let len = length("v-sweep")
+let gold = vector(len)
+
+let kk = 0
+repeat $&len
+  let delta = kk ? (v(1)[kk] - v(1)[kk-1]) : 0
+  let sw = (delta ge 0) ? (v(1)[kk] ge v_thp) : (v(1)[kk] ge v_thm)
+  let gold[kk] = sw ? 0.1 : 1.4
+  let kk = kk + 1
+end
+
+let abs_err1 = vecmax(abs(v(2) - gold))
+let abs_err2 = vecmax(abs(v(3) - gold))
+echo "INFO: $&abs_err1 $&abs_err2"
+if (abs_err1 ge 1e-12) or (abs_err2 ge 1e-12)
+  echo "ERROR: mismatch"
+end
+
+plot v(2) v(3) gold
+plot v(2)+0.005*v(11) vs v(1)+0.002*v(11)
+plot v(3)+0.005*v(11) vs v(1)+0.002*v(11)
+
+.endc
+
+.end

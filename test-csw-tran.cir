@@ -1,0 +1,59 @@
+* test hysteresis in a tran
+
+* test both implementations
+*   the regular one, and the Jon Engelbert variant
+*     (which is selected by a negative VH parameter)
+*   rising and falling
+*   check for plenty of timesteps around the ideal switch point
+*   swtrunc is expected to chime in and force the tran engine to
+*     shrink the the timesteps down to very small values
+*      then switch
+*     and then the tran engine will raise the timesteps back to their usual value
+
+i11  11 0  pwl(0s 0 1s 0 2s 1)
+vm11 0 11  dc=0
+i12  12 0  pwl(0s 1 1s 1 2s 0)
+vm12 0 12  dc=0
+
+I2  2 0  -1mA
+W2 2 0  vm11 SWITCH2
+
+I3  3 0  -1mA
+W3 3 0  vm11 SWITCH3
+
+I4  4 0  -1mA
+W4 4 0  vm12 SWITCH4
+
+I5  5 0  -1mA
+W5 5 0  vm12 SWITCH5
+
+.MODEL SWITCH2 CSW IT=0.25 IH=0.1 RON=100 ROFF=1400
+.MODEL SWITCH3 CSW IT=0.35 IH=-0.1 RON=100 ROFF=1400
+.MODEL SWITCH4 CSW IT=0.45 IH=0.1 RON=100 ROFF=1400
+.MODEL SWITCH5 CSW IT=0.55 IH=-0.1 RON=100 ROFF=1400
+
+.control
+
+tran 10ms 4s
+
+let t_gold2 = 1.35s
+let t_gold3 = 1.45s
+let t_gold4 = 1.55s
+let t_gold5 = 1.65s
+
+* how much timesteps are there around the switching point
+let n_steps2 = length(time) * mean(abs(time - t_gold2) le 1e-9)
+let n_steps3 = length(time) * mean(abs(time - t_gold3) le 1e-9)
+let n_steps4 = length(time) * mean(abs(time - t_gold4) le 1e-9)
+let n_steps5 = length(time) * mean(abs(time - t_gold5) le 1e-9)
+
+echo "INFO: $&n_steps2 $&n_steps3 $&n_steps4 $&n_steps5"
+if (n_steps2 lt 20) or (n_steps3 lt 20) or (n_steps4 lt 20) or (n_steps5 lt 20)
+  echo "ERROR: truncation failed"
+end
+
+plot v(2) v(3) v(4) v(5) i(vm11) i(vm12)
+
+.endc
+
+.end
