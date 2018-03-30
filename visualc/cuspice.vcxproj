@@ -1194,7 +1194,6 @@
     <ClCompile Include="..\src\maths\misc\accuracy.c" />
     <ClCompile Include="..\src\maths\misc\bernoull.c" />
     <ClCompile Include="..\src\maths\misc\equality.c" />
-    <ClCompile Include="..\src\maths\misc\erfc.c" />
     <ClCompile Include="..\src\maths\misc\logb.c" />
     <ClCompile Include="..\src\maths\misc\norm.c" />
     <ClCompile Include="..\src\maths\misc\randnumb.c" />
@@ -1775,6 +1774,8 @@
     <ClCompile Include="..\src\spicelib\devices\mos2\mos2bindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\mos3\mos3bindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\mos6\mos6bindCSC.c" />
+    <ClCompile Include="..\src\spicelib\devices\mos6\mos6del.c" />
+    <ClCompile Include="..\src\spicelib\devices\mos6\mos6mdel.c" />
     <ClCompile Include="..\src\spicelib\devices\mos9\mos9bindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\res\resbindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\soi3\soi3bindCSC.c" />
