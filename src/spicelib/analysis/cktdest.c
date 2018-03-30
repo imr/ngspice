@@ -40,7 +40,9 @@ CKTdestroy(CKTcircuit *ckt)
     for (i = 0; i < DEVmaxnum; i++)
         if (DEVices[i]) {
             GENmodel *model = ckt->CKThead[i];
+#ifndef _MSC_VER
             #warning "this needs to be reviewed, due to rebase onto newer master!"
+#endif
 #ifdef USE_CUSPICE
             if (DEVices[i]->cuDEVdestroy && model)
                 DEVices[i]->cuDEVdestroy(model);
