@@ -1,0 +1,27 @@
+* locks when CKTtime += CKTdelta === CKTtime
+
+* (exec-spice "ngspice %s" t)
+*
+* locks at  Reference value :  61039ns
+*
+* CKTdelmin = 4e-21
+*   (log (/ 61039e-9 4e-21) 2) 53.760580844936776
+*
+* probably locks because
+*   CKTtime += CKTdelta  ===  CKTtime
+* thus VSRC won't deliver a changing value
+* thus SW model continues to CKTtrunc
+* thus CKTtime sticks
+
+* PULSE(V1 V2 TD TR TF PW PER)
+v2  1 0  dc=0 pulse (0 1 61029n 20n)
+
+s1  0 0  1 0  smodel
+
+.model smodel sw vt=0.5 ron=100
+
+.control
+tran 0.4n 100u
+.endc
+
+.end
