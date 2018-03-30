@@ -17,6 +17,7 @@ SWtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
     SWmodel *model = (SWmodel *) inModel;
     SWinstance *here;
     double   lastChange, maxChange, maxStep, ref;
+    const double reltime = 100 * DBL_EPSILON;
 
     for (; model; model = SWnextModel(model))
         for (here = SWinstances(model); here; here = SWnextInstance(here)) {
@@ -29,6 +30,8 @@ SWtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
                     maxChange =
                         (ref - ckt->CKTstate0[here->SWctrlvalue]) * 0.75;
                     maxStep = maxChange / lastChange * ckt->CKTdeltaOld[0];
+                    if (maxStep < ckt->CKTtime * reltime)
+                        maxStep = ckt->CKTtime * reltime;
                     if (maxStep < ckt->CKTdelmin)
                         maxStep = ckt->CKTdelmin;
                     if (*timeStep > maxStep)
@@ -40,6 +43,8 @@ SWtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
                     maxChange =
                         (ref - ckt->CKTstate0[here->SWctrlvalue]) * 0.75;
                     maxStep = maxChange / lastChange * ckt->CKTdeltaOld[0];
+                    if (maxStep < ckt->CKTtime * reltime)
+                        maxStep = ckt->CKTtime * reltime;
                     if (maxStep < ckt->CKTdelmin)
                         maxStep = ckt->CKTdelmin;
                     if (*timeStep > maxStep)

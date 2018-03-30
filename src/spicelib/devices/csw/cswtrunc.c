@@ -17,6 +17,7 @@ CSWtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
     CSWmodel *model = (CSWmodel *) inModel;
     CSWinstance *here;
     double   lastChange, maxChange, maxStep, ref;
+    const double reltime = 100 * DBL_EPSILON;
 
     for (; model; model = CSWnextModel(model))
         for (here = CSWinstances(model); here; here = CSWnextInstance(here)) {
@@ -29,6 +30,8 @@ CSWtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
                     maxChange =
                         (ref - ckt->CKTstate0[here->CSWctrlvalue]) * 0.75;
                     maxStep = maxChange / lastChange * ckt->CKTdeltaOld[0];
+                    if (maxStep < ckt->CKTtime * reltime)
+                        maxStep = ckt->CKTtime * reltime;
                     if (maxStep < ckt->CKTdelmin)
                         maxStep = ckt->CKTdelmin;
                     if (*timeStep > maxStep)
@@ -40,6 +43,8 @@ CSWtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
                     maxChange =
                         (ref - ckt->CKTstate0[here->CSWctrlvalue]) * 0.75;
                     maxStep = maxChange / lastChange * ckt->CKTdeltaOld[0];
+                    if (maxStep < ckt->CKTtime * reltime)
+                        maxStep = ckt->CKTtime * reltime;
                     if (maxStep < ckt->CKTdelmin)
                         maxStep = ckt->CKTdelmin;
                     if (*timeStep > maxStep)
