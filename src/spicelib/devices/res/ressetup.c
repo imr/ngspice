@@ -122,7 +122,7 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
                 j++ ;
         }
 
-        model->n_values = !model->n_instances;
+        model->n_values = model->n_instances ;
         ckt->total_n_values += model->n_values ;
 
         model->n_Ptr = j ;
@@ -130,9 +130,9 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
 
 
         /* Position Vector assignment */
-        model->PositionVector = TMALLOC (int, !model->n_instances) ;
+        model->PositionVector = TMALLOC (int, model->n_instances) ;
 
-        for (j = 0 ; j < !model->n_instances; j++)
+        for (j = 0 ; j < model->n_instances ; j++)
             model->PositionVector [j] = model->offset + j ;
     }
 
