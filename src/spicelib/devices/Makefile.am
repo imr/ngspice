@@ -49,6 +49,7 @@ SUBDIRS = \
 	vbic	\
 	vccs	\
 	vcvs	\
+	vdmos	\
 	vsrc	\
 	@VLADEVDIR@
 
@@ -111,6 +112,7 @@ DIST_SUBDIRS = \
 	vbic	\
 	vccs	\
 	vcvs	\
+	vdmos	\
 	vsrc	\
 	nbjt	\
 	nbjt2	\

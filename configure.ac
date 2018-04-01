@@ -1124,6 +1124,7 @@ AC_CONFIG_FILES([Makefile
                  src/spicelib/devices/vbic/Makefile
                  src/spicelib/devices/vccs/Makefile
                  src/spicelib/devices/vcvs/Makefile
+                 src/spicelib/devices/vdmos/Makefile
                  src/spicelib/devices/vsrc/Makefile
                  src/spicelib/devices/nbjt/Makefile
                  src/spicelib/devices/nbjt2/Makefile
