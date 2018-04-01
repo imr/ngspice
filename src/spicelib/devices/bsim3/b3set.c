@@ -54,7 +54,7 @@ BSIM3instance **InstArray;
 
 #ifdef USE_CUSPICE
         /* This model doesn't support CUDA */
-        model->has_cuda = 0 ;
+        model->gen.has_cuda = 0 ;
 #endif
 
         /* Default value Processing for BSIM3 MOSFET Models */

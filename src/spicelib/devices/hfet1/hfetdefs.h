@@ -170,12 +170,6 @@ typedef struct sHFETAmodel {
 #define HFETAinstances(inst) ((HFETAinstance *)((inst)->gen.GENinstances))
 #define HFETAmodName gen.GENmodName
 
-#ifdef USE_CUSPICE
-    unsigned int has_cuda:1 ;
-#endif
-
-    /* --- end of generic struct GENmodel --- */
-
     int HFETAtype;
     int HFETAgatemod;
     

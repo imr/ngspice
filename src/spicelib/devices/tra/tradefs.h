@@ -123,12 +123,6 @@ typedef struct sTRAmodel {       /* model structure for a transmission lines */
 #define TRAinstances(inst) ((TRAinstance *)((inst)->gen.GENinstances))
 #define TRAmodName gen.GENmodName
 
-#ifdef USE_CUSPICE
-    unsigned int has_cuda:1 ;
-#endif
-
-    /* --- end of generic struct GENmodel --- */
-
 } TRAmodel;
 
 /* device parameters */

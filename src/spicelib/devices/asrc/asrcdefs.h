@@ -71,12 +71,6 @@ typedef struct sASRCmodel {       /* model structure for a source */
 #define ASRCinstances(inst) ((ASRCinstance *)((inst)->gen.GENinstances))
 #define ASRCmodName gen.GENmodName
 
-#ifdef USE_CUSPICE
-    unsigned int has_cuda:1 ;
-#endif
-
-    /* --- end of generic struct GENmodel --- */
-
 } ASRCmodel;
 
 

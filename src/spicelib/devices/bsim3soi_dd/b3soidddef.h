@@ -704,12 +704,6 @@ typedef struct sB3SOIDDmodel
 #define B3SOIDDinstances(inst) ((B3SOIDDinstance *)((inst)->gen.GENinstances))
 #define B3SOIDDmodName gen.GENmodName
 
-#ifdef USE_CUSPICE
-    unsigned int has_cuda:1 ;
-#endif
-
-    /* --- end of generic struct GENmodel --- */
-
     int B3SOIDDtype;
 
     int    B3SOIDDmobMod;

@@ -37,7 +37,7 @@ VBICsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
 #ifdef USE_CUSPICE
         /* This model doesn't support CUDA */
-        model->has_cuda = 0 ;
+        model->gen.has_cuda = 0 ;
 #endif
 
         if(model->VBICtype != NPN && model->VBICtype != PNP) {

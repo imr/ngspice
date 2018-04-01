@@ -279,12 +279,6 @@ typedef struct sMOS6model {       /* model structure for a resistor */
 #define MOS6instances(inst) ((MOS6instance *)((inst)->gen.GENinstances))
 #define MOS6modName gen.GENmodName
 
-#ifdef USE_CUSPICE
-    unsigned int has_cuda:1 ;
-#endif
-
-    /* --- end of generic struct GENmodel --- */
-
     int MOS6type;       /* device type : 1 = nmos,  -1 = pmos */
     double MOS6tnom;        /* temperature at which parameters measured */
     double MOS6latDiff;

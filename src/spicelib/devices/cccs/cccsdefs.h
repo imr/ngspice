@@ -62,12 +62,6 @@ typedef struct sCCCSmodel {       /* model structure for a source */
 #define CCCSinstances(inst) ((CCCSinstance *)((inst)->gen.GENinstances))
 #define CCCSmodName gen.GENmodName
 
-#ifdef USE_CUSPICE
-    unsigned int has_cuda:1 ;
-#endif
-
-    /* --- end of generic struct GENmodel --- */
-
 } CCCSmodel;
 
 /* device parameters */

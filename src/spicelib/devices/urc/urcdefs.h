@@ -48,12 +48,6 @@ typedef struct sURCmodel {       /* model structure for a resistor */
 #define URCinstances(inst) ((URCinstance *)((inst)->gen.GENinstances))
 #define URCmodName gen.GENmodName
 
-#ifdef USE_CUSPICE
-    unsigned int has_cuda:1 ;
-#endif
-
-    /* --- end of generic struct GENmodel --- */
-
     double URCk;        /* propagation constant for URC */
     double URCfmax;     /* max frequence of interest */
     double URCrPerL;    /* resistance per unit length */

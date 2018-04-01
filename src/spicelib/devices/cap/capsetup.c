@@ -138,7 +138,7 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
         model->n_instances = i ;
 
         /* This model supports CUDA */
-        model->has_cuda = 1 ;
+        model->gen.has_cuda = 1 ;
     }
 
     /*  loop through all the capacitor models */

@@ -108,12 +108,6 @@ typedef struct sLTRAmodel {       /* model structure for a transmission lines */
 #define LTRAinstances(inst) ((LTRAinstance *)((inst)->gen.GENinstances))
 #define LTRAmodName gen.GENmodName
 
-#ifdef USE_CUSPICE
-    unsigned int has_cuda:1 ;
-#endif
-
-    /* --- end of generic struct GENmodel --- */
-
 	double LTRAh1dashFirstVal; /* first needed value of h1dasg at 
 									current timepoint */
 	double LTRAh2FirstVal;	 /* first needed value of h2 at current 

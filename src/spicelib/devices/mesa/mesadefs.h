@@ -256,12 +256,6 @@ typedef struct sMESAmodel {       /* model structure for a MESAfet */
 #define MESAinstances(inst) ((MESAinstance *)((inst)->gen.GENinstances))
 #define MESAmodName gen.GENmodName
 
-#ifdef USE_CUSPICE
-    unsigned int has_cuda:1 ;
-#endif
-
-    /* --- end of generic struct GENmodel --- */
-
     int MESAtype;
     
     double MESAthreshold;

@@ -120,12 +120,6 @@ typedef struct sCAPmodel {      /* model structure for a capacitor */
 #define CAPinstances(inst) ((CAPinstance *)((inst)->gen.GENinstances))
 #define CAPmodName gen.GENmodName
 
-#ifdef USE_CUSPICE
-    unsigned int has_cuda:1 ;
-#endif
-
-    /* --- end of generic struct GENmodel --- */
-
     double CAPtnom;       /* temperature at which capacitance measured */
     double CAPtempCoeff1; /* linear temperature coefficient */
     double CAPtempCoeff2; /* quadratic temperature coefficient */

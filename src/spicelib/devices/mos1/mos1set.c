@@ -29,7 +29,7 @@ MOS1setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
 
 #ifdef USE_CUSPICE
         /* This model doesn't support CUDA */
-        model->has_cuda = 0 ;
+        model->gen.has_cuda = 0 ;
 #endif
 
         if(!model->MOS1typeGiven) {

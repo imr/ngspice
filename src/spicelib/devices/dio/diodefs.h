@@ -185,12 +185,6 @@ typedef struct sDIOmodel {       /* model structure for a diode */
 #define DIOinstances(inst) ((DIOinstance *)((inst)->gen.GENinstances))
 #define DIOmodName gen.GENmodName
 
-#ifdef USE_CUSPICE
-    unsigned int has_cuda:1 ;
-#endif
-
-    /* --- end of generic struct GENmodel --- */
-
     unsigned DIOlevelGiven : 1;
     unsigned DIOsatCurGiven : 1;
     unsigned DIOsatSWCurGiven : 1;

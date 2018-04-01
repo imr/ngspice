@@ -143,12 +143,6 @@ typedef struct sVSRCmodel {
 #define VSRCmodName gen.GENmodName
 
 #ifdef USE_CUSPICE
-    unsigned int has_cuda:1 ;
-#endif
-
-    /* --- end of generic struct GENmodel --- */
-
-#ifdef USE_CUSPICE
     VSRCparamCPUstruct VSRCparamCPU ;
     VSRCparamGPUstruct VSRCparamGPU ;
 

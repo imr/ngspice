@@ -29,7 +29,7 @@ B1setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
 
 #ifdef USE_CUSPICE
         /* This model doesn't support CUDA */
-        model->has_cuda = 0 ;
+        model->gen.has_cuda = 0 ;
 #endif
 
         /* Default value Processing for B1 MOSFET Models */

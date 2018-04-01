@@ -190,12 +190,6 @@ typedef struct sMESmodel {       /* model structure for a mesfet */
 #define MESinstances(inst) ((MESinstance *)((inst)->gen.GENinstances))
 #define MESmodName gen.GENmodName
 
-#ifdef USE_CUSPICE
-    unsigned int has_cuda:1 ;
-#endif
-
-    /* --- end of generic struct GENmodel --- */
-
     int MEStype;
 
     double MESthreshold;

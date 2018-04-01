@@ -1012,12 +1012,6 @@ typedef struct sHSMHVmodel {     /* model structure for a resistor */
 #define HSMHVinstances(inst) ((HSMHVinstance *)((inst)->gen.GENinstances))
 #define HSMHVmodName gen.GENmodName
 
-#ifdef USE_CUSPICE
-    unsigned int has_cuda:1 ;
-#endif
-
-  /* --- end of generic struct GENmodel --- */
-
   int HSMHV_type;      		/* device type: 1 = nmos,  -1 = pmos */
   int HSMHV_level;               /* level */
   int HSMHV_info;                /* information */

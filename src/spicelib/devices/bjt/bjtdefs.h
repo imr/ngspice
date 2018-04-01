@@ -360,12 +360,6 @@ typedef struct sBJTmodel {          /* model structure for a bjt */
 #define BJTinstances(inst) ((BJTinstance *)((inst)->gen.GENinstances))
 #define BJTmodName gen.GENmodName
 
-#ifdef USE_CUSPICE
-    unsigned int has_cuda:1 ;
-#endif
-
-    /* --- end of generic struct GENmodel --- */
-
     int BJTtype;
     int BJTsubs;
 

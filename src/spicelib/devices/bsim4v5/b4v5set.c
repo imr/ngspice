@@ -71,7 +71,7 @@ BSIM4v5instance **InstArray;
 
 #ifdef USE_CUSPICE
         /* This model doesn't support CUDA */
-        model->has_cuda = 0 ;
+        model->gen.has_cuda = 0 ;
 #endif
 
         /* process defaults of model parameters */
