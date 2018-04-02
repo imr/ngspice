@@ -79,11 +79,6 @@ IFparm VDMOSpTable[] = { /* parameters */
  OPU( "cqbd", VDMOS_CQBD, IF_REAL, "Capacitance due to bulk-drain charge storage"),
  OPU( "cqbs", VDMOS_CQBS, IF_REAL, "Capacitance due to bulk-source charge storage"),
 
- OP( "cbd0",   VDMOS_CAPZEROBIASBD,   IF_REAL, "Zero-Bias B-D junction capacitance"),
- OP( "cbdsw0", VDMOS_CAPZEROBIASBDSW, IF_REAL, " "),
- OP( "cbs0",   VDMOS_CAPZEROBIASBS,   IF_REAL, "Zero-Bias B-S junction capacitance"),
- OP( "cbssw0", VDMOS_CAPZEROBIASBSSW, IF_REAL, " "),
-
  OPU( "qgs",      VDMOS_QGS,        IF_REAL,    "Gate-Source charge storage"),
  OPU( "qgd",      VDMOS_QGD,        IF_REAL,    "Gate-Drain charge storage"),
  OPU( "qgb",      VDMOS_QGB,        IF_REAL,    "Gate-Bulk charge storage"),
