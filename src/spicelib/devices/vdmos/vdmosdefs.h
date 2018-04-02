@@ -44,7 +44,7 @@ typedef struct sVDMOSinstance {
     const int VDMOSbNode;  /* number of the bulk node of the mosfet */
     int VDMOSdNodePrime; /* number of the internal drain node of the mosfet */
     int VDMOSsNodePrime; /* number of the internal source node of the mosfet */
-    
+
     double VDMOSm;   /* parallel device multiplier */
 
     double VDMOSl;   /* the length of the channel region */
