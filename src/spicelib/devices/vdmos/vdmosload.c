@@ -110,7 +110,8 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                 (here->VDMOSsourceArea == 0)) {
                 DrainSatCur = here->VDMOSm * here->VDMOStSatCur;
                 SourceSatCur = here->VDMOSm * here->VDMOStSatCur;
-            } else {
+            }
+            else {
                 DrainSatCur = here->VDMOStSatCurDens *
                     here->VDMOSm * here->VDMOSdrainArea;
                 SourceSatCur = here->VDMOStSatCurDens *
@@ -160,7 +161,8 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                     *(ckt->CKTstate0 + here->VDMOSvbd) =
                         *(ckt->CKTstate0 + here->VDMOSvbs) -
                         *(ckt->CKTstate0 + here->VDMOSvds);
-                } else {
+                }
+                else {
 #endif /* PREDICTOR */
 
                     /* general iteration */
@@ -199,7 +201,8 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                         here->VDMOSgmbs * delvbs +
                         here->VDMOSgm * delvgs +
                         here->VDMOSgds * delvds;
-                } else {
+                }
+                else {
                     cdhat =
                         here->VDMOScd -
                         (here->VDMOSgbd -
@@ -301,7 +304,8 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                     vds = vgs - vgd;
                     vds = DEVlimvds(vds, *(ckt->CKTstate0 + here->VDMOSvds));
                     vgd = vgs - vds;
-                } else {
+                }
+                else {
                     vgd = DEVfetlim(vgd, vgdo, von);
                     vds = vgs - vgd;
                     if (!(ckt->CKTfixLimit)) {
@@ -314,7 +318,8 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                     vbs = DEVpnjlim(vbs, *(ckt->CKTstate0 + here->VDMOSvbs),
                         vt, here->VDMOSsourceVcrit, &Check);
                     vbd = vbs - vds;
-                } else {
+                }
+                else {
                     vbd = DEVpnjlim(vbd, *(ckt->CKTstate0 + here->VDMOSvbd),
                         vt, here->VDMOSdrainVcrit, &Check);
                     vbs = vbd + vds;
@@ -324,7 +329,8 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                   
                 */
 
-            } else {
+            }
+            else {
 
                 /* ok - not one of the simple cases, so we have to
                  * look at all of the possibilities for why we were
@@ -343,7 +349,8 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                         vgs = model->VDMOStype * here->VDMOStVto;
                         vds = 0;
                     }
-                } else {
+                }
+                else {
                     vbs = vgs = vds = 0;
                 }
             }
@@ -368,7 +375,8 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
         if (vbs <= -3 * vt) {
             here->VDMOSgbs = ckt->CKTgmin;
             here->VDMOScbs = here->VDMOSgbs*vbs - SourceSatCur;
-        } else {
+        }
+                    else {
                         evbs = exp(MIN(MAX_EXP_ARG, vbs / vt));
                         here->VDMOSgbs = SourceSatCur*evbs / vt + ckt->CKTgmin;
                         here->VDMOScbs = SourceSatCur*(evbs - 1) + ckt->CKTgmin*vbs;
@@ -376,7 +384,8 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                     if (vbd <= -3 * vt) {
                         here->VDMOSgbd = ckt->CKTgmin;
                         here->VDMOScbd = here->VDMOSgbd*vbd - DrainSatCur;
-                    } else {
+                    }
+                    else {
                         evbd = exp(MIN(MAX_EXP_ARG, vbd / vt));
                         here->VDMOSgbd = DrainSatCur*evbd / vt + ckt->CKTgmin;
                         here->VDMOScbd = DrainSatCur*(evbd - 1) + ckt->CKTgmin*vbd;
@@ -387,7 +396,8 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                     if (vds >= 0) {
                         /* normal mode */
                         here->VDMOSmode = 1;
-                    } else {
+                    }
+                    else {
                         /* inverse mode */
                         here->VDMOSmode = -1;
                     }
@@ -414,7 +424,8 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
 
                         if ((here->VDMOSmode == 1 ? vbs : vbd) <= 0) {
                             sarg = sqrt(here->VDMOStPhi - (here->VDMOSmode == 1 ? vbs : vbd));
-                        } else {
+                        }
+                        else {
                             sarg = sqrt(here->VDMOStPhi);
                             sarg = sarg - (here->VDMOSmode == 1 ? vbs : vbd) / (sarg + sarg);
                             sarg = MAX(0, sarg);
@@ -424,7 +435,8 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                         vdsat = MAX(vgst, 0);
                         if (sarg <= 0) {
                             arg = 0;
-                        } else {
+                        }
+                        else {
                             arg = model->VDMOSgamma / (sarg + sarg);
                         }
                         if (vgst <= 0) {
@@ -435,7 +447,8 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                             here->VDMOSgm = 0;
                             here->VDMOSgds = 0;
                             here->VDMOSgmbs = 0;
-                        } else {
+                        }
+                        else {
                             /*
                              *     saturation region
                              */
@@ -445,7 +458,8 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                                 here->VDMOSgm = betap*vgst;
                                 here->VDMOSgds = model->VDMOSlambda*Beta*vgst*vgst*.5;
                                 here->VDMOSgmbs = here->VDMOSgm*arg;
-                            } else {
+                            }
+                            else {
                                 /*
                                  *     linear region
                                  */
@@ -508,21 +522,25 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                                         model->VDMOSbulkJctSideGradingCoeff) {
                                         if (model->VDMOSbulkJctBotGradingCoeff == .5) {
                                             sarg = sargsw = 1 / sqrt(arg);
-                                        } else {
+                                        }
+                                        else {
                                             sarg = sargsw =
                                                 exp(-model->VDMOSbulkJctBotGradingCoeff*
                                                     log(arg));
                                         }
-                                    } else {
+                                    }
+                                    else {
                                         if (model->VDMOSbulkJctBotGradingCoeff == .5) {
                                             sarg = 1 / sqrt(arg);
-                                        } else {
+                                        }
+                                        else {
                                             sarg = exp(-model->VDMOSbulkJctBotGradingCoeff*
                                                 log(arg));
                                         }
                                         if (model->VDMOSbulkJctSideGradingCoeff == .5) {
                                             sargsw = 1 / sqrt(arg);
-                                        } else {
+                                        }
+                                        else {
                                             sargsw = exp(-model->VDMOSbulkJctSideGradingCoeff*
                                                 log(arg));
                                         }
@@ -535,12 +553,14 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                                             (1 - model->VDMOSbulkJctSideGradingCoeff));
                                     here->VDMOScapbs = here->VDMOSCbs*sarg +
                                         here->VDMOSCbssw*sargsw;
-                                } else {
+                                }
+                                else {
                                     *(ckt->CKTstate0 + here->VDMOSqbs) = here->VDMOSf4s +
                                         vbs*(here->VDMOSf2s + vbs*(here->VDMOSf3s / 2));
                                     here->VDMOScapbs = here->VDMOSf2s + here->VDMOSf3s*vbs;
                                 }
-                            } else {
+                            }
+                            else {
                                 *(ckt->CKTstate0 + here->VDMOSqbs) = 0;
                                 here->VDMOScapbs = 0;
                             }
@@ -559,16 +579,19 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                                     if (model->VDMOSbulkJctBotGradingCoeff == .5 &&
                                         model->VDMOSbulkJctSideGradingCoeff == .5) {
                                         sarg = sargsw = 1 / sqrt(arg);
-                                    } else {
+                                    }
+                                    else {
                                         if (model->VDMOSbulkJctBotGradingCoeff == .5) {
                                             sarg = 1 / sqrt(arg);
-                                        } else {
+                                        }
+                                        else {
                                             sarg = exp(-model->VDMOSbulkJctBotGradingCoeff*
                                                 log(arg));
                                         }
                                         if (model->VDMOSbulkJctSideGradingCoeff == .5) {
                                             sargsw = 1 / sqrt(arg);
-                                        } else {
+                                        }
+                                        else {
                                             sargsw = exp(-model->VDMOSbulkJctSideGradingCoeff*
                                                 log(arg));
                                         }
@@ -582,12 +605,14 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                                             / (1 - model->VDMOSbulkJctSideGradingCoeff));
                                     here->VDMOScapbd = here->VDMOSCbd*sarg +
                                         here->VDMOSCbdsw*sargsw;
-                                } else {
+                                }
+                                else {
                                     *(ckt->CKTstate0 + here->VDMOSqbd) = here->VDMOSf4d +
                                         vbd * (here->VDMOSf2d + vbd * here->VDMOSf3d / 2);
                                     here->VDMOScapbd = here->VDMOSf2d + vbd * here->VDMOSf3d;
                                 }
-                            } else {
+                            }
+                            else {
                                 *(ckt->CKTstate0 + here->VDMOSqbd) = 0;
                                 here->VDMOScapbd = 0;
                             }
@@ -683,7 +708,8 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                                 GateDrainOverlapCap;
                             capgb = 2 * *(ckt->CKTstate0 + here->VDMOScapgb) +
                                 GateBulkOverlapCap;
-                        } else {
+                        }
+                        else {
                             capgs = (*(ckt->CKTstate0 + here->VDMOScapgs) +
                                 *(ckt->CKTstate1 + here->VDMOScapgs) +
                                 GateSourceOverlapCap);
@@ -709,7 +735,8 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                             *(ckt->CKTstate0 + here->VDMOSqgb) =
                                 (1 + xfact) * *(ckt->CKTstate1 + here->VDMOSqgb)
                                 - xfact * *(ckt->CKTstate2 + here->VDMOSqgb);
-                        } else {
+                        }
+                        else {
 #endif /*PREDICTOR*/
                             if (ckt->CKTmode & MODETRAN) {
                                 *(ckt->CKTstate0 + here->VDMOSqgs) = (vgs - vgs1)*capgs +
@@ -718,7 +745,8 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                                     *(ckt->CKTstate1 + here->VDMOSqgd);
                                 *(ckt->CKTstate0 + here->VDMOSqgb) = (vgb - vgb1)*capgb +
                                     *(ckt->CKTstate1 + here->VDMOSqgb);
-                            } else {
+                            }
+                            else {
                                 /* TRANOP only */
                                 *(ckt->CKTstate0 + here->VDMOSqgs) = vgs*capgs;
                                 *(ckt->CKTstate0 + here->VDMOSqgd) = vgd*capgd;
@@ -744,7 +772,8 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                                ceqgd = 0;
                                gcgb = 0;
                                ceqgb = 0;
-                           } else {
+                           }
+                           else {
                                if (capgs == 0) *(ckt->CKTstate0 + here->VDMOScqgs) = 0;
                                if (capgd == 0) *(ckt->CKTstate0 + here->VDMOScqgd) = 0;
                                if (capgb == 0) *(ckt->CKTstate0 + here->VDMOScqgb) = 0;
@@ -781,7 +810,8 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                                xrev = 0;
                                cdreq = model->VDMOStype*(cdrain - here->VDMOSgds*vds -
                                    here->VDMOSgm*vgs - here->VDMOSgmbs*vbs);
-                           } else {
+                           }
+                           else {
                                xnrm = 0;
                                xrev = 1;
                                cdreq = -(model->VDMOStype)*(cdrain - here->VDMOSgds*(-vds) -

@@ -293,7 +293,8 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
                 if (model->VDMOSdrainResistance != 0) {
                     here->VDMOSdrainConductance = here->VDMOSm /
                         model->VDMOSdrainResistance;
-                } else {
+                }
+                else {
                     here->VDMOSdrainConductance = 0;
                 }
             } else if (model->VDMOSsheetResistanceGiven) {
