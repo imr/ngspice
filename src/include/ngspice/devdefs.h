@@ -20,6 +20,8 @@ void DEVcmeyer(double,double,double,double,double,double,double,double,double,
         double,double,double*,double*,double*,double,double,double,double);
 void DEVqmeyer(double,double,double,double,double,double*,double*,double*,
         double,double);
+void DevCapVDMOS(double, double, double, double, double,
+                 double*, double*, double*);
 double DEVpred(CKTcircuit*,int);
 
 /* Cider integration */

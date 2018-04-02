@@ -28,7 +28,6 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
     double GateBulkOverlapCap;
     double GateDrainOverlapCap;
     double GateSourceOverlapCap;
-    double OxideCap;
     double SourceSatCur;
     double arg;
     double cbhat;
@@ -83,6 +82,11 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
 
     /*  loop through all the VDMOS device models */
     for( ; model != NULL; model = VDMOSnextModel(model)) {
+        /* VDMOS capacitance parameters */
+        const double cgdmin = model->VDMOScgdmin;
+        const double cgdmax = model->VDMOScgdmax;
+        const double a = model->VDMOSa;
+        const double cgs = model->VDMOScgs;
 
         /* loop through all the instances of the model */
         for (here = VDMOSinstances(model); here != NULL ;
@@ -120,8 +124,6 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                     here->VDMOSm * EffectiveLength;
             Beta = here->VDMOStTransconductance * here->VDMOSm *
                     here->VDMOSw/EffectiveLength;
-            OxideCap = model->VDMOSoxideCapFactor * EffectiveLength * 
-                    here->VDMOSm * here->VDMOSw;
            
             /* 
              * ok - now to do the start-up operations
@@ -652,32 +654,25 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
 */
 
             /*
-             *     meyer's capacitor model
+             * vdmos capacitor model
              */
             if ( ckt->CKTmode & (MODETRAN | MODETRANOP | MODEINITSMSIG) ) {
                 /*
-                 *     calculate meyer's capacitors
+                 * calculate gate - drain, gate - source capacitors
+                 * drain-source capacitor is evaluated with the bulk diode below
                  */
-                /* 
-                 * new cmeyer - this just evaluates at the current time,
+                /*
+                 * this just evaluates at the current time,
                  * expects you to remember values from previous time
                  * returns 1/2 of non-constant portion of capacitance
                  * you must add in the other half from previous time
                  * and the constant part
                  */
-                if (here->VDMOSmode > 0){
-                    DEVqmeyer (vgs,vgd,vgb,von,vdsat,
-			       (ckt->CKTstate0 + here->VDMOScapgs),
-			       (ckt->CKTstate0 + here->VDMOScapgd),
-			       (ckt->CKTstate0 + here->VDMOScapgb),
-			       here->VDMOStPhi,OxideCap);
-                } else {
-                    DEVqmeyer (vgd,vgs,vgb,von,vdsat,
-			       (ckt->CKTstate0 + here->VDMOScapgd),
-			       (ckt->CKTstate0 + here->VDMOScapgs),
-			       (ckt->CKTstate0 + here->VDMOScapgb),
-			       here->VDMOStPhi,OxideCap);
-                }
+                DevCapVDMOS(vgd, cgdmin, cgdmax, a, cgs,
+                            (ckt->CKTstate0 + here->VDMOScapgs),
+                            (ckt->CKTstate0 + here->VDMOScapgd),
+                            (ckt->CKTstate0 + here->VDMOScapgb));
+
                 vgs1 = *(ckt->CKTstate1 + here->VDMOSvgs);
                 vgd1 = vgs1 - *(ckt->CKTstate1 + here->VDMOSvds);
                 vgb1 = vgs1 - *(ckt->CKTstate1 + here->VDMOSvbs);
