@@ -22,12 +22,7 @@ libvdmos_la_SOURCES =	\
 	vdmosnoi.c	\
 	vdmospar.c	\
 	vdmospzld.c	\
-	vdmossacl.c	\
 	vdmosset.c	\
-	vdmossld.c	\
-	vdmossprt.c	\
-	vdmossset.c	\
-	vdmossupd.c	\
 	vdmostemp.c	\
 	vdmostrun.c
 

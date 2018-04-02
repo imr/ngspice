@@ -2507,12 +2507,7 @@
     <ClCompile Include="..\src\spicelib\devices\vdmos\vdmosnoi.c" />
     <ClCompile Include="..\src\spicelib\devices\vdmos\vdmospar.c" />
     <ClCompile Include="..\src\spicelib\devices\vdmos\vdmospzld.c" />
-    <ClCompile Include="..\src\spicelib\devices\vdmos\vdmossacl.c" />
     <ClCompile Include="..\src\spicelib\devices\vdmos\vdmosset.c" />
-    <ClCompile Include="..\src\spicelib\devices\vdmos\vdmossld.c" />
-    <ClCompile Include="..\src\spicelib\devices\vdmos\vdmossprt.c" />
-    <ClCompile Include="..\src\spicelib\devices\vdmos\vdmossset.c" />
-    <ClCompile Include="..\src\spicelib\devices\vdmos\vdmossupd.c" />
     <ClCompile Include="..\src\spicelib\devices\vdmos\vdmostemp.c" />
     <ClCompile Include="..\src\spicelib\devices\vdmos\vdmostrun.c" />
     <ClCompile Include="..\src\spicelib\devices\vsrc\vsrc.c" />
