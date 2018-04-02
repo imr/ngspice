@@ -212,6 +212,19 @@ char *INPdomodel(CKTcircuit *ckt, struct card *image, INPtables * tab)
 			INPmakeMod(modname, type, image);
     }
 
+    /*  ------  Check if model is a VDMOS FET ------- */
+    else if ((strcmp(type_name, "vdmos") == 0) ||
+             (strcmp(type_name, "vdmosn") == 0) ||
+             (strcmp(type_name, "vdmosp") == 0)) {
+        type = INPtypelook("VDMOS");
+        if (type < 0) {
+            err =
+                INPmkTemp
+                ("Device type VDMOS not available in this binary\n");
+        }
+        INPmakeMod(modname, type, image);
+    }
+
     /*  --------  Check if model is a MOSFET --------- */
     else if ((strcmp(type_name, "nmos") == 0)
 	       || (strcmp(type_name, "pmos") == 0)

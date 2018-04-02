@@ -119,6 +119,7 @@ int add_udn(int,Evt_Udn_Info_t **);
 #include "vccs/vccsitf.h"
 #include "vcvs/vcvsitf.h"
 #include "vsrc/vsrcitf.h"
+#include "vdmos/vdmositf.h"
 #ifdef ADMS
 #include "adms/hicum0/hicum0itf.h"
 #include "adms/hicum2/hicum2itf.h"
@@ -190,6 +191,7 @@ static SPICEdev *(*static_devices[])(void) = {
     get_vccs_info,
     get_vcvs_info,
     get_vsrc_info,
+    get_vdmos_info,
 
 #ifdef CIDER
     get_nbjt_info,

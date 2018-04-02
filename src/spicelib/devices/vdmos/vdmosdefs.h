@@ -13,7 +13,7 @@ Modified: 2000 AlansFixes
 #include "ngspice/complex.h"
 #include "ngspice/noisedef.h"
 
-/* declarations for level 1 MOSFETs */
+/* declarations for VDMOSFETs */
 
 /* indices to the array of MOSFET(1) noise sources */
 

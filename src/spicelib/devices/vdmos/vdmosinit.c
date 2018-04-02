@@ -9,8 +9,8 @@
 
 SPICEdev VDMOSinfo = {
     .DEVpublic = {
-        .name = "Vdmos",
-        .description = "Level 1 MOSfet model with Meyer capacitance model",
+        .name = "VDMOS",
+        .description = "DMOS model based on Level 1 MOSFET model",
         .terms = &VDMOSnSize,
         .numNames = &VDMOSnSize,
         .termNames = VDMOSnames,
