@@ -171,7 +171,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                         *(ckt->CKTrhsOld + here->VDMOSbNode) -
                         *(ckt->CKTrhsOld + here->VDMOSsNodePrime));
                     vgs = model->VDMOStype * (
-                        *(ckt->CKTrhsOld + here->VDMOSgNode) -
+                        *(ckt->CKTrhsOld + here->VDMOSgNodePrime) -
                         *(ckt->CKTrhsOld + here->VDMOSsNodePrime));
                     vds = model->VDMOStype * (
                         *(ckt->CKTrhsOld + here->VDMOSdNodePrime) -
@@ -817,7 +817,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                                cdreq = -(model->VDMOStype)*(cdrain - here->VDMOSgds*(-vds) -
                                    here->VDMOSgm*vgd - here->VDMOSgmbs*vbd);
                            }
-                           *(ckt->CKTrhs + here->VDMOSgNode) -=
+                           *(ckt->CKTrhs + here->VDMOSgNodePrime) -=
                                (model->VDMOStype * (ceqgs + ceqgb + ceqgd));
                            *(ckt->CKTrhs + here->VDMOSbNode) -=
                                (ceqbs + ceqbd - model->VDMOStype * ceqgb);
@@ -830,7 +830,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                             */
 
                            *(here->VDMOSDdPtr) += (here->VDMOSdrainConductance);
-                           *(here->VDMOSGgPtr) += ((gcgd + gcgs + gcgb));
+                           *(here->VDMOSGgPtr) += (here->VDMOSgateConductance); //((gcgd + gcgs + gcgb));
                            *(here->VDMOSSsPtr) += (here->VDMOSsourceConductance);
                            *(here->VDMOSBbPtr) += (here->VDMOSgbd + here->VDMOSgbs + gcgb);
                            *(here->VDMOSDPdpPtr) +=
@@ -839,20 +839,24 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                            *(here->VDMOSSPspPtr) +=
                                (here->VDMOSsourceConductance + here->VDMOSgds +
                                    here->VDMOSgbs + xnrm*(here->VDMOSgm + here->VDMOSgmbs) + gcgs);
+                           *(here->VDMOSGPgpPtr) +=
+                               (here->VDMOSgateConductance) + (gcgd + gcgs + gcgb);
+                           *(here->VDMOSGgpPtr) += (-here->VDMOSgateConductance);
                            *(here->VDMOSDdpPtr) += (-here->VDMOSdrainConductance);
-                           *(here->VDMOSGbPtr) -= gcgb;
-                           *(here->VDMOSGdpPtr) -= gcgd;
-                           *(here->VDMOSGspPtr) -= gcgs;
+                           *(here->VDMOSGPgPtr) += (-here->VDMOSgateConductance);
+                           *(here->VDMOSGPbPtr) -= gcgb;
+                           *(here->VDMOSGPdpPtr) -= gcgd;
+                           *(here->VDMOSGPspPtr) -= gcgs;
                            *(here->VDMOSSspPtr) += (-here->VDMOSsourceConductance);
-                           *(here->VDMOSBgPtr) -= gcgb;
+                           *(here->VDMOSBgpPtr) -= gcgb;
                            *(here->VDMOSBdpPtr) -= here->VDMOSgbd;
                            *(here->VDMOSBspPtr) -= here->VDMOSgbs;
                            *(here->VDMOSDPdPtr) += (-here->VDMOSdrainConductance);
-                           *(here->VDMOSDPgPtr) += ((xnrm - xrev)*here->VDMOSgm - gcgd);
+                           *(here->VDMOSDPgpPtr) += ((xnrm - xrev)*here->VDMOSgm - gcgd);
                            *(here->VDMOSDPbPtr) += (-here->VDMOSgbd + (xnrm - xrev)*here->VDMOSgmbs);
                            *(here->VDMOSDPspPtr) += (-here->VDMOSgds - xnrm*
                                (here->VDMOSgm + here->VDMOSgmbs));
-                           *(here->VDMOSSPgPtr) += (-(xnrm - xrev)*here->VDMOSgm - gcgs);
+                           *(here->VDMOSSPgpPtr) += (-(xnrm - xrev)*here->VDMOSgm - gcgs);
                            *(here->VDMOSSPsPtr) += (-here->VDMOSsourceConductance);
                            *(here->VDMOSSPbPtr) += (-here->VDMOSgbs - (xnrm - xrev)*here->VDMOSgmbs);
                            *(here->VDMOSSPdpPtr) += (-here->VDMOSgds - xrev*

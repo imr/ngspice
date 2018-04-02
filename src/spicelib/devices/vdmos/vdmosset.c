@@ -188,11 +188,36 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
                 here->VDMOSsNodePrime = here->VDMOSsNode;
             }
 
+            if (model->VDMOSgateResistance != 0 ) {
+                if (here->VDMOSgNodePrime == 0) {
+                    error = CKTmkVolt(ckt, &tmp, here->VDMOSname, "gate");
+                    if (error) return(error);
+                    here->VDMOSgNodePrime = tmp->number;
+
+                    if (ckt->CKTcopyNodesets) {
+                        CKTnode *tmpNode;
+                        IFuid tmpName;
+
+                        if (CKTinst2Node(ckt, here, 3, &tmpNode, &tmpName) == OK) {
+                            if (tmpNode->nsGiven) {
+                                tmp->nodeset = tmpNode->nodeset;
+                                tmp->nsGiven = tmpNode->nsGiven;
+                            }
+                        }
+                    }
+                }
+            }
+            else {
+                here->VDMOSgNodePrime = here->VDMOSgNode;
+            }
+
+
             /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
 do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     return(E_NOMEM);\
 } } while(0)
+/*
             TSTALLOC(VDMOSDdPtr, VDMOSdNode, VDMOSdNode);
             TSTALLOC(VDMOSGgPtr, VDMOSgNode, VDMOSgNode);
             TSTALLOC(VDMOSSsPtr, VDMOSsNode, VDMOSsNode);
@@ -215,6 +240,34 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
             TSTALLOC(VDMOSDPbPtr, VDMOSdNodePrime, VDMOSbNode);
             TSTALLOC(VDMOSSPbPtr, VDMOSsNodePrime, VDMOSbNode);
             TSTALLOC(VDMOSSPdpPtr, VDMOSsNodePrime, VDMOSdNodePrime);
+*/
+
+            TSTALLOC(VDMOSDdPtr, VDMOSdNode, VDMOSdNode);
+            TSTALLOC(VDMOSGgPtr, VDMOSgNode, VDMOSgNode);
+            TSTALLOC(VDMOSSsPtr, VDMOSsNode, VDMOSsNode);
+            TSTALLOC(VDMOSBbPtr, VDMOSbNode, VDMOSbNode);
+            TSTALLOC(VDMOSDPdpPtr, VDMOSdNodePrime, VDMOSdNodePrime);
+            TSTALLOC(VDMOSSPspPtr, VDMOSsNodePrime, VDMOSsNodePrime);
+            TSTALLOC(VDMOSGPgpPtr, VDMOSgNodePrime, VDMOSgNodePrime);
+            TSTALLOC(VDMOSDdpPtr, VDMOSdNode, VDMOSdNodePrime);
+            TSTALLOC(VDMOSGPbPtr, VDMOSgNodePrime, VDMOSbNode);
+            TSTALLOC(VDMOSGPdpPtr, VDMOSgNodePrime, VDMOSdNodePrime);
+            TSTALLOC(VDMOSGPspPtr, VDMOSgNodePrime, VDMOSsNodePrime);
+            TSTALLOC(VDMOSSspPtr, VDMOSsNode, VDMOSsNodePrime);
+            TSTALLOC(VDMOSBdpPtr, VDMOSbNode, VDMOSdNodePrime);
+            TSTALLOC(VDMOSBspPtr, VDMOSbNode, VDMOSsNodePrime);
+            TSTALLOC(VDMOSDPspPtr, VDMOSdNodePrime, VDMOSsNodePrime);
+            TSTALLOC(VDMOSDPdPtr, VDMOSdNodePrime, VDMOSdNode);
+            TSTALLOC(VDMOSBgpPtr, VDMOSbNode, VDMOSgNodePrime);
+            TSTALLOC(VDMOSDPgpPtr, VDMOSdNodePrime, VDMOSgNodePrime);
+            TSTALLOC(VDMOSSPgpPtr, VDMOSsNodePrime, VDMOSgNodePrime);
+            TSTALLOC(VDMOSSPsPtr, VDMOSsNodePrime, VDMOSsNode);
+            TSTALLOC(VDMOSDPbPtr, VDMOSdNodePrime, VDMOSbNode);
+            TSTALLOC(VDMOSSPbPtr, VDMOSsNodePrime, VDMOSbNode);
+            TSTALLOC(VDMOSSPdpPtr, VDMOSsNodePrime, VDMOSdNodePrime);
+
+            TSTALLOC(VDMOSGgpPtr, VDMOSgNode, VDMOSgNodePrime);
+            TSTALLOC(VDMOSGPgPtr, VDMOSgNodePrime, VDMOSgNode);
 
         }
     }
@@ -242,6 +295,11 @@ VDMOSunsetup(GENmodel *inModel, CKTcircuit *ckt)
                 && here->VDMOSdNodePrime != here->VDMOSdNode)
                 CKTdltNNum(ckt, here->VDMOSdNodePrime);
             here->VDMOSdNodePrime = 0;
+
+            if (here->VDMOSgNodePrime > 0
+                && here->VDMOSgNodePrime != here->VDMOSgNode)
+                CKTdltNNum(ckt, here->VDMOSgNodePrime);
+            here->VDMOSgNodePrime = 0;
         }
     }
     return OK;
