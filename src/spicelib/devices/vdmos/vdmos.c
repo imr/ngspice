@@ -95,6 +95,7 @@ IFparm VDMOSmPTable[] = { /* model parameters */
  IOP("lambda",VDMOS_MOD_LAMBDA,IF_REAL,   "Channel length modulation"),
  IOP("rd",    VDMOS_MOD_RD,    IF_REAL,   "Drain ohmic resistance"),
  IOP("rs",    VDMOS_MOD_RS,    IF_REAL,   "Source ohmic resistance"),
+ IOP("rg",    VDMOS_MOD_RG,    IF_REAL,   "Gate ohmic resistance"),
 /*
  Cjo Zero-bias body diode junction capacitance
  Is Body diode saturation current

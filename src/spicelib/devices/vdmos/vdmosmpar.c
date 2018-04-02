@@ -47,6 +47,10 @@ VDMOSmParam(int param, IFvalue *value, GENmodel *inModel)
             model->VDMOSsourceResistance = value->rValue;
             model->VDMOSsourceResistanceGiven = TRUE;
             break;
+        case VDMOS_MOD_RG:
+            model->VDMOSgateResistance = value->rValue;
+            model->VDMOSgateResistanceGiven = TRUE;
+            break;
         case VDMOS_MOD_CBD:
             model->VDMOScapBD = value->rValue;
             model->VDMOScapBDGiven = TRUE;
