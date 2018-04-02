@@ -48,6 +48,12 @@ VDMOSmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case VDMOS_MOD_CBD:
             value->rValue = model->VDMOScapBD;
             return(OK);
+        case VDMOS_MOD_TYPE:
+            if (model->VDMOStype > 0)
+                value->sValue = "vdmosn";
+            else
+                value->sValue = "vdmosp";
+            return(OK);
         case VDMOS_MOD_CBS:
             value->rValue = model->VDMOScapBS;
             return(OK);
@@ -104,12 +110,6 @@ VDMOSmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
             return(OK);
         case VDMOS_MOD_NSS:
             value->rValue = model->VDMOSsurfaceStateDensity;
-            return(OK);
-        case VDMOS_MOD_TYPE:
-            if (model->VDMOStype > 0)
-                value->sValue = "nmos";
-            else
-                value->sValue = "pmos";
             return(OK);
         default:
             return(E_BADPARM);

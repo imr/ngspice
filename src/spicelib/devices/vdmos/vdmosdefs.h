@@ -408,6 +408,7 @@ enum {
     VDMOS_MOD_KF,
     VDMOS_MOD_AF,
     VDMOS_MOD_TYPE,
+    VDMOS_MOD_DMOS,
 };
 
 /* device questions */

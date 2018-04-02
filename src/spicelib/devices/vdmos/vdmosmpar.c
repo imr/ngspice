@@ -147,6 +147,12 @@ VDMOSmParam(int param, IFvalue *value, GENmodel *inModel)
             model->VDMOSfNexp = value->rValue;
             model->VDMOSfNexpGiven = TRUE;
             break;
+        case VDMOS_MOD_DMOS:
+            if (value->iValue) {
+                model->VDMOStype = 1;
+                model->VDMOStypeGiven = TRUE;
+            }
+            break;
         default:
             return(E_BADPARM);
     }

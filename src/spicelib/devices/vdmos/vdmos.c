@@ -103,6 +103,9 @@ IFparm VDMOSmPTable[] = { /* model parameters */
  IOP("tnom",  VDMOS_MOD_TNOM,  IF_REAL,   "Parameter measurement temperature"),
  IOP("kf",    VDMOS_MOD_KF,    IF_REAL,   "Flicker noise coefficient"),
  IOP("af",    VDMOS_MOD_AF,    IF_REAL,   "Flicker noise exponent"),
+ IP("vdmosn", VDMOS_MOD_NMOS,  IF_FLAG,   "N type DMOSfet model"),
+ IP("vdmosp", VDMOS_MOD_PMOS,  IF_FLAG,   "P type DMOSfet model"),
+ IP("vdmos",  VDMOS_MOD_DMOS,  IF_REAL,   "DMOS transistor"),
 
 /* MOS1 */
  IOPR("vt0",  VDMOS_MOD_VTO,   IF_REAL,   "Threshold voltage"),
@@ -125,8 +128,6 @@ IFparm VDMOSmPTable[] = { /* model parameters */
  IOP("u0",    VDMOS_MOD_U0,    IF_REAL,   "Surface mobility"),
  IOPR("uo",   VDMOS_MOD_U0,    IF_REAL,   "Surface mobility"),
  IOP("fc",    VDMOS_MOD_FC,    IF_REAL,   "Forward bias jct. fit parm."),
- IP("nmos",   VDMOS_MOD_NMOS,  IF_FLAG,   "N type MOSfet model"),
- IP("pmos",   VDMOS_MOD_PMOS,  IF_FLAG,   "P type MOSfet model"),
  IOP("nsub",  VDMOS_MOD_NSUB,  IF_REAL,   "Substrate doping"),
  IOP("tpg",   VDMOS_MOD_TPG,   IF_INTEGER,"Gate type"),
  IOP("nss",   VDMOS_MOD_NSS,   IF_REAL,   "Surface state density")
