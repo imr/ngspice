@@ -100,6 +100,18 @@ IFparm VDMOSmPTable[] = { /* model parameters */
  IOP("lambda",VDMOS_MOD_LAMBDA,IF_REAL,   "Channel length modulation"),
  IOP("rd",    VDMOS_MOD_RD,    IF_REAL,   "Drain ohmic resistance"),
  IOP("rs",    VDMOS_MOD_RS,    IF_REAL,   "Source ohmic resistance"),
+/*
+ Cjo Zero-bias body diode junction capacitance
+ Is Body diode saturation current
+ N Bulk diode emission coefficient
+ Vj Body diode junction potential
+ M Body diode grading coefficient
+ Fc Body diode coefficient for forward-bias depletion capacitance formula
+ tt Body diode transit time
+ Eg Body diode activation energy for temperature effect on Is
+ Xti Body diode saturation current temperature exponent
+*/
+
  IOP("tnom",  VDMOS_MOD_TNOM,  IF_REAL,   "Parameter measurement temperature"),
  IOP("kf",    VDMOS_MOD_KF,    IF_REAL,   "Flicker noise coefficient"),
  IOP("af",    VDMOS_MOD_AF,    IF_REAL,   "Flicker noise exponent"),
