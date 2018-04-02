@@ -54,8 +54,20 @@ VDMOSmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
             else
                 value->sValue = "vdmosp";
             return(OK);
+        case VDMOS_MOD_CGDMIN:
+            value->rValue = model->VDMOScgdmin;
+            return(OK);
         case VDMOS_MOD_CBS:
             value->rValue = model->VDMOScapBS;
+            return(OK);
+        case VDMOS_MOD_CGDMAX:
+            value->rValue = model->VDMOScgdmax;
+            return(OK);
+        case VDMOS_MOD_A:
+            value->rValue = model->VDMOSa;
+            return(OK);
+        case VDMOS_MOD_CGS:
+            value->rValue = model->VDMOScgs;
             return(OK);
         case VDMOS_MOD_IS:
             value->rValue = model->VDMOSjctSatCur;
