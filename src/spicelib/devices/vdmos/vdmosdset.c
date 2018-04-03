@@ -87,16 +87,16 @@ VDMOSdSetup(GENmodel *inModel, CKTcircuit *ckt)
 
             vt = CONSTKoverQ * here->VDMOStemp;
             EffectiveLength=here->VDMOSl - 2*model->VDMOSlatDiff;
-            
-             if( (here->VDMOStSatCurDens == 0) || 
+
+             if( (here->VDMOStSatCurDens == 0) ||
                     (here->VDMOSdrainArea == 0) ||
                     (here->VDMOSsourceArea == 0)) {
                 DrainSatCur = here->VDMOSm * here->VDMOStSatCur;
                 SourceSatCur = here->VDMOSm * here->VDMOStSatCur;
             } else {
-                DrainSatCur = here->VDMOStSatCurDens * 
+                DrainSatCur = here->VDMOStSatCurDens *
                         here->VDMOSm * here->VDMOSdrainArea;
-                SourceSatCur = here->VDMOStSatCurDens * 
+                SourceSatCur = here->VDMOStSatCurDens *
                         here->VDMOSm * here->VDMOSsourceArea;
             }
             GateSourceOverlapCap = model->VDMOSgateSourceOverlapCapFactor * 

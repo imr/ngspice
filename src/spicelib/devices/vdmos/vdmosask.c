@@ -34,10 +34,10 @@ VDMOSask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
             return(OK);
         case VDMOS_CGD:
             value->rValue = 2* *(ckt->CKTstate0 + here->VDMOScapgd);
-            return(OK);   
+            return(OK);
         case VDMOS_M:
             value->rValue = here->VDMOSm;
-            return(OK);    
+            return(OK);
         case VDMOS_L:
             value->rValue = here->VDMOSl;
                 return(OK);
@@ -96,19 +96,19 @@ VDMOSask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
             value->rValue = here->VDMOSsourceConductance;
             return(OK);
         case VDMOS_SOURCERESIST:
-	    if (here->VDMOSsNodePrime != here->VDMOSsNode)
-		value->rValue = 1.0 / here->VDMOSsourceConductance;
-	    else
-		value->rValue = 0.0;
+            if (here->VDMOSsNodePrime != here->VDMOSsNode)
+                value->rValue = 1.0 / here->VDMOSsourceConductance;
+            else
+                value->rValue = 0.0;
             return(OK);
         case VDMOS_DRAINCONDUCT:
             value->rValue = here->VDMOSdrainConductance;
             return(OK);
         case VDMOS_DRAINRESIST:
-	    if (here->VDMOSdNodePrime != here->VDMOSdNode)
-		value->rValue = 1.0 / here->VDMOSdrainConductance;
-	    else
-		value->rValue = 0.0;
+            if (here->VDMOSdNodePrime != here->VDMOSdNode)
+                value->rValue = 1.0 / here->VDMOSdrainConductance;
+            else
+                value->rValue = 0.0;
             return(OK);
         case VDMOS_VON:
             value->rValue = here->VDMOSvon;

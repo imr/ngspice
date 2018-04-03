@@ -112,7 +112,7 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
             }
         }
 
-        
+
         /* loop through all instances of the model */
         for(here = VDMOSinstances(model); here!= NULL; 
                 here = VDMOSnextInstance(here)) {
@@ -218,7 +218,7 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
             if(model->VDMOScapBDGiven) {
                 czbd = here->VDMOStCbd * here->VDMOSm;
             } else {
-                if(model->VDMOSbulkCapFactorGiven) {  
+                if(model->VDMOSbulkCapFactorGiven) {
                     czbd=here->VDMOStCj*here->VDMOSm*here->VDMOSdrainArea;
                 } else {
                     czbd=0;
@@ -299,7 +299,7 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
                 }
             } else if (model->VDMOSsheetResistanceGiven) {
                 if(model->VDMOSsheetResistance != 0) {
-                    here->VDMOSdrainConductance = 
+                    here->VDMOSdrainConductance =
                        here->VDMOSm /
                           (model->VDMOSsheetResistance*here->VDMOSdrainSquares);
                 } else {
@@ -318,7 +318,7 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
             } else if (model->VDMOSsheetResistanceGiven) {
                 if ((model->VDMOSsheetResistance != 0) &&
                                    (here->VDMOSsourceSquares != 0)) {
-                    here->VDMOSsourceConductance = 
+                    here->VDMOSsourceConductance =
                         here->VDMOSm /
                           (model->VDMOSsheetResistance*here->VDMOSsourceSquares);
                 } else {
