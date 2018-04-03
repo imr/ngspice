@@ -24,7 +24,6 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
     VDMOSinstance *here;
     double Beta;
     double DrainSatCur;
-    double EffectiveLength;
     double SourceSatCur;
     double arg;
     double cbhat;
@@ -100,8 +99,6 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
              * here.  They may be moved at the expense of instance size
              */
 
-            EffectiveLength = here->VDMOSl - 2 * model->VDMOSlatDiff;
-
             if ((here->VDMOStSatCurDens == 0) ||
                 (here->VDMOSdrainArea == 0) ||
                 (here->VDMOSsourceArea == 0)) {
@@ -115,7 +112,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                     here->VDMOSm * here->VDMOSsourceArea;
             }
             Beta = here->VDMOStTransconductance * here->VDMOSm *
-                here->VDMOSw / EffectiveLength;
+                here->VDMOSw / here->VDMOSl;
 
             /*
              * ok - now to do the start-up operations
