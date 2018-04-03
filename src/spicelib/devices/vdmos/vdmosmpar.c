@@ -63,7 +63,7 @@ VDMOSmParam(int param, IFvalue *value, GENmodel *inModel)
             model->VDMOSjctSatCur = value->rValue;
             model->VDMOSjctSatCurGiven = TRUE;
             break;
-        case VDMOS_MOD_PB:
+        case VDMOS_MOD_VJ:
             model->VDMOSbulkJctPotential = value->rValue;
             model->VDMOSbulkJctPotentialGiven = TRUE;
             break;

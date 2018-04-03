@@ -75,7 +75,7 @@ VDMOSmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case VDMOS_MOD_IS:
             value->rValue = model->VDMOSjctSatCur;
             return(OK);
-        case VDMOS_MOD_PB:
+        case VDMOS_MOD_VJ:
             value->rValue = model->VDMOSbulkJctPotential;
             return(OK);
         case VDMOS_MOD_CJ:
