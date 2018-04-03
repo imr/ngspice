@@ -145,16 +145,16 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
                 here->VDMOSdrainArea = ckt->CKTdefaultMosAD;
             }
             if(!here->VDMOSmGiven) {
-                here->VDMOSm = ckt->CKTdefaultMosM;
+                here->VDMOSm = 1;
             }
             if(!here->VDMOSlGiven) {
-                here->VDMOSl = ckt->CKTdefaultMosL;
+                here->VDMOSl = 1;
             }
             if(!here->VDMOSsourceAreaGiven) {
                 here->VDMOSsourceArea = ckt->CKTdefaultMosAS;
             }
             if(!here->VDMOSwGiven) {
-                here->VDMOSw = ckt->CKTdefaultMosW;
+                here->VDMOSw = 1;
             }
 
             if(here->VDMOSl - 2 * model->VDMOSlatDiff <=0) {
