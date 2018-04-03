@@ -308,9 +308,6 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
     double VDMOSgateResistance;
     double VDMOSsheetResistance;
     double VDMOStransconductance;    /* input - use tTransconductance */
-    double VDMOSgateSourceOverlapCapFactor;
-    double VDMOSgateDrainOverlapCapFactor;
-    double VDMOSgateBulkOverlapCapFactor;
     double VDMOSoxideCapFactor;
     double VDMOSvt0; /* input - use tVto */
     double VDMOScapBD;   /* input - use tCbd */
@@ -345,9 +342,6 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
     unsigned VDMOSgateResistanceGiven    :1;
     unsigned VDMOSsheetResistanceGiven   :1;
     unsigned VDMOStransconductanceGiven  :1;
-    unsigned VDMOSgateSourceOverlapCapFactorGiven    :1;
-    unsigned VDMOSgateDrainOverlapCapFactorGiven :1;
-    unsigned VDMOSgateBulkOverlapCapFactorGiven  :1;
     unsigned VDMOSvt0Given   :1;
     unsigned VDMOScapBDGiven :1;
     unsigned VDMOScapBSGiven :1;
@@ -419,9 +413,6 @@ enum {
     VDMOS_MOD_CBS,
     VDMOS_MOD_IS,
     VDMOS_MOD_PB,
-    VDMOS_MOD_CGSO,
-    VDMOS_MOD_CGDO,
-    VDMOS_MOD_CGBO,
     VDMOS_MOD_CJ,
     VDMOS_MOD_MJ,
     VDMOS_MOD_CJSW,

@@ -67,18 +67,6 @@ VDMOSmParam(int param, IFvalue *value, GENmodel *inModel)
             model->VDMOSbulkJctPotential = value->rValue;
             model->VDMOSbulkJctPotentialGiven = TRUE;
             break;
-        case VDMOS_MOD_CGSO:
-            model->VDMOSgateSourceOverlapCapFactor = value->rValue;
-            model->VDMOSgateSourceOverlapCapFactorGiven = TRUE;
-            break;
-        case VDMOS_MOD_CGDO:
-            model->VDMOSgateDrainOverlapCapFactor = value->rValue;
-            model->VDMOSgateDrainOverlapCapFactorGiven = TRUE;
-            break;
-        case VDMOS_MOD_CGBO:
-            model->VDMOSgateBulkOverlapCapFactor = value->rValue;
-            model->VDMOSgateBulkOverlapCapFactorGiven = TRUE;
-            break;
         case VDMOS_MOD_CJ:
             model->VDMOSbulkCapFactor = value->rValue;
             model->VDMOSbulkCapFactorGiven = TRUE;

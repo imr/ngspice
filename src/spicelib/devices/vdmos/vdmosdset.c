@@ -23,9 +23,6 @@ VDMOSdSetup(GENmodel *inModel, CKTcircuit *ckt)
     double Beta;
     double DrainSatCur;
     double EffectiveLength;
-    double GateBulkOverlapCap;
-    double GateDrainOverlapCap;
-    double GateSourceOverlapCap;
     double OxideCap;
     double SourceSatCur;
     double gm;
@@ -99,12 +96,6 @@ VDMOSdSetup(GENmodel *inModel, CKTcircuit *ckt)
                 SourceSatCur = here->VDMOStSatCurDens *
                         here->VDMOSm * here->VDMOSsourceArea;
             }
-            GateSourceOverlapCap = model->VDMOSgateSourceOverlapCapFactor * 
-                    here->VDMOSm * here->VDMOSw;
-            GateDrainOverlapCap = model->VDMOSgateDrainOverlapCapFactor * 
-                    here->VDMOSm * here->VDMOSw;
-            GateBulkOverlapCap = model->VDMOSgateBulkOverlapCapFactor * 
-                    here->VDMOSm * EffectiveLength;
             Beta = here->VDMOStTransconductance * here->VDMOSm *
                     here->VDMOSw/EffectiveLength;
             OxideCap = model->VDMOSoxideCapFactor * EffectiveLength * 

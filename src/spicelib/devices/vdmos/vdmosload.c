@@ -25,9 +25,6 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
     double Beta;
     double DrainSatCur;
     double EffectiveLength;
-    double GateBulkOverlapCap;
-    double GateDrainOverlapCap;
-    double GateSourceOverlapCap;
     double SourceSatCur;
     double arg;
     double cbhat;
@@ -117,12 +114,6 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                 SourceSatCur = here->VDMOStSatCurDens *
                     here->VDMOSm * here->VDMOSsourceArea;
             }
-            GateSourceOverlapCap = model->VDMOSgateSourceOverlapCapFactor *
-                here->VDMOSm * here->VDMOSw;
-            GateDrainOverlapCap = model->VDMOSgateDrainOverlapCapFactor *
-                here->VDMOSm * here->VDMOSw;
-            GateBulkOverlapCap = model->VDMOSgateBulkOverlapCapFactor *
-                here->VDMOSm * EffectiveLength;
             Beta = here->VDMOStTransconductance * here->VDMOSm *
                 here->VDMOSw / EffectiveLength;
 
@@ -268,14 +259,11 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                     cdrain = here->VDMOSmode * (here->VDMOScd + here->VDMOScbd);
                     if (ckt->CKTmode & (MODETRAN | MODETRANOP)) {
                         capgs = (*(ckt->CKTstate0 + here->VDMOScapgs) +
-                            *(ckt->CKTstate1 + here->VDMOScapgs) +
-                            GateSourceOverlapCap);
+                            *(ckt->CKTstate1 + here->VDMOScapgs));
                         capgd = (*(ckt->CKTstate0 + here->VDMOScapgd) +
-                            *(ckt->CKTstate1 + here->VDMOScapgd) +
-                            GateDrainOverlapCap);
+                            *(ckt->CKTstate1 + here->VDMOScapgd));
                         capgb = (*(ckt->CKTstate0 + here->VDMOScapgb) +
-                            *(ckt->CKTstate1 + here->VDMOScapgb) +
-                            GateBulkOverlapCap);
+                            *(ckt->CKTstate1 + here->VDMOScapgb));
 
                     }
                     goto bypass;
@@ -702,23 +690,17 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                 vgd1 = vgs1 - *(ckt->CKTstate1 + here->VDMOSvds);
                 vgb1 = vgs1 - *(ckt->CKTstate1 + here->VDMOSvbs);
                 if (ckt->CKTmode & (MODETRANOP | MODEINITSMSIG)) {
-                    capgs = 2 * *(ckt->CKTstate0 + here->VDMOScapgs) +
-                        GateSourceOverlapCap;
-                    capgd = 2 * *(ckt->CKTstate0 + here->VDMOScapgd) +
-                        GateDrainOverlapCap;
-                    capgb = 2 * *(ckt->CKTstate0 + here->VDMOScapgb) +
-                        GateBulkOverlapCap;
+                    capgs = 2 * *(ckt->CKTstate0 + here->VDMOScapgs);
+                    capgd = 2 * *(ckt->CKTstate0 + here->VDMOScapgd);
+                    capgb = 2 * *(ckt->CKTstate0 + here->VDMOScapgb);
                 }
                 else {
                     capgs = (*(ckt->CKTstate0 + here->VDMOScapgs) +
-                        *(ckt->CKTstate1 + here->VDMOScapgs) +
-                        GateSourceOverlapCap);
+                        *(ckt->CKTstate1 + here->VDMOScapgs));
                     capgd = (*(ckt->CKTstate0 + here->VDMOScapgd) +
-                        *(ckt->CKTstate1 + here->VDMOScapgd) +
-                        GateDrainOverlapCap);
+                        *(ckt->CKTstate1 + here->VDMOScapgd));
                     capgb = (*(ckt->CKTstate0 + here->VDMOScapgb) +
-                        *(ckt->CKTstate1 + here->VDMOScapgb) +
-                        GateBulkOverlapCap);
+                        *(ckt->CKTstate1 + here->VDMOScapgb));
                 }
                 /*
                   

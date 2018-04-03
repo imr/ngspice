@@ -78,15 +78,6 @@ VDMOSmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case VDMOS_MOD_PB:
             value->rValue = model->VDMOSbulkJctPotential;
             return(OK);
-        case VDMOS_MOD_CGSO:
-            value->rValue = model->VDMOSgateSourceOverlapCapFactor;
-            return(OK);
-        case VDMOS_MOD_CGDO:
-            value->rValue = model->VDMOSgateDrainOverlapCapFactor;
-            return(OK);
-        case VDMOS_MOD_CGBO:
-            value->rValue = model->VDMOSgateBulkOverlapCapFactor;
-            return(OK);
         case VDMOS_MOD_CJ:
             value->rValue = model->VDMOSbulkCapFactor;
             return(OK);

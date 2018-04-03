@@ -28,10 +28,6 @@ VDMOSacLoad(GENmodel *inModel, CKTcircuit *ckt)
     double capgs;
     double capgd;
     double capgb;
-    double GateBulkOverlapCap;
-    double GateDrainOverlapCap;
-    double GateSourceOverlapCap;
-    double EffectiveLength;
 
     for( ; model != NULL; model = VDMOSnextModel(model)) {
         for(here = VDMOSinstances(model); here!= NULL;
@@ -47,24 +43,12 @@ VDMOSacLoad(GENmodel *inModel, CKTcircuit *ckt)
             /*
              *     meyer's model parameters
              */
-            EffectiveLength=here->VDMOSl - 2*model->VDMOSlatDiff;
-            
-            GateSourceOverlapCap = model->VDMOSgateSourceOverlapCapFactor * 
-                    here->VDMOSm * here->VDMOSw;
-            GateDrainOverlapCap = model->VDMOSgateDrainOverlapCapFactor * 
-                    here->VDMOSm * here->VDMOSw;
-            GateBulkOverlapCap = model->VDMOSgateBulkOverlapCapFactor * 
-                    here->VDMOSm * EffectiveLength;
-                    
             capgs = ( *(ckt->CKTstate0+here->VDMOScapgs)+ 
-                      *(ckt->CKTstate0+here->VDMOScapgs) +
-                      GateSourceOverlapCap );
+                      *(ckt->CKTstate0+here->VDMOScapgs));
             capgd = ( *(ckt->CKTstate0+here->VDMOScapgd)+ 
-                      *(ckt->CKTstate0+here->VDMOScapgd) +
-                      GateDrainOverlapCap );
+                      *(ckt->CKTstate0+here->VDMOScapgd));
             capgb = ( *(ckt->CKTstate0+here->VDMOScapgb)+ 
-                      *(ckt->CKTstate0+here->VDMOScapgb) +
-                      GateBulkOverlapCap );
+                      *(ckt->CKTstate0+here->VDMOScapgb));
             xgs = capgs * ckt->CKTomega;
             xgd = capgd * ckt->CKTomega;
             xgb = capgb * ckt->CKTomega;

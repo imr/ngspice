@@ -166,10 +166,6 @@ VDMOSask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
             return(OK);
         case VDMOS_CAPGS:
             value->rValue = 2* *(ckt->CKTstate0 + here->VDMOScapgs);
-            /* add overlap capacitance */
-            value->rValue += (VDMOSmodPtr(here)->VDMOSgateSourceOverlapCapFactor)
-                             * here->VDMOSm
-                             * (here->VDMOSw);
             return(OK);
         case VDMOS_QGS:
             value->rValue = *(ckt->CKTstate0 + here->VDMOSqgs);
@@ -179,10 +175,6 @@ VDMOSask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
             return(OK);
         case VDMOS_CAPGD:
             value->rValue = 2* *(ckt->CKTstate0 + here->VDMOScapgd);
-            /* add overlap capacitance */
-            value->rValue += (VDMOSmodPtr(here)->VDMOSgateDrainOverlapCapFactor)
-                             * here->VDMOSm
-                             * (here->VDMOSw);
             return(OK);
         case VDMOS_QGD:
             value->rValue = *(ckt->CKTstate0 + here->VDMOSqgd);
@@ -192,11 +184,6 @@ VDMOSask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
             return(OK);
         case VDMOS_CAPGB:
             value->rValue = 2* *(ckt->CKTstate0 + here->VDMOScapgb);
-            /* add overlap capacitance */
-            value->rValue += (VDMOSmodPtr(here)->VDMOSgateBulkOverlapCapFactor)
-                             * here->VDMOSm
-                             * (here->VDMOSl
-                                -2*(VDMOSmodPtr(here)->VDMOSlatDiff));
             return(OK);
         case VDMOS_QGB:
             value->rValue = *(ckt->CKTstate0 + here->VDMOSqgb);

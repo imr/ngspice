@@ -29,10 +29,6 @@ VDMOSpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
     double capgs;
     double capgd;
     double capgb;
-    double GateBulkOverlapCap;
-    double GateDrainOverlapCap;
-    double GateSourceOverlapCap;
-    double EffectiveLength;
 
     for( ; model != NULL; model = VDMOSnextModel(model)) {
         for(here = VDMOSinstances(model); here!= NULL;
@@ -48,21 +44,9 @@ VDMOSpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
             /*
              *     meyer's model parameters
              */
-            EffectiveLength=here->VDMOSl - 2*model->VDMOSlatDiff;
-            
-            GateSourceOverlapCap = model->VDMOSgateSourceOverlapCapFactor * 
-                    here->VDMOSm * here->VDMOSw;
-            GateDrainOverlapCap = model->VDMOSgateDrainOverlapCapFactor * 
-                    here->VDMOSm * here->VDMOSw;
-            GateBulkOverlapCap = model->VDMOSgateBulkOverlapCapFactor * 
-                    here->VDMOSm * EffectiveLength;
-           
-            capgs = ( 2* *(ckt->CKTstate0+here->VDMOScapgs)+ 
-                      GateSourceOverlapCap );
-            capgd = ( 2* *(ckt->CKTstate0+here->VDMOScapgd)+ 
-                      GateDrainOverlapCap );
-            capgb = ( 2* *(ckt->CKTstate0+here->VDMOScapgb)+ 
-                      GateBulkOverlapCap );
+            capgs = ( 2* *(ckt->CKTstate0+here->VDMOScapgs));
+            capgd = ( 2* *(ckt->CKTstate0+here->VDMOScapgd));
+            capgb = ( 2* *(ckt->CKTstate0+here->VDMOScapgb));
             xgs = capgs;
             xgd = capgd;
             xgb = capgb;
