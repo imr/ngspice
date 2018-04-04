@@ -84,12 +84,6 @@ VDMOSmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case VDMOS_MOD_MJ:
             value->rValue = model->VDMOSbulkJctBotGradingCoeff;
             return(OK);
-        case VDMOS_MOD_CJSW:
-            value->rValue = model->VDMOSsideWallCapFactor;
-            return(OK);
-        case VDMOS_MOD_MJSW:
-            value->rValue = model->VDMOSbulkJctSideGradingCoeff;
-            return(OK);
         case VDMOS_MOD_JS:
             value->rValue = model->VDMOSjctSatCurDensity;
             return(OK);

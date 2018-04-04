@@ -75,14 +75,6 @@ VDMOSmParam(int param, IFvalue *value, GENmodel *inModel)
             model->VDMOSbulkJctBotGradingCoeff = value->rValue;
             model->VDMOSbulkJctBotGradingCoeffGiven = TRUE;
             break;
-        case VDMOS_MOD_CJSW:
-            model->VDMOSsideWallCapFactor = value->rValue;
-            model->VDMOSsideWallCapFactorGiven = TRUE;
-            break;
-        case VDMOS_MOD_MJSW:
-            model->VDMOSbulkJctSideGradingCoeff = value->rValue;
-            model->VDMOSbulkJctSideGradingCoeffGiven = TRUE;
-            break;
         case VDMOS_MOD_JS:
             model->VDMOSjctSatCurDensity = value->rValue;
             model->VDMOSjctSatCurDensityGiven = TRUE;

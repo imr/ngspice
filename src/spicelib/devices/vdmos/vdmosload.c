@@ -493,8 +493,6 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                              * exp(log()) we use this special case code to buy time.
                              * (as much as 10% of total job time!)
                              */
-                            if (model->VDMOSbulkJctBotGradingCoeff ==
-                                model->VDMOSbulkJctSideGradingCoeff) {
                                 if (model->VDMOSbulkJctBotGradingCoeff == .5) {
                                     sarg = sargsw = 1 / sqrt(arg);
                                 }
@@ -503,29 +501,9 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                                         exp(-model->VDMOSbulkJctBotGradingCoeff*
                                             log(arg));
                                 }
-                            }
-                            else {
-                                if (model->VDMOSbulkJctBotGradingCoeff == .5) {
-                                    sarg = 1 / sqrt(arg);
-                                }
-                                else {
-                                    sarg = exp(-model->VDMOSbulkJctBotGradingCoeff*
-                                        log(arg));
-                                }
-                                if (model->VDMOSbulkJctSideGradingCoeff == .5) {
-                                    sargsw = 1 / sqrt(arg);
-                                }
-                                else {
-                                    sargsw = exp(-model->VDMOSbulkJctSideGradingCoeff*
-                                        log(arg));
-                                }
-                            }
                             *(ckt->CKTstate0 + here->VDMOSqbs) =
                                 here->VDMOStBulkPot*(here->VDMOSCbs*
-                                (1 - arg*sarg) / (1 - model->VDMOSbulkJctBotGradingCoeff)
-                                    + here->VDMOSCbssw*
-                                    (1 - arg*sargsw) /
-                                    (1 - model->VDMOSbulkJctSideGradingCoeff));
+                                (1 - arg*sarg) / (1 - model->VDMOSbulkJctBotGradingCoeff));
                             here->VDMOScapbs = here->VDMOSCbs*sarg +
                                 here->VDMOSCbssw*sargsw;
                         }
@@ -551,8 +529,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                              * exp(log()) we use this special case code to buy time.
                              * (as much as 10% of total job time!)
                              */
-                            if (model->VDMOSbulkJctBotGradingCoeff == .5 &&
-                                model->VDMOSbulkJctSideGradingCoeff == .5) {
+                            if (model->VDMOSbulkJctBotGradingCoeff == .5) {
                                 sarg = sargsw = 1 / sqrt(arg);
                             }
                             else {
@@ -563,21 +540,11 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                                     sarg = exp(-model->VDMOSbulkJctBotGradingCoeff*
                                         log(arg));
                                 }
-                                if (model->VDMOSbulkJctSideGradingCoeff == .5) {
-                                    sargsw = 1 / sqrt(arg);
-                                }
-                                else {
-                                    sargsw = exp(-model->VDMOSbulkJctSideGradingCoeff*
-                                        log(arg));
-                                }
                             }
                             *(ckt->CKTstate0 + here->VDMOSqbd) =
                                 here->VDMOStBulkPot*(here->VDMOSCbd*
                                 (1 - arg*sarg)
-                                    / (1 - model->VDMOSbulkJctBotGradingCoeff)
-                                    + here->VDMOSCbdsw*
-                                    (1 - arg*sargsw)
-                                    / (1 - model->VDMOSbulkJctSideGradingCoeff));
+                                    / (1 - model->VDMOSbulkJctBotGradingCoeff));
                             here->VDMOScapbd = here->VDMOSCbd*sarg +
                                 here->VDMOSCbdsw*sargsw;
                         }

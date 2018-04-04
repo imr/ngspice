@@ -45,17 +45,11 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
         if (!model->VDMOSbulkCapFactorGiven) {
             model->VDMOSbulkCapFactor = 0;
         }
-        if (!model->VDMOSsideWallCapFactorGiven) {
-            model->VDMOSsideWallCapFactor = 0;
-        }
         if (!model->VDMOSbulkJctPotentialGiven) {
             model->VDMOSbulkJctPotential = .8;
         }
         if (!model->VDMOSbulkJctBotGradingCoeffGiven) {
             model->VDMOSbulkJctBotGradingCoeff = .5;
-        }
-        if (!model->VDMOSbulkJctSideGradingCoeffGiven) {
-            model->VDMOSbulkJctSideGradingCoeff = .5;
         }
         if (!model->VDMOSfwdCapDepCoeffGiven) {
             model->VDMOSfwdCapDepCoeff = .5;

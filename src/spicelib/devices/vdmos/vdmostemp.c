@@ -174,9 +174,6 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
             here->VDMOStCbd = model->VDMOScapBD * capfact;
             here->VDMOStCbs = model->VDMOScapBS * capfact;
             here->VDMOStCj = model->VDMOSbulkCapFactor * capfact;
-            capfact = 1/(1+model->VDMOSbulkJctSideGradingCoeff*
-                    (4e-4*(model->VDMOStnom-REFTEMP)-gmaold));
-            here->VDMOStCjsw = model->VDMOSsideWallCapFactor * capfact;
             here->VDMOStBulkPot = fact2 * pbo+pbfact;
             gmanew = (here->VDMOStBulkPot-pbo)/pbo;
             capfact = (1+model->VDMOSbulkJctBotGradingCoeff*
@@ -184,9 +181,6 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
             here->VDMOStCbd *= capfact;
             here->VDMOStCbs *= capfact;
             here->VDMOStCj *= capfact;
-            capfact = (1+model->VDMOSbulkJctSideGradingCoeff*
-                    (4e-4*(here->VDMOStemp-REFTEMP)-gmanew));
-            here->VDMOStCjsw *= capfact;
             here->VDMOStDepCap = model->VDMOSfwdCapDepCoeff * here->VDMOStBulkPot;
             if (here->VDMOStSatCurDens == 0) {
                 here->VDMOSsourceVcrit = here->VDMOSdrainVcrit =
@@ -201,22 +195,14 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
                 czbdsw=0;
             arg = 1-model->VDMOSfwdCapDepCoeff;
             sarg = exp( (-model->VDMOSbulkJctBotGradingCoeff) * log(arg) );
-            sargsw = exp( (-model->VDMOSbulkJctSideGradingCoeff) * log(arg) );
             here->VDMOSCbd = czbd;
             here->VDMOSCbdsw = czbdsw;
-            here->VDMOSf2d = czbd*(1-model->VDMOSfwdCapDepCoeff*
-                        (1+model->VDMOSbulkJctBotGradingCoeff))* sarg/arg
-                    +  czbdsw*(1-model->VDMOSfwdCapDepCoeff*
-                        (1+model->VDMOSbulkJctSideGradingCoeff))*
-                        sargsw/arg;
-            here->VDMOSf3d = czbd * model->VDMOSbulkJctBotGradingCoeff * sarg/arg/
-                        here->VDMOStBulkPot
-                    + czbdsw * model->VDMOSbulkJctSideGradingCoeff * sargsw/arg /
-                        here->VDMOStBulkPot;
-            here->VDMOSf4d = czbd*here->VDMOStBulkPot*(1-arg*sarg)/
-                        (1-model->VDMOSbulkJctBotGradingCoeff)
-                    + czbdsw*here->VDMOStBulkPot*(1-arg*sargsw)/
-                        (1-model->VDMOSbulkJctSideGradingCoeff)
+            here->VDMOSf2d = czbd * (1 - model->VDMOSfwdCapDepCoeff *
+                (1 + model->VDMOSbulkJctBotGradingCoeff)) * sarg / arg;
+            here->VDMOSf3d = czbd * model->VDMOSbulkJctBotGradingCoeff * sarg / arg /
+                here->VDMOStBulkPot;
+            here->VDMOSf4d = czbd * here->VDMOStBulkPot * (1 - arg * sarg) /
+                (1 - model->VDMOSbulkJctBotGradingCoeff);
                     -here->VDMOSf3d/2*
                         (here->VDMOStDepCap*here->VDMOStDepCap)
                     -here->VDMOStDepCap * here->VDMOSf2d;
@@ -228,22 +214,14 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
                 czbssw=0;
             arg = 1-model->VDMOSfwdCapDepCoeff;
             sarg = exp( (-model->VDMOSbulkJctBotGradingCoeff) * log(arg) );
-            sargsw = exp( (-model->VDMOSbulkJctSideGradingCoeff) * log(arg) );
             here->VDMOSCbs = czbs;
             here->VDMOSCbssw = czbssw;
-            here->VDMOSf2s = czbs*(1-model->VDMOSfwdCapDepCoeff*
-                        (1+model->VDMOSbulkJctBotGradingCoeff))* sarg/arg
-                    +  czbssw*(1-model->VDMOSfwdCapDepCoeff*
-                        (1+model->VDMOSbulkJctSideGradingCoeff))*
-                        sargsw/arg;
-            here->VDMOSf3s = czbs * model->VDMOSbulkJctBotGradingCoeff * sarg/arg/
-                        here->VDMOStBulkPot
-                    + czbssw * model->VDMOSbulkJctSideGradingCoeff * sargsw/arg /
-                        here->VDMOStBulkPot;
+            here->VDMOSf2s = czbs * (1 - model->VDMOSfwdCapDepCoeff *
+                (1 + model->VDMOSbulkJctBotGradingCoeff)) * sarg / arg;
+            here->VDMOSf3s = czbs * model->VDMOSbulkJctBotGradingCoeff * sarg / arg /
+                here->VDMOStBulkPot;
             here->VDMOSf4s = czbs*here->VDMOStBulkPot*(1-arg*sarg)/
                         (1-model->VDMOSbulkJctBotGradingCoeff)
-                    + czbssw*here->VDMOStBulkPot*(1-arg*sargsw)/
-                        (1-model->VDMOSbulkJctSideGradingCoeff)
                     -here->VDMOSf3s/2*
                         (here->VDMOStDepCap*here->VDMOStDepCap)
                     -here->VDMOStDepCap * here->VDMOSf2s;
