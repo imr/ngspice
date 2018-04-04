@@ -91,16 +91,17 @@ IFparm VDMOSmPTable[] = { /* model parameters */
  IOP("rs",    VDMOS_MOD_RS,    IF_REAL,   "Source ohmic resistance"),
  IOP("rg",    VDMOS_MOD_RG,    IF_REAL,   "Gate ohmic resistance"),
 /*
- Cjo Zero-bias body diode junction capacitance
  N Bulk diode emission coefficient
- M Body diode grading coefficient
- Fc Body diode coefficient for forward-bias depletion capacitance formula
  tt Body diode transit time
  Eg Body diode activation energy for temperature effect on Is
  Xti Body diode saturation current temperature exponent
 */
  IOP("is",    VDMOS_MOD_IS,    IF_REAL,   "Body diode saturation current"),
  IOP("vj",    VDMOS_MOD_VJ,    IF_REAL,   "Body diode junction potential"),
+
+ /* body diode capacitance (e.g. source-drain capacitance) */
+ IOP("fc",    VDMOS_MOD_FC,    IF_REAL,   "Body diode coefficient for forward-bias depletion capacitance formula"),
+ IOP("mj",    VDMOS_MOD_MJ,    IF_REAL,   "Body diode grading coefficient"),
 
  /* gate-source and gate-drain capacitances */
  IOPA("cgdmin", VDMOS_MOD_CGDMIN, IF_REAL, "Minimum non-linear G-D capacitance"),
@@ -120,14 +121,12 @@ IFparm VDMOSmPTable[] = { /* model parameters */
  IOPA("cbd",  VDMOS_MOD_CBD,   IF_REAL,   "B-D junction capacitance"),
  IOPA("cbs",  VDMOS_MOD_CBS,   IF_REAL,   "B-S junction capacitance"),
  IOPA("cj",   VDMOS_MOD_CJ,    IF_REAL,   "Bottom junction cap per area"),
- IOP("mj",    VDMOS_MOD_MJ,    IF_REAL,   "Bottom grading coefficient"),
  IOPA("cjsw", VDMOS_MOD_CJSW,  IF_REAL,   "Side junction cap per area"),
  IOP("mjsw",  VDMOS_MOD_MJSW,  IF_REAL,   "Side grading coefficient"),
  IOP("js",    VDMOS_MOD_JS,    IF_REAL,   "Bulk jct. sat. current density"),
  IOP("tox",   VDMOS_MOD_TOX,   IF_REAL,   "Oxide thickness"),
  IOP("u0",    VDMOS_MOD_U0,    IF_REAL,   "Surface mobility"),
  IOPR("uo",   VDMOS_MOD_U0,    IF_REAL,   "Surface mobility"),
- IOP("fc",    VDMOS_MOD_FC,    IF_REAL,   "Forward bias jct. fit parm."),
  IOP("nsub",  VDMOS_MOD_NSUB,  IF_REAL,   "Substrate doping"),
  IOP("tpg",   VDMOS_MOD_TPG,   IF_INTEGER,"Gate type"),
  IOP("nss",   VDMOS_MOD_NSS,   IF_REAL,   "Surface state density")
