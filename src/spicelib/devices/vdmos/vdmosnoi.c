@@ -110,7 +110,7 @@ VDMOSnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
 				 log(MAX(fabs(inst->VDMOScd),N_MINLOG))) /
 				 (data->freq * inst->VDMOSw * 
 				 inst->VDMOSm *
-				 (inst->VDMOSl - 2*model->VDMOSlatDiff) * coxSquared);
+				 inst->VDMOSl * coxSquared);
 		    lnNdens[VDMOSFLNOIZ] = 
 				 log(MAX(noizDens[VDMOSFLNOIZ],N_MINLOG));
 

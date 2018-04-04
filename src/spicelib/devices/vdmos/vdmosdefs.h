@@ -300,7 +300,6 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
 
     int VDMOStype;       /* device type : 1 = nmos,  -1 = pmos */
     double VDMOStnom;        /* temperature at which parameters measured */
-    double VDMOSlatDiff;
     double VDMOSjctSatCurDensity;    /* input - use tSatCurDens */
     double VDMOSjctSatCur;   /* input - use tSatCur */
     double VDMOSdrainResistance;
@@ -334,7 +333,6 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
     double VDMOScgs;
 
     unsigned VDMOStypeGiven  :1;
-    unsigned VDMOSlatDiffGiven   :1;
     unsigned VDMOSjctSatCurDensityGiven  :1;
     unsigned VDMOSjctSatCurGiven :1;
     unsigned VDMOSdrainResistanceGiven   :1;
@@ -419,7 +417,6 @@ enum {
     VDMOS_MOD_MJSW,
     VDMOS_MOD_JS,
     VDMOS_MOD_TOX,
-    VDMOS_MOD_LD,
     VDMOS_MOD_RSH,
     VDMOS_MOD_U0,
     VDMOS_MOD_FC,

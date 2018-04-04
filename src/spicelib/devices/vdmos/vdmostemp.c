@@ -157,11 +157,6 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
                 here->VDMOSw = 1;
             }
 
-            if(here->VDMOSl - 2 * model->VDMOSlatDiff <=0) {
-                SPfrontEnd->IFerrorf (ERR_WARNING,
-                        "%s: effective channel length less than zero",
-                        model->VDMOSmodName);
-            }
             ratio4 = ratio * sqrt(ratio);
             here->VDMOStTransconductance = model->VDMOStransconductance / ratio4;
             here->VDMOStSurfMob = model->VDMOSsurfaceMobility/ratio4;

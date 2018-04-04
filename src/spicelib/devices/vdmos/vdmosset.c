@@ -30,9 +30,6 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
         if (!model->VDMOStypeGiven) {
             model->VDMOStype = NMOS;
         }
-        if (!model->VDMOSlatDiffGiven) {
-            model->VDMOSlatDiff = 0;
-        }
         if (!model->VDMOSjctSatCurDensityGiven) {
             model->VDMOSjctSatCurDensity = 0;
         }

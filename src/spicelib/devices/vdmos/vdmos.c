@@ -132,7 +132,6 @@ IFparm VDMOSmPTable[] = { /* model parameters */
  IOP("mjsw",  VDMOS_MOD_MJSW,  IF_REAL,   "Side grading coefficient"),
  IOP("js",    VDMOS_MOD_JS,    IF_REAL,   "Bulk jct. sat. current density"),
  IOP("tox",   VDMOS_MOD_TOX,   IF_REAL,   "Oxide thickness"),
- IOP("ld",    VDMOS_MOD_LD,    IF_REAL,   "Lateral diffusion"),
  IOP("u0",    VDMOS_MOD_U0,    IF_REAL,   "Surface mobility"),
  IOPR("uo",   VDMOS_MOD_U0,    IF_REAL,   "Surface mobility"),
  IOP("fc",    VDMOS_MOD_FC,    IF_REAL,   "Forward bias jct. fit parm."),
