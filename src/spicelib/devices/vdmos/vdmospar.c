@@ -49,30 +49,6 @@ VDMOSparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->VDMOSl = value->rValue * scale;
             here->VDMOSlGiven = TRUE;
             break;
-        case VDMOS_AS:
-            here->VDMOSsourceArea = value->rValue * scale * scale;
-            here->VDMOSsourceAreaGiven = TRUE;
-            break;
-        case VDMOS_AD:
-            here->VDMOSdrainArea = value->rValue * scale * scale;
-            here->VDMOSdrainAreaGiven = TRUE;
-            break;
-        case VDMOS_PS:
-            here->VDMOSsourcePerimiter = value->rValue * scale;
-            here->VDMOSsourcePerimiterGiven = TRUE;
-            break;
-        case VDMOS_PD:
-            here->VDMOSdrainPerimiter = value->rValue * scale;
-            here->VDMOSdrainPerimiterGiven = TRUE;
-            break;
-        case VDMOS_NRS:
-            here->VDMOSsourceSquares = value->rValue;
-            here->VDMOSsourceSquaresGiven = TRUE;
-            break;
-        case VDMOS_NRD:
-            here->VDMOSdrainSquares = value->rValue;
-            here->VDMOSdrainSquaresGiven = TRUE;
-            break;
         case VDMOS_OFF:
             here->VDMOSoff = (value->iValue != 0);
             break;

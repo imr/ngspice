@@ -99,18 +99,8 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
              * here.  They may be moved at the expense of instance size
              */
 
-            if ((here->VDMOStSatCurDens == 0) ||
-                (here->VDMOSdrainArea == 0) ||
-                (here->VDMOSsourceArea == 0)) {
                 DrainSatCur = here->VDMOSm * here->VDMOStSatCur;
                 SourceSatCur = here->VDMOSm * here->VDMOStSatCur;
-            }
-            else {
-                DrainSatCur = here->VDMOStSatCurDens *
-                    here->VDMOSm * here->VDMOSdrainArea;
-                SourceSatCur = here->VDMOStSatCurDens *
-                    here->VDMOSm * here->VDMOSsourceArea;
-            }
             Beta = here->VDMOStTransconductance * here->VDMOSm *
                 here->VDMOSw / here->VDMOSl;
 

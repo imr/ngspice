@@ -141,17 +141,11 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
             arg = -egfet/(kt+kt)+1.1150877/(CONSTboltz*(REFTEMP+REFTEMP));
             pbfact = -2*vt *(1.5*log(fact2)+CHARGE*arg);
 
-            if(!here->VDMOSdrainAreaGiven) {
-                here->VDMOSdrainArea = ckt->CKTdefaultMosAD;
-            }
             if(!here->VDMOSmGiven) {
                 here->VDMOSm = 1;
             }
             if(!here->VDMOSlGiven) {
                 here->VDMOSl = 1;
-            }
-            if(!here->VDMOSsourceAreaGiven) {
-                here->VDMOSsourceArea = ckt->CKTdefaultMosAS;
             }
             if(!here->VDMOSwGiven) {
                 here->VDMOSw = 1;
@@ -194,37 +188,17 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
                     (4e-4*(here->VDMOStemp-REFTEMP)-gmanew));
             here->VDMOStCjsw *= capfact;
             here->VDMOStDepCap = model->VDMOSfwdCapDepCoeff * here->VDMOStBulkPot;
-            if( (here->VDMOStSatCurDens == 0) ||
-                    (here->VDMOSdrainArea == 0) ||
-                    (here->VDMOSsourceArea == 0) ) {
+            if (here->VDMOStSatCurDens == 0) {
                 here->VDMOSsourceVcrit = here->VDMOSdrainVcrit =
                        vt*log(vt/(CONSTroot2*here->VDMOSm*here->VDMOStSatCur));
-            } else {
-                here->VDMOSdrainVcrit =
-                        vt * log( vt / (CONSTroot2 *
-                        here->VDMOSm *
-                        here->VDMOStSatCurDens * here->VDMOSdrainArea));
-                here->VDMOSsourceVcrit =
-                        vt * log( vt / (CONSTroot2 *
-                        here->VDMOSm *
-                        here->VDMOStSatCurDens * here->VDMOSsourceArea));
             }
 
             if(model->VDMOScapBDGiven) {
                 czbd = here->VDMOStCbd * here->VDMOSm;
             } else {
-                if(model->VDMOSbulkCapFactorGiven) {
-                    czbd=here->VDMOStCj*here->VDMOSm*here->VDMOSdrainArea;
-                } else {
                     czbd=0;
-                }
             }
-            if(model->VDMOSsideWallCapFactorGiven) {
-                czbdsw= here->VDMOStCjsw * here->VDMOSdrainPerimiter *
-                     here->VDMOSm;
-            } else {
                 czbdsw=0;
-            }
             arg = 1-model->VDMOSfwdCapDepCoeff;
             sarg = exp( (-model->VDMOSbulkJctBotGradingCoeff) * log(arg) );
             sargsw = exp( (-model->VDMOSbulkJctSideGradingCoeff) * log(arg) );
@@ -249,18 +223,9 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
             if(model->VDMOScapBSGiven) {
                 czbs=here->VDMOStCbs * here->VDMOSm;
             } else {
-                if(model->VDMOSbulkCapFactorGiven) {
-                   czbs=here->VDMOStCj*here->VDMOSsourceArea * here->VDMOSm;
-                } else {
                     czbs=0;
-                }
             }
-            if(model->VDMOSsideWallCapFactorGiven) {
-                czbssw = here->VDMOStCjsw * here->VDMOSsourcePerimiter *
-                          here->VDMOSm;
-            } else {
                 czbssw=0;
-            }
             arg = 1-model->VDMOSfwdCapDepCoeff;
             sarg = exp( (-model->VDMOSbulkJctBotGradingCoeff) * log(arg) );
             sargsw = exp( (-model->VDMOSbulkJctSideGradingCoeff) * log(arg) );
@@ -292,14 +257,6 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
                 else {
                     here->VDMOSdrainConductance = 0;
                 }
-            } else if (model->VDMOSsheetResistanceGiven) {
-                if(model->VDMOSsheetResistance != 0) {
-                    here->VDMOSdrainConductance =
-                       here->VDMOSm /
-                          (model->VDMOSsheetResistance*here->VDMOSdrainSquares);
-                } else {
-                    here->VDMOSdrainConductance = 0;
-                }
             } else {
                 here->VDMOSdrainConductance = 0;
             }
@@ -307,15 +264,6 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
                 if(model->VDMOSsourceResistance != 0) {
                    here->VDMOSsourceConductance = here->VDMOSm /
                                          model->VDMOSsourceResistance;
-                } else {
-                    here->VDMOSsourceConductance = 0;
-                }
-            } else if (model->VDMOSsheetResistanceGiven) {
-                if ((model->VDMOSsheetResistance != 0) &&
-                                   (here->VDMOSsourceSquares != 0)) {
-                    here->VDMOSsourceConductance =
-                        here->VDMOSm /
-                          (model->VDMOSsheetResistance*here->VDMOSsourceSquares);
                 } else {
                     here->VDMOSsourceConductance = 0;
                 }

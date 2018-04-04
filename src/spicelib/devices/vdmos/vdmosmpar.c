@@ -91,10 +91,6 @@ VDMOSmParam(int param, IFvalue *value, GENmodel *inModel)
             model->VDMOSoxideThickness = value->rValue;
             model->VDMOSoxideThicknessGiven = TRUE;
             break;
-        case VDMOS_MOD_RSH:
-            model->VDMOSsheetResistance = value->rValue;
-            model->VDMOSsheetResistanceGiven = TRUE;
-            break;
         case VDMOS_MOD_U0:
             model->VDMOSsurfaceMobility = value->rValue;
             model->VDMOSsurfaceMobilityGiven = TRUE;

@@ -44,24 +44,6 @@ VDMOSask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
         case VDMOS_W:
             value->rValue = here->VDMOSw;
                 return(OK);
-        case VDMOS_AS:
-            value->rValue = here->VDMOSsourceArea;
-                return(OK);
-        case VDMOS_AD:
-            value->rValue = here->VDMOSdrainArea;
-                return(OK);
-        case VDMOS_PS:
-            value->rValue = here->VDMOSsourcePerimiter;
-                return(OK);
-        case VDMOS_PD:
-            value->rValue = here->VDMOSdrainPerimiter;
-                return(OK);
-        case VDMOS_NRS:
-            value->rValue = here->VDMOSsourceSquares;
-                return(OK);
-        case VDMOS_NRD:
-            value->rValue = here->VDMOSdrainSquares;
-                return(OK);
         case VDMOS_OFF:
             value->rValue = here->VDMOSoff;
                 return(OK);

@@ -50,12 +50,6 @@ typedef struct sVDMOSinstance {
 
     double VDMOSl;   /* the length of the channel region */
     double VDMOSw;   /* the width of the channel region */
-    double VDMOSdrainArea;   /* the area of the drain diffusion */
-    double VDMOSsourceArea;  /* the area of the source diffusion */
-    double VDMOSdrainSquares;    /* the length of the drain in squares */
-    double VDMOSsourceSquares;   /* the length of the source in squares */
-    double VDMOSdrainPerimiter;
-    double VDMOSsourcePerimiter;
     double VDMOSsourceConductance;   /*conductance of source(or 0):set in setup*/
     double VDMOSdrainConductance;    /*conductance of drain(or 0):set in setup*/
     double VDMOSgateConductance;    /*conductance of gate(or 0):set in setup*/
@@ -171,12 +165,6 @@ typedef struct sVDMOSinstance {
     unsigned VDMOSmGiven :1;
     unsigned VDMOSlGiven :1;
     unsigned VDMOSwGiven :1;
-    unsigned VDMOSdrainAreaGiven :1;
-    unsigned VDMOSsourceAreaGiven    :1;
-    unsigned VDMOSdrainSquaresGiven  :1;
-    unsigned VDMOSsourceSquaresGiven :1;
-    unsigned VDMOSdrainPerimiterGiven    :1;
-    unsigned VDMOSsourcePerimiterGiven   :1;
     unsigned VDMOSdNodePrimeSet  :1;
     unsigned VDMOSsNodePrimeSet  :1;
     unsigned VDMOSicVBSGiven :1;
@@ -338,7 +326,6 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
     unsigned VDMOSdrainResistanceGiven   :1;
     unsigned VDMOSsourceResistanceGiven  :1;
     unsigned VDMOSgateResistanceGiven    :1;
-    unsigned VDMOSsheetResistanceGiven   :1;
     unsigned VDMOStransconductanceGiven  :1;
     unsigned VDMOSvt0Given   :1;
     unsigned VDMOScapBDGiven :1;
@@ -377,12 +364,6 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
 enum {
     VDMOS_W = 1,
     VDMOS_L,
-    VDMOS_AS,
-    VDMOS_AD,
-    VDMOS_PS,
-    VDMOS_PD,
-    VDMOS_NRS,
-    VDMOS_NRD,
     VDMOS_OFF,
     VDMOS_IC,
     VDMOS_IC_VBS,
@@ -417,7 +398,6 @@ enum {
     VDMOS_MOD_MJSW,
     VDMOS_MOD_JS,
     VDMOS_MOD_TOX,
-    VDMOS_MOD_RSH,
     VDMOS_MOD_U0,
     VDMOS_MOD_FC,
     VDMOS_MOD_NSUB,
