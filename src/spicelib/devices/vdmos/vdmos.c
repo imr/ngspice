@@ -28,8 +28,6 @@ IFparm VDMOSpTable[] = { /* parameters */
  IOPU("temp",         VDMOS_TEMP,       IF_REAL,    "Instance temperature"),
  IOPU("dtemp",        VDMOS_DTEMP,      IF_REAL,    "Instance temperature difference"),
  IP( "ic",            VDMOS_IC,         IF_REALVEC, "Vector of D-S, G-S, B-S voltages"),
- IP( "sens_l", VDMOS_L_SENS, IF_FLAG, "flag to request sensitivity WRT length"),
- IP( "sens_w", VDMOS_W_SENS, IF_FLAG, "flag to request sensitivity WRT width"),
 
  OP( "id",           VDMOS_CD,         IF_REAL,    "Drain current"),
  OP( "is",           VDMOS_CS,         IF_REAL,    "Source current"),
@@ -92,26 +90,6 @@ IFparm VDMOSpTable[] = { /* parameters */
  OPU( "qbd",      VDMOS_QBD,        IF_REAL,    "Bulk-Drain charge storage"),
  OPU( "qbs",      VDMOS_QBS,        IF_REAL,    "Bulk-Source charge storage"),
  OPU( "p",        VDMOS_POWER,      IF_REAL,    "Instaneous power"),
- OPU( "sens_l_dc",    VDMOS_L_SENS_DC,  IF_REAL,    "dc sensitivity wrt length"),
- OPU( "sens_l_real", VDMOS_L_SENS_REAL,IF_REAL,
-        "real part of ac sensitivity wrt length"),
- OPU( "sens_l_imag",  VDMOS_L_SENS_IMAG,IF_REAL,    
-        "imag part of ac sensitivity wrt length"),
- OPU( "sens_l_mag",   VDMOS_L_SENS_MAG, IF_REAL,    
-        "sensitivity wrt l of ac magnitude"),
- OPU( "sens_l_ph",    VDMOS_L_SENS_PH,  IF_REAL,    
-        "sensitivity wrt l of ac phase"),
- OPU( "sens_l_cplx",  VDMOS_L_SENS_CPLX,IF_COMPLEX, "ac sensitivity wrt length"),
- OPU( "sens_w_dc",    VDMOS_W_SENS_DC,  IF_REAL,    "dc sensitivity wrt width"),
- OPU( "sens_w_real",  VDMOS_W_SENS_REAL,IF_REAL,    
-        "real part of ac sensitivity wrt width"),
- OPU( "sens_w_imag",  VDMOS_W_SENS_IMAG,IF_REAL,    
-        "imag part of ac sensitivity wrt width"),
- OPU( "sens_w_mag",   VDMOS_W_SENS_MAG, IF_REAL,    
-        "sensitivity wrt w of ac magnitude"),
- OPU( "sens_w_ph",    VDMOS_W_SENS_PH,  IF_REAL,    
-        "sensitivity wrt w of ac phase"),
- OPU( "sens_w_cplx",  VDMOS_W_SENS_CPLX,IF_COMPLEX, "ac sensitivity wrt width")
 };
 
 IFparm VDMOSmPTable[] = { /* model parameters */

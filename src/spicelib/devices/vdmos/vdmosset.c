@@ -96,10 +96,6 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
             here->VDMOSstates = *states;
             *states += VDMOSnumStates;
 
-            if(ckt->CKTsenInfo && (ckt->CKTsenInfo->SENmode & TRANSEN) ){
-                *states += VDMOSnumSenStates * (ckt->CKTsenInfo->SENparms);
-            }
-
             if(!here->VDMOSdrainPerimiterGiven) {
                 here->VDMOSdrainPerimiter = 0;
             }

@@ -19,12 +19,9 @@ VDMOSask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
         IFvalue *select)
 {
     VDMOSinstance *here = (VDMOSinstance*)inst;
-    double vr;
-    double vi;
-    double sr;
-    double si;
-    double vm;
     static char *msg = "Current and power not available for ac analysis";
+    NG_IGNORE(select);
+
     switch(which) {
         case VDMOS_TEMP:
             value->rValue = here->VDMOStemp - CONSTCtoK;
@@ -230,126 +227,6 @@ VDMOSask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
             return(OK);
         case VDMOS_CQBS:
             value->rValue = *(ckt->CKTstate0 + here->VDMOScqbs);
-            return(OK);
-        case VDMOS_L_SENS_DC:
-            if(ckt->CKTsenInfo && here->VDMOSsens_l){
-               value->rValue = *(ckt->CKTsenInfo->SEN_Sap[select->iValue + 1]+
-                       here->VDMOSsenParmNo);
-            }
-            return(OK);
-        case VDMOS_L_SENS_REAL:
-            if(ckt->CKTsenInfo && here->VDMOSsens_l){
-               value->rValue = *(ckt->CKTsenInfo->SEN_RHS[select->iValue + 1]+
-                       here->VDMOSsenParmNo);
-            }
-            return(OK);
-        case VDMOS_L_SENS_IMAG:
-            if(ckt->CKTsenInfo && here->VDMOSsens_l){
-               value->rValue = *(ckt->CKTsenInfo->SEN_iRHS[select->iValue + 1]+
-                       here->VDMOSsenParmNo);
-            }
-            return(OK);
-        case VDMOS_L_SENS_MAG:
-            if(ckt->CKTsenInfo && here->VDMOSsens_l){
-                vr = *(ckt->CKTrhsOld + select->iValue + 1); 
-                vi = *(ckt->CKTirhsOld + select->iValue + 1); 
-                vm = sqrt(vr*vr + vi*vi);
-                if(vm == 0){
-                    value->rValue = 0;
-                    return(OK);
-                }
-                sr = *(ckt->CKTsenInfo->SEN_RHS[select->iValue + 1]+
-                        here->VDMOSsenParmNo);
-                si = *(ckt->CKTsenInfo->SEN_iRHS[select->iValue + 1]+
-                        here->VDMOSsenParmNo);
-                value->rValue = (vr * sr + vi * si)/vm;
-            }
-            return(OK);
-        case VDMOS_L_SENS_PH:
-            if(ckt->CKTsenInfo && here->VDMOSsens_l){
-                vr = *(ckt->CKTrhsOld + select->iValue + 1); 
-                vi = *(ckt->CKTirhsOld + select->iValue + 1); 
-                vm = vr*vr + vi*vi;
-                if(vm == 0){
-                    value->rValue = 0;
-                    return(OK);
-                }
-                sr = *(ckt->CKTsenInfo->SEN_RHS[select->iValue + 1]+
-                        here->VDMOSsenParmNo);
-                si = *(ckt->CKTsenInfo->SEN_iRHS[select->iValue + 1]+
-                        here->VDMOSsenParmNo);
-                value->rValue =  (vr * si - vi * sr)/vm;
-            }
-            return(OK);
-        case VDMOS_L_SENS_CPLX:
-            if(ckt->CKTsenInfo && here->VDMOSsens_l){
-                value->cValue.real= 
-                        *(ckt->CKTsenInfo->SEN_RHS[select->iValue + 1]+
-                        here->VDMOSsenParmNo);
-                value->cValue.imag= 
-                        *(ckt->CKTsenInfo->SEN_iRHS[select->iValue + 1]+
-                        here->VDMOSsenParmNo);
-            }
-            return(OK);
-        case VDMOS_W_SENS_DC:
-            if(ckt->CKTsenInfo && here->VDMOSsens_w){
-                value->rValue = *(ckt->CKTsenInfo->SEN_Sap[select->iValue + 1]+
-                        here->VDMOSsenParmNo + here->VDMOSsens_l);
-            }
-            return(OK);
-        case VDMOS_W_SENS_REAL:
-            if(ckt->CKTsenInfo && here->VDMOSsens_w){
-                value->rValue = *(ckt->CKTsenInfo->SEN_RHS[select->iValue + 1]+
-                        here->VDMOSsenParmNo + here->VDMOSsens_l);
-            }
-             return(OK);
-        case VDMOS_W_SENS_IMAG:
-            if(ckt->CKTsenInfo && here->VDMOSsens_w){
-                value->rValue = *(ckt->CKTsenInfo->SEN_iRHS[select->iValue + 1]+
-                        here->VDMOSsenParmNo + here->VDMOSsens_l);
-            }
-            return(OK);
-        case VDMOS_W_SENS_MAG:
-            if(ckt->CKTsenInfo && here->VDMOSsens_w){
-                vr = *(ckt->CKTrhsOld + select->iValue + 1); 
-                vi = *(ckt->CKTirhsOld + select->iValue + 1); 
-                vm = sqrt(vr*vr + vi*vi);
-                if(vm == 0){
-                    value->rValue = 0;
-                    return(OK);
-                }
-                sr = *(ckt->CKTsenInfo->SEN_RHS[select->iValue + 1]+
-                        here->VDMOSsenParmNo + here->VDMOSsens_l);
-                si = *(ckt->CKTsenInfo->SEN_iRHS[select->iValue + 1]+
-                        here->VDMOSsenParmNo + here->VDMOSsens_l);
-                value->rValue = (vr * sr + vi * si)/vm;
-            }
-            return(OK);
-        case VDMOS_W_SENS_PH:
-            if(ckt->CKTsenInfo && here->VDMOSsens_w){
-                vr = *(ckt->CKTrhsOld + select->iValue + 1); 
-                vi = *(ckt->CKTirhsOld + select->iValue + 1);     
-                vm = vr*vr + vi*vi;
-                if(vm == 0){
-                    value->rValue = 0;
-                    return(OK);
-                }
-                sr = *(ckt->CKTsenInfo->SEN_RHS[select->iValue + 1]+
-                        here->VDMOSsenParmNo + here->VDMOSsens_l);
-                si = *(ckt->CKTsenInfo->SEN_iRHS[select->iValue + 1]+
-                        here->VDMOSsenParmNo + here->VDMOSsens_l);
-                value->rValue =  (vr * si - vi * sr)/vm;
-            }
-                    return(OK);
-        case VDMOS_W_SENS_CPLX:
-            if(ckt->CKTsenInfo && here->VDMOSsens_w){
-                value->cValue.real= 
-                        *(ckt->CKTsenInfo->SEN_RHS[select->iValue + 1]+
-                        here->VDMOSsenParmNo + here->VDMOSsens_l);
-                value->cValue.imag= 
-                        *(ckt->CKTsenInfo->SEN_iRHS[select->iValue + 1]+
-                        here->VDMOSsenParmNo + here->VDMOSsens_l);
-            }
             return(OK);
         case VDMOS_CB :
             if (ckt->CKTcurrentAnalysis & DOING_AC) {

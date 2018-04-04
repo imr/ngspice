@@ -13,6 +13,5 @@ int
 VDMOSdelete(GENinstance *gen_inst)
 {
     VDMOSinstance *inst = (VDMOSinstance *) gen_inst;
-    FREE(inst->VDMOSsens);
     return OK;
 }

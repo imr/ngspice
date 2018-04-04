@@ -104,18 +104,6 @@ VDMOSparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
                     return(E_BADPARM);
             }
             break;
-        case VDMOS_L_SENS:
-            if(value->iValue) {
-                here->VDMOSsenParmNo = 1;
-                here->VDMOSsens_l = 1;
-            }
-            break;
-        case VDMOS_W_SENS:
-            if(value->iValue) {
-                here->VDMOSsenParmNo = 1;
-                here->VDMOSsens_w = 1;
-            }
-            break;
         default:
             return(E_BADPARM);
     }
