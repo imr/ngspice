@@ -116,10 +116,7 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all instances of the model */
         for(here = VDMOSinstances(model); here!= NULL; 
                 here = VDMOSnextInstance(here)) {
-            double czbd;    /* zero voltage bulk-drain capacitance */
-            double czbs;    /* zero voltage bulk-source capacitance */
             double arg;     /* 1 - fc */
-            double sarg;    /* (1-fc) ^^ (-mj) */
 
             /* perform the parameter defaulting */
             
@@ -184,32 +181,15 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
                        vt*log(vt/(CONSTroot2*here->VDMOSm*here->VDMOStSatCur));
             }
 
-                    czbd=0;
-            arg = 1-model->VDMOSfwdCapDepCoeff;
-            sarg = exp( (-model->VDMOSbulkJctBotGradingCoeff) * log(arg) );
-            here->VDMOSCbd = czbd;
-            here->VDMOSf2d = czbd * (1 - model->VDMOSfwdCapDepCoeff *
-                (1 + model->VDMOSbulkJctBotGradingCoeff)) * sarg / arg;
-            here->VDMOSf3d = czbd * model->VDMOSbulkJctBotGradingCoeff * sarg / arg /
-                here->VDMOStBulkPot;
-            here->VDMOSf4d = czbd * here->VDMOStBulkPot * (1 - arg * sarg) /
-                (1 - model->VDMOSbulkJctBotGradingCoeff);
-                    -here->VDMOSf3d/2*
-                        (here->VDMOStDepCap*here->VDMOStDepCap)
-                    -here->VDMOStDepCap * here->VDMOSf2d;
-                    czbs=0;
-            arg = 1-model->VDMOSfwdCapDepCoeff;
-            sarg = exp( (-model->VDMOSbulkJctBotGradingCoeff) * log(arg) );
-            here->VDMOSCbs = czbs;
-            here->VDMOSf2s = czbs * (1 - model->VDMOSfwdCapDepCoeff *
-                (1 + model->VDMOSbulkJctBotGradingCoeff)) * sarg / arg;
-            here->VDMOSf3s = czbs * model->VDMOSbulkJctBotGradingCoeff * sarg / arg /
-                here->VDMOStBulkPot;
-            here->VDMOSf4s = czbs*here->VDMOStBulkPot*(1-arg*sarg)/
-                        (1-model->VDMOSbulkJctBotGradingCoeff)
-                    -here->VDMOSf3s/2*
-                        (here->VDMOStDepCap*here->VDMOStDepCap)
-                    -here->VDMOStDepCap * here->VDMOSf2s;
+            here->VDMOSCbd = 0;
+            here->VDMOSf2d = 0;
+            here->VDMOSf3d = 0;
+            here->VDMOSf4d = 0;
+
+            here->VDMOSCbs = 0;
+            here->VDMOSf2s = 0;
+            here->VDMOSf3s = 0;
+            here->VDMOSf4s = 0;
 
 
             if (model->VDMOSdrainResistanceGiven) {
