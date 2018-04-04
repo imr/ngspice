@@ -88,9 +88,7 @@ typedef struct sVDMOSinstance {
     double VDMOScapbd;
     double VDMOScapbs;
     double VDMOSCbd;
-    double VDMOSCbdsw;
     double VDMOSCbs;
-    double VDMOSCbssw;
     double VDMOSf2d;
     double VDMOSf3d;
     double VDMOSf4d;

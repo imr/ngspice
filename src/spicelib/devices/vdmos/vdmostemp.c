@@ -117,12 +117,9 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
         for(here = VDMOSinstances(model); here!= NULL; 
                 here = VDMOSnextInstance(here)) {
             double czbd;    /* zero voltage bulk-drain capacitance */
-            double czbdsw;  /* zero voltage bulk-drain sidewall capacitance */
             double czbs;    /* zero voltage bulk-source capacitance */
-            double czbssw;  /* zero voltage bulk-source sidewall capacitance */
             double arg;     /* 1 - fc */
             double sarg;    /* (1-fc) ^^ (-mj) */
-            double sargsw;  /* (1-fc) ^^ (-mjsw) */
 
             /* perform the parameter defaulting */
             
@@ -187,16 +184,10 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
                        vt*log(vt/(CONSTroot2*here->VDMOSm*here->VDMOStSatCur));
             }
 
-            if(model->VDMOScapBDGiven) {
-                czbd = here->VDMOStCbd * here->VDMOSm;
-            } else {
                     czbd=0;
-            }
-                czbdsw=0;
             arg = 1-model->VDMOSfwdCapDepCoeff;
             sarg = exp( (-model->VDMOSbulkJctBotGradingCoeff) * log(arg) );
             here->VDMOSCbd = czbd;
-            here->VDMOSCbdsw = czbdsw;
             here->VDMOSf2d = czbd * (1 - model->VDMOSfwdCapDepCoeff *
                 (1 + model->VDMOSbulkJctBotGradingCoeff)) * sarg / arg;
             here->VDMOSf3d = czbd * model->VDMOSbulkJctBotGradingCoeff * sarg / arg /
@@ -206,16 +197,10 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
                     -here->VDMOSf3d/2*
                         (here->VDMOStDepCap*here->VDMOStDepCap)
                     -here->VDMOStDepCap * here->VDMOSf2d;
-            if(model->VDMOScapBSGiven) {
-                czbs=here->VDMOStCbs * here->VDMOSm;
-            } else {
                     czbs=0;
-            }
-                czbssw=0;
             arg = 1-model->VDMOSfwdCapDepCoeff;
             sarg = exp( (-model->VDMOSbulkJctBotGradingCoeff) * log(arg) );
             here->VDMOSCbs = czbs;
-            here->VDMOSCbssw = czbssw;
             here->VDMOSf2s = czbs * (1 - model->VDMOSfwdCapDepCoeff *
                 (1 + model->VDMOSbulkJctBotGradingCoeff)) * sarg / arg;
             here->VDMOSf3s = czbs * model->VDMOSbulkJctBotGradingCoeff * sarg / arg /

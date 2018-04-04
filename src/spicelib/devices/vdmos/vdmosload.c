@@ -483,7 +483,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                   */
                 {
                     /* can't bypass the diode capacitance calculations */
-                    if (here->VDMOSCbs != 0 || here->VDMOSCbssw != 0) {
+                    if (here->VDMOSCbs != 0) {
                         if (vbs < here->VDMOStDepCap) {
                             arg = 1 - vbs / here->VDMOStBulkPot;
                             /*
@@ -504,8 +504,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                             *(ckt->CKTstate0 + here->VDMOSqbs) =
                                 here->VDMOStBulkPot*(here->VDMOSCbs*
                                 (1 - arg*sarg) / (1 - model->VDMOSbulkJctBotGradingCoeff));
-                            here->VDMOScapbs = here->VDMOSCbs*sarg +
-                                here->VDMOSCbssw*sargsw;
+                            here->VDMOScapbs = here->VDMOSCbs * sarg;
                         }
                         else {
                             *(ckt->CKTstate0 + here->VDMOSqbs) = here->VDMOSf4s +
@@ -519,7 +518,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                     }
                 }
                 {
-                    if (here->VDMOSCbd != 0 || here->VDMOSCbdsw != 0) {
+                    if (here->VDMOSCbd != 0) {
                         if (vbd < here->VDMOStDepCap) {
                             arg = 1 - vbd / here->VDMOStBulkPot;
                             /*
@@ -545,8 +544,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                                 here->VDMOStBulkPot*(here->VDMOSCbd*
                                 (1 - arg*sarg)
                                     / (1 - model->VDMOSbulkJctBotGradingCoeff));
-                            here->VDMOScapbd = here->VDMOSCbd*sarg +
-                                here->VDMOSCbdsw*sargsw;
+                            here->VDMOScapbd = here->VDMOSCbd * sarg;
                         }
                         else {
                             *(ckt->CKTstate0 + here->VDMOSqbd) = here->VDMOSf4d +
