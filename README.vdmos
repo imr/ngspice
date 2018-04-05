@@ -1,0 +1,18 @@
+README for VDMOS model in NGSPICE
+==================
+
+A simmple MOS model for vertical power transistors (VDMOS model) is under
+development. Originally it has been available in LTSPICE
+(see http://ltwiki.org/LTspiceHelp/LTspiceHelp/M_MOSFET.htm) or
+SuperSpice (https://www.anasoft.co.uk/MOS1Model.htm).
+
+It is based on the MOS1 model. The Meyer capacitance has been
+replaced by a special cap model. A body diode with series
+resistance is parallel to the D/S device nodes. It defines the
+reverse behavior, but also the breakdown of the transistor.
+
+This is a work in progress.
+
+Basic current equations for ac, dc and tran operations are
+available as well as the capacitance model. Still missing is the
+body diode and the subthreshold behavior.
