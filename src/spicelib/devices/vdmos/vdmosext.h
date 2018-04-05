@@ -6,7 +6,6 @@ Modified: 2000 AlansFixes
 
 extern int VDMOSacLoad(GENmodel *,CKTcircuit*);
 extern int VDMOSask(CKTcircuit*,GENinstance*,int,IFvalue*,IFvalue*);
-extern int VDMOSdelete(GENinstance*);
 extern int VDMOSgetic(GENmodel*,CKTcircuit*);
 extern int VDMOSload(GENmodel*,CKTcircuit*);
 extern int VDMOSmAsk(CKTcircuit *,GENmodel *,int,IFvalue*);

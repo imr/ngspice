@@ -8,7 +8,6 @@ libvdmos_la_SOURCES =	\
 	vdmosask.c	\
 	vdmosconv.c	\
 	vdmosdefs.h	\
-	vdmosdel.c	\
 	vdmosdist.c	\
 	vdmosdset.c	\
 	vdmosext.h	\

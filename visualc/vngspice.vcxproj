@@ -2496,7 +2496,6 @@
     <ClCompile Include="..\src\spicelib\devices\vdmos\vdmosacld.c" />
     <ClCompile Include="..\src\spicelib\devices\vdmos\vdmosask.c" />
     <ClCompile Include="..\src\spicelib\devices\vdmos\vdmosconv.c" />
-    <ClCompile Include="..\src\spicelib\devices\vdmos\vdmosdel.c" />
     <ClCompile Include="..\src\spicelib\devices\vdmos\vdmosdist.c" />
     <ClCompile Include="..\src\spicelib\devices\vdmos\vdmosdset.c" />
     <ClCompile Include="..\src\spicelib\devices\vdmos\vdmosic.c" />
