@@ -27,10 +27,6 @@ VDMOSmParam(int param, IFvalue *value, GENmodel *inModel)
             model->VDMOStransconductance = value->rValue;
             model->VDMOStransconductanceGiven = TRUE;
             break;
-        case VDMOS_MOD_GAMMA:
-            model->VDMOSgamma = value->rValue;
-            model->VDMOSgammaGiven = TRUE;
-            break;
         case VDMOS_MOD_PHI:
             model->VDMOSphi = value->rValue;
             model->VDMOSphiGiven = TRUE;
@@ -51,14 +47,6 @@ VDMOSmParam(int param, IFvalue *value, GENmodel *inModel)
             model->VDMOSgateResistance = value->rValue;
             model->VDMOSgateResistanceGiven = TRUE;
             break;
-        case VDMOS_MOD_CBD:
-            model->VDMOScapBD = value->rValue;
-            model->VDMOScapBDGiven = TRUE;
-            break;
-        case VDMOS_MOD_CBS:
-            model->VDMOScapBS = value->rValue;
-            model->VDMOScapBSGiven = TRUE;
-            break;
         case VDMOS_MOD_IS:
             model->VDMOSjctSatCur = value->rValue;
             model->VDMOSjctSatCurGiven = TRUE;
@@ -67,41 +55,13 @@ VDMOSmParam(int param, IFvalue *value, GENmodel *inModel)
             model->VDMOSbulkJctPotential = value->rValue;
             model->VDMOSbulkJctPotentialGiven = TRUE;
             break;
-        case VDMOS_MOD_CJ:
-            model->VDMOSbulkCapFactor = value->rValue;
-            model->VDMOSbulkCapFactorGiven = TRUE;
-            break;
         case VDMOS_MOD_MJ:
             model->VDMOSbulkJctBotGradingCoeff = value->rValue;
             model->VDMOSbulkJctBotGradingCoeffGiven = TRUE;
             break;
-        case VDMOS_MOD_JS:
-            model->VDMOSjctSatCurDensity = value->rValue;
-            model->VDMOSjctSatCurDensityGiven = TRUE;
-            break;
-        case VDMOS_MOD_TOX:
-            model->VDMOSoxideThickness = value->rValue;
-            model->VDMOSoxideThicknessGiven = TRUE;
-            break;
-        case VDMOS_MOD_U0:
-            model->VDMOSsurfaceMobility = value->rValue;
-            model->VDMOSsurfaceMobilityGiven = TRUE;
-            break;
         case VDMOS_MOD_FC:
             model->VDMOSfwdCapDepCoeff = value->rValue;
             model->VDMOSfwdCapDepCoeffGiven = TRUE;
-            break;
-        case VDMOS_MOD_NSS:
-            model->VDMOSsurfaceStateDensity = value->rValue;
-            model->VDMOSsurfaceStateDensityGiven = TRUE;
-            break;
-        case VDMOS_MOD_NSUB:
-            model->VDMOSsubstrateDoping = value->rValue;
-            model->VDMOSsubstrateDopingGiven = TRUE;
-            break;
-        case VDMOS_MOD_TPG:
-            model->VDMOSgateType = value->iValue;
-            model->VDMOSgateTypeGiven = TRUE;
             break;
         case VDMOS_MOD_NMOS:
             if(value->iValue) {

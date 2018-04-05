@@ -22,17 +22,8 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
     double kt,kt1;
     double arg1;
     double ratio,ratio4;
-    double phio;
-    double pbo;
-    double gmanew,gmaold;
-    double capfact;
     double pbfact1,pbfact;
     double vt,vtnom;
-    double wkfngs;
-    double wkfng;
-    double fermig;
-    double fermis;
-    double vfb;
     /* loop through all the resistor models */
     for( ; model != NULL; model = VDMOSnextModel(model)) {
         
@@ -52,65 +43,7 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
 
     /* now model parameter preprocessing */
 
-        if (model->VDMOSphi <= 0.0) {
-            SPfrontEnd->IFerrorf (ERR_FATAL,
-               "%s: Phi is not positive.", model->VDMOSmodName);
-            return(E_BADPARM);
-        }
-
-        if(!model->VDMOSoxideThicknessGiven || model->VDMOSoxideThickness == 0) {
-            model->VDMOSoxideCapFactor = 0;
-        } else {
-            model->VDMOSoxideCapFactor = 3.9 * 8.854214871e-12/
-                    model->VDMOSoxideThickness;
-            if(!model->VDMOStransconductanceGiven) {
-                if(!model->VDMOSsurfaceMobilityGiven) {
-                    model->VDMOSsurfaceMobility=600;
-                }
-                model->VDMOStransconductance = model->VDMOSsurfaceMobility *
-                        model->VDMOSoxideCapFactor * 1e-4 /*(m**2/cm**2)*/;
-            }
-            if(model->VDMOSsubstrateDopingGiven) {
-                if(model->VDMOSsubstrateDoping*1e6 /*(cm**3/m**3)*/ >1.45e16) {
-                    if(!model->VDMOSphiGiven) {
-                        model->VDMOSphi = 2*vtnom*
-                                log(model->VDMOSsubstrateDoping*
-                                1e6/*(cm**3/m**3)*//1.45e16);
-                        model->VDMOSphi = MAX(.1,model->VDMOSphi);
-                    }
-                    fermis = model->VDMOStype * .5 * model->VDMOSphi;
-                    wkfng = 3.2;
-                    if(!model->VDMOSgateTypeGiven) model->VDMOSgateType=1;
-                    if(model->VDMOSgateType != 0) {
-                        fermig = model->VDMOStype *model->VDMOSgateType*.5*egfet1;
-                        wkfng = 3.25 + .5 * egfet1 - fermig;
-                    }
-                    wkfngs = wkfng - (3.25 + .5 * egfet1 +fermis);
-                    if(!model->VDMOSgammaGiven) {
-                        model->VDMOSgamma = sqrt(2 * 11.70 * 8.854214871e-12 * 
-                                CHARGE * model->VDMOSsubstrateDoping*
-                                1e6/*(cm**3/m**3)*/)/
-                                model->VDMOSoxideCapFactor;
-                    }
-                    if(!model->VDMOSvt0Given) {
-                        if(!model->VDMOSsurfaceStateDensityGiven) 
-                                model->VDMOSsurfaceStateDensity=0;
-                        vfb = wkfngs - 
-                                model->VDMOSsurfaceStateDensity * 
-                                1e4 /*(cm**2/m**2)*/ * 
-                                CHARGE/model->VDMOSoxideCapFactor;
-                        model->VDMOSvt0 = vfb + model->VDMOStype * 
-                                (model->VDMOSgamma * sqrt(model->VDMOSphi)+
-                                model->VDMOSphi);
-                    }
-                } else {
-                    model->VDMOSsubstrateDoping = 0;
-                    SPfrontEnd->IFerrorf (ERR_FATAL,
-                            "%s: Nsub < Ni", model->VDMOSmodName);
-                    return(E_BADPARM);
-                }
-            }
-        }
+        model->VDMOSoxideCapFactor = 0;
 
 
         /* loop through all instances of the model */
@@ -147,39 +80,7 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
 
             ratio4 = ratio * sqrt(ratio);
             here->VDMOStTransconductance = model->VDMOStransconductance / ratio4;
-            here->VDMOStSurfMob = model->VDMOSsurfaceMobility/ratio4;
-            phio= (model->VDMOSphi-pbfact1)/fact1;
-            here->VDMOStPhi = fact2 * phio + pbfact;
-            here->VDMOStVbi = 
-                    model->VDMOSvt0 - model->VDMOStype * 
-                        (model->VDMOSgamma* sqrt(model->VDMOSphi))
-                    +.5*(egfet1-egfet) 
-                    + model->VDMOStype*.5* (here->VDMOStPhi-model->VDMOSphi);
-            here->VDMOStVto = here->VDMOStVbi + model->VDMOStype * 
-                    model->VDMOSgamma * sqrt(here->VDMOStPhi);
-            here->VDMOStSatCur = model->VDMOSjctSatCur* 
-                    exp(-egfet/vt+egfet1/vtnom);
-            here->VDMOStSatCurDens = model->VDMOSjctSatCurDensity *
-                    exp(-egfet/vt+egfet1/vtnom);
-            pbo = (model->VDMOSbulkJctPotential - pbfact1)/fact1;
-            gmaold = (model->VDMOSbulkJctPotential-pbo)/pbo;
-            capfact = 1/(1+model->VDMOSbulkJctBotGradingCoeff*
-                    (4e-4*(model->VDMOStnom-REFTEMP)-gmaold));
-            here->VDMOStCbd = model->VDMOScapBD * capfact;
-            here->VDMOStCbs = model->VDMOScapBS * capfact;
-            here->VDMOStCj = model->VDMOSbulkCapFactor * capfact;
-            here->VDMOStBulkPot = fact2 * pbo+pbfact;
-            gmanew = (here->VDMOStBulkPot-pbo)/pbo;
-            capfact = (1+model->VDMOSbulkJctBotGradingCoeff*
-                    (4e-4*(here->VDMOStemp-REFTEMP)-gmanew));
-            here->VDMOStCbd *= capfact;
-            here->VDMOStCbs *= capfact;
-            here->VDMOStCj *= capfact;
-            here->VDMOStDepCap = model->VDMOSfwdCapDepCoeff * here->VDMOStBulkPot;
-            if (here->VDMOStSatCurDens == 0) {
-                here->VDMOSsourceVcrit = here->VDMOSdrainVcrit =
-                       vt*log(vt/(CONSTroot2*here->VDMOSm*here->VDMOStSatCur));
-            }
+            here->VDMOStVto = model->VDMOSvt0;
 
             here->VDMOSCbd = 0;
             here->VDMOSf2d = 0;

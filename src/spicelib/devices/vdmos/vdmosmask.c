@@ -30,9 +30,6 @@ VDMOSmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case VDMOS_MOD_KP:
             value->rValue = model->VDMOStransconductance;
             return(OK);
-        case VDMOS_MOD_GAMMA:
-            value->rValue = model->VDMOSgamma;
-            return(OK);
         case VDMOS_MOD_PHI:
             value->rValue = model->VDMOSphi;
             return(OK);
@@ -48,9 +45,6 @@ VDMOSmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case VDMOS_MOD_RG:
             value->rValue = model->VDMOSgateResistance;
             return(OK);
-        case VDMOS_MOD_CBD:
-            value->rValue = model->VDMOScapBD;
-            return(OK);
         case VDMOS_MOD_TYPE:
             if (model->VDMOStype > 0)
                 value->sValue = "vdmosn";
@@ -59,9 +53,6 @@ VDMOSmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
             return(OK);
         case VDMOS_MOD_CGDMIN:
             value->rValue = model->VDMOScgdmin;
-            return(OK);
-        case VDMOS_MOD_CBS:
-            value->rValue = model->VDMOScapBS;
             return(OK);
         case VDMOS_MOD_CGDMAX:
             value->rValue = model->VDMOScgdmax;
@@ -78,32 +69,11 @@ VDMOSmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case VDMOS_MOD_VJ:
             value->rValue = model->VDMOSbulkJctPotential;
             return(OK);
-        case VDMOS_MOD_CJ:
-            value->rValue = model->VDMOSbulkCapFactor;
-            return(OK);
         case VDMOS_MOD_MJ:
             value->rValue = model->VDMOSbulkJctBotGradingCoeff;
             return(OK);
-        case VDMOS_MOD_JS:
-            value->rValue = model->VDMOSjctSatCurDensity;
-            return(OK);
-        case VDMOS_MOD_TOX:
-            value->rValue = model->VDMOSoxideThickness;
-            return(OK);
-        case VDMOS_MOD_U0:
-            value->rValue = model->VDMOSsurfaceMobility;
-            return(OK);
         case VDMOS_MOD_FC:
             value->rValue = model->VDMOSfwdCapDepCoeff;
-            return(OK);
-        case VDMOS_MOD_NSUB:
-            value->rValue = model->VDMOSsubstrateDoping;
-            return(OK);
-        case VDMOS_MOD_TPG:
-            value->iValue = model->VDMOSgateType;
-            return(OK);
-        case VDMOS_MOD_NSS:
-            value->rValue = model->VDMOSsurfaceStateDensity;
             return(OK);
         default:
             return(E_BADPARM);

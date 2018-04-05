@@ -57,18 +57,11 @@ typedef struct sVDMOSinstance {
     double VDMOSdtemp;   /* operating temperature of the instance relative to circuit temperature*/
 
     double VDMOStTransconductance;   /* temperature corrected transconductance*/
-    double VDMOStSurfMob;            /* temperature corrected surface mobility */
-    double VDMOStPhi;                /* temperature corrected Phi */
     double VDMOStVto;                /* temperature corrected Vto */
     double VDMOStSatCur;             /* temperature corrected saturation Cur. */
-    double VDMOStSatCurDens; /* temperature corrected saturation Cur. density*/
-    double VDMOStCbd;                /* temperature corrected B-D Capacitance */
-    double VDMOStCbs;                /* temperature corrected B-S Capacitance */
-    double VDMOStCj;         /* temperature corrected Bulk bottom Capacitance */
     double VDMOStBulkPot;    /* temperature corrected Bulk potential */
     double VDMOStDepCap;     /* temperature adjusted transition point in */
                             /* the cureve matching Fc * Vj */
-    double VDMOStVbi;        /* temperature adjusted Vbi */
 
     double VDMOSicVBS;   /* initial condition B-S voltage */
     double VDMOSicVDS;   /* initial condition D-S voltage */
@@ -285,7 +278,6 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
 
     int VDMOStype;       /* device type : 1 = nmos,  -1 = pmos */
     double VDMOStnom;        /* temperature at which parameters measured */
-    double VDMOSjctSatCurDensity;    /* input - use tSatCurDens */
     double VDMOSjctSatCur;   /* input - use tSatCur */
     double VDMOSdrainResistance;
     double VDMOSsourceResistance;
@@ -294,20 +286,11 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
     double VDMOStransconductance;    /* input - use tTransconductance */
     double VDMOSoxideCapFactor;
     double VDMOSvt0; /* input - use tVto */
-    double VDMOScapBD;   /* input - use tCbd */
-    double VDMOScapBS;   /* input - use tCbs */
-    double VDMOSbulkCapFactor;   /* input - use tCj */
     double VDMOSbulkJctPotential;    /* input - use tBulkPot */
     double VDMOSbulkJctBotGradingCoeff;
     double VDMOSfwdCapDepCoeff;
     double VDMOSphi; /* input - use tPhi */
-    double VDMOSgamma;
     double VDMOSlambda;
-    double VDMOSsubstrateDoping;
-    int VDMOSgateType;
-    double VDMOSsurfaceStateDensity;
-    double VDMOSoxideThickness;
-    double VDMOSsurfaceMobility; /* input - use tSurfMob */
     double VDMOSfNcoef;
     double VDMOSfNexp;
     double VDMOScgdmin;
@@ -316,27 +299,17 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
     double VDMOScgs;
 
     unsigned VDMOStypeGiven  :1;
-    unsigned VDMOSjctSatCurDensityGiven  :1;
     unsigned VDMOSjctSatCurGiven :1;
     unsigned VDMOSdrainResistanceGiven   :1;
     unsigned VDMOSsourceResistanceGiven  :1;
     unsigned VDMOSgateResistanceGiven    :1;
     unsigned VDMOStransconductanceGiven  :1;
     unsigned VDMOSvt0Given   :1;
-    unsigned VDMOScapBDGiven :1;
-    unsigned VDMOScapBSGiven :1;
-    unsigned VDMOSbulkCapFactorGiven :1;
     unsigned VDMOSbulkJctPotentialGiven  :1;
     unsigned VDMOSbulkJctBotGradingCoeffGiven    :1;
     unsigned VDMOSfwdCapDepCoeffGiven    :1;
     unsigned VDMOSphiGiven   :1;
-    unsigned VDMOSgammaGiven :1;
     unsigned VDMOSlambdaGiven    :1;
-    unsigned VDMOSsubstrateDopingGiven   :1;
-    unsigned VDMOSgateTypeGiven  :1;
-    unsigned VDMOSsurfaceStateDensityGiven   :1;
-    unsigned VDMOSoxideThicknessGiven    :1;
-    unsigned VDMOSsurfaceMobilityGiven   :1;
     unsigned VDMOStnomGiven  :1;
     unsigned VDMOSfNcoefGiven  :1;
     unsigned VDMOSfNexpGiven   :1;
@@ -375,25 +348,15 @@ enum {
 enum {
     VDMOS_MOD_VTO = 101,
     VDMOS_MOD_KP,
-    VDMOS_MOD_GAMMA,
     VDMOS_MOD_PHI,
     VDMOS_MOD_LAMBDA,
     VDMOS_MOD_RD,
     VDMOS_MOD_RS,
     VDMOS_MOD_RG,
-    VDMOS_MOD_CBD,
-    VDMOS_MOD_CBS,
     VDMOS_MOD_IS,
     VDMOS_MOD_VJ,
-    VDMOS_MOD_CJ,
     VDMOS_MOD_MJ,
-    VDMOS_MOD_JS,
-    VDMOS_MOD_TOX,
-    VDMOS_MOD_U0,
     VDMOS_MOD_FC,
-    VDMOS_MOD_NSUB,
-    VDMOS_MOD_TPG,
-    VDMOS_MOD_NSS,
     VDMOS_MOD_NMOS,
     VDMOS_MOD_PMOS,
     VDMOS_MOD_TNOM,

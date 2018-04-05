@@ -29,16 +29,12 @@ VDMOSdSetup(GENmodel *inModel, CKTcircuit *ckt)
     double ebd;
     double vgst;
     double evbs;
-    double sargsw;
     double vbd;
     double vbs;
     double vds;
-    double arg;
-    double sarg;
     double vdsat;
     double vgd;
     double vgs;
-    double von;
     double vt;
     double lgbs;
     double lgbs2;
@@ -67,10 +63,10 @@ VDMOSdSetup(GENmodel *inModel, CKTcircuit *ckt)
     double lcapgs3;
     double lcapgd2;
     double lcapgd3;
-    double lcapbs2;
-    double lcapbs3;
-    double lcapbd2;
-    double lcapbd3;
+    double lcapbs2 = 0;
+    double lcapbs3 = 0;
+    double lcapbd2 = 0;
+    double lcapbd3 = 0;
     double gmbds = 0.0;
 
 
@@ -158,37 +154,9 @@ VDMOSdSetup(GENmodel *inModel, CKTcircuit *ckt)
 	    double d2vondvbs2;
 	    double d3vondvbs3;
 
-                if ((here->VDMOSmode==1?vbs:vbd) <= 0 ) {
-                    sarg=sqrt(here->VDMOStPhi-(here->VDMOSmode==1?vbs:vbd));
-		    if (-model->VDMOSgamma != 0.0) {
-		    dvondvbs = -model->VDMOSgamma*0.5/sarg;
-		    d2vondvbs2 = - dvondvbs*0.5/(sarg*sarg);
-		    d3vondvbs3 = 1.5*d2vondvbs2/(sarg*sarg);
-		    }
-		    else {
 		    dvondvbs = d2vondvbs2 = d3vondvbs3 = 0.0;
-		    }
-                } else {
-                    sarg=sqrt(here->VDMOStPhi);
-		    if (model->VDMOSgamma != 0.0) {
-		    dvondvbs = -model->VDMOSgamma/(sarg+sarg);
-		    }
-		    else {
-		    dvondvbs = 0.0;
-		    }
-		    d2vondvbs2 = d3vondvbs3 = 0;
-                    sarg=sarg-(here->VDMOSmode==1?vbs:vbd)/(sarg+sarg);
-                    sarg=MAX(0,sarg);
-		    dvondvbs = (sarg<=0?0:dvondvbs);
-                }
-                von=(here->VDMOStVbi*model->VDMOStype)+model->VDMOSgamma*sarg;
-                vgst=(here->VDMOSmode==1?vgs:vgd)-von;
+                vgst=(here->VDMOSmode==1?vgs:vgd);
                 vdsat=MAX(vgst,0);
-/*                if (sarg <= 0) {
-                    arg=0;
-                } else {
-                    arg=model->VDMOSgamma/(sarg+sarg);
-                } */
                 if (vgst <= 0) {
                     /*
                      *     cutoff region
@@ -314,7 +282,7 @@ VDMOSdSetup(GENmodel *inModel, CKTcircuit *ckt)
 
 
 
-    phi = here->VDMOStPhi;
+    phi = 0.6;
     cox = 0;/*FIXME: can we do disto without knowing the oxide thickness?*/
     if (vgst <= -phi) {
     lcapgb2=lcapgb3=lcapgs2=lcapgs3=lcapgd2=lcapgd3=0;

@@ -394,26 +394,12 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                   */
                 double arg;
                 double betap;
-                double sarg;
                 double vgst;
 
-                if ((here->VDMOSmode == 1 ? vbs : vbd) <= 0) {
-                    sarg = sqrt(here->VDMOStPhi - (here->VDMOSmode == 1 ? vbs : vbd));
-                }
-                else {
-                    sarg = sqrt(here->VDMOStPhi);
-                    sarg = sarg - (here->VDMOSmode == 1 ? vbs : vbd) / (sarg + sarg);
-                    sarg = MAX(0, sarg);
-                }
-                von = (here->VDMOStVbi*model->VDMOStype) + model->VDMOSgamma*sarg;
+                von = (model->VDMOSvt0*model->VDMOStype);
                 vgst = (here->VDMOSmode == 1 ? vgs : vgd) - von;
                 vdsat = MAX(vgst, 0);
-                if (sarg <= 0) {
-                    arg = 0;
-                }
-                else {
-                    arg = model->VDMOSgamma / (sarg + sarg);
-                }
+                arg = 0;
                 if (vgst <= 0) {
                     /*
                      *     cutoff region

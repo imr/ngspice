@@ -115,19 +115,6 @@ IFparm VDMOSmPTable[] = { /* model parameters */
  IP("vdmosn", VDMOS_MOD_NMOS,  IF_FLAG,   "N type DMOSfet model"),
  IP("vdmosp", VDMOS_MOD_PMOS,  IF_FLAG,   "P type DMOSfet model"),
  IP("vdmos",  VDMOS_MOD_DMOS,  IF_REAL,   "DMOS transistor"),
-
-/* MOS1 */
- IOP("gamma", VDMOS_MOD_GAMMA, IF_REAL,   "Bulk threshold parameter"),
- IOPA("cbd",  VDMOS_MOD_CBD,   IF_REAL,   "B-D junction capacitance"),
- IOPA("cbs",  VDMOS_MOD_CBS,   IF_REAL,   "B-S junction capacitance"),
- IOPA("cj",   VDMOS_MOD_CJ,    IF_REAL,   "Bottom junction cap per area"),
- IOP("js",    VDMOS_MOD_JS,    IF_REAL,   "Bulk jct. sat. current density"),
- IOP("tox",   VDMOS_MOD_TOX,   IF_REAL,   "Oxide thickness"),
- IOP("u0",    VDMOS_MOD_U0,    IF_REAL,   "Surface mobility"),
- IOPR("uo",   VDMOS_MOD_U0,    IF_REAL,   "Surface mobility"),
- IOP("nsub",  VDMOS_MOD_NSUB,  IF_REAL,   "Substrate doping"),
- IOP("tpg",   VDMOS_MOD_TPG,   IF_INTEGER,"Gate type"),
- IOP("nss",   VDMOS_MOD_NSS,   IF_REAL,   "Surface state density")
 };
 
 char *VDMOSnames[] = {
