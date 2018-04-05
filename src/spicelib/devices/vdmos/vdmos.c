@@ -90,12 +90,12 @@ IFparm VDMOSmPTable[] = { /* model parameters */
  IOP("rd",    VDMOS_MOD_RD,    IF_REAL,   "Drain ohmic resistance"),
  IOP("rs",    VDMOS_MOD_RS,    IF_REAL,   "Source ohmic resistance"),
  IOP("rg",    VDMOS_MOD_RG,    IF_REAL,   "Gate ohmic resistance"),
-/*
- N Bulk diode emission coefficient
- tt Body diode transit time
- Eg Body diode activation energy for temperature effect on Is
- Xti Body diode saturation current temperature exponent
-*/
+
+/* body diode */
+ IOP("n",     VDMOS_MOD_N,     IF_REAL,   "Bulk diode emission coefficient"),
+ IOP("tt",    VDMOS_MOD_TT,    IF_REAL,   "Body diode transit time"),
+ IOP("eg",    VDMOS_MOD_EG,    IF_REAL,   "Body diode activation energy for temperature effect on Is"),
+ IOP("Xti",   VDMOS_MOD_XTI,   IF_REAL,   "Body diode saturation current temperature exponent"),
  IOP("is",    VDMOS_MOD_IS,    IF_REAL,   "Body diode saturation current"),
  IOP("vj",    VDMOS_MOD_VJ,    IF_REAL,   "Body diode junction potential"),
 

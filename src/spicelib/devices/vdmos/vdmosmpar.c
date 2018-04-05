@@ -105,6 +105,22 @@ VDMOSmParam(int param, IFvalue *value, GENmodel *inModel)
             model->VDMOScgs = value->rValue;
             model->VDMOScgsGiven = TRUE;
             break;
+        case VDMOS_MOD_N:
+            model->VDMOSDn = value->rValue;
+            model->VDMOSDnGiven = TRUE;
+            break;
+        case VDMOS_MOD_TT:
+            model->VDIOtransitTime = value->rValue;
+            model->VDIOtransitTimeGiven = TRUE;
+            break;
+        case VDMOS_MOD_EG:
+            model->VDMOSDeg = value->rValue;
+            model->VDMOSDegGiven = TRUE;
+            break;
+        case VDMOS_MOD_XTI:
+            model->VDMOSDxti = value->rValue;
+            model->VDMOSDxtiGiven = TRUE;
+            break;
         default:
             return(E_BADPARM);
     }

@@ -299,6 +299,11 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
     double VDMOSa;
     double VDMOScgs;
 
+    double VDMOSDn;
+    double VDIOtransitTime;
+    double VDMOSDeg;
+    double VDMOSDxti;
+
     unsigned VDMOStypeGiven  :1;
     unsigned VDMOSjctSatCurGiven :1;
     unsigned VDMOSdrainResistanceGiven   :1;
@@ -319,6 +324,11 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
     unsigned VDMOScgdmaxGiven   :1;
     unsigned VDMOScgsGiven   :1;
     unsigned VDMOSaGiven   :1;
+
+    unsigned VDMOSDnGiven   :1;
+    unsigned VDIOtransitTimeGiven :1;
+    unsigned VDMOSDegGiven   :1;
+    unsigned VDMOSDxtiGiven   :1;
 
 } VDMOSmodel;
 
@@ -369,6 +379,10 @@ enum {
     VDMOS_MOD_CGDMAX,
     VDMOS_MOD_A,
     VDMOS_MOD_CGS,
+    VDMOS_MOD_N,
+    VDMOS_MOD_TT,
+    VDMOS_MOD_EG,
+    VDMOS_MOD_XTI,
 };
 
 /* device questions */
