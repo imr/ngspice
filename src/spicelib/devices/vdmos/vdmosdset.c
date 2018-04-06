@@ -282,7 +282,7 @@ VDMOSdSetup(GENmodel *inModel, CKTcircuit *ckt)
 
 
 
-    phi = 0.6;
+    phi = here->VDMOStPhi;
     cox = 0;/*FIXME: can we do disto without knowing the oxide thickness?*/
     if (vgst <= -phi) {
     lcapgb2=lcapgb3=lcapgs2=lcapgs3=lcapgd2=lcapgd3=0;

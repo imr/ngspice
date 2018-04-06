@@ -22,6 +22,7 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
     double kt,kt1;
     double arg1;
     double ratio,ratio4;
+    double phio;
     double pbfact1,pbfact;
     double vt,vtnom;
     /* loop through all the resistor models */
@@ -42,6 +43,12 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
         pbfact1 = -2*vtnom *(1.5*log(fact1)+CHARGE*arg1);
 
     /* now model parameter preprocessing */
+
+        if (model->VDMOSphi <= 0.0) {
+            SPfrontEnd->IFerrorf(ERR_FATAL,
+                "%s: Phi is not positive.", model->VDMOSmodName);
+            return(E_BADPARM);
+        }
 
         model->VDMOSoxideCapFactor = 0;
 
@@ -80,6 +87,8 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
 
             ratio4 = ratio * sqrt(ratio);
             here->VDMOStTransconductance = model->VDMOStransconductance / ratio4;
+            phio = (model->VDMOSphi - pbfact1) / fact1;
+            here->VDMOStPhi = fact2 * phio + pbfact;
             here->VDMOStVto = model->VDMOSvt0;
 
             here->VDMOSCbd = 0;

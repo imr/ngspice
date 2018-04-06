@@ -57,6 +57,7 @@ typedef struct sVDMOSinstance {
     double VDMOSdtemp;   /* operating temperature of the instance relative to circuit temperature*/
 
     double VDMOStTransconductance;   /* temperature corrected transconductance*/
+    double VDMOStPhi;                /* temperature corrected Phi */
     double VDMOStVto;                /* temperature corrected Vto */
     double VDMOStSatCur;             /* temperature corrected saturation Cur. */
     double VDMOStBulkPot;    /* temperature corrected Bulk potential */
