@@ -319,7 +319,6 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
     /* bulk diode */
     double VDIOjunctionCap;   /* input - use tCj */
     double VDIOjunctionPot;    /* input - use tBulkPot */
-    double VDMOSbulkJctBotGradingCoeff;
     double VDIOdepletionCapCoeff;
     double VDIOjctSatCur;   /* input - use tSatCur */
     double VDMOSDbv;
@@ -335,6 +334,7 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
     double VDIOtranTimeTemp2;
     double VDMOSDeg;
     double VDMOSDxti;
+    double VDIOgradCoeff;
     double VDIOgradCoeffTemp1;
     double VDIOgradCoeffTemp2;
 
@@ -345,7 +345,7 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
     unsigned VDMOSgateResistanceGiven    :1;
     unsigned VDMOStransconductanceGiven  :1;
     unsigned VDMOSvt0Given   :1;
-    unsigned VDMOSbulkJctBotGradingCoeffGiven    :1;
+    unsigned VDIOgradCoeffGiven    :1;
     unsigned VDIOdepletionCapCoeffGiven :1;
     unsigned VDMOSphiGiven   :1;
     unsigned VDMOSlambdaGiven    :1;

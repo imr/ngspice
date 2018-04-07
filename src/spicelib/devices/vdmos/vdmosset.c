@@ -42,8 +42,8 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
         if (!model->VDIOjunctionPotGiven) {
             model->VDIOjunctionPot = .8;
         }
-        if (!model->VDMOSbulkJctBotGradingCoeffGiven) {
-            model->VDMOSbulkJctBotGradingCoeff = .5;
+        if (!model->VDIOgradCoeffGiven) {
+            model->VDIOgradCoeff = .5;
         }
         if (!model->VDIOdepletionCapCoeffGiven) {
             model->VDIOdepletionCapCoeff = .5;

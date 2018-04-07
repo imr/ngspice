@@ -179,7 +179,7 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
             /* Junction grading temperature adjust */
             factor = 1.0 + (model->VDIOgradCoeffTemp1 * dt)
                 + (model->VDIOgradCoeffTemp2 * dt * dt);
-            here->VDIOtGradingCoeff = model->VDMOSbulkJctBotGradingCoeff * factor;
+            here->VDIOtGradingCoeff = model->VDIOgradCoeff * factor;
 
             vt = CONSTKoverQ * here->VDMOStemp;
             /* this part gets really ugly - I won't even try to

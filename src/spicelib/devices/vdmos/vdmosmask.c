@@ -81,7 +81,7 @@ VDMOSmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
             value->rValue = model->VDIOjunctionCap;
             return(OK);
         case VDMOS_MOD_MJ:
-            value->rValue = model->VDMOSbulkJctBotGradingCoeff;
+            value->rValue = model->VDIOgradCoeff;
             return(OK);
         case VDMOS_MOD_BV:
             value->rValue = model->VDMOSDbv;
