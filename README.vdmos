@@ -14,5 +14,7 @@ reverse behavior, but also the breakdown of the transistor.
 This is a work in progress.
 
 Basic current equations for ac, dc and tran operations are
-available as well as the capacitance model. Still missing is the
-body diode and the subthreshold behavior.
+available as well as the capacitance model.
+
+Still missing are parameter mtriode and the subthreshold behavior
+(parameter subthres).
