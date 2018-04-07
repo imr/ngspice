@@ -886,6 +886,13 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                                 *(here->DIOposPrimePosPtr) -= gspr;
                                 *(here->DIOposPrimeNegPtr) -= gd;
                                 */
+                                *(here->VDMOSSsPtr) += gspr;
+                                *(here->VDMOSDdPtr) += gd;
+                                *(here->VDIORPrpPtr) += (gd + gspr);
+                                *(here->VDIOSrpPtr) -= gspr;
+                                *(here->VDIODrpPtr) -= gd;
+                                *(here->VDIOSrpPtr) -= gspr;
+                                *(here->VDIORPdPtr) -= gd;
         }
     }
     return(OK);

@@ -245,6 +245,17 @@ typedef struct sVDMOSinstance {
                              * (gate node, gate prime node) */
     double *VDMOSGPgPtr;    /* pointer to sparse matrix element at
                              * (gate prime node, gate node) */
+    /* bulk diode */
+    double *VDIORPdPtr;    /* pointer to sparse matrix element at
+                             * (diode prime node, drain node) */
+    double *VDIODrpPtr;    /* pointer to sparse matrix element at
+                             * (drain node, diode prime node) */
+    double *VDIORPrpPtr;    /* pointer to sparse matrix element at
+                             * (diode prime node, diode prime node) */
+    double *VDIOSrpPtr;    /* pointer to sparse matrix element at
+                            * (source node, diode prime node) */
+    double *VDIORPsPtr;    /* pointer to sparse matrix element at
+                            * (diode prime node, source node) */
 
 } VDMOSinstance ;
 

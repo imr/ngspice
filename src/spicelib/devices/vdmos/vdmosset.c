@@ -266,6 +266,11 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
             TSTALLOC(VDMOSGgpPtr, VDMOSgNode, VDMOSgNodePrime);
             TSTALLOC(VDMOSGPgPtr, VDMOSgNodePrime, VDMOSgNode);
 
+            TSTALLOC(VDIORPdPtr, VDIOposPrimeNode, VDMOSdNode);
+            TSTALLOC(VDIODrpPtr, VDMOSdNode, VDIOposPrimeNode);
+            TSTALLOC(VDIOSrpPtr, VDMOSsNode, VDIOposPrimeNode);
+            TSTALLOC(VDIORPsPtr, VDIOposPrimeNode, VDMOSsNode);
+            TSTALLOC(VDIORPrpPtr, VDIOposPrimeNode, VDIOposPrimeNode);
         }
     }
     return(OK);
