@@ -403,8 +403,10 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                     /*
                      *     saturation region
                      */
+                    /* scale vds with mtr */
+                    double mtr = model->VDMOSmtr;
                     betap = Beta*(1 + model->VDMOSlambda*(vds*here->VDMOSmode));
-                    if (vgst <= (vds * here->VDMOSmode)) {
+                    if (vgst <= (vds * here->VDMOSmode) * mtr) {
                         cdrain = betap*vgst*vgst*.5;
                         here->VDMOSgm = betap*vgst;
                         here->VDMOSgds = model->VDMOSlambda*Beta*vgst*vgst*.5;
@@ -413,13 +415,13 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                         /*
                          *     linear region
                          */
-                        cdrain = betap * (vds * here->VDMOSmode) *
-                                 (vgst - .5 * (vds * here->VDMOSmode));
-                        here->VDMOSgm = betap * (vds * here->VDMOSmode);
-                        here->VDMOSgds = betap * (vgst - (vds * here->VDMOSmode)) +
+                        cdrain = betap * (vds * here->VDMOSmode) * mtr *
+                                 (vgst - .5 * (vds*here->VDMOSmode) * mtr);
+                        here->VDMOSgm = betap * (vds * here->VDMOSmode) * mtr;
+                        here->VDMOSgds = betap * (vgst - (vds * here->VDMOSmode) * mtr) +
                                          model->VDMOSlambda * Beta *
-                                         (vds * here->VDMOSmode) *
-                                         (vgst - .5 * (vds * here->VDMOSmode));
+                                         (vds * here->VDMOSmode) * mtr *
+                                         (vgst - .5 * (vds * here->VDMOSmode) * mtr);
                         here->VDMOSgmbs = here->VDMOSgm * arg;
                     }
                 }

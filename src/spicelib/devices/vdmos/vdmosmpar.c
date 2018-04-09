@@ -117,6 +117,10 @@ VDMOSmParam(int param, IFvalue *value, GENmodel *inModel)
             model->VDMOScgs = value->rValue;
             model->VDMOScgsGiven = TRUE;
             break;
+        case VDMOS_MOD_MTRIODE:
+            model->VDMOSmtr = value->rValue;
+            model->VDMOSmtrGiven = TRUE;
+            break;
         case VDMOS_MOD_BV:
             model->VDMOSDbv = value->rValue;
             model->VDMOSDbvGiven = TRUE;

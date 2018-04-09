@@ -45,6 +45,9 @@ VDMOSmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case VDMOS_MOD_RG:
             value->rValue = model->VDMOSgateResistance;
             return(OK);
+        case VDMOS_MOD_MTRIODE:
+            value->rValue = model->VDMOSmtr;
+            return(OK);
         case VDMOS_MOD_TYPE:
             if (model->VDMOStype > 0)
                 value->sValue = "vdmosn";
