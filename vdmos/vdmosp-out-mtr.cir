@@ -1,0 +1,26 @@
+VDMOS p channel output
+
+m1 d g s s IRF7233
+.model IRF7233 VDMOS(pchan Rg=3 Rd=8m Rs=6m Vto=-1 Kp=70 Cgdmax=2n Cgdmin=.25n Cgs=3.3n Cjo=.98n Is=98p Rb=10m mfg=International_Rectifier Vds=-12 Ron=20m Qg=49n)
+
+*d1 d s dmod
+*.model dmod d  is=10n rs=0.1
+
+m2 d g s2 s2 IRF7233_2
+.model IRF7233_2 VDMOS(pchan mtriode=2 Rg=3 Rd=8m Rs=6m Vto=-1 Kp=70 Cgdmax=2n Cgdmin=.25n Cgs=3.3n Cjo=.98n Is=98p Rb=10m mfg=International_Rectifier Vds=-12 Ron=20m Qg=49n)
+
+
+
+vd d 0 -5
+vg g 0 -5
+vs s 0 0
+vs2 s2 0 0
+
+.dc vd -12 1 0.05 vg 0 -5 -1
+
+.control
+run
+plot vs#branch vs2#branch
+.endc
+
+.end
