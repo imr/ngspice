@@ -138,8 +138,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                     *(ckt->CKTstate0 + here->VDMOSvbd) =
                         *(ckt->CKTstate0 + here->VDMOSvbs) -
                         *(ckt->CKTstate0 + here->VDMOSvds);
-                }
-                else {
+                } else {
 #endif /* PREDICTOR */
 
                     /* general iteration */
@@ -179,8 +178,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                         here->VDMOSgmbs * delvbs +
                         here->VDMOSgm * delvgs +
                         here->VDMOSgds * delvds;
-                }
-                else {
+                } else {
                     cdhat =
                         here->VDMOScd -
                         (here->VDMOSgbd -
@@ -279,8 +277,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                     vds = vgs - vgd;
                     vds = DEVlimvds(vds, *(ckt->CKTstate0 + here->VDMOSvds));
                     vgd = vgs - vds;
-                }
-                else {
+                } else {
                     vgd = DEVfetlim(vgd, vgdo, von);
                     vds = vgs - vgd;
                     if (!(ckt->CKTfixLimit)) {
@@ -293,8 +290,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                     vbs = DEVpnjlim(vbs, *(ckt->CKTstate0 + here->VDMOSvbs),
                                     vt, here->VDMOSsourceVcrit, &Check);
                     vbd = vbs - vds;
-                }
-                else {
+                } else {
                     vbd = DEVpnjlim(vbd, *(ckt->CKTstate0 + here->VDMOSvbd),
                                     vt, here->VDMOSdrainVcrit, &Check);
                     vbs = vbd + vds;
@@ -304,8 +300,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
 
                 */
 
-            }
-            else {
+            } else {
 
                 /* ok - not one of the simple cases, so we have to
                  * look at all of the possibilities for why we were
@@ -324,8 +319,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                         vgs = model->VDMOStype * here->VDMOStVto;
                         vds = 0;
                     }
-                }
-                else {
+                } else {
                     vbs = vgs = vds = 0;
                 }
             }
@@ -350,8 +344,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
             if (vbs <= -3 * vt) {
                 here->VDMOSgbs = ckt->CKTgmin;
                 here->VDMOScbs = here->VDMOSgbs*vbs - SourceSatCur;
-            }
-            else {
+            } else {
                 evbs = exp(MIN(MAX_EXP_ARG, vbs / vt));
                 here->VDMOSgbs = SourceSatCur*evbs / vt + ckt->CKTgmin;
                 here->VDMOScbs = SourceSatCur*(evbs - 1) + ckt->CKTgmin*vbs;
@@ -359,8 +352,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
             if (vbd <= -3 * vt) {
                 here->VDMOSgbd = ckt->CKTgmin;
                 here->VDMOScbd = here->VDMOSgbd*vbd - DrainSatCur;
-            }
-            else {
+            } else {
                 evbd = exp(MIN(MAX_EXP_ARG, vbd / vt));
                 here->VDMOSgbd = DrainSatCur*evbd / vt + ckt->CKTgmin;
                 here->VDMOScbd = DrainSatCur*(evbd - 1) + ckt->CKTgmin*vbd;
@@ -371,8 +363,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
             if (vds >= 0) {
                 /* normal mode */
                 here->VDMOSmode = 1;
-            }
-            else {
+            } else {
                 /* inverse mode */
                 here->VDMOSmode = -1;
             }
@@ -408,8 +399,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                     here->VDMOSgm = 0;
                     here->VDMOSgds = 0;
                     here->VDMOSgmbs = 0;
-                }
-                else {
+                } else {
                     /*
                      *     saturation region
                      */
@@ -419,8 +409,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                         here->VDMOSgm = betap*vgst;
                         here->VDMOSgds = model->VDMOSlambda*Beta*vgst*vgst*.5;
                         here->VDMOSgmbs = here->VDMOSgm*arg;
-                    }
-                    else {
+                    } else {
                         /*
                          *     linear region
                          */
@@ -507,8 +496,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                     capgs = 2 * *(ckt->CKTstate0 + here->VDMOScapgs);
                     capgd = 2 * *(ckt->CKTstate0 + here->VDMOScapgd);
                     capgb = 2 * *(ckt->CKTstate0 + here->VDMOScapgb);
-                }
-                else {
+                } else {
                     capgs = (*(ckt->CKTstate0 + here->VDMOScapgs) +
                              *(ckt->CKTstate1 + here->VDMOScapgs));
                     capgd = (*(ckt->CKTstate0 + here->VDMOScapgd) +
@@ -531,8 +519,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                     *(ckt->CKTstate0 + here->VDMOSqgb) =
                         (1 + xfact) * *(ckt->CKTstate1 + here->VDMOSqgb)
                         - xfact * *(ckt->CKTstate2 + here->VDMOSqgb);
-                }
-                else {
+                } else {
 #endif /*PREDICTOR*/
                     if (ckt->CKTmode & MODETRAN) {
                         *(ckt->CKTstate0 + here->VDMOSqgs) = (vgs - vgs1)*capgs +
@@ -541,8 +528,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                                                              *(ckt->CKTstate1 + here->VDMOSqgd);
                         *(ckt->CKTstate0 + here->VDMOSqgb) = (vgb - vgb1)*capgb +
                                                              *(ckt->CKTstate1 + here->VDMOSqgb);
-                    }
-                    else {
+                    } else {
                         /* TRANOP only */
                         *(ckt->CKTstate0 + here->VDMOSqgs) = vgs*capgs;
                         *(ckt->CKTstate0 + here->VDMOSqgd) = vgd*capgd;
@@ -568,8 +554,7 @@ bypass :
                 ceqgd = 0;
                 gcgb = 0;
                 ceqgb = 0;
-            }
-            else {
+            } else {
                 if (capgs == 0) *(ckt->CKTstate0 + here->VDMOScqgs) = 0;
                 if (capgd == 0) *(ckt->CKTstate0 + here->VDMOScqgd) = 0;
                 if (capgb == 0) *(ckt->CKTstate0 + here->VDMOScqgb) = 0;
@@ -606,8 +591,7 @@ bypass :
                 xrev = 0;
                 cdreq = model->VDMOStype*(cdrain - here->VDMOSgds*vds -
                                           here->VDMOSgm*vgs - here->VDMOSgmbs*vbs);
-            }
-            else {
+            } else {
                 xnrm = 0;
                 xrev = 1;
                 cdreq = -(model->VDMOStype)*(cdrain - here->VDMOSgds*(-vds) -
@@ -693,18 +677,14 @@ bypass :
             Check = 1;
             if (ckt->CKTmode & MODEINITSMSIG) {
                 vd = *(ckt->CKTstate0 + here->VDIOvoltage);
-            }
-            else if (ckt->CKTmode & MODEINITTRAN) {
+            } else if (ckt->CKTmode & MODEINITTRAN) {
                 vd = *(ckt->CKTstate1 + here->VDIOvoltage);
-            }
-            else if ((ckt->CKTmode & MODEINITJCT) &&
+            } else if ((ckt->CKTmode & MODEINITJCT) &&
                        (ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC)) {
                 vd = here->VDIOinitCond;
-            }
-            else if (ckt->CKTmode & MODEINITJCT) {
+            } else if (ckt->CKTmode & MODEINITJCT) {
                 vd = here->VDIOtVcrit;
-            }
-            else {
+            } else {
 #ifndef PREDICTOR
                 if (ckt->CKTmode & MODEINITPRED) {
                     *(ckt->CKTstate0 + here->VDIOvoltage) =
@@ -714,8 +694,7 @@ bypass :
                         *(ckt->CKTstate1 + here->VDIOcurrent);
                     *(ckt->CKTstate0 + here->VDIOconduct) =
                         *(ckt->CKTstate1 + here->VDIOconduct);
-                }
-                else {
+                } else {
 #endif /* PREDICTOR */
                     vd = model->VDMOStype * (*(ckt->CKTrhsOld + here->VDIOposPrimeNode) -
                                              *(ckt->CKTrhsOld + here->VDMOSdNode));
@@ -757,14 +736,13 @@ bypass :
                                          vbrknp), vtebrk,
                                        here->VDIOtVcrit, &Check);
                     vd = -(vdtemp + vbrknp);
-                }
-                else {
+                } else {
                     vd = DEVpnjlim(vd, *(ckt->CKTstate0 + here->VDIOvoltage),
                                    vte, here->VDIOtVcrit, &Check);
                 }
             }
             /*
-            *   compute dc current and derivitives
+            *   compute dc current and derivatives
             */
             if (vd >= -3 * vte) {                 /* bottom current forward */
 
@@ -772,8 +750,7 @@ bypass :
                 cdb = csat*(evd - 1);
                 gdb = csat*evd / vte;
 
-            }
-            else if ((!(model->VDMOSDbvGiven)) ||
+            } else if ((!(model->VDMOSDbvGiven)) ||
                        vd >= -vbrknp) { /* reverse */
 
                 arg = 3 * vte / (vd*CONSTe);
@@ -781,8 +758,7 @@ bypass :
                 cdb = -csat*(1 + arg);
                 gdb = csat * 3 * arg / vd;
 
-            }
-            else {                            /* breakdown */
+            } else {                          /* breakdown */
 
                 evrev = exp(-(vbrknp + vd) / vtebrk);
                 cdb = -csat*evrev;
@@ -808,8 +784,7 @@ bypass :
                     sarg = exp(-here->VDIOtGradingCoeff*log(arg));
                     deplcharge = here->VDIOtJctPot*czero*(1 - arg*sarg) / (1 - here->VDIOtGradingCoeff);
                     deplcap = czero*sarg;
-                }
-                else {
+                } else {
                     czof2 = czero / here->VDIOtF2;
                     deplcharge = czero*here->VDIOtF1 + czof2*(here->VDIOtF3*(vd - here->VDIOtDepCap) +
                                  (here->VDIOtGradingCoeff / (here->VDIOtJctPot + here->VDIOtJctPot))*(vd*vd - here->VDIOtDepCap*here->VDIOtDepCap));
@@ -877,8 +852,7 @@ load :
             if (model->VDMOStype == 1) {
                 *(ckt->CKTrhs + here->VDMOSdNode) += cdeq;
                 *(ckt->CKTrhs + here->VDIOposPrimeNode) -= cdeq;
-            }
-            else {
+            } else {
                 *(ckt->CKTrhs + here->VDMOSdNode) -= cdeq;
                 *(ckt->CKTrhs + here->VDIOposPrimeNode) += cdeq;
             }
