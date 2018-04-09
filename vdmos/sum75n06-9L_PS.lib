@@ -1,0 +1,32 @@
+*August 6, 2007
+*Doc. ID: 76715, S-71542, Rev. B
+*File Name: SUM75N06-09L_PS.txt and SUM75N06-09L_PS.lib
+*This document is intended as a SPICE modeling guideline and does not
+*constitute a commercial product data sheet.  Designers should refer to the
+*appropriate data sheet of the same number for guaranteed specification
+*limits.
+.SUBCKT SUM75N06-09L 4 1 2
+M1  3 1 2 2 NMOS W=4276188u L=0.25u 
+M2  2 1 2 4 PMOS W=4276188u L=0.40u
+R1  4 3     RTEMP 42E-4
+CGS 1 2     2000E-12
+DBD 2 4     DBD
+******************************************************************* 
+.MODEL  NMOS       NMOS ( LEVEL  = 3               TOX    = 7E-8
++ RS     = 25E-4          RD     = 0               NSUB   = 1.73E17 
++ KP     = 1E-5           UO     = 650             
++ VMAX   = 0              XJ     = 5E-7            KAPPA  = 1E-4
++ ETA    = 1E-4           TPG    = 1  
++ IS     = 0              LD     = 0               
++ CGSO   = 0              CGDO   = 0               CGBO   = 0 
++ NFS    = 0.8E12         DELTA  = 0.1)
+******************************************************************* 
+.MODEL  PMOS       PMOS ( LEVEL  = 3               TOX    = 7E-8
++NSUB    = 3.8E16         TPG    = -1)   
+******************************************************************* 
+.MODEL DBD D (CJO=1200E-12 VJ=0.38 M=0.35
++RS=0.1 FC=0.5 IS=1E-12 TT=5E-8 N=1 BV=60.2)
+******************************************************************* 
+.MODEL RTEMP RES (TC1=8.2E-3 TC2=5.5E-6)
+******************************************************************* 
+.ENDS

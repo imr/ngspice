@@ -1,0 +1,18 @@
+MOS 1 output
+
+m1 d g s b p1
+.model p1 vdmosp vt0=-1.2
+
+vd d 0 1
+vg g 0 1
+vs s 0 0
+vb b 0 0
+
+.dc vd 0 -5 -0.1 vg 0 -5 -1
+
+.control
+run
+plot vs#branch
+.endc
+
+.end

@@ -1,0 +1,37 @@
+*****************==== 11-Stage CMOS RO ====*******************
+*********** MOS1 or VDMOS ************************************
+vdd 1 0 5.0
+
+
+.subckt inv out in vdd vss
+mp1 out in vdd vdd p1 l=2u w=20u
+mn1 out in vss vss n1 l=2u w=10u
+c1 out vss 0.2p
+.ends
+
+xinv1 3 2 1 0 inv
+xinv2 4 3 1 0 inv
+xinv3 5 4 1 0 inv
+xinv4 6 5 1 0 inv
+xinv5 7 6 1 0 inv
+xinv6 8 7 1 0 inv
+xinv7 9 8 1 0 inv
+xinv8 10 9 1 0 inv
+xinv9 2 10 1 0 inv
+
+
+.model  N1  vdmosn cgdmin=0.05p cgdmax=0.2p a=1.2 cgs=0.15p rg=10 kp=2e-5 rb=1e7 cjo=1n
+.model  P1  vdmosp cgdmin=0.05p cgdmax=0.2p a=1.2 cgs=0.15p rg=10 kp=2e-5 rb=1e7 cjo=1n
+
+.tran 0.1n 1u
+
+.control
+
+run
+rusage
+* current and output in a single plot
+plot v(6) 1000*(-I(vdd)) ylimit -1 6
+
+.endc
+
+.end

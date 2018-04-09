@@ -1,0 +1,29 @@
+*****************==== Inverter ====*******************
+*********** VDMOS ****************************
+vdd 1 0 5
+
+.subckt inv out in vdd vss
+mp1 out in vdd vdd p1
+mn1 out in vss vss n1
+.ends
+
+xinv 3 2 1 0 inv
+
+Vin 2 0 Pulse (0 5 10n 10n 10n 140n 300n)
+
+.tran 1n 1u
+
+.control
+
+run
+
+* current and output in a single plot
+plot v(2) v(3)
+
+.endc
+
+*.model  N1  vdmosn $ nmos level=1
+*.model  P1  vdmosp $ pmos level=1
+.model  N1  vdmosn cgdmin=0.2p cgdmax=1p a=2 cgs=0.5p rg=5k rb=1e9 cjo=0.1p
+.model  P1  vdmosp cgdmin=0.2p cgdmax=1p a=2 cgs=0.5p rg=5k rb=1e9 cjo=0.1p
+.end

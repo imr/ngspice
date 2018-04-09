@@ -1,0 +1,20 @@
+VDMOS output
+
+m1 d g s b n1
+.model n1 vdmos rb=0.05 is=10n kp=2 bv=12 rd=0.1
+*d1 s d dmod
+*.model dmod d  is=10n rs=0.05
+
+vd d 0 1
+vg g 0 1
+vs s 0 0
+vb b 0 0
+
+.dc vd -2 15 0.05 vg 0 5 1
+
+.control
+run
+plot vs#branch
+.endc
+
+.end
