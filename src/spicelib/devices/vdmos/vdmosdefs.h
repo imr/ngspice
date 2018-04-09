@@ -45,6 +45,7 @@ typedef struct sVDMOSinstance {
     int VDMOSdNodePrime; /* number of the internal drain node of the mosfet */
     int VDMOSsNodePrime; /* number of the internal source node of the mosfet */
     int VDMOSgNodePrime; /* number of the internal gate node of the mosfet */
+    int VDIOposPrimeNode; /* number of the internal node of the bulk diode */
 
     double VDMOSm;   /* parallel device multiplier */
 
@@ -60,9 +61,6 @@ typedef struct sVDMOSinstance {
     double VDMOStPhi;                /* temperature corrected Phi */
     double VDMOStVto;                /* temperature corrected Vto */
     double VDMOStSatCur;             /* temperature corrected saturation Cur. */
-    double VDMOStBulkPot;    /* temperature corrected Bulk potential */
-    double VDMOStDepCap;     /* temperature adjusted transition point in */
-                            /* the cureve matching Fc * Vj */
 
     double VDMOSicVBS;   /* initial condition B-S voltage */
     double VDMOSicVDS;   /* initial condition D-S voltage */
@@ -89,6 +87,23 @@ typedef struct sVDMOSinstance {
     double VDMOSf2s;
     double VDMOSf3s;
     double VDMOSf4s;
+
+    double VDIOcap;
+    double VDIOtSatCur; /* temperature corrected saturation Cur. density*/
+    double VDIOinitCond;
+    double VDIOtVcrit;
+    double VDIOtConductance;
+    double VDIOtBrkdwnV;
+    double VDIOtJctCap;
+    double VDIOtDepCap;     /* temperature adjusted transition point in */
+                             /* the cureve matching Fc * Vj */
+    double VDIOtJctPot;    /* temperature corrected Bulk potential */
+    double VDIOtGradingCoeff;
+
+    double VDIOtTransitTime;
+    double VDIOtF1;
+    double VDIOtF2;
+    double VDIOtF3;
 
 /*
  * naming convention:
@@ -256,7 +271,13 @@ typedef struct sVDMOSinstance {
 #define VDMOSqbs VDMOSstates+ 15  /* bulk-source capacitor charge */
 #define VDMOScqbs VDMOSstates+ 16 /* bulk-source capacitor current */
 
-#define VDMOSnumStates 17
+#define VDIOvoltage VDMOSstates+ 17
+#define VDIOcurrent VDMOSstates+ 18
+#define VDIOconduct VDMOSstates+ 19
+#define VDIOcapCharge VDMOSstates+ 20
+#define VDIOcapCurrent VDMOSstates+ 21
+
+#define VDMOSnumStates 22
 
 
 /* per model data */
@@ -279,7 +300,6 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
 
     int VDMOStype;       /* device type : 1 = nmos,  -1 = pmos */
     double VDMOStnom;        /* temperature at which parameters measured */
-    double VDMOSjctSatCur;   /* input - use tSatCur */
     double VDMOSdrainResistance;
     double VDMOSsourceResistance;
     double VDMOSgateResistance;
@@ -287,9 +307,6 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
     double VDMOStransconductance;    /* input - use tTransconductance */
     double VDMOSoxideCapFactor;
     double VDMOSvt0; /* input - use tVto */
-    double VDMOSbulkJctPotential;    /* input - use tBulkPot */
-    double VDMOSbulkJctBotGradingCoeff;
-    double VDMOSfwdCapDepCoeff;
     double VDMOSphi; /* input - use tPhi */
     double VDMOSlambda;
     double VDMOSfNcoef;
@@ -299,27 +316,37 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
     double VDMOSa;
     double VDMOScgs;
 
+    /* bulk diode */
+    double VDIOjunctionCap;   /* input - use tCj */
+    double VDIOjunctionPot;    /* input - use tBulkPot */
+    double VDMOSbulkJctBotGradingCoeff;
+    double VDIOdepletionCapCoeff;
+    double VDIOjctSatCur;   /* input - use tSatCur */
     double VDMOSDbv;
     double VDMOSDibv;
     double VDIObrkdEmissionCoeff;
     double VDIOresistance;
     double VDIOresistTemp1;
     double VDIOresistTemp2;
+    double VDIOconductance;
     double VDMOSDn;
     double VDIOtransitTime;
+    double VDIOtranTimeTemp1;
+    double VDIOtranTimeTemp2;
     double VDMOSDeg;
     double VDMOSDxti;
+    double VDIOgradCoeffTemp1;
+    double VDIOgradCoeffTemp2;
 
     unsigned VDMOStypeGiven  :1;
-    unsigned VDMOSjctSatCurGiven :1;
+    unsigned VDIOjctSatCurGiven :1;
     unsigned VDMOSdrainResistanceGiven   :1;
     unsigned VDMOSsourceResistanceGiven  :1;
     unsigned VDMOSgateResistanceGiven    :1;
     unsigned VDMOStransconductanceGiven  :1;
     unsigned VDMOSvt0Given   :1;
-    unsigned VDMOSbulkJctPotentialGiven  :1;
     unsigned VDMOSbulkJctBotGradingCoeffGiven    :1;
-    unsigned VDMOSfwdCapDepCoeffGiven    :1;
+    unsigned VDIOdepletionCapCoeffGiven :1;
     unsigned VDMOSphiGiven   :1;
     unsigned VDMOSlambdaGiven    :1;
     unsigned VDMOStnomGiven  :1;
@@ -333,6 +360,8 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
 
     unsigned VDMOSDbvGiven   :1;
     unsigned VDMOSDibvGiven   :1;
+    unsigned VDIOjunctionCapGiven :1;
+    unsigned VDIOjunctionPotGiven :1;
     unsigned VDIObrkdEmissionCoeffGiven :1;
     unsigned VDIOresistanceGiven :1;
     unsigned VDMOSDnGiven   :1;
@@ -376,6 +405,7 @@ enum {
     VDMOS_MOD_RG,
     VDMOS_MOD_IS,
     VDMOS_MOD_VJ,
+    VDMOS_MOD_CJ,
     VDMOS_MOD_MJ,
     VDMOS_MOD_FC,
     VDMOS_MOD_NMOS,
@@ -403,6 +433,7 @@ enum {
 enum {
     VDMOS_CGS = 201,
     VDMOS_CGD,
+    VDMOS_CDS,
     VDMOS_DNODE,
     VDMOS_GNODE,
     VDMOS_SNODE,

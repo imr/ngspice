@@ -35,6 +35,9 @@ VDMOSask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
         case VDMOS_CGD:
             value->rValue = 2* *(ckt->CKTstate0 + here->VDMOScapgd);
             return(OK);
+        case VDMOS_CDS:
+            value->rValue = here->VDIOcap;
+            return(OK);
         case VDMOS_M:
             value->rValue = here->VDMOSm;
             return(OK);

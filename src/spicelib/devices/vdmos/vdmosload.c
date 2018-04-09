@@ -48,7 +48,6 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
     double gcgs;
     double geq;
     double sarg;
-    double sargsw;
     double vbd;
     double vbs;
     double vds;
@@ -454,144 +453,20 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
 
             if (ckt->CKTmode & (MODETRAN | MODETRANOP | MODEINITSMSIG)) {
                 /*
-                 * now we do the hard part of the bulk-drain and bulk-source
-                 * diode - we evaluate the non-linear capacitance and
-                 * charge
-                 *
-                 * the basic equations are not hard, but the implementation
-                 * is somewhat long in an attempt to avoid log/exponential
-                 * evaluations
+                 * capacitance evaluation for drain-source is done with the bulk diode
                  */
-                 /*
-                  *  charge storage elements
-                  *
-                  *.. bulk-drain and bulk-source depletion capacitances
-                  */
-                {
-                    /* can't bypass the diode capacitance calculations */
-                    if (here->VDMOSCbs != 0) {
-                        if (vbs < here->VDMOStDepCap) {
-                            arg = 1 - vbs / here->VDMOStBulkPot;
-                            /*
-                             * the following block looks somewhat long and messy,
-                             * but since most users use the default grading
-                             * coefficients of .5, and sqrt is MUCH faster than an
-                             * exp(log()) we use this special case code to buy time.
-                             * (as much as 10% of total job time!)
-                             */
-                                if (model->VDMOSbulkJctBotGradingCoeff == .5) {
-                                    sarg = sargsw = 1 / sqrt(arg);
-                                }
-                                else {
-                                    sarg = sargsw =
-                                        exp(-model->VDMOSbulkJctBotGradingCoeff*
-                                            log(arg));
-                                }
-                            *(ckt->CKTstate0 + here->VDMOSqbs) =
-                                here->VDMOStBulkPot*(here->VDMOSCbs*
-                                (1 - arg*sarg) / (1 - model->VDMOSbulkJctBotGradingCoeff));
-                            here->VDMOScapbs = here->VDMOSCbs * sarg;
-                        }
-                        else {
-                            *(ckt->CKTstate0 + here->VDMOSqbs) = here->VDMOSf4s +
-                                vbs*(here->VDMOSf2s + vbs*(here->VDMOSf3s / 2));
-                            here->VDMOScapbs = here->VDMOSf2s + here->VDMOSf3s*vbs;
-                        }
-                    }
-                    else {
                         *(ckt->CKTstate0 + here->VDMOSqbs) = 0;
                         here->VDMOScapbs = 0;
-                    }
-                }
-                {
-                    if (here->VDMOSCbd != 0) {
-                        if (vbd < here->VDMOStDepCap) {
-                            arg = 1 - vbd / here->VDMOStBulkPot;
-                            /*
-                             * the following block looks somewhat long and messy,
-                             * but since most users use the default grading
-                             * coefficients of .5, and sqrt is MUCH faster than an
-                             * exp(log()) we use this special case code to buy time.
-                             * (as much as 10% of total job time!)
-                             */
-                            if (model->VDMOSbulkJctBotGradingCoeff == .5) {
-                                sarg = sargsw = 1 / sqrt(arg);
-                            }
-                            else {
-                                if (model->VDMOSbulkJctBotGradingCoeff == .5) {
-                                    sarg = 1 / sqrt(arg);
-                                }
-                                else {
-                                    sarg = exp(-model->VDMOSbulkJctBotGradingCoeff*
-                                        log(arg));
-                                }
-                            }
-                            *(ckt->CKTstate0 + here->VDMOSqbd) =
-                                here->VDMOStBulkPot*(here->VDMOSCbd*
-                                (1 - arg*sarg)
-                                    / (1 - model->VDMOSbulkJctBotGradingCoeff));
-                            here->VDMOScapbd = here->VDMOSCbd * sarg;
-                        }
-                        else {
-                            *(ckt->CKTstate0 + here->VDMOSqbd) = here->VDMOSf4d +
-                                vbd * (here->VDMOSf2d + vbd * here->VDMOSf3d / 2);
-                            here->VDMOScapbd = here->VDMOSf2d + vbd * here->VDMOSf3d;
-                        }
-                    }
-                    else {
+
                         *(ckt->CKTstate0 + here->VDMOSqbd) = 0;
                         here->VDMOScapbd = 0;
-                    }
-                }
                 /*
                   
                 */
 
-
-                if ((ckt->CKTmode & MODETRAN) || ((ckt->CKTmode&MODEINITTRAN)
-                    && !(ckt->CKTmode&MODEUIC))) {
-                    /* (above only excludes tranop, since we're only at this
-                     * point if tran or tranop )
-                     */
-
-                     /*
-                      *    calculate equivalent conductances and currents for
-                      *    depletion capacitors
-                      */
-
-                      /* integrate the capacitors and save results */
-
-                    error = NIintegrate(ckt, &geq, &ceq, here->VDMOScapbd,
-                        here->VDMOSqbd);
-                    if (error) return(error);
-                    here->VDMOSgbd += geq;
-                    here->VDMOScbd += *(ckt->CKTstate0 + here->VDMOScqbd);
-                    here->VDMOScd -= *(ckt->CKTstate0 + here->VDMOScqbd);
-                    error = NIintegrate(ckt, &geq, &ceq, here->VDMOScapbs,
-                        here->VDMOSqbs);
-                    if (error) return(error);
-                    here->VDMOSgbs += geq;
-                    here->VDMOScbs += *(ckt->CKTstate0 + here->VDMOScqbs);
-                }
             }
-            /*
-              
-            */
 
 
-            /*
-             *  check convergence
-             */
-            if ((here->VDMOSoff == 0) ||
-                (!(ckt->CKTmode & (MODEINITFIX | MODEINITSMSIG)))) {
-                if (Check == 1) {
-                    ckt->CKTnoncon++;
-                    ckt->CKTtroubleElt = (GENinstance *)here;
-                }
-            }
-            /*
-              
-            */
 
             /* save things away for next time */
 
@@ -781,6 +656,236 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                    *(here->VDMOSSPbPtr) += (-here->VDMOSgbs - (xnrm - xrev)*here->VDMOSgmbs);
                    *(here->VDMOSSPdpPtr) += (-here->VDMOSgds - xrev*
                        (here->VDMOSgm + here->VDMOSgmbs));
+
+
+                   /* bulk diode model
+                    * Delivers reverse conduction and forward breakdown
+                    * of VDMOS transistor
+                    */
+
+                   double vd;      /* current diode voltage */
+                   double vdtemp;
+                   double vte;
+                   double vtebrk;
+                   double cd, cdb, csat, cdeq;
+                   double czero;
+                   double czof2;
+                   double capd;
+                   double gd, gdb, gspr;
+                   double delvd;   /* change in diode voltage temporary */
+                   double diffcharge, deplcharge, diffcap, deplcap;
+                   double evd, evrev;
+#ifndef NOBYPASS
+                   double tol;     /* temporary for tolerence calculations */
+#endif
+
+                   cd = 0.0;
+                   cdb = 0.0;
+                   gd = 0.0;
+                   gdb = 0.0;
+                   csat = here->VDIOtSatCur;
+                   gspr = here->VDIOtConductance;
+                   vte = model->VDMOSDn * vt;
+                   vtebrk = model->VDIObrkdEmissionCoeff * vt;
+
+                   Check = 1;
+                   if (ckt->CKTmode & MODEINITSMSIG) {
+                       vd = *(ckt->CKTstate0 + here->VDIOvoltage);
+                   }
+                   else if (ckt->CKTmode & MODEINITTRAN) {
+                       vd = *(ckt->CKTstate1 + here->VDIOvoltage);
+                   }
+                   else if ((ckt->CKTmode & MODEINITJCT) &&
+                       (ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC)) {
+                       vd = here->VDIOinitCond;
+                   }
+                   else if (ckt->CKTmode & MODEINITJCT) {
+                       vd = here->VDIOtVcrit;
+                   }
+                   else {
+#ifndef PREDICTOR
+                       if (ckt->CKTmode & MODEINITPRED) {
+                           *(ckt->CKTstate0 + here->VDIOvoltage) =
+                               *(ckt->CKTstate1 + here->VDIOvoltage);
+                           vd = DEVpred(ckt, here->VDIOvoltage);
+                           *(ckt->CKTstate0 + here->VDIOcurrent) =
+                               *(ckt->CKTstate1 + here->VDIOcurrent);
+                           *(ckt->CKTstate0 + here->VDIOconduct) =
+                               *(ckt->CKTstate1 + here->VDIOconduct);
+                       }
+                       else {
+#endif /* PREDICTOR */
+                           vd = *(ckt->CKTrhsOld + here->VDIOposPrimeNode) -
+                               *(ckt->CKTrhsOld + here->VDMOSdNode);
+#ifndef PREDICTOR
+                       }
+#endif /* PREDICTOR */
+                       delvd = vd - *(ckt->CKTstate0 + here->VDIOvoltage);
+                       cdhat = *(ckt->CKTstate0 + here->VDIOcurrent) +
+                           *(ckt->CKTstate0 + here->VDIOconduct) * delvd;
+                       /*
+                       *   bypass if solution has not changed
+                       */
+#ifndef NOBYPASS
+                       if ((!(ckt->CKTmode & MODEINITPRED)) && (ckt->CKTbypass)) {
+                           tol = ckt->CKTvoltTol + ckt->CKTreltol*
+                               MAX(fabs(vd), fabs(*(ckt->CKTstate0 + here->VDIOvoltage)));
+                           if (fabs(delvd) < tol) {
+                               tol = ckt->CKTreltol* MAX(fabs(cdhat),
+                                   fabs(*(ckt->CKTstate0 + here->VDIOcurrent))) +
+                                   ckt->CKTabstol;
+                               if (fabs(cdhat - *(ckt->CKTstate0 + here->VDIOcurrent))
+                                   < tol) {
+                                   vd = *(ckt->CKTstate0 + here->VDIOvoltage);
+                                   cd = *(ckt->CKTstate0 + here->VDIOcurrent);
+                                   gd = *(ckt->CKTstate0 + here->VDIOconduct);
+                                   goto load;
+                               }
+                           }
+                       }
+#endif /* NOBYPASS */
+                       /*
+                       *   limit new junction voltage
+                       */
+                       if ((model->VDMOSDbvGiven) &&
+                           (vd < MIN(0, -here->VDIOtBrkdwnV + 10 * vtebrk))) {
+                           vdtemp = -(vd + here->VDIOtBrkdwnV);
+                           vdtemp = DEVpnjlim(vdtemp,
+                               -(*(ckt->CKTstate0 + here->VDIOvoltage) +
+                                   here->VDIOtBrkdwnV), vtebrk,
+                               here->VDIOtVcrit, &Check);
+                           vd = -(vdtemp + here->VDIOtBrkdwnV);
+                       }
+                       else {
+                           vd = DEVpnjlim(vd, *(ckt->CKTstate0 + here->VDIOvoltage),
+                               vte, here->VDIOtVcrit, &Check);
+                       }
+                   }
+                   /*
+                   *   compute dc current and derivitives
+                   */
+                           if (vd >= -3 * vte) {                 /* bottom current forward */
+
+                               evd = exp(vd / vte);
+                               cdb = csat*(evd - 1);
+                               gdb = csat*evd / vte;
+
+                           }
+                           else if ((!(model->VDMOSDbvGiven)) ||
+                               vd >= -here->VDIOtBrkdwnV) { /* reverse */
+
+                               arg = 3 * vte / (vd*CONSTe);
+                               arg = arg * arg * arg;
+                               cdb = -csat*(1 + arg);
+                               gdb = csat * 3 * arg / vd;
+
+                           }
+                           else {                            /* breakdown */
+
+                               evrev = exp(-(here->VDIOtBrkdwnV + vd) / vtebrk);
+                               cdb = -csat*evrev;
+                               gdb = csat*evrev / vtebrk;
+
+                           }
+
+
+                           cd = cdb;
+                           gd = gdb;
+
+                           gd = gd + ckt->CKTgmin;
+                           cd = cd + ckt->CKTgmin*vd;
+
+                           if ((ckt->CKTmode & (MODEDCTRANCURVE | MODETRAN | MODEAC | MODEINITSMSIG)) ||
+                               ((ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC))) {
+                               /*
+                               *   charge storage elements
+                               */
+                               czero = here->VDIOtJctCap;
+                               if (vd < here->VDIOtDepCap) {
+                                   arg = 1 - vd / here->VDIOtJctPot;
+                                   sarg = exp(-here->VDIOtGradingCoeff*log(arg));
+                                   deplcharge = here->VDIOtJctPot*czero*(1 - arg*sarg) / (1 - here->VDIOtGradingCoeff);
+                                   deplcap = czero*sarg;
+                               }
+                               else {
+                                   czof2 = czero / here->VDIOtF2;
+                                   deplcharge = czero*here->VDIOtF1 + czof2*(here->VDIOtF3*(vd - here->VDIOtDepCap) +
+                                       (here->VDIOtGradingCoeff / (here->VDIOtJctPot + here->VDIOtJctPot))*(vd*vd - here->VDIOtDepCap*here->VDIOtDepCap));
+                                   deplcap = czof2*(here->VDIOtF3 + here->VDIOtGradingCoeff*vd / here->VDIOtJctPot);
+                               }
+                               diffcharge = here->VDIOtTransitTime*cdb;
+                               *(ckt->CKTstate0 + here->VDIOcapCharge) =
+                                   diffcharge +  deplcharge;
+
+                               diffcap = here->VDIOtTransitTime*gdb;
+                               capd = diffcap + deplcap;
+
+                               here->VDIOcap = capd;
+
+                               /*
+                               *   store small-signal parameters
+                               */
+                               if ((!(ckt->CKTmode & MODETRANOP)) ||
+                                   (!(ckt->CKTmode & MODEUIC))) {
+                                   if (ckt->CKTmode & MODEINITSMSIG) {
+                                       *(ckt->CKTstate0 + here->VDIOcapCurrent) = capd;
+
+                                       continue;
+                                   }
+
+                                   /*
+                                   *   transient analysis
+                                   */
+
+                                   if (ckt->CKTmode & MODEINITTRAN) {
+                                       *(ckt->CKTstate1 + here->VDIOcapCharge) =
+                                           *(ckt->CKTstate0 + here->VDIOcapCharge);
+                                   }
+                                   error = NIintegrate(ckt, &geq, &ceq, capd, here->VDIOcapCharge);
+                                   if (error) return(error);
+                                   gd = gd + geq;
+                                   cd = cd + *(ckt->CKTstate0 + here->VDIOcapCurrent);
+                                   if (ckt->CKTmode & MODEINITTRAN) {
+                                       *(ckt->CKTstate1 + here->VDIOcapCurrent) =
+                                           *(ckt->CKTstate0 + here->VDIOcapCurrent);
+                                   }
+                               }
+                           }
+
+                           /*
+                           *   check convergence
+                           */
+
+                               if (Check == 1) {
+                                   ckt->CKTnoncon++;
+                                   ckt->CKTtroubleElt = (GENinstance *)here;
+                               }
+
+                           *(ckt->CKTstate0 + here->VDIOvoltage) = vd;
+                           *(ckt->CKTstate0 + here->VDIOcurrent) = cd;
+                           *(ckt->CKTstate0 + here->VDIOconduct) = gd;
+
+#ifndef NOBYPASS
+                           load :
+#endif
+                                /*
+                                *   load current vector
+                                */
+                                cdeq = cd - gd*vd;
+                                *(ckt->CKTrhs + here->VDMOSdNode) += cdeq;
+                                *(ckt->CKTrhs + here->VDIOposPrimeNode) -= cdeq;
+                                /*
+                                *   load matrix
+                                */
+                                /*
+                                *(here->DIOposPosPtr) += gspr;
+                                *(here->DIOnegNegPtr) += gd;
+                                *(here->DIOposPrimePosPrimePtr) += (gd + gspr);
+                                *(here->DIOposPosPrimePtr) -= gspr;
+                                *(here->DIOnegPosPrimePtr) -= gd;
+                                *(here->DIOposPrimePosPtr) -= gspr;
+                                *(here->DIOposPrimeNegPtr) -= gd;
+                                */
         }
     }
     return(OK);
