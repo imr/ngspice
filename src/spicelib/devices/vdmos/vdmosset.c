@@ -72,6 +72,15 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
         if (!model->VDMOSaGiven) {
             model->VDMOSa = 1.;
         }
+        if (!model->VDMOSDbvGiven) {
+            model->VDMOSDbv = 1.0e30;
+        }
+        if (!model->VDMOSDibvGiven) {
+            model->VDMOSDibv = 1.0e-10;
+        }
+        if (!model->VDIObrkdEmissionCoeffGiven) {
+            model->VDIObrkdEmissionCoeff = 1.;
+        }
         if (!model->VDMOSDnGiven) {
             model->VDMOSDn = 1.;
         }

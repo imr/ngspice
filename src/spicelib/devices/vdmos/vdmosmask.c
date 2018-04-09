@@ -63,6 +63,11 @@ VDMOSmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case VDMOS_MOD_CGS:
             value->rValue = model->VDMOScgs;
             return(OK);
+
+        /* body diode */
+        case VDMOS_MOD_RB:
+            value->rValue = model->VDIOresistance;
+            return(OK);
         case VDMOS_MOD_IS:
             value->rValue = model->VDMOSjctSatCur;
             return(OK);
@@ -74,6 +79,15 @@ VDMOSmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
             return(OK);
         case VDMOS_MOD_MJ:
             value->rValue = model->VDMOSbulkJctBotGradingCoeff;
+            return(OK);
+        case VDMOS_MOD_BV:
+            value->rValue = model->VDMOSDbv;
+            return(OK);
+        case VDMOS_MOD_IBV:
+            value->rValue = model->VDMOSDibv;
+            return(OK);
+        case VDMOS_MOD_NBV:
+            value->rValue = model->VDIObrkdEmissionCoeff;
             return(OK);
         case VDMOS_MOD_FC:
             value->rValue = model->VDMOSfwdCapDepCoeff;

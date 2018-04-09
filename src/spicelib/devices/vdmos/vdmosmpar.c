@@ -47,6 +47,12 @@ VDMOSmParam(int param, IFvalue *value, GENmodel *inModel)
             model->VDMOSgateResistance = value->rValue;
             model->VDMOSgateResistanceGiven = TRUE;
             break;
+        case VDMOS_MOD_RB:
+            model->VDIOresistance = value->rValue;
+            model->VDIOresistanceGiven = TRUE;
+            model->VDIOresistTemp1 = 0;
+            model->VDIOresistTemp2 = 0;
+            break;
         case VDMOS_MOD_IS:
             model->VDMOSjctSatCur = value->rValue;
             model->VDMOSjctSatCurGiven = TRUE;
@@ -104,6 +110,18 @@ VDMOSmParam(int param, IFvalue *value, GENmodel *inModel)
         case VDMOS_MOD_CGS:
             model->VDMOScgs = value->rValue;
             model->VDMOScgsGiven = TRUE;
+            break;
+        case VDMOS_MOD_BV:
+            model->VDMOSDbv = value->rValue;
+            model->VDMOSDbvGiven = TRUE;
+            break;
+        case VDMOS_MOD_IBV:
+            model->VDMOSDibv = value->rValue;
+            model->VDMOSDibvGiven = TRUE;
+            break;
+        case VDMOS_MOD_NBV:
+            model->VDIObrkdEmissionCoeff = value->rValue;
+            model->VDIObrkdEmissionCoeffGiven = TRUE;
             break;
         case VDMOS_MOD_N:
             model->VDMOSDn = value->rValue;
