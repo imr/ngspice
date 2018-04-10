@@ -137,6 +137,7 @@ static void replace_token(char *string, char *token, int where, int total);
 static void inp_add_series_resistor(struct card *deck);
 static void subckt_params_to_param(struct card *deck);
 static void inp_fix_temper_in_param(struct card *deck);
+static void inp_vdmos_model(struct card *deck);
 
 static char *inp_spawn_brace(char *s);
 
@@ -545,6 +546,8 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile, bool *expr_w_t
 
 
         inp_remove_excess_ws(working);
+
+        inp_vdmos_model(working);
 
         comment_out_unused_subckt_models(working);
 
@@ -6039,6 +6042,60 @@ inp_quote_params(struct card *c, struct card *end_c, struct dependency *deps, in
                     s += strlen(deps[i].param_name);
                 }
             }
+        }
+    }
+}
+
+
+/* VDMOS special:
+   Check for 'vdmos' in .model line.
+   check if 'pchan', then add p to vdmos and ignore 'pchan'.
+   If no 'pchan' is found, add n to vdmos.
+   Ignore annotations on Vds, Ron, Qg, and mfg.
+   Assemble all other tokens in a wordlist, and flatten it
+   to become the new .model line.
+*/
+
+static void
+inp_vdmos_model(struct card *deck)
+{
+    struct card *card;
+    for (card = deck; card; card = card->nextcard) {
+
+        char *curr_line, *cut_line, *token, *new_line;
+        wordlist *wl = NULL, *wlb;
+
+        curr_line = cut_line = card->line;
+
+        if (ciprefix(".model", curr_line) && strstr(curr_line, "vdmos")) {
+            cut_line = strstr(curr_line, "vdmos");
+            wl_append_word(&wl, &wl, copy_substring(curr_line, cut_line));
+            wlb = wl;
+            if (strstr(cut_line, "pchan")) {
+                wl_append_word(NULL, &wl, "vdmosp (");
+            }
+            else {
+                wl_append_word(NULL, &wl, "vdmosn (");
+            }
+            cut_line = cut_line + 5;
+
+            cut_line = skip_ws(cut_line);
+            if (*cut_line == '(')
+                cut_line = cut_line + 1;
+            new_line = NULL;
+            while (cut_line && *cut_line) {
+                token = gettok_noparens(&cut_line);
+                if (!ciprefix("pchan", token) && !ciprefix("ron=", token) && !ciprefix("vds=", token) &&
+                        !ciprefix("qg=", token) && !ciprefix("mfg=", token) && !ciprefix("nchan", token))
+                    wl_append_word(NULL, &wl, token);
+                if (*cut_line == ')') {
+                    wl_append_word(NULL, &wl, ")");
+                    break;
+                }
+            }
+            new_line = wl_flatten(wlb);
+            tfree(card->line);
+            card->line = new_line;
         }
     }
 }
