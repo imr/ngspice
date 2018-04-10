@@ -22,8 +22,8 @@ plot v(2) v(3)
 
 .endc
 
-*.model  N1  vdmosn $ nmos level=1
-*.model  P1  vdmosp $ pmos level=1
-.model  N1  vdmosn cgdmin=0.2p cgdmax=1p a=2 cgs=0.5p rg=5k rb=1e9 cjo=0.1p
-.model  P1  vdmosp cgdmin=0.2p cgdmax=1p a=2 cgs=0.5p rg=5k rb=1e9 cjo=0.1p
+*.model  N1  vdmos $ nmos level=1
+*.model  P1  vdmos $ pmos level=1
+.model  N1  vdmos cgdmin=0.2p cgdmax=1p a=2 cgs=0.5p rg=5k rb=1e9 cjo=0.1p
+.model  P1  vdmos cgdmin=0.2p cgdmax=1p a=2 cgs=0.5p rg=5k rb=1e9 cjo=0.1p pchan
 .end

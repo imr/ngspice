@@ -1,7 +1,7 @@
 VDMOS p channel output
 
 m1 d g s b p1
-.model p1 vdmosp vto=-1.2 is=10n kp=2 bv=-12 rb=1k
+.model p1 vdmos pchan vto=-1.2 is=10n kp=2 bv=-12 rb=1k
 *d1 d s dmod
 *.model dmod d  is=10n rs=0.1
 

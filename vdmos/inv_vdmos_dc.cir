@@ -25,6 +25,6 @@ plot v(2) v(3) vss#branch
 
 *.model  N1  vdmosn $ nmos level=1
 *.model  P1  vdmosp $ pmos level=1
-.model  N1  vdmosn cgdmin=0.2p cgdmax=1p a=2 cgs=0.5p rg=5k
-.model  P1  vdmosp cgdmin=0.2p cgdmax=1p a=2 cgs=0.5p rg=5k
+.model  N1  vdmos cgdmin=0.2p cgdmax=1p a=2 cgs=0.5p rg=5k
+.model  P1  vdmos cgdmin=0.2p cgdmax=1p a=2 cgs=0.5p rg=5k pchan
 .end
