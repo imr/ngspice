@@ -8,8 +8,6 @@ libbsim4_la_SOURCES =	\
 	b4ask.c		\
 	b4check.c	\
 	b4cvtest.c	\
-	b4del.c		\
-	b4dest.c	\
 	b4geo.c		\
 	b4getic.c	\
 	b4ld.c		\

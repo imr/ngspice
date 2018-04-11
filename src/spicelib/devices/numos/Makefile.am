@@ -8,14 +8,12 @@ libnumos_la_SOURCES =	\
 	nummask.c	\
 	numosdef.h	\
 	nummdel.c	\
-	nummdest.c	\
 	nummdump.c	\
 	numosext.h	\
 	numosinit.c	\
 	numosinit.h	\
 	numositf.h	\
 	nummload.c	\
-	nummmdel.c	\
 	nummmpar.c	\
 	nummparm.c	\
 	nummpzld.c	\

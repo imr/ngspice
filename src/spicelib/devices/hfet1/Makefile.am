@@ -7,8 +7,6 @@ libhfet_la_SOURCES =	\
 	hfetacl.c	\
 	hfetask.c	\
 	hfetdefs.h	\
-	hfetdel.c	\
-	hfetdest.c	\
 	hfetext.h	\
 	hfetgetic.c	\
 	hfetinit.c	\
@@ -16,7 +14,6 @@ libhfet_la_SOURCES =	\
 	hfetitf.h	\
 	hfetload.c	\
 	hfetmask.c	\
-	hfetmdel.c	\
 	hfetmpar.c	\
 	hfetparam.c	\
 	hfetpzl.c	\

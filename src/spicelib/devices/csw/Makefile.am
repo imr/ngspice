@@ -7,15 +7,12 @@ libcsw_la_SOURCES =	\
 	cswacld.c	\
 	cswask.c	\
 	cswdefs.h	\
-	cswdel.c	\
-	cswdest.c	\
 	cswext.h	\
 	cswinit.c	\
 	cswinit.h	\
 	cswitf.h	\
 	cswload.c	\
 	cswmask.c	\
-	cswmdel.c	\
 	cswmpar.c	\
 	cswnoise.c	\
 	cswparam.c	\

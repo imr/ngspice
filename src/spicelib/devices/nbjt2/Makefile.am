@@ -8,14 +8,12 @@ libnbjt2_la_SOURCES =	\
 	nbt2ask.c	\
 	nbjt2def.h	\
 	nbt2del.c	\
-	nbt2dest.c	\
 	nbt2dump.c	\
 	nbjt2ext.h	\
 	nbt2init.c	\
 	nbt2init.h	\
 	nbjt2itf.h	\
 	nbt2load.c	\
-	nbt2mdel.c	\
 	nbt2mpar.c	\
 	nbt2parm.c	\
 	nbt2pzld.c	\

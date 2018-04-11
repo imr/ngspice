@@ -8,12 +8,9 @@ libbsim3v1_la_SOURCES = \
 	b3v1ask.c	\
 	b3v1check.c	\
 	b3v1cvtest.c	\
-	b3v1del.c	\
-	b3v1dest.c	\
 	b3v1getic.c	\
 	b3v1ld.c	\
 	b3v1mask.c	\
-	b3v1mdel.c	\
 	b3v1mpar.c	\
 	b3v1noi.c	\
 	b3v1par.c	\

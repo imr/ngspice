@@ -5,12 +5,9 @@ Author: Trond Ytterdal
 
 extern int MESAacLoad(GENmodel*,CKTcircuit*);
 extern int MESAask(CKTcircuit*,GENinstance*,int,IFvalue*,IFvalue*);
-extern int MESAdelete(GENinstance*);
-extern void MESAdestroy(void);
 extern int MESAgetic(GENmodel*,CKTcircuit*);
 extern int MESAload(GENmodel*,CKTcircuit*);
 extern int MESAmAsk(CKTcircuit*,GENmodel*,int,IFvalue*);
-extern int MESAmDelete(GENmodel*);
 extern int MESAmParam(int,IFvalue*,GENmodel*);
 extern int MESAparam(int,IFvalue*,GENinstance*,IFvalue*);
 extern int MESApzLoad(GENmodel*,CKTcircuit*, SPcomplex*);

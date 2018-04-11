@@ -8,12 +8,9 @@ libbsim3soipd_la_SOURCES = \
 	b3soipdask.c	\
 	b3soipdcheck.c	\
 	b3soipdcvtest.c	\
-	b3soipddel.c	\
-	b3soipddest.c	\
 	b3soipdgetic.c	\
 	b3soipdld.c	\
 	b3soipdmask.c	\
-	b3soipdmdel.c	\
 	b3soipdmpar.c	\
 	b3soipdnoi.c	\
 	b3soipdpar.c	\

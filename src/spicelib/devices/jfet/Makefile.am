@@ -7,8 +7,6 @@ libjfet_la_SOURCES =	\
 	jfetacld.c	\
 	jfetask.c	\
 	jfetdefs.h	\
-	jfetdel.c	\
-	jfetdest.c	\
 	jfetdist.c	\
 	jfetdset.c	\
 	jfetext.h	\
@@ -18,7 +16,6 @@ libjfet_la_SOURCES =	\
 	jfetitf.h	\
 	jfetload.c	\
 	jfetmask.c	\
-	jfetmdel.c	\
 	jfetmpar.c	\
 	jfetnoi.c	\
 	jfetpar.c	\
