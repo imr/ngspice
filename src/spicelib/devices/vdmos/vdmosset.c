@@ -98,6 +98,16 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
         for (here = VDMOSinstances(model); here != NULL;
             here = VDMOSnextInstance(here)) {
 
+            /* Check if source and bulk nodes are the same.
+             * The power MOS devices in fact are 3-terminal devices,
+             * but the actual device input still uses 4 terminals to be compatible.
+             */
+            if (here->VDMOSbNode != here->VDMOSsNode) {
+                fprintf(stderr, "\nError: source and bulk nodes of device %s have to be the same!\n",
+                    here->VDMOSname);
+                controlled_exit(1);
+            }
+
             /* allocate a chunk of the state vector */
             here->VDMOSstates = *states;
             *states += VDMOSnumStates;
