@@ -84,6 +84,9 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
         if (!model->VDIObrkdEmissionCoeffGiven) {
             model->VDIObrkdEmissionCoeff = 1.;
         }
+        if (!model->VDMOSrdsGiven) {
+            model->VDMOSrds = 1.0e30;
+        }
         if (!model->VDMOSDnGiven) {
             model->VDMOSDn = 1.;
         }
@@ -278,6 +281,9 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
 
             TSTALLOC(VDMOSGgpPtr, VDMOSgNode, VDMOSgNodePrime);
             TSTALLOC(VDMOSGPgPtr, VDMOSgNodePrime, VDMOSgNode);
+
+            TSTALLOC(VDMOSDsPtr, VDMOSdNode, VDMOSsNode);
+            TSTALLOC(VDMOSSdPtr, VDMOSsNode, VDMOSdNode);
 
             TSTALLOC(VDIORPdPtr, VDIOposPrimeNode, VDMOSdNode);
             TSTALLOC(VDIODrpPtr, VDMOSdNode, VDIOposPrimeNode);

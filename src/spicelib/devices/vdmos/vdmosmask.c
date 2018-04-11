@@ -95,6 +95,9 @@ VDMOSmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case VDMOS_MOD_NBV:
             value->rValue = model->VDIObrkdEmissionCoeff;
             return(OK);
+        case VDMOS_MOD_RDS:
+            value->rValue = model->VDMOSrds;
+            return(OK);
         case VDMOS_MOD_FC:
             value->rValue = model->VDIOdepletionCapCoeff;
             return(OK);

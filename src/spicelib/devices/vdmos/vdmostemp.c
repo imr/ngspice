@@ -160,6 +160,18 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
             } else {
                 here->VDMOSgateConductance = 0;
             }
+            if (model->VDMOSrdsGiven) {
+                if (model->VDMOSrds != 0) {
+                    here->VDMOSdsConductance = here->VDMOSm /
+                        model->VDMOSrds;
+                }
+                else {
+                    here->VDMOSdsConductance = 0;
+                }
+            }
+            else {
+                here->VDMOSdsConductance = 0;
+            }
 
             /* bulk diode model */
             double egfet1, arg1, fact1, pbfact1, pbo, gmaold;

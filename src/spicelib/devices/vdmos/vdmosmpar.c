@@ -133,6 +133,10 @@ VDMOSmParam(int param, IFvalue *value, GENmodel *inModel)
             model->VDIObrkdEmissionCoeff = value->rValue;
             model->VDIObrkdEmissionCoeffGiven = TRUE;
             break;
+        case VDMOS_MOD_RDS:
+            model->VDMOSrds = value->rValue;
+            model->VDMOSrdsGiven = TRUE;
+            break;
         case VDMOS_MOD_N:
             model->VDMOSDn = value->rValue;
             model->VDMOSDnGiven = TRUE;

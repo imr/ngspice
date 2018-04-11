@@ -54,6 +54,7 @@ typedef struct sVDMOSinstance {
     double VDMOSsourceConductance;   /*conductance of source(or 0):set in setup*/
     double VDMOSdrainConductance;    /*conductance of drain(or 0):set in setup*/
     double VDMOSgateConductance;    /*conductance of gate(or 0):set in setup*/
+    double VDMOSdsConductance;    /*conductance of drain to source:set in setup*/
     double VDMOStemp;    /* operating temperature of this instance */
     double VDMOSdtemp;   /* operating temperature of the instance relative to circuit temperature*/
 
@@ -245,6 +246,10 @@ typedef struct sVDMOSinstance {
                              * (gate node, gate prime node) */
     double *VDMOSGPgPtr;    /* pointer to sparse matrix element at
                              * (gate prime node, gate node) */
+    double *VDMOSDsPtr;    /* pointer to sparse matrix element at
+                             * (source node, drain node) */
+    double *VDMOSSdPtr;    /* pointer to sparse matrix element at
+                             * (drain node, source node) */
     /* bulk diode */
     double *VDIORPdPtr;    /* pointer to sparse matrix element at
                              * (diode prime node, drain node) */
@@ -340,6 +345,7 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
     double VDIOresistTemp1;
     double VDIOresistTemp2;
     double VDIOconductance;
+    double VDMOSrds;
     double VDMOSDn;
     double VDIOtransitTime;
     double VDIOtranTimeTemp1;
@@ -377,6 +383,7 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
     unsigned VDIOjunctionPotGiven :1;
     unsigned VDIObrkdEmissionCoeffGiven :1;
     unsigned VDIOresistanceGiven :1;
+    unsigned VDMOSrdsGiven   :1;
     unsigned VDMOSDnGiven   :1;
     unsigned VDIOtransitTimeGiven :1;
     unsigned VDMOSDegGiven   :1;
@@ -437,6 +444,7 @@ enum {
     VDMOS_MOD_BV,
     VDMOS_MOD_IBV,
     VDMOS_MOD_NBV,
+    VDMOS_MOD_RDS,
     VDMOS_MOD_N,
     VDMOS_MOD_TT,
     VDMOS_MOD_EG,

@@ -563,9 +563,6 @@ bypass :
                 ceqgb = ceqgb - gcgb*vgb + ckt->CKTag[0] *
                         *(ckt->CKTstate0 + here->VDMOSqgb);
             }
-            /*
-             *     store charge storage info for meyer's cap in lx table
-             */
 
             /*
              *  load current vector
@@ -597,9 +594,9 @@ bypass :
              *  load y matrix
              */
 
-            *(here->VDMOSDdPtr) += (here->VDMOSdrainConductance);
+            *(here->VDMOSDdPtr) += (here->VDMOSdrainConductance + here->VDMOSdsConductance);
             *(here->VDMOSGgPtr) += (here->VDMOSgateConductance); //((gcgd + gcgs + gcgb));
-            *(here->VDMOSSsPtr) += (here->VDMOSsourceConductance);
+            *(here->VDMOSSsPtr) += (here->VDMOSsourceConductance + here->VDMOSdsConductance);
             *(here->VDMOSBbPtr) += (here->VDMOSgbd + here->VDMOSgbs + gcgb);
             *(here->VDMOSDPdpPtr) +=
                 (here->VDMOSdrainConductance + here->VDMOSgds +
@@ -629,6 +626,9 @@ bypass :
             *(here->VDMOSSPbPtr) += (-here->VDMOSgbs - (xnrm - xrev)*here->VDMOSgmbs);
             *(here->VDMOSSPdpPtr) += (-here->VDMOSgds - xrev*
                                       (here->VDMOSgm + here->VDMOSgmbs));
+
+            *(here->VDMOSDsPtr) += (-here->VDMOSdsConductance);
+            *(here->VDMOSSdPtr) += (-here->VDMOSdsConductance);
 
 
             /* bulk diode model
