@@ -41,8 +41,6 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
     double delvds;
     double delvgd;
     double delvgs;
-    double evbd;
-    double evbs;
     double gcgb;
     double gcgd;
     double gcgs;
@@ -337,26 +335,14 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
 
 
             /*
-             * bulk-source and bulk-drain diodes
-             *   here we just evaluate the ideal diode current and the
-             *   corresponding derivative (conductance).
+             * bulk-source and bulk-drain diodes are not available in vdmos
              */
-            if (vbs <= -3 * vt) {
-                here->VDMOSgbs = ckt->CKTgmin;
-                here->VDMOScbs = here->VDMOSgbs*vbs - SourceSatCur;
-            } else {
-                evbs = exp(MIN(MAX_EXP_ARG, vbs / vt));
-                here->VDMOSgbs = SourceSatCur*evbs / vt + ckt->CKTgmin;
-                here->VDMOScbs = SourceSatCur*(evbs - 1) + ckt->CKTgmin*vbs;
-            }
-            if (vbd <= -3 * vt) {
-                here->VDMOSgbd = ckt->CKTgmin;
-                here->VDMOScbd = here->VDMOSgbd*vbd - DrainSatCur;
-            } else {
-                evbd = exp(MIN(MAX_EXP_ARG, vbd / vt));
-                here->VDMOSgbd = DrainSatCur*evbd / vt + ckt->CKTgmin;
-                here->VDMOScbd = DrainSatCur*(evbd - 1) + ckt->CKTgmin*vbd;
-            }
+
+            here->VDMOSgbs = 0;
+            here->VDMOScbs = 0;
+            here->VDMOSgbd = 0;
+            here->VDMOScbd = 0;
+
             /* now to determine whether the user was able to correctly
              * identify the source and drain of his device
              */
