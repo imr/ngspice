@@ -8,8 +8,6 @@ libhisimhv2_la_SOURCES = hisimhv2.h	\
 			hsmhv2ask.c 	\
 			hsmhv2cvtest.c 	\
 			hsmhv2def.h	\
-			hsmhv2del.c 	\
-			hsmhv2dest.c 	\
 			hsmhv2eval.c	\
 			hsmhv2eval_dep.h	\
 			hsmhv2eval_dio.c	\
@@ -24,7 +22,6 @@ libhisimhv2_la_SOURCES = hisimhv2.h	\
 			hsmhv2ld.c 	\
 			hsmhv2ld_info_eval.h 	\
 			hsmhv2mask.c 	\
-			hsmhv2mdel.c 	\
 			hsmhv2mpar.c 	\
 			hsmhv2noi.c 	\
 			hsmhv2par.c 	\

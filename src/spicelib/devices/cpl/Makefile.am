@@ -6,14 +6,11 @@ libcpl_la_SOURCES = \
 	cpl.c      \
 	cplask.c   \
 	cpldefs.h  \
-	cpldest.c  \
 	cplext.h   \
 	cplinit.h  \
 	cplitf.h   \
 	cplmask.c  \
-	cplmdel.c  \
 	cplparam.c \
-	cpldel.c   \
 	cplload.c  \
 	cplmpar.c  \
 	cplsetup.c \

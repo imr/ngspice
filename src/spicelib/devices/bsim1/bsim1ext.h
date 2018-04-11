@@ -8,12 +8,9 @@ Modified: 2000 AlansFixes
 extern int B1acLoad(GENmodel *,CKTcircuit*);
 extern int B1ask(CKTcircuit *,GENinstance*,int,IFvalue*,IFvalue*);
 extern int B1convTest(GENmodel *,CKTcircuit*);
-extern int B1delete(GENinstance*);
-extern void B1destroy(void);
 extern int B1getic(GENmodel*,CKTcircuit*);
 extern int B1load(GENmodel*,CKTcircuit*);
 extern int B1mAsk(CKTcircuit*,GENmodel *,int, IFvalue*);
-extern int B1mDelete(GENmodel*);
 extern int B1mParam(int,IFvalue*,GENmodel*);
 extern void B1mosCap(CKTcircuit*, double, double, double, double*,
 	double, double, double, double, double, double,

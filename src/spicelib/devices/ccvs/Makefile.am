@@ -6,15 +6,12 @@ libccvs_la_SOURCES =	\
 	ccvs.c		\
 	ccvsask.c	\
 	ccvsdefs.h	\
-	ccvsdel.c	\
-	ccvsdest.c	\
 	ccvsext.h	\
 	ccvsfbr.c	\
 	ccvsinit.c	\
 	ccvsinit.h	\
 	ccvsitf.h	\
 	ccvsload.c	\
-	ccvsmdel.c	\
 	ccvspar.c	\
 	ccvspzld.c	\
 	ccvssacl.c	\

@@ -5,12 +5,9 @@ Author: 1985 Thomas L. Quarles
 
 extern int CAPacLoad(GENmodel*,CKTcircuit*);
 extern int CAPask(CKTcircuit*,GENinstance*,int,IFvalue*,IFvalue*);
-extern int CAPdelete(GENinstance*);
-extern void CAPdestroy(void);
 extern int CAPgetic(GENmodel*,CKTcircuit*);
 extern int CAPload(GENmodel*,CKTcircuit*);
 extern int CAPmAsk(CKTcircuit*,GENmodel*,int,IFvalue*);
-extern int CAPmDelete(GENmodel*);
 extern int CAPmParam(int,IFvalue*,GENmodel*);
 extern int CAPparam(int,IFvalue*,GENinstance*,IFvalue*);
 extern int CAPpzLoad(GENmodel*,CKTcircuit*,SPcomplex*);

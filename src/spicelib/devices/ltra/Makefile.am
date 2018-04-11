@@ -8,15 +8,12 @@ libltra_la_SOURCES =	\
 	ltraacld.c	\
 	ltraask.c	\
 	ltradefs.h	\
-	ltradel.c	\
-	ltradest.c	\
 	ltraext.h	\
 	ltrainit.c	\
 	ltrainit.h	\
 	ltraitf.h	\
 	ltraload.c	\
 	ltramask.c	\
-	ltramdel.c	\
 	ltramisc.c	\
 	ltrampar.c	\
 	ltrapar.c	\

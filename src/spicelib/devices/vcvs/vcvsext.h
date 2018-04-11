@@ -4,11 +4,8 @@ Author: 1985 Thomas L. Quarles
 **********/
 
 extern int VCVSask(CKTcircuit*,GENinstance*,int,IFvalue*,IFvalue*);
-extern int VCVSdelete(GENinstance*);
-extern void VCVSdestroy(void);
 extern int VCVSfindBr(CKTcircuit*,GENmodel*,IFuid);
 extern int VCVSload(GENmodel*,CKTcircuit*);
-extern int VCVSmDelete(GENmodel*);
 extern int VCVSparam(int,IFvalue*,GENinstance*,IFvalue*);
 extern int VCVSpzLoad(GENmodel*,CKTcircuit*,SPcomplex*);
 extern int VCVSsAcLoad(GENmodel*,CKTcircuit*);

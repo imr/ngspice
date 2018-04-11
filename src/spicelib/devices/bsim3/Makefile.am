@@ -8,8 +8,6 @@ libbsim3_la_SOURCES =	\
 	b3ask.c		\
 	b3check.c	\
 	b3cvtest.c	\
-	b3del.c		\
-	b3dest.c	\
 	b3getic.c	\
 	b3ld.c		\
 	b3mask.c	\

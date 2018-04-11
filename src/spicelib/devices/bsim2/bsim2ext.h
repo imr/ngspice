@@ -6,12 +6,9 @@ Author: 1988 Min-Chie Jeng, Hong June Park, Thomas L. Quarles
 extern int B2acLoad(GENmodel *,CKTcircuit*);
 extern int B2ask(CKTcircuit *,GENinstance*,int,IFvalue*,IFvalue*);
 extern int B2convTest(GENmodel *,CKTcircuit*);
-extern int B2delete(GENinstance*);
-extern void B2destroy(void);
 extern int B2getic(GENmodel*,CKTcircuit*);
 extern int B2load(GENmodel*,CKTcircuit*);
 extern int B2mAsk(CKTcircuit*,GENmodel *,int, IFvalue*);
-extern int B2mDelete(GENmodel*);
 extern int B2mParam(int,IFvalue*,GENmodel*);
 extern void B2mosCap(CKTcircuit*, double, double, double, double*,
         double, double, double, double, double, double,

@@ -8,14 +8,12 @@ libnbjt_la_SOURCES =	\
 	nbjtask.c	\
 	nbjtdefs.h	\
 	nbjtdel.c	\
-	nbjtdest.c	\
 	nbjtdump.c	\
 	nbjtext.h	\
 	nbjtinit.c	\
 	nbjtinit.h	\
 	nbjtitf.h	\
 	nbjtload.c	\
-	nbjtmdel.c	\
 	nbjtmpar.c	\
 	nbjtparm.c	\
 	nbjtpzld.c	\

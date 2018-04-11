@@ -8,8 +8,6 @@ libbsim3v32_la_SOURCES = \
 	b3v32ask.c	\
 	b3v32check.c	\
 	b3v32cvtest.c	\
-	b3v32del.c	\
-	b3v32dest.c	\
 	b3v32getic.c	\
 	b3v32ld.c	\
 	b3v32mask.c	\
