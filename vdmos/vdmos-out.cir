@@ -1,6 +1,6 @@
 VDMOS output
 
-m1 d g s b n1
+m1 d g s s n1
 .model n1 vdmos rb=0.05 is=10n kp=2 bv=12 rd=0.1
 *d1 s d dmod
 *.model dmod d  is=10n rs=0.05
