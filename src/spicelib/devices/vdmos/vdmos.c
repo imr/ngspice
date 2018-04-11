@@ -12,7 +12,7 @@ VDMOS Model: 2018 Holger Vogt
 #include "ngspice/suffix.h"
 
 IFparm VDMOSpTable[] = { /* parameters */ 
- IOPU("m",            VDMOS_M,          IF_REAL,    "Multiplier"),
+ IOPU("mu",           VDMOS_M,          IF_REAL,    "Multiplier"),
  IOPU("l",            VDMOS_L,          IF_REAL,    "Length"),
  IOPU("w",            VDMOS_W,          IF_REAL,    "Width"),
  IP("off",            VDMOS_OFF,        IF_FLAG,    "Device initially off"),
