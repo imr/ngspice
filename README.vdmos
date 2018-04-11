@@ -16,5 +16,4 @@ This is a work in progress.
 Basic current equations for ac, dc and tran operations are
 available as well as the capacitance model.
 
-Still missing are the subthreshold behavior (parameter subthres)
-and the shunt resistor rds.
+Still missing is the subthreshold behavior (parameter subthres).
