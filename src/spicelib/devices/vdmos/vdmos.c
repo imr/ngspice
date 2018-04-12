@@ -95,13 +95,18 @@ IFparm VDMOSpTable[] = { /* parameters */
 IFparm VDMOSmPTable[] = { /* model parameters */
  OP("type",   VDMOS_MOD_TYPE,  IF_STRING, "N-channel or P-channel MOS"),
  IOP("vto",   VDMOS_MOD_VTO,   IF_REAL,   "Threshold voltage"),
- IOPR("vt0",  VDMOS_MOD_VTO,   IF_REAL,   "Threshold voltage"),
  IOP("kp",    VDMOS_MOD_KP,    IF_REAL,   "Transconductance parameter"),
- IOP("gamma", VDMOS_MOD_GAMMA, IF_REAL,   "Bulk threshold parameter"),
  IOP("phi",   VDMOS_MOD_PHI,   IF_REAL,   "Surface potential"),
  IOP("lambda",VDMOS_MOD_LAMBDA,IF_REAL,   "Channel length modulation"),
  IOP("rd",    VDMOS_MOD_RD,    IF_REAL,   "Drain ohmic resistance"),
  IOP("rs",    VDMOS_MOD_RS,    IF_REAL,   "Source ohmic resistance"),
+ IOP("tnom",  VDMOS_MOD_TNOM,  IF_REAL,   "Parameter measurement temperature"),
+ IOP("kf",    VDMOS_MOD_KF,    IF_REAL,   "Flicker noise coefficient"),
+ IOP("af",    VDMOS_MOD_AF,    IF_REAL,   "Flicker noise exponent"),
+
+/* MOS1 */
+ IOPR("vt0",  VDMOS_MOD_VTO,   IF_REAL,   "Threshold voltage"),
+ IOP("gamma", VDMOS_MOD_GAMMA, IF_REAL,   "Bulk threshold parameter"),
  IOPA("cbd",  VDMOS_MOD_CBD,   IF_REAL,   "B-D junction capacitance"),
  IOPA("cbs",  VDMOS_MOD_CBS,   IF_REAL,   "B-S junction capacitance"),
  IOP("is",    VDMOS_MOD_IS,    IF_REAL,   "Bulk junction sat. current"),
@@ -124,10 +129,7 @@ IFparm VDMOSmPTable[] = { /* model parameters */
  IP("pmos",   VDMOS_MOD_PMOS,  IF_FLAG,   "P type MOSfet model"),
  IOP("nsub",  VDMOS_MOD_NSUB,  IF_REAL,   "Substrate doping"),
  IOP("tpg",   VDMOS_MOD_TPG,   IF_INTEGER,"Gate type"),
- IOP("nss",   VDMOS_MOD_NSS,   IF_REAL,   "Surface state density"),
- IOP("tnom",  VDMOS_MOD_TNOM,  IF_REAL,   "Parameter measurement temperature"),
- IOP("kf",    VDMOS_MOD_KF,    IF_REAL,   "Flicker noise coefficient"),
- IOP("af",    VDMOS_MOD_AF,    IF_REAL,   "Flicker noise exponent")
+ IOP("nss",   VDMOS_MOD_NSS,   IF_REAL,   "Surface state density")
 };
 
 char *VDMOSnames[] = {
