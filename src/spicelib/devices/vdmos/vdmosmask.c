@@ -106,10 +106,10 @@ VDMOSmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
             value->rValue = model->VDMOSsurfaceStateDensity;
             return(OK);
         case VDMOS_MOD_TYPE:
-	    if (model->VDMOStype > 0)
-		value->sValue = "nmos";
-	    else
-		value->sValue = "pmos";
+            if (model->VDMOStype > 0)
+                value->sValue = "nmos";
+            else
+                value->sValue = "pmos";
             return(OK);
         default:
             return(E_BADPARM);

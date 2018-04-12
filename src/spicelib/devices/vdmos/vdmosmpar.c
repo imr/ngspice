@@ -139,14 +139,14 @@ VDMOSmParam(int param, IFvalue *value, GENmodel *inModel)
                 model->VDMOStypeGiven = TRUE;
             }
             break;
-	case VDMOS_MOD_KF:
-	    model->VDMOSfNcoef = value->rValue;
-	    model->VDMOSfNcoefGiven = TRUE;
-	    break;
-	case VDMOS_MOD_AF:
-	    model->VDMOSfNexp = value->rValue;
-	    model->VDMOSfNexpGiven = TRUE;
-	    break;
+        case VDMOS_MOD_KF:
+            model->VDMOSfNcoef = value->rValue;
+            model->VDMOSfNcoefGiven = TRUE;
+            break;
+        case VDMOS_MOD_AF:
+            model->VDMOSfNexp = value->rValue;
+            model->VDMOSfNexpGiven = TRUE;
+            break;
         default:
             return(E_BADPARM);
     }
