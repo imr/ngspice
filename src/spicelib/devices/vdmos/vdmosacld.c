@@ -41,7 +41,7 @@ VDMOSacLoad(GENmodel *inModel, CKTcircuit *ckt)
                 xrev=0;
             }
             /*
-             *     meyer's model parameters
+             *     VDMOS cap model parameters
              */
             capgs = ( *(ckt->CKTstate0+here->VDMOScapgs)+ 
                       *(ckt->CKTstate0+here->VDMOScapgs));
