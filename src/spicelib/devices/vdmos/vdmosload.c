@@ -87,9 +87,6 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
 
             vt = CONSTKoverQ * here->VDMOStemp;
             Check = 1;
-            /*
-              
-            */
 
             /* first, we compute a few useful values - these could be
              * pre-computed, but for historical reasons are still done
@@ -110,7 +107,6 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
              * step or the general iteration step and they
              * share some code, so we put them first - others later on
              */
-
 
             if ((ckt->CKTmode & (MODEINITFLOAT | MODEINITPRED | MODEINITSMSIG
                                  | MODEINITTRAN)) ||
@@ -189,9 +185,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                     here->VDMOScbd +
                     here->VDMOSgbd * delvbd +
                     here->VDMOSgbs * delvbs;
-                /*
 
-                */
 
 #ifndef NOBYPASS
                 /* now lets see if we can bypass (ugh) */
@@ -253,9 +247,6 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                 }
 #endif /*NOBYPASS*/
 
-                /*
-
-                */
 
                 /* ok - bypass is out, do it the hard way */
 
@@ -294,9 +285,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                     vbs = vbd + vds;
                 }
 #endif /*NODELIMITING*/
-                /*
 
-                */
 
             } else {
 
@@ -321,9 +310,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                     vbs = vgs = vds = 0;
                 }
             }
-            /*
 
-            */
 
             /*
              * now all the preliminaries are over - we can start doing the
@@ -353,9 +340,6 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                 /* inverse mode */
                 here->VDMOSmode = -1;
             }
-            /*
-
-            */
 
             {
                 /*
@@ -411,19 +395,14 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                         here->VDMOSgmbs = here->VDMOSgm * arg;
                     }
                 }
-                /*
-                 *     finished
-                 */
             }
-            /*
 
-            */
 
             /* now deal with n vs p polarity */
 
             here->VDMOSvon = model->VDMOStype * von;
             here->VDMOSvdsat = model->VDMOStype * vdsat;
-            /* line 490 */
+
             /*
              *  COMPUTE EQUIVALENT DRAIN CURRENT SOURCE
              */
@@ -438,12 +417,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
 
                 *(ckt->CKTstate0 + here->VDMOSqbd) = 0;
                 here->VDMOScapbd = 0;
-                /*
-
-                */
-
             }
-
 
 
             /* save things away for next time */
@@ -453,9 +427,6 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
             *(ckt->CKTstate0 + here->VDMOSvgs) = vgs;
             *(ckt->CKTstate0 + here->VDMOSvds) = vds;
 
-            /*
-
-            */
 
             /*
              * vdmos capacitor model
@@ -593,7 +564,6 @@ bypass :
             /*
              *  load y matrix
              */
-
             *(here->VDMOSDdPtr) += (here->VDMOSdrainConductance + here->VDMOSdsConductance);
             *(here->VDMOSGgPtr) += (here->VDMOSgateConductance); //((gcgd + gcgs + gcgb));
             *(here->VDMOSSsPtr) += (here->VDMOSsourceConductance + here->VDMOSdsConductance);

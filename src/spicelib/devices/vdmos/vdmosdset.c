@@ -155,8 +155,10 @@ VDMOSdSetup(GENmodel *inModel, CKTcircuit *ckt)
 	    double d3vondvbs3;
 
 		    dvondvbs = d2vondvbs2 = d3vondvbs3 = 0.0;
+
                 vgst=(here->VDMOSmode==1?vgs:vgd);
                 vdsat=MAX(vgst,0);
+
                 if (vgst <= 0) {
                     /*
                      *     cutoff region
@@ -279,8 +281,6 @@ VDMOSdSetup(GENmodel *inModel, CKTcircuit *ckt)
     double vddif2;
     /* von, vgst and vdsat have already been adjusted for 
         possible source-drain interchange */
-
-
 
     phi = here->VDMOStPhi;
     cox = 0;/*FIXME: can we do disto without knowing the oxide thickness?*/

@@ -219,7 +219,6 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
             here->VDIOtJctCap *= 1 + here->VDIOtGradingCoeff*
                 (400e-6*(here->VDMOStemp - REFTEMP) - gmanew);
 
-
             here->VDIOtSatCur = model->VDIOjctSatCur * exp(
                 ((here->VDMOStemp / model->VDMOStnom) - 1) *
                 model->VDMOSDeg / (model->VDMOSDn*vt) +
