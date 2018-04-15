@@ -68,14 +68,12 @@ struct histent {
 /* The values returned by cp_usrset(). */
 
 enum {
-    US_OK = 1,
-    US_READONLY,
-    US_DONTRECORD,
-    US_SIMVAR,
-    US_NOSIMVAR,
+    US_OK = 1,      /* Either not relevant or nothing special. */
+    US_READONLY,    /* Complain and don't set this var. */
+    US_DONTRECORD,  /* OK, but don't keep track of this one. */
+    US_SIMVAR,      /* OK, recorded in options struct */
+    US_NOSIMVAR,    /* Not OK, simulation param but circuit not loaded */
 };
-
-   /* Not OK, simulation param but circuit not loaded */
 
 /* Aliases. These will be expanded if the word is the first in an input
  * line. The substitution string may contain arg selectors.

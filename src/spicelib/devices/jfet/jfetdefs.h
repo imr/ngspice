@@ -270,7 +270,7 @@ enum {
     JFET_MOD_TNOM,
     JFET_MOD_KF,
     JFET_MOD_AF,
-    JFET_MOD_B,
+    JFET_MOD_B,  /* Modification for Sydney University JFET model */
     JFET_MOD_TCV,
     JFET_MOD_BEX,
     JFET_MOD_NLEV,

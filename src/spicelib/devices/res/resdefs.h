@@ -18,9 +18,9 @@ Modified: 2000 AlansFixes
 /* indices to array of RES noise sources */
 
 enum {
-    RESTHNOIZ = 0,
-    RESFLNOIZ,
-    RESTOTNOIZ,
+    RESTHNOIZ = 0,  /* Thermal noise source */
+    RESFLNOIZ,      /* Flicker noise source */
+    RESTOTNOIZ,     /* Total noise          */
     /* finally, the number of noise sources */
     RESNSRCS
 };

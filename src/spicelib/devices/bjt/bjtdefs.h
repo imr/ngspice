@@ -710,7 +710,11 @@ enum {
     BJT_MOD_VBE_MAX,
     BJT_MOD_VBC_MAX,
     BJT_MOD_VCE_MAX,
-    BJT_QUEST_FT,
+};
+
+/* device questions */
+enum {
+    BJT_QUEST_FT = 211,
     BJT_QUEST_COLNODE,
     BJT_QUEST_BASENODE,
     BJT_QUEST_EMITNODE,
