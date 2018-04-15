@@ -1,0 +1,64 @@
+VDMOS output
+
+m1 d g s s IXTP6N100D2
+m2 d g s2 s2 IXTP6N100D2_2
+m3 d g s3 s3 IXTP6N100D2_3
+
+*.model dmod d  is=10n rs=0.05
+
+.MODEL IXTP6N100D2 VDMOS(KP=2.9 RS=0.1 RD=1.3 RG=1 VTO=-2.7 LAMBDA=0.03 CGDMAX=3000p CGDMIN=2p CGS=2915p TT=1371n a=1 IS=2.13E-08 N=1.564 RB=0.0038 m=0.548 Vj=0.1 Cjo=3200pF subthres=250m)
+
+.MODEL IXTP6N100D2_2 VDMOS(KP=2.9 RS=0.1 RD=1.3 RG=1 VTO=-2.7 LAMBDA=0.03 CGDMAX=3000p CGDMIN=2p CGS=2915p TT=1371n a=1 IS=2.13E-08 N=1.564 RB=0.0038 m=0.548 Vj=0.1 Cjo=3200pF subthres=500m)
+
+.MODEL IXTP6N100D2_3 VDMOS(KP=2.9 RS=0.1 RD=1.3 RG=1 VTO=-2.7 LAMBDA=0.03 CGDMAX=3000p CGDMIN=2p CGS=2915p TT=1371n a=1 IS=2.13E-08 N=1.564 RB=0.0038 m=0.548 Vj=0.1 Cjo=3200pF)
+
+.model FDB3682 VDMOS(Rg=3 Rd=26.8m Vto=4 subthres=.1 mtriode=1.8 Kp=18 Cgdmax=400p Cgdmin=20p A=.5 Cgs=1.25n Cjo=1n M=.6 Is=1.8p Rb=14.2m mfg=Fairchild Vds=100 Ron=32m Qg=18.5n)
+
+vd d 0 -0.6
+vg g 0 -2.3
+vs s 0 0
+vs2 s2 0 0
+vs3 s3 0 0
+
+*.dc  vg -3.1 -2.1 0.01 vd 0.2 1 0.2
+
+.control
+op
+dc  vg -3.1 -2.1 0.01 vd 0.2 1 0.2
+plot vs#branch vs2#branch vs3#branch
+plot log(vs#branch) log(vs2#branch) log(vs3#branch)
+dc  vd 0 5 0.01 vg -3.2 -2 0.2
+plot vs#branch vs2#branch vs3#branch
+.endc
+
+* David Zan, (c) 2017/03/02 Preliminary
+.MODEL IXTH80N20L VDMOS Nchan Vds=200
++ VTO=4 KP=15
++ Lambda=2m
++ Mtriode=0.4
++ Ksubthres=150m
++ Rs=5m Rd=10m Rds=200e6
++ Cgdmax=9000p Cgdmin=300p A=0.25
++ Cgs=5500p Cjo=11000p
++ Is=10e-6 Rb=8m
++ BV=200 IBV=250e-6
++ NBV=4
++ TT=250e-9
+
+* David Zan, (c) 2017/03/02 Preliminary
+.MODEL IXTH48P20P VDMOS Pchan Vds=200
++ VTO=-4 KP=10
++ Lambda=5m
++ Mtriode=0.3
++ Ksubthres=120m
++ Rs=10m Rd=20m Rds=200e6
++ Cgdmax=6000p Cgdmin=100p A=0.25
++ Cgs=5000p Cjo=9000p
++ Is=2e-6 Rb=20m
++ BV=200 IBV=250e-6
++ NBV=4
++ TT=260e-9
+
+
+
+.end
