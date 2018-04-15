@@ -16,4 +16,5 @@ This is a work in progress.
 Basic current equations for ac, dc and tran operations are
 available as well as the capacitance model.
 
-Still missing is the subthreshold behavior (parameter subthres).
+Subthreshold behavior (parameter subthres) is available,
+calibration with LTSPICE is stilll missing.
