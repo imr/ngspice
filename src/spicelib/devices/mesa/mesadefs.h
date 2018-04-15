@@ -14,6 +14,15 @@ Author: Trond Ytterdal
 
     /* structures used to describe MESFET Transistors */
 
+/* indices to the array of MESAFET noise sources */
+
+#define MESARDNOIZ       0
+#define MESARSNOIZ       1
+#define MESAIDNOIZ       2
+#define MESAFLNOIZ       3
+#define MESATOTNOIZ      4
+
+#define MESANSRCS        5     /* the number of MESAFET noise sources */
 
 /* information used to describe a single instance */
 
@@ -175,16 +184,6 @@ int MESAmode;
 #define qgd_xy2     MESAdCoeffs[26]
 
 #endif
-
-/* indices to the array of MESAFET noise sources */
-
-#define MESARDNOIZ       0
-#define MESARSNOIZ       1
-#define MESAIDNOIZ       2
-#define MESAFLNOIZ       3
-#define MESATOTNOIZ      4
-
-#define MESANSRCS        5     /* the number of MESAFET noise sources */
 
 #ifndef NONOISE
     double MESAnVar[NSTATVARS][MESANSRCS];
