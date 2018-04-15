@@ -15,6 +15,16 @@ Modified: 2000 AlansFIxes
 
 /* declarations for level 2 MOSFETs */
 
+/* indices to the array of MOSFET(2) noise sources */
+
+#define MOS2RDNOIZ       0
+#define MOS2RSNOIZ       1
+#define MOS2IDNOIZ       2
+#define MOS2FLNOIZ 3
+#define MOS2TOTNOIZ    4
+
+#define MOS2NSRCS     5     /* the number of MOS2FET noise sources */
+
 /* information needed for each instance */
 
 typedef struct sMOS2instance {
@@ -253,16 +263,6 @@ typedef struct sMOS2instance {
     /* 		end distortion coeffs.  	*/
 
 #endif
-
-/* indices to the array of MOSFET(2) noise sources */
-
-#define MOS2RDNOIZ       0
-#define MOS2RSNOIZ       1
-#define MOS2IDNOIZ       2
-#define MOS2FLNOIZ 3
-#define MOS2TOTNOIZ    4
-
-#define MOS2NSRCS     5     /* the number of MOS2FET noise sources */
 
 #ifndef NONOISE
     double MOS2nVar[NSTATVARS][MOS2NSRCS];

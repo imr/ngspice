@@ -15,6 +15,16 @@ Modified: 2000 AlanFixes
 
     /* declarations for level 3 MOSFETs */
 
+/* indices to the array of MOSFET(3) noise sources */
+
+#define MOS3RDNOIZ       0
+#define MOS3RSNOIZ       1
+#define MOS3IDNOIZ       2
+#define MOS3FLNOIZ 3
+#define MOS3TOTNOIZ    4
+
+#define MOS3NSRCS     5     /* the number of MOSFET(3) noise sources */
+
 /* information needed for each instance */
 
 typedef struct sMOS3instance {
@@ -253,15 +263,6 @@ typedef struct sMOS3instance {
 #endif
 
     /* 		end distortion coeffs.  	*/
-/* indices to the array of MOSFET(3) noise sources */
-
-#define MOS3RDNOIZ       0
-#define MOS3RSNOIZ       1
-#define MOS3IDNOIZ       2
-#define MOS3FLNOIZ 3
-#define MOS3TOTNOIZ    4
-
-#define MOS3NSRCS     5     /* the number of MOSFET(3) noise sources */
 
 #ifndef NONOISE
     double MOS3nVar[NSTATVARS][MOS3NSRCS];

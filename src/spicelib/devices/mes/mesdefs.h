@@ -16,6 +16,15 @@ Author: 1985 S. Hwang
 
     /* structures used to describe MESFET Transistors */
 
+/* indices to the array of MESFET noise sources */
+
+#define MESRDNOIZ       0
+#define MESRSNOIZ       1
+#define MESIDNOIZ       2
+#define MESFLNOIZ 3
+#define MESTOTNOIZ    4
+
+#define MESNSRCS     5     /* the number of MESFET noise sources */
 
 /* information used to describe a single instance */
 
@@ -127,16 +136,6 @@ int MESmode;
 #define	qgd_xy2		MESdCoeffs[26]
 
 #endif
-
-/* indices to the array of MESFET noise sources */
-
-#define MESRDNOIZ       0
-#define MESRSNOIZ       1
-#define MESIDNOIZ       2
-#define MESFLNOIZ 3
-#define MESTOTNOIZ    4
-
-#define MESNSRCS     5     /* the number of MESFET noise sources */
 
 #ifndef NONOISE
     double MESnVar[NSTATVARS][MESNSRCS];

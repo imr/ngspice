@@ -33,6 +33,16 @@ ngspice integration
 
 /* declarations for SOI3 MOSFETs */
 
+/* indices to the array of SOI(3) noise sources */
+
+#define SOI3RDNOIZ       0
+#define SOI3RSNOIZ       1
+#define SOI3IDNOIZ       2
+#define SOI3FLNOIZ       3
+#define SOI3TOTNOIZ      4
+
+#define SOI3NSRCS     5     /* the number of SOI(3) noise sources */
+
 /* information needed for each instance */
 
 typedef struct sSOI3instance {
@@ -303,17 +313,6 @@ typedef struct sSOI3instance {
     double *SOI3TOUT3_tout4Ptr;
     double *SOI3TOUT4_tout3Ptr;
     double *SOI3TOUT4_tout4Ptr;
-
-
-/* indices to the array of SOI(3) noise sources */
-
-#define SOI3RDNOIZ       0
-#define SOI3RSNOIZ       1
-#define SOI3IDNOIZ       2
-#define SOI3FLNOIZ       3
-#define SOI3TOTNOIZ      4
-
-#define SOI3NSRCS     5     /* the number of SOI(3) noise sources */
 
 #ifndef NONOISE
     double SOI3nVar[NSTATVARS][SOI3NSRCS];

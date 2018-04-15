@@ -16,6 +16,25 @@ Spice3 Implementation: 2003 Dietmar Warning DAnalyse GmbH
 
 /* structures to describe Bipolar Junction Transistors */
 
+/* indices to array of VBIC noise sources */
+
+#define VBICRCNOIZ       0
+#define VBICRCINOIZ      1
+#define VBICRBNOIZ       2
+#define VBICRBINOIZ      3
+#define VBICRENOIZ       4
+#define VBICRBPNOIZ      5
+#define VBICRSNOIZ       6
+#define VBICICNOIZ       7
+#define VBICIBNOIZ       8
+#define VBICIBEPNOIZ     9
+#define VBICICCPNOIZ    10
+#define VBICFLBENOIZ    11
+#define VBICFLBEPNOIZ   12
+#define VBICTOTNOIZ     13
+
+#define VBICNSRCS       14     /* the number of VBIC noise sources */
+
 /* data needed to describe a single instance */
 
 typedef struct sVBICinstance {
@@ -218,25 +237,6 @@ typedef struct sVBICinstance {
 #define VBICsenCmcb VBICsens+40 /* stores the perturbed values of cmcb */
 #define VBICsenCsub VBICsens+45 /* stores the perturbed values of csub */
 
-
-/* indices to array of VBIC noise sources */
-
-#define VBICRCNOIZ       0
-#define VBICRCINOIZ      1
-#define VBICRBNOIZ       2
-#define VBICRBINOIZ      3
-#define VBICRENOIZ       4
-#define VBICRBPNOIZ      5
-#define VBICRSNOIZ       6
-#define VBICICNOIZ       7
-#define VBICIBNOIZ       8
-#define VBICIBEPNOIZ     9
-#define VBICICCPNOIZ    10
-#define VBICFLBENOIZ    11
-#define VBICFLBEPNOIZ   12
-#define VBICTOTNOIZ     13
-
-#define VBICNSRCS       14     /* the number of VBIC noise sources */
 
 #ifndef NONOISE
       double VBICnVar[NSTATVARS][VBICNSRCS];

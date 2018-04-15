@@ -15,6 +15,16 @@ Modified: Alan Gillespie
 
     /* declarations for level 9 MOSFETs */
 
+/* indices to the array of MOSFET(9) noise sources */
+
+#define MOS9RDNOIZ       0
+#define MOS9RSNOIZ       1
+#define MOS9IDNOIZ       2
+#define MOS9FLNOIZ 3
+#define MOS9TOTNOIZ    4
+
+#define MOS9NSRCS     5     /* the number of MOSFET(9) noise sources */
+
 /* information needed for each instance */
 
 typedef struct sMOS9instance {
@@ -255,15 +265,6 @@ typedef struct sMOS9instance {
 #endif
 
     /* 		end distortion coeffs.  	*/
-/* indices to the array of MOSFET(3) noise sources */
-
-#define MOS9RDNOIZ       0
-#define MOS9RSNOIZ       1
-#define MOS9IDNOIZ       2
-#define MOS9FLNOIZ 3
-#define MOS9TOTNOIZ    4
-
-#define MOS9NSRCS     5     /* the number of MOSFET(9) noise sources */
 
 #ifndef NONOISE
     double MOS9nVar[NSTATVARS][MOS9NSRCS];
