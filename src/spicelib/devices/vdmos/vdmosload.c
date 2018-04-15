@@ -14,6 +14,10 @@ VDMOS: 2018 Holger Vogt
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
+static double
+cweakinv(double n, double vgst, double vds, double lambda, double beta, double vt, double mtr);
+
+
 int
 VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
 /* actually load the current value into the
@@ -361,38 +365,63 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                 vgst = (here->VDMOSmode == 1 ? vgs : vgd) - von;
                 vdsat = MAX(vgst, 0);
                 arg = 0;
-                if (vgst <= 0) {
-                    /*
-                     *     cutoff region
-                     */
-                    cdrain = 0;
-                    here->VDMOSgm = 0;
-                    here->VDMOSgds = 0;
-                    here->VDMOSgmbs = 0;
+                /* drain current including subthreshold current
+                 * numerical differentiation for gd and gm with a delta of 2 mV */
+                if (model->VDMOSsubthGiven && (here->VDMOSmode == 1)) {
+                    double delta = 0.001;
+                    cdrain = cweakinv(model->VDMOSsubth, vgst, vds, model->VDMOSlambda,
+                        Beta, vt, model->VDMOSmtr);
+                    /* gd */
+                    double vds1 = vds + delta;
+                    double cdrp = cweakinv(model->VDMOSsubth, vgst, vds1, model->VDMOSlambda,
+                        Beta, vt, model->VDMOSmtr);
+                    vds1 = vds - delta;
+                    double cdrm = cweakinv(model->VDMOSsubth, vgst, vds1, model->VDMOSlambda,
+                        Beta, vt, model->VDMOSmtr);
+                    here->VDMOSgds = (cdrp - cdrm) / (2. * delta);
+                    /* gm */
+                    double vgst1 = vgst + delta;
+                    cdrp = cweakinv(model->VDMOSsubth, vgst1, vds, model->VDMOSlambda,
+                        Beta, vt, model->VDMOSmtr);
+                    vgst1 = vgst - delta;
+                    cdrm = cweakinv(model->VDMOSsubth, vgst1, vds, model->VDMOSlambda,
+                        Beta, vt, model->VDMOSmtr);
+                    here->VDMOSgm = (cdrp - cdrm) / (2. * delta);
+                    here->VDMOSgmbs = 0.;
                 } else {
-                    /*
-                     *     saturation region
-                     */
-                    /* scale vds with mtr */
-                    double mtr = model->VDMOSmtr;
-                    betap = Beta*(1 + model->VDMOSlambda*(vds*here->VDMOSmode));
-                    if (vgst <= (vds * here->VDMOSmode) * mtr) {
-                        cdrain = betap*vgst*vgst*.5;
-                        here->VDMOSgm = betap*vgst;
-                        here->VDMOSgds = model->VDMOSlambda*Beta*vgst*vgst*.5;
-                        here->VDMOSgmbs = here->VDMOSgm*arg;
+                    if (vgst <= 0) {
+                        /*
+                         *     cutoff region
+                         */
+                        cdrain = 0;
+                        here->VDMOSgm = 0;
+                        here->VDMOSgds = 0;
+                        here->VDMOSgmbs = 0;
                     } else {
                         /*
-                         *     linear region
+                         *     saturation region
                          */
-                        cdrain = betap * (vds * here->VDMOSmode) * mtr *
-                                 (vgst - .5 * (vds*here->VDMOSmode) * mtr);
-                        here->VDMOSgm = betap * (vds * here->VDMOSmode) * mtr;
-                        here->VDMOSgds = betap * (vgst - (vds * here->VDMOSmode) * mtr) +
-                                         model->VDMOSlambda * Beta *
-                                         (vds * here->VDMOSmode) * mtr *
-                                         (vgst - .5 * (vds * here->VDMOSmode) * mtr);
-                        here->VDMOSgmbs = here->VDMOSgm * arg;
+                        /* scale vds with mtr */
+                        double mtr = model->VDMOSmtr;
+                        betap = Beta*(1 + model->VDMOSlambda*(vds*here->VDMOSmode));
+                        if (vgst <= (vds * here->VDMOSmode) * mtr) {
+                            cdrain = betap*vgst*vgst*.5;
+                            here->VDMOSgm = betap*vgst;
+                            here->VDMOSgds = model->VDMOSlambda*Beta*vgst*vgst*.5;
+                            here->VDMOSgmbs = here->VDMOSgm*arg;
+                        } else {
+                            /*
+                             *     linear region
+                             */
+                            cdrain = betap * (vds * here->VDMOSmode) * mtr *
+                                     (vgst - .5 * (vds*here->VDMOSmode) * mtr);
+                            here->VDMOSgm = betap * (vds * here->VDMOSmode) * mtr;
+                            here->VDMOSgds = betap * (vgst - (vds * here->VDMOSmode) * mtr) +
+                                             model->VDMOSlambda * Beta *
+                                             (vds * here->VDMOSmode) * mtr *
+                                             (vgst - .5 * (vds * here->VDMOSmode) * mtr);
+                            here->VDMOSgmbs = here->VDMOSgm * arg;
+                        }
                     }
                 }
             }
@@ -828,4 +857,36 @@ load :
         }
     }
     return(OK);
+}
+
+
+/* Calculate D/S current including weak inversion.
+ * Uses a single function covering weak-moderate-stong inversion, as well
+ * as linear and saturation regions, with an interpolation method according to
+ * Tvividis, McAndrew: "Operation and Modeling of the MOS Transistor", Oxford, 2011, p. 209.
+ * A single parameter n sets the slope of the weak inversion current. The weak inversion
+ * current is independent from vds, as in long channel devices.
+ * The following modification has been added for VDMOS compatibility:
+ * n and lambda are depending on vgst with a sine function interpolating between 0 and 1.
+ */
+
+static double
+cweakinv(double n, double vgst, double vds, double lambda, double beta, double vt, double mtr)
+{
+    double scalef;
+    double nf2 = 0.1; /* empirical setting of sin 'speed' */
+    double vgstsin = vgst / nf2;
+    if (vgstsin > 1)
+        scalef = 1;
+    else if (vgstsin < -1)
+        scalef = 0;
+    else
+        scalef = 0.5 * sin(vgstsin * M_PI / 2) + 0.5;
+    double n1 = n + (1 - n) * scalef; /* n < n1 < 1 */
+    double first = log(1 + exp(vgst / (2 * n1 * vt)));
+    double second = log(1 + exp((vgst - vds * mtr * n1) / (2 * n1 * vt)));
+    double cds =
+        beta * n1 * 2 * vt * vt * (1 + scalef * lambda * vds) *
+        (first * first - second * second);
+    return cds;
 }
