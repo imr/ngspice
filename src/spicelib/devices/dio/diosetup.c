@@ -196,9 +196,9 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             here->DIOjunctionSWCap = model->DIOjunctionSWCap * here->DIOpj;
 
             here->DIOstate = *states;
-            *states += 5;
+            *states += DIOnumStates;
             if(ckt->CKTsenInfo && (ckt->CKTsenInfo->SENmode & TRANSEN) ){
-                *states += 2 * (ckt->CKTsenInfo->SENparms);
+                *states += DIOnumSenStates * (ckt->CKTsenInfo->SENparms);
             }
 
             if(model->DIOresist == 0) {

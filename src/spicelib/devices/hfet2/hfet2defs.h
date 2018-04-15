@@ -63,7 +63,9 @@ typedef struct sHFET2instance {
 #define HFET2cqgs HFET2state+10 
 #define HFET2qgd HFET2state+11 
 #define HFET2cqgd HFET2state+12 
-    
+
+#define HFET2numStates 13
+
     int HFET2mode;
     int HFET2off;
     

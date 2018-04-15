@@ -76,9 +76,9 @@ INDsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 here=INDnextInstance(here)) {
 
             here->INDflux = *states;
-            *states += 2 ;
+            *states += INDnumStates ;
             if(ckt->CKTsenInfo && (ckt->CKTsenInfo->SENmode & TRANSEN) ){
-                *states += 2 * (ckt->CKTsenInfo->SENparms);
+                *states += INDnumSenStates * (ckt->CKTsenInfo->SENparms);
             }
 
             if(here->INDbrEq == 0) {

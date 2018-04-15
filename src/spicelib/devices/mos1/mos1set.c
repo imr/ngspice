@@ -97,7 +97,7 @@ MOS1setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
             *states += MOS1numStates;
 
             if(ckt->CKTsenInfo && (ckt->CKTsenInfo->SENmode & TRANSEN) ){
-                *states += 10 * (ckt->CKTsenInfo->SENparms);
+                *states += MOS1numSenStates * (ckt->CKTsenInfo->SENparms);
             }
 
             if(!here->MOS1drainPerimiterGiven) {

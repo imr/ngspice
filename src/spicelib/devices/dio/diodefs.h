@@ -159,9 +159,14 @@ typedef struct sDIOinstance {
 #define DIOconduct DIOstate+2
 #define DIOcapCharge DIOstate+3
 #define DIOcapCurrent DIOstate+4
+
+#define DIOnumStates 5
+
 #define DIOsensxp DIOstate+5    /* charge sensitivities and their derivatives.
                                  * +6 for the derivatives - pointer to the
                                  * beginning of the array */
+
+#define DIOnumSenStates 2
 
 
 /* per model data */

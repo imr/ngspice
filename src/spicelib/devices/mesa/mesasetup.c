@@ -251,7 +251,7 @@ MESAsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
 
             here->MESAstate = *states;
-            *states += 20;
+            *states += MESAnumStates;
 
             if(model->MESAsourceResist != 0) {
                 if(here->MESAsourcePrimeNode == 0) {

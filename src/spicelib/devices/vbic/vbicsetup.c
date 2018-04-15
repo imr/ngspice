@@ -398,7 +398,7 @@ VBICsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             here->VBICstate = *states;
             *states += VBICnumStates;
             if(ckt->CKTsenInfo && (ckt->CKTsenInfo->SENmode & TRANSEN) ){
-                *states += 10 * (ckt->CKTsenInfo->SENparms);
+                *states += VBICnumSenStates * (ckt->CKTsenInfo->SENparms);
             }
 
             if(model->VBICextCollResist == 0) {

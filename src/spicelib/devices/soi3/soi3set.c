@@ -329,7 +329,7 @@ SOI3setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             here->SOI3states = *states;
             *states += SOI3numStates;
 /*               if(ckt->CKTsenInfo && (ckt->CKTsenInfo->SENmode & TRANSEN) ){
-                   *states += 10 * (ckt->CKTsenInfo->SENparms);
+                   *states += SOI3numSenStates * (ckt->CKTsenInfo->SENparms);
                }
 */
 				/****** Part 4 - check resistance values for internal nodes, ******/

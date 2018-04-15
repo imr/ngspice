@@ -339,9 +339,9 @@ typedef struct sVBICinstance {
 
 #define VBICnumStates 66
 
-#define VBICsensxpbe VBICstate+66 /* charge sensitivities and their
-                              derivatives. +67 for the derivatives -
-                              pointer to the beginning of the array */
+#define VBICsensxpbe VBICstate+66 /* charge sensitivities and their derivatives.
+                                   * +67 for the derivatives
+                                   * pointer to the beginning of the array */
 #define VBICsensxpbex VBICstate+68
 #define VBICsensxpbc VBICstate+70
 #define VBICsensxpbcx VBICstate+72

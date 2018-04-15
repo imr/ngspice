@@ -302,8 +302,8 @@ typedef struct sMOS2instance {
 
 
 #define MOS2sensxpgs MOS2states+17 /* charge sensitivities and their derivatives
-                                     +18 for the derivatives - pointer to the
-                     beginning of the array */
+                                    * +18 for the derivatives
+                                    * pointer to the beginning of the array */
 
 #define MOS2sensxpgd  MOS2states+19
 #define MOS2sensxpgb  MOS2states+21

@@ -243,7 +243,6 @@ HFETAsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             }
  
             here->HFETAstate = *states;
-            /* *states += 24; */
             *states += HFETAnumStates;
 
             if(model->HFETArs != 0) {

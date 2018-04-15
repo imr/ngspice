@@ -50,7 +50,7 @@ JFET2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             }
 
             here->JFET2state = *states;
-            *states += JFET2_STATE_COUNT + 1;
+            *states += JFET2numStates;
 
             if(model->JFET2rs != 0) {
                 if(here->JFET2sourcePrimeNode == 0) {

@@ -145,7 +145,7 @@ MOS6setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
             here->MOS6states = *states;
             *states += MOS6numStates;
             if(ckt->CKTsenInfo && (ckt->CKTsenInfo->SENmode & TRANSEN) ){
-                *states += 10 * (ckt->CKTsenInfo->SENparms);
+                *states += MOS6numSenStates * (ckt->CKTsenInfo->SENparms);
             }
 
             if((model->MOS6drainResistance != 0 ||

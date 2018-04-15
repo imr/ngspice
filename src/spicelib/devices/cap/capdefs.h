@@ -68,9 +68,14 @@ typedef struct sCAPinstance {
 
 #define CAPqcap CAPstate    /* charge on the capacitor */
 #define CAPccap CAPstate+1  /* current through the capacitor */
+
+#define CAPnumStates 2
+
 #define CAPsensxp CAPstate+2 /* charge sensitivities and their derivatives.
-+3 for the derivatives - pointer to the
-beginning of the array */
+                              * +3 for the derivatives - pointer to the
+                              * beginning of the array */
+
+#define CAPnumSenStates 2
 
 
 /* data per model */

@@ -100,9 +100,9 @@ CAPsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             }
 
             here->CAPqcap = *states;
-            *states += 2;
+            *states += CAPnumStates;
             if(ckt->CKTsenInfo && (ckt->CKTsenInfo->SENmode & TRANSEN) ){
-                *states += 2 * (ckt->CKTsenInfo->SENparms);
+                *states += CAPnumSenStates * (ckt->CKTsenInfo->SENparms);
             }
 
 /* macro to make elements with built in test for out of memory */

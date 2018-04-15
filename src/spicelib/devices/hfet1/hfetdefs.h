@@ -12,8 +12,6 @@ Modified: Paolo Nenzi
 #include "ngspice/complex.h"
 #include "ngspice/noisedef.h"
 
-#define HFETAnumStates 24
-
 typedef struct sHFETAinstance {
 
     struct GENinstance gen;
@@ -96,6 +94,8 @@ typedef struct sHFETAinstance {
 #define HFETAcqds  HFETAstate+21
 #define HFETAgmg   HFETAstate+22
 #define HFETAgmd   HFETAstate+23
+
+#define HFETAnumStates 24
 
 
 

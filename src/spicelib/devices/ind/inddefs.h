@@ -79,9 +79,14 @@ struct sINDinstance {
 
 #define INDflux INDstate     /* flux in the inductor */
 #define INDvolt INDstate+1   /* voltage - save an entry in table */
+
+#define INDnumStates 2
+
 #define INDsensxp INDstate+2 /* charge sensitivities and their derivatives.
                               *  +3 for the derivatives - pointer to the
                               *  beginning of the array */
+
+#define INDnumSenStates 2
 
 
 /* per model data */

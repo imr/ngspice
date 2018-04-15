@@ -366,7 +366,7 @@ BJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             here->BJTstate = *states;
             *states += BJTnumStates;
             if(ckt->CKTsenInfo && (ckt->CKTsenInfo->SENmode & TRANSEN) ){
-                *states += 8 * (ckt->CKTsenInfo->SENparms);
+                *states += BJTnumSenStates * (ckt->CKTsenInfo->SENparms);
             }
 
             if(model->BJTcollectorResist == 0) {

@@ -127,7 +127,7 @@ int HFET2setup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state
       IFuid tmpName;
    
       here->HFET2state = *states;
-      *states += 13;
+      *states += HFET2numStates;
       
       if(!here->HFET2lengthGiven)
         L = 1e-6;      

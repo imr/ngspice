@@ -225,9 +225,9 @@ typedef struct sMOS6instance {
 
 #define MOS6numStates 17
 
-#define MOS6sensxpgs MOS6states+17 /* charge sensitivities and 
-          their derivatives.  +18 for the derivatives:
-          pointer to the beginning of the array */
+#define MOS6sensxpgs MOS6states+17 /* charge sensitivities and their derivatives.
+                                    * +18 for the derivatives
+                                    * pointer to the beginning of the array */
 #define MOS6sensxpgd  MOS6states+19
 #define MOS6sensxpgb  MOS6states+21
 #define MOS6sensxpbs  MOS6states+23
