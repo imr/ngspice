@@ -53,15 +53,15 @@ SENSsetParam(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
         job->n_freq_steps = value->iValue;
         break;
 
-    case SENS_DEC:
+    case SENS_DECADE:
 	job->step_type = SENS_DECADE;
         break;
 
-    case SENS_OCT:
+    case SENS_OCTAVE:
 	job->step_type = SENS_OCTAVE;
         break;
 
-    case SENS_LIN:
+    case SENS_LINEAR:
 	job->step_type = SENS_LINEAR;
 	break;
 
@@ -97,9 +97,9 @@ static IFparm SENSparms[] = {
     { "stop",       SENS_STOP,  IF_SET|IF_ASK|IF_REAL, "ending frequency" },
     { "numsteps",   SENS_STEPS,IF_SET|IF_ASK|IF_INTEGER,
 	    "number of frequencies"},
-    { "dec",        SENS_DEC,     IF_SET|IF_FLAG, "step by decades" },
-    { "oct",        SENS_OCT,     IF_SET|IF_FLAG, "step by octaves" },
-    { "lin",        SENS_LIN,     IF_SET|IF_FLAG, "step linearly" },
+    { "dec",        SENS_DECADE,  IF_SET|IF_FLAG, "step by decades" },
+    { "oct",        SENS_OCTAVE,  IF_SET|IF_FLAG, "step by octaves" },
+    { "lin",        SENS_LINEAR,  IF_SET|IF_FLAG, "step linearly" },
     { "dc",         SENS_DC,      IF_SET|IF_FLAG, "analysis at DC" },
 };
 
