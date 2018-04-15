@@ -17,7 +17,7 @@ ISRCsetup (SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
     ISRCmodel *model = (ISRCmodel *)inModel ;
     ISRCinstance *here ;
 
-    int i, j, k, status ;
+    int i, j, status ;
 
     NG_IGNORE(matrix) ;
     NG_IGNORE(ckt) ;
@@ -35,6 +35,9 @@ ISRCsetup (SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
 
         /* How many instances we have */
         model->n_instances = i ;
+
+        /* This model supports CUDA */
+        model->gen.has_cuda = 1 ;
     }
 
     /*  loop through all the current source models */
@@ -42,23 +45,23 @@ ISRCsetup (SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
     {
         model->offsetRHS = ckt->total_n_valuesRHS ;
 
-        k = 0 ;
+        j = 0 ;
 
         /* loop through all the instances of the model */
         for (here = ISRCinstances(model); here != NULL ; here = ISRCnextInstance(here))
         {
             /* For the RHS */
             if (here->ISRCposNode != 0)
-                k++ ;
+                j++ ;
 
             if (here->ISRCnegNode != 0)
-                k++ ;
+                j++ ;
         }
 
         model->n_valuesRHS = model->n_instances;
         ckt->total_n_valuesRHS += model->n_valuesRHS ;
 
-        model->n_PtrRHS = k ;
+        model->n_PtrRHS = j ;
         ckt->total_n_PtrRHS += model->n_PtrRHS ;
 
 
