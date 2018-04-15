@@ -14,6 +14,18 @@ Author: 1985 Thomas L. Quarles
 
 /* structures to describe Bipolar Junction Transistors */
 
+/* indices to array of BJT noise sources */
+
+#define BJTRCNOIZ       0
+#define BJTRBNOIZ       1
+#define BJT_RE_NOISE    2
+#define BJTICNOIZ       3
+#define BJTIBNOIZ       4
+#define BJTFLNOIZ       5
+#define BJTTOTNOIZ      6
+
+#define BJTNSRCS     7     /* the number of BJT noise sources */
+
 /* data needed to describe a single instance */
 
 typedef struct sBJTinstance {
@@ -266,17 +278,6 @@ typedef struct sBJTinstance {
 
 #endif
 
-/* indices to array of BJT noise sources */
-
-#define BJTRCNOIZ       0
-#define BJTRBNOIZ       1
-#define BJT_RE_NOISE    2
-#define BJTICNOIZ       3
-#define BJTIBNOIZ       4
-#define BJTFLNOIZ       5
-#define BJTTOTNOIZ      6
-
-#define BJTNSRCS     7     /* the number of BJT noise sources */
 
 #ifndef NONOISE
       double BJTnVar[NSTATVARS][BJTNSRCS];

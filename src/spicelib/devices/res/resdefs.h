@@ -15,6 +15,13 @@ Modified: 2000 AlansFixes
 
 /* definitions used to describe resistors */
 
+/* indices to array of RES noise sources */
+
+#define RESTHNOIZ  0     /* Thermal noise source */
+#define RESFLNOIZ  1     /* Flicker noise source */
+#define RESTOTNOIZ 2     /* Total noise          */
+
+#define RESNSRCS   3     /* the number of RES noise sources */
 
 /* information used to describe a single instance */
 
@@ -72,15 +79,6 @@ typedef struct sRESinstance {
     unsigned RESbv_maxGiven : 1;    /* flags indicates maximum voltage is given */
     int    RESsenParmNo;            /* parameter # for sensitivity use;
                                      * set equal to  0 if not a design parameter*/
-
-    /* indices to array of RES noise sources */
-
-#define RESTHNOIZ  0     /* Thermal noise source */
-#define RESFLNOIZ  1     /* Flicker noise source */
-#define RESTOTNOIZ 2     /* Total noise          */
-
-#define RESNSRCS   3     /* the number of RES noise sources */
-
 
 #ifndef NONOISE
     double RESnVar[NSTATVARS][RESNSRCS];
