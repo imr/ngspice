@@ -131,26 +131,11 @@ VDMOSask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
         case VDMOS_GBS:
             value->rValue = here->VDMOSgbs;
             return(OK);
-        case VDMOS_CAPBD:
-            value->rValue = here->VDMOScapbd;
-            return(OK);
-        case VDMOS_CAPBS:
-            value->rValue = here->VDMOScapbs;
-            return(OK);
-        case VDMOS_VBD:
-            value->rValue = *(ckt->CKTstate0 + here->VDMOSvbd);
-            return(OK);
-        case VDMOS_VBS:
-            value->rValue = *(ckt->CKTstate0 + here->VDMOSvbs);
-            return(OK);
         case VDMOS_VGS:
             value->rValue = *(ckt->CKTstate0 + here->VDMOSvgs);
             return(OK);
         case VDMOS_VDS:
             value->rValue = *(ckt->CKTstate0 + here->VDMOSvds);
-            return(OK);
-        case VDMOS_CAPGS:
-            value->rValue = 2* *(ckt->CKTstate0 + here->VDMOScapgs);
             return(OK);
         case VDMOS_QGS:
             value->rValue = *(ckt->CKTstate0 + here->VDMOSqgs);
@@ -158,17 +143,11 @@ VDMOSask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
         case VDMOS_CQGS:
             value->rValue = *(ckt->CKTstate0 + here->VDMOScqgs);
             return(OK);
-        case VDMOS_CAPGD:
-            value->rValue = 2* *(ckt->CKTstate0 + here->VDMOScapgd);
-            return(OK);
         case VDMOS_QGD:
             value->rValue = *(ckt->CKTstate0 + here->VDMOSqgd);
             return(OK);
         case VDMOS_CQGD:
             value->rValue = *(ckt->CKTstate0 + here->VDMOScqgd);
-            return(OK);
-        case VDMOS_CAPGB:
-            value->rValue = 2* *(ckt->CKTstate0 + here->VDMOScapgb);
             return(OK);
         case VDMOS_QGB:
             value->rValue = *(ckt->CKTstate0 + here->VDMOSqgb);

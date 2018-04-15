@@ -31,12 +31,8 @@ IFparm VDMOSpTable[] = { /* parameters */
  OPU( "ibs",         VDMOS_CBS,        IF_REAL,    "B-S junction current"),
  OP( "vgs",          VDMOS_VGS,        IF_REAL,    "Gate-Source voltage"),
  OP( "vds",          VDMOS_VDS,        IF_REAL,    "Drain-Source voltage"),
- OP( "vbs",          VDMOS_VBS,        IF_REAL,    "Bulk-Source voltage"),
- OPU( "vbd",         VDMOS_VBD,        IF_REAL,    "Bulk-Drain voltage"),
- /*
  OP( "cgs",          VDMOS_CGS,        IF_REAL,    "Gate-Source capacitance"),
  OP( "cgd",          VDMOS_CGD,        IF_REAL,    "Gate-Drain capacitance"),
- */
  OP( "cds",          VDMOS_CDS,        IF_REAL,    "Drain-Source capacitance"),
 
  OPU( "dnode",      VDMOS_DNODE,      IF_INTEGER, "Number of the drain node "),
@@ -61,12 +57,6 @@ IFparm VDMOSpTable[] = { /* parameters */
  OPR( "gmbs",     VDMOS_GMBS,       IF_REAL,    ""),
  OPU( "gbd",      VDMOS_GBD,        IF_REAL,    "Bulk-Drain conductance"),
  OPU( "gbs",      VDMOS_GBS,        IF_REAL,    "Bulk-Source conductance"),
-
- OP( "cbd",        VDMOS_CAPBD,      IF_REAL,    "Bulk-Drain capacitance"),
- OP( "cbs",        VDMOS_CAPBS,      IF_REAL,    "Bulk-Source capacitance"),
- OP( "cgs",        VDMOS_CAPGS,      IF_REAL,    "Gate-Source capacitance"),
- OP( "cgd",        VDMOS_CAPGD,      IF_REAL,    "Gate-Drain capacitance"),
- OP( "cgb",        VDMOS_CAPGB,      IF_REAL,    "Gate-Bulk capacitance"),
 
  OPU( "cqgs", VDMOS_CQGS, IF_REAL, "Capacitance due to gate-source charge storage"),
  OPU( "cqgd", VDMOS_CQGD, IF_REAL, "Capacitance due to gate-drain charge storage"),
