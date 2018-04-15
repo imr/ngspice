@@ -625,10 +625,10 @@ DevCapVDMOS(double vgd, double cgdmin,
     double s = (cgdmax - cgdmin) / (1 + M_PI / 2);
     double y = cgdmax - s;
     if (vgd > 0)
-        *capgd = s * tanh(a * vgd) + y;
+        *capgd = 0.5 * (s * tanh(a * vgd) + y);
     else
-        *capgd = s * atan(a * vgd) + y;
-    *capgs = cgs;
+        *capgd = 0.5 * (s * atan(a * vgd) + y);
+    *capgs = 0.5 * cgs;
     *capgb = 0;
 }
 
