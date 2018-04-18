@@ -35,7 +35,7 @@ cuCKTflush
 CKTcircuit *ckt
 )
 {
-    if (ckt->total_n_Ptr > 0 && ckt->total_n_PtrRHS > 0) {
+    if (ckt->total_n_Ptr > 0 || ckt->total_n_PtrRHS > 0) {
         long unsigned int m, mRHS ;
 
         m = (long unsigned int)(ckt->total_n_values + 1) ; // + 1 because of CKTdiagGmin

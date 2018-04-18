@@ -140,7 +140,7 @@ CKTload(CKTcircuit *ckt)
                                                                 // without the zeroes along the diagonal
     TopologyNNZRHS = ckt->total_n_PtrRHS ;
 
-    if (ckt->total_n_Ptr > 0 && ckt->total_n_PtrRHS > 0) {
+    if (TopologyNNZ > 0 || TopologyNNZRHS > 0) {
         /* Copy the CKTdiagGmin value to the GPU */
         // The real Gmin is needed only when the matrix will reside entirely on the GPU
         // Right now, only some models support CUDA, so the matrix is only partially created on the GPU
@@ -149,35 +149,40 @@ CKTload(CKTcircuit *ckt)
         //statusMemcpy = cudaMemcpy (ckt->d_CKTloadOutput + ckt->total_n_values, &(ckt->CKTdiagGmin), sizeof(double), cudaMemcpyHostToDevice) ;
         //CUDAMEMCPYCHECK (ckt->d_CKTloadOutput + ckt->total_n_values, 1, double, statusMemcpy)
 
-        /* Performing CSRMV for the Sparse Matrix using CUSPARSE */
-        cusparseStatus = cusparseDcsrmv ((cusparseHandle_t)(ckt->CKTmatrix->CKTcsrmvHandle),
-                                         CUSPARSE_OPERATION_NON_TRANSPOSE,
-                                         ckt->CKTmatrix->CKTklunz, ckt->total_n_values + 1,
-                                         ckt->total_n_Ptr + ckt->CKTdiagElements,
-                                         &alpha, (cusparseMatDescr_t)(ckt->CKTmatrix->CKTcsrmvDescr),
-                                         ckt->d_CKTtopologyMatrixCSRx, ckt->d_CKTtopologyMatrixCSRp,
-                                         ckt->d_CKTtopologyMatrixCSRj, ckt->d_CKTloadOutput, &beta,
-                                         ckt->CKTmatrix->d_CKTkluAx) ;
+        if (TopologyNNZ > 0) {
+            /* Performing CSRMV for the Sparse Matrix using CUSPARSE */
+            cusparseStatus = cusparseDcsrmv ((cusparseHandle_t)(ckt->CKTmatrix->CKTcsrmvHandle),
+                                             CUSPARSE_OPERATION_NON_TRANSPOSE,
+                                             ckt->CKTmatrix->CKTklunz, ckt->total_n_values + 1,
+                                             TopologyNNZ,
+                                             &alpha, (cusparseMatDescr_t)(ckt->CKTmatrix->CKTcsrmvDescr),
+                                             ckt->d_CKTtopologyMatrixCSRx, ckt->d_CKTtopologyMatrixCSRp,
+                                             ckt->d_CKTtopologyMatrixCSRj, ckt->d_CKTloadOutput, &beta,
+                                             ckt->CKTmatrix->d_CKTkluAx) ;
 
-        if (cusparseStatus != CUSPARSE_STATUS_SUCCESS)
-        {
-            fprintf (stderr, "CUSPARSE MATRIX Call Error\n") ;
-            return (E_NOMEM) ;
+            if (cusparseStatus != CUSPARSE_STATUS_SUCCESS)
+            {
+                fprintf (stderr, "CUSPARSE MATRIX Call Error\n") ;
+                return (E_NOMEM) ;
+            }
         }
 
-        /* Performing CSRMV for the RHS using CUSPARSE */
-        cusparseStatus = cusparseDcsrmv ((cusparseHandle_t)(ckt->CKTmatrix->CKTcsrmvHandle),
-                                         CUSPARSE_OPERATION_NON_TRANSPOSE,
-                                         ckt->CKTmatrix->CKTkluN + 1, ckt->total_n_valuesRHS, ckt->total_n_PtrRHS,
-                                         &alpha, (cusparseMatDescr_t)(ckt->CKTmatrix->CKTcsrmvDescr),
-                                         ckt->d_CKTtopologyMatrixCSRxRHS, ckt->d_CKTtopologyMatrixCSRpRHS,
-                                         ckt->d_CKTtopologyMatrixCSRjRHS, ckt->d_CKTloadOutputRHS, &beta,
-                                         ckt->CKTmatrix->d_CKTrhs) ;
+        if (TopologyNNZRHS > 0) {
+            /* Performing CSRMV for the RHS using CUSPARSE */
+            cusparseStatus = cusparseDcsrmv ((cusparseHandle_t)(ckt->CKTmatrix->CKTcsrmvHandle),
+                                             CUSPARSE_OPERATION_NON_TRANSPOSE,
+                                             ckt->CKTmatrix->CKTkluN + 1, ckt->total_n_valuesRHS,
+                                             TopologyNNZRHS,
+                                             &alpha, (cusparseMatDescr_t)(ckt->CKTmatrix->CKTcsrmvDescr),
+                                             ckt->d_CKTtopologyMatrixCSRxRHS, ckt->d_CKTtopologyMatrixCSRpRHS,
+                                             ckt->d_CKTtopologyMatrixCSRjRHS, ckt->d_CKTloadOutputRHS, &beta,
+                                             ckt->CKTmatrix->d_CKTrhs) ;
 
-        if (cusparseStatus != CUSPARSE_STATUS_SUCCESS)
-        {
-            fprintf (stderr, "CUSPARSE RHS Call Error\n") ;
-            return (E_NOMEM) ;
+            if (cusparseStatus != CUSPARSE_STATUS_SUCCESS)
+            {
+                fprintf (stderr, "CUSPARSE RHS Call Error\n") ;
+                return (E_NOMEM) ;
+            }
         }
 
         cudaDeviceSynchronize () ;

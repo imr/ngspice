@@ -48,37 +48,13 @@ GENmodel *inModel
     cudaError_t status ;
     RESmodel *model = (RESmodel *)inModel ;
 
-    size = (long unsigned int) model->n_instances;
+    size = (long unsigned int) model->n_instances ;
 
     /* DOUBLE */
-    status = cudaMemcpy (model->RESparamGPU.d_REStc1Array, model->RESparamCPU.REStc1Array, size * sizeof(double), cudaMemcpyHostToDevice) ;
-    CUDAMEMCPYCHECK(model->RESparamGPU.d_REStc1Array, size, double, status)
-
-    status = cudaMemcpy (model->RESparamGPU.d_REStc2Array, model->RESparamCPU.REStc2Array, size * sizeof(double), cudaMemcpyHostToDevice) ;
-    CUDAMEMCPYCHECK(model->RESparamGPU.d_REStc2Array, size, double, status)
-
-    status = cudaMemcpy (model->RESparamGPU.d_RESmArray, model->RESparamCPU.RESmArray, size * sizeof(double), cudaMemcpyHostToDevice) ;
-    CUDAMEMCPYCHECK(model->RESparamGPU.d_RESmArray, size, double, status)
-
     status = cudaMemcpy (model->RESparamGPU.d_RESconductArray, model->RESparamCPU.RESconductArray, size * sizeof(double), cudaMemcpyHostToDevice) ;
     CUDAMEMCPYCHECK(model->RESparamGPU.d_RESconductArray, size, double, status)
 
-    status = cudaMemcpy (model->RESparamGPU.d_REStempArray, model->RESparamCPU.REStempArray, size * sizeof(double), cudaMemcpyHostToDevice) ;
-    CUDAMEMCPYCHECK(model->RESparamGPU.d_REStempArray, size, double, status)
-
-    status = cudaMemcpy (model->RESparamGPU.d_RESdtempArray, model->RESparamCPU.RESdtempArray, size * sizeof(double), cudaMemcpyHostToDevice) ;
-    CUDAMEMCPYCHECK(model->RESparamGPU.d_RESdtempArray, size, double, status)
-
     /* INT */
-    status = cudaMemcpy (model->RESparamGPU.d_REStc1GivenArray, model->RESparamCPU.REStc1GivenArray, size * sizeof(int), cudaMemcpyHostToDevice) ;
-    CUDAMEMCPYCHECK(model->RESparamGPU.d_REStc1GivenArray, size, int, status)
-
-    status = cudaMemcpy (model->RESparamGPU.d_REStc2GivenArray, model->RESparamCPU.REStc2GivenArray, size * sizeof(int), cudaMemcpyHostToDevice) ;
-    CUDAMEMCPYCHECK(model->RESparamGPU.d_REStc2GivenArray, size, int, status)
-
-    status = cudaMemcpy (model->RESparamGPU.d_RESmGivenArray, model->RESparamCPU.RESmGivenArray, size * sizeof(int), cudaMemcpyHostToDevice) ;
-    CUDAMEMCPYCHECK(model->RESparamGPU.d_RESmGivenArray, size, int, status)
-
     status = cudaMemcpy (model->RESparamGPU.d_RESposNodeArray, model->RESparamCPU.RESposNodeArray, size * sizeof(int), cudaMemcpyHostToDevice) ;
     CUDAMEMCPYCHECK(model->RESparamGPU.d_RESposNodeArray, size, int, status)
 

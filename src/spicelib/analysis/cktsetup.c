@@ -232,101 +232,105 @@ CKTsetup(CKTcircuit *ckt)
 
         ckt->CKTdiagElements = j ;
 
-        /* Topology Matrix Pre-Allocation in COO format */
         TopologyNNZ = ckt->total_n_Ptr + ckt->CKTdiagElements ; // + ckt->CKTdiagElements because of CKTdiagGmin
                                                                 // without the zeroes along the diagonal
-        ckt->CKTtopologyMatrixCOOi = TMALLOC (int, TopologyNNZ) ;
-        ckt->CKTtopologyMatrixCOOj = TMALLOC (int, TopologyNNZ) ;
-        ckt->CKTtopologyMatrixCOOx = TMALLOC (double, TopologyNNZ) ;
-
-        /* Topology Matrix for the RHS Pre-Allocation in COO format */
         TopologyNNZRHS = ckt->total_n_PtrRHS ;
-        ckt->CKTtopologyMatrixCOOiRHS = TMALLOC (int, TopologyNNZRHS) ;
-        ckt->CKTtopologyMatrixCOOjRHS = TMALLOC (int, TopologyNNZRHS) ;
-        ckt->CKTtopologyMatrixCOOxRHS = TMALLOC (double, TopologyNNZRHS) ;
 
+        if (TopologyNNZ > 0 || TopologyNNZRHS > 0) {
+            /* Topology Matrix Construction & Topology Matrix for the RHS Construction */
 
-        if (ckt->total_n_Ptr > 0 && ckt->total_n_PtrRHS > 0) {
+            if (TopologyNNZ > 0) {
+                /* Topology Matrix Pre-Allocation in COO format */
+                ckt->CKTtopologyMatrixCOOi = TMALLOC (int, TopologyNNZ) ;
+                ckt->CKTtopologyMatrixCOOj = TMALLOC (int, TopologyNNZ) ;
+                ckt->CKTtopologyMatrixCOOx = TMALLOC (double, TopologyNNZ) ;
 
-        /* Topology Matrix Pre-Allocation in CSR format */
-        ckt->CKTtopologyMatrixCSRp = TMALLOC (int, nz + 1) ;
-
-        /* Topology Matrix for the RHS Pre-Allocation in CSR format */
-        ckt->CKTtopologyMatrixCSRpRHS = TMALLOC (int, (n + 1) + 1) ;
-
-
-        /* Topology Matrix Construction & Topology Matrix for the RHS Construction */
-
-        u = 0 ;
-        uRHS = 0 ;
-        for (i = 0 ; i < DEVmaxnum ; i++)
-            if (DEVices [i] && DEVices [i]->DEVtopology && ckt->CKThead [i])
-                DEVices [i]->DEVtopology (ckt->CKThead [i], ckt, &u, &uRHS) ;
-
-
-        /* CKTdiagGmin Contribute Addition to the Topology Matrix */
-        k = u ;
-        for (j = 0 ; j < n ; j++)
-        {
-            if (ckt->CKTmatrix->CKTdiag_CSC [j] >= ckt->CKTmatrix->CKTkluAx)
-            {
-                ckt->CKTtopologyMatrixCOOi [k] = (int)(ckt->CKTmatrix->CKTdiag_CSC [j] - ckt->CKTmatrix->CKTkluAx) ;
-                ckt->CKTtopologyMatrixCOOj [k] = ckt->total_n_values ;
-                ckt->CKTtopologyMatrixCOOx [k] = 1 ;
-                k++ ;
+                u = 0 ;
+                uRHS = 0 ;
+                for (i = 0 ; i < DEVmaxnum ; i++)
+                    if (DEVices [i] && DEVices [i]->DEVtopology && ckt->CKThead [i])
+                        DEVices [i]->DEVtopology (ckt->CKThead [i], ckt, &u, &uRHS) ;
             }
-        }
 
-        /* Copy the Topology Matrix to the GPU in COO format */
+            if (ckt->CKTdiagElements > 0) {
+                /* CKTdiagGmin Contribute Addition to the Topology Matrix */
+                k = u ;
+                for (j = 0 ; j < n ; j++)
+                {
+                    if (ckt->CKTmatrix->CKTdiag_CSC [j] >= ckt->CKTmatrix->CKTkluAx)
+                    {
+                        ckt->CKTtopologyMatrixCOOi [k] = (int)(ckt->CKTmatrix->CKTdiag_CSC [j] - ckt->CKTmatrix->CKTkluAx) ;
+                        ckt->CKTtopologyMatrixCOOj [k] = ckt->total_n_values ;
+                        ckt->CKTtopologyMatrixCOOx [k] = 1 ;
+                        k++ ;
+                    }
+                }
+            }
 
+            /* Copy the Topology Matrix to the GPU in COO format */
 
-        /* COO format to CSR format Conversion using Quick Sort */
+            if (TopologyNNZ > 0) {
+                /* COO format to CSR format Conversion using Quick Sort */
 
-        Element *TopologyStruct ;
-        TopologyStruct = TMALLOC (Element, TopologyNNZ) ;
+                Element *TopologyStruct ;
+                TopologyStruct = TMALLOC (Element, TopologyNNZ) ;
 
-        for (i = 0 ; i < TopologyNNZ ; i++)
-        {
-            TopologyStruct [i].row = ckt->CKTtopologyMatrixCOOi [i] ;
-            TopologyStruct [i].col = ckt->CKTtopologyMatrixCOOj [i] ;
-            TopologyStruct [i].val = ckt->CKTtopologyMatrixCOOx [i] ;
-        }
+                for (i = 0 ; i < TopologyNNZ ; i++)
+                {
+                    TopologyStruct [i].row = ckt->CKTtopologyMatrixCOOi [i] ;
+                    TopologyStruct [i].col = ckt->CKTtopologyMatrixCOOj [i] ;
+                    TopologyStruct [i].val = ckt->CKTtopologyMatrixCOOx [i] ;
+                }
 
-        qsort (TopologyStruct, (size_t)TopologyNNZ, sizeof(Element), Compare) ;
+                qsort (TopologyStruct, (size_t)TopologyNNZ, sizeof(Element), Compare) ;
 
-        for (i = 0 ; i < TopologyNNZ ; i++)
-        {
-            ckt->CKTtopologyMatrixCOOi [i] = TopologyStruct [i].row ;
-            ckt->CKTtopologyMatrixCOOj [i] = TopologyStruct [i].col ;
-            ckt->CKTtopologyMatrixCOOx [i] = TopologyStruct [i].val ;
-        }
+                for (i = 0 ; i < TopologyNNZ ; i++)
+                {
+                    ckt->CKTtopologyMatrixCOOi [i] = TopologyStruct [i].row ;
+                    ckt->CKTtopologyMatrixCOOj [i] = TopologyStruct [i].col ;
+                    ckt->CKTtopologyMatrixCOOx [i] = TopologyStruct [i].val ;
+                }
 
-        ret = Compress (ckt->CKTtopologyMatrixCOOi, ckt->CKTtopologyMatrixCSRp, nz, TopologyNNZ) ;
+                /* Topology Matrix Pre-Allocation in CSR format */
+                ckt->CKTtopologyMatrixCSRp = TMALLOC (int, nz + 1) ;
 
-        /* COO format to CSR format Conversion for the RHS using Quick Sort */
+                ret = Compress (ckt->CKTtopologyMatrixCOOi, ckt->CKTtopologyMatrixCSRp, nz, TopologyNNZ) ;
+            }
 
-        Element *TopologyStructRHS ;
-        TopologyStructRHS = TMALLOC (Element, TopologyNNZRHS) ;
+            if (TopologyNNZRHS > 0) {
+                /* Topology Matrix for the RHS Pre-Allocation in COO format */
+                ckt->CKTtopologyMatrixCOOiRHS = TMALLOC (int, TopologyNNZRHS) ;
+                ckt->CKTtopologyMatrixCOOjRHS = TMALLOC (int, TopologyNNZRHS) ;
+                ckt->CKTtopologyMatrixCOOxRHS = TMALLOC (double, TopologyNNZRHS) ;
 
-        for (i = 0 ; i < TopologyNNZRHS ; i++)
-        {
-            TopologyStructRHS [i].row = ckt->CKTtopologyMatrixCOOiRHS [i] ;
-            TopologyStructRHS [i].col = ckt->CKTtopologyMatrixCOOjRHS [i] ;
-            TopologyStructRHS [i].val = ckt->CKTtopologyMatrixCOOxRHS [i] ;
-        }
+                /* COO format to CSR format Conversion for the RHS using Quick Sort */
 
-        qsort (TopologyStructRHS, (size_t)TopologyNNZRHS, sizeof(Element), Compare) ;
+                Element *TopologyStructRHS ;
+                TopologyStructRHS = TMALLOC (Element, TopologyNNZRHS) ;
 
-        for (i = 0 ; i < TopologyNNZRHS ; i++)
-        {
-            ckt->CKTtopologyMatrixCOOiRHS [i] = TopologyStructRHS [i].row ;
-            ckt->CKTtopologyMatrixCOOjRHS [i] = TopologyStructRHS [i].col ;
-            ckt->CKTtopologyMatrixCOOxRHS [i] = TopologyStructRHS [i].val ;
-        }
+                for (i = 0 ; i < TopologyNNZRHS ; i++)
+                {
+                    TopologyStructRHS [i].row = ckt->CKTtopologyMatrixCOOiRHS [i] ;
+                    TopologyStructRHS [i].col = ckt->CKTtopologyMatrixCOOjRHS [i] ;
+                    TopologyStructRHS [i].val = ckt->CKTtopologyMatrixCOOxRHS [i] ;
+                }
 
-        ret = Compress (ckt->CKTtopologyMatrixCOOiRHS, ckt->CKTtopologyMatrixCSRpRHS, n + 1, TopologyNNZRHS) ;
+                qsort (TopologyStructRHS, (size_t)TopologyNNZRHS, sizeof(Element), Compare) ;
 
-        /* Multiply the Topology Matrix by the M Vector to build the Final CSC Matrix - after the CKTload Call */
+                for (i = 0 ; i < TopologyNNZRHS ; i++)
+                {
+                    ckt->CKTtopologyMatrixCOOiRHS [i] = TopologyStructRHS [i].row ;
+                    ckt->CKTtopologyMatrixCOOjRHS [i] = TopologyStructRHS [i].col ;
+                    ckt->CKTtopologyMatrixCOOxRHS [i] = TopologyStructRHS [i].val ;
+                }
+
+                /* Topology Matrix for the RHS Pre-Allocation in CSR format */
+                ckt->CKTtopologyMatrixCSRpRHS = TMALLOC (int, (n + 1) + 1) ;
+
+                ret = Compress (ckt->CKTtopologyMatrixCOOiRHS, ckt->CKTtopologyMatrixCSRpRHS, n + 1, TopologyNNZRHS) ;
+            }
+
+            /* Multiply the Topology Matrix by the M Vector to build the Final CSC Matrix - after the CKTload Call */
         }
 #endif
 
@@ -340,7 +344,7 @@ CKTsetup(CKTcircuit *ckt)
     }
 
 #ifdef USE_CUSPICE
-    if (ckt->total_n_Ptr > 0 && ckt->total_n_PtrRHS > 0) {
+    if (ckt->total_n_Ptr > 0 || ckt->total_n_PtrRHS > 0) {
         ckt->d_MatrixSize = SMPmatSize (ckt->CKTmatrix) ;
         status = cuCKTsetup (ckt) ;
         if (status != 0)
