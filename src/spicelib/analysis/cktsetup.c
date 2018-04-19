@@ -239,11 +239,20 @@ CKTsetup(CKTcircuit *ckt)
         if (TopologyNNZ > 0 || TopologyNNZRHS > 0) {
             /* Topology Matrix Construction & Topology Matrix for the RHS Construction */
 
-            if (TopologyNNZ > 0) {
-                /* Topology Matrix Pre-Allocation in COO format */
-                ckt->CKTtopologyMatrixCOOi = TMALLOC (int, TopologyNNZ) ;
-                ckt->CKTtopologyMatrixCOOj = TMALLOC (int, TopologyNNZ) ;
-                ckt->CKTtopologyMatrixCOOx = TMALLOC (double, TopologyNNZ) ;
+            if (TopologyNNZ > 0 || TopologyNNZRHS > 0) {
+                if (TopologyNNZ > 0) {
+                    /* Topology Matrix Pre-Allocation in COO format */
+                    ckt->CKTtopologyMatrixCOOi = TMALLOC (int, TopologyNNZ) ;
+                    ckt->CKTtopologyMatrixCOOj = TMALLOC (int, TopologyNNZ) ;
+                    ckt->CKTtopologyMatrixCOOx = TMALLOC (double, TopologyNNZ) ;
+                }
+
+                if (TopologyNNZRHS > 0) {
+                    /* Topology Matrix for the RHS Pre-Allocation in COO format */
+                    ckt->CKTtopologyMatrixCOOiRHS = TMALLOC (int, TopologyNNZRHS) ;
+                    ckt->CKTtopologyMatrixCOOjRHS = TMALLOC (int, TopologyNNZRHS) ;
+                    ckt->CKTtopologyMatrixCOOxRHS = TMALLOC (double, TopologyNNZRHS) ;
+                }
 
                 u = 0 ;
                 uRHS = 0 ;
@@ -298,11 +307,6 @@ CKTsetup(CKTcircuit *ckt)
             }
 
             if (TopologyNNZRHS > 0) {
-                /* Topology Matrix for the RHS Pre-Allocation in COO format */
-                ckt->CKTtopologyMatrixCOOiRHS = TMALLOC (int, TopologyNNZRHS) ;
-                ckt->CKTtopologyMatrixCOOjRHS = TMALLOC (int, TopologyNNZRHS) ;
-                ckt->CKTtopologyMatrixCOOxRHS = TMALLOC (double, TopologyNNZRHS) ;
-
                 /* COO format to CSR format Conversion for the RHS using Quick Sort */
 
                 Element *TopologyStructRHS ;
