@@ -186,6 +186,8 @@ typedef struct sJFETinstance {
 #define JFETqgd JFETstate+11 
 #define JFETcqgd JFETstate+12 
 
+#define JFETnumStates 13
+
 /* per model data */
 
 typedef struct sJFETmodel {       /* model structure for a jfet */

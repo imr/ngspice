@@ -196,7 +196,9 @@ typedef struct sJFET2instance {
 #define JFET2pave     JFET2state+15
 #define JFET2vtrap    JFET2state+16
 #define JFET2vgstrap  JFET2state+17
-#define JFET2_STATE_COUNT    18
+#define JFET2unknown  JFET2state+18
+
+#define JFET2numStates 19
 
 /* per model data */
 
