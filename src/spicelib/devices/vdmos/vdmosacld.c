@@ -54,23 +54,23 @@ VDMOSacLoad(GENmodel *inModel, CKTcircuit *ckt)
             xgb = capgb * ckt->CKTomega;
             xbd  = here->VDMOScapbd * ckt->CKTomega;
             xbs  = here->VDMOScapbs * ckt->CKTomega;
+
             /*
              *    load matrix
              */
-
-            *(here->VDMOSGgPtr +1) += xgd+xgs+xgb;
+            *(here->VDMOSGPgpPtr +1) += xgd+xgs+xgb;
             *(here->VDMOSBbPtr +1) += xgb+xbd+xbs;
             *(here->VDMOSDPdpPtr +1) += xgd+xbd;
             *(here->VDMOSSPspPtr +1) += xgs+xbs;
-            *(here->VDMOSGbPtr +1) -= xgb;
-            *(here->VDMOSGdpPtr +1) -= xgd;
-            *(here->VDMOSGspPtr +1) -= xgs;
-            *(here->VDMOSBgPtr +1) -= xgb;
+            *(here->VDMOSGPbPtr +1) -= xgb;
+            *(here->VDMOSGPdpPtr +1) -= xgd;
+            *(here->VDMOSGPspPtr +1) -= xgs;
+            *(here->VDMOSBgpPtr +1) -= xgb;
             *(here->VDMOSBdpPtr +1) -= xbd;
             *(here->VDMOSBspPtr +1) -= xbs;
-            *(here->VDMOSDPgPtr +1) -= xgd;
+            *(here->VDMOSDPgpPtr +1) -= xgd;
             *(here->VDMOSDPbPtr +1) -= xbd;
-            *(here->VDMOSSPgPtr +1) -= xgs;
+            *(here->VDMOSSPgpPtr +1) -= xgs;
             *(here->VDMOSSPbPtr +1) -= xbs;
             *(here->VDMOSDdPtr) += here->VDMOSdrainConductance;
             *(here->VDMOSSsPtr) += here->VDMOSsourceConductance;
@@ -86,11 +86,11 @@ VDMOSacLoad(GENmodel *inModel, CKTcircuit *ckt)
             *(here->VDMOSBdpPtr) -= here->VDMOSgbd;
             *(here->VDMOSBspPtr) -= here->VDMOSgbs;
             *(here->VDMOSDPdPtr) -= here->VDMOSdrainConductance;
-            *(here->VDMOSDPgPtr) += (xnrm-xrev)*here->VDMOSgm;
+            *(here->VDMOSDPgpPtr) += (xnrm-xrev)*here->VDMOSgm;
             *(here->VDMOSDPbPtr) += -here->VDMOSgbd+(xnrm-xrev)*here->VDMOSgmbs;
             *(here->VDMOSDPspPtr) -= here->VDMOSgds+
                     xnrm*(here->VDMOSgm+here->VDMOSgmbs);
-            *(here->VDMOSSPgPtr) -= (xnrm-xrev)*here->VDMOSgm;
+            *(here->VDMOSSPgpPtr) -= (xnrm-xrev)*here->VDMOSgm;
             *(here->VDMOSSPsPtr) -= here->VDMOSsourceConductance;
             *(here->VDMOSSPbPtr) -= here->VDMOSgbs+(xnrm-xrev)*here->VDMOSgmbs;
             *(here->VDMOSSPdpPtr) -= here->VDMOSgds+
