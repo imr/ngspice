@@ -236,32 +236,30 @@ CKTsetup(CKTcircuit *ckt)
                                                                 // without the zeroes along the diagonal
         TopologyNNZRHS = ckt->total_n_PtrRHS ;
 
-        if (TopologyNNZ > 0 || TopologyNNZRHS > 0) {
+        if (ckt->total_n_Ptr > 0 || TopologyNNZRHS > 0) {
             /* Topology Matrix Construction & Topology Matrix for the RHS Construction */
 
-            if (TopologyNNZ > 0 || TopologyNNZRHS > 0) {
-                if (TopologyNNZ > 0) {
-                    /* Topology Matrix Pre-Allocation in COO format */
-                    ckt->CKTtopologyMatrixCOOi = TMALLOC (int, TopologyNNZ) ;
-                    ckt->CKTtopologyMatrixCOOj = TMALLOC (int, TopologyNNZ) ;
-                    ckt->CKTtopologyMatrixCOOx = TMALLOC (double, TopologyNNZ) ;
-                }
-
-                if (TopologyNNZRHS > 0) {
-                    /* Topology Matrix for the RHS Pre-Allocation in COO format */
-                    ckt->CKTtopologyMatrixCOOiRHS = TMALLOC (int, TopologyNNZRHS) ;
-                    ckt->CKTtopologyMatrixCOOjRHS = TMALLOC (int, TopologyNNZRHS) ;
-                    ckt->CKTtopologyMatrixCOOxRHS = TMALLOC (double, TopologyNNZRHS) ;
-                }
-
-                u = 0 ;
-                uRHS = 0 ;
-                for (i = 0 ; i < DEVmaxnum ; i++)
-                    if (DEVices [i] && DEVices [i]->DEVtopology && ckt->CKThead [i])
-                        DEVices [i]->DEVtopology (ckt->CKThead [i], ckt, &u, &uRHS) ;
+            if (ckt->total_n_Ptr > 0) {
+                /* Topology Matrix Pre-Allocation in COO format */
+                ckt->CKTtopologyMatrixCOOi = TMALLOC (int, TopologyNNZ) ;
+                ckt->CKTtopologyMatrixCOOj = TMALLOC (int, TopologyNNZ) ;
+                ckt->CKTtopologyMatrixCOOx = TMALLOC (double, TopologyNNZ) ;
             }
 
-            if (ckt->CKTdiagElements > 0) {
+            if (TopologyNNZRHS > 0) {
+                /* Topology Matrix for the RHS Pre-Allocation in COO format */
+                ckt->CKTtopologyMatrixCOOiRHS = TMALLOC (int, TopologyNNZRHS) ;
+                ckt->CKTtopologyMatrixCOOjRHS = TMALLOC (int, TopologyNNZRHS) ;
+                ckt->CKTtopologyMatrixCOOxRHS = TMALLOC (double, TopologyNNZRHS) ;
+            }
+
+            u = 0 ;
+            uRHS = 0 ;
+            for (i = 0 ; i < DEVmaxnum ; i++)
+                if (DEVices [i] && DEVices [i]->DEVtopology && ckt->CKThead [i])
+                    DEVices [i]->DEVtopology (ckt->CKThead [i], ckt, &u, &uRHS) ;
+
+            if (ckt->total_n_Ptr > 0) {
                 /* CKTdiagGmin Contribute Addition to the Topology Matrix */
                 k = u ;
                 for (j = 0 ; j < n ; j++)
@@ -278,7 +276,7 @@ CKTsetup(CKTcircuit *ckt)
 
             /* Copy the Topology Matrix to the GPU in COO format */
 
-            if (TopologyNNZ > 0) {
+            if (ckt->total_n_Ptr > 0) {
                 /* COO format to CSR format Conversion using Quick Sort */
 
                 Element *TopologyStruct ;

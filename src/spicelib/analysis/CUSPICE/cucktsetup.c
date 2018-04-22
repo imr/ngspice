@@ -76,7 +76,7 @@ CKTcircuit *ckt
     size2 = (long unsigned int)ckt->CKTnumStates ;
     size3 = (long unsigned int)ckt->total_n_timeSteps ;
 
-    if (TopologyNNZ > 0 || TopologyNNZRHS > 0) {
+    if (ckt->total_n_Ptr > 0 || TopologyNNZRHS > 0) {
         /* Topology Matrix Handling */
         status = cudaMalloc ((void **)&(ckt->CKTmatrix->d_CKTrhs), (n + 1) * sizeof(double)) ;
         CUDAMALLOCCHECK (ckt->CKTmatrix->d_CKTrhs, (n + 1), double, status)
@@ -90,7 +90,7 @@ CKTcircuit *ckt
         status = cudaMalloc ((void **)&(ckt->d_CKTloadOutputRHS), mRHS * sizeof(double)) ;
         CUDAMALLOCCHECK (ckt->d_CKTloadOutputRHS, mRHS, double, status)
 
-        if (TopologyNNZ > 0) {
+        if (ckt->total_n_Ptr > 0) {
             status = cudaMalloc ((void **)&(ckt->d_CKTtopologyMatrixCSRp), (nz + 1) * sizeof(int)) ;
             CUDAMALLOCCHECK (ckt->d_CKTtopologyMatrixCSRp, (nz + 1), int, status)
 
@@ -114,7 +114,7 @@ CKTcircuit *ckt
 
         cudaMemset (ckt->d_CKTloadOutput + ckt->total_n_values, 0, sizeof(double)) ; //DiagGmin is 0 at the beginning
 
-        if (TopologyNNZ > 0) {
+        if (ckt->total_n_Ptr > 0) {
             status = cudaMemcpy (ckt->d_CKTtopologyMatrixCSRp, ckt->CKTtopologyMatrixCSRp, (nz + 1) * sizeof(int), cudaMemcpyHostToDevice) ;
             CUDAMEMCPYCHECK (ckt->d_CKTtopologyMatrixCSRp, (nz + 1), int, status)
 

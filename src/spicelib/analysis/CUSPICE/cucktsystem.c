@@ -56,6 +56,11 @@ CKTcircuit *ckt
             /* Copy back the Matrix */
             status = cudaMemcpy (ckt->CKTmatrix->CKTkluAx, ckt->CKTmatrix->d_CKTkluAx, nz * sizeof(double), cudaMemcpyDeviceToHost) ;
             CUDAMEMCPYCHECK (ckt->CKTmatrix->CKTkluAx, nz, double, status)
+        } else {
+            /* Matrix is empty */
+            for (i = 0 ; i < nz ; i++) {
+                ckt->CKTmatrix->CKTkluAx [i] = 0 ;
+            }
         }
 
         if (ckt->total_n_PtrRHS > 0) {
