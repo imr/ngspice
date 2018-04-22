@@ -9,7 +9,6 @@ libmos9_la_SOURCES =	\
 	mos9conv.c	\
 	mos9defs.h	\
 	mos9del.c	\
-	mos9dest.c	\
 	mos9dist.c	\
 	mos9dset.c	\
 	mos9ext.h	\
@@ -19,7 +18,6 @@ libmos9_la_SOURCES =	\
 	mos9itf.h	\
 	mos9load.c	\
 	mos9mask.c	\
-	mos9mdel.c	\
 	mos9mpar.c	\
 	mos9noi.c	\
 	mos9par.c	\

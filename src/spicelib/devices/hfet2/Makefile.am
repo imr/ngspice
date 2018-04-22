@@ -7,8 +7,6 @@ libhfet2_la_SOURCES =	\
 	hfet2acl.c	\
 	hfet2ask.c	\
 	hfet2defs.h	\
-	hfet2del.c	\
-	hfet2dest.c	\
 	hfet2ext.h	\
 	hfet2getic.c	\
 	hfet2init.c	\
@@ -16,7 +14,6 @@ libhfet2_la_SOURCES =	\
 	hfet2itf.h	\
 	hfet2load.c	\
 	hfet2mask.c	\
-	hfet2mdel.c	\
 	hfet2mpar.c	\
 	hfet2param.c	\
 	hfet2pzl.c	\

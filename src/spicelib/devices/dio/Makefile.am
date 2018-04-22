@@ -8,8 +8,6 @@ libdio_la_SOURCES =	\
 	dioask.c	\
 	dioconv.c	\
 	diodefs.h	\
-	diodel.c	\
-	diodest.c	\
 	diodisto.c	\
 	diodset.c	\
 	dioext.h	\
@@ -19,7 +17,6 @@ libdio_la_SOURCES =	\
 	dioitf.h	\
 	dioload.c	\
 	diomask.c	\
-	diomdel.c	\
 	diompar.c	\
 	dionoise.c	\
 	dioparam.c	\

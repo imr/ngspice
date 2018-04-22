@@ -9,14 +9,12 @@ libvsrc_la_SOURCES =	\
 	vsrcask.c	\
 	vsrcdefs.h	\
 	vsrcdel.c	\
-	vsrcdest.c	\
 	vsrcext.h	\
 	vsrcfbr.c	\
 	vsrcinit.c	\
 	vsrcinit.h	\
 	vsrcitf.h	\
 	vsrcload.c	\
-	vsrcmdel.c	\
 	vsrcpar.c	\
 	vsrcpzld.c	\
 	vsrcpzs.c	\

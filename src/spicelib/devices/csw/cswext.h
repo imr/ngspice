@@ -6,11 +6,8 @@ Modified: 2000 AlansFixes
 
 extern int CSWask(CKTcircuit *, GENinstance *, int, IFvalue *, IFvalue *);
 extern int CSWacLoad(GENmodel *, CKTcircuit *);
-extern int CSWdelete(GENinstance *);
-extern void CSWdestroy(void);
 extern int CSWload(GENmodel *, CKTcircuit *);
 extern int CSWmAsk(CKTcircuit *, GENmodel *, int, IFvalue *);
-extern int CSWmDelete(GENmodel *);
 extern int CSWmParam(int, IFvalue *, GENmodel *);
 extern int CSWparam(int, IFvalue *, GENinstance *, IFvalue *);
 extern int CSWpzLoad(GENmodel *, CKTcircuit *, SPcomplex *);

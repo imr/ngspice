@@ -8,14 +8,11 @@ libtra_la_SOURCES =	\
 	traacld.c	\
 	traask.c	\
 	tradefs.h	\
-	tradel.c	\
-	tradest.c	\
 	traext.h	\
 	trainit.c	\
 	trainit.h	\
 	traitf.h	\
 	traload.c	\
-	tramdel.c	\
 	traparam.c	\
 	trasetup.c	\
 	tratemp.c	\
