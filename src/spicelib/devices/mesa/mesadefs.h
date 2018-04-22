@@ -111,6 +111,8 @@ typedef struct sMESAinstance {
 #define MESAggdpp MESAstate+18
 #define MESAcgdpp MESAstate+19
 
+#define MESAnumStates 20
+
     int MESAoff;
     unsigned MESAlengthGiven : 1;
     unsigned MESAwidthGiven  : 1;
