@@ -83,6 +83,7 @@ IFparm VDMOSmPTable[] = { /* model parameters */
 
  /* weak inversion */
  IOP("subthres",  VDMOS_MOD_SUBTHRES,   IF_REAL, "Current(per volt Vds) to switch from square law to exponential subthreshold conduction"),
+ IOP("subshift",  VDMOS_MOD_SUBSHIFT,   IF_REAL, "Shift of weak inversion plot on the vgs axis"),
 
 /* body diode */
  IOP("bv",    VDMOS_MOD_BV,    IF_REAL,   "Vds breakdown voltage"),

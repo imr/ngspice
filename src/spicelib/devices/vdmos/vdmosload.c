@@ -15,7 +15,7 @@ VDMOS: 2018 Holger Vogt
 #include "ngspice/suffix.h"
 
 static double
-cweakinv(double n, double vgst, double vds, double lambda, double beta, double vt, double mtr);
+cweakinv(double n, double shift, double vgst, double vds, double lambda, double beta, double vt, double mtr);
 
 
 int
@@ -369,22 +369,22 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                  * numerical differentiation for gd and gm with a delta of 2 mV */
                 if (model->VDMOSsubthGiven && (here->VDMOSmode == 1)) {
                     double delta = 0.001;
-                    cdrain = cweakinv(model->VDMOSsubth, vgst, vds, model->VDMOSlambda,
+                    cdrain = cweakinv(model->VDMOSsubth, model->VDMOSsubshift, vgst, vds, model->VDMOSlambda,
                         Beta, vt, model->VDMOSmtr);
                     /* gd */
                     double vds1 = vds + delta;
-                    double cdrp = cweakinv(model->VDMOSsubth, vgst, vds1, model->VDMOSlambda,
+                    double cdrp = cweakinv(model->VDMOSsubth, model->VDMOSsubshift, vgst, vds1, model->VDMOSlambda,
                         Beta, vt, model->VDMOSmtr);
                     vds1 = vds - delta;
-                    double cdrm = cweakinv(model->VDMOSsubth, vgst, vds1, model->VDMOSlambda,
+                    double cdrm = cweakinv(model->VDMOSsubth, model->VDMOSsubshift, vgst, vds1, model->VDMOSlambda,
                         Beta, vt, model->VDMOSmtr);
                     here->VDMOSgds = (cdrp - cdrm) / (2. * delta);
                     /* gm */
                     double vgst1 = vgst + delta;
-                    cdrp = cweakinv(model->VDMOSsubth, vgst1, vds, model->VDMOSlambda,
+                    cdrp = cweakinv(model->VDMOSsubth, model->VDMOSsubshift, vgst1, vds, model->VDMOSlambda,
                         Beta, vt, model->VDMOSmtr);
                     vgst1 = vgst - delta;
-                    cdrm = cweakinv(model->VDMOSsubth, vgst1, vds, model->VDMOSlambda,
+                    cdrm = cweakinv(model->VDMOSsubth, model->VDMOSsubshift, vgst1, vds, model->VDMOSlambda,
                         Beta, vt, model->VDMOSmtr);
                     here->VDMOSgm = (cdrp - cdrm) / (2. * delta);
                     here->VDMOSgmbs = 0.;
@@ -888,14 +888,15 @@ scalef(double nf2, double vgst)
  */
 
 static double
-cweakinv(double n, double vgst, double vds, double lambda, double beta, double vt, double mtr)
+cweakinv(double slope, double shift, double vgst, double vds, double lambda, double beta, double vt, double mtr)
 {
-    double nf2 = 0.1; /* empirical setting of sin 'speed' */
-    double n1 = n + (1 - n) * scalef(nf2, vgst); /* n < n1 < 1 */
+    vgst += shift * (1 - scalef(2, vgst));
+    double n = slope / 2.3 / 0.0256; /* Tsividis, p. 208 */
+    double n1 = n + (1 - n) * scalef(2, vgst); /* n < n1 < 1 */
     double first = log(1 + exp(vgst / (2 * n1 * vt)));
     double second = log(1 + exp((vgst - vds * mtr * n1) / (2 * n1 * vt)));
     double cds =
-        beta * n1 * 2 * vt * vt * (1 + scalef(nf2, vgst) * lambda * vds) *
+        beta * n1 * 2 * vt * vt * (1 + scalef(2, vgst) * lambda * vds) *
         (first * first - second * second);
     return cds;
 }
