@@ -55,6 +55,12 @@ VDMOSacLoad(GENmodel *inModel, CKTcircuit *ckt)
             xbd  = here->VDMOScapbd * ckt->CKTomega;
             xbs  = here->VDMOScapbs * ckt->CKTomega;
 
+            /* bulk diode */
+            double gspr, geq, xceq;
+            gspr = here->VDIOtConductance;
+            geq = *(ckt->CKTstate0 + here->VDIOconduct);
+            xceq= *(ckt->CKTstate0 + here->VDIOcapCurrent) * ckt->CKTomega;
+
             /*
              *    load matrix
              */
@@ -101,6 +107,18 @@ VDMOSacLoad(GENmodel *inModel, CKTcircuit *ckt)
                 (here->VDMOSgateConductance)/* + ?? FIXME */;
             *(here->VDMOSGgpPtr) -= here->VDMOSgateConductance;
             *(here->VDMOSGPgPtr) -= here->VDMOSgateConductance;
+            /* bulk diode */
+            *(here->VDMOSSsPtr) += gspr;
+            *(here->VDMOSDdPtr) += gspr;
+            *(here->VDMOSDdPtr +1) += xceq;
+            *(here->VDIORPrpPtr) += geq+gspr;
+            *(here->VDIORPrpPtr +1) += xceq;
+            *(here->VDIOSrpPtr) -= gspr;
+            *(here->VDIODrpPtr) -= geq;
+            *(here->VDIODrpPtr +1) -= xceq;
+            *(here->VDIORPsPtr) -= gspr;
+            *(here->VDIORPdPtr) -= geq;
+            *(here->VDIORPdPtr +1) -= xceq;
         }
     }
     return(OK);
