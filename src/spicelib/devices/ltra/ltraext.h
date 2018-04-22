@@ -8,11 +8,8 @@ Modified: 2000 AlansFixes
 extern int LTRAaccept(CKTcircuit*,GENmodel*);
 extern int LTRAask(CKTcircuit*,GENinstance*,int,IFvalue*,IFvalue*);
 extern int LTRAacLoad(GENmodel*,CKTcircuit*);
-extern int LTRAdelete(GENinstance*);
-extern void LTRAdestroy(void);
 extern int LTRAload(GENmodel*,CKTcircuit*);
 extern int LTRAmAsk(CKTcircuit*,GENmodel*,int,IFvalue*);
-extern int LTRAmDelete(GENmodel*);
 extern int LTRAparam(int,IFvalue*,GENinstance*,IFvalue*);
 extern int LTRAmParam(int,IFvalue*,GENmodel*);
 extern int LTRAsetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);

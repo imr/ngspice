@@ -8,12 +8,9 @@ File: bsim3v1ext.h
 extern int BSIM3v1acLoad(GENmodel *, CKTcircuit *);
 extern int BSIM3v1ask(CKTcircuit *, GENinstance *, int, IFvalue *, IFvalue *);
 extern int BSIM3v1convTest(GENmodel *, CKTcircuit *);
-extern int BSIM3v1delete(GENinstance *);
-extern void BSIM3v1destroy(void);
 extern int BSIM3v1getic(GENmodel *, CKTcircuit *);
 extern int BSIM3v1load(GENmodel *, CKTcircuit *);
 extern int BSIM3v1mAsk(CKTcircuit *, GENmodel *, int, IFvalue *);
-extern int BSIM3v1mDelete(GENmodel *);
 extern int BSIM3v1mParam(int, IFvalue *, GENmodel *);
 extern void BSIM3v1mosCap(CKTcircuit *, double, double, double, double,
         double, double, double, double, double, double, double,

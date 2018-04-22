@@ -9,8 +9,6 @@ libsoi3_la_SOURCES =	\
 	soi3cap.c	\
 	soi3conv.c	\
 	soi3defs.h	\
-	soi3del.c	\
-	soi3dest.c	\
 	soi3ext.h	\
 	soi3ic.c	\
 	soi3init.c	\
@@ -18,7 +16,6 @@ libsoi3_la_SOURCES =	\
 	soi3itf.h	\
 	soi3load.c	\
 	soi3mask.c	\
-	soi3mdel.c	\
 	soi3mpar.c	\
 	soi3nois.c	\
 	soi3par.c	\

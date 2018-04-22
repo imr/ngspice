@@ -7,8 +7,6 @@ libcap_la_SOURCES =	\
 	capacld.c	\
 	capask.c	\
 	capdefs.h	\
-	capdel.c	\
-	capdest.c	\
 	capext.h	\
 	capgetic.c	\
 	capinit.c	\
@@ -16,7 +14,6 @@ libcap_la_SOURCES =	\
 	capitf.h	\
 	capload.c	\
 	capmask.c	\
-	capmdel.c	\
 	capmpar.c	\
 	capparam.c	\
 	cappzld.c	\

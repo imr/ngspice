@@ -7,8 +7,6 @@ libmesa_la_SOURCES =	\
 	mesaacl.c	\
 	mesaask.c	\
 	mesadefs.h	\
-	mesadel.c	\
-	mesadest.c	\
 	mesaext.h	\
 	mesagetic.c	\
 	mesainit.c	\
@@ -16,7 +14,6 @@ libmesa_la_SOURCES =	\
 	mesaitf.h	\
 	mesaload.c	\
 	mesamask.c	\
-	mesamdel.c	\
 	mesamparam.c	\
 	mesaparam.c	\
 	mesapzl.c	\

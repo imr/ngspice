@@ -6,14 +6,11 @@ liburc_la_SOURCES =	\
 	urc.c		\
 	urcask.c	\
 	urcdefs.h	\
-	urcdel.c	\
-	urcdest.c	\
 	urcext.h	\
 	urcinit.c	\
 	urcinit.h	\
 	urcitf.h	\
 	urcmask.c	\
-	urcmdel.c	\
 	urcmpar.c	\
 	urcparam.c	\
 	urcsetup.c

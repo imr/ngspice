@@ -9,7 +9,6 @@ extern int ASRCdelete(GENinstance *);
 extern void ASRCdestroy(void);
 extern int ASRCfindBr(CKTcircuit *, GENmodel *, IFuid);
 extern int ASRCload(GENmodel *, CKTcircuit *);
-extern int ASRCmDelete(GENmodel *);
 extern int ASRCparam(int, IFvalue *, GENinstance *, IFvalue *);
 extern int ASRCpzLoad(GENmodel *, CKTcircuit *, SPcomplex *);
 extern int ASRCacLoad(GENmodel *, CKTcircuit *);

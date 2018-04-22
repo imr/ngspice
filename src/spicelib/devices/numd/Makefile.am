@@ -8,14 +8,12 @@ libnumd_la_SOURCES =	\
 	numdask.c	\
 	numddefs.h	\
 	numddel.c	\
-	numddest.c	\
 	numddump.c	\
 	numdext.h	\
 	numdinit.c	\
 	numdinit.h	\
 	numditf.h	\
 	numdload.c	\
-	numdmdel.c	\
 	numdmpar.c	\
 	numdparm.c	\
 	numdpzld.c	\

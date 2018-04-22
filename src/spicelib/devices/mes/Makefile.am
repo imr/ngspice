@@ -7,8 +7,6 @@ libmes_la_SOURCES =	\
 	mesacl.c	\
 	mesask.c	\
 	mesdefs.h	\
-	mesdel.c	\
-	mesdest.c	\
 	mesdisto.c	\
 	mesdset.c	\
 	mesext.h	\
@@ -18,7 +16,6 @@ libmes_la_SOURCES =	\
 	mesitf.h	\
 	mesload.c	\
 	mesmask.c	\
-	mesmdel.c	\
 	mesmpar.c	\
 	mesnoise.c	\
 	mesparam.c	\

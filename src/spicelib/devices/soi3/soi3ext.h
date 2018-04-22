@@ -23,12 +23,9 @@ ngspice integration
 
 extern int SOI3acLoad(GENmodel *,CKTcircuit*);
 extern int SOI3ask(CKTcircuit*,GENinstance*,int,IFvalue*,IFvalue*);
-extern int SOI3delete(GENinstance*);
-extern void SOI3destroy(void);
 extern int SOI3getic(GENmodel*,CKTcircuit*);
 extern int SOI3load(GENmodel*,CKTcircuit*);
 extern int SOI3mAsk(CKTcircuit *,GENmodel *,int,IFvalue*);
-extern int SOI3mDelete(GENmodel*);
 extern int SOI3mParam(int,IFvalue*,GENmodel*);
 extern void SOI3cap(double,double,double,
                     	double*,double*,double*,double*,

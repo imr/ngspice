@@ -7,8 +7,6 @@ libjfet2_la_SOURCES =	\
 	jfet2acld.c	\
 	jfet2ask.c	\
 	jfet2defs.h	\
-	jfet2del.c	\
-	jfet2dest.c	\
 	jfet2ext.h	\
 	jfet2ic.c	\
 	jfet2init.c	\
@@ -16,7 +14,6 @@ libjfet2_la_SOURCES =	\
 	jfet2itf.h	\
 	jfet2load.c	\
 	jfet2mask.c	\
-	jfet2mdel.c	\
 	jfet2mpar.c	\
 	jfet2noi.c	\
 	jfet2par.c	\

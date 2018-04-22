@@ -8,14 +8,12 @@ libnumd2_la_SOURCES =	\
 	nud2ask.c	\
 	numd2def.h	\
 	nud2del.c	\
-	nud2dest.c	\
 	nud2dump.c	\
 	numd2ext.h	\
 	numd2init.c	\
 	numd2init.h	\
 	numd2itf.h	\
 	nud2load.c	\
-	nud2mdel.c	\
 	nud2mpar.c	\
 	nud2parm.c	\
 	nud2pzld.c	\
