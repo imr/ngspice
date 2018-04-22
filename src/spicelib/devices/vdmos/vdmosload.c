@@ -860,6 +860,23 @@ load :
 }
 
 
+/* scaling function, sine function interpolating between 0 and 1
+ * nf2: empirical setting of sine 'speed'
+ */
+
+static double
+scalef(double nf2, double vgst)
+{
+    double vgstsin = vgst / nf2;
+    if (vgstsin > 1)
+        return 1;
+    else if (vgstsin < -1)
+        return 0;
+    else
+        return 0.5 * sin(vgstsin * M_PI / 2) + 0.5;
+}
+
+
 /* Calculate D/S current including weak inversion.
  * Uses a single function covering weak-moderate-stong inversion, as well
  * as linear and saturation regions, with an interpolation method according to
@@ -873,20 +890,12 @@ load :
 static double
 cweakinv(double n, double vgst, double vds, double lambda, double beta, double vt, double mtr)
 {
-    double scalef;
     double nf2 = 0.1; /* empirical setting of sin 'speed' */
-    double vgstsin = vgst / nf2;
-    if (vgstsin > 1)
-        scalef = 1;
-    else if (vgstsin < -1)
-        scalef = 0;
-    else
-        scalef = 0.5 * sin(vgstsin * M_PI / 2) + 0.5;
-    double n1 = n + (1 - n) * scalef; /* n < n1 < 1 */
+    double n1 = n + (1 - n) * scalef(nf2, vgst); /* n < n1 < 1 */
     double first = log(1 + exp(vgst / (2 * n1 * vt)));
     double second = log(1 + exp((vgst - vds * mtr * n1) / (2 * n1 * vt)));
     double cds =
-        beta * n1 * 2 * vt * vt * (1 + scalef * lambda * vds) *
+        beta * n1 * 2 * vt * vt * (1 + scalef(nf2, vgst) * lambda * vds) *
         (first * first - second * second);
     return cds;
 }
