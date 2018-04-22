@@ -455,9 +455,9 @@ enum {
 
 /* device questions */
 enum {
-    VDMOS_CGS = 201,
-    VDMOS_CGD,
-    VDMOS_CDS,
+    VDMOS_CAPGS = 201,
+    VDMOS_CAPGD,
+    VDMOS_CAPDS,
     VDMOS_DNODE,
     VDMOS_GNODE,
     VDMOS_SNODE,
