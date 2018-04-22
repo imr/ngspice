@@ -95,7 +95,12 @@ VDMOSacLoad(GENmodel *inModel, CKTcircuit *ckt)
             *(here->VDMOSSPbPtr) -= here->VDMOSgbs+(xnrm-xrev)*here->VDMOSgmbs;
             *(here->VDMOSSPdpPtr) -= here->VDMOSgds+
                     xrev*(here->VDMOSgm+here->VDMOSgmbs);
-
+            /* gate resistor */
+            *(here->VDMOSGgPtr) += (here->VDMOSgateConductance);
+            *(here->VDMOSGPgpPtr) +=
+                (here->VDMOSgateConductance)/* + ?? FIXME */;
+            *(here->VDMOSGgpPtr) -= here->VDMOSgateConductance;
+            *(here->VDMOSGPgPtr) -= here->VDMOSgateConductance;
         }
     }
     return(OK);
