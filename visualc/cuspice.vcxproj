@@ -2143,10 +2143,12 @@
     <ClCompile Include="..\src\spicelib\devices\mos6\mos6ask.c" />
     <ClCompile Include="..\src\spicelib\devices\mos6\mos6conv.c" />
     <ClCompile Include="..\src\spicelib\devices\mos6\mos6dest.c" />
+    <ClCompile Include="..\src\spicelib\devices\mos6\mos6del.c" />
     <ClCompile Include="..\src\spicelib\devices\mos6\mos6ic.c" />
     <ClCompile Include="..\src\spicelib\devices\mos6\mos6init.c" />
     <ClCompile Include="..\src\spicelib\devices\mos6\mos6load.c" />
     <ClCompile Include="..\src\spicelib\devices\mos6\mos6mask.c" />
+    <ClCompile Include="..\src\spicelib\devices\mos6\mos6mdel.c" />
     <ClCompile Include="..\src\spicelib\devices\mos6\mos6mpar.c" />
     <ClCompile Include="..\src\spicelib\devices\mos6\mos6par.c" />
     <ClCompile Include="..\src\spicelib\devices\mos6\mos6set.c" />
