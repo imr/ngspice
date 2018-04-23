@@ -53,11 +53,9 @@ CKTload(CKTcircuit *ckt)
     int status ;
     alpha = 1.0 ;
     beta = 0.0 ;
-#else
-    int size ;
 #endif
 
-    int i;
+    int i, size;
     double startTime;
     CKTnode *node;
     int error;
@@ -81,13 +79,13 @@ CKTload(CKTcircuit *ckt)
     status = cuCKTflush (ckt) ;
     if (status != 0)
         return (E_NOMEM) ;
-#else
+#endif
+
     size = SMPmatSize (ckt->CKTmatrix) ;
     for (i = 0 ; i <= size ; i++)
         *(ckt->CKTrhs + i) = 0 ;
 
     SMPclear (ckt->CKTmatrix) ;
-#endif
 
 #ifdef STEPDEBUG
     noncon = ckt->CKTnoncon;

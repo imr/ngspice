@@ -45,7 +45,7 @@ cuCKTsystemDtoH
 CKTcircuit *ckt
 )
 {
-    long unsigned int i, nz, n ;
+    long unsigned int nz, n ;
     cudaError_t status ;
 
     if (ckt->total_n_Ptr > 0 || ckt->total_n_PtrRHS > 0) {
@@ -56,22 +56,12 @@ CKTcircuit *ckt
             /* Copy back the Matrix */
             status = cudaMemcpy (ckt->CKTmatrix->CKTkluAx, ckt->CKTmatrix->d_CKTkluAx, nz * sizeof(double), cudaMemcpyDeviceToHost) ;
             CUDAMEMCPYCHECK (ckt->CKTmatrix->CKTkluAx, nz, double, status)
-        } else {
-            /* Matrix is empty */
-            for (i = 0 ; i < nz ; i++) {
-                ckt->CKTmatrix->CKTkluAx [i] = 0 ;
-            }
         }
 
         if (ckt->total_n_PtrRHS > 0) {
             /* Copy back the RHS */
             status = cudaMemcpy (ckt->CKTrhs, ckt->CKTmatrix->d_CKTrhs, (n + 1) * sizeof(double), cudaMemcpyDeviceToHost) ;
             CUDAMEMCPYCHECK (ckt->CKTrhs, (n + 1), double, status)
-        } else {
-            /* RHS is empty */
-            for (i = 0 ; i < n + 1 ; i++) {
-                ckt->CKTrhs [i] = 0 ;
-            }
         }
     }
 
