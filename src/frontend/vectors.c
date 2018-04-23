@@ -278,7 +278,7 @@ ft_loadfile(char *file)
 {
     struct plot *pl, *np, *pp;
 
-    fprintf(cp_out, "Loading raw data file (\"%s\") . . . ", file);
+    fprintf(cp_out, "Loading raw data file (\"%s\") ...\n", file);
     pl = raw_read(file);
     if (pl)
         fprintf(cp_out, "done.\n");
