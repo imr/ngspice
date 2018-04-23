@@ -66,7 +66,6 @@ do { \
 #include "ngspice/CUSPICE/CUSPICE.h"
 #endif
 
-
 int
 DCtran(CKTcircuit *ckt,
        int restart)   /* forced restart flag */

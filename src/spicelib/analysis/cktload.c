@@ -82,11 +82,11 @@ CKTload(CKTcircuit *ckt)
     if (status != 0)
         return (E_NOMEM) ;
 #else
-    size = SMPmatSize(ckt->CKTmatrix);
-    for (i = 0; i <= size; i++) {
-        ckt->CKTrhs[i] = 0;
-    }
-    SMPclear(ckt->CKTmatrix);
+    size = SMPmatSize (ckt->CKTmatrix) ;
+    for (i = 0 ; i <= size ; i++)
+        *(ckt->CKTrhs + i) = 0 ;
+
+    SMPclear (ckt->CKTmatrix) ;
 #endif
 
 #ifdef STEPDEBUG

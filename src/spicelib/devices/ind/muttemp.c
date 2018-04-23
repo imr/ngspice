@@ -13,7 +13,6 @@ Author: 2003 Paolo Nenzi
 #include "ngspice/CUSPICE/CUSPICE.h"
 #endif
 
-
 static int
 cholesky(double *a, int n)
 {

@@ -24,7 +24,6 @@ static int spice3_src(CKTcircuit *, long int, long int, int);
 #include "ngspice/CUSPICE/CUSPICE.h"
 #endif
 
-
 int
 CKTop (CKTcircuit *ckt, long int firstmode, long int continuemode,
        int iterlim)

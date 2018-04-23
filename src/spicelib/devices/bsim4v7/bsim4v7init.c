@@ -10,7 +10,6 @@
 #include "ngspice/CUSPICE/CUSPICE.h"
 #endif
 
-
 SPICEdev BSIM4v7info = {
     .DEVpublic = {
         .name = "BSIM4v7",
