@@ -890,13 +890,13 @@ scalef(double nf2, double vgst)
 static double
 cweakinv(double slope, double shift, double vgst, double vds, double lambda, double beta, double vt, double mtr)
 {
-    vgst += shift * (1 - scalef(2, vgst));
+    vgst += shift * (1 - scalef(0.5, vgst));
     double n = slope / 2.3 / 0.0256; /* Tsividis, p. 208 */
-    double n1 = n + (1 - n) * scalef(2, vgst); /* n < n1 < 1 */
+    double n1 = n + (1 - n) * scalef(1, vgst); /* n < n1 < 1 */
     double first = log(1 + exp(vgst / (2 * n1 * vt)));
     double second = log(1 + exp((vgst - vds * mtr * n1) / (2 * n1 * vt)));
     double cds =
-        beta * n1 * 2 * vt * vt * (1 + scalef(2, vgst) * lambda * vds) *
+        beta * n1 * 2 * vt * vt * (1 + scalef(1, vgst) * lambda * vds) *
         (first * first - second * second);
     return cds;
 }
