@@ -9,7 +9,6 @@ libmos2_la_SOURCES =	\
 	mos2conv.c	\
 	mos2defs.h	\
 	mos2del.c	\
-	mos2dest.c	\
 	mos2dist.c	\
 	mos2dset.c	\
 	mos2ext.h	\
@@ -19,7 +18,6 @@ libmos2_la_SOURCES =	\
 	mos2itf.h	\
 	mos2load.c	\
 	mos2mask.c	\
-	mos2mdel.c	\
 	mos2mpar.c	\
 	mos2noi.c	\
 	mos2par.c	\

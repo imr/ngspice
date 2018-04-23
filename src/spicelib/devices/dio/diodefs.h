@@ -14,6 +14,14 @@ Modified by Paolo Nenzi 2003 and Dietmar Warning 2012
 
             /* data structures used to describe diodes */
 
+/* indices to array of diode noise  sources */
+
+#define DIORSNOIZ    0
+#define DIOIDNOIZ    1
+#define DIOFLNOIZ    2
+#define DIOTOTNOIZ   3
+
+#define DIONSRCS     4
 
 /* information needed per instance */
 
@@ -132,15 +140,6 @@ typedef struct sDIOinstance {
 
 #endif
 
-/* indices to array of diode noise  sources */
-
-#define DIORSNOIZ    0
-#define DIOIDNOIZ    1
-#define DIOFLNOIZ    2
-#define DIOTOTNOIZ   3
-
-#define DIONSRCS     4
-
 #ifndef NONOISE
      double DIOnVar[NSTATVARS][DIONSRCS];
 #else /* NONOISE */
@@ -169,9 +168,14 @@ typedef struct sDIOinstance {
 #define DIOconduct DIOstate+2
 #define DIOcapCharge DIOstate+3
 #define DIOcapCurrent DIOstate+4
+
+#define DIOnumStates 5
+
 #define DIOsensxp DIOstate+5    /* charge sensitivities and their derivatives.
                                  * +6 for the derivatives - pointer to the
                                  * beginning of the array */
+
+#define DIOnumSenStates 2
 
 
 /* per model data */

@@ -7,15 +7,12 @@ libsw_la_SOURCES =	\
 	swacload.c	\
 	swask.c		\
 	swdefs.h	\
-	swdelete.c	\
-	swdest.c	\
 	swext.h		\
 	swinit.c	\
 	swinit.h	\
 	switf.h		\
 	swload.c	\
 	swmask.c	\
-	swmdel.c	\
 	swmparam.c	\
 	swnoise.c	\
 	swparam.c	\

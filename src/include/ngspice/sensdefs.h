@@ -80,17 +80,12 @@ extern int sens_sens(CKTcircuit *,int);
 #define	SENS_STOP		11
 #define	SENS_STEPS		12
 
-#define	SENS_DEC			13
-#define	SENS_OCT			14
-#define	SENS_LIN			15
-
 #define	SENS_DECADE		13
 #define	SENS_OCTAVE		14
 #define	SENS_LINEAR		15
 
 #define	SENS_DC			16
 #define	SENS_DEFTOL		17
-#define	SENS_DEFPERT		18
 #define	SENS_DEFPERTURB		18
 #define	SENS_DEVDEFTOL		19
 #define	SENS_DEVDEFPERT		20

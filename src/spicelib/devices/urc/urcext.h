@@ -6,10 +6,7 @@ Author: 1985 Thomas L. Quarles
 #define _URCEXT_H
 
 extern int URCask(CKTcircuit*,GENinstance*,int,IFvalue*,IFvalue*);
-extern int URCdelete(GENinstance*);
-extern void URCdestroy(void);
 extern int URCmAsk(CKTcircuit*,GENmodel*,int,IFvalue*);
-extern int URCmDelete(GENmodel*);
 extern int URCmParam(int,IFvalue*,GENmodel*);
 extern int URCparam(int,IFvalue*,GENinstance*,IFvalue*);
 extern int URCsetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);

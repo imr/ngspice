@@ -138,7 +138,8 @@ typedef struct sISRCmodel {
 
 /* source types */
 
-#ifndef PULSE
+#ifndef PULSE_FUN_TYPES
+#define PULSE_FUN_TYPES
 #define PULSE 1
 #define SINE 2
 #define EXP 3
@@ -148,7 +149,7 @@ typedef struct sISRCmodel {
 #define TRNOISE 7
 #define TRRANDOM 8
 #define EXTERNAL 9
-#endif /*PULSE*/
+#endif
 
 /* device parameters */
 #define ISRC_DC 1

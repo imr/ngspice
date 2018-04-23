@@ -15,6 +15,16 @@ Modified: 2000 AlansFixes
 
 /* declarations for level 1 MOSFETs */
 
+/* indices to the array of MOSFET(1) noise sources */
+
+#define MOS1RDNOIZ	0
+#define MOS1RSNOIZ   1
+#define MOS1IDNOIZ       2
+#define MOS1FLNOIZ 3
+#define MOS1TOTNOIZ    4
+
+#define MOS1NSRCS     5     /* the number of MOS1FET noise sources*/
+
 /* information needed for each instance */
 
 typedef struct sMOS1instance {
@@ -141,14 +151,6 @@ typedef struct sMOS1instance {
 #define	capgd3		MOS1dCoeffs[29]
 
 #endif
-
-#define MOS1RDNOIZ	0
-#define MOS1RSNOIZ   1
-#define MOS1IDNOIZ       2
-#define MOS1FLNOIZ 3
-#define MOS1TOTNOIZ    4
-
-#define MOS1NSRCS     5     /* the number of MOS1FET noise sources*/
 
 #ifndef NONOISE
     double MOS1nVar[NSTATVARS][MOS1NSRCS];
@@ -318,9 +320,9 @@ typedef struct sMOS1instance {
 
 #define MOS1numStates 17
 
-#define MOS1sensxpgs MOS1states+17 /* charge sensitivities and 
-          their derivatives.  +18 for the derivatives:
-          pointer to the beginning of the array */
+#define MOS1sensxpgs MOS1states+17 /* charge sensitivities and their derivatives.
+                                    * +18 for the derivatives
+                                    * pointer to the beginning of the array */
 #define MOS1sensxpgd  MOS1states+19
 #define MOS1sensxpgb  MOS1states+21
 #define MOS1sensxpbs  MOS1states+23

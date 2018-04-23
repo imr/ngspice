@@ -8,8 +8,6 @@ libndev_la_SOURCES =	\
 	ndevaccept.c	\
 	ndevask.c	\
 	ndevdefs.h	\
-	ndevdel.c	\
-	ndevdest.c	\
 	ndevdump.c	\
 	ndevext.h	\
 	ndevexch.h	\

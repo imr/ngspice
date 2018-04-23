@@ -115,7 +115,7 @@ JFETsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 here->JFETm = 1;
             }
             here->JFETstate = *states;
-            *states += 13;
+            *states += JFETnumStates;
 
             if(model->JFETsourceResist != 0) {
                 if(here->JFETsourcePrimeNode == 0) {

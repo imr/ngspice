@@ -6,15 +6,12 @@ libres_la_SOURCES =	\
 	res.c		\
 	resask.c	\
 	resdefs.h	\
-	resdel.c	\
-	resdest.c	\
 	resext.h	\
 	resinit.c	\
 	resinit.h	\
 	resitf.h	\
 	resload.c	\
 	resmask.c	\
-	resmdel.c	\
 	resmpar.c	\
 	resnoise.c	\
 	resparam.c	\

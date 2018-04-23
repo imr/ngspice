@@ -9,7 +9,6 @@ libmos1_la_SOURCES =	\
 	mos1conv.c	\
 	mos1defs.h	\
 	mos1del.c	\
-	mos1dest.c	\
 	mos1dist.c	\
 	mos1dset.c	\
 	mos1ext.h	\
@@ -19,7 +18,6 @@ libmos1_la_SOURCES =	\
 	mos1itf.h	\
 	mos1load.c	\
 	mos1mask.c	\
-	mos1mdel.c	\
 	mos1mpar.c	\
 	mos1noi.c	\
 	mos1par.c	\

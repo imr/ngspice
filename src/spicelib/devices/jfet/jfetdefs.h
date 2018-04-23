@@ -17,6 +17,15 @@ Sydney University mods Copyright(c) 1989 Anthony E. Parker, David J. Skellern
 
     /* structures used to describe Junction Field Effect Transistors */
 
+/* indices to an array of JFET noise sources */
+
+#define JFETRDNOIZ       0
+#define JFETRSNOIZ       1
+#define JFETIDNOIZ       2
+#define JFETFLNOIZ 3
+#define JFETTOTNOIZ    4
+
+#define JFETNSRCS     5
 
 /* information used to describe a single instance */
 
@@ -111,16 +120,6 @@ typedef struct sJFETinstance {
 
 #endif
 
-/* indices to an array of JFET noise sources */
-
-#define JFETRDNOIZ       0
-#define JFETRSNOIZ       1
-#define JFETIDNOIZ       2
-#define JFETFLNOIZ 3
-#define JFETTOTNOIZ    4
-
-#define JFETNSRCS     5
-
 #ifndef NONOISE
     double JFETnVar[NSTATVARS][JFETNSRCS];
 #else /* NONOISE */
@@ -185,6 +184,8 @@ typedef struct sJFETinstance {
 #define JFETcqgs JFETstate+10 
 #define JFETqgd JFETstate+11 
 #define JFETcqgd JFETstate+12 
+
+#define JFETnumStates 13
 
 /* per model data */
 

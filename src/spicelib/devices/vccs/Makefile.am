@@ -6,14 +6,11 @@ libvccs_la_SOURCES =	\
 	vccs.c		\
 	vccsask.c	\
 	vccsdefs.h	\
-	vccsdel.c	\
-	vccsdest.c	\
 	vccsext.h	\
 	vccsinit.c	\
 	vccsinit.h	\
 	vccsitf.h	\
 	vccsload.c	\
-	vccsmdel.c	\
 	vccspar.c	\
 	vccspzld.c	\
 	vccssacl.c	\

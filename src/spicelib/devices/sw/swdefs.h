@@ -13,7 +13,7 @@ Modified: 2000 AlansFixes
 #include "ngspice/complex.h"
 #include "ngspice/noisedef.h"
 
-    /* structures used to describe voltage controlled switches */
+/* structures used to describe voltage controlled switches */
 
 
 /* information to describe each instance */
@@ -27,43 +27,47 @@ typedef struct sSWinstance {
 #define SWname gen.GENname
 #define SWstate gen.GENstate
 
-    const int SWposNode; /* number of positive node of switch */
-    const int SWnegNode; /* number of negative node of switch */
+    const int SWposNode;      /* number of positive node of switch */
+    const int SWnegNode;      /* number of negative node of switch */
     const int SWposCntrlNode; /* number of positive controlling node of switch */
     const int SWnegCntrlNode; /* number of negative controlling node of switch */
 
     double *SWposPosPtr;  /* pointer to sparse matrix diagonal at
-                                (positive,positive) for switch conductance */
+                             (positive,positive) for switch conductance */
     double *SWnegPosPtr;  /* pointer to sparse matrix offdiagonal at
-                                (neagtive,positive) for switch conductance */
+                             (neagtive,positive) for switch conductance */
     double *SWposNegPtr;  /* pointer to sparse matrix offdiagonal at
-                                (positive,neagtive) for switch conductance */
+                             (positive,neagtive) for switch conductance */
     double *SWnegNegPtr;  /* pointer to sparse matrix diagonal at
-                                (neagtive,neagtive) for switch conductance */
+                             (neagtive,neagtive) for switch conductance */
 
-    double SWcond;      /* conductance of the switch now */
+    double SWcond;        /* conductance of the switch now */
 
     unsigned SWzero_stateGiven : 1;  /* flag to indicate initial state */
 #ifndef NONOISE
     double SWnVar[NSTATVARS];
-#else /* NONOISE */
+#else
     double *SWnVar;
-#endif /* NONOISE */
-
-#ifdef KLU
-    BindElement *SWposPosBinding ;
-    BindElement *SWposNegBinding ;
-    BindElement *SWnegPosBinding ;
-    BindElement *SWnegNegBinding ;
 #endif
 
-} SWinstance ;
+#ifdef KLU
+    BindElement *SWposPosBinding;
+    BindElement *SWposNegBinding;
+    BindElement *SWnegPosBinding;
+    BindElement *SWnegNegBinding;
+#endif
+
+} SWinstance;
 
 /* data per model */
 
 #define SW_ON_CONDUCTANCE 1.0   /* default on conductance = 1 mho */
 #define SW_OFF_CONDUCTANCE ckt->CKTgmin   /* default off conductance */
-#define SW_NUM_STATES 2   
+#define SW_NUM_STATES 2
+
+#define SWswitchstate SWstate+0
+#define SWctrlvalue   SWstate+1
+
 
 typedef struct sSWmodel {      /* model structure for a switch */
 
@@ -71,7 +75,7 @@ typedef struct sSWmodel {      /* model structure for a switch */
 
 #define SWmodType gen.GENmodType
 #define SWnextModel(inst) ((struct sSWmodel *)((inst)->gen.GENnextModel))
-#define SWinstances(inst) ((SWinstance *)((inst)->gen.GENinstances))
+#define SWinstances(inst) ((SWinstance *) ((inst)->gen.GENinstances))
 #define SWmodName gen.GENmodName
 
     double SWonResistance;  /* switch "on" resistance */
@@ -81,10 +85,10 @@ typedef struct sSWmodel {      /* model structure for a switch */
     double SWonConduct;     /* switch "on" conductance  */
     double SWoffConduct;    /* switch "off" conductance  */
 
-    unsigned SWonGiven : 1;   /* flag to indicate on-resistance was specified */
-    unsigned SWoffGiven : 1;  /* flag to indicate off-resistance was  "   */
+    unsigned SWonGiven : 1;     /* flag to indicate on-resistance was specified */
+    unsigned SWoffGiven : 1;    /* flag to indicate off-resistance was  "   */
     unsigned SWthreshGiven : 1; /* flag to indicate threshold volt was given */
-    unsigned SWhystGiven : 1; /* flag to indicate hysteresis volt was given */
+    unsigned SWhystGiven : 1;   /* flag to indicate hysteresis volt was given */
 } SWmodel;
 
 /* device parameters */
@@ -112,4 +116,4 @@ typedef struct sSWmodel {      /* model structure for a switch */
 
 #include "swext.h"
 
-#endif /*SW*/
+#endif

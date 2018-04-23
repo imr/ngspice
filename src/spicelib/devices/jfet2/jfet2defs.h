@@ -22,6 +22,15 @@ Modified to add PS model and new parameter definitions ( Anthony E. Parker )
 
     /* structures used to describe Junction Field Effect Transistors */
 
+/* indices to an array of JFET2 noise sources */
+
+#define JFET2RDNOIZ       0
+#define JFET2RSNOIZ       1
+#define JFET2IDNOIZ       2
+#define JFET2FLNOIZ 3
+#define JFET2TOTNOIZ    4
+
+#define JFET2NSRCS     5
 
 /* information used to describe a single instance */
 
@@ -116,16 +125,6 @@ typedef struct sJFET2instance {
 
 #endif
 
-/* indices to an array of JFET2 noise sources */
-
-#define JFET2RDNOIZ       0
-#define JFET2RSNOIZ       1
-#define JFET2IDNOIZ       2
-#define JFET2FLNOIZ 3
-#define JFET2TOTNOIZ    4
-
-#define JFET2NSRCS     5
-
 #ifndef NONOISE
     double JFET2nVar[NSTATVARS][JFET2NSRCS];
 #else /* NONOISE */
@@ -196,7 +195,9 @@ typedef struct sJFET2instance {
 #define JFET2pave     JFET2state+15
 #define JFET2vtrap    JFET2state+16
 #define JFET2vgstrap  JFET2state+17
-#define JFET2_STATE_COUNT    18
+#define JFET2unknown  JFET2state+18
+
+#define JFET2numStates 19
 
 /* per model data */
 

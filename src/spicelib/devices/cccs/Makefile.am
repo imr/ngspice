@@ -6,14 +6,11 @@ libcccs_la_SOURCES =	\
 	cccs.c		\
 	cccsask.c	\
 	cccsdefs.h	\
-	cccsdel.c	\
-	cccsdest.c	\
 	cccsext.h	\
 	cccsinit.c	\
 	cccsinit.h	\
 	cccsitf.h	\
 	cccsload.c	\
-	cccsmdel.c	\
 	cccspar.c	\
 	cccspzld.c	\
 	cccssacl.c	\
