@@ -39,40 +39,13 @@ GENmodel *inModel
     for ( ; model != NULL ; model = RESnextModel(model))
     {
         /* DOUBLE */
-        free (model->RESparamCPU.REStc1Array) ;
-        cudaFree (model->RESparamGPU.d_REStc1Array) ;
-
-        free (model->RESparamCPU.REStc2Array) ;
-        cudaFree (model->RESparamGPU.d_REStc2Array) ;
-
-        free (model->RESparamCPU.RESmArray) ;
-        cudaFree (model->RESparamGPU.d_RESmArray) ;
-
         free (model->RESparamCPU.RESconductArray) ;
         cudaFree (model->RESparamGPU.d_RESconductArray) ;
-
-        free (model->RESparamCPU.REStempArray) ;
-        cudaFree (model->RESparamGPU.d_REStempArray) ;
-
-        free (model->RESparamCPU.RESdtempArray) ;
-        cudaFree (model->RESparamGPU.d_RESdtempArray) ;
 
         free (model->RESparamCPU.REScurrentArray) ;
         cudaFree (model->RESparamGPU.d_REScurrentArray) ;
 
-        free (model->RESparamCPU.RESgValueArray) ;
-        cudaFree (model->RESparamGPU.d_RESgValueArray) ;
-
         /* INT */
-        free (model->RESparamCPU.REStc1GivenArray) ;
-        cudaFree (model->RESparamGPU.d_REStc1GivenArray) ;
-
-        free (model->RESparamCPU.REStc2GivenArray) ;
-        cudaFree (model->RESparamGPU.d_REStc2GivenArray) ;
-
-        free (model->RESparamCPU.RESmGivenArray) ;
-        cudaFree (model->RESparamGPU.d_RESmGivenArray) ;
-
         free (model->RESparamCPU.RESposNodeArray) ;
         cudaFree (model->RESparamGPU.d_RESposNodeArray) ;
 

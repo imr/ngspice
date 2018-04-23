@@ -68,51 +68,15 @@ GENmodel *inModel
     CUDAMEMCPYCHECK (model->d_PositionVector, size, int, status)
 
     /* DOUBLE */
-    model->RESparamCPU.REStc1Array = (double *) malloc (size * sizeof(double)) ;
-    status = cudaMalloc ((void **)&(model->RESparamGPU.d_REStc1Array), size * sizeof(double)) ;
-    CUDAMALLOCCHECK (model->RESparamGPU.d_REStc1Array, size, double, status)
-
-    model->RESparamCPU.REStc2Array = (double *) malloc (size * sizeof(double)) ;
-    status = cudaMalloc ((void **)&(model->RESparamGPU.d_REStc2Array), size * sizeof(double)) ;
-    CUDAMALLOCCHECK (model->RESparamGPU.d_REStc2Array, size, double, status)
-
-    model->RESparamCPU.RESmArray = (double *) malloc (size * sizeof(double)) ;
-    status = cudaMalloc ((void **)&(model->RESparamGPU.d_RESmArray), size * sizeof(double)) ;
-    CUDAMALLOCCHECK (model->RESparamGPU.d_RESmArray, size, double, status)
-
     model->RESparamCPU.RESconductArray = (double *) malloc (size * sizeof(double)) ;
     status = cudaMalloc ((void **)&(model->RESparamGPU.d_RESconductArray), size * sizeof(double)) ;
     CUDAMALLOCCHECK (model->RESparamGPU.d_RESconductArray, size, double, status)
-
-    model->RESparamCPU.REStempArray = (double *) malloc (size * sizeof(double)) ;
-    status = cudaMalloc ((void **)&(model->RESparamGPU.d_REStempArray), size * sizeof(double)) ;
-    CUDAMALLOCCHECK (model->RESparamGPU.d_REStempArray, size, double, status)
-
-    model->RESparamCPU.RESdtempArray = (double *) malloc (size * sizeof(double)) ;
-    status = cudaMalloc ((void **)&(model->RESparamGPU.d_RESdtempArray), size * sizeof(double)) ;
-    CUDAMALLOCCHECK (model->RESparamGPU.d_RESdtempArray, size, double, status)
 
     model->RESparamCPU.REScurrentArray = (double *) malloc (size * sizeof(double)) ;
     status = cudaMalloc ((void **)&(model->RESparamGPU.d_REScurrentArray), size * sizeof(double)) ;
     CUDAMALLOCCHECK (model->RESparamGPU.d_REScurrentArray, size, double, status)
 
-    model->RESparamCPU.RESgValueArray = (double *) malloc (size * sizeof(double)) ;
-    status = cudaMalloc ((void **)&(model->RESparamGPU.d_RESgValueArray), size * sizeof(double)) ;
-    CUDAMALLOCCHECK (model->RESparamGPU.d_RESgValueArray, size, double, status)
-
     /* INT */
-    model->RESparamCPU.REStc1GivenArray = (int *) malloc (size * sizeof(int)) ;
-    status = cudaMalloc ((void **)&(model->RESparamGPU.d_REStc1GivenArray), size * sizeof(int)) ;
-    CUDAMALLOCCHECK (model->RESparamGPU.d_REStc1GivenArray, size, int, status)
-
-    model->RESparamCPU.REStc2GivenArray = (int *) malloc (size * sizeof(int)) ;
-    status = cudaMalloc ((void **)&(model->RESparamGPU.d_REStc2GivenArray), size * sizeof(int)) ;
-    CUDAMALLOCCHECK (model->RESparamGPU.d_REStc2GivenArray, size, int, status)
-
-    model->RESparamCPU.RESmGivenArray = (int *) malloc (size * sizeof(int)) ;
-    status = cudaMalloc ((void **)&(model->RESparamGPU.d_RESmGivenArray), size * sizeof(int)) ;
-    CUDAMALLOCCHECK (model->RESparamGPU.d_RESmGivenArray, size, int, status)
-
     model->RESparamCPU.RESposNodeArray = (int *) malloc (size * sizeof(int)) ;
     status = cudaMalloc ((void **)&(model->RESparamGPU.d_RESposNodeArray), size * sizeof(int)) ;
     CUDAMALLOCCHECK (model->RESparamGPU.d_RESposNodeArray, size, int, status)
