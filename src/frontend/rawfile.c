@@ -332,6 +332,8 @@ raw_read(char *name) {
             s = SKIP(buf);
             NONL(s);
             date = copy(s);
+        } else if (ciprefix("offset:", buf)) {
+            fprintf(cp_err, "Warning: Offset: is not supported\n");
         } else if (ciprefix("plotname:", buf)) {
             s = SKIP(buf);
             NONL(s);
