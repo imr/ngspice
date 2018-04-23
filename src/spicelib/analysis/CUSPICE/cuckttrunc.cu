@@ -31,7 +31,7 @@ cuCKTtrunc
 CKTcircuit *ckt, double timetemp, double *timeStep
 )
 {
-    if (ckt->total_n_Ptr > 0 && ckt->total_n_PtrRHS > 0) {
+    if (ckt->total_n_Ptr > 0 || ckt->total_n_PtrRHS > 0) {
         long unsigned int size ;
         double timetempGPU ;
         int thread_x, thread_y, block_x ;

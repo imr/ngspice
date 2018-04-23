@@ -47,7 +47,7 @@ CKTcircuit *ckt
 {
     long unsigned int size ;
 
-    if (ckt->total_n_Ptr > 0 && ckt->total_n_PtrRHS > 0) {
+    if (ckt->total_n_Ptr > 0 || ckt->total_n_PtrRHS > 0) {
         size = (long unsigned int)(ckt->d_MatrixSize + 1) ;
         cudaMemset (ckt->d_CKTrhsOld, 0, size * sizeof(double)) ;
     }
@@ -64,7 +64,7 @@ CKTcircuit *ckt
     long unsigned int size ;
     cudaError_t status ;
 
-    if (ckt->total_n_Ptr > 0 && ckt->total_n_PtrRHS > 0) {
+    if (ckt->total_n_Ptr > 0 || ckt->total_n_PtrRHS > 0) {
         size = (long unsigned int)(ckt->d_MatrixSize + 1) ;
         status = cudaMemcpy (ckt->d_CKTrhsOld, ckt->CKTrhsOld, size * sizeof(double), cudaMemcpyHostToDevice) ;
         CUDAMEMCPYCHECK (ckt->d_CKTrhsOld, size, double, status)
@@ -82,7 +82,7 @@ CKTcircuit *ckt
     long unsigned int size ;
     cudaError_t status ;
 
-    if (ckt->total_n_Ptr > 0 && ckt->total_n_PtrRHS > 0) {
+    if (ckt->total_n_Ptr > 0 || ckt->total_n_PtrRHS > 0) {
         size = (long unsigned int)(ckt->d_MatrixSize + 1) ;
         status = cudaMemcpy (ckt->CKTrhsOld, ckt->d_CKTrhsOld, size * sizeof(double), cudaMemcpyDeviceToHost) ;
         CUDAMEMCPYCHECK (ckt->CKTrhsOld, size, double, status)
