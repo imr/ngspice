@@ -81,8 +81,6 @@ cuRESload_kernel
 RESparamGPUstruct RESentry, double *CKTrhsOld, int n_instances, int *d_PositionVector, double * d_CKTloadOutput
 )
 {
-    double m, difference, factor ;
-
     int instance_ID ;
 
     instance_ID = threadIdx.y + blockDim.y * blockIdx.x ;
@@ -90,26 +88,11 @@ RESparamGPUstruct RESentry, double *CKTrhsOld, int n_instances, int *d_PositionV
     {
         if (threadIdx.x == 0)
         {
-            if (!(RESentry.d_REStc1GivenArray [instance_ID]))
-                RESentry.d_REStc1Array [instance_ID] = 0.0 ;
-
-            if (!(RESentry.d_REStc2GivenArray [instance_ID]))
-                RESentry.d_REStc2Array [instance_ID] = 0.0 ;
-
-            if (!(RESentry.d_RESmGivenArray [instance_ID]))
-                RESentry.d_RESmArray [instance_ID] = 1.0 ;
-
             RESentry.d_REScurrentArray [instance_ID] = (CKTrhsOld [RESentry.d_RESposNodeArray [instance_ID]] -
                                                     CKTrhsOld [RESentry.d_RESnegNodeArray [instance_ID]]) *
                                                     RESentry.d_RESconductArray [instance_ID] ;
 
-            difference = (RESentry.d_REStempArray [instance_ID] + RESentry.d_RESdtempArray [instance_ID]) - 300.15 ;
-            factor = 1.0 + (RESentry.d_REStc1Array [instance_ID]) * difference +
-                     (RESentry.d_REStc2Array [instance_ID]) * difference * difference ;
-
-            m = (RESentry.d_RESmArray [instance_ID]) / factor ;
-
-            d_CKTloadOutput [d_PositionVector [instance_ID]] = m * RESentry.d_RESconductArray [instance_ID] ;
+            d_CKTloadOutput [d_PositionVector [instance_ID]] = RESentry.d_RESconductArray [instance_ID] ;
         }
     }
 
