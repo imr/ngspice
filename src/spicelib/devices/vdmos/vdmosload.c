@@ -892,7 +892,7 @@ cweakinv(double slope, double shift, double vgst, double vds, double lambda, dou
 {
     vgst += shift * (1 - scalef(0.5, vgst));
     double n = slope / 2.3 / 0.0256; /* Tsividis, p. 208 */
-    double n1 = n + (1 - n) * scalef(1, vgst); /* n < n1 < 1 */
+    double n1 = n + (1 - n) * scalef(0.7, vgst); /* n < n1 < 1 */
     double first = log(1 + exp(vgst / (2 * n1 * vt)));
     double second = log(1 + exp((vgst - vds * mtr * n1) / (2 * n1 * vt)));
     double cds =
