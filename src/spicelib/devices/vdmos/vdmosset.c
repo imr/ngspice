@@ -227,7 +227,7 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
                 }
             }
             else {
-                here->VDIOposPrimeNode = here->VDMOSdNode;
+                here->VDIOposPrimeNode = here->VDMOSsNode;
             }
 
 
@@ -329,7 +329,7 @@ VDMOSunsetup(GENmodel *inModel, CKTcircuit *ckt)
             here->VDMOSgNodePrime = 0;
 
             if (here->VDIOposPrimeNode > 0
-                && here->VDIOposPrimeNode != here->VDMOSdNode)
+                && here->VDIOposPrimeNode != here->VDMOSsNode)
                 CKTdltNNum(ckt, here->VDIOposPrimeNode);
             here->VDIOposPrimeNode = 0;
         }
