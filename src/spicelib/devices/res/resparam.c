@@ -96,8 +96,8 @@ RESparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
     RESmodel *model ;
 
     model = RESmodPtr(here) ;
-    if (model->RESinitCUDA) {
-        model->RESparamCPU.RESconductArray[here->REScudaIndex] = here->RESconduct;
+    if (model->gen.GENinitCUDA) {
+        model->RESparamCPU.RESconductArray[here->gen.GENcudaIndex] = here->RESconduct;
         status = cuREStemp ((GENmodel *)model);
         if (status != 0)
             return E_NOMEM;

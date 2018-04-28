@@ -47,17 +47,17 @@ GENmodel *inModel, CKTcircuit *ckt
         /* Determining how many blocks should exist in the kernel */
         thread_x = 1 ;
         thread_y = 256 ;
-        if (model->RESnInstances % thread_y != 0)
-            block_x = (int)((model->RESnInstances + thread_y - 1) / thread_y) ;
+        if (model->gen.GENnInstances % thread_y != 0)
+            block_x = (int)((model->gen.GENnInstances + thread_y - 1) / thread_y) ;
         else
-            block_x = model->RESnInstances / thread_y ;
+            block_x = model->gen.GENnInstances / thread_y ;
 
         dim3 thread (thread_x, thread_y) ;
 
         /* Kernel launch */
         status = cudaGetLastError () ; // clear error status
 
-        cuRESload_kernel <<< block_x, thread >>> (model->RESparamGPU, ckt->d_CKTrhsOld, model->RESnInstances,
+        cuRESload_kernel <<< block_x, thread >>> (model->RESparamGPU, ckt->d_CKTrhsOld, model->gen.GENnInstances,
                                                   model->d_PositionVector, ckt->d_CKTloadOutput) ;
 
         cudaDeviceSynchronize () ;

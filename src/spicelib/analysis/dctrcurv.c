@@ -486,8 +486,8 @@ DCtrCurv(CKTcircuit *ckt, int restart)
 
 #ifdef USE_CUSPICE
             RESmodel *model = RESmodPtr(here) ;
-            if (model->RESinitCUDA) {
-                model->RESparamCPU.RESconductArray[here->REScudaIndex] = here->RESconduct;
+            if (model->gen.GENinitCUDA) {
+                model->RESparamCPU.RESconductArray[here->gen.GENcudaIndex] = here->RESconduct;
                 status = cuREStemp ((GENmodel *)model);
                 if (status != 0)
                     return E_NOMEM;
