@@ -22,6 +22,10 @@ struct GENinstance {
     IFuid GENname;  /* pointer to character string naming this instance */
     int GENstate;   /* state index number */
 
+#ifdef USE_CUSPICE
+    int GENcudaIndex ; /* device index for CUDA */
+#endif
+
     /* The actual device instance structs have to place their node elements
      *   right after the the end of struct GENinstance
      *   where they will be accessed by generic GENnode()[]
@@ -47,6 +51,8 @@ struct GENmodel {       /* model structure for a resistor */
 
 #ifdef USE_CUSPICE
     unsigned int has_cuda:1 ;   /* flag to indicate is the model supports CUDA */
+    unsigned int GENinitCUDA:1 ; /* flag to initialize CUDA data */
+    int GENnInstances ; /* number of instances for CUDA */
 #endif
 };
 
