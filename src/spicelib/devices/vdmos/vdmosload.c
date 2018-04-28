@@ -590,6 +590,24 @@ bypass :
                 (ceqbd - cdreq + model->VDMOStype * ceqgd);
             *(ckt->CKTrhs + here->VDMOSsNodePrime) +=
                 cdreq + ceqbs + model->VDMOStype * ceqgs;
+
+
+            /* quasi saturation
+             * according to Vincenzo d'Alessandro's Quasi-Saturation Model, simplified:
+             V. D'Alessandro, F. Frisina, N. Rinaldi: A New SPICE Model of VDMOS Transistors
+             Including Thermal and Quasi-saturation Effects, 9th European Conference on Power
+             Electronics and applications (EPE), Graz, Austria, August 2001, pp. P.1 − P.10.
+             */
+            if (model->VDMOSqsGiven && (here->VDMOSmode == 1)) {
+                double vdsn = model->VDMOStype * (
+                    *(ckt->CKTrhsOld + here->VDMOSdNode) -
+                    *(ckt->CKTrhsOld + here->VDMOSsNode));
+                double rd = model->VDMOSdrainResistance + model->VDMOSqsResistance * 
+                    (vdsn / (vdsn + fabs(model->VDMOSqsVoltage)));
+                here->VDMOSdrainConductance = 1 / rd;
+            }
+
+
             /*
              *  load y matrix
              */

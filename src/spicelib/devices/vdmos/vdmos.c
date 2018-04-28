@@ -79,6 +79,9 @@ IFparm VDMOSmPTable[] = { /* model parameters */
  IOP("rs",    VDMOS_MOD_RS,    IF_REAL,   "Source ohmic resistance"),
  IOP("rg",    VDMOS_MOD_RG,    IF_REAL,   "Gate ohmic resistance"),
 
+ /* quasi saturation */
+ IOP("rq",      VDMOS_MOD_RQ,      IF_REAL,   "Quasi saturation resistance fitting parameter"),
+ IOP("vq",      VDMOS_MOD_VQ,      IF_REAL,   "Quasi saturation voltage fitting parameter"),
  IOP("mtriode", VDMOS_MOD_MTRIODE, IF_REAL,   "Conductance multiplier in triode region"),
 
  /* weak inversion */

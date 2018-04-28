@@ -319,7 +319,8 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
     double VDMOSdrainResistance;
     double VDMOSsourceResistance;
     double VDMOSgateResistance;
-    double VDMOSsheetResistance;
+    double VDMOSqsResistance;
+    double VDMOSqsVoltage;
     double VDMOStransconductance;    /* input - use tTransconductance */
     double VDMOSoxideCapFactor;
     double VDMOSvt0; /* input - use tVto */
@@ -363,6 +364,9 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
     unsigned VDMOSdrainResistanceGiven   :1;
     unsigned VDMOSsourceResistanceGiven  :1;
     unsigned VDMOSgateResistanceGiven    :1;
+    unsigned VDMOSqsResistanceGiven    :1;
+    unsigned VDMOSqsVoltageGiven    :1;
+    unsigned VDMOSqsGiven    :1;
     unsigned VDMOStransconductanceGiven  :1;
     unsigned VDMOSvt0Given   :1;
     unsigned VDIOgradCoeffGiven    :1;
@@ -426,6 +430,8 @@ enum {
     VDMOS_MOD_RD,
     VDMOS_MOD_RS,
     VDMOS_MOD_RG,
+    VDMOS_MOD_RQ,
+    VDMOS_MOD_VQ,
     VDMOS_MOD_IS,
     VDMOS_MOD_VJ,
     VDMOS_MOD_CJ,
