@@ -28,6 +28,10 @@ Modified: 1999 Paolo Nenzi
 static double actval, actdiff;
 #endif
 
+#ifdef USE_CUSPICE
+#include "ngspice/CUSPICE/CUSPICE.h"
+#endif
+
 
 int
 DCtrCurv(CKTcircuit *ckt, int restart)
@@ -35,7 +39,11 @@ DCtrCurv(CKTcircuit *ckt, int restart)
     TRCV *job = (TRCV *) ckt->CKTcurJob;
 
     int i;
+#ifdef USE_CUSPICE
+    int status;
+#else
     double *temp;
+#endif
     int converged;
     int rcode;
     int vcode;
@@ -285,11 +293,17 @@ DCtrCurv(CKTcircuit *ckt, int restart)
                 DEVices[rcode]->DEVload(job->TRCVvElt[i]->GENmodPtr, ckt);
             }
 
+#ifdef USE_CUSPICE
+        status = cuCKTstatesCircularBuffer(ckt);
+        if (status != 0)
+            return (E_NOMEM);
+#else
         /* Rotate state vectors. */
         temp = ckt->CKTstates[ckt->CKTmaxOrder + 1];
         for (j = ckt->CKTmaxOrder; j >= 0; j--)
             ckt->CKTstates[j + 1] = ckt->CKTstates[j];
         ckt->CKTstate0 = temp;
+#endif
 
         /* do operation */
 #ifdef XSPICE
@@ -444,8 +458,14 @@ DCtrCurv(CKTcircuit *ckt, int restart)
 
         if (firstTime) {
             firstTime = 0;
+#ifdef USE_CUSPICE
+            status = cuCKTstate01copy(ckt);
+            if (status != 0)
+                return (E_NOMEM);
+#else
             memcpy(ckt->CKTstate1, ckt->CKTstate0,
                    (size_t) ckt->CKTnumStates * sizeof(double));
+#endif
         }
 
         i = 0;
@@ -459,9 +479,21 @@ DCtrCurv(CKTcircuit *ckt, int restart)
             ((ISRCinstance*)(job->TRCVvElt[i]))->ISRCdcValue +=
                 job->TRCVvStep[i];
         } else if (job->TRCVvType[i] == rcode) { /* resistance */
-            ((RESinstance*)(job->TRCVvElt[i]))->RESresist +=
+            RESinstance *here = (RESinstance *)(job->TRCVvElt[i]);
+            here->RESresist +=
                 job->TRCVvStep[i];
-            RESupdate_conduct((RESinstance *)(job->TRCVvElt[i]), FALSE);
+            RESupdate_conduct(here, FALSE);
+
+#ifdef USE_CUSPICE
+            RESmodel *model = RESmodPtr(here) ;
+            if (model->RESinitCUDA) {
+                model->RESparamCPU.RESconductArray[here->REScudaIndex] = here->RESconduct;
+                status = cuREStemp ((GENmodel *)model);
+                if (status != 0)
+                    return E_NOMEM;
+            }
+#endif
+
             DEVices[rcode]->DEVload(job->TRCVvElt[i]->GENmodPtr, ckt);
         } else if (job->TRCVvType[i] == TEMP_CODE) { /* temperature */
             ckt->CKTtemp += job->TRCVvStep[i];
