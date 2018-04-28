@@ -12,6 +12,10 @@ Modified: Apr 2000 - Paolo Nenzi
 #include "ngspice/missing_math.h"
 #include "ngspice/fteext.h"
 
+#ifdef USE_CUSPICE
+#include "ngspice/CUSPICE/CUSPICE.h"
+#endif
+
 int
 RESparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
@@ -86,5 +90,19 @@ RESparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
         return(E_BADPARM);
     }
     RESupdate_conduct(here, FALSE);
+
+#ifdef USE_CUSPICE
+    int status ;
+    RESmodel *model ;
+
+    model = RESmodPtr(here) ;
+    if (model->RESinitCUDA) {
+        model->RESparamCPU.RESconductArray[here->REScudaIndex] = here->RESconduct;
+        status = cuREStemp ((GENmodel *)model);
+        if (status != 0)
+            return E_NOMEM;
+    }
+#endif
+
     return(OK);
 }

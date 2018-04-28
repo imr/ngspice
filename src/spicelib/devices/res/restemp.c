@@ -30,10 +30,6 @@ REStemp(GENmodel *inModel, CKTcircuit *ckt)
     /*  loop through all the resistor models */
     for( ; model != NULL; model = RESnextModel(model)) {
 
-#ifdef USE_CUSPICE
-        int i = 0;
-#endif
-
         /* loop through all the instances of the model */
         for (here = RESinstances(model); here != NULL ;
                 here=RESnextInstance(here)) {
@@ -53,12 +49,11 @@ REStemp(GENmodel *inModel, CKTcircuit *ckt)
             RESupdate_conduct(here, TRUE);
 
 #ifdef USE_CUSPICE
-            model->RESparamCPU.RESposNodeArray[i] = here->RESposNode;
-            model->RESparamCPU.RESnegNodeArray[i] = here->RESnegNode;
-            model->RESparamCPU.RESconductArray[i] = here->RESconduct;
-
-            i++;
+            model->RESparamCPU.RESposNodeArray[here->REScudaIndex] = here->RESposNode;
+            model->RESparamCPU.RESnegNodeArray[here->REScudaIndex] = here->RESnegNode;
+            model->RESparamCPU.RESconductArray[here->REScudaIndex] = here->RESconduct;
 #endif
+
         }
 
 #ifdef USE_CUSPICE

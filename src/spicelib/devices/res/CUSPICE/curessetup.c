@@ -58,7 +58,7 @@ GENmodel *inModel
     cudaError_t status ;
     RESmodel *model = (RESmodel *)inModel ;
 
-    size = (long unsigned int) model->n_instances;
+    size = (long unsigned int) model->RESnInstances ;
 
     /* Space Allocation to GPU */
     status = cudaMalloc ((void **)&(model->d_PositionVector), size * sizeof(int)) ;

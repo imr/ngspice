@@ -80,28 +80,14 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     }
 
 #ifdef USE_CUSPICE
-    int i, j, status ;
-
-    /* Counting the instances */
-    for (model = (RESmodel *)inModel ; model != NULL ; model = RESnextModel(model))
-    {
-        i = 0 ;
-
-        for (here = RESinstances(model); here != NULL ; here = RESnextInstance(here))
-        {
-            i++ ;
-        }
-
-        /* How much instances we have */
-        model->n_instances = i ;
-
-        /* This model supports CUDA */
-        model->gen.has_cuda = 1 ;
-    }
+    int j, status ;
 
     /*  loop through all the resistor models */
     for (model = (RESmodel *)inModel ; model != NULL ; model = RESnextModel(model))
     {
+        /* This model supports CUDA */
+        model->gen.has_cuda = 1 ;
+
         model->offset = ckt->total_n_values ;
 
         j = 0 ;
@@ -122,7 +108,7 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
                 j++ ;
         }
 
-        model->n_values = model->n_instances ;
+        model->n_values = model->RESnInstances ;
         ckt->total_n_values += model->n_values ;
 
         model->n_Ptr = j ;
@@ -130,18 +116,20 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
 
 
         /* Position Vector assignment */
-        model->PositionVector = TMALLOC (int, model->n_instances) ;
+        model->PositionVector = TMALLOC (int, model->RESnInstances) ;
 
-        for (j = 0 ; j < model->n_instances ; j++)
+        for (j = 0 ; j < model->RESnInstances ; j++)
             model->PositionVector [j] = model->offset + j ;
     }
 
-    /*  loop through all the resistor models */
+    /* loop through all the resistor models */
     for (model = (RESmodel *)inModel ; model != NULL ; model = RESnextModel(model))
     {
         status = cuRESsetup ((GENmodel *)model) ;
         if (status != 0)
             return (E_NOMEM) ;
+
+        model->RESinitCUDA = 1 ;
     }
 #endif
 

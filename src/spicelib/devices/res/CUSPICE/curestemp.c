@@ -48,7 +48,7 @@ GENmodel *inModel
     cudaError_t status ;
     RESmodel *model = (RESmodel *)inModel ;
 
-    size = (long unsigned int) model->n_instances;
+    size = (long unsigned int) model->RESnInstances ;
 
     /* DOUBLE */
     status = cudaMemcpy (model->RESparamGPU.d_RESconductArray, model->RESparamCPU.RESconductArray, size * sizeof(double), cudaMemcpyHostToDevice) ;
