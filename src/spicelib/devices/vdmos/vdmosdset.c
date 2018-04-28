@@ -78,8 +78,8 @@ VDMOSdSetup(GENmodel *inModel, CKTcircuit *ckt)
 
             vt = CONSTKoverQ * here->VDMOStemp;
 
-                DrainSatCur = here->VDMOSm * here->VDMOStSatCur;
-                SourceSatCur = here->VDMOSm * here->VDMOStSatCur;
+            DrainSatCur = here->VDMOSm * here->VDMOStSatCur;
+            SourceSatCur = here->VDMOSm * here->VDMOStSatCur;
 
             Beta = here->VDMOStTransconductance * here->VDMOSm *
                     here->VDMOSw/here->VDMOSl;
