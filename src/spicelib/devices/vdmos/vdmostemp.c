@@ -252,7 +252,7 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
             * temperature adjusted basic parameters */
             if (model->VDMOSDbvGiven) {
                 /* tlev == 0 */
-                tBreakdownVoltage = model->VDMOSDbv;
+                tBreakdownVoltage = fabs(model->VDMOSDbv);
 
                 cbv = model->VDMOSDibv;
 

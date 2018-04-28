@@ -677,7 +677,7 @@ bypass :
             gspr = here->VDIOtConductance;
             vte = model->VDMOSDn * vt;
             vtebrk = model->VDIObrkdEmissionCoeff * vt;
-            vbrknp = model->VDMOStype * here->VDIOtBrkdwnV;
+            vbrknp = here->VDIOtBrkdwnV;
 
             Check = 1;
             if (ckt->CKTmode & MODEINITSMSIG) {
