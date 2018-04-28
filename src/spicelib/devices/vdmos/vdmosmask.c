@@ -60,6 +60,9 @@ VDMOSmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case VDMOS_MOD_SUBSHIFT:
             value->rValue = model->VDMOSsubshift;
             return(OK);
+        case VDMOS_MOD_KSUBTHRES:
+            value->rValue = model->VDMOSksubthres;
+            return(OK);
         case VDMOS_MOD_TYPE:
             if (model->VDMOStype > 0)
                 value->sValue = "vdmosn";

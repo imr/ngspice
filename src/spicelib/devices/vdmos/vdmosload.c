@@ -367,7 +367,29 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                 arg = 0;
                 /* drain current including subthreshold current
                  * numerical differentiation for gd and gm with a delta of 2 mV */
-                if (model->VDMOSsubslGiven && (here->VDMOSmode == 1)) {
+                if (model->VDMOSksubthresGiven && (here->VDMOSmode == 1)) {
+                    double delta = 0.001;
+                    cdrain = cweakinv(model->VDMOSksubthres, model->VDMOSsubshift, vgst, vds, model->VDMOSlambda,
+                        Beta, vt, model->VDMOSmtr);
+                    /* gd */
+                    double vds1 = vds + delta;
+                    double cdrp = cweakinv(model->VDMOSksubthres, model->VDMOSsubshift, vgst, vds1, model->VDMOSlambda,
+                        Beta, vt, model->VDMOSmtr);
+                    vds1 = vds - delta;
+                    double cdrm = cweakinv(model->VDMOSksubthres, model->VDMOSsubshift, vgst, vds1, model->VDMOSlambda,
+                        Beta, vt, model->VDMOSmtr);
+                    here->VDMOSgds = (cdrp - cdrm) / (2. * delta);
+                    /* gm */
+                    double vgst1 = vgst + delta;
+                    cdrp = cweakinv(model->VDMOSksubthres, model->VDMOSsubshift, vgst1, vds, model->VDMOSlambda,
+                        Beta, vt, model->VDMOSmtr);
+                    vgst1 = vgst - delta;
+                    cdrm = cweakinv(model->VDMOSksubthres, model->VDMOSsubshift, vgst1, vds, model->VDMOSlambda,
+                        Beta, vt, model->VDMOSmtr);
+                    here->VDMOSgm = (cdrp - cdrm) / (2. * delta);
+                    here->VDMOSgmbs = 0.;
+                }
+                else if (model->VDMOSsubslGiven && (here->VDMOSmode == 1)) {
                     double delta = 0.001;
                     cdrain = cweakinv(model->VDMOSsubsl, model->VDMOSsubshift, vgst, vds, model->VDMOSlambda,
                         Beta, vt, model->VDMOSmtr);

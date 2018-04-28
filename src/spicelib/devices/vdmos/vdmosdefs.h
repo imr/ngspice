@@ -334,6 +334,7 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
     double VDMOScgs;
     double VDMOSsubsl;
     double VDMOSsubshift;
+    double VDMOSksubthres;
     double VDMOSmtr;
 
     /* bulk diode */
@@ -383,6 +384,7 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
     unsigned VDMOSaGiven   :1;
     unsigned VDMOSsubslGiven   :1;
     unsigned VDMOSsubshiftGiven   :1;
+    unsigned VDMOSksubthresGiven :1;
     unsigned VDMOSmtrGiven   :1;
 
     unsigned VDMOSDbvGiven   :1;
@@ -452,6 +454,7 @@ enum {
     VDMOS_MOD_MTRIODE,
     VDMOS_MOD_SUBSLOPE,
     VDMOS_MOD_SUBSHIFT,
+    VDMOS_MOD_KSUBTHRES,
     VDMOS_MOD_BV,
     VDMOS_MOD_IBV,
     VDMOS_MOD_NBV,

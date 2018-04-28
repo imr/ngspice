@@ -87,6 +87,7 @@ IFparm VDMOSmPTable[] = { /* model parameters */
  /* weak inversion */
  IOP("subslope",  VDMOS_MOD_SUBSLOPE,   IF_REAL, "Slope of weak inversion log current versus vgs - vth"),
  IOP("subshift",  VDMOS_MOD_SUBSHIFT,   IF_REAL, "Shift of weak inversion plot on the vgs axis"),
+ IOP("ksubthres", VDMOS_MOD_KSUBTHRES,  IF_REAL, "Shift of weak inversion plot on the vgs axis"),
 
 /* body diode */
  IOP("bv",    VDMOS_MOD_BV,    IF_REAL,   "Vds breakdown voltage"),
