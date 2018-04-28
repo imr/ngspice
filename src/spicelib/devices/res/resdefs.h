@@ -93,11 +93,6 @@ typedef struct sRESinstance {
     BindElement *RESnegPosBinding ;
 #endif
 
-#ifdef USE_CUSPICE
-    #define REScudaIndex gen.GENcudaIndex
-    #define RESnInstances gen.GENnInstances
-#endif
-
 } RESinstance ;
 
 #ifdef USE_CUSPICE
@@ -175,8 +170,6 @@ typedef struct sRESmodel {       /* model structure for a resistor */
     int n_Ptr ;
     int *PositionVector ;
     int *d_PositionVector ;
-
-    #define RESinitCUDA gen.GENinitCUDA
 #endif
 
 } RESmodel;

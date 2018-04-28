@@ -49,9 +49,10 @@ REStemp(GENmodel *inModel, CKTcircuit *ckt)
             RESupdate_conduct(here, TRUE);
 
 #ifdef USE_CUSPICE
-            model->RESparamCPU.RESposNodeArray[here->REScudaIndex] = here->RESposNode;
-            model->RESparamCPU.RESnegNodeArray[here->REScudaIndex] = here->RESnegNode;
-            model->RESparamCPU.RESconductArray[here->REScudaIndex] = here->RESconduct;
+            int i = here->gen.GENcudaIndex;
+            model->RESparamCPU.RESposNodeArray[i] = here->RESposNode;
+            model->RESparamCPU.RESnegNodeArray[i] = here->RESnegNode;
+            model->RESparamCPU.RESconductArray[i] = here->RESconduct;
 #endif
 
         }

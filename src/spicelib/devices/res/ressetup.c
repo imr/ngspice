@@ -108,7 +108,7 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
                 j++ ;
         }
 
-        model->n_values = model->RESnInstances ;
+        model->n_values = model->gen.GENnInstances ;
         ckt->total_n_values += model->n_values ;
 
         model->n_Ptr = j ;
@@ -116,9 +116,9 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
 
 
         /* Position Vector assignment */
-        model->PositionVector = TMALLOC (int, model->RESnInstances) ;
+        model->PositionVector = TMALLOC (int, model->gen.GENnInstances) ;
 
-        for (j = 0 ; j < model->RESnInstances ; j++)
+        for (j = 0 ; j < model->gen.GENnInstances ; j++)
             model->PositionVector [j] = model->offset + j ;
     }
 
@@ -129,7 +129,7 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
         if (status != 0)
             return (E_NOMEM) ;
 
-        model->RESinitCUDA = 1 ;
+        model->gen.GENinitCUDA = 1 ;
     }
 #endif
 
