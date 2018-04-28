@@ -906,7 +906,7 @@ scalef(double nf2, double vgst)
  */
 
 static double
-cweakinv(double slope, double shift, double vgst, double vds, double lambda, double beta, double vt, double mtr)
+cweakinv2(double slope, double shift, double vgst, double vds, double lambda, double beta, double vt, double mtr)
 {
     vgst += shift * (1 - scalef(0.5, vgst));
     double n = slope / 2.3 / 0.0256; /* Tsividis, p. 208 */
@@ -917,4 +917,32 @@ cweakinv(double slope, double shift, double vgst, double vds, double lambda, dou
         beta * n1 * 2 * vt * vt * (1 + scalef(1, vgst) * lambda * vds) *
         (first * first - second * second);
     return cds;
+}
+
+
+/* Alternative simple weak inversion model, according to https://www.anasoft.co.uk/MOS1Model.htm 
+ * Scale the voltage overdrive vgst logarithmically in weak inversion.
+ * Best fits LTSPICE curves with shift=0
+ */
+
+static double
+cweakinv(double slope, double shift, double vgst, double vds, double lambda, double beta, double vt, double mtr)
+{
+    NG_IGNORE(vt);
+    double cdrain, betap;
+    vgst = slope * log(1 + exp((vgst - shift) / slope));
+
+    betap = beta*(1 + lambda*vds);
+    /* scale vds with mtr (except with lambda) */
+
+    if (vgst <= vds * mtr) {
+    /* saturation region */
+        cdrain = betap*vgst*vgst*.5;
+    }
+    else {
+        /* linear region */
+        cdrain = betap * vds * mtr *
+            (vgst - .5 * vds * mtr);
+    }
+    return cdrain;
 }
