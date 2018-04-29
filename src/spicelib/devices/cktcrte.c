@@ -56,6 +56,11 @@ CKTcrtElt(CKTcircuit *ckt, GENmodel *modPtr, GENinstance **inInstPtr, IFuid name
            DEVices[type]->DEVpublic.name, ckt->CKTstat->STATdevNum[type].instNum);
 #endif
 
+#ifdef USE_CUSPICE
+    instPtr->GENcudaIndex = modPtr->GENnInstances ;
+    modPtr->GENnInstances++ ;
+#endif
+
     instPtr->GENname = name;
 
     instPtr->GENmodPtr = modPtr; 

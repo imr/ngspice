@@ -176,20 +176,8 @@ void INP2R(CKTcircuit *ckt, INPtables * tab, struct card *current)
           /* create default R model */
           IFnewUid(ckt, &uid, NULL, "R", UID_MODEL, NULL);
           IFC(newModel, (ckt, type, &(tab->defRmod), uid));
-
-#ifdef USE_CUSPICE
-          tab->defRmod->GENnInstances = 0 ;
-          tab->defRmod->GENinitCUDA = 0 ;
-#endif
-
       }
       IFC(newInstance, (ckt, tab->defRmod, &fast, name));
-
-#ifdef USE_CUSPICE
-      fast->GENcudaIndex = tab->defRmod->GENnInstances ;
-      tab->defRmod->GENnInstances++ ;
-#endif
-
       if (error1 == 1) {		/* was a r=val construction */
         val = INPevaluate(&line, &error1, 1);	/* [<val>] */
 #ifdef TRACE
