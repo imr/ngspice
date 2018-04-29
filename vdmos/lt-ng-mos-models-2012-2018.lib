@@ -1,6 +1,8 @@
 * Copyright (c) 2000-2012 Linear Technology Corporation.   All rights reserved.
+* Modified by Holger Vogt 2018
+* Models parameter sets are modified by adding the parameter ksubthres.
+* Weak inversion characteristics are aligned by comparing LTSPICE and ngspice simulations, ksubthres is selected to offer best fit.
 *
-
 .MODEL KP505A VDMOS(KP=3 RS=0.05 RD=0.004 RG=100 Rds=300Meg VTO=1.7 LAMBDA=0.05 CGDMAX=202p CGDMIN=5p CGS=285p TT=720n a=0.25 is=10p n=1.2 Rb=0.21 m=0.368 Vj=1.77 Cjo=185pF mfg=USSR Vds=50 Ron=0.3)
 .MODEL kp505g VDMOS(KP=2.5 RS=0.0022 RD=0.0001 RG=100 Rds=8Meg VTO=0.6 LAMBDA=0.1 CGDMAX=466p CGDMIN=39p CGS=150p TT=720n a=2.59 is=100p n=1.1 Rb=0.12 m=0.437 Vj=0.62 Cjo=160pF mfg=USSR Vds=8 Ron=1)
 .MODEL KP301B VDMOS(pchan KP=200u Mtriode=2.5 RS=200 RD=100 RG=60 VTO=-4 LAMBDA=0.03 CGDMAX=1.5p CGDMIN=1p CGS=1.5p TT=720n is=10n n=1 Rb=10 m=0.5 Vj=1 Cjo=10p mfg=USSR Vds=-20 Ron=1000)
@@ -144,7 +146,7 @@
 .model SI3445DV VDMOS(pchan Rg=3 Rd=15m Rs=6m Vto=-.85 Kp=18 Cgdmax=1n Cgdmin=.44n cgs=1.2n Cjo=.1n Is=.045nA Rb=.026 N=1.127 mfg=Siliconix Vds=-8 Ron=34m Qg=15n)
 .model SI4467DY VDMOS(pchan Rg=3 Vto=-.7 Rd=4m Rs=3m Rb=5m Kp=90 Cgdmax=3.4n Cgdmin=1.5n Cgs=10n Cjo=3.72n Is=172p mfg=Fairchild Vds=-20 Ron=10m Qg=86n)
 .model SI7454DP VDMOS(Rg=3 Vto=3.8 Rd=13.6m Rs=10.2m Rb=17m Kp=42 Cgdmax=.5n Cgdmin=.1n Cgs=1.6n Cjo=.48n Is=48p mfg=Siliconix Vds=100 Ron=34m Qg=24n)
-.model SPA11N60C3 VDMOS(Rg=.86 Vto=4.08 subthres=10m Mtriode=.8 Rd=275m Rs=60m Rb=22m Kp=40 A=2.2 Cgdmax=2.7n Cgdmin=10p Cgs=1.5n Cjo=.7n Is=20p mfg=Infineon Vds=650 Ron=340m Qg=45n)
+.model SPA11N60C3 VDMOS(Rg=.86 Vto=4.08 subthres=10m ksubthres=27m Mtriode=.8 Rd=275m Rs=60m Rb=22m Kp=40 A=2.2 Cgdmax=2.7n Cgdmin=10p Cgs=1.5n Cjo=.7n Is=20p mfg=Infineon Vds=650 Ron=340m Qg=45n)
 .model STB120NF10 VDMOS(Rg=3 Vto=3.7 Rd=3.6m Rs=2.7m Rb=5m Kp=92 Cgdmax=4n Cgdmin=1n Cgs=4n Cjo=2n Is=200p mfg=STMicroelectronics Vds=100 Ron=9m Qg=172n)
 .model STP8NM60 VDMOS(Rg=4 Vto=5.3 Rd=650m Rs=50m Rb=450m lambda=.005 Kp=1 Cgdmax=.1n Cgdmin=.01n Cgs=.7n Cjo=.3n Is=13p mfg=STMicroelectronics Vds=650 Ron=900m Qg=13n)
 .model STW11NM80 VDMOS(Rg=3 Vto=4.5 Rd=140m Rs=100m Rb=175m Kp=30 Cgdmax=.5n Cgdmin=.05n Cgs=2n Cjo=.3n Is=88p mfg=STMicroelectronics Vds=800 Ron=350m Qg=44n)
@@ -598,8 +600,8 @@
 .model IPU135N03L VDMOS(Rg=1.2 Vto=2.77 Rd=7.36m Rs=2.35m Rb=4.88m Kp=84.9 Lambda=0.09 Cgdmin=12p Cgdmax=0.18n A=0.6 Cgs=0.75n Cjo=0.96n M=0.3 Is=6.6p VJ=0.9 N=1.1 TT=3n mfg=Infineon Vds=30 Ron=13.7m Qg=5n)
 .model IPU135N08N3 VDMOS(Rg=2 Vto=3.9 Rd=6.7m Rs=1.32m Rb=4.02m Kp=58.4 Lambda=0.03 Cgdmin=8p Cgdmax=0.42n A=0.2 Cgs=1.29n Cjo=1.16n M=0.27 Is=25.1p VJ=0.9 N=1.16 TT=40n mfg=Infineon Vds=80 Ron=13.5m Qg=19n)
 .model FDS2734 VDMOS(Rg=3 Rd=100m Rs=0 Vto=3.3 Kp=11 Lambda=.03 mtriode=4 Cgdmax=1000p Cgdmin=30p Cgs=2n Cjo=1n Is=2.8p Rb=3.3m mfg=Fairchild Vds=250 Ron=117m Qg=32n)
-.MODEL IXTP6N100D2 VDMOS(KP=2.9 RS=0.1 RD=1.3 RG=1 VTO=-2.7 LAMBDA=0.03 CGDMAX=3000p CGDMIN=2p CGS=2915p TT=1371n a=1 IS=2.13E-08 N=1.564 RB=0.0038 m=0.548 Vj=0.1 Cjo=3200pF subthres=2.5m)
-.MODEL IXTH20N50D VDMOS KP=1.9 RS=1m RD=.222 VTO=-1.5 RDS=20E6 Lambda=4m subthres=8m CJO=4.9n M=1.5 a=1 CGDMAX=900p CGDMIN=80p CGS=6200p a=1 VJ=2.6 RG=10m IS=1.37u N=2
+.MODEL IXTP6N100D2 VDMOS(KP=2.9 RS=0.1 RD=1.3 RG=1 VTO=-2.7 LAMBDA=0.03 CGDMAX=3000p CGDMIN=2p CGS=2915p TT=1371n a=1 IS=2.13E-08 N=1.564 RB=0.0038 m=0.548 Vj=0.1 Cjo=3200pF subthres=2.5m ksubthres=39m)
+.MODEL IXTH20N50D VDMOS KP=1.9 RS=1m RD=.222 VTO=-1.5 RDS=20E6 Lambda=4m subthres=8m ksubthres=85m CJO=4.9n M=1.5 a=1 CGDMAX=900p CGDMIN=80p CGS=6200p VJ=2.6 RG=10m IS=1.37u N=2
 .model IRFH5004 VDMOS(Rg=1.7 Vto=3.7 Rd=0.4m Rs=0.10m Rb=0.9m Kp=90 Cgdmax=3.5n Cgdmin=0.4n Cgs=3n Cjo=1.7n Is=9p tt=34n mfg=International_Rectifier Vds=40 Ron=2.2m Qg=75n)
 .model IRFH5015 VDMOS(Rg=1.7 Vto=4.95 Rd=17m Rs=0m Rb=1.45m Kp=24 Cgdmax=1.0n Cgdmin=0.07n Cgs=1.8n Cjo=1.45n Is=60p tt=42n mfg=International_Rectifier Vds=150 Ron=25.5m Qg=33n)
 .model IRFH5020 VDMOS(Rg=1.9 Vto=4.4 Rd=33m Rs=0m Rb=2.2m Kp=13 Cgdmax=1.45n Cgdmin=0.025n Cgs=1.8n Cjo=1.3n Is=59p tt=46n mfg=International_Rectifier Vds=200 Ron=47m Qg=36n)
@@ -832,14 +834,14 @@
 .model SiR802DP VDMOS(Rg=.75 Rd=3.7m Rs=0 Vto=1.2 Kp=100 lambda=.06 Cgdmax=1n Cgdmin=200p Cgs=2n Cjo=1n Is=50p Rb=2.5m mtriode=2.8 mfg=Siliconix Vds=20 Ron=5.7m Qg=15.5n)
 .model Si2318CDS VDMOS(Rg=3 Vto=2 Rd=16m Rs=16m Rb=15m Kp=22 lambda=.1 mtriode=2 Cgdmax=110p Cgdmin=20p Cgs=400p Cjo=400p Is=1.5p mfg=Siliconix Vds=40 Ron=51m Qg=2.9n)
 .model RJK0451DPB VDMOS(Rg=.7 Vto=2.31 Rd=2m Rs=1m Rb=.25m Kp=160 lambda=.05 mtriode=.6 Cgdmax=200p Cgdmin=100p Cgs=1n Cjo=1n Is=2p mfg=Renesas Vds=40 Ron=5.5m Qg=14n)
-.model FDB3682 VDMOS(Rg=3 Rd=26.8m Vto=4 subthres=.1 mtriode=1.8 Kp=18 Cgdmax=400p Cgdmin=20p A=.5 Cgs=1.25n Cjo=1n M=.6 Is=1.8p Rb=14.2m mfg=Fairchild Vds=100 Ron=32m Qg=18.5n)
-.model Si7489DP VDMOS(Rg=3 Rd=31.2m Rs=1m Vto=-2.4 subthres=.03 mtriode=2.2 Kp=35 lambda=0.1 Cgdmax=6n Cgdmin=10p A=1 Cgs=4n cjo=200p M=.3 VJ=.9 Is=3.6p Rb=5.5m mfg=Siliconix Vds=-100 Ron=3.3m Qg=106n pchan)
-.model HUFA76645 VDMOS(Rg=3 Rd=9.4m Rs=.8m Vto=2 subthres=.01 mtriode=1 Kp=128 Cgdmax=8n Cgdmin=10p A=.6 Cgs=3n cjo=3.5n M=.55 VJ=.9 Is=3.6p Rb=2.24m mfg=Fairchild Vds=100 Ron=15m Qg=34n)
+.model FDB3682 VDMOS(Rg=3 Rd=26.8m Vto=4 subthres=.1 ksubthres=96m mtriode=1.8 Kp=18 Cgdmax=400p Cgdmin=20p A=.5 Cgs=1.25n Cjo=1n M=.6 Is=1.8p Rb=14.2m mfg=Fairchild Vds=100 Ron=32m Qg=18.5n)
+.model Si7489DP VDMOS(Rg=3 Rd=31.2m Rs=1m Vto=-2.4 subthres=.03 ksubthres=39m mtriode=2.2 Kp=35 lambda=0.1 Cgdmax=6n Cgdmin=10p A=1 Cgs=4n cjo=200p M=.3 VJ=.9 Is=3.6p Rb=5.5m mfg=Siliconix Vds=-100 Ron=3.3m Qg=106n pchan)
+.model HUFA76645 VDMOS(Rg=3 Rd=9.4m Rs=.8m Vto=2 subthres=.01 ksubthres=27.3m mtriode=1 Kp=128 Cgdmax=8n Cgdmin=10p A=.6 Cgs=3n cjo=3.5n M=.55 VJ=.9 Is=3.6p Rb=2.24m mfg=Fairchild Vds=100 Ron=15m Qg=34n)
 .model SUM85N03-06P VDMOS(Rg=3 Vto=2.7 Rd=1.02m Rs=2.4m Rb=3m Kp=81 Mtriode=1.66 Cgdmax=1.3n Cgdmin=.2n Cgs=2.9n Cjo=1.4n m=.4 a=2 Vj=.7 lambda=1m Is=10p mfg=Siliconix Vds=30 Ron=4.5m Qg=48n)
 .MODEL VN10KM NMOS (LEVEL=1 VTO=1.4 KP=1.55E-01 PHI=0.75 LAMBDA=2.9E-04 RD=7.60E-01 RS=7.60E-01 IS=6.46E-14 CBD=3.28E-11 CBS=3.94E-11 PB=0.80 MJ=.46 CGSO=2.40E-08 CGDO=2.00E-08 CGBO=3.36E-07 mfg=Siliconix Vds=60 Ron=4 )
 .model FDMS86500DC VDMOS(Rg=3 Vto=4.9 Rd=.74m Rs=.1m Rb=.6m Kp=70 Mtriode=2.7 Cgdmax=1.4n Cgdmin=10p Cgs=5.5n Cjo=4n m=.4 a=.2 Vj=.7 lambda=110m Is=4p mfg=Fairchild Vds=60 Ron=1.9m Qg=76n)
 .MODEL XP161A1355PR VDMOS(KP=21.5031 RS=0.0101 RD=0.0051 RG=1 VTO=0.85 LAMBDA=0.001 CGDMAX=1202p CGDMIN=40p CGS=280p TT=720n a=1.11 IS=20f N=1 RB=15m m=0.424 Vj=0.65 Cjo=450pF mfg=Torex Vds=60 Ron=100m Qg=5n)
 .model FDMS3622SQ1 VDMOS(mtriode=2 Rg=1.4 Vto=1.58 Rd=3m Rs=.3m Rb=3.m Kp=130 Lambda=.2 Cgdmin=70p Cgdmax=.68n A=.9 Cgs=1.6n Cjo=1.3n M=0.3 Vj=.9 Is=142p N=1.1 mfg=Fairchild Vds=25 Ron=5m Qg=12n)
 .model FDMS3622SQ2 VDMOS(mtriode=3 Rg=.8 Vto=1.87 Rd=.8m Rs=.08m Rb=5m Kp=280 Lambda=.5 Cgdmin=120p Cgdmax=2n A=.9 Cgs=6.3n Cjo=3.5n M=0.42 Vj=.9 Is=10u N=1.1 mfg=Fairchild Vds=25 Ron=1.1m Qg=40n)
-.model Si7102DN VDMOS(mtriode=2.3 Rg=1.4 vto=.843 subthres=180m Rd=1.1m Rs=1.75m Rb=5m Kp=350 Lambda=10m Cgdmin=800p Cgdmax=4.6n A=3 Cgs=3.4n Cjo=1.3n M=0.5 VJ=0.7 Is=2n N=1.05 TT=0 mfg=Vishay Vds=12 Ron=3.8m Qg=41n)
+.model Si7102DN VDMOS(mtriode=2.3 Rg=1.4 vto=.843 subthres=180m ksubthres=31m Rd=1.1m Rs=1.75m Rb=5m Kp=350 Lambda=10m Cgdmin=800p Cgdmax=4.6n A=3 Cgs=3.4n Cjo=1.3n M=0.5 VJ=0.7 Is=2n N=1.05 TT=0 mfg=Vishay Vds=12 Ron=3.8m Qg=41n)
 
