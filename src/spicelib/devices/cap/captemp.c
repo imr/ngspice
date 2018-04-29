@@ -32,15 +32,11 @@ CAPtemp(GENmodel *inModel, CKTcircuit *ckt)
     double tc1, tc2;
 
 #ifdef USE_CUSPICE
-    int i, status ;
+    int status ;
 #endif
 
     /*  loop through all the capacitor models */
     for( ; model != NULL; model = CAPnextModel(model)) {
-
-#ifdef USE_CUSPICE
-        i = 0 ;
-#endif
 
         /* loop through all the instances of the model */
         for (here = CAPinstances(model); here != NULL ;
@@ -97,13 +93,12 @@ CAPtemp(GENmodel *inModel, CKTcircuit *ckt)
             here->CAPcapac = here->CAPcapac * factor * here->CAPscale;
 
 #ifdef USE_CUSPICE
+            int i = here->gen.GENcudaIndex;
             model->CAPparamCPU.CAPcapacArray[i] = here->CAPcapac ;
             model->CAPparamCPU.CAPmArray[i] = here->CAPm ;
             model->CAPparamCPU.CAPposNodeArray[i] = here->CAPposNode ;
             model->CAPparamCPU.CAPnegNodeArray[i] = here->CAPnegNode ;
             model->CAPparamCPU.CAPstateArray[i] = here->CAPstate ;
-
-            i++ ;
 #endif
 
         }

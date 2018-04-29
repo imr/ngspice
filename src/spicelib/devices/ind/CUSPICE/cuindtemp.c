@@ -48,7 +48,7 @@ GENmodel *inModel
     cudaError_t status ;
     INDmodel *model = (INDmodel *)inModel ;
 
-    size = (long unsigned int) model->n_instances;
+    size = (long unsigned int) model->gen.GENnInstances;
 
     /* DOUBLE */
     status = cudaMemcpy (model->INDparamGPU.d_INDinitCondArray, model->INDparamCPU.INDinitCondArray, size * sizeof(double), cudaMemcpyHostToDevice) ;

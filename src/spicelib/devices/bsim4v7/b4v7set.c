@@ -2587,36 +2587,22 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
     }
 
 #ifdef USE_CUSPICE
-    int i, j, jRHS, l, lRHS, lTimeSteps, status ;
-
-    /* Counting the instances */
-    for (model = (BSIM4v7model *)inModel ; model != NULL ; model = BSIM4v7nextModel(model))
-    {
-        i = 0 ;
-
-        for (here = BSIM4v7instances(model); here != NULL ; here = BSIM4v7nextInstance(here))
-        {
-            i++ ;
-        }
-
-        /* How much instances we have */
-        model->n_instances = i ;
-
-        /* This model supports CUDA */
-        model->gen.has_cuda = 1 ;
-    }
+    int j, jRHS, l, lRHS, lTimeSteps, status ;
 
     /*  loop through all the BSIM4v7 models */
     for (model = (BSIM4v7model *)inModel ; model != NULL ; model = BSIM4v7nextModel(model))
     {
+        /* This model supports CUDA */
+        model->gen.has_cuda = 1 ;
+
         /* Position Vector Allocation */
-        model->PositionVector = TMALLOC (int, model->n_instances) ;
+        model->PositionVector = TMALLOC (int, model->gen.GENnInstances) ;
 
         /* Position Vector Allocation for the RHS */
-        model->PositionVectorRHS = TMALLOC (int, model->n_instances) ;
+        model->PositionVectorRHS = TMALLOC (int, model->gen.GENnInstances) ;
 
         /* Position Vector Allocation for timeSteps */
-        model->PositionVector_timeSteps = TMALLOC (int, model->n_instances) ;
+        model->PositionVector_timeSteps = TMALLOC (int, model->gen.GENnInstances) ;
 
 
         model->offset = ckt->total_n_values ;
@@ -2625,7 +2611,7 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
         model->offset_timeSteps = ckt->total_n_timeSteps ;
 
 
-        i = 0 ;
+        int i = 0 ;
         j = 0 ;
         jRHS = 0 ;
         l = 0 ;

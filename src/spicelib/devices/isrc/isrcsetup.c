@@ -34,7 +34,7 @@ ISRCsetup (SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
         }
 
         /* How many instances we have */
-        model->n_instances = i ;
+        model->gen.GENnInstances = i ;
 
         /* This model supports CUDA */
         model->gen.has_cuda = 1 ;
@@ -58,7 +58,7 @@ ISRCsetup (SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
                 j++ ;
         }
 
-        model->n_valuesRHS = model->n_instances;
+        model->n_valuesRHS = model->gen.GENnInstances;
         ckt->total_n_valuesRHS += model->n_valuesRHS ;
 
         model->n_PtrRHS = j ;
@@ -66,9 +66,9 @@ ISRCsetup (SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
 
 
         /* Position Vector assignment for the RHS */
-        model->PositionVectorRHS = TMALLOC (int, model->n_instances) ;
+        model->PositionVectorRHS = TMALLOC (int, model->gen.GENnInstances) ;
 
-        for (j = 0 ; j < model->n_instances; j++)
+        for (j = 0 ; j < model->gen.GENnInstances; j++)
             model->PositionVectorRHS [j] = model->offsetRHS + j ;
     }
 

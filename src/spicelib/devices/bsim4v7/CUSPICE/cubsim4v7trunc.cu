@@ -31,17 +31,17 @@ GENmodel *inModel, CKTcircuit *ckt, double *timeStep
         /* Determining how many blocks should exist in the kernel */
         thread_x = 1 ;
         thread_y = 256 ;
-        if (model->n_instances % thread_y != 0)
-            block_x = (int)((model->n_instances + thread_y - 1) / thread_y) ;
+        if (model->gen.GENnInstances % thread_y != 0)
+            block_x = (int)((model->gen.GENnInstances + thread_y - 1) / thread_y) ;
         else
-            block_x = model->n_instances / thread_y ;
+            block_x = model->gen.GENnInstances / thread_y ;
 
         dim3 thread (thread_x, thread_y) ;
 
         /* Kernel launch */
         status = cudaGetLastError () ; // clear error status
 
-        cuBSIM4v7trunc_kernel <<< block_x, thread >>> (model->BSIM4v7paramGPU, model->n_instances,
+        cuBSIM4v7trunc_kernel <<< block_x, thread >>> (model->BSIM4v7paramGPU, model->gen.GENnInstances,
                                                      ckt->dD_CKTstates, ckt->d_CKTdeltaOld,
                                                      ckt->CKTdelta, ckt->CKTorder, ckt->CKTintegrateMethod,
                                                      ckt->CKTabstol, ckt->CKTreltol, ckt->CKTchgtol, ckt->CKTtrtol,

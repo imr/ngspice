@@ -66,26 +66,15 @@ MUTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         }
 
 #ifdef USE_CUSPICE
-    int i, j, status;
+    int j, status;
     INDmodel *indmodel;
     INDinstance *indhere;
 
-    /* Counting the instances */
-    for (model = (MUTmodel *)inModel; model; model = MUTnextModel(model)) {
-        i = 0;
-
-        for (here = MUTinstances(model); here; here = MUTnextInstance(here))
-            i++;
-
-        /* How much instances we have */
-        model->n_instances = i;
-
-        /* This model supports CUDA */
-        model->gen.has_cuda = 1 ;
-    }
-
     /*  loop through all the mutual inductor models */
     for (model = (MUTmodel *)inModel; model; model = MUTnextModel(model)) {
+        /* This model supports CUDA */
+        model->gen.has_cuda = 1 ;
+
         model->offset = ckt->total_n_values;
 
         j = 0;
@@ -100,7 +89,7 @@ MUTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 j++;
         }
 
-        model->n_values = model->n_instances;
+        model->n_values = model->gen.GENnInstances;
         ckt->total_n_values += model->n_values;
 
         model->n_Ptr = j;
@@ -108,16 +97,16 @@ MUTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
 
         /* Position Vector assignment */
-        model->PositionVector = TMALLOC(int, model->n_instances);
+        model->PositionVector = TMALLOC(int, model->gen.GENnInstances);
 
-        for (j = 0; j < model->n_instances; j++)
+        for (j = 0; j < model->gen.GENnInstances; j++)
             model->PositionVector [j] = model->offset + j;
 
 
         /* PARTICULAR SITUATION */
         /* Pick up the IND model from one of the two IND instances */
         indmodel = INDmodPtr(MUTinstances(model)->MUTind1);
-        model->n_instancesRHS = indmodel->n_instances;
+        model->n_instancesRHS = indmodel->gen.GENnInstances;
 
         /* Position Vector assignment for the RHS */
         model->PositionVectorRHS = TMALLOC(int, model->n_instancesRHS);
@@ -132,9 +121,9 @@ MUTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
         /* InstanceID storing for every MUT instance */
         model->MUTparamCPU.MUTinstanceIND1Array = TMALLOC(int,
-                                                          model->n_instances);
+                                                          model->gen.GENnInstances);
         model->MUTparamCPU.MUTinstanceIND2Array = TMALLOC(int,
-                                                          model->n_instances);
+                                                          model->gen.GENnInstances);
         j = 0;
         for (here = MUTinstances(model); here; here = MUTnextInstance(here)) {
             model->MUTparamCPU.MUTinstanceIND1Array [j] = here->MUTind1->instanceID;

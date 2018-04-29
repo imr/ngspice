@@ -44,16 +44,12 @@ MUTtemp(GENmodel *inModel, CKTcircuit *ckt)
     struct INDsystem *first_system = NULL;
 
 #ifdef USE_CUSPICE
-    int i, status;
+    int status;
 #endif
 
     NG_IGNORE(ckt);
 
     for (; model; model = MUTnextModel(model)) {
-
-#ifdef USE_CUSPICE
-        i = 0;
-#endif
 
         for (here = MUTinstances(model); here; here = MUTnextInstance(here)) {
 
@@ -68,13 +64,12 @@ MUTtemp(GENmodel *inModel, CKTcircuit *ckt)
             here->MUTfactor = here->MUTcoupling * sqrt(fabs(ind1 * ind2));
 
 #ifdef USE_CUSPICE
+            int i = here->gen.GENcudaIndex;
             model->MUTparamCPU.MUTfactorArray[i] = here->MUTfactor;
             model->MUTparamCPU.MUTflux1Array[i] = here->MUTind1->INDflux;
             model->MUTparamCPU.MUTflux2Array[i] = here->MUTind2->INDflux;
             model->MUTparamCPU.MUTbrEq1Array[i] = here->MUTind1->INDbrEq;
             model->MUTparamCPU.MUTbrEq2Array[i] = here->MUTind2->INDbrEq;
-
-            i++;
 #endif
 
             if (ckt->CKTindverbosity > 0) {

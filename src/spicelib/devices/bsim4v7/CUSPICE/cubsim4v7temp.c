@@ -60,7 +60,7 @@ GENmodel *inModel
     BSIM4v7model *model = (BSIM4v7model *)inModel ;
     BSIM4v7instance *here ;
 
-    size = (long unsigned int) model->n_instances;
+    size = (long unsigned int) model->gen.GENnInstances;
 
     /* Special case here->d_pParam */
     model->pParamHost = (struct bsim4SizeDependParam **) malloc (size * sizeof(struct bsim4SizeDependParam *)) ;

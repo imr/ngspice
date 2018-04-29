@@ -129,8 +129,6 @@ typedef struct sISRCmodel {
     int n_PtrRHS ;
     int *PositionVectorRHS ;
     int *d_PositionVectorRHS ;
-
-    int n_instances ;
 #endif
 
 } ISRCmodel;

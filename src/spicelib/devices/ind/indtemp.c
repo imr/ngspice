@@ -26,15 +26,11 @@ INDtemp(GENmodel *inModel, CKTcircuit *ckt)
     double tc1, tc2;
 
 #ifdef USE_CUSPICE
-    int i, status ;
+    int status ;
 #endif
 
     /*  loop through all the inductor models */
     for( ; model != NULL; model = INDnextModel(model)) {
-
-#ifdef USE_CUSPICE
-    i = 0 ;
-#endif
 
         /* loop through all the instances of the model */
         for (here = INDinstances(model); here != NULL ;
@@ -81,12 +77,11 @@ INDtemp(GENmodel *inModel, CKTcircuit *ckt)
             here->INDinduct = here->INDinduct * factor * here->INDscale;
 
 #ifdef USE_CUSPICE
+            int i = here->gen.GENcudaIndex;
             model->INDparamCPU.INDinitCondArray[i] = here->INDinitCond ;
             model->INDparamCPU.INDinductArray[i] = here->INDinduct ;
             model->INDparamCPU.INDbrEqArray[i] = here->INDbrEq ;
             model->INDparamCPU.INDstateArray[i] = here->INDstate ;
-
-            i++ ;
 #endif
 
         }

@@ -157,8 +157,6 @@ typedef struct sVSRCmodel {
     int n_PtrRHS ;
     int *PositionVectorRHS ;
     int *d_PositionVectorRHS ;
-
-    int n_instances ;
 #endif
 
 } VSRCmodel;

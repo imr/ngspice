@@ -60,7 +60,7 @@ GENmodel *inModel
     ISRCmodel *model = (ISRCmodel *)inModel ;
     ISRCinstance *here ;
 
-    size1 = (long unsigned int) model->n_instances;
+    size1 = (long unsigned int) model->gen.GENnInstances;
 
     /* Space Allocation to GPU */
     status = cudaMalloc ((void **)&(model->d_PositionVectorRHS), size1 * sizeof(int)) ;

@@ -27,15 +27,11 @@ ISRCtemp(GENmodel *inModel, CKTcircuit *ckt)
     NG_IGNORE(ckt);
 
 #ifdef USE_CUSPICE
-    int i, j, status ;
+    int j, status ;
 #endif
 
     /*  loop through all the voltage source models */
     for( ; model != NULL; model = ISRCnextModel(model)) {
-
-#ifdef USE_CUSPICE
-    i = 0 ;
-#endif
 
         /* loop through all the instances of the model */
         for (here = ISRCinstances(model); here != NULL ;
@@ -66,6 +62,8 @@ ISRCtemp(GENmodel *inModel, CKTcircuit *ckt)
             here->ISRCacImag = here->ISRCacMag * sin(radians);
 
 #ifdef USE_CUSPICE
+            int i = here->gen.GENcudaIndex;
+
             for (j = 0 ; j < here->n_coeffs ; j++)
             {
                 model->ISRCparamCPU.ISRCcoeffsArrayHost [i] [j] = here->ISRCcoeffs [j] ;
@@ -75,8 +73,6 @@ ISRCtemp(GENmodel *inModel, CKTcircuit *ckt)
             model->ISRCparamCPU.ISRCdcGivenArray[i] = here->ISRCdcGiven ;
             model->ISRCparamCPU.ISRCfunctionTypeArray[i] = here->ISRCfunctionType ;
             model->ISRCparamCPU.ISRCfunctionOrderArray[i] = here->ISRCfunctionOrder ;
-
-            i++ ;
 #endif
 
         }

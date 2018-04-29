@@ -175,8 +175,6 @@ struct sINDmodel {             /* model structure for an inductor */
     int n_timeSteps;
     int *PositionVector_timeSteps;
     int *d_PositionVector_timeSteps;
-
-    int n_instances;
 #endif
 
 };
@@ -268,8 +266,6 @@ struct sMUTmodel {             /* model structure for a mutual inductor */
 
     int *PositionVectorRHS;
     int *d_PositionVectorRHS;
-
-    int n_instances;
 
     /* PARTICULAR SITUATION */
     int n_instancesRHS;
