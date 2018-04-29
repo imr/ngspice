@@ -70,6 +70,7 @@ IFparm VDMOSpTable[] = { /* parameters */
 };
 
 IFparm VDMOSmPTable[] = { /* model parameters */
+ /* basic device */
  OP("type",   VDMOS_MOD_TYPE,  IF_STRING, "N-channel or P-channel MOS"),
  IOP("vto",   VDMOS_MOD_VTO,   IF_REAL,   "Threshold voltage"),
  IOP("kp",    VDMOS_MOD_KP,    IF_REAL,   "Transconductance parameter"),
@@ -78,6 +79,12 @@ IFparm VDMOSmPTable[] = { /* model parameters */
  IOP("rd",    VDMOS_MOD_RD,    IF_REAL,   "Drain ohmic resistance"),
  IOP("rs",    VDMOS_MOD_RS,    IF_REAL,   "Source ohmic resistance"),
  IOP("rg",    VDMOS_MOD_RG,    IF_REAL,   "Gate ohmic resistance"),
+ IOP("tnom",  VDMOS_MOD_TNOM,  IF_REAL,   "Parameter measurement temperature"),
+ IOP("kf",    VDMOS_MOD_KF,    IF_REAL,   "Flicker noise coefficient"),
+ IOP("af",    VDMOS_MOD_AF,    IF_REAL,   "Flicker noise exponent"),
+ IP("vdmosn", VDMOS_MOD_NMOS,  IF_FLAG,   "N type DMOSfet model"),
+ IP("vdmosp", VDMOS_MOD_PMOS,  IF_FLAG,   "P type DMOSfet model"),
+ IP("vdmos",  VDMOS_MOD_DMOS,  IF_REAL,   "DMOS transistor"),
 
  /* quasi saturation */
  IOP("rq",      VDMOS_MOD_RQ,      IF_REAL,   "Quasi saturation resistance fitting parameter"),
@@ -112,13 +119,6 @@ IFparm VDMOSmPTable[] = { /* model parameters */
  IOPA("cgdmax", VDMOS_MOD_CGDMAX, IF_REAL, "Maximum non-linear G-D capacitance"),
  IOPA("a",      VDMOS_MOD_A,      IF_REAL, "Non-linear Cgd capacitance parameter"),
  IOPA("cgs",    VDMOS_MOD_CGS,    IF_REAL, "Gate-source capacitance"),
-
- IOP("tnom",  VDMOS_MOD_TNOM,  IF_REAL,   "Parameter measurement temperature"),
- IOP("kf",    VDMOS_MOD_KF,    IF_REAL,   "Flicker noise coefficient"),
- IOP("af",    VDMOS_MOD_AF,    IF_REAL,   "Flicker noise exponent"),
- IP("vdmosn", VDMOS_MOD_NMOS,  IF_FLAG,   "N type DMOSfet model"),
- IP("vdmosp", VDMOS_MOD_PMOS,  IF_FLAG,   "P type DMOSfet model"),
- IP("vdmos",  VDMOS_MOD_DMOS,  IF_REAL,   "DMOS transistor"),
 };
 
 char *VDMOSnames[] = {
