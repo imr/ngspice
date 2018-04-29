@@ -48,7 +48,7 @@ GENmodel *inModel
     cudaError_t status ;
     CAPmodel *model = (CAPmodel *)inModel ;
 
-    size = (long unsigned int) model->n_instances;
+    size = (long unsigned int) model->gen.GENnInstances;
 
     /* DOUBLE */
     status = cudaMemcpy (model->CAPparamGPU.d_CAPcapacArray, model->CAPparamCPU.CAPcapacArray, size * sizeof(double), cudaMemcpyHostToDevice) ;

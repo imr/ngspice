@@ -68,10 +68,10 @@ GENmodel *inModel, CKTcircuit *ckt
         /* Determining how many blocks should exist in the kernel */
         thread_x = 1 ;
         thread_y = 256 ;
-        if (model->n_instances % thread_y != 0)
-            block_x = (int)(model->n_instances / thread_y) + 1 ;
+        if (model->gen.GENnInstances % thread_y != 0)
+            block_x = (int)(model->gen.GENnInstances / thread_y) + 1 ;
         else
-            block_x = model->n_instances / thread_y ;
+            block_x = model->gen.GENnInstances / thread_y ;
 
         dim3 thread (thread_x, thread_y) ;
 
@@ -80,7 +80,7 @@ GENmodel *inModel, CKTcircuit *ckt
 
         cuINDload_kernel <<< block_x, thread >>> (model->INDparamGPU, ckt->d_CKTrhsOld, ckt->d_CKTstate0,
                                                   ckt->d_CKTstate1, ckt->CKTmode, ckt->CKTag [0], ckt->CKTag [1],
-                                                  ckt->CKTorder, model->n_instances,
+                                                  ckt->CKTorder, model->gen.GENnInstances,
                                                   model->d_PositionVector, ckt->d_CKTloadOutput,
                                                   model->d_PositionVectorRHS, ckt->d_CKTloadOutputRHS) ;
 

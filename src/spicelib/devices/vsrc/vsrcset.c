@@ -66,28 +66,14 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     }
 
 #ifdef USE_CUSPICE
-    int i, j, k, status ;
-
-    /* Counting the instances */
-    for (model = (VSRCmodel *)inModel ; model != NULL ; model = VSRCnextModel(model))
-    {
-        i = 0 ;
-
-        for (here = VSRCinstances(model); here != NULL ; here = VSRCnextInstance(here))
-        {
-            i++ ;
-        }
-
-        /* How much instances we have */
-        model->n_instances = i ;
-
-        /* This model supports CUDA */
-        model->gen.has_cuda = 1 ;
-    }
+    int j, k, status ;
 
     /*  loop through all the voltage source models */
     for (model = (VSRCmodel *)inModel ; model != NULL ; model = VSRCnextModel(model))
     {
+        /* This model supports CUDA */
+        model->gen.has_cuda = 1 ;
+
         model->offset = ckt->total_n_values ;
         model->offsetRHS = ckt->total_n_valuesRHS ;
 
@@ -115,13 +101,13 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
                 k++ ;
         }
 
-        model->n_values = model->n_instances ;
+        model->n_values = model->gen.GENnInstances ;
         ckt->total_n_values += model->n_values ;
 
         model->n_Ptr = j ;
         ckt->total_n_Ptr += model->n_Ptr ;
 
-        model->n_valuesRHS = model->n_instances ;
+        model->n_valuesRHS = model->gen.GENnInstances ;
         ckt->total_n_valuesRHS += model->n_valuesRHS ;
 
         model->n_PtrRHS = k ;
@@ -129,15 +115,15 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
 
 
         /* Position Vector assignment */
-        model->PositionVector = TMALLOC (int, model->n_instances) ;
+        model->PositionVector = TMALLOC (int, model->gen.GENnInstances) ;
 
-        for (j = 0 ; j < model->n_instances ; j++)
+        for (j = 0 ; j < model->gen.GENnInstances ; j++)
             model->PositionVector [j] = model->offset + j ;
 
         /* Position Vector assignment for the RHS */
-        model->PositionVectorRHS = TMALLOC (int, model->n_instances) ;
+        model->PositionVectorRHS = TMALLOC (int, model->gen.GENnInstances) ;
 
-        for (j = 0 ; j < model->n_instances ; j++)
+        for (j = 0 ; j < model->gen.GENnInstances ; j++)
             model->PositionVectorRHS [j] = model->offsetRHS + j ;
     }
 

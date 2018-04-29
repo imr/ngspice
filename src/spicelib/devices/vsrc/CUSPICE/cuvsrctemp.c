@@ -50,7 +50,7 @@ GENmodel *inModel
     VSRCmodel *model = (VSRCmodel *)inModel ;
     VSRCinstance *here ;
 
-    size1 = (long unsigned int) model->n_instances;
+    size1 = (long unsigned int) model->gen.GENnInstances;
 
     i = 0 ;
 

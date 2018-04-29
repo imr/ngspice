@@ -29,14 +29,10 @@ BSIM4v7model *model = (BSIM4v7model*)inModel;
 BSIM4v7instance *here;
 
 #ifdef USE_CUSPICE
-    int i, status;
+    int status;
 #endif
 
     for (; model; model = BSIM4v7nextModel(model)) {
-
-#ifdef USE_CUSPICE
-        i = 0;
-#endif
 
         for (here = BSIM4v7instances(model); here; here = BSIM4v7nextInstance(here))
           {
@@ -54,11 +50,10 @@ BSIM4v7instance *here;
               }
 
 #ifdef USE_CUSPICE
+            int i = here->gen.GENcudaIndex;
             model->BSIM4v7paramCPU.BSIM4v7icVDSArray [i] = here->BSIM4v7icVDS;
             model->BSIM4v7paramCPU.BSIM4v7icVGSArray [i] = here->BSIM4v7icVGS;
             model->BSIM4v7paramCPU.BSIM4v7icVBSArray [i] = here->BSIM4v7icVBS;
-
-            i++;
 #endif
 
          }

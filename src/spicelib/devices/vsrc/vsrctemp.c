@@ -27,15 +27,11 @@ VSRCtemp(GENmodel *inModel, CKTcircuit *ckt)
     NG_IGNORE(ckt);
 
 #ifdef USE_CUSPICE
-    int i, j, status ;
+    int j, status ;
 #endif
 
     /*  loop through all the voltage source models */
     for( ; model != NULL; model = VSRCnextModel(model)) {
-
-#ifdef USE_CUSPICE
-    i = 0 ;
-#endif
 
         /* loop through all the instances of the model */
         for (here = VSRCinstances(model); here != NULL ;
@@ -64,6 +60,8 @@ VSRCtemp(GENmodel *inModel, CKTcircuit *ckt)
             here->VSRCacImag = here->VSRCacMag * sin(radians);
 
 #ifdef USE_CUSPICE
+            int i = here->gen.GENcudaIndex;
+
             for (j = 0 ; j < here->n_coeffs ; j++)
             {
                 model->VSRCparamCPU.VSRCcoeffsArrayHost [i] [j] = here->VSRCcoeffs [j] ;
@@ -76,8 +74,6 @@ VSRCtemp(GENmodel *inModel, CKTcircuit *ckt)
             model->VSRCparamCPU.VSRCfunctionOrderArray[i] = here->VSRCfunctionOrder ;
             model->VSRCparamCPU.VSRCrGivenArray[i] = here->VSRCrGiven ;
             model->VSRCparamCPU.VSRCrBreakptArray[i] = here->VSRCrBreakpt ;
-
-            i++ ;
 #endif
 
         }

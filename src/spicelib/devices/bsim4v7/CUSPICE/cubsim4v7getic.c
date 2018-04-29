@@ -48,7 +48,7 @@ GENmodel *inModel
     cudaError_t status ;
     BSIM4v7model *model = (BSIM4v7model *)inModel ;
 
-    size = (long unsigned int) model->n_instances;
+    size = (long unsigned int) model->gen.GENnInstances;
 
     status = cudaMemcpy (model->BSIM4v7paramGPU.d_BSIM4v7icVDSArray, model->BSIM4v7paramCPU.BSIM4v7icVDSArray, size * sizeof(double), cudaMemcpyHostToDevice) ;
     CUDAMEMCPYCHECK (model->BSIM4v7paramGPU.d_BSIM4v7icVDSArray, size, double, status)
