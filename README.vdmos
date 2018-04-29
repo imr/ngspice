@@ -11,10 +11,62 @@ replaced by a special cap model. A body diode with series
 resistance is parallel to the D/S device nodes. It defines the
 reverse behavior, but also the breakdown of the transistor.
 
-This is a work in progress.
-
 Basic current equations for ac, dc and tran operations are
 available as well as the capacitance model.
 
-Subthreshold behavior (parameter subthres) is available,
-calibration with LTSPICE is stilll missing.
+Subthreshold behavior (parameter ksubthres) is available,
+and is compatible with LTSPICE. An alternative weak inversion
+model may be seected by choosing the subslope parameter instead
+of ksubthres.
+
+A quasi saturation model enhancement is available.
+
+The model parameters supported are:
+
+/* basic device */
+"vto",   ,"Threshold voltage"
+"kp",    "Transconductance parameter"
+"phi",   "Surface potential"
+"lambda","Channel length modulation"
+"rd",    "Drain ohmic resistance"
+"rs",    "Source ohmic resistance"
+"rg",    "Gate ohmic resistance"
+
+"tnom",  "Parameter measurement temperature"
+"kf",    "Flicker noise coefficient"
+"af",    "Flicker noise exponent"
+
+/* quasi saturation */
+"rq",    "Quasi saturation resistance fitting parameter"
+"vq",    "Quasi saturation voltage fitting parameter"
+
+"mtriode", "Conductance multiplier in triode region"
+
+/* weak inversion */
+"subslope",  "Slope of weak inversion log current versus vgs - vth "
+"subshift",  "Shift of weak inversion plot on the vgs axis "
+"ksubthres", "Slope n from (vgs-vth)/n, LTSPICE and SuperSpice standard"
+
+/* body diode */
+"bv",    "Vds breakdown voltage"
+"ibv",   "Current at Vds=bv"
+"nbv",   "Vds breakdown emission coefficient"
+"rds",   "Drain-source shunt resistance"
+"rb",    "Body diode ohmic resistance"
+"n",     "Bulk diode emission coefficient"
+"tt",    "Body diode transit time"
+"eg",    "Body diode activation energy for temperature effect on Is"
+"Xti",   "Body diode saturation current temperature exponent"
+"is",    "Body diode saturation current"
+"vj",    "Body diode junction potential"
+
+/* body diode capacitance (e.g. source-drain capacitance */
+"fc",    "Body diode coefficient for forward-bias depletion capacitance formula"
+"cjo",   "Zero-bias body diode junction capacitance"
+"m",     "Body diode grading coefficient"
+
+/* gate-source and gate-drain capacitances */
+"cgdmin", "Minimum non-linear G-D capacitance"
+"cgdmax", "Maximum non-linear G-D capacitance"
+"a",      "Non-linear Cgd capacitance parameter"
+"cgs",    "Gate-source capacitance"
