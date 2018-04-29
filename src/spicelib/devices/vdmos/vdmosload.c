@@ -16,6 +16,8 @@ VDMOS: 2018 Holger Vogt
 
 static double
 cweakinv(double sl, double shift, double vgst, double vds, double lambda, double beta, double vt, double mtr);
+static double
+cweakinv2(double sl, double shift, double vgst, double vds, double lambda, double beta, double vt, double mtr);
 
 
 int
@@ -391,22 +393,22 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                 }
                 else if (model->VDMOSsubslGiven && (here->VDMOSmode == 1)) {
                     double delta = 0.001;
-                    cdrain = cweakinv(model->VDMOSsubsl, model->VDMOSsubshift, vgst, vds, model->VDMOSlambda,
+                    cdrain = cweakinv2(model->VDMOSsubsl, model->VDMOSsubshift, vgst, vds, model->VDMOSlambda,
                         Beta, vt, model->VDMOSmtr);
                     /* gd */
                     double vds1 = vds + delta;
-                    double cdrp = cweakinv(model->VDMOSsubsl, model->VDMOSsubshift, vgst, vds1, model->VDMOSlambda,
+                    double cdrp = cweakinv2(model->VDMOSsubsl, model->VDMOSsubshift, vgst, vds1, model->VDMOSlambda,
                         Beta, vt, model->VDMOSmtr);
                     vds1 = vds - delta;
-                    double cdrm = cweakinv(model->VDMOSsubsl, model->VDMOSsubshift, vgst, vds1, model->VDMOSlambda,
+                    double cdrm = cweakinv2(model->VDMOSsubsl, model->VDMOSsubshift, vgst, vds1, model->VDMOSlambda,
                         Beta, vt, model->VDMOSmtr);
                     here->VDMOSgds = (cdrp - cdrm) / (2. * delta);
                     /* gm */
                     double vgst1 = vgst + delta;
-                    cdrp = cweakinv(model->VDMOSsubsl, model->VDMOSsubshift, vgst1, vds, model->VDMOSlambda,
+                    cdrp = cweakinv2(model->VDMOSsubsl, model->VDMOSsubshift, vgst1, vds, model->VDMOSlambda,
                         Beta, vt, model->VDMOSmtr);
                     vgst1 = vgst - delta;
-                    cdrm = cweakinv(model->VDMOSsubsl, model->VDMOSsubshift, vgst1, vds, model->VDMOSlambda,
+                    cdrm = cweakinv2(model->VDMOSsubsl, model->VDMOSsubshift, vgst1, vds, model->VDMOSlambda,
                         Beta, vt, model->VDMOSmtr);
                     here->VDMOSgm = (cdrp - cdrm) / (2. * delta);
                     here->VDMOSgmbs = 0.;
