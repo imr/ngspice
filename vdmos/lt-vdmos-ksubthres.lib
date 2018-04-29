@@ -1,0 +1,9 @@
+* Models parameter sets are modified by adding the parameter ksubthres.
+* Weak inversion characteristics are aligned by comparing LTSPICE and ngspice simulations, ksubthres is selected to offer best fit.
+.model FDB3682 VDMOS(Rg=3 Rd=26.8m Vto=4 subthres=.1 ksubthres=96m mtriode=1.8 Kp=18 Cgdmax=400p Cgdmin=20p A=.5 Cgs=1.25n Cjo=1n M=.6 Is=1.8p Rb=14.2m mfg=Fairchild Vds=100 Ron=32m Qg=18.5n)
+.model Si7489DP VDMOS(Rg=3 Rd=31.2m Rs=1m Vto=-2.4 subthres=.03 ksubthres=39m mtriode=2.2 Kp=35 lambda=0.1 Cgdmax=6n Cgdmin=10p A=1 Cgs=4n cjo=200p M=.3 VJ=.9 Is=3.6p Rb=5.5m mfg=Siliconix Vds=-100 Ron=3.3m Qg=106n pchan)
+.model HUFA76645 VDMOS(Rg=3 Rd=9.4m Rs=.8m Vto=2 subthres=.01 ksubthres=27.3m mtriode=1 Kp=128 Cgdmax=8n Cgdmin=10p A=.6 Cgs=3n cjo=3.5n M=.55 VJ=.9 Is=3.6p Rb=2.24m mfg=Fairchild Vds=100 Ron=15m Qg=34n)
+.model Si7102DN VDMOS(mtriode=2.3 Rg=1.4 vto=.843 subthres=180m ksubthres=31m Rd=1.1m Rs=1.75m Rb=5m Kp=350 Lambda=10m Cgdmin=800p Cgdmax=4.6n A=3 Cgs=3.4n Cjo=1.3n M=0.5 VJ=0.7 Is=2n N=1.05 TT=0 mfg=Vishay Vds=12 Ron=3.8m Qg=41n)
+.model SPA11N60C3 VDMOS(Rg=.86 Vto=4.08 subthres=10m ksubthres=27m Mtriode=.8 Rd=275m Rs=60m Rb=22m Kp=40 A=2.2 Cgdmax=2.7n Cgdmin=10p Cgs=1.5n Cjo=.7n Is=20p mfg=Infineon Vds=650 Ron=340m Qg=45n)
+.MODEL IXTP6N100D2 VDMOS(KP=2.9 RS=0.1 RD=1.3 RG=1 VTO=-2.7 LAMBDA=0.03 CGDMAX=3000p CGDMIN=2p CGS=2915p TT=1371n a=1 IS=2.13E-08 N=1.564 RB=0.0038 m=0.548 Vj=0.1 Cjo=3200pF subthres=2.5m ksubthres=39m
+.MODEL IXTH20N50D VDMOS KP=1.9 RS=1m RD=.222 VTO=-1.5 RDS=20E6 Lambda=4m subthres=8m ksubthres=85m CJO=4.9n M=1.5 a=1 CGDMAX=900p CGDMIN=80p CGS=6200p VJ=2.6 RG=10m IS=1.37u N=2
