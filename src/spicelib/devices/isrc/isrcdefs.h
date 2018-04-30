@@ -124,12 +124,7 @@ typedef struct sISRCmodel {
 #define ISRC_VOLTS 21
 
 #define ISRC_AM 22
-/* gtri - begin - add define for current source value */
-#ifdef XSPICE
-/* needed for outputting results */
 #define ISRC_CURRENT 23
-#endif
-/* gtri - end - add define for current source value */
 #define ISRC_TRNOISE 25
 #define ISRC_TRRANDOM 26
 #define ISRC_EXTERNAL 27
