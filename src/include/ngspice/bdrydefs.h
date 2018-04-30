@@ -46,19 +46,21 @@ typedef struct sBDRYcard {
 } BDRYcard;
 
 /* BDRY parameters */
-#define BDRY_X_LOW	1
-#define BDRY_X_HIGH	2
-#define BDRY_Y_LOW	3
-#define BDRY_Y_HIGH	4
-#define BDRY_IX_LOW	5
-#define BDRY_IX_HIGH	6
-#define BDRY_IY_LOW	7
-#define BDRY_IY_HIGH	8
-#define BDRY_DOMAIN	9
-#define BDRY_NEIGHBOR	10
-#define BDRY_QF		11
-#define BDRY_SN		12
-#define BDRY_SP		13
-#define BDRY_LAYER	14
+enum {
+    BDRY_X_LOW = 1,
+    BDRY_X_HIGH,
+    BDRY_Y_LOW,
+    BDRY_Y_HIGH,
+    BDRY_IX_LOW,
+    BDRY_IX_HIGH,
+    BDRY_IY_LOW,
+    BDRY_IY_HIGH,
+    BDRY_DOMAIN,
+    BDRY_NEIGHBOR,
+    BDRY_QF,
+    BDRY_SN,
+    BDRY_SP,
+    BDRY_LAYER,
+};
 
 #endif

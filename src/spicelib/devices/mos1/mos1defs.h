@@ -17,13 +17,15 @@ Modified: 2000 AlansFixes
 
 /* indices to the array of MOSFET(1) noise sources */
 
-#define MOS1RDNOIZ	0
-#define MOS1RSNOIZ   1
-#define MOS1IDNOIZ       2
-#define MOS1FLNOIZ 3
-#define MOS1TOTNOIZ    4
-
-#define MOS1NSRCS     5     /* the number of MOS1FET noise sources*/
+enum {
+    MOS1RDNOIZ = 0,
+    MOS1RSNOIZ,
+    MOS1IDNOIZ,
+    MOS1FLNOIZ,
+    MOS1TOTNOIZ,
+    /* finally, the number of noise sources */
+    MOS1NSRCS
+};
 
 /* information needed for each instance */
 
@@ -397,123 +399,130 @@ typedef struct sMOS1model {       /* model structure for a resistor */
 #endif /*NMOS*/
 
 /* device parameters */
-#define MOS1_W 1
-#define MOS1_L 2
-#define MOS1_AS 3
-#define MOS1_AD 4
-#define MOS1_PS 5
-#define MOS1_PD 6
-#define MOS1_NRS 7
-#define MOS1_NRD 8
-#define MOS1_OFF 9
-#define MOS1_IC 10
-#define MOS1_IC_VBS 11
-#define MOS1_IC_VDS 12
-#define MOS1_IC_VGS 13
-#define MOS1_W_SENS 14
-#define MOS1_L_SENS 15
-#define MOS1_CB 16
-#define MOS1_CG 17
-#define MOS1_CS 18
-#define MOS1_POWER 19
-#define MOS1_TEMP 20
-#define MOS1_M 21
-#define MOS1_DTEMP 22
+enum {
+    MOS1_W = 1,
+    MOS1_L,
+    MOS1_AS,
+    MOS1_AD,
+    MOS1_PS,
+    MOS1_PD,
+    MOS1_NRS,
+    MOS1_NRD,
+    MOS1_OFF,
+    MOS1_IC,
+    MOS1_IC_VBS,
+    MOS1_IC_VDS,
+    MOS1_IC_VGS,
+    MOS1_W_SENS,
+    MOS1_L_SENS,
+    MOS1_CB,
+    MOS1_CG,
+    MOS1_CS,
+    MOS1_POWER,
+    MOS1_TEMP,
+    MOS1_M,
+    MOS1_DTEMP,
+};
+
 /* model paramerers */
-#define MOS1_MOD_VTO 101
-#define MOS1_MOD_KP 102
-#define MOS1_MOD_GAMMA 103
-#define MOS1_MOD_PHI 104
-#define MOS1_MOD_LAMBDA 105
-#define MOS1_MOD_RD 106
-#define MOS1_MOD_RS 107
-#define MOS1_MOD_CBD 108
-#define MOS1_MOD_CBS 109
-#define MOS1_MOD_IS 110
-#define MOS1_MOD_PB 111
-#define MOS1_MOD_CGSO 112
-#define MOS1_MOD_CGDO 113
-#define MOS1_MOD_CGBO 114
-#define MOS1_MOD_CJ 115
-#define MOS1_MOD_MJ 116
-#define MOS1_MOD_CJSW 117
-#define MOS1_MOD_MJSW 118
-#define MOS1_MOD_JS 119
-#define MOS1_MOD_TOX 120
-#define MOS1_MOD_LD 121
-#define MOS1_MOD_RSH 122
-#define MOS1_MOD_U0 123
-#define MOS1_MOD_FC 124
-#define MOS1_MOD_NSUB 125
-#define MOS1_MOD_TPG 126
-#define MOS1_MOD_NSS 127
-#define MOS1_MOD_NMOS 128
-#define MOS1_MOD_PMOS 129
-#define MOS1_MOD_TNOM 130
-#define MOS1_MOD_KF 131
-#define MOS1_MOD_AF 132
-#define MOS1_MOD_TYPE 133
+enum {
+    MOS1_MOD_VTO = 101,
+    MOS1_MOD_KP,
+    MOS1_MOD_GAMMA,
+    MOS1_MOD_PHI,
+    MOS1_MOD_LAMBDA,
+    MOS1_MOD_RD,
+    MOS1_MOD_RS,
+    MOS1_MOD_CBD,
+    MOS1_MOD_CBS,
+    MOS1_MOD_IS,
+    MOS1_MOD_PB,
+    MOS1_MOD_CGSO,
+    MOS1_MOD_CGDO,
+    MOS1_MOD_CGBO,
+    MOS1_MOD_CJ,
+    MOS1_MOD_MJ,
+    MOS1_MOD_CJSW,
+    MOS1_MOD_MJSW,
+    MOS1_MOD_JS,
+    MOS1_MOD_TOX,
+    MOS1_MOD_LD,
+    MOS1_MOD_RSH,
+    MOS1_MOD_U0,
+    MOS1_MOD_FC,
+    MOS1_MOD_NSUB,
+    MOS1_MOD_TPG,
+    MOS1_MOD_NSS,
+    MOS1_MOD_NMOS,
+    MOS1_MOD_PMOS,
+    MOS1_MOD_TNOM,
+    MOS1_MOD_KF,
+    MOS1_MOD_AF,
+    MOS1_MOD_TYPE,
+};
 
 /* device questions */
-#define MOS1_CGS                201
-#define MOS1_CGD                202
-#define MOS1_DNODE              203
-#define MOS1_GNODE              204
-#define MOS1_SNODE              205
-#define MOS1_BNODE              206
-#define MOS1_DNODEPRIME         207
-#define MOS1_SNODEPRIME         208
-#define MOS1_SOURCECONDUCT      209
-#define MOS1_DRAINCONDUCT       210
-#define MOS1_VON                211
-#define MOS1_VDSAT              212
-#define MOS1_SOURCEVCRIT        213
-#define MOS1_DRAINVCRIT         214
-#define MOS1_CD                 215
-#define MOS1_CBS                216
-#define MOS1_CBD                217
-#define MOS1_GMBS               218
-#define MOS1_GM                 219
-#define MOS1_GDS                220
-#define MOS1_GBD                221
-#define MOS1_GBS                222
-#define MOS1_CAPBD              223
-#define MOS1_CAPBS              224
-#define MOS1_CAPZEROBIASBD      225
-#define MOS1_CAPZEROBIASBDSW    226
-#define MOS1_CAPZEROBIASBS      227
-#define MOS1_CAPZEROBIASBSSW    228
-#define MOS1_VBD                229
-#define MOS1_VBS                230
-#define MOS1_VGS                231
-#define MOS1_VDS                232
-#define MOS1_CAPGS              233
-#define MOS1_QGS                234
-#define MOS1_CQGS               235
-#define MOS1_CAPGD              236
-#define MOS1_QGD                237
-#define MOS1_CQGD               238
-#define MOS1_CAPGB              239
-#define MOS1_QGB                240
-#define MOS1_CQGB               241
-#define MOS1_QBD                242
-#define MOS1_CQBD               243
-#define MOS1_QBS                244
-#define MOS1_CQBS               245
-#define MOS1_L_SENS_REAL               246
-#define MOS1_L_SENS_IMAG               247
-#define MOS1_L_SENS_MAG                248 
-#define MOS1_L_SENS_PH                 249 
-#define MOS1_L_SENS_CPLX               250
-#define MOS1_W_SENS_REAL               251
-#define MOS1_W_SENS_IMAG               252
-#define MOS1_W_SENS_MAG                253 
-#define MOS1_W_SENS_PH                 254 
-#define MOS1_W_SENS_CPLX               255
-#define MOS1_L_SENS_DC                 256
-#define MOS1_W_SENS_DC                 257
-#define MOS1_SOURCERESIST      258
-#define MOS1_DRAINRESIST       259
+enum {
+    MOS1_CGS = 201,
+    MOS1_CGD,
+    MOS1_DNODE,
+    MOS1_GNODE,
+    MOS1_SNODE,
+    MOS1_BNODE,
+    MOS1_DNODEPRIME,
+    MOS1_SNODEPRIME,
+    MOS1_SOURCECONDUCT,
+    MOS1_DRAINCONDUCT,
+    MOS1_VON,
+    MOS1_VDSAT,
+    MOS1_SOURCEVCRIT,
+    MOS1_DRAINVCRIT,
+    MOS1_CD,
+    MOS1_CBS,
+    MOS1_CBD,
+    MOS1_GMBS,
+    MOS1_GM,
+    MOS1_GDS,
+    MOS1_GBD,
+    MOS1_GBS,
+    MOS1_CAPBD,
+    MOS1_CAPBS,
+    MOS1_CAPZEROBIASBD,
+    MOS1_CAPZEROBIASBDSW,
+    MOS1_CAPZEROBIASBS,
+    MOS1_CAPZEROBIASBSSW,
+    MOS1_VBD,
+    MOS1_VBS,
+    MOS1_VGS,
+    MOS1_VDS,
+    MOS1_CAPGS,
+    MOS1_QGS,
+    MOS1_CQGS,
+    MOS1_CAPGD,
+    MOS1_QGD,
+    MOS1_CQGD,
+    MOS1_CAPGB,
+    MOS1_QGB,
+    MOS1_CQGB,
+    MOS1_QBD,
+    MOS1_CQBD,
+    MOS1_QBS,
+    MOS1_CQBS,
+    MOS1_L_SENS_REAL,
+    MOS1_L_SENS_IMAG,
+    MOS1_L_SENS_MAG,
+    MOS1_L_SENS_PH,
+    MOS1_L_SENS_CPLX,
+    MOS1_W_SENS_REAL,
+    MOS1_W_SENS_IMAG,
+    MOS1_W_SENS_MAG,
+    MOS1_W_SENS_PH,
+    MOS1_W_SENS_CPLX,
+    MOS1_L_SENS_DC,
+    MOS1_W_SENS_DC,
+    MOS1_SOURCERESIST,
+    MOS1_DRAINRESIST,
+};
 
 /* model questions */
 

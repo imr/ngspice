@@ -25,15 +25,19 @@ typedef struct {
 
 /* available step types: XXX should be somewhere else */
 
-#define DECADE 1
-#define OCTAVE 2
-#define LINEAR 3
+enum {
+    DECADE = 1,
+    OCTAVE,
+    LINEAR,
+};
 
-#define AC_DEC 1
-#define AC_OCT 2
-#define AC_LIN 3
-#define AC_START 4
-#define AC_STOP 5
-#define AC_STEPS 6
+enum {
+    AC_DEC = 1,
+    AC_OCT,
+    AC_LIN,
+    AC_START,
+    AC_STOP,
+    AC_STEPS,
+};
 
 #endif

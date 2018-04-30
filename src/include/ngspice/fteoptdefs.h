@@ -18,8 +18,10 @@ typedef struct sFTESTATistics {
 } FTESTATistics;
 
 
-#define FTEOPT_NLDECK 1
-#define FTEOPT_NLT    2
-#define FTEOPT_NPT    3
+enum {
+    FTEOPT_NLDECK = 1,
+    FTEOPT_NLT,
+    FTEOPT_NPT,
+};
 
 #endif

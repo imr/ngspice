@@ -39,16 +39,18 @@ typedef struct sMODLcard {
 } MODLcard;
 
 /* MODL parameters */
-#define MODL_BGNW	1
-#define MODL_TEMPMOB	2
-#define MODL_CONCMOB	3
-#define MODL_FIELDMOB	4
-#define MODL_TRANSMOB	5
-#define MODL_SURFMOB	6
-#define MODL_MATCHMOB	7
-#define MODL_SRH	8
-#define MODL_CONCTAU	9
-#define MODL_AUGER	10
-#define MODL_AVAL	11
+enum {
+    MODL_BGNW = 1,
+    MODL_TEMPMOB,
+    MODL_CONCMOB,
+    MODL_FIELDMOB,
+    MODL_TRANSMOB,
+    MODL_SURFMOB,
+    MODL_MATCHMOB,
+    MODL_SRH,
+    MODL_CONCTAU,
+    MODL_AUGER,
+    MODL_AVAL,
+};
 
 #endif

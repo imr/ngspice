@@ -17,13 +17,15 @@ Modified: 2000 AlanFixes
 
 /* indices to the array of MOSFET(3) noise sources */
 
-#define MOS3RDNOIZ       0
-#define MOS3RSNOIZ       1
-#define MOS3IDNOIZ       2
-#define MOS3FLNOIZ 3
-#define MOS3TOTNOIZ    4
-
-#define MOS3NSRCS     5     /* the number of MOSFET(3) noise sources */
+enum {
+    MOS3RDNOIZ = 0,
+    MOS3RSNOIZ,
+    MOS3IDNOIZ,
+    MOS3FLNOIZ,
+    MOS3TOTNOIZ,
+    /* finally, the number of noise sources */
+    MOS3NSRCS
+};
 
 /* information needed for each instance */
 
@@ -424,138 +426,141 @@ typedef struct sMOS3model {       /* model structure for a resistor */
 #endif /*NMOS*/
 
 /* device parameters */
-#define MOS3_W 1
-#define MOS3_L 2
-#define MOS3_AS 3
-#define MOS3_AD 4
-#define MOS3_PS 5
-#define MOS3_PD 6
-#define MOS3_NRS 7
-#define MOS3_NRD 8
-#define MOS3_OFF 9
-#define MOS3_IC 10
-#define MOS3_IC_VBS 11
-#define MOS3_IC_VDS 12
-#define MOS3_IC_VGS 13
-#define MOS3_W_SENS 14
-#define MOS3_L_SENS 15
-#define MOS3_CB 16
-#define MOS3_CG 17
-#define MOS3_CS 18
-#define MOS3_POWER 19
-#define MOS3_CGS                20
-#define MOS3_CGD                21
-#define MOS3_DNODE              22
-#define MOS3_GNODE              23
-#define MOS3_SNODE              24
-#define MOS3_BNODE              25
-#define MOS3_DNODEPRIME         26
-#define MOS3_SNODEPRIME         27
-#define MOS3_SOURCECONDUCT      28
-#define MOS3_DRAINCONDUCT       29
-#define MOS3_VON                30
-#define MOS3_VDSAT              31
-#define MOS3_SOURCEVCRIT        32
-#define MOS3_DRAINVCRIT         33
-#define MOS3_CD                 34
-#define MOS3_CBS                35
-#define MOS3_CBD                36
-#define MOS3_GMBS               37
-#define MOS3_GM                 38
-#define MOS3_GDS                39
-#define MOS3_GBD                40
-#define MOS3_GBS                41
-#define MOS3_CAPBD              42
-#define MOS3_CAPBS              43
-#define MOS3_CAPZEROBIASBD      44
-#define MOS3_CAPZEROBIASBDSW    45
-#define MOS3_CAPZEROBIASBS      46
-#define MOS3_CAPZEROBIASBSSW    47
-#define MOS3_VBD                48
-#define MOS3_VBS                49
-#define MOS3_VGS                50
-#define MOS3_VDS                51
-#define MOS3_CAPGS              52
-#define MOS3_QGS                53
-#define MOS3_CQGS               54
-#define MOS3_CAPGD              55
-#define MOS3_QGD                56
-#define MOS3_CQGD               57
-#define MOS3_CAPGB              58
-#define MOS3_QGB                59
-#define MOS3_CQGB               60
-#define MOS3_QBD                61
-#define MOS3_CQBD               62
-#define MOS3_QBS                63
-#define MOS3_CQBS               64
-#define MOS3_W_SENS_REAL        65
-#define MOS3_W_SENS_IMAG        66
-#define MOS3_W_SENS_MAG         67 
-#define MOS3_W_SENS_PH          68
-#define MOS3_W_SENS_CPLX        69
-#define MOS3_L_SENS_REAL        70
-#define MOS3_L_SENS_IMAG        71
-#define MOS3_L_SENS_MAG         72
-#define MOS3_L_SENS_PH          73
-#define MOS3_L_SENS_CPLX        74
-#define MOS3_W_SENS_DC          75
-#define MOS3_L_SENS_DC          76
-#define MOS3_TEMP               77
-#define MOS3_SOURCERESIST       78
-#define MOS3_DRAINRESIST        79
-#define MOS3_M                  80
-#define MOS3_DTEMP              81
+enum {
+    MOS3_W = 1,
+    MOS3_L,
+    MOS3_AS,
+    MOS3_AD,
+    MOS3_PS,
+    MOS3_PD,
+    MOS3_NRS,
+    MOS3_NRD,
+    MOS3_OFF,
+    MOS3_IC,
+    MOS3_IC_VBS,
+    MOS3_IC_VDS,
+    MOS3_IC_VGS,
+    MOS3_W_SENS,
+    MOS3_L_SENS,
+    MOS3_CB,
+    MOS3_CG,
+    MOS3_CS,
+    MOS3_POWER,
+    MOS3_CGS,
+    MOS3_CGD,
+    MOS3_DNODE,
+    MOS3_GNODE,
+    MOS3_SNODE,
+    MOS3_BNODE,
+    MOS3_DNODEPRIME,
+    MOS3_SNODEPRIME,
+    MOS3_SOURCECONDUCT,
+    MOS3_DRAINCONDUCT,
+    MOS3_VON,
+    MOS3_VDSAT,
+    MOS3_SOURCEVCRIT,
+    MOS3_DRAINVCRIT,
+    MOS3_CD,
+    MOS3_CBS,
+    MOS3_CBD,
+    MOS3_GMBS,
+    MOS3_GM,
+    MOS3_GDS,
+    MOS3_GBD,
+    MOS3_GBS,
+    MOS3_CAPBD,
+    MOS3_CAPBS,
+    MOS3_CAPZEROBIASBD,
+    MOS3_CAPZEROBIASBDSW,
+    MOS3_CAPZEROBIASBS,
+    MOS3_CAPZEROBIASBSSW,
+    MOS3_VBD,
+    MOS3_VBS,
+    MOS3_VGS,
+    MOS3_VDS,
+    MOS3_CAPGS,
+    MOS3_QGS,
+    MOS3_CQGS,
+    MOS3_CAPGD,
+    MOS3_QGD,
+    MOS3_CQGD,
+    MOS3_CAPGB,
+    MOS3_QGB,
+    MOS3_CQGB,
+    MOS3_QBD,
+    MOS3_CQBD,
+    MOS3_QBS,
+    MOS3_CQBS,
+    MOS3_W_SENS_REAL,
+    MOS3_W_SENS_IMAG,
+    MOS3_W_SENS_MAG,
+    MOS3_W_SENS_PH,
+    MOS3_W_SENS_CPLX,
+    MOS3_L_SENS_REAL,
+    MOS3_L_SENS_IMAG,
+    MOS3_L_SENS_MAG,
+    MOS3_L_SENS_PH,
+    MOS3_L_SENS_CPLX,
+    MOS3_W_SENS_DC,
+    MOS3_L_SENS_DC,
+    MOS3_TEMP,
+    MOS3_SOURCERESIST,
+    MOS3_DRAINRESIST,
+    MOS3_M,
+    MOS3_DTEMP,
+};
 
 /* model parameters */
-#define MOS3_MOD_VTO 101
-#define MOS3_MOD_KP 102
-#define MOS3_MOD_GAMMA 103
-#define MOS3_MOD_PHI 104
-#define MOS3_MOD_RD 105
-#define MOS3_MOD_RS 106
-#define MOS3_MOD_CBD 107
-#define MOS3_MOD_CBS 108
-#define MOS3_MOD_IS 109
-#define MOS3_MOD_PB 110
-#define MOS3_MOD_CGSO 111
-#define MOS3_MOD_CGDO 112
-#define MOS3_MOD_CGBO 113
-#define MOS3_MOD_RSH 114
-#define MOS3_MOD_CJ 115
-#define MOS3_MOD_MJ 116
-#define MOS3_MOD_CJSW 117
-#define MOS3_MOD_MJSW 118
-#define MOS3_MOD_JS 119
-#define MOS3_MOD_TOX 120
-#define MOS3_MOD_LD 121
-#define MOS3_MOD_U0 122
-#define MOS3_MOD_FC 123
-#define MOS3_MOD_NSUB 124
-#define MOS3_MOD_TPG 125
-#define MOS3_MOD_NSS 126
-#define MOS3_MOD_ETA 127
-#define MOS3_MOD_DELTA 128
-#define MOS3_MOD_NFS 129
-#define MOS3_MOD_THETA 130
-#define MOS3_MOD_VMAX 131
-#define MOS3_MOD_KAPPA 132
-#define MOS3_MOD_NMOS 133
-#define MOS3_MOD_PMOS 134
-#define MOS3_MOD_XJ 135
-#define MOS3_MOD_UEXP 136
-#define MOS3_MOD_NEFF 137
-#define MOS3_MOD_XD 138
-#define MOS3_MOD_ALPHA 139
-#define MOS3_DELTA 140
-#define MOS3_MOD_TNOM 141
-#define MOS3_MOD_KF 142
-#define MOS3_MOD_AF 143
-#define MOS3_MOD_TYPE 144
-
-#define MOS3_MOD_XL 145
-#define MOS3_MOD_WD 146
-#define MOS3_MOD_XW 147
-#define MOS3_MOD_DELVTO 148
+enum {
+    MOS3_MOD_VTO = 101,
+    MOS3_MOD_KP,
+    MOS3_MOD_GAMMA,
+    MOS3_MOD_PHI,
+    MOS3_MOD_RD,
+    MOS3_MOD_RS,
+    MOS3_MOD_CBD,
+    MOS3_MOD_CBS,
+    MOS3_MOD_IS,
+    MOS3_MOD_PB,
+    MOS3_MOD_CGSO,
+    MOS3_MOD_CGDO,
+    MOS3_MOD_CGBO,
+    MOS3_MOD_RSH,
+    MOS3_MOD_CJ,
+    MOS3_MOD_MJ,
+    MOS3_MOD_CJSW,
+    MOS3_MOD_MJSW,
+    MOS3_MOD_JS,
+    MOS3_MOD_TOX,
+    MOS3_MOD_LD,
+    MOS3_MOD_U0,
+    MOS3_MOD_FC,
+    MOS3_MOD_NSUB,
+    MOS3_MOD_TPG,
+    MOS3_MOD_NSS,
+    MOS3_MOD_ETA,
+    MOS3_MOD_DELTA,
+    MOS3_MOD_NFS,
+    MOS3_MOD_THETA,
+    MOS3_MOD_VMAX,
+    MOS3_MOD_KAPPA,
+    MOS3_MOD_NMOS,
+    MOS3_MOD_PMOS,
+    MOS3_MOD_XJ,
+    MOS3_MOD_UEXP,
+    MOS3_MOD_NEFF,
+    MOS3_MOD_XD,
+    MOS3_MOD_ALPHA,
+    MOS3_DELTA,
+    MOS3_MOD_TNOM,
+    MOS3_MOD_KF,
+    MOS3_MOD_AF,
+    MOS3_MOD_TYPE,
+    MOS3_MOD_XL,
+    MOS3_MOD_WD,
+    MOS3_MOD_XW,
+    MOS3_MOD_DELVTO,
+};
 
 /* device questions */
 

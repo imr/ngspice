@@ -48,37 +48,39 @@ typedef struct sDOPcard {
 } DOPcard;
 
 /* DOP parameters */
-#define DOP_UNIF	1
-#define DOP_LINEAR	2
-#define DOP_GAUSS	3
-#define DOP_ERFC	4
-#define DOP_EXP		5
-#define DOP_SUPREM3	6
-#define DOP_ASCII	7
-#define DOP_SUPASCII	8
-#define DOP_INFILE	9
-#define DOP_BORON	10
-#define DOP_PHOSP	11
-#define DOP_ARSEN	12
-#define DOP_ANTIM	13
-#define DOP_P_TYPE	14
-#define DOP_N_TYPE	15
-#define DOP_X_AXIS	16
-#define DOP_Y_AXIS	17
-#define DOP_X_LOW	18
-#define DOP_X_HIGH	19
-#define DOP_Y_LOW	20
-#define DOP_Y_HIGH	21
-#define DOP_CONC	22
-#define DOP_LOCATION	23
-#define DOP_CHAR_LEN	24
-#define DOP_RATIO_LAT	25
-#define DOP_ROTATE_LAT	26
-#define DOP_UNIF_LAT	27
-#define DOP_LINEAR_LAT	28
-#define DOP_GAUSS_LAT	29
-#define DOP_ERFC_LAT	30
-#define DOP_EXP_LAT	31
-#define DOP_DOMAIN	32
+enum {
+    DOP_UNIF = 1,
+    DOP_LINEAR,
+    DOP_GAUSS,
+    DOP_ERFC,
+    DOP_EXP,
+    DOP_SUPREM3,
+    DOP_ASCII,
+    DOP_SUPASCII,
+    DOP_INFILE,
+    DOP_BORON,
+    DOP_PHOSP,
+    DOP_ARSEN,
+    DOP_ANTIM,
+    DOP_P_TYPE,
+    DOP_N_TYPE,
+    DOP_X_AXIS,
+    DOP_Y_AXIS,
+    DOP_X_LOW,
+    DOP_X_HIGH,
+    DOP_Y_LOW,
+    DOP_Y_HIGH,
+    DOP_CONC,
+    DOP_LOCATION,
+    DOP_CHAR_LEN,
+    DOP_RATIO_LAT,
+    DOP_ROTATE_LAT,
+    DOP_UNIF_LAT,
+    DOP_LINEAR_LAT,
+    DOP_GAUSS_LAT,
+    DOP_ERFC_LAT,
+    DOP_EXP_LAT,
+    DOP_DOMAIN,
+};
 
 #endif

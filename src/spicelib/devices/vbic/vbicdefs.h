@@ -18,22 +18,24 @@ Spice3 Implementation: 2003 Dietmar Warning DAnalyse GmbH
 
 /* indices to array of VBIC noise sources */
 
-#define VBICRCNOIZ       0
-#define VBICRCINOIZ      1
-#define VBICRBNOIZ       2
-#define VBICRBINOIZ      3
-#define VBICRENOIZ       4
-#define VBICRBPNOIZ      5
-#define VBICRSNOIZ       6
-#define VBICICNOIZ       7
-#define VBICIBNOIZ       8
-#define VBICIBEPNOIZ     9
-#define VBICICCPNOIZ    10
-#define VBICFLBENOIZ    11
-#define VBICFLBEPNOIZ   12
-#define VBICTOTNOIZ     13
-
-#define VBICNSRCS       14     /* the number of VBIC noise sources */
+enum {
+    VBICRCNOIZ = 0,
+    VBICRCINOIZ,
+    VBICRBNOIZ,
+    VBICRBINOIZ,
+    VBICRENOIZ,
+    VBICRBPNOIZ,
+    VBICRSNOIZ,
+    VBICICNOIZ,
+    VBICIBNOIZ,
+    VBICIBEPNOIZ,
+    VBICICCPNOIZ,
+    VBICFLBENOIZ,
+    VBICFLBEPNOIZ,
+    VBICTOTNOIZ,
+    /* finally, the number of noise sources */
+    VBICNSRCS
+};
 
 /* data needed to describe a single instance */
 
@@ -603,190 +605,197 @@ typedef struct sVBICmodel {           /* model structure for a vbic */
 #endif /*NPN*/
 
 /* device parameters */
-#define VBIC_AREA 1
-#define VBIC_OFF 2
-#define VBIC_IC 3
-#define VBIC_IC_VBE 4
-#define VBIC_IC_VCE 5
-#define VBIC_TEMP  6
-#define VBIC_DTEMP 7
-#define VBIC_M 8
+enum {
+    VBIC_AREA = 1,
+    VBIC_OFF,
+    VBIC_IC,
+    VBIC_IC_VBE,
+    VBIC_IC_VCE,
+    VBIC_TEMP,
+    VBIC_DTEMP,
+    VBIC_M,
+};
 
 /* model parameters */
-#define VBIC_MOD_NPN    101 
-#define VBIC_MOD_PNP    102 
-#define VBIC_MOD_TNOM   103 
-#define VBIC_MOD_RCX    104 
-#define VBIC_MOD_RCI    105 
-#define VBIC_MOD_VO     106 
-#define VBIC_MOD_GAMM   107 
-#define VBIC_MOD_HRCF   108 
-#define VBIC_MOD_RBX    109 
-#define VBIC_MOD_RBI    110 
-#define VBIC_MOD_RE     111 
-#define VBIC_MOD_RS     112 
-#define VBIC_MOD_RBP    113 
-#define VBIC_MOD_IS     114 
-#define VBIC_MOD_NF     115 
-#define VBIC_MOD_NR     116 
-#define VBIC_MOD_FC     117 
-#define VBIC_MOD_CBEO   118 
-#define VBIC_MOD_CJE    119 
-#define VBIC_MOD_PE     120 
-#define VBIC_MOD_ME     121 
-#define VBIC_MOD_AJE    122 
-#define VBIC_MOD_CBCO   123 
-#define VBIC_MOD_CJC    124 
-#define VBIC_MOD_QCO    125 
-#define VBIC_MOD_CJEP   126 
-#define VBIC_MOD_PC     127 
-#define VBIC_MOD_MC     128 
-#define VBIC_MOD_AJC    129 
-#define VBIC_MOD_CJCP   130 
-#define VBIC_MOD_PS     131 
-#define VBIC_MOD_MS     132 
-#define VBIC_MOD_AJS    133 
-#define VBIC_MOD_IBEI   134 
-#define VBIC_MOD_WBE    135 
-#define VBIC_MOD_NEI    136 
-#define VBIC_MOD_IBEN   137 
-#define VBIC_MOD_NEN    138 
-#define VBIC_MOD_IBCI   139 
-#define VBIC_MOD_NCI    140 
-#define VBIC_MOD_IBCN   141 
-#define VBIC_MOD_NCN    142 
-#define VBIC_MOD_AVC1   143 
-#define VBIC_MOD_AVC2   144 
-#define VBIC_MOD_ISP    145 
-#define VBIC_MOD_WSP    146 
-#define VBIC_MOD_NFP    147 
-#define VBIC_MOD_IBEIP  148 
-#define VBIC_MOD_IBENP  149 
-#define VBIC_MOD_IBCIP  150 
-#define VBIC_MOD_NCIP   151 
-#define VBIC_MOD_IBCNP  152 
-#define VBIC_MOD_NCNP   153 
-#define VBIC_MOD_VEF    154 
-#define VBIC_MOD_VER    155 
-#define VBIC_MOD_IKF    156 
-#define VBIC_MOD_IKR    157 
-#define VBIC_MOD_IKP    158   
-#define VBIC_MOD_TF     159 
-#define VBIC_MOD_QTF    160 
-#define VBIC_MOD_XTF    161 
-#define VBIC_MOD_VTF    162 
-#define VBIC_MOD_ITF    163 
-#define VBIC_MOD_TR     164 
-#define VBIC_MOD_TD     165 
-#define VBIC_MOD_KFN    166 
-#define VBIC_MOD_AFN    167 
-#define VBIC_MOD_BFN    168 
-#define VBIC_MOD_XRE    169 
-#define VBIC_MOD_XRB    170 
-#define VBIC_MOD_XRBI   171 
-#define VBIC_MOD_XRC    172 
-#define VBIC_MOD_XRCI   173 
-#define VBIC_MOD_XRS    174 
-#define VBIC_MOD_XVO    175 
-#define VBIC_MOD_EA     176 
-#define VBIC_MOD_EAIE   177 
-#define VBIC_MOD_EAIC   178 
-#define VBIC_MOD_EAIS   179 
-#define VBIC_MOD_EANE   180 
-#define VBIC_MOD_EANC   181 
-#define VBIC_MOD_EANS   182 
-#define VBIC_MOD_XIS    183 
-#define VBIC_MOD_XII    184 
-#define VBIC_MOD_XIN    185 
-#define VBIC_MOD_TNF    186 
-#define VBIC_MOD_TAVC   187 
-#define VBIC_MOD_RTH    188 
-#define VBIC_MOD_CTH    189 
-#define VBIC_MOD_VRT    190 
-#define VBIC_MOD_ART    191 
-#define VBIC_MOD_CCSO   192 
-#define VBIC_MOD_QBM    193 
-#define VBIC_MOD_NKF    194 
-#define VBIC_MOD_XIKF   195 
-#define VBIC_MOD_XRCX   196 
-#define VBIC_MOD_XRBX   197 
-#define VBIC_MOD_XRBP   198 
-#define VBIC_MOD_ISRR   199 
-#define VBIC_MOD_XISR   200 
-#define VBIC_MOD_DEAR   201 
-#define VBIC_MOD_EAP    202 
-#define VBIC_MOD_VBBE   203 
-#define VBIC_MOD_NBBE   204
-#define VBIC_MOD_IBBE   205
-#define VBIC_MOD_TVBBE1 206 
-#define VBIC_MOD_TVBBE2 207 
-#define VBIC_MOD_TNBBE  208 
-#define VBIC_MOD_EBBE   209 
-#define VBIC_MOD_DTEMP  210 
-#define VBIC_MOD_VERS   211
-#define VBIC_MOD_VREF   212
-#define VBIC_MOD_VBE_MAX 213
-#define VBIC_MOD_VBC_MAX 214
-#define VBIC_MOD_VCE_MAX 215
+enum {
+    VBIC_MOD_NPN = 101,
+    VBIC_MOD_PNP,
+    VBIC_MOD_TNOM,
+    VBIC_MOD_RCX,
+    VBIC_MOD_RCI,
+    VBIC_MOD_VO,
+    VBIC_MOD_GAMM,
+    VBIC_MOD_HRCF,
+    VBIC_MOD_RBX,
+    VBIC_MOD_RBI,
+    VBIC_MOD_RE,
+    VBIC_MOD_RS,
+    VBIC_MOD_RBP,
+    VBIC_MOD_IS,
+    VBIC_MOD_NF,
+    VBIC_MOD_NR,
+    VBIC_MOD_FC,
+    VBIC_MOD_CBEO,
+    VBIC_MOD_CJE,
+    VBIC_MOD_PE,
+    VBIC_MOD_ME,
+    VBIC_MOD_AJE,
+    VBIC_MOD_CBCO,
+    VBIC_MOD_CJC,
+    VBIC_MOD_QCO,
+    VBIC_MOD_CJEP,
+    VBIC_MOD_PC,
+    VBIC_MOD_MC,
+    VBIC_MOD_AJC,
+    VBIC_MOD_CJCP,
+    VBIC_MOD_PS,
+    VBIC_MOD_MS,
+    VBIC_MOD_AJS,
+    VBIC_MOD_IBEI,
+    VBIC_MOD_WBE,
+    VBIC_MOD_NEI,
+    VBIC_MOD_IBEN,
+    VBIC_MOD_NEN,
+    VBIC_MOD_IBCI,
+    VBIC_MOD_NCI,
+    VBIC_MOD_IBCN,
+    VBIC_MOD_NCN,
+    VBIC_MOD_AVC1,
+    VBIC_MOD_AVC2,
+    VBIC_MOD_ISP,
+    VBIC_MOD_WSP,
+    VBIC_MOD_NFP,
+    VBIC_MOD_IBEIP,
+    VBIC_MOD_IBENP,
+    VBIC_MOD_IBCIP,
+    VBIC_MOD_NCIP,
+    VBIC_MOD_IBCNP,
+    VBIC_MOD_NCNP,
+    VBIC_MOD_VEF,
+    VBIC_MOD_VER,
+    VBIC_MOD_IKF,
+    VBIC_MOD_IKR,
+    VBIC_MOD_IKP,
+    VBIC_MOD_TF,
+    VBIC_MOD_QTF,
+    VBIC_MOD_XTF,
+    VBIC_MOD_VTF,
+    VBIC_MOD_ITF,
+    VBIC_MOD_TR,
+    VBIC_MOD_TD,
+    VBIC_MOD_KFN,
+    VBIC_MOD_AFN,
+    VBIC_MOD_BFN,
+    VBIC_MOD_XRE,
+    VBIC_MOD_XRB,
+    VBIC_MOD_XRBI,
+    VBIC_MOD_XRC,
+    VBIC_MOD_XRCI,
+    VBIC_MOD_XRS,
+    VBIC_MOD_XVO,
+    VBIC_MOD_EA,
+    VBIC_MOD_EAIE,
+    VBIC_MOD_EAIC,
+    VBIC_MOD_EAIS,
+    VBIC_MOD_EANE,
+    VBIC_MOD_EANC,
+    VBIC_MOD_EANS,
+    VBIC_MOD_XIS,
+    VBIC_MOD_XII,
+    VBIC_MOD_XIN,
+    VBIC_MOD_TNF,
+    VBIC_MOD_TAVC,
+    VBIC_MOD_RTH,
+    VBIC_MOD_CTH,
+    VBIC_MOD_VRT,
+    VBIC_MOD_ART,
+    VBIC_MOD_CCSO,
+    VBIC_MOD_QBM,
+    VBIC_MOD_NKF,
+    VBIC_MOD_XIKF,
+    VBIC_MOD_XRCX,
+    VBIC_MOD_XRBX,
+    VBIC_MOD_XRBP,
+    VBIC_MOD_ISRR,
+    VBIC_MOD_XISR,
+    VBIC_MOD_DEAR,
+    VBIC_MOD_EAP,
+    VBIC_MOD_VBBE,
+    VBIC_MOD_NBBE,
+    VBIC_MOD_IBBE,
+    VBIC_MOD_TVBBE1,
+    VBIC_MOD_TVBBE2,
+    VBIC_MOD_TNBBE,
+    VBIC_MOD_EBBE,
+    VBIC_MOD_DTEMP,
+    VBIC_MOD_VERS,
+    VBIC_MOD_VREF,
+    VBIC_MOD_VBE_MAX,
+    VBIC_MOD_VBC_MAX,
+    VBIC_MOD_VCE_MAX,
+};
 
-                              
 /* device questions */        
-#define VBIC_QUEST_FT             221
-#define VBIC_QUEST_COLLNODE       222
-#define VBIC_QUEST_BASENODE       223
-#define VBIC_QUEST_EMITNODE       224
-#define VBIC_QUEST_SUBSNODE       225
-#define VBIC_QUEST_COLLCXNODE     226
-#define VBIC_QUEST_COLLCINODE     227
-#define VBIC_QUEST_BASEBXNODE     228
-#define VBIC_QUEST_BASEBINODE     229
-#define VBIC_QUEST_BASEBPNODE     230
-#define VBIC_QUEST_EMITEINODE     231
-#define VBIC_QUEST_SUBSSINODE     232
-#define VBIC_QUEST_VBE            233
-#define VBIC_QUEST_VBC            234
-#define VBIC_QUEST_CC             235
-#define VBIC_QUEST_CB             236
-#define VBIC_QUEST_CE             237
-#define VBIC_QUEST_CS             238
-#define VBIC_QUEST_GM             239
-#define VBIC_QUEST_GO             240
-#define VBIC_QUEST_GPI            241
-#define VBIC_QUEST_GMU            242
-#define VBIC_QUEST_GX             243
-#define VBIC_QUEST_QBE            244
-#define VBIC_QUEST_CQBE           245
-#define VBIC_QUEST_QBC            246
-#define VBIC_QUEST_CQBC           247
-#define VBIC_QUEST_QBX            248
-#define VBIC_QUEST_CQBX           249
-#define VBIC_QUEST_QBCP           250
-#define VBIC_QUEST_CQBCP          251
-#define VBIC_QUEST_CEXBC          252
-#define VBIC_QUEST_GEQCB          253
-#define VBIC_QUEST_GCSUB          254
-#define VBIC_QUEST_GDSUB          255
-#define VBIC_QUEST_GEQBX          256
-#define VBIC_QUEST_CBE            257
-#define VBIC_QUEST_CBEX           258
-#define VBIC_QUEST_CBC            259
-#define VBIC_QUEST_CBCX           260
-#define VBIC_QUEST_CBEP           261
-#define VBIC_QUEST_CBCP           262
-#define VBIC_QUEST_SENS_REAL      263
-#define VBIC_QUEST_SENS_IMAG      264
-#define VBIC_QUEST_SENS_MAG       265
-#define VBIC_QUEST_SENS_PH        266
-#define VBIC_QUEST_SENS_CPLX      267
-#define VBIC_QUEST_SENS_DC        268
-#define VBIC_QUEST_POWER          269
+enum {
+    VBIC_QUEST_FT = 221,
+    VBIC_QUEST_COLLNODE,
+    VBIC_QUEST_BASENODE,
+    VBIC_QUEST_EMITNODE,
+    VBIC_QUEST_SUBSNODE,
+    VBIC_QUEST_COLLCXNODE,
+    VBIC_QUEST_COLLCINODE,
+    VBIC_QUEST_BASEBXNODE,
+    VBIC_QUEST_BASEBINODE,
+    VBIC_QUEST_BASEBPNODE,
+    VBIC_QUEST_EMITEINODE,
+    VBIC_QUEST_SUBSSINODE,
+    VBIC_QUEST_VBE,
+    VBIC_QUEST_VBC,
+    VBIC_QUEST_CC,
+    VBIC_QUEST_CB,
+    VBIC_QUEST_CE,
+    VBIC_QUEST_CS,
+    VBIC_QUEST_GM,
+    VBIC_QUEST_GO,
+    VBIC_QUEST_GPI,
+    VBIC_QUEST_GMU,
+    VBIC_QUEST_GX,
+    VBIC_QUEST_QBE,
+    VBIC_QUEST_CQBE,
+    VBIC_QUEST_QBC,
+    VBIC_QUEST_CQBC,
+    VBIC_QUEST_QBX,
+    VBIC_QUEST_CQBX,
+    VBIC_QUEST_QBCP,
+    VBIC_QUEST_CQBCP,
+    VBIC_QUEST_CEXBC,
+    VBIC_QUEST_GEQCB,
+    VBIC_QUEST_GCSUB,
+    VBIC_QUEST_GDSUB,
+    VBIC_QUEST_GEQBX,
+    VBIC_QUEST_CBE,
+    VBIC_QUEST_CBEX,
+    VBIC_QUEST_CBC,
+    VBIC_QUEST_CBCX,
+    VBIC_QUEST_CBEP,
+    VBIC_QUEST_CBCP,
+    VBIC_QUEST_SENS_REAL,
+    VBIC_QUEST_SENS_IMAG,
+    VBIC_QUEST_SENS_MAG,
+    VBIC_QUEST_SENS_PH,
+    VBIC_QUEST_SENS_CPLX,
+    VBIC_QUEST_SENS_DC,
+    VBIC_QUEST_POWER,
+};
 
 /* model questions */
-#define VBIC_MOD_COLLCONDUCT           301
-#define VBIC_MOD_BASECONDUCT           302
-#define VBIC_MOD_EMITTERCONDUCT        303
-#define VBIC_MOD_SUBSTRATECONDUCT      304
-#define VBIC_MOD_TYPE                  305
+enum {
+    VBIC_MOD_COLLCONDUCT = 301,
+    VBIC_MOD_BASECONDUCT,
+    VBIC_MOD_EMITTERCONDUCT,
+    VBIC_MOD_SUBSTRATECONDUCT,
+    VBIC_MOD_TYPE,
+};
 
 #include "vbicext.h"
 #endif /*VBIC*/

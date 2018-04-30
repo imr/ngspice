@@ -19,13 +19,15 @@ Sydney University mods Copyright(c) 1989 Anthony E. Parker, David J. Skellern
 
 /* indices to an array of JFET noise sources */
 
-#define JFETRDNOIZ       0
-#define JFETRSNOIZ       1
-#define JFETIDNOIZ       2
-#define JFETFLNOIZ 3
-#define JFETTOTNOIZ    4
-
-#define JFETNSRCS     5
+enum {
+    JFETRDNOIZ = 0,
+    JFETRSNOIZ,
+    JFETIDNOIZ,
+    JFETFLNOIZ,
+    JFETTOTNOIZ,
+    /* finally, the number of noise sources */
+    JFETNSRCS
+};
 
 /* information used to describe a single instance */
 
@@ -240,67 +242,73 @@ typedef struct sJFETmodel {       /* model structure for a jfet */
 #endif /*NJF*/
 
 /* device parameters */
-#define JFET_AREA 1
-#define JFET_IC_VDS 2
-#define JFET_IC_VGS 3
-#define JFET_IC 4
-#define JFET_OFF 5
-#define JFET_TEMP 6
-#define JFET_DTEMP 7
-#define JFET_M 8
+enum {
+    JFET_AREA = 1,
+    JFET_IC_VDS,
+    JFET_IC_VGS,
+    JFET_IC,
+    JFET_OFF,
+    JFET_TEMP,
+    JFET_DTEMP,
+    JFET_M,
+};
 
 /* model parameters */
-#define JFET_MOD_VTO 101
-#define JFET_MOD_BETA 102
-#define JFET_MOD_LAMBDA 103
-#define JFET_MOD_RD 104
-#define JFET_MOD_RS 105
-#define JFET_MOD_CGS 106
-#define JFET_MOD_CGD 107
-#define JFET_MOD_PB 108
-#define JFET_MOD_IS 109
-#define JFET_MOD_FC 110 
-#define JFET_MOD_NJF 111
-#define JFET_MOD_PJF 112
-#define JFET_MOD_TNOM 113
-#define JFET_MOD_KF 114
-#define JFET_MOD_AF 115
-/* Modification for Sydney University JFET model */
-#define JFET_MOD_B 116
-/* end Sydney University mod */
-#define JFET_MOD_TCV 117
-#define JFET_MOD_BEX 118
-#define JFET_MOD_NLEV 119
-#define JFET_MOD_GDSNOI 120
+enum {
+    JFET_MOD_VTO = 101,
+    JFET_MOD_BETA,
+    JFET_MOD_LAMBDA,
+    JFET_MOD_RD,
+    JFET_MOD_RS,
+    JFET_MOD_CGS,
+    JFET_MOD_CGD,
+    JFET_MOD_PB,
+    JFET_MOD_IS,
+    JFET_MOD_FC,
+    JFET_MOD_NJF,
+    JFET_MOD_PJF,
+    JFET_MOD_TNOM,
+    JFET_MOD_KF,
+    JFET_MOD_AF,
+    JFET_MOD_B,  /* Modification for Sydney University JFET model */
+    JFET_MOD_TCV,
+    JFET_MOD_BEX,
+    JFET_MOD_NLEV,
+    JFET_MOD_GDSNOI,
+};
 
 /* device questions */
-#define JFET_DRAINNODE        301
-#define JFET_GATENODE         302
-#define JFET_SOURCENODE       303
-#define JFET_DRAINPRIMENODE   304
-#define JFET_SOURCEPRIMENODE  305
-#define JFET_VGS              306
-#define JFET_VGD              307
-#define JFET_CG               308
-#define JFET_CD               309
-#define JFET_CGD              310
-#define JFET_GM               311
-#define JFET_GDS              312
-#define JFET_GGS              313
-#define JFET_GGD              314
-#define JFET_QGS              315
-#define JFET_CQGS             316
-#define JFET_QGD              317
-#define JFET_CQGD             318
-#define JFET_CS               319
-#define JFET_POWER            320
+enum {
+    JFET_DRAINNODE = 301,
+    JFET_GATENODE,
+    JFET_SOURCENODE,
+    JFET_DRAINPRIMENODE,
+    JFET_SOURCEPRIMENODE,
+    JFET_VGS,
+    JFET_VGD,
+    JFET_CG,
+    JFET_CD,
+    JFET_CGD,
+    JFET_GM,
+    JFET_GDS,
+    JFET_GGS,
+    JFET_GGD,
+    JFET_QGS,
+    JFET_CQGS,
+    JFET_QGD,
+    JFET_CQGD,
+    JFET_CS,
+    JFET_POWER,
+};
 
 /* model questions */
-#define JFET_MOD_DRAINCONDUCT   301
-#define JFET_MOD_SOURCECONDUCT  302
-#define JFET_MOD_DEPLETIONCAP   303
-#define JFET_MOD_VCRIT          304
-#define JFET_MOD_TYPE           305
+enum {
+    JFET_MOD_DRAINCONDUCT = 301,
+    JFET_MOD_SOURCECONDUCT,
+    JFET_MOD_DEPLETIONCAP,
+    JFET_MOD_VCRIT,
+    JFET_MOD_TYPE,
+};
 
 /* function definitions */
 

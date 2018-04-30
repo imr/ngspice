@@ -17,13 +17,15 @@ Modified: Alan Gillespie
 
 /* indices to the array of MOSFET(9) noise sources */
 
-#define MOS9RDNOIZ       0
-#define MOS9RSNOIZ       1
-#define MOS9IDNOIZ       2
-#define MOS9FLNOIZ 3
-#define MOS9TOTNOIZ    4
-
-#define MOS9NSRCS     5     /* the number of MOSFET(9) noise sources */
+enum {
+    MOS9RDNOIZ = 0,
+    MOS9RSNOIZ,
+    MOS9IDNOIZ,
+    MOS9FLNOIZ,
+    MOS9TOTNOIZ,
+    /* finally, the number of noise sources */
+    MOS9NSRCS
+};
 
 /* information needed for each instance */
 
@@ -426,137 +428,141 @@ typedef struct sMOS9model {       /* model structure for a resistor */
 #endif /*NMOS*/
 
 /* device parameters */
-#define MOS9_W 1
-#define MOS9_L 2
-#define MOS9_AS 3
-#define MOS9_AD 4
-#define MOS9_PS 5
-#define MOS9_PD 6
-#define MOS9_NRS 7
-#define MOS9_NRD 8
-#define MOS9_OFF 9
-#define MOS9_IC 10
-#define MOS9_IC_VBS 11
-#define MOS9_IC_VDS 12
-#define MOS9_IC_VGS 13
-#define MOS9_W_SENS 14
-#define MOS9_L_SENS 15
-#define MOS9_CB 16
-#define MOS9_CG 17
-#define MOS9_CS 18
-#define MOS9_POWER 19
-#define MOS9_CGS                20
-#define MOS9_CGD                21
-#define MOS9_DNODE              22
-#define MOS9_GNODE              23
-#define MOS9_SNODE              24
-#define MOS9_BNODE              25
-#define MOS9_DNODEPRIME         26
-#define MOS9_SNODEPRIME         27
-#define MOS9_SOURCECONDUCT      28
-#define MOS9_DRAINCONDUCT       29
-#define MOS9_VON                30
-#define MOS9_VDSAT              31
-#define MOS9_SOURCEVCRIT        32
-#define MOS9_DRAINVCRIT         33
-#define MOS9_CD                 34
-#define MOS9_CBS                35
-#define MOS9_CBD                36
-#define MOS9_GMBS               37
-#define MOS9_GM                 38
-#define MOS9_GDS                39
-#define MOS9_GBD                40
-#define MOS9_GBS                41
-#define MOS9_CAPBD              42
-#define MOS9_CAPBS              43
-#define MOS9_CAPZEROBIASBD      44
-#define MOS9_CAPZEROBIASBDSW    45
-#define MOS9_CAPZEROBIASBS      46
-#define MOS9_CAPZEROBIASBSSW    47
-#define MOS9_VBD                48
-#define MOS9_VBS                49
-#define MOS9_VGS                50
-#define MOS9_VDS                51
-#define MOS9_CAPGS              52
-#define MOS9_QGS                53
-#define MOS9_CQGS               54
-#define MOS9_CAPGD              55
-#define MOS9_QGD                56
-#define MOS9_CQGD               57
-#define MOS9_CAPGB              58
-#define MOS9_QGB                59
-#define MOS9_CQGB               60
-#define MOS9_QBD                61
-#define MOS9_CQBD               62
-#define MOS9_QBS                63
-#define MOS9_CQBS               64
-#define MOS9_W_SENS_REAL        65
-#define MOS9_W_SENS_IMAG        66
-#define MOS9_W_SENS_MAG         67 
-#define MOS9_W_SENS_PH          68
-#define MOS9_W_SENS_CPLX        69
-#define MOS9_L_SENS_REAL        70
-#define MOS9_L_SENS_IMAG        71
-#define MOS9_L_SENS_MAG         72
-#define MOS9_L_SENS_PH          73
-#define MOS9_L_SENS_CPLX        74
-#define MOS9_W_SENS_DC          75
-#define MOS9_L_SENS_DC          76
-#define MOS9_TEMP               77
-#define MOS9_SOURCERESIST       78
-#define MOS9_DRAINRESIST        79
-#define MOS9_M                  80
-#define MOS9_DTEMP              81
+enum {
+    MOS9_W = 1,
+    MOS9_L,
+    MOS9_AS,
+    MOS9_AD,
+    MOS9_PS,
+    MOS9_PD,
+    MOS9_NRS,
+    MOS9_NRD,
+    MOS9_OFF,
+    MOS9_IC,
+    MOS9_IC_VBS,
+    MOS9_IC_VDS,
+    MOS9_IC_VGS,
+    MOS9_W_SENS,
+    MOS9_L_SENS,
+    MOS9_CB,
+    MOS9_CG,
+    MOS9_CS,
+    MOS9_POWER,
+    MOS9_CGS,
+    MOS9_CGD,
+    MOS9_DNODE,
+    MOS9_GNODE,
+    MOS9_SNODE,
+    MOS9_BNODE,
+    MOS9_DNODEPRIME,
+    MOS9_SNODEPRIME,
+    MOS9_SOURCECONDUCT,
+    MOS9_DRAINCONDUCT,
+    MOS9_VON,
+    MOS9_VDSAT,
+    MOS9_SOURCEVCRIT,
+    MOS9_DRAINVCRIT,
+    MOS9_CD,
+    MOS9_CBS,
+    MOS9_CBD,
+    MOS9_GMBS,
+    MOS9_GM,
+    MOS9_GDS,
+    MOS9_GBD,
+    MOS9_GBS,
+    MOS9_CAPBD,
+    MOS9_CAPBS,
+    MOS9_CAPZEROBIASBD,
+    MOS9_CAPZEROBIASBDSW,
+    MOS9_CAPZEROBIASBS,
+    MOS9_CAPZEROBIASBSSW,
+    MOS9_VBD,
+    MOS9_VBS,
+    MOS9_VGS,
+    MOS9_VDS,
+    MOS9_CAPGS,
+    MOS9_QGS,
+    MOS9_CQGS,
+    MOS9_CAPGD,
+    MOS9_QGD,
+    MOS9_CQGD,
+    MOS9_CAPGB,
+    MOS9_QGB,
+    MOS9_CQGB,
+    MOS9_QBD,
+    MOS9_CQBD,
+    MOS9_QBS,
+    MOS9_CQBS,
+    MOS9_W_SENS_REAL,
+    MOS9_W_SENS_IMAG,
+    MOS9_W_SENS_MAG,
+    MOS9_W_SENS_PH,
+    MOS9_W_SENS_CPLX,
+    MOS9_L_SENS_REAL,
+    MOS9_L_SENS_IMAG,
+    MOS9_L_SENS_MAG,
+    MOS9_L_SENS_PH,
+    MOS9_L_SENS_CPLX,
+    MOS9_W_SENS_DC,
+    MOS9_L_SENS_DC,
+    MOS9_TEMP,
+    MOS9_SOURCERESIST,
+    MOS9_DRAINRESIST,
+    MOS9_M,
+    MOS9_DTEMP,
+};
 
 /* model parameters */
-#define MOS9_MOD_VTO 101
-#define MOS9_MOD_KP 102
-#define MOS9_MOD_GAMMA 103
-#define MOS9_MOD_PHI 104
-#define MOS9_MOD_RD 105
-#define MOS9_MOD_RS 106
-#define MOS9_MOD_CBD 107
-#define MOS9_MOD_CBS 108
-#define MOS9_MOD_IS 109
-#define MOS9_MOD_PB 110
-#define MOS9_MOD_CGSO 111
-#define MOS9_MOD_CGDO 112
-#define MOS9_MOD_CGBO 113
-#define MOS9_MOD_RSH 114
-#define MOS9_MOD_CJ 115
-#define MOS9_MOD_MJ 116
-#define MOS9_MOD_CJSW 117
-#define MOS9_MOD_MJSW 118
-#define MOS9_MOD_JS 119
-#define MOS9_MOD_TOX 120
-#define MOS9_MOD_LD 121
-#define MOS9_MOD_U0 122
-#define MOS9_MOD_FC 123
-#define MOS9_MOD_NSUB 124
-#define MOS9_MOD_TPG 125
-#define MOS9_MOD_NSS 126
-#define MOS9_MOD_ETA 127
-#define MOS9_MOD_DELTA 128
-#define MOS9_MOD_NFS 129
-#define MOS9_MOD_THETA 130
-#define MOS9_MOD_VMAX 131
-#define MOS9_MOD_KAPPA 132
-#define MOS9_MOD_NMOS 133
-#define MOS9_MOD_PMOS 134
-#define MOS9_MOD_XJ 135
-#define MOS9_MOD_UEXP 136
-#define MOS9_MOD_NEFF 137
-#define MOS9_MOD_XD 138
-#define MOS9_MOD_ALPHA 139
-#define MOS9_DELTA 140
-#define MOS9_MOD_TNOM 141
-#define MOS9_MOD_KF 142
-#define MOS9_MOD_AF 143
-#define MOS9_MOD_TYPE 144
-#define MOS9_MOD_XL 145
-#define MOS9_MOD_WD 146
-#define MOS9_MOD_XW 147
-#define MOS9_MOD_DELVTO 148
+enum {
+    MOS9_MOD_VTO = 101,
+    MOS9_MOD_KP,
+    MOS9_MOD_GAMMA,
+    MOS9_MOD_PHI,
+    MOS9_MOD_RD,
+    MOS9_MOD_RS,
+    MOS9_MOD_CBD,
+    MOS9_MOD_CBS,
+    MOS9_MOD_IS,
+    MOS9_MOD_PB,
+    MOS9_MOD_CGSO,
+    MOS9_MOD_CGDO,
+    MOS9_MOD_CGBO,
+    MOS9_MOD_RSH,
+    MOS9_MOD_CJ,
+    MOS9_MOD_MJ,
+    MOS9_MOD_CJSW,
+    MOS9_MOD_MJSW,
+    MOS9_MOD_JS,
+    MOS9_MOD_TOX,
+    MOS9_MOD_LD,
+    MOS9_MOD_U0,
+    MOS9_MOD_FC,
+    MOS9_MOD_NSUB,
+    MOS9_MOD_TPG,
+    MOS9_MOD_NSS,
+    MOS9_MOD_ETA,
+    MOS9_MOD_DELTA,
+    MOS9_MOD_NFS,
+    MOS9_MOD_THETA,
+    MOS9_MOD_VMAX,
+    MOS9_MOD_KAPPA,
+    MOS9_MOD_NMOS,
+    MOS9_MOD_PMOS,
+    MOS9_MOD_XJ,
+    MOS9_MOD_UEXP,
+    MOS9_MOD_NEFF,
+    MOS9_MOD_XD,
+    MOS9_MOD_ALPHA,
+    MOS9_DELTA,
+    MOS9_MOD_TNOM,
+    MOS9_MOD_KF,
+    MOS9_MOD_AF,
+    MOS9_MOD_TYPE,
+    MOS9_MOD_XL,
+    MOS9_MOD_WD,
+    MOS9_MOD_XW,
+    MOS9_MOD_DELVTO,
+};
 
 /* device questions */
 

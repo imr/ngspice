@@ -101,26 +101,27 @@ typedef struct sNUMDmodel {	/* model structure for a diode */
 #define NP -1
 
 /* device parameters */
-#define NUMD_AREA 1
-#define NUMD_IC_FILE 2
-#define NUMD_OFF 3
-#define NUMD_PRINT 4
-#define NUMD_TEMP 5
-#define NUMD_VD 6
-#define NUMD_ID 7
-
-#define NUMD_G11 8
-#define NUMD_C11 9
-#define NUMD_Y11 10
-#define NUMD_G12 11
-#define NUMD_C12 12
-#define NUMD_Y12 13
-#define NUMD_G21 14
-#define NUMD_C21 15
-#define NUMD_Y21 16
-#define NUMD_G22 17
-#define NUMD_C22 18
-#define NUMD_Y22 19
+enum {
+    NUMD_AREA = 1,
+    NUMD_IC_FILE,
+    NUMD_OFF,
+    NUMD_PRINT,
+    NUMD_TEMP,
+    NUMD_VD,
+    NUMD_ID,
+    NUMD_G11,
+    NUMD_C11,
+    NUMD_Y11,
+    NUMD_G12,
+    NUMD_C12,
+    NUMD_Y12,
+    NUMD_G21,
+    NUMD_C21,
+    NUMD_Y21,
+    NUMD_G22,
+    NUMD_C22,
+    NUMD_Y22,
+};
 
 /* model parameters */
 /* NOTE: all true model parameters have been moved to IFcardInfo structures */

@@ -68,28 +68,32 @@ typedef struct sVCCSmodel {       /* model structure for a source */
 } VCCSmodel;
 
 /* device parameters */
-#define VCCS_TRANS 1
-#define VCCS_IC 2
-#define VCCS_POS_NODE 3
-#define VCCS_NEG_NODE 4
-#define VCCS_CONT_P_NODE 5
-#define VCCS_CONT_N_NODE 6
-#define VCCS_CONT_V_OLD 7
-#define VCCS_TRANS_SENS 8
-#define VCCS_CURRENT 9
-#define VCCS_POWER 10
-#define VCCS_VOLTS 11
-#define VCCS_M 12
+enum {
+    VCCS_TRANS = 1,
+    VCCS_IC,
+    VCCS_POS_NODE,
+    VCCS_NEG_NODE,
+    VCCS_CONT_P_NODE,
+    VCCS_CONT_N_NODE,
+    VCCS_CONT_V_OLD,
+    VCCS_TRANS_SENS,
+    VCCS_CURRENT,
+    VCCS_POWER,
+    VCCS_VOLTS,
+    VCCS_M,
+};
 
 /* model parameters */
 
 /* device questions */
-#define VCCS_QUEST_SENS_REAL         201
-#define VCCS_QUEST_SENS_IMAG         202
-#define VCCS_QUEST_SENS_MAG      203
-#define VCCS_QUEST_SENS_PH       204
-#define VCCS_QUEST_SENS_CPLX         205
-#define VCCS_QUEST_SENS_DC       206
+enum {
+    VCCS_QUEST_SENS_REAL = 201,
+    VCCS_QUEST_SENS_IMAG,
+    VCCS_QUEST_SENS_MAG,
+    VCCS_QUEST_SENS_PH,
+    VCCS_QUEST_SENS_CPLX,
+    VCCS_QUEST_SENS_DC,
+};
 
 /* model questions */
 

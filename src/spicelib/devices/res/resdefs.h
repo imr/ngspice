@@ -17,11 +17,13 @@ Modified: 2000 AlansFixes
 
 /* indices to array of RES noise sources */
 
-#define RESTHNOIZ  0     /* Thermal noise source */
-#define RESFLNOIZ  1     /* Flicker noise source */
-#define RESTOTNOIZ 2     /* Total noise          */
-
-#define RESNSRCS   3     /* the number of RES noise sources */
+enum {
+    RESTHNOIZ = 0,  /* Thermal noise source */
+    RESFLNOIZ,      /* Flicker noise source */
+    RESTOTNOIZ,     /* Total noise          */
+    /* finally, the number of noise sources */
+    RESNSRCS
+};
 
 /* information used to describe a single instance */
 
@@ -135,52 +137,60 @@ typedef struct sRESmodel {       /* model structure for a resistor */
 } RESmodel;
 
 /* device parameters */
-#define RES_RESIST 1
-#define RES_WIDTH 2
-#define RES_LENGTH 3
-#define RES_CONDUCT 4
-#define RES_RESIST_SENS 5
-#define RES_CURRENT 6
-#define RES_POWER 7
-#define RES_TEMP 8
+enum {
+    RES_RESIST = 1,
+    RES_WIDTH,
+    RES_LENGTH,
+    RES_CONDUCT,
+    RES_RESIST_SENS,
+    RES_CURRENT,
+    RES_POWER,
+    RES_TEMP,
+};
+
 /* serban */
-#define RES_ACRESIST 10
-#define RES_ACCONDUCT 11
-#define RES_M 12 /* pn */
-#define RES_SCALE 13 /* pn */
-#define RES_DTEMP 14 /* pn */
-#define RES_NOISY 15 /* pn */
-/* tanaka */
-#define RES_TC1 16
-#define RES_TC2 17
-#define RES_BV_MAX 18
-#define RES_TCE 19
+enum {
+    RES_ACRESIST = 10,
+    RES_ACCONDUCT,
+    RES_M,
+    RES_SCALE,
+    RES_DTEMP,
+    RES_NOISY,
+    RES_TC1,
+    RES_TC2,
+    RES_BV_MAX,
+    RES_TCE,
+};
 
 /* model parameters */
-#define RES_MOD_TC1 101
-#define RES_MOD_TC2 102
-#define RES_MOD_RSH 103
-#define RES_MOD_DEFWIDTH 104
-#define RES_MOD_DEFLENGTH 105
-#define RES_MOD_NARROW 106
-#define RES_MOD_R 107
-#define RES_MOD_TNOM 108
-#define RES_MOD_SHORT 109
-#define RES_MOD_KF 110
-#define RES_MOD_AF 111
-#define RES_MOD_BV_MAX 112
-#define RES_MOD_LF 113
-#define RES_MOD_WF 114
-#define RES_MOD_EF 115
-#define RES_MOD_TCE 116
+enum {
+    RES_MOD_TC1 = 101,
+    RES_MOD_TC2,
+    RES_MOD_RSH,
+    RES_MOD_DEFWIDTH,
+    RES_MOD_DEFLENGTH,
+    RES_MOD_NARROW,
+    RES_MOD_R,
+    RES_MOD_TNOM,
+    RES_MOD_SHORT,
+    RES_MOD_KF,
+    RES_MOD_AF,
+    RES_MOD_BV_MAX,
+    RES_MOD_LF,
+    RES_MOD_WF,
+    RES_MOD_EF,
+    RES_MOD_TCE,
+};
 
 /* device questions */
-#define RES_QUEST_SENS_REAL      201
-#define RES_QUEST_SENS_IMAG      202
-#define RES_QUEST_SENS_MAG       203
-#define RES_QUEST_SENS_PH        204
-#define RES_QUEST_SENS_CPLX      205
-#define RES_QUEST_SENS_DC        206
+enum {
+    RES_QUEST_SENS_REAL = 201,
+    RES_QUEST_SENS_IMAG,
+    RES_QUEST_SENS_MAG,
+    RES_QUEST_SENS_PH,
+    RES_QUEST_SENS_CPLX,
+    RES_QUEST_SENS_DC,
+};
 
 /* model questions */
 

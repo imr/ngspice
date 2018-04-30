@@ -341,131 +341,137 @@ typedef struct sMOS6model {       /* model structure for a resistor */
 #endif /*NMOS*/
 
 /* device parameters */
-#define MOS6_W 1
-#define MOS6_L 2
-#define MOS6_AS 3
-#define MOS6_AD 4
-#define MOS6_PS 5
-#define MOS6_PD 6
-#define MOS6_NRS 7
-#define MOS6_NRD 8
-#define MOS6_OFF 9
-#define MOS6_IC 10
-#define MOS6_IC_VBS 11
-#define MOS6_IC_VDS 12
-#define MOS6_IC_VGS 13
-#define MOS6_W_SENS 14
-#define MOS6_L_SENS 15
-#define MOS6_CB 16
-#define MOS6_CG 17
-#define MOS6_CS 18
-#define MOS6_POWER 19
-#define MOS6_TEMP 20
-#define MOS6_DTEMP 21
-#define MOS6_M 22
+enum {
+    MOS6_W = 1,
+    MOS6_L,
+    MOS6_AS,
+    MOS6_AD,
+    MOS6_PS,
+    MOS6_PD,
+    MOS6_NRS,
+    MOS6_NRD,
+    MOS6_OFF,
+    MOS6_IC,
+    MOS6_IC_VBS,
+    MOS6_IC_VDS,
+    MOS6_IC_VGS,
+    MOS6_W_SENS,
+    MOS6_L_SENS,
+    MOS6_CB,
+    MOS6_CG,
+    MOS6_CS,
+    MOS6_POWER,
+    MOS6_TEMP,
+    MOS6_DTEMP,
+    MOS6_M,
+};
 
 /* model paramerers */
-#define MOS6_MOD_VTO 101
-#define MOS6_MOD_KV 102
-#define MOS6_MOD_NV 103
-#define MOS6_MOD_KC 104
-#define MOS6_MOD_NC 105
-#define MOS6_MOD_NVTH 106
-#define MOS6_MOD_PS 107
-#define MOS6_MOD_GAMMA 108
-#define MOS6_MOD_GAMMA1 109
-#define MOS6_MOD_SIGMA 110
-#define MOS6_MOD_PHI 111
-#define MOS6_MOD_LAMBDA 112
-#define MOS6_MOD_LAMDA0 113
-#define MOS6_MOD_LAMDA1 114
-#define MOS6_MOD_RD 115
-#define MOS6_MOD_RS 116
-#define MOS6_MOD_CBD 117
-#define MOS6_MOD_CBS 118
-#define MOS6_MOD_IS 119
-#define MOS6_MOD_PB 120
-#define MOS6_MOD_CGSO 121
-#define MOS6_MOD_CGDO 122
-#define MOS6_MOD_CGBO 123
-#define MOS6_MOD_CJ 124
-#define MOS6_MOD_MJ 125
-#define MOS6_MOD_CJSW 126
-#define MOS6_MOD_MJSW 127
-#define MOS6_MOD_JS 128
-#define MOS6_MOD_TOX 129
-#define MOS6_MOD_LD 130
-#define MOS6_MOD_RSH 131
-#define MOS6_MOD_U0 132
-#define MOS6_MOD_FC 133
-#define MOS6_MOD_NSUB 134
-#define MOS6_MOD_TPG 135
-#define MOS6_MOD_NSS 136
-#define MOS6_MOD_NMOS 137
-#define MOS6_MOD_PMOS 138
-#define MOS6_MOD_TNOM 139
-#define MOS6_MOD_TYPE 140
+enum {
+    MOS6_MOD_VTO = 101,
+    MOS6_MOD_KV,
+    MOS6_MOD_NV,
+    MOS6_MOD_KC,
+    MOS6_MOD_NC,
+    MOS6_MOD_NVTH,
+    MOS6_MOD_PS,
+    MOS6_MOD_GAMMA,
+    MOS6_MOD_GAMMA1,
+    MOS6_MOD_SIGMA,
+    MOS6_MOD_PHI,
+    MOS6_MOD_LAMBDA,
+    MOS6_MOD_LAMDA0,
+    MOS6_MOD_LAMDA1,
+    MOS6_MOD_RD,
+    MOS6_MOD_RS,
+    MOS6_MOD_CBD,
+    MOS6_MOD_CBS,
+    MOS6_MOD_IS,
+    MOS6_MOD_PB,
+    MOS6_MOD_CGSO,
+    MOS6_MOD_CGDO,
+    MOS6_MOD_CGBO,
+    MOS6_MOD_CJ,
+    MOS6_MOD_MJ,
+    MOS6_MOD_CJSW,
+    MOS6_MOD_MJSW,
+    MOS6_MOD_JS,
+    MOS6_MOD_TOX,
+    MOS6_MOD_LD,
+    MOS6_MOD_RSH,
+    MOS6_MOD_U0,
+    MOS6_MOD_FC,
+    MOS6_MOD_NSUB,
+    MOS6_MOD_TPG,
+    MOS6_MOD_NSS,
+    MOS6_MOD_NMOS,
+    MOS6_MOD_PMOS,
+    MOS6_MOD_TNOM,
+    MOS6_MOD_TYPE,
+};
 
 /* device questions */
-#define MOS6_CGS                201
-#define MOS6_CGD                202
-#define MOS6_DNODE              203
-#define MOS6_GNODE              204
-#define MOS6_SNODE              205
-#define MOS6_BNODE              206
-#define MOS6_DNODEPRIME         207
-#define MOS6_SNODEPRIME         208
-#define MOS6_SOURCECONDUCT      209
-#define MOS6_DRAINCONDUCT       210
-#define MOS6_VON                211
-#define MOS6_VDSAT              212
-#define MOS6_SOURCEVCRIT        213
-#define MOS6_DRAINVCRIT         214
-#define MOS6_CD                 215
-#define MOS6_CBS                216
-#define MOS6_CBD                217
-#define MOS6_GMBS               218
-#define MOS6_GM                 219
-#define MOS6_GDS                220
-#define MOS6_GBD                221
-#define MOS6_GBS                222
-#define MOS6_CAPBD              223
-#define MOS6_CAPBS              224
-#define MOS6_CAPZEROBIASBD      225
-#define MOS6_CAPZEROBIASBDSW    226
-#define MOS6_CAPZEROBIASBS      227
-#define MOS6_CAPZEROBIASBSSW    228
-#define MOS6_VBD                229
-#define MOS6_VBS                230
-#define MOS6_VGS                231
-#define MOS6_VDS                232
-#define MOS6_CAPGS              233
-#define MOS6_QGS                234
-#define MOS6_CQGS               235
-#define MOS6_CAPGD              236
-#define MOS6_QGD                237
-#define MOS6_CQGD               238
-#define MOS6_CAPGB              239
-#define MOS6_QGB                240
-#define MOS6_CQGB               241
-#define MOS6_QBD                242
-#define MOS6_CQBD               243
-#define MOS6_QBS                244
-#define MOS6_CQBS               245
-#define MOS6_L_SENS_REAL               246
-#define MOS6_L_SENS_IMAG               247
-#define MOS6_L_SENS_MAG                248 
-#define MOS6_L_SENS_PH                 249 
-#define MOS6_L_SENS_CPLX               250
-#define MOS6_W_SENS_REAL               251
-#define MOS6_W_SENS_IMAG               252
-#define MOS6_W_SENS_MAG                253 
-#define MOS6_W_SENS_PH                 254 
-#define MOS6_W_SENS_CPLX               255
-#define MOS6_L_SENS_DC                 256
-#define MOS6_W_SENS_DC                 257
-#define MOS6_SOURCERESIST      258
-#define MOS6_DRAINRESIST       259
+enum {
+    MOS6_CGS = 201,
+    MOS6_CGD,
+    MOS6_DNODE,
+    MOS6_GNODE,
+    MOS6_SNODE,
+    MOS6_BNODE,
+    MOS6_DNODEPRIME,
+    MOS6_SNODEPRIME,
+    MOS6_SOURCECONDUCT,
+    MOS6_DRAINCONDUCT,
+    MOS6_VON,
+    MOS6_VDSAT,
+    MOS6_SOURCEVCRIT,
+    MOS6_DRAINVCRIT,
+    MOS6_CD,
+    MOS6_CBS,
+    MOS6_CBD,
+    MOS6_GMBS,
+    MOS6_GM,
+    MOS6_GDS,
+    MOS6_GBD,
+    MOS6_GBS,
+    MOS6_CAPBD,
+    MOS6_CAPBS,
+    MOS6_CAPZEROBIASBD,
+    MOS6_CAPZEROBIASBDSW,
+    MOS6_CAPZEROBIASBS,
+    MOS6_CAPZEROBIASBSSW,
+    MOS6_VBD,
+    MOS6_VBS,
+    MOS6_VGS,
+    MOS6_VDS,
+    MOS6_CAPGS,
+    MOS6_QGS,
+    MOS6_CQGS,
+    MOS6_CAPGD,
+    MOS6_QGD,
+    MOS6_CQGD,
+    MOS6_CAPGB,
+    MOS6_QGB,
+    MOS6_CQGB,
+    MOS6_QBD,
+    MOS6_CQBD,
+    MOS6_QBS,
+    MOS6_CQBS,
+    MOS6_L_SENS_REAL,
+    MOS6_L_SENS_IMAG,
+    MOS6_L_SENS_MAG,
+    MOS6_L_SENS_PH,
+    MOS6_L_SENS_CPLX,
+    MOS6_W_SENS_REAL,
+    MOS6_W_SENS_IMAG,
+    MOS6_W_SENS_MAG,
+    MOS6_W_SENS_PH,
+    MOS6_W_SENS_CPLX,
+    MOS6_L_SENS_DC,
+    MOS6_W_SENS_DC,
+    MOS6_SOURCERESIST,
+    MOS6_DRAINRESIST,
+};
 
 /* model questions */
 

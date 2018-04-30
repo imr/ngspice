@@ -119,39 +119,43 @@ typedef struct sNBJTmodel {	/* model structure for a bjt */
 #define PNP -1
 
 /* device parameters */
-#define NBJT_AREA 1
-#define NBJT_OFF 2
-#define NBJT_IC_FILE 3
-#define NBJT_PRINT 4
-#define NBJT_TEMP 5
+enum {
+    NBJT_AREA = 1,
+    NBJT_OFF,
+    NBJT_IC_FILE,
+    NBJT_PRINT,
+    NBJT_TEMP,
+};
 
-#define NBJT_G11 8
-#define NBJT_C11 9
-#define NBJT_Y11 10
-#define NBJT_G12 11
-#define NBJT_C12 12
-#define NBJT_Y12 13
-#define NBJT_G13 14
-#define NBJT_C13 15
-#define NBJT_Y13 16
-#define NBJT_G21 17
-#define NBJT_C21 18
-#define NBJT_Y21 19
-#define NBJT_G22 20
-#define NBJT_C22 21
-#define NBJT_Y22 22
-#define NBJT_G23 23
-#define NBJT_C23 24
-#define NBJT_Y23 25
-#define NBJT_G31 26
-#define NBJT_C31 27
-#define NBJT_Y31 28
-#define NBJT_G32 29
-#define NBJT_C32 30
-#define NBJT_Y32 31
-#define NBJT_G33 32
-#define NBJT_C33 33
-#define NBJT_Y33 34
+enum {
+    NBJT_G11 = 8,
+    NBJT_C11,
+    NBJT_Y11,
+    NBJT_G12,
+    NBJT_C12,
+    NBJT_Y12,
+    NBJT_G13,
+    NBJT_C13,
+    NBJT_Y13,
+    NBJT_G21,
+    NBJT_C21,
+    NBJT_Y21,
+    NBJT_G22,
+    NBJT_C22,
+    NBJT_Y22,
+    NBJT_G23,
+    NBJT_C23,
+    NBJT_Y23,
+    NBJT_G31,
+    NBJT_C31,
+    NBJT_Y31,
+    NBJT_G32,
+    NBJT_C32,
+    NBJT_Y32,
+    NBJT_G33,
+    NBJT_C33,
+    NBJT_Y33,
+};
 
 /* model parameters */
 /* NOTE: all true model parameters have been moved to IFcardInfo structures */

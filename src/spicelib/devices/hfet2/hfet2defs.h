@@ -188,87 +188,94 @@ typedef struct sHFET2model {
 #endif /*NMF*/
 
 /* device parameters */
-#define HFET2_LENGTH 1
-#define HFET2_WIDTH  2
-#define HFET2_IC_VDS 3
-#define HFET2_IC_VGS 4
-#define HFET2_IC     5
-#define HFET2_OFF    6
-#define HFET2_CS     7
-#define HFET2_POWER  8
-#define HFET2_TEMP   9
-#define HFET2_DTEMP 10
-#define HFET2_M     11
+enum {
+    HFET2_LENGTH = 1,
+    HFET2_WIDTH,
+    HFET2_IC_VDS,
+    HFET2_IC_VGS,
+    HFET2_IC,
+    HFET2_OFF,
+    HFET2_CS,
+    HFET2_POWER,
+    HFET2_TEMP,
+    HFET2_DTEMP,
+    HFET2_M,
+};
 
 /* model parameters */
-#define HFET2_MOD_NHFET   101
-#define HFET2_MOD_PHFET   102
-#define HFET2_MOD_CF      103
-#define HFET2_MOD_D1      104
-#define HFET2_MOD_D2      105
-#define HFET2_MOD_DEL     106
-#define HFET2_MOD_DELTA   107
-#define HFET2_MOD_DELTAD  108
-#define HFET2_MOD_DI      109
-#define HFET2_MOD_EPSI    110
-#define HFET2_MOD_ETA     111
-#define HFET2_MOD_ETA1    112
-#define HFET2_MOD_ETA2    113
-#define HFET2_MOD_GAMMA   114
-#define HFET2_MOD_GGR     115
-#define HFET2_MOD_JS      116
-#define HFET2_MOD_KLAMBDA 117
-#define HFET2_MOD_KMU     118
-#define HFET2_MOD_KNMAX   119
-#define HFET2_MOD_KVTO    120
-#define HFET2_MOD_LAMBDA  121
-#define HFET2_MOD_M       122
-#define HFET2_MOD_MC      123
-#define HFET2_MOD_MU      124
-#define HFET2_MOD_N       125
-#define HFET2_MOD_NMAX    126
-#define HFET2_MOD_P       127
-#define HFET2_MOD_RD      128
-#define HFET2_MOD_RDI     129
-#define HFET2_MOD_RS      130
-#define HFET2_MOD_RSI     131
-#define HFET2_MOD_SIGMA0  132
-#define HFET2_MOD_VS      133
-#define HFET2_MOD_VSIGMA  134
-#define HFET2_MOD_VSIGMAT 135
-#define HFET2_MOD_VT1     136
-#define HFET2_MOD_VT2     137
-#define HFET2_MOD_VTO     138
-#define HFET2_MOD_TYPE    139
+enum {
+    HFET2_MOD_NHFET = 101,
+    HFET2_MOD_PHFET,
+    HFET2_MOD_CF,
+    HFET2_MOD_D1,
+    HFET2_MOD_D2,
+    HFET2_MOD_DEL,
+    HFET2_MOD_DELTA,
+    HFET2_MOD_DELTAD,
+    HFET2_MOD_DI,
+    HFET2_MOD_EPSI,
+    HFET2_MOD_ETA,
+    HFET2_MOD_ETA1,
+    HFET2_MOD_ETA2,
+    HFET2_MOD_GAMMA,
+    HFET2_MOD_GGR,
+    HFET2_MOD_JS,
+    HFET2_MOD_KLAMBDA,
+    HFET2_MOD_KMU,
+    HFET2_MOD_KNMAX,
+    HFET2_MOD_KVTO,
+    HFET2_MOD_LAMBDA,
+    HFET2_MOD_M,
+    HFET2_MOD_MC,
+    HFET2_MOD_MU,
+    HFET2_MOD_N,
+    HFET2_MOD_NMAX,
+    HFET2_MOD_P,
+    HFET2_MOD_RD,
+    HFET2_MOD_RDI,
+    HFET2_MOD_RS,
+    HFET2_MOD_RSI,
+    HFET2_MOD_SIGMA0,
+    HFET2_MOD_VS,
+    HFET2_MOD_VSIGMA,
+    HFET2_MOD_VSIGMAT,
+    HFET2_MOD_VT1,
+    HFET2_MOD_VT2,
+    HFET2_MOD_VTO,
+    HFET2_MOD_TYPE,
+};
 
 /* device questions */
 
-#define HFET2_DRAINNODE       201
-#define HFET2_GATENODE        202
-#define HFET2_SOURCENODE      203
-#define HFET2_DRAINPRIMENODE  204
-#define HFET2_SOURCEPRIMENODE 205
-
-#define HFET2_VGS         206
-#define HFET2_VGD         207
-#define HFET2_CG          208
-#define HFET2_CD          209
-#define HFET2_CGD         210
-#define HFET2_GM          211
-#define HFET2_GDS         212
-#define HFET2_GGS         213
-#define HFET2_GGD         214
-#define HFET2_QGS         215
-#define HFET2_CQGS        216
-#define HFET2_QGD         217
-#define HFET2_CQGD        218
+enum {
+    HFET2_DRAINNODE = 201,
+    HFET2_GATENODE,
+    HFET2_SOURCENODE,
+    HFET2_DRAINPRIMENODE,
+    HFET2_SOURCEPRIMENODE,
+    HFET2_VGS,
+    HFET2_VGD,
+    HFET2_CG,
+    HFET2_CD,
+    HFET2_CGD,
+    HFET2_GM,
+    HFET2_GDS,
+    HFET2_GGS,
+    HFET2_GGD,
+    HFET2_QGS,
+    HFET2_CQGS,
+    HFET2_QGD,
+    HFET2_CQGD,
+};
 
 /* model questions */
 
-#define HFET2_MOD_DRAINCONDUCT    301
-#define HFET2_MOD_SOURCECONDUCT   302 
-#define HFET2_MOD_DEPLETIONCAP    303
-#define HFET2_MOD_VCRIT           304
+enum {
+    HFET2_MOD_DRAINCONDUCT = 301,
+    HFET2_MOD_SOURCECONDUCT,
+    HFET2_MOD_DEPLETIONCAP,
+    HFET2_MOD_VCRIT,
+};
 
 #define CF      (model->HFET2cf)
 #define D1      (model->HFET2d1)

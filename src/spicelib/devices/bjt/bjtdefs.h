@@ -16,15 +16,17 @@ Author: 1985 Thomas L. Quarles
 
 /* indices to array of BJT noise sources */
 
-#define BJTRCNOIZ       0
-#define BJTRBNOIZ       1
-#define BJT_RE_NOISE    2
-#define BJTICNOIZ       3
-#define BJTIBNOIZ       4
-#define BJTFLNOIZ       5
-#define BJTTOTNOIZ      6
-
-#define BJTNSRCS     7     /* the number of BJT noise sources */
+enum {
+    BJTRCNOIZ = 0,
+    BJTRBNOIZ,
+    BJT_RE_NOISE,
+    BJTICNOIZ,
+    BJTIBNOIZ,
+    BJTFLNOIZ,
+    BJTTOTNOIZ,
+    /* finally, the number of noise sources */
+    BJTNSRCS
+};
 
 /* data needed to describe a single instance */
 
@@ -582,186 +584,194 @@ typedef struct sBJTmodel {          /* model structure for a bjt */
 #endif /* VERTICAL */
 
 /* device parameters */
-#define BJT_AREA 1
-#define BJT_OFF 2
-#define BJT_IC_VBE 3
-#define BJT_IC_VCE 4
-#define BJT_IC 5
-#define BJT_AREA_SENS 6
-#define BJT_TEMP 7
-#define BJT_DTEMP 8
-#define BJT_M 9
-#define BJT_AREAB 10
-#define BJT_AREAC 11
+enum {
+    BJT_AREA = 1,
+    BJT_OFF,
+    BJT_IC_VBE,
+    BJT_IC_VCE,
+    BJT_IC,
+    BJT_AREA_SENS,
+    BJT_TEMP,
+    BJT_DTEMP,
+    BJT_M,
+    BJT_AREAB,
+    BJT_AREAC,
+};
 
 /* model parameters */
-#define BJT_MOD_NPN 101
-#define BJT_MOD_PNP 102
-#define BJT_MOD_IS 103
-#define BJT_MOD_BF 104
-#define BJT_MOD_NF 105
-#define BJT_MOD_VAF 106
-#define BJT_MOD_IKF 107
-#define BJT_MOD_ISE 108
-#define BJT_MOD_C2 109 
-#define BJT_MOD_NE 110
-#define BJT_MOD_BR 111
-#define BJT_MOD_NR 112
-#define BJT_MOD_VAR 113
-#define BJT_MOD_IKR 114
-#define BJT_MOD_ISC 115
-#define BJT_MOD_C4 116
-#define BJT_MOD_NC 117
-#define BJT_MOD_RB 118
-#define BJT_MOD_IRB 119
-#define BJT_MOD_RBM 120
-#define BJT_MOD_RE 121
-#define BJT_MOD_RC 122
-#define BJT_MOD_CJE 123
-#define BJT_MOD_VJE 124
-#define BJT_MOD_MJE 125
-#define BJT_MOD_TF 126
-#define BJT_MOD_XTF 127
-#define BJT_MOD_VTF 128
-#define BJT_MOD_ITF 129
-#define BJT_MOD_PTF 130
-#define BJT_MOD_CJC 131
-#define BJT_MOD_VJC 132
-#define BJT_MOD_MJC 133
-#define BJT_MOD_XCJC 134
-#define BJT_MOD_TR 135
-#define BJT_MOD_CJS 136
-#define BJT_MOD_VJS 137
-#define BJT_MOD_MJS 138
-#define BJT_MOD_XTB 139
-#define BJT_MOD_EG 140
-#define BJT_MOD_XTI 141
-#define BJT_MOD_FC 142
-#define BJT_MOD_AF 143
-#define BJT_MOD_KF 144
-#define BJT_MOD_ISS 145
-#define BJT_MOD_NS 146
-#define BJT_MOD_TNOM 147
-#define BJT_MOD_TLEV 148
-#define BJT_MOD_TLEVC 149
-#define BJT_MOD_TBF1 150
-#define BJT_MOD_TBF2 151
-#define BJT_MOD_TBR1 152
-#define BJT_MOD_TBR2 153
-#define BJT_MOD_TIKF1 154
-#define BJT_MOD_TIKF2 155
-#define BJT_MOD_TIKR1 156
-#define BJT_MOD_TIKR2 157
-#define BJT_MOD_TIRB1 158
-#define BJT_MOD_TIRB2 159
-#define BJT_MOD_TNC1 160
-#define BJT_MOD_TNC2 161
-#define BJT_MOD_TNE1 162
-#define BJT_MOD_TNE2 163
-#define BJT_MOD_TNF1 164
-#define BJT_MOD_TNF2 165
-#define BJT_MOD_TNR1 166
-#define BJT_MOD_TNR2 167
-#define BJT_MOD_TRB1 168
-#define BJT_MOD_TRB2 169
-#define BJT_MOD_TRC1 170
-#define BJT_MOD_TRC2 171
-#define BJT_MOD_TRE1 172
-#define BJT_MOD_TRE2 173
-#define BJT_MOD_TRM1 174
-#define BJT_MOD_TRM2 175
-#define BJT_MOD_TVAF1 176
-#define BJT_MOD_TVAF2 177
-#define BJT_MOD_TVAR1 178
-#define BJT_MOD_TVAR2 179
-#define BJT_MOD_CTC 180
-#define BJT_MOD_CTE 181
-#define BJT_MOD_CTS 182
-#define BJT_MOD_TVJC 183
-#define BJT_MOD_TVJE 184
-#define BJT_MOD_TVJS 185
-#define BJT_MOD_TITF1 186
-#define BJT_MOD_TITF2 187
-#define BJT_MOD_TTF1 188
-#define BJT_MOD_TTF2 189
-#define BJT_MOD_TTR1 190
-#define BJT_MOD_TTR2 191
-#define BJT_MOD_TMJE1 192
-#define BJT_MOD_TMJE2 193
-#define BJT_MOD_TMJC1 194
-#define BJT_MOD_TMJC2 195
-#define BJT_MOD_TMJS1 196
-#define BJT_MOD_TMJS2 197
-#define BJT_MOD_TNS1 198
-#define BJT_MOD_TNS2 199
-#define BJT_MOD_SUBS 200
-#define BJT_MOD_NKF 201
-#define BJT_MOD_TIS1 202
-#define BJT_MOD_TIS2 203
-#define BJT_MOD_TISE1 204
-#define BJT_MOD_TISE2 205
-#define BJT_MOD_TISC1 206
-#define BJT_MOD_TISC2 207
-#define BJT_MOD_VBE_MAX 208
-#define BJT_MOD_VBC_MAX 209
-#define BJT_MOD_VCE_MAX 210
+enum {
+    BJT_MOD_NPN = 101,
+    BJT_MOD_PNP,
+    BJT_MOD_IS,
+    BJT_MOD_BF,
+    BJT_MOD_NF,
+    BJT_MOD_VAF,
+    BJT_MOD_IKF,
+    BJT_MOD_ISE,
+    BJT_MOD_C2,
+    BJT_MOD_NE,
+    BJT_MOD_BR,
+    BJT_MOD_NR,
+    BJT_MOD_VAR,
+    BJT_MOD_IKR,
+    BJT_MOD_ISC,
+    BJT_MOD_C4,
+    BJT_MOD_NC,
+    BJT_MOD_RB,
+    BJT_MOD_IRB,
+    BJT_MOD_RBM,
+    BJT_MOD_RE,
+    BJT_MOD_RC,
+    BJT_MOD_CJE,
+    BJT_MOD_VJE,
+    BJT_MOD_MJE,
+    BJT_MOD_TF,
+    BJT_MOD_XTF,
+    BJT_MOD_VTF,
+    BJT_MOD_ITF,
+    BJT_MOD_PTF,
+    BJT_MOD_CJC,
+    BJT_MOD_VJC,
+    BJT_MOD_MJC,
+    BJT_MOD_XCJC,
+    BJT_MOD_TR,
+    BJT_MOD_CJS,
+    BJT_MOD_VJS,
+    BJT_MOD_MJS,
+    BJT_MOD_XTB,
+    BJT_MOD_EG,
+    BJT_MOD_XTI,
+    BJT_MOD_FC,
+    BJT_MOD_AF,
+    BJT_MOD_KF,
+    BJT_MOD_ISS,
+    BJT_MOD_NS,
+    BJT_MOD_TNOM,
+    BJT_MOD_TLEV,
+    BJT_MOD_TLEVC,
+    BJT_MOD_TBF1,
+    BJT_MOD_TBF2,
+    BJT_MOD_TBR1,
+    BJT_MOD_TBR2,
+    BJT_MOD_TIKF1,
+    BJT_MOD_TIKF2,
+    BJT_MOD_TIKR1,
+    BJT_MOD_TIKR2,
+    BJT_MOD_TIRB1,
+    BJT_MOD_TIRB2,
+    BJT_MOD_TNC1,
+    BJT_MOD_TNC2,
+    BJT_MOD_TNE1,
+    BJT_MOD_TNE2,
+    BJT_MOD_TNF1,
+    BJT_MOD_TNF2,
+    BJT_MOD_TNR1,
+    BJT_MOD_TNR2,
+    BJT_MOD_TRB1,
+    BJT_MOD_TRB2,
+    BJT_MOD_TRC1,
+    BJT_MOD_TRC2,
+    BJT_MOD_TRE1,
+    BJT_MOD_TRE2,
+    BJT_MOD_TRM1,
+    BJT_MOD_TRM2,
+    BJT_MOD_TVAF1,
+    BJT_MOD_TVAF2,
+    BJT_MOD_TVAR1,
+    BJT_MOD_TVAR2,
+    BJT_MOD_CTC,
+    BJT_MOD_CTE,
+    BJT_MOD_CTS,
+    BJT_MOD_TVJC,
+    BJT_MOD_TVJE,
+    BJT_MOD_TVJS,
+    BJT_MOD_TITF1,
+    BJT_MOD_TITF2,
+    BJT_MOD_TTF1,
+    BJT_MOD_TTF2,
+    BJT_MOD_TTR1,
+    BJT_MOD_TTR2,
+    BJT_MOD_TMJE1,
+    BJT_MOD_TMJE2,
+    BJT_MOD_TMJC1,
+    BJT_MOD_TMJC2,
+    BJT_MOD_TMJS1,
+    BJT_MOD_TMJS2,
+    BJT_MOD_TNS1,
+    BJT_MOD_TNS2,
+    BJT_MOD_SUBS,
+    BJT_MOD_NKF,
+    BJT_MOD_TIS1,
+    BJT_MOD_TIS2,
+    BJT_MOD_TISE1,
+    BJT_MOD_TISE2,
+    BJT_MOD_TISC1,
+    BJT_MOD_TISC2,
+    BJT_MOD_VBE_MAX,
+    BJT_MOD_VBC_MAX,
+    BJT_MOD_VCE_MAX,
+};
 
 /* device questions */
-#define BJT_QUEST_FT             211
-#define BJT_QUEST_COLNODE        212
-#define BJT_QUEST_BASENODE       213
-#define BJT_QUEST_EMITNODE       214
-#define BJT_QUEST_SUBSTNODE      215
-#define BJT_QUEST_COLPRIMENODE   216
-#define BJT_QUEST_BASEPRIMENODE  217
-#define BJT_QUEST_EMITPRIMENODE  218
-#define BJT_QUEST_VBE            219
-#define BJT_QUEST_VBC            220
-#define BJT_QUEST_CC             221
-#define BJT_QUEST_CB             222
-#define BJT_QUEST_GPI            223
-#define BJT_QUEST_GMU            224
-#define BJT_QUEST_GM             225
-#define BJT_QUEST_GO             226
-#define BJT_QUEST_QBE            227
-#define BJT_QUEST_CQBE           228
-#define BJT_QUEST_QBC            229
-#define BJT_QUEST_CQBC           230
-#define BJT_QUEST_QSUB           231
-#define BJT_QUEST_CQSUB          232
-#define BJT_QUEST_QBX            233
-#define BJT_QUEST_CQBX           234
-#define BJT_QUEST_GX             235
-#define BJT_QUEST_CEXBC          236
-#define BJT_QUEST_GEQCB          237
-#define BJT_QUEST_GCSUB          238
-#define BJT_QUEST_GEQBX          239
-#define BJT_QUEST_SENS_REAL      240
-#define BJT_QUEST_SENS_IMAG      241
-#define BJT_QUEST_SENS_MAG       242
-#define BJT_QUEST_SENS_PH        243
-#define BJT_QUEST_SENS_CPLX      244
-#define BJT_QUEST_SENS_DC        245
-#define BJT_QUEST_CE             246
-#define BJT_QUEST_CS             247
-#define BJT_QUEST_POWER          248
-#define BJT_QUEST_CPI            249
-#define BJT_QUEST_CMU            250
-#define BJT_QUEST_CBX            251
-#define BJT_QUEST_CSUB           252
-#define BJT_QUEST_GDSUB          253
+enum {
+    BJT_QUEST_FT = 211,
+    BJT_QUEST_COLNODE,
+    BJT_QUEST_BASENODE,
+    BJT_QUEST_EMITNODE,
+    BJT_QUEST_SUBSTNODE,
+    BJT_QUEST_COLPRIMENODE,
+    BJT_QUEST_BASEPRIMENODE,
+    BJT_QUEST_EMITPRIMENODE,
+    BJT_QUEST_VBE,
+    BJT_QUEST_VBC,
+    BJT_QUEST_CC,
+    BJT_QUEST_CB,
+    BJT_QUEST_GPI,
+    BJT_QUEST_GMU,
+    BJT_QUEST_GM,
+    BJT_QUEST_GO,
+    BJT_QUEST_QBE,
+    BJT_QUEST_CQBE,
+    BJT_QUEST_QBC,
+    BJT_QUEST_CQBC,
+    BJT_QUEST_QSUB,
+    BJT_QUEST_CQSUB,
+    BJT_QUEST_QBX,
+    BJT_QUEST_CQBX,
+    BJT_QUEST_GX,
+    BJT_QUEST_CEXBC,
+    BJT_QUEST_GEQCB,
+    BJT_QUEST_GCSUB,
+    BJT_QUEST_GEQBX,
+    BJT_QUEST_SENS_REAL,
+    BJT_QUEST_SENS_IMAG,
+    BJT_QUEST_SENS_MAG,
+    BJT_QUEST_SENS_PH,
+    BJT_QUEST_SENS_CPLX,
+    BJT_QUEST_SENS_DC,
+    BJT_QUEST_CE,
+    BJT_QUEST_CS,
+    BJT_QUEST_POWER,
+    BJT_QUEST_CPI,
+    BJT_QUEST_CMU,
+    BJT_QUEST_CBX,
+    BJT_QUEST_CSUB,
+    BJT_QUEST_GDSUB,
+};
 
 /* model questions */
-#define BJT_MOD_INVEARLYF             301
-#define BJT_MOD_INVEARLYR             302
-#define BJT_MOD_INVROLLOFFF           303
-#define BJT_MOD_INVROLLOFFR           304
-#define BJT_MOD_COLCONDUCT            305
-#define BJT_MOD_EMITTERCONDUCT        306
-#define BJT_MOD_TRANSVBCFACT          307
-#define BJT_MOD_EXCESSPHASEFACTOR     308
-#define BJT_MOD_TYPE                  309
-#define BJT_MOD_QUEST_SUBS            310
+enum {
+    BJT_MOD_INVEARLYF = 301,
+    BJT_MOD_INVEARLYR,
+    BJT_MOD_INVROLLOFFF,
+    BJT_MOD_INVROLLOFFR,
+    BJT_MOD_COLCONDUCT,
+    BJT_MOD_EMITTERCONDUCT,
+    BJT_MOD_TRANSVBCFACT,
+    BJT_MOD_EXCESSPHASEFACTOR,
+    BJT_MOD_TYPE,
+    BJT_MOD_QUEST_SUBS,
+};
 
 #include "bjtext.h"
 #endif /*BJT*/

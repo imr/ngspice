@@ -24,13 +24,15 @@ Modified to add PS model and new parameter definitions ( Anthony E. Parker )
 
 /* indices to an array of JFET2 noise sources */
 
-#define JFET2RDNOIZ       0
-#define JFET2RSNOIZ       1
-#define JFET2IDNOIZ       2
-#define JFET2FLNOIZ 3
-#define JFET2TOTNOIZ    4
-
-#define JFET2NSRCS     5
+enum {
+    JFET2RDNOIZ = 0,
+    JFET2RSNOIZ,
+    JFET2IDNOIZ,
+    JFET2FLNOIZ,
+    JFET2TOTNOIZ,
+    /* finally, the number of noise sources */
+    JFET2NSRCS
+};
 
 /* information used to describe a single instance */
 
@@ -218,45 +220,51 @@ typedef struct sJFET2model {       /* model structure for a jfet */
 #endif /*NJF*/
 
 /* device parameters */
-#define JFET2_AREA 1
-#define JFET2_IC_VDS 2
-#define JFET2_IC_VGS 3
-#define JFET2_IC 4
-#define JFET2_OFF 5
-#define JFET2_TEMP 6
-#define JFET2_DTEMP 7
-#define JFET2_M 8
+enum {
+    JFET2_AREA = 1,
+    JFET2_IC_VDS,
+    JFET2_IC_VGS,
+    JFET2_IC,
+    JFET2_OFF,
+    JFET2_TEMP,
+    JFET2_DTEMP,
+    JFET2_M,
+};
 
 /* device questions */
-#define JFET2_DRAINNODE        301
-#define JFET2_GATENODE         302
-#define JFET2_SOURCENODE       303
-#define JFET2_DRAINPRIMENODE   304
-#define JFET2_SOURCEPRIMENODE  305
-#define JFET2_VGS              306
-#define JFET2_VGD              307
-#define JFET2_CG               308
-#define JFET2_CD               309
-#define JFET2_CGD              310
-#define JFET2_GM               311
-#define JFET2_GDS              312
-#define JFET2_GGS              313
-#define JFET2_GGD              314
-#define JFET2_QGS              315
-#define JFET2_CQGS             316
-#define JFET2_QGD              317
-#define JFET2_CQGD             318
-#define JFET2_CS               319
-#define JFET2_POWER            320
-#define JFET2_VTRAP            321
-#define JFET2_PAVE             322
+enum {
+    JFET2_DRAINNODE = 301,
+    JFET2_GATENODE,
+    JFET2_SOURCENODE,
+    JFET2_DRAINPRIMENODE,
+    JFET2_SOURCEPRIMENODE,
+    JFET2_VGS,
+    JFET2_VGD,
+    JFET2_CG,
+    JFET2_CD,
+    JFET2_CGD,
+    JFET2_GM,
+    JFET2_GDS,
+    JFET2_GGS,
+    JFET2_GGD,
+    JFET2_QGS,
+    JFET2_CQGS,
+    JFET2_QGD,
+    JFET2_CQGD,
+    JFET2_CS,
+    JFET2_POWER,
+    JFET2_VTRAP,
+    JFET2_PAVE,
+};
 
 /* model questions */
-#define JFET2_MOD_DRAINCONDUCT   301
-#define JFET2_MOD_SOURCECONDUCT  302
-#define JFET2_MOD_DEPLETIONCAP   303
-#define JFET2_MOD_VCRIT          304
-#define JFET2_MOD_TYPE           305
+enum {
+    JFET2_MOD_DRAINCONDUCT = 301,
+    JFET2_MOD_SOURCECONDUCT,
+    JFET2_MOD_DEPLETIONCAP,
+    JFET2_MOD_VCRIT,
+    JFET2_MOD_TYPE,
+};
 
 /* function definitions */
 

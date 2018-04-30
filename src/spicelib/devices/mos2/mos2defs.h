@@ -17,13 +17,15 @@ Modified: 2000 AlansFIxes
 
 /* indices to the array of MOSFET(2) noise sources */
 
-#define MOS2RDNOIZ       0
-#define MOS2RSNOIZ       1
-#define MOS2IDNOIZ       2
-#define MOS2FLNOIZ 3
-#define MOS2TOTNOIZ    4
-
-#define MOS2NSRCS     5     /* the number of MOS2FET noise sources */
+enum {
+    MOS2RDNOIZ = 0,
+    MOS2RSNOIZ,
+    MOS2IDNOIZ,
+    MOS2FLNOIZ,
+    MOS2TOTNOIZ,
+    /* finally, the number of noise sources */
+    MOS2NSRCS
+};
 
 /* information needed for each instance */
 
@@ -421,130 +423,136 @@ typedef struct sMOS2model {       /* model structure for a resistor */
 #endif /*NMOS*/
 
 /* device parameters */
-#define MOS2_W 1
-#define MOS2_L 2
-#define MOS2_AS 3
-#define MOS2_AD 4
-#define MOS2_PS 5
-#define MOS2_PD 6
-#define MOS2_NRS 7
-#define MOS2_NRD 8
-#define MOS2_OFF 9
-#define MOS2_IC 10
-#define MOS2_IC_VBS 11
-#define MOS2_IC_VDS 12
-#define MOS2_IC_VGS 13
-#define MOS2_W_SENS 14
-#define MOS2_L_SENS 15
-#define MOS2_CB 16
-#define MOS2_CG 17
-#define MOS2_CS 18
-#define MOS2_POWER 19
-#define MOS2_CGS                20
-#define MOS2_CGD                21
-#define MOS2_DNODE              22
-#define MOS2_GNODE              23
-#define MOS2_SNODE              24
-#define MOS2_BNODE              25
-#define MOS2_DNODEPRIME         26
-#define MOS2_SNODEPRIME         27
-#define MOS2_SOURCECONDUCT      28
-#define MOS2_DRAINCONDUCT       29
-#define MOS2_VON                30
-#define MOS2_VDSAT              31
-#define MOS2_SOURCEVCRIT        32
-#define MOS2_DRAINVCRIT         33
-#define MOS2_CD                 34
-#define MOS2_CBS                35
-#define MOS2_CBD                36
-#define MOS2_GMBS               37
-#define MOS2_GM                 38
-#define MOS2_GDS                39
-#define MOS2_GBD                40
-#define MOS2_GBS                41
-#define MOS2_CAPBD              42
-#define MOS2_CAPBS              43
-#define MOS2_CAPZEROBIASBD      44
-#define MOS2_CAPZEROBIASBDSW    45
-#define MOS2_CAPZEROBIASBS      46
-#define MOS2_CAPZEROBIASBSSW    47
-#define MOS2_VBD                48
-#define MOS2_VBS                49
-#define MOS2_VGS                50
-#define MOS2_VDS                51
-#define MOS2_CAPGS              52
-#define MOS2_QGS                53
-#define MOS2_CQGS               54
-#define MOS2_CAPGD              55
-#define MOS2_QGD                56
-#define MOS2_CQGD               57
-#define MOS2_CAPGB              58
-#define MOS2_QGB                59
-#define MOS2_CQGB               60
-#define MOS2_QBD                61
-#define MOS2_CQBD               62
-#define MOS2_QBS                63
-#define MOS2_CQBS               64
-#define MOS2_W_SENS_REAL        65
-#define MOS2_W_SENS_IMAG        66
-#define MOS2_W_SENS_MAG         67 
-#define MOS2_W_SENS_PH          68 
-#define MOS2_W_SENS_CPLX        69
-#define MOS2_L_SENS_REAL        70
-#define MOS2_L_SENS_IMAG        71
-#define MOS2_L_SENS_MAG         72
-#define MOS2_L_SENS_PH          73
-#define MOS2_L_SENS_CPLX        74
-#define MOS2_L_SENS_DC          75
-#define MOS2_W_SENS_DC          76
-#define MOS2_TEMP               77
-#define MOS2_SOURCERESIST       78
-#define MOS2_DRAINRESIST        79
-#define MOS2_M                  80
-#define MOS2_DTEMP              81
+enum {
+    MOS2_W = 1,
+    MOS2_L,
+    MOS2_AS,
+    MOS2_AD,
+    MOS2_PS,
+    MOS2_PD,
+    MOS2_NRS,
+    MOS2_NRD,
+    MOS2_OFF,
+    MOS2_IC,
+    MOS2_IC_VBS,
+    MOS2_IC_VDS,
+    MOS2_IC_VGS,
+    MOS2_W_SENS,
+    MOS2_L_SENS,
+    MOS2_CB,
+    MOS2_CG,
+    MOS2_CS,
+    MOS2_POWER,
+    MOS2_CGS,
+    MOS2_CGD,
+    MOS2_DNODE,
+    MOS2_GNODE,
+    MOS2_SNODE,
+    MOS2_BNODE,
+    MOS2_DNODEPRIME,
+    MOS2_SNODEPRIME,
+    MOS2_SOURCECONDUCT,
+    MOS2_DRAINCONDUCT,
+    MOS2_VON,
+    MOS2_VDSAT,
+    MOS2_SOURCEVCRIT,
+    MOS2_DRAINVCRIT,
+    MOS2_CD,
+    MOS2_CBS,
+    MOS2_CBD,
+    MOS2_GMBS,
+    MOS2_GM,
+    MOS2_GDS,
+    MOS2_GBD,
+    MOS2_GBS,
+    MOS2_CAPBD,
+    MOS2_CAPBS,
+    MOS2_CAPZEROBIASBD,
+    MOS2_CAPZEROBIASBDSW,
+    MOS2_CAPZEROBIASBS,
+    MOS2_CAPZEROBIASBSSW,
+    MOS2_VBD,
+    MOS2_VBS,
+    MOS2_VGS,
+    MOS2_VDS,
+    MOS2_CAPGS,
+    MOS2_QGS,
+    MOS2_CQGS,
+    MOS2_CAPGD,
+    MOS2_QGD,
+    MOS2_CQGD,
+    MOS2_CAPGB,
+    MOS2_QGB,
+    MOS2_CQGB,
+    MOS2_QBD,
+    MOS2_CQBD,
+    MOS2_QBS,
+    MOS2_CQBS,
+    MOS2_W_SENS_REAL,
+    MOS2_W_SENS_IMAG,
+    MOS2_W_SENS_MAG,
+    MOS2_W_SENS_PH,
+    MOS2_W_SENS_CPLX,
+    MOS2_L_SENS_REAL,
+    MOS2_L_SENS_IMAG,
+    MOS2_L_SENS_MAG,
+    MOS2_L_SENS_PH,
+    MOS2_L_SENS_CPLX,
+    MOS2_L_SENS_DC,
+    MOS2_W_SENS_DC,
+    MOS2_TEMP,
+    MOS2_SOURCERESIST,
+    MOS2_DRAINRESIST,
+    MOS2_M,
+    MOS2_DTEMP,
+};
 
 /* model paramerers */
-#define MOS2_MOD_VTO 101
-#define MOS2_MOD_KP 102
-#define MOS2_MOD_GAMMA 103
-#define MOS2_MOD_PHI 104
-#define MOS2_MOD_LAMBDA 105
-#define MOS2_MOD_RD 106
-#define MOS2_MOD_RS 107
-#define MOS2_MOD_CBD 108
-#define MOS2_MOD_CBS 109
-#define MOS2_MOD_IS 110
-#define MOS2_MOD_PB 111
-#define MOS2_MOD_CGSO 112
-#define MOS2_MOD_CGDO 113
-#define MOS2_MOD_CGBO 114
-#define MOS2_MOD_CJ 115
-#define MOS2_MOD_MJ 116
-#define MOS2_MOD_CJSW 117
-#define MOS2_MOD_MJSW 118
-#define MOS2_MOD_JS 119
-#define MOS2_MOD_TOX 120
-#define MOS2_MOD_LD 121
-#define MOS2_MOD_RSH 122
-#define MOS2_MOD_U0 123
-#define MOS2_MOD_FC 124
-#define MOS2_MOD_NSUB 125
-#define MOS2_MOD_TPG 126
-#define MOS2_MOD_NSS 127
-#define MOS2_MOD_NFS 128
-#define MOS2_MOD_DELTA 129
-#define MOS2_MOD_UEXP 130
-#define MOS2_MOD_VMAX 131
-#define MOS2_MOD_XJ 132
-#define MOS2_MOD_NEFF 133
-#define MOS2_MOD_UCRIT 134
-#define MOS2_MOD_NMOS 135
-#define MOS2_MOD_PMOS 136
-#define MOS2_MOD_TNOM 137
-#define MOS2_MOD_KF 139
-#define MOS2_MOD_AF 140
-#define MOS2_MOD_TYPE 141
+enum {
+    MOS2_MOD_VTO = 101,
+    MOS2_MOD_KP,
+    MOS2_MOD_GAMMA,
+    MOS2_MOD_PHI,
+    MOS2_MOD_LAMBDA,
+    MOS2_MOD_RD,
+    MOS2_MOD_RS,
+    MOS2_MOD_CBD,
+    MOS2_MOD_CBS,
+    MOS2_MOD_IS,
+    MOS2_MOD_PB,
+    MOS2_MOD_CGSO,
+    MOS2_MOD_CGDO,
+    MOS2_MOD_CGBO,
+    MOS2_MOD_CJ,
+    MOS2_MOD_MJ,
+    MOS2_MOD_CJSW,
+    MOS2_MOD_MJSW,
+    MOS2_MOD_JS,
+    MOS2_MOD_TOX,
+    MOS2_MOD_LD,
+    MOS2_MOD_RSH,
+    MOS2_MOD_U0,
+    MOS2_MOD_FC,
+    MOS2_MOD_NSUB,
+    MOS2_MOD_TPG,
+    MOS2_MOD_NSS,
+    MOS2_MOD_NFS,
+    MOS2_MOD_DELTA,
+    MOS2_MOD_UEXP,
+    MOS2_MOD_VMAX,
+    MOS2_MOD_XJ,
+    MOS2_MOD_NEFF,
+    MOS2_MOD_UCRIT,
+    MOS2_MOD_NMOS,
+    MOS2_MOD_PMOS,
+    MOS2_MOD_TNOM,
+};
 
+enum {
+    MOS2_MOD_KF = 139,
+    MOS2_MOD_AF,
+    MOS2_MOD_TYPE,
+};
 
 /* model questions */
 

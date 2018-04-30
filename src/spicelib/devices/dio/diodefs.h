@@ -16,12 +16,14 @@ Modified by Paolo Nenzi 2003 and Dietmar Warning 2012
 
 /* indices to array of diode noise  sources */
 
-#define DIORSNOIZ    0
-#define DIOIDNOIZ    1
-#define DIOFLNOIZ    2
-#define DIOTOTNOIZ   3
-
-#define DIONSRCS     4
+enum {
+    DIORSNOIZ = 0,
+    DIOIDNOIZ,
+    DIOFLNOIZ,
+    DIOTOTNOIZ,
+    /* finally, the number of noise sources */
+    DIONSRCS
+};
 
 /* information needed per instance */
 
@@ -286,80 +288,84 @@ typedef struct sDIOmodel {       /* model structure for a diode */
 } DIOmodel;
 
 /* device parameters */
-#define DIO_AREA 1 
-#define DIO_IC 2
-#define DIO_OFF 3
-#define DIO_CURRENT 4
-#define DIO_VOLTAGE 5
-#define DIO_CHARGE 6
-#define DIO_CAPCUR 7
-#define DIO_CONDUCT 8
-#define DIO_AREA_SENS 9
-#define DIO_POWER 10
-#define DIO_TEMP 11
-#define DIO_QUEST_SENS_REAL  12
-#define DIO_QUEST_SENS_IMAG  13
-#define DIO_QUEST_SENS_MAG   14
-#define DIO_QUEST_SENS_PH    15
-#define DIO_QUEST_SENS_CPLX  16
-#define DIO_QUEST_SENS_DC    17
-#define DIO_CAP 18
-#define DIO_PJ 19 
-#define DIO_W 20 
-#define DIO_L 21 
-#define DIO_M 22 
-#define DIO_DTEMP 23
+enum {
+    DIO_AREA = 1,
+    DIO_IC,
+    DIO_OFF,
+    DIO_CURRENT,
+    DIO_VOLTAGE,
+    DIO_CHARGE,
+    DIO_CAPCUR,
+    DIO_CONDUCT,
+    DIO_AREA_SENS,
+    DIO_POWER,
+    DIO_TEMP,
+    DIO_QUEST_SENS_REAL,
+    DIO_QUEST_SENS_IMAG,
+    DIO_QUEST_SENS_MAG,
+    DIO_QUEST_SENS_PH,
+    DIO_QUEST_SENS_CPLX,
+    DIO_QUEST_SENS_DC,
+    DIO_CAP,
+    DIO_PJ,
+    DIO_W,
+    DIO_L,
+    DIO_M,
+    DIO_DTEMP,
+};
 
 /* model parameters */
-#define DIO_MOD_LEVEL 100
-#define DIO_MOD_IS 101
-#define DIO_MOD_RS 102
-#define DIO_MOD_N 103
-#define DIO_MOD_TT 104
-#define DIO_MOD_CJO 105
-#define DIO_MOD_VJ 106
-#define DIO_MOD_M 107
-#define DIO_MOD_EG 108
-#define DIO_MOD_XTI 109
-#define DIO_MOD_FC 110
-#define DIO_MOD_BV 111
-#define DIO_MOD_IBV 112
-#define DIO_MOD_D 113
-#define DIO_MOD_COND 114
-#define DIO_MOD_TNOM 115
-#define DIO_MOD_KF 116
-#define DIO_MOD_AF 117
-#define DIO_MOD_JSW 118
-#define DIO_MOD_CJSW 119
-#define DIO_MOD_VJSW 120
-#define DIO_MOD_MJSW 121
-#define DIO_MOD_IKF 122
-#define DIO_MOD_IKR 123
-#define DIO_MOD_FCS 124
-#define DIO_MOD_TTT1 125
-#define DIO_MOD_TTT2 126
-#define DIO_MOD_TM1 127
-#define DIO_MOD_TM2 128
-#define DIO_MOD_TRS 129
-#define DIO_MOD_TRS2 130
-#define DIO_MOD_TLEV 131
-#define DIO_MOD_TLEVC 132
-#define DIO_MOD_CTA 133
-#define DIO_MOD_CTP 134
-#define DIO_MOD_TPB 135
-#define DIO_MOD_TPHP 136
-#define DIO_MOD_TCV 137
-#define DIO_MOD_NBV 138
-#define DIO_MOD_AREA 139
-#define DIO_MOD_PJ 140
-#define DIO_MOD_NS 141
-#define DIO_MOD_JTUN 142
-#define DIO_MOD_JTUNSW 143
-#define DIO_MOD_NTUN 144
-#define DIO_MOD_XTITUN 145
-#define DIO_MOD_KEG 146
-#define DIO_MOD_FV_MAX 147
-#define DIO_MOD_BV_MAX 148
+enum {
+    DIO_MOD_LEVEL = 100,
+    DIO_MOD_IS,
+    DIO_MOD_RS,
+    DIO_MOD_N,
+    DIO_MOD_TT,
+    DIO_MOD_CJO,
+    DIO_MOD_VJ,
+    DIO_MOD_M,
+    DIO_MOD_EG,
+    DIO_MOD_XTI,
+    DIO_MOD_FC,
+    DIO_MOD_BV,
+    DIO_MOD_IBV,
+    DIO_MOD_D,
+    DIO_MOD_COND,
+    DIO_MOD_TNOM,
+    DIO_MOD_KF,
+    DIO_MOD_AF,
+    DIO_MOD_JSW,
+    DIO_MOD_CJSW,
+    DIO_MOD_VJSW,
+    DIO_MOD_MJSW,
+    DIO_MOD_IKF,
+    DIO_MOD_IKR,
+    DIO_MOD_FCS,
+    DIO_MOD_TTT1,
+    DIO_MOD_TTT2,
+    DIO_MOD_TM1,
+    DIO_MOD_TM2,
+    DIO_MOD_TRS,
+    DIO_MOD_TRS2,
+    DIO_MOD_TLEV,
+    DIO_MOD_TLEVC,
+    DIO_MOD_CTA,
+    DIO_MOD_CTP,
+    DIO_MOD_TPB,
+    DIO_MOD_TPHP,
+    DIO_MOD_TCV,
+    DIO_MOD_NBV,
+    DIO_MOD_AREA,
+    DIO_MOD_PJ,
+    DIO_MOD_NS,
+    DIO_MOD_JTUN,
+    DIO_MOD_JTUNSW,
+    DIO_MOD_NTUN,
+    DIO_MOD_XTITUN,
+    DIO_MOD_KEG,
+    DIO_MOD_FV_MAX,
+    DIO_MOD_BV_MAX,
+};
 
 #include "dioext.h"
 #endif /*DIO*/

@@ -44,14 +44,16 @@ struct PZAN {
 #define PZ_IN_VOL	1
 #define PZ_IN_CUR	2
 
-#define PZ_NODEI 1
-#define PZ_NODEG 2
-#define PZ_NODEJ 3
-#define PZ_NODEK 4
-#define PZ_V 5
-#define PZ_I 6
-#define PZ_POL 7
-#define PZ_ZER 8
-#define PZ_PZ 9
+enum {
+    PZ_NODEI = 1,
+    PZ_NODEG,
+    PZ_NODEJ,
+    PZ_NODEK,
+    PZ_V,
+    PZ_I,
+    PZ_POL,
+    PZ_ZER,
+    PZ_PZ,
+};
 
 #endif

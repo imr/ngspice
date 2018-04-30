@@ -35,13 +35,15 @@ ngspice integration
 
 /* indices to the array of SOI(3) noise sources */
 
-#define SOI3RDNOIZ       0
-#define SOI3RSNOIZ       1
-#define SOI3IDNOIZ       2
-#define SOI3FLNOIZ       3
-#define SOI3TOTNOIZ      4
-
-#define SOI3NSRCS     5     /* the number of SOI(3) noise sources */
+enum {
+    SOI3RDNOIZ = 0,
+    SOI3RSNOIZ,
+    SOI3IDNOIZ,
+    SOI3FLNOIZ,
+    SOI3TOTNOIZ,
+    /* finally, the number of noise sources */
+    SOI3NSRCS
+};
 
 /* information needed for each instance */
 
@@ -619,212 +621,245 @@ typedef struct sSOI3model {       /* model structure for an SOI3 MOSFET  */
 #define SOI3_W 			 1
 #define SOI3_L 			 2
 #define SOI3_M			25
-#define SOI3_AS 		 3
-#define SOI3_AD 		 4
-#define SOI3_AB 		 5
-#define SOI3_PS 		 6
-#define SOI3_PD 	 	 7
-#define SOI3_PB 		 8
-#define SOI3_NRS 		 9
-#define SOI3_NRD 		10
-#define SOI3_OFF 		11
-#define SOI3_IC 		12
-#define SOI3_IC_VBS 		13
-#define SOI3_IC_VDS 		14
-#define SOI3_IC_VGFS 		15
-#define SOI3_IC_VGBS      	16
-#define SOI3_W_SENS 		17
-#define SOI3_L_SENS 		18
-#define SOI3_IB 		19
-#define SOI3_IGF 		20
-#define SOI3_IGB           	21
-#define SOI3_IS 		22
-#define SOI3_POWER 		23
-#define SOI3_TEMP 		24
+enum {
+    SOI3_AS = 3,
+    SOI3_AD,
+    SOI3_AB,
+    SOI3_PS,
+    SOI3_PD,
+    SOI3_PB,
+    SOI3_NRS,
+    SOI3_NRD,
+    SOI3_OFF,
+    SOI3_IC,
+    SOI3_IC_VBS,
+    SOI3_IC_VDS,
+    SOI3_IC_VGFS,
+    SOI3_IC_VGBS,
+    SOI3_W_SENS,
+    SOI3_L_SENS,
+    SOI3_IB,
+    SOI3_IGF,
+    SOI3_IGB,
+    SOI3_IS,
+    SOI3_POWER,
+    SOI3_TEMP,
+};
 
 /* model parameters */
 #define SOI3_MOD_VTO      	101
 #define SOI3_MOD_VFBF           149
-#define SOI3_MOD_KP       	102
-#define SOI3_MOD_GAMMA    	103
-#define SOI3_MOD_PHI      	104
-#define SOI3_MOD_LAMBDA   	105
+enum {
+    SOI3_MOD_KP = 102,
+    SOI3_MOD_GAMMA,
+    SOI3_MOD_PHI,
+    SOI3_MOD_LAMBDA,
+};
+
 #define SOI3_MOD_THETA          139
-#define SOI3_MOD_RD       	106
-#define SOI3_MOD_RS       	107
-#define SOI3_MOD_CBD      	108
-#define SOI3_MOD_CBS      	109
-#define SOI3_MOD_IS       	110
-#define SOI3_MOD_PB      	111
-#define SOI3_MOD_CGFSO    	112
-#define SOI3_MOD_CGFDO    	113
-#define SOI3_MOD_CGFBO    	114
-#define SOI3_MOD_CGBSO          144
-#define SOI3_MOD_CGBDO          145
-#define SOI3_MOD_CGBBO          146
-#define SOI3_MOD_CJ       	115
-#define SOI3_MOD_MJ       	116
-#define SOI3_MOD_CJSW     	117
-#define SOI3_MOD_MJSW     	118
-#define SOI3_MOD_JS       	119
-#define SOI3_MOD_TOF      	120
+enum {
+    SOI3_MOD_RD = 106,
+    SOI3_MOD_RS,
+    SOI3_MOD_CBD,
+    SOI3_MOD_CBS,
+    SOI3_MOD_IS,
+    SOI3_MOD_PB,
+    SOI3_MOD_CGFSO,
+    SOI3_MOD_CGFDO,
+    SOI3_MOD_CGFBO,
+};
+
+enum {
+    SOI3_MOD_CGBSO = 144,
+    SOI3_MOD_CGBDO,
+    SOI3_MOD_CGBBO,
+};
+
+enum {
+    SOI3_MOD_CJ = 115,
+    SOI3_MOD_MJ,
+    SOI3_MOD_CJSW,
+    SOI3_MOD_MJSW,
+    SOI3_MOD_JS,
+    SOI3_MOD_TOF,
+};
+
 #define SOI3_MOD_TOB    	133
 #define SOI3_MOD_TB          	134
-#define SOI3_MOD_LD       	121
-#define SOI3_MOD_RSH      	122
-#define SOI3_MOD_U0       	123
-#define SOI3_MOD_FC       	124
-#define SOI3_MOD_NSUB     	125
-#define SOI3_MOD_TPG      	126
+enum {
+    SOI3_MOD_LD = 121,
+    SOI3_MOD_RSH,
+    SOI3_MOD_U0,
+    SOI3_MOD_FC,
+    SOI3_MOD_NSUB,
+    SOI3_MOD_TPG,
+};
+
 #define SOI3_MOD_NQFF           147
 #define SOI3_MOD_NQFB           148
 #define SOI3_MOD_NSSF     	127
 #define SOI3_MOD_NSSB         	135
-#define SOI3_MOD_NSOI3    	128
-#define SOI3_MOD_PSOI3    	129
-#define SOI3_MOD_TNOM     	130
-#define SOI3_MOD_KF       	131
-#define SOI3_MOD_AF		132
+enum {
+    SOI3_MOD_NSOI3 = 128,
+    SOI3_MOD_PSOI3,
+    SOI3_MOD_TNOM,
+    SOI3_MOD_KF,
+    SOI3_MOD_AF,
+};
+
 #define SOI3_MOD_KOX		142
 #define SOI3_MOD_SHSI		143
 /* extra stuff for newer model - msll Jan96 */
-#define SOI3_MOD_SIGMA          150
-#define SOI3_MOD_CHIFB          151
-#define SOI3_MOD_CHIPHI         152
-#define SOI3_MOD_DELTAW         153
-#define SOI3_MOD_DELTAL         154
-#define SOI3_MOD_VSAT           155
-#define SOI3_MOD_K              156
-#define SOI3_MOD_LX             157
-#define SOI3_MOD_VP             158
-#define SOI3_MOD_ETA            159
+enum {
+    SOI3_MOD_SIGMA = 150,
+    SOI3_MOD_CHIFB,
+    SOI3_MOD_CHIPHI,
+    SOI3_MOD_DELTAW,
+    SOI3_MOD_DELTAL,
+    SOI3_MOD_VSAT,
+    SOI3_MOD_K,
+    SOI3_MOD_LX,
+    SOI3_MOD_VP,
+    SOI3_MOD_ETA,
+};
+
 #define SOI3_MOD_ALPHA0         140
 #define SOI3_MOD_BETA0          141
-#define SOI3_MOD_LM             160
-#define SOI3_MOD_LM1            161
-#define SOI3_MOD_LM2            162
-#define SOI3_MOD_ETAD           163
-#define SOI3_MOD_ETAD1          164
-#define SOI3_MOD_IS1            165
-#define SOI3_MOD_JS1            166
-#define SOI3_MOD_CHIBETA        167
-#define SOI3_MOD_VFBB           168
-#define SOI3_MOD_GAMMAB         169
-#define SOI3_MOD_CHID           170
-#define SOI3_MOD_CHID1          171
-#define SOI3_MOD_DVT            172
-#define SOI3_MOD_NLEV           173
-#define SOI3_MOD_BETABJT        174
-#define SOI3_MOD_TAUFBJT        176
-#define SOI3_MOD_TAURBJT        177
-#define SOI3_MOD_BETAEXP        178
-#define SOI3_MOD_TAUEXP         179
-#define SOI3_MOD_RSW            180
-#define SOI3_MOD_RDW            181
-#define SOI3_MOD_FMIN           382
-#define SOI3_MOD_VTEX           383
-#define SOI3_MOD_VDEX           384
-#define SOI3_MOD_DELTA0         385
-#define SOI3_MOD_CSF            386
-#define SOI3_MOD_DSI            387
-#define SOI3_MOD_NPLUS          388
-#define SOI3_MOD_RTA            389
-#define SOI3_MOD_CTA            390
-#define SOI3_MOD_MEXP           391
+enum {
+    SOI3_MOD_LM = 160,
+    SOI3_MOD_LM1,
+    SOI3_MOD_LM2,
+    SOI3_MOD_ETAD,
+    SOI3_MOD_ETAD1,
+    SOI3_MOD_IS1,
+    SOI3_MOD_JS1,
+    SOI3_MOD_CHIBETA,
+    SOI3_MOD_VFBB,
+    SOI3_MOD_GAMMAB,
+    SOI3_MOD_CHID,
+    SOI3_MOD_CHID1,
+    SOI3_MOD_DVT,
+    SOI3_MOD_NLEV,
+    SOI3_MOD_BETABJT,
+};
+
+enum {
+    SOI3_MOD_TAUFBJT = 176,
+    SOI3_MOD_TAURBJT,
+    SOI3_MOD_BETAEXP,
+    SOI3_MOD_TAUEXP,
+    SOI3_MOD_RSW,
+    SOI3_MOD_RDW,
+};
+
+enum {
+    SOI3_MOD_FMIN = 382,
+    SOI3_MOD_VTEX,
+    SOI3_MOD_VDEX,
+    SOI3_MOD_DELTA0,
+    SOI3_MOD_CSF,
+    SOI3_MOD_DSI,
+    SOI3_MOD_NPLUS,
+    SOI3_MOD_RTA,
+    SOI3_MOD_CTA,
+    SOI3_MOD_MEXP,
+};
 
 /* device questions */
-#define SOI3_DNODE              201
-#define SOI3_GFNODE             202
-#define SOI3_SNODE              203
-#define SOI3_GBNODE             204
-#define SOI3_BNODE              205
-#define SOI3_DNODEPRIME         206
-#define SOI3_SNODEPRIME         207
-#define SOI3_TNODE              208
-#define SOI3_BRANCH             209
-#define SOI3_SOURCECONDUCT      210
-#define SOI3_DRAINCONDUCT       211
-#define SOI3_VON                212
-#define SOI3_VFBF               213
-#define SOI3_VDSAT              214
-#define SOI3_SOURCEVCRIT        215
-#define SOI3_DRAINVCRIT         216
-#define SOI3_ID                 217
-#define SOI3_IBS                218
-#define SOI3_IBD                219
-#define SOI3_GMBS               220
-#define SOI3_GMF                221
-#define SOI3_GMB                222
-#define SOI3_GDS                223
-#define SOI3_GBD                224
-#define SOI3_GBS                225
-#define SOI3_CAPBD              226
-#define SOI3_CAPBS              227
-#define SOI3_CAPZEROBIASBD      228
-#define SOI3_CAPZEROBIASBDSW    229
-#define SOI3_CAPZEROBIASBS      230
-#define SOI3_CAPZEROBIASBSSW    231
-#define SOI3_VBD                232
-#define SOI3_VBS                233
-#define SOI3_VGFS               234
-#define SOI3_VGBS               235
-#define SOI3_VDS                236
-#define SOI3_QGF                237
-#define SOI3_IQGF               238
-#define SOI3_QGB                239
-#define SOI3_IQGB               240
-#define SOI3_QD                 241
-#define SOI3_IQD                242
-#define SOI3_QS                 243
-#define SOI3_IQS                244
-#define SOI3_QBD                245
-#define SOI3_IQBD               246
-#define SOI3_QBS                247
-#define SOI3_IQBS               248
-#define SOI3_CGFGF              249
-#define SOI3_CGFD               250
-#define SOI3_CGFS               251
-#define SOI3_CGFDELTAT          252
-#define SOI3_CGFGB              253
-#define SOI3_CDGF               254
-#define SOI3_CDD                255
-#define SOI3_CDS                256
-#define SOI3_CDDELTAT           257
-#define SOI3_CDGB               258
-#define SOI3_CSGF               259
-#define SOI3_CSD                260
-#define SOI3_CSS                261
-#define SOI3_CSDELTAT           262
-#define SOI3_CSGB               263
-#define SOI3_CGBGF              264
-#define SOI3_CGBD               265
-#define SOI3_CGBS               266
-#define SOI3_CGBDELTAT          267
-#define SOI3_CGBGB              268
-#define SOI3_L_SENS_REAL        269
-#define SOI3_L_SENS_IMAG        270
-#define SOI3_L_SENS_MAG         271
-#define SOI3_L_SENS_PH          272
-#define SOI3_L_SENS_CPLX        273
-#define SOI3_W_SENS_REAL        274
-#define SOI3_W_SENS_IMAG        275
-#define SOI3_W_SENS_MAG         276
-#define SOI3_W_SENS_PH          277
-#define SOI3_W_SENS_CPLX        278
-#define SOI3_L_SENS_DC          279
-#define SOI3_W_SENS_DC          280
-#define SOI3_RT                 281
-#define SOI3_CT                 282
-#define SOI3_VFBB               283
-#define SOI3_RT1                284
-#define SOI3_CT1                285
-#define SOI3_RT2                286
-#define SOI3_CT2                287
-#define SOI3_RT3                288
-#define SOI3_CT3                289
-#define SOI3_RT4                290
-#define SOI3_CT4                291
-#define SOI3_ITOT		292
+enum {
+    SOI3_DNODE = 201,
+    SOI3_GFNODE,
+    SOI3_SNODE,
+    SOI3_GBNODE,
+    SOI3_BNODE,
+    SOI3_DNODEPRIME,
+    SOI3_SNODEPRIME,
+    SOI3_TNODE,
+    SOI3_BRANCH,
+    SOI3_SOURCECONDUCT,
+    SOI3_DRAINCONDUCT,
+    SOI3_VON,
+    SOI3_VFBF,
+    SOI3_VDSAT,
+    SOI3_SOURCEVCRIT,
+    SOI3_DRAINVCRIT,
+    SOI3_ID,
+    SOI3_IBS,
+    SOI3_IBD,
+    SOI3_GMBS,
+    SOI3_GMF,
+    SOI3_GMB,
+    SOI3_GDS,
+    SOI3_GBD,
+    SOI3_GBS,
+    SOI3_CAPBD,
+    SOI3_CAPBS,
+    SOI3_CAPZEROBIASBD,
+    SOI3_CAPZEROBIASBDSW,
+    SOI3_CAPZEROBIASBS,
+    SOI3_CAPZEROBIASBSSW,
+    SOI3_VBD,
+    SOI3_VBS,
+    SOI3_VGFS,
+    SOI3_VGBS,
+    SOI3_VDS,
+    SOI3_QGF,
+    SOI3_IQGF,
+    SOI3_QGB,
+    SOI3_IQGB,
+    SOI3_QD,
+    SOI3_IQD,
+    SOI3_QS,
+    SOI3_IQS,
+    SOI3_QBD,
+    SOI3_IQBD,
+    SOI3_QBS,
+    SOI3_IQBS,
+    SOI3_CGFGF,
+    SOI3_CGFD,
+    SOI3_CGFS,
+    SOI3_CGFDELTAT,
+    SOI3_CGFGB,
+    SOI3_CDGF,
+    SOI3_CDD,
+    SOI3_CDS,
+    SOI3_CDDELTAT,
+    SOI3_CDGB,
+    SOI3_CSGF,
+    SOI3_CSD,
+    SOI3_CSS,
+    SOI3_CSDELTAT,
+    SOI3_CSGB,
+    SOI3_CGBGF,
+    SOI3_CGBD,
+    SOI3_CGBS,
+    SOI3_CGBDELTAT,
+    SOI3_CGBGB,
+    SOI3_L_SENS_REAL,
+    SOI3_L_SENS_IMAG,
+    SOI3_L_SENS_MAG,
+    SOI3_L_SENS_PH,
+    SOI3_L_SENS_CPLX,
+    SOI3_W_SENS_REAL,
+    SOI3_W_SENS_IMAG,
+    SOI3_W_SENS_MAG,
+    SOI3_W_SENS_PH,
+    SOI3_W_SENS_CPLX,
+    SOI3_L_SENS_DC,
+    SOI3_W_SENS_DC,
+    SOI3_RT,
+    SOI3_CT,
+    SOI3_VFBB,
+    SOI3_RT1,
+    SOI3_CT1,
+    SOI3_RT2,
+    SOI3_CT2,
+    SOI3_RT3,
+    SOI3_CT3,
+    SOI3_RT4,
+    SOI3_CT4,
+    SOI3_ITOT,
+};
 
 /* model questions */
 

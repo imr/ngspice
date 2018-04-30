@@ -85,22 +85,26 @@ typedef struct sCSWmodel {      /* model structure for a switch */
 } CSWmodel;
 
 /* device parameters */
-#define CSW_CONTROL 1
-#define CSW_IC_ON 2
-#define CSW_IC_OFF 3
-#define CSW_POS_NODE 4
-#define CSW_NEG_NODE 5
-#define CSW_CURRENT 6
-#define CSW_POWER 7
+enum {
+    CSW_CONTROL = 1,
+    CSW_IC_ON,
+    CSW_IC_OFF,
+    CSW_POS_NODE,
+    CSW_NEG_NODE,
+    CSW_CURRENT,
+    CSW_POWER,
+};
 
 /* model parameters */
-#define CSW_CSW 101
-#define CSW_RON 102
-#define CSW_ROFF 103
-#define CSW_ITH 104
-#define CSW_IHYS 105
-#define CSW_GON 106
-#define CSW_GOFF 107
+enum {
+    CSW_CSW = 101,
+    CSW_RON,
+    CSW_ROFF,
+    CSW_ITH,
+    CSW_IHYS,
+    CSW_GON,
+    CSW_GOFF,
+};
 
 /* device questions */
 

@@ -100,28 +100,30 @@ typedef struct sTRAmodel {       /* model structure for a transmission lines */
 } TRAmodel;
 
 /* device parameters */
-#define TRA_Z0 1
-#define TRA_TD 2
-#define TRA_NL 3
-#define TRA_FREQ 4
-#define TRA_V1 5
-#define TRA_I1 6
-#define TRA_V2 7
-#define TRA_I2 8
-#define TRA_IC 9
-#define TRA_RELTOL 10
-#define TRA_ABSTOL 11
-#define TRA_POS_NODE1 12
-#define TRA_NEG_NODE1 13
-#define TRA_POS_NODE2 14
-#define TRA_NEG_NODE2 15
-#define TRA_INPUT1 16
-#define TRA_INPUT2 17
-#define TRA_DELAY 18
-#define TRA_BR_EQ1 19
-#define TRA_BR_EQ2 20
-#define TRA_INT_NODE1 21
-#define TRA_INT_NODE2 22
+enum {
+    TRA_Z0 = 1,
+    TRA_TD,
+    TRA_NL,
+    TRA_FREQ,
+    TRA_V1,
+    TRA_I1,
+    TRA_V2,
+    TRA_I2,
+    TRA_IC,
+    TRA_RELTOL,
+    TRA_ABSTOL,
+    TRA_POS_NODE1,
+    TRA_NEG_NODE1,
+    TRA_POS_NODE2,
+    TRA_NEG_NODE2,
+    TRA_INPUT1,
+    TRA_INPUT2,
+    TRA_DELAY,
+    TRA_BR_EQ1,
+    TRA_BR_EQ2,
+    TRA_INT_NODE1,
+    TRA_INT_NODE2,
+};
 
 /* model parameters */
 

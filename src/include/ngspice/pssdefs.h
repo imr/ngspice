@@ -28,13 +28,15 @@ typedef struct {
     double steady_coeff;
 } PSSan;
 
-#define GUESSED_FREQ 1
-#define STAB_TIME 2
-#define OSC_NODE 3
-#define PSS_POINTS 4
-#define PSS_HARMS 5
-#define PSS_UIC 6
-#define SC_ITER 7
-#define STEADY_COEFF 8
+enum {
+    GUESSED_FREQ = 1,
+    STAB_TIME,
+    OSC_NODE,
+    PSS_POINTS,
+    PSS_HARMS,
+    PSS_UIC,
+    SC_ITER,
+    STEADY_COEFF,
+};
 
 #endif

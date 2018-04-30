@@ -90,18 +90,22 @@ typedef struct sCPLmodel {       /* model structure for a cpl */
 } CPLmodel;
 
 /* instance parameters */
-#define CPL_POS_NODE 1
-#define CPL_NEG_NODE 2
-#define CPL_DIM 3
-#define CPL_LENGTH 4
+enum {
+    CPL_POS_NODE = 1,
+    CPL_NEG_NODE,
+    CPL_DIM,
+    CPL_LENGTH,
+};
 
 /* model parameters */
-#define CPL_R 101
-#define CPL_C 102
-#define CPL_G 103
-#define CPL_L 104
-#define CPL_length 105
-#define CPL_MOD_R 106
+enum {
+    CPL_R = 101,
+    CPL_C,
+    CPL_G,
+    CPL_L,
+    CPL_length,
+    CPL_MOD_R,
+};
 
 #include "cplext.h"
 extern VI_list *pool_vi;

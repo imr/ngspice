@@ -18,13 +18,15 @@ Author: 1985 S. Hwang
 
 /* indices to the array of MESFET noise sources */
 
-#define MESRDNOIZ       0
-#define MESRSNOIZ       1
-#define MESIDNOIZ       2
-#define MESFLNOIZ 3
-#define MESTOTNOIZ    4
-
-#define MESNSRCS     5     /* the number of MESFET noise sources */
+enum {
+    MESRDNOIZ = 0,
+    MESRSNOIZ,
+    MESIDNOIZ,
+    MESFLNOIZ,
+    MESTOTNOIZ,
+    /* finally, the number of noise sources */
+    MESNSRCS
+};
 
 /* information used to describe a single instance */
 
@@ -222,62 +224,69 @@ typedef struct sMESmodel {       /* model structure for a mesfet */
 #endif /*NMF*/
 
 /* device parameters */
-#define MES_AREA 1
-#define MES_IC_VDS 2
-#define MES_IC_VGS 3
-#define MES_IC 4
-#define MES_OFF 5
-#define MES_CS 6
-#define MES_POWER 7
-#define MES_M 8
+enum {
+    MES_AREA = 1,
+    MES_IC_VDS,
+    MES_IC_VGS,
+    MES_IC,
+    MES_OFF,
+    MES_CS,
+    MES_POWER,
+    MES_M,
+};
 
 /* model parameters */
-#define MES_MOD_VTO 101
-#define MES_MOD_ALPHA 102
-#define MES_MOD_BETA 103
-#define MES_MOD_LAMBDA 104
-#define MES_MOD_B 105
-#define MES_MOD_RD 106
-#define MES_MOD_RS 107
-#define MES_MOD_CGS 108
-#define MES_MOD_CGD 109
-#define MES_MOD_PB 110
-#define MES_MOD_IS 111
-#define MES_MOD_FC 112
-#define MES_MOD_NMF 113
-#define MES_MOD_PMF 114
-#define MES_MOD_KF 115
-#define MES_MOD_AF 116
+enum {
+    MES_MOD_VTO = 101,
+    MES_MOD_ALPHA,
+    MES_MOD_BETA,
+    MES_MOD_LAMBDA,
+    MES_MOD_B,
+    MES_MOD_RD,
+    MES_MOD_RS,
+    MES_MOD_CGS,
+    MES_MOD_CGD,
+    MES_MOD_PB,
+    MES_MOD_IS,
+    MES_MOD_FC,
+    MES_MOD_NMF,
+    MES_MOD_PMF,
+    MES_MOD_KF,
+    MES_MOD_AF,
+};
 
 /* device questions */
 
-#define MES_DRAINNODE       201
-#define MES_GATENODE        202
-#define MES_SOURCENODE      203
-#define MES_DRAINPRIMENODE  204
-#define MES_SOURCEPRIMENODE 205
-
-#define MES_VGS         206
-#define MES_VGD         207
-#define MES_CG          208
-#define MES_CD          209
-#define MES_CGD         210
-#define MES_GM          211
-#define MES_GDS         212
-#define MES_GGS         213
-#define MES_GGD         214
-#define MES_QGS         215
-#define MES_CQGS        216
-#define MES_QGD         217
-#define MES_CQGD        218
+enum {
+    MES_DRAINNODE = 201,
+    MES_GATENODE,
+    MES_SOURCENODE,
+    MES_DRAINPRIMENODE,
+    MES_SOURCEPRIMENODE,
+    MES_VGS,
+    MES_VGD,
+    MES_CG,
+    MES_CD,
+    MES_CGD,
+    MES_GM,
+    MES_GDS,
+    MES_GGS,
+    MES_GGD,
+    MES_QGS,
+    MES_CQGS,
+    MES_QGD,
+    MES_CQGD,
+};
 
 /* model questions */
 
-#define MES_MOD_DRAINCONDUCT    301
-#define MES_MOD_SOURCECONDUCT   302 
-#define MES_MOD_DEPLETIONCAP    303
-#define MES_MOD_VCRIT       304
-#define MES_MOD_TYPE       305
+enum {
+    MES_MOD_DRAINCONDUCT = 301,
+    MES_MOD_SOURCECONDUCT,
+    MES_MOD_DEPLETIONCAP,
+    MES_MOD_VCRIT,
+    MES_MOD_TYPE,
+};
 
 #include "mesext.h"
 

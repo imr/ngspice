@@ -121,45 +121,51 @@ typedef struct sCAPmodel {      /* model structure for a capacitor */
 } CAPmodel;
 
 /* device parameters */
-#define CAP_CAP 1
-#define CAP_IC 2
-#define CAP_WIDTH 3
-#define CAP_LENGTH 4
-#define CAP_CAP_SENS 5
-#define CAP_CURRENT 6
-#define CAP_POWER 7
-#define CAP_TEMP 8
-#define CAP_DTEMP 9
-#define CAP_SCALE 10
-#define CAP_M 11
-#define CAP_TC1 12
-#define CAP_TC2 13
-#define CAP_BV_MAX 14
+enum {
+    CAP_CAP = 1,
+    CAP_IC,
+    CAP_WIDTH,
+    CAP_LENGTH,
+    CAP_CAP_SENS,
+    CAP_CURRENT,
+    CAP_POWER,
+    CAP_TEMP,
+    CAP_DTEMP,
+    CAP_SCALE,
+    CAP_M,
+    CAP_TC1,
+    CAP_TC2,
+    CAP_BV_MAX,
+};
 
 /* model parameters */
-#define CAP_MOD_CJ 101
-#define CAP_MOD_CJSW 102
-#define CAP_MOD_DEFWIDTH 103
-#define CAP_MOD_C 104
-#define CAP_MOD_NARROW 105
-#define CAP_MOD_SHORT 106
-#define CAP_MOD_DEL 107
-#define CAP_MOD_TC1 108
-#define CAP_MOD_TC2 109
-#define CAP_MOD_TNOM 110
-#define CAP_MOD_DI 111
-#define CAP_MOD_THICK 112
-#define CAP_MOD_CAP 113
-#define CAP_MOD_DEFLENGTH 114
-#define CAP_MOD_BV_MAX 115
+enum {
+    CAP_MOD_CJ = 101,
+    CAP_MOD_CJSW,
+    CAP_MOD_DEFWIDTH,
+    CAP_MOD_C,
+    CAP_MOD_NARROW,
+    CAP_MOD_SHORT,
+    CAP_MOD_DEL,
+    CAP_MOD_TC1,
+    CAP_MOD_TC2,
+    CAP_MOD_TNOM,
+    CAP_MOD_DI,
+    CAP_MOD_THICK,
+    CAP_MOD_CAP,
+    CAP_MOD_DEFLENGTH,
+    CAP_MOD_BV_MAX,
+};
 
 /* device questions */
-#define CAP_QUEST_SENS_REAL      201
-#define CAP_QUEST_SENS_IMAG      202
-#define CAP_QUEST_SENS_MAG       203
-#define CAP_QUEST_SENS_PH        204
-#define CAP_QUEST_SENS_CPLX      205
-#define CAP_QUEST_SENS_DC        206
+enum {
+    CAP_QUEST_SENS_REAL = 201,
+    CAP_QUEST_SENS_IMAG,
+    CAP_QUEST_SENS_MAG,
+    CAP_QUEST_SENS_PH,
+    CAP_QUEST_SENS_CPLX,
+    CAP_QUEST_SENS_DC,
+};
 
 #include "capext.h"
 

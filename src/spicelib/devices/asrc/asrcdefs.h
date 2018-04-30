@@ -71,18 +71,20 @@ typedef struct sASRCmodel {       /* model structure for a source */
 
 
 /* device parameters */
-#define ASRC_VOLTAGE        1
-#define ASRC_CURRENT        2
-#define ASRC_POS_NODE       3
-#define ASRC_NEG_NODE       4
-#define ASRC_PARSE_TREE     5
-#define ASRC_OUTPUTVOLTAGE  6
-#define ASRC_OUTPUTCURRENT  7
-#define ASRC_TEMP           8
-#define ASRC_DTEMP          9
-#define ASRC_TC1           10
-#define ASRC_TC2           11
-#define ASRC_RTC           12
+enum {
+    ASRC_VOLTAGE = 1,
+    ASRC_CURRENT,
+    ASRC_POS_NODE,
+    ASRC_NEG_NODE,
+    ASRC_PARSE_TREE,
+    ASRC_OUTPUTVOLTAGE,
+    ASRC_OUTPUTCURRENT,
+    ASRC_TEMP,
+    ASRC_DTEMP,
+    ASRC_TC1,
+    ASRC_TC2,
+    ASRC_RTC,
+};
 
 /* module-wide variables */
 

@@ -33,12 +33,14 @@ typedef struct sMESHcard {
 } MESHcard;
 
 /* MESH parameters */
-#define MESH_NUMBER	1
-#define MESH_LOCATION	2
-#define MESH_WIDTH	3
-#define MESH_H_START	4
-#define MESH_H_END	5
-#define MESH_H_MAX	6
-#define MESH_RATIO	7
+enum {
+    MESH_NUMBER = 1,
+    MESH_LOCATION,
+    MESH_WIDTH,
+    MESH_H_START,
+    MESH_H_END,
+    MESH_H_MAX,
+    MESH_RATIO,
+};
 
 #endif
