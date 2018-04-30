@@ -1071,6 +1071,7 @@ fi
 AC_CONFIG_FILES([Makefile
                  man/Makefile
                  man/man1/Makefile
+                 ngspice.pc
                  src/Makefile
                  src/spicelib/Makefile
                  src/spicelib/analysis/Makefile

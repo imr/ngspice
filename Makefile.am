@@ -20,6 +20,11 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 ar-lib compile config.guess \
 
 ACLOCAL_AMFLAGS = -I m4
 
+if SHARED_MODULE
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = ngspice.pc
+endif SHARED_MODULE
+
 dist-hook:
 	rm -rf `find $(distdir)/xgraph -name .deps`
 	rm -rf `find $(distdir)/xgraph -name config.status`
