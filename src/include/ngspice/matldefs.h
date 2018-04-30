@@ -60,34 +60,36 @@ typedef struct sMATLcard {
 } MATLcard;
 
 /* MATL parameters */
-#define MATL_NC0	1
-#define MATL_NV0	2
-#define MATL_EG0	3
-#define MATL_DEGDT	4
-#define MATL_TREF_EG	5
-#define MATL_DEGDN	6
-#define MATL_NREF_EG	7
-#define MATL_DEGDP	8
-#define MATL_PREF_EG	9
-#define MATL_AFFIN	10
-#define MATL_PERMIT	11
-#define MATL_TAUN0	12
-#define MATL_TAUP0	13
-#define MATL_NSRHN	14
-#define MATL_NSRHP	15
-#define MATL_CNAUG	16
-#define MATL_CPAUG	17
-#define MATL_ARICHN	18
-#define MATL_ARICHP	19
-#define MATL_INSULATOR  20
-#define MATL_OXIDE	21
-#define MATL_NITRIDE	22
-#define MATL_SEMICON	23
-#define MATL_SILICON	24
-#define MATL_POLYSIL	25
-#define MATL_GAAS	26
-#define MATL_NUMBER	27
-#define MATL_DEGDC	28
-#define MATL_CREF_EG	29
+enum {
+    MATL_NC0 = 1,
+    MATL_NV0,
+    MATL_EG0,
+    MATL_DEGDT,
+    MATL_TREF_EG,
+    MATL_DEGDN,
+    MATL_NREF_EG,
+    MATL_DEGDP,
+    MATL_PREF_EG,
+    MATL_AFFIN,
+    MATL_PERMIT,
+    MATL_TAUN0,
+    MATL_TAUP0,
+    MATL_NSRHN,
+    MATL_NSRHP,
+    MATL_CNAUG,
+    MATL_CPAUG,
+    MATL_ARICHN,
+    MATL_ARICHP,
+    MATL_INSULATOR,
+    MATL_OXIDE,
+    MATL_NITRIDE,
+    MATL_SEMICON,
+    MATL_SILICON,
+    MATL_POLYSIL,
+    MATL_GAAS,
+    MATL_NUMBER,
+    MATL_DEGDC,
+    MATL_CREF_EG,
+};
 
 #endif

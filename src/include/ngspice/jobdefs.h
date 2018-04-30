@@ -16,9 +16,11 @@ struct JOB {
     IFuid JOBname;              /* name of this job */
 };
 
-#define NODOMAIN	0
-#define TIMEDOMAIN	1
-#define FREQUENCYDOMAIN 2
-#define SWEEPDOMAIN	3
+enum {
+    NODOMAIN = 0,
+    TIMEDOMAIN,
+    FREQUENCYDOMAIN,
+    SWEEPDOMAIN,
+};
 
 #endif

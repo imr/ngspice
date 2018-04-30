@@ -53,10 +53,11 @@ struct CKTnode {
 };
 
 /* defines for node parameters */
-#define PARM_NS        1
-#define PARM_IC        2
-#define PARM_NODETYPE  3
-
+enum {
+    PARM_NS = 1,
+    PARM_IC,
+    PARM_NODETYPE,
+};
 
 struct CKTcircuit {
 

@@ -23,11 +23,13 @@ typedef struct sCONTcard {
 } CONTcard;
 
 /* CONT parameters */
-#define CONT_NEUTRAL	1
-#define CONT_ALUMINUM	2
-#define CONT_P_POLY	3
-#define CONT_N_POLY	4
-#define CONT_WORKFUN	5
-#define CONT_NUMBER	6
+enum {
+    CONT_NEUTRAL = 1,
+    CONT_ALUMINUM,
+    CONT_P_POLY,
+    CONT_N_POLY,
+    CONT_WORKFUN,
+    CONT_NUMBER,
+};
 
 #endif

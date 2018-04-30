@@ -63,20 +63,24 @@ typedef struct sURCmodel {       /* model structure for a resistor */
 } URCmodel;
 
 /* device parameters */
-#define URC_LEN 1
-#define URC_LUMPS 2
-#define URC_POS_NODE 3
-#define URC_NEG_NODE 4
-#define URC_GND_NODE 5
+enum {
+    URC_LEN = 1,
+    URC_LUMPS,
+    URC_POS_NODE,
+    URC_NEG_NODE,
+    URC_GND_NODE,
+};
 
 /* model parameters */
-#define URC_MOD_K 101
-#define URC_MOD_FMAX 102
-#define URC_MOD_RPERL 103
-#define URC_MOD_CPERL 104
-#define URC_MOD_ISPERL 105
-#define URC_MOD_RSPERL 106
-#define URC_MOD_URC 107
+enum {
+    URC_MOD_K = 101,
+    URC_MOD_FMAX,
+    URC_MOD_RPERL,
+    URC_MOD_CPERL,
+    URC_MOD_ISPERL,
+    URC_MOD_RSPERL,
+    URC_MOD_URC,
+};
 
 /* device questions */
 

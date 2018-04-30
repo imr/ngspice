@@ -33,13 +33,15 @@ typedef struct sMETHcard {
 } METHcard;
 
 /* METH parameters */
-#define METH_DABSTOL	1
-#define METH_DRELTOL	2
-#define METH_OMEGA	3
-#define METH_ONEC	4
-#define METH_ACANAL	5
-#define METH_NOMOBDERIV	6
-#define METH_ITLIM      7
-#define METH_VOLTPRED	8
+enum {
+    METH_DABSTOL = 1,
+    METH_DRELTOL,
+    METH_OMEGA,
+    METH_ONEC,
+    METH_ACANAL,
+    METH_NOMOBDERIV,
+    METH_ITLIM,
+    METH_VOLTPRED,
+};
 
 #endif

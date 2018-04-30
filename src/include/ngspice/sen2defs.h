@@ -61,10 +61,12 @@ struct SENstruct {
 #define ON 1
 
 
-#define SEN_AC 1
-#define SEN_DC 2
-#define SEN_TRAN 3
-#define SEN_DEV 4
-#define SEN_PARM 5
+enum {
+    SEN_AC = 1,
+    SEN_DC,
+    SEN_TRAN,
+    SEN_DEV,
+    SEN_PARM,
+};
 
 #endif

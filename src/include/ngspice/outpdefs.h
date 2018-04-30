@@ -72,36 +72,38 @@ typedef struct sOUTPcard {
 } OUTPcard;
 
 /* OUTP parameters */
-#define OUTP_ALL_DEBUG	1
-#define OUTP_DC_DEBUG	2
-#define OUTP_TRAN_DEBUG	3
-#define OUTP_AC_DEBUG	4
-#define OUTP_GEOM    	5
-#define OUTP_MESH	6
-#define OUTP_MATERIAL	7
-#define OUTP_GLOBALS	8
-#define OUTP_STATS	9
-#define OUTP_ROOTFILE	10
-#define OUTP_RAWFILE	11
-#define OUTP_HDF	12
-#define OUTP_DOPING	13
-#define OUTP_PSI	14
-#define OUTP_EQU_PSI	15
-#define OUTP_VAC_PSI	16
-#define OUTP_N_CONC	17
-#define OUTP_P_CONC	18
-#define OUTP_PHIN	19
-#define OUTP_PHIP	20
-#define OUTP_PHIC	21
-#define OUTP_PHIV	22
-#define OUTP_E_FIELD	23
-#define OUTP_J_C	24
-#define OUTP_J_D	25
-#define OUTP_J_N	26
-#define OUTP_J_P	27
-#define OUTP_J_T	28
-#define OUTP_U_NET	29
-#define OUTP_MUN	30
-#define OUTP_MUP	31
+enum {
+    OUTP_ALL_DEBUG = 1,
+    OUTP_DC_DEBUG,
+    OUTP_TRAN_DEBUG,
+    OUTP_AC_DEBUG,
+    OUTP_GEOM,
+    OUTP_MESH,
+    OUTP_MATERIAL,
+    OUTP_GLOBALS,
+    OUTP_STATS,
+    OUTP_ROOTFILE,
+    OUTP_RAWFILE,
+    OUTP_HDF,
+    OUTP_DOPING,
+    OUTP_PSI,
+    OUTP_EQU_PSI,
+    OUTP_VAC_PSI,
+    OUTP_N_CONC,
+    OUTP_P_CONC,
+    OUTP_PHIN,
+    OUTP_PHIP,
+    OUTP_PHIC,
+    OUTP_PHIV,
+    OUTP_E_FIELD,
+    OUTP_J_C,
+    OUTP_J_D,
+    OUTP_J_N,
+    OUTP_J_P,
+    OUTP_J_T,
+    OUTP_U_NET,
+    OUTP_MUN,
+    OUTP_MUP,
+};
 
 #endif

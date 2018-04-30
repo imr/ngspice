@@ -179,7 +179,6 @@ struct sINDmodel {             /* model structure for an inductor */
 
 };
 
-
 /* structures used to describe mutual inductors */
 
 
@@ -282,57 +281,66 @@ struct INDsystem {
 
 
 /* device parameters */
-#define IND_IND      1
-#define IND_IC       2
-#define IND_FLUX     3
-#define IND_VOLT     4
-#define IND_IND_SENS 5
-#define IND_CURRENT  6
-#define IND_POWER    7
-#define IND_M        8
-#define IND_TEMP     9
-#define IND_DTEMP   10
-#define IND_SCALE   11
-#define IND_NT      12
-#define IND_TC1     13
-#define IND_TC2     14
+enum {
+    IND_IND = 1,
+    IND_IC,
+    IND_FLUX,
+    IND_VOLT,
+    IND_IND_SENS,
+    IND_CURRENT,
+    IND_POWER,
+    IND_M,
+    IND_TEMP,
+    IND_DTEMP,
+    IND_SCALE,
+    IND_NT,
+    IND_TC1,
+    IND_TC2,
+};
 
 /* model parameters */
-#define IND_MOD_IND    100
-#define IND_MOD_TC1    101
-#define IND_MOD_TC2    102
-#define IND_MOD_TNOM   103
-#define IND_MOD_CSECT  104
-#define IND_MOD_LENGTH 105
-#define IND_MOD_NT     106
-#define IND_MOD_MU     107
-#define IND_MOD_L      108
+enum {
+    IND_MOD_IND = 100,
+    IND_MOD_TC1,
+    IND_MOD_TC2,
+    IND_MOD_TNOM,
+    IND_MOD_CSECT,
+    IND_MOD_LENGTH,
+    IND_MOD_NT,
+    IND_MOD_MU,
+    IND_MOD_L,
+};
 
 /* device questions */
-#define IND_QUEST_SENS_REAL      201
-#define IND_QUEST_SENS_IMAG      202
-#define IND_QUEST_SENS_MAG       203
-#define IND_QUEST_SENS_PH        204
-#define IND_QUEST_SENS_CPLX      205
-#define IND_QUEST_SENS_DC        206
+enum {
+    IND_QUEST_SENS_REAL = 201,
+    IND_QUEST_SENS_IMAG,
+    IND_QUEST_SENS_MAG,
+    IND_QUEST_SENS_PH,
+    IND_QUEST_SENS_CPLX,
+    IND_QUEST_SENS_DC,
+};
 
 
 /* device parameters */
-#define MUT_COEFF       401
-#define MUT_IND1        402
-#define MUT_IND2        403
-#define MUT_COEFF_SENS  404
+enum {
+    MUT_COEFF = 401,
+    MUT_IND1,
+    MUT_IND2,
+    MUT_COEFF_SENS,
+};
 
 /* model parameters */
 
 /* device questions */
-#define MUT_QUEST_SENS_REAL      601
-#define MUT_QUEST_SENS_IMAG      602
-#define MUT_QUEST_SENS_MAG       603
-#define MUT_QUEST_SENS_PH        604
-#define MUT_QUEST_SENS_CPLX      605
-#define MUT_QUEST_SENS_DC        606
-
+enum {
+    MUT_QUEST_SENS_REAL = 601,
+    MUT_QUEST_SENS_IMAG,
+    MUT_QUEST_SENS_MAG,
+    MUT_QUEST_SENS_PH,
+    MUT_QUEST_SENS_CPLX,
+    MUT_QUEST_SENS_DC,
+};
 
 #include "indext.h"
 

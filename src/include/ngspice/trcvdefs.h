@@ -43,15 +43,17 @@ typedef struct {
     int TRCVnestState;      /* iteration state during pause */
 } TRCV;
 
-#define DCT_START1 1
-#define DCT_STOP1 2
-#define DCT_STEP1 3
-#define DCT_NAME1 4
-#define DCT_TYPE1 5
-#define DCT_START2 6
-#define DCT_STOP2 7
-#define DCT_STEP2 8
-#define DCT_NAME2 9
-#define DCT_TYPE2 10
+enum {
+    DCT_START1 = 1,
+    DCT_STOP1,
+    DCT_STEP1,
+    DCT_NAME1,
+    DCT_TYPE1,
+    DCT_START2,
+    DCT_STOP2,
+    DCT_STEP2,
+    DCT_NAME2,
+    DCT_TYPE2,
+};
 
 #endif

@@ -30,11 +30,12 @@ struct TFan {
 };
 
 
-#define TF_OUTPOS 1
-#define TF_OUTNEG 2
-#define TF_OUTSRC 3
-#define TF_INSRC 4
-#define TF_OUTNAME 5
-
+enum {
+    TF_OUTPOS = 1,
+    TF_OUTNEG,
+    TF_OUTSRC,
+    TF_INSRC,
+    TF_OUTNAME,
+};
 
 #endif

@@ -27,9 +27,12 @@ typedef struct {
     runDesc *TRANplot;
 } TRANan;
 
-#define TRAN_TSTART 1
-#define TRAN_TSTOP 2
-#define TRAN_TSTEP 3
-#define TRAN_TMAX 4
-#define TRAN_UIC 5
+enum {
+    TRAN_TSTART = 1,
+    TRAN_TSTOP,
+    TRAN_TSTEP,
+    TRAN_TMAX,
+    TRAN_UIC,
+};
+
 #endif
