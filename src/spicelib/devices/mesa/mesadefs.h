@@ -457,6 +457,7 @@ enum {
     MESA_MOD_TYPE,
 };
 
+/* device questions */
 enum {
     MESA_DRAINNODE = 201,
     MESA_GATENODE,
@@ -479,6 +480,7 @@ enum {
     MESA_CQGD,
 };
 
+/* model questions */
 enum {
     MESA_MOD_DRAINCONDUCT = 301,
     MESA_MOD_SOURCECONDUCT,
