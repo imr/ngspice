@@ -41,10 +41,9 @@ enum {
     SOI3IDNOIZ,
     SOI3FLNOIZ,
     SOI3TOTNOIZ,
-    SOI3NSRCS,
+    /* finally, the number of noise sources */
+    SOI3NSRCS
 };
-
-     /* the number of SOI(3) noise sources */
 
 /* information needed for each instance */
 

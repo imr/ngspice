@@ -25,7 +25,8 @@ enum {
     JFETIDNOIZ,
     JFETFLNOIZ,
     JFETTOTNOIZ,
-    JFETNSRCS,
+    /* finally, the number of noise sources */
+    JFETNSRCS
 };
 
 /* information used to describe a single instance */

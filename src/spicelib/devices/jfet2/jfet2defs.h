@@ -30,7 +30,8 @@ enum {
     JFET2IDNOIZ,
     JFET2FLNOIZ,
     JFET2TOTNOIZ,
-    JFET2NSRCS,
+    /* finally, the number of noise sources */
+    JFET2NSRCS
 };
 
 /* information used to describe a single instance */

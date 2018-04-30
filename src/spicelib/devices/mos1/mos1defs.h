@@ -23,10 +23,9 @@ enum {
     MOS1IDNOIZ,
     MOS1FLNOIZ,
     MOS1TOTNOIZ,
-    MOS1NSRCS,
+    /* finally, the number of noise sources */
+    MOS1NSRCS
 };
-
-     /* the number of MOS1FET noise sources*/
 
 /* information needed for each instance */
 

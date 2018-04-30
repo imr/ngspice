@@ -23,10 +23,9 @@ enum {
     MOS9IDNOIZ,
     MOS9FLNOIZ,
     MOS9TOTNOIZ,
-    MOS9NSRCS,
+    /* finally, the number of noise sources */
+    MOS9NSRCS
 };
-
-     /* the number of MOSFET(9) noise sources */
 
 /* information needed for each instance */
 

@@ -33,10 +33,9 @@ enum {
     VBICFLBENOIZ,
     VBICFLBEPNOIZ,
     VBICTOTNOIZ,
-    VBICNSRCS,
+    /* finally, the number of noise sources */
+    VBICNSRCS
 };
-
-     /* the number of VBIC noise sources */
 
 /* data needed to describe a single instance */
 

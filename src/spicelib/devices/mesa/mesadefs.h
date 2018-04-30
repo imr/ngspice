@@ -22,10 +22,9 @@ enum {
     MESAIDNOIZ,
     MESAFLNOIZ,
     MESATOTNOIZ,
-    MESANSRCS,
+    /* finally, the number of noise sources */
+    MESANSRCS
 };
-
-     /* the number of MESAFET noise sources */
 
 /* information used to describe a single instance */
 

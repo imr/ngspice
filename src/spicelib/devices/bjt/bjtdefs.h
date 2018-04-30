@@ -24,10 +24,9 @@ enum {
     BJTIBNOIZ,
     BJTFLNOIZ,
     BJTTOTNOIZ,
-    BJTNSRCS,
+    /* finally, the number of noise sources */
+    BJTNSRCS
 };
-
-     /* the number of BJT noise sources */
 
 /* data needed to describe a single instance */
 

@@ -21,10 +21,9 @@ enum {
     RESTHNOIZ = 0,
     RESFLNOIZ,
     RESTOTNOIZ,
-    RESNSRCS,
+    /* finally, the number of noise sources */
+    RESNSRCS
 };
-
-     /* the number of RES noise sources */
 
 /* information used to describe a single instance */
 

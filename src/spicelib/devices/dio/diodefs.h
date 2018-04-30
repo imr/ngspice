@@ -21,7 +21,8 @@ enum {
     DIOIDNOIZ,
     DIOFLNOIZ,
     DIOTOTNOIZ,
-    DIONSRCS,
+    /* finally, the number of noise sources */
+    DIONSRCS
 };
 
 /* information needed per instance */
