@@ -48,93 +48,94 @@ typedef struct {
     STATdevList *STATdevNum;    /* PN: Number of instances and models for each device */
 } STATistics;
 
-#define OPT_GMIN 1
-#define OPT_RELTOL 2
-#define OPT_ABSTOL 3
-#define OPT_VNTOL 4
-#define OPT_TRTOL 5
-#define OPT_CHGTOL 6
-#define OPT_PIVTOL 7
-#define OPT_PIVREL 8
-#define OPT_TNOM 9
-#define OPT_ITL1 10
-#define OPT_ITL2 11
-#define OPT_ITL3 12
-#define OPT_ITL4 13
-#define OPT_ITL5 14
-#define OPT_DEFL 15
-#define OPT_DEFW 16
-#define OPT_DEFAD 17
-#define OPT_DEFAS 18
-#define OPT_BYPASS 19
-#define OPT_MAXORD 20
+enum {
+    OPT_GMIN = 1,
+    OPT_RELTOL,
+    OPT_ABSTOL,
+    OPT_VNTOL,
+    OPT_TRTOL,
+    OPT_CHGTOL,
+    OPT_PIVTOL,
+    OPT_PIVREL,
+    OPT_TNOM,
+    OPT_ITL1,
+    OPT_ITL2,
+    OPT_ITL3,
+    OPT_ITL4,
+    OPT_ITL5,
+    OPT_DEFL,
+    OPT_DEFW,
+    OPT_DEFAD,
+    OPT_DEFAS,
+    OPT_BYPASS,
+    OPT_MAXORD,
+    OPT_ITERS,
+    OPT_TRANIT,
+    OPT_TRANPTS,
+    OPT_TRANACCPT,
+    OPT_TRANRJCT,
+    OPT_TOTANALTIME,
+    OPT_TRANTIME,
+    OPT_LOADTIME,
+    OPT_DECOMP,
+    OPT_SOLVE,
+    OPT_TRANDECOMP,
+    OPT_TRANSOLVE,
+    OPT_TEMP,
+    OPT_OLDLIMIT,
+    OPT_TRANCURITER,
+    OPT_SRCSTEPS,
+    OPT_GMINSTEPS,
+    OPT_MINBREAK,
+    OPT_NOOPITER,
+    OPT_EQNS,
+    OPT_REORDTIME,
+    OPT_METHOD,
+    OPT_TRYTOCOMPACT,
+    OPT_BADMOS3,
+    OPT_KEEPOPINFO,
+    OPT_TRANLOAD,
+    OPT_TRANTRUNC,
+    OPT_ACTIME,
+    OPT_ACLOAD,
+    OPT_ACDECOMP,
+    OPT_ACSOLVE,
+    OPT_ORIGNZ,
+    OPT_FILLNZ,
+    OPT_TOTALNZ,
+};
 
-#define OPT_ITERS 21
-#define OPT_TRANIT 22
-#define OPT_TRANPTS 23
-#define OPT_TRANACCPT 24
-#define OPT_TRANRJCT 25
-#define OPT_TOTANALTIME 26
-#define OPT_TRANTIME 27
-#define OPT_LOADTIME 28
-#define OPT_DECOMP 29
-#define OPT_SOLVE 30
-#define OPT_TRANDECOMP 31
-#define OPT_TRANSOLVE 32
-#define OPT_TEMP 33
-#define OPT_OLDLIMIT 34
-#define OPT_TRANCURITER 35
-#define OPT_SRCSTEPS 36
-#define OPT_GMINSTEPS 37
-#define OPT_MINBREAK 38
-#define OPT_NOOPITER 39
-#define OPT_EQNS 40
-#define OPT_REORDTIME 41
-#define OPT_METHOD 42
-#define OPT_TRYTOCOMPACT 43
-#define OPT_BADMOS3 44
-#define OPT_KEEPOPINFO 45
-#define OPT_TRANLOAD 46
-#define OPT_TRANTRUNC 47
-#define OPT_ACTIME 48
-#define OPT_ACLOAD 49
-#define OPT_ACDECOMP 50
-#define OPT_ACSOLVE 51
-#define OPT_ORIGNZ 52
-#define OPT_FILLNZ 53
-#define OPT_TOTALNZ 54
-#define OPT_SYNCTIME 58
-#define OPT_TRANSYNC 59
-#define OPT_ACSYNC 60
-
-/* AlansFixes: It is not possible to use the same numbers of the
-   original Alan code. The following options are all AlansFixes */
-    
-#define OPT_GSHUNT       61  /* Original: 48 */
-#define OPT_DEFM         62  /* Original: 46 */
-#define OPT_GMINFACT     63  /* Original: 47 */
-#define OPT_COPYNODESETS 64  /* Original: 49 (NodesetFix) */
-#define OPT_NODEDAMPING  65  /* Original: 50 (Node_Damping) */
-#define OPT_ABSDV        66  /* Original: 51 (Node_Damping) */ 
-#define OPT_RELDV        67  /* Original: 52 (Node_Damping) */
-
-#define OPT_NOOPAC       68
-#define OPT_XMU          69
-#define OPT_INDVERBOSITY 70
-#define OPT_EPSMIN       71
-
+enum {
+    OPT_SYNCTIME = 58,
+    OPT_TRANSYNC,
+    OPT_ACSYNC,
+    OPT_GSHUNT,
+    OPT_DEFM,
+    OPT_GMINFACT,
+    OPT_COPYNODESETS,
+    OPT_NODEDAMPING,
+    OPT_ABSDV,
+    OPT_RELDV,
+    OPT_NOOPAC,
+    OPT_XMU,
+    OPT_INDVERBOSITY,
+    OPT_EPSMIN,
+};
 
 #ifdef XSPICE
 /* gtri - begin - wbk - add new options */
-#define OPT_ENH_NOOPALTER           100
-#define OPT_ENH_RAMPTIME            101
-#define OPT_EVT_MAX_EVT_PASSES      102
-#define OPT_EVT_MAX_OP_ALTER        103
-#define OPT_ENH_CONV_LIMIT          104
-#define OPT_ENH_CONV_ABS_STEP       105
-#define OPT_ENH_CONV_STEP           106
-#define OPT_MIF_AUTO_PARTIAL        107
-#define OPT_ENH_RSHUNT              108
+enum {
+    OPT_ENH_NOOPALTER = 100,
+    OPT_ENH_RAMPTIME,
+    OPT_EVT_MAX_EVT_PASSES,
+    OPT_EVT_MAX_OP_ALTER,
+    OPT_ENH_CONV_LIMIT,
+    OPT_ENH_CONV_ABS_STEP,
+    OPT_ENH_CONV_STEP,
+    OPT_MIF_AUTO_PARTIAL,
+    OPT_ENH_RSHUNT,
+};
+
 /* gtri - end   - wbk - add new options */
 #endif
 

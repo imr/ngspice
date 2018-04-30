@@ -66,9 +66,11 @@ typedef struct sNDEVmodel {	/* model structure for a diode */
 /* device parameters */
 #define NDEV_MODEL_FILE 1
 /* model parameters */
-#define NDEV_MOD_NDEV 101
-#define NDEV_REMOTE   102
-#define NDEV_PORT     103 
+enum {
+    NDEV_MOD_NDEV = 101,
+    NDEV_REMOTE,
+    NDEV_PORT,
+};
 
 #include "ndevext.h"
 

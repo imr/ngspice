@@ -286,116 +286,125 @@ typedef struct sHFETAmodel {
 #endif
 
 /* device parameters */
-#define HFETA_LENGTH   1
-#define HFETA_WIDTH    2
-#define HFETA_IC_VDS   3
-#define HFETA_IC_VGS   4
-#define HFETA_TEMP     5
-#define HFETA_IC       6
-#define HFETA_OFF      7
-#define HFETA_CS       8
-#define HFETA_POWER    9
-#define HFETA_DTEMP   10
-#define HFETA_M       11
+enum {
+    HFETA_LENGTH = 1,
+    HFETA_WIDTH,
+    HFETA_IC_VDS,
+    HFETA_IC_VGS,
+    HFETA_TEMP,
+    HFETA_IC,
+    HFETA_OFF,
+    HFETA_CS,
+    HFETA_POWER,
+    HFETA_DTEMP,
+    HFETA_M,
+};
 
 /* model parameters */
-#define HFETA_MOD_VTO      101
-#define HFETA_MOD_LAMBDA   102
-#define HFETA_MOD_RD       103
-#define HFETA_MOD_RS       104
-#define HFETA_MOD_RG       105
-#define HFETA_MOD_RGS      106
-#define HFETA_MOD_RGD      107
-#define HFETA_MOD_RI       108
-#define HFETA_MOD_RF       109
-#define HFETA_MOD_ETA      110
-#define HFETA_MOD_M        111
-#define HFETA_MOD_MC       112
-#define HFETA_MOD_GAMMA    113
-#define HFETA_MOD_SIGMA0   114
-#define HFETA_MOD_VSIGMAT  115
-#define HFETA_MOD_VSIGMA   116
-#define HFETA_MOD_MU       117
-#define HFETA_MOD_DI       118
-#define HFETA_MOD_DELTA    119
-#define HFETA_MOD_VS       120
-#define HFETA_MOD_NMAX     121
-#define HFETA_MOD_DELTAD   122
-#define HFETA_MOD_JS1D     123
-#define HFETA_MOD_JS2D     124
-#define HFETA_MOD_JS1S     125
-#define HFETA_MOD_JS2S     126
-#define HFETA_MOD_M1D      127
-#define HFETA_MOD_M2D      128
-#define HFETA_MOD_M1S      129
-#define HFETA_MOD_M2S      130
-#define HFETA_MOD_EPSI     132
-#define HFETA_MOD_RDI      133
-#define HFETA_MOD_RSI      134
-#define HFETA_MOD_A1       135
-#define HFETA_MOD_A2       136
-#define HFETA_MOD_MV1      137
-#define HFETA_MOD_P        138
-#define HFETA_MOD_KAPPA    139
-#define HFETA_MOD_DELF     140
-#define HFETA_MOD_FGDS     141
-#define HFETA_MOD_TF       142
-#define HFETA_MOD_CDS      143
-#define HFETA_MOD_PHIB     144
-#define HFETA_MOD_TALPHA   145
-#define HFETA_MOD_MT1      146
-#define HFETA_MOD_MT2      147
-#define HFETA_MOD_CK1      148
-#define HFETA_MOD_CK2      149
-#define HFETA_MOD_CM1      150
-#define HFETA_MOD_CM2      151
-#define HFETA_MOD_CM3      152
-#define HFETA_MOD_ASTAR    153
-#define HFETA_MOD_ETA1     154
-#define HFETA_MOD_D1       155
-#define HFETA_MOD_VT1      156
-#define HFETA_MOD_ETA2     157
-#define HFETA_MOD_D2       158
-#define HFETA_MOD_VT2      159
-#define HFETA_MOD_GGR      160
-#define HFETA_MOD_DEL      161
-#define HFETA_MOD_GATEMOD  162
-#define HFETA_MOD_KLAMBDA  163
-#define HFETA_MOD_KMU      164
-#define HFETA_MOD_KVTO     165
-#define HFETA_MOD_NHFET    166
-#define HFETA_MOD_PHFET    167
-#define HFETA_MOD_TYPE	  168
+enum {
+    HFETA_MOD_VTO = 101,
+    HFETA_MOD_LAMBDA,
+    HFETA_MOD_RD,
+    HFETA_MOD_RS,
+    HFETA_MOD_RG,
+    HFETA_MOD_RGS,
+    HFETA_MOD_RGD,
+    HFETA_MOD_RI,
+    HFETA_MOD_RF,
+    HFETA_MOD_ETA,
+    HFETA_MOD_M,
+    HFETA_MOD_MC,
+    HFETA_MOD_GAMMA,
+    HFETA_MOD_SIGMA0,
+    HFETA_MOD_VSIGMAT,
+    HFETA_MOD_VSIGMA,
+    HFETA_MOD_MU,
+    HFETA_MOD_DI,
+    HFETA_MOD_DELTA,
+    HFETA_MOD_VS,
+    HFETA_MOD_NMAX,
+    HFETA_MOD_DELTAD,
+    HFETA_MOD_JS1D,
+    HFETA_MOD_JS2D,
+    HFETA_MOD_JS1S,
+    HFETA_MOD_JS2S,
+    HFETA_MOD_M1D,
+    HFETA_MOD_M2D,
+    HFETA_MOD_M1S,
+    HFETA_MOD_M2S,
+};
+
+enum {
+    HFETA_MOD_EPSI = 132,
+    HFETA_MOD_RDI,
+    HFETA_MOD_RSI,
+    HFETA_MOD_A1,
+    HFETA_MOD_A2,
+    HFETA_MOD_MV1,
+    HFETA_MOD_P,
+    HFETA_MOD_KAPPA,
+    HFETA_MOD_DELF,
+    HFETA_MOD_FGDS,
+    HFETA_MOD_TF,
+    HFETA_MOD_CDS,
+    HFETA_MOD_PHIB,
+    HFETA_MOD_TALPHA,
+    HFETA_MOD_MT1,
+    HFETA_MOD_MT2,
+    HFETA_MOD_CK1,
+    HFETA_MOD_CK2,
+    HFETA_MOD_CM1,
+    HFETA_MOD_CM2,
+    HFETA_MOD_CM3,
+    HFETA_MOD_ASTAR,
+    HFETA_MOD_ETA1,
+    HFETA_MOD_D1,
+    HFETA_MOD_VT1,
+    HFETA_MOD_ETA2,
+    HFETA_MOD_D2,
+    HFETA_MOD_VT2,
+    HFETA_MOD_GGR,
+    HFETA_MOD_DEL,
+    HFETA_MOD_GATEMOD,
+    HFETA_MOD_KLAMBDA,
+    HFETA_MOD_KMU,
+    HFETA_MOD_KVTO,
+    HFETA_MOD_NHFET,
+    HFETA_MOD_PHFET,
+    HFETA_MOD_TYPE,
+};
 
 /* device questions */
 
-#define HFETA_DRAINNODE       201
-#define HFETA_GATENODE        202
-#define HFETA_SOURCENODE      203
-#define HFETA_DRAINPRIMENODE  204
-#define HFETA_SOURCEPRIMENODE 205
-
-#define HFETA_VGS         206
-#define HFETA_VGD         207
-#define HFETA_CG          208
-#define HFETA_CD          209
-#define HFETA_CGD         210
-#define HFETA_GM          211
-#define HFETA_GDS         212
-#define HFETA_GGS         213
-#define HFETA_GGD         214
-#define HFETA_QGS         215
-#define HFETA_CQGS        216
-#define HFETA_QGD         217
-#define HFETA_CQGD        218
+enum {
+    HFETA_DRAINNODE = 201,
+    HFETA_GATENODE,
+    HFETA_SOURCENODE,
+    HFETA_DRAINPRIMENODE,
+    HFETA_SOURCEPRIMENODE,
+    HFETA_VGS,
+    HFETA_VGD,
+    HFETA_CG,
+    HFETA_CD,
+    HFETA_CGD,
+    HFETA_GM,
+    HFETA_GDS,
+    HFETA_GGS,
+    HFETA_GGD,
+    HFETA_QGS,
+    HFETA_CQGS,
+    HFETA_QGD,
+    HFETA_CQGD,
+};
 
 /* model questions */
 
-#define HFETA_MOD_DRAINCONDUCT    301
-#define HFETA_MOD_SOURCECONDUCT   302 
-#define HFETA_MOD_DEPLETIONCAP    303
-#define HFETA_MOD_VCRIT           304
-
+enum {
+    HFETA_MOD_DRAINCONDUCT = 301,
+    HFETA_MOD_SOURCECONDUCT,
+    HFETA_MOD_DEPLETIONCAP,
+    HFETA_MOD_VCRIT,
+};
 
 #define L        (here->HFETAlength)
 #define W        (here->HFETAwidth)

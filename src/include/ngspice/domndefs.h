@@ -37,16 +37,17 @@ typedef struct sDOMNcard {
 } DOMNcard;
 
 /* DOMN parameters */
-#define DOMN_X_LOW	1
-#define DOMN_X_HIGH	2
-#define DOMN_Y_LOW	3
-#define DOMN_Y_HIGH	4
-#define DOMN_IX_LOW	5
-#define DOMN_IX_HIGH	6
-#define DOMN_IY_LOW	7
-#define DOMN_IY_HIGH	8
-#define DOMN_NUMBER	9
-#define DOMN_MATERIAL	10
-
+enum {
+    DOMN_X_LOW = 1,
+    DOMN_X_HIGH,
+    DOMN_Y_LOW,
+    DOMN_Y_HIGH,
+    DOMN_IX_LOW,
+    DOMN_IX_HIGH,
+    DOMN_IY_LOW,
+    DOMN_IY_HIGH,
+    DOMN_NUMBER,
+    DOMN_MATERIAL,
+};
 
 #endif

@@ -96,9 +96,11 @@ typedef struct handle {
 #define MAX_LINES   25
 #define SCROLL_INCR 25
 
-#define BS_LEFT     0
-#define BS_CENTER   1
-#define BS_UNIF     2
+enum {
+    BS_LEFT = 0,
+    BS_CENTER,
+    BS_UNIF,
+};
 
 /* External symbols. */
 

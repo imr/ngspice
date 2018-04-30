@@ -78,17 +78,21 @@ typedef struct sTXLmodel {       /* model structure for a txl */
 } TXLmodel;
 
 /* instance parameters */
-#define TXL_IN_NODE 1
-#define TXL_OUT_NODE 2
-#define TXL_LENGTH 3
+enum {
+    TXL_IN_NODE = 1,
+    TXL_OUT_NODE,
+    TXL_LENGTH,
+};
 
 /* model parameters */
-#define TXL_R 101
-#define TXL_C 102
-#define TXL_G 103
-#define TXL_L 104
-#define TXL_length 105
-#define TXL_MOD_R 106
+enum {
+    TXL_R = 101,
+    TXL_C,
+    TXL_G,
+    TXL_L,
+    TXL_length,
+    TXL_MOD_R,
+};
 
 #include "txlext.h"
 extern VI_list_txl *pool_vi_txl;

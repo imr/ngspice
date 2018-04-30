@@ -60,26 +60,30 @@ typedef struct sCCCSmodel {       /* model structure for a source */
 } CCCSmodel;
 
 /* device parameters */
-#define CCCS_GAIN 1
-#define CCCS_CONTROL 2
-#define CCCS_POS_NODE 3
-#define CCCS_NEG_NODE 4
-#define CCCS_CONT_BR 5
-#define CCCS_GAIN_SENS 6
-#define CCCS_CURRENT 7
-#define CCCS_POWER 8
-#define CCCS_VOLTS 9
-#define CCCS_M 10
+enum {
+    CCCS_GAIN = 1,
+    CCCS_CONTROL,
+    CCCS_POS_NODE,
+    CCCS_NEG_NODE,
+    CCCS_CONT_BR,
+    CCCS_GAIN_SENS,
+    CCCS_CURRENT,
+    CCCS_POWER,
+    CCCS_VOLTS,
+    CCCS_M,
+};
 
 /* model parameters */
 
 /* device questions */
-#define CCCS_QUEST_SENS_REAL         201
-#define CCCS_QUEST_SENS_IMAG         202
-#define CCCS_QUEST_SENS_MAG      203
-#define CCCS_QUEST_SENS_PH       204
-#define CCCS_QUEST_SENS_CPLX         205
-#define CCCS_QUEST_SENS_DC       206
+enum {
+    CCCS_QUEST_SENS_REAL = 201,
+    CCCS_QUEST_SENS_IMAG,
+    CCCS_QUEST_SENS_MAG,
+    CCCS_QUEST_SENS_PH,
+    CCCS_QUEST_SENS_CPLX,
+    CCCS_QUEST_SENS_DC,
+};
 
 /* model questions */
 

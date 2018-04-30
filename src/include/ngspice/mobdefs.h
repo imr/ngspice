@@ -47,22 +47,24 @@ typedef struct sMOBcard {
 } MOBcard;
 
 /* MOB parameters */
-#define MOB_ELEC	1
-#define MOB_HOLE	2
-#define MOB_MAJOR	3
-#define MOB_MINOR	4
-#define MOB_MUMAX	5
-#define MOB_MUMIN	6
-#define MOB_NTREF	7
-#define MOB_NTEXP	8
-#define MOB_VSAT	9
-#define MOB_VWARM	10
-#define MOB_MUS		11
-#define MOB_EC_A	12
-#define MOB_EC_B	13
-#define MOB_CONC_MOD	14
-#define MOB_FIELD_MOD	15
-#define MOB_MATERIAL	16
-#define MOB_INIT	17
+enum {
+    MOB_ELEC = 1,
+    MOB_HOLE,
+    MOB_MAJOR,
+    MOB_MINOR,
+    MOB_MUMAX,
+    MOB_MUMIN,
+    MOB_NTREF,
+    MOB_NTEXP,
+    MOB_VSAT,
+    MOB_VWARM,
+    MOB_MUS,
+    MOB_EC_A,
+    MOB_EC_B,
+    MOB_CONC_MOD,
+    MOB_FIELD_MOD,
+    MOB_MATERIAL,
+    MOB_INIT,
+};
 
 #endif

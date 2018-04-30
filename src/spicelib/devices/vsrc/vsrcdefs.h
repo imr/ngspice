@@ -96,46 +96,50 @@ typedef struct sVSRCmodel {
 /* source function types (shared with current sources) */
 #ifndef PULSE_FUN_TYPES
 #define PULSE_FUN_TYPES
-#define PULSE 1
-#define SINE 2
-#define EXP 3
-#define SFFM 4
-#define PWL 5
-#define AM 6
-#define TRNOISE 7
-#define TRRANDOM 8
-#define EXTERNAL 9
+enum {
+    PULSE = 1,
+    SINE,
+    EXP,
+    SFFM,
+    PWL,
+    AM,
+    TRNOISE,
+    TRRANDOM,
+    EXTERNAL,
+};
+
 #endif
 
 /* device parameters */
-#define VSRC_DC 1
-#define VSRC_AC 2
-#define VSRC_AC_MAG 3
-#define VSRC_AC_PHASE 4
-#define VSRC_PULSE 5
-#define VSRC_SINE 6
-#define VSRC_EXP 7
-#define VSRC_PWL 8
-#define VSRC_SFFM 9
-#define VSRC_BR 10
-#define VSRC_FCN_TYPE 11
-#define VSRC_FCN_ORDER 12
-#define VSRC_FCN_COEFFS 13
-#define VSRC_AC_REAL 14
-#define VSRC_AC_IMAG 15
-#define VSRC_POS_NODE 16
-#define VSRC_NEG_NODE 17
-#define VSRC_CURRENT 18
-#define VSRC_POWER 19
-#define VSRC_D_F1 20
-#define VSRC_D_F2 21
-
-#define VSRC_AM 22
-#define VSRC_R 23
-#define VSRC_TD 24
-#define VSRC_TRNOISE 25
-#define VSRC_TRRANDOM 26
-#define VSRC_EXTERNAL 27
+enum {
+    VSRC_DC = 1,
+    VSRC_AC,
+    VSRC_AC_MAG,
+    VSRC_AC_PHASE,
+    VSRC_PULSE,
+    VSRC_SINE,
+    VSRC_EXP,
+    VSRC_PWL,
+    VSRC_SFFM,
+    VSRC_BR,
+    VSRC_FCN_TYPE,
+    VSRC_FCN_ORDER,
+    VSRC_FCN_COEFFS,
+    VSRC_AC_REAL,
+    VSRC_AC_IMAG,
+    VSRC_POS_NODE,
+    VSRC_NEG_NODE,
+    VSRC_CURRENT,
+    VSRC_POWER,
+    VSRC_D_F1,
+    VSRC_D_F2,
+    VSRC_AM,
+    VSRC_R,
+    VSRC_TD,
+    VSRC_TRNOISE,
+    VSRC_TRRANDOM,
+    VSRC_EXTERNAL,
+};
 
 /* model parameters */
 

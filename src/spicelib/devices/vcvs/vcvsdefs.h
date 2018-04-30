@@ -72,28 +72,32 @@ typedef struct sVCVSmodel {       /* model structure for a source */
 } VCVSmodel;
 
 /* device parameters */
-#define VCVS_GAIN 1
-#define VCVS_POS_NODE 2
-#define VCVS_NEG_NODE 3
-#define VCVS_CONT_P_NODE 4
-#define VCVS_CONT_N_NODE 5
-#define VCVS_BR 6
-#define VCVS_IC 7
-#define VCVS_CONT_V_OLD 8
-#define VCVS_GAIN_SENS 9
-#define VCVS_CURRENT 10
-#define VCVS_POWER 11
-#define VCVS_VOLTS 12
+enum {
+    VCVS_GAIN = 1,
+    VCVS_POS_NODE,
+    VCVS_NEG_NODE,
+    VCVS_CONT_P_NODE,
+    VCVS_CONT_N_NODE,
+    VCVS_BR,
+    VCVS_IC,
+    VCVS_CONT_V_OLD,
+    VCVS_GAIN_SENS,
+    VCVS_CURRENT,
+    VCVS_POWER,
+    VCVS_VOLTS,
+};
 
 /* model parameters */
 
 /* device questions */
-#define VCVS_QUEST_SENS_REAL         201
-#define VCVS_QUEST_SENS_IMAG         202
-#define VCVS_QUEST_SENS_MAG      203
-#define VCVS_QUEST_SENS_PH       204
-#define VCVS_QUEST_SENS_CPLX         205
-#define VCVS_QUEST_SENS_DC       206
+enum {
+    VCVS_QUEST_SENS_REAL = 201,
+    VCVS_QUEST_SENS_IMAG,
+    VCVS_QUEST_SENS_MAG,
+    VCVS_QUEST_SENS_PH,
+    VCVS_QUEST_SENS_CPLX,
+    VCVS_QUEST_SENS_DC,
+};
 
 /* model questions */
 

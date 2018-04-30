@@ -64,26 +64,30 @@ typedef struct sCCVSmodel {       /* model structure for a CCVsource */
 } CCVSmodel;
 
 /* device parameters */
-#define CCVS_TRANS 1
-#define CCVS_CONTROL 2
-#define CCVS_POS_NODE 3
-#define CCVS_NEG_NODE 4
-#define CCVS_BR 5
-#define CCVS_CONT_BR 6
-#define CCVS_TRANS_SENS 7
-#define CCVS_CURRENT 8
-#define CCVS_POWER 9
-#define CCVS_VOLTS 10
+enum {
+    CCVS_TRANS = 1,
+    CCVS_CONTROL,
+    CCVS_POS_NODE,
+    CCVS_NEG_NODE,
+    CCVS_BR,
+    CCVS_CONT_BR,
+    CCVS_TRANS_SENS,
+    CCVS_CURRENT,
+    CCVS_POWER,
+    CCVS_VOLTS,
+};
 
 /* model parameters */
 
 /* device questions */
-#define CCVS_QUEST_SENS_REAL         201
-#define CCVS_QUEST_SENS_IMAG         202
-#define CCVS_QUEST_SENS_MAG      203
-#define CCVS_QUEST_SENS_PH       204
-#define CCVS_QUEST_SENS_CPLX         205
-#define CCVS_QUEST_SENS_DC       206
+enum {
+    CCVS_QUEST_SENS_REAL = 201,
+    CCVS_QUEST_SENS_IMAG,
+    CCVS_QUEST_SENS_MAG,
+    CCVS_QUEST_SENS_PH,
+    CCVS_QUEST_SENS_CPLX,
+    CCVS_QUEST_SENS_DC,
+};
 
 /* model questions */
 

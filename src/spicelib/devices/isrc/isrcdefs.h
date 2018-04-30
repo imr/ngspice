@@ -89,45 +89,52 @@ typedef struct sISRCmodel {
 
 #ifndef PULSE_FUN_TYPES
 #define PULSE_FUN_TYPES
-#define PULSE 1
-#define SINE 2
-#define EXP 3
-#define SFFM 4
-#define PWL 5
-#define AM 6
-#define TRNOISE 7
-#define TRRANDOM 8
-#define EXTERNAL 9
+enum {
+    PULSE = 1,
+    SINE,
+    EXP,
+    SFFM,
+    PWL,
+    AM,
+    TRNOISE,
+    TRRANDOM,
+    EXTERNAL,
+};
+
 #endif
 
 /* device parameters */
-#define ISRC_DC 1
-#define ISRC_M 2
-#define ISRC_AC_MAG 3
-#define ISRC_AC_PHASE 4
-#define ISRC_AC 5
-#define ISRC_PULSE 6
-#define ISRC_SINE 7
-#define ISRC_EXP 8
-#define ISRC_PWL 9
-#define ISRC_SFFM 10
-#define ISRC_NEG_NODE 11
-#define ISRC_POS_NODE 12
-#define ISRC_AC_REAL 13
-#define ISRC_AC_IMAG 14
-#define ISRC_FCN_TYPE 15
-#define ISRC_FCN_ORDER 16
-#define ISRC_FCN_COEFFS 17
-#define ISRC_POWER 18
-#define ISRC_D_F1 19
-#define ISRC_D_F2 20
-#define ISRC_VOLTS 21
+enum {
+    ISRC_DC = 1,
+    ISRC_M,
+    ISRC_AC_MAG,
+    ISRC_AC_PHASE,
+    ISRC_AC,
+    ISRC_PULSE,
+    ISRC_SINE,
+    ISRC_EXP,
+    ISRC_PWL,
+    ISRC_SFFM,
+    ISRC_NEG_NODE,
+    ISRC_POS_NODE,
+    ISRC_AC_REAL,
+    ISRC_AC_IMAG,
+    ISRC_FCN_TYPE,
+    ISRC_FCN_ORDER,
+    ISRC_FCN_COEFFS,
+    ISRC_POWER,
+    ISRC_D_F1,
+    ISRC_D_F2,
+    ISRC_VOLTS,
+    ISRC_AM,
+    ISRC_CURRENT,
+};
 
-#define ISRC_AM 22
-#define ISRC_CURRENT 23
-#define ISRC_TRNOISE 25
-#define ISRC_TRRANDOM 26
-#define ISRC_EXTERNAL 27
+enum {
+    ISRC_TRNOISE = 25,
+    ISRC_TRRANDOM,
+    ISRC_EXTERNAL,
+};
 
 /* model parameters */
 

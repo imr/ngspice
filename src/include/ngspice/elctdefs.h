@@ -35,14 +35,16 @@ typedef struct sELCTcard {
 } ELCTcard;
 
 /* ELCT parameters */
-#define ELCT_X_LOW	1
-#define ELCT_X_HIGH	2
-#define ELCT_Y_LOW	3
-#define ELCT_Y_HIGH	4
-#define ELCT_IX_LOW	5
-#define ELCT_IX_HIGH	6
-#define ELCT_IY_LOW	7
-#define ELCT_IY_HIGH	8
-#define ELCT_NUMBER	9
+enum {
+    ELCT_X_LOW = 1,
+    ELCT_X_HIGH,
+    ELCT_Y_LOW,
+    ELCT_Y_HIGH,
+    ELCT_IX_LOW,
+    ELCT_IX_HIGH,
+    ELCT_IY_LOW,
+    ELCT_IY_HIGH,
+    ELCT_NUMBER,
+};
 
 #endif

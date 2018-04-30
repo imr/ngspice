@@ -16,13 +16,16 @@ Author: Trond Ytterdal
 
 /* indices to the array of MESAFET noise sources */
 
-#define MESARDNOIZ       0
-#define MESARSNOIZ       1
-#define MESAIDNOIZ       2
-#define MESAFLNOIZ       3
-#define MESATOTNOIZ      4
+enum {
+    MESARDNOIZ = 0,
+    MESARSNOIZ,
+    MESAIDNOIZ,
+    MESAFLNOIZ,
+    MESATOTNOIZ,
+    MESANSRCS,
+};
 
-#define MESANSRCS        5     /* the number of MESAFET noise sources */
+     /* the number of MESAFET noise sources */
 
 /* information used to describe a single instance */
 
@@ -369,111 +372,121 @@ typedef struct sMESAmodel {       /* model structure for a MESAfet */
 #endif
 
 /* device parameters */
-#define MESA_LENGTH   1
-#define MESA_WIDTH    2
-#define MESA_IC_VDS   3
-#define MESA_IC_VGS   4
-#define MESA_TD       5
-#define MESA_TS       6
-#define MESA_IC       7
-#define MESA_OFF      8
-#define MESA_CS       9
-#define MESA_POWER   10
-#define MESA_DTEMP   11
-#define MESA_M       12   
+enum {
+    MESA_LENGTH = 1,
+    MESA_WIDTH,
+    MESA_IC_VDS,
+    MESA_IC_VGS,
+    MESA_TD,
+    MESA_TS,
+    MESA_IC,
+    MESA_OFF,
+    MESA_CS,
+    MESA_POWER,
+    MESA_DTEMP,
+    MESA_M,
+};
 
 /* model parameters */
-#define MESA_MOD_VTO      101
-#define MESA_MOD_VS       102
-#define MESA_MOD_LAMBDA   103
-#define MESA_MOD_RD       104
-#define MESA_MOD_RS       105
-#define MESA_MOD_RG       106
-#define MESA_MOD_RI       107
-#define MESA_MOD_RF       108
-#define MESA_MOD_RDI      109
-#define MESA_MOD_RSI      110
-#define MESA_MOD_PHIB     111
-#define MESA_MOD_PHIB1    112
-#define MESA_MOD_ASTAR    113
-#define MESA_MOD_GGR      114
-#define MESA_MOD_DEL      115
-#define MESA_MOD_XCHI     116
-#define MESA_MOD_N        117
-#define MESA_MOD_ETA      118
-#define MESA_MOD_M        119
-#define MESA_MOD_MC       120
-#define MESA_MOD_SIGMA0   121
-#define MESA_MOD_VSIGMAT  122
-#define MESA_MOD_VSIGMA   123
-#define MESA_MOD_MU       124
-#define MESA_MOD_MU1      125
-#define MESA_MOD_MU2      126
-#define MESA_MOD_D        127
-#define MESA_MOD_ND       128
-#define MESA_MOD_DELTA    129
-#define MESA_MOD_TC       130
-#define MESA_MOD_NMF      131
-#define MESA_MOD_TVTO     132
-#define MESA_MOD_TLAMBDA  134
-#define MESA_MOD_TETA0    135
-#define MESA_MOD_TETA1    136
-#define MESA_MOD_TMU      137
-#define MESA_MOD_XTM0     138
-#define MESA_MOD_XTM1     139
-#define MESA_MOD_XTM2     140
-#define MESA_MOD_KS       141
-#define MESA_MOD_VSG      142
-#define MESA_MOD_LAMBDAHF 143
-#define MESA_MOD_TF       144
-#define MESA_MOD_FLO      145
-#define MESA_MOD_DELFO    146
-#define MESA_MOD_AG       147
-#define MESA_MOD_THETA    148
-#define MESA_MOD_ALPHA    149
-#define MESA_MOD_TC1      150
-#define MESA_MOD_TC2      151
-#define MESA_MOD_ZETA     152
-#define MESA_MOD_BETA     153
-#define MESA_MOD_DU       154
-#define MESA_MOD_NDU      155
-#define MESA_MOD_TH       156
-#define MESA_MOD_NDELTA   157
-#define MESA_MOD_LEVEL    158
-#define MESA_MOD_NMAX     159
-#define MESA_MOD_GAMMA    160
-#define MESA_MOD_EPSI     161
-#define MESA_MOD_CBS      162
-#define MESA_MOD_CAS      163
-#define MESA_MOD_PMF      164
-#define MESA_MOD_TYPE     165
+enum {
+    MESA_MOD_VTO = 101,
+    MESA_MOD_VS,
+    MESA_MOD_LAMBDA,
+    MESA_MOD_RD,
+    MESA_MOD_RS,
+    MESA_MOD_RG,
+    MESA_MOD_RI,
+    MESA_MOD_RF,
+    MESA_MOD_RDI,
+    MESA_MOD_RSI,
+    MESA_MOD_PHIB,
+    MESA_MOD_PHIB1,
+    MESA_MOD_ASTAR,
+    MESA_MOD_GGR,
+    MESA_MOD_DEL,
+    MESA_MOD_XCHI,
+    MESA_MOD_N,
+    MESA_MOD_ETA,
+    MESA_MOD_M,
+    MESA_MOD_MC,
+    MESA_MOD_SIGMA0,
+    MESA_MOD_VSIGMAT,
+    MESA_MOD_VSIGMA,
+    MESA_MOD_MU,
+    MESA_MOD_MU1,
+    MESA_MOD_MU2,
+    MESA_MOD_D,
+    MESA_MOD_ND,
+    MESA_MOD_DELTA,
+    MESA_MOD_TC,
+    MESA_MOD_NMF,
+    MESA_MOD_TVTO,
+};
 
-#define MESA_DRAINNODE       201
-#define MESA_GATENODE        202
-#define MESA_SOURCENODE      203
-#define MESA_DRAINPRIMENODE  204
-#define MESA_SOURCEPRIMENODE 205
-#define MESA_GATEPRIMENODE   206
+enum {
+    MESA_MOD_TLAMBDA = 134,
+    MESA_MOD_TETA0,
+    MESA_MOD_TETA1,
+    MESA_MOD_TMU,
+    MESA_MOD_XTM0,
+    MESA_MOD_XTM1,
+    MESA_MOD_XTM2,
+    MESA_MOD_KS,
+    MESA_MOD_VSG,
+    MESA_MOD_LAMBDAHF,
+    MESA_MOD_TF,
+    MESA_MOD_FLO,
+    MESA_MOD_DELFO,
+    MESA_MOD_AG,
+    MESA_MOD_THETA,
+    MESA_MOD_ALPHA,
+    MESA_MOD_TC1,
+    MESA_MOD_TC2,
+    MESA_MOD_ZETA,
+    MESA_MOD_BETA,
+    MESA_MOD_DU,
+    MESA_MOD_NDU,
+    MESA_MOD_TH,
+    MESA_MOD_NDELTA,
+    MESA_MOD_LEVEL,
+    MESA_MOD_NMAX,
+    MESA_MOD_GAMMA,
+    MESA_MOD_EPSI,
+    MESA_MOD_CBS,
+    MESA_MOD_CAS,
+    MESA_MOD_PMF,
+    MESA_MOD_TYPE,
+};
 
-#define MESA_VGS         207
-#define MESA_VGD         208
-#define MESA_CG          209
-#define MESA_CD          210
-#define MESA_CGD         211
-#define MESA_GM          212
-#define MESA_GDS         213
-#define MESA_GGS         214
-#define MESA_GGD         215
-#define MESA_QGS         216
-#define MESA_CQGS        217
-#define MESA_QGD         218
-#define MESA_CQGD        219
+enum {
+    MESA_DRAINNODE = 201,
+    MESA_GATENODE,
+    MESA_SOURCENODE,
+    MESA_DRAINPRIMENODE,
+    MESA_SOURCEPRIMENODE,
+    MESA_GATEPRIMENODE,
+    MESA_VGS,
+    MESA_VGD,
+    MESA_CG,
+    MESA_CD,
+    MESA_CGD,
+    MESA_GM,
+    MESA_GDS,
+    MESA_GGS,
+    MESA_GGD,
+    MESA_QGS,
+    MESA_CQGS,
+    MESA_QGD,
+    MESA_CQGD,
+};
 
-#define MESA_MOD_DRAINCONDUCT    301
-#define MESA_MOD_SOURCECONDUCT   302
-#define MESA_MOD_GATECONDUCT     303
-#define MESA_MOD_DEPLETIONCAP    304
-#define MESA_MOD_VCRIT           305
+enum {
+    MESA_MOD_DRAINCONDUCT = 301,
+    MESA_MOD_SOURCECONDUCT,
+    MESA_MOD_GATECONDUCT,
+    MESA_MOD_DEPLETIONCAP,
+    MESA_MOD_VCRIT,
+};
 
 #include "mesaext.h"
 

@@ -71,29 +71,34 @@ extern int SENSask(CKTcircuit *,JOB *,int ,IFvalue *);
 extern int SENSsetParam(CKTcircuit *,JOB *,int ,IFvalue *);
 extern int sens_sens(CKTcircuit *,int);
 
-#define	SENS_POS			2
-#define	SENS_NEG			3
-#define	SENS_SRC			4
-#define	SENS_NAME		5
+enum {
+    SENS_POS = 2,
+    SENS_NEG,
+    SENS_SRC,
+    SENS_NAME,
+};
 
-#define	SENS_START		10
-#define	SENS_STOP		11
-#define	SENS_STEPS		12
+enum {
+    SENS_START = 10,
+    SENS_STOP,
+    SENS_STEPS,
+    SENS_DECADE,
+    SENS_OCTAVE,
+    SENS_LINEAR,
+    SENS_DC,
+    SENS_DEFTOL,
+    SENS_DEFPERTURB,
+    SENS_DEVDEFTOL,
+    SENS_DEVDEFPERT,
+    SENS_TYPE,
+    SENS_DEVICE,
+};
 
-#define	SENS_DECADE		13
-#define	SENS_OCTAVE		14
-#define	SENS_LINEAR		15
-
-#define	SENS_DC			16
-#define	SENS_DEFTOL		17
-#define	SENS_DEFPERTURB		18
-#define	SENS_DEVDEFTOL		19
-#define	SENS_DEVDEFPERT		20
-#define	SENS_TYPE		21
-#define	SENS_DEVICE		22
-#define	SENS_PARAM		24
-#define	SENS_TOL			25
-#define	SENS_PERT		26
+enum {
+    SENS_PARAM = 24,
+    SENS_TOL,
+    SENS_PERT,
+};
 
 #endif /*DEFS*/
 

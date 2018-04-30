@@ -84,23 +84,27 @@ typedef struct sSWmodel {      /* model structure for a switch */
 } SWmodel;
 
 /* device parameters */
-#define SW_IC_ON 1
-#define SW_IC_OFF 2
-#define SW_POS_NODE 3
-#define SW_NEG_NODE 4
-#define SW_POS_CONT_NODE 5
-#define SW_NEG_CONT_NODE 6
-#define SW_CURRENT 7
-#define SW_POWER 8
+enum {
+    SW_IC_ON = 1,
+    SW_IC_OFF,
+    SW_POS_NODE,
+    SW_NEG_NODE,
+    SW_POS_CONT_NODE,
+    SW_NEG_CONT_NODE,
+    SW_CURRENT,
+    SW_POWER,
+};
 
 /* model parameters */
-#define SW_MOD_SW 101
-#define SW_MOD_RON 102
-#define SW_MOD_ROFF 103
-#define SW_MOD_VTH 104
-#define SW_MOD_VHYS 105
-#define SW_MOD_GON 106
-#define SW_MOD_GOFF 107
+enum {
+    SW_MOD_SW = 101,
+    SW_MOD_RON,
+    SW_MOD_ROFF,
+    SW_MOD_VTH,
+    SW_MOD_VHYS,
+    SW_MOD_GON,
+    SW_MOD_GOFF,
+};
 
 /* device questions */
 

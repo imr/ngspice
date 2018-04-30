@@ -37,24 +37,26 @@ typedef struct sOPTNcard {
 } OPTNcard;
 
 /* OPTN parameters */
-#define OPTN_RESISTOR	1
-#define OPTN_CAPACITOR   2
-#define OPTN_DIODE       3
-#define OPTN_BIPOLAR     4
-#define OPTN_SOIBJT      5
-#define OPTN_MOSCAP      6
-#define OPTN_MOSFET      7
-#define OPTN_SOIMOS      8
-#define OPTN_JFET        9
-#define OPTN_MESFET      10
-#define OPTN_DEFA        11
-#define OPTN_DEFW        12
-#define OPTN_DEFL        13
-#define OPTN_BASE_AREA   14
-#define OPTN_BASE_LENGTH 15
-#define OPTN_BASE_DEPTH  16
-#define OPTN_TNOM        17
-#define OPTN_IC_FILE     18
-#define OPTN_UNIQUE      19
+enum {
+    OPTN_RESISTOR = 1,
+    OPTN_CAPACITOR,
+    OPTN_DIODE,
+    OPTN_BIPOLAR,
+    OPTN_SOIBJT,
+    OPTN_MOSCAP,
+    OPTN_MOSFET,
+    OPTN_SOIMOS,
+    OPTN_JFET,
+    OPTN_MESFET,
+    OPTN_DEFA,
+    OPTN_DEFW,
+    OPTN_DEFL,
+    OPTN_BASE_AREA,
+    OPTN_BASE_LENGTH,
+    OPTN_BASE_DEPTH,
+    OPTN_TNOM,
+    OPTN_IC_FILE,
+    OPTN_UNIQUE,
+};
 
 #endif
