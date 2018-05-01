@@ -57,8 +57,9 @@ To enable the adms option, you have to install adms. LINUX users may
 download the source code, and make and install it in the usual way.
 
 Windows users may either use CYGWIN or MSYS2. MS Visual Studio cannot
-be used for adms. Binaries are available. For MSYS2 you may copy them
-to C:\msys64\mingw64\bin (to create 64 bit ngspice).
+be used for adms. Adms binaries are available (admsCheck.exe and
+admsXml.exe). For MSYS2 you may copy them to C:\msys64\mingw64\bin
+(to create 64 bit ngspice).
 
 The next step is to install the Verilog-a model files. Due to licensing
 issues they are not part of the regular ngspice distribution. Download
