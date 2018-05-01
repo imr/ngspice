@@ -19,6 +19,7 @@ if !TCL_MODULE
 if !SHARED_MODULE
 bin_PROGRAMS =  ngspice ngnutmeg
 
+if OLDAPPS
 if !WINGUI
 bin_PROGRAMS += ngsconvert ngproc2mod ngmultidec ngmakeidx
 helpdatadir = $(pkgdatadir)/helpdir
@@ -27,6 +28,7 @@ if !NO_HELP
 bin_PROGRAMS += nghelp
 endif !NO_HELP
 endif !WINGUI
+endif OLDAPPS
 endif !SHARED_MODULE
 endif !TCL_MODULE
 
@@ -226,6 +228,7 @@ ngnutmeg_LDADD += \
 ## These programs are not required on Windows
 if !WINGUI
 if !SHWIN
+if OLDAPPS
 
 if !NO_X
 ngnutmeg_LDADD += \
@@ -290,6 +293,7 @@ ngmakeidx_SOURCES = makeidx.c
 ngspice.idx: ngmakeidx$(EXEEXT) $(srcdir)/ngspice.txt
 	./ngmakeidx$(EXEEXT) -o ngspice.idx $(srcdir)/ngspice.txt
 
+endif OLDAPPS
 endif !SHWIN
 endif !WINGUI
 
