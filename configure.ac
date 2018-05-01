@@ -979,7 +979,7 @@ if test "x$enable_adms" = xyes ; then
 else
 
     VLADEVDIR=""
-    NOTVLADEVDIR="adms"
+    NOTVLADEVDIR="adms/admst"
 
 fi
 
