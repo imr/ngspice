@@ -1,0 +1,54 @@
+// Copyright (c) 2000-2007, NXP Semiconductor
+// Copyright (c) 2007-2014, Delft University of Technology
+// Copyright (c) 2015, Auburn University
+// All rights reserved, see IP_NOTICE_DISCLAIMER_LICENSE for further information.
+
+`include "frontdef.inc"
+`define  SELFHEATING
+`define  SUBSTRATE
+
+module bjt504tva (c, b, e, s, dt);
+
+`ifdef insideADMS
+  `define P(p) (*p*)
+`else
+  `define P(p)
+`endif
+
+  // External ports
+     inout c, b, e, s, dt;
+
+     electrical 	c     `P(desc="external collector node");
+     electrical 	b     `P(desc="external base node");
+     electrical 	e     `P(desc="external emitter node");
+     electrical 	s     `P(desc="external substrate node");
+     electrical 	dt    `P(desc="external thermal node");
+
+  // Internal nodes
+     electrical 	c1    `P(desc="internal collector node 1");
+     electrical 	e1    `P(desc="internal emitter node");
+     electrical 	b1    `P(desc="internal base node 1");
+     electrical 	b2    `P(desc="internal base node 2");
+     electrical 	c2    `P(desc="internal collector node 2");
+     electrical 	c3    `P(desc="internal collector node 3");
+     electrical 	c4    `P(desc="internal collector node 4");
+  // For correlated noise implementation
+     electrical 	noi   `P(desc="internal noise node");
+
+`include "parameters.inc"
+`include "variables.inc"
+//`include "opvars.inc"
+
+analog begin
+`include "initialize.inc"
+`include "tscaling.inc"
+`include "evaluate.inc"
+`include "noise.inc"
+//`include "opinfo.inc"
+
+// The following can be used to print OP-info to std out:
+// `include "op_print.inc"
+
+end  // analog
+endmodule
+

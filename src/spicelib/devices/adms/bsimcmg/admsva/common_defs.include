@@ -1,0 +1,185 @@
+// ********************************************************
+// **** BSIM-CMG 110.0.0 released by Sourabh Khandelwal on 01/01/2016 ****/
+// *  BSIM Common Multi-Gate Model Equations (Verilog-A)
+// ********************************************************
+//
+// ********************************************************
+// * Copyright 2016 Regents of the University of California. 
+// * All rights reserved.
+// *
+// * Project Director: Prof. Chenming Hu.
+// * Authors: Sriramkumar V., Navid Paydavosi, Juan Duarte, Darsen Lu, Sourabh Khandelwal
+// *          Chung-Hsun Lin, Mohan Dunga, Shijing Yao,
+// *          Ali Niknejad, Chenming Hu
+// ********************************************************
+// ********************************************************
+// *   NONDISCLOSURE STATEMENT
+// Software is distributed as is, completely without warranty or service
+// support. The University of California and its employees are not liable
+// for the condition or performance of the software.
+// The University of California owns the copyright and grants users a perpetual,
+// irrevocable, worldwide, non-exclusive, royalty-free license with 
+// respect to the software as set forth below.
+// The University of California hereby disclaims all implied warranties.
+// The University of California grants the users the right to modify, copy,
+// and redistribute the software and documentation, both within the user's
+// organization and externally, subject to the following restrictions
+// 1. The users agree not to charge for the University of California code
+// itself but may charge for additions, extensions, or support.
+// 2. In any product based on the software, the users agree to acknowledge
+// the University of California that developed the software. This
+// acknowledgment shall appear in the product documentation.
+// 3. The users agree to obey all U.S. Government restrictions governing
+// redistribution or export of the software.
+// 4. The users agree to reproduce any copyright notice which appears on
+// the software on any copy or modification of such made available
+// to others
+// Agreed to on __Jan 01, 2016__________________
+// By: ___University of California, Berkeley____ 
+//     ___Chenming Hu_____________________ 
+//     ___Professor in Graduate School _______
+// ********************************************************
+
+// Numerical Constants
+`define EXPL_THRESHOLD       80.0
+`define MAX_EXPL             5.540622384e34
+`define MIN_EXPL             1.804851387e-35
+`define N_MINLOG             1.0e-38
+`define MEXPQM               4
+`define DELTA_1              0.02
+`define DELTA_ASYMM          0.04
+`define CONSTCtoK            (273.15)
+`define REFTEMP              (300.15)    /* 27 degrees C */
+
+
+// Model type definitions
+`define ntype         1
+`define ptype         0
+
+// Physical Constants
+`define q             1.60219e-19         // Coul
+`define EPS0          8.8542e-12          // F/m
+`define HBAR          1.05457e-34         // Joule-sec
+`define MEL           9.11e-31            // kg
+`define KboQ          8.617087e-5         // Joule / degree
+
+// Mathematical functions
+//`define SINH(x)        (0.5 * (lexp(x) - lexp(-(x))))
+`define COSH(x)        (0.5 * (lexp(x) + lexp(-(x))))
+//`define TANH(x)        ((lexp(x) - lexp(-(x))) / (lexp(x) + lexp(-(x))))
+`define COT(x)         ((x)>=`M_PI/2 ? 0 :  ((x)<=-`M_PI/2 ? 0 : 1.0/tan(x)))
+
+// Junction capacitance
+//ex:(ves_jct, Czbs, PBS_t, SBS, MJS, MJS2, Qes1)
+`define BSIM6JunctnCap(vex, Cz, PB, SJ, MJ, MJ2, Qej)           \
+    begin                                                       \
+        if (Cz > 0.0) begin                                     \
+            T1 = vex / PB;                                      \
+            if (T1 < 0.9) begin                                 \
+                if (SJ > 0.0) begin  /*second-step junction*/   \
+                    vec =  PB * (1.0 - lexp((1.0 / MJ) * lln(1.0/SJ))); /*Switch over voltage*/\
+                    pb2 =  PB * SJ * MJ2 / MJ / lexp(- (1.0 + MJ) * lln(1.0 - vec / PB)); /*PB for second doping region*/\
+                    if (vex > vec) begin                                    \
+                        arg =  1.0 - T1;                                    \
+                        if (MJ == 0.5) sarg  =  1.0 / sqrt(arg);            \
+                        else           sarg  =  lexp(-MJ * lln(arg));       \
+                        Qej =  PB * Cz * (1.0 - arg * sarg) / (1.0 - MJ);   \
+                    end else begin  /*vex < vec*/                           \
+                        arg =  1.0 - vec / PB;                              \
+                        if (MJ == 0.5) sarg  =  1.0 / sqrt(arg);            \
+                        else           sarg  =  lexp(-MJ * lln(arg));       \
+                        Qec =  PB * Cz * (1.0 - arg * sarg) / (1.0 - MJ);   \
+                        arg =  1.0 - (vex - vec) / pb2;                     \
+                        if (MJ2 == 0.5) sarg  =  1.0 / sqrt(arg);           \
+                        else            sarg  =  lexp(-MJ2 * lln(arg));     \
+                        Qej =  Qec + SJ * pb2 * Cz * (1.0 - arg * sarg) / (1.0 - MJ2);   \
+                    end                                                                  \
+                end else begin  /*single junction*/                                      \
+                    arg =  1.0 - T1;                                                     \
+                    if (MJ == 0.5) sarg  =  1.0 / sqrt(arg);                             \
+                    else           sarg  =  lexp(-MJ * lln(arg));                        \
+                    Qej =  PB * Cz * (1.0 - arg * sarg) / (1.0 - MJ);                    \
+                end                                                                      \
+            end else begin  /*vex/PB>=0.9*/                                              \
+                T2  =  lexp(-MJ * lln(0.1));                                             \
+                T3  =  1.0 / (1.0-MJ);                                                   \
+                T4  =  T2 * (T1 - 1.0) * (5.0 * MJ * (T1-1.0) + (1.0 + MJ) );            \
+                T5  =  T3 * (1.0 - 0.05 * MJ * (1.0 + MJ) * T2 );                        \
+                Qej =  PB * Cz * (T4 + T5); /*Quadratic equation for Qej when vex/PB>=0.9*/\
+            end                                                                          \
+        end else begin                                                                   \
+            Qej  =  0.0;                                                                 \
+        end                                                                              \
+    end
+
+//
+//  Macros for the model/instance parameters
+//
+//  MPRxx    model    parameter real
+//  MPIxx    model    parameter integer
+//  IPRxx    instance parameter real
+//  IPIxx    instance parameter integer
+//     || 
+//     cc    closed lower bound, closed upper bound
+//     oo    open   lower bound, open   upper bound
+//     co    closed lower bound, open   upper bound
+//     oc    open   lower bound, closed upper bound
+//     cz    closed lower bound=0, open upper bound=inf
+//     oz    open   lower bound=0, open upper bound=inf
+//     nb    no bounds
+//     ex    no bounds with exclude
+//     sw    switch(integer only, values  0=false  and  1=true)
+//     ty    switch(integer only, values -1=p-type and +1=n-type)
+//
+//  IPM   instance parameter mFactor(multiplicity, implicit for LRM2.2)
+//  OPP   operating point parameter, includes units and description for printing
+//
+`define ALIAS(alias,paramName) aliasparam alias = paramName ;
+`define OPP(nam,uni,des)               (*units=uni,                   desc=des*)           real    nam ;
+
+`define MPRnb(nam,def,uni,        des) (*units=uni,                   desc=des*) parameter real    nam=def ; 
+`define MPRex(nam,def,uni,exc,    des) (*units=uni,                   desc=des*) parameter real    nam=def exclude exc ;
+`define MPRcc(nam,def,uni,lwr,upr,des) (*units=uni,                   desc=des*) parameter real    nam=def from[lwr:upr] ; 
+`define MPRoo(nam,def,uni,lwr,upr,des) (*units=uni,                   desc=des*) parameter real    nam=def from(lwr:upr) ; 
+`define MPRco(nam,def,uni,lwr,upr,des) (*units=uni,                   desc=des*) parameter real    nam=def from[lwr:upr) ; 
+`define MPRoc(nam,def,uni,lwr,upr,des) (*units=uni,                   desc=des*) parameter real    nam=def from(lwr:upr] ; 
+`define MPRcz(nam,def,uni,        des) (*units=uni,                   desc=des*) parameter real    nam=def from[  0:inf);
+`define MPRoz(nam,def,uni,        des) (*units=uni,                   desc=des*) parameter real    nam=def from(  0:inf);
+
+`define MPInb(nam,def,uni,        des) (*units=uni,                   desc=des*) parameter integer nam=def ;
+`define MPIex(nam,def,uni,exc,    des) (*units=uni,                   desc=des*) parameter integer nam=def exclude exc ;
+`define MPIcc(nam,def,uni,lwr,upr,des) (*units=uni,                   desc=des*) parameter integer nam=def from[lwr:upr] ;
+`define MPIoo(nam,def,uni,lwr,upr,des) (*units=uni,                   desc=des*) parameter integer nam=def from(lwr:upr) ; 
+`define MPIco(nam,def,uni,lwr,upr,des) (*units=uni,                   desc=des*) parameter integer nam=def from[lwr:upr) ; 
+`define MPIoc(nam,def,uni,lwr,upr,des) (*units=uni,                   desc=des*) parameter integer nam=def from(lwr:upr] ; 
+`define MPIcz(nam,def,uni,        des) (*units=uni,                   desc=des*) parameter integer nam=def from[  0:inf);
+`define MPIoz(nam,def,uni,        des) (*units=uni,                   desc=des*) parameter integer nam=def from(  0:inf);
+
+`define MPIsw(nam,def,uni,        des) (*units=uni,                   desc=des*) parameter integer nam=def from[  0:  1] ;
+`define MPIty(nam,def,uni,        des) (*units=uni,                   desc=des*) parameter integer nam=def from[ -1:  1] exclude 0 ;
+
+`define IPRnb(nam,def,uni,        des) (*units=uni, type="instance",  desc=des*) parameter real    nam=def ; 
+`define IPRex(nam,def,uni,exc,    des) (*units=uni, type="instance",  desc=des*) parameter real    nam=def exclude exc ;
+`define IPRcc(nam,def,uni,lwr,upr,des) (*units=uni, type="instance",  desc=des*) parameter real    nam=def from[lwr:upr] ; 
+`define IPRoo(nam,def,uni,lwr,upr,des) (*units=uni, type="instance",  desc=des*) parameter real    nam=def from(lwr:upr) ; 
+`define IPRco(nam,def,uni,lwr,upr,des) (*units=uni, type="instance",  desc=des*) parameter real    nam=def from[lwr:upr) ; 
+`define IPRoc(nam,def,uni,lwr,upr,des) (*units=uni, type="instance",  desc=des*) parameter real    nam=def from(lwr:upr] ; 
+`define IPRcz(nam,def,uni,        des) (*units=uni, type="instance",  desc=des*) parameter real    nam=def from[  0:inf);
+`define IPRoz(nam,def,uni,        des) (*units=uni, type="instance",  desc=des*) parameter real    nam=def from(  0:inf);
+
+`define IPInb(nam,def,uni,        des) (*units=uni, type="instance",  desc=des*) parameter integer nam=def ;
+`define IPIex(nam,def,uni,exc,    des) (*units=uni, type="instance",  desc=des*) parameter integer nam=def exclude exc ;
+`define IPIcc(nam,def,uni,lwr,upr,des) (*units=uni, type="instance",  desc=des*) parameter integer nam=def from[lwr:upr] ; 
+`define IPIoo(nam,def,uni,lwr,upr,des) (*units=uni, type="instance",  desc=des*) parameter integer nam=def from(lwr:upr) ; 
+`define IPIco(nam,def,uni,lwr,upr,des) (*units=uni, type="instance",  desc=des*) parameter integer nam=def from[lwr:upr) ; 
+`define IPIoc(nam,def,uni,lwr,upr,des) (*units=uni, type="instance",  desc=des*) parameter integer nam=def from(lwr:upr] ; 
+`define IPIcz(nam,def,uni,        des) (*units=uni, type="instance",  desc=des*) parameter integer nam=def from[  0:inf);
+`define IPIoz(nam,def,uni,        des) (*units=uni, type="instance",  desc=des*) parameter integer nam=def from(  0:inf);
+
+`ifdef EXPLICIT_MFACTOR
+   `define IPM                         (*units="" , type="instance",  desc="multiplicity factor"*) parameter real m=1.0 from(0.0:inf) ;
+   `define MFACTOR_USE m 
+`else // 
+   `define IPM
+   `define MFACTOR_USE 1.0
+`endif
