@@ -80,5 +80,20 @@ CAPparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
     default:
         return(E_BADPARM);
     }
+
+#ifdef USE_CUSPICE
+    int status ;
+    CAPmodel *model ;
+
+    model = CAPmodPtr(here) ;
+    if (model->gen.GENinitCUDA) {
+        model->CAPparamCPU.CAPcapacArray[here->gen.GENcudaIndex] = here->CAPcapac;
+        model->CAPparamCPU.CAPmArray[here->gen.GENcudaIndex] = here->CAPm;
+        status = cuCAPtemp ((GENmodel *)model);
+        if (status != 0)
+            return E_NOMEM;
+    }
+#endif
+
     return(OK);
 }
