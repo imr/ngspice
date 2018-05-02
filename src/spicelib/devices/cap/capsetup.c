@@ -204,6 +204,8 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
         status = cuCAPsetup ((GENmodel *)model) ;
         if (status != 0)
             return (E_NOMEM) ;
+
+        model->gen.GENinitCUDA = 1 ;
     }
 #endif
 
