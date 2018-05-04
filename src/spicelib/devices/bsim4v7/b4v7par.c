@@ -204,5 +204,28 @@ IFvalue *select)
         default:
             return(E_BADPARM);
     }
+
+#ifdef USE_CUSPICE
+    int status ;
+    BSIM4v7model *model ;
+
+    model = BSIM4v7modPtr(here) ;
+    if (model->gen.GENinitCUDA) {
+        model->BSIM4v7paramCPU.BSIM4v7nfArray[here->gen.GENcudaIndex] = here->BSIM4v7nf;
+        model->BSIM4v7paramCPU.BSIM4v7offArray[here->gen.GENcudaIndex] = here->BSIM4v7off;
+        model->BSIM4v7paramCPU.BSIM4v7sbArray[here->gen.GENcudaIndex] = here->BSIM4v7sb;
+        model->BSIM4v7paramCPU.BSIM4v7trnqsModArray[here->gen.GENcudaIndex] = here->BSIM4v7trnqsMod;
+        model->BSIM4v7paramCPU.BSIM4v7acnqsModArray[here->gen.GENcudaIndex] = here->BSIM4v7acnqsMod;
+        model->BSIM4v7paramCPU.BSIM4v7rbodyModArray[here->gen.GENcudaIndex] = here->BSIM4v7rbodyMod;
+        model->BSIM4v7paramCPU.BSIM4v7rgateModArray[here->gen.GENcudaIndex] = here->BSIM4v7rgateMod;
+        model->BSIM4v7paramCPU.BSIM4v7icVDSArray[here->gen.GENcudaIndex] = here->BSIM4v7icVDS;
+        model->BSIM4v7paramCPU.BSIM4v7icVGSArray[here->gen.GENcudaIndex] = here->BSIM4v7icVGS;
+        model->BSIM4v7paramCPU.BSIM4v7icVBSArray[here->gen.GENcudaIndex] = here->BSIM4v7icVBS;
+        status = cuBSIM4v7temp ((GENmodel *)model);
+        if (status != 0)
+            return E_NOMEM;
+    }
+#endif
+
     return(OK);
 }

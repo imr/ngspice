@@ -3159,6 +3159,8 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
         status = cuBSIM4v7setup ((GENmodel *)model) ;
         if (status != 0)
             return (E_NOMEM) ;
+
+        model->gen.GENinitCUDA = 1 ;
     }
 #endif
 
