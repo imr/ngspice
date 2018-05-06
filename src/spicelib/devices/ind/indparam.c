@@ -11,6 +11,9 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
+#ifdef USE_CUSPICE
+#include "ngspice/CUSPICE/CUSPICE.h"
+#endif
 
 /* ARGSUSED */
 int
@@ -65,5 +68,20 @@ INDparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
     default:
         return(E_BADPARM);
     }
+
+#ifdef USE_CUSPICE
+    int status ;
+    INDmodel *model ;
+
+    model = INDmodPtr(here) ;
+    if (model->gen.GENinitCUDA) {
+        model->INDparamCPU.INDinductArray[here->gen.GENcudaIndex] = here->INDinduct;
+        model->INDparamCPU.INDinitCondArray[here->gen.GENcudaIndex] = here->INDinitCond;
+        status = cuINDtemp ((GENmodel *)model);
+        if (status != 0)
+            return E_NOMEM;
+    }
+#endif
+
     return(OK);
 }
