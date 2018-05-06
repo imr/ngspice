@@ -21,6 +21,10 @@
 #include "ngspice/suffix.h"
 #include "ngspice/fteext.h"
 
+#ifdef USE_CUSPICE
+#include "ngspice/CUSPICE/CUSPICE.h"
+#endif
+
 int
 BSIM4v7param(
 int param,
@@ -213,7 +217,6 @@ IFvalue *select)
     if (model->gen.GENinitCUDA) {
         model->BSIM4v7paramCPU.BSIM4v7nfArray[here->gen.GENcudaIndex] = here->BSIM4v7nf;
         model->BSIM4v7paramCPU.BSIM4v7offArray[here->gen.GENcudaIndex] = here->BSIM4v7off;
-        model->BSIM4v7paramCPU.BSIM4v7sbArray[here->gen.GENcudaIndex] = here->BSIM4v7sb;
         model->BSIM4v7paramCPU.BSIM4v7trnqsModArray[here->gen.GENcudaIndex] = here->BSIM4v7trnqsMod;
         model->BSIM4v7paramCPU.BSIM4v7acnqsModArray[here->gen.GENcudaIndex] = here->BSIM4v7acnqsMod;
         model->BSIM4v7paramCPU.BSIM4v7rbodyModArray[here->gen.GENcudaIndex] = here->BSIM4v7rbodyMod;
