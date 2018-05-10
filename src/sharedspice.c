@@ -675,32 +675,38 @@ ngSpice_Init(SendChar* printfcn, SendStat* statusfcn, ControlledExit* ngspiceexi
         tfree(s);
     }
 #else /* ~ HAVE_PWD_H */
-    /* load user's initialisation file
-       try accessing the initialisation file in the current directory
-       if that fails try the alternate name */
-    if (FALSE == read_initialisation_file("", INITSTR) &&
-        FALSE == read_initialisation_file("", ALT_INITSTR)) {
-        /* if that failed try in the user's home directory
-        if their HOME environment variable is set */
-        char *homedir = getenv("HOME");
-        if (homedir) {
-            if (FALSE == read_initialisation_file(homedir, INITSTR) &&
-                FALSE == read_initialisation_file(homedir, ALT_INITSTR)) {
-                ;
-            }
-        }
+    /* load user's initialisation file .spiceinit (or old spice.rc)
+       try accessing the initialisation file in the current directory,
+       or the user's home directories HOME (Linux) and USERPROFILE (MS Windows)*/
+    char *homedir;
+    bool userfileok = read_initialisation_file("", INITSTR); /*.spiceinit*/
+    if (!userfileok) {
+        homedir = getenv("HOME");
+        if (homedir)
+            userfileok = read_initialisation_file(homedir, INITSTR);
         else {
-            /* If there is no HOME environment (e.g. MS Windows), try user's profile directory */
             homedir = getenv("USERPROFILE");
             if (homedir)
-                if (FALSE == read_initialisation_file(homedir, INITSTR) &&
-                    FALSE == read_initialisation_file(homedir, ALT_INITSTR)) {
-                    ;
-                }
+                userfileok = read_initialisation_file(homedir, INITSTR);
+        }
+    }
+    if (!userfileok)
+        userfileok = read_initialisation_file("", ALT_INITSTR); /*spice.rc*/
+    if (!userfileok) {
+        homedir = getenv("HOME");
+        if (homedir)
+            userfileok = read_initialisation_file(homedir, ALT_INITSTR);
+        else {
+            homedir = getenv("USERPROFILE");
+            if (homedir)
+                userfileok = read_initialisation_file(homedir, ALT_INITSTR);
         }
     }
 
+    if (!userfileok && ft_ngdebug)
+        fprintf(stdout, "Warning: No user initialization file .spiceinit or spice.rc found\n");
 #endif /* ~ HAVE_PWD_H */
+
 bot:
     signal(SIGINT, old_sigint);
 
