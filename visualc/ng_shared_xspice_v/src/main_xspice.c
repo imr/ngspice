@@ -1,13 +1,13 @@
 /*
-Test file for shared ngspice
-Copyright Holger Vogt 2013
+Test file for shared ngspice with event nodes
+Copyright Holger Vogt 2018
 
 ngspice library loaded dynamically
 
 Test 1
 Load and initialize ngspice
 Source an input file adder_mos.cir
-Run the simulation for 5 seconds in a background thread
+Run the simulation for 0.5 seconds in a background thread
 Stop the simulation for 3 seconds
 Resume the simulation in the background thread
 Write rawfile
@@ -123,10 +123,7 @@ int main()
 #ifdef __CYGWIN__
     loadstring = "/cygdrive/c/cygwin/usr/local/bin/cygngspice-0.dll";
 #elif _MSC_VER
-//    loadstring = "ngspice.dll";
-//    loadstring = "..\\..\\..\\ngspice\\visualc\\sharedspice\\Debug.Win32\\ngspice.dll";
-//    loadstring = "..\\..\\..\\ngspice\\visualc\\sharedspice\\ReleaseOMP.Win32\\ngspice.dll";
-    loadstring = "D:\\Spice_general\\ngspice\\visualc\\sharedspice\\Debug.Win32\\ngspice.dll";
+    loadstring = "..\\..\\sharedspice\\Debug.x64\\ngspice.dll";
 #elif __MINGW32__
     loadstring = "D:\\Spice_general\\ngspice\\visualc-shared\\Debug\\bin\\ngspice.dll";
 #else
@@ -197,7 +194,7 @@ int main()
 #elif __MINGW32__
     ret = ((int * (*)(char*)) ngSpice_Command_handle)("source D:\\Spice_general\\ngspice_sh\\examples\\shared-ngspice\\counter-test.cir");
 #elif _MSC_VER
-    ret = ((int * (*)(char*)) ngSpice_Command_handle)("source ./examples/counter-test.cir");
+    ret = ((int * (*)(char*)) ngSpice_Command_handle)("source ../examples/counter-test.cir");
 #else
     ret = ((int * (*)(char*)) ngSpice_Command_handle)("source ../examples/counter-test.cir");
     //    ret = ((int * (*)(char*)) ngSpice_Command_handle)("source adder_mos.cir");
@@ -341,7 +338,7 @@ test2:
 #elif __MINGW32__
     ret = ((int * (*)(char*)) ngSpice_Command_handle)("source D:\\Spice_general\\ngspice_sh\\examples\\shared-ngspice\\counter-test.cir");
 #elif _MSC_VER
-    ret = ((int * (*)(char*)) ngSpice_Command_handle)("source ./examples/adder_mos.cir");
+    ret = ((int * (*)(char*)) ngSpice_Command_handle)("source ../examples/adder_mos.cir");
 #else
     ret = ((int * (*)(char*)) ngSpice_Command_handle)("source ../examples/counter-test.cir");
     //    ret = ((int * (*)(char*)) ngSpice_Command_handle)("source adder_mos.cir");
