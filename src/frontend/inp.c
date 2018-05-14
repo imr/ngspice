@@ -391,8 +391,10 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
     }
     /* called with *fp == NULL and not intfile: we want to reload circuit from mc_deck */
     else {
-        if (mc_deck)
+        if (mc_deck) {
             deck = inp_deckcopy(mc_deck);
+            expr_w_temper = TRUE;
+        }
         else {
             fprintf(stderr, "Error: No circuit loaded, cannot copy internally using mc_source\n");
             controlled_exit(1);
