@@ -90,7 +90,7 @@ struct func_temper
 
 extern void line_free_x(struct card *deck, bool recurse);
 
-static COMPATMODE_T inp_compat_mode;
+COMPATMODE_T inp_compat_mode;
 
 /* Collect information for dynamic allocation of numparam arrays */
 /* number of lines in input deck */
