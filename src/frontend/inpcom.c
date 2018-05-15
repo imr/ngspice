@@ -146,6 +146,7 @@ static char *inp_pathresolve(const char *name);
 static char *inp_pathresolve_at(char *name, char *dir);
 static char *search_plain_identifier(char *str, const char *identifier);
 void tprint(struct card *deck);
+static struct card *pspice_compat(struct card *newcard);
 
 struct inp_read_t
 { struct card *cc;
@@ -852,6 +853,8 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
             }
 
             if (newcard) {
+                if (inp_compat_mode == COMPATMODE_PS)
+                    newcard = pspice_compat(newcard);
                 int line_number_inc = 1;
                 end->nextcard = newcard;
                 /* Renumber the lines */
@@ -6301,4 +6304,13 @@ inp_meas_current(struct card *deck)
         tfree(new_rep);
         new_rep = repn;
     }
+}
+
+
+static struct card *
+pspice_compat(struct card *oldcard)
+{
+    struct card *card, *newcard, *nextcard;
+    newcard = oldcard;
+    return newcard;
 }
