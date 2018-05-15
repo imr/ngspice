@@ -6109,7 +6109,7 @@ struct replace_currm
     struct card *cline;
     char *rtoken;
     struct replace_currm *next;
-}
+};
 
 
 /* Measure current in node 1 of all devices, e.g. I, B, F, and G.
