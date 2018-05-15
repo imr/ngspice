@@ -334,7 +334,7 @@ line_reverse(struct card *head)
 void
 mc_free(void)
 {
-    line_free_x(mc_deck, TRUE);
+    line_free(mc_deck, TRUE);
 }
 
 
