@@ -6130,7 +6130,7 @@ inp_meas_current(struct card *deck)
 {
     struct card *card, *subc_start = NULL, *subc_prev = NULL;
     struct replace_currm *new_rep, *act_rep = NULL, *rep = NULL;
-    char *s, *t, *u, *v;
+    char *s, *t, *u, *v, *w;
     int skip_control = 0, subs = 0;
 
     /* scan through deck and find i(xyz), replace by i(v_xyz) */
@@ -6171,14 +6171,14 @@ inp_meas_current(struct card *deck)
         if (!strstr(curr_line, "i("))
             continue;
 
-        s = v = stripWhiteSpacesInsideParens(curr_line);
+        s = v = w = stripWhiteSpacesInsideParens(curr_line);
         while (s) {
             /* i( may occur more than once in a line */
             s = u = strstr(s, "i(");
             /* we have found it, but not (in error) at the beginning of the line */
             if (s && s > v) {
-                /* '{' if at beginning of expression */
-                if (is_arith_char(s[-1]) || s[-1] == '{') {
+                /* '{' if at beginning of expression, '=' possible in B-line */
+                if (is_arith_char(s[-1]) || s[-1] == '{' || s[-1] == '=') {
                     s += 2;
                     if (*s == 'v') {
                         // printf("i(v...) found in\n%s\n not converted!\n\n", curr_line);
@@ -6190,7 +6190,7 @@ inp_meas_current(struct card *deck)
                         /* token containing name of devices to be measured */
                         t = copy_substring(s, --u);
                         if (ft_ngdebug)
-                            printf("i(%s) found in\n%s\n\n", t, curr_line);
+                            printf("i(%s) found in\n%s\n\n", t, v);
 
                         /* new entry to the end of struct rep */
                         new_rep = TMALLOC(struct replace_currm, 1);
@@ -6209,8 +6209,7 @@ inp_meas_current(struct card *deck)
                         new_str = tprintf("%s%s%s", beg_str, "v_", s);
                         if (ft_ngdebug)
                             printf("converted to\n%s\n\n", new_str);
-                        tfree(curr_line);
-                        tfree(v);
+                        tfree(card->line);
                         card->line = s = v = new_str;
                         s++;
                         tfree(beg_str);
@@ -6220,6 +6219,7 @@ inp_meas_current(struct card *deck)
                     s++;
             }
         }
+        tfree(w);
     }
 
     /* return if we did not find any i( */
@@ -6311,6 +6311,6 @@ static struct card *
 pspice_compat(struct card *oldcard)
 {
     struct card *card, *newcard, *nextcard;
-    newcard = oldcard;
+    newcard = oldcard;                     
     return newcard;
 }
