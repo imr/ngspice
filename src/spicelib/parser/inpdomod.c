@@ -461,6 +461,17 @@ char *INPdomodel(CKTcircuit *ckt, struct card *image, INPtables * tab)
 			INPmakeMod(modname, type, image);
     }
 
+    /*  --------  Check if model is a PSPICE resistor --------- */
+    else if (strcmp(type_name, "res") == 0) {
+        type = INPtypelook("Resistor");
+        if (type < 0) {
+            err =
+                INPmkTemp
+                ("Device type Resistor not available in this binary\n");
+        }
+        INPmakeMod(modname, type, image);
+    }
+
     /*  --------  Check if model is a transmission line of some sort --------- */
     else if(strcmp(type_name,"txl") == 0) {
       INPgetTok(&line,&val,1);
