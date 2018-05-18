@@ -6526,6 +6526,22 @@ rep_spar(char *inpar[4])
     return 0;
 }
 
+
+/**** PSPICE to ngspice **************
+* .model replacement in ako (a kind of) model descriptions
+* replace the E source TABLE function by a B source pwl
+* add predefined params TEMP, VT, GMIN to beginning of deck
+* add predefined params TEMP, VT, GMIN to beginning of each .subckt call
+* add .functions limit, pwr, pwrs, stp, if, int
+* replace
+  S1 D S DG GND SWN
+ .MODEL SWN VSWITCH(VON = { 0.55 } VOFF = { 0.49 } RON = { 1 / (2 * M*(W / LE)*(KPN / 2) * 10) }  ROFF = { 1G })
+* by
+  as1 %vd(DG GND) % gd(D S) aswn
+  .model aswn aswitch(cntl_off={0.49} cntl_on={0.55} r_off={1G}
+  + r_on={ 1 / (2 * M*(W / LE)*(KPN / 2) * 10) } log = TRUE)
+* replace & by &&
+* replace | by || */
 static struct card *
 pspice_compat(struct card *oldcard)
 {
