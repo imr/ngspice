@@ -6342,6 +6342,28 @@ static struct card *
 pspice_compat(struct card *oldcard)
 {
     struct card *card, *newcard, *nextcard;
-    newcard = oldcard;                     
+
+    /* add predefined params TEMP, VT, GMIN to beginning of deck */
+    char *new_str = copy(".param temp = 'temper - 273.15'");
+    newcard = insert_new_line(NULL, new_str, 1, 0);
+    new_str = copy(".param vt = 'temper * 8.6173303e-5'"); /*VT=kT/q, T * 1.380 648 52e-23/ 1.602 176 6208e-19*/
+    nextcard = insert_new_line(newcard, new_str, 2, 0);
+    new_str = copy(".param gmin = 1e-12");
+    nextcard = insert_new_line(nextcard, new_str, 3, 0);
+    /* add funcs limit, pwr, pwrs, stp, if, int */
+    new_str = copy(".func limit(x, a, b) { min(max(x, a), b) }");
+    nextcard = insert_new_line(nextcard, new_str, 4, 0);
+    new_str = copy(".func pwr(x, a) { abs(x) ** a }");
+    nextcard = insert_new_line(nextcard, new_str, 5, 0);
+    new_str = copy(".func pwrs(x, a) { sgn(x) * pwr(x, a) }");
+    nextcard = insert_new_line(nextcard, new_str, 6, 0);
+    new_str = copy(".func stp(x) { u(x) }");
+    nextcard = insert_new_line(nextcard, new_str, 7, 0);
+    new_str = copy(".func if(a, b, c) {ternary_fcn( a , b , c )}");
+    nextcard = insert_new_line(nextcard, new_str, 8, 0);
+    new_str = copy(".func int(x) { sign(x)*floor(abs(x)) }");
+    nextcard = insert_new_line(nextcard, new_str, 9, 0);
+    nextcard->nextcard = oldcard;
+
     return newcard;
 }
