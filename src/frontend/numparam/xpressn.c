@@ -254,9 +254,7 @@ initdico(dico_t *dico)
 
     dico->inst_symbols = NULL;          /* instance qualified are lazily allocated */
 
-    compat_mode = ngspice_compat_mode();
-
-    if (compat_mode == COMPATMODE_HS)
+    if (inp_compat_mode == COMPATMODE_HS)
         dico->hs_compatibility = 1;
     else
         dico->hs_compatibility = 0;
