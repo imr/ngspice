@@ -1,0 +1,27 @@
+Test MOS1
+
+vb Nvf 0 0
+
+vd Nvd 0 0
+vg Nvg 0 0
+
+vs1 Nvs1 0 0
+vs2 Nvs2 0 0
+vs3 Nvs3 0 0
+
+* W/L = 3
+M1  Nvd Nvg Nvs1 Nvf  NMOS
+* W/L = 2
+M2  Nvd Nvg Nvs2 Nvf  NMOS W=10u L=5u
+* W/L = 1
+M3  Nvd Nvg Nvs3 Nvf  NMOS3
+
+.MODEL  NMOS         NMOS (LEVEL  = 1  L = 3u  W = 9u)
+.MODEL  NMOS3        NMOS (LEVEL  = 1)
+
+.control
+dc vd 0 5 0.1 vg 0 5 1
+plot vs1#branch vs2#branch vs3#branch
+.endc
+
+.end

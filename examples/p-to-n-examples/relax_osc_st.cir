@@ -1,0 +1,32 @@
+Relaxation oscillator
+* ST AN4071, Fig. 26
+* www.st.com/resource/en/application_note/dm00050759.pdf
+
+.include Opamps_Comparators_ST.lib
+XICOMP2  VM1  VP1  VS1  VCCP VCCN TS302X
+* http://www.st.com/resource/en/cad_symbol_library/opamps_comparators_st.zip
+
+vdd vccp 0 5
+vss vccn 0 0
+
+R1 vs1 vm1 10k
+R2 vp1 0 10k
+R3 vp1 vccp 10k
+R4 vs1 vp1 10k
+
+C1 vm1 0 1n
+
+.tran 100n 500u uic
+
+.option rshunt=1e12
+
+.control
+save  vs1 vm1 vp1
+run
+plot vs1 vm1 vp1
+linearize vs1
+fft vs1
+plot mag(vs1) xlimit 1k 100k
+.endc
+
+.end

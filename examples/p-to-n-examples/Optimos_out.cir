@@ -1,0 +1,24 @@
+Test Optimos PSPICE models
+
+*Xopt Nvd Nvg Nvs Tj Tcase SPD50N03S2-07  dVth=0 dRdson=0 dgfs=0 dC=0 Zthtype=0
+*Xopt Nvd Nvg Nvs Tj Tcase SPD30N03S2L-10  dVth=0 dRdson=0 dgfs=0 dC=0 Zthtype=0
+Xopt Nvd Nvg Nvs Tj Tcase BSC0500NSI dVth=0 dRdson=0 dgfs=0 dC=0 Zthtype=0 Ls=0.3n Ld=1n Lg=3n
+
+vd 1 0 0
+rd 1 Nvd 6m
+vg Nvg 0 0
+vs Nvs 0 0
+
+vtc tcase 0 25
+vjt tj 0 25
+
+.include D:\Spice_general\tests\pspice-to-ngspice\OptiMOS5_30V_PSpice.lib $ OptiMOS_30V.lib
+
+.control
+dc vd 0 3 0.1 vg 2.8 3.2 0.2
+dc vd 0 3 0.1 vg 3.5 5 0.5
+* plot similar to output characteristics in data sheet
+plot vs#branch vs v(Nvd) dc1.vs#branch vs dc1.v(Nvd) noretraceplot
+.endc
+
+.end

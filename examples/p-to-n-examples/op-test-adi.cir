@@ -1,0 +1,40 @@
+OpAmp Test
+
+vddp vp 0 15
+vddn vn 0 0
+voff off 0 -1
+
+*vin in 0 0
+
+.include ad22057n.cir
+
+* Node assignments
+*                non-inverting input
+*                |  inverting input
+*                |  |  positive supply
+*                |  |  |  negative supply
+*                |  |  |  |  A1 out
+*                |  |  |  |  |  A2 in
+*                |  |  |  |  |  |  offset
+*                |  |  |  |  |  |  |  output
+*                |  |  |  |  |  |  |  |
+*SUBCKT AD22057N 1  2  99 50 30 31 40 49
+Xopmap in 0 vp vn a1 a1 off outo AD22057N
+
+Rout outo a1 200k
+Ca1 a1 0 500p
+ 
+.dc vin 0.1 0.2 0.01
+
+vin in 0 DC 0 PULSE(0.1 0.2 200uS 200uS 200uS 5m 10m)
+.tran 10u 10m
+
+.control
+run
+plot dc1.v(outo) vs dc1.v(in)
+plot v(in)  v(a1) v(outo)
+.endc
+
+
+.end
+

@@ -1,0 +1,36 @@
+Test OpAmp
+
+*.OPTIONS RELTOL=.0001
+*.include MCP6041ng.lib
+.include MCP6041.txt
+
+V1 vdd 0 2.2
+V2 vss 0 -2.2
+
+Vin in 0 dc 0 sin(0 100m 500)
+
+Rin in opin 1000k
+Rfb opout opin 10000k
+
+*Eop opout 0 opin 0 -10000
+
+Xop 0 opin vdd vss opout MCP6041
+*       MCP6041 1 2 3 4 5
+*               | | | | |
+*               | | | | Output
+*               | | | Negative Supply
+*               | | Positive Supply
+*               | Inverting Input
+*               Non-inverting Input
+
+*.dc Vin -2.2 2.2 0.1
+*.tran 0.1m 10m
+
+.control
+dc Vin -0.2 0.2 0.01
+plot v(opout) v(opin)
+tran 0.1m 10m
+plot v(in) v(opin) v(opout)
+.endc
+
+.end

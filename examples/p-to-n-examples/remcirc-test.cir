@@ -1,0 +1,13 @@
+remcirc test
+v1 1 0 1
+v2 2 0 1
+v3 3 0 1
+.include rtest.lib
+
+.control
+repeat 1000
+  reset
+end
+.endc
+
+.end
