@@ -6456,5 +6456,70 @@ pspice_compat(struct card *oldcard)
         }
     }
 
+    /* get the area factor for diodes and bipolar devices
+    d1 n1 n2 dmod 7 --> d1 n1 n2 dmod area=7
+    q2 n1 n2 n3 [n4] bjtmod 1.35 --> q2 n1 n2 n3 n4 bjtmod area=1.35
+    q3 1 2 3 4 bjtmod 1.45 --> q2 1 2 3 4 bjtmod area=1.45
+    */
+    for (card = newcard; card; card = card->nextcard) {
+        static struct card *subcktline = NULL;
+        static int nesting = 0;
+        char *cut_line = card->line;
+        if (*cut_line == '*')
+            continue;
+        // exclude any command inside .control ... .endc
+        if (ciprefix(".control", cut_line)) {
+            skip_control++;
+            continue;
+        }
+        else if (ciprefix(".endc", cut_line)) {
+            skip_control--;
+            continue;
+        }
+        else if (skip_control > 0) {
+            continue;
+        }
+        if (*cut_line == 'q') {
+            cut_line = nexttok(cut_line); //.model
+            cut_line = nexttok(cut_line); // node1
+            cut_line = nexttok(cut_line); // node2
+            cut_line = nexttok(cut_line); // node3
+            if (*cut_line == '[') { // node4 not a number
+                *cut_line = ' ';
+                cut_line = strchr(cut_line, ']');
+                *cut_line = ' ';
+                cut_line = skip_ws(cut_line);
+                cut_line = nexttok(cut_line); // model name
+            }
+            else { // if an integer number, it is node4
+                bool is_node4 = TRUE;
+                while (*cut_line && !isspace(*cut_line))
+                    if (!isdigit(*cut_line++))
+                        is_node4 = FALSE; // already model name
+                if(is_node4)
+                    cut_line = nexttok(cut_line); // model name
+            }
+            if (*cut_line && atof(cut_line) > 0.0) { // size of area
+                char *tmpstr1 = copy_substring(card->line, cut_line);
+                char *tmpstr2 = tprintf("%s area=%s", tmpstr1, cut_line);
+                tfree(tmpstr1);
+                tfree(card->line);
+                card->line = tmpstr2;
+            }
+        }
+        else if (*cut_line == 'd') {
+            cut_line = nexttok(cut_line); //.model
+            cut_line = nexttok(cut_line); // node1
+            cut_line = nexttok(cut_line); // node2
+            cut_line = nexttok(cut_line); // model name
+            if (*cut_line && atof(cut_line) > 0.0) { // size of area
+                char *tmpstr1 = copy_substring(card->line, cut_line);
+                char *tmpstr2 = tprintf("%s area=%s", tmpstr1, cut_line);
+                tfree(tmpstr1);
+                tfree(card->line);
+                card->line = tmpstr2;
+            }
+        }
+    }
     return newcard;
 }
