@@ -14,6 +14,7 @@ Author: 1987 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ngspice/ifsim.h"
 #include "ngspice/inpptree.h"
 #include "inpxx.h"
+#include "ngspice/compatmode.h"
 
 /* XXX These should be in math.h */
 
@@ -82,6 +83,10 @@ PTpower(double arg1, double arg2)
 double
 PTpwr(double arg1, double arg2)
 {
+    /* if PSPICE device is evaluated */
+    if (arg1 == 0.0 && arg2 < 0.0 && inp_compat_mode == COMPATMODE_PS)
+        arg1 += PTfudge_factor;
+
     if (arg1 < 0.0)
         return (-pow(-arg1, arg2));
     else
