@@ -6378,6 +6378,109 @@ replace_table(struct card *startcard)
     }
 }
 
+/* find the model requested by ako:model and do the replacement */
+static struct card*
+find_model(struct card *startcard, struct card *changecard, char *searchname, char *newmname, char *newmtype, char *endstr)
+{
+    struct card *nomod, *returncard = changecard;
+    char *origmname, *origmtype;
+    char *beginline = startcard->line;
+    if (ciprefix(".subckt", beginline))
+        startcard = startcard->nextcard;
+
+    int nesting2 = 0;
+    for (nomod = startcard; nomod; nomod = nomod->nextcard) {
+        char *origmodline = nomod->line;
+        if (ciprefix(".subckt", origmodline))
+            nesting2++;
+        if (ciprefix(".ends", origmodline))
+            nesting2--;
+        /* skip any subcircuit */
+        if (nesting2 > 0)
+            continue;
+        if (nesting2 == -1) {
+            returncard = changecard;
+            break;
+        }
+        if (ciprefix(".model", origmodline)) {
+            origmodline = nexttok(origmodline);
+            origmname = gettok(&origmodline);
+            origmtype = gettok_noparens(&origmodline);
+            if (cieq(origmname, searchname)) {
+                if (!eq(origmtype, newmtype)) {
+                    fprintf(stderr, "Error: Original (%s) and new (%s) type for AKO model disagree\n", origmtype, newmtype);
+                    controlled_exit(1);
+                }
+                /* we have got it */
+                char *newmodcard = tprintf(".model %s %s %s%s", newmname, newmtype, origmodline, endstr);
+                char *tmpstr = strstr(newmodcard, ")(");
+                if (tmpstr) {
+                    tmpstr[0] = ' ';
+                    tmpstr[1] = ' ';
+                }
+                tfree(changecard->line);
+                changecard->line = newmodcard;
+                tfree(origmname);
+                tfree(origmtype);
+                returncard = NULL;
+                break;
+            }
+            tfree(origmname);
+            tfree(origmtype);
+        }
+        else
+            returncard = changecard;
+    }
+    return returncard;
+}
+
+/* do the .model replacement required by ako (a kind of)
+* PSPICE does not support ested .subckt definitions, so
+* a simple structure is needed: search for ako:modelname,
+* then for modelname in the subcircuit or in the top level.
+* .model qorig npn (BF=48 IS=2e-7)
+* .model qbip1 ako:qorig NPN (BF=60 IKF=45m)
+* after the replacement we have
+* .model qbip1 NPN (BF=48 IS=2e-7 BF=60 IKF=45m)
+* and we benefit from the fact that if parameters have
+* doubled, the last entry of a parameter (e.g. BF=60)
+* overwrites the previous one (BF=48).
+*/
+static struct card*
+ako_model(struct card *startcard)
+{
+    char *newmname, *newmtype;
+    struct card *card, *returncard = NULL, *subcktcard = NULL;
+    for (card = startcard; card; card = card->nextcard) {
+        char *akostr, *searchname;
+        char *cut_line = card->line;
+        if (ciprefix(".subckt", cut_line))
+            subcktcard = card;
+        else if (ciprefix(".ends", cut_line))
+            subcktcard = NULL;
+        if (ciprefix(".model", cut_line) &&
+            ((akostr = strstr(cut_line, "ako:")) != NULL) && isspace_c(akostr[-1])) {
+            akostr += 4;
+            searchname = gettok(&akostr);
+            cut_line = nexttok(cut_line);
+            newmname = gettok(&cut_line);
+            newmtype = gettok_noparens(&akostr);
+            /* find the model and do the replacement */
+            if (subcktcard)
+                returncard = find_model(subcktcard, card, searchname, newmname, newmtype, akostr);
+            if(returncard || !subcktcard)
+                returncard = find_model(startcard, card, searchname, newmname, newmtype, akostr);
+            tfree(searchname);
+            tfree(newmname);
+            tfree(newmtype);
+            /* replacement not possible, bail out */
+            if (returncard)
+                break;
+        }
+    }
+    return returncard;
+}
+
 /* in       out
    von      cntl_on
    voff     cntl_off
@@ -6428,6 +6531,14 @@ pspice_compat(struct card *oldcard)
 {
     struct card *card, *newcard, *nextcard;
     int skip_control = 0;
+
+    /* .model replacement in ako (a kind of) model descriptions
+    * in first .subckt and top level only */
+    struct card *errcard;
+    if ((errcard = ako_model(oldcard)) != NULL) {
+        fprintf(stderr, "Error: no model found for %s\n", errcard->line);
+        controlled_exit(1);
+    }
 
     /* replace TABLE function in E source */
     replace_table(oldcard);
