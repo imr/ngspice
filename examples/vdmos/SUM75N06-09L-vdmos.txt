@@ -1,0 +1,1 @@
+.model SUM75N06-09L VDMOS(Rg=1.5 Rd=0m Rs=25m Vto=2.0 Kp=75 Cgdmax=1.2n Cgdmin=150p Cgs=2n Cjo=1.2n Is=1p Rb=0)
