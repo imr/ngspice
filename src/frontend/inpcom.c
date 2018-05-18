@@ -6342,6 +6342,7 @@ static struct card *
 pspice_compat(struct card *oldcard)
 {
     struct card *card, *newcard, *nextcard;
+    int skip_control = 0;
 
     /* add predefined params TEMP, VT, GMIN to beginning of deck */
     char *new_str = copy(".param temp = 'temper - 273.15'");
@@ -6375,6 +6376,71 @@ pspice_compat(struct card *oldcard)
             nextcard = insert_new_line(card, new_str, 0, 0);
             new_str = copy(".param vt = 'temper * 8.6173303e-5'");
             nextcard = insert_new_line(nextcard, new_str, 1, 0);
+        }
+    }
+
+    /* replace & with && and | with || and *# with * # */
+    for (card = newcard; card; card = card->nextcard) {
+        char *t;
+        char *cut_line = card->line;
+
+        /* we don't have command lines in a PSPICE model */
+        if (ciprefix("*#", cut_line)) {
+            char *tmpstr = tprintf("* #%s", cut_line + 2);
+            tfree(card->line);
+            card->line = tmpstr;
+            continue;
+        }
+
+        if (*cut_line == '*')
+            continue;
+        /* exclude any command inside .control ... .endc */
+        if (ciprefix(".control", cut_line)) {
+            skip_control++;
+            continue;
+        }
+        else if (ciprefix(".endc", cut_line)) {
+            skip_control--;
+            continue;
+        }
+        else if (skip_control > 0) {
+            continue;
+        }
+        if ((t = strstr(card->line, "&")) != NULL) {
+            while (t && (t[1] != '&')) {
+                char *tt = NULL;
+                char *tn = copy(t + 1);/*skip |*/
+                char *strbeg = copy_substring(card->line, t);
+                tfree(card->line);
+                card->line = tprintf("%s&&%s", strbeg, tn);
+                tfree(strbeg);
+                tfree(tn);
+                t = card->line;
+                while ((t = strstr(t, "&&")) != NULL)
+                    tt = t = t + 2;
+                if (!tt)
+                    break;
+                else
+                    t = strstr(tt, "&");
+            }
+        }
+        if ((t = strstr(card->line, "|")) != NULL) {
+            while (t && (t[1] != '|')) {
+                char *tt = NULL;
+                char *tn = copy(t + 1);/*skip |*/
+                char *strbeg = copy_substring(card->line, t);
+                tfree(card->line);
+                card->line = tprintf("%s||%s", strbeg, tn);
+                tfree(strbeg);
+                tfree(tn);
+                t = card->line;
+                while ((t = strstr(t, "||")) != NULL)
+                    tt = t = t + 2;
+                if (!tt)
+                    break;
+                else
+                    t = strstr(tt, "|");
+            }
         }
     }
     return newcard;
