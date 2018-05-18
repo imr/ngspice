@@ -6365,5 +6365,17 @@ pspice_compat(struct card *oldcard)
     nextcard = insert_new_line(nextcard, new_str, 9, 0);
     nextcard->nextcard = oldcard;
 
+    /* add predefined parameters TEMP, VT after each subckt call */
+    /* FIXME: This should not be necessary if we had a better sense of hierarchy
+    during the evaluation of TEMPER */
+    for (card = newcard; card; card = card->nextcard) {
+        char *cut_line = card->line;
+        if (ciprefix(".subckt", cut_line)) {
+            new_str = copy(".param temp = 'temper - 273.15'");
+            nextcard = insert_new_line(card, new_str, 0, 0);
+            new_str = copy(".param vt = 'temper * 8.6173303e-5'");
+            nextcard = insert_new_line(nextcard, new_str, 1, 0);
+        }
+    }
     return newcard;
 }
