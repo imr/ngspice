@@ -1,6 +1,7 @@
-  Ngspice F.A.Q.Version 2.1 (ngspice-27 release)
+  Ngspice F.A.Q.Version 2.2 (ngspice-28 release)
+
   Maintained by Paolo Nenzi, Holger Vogt
-  Last update: 08-23-2017
+  Last update: 05-19-2018
 
   This document contains the Frequently Asked Questions (and Answers)
   for ngspice project.
@@ -240,71 +241,36 @@
 
   The latest version released is:
 
-  * ngspice-27 (released on 28/08/2017)
+  * ngspice-28 (released on ../../2018)
 
 
  2.2.  What are the latest features in the current release?
 
 - New features:
-    + check for correct inductor coefficients
-    + add variable 'win_console'
-    + --enable-relpath configure flag to set preprocessor flag HAS_RELPATH
-    +    sets search path for spinit relativ to current directory
-    + shared ngspice: search path for spinit: current dir, HOME dir, USERPROFILE dir
-    + new function stddev to calculate the standard deviation of all elements of a vector
-    + xspice digital n-input x m-output look-up table gate
-    + xspice digital model d_lut (digital n-input look-up table gate)
-    + add variable $sharedmode (if shared ngspice is running), to be used in scripts
-    + enable msys2 for mingw compilation
-    + OMP support for bsim3v3.24 model
-    + bsim3v3.24: add model parameter lmlt (Channel length scaling)
-    + OMP support for BSIM4.5 model
-    + update and extension of command 'wrdata'
-    + option xmu to set damping in trapezoid integration
-    + command 'linearize' will take time data from transient analysis vector if no circuit is loaded
-    + two new commands: edisplay and eprvcd
-    +     'edisplay' will show a list of all event nodes
-    +     'eprvcd' will print all event nodes in vcd format
-    + XSPICE 2D and 3D table models
-    + add variable 'batchmode' which is set when command line option `-b' is active
-    + enable backquote substitution for Visual Studio console apps
-    + update how-to-ngspice-vstudio.txt
-    + update visualc directory and project files, add XSPICE code model generation by VS2015
-    + allow access to 4 GB memory of 32 bit ngspice on 64 bit Windows, 8 TB for 64 bit ngspice
-    + new variable `interactive'
-    + xspice, introduce cm_message_printf()
-    + add variable `width' to command "print line ..."
-    + support msys2
-    + favor exponential temperatur equation if all parameters tc1, tc2 and tce are given for R
-    + move libfftw3 sideways out of the ngspice tree
-    + remove visual studio 2008 .vcproj files
-    + visualc/sharedspice.vcxproj, updated and migrated with visual studio 2015
-    + `E..table {expr} {pairs}', `G..', allow an optional `=' after `table'
-    + `E..value=', `G..value=', allow `=' being optional
-    + introduce TCE, exponential temperature coefficient for R
-    + allow `temper' to be recognised when preceded by '='
-    + allow cross-compilation, especially for MinGW-w64
-    + allow "plot xlog ylog" (equiv to "plot loglog")
-    + extend qa test to hisimhv version 2
-    + update hisimhv model to version 2.2.0
-    + update hisim model to version 2.8.0
-    + .control variable "sqrnoise" to deliver noise data in squared representation
-    + noise analysis, deliver results in V/sqrt(Hz) and A/sqrt(Hz)
-    + add delvt0 for bsim4 models
-    + bug fixes for diode model
-    + allow a xspice circuit with exclusively xspice event nodes
-    + man pages for cmpp ngmakeidx and ngproc2mod
-    + implement `nint()'
-    + everywhere: ln to the base e, log to the base e, log10 to the base 10
-    + allow an optional '=' in ".func foo() = {expr}"
-    + bsim4, update to version 4.8
-    + update hisimhv to version 1.2.4
-    + cmc quality check for bsim3 model
-    + nested indexing for vectors
-    + option savecurrents to save current through all devices
-    + option interp to plot interpolated raw file data
-    + MS VS 2010 project file added for compatibility
-    + XSPICE: new callback function cm_get_path
+    + VDMOS power MOS model added
+    + if 'set ngbehavior=ps' is given in .spiceinit, device libraries loaded
+      via .include may have PSPICE syntax 
+    + --enable-oldapps configure flag to compile the old, seldom used apps
+      ngmakeidx, ngmultidec, ngproc2mod, ngsconvert
+    + add command mc_source to internally re-load the circuit
+    + add command alterparam to alter the value of a parameter xxx given in .param xxx=value    
+    + add the fiunction i(xyz) to measure the current in node 1 of device xyz, to be
+      used in .params and behavioral models.
+    + new label 'noretraceplot' for the 'plot' command, if graphs in a plot show unwanted
+      retracing lines.
+    + The hyphen '-' is a valid character in model, device and subcircuit names
+    + add noise for behavioral resistor
+    + add a new vector type "temperature"
+    + support instance parameter defaults on .model lines
+    + New functions for XSPICE event node data export from shared ngspice: 
+      ngGet_Evt_NodeInfo(char*) and ngSpice_AllEvtNodes(void)
+    + 'edisplay' command now showing node name, node type and number of events per node 
+    + add flag 'none' to the 'save' commandfor shared ngspice. 
+      Output data will not be stored, but are available via callback function ng_data.
+    + add a function cm_get_circuit to allow accessing the circuit structure ckt 
+      from within an XSPICE code model.
+    + add variable 'sim_status' to indicate if a simulation has been aborted
+    + add pkg-config file
 
 - Bug fixes:
     + many, many ... as always
