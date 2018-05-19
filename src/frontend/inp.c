@@ -1498,7 +1498,7 @@ create_circbyline(char *line)
     if (linec < memlen) {
         if (ciprefix(".end", line) && (line[4] == '\0' || isspace_c(line[4]))) {
             circarray[linec] = NULL;
-            inp_spsource(fp, FALSE, "", TRUE);
+            inp_spsource(fp, FALSE, NULL, TRUE);
             linec = 0;
         }
     }
