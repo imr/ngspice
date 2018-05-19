@@ -476,13 +476,13 @@
 #define PACKAGE_NAME "ngspice"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "ngspice 27"
+#define PACKAGE_STRING "ngspice 28"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "ngspice"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "27"
+#define PACKAGE_VERSION "28"
 
 /* Define if we want predictor algorithm */
 /* #undef PREDICTOR */
@@ -537,7 +537,7 @@
 /* #undef TM_IN_SYS_TIME */
 
 /* Version number of package */
-#define VERSION "27"
+#define VERSION "28"
 
 /* Define if we want spice2 sensitivity analysis */
 /* #undef WANT_SENSE2 */
