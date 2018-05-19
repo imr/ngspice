@@ -54,6 +54,7 @@ Table of contents
  11.12 BSIM4 - BSIM model level 4
  11.13 HiSIM2 - Hiroshima-University STARC IGFET Model
  11.14 HiSIM_HV - Hiroshima-University STARC IGFET High Voltage Model
+ 11.15 VDMOS - A simple PowerMOS transistor model derived from MOS1
 12. SOI devices
  12.1 BSIM3SOI_FD - SOI model (fully depleted devices)
  12.2 BSIM3SOI_DD - SOI Model (dynamic depletion model)
@@ -717,6 +718,17 @@ will be updated every time the device specific code is altered or changed to ref
 
        Web site: http://home.hiroshima-u.ac.jp/usdl/HiSIM.html
 
+
+       11.15 VDMOS - Simple PowerMOS model
+
+       Ver:    1
+       Class:  M
+       Level:  -
+       Dir:    devices/vdmos
+       Status: TO BE TESTED.
+
+       This is a simplified Power MOS model, derived from MOS1 and
+       diode, similar to LTSPICE and SuperSpice VDMOS
 
 12. SOI devices
 
