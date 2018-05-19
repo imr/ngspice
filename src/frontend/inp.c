@@ -1055,8 +1055,11 @@ inp_dodeck(
     ct->ci_inprogress = FALSE;
     ct->ci_runonce = FALSE;
     ct->ci_commands = end;
+    /* prevent false reads in multi-threaded ngshared */
+#ifndef SHARED_MODULE
     if (reuse)
         tfree(ct->ci_filename);
+#endif
     ct->ci_filename = copy(filename);
 
     if (!noparse) {
