@@ -102,7 +102,7 @@ IFparm VDMOSmPTable[] = { /* model parameters */
  IOP("nbv",   VDMOS_MOD_NBV,   IF_REAL,   "Vds breakdown emission coefficient"),
  IOP("rds",   VDMOS_MOD_RDS,   IF_REAL,   "Drain-source shunt resistance"),
  IOP("rb",    VDMOS_MOD_RB,    IF_REAL,   "Body diode ohmic resistance"),
- IOP("n",     VDMOS_MOD_N,     IF_REAL,   "Bulk diode emission coefficient"),
+ IOP("n",     VDMOS_MOD_N,     IF_REAL,   "Body diode emission coefficient"),
  IOP("tt",    VDMOS_MOD_TT,    IF_REAL,   "Body diode transit time"),
  IOP("eg",    VDMOS_MOD_EG,    IF_REAL,   "Body diode activation energy for temperature effect on Is"),
  IOP("Xti",   VDMOS_MOD_XTI,   IF_REAL,   "Body diode saturation current temperature exponent"),
