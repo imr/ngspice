@@ -686,13 +686,12 @@ AM_CONDITIONAL([NO_HELP], [test "x$has_no_help" = xtrue])
 
 # enabling making of the old and outdated applications
 # ngsconvert ngproc2mod ngmultidec ngmakeidx nghelp
-if test "x$enable_oldapps"=xyes; then
-    has_oldapps=true
+if test "x$enable_oldapps" = xyes ; then
     AC_MSG_RESULT([ngsconvert ngproc2mod ngmultidec ngmakeidx nghelp are made.])
 else
-    has_oldapps=false
+    AC_MSG_RESULT([ngsconvert ngproc2mod ngmultidec ngmakeidx nghelp are not made.])
 fi
-AM_CONDITIONAL([OLDAPPS], [test "x$has_oldapps" = xtrue])
+AM_CONDITIONAL([OLDAPPS], [test "x$enable_oldapps" = xyes])
 
 
 # Check for a few typdefs:
