@@ -475,33 +475,6 @@ double CONSTe;
 IFfrontEnd *SPfrontEnd = NULL;
 int DEVmaxnum = 0;
 
-/* -------------------------------------------------------------------------- */
-/* Set a compatibility flag.
-   Currently available are flags for:
-   - ngspice (standard)
-   - a commercial simulator
-   - Spice3
-   - all compatibility stuff
-*/
-
-COMPATMODE_T
-ngspice_compat_mode(void)
-{
-    char behaviour[80];
-
-    if (cp_getvar("ngbehavior", CP_STRING, behaviour)) {
-        if (strcasecmp(behaviour, "all") == 0)
-            return COMPATMODE_ALL;
-        if (strcasecmp(behaviour, "hs") == 0)
-            return COMPATMODE_HS;
-        if (strcasecmp(behaviour, "ps") == 0)
-            return COMPATMODE_PS;
-        if (strcasecmp(behaviour, "spice3") == 0)
-            return COMPATMODE_SPICE3;
-    }
-
-    return COMPATMODE_ALL;
-}
 
 /* -------------------------------------------------------------------------- */
 int

@@ -479,6 +479,33 @@ find_back_assignment(const char *p, const char *start)
 }
 
 
+/* Set a compatibility flag.
+Currently available are flags for:
+- ngspice (standard)
+- a commercial simulator
+- Spice3
+- all compatibility stuff
+*/
+static COMPATMODE_T
+ngspice_compat_mode(void)
+{
+    char behaviour[80];
+
+    if (cp_getvar("ngbehavior", CP_STRING, behaviour)) {
+        if (strcasecmp(behaviour, "all") == 0)
+            return COMPATMODE_ALL;
+        if (strcasecmp(behaviour, "hs") == 0)
+            return COMPATMODE_HS;
+        if (strcasecmp(behaviour, "ps") == 0)
+            return COMPATMODE_PS;
+        if (strcasecmp(behaviour, "spice3") == 0)
+            return COMPATMODE_SPICE3;
+    }
+
+    return COMPATMODE_ALL;
+}
+
+
 /*-------------------------------------------------------------------------
   Read the entire input file and return  a pointer to the first line of
   the linked list of 'card' records in data.  The pointer is stored in
