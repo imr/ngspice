@@ -13,7 +13,7 @@
 void
 com_ghelp(wordlist *wl)
 {
-#if defined(HAS_WINGUI) || defined(_MSC_VER) || defined(__MINGW32__) || defined(X_DISPLAY_MISSING)
+#if defined(HAS_WINGUI) || defined(_MSC_VER) || defined(__MINGW32__) || defined(X_DISPLAY_MISSING) || defined(NOINTHELP)
 
     NG_IGNORE(wl);
 

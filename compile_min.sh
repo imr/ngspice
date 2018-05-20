@@ -18,6 +18,7 @@
 # Please see http://ngspice.sourceforge.net/admshowto.html for more info on adms.
 # CIDER, XSPICE, and OpenMP may be selected at will.
 # --disable-debug will give O2 optimization (versus O0 for debug) and removes all debugging info.
+# --enable-oldapps will make ngnutmeg ngsconvert ngproc2mod ngmultidec ngmakeidx in addition to ngspice
 
 # ngspice as shared library:
 # Replace --with-wingui by --with-ngshared in line ../configure ... .

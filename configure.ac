@@ -687,9 +687,11 @@ AM_CONDITIONAL([NO_HELP], [test "x$has_no_help" = xtrue])
 # enabling making of the old and outdated applications
 # ngsconvert ngproc2mod ngmultidec ngmakeidx nghelp
 if test "x$enable_oldapps" = xyes ; then
-    AC_MSG_RESULT([ngsconvert ngproc2mod ngmultidec ngmakeidx nghelp are made.])
+    AC_MSG_RESULT([ngnutmeg ngsconvert ngproc2mod ngmultidec ngmakeidx nghelp are made.])
 else
-    AC_MSG_RESULT([ngsconvert ngproc2mod ngmultidec ngmakeidx nghelp are not made.])
+    AC_MSG_RESULT([ngnutmeg ngsconvert ngproc2mod ngmultidec ngmakeidx nghelp are not made.])
+    AC_MSG_RESULT([No internal help available.])    
+    AC_DEFINE([NOINTHELP], [1], [Internal (old) help not available])
 fi
 AM_CONDITIONAL([OLDAPPS], [test "x$enable_oldapps" = xyes])
 

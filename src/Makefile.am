@@ -17,11 +17,11 @@ endif
 
 if !TCL_MODULE
 if !SHARED_MODULE
-bin_PROGRAMS =  ngspice ngnutmeg
+bin_PROGRAMS =  ngspice
 
 if OLDAPPS
 if !WINGUI
-bin_PROGRAMS += ngsconvert ngproc2mod ngmultidec ngmakeidx
+bin_PROGRAMS += ngnutmeg ngsconvert ngproc2mod ngmultidec ngmakeidx
 helpdatadir = $(pkgdatadir)/helpdir
 helpdata_DATA = ngspice.txt ngspice.idx
 if !NO_HELP
@@ -190,7 +190,7 @@ ngspice_LDADD += frontend/help/libhlp.la
 endif
 endif
 
-
+if OLDAPPS
 ## nutmeg:
 
 ngnutmeg_SOURCES = \
@@ -229,7 +229,6 @@ ngnutmeg_LDADD += \
 ## These programs are not required on Windows
 if !WINGUI
 if !SHWIN
-if OLDAPPS
 
 if !NO_X
 ngnutmeg_LDADD += \
@@ -294,9 +293,9 @@ ngmakeidx_SOURCES = makeidx.c
 ngspice.idx: ngmakeidx$(EXEEXT) $(srcdir)/ngspice.txt
 	./ngmakeidx$(EXEEXT) -o ngspice.idx $(srcdir)/ngspice.txt
 
-endif OLDAPPS
 endif !SHWIN
 endif !WINGUI
+endif OLDAPPS
 
 if RELPATH
 spinitpath=../lib/ngspice
