@@ -1,0 +1,70 @@
+* sw ring-oscillators
+
+.control
+destroy all
+run
+plot I(vmeasure)
+plot V(Osc_out) 
+rusage 
+.endc
+
+.ic v(osc_out)=0.25
+.tran 10n 80n 50p ;
+*.tran 100p 80n 50p uic ;for BSIM4
+.option method=gear maxord=3
+
+VDD VDD2 0 DC 3
+
+VMEASURE VDD2 VDD dc 0
+
+cvdd vdd 0 1e-18
+XX18 Osc_out N001 VDD 0 inverter
+XX2 N001 N002 VDD 0 inverter
+XX3 N002 N003 VDD 0 inverter
+XX4 N003 N004 VDD 0 inverter
+XX5 N004 N005 VDD 0 inverter
+XX6 N005 N006 VDD 0 inverter
+XX7 N006 N007 VDD 0 inverter
+XX8 N007 N008 VDD 0 inverter
+XX9 N008 N009 VDD 0 inverter
+XX10 N009 N010 VDD 0 inverter
+XX11 N010 N011 VDD 0 inverter
+XX12 N011 N012 VDD 0 inverter
+XX13 N012 N013 VDD 0 inverter
+XX14 N013 N014 VDD 0 inverter
+XX15 N014 N015 VDD 0 inverter
+XX16 N015 N016 VDD 0 inverter
+XX17 N016 Osc_out VDD 0 inverter
+
+
+* sw like an NMOS inverter with resistive load
+.subckt invertern In Out VDD DGND
+*sp out vdd in vdd swswitch on
+Rl out vdd 10k
+Cl out dgnd 0.1p
+*C2 out vdd 0.1p
+sn out dgnd in dgnd swswitch off
+.ends invertern
+
+* sw like a PMOS inverter with resistive load
+.subckt inverterp In Out VDD DGND
+sp out vdd vdd in swswitch
+Rl out 0 10k
+*Cl out dgnd 0.1p
+C2 out vdd 0.1p
+*sn out dgnd in dgnd swswitch off
+.ends inverterp
+
+* sw like a CMOS inverter
+.subckt inverter In Out VDD DGND
+sp out vdd vdd in swswitch
+*Rl out 0 10k
+Cl out dgnd 0.1p
+C2 out vdd 0.1p
+sn out dgnd in dgnd swswitch
+.ends inverter
+
+.model swswitch sw (vt=1 vh=0.1 ron=1k roff=1e12)
+.model switchn sw (vt=1 vh=0.1 ron=1k roff=1e12)
+
+.end
