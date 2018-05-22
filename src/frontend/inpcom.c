@@ -6670,10 +6670,12 @@ insert_new_model(struct vsmodels *vsmodel, char *name, char *subcktline)
     x->nextmodel = vsmodel ? vsmodel->nextmodel : NULL;
     x->modelname = copy(name);
     x->subcktline = copy(subcktline);
-    if (vsmodel)
-        vsmodel->nextmodel = x;
+	if (vsmodel)
+		vsmodel->nextmodel = x;
+	else
+		vsmodel = x;
 
-    return x;
+    return vsmodel;
 }
 
 /* find the model */
@@ -6923,12 +6925,75 @@ pspice_compat(struct card *oldcard)
 * .MODEL SWN VSWITCH ( VON = {0.55} VOFF = {0.49} RON={1/(2*M*(W/LE)*(KPN/2)*10)}  ROFF={1G} )
 * by
 * a1 %v(DG) %gd(D S) swa
-* .MODEL SWA aswitch(cntl_off=0.49 cntl_on=0.55 r_off=1G r_on={1/(2*M*(W/LE)*(KPN/2)*10)} log=TRUE) */
-    for (card = newcard; card; card = card->nextcard) {
+* .MODEL SWA aswitch(cntl_off=0.49 cntl_on=0.55 r_off=1G r_on={1/(2*M*(W/LE)*(KPN/2)*10)} log=TRUE)
+
+* simple hierachy, as nested subcircuits are not allowed in PSPICE */
+
+    /* first scan: find the vswitch models, transform them and put them into a list */
+	for (card = newcard; card; card = card->nextcard) {
+		char *str;
+		static struct card *subcktline = NULL;
+		static int nesting = 0;
+		char *cut_line = card->line;
+		if (ciprefix(".subckt", cut_line)) {
+			subcktline = card;
+			nesting++;
+		}
+		if (ciprefix(".ends", cut_line))
+			nesting--;
+
+		if (ciprefix(".model", card->line) && strstr(card->line, "vswitch")) {
+			char *modpar[4];
+			char *modname;
+			int i;
+
+			card->line = str = inp_remove_ws(card->line);
+			str = nexttok(str); /* throw away '.model' */
+			INPgetNetTok(&str, &modname, 0); /* model name */
+			if (!ciprefix("vswitch", str))
+				continue;
+			/* we have to find 4 parameters, identified by '=', separated by spaces */
+			char *equalptr[4];
+			equalptr[0] = strstr(str, "=");
+			if (!equalptr[0]) {
+				fprintf(stderr, "Error: not enough parameters in vswitch model\n   %s\n", card->line);
+				controlled_exit(1);
+			}
+			for (i = 1; i < 4; i++) {
+				equalptr[i] = strstr(equalptr[i - 1] + 1, "=");
+				if (!equalptr[i]) {
+					fprintf(stderr, "Error: not enough parameters in vswitch model\n   %s\n", card->line);
+					controlled_exit(1);
+				}
+			}
+			for (i = 0; i < 4; i++) {
+				equalptr[i] = skip_back_ws(equalptr[i], str);
+				equalptr[i] = skip_back_non_ws(equalptr[i], str);
+			}
+			for (i = 0; i < 3; i++)
+				modpar[i] = copy_substring(equalptr[i], equalptr[i + 1] - 1);
+			if (strrchr(equalptr[3], ')'))
+				modpar[3] = copy_substring(equalptr[3], strrchr(equalptr[3], ')'));
+			else
+				/* vswitch defined without parens */
+				modpar[3] = copy(equalptr[3]);
+			tfree(card->line);
+			/* replace VON by cntl_on, VOFF by cntl_off, RON by r_on, and ROFF by r_off */
+			rep_spar(modpar);
+			card->line = tprintf(".model a%s aswitch(%s %s %s %s  log=TRUE)",
+				modname, modpar[0], modpar[1], modpar[2], modpar[3]);
+			for (i = 0; i < 4; i++)
+				tfree(modpar[i]);
+			if (nesting > 0)
+			    modelsfound = insert_new_model(modelsfound, modname, subcktline->line);
+			else
+			    modelsfound = insert_new_model(modelsfound, modname, "top");
+		}
+	}
+	/* second scan: find the switch instances s calling a vswitch model and transform them */
+	for (card = newcard; card; card = card->nextcard) {
         static struct card *subcktline = NULL;
         static int nesting = 0;
-        char *newline = NULL;
-        bool vsfound = FALSE;
         char *cut_line = card->line;
         if (*cut_line == '*')
             continue;
@@ -6951,155 +7016,27 @@ pspice_compat(struct card *oldcard)
         if (ciprefix(".ends", cut_line))
             nesting--;
 
-        if (ciprefix("s", cut_line)) {
-            /* check for the model name */
-            int i;
-            struct card *modcard;
-            char *stoks[6];
-            for (i = 0; i < 6; i++)
-                stoks[i] = gettok(&cut_line);
-            /* rewrite s line, but do the replacement only, if a vswitch is found */
-            newline = tprintf("a%s %%vd(%s %s) %%gd(%s %s) a%s",
-                stoks[0], stoks[3], stoks[4], stoks[1], stoks[2], stoks[5]);
-            /* find the corresponding model */
-            if (nesting > 0)
-                /* inside of subckt, only same level */
-                /* check if we already had the .model line defined */
-                if (find_a_model(modelsfound, stoks[5], subcktline->line))
-                    vsfound = TRUE;
-                else {
-                    for (modcard = subcktline; ; modcard = modcard->nextcard) {
-                        char *str;
-                        if (ciprefix(".ends", modcard->line))
-                            break;
-                        if (ciprefix(".model", modcard->line) && strstr(modcard->line, stoks[5]) && strstr(modcard->line, "vswitch")) {
-                            char *modpar[4];
-                            modcard->line = str = inp_remove_ws(modcard->line);
-                            str = nexttok(str); /* throw away '.model' */
-                            str = nexttok(str); /* throw away 'modname' */
-                            if (!ciprefix("vswitch", str))
-                                goto next_loop;
-#ifndef XSPICE
-                            else {
-                                fprintf(stderr, "Error: vswitch device requires XSPICE \n");
-                                controlled_exit(1);
-                            }
-#endif
-                            /* we have to find 4 parameters, identified by '=', separated by spaces */
-                            char *equalptr[4];
-                            equalptr[0] = strstr(str, "=");
-                            if (!equalptr[0]) {
-                                fprintf(stderr, "Error: not enough parameters in vswitch model\n   %s\n", modcard->line);
-                                controlled_exit(1);
-                            }
-                            for (i = 1; i < 4; i++) {
-                                equalptr[i] = strstr(equalptr[i - 1] + 1, "=");
-                                if (!equalptr[i]) {
-                                    fprintf(stderr, "Error: not enough parameters in vswitch model\n   %s\n", modcard->line);
-                                    controlled_exit(1);
-                                }
-                            }
-                            for (i = 0; i < 4; i++) {
-                                equalptr[i] = skip_back_ws(equalptr[i], str);
-                                equalptr[i] = skip_back_non_ws(equalptr[i], str);
-                            }
-                            for (i = 0; i < 3; i++)
-                                modpar[i] = copy_substring(equalptr[i], equalptr[i + 1] - 1);
-                            if (strrchr(equalptr[3], ')'))
-                                modpar[3] = copy_substring(equalptr[3], strrchr(equalptr[3], ')'));
-                            else
-                                /* vswitch defined without parens */
-                                modpar[3] = copy(equalptr[3]);
-                            tfree(modcard->line);
-                            /* .model is now in modcard, tokens in modpar, call to s in card, tokens in stoks */
-                            /* rewrite .model line (modcard->li_line already freed in inp_remove_ws())
-                            Replace VON by cntl_on, VOFF by cntl_off, RON by r_on, and ROFF by r_off */
-                            rep_spar(modpar);
-                            modcard->line = tprintf(".model a%s aswitch(%s %s %s %s  log=TRUE)",
-                                stoks[5], modpar[0], modpar[1], modpar[2], modpar[3]);
-                            for (i = 0; i < 4; i++)
-                                tfree(modpar[i]);
-                            modelsfound = insert_new_model(modelsfound, stoks[5], subcktline->line);
-                            vsfound = TRUE;
-                            break;
-                        }
-                    }
-                }
-            if(!vsfound)
-                /* at top level only or if no model is found at sub-level */
-                /* check if we already had the .model line defined */
-                if (find_a_model(modelsfound, stoks[5], "top"))
-                    vsfound = TRUE;
-                else {
-                    for (modcard = newcard; modcard; modcard = modcard->nextcard) {
-                        static int inesting = 0;
-                        char *str;
-                        if (ciprefix(".subckt", modcard->line)) {
-                            inesting++;
-                        }
-                        if (ciprefix(".ends", modcard->line))
-                            inesting--;
-                        if ((inesting == 0) && ciprefix(".model", modcard->line) && strstr(modcard->line, stoks[5]) && strstr(modcard->line, "vswitch")) {
-                            char *delstr;
-                            char *modpar[4];
-                            delstr = str = inp_remove_ws(modcard->line);
-                            str = nexttok(str); /* throw away '.model' */
-                            str = nexttok(str); /* throw away 'modname' */
-                            if (!ciprefix("vswitch", str))
-                                goto next_loop;
-#ifndef XSPICE
-                            else {
-                                fprintf(stderr, "Error: vswitch device requires XSPICE \n");
-                                controlled_exit(1);
-                            }
-#endif
-                            /* we have to find 4 parameters, identified by '=', separated by spaces */
-                            char *equalptr[4];
-                            equalptr[0] = strstr(str, "=");
-                            if (!equalptr[0]) {
-                                fprintf(stderr, "Error: not enough parameters in vswitch model\n   %s\n", modcard->line);
-                                controlled_exit(1);
-                            }
-                            for (i = 1; i < 4; i++) {
-                                equalptr[i] = strstr(equalptr[i - 1] + 1, "=");
-                                if (!equalptr[i]) {
-                                    fprintf(stderr, "Error: not enough parameters in vswitch model\n   %s\n", modcard->line);
-                                    controlled_exit(1);
-                                }
-                            }
-                            for (i = 0; i < 4; i++) {
-                                equalptr[i] = skip_back_ws(equalptr[i], str);
-                                equalptr[i] = skip_back_non_ws(equalptr[i], str);
-                            }
-                            for (i = 0; i < 3; i++)
-                                modpar[i] = copy_substring(equalptr[i], equalptr[i + 1] - 1);
-                            modpar[3] = copy_substring(equalptr[3], strrchr(equalptr[3], ')'));
-
-                            /* .model is now in modcard, tokens in modpar, call to s in card, tokens in stoks */
-                            /* rewrite .model line (already freed in inp_remove_ws())
-                            Replace VON by cntl_on, VOFF by cntl_off, RON by r_on, and ROFF by r_off */
-                            rep_spar(modpar);
-                            modcard->line = tprintf(".model a%s aswitch ( %s %s %s %s  log=TRUE )",
-                                stoks[5], modpar[0], modpar[1], modpar[2], modpar[3]);
-                            for (i = 0; i < 4; i++)
-                                tfree(modpar[i]);
-                            modelsfound = insert_new_model(modelsfound, stoks[5], "top");
-                            vsfound = TRUE;
-                        }
-                    }
-                }
-            for (i = 0; i < 6; i++)
-                tfree(stoks[i]);
-        }
-        if (vsfound) {
-            /* we have found a corresponding vswitch model, so do the replacement of the instance line */
-            tfree(card->line);
-            card->line = copy(newline);
-            vsfound = FALSE;
-        }
-    next_loop:
-        /* jump to here if no vswitch model has been found */
-        tfree(newline);
+		if (ciprefix("s", cut_line)) {
+			/* check for the model name */
+			int i;
+			char *stoks[6];
+			for (i = 0; i < 6; i++)
+				stoks[i] = gettok(&cut_line);
+			/* rewrite s line and replace it if a model is found */
+			if (find_a_model(modelsfound, stoks[5], subcktline->line)) {
+				tfree(card->line);
+				card->line = tprintf("a%s %%vd(%s %s) %%gd(%s %s) a%s",
+					stoks[0], stoks[3], stoks[4], stoks[1], stoks[2], stoks[5]);
+			}
+			/* if model is not within same subcircuit, search at top level */
+			else if (find_a_model(modelsfound, stoks[5], "top")) {
+				tfree(card->line);
+				card->line = tprintf("a%s %%vd(%s %s) %%gd(%s %s) a%s",
+					stoks[0], stoks[3], stoks[4], stoks[1], stoks[2], stoks[5]);
+			}
+			for (i = 0; i < 6; i++)
+				tfree(stoks[i]);
+		}
     }
     del_models(modelsfound);
 
