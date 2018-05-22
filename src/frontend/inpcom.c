@@ -4809,6 +4809,7 @@ inp_compat(struct card *card)
                         tc2 = atof(tc2_ptr+1);
                 }
             }
+            /* white noise model by x2line, x3line, x4line */
             if ((tc1_ptr == NULL) && (tc2_ptr == NULL)) {
                 xline = tprintf("b%s %s %s i = v(%s, %s)/(%s)", title_tok, node1, node2,
                         node1, node2, equation);
