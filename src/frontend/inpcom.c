@@ -6951,8 +6951,10 @@ pspice_compat(struct card *oldcard)
             card->line = str = inp_remove_ws(card->line);
             str = nexttok(str); /* throw away '.model' */
             INPgetNetTok(&str, &modname, 0); /* model name */
-            if (!ciprefix("vswitch", str))
+            if (!ciprefix("vswitch", str)) {
+                tfree(modname);
                 continue;
+            }
             /* we have to find 4 parameters, identified by '=', separated by spaces */
             char *equalptr[4];
             equalptr[0] = strstr(str, "=");
@@ -6989,6 +6991,7 @@ pspice_compat(struct card *oldcard)
                 modelsfound = insert_new_model(modelsfound, modname, subcktline->line);
             else
                 modelsfound = insert_new_model(modelsfound, modname, "top");
+            tfree(modname);
         }
     }
     /* second scan: find the switch instances s calling a vswitch model and transform them */
