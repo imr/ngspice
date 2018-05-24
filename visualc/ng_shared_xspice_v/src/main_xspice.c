@@ -96,7 +96,7 @@ funptr_t ngSpice_Circ_handle = NULL;
 funptr_t ngSpice_CurPlot_handle = NULL;
 funptr_t ngSpice_AllVecs_handle = NULL;
 funptr_t ngSpice_GVI_handle = NULL;
-funptr_t ngSpice_AllNodes_handle = NULL;
+funptr_t ngSpice_AllEvtNodes_handle = NULL;
 funptr_t ngSpice_EVT_handle = NULL;
 funptr_t ngSpice_Init_Evt_handle = NULL;
 
@@ -160,7 +160,7 @@ int main()
     errmsg = dlerror();
     if (errmsg)
         printf(errmsg);
-    ngSpice_AllNodes_handle = dlsym(ngdllhandle, "ngSpice_AllEvtNodes");
+    ngSpice_AllEvtNodes_handle = dlsym(ngdllhandle, "ngSpice_AllEvtNodes");
     errmsg = dlerror();
     if (errmsg)
         printf(errmsg);
@@ -278,7 +278,7 @@ int main()
     }
 endsim:
         /* Print all event nodes to stdout */
-    vecarray = ((char ** (*)()) ngSpice_AllNodes_handle)();
+    vecarray = ((char ** (*)()) ngSpice_AllEvtNodes_handle)();
     i = 0;
     if (vecarray) {
         char* node;
