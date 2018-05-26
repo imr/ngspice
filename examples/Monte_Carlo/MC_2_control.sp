@@ -6,7 +6,7 @@
 *
 .control
   save buf                     $ we just need output vector buf, save memory by more than 10x
-  let mc_runs = 100            $ number of runs for monte carlo
+  let mc_runs = 10             $ number of runs for monte carlo
   let run = 1                  $ number of the actual run
 
 * Where to find the circuit netlist file MC_2_circ.sp
@@ -22,7 +22,11 @@
     reset
     set run ="$&run"              $ create a variable from the vector
     set rndseed = $run            $ set the rnd seed value to the loop index
-    source MC_2_circ.sp           $ load the circuit, including model data
+    if run = 1
+       source MC_2_circ.sp        $ load the circuit once from file, including model data
+    else
+       mc_source                  $ re-load the circuit from internal storage
+    end
     tran 15p 200n 0
     write mc_ring{$run}.out buf   $ write each sim output to its own rawfile
     linearize buf                 $ lienarize buf to allow fft

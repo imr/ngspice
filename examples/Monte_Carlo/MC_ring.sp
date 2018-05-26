@@ -95,11 +95,22 @@ cout  buf ss 0.2pF
 * close to 8192, which would yield varying number of line length and thus scale for fft.
 *
 * We have to figure out what to do if a single simulation will not converge.
-* Is there a variable which may be set if there is no convergence?
-* Then we might skip this run and continue with a new run. It does not exist for now.
-* So we have to rely on the robustness of the following steps not leading
-* to a seg fault if the tran data are missing.
+* There is the variable 'sim_status' which is set to 1 if the simulation
+* fails with ’xx simulation(s) aborted’, e.g. because of non-convergence.
+* Then we might skip this run and continue with a new run.
 *
+    echo Simulation status $sim_status
+    let simstat = $sim_status
+    if simstat = 1
+      if run = mc_runs
+        echo go to end
+      else
+        echo go to next run
+      end
+      destroy $curplot
+      goto next
+    end
+
     set run ="$&run"              $ create a variable from the vector
     set mc_runs ="$&mc_runs"      $ create a variable from the vector
     echo simulation run no. $run of $mc_runs
@@ -136,6 +147,8 @@ cout  buf ss 0.2pF
     let maxffts[{$run}]={$dt}.fft_max
     let halfffts[{$run}]={$dt}.fft_40
     let run = run + 1
+    label next
+    reset
   end
 ***** plotting **********************************************************
   setplot $plot_out
