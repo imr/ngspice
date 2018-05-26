@@ -18,6 +18,7 @@ MODIFICATIONS
 
     7/11/2012  Holger Vogt   Replace printf by out_printf to allow output redirection
     5/21/2017  Holger Vogt   Update 'edisplay': add node type and number of events
+    5/26/2018  Uros Platise  Update 'EVTprintvcd': stepsize based on tstep
 
 SUMMARY
 
@@ -580,25 +581,27 @@ EVTprintvcd(wordlist *wl)
 
     out_printf("$version %s %s $end\n", ft_sim->simulator, ft_sim->version);
 
-    /* get the sim time resolution */
+    /* get the sim time resolution based on tstep */
     char *unit;
     double scale;
-    double tstop = ckt->CKTfinalTime;
-    if (tstop < 1e-8) {
-        unit = "fs";
-        scale = 1e15;
+    double tstep = ckt->CKTstep;
+
+    /* if selected time step is down to [ms] then report time at [us] etc., always with one level higher resolution */
+    if (tstep >= 1e-3) {
+        unit = "us";
+        scale = 1e6;
     }
-    else if (tstop < 1e-5) {
-        unit = "ps";
-        scale = 1e12;
-    }
-    else if (tstop < 1e-2) {
+    else if (tstep >= 1e-6) {
         unit = "ns";
         scale = 1e9;
     }
+    else if (tstep >= 1e-9) {
+        unit = "ps";
+        scale = 1e12;
+    }
     else {
-        unit = "us";
-        scale = 1e6;
+        unit = "fs";
+        scale = 1e15;
     }
     out_printf("$timescale 1 %s $end\n", unit);
 
@@ -631,10 +634,9 @@ EVTprintvcd(wordlist *wl)
         tfree(buf);
     }
 
-
     out_printf("$enddefinitions $end\n");
+    out_printf("#%lld\n", (unsigned long long)(step * scale));
 
-    out_printf("#%d\n", (int)(step * scale));
     /* first set of data for initialization
        or if only op has been calculated */
     out_printf("$dumpvars\n");
@@ -673,7 +675,7 @@ EVTprintvcd(wordlist *wl)
             }
 
         /* timestamp */
-        out_printf("#%d\n", (int)(this_step * scale));
+        out_printf("#%lld\n", (unsigned long long)(this_step * scale));
         /* print only values that have changed */
         for (i = 0; i < nargs; i++) {
             if (!eq(old_node_value[i], node_value[i])) {
