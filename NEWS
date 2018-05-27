@@ -1,3 +1,37 @@
+Ngspice-28, May 27th, 2018
+============
+
+- New features:
+    + Licenses for ngspice distribution are DFSG compatible
+    + VDMOS power MOS model added
+    + if 'set ngbehavior=ps' is given in .spiceinit, device libraries loaded
+      via .include may have PSPICE syntax
+    + --enable-oldapps configure flag to compile the old, seldom used apps
+      ngnutmeg, ngmakeidx, ngmultidec, ngproc2mod, ngsconvert
+    + add command mc_source to internally re-load the circuit
+    + add command alterparam to alter the value of a parameter xxx given in .param xxx=value
+    + add the function i(xyz) to measure the current in node 1 of device xyz, to be
+      used in behavioral models.
+    + new label 'noretraceplot' for the 'plot' command, if graphs in a plot show unwanted
+      retracing lines.
+    + The hyphen '-' is a valid character in model, device and subcircuit names
+    + add noise for behavioral resistor
+    + add a new vector type "temperature"
+    + support instance parameter defaults on .model lines
+    + New functions for XSPICE event node data export from shared ngspice:
+      ngGet_Evt_NodeInfo(char*) and ngSpice_AllEvtNodes(void)
+    + 'edisplay' command now showing node name, node type and number of events per node
+    + add flag 'none' to the 'save' command for shared ngspice.
+      Output data will not be stored, but are available via callback function ng_data.
+    + add a function cm_get_circuit to allow accessing the circuit structure ckt
+      from within an XSPICE code model.
+    + add variable 'sim_status' to indicate if a simulation has been aborted
+    + add pkg-config file
+
+- Bug fixes:
+    + many, many ... as always
+
+
 Ngspice-27, Aug 28th, 2017
 ============
 
