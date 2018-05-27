@@ -405,7 +405,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
 
     /* if nothing came back from inp_readall, just close fp and return to caller */
     if (!deck) {
-        if (!intfile)
+        if (!intfile && fp)
             fclose(fp);
         return;
     }
