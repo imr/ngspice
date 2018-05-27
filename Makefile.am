@@ -6,12 +6,13 @@ DIST_SUBDIRS = @XGRAPHDIR@ src man tests
 EXTRA_DIST = FAQ autogen.sh Stuarts_Poly_Notes  \
 		ANALYSES BUGS AUTHORS ChangeLog \
 		DEVICES NEWS README README.tcl \
-		README.adms contrib \
+		README.shared-xspice README.vdmos \
+		README.adms README-old.adms contrib \
 		examples m4 visualc @NOTXGRAPH@ \
 		xgraph/aclocal.m4 \
 		build-for-mac-os.sh \
 		cross-compile.sh cross-compile-shared.sh \
-		compile_min.sh .gitignore
+		compile_min.sh compile_linux.sh .gitignore
 
 MAINTAINERCLEANFILES = Makefile.in aclocal.m4 ar-lib compile config.guess \
 			src/include/ngspice/config.h.in config.sub configure install-sh \
