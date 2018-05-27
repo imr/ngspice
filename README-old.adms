@@ -1,0 +1,453 @@
+***************************************************************************
+* DISCLAIMER                                                              *
+*                                                                         *
+* The admst code generators, part of adms and this document are released  *
+* under LGPL license terms.                                               *
+*                                                                         *
+* Copyright (C) 2006  Freescale Inc.                                      *
+*                                                                         *
+* This library is free software; you can redistribute it and/or           *
+* modify it under the terms of the GNU Lesser General Public              *
+* License as published by the Free Software Foundation; either            *
+* version 2.1 of the License, or (at your option) any later version.      *
+*                                                                         *
+* This library is distributed in the hope that it will be useful,         *
+* but WITHOUT ANY WARRANTY; without even the implied warranty of          *
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU       *
+* Lesser General Public License for more details.                         *
+*                                                                         *
+* You should have received a copy of the GNU Lesser General Public        *
+* License along with this library; if not, write to the Free Software     *
+* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA           *
+* 02110-1301  USA                                                         *
+***************************************************************************
+
+WARNING!
+
+The text in this document has been prepared in 2006 and is outdated. It is
+provided here only for reference and may provide some (historical)
+information.
+
+Please refer to the ngspice adms web page at
+http://ngspice.sourceforge.net/admshowto.html
+for actual information on how to integrate Verilog A device models into
+ngspice.
+
+Holger Vogt, May 2013
+
+
+
+INTRODUCTION
+
+In this document we will provide a guideline on how to auto-generate the
+ready-to compile C code for the ngspice API of a compact device model
+defined in the Verilog-AMS language.
+
+Condition:
+  To compile Verilog-AMS compact models into ngspice-ready C models with
+  admsXml a copy of the latest adms distribution is needed. You get it from
+  the adms Download page http://mot-adms.sourceforge.net as a source code
+  package. (Also use of cvs version is possible, but needs some more effort.)
+
+Version:
+  This guideline has been tested on Windows-XP under cygwin using:
+    $ admsXml -v
+    [usage] <release name="admsXml" version="2.1.3" date="Feb 2 2006" time="19:01:39"/>
+    [info] elapsed time: 0
+    [info] admst iterations: 0 (0 freed)
+
+Goal:
+  In this guideline we will add device model hicum0 to ngspice
+  using the Verilog-AMS source code available at:
+    http://www.iee.et.tu-dresden.de/~schroter/Hicum_PD/Hicumna/hicumL0V1p11.va
+
+Limitations:
+  The adms ngspice interface supports a limited set of Verilog-AMS language
+  constructs. See the home page of adms (http://mot-adms.sourceforge.net/)
+  for more info.
+  Feel free to contribute to the adms ngspice interface so that more
+  constructs can be supported.
+
+
+01- ngspice Files
+
+  Ngspice does not (yet) have support for loading models at run time, every
+  model must be included at compile time. Then, adding a new model into
+  ngspice is a process that cannot be completely automated. Some files need
+  to be edited by hand.
+
+  01.01 What ngspice need to know of a new model ?
+
+  First you have to assign your new model a "device type". As you probably
+  know, ngspice recognizes the type of a device by the first letter in
+  device's name in the netlists ("r" for resistors, "q" for BJT, "m" for
+  mosfets and so on). Then the first thing you have to find is the correct
+  type for your new device (let's call this device_type).
+
+  Since there can be more than one model for each device type, another
+  parameter you have to set is the device_level, which must be unique
+  for each device type.
+
+  Once you have found the (device_type, device_level) couple you have
+  identified the files you have to edit:
+
+    <ngspice-data-tree>/configure.ac
+     Here you have to add the entries in adms section for your new directory
+     and library.
+
+    <ngspice-data-tree>/src/spicelib/parser/inp2<device_type>.c
+    Substitute <device_type> with the letter corresponding to the
+    type of you new model. Here you have to add the interface code for your
+    new device. In the case of hicum (a BJT model and thus a "q" device type)
+    you have to edit inp2q.c
+
+    <ngspice-data-tree>/src/spicelib/parser/inpdomod.c
+    Here you have to add a switch for the level of your new device.
+
+    <ngspice-data-tree>/src/spicelib/devices/dev.c
+    Follow the structure of the files and add information on your new
+    model. In dev.c you have to adjust some macro.
+
+  See existing examples to make the modifications for your own implementation.
+  <ngspice-data-tree> is the path to the ngspice source installation.
+  For instance <ngspice-data-tree> can be /tools/ng-spice-rework-17
+
+  Please see appendix 01 about spice3-flavoured flags.
+
+02- adms Files
+
+  List of files that adms needs to create the ready-to-compile C code:
+    <ngspice-data-tree>/src/spicelib/devices/adms/admst/ngspice*.xml
+  adms creates the ready-to-compile C code from a set of admst code
+  generators. admst is a subset of the XML language which has been created
+  specifically for the purpose of C code generation. The syntax of admst is
+  very close to the XSLT language (it includes some extensions.)
+
+03- Create the data file structure
+
+  Create the following directories if they do not already exist:
+    -a <ngspice-data-tree>/src/spicelib/devices/adms/hicum0
+    -b <ngspice-data-tree>/src/spicelib/devices/adms/hicum0/admsva
+
+  There is no convention on the way to choice the last directory name in -a.
+  However in -b 'admsva' is mandatory.
+
+04- Save the Verilog-AMS source code
+
+  Save the source code of hicum0 from
+    http://www.iee.et.tu-dresden.de/~schroter/Hicum_PD/Hicumna/hicumL0V1p11.va
+  to:
+    <ngspice-data-tree>/src/spicelib/devices/adms/hicum0/admsva/hic0_full.va
+
+  NOTE: the name of the Verilog-AMS file that contains the 'module' declaration
+  should match the name of the module in the file.
+  For instance in file hic0_full.va you will find the following declaration:
+    ...
+    module hic0_full (c,b,e,s);
+    ...
+
+05- Create file 'Makefile.am'
+
+  In directory ..../hicum0 run the following command in order to create file 'Makefile.am':
+    $ admsXml admsva/hic0_full.va -Iadmsva -e ../admst/ngspiceMakefile.am.xml
+    [info] admsXml-2.1.3 Feb 2 2006 19:01:39
+    [warning] [admsva\hic0_full.va:30]: standard vams file created (not found in -I path) ... 'constants.h'
+    [warning] [admsva\hic0_full.va:31]: standard vams file created (not found in -I path) ... 'discipline.h'
+    [info] Makefile.am: file created
+    [info] elapsed time: 1.0624
+    [info] admst iterations: 185425 (185425 freed)
+  After this step file 'Makefile.am' is created:
+    $ head Makefile.am
+    ##
+    ## Interface:
+    ## created by: admsXml-2.1.3 - Monday, 01/30/06
+    ## Process this file with automake to produce Makefile.in
+    ADMSXMLINTERFACE:=../admst
+    adms:
+            admsXml.exe -Iadmsva admsva/hic0_full.va \
+
+06- Update/Create the auto-tools files (configure, Makefile.in, Makefile)
+
+  06.01 Manual changes
+    In directory <ngspice-data-tree> edit file configure.ac, add new device 'hicum0'
+    (use the name of the directory - not the name of the module):
+      $ grep hicum0 configure.ac
+      src/spicelib/devices/adms/hicum0/Makefile       \
+    In directory <ngspice-data-tree>/src/spicelib/devices edit file Makefile.am, add new device 'hicum0':
+      $ grep hicum0 Makefile.am
+              adms/hicum0     \
+              adms/hicum0     \
+
+  06.02 Makefile.in
+      In directory <ngspice-data-tree> run the shell command 'automake':
+      File 'Makefile.in' is created in directory <ngspice-data-tree>/src/spicelib/devices/hicum0.
+      In directory <ngspice-data-tree>/src/spicelib/devices/hicum0 you should have:
+        $ ls
+        Makefile.am  Makefile.in  admsva  constants.h  discipline.h
+
+  06.03 Update file 'configure'
+      In directory <ngspice-data-tree> run the shell command 'autoconf':
+      File 'configure' is updated.
+      Edit the file to make sure that "adms/hicum0/Makefile" is present in the file.
+
+  06.04 Makefile
+      In directory <ngspice-data-tree> run shell command 'configure':
+        $ configure
+        ...
+        config.status: creating src/spicelib/devices/adms/hicum0/Makefile
+        ...
+      File 'Makefile' is created in directory <ngspice-data-tree>/src/spicelib/devices/hicum0.
+      In directory <ngspice-data-tree>/src/spicelib/devices/hicum0 you should have:
+        $ ls
+        Makefile Makefile.am  Makefile.in  admsva  constants.h  discipline.h
+
+07- Create the ready-to-compile auto-generated C code of device hicum0
+
+  In directory ..../hicum0 run the following command in order to create the auto-generated C code:
+      $ make adms
+      admsXml.exe -Iadmsva admsva/hic0_full.va \
+      -e ../admst/ngspiceVersion.xml \
+      -e ../admst/ngspiceMakefile.am.xml \
+      -e ../admst/ngspiceMODULEitf.h.xml \
+      -e ../admst/ngspiceMODULEinit.c.xml \
+      -e ../admst/ngspiceMODULEinit.h.xml \
+      -e ../admst/ngspiceMODULEext.h.xml \
+      -e ../admst/ngspiceMODULEdefs.h.xml \
+      -e ../admst/ngspiceMODULEask.c.xml \
+      -e ../admst/ngspiceMODULEmask.c.xml \
+      -e ../admst/ngspiceMODULEpar.c.xml \
+      -e ../admst/ngspiceMODULEmpar.c.xml \
+      -e ../admst/ngspiceMODULEload.c.xml \
+      -e ../admst/ngspiceMODULEacld.c.xml \
+      -e ../admst/ngspiceMODULEtemp.c.xml \
+      -e ../admst/ngspiceMODULEsetup.c.xml \
+      -e ../admst/ngspiceMODULEguesstopology.c.xml \
+      -e ../admst/ngspiceMODULE.c.xml
+      [info] admsXml-2.1.3 Feb 2 2006 19:01:39
+      [info] Makefile.am: file created
+      [info] hic0_fullitf.h: file created
+      [info] hic0_fullinit.c: file created
+      [info] hic0_fullinit.h: file created
+      [info] hic0_fullext.h: file created
+      [info] hic0_fulldefs.h: file created
+      [info] hic0_fullask.c: file created
+      [info] hic0_fullmask.c: file created
+      [info] hic0_fullpar.c: file created
+      [info] hic0_fullmpar.c: file created
+      [info] noise contribution not implemented - ignored!
+      [info] noise contribution not implemented - ignored!
+      [info] noise contribution not implemented - ignored!
+      [info] noise contribution not implemented - ignored!
+      [info] noise contribution not implemented - ignored!
+      [info] noise contribution not implemented - ignored!
+      [info] hic0_fullload.c: file created
+      [info] hic0_fullacld.c: file created
+      [info] hic0_fulltemp.c: file created
+      [info] hic0_fullsetup.c: file created
+      [info] hic0_fullguesstopology.c: file created
+      [info] hic0_full.c: file created
+      [info] elapsed time: 5.43757
+      [info] admst iterations: 1099640 (1099640 freed)
+      perl -p -i -e 's/IOP\("(\w+)"/IOP("\L\1"/' hic0_full.c
+
+      In directory <ngspice-data-tree>/src/spicelib/devices/hicum0 you should have:
+      $ ls
+      Makefile     constants.h      hic0_fullacld.c  hic0_fullguesstopology.c  hic0_fullload.c  hic0_fullsetup.c
+      Makefile.am  discipline.h     hic0_fullask.c   hic0_fullinit.c           hic0_fullmask.c  hic0_fulltemp.c
+      Makefile.in  hic0_full.c      hic0_fulldefs.h  hic0_fullinit.h           hic0_fullmpar.c
+      admsva       hic0_fullext.h   hic0_fullitf.h            hic0_fullpar.c
+
+08- Compile the ready-to-compile auto-generated C code
+
+  In directory ..../hicum0 run the following command in order to create the object files*.o and libhic0_full.a:
+    $ make CFLAGS="-g"
+    if gcc -DHAVE_CONFIG_H -I. -I. -I../../../../.. -I../../../../../src/include -g -MT hic0_full.o
+    -MD -MP -MF ".ds/hic0_full.Tpo" -c -o hic0_full.o hic0_full.c; \
+    then mv -f ".deps/hic0_full.Tpo" ".deps/hic0_full.Po"; else rm -f ".deps/hic0_full.Tpo"; exit 1; fi
+    ...
+    ar cru libhic0_full.a hic0_full.o hic0_fullacld.o hic0_fullask.o hic0_fullguesstopology.o hic0_fullinit.o
+    hic0_fullload.o hic0_fullmask.o hic0_fullmpar.o hic0_fullpar.o hic0_fullsetup.o hic0_fulltemp.o
+    ranlib libhic0_full.a
+
+  WARNING: at the compilation step some messages about '#warning conflict' will be printed.
+           They mean that some ngspice reserved keywords have been used in the Verilog-AMS.
+           Just ignore them in the case of hicum0.
+
+  In directory <ngspice-data-tree>/src/spicelib/devices/hicum0 you should have:
+    $ ls
+    Makefile      hic0_full.c      hic0_fullask.o            hic0_fullinit.h  hic0_fullmask.o   hic0_fullsetup.o
+    Makefile.am   hic0_fulldefs.h  hic0_fullinit.o           hic0_fullmpar.c  hic0_fulltemp.c
+    Makefile.in   hic0_full.o      hic0_fullext.h            hic0_fullitf.h   hic0_fullmpar.o   hic0_fulltemp.o
+    admsva        hic0_fullacld.c  hic0_fullguesstopology.c  hic0_fullload.c  hic0_fullpar.c    libhic0_full.a
+    constants.h   hic0_fullacld.o  hic0_fullguesstopology.o  hic0_fullload.o  hic0_fullpar.o
+    discipline.h  hic0_fullask.c   hic0_fullinit.c           hic0_fullmask.c  hic0_fullsetup.c
+
+  NOTE: CFLAGS is redefined to "-g" is order to speed up the compilation process.
+        It is better NOT to redefine CFLAGS for official releases.
+        (the compilation will take a lot longer to complete)
+
+
+09- Update manually the ngspice parser files
+  Modify the following files:
+    <ngspice-data-tree>/src/spicelib/parser/inp2q.c ----> depends on the type of the device, here 'q' device
+    <ngspice-data-tree>/src/spicelib/parser/inpdomod.c
+    <ngspice-data-tree>/src/spicelib/devices/dev.c
+    ...
+10- Update executable 'ngspice'
+
+  10-01 Update ngspice
+    In directory <ngspice-data-tree> run shell command 'make':
+      $ make
+    File 'src/ngspice.exe' is updated and contains the new device 'hicum0'.
+
+  10-02 Install ngspice
+    In directory <ngspice-data-tree> run shell command 'make':
+      $ make install
+    ngspice executables are installed in /usr/local/bin.
+
+11- Test the Implementation of hicum0 into ngspice
+  11-01 Create a simple ngspice netlist
+    Create file 'hicum0.sp'. Its contents is given below:
+      $ cat hicum0.sp
+      .title Netlist
+      .option
+      +  temp=25.0
+      +  reltol=1e-5
+      +  abstol=1e-15
+      .model mybjtmodel npn
+      +  npn=1
+      +  level=5
+      qN1
+      +  c b 0 0
+      +  mybjtmodel
+      rcc cc c 100.0
+      rbb bb b 1k
+      vcc
+      +  cc 0
+      +  1.0
+      vbb
+      +  bb 0
+      +  0.0
+      +  ac=0.0
+      .dc vbb 0.0 1.0 0.02
+      .print
+      +  dc
+      +  v(c)
+      +  i(vbb)
+      +  i(vcc)
+      .end
+
+  11-02 run 'ngspice':
+      $ ngspice -b hicum0.sp
+      Circuit: .title Netlist
+      Doing analysis at TEMP = 298.150000 and TNOM = 300.150000
+      No. of Data Rows : 51
+                .title Netlist
+                DC transfer characteristic  Mon Jan 30 10:22:01  2006
+      --------------------------------------------------------------------------------
+      Index   v-sweep         v(c)            vbb#branch      vcc#branch
+      --------------------------------------------------------------------------------
+      0       0.000000e+00    1.000000e+00    0.000000e+00    -7.105421e-17
+      1       2.000000e-02    1.000000e+00    -5.593842e-19   -1.265654e-16
+      2       4.000000e-02    1.000000e+00    -2.076336e-18   -2.775558e-16
+      3       6.000000e-02    1.000000e+00    -5.366258e-18   -6.061817e-16
+      4       8.000000e-02    1.000000e+00    -1.254873e-17   -1.320055e-15
+      5       1.000000e-01    1.000000e+00    -2.812744e-17   -2.874367e-15
+      6       1.200000e-01    1.000000e+00    -7.629085e-17   -7.666090e-15
+      7       1.400000e-01    1.000000e+00    -1.669761e-16   -1.669553e-14
+      8       1.600000e-01    1.000000e+00    -3.645759e-16   -3.636425e-14
+      9       1.800000e-01    1.000000e+00    -7.948513e-16   -7.920553e-14
+      10      2.000000e-01    1.000000e+00    -1.732082e-15   -1.725142e-13
+      11      2.200000e-01    1.000000e+00    -3.773484e-15   -3.757461e-13
+      12      2.400000e-01    1.000000e+00    -8.219658e-15   -8.183998e-13
+      13      2.600000e-01    1.000000e+00    -1.790375e-14   -1.782522e-12
+      14      2.800000e-01    1.000000e+00    -3.899630e-14   -3.882434e-12
+      15      3.000000e-01    1.000000e+00    -8.493698e-14   -8.456170e-12
+      16      3.200000e-01    1.000000e+00    -1.849987e-13   -1.841804e-11
+      17      3.400000e-01    1.000000e+00    -4.029389e-13   -4.011557e-11
+      18      3.600000e-01    1.000000e+00    -8.776254e-13   -8.737407e-11
+      19      3.800000e-01    1.000000e+00    -1.911521e-12   -1.903059e-10
+      20      4.000000e-01    1.000000e+00    -4.163405e-12   -4.144973e-10
+      21      4.200000e-01    9.999999e-01    -9.068141e-12   -9.027994e-10
+      22      4.400000e-01    9.999998e-01    -1.975094e-11   -1.966349e-09
+      23      4.600000e-01    9.999996e-01    -4.301867e-11   -4.282821e-09
+      24      4.800000e-01    9.999991e-01    -9.369701e-11   -9.328218e-09
+      25      5.000000e-01    9.999980e-01    -2.040767e-10   -2.031732e-08
+      26      5.200000e-01    9.999956e-01    -4.444870e-10   -4.425191e-08
+      27      5.400000e-01    9.999904e-01    -9.680991e-10   -9.638130e-08
+      28      5.600000e-01    9.999790e-01    -2.108483e-09   -2.099148e-07
+      29      5.800000e-01    9.999543e-01    -4.591957e-09   -4.571626e-07
+      30      6.000000e-01    9.999004e-01    -9.999448e-09   -9.955176e-07
+      31      6.200000e-01    9.997833e-01    -2.176941e-08   -2.167303e-06
+      32      6.400000e-01    9.995284e-01    -4.736784e-08   -4.715812e-06
+      33      6.600000e-01    9.989751e-01    -1.029470e-07   -1.024912e-05
+      34      6.800000e-01    9.977781e-01    -2.231776e-07   -2.221894e-05
+      35      7.000000e-01    9.952090e-01    -4.812339e-07   -4.791028e-05
+      36      7.200000e-01    9.897838e-01    -1.026165e-06   -1.021618e-04
+      37      7.400000e-01    9.786930e-01    -2.140206e-06   -2.130697e-04
+      38      7.600000e-01    9.573154e-01    -4.287705e-06   -4.268455e-04
+      39      7.800000e-01    9.197474e-01    -8.062749e-06   -8.025264e-04
+      40      8.000000e-01    8.611162e-01    -1.395965e-05   -1.388838e-03
+      41      8.200000e-01    7.801099e-01    -2.212604e-05   -2.198901e-03
+      42      8.400000e-01    6.791392e-01    -3.235919e-05   -3.208608e-03
+      43      8.600000e-01    5.627227e-01    -4.429334e-05   -4.372773e-03
+      44      8.800000e-01    4.367031e-01    -5.756142e-05   -5.632969e-03
+      45      9.000000e-01    3.111929e-01    -7.186079e-05   -6.888071e-03
+      46      9.200000e-01    2.120521e-01    -8.696058e-05   -7.879479e-03
+      47      9.400000e-01    1.637984e-01    -1.026891e-04   -8.362016e-03
+      48      9.600000e-01    1.443326e-01    -1.189191e-04   -8.556674e-03
+      49      9.800000e-01    1.353683e-01    -1.355550e-04   -8.646317e-03
+      50      1.000000e+00    1.312181e-01    -1.525242e-04   -8.687819e-03
+      Total elapsed time: 0.625 seconds.
+      Current dynamic memory usage = 1.515520 MB,
+      Dynamic memory limit = 1241.702400 MB.
+
+12- How to update ngspice when the Verilog-AMS source code changes
+
+  If you modify the Verilog-AMS source code of 'hicum0'
+  just complete the following steps in order to update
+  'ngspice':
+
+  12-01 Update the auto-generated C code
+    In directory ..../hicum0 run:
+    - make clean
+    - make adms
+    - make
+  12-02 Update 'ngspice' and re-install
+    In directory <ngspice-data-tree> run:
+    - make
+    - make install
+
+Appendix 01: Comments on spice3-flavoured flags like npn, pnp, nmos, pmos and so on
+
+  In the adms-based implementation of hicum0 the value of the device type flag (either npn or pnp)
+  in the model card is just ignored.
+  The selection of the type of the device is actually done using model parameters.
+  In the Verilog-AMS code of hicum0 there are two special model parameters called 'npn' and 'pnp'
+  which decide what the type of the device will be (either a npn bipolar model or pnp bipolar model).
+  The Verilog-AMS piece of code that triggers the decision is as follows:
+     if (`PGIVEN(npn))
+       HICUMtype =  `NPN;
+     else if (`PGIVEN(pnp))
+       HICUMtype =  `PNP;
+     else
+       HICUMtype =  `NPN;
+     end
+  `PGIVEN(npn) is a macro that returns 1 is model parameter 'npn' occurs in the .model card
+  of the ngspice netlist. Otherwise it returns 0.
+  For instance:
+    1- the following model card will select a NPN type device:
+      .model mybjtmodel npn
+      +  npn=1
+      +  level=5
+    2- the following model card will select a PNP type device:
+      .model mybjtmodel npn
+      +  pnp=1
+      +  level=5
+
+  In both cases flag 'npn' is just ignored.
+  In section 'Update manually the ngspice parser files' it is recommended
+  to use flag 'adms' instead.
+  This limitation results from the LRM of VerilogAMS that does not support flags.
+
+
