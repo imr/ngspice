@@ -6995,6 +6995,11 @@ pspice_compat(struct card *oldcard)
             tfree(modname);
         }
     }
+
+    /* no need to continue if no vswitch is found */
+    if (!modelsfound)
+        return newcard;
+
     /* second scan: find the switch instances s calling a vswitch model and transform them */
     for (card = newcard; card; card = card->nextcard) {
         static struct card *subcktline = NULL;
@@ -7028,7 +7033,7 @@ pspice_compat(struct card *oldcard)
             for (i = 0; i < 6; i++)
                 stoks[i] = gettok(&cut_line);
             /* rewrite s line and replace it if a model is found */
-            if (find_a_model(modelsfound, stoks[5], subcktline->line)) {
+            if ((nesting > 0) && find_a_model(modelsfound, stoks[5], subcktline->line)) {
                 tfree(card->line);
                 card->line = tprintf("a%s %%vd(%s %s) %%gd(%s %s) a%s",
                     stoks[0], stoks[3], stoks[4], stoks[1], stoks[2], stoks[5]);
