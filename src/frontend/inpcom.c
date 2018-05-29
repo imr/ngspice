@@ -6779,6 +6779,53 @@ pspice_compat(struct card *oldcard)
         }
     }
 
+    /* in R instance, replace TC = xx1, xx2 by TC1=xx1 TC2=xx2 */
+    for (card = newcard; card; card = card->nextcard) {
+        char *cut_line = card->line;
+
+        /* exclude any command inside .control ... .endc */
+        if (ciprefix(".control", cut_line)) {
+            skip_control++;
+            continue;
+        }
+        else if (ciprefix(".endc", cut_line)) {
+            skip_control--;
+            continue;
+        }
+        else if (skip_control > 0) {
+            continue;
+        }
+
+        if (*cut_line == 'r') {
+            char *tctok = search_plain_identifier(cut_line, "tc");
+            if (tctok) {
+                char *tctok1 = strchr(tctok,'=');
+                if (tctok1)
+                    /* skip '=' */
+                    tctok1 += 1;
+                else
+                    /* no '=' found, skip 'tc' */
+                    tctok1 = tctok + 2;
+                char *tc1 = gettok_node(&tctok1);
+                char *tc2 = gettok_node(&tctok1);
+                tctok[-1] = '\0';
+                char *newstring;
+                if (tc1 && tc2)
+                    newstring = tprintf("%s tc1=%s tc2=%s", cut_line, tc1, tc2);
+                else if (tc1)
+                    newstring = tprintf("%s tc1=%s", cut_line, tc1);
+                else {
+                    fprintf(stderr, "Warning: tc without parameters removed in line \n   %s\n", cut_line);
+                    continue;
+                }
+                tfree(card->line);
+                card->line = newstring;
+                tfree(tc1);
+                tfree(tc2);
+            }
+        }
+    }
+
     /* replace & with && and | with || and *# with * # */
     for (card = newcard; card; card = card->nextcard) {
         char *t;
