@@ -259,9 +259,8 @@ int main()
     /* read current plot while simulation continues */
     curplot = ((char * (*)()) ngSpice_CurPlot_handle)();
     printf("\nCurrent plot is %s\n\n", curplot);
-/*
     vecarray = ((char ** (*)(char*)) ngSpice_AllVecs_handle)(curplot);
-    // get length of first vector
+    /* get length of first vector */
     if (vecarray) {
         char plotvec[256];
         pvector_info myvec;
@@ -269,10 +268,13 @@ int main()
         vecname = vecarray[0];
         sprintf(plotvec, "%s.%s", curplot, vecname);
         myvec = ((pvector_info(*)(char*)) ngSpice_GVI_handle)(plotvec);
-        veclength = myvec->v_length;
-        printf("\nActual length of vector %s is %d\n\n", plotvec, veclength);
+        if (myvec) {
+            veclength = myvec->v_length;
+            printf("\nActual length of vector %s is %d\n\n", plotvec, veclength);
+        }
+        else
+            printf("\nCould not read vector %s\n\n", plotvec);
     }
-*/
     /* wait until simulation finishes */
     for (;;) {
 #if defined(__MINGW32__) || defined(_MSC_VER)
@@ -414,7 +416,7 @@ endsim2:
     /* read current plot while simulation continues */
     curplot = ((char * (*)()) ngSpice_CurPlot_handle)();
     printf("\nCurrent plot is %s\n\n", curplot);
-
+    ret = ((int * (*)(char*)) ngSpice_Command_handle)("bg_halt");
     vecarray = ((char ** (*)(char*)) ngSpice_AllVecs_handle)(curplot);
     /* get length of first vector */
     if (vecarray) {
@@ -424,10 +426,15 @@ endsim2:
         vecname = vecarray[0];
         sprintf(plotvec, "%s.%s", curplot, vecname);
         myvec = ((pvector_info(*)(char*)) ngSpice_GVI_handle)(plotvec);
-        veclength = myvec->v_length;
-        printf("\nActual length of vector %s is %d\n\n", plotvec, veclength);
+        if (myvec) {
+            veclength = myvec->v_length;
+            printf("\nActual length of vector %s is %d\n\n", plotvec, veclength);
+        }
+        else
+            printf("\nCould not read vector %s\n\n", plotvec);
     }
-
+    ret = ((int * (*)(char*)) ngSpice_Command_handle)("display");
+    ret = ((int * (*)(char*)) ngSpice_Command_handle)("bg_resume");
     /* wait until simulation finishes */
     for (;;) {
 #if defined(__MINGW32__) || defined(_MSC_VER)
@@ -442,12 +449,12 @@ endsim2:
     }
     ret = ((int * (*)(char*)) ngSpice_Command_handle)("display");
     ret = ((int * (*)(char*)) ngSpice_Command_handle)("quit");
-#if 0
+
     /* unload now */
     dlclose(ngdllhandle);
     ngdllhandle = NULL;
     printf("Unloaded\n\n");
-
+#if 0
     if (will_unload) {
         printf("Unload now\n");
         dlclose(ngdllhandle);
