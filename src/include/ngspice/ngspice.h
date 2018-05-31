@@ -190,7 +190,6 @@ extern double x_atanh(double);
 #define write _write
 #define strcasecmp _stricmp
 #define strncasecmp _strnicmp
-#define snprintf _snprintf
 #define isatty _isatty
 #define inline __inline
 #define popen _popen

@@ -527,7 +527,7 @@ drawlingrid(GRAPH *graph, char *units, int spacing, int nsp, double dst, double 
         if (j == 0)
             SetLinestyle(1);
 
-        snprintf(buf, sizeof(buf) - 1, "%.*f", digits + 1, m * mag / 100.0);
+        snprintf(buf, sizeof(buf), "%.*f", digits + 1, m * mag / 100.0);
 
         if (axis == x_axis)
             DevDrawText(buf, graph->viewportxoff + i -
