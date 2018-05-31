@@ -6725,7 +6725,10 @@ del_models(struct vsmodels *vsmodel)
   .model aswn aswitch(cntl_off={0.49} cntl_on={0.55} r_off={1G}
   + r_on={ 1 / (2 * M*(W / LE)*(KPN / 2) * 10) } log = TRUE)
 * replace & by &&
-* replace | by || */
+* replace | by ||
+* in R instance, replace TC = xx1, xx2 by TC1=xx1 TC2=xx2
+* replace T_ABS by temp and T_REL_GLOBAL by dtemp in .model cards
+* get the area factor for diodes and bipolar devices */
 static struct card *
 pspice_compat(struct card *oldcard)
 {
