@@ -12,7 +12,8 @@ vs Nvs 0 0
 vtc tcase 0 25
 vjt tj 0 25
 
-.include OptiMOS5_30V_PSpice.lib $ OptiMOS_30V.lib
+* the library may be downloaded from https://www.infineon.com/cms/en/product/promopages/power-mosfet-simulation-models/?redirId=56389#low-voltage-simulation-models-00001
+.include OptiMOS5_30V_PSpice.lib
 
 .control
 dc vd 0 3 0.1 vg 2.8 3.2 0.2
