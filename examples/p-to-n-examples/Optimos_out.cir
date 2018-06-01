@@ -12,7 +12,7 @@ vs Nvs 0 0
 vtc tcase 0 25
 vjt tj 0 25
 
-.include D:\Spice_general\tests\pspice-to-ngspice\OptiMOS5_30V_PSpice.lib $ OptiMOS_30V.lib
+.include OptiMOS5_30V_PSpice.lib $ OptiMOS_30V.lib
 
 .control
 dc vd 0 3 0.1 vg 2.8 3.2 0.2
