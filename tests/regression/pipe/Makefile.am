@@ -8,6 +8,7 @@ TESTS_ENVIRONMENT = \
 	$(SHELL) -c '$(top_builddir)/src/ngspice -p < $$1' --
 
 EXTRA_DIST = \
-	$(TESTS)
+	$(TESTS) \
+    alter-1.cir
 
 MAINTAINERCLEANFILES = Makefile.in
