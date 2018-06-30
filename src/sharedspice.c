@@ -235,8 +235,10 @@ static bool immediate = FALSE;
 static bool coquit = FALSE;
 static jmp_buf errbufm, errbufc;
 static int intermj = 1;
+#ifdef XSPICE
 static SendInitEvtData* sendinitevt;
 static SendEvtData* sendevt;
+#endif
 static void* euserptr;
 
 
@@ -1979,6 +1981,7 @@ sharedsync(double *pckttime, double *pcktdelta, double olddelta, double finalt,
     }
 }
 
+#ifdef XSPICE
 void shared_send_event(int index, double step, double dvalue, char *svalue, void *pvalue, int plen, int mode)
 {
     if(wantevtdata)
@@ -1991,4 +1994,4 @@ void shared_send_dict(int index, int no_of_nodes, char* name, char*type)
     if (sendinitevt)
         sendinitevt(index, no_of_nodes, name, type, ng_ident, euserptr);
 }
-
+#endif
