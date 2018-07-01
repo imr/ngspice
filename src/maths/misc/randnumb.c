@@ -65,6 +65,7 @@ double CombLCGTaus(void);
 float  CombLCGTaus2(void);
 
 void rgauss(double* py1, double* py2);
+static bool seedinfo = FALSE;
 
 
 /* Check if a seed has been set by the command 'set rndseed=value'
@@ -213,6 +214,23 @@ double gauss0(void)
   }
 }
 
+
+/***  gauss  ***
+to be reproducible, we just use one value per pass */
+double gauss1(void)
+{
+    double fac, r, v1, v2;
+    do {
+        v1 = 2.0 * CombLCGTaus() - 1.0;
+        v2 = 2.0 * CombLCGTaus() - 1.0;
+        r = v1 * v1 + v2 * v2;
+    } while (r >= 1.0);
+    /*    printf("v1 %f, v2 %f\n", v1, v2); */
+    fac = sqrt(-2.0 * log(r) / r);
+    return v2 * fac;
+}
+
+
 /* Polar form of the Box-Muller generator for Gaussian distributed
    random variates.
    Generator will be fed with two uniformly distributed random variates.
@@ -264,3 +282,51 @@ double exprand(double mean)
     expval = -log(CombLCGTaus()) * mean;
     return expval;
 }
+
+
+
+/* seed random number generators immediately
+* command "setseed"
+*   take value of variable rndseed as seed
+* command "setseed <n>"
+*   seed with number <n>
+*/
+void
+com_sseed(wordlist *wl)
+{
+    int newseed;
+
+    if (wl == NULL) {
+        if (!cp_getvar("rndseed", CP_NUM, &newseed)) {
+            newseed = getpid();
+            cp_vset("rndseed", CP_NUM, &newseed);
+        }
+        srand((unsigned int)newseed);
+        TausSeed();
+    }
+    else if ((sscanf(wl->wl_word, " %d ", &newseed) != 1) ||
+        (newseed <= 0) || (newseed > INT_MAX))
+    {
+        fprintf(cp_err,
+            "\nWarning: Cannot use %s as seed!\n"
+            "    Command 'setseed %s' ignored.\n\n",
+            wl->wl_word, wl->wl_word);
+        return;
+    }
+    else {
+        srand((unsigned int)newseed);
+        TausSeed();
+        cp_vset("rndseed", CP_NUM, &newseed);
+    }
+
+    if (seedinfo)
+        printf("\nSeed value for random number generator is set to %d\n", newseed);
+}
+
+
+void
+setseedinfo(void)
+{
+    seedinfo = TRUE;
+}
+

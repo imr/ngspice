@@ -864,8 +864,10 @@ main(int argc, char **argv)
 
     cp_program = ft_sim->simulator;
 
-    srand((unsigned int) getpid());
-    TausSeed();
+    /* initialze random number generator with seed = 1 */
+    int ii = 1;
+    cp_vset("rndseed", CP_NUM, &ii);
+    com_sseed(NULL);
 
     /* --- Process command line options --- */
     for (;;) {
