@@ -1,0 +1,40 @@
+*** random number test for scope-inpcom-8
+
+*** Start value of seed for random number generator: variable 'rndseed' is set to 1
+*** and random number generator is seeded with this value.
+*** You may override this value by adding 'setseed 5' or similar to file .spiceinit.
+
+*** print a message when the random number generator gets a new seed
+.option seedinfo
+
+*** like HSPICE: set rndseed to (number of seconds since 1.1.1970 - 1470000000)
+*** and seed the random number generator with rndseed
+*.option seed = random
+
+*** like HSPICE: set rndseed to 55
+*** and seed the random number generator with rndseed (here 55)
+.option seed = 55
+
+*** the 'circuit'
+.param myval = agauss(0, 1, 1)
+v1 1 0  'myval'
+
+*** the .control script
+.control
+
+*** set variable rndseed to value 11
+*set rndseed = 11
+*** seed the random number generator with value from variable rndseed
+*setseed
+
+*** seed the random number generator with value 12 and set rndseed to 12
+setseed 12
+
+*** reload circuit and re-evaluate all random functions (agauss etc.)
+mc_source
+*** simulate and print result
+op
+print v(1)
+.endc
+
+.end
