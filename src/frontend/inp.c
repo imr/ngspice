@@ -58,6 +58,7 @@ static void dotifeval(struct card *deck);
 
 static wordlist *inp_savecurrents(struct card *deck, struct card *options, wordlist *wl, wordlist *controls);
 
+static void eval_agauss(struct card *deck, char *fcn);
 void line_free_x(struct card *deck, bool recurse);
 void create_circbyline(char *line);
 
@@ -378,7 +379,6 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
     /* called with *fp == NULL and intfile: we want to load circuit from circarray */
     if (fp || intfile) {
         deck = inp_readall(fp, dir_name, comfile, intfile, &expr_w_temper);
-
         /* files starting with *ng_script are user supplied command files */
         if (deck && ciprefix("*ng_script", deck->line))
             comfile = TRUE;
@@ -599,6 +599,12 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
 #ifdef HAS_PROGREP
             SetAnalyse("Prepare Deck", 0);
 #endif
+            /*FIXME This is for the globel param setting only */
+            /* replace agauss(x,y,z) in each b-line by suitable value */
+            static char *statfcn[] = { "agauss", "gauss", "aunif", "unif", "limit" };
+            int ii;
+            for (ii = 0; ii < 5; ii++)
+                eval_agauss(deck, statfcn[ii]);
             /* Now expand subcircuit macros and substitute numparams.*/
             if (!cp_getvar("nosubckt", CP_BOOL, NULL, 0))
                 if ((deck->nextcard = inp_subcktexpand(deck->nextcard)) == NULL) {
@@ -678,6 +684,13 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             if (expr_w_temper)
                 inp_parse_temper(deck, &modtlist, &devtlist);
 
+            /* replace agauss(x,y,z) in each b-line by suitable value */
+            /* FIXME: This is for the local param setting (not yet implemented in
+            inp_fix_agauss_in_param() for model parameters according to HSPICE manual)
+            static char *statfcn[] = { "agauss", "gauss", "aunif", "unif", "limit" };
+            int ii;
+            for (ii = 0; ii < 5; ii++)
+                eval_agauss(deck, statfcn[ii]); */
             /* If user wants all currents saved (.options savecurrents), add .save 
             to wl_first with all terminal currents available on selected devices */
             wl_first = inp_savecurrents(deck, options, wl_first, controls);
@@ -1872,4 +1885,145 @@ inp_savecurrents(struct card *deck, struct card *options, wordlist *wl, wordlist
     }
 
     return wl_append(wl, wl_reverse(p));
+}
+
+
+static double
+agauss(double nominal_val, double abs_variation, double sigma)
+{
+    double stdvar;
+    stdvar = abs_variation / sigma;
+    return (nominal_val + stdvar * gauss1());
+}
+
+
+static double
+gauss(double nominal_val, double rel_variation, double sigma)
+{
+    double stdvar;
+    stdvar = nominal_val * rel_variation / sigma;
+    return (nominal_val + stdvar * gauss1());
+}
+
+
+static double
+unif(double nominal_val, double rel_variation)
+{
+    return (nominal_val + nominal_val * rel_variation * drand());
+}
+
+
+static double
+aunif(double nominal_val, double abs_variation)
+{
+    return (nominal_val + abs_variation * drand());
+}
+
+
+static double
+limit(double nominal_val, double abs_variation)
+{
+    return (nominal_val + (drand() > 0 ? abs_variation : -1. * abs_variation));
+}
+
+
+/* Second step to enable functions agauss, gauss, aunif, unif, limit
+ * in professional parameter decks:
+ * agauss has been preserved by replacement operation of .func
+ * (function inp_fix_agauss_in_param() in inpcom.c).
+ * After subcircuit expansion, agauss may be still existing in b-lines,
+ * however agauss does not exist in the B source parser, and it would
+ * not make sense in adding it there, because in each time step a different
+ * return form agauss would result.
+ * So we have to do the following in each B-line:
+ * check for agauss(x,y,z), and replace it by a suitable return value
+ * of agauss()
+ * agauss may also occur in .param lines, which have to be treated as well
+ */
+
+static void
+eval_agauss(struct card *deck, char *fcn)
+{
+    struct card *card;
+    double x, y, z, val;
+
+    card = deck;
+    for (; card; card = card->nextcard) {
+
+        int skip_control = 0;
+        char *ap, *curr_line = card->line;
+
+        /* exclude any command inside .control ... .endc */
+        if (ciprefix(".control", curr_line)) {
+            skip_control++;
+            continue;
+        }
+        else if (ciprefix(".endc", curr_line)) {
+            skip_control--;
+            continue;
+        }
+        else if (skip_control > 0) {
+            continue;
+        }
+
+        if ((*curr_line != 'b') && !ciprefix(".para", curr_line))
+            continue;
+
+        while ((ap = search_identifier(curr_line, fcn, curr_line)) != NULL) {
+            char *lparen, *rparen, *begstr, *contstr = NULL, *new_line, *midstr;
+            char *tmp1str, *tmp2str, *delstr;
+            int nerror;
+
+            begstr = copy_substring(curr_line, ap);
+
+            lparen = strchr(ap, '(');
+            rparen = strchr(ap, ')');
+            tmp1str = midstr = copy_substring(lparen + 1, rparen);
+            if (rparen + 1)
+                contstr = copy(rparen + 1);
+
+            /* find the parameters */
+            delstr = tmp2str = gettok(&tmp1str);
+            x = INPevaluate(&tmp2str, &nerror, 1);
+            tfree(delstr);
+            delstr = tmp2str = gettok(&tmp1str);
+            y = INPevaluate(&tmp2str, &nerror, 1);
+            tfree(delstr);
+            if (cieq(fcn, "agauss")) {
+                delstr = tmp2str = gettok(&tmp1str);
+                z = INPevaluate(&tmp2str, &nerror, 1);
+                tfree(delstr);
+                val = agauss(x, y, z);
+            }
+            else if (cieq(fcn, "gauss")) {
+                delstr = tmp2str = gettok(&tmp1str);
+                z = INPevaluate(&tmp2str, &nerror, 1);
+                tfree(delstr);
+                val = gauss(x, y, z);
+            }
+            else if (cieq(fcn, "aunif")) {
+                val = aunif(x, y);
+            }
+            else if (cieq(fcn, "unif")) {
+                val = unif(x, y);
+            }
+            else if (cieq(fcn, "limit")) {
+                val = limit(x, y);
+            }
+            else {
+                fprintf(cp_err, "ERROR: Unknown function %s, cannot evaluate\n", fcn);
+                tfree(begstr);
+                tfree(contstr);
+                tfree(midstr);
+                return;
+            }
+
+            new_line = tprintf("%s%g%s", begstr, val, contstr);
+            tfree(card->line);
+            curr_line = card->line = new_line;
+            tfree(begstr);
+            tfree(contstr);
+            tfree(midstr);
+        }
+    }
 }
