@@ -339,6 +339,54 @@ mc_free(void)
 }
 
 
+/* check for .option seed=[val|random] and set the random number generator */
+void
+eval_seed_opt(struct card *deck)
+{
+    struct card *card;
+    bool has_seed = FALSE;
+
+    for (card = deck; card; card = card->nextcard) {
+        char *line = card->line;
+        if (*line == '*')
+            continue;
+        if (ciprefix(".option", line) || ciprefix("option", line)) {
+            /* option seedinfo */
+            if (strstr(line, "seedinfo"))
+                setseedinfo();
+            char *begtok = strstr(line, "seed=");
+            if (begtok)
+                begtok = &begtok[5]; /*skip seed=*/
+            if (begtok) {
+                if (has_seed)
+                    fprintf(cp_err, "Warning: Multiple 'option seed=val|random' found!\n");
+                char *token = gettok(&begtok);
+                /* option seed=random [seed='random'] */
+                if (eq(token, "random") || eq(token, "{random}")) {
+                    time_t acttime = time(NULL);
+                    /* get random value from time in seconds since 1.1.1970 */
+                    int rseed = (int)(acttime - 1470000000);
+                    cp_vset("rndseed", CP_NUM, &rseed);
+                    com_sseed(NULL);
+                    has_seed = TRUE;
+                }
+                /* option seed=val*/
+                else {
+                    int sr = atoi(token);
+                    if (sr <= 0)
+                        fprintf(cp_err, "Warning: Cannot convert 'option seed=%s' to seed value, skipped!\n", token);
+                    else {
+                        cp_vset("rndseed", CP_NUM, &sr);
+                        com_sseed(NULL);
+                        has_seed = TRUE;
+                    }
+                }
+                tfree(token);
+            }
+        }
+    }
+}
+
 /* The routine to source a spice input deck. We read the deck in, take
  * out the front-end commands, and create a CKT structure. Also we
  * filter out the following cards: .save, .width, .four, .print, and
@@ -379,6 +427,9 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
     /* called with *fp == NULL and intfile: we want to load circuit from circarray */
     if (fp || intfile) {
         deck = inp_readall(fp, dir_name, comfile, intfile, &expr_w_temper);
+
+        /* here we check for .option seed=[val|random] and set the random number generator */
+        eval_seed_opt(deck);
         /* files starting with *ng_script are user supplied command files */
         if (deck && ciprefix("*ng_script", deck->line))
             comfile = TRUE;
