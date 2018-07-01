@@ -648,8 +648,10 @@ ngSpice_Init(SendChar* printfcn, SendStat* statusfcn, ControlledExit* ngspiceexi
     /* program name*/
     cp_program = ft_sim->simulator;
 
-    srand((unsigned int) getpid());
-    TausSeed();
+    /* initialze random number generator with seed = 1 */
+    int ii = 1;
+    cp_vset("rndseed", CP_NUM, &ii);
+    com_sseed(NULL);
 
     /* set a boolean variable to be used in .control sections */
     bool sm = TRUE;
@@ -741,15 +743,7 @@ bot:
         fprintf (cp_out, "SoS %f, seed value: %ld\n", renormalize(), rseed);
     }
 #elif defined (WaGauss)
-    {
-        unsigned int rseed = 66;
-        if (!cp_getvar("rndseed", CP_NUM, &rseed, 0)) {
-            time_t acttime = time(NULL);
-            rseed = (unsigned int) acttime;
-        }
-        srand(rseed);
         initw();
-    }
 #endif
 
 //  com_version(NULL);
