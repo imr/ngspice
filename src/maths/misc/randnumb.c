@@ -69,9 +69,10 @@ static bool seedinfo = FALSE;
 
 
 /* Check if a seed has been set by the command 'set rndseed=value'
-   in spinit with integer value > 0. If available, call srand(value).
-   This will override the call to srand in main.c.
-   Checkseed should be put in front of any call to rand or CombLCGTaus.. .
+   in spinit, .spiceinit or in a .control section
+   with integer value > 0. If available, call srand(value).
+   rndseed set in main.c to 1, if no 'set rndseed=val' is given.
+   Called from functions in cmath2.c.
 */
 void checkseed(void)
 {
@@ -82,10 +83,10 @@ void checkseed(void)
       if ((newseed > 0) && (oldseed != newseed)) {
          srand((unsigned int)newseed);
          TausSeed();
+         if (oldseed > 0) /* no printout upon start-up */
+             printf("Seed value for random number generator is set to %d\n", newseed);
          oldseed = newseed;
-         printf("Seed value for random number generator is set to %d\n", newseed);
       }
-/*      else printf("Oldseed %d, newseed %d\n", oldseed, newseed); */
    }
    
 }
@@ -93,8 +94,6 @@ void checkseed(void)
 /* uniform random number generator, interval [-1 .. +1[ */
 double drand(void)
 {
-   checkseed();
-//   return ( 2.0*((double) (RR_MAX-abs(rand())) / (double)RR_MAX-0.5));
    return 2.0 * CombLCGTaus() - 1.0;
 }
 
@@ -191,8 +190,8 @@ unsigned int CombLCGTausInt2(void)
 }
 
 
-/***  gauss  ***/
-
+/***  gauss  ***
+ for speed reasons get two values per pass */
 double gauss0(void)
 {
   static bool gliset = TRUE;
@@ -200,7 +199,8 @@ double gauss0(void)
   double fac,r,v1,v2;
   if (gliset) {
     do {
-      v1 = drand();  v2 = drand();
+      v1 = 2.0 * CombLCGTaus() - 1.0;
+      v2 = 2.0 * CombLCGTaus() - 1.0;
       r = v1*v1 + v2*v2;
     } while (r >= 1.0);
 /*    printf("v1 %f, v2 %f\n", v1, v2); */
@@ -239,19 +239,19 @@ double gauss1(void)
 
 void rgauss(double* py1, double* py2)
 {
-	double x1, x2, w;
+    double x1, x2, w;
 
-         do {
-                 x1 = 2.0 * CombLCGTaus() - 1.0;
-                 x2 = 2.0 * CombLCGTaus() - 1.0;
-                 w = x1 * x1 + x2 * x2;
-         } while ( w >= 1.0 );
+    do {
+        x1 = 2.0 * CombLCGTaus() - 1.0;
+        x2 = 2.0 * CombLCGTaus() - 1.0;
+        w = x1 * x1 + x2 * x2;
+    } while ( w >= 1.0 );
 
-         w = sqrt( (-2.0 * log( w ) ) / w );
+     w = sqrt( (-2.0 * log( w ) ) / w );
 
-	*py1 = x1 * w;
-	*py2 = x2 * w;
-}	
+    *py1 = x1 * w;
+    *py2 = x2 * w;
+}
 
 
 
@@ -278,11 +278,9 @@ int poisson(double lambda)
 double exprand(double mean)
 {
     double expval;
-    checkseed();
     expval = -log(CombLCGTaus()) * mean;
     return expval;
 }
-
 
 
 /* seed random number generators immediately
@@ -329,4 +327,3 @@ setseedinfo(void)
 {
     seedinfo = TRUE;
 }
-

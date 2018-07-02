@@ -1177,15 +1177,7 @@ main(int argc, char **argv)
             fprintf(cp_out, "SoS %f, seed value: %ld\n", renormalize(), rseed);
         }
 #elif defined(WaGauss)
-        {
-            unsigned int rseed = 66;
-            if (!cp_getvar("rndseed", CP_NUM, &rseed)) {
-                time_t acttime = time(NULL);
-                rseed = (unsigned int) acttime;
-            }
-            srand(rseed);
-            initw();
-        }
+        initw();
 #endif
 
         if (!ft_servermode) {

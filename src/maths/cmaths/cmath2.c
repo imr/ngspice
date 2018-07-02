@@ -305,7 +305,7 @@ cx_sgauss(void *data, short int type, int length, int *newlength, short int *new
         d = alloc_d(length);
         *newtype = VF_REAL;
         for (i = 0; i < length; i++) {
-            d[i] = gauss0();
+            d[i] = gauss1();
         }
         return ((void *) d);
     }
