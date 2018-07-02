@@ -15,9 +15,9 @@ R2 0 OUT 141
   let run = 0
   set curplot=new          $ create a new plot
   set scratch=$curplot     $ store its name to 'scratch'
-  setplot $scratch         $ make 'scratch' the active plot 
+  setplot $scratch         $ make 'scratch' the active plot
   let bwh=unitvec(mc_runs) $ create a vector in plot 'scratch' to store bandwidth data
-  
+
 * define distributions for random numbers:
 * unif: uniform distribution, deviation relativ to nominal value
 * aunif: uniform distribution, deviation absolut
@@ -47,19 +47,19 @@ R2 0 OUT 141
     alter c3 = limit(250e-12, 25e-12)
 *
     ac oct 100 250K 10Meg
-*	
+*
 * measure bandwidth at -10 dB
     meas ac bw trig vdb(out) val=-10 rise=1 targ vdb(out) val=-10 fall=1
-* 
-    set run ="$&run"            $ create a variable from the vector
+*
+    set run = $&run             $ create a variable from the vector
     set dt = $curplot           $ store the current plot to dt
     setplot $scratch            $ make 'scratch' the active plot
     let vout{$run}={$dt}.v(out) $ store the output vector to plot 'scratch'
-	let bwh[run]={$dt}.bw       $ store bw to vector bwh in plot 'scratch'
+    let bwh[run]={$dt}.bw       $ store bw to vector bwh in plot 'scratch'
     setplot $dt                 $ go back to the previous plot
-    let run = run + 1      	
+    let run = run + 1
   end    $ loop ends here
-*  
+*
   plot db({$scratch}.allv)
   echo
   print {$scratch}.bwh
