@@ -934,6 +934,9 @@ if test "x$enable_xspice" = xyes; then
         * )
             AC_DEFINE([IPC_UNIX_SOCKETS], [1], [Client-Server via socket.])
             XSPICEDLLIBS="-ldl"
+            if test -z "$has_shared_module"; then
+                CFLAGS="$CFLAGS -fvisibility=hidden"
+            fi
             ;;
     esac
     XSPICEINIT=""
