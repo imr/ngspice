@@ -1,0 +1,56 @@
+Perform Monte Carlo simulation in ngspice
+* 25 stage Ring-Osc. BSIM3 or 4 with statistical variation of model parameters
+* Model parameters are varied according to the PDK selection.
+* Tested with 3 different commercial HSPICE libraries from 2 vendors.
+* To be started with script MC_ring_ts.sp
+
+.options noacct seedinfo
+
+vin in out dc 0.5 pulse 0.5 0 0.1n 5n 1 1 1
+vdd dd 0 dc 3.3
+vss ss 0 dc 0
+ve  sub  0 dc 0
+vpe well 0 dc 3.3
+
+* transistors to be selected according to the library (here: p33ll and n33ll or pch_5_mac and nch_5_mac
+* or pe3 and ne3 or p1 and n1 (these models see below))
+.subckt inv1 dd ss sub well in out
+*XMP1 out in  dd  well p33ll w=5u l=800n m=3 nf=1 ad=1.35p as=1.35p pd=9.6u ps=9.6u mosmis_mod=1
+*XMN1 out in  ss  sub n33ll w=5u l=800n m=1 nf=3 ad=0.9p as=0.9p pd=6.6u ps=6.6u mosmis_mod=1
+*XMP1 out in  dd  well pch_5_mac w=5u l=800n m=3 nf=1 ad=1.35p as=1.35p pd=9.6u ps=9.6u mosmis_mod=1
+*XMN1 out in  ss  sub nch_5_mac w=5u l=800n m=1 nf=3 ad=0.9p as=0.9p pd=6.6u ps=6.6u mosmis_mod=1
+*XMP1 out in  dd  well pe3 w=5u l=800n m=3 nf=1 ad=1.35p as=1.35p pd=9.6u ps=9.6u mosmis_mod=1
+*XMN1 out in  ss  sub ne3 w=5u l=800n m=1 nf=3 ad=0.9p as=0.9p pd=6.6u ps=6.6u mosmis_mod=1
+MP1 out in  dd  well p1 w=5u l=800n m=3 ad=1.35p as=1.35p pd=9.6u ps=9.6u
+MN1 out in  ss  sub n1 w=5u l=800n m=1 ad=0.9p as=0.9p pd=6.6u ps=6.6u
+.ends inv1
+
+.subckt inv5 dd ss sub well in out
+xinv1 dd ss sub well in 1 inv1
+xinv2 dd ss sub well 1  2 inv1
+xinv3 dd ss sub well 2  3 inv1
+xinv4 dd ss sub well 3  4 inv1
+xinv5 dd ss sub well 4 out inv1
+.ends inv5
+
+xinv1 dd ss sub well in out5 inv5
+xinv2 dd ss sub well out5 out10 inv5
+xinv3 dd ss sub well out10 out15 inv5
+xinv4 dd ss sub well out15 out20 inv5
+xinv5 dd ss sub well out20 out inv5
+xinv11 dd 0 sub well out buf inv1
+cout  buf ss 0.2pF
+
+ *** Model library files.
+* Add your library here
+* Chose the transistors for XMP1 and XMN1 accordingly
+*.lib "jc_usage.l" MC_LIB
+*.lib "my_ts_usage.l" MC_LIB
+*.lib "x_usage.l" MC_LIB
+
+* or use the BSIM3 model with internal parameters except Vth0
+* that varies the threshold voltage +-3 sigma around a mean of +-0.6V
+.model p1 PMOS version=3.3.0 Level=8 Vth0=agauss(-0.6, 0.1, 3)
+.model n1 NMOS version=3.3.0 Level=8 Vth0=agauss(0.6, 0.1, 3)
+
+.end
