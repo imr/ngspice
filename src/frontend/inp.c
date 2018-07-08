@@ -452,6 +452,10 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
         }
     }
     endTime = seconds();
+    /* store input directory to a variable*/
+    if (fp) {
+        cp_vset("inputdir", CP_STRING, dir_name);
+    }
     tfree(dir_name);
 
     /* if nothing came back from inp_readall, just close fp and return to caller */
