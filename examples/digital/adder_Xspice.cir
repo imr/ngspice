@@ -1,0 +1,84 @@
+  ADDER - 4 BIT ALL-NAND-GATE BINARY ADDER
+
+*** SUBCIRCUIT DEFINITIONS
+.SUBCKT NAND in1 in2 out
+*   NODES:  INPUT(2), OUTPUT
+a6 [in1 in2] out nand1
+.ENDS NAND
+
+.model nand1 d_nand(rise_delay = 0.7e-9 fall_delay = 0.7e-9
++ input_load = 0.5e-12)
+
+.SUBCKT ONEBIT 1 2 3 4 5
+*   NODES:  INPUT(2), CARRY-IN, OUTPUT, CARRY-OUT
+X1   1  2  7   NAND
+X2   1  7  8   NAND
+X3   2  7  9   NAND
+X4   8  9 10   NAND
+X5   3 10 11   NAND
+X6   3 11 12   NAND
+X7  10 11 13   NAND
+X8  12 13  4   NAND
+X9  11  7  5   NAND
+.ENDS ONEBIT
+
+.SUBCKT TWOBIT 1 2 3 4 5 6 7 8
+*   NODES:  INPUT - BIT0(2) / BIT1(2), OUTPUT - BIT0 / BIT1,
+*           CARRY-IN, CARRY-OUT
+X1   1  2  7  5 10   ONEBIT
+X2   3  4 10  6  8   ONEBIT
+.ENDS TWOBIT
+
+.SUBCKT FOURBIT 1 2 3 4 5 6 7 8 9 10 11 12 13 14
+*   NODES:  INPUT - BIT0(2) / BIT1(2) / BIT2(2) / BIT3(2),
+*           OUTPUT - BIT0 / BIT1 / BIT2 / BIT3, CARRY-IN, CARRY-OUT
+X1   1  2  3  4  9 10 13 16  TWOBIT
+X2   5  6  7  8 11 12 16 14  TWOBIT
+.ENDS FOURBIT
+
+
+*** ALL INPUTS (analog)
+VIN1A  a1  0   DC 0 PULSE(0 3 0 0.5NS 0.5NS   20NS   50NS)
+VIN1B  a2  0   DC 0 PULSE(0 3 0 0.5NS 0.5NS   30NS  100NS)
+VIN2A  a3  0   DC 0 PULSE(0 3 0 0.5NS 0.5NS   50NS  200NS)
+VIN2B  a4  0   DC 0 PULSE(0 3 0 0.5NS 0.5NS   90NS  400NS)
+VIN3A  a5  0   DC 0 PULSE(0 3 0 0.5NS 0.5NS  170NS  800NS)
+VIN3B  a6  0   DC 0 PULSE(0 3 0 0.5NS 0.5NS  330NS 1600NS)
+VIN4A  a7  0   DC 0 PULSE(0 3 0 0.5NS 0.5NS  650NS 3200NS)
+VIN4B  a8  0   DC 0 PULSE(0 3 0 0.5NS 0.5NS 1290NS 6400NS)
+
+*** analog to digital 
+abridge2 [a1 a2 a3 a4 a5 a6 a7 a8] [1 2 3 4 5 6 7 8] adc_buff
+.model adc_buff adc_bridge(in_low = 1 in_high = 2)
+
+*** digital 0
+V0 a0 0 0
+abridge0 [a0] [d0] adc_buff
+
+*** DEFINE NOMINAL CIRCUIT
+X1     1  2  3  4  5  6  7  8  s0 s1 s2 s3  d0 c3 FOURBIT
+
+*.TRAN 500p 6400NS
+* save inputs
+*.save V(a1) V(a2) V(a3) V(a4) V(a5) V(a6) V(a7) V(a8) 
+
+*.save v(1)
+
+
+.control
+*save v(1)
+TRAN 500p 6400NS
+rusage
+display
+edisplay
+* save data to input directory
+cd $inputdir 
+eprvcd 1 2 3 4 5 6 7 8 s0 s1 s2 s3 c3 > adder_x.vcd
+* plotting the vcd file (e.g. with GTKWave)
+* For Windows: returns control to ngspice
+shell start gtkwave adder_x.vcd --script nggtk.tcl
+* Others
+*shell gtkwave adder_x.vcd --script nggtk.tcl &
+.endc
+
+.END
