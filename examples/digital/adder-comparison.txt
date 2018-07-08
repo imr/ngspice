@@ -1,0 +1,23 @@
+Compare four different 4-bit full adders,
+made of NAND gates
+Simulating for 6400ns
+
+adder_bib
+The old spice bipolar NAND gate full adder
+Simulation time 14.0s
+
+adder_mos
+A MOS NAND gate inverter, using BSIM3 and OpenMP
+Simulation time 10.5s
+
+adder_behav
+NAND gates made with XSPICE digital devices,
+but each has an analog interface, the interconnect
+is analog, gate library is 74HCng_short_2.lib
+Simulation time 1.9s
+
+adder_Xspice
+Fully digital, event node based NAND gates
+digital plotting into vcd file, display with gtkwave
+Simulation time 0.27s
+
