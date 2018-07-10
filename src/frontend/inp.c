@@ -32,6 +32,7 @@ Author: 1985 Wayne A. Christopher
 #include "spiceif.h"
 #include "com_let.h"
 #include "com_commands.h"
+#include "translatepoly.h"
 
 #ifdef XSPICE
 #include "ngspice/ipctiein.h"
@@ -609,9 +610,11 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                 }
 
             /* Now handle translation of spice2c6 POLYs. */
-#ifdef XSPICE
+#ifdef XSPICE_
             /* Translate all SPICE 2G6 polynomial type sources */
             deck->nextcard = ENHtranslate_poly(deck->nextcard);
+#else
+            deck->nextcard = translatepoly(deck->nextcard);
 #endif
 
             line_free(deck->actualLine, FALSE);

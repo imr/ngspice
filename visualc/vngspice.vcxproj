@@ -876,6 +876,7 @@
     <ClInclude Include="..\src\frontend\streams.h" />
     <ClInclude Include="..\src\frontend\subckt.h" />
     <ClInclude Include="..\src\frontend\terminal.h" />
+    <ClInclude Include="..\src\frontend\translatepoly.h" />
     <ClInclude Include="..\src\frontend\typesdef.h" />
     <ClInclude Include="..\src\frontend\variable.h" />
     <ClInclude Include="..\src\frontend\vectors.h" />
@@ -1480,6 +1481,7 @@
     <ClCompile Include="..\src\frontend\trannoise\1-f-code.c" />
     <ClCompile Include="..\src\frontend\trannoise\FastNorm3.c" />
     <ClCompile Include="..\src\frontend\trannoise\wallace.c" />
+    <ClCompile Include="..\src\frontend\translatepoly.c" />
     <ClCompile Include="..\src\frontend\typesdef.c" />
     <ClCompile Include="..\src\frontend\variable.c" />
     <ClCompile Include="..\src\frontend\vectors.c" />
