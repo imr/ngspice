@@ -106,13 +106,14 @@ permutation_t increment(permutation_t input, int ndimensions)
 	return next;
 }
 
-Poly_t interpretpoly(struct line * input, char controlType, char sourceType)
+Poly_t interpretpoly(struct card *input, char controlType, char sourceType)
 {
+    NG_IGNORE(sourceType);
 	Poly_t Poly;
 	Poly.Dimensions = 0;
 	Poly.Coefficients = 0;
 	char * linestr;
-	linestr = input->li_line;
+	linestr = input->line;
 	char * polystr;
 	polystr = strstr(linestr, "poly(");
 	if(polystr == NULL){
@@ -148,7 +149,7 @@ Poly_t interpretpoly(struct line * input, char controlType, char sourceType)
 		for(int j = 0; j < 2; j++){
 			if(cutstr[0] == '\0'){
 				//Syntax Error
-				fprintf(stderr, "Error: Too few control node/source pairs for POLY command in line %i", input->li_linenum_orig);
+				fprintf(stderr, "Error: Too few control node/source pairs for POLY command in line %i", input->linenum_orig);
 			}
 			nodepair[j] = gettok_node(&cutstr);
 		}
@@ -300,10 +301,10 @@ char * expressionfrompoly(Poly_t input)
 	return expression;
 }
 
-struct line * translatepoly(struct line * input_line)
+struct card * translatepoly(struct card * input_line)
 {
 	char * linestr;
-	linestr = input_line->li_line;
+	linestr = input_line->line;
 	// check if translation needed
 	if(strstr(linestr, "poly") == NULL){
 		return input_line;
@@ -318,13 +319,13 @@ struct line * translatepoly(struct line * input_line)
 		//default:  return input_line;
 	}
 	Poly_t Poly = interpretpoly(input_line, controlchar, sourcechar);
-	struct line * output_line;
+	struct card * output_line;
 	if(TRANSLATEPOLY_REPLACE){
-		output_line->li_actual = input_line->li_actual;
-		output_line->li_error = input_line->li_error;
-		output_line->li_linenum = input_line->li_linenum;
-		output_line->li_linenum_orig = input_line->li_linenum_orig;
-		output_line->li_next = input_line->li_next;
+		output_line->actualLine = input_line->actualLine;
+		output_line->error = input_line->error;
+		output_line->linenum = input_line->linenum;
+		output_line->linenum_orig = input_line->linenum_orig;
+		output_line->nextcard = input_line->nextcard;
 	}
     char * sourcename;
     int newlinelen;
@@ -335,23 +336,23 @@ struct line * translatepoly(struct line * input_line)
             break;
         }
     }
-    output_line->li_line = (char *) tmalloc( newlinelen * sizeof(char) );
-    if(output_line->li_line == NULL){
+    output_line->line = (char *) tmalloc( newlinelen * sizeof(char) );
+    if(output_line->line == NULL){
         fprintf(stderr, "ERROR: Out of memory");
 		controlled_exit(EXIT_BAD);
     }
-    strcpy(output_line->li_line, "b");
-    strcat(output_line->li_line, sourcename);
+    strcpy(output_line->line, "b");
+    strcat(output_line->line, sourcename);
     char * expressionLHS, * expressionRHS;
     expressionLHS = tprintf(" %c = ", sourcechar);
-    strcat(output_line->li_line, expressionLHS);
+    strcat(output_line->line, expressionLHS);
     expressionRHS = expressionfrompoly(Poly);
     newlinelen += strlen(expressionRHS);
-    output_line->li_line = (char *) trealloc(output_line->li_line, newlinelen);
-    if(output_line->li_line == NULL){
+    output_line->line = (char *) trealloc(output_line->line, newlinelen);
+    if(output_line->line == NULL){
         fprintf(stderr, "ERROR: Out of memory");
 		controlled_exit(EXIT_BAD);
     }
-    strcat(output_line->li_line, expressionRHS);
+    strcat(output_line->line, expressionRHS);
     return output_line;
 }

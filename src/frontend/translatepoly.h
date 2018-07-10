@@ -7,6 +7,6 @@
   arbitrary behavioural modelling source line.
 */
 
-struct line * translatepoly(struct line * input_line);
+struct card * translatepoly(struct card * input_line);
 
 #endif
