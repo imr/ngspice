@@ -137,8 +137,10 @@ Poly_t interpretpoly(struct card *input, char controlType, char sourceType)
     switch(controlType) {
     case 'i':
         formatselected = formatCC;
+        break;
     case 'v':
         formatselected = formatVC;
+        break;
     default:
         break; //TODO: decide what to do on other characters?
     }
