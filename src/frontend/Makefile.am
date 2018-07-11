@@ -175,8 +175,8 @@ libfte_la_SOURCES =	\
 	spiceif.h	\
 	subckt.c	\
 	subckt.h	\
-    translatepoly.c \
-    translatepoly.h \
+	translatepoly.c \
+	translatepoly.h \
 	typesdef.c	\
 	typesdef.h	\
 	vectors.c	\
