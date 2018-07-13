@@ -300,69 +300,74 @@ char * expressionfrompoly(Poly_t input)
     return expression;
 }
 
-struct card * translatepoly(struct card * input_line) {
-    char * linestr;
-    linestr = input_line->line;
-    // check if translation needed
-    if(strstr(linestr, "poly") == NULL) {
-        return input_line;
-    }
-    // not returned from function so translate
-    char controlchar = '\0', sourcechar = '\0';
-    switch(linestr[0]) {
-    case 'e':
-        controlchar = 'v';
-        sourcechar = 'v';
-        break;
-    case 'f':
-        controlchar = 'i';
-        sourcechar = 'i';
-        break;
-    case 'g':
-        controlchar = 'v';
-        sourcechar = 'i';
-        break;
-    case 'h':
-        controlchar = 'i';
-        sourcechar = 'v';
-        break;
-        //default:  return input_line;
-    }
-    Poly_t Poly = interpretpoly(input_line, controlchar, sourcechar);
-    struct card * output_line;
-    if(TRANSLATEPOLY_REPLACE) {
-        output_line->actualLine = input_line->actualLine;
-        output_line->error = input_line->error;
-        output_line->linenum = input_line->linenum;
-        output_line->linenum_orig = input_line->linenum_orig;
-        output_line->nextcard = input_line->nextcard;
-    }
-    char * sourcename;
-    int newlinelen;
-    for(int i = 0; linestr[i] != '\0'; i++) {
-        if(isspace(linestr[i])) {
-            sourcename = copy_substring(linestr, &linestr[i]);
-            newlinelen = i + 7;
-            break;
+struct card * translatepoly(struct card * input_deck) {
+    struct card *input_line;
+    for (input_line = input_deck; input_line; input_line = input_line->nextcard) {
+        char *linestr = input_line->line;
+        if (*linestr == '*')
+            continue;
+        // check if translation needed
+        if (strstr(linestr, "poly") == NULL) {
+            continue;
         }
+        // not returned from function so translate
+        char controlchar = '\0', sourcechar = '\0';
+        switch (linestr[0]) {
+        case 'e':
+            controlchar = 'v';
+            sourcechar = 'v';
+            break;
+        case 'f':
+            controlchar = 'i';
+            sourcechar = 'i';
+            break;
+        case 'g':
+            controlchar = 'v';
+            sourcechar = 'i';
+            break;
+        case 'h':
+            controlchar = 'i';
+            sourcechar = 'v';
+            break;
+            //default:  return input_line;
+        }
+        Poly_t Poly = interpretpoly(input_line, controlchar, sourcechar);
+        struct card * output_line;
+        if (TRANSLATEPOLY_REPLACE) {
+            output_line->actualLine = input_line->actualLine;
+            output_line->error = input_line->error;
+            output_line->linenum = input_line->linenum;
+            output_line->linenum_orig = input_line->linenum_orig;
+            output_line->nextcard = input_line->nextcard;
+        }
+        char * sourcename;
+        int newlinelen;
+        for (int i = 0; linestr[i] != '\0'; i++) {
+            if (isspace(linestr[i])) {
+                sourcename = copy_substring(linestr, &linestr[i]);
+                newlinelen = i + 7;
+                break;
+            }
+        }
+        output_line->line = (char *)tmalloc(newlinelen * sizeof(char));
+        if (output_line->line == NULL) {
+            fprintf(stderr, "ERROR: Out of memory");
+            controlled_exit(EXIT_BAD);
+        }
+        strcpy(output_line->line, "b");
+        strcat(output_line->line, sourcename);
+        char * expressionLHS, *expressionRHS;
+        expressionLHS = tprintf(" %c = ", sourcechar);
+        strcat(output_line->line, expressionLHS);
+        expressionRHS = expressionfrompoly(Poly);
+        newlinelen += strlen(expressionRHS);
+        output_line->line = (char *)trealloc(output_line->line, newlinelen);
+        if (output_line->line == NULL) {
+            fprintf(stderr, "ERROR: Out of memory");
+            controlled_exit(EXIT_BAD);
+        }
+        strcat(output_line->line, expressionRHS);
+        return output_line;
     }
-    output_line->line = (char *) tmalloc( newlinelen * sizeof(char) );
-    if(output_line->line == NULL) {
-        fprintf(stderr, "ERROR: Out of memory");
-        controlled_exit(EXIT_BAD);
-    }
-    strcpy(output_line->line, "b");
-    strcat(output_line->line, sourcename);
-    char * expressionLHS, * expressionRHS;
-    expressionLHS = tprintf(" %c = ", sourcechar);
-    strcat(output_line->line, expressionLHS);
-    expressionRHS = expressionfrompoly(Poly);
-    newlinelen += strlen(expressionRHS);
-    output_line->line = (char *) trealloc(output_line->line, newlinelen);
-    if(output_line->line == NULL) {
-        fprintf(stderr, "ERROR: Out of memory");
-        controlled_exit(EXIT_BAD);
-    }
-    strcat(output_line->line, expressionRHS);
-    return output_line;
+    return NULL;
 }
