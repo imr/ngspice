@@ -109,15 +109,15 @@ Poly_t interpretpoly(struct card *input, char controlType, char sourceType)
     Poly.Coefficients = 0;
     char * linestr;
     linestr = input->line;
-    char * polystr;
-    polystr = strstr(linestr, "poly(");
-    if(polystr == NULL) {
-        return Poly;
-    }
+    char * polystr = linestr;
+    /* skip the first three tokens */
+    polystr = nexttok(polystr);
+    polystr = nexttok(polystr);
+    polystr = nexttok(polystr);
     int charsAfterPoly = 0;
     sscanf(polystr, "poly( %u )%n", &Poly.Dimensions, &charsAfterPoly);
     if(Poly.Dimensions == 0) {
-        fprintf(stderr, "ERROR: POLY interpreted as having 0 dimensions, Syntax Error Assumed.");
+        fprintf(stderr, "ERROR: POLY interpreted as having 0 dimensions, Syntax Error Assumed.\n");
         controlled_exit(EXIT_BAD);
     }
     Poly.ExpressionList = (char **) tmalloc(Poly.Dimensions * sizeof(char *));
