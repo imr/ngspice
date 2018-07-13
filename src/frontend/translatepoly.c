@@ -302,14 +302,34 @@ char * expressionfrompoly(Poly_t input)
 
 struct card * translatepoly(struct card * input_deck) {
     struct card *input_line;
+    bool found_control = FALSE;
+    /* scan through the deck and find poly sources */
     for (input_line = input_deck; input_line; input_line = input_line->nextcard) {
         char *linestr = input_line->line;
-        if (*linestr == '*')
+        /* exclude lines between .control and .endc from getting quotes changed */
+        if (ciprefix(".control", linestr))
+            found_control = TRUE;
+        if (ciprefix(".endc", linestr))
+            found_control = FALSE;
+        if (found_control)
+            continue;
+
+        /* check for e g f h sources */
+        if (*linestr != 'e' && *linestr != 'g' && *linestr != 'f' && *linestr != 'h')
             continue;
         // check if translation needed
-        if (strstr(linestr, "poly") == NULL) {
+        char *tmpstr = linestr;
+        /* skip the first three tokens */
+        tmpstr = nexttok(tmpstr);
+        tmpstr = nexttok(tmpstr);
+        tmpstr = nexttok(tmpstr);
+        /* do a case insensitive compare of the fourth token */
+        tmpstr = gettok_noparens(&tmpstr);
+        if (cieq(tmpstr, "poly") == 0) {
+            tfree(tmpstr);
             continue;
         }
+        tfree(tmpstr);
         // not returned from function so translate
         char controlchar = '\0', sourcechar = '\0';
         switch (linestr[0]) {
