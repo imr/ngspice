@@ -610,7 +610,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                 }
 
             /* Now handle translation of spice2c6 POLYs. */
-#ifdef XSPICE_
+#ifdef XSPICE
             /* Translate all SPICE 2G6 polynomial type sources */
             deck->nextcard = ENHtranslate_poly(deck->nextcard);
 #else
