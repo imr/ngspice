@@ -601,9 +601,9 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile, bool *expr_w_t
 
         if (cp_getvar("addcontrol", CP_BOOL, NULL))
             inp_add_control_section(working, &rv . line_number);
-#ifndef XSPICE
+/* #ifndef XSPICE
         inp_poly_err(working);
-#endif
+#endif */
         bool expr_w_temper = FALSE;
         if (inp_compat_mode != COMPATMODE_SPICE3) {
             /* Do all the compatibility stuff here */
