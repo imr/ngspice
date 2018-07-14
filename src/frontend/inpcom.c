@@ -6169,8 +6169,8 @@ inp_quote_params(struct card *c, struct card *end_c, struct dependency *deps, in
 
                     prefix_len = (int)(s - curr_line);
 
-                    curr_line = tprintf("%.*s{%s}%s", prefix_len, curr_line, deps[i].param_name, rest);
-                    s = curr_line + prefix_len + strlen(deps[i].param_name) + 2;
+                    curr_line = tprintf("%.*s {%s}%s", prefix_len, curr_line, deps[i].param_name, rest);
+                    s = curr_line + prefix_len + strlen(deps[i].param_name) + 3;
 
                     tfree(c->line);
                     c->line = curr_line;
