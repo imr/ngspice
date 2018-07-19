@@ -45,7 +45,8 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
     double delvd;   /* change in diode voltage temporary */
     double evd;
     double evrev;
-    double gd, gdb, gdsw;
+    double gd, gdb, gdsw, gen_fac, gen_fac_vd;
+    double evd_rec, cdb_rec, gdb_rec;
     double geq;
     double gspr;    /* area-scaled conductance */
     double sarg;
@@ -234,6 +235,15 @@ next1:      if (model->DIOsatSWCurGiven) {              /* sidewall current */
                 evd = exp(vd/vte);
                 cdb = csat*(evd-1);
                 gdb = csat*evd/vte;
+                evd_rec = exp(vd/(model->DIOrecEmissionCoeff*vt)); /* recombination current */
+                cdb_rec = here->DIOtRecSatCur*(evd_rec-1);
+                gdb_rec = here->DIOtRecSatCur*evd_rec/vt;
+                gen_fac = pow((pow((1-vd/here->DIOtJctPot), 2) + 0.005), here->DIOtGradingCoeff/2);
+                gen_fac_vd = here->DIOtGradingCoeff * (1-vd/here->DIOtJctPot) * pow((pow((1-vd/here->DIOtJctPot), 2) + 0.005), here->DIOtGradingCoeff/2-1);
+                cdb_rec = cdb_rec * gen_fac;
+                gdb_rec = gdb_rec * gen_fac + cdb_rec * gen_fac_vd;
+                cdb = cdb + cdb_rec;
+                gdb = gdb + gdb_rec;
 
             } else if((!(model->DIObreakdownVoltageGiven)) ||
                     vd >= -here->DIOtBrkdwnV) { /* reverse */

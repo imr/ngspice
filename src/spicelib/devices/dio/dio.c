@@ -106,6 +106,8 @@ IFparm DIOmPTable[] = { /* model parameters */
 
  IOP( "fv_max",   DIO_MOD_FV_MAX,  IF_REAL, "maximum voltage in forward direction"),
  IOP( "bv_max",   DIO_MOD_BV_MAX,  IF_REAL, "maximum voltage in reverse direction"),
+ IOP( "isr",  DIO_MOD_ISR,  IF_REAL, "Recombination saturation current"),
+ IOP( "nr",   DIO_MOD_NR,   IF_REAL, "Recombination current emission coefficient"),
 
  IP( "d",    DIO_MOD_D,   IF_FLAG, "Diode model")
 };

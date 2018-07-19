@@ -157,6 +157,12 @@ DIOtemp(GENmodel *inModel, CKTcircuit *ckt)
                     model->DIOtunSaturationCurrentExp *
                     log(here->DIOtemp/model->DIOnomTemp) );
 
+            here->DIOtRecSatCur = model->DIOrecSatCur * here->DIOarea * exp(
+                    ((here->DIOtemp/model->DIOnomTemp)-1) *
+                    model->DIOactivationEnergy/(model->DIOrecEmissionCoeff*vt) +
+                    model->DIOsaturationCurrentExp/model->DIOrecEmissionCoeff *
+                    log(here->DIOtemp/model->DIOnomTemp) );
+
             /* the defintion of f1, just recompute after temperature adjusting
              * all the variables used in it */
             here->DIOtF1=here->DIOtJctPot*

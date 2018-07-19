@@ -115,6 +115,7 @@ typedef struct sDIOinstance {
     double DIOreverseKneeCurrent; /* Reverse Knee current */
     double DIOjunctionCap;     /* geometry adjusted junction capacitance */
     double DIOjunctionSWCap;     /* geometry adjusted junction sidewall capacitance */
+    double DIOtRecSatCur; /* temperature adjusted recombination saturation current */
 
 /*
  * naming convention:
@@ -231,6 +232,8 @@ typedef struct sDIOmodel {       /* model structure for a diode */
     unsigned DIOtunEGcorrectionFactorGiven : 1;
     unsigned DIOfv_maxGiven : 1;
     unsigned DIObv_maxGiven : 1;
+    unsigned DIOrecSatCurGiven : 1;
+    unsigned DIOrecEmissionCoeffGiven : 1;
 
     int    DIOlevel;   /* level selector */
     double DIOsatCur;   /* saturation current */
@@ -284,6 +287,8 @@ typedef struct sDIOmodel {       /* model structure for a diode */
     double DIOtunEGcorrectionFactor; /* EG correction factor for tunneling (KEG) */
     double DIOfv_max; /* maximum voltage in forward direction */
     double DIObv_max; /* maximum voltage in reverse direction */
+    double DIOrecSatCur; /* Recombination saturation current */
+    double DIOrecEmissionCoeff; /* Recombination emission coefficient */
 
 } DIOmodel;
 
@@ -365,6 +370,8 @@ enum {
     DIO_MOD_KEG,
     DIO_MOD_FV_MAX,
     DIO_MOD_BV_MAX,
+    DIO_MOD_ISR,
+    DIO_MOD_NR,
 };
 
 #include "dioext.h"
