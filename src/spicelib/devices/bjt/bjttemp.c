@@ -92,12 +92,6 @@ BJTtemp(GENmodel *inModel, CKTcircuit *ckt)
             model->BJTdepletionCapCoeff=.5;
         }
         xfc = log(1-model->BJTdepletionCapCoeff);
-        model->BJTf2 = exp((1 + model->BJTjunctionExpBE) * xfc);
-        model->BJTf3 = 1 - model->BJTdepletionCapCoeff *
-                (1 + model->BJTjunctionExpBE);
-        model->BJTf6 = exp((1+model->BJTjunctionExpBC)*xfc);
-        model->BJTf7 = 1 - model->BJTdepletionCapCoeff *
-                (1 + model->BJTjunctionExpBC);
 
         /* loop through all the instances of the model */
         for (here = BJTinstances(model); here != NULL ;
@@ -265,6 +259,12 @@ BJTtemp(GENmodel *inModel, CKTcircuit *ckt)
                      log(vt / (CONSTroot2*here->BJTtSatCur*here->BJTarea));
             here->BJTtSubVcrit = vt *
                      log(vt / (CONSTroot2*here->BJTtSubSatCur*here->BJTarea));
+            here->BJTtf2 = exp((1 + here->BJTtjunctionExpBE) * xfc);
+            here->BJTtf3 = 1 - model->BJTdepletionCapCoeff *
+                    (1 + here->BJTtjunctionExpBE);
+            here->BJTtf6 = exp((1 + here->BJTtjunctionExpBC)*xfc);
+            here->BJTtf7 = 1 - model->BJTdepletionCapCoeff *
+                    (1 + here->BJTtjunctionExpBC);
 
         }
     }

@@ -73,6 +73,10 @@ typedef struct sBJTinstance {
     double BJTtf1;      /* temperature adjusted polynomial coefficient */
     double BJTtf4;      /* temperature adjusted polynomial coefficient */
     double BJTtf5;      /* temperature adjusted polynomial coefficient */
+    double BJTtf2;      /* temperature adjusted polynomial coefficient */
+    double BJTtf3;      /* temperature adjusted polynomial coefficient */
+    double BJTtf6;      /* temperature adjusted polynomial coefficient */
+    double BJTtf7;      /* temperature adjusted polynomial coefficient */
     double BJTtVcrit;   /* temperature adjusted critical voltage */
     double BJTtSubVcrit; /* temperature adjusted substrate critical voltage */
     double BJTtSubSatCur; /* temperature adjusted subst. saturation current */

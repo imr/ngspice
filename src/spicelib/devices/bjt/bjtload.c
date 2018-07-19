@@ -593,8 +593,8 @@ next1:      vtn=vt*here->BJTtemissionCoeffF;
                     capbe=tf*gbe+czbe*sarg;
                 } else {
                     f1=here->BJTtf1;
-                    f2=model->BJTf2;
-                    f3=model->BJTf3;
+                    f2=here->BJTtf2;
+                    f3=here->BJTtf3;
                     czbef2=czbe/f2;
                     *(ckt->CKTstate0 + here->BJTqbe) = tf*cbe+czbe*f1+czbef2*
                             (f3*(vbe-fcpe) +(xme/(pe+pe))*(vbe*vbe-fcpe*fcpe));
@@ -602,8 +602,8 @@ next1:      vtn=vt*here->BJTtemissionCoeffF;
                 }
                 fcpc=here->BJTtf4;
                 f1=here->BJTtf5;
-                f2=model->BJTf6;
-                f3=model->BJTf7;
+                f2=here->BJTtf6;
+                f3=here->BJTtf7;
                 if (vbc < fcpc) {
                     arg=1-vbc/pc;
                     sarg=exp(-xmc*log(arg));
