@@ -482,7 +482,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                 s = skip_ws(dd->line + 5);
                 if (temperature)
                     txfree(temperature);
-                temperature = strdup(s);
+                temperature = copy(s);
             }
             /* Ignore comment lines, but not lines begining with '*#',
                but remove them, if they are in a .control ... .endc section */

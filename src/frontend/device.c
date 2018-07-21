@@ -293,7 +293,7 @@ all_show(wordlist *wl, int mode)
 
             if (eq(w->wl_word, "*")) {
                 tfree(w->wl_word);
-                w->wl_word = strdup("all");
+                w->wl_word = copy("all");
             }
 
             if (eq(w->wl_word, "++") || eq(w->wl_word, "all")) {
@@ -454,7 +454,7 @@ all_show_old(wordlist *wl, int mode)
 
             if (eq(w->wl_word, "*")) {
                 tfree(w->wl_word);
-                w->wl_word = strdup("all");
+                w->wl_word = copy("all");
             }
 
             if (eq(w->wl_word, "++") || eq(w->wl_word, "all")) {
