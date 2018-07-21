@@ -87,7 +87,7 @@ static int hcopygraphid;
 
 int GL_Init(void)
 {
-    if (!cp_getvar("hcopyscale", CP_STRING, psscale, 32)) {
+    if (!cp_getvar("hcopyscale", CP_STRING, psscale, sizeof(psscale))) {
         scale = 1.0;
     } else {
         sscanf(psscale, "%lf", &scale);

@@ -491,7 +491,7 @@ ngspice_compat_mode(void)
 {
     char behaviour[80];
 
-    if (cp_getvar("ngbehavior", CP_STRING, behaviour, 80)) {
+    if (cp_getvar("ngbehavior", CP_STRING, behaviour, sizeof(behaviour))) {
         if (strcasecmp(behaviour, "all") == 0)
             return COMPATMODE_ALL;
         if (strcasecmp(behaviour, "hs") == 0)
@@ -1512,7 +1512,7 @@ inp_add_control_section(struct card *deck, int *line_number)
                 found_run = TRUE;
             }
 
-            if (cp_getvar("rawfile", CP_STRING, rawfile, 1000)) {
+            if (cp_getvar("rawfile", CP_STRING, rawfile, sizeof(rawfile))) {
                 line = tprintf("write %s", rawfile);
                 prev_card = insert_new_line(prev_card, line, (*line_number)++, 0);
             }
@@ -1531,7 +1531,7 @@ inp_add_control_section(struct card *deck, int *line_number)
         if (op_line)
             deck = insert_new_line(deck, copy(op_line), (*line_number)++, 0);
 
-        if (cp_getvar("rawfile", CP_STRING, rawfile, 1000)) {
+        if (cp_getvar("rawfile", CP_STRING, rawfile, sizeof(rawfile))) {
             line = tprintf("write %s", rawfile);
             deck = insert_new_line(deck, line, (*line_number)++, 0);
         }
