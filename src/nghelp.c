@@ -57,7 +57,7 @@ main(int ac, char **av)
 
 #ifndef X_DISPLAY_MISSING
 
-    if (cp_getvar("display", CP_STRING, buf)) {
+    if (cp_getvar("display", CP_STRING, buf, sizeof(buf))) {
       displayname = buf;
     } else if (!(displayname = getenv("DISPLAY"))) {
       fprintf(stderr, "Can't open X display.");
@@ -111,7 +111,7 @@ cp_printword(s)
 */
 
 bool
-cp_getvar(char *n, enum cp_types type, void *r)
+cp_getvar(char *n, enum cp_types type, void *r, size_t rs)
 {
     return (FALSE);
 }

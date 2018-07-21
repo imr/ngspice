@@ -1167,7 +1167,7 @@ main(int argc, char **argv)
         {
             unsigned int rseed = 66;
             initnorm(0, 0);
-            if (!cp_getvar("rndseed", CP_NUM, &rseed)) {
+            if (!cp_getvar("rndseed", CP_NUM, &rseed, 0)) {
                 time_t acttime = time(NULL);
                 rseed = (unsigned int) acttime;
             }

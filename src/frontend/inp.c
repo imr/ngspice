@@ -1357,7 +1357,7 @@ doedit(char *filename)
 {
     char buf[BSIZE_SP], buf2[BSIZE_SP], *editor;
 
-    if (cp_getvar("editor", CP_STRING, buf2, 512)) {
+    if (cp_getvar("editor", CP_STRING, buf2, sizeof(buf2))) {
         editor = buf2;
     } else {
         if ((editor = getenv("EDITOR")) == NULL) {
