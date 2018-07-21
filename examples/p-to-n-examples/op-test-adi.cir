@@ -6,7 +6,7 @@ voff off 0 -1
 
 *vin in 0 0
 
-.include ad22057n.cir
+.include ad22057n.lib
 
 * Node assignments
 *                non-inverting input
