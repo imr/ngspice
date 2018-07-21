@@ -164,6 +164,12 @@ typedef void (*sighandler)(int);
 #define S_IRWXU _S_IWRITE
 #endif
 
+
+#ifdef XSPICE
+#include "ngspice/evtshared.h"
+extern bool wantevtdata;
+#endif
+
 extern IFfrontEnd nutmeginfo;
 
 extern struct comm spcp_coms[ ];
@@ -172,11 +178,6 @@ extern int SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator);
 extern wordlist *cp_varwl(struct variable *var);
 extern void create_circbyline(char *line);
 
-#ifdef XSPICE
-extern struct evt_shared_data *EVTshareddata(char *node_name);
-extern char** EVTallnodes(void);
-extern bool wantevtdata;
-#endif
 
 
 /*The current run (to get variable names, etc)*/
