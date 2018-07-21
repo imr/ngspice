@@ -123,11 +123,11 @@ com_diff(wordlist *wl)
     wordlist *tw;
     char numbuf[BSIZE_SP], numbuf2[BSIZE_SP], numbuf3[BSIZE_SP], numbuf4[BSIZE_SP]; /* For printnum */
 
-    if (!cp_getvar("diff_vntol", CP_REAL, &vntol))
+    if (!cp_getvar("diff_vntol", CP_REAL, &vntol, 0))
         vntol = 1.0e-6;
-    if (!cp_getvar("diff_abstol", CP_REAL, &abstol))
+    if (!cp_getvar("diff_abstol", CP_REAL, &abstol, 0))
         abstol = 1.0e-12;
-    if (!cp_getvar("diff_reltol", CP_REAL, &reltol))
+    if (!cp_getvar("diff_reltol", CP_REAL, &reltol, 0))
         reltol = 0.001;
 
     /* Let's try to be clever about defaults. This code is ugly. */

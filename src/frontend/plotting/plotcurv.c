@@ -41,7 +41,7 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
     if (nostart) {
         degree = currentgraph->degree;
     } else {
-        if (!cp_getvar("polydegree", CP_NUM, &degree))
+        if (!cp_getvar("polydegree", CP_NUM, &degree, 0))
             degree = 1;
         currentgraph->degree = degree;
     }
@@ -55,7 +55,7 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
         return;
     }
 
-    if (!cp_getvar("gridsize", CP_NUM, &gridsize))
+    if (!cp_getvar("gridsize", CP_NUM, &gridsize, 0))
         gridsize = 0;
 
     if ((gridsize < 0) || (gridsize > 10000)) {
@@ -325,7 +325,7 @@ plotinterval(struct dvec *v, double lo, double hi, register double *coeffs, int 
     /* This is a problem -- how do we know what granularity to use?  If
      * the guy cares about this he will use gridsize.
      */
-    if (!cp_getvar("polysteps", CP_NUM, &steps))
+    if (!cp_getvar("polysteps", CP_NUM, &steps, 0))
         steps = GRANULARITY;
 
     incr = (hi - lo) / (double) (steps + 1);

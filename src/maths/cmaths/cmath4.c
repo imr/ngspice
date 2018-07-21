@@ -213,7 +213,7 @@ cx_interpolate(void *data, short int type, int length, int *newlength, short int
     *newlength = ns->v_length;
     d = alloc_d(ns->v_length);
 
-    if (!cp_getvar("polydegree", CP_NUM, &degree))
+    if (!cp_getvar("polydegree", CP_NUM, &degree, 0))
         degree = 1;
 
     for (base = 0; base < length; base += grouping) {
@@ -248,7 +248,7 @@ cx_deriv(void *data, short int type, int length, int *newlength, short int *newt
         return (NULL);
     }
 
-    if (!cp_getvar("dpolydegree", CP_NUM, &degree))
+    if (!cp_getvar("dpolydegree", CP_NUM, &degree, 0))
         degree = 2; /* default quadratic */
 
     n = degree + 1;
@@ -615,9 +615,9 @@ cx_fft(void *data, short int type, int length, int *newlength, short int *newtyp
 
     win = TMALLOC(double, length);
     maxt = time[length-1];
-    if (!cp_getvar("specwindow", CP_STRING, window))
+    if (!cp_getvar("specwindow", CP_STRING, window, sizeof(window)))
         strcpy(window, "none");
-    if (!cp_getvar("specwindoworder", CP_NUM, &order))
+    if (!cp_getvar("specwindoworder", CP_NUM, &order, 0))
         order = 2;
     if (order < 2)
         order = 2;

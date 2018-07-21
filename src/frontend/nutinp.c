@@ -156,7 +156,7 @@ inp_nutsource(FILE *fp, bool comfile, char *filename)
              * fix the case before we do this but after we
              * deal with the commands.
              */
-            if (!cp_getvar("nosubckt", CP_BOOL, NULL))
+            if (!cp_getvar("nosubckt", CP_BOOL, NULL, 0))
                 deck->nextcard = inp_subcktexpand(deck->nextcard);
             deck->actualLine = realdeck;
             nutinp_dodeck(deck, tt, wl, FALSE, options, filename);

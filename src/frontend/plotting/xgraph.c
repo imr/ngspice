@@ -38,13 +38,13 @@ ft_xgraph(double *xlims, double *ylims, char *filename, char *title, char *xlabe
         return;
     }
 
-    if (!cp_getvar("xbrushwidth", CP_NUM, &linewidth))
+    if (!cp_getvar("xbrushwidth", CP_NUM, &linewidth, 0))
         linewidth = 1;
 
     if (linewidth < 1)
         linewidth = 1;
 
-    if (!cp_getvar("pointstyle", CP_STRING, pointstyle)) {
+    if (!cp_getvar("pointstyle", CP_STRING, pointstyle, sizeof(pointstyle))) {
         markers = FALSE;
     } else {
         if (cieq(pointstyle, "markers"))

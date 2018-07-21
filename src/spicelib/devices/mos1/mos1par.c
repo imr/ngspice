@@ -25,7 +25,7 @@ MOS1param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 
     NG_IGNORE(select);
 
-    if (!cp_getvar("scale", CP_REAL, &scale))
+    if (!cp_getvar("scale", CP_REAL, &scale, 0))
         scale = 1;
 
     switch(param) {

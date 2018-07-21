@@ -79,7 +79,7 @@ CKTdoJob(CKTcircuit *ckt, int reset, TSKtask *task)
    may be overridden by 'set xtrtol=newval' */
     if (ckt->CKTadevFlag  &&  (ckt->CKTtrtol > 1)) {
       int newtol;
-      if (cp_getvar("xtrtol", CP_NUM, &newtol)) {
+      if (cp_getvar("xtrtol", CP_NUM, &newtol, 0)) {
         printf("Override trtol to %d for xspice 'A' devices\n", newtol);
         ckt->CKTtrtol  = newtol;
       }

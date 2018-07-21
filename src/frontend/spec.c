@@ -91,7 +91,7 @@ com_spec(wordlist *wl)
     {
         char   window[BSIZE_SP];
         double maxt = time[tlen-1];
-        if (!cp_getvar("specwindow", CP_STRING, window))
+        if (!cp_getvar("specwindow", CP_STRING, window, sizeof(window)))
             strcpy(window, "hanning");
         if (eq(window, "none"))
             for (i = 0; i < tlen; i++)
@@ -130,7 +130,7 @@ com_spec(wordlist *wl)
             }
         else if (eq(window, "blackman")) {
             int order;
-            if (!cp_getvar("specwindoworder", CP_NUM, &order))
+            if (!cp_getvar("specwindoworder", CP_NUM, &order, 0))
                 order = 2;
             if (order < 2)      /* only order 2 supported here */
                 order = 2;
@@ -146,7 +146,7 @@ com_spec(wordlist *wl)
         } else if (eq(window, "gaussian")) {
             int order;
             double scale;
-            if (!cp_getvar("specwindoworder", CP_NUM, &order))
+            if (!cp_getvar("specwindoworder", CP_NUM, &order, 0))
                 order = 2;
             if (order < 2)
                 order = 2;
@@ -237,7 +237,7 @@ com_spec(wordlist *wl)
             dc[i] += tdvec[i][k]*amp;
         }
     }
-    trace = cp_getvar("spectrace", CP_BOOL, NULL);
+    trace = cp_getvar("spectrace", CP_BOOL, NULL, 0);
     for (j = (startf == 0 ? 1 : 0); j < fpts; j++) {
         freq[j] = startf + j*stepf;
         if (trace)

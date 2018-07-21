@@ -119,7 +119,7 @@ trnoise_state_gen(struct trnoise_state *this, CKTcircuit *ckt)
 {
     if (this->top == 0) {
 
-        if (cp_getvar("notrnoise", CP_BOOL, NULL))
+        if (cp_getvar("notrnoise", CP_BOOL, NULL, 0))
             this -> NA = this -> TS = this -> NALPHA = this -> NAMP =
                 this -> RTSAM = this -> RTSCAPT = this -> RTSEMT = 0.0;
 

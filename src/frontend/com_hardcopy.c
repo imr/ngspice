@@ -35,7 +35,7 @@ com_hardcopy(wordlist *wl)
     int hc_button;
     int foundit;
 
-    if (!cp_getvar("hcopydev", CP_STRING, device))
+    if (!cp_getvar("hcopydev", CP_STRING, device, sizeof(device)))
         *device = '\0';
 
     if (wl) {
@@ -48,7 +48,7 @@ com_hardcopy(wordlist *wl)
         tempf = TRUE;
     }
 
-    if (!cp_getvar("hcopydevtype", CP_STRING, buf))
+    if (!cp_getvar("hcopydevtype", CP_STRING, buf, sizeof(buf)))
         devtype = "postscript";
     else
         devtype = buf;
@@ -161,7 +161,7 @@ com_hardcopy(wordlist *wl)
     if (*device) {
 #ifdef SYSTEM_PLOT5LPR
         if (!strcmp(devtype, "plot5") || !strcmp(devtype, "MFB")) {
-            if (!cp_getvar("lprplot5", CP_STRING, format))
+            if (!cp_getvar("lprplot5", CP_STRING, format, size_of(format)))
                 strcpy(format, SYSTEM_PLOT5LPR);
             (void) sprintf(buf, format, device, fname);
             fprintf(cp_out, "Printing %s on the %s printer.\n", fname, device);
@@ -172,7 +172,7 @@ com_hardcopy(wordlist *wl)
 #ifdef SYSTEM_PSLPR
         if (!printed && !strcmp(devtype, "postscript")) {
             /* note: check if that was a postscript printer XXX */
-            if (!cp_getvar("lprps", CP_STRING, format))
+            if (!cp_getvar("lprps", CP_STRING, format, size_of(format)))
                 strcpy(format, SYSTEM_PSLPR);
             (void) sprintf(buf, format, device, fname);
             fprintf(cp_out, "Printing %s on the %s printer.\n", fname, device);

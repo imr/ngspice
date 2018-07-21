@@ -491,7 +491,7 @@ ngspice_compat_mode(void)
 {
     char behaviour[80];
 
-    if (cp_getvar("ngbehavior", CP_STRING, behaviour)) {
+    if (cp_getvar("ngbehavior", CP_STRING, behaviour, 80)) {
         if (strcasecmp(behaviour, "all") == 0)
             return COMPATMODE_ALL;
         if (strcasecmp(behaviour, "hs") == 0)
@@ -599,7 +599,7 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile, bool *expr_w_t
         inp_fix_gnd_name(working);
         inp_chk_for_multi_in_vcvs(working, &rv. line_number);
 
-        if (cp_getvar("addcontrol", CP_BOOL, NULL))
+        if (cp_getvar("addcontrol", CP_BOOL, NULL, 0))
             inp_add_control_section(working, &rv . line_number);
 #ifndef XSPICE
         inp_poly_err(working);
@@ -1144,7 +1144,7 @@ inp_pathresolve(const char *name)
 #if defined(__MINGW32__) || defined(_MSC_VER)
 
     /* If variable 'mingwpath' is set: convert mingw /d/... to d:/... */
-    if (cp_getvar("mingwpath", CP_BOOL, NULL) && name[0] == DIR_TERM_LINUX && isalpha_c(name[1]) && name[2] == DIR_TERM_LINUX) {
+    if (cp_getvar("mingwpath", CP_BOOL, NULL, 0) && name[0] == DIR_TERM_LINUX && isalpha_c(name[1]) && name[2] == DIR_TERM_LINUX) {
         strcpy(buf, name);
         buf[0] = buf[1];
         buf[1] = ':';
@@ -1158,7 +1158,7 @@ inp_pathresolve(const char *name)
         return copy(name);
 
     /* fail if this was an absolute filename or if there is no sourcepath var */
-    if (is_absolute_pathname(name) || !cp_getvar("sourcepath", CP_LIST, &v))
+    if (is_absolute_pathname(name) || !cp_getvar("sourcepath", CP_LIST, &v, 0))
         return NULL;
 
     for (; v; v = v->va_next) {
@@ -1512,7 +1512,7 @@ inp_add_control_section(struct card *deck, int *line_number)
                 found_run = TRUE;
             }
 
-            if (cp_getvar("rawfile", CP_STRING, rawfile)) {
+            if (cp_getvar("rawfile", CP_STRING, rawfile, 1000)) {
                 line = tprintf("write %s", rawfile);
                 prev_card = insert_new_line(prev_card, line, (*line_number)++, 0);
             }
@@ -1531,7 +1531,7 @@ inp_add_control_section(struct card *deck, int *line_number)
         if (op_line)
             deck = insert_new_line(deck, copy(op_line), (*line_number)++, 0);
 
-        if (cp_getvar("rawfile", CP_STRING, rawfile)) {
+        if (cp_getvar("rawfile", CP_STRING, rawfile, 1000)) {
             line = tprintf("write %s", rawfile);
             deck = insert_new_line(deck, line, (*line_number)++, 0);
         }

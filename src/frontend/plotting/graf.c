@@ -104,17 +104,17 @@ gr_init(double *xlims, double *ylims, /* The size of the screen. */
     cur.plotno = 0;
 
     /* note: should do only once, maybe in gr_init_once */
-    if (!cp_getvar("pointchars", CP_STRING, pointchars))
+    if (!cp_getvar("pointchars", CP_STRING, pointchars, sizeof(pointchars)))
         (void) strcpy(pointchars, DEFPOINTCHARS);
 
-    if (!cp_getvar("ticmarks", CP_NUM, &graph->ticmarks)) {
-        if (cp_getvar("ticmarks", CP_BOOL, NULL))
+    if (!cp_getvar("ticmarks", CP_NUM, &graph->ticmarks, 0)) {
+        if (cp_getvar("ticmarks", CP_BOOL, NULL, 0))
             graph->ticmarks = 10;
         else
             graph->ticmarks = 0;
     }
 
-    if (cp_getvar("ticlist", CP_LIST, ticlist)) {
+    if (cp_getvar("ticlist", CP_LIST, ticlist, 0)) {
         wl = vareval("ticlist");
         ticlist = wl_flatten(wl);
         graph->ticdata = readtics(ticlist);
@@ -445,7 +445,7 @@ gr_pmsg(char *text)
 
     DevUpdate();
 
-    if (cp_getvar("device", CP_STRING, buf) && !(strcmp("/dev/tty", buf) == 0))
+    if (cp_getvar("device", CP_STRING, buf, sizeof(buf)) && !(strcmp("/dev/tty", buf) == 0))
         fprintf(cp_err, "%s", text);
     else if (currentgraph->grid.xlabel)
         /* MW. grid.xlabel may be NULL */

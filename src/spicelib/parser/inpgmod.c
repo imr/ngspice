@@ -226,7 +226,7 @@ INPgetModBin(CKTcircuit *ckt, char *name, INPmodel **model, INPtables *tab, char
     static char *model_tokens[]    = { "lmin", "lmax", "wmin", "wmax" };
     double       scale;
 
-    if (!cp_getvar("scale", CP_REAL, &scale))
+    if (!cp_getvar("scale", CP_REAL, &scale, 0))
         scale = 1;
 
     *model = NULL;

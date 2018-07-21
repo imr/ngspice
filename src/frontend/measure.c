@@ -239,7 +239,7 @@ do_measure(
     }
 
     /* don't allow autostop if no .meas commands are given in the input file */
-    if ((cp_getvar("autostop", CP_BOOL, NULL)) && (ft_curckt->ci_meas == NULL)) {
+    if ((cp_getvar("autostop", CP_BOOL, NULL, 0)) && (ft_curckt->ci_meas == NULL)) {
         fprintf(cp_err, "\nWarning: No .meas commands found!\n");
         fprintf(cp_err, "  Option autostop is not available, ignored!\n\n");
         cp_remvar("autostop");
@@ -447,7 +447,7 @@ check_autostop(char* what)
 {
     bool flag = FALSE;
 
-    if (cp_getvar("autostop", CP_BOOL, NULL))
+    if (cp_getvar("autostop", CP_BOOL, NULL, 0))
         flag = do_measure(what, TRUE);
 
     return flag;

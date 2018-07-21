@@ -123,7 +123,7 @@ NOISEan (CKTcircuit *ckt, int restart)
 	data->freq = job->NstartFreq;
 	data->outNoiz = 0.0;
 	data->inNoise = 0.0;
-	data->squared = cp_getvar("sqrnoise", CP_BOOL, NULL) ? 1 : 0;
+	data->squared = cp_getvar("sqrnoise", CP_BOOL, NULL, 0) ? 1 : 0;
 
 	/* the current front-end needs the namelist to be fully
 		declared before an OUTpBeginplot */

@@ -235,7 +235,7 @@ static int count;
 void
 com_showmod(wordlist *wl)
 {
-    if (cp_getvar("altshow", CP_BOOL, NULL))
+    if (cp_getvar("altshow", CP_BOOL, NULL, 0))
         all_show(wl, 1);
     else
         all_show_old(wl, 1);
@@ -245,7 +245,7 @@ com_showmod(wordlist *wl)
 void
 com_show(wordlist *wl)
 {
-    if (cp_getvar("altshow", CP_BOOL, NULL))
+    if (cp_getvar("altshow", CP_BOOL, NULL, 0))
         all_show(wl, 0);
     else
         all_show_old(wl, 0);
@@ -273,7 +273,7 @@ all_show(wordlist *wl, int mode)
         return;
     }
 
-    if (!cp_getvar("width", CP_NUM, &screen_width))
+    if (!cp_getvar("width", CP_NUM, &screen_width, 0))
         screen_width = DEF_WIDTH;
     count = (screen_width - LEFT_WIDTH) / (DEV_WIDTH + 1);
     count = 1;
@@ -435,7 +435,7 @@ all_show_old(wordlist *wl, int mode)
         return;
     }
 
-    if (!cp_getvar("width", CP_NUM, &screen_width))
+    if (!cp_getvar("width", CP_NUM, &screen_width, 0))
         screen_width = DEF_WIDTH;
     count = (screen_width - LEFT_WIDTH) / (DEV_WIDTH + 1);
 

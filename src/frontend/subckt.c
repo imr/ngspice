@@ -213,18 +213,18 @@ inp_subcktexpand(struct card *deck) {
     struct card *c;
     wordlist *modnames = NULL;
 
-    if (!cp_getvar("substart", CP_STRING, start))
+    if (!cp_getvar("substart", CP_STRING, start, sizeof(start)))
         strcpy(start, ".subckt");
-    if (!cp_getvar("subend", CP_STRING, sbend))
+    if (!cp_getvar("subend", CP_STRING, sbend, sizeof(sbend)))
         strcpy(sbend, ".ends");
-    if (!cp_getvar("subinvoke", CP_STRING, invoke))
+    if (!cp_getvar("subinvoke", CP_STRING, invoke, sizeof(invoke)))
         strcpy(invoke, "x");
-    if (!cp_getvar("modelcard", CP_STRING, model))
+    if (!cp_getvar("modelcard", CP_STRING, model, sizeof(model)))
         strcpy(model, ".model");
-    if (!cp_getvar("modelline", CP_STRING, model))
+    if (!cp_getvar("modelline", CP_STRING, model, sizeof(model)))
         strcpy(model, ".model");
 
-    use_numparams = cp_getvar("numparams", CP_BOOL, NULL);
+    use_numparams = cp_getvar("numparams", CP_BOOL, NULL, 0);
 
     use_numparams = TRUE;
 

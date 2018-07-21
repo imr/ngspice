@@ -58,7 +58,7 @@ ft_agraf(double *xlims, double *ylims, struct dvec *xscale, struct plot *plot, s
 
     /* Make sure the margin is correct */
     omargin = margin;
-    novalue = cp_getvar("noasciiplotvalue", CP_BOOL, NULL);
+    novalue = cp_getvar("noasciiplotvalue", CP_BOOL, NULL, 0);
     if (!novalue && !vec_eq(xscale, vecs))
         margin *= 2;
     else
@@ -67,16 +67,16 @@ ft_agraf(double *xlims, double *ylims, struct dvec *xscale, struct plot *plot, s
     if ((xscale->v_gridtype == GRID_YLOG) || (xscale->v_gridtype == GRID_LOGLOG))
         ylogscale = TRUE;
 
-    if (!cp_getvar("width", CP_NUM, &maxy))
+    if (!cp_getvar("width", CP_NUM, &maxy, 0))
         maxy = DEF_WIDTH;
 
-    if (!cp_getvar("height", CP_NUM, &height))
+    if (!cp_getvar("height", CP_NUM, &height, 0))
         height = DEF_HEIGHT;
 
     if (ft_nopage)
         nobreakp = TRUE;
     else
-        nobreakp = cp_getvar("nobreak", CP_BOOL, NULL);
+        nobreakp = cp_getvar("nobreak", CP_BOOL, NULL, 0);
 
     maxy -= (margin + FUDGE);
     maxx = xscale->v_length;

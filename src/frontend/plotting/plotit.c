@@ -417,7 +417,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     }
 
     if (!sameflag && !gfound) {
-        if (cp_getvar("gridstyle", CP_STRING, buf)) {
+        if (cp_getvar("gridstyle", CP_STRING, buf, sizeof(buf))) {
             if (eq(buf, "lingrid"))
                 gtype = GRID_LIN;
             else if (eq(buf, "loglog"))
@@ -480,7 +480,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     }
 
     if (!sameflag && !pfound) {
-        if (cp_getvar("plotstyle", CP_STRING, buf)) {
+        if (cp_getvar("plotstyle", CP_STRING, buf, sizeof(buf))) {
             if (eq(buf, "linplot"))
                 ptype = PLOT_LIN;
             else if (eq(buf, "noretraceplot"))
