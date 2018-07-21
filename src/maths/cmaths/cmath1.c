@@ -731,7 +731,7 @@ cx_sortorder(void *data, short int type, int length, int *newlength, short int *
     int i;
 
     amplitude_index_t *array_amplitudes;
-    array_amplitudes = (amplitude_index_t *) malloc(sizeof(amplitude_index_t) * (size_t) length);
+    array_amplitudes = (amplitude_index_t *) tmalloc(sizeof(amplitude_index_t) * (size_t) length);
 
     *newlength = length;
     *newtype = VF_REAL;
@@ -748,7 +748,7 @@ cx_sortorder(void *data, short int type, int length, int *newlength, short int *
             d[i] = array_amplitudes[i].index;
     }
 
-    free(array_amplitudes);
+    tfree(array_amplitudes);
 
     /* Otherwise it is 0, but tmalloc zeros the stuff already. */
     return ((void *) d);

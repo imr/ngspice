@@ -185,7 +185,7 @@ B4SOItemp(
             }
 
             if (Size_Not_Found)
-            {   pParam = (struct b4soiSizeDependParam *)malloc(
+            {   pParam = (struct b4soiSizeDependParam *)tmalloc(
                     sizeof(struct b4soiSizeDependParam));
             if (pLastKnot == NULL)
                 model->pSizeDependParamKnot = pParam;

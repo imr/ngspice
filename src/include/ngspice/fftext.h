@@ -101,7 +101,7 @@ void rspectprod(double *data1, double *data2, double *outdata, int N);
 // aInit = CACHEFILLMALLOC( NUMFLOATS*sizeof(float) );
 // a = (float *) CEILCACHELINE(ainit);
 // ... main body of code ...
-// free(aInit);
+// tfree(aInit);
 //
 // To disable this alignment, set CACHELINESIZE to 1
 //#define CACHELINESIZE 32				// Bytes per cache line

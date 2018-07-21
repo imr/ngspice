@@ -76,8 +76,8 @@ static void
 tesFreeSystemInfo(TesSystemInfo *info)
 {
     if (info != NULL) {
-        free(info->cpuModelName);
-        free(info->osName);
+        tfree(info->cpuModelName);
+        tfree(info->osName);
     }
 }
 
@@ -323,7 +323,7 @@ tesCreateSystemInfo(TesSystemInfo *info)
                 }
             }
             info->numPhysicalProcessors = numProcs;
-            free(physIDs);
+            tfree(physIDs);
         }
 
         /* another test to get number of logical processors
@@ -341,7 +341,7 @@ tesCreateSystemInfo(TesSystemInfo *info)
          * }
          */
 
-        free(inStr);
+        tfree(inStr);
         fclose(file);
     } else {
         error = TES_FAIL;

@@ -160,7 +160,7 @@ basename(const char *name)
     int len; 
 
     if (tmp) {
-        free(tmp);
+        tfree(tmp);
         tmp = NULL;
     }
 
