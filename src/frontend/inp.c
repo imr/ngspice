@@ -200,7 +200,7 @@ inp_list(FILE *file, struct card *deck, struct card *extras, int type)
         file = cp_more;
     }
 
-    renumber = cp_getvar("renumber", CP_BOOL, NULL);
+    renumber = cp_getvar("renumber", CP_BOOL, NULL, 0);
 
     if (type == LS_LOGICAL) {
     top1:
@@ -588,7 +588,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             cp_vset("pretemp", CP_REAL, &temperature_value);
         }
         if (ft_ngdebug) {
-            cp_getvar("pretemp", CP_REAL, &testemp);
+            cp_getvar("pretemp", CP_REAL, &testemp, 0);
             printf("test temperature %f\n", testemp);
         }
 
@@ -600,7 +600,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             SetAnalyse("Prepare Deck", 0);
 #endif
             /* Now expand subcircuit macros and substitute numparams.*/
-            if (!cp_getvar("nosubckt", CP_BOOL, NULL))
+            if (!cp_getvar("nosubckt", CP_BOOL, NULL, 0))
                 if ((deck->nextcard = inp_subcktexpand(deck->nextcard)) == NULL) {
                     line_free(realdeck, TRUE);
                     line_free(deck->actualLine, TRUE);
@@ -723,7 +723,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             }
 
             if (ciprefix(".meas", dd->line)) {
-                if (cp_getvar("autostop", CP_BOOL, NULL)) {
+                if (cp_getvar("autostop", CP_BOOL, NULL, 0)) {
                     if (strstr(dd->line, " max ") ||
                         strstr(dd->line, " min ") ||
                         strstr(dd->line, " avg ") ||
@@ -876,7 +876,7 @@ inp_dodeck(
         /*PN FTESTATS*/
         ft_curckt->FTEstats = TMALLOC(FTESTATistics, 1);
     }
-    noparse = cp_getvar("noparse", CP_BOOL, NULL);
+    noparse = cp_getvar("noparse", CP_BOOL, NULL, 0);
 
 
     /* We check preliminary for the scale option. This special processing
@@ -944,12 +944,12 @@ inp_dodeck(
     out_init();
     /* if_inpdeck() may return NULL upon error */
     if (ckt) {
-        if (cp_getvar("warn", CP_NUM, &warn))
+        if (cp_getvar("warn", CP_NUM, &warn, 0))
             ckt->CKTsoaCheck = warn;
         else
             ckt->CKTsoaCheck = 0;
 
-        if (cp_getvar("maxwarns", CP_NUM, &maxwarns))
+        if (cp_getvar("maxwarns", CP_NUM, &maxwarns, 0))
             ckt->CKTsoaMaxWarns = maxwarns;
         else
             ckt->CKTsoaMaxWarns = 5;
@@ -1017,7 +1017,7 @@ inp_dodeck(
     }
 
     /* Only print out netlist if brief is FALSE */
-    if (!cp_getvar("brief", CP_BOOL, NULL)) {
+    if (!cp_getvar("brief", CP_BOOL, NULL, 0)) {
         /* output deck */
         out_printf("\nProcessed Netlist\n");
         out_printf("=================\n");
@@ -1137,7 +1137,7 @@ com_edit(wordlist *wl)
     bool inter, permfile;
     char buf[BSIZE_SP];
 
-    if (!cp_getvar("interactive", CP_BOOL, NULL)) {
+    if (!cp_getvar("interactive", CP_BOOL, NULL, 0)) {
         fprintf(cp_err,
                 "Warning: `edit' is disabled because 'interactive' has not been set.\n"
                 "  perhaps you want to 'set interactive'\n");
@@ -1357,7 +1357,7 @@ doedit(char *filename)
 {
     char buf[BSIZE_SP], buf2[BSIZE_SP], *editor;
 
-    if (cp_getvar("editor", CP_STRING, buf2)) {
+    if (cp_getvar("editor", CP_STRING, buf2, 512)) {
         editor = buf2;
     } else {
         if ((editor = getenv("EDITOR")) == NULL) {

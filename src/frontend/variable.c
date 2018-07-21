@@ -509,7 +509,7 @@ cp_remvar(char *varname)
 /* Determine the value of a variable.  Fail if the variable is unset,
  * and if the type doesn't match, try and make it work...  */
 bool
-cp_getvar(char *name, enum cp_types type, void *retval)
+cp_getvar(char *name, enum cp_types type, void *retval, size_t rsize)
 {
     struct variable *v;
     struct variable *uv1;
@@ -563,7 +563,12 @@ cp_getvar(char *name, enum cp_types type, void *retval)
             case CP_STRING: {   /* Gotta be careful to have room. */
                 char *s = cp_unquote(v->va_string);
                 cp_wstrip(s);
-                strcpy((char*) retval, s);
+                if (strlen(s) >= rsize - 1) {
+                    fprintf(stderr, "Internal Error: string length for variable %s is limited to %d chars\n", v->va_name, rsize);
+                    controlled_exit(EXIT_BAD);
+                }
+                else
+                    strcpy((char*) retval, s);
                 tfree(s);
                 break;
             }

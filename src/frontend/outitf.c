@@ -154,11 +154,11 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
         /*end saj*/
 
         /* Check to see if we want to print informational data. */
-        if (cp_getvar("printinfo", CP_BOOL, NULL))
+        if (cp_getvar("printinfo", CP_BOOL, NULL, 0))
             fprintf(cp_err, "(debug printing enabled)\n");
 
         /* Check to see if we want to save only interpolated data. */
-        if (cp_getvar("interp", CP_BOOL, NULL)) {
+        if (cp_getvar("interp", CP_BOOL, NULL, 0)) {
             interpolated = TRUE;
             fprintf(cp_out, "Warning: Interpolated raw file data!\n\n");
         }
@@ -1292,7 +1292,7 @@ OUTerror(int flags, char *format, IFuid *names)
     char buf[BSIZE_SP], *s, *bptr;
     int nindex = 0;
 
-    if ((flags == ERR_INFO) && cp_getvar("printinfo", CP_BOOL, NULL))
+    if ((flags == ERR_INFO) && cp_getvar("printinfo", CP_BOOL, NULL, 0))
         return;
 
     for (m = msgs; m->flag; m++)
@@ -1325,7 +1325,7 @@ OUTerrorf(int flags, const char *format, ...)
     struct mesg *m;
     va_list args;
 
-    if ((flags == ERR_INFO) && cp_getvar("printinfo", CP_BOOL, NULL))
+    if ((flags == ERR_INFO) && cp_getvar("printinfo", CP_BOOL, NULL, 0))
         return;
 
     for (m = msgs; m->flag; m++)

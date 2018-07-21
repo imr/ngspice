@@ -66,7 +66,7 @@ com_display(wordlist *wl)
     dvs = TMALLOC(struct dvec *, len);
     for (d = plot_cur->pl_dvecs, i = 0; d; d = d->v_next, i++)
         dvs[i] = d;
-    if (!cp_getvar("nosort", CP_BOOL, NULL))
+    if (!cp_getvar("nosort", CP_BOOL, NULL, 0))
         qsort(dvs, (size_t) len, sizeof(struct dvec *), dcomp);
 
     out_printf("Title: %s\n", plot_cur->pl_title);

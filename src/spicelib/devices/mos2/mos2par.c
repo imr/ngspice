@@ -26,7 +26,7 @@ MOS2param(int param, IFvalue *value, GENinstance *inst,
 
     NG_IGNORE(select);
 
-    if (!cp_getvar("scale", CP_REAL, &scale))
+    if (!cp_getvar("scale", CP_REAL, &scale, 0))
         scale = 1;
 
     switch(param) {

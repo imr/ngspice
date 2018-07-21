@@ -77,7 +77,7 @@ void checkseed(void)
    int newseed;
    static int oldseed;
 /*   printf("Enter checkseed()\n"); */
-   if (cp_getvar("rndseed", CP_NUM, &newseed)) {
+   if (cp_getvar("rndseed", CP_NUM, &newseed, 0)) {
       if ((newseed > 0) && (oldseed != newseed)) {
          srand((unsigned int)newseed);
          TausSeed();

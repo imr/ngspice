@@ -63,7 +63,7 @@ CKTsetup(CKTcircuit *ckt)
     matrix = ckt->CKTmatrix;
 
 #ifdef USE_OMP
-    if (!cp_getvar("num_threads", CP_NUM, &nthreads))
+    if (!cp_getvar("num_threads", CP_NUM, &nthreads, 0))
         nthreads = 2;
 
     omp_set_num_threads(nthreads);

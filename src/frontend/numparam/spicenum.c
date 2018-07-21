@@ -359,7 +359,7 @@ nupa_done(void)
 
     if (nerrors) {
         bool is_interactive = FALSE;
-        if (cp_getvar("interactive", CP_BOOL, NULL))
+        if (cp_getvar("interactive", CP_BOOL, NULL, 0))
             is_interactive = TRUE;
         printf(" Copies=%d Evals=%d Placeholders=%ld Symbols=%d Errors=%d\n",
                linecountS, evalcountS, placeholder, dictsize, nerrors);

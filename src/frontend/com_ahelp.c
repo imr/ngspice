@@ -38,7 +38,7 @@ com_ahelp(wordlist *wl)
         env |= E_NOPLOTS;
 
     /* determine level */
-    if (cp_getvar("level", CP_STRING, slevel)) {
+    if (cp_getvar("level", CP_STRING, slevel, sizeof(slevel))) {
         switch (*slevel) {
         case 'b':   level = 1;
             break;

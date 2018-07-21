@@ -169,7 +169,7 @@ extern char *span_var_expr(char *t);
 
 /* var2.c */
 extern void cp_vprint(void);
-extern bool cp_getvar(char *name, enum cp_types type, void *retval);
+extern bool cp_getvar(char *name, enum cp_types type, void *retval, size_t rsize);
 
 /* cpinterface.c etc -- stuff CP needs from FTE */
 

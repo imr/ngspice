@@ -742,7 +742,7 @@ bot:
 #elif defined (WaGauss)
     {
         unsigned int rseed = 66;
-        if (!cp_getvar("rndseed", CP_NUM, &rseed)) {
+        if (!cp_getvar("rndseed", CP_NUM, &rseed, 0)) {
             time_t acttime = time(NULL);
             rseed = (unsigned int) acttime;
         }
@@ -1113,7 +1113,7 @@ sh_vfprintf(FILE *f, const char *fmt, va_list args)
     }
 
     /* add / to escape characters, if 'set addescape' is called in .spiceinit */
-    if (cp_getvar("addescape", CP_BOOL, NULL)) {
+    if (cp_getvar("addescape", CP_BOOL, NULL, 0)) {
         size_t escapes;
         const char * const escape_chars = "$[]\"\\";
         char *s = p;

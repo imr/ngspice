@@ -77,7 +77,7 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
 
     extrange = 0.05 * (ylims[1] - ylims[0]);
 
-    if (!cp_getvar("gnuplot_terminal", CP_STRING, terminal)) {
+    if (!cp_getvar("gnuplot_terminal", CP_STRING, terminal, sizeof(terminal))) {
         terminal_type = 1;
     } else {
         terminal_type = 1;
@@ -85,11 +85,11 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
             terminal_type = 2;
     }
 
-    if (!cp_getvar("xbrushwidth", CP_NUM, &linewidth))
+    if (!cp_getvar("xbrushwidth", CP_NUM, &linewidth, 0))
         linewidth = 1;
     if (linewidth < 1) linewidth = 1;
 
-    if (!cp_getvar("pointstyle", CP_STRING, pointstyle)) {
+    if (!cp_getvar("pointstyle", CP_STRING, pointstyle, sizeof(pointstyle))) {
         markers = FALSE;
     } else {
         if (cieq(pointstyle,"markers"))
@@ -324,9 +324,9 @@ ft_writesimple(double *xlims, double *ylims, char *filename, char *title, char *
     NG_IGNORE(gridtype);
     NG_IGNORE(plottype);
 
-    appendwrite = cp_getvar("appendwrite", CP_BOOL, NULL);
-    singlescale = cp_getvar("wr_singlescale", CP_BOOL, NULL);
-    vecnames = cp_getvar("wr_vecnames", CP_BOOL, NULL);
+    appendwrite = cp_getvar("appendwrite", CP_BOOL, NULL, 0);
+    singlescale = cp_getvar("wr_singlescale", CP_BOOL, NULL, 0);
+    vecnames = cp_getvar("wr_vecnames", CP_BOOL, NULL, 0);
 
     /* Sanity checking. */
     for (v = vecs, numVecs = 0; v; v = v->v_link2)
