@@ -32,7 +32,7 @@ void db_print_pnode_tree(struct pnode *p, char *print);
 struct pnode *
 ft_getpnames(wordlist *wl, bool check)
 {
-    struct pnode *pn;
+    struct pnode *pn = NULL;
     char *xsbuf, *sbuf;
     int rv;
 
