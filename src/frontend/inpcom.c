@@ -6618,7 +6618,7 @@ ako_model(struct card *startcard)
    ron      r_on
    roff     r_off
 */
-int
+static int
 rep_spar(char *inpar[4])
 {
     int i;

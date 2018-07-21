@@ -43,6 +43,7 @@ NON-STANDARD FEATURES
 #include "ngspice/evtudn.h"
 
 #include "ngspice/evtproto.h"
+#include "ngspice/evtshared.h"
 
 #include <time.h>
 
@@ -68,7 +69,7 @@ pevt_data *return_node;
 pevt_shared_data return_all;
 
 /* delete the information return structures */
-void
+static void
 delete_ret(void)
 {
     int i;
