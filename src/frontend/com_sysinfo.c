@@ -384,7 +384,7 @@ tesCreateSystemInfo(TesSystemInfo *info)
     OSVERSIONINFOA version;
     char *versionStr = NULL, *procStr, *freeStr;
     DWORD major, minor;
-    DWORD dwLen;
+    DWORD dwLen = 0;
     HKEY hkBaseCPU;
     LONG lResult;
 
