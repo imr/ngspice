@@ -34,7 +34,7 @@ com_ghelp(wordlist *wl)
     int i;
 #endif /* X_DISPLAY_MISSING 1  */
 
-    if (cp_getvar("helppath", CP_STRING, buf))
+    if (cp_getvar("helppath", CP_STRING, , size_of(buf)))
         path = copy(buf);
     if (!path) {
         fprintf(cp_err, "Note: defaulting to old help.\n\n");
@@ -50,21 +50,21 @@ com_ghelp(wordlist *wl)
 
 #ifndef X_DISPLAY_MISSING /* 1 */
     path = npath;
-    if (cp_getvar("helpregfont", CP_STRING, buf))
+    if (cp_getvar("helpregfont", CP_STRING, buf, size_of(buf)))
         hlp_regfontname = copy(buf);
-    if (cp_getvar("helpboldfont", CP_STRING, buf))
+    if (cp_getvar("helpboldfont", CP_STRING, buf, size_of(buf)))
         hlp_boldfontname = copy(buf);
-    if (cp_getvar("helpitalicfont", CP_STRING, buf))
+    if (cp_getvar("helpitalicfont", CP_STRING, buf, size_of(buf)))
         hlp_italicfontname = copy(buf);
-    if (cp_getvar("helptitlefont", CP_STRING, buf))
+    if (cp_getvar("helptitlefont", CP_STRING, buf, size_of(buf)))
         hlp_titlefontname = copy(buf);
-    if (cp_getvar("helpbuttonfont", CP_STRING, buf))
+    if (cp_getvar("helpbuttonfont", CP_STRING, buf, size_of(buf)))
         hlp_buttonfontname = copy(buf);
-    if (cp_getvar("helpinitxpos", CP_NUM, &i))
+    if (cp_getvar("helpinitxpos", CP_NUM, &i, 0))
         hlp_initxpos = i;
-    if (cp_getvar("helpinitypos", CP_NUM, &i))
+    if (cp_getvar("helpinitypos", CP_NUM, &i, 0))
         hlp_initypos = i;
-    if (cp_getvar("helpbuttonstyle", CP_STRING, buf)) {
+    if (cp_getvar("helpbuttonstyle", CP_STRING, buf, size_of(buf))) {
         if (cieq(buf, "left"))
             hlp_buttonstyle = BS_LEFT;
         else if (cieq(buf, "center"))
@@ -77,9 +77,9 @@ com_ghelp(wordlist *wl)
     }
     if (cp_getvar("width", CP_NUM, &i))
         hlp_width = i;
-    if (cp_getvar("display", CP_STRING, buf))
+    if (cp_getvar("display", CP_STRING, buf, size_of(buf)))
         hlp_displayname = copy(buf);
-    else if (cp_getvar("device", CP_STRING, buf))
+    else if (cp_getvar("device", CP_STRING, buf, size_of(buf)))
         hlp_displayname = copy(buf);
     else
         hlp_displayname = NULL;
