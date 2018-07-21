@@ -79,7 +79,7 @@ com_aspice(wordlist *wl)
     bool saveout = FALSE;
 
     deck = wl->wl_word;
-    if (!cp_getvar("spicepath", CP_STRING, spicepath)) {
+    if (!cp_getvar("spicepath", CP_STRING, spicepath, size_of(spicepath))) {
         if (!Spice_Path || !*Spice_Path) {
             fprintf(cp_err,
                     "No spice-3 binary is available for the aspice command.\n");
@@ -282,11 +282,11 @@ com_rspice(wordlist *wl)
     char *p;
 
     /* Figure out where the spicedaemon is and connect to it. */
-    if (!cp_getvar("rhost", CP_STRING, rhost))
+    if (!cp_getvar("rhost", CP_STRING, rhost, size_of(rhost)))
         (void) strcpy(rhost, Spice_Host);
-    if (!cp_getvar("rprogram", CP_STRING, program))
+    if (!cp_getvar("rprogram", CP_STRING, program, size_of(program)))
         *program = '\0';
-    if (!cp_getvar("remote_shell", CP_STRING, remote_shell))
+    if (!cp_getvar("remote_shell", CP_STRING, remote_shell, size_of(remote_shell)))
         strcpy(remote_shell, "rsh");
 
     if (*rhost == '\0') {

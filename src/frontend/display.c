@@ -169,7 +169,7 @@ DevInit(void)
 
 #ifndef X_DISPLAY_MISSING
     /* determine display type */
-    if (getenv("DISPLAY") || cp_getvar("display", CP_STRING, buf))
+    if (getenv("DISPLAY") || cp_getvar("display", CP_STRING, buf, size_of(buf)))
         dispdev = FindDev("X11");
 #endif
 
