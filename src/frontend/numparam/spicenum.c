@@ -598,7 +598,7 @@ nupa_copy(struct card *deck)
         dicoS->dyncategory[linenum] = c;
     } /* keep a local copy and mangle the string */
 
-    t = strdup(spice_dstring_value(&u));
+    t = copy(spice_dstring_value(&u));
 
     if (!t) {
         fputs("Fatal: String malloc crash in nupa_copy()\n", stderr);

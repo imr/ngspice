@@ -225,7 +225,7 @@ do_measure(
         SetAnalyse("meas", 0);
 #endif
 
-    an_name = strdup(what); /* analysis type, e.g. "tran" */
+    an_name = copy(what); /* analysis type, e.g. "tran" */
     strtolower(an_name);
     measure_word_list = NULL;
     measures_passed = TRUE;
@@ -333,7 +333,7 @@ do_measure(
 
         if (!chk_only) {
             newcard          = TMALLOC(struct card, 1);
-            newcard->line = strdup(out_line);
+            newcard->line = copy(out_line);
             newcard->nextcard = NULL;
 
             if (meas_results == NULL) {

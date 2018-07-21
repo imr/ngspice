@@ -49,7 +49,7 @@ com_removecirc(wordlist *wl)
 
     ct->ci_vars = NULL;
     caux = ft_circuits;
-    namecircuit = strdup(ft_curckt->ci_name);
+    namecircuit = copy(ft_curckt->ci_name);
 
     /* The circuit  being removed is the first loaded and you have more circuits */
     if (ft_curckt == ft_circuits  &&  ft_circuits->ci_next)

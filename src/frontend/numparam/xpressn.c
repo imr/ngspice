@@ -409,7 +409,7 @@ attrib(dico_t *dico, NGHASHPTR htable_p, char *t, char op)
 
     if (!entry) {
         entry = TMALLOC(entry_t, 1);
-        entry->symbol = strdup(t);
+        entry->symbol = copy(t);
         entry->tp = NUPA_UNKNOWN;      /* signal Unknown */
         entry->level = dico->stack_depth;
         nghash_insert(htable_p, t, entry);

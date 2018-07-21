@@ -312,7 +312,7 @@ read_a_lib(char *y, char *dir_name)
         /* lib points to a new entry in global lib array libraries[N_LIBRARIES] */
         lib = new_lib();
 
-        lib->realpath = strdup(yy);
+        lib->realpath = copy(yy);
         lib->habitat = ngdirname(yy);
 
         lib->deck = inp_read(newfp, 1 /*dummy*/, lib->habitat, FALSE, FALSE) . cc;
@@ -2317,7 +2317,7 @@ inp_fix_subckt(struct names *subckt_w_params, char *s)
         new_str = NULL;
         for (c = head->nextcard; c; c = c->nextcard)
             if (new_str == NULL) {
-                new_str = strdup(c->line);
+                new_str = copy(c->line);
             } else {
                 char *x = tprintf("%s %s", new_str, c->line);
                 tfree(new_str);
@@ -2668,7 +2668,7 @@ inp_fix_inst_line(char *inst_line,
         for (j = 0; j < num_inst_params; j++)
             if (strcmp(subckt_param_names[i], inst_param_names[j]) == 0) {
                 tfree(subckt_param_values[i]);
-                subckt_param_values[i] = strdup(inst_param_values[j]);
+                subckt_param_values[i] = copy(inst_param_values[j]);
             }
 
     for (i = 0; i < num_subckt_params; i++) {
@@ -2721,8 +2721,8 @@ inp_fix_subckt_multiplier(struct names *subckt_w_params, struct card *subckt_car
     struct card *card;
     char *new_str;
 
-    subckt_param_names[num_subckt_params]  = strdup("m");
-    subckt_param_values[num_subckt_params] = strdup("1");
+    subckt_param_names[num_subckt_params]  = copy("m");
+    subckt_param_values[num_subckt_params] = copy("1");
     num_subckt_params ++;
 
     if (!strstr(subckt_card->line, "params:")) {
@@ -3106,7 +3106,7 @@ search_func_arg(char *str, struct function *fcn, int *which, char *str_begin)
 static char*
 inp_do_macro_param_replace(struct function *fcn, char *params[])
 {
-    char *str = strdup(fcn->body);
+    char *str = copy(fcn->body);
     int  i;
 
     char *collect_ptr = NULL;
@@ -3178,7 +3178,7 @@ inp_expand_macro_in_str(struct function_env *env, char *str)
     char *open_paren_ptr, *close_paren_ptr, *fcn_name, *params[1000];
     char *curr_ptr, *macro_str, *curr_str = NULL;
     int  num_params, i;
-    char *orig_ptr = str, *search_ptr = str, *orig_str = strdup(str);
+    char *orig_ptr = str, *search_ptr = str, *orig_str = copy(str);
     char keep;
 
     // printf("%s: enter(\"%s\")\n", __FUNCTION__, str);
@@ -3847,8 +3847,8 @@ inp_sort_params(struct card *param_cards, struct card *card_bf_start, struct car
             deps[num_params].depends_on[0] = NULL;
             deps[num_params].level         = -1;
             deps[num_params].skip          = 0;
-            deps[num_params].param_name    = get_param_name(c->line); /* strdup in fcn */
-            deps[num_params].param_str     = strdup(get_param_str(c->line));
+            deps[num_params].param_name    = get_param_name(c->line); /* copy in fcn */
+            deps[num_params].param_str     = copy(get_param_str(c->line));
             deps[num_params].card          = c;
             num_params ++;
         }
