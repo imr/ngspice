@@ -98,6 +98,8 @@ static wordlist *modtranslate(struct card *deck, char *subname, wordlist *new_mo
 static void devmodtranslate(struct card *deck, char *subname, wordlist * const orig_modnames);
 static int inp_numnodes(char c);
 
+#define N_GLOBAL_NODES 1005
+
 /*---------------------------------------------------------------------
  * table is used in settrans and gettrans -- it holds the netnames used
  * in the .subckt definition (t_old), and in the subcircuit invocation
@@ -106,7 +108,7 @@ static int inp_numnodes(char c);
 static struct tab {
     char *t_old;
     char *t_new;
-} table[512];   /* That had better be enough. */
+} table[N_GLOBAL_NODES];   /* That had better be enough. */
 
 
 /*---------------------------------------------------------------------
@@ -131,7 +133,7 @@ static bool use_numparams = FALSE;
 
 static char start[32], sbend[32], invoke[32], model[32];
 
-static char *global_nodes[128];
+static char *global_nodes[N_GLOBAL_NODES];
 static int num_global_nodes;
 
 
@@ -151,6 +153,10 @@ collect_global_nodes(struct card *c)
             char *s = c->line;
             s = nexttok(s);
             while (*s) {
+                if (num_global_nodes == N_GLOBAL_NODES) {
+                    fprintf(stderr, "ERROR, N_GLOBAL_NODES overflow\n");
+                    controlled_exit(EXIT_FAILURE);
+                }
                 char *t = skip_non_ws(s);
                 global_nodes[num_global_nodes++] = copy_substring(s, t);
                 s = skip_ws(t);
@@ -1246,7 +1252,7 @@ translate(struct card *deck, char *formal, char *actual, char *scname, const cha
     }
     rtn = 1;
  quit:
-    for (i = 0; ; i++) {
+    for (i = 0; i < N_GLOBAL_NODES; i++) {
         if (!table[i].t_old && !table[i].t_new)
             break;
         FREE(table[i].t_old);
@@ -1338,7 +1344,7 @@ settrans(char *formal, char *actual, const char *subname)
 
     memset(table, 0, sizeof(*table));
 
-    for (i = 0; ; i++) {
+    for (i = 0; i < N_GLOBAL_NODES; i++) {
         table[i].t_old = gettok(&formal);
         table[i].t_new = gettok(&actual);
 
@@ -1351,6 +1357,11 @@ settrans(char *formal, char *actual, const char *subname)
                 return 1;       /* Too many actual / too few formal */
         }
     }
+    if (i == N_GLOBAL_NODES) {
+        fprintf(stderr, "ERROR, N_GLOBAL_NODES overflow\n");
+        controlled_exit(EXIT_FAILURE);
+    }
+
     return 0;
 }
 

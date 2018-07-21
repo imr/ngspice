@@ -28,14 +28,14 @@ Modified: 2004 Paolo Nenzi - (ng)spice integration
         }                                       \
 }
 
-#define VECTOR_FREE(vec) free(vec)
+#define VECTOR_FREE(vec) tfree(vec)
 
 #define MATRIX_FREE(mat, m, j) {                \
         int k;                                  \
         for (k = 0; k < m; k++) {               \
-            free(mat[k]);                       \
+            tfree(mat[k]);                       \
         }                                       \
-        free(mat);                              \
+        tfree(mat);                              \
 }
 
 #define MAX_DEG 8
@@ -225,7 +225,7 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
                 }
                 here->CPLibr1Given = 1;
             }
-            free(branchname);
+            tfree(branchname);
             branchname = TMALLOC(char *, here->dimension);
             if (! here->CPLibr2Given) {
                 for (m = 0; m < here->dimension; m++) {
@@ -239,7 +239,7 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
                 }
                 here->CPLibr2Given = 1;
             }
-            free(branchname);
+            tfree(branchname);
 
             for (m = 0; m < here->dimension; m++) {
                 for (node = ckt->CKTnodes; node; node = node->next) {
@@ -337,10 +337,10 @@ CPLunsetup(GENmodel *inModel, CKTcircuit *ckt)
                 }
             }
 
-            free(here->CPLposNodes);
-            free(here->CPLnegNodes);
-            free(here->CPLibr1);
-            free(here->CPLibr2);
+            tfree(here->CPLposNodes);
+            tfree(here->CPLnegNodes);
+            tfree(here->CPLibr1);
+            tfree(here->CPLibr2);
 
             /* reset switches */
             here->CPLdcGiven=0;
@@ -583,8 +583,8 @@ static void
 free_vector(double *v, int nl, int nh)
 {
     NG_IGNORE(nh);
-
-    free(v + nl);
+    double *freev = v + nl;
+    tfree(freev);
 }
 
 static void

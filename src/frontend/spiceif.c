@@ -659,7 +659,7 @@ spif_getparam_special(CKTcircuit *ckt, char **name, char *param, int ind, int do
                     {
                         char *x = tv->va_name;
                         tv->va_name = tprintf("%s [%s]", tv->va_name, device->instanceParms[i].keyword);
-                        free(x);
+                        tfree(x);
                     }
                     if (vv)
                         tv->va_next = vv;
@@ -704,7 +704,7 @@ spif_getparam_special(CKTcircuit *ckt, char **name, char *param, int ind, int do
                     {
                         char *x = tv->va_name;
                         tv->va_name = tprintf("%s [%s]", tv->va_name, device->modelParms[i].keyword);
-                        free(x);
+                        tfree(x);
                     }
                     /* tv->va_string = device->modelParms[i].keyword;   Put the name of the variable */
                     if (vv)

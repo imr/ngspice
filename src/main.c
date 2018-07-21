@@ -657,10 +657,10 @@ app_rl_readlines(void)
                 cp_evloop(expanded_line);
                 add_history(expanded_line);
             }
-            free(expanded_line);
+            tfree(expanded_line);
         }
 
-        free(line);
+        tfree(line);
     }
     /* History gets written in ../fte/misccoms.c com_quit */
 

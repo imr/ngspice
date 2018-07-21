@@ -81,13 +81,13 @@ void fftFree(void)
     int i1;
     for (i1=8*sizeof(int)/2-1; i1>=0; i1--) {
         if (BRLowArray[i1] != NULL) {
-            free(BRLowArray[i1]);
+            tfree(BRLowArray[i1]);
             BRLowArray[i1] = NULL;
         }
     }
     for (i1=8*sizeof(int)-1; i1>=0; i1--) {
         if (UtblArray[i1] != NULL) {
-            free(UtblArray[i1]);
+            tfree(UtblArray[i1]);
             UtblArray[i1] = NULL;
         }
     }

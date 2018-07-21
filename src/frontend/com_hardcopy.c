@@ -73,7 +73,7 @@ com_hardcopy(wordlist *wl)
             psfname[2] = 's';
             psfname[3] = '\0';
         } else {
-            fname = realloc(fname, strlen(fname)+4);
+            fname = trealloc(fname, strlen(fname)+4);
             strcat(fname, ".ps");
         }
         tempgraph->devdep = fname;

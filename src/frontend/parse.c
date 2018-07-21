@@ -552,7 +552,7 @@ db_print_pnode_tree(struct pnode *p, char *print)
     fclose(db_stream);
     if (print)
         printf("%s:%d: %s {%s}\n%s\n", __FILE__, __LINE__, __func__, print, buf);
-    free(buf);
+    tfree(buf);
 #endif
 }
 
