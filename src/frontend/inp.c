@@ -1989,7 +1989,7 @@ limit(double nominal_val, double abs_variation)
  * After subcircuit expansion, agauss may be still existing in b-lines,
  * however agauss does not exist in the B source parser, and it would
  * not make sense in adding it there, because in each time step a different
- * return form agauss would result.
+ * return from agauss would result.
  * So we have to do the following in each B-line:
  * check for agauss(x,y,z), and replace it by a suitable return value
  * of agauss()
@@ -2030,13 +2030,11 @@ eval_agauss(struct card *deck, char *fcn)
             int nerror;
 
             begstr = copy_substring(curr_line, ap);
-
             lparen = strchr(ap, '(');
-            rparen = strchr(ap, ')');
-            tmp1str = midstr = copy_substring(lparen + 1, rparen);
-            if (rparen + 1)
-                contstr = copy(rparen + 1);
-
+            tmp1str = midstr = gettok_char(&lparen, ')', FALSE, TRUE);
+            if (lparen + 1)
+                contstr = copy(lparen + 1);
+            tmp1str++; /* skip '(' */
             /* find the parameters */
             delstr = tmp2str = gettok(&tmp1str);
             x = INPevaluate(&tmp2str, &nerror, 1);
