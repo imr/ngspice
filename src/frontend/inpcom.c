@@ -4513,7 +4513,7 @@ inp_compat(struct card *card)
                BGxxx int1 0 V = pwl (expression, x0-(x2-x0)/2, y0, x0, y0, x1, y1, x2, y2, x2+(x2-x0)/2, y2)
             */
             if ((str_ptr = strstr(curr_line, "table")) != NULL) {
-                char *expression, *firstno, *ffirstno, *secondno, *midline, *lastno, *lastlastno;
+                char *expression, *firstno, *ffirstno, *ffirstnof, *secondno, *midline, *lastno, *lastnof, *lastlastno;
                 char *m_ptr, *m_token;
                 double fnumber, lnumber, delta;
                 int nerror;
@@ -4570,7 +4570,7 @@ inp_compat(struct card *card)
                     *str_ptr = ' ';
                 /* get first two numbers to establish extrapolation */
                 str_ptr = cut_line;
-                ffirstno = gettok_node(&cut_line);
+                ffirstnof = ffirstno = gettok_node(&cut_line);
                 if (!ffirstno) {
                     fprintf(stderr, "Error: bad syntax in line %d\n  %s\n",
                             card->linenum_orig, card->line);
@@ -4588,7 +4588,7 @@ inp_compat(struct card *card)
                     else if (*str_ptr == ')')
                         *str_ptr = ' ';
                 /* scan for last two numbers */
-                lastno = gettok_node(&cut_line);
+                lastnof = lastno = gettok_node(&cut_line);
                 lnumber = INPevaluate(&lastno, &nerror, FALSE);
                 /* check for max-min and take half the difference for delta */
                 delta = (lnumber-fnumber)/2.;
@@ -4610,7 +4610,9 @@ inp_compat(struct card *card)
                     card = insert_new_line(card, ckt_array[i], 0, 0);
 
                 tfree(firstno);
+                tfree(ffirstnof);                
                 tfree(secondno);
+                tfree(lastnof);               
                 tfree(lastlastno);
                 tfree(expression);
                 tfree(title_tok);
