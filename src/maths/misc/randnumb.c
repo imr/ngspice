@@ -295,7 +295,7 @@ com_sseed(wordlist *wl)
     int newseed;
 
     if (wl == NULL) {
-        if (!cp_getvar("rndseed", CP_NUM, &newseed)) {
+        if (!cp_getvar("rndseed", CP_NUM, &newseed, 0)) {
             newseed = getpid();
             cp_vset("rndseed", CP_NUM, &newseed);
         }
