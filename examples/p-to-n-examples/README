@@ -8,3 +8,5 @@ https://www.infineon.com/dgdl/Infineon-SimulationModel_OptiMOS_PowerMOSFET_PSpic
 And don't forget to add
 set ngbehavior=ps
 to spinit or .spiceinit to obtain PSPICE compatibility for the included (using .include) device libraries
+
+See ngspice manual chapt. 16.13.5 for details on the PSPICE Compatibility mode.
