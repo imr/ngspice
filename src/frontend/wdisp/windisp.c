@@ -1017,7 +1017,7 @@ static void WIN_ScreentoData(GRAPH *graph, int x, int y, double *fx, double *fy)
     {
         lmin = log10(graph->datawindow.ymin);
         lmax = log10(graph->datawindow.ymax);
-        *fy = exp(((graph->absolute.height - y - graph->viewportxoff) *
+        *fy = exp(((graph->absolute.height - y - graph->viewportyoff) *
                    (lmax - lmin) / graph->viewport.height + lmin) * M_LN10);
     } else {
         *fy = ((graph->absolute.height - y) - graph->viewportyoff) *
