@@ -207,9 +207,6 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
         loc->indata->actpointer = 0;
         loc->indata->size = stepsize;
 
-        loc->timeinterval[0] = loc->timeinterval[1] = PARAM_NULL(timeoffset) ? 0.0 : PARAM(timeoffset);
-        for (i = 0; i < size; ++i)
-            loc->amplinterval[2 * i] = loc->amplinterval[2 * i + 1] = PARAM_NULL(amploffset) ? 0.0 : PARAM(amploffset[i]);
         /* open the file */
         loc->state->fp = fopen_with_path(PARAM(file), "r");
         loc->state->atend = 0;
@@ -246,7 +243,7 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
             /* read the time channel; update the time difference */
             while (*cp && isspace_c(*cp))
                 ++cp;
-            if (*cp == '#' || *cp == ';') {
+            if (*cp == '*' || *cp == '#' || *cp == ';') {
                 free(cpdel);
                 continue;
             }
@@ -299,8 +296,9 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
             fclose(loc->state->fp);
             loc->state->fp = NULL;
         }
-        /* point to the next time */
-        loc->indata->actpointer = stepsize;
+        /* set the start time data */
+        loc->timeinterval[0] = loc->indata->datavec[loc->indata->actpointer];
+        loc->timeinterval[1] = loc->indata->datavec[loc->indata->actpointer + stepsize];
     }
 
     loc = STATIC_VAR (locdata);
@@ -309,13 +307,12 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
      * If TIME steps backward, for example due to a second invocation of a 'tran' analysis
      *   step back in datavec[loc->indata->actpointer] .
      */
-
     if (TIME < loc->timeinterval[0]) {
         while (TIME < loc->indata->datavec[loc->indata->actpointer] && loc->indata->actpointer >= 0)
             loc->indata->actpointer -= stepsize;
         loc->timeinterval[0] = loc->indata->datavec[loc->indata->actpointer];
+        loc->timeinterval[1] = loc->indata->datavec[loc->indata->actpointer + stepsize];
     }
-    loc->timeinterval[1] = loc->indata->datavec[loc->indata->actpointer + stepsize];
 
     while (TIME > loc->timeinterval[1]) {
         loc->indata->actpointer += stepsize;
@@ -323,13 +320,13 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
             /* we are done */
             return;
         }
-        loc->timeinterval[1] = loc->indata->datavec[loc->indata->actpointer];
+        loc->timeinterval[1] = loc->indata->datavec[loc->indata->actpointer + stepsize];
+        loc->timeinterval[0] = loc->indata->datavec[loc->indata->actpointer];
     }
-    loc->timeinterval[0] = loc->indata->datavec[loc->indata->actpointer - stepsize];
 
     for (j = 0; j < size; j++) {
-        loc->amplinterval[2 * j] = loc->indata->datavec[loc->indata->actpointer - stepsize + j + 1];
-        loc->amplinterval[2 * j + 1] = loc->indata->datavec[loc->indata->actpointer + j + 1];
+        loc->amplinterval[2 * j] = loc->indata->datavec[loc->indata->actpointer + j + 1];
+        loc->amplinterval[2 * j + 1] = loc->indata->datavec[loc->indata->actpointer + stepsize + j + 1];
     }
 
     if (loc->timeinterval[0] <= TIME && TIME <= loc->timeinterval[1]) {
