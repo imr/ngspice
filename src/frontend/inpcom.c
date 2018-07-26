@@ -7234,7 +7234,9 @@ pspice_compat(struct card *oldcard)
             }
             for (i = 0; i < 4; i++) {
                 equalptr[i] = skip_back_ws(equalptr[i], str);
-                equalptr[i] = skip_back_non_ws(equalptr[i], str);
+                while (*(equalptr[i]) != '(' && !isspace_c(*(equalptr[i])) && *(equalptr[i]) != ',')
+                    (equalptr[i])--;
+                (equalptr[i])++;
             }
             for (i = 0; i < 3; i++)
                 modpar[i] = copy_substring(equalptr[i], equalptr[i + 1] - 1);
@@ -7293,7 +7295,7 @@ pspice_compat(struct card *oldcard)
             int i;
             char *stoks[6];
             for (i = 0; i < 6; i++)
-                stoks[i] = gettok(&cut_line);
+                stoks[i] = gettok_node(&cut_line);
             /* rewrite s line and replace it if a model is found */
             if ((nesting > 0) && find_a_model(modelsfound, stoks[5], subcktline->line)) {
                 tfree(card->line);
