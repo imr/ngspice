@@ -1,0 +1,16 @@
+Parsing
+*
+* This circuit contains a simple gain block to demonstrate
+* that the simulator parses the syntax used to reference
+* code models.
+*
+.tran 1e-5 1e-3
+*
+v1 1 0 0.0 sin(0 1 1k)
+r1 1 0 1k
+*
+a1 1 2 gain_block
+.model gain_block gain (gain=10)
+r2 2 0 1k
+*
+.end

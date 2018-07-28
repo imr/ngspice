@@ -1,0 +1,33 @@
+Mixed IO sizes
+*
+* This circuit contains a collection of digital and analog
+* models with saclar and vector inputs of varying sizes.
+*
+.tran 1e-5 1e-3
+*
+v1 1 0 0.0 pulse(0 1 1e-4)
+r1 1 0 1k
+*
+v2 2 0 0.0 sin(0 1 2k)
+r2 2 0 1k
+*
+abridge1 [1] [enable] atod
+.model atod adc_bridge
+*
+aosc [enable clk] clk nand
+.model nand d_nand (rise_delay=1e-4 fall_delay=1e-4)
+*
+ainv clk clk_bar inv
+.model inv d_inverter (rise_delay=1e-5 fall_delay=1e-5)
+*
+adac [clk clk_bar] [3 4] dac
+.model dac dac_bridge (t_rise=1e-5 t_fall=1e-5)
+*
+asum [1 2 3 4] 5 sum
+.model sum summer
+*
+r3 3 0 1k
+r4 4 0 1k
+r5 5 0 1k
+*
+.end

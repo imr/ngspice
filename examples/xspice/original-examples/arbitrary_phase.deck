@@ -1,0 +1,17 @@
+Arbitrary Phase SIN and PULSE Sources
+*
+* This circuit generates two cycles of sine and square waves
+* beginning at +45 degrees.
+*
+* Phase shift is specified after Berkeley defined parameters
+* on the independent source cards.
+*
+.tran 2e-5 2e-3
+*
+v1 1 0 0.0 sin(0 1 1k 0 0 45.0)
+r1 1 0 1k
+*
+v2 2 0 0.0 pulse(-1 1 0 1e-5 1e-5 5e-4 1e-3 45.0)
+r2 2 0 1k
+*
+.end

@@ -1,0 +1,17 @@
+IO ordering
+*
+* This circuit contains a simple gain block.  The order of
+* the nodes listed on the instance line follows the order
+* of the connections defined in the 'ifspec.ifs' file for
+* the model.  Refer to /atesse-su/src/cml/gain/ifspec.ifs .
+*
+.tran 1e-5 1e-3
+*
+v1 1 0 0.0 sin(0 1 1k)
+r1 1 0 1k
+*
+a1 1 2 gain_block
+.model gain_block gain (gain=10)
+r2 2 0 1k
+*
+.end

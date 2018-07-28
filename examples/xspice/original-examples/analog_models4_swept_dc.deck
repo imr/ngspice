@@ -1,0 +1,72 @@
+Code Model Test - Swept DC: sine, triangle, aswitch, zener, oneshot
+*
+*
+*** analysis type ***
+.dc v1 .1 15 .5
+*
+*** input sources ***
+v1 1 0 DC 1.0
+*
+v2 2 0 DC 1.0
+*
+v3 3 0 DC 1.0
+*
+*
+*** sine block ***
+a1 1 10 sine1
+.model sine1 sine (cntl_array=[-1.0 0.0 1.0 2.0] 
++                  freq_array=[1.0 1.0 100.0 100.0]
++                  out_low=-1.0 out_high=1.0)
+*
+*
+*** triangle block ***
+a2 1 20 triangle1
+.model triangle1 triangle (cntl_array=[-1.0 0.0 1.0 2.0] 
++                  freq_array=[1.0 1.0 100.0 100.0]
++                  out_low=-1.0 out_high=1.0 duty_cycle=0.8)
+*
+*
+*** aswitch block ***
+a3 1 (2 30) aswitch1
+.model aswitch1 aswitch (cntl_off=0.0 cntl_on=1.0 log=TRUE
++                        r_off=1.0e12 r_on=10.0)
+*
+*
+*** zener diode ***
+r4 1 40 100
+a4 (0 40) zener1
+.model zener1 zener (v_breakdown=8.0 i_breakdown=2.0e-2
++                    r_breakdown=1.0 i_rev=1.0e-6 i_sat=1.0e-12
++                    n_forward=1.0 limit_switch=FALSE)
+*
+*
+*** oneshot block ***
+a5 3 1 2 50 oneshot1
+.model oneshot1 oneshot (cntl_array=[-1.0 0.0 1.0 2.0]
++                        pw_array=[1.0 1.0 0.1 0.1] clk_trig=0.5
++                        pos_edge_trig=TRUE out_low=0.0 out_high=1.0
++                        rise_time=1.0e-6 rise_delay=1.0e-9 
++                        fall_delay=1.0e-9 fall_time=1.0e-6
++                        retrig=FALSE)
+*
+*
+*
+*
+*** resistors to ground ***
+r1 1 0 10k
+r2 2 0 10k
+r3 3 0 10k
+*
+r10 10 0 10k
+r20 20 0 10k
+r30 30 0 10k
+r40 40 0 10k
+r50 50 0 10k
+r60 60 0 10k
+*
+*
+.end
+
+
+
+

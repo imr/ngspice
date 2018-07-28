@@ -1,0 +1,19 @@
+Long names
+*
+* This circuit contains a sine wave source followed by a
+* gain block code model with a gain of 10.  Long names
+* are used for instances, models, and nodes.
+*
+.tran 1e-5 1e-3
+*
+v1_123456789_123456789_1234  1 0  0.0 sin(0 1 2k)
+*
+r1_123456789_123456789_1234  1 0  1k
+*
+a1_123456789_123456789_1234  1 out_123456789_123456789_1234
++   gain_block_123456789_123456789_1234
+*
+.model gain_block_123456789_123456789_1234 gain (gain=10)
+r2_123456789_123456789_1234  out_123456789_123456789_1234 0  1k
+*
+.end

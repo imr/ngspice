@@ -1,0 +1,41 @@
+Mixed references
+*
+* This circuit demonstrates the use of single-ended and
+* differential inputs and outputs.
+*
+* Note that digital models reference a single node for
+* their inputs and output (i.e. they are single-ended)
+*
+.tran 1e-5 1e-3
+*
+v1  1 0  0.0 sin(0 1 5k)
+v2  2 0  0.0 sin(0 1 1k)
+*
+r1  1 0  1k
+r2  2 0  1k
+*
+*
+a1  %v 1  %i 10  times10
+r10  10 0  1k
+*
+*
+a2  %vd (1 2)  %id(11 12)  times10
+r11  11 0  1k
+r12  12 0  1k
+r11_12  11 12  1.0
+*
+*
+r3  2 3  1k
+a3  %i 3  %v 13  times10
+r13  13 0  1k
+*
+a4  [1] [digital_node1]  adc
+.model adc adc_bridge
+*
+a5  digital_node1 digital_node2  inv
+.model inv d_inverter
+*
+*
+.model times10 gain (gain=10)
+*
+.end

@@ -1,0 +1,23 @@
+Parameter types
+*
+* This circuit contains a code model which accepts several
+* parameters of various types and prints them.
+*
+.op
+*
+r1 1 0 1k
+r2 2 0 1k
+r3 1 2 1k
+*
+a1 [1 2] mod
+.model mod print_param_types 
++  integer=2
++  real=3.0
++  complex=<4.0 5.0>
++  string=six
++  integer_array=[7 8]
++  real_array=[9.0 10.0]
++  complex_array=[< 11.0 12.0 > < 13.0 14.0 >]
++  string_array=[fifteen sixteen]
+*
+.end

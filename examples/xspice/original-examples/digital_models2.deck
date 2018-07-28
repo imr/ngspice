@@ -1,0 +1,91 @@
+Code Model Test: d flip-flop, jk flip-flop, toggle ff, set-reset ff
+*
+*
+*** analysis type ***
+.tran .01s 4s
+*
+*** input sources ***
+*
+vdata1 100 0 DC PWL( (0 0.0) (2 0.0) (2.0000000001 1.0) (3 1.0) ) 
+*
+*
+vdata2 200 0 DC PWL( (0 0.0) (1.0 0.0) (1.0000000001 1.0) (2 1.0) 
++                (2.0000000001 0.0) (3 0.0) (3.0000000001 1.0) (4 1.0) )
+*
+*
+vclk 300 0 DC PWL( (0 0.0) (0.5 0.0) (0.50000000001 1.0) 
++                          (1.0 1.0) (1.00000000001 0.0)
++                          (1.5 0.0) (1.50000000001 1.0)
++                          (2.0 1.0) (2.00000000001 0.0)
++                          (2.5 0.0) (2.50000000001 1.0)
++                          (3.0 1.0) (3.00000000001 0.0)
++                          (3.5 0.0) (3.50000000001 1.0) (4.0 1.0)  )
+*
+*
+vset 400 0 DC 0.0
+*
+*
+vreset 500 0 DC PWL( (0 0.0) (3.8 0.0) (3.80000000001 1.0) (4 1.0) ) 
+*
+*
+*** adc_bridge blocks ***
+aconverter [100 200 300 400 500] [1 2 3 4 5] adc_bridge1
+.model adc_bridge1 adc_bridge (in_low=0.1 in_high=0.9 
++                              rise_delay=1.0e-12 fall_delay=1.0e-12)
+*
+*
+*
+*** d flip-flop block ***
+a1 1 3 4 5 10 11 d_dff1
+.model d_dff1 d_dff (clk_delay=1.0e-6 set_delay=2.0e-6
++                    reset_delay=3.0e-6 ic=0 
++                    rise_delay=4.0e-6 fall_delay=5.0e-6 
++                    data_load=1.0e-12 clk_load=1.0e-12
++                    set_load=1.0e-12 reset_load=1.0e-12)
+*
+*
+*** jk flip-flop block ***
+a2 1 2 3 4 5 20 21 d_jkff1
+.model d_jkff1 d_jkff (clk_delay=1.0e-6 set_delay=2.0e-6
++                      reset_delay=3.0e-6 ic=0 
++                      rise_delay=4.0e-6 fall_delay=5.0e-6 
++                      jk_load=1.0e-12 clk_load=1.0e-12
++                      set_load=1.0e-12 reset_load=1.0e-12)
+*
+*
+*** toggle flip-flop block ***
+a3 1 3 4 5 30 31 d_tff1
+.model d_tff1 d_tff (clk_delay=1.0e-6 set_delay=2.0e-6
++                    reset_delay=3.0e-6 ic=0 
++                    rise_delay=4.0e-6 fall_delay=5.0e-6 
++                    t_load=1.0e-12 clk_load=1.0e-12
++                    set_load=1.0e-12 reset_load=1.0e-12)
+*
+*
+*** set-reset flip-flop block ***
+a4 1 2 3 4 5 40 41 d_srff1
+.model d_srff1 d_srff (clk_delay=1.0e-6 set_delay=2.0e-6
++                      reset_delay=3.0e-6 ic=0 
++                      rise_delay=4.0e-6 fall_delay=5.0e-6 
++                      sr_load=1.0e-12 clk_load=1.0e-12
++                      set_load=1.0e-12 reset_load=1.0e-12)
+*
+*
+*
+*
+*** resistors to ground ***
+r1 100 0 1k
+r2 200 0 1k
+r3 300 0 1k
+r4 400 0 1k
+r5 500 0 1k
+*
+*
+*
+.end
+
+
+
+
+
+
