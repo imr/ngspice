@@ -1,0 +1,36 @@
+* state machine example
+* by Marcel Hendrix, Jan. 10th, 2014
+
+* Define a simple up/down counter that counts clk edges.
+* Digital outputs are on msb+lsb.
+*   inputs  clock   reset     outputs (all digital)
+a0  [n_one]  clk    n_zero   [msb lsb]   state1
+*.model state1 d_state(state_file = "D:\Software\Spice\various\xspice\state.in")
+.model state1 d_state(state_file = "state.in")
+
+* Digital "one" and "zero"
+a1 n_one pullup1
+.model pullup1 d_pullup(load = 1pF)
+a2 n_zero pulldown1
+.model pulldown1 d_pulldown(load = 1pF)
+
+* Convert the digital outputs to analog so we can conveniently plot them
+a3 [msb] [out_msb] dac1
+a4 [lsb] [out_lsb] dac1
+.model dac1 dac_bridge(out_low = 0 out_high = 5 out_undef = 2.5)
+
+* The digital VCO needs an analog control voltage
+Vcnt cntl 0  pulse(-1V 1V 0 5ms 4ms 1ms 1)
+
+* Digital VCO to drive state-machine (counter)
+a5 cntl clk var_clock
+.model var_clock d_osc(cntl_array = [-2 -1 1 2] freq_array = [1e3 1e3 10e3 10e3]
++ duty_cycle = 0.1)
+
+.control
+tran 1us 10ms
+write spifsim.raw
+eprvcd n_one clk n_zero msb lsb > spifsim.vcd
+.endc
+
+.end
