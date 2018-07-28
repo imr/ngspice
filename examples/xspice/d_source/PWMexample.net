@@ -1,0 +1,24 @@
+* PWMexample.net
+* calling with:
+* ngspice -r ngs.raw -b PWMexample.net
+
+.model input_vector d_source(input_file = "pwmexample_data.text")
+.model dac1 dac_bridge(out_low = 0.7 out_high = 3.5 out_undef = 2.2
++ input_load = 5.0e-12 t_rise = 1e-9 t_fall = 1e-9)
+
+
+*==============  Begin SPICE netlist of main design ============
+A1 [3 4] input_vector
+abridge1 [3] [33] dac1
+abridge2 [4] [44] dac1
+R1 33 1 1K
+C1 0 1 10n
+
+.control
+save 33 44 1
+tran 1us 50m
+wrdata $inputdir/fil2.dat V(33) v(44) V(1)
+.endc
+
+
+

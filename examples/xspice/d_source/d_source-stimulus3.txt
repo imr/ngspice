@@ -1,0 +1,5 @@
+* time, c1 c2  c3
+0.5n      0s 1s  Us
+2.5n      0r 1r  Ur
+4.5n      0z 1z  Uz
+6.0n      0u 1u  Uu

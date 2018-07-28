@@ -1,0 +1,21 @@
+Code Model Test: d_source
+
+a_source3 [c1 c2 c3]  d_source3
+.model d_source3 d_source (input_file="./test/d_source-stimulus3.txt")
+
+a_source [a1 a2 a3 a4 a5 a6 a7 a8 a9 aa ab]  d_source1
+.model d_source1 d_source (input_file="d_source-stimulus.txt")
+
+a_source2 [b1 b2 b3 b4 b5 b6 b7 b8 b9 ba]  d_source2
+.model d_source2 d_source (input_file="d_source-stimulus2.txt")
+
+.control
+set noaskquit
+set noacct
+tran 100ps 30ns
+eprint c1 c2 c3 > $inputdir/d_s.out
+eprint a1 a2 a3 a4 a5 a6 a7 a8 a9 aa ab >> $inputdir/d_s.out
+eprint b1 b2 b3 b4 b5 b6 b7 b8 b9 ba >> $inputdir/d_s.out
+.endc
+
+.end
