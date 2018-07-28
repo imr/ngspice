@@ -1,0 +1,28 @@
+filesource staircase non-interpolating and interpolating
+
+* non-interpolating
+.model filesrc filesource (file="my-source.txt"
++ amploffset=[0.1 0.1] amplscale=[3.0 3.0]
++ timeoffset=0 timescale=1
++ timerelative=false amplstep=true)
+
+* interpolating
+.model filesrc2 filesource (file="my-source.txt"
++ amploffset=[0.1 0.1] amplscale=[3.0 3.0]
++ timeoffset=0 timescale=1
++ timerelative=false amplstep=false)
+
+A1 %vd([1 0 N_IN 0]) filesrc
+Rload N_IN 0 1k
+
+A2 %vd([2 0 N_IN2 0]) filesrc2
+Rload2 N_IN2 0 1k
+
+.control
+option NOINIT ACCT
+
+tran 1us 100us
+display
+plot allv
+.endc
+.end
