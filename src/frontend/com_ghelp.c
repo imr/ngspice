@@ -34,7 +34,7 @@ com_ghelp(wordlist *wl)
     int i;
 #endif /* X_DISPLAY_MISSING 1  */
 
-    if (cp_getvar("helppath", CP_STRING, , sizeof(buf)))
+    if (cp_getvar("helppath", CP_STRING, buf, sizeof(buf)))
         path = copy(buf);
     if (!path) {
         fprintf(cp_err, "Note: defaulting to old help.\n\n");
@@ -75,7 +75,7 @@ com_ghelp(wordlist *wl)
             fprintf(cp_err, "Warning: no such button style %s\n",
                     buf);
     }
-    if (cp_getvar("width", CP_NUM, &i))
+    if (cp_getvar("width", CP_NUM, &i, 0))
         hlp_width = i;
     if (cp_getvar("display", CP_STRING, buf, sizeof(buf)))
         hlp_displayname = copy(buf);
