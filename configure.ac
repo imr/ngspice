@@ -809,7 +809,8 @@ else
 AC_DEFINE_UNQUOTED([NGSPICEBINDIR], ["`echo $dprefix/bin`"], [Define the directory for executables])
 AC_DEFINE_UNQUOTED([NGSPICEDATADIR], ["`echo $dprefix/share/ngspice`"], [Define the directory for architecture independent data files])
 fi
-AC_DEFINE_UNQUOTED([NGSPICEBUILDDATE], ["`date`"], [Define the build date])
+BUILD_DATE="$(date --utc --date="@${SOURCE_DATE_EPOCH:-$(date +%s)}")"
+AC_DEFINE_UNQUOTED([NGSPICEBUILDDATE], ["$BUILD_DATE"], [Define the build date])
 
 if test "x$with_wingui" = xyes; then
     AC_MSG_RESULT([WINDOWS GUI code enabled])
