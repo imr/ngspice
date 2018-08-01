@@ -292,13 +292,13 @@ char *INPdomodel(CKTcircuit *ckt, struct card *image, INPtables * tab)
 			case 8: case 49:
 			    err = INPfindVer(line, ver);
 
-			    if ( strcmp(ver, "3.0") == 0 ) {
+			    if (prefix("3.0", ver)) {
 			      type = INPtypelook("BSIM3v0");
 			    }
-			    if ( strcmp(ver, "3.1") == 0 ) {
+			    if (prefix("3.1", ver)) {
 			      type = INPtypelook("BSIM3v1");
 			    }
-			    if ( prefix("3.2", ver)) { /* version string ver has to start with 3.2 */
+			    if (prefix("3.2", ver)) { /* version string ver has to start with 3.2 */
 			      type = INPtypelook("BSIM3v32");
 			    }
 			    if ( (strstr(ver, "default")) || (prefix("3.3", ver)) ) {
