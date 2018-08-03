@@ -51,6 +51,9 @@ Author: 1985 Wayne A. Christopher
 #define N_PARAMS          1000
 #define N_SUBCKT_W_PARAMS 4000
 
+#define NPARAMS 10000
+#define FCN_PARAMS 1000
+
 #define VALIDCHARS "!$%_#?@.[]&"
 
 static struct library {
@@ -2614,6 +2617,11 @@ inp_get_params(char *line, char *param_names[], char *param_values[])
         end = skip_back_ws(equal_ptr, line);
         name = skip_back_non_ws(end, line);
 
+		if (num_params == NPARAMS) {
+			fprintf(stderr, "Error: to many params in a line, max is %d\n", NPARAMS);
+			controlled_exit(EXIT_FAILURE);
+		}
+
         param_names[num_params++] = copy_substring(name, end);
 
         /* get parameter value */
@@ -2783,10 +2791,10 @@ static void
 inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct card *deck)
 {
     struct card *c;
-    char *subckt_param_names[1000];
-    char *subckt_param_values[1000];
-    char *inst_param_names[1000];
-    char *inst_param_values[1000];
+    char *subckt_param_names[NPARAMS];
+    char *subckt_param_values[NPARAMS];
+    char *inst_param_names[NPARAMS];
+    char *inst_param_values[NPARAMS];
     int  i;
 
     // first iterate through instances and find occurences where 'm' multiplier needs to be
@@ -3181,7 +3189,7 @@ static char*
 inp_expand_macro_in_str(struct function_env *env, char *str)
 {
     struct function *function;
-    char *open_paren_ptr, *close_paren_ptr, *fcn_name, *params[1000];
+    char *open_paren_ptr, *close_paren_ptr, *fcn_name, *params[FCN_PARAMS];
     char *curr_ptr, *macro_str, *curr_str = NULL;
     int  num_params, i;
     char *orig_ptr = str, *search_ptr = str, *orig_str = copy(str);
@@ -3260,6 +3268,10 @@ inp_expand_macro_in_str(struct function_env *env, char *str)
                 if (*curr_ptr == ',' && num_parens == 0)
                     break;
             }
+			if (num_params == FCN_PARAMS) {
+				fprintf(stderr, "Error: Too many params in fcn, max is %d\n", FCN_PARAMS);
+				controlled_exit(EXIT_FAILURE);
+			}
             params[num_params++] =
                 inp_expand_macro_in_str(env, copy_substring(beg_parameter, curr_ptr));
         }
