@@ -33,7 +33,7 @@ void INP2K(CKTcircuit *ckt, INPtables * tab, struct card *current)
 	LITERR("Device type mutual not supported by this binary\n");
 	return;
     }
-    INPgetTok(&line, &name, 1);
+    INPgetNetTok(&line, &name, 1);
     INPinsert(&name, tab);
     if (!tab->defKmod) {
 	/* create deafult K model */

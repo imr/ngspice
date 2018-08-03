@@ -47,7 +47,7 @@ int num, i;
         return;
     }
     line = current->line;
-    INPgetTok(&line,&name,1);
+    INPgetNetTok(&line,&name,1);
     INPinsert(&name,tab);
     /* num = (int) INPevaluate(&line,&error1,1); */
     num = 0;

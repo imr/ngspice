@@ -60,7 +60,7 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, struct card *current, CKTnode *gnod
 
     line = current->line;
 
-    INPgetTok(&line, &name, 1);
+    INPgetNetTok(&line, &name, 1);
     INPinsert(&name, tab);
 
     for (i = 0; ; i++) {
