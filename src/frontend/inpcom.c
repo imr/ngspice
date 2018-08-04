@@ -1228,7 +1228,22 @@ inp_pathresolve_at(char *name, char *dir)
         }
     }
 
-    /* concatenate them */
+    /*
+     * Try in current dir and then in the actual dir the file was read.
+     * Current dir . is needed to correctly support absolute paths in sourcepath
+     */
+
+    strcpy(buf, ".");
+
+    end = strchr(buf, '\0');
+    if (end[-1] != DIR_TERM)
+        *end++ = DIR_TERM;
+
+    strcpy(end, name);
+
+    char *r = inp_pathresolve(buf);
+    if (r)
+        return r;
 
     strcpy(buf, dir);
 
