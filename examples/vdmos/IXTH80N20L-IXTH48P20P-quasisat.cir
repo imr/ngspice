@@ -1,6 +1,8 @@
 VDMOS Test of quasi saturation IXTH80N20L IXTH48P20P
 * Original VDMOS model parameters taken from David Zan,
 * http://www.diyaudio.com/forums/software-tools/266655-power-mosfet-models-ltspice-post5300643.html
+* The Quasi-aturation is added for demonstration only, it is not aligned with the data sheets
+* and is for sure exagerated, at least for the IXTH80N20L
 
 mn1 d1 g1 s1 s1 IXTH80N20L
 
