@@ -809,7 +809,25 @@ else
 AC_DEFINE_UNQUOTED([NGSPICEBINDIR], ["`echo $dprefix/bin`"], [Define the directory for executables])
 AC_DEFINE_UNQUOTED([NGSPICEDATADIR], ["`echo $dprefix/share/ngspice`"], [Define the directory for architecture independent data files])
 fi
-AC_DEFINE_UNQUOTED([NGSPICEBUILDDATE], ["`date`"], [Define the build date])
+
+# Create timestamp, may be overruled by setting env var SOURCE_DATE_EPOCH
+case $host_os in
+    *freebsd* )
+        DATE_FMT="%Y-%m-%d"
+        SOURCE_DATE_EPOCH="${SOURCE_DATE_EPOCH:-$(date +%s)}"
+        BUILD_DATE=$(date -u -d "@$SOURCE_DATE_EPOCH" "+$DATE_FMT" 2>/dev/null || date -u -r "$SOURCE_DATE_EPOCH" "+$DATE_FMT" 2>/dev/null || date -u "+$DATE_FMT")
+        ;;
+    *openbsd* )
+        DATE_FMT="%Y-%m-%d"
+        SOURCE_DATE_EPOCH="${SOURCE_DATE_EPOCH:-$(date +%s)}"
+        BUILD_DATE=$(date -u -d "@$SOURCE_DATE_EPOCH" "+$DATE_FMT" 2>/dev/null || date -u -r "$SOURCE_DATE_EPOCH" "+$DATE_FMT" 2>/dev/null || date -u "+$DATE_FMT")
+        ;;
+    * )
+        BUILD_DATE="$(date --utc --date="@${SOURCE_DATE_EPOCH:-$(date +%s)}")"
+        ;;
+esac
+
+AC_DEFINE_UNQUOTED([NGSPICEBUILDDATE], ["$BUILD_DATE"], [Define the build date])
 
 if test "x$with_wingui" = xyes; then
     AC_MSG_RESULT([WINDOWS GUI code enabled])
