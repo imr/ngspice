@@ -995,6 +995,16 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
                     }
                 }
             } else {
+                /* add Inp_Path to sourcepath variable */
+                char *p;
+                if ((p = strstr(buffer, "sourcepath"))) {
+                    if ((p = strchr(buffer, ')'))) {
+                        *p = 0;     // clear ) and insert Inp_Path in between
+                        p = tprintf("%s %s ) %s", buffer, Inp_Path ? Inp_Path : "", p + 1);
+                        tfree(buffer);
+                        buffer = p;
+                    }
+                }
                 /* exclude commands listed above to preserve filename case */
                 for (s = buffer; *s && (*s != '\n'); s++)
                     ;
