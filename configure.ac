@@ -101,10 +101,6 @@ AC_ARG_ENABLE([ansi],
 AC_ARG_ENABLE([gprof],
    [AS_HELP_STRING([--enable-gprof], [Produce gprof profiling data in 'gmon.out' (GCC only).])])
 
-# --enable-checker: add --with-checker-debug  option to the compiler
-AC_ARG_ENABLE([checker],
-    [AS_HELP_STRING([--enable-checkergcc], [Option for compilation with checkergcc])])
-
 # --enable-gc: Enable Boehm-Weiser Conservative Garbage Collector
 AC_ARG_ENABLE([checker],
     [AS_HELP_STRING([--enable-gc], [Use Boehm-Weiser Conservative Garbage Collector. Disabled by default.])])
@@ -259,13 +255,6 @@ if test "x$enable_gprof" = xyes; then
         AC_MSG_ERROR([We only support --enable-gprof with GCC right now.])
     fi
 fi
-
-
-# Not sure that this will work....
-if test "x$with_checkergcc" = xyes; then
-    CC="checkergcc"
-fi
-
 
 # Checks for ANSI-C header files.
 AC_HEADER_STDC
