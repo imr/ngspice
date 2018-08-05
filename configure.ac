@@ -46,13 +46,56 @@ AC_CONFIG_MACRO_DIR([m4])
 # Package Options
 # ---------------
 
+# --disable-debug: remove -g and -Wall  option to the compiler
+AC_ARG_ENABLE([debug],
+    [AS_HELP_STRING([--disable-debug], [Remove -g option for compilation (default is -g)])])
+
+ # --enable-oldapps: define OLDAPPS
+AC_ARG_ENABLE([oldapps],
+    [AS_HELP_STRING([--enable-oldapps], [Enable making old, outdated apps.])])
+
+# --enable-xspice: define XSPICE in the code. This is for xspice support
+AC_ARG_ENABLE([xspice],
+    [AS_HELP_STRING([--enable-xspice], [Enable XSPICE enhancements])])
+
+# --enable-cider: define CIDER in the code. This is for CIDER support
+AC_ARG_ENABLE([cider],
+    [AS_HELP_STRING([--enable-cider], [Enable CIDER enhancements])])
+
+# --enable-adms: define ADMS in the code. This is for the adms Verilog-A compiler support
+AC_ARG_ENABLE([adms],
+    [AS_HELP_STRING([--enable-adms], [Enable ADMS code models, (experimental)])])
+
+# --enable-pss: enable PSS Analysis
+AC_ARG_ENABLE([pss],
+    [AS_HELP_STRING([--enable-pss], [Enable PSS Analysis, (experimental)])])
+
+# --enable-relpath: Relative path for binary and data. Default is "no".
+# ngspice shared may want relative paths for spinit etc.
+AC_ARG_ENABLE([relpath],
+    [AS_HELP_STRING([--enable-relpath], [Enable relative paths for spinit etc. Default=no])])
+
+# --with-readline:  Includes GNU readline support into CLI.  Default is "no".
+AC_ARG_WITH([readline],
+    [AS_HELP_STRING([--with-readline[=yes/no]], [Enable GNU readline support for CLI. Default=no.])])
+
+# --with-editline:  Includes BSD Editline support into CLI.  Default is "no".
+AC_ARG_WITH([editline],
+    [AS_HELP_STRING([--with-editline[=yes/no]], [Enable BSD editline support for CLI. Default=no.])])
+
+# --with-tcl: define TCL_MODULE in the code. This is for tcl support
+AC_ARG_WITH([tcl],
+    [AS_HELP_STRING([--with-tcl=tcldir], [Compiles  the tcl module instead,  experimental, see README.tcl])])
+
+# --with-ngshared: define SHARED_MODULE in the code. This is for ngspice as shared library (or dll)
+AC_ARG_WITH([ngshared],
+    [AS_HELP_STRING([--with-ngshared], [Compiles ngspice as shared library (dll)])])
+
+# old options, not maintained, may even not work at all
+
 # --enable-ansi: try to force --ansi option to the compiler
 AC_ARG_ENABLE([ansi],
     [AS_HELP_STRING([--enable-ansi], [Force --ansi option for compilation])])
-
-# --disable-debug: remove -g and -Wall  option to the compiler
-AC_ARG_ENABLE([debug],
-    [AS_HELP_STRING([--disable-debug], [Remove -g option for compilation (Added by default)])])
 
 # --enable-gprof: add -pg option to the compiler (GCC)
 AC_ARG_ENABLE([gprof],
@@ -89,10 +132,6 @@ AC_ARG_ENABLE([newpred],
 # --enable-newtrunc: define NEWTRUNC for the code
 AC_ARG_ENABLE([newtrunc],
     [AS_HELP_STRING([--enable-newtrunc], [Enable, how we want extrapolate capacitances.])])
-
- # --enable-oldapps: define OLDAPPS
-AC_ARG_ENABLE([oldapps],
-    [AS_HELP_STRING([--enable-oldapps], [Enable making old, outdated apps.])])
 
 # --enable-sense2: define WANT_SENSE2 for the code
 AC_ARG_ENABLE([sense2],
@@ -142,22 +181,6 @@ AC_ARG_ENABLE([experimental],
 AC_ARG_ENABLE([expdevices],
     [AS_HELP_STRING([--enable-expdevices], [Enable experimental devices (they do not compile)])])
 
-# --enable-xspice: define XSPICE in the code. This is for xspice support
-AC_ARG_ENABLE([xspice],
-    [AS_HELP_STRING([--enable-xspice], [Enable XSpice enhancements, (experimental)])])
-
-# --enable-cider: define CIDER in the code. This is for CIDER support
-AC_ARG_ENABLE([cider],
-    [AS_HELP_STRING([--enable-cider], [Enable CIDER enhancements, (experimental)])])
-
-# --enable-adms: define ADMS in the code. This is for the adms Verilog-A compiler support
-AC_ARG_ENABLE([adms],
-    [AS_HELP_STRING([--enable-adms], [Enable ADMS code models, (experimental)])])
-
-# --enable-pss: enable PSS Analysis
-AC_ARG_ENABLE([pss],
-    [AS_HELP_STRING([--enable-pss], [Enable PSS Analysis, (experimental)])])
-
 # --enable-ndev: define NDEV in the code. An interface for external device i.e. numerical device
 AC_ARG_ENABLE([ndev],
     [AS_HELP_STRING([--enable-ndev], [Enable NDEV interface, (experimental)])])
@@ -174,27 +197,6 @@ AC_ARG_ENABLE([help],
 # Xgraph is a plotting package for X11 once very popular.
 AC_ARG_ENABLE([xgraph],
     [AS_HELP_STRING([--enable-xgraph], [Enable xgraph compilation.])])
-
-# --enable-relpath: Relative path for binary and data. Default is "no".
-# ngspice shared may want relative paths for spinit etc.
-AC_ARG_ENABLE([relpath],
-    [AS_HELP_STRING([--enable-relpath], [Enable relative paths for spinit etc.])])
-
-# --with-readline:  Includes GNU readline support into CLI.  Default is "no".
-AC_ARG_WITH([readline],
-    [AS_HELP_STRING([--with-readline[=yes/no]], [Enable GNU readline support for CLI. Default=no.])])
-
-# --with-editline:  Includes BSD Editline support into CLI.  Default is "no".
-AC_ARG_WITH([editline],
-    [AS_HELP_STRING([--with-editline[=yes/no]], [Enable BSD editline support for CLI. Default=no.])])
-
-# --with-tcl: define TCL_MODULE in the code. This is for tcl support
-AC_ARG_WITH([tcl],
-    [AS_HELP_STRING([--with-tcl=tcldir], [Compiles  the tcl module instead,  experimental, see README.tcl])])
-
-# --with-ngshared: define SHARED_MODULE in the code. This is for ngspice as shared library (or dll)
-AC_ARG_WITH([ngshared],
-    [AS_HELP_STRING([--with-ngshared], [Compiles ngspice as shared library (dll)])])
 
 # readline and editline cannot both be enabled
 if test "x$with_editline" = xyes; then
