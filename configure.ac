@@ -101,10 +101,6 @@ AC_ARG_ENABLE([ansi],
 AC_ARG_ENABLE([gprof],
    [AS_HELP_STRING([--enable-gprof], [Produce gprof profiling data in 'gmon.out' (GCC only).])])
 
-# --enable-gc: Enable Boehm-Weiser Conservative Garbage Collector
-AC_ARG_ENABLE([checker],
-    [AS_HELP_STRING([--enable-gc], [Use Boehm-Weiser Conservative Garbage Collector. Disabled by default.])])
-
 # --enable-nobypass: define NOBYPASS for the code
 AC_ARG_ENABLE([nobypass],
     [AS_HELP_STRING([--enable-nobypass], [Don't bypass recalculations of slowly changing variables])])
