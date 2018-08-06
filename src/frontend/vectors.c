@@ -966,6 +966,28 @@ plot_setcur(char *name)
         plot_cur = pl;
         return;
     }
+	/* plots are listed in pl in reverse order */
+	else if (cieq(name, "previous")) {
+		if (plot_cur->pl_next)
+			plot_cur = plot_cur->pl_next;
+		else
+			fprintf(cp_err, "Warning: Switching to previous plot not possible, stay with current plot (%s)\n", plot_cur->pl_typename);
+        return;
+    }
+	else if (cieq(name, "next")) {
+		struct plot *prev_pl = NULL;
+		for (pl = plot_list; pl; pl = pl->pl_next) {
+			if (pl == plot_cur)
+				break;
+			prev_pl = pl;
+		}
+		if (!prev_pl) {
+			fprintf(cp_err, "Warning: Switching to next plot not possible, stay with current plot (%s)\n", plot_cur->pl_typename);
+			return;
+		}
+		plot_cur = prev_pl;
+		return;
+	}
     for (pl = plot_list; pl; pl = pl->pl_next)
         if (plot_prefix(name, pl->pl_typename))
             break;
