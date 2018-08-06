@@ -30,14 +30,14 @@ begin
   echo source the input file
 * Path of your circuit file and library file here
 * Will be added to the already existing sourcepath
-  set sourcepath = ( D:/Spice_general/ngspice/examples/Monte_Carlo $sourcepath ./ngspice/examples/Monte_Carlo )
+  set sourcepath = ( $inputdir $sourcepath ./ngspice/examples/Monte_Carlo )
 * source with file name of your circuit file
   source mc_ring_circ.net
 
   save buf                        $ we just need buf, save memory by more than 10x
 
 * Output path (directory has already to be there)
-  setcf outputpath = 'D:\Spice_general\ngspice\examples\Monte_Carlo\out'
+*  set outputpath = 'D:\Spice_general\ngspice\examples\Monte_Carlo\out'
 * If your current directory is the 'ngspice' directory
 *  set outputpath = './examples/Monte_Carlo/out' $ LINUX alternative
 * run the simulation loop
