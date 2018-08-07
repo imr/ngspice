@@ -863,6 +863,9 @@ killplot(struct plot *pl)
         if (pl == plot_cur)
             plot_cur = op;
     }
+    /* delete the hash table entry for this plot */
+    if (pl->pl_lookup_table)
+        nghash_free(pl->pl_lookup_table, NULL, NULL);
     tfree(pl->pl_title);
     tfree(pl->pl_name);
     tfree(pl->pl_typename);
