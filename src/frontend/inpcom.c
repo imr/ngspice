@@ -6663,8 +6663,10 @@ inp_meas_current(struct card *deck)
                where i(xyz) has been found */
             tok = gettok(&curr_line);
             /* done when end of subcircuit is reached */
-            if (eq(".ends", tok) && rep->s_start)
+            if (eq(".ends", tok) && rep->s_start) {
+                tfree(tok);
                 break;
+            }
             if (eq(rep->rtoken, tok)) {
                 /* special treatment if we have an e (VCVS) or h (CCVS) source:
                 check if it is a simple linear source, if yes, don't do a
@@ -6682,6 +6684,7 @@ inp_meas_current(struct card *deck)
                             printf("i(%s) moved back to i(%s) in\n%s\n\n", searchstr, tok, rep->cline->line);
                     }
                     tfree(searchstr);
+                    tfree(tok);
                     continue;
                 }
                 node1 = gettok(&curr_line);
