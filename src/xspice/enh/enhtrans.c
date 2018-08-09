@@ -132,6 +132,7 @@ ENHtranslate_poly(
         card = TMALLOC(char, strlen(d->line) + 2);
         strcpy(card,"*");
         strcat(card, d->line);
+        tfree(d->line);
         d->line = card;
 
 #ifdef TRACE
