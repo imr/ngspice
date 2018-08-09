@@ -199,6 +199,8 @@ char *MIFgetMod(
                                     modtmp->INPmodfast,
                                     ft_sim->devices[modtmp->INPmodType]->modelParms[j].id,
                                     val, NULL);
+                            /* free val, allocated by MIFgetValue */
+                            tfree(val->v.vec.rVec);
                             if(error)
                                 return(INPerror(error));
                             break;
