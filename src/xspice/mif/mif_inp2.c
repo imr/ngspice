@@ -291,7 +291,7 @@ MIF_INP2A (
                 return;
         } else {   /* use the default port type for this connection */
             def_port_type = conn_info->default_port_type;
-            def_port_type_str = conn_info->default_type;
+            def_port_type_str = copy(conn_info->default_type);
         }
 
         /* At this point, next_token should be either a [ char, or should hold
@@ -323,6 +323,7 @@ MIF_INP2A (
 
             /* eat the null token and continue to next connection */
             next_token = MIFget_token(&line,&next_token_type);
+			tfree(def_port_type_str);
             continue;  /* iterate */
         } else {
             /* set the null flag to false */
@@ -386,7 +387,7 @@ MIF_INP2A (
                     (next_token_type != MIF_RARRAY_TOK) &&
                     (*line != '\0');
                     j++) {
-
+                char* dpts_free = NULL;
                 /********** mhx Friday, August 19, 2011, 15:08 begin ***
                  Now if we had a % token, get actual info about connection type,
                  or else use the port type for this connection that was setup BEFORE the '[' token.
@@ -405,6 +406,8 @@ MIF_INP2A (
                                      &status);
                     if(status == MIF_ERROR)
                         return;
+                    /*prepare to free def_port_type_str only if it has been set here */
+                    dpts_free = def_port_type_str;
                 }
                 /* At this point, next_token should be either a [ or ] char (not allowed),
                 or hold a non-null connection (netname) */
@@ -442,6 +445,7 @@ MIF_INP2A (
                             j,                  /* port index */
                             &status);
 
+                tfree(dpts_free);
                 if(status == MIF_ERROR)
                     return;
             } /*------ end of for loop until ] is encountered ------*/
@@ -476,7 +480,7 @@ MIF_INP2A (
 
         /* be careful about putting stuff here, there is a 'continue' used */
         /* in the processing of NULL connections above                     */
-
+        tfree(def_port_type_str);
         /*  At this point, next_token should hold the next unprocessed token.  */
 
     } /******* for number of connections *******/
