@@ -117,6 +117,7 @@ MIFgetValue (
     /* initialize stuff if array */
     if(is_array) {
         token = MIFget_token(line, &token_type);
+        tfree(token);
         if(token_type != MIF_LARRAY_TOK) {
             *err = "Array parameter expected - No array delimiter found";
             return(NULL);
