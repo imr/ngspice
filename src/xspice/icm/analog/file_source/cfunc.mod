@@ -188,7 +188,7 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
     }
     if (INIT == 1) {
 
-        int i, count;
+        int count;
 
         CALLBACK = cm_filesource_callback;
 
