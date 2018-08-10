@@ -2,7 +2,7 @@
   * behavioral gate description
 
 *** SUBCIRCUIT DEFINITIONS
-.include D:\Spice_general\ngspice\examples\digital\74HCng_short_2.lib
+.include 74HCng_short_2.lib
 .param vcc=3 tripdt=6n
 
 .SUBCKT ONEBIT 1 2 3 4 5 6
