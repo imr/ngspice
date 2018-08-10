@@ -57,8 +57,14 @@ com_quit(wordlist *wl)
             return;
 
 #ifndef SHARED_MODULE
-	if (!ft_ngdebug)
-	    exit(exitcode);
+    if (!ft_ngdebug && !ft_nutmeg) {
+        /* Destroy CKT */
+        struct circ *cc;
+        for (cc = ft_circuits; cc; cc = cc->ci_next)
+            if (SIMinfo.deleteCircuit)
+                SIMinfo.deleteCircuit(cc->ci_ckt);
+    }
+    exit(exitcode);
 #endif
 
     /* start to clean up the mess */
@@ -79,16 +85,6 @@ com_quit(wordlist *wl)
         cp_remvar("sourcepath");
         cp_remvar("program");
         cp_remvar("prompt");
-    }
-#endif
-
-#ifdef EXPERIMENTAL_CODE
-    /* Destroy CKT when quit. Add by Gong Ding, gdiso@ustc.edu */
-    if (!ft_nutmeg) {
-        struct circ *cc;
-        for (cc = ft_circuits; cc; cc = cc->ci_next)
-            if (SIMinfo.deleteCircuit)
-                SIMinfo.deleteCircuit(cc->ci_ckt);
     }
 #endif
 
