@@ -1,3 +1,5 @@
+* please run the table generator table-generator-q-2d.sp in ngspice to
+* create the table data file qinn-clc409-2d-1.table as is required here
 *
 *   This is a Very Wide band, Low Distortion Monolithic
 *   Current Feedback Op Amp.
