@@ -299,12 +299,11 @@ cm_table2D_callback(ARGS, Mif_Callback_Reason_t reason)
         case MIF_CB_DESTROY: {
             int i;
             Local_Data_t *loc = STATIC_VAR (locdata);
-            if (loc->state->fp)
-                fclose(loc->state->fp);
             free(loc->state);
             for (i = 0; i < loc->iy; i++)
                free(loc->table[i]);
             free(loc->table);
+            sf_eno2_close (loc->newtable);
             free(loc);
             break;
         }
