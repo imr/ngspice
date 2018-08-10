@@ -30,7 +30,13 @@ a5 cntl clk var_clock
 .control
 tran 1us 10ms
 write spifsim.raw
+plot cntl out_msb+2 out_lsb+8
 eprvcd n_one clk n_zero msb lsb > spifsim.vcd
+* plotting the vcd file (e.g. with GTKWave)
+* For Windows: returns control to ngspice
+shell start gtkwave spifsim.vcd --script $inputdir/nggtk.tcl
+* Others
+*shell gtkwave spifsim.vcd --script nggtk.tcl &
 .endc
 
 .end
