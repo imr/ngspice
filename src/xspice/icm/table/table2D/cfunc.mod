@@ -29,6 +29,7 @@ AUTHORS
 
 MODIFICATIONS
 
+    10 Aug 2018     Holger Vogt
 
 SUMMARY
 
@@ -291,6 +292,26 @@ cnv_get_spice_value(char   *str,       /* IN - The value text e.g. 1.2K */
     return OK;
 }
 
+static void
+cm_table2D_callback(ARGS, Mif_Callback_Reason_t reason)
+{
+    switch (reason) {
+        case MIF_CB_DESTROY: {
+            int i;
+            Local_Data_t *loc = STATIC_VAR (locdata);
+            if (loc->state->fp)
+                fclose(loc->state->fp);
+            free(loc->state);
+            for (i = 0; i < loc->iy; i++)
+               free(loc->table[i]);
+            free(loc->table);
+            free(loc);
+            break;
+        }
+    }
+}
+
+
 
 /*==============================================================================
 
@@ -379,6 +400,8 @@ cm_table2D(ARGS)   /* structure holding parms, inputs, outputs, etc. */
         size_t lStartPos;    /* Offset of start of current line */
         size_t lTotalChars;  /* Total characters read */
         int   interporder;   /* order of interpolation for eno */
+
+        CALLBACK = cm_table2D_callback;
 
         /* allocate static storage for *loc */
         STATIC_VAR (locdata) = calloc(1, sizeof(Local_Data_t));
@@ -594,10 +617,7 @@ cm_table2D(ARGS)   /* structure holding parms, inputs, outputs, etc. */
         /* fill table data into eno2 structure */
         sf_eno2_set (loc->newtable, table_data /* data [n2][n1] */);
 
-        /* free all the emory allocated */
-        // for (i = 0; i < iy; i++)
-        //     free(table_data[i]);
-        // free(table_data);
+        /* free the file memory allocated */
         free(cFile);
         free(cThisLine);
     } /* end of initialization "if (INIT == 1)" */

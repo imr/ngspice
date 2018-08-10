@@ -29,6 +29,7 @@ AUTHORS
 
 MODIFICATIONS
 
+    10 Aug 2018     Holger Vogt
 
 SUMMARY
 
@@ -297,6 +298,29 @@ cnv_get_spice_value(char   *str,       /* IN - The value text e.g. 1.2K */
     return OK;
 }
 
+static void
+cm_table3D_callback(ARGS, Mif_Callback_Reason_t reason)
+{
+    switch (reason) {
+        case MIF_CB_DESTROY: {
+            int i, j;
+            Local_Data_t *loc = STATIC_VAR (locdata);
+            if (loc->state->fp)
+                fclose(loc->state->fp);
+            free(loc->state);
+
+            for (i = 0; i < loc->iz; i++) {
+                for (j = 0; j < loc->iy; j++)
+                    free(loc->table[i][j]);
+                free(loc->table[i]);
+            }
+            free(loc->table);
+            free(loc);
+            break;
+        }
+    }
+}
+
 
 /*==============================================================================
 
@@ -312,7 +336,7 @@ MODIFICATIONS
 
 SUMMARY
 
-    This function implements 2D table code model.
+    This function implements 3D table code model.
 
 INTERFACES
 
@@ -388,6 +412,8 @@ cm_table3D(ARGS)   /* structure holding parms, inputs, outputs, etc. */
         size_t lTotalChars;   /* Total characters read */
         int   lTableCount;   /* Number of tables */
         int   interporder;   /* order of interpolation for eno */
+
+        CALLBACK = cm_table3D_callback;
 
         /* allocate static storage for *loc */
         STATIC_VAR (locdata) = calloc (1, sizeof(Local_Data_t));
@@ -631,10 +657,7 @@ cm_table3D(ARGS)   /* structure holding parms, inputs, outputs, etc. */
 
         sf_eno3_set(loc->newtable, table_data /* data [n3][n2][n1] */);
 
-        /* free all the emory allocated */
-        // for (i = 0; i < iy; i++)
-        //     free(table_data[i]);
-        // free(table_data);
+        /* free file memory allocated */
         free(cFile);
         free(cThisLine);
     } /* end of initialization "if (INIT == 1)" */
