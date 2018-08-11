@@ -303,6 +303,8 @@ cm_table2D_callback(ARGS, Mif_Callback_Reason_t reason)
             for (i = 0; i < loc->iy; i++)
                free(loc->table[i]);
             free(loc->table);
+            free(loc->xcol);
+            free(loc->ycol);
             sf_eno2_close (loc->newtable);
             free(loc);
             break;

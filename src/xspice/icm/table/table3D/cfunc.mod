@@ -313,6 +313,9 @@ cm_table3D_callback(ARGS, Mif_Callback_Reason_t reason)
                 free(loc->table[i]);
             }
             free(loc->table);
+            free(loc->xcol);
+            free(loc->ycol);
+            free(loc->zcol);
             sf_eno3_close (loc->newtable);
             free(loc);
             break;
