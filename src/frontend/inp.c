@@ -53,6 +53,7 @@ static char *upper(register char *string);
 static bool doedit(char *filename);
 static struct card *com_options = NULL;
 static struct card *mc_deck = NULL;
+static struct card *recent_deck = NULL;
 static void cktislinear(CKTcircuit *ckt, struct card *deck);
 static void dotifeval(struct card *deck);
 
@@ -61,6 +62,10 @@ static wordlist *inp_savecurrents(struct card *deck, struct card *options, wordl
 static void eval_agauss(struct card *deck, char *fcn);
 void line_free_x(struct card *deck, bool recurse);
 void create_circbyline(char *line);
+void inp_source_recent(void);
+void inp_mc_free(void);
+void inp_remove_recent(void);
+static bool mc_reload = FALSE;
 
 extern bool ft_batchmode;
 
@@ -331,13 +336,34 @@ line_reverse(struct card *head)
 }
 
 
-/* free mc_deck */
+/* store ft_curckt->ci_mcdeck into a 'previous' deck */
 void
-mc_free(void)
+inp_mc_free(void)
 {
-    line_free(mc_deck, TRUE);
+    if (ft_curckt && ft_curckt->ci_mcdeck) {
+        if (recent_deck)
+            line_free(recent_deck, TRUE);
+        recent_deck = ft_curckt->ci_mcdeck;
+        ft_curckt->ci_mcdeck = NULL;
+    }
+    else
+        fprintf(stderr, "Error: No circuit loaded\n");
 }
 
+/* called by com_rset: reload most recent circuit */
+void
+inp_source_recent(void) {
+    mc_deck = recent_deck;
+    mc_reload = TRUE;
+    inp_spsource(NULL, FALSE, NULL, FALSE);
+}
+
+/* remove the 'recent' deck */
+void
+inp_remove_recent(void) {
+    if (recent_deck)
+        line_free(recent_deck, TRUE);
+}
 
 /* check for .option seed=[val|random] and set the random number generator */
 void
@@ -435,17 +461,25 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             comfile = TRUE;
         /* save a copy of the deck for later reloading with 'mc_source' */
         if (deck && !comfile) {
-            if (mc_deck)
-                mc_free();
+        /* stored to new circuit ci_mcdeck in fcn */
             mc_deck = inp_deckcopy_oc(deck);
         }
     }
     /* called with *fp == NULL and not intfile: we want to reload circuit from mc_deck */
     else {
-        if (mc_deck) {
-            deck = inp_deckcopy(mc_deck);
+        /* re-load input deck from the current circuit structure */
+        if (ft_curckt && ft_curckt->ci_mcdeck) {
+            deck = inp_deckcopy(ft_curckt->ci_mcdeck);
             expr_w_temper = TRUE;
         }
+        /* re-load deck due to command 'reset' via function inp_source_recent() */
+        else if (mc_reload) {
+            deck = inp_deckcopy(mc_deck);
+            expr_w_temper = TRUE;
+            mc_reload = FALSE;
+            fprintf(stdout, "Reset re-loads circuit %s\n", mc_deck->line);
+        }
+        /* no circuit available, should not happen */
         else {
             fprintf(stderr, "Error: No circuit loaded, cannot copy internally using mc_source\n");
             controlled_exit(1);
@@ -1115,6 +1149,7 @@ inp_dodeck(
     }
     ct->ci_name = tt;
     ct->ci_deck = deck;
+    ct->ci_mcdeck = mc_deck;
     ct->ci_options = options;
     if (deck->actualLine)
         ct->ci_origdeck = deck->actualLine;
@@ -1299,7 +1334,7 @@ com_alterparam(wordlist *wl)
     char *pname, *pval, *tmp, *subcktname = NULL, *linein, *linefree, *s;
     bool found = FALSE;
 
-    if (!mc_deck) {
+    if (!ft_curckt->ci_mcdeck) {
         fprintf(cp_err, "Error: No internal deck available\n");
         return;
     }
@@ -1328,7 +1363,7 @@ com_alterparam(wordlist *wl)
     }
     tfree(linefree);
     tfree(s);
-    for (dd = mc_deck->nextcard; dd; dd = dd->nextcard) {
+    for (dd = ft_curckt->ci_mcdeck->nextcard; dd; dd = dd->nextcard) {
         char *curr_line = dd->line;
         /* alterparam subcktname pname=vpval
            Parameters from within subcircuit are no longer .param lines, but have been added to
@@ -1366,7 +1401,7 @@ com_alterparam(wordlist *wl)
                         /* find x line with same subcircuit name */
                         struct card *xx;
                         char *bsubb = tprintf(" %s ", subcktname);
-                        for (xx = mc_deck->nextcard; xx; xx = xx->nextcard) {
+                        for (xx = ft_curckt->ci_mcdeck->nextcard; xx; xx = xx->nextcard) {
                             char *xline = xx->line;
                             if (*xline == 'x') {
                                 xline = strstr(xline, bsubb);

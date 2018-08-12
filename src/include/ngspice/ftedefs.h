@@ -37,6 +37,7 @@ struct circ {
     struct dbcomm *ci_dbs;    /* The database storing save, iplot, stop data */
     struct card *ci_deck;     /* The input deck. */
     struct card *ci_origdeck; /* The input deck, before subckt expansion. */
+    struct card *ci_mcdeck;   /* The compacted input deck, used by mc_source */
     struct card *ci_options;  /* The .option cards from the deck... */
     struct card *ci_meas;     /* .measure commands to run after simulation */
     struct card *ci_param;    /* .param statements found in deck */

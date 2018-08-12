@@ -32,6 +32,8 @@ extern char rawfileBuf[RAWBUF_SIZE];
 extern void line_free_x(struct card *deck, bool recurse);
 extern INPmodel *modtab;
 
+extern void com_mc_source(wordlist *wl);
+
 #define line_free(line, flag)                   \
     do {                                        \
         line_free_x(line, flag);                \
@@ -171,9 +173,17 @@ com_resume(wordlist *wl)
 void
 com_rset(wordlist *wl)
 {
-    struct variable *v, *next;
-
     NG_IGNORE(wl);
+
+#if (1)
+    if (ft_curckt == NULL) {
+        fprintf(cp_err, "Error: there is no circuit loaded.\n");
+        return;
+    }
+    com_remcirc(NULL);
+    inp_source_recent();
+#else
+    struct variable *v, *next;
 
     if (ft_curckt == NULL) {
         fprintf(cp_err, "Error: there is no circuit loaded.\n");
@@ -190,6 +200,7 @@ com_rset(wordlist *wl)
 
     inp_dodeck(ft_curckt->ci_deck, ft_curckt->ci_name, NULL,
                TRUE, ft_curckt->ci_options, ft_curckt->ci_filename);
+#endif
 }
 
 
@@ -261,6 +272,8 @@ com_remcirc(wordlist *wl)
         tfree(ft_curckt->ci_filename);
     rem_tlist(ft_curckt->devtlist);
     rem_tlist(ft_curckt->modtlist);
+
+    inp_mc_free();
 
     /* delete the actual circuit entry from ft_circuits */
     for (p = ft_circuits; p; p = p->ci_next) {
