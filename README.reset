@@ -1,0 +1,8 @@
+store deck witthoput comment lines, prepared for 
+command mc_source for each circuit in ft_curckt->ci_mcdeck
+
+remove this storage for the current circuit during remcirc
+
+keep most recent deck in recent_deck to allow modified
+'reset' command. 'reset' now deletes the current circuit
+and restores it immediately from recent_deck.
