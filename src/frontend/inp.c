@@ -341,7 +341,7 @@ void
 inp_mc_free(void)
 {
     if (ft_curckt && ft_curckt->ci_mcdeck) {
-        if (recent_deck)
+        if (recent_deck && recent_deck != ft_curckt->ci_mcdeck)
             line_free(recent_deck, TRUE);
         recent_deck = ft_curckt->ci_mcdeck;
         ft_curckt->ci_mcdeck = NULL;
