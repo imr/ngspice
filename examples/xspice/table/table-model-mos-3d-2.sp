@@ -6,9 +6,11 @@ Code Model Test - 3d Table Model
 dc V1 -0.1 1.7 0.06 V2 0.2 1.7 0.25
 plot i(Vs)
 plot deriv(i(Vs))
+reset
 dc v2 0 1.7 0.04
 plot i(Vs)
 plot deriv(i(Vs))
+reset
 dc V1 -0.1 1.7 0.06
 plot i(Vs2)
 .endc
