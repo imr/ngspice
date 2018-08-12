@@ -57,6 +57,7 @@ com_quit(wordlist *wl)
             return;
 
 #ifndef SHARED_MODULE
+#if 0
     if (!ft_ngdebug && !ft_nutmeg) {
         /* Destroy CKT */
         struct circ *cc;
@@ -64,6 +65,9 @@ com_quit(wordlist *wl)
             if (SIMinfo.deleteCircuit)
                 SIMinfo.deleteCircuit(cc->ci_ckt);
     }
+#endif
+    while (ft_curckt)
+        com_remcirc(NULL);
     exit(exitcode);
 #endif
 
@@ -111,7 +115,7 @@ com_quit(wordlist *wl)
     destroy_const_plot();
     spice_destroy_devices();
 #endif
-    mc_free();
+
 #ifdef SHARED_MODULE
     /* add 1000 to notify that we exit from 'quit' */
     controlled_exit(1000 + exitcode);
