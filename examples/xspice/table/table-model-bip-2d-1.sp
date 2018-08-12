@@ -40,7 +40,7 @@ Dbe b bint DMOD
 dc vce 0 5 0.05 ib 0.2u 1.8u 0.4u
 *plot i(vee)
 *plot v(1) ylimit 0 1
-
+reset
 * bipolar from table
 dc vce2 0 5 0.05 ib2 0.2u 1.8u 0.4u
 
