@@ -23,6 +23,7 @@ vin in 0 dc 0 PULSE(-1 1 20NS 20NS 20NS 500NS 1000NS)
 .control
 dc vin -1 1 0.1
 plot v(outo)
+reset
 tran 10n 1000n
 plot v(outo)
 .endc
