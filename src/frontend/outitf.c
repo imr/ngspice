@@ -446,7 +446,7 @@ static int
 addSpecialDesc(runDesc *run, char *name, char *devname, char *param, int depind)
 {
     dataDesc *data;
-    char *unique;       /* unique char * from back-end */
+    char *unique, *freeunique;       /* unique char * from back-end */
 
     if (!run->numData)
         run->data = TMALLOC(dataDesc, 1);
@@ -459,11 +459,13 @@ addSpecialDesc(runDesc *run, char *name, char *devname, char *param, int depind)
 
     data->name = copy(name);
 
-    unique = copy(devname);
+    freeunique = unique = copy(devname);
 
     /* MW. My "special" routine here */
     INPinsertNofree(&unique, ft_curckt->ci_symtab);
-    data->specName = unique;
+    data->specName = copy(unique);
+
+    tfree(freeunique);
 
     data->specParamName = copy(param);
 
@@ -1249,6 +1251,7 @@ freeRun(runDesc *run)
     for (i = 0; i < run->numData; i++) {
         tfree(run->data[i].name);
         tfree(run->data[i].specParamName);
+        tfree(run->data[i].specName);
     }
 
     tfree(run->data);
