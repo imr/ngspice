@@ -2060,7 +2060,7 @@ eval_agauss(struct card *deck, char *fcn)
             continue;
 
         while ((ap = search_identifier(curr_line, fcn, curr_line)) != NULL) {
-            char *lparen, *rparen, *begstr, *contstr = NULL, *new_line, *midstr;
+            char *lparen, *begstr, *contstr = NULL, *new_line, *midstr;
             char *tmp1str, *tmp2str, *delstr;
             int nerror;
 
