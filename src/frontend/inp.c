@@ -467,18 +467,19 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
     }
     /* called with *fp == NULL and not intfile: we want to reload circuit from mc_deck */
     else {
-        /* re-load input deck from the current circuit structure */
-        if (ft_curckt && ft_curckt->ci_mcdeck) {
-            deck = inp_deckcopy(ft_curckt->ci_mcdeck);
-            expr_w_temper = TRUE;
-        }
         /* re-load deck due to command 'reset' via function inp_source_recent() */
-        else if (mc_reload) {
+        if (mc_reload) {
             deck = inp_deckcopy(mc_deck);
             expr_w_temper = TRUE;
             mc_reload = FALSE;
             fprintf(stdout, "Reset re-loads circuit %s\n", mc_deck->line);
         }
+        /* re-load input deck from the current circuit structure */
+        else if (ft_curckt && ft_curckt->ci_mcdeck) {
+            deck = inp_deckcopy(ft_curckt->ci_mcdeck);
+            expr_w_temper = TRUE;
+        }
+
         /* no circuit available, should not happen */
         else {
             fprintf(stderr, "Error: No circuit loaded, cannot copy internally using mc_source\n");
