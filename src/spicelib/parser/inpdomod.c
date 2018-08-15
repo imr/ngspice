@@ -371,7 +371,7 @@ char *INPdomodel(CKTcircuit *ckt, struct card *image, INPtables * tab)
 			    if (type < 0) {
 				    err =
 				    INPmkTemp
-				    ("Placeholder: Device type B3SOIFD not available in this binary\n");
+				    ("Device type B3SOIFD not available in this binary\n");
 			    }
 			    break;
 			case 56:
@@ -379,7 +379,7 @@ char *INPdomodel(CKTcircuit *ckt, struct card *image, INPtables * tab)
 			    if (type < 0) {
 				    err =
 				    INPmkTemp
-				    ("Placeholder: Device type B3SOIDD not available in this binary\n");
+				    ("Device type B3SOIDD not available in this binary\n");
 			    }
 			    break;
 			case 57:
@@ -387,7 +387,7 @@ char *INPdomodel(CKTcircuit *ckt, struct card *image, INPtables * tab)
 			    if (type < 0) {
 				    err =
 				    INPmkTemp
-				    ("Placeholder: Device type B3SOIPD not available in this binary\n");
+				    ("Device type B3SOIPD not available in this binary\n");
 			    }
 			    break;
 			case 10: case 58:
@@ -411,7 +411,7 @@ char *INPdomodel(CKTcircuit *ckt, struct card *image, INPtables * tab)
 			    if (type < 0) {
 				    err =
 				    INPmkTemp
-				    ("Placeholder: Device type HiSIM2 not available in this binary\n");
+				    ("Device type HiSIM2 not available in this binary\n");
 			    }
 			    break;
 			case 73:
