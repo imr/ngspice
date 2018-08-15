@@ -485,6 +485,21 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             fprintf(stderr, "Error: No circuit loaded, cannot copy internally using mc_source\n");
             controlled_exit(1);
         }
+        /* print out the re-loaded deck into debug-out-mc.txt */
+        if (ft_ngdebug) {
+            /*debug: print into file*/
+            FILE *fdo = fopen("debug-out-mc.txt", "w");
+            if (fdo) {
+                struct card *t = NULL;
+                fprintf(fdo, "****************** complete mc deck ***************\n\n");
+                /* now completely */
+                for (t = deck; t; t = t->nextcard)
+                    fprintf(fdo, "%6d  %6d  %s\n", t->linenum_orig, t->linenum, t->line);
+                fclose(fdo);
+            }
+            else
+                fprintf(stderr, "Warning: Cannot open file debug-out-mc.txt for saving debug info\n");
+        }
     }
     endTime = seconds();
     /* store input directory to a variable*/
