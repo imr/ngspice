@@ -4,6 +4,16 @@
 * provides advanced spice netlisting capability.        *
 * Documentation at http://www.brorson.com/gEDA/SPICE/   *
 *********************************************************
+
+* Batch command
+* ngspice -b -o output.log output.net
+* will generate a nice printer plot in output.log
+* (remember the old times !)
+
+* Interactive commands for usage:
+* run
+* plot vout1 vout2
+
 * Command stuff
 .options gmin=1e-9
 .options method=gear
