@@ -728,7 +728,7 @@ struct card *
 inp_deckcopy_oc(struct card *deck)
 {
     struct card *d = NULL, *nd = NULL;
-    int skip_control = 0;
+    int skip_control = 0, i = 0;
 
     while (deck) {
         /* exclude any command inside .control ... .endc */
@@ -753,7 +753,8 @@ inp_deckcopy_oc(struct card *deck)
         else {
             nd = d = TMALLOC(struct card, 1);
         }
-        d->linenum = deck->linenum;
+        d->linenum_orig = deck->linenum;
+        d->linenum = i++;
         d->line = copy(deck->line);
         if (deck->error)
             d->error = copy(deck->error);
