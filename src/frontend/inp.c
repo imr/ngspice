@@ -479,7 +479,11 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             deck = inp_deckcopy(ft_curckt->ci_mcdeck);
             expr_w_temper = TRUE;
         }
-
+        /* re-load input deck from the recent circuit structure */
+        else if (!ft_curckt && mc_deck) {
+            deck = inp_deckcopy(mc_deck);
+            expr_w_temper = TRUE;
+        }
         /* no circuit available, should not happen */
         else {
             fprintf(stderr, "Error: No circuit loaded, cannot copy internally using mc_source\n");
