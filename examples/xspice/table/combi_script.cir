@@ -1,0 +1,41 @@
+*ng_script
+* A somewhat complex example:
+* This script loads two circuits, then selects circuit 1,
+* does three dc simulations, selects circuit 2, does
+* two dc simulations on the bipolar table device.
+* Always do a 'reset' in between to avoid memory leaks.
+
+* you have to create the bipolar device table first by running
+* the table generator table-generator-q-2d.sp
+
+.control
+
+source $inputdir/table-model-bip-2d-1-oc.sp $ circuit 2
+source $inputdir/table-model-mos-2d-2-oc.sp $ circuit 1
+
+*** analysis type ***
+setcirc 1
+dc V1 -0.1 1.7 0.06 V2 0.3 1.7 0.3
+plot i(Vs)
+plot deriv(i(Vs))
+reset
+dc v2 0 1.7 0.04
+plot i(Vs)
+plot deriv(i(Vs))
+reset
+dc V1 -0.1 1.7 0.06
+plot i(Vs2)
+
+setcirc 2
+* bipolar model qinn
+dc vce 0 5 0.05 ib 0.2u 1.8u 0.4u
+*plot i(vee)
+*plot v(1) ylimit 0 1
+reset
+* bipolar from table
+dc vce2 0 5 0.05 ib2 0.2u 1.8u 0.4u
+
+plot dc4.i(vee) i(vee2) title 'table q3, q4 output current (i(vee2)) compared to bjt model (dc1.i(vee))'
+plot dc4.v(1) v(bb) ylimit 0.6 0.8 title 'table q3, q4 input diode (v(bb)) compared to bjt model (dc1.v(1))'
+
+.endc
