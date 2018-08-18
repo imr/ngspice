@@ -32,6 +32,8 @@ com_chdir(wordlist *wl)
     if (wl == NULL) {
 
         s = getenv("HOME");
+        if (!s)
+            s = getenv("USERPROFILE");
 
 #ifdef HAVE_PWD_H
         if (s == NULL) {
@@ -64,4 +66,22 @@ com_chdir(wordlist *wl)
         fprintf(cp_err, "Can't get current working directory.\n");
 #endif
 
+}
+
+/* just print the current working directory */
+void
+com_getcwd(wordlist *wl)
+{
+    NG_IGNORE(wl);
+#ifdef HAVE_GETCWD
+    char *s;
+    char localbuf[257];
+    s = getcwd(localbuf, sizeof(localbuf));
+    if (s)
+        printf("Current directory: %s\n", s);
+    else
+        fprintf(cp_err, "Can't get current working directory.\n");
+#else
+    fprintf(cp_err, "Error, function getcwd not available\n");
+#endif
 }

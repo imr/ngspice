@@ -8,5 +8,6 @@
 #include "ngspice/wordlist.h"
 
 void com_chdir(wordlist *wl);
+void com_getcwd(wordlist *wl);
 
 #endif
