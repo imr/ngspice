@@ -423,7 +423,9 @@ printres(char *name)
         if (name && v) {
 #endif
             fprintf(cp_out, "%s = ", v->va_name);
-            wl_print(cp_varwl(v), cp_out);
+            wordlist *wltmp = cp_varwl(v);
+            wl_print(wltmp, cp_out);
+            wl_free(wltmp);
             (void) putc('\n', cp_out);
             yy = TRUE;
         } else if (v) {
