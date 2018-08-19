@@ -124,7 +124,8 @@ com_rusage(wordlist *wl)
                 (void) putc('\n', cp_out);
         }
     } else {
-        printres("cputime");
+        printf("\n");
+        printres("time");
         (void) putc('\n', cp_out);
         printres("totalcputime");
         (void) putc('\n', cp_out);
@@ -189,6 +190,7 @@ printres(char *name)
     char *paramname = NULL;
 #endif
     bool yy = FALSE;
+    static bool called = FALSE;
     static long last_sec = 0, last_msec = 0;
     struct variable *v, *vfree = NULL;
     char *cpu_elapsed;
@@ -237,7 +239,7 @@ printres(char *name)
         }
 
         if (!name || eq(name, "totalcputime")) {
-            fprintf(cp_out, "Total %s time: %u.%03u seconds.\n",
+            fprintf(cp_out, "Total %s time (seconds) = %u.%03u \n",
                     cpu_elapsed, total_sec, total_msec);
         }
 
@@ -248,12 +250,14 @@ printres(char *name)
                 last_msec -= 1000;
                 last_sec += 1;
             }
-#ifndef HAVE_WIN32
-            fprintf(cp_out, "%s time since last call: %lu.%03lu seconds.\n",
-                    cpu_elapsed, last_sec, last_msec);
-#endif
+            /* do not print it the first time, doubling totalcputime */
+            if (called)
+                fprintf(cp_out, "%s time since last call seconds) = %lu.%03lu \n",
+                        cpu_elapsed, last_sec, last_msec);
+
             last_sec = total_sec;
             last_msec = total_msec;
+            called = TRUE;
         }
 
 #ifdef XSPICE
