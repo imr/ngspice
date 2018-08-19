@@ -142,6 +142,7 @@ trnoise_state_gen(struct trnoise_state *this, CKTcircuit *ckt)
             }
 #endif
 
+            tfree(this->oneof); /* FIXME, this is just a trivial trial to avoid memory leaks */
             this->oneof = TMALLOC(double, newsteps);
             this->oneof_length = newsteps;
 
