@@ -62,10 +62,11 @@ static wordlist *inp_savecurrents(struct card *deck, struct card *options, wordl
 static void eval_agauss(struct card *deck, char *fcn);
 void line_free_x(struct card *deck, bool recurse);
 void create_circbyline(char *line);
-void inp_source_recent(void);
-void inp_mc_free(void);
-void inp_remove_recent(void);
+//void inp_source_recent(void);
+//void inp_mc_free(void);
+//void inp_remove_recent(void);
 static bool mc_reload = FALSE;
+void eval_seed_opt(struct card *deck);
 
 extern bool ft_batchmode;
 
