@@ -239,7 +239,6 @@ void
 initdico(dico_t *dico)
 {
     int asize = 10;           /* default allocation depth of the synbol stack */
-    COMPATMODE_T compat_mode;
 
     dico->srcline = -1;
     dico->errcount = 0;

@@ -7164,8 +7164,6 @@ pspice_compat(struct card *oldcard)
     q3 1 2 3 4 bjtmod 1.45 --> q2 1 2 3 4 bjtmod area=1.45
     */
     for (card = newcard; card; card = card->nextcard) {
-        static struct card *subcktline = NULL;
-        static int nesting = 0;
         char *cut_line = card->line;
         if (*cut_line == '*')
             continue;

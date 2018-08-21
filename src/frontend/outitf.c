@@ -90,7 +90,9 @@ static bool shouldstop = FALSE; /* Tell simulator to stop next time it asks. */
 static bool interpolated = FALSE;
 static double *valueold, *valuenew;
 
+#ifdef SHARED_MODULE
 static bool savenone = FALSE;
+#endif
 
 /* The two "begin plot" routines share all their internals... */
 
