@@ -291,8 +291,12 @@ do_measure(
         }
 
         /* skip param|expr measurement types for now -- will be done after other measurements */
-        if (strncmp(meastype, "param", 5) == 0 || strncmp(meastype, "expr", 4) == 0)
+        if (strncmp(meastype, "param", 5) == 0 || strncmp(meastype, "expr", 4) == 0) {
+            txfree(an_type);
+            txfree(resname);
+            txfree(meastype);
             continue;
+        }
 
         /* skip .meas line, if analysis type from line and name of analysis performed differ */
         if (strcmp(an_name, an_type) != 0) {
