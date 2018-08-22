@@ -17,6 +17,8 @@ struct trnoise_state
     double *oneof;
     size_t oneof_length;
 
+    bool timezero;
+
     double RTScapTime, RTSemTime;
     bool RTS;
 };
