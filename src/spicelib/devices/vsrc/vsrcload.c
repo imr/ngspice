@@ -349,12 +349,18 @@ VNoi3 3 0  DC 0 TRNOISE(0 0 0 0 15m 22u 50u) : generate RTS noise
                         double TS = state -> TS;
                         double RTSAM = state->RTSAM;
 
-                        /* reset top (hack for repeated tran commands) */
-                        if (time == 0)
-                            state->top = 0;
+                        /* reset top (hack for repeated tran commands)
+                           when there is the jump from time=0 to time>0 */
+                        if (time == 0.0)
+                            state->timezero = TRUE;
+                        else
+                            if (state->timezero) {
+                                state->top = 0;
+                                state->timezero = FALSE;
+                            }
 
-                        /* no noise */
-                        if(TS == 0.0) {
+                        /* no noise or time == 0 */
+                        if(TS == 0.0 || time == 0.0) {
                             value = 0.0;
                         } else {
 
