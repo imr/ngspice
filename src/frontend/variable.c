@@ -564,7 +564,7 @@ cp_getvar(char *name, enum cp_types type, void *retval, size_t rsize)
                 char *s = cp_unquote(v->va_string);
                 cp_wstrip(s);
                 if (strlen(s) >= rsize - 1) {
-                    fprintf(stderr, "Internal Error: string length for variable %s is limited to %d chars\n", v->va_name, rsize);
+                    fprintf(stderr, "Internal Error: string length for variable %s is limited to %zu chars\n", v->va_name, rsize);
                     controlled_exit(EXIT_BAD);
                 }
                 else
