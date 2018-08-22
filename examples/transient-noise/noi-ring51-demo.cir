@@ -15,8 +15,11 @@ vpe well 0 2.2
 xiinv2 dd ss sub well out25 out50 inv253
 xiinv1 dd ss sub well in out25 inv253
 
-*very noisy inverter
-xiinv5 dd ss sub well out50 out inv1_2
+*three very noisy inverters
+xiinv51 dd ss sub well out50 out51 inv1_2
+xiinv52 dd ss sub well out51 out52 inv1_2
+xiinv53 dd ss sub well out52 out inv1_2
+
 *output amplifier
 xiinv11 dd ss sub well out25 bufout inv1
 cout  bufout ss 0.2pF
@@ -24,7 +27,7 @@ cout  bufout ss 0.2pF
 .option itl1=500 gmin=1e-15 itl4=10  noacct
 
 * .dc vdd 0 2 0.01
-.tran 0.01n 500n
+.tran 8p 200n
 
 .save in bufout v(t1)
 
@@ -38,21 +41,47 @@ unset ngdebug
 * first run
 save bufout  $ needed for restricting memory usage
 rusage
-tran 8p 10000n
+run
 rusage
 plot bufout xlimit 90n 95n
 linearize
 fft bufout
+echo start noise in plot $curplot
+echo
+
 * next run
-reset
+* reset
 save bufout
-alter @v.xiinv5.vn1[trnoise] = [ 0 0 0 0 ] $ no noise
-tran 8p 10000n
+* original noise parameters 0.05 8p 1.0 0.001
+alter @v.xiinv51.vn1[trnoise] = [ 0 0 0 0 ] $ no noise
+alter @v.xiinv52.vn1[trnoise] = [ 0 0 0 0 ] $ no noise
+alter @v.xiinv53.vn1[trnoise] = [ 0 0 0 0 ] $ no noise
+
+run
 rusage
 plot bufout xlimit 90n 95n
 linearize
 fft bufout
-plot mag(bufout) mag(sp2.bufout) xlimit 0 2G ylimit 1e-11 0.1 ylog
+echo no noise in plot $curplot
+echo
+
+* next run
+* reset
+save bufout
+alter @v.xiinv51.vn1[trnoise] = [ 0.1 8p 1.5 0.002 ] $ more noise
+alter @v.xiinv52.vn1[trnoise] = [ 0.1 8p 1.5 0.002 ] $ more noise
+alter @v.xiinv53.vn1[trnoise] = [ 0.1 8p 1.5 0.002 ] $ more noise
+
+run
+rusage
+plot bufout xlimit 90n 95n
+linearize
+fft bufout
+echo more noise in plot $curplot
+echo
+
+set color0=white
+plot mag(sp6.bufout) mag(sp2.bufout) mag(sp4.bufout) xlimit 0 2G ylimit 1e-7 1 ylog
 .endc
 
 
