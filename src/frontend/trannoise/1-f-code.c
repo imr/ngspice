@@ -241,3 +241,12 @@ trrandom_state_init(int rndtype, double TS, double TD, double PARAM1, double PAR
 
     return this;
 }
+
+void
+trnoise_state_free(struct trnoise_state *this)
+{
+    if (!this)
+        return;
+    tfree(this->oneof);
+    tfree(this);
+}

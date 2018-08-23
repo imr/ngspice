@@ -16,10 +16,7 @@ VSRCdelete(GENinstance *gen_inst)
     VSRCinstance *inst = (VSRCinstance *) gen_inst;
 
     FREE(inst->VSRCcoeffs);
-    if (inst->VSRCtrnoise_state) {
-        FREE(inst->VSRCtrnoise_state->oneof);
-        FREE(inst->VSRCtrnoise_state);
-    }
+    trnoise_state_free(inst->VSRCtrnoise_state);
     FREE(inst->VSRCtrrandom_state);
 
     return OK;
