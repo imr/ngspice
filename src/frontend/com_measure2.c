@@ -1763,6 +1763,7 @@ err_ret3:
         tfree(mAnalysis);
         tfree(mName);
         tfree(meas->m_vec);
+        tfree(meas->m_vec2);
         tfree(meas);
 
         return ret_val;
