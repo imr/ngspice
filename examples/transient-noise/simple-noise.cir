@@ -1,0 +1,32 @@
+test of isrc trnoise and trrandom isrc, vsrc
+* 1/f noise current
+i1 1 2 DC 0 TRNOISE(0.05 8p 0 1.0 0.001)
+i2 2 0 DC 0 TRNOISE(0.05 8p 0 1.0 0.001)
+
+r1 1 2 1
+r2 2 0 1
+
+* gaussian (type=2) noise
+i3 3 0 DC 0 TRRANDOM(2 8p 0 1.0 0.01)
+R3 3 0 1
+
+v4 4 0 DC 0 TRRANDOM(2 8p 0 1.0 0.01)
+*R4 4 0 1
+
+.tran 8p 200n
+
+.control
+run
+alter @i1[trnoise] = [ 0.1 8p 0 1.5 0.002 ] $ more noise
+alter @i2[trnoise] = [ 0.1 8p 0 1.5 0.002 ] $ more noise
+
+alter @i3[trrandom] = [ 2 8p 0 1.5 0.02 ] $ more noise
+alter @v4[trrandom] = [ 2 8p 0 1.5 0.02 ] $ more noise
+
+run
+plot tran2.v(1) tran1.v(1)
+plot tran2.v(3) tran1.v(3) ylimit -6 6
+plot tran2.v(4) tran1.v(4) ylimit -6 6
+.endc
+
+.end
