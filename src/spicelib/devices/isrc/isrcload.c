@@ -334,19 +334,27 @@ INoi1 1 0  DC 0 TRNOISE(0n 0.5n 1 10n) : generate 1/f noise
                         double TS = state -> TS;
                         double RTSAM = state->RTSAM;
 
-                        /* reset top (hack for repeated tran commands) */
-                        if (time == 0)
-                            state->top = 0;
+                        /* reset top (hack for repeated tran commands)
+                        when there is the jump from time=0 to time>0 */
+                        if (time == 0.0)
+                            state->timezero = TRUE;
+                        else
+                            if (state->timezero) {
+                                state->top = 0;
+                                state->timezero = FALSE;
+                            }
 
-                        /* no noise */
-                        if(TS == 0.0) {
+                        /* no noise or time == 0 */
+                        if (TS == 0.0 || time == 0.0) {
                             value = 0.0;
-                        } else {
+                        }
+                        else {
+
                             /* 1/f and white noise */
-                            size_t n1 = (size_t) floor(time / TS);
+                            size_t n1 = (size_t)floor(time / TS);
 
                             double V1 = trnoise_state_get(state, ckt, n1);
-                            double V2 = trnoise_state_get(state, ckt, n1+1);
+                            double V2 = trnoise_state_get(state, ckt, n1 + 1);
 
                             value = V1 + (V2 - V1) * (time / TS - (double)n1);
                         }

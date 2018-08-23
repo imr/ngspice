@@ -201,7 +201,7 @@ ISRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                         /* FIXME, dont' want this here, over to aof_get or somesuch */
                         if (ckt->CKTtime == 0.0) {
                             if (ft_ngdebug)
-                                printf("VSRC: free fft tables\n");
+                                printf("ISRC: free fft tables\n");
                             fftFree();
                         }
 #endif
