@@ -230,6 +230,9 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             if (here->VSRCfunctionOrder > 6 && RTSAM != 0.0)
                 RTSEMT = here->VSRCcoeffs[6]; // RTS trap emission time
 
+            /* after an 'alter' command to the TRNOISE voltage source the state gets re-written
+               with the new parameters. So free the old state first. */
+            trnoise_state_free(here->VSRCtrnoise_state);
             here->VSRCtrnoise_state =
                 trnoise_state_init(NA, TS, NALPHA, NAMP, RTSAM, RTSCAPT, RTSEMT);
         }
@@ -256,6 +259,9 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             if (here->VSRCfunctionOrder > 4)
                 PARAM2 = here->VSRCcoeffs[4]; // second parameter
 
+            /* after an 'alter' command to the TRRANDOM voltage source the state gets re-written
+               with the new parameters. So free the old state first. */
+            tfree(here->VSRCtrrandom_state);
             here->VSRCtrrandom_state =
                 trrandom_state_init(rndtype, TS, TD, PARAM1, PARAM2);
         }
