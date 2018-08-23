@@ -81,6 +81,7 @@ echo more noise in plot $curplot
 echo
 
 set color0=white
+set color1=black
 plot mag(sp6.bufout) mag(sp2.bufout) mag(sp4.bufout) xlimit 0 2G ylimit 1e-7 1 ylog
 .endc
 
