@@ -620,7 +620,7 @@ getcommand(char *string)
 int
 cp_evloop(char *string)
 {
-    wordlist *wlist, *ww;
+    wordlist *wlist, *ww, *freewl;
     struct control *x;
     char *i;
     int nn;
@@ -635,7 +635,7 @@ cp_evloop(char *string)
     } while(0)
 
     for (;;) {
-        wlist = getcommand(string);
+        freewl = wlist = getcommand(string);
         if (wlist == NULL) {    /* End of file or end of user input. */
             if (cend[stackp]->co_parent && !string) {
                 cp_resetcontrol();
@@ -748,7 +748,7 @@ cp_evloop(char *string)
                 fprintf(stderr,
                         "Error: missing foreach variable.\n");
             }
-            wlist = cp_doglob(wlist);  /*CDHW Possible leak around here? */
+            wlist = cp_doglob(wlist);
             cend[stackp]->co_text = wl_copy(wlist);
             newblock;
         } else if (eq(wlist->wl_word, "label")) {
@@ -864,8 +864,7 @@ cp_evloop(char *string)
                     x = x->co_next;
             } while (x);
         }
-        wl_free(wlist);
-        wlist = NULL;
+        wl_free(freewl);
         if (string)
             return (1); /* The return value is irrelevant. */
     }
