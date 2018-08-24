@@ -393,7 +393,7 @@ if_option(CKTcircuit *ckt, char *name, enum cp_types type, void *value)
 {
     IFvalue pval;
     int err;
-    char **vv;
+    char **vv, *sfree = NULL;
     int which = -1;
     IFparm *if_parm;
 
@@ -466,7 +466,7 @@ if_option(CKTcircuit *ckt, char *name, enum cp_types type, void *value)
         break;
     case IF_STRING:
         if (type == CP_STRING)
-            pval.sValue = copy((char*) value);
+            sfree = pval.sValue = copy((char*) value);
         else
             goto badtype;
         break;
@@ -502,6 +502,7 @@ if_option(CKTcircuit *ckt, char *name, enum cp_types type, void *value)
                                         if_parm->id, &pval,
                                         NULL)) != OK)
         ft_sperror(err, "setAnalysisParm(options) ci_curOpt");
+    tfree(sfree);
     return 1;
 #endif
 
