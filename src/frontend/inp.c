@@ -845,6 +845,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                 }
             }
 
+            /* remove the .measure cards from the deckand store them in ft_curckt->ci_meas */
             if (ciprefix(".meas", dd->line)) {
                 if (cp_getvar("autostop", CP_BOOL, NULL, 0)) {
                     if (strstr(dd->line, " max ") ||
