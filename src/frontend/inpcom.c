@@ -926,6 +926,7 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
                 !ciprefix("source", buffer) &&
                 !ciprefix("load", buffer) &&
                 !ciprefix("plot", buffer) &&
+                !ciprefix("print", buffer) &&
                 !ciprefix("hardcopy", buffer) &&
                 !(ciprefix("set", buffer) && strstr(buffer, "sourcepath"))
                 )
@@ -994,7 +995,16 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
                             s++;
                     }
                 }
-            } else {
+            }
+            else if (ciprefix("print", buffer)) {
+                /* lower case excluded for tokens following output redirection '>' */
+                for (s = buffer; *s && (*s != '\n'); s++) {
+                    if (*s == '>')
+                        break;
+                    *s = tolower_c(*s);
+                }
+            }
+            else {
                 /* add Inp_Path to sourcepath variable */
                 char *p;
                 if ((p = strstr(buffer, "sourcepath"))) {
