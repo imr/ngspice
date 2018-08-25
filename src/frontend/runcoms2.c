@@ -247,6 +247,8 @@ com_remcirc(wordlist *wl)
     for (v = ft_curckt->ci_vars; v; v = next) {
         next = v->va_next;
         tfree(v->va_name);
+        if (v->va_type == CP_STRING)
+            tfree(v->va_string);
         tfree(v);
     }
     ft_curckt->ci_vars = NULL;
