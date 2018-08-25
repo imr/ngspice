@@ -58,6 +58,13 @@ int Size_Not_Found, error;
          {   model->BSIM3GatesidewallJctPotential = 0.1;
              fprintf(stderr, "Given pbswg is less than 0.1. Pbswg is set to 0.1.\n");
          }
+
+         struct bsim3SizeDependParam *p = model->pSizeDependParamKnot;
+         while (p) {
+             struct bsim3SizeDependParam *next_p = p->pNext;
+             FREE(p);
+             p = next_p;
+         }
          model->pSizeDependParamKnot = NULL;
          pLastKnot = NULL;
 
