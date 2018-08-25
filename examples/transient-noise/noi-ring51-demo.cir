@@ -1,5 +1,6 @@
 * 51 stage Ring-Osc. BSIM3, transient noise
-* will need 45 min on a i7 860 with 4 threads
+* will need 90 sec on a i7 860 with 4 threads
+* for better noise analysis simulation time may be made larger than 200n
 
 * closes the loop between inverters xinv1 and xinv5
 vin in out dc 0.5 pulse 0.5 0 0.1n 5n 1 1 1
@@ -21,7 +22,7 @@ xiinv52 dd ss sub well out51 out52 inv1_2
 xiinv53 dd ss sub well out52 out inv1_2
 
 *output amplifier
-xiinv11 dd ss sub well out25 bufout inv1
+xiinv11 dd ss sub well out25 bufout inv2
 cout  bufout ss 0.2pF
 
 .option itl1=500 gmin=1e-15 itl4=10  noacct

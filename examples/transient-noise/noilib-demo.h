@@ -6,11 +6,18 @@
 *mp1  outi in  dd  well  p1  w=4u l=0.25u  AS=7p AD=7p PS=6u PD=6u
 *.ends inv1
 
-* standard inverter
+* standard no noise inverter
 .subckt inv1 dd ss sub well in out
 mn1  out in  ss  sub  n1  w=2u  l=0.25u  AS=3p AD=3p PS=4u PD=4u
 mp1  out in  dd  well  p1  w=4u l=0.25u  AS=7p AD=7p PS=6u PD=6u
 .ends inv1
+
+* standard no noise inverter
+.subckt inv2 dd ss sub well in out
+mn1  out in  ss  sub  n1  w=5u  l=0.25u  AS=7p AD=7p PS=7u PD=7u
+mp1  out in  dd  well  p1  w=10u l=0.25u  AS=12p AD=12p PS=12u PD=12u
+.ends inv2
+
 
 * very noisy inverter (noise on vdd and well)
 .subckt inv1_1 dd ss sub well in out
