@@ -322,6 +322,7 @@ MIF_INP2A (
             fast[0]->conn[i]->size = 0;
 
             /* eat the null token and continue to next connection */
+            tfree(next_token);
             next_token = MIFget_token(&line,&next_token_type);
 			tfree(def_port_type_str);
             continue;  /* iterate */
