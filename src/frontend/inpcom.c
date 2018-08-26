@@ -3948,6 +3948,10 @@ inp_sort_params(struct card *param_cards, struct card *card_bf_start, struct car
                 c = insert_deck(c, deps[j].card);
                 ind++;
             }
+            else if (deps[j].skip) {
+                line_free_x(deps[j].card, FALSE);
+                deps[j].card = NULL;
+            }
 
     num_params -= skipped;
     if (ind != num_params) {
