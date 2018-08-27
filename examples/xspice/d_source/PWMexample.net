@@ -18,7 +18,5 @@ C1 0 1 10n
 save 33 44 1
 tran 1us 50m
 wrdata $inputdir/fil2.dat V(33) v(44) V(1)
+plot  v(44) V(1) xlimit 22.9m 23m
 .endc
-
-
-
