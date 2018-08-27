@@ -515,9 +515,12 @@ MIFunsetup(GENmodel *inModel,CKTcircuit *ckt)
                     for (k = 0; k < num_conn; k++) {
                         if ((here->conn[k]->is_null) || (!here->conn[k]->is_input))
                             continue;
-                        tfree(here->conn[i]->port[j]->partial[k].port);
-                        tfree(here->conn[i]->port[j]->ac_gain[k].port);
-                        tfree(here->conn[i]->port[j]->smp_data.input[k].port);
+                        if (here->conn[i]->port[j]->partial)
+                            tfree(here->conn[i]->port[j]->partial[k].port);
+                        if (here->conn[i]->port[j]->ac_gain)
+                            tfree(here->conn[i]->port[j]->ac_gain[k].port);
+                        if (here->conn[i]->port[j]->smp_data.input)
+                            tfree(here->conn[i]->port[j]->smp_data.input[k].port);
                     }
                     tfree(here->conn[i]->port[j]->partial);
                     tfree(here->conn[i]->port[j]->ac_gain);
