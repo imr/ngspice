@@ -99,8 +99,9 @@ com_quit(wordlist *wl)
     }
 #endif
 
-    DevSwitch(NULL);
-    DevSwitch(NULL);
+/* remove because of memory leak in X11 */
+/*    DevSwitch(NULL);
+    DevSwitch(NULL);*/
 
     /* then go away */
 
