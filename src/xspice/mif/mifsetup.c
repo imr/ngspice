@@ -450,7 +450,7 @@ MIFunsetup(GENmodel *inModel,CKTcircuit *ckt)
     Mif_Smp_Ptr_t  *smp_data_out;
     Mif_Port_Type_t type;
     Mif_Boolean_t   is_input, is_output;
-    int             num_conn, num_port, i, j;
+    int             num_conn, num_port, i, j, k;
 
 
     for (model = (MIFmodel *)inModel; model != NULL;
@@ -511,8 +511,23 @@ MIFunsetup(GENmodel *inModel,CKTcircuit *ckt)
                         smp_data_out->ibranch = 0;
                     } /* end if vsource current input */
 
+                    /* free memory allocated in MIFsetup */
+                    for (k = 0; k < num_conn; k++) {
+                        if ((here->conn[k]->is_null) || (!here->conn[k]->is_input))
+                            continue;
+                        tfree(here->conn[i]->port[j]->partial[k].port);
+                        tfree(here->conn[i]->port[j]->ac_gain[k].port);
+                        tfree(here->conn[i]->port[j]->smp_data.input[k].port);
+                    }
+                    tfree(here->conn[i]->port[j]->partial);
+                    tfree(here->conn[i]->port[j]->ac_gain);
+                    tfree(here->conn[i]->port[j]->smp_data.input);
+
                 } /* end for number of ports */
             } /* end for number of connections */
+            /* free memory allocated by cm_analog_alloc and cm_analog_converge */
+            tfree(here->state);
+            tfree(here->conv);
             here->initialized = MIF_FALSE;
         } /* end for all instances */
     }
