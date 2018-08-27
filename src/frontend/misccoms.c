@@ -68,7 +68,6 @@ com_quit(wordlist *wl)
 #endif
     while (ft_curckt)
         com_remcirc(NULL);
-    exit(exitcode);
 #endif
 
     /* start to clean up the mess */
