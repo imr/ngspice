@@ -531,6 +531,7 @@ MIFunsetup(GENmodel *inModel,CKTcircuit *ckt)
             /* free memory allocated by cm_analog_alloc and cm_analog_converge */
             tfree(here->state);
             tfree(here->conv);
+            tfree(here->intgr);
             here->initialized = MIF_FALSE;
         } /* end for all instances */
     }
