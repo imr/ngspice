@@ -64,12 +64,19 @@ int
 MIFmDelete(GENmodel *gen_model)
 {
     MIFmodel *model = (MIFmodel *) gen_model;
-    int i;
+    int i, j;
 
     /* Free the model params stuff allocated in MIFget_mod */
     for (i = 0; i < model->num_param; i++) {
-        if (model->param[i]->element)
+        /* delete content of union 'element' if it contains a string */
+        if (model->param[i]->element) {
+            if (model->param[i]->eltype == IF_STRING)
+                FREE(model->param[i]->element[0].svalue);
+            else if (model->param[i]->eltype == IF_STRINGVEC)
+                for (j = 0; j < model->param[i]->size; j++)
+                    FREE(model->param[i]->element[j].svalue);
             FREE(model->param[i]->element);
+        }
         FREE(model->param[i]);
     }
     FREE(model->param);

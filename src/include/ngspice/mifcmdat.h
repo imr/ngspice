@@ -328,6 +328,7 @@ typedef struct Mif_Param_Data_s {
     Mif_Boolean_t   is_null;            /* True if no value given on .model card */
     int             size;               /* Size of array (1 if scalar)           */
     Mif_Value_t     *element;           /* Value of parameter(s)                 */
+    int             eltype;             /* type of the element                   */
 
 } Mif_Param_Data_t;
 
