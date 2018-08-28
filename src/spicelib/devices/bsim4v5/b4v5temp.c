@@ -138,6 +138,13 @@ int Size_Not_Found, i;
          }
          if (!model->BSIM4v5cgboGiven)
              model->BSIM4v5cgbo = 2.0 * model->BSIM4v5dwc * model->BSIM4v5coxe;
+
+         struct bsim4v5SizeDependParam *p = model->pSizeDependParamKnot;
+         while (p) {
+             struct bsim4v5SizeDependParam *next_p = p->pNext;
+             FREE(p);
+             p = next_p;
+         }
          model->pSizeDependParamKnot = NULL;
          pLastKnot = NULL;
 

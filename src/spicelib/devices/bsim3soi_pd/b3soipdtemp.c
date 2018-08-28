@@ -68,6 +68,13 @@ double tmp3, T7;
     {    Temp = ckt->CKTtemp;
          if (model->B3SOIPDGatesidewallJctPotential < 0.1)
              model->B3SOIPDGatesidewallJctPotential = 0.1;
+
+        struct b3soipdSizeDependParam *p = model->pSizeDependParamKnot;
+        while (p) {
+            struct b3soipdSizeDependParam *next_p = p->pNext;
+            FREE(p);
+            p = next_p;
+        }
          model->pSizeDependParamKnot = NULL;
 	 pLastKnot = NULL;
 

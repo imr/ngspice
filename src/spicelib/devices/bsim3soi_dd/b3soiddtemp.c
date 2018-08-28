@@ -50,6 +50,13 @@ int Size_Not_Found;
     {    Temp = ckt->CKTtemp;
          if (model->B3SOIDDGatesidewallJctPotential < 0.1)
              model->B3SOIDDGatesidewallJctPotential = 0.1;
+
+        struct b3soiddSizeDependParam *p = model->pSizeDependParamKnot;
+        while (p) {
+            struct b3soiddSizeDependParam *next_p = p->pNext;
+            FREE(p);
+            p = next_p;
+        }
          model->pSizeDependParamKnot = NULL;
 	 pLastKnot = NULL;
 

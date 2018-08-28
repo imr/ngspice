@@ -51,6 +51,13 @@ int Size_Not_Found;
              model->BSIM3v1sidewallJctPotential = 0.1;
          if (model->BSIM3v1GatesidewallJctPotential < 0.1)
              model->BSIM3v1GatesidewallJctPotential = 0.1;
+
+         struct bsim3v1SizeDependParam *p = model->pSizeDependParamKnot;
+         while (p) {
+             struct bsim3v1SizeDependParam *next_p = p->pNext;
+             FREE(p);
+             p = next_p;
+         }
          model->pSizeDependParamKnot = NULL;
 	 pLastKnot = NULL;
 

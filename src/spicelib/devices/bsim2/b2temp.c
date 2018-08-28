@@ -46,6 +46,13 @@ B2temp(GENmodel *inModel, CKTcircuit *ckt)
 	model->B2vgg2 = 2.0 * model->B2vgg;
 	model->B2vbb2 = 2.0 * model->B2vbb;
 	model->B2Vtm = 8.625e-5 * (model->B2temp + 273.0);
+
+        struct bsim2SizeDependParam *p = model->pSizeDependParamKnot;
+        while (p) {
+            struct bsim2SizeDependParam *next_p = p->pNext;
+            FREE(p);
+            p = next_p;
+        }
 	model->pSizeDependParamKnot = NULL;
 	pLastKnot = NULL;
 
