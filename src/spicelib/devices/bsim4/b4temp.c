@@ -1393,7 +1393,7 @@ int Size_Not_Found, i;
                   pParam->BSIM4Bechvb = (model->BSIM4type == NMOS) ? 7.45669e11 : 1.16645e12;
 
                   if ((strcmp(model->BSIM4version, "4.8.1")) && (strncmp(model->BSIM4version, "4.81", 4)))
-                  {  
+                  {
                       pParam->BSIM4AechvbEdgeS = pParam->BSIM4Aechvb * pParam->BSIM4weff
                                               * model->BSIM4dlcig * pParam->BSIM4ToxRatioEdge;
                       pParam->BSIM4AechvbEdgeD = pParam->BSIM4Aechvb * pParam->BSIM4weff
@@ -1626,7 +1626,7 @@ int Size_Not_Found, i;
                   /*high k*/
                   /*Calculate VgsteffVth for mobMod=3*/
                   if(model->BSIM4mobMod==3)
-                  {	/*Calculate n @ Vbs=Vds=0*/
+                  {        /*Calculate n @ Vbs=Vds=0*/
                       lt1 = model->BSIM4factor1* pParam->BSIM4sqrtXdep0;
                       T0 = pParam->BSIM4dvt1 * pParam->BSIM4leff / lt1;
                       if (T0 < EXP_THRESHOLD)
@@ -1877,14 +1877,14 @@ int Size_Not_Found, i;
                       }
 
                     /*rbpbx =  exp( log(model->BSIM4rbpbx0) + model->BSIM4rbpbxl * lnl +
-                      	model->BSIM4rbpbxw * lnw + model->BSIM4rbpbxnf * lnnf );
+                              model->BSIM4rbpbxw * lnw + model->BSIM4rbpbxnf * lnnf );
                     rbpby =  exp( log(model->BSIM4rbpby0) + model->BSIM4rbpbyl * lnl +
-                      	model->BSIM4rbpbyw * lnw + model->BSIM4rbpbynf * lnnf );
+                              model->BSIM4rbpbyw * lnw + model->BSIM4rbpbynf * lnnf );
                             */
                             rbpbx =  model->BSIM4rbpbx0 * exp(  model->BSIM4rbpbxl * lnl +
-                      	model->BSIM4rbpbxw * lnw + model->BSIM4rbpbxnf * lnnf );
+                              model->BSIM4rbpbxw * lnw + model->BSIM4rbpbxnf * lnnf );
                     rbpby =  model->BSIM4rbpby0 * exp(  model->BSIM4rbpbyl * lnl +
-                      	model->BSIM4rbpbyw * lnw + model->BSIM4rbpbynf * lnnf );
+                              model->BSIM4rbpbyw * lnw + model->BSIM4rbpbynf * lnnf );
 
                     here->BSIM4rbpb = rbpbx*rbpby/(rbpbx + rbpby);
                   }
