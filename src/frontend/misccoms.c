@@ -56,20 +56,6 @@ com_quit(wordlist *wl)
         if (!noask && !confirm_quit())
             return;
 
-#ifndef SHARED_MODULE
-#if 0
-    if (!ft_ngdebug && !ft_nutmeg) {
-        /* Destroy CKT */
-        struct circ *cc;
-        for (cc = ft_circuits; cc; cc = cc->ci_next)
-            if (SIMinfo.deleteCircuit)
-                SIMinfo.deleteCircuit(cc->ci_ckt);
-    }
-#endif
-    while (ft_curckt)
-        com_remcirc(NULL);
-#endif
-
     /* start to clean up the mess */
 
 #ifdef SHARED_MODULE
@@ -77,7 +63,6 @@ com_quit(wordlist *wl)
         wordlist all = { "all", NULL, NULL };
         wordlist star = { "*", NULL, NULL };
 
-//      com_remcirc(NULL);
         com_destroy(&all);
         com_unalias(&star);
         com_undefine(&star);
@@ -89,34 +74,25 @@ com_quit(wordlist *wl)
         cp_remvar("program");
         cp_remvar("prompt");
     }
-#endif
 
-#ifdef SHARED_MODULE
     /* Destroy CKT when quit. */
     if (!ft_nutmeg) {
         while(ft_curckt)
             com_remcirc(NULL);
     }
-#endif
-
-/* remove because of memory leak in X11 */
-/*    DevSwitch(NULL);
-    DevSwitch(NULL);*/
-
-    /* then go away */
-
-#ifdef SHARED_MODULE
     cp_destroy_keywords();
     destroy_ivars();
+#else
+    while (ft_curckt)
+        com_remcirc(NULL);
 #endif
 
     byemesg();
+
 #ifdef SHARED_MODULE
     destroy_const_plot();
     spice_destroy_devices();
-#endif
 
-#ifdef SHARED_MODULE
     /* add 1000 to notify that we exit from 'quit' */
     controlled_exit(1000 + exitcode);
 #else
