@@ -403,7 +403,8 @@ com_compose(wordlist *wl)
 
         if (lingiven) {
             /* Create a linear sweep... */
-            data = TMALLOC(double, (int) lin);
+            length = (int)lin;
+            data = TMALLOC(double, length);
             if (stepgiven && startgiven && stopgiven) {
                 if (step != (stop - start) / lin * (reverse ? -1 : 1)) {
                     fprintf(cp_err,
@@ -431,13 +432,14 @@ com_compose(wordlist *wl)
             if (!stepgiven) {
                 step = (stop - start) / lin;
             }
+
             if (reverse)
-                for (i = 0, tt = stop; i < lin; i++, tt -= step)
+                for (i = 0, tt = stop; i < length; i++, tt -= step)
                     data[i] = tt;
             else
-                for (i = 0, tt = start; i < lin; i++, tt += step)
+                for (i = 0, tt = start; i < length; i++, tt += step)
                     data[i] = tt;
-            length = (int)lin;
+
         } else if (loggiven || decgiven) {
             /* Create a log sweep... */
         } else if (randmgiven) {
