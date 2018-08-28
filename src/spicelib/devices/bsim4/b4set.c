@@ -2761,6 +2761,11 @@ CKTcircuit *ckt)
     BSIM4model *model;
     BSIM4instance *here;
 
+#ifdef USE_OMP
+    model = (BSIM4model*)inModel;
+    tfree(model->BSIM4InstanceArray);
+#endif
+
     for (model = (BSIM4model *)inModel; model != NULL;
             model = BSIM4nextModel(model))
     {

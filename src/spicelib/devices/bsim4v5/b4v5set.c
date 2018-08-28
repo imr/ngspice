@@ -2139,6 +2139,11 @@ BSIM4v5unsetup(
     BSIM4v5model *model;
     BSIM4v5instance *here;
 
+#ifdef USE_OMP
+    model = (BSIM4v5model*)inModel;
+    tfree(model->BSIM4v5InstanceArray);
+#endif
+
     for (model = (BSIM4v5model *)inModel; model != NULL;
             model = BSIM4v5nextModel(model))
     {

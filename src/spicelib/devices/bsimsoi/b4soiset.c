@@ -2766,6 +2766,11 @@ B4SOIunsetup(
     B4SOImodel *model;
     B4SOIinstance *here;
 
+#ifdef USE_OMP
+    model = (B4SOImodel*)inModel;
+    tfree(model->B4SOIInstanceArray);
+#endif
+
     for (model = (B4SOImodel *)inModel; model != NULL;
             model = B4SOInextModel(model))
     {

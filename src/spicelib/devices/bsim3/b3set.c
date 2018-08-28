@@ -1169,6 +1169,11 @@ BSIM3unsetup(
     BSIM3model *model;
     BSIM3instance *here;
 
+#ifdef USE_OMP
+    model = (BSIM3model*)inModel;
+    tfree(model->BSIM3InstanceArray);
+#endif
+
     for (model = (BSIM3model *)inModel; model != NULL;
             model = BSIM3nextModel(model))
     {

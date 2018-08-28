@@ -2472,6 +2472,11 @@ BSIM4v6unsetup(GENmodel *inModel, CKTcircuit *ckt)
     BSIM4v6model *model;
     BSIM4v6instance *here;
 
+#ifdef USE_OMP
+    model = (BSIM4v6model*)inModel;
+    tfree(model->BSIM4v6InstanceArray);
+#endif
+
     for (model = (BSIM4v6model *)inModel; model != NULL;
             model = BSIM4v6nextModel(model))
     {

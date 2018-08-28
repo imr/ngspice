@@ -1181,6 +1181,11 @@ BSIM3v32unsetup(
     BSIM3v32model *model;
     BSIM3v32instance *here;
 
+#ifdef USE_OMP
+    model = (BSIM3v32model*)inModel;
+    tfree(model->BSIM3v32InstanceArray);
+#endif
+
     for (model = (BSIM3v32model *)inModel; model != NULL;
             model = BSIM3v32nextModel(model))
     {
