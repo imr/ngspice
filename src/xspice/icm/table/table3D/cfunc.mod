@@ -750,7 +750,15 @@ cm_table3D(ARGS)   /* structure holding parms, inputs, outputs, etc. */
                    DER                 /* what to compute [FUNC, DER, BOTH] */
                    );
 
+/* xind yind zind may become too large */
+    if (xind == loc->ix - 1)
+        xind--;
+    if (yind == loc->iy - 1)
+        yind--;
+    if (zind == loc->iz - 1)
+        zind--;
 
+    /* overwrite outval from sf_eno3_apply by trilinear interpolation */
     outval = TrilinearInterpolation(xoff / (loc->xcol[xind + 1] - loc->xcol[xind]),
                                     yoff / (loc->ycol[yind + 1] - loc->ycol[yind]),
                                     zoff / (loc->zcol[zind + 1] - loc->zcol[zind]),
