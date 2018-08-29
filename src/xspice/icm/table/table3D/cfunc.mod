@@ -386,7 +386,7 @@ void
 cm_table3D(ARGS)   /* structure holding parms, inputs, outputs, etc. */
 {
     int size, xind, yind, zind;
-    double xval, yval, zval, xoff, yoff, zoff, xdiff, ydiff, zdiff;
+    double xval, yval, zval, xoff, yoff, zoff, xdiff, ydiff, zdiff, xdiff1, ydiff1, zdiff1;
     double derivval[3], outval;
 
     Local_Data_t *loc;   /* Pointer to local static data, not to be included
@@ -740,6 +740,23 @@ cm_table3D(ARGS)   /* structure holding parms, inputs, outputs, etc. */
     else
         zdiff = 0.5 * (loc->zcol[zind + 1] - loc->zcol[zind - 1]);
 
+    /* find local difference around index for trilinear interpolation */
+    if (xind == loc->ix - 1)
+        xdiff1 = loc->xcol[xind] - loc->xcol[xind - 1];
+    else
+        xdiff1 = loc->xcol[xind + 1] - loc->xcol[xind];
+
+    if (yind == loc->iy - 1)
+        ydiff1 = loc->ycol[yind] - loc->ycol[yind - 1];
+    else
+        ydiff1 = loc->ycol[yind + 1] - loc->ycol[yind];
+
+    if (zind == loc->iz - 1)
+        zdiff1 = loc->zcol[zind] - loc->zcol[zind - 1];
+    else
+        zdiff1 = loc->zcol[zind + 1] - loc->zcol[zind];
+
+
     /* Essentially non-oscillatory (ENO) interpolation to obtain the derivatives only.
        Using outval for now yields ngspice op non-convergence */
     sf_eno3_apply (loc->newtable,
@@ -750,11 +767,20 @@ cm_table3D(ARGS)   /* structure holding parms, inputs, outputs, etc. */
                    DER                 /* what to compute [FUNC, DER, BOTH] */
                    );
 
+   /* overwrite outval from sf_eno3_apply by trilinear interpolation */
+    outval = TrilinearInterpolation(xoff / xdiff1,
+                                    yoff / ydiff1,
+                                    zoff / zdiff1,
+                                    xind, yind, zind, loc->table);
+   /* FIXME: how to prevent xdiff1 etc. becoming 0 ? */
 
+/* xind yind zind may become too large */
+/*
     outval = TrilinearInterpolation(xoff / (loc->xcol[xind + 1] - loc->xcol[xind]),
                                     yoff / (loc->ycol[yind + 1] - loc->ycol[yind]),
                                     zoff / (loc->zcol[zind + 1] - loc->zcol[zind]),
                                     xind, yind, zind, loc->table);
+*/
 
     if (ANALYSIS != MIF_AC) {
         double xderiv, yderiv, zderiv, outv;
