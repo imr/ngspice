@@ -1356,10 +1356,17 @@ com_alterparam(wordlist *wl)
     char *pname, *pval, *tmp, *subcktname = NULL, *linein, *linefree, *s;
     bool found = FALSE;
 
-    if (!ft_curckt->ci_mcdeck) {
-        fprintf(cp_err, "Error: No internal deck available\n");
+    if (!ft_curckt) {
+        fprintf(stderr, "Warning: No circuit loaded!\n");
+        fprintf(stderr, "    Command 'alterparam' ignored\n");
         return;
     }
+    if (!ft_curckt->ci_mcdeck) {
+        fprintf(cp_err, "Error: No internal deck available\n");
+        fprintf(stderr, "    Command 'alterparam' ignored\n");
+        return;
+    }
+
     linefree = wl_flatten(wl);
     linein = skip_ws(linefree);
     s = tmp = gettok_char(&linein, '=', FALSE, FALSE);
