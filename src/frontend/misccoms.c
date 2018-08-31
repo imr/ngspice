@@ -7,6 +7,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ngspice/cpdefs.h"
 #include "ngspice/ftedefs.h"
 #include "ngspice/dvec.h"
+#include "ngspice/iferrmsg.h"
 #include "ftehelp.h"
 #include "ngspice/hlpdefs.h"
 #include "misccoms.h"
@@ -87,6 +88,7 @@ com_quit(wordlist *wl)
         com_remcirc(NULL);
 #endif
 
+    tfree(errMsg);
     byemesg();
 
 #ifdef SHARED_MODULE
