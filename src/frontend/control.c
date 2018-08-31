@@ -427,6 +427,8 @@ doblock(struct control *bl, int *num)
                                    bl->co_children);
                     if (!cn)
                         return (i);
+                    else
+                        tfree(i);
                 } else if (*i != NORMAL) {
                     *num = nn;
                     return (i);
@@ -859,6 +861,7 @@ cp_evloop(char *string)
                     x = findlabel(i, control[stackp]);
                     if (!x)
                         fprintf(cp_err, "Error: label %s not found\n", i);
+                    tfree(i);
                 }
                 if (x)
                     x = x->co_next;
