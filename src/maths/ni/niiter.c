@@ -177,14 +177,16 @@ NIiter(CKTcircuit *ckt, int maxIter)
             ckt->CKTrhsOld[0] = 0;
 
             if (iterno > maxIter) {
-                /* fprintf(stderr, "too many iterations without convergence: %d iter's (max iter == %d)\n",
-                   iterno, maxIter); */
                 ckt->CKTstat->STATnumIter += iterno;
-                FREE(errMsg);
-                errMsg = copy("Too many iterations without convergence");
+                /* we don't use this info during transient analysis */
+                if (ckt->CKTcurrentAnalysis != DOING_TRAN) {
+                    FREE(errMsg);
+                    errMsg = copy("Too many iterations without convergence");
 #ifdef STEPDEBUG
-                printf("iterlim exceeded \n");
+                    fprintf(stderr, "too many iterations without convergence: %d iter's (max iter == %d)\n",
+                    iterno, maxIter);
 #endif
+                }
                 FREE(OldCKTstate0);
                 return(E_ITERLIM);
             }
