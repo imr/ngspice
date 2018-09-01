@@ -12,7 +12,7 @@
 ** Lmin=0.02 Lmax=10 Wmin=0.6 Wmax=20
 ** By Mohan Dunga, Wenwei Yang 05/18/2007
 
-.MODEL  P1  PMOS  LEVEL = 14
+.MODEL  PBSIM4  PMOS  LEVEL = 14
 
 +VERSION = 4.6.5        BINUNIT = 1            PARAMCHK= 0            MOBMOD  = 0
 +CAPMOD  = 2            IGCMOD  = 1            IGBMOD  = 1            GEOMOD  = 1

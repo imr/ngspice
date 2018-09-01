@@ -1,5 +1,15 @@
 ** npn bipolar: table generator with q 2D (Vce, Ib)
-*NMOS
+* This file may be run by 'ngspice table-generator-q-2d.sp'
+* It will generate a 2D data table by simulating the bipolar collector current 
+* as function of collector voltage and base current. The simulation uses
+* the ngspice bipolar model and model parameters of a clc409 transitor.
+* This table is an input file for the XSPICE 2D table model.
+* You may change the step sizes vcstep ibstep in CSPARAM
+* to obtain the required resolution for the data.
+* These tables will contain pure dc data. For transient simulation you may
+* need to add some capacitors to the device model for a 'real world' simulation.
+
+*NPN
 .csparam vcstart=-0.2
 .csparam vcstop=6.4
 .csparam vcstep=0.05
@@ -79,13 +89,10 @@ while lcy < ycount
   let lcy = lcy + 1
 end
 
-
-
 label next
 end
 
 .endc
-
 
 .MODEL QINN NPN
 + IS =0.166f    BF =3.239E+02 NF =1.000E+00 VAF=8.457E+01
