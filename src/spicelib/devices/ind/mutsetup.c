@@ -46,16 +46,18 @@ MUTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             if (!here->MUTind1)
                 here->MUTind1 = (INDinstance *) CKTfndDev(ckt, here->MUTindName1);
             if (!here->MUTind1) {
-                SPfrontEnd->IFerrorf (ERR_WARNING,
+                SPfrontEnd->IFerrorf (ERR_FATAL,
                                       "%s: coupling to non-existant inductor %s.",
                                       here->MUTname, here->MUTindName1);
+                return(E_INTERN); /* We have to leave, or TSTALLOC will segfault */
             }
             if (!here->MUTind2)
                 here->MUTind2 = (INDinstance *) CKTfndDev(ckt, here->MUTindName2);
             if (!here->MUTind2) {
-                SPfrontEnd->IFerrorf (ERR_WARNING,
+                SPfrontEnd->IFerrorf (ERR_FATAL,
                                       "%s: coupling to non-existant inductor %s.",
                                       here->MUTname, here->MUTindName2);
+                return(E_INTERN);
             }
 
             TSTALLOC(MUTbr1br2Ptr, MUTind1->INDbrEq, MUTind2->INDbrEq);
