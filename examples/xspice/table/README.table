@@ -1,0 +1,55 @@
+This example/xspice/table directory offers input files, table files as
+well as table generators for the ngspice table model. This model is a XSPICE
+extension for ngspice. It enables simulation of devices that consist of in/out
+data points, i.e. devices where analytical model equations are not available. 
+
+The table model reads a value val from a file. With the 2D table model val
+depends on 2 input parameters, i.e. val = f(x,y), with the 3D table on 3 input
+parameters, i.e. val = f(x,y,z). Val may be defined as a voltage or as a
+current, either single ended or differential. The inputs x, y (, z) may be 
+voltage inputs (infinite input resistance, single ended or differential) or
+current sinks (zero input resistance, single ended or differential). Single
+ended denotes: one node given, the other is 0 (ground), differential: both
+nodes are to be given.
+
+For some implementation details, and the format of the 2D or 3D tables,
+please have a look at the ngspice manual, chapters 12.2.27 and 12.2.28.
+ 
+How to generate these tables?
+For simple functional relationships you may do this manually. For example in
+the table directory there are the files test~.table containing simple linear
+curves.
+
+You may analyse measured curves and fit their data into the table format.
+
+If you already have functional models, you may design a table generator. It
+runs the models at certain input condition, calculates the output and stores
+it with the correct format. Some examples are given here in the
+table-generator files. The bsim4 tables have been thus generated already and
+are distributed as files bsim4~.table.
+
+The example input files table-model-bip~.sp require some further user action
+because their table is not provided with the distribution due to its large
+size. So cd into the table directory and run the following command:
+ngspice table-generator-q-2d.sp
+The table will be generated, using the built in ngspice bipolar model and model
+parameters for a CLC409 bipolar npn transistor.
+
+Some considerations for using table models
+These table models are pure dc models. The input is an ideal open (for voltage)
+or short circuit (for current). If your application requires a more complex
+input behavior, it may be emulated by additional passive (or active?) devices
+added to the table model. Also, if dynamic behavior ir expected, there a no
+capacitors in the table model, so again add them externally. The example input
+files give some hints: The bipolar table transistor should show a base input
+behaviour like a common transistor, so we have added a diode with parameters
+optimized to compare well with the analytical model. The MOS transistors at
+least require some input capacitance, emulated by some extra capacitors. So
+the table models offer a lot of freedome, but require careful considerations
+of their environment to become really useful.
+
+The 2D and 3D table models use linear interpolation to obtain their output
+data. This may limit the application to not have a too steep slope. Otherwise
+convergence problems may arise. The derivatives (output vs. each input)
+required by ngspice are calculated by an approach named eno (essentially non
+oscillating) interpolation, that has proven itself to be very robust.
