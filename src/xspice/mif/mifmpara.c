@@ -109,6 +109,8 @@ int MIFmParam(
 
     /* initialize the parameter is_null and size elements and allocate elements */
     model->param[param_index]->is_null = MIF_FALSE;
+    /* element may exist already, if called from 'altermod' */
+    FREE(model->param[param_index]->element);
     if(is_array) {
         model->param[param_index]->size = value->v.numValue;
         model->param[param_index]->element = TMALLOC(Mif_Value_t, value->v.numValue);
