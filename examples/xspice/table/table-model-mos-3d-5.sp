@@ -9,8 +9,6 @@ option trtol=1
 tran 100p 20n
 *plot i(Vs) i(Vs2)
 plot v(in1)
-tran 100p 20n
-plot v(in1)
 rusage
 .endc
 *
