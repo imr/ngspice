@@ -190,6 +190,10 @@ AC_ARG_ENABLE([help],
 AC_ARG_ENABLE([xgraph],
     [AS_HELP_STRING([--enable-xgraph], [Enable xgraph compilation.])])
 
+# --with-fftw3: Use fftw3 for Fourier transforms.  Default is "yes".
+AC_ARG_WITH([fftw3],
+    [AS_HELP_STRING([--with-fftw3[=yes/no]], [Use fftw3 for Fourier transforms. Default=yes.])])
+
 # readline and editline cannot both be enabled
 if test "x$with_editline" = xyes; then
     if test "x$with_readline" = xyes; then
@@ -735,10 +739,12 @@ AC_MSG_RESULT([Checking mathematical features of the system:])
 # Look for math library:
 AC_CHECK_LIB([m], [sqrt])
 AC_CHECK_HEADERS([float.h limits.h values.h ieeefp.h])
-AC_CHECK_HEADERS([fftw3.h])
-AC_CHECK_LIB([fftw3], [fftw_plan_dft_1d],
+if test "x$with_fftw3" != xno; then
+    AC_CHECK_HEADERS([fftw3.h])
+    AC_CHECK_LIB([fftw3], [fftw_plan_dft_1d],
         [AC_DEFINE([HAVE_LIBFFTW3], [], [Have fft routines in libfftw3])
          LIBS="$LIBS -lfftw3"])
+fi
 
 # Check for a few mathematical functions:
 AC_CHECK_FUNCS([erfc logb scalb scalbn asinh acosh atanh finite])
