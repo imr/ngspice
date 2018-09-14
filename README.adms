@@ -29,7 +29,7 @@ admsXml (see below).
 Unfortunately most of the above named models’ licenses are not compatible to free software
 rules as defined by DFSG. Therefore since ngspice-28 the va model files are no longer part of
 the standard ngspice distribution. They may however be downloaded as a tar.gz archive from the
-ngspice-28 file distribution folder. After downloading, you may expand the zipped files into
+ngspice-29 file distribution folder. After downloading, you may expand the zipped files into
 your ngspice top level folder. The models enable dc, ac, and tran simulations. Noise simulation
 is not supported.
 Other (foreign) va model files will not compile without code tweaking, due to the limited

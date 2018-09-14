@@ -1,3 +1,27 @@
+Ngspice-29, Sept 30th, 2018
+============
+
+- New features:
+    + configure flag --with-fftw3 If set to 'no', internal fast fourier is used
+      instead of fftw
+    + command setseed to set the seed value for the random number generator
+    + option seed=[val|random]
+    + variable inputdir to remeber and retrieve the last input file directory
+    + example directory 'digital' with analog, behavioral and digital example input files
+    + new XSPICE filesource, d_source, and state-machine examples
+    + +, - maybe part of instance name
+    + Quasi-saturation VDMOS example
+    + add environmental variable SOURCE_DATE_EPOCH to allow reproducible executables
+    + new parameters to command setplot: setplot next, setplot previous
+    + updates to commands cd, rusage, print
+    + update to bipolar and diode temperature equations
+
+- Bug fixes:
+    + several bug fixes
+    + lots of memory leaks removed, especially when XSPICE circuits are called several
+      times in a loop.
+
+
 Ngspice-28, May 27th, 2018
 ============
 
