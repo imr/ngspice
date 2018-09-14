@@ -5,7 +5,7 @@ Table of contents
 
   1 Ngspice installation (LINUX)
    1.1 Prerequisites
-   1.2 Install from tarball (e.g. ngspice-27.tar.gz)
+   1.2 Install from tarball (e.g. ngspice-29.tar.gz)
    1.3 Install from git repository
    1.4 Advanced Install
     1.4.1 Most useful options
@@ -53,14 +53,14 @@ This file describes the procedures to install ngspice from sources.
  information on ngspice and its usage.
 
 
-1.2 Install from tarball (e.g. ngspice-27.tar.gz)
+1.2 Install from tarball (e.g. ngspice-29.tar.gz)
 
  This covers installation from a release distribution (for example
  ngspice-27.tar.gz, the so called tar ball).
 
  After downloading the tar ball to a local directory unpack it using:
 
- $ tar -zxvf ngspice-27.tar.gz
+ $ tar -zxvf ngspice-29.tar.gz
 
  Now change directories in to the top-level source directory (where this
  INSTALL file can be found).
@@ -185,9 +185,17 @@ This file describes the procedures to install ngspice from sources.
 
  --disable-debug
         This option will remove the '-g' option passed to the compiler
-                and add -O2 optimisation (instead of default O0).
+        and add -O2 optimisation (instead of default O0).
         This speeds up simulating significantly, and is recommended for
         normal use.
+
+ --enable-oldapps
+        The old apllications ngsconvert ngproc2mod ngmultidec and ngmakeidx
+        are made only per user request, by adding this flag.
+
+ --with-fftw3=no
+        Disable using fftw fast fourier transform library. Use internal
+        fft instead. Default is 'yes'.
 
 
 1.4.2 Options Specific to Enable Ngspice as a shared library
@@ -216,21 +224,20 @@ Most of the options now following are not well maintained, are not tested or eve
         voltages are unchanged.
 
  --enable-cluster
-                Clustering code for distributed simulation. This is a
-                contribution never tested. This code comes from TCLspice
-                implementation and is implemented for transient analysis only.
+        Clustering code for distributed simulation. This is a
+        contribution never tested. This code comes from TCLspice
+        implementation and is implemented for transient analysis only.
 
  --enable-expdevices
-                Enable experimental devices. This option is used by developers
-                to mask devices under development. Almost useless for users.
+        Enable experimental devices. This option is used by developers
+        to mask devices under development. Almost useless for users.
 
- --enable-experimental
-        This enables some experimental code. Specifically it enables:
-            * The ability to save and load snapshots: adds
-              interactive keywords 'savesnap' and 'loadsnap'.
+  --enable-experimental
+        define EXPERIMENTAL_CODE to mark experimental parts the code
+        (currently not used)
 
  --enable-help
-                Force building nghelp. This is deprecated.
+        Force building nghelp. This is deprecated.
 
  --enable-ndev
         Enable NDEV interface, (experimental, needs updating)
@@ -290,9 +297,6 @@ Most of the options now following are not well maintained, are not tested or eve
 
  --enable-ftedebug
         Enable ngspice frontend debug.
-
- --enable-gc
-        Enable the Boehm-Weiser Conservative Garbage Collector.
 
  --enable-pzdebug
         Debug pole/zero code.
@@ -456,8 +460,8 @@ Most of the options now following are not well maintained, are not tested or eve
  to the standard install (FLEX and BISON have to be made available in MSYS).
  Some links are given below which describe the procedures.
 
-     Installing from the tarball, e.g. ngspice-27.tar.gz, is now simple: After
- expanding, you may just run ./compile_min.sh from the ngspice-27 directory.
+     Installing from the tarball, e.g. ngspice-29.tar.gz, is now simple: After
+ expanding, you may just run ./compile_min.sh from the ngspice-29 directory.
 
      The default installation location of ngspice is the Windows path
  C:\spice. The install path can be altered by passing --prefix=NEWPATH
@@ -471,7 +475,7 @@ Most of the options now following are not well maintained, are not tested or eve
  The procedure of compiling a distribution (for example, a tarball from
  the ngspice website), is as follows:
 
- $ cd ngspice-27
+ $ cd ngspice-29
  $ mkdir release
  $ cd release
  $ ../configure --with-wingui ...and other options
@@ -550,8 +554,56 @@ Most of the options now following are not well maintained, are not tested or eve
  An alternative compiler setup is available at
  http://tdm-gcc.tdragon.net/
 
+ A modern environment is offered by MSYS2 (https://www.msys2.org/).
 
-9.2 make ngspice with MS Visual Studio 2008
+ The install tree generated during 'make install' is:
+
+  C:\Spice\
+    bin\
+        ngspice.exe
+        nghelp.exe
+        ngmakeidx.exe
+        ngnutmeg.exe
+        cmpp.exe
+    lib\
+        spice\
+            analog.cm
+            digital.cm
+            spice2poly.cm
+            extradev.cm
+            extravt.cm
+    share\
+        info\
+            dir
+            ngspice.info
+            ngspice.info-1
+            ..
+            ngspice.info-10
+        man\
+            man1\
+                cmpp.1
+                ngmakeidx.1
+                ngmultidec.1
+                ngnutmeg.1
+                ngproc2mod.1
+                ngsconvert.1
+                ngspice.1
+        ngspice\
+            helpdir\
+                ngspice.idx
+                ngspice.txt
+            scripts\
+                ciderinit
+                devaxis
+                devload
+                setplot
+                spectrum
+                spinit
+
+
+
+
+9.2 make ngspice with MS Visual Studio 2015/17
 
  ngspice may be compiled with MS Visual Studio 2015 or newer.
 
@@ -595,13 +647,9 @@ Most of the options now following are not well maintained, are not tested or eve
  An installation tree (as provided with MINGW make install) and also used by
  vngspice is (maybe created manually):
 
- C:\Spice\
+ C:\Spice64\
     bin\
         ngspice.exe
-        nghelp.exe
-        ngmakeidx.exe
-        ngnutmeg.exe
-        cmpp.exe
     lib\
         spice\
             analog.cm
@@ -610,31 +658,8 @@ Most of the options now following are not well maintained, are not tested or eve
             extradev.cm
             extravt.cm
     share\
-        info\
-            dir
-            ngspice.info
-            ngspice.info-1
-            ..
-            ngspice.info-10
-        man\
-            man1\
-                cmpp.1
-                ngmakeidx.1
-                ngmultidec.1
-                ngnutmeg.1
-                ngproc2mod.1
-                ngsconvert.1
-                ngspice.1
         ngspice\
-            helpdir\
-                ngspice.idx
-                ngspice.txt
             scripts\
-                ciderinit
-                devaxis
-                devload
-                setplot
-                spectrum
                 spinit
 
  If you intend to install vngspice into another directory, e.g. D:\MySpice,
@@ -672,7 +697,7 @@ Most of the options now following are not well maintained, are not tested or eve
  ./configure --enable-adms --enable-xspice --enable-cider --enable-openmp
  --disable-debug CFLAGS=-m32 LDFLAGS=-m32 prefix=C:/Spice
  tested with TDM mingw.
- 
+
 
 9.5 cross compiling ngspice for Windows from LINUX
 
