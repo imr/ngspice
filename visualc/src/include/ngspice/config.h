@@ -434,31 +434,10 @@
 /* Do not trigger unwanted traps by default */
 /* #undef NEWTRUNC */
 
-#ifdef NGDEBUG
-#ifdef CONFIG64
 /* Define the directory for executables */
-#define NGSPICEBINDIR "C:/Spice64d/bin"
+#define NGSPICEBINDIR "../bin"
 /* Define the directory for architecture independent data files */
-#define NGSPICEDATADIR "C:/Spice64d/share/ngspice"
-#else
-/* Define the directory for executables */
-#define NGSPICEBINDIR "C:/Spiced/bin"
-/* Define the directory for architecture independent data files */
-#define NGSPICEDATADIR "C:/Spiced/share/ngspice"
-#endif
-#else
-#ifdef CONFIG64
-/* Define the directory for executables */
-#define NGSPICEBINDIR "C:/Spice64/bin"
-/* Define the directory for architecture independent data files */
-#define NGSPICEDATADIR "C:/Spice64/share/ngspice"
-#else
-/* Define the directory for executables */
-#define NGSPICEBINDIR "C:/Spice/bin"
-/* Define the directory for architecture independent data files */
-#define NGSPICEDATADIR "C:/Spice/share/ngspice"
-#endif
-#endif
+#define NGSPICEDATADIR "../share/ngspice"
 
 /* Define if we want NOBYPASS */
 /* #undef NOBYPASS */
@@ -476,13 +455,13 @@
 #define PACKAGE_NAME "ngspice"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "ngspice 28"
+#define PACKAGE_STRING "ngspice 29"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "ngspice"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "28"
+#define PACKAGE_VERSION "29"
 
 /* Define if we want predictor algorithm */
 /* #undef PREDICTOR */
@@ -537,7 +516,7 @@
 /* #undef TM_IN_SYS_TIME */
 
 /* Version number of package */
-#define VERSION "28"
+#define VERSION "29"
 
 /* Define if we want spice2 sensitivity analysis */
 /* #undef WANT_SENSE2 */
