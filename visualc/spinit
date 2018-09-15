@@ -17,17 +17,14 @@ set interactive
 strcmp __flag $program "ngspice"
 if $__flag = 0
 
-* For SPICE2 POLYs, edit the below line to point to the location
-* of your codemodel.
+* Load the codemodels
+ codemodel ../lib/ngspice/spice2poly.cm
+ codemodel ../lib/ngspice/analog.cm
+ codemodel ../lib/ngspice/digital.cm
+ codemodel ../lib/ngspice/xtradev.cm
+ codemodel ../lib/ngspice/xtraevt.cm
+ codemodel ../lib/ngspice/table.cm
 
- codemodel C:/Spice/lib/ngspice/spice2poly.cm
-
-* The other codemodels
- codemodel C:/Spice/lib/ngspice/analog.cm
- codemodel C:/Spice/lib/ngspice/digital.cm
- codemodel C:/Spice/lib/ngspice/xtradev.cm
- codemodel C:/Spice/lib/ngspice/xtraevt.cm
- codemodel C:/Spice/lib/ngspice/table.cm
 
 end
 unset __flag
