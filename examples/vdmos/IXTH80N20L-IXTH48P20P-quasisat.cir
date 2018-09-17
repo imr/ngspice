@@ -1,8 +1,8 @@
 VDMOS Test of quasi saturation IXTH80N20L IXTH48P20P
 * Original VDMOS model parameters taken from David Zan,
 * http://www.diyaudio.com/forums/software-tools/266655-power-mosfet-models-ltspice-post5300643.html
-* The Quasi-aturation is added for demonstration only, it is not aligned with the data sheets
-* and is for sure exagerated, at least for the IXTH80N20L
+* The Quasi-saturation is added for demonstration only, it is not aligned with the data sheets
+* and is for sure exaggerated, at least for the IXTH80N20L
 
 mn1 d1 g1 s1 s1 IXTH80N20L
 
@@ -16,12 +16,10 @@ vd2 d2 0 1
 vg2 g2 0 1
 vs2 s2 0 0
 
-
-
 .control
 dc vd1 -1 100 0.05 vg1 3 10 1
 altermod mn1 rq=0
-altermod mp1 Lambda=2m
+altermod mn1 Lambda=2m
 dc vd1 -1 100 0.05 vg1 3 10 1
 plot dc1.vs1#branch vs1#branch
 
@@ -36,7 +34,7 @@ plot dc3.vs2#branch vs2#branch
 * David Zan, (c) 2017/03/02 Preliminary
 .MODEL IXTH80N20L VDMOS Nchan Vds=200
 + VTO=4 KP=15
-+ Lambda=1m  $ will be reset to original 2m
++ Lambda=3m  $ will be reset by altermod to original 2m
 + Mtriode=0.4
 + subslope=120m
 + subshift=160m
@@ -48,12 +46,12 @@ plot dc3.vs2#branch vs2#branch
 + NBV=4
 + TT=250e-9
 + vq=100
-+ rq=0.5  $ will be reset to original 0
++ rq=0.5  $ will be reset by altermod to original 0
 
 * David Zan, (c) 2017/03/02 Preliminary
 .MODEL IXTH48P20P VDMOS Pchan Vds=200
 + VTO=-4 KP=10
-+ Lambda=7m  $ will be reset to original 5m  
++ Lambda=7m  $ will be reset by altermod to original 5m  
 + Mtriode=0.3   
 + Ksubthres=120m
 + Rs=10m Rd=20m Rds=200e6
@@ -64,4 +62,4 @@ plot dc3.vs2#branch vs2#branch
 + NBV=4
 + TT=260e-9
 + vq=100
-+ rq=0.5
++ rq=0.5  $ will be reset by altermod to original 0
