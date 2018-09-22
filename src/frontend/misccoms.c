@@ -87,6 +87,7 @@ com_quit(wordlist *wl)
     while (ft_curckt)
         com_remcirc(NULL);
 #endif
+    inp_remove_recent();
 
     tfree(errMsg);
     byemesg();

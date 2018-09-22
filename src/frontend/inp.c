@@ -336,16 +336,23 @@ line_reverse(struct card *head)
     return prev;
 }
 
+/* reload from ci_mcdeck */
+void
+inp_mc_set(void)
+{
+    if (ft_curckt && ft_curckt->ci_mcdeck) {
+        mc_deck = ft_curckt->ci_mcdeck;
+    }
+    else
+        fprintf(stderr, "Error: No circuit loaded\n");
+}
 
-/* store ft_curckt->ci_mcdeck into a 'previous' deck */
+/* remove ci_mcdeck */
 void
 inp_mc_free(void)
 {
     if (ft_curckt && ft_curckt->ci_mcdeck) {
-        if (recent_deck && recent_deck != ft_curckt->ci_mcdeck)
-            line_free(recent_deck, TRUE);
-        recent_deck = ft_curckt->ci_mcdeck;
-        ft_curckt->ci_mcdeck = NULL;
+        line_free(ft_curckt->ci_mcdeck, TRUE);
     }
     else
         fprintf(stderr, "Error: No circuit loaded\n");
@@ -357,6 +364,13 @@ inp_source_recent(void) {
     mc_deck = recent_deck;
     mc_reload = TRUE;
     inp_spsource(NULL, FALSE, NULL, FALSE);
+}
+
+/* store ft_curckt->ci_mcdeck into a 'previous' deck */
+void
+inp_set_recent(void) {
+    inp_remove_recent();
+    recent_deck = inp_deckcopy(ft_curckt->ci_mcdeck);
 }
 
 /* remove the 'recent' deck */
@@ -460,11 +474,6 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
         /* files starting with *ng_script are user supplied command files */
         if (deck && ciprefix("*ng_script", deck->line))
             comfile = TRUE;
-        /* save a copy of the deck for later reloading with 'mc_source' */
-        if (deck && !comfile) {
-        /* stored to new circuit ci_mcdeck in fcn */
-            mc_deck = inp_deckcopy_oc(deck);
-        }
     }
     /* called with *fp == NULL and not intfile: we want to reload circuit from mc_deck */
     else {
@@ -1171,7 +1180,8 @@ inp_dodeck(
     }
     ct->ci_name = tt;
     ct->ci_deck = deck;
-    ct->ci_mcdeck = mc_deck;
+    /* save a cleaned copy of the deck for later reloading with 'mc_source' */
+    ct->ci_mcdeck = mc_deck = inp_deckcopy_oc(deck);
     ct->ci_options = options;
     if (deck->actualLine)
         ct->ci_origdeck = deck->actualLine;

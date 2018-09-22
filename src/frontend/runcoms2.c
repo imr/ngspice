@@ -180,6 +180,7 @@ com_rset(wordlist *wl)
         fprintf(cp_err, "Error: there is no circuit loaded.\n");
         return;
     }
+    inp_set_recent();
     com_remcirc(NULL);
     inp_source_recent();
 #else
@@ -303,5 +304,6 @@ com_remcirc(wordlist *wl)
         modtab = ft_curckt->ci_modtab;
         dbs = ft_curckt->ci_dbs;
         nupa_set_dicoslist(ft_curckt->ci_dicos);
+        inp_mc_set();
     }
 }
