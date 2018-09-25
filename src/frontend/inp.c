@@ -1171,7 +1171,7 @@ inp_dodeck(
     }
     ct->ci_name = tt;
     ct->ci_deck = deck;
-    ct->ci_mcdeck = inp_deckcopy(mc_deck);
+    ct->ci_mcdeck = mc_deck;
     ct->ci_options = options;
     if (deck->actualLine)
         ct->ci_origdeck = deck->actualLine;
