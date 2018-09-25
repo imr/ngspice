@@ -342,13 +342,19 @@ void
 inp_mc_free(void)
 {
     if (ft_curckt && ft_curckt->ci_mcdeck) {
-        if (recent_deck && recent_deck != ft_curckt->ci_mcdeck)
+        if (recent_deck && recent_deck != ft_curckt->ci_mcdeck) {
+            struct circ *pp;
+            /* NULL any ci_mcdeck entry from ft_circuits whose address equals recent_deck,
+            then free this address */
+            for (pp = ft_circuits; pp; pp = pp->ci_next)
+                if (pp->ci_mcdeck == recent_deck) {
+                    pp->ci_mcdeck = NULL;
+                }
             line_free(recent_deck, TRUE);
+        }
         recent_deck = ft_curckt->ci_mcdeck;
         ft_curckt->ci_mcdeck = NULL;
     }
-    else
-        fprintf(stderr, "Error: No circuit loaded\n");
 }
 
 /* called by com_rset: reload most recent circuit */
