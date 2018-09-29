@@ -311,7 +311,7 @@ PP_mkfnode(const char *func, struct pnode *arg)
     if (!f->fu_func && arg->pn_op && arg->pn_op->op_num == PT_OP_COMMA) {
         p = PP_mkbnode(PT_OP_MINUS, PP_mkfnode(func, arg->pn_left),
                     PP_mkfnode(func, arg->pn_right));
-        tfree(arg);
+        free_pnode(arg);
         return p;
     }
 
