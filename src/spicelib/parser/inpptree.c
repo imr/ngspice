@@ -461,16 +461,16 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
                                                              p->left)));
             break;
 
-        case PTF_TAN:                /* 1 / (cos(u) ^ 2) */
-            arg1 = mkb(PT_DIVIDE, mkcon(1.0), mkb(PT_POWER,
-                                                         mkf(PTF_COS,
+        case PTF_TAN:                /* 1 + (tan(u) ^ 2) */
+            arg1 = mkb(PT_PLUS, mkcon(1.0), mkb(PT_POWER,
+                                                         mkf(PTF_TAN,
                                                              p->left),
                                                          mkcon(2.0)));
             break;
 
-        case PTF_TANH:                /* 1 / (cosh(u) ^ 2) */
-            arg1 = mkb(PT_DIVIDE, mkcon(1.0), mkb(PT_POWER,
-                                                         mkf(PTF_COSH,
+        case PTF_TANH:                /* 1 - (tanh(u) ^ 2) */
+            arg1 = mkb(PT_MINUS, mkcon(1.0), mkb(PT_POWER,
+                                                         mkf(PTF_TANH,
                                                              p->left),
                                                          mkcon(2.0)));
             break;
