@@ -581,8 +581,8 @@ d_tan(double *dd, int length)
 
     d = alloc_d(length);
     for (i = 0; i < length; i++) {
-        rcheck(cos(degtorad(dd[i])) != 0, "tan");
-        d[i] = sin(degtorad(dd[i])) / cos(degtorad(dd[i]));
+        rcheck(tan(degtorad(dd[i])) != 0, "tan");
+        d[i] = tan(degtorad(dd[i]));
     }
     return d;
 }
@@ -595,8 +595,7 @@ d_tanh(double *dd, int length)
 
     d = alloc_d(length);
     for (i = 0; i < length; i++) {
-        rcheck(cosh(degtorad(dd[i])) != 0, "tanh");
-        d[i] = sinh(degtorad(dd[i])) / cosh(degtorad(dd[i]));
+        d[i] = tanh(degtorad(dd[i]));
     }
     return d;
 }
