@@ -56,6 +56,7 @@ static struct card *mc_deck = NULL;
 static struct card *recent_deck = NULL;
 static void cktislinear(CKTcircuit *ckt, struct card *deck);
 static void dotifeval(struct card *deck);
+static void recifeval(struct card *pdeck);
 
 static wordlist *inp_savecurrents(struct card *deck, struct card *options, wordlist *wl, wordlist *controls);
 
@@ -1665,14 +1666,74 @@ com_circbyline(wordlist *wl)
     create_circbyline(newline);
 }
 
-
 /* handle .if('expr') ... .elseif('expr') ... .else ... .endif statements.
    numparam has evaluated .if('boolean expression') to
-   .if (   1.000000000e+000  ) or .elseif (   0.000000000e+000  ) */
+   .if (   1.000000000e+000  ) or .elseif (   0.000000000e+000  ).
+   Evaluation is done recursively, starting with .IF, ending with .ENDIF*/
+static void
+recifeval(struct card *pdeck)
+{
+    struct card *nd;
+    int iftrue = 0, elseiftrue = 0, elsetrue = 0, iffound = 0, elseiffound = 0, elsefound = 0;
+    char *t;
+    char *s = t = pdeck->line;
+    /* get parameter to .if */
+    s = nexttok(s);
+    elsefound = 0;
+    elseiffound = 0;
+    iffound = 1;
+    *t = '*';
+    s = pdeck->line + 3;
+    iftrue = atoi(s);
+    nd = pdeck->nextcard;
+
+    while(nd) {
+        s = nd->line;
+        if (ciprefix(".if", nd->line))
+            recifeval(nd);
+        else if (ciprefix(".elseif", nd->line)) {
+            elsefound = 0;
+            elseiffound = 1;
+            iffound = 0;
+            *s = '*';
+            if (!iftrue) {
+                s = pdeck->line + 7;
+                elseiftrue = atoi(s);
+            }
+        }
+        else if (ciprefix(".else", nd->line)) {
+            elsefound = 1;
+            elseiffound = 0;
+            iffound = 0;
+            if (!iftrue && !elseiftrue)
+                elsetrue = 1;
+            *s = '*';
+        }
+        else if (ciprefix(".endif", nd->line)) {
+            elsefound = elseiffound = iffound = 0;
+            elsetrue = elseiftrue = iftrue = 0;
+            *s = '*';
+            return;
+        }
+        else {
+            if (iffound && !iftrue) {
+                *s = '*';
+            }
+            else if (elseiffound && !elseiftrue) {
+                *s = '*';
+            }
+            else if (elsefound && !elsetrue) {
+                *s = '*';
+            }
+        }
+        nd = nd->nextcard;
+    }
+}
+
+/* Scan through all lines of the deck */
 static void
 dotifeval(struct card *deck)
 {
-    int iftrue = 0, elseiftrue = 0, elsetrue = 0, iffound = 0, elseiffound = 0, elsefound = 0;
     struct card *dd;
     char *dottoken;
     char *s, *t;
@@ -1686,49 +1747,10 @@ dotifeval(struct card *deck)
             continue;
 
         dottoken = gettok(&t);
-        /* find '.if' and read its parameter */
+        /* find '.if', the starter of any .if --- .endif clause, and call the recursive evaluation.
+           recifeval() returns when .endif is found */
         if (cieq(dottoken, ".if")) {
-            elsefound = 0;
-            elseiffound = 0;
-            iffound = 1;
-            *s = '*';
-            s = dd->line + 3;
-            iftrue = atoi(s);
-        }
-        else if (cieq(dottoken, ".elseif")) {
-            elsefound = 0;
-            elseiffound = 1;
-            iffound = 0;
-            *s = '*';
-            if (!iftrue) {
-                s = dd->line + 7;
-                elseiftrue = atoi(s);
-            }
-        }
-        else if (cieq(dottoken, ".else")) {
-            elsefound = 1;
-            elseiffound = 0;
-            iffound = 0;
-            if (!iftrue && !elseiftrue)
-                elsetrue = 1;
-            *s = '*';
-        }
-        else if (cieq(dottoken, ".endif")) {
-            elsefound = elseiffound = iffound = 0;
-            elsetrue = elseiftrue = iftrue = 0;
-            *s = '*';
-//          inp_subcktexpand(dd);
-        }
-        else {
-            if (iffound && !iftrue) {
-                *s = '*';
-            }
-            else if (elseiffound && !elseiftrue)  {
-                *s = '*';
-            }
-            else if (elsefound && !elsetrue)  {
-                *s = '*';
-            }
+            recifeval(dd);
         }
         tfree(dottoken);
     }
