@@ -219,6 +219,8 @@
       <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="icm\xtradev\core\core-ifspec.c" />
+    <ClCompile Include="icm\xtradev\sidiode\sidiode-cfunc.c" />
+    <ClCompile Include="icm\xtradev\sidiode\sidiode-ifspec.c" />
     <ClCompile Include="icm\xtradev\inductor\inductor-cfunc.c">
       <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -254,6 +256,8 @@
     <None Include="..\..\src\xspice\icm\xtradev\cmeter\ifspec.ifs" />
     <None Include="..\..\src\xspice\icm\xtradev\core\cfunc.mod" />
     <None Include="..\..\src\xspice\icm\xtradev\core\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\xtradev\sidiode\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\xtradev\sidiode\ifspec.ifs" />
     <None Include="..\..\src\xspice\icm\xtradev\inductor\cfunc.mod" />
     <None Include="..\..\src\xspice\icm\xtradev\inductor\ifspec.ifs" />
     <None Include="..\..\src\xspice\icm\xtradev\lcouple\cfunc.mod" />

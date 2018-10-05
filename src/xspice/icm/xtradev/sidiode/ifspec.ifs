@@ -1,0 +1,108 @@
+/*.......1.........2.........3.........4.........5.........6.........7.........8
+================================================================================
+Copyright 2018
+Holger Vogt
+All Rights Reserved
+
+AUTHORS
+
+     2 October 2018     Holger Vogt
+
+
+SUMMARY
+
+    This file contains the interface specification file for the
+    analog simple diode code model.
+
+===============================================================================*/
+
+NAME_TABLE:
+
+
+C_Function_Name:       cm_sidiode
+Spice_Model_Name:      sidiode
+Description:           "simple diode"
+
+
+PORT_TABLE:
+
+
+Port_Name:             ds
+Description:           "diode port"
+Direction:             inout
+Default_Type:          gd
+Allowed_Types:         [gd]
+Vector:                 no
+Vector_Bounds:          -
+Null_Allowed:          no
+
+
+PARAMETER_TABLE:
+
+
+Parameter_Name:     ron                      roff
+Description:        "resistance on-state"    "resistance off-state"
+Data_Type:          real                     real
+Default_Value:      1                        1
+Limits:             [1e-6  - ]               [1e-12 -]
+Vector:              no                       no
+Vector_Bounds:       -                        -
+Null_Allowed:       no                       no
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:    vfwd                      vrev
+Description:       "forward voltage"         "reverse breakdown voltage"
+Data_Type:     	   real                      real
+Default_Value:     0.                        1e30
+Limits:            [0. -]                    [0. -]
+Vector:             no                        no
+Vector_Bounds:      -                         -
+Null_Allowed:      yes                       yes
+
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:     ilimit                   revilimit
+Description:        "limit of on-current"    "limit of breakdown current"
+Data_Type:          real                     real
+Default_Value:      1e30                     1e30
+Limits:             [1e-15 -]                [1e-15 -]
+Vector:              no                       no
+Vector_Bounds:       -                        -
+Null_Allowed:       yes                      yes
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:    epsilon                   revepsilon
+Description:       "width quadrat. r 1"      "width quadratic region 2"
+Data_Type:     	   real                      real
+Default_Value:     0.                        0.
+Limits:            [0. -]                    [0. -]
+Vector:             no                        no
+Vector_Bounds:      -                         -
+Null_Allowed:      yes                       yes
+
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:     rrev
+Description:        "resistance in breakdown"
+Data_Type:          real
+Default_Value:      0.
+Limits:             -
+Vector:              no
+Vector_Bounds:       -
+Null_Allowed:       yes
+
+
+
+STATIC_VAR_TABLE:
+
+Static_Var_Name:    locdata
+Data_Type:          pointer
+Description:        "table with constants"
