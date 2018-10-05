@@ -1,5 +1,5 @@
 /* ===========================================================================
-FILE    cfunc.mod
+FILE    memristor/cfunc.mod
 
 MEMBER OF process XSPICE
 

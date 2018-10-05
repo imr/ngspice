@@ -1,5 +1,5 @@
 /* ===========================================================================
-FILE    cfunc.mod
+FILE    capacitor/cfunc.mod
 
 MEMBER OF process XSPICE
 
