@@ -723,7 +723,7 @@ vareval(char *string)
     char buf[BSIZE_SP], *s;
     char *oldstring = copy(string);
     char *range = NULL;
-    int i, up, low;
+    int i, up, low, tbfreed;
 
     /* usage of vfree: variable v has to be freed only if created by cp_enqvar()! */
 
@@ -761,8 +761,11 @@ vareval(char *string)
         for (v = variables; v; v = v->va_next)
             if (eq(v->va_name, string))
                 break;
-        if (!v)
-            vfree = v = cp_enqvar(string);
+        if (!v) {
+            v = cp_enqvar(string, &tbfreed);
+            if (tbfreed)
+                vfree = v;
+        }
         wl = wl_cons(copy(v ? "1" : "0"), NULL);
         free_struct_variable(vfree);
         tfree(oldstring);
@@ -773,8 +776,11 @@ vareval(char *string)
         for (v = variables; v; v = v->va_next)
             if (eq(v->va_name, string))
                 break;
-        if (!v)
-            vfree = v = cp_enqvar(string);
+        if (!v) {
+            v = cp_enqvar(string, &tbfreed);
+            if (tbfreed)
+                vfree = v;
+        }
         if (!v) {
             fprintf(cp_err, "Error: %s: no such variable.\n", string);
             tfree(oldstring);
@@ -813,7 +819,9 @@ vareval(char *string)
     if (!v) {
         range = NULL;
         string = oldstring;
-        vfree = v = cp_enqvar(string);
+        v = cp_enqvar(string, &tbfreed);
+        if (tbfreed)
+            vfree = v;
     }
     if (!v && (s = getenv(string)) != NULL) {
         wl = wl_cons(copy(s), NULL);
