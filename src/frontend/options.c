@@ -29,13 +29,16 @@ bool ft_nodesprint = FALSE, ft_optsprint = FALSE, ft_noinitprint = FALSE;
 bool ft_ngdebug = FALSE, ft_stricterror = FALSE;
 
 
-/* The user-supplied routine to query the values of variables. This
- * recognises the $&varname notation, and also searches the values of
- * plot and circuit environment variables.
+/* The user-supplied routine to query the address of a variable, if its
+ * name is given. This recognises the $&varname notation, and also
+ * searches the address of plot and circuit environment variables.
+ * tbfreed is set to 1, if the variable is malloced here and may safely
+ * be freed, and is set to 0 if plot and circuit environment variables
+ * are returned.
  */
 
 struct variable *
-cp_enqvar(char *word)
+cp_enqvar(char *word, int *tbfreed)
 {
     struct dvec *d;
     struct variable *vv;
@@ -43,6 +46,7 @@ cp_enqvar(char *word)
     if (*word == '&') {
 
         word++;
+        *tbfreed = 1;
 
         d = vec_get(word);
         if (!d)
@@ -71,9 +75,11 @@ cp_enqvar(char *word)
     }
 
     if (plot_cur) {
+        *tbfreed = 0;
         for (vv = plot_cur->pl_env; vv; vv = vv->va_next)
             if (eq(vv->va_name, word))
                 return (vv);
+        *tbfreed = 1;
         if (eq(word, "curplotname"))
             return var_alloc_string(copy(word), copy(plot_cur->pl_name), NULL);
         if (eq(word, "curplottitle"))
@@ -91,6 +97,7 @@ cp_enqvar(char *word)
         }
     }
 
+    *tbfreed = 0;
     if (ft_curckt)
         for (vv = ft_curckt->ci_vars; vv; vv = vv->va_next)
             if (eq(vv->va_name, word))
@@ -106,26 +113,27 @@ struct variable *
 cp_usrvars(void)
 {
     struct variable *v, *tv;
+    int tbfreed;
 
     v = NULL;
 
-    if ((tv = cp_enqvar("plots")) != NULL) {
+    if ((tv = cp_enqvar("plots", &tbfreed)) != NULL) {
         tv->va_next = v;
         v = tv;
     }
-    if ((tv = cp_enqvar("curplot")) != NULL) {
+    if ((tv = cp_enqvar("curplot", &tbfreed)) != NULL) {
         tv->va_next = v;
         v = tv;
     }
-    if ((tv = cp_enqvar("curplottitle")) != NULL) {
+    if ((tv = cp_enqvar("curplottitle", &tbfreed)) != NULL) {
         tv->va_next = v;
         v = tv;
     }
-    if ((tv = cp_enqvar("curplotname")) != NULL) {
+    if ((tv = cp_enqvar("curplotname", &tbfreed)) != NULL) {
         tv->va_next = v;
         v = tv;
     }
-    if ((tv = cp_enqvar("curplotdate")) != NULL) {
+    if ((tv = cp_enqvar("curplotdate", &tbfreed)) != NULL) {
         tv->va_next = v;
         v = tv;
     }
