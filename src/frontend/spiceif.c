@@ -918,7 +918,6 @@ if_setparam(CKTcircuit *ckt, char **name, char *param, struct dvec *val, int do_
     GENmodel *mod = NULL;
     GENinstance *dev = NULL;
     int typecode;
-    char *s;
 
     /* PN  */
     INPretrieve(name, ft_curckt->ci_symtab);
@@ -928,10 +927,6 @@ if_setparam(CKTcircuit *ckt, char **name, char *param, struct dvec *val, int do_
         return;
     }
     device = ft_sim->devices[typecode];
-    /* in case the altermod command comes from commandline or
-	   over shared library we have to provide lowercase */
-    for (s = param; *s && (*s != '\n'); s++)
-        *s = tolower_c(*s);
     opt = parmlookup(device, &dev, param, do_model, 1);
     if (!opt) {
         if (param)
