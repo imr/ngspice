@@ -1303,14 +1303,6 @@ com_alter_common(wordlist *wl, int do_model)
         goto done;
     }
 
-    /* in case the alter/altermod command comes from commandline
-       or over shared library we have to provide lowercase */
-    if (param) {
-        unsigned int j;
-        for (j = 0; j < strlen(param); j++)
-            param[j] = tolower_c(param[j]);
-    }
-
     /* If we want alter the geometry of a MOS device
        we have to ensure that we are in the valid model bin. */
     if ((dev[0] == 'm') && ((param[0] == 'w') || (param[0] == 'l')))
