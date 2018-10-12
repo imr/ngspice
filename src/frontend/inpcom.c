@@ -151,6 +151,7 @@ static char *inp_pathresolve_at(char *name, char *dir);
 static char *search_plain_identifier(char *str, const char *identifier);
 void tprint(struct card *deck);
 static struct card *pspice_compat(struct card *newcard);
+static struct card *ltspice_compat(struct card *oldcard);
 
 struct inp_read_t
 { struct card *cc;
@@ -502,13 +503,22 @@ ngspice_compat_mode(void)
             return COMPATMODE_HS;
         if (strcasecmp(behaviour, "ps") == 0)
             return COMPATMODE_PS;
+        if (strcasecmp(behaviour, "lt") == 0)
+            return COMPATMODE_LT;
+        if (strcasecmp(behaviour, "ltps") == 0)
+            return COMPATMODE_LTPS;
+        if (strcasecmp(behaviour, "psa") == 0)
+            return COMPATMODE_PSA;
+        if (strcasecmp(behaviour, "lta") == 0)
+            return COMPATMODE_LTA;
+        if (strcasecmp(behaviour, "ltpsa") == 0)
+            return COMPATMODE_LTPSA;
         if (strcasecmp(behaviour, "spice3") == 0)
             return COMPATMODE_SPICE3;
     }
 
     return COMPATMODE_ALL;
 }
-
 
 /*-------------------------------------------------------------------------
   Read the entire input file and return  a pointer to the first line of
@@ -581,6 +591,15 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile, bool *expr_w_t
         inp_remove_excess_ws(working);
 
         inp_vdmos_model(working);
+
+        if(inp_compat_mode == COMPATMODE_LTA)
+            working = ltspice_compat(working);
+        else if(inp_compat_mode == COMPATMODE_PSA)
+            working = pspice_compat(working);
+        else if (inp_compat_mode == COMPATMODE_LTPSA) {
+            working = ltspice_compat(working);
+            working = pspice_compat(working);
+        }
 
         comment_out_unused_subckt_models(working);
 
@@ -814,7 +833,8 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
         /* now handle old style .lib entries */
         /* new style .lib entries handling is in expand_section_references() */
         if (ciprefix(".lib", buffer))
-            if (inp_compat_mode == COMPATMODE_PS) {
+            if (inp_compat_mode == COMPATMODE_PS || inp_compat_mode == COMPATMODE_PSA 
+                || inp_compat_mode == COMPATMODE_LTPS || inp_compat_mode == COMPATMODE_LTPSA) {
                 /* compatibility mode,
                  *   this is neither a libray section definition nor a reference
                  * interpret as old style
@@ -889,8 +909,15 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
             }
 
             if (newcard) {
-                if (inp_compat_mode == COMPATMODE_PS)
+                if (inp_compat_mode == COMPATMODE_LT)
+                    newcard = ltspice_compat(newcard);
+                else if (inp_compat_mode == COMPATMODE_PS)
                     newcard = pspice_compat(newcard);
+                else if (inp_compat_mode == COMPATMODE_LTPS) {
+                    newcard = ltspice_compat(newcard);
+                    newcard = pspice_compat(newcard);
+                }
+
                 int line_number_inc = 1;
                 end->nextcard = newcard;
                 /* Renumber the lines */
@@ -2474,7 +2501,9 @@ inp_fix_for_numparam(struct names *subckt_w_params, struct card *c)
 
         inp_change_quotes(c->line);
 
-        if ((inp_compat_mode == COMPATMODE_ALL) || (inp_compat_mode == COMPATMODE_PS))
+        if ((inp_compat_mode == COMPATMODE_ALL) || (inp_compat_mode == COMPATMODE_PS) ||
+            (inp_compat_mode == COMPATMODE_PSA) || (inp_compat_mode == COMPATMODE_LTPS) ||
+            (inp_compat_mode == COMPATMODE_LTPSA))
             if (ciprefix(".subckt", c->line) || ciprefix("x", c->line)) {
                 /* remove params: */
                 char *str_ptr = strstr(c->line, "params:");
@@ -7361,6 +7390,152 @@ pspice_compat(struct card *oldcard)
                     stoks[0], stoks[3], stoks[4], stoks[1], stoks[2], stoks[5]);
             }
             for (i = 0; i < 6; i++)
+                tfree(stoks[i]);
+        }
+    }
+    del_models(modelsfound);
+
+    return newcard;
+}
+
+/**** LTSPICE to ngspice **************
+* add functions uplim, dnlim
+* Replace
+* D1 A K SDMOD
+* .MODEL SDMOD D (Roff=1000 Ron=0.7  Rrev=0.2  Vfwd=1  Vrev=10 Revepsilon=0.2 Epsilon=0.2 Ilimit=7 Revilimit=7)
+* by
+* ad1 a k asdmod
+* .model asdmod sidiode(Roff=1000 Ron=0.7  Rrev=0.2  Vfwd=1  Vrev=10 Revepsilon=0.2 Epsilon=0.2 Ilimit=7 Revilimit=7)
+*/
+struct card *
+ltspice_compat(struct card *oldcard)
+{
+    struct card *card, *newcard, *nextcard;
+    struct vsmodels *modelsfound = NULL;
+    int skip_control = 0;
+
+    /* add funcs uplim, dnlim to beginning of deck */
+    char *new_str = copy(".func uplim(x, pos, z) { min(x, pos - z) + (1 - (min(max(0, x - pos + z), 2 * z) / 2 / z - 1)**2)*z }");
+    newcard = insert_new_line(NULL, new_str, 1, 0);
+    new_str = copy(".func dnlim(x, neg, z) { max(x, neg + z) - (1 - (min(max(0, -x + neg + z), 2 * z) / 2 / z - 1)**2)*z }"); 
+    nextcard = insert_new_line(newcard, new_str, 2, 0);
+    new_str = copy(".func uplim_tanh(x, pos, z) { min(x, pos - z) + tanh(max(0, x - pos + z) / z)*z }");
+    nextcard = insert_new_line(nextcard, new_str, 3, 0);
+    new_str = copy(".func dnlim_tanh(x, neg, z) { max(x, neg + z) - tanh(max(0, neg + z - x) / z)*z }");
+    nextcard = insert_new_line(nextcard, new_str, 4, 0);
+    nextcard->nextcard = oldcard;
+
+     /* replace
+    * D1 A K SDMOD
+    * .MODEL SDMOD D (Roff=1000 Ron=0.7  Rrev=0.2  Vfwd=1  Vrev=10 Revepsilon=0.2 Epsilon=0.2 Ilimit=7 Revilimit=7)
+    * by
+    * a1 a k SDMOD
+    * .model SDMOD sidiode(Roff=1000 Ron=0.7  Rrev=0.2  Vfwd=1  Vrev=10 Revepsilon=0.2 Epsilon=0.2 Ilimit=7 Revilimit=7)
+    * Do this if one of the parameters, which are uncommon to standard diode model, has been found.
+
+    * simple hierachy, as nested subcircuits are not allowed in PSPICE */
+
+    /* first scan: find the d models, transform them and put them into a list */
+    for (card = nextcard; card; card = card->nextcard) {
+        char *str;
+        static struct card *subcktline = NULL;
+        static int nesting = 0;
+        char *cut_line = card->line;
+        if (ciprefix(".subckt", cut_line)) {
+            subcktline = card;
+            nesting++;
+        }
+        if (ciprefix(".ends", cut_line))
+            nesting--;
+
+        if (ciprefix(".model", card->line) && search_plain_identifier(card->line, "d")) {
+            if (search_plain_identifier(card->line, "roff") ||
+                search_plain_identifier(card->line, "ron") ||
+                search_plain_identifier(card->line, "rrev") ||
+                search_plain_identifier(card->line, "vfwd") ||
+                search_plain_identifier(card->line, "vrev") ||
+                search_plain_identifier(card->line, "revepsilon") ||
+                search_plain_identifier(card->line, "epsilon") ||
+                search_plain_identifier(card->line, "revilimit") ||
+                search_plain_identifier(card->line, "ilimit")
+                )
+            {
+                char *modname;
+
+                card->line = str = inp_remove_ws(card->line);
+                str = nexttok(str); /* throw away '.model' */
+                INPgetNetTok(&str, &modname, 0); /* model name */
+                if (!ciprefix("d", str)) {
+                    tfree(modname);
+                    continue;
+                }
+                /* skip d */
+                str++;
+                /* we take all the existing parameters */
+                char *newstr = copy(str);
+                tfree(card->line);
+                card->line = tprintf(".model a%s sidiode%s", modname, newstr);
+                if (nesting > 0)
+                    modelsfound = insert_new_model(modelsfound, modname, subcktline->line);
+                else
+                    modelsfound = insert_new_model(modelsfound, modname, "top");
+                tfree(modname);
+                tfree(newstr);
+            }
+        }
+        else
+            continue;
+    }
+
+    /* no need to continue if no d is found */
+    if (!modelsfound)
+        return newcard;
+
+    /* second scan: find the diode instances d calling a simple diode model and transform them */
+    for (card = nextcard; card; card = card->nextcard) {
+        static struct card *subcktline = NULL;
+        static int nesting = 0;
+        char *cut_line = card->line;
+        if (*cut_line == '*')
+            continue;
+        // exclude any command inside .control ... .endc
+        if (ciprefix(".control", cut_line)) {
+            skip_control++;
+            continue;
+        }
+        else if (ciprefix(".endc", cut_line)) {
+            skip_control--;
+            continue;
+        }
+        else if (skip_control > 0) {
+            continue;
+        }
+        if (ciprefix(".subckt", cut_line)) {
+            subcktline = card;
+            nesting++;
+        }
+        if (ciprefix(".ends", cut_line))
+            nesting--;
+
+        if (ciprefix("d", cut_line)) {
+            /* check for the model name */
+            int i;
+            char *stoks[4];
+            for (i = 0; i < 4; i++)
+                stoks[i] = gettok_node(&cut_line);
+            /* rewrite d line and replace it if a model is found */
+            if ((nesting > 0) && find_a_model(modelsfound, stoks[3], subcktline->line)) {
+                tfree(card->line);
+                card->line = tprintf("a%s %s %s a%s",
+                    stoks[0], stoks[1], stoks[2], stoks[3]);
+            }
+            /* if model is not within same subcircuit, search at top level */
+            else if (find_a_model(modelsfound, stoks[3], "top")) {
+                tfree(card->line);
+                card->line = tprintf("a%s %s %s a%s",
+                    stoks[0], stoks[1], stoks[2], stoks[3]);
+            }
+            for (i = 0; i < 4; i++)
                 tfree(stoks[i]);
         }
     }
