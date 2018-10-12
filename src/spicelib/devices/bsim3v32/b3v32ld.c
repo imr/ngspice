@@ -2514,18 +2514,18 @@ finished:
                           czbdswg = model->BSIM3v32unitLengthGateSidewallJctCap
                             * here->BSIM3v32drainPerimeter;
                       }
-                  czbdsw = 0.0;
+                      czbdsw = 0.0;
                   }
                   else
                   {
-                  czbdsw = model->BSIM3v32unitLengthSidewallTempJctCap
-                         * (here->BSIM3v32drainPerimeter - pParam->BSIM3v32weff);
-                  czbdswg = model->BSIM3v32unitLengthGateSidewallTempJctCap
-                          *  pParam->BSIM3v32weff;
+                      czbdsw = model->BSIM3v32unitLengthSidewallTempJctCap
+                             * (here->BSIM3v32drainPerimeter - pParam->BSIM3v32weff);
+                      czbdswg = model->BSIM3v32unitLengthGateSidewallTempJctCap
+                              *  pParam->BSIM3v32weff;
                   }
                   if (here->BSIM3v32sourcePerimeter < pParam->BSIM3v32weff)
                   {
-                  czbssw = 0.0;
+                      czbssw = 0.0;
                       /* Added revision dependent code */
                       switch (model->BSIM3v32intVersion) {
                         case BSIM3v32V324:
@@ -2536,7 +2536,7 @@ finished:
                         case BSIM3v32V322:
                         case BSIM3v32V32:
                         default:
-                          czbsswg =        model->BSIM3v32unitLengthGateSidewallJctCap
+                          czbsswg = model->BSIM3v32unitLengthGateSidewallJctCap
                             * here->BSIM3v32sourcePerimeter;
                       }
                   }
