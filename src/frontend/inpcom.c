@@ -151,7 +151,9 @@ static char *inp_pathresolve_at(char *name, char *dir);
 static char *search_plain_identifier(char *str, const char *identifier);
 void tprint(struct card *deck);
 static struct card *pspice_compat(struct card *newcard);
+static void pspice_compat_a(struct card *oldcard);
 static struct card *ltspice_compat(struct card *oldcard);
+static void ltspice_compat_a(struct card *oldcard);
 
 struct inp_read_t
 { struct card *cc;
@@ -593,12 +595,12 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile, bool *expr_w_t
         inp_vdmos_model(working);
 
         if(inp_compat_mode == COMPATMODE_LTA)
-            working = ltspice_compat(working);
+            ltspice_compat_a(working);
         else if(inp_compat_mode == COMPATMODE_PSA)
-            working = pspice_compat(working);
+            pspice_compat_a(working);
         else if (inp_compat_mode == COMPATMODE_LTPSA) {
-            working = ltspice_compat(working);
-            working = pspice_compat(working);
+            ltspice_compat_a(working);
+            pspice_compat_a(working);
         }
 
         comment_out_unused_subckt_models(working);
@@ -7398,6 +7400,14 @@ pspice_compat(struct card *oldcard)
     return newcard;
 }
 
+/* do not modify oldcard address, insert everything after first line only */
+static void
+pspice_compat_a(struct card *oldcard)
+{
+    oldcard->nextcard = pspice_compat(oldcard->nextcard);
+}
+
+
 /**** LTSPICE to ngspice **************
 * add functions uplim, dnlim
 * Replace
@@ -7542,4 +7552,11 @@ ltspice_compat(struct card *oldcard)
     del_models(modelsfound);
 
     return newcard;
+}
+
+/* do not modify oldcard address, insert everything after first line only */
+static void
+ltspice_compat_a(struct card *oldcard)
+{
+    oldcard->nextcard = ltspice_compat(oldcard->nextcard);
 }
