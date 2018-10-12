@@ -1,7 +1,7 @@
 /*.......1.........2.........3.........4.........5.........6.........7.........8
 ================================================================================
 
-FILE diodes/cfunc.mod
+FILE sidiode/cfunc.mod
 
 Copyright 2018
 GHolger Vogt
@@ -87,16 +87,6 @@ typedef struct {
 /*=== FUNCTION PROTOTYPE DEFINITIONS ===*/
 
 
-
-
-
-/*==============================================================================
-
-FUNCTION void cm_diodes()
-
-
-==============================================================================*/
-
 static void
 cm_sidiode_callback(ARGS, Mif_Callback_Reason_t reason)
 {
@@ -110,8 +100,12 @@ cm_sidiode_callback(ARGS, Mif_Callback_Reason_t reason)
 }
 
 
-/*=== CM_DIODES ROUTINE ===*/
 
+/*==============================================================================
+
+FUNCTION void cm_sidiode()
+
+==============================================================================*/
 
 void cm_sidiode(ARGS)  /* structure holding parms,
                                           inputs, outputs, etc.     */
@@ -122,7 +116,7 @@ void cm_sidiode(ARGS)  /* structure holding parms,
 
     Mif_Complex_t ac_gain;  /* AC gain  */
 
-    double Vrev, Vfwd, Vin, Id, deriv, Ilimit, Revilimit;
+    double Vrev, Vfwd, Vin, Idd, deriv, Ilimit, Revilimit;
 
     Vrev = -PARAM(vrev);
     Vfwd = PARAM(vfwd);
@@ -177,7 +171,7 @@ void cm_sidiode(ARGS)  /* structure holding parms,
             loc->Revili = MIF_TRUE;
         else
             loc->Revili = MIF_FALSE;
-            
+
 
         loc->grev = grev;
         loc->goff = goff;
@@ -193,43 +187,45 @@ void cm_sidiode(ARGS)  /* structure holding parms,
 
     if (Vin < loc->Va) {
         if(loc->Revili) {
-            double tmp = tanh(loc->a2 * (loc->Va - Vin));
-            Id = Ilimit * tmp + loc->goff * loc->Va 
+            double tmp = tanh(loc->a2 * (Vin - loc->Va));
+            double ia = loc->goff * loc->Va
                 + 0.5 * (loc->Va - loc->Vb) * (loc->Va - loc->Vb) * loc->a1;
+            Idd = (Revilimit - ia) * tmp + ia;
             deriv = loc->grev * (1. - tmp * tmp);
         }
         else {
-            Id = Vrev * loc->goff + (Vin - Vrev) * loc->grev;
+            Idd = Vrev * loc->goff + (Vin - Vrev) * loc->grev;
             deriv = loc->grev;
         }
     }
     else if (loc->revepsi && Vin >= loc->Va && Vin < loc->Vb) {
-        Id = 0.5 * (Vin -loc->Vb) * (Vin - loc->Vb) * loc->a1 + Vin * loc->goff;
+        Idd = 0.5 * (Vin -loc->Vb) * (Vin - loc->Vb) * loc->a1 + Vin * loc->goff;
         deriv = (Vin - loc->Vb) * loc->a1 + loc->goff;
     }
     else if (Vin >= loc->Vb && Vin < loc->Vc) {
-        Id = Vin * loc->goff;
+        Idd = Vin * loc->goff;
         deriv = loc->goff;
     }
     else if (loc->epsi && Vin >= loc->Vc && Vin < loc->Vd) {
-        Id = 0.5 * (Vin -loc->Vc) * (Vin - loc->Vc) * loc->b1 + Vin * loc->goff;
+        Idd = 0.5 * (Vin -loc->Vc) * (Vin - loc->Vc) * loc->b1 + Vin * loc->goff;
         deriv = (Vin - loc->Vc) * loc->b1 + loc->goff;
     }
     else {
         if(loc->Ili) {
             double tmp = tanh(loc->b2 * (Vin - loc->Vd));
-            Id = Ilimit * tmp + loc->goff * loc->Vd 
+            double id = loc->goff * loc->Vd
                 + 0.5 * (loc->Vd - loc->Vc) * (loc->Vd - loc->Vc) * loc->b1;
+            Idd = (Ilimit - id) * tmp + id;
             deriv = loc->gon * (1. - tmp * tmp);
         }
         else {
-            Id = Vfwd * loc->goff + (Vin - Vfwd) * loc->gon;
+            Idd = Vfwd * loc->goff + (Vin - Vfwd) * loc->gon;
             deriv = loc->gon;
         }
     }
 
     if(ANALYSIS != MIF_AC) {        /* Output DC & Transient Values */
-        OUTPUT(ds) = Id;
+        OUTPUT(ds) = Idd;
         PARTIAL(ds,ds) = deriv;
     }
     else {                      /* Output AC Gain */
