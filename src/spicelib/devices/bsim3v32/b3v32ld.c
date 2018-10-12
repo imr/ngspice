@@ -2501,6 +2501,7 @@ finished:
                   
                   if (here->BSIM3v32drainPerimeter < pParam->BSIM3v32weff)
                   {
+                      czbdsw = 0.0;
                       /* Added revision dependent code */
                       switch (model->BSIM3v32intVersion) {
                         case BSIM3v32V324:
@@ -2514,14 +2515,26 @@ finished:
                           czbdswg = model->BSIM3v32unitLengthGateSidewallJctCap
                             * here->BSIM3v32drainPerimeter;
                       }
-                      czbdsw = 0.0;
                   }
                   else
                   {
-                      czbdsw = model->BSIM3v32unitLengthSidewallTempJctCap
-                             * (here->BSIM3v32drainPerimeter - pParam->BSIM3v32weff);
-                      czbdswg = model->BSIM3v32unitLengthGateSidewallTempJctCap
-                              *  pParam->BSIM3v32weff;
+                      /* Added revision dependent code */
+                      switch (model->BSIM3v32intVersion) {
+                        case BSIM3v32V324:
+                        case BSIM3v32V323:
+                          czbdsw = model->BSIM3v32unitLengthSidewallTempJctCap
+                                 * (here->BSIM3v32drainPerimeter - pParam->BSIM3v32weff);
+                          czbdswg = model->BSIM3v32unitLengthGateSidewallTempJctCap
+                                  *  pParam->BSIM3v32weff;
+                          break;
+                        case BSIM3v32V322:
+                        case BSIM3v32V32:
+                        default:
+                          czbdsw = model->BSIM3v32unitLengthSidewallJctCap
+                                 * (here->BSIM3v32drainPerimeter - pParam->BSIM3v32weff);
+                          czbdswg = model->BSIM3v32unitLengthGateSidewallJctCap
+                                  *  pParam->BSIM3v32weff;
+                      }
                   }
                   if (here->BSIM3v32sourcePerimeter < pParam->BSIM3v32weff)
                   {
@@ -2562,32 +2575,67 @@ finished:
                   }
 
               } else {
-                  error = ACM_junctionCapacitances(
-                  model->BSIM3v32acmMod,
-                  model->BSIM3v32calcacm,
-                  here->BSIM3v32geo,
-                  model->BSIM3v32hdif,
-                  model->BSIM3v32wmlt,
-                  here->BSIM3v32w,
-                  model->BSIM3v32xw,
-                  here->BSIM3v32drainAreaGiven,
-                  here->BSIM3v32drainArea,
-                  here->BSIM3v32drainPerimeterGiven,
-                  here->BSIM3v32drainPerimeter,
-                  here->BSIM3v32sourceAreaGiven,
-                  here->BSIM3v32sourceArea,
-                  here->BSIM3v32sourcePerimeterGiven,
-                  here->BSIM3v32sourcePerimeter,
-                  model->BSIM3v32unitAreaTempJctCap,
-                  model->BSIM3v32unitLengthSidewallTempJctCap,
-                  model->BSIM3v32unitLengthGateSidewallJctCap,
-                  &czbd,
-                  &czbdsw,
-                  &czbdswg,
-                  &czbs,
-                  &czbssw,
-                  &czbsswg
-                  );
+                  /* Added revision dependent code */
+                  switch (model->BSIM3v32intVersion) {
+                    case BSIM3v32V324:
+                    case BSIM3v32V323:
+                      error = ACM_junctionCapacitances(
+                      model->BSIM3v32acmMod,
+                      model->BSIM3v32calcacm,
+                      here->BSIM3v32geo,
+                      model->BSIM3v32hdif,
+                      model->BSIM3v32wmlt,
+                      here->BSIM3v32w,
+                      model->BSIM3v32xw,
+                      here->BSIM3v32drainAreaGiven,
+                      here->BSIM3v32drainArea,
+                      here->BSIM3v32drainPerimeterGiven,
+                      here->BSIM3v32drainPerimeter,
+                      here->BSIM3v32sourceAreaGiven,
+                      here->BSIM3v32sourceArea,
+                      here->BSIM3v32sourcePerimeterGiven,
+                      here->BSIM3v32sourcePerimeter,
+                      model->BSIM3v32unitAreaTempJctCap,
+                      model->BSIM3v32unitLengthSidewallTempJctCap,
+                      model->BSIM3v32unitLengthGateSidewallTempJctCap,
+                      &czbd,
+                      &czbdsw,
+                      &czbdswg,
+                      &czbs,
+                      &czbssw,
+                      &czbsswg
+                      );
+                      break;
+                    case BSIM3v32V322:
+                    case BSIM3v32V32:
+                    default:
+                      error = ACM_junctionCapacitances(
+                      model->BSIM3v32acmMod,
+                      model->BSIM3v32calcacm,
+                      here->BSIM3v32geo,
+                      model->BSIM3v32hdif,
+                      model->BSIM3v32wmlt,
+                      here->BSIM3v32w,
+                      model->BSIM3v32xw,
+                      here->BSIM3v32drainAreaGiven,
+                      here->BSIM3v32drainArea,
+                      here->BSIM3v32drainPerimeterGiven,
+                      here->BSIM3v32drainPerimeter,
+                      here->BSIM3v32sourceAreaGiven,
+                      here->BSIM3v32sourceArea,
+                      here->BSIM3v32sourcePerimeterGiven,
+                      here->BSIM3v32sourcePerimeter,
+                      model->BSIM3v32unitAreaJctCap,
+                      model->BSIM3v32unitLengthSidewallJctCap,
+                      model->BSIM3v32unitLengthGateSidewallJctCap,
+                      &czbd,
+                      &czbdsw,
+                      &czbdswg,
+                      &czbs,
+                      &czbssw,
+                      &czbsswg
+                      );
+                  }
                   if (error)
                       return(error);
               }
