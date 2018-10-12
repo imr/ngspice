@@ -1241,6 +1241,10 @@ com_alter_common(wordlist *wl, int do_model)
         return;
     }
 
+    /* in case the altermod command comes from commandline or
+       over shared library we have to provide lowercase */
+    strtolower(param);
+
     words = eqword->wl_next;
     /* skip next line if words is a vector */
     if (!eq(words->wl_word, "["))
