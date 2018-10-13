@@ -2,14 +2,23 @@ Ngspice-29, Sept 30th, 2018
 ============
 
 - New features:
-    + configure flag --with-fftw3 If set to 'no', internal fast fourier is used
+    + new variable no_auto_gnd. If set, the automatic replacing of gnd by 0
+      is disabled
+    + new compatibility modes for 'set behavior=??'. ps sets PSPICE, lt sets
+      LTSPICE compatibility, ltps is both for a file added by .include command, 
+      psa, lta, and ltpsa are the same for the whole netlist
+    + .if, .elseif, .endif is now evaluated recursively, nested .if are thus
+      enabled
+    + new code model sidiode, that is a simple diode, linear breakdown, reverse
+      and forward regions with smooth overlapp, and optional current limits
+    + configure flag --with-fftw3. If set to 'no', internal fast fourier is used
       instead of fftw
     + command setseed to set the seed value for the random number generator
     + option seed=[val|random]
     + variable inputdir to remeber and retrieve the last input file directory
     + example directory 'digital' with analog, behavioral and digital example input files
     + new XSPICE filesource, d_source, and state-machine examples
-    + +, - maybe part of instance name
+    + + or - maybe part of instance name
     + Quasi-saturation VDMOS example
     + add environmental variable SOURCE_DATE_EPOCH to allow reproducible executables
     + new parameters to command setplot: setplot next, setplot previous
