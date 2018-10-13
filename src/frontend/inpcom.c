@@ -587,12 +587,6 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile, bool *expr_w_t
         struct card *working = cc->nextcard;
 
         delete_libs();
-        inp_fix_for_numparam(subckt_w_params, working);
-
-
-        inp_remove_excess_ws(working);
-
-        inp_vdmos_model(working);
 
         if(inp_compat_mode == COMPATMODE_LTA)
             ltspice_compat_a(working);
@@ -602,6 +596,12 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile, bool *expr_w_t
             ltspice_compat_a(working);
             pspice_compat_a(working);
         }
+
+        inp_fix_for_numparam(subckt_w_params, working);
+
+        inp_remove_excess_ws(working);
+
+        inp_vdmos_model(working);
 
         comment_out_unused_subckt_models(working);
 
