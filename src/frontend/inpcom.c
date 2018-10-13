@@ -625,8 +625,8 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile, bool *expr_w_t
 
         delete_names(subckt_w_params);
         subckt_w_params = NULL;
-
-        inp_fix_gnd_name(working);
+        if (!cp_getvar("no_auto_gnd", CP_BOOL, NULL, 0))
+            inp_fix_gnd_name(working);
         inp_chk_for_multi_in_vcvs(working, &rv. line_number);
 
         if (cp_getvar("addcontrol", CP_BOOL, NULL, 0))
@@ -1097,7 +1097,10 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
         comfile = TRUE;
 
     if (call_depth == 0 && !comfile) {
-        insert_new_line(cc, copy(".global gnd"), 1, 0);
+        if (!cp_getvar("no_auto_gnd", CP_BOOL, NULL, 0))
+            insert_new_line(cc, copy(".global gnd"), 1, 0);
+        else
+            insert_new_line(cc, copy("* gnd is not set to 0 automatically "), 1, 0);
 
         if (inp_compat_mode == COMPATMODE_ALL ||
             inp_compat_mode == COMPATMODE_HS  ||
@@ -1350,8 +1353,9 @@ readline(FILE *fd)
 }
 
 
-/* replace "gnd" by " 0 "
-   Delimiters of gnd may be ' ' or ',' or '(' or ')' */
+/* Replace "gnd" by " 0 "
+   Delimiters of gnd may be ' ' or ',' or '(' or ')',
+   may be disabled by setting variable no_auto_gnd */
 
 static void
 inp_fix_gnd_name(struct card *c)
