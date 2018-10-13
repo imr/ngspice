@@ -32,7 +32,7 @@ goto end
 
 :copy2
 copy %1\ngspice.exe %dst%\bin\
-copy ..\..\fftw-3.3.5-dll32\libfftw3-3.dll %dst%\bin\
+copy ..\..\fftw-3.3-dll32\libfftw3-3.dll %dst%\bin\
 goto end
 
 :b64
@@ -62,6 +62,6 @@ goto end
 
 :copy2-64
 copy %1\ngspice.exe %dst%\bin\
-copy ..\..\fftw-3.3.5-dll64\libfftw3-3.dll %dst%\bin\
+copy ..\..\fftw-3.3-dll64\libfftw3-3.dll %dst%\bin\
 
 :end
