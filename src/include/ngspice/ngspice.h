@@ -280,7 +280,7 @@ extern int tcl_fprintf(FILE *f, const char *format, ...);
 #define fprintf tcl_fprintf
 
 #undef perror
-#define perror(string) fprintf(stderr,"%s: %s\n",string,sys_errlist[errno])
+#define perror(string) fprintf(stderr, "%s: %s\n", string, strerror(errno))
 
 #elif defined SHARED_MODULE
 
@@ -307,7 +307,7 @@ extern void SetAnalyse(char *analyse, int percent);
 #define fprintf sh_fprintf
 
 #undef perror
-#define perror(string) fprintf(stderr, "%s: %s\n", string, sys_errlist[errno])
+#define perror(string) fprintf(stderr, "%s: %s\n", string, strerror(errno))
 
 #undef fputs
 #define fputs sh_fputs
