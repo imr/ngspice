@@ -936,11 +936,11 @@ if test "x$enable_xspice" = xyes; then
             ;;
         *freebsd* )
             AC_DEFINE([IPC_UNIX_SOCKETS], [1], [Client-Server via socket.])
-            XSPICEDLLIBS=""
+            XSPICEDLLIBS="-ldl"
             ;;
         *openbsd* )
             AC_DEFINE([IPC_UNIX_SOCKETS], [1], [Client-Server via socket.])
-            XSPICEDLLIBS=""
+            XSPICEDLLIBS="-ldl"
             ;;
         * )
             AC_DEFINE([IPC_UNIX_SOCKETS], [1], [Client-Server via socket.])
