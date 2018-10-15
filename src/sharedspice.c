@@ -814,7 +814,7 @@ int  ngSpice_Command(char* comexec)
        return 0;
     }
     return 1;
-};
+}
 
 /* Return information about a vector to the caller */
 IMPEXP
@@ -861,7 +861,7 @@ pvector_info  ngGet_Vec_Info(char* vecname)
 #endif
 
     return myvec;
-};
+}
 
 /* Receive a circuit from the caller as a
    pointer to an array of char* .
