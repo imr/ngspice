@@ -319,6 +319,14 @@ if test "x$with_ngshared" != x  &&  test "x$with_ngshared" != xno ; then
             has_shcyg=true
             AC_CHECK_LIB([pthread], [pthread_create])
             ;;
+        *solaris* )
+            if test "x$GCC" = xyes; then
+                CFLAGS="$CFLAGS -fvisibility=hidden"
+            else
+                CFLAGS="$CFLAGS -xldscope=hidden"
+            fi
+            AC_CHECK_LIB([pthread], [pthread_create])
+            ;;
         *)
             CFLAGS="$CFLAGS -fvisibility=hidden"
             AC_CHECK_LIB([pthread], [pthread_create])
@@ -941,6 +949,18 @@ if test "x$enable_xspice" = xyes; then
         *openbsd* )
             AC_DEFINE([IPC_UNIX_SOCKETS], [1], [Client-Server via socket.])
             XSPICEDLLIBS="-ldl"
+            ;;
+        *solaris* )
+            AC_DEFINE([IPC_UNIX_SOCKETS], [1], [Client-Server via socket.])
+            XSPICEDLLIBS="-ldl"
+            if test -z "$has_shared_module"; then
+                if test "x$GCC" = xyes; then
+                    CFLAGS="$CFLAGS -fvisibility=hidden"
+                else
+                    CFLAGS="$CFLAGS -xldscope=hidden"
+                fi
+            fi
+            XSPICEDLLIBS=""
             ;;
         * )
             AC_DEFINE([IPC_UNIX_SOCKETS], [1], [Client-Server via socket.])
