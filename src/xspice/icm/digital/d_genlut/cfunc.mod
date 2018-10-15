@@ -38,6 +38,7 @@ NON-STANDARD FEATURES
 
 /*=== INCLUDE FILES ====================*/
 
+#include <stdlib.h>
 #include <stdio.h>
 #include <ctype.h>
 #include <math.h>
