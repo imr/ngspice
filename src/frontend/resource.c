@@ -633,7 +633,7 @@ fault(void)
 static void *
 baseaddr(void)
 {
-#if defined(__CYGWIN__) || defined(__MINGW32__) || defined(HAVE_WIN32) || defined(__APPLE__)
+#if defined(__CYGWIN__) || defined(__MINGW32__) || defined(HAVE_WIN32) || defined(__APPLE__) || defined(__SUNPRO_C)
     return 0;
 #else
     char *low, *high, *at;
