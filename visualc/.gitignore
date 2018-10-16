@@ -11,12 +11,15 @@
 /xspice/cmpp/Debug/
 /xspice/cmpp/Release/
 /xspice/cmpp/tmp-bison/
+/xspice/cmpp/x64/
 /xspice/icm/
 /xspice/intermediate/
 
+/x64/
 /vngspice/
 /vngspice-fftw/
 /sharedspice/
 
 /.vs/
 *.vc.db
+spinit

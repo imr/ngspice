@@ -1,11 +1,11 @@
-../../fftw-3.3.5-dll32 and ../../fftw-3.3.5-dll64
+../../fftw-3.3-dll32 and ../../fftw-3.3-dll64
 are the places to deploy the appropriate 32/64 bit version
 of the fftw3 libraries under VC++ which can be found here:
 
  http://www.fftw.org/install/windows.html
 
-More precisely (here in case of the 32 bit version),
- - you have to create the directory ../../fftw-3.3.5-dll32
+More precisely (here in case of the 32 bit version 3.3.5),
+ - you have to create the directory ../../fftw-3.3-dll32
     (which is side by side and thus outside of the ngspice source tree)
  - you have to fetch fftw-3.3.5-dll32.zip and deploy it there
  - you have to unpack this .zip there
@@ -25,7 +25,7 @@ to a place which is in your PATH environment.
 
 (compile
   "url=ftp://ftp.fftw.org/pub/fftw
-       for i in fftw-3.3.5-dll32 fftw-3.3.5-dll64 ; do
+       for i in fftw-3.3-dll32 fftw-3.3-dll64 ; do
            dst=../../$i
            mkdir -p $dst
            (cd $dst && wget $url/$i.zip && unzip $i.zip)
