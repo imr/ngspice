@@ -952,15 +952,12 @@ if test "x$enable_xspice" = xyes; then
             ;;
         *solaris* )
             AC_DEFINE([IPC_UNIX_SOCKETS], [1], [Client-Server via socket.])
-            XSPICEDLLIBS="-ldl"
+            XSPICEDLLIBS=""
             if test -z "$has_shared_module"; then
                 if test "x$GCC" = xyes; then
                     CFLAGS="$CFLAGS -fvisibility=hidden"
-                else
-                    CFLAGS="$CFLAGS -xldscope=hidden"
                 fi
             fi
-            XSPICEDLLIBS=""
             ;;
         * )
             AC_DEFINE([IPC_UNIX_SOCKETS], [1], [Client-Server via socket.])
