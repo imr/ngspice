@@ -201,7 +201,7 @@ char *MIFgetMod(
                                     val, NULL);
                             /* free val, allocated by MIFgetValue */
                             int vtype = (ft_sim->devices[modtmp->INPmodType]->modelParms[j].dataType & IF_VARTYPES);
-                            if (vtype == IF_FLAGVEC || IF_INTVEC)
+                            if (vtype == IF_FLAGVEC || vtype == IF_INTVEC)
                                 tfree(val->v.vec.iVec);
                             if (vtype == IF_REALVEC)
                                 tfree(val->v.vec.rVec);
