@@ -22,7 +22,7 @@ copy %cmsrc%\xtraevt.cm %dst%\lib\ngspice\xtraevt.cm
 copy %cmsrc%\xtradev.cm %dst%\lib\ngspice\xtradev.cm
 copy %cmsrc%\spice2poly.cm %dst%\lib\ngspice\spice2poly.cm
 copy .\spinit_all %dst%\share\ngspice\scripts\spinit
-copy .\spinitd .\spinit
+copy .\spinitr .\spinit
 
 if "%2" == "fftw" goto copy2
 if "%3" == "fftw" goto copy2
@@ -52,7 +52,7 @@ copy %cmsrc%\xtraevt64.cm %dst%\lib\ngspice\xtraevt.cm
 copy %cmsrc%\xtradev64.cm %dst%\lib\ngspice\xtradev.cm
 copy %cmsrc%\spice2poly64.cm %dst%\lib\ngspice\spice2poly.cm
 copy .\spinit_all %dst%\share\ngspice\scripts\spinit
-copy .\spinitd64 .\spinit
+copy .\spinitr64 .\spinit
 
 if "%2" == "fftw" goto copy2-64
 if "%3" == "fftw" goto copy2-64
