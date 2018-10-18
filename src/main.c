@@ -1229,6 +1229,10 @@ main(int argc, char **argv)
                 if (!Infile_Path)
                     Infile_Path = ngdirname(arg);
 
+             /* unquote the input string, needed if it results from double clicking the filename */
+#if defined(HAS_WINGUI)
+                arg = cp_unquote(arg);
+#endif
                 /* Copy all the arguments into the temporary file */
                 tp = fopen(arg, "r");
                 if (!tp) {
@@ -1253,6 +1257,8 @@ main(int argc, char **argv)
 #if defined(HAS_WINGUI)
                 /* write source file name into source window */
                 SetSource(dname);
+                /* free arg that has been unquoted above */
+                tfree(arg);
 #endif
 
                 append_to_stream(tempfile, tp);
