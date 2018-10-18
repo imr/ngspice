@@ -46,14 +46,19 @@ mkvar(char **p, char *path_prefix, char *var_dir, char *env_var)
     may be overridden here by environmental variable SPICE_LIB_DIR.
     The search path for codemodels in spinit contains $dprefix, or, if --enable-relpath
     is given, to ../lib, set by src/makefile.am. With Visual C, it is set manually by
-    an entry to ngspice\visualc\src\include\ngspice\config.h.*/
+    an entry to ngspice\visualc\src\include\ngspice\config.h.
+    For Windows GUI and Console the path is set relative to the executable.*/
 void
 ivars(char *argv0)
 {
-    char *temp=NULL;
+    char *temp=NULL, *ngpath;
 
 #ifdef HAS_RELPATH
     Spice_Lib_Dir = temp = copy("../share/ngspice");
+#elif !defined SHARED_MODULE && (defined (HAS_WINGUI) || defined (__MINGW32__) || defined (_MSC_VER))
+    ngpath = ngdirname(argv0);
+    mkvar(&Spice_Lib_Dir, ngpath, "../share/ngspice", "SPICE_LIB_DIR");
+    tfree(ngpath);
 #else
     env_overr(&Spice_Lib_Dir, "SPICE_LIB_DIR");
 #endif
@@ -71,7 +76,7 @@ ivars(char *argv0)
     /* get directory where ngspice resides */
 #if defined (HAS_WINGUI) || defined (__MINGW32__) || defined (_MSC_VER)
     {
-        char *ngpath = ngdirname(argv0);
+        ngpath = ngdirname(argv0);
         /* set path either to <ngspice-bin-directory>/input or,
         if set, to environment variable NGSPICE_INPUT_DIR */
         mkvar(&Inp_Path, ngpath, "input", "NGSPICE_INPUT_DIR");
