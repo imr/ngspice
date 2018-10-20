@@ -186,7 +186,8 @@ findsubname(dico_t *dico, SPICE_DSTRINGPTR dstr_p)
             char *t;
             entry_t *entry;
             /* check for known subckt name */
-            if (inp_compat_mode == COMPATMODE_PS)
+            if (inp_compat_mode == COMPATMODE_PS || inp_compat_mode == COMPATMODE_PSA
+                || inp_compat_mode == COMPATMODE_LTPS || inp_compat_mode == COMPATMODE_LTPSA)
                 for (t = p; alfanumps(*t); t++)
                     ;
             else
