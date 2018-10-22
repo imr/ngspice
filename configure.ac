@@ -310,6 +310,7 @@ fi
 if test "x$with_ngshared" != x  &&  test "x$with_ngshared" != xno ; then
     has_shared_module=true
     AC_DEFINE([SHARED_MODULE], [1], [shared ngspice module])
+    VIS_CFLAGS=""
     case $host_os in
         *mingw* | *msys* )
             has_shwin=true
@@ -930,6 +931,7 @@ AC_PROG_LEX
 #################  XSPICE ##################################################
 # Add new code models to the build by pointing to them here.
 
+VIS_CFLAGS=""
 if test "x$enable_xspice" = xyes; then
     AC_MSG_RESULT([X-Spice features included])
     AC_DEFINE([XSPICE], [1], [The xspice enhancements])
@@ -955,7 +957,7 @@ if test "x$enable_xspice" = xyes; then
             XSPICEDLLIBS=""
             if test -z "$has_shared_module"; then
                 if test "x$GCC" = xyes; then
-                    CFLAGS="$CFLAGS -fvisibility=hidden"
+                    VIS_CFLAGS="-fvisibility=hidden"
                 fi
             fi
             ;;
@@ -963,7 +965,7 @@ if test "x$enable_xspice" = xyes; then
             AC_DEFINE([IPC_UNIX_SOCKETS], [1], [Client-Server via socket.])
             XSPICEDLLIBS="-ldl"
             if test -z "$has_shared_module"; then
-                CFLAGS="$CFLAGS -fvisibility=hidden"
+                VIS_CFLAGS="-fvisibility=hidden"
             fi
             ;;
     esac
@@ -975,6 +977,7 @@ else
 fi
 AC_SUBST([XSPICEINIT])
 AC_SUBST([XSPICEDLLIBS])
+AC_SUBST([VIS_CFLAGS])
 
 AM_CONDITIONAL([XSPICE_WANTED], [test "x$enable_xspice" = xyes])
 
