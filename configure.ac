@@ -951,8 +951,8 @@ if test "x$enable_xspice" = xyes; then
         *SunOS* )
             AC_DEFINE([IPC_UNIX_SOCKETS], [1], [Client-Server via socket.])
             XSPICEDLLIBS=""
-            if test "x$with_ngshared" = xno ; then
-                if test "x$enable_debug" = xno ; then
+            if test "x$with_ngshared" != xyes ; then
+                if test "x$enable_debug" != xyes ; then
 			    	if test "x$GCC" = xyes; then
                         VIS_CFLAGS="-fvisibility=hidden"
                     else
@@ -964,8 +964,8 @@ if test "x$enable_xspice" = xyes; then
         * )
             AC_DEFINE([IPC_UNIX_SOCKETS], [1], [Client-Server via socket.])
             XSPICEDLLIBS="-ldl"
-            if test "x$with_ngshared" = xno ; then
-                if test "x$enable_debug" = xno; then
+            if test "x$with_ngshared" != xyes ; then
+                if test "x$enable_debug" != xyes; then
                     VIS_CFLAGS="-fvisibility=hidden"
                 fi
             fi
