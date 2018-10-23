@@ -310,7 +310,6 @@ fi
 if test "x$with_ngshared" != x  &&  test "x$with_ngshared" != xno ; then
     has_shared_module=true
     AC_DEFINE([SHARED_MODULE], [1], [shared ngspice module])
-    VIS_CFLAGS=""
     case $host_os in
         *mingw* | *msys* )
             has_shwin=true
@@ -320,19 +319,24 @@ if test "x$with_ngshared" != x  &&  test "x$with_ngshared" != xno ; then
             has_shcyg=true
             AC_CHECK_LIB([pthread], [pthread_create])
             ;;
-        *solaris* )
-            if test "x$GCC" = xyes; then
-                CFLAGS="$CFLAGS -fvisibility=hidden"
-            else
-                CFLAGS="$CFLAGS -xldscope=hidden"
-            fi
-            AC_CHECK_LIB([pthread], [pthread_create])
-            ;;
         *)
-            CFLAGS="$CFLAGS -fvisibility=hidden"
             AC_CHECK_LIB([pthread], [pthread_create])
             ;;
     esac
+    if test "x$enable_debug" = xno; then
+        case $host_os in
+            *SunOS* )
+                if test "x$GCC" = xyes; then
+                    CFLAGS="$CFLAGS -fvisibility=hidden"
+                else
+                    CFLAGS="$CFLAGS -xldscope=hidden"
+                fi
+                ;;
+            *)
+                CFLAGS="$CFLAGS -fvisibility=hidden"
+                ;;
+        esac
+    fi
 
     with_x=no
     with_windows=no
@@ -931,8 +935,8 @@ AC_PROG_LEX
 #################  XSPICE ##################################################
 # Add new code models to the build by pointing to them here.
 
-VIS_CFLAGS=""
 if test "x$enable_xspice" = xyes; then
+    VIS_CFLAGS=""
     AC_MSG_RESULT([X-Spice features included])
     AC_DEFINE([XSPICE], [1], [The xspice enhancements])
     case $host_os in
@@ -940,44 +944,42 @@ if test "x$enable_xspice" = xyes; then
             AC_DEFINE([IPC_DEBUG_VIA_STDIO], [1], [Client-Server only via stdio.])
             XSPICEDLLIBS=""
             ;;
-        *cygwin* )
+        *cygwin* | *freebsd* | *openbsd* )
             AC_DEFINE([IPC_UNIX_SOCKETS], [1], [Client-Server via socket.])
             XSPICEDLLIBS=""
             ;;
-        *freebsd* )
+        *SunOS* )
             AC_DEFINE([IPC_UNIX_SOCKETS], [1], [Client-Server via socket.])
             XSPICEDLLIBS=""
-            ;;
-        *openbsd* )
-            AC_DEFINE([IPC_UNIX_SOCKETS], [1], [Client-Server via socket.])
-            XSPICEDLLIBS=""
-            ;;
-        *solaris* )
-            AC_DEFINE([IPC_UNIX_SOCKETS], [1], [Client-Server via socket.])
-            XSPICEDLLIBS=""
-            if test -z "$has_shared_module"; then
-                if test "x$GCC" = xyes; then
-                    VIS_CFLAGS="-fvisibility=hidden"
+            if test "x$with_ngshared" = xno ; then
+                if test "x$enable_debug" = xno ; then
+			    	if test "x$GCC" = xyes; then
+                        VIS_CFLAGS="-fvisibility=hidden"
+                    else
+                        VIS_CFLAGS="-xldscope=hidden"
+                    fi
                 fi
             fi
             ;;
         * )
             AC_DEFINE([IPC_UNIX_SOCKETS], [1], [Client-Server via socket.])
             XSPICEDLLIBS="-ldl"
-            if test -z "$has_shared_module"; then
-                VIS_CFLAGS="-fvisibility=hidden"
+            if test "x$with_ngshared" = xno ; then
+                if test "x$enable_debug" = xno; then
+                    VIS_CFLAGS="-fvisibility=hidden"
+                fi
             fi
             ;;
     esac
     XSPICEINIT=""
     AC_CHECK_FUNCS([modf])
     AC_CHECK_HEADERS([libintl.h malloc.h])
+    AC_SUBST([VIS_CFLAGS])
 else
     XSPICEINIT="*"
 fi
 AC_SUBST([XSPICEINIT])
 AC_SUBST([XSPICEDLLIBS])
-AC_SUBST([VIS_CFLAGS])
 
 AM_CONDITIONAL([XSPICE_WANTED], [test "x$enable_xspice" = xyes])
 
