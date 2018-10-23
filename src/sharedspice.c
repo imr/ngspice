@@ -201,6 +201,13 @@ void wl_delete_first(wordlist **wlstart, wordlist **wlend);
 int add_bkpt(void);
 int sharedsync(double*, double*, double, double, double, int, int*, int);
 
+void sh_delete_myvec(void);
+
+#ifdef XSPICE
+void shared_send_event(int, double, double, char *, void *, int, int);
+void shared_send_dict(int, int, char*, char*);
+#endif
+
 #if !defined(low_latency)
 static char* outstorage(char*, bool);
 static void printsend(void);
