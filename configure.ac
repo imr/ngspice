@@ -325,7 +325,7 @@ if test "x$with_ngshared" != x  &&  test "x$with_ngshared" != xno ; then
     esac
     if test "x$enable_debug" = xno; then
         case $host_os in
-            *SunOS* )
+            *solaris* )
                 if test "x$GCC" = xyes; then
                     CFLAGS="$CFLAGS -fvisibility=hidden"
                 else
@@ -948,7 +948,7 @@ if test "x$enable_xspice" = xyes; then
             AC_DEFINE([IPC_UNIX_SOCKETS], [1], [Client-Server via socket.])
             XSPICEDLLIBS=""
             ;;
-        *SunOS* )
+        *solaris* )
             AC_DEFINE([IPC_UNIX_SOCKETS], [1], [Client-Server via socket.])
             XSPICEDLLIBS=""
             if test "x$with_ngshared" != xyes ; then
