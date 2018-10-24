@@ -70,7 +70,7 @@ CKTtrunc(CKTcircuit *ckt, double *timeStep)
     size = SMPmatSize(ckt->CKTmatrix);
 #ifdef STEPDEBUG
     printf("at time %g, delta %g\n",ckt->CKTtime,ckt->CKTdeltaOld[0]);
-#endif STEPDEBUG
+#endif
     node = ckt->CKTnodes;
     switch(ckt->CKTintegrateMethod) {
 
