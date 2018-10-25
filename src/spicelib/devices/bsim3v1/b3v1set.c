@@ -161,7 +161,6 @@ IFuid tmpName;
         if (!model->BSIM3v1prwbGiven)
             model->BSIM3v1prwb = 0.0;
         if (!model->BSIM3v1prtGiven)
-        if (!model->BSIM3v1prtGiven)
             model->BSIM3v1prt = 0.0;
         if (!model->BSIM3v1eta0Given)
             model->BSIM3v1eta0 = 0.08;      /* no unit  */
@@ -306,7 +305,6 @@ IFuid tmpName;
             model->BSIM3v1lprwb = 0.0;
         if (!model->BSIM3v1lprwgGiven)
             model->BSIM3v1lprwg = 0.0;
-        if (!model->BSIM3v1lprtGiven)
         if (!model->BSIM3v1lprtGiven)
             model->BSIM3v1lprt = 0.0;
         if (!model->BSIM3v1leta0Given)
@@ -746,7 +744,6 @@ IFuid tmpName;
             model->BSIM3v1jctEmissionCoeff = 1.0;
         if (!model->BSIM3v1jctTempExponentGiven)
             model->BSIM3v1jctTempExponent = 3.0;
-        if (!model->BSIM3v1oxideTrapDensityAGiven)
         if (!model->BSIM3v1oxideTrapDensityAGiven)
 	{   if (model->BSIM3v1type == NMOS)
                 model->BSIM3v1oxideTrapDensityA = 1e20;

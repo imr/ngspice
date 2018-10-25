@@ -153,7 +153,6 @@ IFuid tmpName;
         if (!model->BSIM3v0prwbGiven)
             model->BSIM3v0prwb = 0.0;      
         if (!model->BSIM3v0prtGiven)
-        if (!model->BSIM3v0prtGiven)
             model->BSIM3v0prt = 0.0;      
         if (!model->BSIM3v0eta0Given)
             model->BSIM3v0eta0 = 0.08;      /* no unit  */ 
@@ -296,7 +295,6 @@ IFuid tmpName;
             model->BSIM3v0lprwb = 0.0;
         if (!model->BSIM3v0lprwgGiven)
             model->BSIM3v0lprwg = 0.0;
-        if (!model->BSIM3v0lprtGiven)
         if (!model->BSIM3v0lprtGiven)
             model->BSIM3v0lprt = 0.0;
         if (!model->BSIM3v0leta0Given)

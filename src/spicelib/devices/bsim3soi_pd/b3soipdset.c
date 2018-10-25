@@ -170,7 +170,6 @@ IFuid tmpName;
         if (!model->B3SOIPDprwbGiven)
             model->B3SOIPDprwb = 0.0;      
         if (!model->B3SOIPDprtGiven)
-        if (!model->B3SOIPDprtGiven)
             model->B3SOIPDprt = 0.0;      
         if (!model->B3SOIPDeta0Given)
             model->B3SOIPDeta0 = 0.08;      /* no unit  */ 
