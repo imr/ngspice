@@ -51,7 +51,10 @@ mkvar(char **p, char *path_prefix, char *var_dir, char *env_var)
 void
 ivars(char *argv0)
 {
-    char *temp=NULL, *ngpath;
+    char *temp=NULL;
+#if defined (HAS_WINGUI) || defined (__MINGW32__) || defined (_MSC_VER)
+    char *ngpath;
+#endif
 
 #ifdef HAS_RELPATH
     Spice_Lib_Dir = temp = copy("../share/ngspice");
