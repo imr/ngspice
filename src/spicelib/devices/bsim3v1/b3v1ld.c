@@ -2049,25 +2049,11 @@ line755:
           ag0 = ckt->CKTag[0];
 
 	  if (model->BSIM3v1capMod == 0)
-	  {   if (vgd < 0.0)
-	      {   
-	          cgdo = pParam->BSIM3v1cgdo;
-	          qgdo = pParam->BSIM3v1cgdo * vgd;
-	      }
-	      else
-	      {   cgdo = pParam->BSIM3v1cgdo;
-	          qgdo =  pParam->BSIM3v1cgdo * vgd;
-	      }
-
-	      if (vgs < 0.0)
-	      {   
-	          cgso = pParam->BSIM3v1cgso;
-	          qgso = pParam->BSIM3v1cgso * vgs;
-	      }
-	      else
-	      {   cgso = pParam->BSIM3v1cgso;
-	          qgso =  pParam->BSIM3v1cgso * vgs;
-	      }
+	  {
+	      cgdo = pParam->BSIM3v1cgdo;
+	      qgdo = pParam->BSIM3v1cgdo * vgd;
+	      cgso = pParam->BSIM3v1cgso;
+	      qgso = pParam->BSIM3v1cgso * vgs;
 	  }
 	  else if (model->BSIM3v1capMod == 1)
 	  {   if (vgd < 0.0)

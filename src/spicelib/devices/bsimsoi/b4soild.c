@@ -1708,8 +1708,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
             dVbs_dVb = 1.0;
             dVbs_dVe = 0.0;
             dVbs_dT = 0.0;
-            if (selfheat)  dVbsmos_dT = 0.0;
-            else  dVbsmos_dT = 0.0;
+            dVbsmos_dT = 0.0;
 
             Vbp = Vbs - Vps;
             dVbp_dVb = 1;
