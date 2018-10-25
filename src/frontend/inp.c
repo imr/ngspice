@@ -1678,7 +1678,6 @@ recifeval(struct card *pdeck)
     char *t;
     char *s = t = pdeck->line;
     /* get parameter to .if */
-    s = nexttok(s);
     elsefound = 0;
     elseiffound = 0;
     iffound = 1;
@@ -2093,11 +2092,11 @@ eval_agauss(struct card *deck, char *fcn)
 {
     struct card *card;
     double x, y, z, val;
+    int skip_control = 0;
 
     card = deck;
     for (; card; card = card->nextcard) {
 
-        int skip_control = 0;
         char *ap, *curr_line = card->line;
 
         /* exclude any command inside .control ... .endc */
