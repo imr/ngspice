@@ -1216,6 +1216,7 @@ IFvalue *value)
             return(OK);
         case B4SOI_MOD_TNOIMOD :
             value->iValue = model->B4SOItnoiMod;
+            return(OK);
         case B4SOI_MOD_TNOIA:
             value->rValue = model->B4SOItnoia;
             return(OK);
