@@ -409,7 +409,6 @@ BSIM4v7instance **InstArray;
         if (!model->BSIM4v7prwbGiven)
             model->BSIM4v7prwb = 0.0;      
         if (!model->BSIM4v7prtGiven)
-        if (!model->BSIM4v7prtGiven)
             model->BSIM4v7prt = 0.0;      
         if (!model->BSIM4v7eta0Given)
             model->BSIM4v7eta0 = 0.08;      /* no unit  */ 

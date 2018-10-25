@@ -166,7 +166,6 @@ IFuid tmpName;
         if (!model->B3SOIDDprwbGiven)
             model->B3SOIDDprwb = 0.0;      
         if (!model->B3SOIDDprtGiven)
-        if (!model->B3SOIDDprtGiven)
             model->B3SOIDDprt = 0.0;      
         if (!model->B3SOIDDeta0Given)
             model->B3SOIDDeta0 = 0.08;      /* no unit  */ 
