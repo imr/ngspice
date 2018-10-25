@@ -126,6 +126,7 @@ com_resume(wordlist *wl)
         /*---------------------------------------------------------------------------*/
 #else
         else if (!(rawfileFp = fopen(last_used_rawfile, "a"))) {
+            rawfileFp = stdout; /* If fopen has failed, we have to proceed with stdout */
             setvbuf(rawfileFp, rawfileBuf, _IOFBF, RAWBUF_SIZE);
             perror(last_used_rawfile);
             ft_setflag = FALSE;
