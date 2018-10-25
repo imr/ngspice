@@ -2808,41 +2808,11 @@ line755:
 
           if (model->BSIM3v32capMod == 0)
           {
-              /* Added revision dependent code */
-              switch (model->BSIM3v32intVersion) {
-                case BSIM3v32V324:
-                case BSIM3v32V323:
-                  /* code merge -JX */
-                  cgdo = pParam->BSIM3v32cgdo;
-                  qgdo = pParam->BSIM3v32cgdo * vgd;
-                  cgso = pParam->BSIM3v32cgso;
-                  qgso = pParam->BSIM3v32cgso * vgs;
-                  break;
-                case BSIM3v32V322:
-                case BSIM3v32V32:
-                default:
-                  if (vgd < 0.0)
-                    {
-                      cgdo = pParam->BSIM3v32cgdo;
-                      qgdo = pParam->BSIM3v32cgdo * vgd;
-                    }
-                  else
-                    {
-                      cgdo = pParam->BSIM3v32cgdo;
-                      qgdo = pParam->BSIM3v32cgdo * vgd;
-                    }
-
-                  if (vgs < 0.0)
-                    {
-                      cgso = pParam->BSIM3v32cgso;
-                      qgso = pParam->BSIM3v32cgso * vgs;
-                    }
-                  else
-                    {
-                      cgso = pParam->BSIM3v32cgso;
-                      qgso = pParam->BSIM3v32cgso * vgs;
-                    }
-              }
+              /* code merge -JX */
+              cgdo = pParam->BSIM3v32cgdo;
+              qgdo = pParam->BSIM3v32cgdo * vgd;
+              cgso = pParam->BSIM3v32cgso;
+              qgso = pParam->BSIM3v32cgso * vgs;
           }
           else if (model->BSIM3v32capMod == 1)
           {   if (vgd < 0.0)
