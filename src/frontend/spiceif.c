@@ -1301,7 +1301,7 @@ if_getstat(CKTcircuit *ckt, char *name)
                                           if_parm->id, &parm,
                                           NULL) == -1)
             {
-                fprintf(cp_err, "if_getstat: Internal Error: can't get %s\n", name);
+                fprintf(cp_err, "if_getstat: Internal Error: can't get a name\n");
                 return (NULL);
             }
 
