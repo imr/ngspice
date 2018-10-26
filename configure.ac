@@ -263,10 +263,10 @@ AC_CHECK_HEADERS([strings.h])
 if test "x$enable_ansi" = xyes; then
     AC_PROG_CC()
     AC_DIAGNOSE([obsolete], [AM_PROG_CC_STDC:
-	your code should no longer depend upon `am_cv_prog_cc_stdc', but upon
-	`ac_cv_prog_cc_stdc'.  Remove this warning and the assignment when
-	you adjust the code.  You can also remove the above call to
-	AC_PROG_CC if you already called it elsewhere.])
+    your code should no longer depend upon `am_cv_prog_cc_stdc', but upon
+    `ac_cv_prog_cc_stdc'.  Remove this warning and the assignment when
+    you adjust the code.  You can also remove the above call to
+    AC_PROG_CC if you already called it elsewhere.])
     am_cv_prog_cc_stdc=$ac_cv_prog_cc_stdc
 
     if test "x$am_cv_prog_cc_stdc" != xyes ; then
@@ -694,7 +694,7 @@ if test "x$enable_oldapps" = xyes ; then
     AC_MSG_RESULT([ngnutmeg ngsconvert ngproc2mod ngmultidec ngmakeidx nghelp are made.])
 else
     AC_MSG_RESULT([ngnutmeg ngsconvert ngproc2mod ngmultidec ngmakeidx nghelp are not made.])
-    AC_MSG_RESULT([No internal help available.])    
+    AC_MSG_RESULT([No internal help available.])
     AC_DEFINE([NOINTHELP], [1], [Internal (old) help not available])
 fi
 AM_CONDITIONAL([OLDAPPS], [test "x$enable_oldapps" = xyes])
@@ -953,7 +953,7 @@ if test "x$enable_xspice" = xyes; then
             XSPICEDLLIBS=""
             if test "x$with_ngshared" != xyes ; then
                 if test "x$enable_debug" != xyes ; then
-			    	if test "x$GCC" = xyes; then
+                    if test "x$GCC" = xyes; then
                         VIS_CFLAGS="-fvisibility=hidden"
                     else
                         VIS_CFLAGS="-xldscope=hidden"
