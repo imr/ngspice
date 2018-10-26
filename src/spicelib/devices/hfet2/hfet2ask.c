@@ -32,6 +32,7 @@ HFET2ask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
         case HFET2_WIDTH:
             value->rValue = here->HFET2width;
             value->rValue *= here->HFET2m;
+            return (OK);
         case HFET2_IC_VDS:
             value->rValue = here->HFET2icVDS;
             return (OK);
@@ -57,9 +58,11 @@ HFET2ask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
             value->iValue = here->HFET2sourcePrimeNode;
             return (OK); 
         case HFET2_TEMP:
-        	  value->rValue = here->HFET2temp - CONSTCtoK;
-       case HFET2_DTEMP:
-        	  value->rValue = here->HFET2dtemp;
+            value->rValue = here->HFET2temp - CONSTCtoK;
+            return (OK); 
+        case HFET2_DTEMP:
+            value->rValue = here->HFET2dtemp;
+            return (OK); 
         case HFET2_VGS:
             value->rValue = *(ckt->CKTstate0 + here->HFET2vgs);
             return (OK);
