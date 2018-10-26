@@ -1152,8 +1152,6 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==(double *)NUL
       pParam->HSM2_nsubpsti1  = pParam->HSM2_nsubpsti1 / C_m2cm ;
       pParam->HSM2_nsubcsti1  = pParam->HSM2_nsubcsti1 / C_m2cm ;
       pParam->HSM2_muesti1    = pParam->HSM2_muesti1 / C_m2cm ;
-      pParam->HSM2_ndep       = pParam->HSM2_ndep ;
-      pParam->HSM2_ninv       = pParam->HSM2_ninv ;
 
       pParam->HSM2_vmax       = pParam->HSM2_vmax   / C_m2cm ;
       pParam->HSM2_wfc        = pParam->HSM2_wfc    * C_m2cm_p2 ;
