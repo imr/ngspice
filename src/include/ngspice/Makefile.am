@@ -39,6 +39,7 @@ pkginclude_HEADERS = \
 	evt.h		\
 	evtproto.h	\
 	evttypes.h	\
+	evtshared.h	\
 	evtudn.h	\
 	ftedbgra.h	\
 	ftedebug.h	\
