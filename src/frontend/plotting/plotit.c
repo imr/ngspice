@@ -625,11 +625,13 @@ plotit(wordlist *wl, char *hcopy, char *devname)
         }
 
     /* The following line displays the unit at the time of
-       temp-sweep and res-sweep. This may not be a so good solution. by H.T */
+       temp-sweep, res-sweep, and i-sweep. This may not be a so good solution. by H.T */
     if (strcmp(vecs->v_scale->v_name, "temp-sweep") == 0)
         vecs->v_scale->v_type = SV_TEMP;
     if (strcmp(vecs->v_scale->v_name, "res-sweep") == 0)
         vecs->v_scale->v_type = SV_RES;
+    if (strcmp(vecs->v_scale->v_name, "i-sweep") == 0)
+        vecs->v_scale->v_type = SV_CURRENT;
 
     /* See if the log flag is set anywhere... */
     if (!gfound) {
