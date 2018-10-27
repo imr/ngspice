@@ -15,6 +15,7 @@ uname = $(shell uname)
 # C compiler to use
 CC = @CC@
 CFLAGS = @CFLAGS@
+VIS_CFLAGS = @VIS_CFLAGS@
 EXEEXT = @EXEEXT@
 BUILD_EXEEXT = @BUILD_EXEEXT@
 

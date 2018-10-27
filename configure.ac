@@ -319,19 +319,24 @@ if test "x$with_ngshared" != x  &&  test "x$with_ngshared" != xno ; then
             has_shcyg=true
             AC_CHECK_LIB([pthread], [pthread_create])
             ;;
+        *)
+            AC_CHECK_LIB([pthread], [pthread_create])
+            ;;
+    esac
+    if test "x$enable_debug" = xno; then
+        case $host_os in
         *solaris* )
             if test "x$GCC" = xyes; then
                 CFLAGS="$CFLAGS -fvisibility=hidden"
             else
                 CFLAGS="$CFLAGS -xldscope=hidden"
             fi
-            AC_CHECK_LIB([pthread], [pthread_create])
             ;;
         *)
             CFLAGS="$CFLAGS -fvisibility=hidden"
-            AC_CHECK_LIB([pthread], [pthread_create])
             ;;
-    esac
+        esac
+    fi
 
     with_x=no
     with_windows=no
@@ -931,6 +936,7 @@ AC_PROG_LEX
 # Add new code models to the build by pointing to them here.
 
 if test "x$enable_xspice" = xyes; then
+    VIS_CFLAGS=""
     AC_MSG_RESULT([X-Spice features included])
     AC_DEFINE([XSPICE], [1], [The xspice enhancements])
     case $host_os in
@@ -953,23 +959,30 @@ if test "x$enable_xspice" = xyes; then
         *solaris* )
             AC_DEFINE([IPC_UNIX_SOCKETS], [1], [Client-Server via socket.])
             XSPICEDLLIBS=""
-            if test -z "$has_shared_module"; then
-                if test "x$GCC" = xyes; then
-                    CFLAGS="$CFLAGS -fvisibility=hidden"
+            if test "x$with_ngshared" != xyes ; then
+                if test "x$enable_debug" = xno; then
+                    if test "x$GCC" = xyes; then
+                        VIS_CFLAGS="-fvisibility=hidden"
+                    else
+                        VIS_CFLAGS="-xldscope=hidden"
+                    fi
                 fi
             fi
             ;;
         * )
             AC_DEFINE([IPC_UNIX_SOCKETS], [1], [Client-Server via socket.])
             XSPICEDLLIBS="-ldl"
-            if test -z "$has_shared_module"; then
-                CFLAGS="$CFLAGS -fvisibility=hidden"
+            if test "x$with_ngshared" != xyes ; then
+                if test "x$enable_debug" = xno; then
+                    VIS_CFLAGS="-fvisibility=hidden"
+                fi
             fi
             ;;
     esac
     XSPICEINIT=""
     AC_CHECK_FUNCS([modf])
     AC_CHECK_HEADERS([libintl.h malloc.h])
+    AC_SUBST([VIS_CFLAGS])
 else
     XSPICEINIT="*"
 fi
