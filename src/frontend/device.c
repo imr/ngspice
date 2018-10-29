@@ -1385,7 +1385,7 @@ com_alter_mod(wordlist *wl)
         eqword++;
         while (*eqword == ' ')
             eqword++;
-        if (eqword == '\0') {
+        if (*eqword == '\0') {
             fprintf(cp_err, "Error: no filename given\n");
             controlled_exit(1);
         }
@@ -1395,7 +1395,7 @@ com_alter_mod(wordlist *wl)
         eqword += 4;
         while (*eqword == ' ')
             eqword++;
-        if (eqword == '\0') {
+        if (*eqword == '\0') {
             fprintf(cp_err, "Error: no filename given\n");
             controlled_exit(1);
         }
