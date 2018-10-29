@@ -1346,7 +1346,7 @@ settrans(char *formal, char *actual, const char *subname)
 {
     int i;
 
-    memset(table, 0, sizeof(*table));
+    memset(table, 0, N_GLOBAL_NODES * sizeof(*table));
 
     for (i = 0; i < N_GLOBAL_NODES; i++) {
         table[i].t_old = gettok(&formal);
