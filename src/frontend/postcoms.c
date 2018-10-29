@@ -273,7 +273,6 @@ com_print(wordlist *wl)
         out_send("\n");
         out_send(buf2);
         (void) sprintf(buf, "%s  %s", p->pl_name, p->pl_date);
-        j = (width - (int) strlen(buf)) / 2;
         out_send(buf);
         out_send("\n");
         for (i = 0; i < width; i++)
