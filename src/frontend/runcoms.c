@@ -282,12 +282,11 @@ dosim(
 /*---------------------------------------------------------------------------*/
 #else
         else if (!(rawfileFp = fopen(wl->wl_word, "w"))) {
-            rawfileFp = stdout; /* If fopen has failed, we have to proceed with stdout */
-            setvbuf(rawfileFp, rawfileBuf, _IOFBF, RAWBUF_SIZE);
             perror(wl->wl_word);
             ft_setflag = FALSE;
             return 1;
         }
+        setvbuf(rawfileFp, rawfileBuf, _IOFBF, RAWBUF_SIZE);
 #endif /* __MINGW32__ */
         rawfileBinary = !ascii;
     } else {
