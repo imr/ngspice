@@ -110,28 +110,27 @@ com_resume(wordlist *wl)
         /* ask if binary or ASCII, open file with w or wb   hvogt 15.3.2000 */
         else if (ascii) {
             if ((rawfileFp = fopen(last_used_rawfile, "a")) == NULL) {
-                setvbuf(rawfileFp, rawfileBuf, _IOFBF, RAWBUF_SIZE);
                 perror(last_used_rawfile);
                 ft_setflag = FALSE;
                 return;
             }
+            setvbuf(rawfileFp, rawfileBuf, _IOFBF, RAWBUF_SIZE);
         } else if (!ascii) {
             if ((rawfileFp = fopen(last_used_rawfile, "ab")) == NULL) {
-                setvbuf(rawfileFp, rawfileBuf, _IOFBF, RAWBUF_SIZE);
                 perror(last_used_rawfile);
                 ft_setflag = FALSE;
                 return;
             }
+            setvbuf(rawfileFp, rawfileBuf, _IOFBF, RAWBUF_SIZE);
         }
         /*---------------------------------------------------------------------------*/
 #else
         else if (!(rawfileFp = fopen(last_used_rawfile, "a"))) {
-            rawfileFp = stdout; /* If fopen has failed, we have to proceed with stdout */
-            setvbuf(rawfileFp, rawfileBuf, _IOFBF, RAWBUF_SIZE);
             perror(last_used_rawfile);
             ft_setflag = FALSE;
             return;
         }
+        setvbuf(rawfileFp, rawfileBuf, _IOFBF, RAWBUF_SIZE);
 #endif
         rawfileBinary = !ascii;
     } else {
