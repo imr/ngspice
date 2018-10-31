@@ -45,8 +45,6 @@ extern struct dbcomm *dbs;
 
 FILE *rawfileFp;
 bool rawfileBinary;
-#define RAWBUF_SIZE 32768
-char rawfileBuf[RAWBUF_SIZE];
 /*To tell resume the rawfile name saj*/
 char *last_used_rawfile = NULL;
 /*end saj */
@@ -286,7 +284,6 @@ dosim(
             ft_setflag = FALSE;
             return 1;
         }
-        setvbuf(rawfileFp, rawfileBuf, _IOFBF, RAWBUF_SIZE);
 #endif /* __MINGW32__ */
         rawfileBinary = !ascii;
     } else {
