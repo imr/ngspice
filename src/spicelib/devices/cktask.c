@@ -19,7 +19,6 @@ CKTask(CKTcircuit *ckt, GENinstance *instance, int which, IFvalue *value, IFvalu
 {
     int type = instance->GENmodPtr->GENmodType;
     int error;
-    SPICEdev **DEVices;
 
     DEVices = devices();
     if(DEVices[type]->DEVask) {

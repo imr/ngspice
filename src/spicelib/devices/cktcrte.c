@@ -20,7 +20,6 @@ CKTcrtElt(CKTcircuit *ckt, GENmodel *modPtr, GENinstance **inInstPtr, IFuid name
 {
   GENinstance *instPtr = NULL;             /* instPtr points to the data struct for per-instance data */
 
-    SPICEdev **DEVices;
     int type;
 
     DEVices = devices();
