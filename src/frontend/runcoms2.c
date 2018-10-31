@@ -27,8 +27,6 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 #include "ngspice/inpdefs.h"
 
-#define RAWBUF_SIZE 32768
-extern char rawfileBuf[RAWBUF_SIZE];
 extern void line_free_x(struct card *deck, bool recurse);
 extern INPmodel *modtab;
 
@@ -114,14 +112,12 @@ com_resume(wordlist *wl)
                 ft_setflag = FALSE;
                 return;
             }
-            setvbuf(rawfileFp, rawfileBuf, _IOFBF, RAWBUF_SIZE);
         } else if (!ascii) {
             if ((rawfileFp = fopen(last_used_rawfile, "ab")) == NULL) {
                 perror(last_used_rawfile);
                 ft_setflag = FALSE;
                 return;
             }
-            setvbuf(rawfileFp, rawfileBuf, _IOFBF, RAWBUF_SIZE);
         }
         /*---------------------------------------------------------------------------*/
 #else
@@ -130,7 +126,6 @@ com_resume(wordlist *wl)
             ft_setflag = FALSE;
             return;
         }
-        setvbuf(rawfileFp, rawfileBuf, _IOFBF, RAWBUF_SIZE);
 #endif
         rawfileBinary = !ascii;
     } else {
