@@ -815,8 +815,10 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             /* now load deck into ft_curckt -- the current circuit. */
             inp_dodeck(deck, tt, wl_first, FALSE, options, filename);
 
-            ft_curckt->devtlist = devtlist;
-            ft_curckt->modtlist = modtlist;
+            if (ft_curckt) {
+                ft_curckt->devtlist = devtlist;
+                ft_curckt->modtlist = modtlist;
+            }
 
             /* inp_dodeck did take ownership */
             tt = NULL;
