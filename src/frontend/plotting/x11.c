@@ -1058,7 +1058,8 @@ X11_Input(REQUEST *request, RESPONSE *response)
 
     default:
         internalerror("unrecognized input type");
-        response->option = error_option;
+        if (response)
+            response->option = error_option;
         return 1;
         break;
     }
