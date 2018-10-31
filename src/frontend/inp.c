@@ -437,7 +437,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
 {
     struct card *deck = NULL, *dd, *ld, *prev_param = NULL, *prev_card = NULL;
     struct card *realdeck = NULL, *options = NULL, *curr_meas = NULL;
-    char *tt = NULL, name[BSIZE_SP], *s, *t, *temperature = NULL;
+    char *tt = NULL, name[BSIZE_SP], *s, *temperature = NULL;
     double testemp = 0.0;
     bool commands = FALSE;
     wordlist *wl = NULL, *end = NULL, *wl_first = NULL;
@@ -619,9 +619,9 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             /* Put the first token from line into s */
             strncpy(name, dd->line, BSIZE_SP);
             s = skip_ws(name);
-            t = skip_non_ws(s);
+/*            t = skip_non_ws(s);
             *t = '\0';
-
+*/
             if (ciprefix(".control", dd->line)) {
                 ld->nextcard = dd->nextcard;
                 line_free(dd, FALSE); /* SJB - free this line's memory */
