@@ -1816,6 +1816,7 @@ static int
 is_a_modelname(const char *s)
 {
     char *st;
+    double testval;
     /* first character of model name is character from alphabet */
     if (isalpha_c(s[0]))
         return TRUE;
@@ -1823,7 +1824,11 @@ is_a_modelname(const char *s)
     if (strchr("{*^@\\\'", s[0]))
         return FALSE;
     /* not beeing a valid number */
-    if (strtod(s, &st))
+    testval = strtod(s, &st);
+    /* conversion failed, so no number */
+    if (eq(s, st))
+        return TRUE;
+    else
         /* test if we have a true number */
         if (*st == '\0' || isspace(*st))
             return FALSE;
