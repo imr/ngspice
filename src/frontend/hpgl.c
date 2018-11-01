@@ -243,9 +243,10 @@ GL_Arc(int x0, int y0, int r, double theta, double delta_theta)
 
 
 int
-GL_Text(char *text, int x, int y)
+GL_Text(char *text, int x, int y, int angle)
 {
     /* move to (x, y) */
+    NG_IGNORE(angle);
 
     fprintf(plotfile, "PU;PA %d , %d;", jgmult*(x+xoff+XTADJ), jgmult*(y+yoff+YTADJ));
     fprintf(plotfile, "LB %s \x03", text);

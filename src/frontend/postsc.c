@@ -217,6 +217,7 @@ PS_NewViewport(GRAPH *graph)
     fprintf(plotfile, "} def\n");
     fprintf(plotfile, "/%s /%sLatin1 ISOLatin1Encoding ReEncode\n", psfont, psfont);
 
+    fprintf(plotfile, "%g %g scale\n", 1.0 / scale, 1.0 / scale);
     if (colorflag == 1) {
         /* set the background to color given in spinit (or 0) */
         PS_SelectColor(setbgcolor);
@@ -325,7 +326,7 @@ PS_Arc(int x0, int y0, int r, double theta, double delta_theta)
 
 
 int
-PS_Text(char *text, int x, int y)
+PS_Text(char *text, int x, int y, int angle)
 {
     int savedlstyle, savedcolor;
 
@@ -347,7 +348,11 @@ PS_Text(char *text, int x, int y)
     PS_Stroke();
     /* move to (x, y) */
     fprintf(plotfile, "%d %d moveto\n", x + xoff + xtadj, y + yoff + ytadj);
+    /* rotate the text counterclockwise by 'angle' degrees */
+    fprintf(plotfile, "%d rotate\n", angle);
     fprintf(plotfile, "(%s) show\n", text);
+    /* rotate the text back clockwise by 'angle' degrees */
+    fprintf(plotfile, "-%d rotate\n", angle);
 
     DEVDEP(currentgraph).lastx = -1;
     DEVDEP(currentgraph).lasty = -1;
