@@ -185,11 +185,6 @@ AC_ARG_ENABLE([cluster],
 AC_ARG_ENABLE([help],
     [AS_HELP_STRING([--enable-help], [Force building nghelp (deprecated)])])
 
-# --enable-xgraph: Compile the xgraph plotting program. Default is "no".
-# Xgraph is a plotting package for X11 once very popular.
-AC_ARG_ENABLE([xgraph],
-    [AS_HELP_STRING([--enable-xgraph], [Enable xgraph compilation.])])
-
 # --with-fftw3: Use fftw3 for Fourier transforms.  Default is "yes".
 AC_ARG_WITH([fftw3],
     [AS_HELP_STRING([--with-fftw3[=yes/no]], [Use fftw3 for Fourier transforms. Default=yes.])])
@@ -912,18 +907,6 @@ if test "x$enable_smltmsdebug" = xyes; then
     AC_DEFINE([D_DBG_SMALLTIMES], [], [Define if we want debug distortion analysis (SMALLTIMES)])
     AC_MSG_RESULT([WARNING: Distortion analysis debug *D_DBG_SMALLTIMES* is enabled])
 fi
-if test "x$enable_xgraph" = xyes; then
-    AC_MSG_RESULT([Xgraph compilation enabled.])
-    AC_CONFIG_SUBDIRS([xgraph])
-    XGRAPHDIR="xgraph"
-    NOTXGRAPH=""
-else
-    XGRAPHDIR=""
-    NOTXGRAPH="xgraph"
-fi
-
-AC_SUBST([XGRAPHDIR])
-AC_SUBST([NOTXGRAPH])
 
 AC_PROG_YACC
 AC_PATH_PROG([BISON], [bison])
