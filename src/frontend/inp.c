@@ -437,7 +437,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
 {
     struct card *deck = NULL, *dd, *ld, *prev_param = NULL, *prev_card = NULL;
     struct card *realdeck = NULL, *options = NULL, *curr_meas = NULL;
-    char *tt = NULL, name[BSIZE_SP], *s, *temperature = NULL;
+    char *tt = NULL, name[BSIZE_SP], *s, *t, *temperature = NULL;
     double testemp = 0.0;
     bool commands = FALSE;
     wordlist *wl = NULL, *end = NULL, *wl_first = NULL;
@@ -502,11 +502,11 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             /*debug: print into file*/
             FILE *fdo = fopen("debug-out-mc.txt", "w");
             if (fdo) {
-                struct card *t = NULL;
+                struct card *tc = NULL;
                 fprintf(fdo, "****************** complete mc deck ***************\n\n");
                 /* now completely */
-                for (t = deck; t; t = t->nextcard)
-                    fprintf(fdo, "%6d  %6d  %s\n", t->linenum_orig, t->linenum, t->line);
+                for (tc = deck; tc; tc = tc->nextcard)
+                    fprintf(fdo, "%6d  %6d  %s\n", tc->linenum_orig, tc->linenum, tc->line);
                 fclose(fdo);
             }
             else
@@ -619,9 +619,9 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             /* Put the first token from line into s */
             strncpy(name, dd->line, BSIZE_SP);
             s = skip_ws(name);
-/*            t = skip_non_ws(s);
+            t = skip_non_ws(s);
             *t = '\0';
-*/
+
             if (ciprefix(".control", dd->line)) {
                 ld->nextcard = dd->nextcard;
                 line_free(dd, FALSE); /* SJB - free this line's memory */
@@ -745,20 +745,20 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                 /*debug: print into file*/
                 FILE *fdo = fopen("debug-out2.txt", "w");
                 if (fdo) {
-                    struct card *t = NULL;
+                    struct card *tc = NULL;
                     fprintf(fdo, "**************** uncommented deck **************\n\n");
                     /* always print first line */
                     fprintf(fdo, "%6d  %6d  %s\n", deck->linenum_orig, deck->linenum, deck->line);
                     /* here without out-commented lines */
-                    for (t = deck->nextcard; t; t = t->nextcard) {
-                        if (*(t->line) == '*')
+                    for (tc = deck->nextcard; tc; tc = tc->nextcard) {
+                        if (*(tc->line) == '*')
                             continue;
-                        fprintf(fdo, "%6d  %6d  %s\n", t->linenum_orig, t->linenum, t->line);
+                        fprintf(fdo, "%6d  %6d  %s\n", tc->linenum_orig, tc->linenum, tc->line);
                     }
                     fprintf(fdo, "\n****************** complete deck ***************\n\n");
                     /* now completely */
-                    for (t = deck; t; t = t->nextcard)
-                        fprintf(fdo, "%6d  %6d  %s\n", t->linenum_orig, t->linenum, t->line);
+                    for (tc = deck; tc; tc = tc->nextcard)
+                        fprintf(fdo, "%6d  %6d  %s\n", tc->linenum_orig, tc->linenum, tc->line);
                     fclose(fdo);
                 }
                 else
@@ -901,20 +901,20 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             /*debug: print into file*/
             FILE *fdo = fopen("debug-out3.txt", "w");
             if (fdo) {
-                struct card *t = NULL;
+                struct card *tc = NULL;
                 fprintf(fdo, "**************** uncommented deck **************\n\n");
                 /* always print first line */
                 fprintf(fdo, "%6d  %6d  %s\n", deck->linenum_orig, deck->linenum, deck->line);
                 /* here without out-commented lines */
-                for (t = deck->nextcard; t; t = t->nextcard) {
-                    if (*(t->line) == '*')
+                for (tc = deck->nextcard; tc; tc = tc->nextcard) {
+                    if (*(tc->line) == '*')
                         continue;
-                    fprintf(fdo, "%6d  %6d  %s\n", t->linenum_orig, t->linenum, t->line);
+                    fprintf(fdo, "%6d  %6d  %s\n", tc->linenum_orig, tc->linenum, tc->line);
                 }
                 fprintf(fdo, "\n****************** complete deck ***************\n\n");
                 /* now completely */
-                for (t = deck; t; t = t->nextcard)
-                    fprintf(fdo, "%6d  %6d  %s\n", t->linenum_orig, t->linenum, t->line);
+                for (tc = deck; tc; tc = tc->nextcard)
+                    fprintf(fdo, "%6d  %6d  %s\n", tc->linenum_orig, tc->linenum, tc->line);
                 fclose(fdo);
             }
             else
