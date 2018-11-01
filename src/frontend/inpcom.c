@@ -956,6 +956,7 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
                 !ciprefix("load", buffer) &&
                 !ciprefix("plot", buffer) &&
                 !ciprefix("print", buffer) &&
+                !ciprefix("gnuplot", buffer) &&
                 !ciprefix("hardcopy", buffer) &&
                 !(ciprefix("set", buffer) && strstr(buffer, "sourcepath"))
                 )
@@ -963,7 +964,7 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
                 /* lower case for all other lines */
                 for (s = buffer; *s && (*s != '\n'); s++)
                     *s = tolower_c(*s);
-            } else if (ciprefix("plot", buffer) || ciprefix("hardcopy", buffer)) {
+            } else if (ciprefix("plot", buffer) || ciprefix("gnuplot", buffer) ||ciprefix("hardcopy", buffer)) {
                 /* lower case excluded for tokens following title, xlabel, ylabel.
                  * tokens may contain spaces, then they have to be enclosed in quotes.
                  * keywords and tokens have to be separated by spaces. */
