@@ -5728,7 +5728,8 @@ inp_modify_exp(char* expr)
                     } else {
                         wl->wl_word = tprintf("({%s})", buf);
                     }
-
+                    /* '-' following the '=' is attached to number as its sign */
+                    c_arith = TRUE;
                 } else {
                     /* {} around all other tokens */
                     wl->wl_word = tprintf("({%s})", buf);
