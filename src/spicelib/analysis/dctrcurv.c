@@ -179,15 +179,13 @@ DCtrCurv(CKTcircuit *ckt, int restart)
     if (error)
         return(error);
 
-    i = job->TRCVnestLevel;
-
-    if (job->TRCVvType[i] == vcode)
+    if (job->TRCVvType[0] == vcode)
         SPfrontEnd->IFnewUid (ckt, &varUid, NULL, "v-sweep", UID_OTHER, NULL);
-    else if (job->TRCVvType[i] == icode)
+    else if (job->TRCVvType[0] == icode)
         SPfrontEnd->IFnewUid (ckt, &varUid, NULL, "i-sweep", UID_OTHER, NULL);
-    else if (job->TRCVvType[i] == TEMP_CODE)
+    else if (job->TRCVvType[0] == TEMP_CODE)
         SPfrontEnd->IFnewUid (ckt, &varUid, NULL, "temp-sweep", UID_OTHER, NULL);
-    else if (job->TRCVvType[i] == rcode)
+    else if (job->TRCVvType[0] == rcode)
         SPfrontEnd->IFnewUid (ckt, &varUid, NULL, "res-sweep", UID_OTHER, NULL);
     else
         SPfrontEnd->IFnewUid (ckt, &varUid, NULL, "?-sweep", UID_OTHER, NULL);
