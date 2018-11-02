@@ -224,7 +224,7 @@ inp_subcktexpand(struct card *deck) {
     if (!cp_getvar("modelline", CP_STRING, model, sizeof(model)))
         strcpy(model, ".model");
 
-    use_numparams = cp_getvar("numparams", CP_BOOL, NULL, 0);
+/*    use_numparams = cp_getvar("numparams", CP_BOOL, NULL, 0); */
 
     use_numparams = TRUE;
 

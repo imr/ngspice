@@ -467,7 +467,6 @@ int BJTdSetup(GENmodel *inModel, CKTcircuit *ckt)
             /* ib term */
 
             EqualDeriv(&d_ib, &d_p);
-            d_ib.d1_p = 0.0;
             d_ib.value = cb;
             d_ib.d1_p = gbe/here->BJTtBetaF + gben;
             d_ib.d2_p2 = gbe2/here->BJTtBetaF + gben2;

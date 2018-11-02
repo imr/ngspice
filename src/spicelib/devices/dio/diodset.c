@@ -100,13 +100,12 @@ DIOdSetup(DIOmodel *model, CKTcircuit *ckt)
 				/* why using csat instead of breakdowncurrent? */
 				evrev=exp(-(here->DIOtBrkdwnV+vd)/vt);
 				cd = -csat*evrev;
-                                gd = csat*evrev/vte;
+				gd = csat*evrev/vt;
 				/*
                       * cd = -csat*(evrev-1+here->DIOtBrkdwnV/vt);
                       */
 				/* should there be a minus here above? 
 		      */
-				gd=csat*evrev/vt;
 				g2 = -gd/2/vt;
 				g3 = -g2/3/vt;
 				cdiff3 = cdiff2 = 0;
