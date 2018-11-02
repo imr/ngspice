@@ -610,7 +610,7 @@ int B4SOILoadOMP(B4SOIinstance *here, CKTcircuit *ckt) {
             if ((vds == 0.0) && (vgs == 0.0) && (vbs == 0.0) &&
                     ((ckt->CKTmode & (MODETRAN | MODEAC|MODEDCOP |
                                       MODEDCTRANCURVE)) || (!(ckt->CKTmode & MODEUIC))))
-            {   vbs = 0.0;
+            {
                 /*                vgs = model->B4SOItype*0.1 + here->B4SOIvth0; */
                 vgs = model->B4SOItype * here->B4SOIvth0 + 0.1; /* v4.0 */
                 vds = 0.0;

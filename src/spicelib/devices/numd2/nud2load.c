@@ -81,7 +81,7 @@ NUMD2load(GENmodel *inModel, CKTcircuit *ckt)
       }
     } else if (ckt->CKTmode & MODEINITTRAN) {
       model->NUMD2pInfo->order = ckt->CKTorder;
-      model->NUMD2pInfo->method = GEAR;
+/*      model->NUMD2pInfo->method = GEAR; */
       model->NUMD2pInfo->method = ckt->CKTintegrateMethod;
       for (i = 0; i <= ckt->CKTmaxOrder; i++) {
 	deltaNorm[i] = ckt->CKTdeltaOld[i] / TNorm;
