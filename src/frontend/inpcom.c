@@ -4953,8 +4953,11 @@ inp_compat(struct card *card)
                 /* We need to have 'tc1=something */
                 if (str_ptr[3] && (isspace_c(str_ptr[3]) || (str_ptr[3] == '='))) {
                     tc1_ptr = strchr(str_ptr, '=');
-                    if (tc1_ptr)
-                        tc1 = atof(tc1_ptr+1);
+                    if (tc1_ptr) {
+                        tc1_ptr++;
+                        int error;
+                        tc1 = INPevaluate(&tc1_ptr, &error, 1);
+                    }
                 }
             }
             str_ptr = strstr(cut_line, "tc2");
@@ -4962,8 +4965,11 @@ inp_compat(struct card *card)
                 /* We need to have 'tc2=something */
                 if (str_ptr[3] && (isspace_c(str_ptr[3]) || (str_ptr[3] == '='))) {
                     tc2_ptr = strchr(str_ptr, '=');
-                    if (tc2_ptr)
-                        tc2 = atof(tc2_ptr+1);
+                    if (tc2_ptr) {
+                        tc2_ptr++;
+                        int error;
+                        tc2 = INPevaluate(&tc2_ptr, &error, 1);
+                    }
                 }
             }
             /* white noise model by x2line, x3line, x4line */
@@ -5056,8 +5062,11 @@ inp_compat(struct card *card)
                 /* We need to have 'tc1=something */
                 if (str_ptr[3] && (isspace_c(str_ptr[3]) || (str_ptr[3] == '='))) {
                     tc1_ptr = strchr(str_ptr, '=');
-                    if (tc1_ptr)
-                        tc1 = atof(tc1_ptr+1);
+                    if (tc1_ptr) {
+                        tc1_ptr++;
+                        int error;
+                        tc1 = INPevaluate(&tc1_ptr, &error, 1);
+                    }
                 }
             }
             str_ptr = strstr(cut_line, "tc2");
@@ -5065,8 +5074,11 @@ inp_compat(struct card *card)
                 /* We need to have 'tc2=something */
                 if (str_ptr[3] && (isspace_c(str_ptr[3]) || (str_ptr[3] == '='))) {
                     tc2_ptr = strchr(str_ptr, '=');
-                    if (tc2_ptr)
-                        tc2 = atof(tc2_ptr+1);
+                    if (tc2_ptr) {
+                        tc2_ptr++;
+                        int error;
+                        tc2 = INPevaluate(&tc2_ptr, &error, 1);
+                    }
                 }
             }
             // Exxx  n-aux 0  n1 n2  1
@@ -5136,8 +5148,11 @@ inp_compat(struct card *card)
                 /* We need to have 'tc1=something */
                 if (str_ptr[3] && (isspace_c(str_ptr[3]) || (str_ptr[3] == '='))) {
                     tc1_ptr = strchr(str_ptr, '=');
-                    if (tc1_ptr)
-                        tc1 = atof(tc1_ptr+1);
+                    if (tc1_ptr) {
+                        tc1_ptr++;
+                        int error;
+                        tc1 = INPevaluate(&tc1_ptr, &error, 1);
+                    }
                 }
             }
             str_ptr = strstr(cut_line, "tc2");
@@ -5145,8 +5160,11 @@ inp_compat(struct card *card)
                 /* We need to have 'tc2=something */
                 if (str_ptr[3] && (isspace_c(str_ptr[3]) || (str_ptr[3] == '='))) {
                     tc2_ptr = strchr(str_ptr, '=');
-                    if (tc2_ptr)
-                        tc2 = atof(tc2_ptr+1);
+                    if (tc2_ptr) {
+                        tc2_ptr++;
+                        int error;
+                        tc2 = INPevaluate(&tc2_ptr, &error, 1);
+                    }
                 }
             }
             // Fxxx  n-aux 0  Bxxx  1
