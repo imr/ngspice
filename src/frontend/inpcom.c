@@ -143,6 +143,7 @@ static void subckt_params_to_param(struct card *deck);
 static void inp_fix_temper_in_param(struct card *deck);
 static void inp_fix_agauss_in_param(struct card *deck, char *fcn);
 static void inp_vdmos_model(struct card *deck);
+static void inp_check_control(struct card *deck);
 
 static char *inp_spawn_brace(char *s);
 
@@ -596,6 +597,8 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile, bool *expr_w_t
             ltspice_compat_a(working);
             pspice_compat_a(working);
         }
+
+        inp_check_control(working);
 
         inp_fix_for_numparam(subckt_w_params, working);
 
@@ -7665,4 +7668,34 @@ static void
 ltspice_compat_a(struct card *oldcard)
 {
     oldcard->nextcard = ltspice_compat(oldcard->nextcard);
+}
+
+/* check if we have a .control ... .endc pair */
+static void inp_check_control(struct card *deck)
+{
+    struct card *card;
+    int check_control = 0;
+    for (card = deck; card; card = card->nextcard) {
+        char *cut_line = card->line;
+        if (*cut_line == '*')
+            continue;
+        // check for .control ... .endc
+        if (ciprefix(".control", cut_line)) {
+            if (check_control > 0) {
+                fprintf(cp_err, "\nError: Nesting of .control statements is not allowed!\n\n");
+                controlled_exit(EXIT_BAD);
+            }
+            check_control++;
+            continue;
+        }
+        else if (ciprefix(".endc", cut_line)) {
+            check_control--;
+            continue;
+        }
+    }
+
+    if (check_control > 0) {
+        fprintf(cp_err, "\nWarning: Missing .endc statement!\n");
+        fprintf(cp_err, "    This may cause subsequent errors.\n\n");
+    }
 }
