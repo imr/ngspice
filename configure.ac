@@ -1065,9 +1065,9 @@ else
         AC_CHECK_HEADERS([readline/readline.h readline/history.h],
             [AC_DEFINE([HAVE_GNUREADLINE], [], [Define if we have GNU readline])],
             [AC_MSG_ERROR([Couldn't find GNU readline headers.])])
-        AC_SEARCH_LIBS([tputs], [ncurses termcap],
-            [AC_DEFINE([HAVE_TERMCAP], [], [Define if we have ncurses or termcap])],
-            [AC_MSG_ERROR([Found neither ncurses or termcap])])
+        AC_SEARCH_LIBS([tputs], [ncurses tinfo termcap],
+            [AC_DEFINE([HAVE_TERMCAP], [], [Define if we have ncurses/terminfo or termcap])],
+            [AC_MSG_ERROR([Found neither ncurses/terminfo or termcap])])
         AC_CHECK_LIB([readline], [readline],
             [LIBS="$LIBS -lreadline"],
             [AC_MSG_ERROR([Couldn't find readline libraries.])])
@@ -1085,9 +1085,9 @@ else
     AC_CHECK_HEADERS([editline/readline.h],
         [AC_DEFINE([HAVE_BSDEDITLINE], [1], [Define to enable BSD editline])],
         [AC_MSG_ERROR([Couldn't find BSD editline headers.])])
-    AC_SEARCH_LIBS([tputs], [ncurses termcap],
-        [AC_DEFINE([HAVE_TERMCAP], [], [Define if we have ncurses or termcap])],
-        [AC_MSG_ERROR([Found neither ncurses or termcap])])
+    AC_SEARCH_LIBS([tputs], [ncurses tinfo termcap],
+        [AC_DEFINE([HAVE_TERMCAP], [], [Define if we have ncurses/terminfo or termcap])],
+        [AC_MSG_ERROR([Found neither ncurses/terminfo or termcap])])
     AC_CHECK_LIB([edit], [readline],
         [LIBS="$LIBS -ledit"],
         [AC_MSG_ERROR([Couldn't find editline libraries.])],
