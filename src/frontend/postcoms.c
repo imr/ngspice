@@ -28,12 +28,27 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 static void killplot(struct plot *pl);
 static void DelPlotWindows(struct plot *pl);
 
+/* check if the user want's to delete the scale vector of the current plot.
+   This should not happen, because then redrawing the graph crashes ngspice */
+static bool
+check_cp(char* vecname)
+{
+    if (plot_cur && plot_cur->pl_scale && plot_cur->pl_scale->v_name && eq(plot_cur->pl_scale->v_name, vecname)) {
+        fprintf(cp_err, "\nWarning: Scale vector '%s' of current plot cannot be deleted!\n", vecname);
+        fprintf(cp_err, "    Command 'unlet %s' is ignored.\n\n", vecname);
+        return TRUE;
+    }
+    else
+        return FALSE;
+}
 
 void
 com_unlet(wordlist *wl)
 {
     while (wl) {
-        vec_remove(wl->wl_word);
+        /* don't delete the scale vector of the current plot */
+        if (!check_cp(wl->wl_word))
+            vec_remove(wl->wl_word);
         wl = wl->wl_next;
     }
 }
