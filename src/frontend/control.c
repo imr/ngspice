@@ -639,7 +639,7 @@ cp_evloop(char *string)
     for (;;) {
         freewl = wlist = getcommand(string);
         if (wlist == NULL) {    /* End of file or end of user input. */
-            if (cend[stackp]->co_parent && !string) {
+            if (cend[stackp] && cend[stackp]->co_parent && !string) {
                 cp_resetcontrol();
                 continue;
             } else {
