@@ -354,7 +354,7 @@ NIpzSym2(PZtrial **set, PZtrial *new)
 	} else {
 	    /* special case */
 	    b = 0.0;
-	    b = 0;
+	    b_mag = 0;
 	}
 
 	zaddeq(&b, &b_mag, set[1]->s.real, 0, -b, b_mag);
