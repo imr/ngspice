@@ -1698,7 +1698,7 @@ recifeval(struct card *pdeck)
             iffound = 0;
             *s = '*';
             if (!iftrue) {
-                s = pdeck->line + 7;
+                s = nd->line + 7;
                 elseiftrue = atoi(s);
             }
         }
