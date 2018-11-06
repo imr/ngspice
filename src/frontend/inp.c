@@ -1692,7 +1692,7 @@ recifeval(struct card *pdeck)
         s = nd->line;
         if (ciprefix(".if", nd->line))
             recifeval(nd);
-        else if (ciprefix(".elseif", nd->line)) {
+        else if (ciprefix(".elseif", nd->line) && elseiftrue == 0) {
             elsefound = 0;
             elseiffound = 1;
             iffound = 0;
