@@ -1031,10 +1031,12 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
             }
             else if (ciprefix("print", buffer)) {
                 /* lower case excluded for tokens following output redirection '>' */
+                bool redir = FALSE;
                 for (s = buffer; *s && (*s != '\n'); s++) {
                     if (*s == '>')
-                        break;
-                    *s = tolower_c(*s);
+                        redir = TRUE; /* do not lower, but move to end of string */
+                    if (!redir)
+                        *s = tolower_c(*s);
                 }
             }
             else {
