@@ -959,6 +959,7 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
                 !ciprefix("load", buffer) &&
                 !ciprefix("plot", buffer) &&
                 !ciprefix("print", buffer) &&
+                !ciprefix("asciiplot", buffer) &&
                 !ciprefix("gnuplot", buffer) &&
                 !ciprefix("hardcopy", buffer) &&
                 !(ciprefix("set", buffer) && strstr(buffer, "sourcepath"))
@@ -1029,7 +1030,7 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
                     }
                 }
             }
-            else if (ciprefix("print", buffer)) {
+            else if (ciprefix("print", buffer) || ciprefix("asciiplot", buffer)) {
                 /* lower case excluded for tokens following output redirection '>' */
                 bool redir = FALSE;
                 for (s = buffer; *s && (*s != '\n'); s++) {
