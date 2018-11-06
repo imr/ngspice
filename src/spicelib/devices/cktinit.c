@@ -88,8 +88,6 @@ CKTinit(CKTcircuit **ckt)		/* new circuit to create */
     sckt->CKTtroubleNode = 0;
     sckt->CKTtroubleElt = NULL;
     sckt->CKTtimePoints = NULL;
-    if (sckt->CKTstat == NULL)
-	return E_NOMEM;
     sckt->CKTnodeDamping = 0;
     sckt->CKTabsDv = 0.5;
     sckt->CKTrelDv = 2.0;
