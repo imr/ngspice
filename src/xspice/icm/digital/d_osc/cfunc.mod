@@ -286,6 +286,7 @@ void cm_d_osc(ARGS)
             y = (double *) calloc((size_t) freq_size, sizeof(double));
             if (!y) {
                 cm_message_send(d_osc_allocation_error);  
+                if(x) free(x);
                 return;
             }
         

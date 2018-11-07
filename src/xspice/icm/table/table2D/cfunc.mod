@@ -444,6 +444,8 @@ cm_table2D(ARGS)   /* structure holding parms, inputs, outputs, etc. */
             cm_message_printf("Insufficient memory to read file %s", PARAM(file));
             loc->state->atend = 1;
             loc->init_err = 1;
+            if(cFile) free(cFile);
+            if(cThisLine) free(cThisLine);
             return;
         }
         /* read whole file into cFile */
