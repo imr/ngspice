@@ -368,7 +368,7 @@ MIF_INP2A (
                 return;
 
             fast[0]->conn[i]->size = 1;
-
+            tfree(def_port_type_str);
             /* when we leave here, next_token should hold the next, unprocessed netname */
 
         } else { /* ====== the connection is an array - much to be done ... ====== */
@@ -481,7 +481,7 @@ MIF_INP2A (
 
         /* be careful about putting stuff here, there is a 'continue' used */
         /* in the processing of NULL connections above                     */
-        tfree(def_port_type_str);
+
         /*  At this point, next_token should hold the next unprocessed token.  */
 
     } /******* for number of connections *******/
