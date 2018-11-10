@@ -1,0 +1,43 @@
+multiple .elseif, nested .if
+.param select = 3
+.param select2 = 3
+
+V1 1 0 1
+
+.if (select == 1)
+    R1 1 0 1
+.elseif (select == 2)
+    R1 1 0 10
+.elseif (select == 3)
+    .if (select2 == 1)
+        R1 1 0 100
+    .elseif (select2 = 2)
+        R1 1 0 200
+    .elseif (select2 = 3) $ <----- selected
+        R1 1 0 300
+    .else
+        R1 1 0 400
+    .endif
+.elseif (select == 4)
+    R1 1 0 1000
+.else
+    R1 1 0 10000
+.endif
+
+.control
+define mismatch(a,b,err) abs(a-b)>err
+op
+let out = -1/v1#branch
+
+print out > test.log
+
+if mismatch(out, 300, 1e-9)
+  echo "ERROR: nested .if test failed"
+  quit 1
+else
+  echo "INFO: nested .if test o.k."
+  quit 0
+end
+.endc
+
+.end
