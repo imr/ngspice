@@ -455,6 +455,9 @@ MIFunsetup(GENmodel *inModel,CKTcircuit *ckt)
 
     for (model = (MIFmodel *)inModel; model != NULL;
             model = MIFnextModel(model)) {
+        for (i = 0; i < model->num_param; i++)
+            if (model->param[i]->is_null)
+                tfree(model->param[i]->element);
         for(here = MIFinstances(model); here != NULL; here = MIFnextInstance(here)) {
             /* Skip these expensive allocations if the instance is not analog */
             if(! here->analog)
