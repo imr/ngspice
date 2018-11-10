@@ -1,18 +1,19 @@
 ## Process this file with automake to produce Makefile.in
+## regression first, the model qua tests
 
-SUBDIRS =		\
-	bsim3		\
-	bsim4		\
-	bsimsoi		\
-	hisim		\
-	hisimhv1	\
-	hisimhv2	\
-	regression
+SUBDIRS = regression
 
 if XSPICE_WANTED
 SUBDIRS += xspice
 endif
 
+SUBDIRS +=		\
+	bsim3		\
+	bsim4		\
+	bsimsoi		\
+	hisim		\
+	hisimhv1	\
+	hisimhv2
 
 DIST_SUBDIRS =		\
 	bsim1		\
