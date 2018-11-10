@@ -327,6 +327,8 @@ if test "x$with_ngshared" != x  &&  test "x$with_ngshared" != xno ; then
                 CFLAGS="$CFLAGS -xldscope=hidden"
             fi
             ;;
+        *mingw* | *msys* | *cygwin* )
+            ;;
         *)
             CFLAGS="$CFLAGS -fvisibility=hidden"
             ;;
@@ -546,6 +548,29 @@ AC_ARG_WITH([wingui],
     fi])
 AC_MSG_RESULT([$with_wingui])
 AM_CONDITIONAL([WINGUI], [test "x$with_wingui" = xyes])
+
+case $host_os in
+    *mingw* | *msys* )
+        has_win32=yes
+        if test "x$with_wingui" = xyes; then
+            has_winconsole=no
+        else
+            if test "x$with_ngshared" = xyes; then
+                has_winconsole=no
+            else
+                has_winconsole=yes
+            fi
+        fi
+        ;;
+    *cygwin* )
+        has_cyg=yes
+        ;;
+    *)
+        has_win32=no
+        has_cyg=no
+        ;;
+esac
+AM_CONDITIONAL([WINCONSOLE], [test "x$has_winconsole" = xyes])
 
 case $with_wingui in
     yes )
