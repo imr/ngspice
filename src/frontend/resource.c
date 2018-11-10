@@ -479,7 +479,8 @@ fprintmem(FILE *stream, unsigned long long memory) {
 static int get_procm(struct proc_mem *memall) {
 
 #if defined(_MSC_VER) || defined(__MINGW32__)
-#if (_WIN32_WINNT >= 0x0500) && defined(HAS_WINGUI)
+    /* FIXME: shared module should be allowed, but currently does not link to psapi within MINGW/MSYS2 */
+#if (_WIN32_WINNT >= 0x0500) && (!defined(SHARED_MODULE) || _MSC_VER)
 /* Use Windows API function to obtain size of memory - more accurate */
     HANDLE hProcess;
     PROCESS_MEMORY_COUNTERS pmc;
