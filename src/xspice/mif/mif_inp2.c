@@ -175,6 +175,8 @@ MIF_INP2A (
     Mif_Status_t     status;         /* return status */
     Mif_Token_Type_t next_token_type; /* the type of the next token */
 
+    bool port_deleted = FALSE;
+
 #ifdef TRACE
     /* SDB debug statement */
     printf("In MIF_INP2A, line to process = %s . . . \n", current->line);
@@ -446,7 +448,10 @@ MIF_INP2A (
                             j,                  /* port index */
                             &status);
 
-                tfree(dpts_free);
+                if (dpts_free) {
+                    tfree(dpts_free);
+                    port_deleted = TRUE;
+                }
                 if(status == MIF_ERROR)
                     return;
             } /*------ end of for loop until ] is encountered ------*/
@@ -481,7 +486,8 @@ MIF_INP2A (
 
         /* be careful about putting stuff here, there is a 'continue' used */
         /* in the processing of NULL connections above                     */
-
+        if (!port_deleted && def_port_type_str)
+            tfree(def_port_type_str);
         /*  At this point, next_token should hold the next unprocessed token.  */
 
     } /******* for number of connections *******/
@@ -827,6 +833,7 @@ MIFget_port(
         fast->conn[conn_num]->port[port_num]->invert = MIF_TRUE;
 
         /* eat the tilde and get the next token */
+        tfree(*next_token);
         *next_token = MIFget_token(line, next_token_type);
         if(**line == '\0') {
             LITERR("ERROR - Not enough ports");
@@ -854,6 +861,7 @@ MIFget_port(
         fast->conn[conn_num]->port[port_num]->input.rvalue = 0.0;
 
         /* eat the null token and return */
+        tfree(*next_token);
         *next_token = MIFget_token(line, next_token_type);
         *status = MIF_OK;
         return;
