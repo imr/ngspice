@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-## regression first, the model qua tests
+## regression first, then xspice, then the model qua tests
 
 SUBDIRS = regression
 
