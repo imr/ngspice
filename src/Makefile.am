@@ -334,6 +334,15 @@ if WINGUI
 LIBS += -lpsapi
 endif
 
+if WINCONSOLE
+LIBS += -lpsapi
+endif
+
+## FIXME: Should be allwed, but fails within MSYS2
+#if SHWIN
+#LIBS += -lpsapi
+#endif
+
 CLEANFILES = ngspice.idx spinit tclspinit pkgIndex.tcl
 
 MAINTAINERCLEANFILES = Makefile.in
