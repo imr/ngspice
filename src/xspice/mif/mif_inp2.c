@@ -175,8 +175,6 @@ MIF_INP2A (
     Mif_Status_t     status;         /* return status */
     Mif_Token_Type_t next_token_type; /* the type of the next token */
 
-    bool port_deleted = FALSE;
-
 #ifdef TRACE
     /* SDB debug statement */
     printf("In MIF_INP2A, line to process = %s . . . \n", current->line);
@@ -192,8 +190,6 @@ MIF_INP2A (
 
     /* locate the last token on the line (i.e. model name) and put it into "model" */
     while(*line != '\0') {
-        if (model)
-            tfree(model);
         model = MIFgettok(&line);
     }
 
@@ -324,9 +320,7 @@ MIF_INP2A (
             fast[0]->conn[i]->size = 0;
 
             /* eat the null token and continue to next connection */
-            tfree(next_token);
             next_token = MIFget_token(&line,&next_token_type);
-			tfree(def_port_type_str);
             continue;  /* iterate */
         } else {
             /* set the null flag to false */
@@ -370,7 +364,7 @@ MIF_INP2A (
                 return;
 
             fast[0]->conn[i]->size = 1;
-            tfree(def_port_type_str);
+
             /* when we leave here, next_token should hold the next, unprocessed netname */
 
         } else { /* ====== the connection is an array - much to be done ... ====== */
@@ -381,16 +375,13 @@ MIF_INP2A (
                 printf("Missing [, an array connection was expected.  Returning . . .");
                 return;
             } else /* eat the [  */
-                if (next_token)
-                    tfree(next_token);
-            next_token = MIFget_token(&line,&next_token_type);
+                next_token = MIFget_token(&line,&next_token_type);
 
             /*------ get and process ports until ] is encountered ------*/
             for(j = 0;
                     (next_token_type != MIF_RARRAY_TOK) &&
                     (*line != '\0');
                     j++) {
-                char* dpts_free = NULL;
                 /********** mhx Friday, August 19, 2011, 15:08 begin ***
                  Now if we had a % token, get actual info about connection type,
                  or else use the port type for this connection that was setup BEFORE the '[' token.
@@ -409,8 +400,6 @@ MIF_INP2A (
                                      &status);
                     if(status == MIF_ERROR)
                         return;
-                    /*prepare to free def_port_type_str only if it has been set here */
-                    dpts_free = def_port_type_str;
                 }
                 /* At this point, next_token should be either a [ or ] char (not allowed),
                 or hold a non-null connection (netname) */
@@ -448,10 +437,6 @@ MIF_INP2A (
                             j,                  /* port index */
                             &status);
 
-                if (dpts_free) {
-                    tfree(dpts_free);
-                    port_deleted = TRUE;
-                }
                 if(status == MIF_ERROR)
                     return;
             } /*------ end of for loop until ] is encountered ------*/
@@ -478,16 +463,12 @@ MIF_INP2A (
             We'll do that now, since when we enter the loop, we expect next_token
             to hold the next unprocessed token.
             */
-            if (next_token)
-                tfree(next_token);
             next_token = MIFget_token(&line, &next_token_type);
 
         }  /* ======  array connection processing   ====== */
 
         /* be careful about putting stuff here, there is a 'continue' used */
         /* in the processing of NULL connections above                     */
-        if (!port_deleted && def_port_type_str)
-            tfree(def_port_type_str);
         /*  At this point, next_token should hold the next unprocessed token.  */
 
     } /******* for number of connections *******/
@@ -507,9 +488,6 @@ MIF_INP2A (
         LITERR("Too many connections -- expecting model name but encountered other tokens.");
         return;
     }
-
-    tfree(model);
-    tfree(next_token);
 
     /* check connection constraints */
 
@@ -833,7 +811,6 @@ MIFget_port(
         fast->conn[conn_num]->port[port_num]->invert = MIF_TRUE;
 
         /* eat the tilde and get the next token */
-        tfree(*next_token);
         *next_token = MIFget_token(line, next_token_type);
         if(**line == '\0') {
             LITERR("ERROR - Not enough ports");
@@ -861,7 +838,6 @@ MIFget_port(
         fast->conn[conn_num]->port[port_num]->input.rvalue = 0.0;
 
         /* eat the null token and return */
-        tfree(*next_token);
         *next_token = MIFget_token(line, next_token_type);
         *status = MIF_OK;
         return;
@@ -929,8 +905,6 @@ MIFget_port(
             *status = MIF_ERROR;
             return;
         }
-        /* free just the digital ones, the other are still assigned by INPtermInsert */
-        tfree(*next_token);
         break;
 
     default:
@@ -958,8 +932,6 @@ MIFget_port(
 
         *node = '0';    // added by K.A. March 5th 2000
         node[1] ='\0';  // added by K.A. March 5th 2000
-//      node = "0";     // deleted by K.A. March 5th 2000, this is incorrect, it creates a new pointer
-        // that cause a crash in INPtermInsert()
 
         INPtermInsert(ckt, &node, tab, neg_node);
 
