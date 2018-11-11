@@ -901,8 +901,6 @@ MIFget_port(
         return;
     }
 
-    *next_token = copy(*next_token);
-
     /* Get the first connection or the voltage source name */
 
     switch(def_port_type) {
@@ -916,6 +914,7 @@ MIFget_port(
     case MIF_RESISTANCE:
     case MIF_DIFF_RESISTANCE:
 
+        *next_token = copy(*next_token);
         /* Call the spice3c1 function to put this node in the node list in ckt */
         INPtermInsert(ckt, next_token, tab, pos_node);
 
@@ -927,7 +926,7 @@ MIFget_port(
         break;
 
     case MIF_VSOURCE_CURRENT:
-
+        *next_token = copy(*next_token);
         /* Call the spice3c1 function to put this vsource instance name in */
         /* the symbol table                                                */
         INPinsert(next_token, tab);
@@ -998,6 +997,7 @@ MIFget_port(
             *status = MIF_ERROR;
             return;
         }
+        *next_token = copy(*next_token);
         INPtermInsert(ckt, next_token, tab, neg_node);
         fast->conn[conn_num]->port[port_num]->neg_node_str = *next_token;
         fast->conn[conn_num]->port[port_num]->smp_data.neg_node = neg_node[0]->number;
