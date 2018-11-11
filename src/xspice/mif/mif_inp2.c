@@ -101,6 +101,7 @@ Some tokens should not be deleted here, they need another copying.
 static char *MIFgettok_gc(char **line);
 static char *MIFget_token_gc(char **s, Mif_Token_Type_t *type);
 static char *copy_gc(char *in);
+static void gc_start(void);
 static void gc_end(void);
 
 #define MIFgettok MIFgettok_gc
@@ -202,6 +203,8 @@ MIF_INP2A (
     /* get the line text from the card struct */
     line = current->line;
 
+    /* reset the garbage collector */
+    gc_start();
 
     /* get the name of the instance and add it to the symbol table */
     name = copy(MIFgettok(&line));
@@ -400,6 +403,7 @@ MIF_INP2A (
             if(next_token_type != MIF_LARRAY_TOK) {
                 LITERR("Missing [, an array connection was expected");
                 printf("Missing [, an array connection was expected.  Returning . . .");
+                gc_end();
                 return;
             } else /* eat the [  */
                 next_token = MIFget_token(&line,&next_token_type);
@@ -1031,12 +1035,21 @@ char *MIFget_token_gc(char **s, Mif_Token_Type_t *type)
 }
 
 static
+void gc_start(void)
+{
+    int i;
+    for (i = 0; i < BSIZE_SP; i++)
+        alltokens[i] = NULL;
+    curtoknr = 0;
+}
+
+static
 void gc_end(void)
 {
     int i, j;
     for (i = 0; i < BSIZE_SP; i++) {
         /* We have multiple entries with the same address */
-        for (j = i + 1; j < BSIZE_SP; j++)
+        for (j = i + 1; j < curtoknr; j++)
             if (alltokens[i] == alltokens[j])
                 alltokens[j] = NULL;
         tfree(alltokens[i]);
