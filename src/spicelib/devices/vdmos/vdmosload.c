@@ -356,17 +356,15 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                  *
                  */
 
-                /* the following 4 variables are local to this code block until
+                /* the following 2 variables are local to this code block until
                  * it is obvious that they can be made global
                  */
-                double arg;
                 double betap;
                 double vgst;
 
                 von = (model->VDMOSvt0*model->VDMOStype);
                 vgst = (here->VDMOSmode == 1 ? vgs : vgd) - von;
                 vdsat = MAX(vgst, 0);
-                arg = 0;
                 /* drain current including subthreshold current
                  * numerical differentiation for gd and gm with a delta of 2 mV */
                 if (model->VDMOSksubthresGiven && (here->VDMOSmode == 1)) {
@@ -432,7 +430,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                             cdrain = betap*vgst*vgst*.5;
                             here->VDMOSgm = betap*vgst;
                             here->VDMOSgds = model->VDMOSlambda*Beta*vgst*vgst*.5;
-                            here->VDMOSgmbs = here->VDMOSgm*arg;
+                            here->VDMOSgmbs = 0.;
                         } else {
                             /*
                              *     linear region
@@ -444,7 +442,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                                              model->VDMOSlambda * Beta *
                                              (vds * here->VDMOSmode) * mtr *
                                              (vgst - .5 * (vds * here->VDMOSmode) * mtr);
-                            here->VDMOSgmbs = here->VDMOSgm * arg;
+                            here->VDMOSgmbs = 0.;
                         }
                     }
                 }
