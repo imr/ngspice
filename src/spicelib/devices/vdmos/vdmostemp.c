@@ -44,7 +44,7 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
         arg1 = -egfet1/(kt1+kt1)+1.1150877/(CONSTboltz*(REFTEMP+REFTEMP));
         pbfact1 = -2*vtnom *(1.5*log(fact1)+CHARGE*arg1);
 
-    /* now model parameter preprocessing */
+        /* now model parameter preprocessing */
 
         if (model->VDMOSphi <= 0.0) {
             SPfrontEnd->IFerrorf(ERR_FATAL,
@@ -86,7 +86,7 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
             double arg;     /* 1 - fc */
 
             /* perform the parameter defaulting */
-            
+
             if(!here->VDMOSdtempGiven) {
                 here->VDMOSdtemp = 0.0;
             }
@@ -174,40 +174,16 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
             }
 
             /* bulk diode model */
-            double egfet1, arg1, fact1, pbfact1, pbo, gmaold;
-            double fact2, pbfact, arg2, egfet, gmanew, factor;
+            double pbo, gmaold;
+            double gmanew, factor;
             double tBreakdownVoltage, vte, cbv;
             double xbv, xcbv, tol, iter, dt;
 
-            /* loop through all the instances */
-
-            if (!here->VDMOSdtempGiven) here->VDMOStemp = 0.0;
-
-            if (!here->VDMOStempGiven)
-                here->VDMOStemp = ckt->CKTtemp + here->VDMOStemp;
-
             dt = here->VDMOStemp - model->VDMOStnom;
-
             /* Junction grading temperature adjust */
             factor = 1.0 + (model->VDIOgradCoeffTemp1 * dt)
                 + (model->VDIOgradCoeffTemp2 * dt * dt);
             here->VDIOtGradingCoeff = model->VDIOgradCoeff * factor;
-
-            vt = CONSTKoverQ * here->VDMOStemp;
-            /* this part gets really ugly - I won't even try to
-            * explain these equations */
-            fact2 = here->VDMOStemp / REFTEMP;
-            egfet = 1.16 - (7.02e-4*here->VDMOStemp*here->VDMOStemp) /
-                (here->VDMOStemp + 1108);
-            arg2 = -egfet / (2 * CONSTboltz*here->VDMOStemp) +
-                1.1150877 / (CONSTboltz*(REFTEMP + REFTEMP));
-            pbfact = -2 * vt*(1.5*log(fact2) + CHARGE*arg2);
-            egfet1 = 1.16 - (7.02e-4*model->VDMOStnom*model->VDMOStnom) /
-                (model->VDMOStnom + 1108);
-            arg1 = -egfet1 / (CONSTboltz * 2 * model->VDMOStnom) +
-                1.1150877 / (2 * CONSTboltz*REFTEMP);
-            fact1 = model->VDMOStnom / REFTEMP;
-            pbfact1 = -2 * vtnom*(1.5*log(fact1) + CHARGE*arg1);
 
             pbo = (model->VDIOjunctionPot - pbfact1) / fact1;
             gmaold = (model->VDIOjunctionPot - pbo) / pbo;
