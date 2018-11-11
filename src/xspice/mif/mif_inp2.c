@@ -88,7 +88,11 @@ static void MIFget_port(
     Mif_Status_t     *status);
 
 
+static char *MIFgettok_gc(char **line);
+static char *MIFget_token_gc(char **s, Mif_Token_Type_t *type);
 
+#define MIFgettok MIFgettok_gc
+#define MIFget_token MIFget_token_gc
 
 /* ********************************************************************* */
 
@@ -232,7 +236,6 @@ MIF_INP2A (
     line = current->line;
 
     tmp_token = MIFgettok(&line);  /* read instance name again . . . .*/
-    tfree(tmp_token);
 
     /*  OK -- now &line points to the first token after
     the instance name and we are ready to process the connections
@@ -965,6 +968,19 @@ MIFget_port(
     return;
 }
 
+
+#undef MIFgettok
+#undef MIFget_token
+
+static char *MIFgettok_gc(char **line)
+{
+    return MIFgettok(line);
+}
+
+static char  *MIFget_token_gc(char **s, Mif_Token_Type_t *type)
+{
+    return MIFget_token(s, type);
+}
 
 
 
