@@ -6681,7 +6681,7 @@ inp_meas_current(struct card *deck)
     struct card *card, *subc_start = NULL, *subc_prev = NULL;
     struct replace_currm *new_rep, *act_rep = NULL, *rep = NULL;
     char *s, *t, *u, *v, *w;
-    int skip_control = 0, subs = 0;
+    int skip_control = 0, subs = 0, sn = 0;
 
     /* scan through deck and find i(xyz), replace by i(v_xyz) */
     for (card = deck; card; card = card->nextcard) {
@@ -6848,7 +6848,7 @@ inp_meas_current(struct card *deck)
                 /* Add _vmeas only once to first device node.
                    Continue if we already have modified device "tok" */
                 if (!strstr(node1, "_vmeas")) {
-                    new_line = tprintf("%s %s_vmeas %s", tok, node1, curr_line);
+                    new_line = tprintf("%s %s_vmeas_%d %s", tok, node1, sn, curr_line);
                     tfree(card->line);
                     card->line = new_line;
                 }
@@ -6857,10 +6857,11 @@ inp_meas_current(struct card *deck)
                 /* We have already added a line v_xyz to the deck */
                 if (!ciprefix(new_tok, card->nextcard->line)) {
                     /* add new line */
-                    new_line = tprintf("%s %s %s_vmeas 0", new_tok, node1, node1);
+                    new_line = tprintf("%s %s %s_vmeas_%d 0", new_tok, node1, node1, sn);
                     /* insert new_line after card->line */
                     insert_new_line(card, new_line, card->linenum + 1, 0);
                 }
+                sn++;
                 tfree(new_tok);
                 tfree(node1);
             }
