@@ -34,10 +34,8 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 /* We might compile for Windows, but only as a console application (e.g. tcl) */
 #if defined(HAS_WINGUI) || defined(__MINGW32__) || defined(_MSC_VER)
+#define PSAPI_VERSION 1
 #define HAVE_WIN32
-#endif
-
-#ifdef HAVE_WIN32
 
 #define WIN32_LEAN_AND_MEAN
 
@@ -52,12 +50,13 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include <windows.h>
 #include <psapi.h>
 
+#else
+#include <unistd.h>
 #endif /* HAVE_WIN32 */
 
 /* Uncheck the following definition if you want to get the old usage information
    #undef HAVE__PROC_MEMINFO
 */
-
 
 static void printres(char *name);
 static void fprintmem(FILE *stream, unsigned long long memory);
@@ -182,7 +181,6 @@ ft_ckspace(void)
 
 
 /* Print out one piece of resource usage information. */
-
 static void
 printres(char *name)
 {
@@ -317,31 +315,31 @@ printres(char *name)
 
         /* get_procm returns Kilobytes */
         fprintf(cp_out, "Total ngspice program size = ");
-        fprintmem(cp_out, mem_ng_act.size*1024);
+        fprintmem(cp_out, mem_ng_act.size);
         fprintf(cp_out, ".\n");
 #if defined(HAVE__PROC_MEMINFO)
         fprintf(cp_out, "Resident set size = ");
-        fprintmem(cp_out, mem_ng_act.resident*1024);
+        fprintmem(cp_out, mem_ng_act.resident);
         fprintf(cp_out, ".\n");
 
         fprintf(cp_out, "Shared ngspice pages = ");
-        fprintmem(cp_out, mem_ng_act.shared*1024);
+        fprintmem(cp_out, mem_ng_act.shared);
         fprintf(cp_out, ".\n");
 
         fprintf(cp_out, "Text (code) pages = ");
-        fprintmem(cp_out, mem_ng_act.trs*1024);
+        fprintmem(cp_out, mem_ng_act.trs);
         fprintf(cp_out, ".\n");
 
         fprintf(cp_out, "Stack = ");
-        fprintmem(cp_out, mem_ng_act.drs*1024);
+        fprintmem(cp_out, mem_ng_act.drs);
         fprintf(cp_out, ".\n");
 
         fprintf(cp_out, "Library pages = ");
-        fprintmem(cp_out, mem_ng_act.lrs*1024);
+        fprintmem(cp_out, mem_ng_act.lrs);
         fprintf(cp_out, ".\n");
         /* not used
            fprintf(cp_out, "Dirty pages = ");
-           fprintmem(cp_out, all_memory.dt * 1024);
+           fprintmem(cp_out, all_memory.dt);
            fprintf(cp_out, ".\n"); */
 #endif  /* HAVE__PROC_MEMINFO */
 #else   /* HAS_WINGUI or HAVE__PROC_MEMINFO */
@@ -466,7 +464,7 @@ printres(char *name)
 static void
 fprintmem(FILE *stream, unsigned long long memory) {
     if (memory > 1048576)
-        fprintf(stream, "%8.6f MB", (double)memory / 1048576.);
+        fprintf(stream, "%8.3f MB", (double)memory / 1048576.);
     else if (memory > 1024)
         fprintf(stream, "%5.3f kB", (double)memory / 1024.);
     else
@@ -478,48 +476,37 @@ fprintmem(FILE *stream, unsigned long long memory) {
 
 static int get_procm(struct proc_mem *memall) {
 
-#if defined(_MSC_VER) || defined(__MINGW32__)
+#ifdef HAVE_WIN32
     /* FIXME: shared module should be allowed, but currently does not link to psapi within MINGW/MSYS2 */
-#if (_WIN32_WINNT >= 0x0500) && (!defined(SHARED_MODULE) || _MSC_VER)
+#ifndef SHARED_MODULE
 /* Use Windows API function to obtain size of memory - more accurate */
-    HANDLE hProcess;
     PROCESS_MEMORY_COUNTERS pmc;
-    DWORD procid = GetCurrentProcessId();
-
-    hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ,
-                           FALSE, procid);
-    if (NULL == hProcess)
-        return 0;
 
     /* psapi library required */
-    if (GetProcessMemoryInfo(hProcess, &pmc, sizeof(pmc))) {
-        memall->size = pmc.WorkingSetSize/1024;
-        memall->resident = pmc.QuotaNonPagedPoolUsage/1024;
-        memall->trs = pmc.QuotaPagedPoolUsage/1024;
-    } else {
-        CloseHandle(hProcess);
+    if (GetProcessMemoryInfo(GetCurrentProcess(), &pmc, sizeof(pmc))) {
+        memall->size = pmc.WorkingSetSize;
+        memall->resident = pmc.QuotaNonPagedPoolUsage;
+        memall->trs = pmc.QuotaPagedPoolUsage;
+    } else
         return 0;
-    }
-    CloseHandle(hProcess);
 #else
 /* Use Windows GlobalMemoryStatus or /proc/memory to obtain size of memory - not accurate */
     get_sysmem(&mem_t_act); /* size is the difference between free memory at start time and now */
     if (mem_t.free > mem_t_act.free) /* it can happen that that ngspice is */
-        memall->size = (mem_t.free - mem_t_act.free)/1024; /* to small compared to os memory usage */
+        memall->size = (mem_t.free - mem_t_act.free); /* to small compared to os memory usage */
     else
         memall->size = 0;       /* sure, it is more */
     memall->resident = 0;
     memall->trs = 0;
-#endif /* _WIN32_WINNT 0x0500 && HAS_WINGUI */
+#endif /* HAVE_WIN32 */
 #else
 /* Use Linux/UNIX /proc/<pid>/statm file information */
     FILE *fp;
-    char buffer[1024], fibuf[100];
+    char buffer[1024];
     size_t bytes_read;
-
-    (void) sprintf(fibuf, "/proc/%d/statm", getpid());
-
-    if ((fp = fopen(fibuf, "r")) == NULL) {
+    /* page size */
+    long sz = sysconf(_SC_PAGESIZE);
+    if ((fp = fopen("/proc/self/statm", "r")) == NULL) {
         perror("fopen(\"/proc/%d/statm\")");
         return 0;
     }
@@ -530,6 +517,15 @@ static int get_procm(struct proc_mem *memall) {
     buffer[bytes_read] = '\0';
 
     sscanf(buffer, "%llu %llu %llu %llu %llu %llu %llu", &memall->size, &memall->resident, &memall->shared, &memall->trs, &memall->drs, &memall->lrs, &memall->dt);
+    /* scale by page size */
+    memall->size *= (double)sz;
+    memall->resident *= (double)sz;
+    memall->shared *= (double)sz;
+    memall->trs *= (double)sz;
+    memall->drs *= (double)sz;
+    memall->lrs *= (double)sz;
+    memall->dt *= (double)sz;
+
 #endif
     return 1;
 }
