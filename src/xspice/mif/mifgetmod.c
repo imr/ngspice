@@ -207,8 +207,13 @@ char *MIFgetMod(
                                 tfree(val->v.vec.rVec);
                             if (vtype == IF_CPLXVEC)
                                 tfree(val->v.vec.cVec);
-                            if (vtype == IF_STRING || vtype == IF_STRINGVEC)
+                            if (vtype == IF_STRING)
                                 tfree(val->sValue);
+                            if (vtype == IF_STRINGVEC) {
+                                for (i = 0; i < val->v.numValue; i++)
+                                    tfree(val->v.vec.sVec[i]);
+                                tfree(val->v.vec.sVec);
+                            }
                             if(error)
                                 return(INPerror(error));
                             break;
