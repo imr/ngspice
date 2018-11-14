@@ -62,7 +62,8 @@ dot_noise(char *line, CKTcircuit *ckt, INPtables *tab, struct card *current,
 			}
 			GCA(INPapName, (ckt, which, foo, "outputref", &ptemp));
 
-			INPgetTok(&line, &name, 1);
+			tfree(name);
+            INPgetTok(&line, &name, 1);
 			INPinsert(&name, tab);
 			ptemp.uValue = name;
 			GCA(INPapName, (ckt, which, foo, "input", &ptemp));
@@ -70,6 +71,7 @@ dot_noise(char *line, CKTcircuit *ckt, INPtables *tab, struct card *current,
 			INPgetTok(&line, &steptype, 1);
 			ptemp.iValue = 1;
 			error = INPapName(ckt, which, foo, steptype, &ptemp);
+            tfree(steptype);
 			if (error)
 				current->error = INPerrCat(current->error, INPerror(error));
 			parm = INPgetValue(ckt, &line, IF_INTEGER, tab);
