@@ -4978,7 +4978,8 @@ inp_compat(struct card *card)
                     }
                 }
             }
-            /* white noise model by x2line, x3line, x4line */
+            /* white noise model by x2line, x3line, x4line
+               if instance parameter noisy=0 is set, noise calculation is skipped */
             if ((tc1_ptr == NULL) && (tc2_ptr == NULL)) {
                 xline = tprintf("b%s %s %s i = v(%s, %s)/(%s)", title_tok, node1, node2,
                         node1, node2, equation);
@@ -5020,7 +5021,7 @@ inp_compat(struct card *card)
             *(card->line)   = '*';
             // insert new B source line immediately after current line
             card = insert_new_line(card, xline, 0, 0);
-            if (x2line) {
+            if (x2line && !strstr(cut_line, "noisy=0")) {
                 card = insert_new_line(card, x2line, 0, 0);
                 card = insert_new_line(card, x3line, 0, 0);
                 card = insert_new_line(card, x4line, 0, 0);
