@@ -1060,7 +1060,7 @@ plotInit(runDesc *run)
     }
 }
 
-
+/* prepare the vector length data for memory allocation */
 static inline int
 vlength2delta(int l)
 {
@@ -1069,18 +1069,30 @@ vlength2delta(int l)
         /* We need just a vector length of 1 */
         return 1;
 #endif
-
-    if (l < 50000)
-        return 512;
-    if (l < 200000)
-        return 256;
-    if (l < 500000)
-        return 128;
-    /* larger memory allocations may exhaust memory easily
-     * this function may use better estimation depending on
-     * available memory and number of vectors (run->numData)
-     */
-    return 64;
+    static int newpoints;
+    static int newpoints2;
+    int points = ft_curckt->ci_ckt->CKTtimeListSize;
+    /* transient and pss analysis (points > 0) upon start */
+    if (l == 0 && points > 0) {
+        /* number of timesteps plus some overhead */
+        newpoints = points + 100;
+        return newpoints;
+    }
+    /* transient and pss if original estimate is exceeded */
+    else if (l == newpoints && points > 0)
+    {
+        /* check where we are */
+        double timerel = ft_curckt->ci_ckt->CKTtime / ft_curckt->ci_ckt->CKTfinalTime;
+        /* return an estimate of the appropriate number of time points */
+        newpoints2 = (int)(points / timerel) - points + 1;
+        return newpoints2;
+    }
+    /* the estimate is (hopefully only slightly) too small, so add 2% of points */
+    else if (points > 0)
+        return (int)(newpoints2 / 50) + 1;
+    /* other analysis types that do not set CKTtimeListSize */
+    else
+        return 1024;
 }
 
 
