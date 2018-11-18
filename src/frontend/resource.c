@@ -478,7 +478,7 @@ static int get_procm(struct proc_mem *memall) {
 
 #ifdef HAVE_WIN32
     /* FIXME: shared module should be allowed, but currently does not link to psapi within MINGW/MSYS2 */
-#ifndef SHARED_MODULE
+#if !defined(SHARED_MODULE) || !defined(__MINGW32__)
 /* Use Windows API function to obtain size of memory - more accurate */
     PROCESS_MEMORY_COUNTERS pmc;
 
@@ -498,7 +498,7 @@ static int get_procm(struct proc_mem *memall) {
         memall->size = 0;       /* sure, it is more */
     memall->resident = 0;
     memall->trs = 0;
-#endif /* HAVE_WIN32 */
+#endif
 #else
 /* Use Linux/UNIX /proc/<pid>/statm file information */
     FILE *fp;
@@ -526,7 +526,7 @@ static int get_procm(struct proc_mem *memall) {
     memall->lrs *= (double)sz;
     memall->dt *= (double)sz;
 
-#endif
+#endif /* HAVE_WIN32 */
     return 1;
 }
 
