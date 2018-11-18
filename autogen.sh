@@ -118,7 +118,7 @@ check_adms_va()
         FOK=0
         if [ -d "$adms_dir" ]; then
                     ls $adms_dir/admsva/*.va  > /dev/null 2>&1
-                    exitcode=${PIPESTATUS[0]}
+                    exitcode=$?
                     if [ $exitcode -ne 0 ]; then
                        FOK=1
                     fi
