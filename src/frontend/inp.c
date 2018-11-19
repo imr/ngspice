@@ -2086,7 +2086,7 @@ limit(double nominal_val, double abs_variation)
  * So we have to do the following in each B-line:
  * check for agauss(x,y,z), and replace it by a suitable return value
  * of agauss()
- * agauss may also occur in .param lines, which have to be treated as well
+ * agauss  in .param lines has been treated already
  */
 
 static void
@@ -2114,7 +2114,7 @@ eval_agauss(struct card *deck, char *fcn)
             continue;
         }
 
-        if ((*curr_line != 'b') && !ciprefix(".para", curr_line))
+        if (*curr_line != 'b')
             continue;
 
         while ((ap = search_identifier(curr_line, fcn, curr_line)) != NULL) {
