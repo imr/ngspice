@@ -504,8 +504,12 @@ static int get_procm(struct proc_mem *memall) {
     FILE *fp;
     char buffer[1024];
     size_t bytes_read;
+    long sz;
     /* page size */
-    long sz = sysconf(_SC_PAGESIZE);
+    if ((sz = sysconf(_SC_PAGESIZE)) == -1) {
+        perror("sysconf() error");
+        return 0;
+    }
     if ((fp = fopen("/proc/self/statm", "r")) == NULL) {
         perror("fopen(\"/proc/%d/statm\")");
         return 0;
@@ -518,13 +522,13 @@ static int get_procm(struct proc_mem *memall) {
 
     sscanf(buffer, "%llu %llu %llu %llu %llu %llu %llu", &memall->size, &memall->resident, &memall->shared, &memall->trs, &memall->drs, &memall->lrs, &memall->dt);
     /* scale by page size */
-    memall->size *= (double)sz;
-    memall->resident *= (double)sz;
-    memall->shared *= (double)sz;
-    memall->trs *= (double)sz;
-    memall->drs *= (double)sz;
-    memall->lrs *= (double)sz;
-    memall->dt *= (double)sz;
+    memall->size *= (long long unsigned)sz;
+    memall->resident *= (long long unsigned)sz;
+    memall->shared *= (long long unsigned)sz;
+    memall->trs *= (long long unsigned)sz;
+    memall->drs *= (long long unsigned)sz;
+    memall->lrs *= (long long unsigned)sz;
+    memall->dt *= (long long unsigned)sz;
 
 #endif /* HAVE_WIN32 */
     return 1;
