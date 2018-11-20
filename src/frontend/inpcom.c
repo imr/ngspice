@@ -5021,7 +5021,7 @@ inp_compat(struct card *card)
             *(card->line)   = '*';
             // insert new B source line immediately after current line
             card = insert_new_line(card, xline, 0, 0);
-            if (x2line && !strstr(cut_line, "noisy=0")) {
+            if (x2line && strstr(cut_line, "noisy=1")) {
                 card = insert_new_line(card, x2line, 0, 0);
                 card = insert_new_line(card, x3line, 0, 0);
                 card = insert_new_line(card, x4line, 0, 0);
