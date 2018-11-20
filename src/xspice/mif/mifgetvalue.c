@@ -336,7 +336,10 @@ static IFcomplex MIFget_complex(char *token, Mif_Token_Type_t token_type,
         return(ctemp);
     }
 
-    /* get the real part */
+    /* the incoming 'token' is the opening < delimiter 
+       and will not handled furthermore */
+
+   /* get the real part */
     token = MIFget_token(line, &token_type);
     if(token_type != MIF_STRING_TOK) {
         *err = msg;
