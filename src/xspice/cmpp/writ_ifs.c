@@ -1247,9 +1247,7 @@ static char  *boolean_to_str(Boolean_t value)
 
         default:
             print_error("INTERNAL ERROR - boolean_to_str() - Impossible boolean value.");
-	    {
-	       char *p = NULL; *p = '\0';
-	    }
+
     }
 
     return(str);
