@@ -25,11 +25,6 @@ VDMOSgetic(GENmodel *inModel, CKTcircuit *ckt)
     for( ; model ; model = VDMOSnextModel(model)) {
         for(here = VDMOSinstances(model); here ; here = VDMOSnextInstance(here)) {
         
-            if(!here->VDMOSicVBSGiven) {
-                here->VDMOSicVBS = 
-                        *(ckt->CKTrhs + here->VDMOSbNode) - 
-                        *(ckt->CKTrhs + here->VDMOSsNode);
-            }
             if(!here->VDMOSicVDSGiven) {
                 here->VDMOSicVDS = 
                         *(ckt->CKTrhs + here->VDMOSdNode) - 

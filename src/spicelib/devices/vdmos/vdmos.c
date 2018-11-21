@@ -18,10 +18,9 @@ IFparm VDMOSpTable[] = { /* parameters */
  IP("off",            VDMOS_OFF,        IF_FLAG,    "Device initially off"),
  IOPU("icvds",        VDMOS_IC_VDS,     IF_REAL,    "Initial D-S voltage"),
  IOPU("icvgs",        VDMOS_IC_VGS,     IF_REAL,    "Initial G-S voltage"),
- IOPU("icvbs",        VDMOS_IC_VBS,     IF_REAL,    "Initial B-S voltage"),
  IOPU("temp",         VDMOS_TEMP,       IF_REAL,    "Instance temperature"),
  IOPU("dtemp",        VDMOS_DTEMP,      IF_REAL,    "Instance temperature difference"),
- IP( "ic",            VDMOS_IC,         IF_REALVEC, "Vector of D-S, G-S, B-S voltages"),
+ IP( "ic",            VDMOS_IC,         IF_REALVEC, "Vector of D-S, G-S voltages"),
 
  OP( "id",           VDMOS_CD,         IF_REAL,    "Drain current"),
  OP( "is",           VDMOS_CS,         IF_REAL,    "Source current"),
@@ -35,7 +34,6 @@ IFparm VDMOSpTable[] = { /* parameters */
  OPU( "dnode",      VDMOS_DNODE,      IF_INTEGER, "Number of the drain node "),
  OPU( "gnode",      VDMOS_GNODE,      IF_INTEGER, "Number of the gate node "),
  OPU( "snode",      VDMOS_SNODE,      IF_INTEGER, "Number of the source node "),
- OPU( "bnode",      VDMOS_BNODE,      IF_INTEGER, "Number of the node "),
  OPU( "dnodeprime", VDMOS_DNODEPRIME, IF_INTEGER, "Number of int. drain node"),
  OPU( "snodeprime", VDMOS_SNODEPRIME, IF_INTEGER, "Number of int. source node "),
 
@@ -50,22 +48,12 @@ IFparm VDMOSpTable[] = { /* parameters */
 
  OP( "gm",        VDMOS_GM,         IF_REAL,    "Transconductance"),
  OP( "gds",       VDMOS_GDS,        IF_REAL,    "Drain-Source conductance"),
- OP( "gmb",       VDMOS_GMBS,       IF_REAL,    "Bulk-Source transconductance"),
- OPR( "gmbs",     VDMOS_GMBS,       IF_REAL,    ""),
- OPU( "gbd",      VDMOS_GBD,        IF_REAL,    "Bulk-Drain conductance"),
- OPU( "gbs",      VDMOS_GBS,        IF_REAL,    "Bulk-Source conductance"),
 
  OPU( "cqgs", VDMOS_CQGS, IF_REAL, "Capacitance due to gate-source charge storage"),
  OPU( "cqgd", VDMOS_CQGD, IF_REAL, "Capacitance due to gate-drain charge storage"),
- OPU( "cqgb", VDMOS_CQGB, IF_REAL, "Capacitance due to gate-bulk charge storage"),
- OPU( "cqbd", VDMOS_CQBD, IF_REAL, "Capacitance due to bulk-drain charge storage"),
- OPU( "cqbs", VDMOS_CQBS, IF_REAL, "Capacitance due to bulk-source charge storage"),
 
  OPU( "qgs",      VDMOS_QGS,        IF_REAL,    "Gate-Source charge storage"),
  OPU( "qgd",      VDMOS_QGD,        IF_REAL,    "Gate-Drain charge storage"),
- OPU( "qgb",      VDMOS_QGB,        IF_REAL,    "Gate-Bulk charge storage"),
- OPU( "qbd",      VDMOS_QBD,        IF_REAL,    "Bulk-Drain charge storage"),
- OPU( "qbs",      VDMOS_QBS,        IF_REAL,    "Bulk-Source charge storage"),
  OPU( "p",        VDMOS_POWER,      IF_REAL,    "Instaneous power"),
 };
 
@@ -124,8 +112,7 @@ IFparm VDMOSmPTable[] = { /* model parameters */
 char *VDMOSnames[] = {
     "Drain",
     "Gate",
-    "Source",
-    "Bulk"
+    "Source"
 };
 
 int	VDMOSnSize = NUMELEMS(VDMOSnames);

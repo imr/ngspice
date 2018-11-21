@@ -110,23 +110,10 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
         for (here = VDMOSinstances(model); here != NULL;
             here = VDMOSnextInstance(here)) {
 
-            /* Check if source and bulk nodes are the same.
-             * The power MOS devices in fact are 3-terminal devices,
-             * but the actual device input still uses 4 terminals to be compatible.
-             */
-            if (here->VDMOSbNode != here->VDMOSsNode) {
-                fprintf(stderr, "\nError: source and bulk nodes of device %s have to be the same!\n",
-                    here->VDMOSname);
-                controlled_exit(1);
-            }
-
             /* allocate a chunk of the state vector */
             here->VDMOSstates = *states;
             *states += VDMOSnumStates;
 
-            if (!here->VDMOSicVBSGiven) {
-                here->VDMOSicVBS = 0;
-            }
             if (!here->VDMOSicVDSGiven) {
                 here->VDMOSicVDS = 0;
             }
@@ -239,53 +226,22 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
 do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     return(E_NOMEM);\
 } } while(0)
-/*
-            TSTALLOC(VDMOSDdPtr, VDMOSdNode, VDMOSdNode);
-            TSTALLOC(VDMOSGgPtr, VDMOSgNode, VDMOSgNode);
-            TSTALLOC(VDMOSSsPtr, VDMOSsNode, VDMOSsNode);
-            TSTALLOC(VDMOSBbPtr, VDMOSbNode, VDMOSbNode);
-            TSTALLOC(VDMOSDPdpPtr, VDMOSdNodePrime, VDMOSdNodePrime);
-            TSTALLOC(VDMOSSPspPtr, VDMOSsNodePrime, VDMOSsNodePrime);
-            TSTALLOC(VDMOSDdpPtr, VDMOSdNode, VDMOSdNodePrime);
-            TSTALLOC(VDMOSGbPtr, VDMOSgNode, VDMOSbNode);
-            TSTALLOC(VDMOSGdpPtr, VDMOSgNode, VDMOSdNodePrime);
-            TSTALLOC(VDMOSGspPtr, VDMOSgNode, VDMOSsNodePrime);
-            TSTALLOC(VDMOSSspPtr, VDMOSsNode, VDMOSsNodePrime);
-            TSTALLOC(VDMOSBdpPtr, VDMOSbNode, VDMOSdNodePrime);
-            TSTALLOC(VDMOSBspPtr, VDMOSbNode, VDMOSsNodePrime);
-            TSTALLOC(VDMOSDPspPtr, VDMOSdNodePrime, VDMOSsNodePrime);
-            TSTALLOC(VDMOSDPdPtr, VDMOSdNodePrime, VDMOSdNode);
-            TSTALLOC(VDMOSBgPtr, VDMOSbNode, VDMOSgNode);
-            TSTALLOC(VDMOSDPgPtr, VDMOSdNodePrime, VDMOSgNode);
-            TSTALLOC(VDMOSSPgPtr, VDMOSsNodePrime, VDMOSgNode);
-            TSTALLOC(VDMOSSPsPtr, VDMOSsNodePrime, VDMOSsNode);
-            TSTALLOC(VDMOSDPbPtr, VDMOSdNodePrime, VDMOSbNode);
-            TSTALLOC(VDMOSSPbPtr, VDMOSsNodePrime, VDMOSbNode);
-            TSTALLOC(VDMOSSPdpPtr, VDMOSsNodePrime, VDMOSdNodePrime);
-*/
 
             TSTALLOC(VDMOSDdPtr, VDMOSdNode, VDMOSdNode);
             TSTALLOC(VDMOSGgPtr, VDMOSgNode, VDMOSgNode);
             TSTALLOC(VDMOSSsPtr, VDMOSsNode, VDMOSsNode);
-            TSTALLOC(VDMOSBbPtr, VDMOSbNode, VDMOSbNode);
             TSTALLOC(VDMOSDPdpPtr, VDMOSdNodePrime, VDMOSdNodePrime);
             TSTALLOC(VDMOSSPspPtr, VDMOSsNodePrime, VDMOSsNodePrime);
             TSTALLOC(VDMOSGPgpPtr, VDMOSgNodePrime, VDMOSgNodePrime);
             TSTALLOC(VDMOSDdpPtr, VDMOSdNode, VDMOSdNodePrime);
-            TSTALLOC(VDMOSGPbPtr, VDMOSgNodePrime, VDMOSbNode);
             TSTALLOC(VDMOSGPdpPtr, VDMOSgNodePrime, VDMOSdNodePrime);
             TSTALLOC(VDMOSGPspPtr, VDMOSgNodePrime, VDMOSsNodePrime);
             TSTALLOC(VDMOSSspPtr, VDMOSsNode, VDMOSsNodePrime);
-            TSTALLOC(VDMOSBdpPtr, VDMOSbNode, VDMOSdNodePrime);
-            TSTALLOC(VDMOSBspPtr, VDMOSbNode, VDMOSsNodePrime);
             TSTALLOC(VDMOSDPspPtr, VDMOSdNodePrime, VDMOSsNodePrime);
             TSTALLOC(VDMOSDPdPtr, VDMOSdNodePrime, VDMOSdNode);
-            TSTALLOC(VDMOSBgpPtr, VDMOSbNode, VDMOSgNodePrime);
             TSTALLOC(VDMOSDPgpPtr, VDMOSdNodePrime, VDMOSgNodePrime);
             TSTALLOC(VDMOSSPgpPtr, VDMOSsNodePrime, VDMOSgNodePrime);
             TSTALLOC(VDMOSSPsPtr, VDMOSsNodePrime, VDMOSsNode);
-            TSTALLOC(VDMOSDPbPtr, VDMOSdNodePrime, VDMOSbNode);
-            TSTALLOC(VDMOSSPbPtr, VDMOSsNodePrime, VDMOSbNode);
             TSTALLOC(VDMOSSPdpPtr, VDMOSsNodePrime, VDMOSdNodePrime);
 
             TSTALLOC(VDMOSGgpPtr, VDMOSgNode, VDMOSgNodePrime);

@@ -118,12 +118,10 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
             here->VDMOStPhi = fact2 * phio + pbfact;
             here->VDMOStVto = model->VDMOSvt0;
 
-            here->VDMOSCbd = 0;
             here->VDMOSf2d = 0;
             here->VDMOSf3d = 0;
             here->VDMOSf4d = 0;
 
-            here->VDMOSCbs = 0;
             here->VDMOSf2s = 0;
             here->VDMOSf3s = 0;
             here->VDMOSf4s = 0;

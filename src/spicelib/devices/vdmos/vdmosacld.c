@@ -22,12 +22,8 @@ VDMOSacLoad(GENmodel *inModel, CKTcircuit *ckt)
     int xrev;
     double xgs;
     double xgd;
-    double xgb;
-    double xbd;
-    double xbs;
     double capgs;
     double capgd;
-    double capgb;
 
     for( ; model != NULL; model = VDMOSnextModel(model)) {
         for(here = VDMOSinstances(model); here!= NULL;
@@ -47,13 +43,8 @@ VDMOSacLoad(GENmodel *inModel, CKTcircuit *ckt)
                       *(ckt->CKTstate0+here->VDMOScapgs));
             capgd = ( *(ckt->CKTstate0+here->VDMOScapgd)+ 
                       *(ckt->CKTstate0+here->VDMOScapgd));
-            capgb = ( *(ckt->CKTstate0+here->VDMOScapgb)+ 
-                      *(ckt->CKTstate0+here->VDMOScapgb));
             xgs = capgs * ckt->CKTomega;
             xgd = capgd * ckt->CKTomega;
-            xgb = capgb * ckt->CKTomega;
-            xbd  = here->VDMOScapbd * ckt->CKTomega;
-            xbs  = here->VDMOScapbs * ckt->CKTomega;
 
             /* bulk diode */
             double gspr, geq, xceq;
@@ -64,47 +55,30 @@ VDMOSacLoad(GENmodel *inModel, CKTcircuit *ckt)
             /*
              *    load matrix
              */
-            *(here->VDMOSGPgpPtr +1) += xgd+xgs+xgb;
-            *(here->VDMOSBbPtr +1) += xgb+xbd+xbs;
-            *(here->VDMOSDPdpPtr +1) += xgd+xbd;
-            *(here->VDMOSSPspPtr +1) += xgs+xbs;
-            *(here->VDMOSGPbPtr +1) -= xgb;
+            *(here->VDMOSGPgpPtr +1) += xgd+xgs;
+            *(here->VDMOSDPdpPtr +1) += xgd;
+            *(here->VDMOSSPspPtr +1) += xgs;
             *(here->VDMOSGPdpPtr +1) -= xgd;
             *(here->VDMOSGPspPtr +1) -= xgs;
-            *(here->VDMOSBgpPtr +1) -= xgb;
-            *(here->VDMOSBdpPtr +1) -= xbd;
-            *(here->VDMOSBspPtr +1) -= xbs;
             *(here->VDMOSDPgpPtr +1) -= xgd;
-            *(here->VDMOSDPbPtr +1) -= xbd;
             *(here->VDMOSSPgpPtr +1) -= xgs;
-            *(here->VDMOSSPbPtr +1) -= xbs;
             *(here->VDMOSDdPtr) += here->VDMOSdrainConductance;
             *(here->VDMOSSsPtr) += here->VDMOSsourceConductance;
-            *(here->VDMOSBbPtr) += here->VDMOSgbd+here->VDMOSgbs;
             *(here->VDMOSDPdpPtr) += here->VDMOSdrainConductance+
-                    here->VDMOSgds+here->VDMOSgbd+
-                    xrev*(here->VDMOSgm+here->VDMOSgmbs);
+                    here->VDMOSgds+xrev*(here->VDMOSgm);
             *(here->VDMOSSPspPtr) += here->VDMOSsourceConductance+
-                    here->VDMOSgds+here->VDMOSgbs+
-                    xnrm*(here->VDMOSgm+here->VDMOSgmbs);
+                    here->VDMOSgds+xnrm*(here->VDMOSgm);
             *(here->VDMOSDdpPtr) -= here->VDMOSdrainConductance;
             *(here->VDMOSSspPtr) -= here->VDMOSsourceConductance;
-            *(here->VDMOSBdpPtr) -= here->VDMOSgbd;
-            *(here->VDMOSBspPtr) -= here->VDMOSgbs;
             *(here->VDMOSDPdPtr) -= here->VDMOSdrainConductance;
             *(here->VDMOSDPgpPtr) += (xnrm-xrev)*here->VDMOSgm;
-            *(here->VDMOSDPbPtr) += -here->VDMOSgbd+(xnrm-xrev)*here->VDMOSgmbs;
-            *(here->VDMOSDPspPtr) -= here->VDMOSgds+
-                    xnrm*(here->VDMOSgm+here->VDMOSgmbs);
+            *(here->VDMOSDPspPtr) -= here->VDMOSgds+xnrm*(here->VDMOSgm);
             *(here->VDMOSSPgpPtr) -= (xnrm-xrev)*here->VDMOSgm;
             *(here->VDMOSSPsPtr) -= here->VDMOSsourceConductance;
-            *(here->VDMOSSPbPtr) -= here->VDMOSgbs+(xnrm-xrev)*here->VDMOSgmbs;
-            *(here->VDMOSSPdpPtr) -= here->VDMOSgds+
-                    xrev*(here->VDMOSgm+here->VDMOSgmbs);
+            *(here->VDMOSSPdpPtr) -= here->VDMOSgds+xrev*(here->VDMOSgm);
             /* gate resistor */
             *(here->VDMOSGgPtr) += (here->VDMOSgateConductance);
-            *(here->VDMOSGPgpPtr) +=
-                (here->VDMOSgateConductance)/* + ?? FIXME */;
+            *(here->VDMOSGPgpPtr) += (here->VDMOSgateConductance)/* + ?? FIXME */;
             *(here->VDMOSGgpPtr) -= here->VDMOSgateConductance;
             *(here->VDMOSGPgPtr) -= here->VDMOSgateConductance;
             /* bulk diode */

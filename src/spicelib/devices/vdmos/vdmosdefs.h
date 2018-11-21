@@ -41,7 +41,6 @@ typedef struct sVDMOSinstance {
     const int VDMOSdNode;  /* number of the gate node of the mosfet */
     const int VDMOSgNode;  /* number of the gate node of the mosfet */
     const int VDMOSsNode;  /* number of the source node of the mosfet */
-    const int VDMOSbNode;  /* number of the bulk node of the mosfet */
     int VDMOSdNodePrime; /* number of the internal drain node of the mosfet */
     int VDMOSsNodePrime; /* number of the internal source node of the mosfet */
     int VDMOSgNodePrime; /* number of the internal gate node of the mosfet */
@@ -63,7 +62,6 @@ typedef struct sVDMOSinstance {
     double VDMOStVto;                /* temperature corrected Vto */
     double VDMOStSatCur;             /* temperature corrected saturation Cur. */
 
-    double VDMOSicVBS;   /* initial condition B-S voltage */
     double VDMOSicVDS;   /* initial condition D-S voltage */
     double VDMOSicVGS;   /* initial condition G-S voltage */
     double VDMOSvon;
@@ -71,17 +69,8 @@ typedef struct sVDMOSinstance {
     double VDMOSsourceVcrit; /* Vcrit for pos. vds */
     double VDMOSdrainVcrit;  /* Vcrit for pos. vds */
     double VDMOScd;
-    double VDMOScbs;
-    double VDMOScbd;
-    double VDMOSgmbs;
     double VDMOSgm;
     double VDMOSgds;
-    double VDMOSgbd;
-    double VDMOSgbs;
-    double VDMOScapbd;
-    double VDMOScapbs;
-    double VDMOSCbd;
-    double VDMOSCbs;
     double VDMOSf2d;
     double VDMOSf3d;
     double VDMOSf4d;
@@ -114,7 +103,7 @@ typedef struct sVDMOSinstance {
  * cdr = cdrain
  */
 
-#define	VDMOSNDCOEFFS	30
+#define	VDMOSNDCOEFFS	11
 
 #ifndef NODISTO
 	double VDMOSdCoeffs[VDMOSNDCOEFFS];
@@ -124,36 +113,17 @@ typedef struct sVDMOSinstance {
 
 #ifndef CONFIG
 
-#define	capbs2		VDMOSdCoeffs[0]
-#define	capbs3		VDMOSdCoeffs[1]
-#define	capbd2		VDMOSdCoeffs[2]
-#define	capbd3		VDMOSdCoeffs[3]
-#define	gbs2		VDMOSdCoeffs[4]
-#define	gbs3		VDMOSdCoeffs[5]
-#define	gbd2		VDMOSdCoeffs[6]
-#define	gbd3		VDMOSdCoeffs[7]
-#define	capgb2		VDMOSdCoeffs[8]
-#define	capgb3		VDMOSdCoeffs[9]
-#define	cdr_x2		VDMOSdCoeffs[10]
-#define	cdr_y2		VDMOSdCoeffs[11]
-#define	cdr_z2		VDMOSdCoeffs[12]
-#define	cdr_xy		VDMOSdCoeffs[13]
-#define	cdr_yz		VDMOSdCoeffs[14]
-#define	cdr_xz		VDMOSdCoeffs[15]
-#define	cdr_x3		VDMOSdCoeffs[16]
-#define	cdr_y3		VDMOSdCoeffs[17]
-#define	cdr_z3		VDMOSdCoeffs[18]
-#define	cdr_x2z		VDMOSdCoeffs[19]
-#define	cdr_x2y		VDMOSdCoeffs[20]
-#define	cdr_y2z		VDMOSdCoeffs[21]
-#define	cdr_xy2		VDMOSdCoeffs[22]
-#define	cdr_xz2		VDMOSdCoeffs[23]
-#define	cdr_yz2		VDMOSdCoeffs[24]
-#define	cdr_xyz		VDMOSdCoeffs[25]
-#define	capgs2		VDMOSdCoeffs[26]
-#define	capgs3		VDMOSdCoeffs[27]
-#define	capgd2		VDMOSdCoeffs[28]
-#define	capgd3		VDMOSdCoeffs[29]
+#define	cdr_x2		VDMOSdCoeffs[0]
+#define	cdr_y2		VDMOSdCoeffs[1]
+#define	cdr_xy		VDMOSdCoeffs[2]
+#define	cdr_x3		VDMOSdCoeffs[3]
+#define	cdr_y3		VDMOSdCoeffs[4]
+#define	cdr_x2y		VDMOSdCoeffs[5]
+#define	cdr_xy2		VDMOSdCoeffs[6]
+#define	capgs2		VDMOSdCoeffs[7]
+#define	capgs3		VDMOSdCoeffs[8]
+#define	capgd2		VDMOSdCoeffs[9]
+#define	capgd3		VDMOSdCoeffs[10]
 
 #endif
 
@@ -174,7 +144,6 @@ typedef struct sVDMOSinstance {
     unsigned VDMOSwGiven :1;
     unsigned VDMOSdNodePrimeSet  :1;
     unsigned VDMOSsNodePrimeSet  :1;
-    unsigned VDMOSicVBSGiven :1;
     unsigned VDMOSicVDSGiven :1;
     unsigned VDMOSicVGSGiven :1;
     unsigned VDMOSvonGiven   :1;
@@ -188,32 +157,22 @@ typedef struct sVDMOSinstance {
                                      * (gate node,gate node) */
     double *VDMOSSsPtr;      /* pointer to sparse matrix element at
                                      * (source node,source node) */
-    double *VDMOSBbPtr;      /* pointer to sparse matrix element at
-                                     * (bulk node,bulk node) */
     double *VDMOSDPdpPtr;    /* pointer to sparse matrix element at
                                      * (drain prime node,drain prime node) */
     double *VDMOSSPspPtr;    /* pointer to sparse matrix element at
                                      * (source prime node,source prime node) */
     double *VDMOSDdpPtr;     /* pointer to sparse matrix element at
                                      * (drain node,drain prime node) */
-    double *VDMOSGbPtr;      /* pointer to sparse matrix element at
-                                     * (gate node,bulk node) */
     double *VDMOSGdpPtr;     /* pointer to sparse matrix element at
                                      * (gate node,drain prime node) */
     double *VDMOSGspPtr;     /* pointer to sparse matrix element at
                                      * (gate node,source prime node) */
     double *VDMOSSspPtr;     /* pointer to sparse matrix element at
                                      * (source node,source prime node) */
-    double *VDMOSBdpPtr;     /* pointer to sparse matrix element at
-                                     * (bulk node,drain prime node) */
-    double *VDMOSBspPtr;     /* pointer to sparse matrix element at
-                                     * (bulk node,source prime node) */
     double *VDMOSDPspPtr;    /* pointer to sparse matrix element at
                                      * (drain prime node,source prime node) */
     double *VDMOSDPdPtr;     /* pointer to sparse matrix element at
                                      * (drain prime node,drain node) */
-    double *VDMOSBgPtr;      /* pointer to sparse matrix element at
-                                     * (bulk node,gate node) */
     double *VDMOSDPgPtr;     /* pointer to sparse matrix element at
                                      * (drain prime node,gate node) */
 
@@ -221,23 +180,15 @@ typedef struct sVDMOSinstance {
                                      * (source prime node,gate node) */
     double *VDMOSSPsPtr;     /* pointer to sparse matrix element at
                                      * (source prime node,source node) */
-    double *VDMOSDPbPtr;     /* pointer to sparse matrix element at
-                                     * (drain prime node,bulk node) */
-    double *VDMOSSPbPtr;     /* pointer to sparse matrix element at
-                                     * (source prime node,bulk node) */
     double *VDMOSSPdpPtr;    /* pointer to sparse matrix element at
                                      * (source prime node,drain prime node) */
     /* added for VDMOS */
     double *VDMOSGPgpPtr;    /* pointer to sparse matrix element at
                              * (gate prime node, gate prime node) */
-    double *VDMOSGPbPtr;    /* pointer to sparse matrix element at
-                             * (gate prime node, bulk node) */
     double *VDMOSGPdpPtr;    /* pointer to sparse matrix element at
                              * (gate prime node, drain prime node) */
     double *VDMOSGPspPtr;    /* pointer to sparse matrix element at
                              * (gate prime node, source prime node) */
-    double *VDMOSBgpPtr;    /* pointer to sparse matrix element at
-                             * (bulk node, gate prime node) */
     double *VDMOSDPgpPtr;    /* pointer to sparse matrix element at
                              * (drain prime node, gate prime node) */
     double *VDMOSSPgpPtr;    /* pointer to sparse matrix element at
@@ -264,36 +215,24 @@ typedef struct sVDMOSinstance {
 
 } VDMOSinstance ;
 
-#define VDMOSvbd VDMOSstates+ 0   /* bulk-drain voltage */
-#define VDMOSvbs VDMOSstates+ 1   /* bulk-source voltage */
-#define VDMOSvgs VDMOSstates+ 2   /* gate-source voltage */
-#define VDMOSvds VDMOSstates+ 3   /* drain-source voltage */
+#define VDMOSvgs VDMOSstates+ 0   /* gate-source voltage */
+#define VDMOSvds VDMOSstates+ 1   /* drain-source voltage */
 
-#define VDMOScapgs VDMOSstates+4  /* gate-source capacitor value */
-#define VDMOSqgs VDMOSstates+ 5   /* gate-source capacitor charge */
-#define VDMOScqgs VDMOSstates+ 6  /* gate-source capacitor current */
+#define VDMOScapgs VDMOSstates+2  /* gate-source capacitor value */
+#define VDMOSqgs VDMOSstates+ 3   /* gate-source capacitor charge */
+#define VDMOScqgs VDMOSstates+ 4  /* gate-source capacitor current */
 
-#define VDMOScapgd VDMOSstates+ 7 /* gate-drain capacitor value */
-#define VDMOSqgd VDMOSstates+ 8   /* gate-drain capacitor charge */
-#define VDMOScqgd VDMOSstates+ 9  /* gate-drain capacitor current */
+#define VDMOScapgd VDMOSstates+ 5 /* gate-drain capacitor value */
+#define VDMOSqgd VDMOSstates+ 6   /* gate-drain capacitor charge */
+#define VDMOScqgd VDMOSstates+ 7  /* gate-drain capacitor current */
 
-#define VDMOScapgb VDMOSstates+10 /* gate-bulk capacitor value */
-#define VDMOSqgb VDMOSstates+ 11  /* gate-bulk capacitor charge */
-#define VDMOScqgb VDMOSstates+ 12 /* gate-bulk capacitor current */
+#define VDIOvoltage VDMOSstates+ 8
+#define VDIOcurrent VDMOSstates+ 9
+#define VDIOconduct VDMOSstates+ 10
+#define VDIOcapCharge VDMOSstates+ 11
+#define VDIOcapCurrent VDMOSstates+ 12
 
-#define VDMOSqbd VDMOSstates+ 13  /* bulk-drain capacitor charge */
-#define VDMOScqbd VDMOSstates+ 14 /* bulk-drain capacitor current */
-
-#define VDMOSqbs VDMOSstates+ 15  /* bulk-source capacitor charge */
-#define VDMOScqbs VDMOSstates+ 16 /* bulk-source capacitor current */
-
-#define VDIOvoltage VDMOSstates+ 17
-#define VDIOcurrent VDMOSstates+ 18
-#define VDIOconduct VDMOSstates+ 19
-#define VDIOcapCharge VDMOSstates+ 20
-#define VDIOcapCurrent VDMOSstates+ 21
-
-#define VDMOSnumStates 22
+#define VDMOSnumStates 13
 
 
 /* per model data */
@@ -412,7 +351,6 @@ enum {
     VDMOS_L,
     VDMOS_OFF,
     VDMOS_IC,
-    VDMOS_IC_VBS,
     VDMOS_IC_VDS,
     VDMOS_IC_VGS,
     VDMOS_CG,
@@ -473,7 +411,6 @@ enum {
     VDMOS_DNODE,
     VDMOS_GNODE,
     VDMOS_SNODE,
-    VDMOS_BNODE,
     VDMOS_DNODEPRIME,
     VDMOS_SNODEPRIME,
     VDMOS_SOURCECONDUCT,
@@ -483,23 +420,14 @@ enum {
     VDMOS_SOURCEVCRIT,
     VDMOS_DRAINVCRIT,
     VDMOS_CD,
-    VDMOS_GMBS,
     VDMOS_GM,
     VDMOS_GDS,
-    VDMOS_GBD,
-    VDMOS_GBS,
     VDMOS_VGS,
     VDMOS_VDS,
     VDMOS_QGS,
     VDMOS_CQGS,
     VDMOS_QGD,
     VDMOS_CQGD,
-    VDMOS_QGB,
-    VDMOS_CQGB,
-    VDMOS_QBD,
-    VDMOS_CQBD,
-    VDMOS_QBS,
-    VDMOS_CQBS,
     VDMOS_SOURCERESIST,
     VDMOS_DRAINRESIST,
 };

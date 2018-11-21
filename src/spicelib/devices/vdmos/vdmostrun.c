@@ -23,7 +23,6 @@ VDMOStrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
         
             CKTterr(here->VDMOSqgs,ckt,timeStep);
             CKTterr(here->VDMOSqgd,ckt,timeStep);
-            CKTterr(here->VDMOSqgb,ckt,timeStep);
         }
     }
     return(OK);
