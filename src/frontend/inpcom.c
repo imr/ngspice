@@ -103,6 +103,7 @@ int dynMaxckt = 0; /* subckt.c 307 */
 /* number of parameter substitutions */
 long dynsubst; /* spicenum.c 221 */
 
+static bool has_if = FALSE; /* if we have an .if ... .endif pair */
 
 static char *readline(FILE *fd);
 static int  get_number_terminals(char *c);
@@ -143,7 +144,7 @@ static void subckt_params_to_param(struct card *deck);
 static void inp_fix_temper_in_param(struct card *deck);
 static void inp_fix_agauss_in_param(struct card *deck, char *fcn);
 static void inp_vdmos_model(struct card *deck);
-static void inp_check_control(struct card *deck);
+static void inp_check_syntax(struct card *deck);
 
 static char *inp_spawn_brace(char *s);
 
@@ -585,9 +586,13 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile, bool *expr_w_t
         struct card *tmp_ptr1;
         struct names *subckt_w_params = new_names();
 
+        /* skip title line */
         struct card *working = cc->nextcard;
 
         delete_libs();
+
+        /* some syntax checks, including title line */
+        inp_check_syntax(cc);
 
         if(inp_compat_mode == COMPATMODE_LTA)
             ltspice_compat_a(working);
@@ -598,15 +603,15 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile, bool *expr_w_t
             pspice_compat_a(working);
         }
 
-        inp_check_control(working);
-
         inp_fix_for_numparam(subckt_w_params, working);
 
         inp_remove_excess_ws(working);
 
         inp_vdmos_model(working);
-
-        comment_out_unused_subckt_models(working);
+        /* don't remove unused model if we have an .if clause, because we cannot yet
+           decide here which model we finally will need */
+        if (!has_if)
+            comment_out_unused_subckt_models(working);
 
         subckt_params_to_param(working);
 
@@ -7675,11 +7680,20 @@ ltspice_compat_a(struct card *oldcard)
     oldcard->nextcard = ltspice_compat(oldcard->nextcard);
 }
 
-/* check if we have a .control ... .endc pair */
-static void inp_check_control(struct card *deck)
+/* syntax check:
+   Check if we have a .control ... .endc pair,
+   a .if ... .endif pair, a .suckt ... .ends pair */
+static void inp_check_syntax(struct card *deck)
 {
     struct card *card;
-    int check_control = 0;
+    int check_control = 0, check_subs = 0, check_if = 0;
+
+    /* will lead to crash in inp.c, fcn inp_spsource */
+    if (ciprefix(".param", deck->line) || ciprefix(".meas", deck->line)) {
+        fprintf(cp_err, "\nError: title line is missing!\n\n");
+        controlled_exit(EXIT_BAD);
+    }
+
     for (card = deck; card; card = card->nextcard) {
         char *cut_line = card->line;
         if (*cut_line == '*')
@@ -7697,10 +7711,44 @@ static void inp_check_control(struct card *deck)
             check_control--;
             continue;
         }
+        // check for .subckt ... .ends
+        else if (ciprefix(".subckt", cut_line)) {
+            if (check_subs > 0)
+                fprintf(cp_err, "\nWarning: Nesting of subcircuits is only marginally supported!\n\n");
+            check_subs++;
+            continue;
+        }
+        else if (ciprefix(".ends", cut_line)) {
+            check_subs--;
+            continue;
+        }
+        // check for .if ... .endif
+        if (ciprefix(".if", cut_line)) {
+            check_if++;
+            has_if = TRUE;
+            continue;
+        }
+        else if (ciprefix(".endif", cut_line)) {
+            check_if--;
+            continue;
+        }
     }
 
     if (check_control > 0) {
         fprintf(cp_err, "\nWarning: Missing .endc statement!\n");
+        fprintf(cp_err, "    This may cause subsequent errors.\n\n");
+    }
+    if (check_control < 0) {
+        fprintf(cp_err, "\nWarning: Missing .control statement!\n");
+        fprintf(cp_err, "    This may cause subsequent errors.\n\n");
+    }
+    if (check_subs != 0) {
+        fprintf(cp_err, "\nError: Mismatch of .subckt ... .ends statements!\n");
+        fprintf(cp_err, "    This will cause subsequent errors.\n\n");
+        controlled_exit(EXIT_BAD);
+    }
+    if (check_if != 0) {
+        fprintf(cp_err, "\nError: Mismatch of .if ... .endif statements!\n");
         fprintf(cp_err, "    This may cause subsequent errors.\n\n");
     }
 }
