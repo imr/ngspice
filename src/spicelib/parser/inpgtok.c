@@ -285,9 +285,7 @@ INPgetUTok(char **line, char **token, int gobble)
             break;
         /* This is not complex enough to catch all errors, but it will
            get the "good" parses */
-        if (*point == '+' && (signstate == 1 || signstate == 3))
-            break;
-        if (*point == '-') {
+        if (*point == '+' || *point == '-') {
             if (signstate == 1 || signstate == 3)
                 break;
             signstate += 1;
