@@ -1047,9 +1047,10 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
             }
             else {
                 /* add Inp_Path to sourcepath variable */
-                char *p;
-                if ((p = strstr(buffer, "sourcepath"))) {
-                    if ((p = strchr(buffer, ')'))) {
+                char *p = strstr(buffer, "sourcepath");
+                if (p) {
+                    p = strchr(buffer, ')');
+                    if (p) {
                         *p = 0;     // clear ) and insert Inp_Path in between
                         p = tprintf("%s %s ) %s", buffer, Inp_Path ? Inp_Path : "", p + 1);
                         tfree(buffer);
@@ -1442,9 +1443,9 @@ inp_chk_for_multi_in_vcvs(struct card *c, int *line_number)
                 isspace_c(fcn_b[-1]))
             {
                 char keep, *comma_ptr, *xy_values1[5], *xy_values2[5];
-                char *out_str, *ctrl_nodes_str, *xy_values1_b, *ref_str, *fcn_name, *fcn_e, *out_b, *out_e, *ref_e;
+                char *out_str, *ctrl_nodes_str, *xy_values1_b = NULL, *ref_str, *fcn_name, *fcn_e = NULL, *out_b, *out_e, *ref_e;
                 char *m_instance, *m_model;
-                char *xy_values2_b, *xy_values1_e, *ctrl_nodes_b, *ctrl_nodes_e;
+                char *xy_values2_b = NULL, *xy_values1_e = NULL, *ctrl_nodes_b = NULL, *ctrl_nodes_e = NULL;
                 int  xy_count1, xy_count2;
                 bool ok = FALSE;
 
@@ -4478,7 +4479,7 @@ inp_compat(struct card *card)
 {
     char *str_ptr, *cut_line, *title_tok, *node1, *node2;
     char *out_ptr, *exp_ptr, *beg_ptr, *end_ptr, *copy_ptr, *del_ptr;
-    char *xline, *x2line, *x3line, *x4line;
+    char *xline, *x2line = NULL, *x3line = NULL, *x4line = NULL;
     size_t xlen, i, pai = 0, paui = 0, ii;
     char *ckt_array[100];
 
@@ -5662,7 +5663,7 @@ inp_modify_exp(char* expr)
 
         static bool c_arith_prev = FALSE;
         bool c_arith = FALSE;
-        char c_prev;
+        char c_prev = '\0';
         char c = *s;
 
         wl_append_word(&wlist, &wl, NULL);
