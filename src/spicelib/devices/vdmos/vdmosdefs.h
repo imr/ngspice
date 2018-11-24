@@ -265,8 +265,10 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
     double VDMOSvt0; /* input - use tVto */
     double VDMOSphi; /* input - use tPhi */
     double VDMOSlambda;
+    double VDMOStheta;
     double VDMOSfNcoef;
     double VDMOSfNexp;
+
     double VDMOScgdmin;
     double VDMOScgdmax;
     double VDMOSa;
@@ -313,6 +315,7 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
     unsigned VDIOdepletionCapCoeffGiven :1;
     unsigned VDMOSphiGiven   :1;
     unsigned VDMOSlambdaGiven    :1;
+    unsigned VDMOSthetaGiven    :1;
     unsigned VDMOStnomGiven  :1;
     unsigned VDMOSfNcoefGiven  :1;
     unsigned VDMOSfNexpGiven   :1;
@@ -367,6 +370,7 @@ enum {
     VDMOS_MOD_KP,
     VDMOS_MOD_PHI,
     VDMOS_MOD_LAMBDA,
+    VDMOS_MOD_THETA,
     VDMOS_MOD_RD,
     VDMOS_MOD_RS,
     VDMOS_MOD_RG,

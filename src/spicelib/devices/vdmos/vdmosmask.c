@@ -36,6 +36,9 @@ VDMOSmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case VDMOS_MOD_LAMBDA:
             value->rValue = model->VDMOSlambda;
             return(OK);
+        case VDMOS_MOD_THETA:
+            value->rValue = model->VDMOStheta;
+            return(OK);
         case VDMOS_MOD_RD:
             value->rValue = model->VDMOSdrainResistance;
             return(OK);

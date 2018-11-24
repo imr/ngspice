@@ -282,53 +282,58 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                  */
                 double betap;
                 double vgst;
+                double onfg, fgate, Betam, dfgdvg;
 
                 von = (model->VDMOSvt0*model->VDMOStype);
                 vgst = (here->VDMOSmode == 1 ? vgs : vgd) - von;
                 vdsat = MAX(vgst, 0);
+                onfg = 1.0+model->VDMOStheta*vgst;
+                fgate = 1.0/onfg;
+                Betam = Beta * fgate;
+                dfgdvg = -model->VDMOStheta*fgate*fgate;
                 /* drain current including subthreshold current
                  * numerical differentiation for gd and gm with a delta of 2 mV */
                 if (model->VDMOSksubthresGiven && (here->VDMOSmode == 1)) {
                     double delta = 0.001;
                     cdrain = cweakinv(model->VDMOSksubthres, model->VDMOSsubshift, vgst, vds, model->VDMOSlambda,
-                        Beta, vt, model->VDMOSmtr);
+                        Betam, vt, model->VDMOSmtr);
                     /* gd */
                     double vds1 = vds + delta;
                     double cdrp = cweakinv(model->VDMOSksubthres, model->VDMOSsubshift, vgst, vds1, model->VDMOSlambda,
-                        Beta, vt, model->VDMOSmtr);
+                        Betam, vt, model->VDMOSmtr);
                     vds1 = vds - delta;
                     double cdrm = cweakinv(model->VDMOSksubthres, model->VDMOSsubshift, vgst, vds1, model->VDMOSlambda,
-                        Beta, vt, model->VDMOSmtr);
+                        Betam, vt, model->VDMOSmtr);
                     here->VDMOSgds = (cdrp - cdrm) / (2. * delta);
                     /* gm */
                     double vgst1 = vgst + delta;
                     cdrp = cweakinv(model->VDMOSksubthres, model->VDMOSsubshift, vgst1, vds, model->VDMOSlambda,
-                        Beta, vt, model->VDMOSmtr);
+                        Betam, vt, model->VDMOSmtr);
                     vgst1 = vgst - delta;
                     cdrm = cweakinv(model->VDMOSksubthres, model->VDMOSsubshift, vgst1, vds, model->VDMOSlambda,
-                        Beta, vt, model->VDMOSmtr);
-                    here->VDMOSgm = (cdrp - cdrm) / (2. * delta);
+                        Betam, vt, model->VDMOSmtr);
+                    here->VDMOSgm = (cdrp - cdrm) / (2. * delta) * fgate + dfgdvg * cdrain;
                 }
                 else if (model->VDMOSsubslGiven && (here->VDMOSmode == 1)) {
                     double delta = 0.001;
                     cdrain = cweakinv2(model->VDMOSsubsl, model->VDMOSsubshift, vgst, vds, model->VDMOSlambda,
-                        Beta, vt, model->VDMOSmtr);
+                        Betam, vt, model->VDMOSmtr);
                     /* gd */
                     double vds1 = vds + delta;
                     double cdrp = cweakinv2(model->VDMOSsubsl, model->VDMOSsubshift, vgst, vds1, model->VDMOSlambda,
-                        Beta, vt, model->VDMOSmtr);
+                        Betam, vt, model->VDMOSmtr);
                     vds1 = vds - delta;
                     double cdrm = cweakinv2(model->VDMOSsubsl, model->VDMOSsubshift, vgst, vds1, model->VDMOSlambda,
-                        Beta, vt, model->VDMOSmtr);
+                        Betam, vt, model->VDMOSmtr);
                     here->VDMOSgds = (cdrp - cdrm) / (2. * delta);
                     /* gm */
                     double vgst1 = vgst + delta;
                     cdrp = cweakinv2(model->VDMOSsubsl, model->VDMOSsubshift, vgst1, vds, model->VDMOSlambda,
-                        Beta, vt, model->VDMOSmtr);
+                        Betam, vt, model->VDMOSmtr);
                     vgst1 = vgst - delta;
                     cdrm = cweakinv2(model->VDMOSsubsl, model->VDMOSsubshift, vgst1, vds, model->VDMOSlambda,
-                        Beta, vt, model->VDMOSmtr);
-                    here->VDMOSgm = (cdrp - cdrm) / (2. * delta);
+                        Betam, vt, model->VDMOSmtr);
+                    here->VDMOSgm = (cdrp - cdrm) / (2. * delta) * fgate + dfgdvg * cdrain;
                 } else {
                     if (vgst <= 0) {
                         /*
@@ -343,20 +348,20 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                          */
                         /* scale vds with mtr */
                         double mtr = model->VDMOSmtr;
-                        betap = Beta*(1 + model->VDMOSlambda*(vds*here->VDMOSmode));
+                        betap = Betam*(1 + model->VDMOSlambda*(vds*here->VDMOSmode));
                         if (vgst <= (vds * here->VDMOSmode) * mtr) {
                             cdrain = betap*vgst*vgst*.5;
-                            here->VDMOSgm = betap*vgst;
-                            here->VDMOSgds = model->VDMOSlambda*Beta*vgst*vgst*.5;
+                            here->VDMOSgm = betap*vgst * fgate + dfgdvg * cdrain;
+                            here->VDMOSgds = model->VDMOSlambda*Betam*vgst*vgst*.5;
                         } else {
                             /*
                              *     linear region
                              */
                             cdrain = betap * (vds * here->VDMOSmode) * mtr *
                                      (vgst - .5 * (vds*here->VDMOSmode) * mtr);
-                            here->VDMOSgm = betap * (vds * here->VDMOSmode) * mtr;
+                            here->VDMOSgm = betap * (vds * here->VDMOSmode) * mtr  * fgate + dfgdvg * cdrain;
                             here->VDMOSgds = betap * (vgst - (vds * here->VDMOSmode) * mtr) +
-                                             model->VDMOSlambda * Beta *
+                                             model->VDMOSlambda * Betam *
                                              (vds * here->VDMOSmode) * mtr *
                                              (vgst - .5 * (vds * here->VDMOSmode) * mtr);
                         }

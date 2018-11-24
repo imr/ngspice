@@ -35,6 +35,10 @@ VDMOSmParam(int param, IFvalue *value, GENmodel *inModel)
             model->VDMOSlambda = value->rValue;
             model->VDMOSlambdaGiven = TRUE;
             break;
+        case VDMOS_MOD_THETA:
+            model->VDMOStheta = value->rValue;
+            model->VDMOSthetaGiven = TRUE;
+            break;
         case VDMOS_MOD_RD:
             model->VDMOSdrainResistance = value->rValue;
             model->VDMOSdrainResistanceGiven = TRUE;

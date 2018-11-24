@@ -54,6 +54,9 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
         if (!model->VDMOSlambdaGiven) {
             model->VDMOSlambda = 0;
         }
+        if (!model->VDMOSthetaGiven) {
+            model->VDMOStheta = 0;
+        }
         if (!model->VDMOSfNcoefGiven) {
             model->VDMOSfNcoef = 0;
         }

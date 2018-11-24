@@ -64,6 +64,7 @@ IFparm VDMOSmPTable[] = { /* model parameters */
  IOP("kp",    VDMOS_MOD_KP,    IF_REAL,   "Transconductance parameter"),
  IOP("phi",   VDMOS_MOD_PHI,   IF_REAL,   "Surface potential"),
  IOP("lambda",VDMOS_MOD_LAMBDA,IF_REAL,   "Channel length modulation"),
+ IOP("theta", VDMOS_MOD_THETA, IF_REAL,   "Vgs dependence on mobility"),
  IOP("rd",    VDMOS_MOD_RD,    IF_REAL,   "Drain ohmic resistance"),
  IOP("rs",    VDMOS_MOD_RS,    IF_REAL,   "Source ohmic resistance"),
  IOP("rg",    VDMOS_MOD_RG,    IF_REAL,   "Gate ohmic resistance"),
