@@ -15,9 +15,7 @@ VDMOS: 2018 Holger Vogt
 #include "ngspice/suffix.h"
 
 static double
-cweakinv(double sl, double shift, double vgst, double vds, double lambda, double beta, double vt, double mtr);
-static double
-cweakinv2(double sl, double shift, double vgst, double vds, double lambda, double beta, double vt, double mtr);
+cweakinv2(double sl, double shift, double vgst, double vds, double lambda, double beta, double vt, double mtr, double theta);
 
 
 int
@@ -282,59 +280,83 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                  */
                 double betap;
                 double vgst;
-                double onfg, fgate, Betam, dfgdvg;
 
                 von = (model->VDMOSvt0*model->VDMOStype);
                 vgst = (here->VDMOSmode == 1 ? vgs : vgd) - von;
                 vdsat = MAX(vgst, 0);
-                onfg = 1.0+model->VDMOStheta*vgst;
-                fgate = 1.0/onfg;
-                Betam = Beta * fgate;
-                dfgdvg = -model->VDMOStheta*fgate*fgate;
-                /* drain current including subthreshold current
-                 * numerical differentiation for gd and gm with a delta of 2 mV */
-                if (model->VDMOSksubthresGiven && (here->VDMOSmode == 1)) {
-                    double delta = 0.001;
-                    cdrain = cweakinv(model->VDMOSksubthres, model->VDMOSsubshift, vgst, vds, model->VDMOSlambda,
-                        Betam, vt, model->VDMOSmtr);
-                    /* gd */
-                    double vds1 = vds + delta;
-                    double cdrp = cweakinv(model->VDMOSksubthres, model->VDMOSsubshift, vgst, vds1, model->VDMOSlambda,
-                        Betam, vt, model->VDMOSmtr);
-                    vds1 = vds - delta;
-                    double cdrm = cweakinv(model->VDMOSksubthres, model->VDMOSsubshift, vgst, vds1, model->VDMOSlambda,
-                        Betam, vt, model->VDMOSmtr);
-                    here->VDMOSgds = (cdrp - cdrm) / (2. * delta);
-                    /* gm */
-                    double vgst1 = vgst + delta;
-                    cdrp = cweakinv(model->VDMOSksubthres, model->VDMOSsubshift, vgst1, vds, model->VDMOSlambda,
-                        Betam, vt, model->VDMOSmtr);
-                    vgst1 = vgst - delta;
-                    cdrm = cweakinv(model->VDMOSksubthres, model->VDMOSsubshift, vgst1, vds, model->VDMOSlambda,
-                        Betam, vt, model->VDMOSmtr);
-                    here->VDMOSgm = (cdrp - cdrm) / (2. * delta) * fgate + dfgdvg * cdrain;
+                if (model->VDMOSksubthresGiven) {
+                /* Alternative simple weak inversion model, according to https://www.anasoft.co.uk/MOS1Model.htm 
+                 * Scale the voltage overdrive vgst logarithmically in weak inversion.
+                 * Best fits LTSPICE curves with shift=0
+                 * Drain current including subthreshold current */
+
+                    double t0, t1, t2, t3, t4, t5, t6;
+                    double slope = model->VDMOSksubthres;
+                    double lambda = model->VDMOSlambda;
+                    double theta = model->VDMOStheta;
+                    double shift = model->VDMOSsubshift;
+                    double mtr = model->VDMOSmtr;
+
+                    /* scale vds with mtr (except with lambda) */
+                    double vdss = vds*mtr*here->VDMOSmode;
+                    t0 = 1 + lambda*vds*here->VDMOSmode;
+                    t1 = 1 + theta*vgs;
+                    betap = Beta*t0/t1;
+
+                    vgst = slope * log(1 + exp((vgst - shift) / slope));
+
+                    if (vgst <= vdss) {
+                        /* saturation region */
+                        cdrain = betap*vgst*vgst*0.5;
+                        t2 = exp((vgst-shift)/slope);
+                        t3 = Beta*slope*t2*log(t2+1)*t0/(t1*(t2+1));
+                        t4 = Beta*slope*slope*theta*log((t2+1)*(t2+1))*t0/(2*t1*t1);
+                        here->VDMOSgm = t3-t4;
+                        t3 = Beta*slope*slope*log((t2+1)*(t2+1))*lambda;
+                        t4 = 2*t1;
+                        here->VDMOSgds = t3/t4;
+                    }
+                    else {
+                        /* linear region */
+                        cdrain = betap * vdss * (vgst - 0.5 * vdss);
+                        t3 = exp((vgst-shift)/slope);
+                        t4 = Beta*vdss*t3*t0/(t1*(t3+1));
+                        t5 = Beta*vdss*theta*(slope*log(t3+1)-0.5*vdss)*t0/(t1*t1);
+                        here->VDMOSgm = t4-t5;
+                        t4 = Beta*mtr*(slope*log(t3+1)-0.5*vdss)*t0/t1;
+                        t5 = Beta*0.5*mtr*vdss*t0/t1;
+                        t6 = Beta*vdss*(slope*log(t3+1)-0.5*vdss)*lambda/t1;
+                        here->VDMOSgds = t4-t5+t6;
+                    }
                 }
-                else if (model->VDMOSsubslGiven && (here->VDMOSmode == 1)) {
+                else if (model->VDMOSsubslGiven) {
+                    /* numerical differentiation for gd and gm with a delta of 2 mV */
+                    double vdsm = vds * here->VDMOSmode;
                     double delta = 0.001;
-                    cdrain = cweakinv2(model->VDMOSsubsl, model->VDMOSsubshift, vgst, vds, model->VDMOSlambda,
-                        Betam, vt, model->VDMOSmtr);
+                    cdrain = cweakinv2(model->VDMOSsubsl, model->VDMOSsubshift, vgst, vdsm, model->VDMOSlambda,
+                        Beta, vt, model->VDMOSmtr, model->VDMOStheta);
                     /* gd */
-                    double vds1 = vds + delta;
+                    double vds1 = vdsm + delta;
                     double cdrp = cweakinv2(model->VDMOSsubsl, model->VDMOSsubshift, vgst, vds1, model->VDMOSlambda,
-                        Betam, vt, model->VDMOSmtr);
-                    vds1 = vds - delta;
+                        Beta, vt, model->VDMOSmtr, model->VDMOStheta);
+                    vds1 = vdsm - delta;
                     double cdrm = cweakinv2(model->VDMOSsubsl, model->VDMOSsubshift, vgst, vds1, model->VDMOSlambda,
-                        Betam, vt, model->VDMOSmtr);
+                        Beta, vt, model->VDMOSmtr, model->VDMOStheta);
                     here->VDMOSgds = (cdrp - cdrm) / (2. * delta);
                     /* gm */
                     double vgst1 = vgst + delta;
-                    cdrp = cweakinv2(model->VDMOSsubsl, model->VDMOSsubshift, vgst1, vds, model->VDMOSlambda,
-                        Betam, vt, model->VDMOSmtr);
+                    cdrp = cweakinv2(model->VDMOSsubsl, model->VDMOSsubshift, vgst1, vdsm, model->VDMOSlambda,
+                        Beta, vt, model->VDMOSmtr, model->VDMOStheta);
                     vgst1 = vgst - delta;
-                    cdrm = cweakinv2(model->VDMOSsubsl, model->VDMOSsubshift, vgst1, vds, model->VDMOSlambda,
-                        Betam, vt, model->VDMOSmtr);
-                    here->VDMOSgm = (cdrp - cdrm) / (2. * delta) * fgate + dfgdvg * cdrain;
+                    cdrm = cweakinv2(model->VDMOSsubsl, model->VDMOSsubshift, vgst1, vdsm, model->VDMOSlambda,
+                        Beta, vt, model->VDMOSmtr, model->VDMOStheta);
+                    here->VDMOSgm = (cdrp - cdrm) / (2. * delta);
                 } else {
+                    double onfg, fgate, Betam, dfgdvg;
+                    onfg = 1.0+model->VDMOStheta*vgst;
+                    fgate = 1.0/onfg;
+                    Betam = Beta * fgate;
+                    dfgdvg = -model->VDMOStheta*fgate*fgate;
                     if (vgst <= 0) {
                         /*
                          *     cutoff region
@@ -805,43 +827,17 @@ scalef(double nf2, double vgst)
  */
 
 static double
-cweakinv2(double slope, double shift, double vgst, double vds, double lambda, double beta, double vt, double mtr)
+cweakinv2(double slope, double shift, double vgst, double vds, double lambda, double beta, double vt, double mtr, double theta)
 {
+    double betam = beta / (1.0+theta*vgst);
     vgst += shift * (1 - scalef(0.5, vgst));
     double n = slope / 2.3 / 0.0256; /* Tsividis, p. 208 */
     double n1 = n + (1 - n) * scalef(0.7, vgst); /* n < n1 < 1 */
     double first = log(1 + exp(vgst / (2 * n1 * vt)));
     double second = log(1 + exp((vgst - vds * mtr * n1) / (2 * n1 * vt)));
     double cds =
-        beta * n1 * 2 * vt * vt * (1 + scalef(1, vgst) * lambda * vds) *
+        betam * n1 * 2 * vt * vt * (1 + scalef(1, vgst) * lambda * vds) *
         (first * first - second * second);
     return cds;
 }
 
-
-/* Alternative simple weak inversion model, according to https://www.anasoft.co.uk/MOS1Model.htm 
- * Scale the voltage overdrive vgst logarithmically in weak inversion.
- * Best fits LTSPICE curves with shift=0
- */
-
-static double
-cweakinv(double slope, double shift, double vgst, double vds, double lambda, double beta, double vt, double mtr)
-{
-    NG_IGNORE(vt);
-    double cdrain, betap;
-    vgst = slope * log(1 + exp((vgst - shift) / slope));
-
-    betap = beta*(1 + lambda*vds);
-    /* scale vds with mtr (except with lambda) */
-
-    if (vgst <= vds * mtr) {
-    /* saturation region */
-        cdrain = betap*vgst*vgst*.5;
-    }
-    else {
-        /* linear region */
-        cdrain = betap * vds * mtr *
-            (vgst - .5 * vds * mtr);
-    }
-    return cdrain;
-}
