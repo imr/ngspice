@@ -1281,6 +1281,7 @@
     <ClInclude Include=".\src\include\stdint.h" />
     <ClInclude Include=".\tmp-bison\inpptree-parser.h" />
     <ClInclude Include=".\tmp-bison\parse-bison.h" />
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\src\frontend\parse-bison.y;..\src\spicelib\parser\inpptree-parser.y">
@@ -2629,6 +2630,9 @@
     <ClCompile Include=".\tmp-bison\inpptree-parser.c" />
     <ClCompile Include=".\src\msvc-compat.c" />
     <ClCompile Include=".\tmp-bison\parse-bison.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="vngspice.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

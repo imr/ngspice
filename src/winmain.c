@@ -862,7 +862,7 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int nCm
     hwMainClass.cbClsExtra      = 0;
     hwMainClass.cbWndExtra      = 0;
     hwMainClass.hInstance       = hInst;
-    hwMainClass.hIcon           = LoadIcon(hInst, MAKEINTRESOURCE(1));
+    hwMainClass.hIcon           = LoadIcon(hInst, MAKEINTRESOURCE(101));
     hwMainClass.hCursor         = LoadCursor(NULL, IDC_ARROW);
     hwMainClass.hbrBackground   = GetStockObject(LTGRAY_BRUSH);
     hwMainClass.lpszMenuName    = NULL;
