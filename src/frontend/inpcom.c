@@ -4986,9 +4986,9 @@ inp_compat(struct card *card)
             }
 
             /* white noise model by x2line, x3line, x4line
-               if instance parameter noisy=1 is set */
+               if instance parameter noisy=1 (or noise=1) is set */
             bool rnoise = FALSE;
-            if(strstr(cut_line, "noisy=1"))
+            if(strstr(cut_line, "noisy=1") || strstr(cut_line, "noise=1"))
                 rnoise = TRUE;
 
             if ((tc1_ptr == NULL) && (tc2_ptr == NULL)) {
