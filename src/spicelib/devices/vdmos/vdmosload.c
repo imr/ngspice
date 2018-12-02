@@ -290,7 +290,6 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                  * Best fits LTSPICE curves with shift=0
                  * Drain current including subthreshold current */
 
-                    double t0, t1, t2, t3, t4, t5, t6;
                     double slope = model->VDMOSksubthres;
                     double lambda = model->VDMOSlambda;
                     double theta = model->VDMOStheta;
@@ -299,34 +298,30 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
 
                     /* scale vds with mtr (except with lambda) */
                     double vdss = vds*mtr*here->VDMOSmode;
-                    t0 = 1 + lambda*vds*here->VDMOSmode;
-                    t1 = 1 + theta*vgs;
+                    double dvdssdvds = mtr*here->VDMOSmode;
+                    double t0 = 1 + lambda*vds*here->VDMOSmode;
+                    double t1 = 1 + theta*vgs;
                     betap = Beta*t0/t1;
+                    double dbetapdvgs = -Beta*theta*t0/(t1*t1);
+                    double dbetapdvds = Beta*lambda/t1;
 
-                    vgst = slope * log(1 + exp((vgst - shift) / slope));
+                    double t2 = exp((vgst-shift)/slope);
+                    vgst = slope * log(1 + t2);
+                    double dvgstdvgs = t2/(t2+1);
 
                     if (vgst <= vdss) {
                         /* saturation region */
-                        cdrain = betap*vgst*vgst*0.5;
-                        t2 = exp((vgst-shift)/slope);
-                        t3 = Beta*slope*t2*log(t2+1)*t0/(t1*(t2+1));
-                        t4 = Beta*slope*slope*theta*log((t2+1)*(t2+1))*t0/(2*t1*t1);
-                        here->VDMOSgm = t3-t4;
-                        t3 = Beta*slope*slope*log((t2+1)*(t2+1))*lambda;
-                        t4 = 2*t1;
-                        here->VDMOSgds = t3/t4;
+                        cdrain = betap*vgst*vgst*.5;
+                        here->VDMOSgm = betap*vgst*dvgstdvgs + 0.5*dbetapdvgs*vgst*vgst;
+                        here->VDMOSgds = .5*dbetapdvds*vgst*vgst;
+printf("s1 vds: %g vgs: %g cd: %g gds: %g gm: %g\n", vds, vgs, cdrain, here->VDMOSgds, here->VDMOSgm);
                     }
                     else {
                         /* linear region */
-                        cdrain = betap * vdss * (vgst - 0.5 * vdss);
-                        t3 = exp((vgst-shift)/slope);
-                        t4 = Beta*vdss*t3*t0/(t1*(t3+1));
-                        t5 = Beta*vdss*theta*(slope*log(t3+1)-0.5*vdss)*t0/(t1*t1);
-                        here->VDMOSgm = t4-t5;
-                        t4 = Beta*mtr*(slope*log(t3+1)-0.5*vdss)*t0/t1;
-                        t5 = Beta*0.5*mtr*vdss*t0/t1;
-                        t6 = Beta*vdss*(slope*log(t3+1)-0.5*vdss)*lambda/t1;
-                        here->VDMOSgds = t4-t5+t6;
+                        cdrain = betap * vdss * (vgst - .5 * vdss);
+                        here->VDMOSgm = betap*vdss*dvgstdvgs + vdss*dbetapdvgs*(vgst-.5*vdss);
+                        here->VDMOSgds = vdss*dbetapdvds*(vgst-.5*vdss) + betap*dvdssdvds*(vgst-.5*vdss) - .5*vdss*betap*dvdssdvds;
+printf("l1 vds: %g vgs: %g cd: %g gds: %g gm: %g\n", vds, vgs, cdrain, here->VDMOSgds, here->VDMOSgm);
                     }
                 }
                 else if (model->VDMOSsubslGiven) {
@@ -365,16 +360,17 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                         here->VDMOSgm = 0;
                         here->VDMOSgds = 0;
                     } else {
-                        /*
-                         *     saturation region
-                         */
                         /* scale vds with mtr */
                         double mtr = model->VDMOSmtr;
                         betap = Betam*(1 + model->VDMOSlambda*(vds*here->VDMOSmode));
                         if (vgst <= (vds * here->VDMOSmode) * mtr) {
+                            /*
+                             *     saturation region
+                             */
                             cdrain = betap*vgst*vgst*.5;
                             here->VDMOSgm = betap*vgst * fgate + dfgdvg * cdrain;
                             here->VDMOSgds = model->VDMOSlambda*Betam*vgst*vgst*.5;
+printf("s2 vds: %g vgs: %g cd: %g gds: %g gm: %g\n", vds, vgs, cdrain, here->VDMOSgds, here->VDMOSgm);
                         } else {
                             /*
                              *     linear region
@@ -386,6 +382,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                                              model->VDMOSlambda * Betam *
                                              (vds * here->VDMOSmode) * mtr *
                                              (vgst - .5 * (vds * here->VDMOSmode) * mtr);
+printf("l2 vds: %g vgs: %g cd: %g gds: %g gm: %g\n", vds, vgs, cdrain, here->VDMOSgds, here->VDMOSgm);
                         }
                     }
                 }
