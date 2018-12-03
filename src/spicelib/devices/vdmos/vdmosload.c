@@ -285,7 +285,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                 vgst = (here->VDMOSmode == 1 ? vgs : vgd) - von;
                 vdsat = MAX(vgst, 0);
                 if (model->VDMOSksubthresGiven) {
-                /* Alternative simple weak inversion model, according to https://www.anasoft.co.uk/MOS1Model.htm 
+                /* Alternative simple weak inversion model, according to https://www.anasoft.co.uk/MOS1Model.htm
                  * Scale the voltage overdrive vgst logarithmically in weak inversion.
                  * Best fits LTSPICE curves with shift=0
                  * Drain current including subthreshold current */
@@ -298,8 +298,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
 
                     /* scale vds with mtr (except with lambda) */
                     double vdss = vds*mtr*here->VDMOSmode;
-                    double dvdssdvds = mtr*here->VDMOSmode;
-                    double t0 = 1 + lambda*vds*here->VDMOSmode;
+                    double t0 = 1 + lambda*vds;
                     double t1 = 1 + theta*vgs;
                     betap = Beta*t0/t1;
                     double dbetapdvgs = -Beta*theta*t0/(t1*t1);
@@ -314,14 +313,12 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                         cdrain = betap*vgst*vgst*.5;
                         here->VDMOSgm = betap*vgst*dvgstdvgs + 0.5*dbetapdvgs*vgst*vgst;
                         here->VDMOSgds = .5*dbetapdvds*vgst*vgst;
-printf("s1 vds: %g vgs: %g cd: %g gds: %g gm: %g\n", vds, vgs, cdrain, here->VDMOSgds, here->VDMOSgm);
                     }
                     else {
                         /* linear region */
                         cdrain = betap * vdss * (vgst - .5 * vdss);
                         here->VDMOSgm = betap*vdss*dvgstdvgs + vdss*dbetapdvgs*(vgst-.5*vdss);
-                        here->VDMOSgds = vdss*dbetapdvds*(vgst-.5*vdss) + betap*dvdssdvds*(vgst-.5*vdss) - .5*vdss*betap*dvdssdvds;
-printf("l1 vds: %g vgs: %g cd: %g gds: %g gm: %g\n", vds, vgs, cdrain, here->VDMOSgds, here->VDMOSgm);
+                        here->VDMOSgds = vdss*dbetapdvds*(vgst-.5*vdss) + betap*mtr*(vgst-.5*vdss) - .5*vdss*betap*mtr;
                     }
                 }
                 else if (model->VDMOSsubslGiven) {
@@ -370,7 +367,6 @@ printf("l1 vds: %g vgs: %g cd: %g gds: %g gm: %g\n", vds, vgs, cdrain, here->VDM
                             cdrain = betap*vgst*vgst*.5;
                             here->VDMOSgm = betap*vgst * fgate + dfgdvg * cdrain;
                             here->VDMOSgds = model->VDMOSlambda*Betam*vgst*vgst*.5;
-printf("s2 vds: %g vgs: %g cd: %g gds: %g gm: %g\n", vds, vgs, cdrain, here->VDMOSgds, here->VDMOSgm);
                         } else {
                             /*
                              *     linear region
@@ -382,7 +378,6 @@ printf("s2 vds: %g vgs: %g cd: %g gds: %g gm: %g\n", vds, vgs, cdrain, here->VDM
                                              model->VDMOSlambda * Betam *
                                              (vds * here->VDMOSmode) * mtr *
                                              (vgst - .5 * (vds * here->VDMOSmode) * mtr);
-printf("l2 vds: %g vgs: %g cd: %g gds: %g gm: %g\n", vds, vgs, cdrain, here->VDMOSgds, here->VDMOSgm);
                         }
                     }
                 }
@@ -527,7 +522,7 @@ bypass :
                 double vdsn = model->VDMOStype * (
                     *(ckt->CKTrhsOld + here->VDMOSdNode) -
                     *(ckt->CKTrhsOld + here->VDMOSsNode));
-                double rd = model->VDMOSdrainResistance + model->VDMOSqsResistance * 
+                double rd = model->VDMOSdrainResistance + model->VDMOSqsResistance *
                     (vdsn / (vdsn + fabs(model->VDMOSqsVoltage)));
                 here->VDMOSdrainConductance = 1 / rd;
             }
