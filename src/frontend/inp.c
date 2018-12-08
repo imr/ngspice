@@ -71,6 +71,10 @@ void eval_seed_opt(struct card *deck);
 
 extern bool ft_batchmode;
 
+#ifdef SHARED_MODULE
+extern void exec_controls(wordlist *controls);
+#endif
+
 /* structure used to save expression parse trees for .model and
  * device instance lines
  */
@@ -937,9 +941,18 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
 
         /* Now that the deck is loaded, do the commands, if there are any */
         controls = wl_reverse(controls);
+
+        /* in shared ngspice controls a execute in the primary thread, typically
+           before the background thread has finished. This leads to premature execution
+           of commands. Thus this is delegated to a function using a third thread, that
+           only start when the background threas has finished (sharedspice.c).*/
+#ifdef SHARED_MODULE
+        exec_controls(controls);
+#else
         for (wl = controls; wl; wl = wl->wl_next)
             cp_evloop(wl->wl_word);
         wl_free(controls);
+#endif
     }
 
     /* Now reset everything.  Pop the control stack, and fix up the IO

@@ -178,7 +178,7 @@ extern int SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator);
 extern wordlist *cp_varwl(struct variable *var);
 extern void create_circbyline(char *line);
 
-
+void exec_controls(wordlist *controls);
 
 /*The current run (to get variable names, etc)*/
 static runDesc *cur_run;
@@ -290,7 +290,7 @@ get_plot_byname(char* plotname)
 #ifdef __MINGW32__
 static threadId_t tid, printtid; // , bgtid;
 #else
-static threadId_t tid, printtid; // , bgtid = (threadId_t) 0;
+static threadId_t tid, printtid, tid2; // , bgtid = (threadId_t) 0;
 #endif
 
 static bool fl_running = FALSE;
@@ -304,6 +304,17 @@ static bool ps_exited = TRUE;
 #else
 #define EXPORT_FLAVOR
 #endif
+
+/* starts a thread to run the controls, started when bg thread finishes */
+static void * EXPORT_FLAVOR
+_cthread_run(void *controls)
+{
+    wordlist *wl;
+    for (wl = controls; wl; wl = wl->wl_next)
+        cp_evloop(wl->wl_word);
+    wl_free(controls);
+    return NULL;
+}
 
 /* starts a background thread, e.g. from command bg_run */
 static void * EXPORT_FLAVOR
@@ -327,6 +338,14 @@ _thread_run(void *string)
     /* notify caller that thread has exited */
     if (!nobgtrwanted)
         bgtr(fl_exited, ng_ident, userptr);
+#ifdef HAVE_LIBPTHREAD
+
+#elif defined _MSC_VER || defined __MINGW32__
+    ResumeThread(tid2);
+#else
+
+#endif
+
     return NULL;
 }
 
@@ -380,6 +399,28 @@ sighandler_sharedspice(int num)
 }
 
 #endif /*THREADS*/
+
+void
+exec_controls(wordlist *controls)
+{
+#ifdef THREADS
+#ifdef HAVE_LIBPTHREAD
+    usleep(20000); /* wait a little */
+    pthread_join(tid, NULL); /* wait wait for background thread to return */
+    pthread_create(&tid2, NULL, (void * (*)(void *))_cthread_run, (void *)controls);
+#elif defined _MSC_VER || defined __MINGW32__
+    tid2 = (HANDLE)_beginthreadex(NULL, 0, (unsigned int(__stdcall *)(void *))_cthread_run,
+        (void*)controls, CREATE_SUSPENDED, NULL);
+#else
+    tid2 = CreateThread(NULL, 0, (PTHREAD_START_ROUTINE)_cthread_run, (void*)controls,
+        0, NULL);
+#endif
+#else
+    wordlist *wl;
+    for (wl = controls; wl; wl = wl->wl_next)
+        cp_evloop(wl->wl_word);
+#endif
+}
 
 
 /* run a ngspice command */
