@@ -6557,6 +6557,11 @@ inp_quote_params(struct card *c, struct card *end_c, struct dependency *deps, in
         if (num_terminals <= 0)
             continue;
 
+        /* There are devices that should not get quotes around tokens following after the terminals.
+           See bug 384 */
+        if (curr_line[0] == 'f' || curr_line[0] == 'h')
+            num_terminals++;
+
         for (i = 0; i < num_params; i++) {
 
             char *s = curr_line;
