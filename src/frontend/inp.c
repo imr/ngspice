@@ -947,12 +947,18 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
            of commands. Thus this is delegated to a function using a third thread, that
            only start when the background threas has finished (sharedspice.c).*/
 #ifdef SHARED_MODULE
-        exec_controls(controls);
+        for (wl = controls; wl; wl = wl->wl_next)
+            if (cp_getvar("controlswait", CP_BOOL, NULL, 0)) {
+                exec_controls(wl_copy(wl));
+                break;
+            }
+            else
+                cp_evloop(wl->wl_word);
 #else
         for (wl = controls; wl; wl = wl->wl_next)
             cp_evloop(wl->wl_word);
-        wl_free(controls);
 #endif
+        wl_free(controls);
     }
 
     /* Now reset everything.  Pop the control stack, and fix up the IO
