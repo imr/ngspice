@@ -94,6 +94,8 @@ typedef HANDLE threadId_t;
 typedef pthread_mutex_t mutexType;
 typedef pthread_t threadId_t;
 #define THREADS
+static pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
+static bool cont_condition;
 
 #endif
 
@@ -310,9 +312,19 @@ static void * EXPORT_FLAVOR
 _cthread_run(void *controls)
 {
     wordlist *wl;
+#ifdef HAVE_LIBPTHREAD
+    pthread_mutex_lock(&triggerMutex);
+    while (!cont_condition)
+        pthread_cond_wait(&cond, &triggerMutex);
+    pthread_mutex_unlock(&triggerMutex);
+#endif
+
     for (wl = controls; wl; wl = wl->wl_next)
         cp_evloop(wl->wl_word);
     wl_free(controls);
+#ifdef HAVE_LIBPTHREAD
+    cont_condition = FALSE;
+#endif
     return NULL;
 }
 
@@ -339,7 +351,8 @@ _thread_run(void *string)
     if (!nobgtrwanted)
         bgtr(fl_exited, ng_ident, userptr);
 #ifdef HAVE_LIBPTHREAD
-
+    cont_condition = TRUE;
+    pthread_cond_signal(&cond);
 #elif defined _MSC_VER || defined __MINGW32__
     ResumeThread(tid2);
 #else
@@ -376,9 +389,7 @@ _thread_stop(void)
         }
         else
             fprintf(stdout, "Background thread stopped with timeout = %d\n", timeout);
-#ifdef HAVE_LIBPTHREAD
-        pthread_join(tid, NULL);
-#endif
+
         fl_running = FALSE;
         ft_intrpt = FALSE;
         return EXIT_NORMAL;
@@ -406,7 +417,6 @@ exec_controls(wordlist *controls)
 #ifdef THREADS
 #ifdef HAVE_LIBPTHREAD
     usleep(20000); /* wait a little */
-    pthread_join(tid, NULL); /* wait wait for background thread to return */
     pthread_create(&tid2, NULL, (void * (*)(void *))_cthread_run, (void *)controls);
 #elif defined _MSC_VER || defined __MINGW32__
     tid2 = (HANDLE)_beginthreadex(NULL, 0, (unsigned int(__stdcall *)(void *))_cthread_run,
@@ -664,6 +674,7 @@ ngSpice_Init(SendChar* printfcn, SendStat* statusfcn, ControlledExit* ngspiceexi
     pthread_mutex_init(&triggerMutex, NULL);
     pthread_mutex_init(&allocMutex, NULL);
     pthread_mutex_init(&fputsMutex, NULL);
+    cont_condition = FALSE;
 #else
 #ifdef SRW
     InitializeSRWLock(&triggerMutex);
@@ -855,7 +866,6 @@ int  ngSpice_Command(char* comexec)
            fprintf(stderr, no_init);
            return 1;
        }
-
        runc(comexec);
        /* main thread prepares immediate detaching of dll */
        immediate = TRUE;
