@@ -185,7 +185,6 @@ void exec_controls(wordlist *controls);
 /*The current run (to get variable names, etc)*/
 static runDesc *cur_run;
 
-void sh_stdflush(FILE *f);
 double getisrcval(double time, char *iname);
 
 int sh_fputsll(const char *input, FILE* outf);
