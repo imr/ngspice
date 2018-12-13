@@ -369,13 +369,19 @@ static void print_data(
     int           nargs)         /* The size of the value array */
 {
 
-    int  i;
+    int  i, preci;
     char step_str[100];
+
+    /* If option numdgt is set, use it for printout precision. */
+    if (cp_numdgt > 0)
+        preci = cp_numdgt;
+    else
+        preci = 9;
 
     if(dcop)
         strcpy(step_str, "DCOP            ");
     else
-        sprintf(step_str, "%-16.9e", step);
+        sprintf(step_str, "%.*e", preci, step);
 
     out_printf("%s", step_str);
     for(i = 0; i < nargs; i++)
