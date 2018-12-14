@@ -32,6 +32,10 @@ extern char history_file[];
 extern char history_file[];
 #endif
 
+#ifdef SHARED_MODULE
+extern void rem_controls(void);
+#endif
+
 extern IFsimulator SIMinfo;
 extern void spice_destroy_devices(void); /* FIXME need a better place */
 static void byemesg(void);
@@ -75,6 +79,8 @@ com_quit(wordlist *wl)
         cp_remvar("program");
         cp_remvar("prompt");
     }
+
+    rem_controls();
 
     /* Destroy CKT when quit. */
     if (!ft_nutmeg) {

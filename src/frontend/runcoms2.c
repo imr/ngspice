@@ -30,7 +30,9 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 extern void line_free_x(struct card *deck, bool recurse);
 extern INPmodel *modtab;
 
-extern void com_mc_source(wordlist *wl);
+#ifdef SHARED_MODULE
+extern void exec_controls(wordlist *newcontrols);
+#endif
 
 #define line_free(line, flag)                   \
     do {                                        \
@@ -176,6 +178,9 @@ com_rset(wordlist *wl)
         return;
     }
     com_remcirc(NULL);
+#ifdef SHARED_MODULE
+    exec_controls(NULL);
+#endif
     inp_source_recent();
 #else
     struct variable *v, *next;

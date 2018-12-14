@@ -1,4 +1,4 @@
-/* Copyright 2013 Holger Vogt
+/* Copyright 2013 - 2018 Holger Vogt
  *
  * Modified BSD license
  */
@@ -21,6 +21,25 @@
    Printing messages are assembled in a wordlist, and sent to the caller
    via a new thread. Delays may occur. */
 #define low_latency
+
+/************* About threads in sharedspice.c *************************
+   If the calling (main) thread loads a circuit, the .control section
+   commands in the input file are executed immediately by the calling
+   thread after the ciruit has been parsed and loaded.
+   Command bg_run from the calling thread then immediately starts the
+   background thread (id. tid) that issues the 'run' command to
+   start the simulation in this thread. The main thread returns to the
+   caller. .control commands typically are executed prematurely before
+   bg_run has returned.
+   If the flag 'set controlswait' is given in the .control section,
+   all commands following are assembled in the wordlist 'shcontrols',
+   a new thread is started (id: tid2) and suspended immediately. Only
+   when the background thread tid (and thus the simulation) is ready,
+   the tid2 thread is released and the .control commands are executed.
+   Before a repeated 'bg_run' is given, or after a 'reset', the command
+   'bg_ctrl' has to be sent by the caller to re-start and suspend the
+   thread tid2, using the still existing shcontrols.
+*/
 
 /**********************************************************************/
 /*              Header files for C functions                          */
@@ -180,7 +199,8 @@ extern int SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator);
 extern wordlist *cp_varwl(struct variable *var);
 extern void create_circbyline(char *line);
 
-void exec_controls(wordlist *controls);
+void exec_controls(wordlist *shcontrols);
+void rem_controls(void);
 
 /*The current run (to get variable names, etc)*/
 static runDesc *cur_run;
@@ -249,6 +269,7 @@ static SendInitEvtData* sendinitevt;
 static SendEvtData* sendevt;
 #endif
 static void* euserptr;
+static wordlist *shcontrols;
 
 
 // thread IDs
@@ -312,6 +333,8 @@ _cthread_run(void *controls)
 {
     wordlist *wl;
 #ifdef HAVE_LIBPTHREAD
+    if (!cont_condition)
+        printf("Prepared to start controls after bg_run has finished\n");
     pthread_mutex_lock(&triggerMutex);
     while (!cont_condition)
         pthread_cond_wait(&cond, &triggerMutex);
@@ -320,7 +343,7 @@ _cthread_run(void *controls)
 
     for (wl = controls; wl; wl = wl->wl_next)
         cp_evloop(wl->wl_word);
-    wl_free(controls);
+
 #ifdef HAVE_LIBPTHREAD
     cont_condition = FALSE;
 #endif
@@ -410,25 +433,41 @@ sighandler_sharedspice(int num)
 
 #endif /*THREADS*/
 
+/* create a suspended thread tid2 that is activated when bg_run has finished.
+   It executes the .control commands. If the arguemnt is NULL, the thread is
+   stated with the existing controls (e.g. for command 'reset'. */
 void
-exec_controls(wordlist *controls)
+exec_controls(wordlist *newcontrols)
 {
+    if (newcontrols) {
+        if (shcontrols)
+            wl_free(shcontrols);
+        shcontrols = newcontrols;
+    }
 #ifdef THREADS
 #ifdef HAVE_LIBPTHREAD
+    cont_condition = FALSE;
     usleep(20000); /* wait a little */
-    pthread_create(&tid2, NULL, (void * (*)(void *))_cthread_run, (void *)controls);
+    pthread_create(&tid2, NULL, (void * (*)(void *))_cthread_run, (void *)shcontrols);
+    pthread_detach(tid2);  /* automatically release the memory after thread has finished */
 #elif defined _MSC_VER || defined __MINGW32__
     tid2 = (HANDLE)_beginthreadex(NULL, 0, (unsigned int(__stdcall *)(void *))_cthread_run,
-        (void*)controls, CREATE_SUSPENDED, NULL);
+        (void*)shcontrols, CREATE_SUSPENDED, NULL);
 #else
-    tid2 = CreateThread(NULL, 0, (PTHREAD_START_ROUTINE)_cthread_run, (void*)controls,
+    tid2 = CreateThread(NULL, 0, (PTHREAD_START_ROUTINE)_cthread_run, (void*)shcontrols,
         0, NULL);
 #endif
 #else
     wordlist *wl;
-    for (wl = controls; wl; wl = wl->wl_next)
+    for (wl = shcontrols; wl; wl = wl->wl_next)
         cp_evloop(wl->wl_word);
 #endif
+}
+
+/* free controls after 'quit' */
+void rem_controls(void)
+{
+    wl_free(shcontrols);
 }
 
 
@@ -446,7 +485,8 @@ runc(char* command)
     bool fl_bg = FALSE;
     command_id = threadid_self();
     /* run task in background if command is preceeded by "bg_" */
-    if (!cieq("bg_halt", command) && !cieq("bg_pstop", command) && ciprefix("bg_", command)) {
+    if (!cieq("bg_halt", command) && !cieq("bg_pstop", command)
+        && !cieq("bg_ctrl", command) && ciprefix("bg_", command)) {
         strncpy(buf, command+3, 1024);
         fl_bg = TRUE;
     }
@@ -503,6 +543,7 @@ runc(char* command)
         string = copy(buf);     /*as buf gets freed fairly quickly*/
 #ifdef HAVE_LIBPTHREAD
         pthread_create(&tid, NULL, (void * (*)(void *))_thread_run, (void *)string);
+        pthread_detach(tid);
 #elif defined _MSC_VER || defined __MINGW32__
         tid = (HANDLE)_beginthreadex(NULL, 0, (unsigned int (__stdcall *)(void *))_thread_run,
             (void*)string, 0, NULL);
@@ -515,6 +556,13 @@ runc(char* command)
         if (!strcmp(buf, "bg_halt")) {
             signal(SIGINT, oldHandler);
             return _thread_stop();
+        /* bg_ctrl prepare running the controls after bg_run */
+        } else if (!strcmp(buf, "bg_ctrl")) {
+            if (shcontrols)
+                exec_controls(wl_copy(shcontrols));
+            else
+                fprintf(stderr, "Warning: No .control commands available, bg_ctrl skipped\n");
+            return 0;
         } else
             /* cannot do anything if ngspice is running in the bg*/
             if (fl_running) {
