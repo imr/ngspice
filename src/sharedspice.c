@@ -46,6 +46,7 @@
 /**********************************************************************/
 
 #include <stdio.h>
+#include <string.h>
 #include <setjmp.h>
 
 /* workaround since fputs, putc are replaced by sh_fputs,
@@ -1614,6 +1615,7 @@ void SetAnalyse(
    static int OldPercent = -2;     /* Previous progress value */
    static char OldAn[128];         /* Previous analysis type */
    char* s;                        /* outputs to callback function */
+   static char olds[128];          /* previous output */
    static struct timeb timebefore; /* previous time stamp */
    struct timeb timenow;           /* actual time stamp */
    int diffsec, diffmillisec;      /* differences actual minus prev. time stamp */
@@ -1628,7 +1630,7 @@ void SetAnalyse(
    if (nostatuswanted)
        return;
 
-   OldAn[0] = '\0';
+   strcpy(OldAn, "?");
 
    if ((DecaPercent == OldPercent) && !strcmp(OldAn, Analyse))
        return;
@@ -1691,8 +1693,10 @@ void SetAnalyse(
             printf("%s finished after %4.2f seconds.\n", OldAn, seconds());
          strncpy(OldAn, Analyse, 127);
       }
-
-      result = statfcn(s, ng_ident, userptr);
+      /* ouput only after a change */
+      if (strcmp(olds, s))
+          result = statfcn(s, ng_ident, userptr);
+      strcpy(olds, s);
    }
    tfree(s);
 #else
