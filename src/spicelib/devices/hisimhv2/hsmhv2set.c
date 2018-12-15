@@ -188,7 +188,7 @@ int HSMHV2setup(
     if ( !model->HSMHV2_codep_Given ) model->HSMHV2_codep = 0 ;
     if ( model->HSMHV2_codep_Given ) {
       if( model->HSMHV2_codep != 0 && model->HSMHV2_codep != 1 ) {
-        printf("warning(HiSIM_HV(%s)): Invalid model parameter CODEP  (= %d) was specified, resetted to 0.\n",model->HSMHV2modName,model->HSMHV2_codep);
+        printf("warning(HiSIM_HV(%s)): Invalid model parameter CODEP  (= %d) was specified, reset to 0.\n",model->HSMHV2modName,model->HSMHV2_codep);
         model->HSMHV2_codep = 0 ;
       }
     }
@@ -196,7 +196,7 @@ int HSMHV2setup(
     if ( !model->HSMHV2_coddlt_Given ) model->HSMHV2_coddlt = 1 ;
     if ( model->HSMHV2_coddlt_Given ) {
       if( model->HSMHV2_coddlt != 0 && model->HSMHV2_coddlt != 1 ) {
-        printf("warning(HiSIM_HV(%s)): Invalid model parameter CODDLT  (= %d) was specified, resetted to 1.\n",model->HSMHV2modName,model->HSMHV2_coddlt);
+        printf("warning(HiSIM_HV(%s)): Invalid model parameter CODDLT  (= %d) was specified, reset to 1.\n",model->HSMHV2modName,model->HSMHV2_coddlt);
         model->HSMHV2_coddlt = 1 ;
       }
     }
@@ -1649,7 +1649,7 @@ do { if((here->ptr = SMPmakeElt(matrix,here->first,here->second))==NULL){\
     
     if( model->HSMHV2_codep == 1 && model->HSMHV2_coerrrep ) {
       if( model->HSMHV2_copprv == 1 ) {
-        printf("warning(HiSIM_HV(%s)): COPPRV is not supported yet in Depletion mode mode, resetted to 0.\n",model->HSMHV2modName);
+        printf("warning(HiSIM_HV(%s)): COPPRV is not supported yet in Depletion mode mode, reset to 0.\n",model->HSMHV2modName);
       }
       if( model->HSMHV2_coisti == 1 ) { 
         printf("warning(HiSIM_HV(%s)): STI leak model is not supported yet in Depletion mode model, skipped\n",model->HSMHV2modName);

@@ -172,13 +172,13 @@ int HSM2setup(
 
     if ( model->HSM2_codep_Given ) {
       if( model->HSM2_codep != 0 && model->HSM2_codep != 1 ) {
-        printf("warning(HiSIM): Invalid CODEP  (%d) was specified, resetted to 0.\n",model->HSM2_codep);
+        printf("warning(HiSIM): Invalid CODEP  (%d) was specified, reset to 0.\n",model->HSM2_codep);
         model->HSM2_codep = 0 ;
       }
     }
     if ( model->HSM2_coddlt_Given ) {
       if( model->HSM2_coddlt != 0 && model->HSM2_coddlt != 1 ) {
-        printf("warning(HiSIM): Invalid CODDLT (%d) was specified, resetted to 0.\n",model->HSM2_coddlt);
+        printf("warning(HiSIM): Invalid CODDLT (%d) was specified, reset to 0.\n",model->HSM2_coddlt);
         model->HSM2_coddlt = 0 ;
       }
     }
@@ -777,15 +777,15 @@ int HSM2setup(
       RANGECHECK(model->HSM2_depleak,    0.0,   10.0,   "DEPLEAK" ) ;
 
       if( model->HSM2_corecip )  {
-        printf("warning(HiSIM): CORECIP is not supported yet in depletion mode MOSFET, resetted to 0.\n");
+        printf("warning(HiSIM): CORECIP is not supported yet in depletion mode MOSFET, reset to 0.\n");
         model->HSM2_corecip = 0;
       }
       if( model->HSM2_copprv )  {
-        printf("warning(HiSIM): COPPRV is not supported yet in depletion mode MOSFET, resetted to 0.\n");
+        printf("warning(HiSIM): COPPRV is not supported yet in depletion mode MOSFET, reset to 0.\n");
         model->HSM2_copprv = 0;
       }
       if( model->HSM2_corsrd == 1 )  {
-        printf("warning(HiSIM): CORSRD=1 is not supported yet in depletion mode MOSFET, resetted to -1.\n");
+        printf("warning(HiSIM): CORSRD=1 is not supported yet in depletion mode MOSFET, reset to -1.\n");
         model->HSM2_corsrd = -1;
       }
       if( model->HSM2_coisti )  {

@@ -162,14 +162,14 @@ char *INPdomodel(CKTcircuit *ckt, struct card *image, INPtables * tab)
 					type = INPtypelook("MESA");
 					if (type < 0)
 					{
-						err = INPmkTemp("Device type MESA not availabe\n");
+						err = INPmkTemp("Device type MESA not available\n");
 					}
 					break;
 				case 3:
 					type = INPtypelook("MESA");
 					if (type < 0)
 					{
-						err = INPmkTemp("Device type MESA not availabe\n");
+						err = INPmkTemp("Device type MESA not available\n");
 					}
 					break;
 				case 4:
