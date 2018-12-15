@@ -1630,7 +1630,7 @@ void SetAnalyse(
    if (nostatuswanted)
        return;
 
-   strcpy(OldAn, "?");
+   strcpy(OldAn, "?"); /* initial value */
 
    if ((DecaPercent == OldPercent) && !strcmp(OldAn, Analyse))
        return;
