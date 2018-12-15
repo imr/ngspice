@@ -148,10 +148,6 @@ static bool cont_condition;
 #include "misc/ivars.h"
 #include "frontend/resource.h"
 #include "frontend/com_measure2.h"
-#ifdef _MSC_VER
-#include <stdio.h>
-#define snprintf _snprintf
-#endif
 #include "frontend/outitf.h"
 #include "ngspice/memory.h"
 #include "frontend/com_measure2.h"
@@ -435,7 +431,7 @@ sighandler_sharedspice(int num)
 
 /* create a suspended thread tid2 that is activated when bg_run has finished.
    It executes the .control commands. If the arguemnt is NULL, the thread is
-   stated with the existing controls (e.g. for command 'reset'. */
+   started with the existing controls (e.g. during command 'reset'. */
 void
 exec_controls(wordlist *newcontrols)
 {
@@ -1634,6 +1630,8 @@ void SetAnalyse(
    /* If caller has sent NULL address for statfcn */
    if (nostatuswanted)
        return;
+
+   OldAn[0] = '\0';
 
    if ((DecaPercent == OldPercent) && !strcmp(OldAn, Analyse))
        return;
