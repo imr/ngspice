@@ -3193,7 +3193,7 @@ inp_get_func_from_line(struct function_env *env, char *line)
 
  Lerror:
     // fixme, free()
-    fprintf(stderr, "ERROR: faild to parse .func in: %s\n", orig_line);
+    fprintf(stderr, "ERROR: failed to parse .func in: %s\n", orig_line);
     controlled_exit(EXIT_FAILURE);
 }
 
