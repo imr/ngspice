@@ -305,11 +305,8 @@ get_plot_byname(char* plotname)
 /*****************************************************************/
 
 #ifdef THREADS
-#ifdef __MINGW32__
-static threadId_t tid, printtid; // , bgtid;
-#else
-static threadId_t tid, printtid, tid2; // , bgtid = (threadId_t) 0;
-#endif
+
+static threadId_t tid, printtid, tid2;
 
 static bool fl_running = FALSE;
 static bool fl_exited = TRUE;
