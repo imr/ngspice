@@ -333,10 +333,10 @@ _cthread_run(void *controls)
         pthread_cond_wait(&cond, &triggerMutex);
     pthread_mutex_unlock(&triggerMutex);
 #endif
-
+    fl_exited = FALSE;
     for (wl = controls; wl; wl = wl->wl_next)
         cp_evloop(wl->wl_word);
-
+    fl_exited = TRUE;
 #ifdef HAVE_LIBPTHREAD
     cont_condition = FALSE;
 #endif
