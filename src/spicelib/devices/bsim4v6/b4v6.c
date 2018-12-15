@@ -413,7 +413,7 @@ IOP( "jtssws", BSIM4v6_MOD_JTSSWS, IF_REAL, "Source STI sidewall trap-assisted s
 IOP( "jtsswd", BSIM4v6_MOD_JTSSWD, IF_REAL, "Drain STI sidewall trap-assisted saturation current density"),
 IOP( "jtsswgs", BSIM4v6_MOD_JTSSWGS, IF_REAL, "Source gate-edge sidewall trap-assisted saturation current density"),
 IOP( "jtsswgd", BSIM4v6_MOD_JTSSWGD, IF_REAL, "Drain gate-edge sidewall trap-assisted saturation current density"),
-IOP( "jtweff", BSIM4v6_MOD_JTWEFF, IF_REAL, "TAT current width dependance"),
+IOP( "jtweff", BSIM4v6_MOD_JTWEFF, IF_REAL, "TAT current width dependence"),
 IOP( "njts", BSIM4v6_MOD_NJTS, IF_REAL, "Non-ideality factor for bottom junction"),
 IOP( "njtssw", BSIM4v6_MOD_NJTSSW, IF_REAL, "Non-ideality factor for STI sidewall junction"),
 IOP( "njtsswg", BSIM4v6_MOD_NJTSSWG, IF_REAL, "Non-ideality factor for gate-edge sidewall junction"),
