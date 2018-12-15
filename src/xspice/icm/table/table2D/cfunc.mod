@@ -89,7 +89,6 @@ NON-STANDARD FEATURES
 
 #if defined(_MSC_VER)
 #define strdup _strdup
-#define snprintf _snprintf
 #endif
 
 /*=== LOCAL VARIABLES & TYPEDEFS =======*/

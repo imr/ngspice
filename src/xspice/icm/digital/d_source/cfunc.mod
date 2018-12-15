@@ -72,9 +72,6 @@ NON-STANDARD FEATURES
 #define DIR_PATHSEP    "/"
 #endif
 
-#ifdef _MSC_VER
-#define snprintf _snprintf
-#endif
 
 /*=== LOCAL VARIABLES & TYPEDEFS =======*/
 
