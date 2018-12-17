@@ -1611,6 +1611,10 @@ void SetAnalyse(
    int DecaPercent /*in: 10 times the progress [%]*/
    /*HWND hwAnalyse, in: global handle to analysis window */
 ) {
+    /* If caller has sent NULL address for statfcn */
+    if (nostatuswanted)
+        return;
+
 #ifdef HAVE_FTIME
    static int OldPercent = -2;     /* Previous progress value */
    static char OldAn[128];         /* Previous analysis type */
@@ -1625,10 +1629,6 @@ void SetAnalyse(
 
    if (ft_curckt)
        ckt = ft_curckt->ci_ckt;
-
-   /* If caller has sent NULL address for statfcn */
-   if (nostatuswanted)
-       return;
 
    strcpy(OldAn, "?"); /* initial value */
 
