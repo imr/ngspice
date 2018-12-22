@@ -4,13 +4,13 @@ VDMOS Test of quasi saturation IXTH80N20L IXTH48P20P
 * The Quasi-saturation is added for demonstration only, it is not aligned with the data sheets
 * and is for sure exaggerated, at least for the IXTH80N20L
 
-mn1 d1 g1 s1 s1 IXTH80N20L
+mn1 d1 g1 s1 IXTH80N20L
 
 vd1 d1 0 1
 vg1 g1 0 1
 vs1 s1 0 0
 
-mp2 d2 g2 s2 s2 IXTH48P20P
+mp2 d2 g2 s2 IXTH48P20P
 
 vd2 d2 0 1
 vg2 g2 0 1
@@ -63,3 +63,5 @@ plot dc3.vs2#branch vs2#branch
 + TT=260e-9
 + vq=100
 + rq=0.5  $ will be reset by altermod to original 0
+
+.end
