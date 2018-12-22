@@ -374,8 +374,8 @@ int add_device(int n, SPICEdev **devs, int flag){
 #endif
     DEVices[DEVNUM+i] = devs[i];
 
-    /* added by SDB on 6.20.2003 */
     DEVices[DEVNUM+i]->DEVinstSize = &MIFiSize;
+    DEVices[DEVNUM+i]->DEVmodSize = &MIFmSize;
 
     DEVicesfl[DEVNUM+i] = flag;
   }
