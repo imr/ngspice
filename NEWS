@@ -3,6 +3,8 @@ Ngspice-30, Jan 1st, 2019
 
 - New features:
     + VDMOS device model has been overhauled extensively
+    + Making the manual is now much more flexible and comfortable,
+      xhtml manual added.
     + Add pre-defined variable controlswait to enable running .control sections
       after the simulation has finished (shared ngspice only)
     + Add an icon to the MS Windows GUI build
@@ -17,6 +19,8 @@ Ngspice-30, Jan 1st, 2019
 - Bug fixes:
     + many bugs fixed (bug tracker nos. 253, 332, 337, 368, 374, 375, 376, 377, 378,
       379, 380, 381, 384, 385, 386)
+    + ancient bug removed that led to spurious heap corruption of shared ngspice
+      under (very sensitive) Windows 10
     + memory leaks removed
 
 Ngspice-29, Sept 30th, 2018
@@ -26,7 +30,7 @@ Ngspice-29, Sept 30th, 2018
     + new variable no_auto_gnd. If set, the automatic replacing of gnd by 0
       is disabled
     + new compatibility modes for 'set behavior=??'. ps sets PSPICE, lt sets
-      LTSPICE compatibility, ltps is both for a file added by .include command, 
+      LTSPICE compatibility, ltps is both for a file added by .include command,
       psa, lta, and ltpsa are the same for the whole netlist
     + .if, .elseif, .endif is now evaluated recursively, nested .if are thus
       enabled
