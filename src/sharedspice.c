@@ -10,7 +10,7 @@
 /*******************/
 
 #ifdef _MSC_VER
-#define SHAREDSPICE_version "29.0"
+#define SHAREDSPICE_version "30.0"
 #define STDIN_FILENO    0
 #define STDOUT_FILENO   1
 #define STDERR_FILENO   2
