@@ -31,6 +31,10 @@ IFparm VDMOSpTable[] = { /* parameters */
  OP( "cgd",          VDMOS_CAPGD,      IF_REAL,    "Gate-Drain capacitance"),
  OP( "cds",          VDMOS_CAPDS,      IF_REAL,    "Drain-Source capacitance"),
 
+ IOP( "rth0", VDMOS_RTH0,  IF_REAL,    "Instance Thermal Resistance"),
+ IOP( "cth0", VDMOS_CTH0,  IF_REAL,    "Instance Thermal Capacitance"),
+ OP( "deltemp",       VDMOS_DELTEMP,    IF_REAL, "Self-heating temperature rise"),
+
  OPU( "dnode",      VDMOS_DNODE,      IF_INTEGER, "Number of the drain node "),
  OPU( "gnode",      VDMOS_GNODE,      IF_INTEGER, "Number of the gate node "),
  OPU( "snode",      VDMOS_SNODE,      IF_INTEGER, "Number of the source node "),
@@ -108,6 +112,13 @@ IFparm VDMOSmPTable[] = { /* model parameters */
  IOPA("cgdmax", VDMOS_MOD_CGDMAX, IF_REAL, "Maximum non-linear G-D capacitance"),
  IOPA("a",      VDMOS_MOD_A,      IF_REAL, "Non-linear Cgd capacitance parameter"),
  IOPA("cgs",    VDMOS_MOD_CGS,    IF_REAL, "Gate-source capacitance"),
+
+/* self heating */
+ IOP( "shmod", VDMOS_MOD_SHMOD, IF_INTEGER, "Self heating mode selector"),
+ IOP( "rth0",  VDMOS_MOD_RTH0,  IF_REAL, "Self-heating thermal resistance"),   
+ IOP( "cth0",  VDMOS_MOD_CTH0,  IF_REAL, "Self-heating thermal capacitance"),
+ IOP( "alpha", VDMOS_MOD_ALPHA, IF_REAL, "Self-heating rds impact coefficient"),
+ IOP( "mu",    VDMOS_MOD_MU,    IF_REAL, "Self-heating gain impact exponent"),
 };
 
 char *VDMOSnames[] = {
@@ -116,8 +127,8 @@ char *VDMOSnames[] = {
     "Source"
 };
 
-int	VDMOSnSize = NUMELEMS(VDMOSnames);
-int	VDMOSpTSize = NUMELEMS(VDMOSpTable);
-int	VDMOSmPTSize = NUMELEMS(VDMOSmPTable);
-int	VDMOSiSize = sizeof(VDMOSinstance);
-int	VDMOSmSize = sizeof(VDMOSmodel);
+int VDMOSnSize = NUMELEMS(VDMOSnames);
+int VDMOSpTSize = NUMELEMS(VDMOSpTable);
+int VDMOSmPTSize = NUMELEMS(VDMOSmPTable);
+int VDMOSiSize = sizeof(VDMOSinstance);
+int VDMOSmSize = sizeof(VDMOSmodel);

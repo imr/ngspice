@@ -183,6 +183,26 @@ VDMOSmParam(int param, IFvalue *value, GENmodel *inModel)
             model->VDMOSDxti = value->rValue;
             model->VDMOSDxtiGiven = TRUE;
             break;
+        case  VDMOS_MOD_SHMOD:
+            model->VDMOSshMod = value->iValue;
+            model->VDMOSshModGiven = TRUE;
+            break;
+        case  VDMOS_MOD_RTH0:
+            model->VDMOSrth0 = value->rValue;
+            model->VDMOSrth0Given = TRUE;
+            break;
+        case  VDMOS_MOD_CTH0:
+            model->VDMOScth0 = value->rValue;
+            model->VDMOScth0Given = TRUE;
+            break;
+        case  VDMOS_MOD_ALPHA:
+            model->VDMOSalpha = value->rValue;
+            model->VDMOSalphaGiven = TRUE;
+            break;
+        case  VDMOS_MOD_MU:
+            model->VDMOSmu = value->rValue;
+            model->VDMOSmuGiven = TRUE;
+            break;
         default:
             return(E_BADPARM);
     }

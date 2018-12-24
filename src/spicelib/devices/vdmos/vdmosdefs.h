@@ -45,6 +45,7 @@ typedef struct sVDMOSinstance {
     int VDMOSsNodePrime; /* number of the internal source node of the mosfet */
     int VDMOSgNodePrime; /* number of the internal gate node of the mosfet */
     int VDIOposPrimeNode; /* number of the internal node of the bulk diode */
+    int VDMOStempNode; /* number of the internal temperature node for self heating */
 
     double VDMOSm;   /* parallel device multiplier */
 
@@ -79,21 +80,33 @@ typedef struct sVDMOSinstance {
     double VDMOSf4s;
 
     double VDIOcap;
-    double VDIOtSatCur; /* temperature corrected saturation Cur. density*/
+    double VDIOtSatCur;     /* temperature corrected saturation Cur. density*/
     double VDIOinitCond;
     double VDIOtVcrit;
     double VDIOtConductance;
     double VDIOtBrkdwnV;
     double VDIOtJctCap;
     double VDIOtDepCap;     /* temperature adjusted transition point in */
-                             /* the cureve matching Fc * Vj */
-    double VDIOtJctPot;    /* temperature corrected Bulk potential */
+                            /* the curve matching Fc * Vj */
+    double VDIOtJctPot;     /* temperature corrected Bulk potential */
     double VDIOtGradingCoeff;
 
     double VDIOtTransitTime;
     double VDIOtF1;
     double VDIOtF2;
     double VDIOtF3;
+
+    double VDMOSTempSH;      /* for portability of SH temp to noise analysis */
+    double VDMOSrth0;
+    double VDMOScth0;
+
+    double VDMOSgmT;
+    double VDMOSgtempg;
+    double VDMOSgtempd;
+    double VDMOSgtempT;
+    double VDMOScgT;
+    double VDMOScdT;
+    double VDMOScth;
 
 /*
  * naming convention:
@@ -150,6 +163,8 @@ typedef struct sVDMOSinstance {
     unsigned VDMOSvdsatGiven :1;
     unsigned VDMOSmodeGiven  :1;
 
+    unsigned VDMOSrth0Given :1;
+    unsigned VDMOScth0Given :1;
 
     double *VDMOSDdPtr;      /* pointer to sparse matrix element at
                                      * (Drain node,drain node) */
@@ -212,6 +227,14 @@ typedef struct sVDMOSinstance {
                             * (source node, diode prime node) */
     double *VDIORPsPtr;    /* pointer to sparse matrix element at
                             * (diode prime node, source node) */
+    /* self heating */
+    double *VDMOSTemptempPtr;
+    double *VDMOSTempdpPtr;
+    double *VDMOSTempspPtr;
+    double *VDMOSTempgPtr;
+    double *VDMOSGtempPtr;
+    double *VDMOSDPtempPtr;
+    double *VDMOSSPtempPtr;
 
 } VDMOSinstance ;
 
@@ -232,12 +255,16 @@ typedef struct sVDMOSinstance {
 #define VDIOcapCharge VDMOSstates+ 11
 #define VDIOcapCurrent VDMOSstates+ 12
 
-#define VDMOSnumStates 13
+#define VDMOSqth VDMOSstates+ 13
+#define VDMOScqth VDMOSstates+ 14
+#define VDMOSdeltemp VDMOSstates+ 15
+
+#define VDMOSnumStates 16
 
 
 /* per model data */
 
-    /* NOTE:  parameters marked 'input - use xxxx' are paramters for
+    /* NOTE:  parameters marked 'input - use xxxx' are parameters for
      * which a temperature correction is applied in VDMOStemp, thus
      * the VDMOSxxxx value in the per-instance structure should be used
      * instead in all calculations 
@@ -254,6 +281,7 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
 #define VDMOSmodName gen.GENmodName
 
     int VDMOStype;       /* device type : 1 = nmos,  -1 = pmos */
+    int VDMOSshMod;
     double VDMOStnom;        /* temperature at which parameters measured */
     double VDMOSdrainResistance;
     double VDMOSsourceResistance;
@@ -301,6 +329,11 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
     double VDIOgradCoeffTemp1;
     double VDIOgradCoeffTemp2;
 
+    double VDMOSrth0;
+    double VDMOScth0;
+    double VDMOSalpha;
+    double VDMOSmu;
+
     unsigned VDMOStypeGiven  :1;
     unsigned VDIOjctSatCurGiven :1;
     unsigned VDMOSdrainResistanceGiven   :1;
@@ -341,6 +374,11 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
     unsigned VDMOSDegGiven   :1;
     unsigned VDMOSDxtiGiven   :1;
 
+    unsigned VDMOSshModGiven :1;
+    unsigned VDMOSrth0Given :1;
+    unsigned VDMOScth0Given :1;
+    unsigned VDMOSalphaGiven :1;
+    unsigned VDMOSmuGiven :1;
 } VDMOSmodel;
 
 #ifndef NMOS
@@ -362,9 +400,11 @@ enum {
     VDMOS_TEMP,
     VDMOS_M,
     VDMOS_DTEMP,
+    VDMOS_RTH0,
+    VDMOS_CTH0,
 };
 
-/* model paramerers */
+/* model parameters */
 enum {
     VDMOS_MOD_VTO = 101,
     VDMOS_MOD_KP,
@@ -405,6 +445,11 @@ enum {
     VDMOS_MOD_TT,
     VDMOS_MOD_EG,
     VDMOS_MOD_XTI,
+    VDMOS_MOD_SHMOD,
+    VDMOS_MOD_RTH0,
+    VDMOS_MOD_CTH0,
+    VDMOS_MOD_ALPHA,
+    VDMOS_MOD_MU,
 };
 
 /* device questions */
@@ -434,6 +479,7 @@ enum {
     VDMOS_CQGD,
     VDMOS_SOURCERESIST,
     VDMOS_DRAINRESIST,
+    VDMOS_DELTEMP,
 };
 
 /* model questions */

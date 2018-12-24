@@ -20,15 +20,21 @@ VDMOSacLoad(GENmodel *inModel, CKTcircuit *ckt)
     VDMOSinstance *here;
     int xnrm;
     int xrev;
-    double xgs;
-    double xgd;
-    double capgs;
-    double capgd;
+    double xgs, xcgT;
+    double xgd, xcdT;
+    double capgs, cgT;
+    double capgd, cdT;
+    double cTt, gTtt, gTtg, gTtdp, gTtsp;
+    double GmT;
+    double xcsT, xcTt;
+
+    register int selfheat;
 
     for( ; model != NULL; model = VDMOSnextModel(model)) {
         for(here = VDMOSinstances(model); here!= NULL;
                 here = VDMOSnextInstance(here)) {
-        
+
+            selfheat = (model->VDMOSshMod == 1) && (here->VDMOSrth0 != 0.0);
             if (here->VDMOSmode < 0) {
                 xnrm=0;
                 xrev=1;
@@ -36,6 +42,27 @@ VDMOSacLoad(GENmodel *inModel, CKTcircuit *ckt)
                 xnrm=1;
                 xrev=0;
             }
+
+            if (here->VDMOSmode >= 0) {
+                GmT = model->VDMOStype * here->VDMOSgmT;
+                cgT  = model->VDMOStype * here->VDMOScgT;
+                cdT  = model->VDMOStype * here->VDMOScdT;
+                cTt = model->VDMOScth0;
+                gTtg  = here->VDMOSgtempg;
+                gTtdp = here->VDMOSgtempd;
+                gTtt  = here->VDMOSgtempT;
+                gTtsp = - (gTtg + gTtdp);
+            } else {
+                GmT = -model->VDMOStype * here->VDMOSgmT;
+                cgT  = -model->VDMOStype * here->VDMOScgT;
+                cdT  = -model->VDMOStype * here->VDMOScdT;
+                cTt = -model->VDMOScth0;
+                gTtg  = -here->VDMOSgtempg;
+                gTtdp = -here->VDMOSgtempd;
+                gTtt  = -here->VDMOSgtempT;
+                gTtsp = gTtg + gTtdp;
+            }
+
             /*
              *     VDMOS cap model parameters
              */
@@ -45,6 +72,11 @@ VDMOSacLoad(GENmodel *inModel, CKTcircuit *ckt)
                       *(ckt->CKTstate0+here->VDMOScapgd));
             xgs = capgs * ckt->CKTomega;
             xgd = capgd * ckt->CKTomega;
+
+            xcgT = cgT * ckt->CKTomega;
+            xcdT = cdT * ckt->CKTomega;
+            xcsT = -(cgT + cdT) * ckt->CKTomega;
+            xcTt = cTt * ckt->CKTomega;
 
             /* bulk diode */
             double gspr, geq, xceq;
@@ -93,6 +125,19 @@ VDMOSacLoad(GENmodel *inModel, CKTcircuit *ckt)
             *(here->VDIORPsPtr) -= gspr;
             *(here->VDIORPdPtr) -= geq;
             *(here->VDIORPdPtr +1) -= xceq;
+            if (selfheat)
+            {
+               *(here->VDMOSTemptempPtr + 1) += xcTt;
+               *(here->VDMOSDPtempPtr + 1) += xcdT;
+               *(here->VDMOSSPtempPtr + 1) += xcsT;
+               *(here->VDMOSGtempPtr + 1) += xcgT;
+               *(here->VDMOSDPtempPtr) += GmT;
+               *(here->VDMOSSPtempPtr) += -GmT;
+               *(here->VDMOSTemptempPtr) += gTtt + 1/model->VDMOSrth0;
+               *(here->VDMOSTempgPtr) += gTtg;
+               *(here->VDMOSTempdpPtr) += gTtdp;
+               *(here->VDMOSTempspPtr) += gTtsp;
+            }
         }
     }
     return(OK);
