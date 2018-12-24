@@ -144,14 +144,14 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
 
                 if (here->VDMOSmode >= 0) {
                     cdhat =
-                        here->VDMOScd -
-                        here->VDMOSgm * delvgs +
-                        here->VDMOSgds * delvds;
+                            here->VDMOScd
+                          + here->VDMOSgm * delvgs
+                          + here->VDMOSgds * delvds;
                 } else {
                     cdhat =
-                        here->VDMOScd -
-                        here->VDMOSgm * delvgd +
-                        here->VDMOSgds * delvds;
+                            here->VDMOScd
+                          - here->VDMOSgm * delvgd
+                          + here->VDMOSgds * delvds;
                 }
 
 #ifndef NOBYPASS
@@ -507,7 +507,7 @@ bypass :
             *(ckt->CKTrhs + here->VDMOSgNodePrime) -=
                 (model->VDMOStype * (ceqgs + ceqgd));
             *(ckt->CKTrhs + here->VDMOSdNodePrime) +=
-                (- cdreq + model->VDMOStype * ceqgd);
+                (-cdreq + model->VDMOStype * ceqgd);
             *(ckt->CKTrhs + here->VDMOSsNodePrime) +=
                 cdreq + model->VDMOStype * ceqgs;
 
