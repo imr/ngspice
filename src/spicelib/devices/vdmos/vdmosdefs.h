@@ -103,34 +103,34 @@ typedef struct sVDMOSinstance {
  * cdr = cdrain
  */
 
-#define	VDMOSNDCOEFFS	11
+#define VDMOSNDCOEFFS   11
 
 #ifndef NODISTO
-	double VDMOSdCoeffs[VDMOSNDCOEFFS];
+    double VDMOSdCoeffs[VDMOSNDCOEFFS];
 #else /* NODISTO */
-	double *VDMOSdCoeffs;
+    double *VDMOSdCoeffs;
 #endif /* NODISTO */
 
 #ifndef CONFIG
 
-#define	cdr_x2		VDMOSdCoeffs[0]
-#define	cdr_y2		VDMOSdCoeffs[1]
-#define	cdr_xy		VDMOSdCoeffs[2]
-#define	cdr_x3		VDMOSdCoeffs[3]
-#define	cdr_y3		VDMOSdCoeffs[4]
-#define	cdr_x2y		VDMOSdCoeffs[5]
-#define	cdr_xy2		VDMOSdCoeffs[6]
-#define	capgs2		VDMOSdCoeffs[7]
-#define	capgs3		VDMOSdCoeffs[8]
-#define	capgd2		VDMOSdCoeffs[9]
-#define	capgd3		VDMOSdCoeffs[10]
+#define cdr_x2      VDMOSdCoeffs[0]
+#define cdr_y2      VDMOSdCoeffs[1]
+#define cdr_xy      VDMOSdCoeffs[2]
+#define cdr_x3      VDMOSdCoeffs[3]
+#define cdr_y3      VDMOSdCoeffs[4]
+#define cdr_x2y     VDMOSdCoeffs[5]
+#define cdr_xy2     VDMOSdCoeffs[6]
+#define capgs2      VDMOSdCoeffs[7]
+#define capgs3      VDMOSdCoeffs[8]
+#define capgd2      VDMOSdCoeffs[9]
+#define capgd3      VDMOSdCoeffs[10]
 
 #endif
 
 #ifndef NONOISE
     double VDMOSnVar[NSTATVARS][VDMOSNSRCS];
 #else /* NONOISE */
-	double **VDMOSnVar;
+    double **VDMOSnVar;
 #endif /* NONOISE */
 
     int VDMOSmode;       /* device mode : 1 = normal, -1 = inverse */
