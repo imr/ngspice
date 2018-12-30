@@ -134,11 +134,14 @@ VDMOSmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case VDMOS_MOD_CTH0:
             value->rValue = model->VDMOScth0; 
             return(OK);
-        case VDMOS_MOD_ALPHA:
-            value->rValue = model->VDMOSalpha; 
-            return(OK);
         case VDMOS_MOD_MU:
             value->rValue = model->VDMOSmu; 
+            return(OK);
+        case VDMOS_MOD_TEXP0:
+            value->rValue = model->VDMOStexp0; 
+            return(OK);
+        case VDMOS_MOD_TEXP1:
+            value->rValue = model->VDMOStexp1; 
             return(OK);
         default:
             return(E_BADPARM);

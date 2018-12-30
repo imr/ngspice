@@ -41,11 +41,11 @@ typedef struct sVDMOSinstance {
     const int VDMOSdNode;  /* number of the gate node of the mosfet */
     const int VDMOSgNode;  /* number of the gate node of the mosfet */
     const int VDMOSsNode;  /* number of the source node of the mosfet */
+    const int VDMOStempNode;  /* number of the temperature node of the mosfet */
     int VDMOSdNodePrime; /* number of the internal drain node of the mosfet */
     int VDMOSsNodePrime; /* number of the internal source node of the mosfet */
     int VDMOSgNodePrime; /* number of the internal gate node of the mosfet */
     int VDIOposPrimeNode; /* number of the internal node of the bulk diode */
-    int VDMOStempNode; /* number of the internal temperature node for self heating */
 
     double VDMOSm;   /* parallel device multiplier */
 
@@ -61,7 +61,6 @@ typedef struct sVDMOSinstance {
     double VDMOStTransconductance;   /* temperature corrected transconductance*/
     double VDMOStPhi;                /* temperature corrected Phi */
     double VDMOStVto;                /* temperature corrected Vto */
-    double VDMOStSatCur;             /* temperature corrected saturation Cur. */
 
     double VDMOSicVDS;   /* initial condition D-S voltage */
     double VDMOSicVGS;   /* initial condition G-S voltage */
@@ -331,8 +330,9 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
 
     double VDMOSrth0;
     double VDMOScth0;
-    double VDMOSalpha;
     double VDMOSmu;
+    double VDMOStexp0;
+    double VDMOStexp1;
 
     unsigned VDMOStypeGiven  :1;
     unsigned VDIOjctSatCurGiven :1;
@@ -377,8 +377,9 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
     unsigned VDMOSshModGiven :1;
     unsigned VDMOSrth0Given :1;
     unsigned VDMOScth0Given :1;
-    unsigned VDMOSalphaGiven :1;
     unsigned VDMOSmuGiven :1;
+    unsigned VDMOStexp0Given :1;
+    unsigned VDMOStexp1Given :1;
 } VDMOSmodel;
 
 #ifndef NMOS
@@ -448,8 +449,9 @@ enum {
     VDMOS_MOD_SHMOD,
     VDMOS_MOD_RTH0,
     VDMOS_MOD_CTH0,
-    VDMOS_MOD_ALPHA,
     VDMOS_MOD_MU,
+    VDMOS_MOD_TEXP0,
+    VDMOS_MOD_TEXP1,
 };
 
 /* device questions */
@@ -460,6 +462,7 @@ enum {
     VDMOS_DNODE,
     VDMOS_GNODE,
     VDMOS_SNODE,
+    VDMOS_TNODE,
     VDMOS_DNODEPRIME,
     VDMOS_SNODEPRIME,
     VDMOS_SOURCECONDUCT,
@@ -479,7 +482,6 @@ enum {
     VDMOS_CQGD,
     VDMOS_SOURCERESIST,
     VDMOS_DRAINRESIST,
-    VDMOS_DELTEMP,
 };
 
 /* model questions */

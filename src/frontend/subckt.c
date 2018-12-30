@@ -1477,12 +1477,12 @@ numnodes(const char *line, struct subs *subs, wordlist const *modnames)
         /* "while" cycle increments the counter even when a model is */
         /* recognized. This code may be better!                      */
 
-        if ((i < 4) && ((c == 'm') || (c == 'q'))) {
-            fprintf(cp_err, "Error: too few nodes for MOS or BJT: %s\n", line);
+        if ((i < 4) && (c == 'q')) {
+            fprintf(cp_err, "Error: too few nodes for BJT: %s\n", line);
             return (0);
         }
-        if ((i < 5) && (c == 'p')) {
-            fprintf(cp_err, "Error: too few nodes for CPL: %s\n", line);
+        if ((i < 5) && ((c == 'm') || (c == 'p'))) {
+            fprintf(cp_err, "Error: too few nodes for MOS or CPL: %s\n", line);
             return (0);
         }
         return (i-1); /* compensate the unnecessary increment in the while cycle */

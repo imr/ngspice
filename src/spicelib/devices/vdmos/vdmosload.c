@@ -59,8 +59,6 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
     VDMOSmodel *model = (VDMOSmodel *)inModel;
     VDMOSinstance *here;
     double Beta;
-    double DrainSatCur;
-    double SourceSatCur;
     double arg;
     double cdhat;
     double cdrain;
@@ -95,10 +93,10 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
     int error;
 
     register int selfheat;
-    double BetaT=0.0, rdT=0.0, dBetaT_dT=0.0, drdT_dT, dIds_dT;
+    double BetaT, rd0T, rd1T, dBetaT_dT, drd0T_dT, drd1T_dT, dIds_dT;
     double deldelTemp, delTemp, Temp;
     double ceqth, cqtemp, ceqqth;
-    double GmT, gTtg, gTtdp, gTtt, gTtsp, gcTt;
+    double GmT, gTtg, gTtdp, gTtt, gTtsp, gcTt=0.0;
 
     double CGBdummy;
 
@@ -124,8 +122,6 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
              * here.  They may be moved at the expense of instance size
              */
 
-            DrainSatCur = here->VDMOSm * here->VDMOStSatCur;
-            SourceSatCur = here->VDMOSm * here->VDMOStSatCur;
             Beta = here->VDMOStTransconductance * here->VDMOSm *
                    here->VDMOSw / here->VDMOSl;
 
@@ -134,6 +130,30 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                 delTemp = *(ckt->CKTstate0 + here->VDMOSdeltemp);
             else if ((ckt->CKTmode & MODEINITTRAN))
                 delTemp = *(ckt->CKTstate1 + here->VDMOSdeltemp);
+
+            Temp = delTemp + ckt->CKTtemp;
+            here->VDMOSTempSH = Temp; /* added for portability of SH Temp for noise analysis */
+
+            /* Initialize temperature dependent values for self-heating effect  */
+            BetaT = Beta;
+            dBetaT_dT = 0.0;
+            rd0T = model->VDMOSdrainResistance / here->VDMOSm;
+            drd0T_dT = 0.0;
+            rd1T = model->VDMOSqsResistance;
+            drd1T_dT = 0.0;
+            if (selfheat) {
+                double TempRatio = Temp / model->VDMOStnom;
+                BetaT = Beta * pow(TempRatio,-model->VDMOSmu);
+                dBetaT_dT = -Beta * model->VDMOSmu / (model->VDMOStnom * pow(TempRatio,1+model->VDMOSmu));
+                if ((model->VDMOSdrainResistanceGiven) && (model->VDMOSdrainResistance != 0)) {
+                    rd0T =  model->VDMOSdrainResistance / here->VDMOSm * pow(TempRatio, model->VDMOStexp0);
+                    drd0T_dT = rd0T * model->VDMOStexp0 / Temp;
+                }
+                if ((model->VDMOSqsResistanceGiven) && (model->VDMOSqsResistance != 0)) {
+                    rd1T = model->VDMOSqsResistance * pow(TempRatio, model->VDMOStexp1);
+                    drd1T_dT = rd1T * model->VDMOStexp1 / Temp;
+                }
+            }
 
             /*
              * ok - now to do the start-up operations
@@ -256,22 +276,6 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                 /* ok - bypass is out, do it the hard way */
 
                 von = model->VDMOStype * here->VDMOSvon;
-                Temp = delTemp + ckt->CKTtemp;
-                here->VDMOSTempSH = Temp; /* added for portability of SH Temp for noise analysis */
-
-                /*  Calculate temperature dependent values for self-heating effect  */
-                if (selfheat) {
-                    double TempRatio = Temp / model->VDMOStnom;
-                    BetaT = Beta * pow(TempRatio,-model->VDMOSmu);
-                    dBetaT_dT = -Beta * model->VDMOSmu / (model->VDMOStnom * pow(TempRatio,1+model->VDMOSmu));
-                    rdT = model->VDMOSdrainResistance * (1 + model->VDMOSalpha * TempRatio);
-                    drdT_dT = model->VDMOSdrainResistance * model->VDMOSalpha/model->VDMOStnom;
-                } else {
-                    BetaT = Beta;
-                    dBetaT_dT = 0.0;
-                    rdT = model->VDMOSdrainResistance;
-                    drdT_dT = 0.0;
-                }
 
 #ifndef NODELIMITING
                 /*
@@ -324,6 +328,36 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                 delTemp = 0;
             }
 
+            Temp = delTemp + ckt->CKTtemp;
+            here->VDMOSTempSH = Temp; /* added for portability of SH Temp for noise analysis */
+
+            /*  Calculate temperature dependent values for self-heating effect  */
+            if (selfheat) {
+                double TempRatio = Temp / model->VDMOStnom;
+                BetaT = Beta * pow(TempRatio,-model->VDMOSmu);
+                dBetaT_dT = -Beta * model->VDMOSmu / (model->VDMOStnom * pow(TempRatio,1+model->VDMOSmu));
+                if ((model->VDMOSdrainResistanceGiven) && (model->VDMOSdrainResistance != 0)) {
+                    rd0T =  model->VDMOSdrainResistance / here->VDMOSm * pow(TempRatio, model->VDMOStexp0);
+                    drd0T_dT = rd0T * model->VDMOStexp0 / Temp;
+                } else {
+                    rd0T = 0.0;
+                    drd0T_dT = 0.0;
+                }
+                if ((model->VDMOSqsResistanceGiven) && (model->VDMOSqsResistance != 0)) {
+                    rd1T = model->VDMOSqsResistance * pow(TempRatio, model->VDMOStexp1);
+                    drd1T_dT = rd1T * model->VDMOStexp1 / Temp;
+                } else {
+                    rd1T = 0.0;
+                    drd1T_dT = 0.0;
+                }
+            } else {
+                BetaT = Beta;
+                dBetaT_dT = 0.0;
+                rd0T = model->VDMOSdrainResistance / here->VDMOSm;
+                drd0T_dT = 0.0;
+                rd1T = model->VDMOSqsResistance;
+                drd1T_dT = 0.0;
+            }
 
             /*
              * now all the preliminaries are over - we can start doing the
@@ -497,6 +531,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
             here->VDMOSgtempT = -GmT * vds;
             here->VDMOSgtempd = -model->VDMOStype* (here->VDMOSgds * vds + cdrain);
             here->VDMOScth = - cdrain * vds
+                             - 1/here->VDMOSdrainConductance * cdrain*cdrain
                              - model->VDMOStype * (here->VDMOSgtempg * vgs + here->VDMOSgtempd * vds)
                              - here->VDMOSgtempT * delTemp;
 
@@ -606,6 +641,26 @@ bypass:
                     *(ckt->CKTstate0 + here->VDMOScqth);
             }
 
+            /* quasi saturation
+             * according to Vincenzo d'Alessandro's Quasi-Saturation Model, simplified:
+             V. D'Alessandro, F. Frisina, N. Rinaldi: A New SPICE Model of VDMOS Transistors
+             Including Thermal and Quasi-saturation Effects, 9th European Conference on Power
+             Electronics and applications (EPE), Graz, Austria, August 2001, pp. P.1 − P.10.
+             */
+            if (model->VDMOSqsGiven && (here->VDMOSmode == 1)) {
+                double vdsn = model->VDMOStype * (
+                    *(ckt->CKTrhsOld + here->VDMOSdNode) -
+                    *(ckt->CKTrhsOld + here->VDMOSsNode));
+                double rd = rd0T + rd1T * (vdsn / (vdsn + fabs(model->VDMOSqsVoltage)));
+                if (rd > 0)
+                    here->VDMOSdrainConductance = 1 / rd;
+                else
+                    here->VDMOSdrainConductance = 0.0;
+            } else {
+                if ((selfheat) && (rd0T > 0))
+                    here->VDMOSdrainConductance = 1 / rd0T;
+            }
+
             /*
              *  load current vector
              */
@@ -629,23 +684,7 @@ bypass:
                 cdreq + model->VDMOStype * ceqgs;
             if (selfheat) {
                 ceqqth = cqtemp - gcTt * delTemp; /* Equivalent current by capacitor Cth*/
-                *(ckt->CKTrhs + here->VDMOStempNode) -= ceqth + ceqqth; /* dissipated power */
-            }
-
-
-            /* quasi saturation
-             * according to Vincenzo d'Alessandro's Quasi-Saturation Model, simplified:
-             V. D'Alessandro, F. Frisina, N. Rinaldi: A New SPICE Model of VDMOS Transistors
-             Including Thermal and Quasi-saturation Effects, 9th European Conference on Power
-             Electronics and applications (EPE), Graz, Austria, August 2001, pp. P.1 − P.10.
-             */
-            if (model->VDMOSqsGiven && (here->VDMOSmode == 1)) {
-                double vdsn = model->VDMOStype * (
-                    *(ckt->CKTrhsOld + here->VDMOSdNode) -
-                    *(ckt->CKTrhsOld + here->VDMOSsNode));
-                double rd = rdT + model->VDMOSqsResistance *
-                    (vdsn / (vdsn + fabs(model->VDMOSqsVoltage)));
-                here->VDMOSdrainConductance = 1 / rd;
+                *(ckt->CKTrhs + here->VDMOStempNode) -= ceqth + ceqqth; /* dissipated power + Cth current*/
             }
 
             if (here->VDMOSmode >= 0) {
@@ -666,7 +705,7 @@ bypass:
              *  load y matrix
              */
             *(here->VDMOSDdPtr) += (here->VDMOSdrainConductance + here->VDMOSdsConductance);
-            *(here->VDMOSGgPtr) += (here->VDMOSgateConductance); //((gcgd + gcgs + gcgb));
+            *(here->VDMOSGgPtr) += (here->VDMOSgateConductance);
             *(here->VDMOSSsPtr) += (here->VDMOSsourceConductance + here->VDMOSdsConductance);
             *(here->VDMOSDPdpPtr) +=
                 (here->VDMOSdrainConductance + here->VDMOSgds +
@@ -953,9 +992,9 @@ scalef(double nf2, double vgst)
 
 
 /* Calculate D/S current including weak inversion.
- * Uses a single function covering weak-moderate-stong inversion, as well
+ * Uses a single function covering weak-moderate-strong inversion, as well
  * as linear and saturation regions, with an interpolation method according to
- * Tvividis, McAndrew: "Operation and Modeling of the MOS Transistor", Oxford, 2011, p. 209.
+ * Tsividis, McAndrew: "Operation and Modeling of the MOS Transistor", Oxford, 2011, p. 209.
  * A single parameter n sets the slope of the weak inversion current. The weak inversion
  * current is independent from vds, as in long channel devices.
  * The following modification has been added for VDMOS compatibility:

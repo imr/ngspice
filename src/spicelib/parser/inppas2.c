@@ -167,7 +167,7 @@ void INPpas2(CKTcircuit *ckt, struct card *data, INPtables * tab, TSKtask *task)
 	       [W=<val>] [AD=<val>] [AS=<val>] [PD=<val>]
 	       [PS=<val>] [NRD=<val>] [NRS=<val>] [OFF] 
 	       [IC=<val>,<val>,<val>] */
-	    INP2M(ckt, tab, current);
+	    INP2M(ckt, tab, current, gnode);
 	    break;
 #ifdef  NDEV   
 	case 'N':

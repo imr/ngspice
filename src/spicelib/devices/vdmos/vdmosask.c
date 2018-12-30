@@ -71,6 +71,9 @@ VDMOSask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
         case VDMOS_SNODE:
             value->iValue = here->VDMOSsNode;
             return(OK);
+        case VDMOS_TNODE:
+            value->iValue = here->VDMOStempNode;
+            return(OK);
         case VDMOS_SNODEPRIME:
             value->iValue = here->VDMOSsNodePrime;
             return(OK);
@@ -130,9 +133,6 @@ VDMOSask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
             return(OK);
         case VDMOS_CQGD:
             value->rValue = *(ckt->CKTstate0 + here->VDMOScqgd);
-            return(OK);
-        case VDMOS_DELTEMP:
-            value->rValue = *(ckt->CKTstate0 + here->VDMOSdeltemp);
             return(OK);
         case VDMOS_CG :
             if (ckt->CKTcurrentAnalysis & DOING_AC) {

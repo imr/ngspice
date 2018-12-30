@@ -33,11 +33,11 @@ IFparm VDMOSpTable[] = { /* parameters */
 
  IOP( "rth0", VDMOS_RTH0,  IF_REAL,    "Instance Thermal Resistance"),
  IOP( "cth0", VDMOS_CTH0,  IF_REAL,    "Instance Thermal Capacitance"),
- OP( "deltemp",       VDMOS_DELTEMP,    IF_REAL, "Self-heating temperature rise"),
 
  OPU( "dnode",      VDMOS_DNODE,      IF_INTEGER, "Number of the drain node "),
  OPU( "gnode",      VDMOS_GNODE,      IF_INTEGER, "Number of the gate node "),
  OPU( "snode",      VDMOS_SNODE,      IF_INTEGER, "Number of the source node "),
+ OPU(" tempnode",   VDMOS_TNODE,      IF_INTEGER, "Number of temperature node"),
  OPU( "dnodeprime", VDMOS_DNODEPRIME, IF_INTEGER, "Number of int. drain node"),
  OPU( "snodeprime", VDMOS_SNODEPRIME, IF_INTEGER, "Number of int. source node "),
 
@@ -117,14 +117,16 @@ IFparm VDMOSmPTable[] = { /* model parameters */
  IOP( "shmod", VDMOS_MOD_SHMOD, IF_INTEGER, "Self heating mode selector"),
  IOP( "rth0",  VDMOS_MOD_RTH0,  IF_REAL, "Self-heating thermal resistance"),   
  IOP( "cth0",  VDMOS_MOD_CTH0,  IF_REAL, "Self-heating thermal capacitance"),
- IOP( "alpha", VDMOS_MOD_ALPHA, IF_REAL, "Self-heating rds impact coefficient"),
- IOP( "mu",    VDMOS_MOD_MU,    IF_REAL, "Self-heating gain impact exponent"),
+ IOP( "mu",    VDMOS_MOD_MU,    IF_REAL, "Self-heating gain exponent"),
+ IOP( "texp0", VDMOS_MOD_TEXP0, IF_REAL, "Self-heating rd0 temperature exponent"),
+ IOP( "texp1", VDMOS_MOD_TEXP1, IF_REAL, "Self-heating rd1 temperature exponent"),
 };
 
 char *VDMOSnames[] = {
     "Drain",
     "Gate",
-    "Source"
+    "Source",
+    "Temp"
 };
 
 int VDMOSnSize = NUMELEMS(VDMOSnames);

@@ -102,16 +102,6 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
             arg = -egfet/(kt+kt)+1.1150877/(CONSTboltz*(REFTEMP+REFTEMP));
             pbfact = -2*vt *(1.5*log(fact2)+CHARGE*arg);
 
-            if(!here->VDMOSmGiven) {
-                here->VDMOSm = 1;
-            }
-            if(!here->VDMOSlGiven) {
-                here->VDMOSl = 1;
-            }
-            if(!here->VDMOSwGiven) {
-                here->VDMOSw = 1;
-            }
-
             ratio4 = ratio * sqrt(ratio);
             here->VDMOStTransconductance = model->VDMOStransconductance / ratio4;
             phio = (model->VDMOSphi - pbfact1) / fact1;
@@ -125,51 +115,6 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
             here->VDMOSf2s = 0;
             here->VDMOSf3s = 0;
             here->VDMOSf4s = 0;
-
-
-            if (model->VDMOSdrainResistanceGiven) {
-                if (model->VDMOSdrainResistance != 0) {
-                    here->VDMOSdrainConductance = here->VDMOSm /
-                        model->VDMOSdrainResistance;
-                }
-                else {
-                    here->VDMOSdrainConductance = 0;
-                }
-            } else {
-                here->VDMOSdrainConductance = 0;
-            }
-            if(model->VDMOSsourceResistanceGiven) {
-                if(model->VDMOSsourceResistance != 0) {
-                   here->VDMOSsourceConductance = here->VDMOSm /
-                                         model->VDMOSsourceResistance;
-                } else {
-                    here->VDMOSsourceConductance = 0;
-                }
-            } else {
-                here->VDMOSsourceConductance = 0;
-            }
-            if (model->VDMOSgateResistanceGiven) {
-                if (model->VDMOSgateResistance != 0) {
-                    here->VDMOSgateConductance = here->VDMOSm /
-                        model->VDMOSgateResistance;
-                } else {
-                    here->VDMOSgateConductance = 0;
-                }
-            } else {
-                here->VDMOSgateConductance = 0;
-            }
-            if (model->VDMOSrdsGiven) {
-                if (model->VDMOSrds != 0) {
-                    here->VDMOSdsConductance = here->VDMOSm /
-                        model->VDMOSrds;
-                }
-                else {
-                    here->VDMOSdsConductance = 0;
-                }
-            }
-            else {
-                here->VDMOSdsConductance = 0;
-            }
 
             /* bulk diode model */
             double pbo, gmaold;

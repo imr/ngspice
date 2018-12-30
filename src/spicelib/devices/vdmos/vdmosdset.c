@@ -21,8 +21,6 @@ VDMOSdSetup(GENmodel *inModel, CKTcircuit *ckt)
     VDMOSmodel *model = (VDMOSmodel *) inModel;
     VDMOSinstance *here;
     double Beta;
-    double DrainSatCur;
-    double SourceSatCur;
     double gm;
     double gds;
     double vgst;
@@ -51,9 +49,6 @@ VDMOSdSetup(GENmodel *inModel, CKTcircuit *ckt)
                 here=VDMOSnextInstance(here)) {
 
             vt = CONSTKoverQ * here->VDMOStemp;
-
-            DrainSatCur = here->VDMOSm * here->VDMOStSatCur;
-            SourceSatCur = here->VDMOSm * here->VDMOStSatCur;
 
             Beta = here->VDMOStTransconductance * here->VDMOSm *
                     here->VDMOSw/here->VDMOSl;

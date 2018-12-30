@@ -195,13 +195,17 @@ VDMOSmParam(int param, IFvalue *value, GENmodel *inModel)
             model->VDMOScth0 = value->rValue;
             model->VDMOScth0Given = TRUE;
             break;
-        case  VDMOS_MOD_ALPHA:
-            model->VDMOSalpha = value->rValue;
-            model->VDMOSalphaGiven = TRUE;
-            break;
         case  VDMOS_MOD_MU:
             model->VDMOSmu = value->rValue;
             model->VDMOSmuGiven = TRUE;
+            break;
+        case  VDMOS_MOD_TEXP0:
+            model->VDMOStexp0 = value->rValue;
+            model->VDMOStexp0Given = TRUE;
+            break;
+        case  VDMOS_MOD_TEXP1:
+            model->VDMOStexp1 = value->rValue;
+            model->VDMOStexp1Given = TRUE;
             break;
         default:
             return(E_BADPARM);

@@ -31,9 +31,9 @@ model_numnodes(int type)
         return 6;
     }
 
-    if (type == INPtypelook("VDMOS"))       /* 3 ; VDMOSnames */
+    if (type == INPtypelook("VDMOS"))       /* 4 ; VDMOSnames */
     {
-        return 3;
+        return 4;
     }
 
     return 4;
@@ -41,7 +41,7 @@ model_numnodes(int type)
 
 
 void
-INP2M(CKTcircuit *ckt, INPtables *tab, struct card *current)
+INP2M(CKTcircuit *ckt, INPtables *tab, struct card *current, CKTnode *gnode)
 {
     /* Mname <node> <node> <node> <node> <model> [L=<val>]
      *       [W=<val>] [AD=<val>] [AS=<val>] [PD=<val>]
@@ -94,11 +94,15 @@ INP2M(CKTcircuit *ckt, INPtables *tab, struct card *current)
         INPtermInsert(ckt, &token, tab, &node[i]);
     }
 
-    int model_numnodes_ = model_numnodes(thismodel->INPmodType);
-    if (i > model_numnodes_) {
+    int model_max_numnodes = model_numnodes(thismodel->INPmodType);
+    if (i > model_max_numnodes) {
         LITERR ("too many nodes connected to instance");
         return;
     }
+
+    /* tie missing ports to ground, (thermal node) */
+    while (i < model_max_numnodes)
+        node[i++] = gnode;
 
     numnodes = i;
 
@@ -144,7 +148,7 @@ INP2M(CKTcircuit *ckt, INPtables *tab, struct card *current)
 
     IFC (newInstance, (ckt, mdfast, &fast, name));
 
-    for (i = 0; i < model_numnodes_; i++)
+    for (i = 0; i < model_max_numnodes; i++)
         if (i < numnodes)
             IFC (bindNode, (ckt, fast, i + 1, node[i]));
         else
