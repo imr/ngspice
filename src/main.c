@@ -21,8 +21,11 @@
 
 /* SJB added editline support 2005-05-05 */
 #ifdef HAVE_BSDEDITLINE
-# include <editline/readline.h>
-extern VFunction *rl_event_hook;    /* missing from editline/readline.h */
+#include <editline/readline.h>
+#ifndef rl_hook_func_t
+    typedef int rl_hook_func_t(void);
+#endif
+extern rl_hook_func_t *rl_event_hook;    /* missing from editline/readline.h */
 extern int rl_catch_signals;        /* missing from editline/readline.h */
 #endif
 
@@ -164,16 +167,10 @@ static void app_rl_readlines(void);
 
 #if defined(HAVE_GNUREADLINE) || defined(HAVE_BSDEDITLINE)
 static char *prompt(void);
-#endif
-
 #ifndef X_DISPLAY_MISSING
 # include "frontend/plotting/x11.h"
-# ifdef HAVE_GNUREADLINE
 static int app_event_func(void);
-# endif
-# ifdef HAVE_BSDEDITLINE
-static void app_event_func(void);
-# endif
+#endif
 #endif
 
 static void show_help(void);
@@ -183,7 +180,6 @@ static bool read_initialisation_file(char *dir, char *name);
 #ifdef SIMULATOR
 static void append_to_stream(FILE *dest, FILE *source);
 #endif
-
 
 extern IFsimulator SIMinfo;
 
@@ -566,7 +562,7 @@ prompt(void)
 #endif /* HAVE_GNUREADLINE || HAVE_BSDEDITLINE */
 
 #ifndef X_DISPLAY_MISSING
-#ifdef HAVE_GNUREADLINE
+#if defined(HAVE_GNUREADLINE) || defined(HAVE_BSDEDITLINE)
 /* -------------------------------------------------------------------------- */
 /* Process device events in Readline's hook since there is no where
    else to do it now - AV */
@@ -579,21 +575,8 @@ app_event_func(void)
     X11_Input(&reqst, NULL);
     return 0;
 }
-#endif /* HAVE_GNUREADLINE */
+#endif
 
-#ifdef HAVE_BSDEDITLINE
-/* -------------------------------------------------------------------------- */
-/* Process device events in Editline's hook.
-   similar to the readline function above but returns void */
-static void
-app_event_func(void)
-/* called by GNU readline periodically to know what to do about keypresses */
-{
-    static REQUEST reqst = { char_option, 0 };
-    reqst.fp = rl_instream;
-    X11_Input(&reqst, NULL);
-}
-#endif /* HAVE_BSDEDITLINE */
 #endif
 
 /* -------------------------------------------------------------------------- */
