@@ -19,7 +19,8 @@
 # include <readline/history.h>
 #endif
 
-/* SJB added editline support 2005-05-05 */
+/* editline development has added the following typdef to readline.h in 06/2018.
+   It is not vailable with older libedit versions (pre-1.42.2) , thus we have to set it ourselves */
 #ifdef HAVE_BSDEDITLINE
 #include <editline/readline.h>
 #ifndef rl_hook_func_t
