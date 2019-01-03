@@ -126,6 +126,10 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
         if (!model->VDMOStexp1Given)
             model->VDMOStexp1 = 0.3;
 
+        if (!model->VDMOStcvt0Given) {
+            model->VDMOStcvt0 = 0.00625;
+        }
+
         /* loop through all the instances of the model */
         for (here = VDMOSinstances(model); here != NULL;
             here = VDMOSnextInstance(here)) {

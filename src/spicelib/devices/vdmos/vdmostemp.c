@@ -106,7 +106,7 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
             here->VDMOStTransconductance = model->VDMOStransconductance / ratio4;
             phio = (model->VDMOSphi - pbfact1) / fact1;
             here->VDMOStPhi = fact2 * phio + pbfact;
-            here->VDMOStVto = model->VDMOSvt0;
+            here->VDMOStVto = model->VDMOSvt0 - model->VDMOStcvt0*(here->VDMOStemp - model->VDMOStnom);
 
             here->VDMOSf2d = 0;
             here->VDMOSf3d = 0;

@@ -333,6 +333,7 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
     double VDMOSmu;
     double VDMOStexp0;
     double VDMOStexp1;
+    double VDMOStcvt0;
 
     unsigned VDMOStypeGiven  :1;
     unsigned VDIOjctSatCurGiven :1;
@@ -380,6 +381,7 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
     unsigned VDMOSmuGiven :1;
     unsigned VDMOStexp0Given :1;
     unsigned VDMOStexp1Given :1;
+    unsigned VDMOStcvt0Given :1;
 } VDMOSmodel;
 
 #ifndef NMOS
@@ -452,6 +454,7 @@ enum {
     VDMOS_MOD_MU,
     VDMOS_MOD_TEXP0,
     VDMOS_MOD_TEXP1,
+    VDMOS_MOD_TCVT0,
 };
 
 /* device questions */

@@ -207,6 +207,10 @@ VDMOSmParam(int param, IFvalue *value, GENmodel *inModel)
             model->VDMOStexp1 = value->rValue;
             model->VDMOStexp1Given = TRUE;
             break;
+        case VDMOS_MOD_TCVT0:
+            model->VDMOStcvt0 = value->rValue;
+            model->VDMOStcvt0Given = TRUE;
+            break;
         default:
             return(E_BADPARM);
     }

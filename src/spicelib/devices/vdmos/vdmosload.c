@@ -392,7 +392,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                 double betap;
                 double vgst;
 
-                von = (model->VDMOSvt0*model->VDMOStype);
+                von = (here->VDMOStVto*model->VDMOStype);
                 vgst = (here->VDMOSmode == 1 ? vgs : vgd) - von;
                 vdsat = MAX(vgst, 0);
                 if (model->VDMOSksubthresGiven) {
