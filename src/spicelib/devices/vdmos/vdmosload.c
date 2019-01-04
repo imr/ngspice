@@ -399,8 +399,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                 /* Simple weak inversion model, according to https://www.anasoft.co.uk/MOS1Model.htm
                  * Scale the voltage overdrive vgst logarithmically in weak inversion.
                  * Best fits LTSPICE curves with shift=0
-                 * Drain current including subthreshold current */
-
+                 */
                     double slope = model->VDMOSksubthres;
                     double lambda = model->VDMOSlambda;
                     double theta = model->VDMOStheta;
