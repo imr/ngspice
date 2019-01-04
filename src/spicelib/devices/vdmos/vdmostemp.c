@@ -104,17 +104,10 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
 
             ratio4 = ratio * sqrt(ratio);
             here->VDMOStTransconductance = model->VDMOStransconductance / ratio4;
-            phio = (model->VDMOSphi - pbfact1) / fact1;
-            here->VDMOStPhi = fact2 * phio + pbfact;
             here->VDMOStVto = model->VDMOSvt0 - model->VDMOStcvt0*(here->VDMOStemp - model->VDMOStnom);
 
-            here->VDMOSf2d = 0;
-            here->VDMOSf3d = 0;
-            here->VDMOSf4d = 0;
-
-            here->VDMOSf2s = 0;
-            here->VDMOSf3s = 0;
-            here->VDMOSf4s = 0;
+            phio = (model->VDMOSphi - pbfact1) / fact1;
+            here->VDMOStPhi = fact2 * phio + pbfact; /* needed for distortion analysis */
 
             /* bulk diode model */
             double pbo, gmaold;

@@ -101,12 +101,6 @@ VDMOSask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
         case VDMOS_VDSAT:
             value->rValue = here->VDMOSvdsat;
             return(OK);
-        case VDMOS_SOURCEVCRIT:
-            value->rValue = here->VDMOSsourceVcrit;
-            return(OK);
-        case VDMOS_DRAINVCRIT:
-            value->rValue = here->VDMOSdrainVcrit;
-            return(OK);
         case VDMOS_CD:
             value->rValue = here->VDMOScd;
             return(OK);

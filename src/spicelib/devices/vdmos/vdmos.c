@@ -24,7 +24,7 @@ IFparm VDMOSpTable[] = { /* parameters */
 
  OP( "id",           VDMOS_CD,         IF_REAL,    "Drain current"),
  OP( "is",           VDMOS_CS,         IF_REAL,    "Source current"),
- OP( "ig",           VDMOS_CG,         IF_REAL,    "Gate current "),
+ OP( "ig",           VDMOS_CG,         IF_REAL,    "Gate current"),
  OP( "vgs",          VDMOS_VGS,        IF_REAL,    "Gate-Source voltage"),
  OP( "vds",          VDMOS_VDS,        IF_REAL,    "Drain-Source voltage"),
  OP( "cgs",          VDMOS_CAPGS,      IF_REAL,    "Gate-Source capacitance"),
@@ -43,8 +43,6 @@ IFparm VDMOSpTable[] = { /* parameters */
 
  OP( "von",               VDMOS_VON,           IF_REAL, " "),
  OP( "vdsat",             VDMOS_VDSAT,         IF_REAL, "Saturation drain voltage"),
- OPU( "sourcevcrit",      VDMOS_SOURCEVCRIT,   IF_REAL, "Critical source voltage"),
- OPU( "drainvcrit",       VDMOS_DRAINVCRIT,    IF_REAL, "Critical drain voltage"),
  OP( "rs",                VDMOS_SOURCERESIST,  IF_REAL, "Source resistance"),
  OPU("sourceconductance", VDMOS_SOURCECONDUCT, IF_REAL, "Conductance of source"),
  OP( "rd",                VDMOS_DRAINRESIST,   IF_REAL, "Drain conductance"),

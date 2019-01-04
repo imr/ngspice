@@ -66,17 +66,9 @@ typedef struct sVDMOSinstance {
     double VDMOSicVGS;   /* initial condition G-S voltage */
     double VDMOSvon;
     double VDMOSvdsat;
-    double VDMOSsourceVcrit; /* Vcrit for pos. vds */
-    double VDMOSdrainVcrit;  /* Vcrit for pos. vds */
     double VDMOScd;
     double VDMOSgm;
     double VDMOSgds;
-    double VDMOSf2d;
-    double VDMOSf3d;
-    double VDMOSf4d;
-    double VDMOSf2s;
-    double VDMOSf3s;
-    double VDMOSf4s;
 
     double VDIOcap;
     double VDIOtSatCur;     /* temperature corrected saturation Cur. density*/
@@ -472,8 +464,6 @@ enum {
     VDMOS_DRAINCONDUCT,
     VDMOS_VON,
     VDMOS_VDSAT,
-    VDMOS_SOURCEVCRIT,
-    VDMOS_DRAINVCRIT,
     VDMOS_CD,
     VDMOS_GM,
     VDMOS_GDS,
