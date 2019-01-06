@@ -10,6 +10,7 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/inpptree.h"
 #include "inpxx.h"
 
+extern bool ft_ngdebug;
 
 IFvalue *
 INPgetValue(CKTcircuit *ckt, char **line, int type, INPtables *tab)
@@ -21,6 +22,7 @@ INPgetValue(CKTcircuit *ckt, char **line, int type, INPtables *tab)
     int error;
     static IFvalue temp;
     INPparseTree *pt;
+    char *compline = *line;
 
     /* make sure we get rid of extra bits in type */
     type &= IF_VARTYPES;
@@ -32,9 +34,15 @@ INPgetValue(CKTcircuit *ckt, char **line, int type, INPtables *tab)
         temp.rValue = INPevaluate(line, &error, 1);
         /* printf(" returning real value %e\n",temp.rValue); */
     } else if (type == IF_REALVEC) {
+        /* read until error occurs. If first token is already
+           in error, return NULL */
         temp.v.numValue = 0;
         list = TMALLOC(double, 1);
         tmp = INPevaluate(line, &error, 1);
+        if (error) {
+            tfree(list);
+            return NULL;
+        }
         while (error == 0) {
             /* printf(" returning vector value %g\n",tmp); */
             temp.v.numValue++;
@@ -42,11 +50,20 @@ INPgetValue(CKTcircuit *ckt, char **line, int type, INPtables *tab)
             list[temp.v.numValue - 1] = tmp;
             tmp = INPevaluate(line, &error, 1);
         }
+        if (error && ft_ngdebug && !eq(*line, "") && !eq(*line, ")"))
+            /* in rare cases false warnings may occur */
+            fprintf(stderr, "Warning: Could not read parameter from %s at %s\n", compline, *line);
         temp.v.vec.rVec = list;
     } else if (type == IF_INTVEC) {
+        /* read until error occurs. If first token is already
+           in error, return NULL */
         temp.v.numValue = 0;
         ilist = TMALLOC(int, 1);
         tmp = INPevaluate(line, &error, 1);
+        if (error) {
+            tfree(ilist);
+            return NULL;
+        }
         while (error == 0) {
             /* printf(" returning vector value %g\n",tmp); */
             temp.v.numValue++;
@@ -54,6 +71,8 @@ INPgetValue(CKTcircuit *ckt, char **line, int type, INPtables *tab)
             ilist[temp.v.numValue - 1] = (int) floor(0.5 + tmp);
             tmp = INPevaluate(line, &error, 1);
         }
+        if (error && ft_ngdebug && !eq(*line, "") && !eq(*line, ")"))
+            fprintf(stderr, "Warning: Could not read parameter from %s at %s\n", compline, *line);
         temp.v.vec.iVec = ilist;
     } else if (type == IF_FLAG) {
         temp.iValue = 1;
