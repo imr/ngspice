@@ -42,6 +42,7 @@ struct runDesc {
     int pointCount;
     int isComplex;
     int windowCount;
+    int maxData;
 };
 
 
