@@ -39,8 +39,8 @@ extern char *spice_analysis_get_description(int index);
 static int beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analName,
                      char *refName, int refType, int numNames, char **dataNames, int dataType,
                      bool windowed, runDesc **runp);
-static int addDataDesc(runDesc *run, char *name, int type, int ind);
-static int addSpecialDesc(runDesc *run, char *name, char *devname, char *param, int depind);
+static int addDataDesc(runDesc *run, char *name, int type, int ind, int meminit);
+static int addSpecialDesc(runDesc *run, char *name, char *devname, char *param, int depind, int meminit);
 static void fileInit(runDesc *run);
 static void fileInit_pass2(runDesc *run);
 static void fileStartPoint(FILE *fp, bool bin, int num);
@@ -143,6 +143,7 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
     bool saveall  = TRUE;
     bool savealli = FALSE;
     char *an_name;
+    int initmem;
     /*to resume a run saj
      *All it does is reassign the file pointer and return (requires *runp to be NULL if this is not needed)
      */
@@ -224,9 +225,14 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
             }
         }
 
+        if (numsaves && !saveall)
+            initmem = numsaves;
+        else
+            initmem = numNames;
+
         /* Pass 0. */
         if (refName) {
-            addDataDesc(run, refName, refType, -1);
+            addDataDesc(run, refName, refType, -1, initmem);
             for (i = 0; i < numsaves; i++)
                 if (!savesused[i] && name_eq(saves[i].name, refName)) {
                     savesused[i] = TRUE;
@@ -243,7 +249,7 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
                 if (!savesused[i])
                     for (j = 0; j < numNames; j++)
                         if (name_eq(saves[i].name, dataNames[j])) {
-                            addDataDesc(run, dataNames[j], dataType, j);
+                            addDataDesc(run, dataNames[j], dataType, j, initmem);
                             savesused[i] = TRUE;
                             saves[i].used = 1;
                             break;
@@ -259,7 +265,7 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
                         !strstr(dataNames[i], "#emitter") &&
                         !strstr(dataNames[i], "#base"))
                     {
-                        addDataDesc(run, dataNames[i], dataType, i);
+                        addDataDesc(run, dataNames[i], dataType, i, initmem);
                     }
         }
 
@@ -289,17 +295,17 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
                     } else if (strstr(ch, "#emitter")) {
                         strcpy(ch, "[ie]");
                         if (parseSpecial(tmpname, namebuf, parambuf, depbuf))
-                            addSpecialDesc(run, tmpname, namebuf, parambuf, depind);
+                            addSpecialDesc(run, tmpname, namebuf, parambuf, depind, initmem);
                         strcpy(ch, "[is]");
                     } else if (strstr(ch, "#drain")) {
                         strcpy(ch, "[id]");
                         if (parseSpecial(tmpname, namebuf, parambuf, depbuf))
-                            addSpecialDesc(run, tmpname, namebuf, parambuf, depind);
+                            addSpecialDesc(run, tmpname, namebuf, parambuf, depind, initmem);
                         strcpy(ch, "[ig]");
                     } else if (strstr(ch, "#source")) {
                         strcpy(ch, "[is]");
                         if (parseSpecial(tmpname, namebuf, parambuf, depbuf))
-                            addSpecialDesc(run, tmpname, namebuf, parambuf, depind);
+                            addSpecialDesc(run, tmpname, namebuf, parambuf, depind, initmem);
                         strcpy(ch, "[ib]");
                     } else if (strstr(ch, "#internal") && (tmpname[1] == 'd')) {
                         strcpy(ch, "[id]");
@@ -313,7 +319,7 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
                             fprintf(stderr,
                                     "Warning : unexpected dependent variable on %s\n", tmpname);
                         } else {
-                            addSpecialDesc(run, tmpname, namebuf, parambuf, depind);
+                            addSpecialDesc(run, tmpname, namebuf, parambuf, depind, initmem);
                         }
                     }
                 }
@@ -350,7 +356,7 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
                                 depbuf, saves[i].name);
                         continue;
                     }
-                    addDataDesc(run, dataNames[j], dataType, j);
+                    addDataDesc(run, dataNames[j], dataType, j, initmem);
                     savesused[i] = TRUE;
                     saves[i].used = 1;
                     depind = j;
@@ -359,7 +365,7 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
                 }
             }
 
-            addSpecialDesc(run, saves[i].name, namebuf, parambuf, depind);
+            addSpecialDesc(run, saves[i].name, namebuf, parambuf, depind, initmem);
         }
 
         if (numsaves) {
@@ -413,16 +419,28 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
     return (OK);
 }
 
-
+/* Initialze memory for the list of all vectors in the current plot.
+   Add a standard vector to this plot */
 static int
-addDataDesc(runDesc *run, char *name, int type, int ind)
+addDataDesc(runDesc *run, char *name, int type, int ind, int meminit)
 {
     dataDesc *data;
 
-    if (!run->numData)
-        run->data = TMALLOC(dataDesc, 1);
-    else
-        run->data = TREALLOC(dataDesc, run->data, run->numData + 1);
+
+    /* even if 0 input */
+    meminit++;
+
+    /* initialize memory (all or given by 'save' */
+    if (!run->numData) {
+        run->data = TMALLOC(dataDesc, meminit);
+        run->maxData = meminit;
+    }
+    /* If there is need for more memory */
+    else if (run->numData == run->maxData) {
+        run->maxData = (int)(run->maxData * 1.1) + 1;
+        run->data = TREALLOC(dataDesc, run->data, run->maxData);
+    }
+
 
     data = &run->data[run->numData];
     /* so freeRun will get nice NULL pointers for the fields we don't set */
@@ -443,18 +461,26 @@ addDataDesc(runDesc *run, char *name, int type, int ind)
     return (OK);
 }
 
-
+/* Initialze memory for the list of all vectors in the currnt plot.
+   Add a special vector (e.g. @q1[ib]) to this plot */
 static int
-addSpecialDesc(runDesc *run, char *name, char *devname, char *param, int depind)
+addSpecialDesc(runDesc *run, char *name, char *devname, char *param, int depind, int meminit)
 {
     dataDesc *data;
     char *unique, *freeunique;       /* unique char * from back-end */
     int ret;
 
-    if (!run->numData)
-        run->data = TMALLOC(dataDesc, 1);
-    else
-        run->data = TREALLOC(dataDesc, run->data, run->numData + 1);
+    /* even if 0 input */
+    meminit++;
+
+    if (!run->numData) {
+        run->data = TMALLOC(dataDesc, meminit);
+        run->maxData = meminit;
+    }
+    else if (run->numData == run->maxData) {
+        run->maxData = (int)(run->maxData * 1.1) + 1;
+        run->data = TREALLOC(dataDesc, run->data, run->maxData);
+    }
 
     data = &run->data[run->numData];
     /* so freeRun will get nice NULL pointers for the fields we don't set */
