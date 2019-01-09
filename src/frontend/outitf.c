@@ -426,13 +426,10 @@ addDataDesc(runDesc *run, char *name, int type, int ind, int meminit)
 {
     dataDesc *data;
 
-
-    /* even if 0 input */
-    meminit++;
-
-    /* initialize memory (all or given by 'save' */
+    /* initialize memory (for all vectors or given by 'save') */
     if (!run->numData) {
-        run->data = TMALLOC(dataDesc, meminit);
+        /* even if input 0, do a malloc */
+        run->data = TMALLOC(dataDesc, ++meminit);
         run->maxData = meminit;
     }
     /* If there is need for more memory */
@@ -440,7 +437,6 @@ addDataDesc(runDesc *run, char *name, int type, int ind, int meminit)
         run->maxData = (int)(run->maxData * 1.1) + 1;
         run->data = TREALLOC(dataDesc, run->data, run->maxData);
     }
-
 
     data = &run->data[run->numData];
     /* so freeRun will get nice NULL pointers for the fields we don't set */
@@ -461,7 +457,7 @@ addDataDesc(runDesc *run, char *name, int type, int ind, int meminit)
     return (OK);
 }
 
-/* Initialze memory for the list of all vectors in the currnt plot.
+/* Initialze memory for the list of all vectors in the current plot.
    Add a special vector (e.g. @q1[ib]) to this plot */
 static int
 addSpecialDesc(runDesc *run, char *name, char *devname, char *param, int depind, int meminit)
@@ -470,11 +466,9 @@ addSpecialDesc(runDesc *run, char *name, char *devname, char *param, int depind,
     char *unique, *freeunique;       /* unique char * from back-end */
     int ret;
 
-    /* even if 0 input */
-    meminit++;
-
     if (!run->numData) {
-        run->data = TMALLOC(dataDesc, meminit);
+        /* even if input 0, do a malloc */
+        run->data = TMALLOC(dataDesc, ++meminit);
         run->maxData = meminit;
     }
     else if (run->numData == run->maxData) {
