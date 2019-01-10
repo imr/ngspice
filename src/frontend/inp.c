@@ -1984,6 +1984,9 @@ inp_savecurrents(struct card *deck, struct card *options, wordlist *wl, wordlist
     if (!options)
         return wl;
 
+    if (cp_getvar("nosavecurrents", CP_BOOL, NULL, 0))
+        return wl;
+
     /* search for 'save' command in the .control section */
     for (p = controls; p; p = p->wl_next)
         if(prefix("save", p->wl_word))
