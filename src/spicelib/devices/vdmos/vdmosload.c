@@ -98,8 +98,6 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
     double ceqth, cqtemp, ceqqth;
     double GmT, gTtg, gTtdp, gTtt, gTtsp, gcTt=0.0;
 
-    double CGBdummy;
-
     /*  loop through all the VDMOS device models */
     for (; model != NULL; model = VDMOSnextModel(model)) {
         /* VDMOS capacitance parameters */
@@ -553,8 +551,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                  */
                 DevCapVDMOS(vgd, cgdmin, cgdmax, a, cgs,
                             (ckt->CKTstate0 + here->VDMOScapgs),
-                            (ckt->CKTstate0 + here->VDMOScapgd),
-                             &CGBdummy);
+                            (ckt->CKTstate0 + here->VDMOScapgd));
 
                 vgs1 = *(ckt->CKTstate1 + here->VDMOSvgs);
                 vgd1 = vgs1 - *(ckt->CKTstate1 + here->VDMOSvds);
