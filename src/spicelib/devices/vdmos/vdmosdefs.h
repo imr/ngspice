@@ -97,7 +97,7 @@ typedef struct sVDMOSinstance {
     double VDMOSgtempT;
     double VDMOScgT;
     double VDMOScdT;
-    double VDMOScth;
+    double VDMOScth;         /* current alias power */
 
 /*
  * naming convention:
@@ -231,26 +231,27 @@ typedef struct sVDMOSinstance {
 
 #define VDMOSvgs VDMOSstates+ 0   /* gate-source voltage */
 #define VDMOSvds VDMOSstates+ 1   /* drain-source voltage */
+#define VDMOSdeltemp VDMOSstates+ 2
 
-#define VDMOScapgs VDMOSstates+2  /* gate-source capacitor value */
-#define VDMOSqgs VDMOSstates+ 3   /* gate-source capacitor charge */
-#define VDMOScqgs VDMOSstates+ 4  /* gate-source capacitor current */
+#define VDMOScapgs VDMOSstates+3  /* gate-source capacitor value */
+#define VDMOSqgs VDMOSstates+ 4   /* gate-source capacitor charge */
+#define VDMOScqgs VDMOSstates+ 5  /* gate-source capacitor current */
 
-#define VDMOScapgd VDMOSstates+ 5 /* gate-drain capacitor value */
-#define VDMOSqgd VDMOSstates+ 6   /* gate-drain capacitor charge */
-#define VDMOScqgd VDMOSstates+ 7  /* gate-drain capacitor current */
+#define VDMOScapgd VDMOSstates+ 6 /* gate-drain capacitor value */
+#define VDMOSqgd VDMOSstates+ 7   /* gate-drain capacitor charge */
+#define VDMOScqgd VDMOSstates+ 8  /* gate-drain capacitor current */
 
-#define VDIOvoltage VDMOSstates+ 8
-#define VDIOcurrent VDMOSstates+ 9
-#define VDIOconduct VDMOSstates+ 10
-#define VDIOcapCharge VDMOSstates+ 11
-#define VDIOcapCurrent VDMOSstates+ 12
+#define VDIOvoltage VDMOSstates+ 9
+#define VDIOcurrent VDMOSstates+ 10
+#define VDIOconduct VDMOSstates+ 11
+#define VDIOcapCharge VDMOSstates+ 12
+#define VDIOcapCurrent VDMOSstates+ 13
 
-#define VDMOSqth VDMOSstates+ 13
-#define VDMOScqth VDMOSstates+ 14
-#define VDMOSdeltemp VDMOSstates+ 15
+#define VDMOScapth VDMOSstates+ 14  /* thermal capacitor value */
+#define VDMOSqth VDMOSstates+ 15  /* thermal capacitor charge */
+#define VDMOScqth VDMOSstates+ 16 /* thermal capacitor current */
 
-#define VDMOSnumStates 16
+#define VDMOSnumStates 17
 
 
 /* per model data */
