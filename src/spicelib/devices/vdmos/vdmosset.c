@@ -87,11 +87,11 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
         if (!model->VDMOSmtrGiven) {
             model->VDMOSmtr = 1.;
         }
-        if (!model->VDMOSDbvGiven) {
-            model->VDMOSDbv = 1.0e30;
+        if (!model->VDMOSbvGiven) {
+            model->VDMOSbv = 1.0e30;
         }
-        if (!model->VDMOSDibvGiven) {
-            model->VDMOSDibv = 1.0e-10;
+        if (!model->VDMOSibvGiven) {
+            model->VDMOSibv = 1.0e-10;
         }
         if (!model->VDIObrkdEmissionCoeffGiven) {
             model->VDIObrkdEmissionCoeff = 1.;
@@ -99,14 +99,14 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
         if (!model->VDMOSrdsGiven) {
             model->VDMOSrds = 1.0e30;
         }
-        if (!model->VDMOSDnGiven) {
-            model->VDMOSDn = 1.;
+        if (!model->VDMOSnGiven) {
+            model->VDMOSn = 1.;
         }
         if (!model->VDIOtransitTimeGiven) {
             model->VDIOtransitTime = 0.;
         }
-        if (!model->VDMOSDegGiven) {
-            model->VDMOSDeg = 1.11;
+        if (!model->VDMOSegGiven) {
+            model->VDMOSeg = 1.11;
         }
         if (!model->VDMOSshModGiven)
             model->VDMOSshMod = 0;

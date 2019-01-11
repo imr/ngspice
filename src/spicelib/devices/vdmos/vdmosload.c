@@ -748,7 +748,7 @@ bypass:
             gdb = 0.0;
             csat = here->VDIOtSatCur;
             gspr = here->VDIOtConductance;
-            vte = model->VDMOSDn * vt;
+            vte = model->VDMOSn * vt;
             vtebrk = model->VDIObrkdEmissionCoeff * vt;
             vbrknp = here->VDIOtBrkdwnV;
 
@@ -806,7 +806,7 @@ bypass:
                 /*
                 *   limit new junction voltage
                 */
-                if ((model->VDMOSDbvGiven) &&
+                if ((model->VDMOSbvGiven) &&
                         (vd < MIN(0, -vbrknp + 10 * vtebrk))) {
                     vdtemp = -(vd + vbrknp);
                     vdtemp = DEVpnjlim(vdtemp,
@@ -828,7 +828,7 @@ bypass:
                 cdb = csat*(evd - 1);
                 gdb = csat*evd / vte;
 
-            } else if ((!(model->VDMOSDbvGiven)) ||
+            } else if ((!(model->VDMOSbvGiven)) ||
                        vd >= -vbrknp) { /* reverse */
 
                 arg = 3 * vte / (vd*CONSTe);

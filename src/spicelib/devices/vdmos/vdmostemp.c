@@ -56,11 +56,11 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
 
         /* bulk diode model */
         /* limit activation energy to min of .1 */
-        if (model->VDMOSDeg<.1) {
+        if (model->VDMOSeg<.1) {
             SPfrontEnd->IFerrorf(ERR_WARNING,
                 "%s: bulk diode activation energy too small, limited to 0.1",
                 model->VDMOSmodName);
-            model->VDMOSDeg = .1;
+            model->VDMOSeg = .1;
         }
         /* limit depletion cap coeff to max of .95 */
         if (model->VDIOdepletionCapCoeff>.95) {
@@ -133,8 +133,8 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
 
             here->VDIOtSatCur = model->VDIOjctSatCur * exp(
                 ((here->VDMOStemp / model->VDMOStnom) - 1) *
-                model->VDMOSDeg / (model->VDMOSDn*vt) +
-                model->VDMOSDxti / model->VDMOSDn *
+                model->VDMOSeg / (model->VDMOSn*vt) +
+                model->VDMOSxti / model->VDMOSn *
                 log(here->VDMOStemp / model->VDMOStnom));
 
             /* the defintion of f1, just recompute after temperature adjusting
@@ -147,14 +147,14 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
                 here->VDIOtJctPot;
 
             /* and Vcrit */
-            vte = model->VDMOSDn*vt;
+            vte = model->VDMOSn*vt;
 
             here->VDIOtVcrit = vte * log(vte / (CONSTroot2*here->VDIOtSatCur));
 
             /* limit junction potential to max of 1/FC */
             if (here->VDIOtDepCap > 2.5) {
-                here->VDIOtJctPot = 2.5 / model->VDMOSDn;
-                here->VDIOtDepCap = model->VDMOSDn*here->VDIOtJctPot;
+                here->VDIOtJctPot = 2.5 / model->VDMOSn;
+                here->VDIOtDepCap = model->VDMOSn*here->VDIOtJctPot;
                 SPfrontEnd->IFerrorf(ERR_WARNING,
                     "%s: junction potential VJ too large, limited to %f",
                     model->VDMOSmodName, here->VDIOtJctPot);
@@ -162,11 +162,11 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
 
             /* and now to compute the breakdown voltage, again, using
             * temperature adjusted basic parameters */
-            if (model->VDMOSDbvGiven) {
+            if (model->VDMOSbvGiven) {
                 /* tlev == 0 */
-                tBreakdownVoltage = fabs(model->VDMOSDbv);
+                tBreakdownVoltage = fabs(model->VDMOSbv);
 
-                cbv = model->VDMOSDibv;
+                cbv = model->VDMOSibv;
 
                 if (cbv < here->VDIOtSatCur * tBreakdownVoltage / vt) {
                     cbv = here->VDIOtSatCur * tBreakdownVoltage / vt;

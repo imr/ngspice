@@ -150,12 +150,12 @@ VDMOSmParam(int param, IFvalue *value, GENmodel *inModel)
             model->VDMOSksubthresGiven = TRUE;
             break;
         case VDMOS_MOD_BV:
-            model->VDMOSDbv = value->rValue;
-            model->VDMOSDbvGiven = TRUE;
+            model->VDMOSbv = value->rValue;
+            model->VDMOSbvGiven = TRUE;
             break;
         case VDMOS_MOD_IBV:
-            model->VDMOSDibv = value->rValue;
-            model->VDMOSDibvGiven = TRUE;
+            model->VDMOSibv = value->rValue;
+            model->VDMOSibvGiven = TRUE;
             break;
         case VDMOS_MOD_NBV:
             model->VDIObrkdEmissionCoeff = value->rValue;
@@ -166,8 +166,8 @@ VDMOSmParam(int param, IFvalue *value, GENmodel *inModel)
             model->VDMOSrdsGiven = TRUE;
             break;
         case VDMOS_MOD_N:
-            model->VDMOSDn = value->rValue;
-            model->VDMOSDnGiven = TRUE;
+            model->VDMOSn = value->rValue;
+            model->VDMOSnGiven = TRUE;
             break;
         case VDMOS_MOD_TT:
             model->VDIOtransitTime = value->rValue;
@@ -176,12 +176,12 @@ VDMOSmParam(int param, IFvalue *value, GENmodel *inModel)
             model->VDIOtranTimeTemp2 = 0;
             break;
         case VDMOS_MOD_EG:
-            model->VDMOSDeg = value->rValue;
-            model->VDMOSDegGiven = TRUE;
+            model->VDMOSeg = value->rValue;
+            model->VDMOSegGiven = TRUE;
             break;
         case VDMOS_MOD_XTI:
-            model->VDMOSDxti = value->rValue;
-            model->VDMOSDxtiGiven = TRUE;
+            model->VDMOSxti = value->rValue;
+            model->VDMOSxtiGiven = TRUE;
             break;
         case  VDMOS_MOD_SHMOD:
             model->VDMOSshMod = value->iValue;
