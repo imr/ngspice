@@ -75,9 +75,6 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
         if (!model->VDMOSaGiven) {
             model->VDMOSa = 1.;
         }
-        if (!model->VDMOSsubslGiven) {
-            model->VDMOSsubsl = 0;
-        }
         if (!model->VDMOSsubshiftGiven) {
             model->VDMOSsubshift = 0;
         }

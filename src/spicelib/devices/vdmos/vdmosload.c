@@ -14,10 +14,6 @@ VDMOS: 2018 Holger Vogt
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
-static double
-cweakinv2(double sl, double shift, double vgst, double vds, double lambda, double beta, double vt, double mtr, double theta);
-
-
 /* VDMOSlimitlog(vnew,vold)
  *  limits the per-iteration change of any absolute voltage value
  */
@@ -413,30 +409,6 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                         here->VDMOSgds = vdss*dbetapdvds*(vgst-.5*vdss) + betap*mtr*(vgst-.5*vdss) - .5*vdss*betap*mtr;
                         dIds_dT = dbetapdT * vdss * (vgst - .5 * vdss);
                     }
-                }
-                else if (model->VDMOSsubslGiven) {
-                    /* numerical differentiation for gd and gm with a delta of 2 mV */
-                    double vdsm = vds * here->VDMOSmode;
-                    double delta = 0.001;
-                    cdrain = cweakinv2(model->VDMOSsubsl, model->VDMOSsubshift, vgst, vdsm, model->VDMOSlambda,
-                        BetaT, vt, model->VDMOSmtr, model->VDMOStheta);
-                    /* gd */
-                    double vds1 = vdsm + delta;
-                    double cdrp = cweakinv2(model->VDMOSsubsl, model->VDMOSsubshift, vgst, vds1, model->VDMOSlambda,
-                        BetaT, vt, model->VDMOSmtr, model->VDMOStheta);
-                    vds1 = vdsm - delta;
-                    double cdrm = cweakinv2(model->VDMOSsubsl, model->VDMOSsubshift, vgst, vds1, model->VDMOSlambda,
-                        BetaT, vt, model->VDMOSmtr, model->VDMOStheta);
-                    here->VDMOSgds = (cdrp - cdrm) / (2. * delta);
-                    /* gm */
-                    double vgst1 = vgst + delta;
-                    cdrp = cweakinv2(model->VDMOSsubsl, model->VDMOSsubshift, vgst1, vdsm, model->VDMOSlambda,
-                        BetaT, vt, model->VDMOSmtr, model->VDMOStheta);
-                    vgst1 = vgst - delta;
-                    cdrm = cweakinv2(model->VDMOSsubsl, model->VDMOSsubshift, vgst1, vdsm, model->VDMOSlambda,
-                        BetaT, vt, model->VDMOSmtr, model->VDMOStheta);
-                    here->VDMOSgm = (cdrp - cdrm) / (2. * delta);
-                    dIds_dT = 0.0;
                 } else {
                     double onfg, fgate, Betam, dfgdvg;
                     onfg = 1.0+model->VDMOStheta*vgst;
@@ -949,47 +921,3 @@ load :
     }
     return(OK);
 }
-
-
-/* scaling function, sine function interpolating between 0 and 1
- * nf2: empirical setting of sine 'speed'
- */
-
-static double
-scalef(double nf2, double vgst)
-{
-    double vgstsin = vgst / nf2;
-    if (vgstsin > 1)
-        return 1;
-    else if (vgstsin < -1)
-        return 0;
-    else
-        return 0.5 * sin(vgstsin * M_PI / 2) + 0.5;
-}
-
-
-/* Calculate D/S current including weak inversion.
- * Uses a single function covering weak-moderate-strong inversion, as well
- * as linear and saturation regions, with an interpolation method according to
- * Tsividis, McAndrew: "Operation and Modeling of the MOS Transistor", Oxford, 2011, p. 209.
- * A single parameter n sets the slope of the weak inversion current. The weak inversion
- * current is independent from vds, as in long channel devices.
- * The following modification has been added for VDMOS compatibility:
- * n and lambda are depending on vgst with a sine function interpolating between 0 and 1.
- */
-
-static double
-cweakinv2(double slope, double shift, double vgst, double vds, double lambda, double beta, double vt, double mtr, double theta)
-{
-    double betam = beta / (1.0+theta*vgst);
-    vgst += shift * (1 - scalef(0.5, vgst));
-    double n = slope / 2.3 / 0.0256; /* Tsividis, p. 208 */
-    double n1 = n + (1 - n) * scalef(0.7, vgst); /* n < n1 < 1 */
-    double first = log(1 + exp(vgst / (2 * n1 * vt)));
-    double second = log(1 + exp((vgst - vds * mtr * n1) / (2 * n1 * vt)));
-    double cds =
-        betam * n1 * 2 * vt * vt * (1 + scalef(1, vgst) * lambda * vds) *
-        (first * first - second * second);
-    return cds;
-}
-

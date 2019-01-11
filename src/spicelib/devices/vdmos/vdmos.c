@@ -86,7 +86,6 @@ IFparm VDMOSmPTable[] = { /* model parameters */
  IOP("tcvt0", VDMOS_MOD_TCVT0, IF_REAL,   "Linear Vth0 temperature coefficient"),
 
  /* weak inversion */
- IOP("subslope",  VDMOS_MOD_SUBSLOPE,   IF_REAL, "Slope of weak inversion log current versus vgs"),
  IOP("subshift",  VDMOS_MOD_SUBSHIFT,   IF_REAL, "Shift of weak inversion plot on the vgs axis"),
  IOP("ksubthres", VDMOS_MOD_KSUBTHRES,  IF_REAL, "Slope of weak inversion log current versus vgs"),
 

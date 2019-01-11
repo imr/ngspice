@@ -18,8 +18,8 @@ xinv7 9 8 1 0 inv
 xinv8 10 9 1 0 inv
 xinv9 2 10 1 0 inv
 
-.model  N1  vdmos cgdmin=0.05p cgdmax=0.2p a=1.2 cgs=0.15p rg=10 kp=2e-5 rb=1e7 cjo=1n subslope=0.2
-.model  P1  vdmos cgdmin=0.05p cgdmax=0.2p a=1.2 cgs=0.15p rg=10 kp=2e-5 rb=1e7 cjo=1n pchan subslope=0.2
+.model  N1  vdmos cgdmin=0.05p cgdmax=0.2p a=1.2 cgs=0.15p rg=10 kp=2e-5 rb=1e7 cjo=1n ksubthres=0.2
+.model  P1  vdmos cgdmin=0.05p cgdmax=0.2p a=1.2 cgs=0.15p rg=10 kp=2e-5 rb=1e7 cjo=1n pchan ksubthres=0.2
 
 .tran 0.1n 1u
 
