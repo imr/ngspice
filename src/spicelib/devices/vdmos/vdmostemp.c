@@ -152,8 +152,8 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
             here->VDIOtVcrit = vte * log(vte / (CONSTroot2*here->VDIOtSatCur));
 
             /* limit junction potential to max of 1/FC */
-            if (here->VDIOtDepCap > 1.0) {
-                here->VDIOtJctPot = 1.0 / model->VDMOSDn;
+            if (here->VDIOtDepCap > 2.5) {
+                here->VDIOtJctPot = 2.5 / model->VDMOSDn;
                 here->VDIOtDepCap = model->VDMOSDn*here->VDIOtJctPot;
                 SPfrontEnd->IFerrorf(ERR_WARNING,
                     "%s: junction potential VJ too large, limited to %f",
