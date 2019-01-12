@@ -79,9 +79,9 @@ plot inoise_spectrum
 .endc
 *
 .model IRFP240 VDMOS(nchan Rg=3 Vto=4 Rd=72m Rs=18m Rb=36m Kp=4.9 Lambda=.03 Cgdmax=1.34n Cgdmin=.1n Cgs=1.25n Cjo=1.25n Is=67p ksubthres=.1
-+ shmod=1 RTH0=1.1k CTH0=1e-3 MU=1.27 texp0=1.5 texp1=0.3 tcvt0=0.00625)
++ shmod=1 RTH0=1.1k CTH0=1e-3 MU=1.27 texp0=1.5 texp1=0.3 tcvth=0.00625)
 .model IRFP9240 VDMOS(pchan Rg=3 Vto=-4 Rd=200m Rs=50m Rb=100m Kp=8.2 Lambda=.10 Cgdmax=1.8n Cgdmin=.07n Cgs=.77n Cjo=.77n Is=76p ksubthres=.1
-+ shmod=1 RTH0=1.1k CTH0=1e-3 MU=1.27 texp0=1.5 texp1=0.3 tcvt0=0.00625)
++ shmod=1 RTH0=1.1k CTH0=1e-3 MU=1.27 texp0=1.5 texp1=0.3 tcvth=0.00625)
 *
 .model MJE340 NPN(Is=1.03431e-13 BF=172.974 NF=.939811 VAF=27.3487 IKF=0.0260146 ISE=4.48447e-11 Ne=1.61605 Br=16.6725
 + Nr=0.796984 VAR=6.11596 IKR=0.10004 Isc=9.99914e-14 Nc=1.99995 RB=1.47761 IRB=0.2 RBM=1.47761 Re=0.0001 RC=1.42228

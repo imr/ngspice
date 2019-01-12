@@ -36,8 +36,8 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
         if (!model->VDMOStransconductanceGiven) {
             model->VDMOStransconductance = 1;
         }
-        if (!model->VDMOSvt0Given) {
-            model->VDMOSvt0 = 0;
+        if (!model->VDMOSvth0Given) {
+            model->VDMOSvth0 = 0;
         }
         if (!model->VDIOjunctionPotGiven) {
             model->VDIOjunctionPot = .8;
@@ -123,8 +123,8 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
         if (!model->VDMOStexp1Given)
             model->VDMOStexp1 = 0.3;
 
-        if (!model->VDMOStcvt0Given) {
-            model->VDMOStcvt0 = 0.00625;
+        if (!model->VDMOStcvthGiven) {
+            model->VDMOStcvth = 0.00625;
         }
 
         /* loop through all the instances of the model */

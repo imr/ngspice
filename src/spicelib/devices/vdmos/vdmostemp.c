@@ -45,7 +45,6 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
         pbfact1 = -2*vtnom *(1.5*log(fact1)+CHARGE*arg1);
 
         /* now model parameter preprocessing */
-
         if (model->VDMOSphi <= 0.0) {
             SPfrontEnd->IFerrorf(ERR_FATAL,
                 "%s: Phi is not positive.", model->VDMOSmodName);
@@ -86,25 +85,25 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
             double arg;     /* 1 - fc */
 
             /* perform the parameter defaulting */
-
             if(!here->VDMOSdtempGiven) {
                 here->VDMOSdtemp = 0.0;
             }
             if(!here->VDMOStempGiven) {
                 here->VDMOStemp = ckt->CKTtemp + here->VDMOSdtemp;
             }
-            vt = here->VDMOStemp * CONSTKoverQ;
+
             ratio = here->VDMOStemp/model->VDMOStnom;
+            ratio4 = ratio * sqrt(ratio);
+            here->VDMOStTransconductance = model->VDMOStransconductance / ratio4;
+            here->VDMOStVth = model->VDMOSvth0 - model->VDMOStcvth*(here->VDMOStemp - model->VDMOStnom);
+
+            vt = here->VDMOStemp * CONSTKoverQ;
             fact2 = here->VDMOStemp/REFTEMP;
             kt = here->VDMOStemp * CONSTboltz;
             egfet = 1.16-(7.02e-4*here->VDMOStemp*here->VDMOStemp)/
                     (here->VDMOStemp+1108);
             arg = -egfet/(kt+kt)+1.1150877/(CONSTboltz*(REFTEMP+REFTEMP));
             pbfact = -2*vt *(1.5*log(fact2)+CHARGE*arg);
-
-            ratio4 = ratio * sqrt(ratio);
-            here->VDMOStTransconductance = model->VDMOStransconductance / ratio4;
-            here->VDMOStVto = model->VDMOSvt0 - model->VDMOStcvt0*(here->VDMOStemp - model->VDMOStnom);
 
             phio = (model->VDMOSphi - pbfact1) / fact1;
             here->VDMOStPhi = fact2 * phio + pbfact; /* needed for distortion analysis */

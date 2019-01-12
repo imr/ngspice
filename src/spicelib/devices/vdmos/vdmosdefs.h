@@ -60,7 +60,7 @@ typedef struct sVDMOSinstance {
 
     double VDMOStTransconductance;   /* temperature corrected transconductance*/
     double VDMOStPhi;                /* temperature corrected Phi */
-    double VDMOStVto;                /* temperature corrected Vto */
+    double VDMOStVth;                /* temperature corrected Vth */
 
     double VDMOSicVDS;   /* initial condition D-S voltage */
     double VDMOSicVGS;   /* initial condition G-S voltage */
@@ -282,7 +282,7 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
     double VDMOSqsVoltage;
     double VDMOStransconductance;    /* input - use tTransconductance */
     double VDMOSoxideCapFactor;
-    double VDMOSvt0; /* input - use tVto */
+    double VDMOSvth0; /* input - use tVth */
     double VDMOSphi; /* input - use tPhi */
     double VDMOSlambda;
     double VDMOStheta;
@@ -325,7 +325,7 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
     double VDMOSmu;
     double VDMOStexp0;
     double VDMOStexp1;
-    double VDMOStcvt0;
+    double VDMOStcvth;
 
     unsigned VDMOStypeGiven  :1;
     unsigned VDIOjctSatCurGiven :1;
@@ -336,7 +336,7 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
     unsigned VDMOSqsVoltageGiven    :1;
     unsigned VDMOSqsGiven    :1;
     unsigned VDMOStransconductanceGiven  :1;
-    unsigned VDMOSvt0Given   :1;
+    unsigned VDMOSvth0Given   :1;
     unsigned VDIOgradCoeffGiven    :1;
     unsigned VDIOdepletionCapCoeffGiven :1;
     unsigned VDMOSphiGiven   :1;
@@ -372,7 +372,7 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
     unsigned VDMOSmuGiven :1;
     unsigned VDMOStexp0Given :1;
     unsigned VDMOStexp1Given :1;
-    unsigned VDMOStcvt0Given :1;
+    unsigned VDMOStcvthGiven :1;
 } VDMOSmodel;
 
 #ifndef NMOS
@@ -400,7 +400,7 @@ enum {
 
 /* model parameters */
 enum {
-    VDMOS_MOD_VTO = 101,
+    VDMOS_MOD_VTH = 101,
     VDMOS_MOD_KP,
     VDMOS_MOD_PHI,
     VDMOS_MOD_LAMBDA,
@@ -445,7 +445,7 @@ enum {
     VDMOS_MOD_MU,
     VDMOS_MOD_TEXP0,
     VDMOS_MOD_TEXP1,
-    VDMOS_MOD_TCVT0,
+    VDMOS_MOD_TCVTH,
 };
 
 /* device questions */

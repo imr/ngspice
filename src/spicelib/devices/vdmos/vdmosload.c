@@ -139,7 +139,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                         ((ckt->CKTmode & (MODETRAN | MODEAC|MODEDCOP |
                                           MODEDCTRANCURVE)) || (!(ckt->CKTmode & MODEUIC))))
                 {
-                    vgs = model->VDMOStype * model->VDMOSvt0 + 0.1;
+                    vgs = model->VDMOStype * model->VDMOSvth0 + 0.1;
                     vds = 0.0;
                 }
             } else if ((ckt->CKTmode & (MODEINITJCT | MODEINITFIX)) && (here->VDMOSoff)) {
@@ -368,7 +368,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                 double betap;
                 double vgst;
 
-                von = here->VDMOStVto * model->VDMOStype;
+                von = here->VDMOStVth * model->VDMOStype;
                 vgst = (here->VDMOSmode == 1 ? vgs : vgd) - von;
                 vdsat = MAX(vgst, 0);
                 if (model->VDMOSksubthresGiven) {

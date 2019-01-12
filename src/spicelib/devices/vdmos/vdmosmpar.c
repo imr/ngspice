@@ -19,9 +19,9 @@ VDMOSmParam(int param, IFvalue *value, GENmodel *inModel)
             model->VDMOStnom = value->rValue + CONSTCtoK;
             model->VDMOStnomGiven = TRUE;
             break;
-        case VDMOS_MOD_VTO:
-            model->VDMOSvt0 = value->rValue;
-            model->VDMOSvt0Given = TRUE;
+        case VDMOS_MOD_VTH:
+            model->VDMOSvth0 = value->rValue;
+            model->VDMOSvth0Given = TRUE;
             break;
         case VDMOS_MOD_KP:
             model->VDMOStransconductance = value->rValue;
@@ -203,9 +203,9 @@ VDMOSmParam(int param, IFvalue *value, GENmodel *inModel)
             model->VDMOStexp1 = value->rValue;
             model->VDMOStexp1Given = TRUE;
             break;
-        case VDMOS_MOD_TCVT0:
-            model->VDMOStcvt0 = value->rValue;
-            model->VDMOStcvt0Given = TRUE;
+        case VDMOS_MOD_TCVTH:
+            model->VDMOStcvth = value->rValue;
+            model->VDMOStcvthGiven = TRUE;
             break;
         default:
             return(E_BADPARM);

@@ -24,8 +24,8 @@ VDMOSmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case VDMOS_MOD_TNOM:
             value->rValue = model->VDMOStnom-CONSTCtoK;
             return(OK);
-        case VDMOS_MOD_VTO:
-            value->rValue = model->VDMOSvt0;
+        case VDMOS_MOD_VTH:
+            value->rValue = model->VDMOSvth0;
             return(OK);
         case VDMOS_MOD_KP:
             value->rValue = model->VDMOStransconductance;
@@ -140,8 +140,8 @@ VDMOSmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case VDMOS_MOD_TEXP1:
             value->rValue = model->VDMOStexp1; 
             return(OK);
-        case VDMOS_MOD_TCVT0:
-            value->rValue = model->VDMOStcvt0;
+        case VDMOS_MOD_TCVTH:
+            value->rValue = model->VDMOStcvth;
             return(OK);
         default:
             return(E_BADPARM);

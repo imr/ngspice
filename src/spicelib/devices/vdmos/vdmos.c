@@ -62,7 +62,8 @@ IFparm VDMOSpTable[] = { /* parameters */
 IFparm VDMOSmPTable[] = { /* model parameters */
  /* basic device */
  OP("type",   VDMOS_MOD_TYPE,  IF_STRING, "N-channel or P-channel MOS"),
- IOP("vto",   VDMOS_MOD_VTO,   IF_REAL,   "Threshold voltage"),
+ IOP("vto",   VDMOS_MOD_VTH,   IF_REAL,   "Threshold voltage"),
+ IOPR("vth0", VDMOS_MOD_VTH,   IF_REAL,   "Threshold voltage"),
  IOP("kp",    VDMOS_MOD_KP,    IF_REAL,   "Transconductance parameter"),
  IOP("phi",   VDMOS_MOD_PHI,   IF_REAL,   "Surface potential"),
  IOP("lambda",VDMOS_MOD_LAMBDA,IF_REAL,   "Channel length modulation"),
@@ -83,7 +84,7 @@ IFparm VDMOSmPTable[] = { /* model parameters */
  IOP("mtriode", VDMOS_MOD_MTRIODE, IF_REAL,   "Conductance multiplier in triode region"),
 
  /* temperature dependency */
- IOP("tcvt0", VDMOS_MOD_TCVT0, IF_REAL,   "Linear Vth0 temperature coefficient"),
+ IOP("tcvth", VDMOS_MOD_TCVTH, IF_REAL,   "Linear Vth0 temperature coefficient"),
 
  /* weak inversion */
  IOP("subshift",  VDMOS_MOD_SUBSHIFT,   IF_REAL, "Shift of weak inversion plot on the vgs axis"),
