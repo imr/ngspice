@@ -26,6 +26,7 @@ static void setdb(char *str);
 
 bool ft_acctprint = FALSE, ft_noacctprint = FALSE, ft_listprint = FALSE;
 bool ft_nodesprint = FALSE, ft_optsprint = FALSE, ft_noinitprint = FALSE;
+bool ft_norefprint = FALSE;
 bool ft_ngdebug = FALSE, ft_stricterror = FALSE;
 
 
@@ -237,6 +238,8 @@ cp_usrset(struct variable *var, bool isset)
         ft_ngdebug = isset;
     } else if (eq(var->va_name, "noinit")) {
         ft_noinitprint = isset;
+    } else if (eq(var->va_name, "norefvalue")) {
+        ft_norefprint = isset;
     } else if (eq(var->va_name, "list")) {
         ft_listprint = isset;
     } else if (eq(var->va_name, "nopage")) {

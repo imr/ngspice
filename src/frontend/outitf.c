@@ -591,7 +591,7 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
                     every quarter of a second, to give some feedback without using
                     too much CPU time  */
 #ifndef HAS_WINGUI
-                if (!orflag) {
+                if (!orflag && !ft_norefprint) {
                     currclock = clock();
                     if ((currclock-lastclock) > (0.25*CLOCKS_PER_SEC)) {
                         fprintf(stderr, " Reference value : % 12.5e\r",
@@ -606,7 +606,7 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
 
                 fileAddRealValue(run->fp, run->binary, refValue->rValue);
 #ifndef HAS_WINGUI
-                if (!orflag) {
+                if (!orflag && !ft_norefprint) {
                     currclock = clock();
                     if ((currclock-lastclock) > (0.25*CLOCKS_PER_SEC)) {
                         fprintf(stderr, " Reference value : % 12.5e\r",
@@ -691,7 +691,7 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
             variable just the same  */
 
 #ifndef HAS_WINGUI
-        if (!orflag) {
+        if (!orflag && !ft_norefprint) {
             currclock = clock();
             if ((currclock-lastclock) > (0.25*CLOCKS_PER_SEC)) {
                 if (run->isComplex) {
@@ -1434,7 +1434,7 @@ InterpFileAdd(runDesc *run, IFvalue *refValue, IFvalue *valuePtr)
             interpolatenow = FALSE;
         }
 #ifndef HAS_WINGUI
-        if (!orflag) {
+        if (!orflag && !ft_norefprint) {
             currclock = clock();
             if ((currclock-lastclock) > (0.25*CLOCKS_PER_SEC)) {
                 fprintf(stderr, " Reference value : % 12.5e\r",
@@ -1598,7 +1598,7 @@ InterpPlotAdd(runDesc *run, IFvalue *refValue, IFvalue *valuePtr)
 #endif
 
 #ifndef HAS_WINGUI
-    if (!orflag) {
+    if (!orflag && !ft_norefprint) {
         currclock = clock();
         if ((currclock-lastclock) > (0.25*CLOCKS_PER_SEC)) {
             fprintf(stderr, " Reference value : % 12.5e\r",
