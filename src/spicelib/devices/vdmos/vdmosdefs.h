@@ -306,8 +306,6 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
     double VDMOSibv;
     double VDIObrkdEmissionCoeff;
     double VDIOresistance;
-    double VDIOresistTemp1;
-    double VDIOresistTemp2;
     double VDIOconductance;
     double VDMOSrds;
     double VDMOSn;
@@ -428,7 +426,6 @@ enum {
     VDMOS_MOD_CGS,
     VDMOS_MOD_RB,
     VDMOS_MOD_MTRIODE,
-    VDMOS_MOD_SUBSLOPE,
     VDMOS_MOD_SUBSHIFT,
     VDMOS_MOD_KSUBTHRES,
     VDMOS_MOD_BV,
@@ -462,7 +459,6 @@ enum {
     VDMOS_SOURCECONDUCT,
     VDMOS_DRAINCONDUCT,
     VDMOS_VON,
-    VDMOS_VDSAT,
     VDMOS_CD,
     VDMOS_GM,
     VDMOS_GDS,

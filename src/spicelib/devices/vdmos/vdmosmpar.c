@@ -66,8 +66,6 @@ VDMOSmParam(int param, IFvalue *value, GENmodel *inModel)
         case VDMOS_MOD_RB:
             model->VDIOresistance = value->rValue;
             model->VDIOresistanceGiven = TRUE;
-            model->VDIOresistTemp1 = 0;
-            model->VDIOresistTemp2 = 0;
             break;
         case VDMOS_MOD_IS:
             model->VDIOjctSatCur = value->rValue;

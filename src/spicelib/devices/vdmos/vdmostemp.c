@@ -92,10 +92,13 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
                 here->VDMOStemp = ckt->CKTtemp + here->VDMOSdtemp;
             }
 
+            double dt = here->VDMOStemp - model->VDMOStnom;
+
+            /* vdmos temperature model */
             ratio = here->VDMOStemp/model->VDMOStnom;
             ratio4 = ratio * sqrt(ratio);
             here->VDMOStTransconductance = model->VDMOStransconductance / ratio4;
-            here->VDMOStVth = model->VDMOSvth0 - model->VDMOStcvth*(here->VDMOStemp - model->VDMOStnom);
+            here->VDMOStVth = model->VDMOSvth0 - model->VDMOStcvth * dt;
 
             vt = here->VDMOStemp * CONSTKoverQ;
             fact2 = here->VDMOStemp/REFTEMP;
@@ -108,13 +111,12 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
             phio = (model->VDMOSphi - pbfact1) / fact1;
             here->VDMOStPhi = fact2 * phio + pbfact; /* needed for distortion analysis */
 
-            /* bulk diode model */
+            /* bulk diode temperature model */
             double pbo, gmaold;
             double gmanew, factor;
             double tBreakdownVoltage, vte, cbv;
-            double xbv, xcbv, tol, iter, dt;
+            double xbv, xcbv, tol, iter;
 
-            dt = here->VDMOStemp - model->VDMOStnom;
             /* Junction grading temperature adjust */
             factor = 1.0 + (model->VDIOgradCoeffTemp1 * dt)
                 + (model->VDIOgradCoeffTemp2 * dt * dt);
@@ -201,13 +203,8 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
                 + (model->VDIOtranTimeTemp2 * dt * dt);
             here->VDIOtTransitTime = model->VDIOtransitTime * factor;
 
-            /* Series resistance temperature adjust */
+            /* Series resistance temperature adjust (not implemented yet) */
             here->VDIOtConductance = model->VDIOconductance;
-            if (model->VDIOresistanceGiven && model->VDIOresistance != 0.0) {
-                factor = 1.0 + (model->VDIOresistTemp1) * dt
-                    + (model->VDIOresistTemp2 * dt * dt);
-                here->VDIOtConductance = model->VDIOconductance / factor;
-            }
 
             here->VDIOtF2 = exp((1 + here->VDIOtGradingCoeff)*xfc);
             here->VDIOtF3 = 1 - model->VDIOdepletionCapCoeff*

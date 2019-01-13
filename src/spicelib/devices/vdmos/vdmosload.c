@@ -479,7 +479,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                     *(ckt->CKTrhsOld + here->VDMOSsNode));
                 double rd = rd0T + rd1T * (vdsn / (vdsn + fabs(model->VDMOSqsVoltage)));
                 if (rd > 0)
-                    here->VDMOSdrainConductance = 1 / rd;
+                    here->VDMOSdrainConductance = 1 / rd + ckt->CKTgmin;
                 else
                     here->VDMOSdrainConductance = 0.0;
             } else {
@@ -653,11 +653,11 @@ bypass:
             /*
              *  load y matrix
              */
-            *(here->VDMOSDdPtr) += (here->VDMOSdrainConductance + ckt->CKTgmin + here->VDMOSdsConductance);
+            *(here->VDMOSDdPtr) += (here->VDMOSdrainConductance + here->VDMOSdsConductance);
             *(here->VDMOSGgPtr) += (here->VDMOSgateConductance);
             *(here->VDMOSSsPtr) += (here->VDMOSsourceConductance + here->VDMOSdsConductance);
             *(here->VDMOSDPdpPtr) +=
-                (here->VDMOSdrainConductance + ckt->CKTgmin + here->VDMOSgds +
+                (here->VDMOSdrainConductance + here->VDMOSgds +
                  xrev*(here->VDMOSgm) + gcgd);
             *(here->VDMOSSPspPtr) +=
                 (here->VDMOSsourceConductance + here->VDMOSgds +
@@ -665,12 +665,12 @@ bypass:
             *(here->VDMOSGPgpPtr) +=
                 (here->VDMOSgateConductance) + (gcgd + gcgs);
             *(here->VDMOSGgpPtr) += (-here->VDMOSgateConductance);
-            *(here->VDMOSDdpPtr) += -(here->VDMOSdrainConductance + ckt->CKTgmin);
+            *(here->VDMOSDdpPtr) += (-here->VDMOSdrainConductance);
             *(here->VDMOSGPgPtr) += (-here->VDMOSgateConductance);
             *(here->VDMOSGPdpPtr) -= gcgd;
             *(here->VDMOSGPspPtr) -= gcgs;
             *(here->VDMOSSspPtr) += (-here->VDMOSsourceConductance);
-            *(here->VDMOSDPdPtr) += -(here->VDMOSdrainConductance + ckt->CKTgmin);
+            *(here->VDMOSDPdPtr) += (-here->VDMOSdrainConductance);
             *(here->VDMOSDPgpPtr) += ((xnrm - xrev)*here->VDMOSgm - gcgd);
             *(here->VDMOSDPspPtr) += (-here->VDMOSgds - xnrm*
                                       (here->VDMOSgm));
