@@ -141,6 +141,12 @@ ft_ckspace(void)
 {
     unsigned long long usage, limit;
 
+#ifdef SHARED_MODULE
+    /* False warning on some OSs, especially on Linux when loaded during runtime.
+       The caller then has to take care of memory available */
+    return;
+#endif
+
 #if defined(HAVE_WIN32) || defined(HAVE__PROC_MEMINFO)
     get_procm(&mem_ng_act);
     usage = mem_ng_act.size;
