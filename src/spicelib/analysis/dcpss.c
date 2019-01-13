@@ -1464,30 +1464,32 @@ resume:
                 UPDATE_STATS(DOING_TRAN);
                 return(error);
             }
-            if(newdelta > .9 * ckt->CKTdelta) {
-                if((ckt->CKTorder == 1) && (ckt->CKTmaxOrder > 1)) { /* don't rise the order for backward Euler */
+            if (newdelta > .9 * ckt->CKTdelta) {
+                if ((ckt->CKTorder == 1) && (ckt->CKTmaxOrder > 1)) { /* don't rise the order for backward Euler */
                     newdelta = ckt->CKTdelta;
                     ckt->CKTorder = 2;
-                    error = CKTtrunc(ckt,&newdelta);
-                    if(error) {
+                    error = CKTtrunc(ckt, &newdelta);
+                    if (error) {
                         UPDATE_STATS(DOING_TRAN);
                         return(error);
                     }
-                    if(newdelta <= 1.05 * ckt->CKTdelta) {
+                    if (newdelta <= 1.05 * ckt->CKTdelta) {
                         ckt->CKTorder = 1;
                     }
                 }
                 /* time point OK  - 630 */
                 ckt->CKTdelta = newdelta;
 #ifdef NDEV
-                /* show a time process indicator, by Gong Ding, gdiso@ustc.edu */
-                if(ckt->CKTtime/ckt->CKTfinalTime*100<10.0)
-                    fprintf (stderr, "%%%3.2lf\b\b\b\b\b", ckt->CKTtime / ckt->CKTfinalTime * 100) ;
-                else  if(ckt->CKTtime/ckt->CKTfinalTime*100<100.0)
-                    fprintf (stderr, "%%%4.2lf\b\b\b\b\b\b", ckt->CKTtime / ckt->CKTfinalTime * 100) ;
-                else
-                    fprintf (stderr, "%%%5.2lf\b\b\b\b\b\b\b", ckt->CKTtime / ckt->CKTfinalTime * 100) ;
-                fflush(stdout);
+                if (!ft_norefprint) {
+                    /* show a time process indicator, by Gong Ding, gdiso@ustc.edu */
+                    if (ckt->CKTtime / ckt->CKTfinalTime * 100 < 10.0)
+                        fprintf(stderr, "%%%3.2lf\b\b\b\b\b", ckt->CKTtime / ckt->CKTfinalTime * 100);
+                    else  if (ckt->CKTtime / ckt->CKTfinalTime * 100 < 100.0)
+                        fprintf(stderr, "%%%4.2lf\b\b\b\b\b\b", ckt->CKTtime / ckt->CKTfinalTime * 100);
+                    else
+                        fprintf(stderr, "%%%5.2lf\b\b\b\b\b\b\b", ckt->CKTtime / ckt->CKTfinalTime * 100);
+                    fflush(stdout);
+                }
 #endif
 
 #ifdef STEPDEBUG
