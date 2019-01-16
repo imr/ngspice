@@ -34,11 +34,11 @@ VDMOSlimitlog(
     /* Logarithmic damping of deltemp beyond LIM_TOL */
     if (deltemp > deltemp_old + LIM_TOL) {
         deltemp = deltemp_old + LIM_TOL + log10((deltemp-deltemp_old)/LIM_TOL);
-        *check = 11;
+        *check = 1;
     }
     else if (deltemp < deltemp_old - LIM_TOL) {
         deltemp = deltemp_old - LIM_TOL - log10((deltemp_old-deltemp)/LIM_TOL);
-        *check = 12;
+        *check = 1;
     }
     return deltemp;
 }
@@ -83,7 +83,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
     double capgs = 0.0;   /* total gate-source capacitance */
     double capgd = 0.0;   /* total gate-drain capacitance */
     double capth = 0.0;   /* total thermal capacitance */
-    int Check;
+    int Check_mos, Check_diode;
     int error;
 
     register int selfheat;
@@ -107,7 +107,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
             selfheat = (model->VDMOSshMod == 1) && (here->VDMOSrth0 != 0.0);
 
             vt = CONSTKoverQ * here->VDMOStemp;
-            Check = 1;
+            Check_mos = 0;
 
             /* first, we compute a few useful values - these could be
              * pre-computed, but for historical reasons are still done
@@ -300,7 +300,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                 }
                 if (selfheat)
                     delTemp = VDMOSlimitlog(delTemp,
-                          *(ckt->CKTstate0 + here->VDMOSdeltemp),1.0,&Check);
+                          *(ckt->CKTstate0 + here->VDMOSdeltemp),1.0,&Check_mos);
                 else
                     delTemp = 0.0;
 #endif /*NODELIMITING*/
@@ -733,7 +733,7 @@ bypass:
             vtebrk = model->VDIObrkdEmissionCoeff * vt;
             vbrknp = here->VDIOtBrkdwnV;
 
-            Check = 1;
+            Check_diode = 1;
             if (ckt->CKTmode & MODEINITSMSIG) {
                 vd = *(ckt->CKTstate0 + here->VDIOvoltage);
             } else if (ckt->CKTmode & MODEINITTRAN) {
@@ -793,11 +793,11 @@ bypass:
                     vdtemp = DEVpnjlim(vdtemp,
                                        -(*(ckt->CKTstate0 + here->VDIOvoltage) +
                                          vbrknp), vtebrk,
-                                       here->VDIOtVcrit, &Check);
+                                       here->VDIOtVcrit, &Check_diode);
                     vd = -(vdtemp + vbrknp);
                 } else {
                     vd = DEVpnjlim(vd, *(ckt->CKTstate0 + here->VDIOvoltage),
-                                   vte, here->VDIOtVcrit, &Check);
+                                   vte, here->VDIOtVcrit, &Check_diode);
                 }
             }
             /*
@@ -892,7 +892,7 @@ bypass:
             *   check convergence
             */
 
-            if (Check == 1) {
+            if ((Check_mos == 1) || (Check_diode == 1)) {
                 ckt->CKTnoncon++;
                 ckt->CKTtroubleElt = (GENinstance *)here;
             }
@@ -902,7 +902,7 @@ bypass:
             *(ckt->CKTstate0 + here->VDIOconduct) = gd;
 
 #ifndef NOBYPASS
-load :
+load:
 #endif
             /*
             *   load current vector
