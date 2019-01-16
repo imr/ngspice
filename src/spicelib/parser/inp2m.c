@@ -100,9 +100,10 @@ INP2M(CKTcircuit *ckt, INPtables *tab, struct card *current, CKTnode *gnode)
         return;
     }
 
-    /* tie missing ports to ground, (thermal node) */
-    while (i < model_max_numnodes)
-        node[i++] = gnode;
+    /* tie missing port to ground for vdmos, (thermal node) */
+    if (thismodel->INPmodType == INPtypelook("VDMOS"))
+        while (i < model_max_numnodes)
+            node[i++] = gnode;
 
     numnodes = i;
 
