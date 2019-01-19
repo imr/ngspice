@@ -89,7 +89,7 @@ INPpas3(CKTcircuit *ckt, struct card *data, INPtables *tab, TSKtask *task,
                 if( (*name == 'V' || *name == 'v') && !name[1] ) {
                     /* looks like V - must be V(xx) - get xx now*/
                     char *nodename;
-                    INPgetTok(&line,&nodename,1);
+                    INPgetNetTok(&line,&nodename,1);
                     if (INPtermInsert(ckt,&nodename,tab,&node1)!=E_EXISTS)
                         fprintf(stderr,
                                 "Warning : Nodeset on non-existant node - %s\n", nodename);
@@ -130,7 +130,7 @@ INPpas3(CKTcircuit *ckt, struct card *data, INPtables *tab, TSKtask *task,
                 if( (*name == 'V' || *name == 'v') && !name[1] ) {
                     /* looks like V - must be V(xx) - get xx now*/
                     char *nodename;
-                    INPgetTok(&line,&nodename,1);
+                    INPgetNetTok(&line,&nodename,1);
                     if (INPtermInsert(ckt,&nodename,tab,&node1)!=E_EXISTS)
                         fprintf(stderr,
                                 "Warning : IC on non-existant node - %s\n", nodename);
