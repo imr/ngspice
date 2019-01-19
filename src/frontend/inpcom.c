@@ -104,6 +104,7 @@ int dynMaxckt = 0; /* subckt.c 307 */
 long dynsubst; /* spicenum.c 221 */
 
 static bool has_if = FALSE; /* if we have an .if ... .endif pair */
+static bool has_vdmos = FALSE; /* if we have a VDMOS device in the deck */
 
 static char *readline(FILE *fd);
 static int  get_number_terminals(char *c);
@@ -6611,6 +6612,10 @@ inp_quote_params(struct card *c, struct card *end_c, struct dependency *deps, in
     }
 }
 
+bool inqvdmos(void)
+{
+    return has_vdmos;
+}
 
 /* VDMOS special:
    Check for 'vdmos' in .model line.
@@ -6632,6 +6637,7 @@ inp_vdmos_model(struct card *deck)
         curr_line = cut_line = card->line;
 
         if (ciprefix(".model", curr_line) && strstr(curr_line, "vdmos")) {
+            has_vdmos = TRUE;
             cut_line = strstr(curr_line, "vdmos");
             wl_append_word(&wl, &wl, copy_substring(curr_line, cut_line));
             wlb = wl;

@@ -63,6 +63,8 @@ INP2M(CKTcircuit *ckt, INPtables *tab, struct card *current, CKTnode *gnode)
     GENmodel *mdfast;          /* pointer to the actual model */
     int i;
 
+    bool hasvdmos = inqvdmos();
+
 #ifdef TRACE
     printf("INP2M: Parsing '%s'\n", current->line);
 #endif
@@ -75,7 +77,7 @@ INP2M(CKTcircuit *ckt, INPtables *tab, struct card *current, CKTnode *gnode)
     for (i = 0; ; i++) {
         char *token;
         INPgetNetTok(&line, &token, 1);
-        if (i >= 3) {
+        if (hasvdmos && (i >= 3) || (i >= 4)){
             txfree(INPgetMod(ckt, token, &thismodel, tab));
 
             /* check if using model binning -- pass in line since need 'l' and 'w' */

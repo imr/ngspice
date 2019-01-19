@@ -1619,6 +1619,7 @@ devmodtranslate(struct card *s, char *subname, wordlist * const orig_modnames)
     struct bxx_buffer buffer;
     bxx_init(&buffer);
 
+    bool hvdmos = inqvdmos();
 
     for (; s; s = s->nextcard) {
 
@@ -1821,6 +1822,12 @@ devmodtranslate(struct card *s, char *subname, wordlist * const orig_modnames)
             name = gettok_node(&t);  /* get third attached netname */
             bxx_printf(&buffer, "%s ", name);
             tfree(name);
+            if (!hvdmos) {
+                name = gettok_node(&t);  /* get fourth attached netname */
+                bxx_printf(&buffer, "%s ", name);
+                tfree(name);
+            }
+
             name = gettok_node(&t);  /* this can be either a model name or a node name. */
 
             found = 0;

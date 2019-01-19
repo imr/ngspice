@@ -227,6 +227,9 @@ extern void inp_remove_recent(void);
 extern char **circarray;
 extern void rem_tlist(struct pt_temper *p);
 
+/* inpcom.c */
+extern bool inqvdmos(void);
+
 /* nutinp.c */
 
 void inp_nutsource(FILE *fp, bool comfile, char *filename);
