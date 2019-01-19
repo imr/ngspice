@@ -1080,36 +1080,39 @@ plotInit(runDesc *run)
     }
 }
 
-/* prepare the vector length data for memory allocation */
+/* prepare the vector length data for memory allocation
+   If new, and tran or pss, length is TSTOP / TSTEP plus some margin.
+   If allocated length is exceeded, check progress. When > 20% then extrapolate memory needed,
+   if less than 20% then just double the size.
+   If not tran or pss, return fixed value (1024) of memory to be added.
+   */
 static inline int
-vlength2delta(int l)
+vlength2delta(int len)
 {
 #ifdef SHARED_MODULE
     if (savenone)
         /* We need just a vector length of 1 */
         return 1;
 #endif
-    static int newpoints;
-    static int newpoints2;
+    /* TSTOP / TSTEP */
     int points = ft_curckt->ci_ckt->CKTtimeListSize;
     /* transient and pss analysis (points > 0) upon start */
-    if (l == 0 && points > 0) {
+    if (len == 0 && points > 0) {
         /* number of timesteps plus some overhead */
-        newpoints = points + 100;
-        return newpoints;
+        return points + 100;
     }
     /* transient and pss if original estimate is exceeded */
-    else if (l == newpoints && points > 0)
-    {
+    else if (points > 0) {
         /* check where we are */
         double timerel = ft_curckt->ci_ckt->CKTtime / ft_curckt->ci_ckt->CKTfinalTime;
-        /* return an estimate of the appropriate number of time points */
-        newpoints2 = (int)(points / timerel) - points + 1;
-        return newpoints2;
+        /* return an estimate of the appropriate number of time points, if more than 20% of
+           the anticipated total time has passed */
+        if (timerel > 0.2)
+            return (int)(len / timerel) - len + 1;
+        /* If not, just double the available memory */
+        else
+            return len;
     }
-    /* the estimate is (hopefully only slightly) too small, so add 2% of points */
-    else if (points > 0)
-        return (int)(newpoints2 / 50) + 1;
     /* other analysis types that do not set CKTtimeListSize */
     else
         return 1024;
