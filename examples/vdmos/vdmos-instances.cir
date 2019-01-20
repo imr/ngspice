@@ -1,0 +1,78 @@
+test of various vdmos instance lines
+
+Vd1 d1 0 1
+Vd2 d2 0 -1
+Vd3 d3 0 -1
+
+Vg1 g1 0 1
+Vg2 g2 0 -1
+Vg3 g3 0 -1
+
+Vs1 s1 0 0
+Vs2 s2 0 0
+Vs3 s3 0 0
+
+.subckt mytran1 d g s t
+  ms d g s t IXTH80N20L
+.ends
+
+.subckt mytran2 d g s
+  ms d g s s IXTH48P20P temp=50
+.ends
+
+.subckt mytran3 d g s
+  ms d g s IXTH48P20P temp=30
+.ends
+
+Xt1 d1 g1 s1 t1 mytran1
+
+Xt2 d2 g2 s2 mytran2
+
+Xt3 d3 g3 s3 mytran3
+
+.control
+dc Vd1 0 10 0.1 Vg1 0 10 2
+plot vs1#branch
+settype temperature v(t1)
+plot t1
+dc Vd2 0 -10 -0.1 Vg2 0 -10 -2
+plot vs2#branch
+dc Vd3 0 -10 -0.1 Vg3 0 -10 -2
+plot vs3#branch
+.endc
+
+* David Zan, (c) 2017/03/02 Preliminary
+.MODEL IXTH80N20L VDMOS Nchan Vds=200
++ VTO=4 KP=15
++ Lambda=2m
++ Mtriode=0.4
++ Ksubthres=120m
++ subshift=160m
++ Rs=5m Rd=10m Rds=200e6
++ Cgdmax=9000p Cgdmin=300p A=0.25
++ Cgs=5500p Cjo=11000p
++ Is=10e-6 Rb=8m   
++ BV=200 IBV=250e-6
++ NBV=4
++ TT=250e-9
++ vq=100
++ rq=0
++ shmod=1 RTH0=0.1 CTH0=1e-3 MU=1.27 texp0=1.5 texp1=0.3
+
+* David Zan, (c) 2017/03/02 Preliminary
+.MODEL IXTH48P20P VDMOS Pchan Vds=200
++ VTO=-4 KP=10
++ Lambda=5m
++ Mtriode=0.3   
++ Ksubthres=120m
++ Rs=10m Rd=20m Rds=200e6
++ Cgdmax=6000p Cgdmin=100p A=0.25
++ Cgs=5000p Cjo=9000p
++ Is=2e-6 Rb=20m   
++ BV=200 IBV=250e-6
++ NBV=4
++ TT=260e-9
++ vq=100
++ rq=0
+
+.end
