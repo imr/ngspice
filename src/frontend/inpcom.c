@@ -6734,7 +6734,10 @@ inp_vdmos_model(struct card *deck)
                     fprintf(stderr, "Warning: Possible syntax error in line %s\n   Wrong model or instance parameter?\n", curr_line);
                     goto endloop;
                 }
-            new_line = tprintf("%s %s %s %s %s", start_line, node3, node4, token1, cut_line);
+                if (token1)
+                    new_line = tprintf("%s %s %s %s %s", start_line, node3, node4, token1, cut_line);
+                else
+                    new_line = tprintf("%s %s %s", start_line, node3, node4);
             }
 
             /* if yes, we have to add another node equal to node3 */
