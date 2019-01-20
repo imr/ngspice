@@ -75,7 +75,7 @@ INP2M(CKTcircuit *ckt, INPtables *tab, struct card *current, CKTnode *gnode)
     for (i = 0; ; i++) {
         char *token;
         INPgetNetTok(&line, &token, 1);
-        if (i >= 3) {
+        if (i >= 4) {
             txfree(INPgetMod(ckt, token, &thismodel, tab));
 
             /* check if using model binning -- pass in line since need 'l' and 'w' */

@@ -157,6 +157,8 @@ static void pspice_compat_a(struct card *oldcard);
 static struct card *ltspice_compat(struct card *oldcard);
 static void ltspice_compat_a(struct card *oldcard);
 
+static wordlist *vdmosmodels;
+
 struct inp_read_t
 { struct card *cc;
     int line_number;
@@ -6624,6 +6626,7 @@ static void
 inp_vdmos_model(struct card *deck)
 {
     struct card *card;
+    vdmosmodels = NULL;
     for (card = deck; card; card = card->nextcard) {
 
         char *curr_line, *cut_line, *token, *new_line;
@@ -6632,6 +6635,13 @@ inp_vdmos_model(struct card *deck)
         curr_line = cut_line = card->line;
 
         if (ciprefix(".model", curr_line) && strstr(curr_line, "vdmos")) {
+            /* add model name to list */
+            char *modline = curr_line;
+            modline = nexttok(modline);/* skip .model */
+            char *name = gettok(&modline);
+            vdmosmodels = wl_cons(name, vdmosmodels);
+
+            /* update the .model line */
             cut_line = strstr(curr_line, "vdmos");
             wl_append_word(&wl, &wl, copy_substring(curr_line, cut_line));
             wlb = wl;
@@ -6661,6 +6671,85 @@ inp_vdmos_model(struct card *deck)
             tfree(card->line);
             card->line = new_line;
         }
+    }
+    /* no VDMOS transistors in netlist */
+    if (!vdmosmodels)
+        return;
+    /* get vdmos instance lines */
+    for (card = deck; card; card = card->nextcard) {
+
+        char *curr_line, *cut_line, *token1 = NULL, *token2 = NULL, *new_line = NULL, *start_line, *node3, *node4;
+        wordlist *wlb;
+        bool found = FALSE;
+
+        curr_line = cut_line = card->line;
+        if (curr_line[0] != 'm')
+            continue;
+        cut_line = nexttok(cut_line); /* skip device name */
+        cut_line = nexttok(cut_line); /* skip first node */
+        cut_line = nexttok(cut_line); /* skip second node */
+        node3 = gettok(&cut_line); /* third node */
+        start_line = copy_substring(curr_line, cut_line); /* beginning of new m line, including third node */
+        node4 = gettok(&cut_line); /* fourth node or model name */
+        token1 = gettok(&cut_line); /* model name or empty or instance parameter */
+        /* evaluation: 
+        If not token1 or token1 contains '=', check if node4 is model name
+        If token1 and not contains '=', check if token1 is model name */
+        if (token1 && !strchr(token1, '=')) {
+            /* check if token1 is modelname */
+            for (wlb = vdmosmodels; wlb; wlb = wlb->wl_next)
+                if (eq(wlb->wl_word, token1)) {
+                    found = TRUE;
+                    break;
+                }
+            if (found) {
+                /* if token1 is modelname, check if token2 is empty or has '=', if not, raise error */
+                token2 = gettok(&cut_line);
+                if (token2 && !strchr(token2, '=')) {
+                    fprintf(stderr, "Warning: Possible syntax error in line %s\n   Wrong model or instance parameter?\n", curr_line);
+                    goto endloop;
+                }
+            }
+            else {
+                fprintf(stderr, "Warning: No model found for device in line %s\n", curr_line);
+                goto endloop;
+            }
+
+            /* if m instance line has 4 nodes, and the last two are equal, rename the fourth
+               node into a thermal node */
+            if(eq(node3, node4))
+                new_line = tprintf("%s tnode_%s %s %s", start_line, node4, token1, cut_line);
+        }
+        else {
+            /* check if node4 is model name */
+            for (wlb = vdmosmodels; wlb; wlb = wlb->wl_next)
+                if (eq(wlb->wl_word, node4)) {
+                    found = TRUE;
+                    break;
+                }
+            /* if yes, and token1 exists, check if it contains '=', if not raise error */
+            if (found) {
+                if (token1 && !strchr(token1, '='))
+                {
+                    fprintf(stderr, "Warning: Possible syntax error in line %s\n   Wrong model or instance parameter?\n", curr_line);
+                    goto endloop;
+                }
+            new_line = tprintf("%s %s %s %s %s", start_line, node3, node4, token1, cut_line);
+            }
+
+            /* if yes, we have to add another node equal to node3 */
+        }
+        if (new_line) {
+            /* do the line replacement */
+            tfree(card->line);
+            card->line = new_line;
+        }
+        endloop:
+        tfree(node3);
+        tfree(node4);
+        tfree(start_line);
+        tfree(token1);
+        tfree(token2);
     }
 }
 
