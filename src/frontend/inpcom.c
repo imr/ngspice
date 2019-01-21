@@ -6715,10 +6715,10 @@ inp_vdmos_model(struct card *deck)
                 goto endloop;
             }
 
-            /* if m instance line has 4 nodes, and the last two are equal, rename the fourth
-               node into a thermal node */
+            /* if m instance line has 4 nodes, and the last two are equal, replace fourth
+               node (thermal node) by '0' */
             if(eq(node3, node4))
-                new_line = tprintf("%s tnode_%s %s %s", start_line, node4, token1, cut_line);
+                new_line = tprintf("%s 0 %s %s", start_line, token1, cut_line);
         }
         else {
             /* check if node4 is model name */
@@ -6734,10 +6734,11 @@ inp_vdmos_model(struct card *deck)
                     fprintf(stderr, "Warning: Possible syntax error in line %s\n   Wrong model or instance parameter?\n", curr_line);
                     goto endloop;
                 }
+                /* if m instance line has 3 nodes, add a fourth node (thermal node) as '0' */
                 if (token1)
-                    new_line = tprintf("%s %s %s %s %s", start_line, node3, node4, token1, cut_line);
+                    new_line = tprintf("%s 0 %s %s %s", start_line, node4, token1, cut_line);
                 else
-                    new_line = tprintf("%s %s %s", start_line, node3, node4);
+                    new_line = tprintf("%s 0 %s", start_line, node4);
             }
 
             /* if yes, we have to add another node equal to node3 */
