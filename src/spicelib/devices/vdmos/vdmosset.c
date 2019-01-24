@@ -150,6 +150,12 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
             if(!here->VDMOSmGiven) {
                 here->VDMOSm = 1;
             }
+            if(!here->VDMOSlGiven) {
+                here->VDMOSl = 1;
+            }
+            if(!here->VDMOSwGiven) {
+                here->VDMOSw = 1;
+            }
             if (model->VDMOSdrainResistanceGiven) {
                 if (model->VDMOSdrainResistance != 0) {
                     here->VDMOSdrainConductance = here->VDMOSm / model->VDMOSdrainResistance;

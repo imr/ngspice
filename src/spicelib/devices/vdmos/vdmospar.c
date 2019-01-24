@@ -41,6 +41,14 @@ VDMOSparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->VDMOSm = value->rValue;
             here->VDMOSmGiven = TRUE;
             break;
+        case VDMOS_W:
+            here->VDMOSw = value->rValue * scale;
+            here->VDMOSwGiven = TRUE;
+            break;
+        case VDMOS_L:
+            here->VDMOSl = value->rValue * scale;
+            here->VDMOSlGiven = TRUE;
+            break;
         case VDMOS_OFF:
             here->VDMOSoff = (value->iValue != 0);
             break;

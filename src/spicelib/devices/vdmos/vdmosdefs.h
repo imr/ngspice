@@ -49,6 +49,8 @@ typedef struct sVDMOSinstance {
 
     double VDMOSm;   /* parallel device multiplier */
 
+    double VDMOSl;   /* the length of the channel region */
+    double VDMOSw;   /* the width of the channel region */
     double VDMOSsourceConductance;   /*conductance of source(or 0):set in setup*/
     double VDMOSdrainConductance;    /*conductance of drain(or 0):set in setup*/
     double VDMOSgateConductance;    /*conductance of gate(or 0):set in setup*/

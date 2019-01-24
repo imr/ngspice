@@ -50,7 +50,8 @@ VDMOSdSetup(GENmodel *inModel, CKTcircuit *ckt)
 
             vt = CONSTKoverQ * here->VDMOStemp;
 
-            Beta = here->VDMOStTransconductance * here->VDMOSm;
+            Beta = here->VDMOStTransconductance * here->VDMOSm *
+                    here->VDMOSw/here->VDMOSl;
 
             vgs = model->VDMOStype * ( 
                 *(ckt->CKTrhsOld+here->VDMOSgNode) -
