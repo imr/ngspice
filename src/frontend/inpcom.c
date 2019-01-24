@@ -6723,6 +6723,11 @@ inp_vdmos_model(struct card *deck)
                     new_line = tprintf("%s %s %s", start_line, token2, cut_line);
             }
         } else {
+            if (!token1)
+            {
+                fprintf(stderr, "Error: Possible syntax error in line %s\n   Too few nodes for vdmos\n", curr_line);
+                goto endloop;
+            }
             /* check if token1 is model name */
             for (wlb = vdmosmodels; wlb; wlb = wlb->wl_next)
                 if (eq(wlb->wl_word, token1)) {
