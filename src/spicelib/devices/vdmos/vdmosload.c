@@ -216,8 +216,8 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                 } else {
                     cdhat =
                         here->VDMOScd
-                      + here->VDMOSgm * delvgd
-                      - here->VDMOSgds * delvds
+                      - here->VDMOSgm * delvgd
+                      + here->VDMOSgds * delvds
                       + here->VDMOSgmT * deldelTemp;
                 }
 
