@@ -72,6 +72,7 @@ typedef struct sVDMOSinstance {
     double VDIOtSatCur;     /* temperature corrected saturation Cur. density*/
     double VDIOinitCond;
     double VDIOtVcrit;
+    double VDIOconductance;
     double VDIOtConductance;
     double VDIOtBrkdwnV;
     double VDIOtJctCap;
@@ -304,7 +305,6 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
     double VDMOSibv;
     double VDIObrkdEmissionCoeff;
     double VDIOresistance;
-    double VDIOconductance;
     double VDMOSrds;
     double VDMOSn;
     double VDIOtransitTime;

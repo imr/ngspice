@@ -71,12 +71,7 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
         /* set lower limit of saturation current */
         if (model->VDIOjctSatCur < ckt->CKTepsmin)
             model->VDIOjctSatCur = ckt->CKTepsmin;
-        if ((!model->VDIOresistanceGiven) || (model->VDIOresistance == 0)) {
-            model->VDIOconductance = 0.0;
-        }
-        else {
-            model->VDIOconductance = 1 / model->VDIOresistance;
-        }
+
         xfc = log(1 - model->VDIOdepletionCapCoeff);
 
         /* loop through all instances of the model */
@@ -124,7 +119,7 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
 
             pbo = (model->VDIOjunctionPot - pbfact1) / fact1;
             gmaold = (model->VDIOjunctionPot - pbo) / pbo;
-            here->VDIOtJctCap = model->VDIOjunctionCap /
+            here->VDIOtJctCap = here->VDMOSm * model->VDIOjunctionCap /
                 (1 + here->VDIOtGradingCoeff*
                 (400e-6*(model->VDMOStnom - REFTEMP) - gmaold));
             here->VDIOtJctPot = pbfact + fact2*pbo;
@@ -132,7 +127,7 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
             here->VDIOtJctCap *= 1 + here->VDIOtGradingCoeff*
                 (400e-6*(here->VDMOStemp - REFTEMP) - gmanew);
 
-            here->VDIOtSatCur = model->VDIOjctSatCur * exp(
+            here->VDIOtSatCur = here->VDMOSm * model->VDIOjctSatCur * exp(
                 ((here->VDMOStemp / model->VDMOStnom) - 1) *
                 model->VDMOSeg / (model->VDMOSn*vt) +
                 model->VDMOSxti / model->VDMOSn *
@@ -204,7 +199,7 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
             here->VDIOtTransitTime = model->VDIOtransitTime * factor;
 
             /* Series resistance temperature adjust (not implemented yet) */
-            here->VDIOtConductance = model->VDIOconductance;
+            here->VDIOtConductance = here->VDIOconductance;
 
             here->VDIOtF2 = exp((1 + here->VDIOtGradingCoeff)*xfc);
             here->VDIOtF3 = 1 - model->VDIOdepletionCapCoeff*

@@ -189,6 +189,17 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
             else {
                 here->VDMOSdsConductance = 0;
             }
+            if (model->VDIOresistanceGiven) {
+                if (model->VDIOresistance != 0) {
+                    here->VDIOconductance = here->VDMOSm / model->VDIOresistance;
+                }
+                else {
+                    here->VDIOconductance = 0;
+                }
+            }
+            else {
+                here->VDIOconductance = 0;
+            }
 
             if (!here->VDMOSrth0Given)
                 here->VDMOSrth0 = model->VDMOSrth0;
