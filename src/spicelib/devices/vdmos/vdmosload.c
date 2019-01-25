@@ -622,27 +622,6 @@ bypass:
              *  load current vector
              */
 
-            if (here->VDMOSmode >= 0) {
-                xnrm = 1;
-                xrev = 0;
-                cdreq = model->VDMOStype*(cdrain - here->VDMOSgds*vds
-                                                 - here->VDMOSgm*vgs);
-            } else {
-                xnrm = 0;
-                xrev = 1;
-                cdreq = -(model->VDMOStype)*(cdrain - here->VDMOSgds*(-vds) -
-                                             here->VDMOSgm*vgd);
-            }
-            *(ckt->CKTrhs + here->VDMOSgNodePrime) -=
-                (model->VDMOStype * (ceqgs + ceqgd));
-            *(ckt->CKTrhs + here->VDMOSdNodePrime) +=
-                (-cdreq + model->VDMOStype * ceqgd);
-            *(ckt->CKTrhs + here->VDMOSsNodePrime) +=
-                cdreq + model->VDMOStype * ceqgs;
-            if (selfheat) {
-                *(ckt->CKTrhs + here->VDMOStempNode) -= here->VDMOSpower + ceqth; /* dissipated power + Cth current*/
-            }
-
             if (selfheat) {
                 if (here->VDMOSmode >= 0) {
                     GmT = model->VDMOStype * here->VDMOSgmT;
@@ -657,6 +636,35 @@ bypass:
                     gTtt  = here->VDMOSgtempT;
                     gTtdp = - (gTtg + gTtsp);
                 }
+            } else {
+                GmT = 0.0;
+                gTtg  = 0.0;
+                gTtdp = 0.0;
+                gTtt  = 0.0;
+                gTtsp = 0.0;
+            }
+
+            if (here->VDMOSmode >= 0) {
+                xnrm = 1;
+                xrev = 0;
+                cdreq = model->VDMOStype*(cdrain - here->VDMOSgds*vds
+                                                 - here->VDMOSgm*vgs)
+                        - GmT * delTemp;
+            } else {
+                xnrm = 0;
+                xrev = 1;
+                cdreq = -(model->VDMOStype)*(cdrain - here->VDMOSgds*(-vds)
+                                                    - here->VDMOSgm*vgd)
+                        - GmT * delTemp;
+            }
+            *(ckt->CKTrhs + here->VDMOSgNodePrime) -=
+                (model->VDMOStype * (ceqgs + ceqgd));
+            *(ckt->CKTrhs + here->VDMOSdNodePrime) +=
+                (-cdreq + model->VDMOStype * ceqgd);
+            *(ckt->CKTrhs + here->VDMOSsNodePrime) +=
+                cdreq + model->VDMOStype * ceqgs;
+            if (selfheat) {
+                *(ckt->CKTrhs + here->VDMOStempNode) -= here->VDMOSpower + ceqth; /* dissipated power + Cth current*/
             }
 
             /*
