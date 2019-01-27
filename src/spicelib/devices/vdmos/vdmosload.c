@@ -506,7 +506,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                 here->VDMOSgtempg = -model->VDMOStype*here->VDMOSgm * Vds;
                 here->VDMOSgtempT = -GmT * Vds;
                 here->VDMOSgtempd = -model->VDMOStype* (here->VDMOSgds * Vds + cdrain);
-                here->VDMOSpower = - cdrain * Vds
+                here->VDMOScth = - cdrain * Vds
                                  - 1/here->VDMOSdrainConductance * cdrain*cdrain
                                  - model->VDMOStype * (here->VDMOSgtempg * Vgs + here->VDMOSgtempd * Vds)
                                  - here->VDMOSgtempT * delTemp;
@@ -664,7 +664,7 @@ bypass:
             *(ckt->CKTrhs + here->VDMOSsNodePrime) +=
                 cdreq + model->VDMOStype * ceqgs;
             if (selfheat) {
-                *(ckt->CKTrhs + here->VDMOStempNode) -= here->VDMOSpower + ceqth; /* dissipated power + Cth current*/
+                *(ckt->CKTrhs + here->VDMOStempNode) -= here->VDMOScth + ceqth; /* dissipated power + Cth current*/
             }
 
             /*

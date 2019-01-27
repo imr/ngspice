@@ -98,7 +98,7 @@ typedef struct sVDMOSinstance {
     double VDMOSgtempT;
     double VDMOScgT;
     double VDMOScdT;
-    double VDMOSpower;         /* current alias power */
+    double VDMOScth;         /* current alias power */
 
 /*
  * naming convention:
