@@ -14,8 +14,8 @@ VDMOS: 2018 Holger Vogt
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
-/* VDMOSlimitlog(vnew,vold)
- *  limits the per-iteration change of any absolute voltage value
+/* VDMOSlimitlog(deltemp, deltemp_old, LIM_TOL, check)
+ * Logarithmic damping the per-iteration change of deltemp beyond LIM_TOL.
  */
 static double
 VDMOSlimitlog(
@@ -300,7 +300,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                 }
                 if (selfheat)
                     delTemp = VDMOSlimitlog(delTemp,
-                          *(ckt->CKTstate0 + here->VDMOSdeltemp),1.0,&Check_mos);
+                          *(ckt->CKTstate0 + here->VDMOSdeltemp),100,&Check_mos);
                 else
                     delTemp = 0.0;
 #endif /*NODELIMITING*/
