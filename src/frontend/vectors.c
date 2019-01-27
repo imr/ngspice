@@ -945,6 +945,18 @@ vec_basename(struct dvec *v)
     return (copy(s));
 }
 
+/* get address of plot named 'name' */
+struct plot *
+get_plot(char* name)
+{
+    struct plot *pl;
+    for (pl = plot_list; pl; pl = pl->pl_next)
+        if (plot_prefix(name, pl->pl_typename))
+            return pl;
+    fprintf(cp_err, "Error: no such plot named %s\n", name);
+    return NULL;
+}
+
 
 /* Make a plot the current one.  This gets called by cp_usrset() when one
  * does a 'set curplot = name'.

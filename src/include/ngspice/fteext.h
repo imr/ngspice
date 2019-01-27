@@ -359,6 +359,7 @@ extern void vec_new(struct dvec *d);
 extern void plot_docoms(wordlist *wl);
 extern void vec_remove(char *name);
 extern void plot_setcur(char *name);
+extern struct plot *get_plot(char* name);
 extern void plot_new(struct plot *pl);
 extern char *vec_basename(struct dvec *v);
 extern bool plot_prefix(char *pre, char *str);
