@@ -878,7 +878,11 @@ apply_func(struct func *func, struct pnode *arg)
             fprintf(cp_err, "Error: bad v() syntax\n");
             return (NULL);
         }
-        t = vec_fromplot(arg->pn_value->v_name, get_plot(arg->pn_value->v_plot->pl_typename));
+        /* try not using the current plot, but the plot set in the arg... vector */
+        if(arg->pn_value->v_plot && arg->pn_value->v_plot->pl_typename)
+            t = vec_fromplot(arg->pn_value->v_name, get_plot(arg->pn_value->v_plot->pl_typename));
+        else
+            t = vec_fromplot(arg->pn_value->v_name, plot_cur);
         if (!t) {
             fprintf(cp_err, "Error: no such vector %s\n", arg->pn_value->v_name);
             return (NULL);
