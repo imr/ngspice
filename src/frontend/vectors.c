@@ -64,8 +64,7 @@ vec_rebuild_lookup_table(struct plot *pl)
 /* Find a named vector in a plot. We are careful to copy the vector if
  * v_link2 is set, because otherwise we will get screwed up.  */
 static struct dvec *
-findvec(char *word, struct plot *pl)
-{
+findvec(char *word, struct plot *pl) {
     SPICE_DSTRING dbuf;                 /* dynamic buffer */
     char *lower_name;                   /* lower case name */
     char *node_name;
@@ -157,9 +156,8 @@ findvec(char *word, struct plot *pl)
     lower_name = spice_dstring_append_lower(&dbuf, word, -1);
 
     for (d = nghash_find(pl->pl_lookup_table, lower_name);
-         d;
-         d = nghash_find_again(pl->pl_lookup_table, lower_name))
-    {
+            d;
+            d = nghash_find_again(pl->pl_lookup_table, lower_name)) {
         if (d->v_flags & VF_PERMANENT)
             break;
     }
@@ -171,9 +169,8 @@ findvec(char *word, struct plot *pl)
         node_name = spice_dstring_append_char(&dbuf, ')');
 
         for (d = nghash_find(pl->pl_lookup_table, node_name);
-             d;
-             d = nghash_find_again(pl->pl_lookup_table, node_name))
-        {
+                d;
+                d = nghash_find_again(pl->pl_lookup_table, node_name)) {
             if (d->v_flags & VF_PERMANENT)
                 break;
         }
@@ -247,8 +244,7 @@ veccmp(const void *a, const void *b)
 /* Sort all the vectors in d, first by plot name and then by vector
  * name.  Do the right thing with numbers.  */
 static struct dvec *
-sortvecs(struct dvec *d)
-{
+sortvecs(struct dvec *d) {
     struct dvec **array, *t;
     int i, j;
 
@@ -366,8 +362,7 @@ vec_remove(char *name)
  */
 
 struct dvec *
-vec_fromplot(char *word, struct plot *plot)
-{
+vec_fromplot(char *word, struct plot *plot) {
     struct dvec *d;
     char buf[BSIZE_SP], buf2[BSIZE_SP], cc, *s;
 
@@ -385,8 +380,8 @@ vec_fromplot(char *word, struct plot *plot)
 
     /* scanf("%c(%s)" doesn't do what it should do. ) */
     if (!d && (sscanf(word, "%c(%s", &cc, buf) == 2) &&
-        ((s = strrchr(buf, ')')) != NULL) &&
-        (s[1] == '\0')) {
+            ((s = strrchr(buf, ')')) != NULL) &&
+            (s[1] == '\0')) {
         *s = '\0';
         if (prefix("i(", word) || prefix("I(", word)) {
             /* Spice dependency... */
@@ -416,8 +411,7 @@ vec_fromplot(char *word, struct plot *plot)
 #define SPECCHAR '@'
 
 struct dvec *
-vec_get(const char *vec_name)
-{
+vec_get(const char *vec_name) {
     struct dvec *d, *end = NULL, *newv = NULL;
     struct plot *pl;
     char buf[BSIZE_SP], *s, *wd, *word, *whole, *name = NULL, *param;
@@ -436,8 +430,8 @@ vec_get(const char *vec_name)
             pl = NULL;  /* NULL pl signifies a wildcard. */
         } else {
             for (pl = plot_list;
-                 pl && !plot_prefix(buf, pl->pl_typename);
-                 pl = pl->pl_next)
+                    pl && !plot_prefix(buf, pl->pl_typename);
+                    pl = pl->pl_next)
                 ;
             if (pl) {
                 word = ++s;
@@ -673,8 +667,7 @@ plot_docoms(wordlist *wl)
 /* Create a copy of a vector. */
 
 struct dvec *
-vec_copy(struct dvec *v)
-{
+vec_copy(struct dvec *v) {
     struct dvec *nv;
     int i;
 
@@ -688,10 +681,10 @@ vec_copy(struct dvec *v)
 
     if (isreal(v))
         memcpy(nv->v_realdata, v->v_realdata,
-              sizeof(double) * (size_t) v->v_length);
+               sizeof(double) * (size_t) v->v_length);
     else
         memcpy(nv->v_compdata, v->v_compdata,
-              sizeof(ngcomplex_t) * (size_t) v->v_length);
+               sizeof(ngcomplex_t) * (size_t) v->v_length);
 
     nv->v_minsignal = v->v_minsignal;
     nv->v_maxsignal = v->v_maxsignal;
@@ -730,8 +723,7 @@ vec_copy(struct dvec *v)
  */
 
 struct plot *
-plot_alloc(char *name)
-{
+plot_alloc(char *name) {
     struct plot *pl = TMALLOC(struct plot, 1), *tp;
     char *s;
     struct ccom *ccom;
@@ -947,8 +939,7 @@ vec_basename(struct dvec *v)
 
 /* get address of plot named 'name' */
 struct plot *
-get_plot(char* name)
-{
+get_plot(char* name) {
     struct plot *pl;
     for (pl = plot_list; pl; pl = pl->pl_next)
         if (plot_prefix(name, pl->pl_typename))
@@ -978,28 +969,27 @@ plot_setcur(char *name)
         plot_cur = pl;
         return;
     }
-	/* plots are listed in pl in reverse order */
-	else if (cieq(name, "previous")) {
-		if (plot_cur->pl_next)
-			plot_cur = plot_cur->pl_next;
-		else
-			fprintf(cp_err, "Warning: Switching to previous plot not possible, stay with current plot (%s)\n", plot_cur->pl_typename);
+    /* plots are listed in pl in reverse order */
+    else if (cieq(name, "previous")) {
+        if (plot_cur->pl_next)
+            plot_cur = plot_cur->pl_next;
+        else
+            fprintf(cp_err, "Warning: Switching to previous plot not possible, stay with current plot (%s)\n", plot_cur->pl_typename);
+        return;
+    } else if (cieq(name, "next")) {
+        struct plot *prev_pl = NULL;
+        for (pl = plot_list; pl; pl = pl->pl_next) {
+            if (pl == plot_cur)
+                break;
+            prev_pl = pl;
+        }
+        if (!prev_pl) {
+            fprintf(cp_err, "Warning: Switching to next plot not possible, stay with current plot (%s)\n", plot_cur->pl_typename);
+            return;
+        }
+        plot_cur = prev_pl;
         return;
     }
-	else if (cieq(name, "next")) {
-		struct plot *prev_pl = NULL;
-		for (pl = plot_list; pl; pl = pl->pl_next) {
-			if (pl == plot_cur)
-				break;
-			prev_pl = pl;
-		}
-		if (!prev_pl) {
-			fprintf(cp_err, "Warning: Switching to next plot not possible, stay with current plot (%s)\n", plot_cur->pl_typename);
-			return;
-		}
-		plot_cur = prev_pl;
-		return;
-	}
     pl = get_plot(name);
     if (!pl)
         return;
@@ -1108,8 +1098,7 @@ vec_transpose(struct dvec *v)
  */
 
 struct dvec *
-vec_mkfamily(struct dvec *v)
-{
+vec_mkfamily(struct dvec *v) {
     int size, numvecs, i, count[MAXDIMS];
     struct dvec *vecs, *d, **t;
     char buf2[BSIZE_SP];
