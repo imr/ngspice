@@ -1000,13 +1000,9 @@ plot_setcur(char *name)
 		plot_cur = prev_pl;
 		return;
 	}
-    for (pl = plot_list; pl; pl = pl->pl_next)
-        if (plot_prefix(name, pl->pl_typename))
-            break;
-    if (!pl) {
-        fprintf(cp_err, "Error: no such plot named %s\n", name);
+    pl = get_plot(name);
+    if (!pl)
         return;
-    }
     /* va: we skip cp_kwswitch, because it confuses the keyword-tree management for
      *     repeated op-commands. When however cp_kwswitch is necessary for other
      *     reasons, we should hold the original keyword table pointer in an
