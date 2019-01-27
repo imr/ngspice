@@ -878,7 +878,13 @@ apply_func(struct func *func, struct pnode *arg)
             fprintf(cp_err, "Error: bad v() syntax\n");
             return (NULL);
         }
-        t = vec_fromplot(arg->pn_value->v_name, get_plot(arg->pn_value->v_plot->pl_typename));
+        /* function 'v': take the plot data vector from the node selected - not the current plot */
+        if (func->fu_name && eq(func->fu_name, "v")) {
+           t = arg->pn_value;
+        }
+        else {
+            t = vec_fromplot(arg->pn_value->v_name, plot_cur);
+        }
         if (!t) {
             fprintf(cp_err, "Error: no such vector %s\n", arg->pn_value->v_name);
             return (NULL);
