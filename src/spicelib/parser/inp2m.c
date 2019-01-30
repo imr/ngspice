@@ -89,12 +89,11 @@ INP2M(CKTcircuit *ckt, INPtables *tab, struct card *current, CKTnode *gnode)
         INPtermInsert(ckt, &token, tab, &node[i]);
     }
 
-    int model_max_numnodes = model_numnodes(thismodel->INPmodType);
-
-    if ((thismodel->INPmodType != INPtypelook("VDMOS")) && (i < model_max_numnodes)) {
+    if ((thismodel->INPmodType != INPtypelook("VDMOS")) && (i < 4)) {
         LITERR ("too few nodes connected to instance");
         return;
     }
+    int model_max_numnodes = model_numnodes(thismodel->INPmodType);
     if (i > model_max_numnodes) {
         LITERR ("too many nodes connected to instance");
         return;
