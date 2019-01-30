@@ -9,8 +9,6 @@ Vgnd VS 0 0
 Vgate Gate 0 0.0
 MN0 Out Gate VS VS VS N1 W=10u L=0.18u
 MP0 Out Gate VD VS VD P1 W=20u L=0.18u
-MN0 Out Gate VS VS VS N1 W=10u L=0.18u
-MP0 Out Gate VD VS VD P1 W=20u L=0.18u
 .dc Vgate 0 1.5 0.05
 .print dc v(out)
 
