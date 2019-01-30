@@ -31,11 +31,6 @@ model_numnodes(int type)
         return 6;
     }
 
-    if (type == INPtypelook("VDMOS"))       /* 4 ; VDMOSnames */
-    {
-        return 4;
-    }
-
     return 4;
 }
 
@@ -95,6 +90,11 @@ INP2M(CKTcircuit *ckt, INPtables *tab, struct card *current, CKTnode *gnode)
     }
 
     int model_max_numnodes = model_numnodes(thismodel->INPmodType);
+
+    if ((thismodel->INPmodType != INPtypelook("VDMOS")) && (i < model_max_numnodes)) {
+        LITERR ("too few nodes connected to instance");
+        return;
+    }
     if (i > model_max_numnodes) {
         LITERR ("too many nodes connected to instance");
         return;
