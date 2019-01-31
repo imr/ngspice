@@ -20,7 +20,7 @@ V2 0 -V 50
 Q3 N009 N006 N005 0 MJE350
 Q4 N006 N006 N004 0 MJE350
 R6 +V N005 100
-R7 N009 N019 890
+R7 N009 N019 820
 Q5 N019 N023 N024 0 MJE340
 R8 +V N004 100
 R9 N024 -V 100
@@ -48,7 +48,7 @@ R22 N014 0 47K
 C7 N014 N013 2.2u
 Vin N013 0 ac 0 dc 0 SINE(0 {V} 1K)
 RLOAD OUT 0 8
-R24 +V N011 3.67Meg
+R24 +V N011 3.7Meg
 R25 N011 -V 6.1Meg
 V3 OUT OUT1 dc 0 ac 1
 C8 OUT1 N011 3p
@@ -76,20 +76,22 @@ setplot noise2
 plot inoise_spectrum
 .endc
 *
-.model IRFP240 VDMOS nchan 
-+ Vto=4 Kp=4.9 Lambda=.01 ksubthres=.1
-+ Rd=72m Rs=18m Rg=3
-+ Cgdmax=2.2n Cgdmin=10p Cgs=1.25n
-+ Is=67p Rb=36m Cjo=2n
-+ tcvth=0.0055
-+ shmod=1 RTH0=1.1k CTH0=1e-3 MU=1.27 texp0=1.5 texp1=0.3
+.model IRFP240 VDMOS nchan
++ Vto=4 Kp=5.9 Lambda=.001 Theta=0.015 ksubthres=.27
++ Rd=61m Rs=18m Rg=3 Rds=1e7
++ Cgdmax=2.1n Cgdmin=10p a=0.3 Cgs=1.25n
++ Is=60p N=1.1 Rb=14m Cjo=1.6n XTI=3
++ tcvth=0.0065
++ shmod=1 RTH0=1.8k CTH0=1e-3 MU=1.27 texp0=1.5 texp1=0.3
++ mtriode=0.8
 .model IRFP9240 VDMOS pchan
-+ Vto=-4 Kp=8.2 Lambda=.01 ksubthres=.1
-+ Rd=200m Rs=50m Rg=3
-+ Cgdmax=1.2n Cgdmin=50p Cgs=1.1n
-+ Is=76p Rb=100m Cjo=1n
++ Vto=-4 Kp=8.8 Lambda=.003 Theta=0.085 ksubthres=.35
++ Rd=185m Rs=50m Rg=3 Rds=1e7
++ Cgdmax=1.4n Cgdmin=30p a=0.23 Cgs=1.2n
++ Is=150p N=1.3 Rb=16m Cjo=1.1n XTI=2
 + tcvth=-0.004
-+ shmod=1 RTH0=1.1k CTH0=1e-3 MU=1.27 texp0=1.5 texp1=0.3
++ shmod=1 RTH0=1.8k CTH0=1e-3 MU=1.27 texp0=1.5 texp1=0.3
++ mtriode=0.5
 *
 .model MJE340 NPN(Is=1.03431e-13 BF=172.974 NF=.939811 VAF=27.3487 IKF=0.0260146 ISE=4.48447e-11 Ne=1.61605 Br=16.6725
 + Nr=0.796984 VAR=6.11596 IKR=0.10004 Isc=9.99914e-14 Nc=1.99995 RB=1.47761 IRB=0.2 RBM=1.47761 Re=0.0001 RC=1.42228
