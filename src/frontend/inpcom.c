@@ -6712,7 +6712,6 @@ inp_vdmos_model(struct card *deck)
                 }
             }
             else {
-                fprintf(stderr, "Warning: No model found for device in line %s\n", curr_line);
                 goto endloop;
             }
             /* if m instance line has 4 nodes, and the last two are equal, remove fourth node */
@@ -6746,10 +6745,6 @@ inp_vdmos_model(struct card *deck)
                     new_line = tprintf("%s %s %s %s", start_line, token1, token2, cut_line);
                 else
                     new_line = tprintf("%s %s", start_line, token1);
-            }
-            else {
-                fprintf(stderr, "Warning: No model found for device in line %s\n", curr_line);
-                goto endloop;
             }
         }
         if (new_line) {
