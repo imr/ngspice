@@ -80,7 +80,7 @@ let pw2 = per2/2
 let per3=1/f3
 let pw3 = per3/2
 *simulate
-tran 0.1n $&simtime uic
+tran 0.1n $&simtime 0 0.5n uic
 *change frequency after stopping
 * first pair of [] without spaces, second pair with spaces
 alter @vref[pulse] = [ 0 3.3 10n 1n 1n  $&pw2 $&per2 ]
