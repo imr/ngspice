@@ -87,10 +87,10 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
     int error;
 
     register int selfheat;
-    double BetaT, rd0T=0.0, rd1T=0.0, dBetaT_dT, drd0T_dT, drd1T_dT, dIds_dT;
+    double BetaT, rd0T, rd1T, dBetaT_dT, drd0T_dT, drd1T_dT, dIds_dT;
     double deldelTemp, delTemp, delTemp1, Temp, Vds, Vgs;
-    double ceqth;
-    double GmT, gTtg, gTtdp, gTtt, gTtsp, gcTt;
+    double ceqth=0.0;
+    double GmT, gTtg, gTtdp, gTtt, gTtsp, gcTt=0.0;
 
     /*  loop through all the VDMOS device models */
     for (; model != NULL; model = VDMOSnextModel(model)) {
@@ -315,14 +315,10 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                 double TempRatio = Temp / model->VDMOStnom;
                 BetaT = Beta * pow(TempRatio,-model->VDMOSmu);
                 dBetaT_dT = -Beta * model->VDMOSmu / (model->VDMOStnom * pow(TempRatio,1+model->VDMOSmu));
-                rd0T = 0.0;
-                drd0T_dT = 0.0;
+                rd0T =  model->VDMOSdrainResistance / here->VDMOSm * pow(TempRatio, model->VDMOStexp0);
+                drd0T_dT = rd0T * model->VDMOStexp0 / Temp;
                 rd1T = 0.0;
                 drd1T_dT = 0.0;
-                if ((model->VDMOSdrainResistanceGiven) && (model->VDMOSdrainResistance != 0)) {
-                    rd0T =  model->VDMOSdrainResistance / here->VDMOSm * pow(TempRatio, model->VDMOStexp0);
-                    drd0T_dT = rd0T * model->VDMOStexp0 / Temp;
-                }
                 if ((model->VDMOSqsResistanceGiven) && (model->VDMOSqsResistance != 0)) {
                     rd1T = model->VDMOSqsResistance * pow(TempRatio, model->VDMOStexp1);
                     drd1T_dT = rd1T * model->VDMOStexp1 / Temp;
@@ -332,7 +328,9 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                 dBetaT_dT = 0.0;
                 rd0T = model->VDMOSdrainResistance / here->VDMOSm;
                 drd0T_dT = 0.0;
-                rd1T = model->VDMOSqsResistance;
+                rd1T = 0.0;
+                if (model->VDMOSqsResistanceGiven)
+                    rd1T = model->VDMOSqsResistance / here->VDMOSm;
                 drd1T_dT = 0.0;
             }
 
@@ -486,7 +484,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                 if (rd > 0)
                     here->VDMOSdrainConductance = 1 / rd + ckt->CKTgmin;
                 else
-                    here->VDMOSdrainConductance = 0.0;
+                    here->VDMOSdrainConductance = 1 / rd0T;
             } else {
                 if ((selfheat) && (rd0T > 0))
                     here->VDMOSdrainConductance = 1 / rd0T;

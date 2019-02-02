@@ -93,8 +93,20 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
         if (!model->VDIObrkdEmissionCoeffGiven) {
             model->VDIObrkdEmissionCoeff = 1.;
         }
+        if (!model->VDMOSdrainResistanceGiven) {
+            model->VDMOSdrainResistance = 1.0e-03;
+        }
+        if (!model->VDMOSsourceResistanceGiven) {
+            model->VDMOSsourceResistance = 1.0e-03;
+        }
+        if (!model->VDMOSgateResistanceGiven) {
+            model->VDMOSgateResistance = 1.0e-03;
+        }
         if (!model->VDMOSrdsGiven) {
-            model->VDMOSrds = 1.0e30;
+            model->VDMOSrds = 1.0e+15;
+        }
+        if (!model->VDIOresistanceGiven) {
+            model->VDIOresistance = 1.0e-03;
         }
         if (!model->VDMOSnGiven) {
             model->VDMOSn = 1.;
@@ -156,55 +168,34 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
             if(!here->VDMOSwGiven) {
                 here->VDMOSw = 1;
             }
-            if (model->VDMOSdrainResistanceGiven) {
-                if (model->VDMOSdrainResistance != 0) {
-                    here->VDMOSdrainConductance = here->VDMOSm / model->VDMOSdrainResistance;
-                }
-                else {
-                    here->VDMOSdrainConductance = 0;
-                }
+            if (model->VDMOSdrainResistance != 0) {
+                here->VDMOSdrainConductance = here->VDMOSm / model->VDMOSdrainResistance;
             } else {
-                here->VDMOSdrainConductance = 0;
+                here->VDMOSdrainConductance = here->VDMOSm / 1.0e-03;
             }
-            if(model->VDMOSsourceResistanceGiven) {
-                if(model->VDMOSsourceResistance != 0) {
-                   here->VDMOSsourceConductance = here->VDMOSm / model->VDMOSsourceResistance;
-                } else {
-                    here->VDMOSsourceConductance = 0;
-                }
+            if (model->VDMOSsourceResistance != 0) {
+                here->VDMOSsourceConductance = here->VDMOSm / model->VDMOSsourceResistance;
             } else {
-                here->VDMOSsourceConductance = 0;
+                here->VDMOSsourceConductance = here->VDMOSm / 1.0e-03;
             }
-            if (model->VDMOSgateResistanceGiven) {
-                if (model->VDMOSgateResistance != 0) {
-                    here->VDMOSgateConductance = here->VDMOSm / model->VDMOSgateResistance;
-                } else {
-                    here->VDMOSgateConductance = 0;
-                }
+            if (model->VDMOSgateResistance != 0) {
+                here->VDMOSgateConductance = here->VDMOSm / model->VDMOSgateResistance;
             } else {
-                here->VDMOSgateConductance = 0;
+                here->VDMOSgateConductance = here->VDMOSm / 1.0e-03;
             }
             if (model->VDMOSrdsGiven) {
                 if (model->VDMOSrds != 0) {
                     here->VDMOSdsConductance = here->VDMOSm / model->VDMOSrds;
+                } else {
+                    here->VDMOSdsConductance = 1e-15;
                 }
-                else {
-                    here->VDMOSdsConductance = 0;
-                }
+            } else {
+                here->VDMOSdsConductance = 1e-15;
             }
-            else {
-                here->VDMOSdsConductance = 0;
-            }
-            if (model->VDIOresistanceGiven) {
-                if (model->VDIOresistance != 0) {
-                    here->VDIOconductance = here->VDMOSm / model->VDIOresistance;
-                }
-                else {
-                    here->VDIOconductance = 0;
-                }
-            }
-            else {
-                here->VDIOconductance = 0;
+            if (model->VDIOresistance != 0) {
+                here->VDIOconductance = here->VDMOSm / model->VDIOresistance;
+            } else {
+                here->VDIOconductance = here->VDMOSm / 1.0e-03;
             }
 
             if (!here->VDMOSrth0Given)
