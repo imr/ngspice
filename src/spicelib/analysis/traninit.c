@@ -7,6 +7,7 @@ Modified: 2000 AlansFixes
 #include "ngspice/cktdefs.h"
 #include "ngspice/trandefs.h"
 #include "ngspice/iferrmsg.h"
+#include "ngspice/cpextern.h"
 
 /*
  * this used to be in setup, but we need it here now
@@ -25,7 +26,7 @@ int TRANinit(CKTcircuit	*ckt, JOB *anal)
     /*  The following code has been taken from macspice 3f4 (A. Wilson)
         in the file traninit.new.c - Seems interesting */
     if(ckt->CKTmaxStep == 0) {
-        if (ckt->CKTstep < ( ckt->CKTfinalTime - ckt->CKTinitTime )/50.0)
+        if ((ckt->CKTstep < ( ckt->CKTfinalTime - ckt->CKTinitTime )/50.0) && cp_getvar("stepsizelimit", CP_BOOL, NULL, 0))
             ckt->CKTmaxStep = ckt->CKTstep;
         else
             ckt->CKTmaxStep = ( ckt->CKTfinalTime - ckt->CKTinitTime )/50.0;
