@@ -17,6 +17,7 @@ VD D 0 2V
 *dc vg 0 9 0.1
 dc vd 0.1 50 .1 vg 5 13 2
 plot -i(vd) xlog ylog ylimit .1 100
+settype temperature v(t)
 plot v(t)
 *tran 1m 0.01
 *plot v(d1)

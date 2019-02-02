@@ -65,6 +65,7 @@ plot ph(V(out)/V(out1))
 tran 1u 1000m
 fourier 1K V(out)
 plot v(out)*@rload[i]
+settype temperature v(tn) v(tp)
 plot v(tn) v(tp)
 linearize v(out)
 fft v(out)
