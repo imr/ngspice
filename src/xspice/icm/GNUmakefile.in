@@ -29,7 +29,7 @@ install: all
 
 uninstall:
 	for cm in $(CMDIRS) ; do \
-		-rm -f "$(DESTDIR)$(pkglibdir)/$$cm.cm"; \
+		rm -f "$(DESTDIR)$(pkglibdir)/$$cm.cm"; \
 	done
 
 
