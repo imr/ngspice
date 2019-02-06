@@ -83,7 +83,7 @@ VDMOSacLoad(GENmodel *inModel, CKTcircuit *ckt)
             *(here->VDMOSGPgPtr) -= here->VDMOSgateConductance;
             /* bulk diode */
             *(here->VDMOSSsPtr) += gspr;
-            *(here->VDMOSDdPtr) += gspr;
+            *(here->VDMOSDdPtr) += geq;
             *(here->VDMOSDdPtr +1) += xceq;
             *(here->VDIORPrpPtr) += geq+gspr;
             *(here->VDIORPrpPtr +1) += xceq;
