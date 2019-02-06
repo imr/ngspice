@@ -127,7 +127,7 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
             model->VDMOScth0 = 1e-5;
 
         if (!model->VDMOSmuGiven)
-            model->VDMOSmu = 1.27;
+            model->VDMOSmu = 1.5;
 
         if (!model->VDMOStexp0Given)
             model->VDMOStexp0 = 1.5;

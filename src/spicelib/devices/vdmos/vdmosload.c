@@ -87,7 +87,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
     int error;
 
     register int selfheat;
-    double BetaT, rd0T, rd1T, dBetaT_dT, drd0T_dT, drd1T_dT, dIds_dT;
+    double rd0T, rd1T, dBeta_dT, drd0T_dT, drd1T_dT, dIds_dT;
     double deldelTemp, delTemp, delTemp1, Temp, Vds, Vgs;
     double ceqth=0.0;
     double GmT, gTtg, gTtdp, gTtt, gTtsp, gcTt=0.0;
@@ -113,8 +113,6 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
              * pre-computed, but for historical reasons are still done
              * here.  They may be moved at the expense of instance size
              */
-
-            Beta = here->VDMOStTransconductance;
 
             delTemp = 0.0;
             if ((ckt->CKTmode & MODEINITSMSIG)) {
@@ -306,15 +304,15 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
 
             }
 
-            Temp = delTemp + ckt->CKTtemp;
+            Temp = delTemp + here->VDMOStemp;
             here->VDMOSTempSH = Temp; /* added for portability of SH Temp for noise analysis */
 
             /*  Calculate temperature dependent values for self-heating effect  */
             if (selfheat) {
                 double TempRatio = Temp / model->VDMOStnom;
-                BetaT = Beta * pow(TempRatio,-model->VDMOSmu);
-                dBetaT_dT = -Beta * model->VDMOSmu / (model->VDMOStnom * pow(TempRatio,1+model->VDMOSmu));
-                rd0T =  model->VDMOSdrainResistance / here->VDMOSm * pow(TempRatio, model->VDMOStexp0);
+                Beta = here->VDMOStTransconductance * pow(TempRatio,-model->VDMOSmu);
+                dBeta_dT = -here->VDMOStTransconductance * model->VDMOSmu / (model->VDMOStnom * pow(TempRatio,1+model->VDMOSmu));
+                rd0T =  here->VDMOSdrainResistance * pow(TempRatio, model->VDMOStexp0);
                 drd0T_dT = rd0T * model->VDMOStexp0 / Temp;
                 rd1T = 0.0;
                 drd1T_dT = 0.0;
@@ -323,9 +321,9 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                     drd1T_dT = rd1T * model->VDMOStexp1 / Temp;
                 }
             } else {
-                BetaT = Beta;
-                dBetaT_dT = 0.0;
-                rd0T = model->VDMOSdrainResistance / here->VDMOSm;
+                Beta = here->VDMOStTransconductance;
+                dBeta_dT = 0.0;
+                rd0T = here->VDMOSdrainResistance;
                 drd0T_dT = 0.0;
                 rd1T = 0.0;
                 if (model->VDMOSqsResistanceGiven)
@@ -388,10 +386,10 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                     double vdss = vds*mtr*here->VDMOSmode;
                     double t0 = 1 + lambda*vds;
                     double t1 = 1 + theta*vgs;
-                    betap = BetaT*t0/t1;
-                    double dbetapdvgs = -BetaT*theta*t0/(t1*t1);
-                    double dbetapdvds = BetaT*lambda/t1;
-                    double dbetapdT = dBetaT_dT*t0/t1;
+                    betap = Beta*t0/t1;
+                    double dbetapdvgs = -Beta*theta*t0/(t1*t1);
+                    double dbetapdvds = Beta*lambda/t1;
+                    double dbetapdT = dBeta_dT*t0/t1;
 
                     double t2 = exp((vgst-shift)/slope);
                     vgst = slope * log(1 + t2);
@@ -415,7 +413,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                     double onfg, fgate, Betam, dfgdvg;
                     onfg = 1.0+model->VDMOStheta*vgst;
                     fgate = 1.0/onfg;
-                    Betam = BetaT * fgate;
+                    Betam = Beta * fgate;
                     dfgdvg = -model->VDMOStheta*fgate*fgate;
                     if (vgst <= 0) {
                         /*
