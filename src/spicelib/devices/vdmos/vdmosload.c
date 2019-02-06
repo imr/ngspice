@@ -114,8 +114,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
              * here.  They may be moved at the expense of instance size
              */
 
-            Beta = here->VDMOStTransconductance * here->VDMOSm *
-                   here->VDMOSw / here->VDMOSl;
+            Beta = here->VDMOStTransconductance;
 
             delTemp = 0.0;
             if ((ckt->CKTmode & MODEINITSMSIG)) {

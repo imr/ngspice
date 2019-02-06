@@ -90,7 +90,7 @@ plot inoise_spectrum
 + Rd=185m Rs=50m Rg=3 Rds=1e7
 + Cgdmax=1.4n Cgdmin=30p a=0.23 Cgs=1.2n
 + Is=150p N=1.3 Rb=16m Cjo=1.1n XTI=2
-+ tcvth=-0.004
++ tcvth=0.004
 + shmod=1 RTH0=1.8k CTH0=1e-3 MU=1.27 texp0=1.5 texp1=0.3
 + mtriode=0.5
 *
