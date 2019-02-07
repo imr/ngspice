@@ -362,91 +362,45 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                  *
                  */
 
-                /* the following 2 variables are local to this code block until
-                 * it is obvious that they can be made global
-                 */
-                double betap;
-                double vgst;
-
                 von = here->VDMOStVth * model->VDMOStype;
-                vgst = (here->VDMOSmode == 1 ? vgs : vgd) - von;
+                double vgst = (here->VDMOSmode == 1 ? vgs : vgd) - von;
                 vdsat = MAX(vgst, 0);
-                if (model->VDMOSksubthresGiven) {
                 /* Simple weak inversion model, according to https://www.anasoft.co.uk/MOS1Model.htm
                  * Scale the voltage overdrive vgst logarithmically in weak inversion.
                  * Best fits LTSPICE curves with shift=0
                  */
-                    double slope = model->VDMOSksubthres;
-                    double lambda = model->VDMOSlambda;
-                    double theta = model->VDMOStheta;
-                    double shift = model->VDMOSsubshift;
-                    double mtr = model->VDMOSmtr;
+                double slope = model->VDMOSksubthres;
+                double lambda = model->VDMOSlambda;
+                double theta = model->VDMOStheta;
+                double shift = model->VDMOSsubshift;
+                double mtr = model->VDMOSmtr;
 
-                    /* scale vds with mtr (except with lambda) */
-                    double vdss = vds*mtr*here->VDMOSmode;
-                    double t0 = 1 + lambda*vds;
-                    double t1 = 1 + theta*vgs;
-                    betap = Beta*t0/t1;
-                    double dbetapdvgs = -Beta*theta*t0/(t1*t1);
-                    double dbetapdvds = Beta*lambda/t1;
-                    double dbetapdT = dBeta_dT*t0/t1;
+                /* scale vds with mtr (except with lambda) */
+                double vdss = vds*mtr*here->VDMOSmode;
+                double t0 = 1 + lambda*vds;
+                double t1 = 1 + theta*vgs;
+                double betap = Beta*t0/t1;
+                double dbetapdvgs = -Beta*theta*t0/(t1*t1);
+                double dbetapdvds = Beta*lambda/t1;
+                double dbetapdT = dBeta_dT*t0/t1;
 
-                    double t2 = exp((vgst-shift)/slope);
-                    vgst = slope * log(1 + t2);
-                    double dvgstdvgs = t2/(t2+1);
+                double t2 = exp((vgst-shift)/slope);
+                vgst = slope * log(1 + t2);
+                double dvgstdvgs = t2/(t2+1);
 
-                    if (vgst <= vdss) {
-                        /* saturation region */
-                        cdrain = betap * vgst*vgst * .5;
-                        here->VDMOSgm = betap*vgst*dvgstdvgs + 0.5*dbetapdvgs*vgst*vgst;
-                        here->VDMOSgds = .5*dbetapdvds*vgst*vgst;
-                        dIds_dT = dbetapdT * vgst*vgst * .5;
-                    }
-                    else {
-                        /* linear region */
-                        cdrain = betap * vdss * (vgst - .5 * vdss);
-                        here->VDMOSgm = betap*vdss*dvgstdvgs + vdss*dbetapdvgs*(vgst-.5*vdss);
-                        here->VDMOSgds = vdss*dbetapdvds*(vgst-.5*vdss) + betap*mtr*(vgst-.5*vdss) - .5*vdss*betap*mtr;
-                        dIds_dT = dbetapdT * vdss * (vgst - .5 * vdss);
-                    }
-                } else {
-                    double onfg, fgate, Betam, dfgdvg;
-                    onfg = 1.0+model->VDMOStheta*vgst;
-                    fgate = 1.0/onfg;
-                    Betam = Beta * fgate;
-                    dfgdvg = -model->VDMOStheta*fgate*fgate;
-                    if (vgst <= 0) {
-                        /*
-                         *     cutoff region
-                         */
-                        cdrain = 0;
-                        here->VDMOSgm = 0;
-                        here->VDMOSgds = 0;
-                    } else {
-                        /* scale vds with mtr */
-                        double mtr = model->VDMOSmtr;
-                        betap = Betam*(1 + model->VDMOSlambda*(vds*here->VDMOSmode));
-                        if (vgst <= (vds * here->VDMOSmode) * mtr) {
-                            /*
-                             *     saturation region
-                             */
-                            cdrain = betap*vgst*vgst*.5;
-                            here->VDMOSgm = betap*vgst * fgate + dfgdvg * cdrain;
-                            here->VDMOSgds = model->VDMOSlambda*Betam*vgst*vgst*.5;
-                        } else {
-                            /*
-                             *     linear region
-                             */
-                            cdrain = betap * (vds * here->VDMOSmode) * mtr *
-                                     (vgst - .5 * (vds*here->VDMOSmode) * mtr);
-                            here->VDMOSgm = betap * (vds * here->VDMOSmode) * mtr  * fgate + dfgdvg * cdrain;
-                            here->VDMOSgds = betap * (vgst - (vds * here->VDMOSmode) * mtr) +
-                                             model->VDMOSlambda * Betam *
-                                             (vds * here->VDMOSmode) * mtr *
-                                             (vgst - .5 * (vds * here->VDMOSmode) * mtr);
-                        }
-                    }
-                    dIds_dT = 0.0;
+                if (vgst <= vdss) {
+                    /* saturation region */
+                    cdrain = betap * vgst*vgst * .5;
+                    here->VDMOSgm = betap*vgst*dvgstdvgs + 0.5*dbetapdvgs*vgst*vgst;
+                    here->VDMOSgds = .5*dbetapdvds*vgst*vgst;
+                    dIds_dT = dbetapdT * vgst*vgst * .5;
+                }
+                else {
+                    /* linear region */
+                    cdrain = betap * vdss * (vgst - .5 * vdss);
+                    here->VDMOSgm = betap*vdss*dvgstdvgs + vdss*dbetapdvgs*(vgst-.5*vdss);
+                    here->VDMOSgds = vdss*dbetapdvds*(vgst-.5*vdss) + betap*mtr*(vgst-.5*vdss) - .5*vdss*betap*mtr;
+                    dIds_dT = dbetapdT * vdss * (vgst - .5 * vdss);
                 }
             }
 
