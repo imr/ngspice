@@ -54,14 +54,10 @@ VDMOSmParam(int param, IFvalue *value, GENmodel *inModel)
         case VDMOS_MOD_RQ:
             model->VDMOSqsResistance = value->rValue;
             model->VDMOSqsResistanceGiven = TRUE;
-            if (model->VDMOSqsVoltageGiven)
-                model->VDMOSqsGiven = TRUE;
             break;
         case VDMOS_MOD_VQ:
             model->VDMOSqsVoltage = value->rValue;
             model->VDMOSqsVoltageGiven = TRUE;
-            if (model->VDMOSqsResistanceGiven)
-                model->VDMOSqsGiven = TRUE;
             break;
         case VDMOS_MOD_RB:
             model->VDIOresistance = value->rValue;

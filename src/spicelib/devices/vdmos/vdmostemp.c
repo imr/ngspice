@@ -94,9 +94,13 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
             here->VDMOStTransconductance = model->VDMOStransconductance 
                                            * here->VDMOSm * here->VDMOSw / here->VDMOSl 
                                            * pow(ratio, -model->VDMOSmu);
+
             here->VDMOStVth = model->VDMOSvth0 - model->VDMOStype * model->VDMOStcvth * dt;
 
             here->VDMOSdrainResistance =  model->VDMOSdrainResistance / here->VDMOSm * pow(ratio, model->VDMOStexp0);
+
+            if (model->VDMOSqsGiven)
+                here->VDMOSqsResistance = model->VDMOSqsResistance / here->VDMOSm * pow(ratio, model->VDMOStexp1);
 
             vt = here->VDMOStemp * CONSTKoverQ;
             fact2 = here->VDMOStemp/REFTEMP;

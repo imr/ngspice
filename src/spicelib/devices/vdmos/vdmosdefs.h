@@ -54,6 +54,7 @@ typedef struct sVDMOSinstance {
     double VDMOSsourceConductance;   /*conductance of source(or 0):set in setup*/
     double VDMOSdrainConductance;    /*conductance of drain(or 0):set in setup*/
     double VDMOSdrainResistance;    /*resistance of drain(or 0): set in temp*/
+    double VDMOSqsResistance;    /*resistance of drain: set in temp*/
     double VDMOSgateConductance;    /*conductance of gate(or 0):set in setup*/
     double VDMOSdsConductance;    /*conductance of drain to source:set in setup*/
     double VDMOStemp;    /* operating temperature of this instance */

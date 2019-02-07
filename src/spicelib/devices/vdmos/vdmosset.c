@@ -129,15 +129,19 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
         if (!model->VDMOSmuGiven)
             model->VDMOSmu = 1.5;
 
+        if (!model->VDMOStcvthGiven)
+            model->VDMOStcvth = 0.0;
+
         if (!model->VDMOStexp0Given)
             model->VDMOStexp0 = 1.5;
 
         if (!model->VDMOStexp1Given)
             model->VDMOStexp1 = 0.3;
 
-        if (!model->VDMOStcvthGiven) {
-            model->VDMOStcvth = 0.0;
-        }
+        if ((model->VDMOSqsResistanceGiven) && (model->VDMOSqsVoltageGiven))
+            model->VDMOSqsGiven = 1;
+        else
+            model->VDMOSqsGiven = 0;
 
         /* loop through all the instances of the model */
         for (here = VDMOSinstances(model); here != NULL;

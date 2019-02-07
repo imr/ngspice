@@ -309,15 +309,15 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
 
             /*  Calculate temperature dependent values for self-heating effect  */
             if (selfheat) {
-                double TempRatio = Temp / model->VDMOStnom;
+                double TempRatio = Temp / here->VDMOStemp;
                 Beta = here->VDMOStTransconductance * pow(TempRatio,-model->VDMOSmu);
-                dBeta_dT = -here->VDMOStTransconductance * model->VDMOSmu / (model->VDMOStnom * pow(TempRatio,1+model->VDMOSmu));
+                dBeta_dT = -here->VDMOStTransconductance * model->VDMOSmu / (here->VDMOStemp * pow(TempRatio,1+model->VDMOSmu));
                 rd0T =  here->VDMOSdrainResistance * pow(TempRatio, model->VDMOStexp0);
                 drd0T_dT = rd0T * model->VDMOStexp0 / Temp;
                 rd1T = 0.0;
                 drd1T_dT = 0.0;
-                if ((model->VDMOSqsResistanceGiven) && (model->VDMOSqsResistance != 0)) {
-                    rd1T = model->VDMOSqsResistance * pow(TempRatio, model->VDMOStexp1);
+                if (model->VDMOSqsGiven) {
+                    rd1T = here->VDMOSqsResistance * pow(TempRatio, model->VDMOStexp1);
                     drd1T_dT = rd1T * model->VDMOStexp1 / Temp;
                 }
             } else {
@@ -326,8 +326,8 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                 rd0T = here->VDMOSdrainResistance;
                 drd0T_dT = 0.0;
                 rd1T = 0.0;
-                if (model->VDMOSqsResistanceGiven)
-                    rd1T = model->VDMOSqsResistance / here->VDMOSm;
+                if (model->VDMOSqsGiven)
+                    rd1T = here->VDMOSqsResistance;
                 drd1T_dT = 0.0;
             }
 
@@ -483,7 +483,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                 else
                     here->VDMOSdrainConductance = 1 / rd0T;
             } else {
-                if ((selfheat) && (rd0T > 0))
+                if (rd0T > 0)
                     here->VDMOSdrainConductance = 1 / rd0T;
             }
 
