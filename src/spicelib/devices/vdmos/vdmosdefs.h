@@ -45,7 +45,7 @@ typedef struct sVDMOSinstance {
     int VDMOSdNodePrime; /* number of the internal drain node of the mosfet */
     int VDMOSsNodePrime; /* number of the internal source node of the mosfet */
     int VDMOSgNodePrime; /* number of the internal gate node of the mosfet */
-    int VDIOposPrimeNode; /* number of the internal node of the bulk diode */
+    int VDIOposPrimeNode; /* number of the internal node of the body diode */
 
     double VDMOSm;   /* parallel device multiplier */
 
@@ -82,7 +82,7 @@ typedef struct sVDMOSinstance {
     double VDIOtJctCap;
     double VDIOtDepCap;     /* temperature adjusted transition point in */
                             /* the curve matching Fc * Vj */
-    double VDIOtJctPot;     /* temperature corrected Bulk potential */
+    double VDIOtJctPot;     /* temperature corrected junction potential */
     double VDIOtGradingCoeff;
 
     double VDIOtTransitTime;
@@ -210,7 +210,7 @@ typedef struct sVDMOSinstance {
                              * (source node, drain node) */
     double *VDMOSSdPtr;    /* pointer to sparse matrix element at
                              * (drain node, source node) */
-    /* bulk diode */
+    /* body diode */
     double *VDIORPdPtr;    /* pointer to sparse matrix element at
                              * (diode prime node, drain node) */
     double *VDIODrpPtr;    /* pointer to sparse matrix element at
@@ -300,9 +300,9 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
     double VDMOSksubthres;
     double VDMOSmtr;
 
-    /* bulk diode */
+    /* body diode */
     double VDIOjunctionCap;   /* input - use tCj */
-    double VDIOjunctionPot;    /* input - use tBulkPot */
+    double VDIOjunctionPot;    /* input - use tJctPot */
     double VDIOdepletionCapCoeff;
     double VDIOjctSatCur;   /* input - use tSatCur */
     double VDMOSbv;

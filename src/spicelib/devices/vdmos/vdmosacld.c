@@ -78,7 +78,7 @@ VDMOSacLoad(GENmodel *inModel, CKTcircuit *ckt)
             xcsT = -(cgT + cdT) * ckt->CKTomega;
             xcTt = cTt * ckt->CKTomega;
 
-            /* bulk diode */
+            /* body diode */
             double gspr, geq, xceq;
             gspr = here->VDIOtConductance;
             geq = *(ckt->CKTstate0 + here->VDIOconduct);
@@ -120,7 +120,7 @@ VDMOSacLoad(GENmodel *inModel, CKTcircuit *ckt)
             *(here->VDMOSGPgpPtr) += (here->VDMOSgateConductance)/* + ?? FIXME */;
             *(here->VDMOSGgpPtr) -= here->VDMOSgateConductance;
             *(here->VDMOSGPgPtr) -= here->VDMOSgateConductance;
-            /* bulk diode */
+            /* body diode */
             *(here->VDMOSSsPtr) += gspr;
             *(here->VDMOSDdPtr) += geq;
             *(here->VDMOSDdPtr +1) += xceq;

@@ -357,7 +357,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                 /*
                  *     this block of code evaluates the drain current and its
                  *     derivatives using the shichman-hodges model and the
-                 *     charges associated with the gate, channel and bulk for
+                 *     charges associated with the gate and channel for
                  *     mosfets
                  *
                  */
@@ -467,7 +467,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
             if (ckt->CKTmode & (MODETRAN | MODETRANOP | MODEINITSMSIG)) {
                 /*
                  * calculate gate - drain, gate - source capacitors
-                 * drain-source capacitor is evaluated with the bulk diode below
+                 * drain-source capacitor is evaluated with the body diode below
                  */
                 /*
                  * this just evaluates at the current time,
@@ -659,7 +659,7 @@ bypass:
                 (*(here->VDMOSTempspPtr) += gTtsp);
             }
 
-            /* bulk diode model
+            /* body diode model
              * Delivers reverse conduction and forward breakdown
              * of VDMOS transistor
              */

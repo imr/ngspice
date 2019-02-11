@@ -79,7 +79,7 @@ VDMOSdSetup(GENmodel *inModel, CKTcircuit *ckt)
             /*
              *     this block of code evaluates the drain current and its 
              *     derivatives using the shichman-hodges model and the 
-             *     charges associated with the gate, channel and bulk for 
+             *     charges associated with the gate and channel for 
              *     mosfets
              *
              */
@@ -151,15 +151,6 @@ VDMOSdSetup(GENmodel *inModel, CKTcircuit *ckt)
             /*
              *  COMPUTE EQUIVALENT DRAIN CURRENT SOURCE
              */
-                /* 
-                 * now we do the hard part of the bulk-drain and bulk-source
-                 * diode - we evaluate the non-linear capacitance and
-                 * charge
-                 *
-                 * the basic equations are not hard, but the implementation
-                 * is somewhat long in an attempt to avoid log/exponential
-                 * evaluations
-                 */
             /*
              *     meyer's capacitor model
              */

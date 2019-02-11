@@ -53,11 +53,11 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
 
         model->VDMOSoxideCapFactor = 0;
 
-        /* bulk diode model */
+        /* body diode model */
         /* limit activation energy to min of .1 */
         if (model->VDMOSeg<.1) {
             SPfrontEnd->IFerrorf(ERR_WARNING,
-                "%s: bulk diode activation energy too small, limited to 0.1",
+                "%s: body diode activation energy too small, limited to 0.1",
                 model->VDMOSmodName);
             model->VDMOSeg = .1;
         }
@@ -113,7 +113,7 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
             phio = (model->VDMOSphi - pbfact1) / fact1;
             here->VDMOStPhi = fact2 * phio + pbfact; /* needed for distortion analysis */
 
-            /* bulk diode temperature model */
+            /* body diode temperature model */
             double pbo, gmaold;
             double gmanew, factor;
             double tBreakdownVoltage, vte, cbv;
