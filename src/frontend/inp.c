@@ -669,7 +669,9 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                 /* lines .width, .four, .plot, .print, .save added to wl_first, removed from deck */
                 /* lines .op, .meas, .tf added to wl_first */
                 inp_casefix(s); /* s: first token from line */
-                inp_casefix(dd->line);
+                /* Do not eliminate " around netnames, to allow '/' or '-' in netnames */
+                if (!eq(s, ".plot") && !eq(s, ".print"))
+                    inp_casefix(dd->line);
                 if (eq(s, ".width") ||
                     ciprefix(".four", s) ||
                     eq(s, ".plot") ||
