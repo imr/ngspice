@@ -51,7 +51,7 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
             return(E_BADPARM);
         }
 
-        model->VDMOSoxideCapFactor = 0;
+        model->VDMOSoxideCapFactor = 3.9 * 8.854214871e-12 / 1e-07; /* use default Tox of 100nm */
 
         /* body diode model */
         /* limit activation energy to min of .1 */

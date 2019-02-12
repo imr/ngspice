@@ -21,6 +21,7 @@ VDMOSdSetup(GENmodel *inModel, CKTcircuit *ckt)
     VDMOSmodel *model = (VDMOSmodel *) inModel;
     VDMOSinstance *here;
     double Beta;
+    double OxideCap;
     double gm;
     double gds;
     double vgst;
@@ -50,8 +51,10 @@ VDMOSdSetup(GENmodel *inModel, CKTcircuit *ckt)
 
             vt = CONSTKoverQ * here->VDMOStemp;
 
-            Beta = here->VDMOStTransconductance * here->VDMOSm *
-                    here->VDMOSw/here->VDMOSl;
+            Beta = here->VDMOStTransconductance;
+
+            OxideCap = model->VDMOSoxideCapFactor * here->VDMOSl * 
+                    here->VDMOSm * here->VDMOSw;
 
             vgs = model->VDMOStype * ( 
                 *(ckt->CKTrhsOld+here->VDMOSgNode) -
@@ -88,59 +91,50 @@ VDMOSdSetup(GENmodel *inModel, CKTcircuit *ckt)
              * it is obvious that they can be made global 
              */
             {
-                double betap;
+                double von = here->VDMOStVth * model->VDMOStype;
+                vgst = (here->VDMOSmode == 1 ? vgs : vgd) - von;
+                vdsat = MAX(vgst, 0);
+                double slope = model->VDMOSksubthres;
+                double lambda = model->VDMOSlambda;
+                double theta = model->VDMOStheta;
+                double shift = model->VDMOSsubshift;
+                double mtr = model->VDMOSmtr;
 
-                vgst=(here->VDMOSmode==1?vgs:vgd);
-                vdsat=MAX(vgst,0);
+                /* scale vds with mtr (except with lambda) */
+                double vdss = vds*mtr*here->VDMOSmode;
+                double t0 = 1 + lambda*vds;
+                double t1 = 1 + theta*vgs;
+                double betap = Beta*t0/t1;
+                double dbetapdvgs = -Beta*theta*t0/(t1*t1);
+                double dbetapdvds = Beta*lambda/t1;
 
-                if (vgst <= 0) {
-                    /*
-                     *     cutoff region
-                     */
-                /* cdrain = 0 */
-                    gm=0;
-                    gds=0;
-                    gm2=gds2=0;
-                    gmds=0;
-                    gm3=gds3=0;
-                    gm2ds=gmds2=0;
-                } else {
-                    /*
-                     *     saturation region
-                     */
+                double t2 = exp((vgst-shift)/slope);
+                vgst = slope * log(1 + t2);
+                double dvgstdvgs = t2/(t2+1);
 
-                    betap=Beta*(1+model->VDMOSlambda*(vds*here->VDMOSmode));
-                    /* cdrain = betap * vgst * vgst * 0.5; */
-                    if (vgst <= (vds*here->VDMOSmode)){
-                        gm=betap*vgst;
-                        gds=model->VDMOSlambda*Beta*vgst*vgst*.5;
+                if (vgst <= vdss) {
+                    /* saturation region */
+                    gm = betap*vgst*dvgstdvgs + 0.5*dbetapdvgs*vgst*vgst;
+                    gds = .5*dbetapdvds*vgst*vgst;
                         gm2 = betap;
                         gds2 = 0;
-                        gmds = vgst*model->VDMOSlambda*Beta;
+                        gmds = Beta*lambda*vgst;
                         gm3 = 0;
                         gds3 = 0;
-                        gm2ds = Beta * model->VDMOSlambda;
+                        gm2ds = Beta*lambda;
                         gmds2 = 0;
-
-                    } else {
-                        /*
-                         *     linear region
-                         */
-                        /* cdrain = betap * vds * (vgst - vds/2); */
-                        gm=betap*(vds*here->VDMOSmode);
-                        gds= Beta * model->VDMOSlambda*(vgst*
-                        vds*here->VDMOSmode - vds*vds*0.5) +
-                        betap*(vgst - vds*here->VDMOSmode);
+                }
+                else {
+                    /* linear region */
+                    gm = betap*vdss*dvgstdvgs + vdss*dbetapdvgs*(vgst-.5*vdss);
+                    gds = vdss*dbetapdvds*(vgst-.5*vdss) + betap*mtr*(vgst-.5*vdss) - .5*vdss*betap*mtr;
                         gm2 = 0;
-                        gds2 = 2*Beta * model->VDMOSlambda*(vgst - 
-                            vds*here->VDMOSmode) - betap;
-                        gmds = Beta * model->VDMOSlambda* vds *
-                            here->VDMOSmode + betap;
+                        gds2 = 2*Beta * lambda*(vgst - vds*here->VDMOSmode) - betap;
+                        gmds = Beta * lambda * vds * here->VDMOSmode + betap;
                         gm3=0;
-                        gds3 = -Beta*model->VDMOSlambda*3.;
+                        gds3 = -Beta*lambda*3.;
                         gm2ds=0;
-                        gmds2 = 2*model->VDMOSlambda*Beta;
-                    }
+                        gmds2 = 2*lambda*Beta;
                 }
                 /*
                  *     finished
@@ -166,7 +160,6 @@ VDMOSdSetup(GENmodel *inModel, CKTcircuit *ckt)
              * expressions for the charge are available
              */
 
-     
             {
 
                 double phi;
@@ -177,7 +170,7 @@ VDMOSdSetup(GENmodel *inModel, CKTcircuit *ckt)
                 /* von, vgst and vdsat have already been adjusted for 
                     possible source-drain interchange */
                 phi = here->VDMOStPhi;
-                cox = 0;/*FIXME: can we do disto without knowing the oxide thickness?*/
+                cox = OxideCap; /*FIXME: using a guess for the oxide thickness of 1e-07 in vdmostemp.c */
                 lcapgs2=lcapgs3=lcapgd2=lcapgd3=0;
                 if (vgst <= 0) {
                     lcapgs2 = cox/(3*phi);
