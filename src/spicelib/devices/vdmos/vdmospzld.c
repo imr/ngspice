@@ -75,10 +75,10 @@ VDMOSpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
             *(here->VDMOSDdpPtr) -= here->VDMOSdrainConductance;
             *(here->VDMOSSspPtr) -= here->VDMOSsourceConductance;
             *(here->VDMOSDPdPtr) -= here->VDMOSdrainConductance;
-            *(here->VDMOSDPgPtr) += (xnrm-xrev)*here->VDMOSgm;
+            *(here->VDMOSDPgpPtr) += (xnrm-xrev)*here->VDMOSgm;
             *(here->VDMOSDPspPtr) -= here->VDMOSgds+
                     xnrm*(here->VDMOSgm);
-            *(here->VDMOSSPgPtr) -= (xnrm-xrev)*here->VDMOSgm;
+            *(here->VDMOSSPgpPtr) -= (xnrm-xrev)*here->VDMOSgm;
             *(here->VDMOSSPsPtr) -= here->VDMOSsourceConductance;
             *(here->VDMOSSPdpPtr) -= here->VDMOSgds+
                     xrev*(here->VDMOSgm);
