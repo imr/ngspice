@@ -2664,6 +2664,9 @@ lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3
     <ClCompile Include=".\src\msvc-compat.c" />
     <ClCompile Include=".\tmp-bison\parse-bison.c" />
   </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="vngspice.rc" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
