@@ -80,19 +80,21 @@ plot inoise_spectrum
 .model IRFP240 VDMOS nchan
 + Vto=4 Kp=5.9 Lambda=.001 Theta=0.015 ksubthres=.27
 + Rd=61m Rs=18m Rg=3 Rds=1e7
-+ Cgdmax=2.1n Cgdmin=10p a=0.3 Cgs=1.25n
-+ Is=60p N=1.1 Rb=14m Cjo=1.6n XTI=3
-+ tcvth=0.0065 texp0=1.5
-+ shmod=1 RTH0=1.8k CTH0=1e-3 MU=1.27 texp1=0.3
++ Cgdmax=2.45n Cgdmin=10p a=0.3 Cgs=1.2n
++ Is=60p N=1.1 Rb=14m XTI=3
++ Cjo=1.5n Vj=0.8 m=0.5
++ tcvth=0.0065 MU=1.27 texp0=1.5
++ shmod=1 RTH0=1.8k CTH0=1e-3
 + mtriode=0.8
 .model IRFP9240 VDMOS pchan
-+ Vto=-4 Kp=8.8 Lambda=.003 Theta=0.085 ksubthres=.35
-+ Rd=185m Rs=50m Rg=3 Rds=1e7
-+ Cgdmax=1.4n Cgdmin=30p a=0.23 Cgs=1.2n
-+ Is=150p N=1.3 Rb=16m Cjo=1.1n XTI=2
-+ tcvth=0.004 texp0=1.5
-+ shmod=1 RTH0=1.8k CTH0=1e-3 MU=1.27 texp1=0.3
-+ mtriode=0.5
++ Vto=-4 Kp=8.8 Lambda=.003 Theta=0.08 ksubthres=.35
++ Rd=180m Rs=50m Rg=3 Rds=1e7
++ Cgdmax=1.25n Cgdmin=50p a=0.23 Cgs=1.15n
++ Is=150p N=1.3 Rb=16m XTI=2
++ Cjo=1.3n Vj=0.8 m=0.5
++ tcvth=0.004 MU=1.27 texp0=1.5
++ shmod=1 RTH0=1.8k CTH0=1e-3
++ mtriode=0.6
 *
 .model MJE340 NPN(Is=1.03431e-13 BF=172.974 NF=.939811 VAF=27.3487 IKF=0.0260146 ISE=4.48447e-11 Ne=1.61605 Br=16.6725
 + Nr=0.796984 VAR=6.11596 IKR=0.10004 Isc=9.99914e-14 Nc=1.99995 RB=1.47761 IRB=0.2 RBM=1.47761 Re=0.0001 RC=1.42228
