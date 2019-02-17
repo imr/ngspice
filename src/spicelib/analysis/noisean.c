@@ -78,8 +78,8 @@ NOISEan (CKTcircuit *ckt, int restart)
 
         if (!inst || inst->GENmodPtr->GENmodType < 0) {
             SPfrontEnd->IFerrorf (ERR_WARNING,
-                                 "Noise input source %s not in circuit",
-                                 job->input);
+                                  "Noise input source %s not in circuit",
+                                  job->input);
             return E_NOTFOUND;
         }
 
@@ -91,15 +91,15 @@ NOISEan (CKTcircuit *ckt, int restart)
             src_type = SV_CURRENT;
         } else {
             SPfrontEnd->IFerrorf (ERR_WARNING,
-                                 "Noise input source %s is not of proper type",
-                                 job->input);
+                                  "Noise input source %s is not of proper type",
+                                  job->input);
             return E_NOTFOUND;
         }
 
         if (!ac_given) {
             SPfrontEnd->IFerrorf (ERR_WARNING,
-                                 "Noise input source %s has no AC value",
-                                 job->input);
+                                  "Noise input source %s has no AC value",
+                                  job->input);
             return E_NOACINPUT;
         }
     }
@@ -107,34 +107,29 @@ NOISEan (CKTcircuit *ckt, int restart)
     if ( (job->NsavFstp == 0.0) || restart) { /* va, NsavFstp is double */
         switch (job->NstpType) {
 
-            case DECADE:
-                job->NfreqDelta = exp(log(10.0) / job->NnumSteps);
-                break;
+        case DECADE:
+            job->NfreqDelta = exp(log(10.0) / job->NnumSteps);
+            break;
 
-            case OCTAVE:
-                job->NfreqDelta = exp(log(2.0) / job->NnumSteps);
-                break;
+        case OCTAVE:
+            job->NfreqDelta = exp(log(2.0) / job->NnumSteps);
+            break;
 
-            case LINEAR:
+        case LINEAR:
             if (job->NnumSteps == 1)
                 job->NfreqDelta = 0;
             else
                 job->NfreqDelta = (job->NstopFreq - job->NstartFreq) / (job->NnumSteps - 1);
-                break;
+            break;
 
-            default:
-                return(E_BADPARM);
+        default:
+            return(E_BADPARM);
         }
 
         /* error = DCop(ckt); */
         error = CKTop(ckt, (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITJCT,
-<<<<<<< .mine
-            (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITFLOAT,
-            ckt->CKTdcMaxIter);
-=======
                       (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITFLOAT,
                       ckt->CKTdcMaxIter);
->>>>>>> .theirs
 
         if (error) return(error);
 
@@ -166,13 +161,13 @@ NOISEan (CKTcircuit *ckt, int restart)
 
         if (src_type == SV_VOLTAGE)
             fixme_inoise_type =
-                    data->squared ? SV_SQR_VOLTAGE_DENSITY : SV_VOLTAGE_DENSITY;
+                data->squared ? SV_SQR_VOLTAGE_DENSITY : SV_VOLTAGE_DENSITY;
         else
             fixme_inoise_type =
-                    data->squared ? SV_SQR_CURRENT_DENSITY : SV_CURRENT_DENSITY;
+                data->squared ? SV_SQR_CURRENT_DENSITY : SV_CURRENT_DENSITY;
 
         fixme_onoise_type =
-                data->squared ? SV_SQR_VOLTAGE_DENSITY : SV_VOLTAGE_DENSITY;
+            data->squared ? SV_SQR_VOLTAGE_DENSITY : SV_VOLTAGE_DENSITY;
 
         if (!data->squared)
             for (i = 0; i < data->numPlots; i++)
@@ -199,16 +194,16 @@ NOISEan (CKTcircuit *ckt, int restart)
         switch (job->NstpType) {
 
         case DECADE:
-            case OCTAVE:
+        case OCTAVE:
             data->freq = job->NstartFreq * exp (step * log (job->NfreqDelta));
-                    break;
+            break;
 
-            case LINEAR:
-                data->freq = job->NstartFreq + step * job->NfreqDelta;
-                    break;
+        case LINEAR:
+            data->freq = job->NstartFreq + step * job->NfreqDelta;
+            break;
 
-            default:
-                return(E_BADPARM);
+        default:
+            return(E_BADPARM);
 
         }
         job->NsavFstp = 0;
@@ -216,23 +211,23 @@ NOISEan (CKTcircuit *ckt, int restart)
         data->inNoise = job->NsavInoise;
         /* saj resume rawfile fix*/
         error = SPfrontEnd->OUTpBeginPlot (NULL, NULL,
-                                       NULL,
-                                       NULL, 0,
-                                       666, NULL, 666,
-                                       &(data->NplotPtr));
+                                           NULL,
+                                           NULL, 0,
+                                           666, NULL, 666,
+                                           &(data->NplotPtr));
         /*saj*/
     }
 
     switch (job->NstpType) {
-        case DECADE:
-        case OCTAVE:
-            freqTol = job->NfreqDelta * job->NstopFreq * ckt->CKTreltol;
-            break;
-        case LINEAR:
-            freqTol = job->NfreqDelta * ckt->CKTreltol;
-            break;
-        default:
-            return(E_BADPARM);
+    case DECADE:
+    case OCTAVE:
+        freqTol = job->NfreqDelta * job->NstopFreq * ckt->CKTreltol;
+        break;
+    case LINEAR:
+        freqTol = job->NfreqDelta * ckt->CKTreltol;
+        break;
+    default:
+        return(E_BADPARM);
     }
 
     data->lstFreq = data->freq;
@@ -304,7 +299,7 @@ NOISEan (CKTcircuit *ckt, int restart)
             data->freq *= job->NfreqDelta;
             break;
 
-            case LINEAR:
+        case LINEAR:
             data->freq += job->NfreqDelta;
             break;
 
@@ -330,17 +325,12 @@ NOISEan (CKTcircuit *ckt, int restart)
 
         if (src_type == SV_VOLTAGE)
             fixme_inoise_type =
-                    data->squared ? SV_SQR_VOLTAGE : SV_VOLTAGE;
+                data->squared ? SV_SQR_VOLTAGE : SV_VOLTAGE;
         else
             fixme_inoise_type =
-                    data->squared ? SV_SQR_CURRENT : SV_CURRENT;
+                data->squared ? SV_SQR_CURRENT : SV_CURRENT;
 
-        fixme_onoise_type =
-<<<<<<< .mine
-                    data->squared ? SV_SQR_VOLTAGE : SV_VOLTAGE;
-=======
-            data->squared ? SV_SQR_VOLTAGE : SV_VOLTAGE;
->>>>>>> .theirs
+        fixme_onoise_type = data->squared ? SV_SQR_VOLTAGE : SV_VOLTAGE;
 
         if (!data->squared)
             for (i = 0; i < data->numPlots; i++)
