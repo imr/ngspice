@@ -1,0 +1,32 @@
+This document is covered by the Creative Commons Attribution Share-Alike (CC-BY-SA) v4.0. .
+
+***************  Verilog A Device models in ngspice ******************************************
+
+Branch adms-new
+
+adms-experiment-3 rebased on top of current pre-master,
+https://sourceforge.net/p/ngspice/ngspice/ci/5fe1dca57ab5232f583f22054827b93a0e52f9a8/,
+that is on top of ngspice-30-2
+
+checkout pre-master
+rename branch: adms-new
+tortoise git rebase
+upstream origin/adms-experiment-3
+revert Branch:, Upstream
+
+in msys2: ./compile_min_adms.sh 64
+working executable obtained
+
+
+Branch adms-new-reverse
+
+adms-experimental-3 rebased on top of current pre-master
+pre-master reased on top of adms-experiment-3
+
+checkout pre-master
+tortoise git rebase
+select upstream origin/adms-experiment-3
+tags after ngspice-27 got lost.
+
+in msys2: ./compile_min_adms.sh 64
+working executable obtained
