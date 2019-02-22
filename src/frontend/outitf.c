@@ -905,7 +905,7 @@ guess_type(const char *name)
         type = SV_TEMP;
     else if (cieq(name, "res-sweep"))
         type = SV_RES;
-    else if ((*name == '@') && substring("[g", name))
+    else if ((*name == '@') && substring("[g", name)) /* token starting with [g */
         type = SV_ADMITTANCE;
     else if ((*name == '@') && substring("[c", name))
         type = SV_CAPACITANCE;
@@ -913,6 +913,8 @@ guess_type(const char *name)
         type = SV_CURRENT;
     else if ((*name == '@') && substring("[q", name))
         type = SV_CHARGE;
+    else if ((*name == '@') && substring("[p]", name)) /* token is exactly [p] */
+        type = SV_POWER;
     else
         type = SV_VOLTAGE;
 
