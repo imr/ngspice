@@ -55,8 +55,8 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
     char filename_data[128];
     char filename_plt[128];
 
-    sprintf(filename_data, "%s.data", filename);
-    sprintf(filename_plt, "%s.plt", filename);
+    snprintf(filename_data, 128, "%s.data", filename);
+    snprintf(filename_plt, 128, "%s.plt", filename);
 
     /* Sanity checking. */
     for (v = vecs, numVecs = 0; v; v = v->v_link2)
