@@ -83,6 +83,8 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
         terminal_type = 1;
         if (cieq(terminal,"png"))
             terminal_type = 2;
+        if (cieq(terminal,"png/quit"))
+            terminal_type = 3;
     }
 
     if (!cp_getvar("xbrushwidth", CP_NUM, &linewidth, 0))
@@ -216,6 +218,12 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
     }
     fprintf(file, "set format y \"%%g\"\n");
     fprintf(file, "set format x \"%%g\"\n");
+
+    if (terminal_type == 3) {
+        fprintf(file, "set terminal png noenhanced\n");
+        fprintf(file, "set out \'%s.png\'\n", filename);
+    }
+
     fprintf(file, "plot ");
     i = 0;
 
@@ -234,20 +242,26 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
 
     /* do not print an eps or png file if filename start with 'np_' */
     if (!ciprefix("np_", filename)) {
-        fprintf(file, "set terminal push\n");
+        if (terminal_type != 3)
+            fprintf(file, "set terminal push\n");
         if (terminal_type == 1) {
             fprintf(file, "set terminal postscript eps color noenhanced\n");
             fprintf(file, "set out \'%s.eps\'\n", filename);
         }
-        else {
+        if (terminal_type == 2) {
             fprintf(file, "set terminal png noenhanced\n");
             fprintf(file, "set out \'%s.png\'\n", filename);
         }
-        fprintf(file, "replot\n");
-        fprintf(file, "set term pop\n");
+        if (terminal_type != 3) {
+            fprintf(file, "replot\n");
+            fprintf(file, "set term pop\n");
+        }
     }
 
-    fprintf(file, "replot\n");
+    if (terminal_type == 3)
+        fprintf(file, "exit\n");
+    else
+        fprintf(file, "replot\n");
 
     (void) fclose(file);
 
@@ -293,7 +307,12 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
     _flushall();
 #else
     /* for external fcn system() from LINUX environment */
-    (void) sprintf(buf, "xterm -e gnuplot %s - &", filename_plt);
+    if (terminal_type == 3) {
+        fprintf(cp_out, "writing plot to file %s\n", filename_plt);
+        (void) sprintf(buf, "gnuplot %s", filename_plt);
+    }
+    else
+        (void) sprintf(buf, "xterm -e gnuplot %s - &", filename_plt);
 #endif
     err = system(buf);
 
