@@ -85,6 +85,10 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
             terminal_type = 2;
         if (cieq(terminal,"png/quit"))
             terminal_type = 3;
+        if (cieq(terminal, "eps"))
+            terminal_type = 4;
+        if (cieq(terminal, "eps/quit"))
+            terminal_type = 5;
     }
 
     if (!cp_getvar("xbrushwidth", CP_NUM, &linewidth, 0))
@@ -219,11 +223,6 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
     fprintf(file, "set format y \"%%g\"\n");
     fprintf(file, "set format x \"%%g\"\n");
 
-    if (terminal_type == 3) {
-        fprintf(file, "set terminal png noenhanced\n");
-        fprintf(file, "set out \'%s.png\'\n", filename);
-    }
-
     fprintf(file, "plot ");
     i = 0;
 
@@ -240,28 +239,35 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
     }
     fprintf(file, "\n");
 
-    /* do not print an eps or png file if filename start with 'np_' */
-    if (!ciprefix("np_", filename)) {
-        if (terminal_type != 3)
-            fprintf(file, "set terminal push\n");
-        if (terminal_type == 1) {
-            fprintf(file, "set terminal postscript eps color noenhanced\n");
-            fprintf(file, "set out \'%s.eps\'\n", filename);
-        }
-        if (terminal_type == 2) {
-            fprintf(file, "set terminal png noenhanced\n");
-            fprintf(file, "set out \'%s.png\'\n", filename);
-        }
-        if (terminal_type != 3) {
-            fprintf(file, "replot\n");
-            fprintf(file, "set term pop\n");
-        }
+    /* terminal_type
+    1: do not print an eps or png file
+    2: print png file, keep command window open
+    3: print png file, quit command window
+    4: print eps file, keep command window open
+    5: print eps file, quit command window
+    */
+    if ((terminal_type == 2) || (terminal_type == 4))
+        fprintf(file, "set terminal push\n");
+    if ((terminal_type == 4) || (terminal_type == 5)) {
+        fprintf(file, "set terminal postscript eps color noenhanced\n");
+        fprintf(file, "set out \'%s.eps\'\n", filename);
+    }
+    if ((terminal_type == 2) || (terminal_type == 3)) {
+        fprintf(file, "set terminal png noenhanced\n");
+        fprintf(file, "set out \'%s.png\'\n", filename);
+    }
+    if ((terminal_type == 2) || (terminal_type == 4)) {
+        fprintf(file, "replot\n");
+        fprintf(file, "set term pop\n");
+        fprintf(file, "replot\n");
     }
 
-    if (terminal_type == 3)
-        fprintf(file, "exit\n");
-    else
+    if ((terminal_type == 3) || (terminal_type == 5)) {
         fprintf(file, "replot\n");
+        fprintf(file, "exit\n");
+    }
+
+
 
     (void) fclose(file);
 
