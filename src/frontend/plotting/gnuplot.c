@@ -223,21 +223,23 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
     fprintf(file, "set format y \"%%g\"\n");
     fprintf(file, "set format x \"%%g\"\n");
 
-    fprintf(file, "plot ");
-    i = 0;
+    if ((terminal_type != 3) && (terminal_type != 5)) {
+        fprintf(file, "plot ");
+        i = 0;
 
-    /* Write out the gnuplot command */
-    for (v = vecs; v; v = v->v_link2) {
-        scale = v->v_scale;
-        if (v->v_name) {
-            i = i + 2;
-            if (i > 2) fprintf(file, ",\\\n");
-            fprintf(file, "\'%s\' using %d:%d with %s lw %d title ",
-                    filename_data, i-1, i, plotstyle, linewidth);
-            quote_gnuplot_string(file, v->v_name);
+        /* Write out the gnuplot command */
+        for (v = vecs; v; v = v->v_link2) {
+            scale = v->v_scale;
+            if (v->v_name) {
+                i = i + 2;
+                if (i > 2) fprintf(file, ",\\\n");
+                fprintf(file, "\'%s\' using %d:%d with %s lw %d title ",
+                    filename_data, i - 1, i, plotstyle, linewidth);
+                quote_gnuplot_string(file, v->v_name);
+            }
         }
+        fprintf(file, "\n");
     }
-    fprintf(file, "\n");
 
     /* terminal_type
     1: do not print an eps or png file
@@ -263,7 +265,21 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
     }
 
     if ((terminal_type == 3) || (terminal_type == 5)) {
-        fprintf(file, "replot\n");
+        fprintf(file, "plot ");
+        i = 0;
+
+        /* Write out the gnuplot command */
+        for (v = vecs; v; v = v->v_link2) {
+            scale = v->v_scale;
+            if (v->v_name) {
+                i = i + 2;
+                if (i > 2) fprintf(file, ",\\\n");
+                fprintf(file, "\'%s\' using %d:%d with %s lw %d title ",
+                    filename_data, i - 1, i, plotstyle, linewidth);
+                quote_gnuplot_string(file, v->v_name);
+            }
+        }
+        fprintf(file, "\n");
         fprintf(file, "exit\n");
     }
 
