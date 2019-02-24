@@ -16,7 +16,12 @@
 #include "ngspice/dvec.h"
 #include "ngspice/fteparse.h"
 #include "gnuplot.h"
-
+#if defined(__MINGW32__) || defined(_MSC_VER)
+#undef BOOLEAN
+#include <windows.h>
+#else
+#include <unistd.h.h>
+#endif
 
 #define GP_MAXVECTORS 64
 
@@ -338,6 +343,23 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
 #endif
     err = system(buf);
 
+    /* delete the plt and data files */
+    if ((terminal_type == 3) || (terminal_type == 5)) {
+        /* wait for gnuplot generating eps or png file */
+#if defined(__MINGW32__) || defined(_MSC_VER)
+        Sleep(200);
+#else
+        usleep(200000);
+#endif
+        if (remove(filename_data)) {
+            fprintf(stderr, "Could not remove file %s\n", filename_data);
+            perror(NULL);
+        }
+        if (remove(filename_plt)) {
+            fprintf(stderr, "Could not remove file %s\n", filename_plt);
+            perror(NULL);
+        }
+    }
 }
 
 
