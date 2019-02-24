@@ -20,7 +20,7 @@
 #undef BOOLEAN
 #include <windows.h>
 #else
-#include <unistd.h.h>
+#include <unistd.h>
 #endif
 
 #define GP_MAXVECTORS 64
@@ -335,7 +335,11 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
 #else
     /* for external fcn system() from LINUX environment */
     if (terminal_type == 3) {
-        fprintf(cp_out, "writing plot to file %s\n", filename_plt);
+        fprintf(cp_out, "writing plot to file %s.png\n", filename);
+        (void) sprintf(buf, "gnuplot %s", filename_plt);
+    }
+    else if (terminal_type == 5) {
+        fprintf(cp_out, "writing plot to file %s.eps\n", filename);
         (void) sprintf(buf, "gnuplot %s", filename_plt);
     }
     else
