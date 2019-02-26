@@ -846,7 +846,7 @@ MIFget_port(
 
     /* store the port type information in the instance struct */
     fast->conn[conn_num]->port[port_num]->type = def_port_type;
-    fast->conn[conn_num]->port[port_num]->type_str = def_port_type_str;
+    fast->conn[conn_num]->port[port_num]->type_str = copy(def_port_type_str);
 
     /* check for a leading tilde on digital ports */
     if(*next_token_type == MIF_TILDE_TOK) {
