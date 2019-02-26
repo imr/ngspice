@@ -120,6 +120,13 @@ IFparm VDMOSmPTable[] = { /* model parameters */
  IOP( "mu",    VDMOS_MOD_MU,    IF_REAL, "Self-heating gain exponent"),
  IOP( "texp0", VDMOS_MOD_TEXP0, IF_REAL, "Self-heating rd0 temperature exponent"),
  IOP( "texp1", VDMOS_MOD_TEXP1, IF_REAL, "Self-heating rd1 temperature exponent"),
+ 
+/* soa check */
+ IOP("vgs_max", VDMOS_MOD_VGS_MAX, IF_REAL, "maximum voltage G-S branch"),
+ IOP("vgd_max", VDMOS_MOD_VGD_MAX, IF_REAL, "maximum voltage G-D branch"),
+ IOP("vds_max", VDMOS_MOD_VDS_MAX, IF_REAL, "maximum voltage D-S branch"),
+ IOP("vgsr_max", VDMOS_MOD_VGSR_MAX, IF_REAL, "maximum voltage G-S branch"),
+ IOP("vgdr_max", VDMOS_MOD_VGDR_MAX, IF_REAL, "maximum voltage G-D branch"),
 };
 
 char *VDMOSnames[] = {

@@ -201,6 +201,26 @@ VDMOSmParam(int param, IFvalue *value, GENmodel *inModel)
             model->VDMOStcvth = value->rValue;
             model->VDMOStcvthGiven = TRUE;
             break;
+        case VDMOS_MOD_VGS_MAX:
+            model->VDMOSvgsMax = value->rValue;
+            model->VDMOSvgsMaxGiven = TRUE;
+            break;
+        case VDMOS_MOD_VGD_MAX:
+            model->VDMOSvgdMax = value->rValue;
+            model->VDMOSvgdMaxGiven = TRUE;
+            break;
+        case VDMOS_MOD_VDS_MAX:
+            model->VDMOSvdsMax = value->rValue;
+            model->VDMOSvdsMaxGiven = TRUE;
+            break;
+        case VDMOS_MOD_VGSR_MAX:
+            model->VDMOSvgsrMax = value->rValue;
+            model->VDMOSvgsrMaxGiven = TRUE;
+            break;
+        case VDMOS_MOD_VGDR_MAX:
+            model->VDMOSvgdrMax = value->rValue;
+            model->VDMOSvgdrMaxGiven = TRUE;
+            break;
         default:
             return(E_BADPARM);
     }
