@@ -528,7 +528,8 @@ MIFunsetup(GENmodel *inModel,CKTcircuit *ckt)
                     tfree(here->conn[i]->port[j]->partial);
                     tfree(here->conn[i]->port[j]->ac_gain);
                     tfree(here->conn[i]->port[j]->smp_data.input);
-
+                    /* free memory allocated in mif_inp2.c */
+                    tfree(here->conn[i]->port[j]->type_str);
                 } /* end for number of ports */
             } /* end for number of connections */
             /* free memory allocated by cm_analog_alloc and cm_analog_converge */
