@@ -41,12 +41,12 @@ VBICmParam(int param, IFvalue *value, GENmodel *inModel)
             break;
         case VBIC_MOD_RCX:
             mods->VBICextCollResist = value->rValue;
-            if (mods->VBICextCollResist < 0.1) mods->VBICextCollResist = 0.1;
+            if (mods->VBICextCollResist < 0.01) mods->VBICextCollResist = 0.01;
             mods->VBICextCollResistGiven = TRUE;
             break;
         case VBIC_MOD_RCI:
             mods->VBICintCollResist = value->rValue;
-            if (mods->VBICintCollResist < 0.1) mods->VBICintCollResist = 0.1;
+            if (mods->VBICintCollResist < 0.01) mods->VBICintCollResist = 0.01;
             mods->VBICintCollResistGiven = TRUE;
             break;
         case VBIC_MOD_VO:
@@ -63,12 +63,12 @@ VBICmParam(int param, IFvalue *value, GENmodel *inModel)
             break;
         case VBIC_MOD_RBX:
             mods->VBICextBaseResist = value->rValue;
-            if (mods->VBICextBaseResist < 0.1) mods->VBICextBaseResist = 0.1;
+            if (mods->VBICextBaseResist < 0.01) mods->VBICextBaseResist = 0.01;
             mods->VBICextBaseResistGiven = TRUE;
             break;
         case VBIC_MOD_RBI:
             mods->VBICintBaseResist = value->rValue;
-            if (mods->VBICintBaseResist < 0.1) mods->VBICintBaseResist = 0.1;
+            if (mods->VBICintBaseResist < 0.01) mods->VBICintBaseResist = 0.01;
             mods->VBICintBaseResistGiven = TRUE;
             break;
         case VBIC_MOD_RE:
@@ -78,12 +78,12 @@ VBICmParam(int param, IFvalue *value, GENmodel *inModel)
             break;
         case VBIC_MOD_RS:
             mods->VBICsubstrateResist = value->rValue;
-            if (mods->VBICsubstrateResist < 0.1) mods->VBICsubstrateResist = 0.1;
+            if (mods->VBICsubstrateResist < 0.01) mods->VBICsubstrateResist = 0.01;
             mods->VBICsubstrateResistGiven = TRUE;
             break;
         case VBIC_MOD_RBP:
             mods->VBICparBaseResist = value->rValue;
-            if (mods->VBICparBaseResist < 0.1) mods->VBICparBaseResist = 0.1;
+            if (mods->VBICparBaseResist < 0.01) mods->VBICparBaseResist = 0.01;
             mods->VBICparBaseResistGiven = TRUE;
             break;
         case VBIC_MOD_IS:
