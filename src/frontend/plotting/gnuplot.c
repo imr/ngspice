@@ -16,7 +16,12 @@
 #include "ngspice/dvec.h"
 #include "ngspice/fteparse.h"
 #include "gnuplot.h"
-
+#if defined(__MINGW32__) || defined(_MSC_VER)
+#undef BOOLEAN
+#include <windows.h>
+#else
+#include <unistd.h>
+#endif
 
 #define GP_MAXVECTORS 64
 
@@ -55,8 +60,8 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
     char filename_data[128];
     char filename_plt[128];
 
-    sprintf(filename_data, "%s.data", filename);
-    sprintf(filename_plt, "%s.plt", filename);
+    snprintf(filename_data, 128, "%s.data", filename);
+    snprintf(filename_plt, 128, "%s.plt", filename);
 
     /* Sanity checking. */
     for (v = vecs, numVecs = 0; v; v = v->v_link2)
@@ -83,6 +88,12 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
         terminal_type = 1;
         if (cieq(terminal,"png"))
             terminal_type = 2;
+        if (cieq(terminal,"png/quit"))
+            terminal_type = 3;
+        if (cieq(terminal, "eps"))
+            terminal_type = 4;
+        if (cieq(terminal, "eps/quit"))
+            terminal_type = 5;
     }
 
     if (!cp_getvar("xbrushwidth", CP_NUM, &linewidth, 0))
@@ -216,38 +227,68 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
     }
     fprintf(file, "set format y \"%%g\"\n");
     fprintf(file, "set format x \"%%g\"\n");
-    fprintf(file, "plot ");
-    i = 0;
 
-    /* Write out the gnuplot command */
-    for (v = vecs; v; v = v->v_link2) {
-        scale = v->v_scale;
-        if (v->v_name) {
-            i = i + 2;
-            if (i > 2) fprintf(file, ",\\\n");
-            fprintf(file, "\'%s\' using %d:%d with %s lw %d title ",
-                    filename_data, i-1, i, plotstyle, linewidth);
-            quote_gnuplot_string(file, v->v_name);
+    if ((terminal_type != 3) && (terminal_type != 5)) {
+        fprintf(file, "plot ");
+        i = 0;
+
+        /* Write out the gnuplot command */
+        for (v = vecs; v; v = v->v_link2) {
+            scale = v->v_scale;
+            if (v->v_name) {
+                i = i + 2;
+                if (i > 2) fprintf(file, ",\\\n");
+                fprintf(file, "\'%s\' using %d:%d with %s lw %d title ",
+                    filename_data, i - 1, i, plotstyle, linewidth);
+                quote_gnuplot_string(file, v->v_name);
+            }
         }
+        fprintf(file, "\n");
     }
-    fprintf(file, "\n");
 
-    /* do not print an eps or png file if filename start with 'np_' */
-    if (!ciprefix("np_", filename)) {
+    /* terminal_type
+    1: do not print an eps or png file
+    2: print png file, keep command window open
+    3: print png file, quit command window
+    4: print eps file, keep command window open
+    5: print eps file, quit command window
+    */
+    if ((terminal_type == 2) || (terminal_type == 4))
         fprintf(file, "set terminal push\n");
-        if (terminal_type == 1) {
-            fprintf(file, "set terminal postscript eps color noenhanced\n");
-            fprintf(file, "set out \'%s.eps\'\n", filename);
-        }
-        else {
-            fprintf(file, "set terminal png noenhanced\n");
-            fprintf(file, "set out \'%s.png\'\n", filename);
-        }
+    if ((terminal_type == 4) || (terminal_type == 5)) {
+        fprintf(file, "set terminal postscript eps color noenhanced\n");
+        fprintf(file, "set out \'%s.eps\'\n", filename);
+    }
+    if ((terminal_type == 2) || (terminal_type == 3)) {
+        fprintf(file, "set terminal png noenhanced\n");
+        fprintf(file, "set out \'%s.png\'\n", filename);
+    }
+    if ((terminal_type == 2) || (terminal_type == 4)) {
         fprintf(file, "replot\n");
         fprintf(file, "set term pop\n");
+        fprintf(file, "replot\n");
     }
 
-    fprintf(file, "replot\n");
+    if ((terminal_type == 3) || (terminal_type == 5)) {
+        fprintf(file, "plot ");
+        i = 0;
+
+        /* Write out the gnuplot command */
+        for (v = vecs; v; v = v->v_link2) {
+            scale = v->v_scale;
+            if (v->v_name) {
+                i = i + 2;
+                if (i > 2) fprintf(file, ",\\\n");
+                fprintf(file, "\'%s\' using %d:%d with %s lw %d title ",
+                    filename_data, i - 1, i, plotstyle, linewidth);
+                quote_gnuplot_string(file, v->v_name);
+            }
+        }
+        fprintf(file, "\n");
+        fprintf(file, "exit\n");
+    }
+
+
 
     (void) fclose(file);
 
@@ -293,10 +334,36 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
     _flushall();
 #else
     /* for external fcn system() from LINUX environment */
-    (void) sprintf(buf, "xterm -e gnuplot %s - &", filename_plt);
+    if (terminal_type == 3) {
+        fprintf(cp_out, "writing plot to file %s.png\n", filename);
+        (void) sprintf(buf, "gnuplot %s", filename_plt);
+    }
+    else if (terminal_type == 5) {
+        fprintf(cp_out, "writing plot to file %s.eps\n", filename);
+        (void) sprintf(buf, "gnuplot %s", filename_plt);
+    }
+    else
+        (void) sprintf(buf, "xterm -e gnuplot %s - &", filename_plt);
 #endif
     err = system(buf);
 
+    /* delete the plt and data files */
+    if ((terminal_type == 3) || (terminal_type == 5)) {
+        /* wait for gnuplot generating eps or png file */
+#if defined(__MINGW32__) || defined(_MSC_VER)
+        Sleep(200);
+#else
+        usleep(200000);
+#endif
+        if (remove(filename_data)) {
+            fprintf(stderr, "Could not remove file %s\n", filename_data);
+            perror(NULL);
+        }
+        if (remove(filename_plt)) {
+            fprintf(stderr, "Could not remove file %s\n", filename_plt);
+            perror(NULL);
+        }
+    }
 }
 
 
