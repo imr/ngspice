@@ -43,6 +43,8 @@ com_display(wordlist *wl)
         tfree(s);               /*DG to avoid the cp_unquote memory leak */
         if (d == NULL)
             fprintf(cp_err, "Error: no such vector as %s.\n", wl->wl_word);
+        else if (d->v_plot == NULL)
+            fprintf(cp_err, "Error: no analog vector as %s.\n", wl->wl_word);
         else
             while (d) {
                 pvec(d);
