@@ -739,7 +739,7 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                 /*
                  *   limit nonlinear branch voltages
                  */
-                ichk1 = 1;
+                ichk1 = 1, ichk2 = 1, ichk3 = 1, ichk4 = 1, ichk5 = 1;
                 Vbei = DEVpnjlim(Vbei,*(ckt->CKTstate0 + here->VBICvbei),vt,
                         here->VBICtVcrit,&icheck);
                 Vbex = DEVpnjlim(Vbex,*(ckt->CKTstate0 + here->VBICvbex),vt,
