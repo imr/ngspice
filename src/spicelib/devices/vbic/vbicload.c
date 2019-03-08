@@ -81,7 +81,6 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
     int icheck = 0;
     int ichk1, ichk2, ichk3, ichk4, ichk5;
     int error;
-    int SenCond=0;
     double gqbeo, cqbeo, gqbco, cqbco, gbcx, cbcx;
 
     /*  loop through all the models */
@@ -92,15 +91,6 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                 here=VBICnextInstance(here)) {
 
             vt = here->VBICtemp * CONSTKoverQ;
-
-            if(ckt->CKTsenInfo){
-#ifdef SENSDEBUG
-                printf("VBICload\n");
-#endif /* SENSDEBUG */
-                if((ckt->CKTsenInfo->SENstatus == PERTURBATION)&&
-                    (here->VBICsenPertFlag == OFF)) continue;
-                SenCond = here->VBICsenPertFlag;
-            }
 
             gbcx = 0.0;
             cbcx = 0.0;
@@ -221,96 +211,6 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
             p[107] = model->VBICrefVersion;
 
             SCALE = here->VBICarea * here->VBICm;
-
-            if(SenCond){
-#ifdef SENSDEBUG
-                printf("VBICsenPertFlag = ON \n");
-#endif /* SENSDEBUG */
-
-                if((ckt->CKTsenInfo->SENmode == TRANSEN)&&
-                    (ckt->CKTmode & MODEINITTRAN)) {
-                    Vbe = model->VBICtype*(
-                        *(ckt->CKTrhsOp+here->VBICbaseNode)-
-                        *(ckt->CKTrhsOp+here->VBICemitNode));
-                    Vbc = model->VBICtype*(
-                        *(ckt->CKTrhsOp+here->VBICbaseNode)-
-                        *(ckt->CKTrhsOp+here->VBICcollNode));
-                    Vbei = *(ckt->CKTstate1 + here->VBICvbei);
-                    Vbex = *(ckt->CKTstate1 + here->VBICvbex);
-                    Vbci = *(ckt->CKTstate1 + here->VBICvbci);
-                    Vbcx = *(ckt->CKTstate1 + here->VBICvbcx);
-                    Vbep = *(ckt->CKTstate1 + here->VBICvbep);
-                    Vrci = *(ckt->CKTstate1 + here->VBICvrci);
-                    Vrbi = *(ckt->CKTstate1 + here->VBICvrbi);
-                    Vrbp = *(ckt->CKTstate1 + here->VBICvrbp);
-                    Vrcx = model->VBICtype*(
-                        *(ckt->CKTrhsOp+here->VBICcollNode)-
-                        *(ckt->CKTrhsOp+here->VBICcollCXNode));
-                    Vrbx = model->VBICtype*(
-                        *(ckt->CKTrhsOp+here->VBICbaseNode)-
-                        *(ckt->CKTrhsOp+here->VBICbaseBXNode));
-                    Vre = model->VBICtype*(
-                        *(ckt->CKTrhsOp+here->VBICemitNode)-
-                        *(ckt->CKTrhsOp+here->VBICemitEINode));
-                    Vbcp = *(ckt->CKTstate1 + here->VBICvbcp);
-                    Vrs = model->VBICtype*(
-                        *(ckt->CKTrhsOp+here->VBICsubsNode)-
-                        *(ckt->CKTrhsOp+here->VBICsubsSINode));
-                }
-                else{
-                    Vbei = *(ckt->CKTstate0 + here->VBICvbei);
-                    Vbex = *(ckt->CKTstate0 + here->VBICvbex);
-                    Vbci = *(ckt->CKTstate0 + here->VBICvbci);
-                    Vbcx = *(ckt->CKTstate0 + here->VBICvbcx);
-                    Vbep = *(ckt->CKTstate0 + here->VBICvbep);
-                    Vrci = *(ckt->CKTstate0 + here->VBICvrci);
-                    Vrbi = *(ckt->CKTstate0 + here->VBICvrbi);
-                    Vrbp = *(ckt->CKTstate0 + here->VBICvrbp);
-                    Vbcp = *(ckt->CKTstate0 + here->VBICvbcp);
-                    if((ckt->CKTsenInfo->SENmode == DCSEN)||
-                        (ckt->CKTsenInfo->SENmode == TRANSEN)){
-                        Vbe = model->VBICtype*(
-                            *(ckt->CKTrhsOld+here->VBICbaseNode)-
-                            *(ckt->CKTrhsOld+here->VBICemitNode));
-                        Vbc = model->VBICtype*(
-                            *(ckt->CKTrhsOld+here->VBICbaseNode)-
-                            *(ckt->CKTrhsOld+here->VBICcollNode));
-                        Vrcx = model->VBICtype*(
-                            *(ckt->CKTrhsOld+here->VBICcollNode)-
-                            *(ckt->CKTrhsOld+here->VBICcollCXNode));
-                        Vrbx = model->VBICtype*(
-                            *(ckt->CKTrhsOld+here->VBICbaseNode)-
-                            *(ckt->CKTrhsOld+here->VBICbaseBXNode));
-                        Vre = model->VBICtype*(
-                            *(ckt->CKTrhsOld+here->VBICemitNode)-
-                            *(ckt->CKTrhsOld+here->VBICemitEINode));
-                        Vrs = model->VBICtype*(
-                            *(ckt->CKTrhsOld+here->VBICsubsNode)-
-                            *(ckt->CKTrhsOld+here->VBICsubsSINode));
-                    }
-                    if(ckt->CKTsenInfo->SENmode == ACSEN){
-                        Vbe = model->VBICtype*(
-                            *(ckt->CKTrhsOp+here->VBICbaseNode)-
-                            *(ckt->CKTrhsOp+here->VBICemitNode));
-                        Vbc = model->VBICtype*(
-                            *(ckt->CKTrhsOp+here->VBICbaseNode)-
-                            *(ckt->CKTrhsOp+here->VBICcollNode));
-                        Vrcx = model->VBICtype*(
-                            *(ckt->CKTrhsOp+here->VBICcollNode)-
-                            *(ckt->CKTrhsOp+here->VBICcollCXNode));
-                        Vrbx = model->VBICtype*(
-                            *(ckt->CKTrhsOp+here->VBICbaseNode)-
-                            *(ckt->CKTrhsOp+here->VBICbaseBXNode));
-                        Vre = model->VBICtype*(
-                            *(ckt->CKTrhsOp+here->VBICemitNode)-
-                            *(ckt->CKTrhsOp+here->VBICemitEINode));
-                        Vrs = model->VBICtype*(
-                            *(ckt->CKTrhsOp+here->VBICsubsNode)-
-                            *(ckt->CKTrhsOp+here->VBICsubsSINode));
-                    }
-                }
-                goto next1;
-            }
 
             /*
              *   initialization
@@ -757,7 +657,7 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
             /*
              *   determine dc current and derivitives
              */
-next1:      
+
             iret = vbic_4T_it_cf_fj(p
             ,&Vbei,&Vbex,&Vbci,&Vbep,&Vbcp,&Vrcx
             ,&Vbcx,&Vrci,&Vrbx,&Vrbi,&Vre,&Vrbp,&Vrs
@@ -825,76 +725,11 @@ next1:
                         *(ckt->CKTstate0 + here->VBICcqbeo) = Qbeo_Vbe;
                         *(ckt->CKTstate0 + here->VBICcqbco) = Qbco_Vbc;
                         *(ckt->CKTstate0 + here->VBICcqbcp) = Qbcp_Vbcp;
-                        if(SenCond) {
-                            *(ckt->CKTstate0 + here->VBICibe)       = Ibe;
-                            *(ckt->CKTstate0 + here->VBICibe_Vbei)  = Ibe_Vbei;
-                            *(ckt->CKTstate0 + here->VBICibex)      = Ibex;
-                            *(ckt->CKTstate0 + here->VBICibex_Vbex) = Ibex_Vbex;
-                            *(ckt->CKTstate0 + here->VBICitzf)      = Itzf;
-                            *(ckt->CKTstate0 + here->VBICitzf_Vbei) = Itzf_Vbei;
-                            *(ckt->CKTstate0 + here->VBICitzf_Vbci) = Itzf_Vbci;
-                            *(ckt->CKTstate0 + here->VBICitzr)      = Itzr;
-                            *(ckt->CKTstate0 + here->VBICitzr_Vbci) = Itzr_Vbci;
-                            *(ckt->CKTstate0 + here->VBICitzr_Vbei) = Itzr_Vbei;
-                            *(ckt->CKTstate0 + here->VBICibc)       = Ibc;
-                            *(ckt->CKTstate0 + here->VBICibc_Vbci)  = Ibc_Vbci;
-                            *(ckt->CKTstate0 + here->VBICibc_Vbei)  = Ibc_Vbei;
-                            *(ckt->CKTstate0 + here->VBICibep)      = Ibep;
-                            *(ckt->CKTstate0 + here->VBICibep_Vbep) = Ibep_Vbep;
-                            *(ckt->CKTstate0 + here->VBICirci)      = Irci;
-                            *(ckt->CKTstate0 + here->VBICirci_Vrci) = Irci_Vrci;
-                            *(ckt->CKTstate0 + here->VBICirci_Vbci) = Irci_Vbci;
-                            *(ckt->CKTstate0 + here->VBICirci_Vbcx) = Irci_Vbcx;
-                            *(ckt->CKTstate0 + here->VBICirbi)      = Irbi;
-                            *(ckt->CKTstate0 + here->VBICirbi_Vrbi) = Irbi_Vrbi;
-                            *(ckt->CKTstate0 + here->VBICirbi_Vbei) = Irbi_Vbei;
-                            *(ckt->CKTstate0 + here->VBICirbi_Vbci) = Irbi_Vbci;
-                            *(ckt->CKTstate0 + here->VBICirbp)      = Irbp;
-                            *(ckt->CKTstate0 + here->VBICirbp_Vrbp) = Irbp_Vrbp;
-                            *(ckt->CKTstate0 + here->VBICirbp_Vbep) = Irbp_Vbep;
-                            *(ckt->CKTstate0 + here->VBICirbp_Vbci) = Irbp_Vbci;
-                            *(ckt->CKTstate0 + here->VBICibcp)      = Ibcp;
-                            *(ckt->CKTstate0 + here->VBICibcp_Vbcp) = Ibcp_Vbcp;
-                            *(ckt->CKTstate0 + here->VBICiccp)      = Iccp;
-                            *(ckt->CKTstate0 + here->VBICiccp_Vbep) = Iccp_Vbep;
-                            *(ckt->CKTstate0 + here->VBICiccp_Vbci) = Iccp_Vbci;
-                            *(ckt->CKTstate0 + here->VBICiccp_Vbcp) = Iccp_Vbcp;
-                            *(ckt->CKTstate0 + here->VBICgqbeo)     = gqbeo;
-                            *(ckt->CKTstate0 + here->VBICgqbco)     = gqbco;
-                            *(ckt->CKTstate0 + here->VBICircx_Vrcx) = Ircx_Vrcx;
-                            *(ckt->CKTstate0 + here->VBICirbx_Vrbx) = Irbx_Vrbx;
-                            *(ckt->CKTstate0 + here->VBICirs_Vrs)   = Irs_Vrs;  
-                            *(ckt->CKTstate0 + here->VBICire_Vre)   = Ire_Vre;  
-                        }
-#ifdef SENSDEBUG
-                        printf("storing small signal parameters for op\n");
-                        printf("Cbe = %.7e, Cbex = %.7e\n", Qbe_Vbei, Qbex_Vbex);
-                        printf("Cbc = %.7e, Cbcx = %.7e\n", Qbc_Vbci, Qbcx_Vbcx);
-                        printf("gpi = %.7e\n", Ibe_Vbei);
-                        printf("gmu = %.7e, gm = %.7e\n", Ibc_Vbci, Itzf_Vbei);
-                        printf("go = %.7e, gx = %.7e\n", Itzf_Vbci, Irbi_Vrbi);
-                        printf("cc = %.7e, cb = %.7e\n", Ibe+Itzf, Ibe);
-#endif /* SENSDEBUG */
                         continue; /* go to 1000 */
                     }
                     /*
                      *   transient analysis
                      */
-                    if(SenCond && ckt->CKTsenInfo->SENmode == TRANSEN) {
-                        *(ckt->CKTstate0 + here->VBICibe)  = Ibe;
-                        *(ckt->CKTstate0 + here->VBICibex) = Ibex;
-                        *(ckt->CKTstate0 + here->VBICitzf) = Itzf;
-                        *(ckt->CKTstate0 + here->VBICitzr) = Itzr;
-                        *(ckt->CKTstate0 + here->VBICibc)  = Ibc;
-                        *(ckt->CKTstate0 + here->VBICibep) = Ibep;
-                        *(ckt->CKTstate0 + here->VBICirci) = Irci;
-                        *(ckt->CKTstate0 + here->VBICirbi) = Irbi;
-                        *(ckt->CKTstate0 + here->VBICirbp) = Irbp;
-                        *(ckt->CKTstate0 + here->VBICibcp) = Ibcp;
-                        *(ckt->CKTstate0 + here->VBICiccp) = Iccp;
-                        continue;
-                    }
-
                     if(ckt->CKTmode & MODEINITTRAN) {
                         *(ckt->CKTstate1 + here->VBICqbe) =
                                 *(ckt->CKTstate0 + here->VBICqbe) ;
@@ -960,8 +795,6 @@ next1:
                 }
             }
 
-            if(SenCond) goto next2;
-
             /*
              *   check convergence
              */
@@ -987,7 +820,7 @@ next1:
                             *(ckt->CKTstate0 + here->VBICcqbco);
                 }
             }
-next2:
+
             *(ckt->CKTstate0 + here->VBICvbei)      = Vbei;
             *(ckt->CKTstate0 + here->VBICvbex)      = Vbex;
             *(ckt->CKTstate0 + here->VBICvbci)      = Vbci;
@@ -1038,9 +871,6 @@ next2:
             *(ckt->CKTstate0 + here->VBICirs_Vrs)   = Irs_Vrs;  
             *(ckt->CKTstate0 + here->VBICire_Vre)   = Ire_Vre;  
 
-            /* Do not load the Jacobian and the rhs if
-               perturbation is being carried out */
-            if(SenCond) continue;
 load:
             /*
              *  load current excitation vector and matrix
