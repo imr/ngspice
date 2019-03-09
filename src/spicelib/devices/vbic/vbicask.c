@@ -23,12 +23,8 @@ int
 VBICask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFvalue *select)
 {
     VBICinstance *here = (VBICinstance*)instPtr;
-    int itmp;
-    double vr;
-    double vi;
-    double sr;
-    double si;
-    double vm;
+
+    NG_IGNORE(select); 
 
     switch(which) {
         case VBIC_AREA:
