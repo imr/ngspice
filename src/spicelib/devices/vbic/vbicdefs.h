@@ -215,30 +215,13 @@ typedef struct sVBICinstance {
     unsigned VBICtempGiven   :1; /* temperature given for vbic instance*/
     unsigned VBICdtempGiven  :1; /* delta temperature given for vbic instance*/
     unsigned VBICmGiven      :1; /* flag to indicate multiplier was specified */
-    unsigned VBICsenPertFlag :1; /* indictes whether the the parameter of
-                                    the particular instance is to be perturbed */
 
-    int  VBICsenParmNo;   /* parameter # for sensitivity use;
-                             set equal to  0 if not a design parameter */
     double VBICcapbe;
     double VBICcapbex;
     double VBICcapbc;
     double VBICcapbcx;
     double VBICcapbep;
     double VBICcapbcp;
-    double *VBICsens;
-
-#define VBICsenGpi VBICsens /* stores the perturbed values of gpi */
-#define VBICsenGmu VBICsens+5 /* stores the perturbed values of gmu */
-#define VBICsenGm VBICsens+10 /* stores the perturbed values of gm */
-#define VBICsenGo VBICsens+15 /* stores the perturbed values of go */
-#define VBICsenGx VBICsens+20 /* stores the perturbed values of gx */
-#define VBICsenCpi VBICsens+25 /* stores the perturbed values of cpi */
-#define VBICsenCmu VBICsens+30 /* stores the perturbed values of cmu */
-#define VBICsenCbx VBICsens+35 /* stores the perturbed values of cbx */
-#define VBICsenCmcb VBICsens+40 /* stores the perturbed values of cmcb */
-#define VBICsenCsub VBICsens+45 /* stores the perturbed values of csub */
-
 
 #ifndef NONOISE
       double VBICnVar[NSTATVARS][VBICNSRCS];
@@ -340,17 +323,6 @@ typedef struct sVBICinstance {
 #define VBICire_Vre VBICstate+65
 
 #define VBICnumStates 66
-
-#define VBICsensxpbe VBICstate+66 /* charge sensitivities and their derivatives.
-                                   * +67 for the derivatives
-                                   * pointer to the beginning of the array */
-#define VBICsensxpbex VBICstate+68
-#define VBICsensxpbc VBICstate+70
-#define VBICsensxpbcx VBICstate+72
-#define VBICsensxpbep VBICstate+74
-
-#define VBICnumSenStates 10
-
 
 /* per model data */
 typedef struct sVBICmodel {           /* model structure for a vbic */
@@ -779,12 +751,6 @@ enum {
     VBIC_QUEST_CBCX,
     VBIC_QUEST_CBEP,
     VBIC_QUEST_CBCP,
-    VBIC_QUEST_SENS_REAL,
-    VBIC_QUEST_SENS_IMAG,
-    VBIC_QUEST_SENS_MAG,
-    VBIC_QUEST_SENS_PH,
-    VBIC_QUEST_SENS_CPLX,
-    VBIC_QUEST_SENS_DC,
     VBIC_QUEST_POWER,
 };
 
