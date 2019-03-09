@@ -397,9 +397,6 @@ VBICsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
             here->VBICstate = *states;
             *states += VBICnumStates;
-            if(ckt->CKTsenInfo && (ckt->CKTsenInfo->SENmode & TRANSEN) ){
-                *states += VBICnumSenStates * (ckt->CKTsenInfo->SENparms);
-            }
 
             if(model->VBICextCollResist == 0) {
                 here->VBICcollCXNode = here->VBICcollNode;

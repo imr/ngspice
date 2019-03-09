@@ -8,7 +8,6 @@ libvbic_la_SOURCES =	\
 	vbicask.c	\
 	vbicconv.c	\
 	vbicdefs.h	\
-	vbicdel.c	\
 	vbicext.h	\
 	vbicgetic.c	\
 	vbicinit.c	\
