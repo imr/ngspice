@@ -99,7 +99,7 @@ VDMOSacLoad(GENmodel *inModel, CKTcircuit *ckt)
                *(here->VDMOSTemptempPtr + 1) += xcTt;
                *(here->VDMOSDPtempPtr + 1) += xcdT;
                *(here->VDMOSSPtempPtr + 1) += xcsT;
-               *(here->VDMOSGtempPtr + 1) += xcgT;
+               *(here->VDMOSGPtempPtr + 1) += xcgT;
             }
             *(here->VDMOSDdPtr) += here->VDMOSdrainConductance;
             *(here->VDMOSSsPtr) += here->VDMOSsourceConductance;
@@ -137,7 +137,7 @@ VDMOSacLoad(GENmodel *inModel, CKTcircuit *ckt)
                *(here->VDMOSDPtempPtr) += GmT;
                *(here->VDMOSSPtempPtr) += -GmT;
                *(here->VDMOSTemptempPtr) += gTtt + 1/model->VDMOSrth0;
-               *(here->VDMOSTempgPtr) += gTtg;
+               *(here->VDMOSTempgpPtr) += gTtg;
                *(here->VDMOSTempdpPtr) += gTtdp;
                *(here->VDMOSTempspPtr) += gTtsp;
             }

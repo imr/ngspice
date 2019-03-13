@@ -652,9 +652,9 @@ bypass:
             {
                 (*(here->VDMOSDPtempPtr) += GmT);
                 (*(here->VDMOSSPtempPtr) += -GmT);
-                (*(here->VDMOSGtempPtr) += 0.0);
+                (*(here->VDMOSGPtempPtr) += 0.0);
                 (*(here->VDMOSTemptempPtr) += gTtt + 1/here->VDMOSrth0 + gcTt);
-                (*(here->VDMOSTempgPtr) += gTtg);
+                (*(here->VDMOSTempgpPtr) += gTtg);
                 (*(here->VDMOSTempdpPtr) += gTtdp);
                 (*(here->VDMOSTempspPtr) += gTtsp);
             }

@@ -142,7 +142,6 @@ typedef struct sVDMOSinstance {
 
     int VDMOSmode;       /* device mode : 1 = normal, -1 = inverse */
 
-
     unsigned VDMOSoff:1;  /* non-zero to indicate device is off for dc analysis*/
     unsigned VDMOStempGiven :1;  /* instance temperature specified */
     unsigned VDMOSdtempGiven :1;  /* instance delta temperature specified */
@@ -225,8 +224,8 @@ typedef struct sVDMOSinstance {
     double *VDMOSTemptempPtr;
     double *VDMOSTempdpPtr;
     double *VDMOSTempspPtr;
-    double *VDMOSTempgPtr;
-    double *VDMOSGtempPtr;
+    double *VDMOSTempgpPtr;
+    double *VDMOSGPtempPtr;
     double *VDMOSDPtempPtr;
     double *VDMOSSPtempPtr;
 

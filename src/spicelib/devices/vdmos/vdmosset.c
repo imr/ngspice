@@ -323,8 +323,8 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
                 TSTALLOC(VDMOSTemptempPtr, VDMOStempNode, VDMOStempNode);
                 TSTALLOC(VDMOSTempdpPtr, VDMOStempNode, VDMOSdNodePrime);
                 TSTALLOC(VDMOSTempspPtr, VDMOStempNode, VDMOSsNodePrime);
-                TSTALLOC(VDMOSTempgPtr, VDMOStempNode, VDMOSgNode);
-                TSTALLOC(VDMOSGtempPtr, VDMOSgNode, VDMOStempNode);
+                TSTALLOC(VDMOSTempgpPtr, VDMOStempNode, VDMOSgNodePrime);
+                TSTALLOC(VDMOSGPtempPtr, VDMOSgNodePrime, VDMOStempNode);
                 TSTALLOC(VDMOSDPtempPtr, VDMOSdNodePrime, VDMOStempNode);
                 TSTALLOC(VDMOSSPtempPtr, VDMOSsNodePrime, VDMOStempNode);
             }
