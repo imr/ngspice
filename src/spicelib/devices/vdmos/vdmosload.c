@@ -275,7 +275,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
 #ifndef NODELIMITING
                 /*
                  * limiting
-                 *  we want to keep device voltages from changing
+                 * we want to keep device voltages from changing
                  * so fast that the exponentials churn out overflows
                  * and similar rudeness
                  */
@@ -605,12 +605,10 @@ bypass:
                                                     - here->VDMOSgm*vgd)
                         - GmT * delTemp;
             }
-            *(ckt->CKTrhs + here->VDMOSgNodePrime) -=
-                (model->VDMOStype * (ceqgs + ceqgd));
-            *(ckt->CKTrhs + here->VDMOSdNodePrime) +=
-                (-cdreq + model->VDMOStype * ceqgd);
-            *(ckt->CKTrhs + here->VDMOSsNodePrime) +=
-                cdreq + model->VDMOStype * ceqgs;
+
+            *(ckt->CKTrhs + here->VDMOSgNodePrime) -= (model->VDMOStype * (ceqgs + ceqgd));
+            *(ckt->CKTrhs + here->VDMOSdNodePrime) += (-cdreq + model->VDMOStype * ceqgd);
+            *(ckt->CKTrhs + here->VDMOSsNodePrime) +=   cdreq + model->VDMOStype * ceqgs;
             if (selfheat) {
                 *(ckt->CKTrhs + here->VDMOStempNode) -= here->VDMOScth + ceqqth; /* dissipated power + Cth current*/
             }
