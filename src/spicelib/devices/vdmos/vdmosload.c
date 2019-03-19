@@ -89,8 +89,8 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
     register int selfheat;
     double rd0T, rd1T, dBeta_dT, drd0T_dT, drd1T_dT, dIds_dT;
     double deldelTemp, delTemp, delTemp1, Temp, Vds, Vgs;
-    double ceqth=0.0;
-    double GmT, gTtg, gTtdp, gTtt, gTtsp, gcTt=0.0;
+    double ceqqth;
+    double GmT, gTtg, gTtdp, gTtt, gTtsp, gcTt;
 
     /*  loop through all the VDMOS device models */
     for (; model != NULL; model = VDMOSnextModel(model)) {
@@ -541,7 +541,7 @@ bypass:
                 gcgd = 0;
                 ceqgd = 0;
                 gcTt = 0.0;
-                ceqth = 0.0;
+                ceqqth = 0.0;
             } else {
                 if (capgs == 0) *(ckt->CKTstate0 + here->VDMOScqgs) = 0;
                 if (capgd == 0) *(ckt->CKTstate0 + here->VDMOScqgd) = 0;
@@ -560,10 +560,9 @@ bypass:
                         *(ckt->CKTstate0 + here->VDMOSqgd);
                 if (selfheat)
                 {
-                    error = NIintegrate(ckt, &gcTt, &ceqth, capth, here->VDMOSqth);
-                    if (error) return (error);
-                    ceqth = ceqth - gcTt*delTemp + ckt->CKTag[0] *
-                            *(ckt->CKTstate0 + here->VDMOSqth);
+                    error = NIintegrate(ckt, &gcTt, &ceqqth, 0.0, here->VDMOSqth);
+                    gcTt = here->VDMOScth0 * ckt->CKTag[0];
+                    ceqqth = *(ckt->CKTstate0 + here->VDMOScqth) - gcTt * delTemp;
                 }
             }
 
@@ -613,7 +612,7 @@ bypass:
             *(ckt->CKTrhs + here->VDMOSsNodePrime) +=
                 cdreq + model->VDMOStype * ceqgs;
             if (selfheat) {
-                *(ckt->CKTrhs + here->VDMOStempNode) -= here->VDMOScth + ceqth; /* dissipated power + Cth current*/
+                *(ckt->CKTrhs + here->VDMOStempNode) -= here->VDMOScth + ceqqth; /* dissipated power + Cth current*/
             }
 
             /*
