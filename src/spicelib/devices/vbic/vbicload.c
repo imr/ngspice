@@ -681,7 +681,9 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
             Ibep_Vbep += ckt->CKTgmin;
             Irci += ckt->CKTgmin*Vrci;
             Irci_Vrci += ckt->CKTgmin;
+            Irci += ckt->CKTgmin*Vbci;
             Irci_Vbci += ckt->CKTgmin;
+            Irci += ckt->CKTgmin*Vbcx;
             Irci_Vbcx += ckt->CKTgmin;
             Ibcp += ckt->CKTgmin*Vbcp;
             Ibcp_Vbcp += ckt->CKTgmin;
