@@ -68,7 +68,6 @@ typedef struct sVBICinstance {
     double VBICm;        /* multiply factor for the vbic */
 
     double VBICtVcrit;
-    double VBICttnom;    /* temperature adjusted model parameters per instance */
     double VBICtextCollResist;
     double VBICtintCollResist;
     double VBICtepiSatVoltage;

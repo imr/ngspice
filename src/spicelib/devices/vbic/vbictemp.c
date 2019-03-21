@@ -153,7 +153,6 @@ VBICtemp(GENmodel *inModel, CKTcircuit *ckt)
             
             iret = vbic_4T_it_cf_t(p,pnom,&TAMB);
             
-            here->VBICttnom = p[0];
             here->VBICtextCollResist = p[1];
             here->VBICtintCollResist = p[2];
             here->VBICtepiSatVoltage = p[3];

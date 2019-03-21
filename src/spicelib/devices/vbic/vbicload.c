@@ -101,7 +101,7 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
             /*
              *   dc model paramters
              */
-            p[0] = here->VBICttnom;
+            p[0] = model->VBICtnom;
             p[1] = here->VBICtextCollResist;
             p[2] = here->VBICtintCollResist;
             p[3] = here->VBICtepiSatVoltage;
