@@ -32,21 +32,6 @@ VBICtemp(GENmodel *inModel, CKTcircuit *ckt)
     /*  loop through all the bipolar models */
     for( ; model != NULL; model = VBICnextModel(model)) {
 
-        if(!model->VBICtnomGiven) model->VBICtnom = ckt->CKTnomTemp - CONSTCtoK;
-
-        if(model->VBICtempExpRBGiven && !model->VBICtempExpRBIGiven) {
-          model->VBICtempExpRBI = model->VBICtempExpRB;
-        }
-        if(model->VBICtempExpRBGiven && !model->VBICtempExpRBXGiven) {
-          model->VBICtempExpRBX = model->VBICtempExpRB;
-        }
-        if(model->VBICtempExpRCGiven && !model->VBICtempExpRCIGiven) {
-          model->VBICtempExpRCI = model->VBICtempExpRC;
-        }
-        if(model->VBICtempExpRCGiven && !model->VBICtempExpRCXGiven) {
-          model->VBICtempExpRCX = model->VBICtempExpRC;
-        }
-
         /* loop through all the instances of the model */
         for (here = VBICinstances(model); here != NULL ;
                 here=VBICnextInstance(here)) {
