@@ -34,27 +34,6 @@ VBICtemp(GENmodel *inModel, CKTcircuit *ckt)
 
         if(!model->VBICtnomGiven) model->VBICtnom = ckt->CKTnomTemp - CONSTCtoK;
 
-        if(model->VBICextCollResistGiven && model->VBICextCollResist != 0.0) {
-          model->VBICcollectorConduct = 1.0 / model->VBICextCollResist;
-        } else {
-          model->VBICcollectorConduct = 0.0;
-        }
-        if(model->VBICextBaseResistGiven && model->VBICextBaseResist != 0.0) {
-          model->VBICbaseConduct = 1.0 / model->VBICextBaseResist;
-        } else {
-          model->VBICbaseConduct = 0.0;
-        }
-        if(model->VBICemitterResistGiven && model->VBICemitterResist != 0.0) {
-          model->VBICemitterConduct = 1.0 / model->VBICemitterResist;
-        } else {
-          model->VBICemitterConduct = 0.0;
-        }
-        if(model->VBICsubstrateResistGiven && model->VBICsubstrateResist != 0.0) {
-          model->VBICsubstrateConduct = 1.0 / model->VBICsubstrateResist;
-        } else {
-          model->VBICsubstrateConduct = 0.0;
-        }
-
         if(model->VBICtempExpRBGiven && !model->VBICtempExpRBIGiven) {
           model->VBICtempExpRBI = model->VBICtempExpRB;
         }
