@@ -447,11 +447,6 @@ typedef struct sVBICmodel {           /* model structure for a vbic */
     double VBICrevVersion;
     double VBICrefVersion;
 
-    double VBICcollectorConduct; /* collector conductance */
-    double VBICbaseConduct;      /* base conductance */
-    double VBICemitterConduct;   /* emitter conductance */
-    double VBICsubstrateConduct; /* substrate conductance */
-
     double VBICvbeMax; /* maximum voltage over B-E junction */
     double VBICvbcMax; /* maximum voltage over B-C junction */
     double VBICvceMax; /* maximum voltage over C-E branch */
