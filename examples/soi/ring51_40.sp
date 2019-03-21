@@ -15,7 +15,7 @@ cout  buf ss 1pF
 * this is needed
 .option reltol=1e-4
 
-.tran 0.2n 10n
+.tran 0.2n 16n
 .print tran v(out25) v(out50)
 .include ./bsim4soi/nmos4p0.mod
 .include ./bsim4soi/pmos4p0.mod
@@ -46,7 +46,13 @@ xinv5 dd ss sub 4 out inv5
 if $?batchmode
 * do nothing
 else
+  save  out25 out50
   run
+  plot out25 out50
+  let lin-tstart = 4n $ skip the start-up phase
+  let lin-tstop = 14n $ end earlier(just for demonstration)
+  let lin-tstep = 5p
+  linearize out25 out50
   plot out25 out50
 endif
 .endc
