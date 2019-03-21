@@ -369,8 +369,6 @@ VBICsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             model->VBICrefVersion = 0.0;
         }
 
-        if(!model->VBICtnomGiven) model->VBICtnom = ckt->CKTnomTemp - CONSTCtoK;
-
         if(model->VBICtempExpRBGiven && !model->VBICtempExpRBIGiven) {
           model->VBICtempExpRBI = model->VBICtempExpRB;
         }
