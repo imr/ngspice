@@ -369,6 +369,21 @@ VBICsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             model->VBICrefVersion = 0.0;
         }
 
+        if(!model->VBICtnomGiven) model->VBICtnom = ckt->CKTnomTemp - CONSTCtoK;
+
+        if(model->VBICtempExpRBGiven && !model->VBICtempExpRBIGiven) {
+          model->VBICtempExpRBI = model->VBICtempExpRB;
+        }
+        if(model->VBICtempExpRBGiven && !model->VBICtempExpRBXGiven) {
+          model->VBICtempExpRBX = model->VBICtempExpRB;
+        }
+        if(model->VBICtempExpRCGiven && !model->VBICtempExpRCIGiven) {
+          model->VBICtempExpRCI = model->VBICtempExpRC;
+        }
+        if(model->VBICtempExpRCGiven && !model->VBICtempExpRCXGiven) {
+          model->VBICtempExpRCX = model->VBICtempExpRC;
+        }
+
         if(!model->VBICvbeMaxGiven) {
             model->VBICvbeMax = 1e99;
         }
