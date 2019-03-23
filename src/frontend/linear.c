@@ -17,8 +17,6 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
  * we determine by looking at the transient parameters in the CKT struct.
  * If no circuit is loaded, e.g. because the 'load' command has been used
  * to obtain data, try to get parameters from scale vector.
- * Interpolation may be restricted to only a region of the input vector,
- * thus creating a cutout of the original vector.
  */
 
 void
@@ -28,7 +26,6 @@ com_linearize(wordlist *wl)
     struct plot *new, *old;
     struct dvec *newtime, *v;
     struct dvec *oldtime;
-    struct dvec *lin;
     int len, i;
 
     if (!plot_cur || !plot_cur->pl_dvecs || !plot_cur->pl_scale) {
@@ -57,33 +54,9 @@ com_linearize(wordlist *wl)
             fprintf(cp_err, "Error: no data in vector\n");
             return;
         }
-
-        /* if this plot contains special vectors lin-tstart, lin-tstop and lin-tstep use these instead */
-        lin = vec_fromplot("lin-tstart", plot_cur);
-        if (lin) {
-            fprintf(cp_out, "linearize tstart is set to: %8e\n", lin->v_realdata[0]);
-            tstart = lin->v_realdata[0];
-        }
-        else {
-            tstart = plot_cur->pl_scale->v_realdata[0];
-        }
-        lin = vec_fromplot("lin-tstop", plot_cur);
-        if (lin) {
-            fprintf(cp_out, "linearize tstop is set to: %8e\n", lin->v_realdata[0]);
-            tstop = lin->v_realdata[0];
-        }
-        else {
-            tstop = plot_cur->pl_scale->v_realdata[length - 1];
-        }
-        lin = vec_fromplot("lin-tstep", plot_cur);
-        if (lin) {
-            fprintf(cp_out, "linearize tstep is set to: %8e\n", lin->v_realdata[0]);
-            tstep = lin->v_realdata[0];
-        }
-        else {
-            tstep = (tstop - tstart) / (double)length;
-        }
-
+        tstart = plot_cur->pl_scale->v_realdata[0];
+        tstop = plot_cur->pl_scale->v_realdata[length - 1];
+        tstep = (tstop - tstart) / (double)length;
     }
     /* finally check if tstart, tstop and tstep are reasonable */
     if (((tstop - tstart) * tstep <= 0.0) || ((tstop - tstart) < tstep)) {
