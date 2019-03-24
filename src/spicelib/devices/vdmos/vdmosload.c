@@ -24,6 +24,7 @@ VDMOSlimitlog(
     double LIM_TOL,
     int *check)
 {
+    *check = 0;
     if (isnan (deltemp) || isnan (deltemp_old))
     {
         fprintf(stderr, "Alberto says:  YOU TURKEY!  The limiting function received NaN.\n");
@@ -105,9 +106,12 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                 here = VDMOSnextInstance(here)) {
 
             selfheat = (model->VDMOSshMod == 1) && (here->VDMOSrth0 != 0.0);
+            if (selfheat)
+                Check_mos = 1;
+            else
+                Check_mos = 0;
 
             vt = CONSTKoverQ * here->VDMOStemp;
-            Check_mos = 0;
 
             /* first, we compute a few useful values - these could be
              * pre-computed, but for historical reasons are still done
