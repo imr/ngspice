@@ -62,7 +62,8 @@ bool defsubckt(dico_t *, struct card *);
 int findsubckt(dico_t *, const char *s);
 bool nupa_substitute(dico_t *, const char *s, char *r);
 bool nupa_assignment(dico_t *, const char *s, char mode);
-bool nupa_subcktcall(dico_t *, char *s, char *x, char *inst_name);
+bool nupa_subcktcall(dico_t *, const char *s, const char *x,
+        char *inst_name);
 void nupa_subcktexit(dico_t *);
 entry_t *entrynb(dico_t *dico, char *s);
 entry_t *attrib(dico_t *, NGHASHPTR htable, char *t, char op);

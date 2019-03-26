@@ -535,7 +535,7 @@ defsubckt(dico_t *dico, struct card *card)
 
 
 int
-findsubckt(dico_t *dico, const char * const s)
+findsubckt(dico_t *dico, const char *s)
 /* input: s is a subcircuit invocation line.
    returns 0 if not found, else the stored definition line number value */
 {
@@ -1292,7 +1292,7 @@ getexpress(nupa_type *type, SPICE_DSTRINGPTR tstr_p, const char *s)
 
 
 bool
-nupa_assignment(dico_t *dico, const char * const s, char mode)
+nupa_assignment(dico_t *dico, const char *s, char mode)
 /* is called for all 'Param' lines of the input file.
    is also called for the params: section of a subckt .
    mode='N' define new local variable, else global...
@@ -1399,7 +1399,8 @@ search_isolated_identifier(char *str, const char *identifier)
 
 
 bool
-nupa_subcktcall(dico_t *dico, char *s, char * const x, char * const inst_name)
+nupa_subcktcall(dico_t *dico, const char *s, const char *x,
+        char *inst_name)
 /* s= a subckt define line, with formal params.
    x= a matching subckt call line, with actual params
 */
