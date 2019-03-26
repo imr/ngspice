@@ -159,28 +159,57 @@ wl_reverse(wordlist *wl)
 }
 
 
-/* Convert a wordlist into a string. */
+/* This function converts a wordlist into a string, adding a blank space
+ * between each word and a null termination. The wordlist may be NULL, in
+ * which case "" is returned.
+ *
+ * The returned string is allocated and must be freed by the caller. */
 char *
-wl_flatten(wordlist *wlist)
+wl_flatten(const wordlist *wlist)
 {
     char *buf;
-    wordlist *wl;
-    size_t len = 0;
+    const wordlist *wl;
 
+    /* Handle case of an empty list */
+    if (wlist == (wordlist *) NULL) {
+        buf = TMALLOC(char, 1);
+        *buf = '\0';
+        return buf;
+    }
+
+    /* List has at least one word */
+
+    /* Find size needed for buffer
+     * +1 for interword blanks and null at end */
+    size_t len = 0;
     for (wl = wlist; wl; wl = wl->wl_next)
         len += strlen(wl->wl_word) + 1;
 
-    buf = TMALLOC(char, len + 1);
-    *buf = '\0';
+    /* Allocate to min required size */
+    buf = TMALLOC(char, len);
 
-    for (wl = wlist; wl; wl = wl->wl_next) {
-        (void) strcat(buf, wl->wl_word);
-        if (wl->wl_next)
-            (void) strcat(buf, " ");
-    }
-    return (buf);
+    /* Step through the list again, building the output string */
+    char *p_dst = buf;
+    for (wl = wlist; ; ) { /* for each word */
+        /* Add all source chars until end of word */
+        const char *p_src = wl->wl_word;
+        for ( ; ; p_src++) { /* for each char */
+            const char ch_src = *p_src;
+            if (ch_src == '\0') { /* exit when null found */
+                break;
+            }
+            *p_dst++ = ch_src;
+        } /* end of loop over chars in source string */
 
-}
+        /* Move to next word, exiting if none left */
+        if ((wl = wl->wl_next) == (wordlist *) NULL) {
+            *p_dst = '\0'; /* null-terminate string */
+            return buf; /* normal function exit */
+        }
+        *p_dst++ = ' '; /* add space between words */
+    } /* end of loop over words in word list */
+} /* end of function wl_flatten */
+
 
 
 /* Return the nth element of a wordlist, or the last one if n is too
