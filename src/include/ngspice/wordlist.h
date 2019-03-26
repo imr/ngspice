@@ -20,7 +20,7 @@ wordlist * wl_build(char **v);
 char ** wl_mkvec(wordlist *wl);
 wordlist * wl_append(wordlist *wlist, wordlist *nwl);
 wordlist * wl_reverse(wordlist *wl);
-char * wl_flatten(wordlist *wl);
+char * wl_flatten(const wordlist *wl);
 wordlist * wl_nthelem(int i, wordlist *wl);
 void wl_sort(wordlist *wl);
 wordlist * wl_range(wordlist *wl, int low, int up);
