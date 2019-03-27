@@ -369,6 +369,19 @@ VBICsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             model->VBICrefVersion = 0.0;
         }
 
+        if(model->VBICtempExpRBGiven && !model->VBICtempExpRBIGiven) {
+          model->VBICtempExpRBI = model->VBICtempExpRB;
+        }
+        if(model->VBICtempExpRBGiven && !model->VBICtempExpRBXGiven) {
+          model->VBICtempExpRBX = model->VBICtempExpRB;
+        }
+        if(model->VBICtempExpRCGiven && !model->VBICtempExpRCIGiven) {
+          model->VBICtempExpRCI = model->VBICtempExpRC;
+        }
+        if(model->VBICtempExpRCGiven && !model->VBICtempExpRCXGiven) {
+          model->VBICtempExpRCX = model->VBICtempExpRC;
+        }
+
         if(!model->VBICvbeMaxGiven) {
             model->VBICvbeMax = 1e99;
         }
@@ -397,9 +410,6 @@ VBICsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
             here->VBICstate = *states;
             *states += VBICnumStates;
-            if(ckt->CKTsenInfo && (ckt->CKTsenInfo->SENmode & TRANSEN) ){
-                *states += VBICnumSenStates * (ckt->CKTsenInfo->SENparms);
-            }
 
             if(model->VBICextCollResist == 0) {
                 here->VBICcollCXNode = here->VBICcollNode;
@@ -462,22 +472,31 @@ VBICsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 }
             }
 
+            if((model->VBICthermalResistGiven) && (model->VBICthermalResist > 0.0))
+                here->VBIC_selfheat = 1;
+            else
+                here->VBIC_selfheat = 0;
+
+            if((model->VBICthermalResistGiven) && (model->VBICthermalCapacitance < 1e-09))
+                model->VBICthermalCapacitance = 1e-09;
+
+
             if(here->VBICcollCINode == 0) {
-            error = CKTmkVolt(ckt, &tmp, here->VBICname, "collCI");
-            if(error) return(error);
-            here->VBICcollCINode = tmp->number;  
+                error = CKTmkVolt(ckt, &tmp, here->VBICname, "collCI");
+                if(error) return(error);
+                here->VBICcollCINode = tmp->number;  
             }
 
             if(here->VBICbaseBPNode == 0) {
-            error = CKTmkVolt(ckt, &tmp, here->VBICname, "baseBP");
-            if(error) return(error);
-            here->VBICbaseBPNode = tmp->number;  
+                error = CKTmkVolt(ckt, &tmp, here->VBICname, "baseBP");
+                if(error) return(error);
+                here->VBICbaseBPNode = tmp->number;  
             }
 
             if(here->VBICbaseBINode == 0) {
-            error = CKTmkVolt(ckt, &tmp, here->VBICname, "baseBI");
-            if(error) return(error);
-            here->VBICbaseBINode = tmp->number;  
+                error = CKTmkVolt(ckt, &tmp, here->VBICname, "baseBI");
+                if(error) return(error);
+                here->VBICbaseBINode = tmp->number;  
             }
 
 /* macro to make elements with built in test for out of memory */
@@ -538,6 +557,28 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
             TSTALLOC(VBICsubsSICollCIPtr,VBICsubsSINode,VBICcollCINode);
             TSTALLOC(VBICsubsSIBaseBIPtr,VBICsubsSINode,VBICbaseBINode);
             TSTALLOC(VBICsubsSIBaseBPPtr,VBICsubsSINode,VBICbaseBPNode);
+
+            if (here->VBIC_selfheat) {
+                TSTALLOC(VBICcollTempPtr,VBICcollNode,VBICtempNode);
+                TSTALLOC(VBICbaseTempPtr,VBICbaseNode,VBICtempNode);
+                TSTALLOC(VBICemitTempPtr,VBICemitNode,VBICtempNode);
+                TSTALLOC(VBICsubsTempPtr,VBICsubsNode,VBICtempNode);
+                TSTALLOC(VBICcollCItempPtr,VBICcollCINode,VBICtempNode);
+                TSTALLOC(VBICcollCXtempPtr,VBICcollCXNode,VBICtempNode);
+                TSTALLOC(VBICbaseBItempPtr,VBICbaseBINode,VBICtempNode);
+                TSTALLOC(VBICbaseBXtempPtr,VBICbaseBXNode,VBICtempNode);
+                TSTALLOC(VBICbaseBPtempPtr,VBICbaseBPNode,VBICtempNode);
+                TSTALLOC(VBICemitEItempPtr,VBICemitEINode,VBICtempNode);
+                TSTALLOC(VBICsubsSItempPtr,VBICsubsSINode,VBICtempNode);
+                TSTALLOC(VBICtempCollCIPtr,VBICtempNode,VBICcollCINode);
+                TSTALLOC(VBICtempCollCXPtr,VBICtempNode,VBICcollCXNode);
+                TSTALLOC(VBICtempBaseBIPtr,VBICtempNode,VBICbaseBINode);
+                TSTALLOC(VBICtempBaseBXPtr,VBICtempNode,VBICbaseBXNode);
+                TSTALLOC(VBICtempBaseBPPtr,VBICtempNode,VBICbaseBPNode);
+                TSTALLOC(VBICtempEmitEIPtr,VBICtempNode,VBICemitEINode);
+                TSTALLOC(VBICtempSubsPtr,VBICtempNode,VBICsubsNode);
+                TSTALLOC(VBICtempTempPtr,VBICtempNode,VBICtempNode);
+            }
 
         }
     }

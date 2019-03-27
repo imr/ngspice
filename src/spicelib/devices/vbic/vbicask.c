@@ -23,12 +23,8 @@ int
 VBICask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFvalue *select)
 {
     VBICinstance *here = (VBICinstance*)instPtr;
-    int itmp;
-    double vr;
-    double vi;
-    double sr;
-    double si;
-    double vm;
+
+    NG_IGNORE(select);
 
     switch(which) {
         case VBIC_AREA:
@@ -149,66 +145,6 @@ VBICask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFvalu
             return(OK);
         case VBIC_QUEST_QBC:
             value->rValue = *(ckt->CKTstate0 + here->VBICqbc);
-            return(OK);
-        case VBIC_QUEST_SENS_DC:
-            if(ckt->CKTsenInfo){
-               value->rValue = *(ckt->CKTsenInfo->SEN_Sap[select->iValue + 1]+
-                   here->VBICsenParmNo);
-            }
-            return(OK);
-        case VBIC_QUEST_SENS_REAL:
-            if(ckt->CKTsenInfo){
-               value->rValue = *(ckt->CKTsenInfo->SEN_RHS[select->iValue + 1]+
-                   here->VBICsenParmNo);
-            }
-            return(OK);
-        case VBIC_QUEST_SENS_IMAG:
-            if(ckt->CKTsenInfo){
-               value->rValue = *(ckt->CKTsenInfo->SEN_iRHS[select->iValue + 1]+
-                   here->VBICsenParmNo);
-            }
-            return(OK);
-        case VBIC_QUEST_SENS_MAG:
-            if(ckt->CKTsenInfo){
-               vr = *(ckt->CKTrhsOld + select->iValue + 1); 
-               vi = *(ckt->CKTirhsOld + select->iValue + 1); 
-               vm = sqrt(vr*vr + vi*vi);
-               if(vm == 0){
-                 value->rValue = 0;
-                 return(OK);
-               }
-               sr = *(ckt->CKTsenInfo->SEN_RHS[select->iValue + 1]+
-                    here->VBICsenParmNo);
-               si = *(ckt->CKTsenInfo->SEN_iRHS[select->iValue + 1]+
-                    here->VBICsenParmNo);
-                   value->rValue = (vr * sr + vi * si)/vm;
-            }
-            return(OK);
-        case VBIC_QUEST_SENS_PH:
-            if(ckt->CKTsenInfo){
-               vr = *(ckt->CKTrhsOld + select->iValue + 1); 
-               vi = *(ckt->CKTirhsOld + select->iValue + 1); 
-               vm = vr*vr + vi*vi;
-               if(vm == 0){
-                 value->rValue = 0;
-                 return(OK);
-               }
-               sr = *(ckt->CKTsenInfo->SEN_RHS[select->iValue + 1]+
-                    here->VBICsenParmNo);
-               si = *(ckt->CKTsenInfo->SEN_iRHS[select->iValue + 1]+
-                    here->VBICsenParmNo);
-       
-                   value->rValue =  (vr * si - vi * sr)/vm;
-            }
-            return(OK);
-        case VBIC_QUEST_SENS_CPLX:
-            if(ckt->CKTsenInfo){
-               itmp = select->iValue + 1;
-               value->cValue.real= *(ckt->CKTsenInfo->SEN_RHS[itmp]+
-                   here->VBICsenParmNo);
-               value->cValue.imag= *(ckt->CKTsenInfo->SEN_iRHS[itmp]+
-                   here->VBICsenParmNo);
-            }
             return(OK);
         default:
             return(E_BADPARM);

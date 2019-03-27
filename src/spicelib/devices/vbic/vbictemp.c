@@ -17,7 +17,7 @@ Spice3 Implementation: 2003 Dietmar Warning DAnalyse GmbH
 
 /* ARGSUSED */
 
-int iret, vbic_4T_it_cf_t(double *, double *, double *);
+int iret, vbic_4T_et_cf_t(double *, double *, double *);
 
 int
 VBICtemp(GENmodel *inModel, CKTcircuit *ckt)
@@ -31,42 +31,6 @@ VBICtemp(GENmodel *inModel, CKTcircuit *ckt)
 
     /*  loop through all the bipolar models */
     for( ; model != NULL; model = VBICnextModel(model)) {
-
-        if(!model->VBICtnomGiven) model->VBICtnom = ckt->CKTnomTemp - CONSTCtoK;
-
-        if(model->VBICextCollResistGiven && model->VBICextCollResist != 0.0) {
-          model->VBICcollectorConduct = 1.0 / model->VBICextCollResist;
-        } else {
-          model->VBICcollectorConduct = 0.0;
-        }
-        if(model->VBICextBaseResistGiven && model->VBICextBaseResist != 0.0) {
-          model->VBICbaseConduct = 1.0 / model->VBICextBaseResist;
-        } else {
-          model->VBICbaseConduct = 0.0;
-        }
-        if(model->VBICemitterResistGiven && model->VBICemitterResist != 0.0) {
-          model->VBICemitterConduct = 1.0 / model->VBICemitterResist;
-        } else {
-          model->VBICemitterConduct = 0.0;
-        }
-        if(model->VBICsubstrateResistGiven && model->VBICsubstrateResist != 0.0) {
-          model->VBICsubstrateConduct = 1.0 / model->VBICsubstrateResist;
-        } else {
-          model->VBICsubstrateConduct = 0.0;
-        }
-
-        if(model->VBICtempExpRBGiven && !model->VBICtempExpRBIGiven) {
-          model->VBICtempExpRBI = model->VBICtempExpRB;
-        }
-        if(model->VBICtempExpRBGiven && !model->VBICtempExpRBXGiven) {
-          model->VBICtempExpRBX = model->VBICtempExpRB;
-        }
-        if(model->VBICtempExpRCGiven && !model->VBICtempExpRCIGiven) {
-          model->VBICtempExpRCI = model->VBICtempExpRC;
-        }
-        if(model->VBICtempExpRCGiven && !model->VBICtempExpRCXGiven) {
-          model->VBICtempExpRCX = model->VBICtempExpRC;
-        }
 
         /* loop through all the instances of the model */
         for (here = VBICinstances(model); here != NULL ;
@@ -187,9 +151,8 @@ VBICtemp(GENmodel *inModel, CKTcircuit *ckt)
             pnom[106] = model->VBICrevVersion;
             pnom[107] = model->VBICrefVersion;
             
-            iret = vbic_4T_it_cf_t(p,pnom,&TAMB);
+            iret = vbic_4T_et_cf_t(p,pnom,&TAMB);
             
-            here->VBICttnom = p[0];
             here->VBICtextCollResist = p[1];
             here->VBICtintCollResist = p[2];
             here->VBICtepiSatVoltage = p[3];
@@ -232,7 +195,7 @@ VBICtemp(GENmodel *inModel, CKTcircuit *ckt)
     return(OK);
 }
 
-int vbic_4T_it_cf_t(double *p, double *pnom, double *TAMB)
+int vbic_4T_et_cf_t(double *p, double *pnom, double *TAMB)
 {
         double Tini, Tdev, Vtv, rT, dT, xvar1;
         double xvar2, xvar3, xvar4, xvar5, xvar6, psiio;

@@ -2053,7 +2053,6 @@
     <ClCompile Include="..\src\spicelib\devices\vbic\vbicacld.c" />
     <ClCompile Include="..\src\spicelib\devices\vbic\vbicask.c" />
     <ClCompile Include="..\src\spicelib\devices\vbic\vbicconv.c" />
-    <ClCompile Include="..\src\spicelib\devices\vbic\vbicdel.c" />
     <ClCompile Include="..\src\spicelib\devices\vbic\vbicgetic.c" />
     <ClCompile Include="..\src\spicelib\devices\vbic\vbicinit.c" />
     <ClCompile Include="..\src\spicelib\devices\vbic\vbicload.c" />

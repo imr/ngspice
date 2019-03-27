@@ -52,6 +52,7 @@ typedef struct sVBICinstance {
     const int VBICbaseNode;   /* number of base node of vbic */
     const int VBICemitNode;   /* number of emitter node of vbic */
     const int VBICsubsNode;   /* number of substrate node of vbic */
+    const int VBICtempNode;  /* number of the temperature node of the vbic */
     int VBICcollCXNode; /* number of internal collector node of vbic */
     int VBICcollCINode; /* number of internal collector node of vbic */
     int VBICbaseBXNode; /* number of internal base node of vbic */
@@ -68,7 +69,6 @@ typedef struct sVBICinstance {
     double VBICm;        /* multiply factor for the vbic */
 
     double VBICtVcrit;
-    double VBICttnom;    /* temperature adjusted model parameters per instance */
     double VBICtextCollResist;
     double VBICtintCollResist;
     double VBICtepiSatVoltage;
@@ -208,6 +208,27 @@ typedef struct sVBICinstance {
     double *VBICsubsSIBaseBPPtr;   /* pointer to sparse matrix at
                              * (substrate,substrate) */
 
+    /* self heating */
+    double *VBICcollTempPtr;
+    double *VBICbaseTempPtr;
+    double *VBICemitTempPtr;
+    double *VBICsubsTempPtr;
+    double *VBICcollCItempPtr;
+    double *VBICcollCXtempPtr;
+    double *VBICbaseBItempPtr;
+    double *VBICbaseBXtempPtr;
+    double *VBICbaseBPtempPtr;
+    double *VBICemitEItempPtr;
+    double *VBICsubsSItempPtr;
+    double *VBICtempCollCIPtr;
+    double *VBICtempCollCXPtr;
+    double *VBICtempBaseBIPtr;
+    double *VBICtempBaseBXPtr;
+    double *VBICtempBaseBPPtr;
+    double *VBICtempEmitEIPtr;
+    double *VBICtempSubsPtr;
+    double *VBICtempTempPtr;
+
     unsigned VBICareaGiven   :1; /* flag to indicate area was specified */
     unsigned VBICoff         :1; /* 'off' flag for vbic */
     unsigned VBICicVBEGiven  :1; /* flag to indicate VBE init. cond. given */
@@ -215,30 +236,16 @@ typedef struct sVBICinstance {
     unsigned VBICtempGiven   :1; /* temperature given for vbic instance*/
     unsigned VBICdtempGiven  :1; /* delta temperature given for vbic instance*/
     unsigned VBICmGiven      :1; /* flag to indicate multiplier was specified */
-    unsigned VBICsenPertFlag :1; /* indictes whether the the parameter of
-                                    the particular instance is to be perturbed */
 
-    int  VBICsenParmNo;   /* parameter # for sensitivity use;
-                             set equal to  0 if not a design parameter */
     double VBICcapbe;
     double VBICcapbex;
     double VBICcapbc;
     double VBICcapbcx;
     double VBICcapbep;
     double VBICcapbcp;
-    double *VBICsens;
+    double VBICcapcth;
 
-#define VBICsenGpi VBICsens /* stores the perturbed values of gpi */
-#define VBICsenGmu VBICsens+5 /* stores the perturbed values of gmu */
-#define VBICsenGm VBICsens+10 /* stores the perturbed values of gm */
-#define VBICsenGo VBICsens+15 /* stores the perturbed values of go */
-#define VBICsenGx VBICsens+20 /* stores the perturbed values of gx */
-#define VBICsenCpi VBICsens+25 /* stores the perturbed values of cpi */
-#define VBICsenCmu VBICsens+30 /* stores the perturbed values of cmu */
-#define VBICsenCbx VBICsens+35 /* stores the perturbed values of cbx */
-#define VBICsenCmcb VBICsens+40 /* stores the perturbed values of cmcb */
-#define VBICsenCsub VBICsens+45 /* stores the perturbed values of csub */
-
+    int VBIC_selfheat; /* self-heating enabled  */
 
 #ifndef NONOISE
       double VBICnVar[NSTATVARS][VBICNSRCS];
@@ -339,18 +346,13 @@ typedef struct sVBICinstance {
 #define VBICirs_Vrs VBICstate+64
 #define VBICire_Vre VBICstate+65
 
-#define VBICnumStates 66
+#define VBICqcth VBICstate+66  /* thermal capacitor charge */
+#define VBICcqcth VBICstate+67 /* thermal capacitor current */
 
-#define VBICsensxpbe VBICstate+66 /* charge sensitivities and their derivatives.
-                                   * +67 for the derivatives
-                                   * pointer to the beginning of the array */
-#define VBICsensxpbex VBICstate+68
-#define VBICsensxpbc VBICstate+70
-#define VBICsensxpbcx VBICstate+72
-#define VBICsensxpbep VBICstate+74
+#define VBICvrth VBICstate+68
+#define VBICicth_Vrth VBICstate+69
 
-#define VBICnumSenStates 10
-
+#define VBICnumStates 70
 
 /* per model data */
 typedef struct sVBICmodel {           /* model structure for a vbic */
@@ -474,11 +476,6 @@ typedef struct sVBICmodel {           /* model structure for a vbic */
     double VBIClocTempDiff;
     double VBICrevVersion;
     double VBICrefVersion;
-
-    double VBICcollectorConduct; /* collector conductance */
-    double VBICbaseConduct;      /* base conductance */
-    double VBICemitterConduct;   /* emitter conductance */
-    double VBICsubstrateConduct; /* substrate conductance */
 
     double VBICvbeMax; /* maximum voltage over B-E junction */
     double VBICvbcMax; /* maximum voltage over B-C junction */
@@ -779,12 +776,6 @@ enum {
     VBIC_QUEST_CBCX,
     VBIC_QUEST_CBEP,
     VBIC_QUEST_CBCP,
-    VBIC_QUEST_SENS_REAL,
-    VBIC_QUEST_SENS_IMAG,
-    VBIC_QUEST_SENS_MAG,
-    VBIC_QUEST_SENS_PH,
-    VBIC_QUEST_SENS_CPLX,
-    VBIC_QUEST_SENS_DC,
     VBIC_QUEST_POWER,
 };
 
