@@ -1,5 +1,4 @@
 .param
-*qnva:
 +qnva_is=1.000e+00
 +qnva_re=1.000e+00
 +qnva_cje=1.000e+00
@@ -16,26 +15,6 @@
 +qnva_aibei=0.000e+00
 +qnva_aiben=0.000e+00
 
-* ----------------------------------------------------------------------
-************* XFAB ******** MODEL PARAMETERS ***************************
-* ----------------------------------------------------------------------
-* Simulator : HSPICE version: HSPICE M-2017.03 linux64 (Feb 20 2017)
-* Device    : qnva
-* Desc      : vertical NPN bipolar transistor
-* Model     : 4-term vbic subckt
-*           : hspice.vbic_s.4term_subckt.npn.1009
-* Process   : XH018
-* Extracted : XH018; EF709000.001.w02; 2008-03-09; S.Schmidt
-* Spec.     : PS_018_03
-* Revision  : 1.0.5; 2015-01-31
-* ----------------------------------------------------------------------
-*                        PARAMETERIZED
-* ----------------------------------------------------------------------
-* NOTE: Tnom = 27 degree Celsius
-* Fixed emitter width=1.02um, parameters are referred to emitter length L0=1um
-* LE [um] : total emitter length LE=2um ... 50um
-* The device length must be specified as le=LE/L0
-*
 .subckt qnva c b e s le=2.02 par1=1
 q1 c b e s qnvamod area=1
 .model qnvamod npn level=9
@@ -113,4 +92,3 @@ q1 c b e s qnvamod area=1
 + ibbe='(le*7.769e-09+(-1.684e-12))'
 + avc2='1/(1.590e-03/le+1/1.892e+01)'
 .ends qnva
-* ----------------------------------------------------------------------

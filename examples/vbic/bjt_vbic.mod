@@ -27,7 +27,7 @@
 + Tnf=0 Tavc=0.002613 Kfn=0 Afn=1 Bfn=1)
 
 * hspice vbic99_ac and vbic99_tran example
-.model vbic99 npn level=9
+.model vbic99 npn
 + LEVEL = 9 TREF=27 RCX = 10.26
 + RCI = 0.001 VO = 0 GAMM = 0
 + HRCF = 0 RBX = 122.23 RBI = 0.001

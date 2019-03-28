@@ -32,7 +32,7 @@ foreach myic 1m 4m 7m 10m 20m 40m 60m 75m 90m 100m 110m 130m 180m
  let ic[run] = $myic         $ store ic to vector ft in plot 'scratch'
  let ft[run] = {$dt}.freq_at $ store ft to vector ft in plot 'scratch'
  setplot $dt                 $ go back to the previous plot
- let run = run + 1      	 
+ let run = run + 1
 end
 setplot unknown1
 plot ft vs ic xlog
