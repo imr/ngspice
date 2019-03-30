@@ -50,11 +50,17 @@ ft_getpnames(wordlist *wl, bool check)
     if (rv)
         return (NULL);
 
-    if (check && !checkvalid(pn))
-        return (NULL);
+    /* If validation is requested, do it and return NULL on failure. The
+     * structure must also be freed if the check fails since it is not
+     * being returned. */
+    if (check && !checkvalid(pn)) {
+        free_pnode(pn);
+        return (struct pnode *) NULL;
+    }
 
     return (pn);
-}
+} /* end of function ft_getpnames */
+
 
 
 /* See if there are any variables around which have length 0 and are
