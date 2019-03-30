@@ -10,6 +10,13 @@
 #include "com_ghelp.h"
 #include "com_help.h"
 
+/* Displays SPICE3 help for commands if that is available or a link to the
+ * latest manuals otherwise.
+ *
+ * For those interested, an HTML source for the SPICE3 manual can be found at
+ * Internet Archive using the link below.
+ * https://web.archive.org/web/20180221111839/http://newton.ex.ac.uk/teaching/CDHW/Electronics2/userguide/
+ */
 void
 com_ghelp(wordlist *wl)
 {
@@ -17,11 +24,12 @@ com_ghelp(wordlist *wl)
 
     NG_IGNORE(wl);
 
-    printf("Internal help is no longer avaialable!\n"
-           "Please check for the actual ngspice manual at\n"
-           "  http://ngspice.sourceforge.net/docs/ngspice-manual.pdf\n"
-           "or for help on spice3 at\n"
-           "  http://newton.ex.ac.uk/teaching/CDHW/Electronics2/userguide/\n");
+    (void) printf("Internal help is no longer avaialable!\n"
+            "For the latest official ngspice manual in PDF format, "
+                    "please see\n"
+            "  http://ngspice.sourceforge.net/docs/ngspice-manual.pdf\n"
+           "Or for HTML see\n"
+           "  http://ngspice.sourceforge.net/docs/ngspice-html-manual/manual.html\n");
     return;
 
 #else
