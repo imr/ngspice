@@ -257,7 +257,13 @@ cp_vset(char *varname, enum cp_types type, void *value)
 }
 
 
-/*CDHW This needs leak checking carefully CDHW*/
+/* Read a wordlist, e.g. from the options or set commands 
+   e.g. set myvar=myval or set myvar="myval" or myvar=( "myval1" myval2 ) or
+   set myvar1=myval1 myvar2=myval2 myvar3="myval3"
+   Separate into name and value(s)
+   Generate variables (real, string or list) 
+   Value in double quotes will always become string variable.
+   Without quotes tokens like 2N5401_C will be evaluated as real number 2n, i.e. 2e-9 */
 struct variable *
 cp_setparse(wordlist *wl)
 {
@@ -318,8 +324,14 @@ cp_setparse(wordlist *wl)
             return (NULL);
         }
 
-        /*   val = cp_unquote(val);  DG: bad   old val is lost*/
-        copyval = cp_unquote(val); /*DG*/
+        /* if val is in double quotes, treat as string */
+        copyval = cp_unquote(val);
+        if (!eq(val, copyval)) {
+            vars = var_alloc_string(copy(name), copy(copyval), vars);
+            tfree(name);
+            tfree(copyval);
+            continue;
+        }
         strcpy(val, copyval);
         tfree(copyval);
 
@@ -336,12 +348,18 @@ cp_setparse(wordlist *wl)
                         break;
                 }
                 copyval = ss = cp_unquote(wl->wl_word);
-                td = ft_numparse(&ss, FALSE);
-                if (td)
-                    vv = var_alloc_real(NULL, *td, NULL);
-                else
+                /* if val is in double quotes, treat as string */
+                if (!eq(wl->wl_word, copyval)) {
                     vv = var_alloc_string(NULL, copy(ss), NULL);
-                tfree(copyval); /*DG: must free ss any way to avoid cp_unquote memory leak*/
+                }
+                else {
+                    td = ft_numparse(&ss, FALSE);
+                    if (td)
+                        vv = var_alloc_real(NULL, *td, NULL);
+                    else
+                        vv = var_alloc_string(NULL, copy(ss), NULL);
+                }
+                tfree(copyval);
                 if (listv) {
                     lv->va_next = vv;
                     lv = vv;
@@ -365,12 +383,19 @@ cp_setparse(wordlist *wl)
         }
 
         copyval = ss = cp_unquote(val);
-        td = ft_numparse(&ss, FALSE);
-        if (td) {
-            /*** We should try to get CP_NUM's... */
-            vars = var_alloc_real(copy(name), *td, vars);
-        } else {
-            vars = var_alloc_string(copy(name), copy(val), vars);
+        /* if val is in double quotes, treat as string */
+        if (!eq(val, copyval)) {
+            vars = var_alloc_string(copy(name), copy(copyval), vars);
+        }
+        else {
+            td = ft_numparse(&ss, FALSE);
+            if (td) {
+                /*** We should try to get CP_NUM's... */
+                vars = var_alloc_real(copy(name), *td, vars);
+            }
+            else {
+                vars = var_alloc_string(copy(name), copy(val), vars);
+            }
         }
         tfree(copyval); /*DG: must free ss any way to avoid cp_unquote memory leak */
         tfree(name);  /* va: cp_unquote memory leak: free name for every loop */
