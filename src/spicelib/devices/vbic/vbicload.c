@@ -474,6 +474,9 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                             *(ckt->CKTstate1 + here->VBICirs_Vrs);
                     *(ckt->CKTstate0 + here->VBICire_Vre) = 
                             *(ckt->CKTstate1 + here->VBICire_Vre);
+                    if (here->VBIC_selfheat)
+                        *(ckt->CKTstate0 + here->VBICqcth) = 
+                                *(ckt->CKTstate1 + here->VBICqcth);
                 } else {
 #endif /* PREDICTOR */
                     /*
@@ -869,8 +872,8 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                     {
                         error = NIintegrate(ckt,&geq,&ceq,Qcth_Vrth,here->VBICqcth);
                         if(error) return(error);
-                        Icth_Vrth = Qcth_Vrth * ckt->CKTag[0];
-                        Icth = *(ckt->CKTstate0 + here->VBICcqcth) - Icth_Vrth * Vrth;
+                        Icth_Vrth = geq;
+                        Icth = *(ckt->CKTstate0 + here->VBICcqcth);
                     }
 
                     if(ckt->CKTmode & MODEINITTRAN) {
@@ -1301,13 +1304,10 @@ c               Stamp element: Cth
 /*
 c               Stamp element: Ith
 */
-// power sum from vbic_4T_et_cf_fj w/o Vbcx term
-//(*Ith)=-((*Ibe)*(*Vbei)+(*Ibc)*(*Vbci)+((*Itzf)-(*Itzr))*(*Vcei)+(*Ibex)*(*Vbex)+(*Ibep)*(*Vbep)+(*Irs)*(*Vrs)+(*Ibcp)*(*Vbcp)+(*Iccp)*(*Vcep)+(*Ircx)*(*Vrcx)+(*Irci)*(*Vrci)+(*Irbx)*(*Vrbx)+(*Irbi)*(*Vrbi)+(*Ire)*(*Vre)+(*Irbp)*(*Vrbp));
-
-                rhs_current = - Ith + Ith_Vrth*Vrth + Icth
+                rhs_current = - Ith + Ith_Vrth*Vrth + Icth - Icth_Vrth*Vrth
                               + Ith_Vbei*Vbei + Ith_Vbci*Vbci + Ith_Vcei*Vcei
                               + Ith_Vbex*Vbex + Ith_Vbep*Vbep + Ith_Vbcp*Vbcp
-                              + Ith_Vcep*Vcep + Ith_Vrci*Vrci// + Ith_Vbcx*Vbcx
+                              + Ith_Vcep*Vcep + Ith_Vrci*Vrci + Ith_Vbcx*Vbcx
                               + Ith_Vrbi*Vrbi + Ith_Vrbp*Vrbp
                               + Ith_Vrcx*Vrcx + Ith_Vrbx*Vrbx + Ith_Vre*Vre + Ith_Vrs*Vrs;
 
@@ -1331,8 +1331,8 @@ c               Stamp element: Ith
                 *(here->VBICtempSubsPtr)   += +Ith_Vcep;
                 *(here->VBICtempCollCXPtr) += -Ith_Vrci;
                 *(here->VBICtempCollCIPtr) += +Ith_Vrci;
-//                *(here->VBICtempBaseBIPtr) += -Ith_Vbcx;
-//                *(here->VBICtempCollCXPtr) += +Ith_Vbcx;
+                *(here->VBICtempBaseBIPtr) += -Ith_Vbcx;
+                *(here->VBICtempCollCXPtr) += +Ith_Vbcx;
                 *(here->VBICtempBaseBXPtr) += -Ith_Vrbi;
                 *(here->VBICtempBaseBIPtr) += +Ith_Vrbi;
                 *(here->VBICtempBaseBPPtr) += -Ith_Vrbp;
