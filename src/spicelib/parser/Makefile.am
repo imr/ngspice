@@ -2,6 +2,8 @@
 
 noinst_LTLIBRARIES = libinp.la
 
+BUILT_SOURCES = inpptree-parser.h
+
 libinp_la_SOURCES = \
 		ifeval.c	\
 		ifnewuid.c	\
@@ -60,17 +62,11 @@ libinp_la_SOURCES = \
 		inppname.c	\
 		inpptree.c	\
 		inpptree-parser.y \
-		inpptree-parser-y.h \
 		inpsymt.c	\
 		inptyplk.c	\
 		ptfuncs.c	\
 		sperror.c	\
 		inpxx.h
-
-$(srcdir)/inpptree.c : inpptree-parser.c
-
-inpptree-parser.c : inpptree-parser.y
-	$(am__skipyacc) $(YACCCOMPILE) -o $@ $<
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include -I$(top_srcdir)/src/frontend
 AM_CFLAGS = $(STATIC)

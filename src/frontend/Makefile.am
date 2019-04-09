@@ -4,6 +4,8 @@ SUBDIRS = plotting help parser wdisp numparam trannoise
 DIST_SUBDIRS = plotting help parser wdisp numparam trannoise
 EXTRA_DIST = testcommands.c
 
+BUILT_SOURCES = parse-bison.h
+
 noinst_LTLIBRARIES = libfte.la
 
 libfte_la_SOURCES =	\
@@ -150,7 +152,6 @@ libfte_la_SOURCES =	\
 	parse.c		\
 	parse.h		\
 	parse-bison.y	\
-	parse-bison-y.h	\
 	points.c	\
 	points.h	\
 	postcoms.c	\
@@ -198,8 +199,3 @@ AM_CFLAGS = $(STATIC)
 AM_YFLAGS = -d
 
 MAINTAINERCLEANFILES = Makefile.in
-
-$(srcdir)/parse.c : parse-bison.c
-
-parse-bison.c : parse-bison.y
-	$(am__skipyacc) $(YACCCOMPILE) -o $@ $<
