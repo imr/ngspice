@@ -413,6 +413,43 @@ gettok_noparens(char **s)
     return copy_substring(token, token_e);
 }
 
+/*-------------------------------------------------------------------------*
+* gettok_model acts like gettok_noparens, however when it encounters a '{', 
+* it searches for the corresponding '}' and adds the string to the output
+* token.
+*-------------------------------------------------------------------------*/
+char *
+gettok_model(char **s)
+{
+    char c;
+    const char *token, *token_e;
+
+    *s = skip_ws(*s);
+
+    if (!**s)
+        return NULL;  /* return NULL if we come to end of line */
+
+    token = *s;
+    while ((c = **s) != '\0' &&
+        !isspace_c(c) &&
+        (**s != '(') &&
+        (**s != ')') &&
+        (**s != ',')
+        ) {
+        (*s)++;
+        if (**s == '{') {
+            char *tmpstr = gettok_char(s, '}', FALSE, TRUE);
+            tfree(tmpstr);
+        }
+    }
+    token_e = *s;
+
+    *s = skip_ws(*s);
+
+    return copy_substring(token, token_e);
+}
+
+
 
 char *
 gettok_instance(char **s)
