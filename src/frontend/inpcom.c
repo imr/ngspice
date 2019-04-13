@@ -6645,7 +6645,7 @@ inp_vdmos_model(struct card *deck)
                 cut_line = cut_line + 1;
             new_line = NULL;
             while (cut_line && *cut_line) {
-                token = gettok_noparens(&cut_line);
+                token = gettok_model(&cut_line);
                 if (!ciprefix("pchan", token) && !ciprefix("ron=", token) && !ciprefix("vds=", token) &&
                         !ciprefix("qg=", token) && !ciprefix("mfg=", token) && !ciprefix("nchan", token))
                     wl_append_word(NULL, &wl, token);
