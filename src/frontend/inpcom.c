@@ -133,6 +133,7 @@ static void inp_delete_funcs(struct func_temper *funcs);
 
 static bool chk_for_line_continuation(char *line);
 static void comment_out_unused_subckt_models(struct card *start_card);
+static void rem_mfg_from_models(struct card *start_card);
 static void inp_fix_macro_param_func_paren_io(struct card *begin_card);
 static void inp_fix_gnd_name(struct card *deck);
 static void inp_chk_for_multi_in_vcvs(struct card *deck, int *line_number);
@@ -612,6 +613,8 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile, bool *expr_w_t
            decide here which model we finally will need */
         if (!has_if)
             comment_out_unused_subckt_models(working);
+
+        rem_mfg_from_models(working);
 
         subckt_params_to_param(working);
 
@@ -7764,5 +7767,33 @@ static void inp_check_syntax(struct card *deck)
     if (check_if != 0) {
         fprintf(cp_err, "\nError: Mismatch of .if ... .endif statements!\n");
         fprintf(cp_err, "    This may cause subsequent errors.\n\n");
+    }
+}
+
+/* remove the mfg=mfgname entry from the .model cards */
+static void
+rem_mfg_from_models(struct card *deck)
+{
+    struct card *card;
+    for (card = deck; card; card = card->nextcard) {
+
+        char *curr_line, *end, *start;
+
+        curr_line = start = card->line;
+        /* remove mfg=name */
+        if (ciprefix(".model", curr_line)){
+            start = strstr(curr_line, "mfg=");
+            if (start) {
+                end = nexttok(start);
+                if (*end == '\0')
+                    *start = '\0';
+                else
+                    while (start < end) {
+                        *start = ' ';
+                        start++;
+                    }
+            }
+
+        }
     }
 }
