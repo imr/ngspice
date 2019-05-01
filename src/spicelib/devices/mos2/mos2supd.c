@@ -95,7 +95,8 @@ MOS2sUpdate(GENmodel *inModel, CKTcircuit *ckt)
                     sxpgb += *(here->MOS2dphigb_dl);
                 }
                 if(here->MOS2sens_w && 
-                        (iparmno == (here->MOS2senParmNo+here->MOS2sens_l))){
+                        (iparmno == (here->MOS2senParmNo +
+                            (int) here->MOS2sens_l))){
                     sxpgs += *(here->MOS2dphigs_dw);
                     sxpgd += *(here->MOS2dphigd_dw);
                     sxpbs += *(here->MOS2dphibs_dw);

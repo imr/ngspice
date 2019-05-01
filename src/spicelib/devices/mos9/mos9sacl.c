@@ -633,7 +633,7 @@ load:
             for(iparmno = 1;iparmno<=info->SENparms;iparmno++){
                 if( (flag == 4) && (iparmno != here->MOS9senParmNo) ) continue;
                 if( (flag == 5) && (iparmno != (here->MOS9senParmNo + 
-                        here->MOS9sens_l)) ) continue;
+                        (int) here->MOS9sens_l)) ) continue;
 
                 switch(flag){
                 case 1: 

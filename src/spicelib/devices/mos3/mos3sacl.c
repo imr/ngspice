@@ -637,8 +637,8 @@ load:
 #endif /* SENSDEBUG */
             for(iparmno = 1;iparmno<=info->SENparms;iparmno++){
                 if( (flag == 4) && (iparmno != here->MOS3senParmNo) ) continue;
-                if( (flag == 5) && (iparmno != (here->MOS3senParmNo + 
-                        here->MOS3sens_l)) ) continue;
+                if( (flag == 5) && (iparmno != (here->MOS3senParmNo +
+                        (int) here->MOS3sens_l)) ) continue;
 
                 switch(flag){
                 case 1: 
