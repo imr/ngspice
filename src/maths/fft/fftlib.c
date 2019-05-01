@@ -3,6 +3,7 @@ lower level fft stuff including routines called in fftext.c and fft2d.c
 *******************************************************************/
 #include "fftlib.h"
 #include <math.h>
+#include <stdlib.h>
 #define	MCACHE	(11-(int)(sizeof(double)/8))	// fft's with M bigger than this bust primary cache
 
 // some math constants to 40 decimal places
