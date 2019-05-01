@@ -199,14 +199,30 @@ com_compose(wordlist *wl)
          */
         for (v = vecs, i = 0; v; v = v->v_link2) {
             if (dim == 1) {
-                if (realflag && isreal(v)) {
+                /* 3 possibilities
+                 * 1) Composed vector is real (and current value is real)
+                 * 2) Composed vector is complex
+                 *      a) and current value is real
+                 *      b) and current value is complex
+                 * It is not possible for the composed vector to be real and
+                 * the current value to be complex because it would have
+                 * caused the composed vector to be complex. */
+                if (realflag) { /* composed vector is real */
                     data[i] = v->v_realdata[0];
-                } else if (isreal(v)) {
-                    realpart(cdata[i]) = realpart(v->v_compdata[0]);
-                    imagpart(cdata[i]) = 0.0;
-                } else {
-                    cdata[i] = v->v_compdata[0];
                 }
+                else { /* complex composed vector */
+                    ngcomplex_t *cdata_cur = cdata + i;
+                    if (isreal(v)) {
+                        /* Current value is real, so build complex value from it
+                         * and no imaginary part */
+                        realpart(*cdata_cur) = *v->v_realdata;
+                        imagpart(*cdata_cur) = 0.0;
+                    }
+                    else {
+                        *cdata_cur = *v->v_compdata;
+                    }
+                }
+
                 i++;
                 continue;
             }
