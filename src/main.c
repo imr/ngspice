@@ -8,6 +8,7 @@
 */
 
 #include "ngspice/ngspice.h"
+#include "ngspice/const.h"
 
 #include <setjmp.h>
 #include <signal.h>
@@ -463,12 +464,13 @@ EVTfindvec(char *node) {
 char *hlp_filelist[] = { "ngspice", NULL };
 
 
-/* allocate space for global constants in 'CONST.h' */
+/* Allocate space for global constants declared in const.h
+ * and set their values */
+double CONSTroot2 = CONSTsqrt2;
+double CONSTvt0 = CONSTboltz * REFTEMP / CHARGE;
+double CONSTKoverQ = CONSTboltz / CHARGE;
+double CONSTe = CONSTnap;
 
-double CONSTroot2;
-double CONSTvt0;
-double CONSTKoverQ;
-double CONSTe;
 IFfrontEnd *SPfrontEnd = NULL;
 int DEVmaxnum = 0;
 
@@ -482,9 +484,10 @@ SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator)
     SIMinfo.numDevices = DEVmaxnum = num_devices();
     SIMinfo.devices = devices_ptr();
     SIMinfo.numAnalyses = spice_num_analysis();
-    SIMinfo.analyses = (IFanalysis **)spice_analysis_ptr(); /* va: we recast, because we use
-                                                             * only the public part
-                                                             */
+
+    /* va: we recast, because we use only the public part */
+    SIMinfo.analyses = (IFanalysis **)spice_analysis_ptr();
+
 
 #ifdef CIDER
 /* Evaluates limits of machine accuracy for CIDER */
@@ -495,12 +498,10 @@ SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator)
 
     SPfrontEnd = frontEnd;
     *simulator = &SIMinfo;
-    CONSTroot2 = sqrt(2.);
-    CONSTvt0 = CONSTboltz * (27 /* deg c */ + CONSTCtoK) / CHARGE;
-    CONSTKoverQ = CONSTboltz / CHARGE;
-    CONSTe = exp(1.0);
+
     return OK;
-}
+} /* end of function SIMinit */
+
 
 
 /* -------------------------------------------------------------------------- */

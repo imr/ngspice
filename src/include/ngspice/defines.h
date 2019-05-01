@@ -13,20 +13,25 @@
 #ifndef ngspice_DEFINES_H
 #define ngspice_DEFINES_H
 
+/* 
+ * Physical constants (const.h)
+ */
+ /* For definitions of CHARGE, CONSTCtoK CONSTboltz, CONSTepsZero,
+  * CONSTepsSi02, CONSTmuZero, REFTEMP */
+#include "ngspice/const.h"
 
-#ifndef	M_PI
-#  define M_PI       3.14159265358979323846
+#ifndef M_PI
+#define M_PI       CONSTpi
 #endif
-#ifndef	M_E
-#  define M_E  	     2.7182818284590452354
+#ifndef M_E
+#define M_E        CONSTnap
 #endif
-#ifndef	M_LOG2E
-#  define M_LOG2E    1.4426950408889634074
+#ifndef M_LOG2E
+#define M_LOG2E    CONSTlog2e
 #endif
-#ifndef	M_LOG10E
-#  define M_LOG10E   0.43429448190325182765
+#ifndef M_LOG10E
+#define M_LOG10E   CONSTlog10e
 #endif
-
 
 /*
  *  IEEE Floating point
@@ -55,18 +60,7 @@
 
 #define MAXPOSINT	INT_MAX
 
-/* 
- * Physical constants (const.h)
- */
 
-#define CHARGE (1.6021918e-19)
-#define CONSTCtoK (273.15)
-#define CONSTboltz (1.3806226e-23)
-#define CONSTepsZero (8.854214871e-12)   /* epsilon zero F/m */
-#define CONSTepsSiO2 (3.4531479969e-11)  /* epsilon SiO2 F/m */
-#define CONSTmuZero  (1.25663706143592e-6)         /* MuZero H/m       */
-
-#define REFTEMP 300.15 /* 27 degrees C */
 
 /* Standard initialisation file name */
 #define INITSTR		".spiceinit"
