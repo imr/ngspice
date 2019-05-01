@@ -109,7 +109,8 @@ static inline void bitrevR2(double *ioptr, int M, short *BRLow)
     posBi = posB + 1;
 
     iolimit = ioptr + Nrems2;
-    for (; ioptr < iolimit; ioptr += POW2(M/2+1)) {
+    const size_t ioptr_inc = (size_t) POW2((M / 2 + 1));
+    for (; ioptr < iolimit; ioptr += ioptr_inc) {
         for (Colstart = Nroot_1; Colstart >= 0; Colstart--) {
             iCol = Nroot_1;
             p0r = ioptr+ Nroot_1_ColInc + BRLow[Colstart]*4;
@@ -1182,7 +1183,8 @@ static inline void scbitrevR2(double *ioptr, int M, short *BRLow, double scale)
     posBi = posB + 1;
 
     iolimit = ioptr + Nrems2;
-    for (; ioptr < iolimit; ioptr += POW2(M/2+1)) {
+    const size_t ioptr_inc = (size_t) POW2((M / 2 + 1));
+    for (; ioptr < iolimit; ioptr += ioptr_inc) {
         for (Colstart = Nroot_1; Colstart >= 0; Colstart--) {
             iCol = Nroot_1;
             p0r = ioptr+ Nroot_1_ColInc + BRLow[Colstart]*4;
@@ -2525,7 +2527,7 @@ static inline void frstage(double *ioptr, int M, double *Utbl)
     p0r = ioptr;
     p1r = ioptr + pos/2;
 
-    u0r = Utbl + POW2(M-3);
+    u0r = Utbl + (size_t) POW2(M-3);
 
     w0r =  *u0r,
 
@@ -3022,7 +3024,7 @@ static inline void ifrstage(double *ioptr, int M, double *Utbl)
     p0r = ioptr;
     p1r = ioptr + pos/2;
 
-    u0r = Utbl + POW2(M-3);
+    u0r = Utbl + (size_t) POW2(M-3);
 
     w0r =  *u0r,
 
