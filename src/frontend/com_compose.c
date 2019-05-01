@@ -161,6 +161,9 @@ com_compose(wordlist *wl)
             if (v->v_numdims < 2)
                 v->v_dims[0] = v->v_length;
 
+        /* Init real flag according to type of first element */
+        realflag = !iscomplex(vecs);
+
         for (v = vecs->v_link2, length = 1; v; v = v->v_link2) {
             i = v->v_numdims;
             if (i < 2)
@@ -449,6 +452,7 @@ com_compose(wordlist *wl)
         }
     }
 
+    /* Create a vector with the data that was processed */
     if (realflag) {
         result = dvec_alloc(resname,
                             type,
@@ -461,8 +465,11 @@ com_compose(wordlist *wl)
                             length, cdata);
     }
 
-    resname = NULL;             /* resname storage has been consumed */
+    /* The allocation for resname has been assigned to the result vector, so
+     * set to NULL so that it is not freed */
+    resname = NULL;
 
+    /* Set dimension info */
     result->v_numdims = 1;
     result->v_dims[0] = length;
 
