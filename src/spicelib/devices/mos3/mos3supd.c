@@ -92,8 +92,9 @@ MOS3sUpdate(GENmodel *inModel, CKTcircuit *ckt)
                     sxpbd += *(here->MOS3dphibd_dl);
                     sxpgb += *(here->MOS3dphigb_dl);
                 }
-                if(here->MOS3sens_w && 
-                        (iparmno == (here->MOS3senParmNo+here->MOS3sens_l))){
+                if(here->MOS3sens_w &&
+                        (iparmno == (here->MOS3senParmNo +
+                            (int) here->MOS3sens_l))){
                     sxpgs += *(here->MOS3dphigs_dw);
                     sxpgd += *(here->MOS3dphigd_dw);
                     sxpbs += *(here->MOS3dphibs_dw);

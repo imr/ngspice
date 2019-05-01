@@ -93,8 +93,9 @@ MOS9sUpdate(GENmodel *inModel, CKTcircuit *ckt)
                     sxpbd += *(here->MOS9dphibd_dl);
                     sxpgb += *(here->MOS9dphigb_dl);
                 }
-                if(here->MOS9sens_w && 
-                        (iparmno == (here->MOS9senParmNo+here->MOS9sens_l))){
+                if(here->MOS9sens_w &&
+                        (iparmno == (here->MOS9senParmNo +
+                            (int) here->MOS9sens_l))){
                     sxpgs += *(here->MOS9dphigs_dw);
                     sxpgd += *(here->MOS9dphigd_dw);
                     sxpbs += *(here->MOS9dphibs_dw);

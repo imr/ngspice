@@ -538,8 +538,9 @@ next1:
                     Osxpbd -= tag0 * *(here->MOS1dphibd_dl);
                     Osxpgb -= tag0 * *(here->MOS1dphigb_dl);
                 }
-                if(here->MOS1sens_w && 
-                        (iparmno == (here->MOS1senParmNo + here->MOS1sens_l))){
+                if(here->MOS1sens_w &&
+                        (iparmno == (here->MOS1senParmNo +
+                            (int) here->MOS1sens_l))){
                     Osxpgs -= tag0 * *(here->MOS1dphigs_dw);
                     Osxpgd -= tag0 * *(here->MOS1dphigd_dw);
                     Osxpbs -= tag0 * *(here->MOS1dphibs_dw);

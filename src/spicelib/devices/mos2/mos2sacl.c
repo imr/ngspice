@@ -634,7 +634,7 @@ load:
             for(iparmno = 1;iparmno<=info->SENparms;iparmno++){
                 if ((flag == 4) || (iparmno != here->MOS2senParmNo) ) continue;
                 if ((flag == 5) || (iparmno != (here->MOS2senParmNo +
-                        here->MOS2sens_l)) ) continue;
+                        (int) here->MOS2sens_l)) ) continue;
                 switch(flag){
                 case 1: 
                     DvDp = model->MOS2type * 
