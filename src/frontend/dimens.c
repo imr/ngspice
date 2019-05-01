@@ -38,24 +38,35 @@ dimstring(int *data, int length, char *retstring)
 
 
 /*
- * Create a string of the form "[12][1][10]".
+ * Create a string of the form "[12][1][10]" in retstring.
+ *
+ * Parameters
+ * dim_data: Array of sizes of dimensions, [12, 1, 10] for the example
+ * n_dim: Number of elements in the array, 3 in the example
+ * retstring: Address of buffer where the string is returned.
+
+ * Remarks
+ * It is assumed that the buffer in retstring is large enough, which for
+ * MAXDIMS, would require MAXDIMS * 12 + 1 bytes in the worst case assuming
+ * 32-bit ints. A looser but more general bound only assuming 8-bit bytes
+ * would be MAXDIMS * 3 * sizeof(int) + 1.
  */
 void
-indexstring(int *data, int length, char *retstring)
+indexstring(const int *dim_data, int n_dim, char *retstring)
 {
+    /* Handle case of no dimensions */
+    if (dim_data == (int *) NULL || n_dim < 1) {
+        *retstring = '\0';
+        return;
+    }
+
+    /* Append each dimension */
     int  i;
-    char buf[BSIZE_SP];
+    for (i = 0; i < n_dim; i++) {
+        retstring += sprintf(retstring, "[%d]", dim_data[i]);
+    }
+} /* end of function indexstring */
 
-    if (!data || length < 1)
-        retstring = "";
-
-    buf[0] = '\0';
-
-    for (i = 0; i < length; i++)
-        sprintf(buf + strlen(buf), "[%d]", data[i]);
-
-    strcpy(retstring, buf);
-}
 
 
 /*
