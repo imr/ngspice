@@ -62,3 +62,14 @@ Makefile.in
 /debug*
 
 /visualc-tcl*
+
+# Swap files for Vim
+**/*.swp
+**/*.swo
+
+# Patches
+**/*.patch
+
+# Visual Studio user options files
+**/*.vcxproj.user
+
