@@ -75,22 +75,34 @@ tvprintf(const char *fmt, va_list args)
 
         if (nchars == -1) {     // compatibility to old implementations
             size *= 2;
-        } else if (size < nchars + 1) {
-            size = nchars + 1;
-        } else {
+        }
+        else if (nchars >= size) {
+            /* Output was truncated. Returned value is the number of chars
+             * that would have been written if the buffer were large enough
+             * excluding the terminiating null. */
+            size = nchars + 1; /* min required allocation size */
+        }
+        else { /* String formatted OK */
             break;
         }
 
+        /* Allocate a larger buffer */
         if (p == buf)
             p = TMALLOC(char, size);
         else
             p = TREALLOC(char, p, size);
     }
 
+    /* Return the formatted string, making a copy on the heap if the
+     * stack's buffer (buf) contains the string */
     return (p == buf) ? copy(p) : p;
-}
+} /* end of function tvprintf */
 
 
+
+/* This function returns an allocation containing the string formatted
+ * according to fmt and the variadic argument list provided. It is a wrapper
+ * around tvprintf() which processes the argumens as a va_list. */
 char *
 tprintf(const char *fmt, ...)
 {
@@ -102,7 +114,7 @@ tprintf(const char *fmt, ...)
     va_end(ap);
 
     return rv;
-}
+} /* end of function tprintf */
 
 
 /* Determine whether sub is a substring of str. */
