@@ -29,7 +29,6 @@ MOS1load(GENmodel *inModel, CKTcircuit *ckt)
     double GateSourceOverlapCap;
     double OxideCap;
     double SourceSatCur;
-    double arg;
     double cbhat;
     double cdhat;
     double cdrain;
@@ -51,7 +50,6 @@ MOS1load(GENmodel *inModel, CKTcircuit *ckt)
     double gcgd;
     double gcgs;
     double geq;
-    double sarg;
     double sargsw;
     double vbd;
     double vbs;
@@ -568,7 +566,8 @@ next1:      if(vbs <= -3*vt) {
                     /* can't bypass the diode capacitance calculations */
                     if(here->MOS1Cbs != 0 || here->MOS1Cbssw != 0 ) {
                         if (vbs < here->MOS1tDepCap){
-                            arg=1-vbs/here->MOS1tBulkPot;
+                            const double arg=1-vbs/here->MOS1tBulkPot;
+                            double sarg;
                             /*
                              * the following block looks somewhat long and messy,
                              * but since most users use the default grading
@@ -628,7 +627,8 @@ next1:      if(vbs <= -3*vt) {
                 {
                     if(here->MOS1Cbd != 0 || here->MOS1Cbdsw != 0 ) {
                         if (vbd < here->MOS1tDepCap) {
-                            arg=1-vbd/here->MOS1tBulkPot;
+                            const double arg=1-vbd/here->MOS1tBulkPot;
+                            double sarg;
                             /*
                              * the following block looks somewhat long and messy,
                              * but since most users use the default grading
