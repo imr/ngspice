@@ -39,12 +39,30 @@ ft_cpinit(void)
         "FALSE",    "0",
         "pi",       "3.14159265358979323846",
         "e",        "2.71828182845904523536",
-        "c",        "2.997925e8",
+
+        /* https://physics.nist.gov/cgi-bin/cuu/Value?e
+         * value = 299 792 458 m s-1 (exact) */
+        "c",        "299792458",
+
         "i",        "0,1",
+
+        /* https://www.nist.gov/pml/weights-and-measures/si-units-temperature */
         "kelvin",   "-273.15",
-        "echarge",  "1.60219e-19",
-        "boltz",    "1.38062e-23",
-        "planck",   "6.62620e-34"
+
+        /* https://physics.nist.gov/cgi-bin/cuu/Value?e
+         *                value = 1.602 176 6208 x 10-19 C
+         * standard uncertainty = 0.000 000 0098 x 10-19 C */
+        "echarge",  "1.6021766208E-19",
+
+        /* https://physics.nist.gov/cgi-bin/cuu/Value?k|search_for=physchem_in!
+         *                value = 1.380 648 52 x 10-23 J K-1
+         * standard uncertainty = 0.000 000 79 x 10-23 J K-1 */
+        "boltz",    "1.38064852E-23",
+
+        /* https://physics.nist.gov/cgi-bin/cuu/Value?h
+         *                value = 6.626 070 040 x 10-34 J s
+         * standard uncertainty = 0.000 000 081 x 10-34 J s */
+        "planck",   "6.626070040E-34"
     };
 
     static char *udfs[] = {
