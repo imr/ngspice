@@ -898,6 +898,17 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     if (ylim)
         tfree(ylim);
 
+    /* Sanity check: scale and vector may differ, if user assembles a single graph from different plots  */
+    if(!oneval) {
+        int firstscalelength = vecs->v_scale->v_length;
+        for (d = vecs; d; d = d->v_link2)
+            if (firstscalelength != d->v_length) {
+                fprintf(cp_err, "\nError: length of vector %s and its scale differ.\n", d->v_name);
+                fprintf(cp_err, "   cannot plot!\n");
+                goto quit;
+            }
+    }
+
     /* We don't want to try to deal with smith plots for asciiplot. */
     if (devname && eq(devname, "lpr")) {
         /* check if we should (can) linearize */
