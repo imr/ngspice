@@ -43,7 +43,7 @@ extern void cp_ccom(wordlist *wlist, char *buf, bool esc);
 extern void cp_ccon(bool on);
 extern void cp_ccrestart(bool kwords);
 extern void cp_remcomm(char *word);
-extern void cp_remkword(int kw_class, char *word);
+extern void cp_remkword(int kw_class, const char *word);
 extern void cp_destroy_keywords(void);
 
 extern wordlist *cp_cctowl(struct ccom *stuff);

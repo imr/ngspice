@@ -339,7 +339,7 @@ plot_add(struct plot *pl)
 /* Remove a vector from the database, if it is there. */
 
 void
-vec_remove(char *name)
+vec_remove(const char *name)
 {
     struct dvec *ov;
 
@@ -769,12 +769,20 @@ vec_new(struct dvec *d)
         plot_cur->pl_scale = d;
     if (!d->v_plot)
         d->v_plot = plot_cur;
+
+    /* This code appears to be a patch for incorrectly specified vectors */
     if (d->v_numdims < 1) {
         d->v_numdims = 1;
         d->v_dims[0] = d->v_length;
     }
-    d->v_next = d->v_plot->pl_dvecs;
-    d->v_plot->pl_dvecs = d;
+
+    {
+        /* Make this vector the first plot vector and link the old first plot
+         * vector via its next pointer */
+        struct plot *v_plot = d->v_plot;
+        d->v_next = v_plot->pl_dvecs;
+        v_plot->pl_dvecs = d;
+    }
 }
 
 

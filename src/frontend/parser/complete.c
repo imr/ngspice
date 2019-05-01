@@ -73,8 +73,8 @@ static void printem(wordlist *wl);
 #endif
 
 static wordlist *cctowl(struct ccom *cc, bool sib);
-static struct ccom *clookup(register char *word, struct ccom **dd, bool pref,
-                            bool create);
+static struct ccom *clookup(register const char *word, struct ccom **dd, bool pref,
+        bool create);
 /* MW. I need top node in cdelete */
 static void cdelete(struct ccom *node, struct ccom **top);
 
@@ -515,7 +515,7 @@ cp_destroy_keywords(void)
 /* Remove a keyword from the database. */
 
 void
-cp_remkword(int kw_class, char *word)
+cp_remkword(int kw_class, const char *word)
 {
     struct ccom *cc;
 
@@ -583,7 +583,7 @@ throwaway(struct ccom *dbase)
  */
 
 static struct ccom *
-clookup(register char *word, struct ccom **dd, bool pref, bool create)
+clookup(register const char *word, struct ccom **dd, bool pref, bool create)
 {
     register struct ccom *place = *dd, *tmpc;
     int ind = 0, i;

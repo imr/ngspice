@@ -357,7 +357,7 @@ extern void vec_gc(void);
 extern void ft_loadfile(char *file);
 extern void vec_new(struct dvec *d);
 extern void plot_docoms(wordlist *wl);
-extern void vec_remove(char *name);
+extern void vec_remove(const char *name);
 extern void plot_setcur(char *name);
 extern struct plot *get_plot(char* name);
 extern void plot_new(struct plot *pl);
