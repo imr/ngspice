@@ -365,14 +365,14 @@ int sens_sens(CKTcircuit *ckt, int restart)
 
 			fn = DEVices[sg->dev]->DEVsetup;
 			if (fn) {
-                            CKTnode *n = ckt->CKTlastNode;
-                            /* XXXX insert old state base here ?? */
-                            fn (delta_Y, sg->model, ckt, &ckt->CKTnumStates);
-                            if (n != ckt->CKTlastNode) {
-                                fprintf(stderr, "Internal Error: node allocation in DEVsetup() during sensitivity analysis, this will cause serious troubles !, please report this issue !\n");
-                                controlled_exit(EXIT_FAILURE);
-                            }
-                        }
+                CKTnode *node = ckt->CKTlastNode;
+                /* XXXX insert old state base here ?? */
+                fn (delta_Y, sg->model, ckt, &ckt->CKTnumStates);
+                if (node != ckt->CKTlastNode) {
+                    fprintf(stderr, "Internal Error: node allocation in DEVsetup() during sensitivity analysis, this will cause serious troubles !, please report this issue !\n");
+                    controlled_exit(EXIT_FAILURE);
+                }
+            }
 
 			/* ? CKTsetup would call NIreinit instead */
 			ckt->CKTniState = NISHOULDREORDER | NIACSHOULDREORDER;
