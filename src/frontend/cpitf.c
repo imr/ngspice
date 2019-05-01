@@ -4,6 +4,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 ***********/
 
 #include "ngspice/ngspice.h"
+#include "ngspice/const.h"
 #include "ngspice/cpdefs.h"
 #include "ngspice/ftedefs.h"
 #include "ngspice/dvec.h"
@@ -23,6 +24,11 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 /* Set some standard variables and aliases, etc, and init the ccom stuff.
    Called by fcn main() */
 
+/* Macros to expand a macro to its value and then quote that value */
+#undef stringit
+#undef stringit2
+#define stringit2(x) #x
+#define stringit(x) stringit2(x)
 void
 ft_cpinit(void)
 {
@@ -37,32 +43,14 @@ ft_cpinit(void)
         "TRUE",     "1",
         "no",       "0",
         "FALSE",    "0",
-        "pi",       "3.14159265358979323846",
-        "e",        "2.71828182845904523536",
-
-        /* https://physics.nist.gov/cgi-bin/cuu/Value?e
-         * value = 299 792 458 m s-1 (exact) */
-        "c",        "299792458",
-
+        "pi",       stringit(CONSTpi),
+        "e",        stringit(CONSTnap),
+        "c",        stringit(CONSTc),
         "i",        "0,1",
-
-        /* https://www.nist.gov/pml/weights-and-measures/si-units-temperature */
-        "kelvin",   "-273.15",
-
-        /* https://physics.nist.gov/cgi-bin/cuu/Value?e
-         *                value = 1.602 176 6208 x 10-19 C
-         * standard uncertainty = 0.000 000 0098 x 10-19 C */
-        "echarge",  "1.6021766208E-19",
-
-        /* https://physics.nist.gov/cgi-bin/cuu/Value?k|search_for=physchem_in!
-         *                value = 1.380 648 52 x 10-23 J K-1
-         * standard uncertainty = 0.000 000 79 x 10-23 J K-1 */
-        "boltz",    "1.38064852E-23",
-
-        /* https://physics.nist.gov/cgi-bin/cuu/Value?h
-         *                value = 6.626 070 040 x 10-34 J s
-         * standard uncertainty = 0.000 000 081 x 10-34 J s */
-        "planck",   "6.626070040E-34"
+        "kelvin",   stringit(CONSTKtoC_for_str),
+        "echarge",  stringit(CHARGE),
+        "boltz",    stringit(CONSTboltz),
+        "planck",   stringit(CONSTplanck)
     };
 
     static char *udfs[] = {
