@@ -83,7 +83,7 @@ plot inoise_spectrum
 + Cgdmax=2.45n Cgdmin=10p a=0.3 Cgs=1.2n
 + Is=60p N=1.1 Rb=14m XTI=3
 + Cjo=1.5n Vj=0.8 m=0.5
-+ tcvth=0.0065 MU=1.27 texp0=1.5
++ tcvth=0.0065 MU=-1.27 texp0=1.5
 + shmod=1 RTH0=1.8k CTH0=1e-3
 + mtriode=0.8
 .model IRFP9240 VDMOS pchan
@@ -92,7 +92,7 @@ plot inoise_spectrum
 + Cgdmax=1.25n Cgdmin=50p a=0.23 Cgs=1.15n
 + Is=150p N=1.3 Rb=16m XTI=2
 + Cjo=1.3n Vj=0.8 m=0.5
-+ tcvth=0.004 MU=1.27 texp0=1.5
++ tcvth=0.004 MU=-1.27 texp0=1.5
 + shmod=1 RTH0=1.8k CTH0=1e-3
 + mtriode=0.6
 *

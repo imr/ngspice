@@ -26,7 +26,7 @@ V4 out2   0      0.0
 + Cgdmax=.2n Cgdmin=.05n a=0.3 Cgs=.12n 
 + Is=17p N=1.1 Rb=80m XTI=3
 + Cjo=.25n Vj=0.8 m=0.5
-+ tcvth=0.007 MU=1.27 texp0=1.5
++ tcvth=0.007 MU=-1.27 texp0=1.5
 
 .model MBRS340 D(Is=22.6u Rs=.042 N=1.094 Cjo=480p M=.61 Eg=.69 Xti=2)
 
