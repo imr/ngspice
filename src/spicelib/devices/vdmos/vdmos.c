@@ -83,7 +83,12 @@ IFparm VDMOSmPTable[] = { /* model parameters */
  IOP("mtriode", VDMOS_MOD_MTRIODE, IF_REAL,   "Conductance multiplier in triode region"),
 
  /* temperature dependency */
- IOP("tcvth", VDMOS_MOD_TCVTH, IF_REAL,   "Linear Vth0 temperature coefficient"),
+ IOP( "tcvth", VDMOS_MOD_TCVTH, IF_REAL,  "Linear Vth0 temperature coefficient"),
+ IOPR("vtotc", VDMOS_MOD_TCVTH, IF_REAL,  "Linear Vth0 temperature coefficient"),
+ IOP( "mu",    VDMOS_MOD_MU,    IF_REAL,  "Exponent of gain temperature dependency"),
+ IOPR("bex",   VDMOS_MOD_MU,    IF_REAL,  "Exponent of gain temperature dependency"),
+ IOP( "texp0", VDMOS_MOD_TEXP0, IF_REAL,  "Drain resistance rd0 temperature exponent"),
+ IOP( "texp1", VDMOS_MOD_TEXP1, IF_REAL,  "Drain resistance rd1 temperature exponent"),
 
  /* weak inversion */
  IOP("subshift",  VDMOS_MOD_SUBSHIFT,   IF_REAL, "Shift of weak inversion plot on the vgs axis"),
@@ -114,12 +119,9 @@ IFparm VDMOSmPTable[] = { /* model parameters */
  IOPA("cgs",    VDMOS_MOD_CGS,    IF_REAL, "Gate-source capacitance"),
 
 /* self heating */
- IOP( "shmod", VDMOS_MOD_SHMOD, IF_INTEGER, "Self heating mode selector"),
- IOP( "rth0",  VDMOS_MOD_RTH0,  IF_REAL, "Self-heating thermal resistance"),
- IOP( "cth0",  VDMOS_MOD_CTH0,  IF_REAL, "Self-heating thermal capacitance"),
- IOP( "mu",    VDMOS_MOD_MU,    IF_REAL, "Self-heating gain exponent"),
- IOP( "texp0", VDMOS_MOD_TEXP0, IF_REAL, "Self-heating rd0 temperature exponent"),
- IOP( "texp1", VDMOS_MOD_TEXP1, IF_REAL, "Self-heating rd1 temperature exponent"),
+ IOP("shmod", VDMOS_MOD_SHMOD, IF_INTEGER, "Self heating mode selector"),
+ IOP("rth0",  VDMOS_MOD_RTH0,  IF_REAL, "Self-heating thermal resistance"),
+ IOP("cth0",  VDMOS_MOD_CTH0,  IF_REAL, "Self-heating thermal capacitance"),
  
 /* soa check */
  IOP("vgs_max", VDMOS_MOD_VGS_MAX, IF_REAL, "maximum voltage G-S branch"),
