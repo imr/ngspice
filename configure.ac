@@ -1042,6 +1042,7 @@ if test "x$enable_adms" = xyes ; then
 #VLAMKF    src/spicelib/devices/adms/hicum2/Makefile
 #VLAMKF    src/spicelib/devices/adms/mextram/Makefile
 #VLAMKF    src/spicelib/devices/adms/psp102/Makefile
+#VLAMKF    tests/hicum/Makefile
 
     NOTVLADEVDIR=""
 

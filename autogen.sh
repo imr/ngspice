@@ -116,23 +116,30 @@ check_adms_va()
 
     for adms_dir in $admsdirs ; do
         FOK=0
-        if [ -d "$adms_dir" ]; then
-                    ls $adms_dir/admsva/*.va  > /dev/null 2>&1
-                    exitcode=$?
-                    if [ $exitcode -ne 0 ]; then
-                       FOK=1
-                    fi
-        else
-           FOK=1
-        fi
-        if [ "$FOK" -eq 1 ]; then
-            echo "Error: No *.va file found in $adms_dir/admsva"
-            echo "Please download patch file ng-adms-va.tar.gz from"
-            echo "http://ngspice.sourceforge.net/experimental/ng-adms-va.tar.gz"
-            echo "and expand it into the ngspice directory"
-            echo
-            DIE=1
-        fi
+        case "$adms_dir" in
+            "tests/hicum")
+#                echo "Skipping test dir"
+                ;;
+            *)
+                if [ -d "$adms_dir" ]; then
+                            ls $adms_dir/admsva/*.va  > /dev/null 2>&1
+                            exitcode=$?
+                            if [ $exitcode -ne 0 ]; then
+                               FOK=1
+                            fi
+                else
+                   FOK=1
+                fi
+                if [ "$FOK" -eq 1 ]; then
+                    echo "Error: No *.va file found in $adms_dir/admsva"
+                    echo "Please download patch file ng-adms-va.tar.gz from"
+                    echo "http://ngspice.sourceforge.net/experimental/ng-adms-va.tar.gz"
+                    echo "and expand it into the ngspice directory"
+                    echo
+                    DIE=1
+                fi
+                ;;
+            esac
     done
 }
 
@@ -197,6 +204,10 @@ $znew
         if [ -d "$ADMSDIR/$adms_dir" ]; then
 
             case "$adms_dir" in
+
+                "tests/hicum")
+#                    echo "Skipping test dir"
+                    ;;
 
                 "admst")
 #                    echo "Skipping admst dir"
