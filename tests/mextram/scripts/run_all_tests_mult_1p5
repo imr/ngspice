@@ -1,4 +1,4 @@
-#!/bin/csh
+#!/bin/sh
 echo "\n---------------------------"
 echo "run all tests with mult=1.5\n"
 rm ../test_specs/set_mult.inc
