@@ -564,26 +564,26 @@ outputs                     C(c,c)
 modelParameters             EXPHI=0
 `include ../test_specs/set_mult.inc
 
-// noise tests
-
-
-test                        acNoise_standT
-temperature                 25
-biases                      V(e)=0 V(c)=1.0
-`include substrate_bias.inc
-biasSweep                   V(b)=0.7,1.0,0.02
-freq                        lin 1 1.0e9 1.0e9
-outputs                     N(c)
-`include dtestpars.inc
-`include ../test_specs/set_mult.inc
-
-test                        acNoise_hightT
-temperature                 100
-biases                      V(e)=0 V(c)=1.0
-`include substrate_bias.inc
-biasSweep                   V(b)=0.7,1.0,0.02
-`include substrate_bias.inc
-freq                        lin 1 1.0e9 1.0e9
-outputs                     N(c)
-`include dtestpars.inc
-`include ../test_specs/set_mult.inc
+//// noise tests
+//
+//
+//test                        acNoise_standT
+//temperature                 25
+//biases                      V(e)=0 V(c)=1.0
+//`include substrate_bias.inc
+//biasSweep                   V(b)=0.7,1.0,0.02
+//freq                        lin 1 1.0e9 1.0e9
+//outputs                     N(c)
+//`include dtestpars.inc
+//`include ../test_specs/set_mult.inc
+//
+//test                        acNoise_hightT
+//temperature                 100
+//biases                      V(e)=0 V(c)=1.0
+//`include substrate_bias.inc
+//biasSweep                   V(b)=0.7,1.0,0.02
+//`include substrate_bias.inc
+//freq                        lin 1 1.0e9 1.0e9
+//outputs                     N(c)
+//`include dtestpars.inc
+//`include ../test_specs/set_mult.inc

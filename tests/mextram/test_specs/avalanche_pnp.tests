@@ -68,76 +68,76 @@ modelParameters             EXAVL=1
 `include set_low_rth.inc
 `include ../test_specs/set_mult.inc
 
-// noise tests involving avalanche
-
-
-test                        acNoise_KAVL_pnp
-temperature                 25
-biases                      V(e)=0 V(b)=-0.8
-`include substrate_bias.inc
-biasSweep                   V(c)=-10.0,-20.6,-0.2
-freq                        lin 1 1.0e9 1.0e9
-outputs                     N(c)
-`include dtestpars.inc
-modelParameters             KAVL=1
-`include ../test_specs/set_mult.inc
-
-test                        acNoise_highT_KAVL_pnp
-temperature                 100
-biases                      V(e)=0 V(b)=-0.8
-`include substrate_bias.inc
-biasSweep                   V(c)=-10.0,-20.6,-0.2
-`include substrate_bias.inc
-freq                        lin 1 1.0e9 1.0e9
-outputs                     N(c)
-`include dtestpars.inc
-modelParameters             KAVL=1
-`include set_low_rth.inc
-`include ../test_specs/set_mult.inc
-
-test                        acNoise_no_KAVL_pnp
-temperature                 25
-biases                      V(e)=0 V(b)=-0.8
-`include substrate_bias.inc
-biasSweep                   V(c)=-10.0,-20.6,-0.2
-freq                        lin 1 1.0e9 1.0e9
-outputs                     N(c)
-`include dtestpars.inc
-modelParameters             KAVL=0
-`include ../test_specs/set_mult.inc
-
-test                        acNoise_highT_no_KAVL_pnp
-temperature                 100
-biases                      V(e)=0 V(b)=-0.7
-`include substrate_bias.inc
-biasSweep                   V(c)=-10.0,-21.4,-0.2
-`include substrate_bias.inc
-freq                        lin 1 1.0e9 1.0e9
-outputs                     N(c)
-`include dtestpars.inc
-modelParameters             KAVL=0
-`include set_low_rth.inc
-`include ../test_specs/set_mult.inc
-
-test                        acNoise_EXAVL_KAVL_pnp
-temperature                 25
-biases                      V(e)=0 V(b)=-0.8
-`include substrate_bias.inc
-biasSweep                   V(c)=-10.0,-20.6,-0.2
-freq                        lin 1 1.0e9 1.0e9
-outputs                     N(c)
-`include dtestpars.inc
-modelParameters             EXAVL=1 KAVL=1
-`include ../test_specs/set_mult.inc
-
-test                        acNoise_highT_EXAVL_KAVL_pnp
-temperature                 100
-biases                      V(e)=0 V(b)=-0.7
-`include substrate_bias.inc
-biasSweep                   V(c)=-10.0,-21.4,-0.2
-freq                        lin 1 1.0e9 1.0e9
-outputs                     N(c)
-`include dtestpars.inc
-modelParameters             EXAVL=1 KAVL=1
-`include set_low_rth.inc
-`include ../test_specs/set_mult.inc
+//// noise tests involving avalanche
+//
+//
+//test                        acNoise_KAVL_pnp
+//temperature                 25
+//biases                      V(e)=0 V(b)=-0.8
+//`include substrate_bias.inc
+//biasSweep                   V(c)=-10.0,-20.6,-0.2
+//freq                        lin 1 1.0e9 1.0e9
+//outputs                     N(c)
+//`include dtestpars.inc
+//modelParameters             KAVL=1
+//`include ../test_specs/set_mult.inc
+//
+//test                        acNoise_highT_KAVL_pnp
+//temperature                 100
+//biases                      V(e)=0 V(b)=-0.8
+//`include substrate_bias.inc
+//biasSweep                   V(c)=-10.0,-20.6,-0.2
+//`include substrate_bias.inc
+//freq                        lin 1 1.0e9 1.0e9
+//outputs                     N(c)
+//`include dtestpars.inc
+//modelParameters             KAVL=1
+//`include set_low_rth.inc
+//`include ../test_specs/set_mult.inc
+//
+//test                        acNoise_no_KAVL_pnp
+//temperature                 25
+//biases                      V(e)=0 V(b)=-0.8
+//`include substrate_bias.inc
+//biasSweep                   V(c)=-10.0,-20.6,-0.2
+//freq                        lin 1 1.0e9 1.0e9
+//outputs                     N(c)
+//`include dtestpars.inc
+//modelParameters             KAVL=0
+//`include ../test_specs/set_mult.inc
+//
+//test                        acNoise_highT_no_KAVL_pnp
+//temperature                 100
+//biases                      V(e)=0 V(b)=-0.7
+//`include substrate_bias.inc
+//biasSweep                   V(c)=-10.0,-21.4,-0.2
+//`include substrate_bias.inc
+//freq                        lin 1 1.0e9 1.0e9
+//outputs                     N(c)
+//`include dtestpars.inc
+//modelParameters             KAVL=0
+//`include set_low_rth.inc
+//`include ../test_specs/set_mult.inc
+//
+//test                        acNoise_EXAVL_KAVL_pnp
+//temperature                 25
+//biases                      V(e)=0 V(b)=-0.8
+//`include substrate_bias.inc
+//biasSweep                   V(c)=-10.0,-20.6,-0.2
+//freq                        lin 1 1.0e9 1.0e9
+//outputs                     N(c)
+//`include dtestpars.inc
+//modelParameters             EXAVL=1 KAVL=1
+//`include ../test_specs/set_mult.inc
+//
+//test                        acNoise_highT_EXAVL_KAVL_pnp
+//temperature                 100
+//biases                      V(e)=0 V(b)=-0.7
+//`include substrate_bias.inc
+//biasSweep                   V(c)=-10.0,-21.4,-0.2
+//freq                        lin 1 1.0e9 1.0e9
+//outputs                     N(c)
+//`include dtestpars.inc
+//modelParameters             EXAVL=1 KAVL=1
+//`include set_low_rth.inc
+//`include ../test_specs/set_mult.inc
