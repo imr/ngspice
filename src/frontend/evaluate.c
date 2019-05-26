@@ -812,7 +812,7 @@ op_ind(struct pnode *arg1, struct pnode *arg2)
 
 /* Apply a function to an argument. Complex functions are called as follows:
  *  cx_something(data, type, length, &newlength, &newtype),
- *  and returns a char * that is cast to complex or double.
+ *  and returns a void * that is cast to complex or double.
  */
 
 static void *

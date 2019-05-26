@@ -30,25 +30,15 @@ void db_print_pnode_tree(struct pnode *p, char *print);
 
 
 struct pnode *
-ft_getpnames(wordlist *wl, bool check)
+ft_getpnames_from_string(const char *sz, bool check)
 {
-    struct pnode *pn = NULL;
-    char *xsbuf, *sbuf;
-    int rv;
+    struct pnode *pn;
 
-    if (!wl) {
-        fprintf(cp_err, "Warning: NULL arithmetic expression\n");
-        return (NULL);
+    /* The first argument to PPparse is not const char **, but it does not
+     * appear to modify the string that is being parsed */
+    if (PPparse((char **) &sz, &pn) != 0) {
+        return (struct pnode *) NULL;
     }
-
-    xsbuf = sbuf = wl_flatten(wl);
-
-    rv = PPparse(&sbuf, &pn);
-
-    tfree(xsbuf);
-
-    if (rv)
-        return (NULL);
 
     /* If validation is requested, do it and return NULL on failure. The
      * structure must also be freed if the check fails since it is not
@@ -58,7 +48,26 @@ ft_getpnames(wordlist *wl, bool check)
         return (struct pnode *) NULL;
     }
 
-    return (pn);
+    return pn;
+} /* end of function ft_getpnames_from_string */
+
+
+
+struct pnode *
+ft_getpnames(const wordlist *wl, bool check)
+{
+    /* Validate input */
+    if (!wl) {
+        (void) fprintf(cp_err, "Warning: NULL arithmetic expression\n");
+        return (struct pnode *) NULL;
+    }
+
+    /* Convert the list to a string then parse the string */
+    const char * const sz = wl_flatten(wl);
+    struct pnode * const pn = ft_getpnames_from_string(sz, check);
+    txfree((void *) sz);
+
+    return pn; /* Return the parsed result */
 } /* end of function ft_getpnames */
 
 

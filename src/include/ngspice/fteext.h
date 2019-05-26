@@ -268,7 +268,8 @@ extern bool ft_stricterror;
 extern struct func ft_funcs[];
 extern struct func func_not;
 extern struct func func_uminus;
-extern struct pnode *ft_getpnames(wordlist *wl, bool check);
+extern struct pnode *ft_getpnames(const wordlist *wl, bool check);
+struct pnode *ft_getpnames_from_string(const char *sz, bool check);
 extern struct pnode *alloc_pnode(void);
 #define free_pnode(ptr)                         \
     do {                                        \
