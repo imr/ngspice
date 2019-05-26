@@ -17,7 +17,6 @@ com_let(wordlist *wl)
     char *p, *q, *s;
     int indices[MAXDIMS];
     int numdims;
-    wordlist fake_wl;
     int need_open;
     int offset, length;
     struct pnode *names;
@@ -27,7 +26,6 @@ com_let(wordlist *wl)
     int newvec;
     char *rhs;
 
-    fake_wl.wl_next = NULL;
 
     if (!wl) {
         com_display(NULL);
@@ -80,8 +78,7 @@ com_let(wordlist *wl)
 
             /* evaluate expression between s and q */
             /* va, indexing */
-            fake_wl.wl_word = s;
-            names = ft_getpnames(&fake_wl, TRUE);
+            names = ft_getpnames_from_string(s, TRUE);
             if (!names) {
                 /* XXX error message */
                 tfree(p);
@@ -130,10 +127,9 @@ com_let(wordlist *wl)
     }
 
     /* evaluate rhs */
-    fake_wl.wl_word = rhs;
-    names = ft_getpnames(&fake_wl, TRUE);
+    names = ft_getpnames_from_string(rhs, TRUE);
     if (names == NULL) {
-        /* XXX error message */
+        fprintf(cp_err, "Error: RHS \"%s\" invalid\n", rhs);
         tfree(p);
         return;
     }
