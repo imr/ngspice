@@ -54,17 +54,19 @@ NON-STANDARD FEATURES
 #include <unistd.h>
 #endif
 
+#include "ngspice/const.h"
+
 #ifndef M_PI
-#  define M_PI       3.14159265358979323846
+#define M_PI CONSTpi
 #endif
 #ifndef M_E
-#  define M_E        2.7182818284590452354
+#define M_E CONSTnap
 #endif
 #ifndef M_LOG2E
-#  define M_LOG2E    1.4426950408889634074
+#define M_LOG2E CONSTlog2e
 #endif
 #ifndef M_LOG10E
-#  define M_LOG10E   0.43429448190325182765
+#define M_LOG10E CONSTlog10e
 #endif
 
 #if !defined(NAN)
