@@ -523,7 +523,7 @@ MainWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 }
 
 
-/* Procedure for string window */
+/* Procedure for string (input) window */
 static LRESULT CALLBACK
 StringWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -950,9 +950,10 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int nCm
         }
     }
 
-    /* Create string window */
+    /* Create string window for input */
     swString = CreateWindowEx(WS_EX_NOPARENTNOTIFY, swClassName, swWindowName,
-                              ES_LEFT | WS_CHILD | WS_BORDER,
+            ES_LEFT | WS_CHILD | WS_BORDER |
+                    ES_AUTOHSCROLL, /* Allow text to scroll */
                               20, 20, 300, 100, hwMain, NULL, hInst, NULL);
     if (!swString)
         goto THE_END;
