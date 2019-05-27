@@ -13,6 +13,14 @@ Author: 1992 David A. Gates, U. C. Berkeley CAD Group
 #include "ngspice/stringskip.h"
 
 
+static int atodims_bracketed(const char *p, int *data, int *p_n_dim);
+static int atodims_unbracketed(const char *p, int *data, int *p_n_dim);
+static int get_bracketed_dim(const char *p, int *p_val);
+static int atodims_csv(const char *p, int *data, int *p_n_dim);
+static int get_dim(const char *p, int *p_val);
+
+
+
 /*
  * Create a string of the form "12,1,10".
  *
@@ -120,94 +128,239 @@ incindex(int *counts, int numcounts, const int *dims, int numdims)
  *
  *  Return 0 on success, 1 on failure.
  */
-int
-atodims(char *p, int *data, int *outlength)
+int atodims(const char *p, int *data, int *p_n_dim)
 {
-    int length = 0;
-    int state = 0;
-    int err = 0;
-    int needbracket = 0;
-    char sep = '\0';
-
-    if (!data || !outlength)
+    /* Validate arguments partially */
+    if (!data || !p_n_dim) {
         return 1;
+    }
 
+    /* NULL string = no dimensions */
     if (!p) {
-        *outlength = 0;
+        *p_n_dim = 0;
         return 0;
     }
 
+    /* Move to first "real" character */
     p = skip_ws(p);
 
-    if (*p == '[') {
-        p = skip_ws(p + 1);
-        needbracket = 1;
-    }
+    /* Allowed first char is [ to start bracked string or a number */
+    return *p == '[' ? atodims_bracketed(p, data, p_n_dim) :
+            atodims_unbracketed(p, data, p_n_dim);
+} /* end of function atodims */
 
-    while (*p && state != 3) {
-        switch (state) {
-        case 0: /* p just at or before a number */
-            if (length >= MAXDIMS) {
-                if (length == MAXDIMS)
-                    printf("Error: maximum of %d dimensions allowed.\n",
-                           MAXDIMS);
-                length += 1;
-            } else if (!isdigit_c(*p)) {
-                data[length++] = 0;     /* This position was empty. */
-            } else {
-                data[length++] = atoi(p);
-                while (isdigit_c(*p))
-                    p++;
+
+
+/* This function processes a dimension string of the form
+ * [1,2,3,4] or [1][2][3][4]. Whitespace is allowed anywhere except
+ * at the beginning of the string or between the digits of a dimension.
+ *
+ * Return codes
+ * 0: OK
+ * +1: Error
+ */
+static int atodims_bracketed(const char *p, int *data, int *p_n_dim)
+{
+    /* Process the first element, which is special because it determines
+     * if the string is of form [] or [1,2...] or [1][2]... */
+    p = skip_ws(++p); /* Step to number */
+
+    {
+        int rc;
+
+        /* Get the dimension value exiting with an error on failure */
+        if ((rc = get_dim(p, data)) <= 0) { /* no number or overflow */
+            if (rc < 0) { /* overflow */
+                return +1;
             }
-            state = 1;
-            break;
-
-        case 1: /* p after a number, looking for ',' or ']' */
-            if (sep == '\0')
-                sep = *p;
-
-            if (*p == ']' && *p == sep) {
-                p++;
-                state = 2;
-            } else if (*p == ',' && *p == sep) {
-                p++;
-                state = 0;
-            } else {  /* Funny character following a # */
-                break;
+            /* Handle special case of [] */
+            if (*p == ']') {
+                *p_n_dim = 0;
+                return 0;
             }
-            break;
-
-        case 2: /* p after a ']', either at the end or looking for '[' */
-            if (*p == '[') {
-                p++;
-                state = 0;
-            } else {
-                state = 3;
-            }
-            break;
+            return +1; /* else an error */
         }
 
+        
+        p = skip_ws(p + rc); /* at comma or ] (or error) */
+        switch (*p) {
+        case ',': /* form [1,2,... */
+            *p_n_dim = 1;
+            rc = atodims_csv(++p, data, p_n_dim);
+            if (rc <= 1) { /* error or invalid termination */
+                return +1; /* Return error */
+            }
+
+            /* Else scan ended with ']', but did it end the string,
+             * whitespace excluded? */
+            p = skip_ws(p + rc);
+
+            return *p != '\0';
+        case ']': /* form [1][2]... */
+            ++p; /* step past ']' */
+            break;
+        default: /* invalid char */
+            return +1;
+        }
+    }
+
+    /* Continue parsing form [1][2]... */
+    unsigned int n_dim = 1; /* already 1 dim from above */
+    for ( ; ; ) {
+        if (n_dim == MAXDIMS) { /* too many dimensions */
+            return +1;
+        }
+
+        int rc = get_bracketed_dim(p, data + n_dim);
+        if (rc <= 0) { /* error or normal exit */
+            *p_n_dim = n_dim;
+            return !!rc;
+        }
+        p += rc; /* step after the dimension that was processed */
+        ++n_dim; /* one more dimension */
+    } /* end of loop getting dimensions */
+} /* end of function atodims_bracketed */
+
+
+
+/* This function processes a dimension string of the form
+ *  1,2,3,4. Whiltespace is allowed anywhere except
+ * at the beginning of the string or between the digits of a dimension.
+ *
+ * Return codes
+ * 0: OK
+ * +1: Error
+ */
+static int atodims_unbracketed(const char *p, int *data, int *p_n_dim)
+{
+    *p_n_dim = 0; /* either "" so 0 or init for atodims_csv */
+
+    if (*p == '\0') { /* special case of "" */
+        return 0;
+    }
+
+    /* Scan comma-separated dimensions. Must end with '\0' (rc=0) */
+    return !!atodims_csv(p, data, p_n_dim);
+} /* end of function atodims_unbracked */
+
+
+
+/* This function processes dimension strings of the form
+ *  1,2,3,4 and 1,2,3,4]. Whiltespace is allowed anywhere except
+ * at the beginning of the string or between the digits of a dimension.
+ * On entry, *p_n_dim is the number of dimensions already added to data
+ * and p points to the first number to be processed.
+
+ *
+ * Return codes
+ * -1: Error
+ * 0: OK, scan ended by '\0'
+ * >0: OK, scan ended by ']', returned value = # chars processed
+ */
+static int atodims_csv(const char *p, int *data, int *p_n_dim)
+{
+    const char *p0 = p;
+    unsigned int n_dim = (unsigned int) *p_n_dim;
+    for ( ; ; ) {
+        int val;
         p = skip_ws(p);
+        int rc = get_dim(p, &val);
+        if (rc <= 0) { /* No number or overflow */
+            return -1;
+        }
+
+        /* Dimension was read */
+        if (n_dim >= MAXDIMS) { /* too many dimensions */
+            return -1;
+        }
+        data[n_dim++] = val; /* Add data for this dimension */
+        p = skip_ws(p + rc); /* step after the dimension that was processed */
+
+        /* Should normally be at comma, but there are special cases for
+         * end of regular list or bracketed list */
+        switch (*p) {
+        case ',': /* inter-dimension comma */
+            ++p;
+            break;
+        case ']': /* ] ended scan */
+            *p_n_dim = n_dim;
+            return (int) (p - p0) + 1;
+        case '\0': /* end of string ended scan */
+            *p_n_dim = n_dim;
+            return 0;
+        default: /* invalid char */
+            return -1;
+        } /* end of switch over character ending scan */
+    } /* end of loop getting dimensions */
+} /* end of function atodims_csv */
+
+
+
+/* This function gets the dimension value in a string of the form
+ * [1] where spaces may appear anywhere except between the digits of the
+ * number.
+ *
+ * Return codes
+ * -1: Error
+ * 0: String ended before '['
+ * >0: Number of characters processed
+ */
+static int get_bracketed_dim(const char *p, int *p_val)
+{
+    const char *p0 = p; /* save start */
+    p = skip_ws(p); /* move to opening bracket */
+
+    const char char_cur = *p;
+    if (char_cur == '\0') { /* end of string */
+        return 0;
+    }
+    if (char_cur != '[') { /* no bracket */
+        return -1;
+    }
+    p = skip_ws(++p); /* move to dimension */
+
+    int rc = get_dim(p, p_val); /* read the dimension */
+    if (rc <= 0) { /* error */
+        return -1;
     }
 
-    *outlength = length;
-
-    if (length > MAXDIMS)
-        return (1);
-
-    if (state == 3) {  /* We finished with a closing bracket */
-        err = !needbracket;
-    } else if (*p) {   /* We finished by hitting a bad character after a # */
-        err = 1;
-    } else {           /* We finished by exhausting the string */
-        err = needbracket;
+    p = skip_ws(p + rc); /* move to closing backet */
+    if (*p != ']') { /* no bracket */
+        return -1;
     }
 
-    if (err)
-        *outlength = 0;
+    return (int) (p - p0) + 1;
+} /* end of function get_bracketed_dim */
 
-    return (err);
-}
+
+
+/* This function reads the unsigned number at p as a dimension
+ *
+ * Return codes
+ * -1: overflow
+ * 0: *p is not a digit
+ * >0: Number of characters processed
+ */
+static int get_dim(const char *p, int *p_val)
+{
+    unsigned int val = 0;
+    const char *p0 = p;
+    for ( ; ; ++p) {
+        const char c_cur = *p;
+        unsigned int digit_cur = c_cur - '0';
+        unsigned int val_new;
+        if (digit_cur > 9) { /* not a digit */
+            if ((*p_val = (int) val) < 0) { /* overflow */
+                return -1;
+            }
+            return (int) (p - p0);
+        } /* end of case of not a digit */
+        if ((val_new = 10 * val + digit_cur) < val) { /* overflow */
+            return -1;
+        }
+        val = val_new; /* update number */
+    } /* end of loop over digits */
+} /* end of function get_dim */
 
 
 

@@ -9,7 +9,7 @@
 void dimstring(const int *dim_data, int n_dim, char *retstring);
 void indexstring(const int *dim_data, int n_dim, char *retstring);
 int incindex(int *counts, int numcounts, const int *dims, int numdims);
-int atodims(char *p, int *data, int *outlength);
+int atodims(const char *p, int *data, int *outlength);
 
 #ifdef COMPILE_UNUSED_FUNCTIONS
 /* #ifdef COMPILE_UNUSED_FUNCTIONS added 2019-03-31 */
