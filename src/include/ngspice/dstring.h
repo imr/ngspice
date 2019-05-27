@@ -10,15 +10,15 @@
 ----------------------------------------------------------------- */
 #define SPICE_DSTRING_STATIC_SIZE 200
 typedef struct spice_dstring {
-  char *string ;               /* Points to beginning of string:  either
-			        * staticSpace below or a malloced array. */
-  int length ;                 /* Number of non-NULL characters in the
-				* string. */
-  int spaceAvl ;               /* Total number of bytes available for the
-			        * string and its terminating NULL char. */
+  char *string; /* Points to beginning of string:  either
+                 * staticSpace below or a malloced array. */
+  int length ; /* Number of characters in the string excluding the
+                * terminating NULL. */
+  int spaceAvl ; /* Total number of bytes available for the
+                  * string and its terminating NULL char. */
   char staticSpace[SPICE_DSTRING_STATIC_SIZE] ;
-			       /* Space to use in common case where string
-				* is small. */
+                  /* Space to use in common case where string
+                   * is small. */
 } SPICE_DSTRING, *SPICE_DSTRINGPTR ;
 
 /* -----------------------------------------------------------------
