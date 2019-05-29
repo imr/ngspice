@@ -764,11 +764,15 @@ vec_new(struct dvec *d)
     if (plot_cur == NULL) {
         fprintf(cp_err, "vec_new: Internal Error: no cur plot\n");
     }
-    plot_cur->pl_lookup_valid = FALSE;
-    if ((d->v_flags & VF_PERMANENT) && (plot_cur->pl_scale == NULL))
-        plot_cur->pl_scale = d;
-    if (!d->v_plot)
-        d->v_plot = plot_cur;
+    else {
+        plot_cur->pl_lookup_valid = FALSE;
+        if ((d->v_flags & VF_PERMANENT) && (plot_cur->pl_scale == NULL)) {
+            plot_cur->pl_scale = d;
+        }
+        if (!d->v_plot) {
+            d->v_plot = plot_cur;
+        }
+    }
 
     /* This code appears to be a patch for incorrectly specified vectors */
     if (d->v_numdims < 1) {
