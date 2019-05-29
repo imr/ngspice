@@ -131,7 +131,7 @@ char **
 wl_mkvec(const wordlist *wl)
 {
     int  len = wl_length(wl);
-    char **vec = TMALLOC(char *, len + 1);
+    char **vec = TMALLOC(char *, (size_t) len + 1);
 
     int i;
 

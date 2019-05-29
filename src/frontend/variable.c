@@ -275,8 +275,9 @@ cp_setparse(wordlist *wl)
 
     while (wl) {
 
-        if (name)
-            tfree(name);
+        if (name) {
+            txfree(name);
+        }
 
         name = cp_unquote(wl->wl_word);
 

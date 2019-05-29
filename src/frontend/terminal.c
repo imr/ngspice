@@ -129,7 +129,7 @@ outbufputc(void)
 {
     if (ourbuf.count != BUFSIZ) {
         fputs(staticbuf, cp_out);
-        memset(staticbuf, 0, (size_t) (BUFSIZ - ourbuf.count));
+        memset(staticbuf, 0, (size_t) BUFSIZ - ourbuf.count);
         ourbuf.count = BUFSIZ;
         ourbuf.ptr = staticbuf;
     }
