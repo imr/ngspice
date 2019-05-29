@@ -23,6 +23,8 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #define BROKEN_STR  "\002"
 #define CONTINUED_STR   "\003"
 
+static void cp_free_control(void); /* needed by resetcontrol */
+
 /* Are we waiting for a command? This lets signal handling be
  * more clever. */
 
@@ -108,8 +110,10 @@ pwlist_echo(wordlist *wlist, char *name)   /*CDHW used to perform function of se
 static void
 ctl_free(struct control *ctrl)
 {
-    if (!ctrl)
+    if (!ctrl) {
         return;
+    }
+
     wl_free(ctrl->co_cond);
     ctrl->co_cond = NULL;
     tfree(ctrl->co_foreachvar);
@@ -122,8 +126,7 @@ ctl_free(struct control *ctrl)
     ctrl->co_elseblock = NULL;
     ctl_free(ctrl->co_next);
     ctrl->co_next = NULL;
-    tfree(ctrl);
-    ctrl = NULL;
+    txfree(ctrl);
 }
 
 
@@ -875,7 +878,6 @@ cp_evloop(char *string)
 
 
 /* This blows away the control structures... */
-void cp_free_control(void); /* needed by resetcontrol */
 void cp_resetcontrol(void)
 {
     fprintf(cp_err, "Warning: clearing control structures\n");
@@ -933,13 +935,15 @@ cp_toplevel(void)
 
 
 /* va: This totally frees the control structures */
-void
+static void
 cp_free_control(void)
 {
     int i;
 
-    for (i = stackp; i >= 0; i--)
+    /* Free the control structures */
+    for (i = stackp; i >= 0; i--) {
         ctl_free(control[i]);
+    }
 
     control[0] = cend[0] = NULL;
     stackp = 0;
