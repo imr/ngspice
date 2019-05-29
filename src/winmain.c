@@ -432,8 +432,13 @@ w_getch(void)
         // Cursor = warten
         SetCursor(LoadCursor(NULL, IDC_WAIT));
     }
-    // Zeichen abholen
-    memmove(&SBuffer[0], &SBuffer[1], SBufSize);
+
+    /* Shift out the character being returned. After the entire
+     * contents of the buffer is read, it first byte is '\0' from
+     * the null termination of the buffer.
+     *
+     * Inefficient way to process the string, but it should work */
+    (void) memmove(SBuffer, SBuffer + 1, sizeof SBuffer - 1);
     return c;
 }
 
@@ -550,9 +555,16 @@ StringWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_CHAR:
         c = (char) wParam;
         if (c == CR) {
-            GetWindowText(hwnd, SBuffer, SBufSize);
+            /* Get text from the window. Must leave space for crlf
+             * that is appended. -1 accounts for NULL as follows:
+             * The last argument to GetWindowText is the size of the
+             * buffer for writing the string + NULL. The NULL will be
+             * overwritten by the strcpy below, so it should not be
+             * counted in the size needed for the CRLF string. */
+            const int n_char_returned = GetWindowText(
+                    hwnd, SBuffer, sizeof SBuffer - (sizeof CRLF - 1));
             HistoryEnter(SBuffer);
-            strcat(SBuffer, CRLF);
+            strcpy(SBuffer + n_char_returned, CRLF);
             ClearInput();
             return 0;
         }
