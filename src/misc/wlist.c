@@ -4,9 +4,13 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 **********/
 
 /* Wordlist manipulation stuff.  */
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-#include "ngspice/ngspice.h"
 #include "ngspice/bool.h"
+#include "ngspice/memory.h"
+#include "ngspice/ngspice.h"
 #include "ngspice/wordlist.h"
 
 
@@ -38,7 +42,7 @@ wl_free(wordlist *wl)
 
 /* Copy a wordlist and the words. */
 wordlist *
-wl_copy(wordlist *wl)
+wl_copy(const wordlist *wl)
 {
     wordlist *first = NULL, *last = NULL;
 
@@ -74,11 +78,13 @@ wl_splice(wordlist *elt, wordlist *list)
 
 
 static void
-printword(char *string, FILE *fp)
+printword(const char *string, FILE *fp)
 {
-    if (string)
-        while (*string)
+    if (string) {
+        while (*string) {
             putc(strip(*string++), fp);
+        }
+    }
 }
 
 
@@ -96,7 +102,7 @@ wl_print(const wordlist *wl, FILE *fp)
 
 /* Turn an array of char *'s into a wordlist. */
 wordlist *
-wl_build(char **v)
+wl_build(const char * const *v)
 {
     wordlist *first = NULL;
     wordlist *last = NULL;
@@ -104,12 +110,25 @@ wl_build(char **v)
     while (*v)
         wl_append_word(&first, &last, copy(*v++));
 
-    return (first);
+    return first;
 }
 
 
+
+/* Convert a single string into a wordlist. */
+wordlist *
+wl_from_string(const char *sz)
+{
+    const char * list_of_1_word[2];
+    list_of_1_word[0] = sz;
+    list_of_1_word[1] = (char *) NULL;
+    return wl_build(list_of_1_word);
+} /* end of function wl_from_string */
+
+
+
 char **
-wl_mkvec(wordlist *wl)
+wl_mkvec(const wordlist *wl)
 {
     int  len = wl_length(wl);
     char **vec = TMALLOC(char *, len + 1);
@@ -124,6 +143,7 @@ wl_mkvec(wordlist *wl)
 
     return (vec);
 }
+
 
 
 /* Nconc two wordlists together. */
@@ -224,15 +244,17 @@ wl_nthelem(int i, wordlist *wl)
 }
 
 
+
+/* Compare function for the array of word pointers */
 static int
-wlcomp(const void *a, const void *b)
+wlcomp(const char * const *s, const char * const *t)
 {
-    const char **s = (const char **) a;
-    const char **t = (const char **) b;
-    return (strcmp(*s, *t));
+    return strcmp(*s, *t);
 }
 
 
+
+/* Sort a word list in order of strcmp ascending */
 void
 wl_sort(wordlist *wl)
 {
@@ -240,18 +262,35 @@ wl_sort(wordlist *wl)
     wordlist *ww = wl;
     char **stuff;
 
-    for (i = 0; ww; i++)
+    /* Find number of words in the list */
+    for (i = 0; ww; i++) {
         ww = ww->wl_next;
-    if (i < 2)
+    }
+
+    /* If empty list or only one word, no sort is required */
+    if (i <= 1) {
         return;
-    stuff = TMALLOC(char *, i);
-    for (i = 0, ww = wl; ww; i++, ww = ww->wl_next)
+    }
+
+    stuff = TMALLOC(char *, i); /* allocate buffer for words */
+
+    /* Add pointers to the words to the buffer */
+    for (i = 0, ww = wl; ww; i++, ww = ww->wl_next) {
         stuff[i] = ww->wl_word;
-    qsort(stuff, i, sizeof (char *), wlcomp);
-    for (i = 0, ww = wl; ww; i++, ww = ww->wl_next)
+    }
+
+    /* Sort the words */
+    qsort(stuff, i, sizeof (char *),
+            (int (*)(const void *, const void *)) &wlcomp);
+
+    /* Put the words back into the word list in sorted order */
+    for (i = 0, ww = wl; ww; i++, ww = ww->wl_next) {
         ww->wl_word = stuff[i];
-    tfree(stuff);
-}
+    }
+
+    tfree(stuff); /* free buffer of word pointers */
+} /* end of function wl_sort */
+
 
 
 /* Return a range of wordlist elements... */
@@ -316,6 +355,10 @@ wl_cons(char *word, wordlist *wlist)
  *   described by a `first' and `last' wordlist element
  * append a new `word'
  *   and update the given `first' and `last' pointers accordingly
+ *
+ * Remarks
+ * Onwership of the buffer containing the word is given to the
+ * word list. That is, the word is not copied.
  */
 
 void
@@ -336,11 +379,11 @@ wl_append_word(wordlist **first, wordlist **last, char *word)
 
 
 /*
- * given a pointer `wl' into a wordlist
- *   cut off this list from its preceding elements
- *   and return itself
+ * given a pointer `wl' into a wordlist, cut off this list from its
+ * preceding elements and return itself. Thus, the function creates two
+ * valid word lists: the one before this word and the one starting with
+ * this word and continuing to the end of the original word list.
  */
-
 wordlist *
 wl_chop(wordlist *wl)
 {
@@ -357,7 +400,6 @@ wl_chop(wordlist *wl)
  *   cut off the rest of the list
  *   and return this rest
  */
-
 wordlist *
 wl_chop_rest(wordlist *wl)
 {
@@ -372,7 +414,6 @@ wl_chop_rest(wordlist *wl)
 /*
  * search for a string in a wordlist
  */
-
 wordlist *
 wl_find(const char *string, const wordlist *wl)
 {
@@ -383,27 +424,34 @@ wl_find(const char *string, const wordlist *wl)
         if (eq(string, wl->wl_word))
             break;
     return ((wordlist *) wl);
-}
+} /* end of function wl_find */
+
 
 
 /*
  * delete elements from a wordlist
- *   from inclusive `from'
- *   up to exclusive `to'
+ *   starting at `from'
+ *   up to but exclusive of `to'.
+ *   `to' may be NULL to delete from `from' to the end of the list
+ *
+ * Allocations for the deleted slice are freed.
+ *
+ * Note that the function does not check if `from' and `to' are in
+ * the same word list initially or that the former precedes the latter.
  */
-
 void
 wl_delete_slice(wordlist *from, wordlist *to)
 {
-    wordlist *prev;
 
-    if (from == to)
+    if (from == to) { /* nothing to delete */
         return;
+    }
 
-    prev = from->wl_prev;
+    wordlist *prev = from->wl_prev;
 
-    if(prev)
+    if (prev) {
         prev->wl_next = to;
+    }
 
     if (to) {
         to->wl_prev->wl_next = NULL;
@@ -411,4 +459,7 @@ wl_delete_slice(wordlist *from, wordlist *to)
     }
 
     wl_free(from);
-}
+} /* end of function wl_delete_slice */
+
+
+
