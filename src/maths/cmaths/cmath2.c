@@ -332,7 +332,7 @@ cx_avg(void *data, short int type, int length, int *newlength, short int *newtyp
 
         for (i = 0; i < length; i++) {
             sum_real += dd[i];
-            d[i] = sum_real / (double)(i+1);
+            d[i] = sum_real / ((double) i + 1.0);
         }
 
         return ((void *) d);
@@ -347,10 +347,10 @@ cx_avg(void *data, short int type, int length, int *newlength, short int *newtyp
 
         for (i = 0; i < length; i++) {
             sum_real += realpart(cc[i]);
-            realpart(c[i]) = sum_real / (double)(i+1);
+            realpart(c[i]) = sum_real / ((double) i + 1.0);
 
             sum_imag += imagpart(cc[i]);
-            imagpart(c[i]) = sum_imag / (double)(i+1);
+            imagpart(c[i]) = sum_imag / ((double) i + 1.0);
         }
 
         return ((void *) c);
@@ -412,7 +412,7 @@ cx_stddev(void *data, short int type, int length, int *newlength, short int *new
         *newtype = VF_REAL;
         for (i = 0; i < length; i++)
             sum += (dd[i] - *mean) * (dd[i] - *mean);
-        *d = sqrt(sum / (length - 1));
+        *d = sqrt(sum / ((double) length - 1.0));
         tfree(mean);
         return ((void *)d);
     }
@@ -429,7 +429,7 @@ cx_stddev(void *data, short int type, int length, int *newlength, short int *new
             b = imagpart(cc[i]) - imagpart(*cmean);
             sum += a * a + b * b;
         }
-        *d = sqrt(sum / (length - 1));
+        *d = sqrt(sum / ((double) length - 1.0));
         tfree(cmean);
         return ((void *)d);
     }

@@ -1140,9 +1140,11 @@ vec_mkfamily(struct dvec *v) {
         d->v_dims[0] = size;
 
         if (isreal(v)) {
-            memcpy(d->v_realdata, v->v_realdata + size*i, (size_t) size * sizeof(double));
+            memcpy(d->v_realdata, v->v_realdata + (size_t) size * i,
+                    (size_t) size * sizeof(double));
         } else {
-            memcpy(d->v_compdata, v->v_compdata + size*i, (size_t) size * sizeof(ngcomplex_t));
+            memcpy(d->v_compdata, v->v_compdata + (size_t) size * i,
+                    (size_t) size * sizeof(ngcomplex_t));
         }
         /* Add one to the counter. */
         (void) incindex(count, v->v_numdims - 1, v->v_dims, v->v_numdims);

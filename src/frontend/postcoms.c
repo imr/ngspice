@@ -163,7 +163,7 @@ com_print(wordlist *wl)
         if (width < 60)
             width = 60;
         if (width > BSIZE_SP - 2)
-            buf = TREALLOC(char, buf, width + 1);
+            buf = TREALLOC(char, buf, (size_t) width + 1);
         for (v = vecs; v; v = v->v_link2) {
             char *basename = vec_basename(v);
             if (plotnames)
@@ -239,8 +239,8 @@ com_print(wordlist *wl)
         if (width < 40)
             width = 40;
         if (width > BSIZE_SP - 2) {
-            buf = TREALLOC(char, buf, width + 1);
-            buf2 = TREALLOC(char, buf2, width + 1);
+            buf = TREALLOC(char, buf, (size_t) width + 1);
+            buf2 = TREALLOC(char, buf2, (size_t) width + 1);
         }
         if (cp_getvar("height", CP_NUM, &i, 0))
             height = i;

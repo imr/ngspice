@@ -258,7 +258,7 @@ SetAnalyse(char *Analyse,   /* in: analysis type */
     OldPercent = DecaPercent;
     /* output only into hwAnalyse window and if time elapsed is larger than
        DELTATIME given value, or if analysis has changed, else return */
-    if (hwAnalyse && ((diffsec > 0) || (diffmillisec > DELTATIME) || strcmp(OldAn, Analyse))) {
+    if (((diffsec > 0) || (diffmillisec > DELTATIME) || strcmp(OldAn, Analyse))) {
         if (DecaPercent < 0) {
             sprintf(s, "--ready--");
             sprintf(t, "%s", PACKAGE_STRING);
@@ -313,7 +313,7 @@ AdjustScroller(void)
     if (MyFirstLine < 0 )
         MyFirstLine = 0;
 
-    Edit_Scroll(twText, MyFirstLine - FirstLine, 0);
+    Edit_Scroll(twText, (WPARAM) MyFirstLine - FirstLine, 0);
     // Das wars
     DoUpdate = FALSE;
 }
@@ -1034,7 +1034,8 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int nCm
 
     /* terminate */
     return nReturnCode;
-}
+} /* end of function WinMain */
+
 
 
 // -----------------------------------<User-IO>--------------------------------
