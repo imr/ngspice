@@ -33,7 +33,8 @@ endif !SHARED_MODULE
 endif !TCL_MODULE
 
 EXTRA_DIST = ngspice.txt setplot spectrum \
-	     devload devaxis ciderinit winmain.c winmain.h \
+	     devload devaxis ciderinit \
+	     hist_info.c hist_info.h winmain.c winmain.h \
 	     tclspice.c tclspice.map pkgIndex.tcl.in spinit.in tclspinit.in \
 	     main.c sharedspice.c
 
@@ -110,7 +111,7 @@ ngspice_SOURCES = \
 ngspice_CPPFLAGS = $(AM_CPPFLAGS) -DSIMULATOR
 
 if WINGUI
-ngspice_SOURCES += winmain.c
+ngspice_SOURCES += winmain.c hist_info.c
 endif
 
 ngspice_LDADD = \
@@ -202,7 +203,7 @@ ngnutmeg_SOURCES = \
 ngnutmeg_CPPFLAGS = $(AM_CPPFLAGS)
 
 if WINGUI
-ngnutmeg_SOURCES += winmain.c
+ngnutmeg_SOURCES += winmain.c hist_info.c
 endif
 
 ngnutmeg_LDADD = \
@@ -331,16 +332,16 @@ AM_CFLAGS = -static
 LIBS = @LIBS@ @X_LIBS@ @X_PRE_LIBS@ @X_EXTRA_LIBS@
 
 if WINGUI
-LIBS += -lpsapi
+LIBS += -lpsapi -lShlwapi
 endif
 
 if WINCONSOLE
-LIBS += -lpsapi
+LIBS += -lpsapi -lShlwapi
 endif
 
 ## FIXME: Should be allwed, but fails within MSYS2
 #if SHWIN
-#LIBS += -lpsapi
+#LIBS += -lpsapi -lShlwapi
 #endif
 
 CLEANFILES = ngspice.idx spinit tclspinit pkgIndex.tcl
@@ -356,7 +357,7 @@ pkgIndex_DATA = pkgIndex.tcl
 pkgIndexdir = $(pkglibdir)
 
 if TCLWIN
-LIBS += -lpsapi  -ltcl84 -lBLT24
+LIBS += -lpsapi -lShlwapi  -ltcl84 -lBLT24
 endif
 
 libspice_la_SOURCES = \
