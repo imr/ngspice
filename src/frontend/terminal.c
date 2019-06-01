@@ -305,14 +305,14 @@ tcap_init(void)
         if ((s = getenv("COLS")) != NULL)
             xsize = atoi(s);
         if (xsize <= 0)
-            xsize = 0;
+            xsize = DEF_SCRWIDTH;
     }
 
     if (!ysize) {
         if ((s = getenv("LINES")) != NULL)
             ysize = atoi(s);
         if (ysize <= 0)
-            ysize = 0;
+            ysize = DEF_SCRHEIGHT;
     }
 }
 
