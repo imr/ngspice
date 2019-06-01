@@ -340,9 +340,9 @@ measure_extract_variables(char *line)
                 }
             }
         }
-    } while(line && *line);
+    } while (*line);
 
-    return (status);
+    return status;
 }
 
 
