@@ -12,11 +12,6 @@ static char* rlead(char*);
 
 void winmessage(char*);
 
-static void HistoryInit(void);
-static void HistoryScroll(void);
-static void HistoryEnter(char *newLine);
-static char *HistoryGetPrev(void);
-static char *HistoryGetNext(void);
 void WaitForIdle(void);
 static void WaitForMessage(void);
 static void ClearInput(void);

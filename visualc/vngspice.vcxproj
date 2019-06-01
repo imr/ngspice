@@ -883,6 +883,7 @@
     <ClInclude Include="..\src\frontend\wdisp\windisp.h" />
     <ClInclude Include="..\src\frontend\wdisp\winprint.h" />
     <ClInclude Include="..\src\frontend\where.h" />
+    <ClInclude Include="..\src\hist_info.h" />
     <ClInclude Include="..\src\include\ngspice\1-f-code.h" />
     <ClInclude Include="..\src\include\ngspice\acdefs.h" />
     <ClInclude Include="..\src\include\ngspice\bdrydefs.h" />
@@ -1488,6 +1489,7 @@
     <ClCompile Include="..\src\frontend\wdisp\windisp.c" />
     <ClCompile Include="..\src\frontend\wdisp\winprint.c" />
     <ClCompile Include="..\src\frontend\where.c" />
+    <ClCompile Include="..\src\hist_info.c" />
     <ClCompile Include="..\src\main.c" />
     <ClCompile Include="..\src\maths\cmaths\cmath1.c" />
     <ClCompile Include="..\src\maths\cmaths\cmath2.c" />
