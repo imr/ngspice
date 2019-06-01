@@ -19,15 +19,17 @@
 #include <assert.h>         // assert macro
 #include "ngspice/stringutil.h" // copy
 #include <io.h>             // _read
-
 #include <errno.h>
-
 #include <signal.h>
 #include <ctype.h>
 #include <sys/types.h>
 #include <sys/timeb.h>
+
+
+#include "hist_info.h" /* history management */
 #include "ngspice/bool.h"   /* bool defined as unsigned char */
 #include "misc/misc_time.h" /* timediff */
+#include "winmain.h"
 
 /* Constants */
 #define TBufSize 65536       // size of text buffer
@@ -38,13 +40,19 @@
 #define BorderSize 8        // Umrandung des Stringfeldes
 #define SBufSize 100        // Groesze des Stringbuffers
 #define IOBufSize 16348      // Groesze des printf-Buffers
-#define HistSize 20         // Zeilen History-Buffer
+#define HIST_SIZE   20  /* Max # commands held in history */
+#define N_BYTE_HIST_BUF 512 /* Initial size of history buffer in bytes */
 #define StatusHeight 25         // Hoehe des Status Bars
 #define StatusFrame 2           // Abstand Statusbar / StatusElement
 #define StatusElHeight (StatusHeight - 2 * StatusFrame)
 #define SourceLength 500        // Platz fuer Source File Name
 #define AnalyseLength 100       // Platz fuer Analyse
 #define QuitButtonLength 80
+
+/* Define the macro below to create a larger main window that is useful
+ * for seeing debug output that is generated before the window can be
+ * resized */
+//#define BIG_WINDOW_FOR_DEBUGGING
 
 /* macro to ignore unused variables and parameters */
 #define NG_IGNORE(x)  (void)x
@@ -89,9 +97,6 @@ static int VisibleRows = 10;           /* Number of visible lines in text window
 static BOOL DoUpdate = FALSE;          /* Update text window */
 static WNDPROC swProc = NULL;          /* original string window procedure */
 static WNDPROC twProc = NULL;          /* original text window procedure */
-static SBufLine HistBuffer[HistSize];  /* History buffer for string window */
-static int HistIndex = 0;              /* History management */
-static int HistPtr   = 0;              /* History management */
 
 extern bool ft_ngdebug; /* some additional debug info printed */
 extern bool ft_batchmode;
@@ -99,71 +104,10 @@ extern FILE *flogp;     /* definition see xmain.c, stdout redirected to file */
 
 extern void cp_doquit(void);
 
-#include "winmain.h"
-
-/* --------------------------<history management>------------------------------ */
-
-/* Clear history buffer, set pointer to the beginning */
-static void
-HistoryInit(void)
-{
-    int i;
-    HistIndex = 0;
-    HistPtr = 0;
-    for (i = 0; i < HistSize; i++)
-        HistBuffer[i][0] = SE;
-}
 
 
-/* Delete first line of buffer, all other lines move one down */
-static void
-HistoryScroll(void)
-{
-    memmove(&(HistBuffer[0]), &(HistBuffer[1]), sizeof(SBufLine) * (HistSize-1));
-    HistBuffer[HistSize-1][0] = SE;
-    if (HistIndex)
-        HistIndex--;
-    if (HistPtr)
-        HistPtr--;
-}
+static struct History_info *init_history(void);
 
-
-/* Enter new input line into history buffer */
-static void
-HistoryEnter(char *newLine)
-{
-    if (!newLine || !*newLine)
-        return;
-
-    if (HistPtr == HistSize)
-        HistoryScroll();
-
-    strcpy(HistBuffer[HistPtr], newLine);
-    HistPtr++;
-    HistIndex = HistPtr;
-}
-
-
-// Mit dem Index eine Zeile zurueckgehen und den dort stehenden Eintrag zurueckgeben
-static char *
-HistoryGetPrev(void)
-{
-    if (HistIndex)
-        HistIndex--;
-    return &(HistBuffer[HistIndex][0]);
-}
-
-
-// Mit dem Index eine Zeile vorgehen und den dort stehenden Eintrag zurueckgeben
-static char *
-HistoryGetNext(void)
-{
-    if (HistIndex < HistPtr)
-        HistIndex++;
-    if (HistIndex == HistPtr)
-        return ""; //HistIndex--;
-    return &(HistBuffer[HistIndex][0]);
-}
 
 
 // ---------------------------<Message Handling>-------------------------------
@@ -532,16 +476,21 @@ MainWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 static LRESULT CALLBACK
 StringWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    char c;
-    UINT i;
+    static struct History_info **pp_hi; /* handle to history */
 
     switch (uMsg) {
-
-    case WM_KEYDOWN:
-        i = (UINT) wParam;
+    case WM_CREATE:
+        /* Get access to history information */
+        pp_hi = (struct History_info **)
+                ((LPCREATESTRUCT) lParam)->lpCreateParams;
+        break;
+    case WM_KEYDOWN: {
+        const UINT i = (UINT) wParam;
         if ((i == VK_UP) || (i == VK_DOWN)) {
             /* Set old text to new */
-            SetWindowText(hwnd, (i == VK_UP) ? HistoryGetPrev() : HistoryGetNext());
+            SetWindowText(hwnd, (i == VK_UP) ?
+                    history_get_prev(*pp_hi, NULL) :
+                    history_get_next(*pp_hi, NULL));
             /* Put cursor to end of line */
             CallWindowProc(swProc, hwnd, uMsg, (WPARAM) VK_END, lParam);
             return 0;
@@ -550,10 +499,10 @@ StringWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             ClearInput();
             return 0;
         }
-        goto DEFAULT;
-
-    case WM_CHAR:
-        c = (char) wParam;
+        break;
+    }
+    case WM_CHAR: {
+        const char c = (char) wParam;
         if (c == CR) {
             /* Get text from the window. Must leave space for crlf
              * that is appended. -1 accounts for NULL as follows:
@@ -563,7 +512,26 @@ StringWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
              * counted in the size needed for the CRLF string. */
             const int n_char_returned = GetWindowText(
                     hwnd, SBuffer, sizeof SBuffer - (sizeof CRLF - 1));
-            HistoryEnter(SBuffer);
+            unsigned int n_char_prev_cmd;
+
+            /* Add the command to the history if it is different from the
+             * previous one. This avoids filling the buffer with the same
+             * command and allows faster scrolling through the commands.
+             * history_get_newest() is called rather than history_get_prev()
+             * since the current return position may not be the last one
+             * and the position should not be changed. */
+            const char *cmd_prev = history_get_newest(
+                    *pp_hi, &n_char_prev_cmd);
+            if ((int) n_char_prev_cmd != n_char_returned ||
+                    strcmp(SBuffer, cmd_prev) != 0) {
+                /* Different, so add */
+                history_add(pp_hi, n_char_returned, SBuffer);
+            }
+            else {
+                history_reset_pos(*pp_hi);
+            } 
+
+
             strcpy(SBuffer + n_char_returned, CRLF);
             ClearInput();
             return 0;
@@ -583,10 +551,11 @@ StringWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             raise (SIGINT);
             return 0;
         }
-    default:
-    DEFAULT:
-        return CallWindowProc(swProc, hwnd, uMsg, wParam, lParam);
     }
+    } /* end of switch over handled messages */
+
+    /* Fowrard to be processed further by swProc */
+    return CallWindowProc(swProc, hwnd, uMsg, wParam, lParam);
 }
 
 
@@ -849,11 +818,17 @@ WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
         _In_ LPSTR lpszCmdLine, _In_ int nCmdShow)
 {
     int ix, iy; /* width and height of screen */
-    int iyt;    /* height of screen divided by 3 */
     int status;
 
     int argc;
     char **argv;
+
+    /* Initialize history info to a maximum of HIST_SIZE commands.
+     * The initial buffer for storage is N_BYTE_HIST_BUF bytes. */
+    struct History_info *p_hi = init_history();
+    if (p_hi == (struct History_info *) NULL) {
+        goto THE_END;
+    }
 
     RECT wsize; /* size of usable window */
 
@@ -867,7 +842,6 @@ WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
     TBufEnd = 0;
     TBuffer[TBufEnd] = SE;
     SBuffer[0] = SE;
-    HistoryInit();
 
     /* Define main window class */
     hwMainClass.style           = CS_HREDRAW | CS_VREDRAW;
@@ -926,15 +900,21 @@ WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
         goto THE_END;
 
     /*Create main window */
-    SystemParametersInfo(SPI_GETWORKAREA, 0, &wsize, 0);
-    iy = wsize.bottom;
-    iyt = iy / 3;
-    ix = wsize.right;
 //    iy = GetSystemMetrics(SM_CYSCREEN);
 //    iyt = GetSystemMetrics(SM_CYSCREEN) / 3;
 //    ix = GetSystemMetrics(SM_CXSCREEN);
+    SystemParametersInfo(SPI_GETWORKAREA, 0, &wsize, 0);
+    iy = wsize.bottom;
+    ix = wsize.right;
+#ifndef BIG_WINDOW_FOR_DEBUGGING
+    const int iyt = iy / 3; /* height of screen divided by 3 */
     hwMain = CreateWindow(hwClassName, hwWindowName, WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
                           0, iyt * 2, ix, iyt, NULL, NULL, hInst, NULL);
+#else
+    hwMain = CreateWindow(hwClassName, hwWindowName, WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
+                          0, 0, ix, iy, NULL, NULL, hInst, NULL);
+#endif
+
     if (!hwMain)
         goto THE_END;
 
@@ -963,13 +943,15 @@ WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
         }
     }
 
-    /* Create string window for input */
+    /* Create string window for input. Give a handle to history info to
+     * the window for saving and retrieving commands */
     swString = CreateWindowEx(WS_EX_NOPARENTNOTIFY, swClassName, swWindowName,
             ES_LEFT | WS_CHILD | WS_BORDER |
                     ES_AUTOHSCROLL, /* Allow text to scroll */
-                              20, 20, 300, 100, hwMain, NULL, hInst, NULL);
-    if (!swString)
+            20, 20, 300, 100, hwMain, NULL, hInst, &p_hi);
+    if (!swString) {
         goto THE_END;
+    }
 
     {
         HDC stringDC;
@@ -1009,7 +991,9 @@ WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
        Limit window to screen size (if only VGA). */
     if (WinLineWidth > ix)
         WinLineWidth = ix;
+#ifndef BIG_WINDOW_FOR_DEBUGGING
     MoveWindow(hwMain, 0, (iyt * 2), WinLineWidth, iyt, FALSE);
+#endif
     ShowWindow(hwMain, nShowState);
     ShowWindow(twText, SW_SHOWNORMAL);
     ShowWindow(swString, SW_SHOWNORMAL);
@@ -1031,11 +1015,41 @@ WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
     /* Go to main() */
     nReturnCode = xmain(argc, argv);
 
- THE_END:
-
+THE_END:
     /* terminate */
+
+    /* Free history information if initialized */
+    if (p_hi != (struct History_info *) NULL) {
+        history_free(p_hi);
+    }
+
     return nReturnCode;
 } /* end of function WinMain */
+
+
+
+/* This funtion initializes the history buffering with a welcome command */
+static struct History_info *init_history(void)
+{
+    static struct History_info_opt hi_opt = {
+        sizeof hi_opt,
+        HIST_SIZE, HIST_SIZE, N_BYTE_HIST_BUF,
+        4, 20, 10
+    };
+
+    struct History_info *p_hi = history_init(&hi_opt);
+    if (p_hi == (struct History_info *) NULL) {
+        return (struct History_info *) NULL;
+    }
+
+    {
+        /* Initialize history buffer with a greeting */
+        static const char cmd_welcome[] = "# Welcome to ngspice!";
+        (void) history_add(&p_hi, sizeof cmd_welcome - 1, cmd_welcome);
+    }
+
+    return p_hi;
+} /* end of function init_history */
 
 
 
