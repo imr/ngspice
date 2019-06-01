@@ -22,7 +22,7 @@ int cieq(const char *p, const char *s);
 int ciprefix(const char *p, const char *s);
 void strtolower(char *str);
 void strtoupper(char *str);
-char * stripWhiteSpacesInsideParens(char *str);
+char * stripWhiteSpacesInsideParens(const char *str);
 char * gettok(char **s);
 char * gettok_instance(char **);
 char * gettok_char(char **s, char p, bool inc_p, bool nested);
