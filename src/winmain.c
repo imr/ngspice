@@ -845,7 +845,8 @@ MakeArgcArgv(char *cmdline, int *argc, char ***argv)
 
 /* Main entry point for our Windows application */
 int WINAPI
-WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int nCmdShow)
+WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
+        _In_ LPSTR lpszCmdLine, _In_ int nCmdShow)
 {
     int ix, iy; /* width and height of screen */
     int iyt;    /* height of screen divided by 3 */
