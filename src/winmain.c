@@ -1187,20 +1187,20 @@ win_x_fread(void *ptr, size_t size, size_t n, FILE *stream)
     if (stream == stdin) {
         size_t i = 0;
         int c;
-        char s[IOBufSize];
+        char *s = (char *) ptr;
         while (i < (size * n - 1)) {
             c = w_getch();
             if (c == LF) {
 //              s[i++] = LF;
                 break;
             }
-            if (c != CR)
-                s[i++] = (char)c;
+            if (c != CR) {
+                s[i++] = (char) c;
+            }
         }
 //      s[i] = SE;
-        ptr = &s[0];
-        return (size_t)(i / size);
-    }
+        return (size_t) (i / size);
+    } /* end of case of stdin */
 
     return fread(ptr, size, n, stream);
 }
