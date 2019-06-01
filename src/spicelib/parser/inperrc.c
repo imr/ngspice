@@ -8,50 +8,73 @@ Author: 1985 Thomas L. Quarles
   a new string is malloced, they are combined, both input strings
   are freed, and the new string is returned.
  */
+#include <stdio.h>
+#include <string.h>
 
 #include "ngspice/ngspice.h"
-#include <stdio.h>
 #include "ngspice/inpdefs.h"
 #include "inpxx.h"
 
+static char *INPcat(size_t n_a, const char *a, char sep_char,
+        size_t n_b, const char *b);
 
+
+/* This function returns the non-null string a or b if only one of them
+ * is not null. Otherwise it returns NULL if both are null or
+ * <a>'\n'<b> if both are non-null. */
 char *INPerrCat(char *a, char *b)
 {
-    if (a != NULL) {
-        if (b == NULL) {        /* a valid, b null, return a */
-            return (a);
-        } else {                /* both valid  - hard work... */
-            register char *errtmp;
-            errtmp =
-                TMALLOC(char, strlen(a) + strlen(b) + 2);
-            (void) strcpy(errtmp, a);
-            (void) strcat(errtmp, "\n");
-            (void) strcat(errtmp, b);
-            FREE(a);
-            FREE(b);
-            return (errtmp);
-        }
-    } else                      /* a null, so return b */
-        return (b);
-}
+    return INPstrCat(a, '\n', b);
+} /* end of function INPerrCat */
 
 
-char *INPstrCat(char *a, char *b, char *c)
+
+/* This function returns the non-null string a or b if only one of them
+ * is not null. Otherwise it returns NULL if both are null or
+ * <a><seppchar><b> if both are non-null. */
+char *INPstrCat(char *a, char sepchar, char *b)
 {
     if (a != NULL) {
-        if (b == NULL) {        /* a valid, b null, return a */
-            return (a);
-        } else {                /* both valid  - hard work... */
-            register char *strtmp;
-            strtmp =
-                TMALLOC(char, strlen(a) + strlen(b) + 2);
-            (void) strcpy(strtmp, a);
-            (void) strcat(strtmp, c); /* single character only! */
-            (void) strcat(strtmp, b);
-            FREE(a);
-            FREE(b);
-            return (strtmp);
+        if (b == NULL) { /* a valid, b null, return a */
+            return a;
         }
-    } else                      /* a null, so return b */
-        return (b);
-}
+        else { /* both valid  - hard work... */
+            char *a_ch_b = INPcat(strlen(a), a, sepchar,
+                    strlen(b), b);
+            txfree(a);
+            txfree(b);
+            return a_ch_b;
+        }
+    }
+    else { /* a null, so return b */
+        return b;
+    }
+} /* end of function INPstrCat */
+
+
+
+/* This function concatenates strings a and b with sep_char added
+ * between them. Strings a and b need not be null-terminated. */
+static char *INPcat(size_t n_a, const char *a, char sepchar,
+        size_t n_b, const char *b)
+{
+    char *a_ch_b = TMALLOC(char, n_a + n_b + 2);
+
+    /* Build string. Check not really requied since program exits
+     * if allocation in TMALLOC fails but would be if this behavior
+     * is changed. */
+    if (a_ch_b != (char *) NULL) {
+        char *p_cur = a_ch_b;
+        (void) memcpy(p_cur, a, n_a);
+        p_cur += n_a;
+        *p_cur++ = sepchar;
+        (void) memcpy(p_cur, b, n_b);
+        p_cur += n_b;
+        *p_cur = '\0';
+    }
+
+    return a_ch_b;
+} /* end of function INPcat */
+
+
+

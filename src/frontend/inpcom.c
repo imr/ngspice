@@ -5617,15 +5617,16 @@ inp_temper_compat(struct card *card)
             modified_exp = inp_modify_exp(exp_str);
             tfree(exp_str);
             /* add the intermediate string between previous and next expression to the new line */
-            new_str = INPstrCat(new_str, copy_substring(beg_str, end_str), " ");
+            new_str = INPstrCat(new_str, ' ',
+                    copy_substring(beg_str, end_str));
             /* add the modified expression string to the new line */
-            new_str = INPstrCat(new_str, modified_exp, " ");
-            new_str = INPstrCat(new_str, copy(" "), " ");
+            new_str = INPstrCat(new_str, ' ', modified_exp);
+            new_str = INPstrCat(new_str, ' ', copy(" "));
             /* move on to the next intermediate string */
             beg_str = beg_tstr = end_tstr;
         }
         if (*beg_str)
-            new_str = INPstrCat(new_str, copy(beg_str), " ");
+            new_str = INPstrCat(new_str, ' ', copy(beg_str));
         tfree(card->line);
         card->line = inp_remove_ws(new_str);
     }
@@ -6230,7 +6231,7 @@ inp_fix_temper_in_param(struct card *deck)
             }
 
             /* restore first part of the line */
-            new_str = INPstrCat(firsttok_str, new_str, " ");
+            new_str = INPstrCat(firsttok_str, ' ', new_str);
             new_str = inp_remove_ws(new_str);
 
             /* if we have inserted into a .param line, convert to .func */
@@ -6448,7 +6449,7 @@ inp_fix_agauss_in_param(struct card *deck, char *fcn)
             }
 
             /* restore first part of the line */
-            new_str = INPstrCat(firsttok_str, new_str, " ");
+            new_str = INPstrCat(firsttok_str, ' ', new_str);
             new_str = inp_remove_ws(new_str);
 
             *card->line = '*';
