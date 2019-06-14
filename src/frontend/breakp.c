@@ -176,6 +176,13 @@ com_trce(wordlist *wl)
 void
 com_iplot(wordlist *wl)
 {
+    /* Check for an active circuit */
+    if (ft_curckt == (struct circ *) NULL) {
+        fprintf(cp_err, "No circuit loaded. "
+                "Incremental plotting is not possible.\n");
+        return;
+    }
+
     /* settrace(wl, VF_PLOT); */
 
     struct dbcomm *d, *td, *currentdb = NULL;
