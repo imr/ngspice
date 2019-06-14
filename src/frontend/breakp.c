@@ -36,6 +36,12 @@ static int steps = 0;
 void
 com_stop(wordlist *wl)
 {
+    /* Check for an active circuit */
+    if (ft_curckt == (struct circ *) NULL) {
+        fprintf(cp_err, "No circuit loaded. Stopping is not possible.\n");
+        return;
+    }
+
     struct dbcomm *thisone = NULL;
     struct dbcomm *d = NULL;
     char *s, buf[64];
