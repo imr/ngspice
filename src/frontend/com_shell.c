@@ -10,16 +10,22 @@
 #include "ngspice/cpextern.h"
 
 
-/* Fork a shell. */
+#ifdef _WIN32
+#define SHELL "cmd /k"
+#else
+#define SHELL "/bin/csh"
+#endif
 
+/* Fork a shell. */
 void
 com_shell(wordlist *wl)
 {
     char *com, *shell = NULL;
 
     shell = getenv("SHELL");
-    if (shell == NULL)
-        shell = "/bin/csh";
+    if (shell == NULL) {
+        shell = SHELL;
+    }
 
     cp_ccon(FALSE);
 
