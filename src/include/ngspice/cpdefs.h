@@ -13,8 +13,6 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 #include "ngspice/cpstd.h"
 
-#define MAXWORDS 512
-
 /* Information about spice commands. */
 
 struct comm {
