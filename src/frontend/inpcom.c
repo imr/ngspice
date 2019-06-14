@@ -7366,6 +7366,11 @@ pspice_compat(struct card *oldcard)
             cut_line = nexttok(cut_line); // node1
             cut_line = nexttok(cut_line); // node2
             cut_line = nexttok(cut_line); // node3
+            if (!cut_line) {
+                fprintf(stderr, "Line no. %d, %s missing tokens\n",
+                        card->linenum_orig, card->line);
+                continue;
+            }
             if (*cut_line == '[') { // node4 not a number
                 *cut_line = ' ';
                 cut_line = strchr(cut_line, ']');
@@ -7393,6 +7398,11 @@ pspice_compat(struct card *oldcard)
             cut_line = nexttok(cut_line); //.model
             cut_line = nexttok(cut_line); // node1
             cut_line = nexttok(cut_line); // node2
+            if (!cut_line) {
+                fprintf(stderr, "Line no. %d, %s missing tokens\n",
+                        card->linenum_orig, card->line);
+                continue;
+            }
             cut_line = nexttok(cut_line); // model name
             if (*cut_line && atof(cut_line) > 0.0) { // size of area
                 char *tmpstr1 = copy_substring(card->line, cut_line);
