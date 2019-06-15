@@ -7386,12 +7386,21 @@ pspice_compat(struct card *oldcard)
                 if(is_node4)
                     cut_line = nexttok(cut_line); // model name
             }
-            if (*cut_line && atof(cut_line) > 0.0) { // size of area
+            if (*cut_line && atof(cut_line) > 0.0) { // size of area is a real number
                 char *tmpstr1 = copy_substring(card->line, cut_line);
                 char *tmpstr2 = tprintf("%s area=%s", tmpstr1, cut_line);
                 tfree(tmpstr1);
                 tfree(card->line);
                 card->line = tmpstr2;
+            }
+            else if (*cut_line && *(skip_ws(cut_line)) == '{') { // size of area is parametrized inside {}
+                char *tmpstr1 = copy_substring(card->line, cut_line);
+                char *tmpstr2 = gettok_char(&cut_line, '}', TRUE, TRUE);
+                char *tmpstr3 = tprintf("%s area=%s %s", tmpstr1, tmpstr2, cut_line);
+                tfree(tmpstr1);
+                tfree(tmpstr2);
+                tfree(card->line);
+                card->line = tmpstr3;
             }
         }
         else if (*cut_line == 'd') {
