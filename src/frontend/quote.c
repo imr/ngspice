@@ -10,6 +10,8 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
  * your IBM machine and buy a vax.
  */
 
+#include <string.h>
+
 #include "ngspice/ngspice.h"
 #include "ngspice/cpdefs.h"
 #include "quote.h"
@@ -70,27 +72,36 @@ cp_striplist(wordlist *wlist)
 }
 
 
-/* Remove the "" from a string. */
 
+/* Create a copy of the input string removing the enclosing quotes,
+ * if they are present */
 char *
-cp_unquote(char *string)
+cp_unquote(const char *p_src)
 {
-    char *s;
-    size_t l;
-
-    if (string) {
-        l = strlen(string);
-        s = TMALLOC(char, l + 1);
-
-        if (l >= 2 && *string == '"' && string[l-1] == '"') {
-            strncpy(s, string+1, l-2);
-            s[l-2] = '\0';
-        } else {
-            strcpy(s, string);
-        }
-
-        return (s);
-    } else {
-        return NULL;
+    if (!p_src) { /* case of no string */
+        return (char *) NULL;
     }
-}
+
+    const size_t len_src = strlen(p_src); /* input str length */
+    size_t len_dst;
+
+    /* If enclosed in quotes locate the source after the quote and
+     * make the destination length 2 chars less */
+    if (len_src >= 2 && *p_src == '"' && p_src[len_src - 1] == '"') {
+        len_dst = len_src - 2;
+        ++p_src; /* step past first quote */
+    }
+    else { /* not enclosed in quotes */
+        len_dst = len_src;
+    }
+
+    /* Allocate string being returned and fill. */
+    char * const p_dst = TMALLOC(char, len_dst + 1);
+    strncpy(p_dst, p_src, len_dst);
+    p_dst[len_dst] = '\0';
+
+    return p_dst;
+} /* end of function cp_unquote */
+
+
+
