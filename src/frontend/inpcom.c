@@ -7750,8 +7750,9 @@ static void inp_check_syntax(struct card *deck)
         }
         // check for .subckt ... .ends
         else if (ciprefix(".subckt", cut_line)) {
-            if (check_subs > 0)
-                fprintf(cp_err, "\nWarning: Nesting of subcircuits is only marginally supported!\n\n");
+            // nesting may be critical if params are involved
+            if (check_subs > 0 && strchr(cut_line, '='))
+                fprintf(cp_err, "\nWarning: Nesting of subcircuits with parameters is only marginally supported!\n\n");
             check_subs++;
             continue;
         }
