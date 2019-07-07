@@ -13,6 +13,7 @@ Modified by Paolo Nenzi 2003 and Dietmar Warning 2012
 #include "ngspice/const.h"
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
+#include "ngspice/cpdefs.h"
 
 int
 DIOtemp(GENmodel *inModel, CKTcircuit *ckt)
@@ -32,18 +33,23 @@ DIOtemp(GENmodel *inModel, CKTcircuit *ckt)
     double factor;
     double tBreakdownVoltage;
 
+    double gclimit;
+
+    if (!cp_getvar("DIOgradingCoeffMax", CP_REAL, &gclimit, 0))
+        gclimit = 0.9;
+
     /*  loop through all the diode models */
     for( ; model != NULL; model = DIOnextModel(model)) {
         if(!model->DIOnomTempGiven) {
             model->DIOnomTemp = ckt->CKTnomTemp;
         }
         vtnom = CONSTKoverQ * model->DIOnomTemp;
-        /* limit grading coeff to max of .9 */
-        if(model->DIOgradingCoeff>.9) {
+        /* limit grading coeff to max of .9, set new limit with variable DIOgradingCoeffMax */
+        if(model->DIOgradingCoeff>gclimit) {
             SPfrontEnd->IFerrorf (ERR_WARNING,
-                    "%s: grading coefficient too large, limited to 0.9",
-                    model->DIOmodName);
-            model->DIOgradingCoeff=.9;
+                    "%s: grading coefficient too large, limited to %g",
+                    model->DIOmodName, gclimit);
+            model->DIOgradingCoeff=gclimit;
         }
         /* limit activation energy to min of .1 */
         if(model->DIOactivationEnergy<.1) {
@@ -95,13 +101,13 @@ DIOtemp(GENmodel *inModel, CKTcircuit *ckt)
             here->DIOtGradingCoeff = model->DIOgradingCoeff * factor;
 
             /* limit temperature adjusted grading coeff
-             * to max of .9
+             * to max of .9, or set new limit with variable DIOgradingCoeffMax
              */
-            if(here->DIOtGradingCoeff>.9) {
+            if(here->DIOtGradingCoeff>gclimit) {
               SPfrontEnd->IFerrorf (ERR_WARNING,
-                    "%s: temperature adjusted grading coefficient too large, limited to 0.9",
-                    here->DIOname);
-              here->DIOtGradingCoeff=.9;
+                    "%s: temperature adjusted grading coefficient too large, limited to %g",
+                    here->DIOname, gclimit);
+              here->DIOtGradingCoeff=gclimit;
             }
 
             vt = CONSTKoverQ * here->DIOtemp;
