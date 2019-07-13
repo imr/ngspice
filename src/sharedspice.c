@@ -1860,6 +1860,9 @@ int sh_ExecutePerLoop(void)
 
     /* get the data of the last entry to the plot vector */
     veclen = pl->pl_dvecs->v_length - 1;
+    /* safeguard against vectors with 0 length (e.g. @c1[i] during ac simulation) */
+    if (veclen < 1)
+        return 2;
     curvecvalsall->vecindex = veclen;
     for (d = pl->pl_dvecs, i = 0; d; d = d->v_next, i++) {
         /* test if real */
