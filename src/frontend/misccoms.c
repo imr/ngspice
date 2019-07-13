@@ -151,9 +151,9 @@ com_bug(wordlist *wl)
 #endif
 
 
-/* printout upon startup or 'version' command. options to version are -s (short)
-   or -f (full). 'version' with options may also be used in ngspice pipe mode. */
-
+/* printout upon startup or 'version' command. options to version are -s (short),
+   -f (full), -v (just version), -d (just compile date).
+   'version' with options may also be used in ngspice pipe mode. */
 void
 com_version(wordlist *wl)
 {
@@ -193,8 +193,13 @@ com_version(wordlist *wl)
                 fprintf(cp_out, "** Creation Date: %s\n", Spice_Build_Date);
             fprintf(cp_out, "******\n");
 
-        } else if (!strncasecmp(s, "-f", 2)) {
+        } else if (!strncasecmp(s, "-v", 2)) {
+            fprintf(cp_out, "%s-%s\n",ft_sim->simulator, ft_sim->version);
+        } else if (!strncasecmp(s, "-d", 2) && Spice_Build_Date != NULL &&
+                         *Spice_Build_Date != '\0'){
+            fprintf(cp_out, "%s\n", Spice_Build_Date);
 
+        } else if (!strncasecmp(s, "-f", 2)) {
             fprintf(cp_out,
                     "******\n"
                     "** %s-%s : %s\n"
