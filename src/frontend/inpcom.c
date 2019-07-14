@@ -2303,8 +2303,12 @@ inp_stripcomments_deck(struct card *c, bool cf)
  the whole line is converted to a normal comment line (i.e. one that
  begins with a '*').
  BUG: comment characters in side of string literals are not ignored
- ('$' outside of .control section is o.k. however). */
+ ('$' outside of .control section is o.k. however).
 
+ If the comaptibility mode is PS, LTPS or LTPSA, '$' is treated as a valid
+ character, not a s end-of-line comment delimiter, except for that it is
+ located at the beginning of a line. If inside of a control section,
+ still '$ ' is read a an end-of-line comment delimiter.*/
 static void
 inp_stripcomments_line(char *s, bool cs)
 {
@@ -2319,7 +2323,12 @@ inp_stripcomments_line(char *s, bool cs)
         d++;
         if (*d == ';') {
             break;
-        } else if (!cs && (c == '$')) { /* outside of .control section */
+        }
+        /* outside of .control section, and not in PS mode */
+        else if (!cs && (c == '$') &&
+                inp_compat_mode != COMPATMODE_PS &&
+                inp_compat_mode != COMPATMODE_LTPS &&
+                inp_compat_mode != COMPATMODE_LTPSA) {
             /* The character before '&' has to be ',' or ' ' or tab.
                A valid numerical expression directly before '$' is not yet supported. */
             if ((d - 2 >= s) && ((d[-2] == ' ') || (d[-2] == ',') || (d[-2] == '\t'))) {
