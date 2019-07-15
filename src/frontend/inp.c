@@ -947,7 +947,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
         /* in shared ngspice controls a execute in the primary thread, typically
            before the background thread has finished. This leads to premature execution
            of commands. Thus this is delegated to a function using a third thread, that
-           only start when the background threas has finished (sharedspice.c).*/
+           only starts when the background thread has finished (sharedspice.c).*/
 #ifdef SHARED_MODULE
         for (wl = controls; wl; wl = wl->wl_next)
             if (cp_getvar("controlswait", CP_BOOL, NULL, 0)) {
