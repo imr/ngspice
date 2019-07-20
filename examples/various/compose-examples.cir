@@ -1,0 +1,32 @@
+compose examples
+
+.control
+compose vec1 values (-3) (-5) 4 6
+echo $&vec1
+echo
+compose vec2 values (-3) (-5*PI) 4 6*e
+echo $&vec2
+echo
+compose vec3 start=-3 stop=7 step = 2
+echo $&vec3
+echo
+compose vec4 start=-3 stop=7 step = 2 lin=19
+*warning, step is ignored
+echo $&vec4
+echo
+compose vec5 dec=3 start=0.1 stop=10
+echo $&vec5
+echo
+compose vec6 dec=3 start=-0.1 stop=10
+*error, value is negative
+echo $&vec6
+echo
+compose vec7 log=3 start=0.1 stop=10
+echo $&vec7
+echo
+compose vec8 gauss=10 mean=1 sd=0.2
+echo $&vec8
+echo
+.endc
+
+.end

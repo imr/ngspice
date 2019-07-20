@@ -8,11 +8,13 @@
 #include "ngspice/pnode.h"
 #include "ngspice/fteext.h"
 #include "ngspice/cpextern.h"
+#include "ngspice/randnumb.h"
 
 #include "quote.h"
 #include "com_compose.h"
 #include "completion.h"
 
+#include <math.h>       /* log10 */
 
 /* Copy the data from a vector into a buffer with larger dimensions. */
 static void
@@ -62,25 +64,21 @@ dimxpand(struct dvec *v, int *newdims, double *data)
  * The possible parms are:
  *  start       The value at which the vector should start.
  *  stop        The value at which the vector should end.
- *  step        The difference between sucessive elements.
+ *  step        The difference between successive elements.
  *  lin         The number of points, linearly spaced.
  *  log         The number of points, logarithmically spaced.
  *  dec         The number of points per decade, logarithmically spaced.
+ *  oct         The number of points per octave, logarithmically spaced.
  *  center      Where to center the range of points.
  *  span        The size of the range of points.
- *  unif        ??
  *  gauss       The number of points in the gaussian distribution.
- *  mean        The mean value for the gaussian dist.
- *  sd          The standard deviation for the gauss. dist.
- *  random      The number of randomly selected points.
- *  pool        The name of a vector (must be already defined) to get
- *              random values -- default is 'unitvec(npoints)'
+ *  mean        The mean value for the gaussian or uniform distributions.
+ *  sd          The standard deviation for the gaussian distribution.
+ *  unif        The number of points in the uniform distribution.
  *
  * The case 'compose name values val val ...' takes the values and creates a
- * new vector -- the vals may be arbitrary expressions.
- *
- * NOTE: most of this doesn't work -- there will be plenty of unused variable
- * lint messages...
+ * new vector -- the vals may be arbitrary expressions. Negative vals have to
+ * be put into brackets, like (-1.6).
  */
 
 void
@@ -90,20 +88,19 @@ com_compose(wordlist *wl)
     double stop = 0.0;
     double step = 0.0;
     double lin = 0.0;
-    double center;
-    double span;
-    double mean, sd;
+    double center = 0.0;
+    double span = 0.0;
+    double mean = 0.0;
+    double sd = 0.0;
     bool startgiven = FALSE, stopgiven = FALSE, stepgiven = FALSE;
     bool lingiven = FALSE;
-    bool loggiven = FALSE, decgiven = FALSE, gaussgiven = FALSE;
-    bool randmgiven = FALSE;
+    bool loggiven = FALSE, decgiven = FALSE, octgiven = FALSE, gaussgiven = FALSE;
+    bool unifgiven = FALSE;
     bool spangiven = FALSE;
     bool centergiven = FALSE;
     bool meangiven = FALSE;
-    bool poolgiven = FALSE;
     bool sdgiven = FALSE;
-    int  log, dec, gauss, randm;
-    char *pool;
+    int  log = 0, dec = 0, oct = 0, gauss = 0, unif = 0;
     int i;
 
     char *s, *var, *val;
@@ -116,7 +113,6 @@ com_compose(wordlist *wl)
     int dims[MAXDIMS];
     struct dvec *result, *vecs = NULL, *v, *lv = NULL;
     struct pnode *pn, *names = NULL;
-    bool reverse = FALSE;
 
     char *resname = cp_unquote(wl->wl_word);
 
@@ -152,7 +148,7 @@ com_compose(wordlist *wl)
             dim = (vecs->v_length > 1) ? 1 : 0;
 
         if (dim == MAXDIMS) {
-            fprintf(cp_err, "Error: max dimensionality is %d\n",
+            fprintf(cp_err, "Error: compose -> max dimensionality is %d\n",
                     MAXDIMS);
             goto done;
         }
@@ -170,7 +166,7 @@ com_compose(wordlist *wl)
                 i = (v->v_length > 1) ? 1 : 0;
             if (i != dim) {
                 fprintf(cp_err,
-                        "Error: all vectors must be of the same dimensionality\n");
+                        "Error: compose -> all vectors must be of the same dimensionality\n");
                 goto done;
             }
             length++;
@@ -249,7 +245,7 @@ com_compose(wordlist *wl)
                     val = wl->wl_word;
                     wl = wl->wl_next;
                 } else {
-                    fprintf(cp_err, "Error: bad syntax\n");
+                    fprintf(cp_err, "Error: compose -> bad syntax\n");
                     goto done;
                 }
             } else {
@@ -260,7 +256,7 @@ com_compose(wordlist *wl)
                     val = wl->wl_word;
                     if (*val != '=') {
                         fprintf(cp_err,
-                                "Error: bad syntax\n");
+                                "Error: compose -> bad syntax\n");
                         goto done;
                     }
                     val++;
@@ -270,13 +266,13 @@ com_compose(wordlist *wl)
                             val = wl->wl_word;
                         } else {
                             fprintf(cp_err,
-                                    "Error: bad syntax\n");
+                                    "Error: compose -> bad syntax\n");
                             goto done;
                         }
                     }
                     wl = wl->wl_next;
                 } else {
-                    fprintf(cp_err, "Error: bad syntax\n");
+                    fprintf(cp_err, "Error: compose -> bad syntax\n");
                     goto done;
                 }
             }
@@ -284,7 +280,7 @@ com_compose(wordlist *wl)
                 startgiven = TRUE;
                 if ((td = ft_numparse(&val, FALSE)) == NULL) {
                     fprintf(cp_err,
-                            "Error: bad parm %s = %s\n", var, val);
+                            "Error: compose -> bad parm %s = %s\n", var, val);
                     goto done;
                 }
                 start = *td;
@@ -292,7 +288,7 @@ com_compose(wordlist *wl)
                 stopgiven = TRUE;
                 if ((td = ft_numparse(&val, FALSE)) == NULL) {
                     fprintf(cp_err,
-                            "Error: bad parm %s = %s\n", var, val);
+                            "Error: compose -> bad parm %s = %s\n", var, val);
                     goto done;
                 }
                 stop = *td;
@@ -300,7 +296,7 @@ com_compose(wordlist *wl)
                 stepgiven = TRUE;
                 if ((td = ft_numparse(&val, FALSE)) == NULL) {
                     fprintf(cp_err,
-                            "Error: bad parm %s = %s\n", var, val);
+                            "Error: compose -> bad parm %s = %s\n", var, val);
                     goto done;
                 }
                 step = *td;
@@ -308,7 +304,7 @@ com_compose(wordlist *wl)
                 centergiven = TRUE;
                 if ((td = ft_numparse(&val, FALSE)) == NULL) {
                     fprintf(cp_err,
-                            "Error: bad parm %s = %s\n", var, val);
+                            "Error: compose -> bad parm %s = %s\n", var, val);
                     goto done;
                 }
                 center = *td;
@@ -316,7 +312,7 @@ com_compose(wordlist *wl)
                 spangiven = TRUE;
                 if ((td = ft_numparse(&val, FALSE)) == NULL) {
                     fprintf(cp_err,
-                            "Error: bad parm %s = %s\n", var, val);
+                            "Error: compose -> bad parm %s = %s\n", var, val);
                     goto done;
                 }
                 span = *td;
@@ -324,7 +320,7 @@ com_compose(wordlist *wl)
                 meangiven = TRUE;
                 if ((td = ft_numparse(&val, FALSE)) == NULL) {
                     fprintf(cp_err,
-                            "Error: bad parm %s = %s\n", var, val);
+                            "Error: compose -> bad parm %s = %s\n", var, val);
                     goto done;
                 }
                 mean = *td;
@@ -332,7 +328,7 @@ com_compose(wordlist *wl)
                 sdgiven = TRUE;
                 if ((td = ft_numparse(&val, FALSE)) == NULL) {
                     fprintf(cp_err,
-                            "Error: bad parm %s = %s\n", var, val);
+                            "Error: compose -> bad parm %s = %s\n", var, val);
                     goto done;
                 }
                 sd = *td;
@@ -340,7 +336,7 @@ com_compose(wordlist *wl)
                 lingiven = TRUE;
                 if ((td = ft_numparse(&val, FALSE)) == NULL) {
                     fprintf(cp_err,
-                            "Error: bad parm %s = %s\n", var, val);
+                            "Error: compose -> bad parm %s = %s\n", var, val);
                     goto done;
                 }
                 lin = *td;
@@ -348,7 +344,7 @@ com_compose(wordlist *wl)
                 loggiven = TRUE;
                 if ((td = ft_numparse(&val, FALSE)) == NULL) {
                     fprintf(cp_err,
-                            "Error: bad parm %s = %s\n", var, val);
+                            "Error: compose -> bad parm %s = %s\n", var, val);
                     goto done;
                 }
                 log = (int)(*td);
@@ -356,64 +352,72 @@ com_compose(wordlist *wl)
                 decgiven = TRUE;
                 if ((td = ft_numparse(&val, FALSE)) == NULL) {
                     fprintf(cp_err,
-                            "Error: bad parm %s = %s\n", var, val);
+                            "Error: compose -> bad parm %s = %s\n", var, val);
                     goto done;
                 }
                 dec = (int)(*td);
+            } else if (cieq(var, "oct")) {
+                octgiven = TRUE;
+                if ((td = ft_numparse(&val, FALSE)) == NULL) {
+                    fprintf(cp_err,
+                            "Error: compose -> bad parm %s = %s\n", var, val);
+                    goto done;
+                }
+                oct = (int)(*td);
             } else if (cieq(var, "gauss")) {
                 gaussgiven = TRUE;
                 if ((td = ft_numparse(&val, FALSE)) == NULL) {
                     fprintf(cp_err,
-                            "Error: bad parm %s = %s\n", var, val);
+                            "Error: compose -> bad parm %s = %s\n", var, val);
                     goto done;
                 }
                 gauss = (int)(*td);
-            } else if (cieq(var, "random")) {
-                randmgiven = TRUE;
+            } else if (cieq(var, "unif")) {
+                unifgiven = TRUE;
                 if ((td = ft_numparse(&val, FALSE)) == NULL) {
                     fprintf(cp_err,
-                            "Error: bad parm %s = %s\n", var, val);
+                            "Error: compose -> bad parm %s = %s\n", var, val);
                     goto done;
                 }
-                randm = (int)(*td);
-            } else if (cieq(var, "pool")) {
-                poolgiven = TRUE;
-                pool = val;
+                unif = (int)(*td);
+            } else {
+                fprintf(cp_err, "Error: compose -> bad parm %s\n", var);
+                goto done;
             }
         }
 
-#ifdef LINT
-        /* XXX Now, doesn't this look just a little suspicious */
-        if (centergiven || spangiven || meangiven || sdgiven || poolgiven)
-            j = k = l = m = q = inds = center + span + mean + sd +
-                log + dec + gauss + randm + pool;
-#endif
         /* Now see what we have... start and stop are pretty much
-         * compatible with everything...
+         * compatible with everything (except gauss)...
          */
+        if (centergiven && spangiven && !startgiven && !stopgiven) {
+            start = center - span/2.0;
+            stop  = center + span/2.0;
+            startgiven = TRUE;
+            stopgiven = TRUE;
+        }
+
         if (stepgiven && (step == 0.0)) {
-            fprintf(cp_err, "Error: step cannot = 0.0\n");
+            fprintf(cp_err, "Error: compose -> step cannot = 0.0\n");
             goto done;
         }
 
-        if (startgiven && stopgiven && (start > stop)) {
-            SWAP(double, start, stop);
-            reverse = TRUE;
-        }
-
-        if (lingiven + loggiven + decgiven + randmgiven + gaussgiven > 1) {
+        if (lingiven + loggiven + decgiven + octgiven + unifgiven + gaussgiven > 1) {
             fprintf(cp_err,
-                    "Error: can have at most one of (lin, log, dec, random, gauss)\n");
+                    "Error: compose -> can have at most one of (lin, log, dec, oct, unif, gauss)\n");
             goto done;
-        } else if (lingiven + loggiven + decgiven + randmgiven + gaussgiven == 0) {
+        } else if (lingiven + loggiven + decgiven + octgiven + unifgiven + gaussgiven == 0) {
             /* Hmm, if we have a start, stop, and step we're ok. */
             if (startgiven && stopgiven && stepgiven) {
                 lingiven = TRUE;
-                lin = (stop - start) / step + 1;
+                /* Ensure that step has the right sign */
+                if ((stop - start > 0) != (step > 0)) {
+                  step = -step;
+                }
+                lin = (stop - start) / step + 1.;
                 stepgiven = FALSE;  /* Problems below... */
             } else {
                 fprintf(cp_err,
-                        "Error: either one of (lin, log, dec, random, gauss) must be given, or all\n");
+                        "Error: compose -> either one of (lin, log, dec, oct, unif, gauss) must be given, or all\n");
                 fprintf(cp_err,
                         "\tof (start, stop, and step) must be given.\n");
                 goto done;
@@ -422,49 +426,140 @@ com_compose(wordlist *wl)
 
         if (lingiven) {
             /* Create a linear sweep... */
+            if (lin <= 0) {
+                fprintf(cp_err,
+                        "Error: compose -> The number of linearly spaced points, lin, must be positive.\n");
+                goto done;
+            }
             length = (int)lin;
             data = TMALLOC(double, length);
             if (stepgiven && startgiven && stopgiven) {
-                if (step != (stop - start) / lin * (reverse ? -1 : 1)) {
+                if (step != (stop - start) / (lin - 1.0)) {
                     fprintf(cp_err,
-                            "Warning: bad step -- should be %g\n",
-                            (stop - start) / lin * (reverse ? -1 : 1));
+                            "Warning: compose -> bad step -- should be %g. ",
+                            (stop - start) / (lin - 1.0));
+                    fprintf(cp_err,
+                            "Specify only three out of start, stop, step, lin.\n");
                     stepgiven = FALSE;
                 }
             }
             if (!startgiven) {
                 if (stopgiven && stepgiven)
-                    start = stop - step * lin;
+                    start = stop - step * (lin - 1.0);
                 else if (stopgiven)
-                    start = stop - lin;
+                    start = stop - lin + 1.0;
                 else
                     start = 0;
                 startgiven = TRUE;
             }
             if (!stopgiven) {
                 if (stepgiven)
-                    stop = start + lin * step;
+                    stop = start + step * (lin - 1.0);
                 else
-                    stop = start + lin;
+                    stop = start + lin - 1.;
                 stopgiven = TRUE;
             }
             if (!stepgiven) {
-                step = (stop - start) / lin;
+                step = (stop - start) / (lin - 1.0);
             }
 
-            if (reverse)
-                for (i = 0, tt = stop; i < length; i++, tt -= step)
-                    data[i] = tt;
-            else
-                for (i = 0, tt = start; i < length; i++, tt += step)
-                    data[i] = tt;
+            for (i = 0, tt = start; i < length; i++, tt += step)
+                data[i] = tt;
 
-        } else if (loggiven || decgiven) {
+        } else if (loggiven || decgiven || octgiven) {
             /* Create a log sweep... */
-        } else if (randmgiven) {
-            /* Create a set of random values... */
+            if (centergiven && spangiven) {
+                if (center <= span/2.0) {
+                    fprintf(cp_err,
+                            "Error: compose -> center must be greater than span/2\n");
+                    goto done;
+                }
+                if ((center <= 0) || (span <= 0)) {
+                    fprintf(cp_err,
+                            "Error: compose -> center and span must be greater than 0\n");
+                    goto done;
+                }
+            }
+            else if (startgiven && stopgiven) {
+                if ((start <= 0) || (stop <= 0)) {
+                    fprintf(cp_err,
+                            "Error: compose -> start and stop must be greater than 0\n");
+                    goto done;
+                }
+            }
+            else {
+                fprintf(cp_err,
+                        "Error: compose -> start and stop or center and span needed in case of log, dec or oct\n");
+                goto done;
+            }
+            if (decgiven) {
+                log = (int)round(dec * log10(stop / start)) + 1;
+            } else if (octgiven) {
+                log = (int)round(oct * log10(stop / start) / log10(2)) + 1;
+            }
+
+            length = log;
+            data = TMALLOC(double, length);
+
+            data[0] = start;
+            for (i = 0; i < length; i++)
+                data[i] = start * pow(stop/start, (double)i/(log-1.0));
+
+        } else if (unifgiven) {
+            /* Create a set of uniform distributed values... */
+            if (startgiven || stopgiven) {
+                if (!startgiven || !stopgiven) {
+                    fprintf(cp_err,
+                            "Error: compose -> For uniform distribution (start, stop) can be only given as bundle.\n");
+                    goto done;
+                }
+                if (meangiven || spangiven) {
+                    fprintf(cp_err,
+                            "Error: compose -> For uniform distribution (start, stop) can't be mixed with mean or span.\n");
+                    goto done;
+                }
+                mean = (start + stop) / 2.0;
+                span = fabs(stop - start);
+                meangiven = TRUE;
+                spangiven = TRUE;
+            }
+            if (unif <= 0) {
+                fprintf(cp_err,
+                        "Error: compose -> The number of uniformly distributed points, unif, must be positive.\n");
+                goto done;
+            }
+            if (!meangiven) {
+                /* Use mean default value 0.5 */
+                mean = 0.5;
+            }
+            if (!spangiven) {
+                /* Use span default value 1.0 */
+                span = 1.0;
+            }
+            length = unif;
+            data = TMALLOC(double, length);
+            for (i = 0; i < length; i++)
+                data[i] = mean + span * 0.5 * drand();
+
         } else if (gaussgiven) {
             /* Create a gaussian distribution... */
+            if (gauss <= 0) {
+                fprintf(cp_err,
+                        "Error: compose -> The number of Gaussian distributed points, gauss, must be positive.\n");
+                goto done;
+            }
+            if (!meangiven) {
+                /* Use mean default value 0 */
+                mean = 0;
+            }
+            if (!sdgiven) {
+                /* Use sd default value 1.0 */
+                sd = 1.0;
+            }
+            length = gauss;
+            data = TMALLOC(double, length);
+            for (i = 0; i < length; i++)
+                data[i] = mean + sd * gauss1();
         }
     }
 
