@@ -281,20 +281,54 @@ _DeleteFirstLine(void)
     TBuffer[TBufEnd] = SE;
 }
 
+/* Compare old system time with current system time.
+   If difference is larger than ms milliseconds, return TRUE.
+   If time is less than the delay time (in milliseconds), return TRUE. */
+static bool
+CompareTime(int ms, int delay)
+{
+    static __int64 prevfileTime64Bit;
+    static __int64 startfileTime64Bit;
+    /* conversion: time in ms -> 100ns */
+    __int64 reftime = ms * 10000;
+    __int64 delaytime = delay * 10000;
+    FILETIME newtime;
+    /* get time in 100ns units */
+    GetSystemTimeAsFileTime(&newtime);
+    ULARGE_INTEGER theTime;
+    theTime.LowPart = newtime.dwLowDateTime;
+    theTime.HighPart = newtime.dwHighDateTime;
+    __int64 fileTime64Bit = theTime.QuadPart;
+    __int64 difffileTime64Bit = fileTime64Bit - prevfileTime64Bit;
+    /* Catch the delay start time */
+    if ((startfileTime64Bit) == 0) {
+        startfileTime64Bit = fileTime64Bit;
+    }
+    if ((fileTime64Bit - startfileTime64Bit) < delaytime)
+        return TRUE;
+    if ((difffileTime64Bit) > reftime) {
+        prevfileTime64Bit = fileTime64Bit;
+        return TRUE;
+    }
+    else
+        return FALSE;
+}
 
-// Anfuegen eines chars an den TextBuffer
+// Add a char to the text buffer
 static void
 AppendChar(char c)
 {
-    // limit the text buffer size to TBufSize
+    // Limit the text buffer size to TBufSize
     while ((TBufEnd + 4) >= TBufSize)
         _DeleteFirstLine();
-    // Zeichen anfuegen
+    // Add character
     TBuffer[TBufEnd++] = c;
     TBuffer[TBufEnd] = SE;
     DoUpdate = TRUE;
-    // if line is complete, show it in text window
-    if (c == LF) {
+
+    /* If line is complete, and waiting time has passed, show it in text window.
+       If time is less than delay time, always show the line (useful during start-up) */
+    if (c == LF && CompareTime(30, 200)) {
         DisplayText();
         WaitForIdle();
     }
