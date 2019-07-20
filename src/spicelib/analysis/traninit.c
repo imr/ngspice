@@ -23,10 +23,11 @@ int TRANinit(CKTcircuit	*ckt, JOB *anal)
     ckt->CKTinitTime  = job->TRANinitTime;
     ckt->CKTmaxStep   = job->TRANmaxStep;
 
-    /*  The following code has been taken from macspice 3f4 (A. Wilson)
-        in the file traninit.new.c - Seems interesting */
+    /*  Maximum step size is limited to tstep given by .tran tstep tstop <tstart <tmax>>.
+        May be overridden by giving 'set nostepsizelimit' to (tstop - tstart)/50.
+        Both may be overriden by setting tmax. */
     if(ckt->CKTmaxStep == 0) {
-        if ((ckt->CKTstep < ( ckt->CKTfinalTime - ckt->CKTinitTime )/50.0) && cp_getvar("stepsizelimit", CP_BOOL, NULL, 0))
+        if ((ckt->CKTstep < ( ckt->CKTfinalTime - ckt->CKTinitTime )/50.0) && !cp_getvar("nostepsizelimit", CP_BOOL, NULL, 0))
             ckt->CKTmaxStep = ckt->CKTstep;
         else
             ckt->CKTmaxStep = ( ckt->CKTfinalTime - ckt->CKTinitTime )/50.0;
