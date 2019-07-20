@@ -1,8 +1,9 @@
 /* Main program for ngspice under Windows OS
    Autor: Wolfgang Muees
    Stand: 28.10.97
-   Autor: Holger Vogt
-   Stand: 17.10.2009
+   Copyright: Holger Vogt
+   Stand: 20.07.2019
+   Modified BSD license
 */
 
 #include "ngspice/config.h"
@@ -285,16 +286,18 @@ _DeleteFirstLine(void)
 static void
 AppendChar(char c)
 {
-    // Textbuffer nicht zu grosz werden lassen
+    // limit the text buffer size to TBufSize
     while ((TBufEnd + 4) >= TBufSize)
         _DeleteFirstLine();
     // Zeichen anfuegen
     TBuffer[TBufEnd++] = c;
     TBuffer[TBufEnd] = SE;
     DoUpdate = TRUE;
-    // Sobald eine Zeile zuende, im Textfenster anzeigen
-    if (c == LF)
+    // if line is complete, show it in text window
+    if (c == LF) {
         DisplayText();
+        WaitForIdle();
+    }
 }
 
 
