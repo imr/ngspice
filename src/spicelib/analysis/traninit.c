@@ -24,7 +24,7 @@ int TRANinit(CKTcircuit	*ckt, JOB *anal)
     ckt->CKTmaxStep   = job->TRANmaxStep;
 
     /*  Maximum step size is limited to tstep given by .tran tstep tstop <tstart <tmax>>.
-        May be overridden by giving 'set nostepsizelimit' to (tstop - tstart)/50.
+        May be overridden to a value (tstop - tstart)/50 by 'set nostepsizelimit'.
         Both may be overriden by setting tmax. */
     if(ckt->CKTmaxStep == 0) {
         if ((ckt->CKTstep < ( ckt->CKTfinalTime - ckt->CKTinitTime )/50.0) && !cp_getvar("nostepsizelimit", CP_BOOL, NULL, 0))
