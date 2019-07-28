@@ -44,7 +44,8 @@ cp_bquote(wordlist *wlist)
             *s++ = *t++;
         /* What the heck, let "echo `foo" work... */
         *s = '\0';
-        t++;    /* Get past the second ` */
+        if (*t != '\0')
+            t++;    /* Get past the second ` */
         if ((nwl = backeval(buf)) == NULL) {
             wlist->wl_word = NULL;
             return (wlist);
