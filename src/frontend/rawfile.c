@@ -304,7 +304,7 @@ raw_read(char *name) {
 
     if ((fp = fopen(name, "rb")) == NULL) {
         perror(name);
-        controlled_exit(EXIT_FAILURE);
+        return NULL;
     }
 
     /* Since we call cp_evloop() from here, we have to do this junk. */
