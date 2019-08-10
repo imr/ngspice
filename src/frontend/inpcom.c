@@ -11,35 +11,35 @@ Author: 1985 Wayne A. Christopher
 
 #include "ngspice/ngspice.h"
 
+#include "ngspice/compatmode.h"
 #include "ngspice/cpdefs.h"
+#include "ngspice/dvec.h"
 #include "ngspice/ftedefs.h"
 #include "ngspice/fteext.h"
-#include "ngspice/dvec.h"
 #include "ngspice/fteinp.h"
-#include "ngspice/compatmode.h"
 
 #include <limits.h>
 #include <stdlib.h>
 
-#include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 
 #if !defined(__MINGW32__) && !defined(_MSC_VER)
 #include <unistd.h>
 #endif
 
-#include "inpcom.h"
-#include "variable.h"
-#include "subckt.h"
 #include "../misc/util.h" /* ngdirname() */
-#include "ngspice/stringutil.h"
+#include "inpcom.h"
 #include "ngspice/stringskip.h"
+#include "ngspice/stringutil.h"
 #include "ngspice/wordlist.h"
+#include "subckt.h"
+#include "variable.h"
 
 #ifdef XSPICE
 /* gtri - add - 12/12/90 - wbk - include new stuff */
-#include "ngspice/ipctiein.h"
 #include "ngspice/enh.h"
+#include "ngspice/ipctiein.h"
 /* gtri - end - 12/12/90 */
 #endif
 
@@ -47,8 +47,8 @@ Author: 1985 Wayne A. Christopher
 /*#define TRACE*/
 
 /* globals -- wanted to avoid complicating inp_readall interface */
-#define N_LIBRARIES       1000
-#define N_PARAMS          1000
+#define N_LIBRARIES 1000
+#define N_PARAMS 1000
 #define N_SUBCKT_W_PARAMS 4000
 
 #define NPARAMS 10000
@@ -62,15 +62,14 @@ static struct library {
     struct card *deck;
 } libraries[N_LIBRARIES];
 
-static int  num_libraries;
+static int num_libraries;
 
 struct names {
     char *names[N_SUBCKT_W_PARAMS];
-    int  num_names;
+    int num_names;
 };
 
-struct function_env
-{
+struct function_env {
     struct function_env *up;
 
     struct function {
@@ -78,14 +77,13 @@ struct function_env
         char *name;
         char *body;
         char *params[N_PARAMS];
-        int   num_parameters;
+        int num_parameters;
         const char *accept;
-    } *functions;
+    } * functions;
 };
 
-struct func_temper
-{
-    char* funcname;
+struct func_temper {
+    char *funcname;
     int subckt_depth;
     int subckt_count;
     struct func_temper *next;
@@ -97,7 +95,7 @@ COMPATMODE_T inp_compat_mode;
 
 /* Collect information for dynamic allocation of numparam arrays */
 /* number of lines in input deck */
-int dynmaxline;  /* inpcom.c 1529 */
+int dynmaxline; /* inpcom.c 1529 */
 /* number of lines in deck after expansion */
 int dynMaxckt = 0; /* subckt.c 307 */
 /* number of parameter substitutions */
@@ -106,33 +104,39 @@ long dynsubst; /* spicenum.c 221 */
 static bool has_if = FALSE; /* if we have an .if ... .endif pair */
 
 static char *readline(FILE *fd);
-static int  get_number_terminals(char *c);
+static int get_number_terminals(char *c);
 static void inp_stripcomments_deck(struct card *deck, bool cs);
 static void inp_stripcomments_line(char *s, bool cs);
-static void inp_fix_for_numparam(struct names *subckt_w_params, struct card *deck);
+static void inp_fix_for_numparam(
+        struct names *subckt_w_params, struct card *deck);
 static void inp_remove_excess_ws(struct card *deck);
 static void expand_section_references(struct card *deck, char *dir_name);
 static void inp_grab_func(struct function_env *, struct card *deck);
-static void inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct card *deck);
+static void inp_fix_inst_calls_for_numparam(
+        struct names *subckt_w_params, struct card *deck);
 static void inp_expand_macros_in_func(struct function_env *);
-static struct card *inp_expand_macros_in_deck(struct function_env *, struct card *deck);
+static struct card *inp_expand_macros_in_deck(
+        struct function_env *, struct card *deck);
 static void inp_fix_param_values(struct card *deck);
-static void inp_reorder_params(struct names *subckt_w_params, struct card *list_head);
-static int  inp_split_multi_param_lines(struct card *deck, int line_number);
-static void inp_sort_params(struct card *param_cards, struct card *card_bf_start, struct card *s_c, struct card *e_c);
+static void inp_reorder_params(
+        struct names *subckt_w_params, struct card *list_head);
+static int inp_split_multi_param_lines(struct card *deck, int line_number);
+static void inp_sort_params(struct card *param_cards,
+        struct card *card_bf_start, struct card *s_c, struct card *e_c);
 static char *inp_remove_ws(char *s);
 static void inp_compat(struct card *deck);
 static void inp_bsource_compat(struct card *deck);
 static bool inp_temper_compat(struct card *card);
 static void inp_meas_current(struct card *card);
 static void inp_dot_if(struct card *deck);
-static char *inp_modify_exp(char* expression);
-static struct func_temper *inp_new_func(char *funcname, char *funcbody, struct card *card,
-                                        int *sub_count, int subckt_depth);
+static char *inp_modify_exp(char *expression);
+static struct func_temper *inp_new_func(char *funcname, char *funcbody,
+        struct card *card, int *sub_count, int subckt_depth);
 static void inp_delete_funcs(struct func_temper *funcs);
 
 static bool chk_for_line_continuation(char *line);
 static void comment_out_unused_subckt_models(struct card *start_card);
+static char inp_get_elem_ident(char *type);
 static void rem_mfg_from_models(struct card *start_card);
 static void inp_fix_macro_param_func_paren_io(struct card *begin_card);
 static void inp_fix_gnd_name(struct card *deck);
@@ -158,12 +162,13 @@ static void pspice_compat_a(struct card *oldcard);
 static struct card *ltspice_compat(struct card *oldcard);
 static void ltspice_compat_a(struct card *oldcard);
 
-struct inp_read_t
-{ struct card *cc;
+struct inp_read_t {
+    struct card *cc;
     int line_number;
 };
 
-static struct inp_read_t inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile);
+static struct inp_read_t inp_read(
+        FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile);
 
 
 #ifndef XSPICE
@@ -172,8 +177,8 @@ static void inp_poly_err(struct card *deck);
 
 
 /* insert a new card, just behind the given card */
-static struct card *
-insert_new_line(struct card *card, char *line, int linenum, int linenum_orig)
+static struct card *insert_new_line(
+        struct card *card, char *line, int linenum, int linenum_orig)
 {
     struct card *x = TMALLOC(struct card, 1);
 
@@ -192,33 +197,31 @@ insert_new_line(struct card *card, char *line, int linenum, int linenum_orig)
 
 
 /* insert new_card, just behind the given card */
-static struct card *
-insert_deck(struct card *card, struct card *new_card)
+static struct card *insert_deck(struct card *card, struct card *new_card)
 {
     if (card) {
         new_card->nextcard = card->nextcard;
         card->nextcard = new_card;
-    } else {
+    }
+    else {
         new_card->nextcard = NULL;
     }
     return new_card;
 }
 
 
-static struct library *
-new_lib(void)
+static struct library *new_lib(void)
 {
     if (num_libraries >= N_LIBRARIES) {
         fprintf(stderr, "ERROR, N_LIBRARIES overflow\n");
         controlled_exit(EXIT_FAILURE);
     }
 
-    return & libraries[num_libraries++];
+    return &libraries[num_libraries++];
 }
 
 
-static void
-delete_libs(void)
+static void delete_libs(void)
 {
     int i;
 
@@ -230,21 +233,19 @@ delete_libs(void)
 }
 
 
-static struct library *
-find_lib(char *name)
+static struct library *find_lib(char *name)
 {
     int i;
 
     for (i = 0; i < num_libraries; i++)
         if (cieq(libraries[i].realpath, name))
-            return & libraries[i];
+            return &libraries[i];
 
     return NULL;
 }
 
 
-static struct card *
-find_section_definition(struct card *c, char *name)
+static struct card *find_section_definition(struct card *c, char *name)
 {
     for (; c; c = c->nextcard) {
 
@@ -264,7 +265,8 @@ find_section_definition(struct card *c, char *name)
                 y++;
 
             if (!*y) {
-                /* library section definition: `.lib <section-name>' .. `.endl' */
+                /* library section definition: `.lib <section-name>' ..
+                 * `.endl' */
 
                 char keep_char = *t;
                 *t = '\0';
@@ -283,8 +285,7 @@ find_section_definition(struct card *c, char *name)
 }
 
 
-static struct library *
-read_a_lib(char *y, char *dir_name)
+static struct library *read_a_lib(char *y, char *dir_name)
 {
     char *yy, *y_resolved;
 
@@ -319,13 +320,15 @@ read_a_lib(char *y, char *dir_name)
             return NULL;
         }
 
-        /* lib points to a new entry in global lib array libraries[N_LIBRARIES] */
+        /* lib points to a new entry in global lib array
+         * libraries[N_LIBRARIES] */
         lib = new_lib();
 
         lib->realpath = copy(yy);
         lib->habitat = ngdirname(yy);
 
-        lib->deck = inp_read(newfp, 1 /*dummy*/, lib->habitat, FALSE, FALSE) . cc;
+        lib->deck =
+                inp_read(newfp, 1 /*dummy*/, lib->habitat, FALSE, FALSE).cc;
 
         fclose(newfp);
     }
@@ -337,18 +340,16 @@ read_a_lib(char *y, char *dir_name)
 }
 
 
-static struct names *
-new_names(void)
+static struct names *new_names(void)
 {
     struct names *p = TMALLOC(struct names, 1);
-    p -> num_names = 0;
+    p->num_names = 0;
 
     return p;
 }
 
 
-static void
-delete_names(struct names *p)
+static void delete_names(struct names *p)
 {
     int i;
     for (i = 0; i < p->num_names; i++)
@@ -362,11 +363,11 @@ delete_names(struct names *p)
    + line2
    ---->
    line1 line 2
-   Proccedure: store regular card in prev, skip comment lines (*..) and some others
+   Proccedure: store regular card in prev, skip comment lines (*..) and some
+   others
    */
 
-static void
-inp_stitch_continuation_lines(struct card *working)
+static void inp_stitch_continuation_lines(struct card *working)
 {
     struct card *prev = NULL;
 
@@ -378,59 +379,67 @@ inp_stitch_continuation_lines(struct card *working)
 
 #ifdef TRACE
         /* SDB debug statement */
-        printf("In inp_read, processing linked list element line = %d, s = %s . . . \n", working->linenum, s);
+        printf("In inp_read, processing linked list element line = %d, s = "
+               "%s . . . \n",
+                working->linenum, s);
 #endif
 
         switch (c) {
-        case '#':
-        case '$':
-        case '*':
-        case '\0':
-            /* skip these cards, and keep prev as the last regular card */
-            working = working->nextcard;  /* for these chars, go to next card */
-            break;
+            case '#':
+            case '$':
+            case '*':
+            case '\0':
+                /* skip these cards, and keep prev as the last regular card */
+                working = working->nextcard; /* for these chars, go to next
+                                                card */
+                break;
 
-        case '+':   /* handle continuation */
-            if (!prev) {
-                working->error = copy("Illegal continuation line: ignored.");
+            case '+': /* handle continuation */
+                if (!prev) {
+                    working->error =
+                            copy("Illegal continuation line: ignored.");
+                    working = working->nextcard;
+                    break;
+                }
+
+                /* We now may have lept over some comment lines, which are
+                located among the continuation lines. We have to delete them
+                here to prevent a memory leak */
+                while (prev->nextcard != working) {
+                    struct card *tmpl = prev->nextcard->nextcard;
+                    line_free_x(prev->nextcard, FALSE);
+                    prev->nextcard = tmpl;
+                }
+
+                /* create buffer and write last and current line into it. */
+                buffer = tprintf("%s %s", prev->line, s + 1);
+
+                /* replace prev->line by buffer */
+                s = prev->line;
+                prev->line = buffer;
+                prev->nextcard = working->nextcard;
+                working->nextcard = NULL;
+                /* add original line to prev->actualLine */
+                if (prev->actualLine) {
+                    struct card *end;
+                    for (end = prev->actualLine; end->nextcard;
+                            end = end->nextcard)
+                        ;
+                    end->nextcard = working;
+                    tfree(s);
+                }
+                else {
+                    prev->actualLine =
+                            insert_new_line(NULL, s, prev->linenum, 0);
+                    prev->actualLine->nextcard = working;
+                }
+                working = prev->nextcard;
+                break;
+
+            default: /* regular one-line card */
+                prev = working;
                 working = working->nextcard;
                 break;
-            }
-
-            /* We now may have lept over some comment lines, which are located among
-            the continuation lines. We have to delete them here to prevent a memory leak */
-            while (prev->nextcard != working) {
-                struct card *tmpl = prev->nextcard->nextcard;
-                line_free_x(prev->nextcard, FALSE);
-                prev->nextcard = tmpl;
-            }
-
-            /* create buffer and write last and current line into it. */
-            buffer = tprintf("%s %s", prev->line, s + 1);
-
-            /* replace prev->line by buffer */
-            s = prev->line;
-            prev->line = buffer;
-            prev->nextcard = working->nextcard;
-            working->nextcard = NULL;
-            /* add original line to prev->actualLine */
-            if (prev->actualLine) {
-                struct card *end;
-                for (end = prev->actualLine; end->nextcard; end = end->nextcard)
-                    ;
-                end->nextcard = working;
-                tfree(s);
-            } else {
-                prev->actualLine = insert_new_line(NULL, s, prev->linenum, 0);
-                prev->actualLine->nextcard = working;
-            }
-            working = prev->nextcard;
-            break;
-
-        default:  /* regular one-line card */
-            prev = working;
-            working = working->nextcard;
-            break;
         }
     }
 }
@@ -441,8 +450,7 @@ inp_stitch_continuation_lines(struct card *working)
  *   take care of `!=' `<=' `==' and `>='
  */
 
-char *
-find_assignment(const char *str)
+char *find_assignment(const char *str)
 {
     const char *p = str;
 
@@ -473,8 +481,7 @@ find_assignment(const char *str)
  *   fixme, doesn't honour neither " nor ' quotes
  */
 
-char *
-find_back_assignment(const char *p, const char *start)
+char *find_back_assignment(const char *p, const char *start)
 {
     while (--p >= start) {
         if (*p != '=')
@@ -496,8 +503,7 @@ Currently available are flags for:
 - Spice3
 - all compatibility stuff
 */
-static COMPATMODE_T
-ngspice_compat_mode(void)
+static COMPATMODE_T ngspice_compat_mode(void)
 {
     char behaviour[80];
 
@@ -540,29 +546,21 @@ ngspice_compat_mode(void)
   store contents in string new_title
   process .lib lines
   read file and library name, open file using fcn inp_pathopen()
-  read file contents and put into struct libraries[].deck, one entry per .lib line
-  process .inc lines
-  read file and library name, open file using fcn inp_pathopen()
-  read file contents and add lines to cc
-  make line entry lower case
-  allow for shell end of line continuation (\\)
-  add '+' to beginning of next line
-  add line entry to list cc
-  add '.global gnd'
-  add libraries
-  find library section
-  add lines
-  add .end card
-  strip end-of-line comments
-  make continuation lines a single line
+  read file contents and put into struct libraries[].deck, one entry per .lib
+  line process .inc lines read file and library name, open file using fcn
+  inp_pathopen() read file contents and add lines to cc make line entry lower
+  case allow for shell end of line continuation (\\) add '+' to beginning of
+  next line add line entry to list cc add '.global gnd' add libraries find
+  library section add lines add .end card strip end-of-line comments make
+  continuation lines a single line
   *** end of processing for command files ***
   start preparation of input deck for numparam
   ...
   debug printout to debug-out.txt
   *-------------------------------------------------------------------------*/
 
-struct card *
-inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile, bool *expr_w_temper_p)
+struct card *inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile,
+        bool *expr_w_temper_p)
 {
     struct card *cc;
     struct inp_read_t rv;
@@ -571,14 +569,14 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile, bool *expr_w_t
     inp_compat_mode = ngspice_compat_mode();
 
     rv = inp_read(fp, 0, dir_name, comfile, intfile);
-    cc = rv . cc;
+    cc = rv.cc;
 
     /* files starting with *ng_script are user supplied command files */
     if (cc && ciprefix("*ng_script", cc->line))
         comfile = TRUE;
 
-    /* The following processing of an input file is not required for command files
-       like spinit or .spiceinit, so return command files here. */
+    /* The following processing of an input file is not required for command
+       files like spinit or .spiceinit, so return command files here. */
 
     if (!comfile && cc) {
 
@@ -595,9 +593,9 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile, bool *expr_w_t
         /* some syntax checks, including title line */
         inp_check_syntax(cc);
 
-        if(inp_compat_mode == COMPATMODE_LTA)
+        if (inp_compat_mode == COMPATMODE_LTA)
             ltspice_compat_a(working);
-        else if(inp_compat_mode == COMPATMODE_PSA)
+        else if (inp_compat_mode == COMPATMODE_PSA)
             pspice_compat_a(working);
         else if (inp_compat_mode == COMPATMODE_LTPSA) {
             ltspice_compat_a(working);
@@ -609,8 +607,8 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile, bool *expr_w_t
         inp_remove_excess_ws(working);
 
         inp_vdmos_model(working);
-        /* don't remove unused model if we have an .if clause, because we cannot yet
-           decide here which model we finally will need */
+        /* don't remove unused model if we have an .if clause, because we
+           cannot yet decide here which model we finally will need */
         if (!has_if)
             comment_out_unused_subckt_models(working);
 
@@ -618,11 +616,12 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile, bool *expr_w_t
 
         subckt_params_to_param(working);
 
-        rv . line_number = inp_split_multi_param_lines(working, rv . line_number);
+        rv.line_number = inp_split_multi_param_lines(working, rv.line_number);
 
         inp_fix_macro_param_func_paren_io(working);
 
-        static char *statfcn[] = { "agauss", "gauss", "aunif", "unif", "limit" };
+        static char *statfcn[] = {
+                "agauss", "gauss", "aunif", "unif", "limit"};
         int ii;
         for (ii = 0; ii < 5; ii++)
             inp_fix_agauss_in_param(working, statfcn[ii]);
@@ -638,10 +637,10 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile, bool *expr_w_t
         subckt_w_params = NULL;
         if (!cp_getvar("no_auto_gnd", CP_BOOL, NULL, 0))
             inp_fix_gnd_name(working);
-        inp_chk_for_multi_in_vcvs(working, &rv. line_number);
+        inp_chk_for_multi_in_vcvs(working, &rv.line_number);
 
         if (cp_getvar("addcontrol", CP_BOOL, NULL, 0))
-            inp_add_control_section(working, &rv . line_number);
+            inp_add_control_section(working, &rv.line_number);
 #ifndef XSPICE
         inp_poly_err(working);
 #endif
@@ -683,7 +682,7 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile, bool *expr_w_t
             for (s = tmp_ptr1->line; *s; s++)
                 if (*s == '{')
                     braces_per_line++;
-            if (no_braces <  braces_per_line)
+            if (no_braces < braces_per_line)
                 no_braces = braces_per_line;
         }
 
@@ -692,26 +691,37 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile, bool *expr_w_t
             if (fd) {
                 /*debug: print into file*/
                 struct card *t;
-                fprintf(fd, "**************** uncommented deck **************\n\n");
+                fprintf(fd,
+                        "**************** uncommented deck "
+                        "**************\n\n");
                 /* always print first line */
-                fprintf(fd, "%6d  %6d  %s\n", cc->linenum_orig, cc->linenum, cc->line);
+                fprintf(fd, "%6d  %6d  %s\n", cc->linenum_orig, cc->linenum,
+                        cc->line);
                 /* here without out-commented lines */
                 for (t = cc->nextcard; t; t = t->nextcard) {
                     if (*(t->line) == '*')
                         continue;
-                    fprintf(fd, "%6d  %6d  %s\n", t->linenum_orig, t->linenum, t->line);
+                    fprintf(fd, "%6d  %6d  %s\n", t->linenum_orig, t->linenum,
+                            t->line);
                 }
-                fprintf(fd, "\n****************** complete deck ***************\n\n");
+                fprintf(fd,
+                        "\n****************** complete deck "
+                        "***************\n\n");
                 /* now completely */
                 for (t = cc; t; t = t->nextcard)
-                    fprintf(fd, "%6d  %6d  %s\n", t->linenum_orig, t->linenum, t->line);
+                    fprintf(fd, "%6d  %6d  %s\n", t->linenum_orig, t->linenum,
+                            t->line);
                 fclose(fd);
 
-                fprintf(stdout, "max line length %d, max subst. per line %d, number of lines %d\n",
-                    (int)max_line_length, no_braces, dynmaxline);
+                fprintf(stdout,
+                        "max line length %d, max subst. per line %d, number "
+                        "of lines %d\n",
+                        (int) max_line_length, no_braces, dynmaxline);
             }
             else
-                fprintf(stderr, "Warning: Cannot open file debug-out.txt for saving debug info\n");
+                fprintf(stderr,
+                        "Warning: Cannot open file debug-out.txt for saving "
+                        "debug info\n");
         }
     }
 
@@ -719,8 +729,8 @@ inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile, bool *expr_w_t
 }
 
 
-struct inp_read_t
-inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
+struct inp_read_t inp_read(
+        FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
 /* fp: in, pointer to file to be read,
    call_depth: in, nested call to fcn
    dir_name: in, name of directory of file to be read
@@ -737,7 +747,8 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
     int line_count = 0;
 #endif
     char *new_title = NULL;
-    int line_number = 1; /* sjb - renamed to avoid confusion with struct card */
+    int line_number =
+            1; /* sjb - renamed to avoid confusion with struct card */
     int line_number_orig = 1;
     int cirlinecount = 0; /* length of circarray */
     static int is_control = 0; /* We are reading from a .control section */
@@ -758,35 +769,41 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
         else {
 
 #ifdef XSPICE
-            /* gtri - modify - 12/12/90 - wbk - read from mailbox if ipc enabled */
+            /* gtri - modify - 12/12/90 - wbk - read from mailbox if ipc
+             * enabled */
 
-            /* If IPC is not enabled, do equivalent of what SPICE did before */
-            if (! g_ipc.enabled) {
+            /* If IPC is not enabled, do equivalent of what SPICE did before
+             */
+            if (!g_ipc.enabled) {
                 if (call_depth == 0 && line_count == 0) {
                     line_count++;
                     if (fgets(big_buff, 5000, fp))
                         buffer = copy(big_buff);
-                } else {
+                }
+                else {
                     buffer = readline(fp);
                     if (!buffer)
                         break;
                 }
-            } else {
+            }
+            else {
                 /* else, get the line from the ipc channel. */
                 /* We assume that newlines are not sent by the client */
                 /* so we add them here */
-                char         ipc_buffer[1025];  /* Had better be big enough */
-                int          ipc_len;
+                char ipc_buffer[1025]; /* Had better be big enough */
+                int ipc_len;
                 Ipc_Status_t ipc_status =
-                    ipc_get_line(ipc_buffer, &ipc_len, IPC_WAIT);
+                        ipc_get_line(ipc_buffer, &ipc_len, IPC_WAIT);
                 if (ipc_status == IPC_STATUS_END_OF_DECK) {
                     buffer = NULL;
                     break;
-                } else if (ipc_status == IPC_STATUS_OK) {
+                }
+                else if (ipc_status == IPC_STATUS_OK) {
                     buffer = TMALLOC(char, strlen(ipc_buffer) + 3);
                     strcpy(buffer, ipc_buffer);
                     strcat(buffer, "\n");
-                } else {            /* No good way to report this so just die */
+                }
+                else { /* No good way to report this so just die */
                     controlled_exit(EXIT_FAILURE);
                 }
             }
@@ -795,7 +812,7 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
 #else
 
             buffer = readline(fp);
-            if(!buffer)
+            if (!buffer)
                 break;
 
 #endif
@@ -809,17 +826,18 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
         if (!buffer)
             continue;
 
-        /* OK -- now we have loaded the next line into 'buffer'.  Process it. */
+        /* OK -- now we have loaded the next line into 'buffer'.  Process it.
+         */
         /* If input line is blank, ignore it & continue looping.  */
         if ((strcmp(buffer, "\n") == 0) || (strcmp(buffer, "\r\n") == 0))
             if (call_depth != 0 || (call_depth == 0 && cc != NULL)) {
                 line_number_orig++;
-                tfree(buffer);  /* was allocated by readline() */
+                tfree(buffer); /* was allocated by readline() */
                 continue;
             }
 
         if (*buffer == '@') {
-            tfree(buffer);      /* was allocated by readline() */
+            tfree(buffer); /* was allocated by readline() */
             break;
         }
 
@@ -832,26 +850,29 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
         /* now handle .title statement */
         if (ciprefix(".title", buffer)) {
             char *s;
-            s = skip_non_ws(buffer);   /* skip over .title */
-            s = skip_ws(s);            /* advance past space chars */
+            s = skip_non_ws(buffer); /* skip over .title */
+            s = skip_ws(s); /* advance past space chars */
 
             /* only the last title line remains valid */
             tfree(new_title);
             new_title = copy(s);
             if ((s = strchr(new_title, '\n')) != NULL)
                 *s = ' ';
-            *buffer = '*';      /* change .TITLE line to comment line */
+            *buffer = '*'; /* change .TITLE line to comment line */
         }
 
         /* now handle old style .lib entries */
-        /* new style .lib entries handling is in expand_section_references() */
+        /* new style .lib entries handling is in expand_section_references()
+         */
         if (ciprefix(".lib", buffer))
-            if (inp_compat_mode == COMPATMODE_PS || inp_compat_mode == COMPATMODE_PSA 
-                || inp_compat_mode == COMPATMODE_LTPS || inp_compat_mode == COMPATMODE_LTPSA) {
+            if (inp_compat_mode == COMPATMODE_PS ||
+                    inp_compat_mode == COMPATMODE_PSA ||
+                    inp_compat_mode == COMPATMODE_LTPS ||
+                    inp_compat_mode == COMPATMODE_LTPSA) {
                 /* compatibility mode,
-                 *   this is neither a libray section definition nor a reference
-                 * interpret as old style
-                 *   .lib <file name> (no lib name given)
+                 *   this is neither a libray section definition nor a
+                 * reference interpret as old style .lib <file name> (no lib
+                 * name given)
                  */
                 char *s = skip_non_ws(buffer); /* skip over .lib */
                 fprintf(cp_err, "  File included as:   .inc %s\n", s);
@@ -868,13 +889,13 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
 
             inp_stripcomments_line(buffer, FALSE);
 
-            s = skip_non_ws(buffer);               /* advance past non-space chars */
+            s = skip_non_ws(buffer); /* advance past non-space chars */
 
             s = get_quoted_token(s, &y);
 
             if (!y) {
                 fprintf(cp_err, "Error: .include filename missing\n");
-                tfree(buffer);  /* was allocated by readline() */
+                tfree(buffer); /* was allocated by readline() */
                 controlled_exit(EXIT_FAILURE);
             }
 
@@ -884,9 +905,10 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
                 FILE *newfp;
 
                 if (!y_resolved) {
-                    fprintf(cp_err, "Error: Could not find include file %s\n", y);
-                    rv . line_number = line_number;
-                    rv . cc = NULL;
+                    fprintf(cp_err, "Error: Could not find include file %s\n",
+                            y);
+                    rv.line_number = line_number;
+                    rv.cc = NULL;
                     return rv;
                 }
 
@@ -894,13 +916,16 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
 
                 if (!newfp) {
                     fprintf(cp_err, "Error: .include statement failed.\n");
-                    tfree(buffer);          /* allocated by readline() above */
+                    tfree(buffer); /* allocated by readline() above */
                     controlled_exit(EXIT_FAILURE);
                 }
 
                 y_dir_name = ngdirname(y_resolved);
 
-                newcard = inp_read(newfp, call_depth+1, y_dir_name, FALSE, FALSE) . cc;  /* read stuff in include file into netlist */
+                newcard = inp_read(
+                        newfp, call_depth + 1, y_dir_name, FALSE, FALSE)
+                                  .cc; /* read stuff in include file into
+                                          netlist */
 
                 tfree(y_dir_name);
                 tfree(y_resolved);
@@ -913,7 +938,8 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
 
             /* append `buffer' to the (cc, end) chain of decks */
             {
-                end = insert_new_line(end, copy(buffer), line_number, line_number);
+                end = insert_new_line(
+                        end, copy(buffer), line_number, line_number);
 
                 if (!cc)
                     cc = end;
@@ -934,17 +960,20 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
                 int line_number_inc = 1;
                 end->nextcard = newcard;
                 /* Renumber the lines */
-                for (end = newcard; end && end->nextcard; end = end->nextcard) {
+                for (end = newcard; end && end->nextcard;
+                        end = end->nextcard) {
                     end->linenum = line_number++;
                     end->linenum_orig = line_number_inc++;
                 }
-                end->linenum = line_number++;        /* SJB - renumber the last line */
-                end->linenum_orig = line_number_inc++;       /* SJB - renumber the last line */
+                end->linenum =
+                        line_number++; /* SJB - renumber the last line */
+                end->linenum_orig =
+                        line_number_inc++; /* SJB - renumber the last line */
             }
 
             /* Fix the buffer up a bit. */
             (void) strncpy(buffer + 1, "end of: ", 8);
-        }   /*  end of .include handling  */
+        } /*  end of .include handling  */
 
         /* loop through 'buffer' until end is reached. Make all letters lower
          * case except for the commands given below. Special treatment for
@@ -956,27 +985,25 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
         {
             char *s;
             /* no lower case letters for lines beginning with: */
-            if (!ciprefix("write", buffer) &&
-                !ciprefix("wrdata", buffer) &&
-                !ciprefix(".lib", buffer) &&
-                !ciprefix(".inc", buffer) &&
-                !ciprefix("codemodel", buffer) &&
-                !ciprefix("echo", buffer) &&
-                !ciprefix("shell", buffer) &&
-                !ciprefix("source", buffer) &&
-                !ciprefix("load", buffer) &&
-                !ciprefix("plot", buffer) &&
-                !ciprefix("hardcopy", buffer) &&
-                !ciprefix("setcs", buffer)
-                )
-            {
+            if (!ciprefix("write", buffer) && !ciprefix("wrdata", buffer) &&
+                    !ciprefix(".lib", buffer) && !ciprefix(".inc", buffer) &&
+                    !ciprefix("codemodel", buffer) &&
+                    !ciprefix("echo", buffer) && !ciprefix("shell", buffer) &&
+                    !ciprefix("source", buffer) &&
+                    !ciprefix("load", buffer) && !ciprefix("plot", buffer) &&
+                    !ciprefix("hardcopy", buffer) &&
+                    !ciprefix("setcs", buffer)) {
                 /* lower case for all other lines */
                 for (s = buffer; *s && (*s != '\n'); s++)
                     *s = tolower_c(*s);
-            } else if (ciprefix("plot", buffer) || ciprefix("gnuplot", buffer) ||ciprefix("hardcopy", buffer)) {
-                /* lower case excluded for tokens following title, xlabel, ylabel.
-                 * tokens may contain spaces, then they have to be enclosed in quotes.
-                 * keywords and tokens have to be separated by spaces. */
+            }
+            else if (ciprefix("plot", buffer) ||
+                    ciprefix("gnuplot", buffer) ||
+                    ciprefix("hardcopy", buffer)) {
+                /* lower case excluded for tokens following title, xlabel,
+                 * ylabel. tokens may contain spaces, then they have to be
+                 * enclosed in quotes. keywords and tokens have to be
+                 * separated by spaces. */
                 int j;
                 char t = ' ';
                 for (s = buffer; *s && (*s != '\n'); s++) {
@@ -1035,12 +1062,15 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
                     }
                 }
             }
-            else if (ciprefix("print", buffer) || ciprefix("asciiplot", buffer)) {
-                /* lower case excluded for tokens following output redirection '>' */
+            else if (ciprefix("print", buffer) ||
+                    ciprefix("asciiplot", buffer)) {
+                /* lower case excluded for tokens following output redirection
+                 * '>' */
                 bool redir = FALSE;
                 for (s = buffer; *s && (*s != '\n'); s++) {
                     if (*s == '>')
-                        redir = TRUE; /* do not lower, but move to end of string */
+                        redir = TRUE; /* do not lower, but move to end of
+                                         string */
                     if (!redir)
                         *s = tolower_c(*s);
                 }
@@ -1051,8 +1081,9 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
                 if (p) {
                     p = strchr(buffer, ')');
                     if (p) {
-                        *p = 0;     // clear ) and insert Inp_Path in between
-                        p = tprintf("%s %s ) %s", buffer, Inp_Path ? Inp_Path : "", p + 1);
+                        *p = 0; // clear ) and insert Inp_Path in between
+                        p = tprintf("%s %s ) %s", buffer,
+                                Inp_Path ? Inp_Path : "", p + 1);
                         tfree(buffer);
                         buffer = p;
                     }
@@ -1065,17 +1096,20 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
             if (!*s) {
                 // fprintf(cp_err, "Warning: premature EOF\n");
             }
-            *s = '\0';      /* Zap the newline. */
+            *s = '\0'; /* Zap the newline. */
 
-            if ((s-1) >= buffer && *(s-1) == '\r') /* Zop the carriage return under windows */
-                *(s-1) = '\0';
+            if ((s - 1) >= buffer &&
+                    *(s - 1) ==
+                            '\r') /* Zop the carriage return under windows */
+                *(s - 1) = '\0';
         }
 
-        /* find the true .end command out of .endc, .ends, .endl, .end (comments may follow) */
+        /* find the true .end command out of .endc, .ends, .endl, .end
+         * (comments may follow) */
         if (ciprefix(".end", buffer))
             if ((buffer[4] == '\0') || isspace_c(buffer[4])) {
                 found_end = TRUE;
-                *buffer   = '*';
+                *buffer = '*';
             }
 
         if (shell_eol_continuation) {
@@ -1085,23 +1119,25 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
             buffer = new_buffer;
         }
 
-        /* If \\ at end of line is found, next line in loop will get + (see code above) */
+        /* If \\ at end of line is found, next line in loop will get + (see
+         * code above) */
         shell_eol_continuation = chk_for_line_continuation(buffer);
 
         {
-            end = insert_new_line(end, copy(buffer), line_number++, line_number_orig++);
+            end = insert_new_line(
+                    end, copy(buffer), line_number++, line_number_orig++);
 
             if (!cc)
                 cc = end;
         }
 
         tfree(buffer);
-    }  /* end while ((buffer = readline(fp)) != NULL) */
+    } /* end while ((buffer = readline(fp)) != NULL) */
 
     if (!cc) /* No stuff here */
     {
-        rv . line_number = line_number;
-        rv . cc = cc;
+        rv.line_number = line_number;
+        rv.cc = cc;
         return rv;
     }
 
@@ -1113,12 +1149,12 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
         if (!cp_getvar("no_auto_gnd", CP_BOOL, NULL, 0))
             insert_new_line(cc, copy(".global gnd"), 1, 0);
         else
-            insert_new_line(cc, copy("* gnd is not set to 0 automatically "), 1, 0);
+            insert_new_line(
+                    cc, copy("* gnd is not set to 0 automatically "), 1, 0);
 
         if (inp_compat_mode == COMPATMODE_ALL ||
-            inp_compat_mode == COMPATMODE_HS  ||
-            inp_compat_mode == COMPATMODE_NATIVE)
-        {
+                inp_compat_mode == COMPATMODE_HS ||
+                inp_compat_mode == COMPATMODE_NATIVE) {
             /* process all library section references */
             expand_section_references(cc, dir_name);
         }
@@ -1130,7 +1166,8 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
 
     if (call_depth == 0 && !comfile)
         if (found_end == TRUE)
-            end = insert_new_line(end, copy(".end"), line_number++, line_number_orig++);
+            end = insert_new_line(
+                    end, copy(".end"), line_number++, line_number_orig++);
 
     /* Replace first line with the new title, if available */
     if (call_depth == 0 && !comfile && new_title) {
@@ -1147,25 +1184,21 @@ inp_read(FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
 
     inp_stitch_continuation_lines(cc->nextcard);
 
-    rv . line_number = line_number;
-    rv . cc = cc;
+    rv.line_number = line_number;
+    rv.cc = cc;
     return rv;
 }
 
 
-static bool
-is_absolute_pathname(const char *p)
+static bool is_absolute_pathname(const char *p)
 {
 #if defined(__MINGW32__) || defined(_MSC_VER)
     /* /... or \... or D:\... or D:/... */
-    return
-        p[0] == DIR_TERM  ||
-        p[0] == DIR_TERM_LINUX  ||
-        (isalpha_c(p[0]) && p[1] == ':' &&
-         (p[2] == DIR_TERM_LINUX || p[2] == DIR_TERM));
+    return p[0] == DIR_TERM || p[0] == DIR_TERM_LINUX ||
+            (isalpha_c(p[0]) && p[1] == ':' &&
+                    (p[2] == DIR_TERM_LINUX || p[2] == DIR_TERM));
 #else
-    return
-        p[0] == DIR_TERM;
+    return p[0] == DIR_TERM;
 #endif
 }
 
@@ -1188,8 +1221,7 @@ is_plain_filename(const char *p)
 #endif
 
 
-FILE *
-inp_pathopen(char *name, char *mode)
+FILE *inp_pathopen(char *name, char *mode)
 {
     char *path = inp_pathresolve(name);
 
@@ -1208,8 +1240,7 @@ inp_pathopen(char *name, char *mode)
   if the file isn't in . and it isn't an abs path name.
   *-------------------------------------------------------------------------*/
 
-static char *
-inp_pathresolve(const char *name)
+static char *inp_pathresolve(const char *name)
 {
     char buf[BSIZE_SP];
     struct variable *v;
@@ -1218,7 +1249,9 @@ inp_pathresolve(const char *name)
 #if defined(__MINGW32__) || defined(_MSC_VER)
 
     /* If variable 'mingwpath' is set: convert mingw /d/... to d:/... */
-    if (cp_getvar("mingwpath", CP_BOOL, NULL, 0) && name[0] == DIR_TERM_LINUX && isalpha_c(name[1]) && name[2] == DIR_TERM_LINUX) {
+    if (cp_getvar("mingwpath", CP_BOOL, NULL, 0) &&
+            name[0] == DIR_TERM_LINUX && isalpha_c(name[1]) &&
+            name[2] == DIR_TERM_LINUX) {
         strcpy(buf, name);
         buf[0] = buf[1];
         buf[1] = ':';
@@ -1231,27 +1264,32 @@ inp_pathresolve(const char *name)
     if (stat(name, &st) == 0)
         return copy(name);
 
-    /* fail if this was an absolute filename or if there is no sourcepath var */
-    if (is_absolute_pathname(name) || !cp_getvar("sourcepath", CP_LIST, &v, 0))
+    /* fail if this was an absolute filename or if there is no sourcepath var
+     */
+    if (is_absolute_pathname(name) ||
+            !cp_getvar("sourcepath", CP_LIST, &v, 0))
         return NULL;
 
     for (; v; v = v->va_next) {
 
         switch (v->va_type) {
-        case CP_STRING:
-            cp_wstrip(v->va_string);
-            (void) sprintf(buf, "%s%s%s", v->va_string, DIR_PATHSEP, name);
-            break;
-        case CP_NUM:
-            (void) sprintf(buf, "%d%s%s", v->va_num, DIR_PATHSEP, name);
-            break;
-        case CP_REAL:           /* This is foolish */
-            (void) sprintf(buf, "%g%s%s", v->va_real, DIR_PATHSEP, name);
-            break;
-        default:
-            fprintf(stderr, "ERROR: enumeration value `CP_BOOL' or `CP_LIST' not handled in inp_pathresolve\nAborting...\n");
-            controlled_exit(EXIT_FAILURE);
-            break;
+            case CP_STRING:
+                cp_wstrip(v->va_string);
+                (void) sprintf(
+                        buf, "%s%s%s", v->va_string, DIR_PATHSEP, name);
+                break;
+            case CP_NUM:
+                (void) sprintf(buf, "%d%s%s", v->va_num, DIR_PATHSEP, name);
+                break;
+            case CP_REAL: /* This is foolish */
+                (void) sprintf(buf, "%g%s%s", v->va_real, DIR_PATHSEP, name);
+                break;
+            default:
+                fprintf(stderr,
+                        "ERROR: enumeration value `CP_BOOL' or `CP_LIST' not "
+                        "handled in inp_pathresolve\nAborting...\n");
+                controlled_exit(EXIT_FAILURE);
+                break;
         }
 
         if (stat(buf, &st) == 0)
@@ -1262,8 +1300,7 @@ inp_pathresolve(const char *name)
 }
 
 
-static char *
-inp_pathresolve_at(char *name, char *dir)
+static char *inp_pathresolve_at(char *name, char *dir)
 {
     char buf[BSIZE_SP], *end;
 
@@ -1285,7 +1322,8 @@ inp_pathresolve_at(char *name, char *dir)
 
     /*
      * Try in current dir and then in the actual dir the file was read.
-     * Current dir . is needed to correctly support absolute paths in sourcepath
+     * Current dir . is needed to correctly support absolute paths in
+     * sourcepath
      */
 
     strcpy(buf, ".");
@@ -1322,8 +1360,7 @@ inp_pathresolve_at(char *name, char *dir)
 
 #define STRGROW 256
 
-static char *
-readline(FILE *fd)
+static char *readline(FILE *fd)
 {
     int c;
     int memlen;
@@ -1333,7 +1370,7 @@ readline(FILE *fd)
     strlen = 0;
     memlen = STRGROW;
     strptr = TMALLOC(char, memlen);
-    memlen -= 1;                /* Save constant -1's in while loop */
+    memlen -= 1; /* Save constant -1's in while loop */
 
     while ((c = getc(fd)) != EOF) {
 
@@ -1370,8 +1407,7 @@ readline(FILE *fd)
    Delimiters of gnd may be ' ' or ',' or '(' or ')',
    may be disabled by setting variable no_auto_gnd */
 
-static void
-inp_fix_gnd_name(struct card *c)
+static void inp_fix_gnd_name(struct card *c)
 {
     for (; c; c = c->nextcard) {
 
@@ -1384,7 +1420,7 @@ inp_fix_gnd_name(struct card *c)
         // replace "?gnd?" by "? 0 ?", ? being a ' '  ','  '('  ')'.
         while ((gnd = strstr(gnd, "gnd")) != NULL) {
             if ((isspace_c(gnd[-1]) || gnd[-1] == '(' || gnd[-1] == ',') &&
-                (isspace_c(gnd[3]) || gnd[3] == ')' || gnd[3] == ',')) {
+                    (isspace_c(gnd[3]) || gnd[3] == ')' || gnd[3] == ',')) {
                 memcpy(gnd, " 0 ", 3);
             }
             gnd += 3;
@@ -1405,15 +1441,15 @@ inp_fix_gnd_name(struct card *c)
  * ==>
  *   Axx  %vd[ in[1]+ in[1]- ... in[n]+ in[n]- ]
  *   +    %vd( out+ out- )  Exx
- *   .model Exx multi_input_pwd ( x = [x1 x2] x = [y1 y2] model = {nand|nor|and|or} )
+ *   .model Exx multi_input_pwd ( x = [x1 x2] x = [y1 y2] model =
+ * {nand|nor|and|or} )
  *
  * fixme,
  *   `n' is not checked
  *   the x,y list is fixed to length 2
  */
 
-static void
-inp_chk_for_multi_in_vcvs(struct card *c, int *line_number)
+static void inp_chk_for_multi_in_vcvs(struct card *c, int *line_number)
 {
     int skip_control = 0;
 
@@ -1423,12 +1459,14 @@ inp_chk_for_multi_in_vcvs(struct card *c, int *line_number)
 
         /* there is no e source inside .control ... .endc */
         if (ciprefix(".control", line)) {
-            skip_control ++;
+            skip_control++;
             continue;
-        } else if (ciprefix(".endc", line)) {
-            skip_control --;
+        }
+        else if (ciprefix(".endc", line)) {
+            skip_control--;
             continue;
-        } else if (skip_control > 0) {
+        }
+        else if (skip_control > 0) {
             continue;
         }
 
@@ -1437,28 +1475,30 @@ inp_chk_for_multi_in_vcvs(struct card *c, int *line_number)
             char *fcn_b;
 
             if (((fcn_b = strstr(line, "nand(")) != NULL ||
-                 (fcn_b = strstr(line, "and(")) != NULL ||
-                 (fcn_b = strstr(line, "nor(")) != NULL ||
-                 (fcn_b = strstr(line, "or(")) != NULL) &&
-                isspace_c(fcn_b[-1]))
-            {
+                        (fcn_b = strstr(line, "and(")) != NULL ||
+                        (fcn_b = strstr(line, "nor(")) != NULL ||
+                        (fcn_b = strstr(line, "or(")) != NULL) &&
+                    isspace_c(fcn_b[-1])) {
                 char keep, *comma_ptr, *xy_values1[5], *xy_values2[5];
-                char *out_str, *ctrl_nodes_str, *xy_values1_b = NULL, *ref_str, *fcn_name, *fcn_e = NULL, *out_b, *out_e, *ref_e;
+                char *out_str, *ctrl_nodes_str,
+                        *xy_values1_b = NULL, *ref_str, *fcn_name,
+                        *fcn_e = NULL, *out_b, *out_e, *ref_e;
                 char *m_instance, *m_model;
-                char *xy_values2_b = NULL, *xy_values1_e = NULL, *ctrl_nodes_b = NULL, *ctrl_nodes_e = NULL;
-                int  xy_count1, xy_count2;
+                char *xy_values2_b = NULL, *xy_values1_e = NULL,
+                     *ctrl_nodes_b = NULL, *ctrl_nodes_e = NULL;
+                int xy_count1, xy_count2;
                 bool ok = FALSE;
 
 #ifndef XSPICE
                 fprintf(stderr,
                         "\n"
-                        "Error: XSPICE is required to run the 'multi-input pwl' option in line %d\n"
+                        "Error: XSPICE is required to run the 'multi-input "
+                        "pwl' option in line %d\n"
                         "  %s\n"
                         "\n"
-                        "See manual chapt. 31 for installation instructions\n",
-                        *line_number,
-                        line
-                    );
+                        "See manual chapt. 31 for installation "
+                        "instructions\n",
+                        *line_number, line);
                 controlled_exit(EXIT_BAD);
 #endif
 
@@ -1487,8 +1527,10 @@ inp_chk_for_multi_in_vcvs(struct card *c, int *line_number)
                         while (--xy_values1_b >= ctrl_nodes_b)
                             if (*xy_values1_b == '{')
                                 break;
-                    } else {
-                        xy_values1_b = skip_back_non_ws(xy_values1_b, ctrl_nodes_b);
+                    }
+                    else {
+                        xy_values1_b =
+                                skip_back_non_ws(xy_values1_b, ctrl_nodes_b);
                     }
                     if (xy_values1_b <= ctrl_nodes_b)
                         break;
@@ -1500,7 +1542,8 @@ inp_chk_for_multi_in_vcvs(struct card *c, int *line_number)
                     xy_values1_e = skip_ws(comma_ptr + 1);
                     if (*xy_values1_e == '{') {
                         xy_values1_e = inp_spawn_brace(xy_values1_e);
-                    } else {
+                    }
+                    else {
                         xy_values1_e = skip_non_ws(xy_values1_e);
                     }
                     if (!xy_values1_e)
@@ -1509,7 +1552,7 @@ inp_chk_for_multi_in_vcvs(struct card *c, int *line_number)
                     xy_values2_b = skip_ws(xy_values1_e);
 
                     ok = TRUE;
-                } while(0);
+                } while (0);
 
                 if (!ok) {
                     fprintf(stderr, "ERROR: malformed line: %s\n", line);
@@ -1523,22 +1566,28 @@ inp_chk_for_multi_in_vcvs(struct card *c, int *line_number)
 
                 keep = *xy_values1_e;
                 *xy_values1_e = '\0';
-                xy_count1 = get_comma_separated_values(xy_values1, xy_values1_b);
+                xy_count1 =
+                        get_comma_separated_values(xy_values1, xy_values1_b);
                 *xy_values1_e = keep;
 
-                xy_count2 = get_comma_separated_values(xy_values2, xy_values2_b);
+                xy_count2 =
+                        get_comma_separated_values(xy_values2, xy_values2_b);
 
-                // place restrictions on only having 2 point values; this can change later
+                // place restrictions on only having 2 point values; this can
+                // change later
                 if (xy_count1 != 2 && xy_count2 != 2)
-                    fprintf(stderr, "ERROR: only expecting 2 pair values for multi-input vcvs!\n");
+                    fprintf(stderr,
+                            "ERROR: only expecting 2 pair values for "
+                            "multi-input vcvs!\n");
 
-                m_instance = tprintf("%s %%vd[ %s ] %%vd( %s ) %s",
-                                     ref_str, ctrl_nodes_str, out_str, ref_str);
+                m_instance = tprintf("%s %%vd[ %s ] %%vd( %s ) %s", ref_str,
+                        ctrl_nodes_str, out_str, ref_str);
                 m_instance[0] = 'a';
 
-                m_model = tprintf(".model %s multi_input_pwl ( x = [%s %s] y = [%s %s] model = \"%s\" )",
-                                  ref_str, xy_values1[0], xy_values2[0],
-                                  xy_values1[1], xy_values2[1], fcn_name);
+                m_model = tprintf(".model %s multi_input_pwl ( x = [%s %s] y "
+                                  "= [%s %s] model = \"%s\" )",
+                        ref_str, xy_values1[0], xy_values2[0], xy_values1[1],
+                        xy_values2[1], fcn_name);
 
                 tfree(ref_str);
                 tfree(out_str);
@@ -1567,13 +1616,12 @@ inp_chk_for_multi_in_vcvs(struct card *c, int *line_number)
  *   write rawfile   ; if rawfile given
  *   .endc
  */
-static void
-inp_add_control_section(struct card *deck, int *line_number)
+static void inp_add_control_section(struct card *deck, int *line_number)
 {
     struct card *c, *prev_card = NULL;
-    bool        found_control = FALSE, found_run = FALSE;
-    bool        found_end = FALSE;
-    char        *op_line  = NULL, rawfile[1000], *line;
+    bool found_control = FALSE, found_run = FALSE;
+    bool found_end = FALSE;
+    char *op_line = NULL, rawfile[1000], *line;
 
     for (c = deck; c; c = c->nextcard) {
 
@@ -1598,13 +1646,15 @@ inp_add_control_section(struct card *deck, int *line_number)
             found_control = FALSE;
 
             if (!found_run) {
-                prev_card = insert_new_line(prev_card, copy("run"), (*line_number)++, 0);
+                prev_card = insert_new_line(
+                        prev_card, copy("run"), (*line_number)++, 0);
                 found_run = TRUE;
             }
 
             if (cp_getvar("rawfile", CP_STRING, rawfile, sizeof(rawfile))) {
                 line = tprintf("write %s", rawfile);
-                prev_card = insert_new_line(prev_card, line, (*line_number)++, 0);
+                prev_card =
+                        insert_new_line(prev_card, line, (*line_number)++, 0);
             }
         }
 
@@ -1633,8 +1683,7 @@ inp_add_control_section(struct card *deck, int *line_number)
 
 /* overwrite shell-style end-of-line continuation '\\' with spaces,
  *   and return TRUE when found */
-static bool
-chk_for_line_continuation(char *line)
+static bool chk_for_line_continuation(char *line)
 {
     if (*line != '*' && *line != '$') {
 
@@ -1654,15 +1703,13 @@ chk_for_line_continuation(char *line)
 //
 // change .macro --> .subckt
 //        .eom   --> .ends
-//        .subckt name 1 2 3 params: w=9u l=180n --> .subckt name 1 2 3 w=9u l=180n
-//        .subckt name (1 2 3) --> .subckt name 1 2 3
-//        x1 (1 2 3)      --> x1 1 2 3
-//        .param func1(x,y) = {x*y} --> .func func1(x,y) {x*y}
+//        .subckt name 1 2 3 params: w=9u l=180n --> .subckt name 1 2 3 w=9u
+//        l=180n .subckt name (1 2 3) --> .subckt name 1 2 3 x1 (1 2 3) --> x1
+//        1 2 3 .param func1(x,y) = {x*y} --> .func func1(x,y) {x*y}
 
-static void
-inp_fix_macro_param_func_paren_io(struct card *card)
+static void inp_fix_macro_param_func_paren_io(struct card *card)
 {
-    char        *str_ptr, *new_str;
+    char *str_ptr, *new_str;
 
     for (; card; card = card->nextcard) {
 
@@ -1674,7 +1721,8 @@ inp_fix_macro_param_func_paren_io(struct card *card)
 
             if (ciprefix(".macro", card->line)) {
                 new_str = tprintf(".subckt%s", str_ptr);
-            } else {
+            }
+            else {
                 new_str = tprintf(".ends%s", str_ptr);
             }
 
@@ -1684,10 +1732,11 @@ inp_fix_macro_param_func_paren_io(struct card *card)
 
         if (ciprefix(".subckt", card->line) || ciprefix("x", card->line)) {
             /* remove () */
-            str_ptr = skip_non_ws(card->line);  // skip over .subckt, instance name
+            str_ptr = skip_non_ws(
+                    card->line); // skip over .subckt, instance name
             str_ptr = skip_ws(str_ptr);
             if (ciprefix(".subckt", card->line)) {
-                str_ptr = skip_non_ws(str_ptr);  // skip over subckt name
+                str_ptr = skip_non_ws(str_ptr); // skip over subckt name
                 str_ptr = skip_ws(str_ptr);
             }
             if (*str_ptr == '(') {
@@ -1699,13 +1748,15 @@ inp_fix_macro_param_func_paren_io(struct card *card)
                     }
                     str_ptr++;
                 }
-                card->line = inp_remove_ws(card->line); /* remove the extra white spaces just introduced */
+                card->line = inp_remove_ws(
+                        card->line); /* remove the extra white spaces just
+                                        introduced */
             }
         }
 
         if (ciprefix(".para", card->line)) {
             bool is_func = FALSE;
-            str_ptr = skip_non_ws(card->line);  // skip over .param
+            str_ptr = skip_non_ws(card->line); // skip over .param
             str_ptr = skip_ws(str_ptr);
             while (!isspace_c(*str_ptr) && *str_ptr != '=') {
                 if (*str_ptr == '(')
@@ -1729,8 +1780,7 @@ inp_fix_macro_param_func_paren_io(struct card *card)
 }
 
 
-static char *
-get_instance_subckt(char *line)
+static char *get_instance_subckt(char *line)
 {
     char *end_ptr, *inst_name_ptr;
     char *equal_ptr = strchr(line, '=');
@@ -1739,7 +1789,8 @@ get_instance_subckt(char *line)
     if (equal_ptr) {
         end_ptr = skip_back_ws(equal_ptr, line);
         end_ptr = skip_back_non_ws(end_ptr, line);
-    } else {
+    }
+    else {
         end_ptr = strchr(line, '\0');
     }
 
@@ -1751,12 +1802,11 @@ get_instance_subckt(char *line)
 }
 
 
-static char*
-get_subckt_model_name(char *line)
+static char *get_subckt_model_name(char *line)
 {
     char *name, *end_ptr;
 
-    name = skip_non_ws(line);   // eat .subckt|.model
+    name = skip_non_ws(line); // eat .subckt|.model
     name = skip_ws(name);
 
     end_ptr = skip_non_ws(name);
@@ -1765,11 +1815,10 @@ get_subckt_model_name(char *line)
 }
 
 
-static char*
-get_model_name(char *line, int num_terminals)
+static char *get_model_name(char *line, int num_terminals)
 {
     char *beg_ptr, *end_ptr;
-    int  i = 0;
+    int i = 0;
 
     beg_ptr = skip_non_ws(line); /* eat device name */
     beg_ptr = skip_ws(beg_ptr);
@@ -1779,8 +1828,9 @@ get_model_name(char *line, int num_terminals)
         beg_ptr = skip_ws(beg_ptr);
     }
 
-    if (*line == 'r')           /* special dealing for r models */
-        if ((*beg_ptr == '+') || (*beg_ptr == '-') || isdigit_c(*beg_ptr)) { /* looking for a value before model */
+    if (*line == 'r') /* special dealing for r models */
+        if ((*beg_ptr == '+') || (*beg_ptr == '-') ||
+                isdigit_c(*beg_ptr)) { /* looking for a value before model */
             beg_ptr = skip_non_ws(beg_ptr); /* skip the value */
             beg_ptr = skip_ws(beg_ptr);
         }
@@ -1791,8 +1841,7 @@ get_model_name(char *line, int num_terminals)
 }
 
 
-static char*
-get_model_type(char *line)
+static char *get_model_type(char *line)
 {
     char *beg_ptr;
 
@@ -1809,8 +1858,7 @@ get_model_type(char *line)
 }
 
 
-static char *
-get_adevice_model_name(char *line)
+static char *get_adevice_model_name(char *line)
 {
     char *ptr_end, *ptr_beg;
 
@@ -1825,8 +1873,7 @@ get_adevice_model_name(char *line)
  *   To distinguish modelname tokens from other tokens
  *   by checking if token is not a valid ngspice number
  */
-static int
-is_a_modelname(const char *s)
+static int is_a_modelname(const char *s)
 {
     char *st;
     double testval;
@@ -1842,15 +1889,15 @@ is_a_modelname(const char *s)
     if (eq(s, st))
         return TRUE;
     else
-        /* test if we have a true number */
-        if (*st == '\0' || isspace(*st))
-            return FALSE;
-        else {
-            /* look for the scale factor (alphabetic) and skip it.
-             * INPevaluate will not do it because is does not swallow
-             * the scale factor from the string.
-            */
-            switch (*st) {
+            /* test if we have a true number */
+            if (*st == '\0' || isspace(*st))
+        return FALSE;
+    else {
+        /* look for the scale factor (alphabetic) and skip it.
+         * INPevaluate will not do it because is does not swallow
+         * the scale factor from the string.
+         */
+        switch (*st) {
             case 't':
             case 'T':
             case 'g':
@@ -1870,39 +1917,37 @@ is_a_modelname(const char *s)
             case 'm':
             case 'M':
                 if (((st[1] == 'E') || (st[1] == 'e')) &&
-                    ((st[2] == 'G') || (st[2] == 'g')))
-                {
-                    st = st + 3;  /* Meg */
+                        ((st[2] == 'G') || (st[2] == 'g'))) {
+                    st = st + 3; /* Meg */
                 }
                 else if (((st[1] == 'I') || (st[1] == 'i')) &&
-                    ((st[2] == 'L') || (st[2] == 'l')))
-                {
-                    st = st + 3;     /* Mil */
+                        ((st[2] == 'L') || (st[2] == 'l'))) {
+                    st = st + 3; /* Mil */
                 }
                 else {
-                    st = st + 1;  /* m, milli */
+                    st = st + 1; /* m, milli */
                 }
                 break;
             default:
                 break;
-            }
-            /* test if we have a true scale factor */
-            if (*st == '\0' || isspace(*st))
-                return FALSE;
-
-            /* test if people use Ohms, F, H for RLC, like pF or uOhms */
-            if (ciprefix("ohms", st))
-                st = st + 4;
-            else if  (ciprefix("farad", st))
-                st = st + 5;
-            else if  (ciprefix("henry", st))
-                st = st + 5;
-            else if ((*st == 'f') || (*st == 'h'))
-                st = st + 1;
-
-            if (*st == '\0' || isspace(*st))
-                return FALSE;
         }
+        /* test if we have a true scale factor */
+        if (*st == '\0' || isspace(*st))
+            return FALSE;
+
+        /* test if people use Ohms, F, H for RLC, like pF or uOhms */
+        if (ciprefix("ohms", st))
+            st = st + 4;
+        else if (ciprefix("farad", st))
+            st = st + 5;
+        else if (ciprefix("henry", st))
+            st = st + 5;
+        else if ((*st == 'f') || (*st == 'h'))
+            st = st + 1;
+
+        if (*st == '\0' || isspace(*st))
+            return FALSE;
+    }
 
     /* token starts with non alphanum character */
     return TRUE;
@@ -1916,8 +1961,7 @@ struct nlist {
 };
 
 
-static const char *
-nlist_find(const struct nlist *nlist, const char *name)
+static const char *nlist_find(const struct nlist *nlist, const char *name)
 {
     int i;
     for (i = 0; i < nlist->num_names; i++)
@@ -1927,8 +1971,8 @@ nlist_find(const struct nlist *nlist, const char *name)
 }
 
 
-static const char *
-nlist_model_find(const struct nlist *nlist, const char *name)
+static const char *nlist_model_find(
+        const struct nlist *nlist, const char *name)
 {
     int i;
     for (i = 0; i < nlist->num_names; i++)
@@ -1938,8 +1982,7 @@ nlist_model_find(const struct nlist *nlist, const char *name)
 }
 
 
-static void
-nlist_adjoin(struct nlist *nlist, char *name)
+static void nlist_adjoin(struct nlist *nlist, char *name)
 {
     if (nlist_find(nlist, name)) {
         tfree(name);
@@ -1953,8 +1996,7 @@ nlist_adjoin(struct nlist *nlist, char *name)
 }
 
 
-static struct nlist *
-nlist_allocate(int size)
+static struct nlist *nlist_allocate(int size)
 {
     struct nlist *t = TMALLOC(struct nlist, 1);
 
@@ -1965,8 +2007,7 @@ nlist_allocate(int size)
 }
 
 
-static void
-nlist_destroy(struct nlist *nlist)
+static void nlist_destroy(struct nlist *nlist)
 {
     int i;
     for (i = 0; i < nlist->num_names; i++)
@@ -1977,16 +2018,15 @@ nlist_destroy(struct nlist *nlist)
 }
 
 
-static void
-get_subckts_for_subckt(struct card *start_card, char *subckt_name,
-                       struct nlist *used_subckts, struct nlist *used_models,
-                       bool has_models)
+static void get_subckts_for_subckt(struct card *start_card, char *subckt_name,
+        struct nlist *used_subckts, struct nlist *used_models,
+        bool has_models)
 {
     struct card *card;
     int first_new_subckt = used_subckts->num_names;
 
     bool found_subckt = FALSE;
-    int  i, fence;
+    int i, fence;
 
     for (card = start_card; card; card = card->nextcard) {
 
@@ -1996,7 +2036,8 @@ get_subckts_for_subckt(struct card *start_card, char *subckt_name,
         if (strchr("*vibefghkt", *line))
             continue;
 
-        if ((ciprefix(".ends", line) || ciprefix(".eom", line)) && found_subckt)
+        if ((ciprefix(".ends", line) || ciprefix(".eom", line)) &&
+                found_subckt)
             break;
 
         if (ciprefix(".subckt", line) || ciprefix(".macro", line)) {
@@ -2012,10 +2053,12 @@ get_subckts_for_subckt(struct card *start_card, char *subckt_name,
             if (*line == 'x') {
                 char *inst_subckt_name = get_instance_subckt(line);
                 nlist_adjoin(used_subckts, inst_subckt_name);
-            } else if (*line == 'a') {
+            }
+            else if (*line == 'a') {
                 char *model_name = get_adevice_model_name(line);
                 nlist_adjoin(used_models, model_name);
-            } else if (has_models) {
+            }
+            else if (has_models) {
                 int num_terminals = get_number_terminals(line);
                 if (num_terminals != 0) {
                     char *model_name = get_model_name(line, num_terminals);
@@ -2032,7 +2075,7 @@ get_subckts_for_subckt(struct card *start_card, char *subckt_name,
     fence = used_subckts->num_names;
     for (i = first_new_subckt; i < fence; i++)
         get_subckts_for_subckt(start_card, used_subckts->names[i],
-                               used_subckts, used_models, has_models);
+                used_subckts, used_models, has_models);
 }
 
 
@@ -2042,12 +2085,11 @@ get_subckts_for_subckt(struct card *start_card, char *subckt_name,
   also comment out .param lines with no parameters defined
 */
 
-static void
-comment_out_unused_subckt_models(struct card *start_card)
+static void comment_out_unused_subckt_models(struct card *start_card)
 {
     struct card *card;
     struct nlist *used_subckts, *used_models;
-    int  i = 0, fence;
+    int i = 0, fence;
     bool processing_subckt = FALSE, remove_subckt = FALSE, has_models = FALSE;
     int skip_control = 0, nested_subckt = 0;
 
@@ -2073,12 +2115,14 @@ comment_out_unused_subckt_models(struct card *start_card)
 
         /* there is no .subckt, .model or .param inside .control ... .endc */
         if (ciprefix(".control", line)) {
-            skip_control ++;
+            skip_control++;
             continue;
-        } else if (ciprefix(".endc", line)) {
-            skip_control --;
+        }
+        else if (ciprefix(".endc", line)) {
+            skip_control--;
             continue;
-        } else if (skip_control > 0) {
+        }
+        else if (skip_control > 0) {
             continue;
         }
 
@@ -2091,13 +2135,15 @@ comment_out_unused_subckt_models(struct card *start_card)
             if (*line == 'x') {
                 char *subckt_name = get_instance_subckt(line);
                 nlist_adjoin(used_subckts, subckt_name);
-            } else if (*line == 'a') {
+            }
+            else if (*line == 'a') {
                 char *model_name = get_adevice_model_name(line);
                 nlist_adjoin(used_models, model_name);
-            } else if (has_models) {
-                /* This is a preliminary version, until we have found a reliable
-                   method to detect the model name out of the input line (Many
-                   options have to be taken into account.). */
+            }
+            else if (has_models) {
+                /* This is a preliminary version, until we have found a
+                   reliable method to detect the model name out of the input
+                   line (Many options have to be taken into account.). */
                 int num_terminals = get_number_terminals(line);
                 if (num_terminals != 0) {
                     char *model_name = get_model_name(line, num_terminals);
@@ -2113,7 +2159,7 @@ comment_out_unused_subckt_models(struct card *start_card)
     fence = used_subckts->num_names;
     for (i = 0; i < fence; i++)
         get_subckts_for_subckt(start_card, used_subckts->names[i],
-                               used_subckts, used_models, has_models);
+                used_subckts, used_models, has_models);
 
     /* comment out any unused subckts, currently only at top level */
     for (card = start_card; card; card = card->nextcard) {
@@ -2141,19 +2187,17 @@ comment_out_unused_subckt_models(struct card *start_card)
         if (remove_subckt)
             *line = '*';
         else if (has_models &&
-                 (ciprefix(".model", line) || ciprefix(".cmodel", line)))
-        {
+                (ciprefix(".model", line) || ciprefix(".cmodel", line))) {
             char *model_type = get_model_type(line);
             char *model_name = get_subckt_model_name(line);
 
-            /* keep R, L, C models because in addition to no. of terminals the value may be given,
-               as in RE1 1 2 800 newres dtemp=5, so model name may be token no. 4 or 5,
-               and, if 5, will not be detected by get_subckt_model_name()*/
-            if (!cieq(model_type, "c") &&
-                !cieq(model_type, "l") &&
-                !cieq(model_type, "r") &&
-                !nlist_model_find(used_models, model_name))
-            {
+            /* keep R, L, C models because in addition to no. of terminals the
+               value may be given, as in RE1 1 2 800 newres dtemp=5, so model
+               name may be token no. 4 or 5, and, if 5, will not be detected
+               by get_subckt_model_name()*/
+            if (!cieq(model_type, "c") && !cieq(model_type, "l") &&
+                    !cieq(model_type, "r") &&
+                    !nlist_model_find(used_models, model_name)) {
                 *line = '*';
             }
 
@@ -2212,8 +2256,7 @@ inp_search_opening_paren(char *s, char *start)
 
 
 /* search forward for closing brace */
-static char *
-inp_spawn_brace(char *s)
+static char *inp_spawn_brace(char *s)
 {
     int count = 0;
     // assert(*s == '{')
@@ -2233,17 +2276,17 @@ inp_spawn_brace(char *s)
 
 /*-------------------------------------------------------------------------*
   removes  " " quotes, returns lower case letters,
-  replaces non-printable characterss with '_'                                                                       *
+  replaces non-printable characterss with '_' *
   *-------------------------------------------------------------------------*/
 
-void
-inp_casefix(char *string)
+void inp_casefix(char *string)
 {
 #ifdef HAVE_CTYPE_H
     if (string)
         while (*string) {
 #ifdef HAS_ASCII
-            /* ((*string) & 0177): mask off all but the first seven bits, 0177: octal */
+            /* ((*string) & 0177): mask off all but the first seven bits,
+             * 0177: octal */
             *string = (char) strip(*string);
 #endif
             if (*string == '"') {
@@ -2269,17 +2312,17 @@ inp_casefix(char *string)
    For cf == TRUE (script files, command files like spinit, .spiceinit)
    and for .control sections only '$ ' is accepted as end-of-line comment,
    to avoid conflict with $variable definition, otherwise we accept '$'. */
-static void
-inp_stripcomments_deck(struct card *c, bool cf)
+static void inp_stripcomments_deck(struct card *c, bool cf)
 {
     bool found_control = FALSE;
     for (; c; c = c->nextcard) {
-        /* exclude lines between .control and .endc from removing white spaces */
+        /* exclude lines between .control and .endc from removing white spaces
+         */
         if (ciprefix(".control", c->line))
             found_control = TRUE;
         if (ciprefix(".endc", c->line))
             found_control = FALSE;
-        inp_stripcomments_line(c->line, found_control|cf);
+        inp_stripcomments_line(c->line, found_control | cf);
     }
 }
 
@@ -2296,7 +2339,8 @@ inp_stripcomments_deck(struct card *c, bool cf)
  * with use of $ in front of a variable.
  * Comments on a continuation line (i.e. line begining with '+') are allowed
  * and are removed before lines are stitched.
- * Lines that contain only an end-of-line comment with or without leading white
+ * Lines that contain only an end-of-line comment with or without leading
+ white
  * space are also allowed.
 
  If there is only white space before the end-of-line comment the
@@ -2309,15 +2353,14 @@ inp_stripcomments_deck(struct card *c, bool cf)
  character, not a s end-of-line comment delimiter, except for that it is
  located at the beginning of a line. If inside of a control section,
  still '$ ' is read a an end-of-line comment delimiter.*/
-static void
-inp_stripcomments_line(char *s, bool cs)
+static void inp_stripcomments_line(char *s, bool cs)
 {
-    char c = ' ';               /* anything other than a comment character */
+    char c = ' '; /* anything other than a comment character */
     char *d = s;
     if (*s == '\0')
-        return;                 /* empty line */
+        return; /* empty line */
     if (*s == '*')
-        return;                 /* line is already a comment */
+        return; /* line is already a comment */
     /* look for comments */
     while ((c = *d) != '\0') {
         d++;
@@ -2325,29 +2368,35 @@ inp_stripcomments_line(char *s, bool cs)
             break;
         }
         /* outside of .control section, and not in PS mode */
-        else if (!cs && (c == '$') &&
-                inp_compat_mode != COMPATMODE_PS &&
+        else if (!cs && (c == '$') && inp_compat_mode != COMPATMODE_PS &&
                 inp_compat_mode != COMPATMODE_LTPS &&
                 inp_compat_mode != COMPATMODE_LTPSA) {
             /* The character before '&' has to be ',' or ' ' or tab.
-               A valid numerical expression directly before '$' is not yet supported. */
-            if ((d - 2 >= s) && ((d[-2] == ' ') || (d[-2] == ',') || (d[-2] == '\t'))) {
+               A valid numerical expression directly before '$' is not yet
+               supported. */
+            if ((d - 2 >= s) &&
+                    ((d[-2] == ' ') || (d[-2] == ',') || (d[-2] == '\t'))) {
                 d--;
                 break;
             }
-        } else if (cs && (c == '$') && (*d == ' ')) {/* inside of .control section or command file */
-            d--;                /* move d back to first comment character */
+        }
+        else if (cs && (c == '$') &&
+                (*d == ' ')) { /* inside of .control section or command file
+                                */
+            d--; /* move d back to first comment character */
             break;
-        } else if ((c == '/') && (*d == '/')) {
-            d--;                /* move d back to first comment character */
+        }
+        else if ((c == '/') && (*d == '/')) {
+            d--; /* move d back to first comment character */
             break;
         }
     }
-    /* d now points to the first comment character or the null at the string end */
+    /* d now points to the first comment character or the null at the string
+     * end */
 
     /* check for special case of comment at start of line */
     if (d == s) {
-        *s = '*';               /* turn into normal comment */
+        *s = '*'; /* turn into normal comment */
         return;
     }
 
@@ -2378,8 +2427,7 @@ inp_stripcomments_line(char *s, bool cs)
 }
 
 
-static void
-inp_change_quotes(char *s)
+static void inp_change_quotes(char *s)
 {
     bool first_quote = FALSE;
 
@@ -2388,7 +2436,8 @@ inp_change_quotes(char *s)
             if (first_quote == FALSE) {
                 *s = '{';
                 first_quote = TRUE;
-            } else {
+            }
+            else {
                 *s = '}';
                 first_quote = FALSE;
             }
@@ -2396,8 +2445,7 @@ inp_change_quotes(char *s)
 }
 
 
-static void
-add_name(struct names *p, char *name)
+static void add_name(struct names *p, char *name)
 {
     if (p->num_names >= N_SUBCKT_W_PARAMS) {
         fprintf(stderr, "ERROR, N_SUBCKT_W_PARMS overflow\n");
@@ -2408,21 +2456,19 @@ add_name(struct names *p, char *name)
 }
 
 
-static char **
-find_name(struct names *p, char *name)
+static char **find_name(struct names *p, char *name)
 {
     int i;
 
     for (i = 0; i < p->num_names; i++)
         if (strcmp(p->names[i], name) == 0)
-            return & p->names[i];
+            return &p->names[i];
 
     return NULL;
 }
 
 
-static char*
-inp_fix_subckt(struct names *subckt_w_params, char *s)
+static char *inp_fix_subckt(struct names *subckt_w_params, char *s)
 {
     struct card *head, *first_param_card, *c;
     char *equal, *beg, *buffer, *ptr1, *ptr2, *new_str;
@@ -2432,7 +2478,8 @@ inp_fix_subckt(struct names *subckt_w_params, char *s)
         /* get subckt name (ptr1 will point to name) */
         ptr1 = skip_non_ws(s);
         ptr1 = skip_ws(ptr1);
-        for (ptr2 = ptr1; *ptr2 && !isspace_c(*ptr2) && !isquote(*ptr2); ptr2++)
+        for (ptr2 = ptr1; *ptr2 && !isspace_c(*ptr2) && !isquote(*ptr2);
+                ptr2++)
             ;
 
         add_name(subckt_w_params, copy_substring(ptr1, ptr2));
@@ -2442,7 +2489,7 @@ inp_fix_subckt(struct names *subckt_w_params, char *s)
         /* beg  will point to start of param list   */
         beg = skip_back_ws(equal, s);
         beg = skip_back_non_ws(beg, s);
-        beg[-1] = '\0';         /* fixme can be < s */
+        beg[-1] = '\0'; /* fixme can be < s */
 
         head = insert_new_line(NULL, NULL, 0, 0);
         /* create list of parameters that need to get sorted */
@@ -2478,7 +2525,8 @@ inp_fix_subckt(struct names *subckt_w_params, char *s)
         for (c = head->nextcard; c; c = c->nextcard)
             if (new_str == NULL) {
                 new_str = copy(c->line);
-            } else {
+            }
+            else {
                 char *x = tprintf("%s %s", new_str, c->line);
                 tfree(new_str);
                 new_str = x;
@@ -2511,8 +2559,7 @@ inp_fix_subckt(struct names *subckt_w_params, char *s)
  *   thats odd and very naive business
  */
 
-static char*
-inp_remove_ws(char *s)
+static char *inp_remove_ws(char *s)
 {
     char *x = s;
     char *d = s;
@@ -2535,12 +2582,15 @@ inp_remove_ws(char *s)
 
         if (isspace_c(*s)) {
             s = skip_ws(s);
-            if (!(*s == '\0' || *s == '=' || ((brace_level > 0) && (is_arith_char(*s) || *s == ','))))
+            if (!(*s == '\0' || *s == '=' ||
+                        ((brace_level > 0) &&
+                                (is_arith_char(*s) || *s == ','))))
                 *d++ = ' ';
             continue;
         }
 
-        if (*s == '=' || ((brace_level > 0) && (is_arith_char(*s) || *s == ','))) {
+        if (*s == '=' ||
+                ((brace_level > 0) && (is_arith_char(*s) || *s == ','))) {
             *d++ = *s++;
             s = skip_ws(s);
             continue;
@@ -2569,8 +2619,8 @@ inp_remove_ws(char *s)
   No changes to lines in .control section !
 */
 
-static void
-inp_fix_for_numparam(struct names *subckt_w_params, struct card *c)
+static void inp_fix_for_numparam(
+        struct names *subckt_w_params, struct card *c)
 {
     bool found_control = FALSE;
 
@@ -2579,7 +2629,8 @@ inp_fix_for_numparam(struct names *subckt_w_params, struct card *c)
         if (*(c->line) == '*' || ciprefix(".lib", c->line))
             continue;
 
-        /* exclude lines between .control and .endc from getting quotes changed */
+        /* exclude lines between .control and .endc from getting quotes
+         * changed */
         if (ciprefix(".control", c->line))
             found_control = TRUE;
         if (ciprefix(".endc", c->line))
@@ -2590,9 +2641,11 @@ inp_fix_for_numparam(struct names *subckt_w_params, struct card *c)
 
         inp_change_quotes(c->line);
 
-        if ((inp_compat_mode == COMPATMODE_ALL) || (inp_compat_mode == COMPATMODE_PS) ||
-            (inp_compat_mode == COMPATMODE_PSA) || (inp_compat_mode == COMPATMODE_LTPS) ||
-            (inp_compat_mode == COMPATMODE_LTPSA))
+        if ((inp_compat_mode == COMPATMODE_ALL) ||
+                (inp_compat_mode == COMPATMODE_PS) ||
+                (inp_compat_mode == COMPATMODE_PSA) ||
+                (inp_compat_mode == COMPATMODE_LTPS) ||
+                (inp_compat_mode == COMPATMODE_LTPSA))
             if (ciprefix(".subckt", c->line) || ciprefix("x", c->line)) {
                 /* remove params: */
                 char *str_ptr = strstr(c->line, "params:");
@@ -2606,8 +2659,7 @@ inp_fix_for_numparam(struct names *subckt_w_params, struct card *c)
 }
 
 
-static void
-inp_remove_excess_ws(struct card *c)
+static void inp_remove_excess_ws(struct card *c)
 {
     bool found_control = FALSE;
 
@@ -2616,7 +2668,8 @@ inp_remove_excess_ws(struct card *c)
         if (*c->line == '*')
             continue;
 
-        /* exclude echo lines between .control and .endc from removing white spaces */
+        /* exclude echo lines between .control and .endc from removing white
+         * spaces */
         if (ciprefix(".control", c->line))
             found_control = TRUE;
         if (ciprefix(".endc", c->line))
@@ -2630,8 +2683,7 @@ inp_remove_excess_ws(struct card *c)
 }
 
 
-static struct card *
-expand_section_ref(struct card *c, char *dir_name)
+static struct card *expand_section_ref(struct card *c, char *dir_name)
 {
     char *line = c->line;
 
@@ -2671,7 +2723,10 @@ expand_section_ref(struct card *c, char *dir_name)
         section_def = find_section_definition(lib->deck, y);
 
         if (!section_def) {
-            fprintf(stderr, "ERROR, library file %s, section definition %s not found\n", s, y);
+            fprintf(stderr,
+                    "ERROR, library file %s, section definition %s not "
+                    "found\n",
+                    s, y);
             controlled_exit(EXIT_FAILURE);
         }
 
@@ -2694,12 +2749,13 @@ expand_section_ref(struct card *c, char *dir_name)
         {
             struct card *t = section_def;
             for (; t; t = t->nextcard) {
-                c = insert_new_line(c, copy(t->line), t->linenum, t->linenum_orig);
+                c = insert_new_line(
+                        c, copy(t->line), t->linenum, t->linenum_orig);
                 if (t == section_def) {
                     c->line[0] = '*';
                     c->line[1] = '<';
                 }
-                if(ciprefix(".endl", t->line)) {
+                if (ciprefix(".endl", t->line)) {
                     c->line[0] = '*';
                     c->line[1] = '>';
                     break;
@@ -2711,7 +2767,7 @@ expand_section_ref(struct card *c, char *dir_name)
             }
         }
 
-        *line = '*';  /* comment out .lib line */
+        *line = '*'; /* comment out .lib line */
         *s_e = keep_char1;
         *y_e = keep_char2;
     }
@@ -2728,8 +2784,7 @@ expand_section_ref(struct card *c, char *dir_name)
  *    just those references occuring in the given library section definition
  */
 
-static void
-expand_section_references(struct card *c, char *dir_name)
+static void expand_section_references(struct card *c, char *dir_name)
 {
     for (; c; c = c->nextcard)
         if (ciprefix(".lib", c->line))
@@ -2737,15 +2792,15 @@ expand_section_references(struct card *c, char *dir_name)
 }
 
 
-static char*
-inp_get_subckt_name(char *s)
+static char *inp_get_subckt_name(char *s)
 {
     char *subckt_name, *end_ptr = strchr(s, '=');
 
     if (end_ptr) {
         end_ptr = skip_back_ws(end_ptr, s);
         end_ptr = skip_back_non_ws(end_ptr, s);
-    } else {
+    }
+    else {
         end_ptr = strchr(s, '\0');
     }
 
@@ -2756,12 +2811,12 @@ inp_get_subckt_name(char *s)
 }
 
 
-static int
-inp_get_params(char *line, char *param_names[], char *param_values[])
+static int inp_get_params(
+        char *line, char *param_names[], char *param_values[])
 {
     char *equal_ptr;
     char *end, *name, *value;
-    int  num_params = 0;
+    int num_params = 0;
     char keep;
 
     while ((equal_ptr = find_assignment(line)) != NULL) {
@@ -2770,10 +2825,11 @@ inp_get_params(char *line, char *param_names[], char *param_values[])
         end = skip_back_ws(equal_ptr, line);
         name = skip_back_non_ws(end, line);
 
-		if (num_params == NPARAMS) {
-			fprintf(stderr, "Error: to many params in a line, max is %d\n", NPARAMS);
-			controlled_exit(EXIT_FAILURE);
-		}
+        if (num_params == NPARAMS) {
+            fprintf(stderr, "Error: to many params in a line, max is %d\n",
+                    NPARAMS);
+            controlled_exit(EXIT_FAILURE);
+        }
 
         param_names[num_params++] = copy_substring(name, end);
 
@@ -2793,16 +2849,15 @@ inp_get_params(char *line, char *param_names[], char *param_values[])
         keep = *end;
         *end = '\0';
 
-        if (*value == '{' ||
-            isdigit_c(*value) ||
-            (*value == '.' && isdigit_c(value[1])))
-        {
+        if (*value == '{' || isdigit_c(*value) ||
+                (*value == '.' && isdigit_c(value[1]))) {
             value = copy(value);
-        } else {
+        }
+        else {
             value = tprintf("{%s}", value);
         }
 
-        param_values[num_params-1] = value;
+        param_values[num_params - 1] = value;
         *end = keep;
 
         line = end;
@@ -2812,10 +2867,10 @@ inp_get_params(char *line, char *param_names[], char *param_values[])
 }
 
 
-static char*
-inp_fix_inst_line(char *inst_line,
-                  int num_subckt_params, char *subckt_param_names[], char *subckt_param_values[],
-                  int num_inst_params, char *inst_param_names[], char *inst_param_values[])
+static char *inp_fix_inst_line(char *inst_line, int num_subckt_params,
+        char *subckt_param_names[], char *subckt_param_values[],
+        int num_inst_params, char *inst_param_names[],
+        char *inst_param_values[])
 {
     char *end, *inst_name, *inst_name_end;
     char *curr_line = inst_line, *new_line = NULL;
@@ -2828,7 +2883,7 @@ inp_fix_inst_line(char *inst_line,
     if (end) {
         end = skip_back_ws(end, inst_line);
         end = skip_back_non_ws(end, inst_line);
-        end[-1] = '\0';         /* fixme can be < inst_line */
+        end[-1] = '\0'; /* fixme can be < inst_line */
     }
 
     for (i = 0; i < num_subckt_params; i++)
@@ -2863,8 +2918,7 @@ inp_fix_inst_line(char *inst_line,
    to TRUE.
    Function is called from inp_fix_inst_calls_for_numparam() */
 
-static bool
-found_mult_param(int num_params, char *param_names[])
+static bool found_mult_param(int num_params, char *param_names[])
 {
     int i;
 
@@ -2881,32 +2935,33 @@ found_mult_param(int num_params, char *param_names[])
    the corresponding subcircuit except of some excluded in the code below
    Function is called from inp_fix_inst_calls_for_numparam() */
 
-static int
-inp_fix_subckt_multiplier(struct names *subckt_w_params, struct card *subckt_card,
-                          int num_subckt_params, char *subckt_param_names[], char *subckt_param_values[])
+static int inp_fix_subckt_multiplier(struct names *subckt_w_params,
+        struct card *subckt_card, int num_subckt_params,
+        char *subckt_param_names[], char *subckt_param_values[])
 {
     struct card *card;
     char *new_str;
 
-    subckt_param_names[num_subckt_params]  = copy("m");
+    subckt_param_names[num_subckt_params] = copy("m");
     subckt_param_values[num_subckt_params] = copy("1");
-    num_subckt_params ++;
+    num_subckt_params++;
 
     if (!strstr(subckt_card->line, "params:")) {
         new_str = tprintf("%s params: m=1", subckt_card->line);
         add_name(subckt_w_params, get_subckt_model_name(subckt_card->line));
-    } else {
+    }
+    else {
         new_str = tprintf("%s m=1", subckt_card->line);
     }
 
     tfree(subckt_card->line);
     subckt_card->line = new_str;
 
-    for (card = subckt_card->nextcard;
-         card && !ciprefix(".ends", card->line);
-         card = card->nextcard) {
+    for (card = subckt_card->nextcard; card && !ciprefix(".ends", card->line);
+            card = card->nextcard) {
         char *curr_line = card->line;
-        /* no 'm' for comment line, B, V, E, H and some others that are not using 'm' in their model description */
+        /* no 'm' for comment line, B, V, E, H and some others that are not
+         * using 'm' in their model description */
         if (strchr("*bvehaknopstuwy", curr_line[0]))
             continue;
         /* no 'm' for model cards */
@@ -2926,32 +2981,33 @@ inp_fix_subckt_multiplier(struct names *subckt_w_params, struct card *subckt_car
  *   which does not honour scoping rules
  */
 
-static struct card *
-bogus_find_subckt(struct card *d, const char *subckt_name)
+static struct card *bogus_find_subckt(struct card *d, const char *subckt_name)
 {
     const size_t len = strlen(subckt_name);
     for (; d; d = d->nextcard)
         if (ciprefix(".subckt", d->line)) {
             const char *n = skip_ws(skip_non_ws(d->line));
-            if ((strncmp(n, subckt_name, len) == 0) && (!n[len] || isspace_c(n[len])))
+            if ((strncmp(n, subckt_name, len) == 0) &&
+                    (!n[len] || isspace_c(n[len])))
                 break;
         }
     return d;
 }
 
 
-static void
-inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct card *deck)
+static void inp_fix_inst_calls_for_numparam(
+        struct names *subckt_w_params, struct card *deck)
 {
     struct card *c;
     char *subckt_param_names[NPARAMS];
     char *subckt_param_values[NPARAMS];
     char *inst_param_names[NPARAMS];
     char *inst_param_values[NPARAMS];
-    int  i;
+    int i;
 
-    // first iterate through instances and find occurences where 'm' multiplier needs to be
-    // added to the subcircuit -- subsequent instances will then need this parameter as well
+    // first iterate through instances and find occurences where 'm'
+    // multiplier needs to be added to the subcircuit -- subsequent instances
+    // will then need this parameter as well
     for (c = deck; c; c = c->nextcard) {
         char *inst_line = c->line;
 
@@ -2959,21 +3015,29 @@ inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct card *deck
             continue;
 
         if (ciprefix("x", inst_line)) {
-            int num_inst_params = inp_get_params(inst_line, inst_param_names, inst_param_values);
-            char *subckt_name   = inp_get_subckt_name(inst_line);
+            int num_inst_params = inp_get_params(
+                    inst_line, inst_param_names, inst_param_values);
+            char *subckt_name = inp_get_subckt_name(inst_line);
 
             if (found_mult_param(num_inst_params, inst_param_names)) {
                 struct card *d, *p = NULL;
 
-                // iterate through the deck to find the subckt (last one defined wins)
-                for (d = deck; (d = bogus_find_subckt(d, subckt_name)) != NULL; d = d->nextcard)
+                // iterate through the deck to find the subckt (last one
+                // defined wins)
+                for (d = deck;
+                        (d = bogus_find_subckt(d, subckt_name)) != NULL;
+                        d = d->nextcard)
                     p = d;
 
                 if (p) {
-                    int num_subckt_params = inp_get_params(p->line, subckt_param_names, subckt_param_values);
+                    int num_subckt_params = inp_get_params(
+                            p->line, subckt_param_names, subckt_param_values);
 
-                    if (!found_mult_param(num_subckt_params, subckt_param_names))
-                        inp_fix_subckt_multiplier(subckt_w_params, p, num_subckt_params, subckt_param_names, subckt_param_values);
+                    if (!found_mult_param(
+                                num_subckt_params, subckt_param_names))
+                        inp_fix_subckt_multiplier(subckt_w_params, p,
+                                num_subckt_params, subckt_param_names,
+                                subckt_param_values);
 
                     for (i = 0; i < num_subckt_params; i++) {
                         tfree(subckt_param_names[i]);
@@ -3003,22 +3067,28 @@ inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct card *deck
             if (find_name(subckt_w_params, subckt_name)) {
                 struct card *d;
 
-                for (d = deck; (d = bogus_find_subckt(d, subckt_name)) != NULL; d = d->nextcard) {
+                for (d = deck;
+                        (d = bogus_find_subckt(d, subckt_name)) != NULL;
+                        d = d->nextcard) {
                     char *subckt_line = d->line;
                     subckt_line = skip_non_ws(subckt_line);
                     subckt_line = skip_ws(subckt_line);
 
-                    int num_subckt_params = inp_get_params(subckt_line, subckt_param_names, subckt_param_values);
-                    int num_inst_params   = inp_get_params(inst_line, inst_param_names, inst_param_values);
+                    int num_subckt_params = inp_get_params(subckt_line,
+                            subckt_param_names, subckt_param_values);
+                    int num_inst_params = inp_get_params(
+                            inst_line, inst_param_names, inst_param_values);
 
-                    // make sure that if have inst params that one matches subckt
+                    // make sure that if have inst params that one matches
+                    // subckt
                     if (num_inst_params != 0) {
                         bool found_param_match = FALSE;
                         int j, k;
 
                         for (j = 0; j < num_inst_params; j++) {
                             for (k = 0; k < num_subckt_params; k++)
-                                if (strcmp(subckt_param_names[k], inst_param_names[j]) == 0) {
+                                if (strcmp(subckt_param_names[k],
+                                            inst_param_names[j]) == 0) {
                                     found_param_match = TRUE;
                                     break;
                                 }
@@ -3037,7 +3107,10 @@ inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct card *deck
                         }
                     }
 
-                    c->line = inp_fix_inst_line(inst_line, num_subckt_params, subckt_param_names, subckt_param_values, num_inst_params, inst_param_names, inst_param_values);
+                    c->line = inp_fix_inst_line(inst_line, num_subckt_params,
+                            subckt_param_names, subckt_param_values,
+                            num_inst_params, inst_param_names,
+                            inst_param_values);
                     for (i = 0; i < num_subckt_params; i++) {
                         tfree(subckt_param_names[i]);
                         tfree(subckt_param_values[i]);
@@ -3058,23 +3131,21 @@ inp_fix_inst_calls_for_numparam(struct names *subckt_w_params, struct card *deck
 }
 
 
-static struct function *
-new_function(struct function_env *env, char *name)
+static struct function *new_function(struct function_env *env, char *name)
 {
     struct function *f = TMALLOC(struct function, 1);
 
-    f -> name = name;
-    f -> num_parameters = 0;
+    f->name = name;
+    f->num_parameters = 0;
 
-    f -> next = env->functions;
-    env -> functions  = f;
+    f->next = env->functions;
+    env->functions = f;
 
     return f;
 }
 
 
-static struct function *
-find_function(struct function_env *env, char *name)
+static struct function *find_function(struct function_env *env, char *name)
 {
     struct function *f;
 
@@ -3087,8 +3158,7 @@ find_function(struct function_env *env, char *name)
 }
 
 
-static void
-free_function(struct function *fcn)
+static void free_function(struct function *fcn)
 {
     int i;
 
@@ -3101,8 +3171,7 @@ free_function(struct function *fcn)
 }
 
 
-static void
-new_function_parameter(struct function *fcn, char *parameter)
+static void new_function_parameter(struct function *fcn, char *parameter)
 {
     if (fcn->num_parameters >= N_PARAMS) {
         fprintf(stderr, "ERROR, N_PARAMS overflow\n");
@@ -3113,8 +3182,7 @@ new_function_parameter(struct function *fcn, char *parameter)
 }
 
 
-static bool
-inp_strip_braces(char *s)
+static bool inp_strip_braces(char *s)
 {
     int nesting = 0;
     char *d = s;
@@ -3122,10 +3190,12 @@ inp_strip_braces(char *s)
     for (; *s; s++)
         if (*s == '{') {
             nesting++;
-        } else if (*s == '}') {
+        }
+        else if (*s == '}') {
             if (--nesting < 0)
                 return FALSE;
-        } else if (!isspace_c(*s)) {
+        }
+        else if (!isspace_c(*s)) {
             *d++ = *s;
         }
 
@@ -3135,8 +3205,7 @@ inp_strip_braces(char *s)
 }
 
 
-static void
-inp_get_func_from_line(struct function_env *env, char *line)
+static void inp_get_func_from_line(struct function_env *env, char *line)
 {
     char *end, *orig_line = line;
     struct function *function;
@@ -3160,7 +3229,7 @@ inp_get_func_from_line(struct function_env *env, char *line)
     end = skip_ws(end + 1);
 
     /* get function parameters */
-    for (;;)  {
+    for (;;) {
         char *beg = end;
         while (*end && !isspace_c(*end) && *end != ',' && *end != ')')
             end++;
@@ -3200,7 +3269,7 @@ inp_get_func_from_line(struct function_env *env, char *line)
 
     tfree(function->body);
 
- Lerror:
+Lerror:
     // fixme, free()
     fprintf(stderr, "ERROR: failed to parse .func in: %s\n", orig_line);
     controlled_exit(EXIT_FAILURE);
@@ -3211,8 +3280,7 @@ inp_get_func_from_line(struct function_env *env, char *line)
  * grab functions at the current .subckt nesting level
  */
 
-static void
-inp_grab_func(struct function_env *env, struct card *c)
+static void inp_grab_func(struct function_env *env, struct card *c)
 {
     int nesting = 0;
 
@@ -3240,8 +3308,8 @@ inp_grab_func(struct function_env *env, struct card *c)
 }
 
 
-static char*
-search_func_arg(char *str, struct function *fcn, int *which, char *str_begin)
+static char *search_func_arg(
+        char *str, struct function *fcn, int *which, char *str_begin)
 {
     for (; (str = strpbrk(str, fcn->accept)) != NULL; str++) {
         char before;
@@ -3251,13 +3319,15 @@ search_func_arg(char *str, struct function *fcn, int *which, char *str_begin)
         else
             before = '\0';
 
-        if (is_arith_char(before) || isspace_c(before) || strchr(",=", before)) {
+        if (is_arith_char(before) || isspace_c(before) ||
+                strchr(",=", before)) {
             int i;
             for (i = 0; i < fcn->num_parameters; i++) {
                 size_t len = strlen(fcn->params[i]);
                 if (strncmp(str, fcn->params[i], len) == 0) {
                     char after = str[len];
-                    if (is_arith_char(after) || isspace_c(after) || strchr(",=", after)) {
+                    if (is_arith_char(after) || isspace_c(after) ||
+                            strchr(",=", after)) {
                         *which = i;
                         return str;
                     }
@@ -3270,11 +3340,10 @@ search_func_arg(char *str, struct function *fcn, int *which, char *str_begin)
 }
 
 
-static char*
-inp_do_macro_param_replace(struct function *fcn, char *params[])
+static char *inp_do_macro_param_replace(struct function *fcn, char *params[])
 {
     char *str = copy(fcn->body);
-    int  i;
+    int i;
 
     char *collect_ptr = NULL;
     char *arg_ptr = str;
@@ -3288,10 +3357,11 @@ inp_do_macro_param_replace(struct function *fcn, char *params[])
            and i(parameter) if here 'parameter' is also a node name */
 
         /* go backwards from 'parameter' and find '(' */
-        for (p = arg_ptr; --p > str; )
+        for (p = arg_ptr; --p > str;)
             if (*p == '(' || *p == ')') {
                 if ((*p == '(') && strchr("vi", p[-1]) &&
-                    (p - 2 < str || is_arith_char(p[-2]) || isspace_c(p[-2]) || strchr(",=", p[-2])))
+                        (p - 2 < str || is_arith_char(p[-2]) ||
+                                isspace_c(p[-2]) || strchr(",=", p[-2])))
                     is_vi = 1;
                 break;
             }
@@ -3315,11 +3385,16 @@ inp_do_macro_param_replace(struct function *fcn, char *params[])
             size_t len = strlen(rest) + strlen(params[i]) + 1;
             int prefix_len = (int) (arg_ptr - rest);
             if (str_has_arith_char(params[i])) {
-                collect_ptr = TREALLOC(char, collect_ptr, collect_ptr_len + len + 2);
-                sprintf(collect_ptr + collect_ptr_len, "%.*s(%s)", prefix_len, rest, params[i]);
-            } else {
-                collect_ptr = TREALLOC(char, collect_ptr, collect_ptr_len + len);
-                sprintf(collect_ptr + collect_ptr_len, "%.*s%s", prefix_len, rest, params[i]);
+                collect_ptr = TREALLOC(
+                        char, collect_ptr, collect_ptr_len + len + 2);
+                sprintf(collect_ptr + collect_ptr_len, "%.*s(%s)", prefix_len,
+                        rest, params[i]);
+            }
+            else {
+                collect_ptr =
+                        TREALLOC(char, collect_ptr, collect_ptr_len + len);
+                sprintf(collect_ptr + collect_ptr_len, "%.*s%s", prefix_len,
+                        rest, params[i]);
             }
         }
 
@@ -3338,13 +3413,12 @@ inp_do_macro_param_replace(struct function *fcn, char *params[])
 }
 
 
-static char*
-inp_expand_macro_in_str(struct function_env *env, char *str)
+static char *inp_expand_macro_in_str(struct function_env *env, char *str)
 {
     struct function *function;
     char *open_paren_ptr, *close_paren_ptr, *fcn_name, *params[FCN_PARAMS];
     char *curr_ptr, *macro_str, *curr_str = NULL;
-    int  num_params, i;
+    int num_params, i;
     char *orig_ptr = str, *search_ptr = str, *orig_str = copy(str);
     char keep;
 
@@ -3353,7 +3427,8 @@ inp_expand_macro_in_str(struct function_env *env, char *str)
 
         fcn_name = open_paren_ptr;
         while (--fcn_name >= search_ptr)
-        /* function name consists of numbers, letters and special characters (VALIDCHARS) */
+            /* function name consists of numbers, letters and special
+             * characters (VALIDCHARS) */
             if (!isalnum_c(*fcn_name) && !strchr(VALIDCHARS, *fcn_name))
                 break;
         fcn_name++;
@@ -3384,7 +3459,10 @@ inp_expand_macro_in_str(struct function_env *env, char *str)
             }
 
             if (num_parens) {
-                fprintf(stderr, "ERROR: did not find closing parenthesis for function call in str: %s\n", orig_str);
+                fprintf(stderr,
+                        "ERROR: did not find closing parenthesis for "
+                        "function call in str: %s\n",
+                        orig_str);
                 controlled_exit(EXIT_FAILURE);
             }
 
@@ -3421,22 +3499,26 @@ inp_expand_macro_in_str(struct function_env *env, char *str)
                 if (*curr_ptr == ',' && num_parens == 0)
                     break;
             }
-			if (num_params == FCN_PARAMS) {
-				fprintf(stderr, "Error: Too many params in fcn, max is %d\n", FCN_PARAMS);
-				controlled_exit(EXIT_FAILURE);
-			}
-            params[num_params++] =
-                inp_expand_macro_in_str(env, copy_substring(beg_parameter, curr_ptr));
+            if (num_params == FCN_PARAMS) {
+                fprintf(stderr, "Error: Too many params in fcn, max is %d\n",
+                        FCN_PARAMS);
+                controlled_exit(EXIT_FAILURE);
+            }
+            params[num_params++] = inp_expand_macro_in_str(
+                    env, copy_substring(beg_parameter, curr_ptr));
         }
 
         if (function->num_parameters != num_params) {
-            fprintf(stderr, "ERROR: parameter mismatch for function call in str: %s\n", orig_str);
+            fprintf(stderr,
+                    "ERROR: parameter mismatch for function call in str: "
+                    "%s\n",
+                    orig_str);
             controlled_exit(EXIT_FAILURE);
         }
 
         macro_str = inp_do_macro_param_replace(function, params);
         macro_str = inp_expand_macro_in_str(env, macro_str);
-        keep  = *fcn_name;
+        keep = *fcn_name;
         *fcn_name = '\0';
         {
             size_t curr_str_len = curr_str ? strlen(curr_str) : 0;
@@ -3455,7 +3537,8 @@ inp_expand_macro_in_str(struct function_env *env, char *str)
 
     if (curr_str == NULL) {
         curr_str = orig_ptr;
-    } else {
+    }
+    else {
         if (str != NULL) {
             size_t curr_str_len = strlen(curr_str);
             size_t len = strlen(str) + 1;
@@ -3472,37 +3555,34 @@ inp_expand_macro_in_str(struct function_env *env, char *str)
 }
 
 
-static void
-inp_expand_macros_in_func(struct function_env *env)
+static void inp_expand_macros_in_func(struct function_env *env)
 {
     struct function *f;
 
-    for (f = env->functions; f ; f = f->next)
+    for (f = env->functions; f; f = f->next)
         f->body = inp_expand_macro_in_str(env, f->body);
 }
 
 
-static struct function_env *
-new_function_env(struct function_env *up)
+static struct function_env *new_function_env(struct function_env *up)
 {
     struct function_env *env = TMALLOC(struct function_env, 1);
 
-    env -> up = up;
-    env -> functions = NULL;
+    env->up = up;
+    env->functions = NULL;
 
     return env;
 }
 
 
-static struct function_env *
-delete_function_env(struct function_env *env)
+static struct function_env *delete_function_env(struct function_env *env)
 {
-    struct function_env *up = env -> up;
+    struct function_env *up = env->up;
     struct function *f;
 
-    for (f = env -> functions; f; ) {
+    for (f = env->functions; f;) {
         struct function *here = f;
-        f = f -> next;
+        f = f->next;
         free_function(here);
         tfree(here);
     }
@@ -3513,8 +3593,8 @@ delete_function_env(struct function_env *env)
 }
 
 
-static struct card *
-inp_expand_macros_in_deck(struct function_env *env, struct card *c)
+static struct card *inp_expand_macros_in_deck(
+        struct function_env *env, struct card *c)
 {
     env = new_function_env(env);
 
@@ -3559,13 +3639,13 @@ inp_expand_macros_in_deck(struct function_env *env, struct card *c)
    h_vogt 20 April 2008
    * For xspice and num_pram compatibility .cmodel added
    * .cmodel will be replaced by .model in inp_fix_param_values()
-   * and then the entire line is skipped (will not be changed by this function).
+   * and then the entire line is skipped (will not be changed by this
+   function).
    * Usage of numparam requires {} around the parameters in the .cmodel line.
    * May be obsolete?
    */
 
-static void
-inp_fix_param_values(struct card *c)
+static void inp_fix_param_values(struct card *c)
 {
     char *beg_of_str, *end_of_str, *old_str, *equal_ptr, *new_str;
     char *vec_str, *tmp_str, *natok, *buffer, *newvec, *whereisgt;
@@ -3601,7 +3681,8 @@ inp_fix_param_values(struct card *c)
         if (*line == 'b')
             continue;
 
-        /* for xspice .cmodel: replace .cmodel with .model and skip entire line) */
+        /* for xspice .cmodel: replace .cmodel with .model and skip entire
+         * line) */
         if (ciprefix(".cmodel", line)) {
             *(++line) = 'm';
             *(++line) = 'o';
@@ -3613,10 +3694,10 @@ inp_fix_param_values(struct card *c)
         }
 
         /* exclude CIDER models */
-        if (ciprefix(".model", line) && (strstr(line, "numos") || strstr(line, "numd") ||
-                                         strstr(line, "nbjt") || strstr(line, "nbjt2") ||
-                                         strstr(line, "numd2")))
-        {
+        if (ciprefix(".model", line) &&
+                (strstr(line, "numos") || strstr(line, "numd") ||
+                        strstr(line, "nbjt") || strstr(line, "nbjt2") ||
+                        strstr(line, "numd2"))) {
             continue;
         }
 
@@ -3626,12 +3707,12 @@ inp_fix_param_values(struct card *c)
 
         while ((equal_ptr = find_assignment(line)) != NULL) {
 
-            // special case: .MEASURE {DC|AC|TRAN} result FIND out_variable WHEN out_variable2=out_variable3
-            // no braces around out_variable3. out_variable3 may be v(...) or i(...)
+            // special case: .MEASURE {DC|AC|TRAN} result FIND out_variable
+            // WHEN out_variable2=out_variable3 no braces around
+            // out_variable3. out_variable3 may be v(...) or i(...)
             if (ciprefix(".meas", line))
                 if (((equal_ptr[1] == 'v') || (equal_ptr[1] == 'i')) &&
-                    (equal_ptr[2] == '('))
-                {
+                        (equal_ptr[2] == '(')) {
                     // find closing ')' and skip token v(...) or i(...)
                     while (*equal_ptr != ')' && equal_ptr[1] != '\0')
                         equal_ptr++;
@@ -3641,24 +3722,27 @@ inp_fix_param_values(struct card *c)
 
             beg_of_str = skip_ws(equal_ptr + 1);
             /* all cases where no {} have to be put around selected token */
-            if (isdigit_c(*beg_of_str) ||
-                *beg_of_str == '{' ||
-                *beg_of_str == '.' ||
-                *beg_of_str == '"' ||
-                ((*beg_of_str == '-' || *beg_of_str == '+') && isdigit_c(beg_of_str[1])) ||
-                ((*beg_of_str == '-' || *beg_of_str == '+') && beg_of_str[1] == '.' && isdigit_c(beg_of_str[2])) ||
-                ciprefix("true", beg_of_str) ||
-                ciprefix("false", beg_of_str))
-            {
+            if (isdigit_c(*beg_of_str) || *beg_of_str == '{' ||
+                    *beg_of_str == '.' || *beg_of_str == '"' ||
+                    ((*beg_of_str == '-' || *beg_of_str == '+') &&
+                            isdigit_c(beg_of_str[1])) ||
+                    ((*beg_of_str == '-' || *beg_of_str == '+') &&
+                            beg_of_str[1] == '.' &&
+                            isdigit_c(beg_of_str[2])) ||
+                    ciprefix("true", beg_of_str) ||
+                    ciprefix("false", beg_of_str)) {
                 line = equal_ptr + 1;
-            } else if (*beg_of_str == '[') {
-                /* A vector following the '=' token: code to put curly brackets around all params
+            }
+            else if (*beg_of_str == '[') {
+                /* A vector following the '=' token: code to put curly
+                   brackets around all params
                    inside a pair of square brackets */
                 end_of_str = beg_of_str;
                 while (*end_of_str != ']')
                     end_of_str++;
                 /* string xx yyy from vector [xx yyy] */
-                tmp_str = vec_str = copy_substring(beg_of_str + 1, end_of_str);
+                tmp_str = vec_str =
+                        copy_substring(beg_of_str + 1, end_of_str);
 
                 /* work on vector elements inside [] */
                 nwl = NULL;
@@ -3669,34 +3753,41 @@ inp_fix_param_values(struct card *c)
 
                     buffer = TMALLOC(char, strlen(natok) + 4);
                     if (isdigit_c(*natok) || *natok == '{' || *natok == '.' ||
-                        *natok == '"' || (*natok == '-' && isdigit_c(natok[1])) ||
-                        ciprefix("true", natok) || ciprefix("false", natok) ||
-                        eq(natok, "<") || eq(natok, ">"))
-                    {
+                            *natok == '"' ||
+                            (*natok == '-' && isdigit_c(natok[1])) ||
+                            ciprefix("true", natok) ||
+                            ciprefix("false", natok) || eq(natok, "<") ||
+                            eq(natok, ">")) {
                         (void) sprintf(buffer, "%s", natok);
-                        /* A complex value found inside a vector [< x1 y1> <x2 y2>] */
+                        /* A complex value found inside a vector [< x1 y1> <x2
+                         * y2>] */
                         /* < xx and yy > have been dealt with before */
                         /* <xx */
-                    } else if (*natok == '<') {
+                    }
+                    else if (*natok == '<') {
                         if (isdigit_c(natok[1]) ||
-                            (natok[1] == '-' && isdigit_c(natok[2])))
-                        {
+                                (natok[1] == '-' && isdigit_c(natok[2]))) {
                             (void) sprintf(buffer, "%s", natok);
-                        } else {
+                        }
+                        else {
                             *natok = '{';
                             (void) sprintf(buffer, "<%s}", natok);
                         }
                         /* yy> */
-                    } else if (strchr(natok, '>')) {
-                        if (isdigit_c(*natok) || (*natok == '-' && isdigit_c(natok[1]))) {
+                    }
+                    else if (strchr(natok, '>')) {
+                        if (isdigit_c(*natok) ||
+                                (*natok == '-' && isdigit_c(natok[1]))) {
                             (void) sprintf(buffer, "%s", natok);
-                        } else {
+                        }
+                        else {
                             whereisgt = strchr(natok, '>');
                             *whereisgt = '}';
                             (void) sprintf(buffer, "{%s>", natok);
                         }
                         /* all other tokens */
-                    } else {
+                    }
+                    else {
                         (void) sprintf(buffer, "{%s}", natok);
                     }
                     tfree(natok);
@@ -3709,17 +3800,19 @@ inp_fix_param_values(struct card *c)
                 newvec = wl_flatten(nwl);
                 wl_free(nwl);
                 /* insert new vector into actual line */
-                *equal_ptr  = '\0';
-                new_str = tprintf("%s=[%s] %s", c->line, newvec, end_of_str+1);
+                *equal_ptr = '\0';
+                new_str = tprintf(
+                        "%s=[%s] %s", c->line, newvec, end_of_str + 1);
                 tfree(newvec);
 
-                old_str    = c->line;
+                old_str = c->line;
                 c->line = new_str;
                 line = new_str + strlen(old_str) + 1;
                 tfree(old_str);
-            } else if (*beg_of_str == '<') {
-                /* A complex value following the '=' token: code to put curly brackets around all params
-                   inside a pair < > */
+            }
+            else if (*beg_of_str == '<') {
+                /* A complex value following the '=' token: code to put curly
+                   brackets around all params inside a pair < > */
                 end_of_str = beg_of_str;
                 while (*end_of_str != '>')
                     end_of_str++;
@@ -3735,11 +3828,13 @@ inp_fix_param_values(struct card *c)
 
                     buffer = TMALLOC(char, strlen(natok) + 4);
                     if (isdigit_c(*natok) || *natok == '{' || *natok == '.' ||
-                        *natok == '"' || (*natok == '-' && isdigit_c(natok[1])) ||
-                        ciprefix("true", natok) || ciprefix("false", natok))
-                    {
+                            *natok == '"' ||
+                            (*natok == '-' && isdigit_c(natok[1])) ||
+                            ciprefix("true", natok) ||
+                            ciprefix("false", natok)) {
                         (void) sprintf(buffer, "%s", natok);
-                    } else {
+                    }
+                    else {
                         (void) sprintf(buffer, "{%s}", natok);
                     }
                     tfree(natok);
@@ -3751,21 +3846,22 @@ inp_fix_param_values(struct card *c)
                 newvec = wl_flatten(nwl);
                 wl_free(nwl);
                 /* insert new complex value into actual line */
-                *equal_ptr  = '\0';
-                new_str = tprintf("%s=<%s> %s", c->line, newvec, end_of_str+1);
+                *equal_ptr = '\0';
+                new_str = tprintf(
+                        "%s=<%s> %s", c->line, newvec, end_of_str + 1);
                 tfree(newvec);
 
-                old_str    = c->line;
+                old_str = c->line;
                 c->line = new_str;
                 line = new_str + strlen(old_str) + 1;
                 tfree(old_str);
-            } else {
+            }
+            else {
                 /* put {} around token to be accepted as numparam */
                 end_of_str = beg_of_str;
                 parens = 0;
                 while (*end_of_str != '\0' &&
-                       (!isspace_c(*end_of_str) || (parens > 0)))
-                {
+                        (!isspace_c(*end_of_str) || (parens > 0))) {
                     if (*end_of_str == '(')
                         parens++;
                     if (*end_of_str == ')')
@@ -3773,16 +3869,17 @@ inp_fix_param_values(struct card *c)
                     end_of_str++;
                 }
 
-                *equal_ptr  = '\0';
+                *equal_ptr = '\0';
 
                 if (*end_of_str == '\0') {
                     new_str = tprintf("%s={%s}", c->line, beg_of_str);
-
-                } else {
-                    *end_of_str = '\0';
-                    new_str = tprintf("%s={%s} %s", c->line, beg_of_str, end_of_str+1);
                 }
-                old_str    = c->line;
+                else {
+                    *end_of_str = '\0';
+                    new_str = tprintf("%s={%s} %s", c->line, beg_of_str,
+                            end_of_str + 1);
+                }
+                old_str = c->line;
                 c->line = new_str;
 
                 line = new_str + strlen(old_str) + 1;
@@ -3793,14 +3890,14 @@ inp_fix_param_values(struct card *c)
 }
 
 
-static char*
-get_param_name(char *line)
+static char *get_param_name(char *line)
 {
     char *beg;
     char *equal_ptr = strchr(line, '=');
 
     if (!equal_ptr) {
-        fprintf(stderr, "ERROR: could not find '=' on parameter line '%s'!\n", line);
+        fprintf(stderr, "ERROR: could not find '=' on parameter line '%s'!\n",
+                line);
         controlled_exit(EXIT_FAILURE);
     }
 
@@ -3812,8 +3909,7 @@ get_param_name(char *line)
 }
 
 
-static char*
-get_param_str(char *line)
+static char *get_param_str(char *line)
 {
     char *equal_ptr = strchr(line, '=');
 
@@ -3824,8 +3920,7 @@ get_param_str(char *line)
 }
 
 
-struct dependency
-{
+struct dependency {
     int level;
     int skip;
     char *param_name;
@@ -3835,8 +3930,8 @@ struct dependency
 };
 
 
-static int
-inp_get_param_level(int param_num, struct dependency *deps, int num_params)
+static int inp_get_param_level(
+        int param_num, struct dependency *deps, int num_params)
 {
     int i, k, l, level = 0;
 
@@ -3850,7 +3945,9 @@ inp_get_param_level(int param_num, struct dependency *deps, int num_params)
                 break;
 
         if (k >= num_params) {
-            fprintf(stderr, "ERROR: unable to find dependency parameter for %s!\n", deps[param_num].param_name);
+            fprintf(stderr,
+                    "ERROR: unable to find dependency parameter for %s!\n",
+                    deps[param_num].param_name);
             controlled_exit(EXIT_FAILURE);
         }
 
@@ -3866,8 +3963,7 @@ inp_get_param_level(int param_num, struct dependency *deps, int num_params)
 }
 
 
-static int
-get_number_terminals(char *c)
+static int get_number_terminals(char *c)
 {
     int i, j, k;
     char *name[12];
@@ -3875,126 +3971,134 @@ get_number_terminals(char *c)
     bool area_found = FALSE;
 
     switch (*c) {
-    case 'r':
-    case 'c':
-    case 'l':
-    case 'k':
-    case 'f':
-    case 'h':
-    case 'b':
-    case 'v':
-    case 'i':
-    case 'd':
-        return 2;
-        break;
-    case 'u':
-    case 'j':
-    case 'w':
-    case 'z':
-        return 3;
-        break;
-    case 't':
-    case 'o':
-    case 'g':
-    case 'e':
-    case 's':
-    case 'y':
-        return 4;
-        break;
-    case 'm': /* recognition of 4, 5, 6, or 7 nodes for SOI devices needed */
-        i = 0;
-        /* find the first token with "off" or "=" in the line*/
-        while ((i < 20) && (*c != '\0')) {
-            char *inst = gettok_instance(&c);
-            strncpy(nam_buf, inst, sizeof(nam_buf) - 1);
-            txfree(inst);
-            if (strstr(nam_buf, "off") || strchr(nam_buf, '='))
-                break;
-            i++;
-        }
-        return i-2;
-        break;
-    case 'p': /* recognition of up to 100 cpl nodes */
-        i = j = 0;
-        /* find the last token in the line*/
-        while ((i < 100) && (*c != '\0')) {
-            char *tmp_inst = gettok_instance(&c);
-            strncpy(nam_buf, tmp_inst, 32);
-            tfree(tmp_inst);
-            if (strchr(nam_buf, '='))
-                j++;
-            i++;
-        }
-        if (i == 100)
-            return 0;
-        return i - j - 2;
-        break;
-    case 'q': /* recognition of 3, 4 or 5 terminal bjt's needed */
-        /* QXXXXXXX NC NB NE <NS> <NT> MNAME <AREA> <OFF> <IC=VBE, VCE> <TEMP=T> */
-        /* 12 tokens maximum */
-        i = j = 0;
-        while ((i < 12) && (*c != '\0')) {
-            char *comma;
-            name[i] = gettok_instance(&c);
-            if (strstr(name[i], "off") || strchr(name[i], '='))
-                j++;
-#ifdef CIDER
-            if (strstr(name[i], "save") || strstr(name[i], "print"))
-                j++;
-#endif
-            /* If we have IC=VBE, VCE instead of IC=VBE,VCE we need to inc j */
-            if ((comma = strchr(name[i], ',')) != NULL && (*(++comma) == '\0'))
-                j++;
-            /* If we have IC=VBE , VCE ("," is a token) we need to inc j */
-            if (eq(name[i], ","))
-                j++;
-            i++;
-        }
-        i--;
-        area_found = FALSE;
-        for (k = i; k > i-j-1; k--) {
-            bool only_digits = TRUE;
-            char *nametmp = name[k];
-            /* MNAME has to contain at least one alpha character. AREA may be assumed
-               if we have a token with only digits, and where the previous token does not
-               end with a ',' */
-            while (*nametmp) {
-                if (isalpha_c(*nametmp) || (*nametmp == ','))
-                    only_digits = FALSE;
-                nametmp++;
+        case 'r':
+        case 'c':
+        case 'l':
+        case 'k':
+        case 'f':
+        case 'h':
+        case 'b':
+        case 'v':
+        case 'i':
+        case 'd':
+            return 2;
+            break;
+        case 'u':
+        case 'j':
+        case 'w':
+        case 'z':
+            return 3;
+            break;
+        case 't':
+        case 'o':
+        case 'g':
+        case 'e':
+        case 's':
+        case 'y':
+            return 4;
+            break;
+        case 'm': /* recognition of 4, 5, 6, or 7 nodes for SOI devices needed
+                   */
+            i = 0;
+            /* find the first token with "off" or "=" in the line*/
+            while ((i < 20) && (*c != '\0')) {
+                char *inst = gettok_instance(&c);
+                strncpy(nam_buf, inst, sizeof(nam_buf) - 1);
+                txfree(inst);
+                if (strstr(nam_buf, "off") || strchr(nam_buf, '='))
+                    break;
+                i++;
             }
-            if (only_digits && (strchr(name[k-1], ',') == NULL))
-                area_found = TRUE;
-        }
-        for (k = i; k >= 0; k--)
-            tfree(name[k]);
-        if (area_found) {
-            return i-j-2;
-        } else {
-            return i-j-1;
-        }
-        break;
-    default:
-        return 0;
-        break;
+            return i - 2;
+            break;
+        case 'p': /* recognition of up to 100 cpl nodes */
+            i = j = 0;
+            /* find the last token in the line*/
+            while ((i < 100) && (*c != '\0')) {
+                char *tmp_inst = gettok_instance(&c);
+                strncpy(nam_buf, tmp_inst, 32);
+                tfree(tmp_inst);
+                if (strchr(nam_buf, '='))
+                    j++;
+                i++;
+            }
+            if (i == 100)
+                return 0;
+            return i - j - 2;
+            break;
+        case 'q': /* recognition of 3, 4 or 5 terminal bjt's needed */
+            /* QXXXXXXX NC NB NE <NS> <NT> MNAME <AREA> <OFF> <IC=VBE, VCE>
+             * <TEMP=T> */
+            /* 12 tokens maximum */
+            i = j = 0;
+            while ((i < 12) && (*c != '\0')) {
+                char *comma;
+                name[i] = gettok_instance(&c);
+                if (strstr(name[i], "off") || strchr(name[i], '='))
+                    j++;
+#ifdef CIDER
+                if (strstr(name[i], "save") || strstr(name[i], "print"))
+                    j++;
+#endif
+                /* If we have IC=VBE, VCE instead of IC=VBE,VCE we need to inc
+                 * j */
+                if ((comma = strchr(name[i], ',')) != NULL &&
+                        (*(++comma) == '\0'))
+                    j++;
+                /* If we have IC=VBE , VCE ("," is a token) we need to inc j
+                 */
+                if (eq(name[i], ","))
+                    j++;
+                i++;
+            }
+            i--;
+            area_found = FALSE;
+            for (k = i; k > i - j - 1; k--) {
+                bool only_digits = TRUE;
+                char *nametmp = name[k];
+                /* MNAME has to contain at least one alpha character. AREA may
+                   be assumed if we have a token with only digits, and where
+                   the previous token does not end with a ',' */
+                while (*nametmp) {
+                    if (isalpha_c(*nametmp) || (*nametmp == ','))
+                        only_digits = FALSE;
+                    nametmp++;
+                }
+                if (only_digits && (strchr(name[k - 1], ',') == NULL))
+                    area_found = TRUE;
+            }
+            for (k = i; k >= 0; k--)
+                tfree(name[k]);
+            if (area_found) {
+                return i - j - 2;
+            }
+            else {
+                return i - j - 1;
+            }
+            break;
+        default:
+            return 0;
+            break;
     }
 }
 
 
-static char *ya_search_identifier(char *str, const char *identifier, char *str_begin);
+static char *ya_search_identifier(
+        char *str, const char *identifier, char *str_begin);
 
 
-static void inp_quote_params(struct card *s_c, struct card *e_c, struct dependency *deps, int num_params);
+static void inp_quote_params(struct card *s_c, struct card *e_c,
+        struct dependency *deps, int num_params);
 
 /* sort parameters based on parameter dependencies */
 
-static void
-inp_sort_params(struct card *param_cards, struct card *card_bf_start, struct card *s_c, struct card *e_c)
+static void inp_sort_params(struct card *param_cards,
+        struct card *card_bf_start, struct card *s_c, struct card *e_c)
 {
-    int  i, j, num_params, ind = 0, max_level;
+    int i, j, num_params, ind = 0, max_level;
 
     struct card *c;
-    int  skipped;
+    int skipped;
     int arr_size;
 
     struct dependency *deps;
@@ -4007,7 +4111,7 @@ inp_sort_params(struct card *param_cards, struct card *card_bf_start, struct car
     arr_size = 0;
     for (c = param_cards; c; c = c->nextcard)
         if (strchr(c->line, '='))
-            arr_size ++;
+            arr_size++;
 
     deps = TMALLOC(struct dependency, arr_size);
 
@@ -4016,12 +4120,13 @@ inp_sort_params(struct card *param_cards, struct card *card_bf_start, struct car
         // ignore .param lines without '='
         if (strchr(c->line, '=')) {
             deps[num_params].depends_on[0] = NULL;
-            deps[num_params].level         = -1;
-            deps[num_params].skip          = 0;
-            deps[num_params].param_name    = get_param_name(c->line); /* copy in fcn */
-            deps[num_params].param_str     = copy(get_param_str(c->line));
-            deps[num_params].card          = c;
-            num_params ++;
+            deps[num_params].level = -1;
+            deps[num_params].skip = 0;
+            deps[num_params].param_name =
+                    get_param_name(c->line); /* copy in fcn */
+            deps[num_params].param_str = copy(get_param_str(c->line));
+            deps[num_params].card = c;
+            num_params++;
         }
 
     // look for duplicately defined parameters and mark earlier one to skip
@@ -4042,11 +4147,12 @@ inp_sort_params(struct card *param_cards, struct card *card_bf_start, struct car
         if (!deps[i].skip) {
             char *param = deps[i].param_name;
             for (j = 0; j < num_params; j++)
-                if (j != i && search_plain_identifier(deps[j].param_str, param)) {
+                if (j != i &&
+                        search_plain_identifier(deps[j].param_str, param)) {
                     for (ind = 0; deps[j].depends_on[ind]; ind++)
                         ;
                     deps[j].depends_on[ind++] = param;
-                    deps[j].depends_on[ind]   = NULL;
+                    deps[j].depends_on[ind] = NULL;
                 }
         }
 
@@ -4073,7 +4179,10 @@ inp_sort_params(struct card *param_cards, struct card *card_bf_start, struct car
 
     num_params -= skipped;
     if (ind != num_params) {
-        fprintf(stderr, "ERROR: found wrong number of parameters during levelization ( %d instead of %d parameter s)!\n", ind, num_params);
+        fprintf(stderr,
+                "ERROR: found wrong number of parameters during levelization "
+                "( %d instead of %d parameter s)!\n",
+                ind, num_params);
         controlled_exit(EXIT_FAILURE);
     }
 
@@ -4089,12 +4198,12 @@ inp_sort_params(struct card *param_cards, struct card *card_bf_start, struct car
 }
 
 
-static void
-inp_add_params_to_subckt(struct names *subckt_w_params, struct card *subckt_card)
+static void inp_add_params_to_subckt(
+        struct names *subckt_w_params, struct card *subckt_card)
 {
-    struct card *card        = subckt_card->nextcard;
-    char        *subckt_line = subckt_card->line;
-    char        *new_line, *param_ptr, *subckt_name, *end_ptr;
+    struct card *card = subckt_card->nextcard;
+    char *subckt_line = subckt_card->line;
+    char *new_line, *param_ptr, *subckt_name, *end_ptr;
 
     for (; card; card = card->nextcard) {
 
@@ -4113,7 +4222,8 @@ inp_add_params_to_subckt(struct names *subckt_w_params, struct card *subckt_card
             subckt_name = skip_ws(subckt_name);
             end_ptr = skip_non_ws(subckt_name);
             add_name(subckt_w_params, copy_substring(subckt_name, end_ptr));
-        } else {
+        }
+        else {
             new_line = tprintf("%s %s", subckt_line, param_ptr);
         }
 
@@ -4142,14 +4252,14 @@ inp_add_params_to_subckt(struct names *subckt_w_params, struct card *subckt_card
  *
  */
 
-static struct card *
-inp_reorder_params_subckt(struct names *subckt_w_params, struct card *subckt_card)
+static struct card *inp_reorder_params_subckt(
+        struct names *subckt_w_params, struct card *subckt_card)
 {
     struct card *first_param_card = NULL;
     struct card *last_param_card = NULL;
 
     struct card *prev_card = subckt_card;
-    struct card *c         = subckt_card->nextcard;
+    struct card *c = subckt_card->nextcard;
 
     /* move .param lines to beginning of deck */
     while (c != NULL) {
@@ -4164,13 +4274,14 @@ inp_reorder_params_subckt(struct names *subckt_w_params, struct card *subckt_car
 
         if (ciprefix(".subckt", curr_line)) {
             prev_card = inp_reorder_params_subckt(subckt_w_params, c);
-            c         = prev_card->nextcard;
+            c = prev_card->nextcard;
             continue;
         }
 
         if (ciprefix(".ends", curr_line)) {
             if (first_param_card) {
-                inp_sort_params(first_param_card, subckt_card, subckt_card->nextcard, c);
+                inp_sort_params(first_param_card, subckt_card,
+                        subckt_card->nextcard, c);
                 inp_add_params_to_subckt(subckt_w_params, subckt_card);
             }
             return c;
@@ -4189,7 +4300,7 @@ inp_reorder_params_subckt(struct names *subckt_w_params, struct card *subckt_car
         }
 
         prev_card = c;
-        c         = c->nextcard;
+        c = c->nextcard;
     }
 
     /* the terminating `.ends' deck wasn't found */
@@ -4197,8 +4308,8 @@ inp_reorder_params_subckt(struct names *subckt_w_params, struct card *subckt_car
 }
 
 
-static void
-inp_reorder_params(struct names *subckt_w_params, struct card *list_head)
+static void inp_reorder_params(
+        struct names *subckt_w_params, struct card *list_head)
 {
     struct card *first_param_card = NULL;
     struct card *last_param_card = NULL;
@@ -4219,13 +4330,14 @@ inp_reorder_params(struct names *subckt_w_params, struct card *list_head)
 
         if (ciprefix(".subckt", curr_line)) {
             prev_card = inp_reorder_params_subckt(subckt_w_params, c);
-            c         = prev_card->nextcard;
+            c = prev_card->nextcard;
             continue;
         }
 
         /* check for an unexpected extra `.ends' deck */
         if (ciprefix(".ends", curr_line)) {
-            fprintf(stderr, "Error: Unexpected extra .ends in line:\n  %s.\n", curr_line);
+            fprintf(stderr, "Error: Unexpected extra .ends in line:\n  %s.\n",
+                    curr_line);
             controlled_exit(EXIT_FAILURE);
         }
 
@@ -4254,8 +4366,7 @@ inp_reorder_params(struct names *subckt_w_params, struct card *list_head)
 // split line up into multiple lines and place those new lines immediately
 // afetr the current multi-param line in the deck
 
-static int
-inp_split_multi_param_lines(struct card *card, int line_num)
+static int inp_split_multi_param_lines(struct card *card, int line_num)
 {
     for (; card; card = card->nextcard) {
 
@@ -4281,7 +4392,7 @@ inp_split_multi_param_lines(struct card *card, int line_num)
 
             // need to split multi param line
             curr_line = card->line;
-            counter   = 0;
+            counter = 0;
             while ((equal_ptr = find_assignment(curr_line)) != NULL) {
 
                 char *beg_param, *end_param;
@@ -4292,7 +4403,9 @@ inp_split_multi_param_lines(struct card *card, int line_num)
                 beg_param = skip_back_ws(equal_ptr, curr_line);
                 beg_param = skip_back_non_ws(beg_param, curr_line);
                 end_param = skip_ws(equal_ptr + 1);
-                while (*end_param != '\0' && (!isspace_c(*end_param) || get_expression || get_paren_expression)) {
+                while (*end_param != '\0' &&
+                        (!isspace_c(*end_param) || get_expression ||
+                                get_paren_expression)) {
                     if (*end_param == '{')
                         get_expression = TRUE;
                     if (*end_param == '(')
@@ -4307,7 +4420,8 @@ inp_split_multi_param_lines(struct card *card, int line_num)
                 if (end_param[-1] == ',')
                     end_param--;
 
-                array[counter++] = tprintf(".param %.*s", (int) (end_param - beg_param), beg_param);
+                array[counter++] = tprintf(".param %.*s",
+                        (int) (end_param - beg_param), beg_param);
 
                 curr_line = end_param;
             }
@@ -4326,15 +4440,13 @@ inp_split_multi_param_lines(struct card *card, int line_num)
 }
 
 
-static int
-identifier_char(char c)
+static int identifier_char(char c)
 {
     return (c == '_') || isalnum_c(c);
 }
 
 
-static bool
-b_transformation_wanted(const char *p)
+static bool b_transformation_wanted(const char *p)
 {
     const char *start = p;
 
@@ -4355,8 +4467,7 @@ b_transformation_wanted(const char *p)
 }
 
 
-char *
-search_identifier(char *str, const char *identifier, char *str_begin)
+char *search_identifier(char *str, const char *identifier, char *str_begin)
 {
     while ((str = strstr(str, identifier)) != NULL) {
         char before;
@@ -4366,9 +4477,11 @@ search_identifier(char *str, const char *identifier, char *str_begin)
         else
             before = '\0';
 
-        if (is_arith_char(before) || isspace_c(before) || strchr("=,{", before)) {
+        if (is_arith_char(before) || isspace_c(before) ||
+                strchr("=,{", before)) {
             char after = str[strlen(identifier)];
-            if (is_arith_char(after) || isspace_c(after) || strchr(",}", after))
+            if (is_arith_char(after) || isspace_c(after) ||
+                    strchr(",}", after))
                 return str;
         }
 
@@ -4379,8 +4492,7 @@ search_identifier(char *str, const char *identifier, char *str_begin)
 }
 
 
-char *
-ya_search_identifier(char *str, const char *identifier, char *str_begin)
+char *ya_search_identifier(char *str, const char *identifier, char *str_begin)
 {
     while ((str = strstr(str, identifier)) != NULL) {
         char before;
@@ -4390,7 +4502,8 @@ ya_search_identifier(char *str, const char *identifier, char *str_begin)
         else
             before = '\0';
 
-        if (is_arith_char(before) || isspace_c(before) || (str <= str_begin)) {
+        if (is_arith_char(before) || isspace_c(before) ||
+                (str <= str_begin)) {
             char after = str[strlen(identifier)];
             if ((is_arith_char(after) || isspace_c(after) || after == '\0'))
                 break;
@@ -4403,8 +4516,7 @@ ya_search_identifier(char *str, const char *identifier, char *str_begin)
 }
 
 
-static char *
-search_plain_identifier(char *str, const char *identifier)
+static char *search_plain_identifier(char *str, const char *identifier)
 {
     char *str_begin = str;
 
@@ -4438,7 +4550,8 @@ search_plain_identifier(char *str, const char *identifier)
    GD16 16 1 TABLE {V(16,1)} ((-100V,-1pV)(0,0)(1m,1u)(2m,1m))
    -->
    GD16 16 1 int_16 int_1 1
-   BGD16 int_16 int_1 V = pwl (v(16,1) , -100V , -1pV , 0 , 0 , 1m , 1u , 2m , 1m)
+   BGD16 int_16 int_1 V = pwl (v(16,1) , -100V , -1pV , 0 , 0 , 1m , 1u , 2m ,
+   1m)
 */
 
 /* hs compatibility:
@@ -4483,8 +4596,7 @@ search_plain_identifier(char *str, const char *identifier)
 
 */
 
-static void
-inp_compat(struct card *card)
+static void inp_compat(struct card *card)
 {
     char *str_ptr, *cut_line, *title_tok, *node1, *node2;
     char *out_ptr, *exp_ptr, *beg_ptr, *end_ptr, *copy_ptr, *del_ptr;
@@ -4503,12 +4615,14 @@ inp_compat(struct card *card)
 
         /* exclude any command inside .control ... .endc */
         if (ciprefix(".control", curr_line)) {
-            skip_control ++;
+            skip_control++;
             continue;
-        } else if (ciprefix(".endc", curr_line)) {
-            skip_control --;
+        }
+        else if (ciprefix(".endc", curr_line)) {
+            skip_control--;
             continue;
-        } else if (skip_control > 0) {
+        }
+        else if (skip_control > 0) {
             continue;
         }
 
@@ -4523,7 +4637,8 @@ inp_compat(struct card *card)
             /* Exxx n1 n2 value={equation}
                -->
                Exxx n1 n2   vol={equation} */
-            if ((str_ptr = search_plain_identifier(curr_line, "value")) != NULL) {
+            if ((str_ptr = search_plain_identifier(curr_line, "value")) !=
+                    NULL) {
                 if (str_ptr[5] == '=')
                     *str_ptr++ = ' ';
                 strncpy(str_ptr, " vol=", 5);
@@ -4531,20 +4646,22 @@ inp_compat(struct card *card)
             /* Exxx n1 n2 TABLE {expression} = (x0, y0) (x1, y1) (x2, y2)
                -->
                Exxx n1 n2 int1 0 1
-               BExxx int1 0 V = pwl (expression, x0-(x2-x0)/2, y0, x0, y0, x1, y1, x2, y2, x2+(x2-x0)/2, y2)
+               BExxx int1 0 V = pwl (expression, x0-(x2-x0)/2, y0, x0, y0, x1,
+               y1, x2, y2, x2+(x2-x0)/2, y2)
             */
             if ((str_ptr = strstr(curr_line, "table")) != NULL) {
-                char *expression, *firstno, *ffirstno, *secondno, *midline, *lastno, *lastlastno;
+                char *expression, *firstno, *ffirstno, *secondno, *midline,
+                        *lastno, *lastlastno;
                 double fnumber, lnumber, delta;
                 int nerror;
                 cut_line = curr_line;
                 /* title and nodes */
                 title_tok = gettok(&cut_line);
-                node1 =  gettok(&cut_line);
-                node2 =  gettok(&cut_line);
+                node1 = gettok(&cut_line);
+                node2 = gettok(&cut_line);
                 // Exxx  n1 n2 int1 0 1
-                ckt_array[0] = tprintf("%s %s %s %s_int1 0 1",
-                        title_tok, node1, node2, title_tok);
+                ckt_array[0] = tprintf("%s %s %s %s_int1 0 1", title_tok,
+                        node1, node2, title_tok);
                 // skip "table"
                 cut_line = skip_ws(cut_line);
                 if (ciprefix("table", cut_line)) {
@@ -4554,10 +4671,12 @@ inp_compat(struct card *card)
                     if (*cut_line == '=')
                         *cut_line++ = ' ';
                     // get the expression
-                    str_ptr =  gettok_char(&cut_line, '{', FALSE, FALSE);
-                    expression = gettok_char(&cut_line, '}', TRUE, TRUE); /* expression */
+                    str_ptr = gettok_char(&cut_line, '{', FALSE, FALSE);
+                    expression = gettok_char(
+                            &cut_line, '}', TRUE, TRUE); /* expression */
                     if (!expression || !str_ptr) {
-                        fprintf(stderr, "Error: bad syntax in line %d\n  %s\n",
+                        fprintf(stderr,
+                                "Error: bad syntax in line %d\n  %s\n",
                                 card->linenum_orig, card->line);
                         controlled_exit(EXIT_BAD);
                     }
@@ -4567,8 +4686,8 @@ inp_compat(struct card *card)
                         *str_ptr = ' ';
                     if ((str_ptr = strchr(expression, '}')) != NULL)
                         *str_ptr = ' ';
-                    /* cut_line may now have a '=', if yes, it will have '{' and '}'
-                       (braces around token after '=') */
+                    /* cut_line may now have a '=', if yes, it will have '{'
+                       and '}' (braces around token after '=') */
                     if ((str_ptr = strchr(cut_line, '=')) != NULL)
                         *str_ptr = ' ';
                     if ((str_ptr = strchr(cut_line, '{')) != NULL)
@@ -4579,7 +4698,8 @@ inp_compat(struct card *card)
                     str_ptr = cut_line;
                     ffirstno = gettok_node(&cut_line);
                     if (!ffirstno) {
-                        fprintf(stderr, "Error: bad syntax in line %d\n  %s\n",
+                        fprintf(stderr,
+                                "Error: bad syntax in line %d\n  %s\n",
                                 card->linenum_orig, card->line);
                         controlled_exit(EXIT_BAD);
                     }
@@ -4589,7 +4709,9 @@ inp_compat(struct card *card)
                     midline = cut_line;
                     cut_line = strrchr(str_ptr, '(');
                     if (!cut_line) {
-                        fprintf(stderr, "Error: bad syntax in line %d (missing parentheses)\n  %s\n",
+                        fprintf(stderr,
+                                "Error: bad syntax in line %d (missing "
+                                "parentheses)\n  %s\n",
                                 card->linenum_orig, card->line);
                         controlled_exit(EXIT_BAD);
                     }
@@ -4602,17 +4724,22 @@ inp_compat(struct card *card)
                     /* scan for last two numbers */
                     lastno = gettok_node(&cut_line);
                     lnumber = INPevaluate(&lastno, &nerror, FALSE);
-                    /* check for max-min and take half the difference for delta */
-                    delta = (lnumber-fnumber)/2.;
+                    /* check for max-min and take half the difference for
+                     * delta */
+                    delta = (lnumber - fnumber) / 2.;
                     lastlastno = gettok_node(&cut_line);
-                    if (!secondno || (*midline == '\0') || (delta <= 0.) || !lastlastno) {
-                        fprintf(stderr, "Error: bad syntax in line %d\n  %s\n",
+                    if (!secondno || (*midline == '\0') || (delta <= 0.) ||
+                            !lastlastno) {
+                        fprintf(stderr,
+                                "Error: bad syntax in line %d\n  %s\n",
                                 card->linenum_orig, card->line);
                         controlled_exit(EXIT_BAD);
                     }
-                    ckt_array[1] = tprintf("b%s %s_int1 0 v = pwl(%s, %e, %s, %s, %s, %s, %e, %s)",
-                            title_tok, title_tok, expression, fnumber-delta, secondno, firstno, secondno,
-                            midline, lnumber + delta, lastlastno);
+                    ckt_array[1] = tprintf("b%s %s_int1 0 v = pwl(%s, %e, "
+                                           "%s, %s, %s, %s, %e, %s)",
+                            title_tok, title_tok, expression, fnumber - delta,
+                            secondno, firstno, secondno, midline,
+                            lnumber + delta, lastlastno);
 
                     // comment out current variable e line
                     *(card->line) = '*';
@@ -4622,7 +4749,6 @@ inp_compat(struct card *card)
 
                     tfree(firstno);
                     tfree(lastlastno);
-
                 }
                 else {
                     /* not used */
@@ -4638,25 +4764,29 @@ inp_compat(struct card *card)
                BExxx int1 0 V = {equation}
             */
             /* search for ' vol=' or ' vol =' */
-            if (((str_ptr = strchr(curr_line, '=')) != NULL) && prefix("vol", skip_back_non_ws(skip_back_ws(str_ptr, curr_line), curr_line))) {
+            if (((str_ptr = strchr(curr_line, '=')) != NULL) &&
+                    prefix("vol",
+                            skip_back_non_ws(skip_back_ws(str_ptr, curr_line),
+                                    curr_line))) {
                 cut_line = curr_line;
                 /* title and nodes */
                 title_tok = gettok(&cut_line);
-                node1 =  gettok(&cut_line);
-                node2 =  gettok(&cut_line);
+                node1 = gettok(&cut_line);
+                node2 = gettok(&cut_line);
                 /* Find equation, starts with '{', till end of line */
                 str_ptr = strchr(cut_line, '{');
                 if (str_ptr == NULL) {
-                    fprintf(stderr, "ERROR: mal formed E line: %s\n", curr_line);
+                    fprintf(stderr, "ERROR: mal formed E line: %s\n",
+                            curr_line);
                     controlled_exit(EXIT_FAILURE);
                 }
 
                 // Exxx  n1 n2 int1 0 1
-                ckt_array[0] = tprintf("%s %s %s %s_int1 0 1",
-                        title_tok, node1, node2, title_tok);
+                ckt_array[0] = tprintf("%s %s %s %s_int1 0 1", title_tok,
+                        node1, node2, title_tok);
                 // BExxx int1 0 V = {equation}
-                ckt_array[1] = tprintf("b%s %s_int1 0 v = %s",
-                        title_tok, title_tok, str_ptr);
+                ckt_array[1] = tprintf("b%s %s_int1 0 v = %s", title_tok,
+                        title_tok, str_ptr);
 
                 // comment out current variable e line
                 *(card->line) = '*';
@@ -4668,7 +4798,8 @@ inp_compat(struct card *card)
                 tfree(node1);
                 tfree(node2);
             }
-        } else if (*curr_line == 'g') {
+        }
+        else if (*curr_line == 'g') {
             /* Gxxx n1 n2 VCCS n3 n4 tr --> Gxxx n1 n2 n3 n4 tr
                remove vccs */
             replace_token(curr_line, "vccs", 4, 7);
@@ -4676,7 +4807,8 @@ inp_compat(struct card *card)
             /* Gxxx n1 n2 value={equation}
                -->
                Gxxx n1 n2   cur={equation} */
-            if ((str_ptr = search_plain_identifier(curr_line, "value")) != NULL) {
+            if ((str_ptr = search_plain_identifier(curr_line, "value")) !=
+                    NULL) {
                 if (str_ptr[5] == '=')
                     *str_ptr++ = ' ';
                 strncpy(str_ptr, " cur=", 5);
@@ -4685,31 +4817,33 @@ inp_compat(struct card *card)
             /* Gxxx n1 n2 TABLE {expression} = (x0, y0) (x1, y1) (x2, y2)
                -->
                Gxxx n1 n2 int1 0 1
-               BGxxx int1 0 V = pwl (expression, x0-(x2-x0)/2, y0, x0, y0, x1, y1, x2, y2, x2+(x2-x0)/2, y2)
+               BGxxx int1 0 V = pwl (expression, x0-(x2-x0)/2, y0, x0, y0, x1,
+               y1, x2, y2, x2+(x2-x0)/2, y2)
             */
             if ((str_ptr = strstr(curr_line, "table")) != NULL) {
-                char *expression, *firstno, *ffirstno, *ffirstnof, *secondno, *midline, *lastno, *lastnof, *lastlastno;
+                char *expression, *firstno, *ffirstno, *ffirstnof, *secondno,
+                        *midline, *lastno, *lastnof, *lastlastno;
                 char *m_ptr, *m_token;
                 double fnumber, lnumber, delta;
                 int nerror;
                 cut_line = curr_line;
                 /* title and nodes */
                 title_tok = gettok(&cut_line);
-                node1 =  gettok(&cut_line);
-                node2 =  gettok(&cut_line);
+                node1 = gettok(&cut_line);
+                node2 = gettok(&cut_line);
                 // Gxxx  n1 n2 int1 0 1
                 // or
                 // Gxxx  n1 n2 int1 0 m='expr'
                 /* find multiplier m at end of line */
                 m_ptr = strstr(cut_line, "m=");
                 if (m_ptr) {
-                    m_token = copy(m_ptr + 2);  // get only the expression
+                    m_token = copy(m_ptr + 2); // get only the expression
                     *m_ptr = '\0';
                 }
                 else
                     m_token = copy("1");
-                ckt_array[0] = tprintf("%s %s %s %s_int1 0 %s",
-                        title_tok, node1, node2, title_tok, m_token);
+                ckt_array[0] = tprintf("%s %s %s %s_int1 0 %s", title_tok,
+                        node1, node2, title_tok, m_token);
                 // skip "table"
                 cut_line = skip_ws(cut_line);
                 if (!ciprefix("table", cut_line)) {
@@ -4722,8 +4856,9 @@ inp_compat(struct card *card)
                 if (*cut_line == '=')
                     *cut_line++ = ' ';
                 // get the expression
-                str_ptr =  gettok_char(&cut_line, '{', FALSE, FALSE);
-                expression = gettok_char(&cut_line, '}', TRUE, TRUE); /* expression */
+                str_ptr = gettok_char(&cut_line, '{', FALSE, FALSE);
+                expression = gettok_char(
+                        &cut_line, '}', TRUE, TRUE); /* expression */
                 if (!expression || !str_ptr) {
                     fprintf(stderr, "Error: bad syntax in line %d\n  %s\n",
                             card->linenum_orig, card->line);
@@ -4735,8 +4870,8 @@ inp_compat(struct card *card)
                     *str_ptr = ' ';
                 if ((str_ptr = strchr(expression, '}')) != NULL)
                     *str_ptr = ' ';
-                /* cut_line may now have a '=', if yes, it will have '{' and '}'
-                   (braces around token after '=') */
+                /* cut_line may now have a '=', if yes, it will have '{' and
+                   '}' (braces around token after '=') */
                 if ((str_ptr = strchr(cut_line, '=')) != NULL)
                     *str_ptr = ' ';
                 if ((str_ptr = strchr(cut_line, '{')) != NULL)
@@ -4766,17 +4901,21 @@ inp_compat(struct card *card)
                 lastnof = lastno = gettok_node(&cut_line);
                 lnumber = INPevaluate(&lastno, &nerror, FALSE);
                 /* check for max-min and take half the difference for delta */
-                delta = (lnumber-fnumber)/2.;
+                delta = (lnumber - fnumber) / 2.;
                 lastlastno = gettok_node(&cut_line);
-                if (!secondno || (*midline == '\0') || (delta <= 0.) || !lastlastno) {
+                if (!secondno || (*midline == '\0') || (delta <= 0.) ||
+                        !lastlastno) {
                     fprintf(stderr, "Error: bad syntax in line %d\n  %s\n",
                             card->linenum_orig, card->line);
                     controlled_exit(EXIT_BAD);
                 }
-                /* BGxxx int1 0 V = pwl (expression, x0-(x2-x0)/2, y0, x0, y0, x1, y1, x2, y2, x2+(x2-x0)/2, y2) */
-                ckt_array[1] = tprintf("b%s %s_int1 0 v = pwl(%s, %e, %s, %s, %s, %s, %e, %s)",
-                        title_tok, title_tok, expression, fnumber-delta, secondno, firstno, secondno,
-                        midline, lnumber + delta, lastlastno);
+                /* BGxxx int1 0 V = pwl (expression, x0-(x2-x0)/2, y0, x0, y0,
+                 * x1, y1, x2, y2, x2+(x2-x0)/2, y2) */
+                ckt_array[1] = tprintf("b%s %s_int1 0 v = pwl(%s, %e, %s, "
+                                       "%s, %s, %s, %e, %s)",
+                        title_tok, title_tok, expression, fnumber - delta,
+                        secondno, firstno, secondno, midline, lnumber + delta,
+                        lastlastno);
 
                 // comment out current variable e line
                 *(card->line) = '*';
@@ -4785,9 +4924,9 @@ inp_compat(struct card *card)
                     card = insert_new_line(card, ckt_array[i], 0, 0);
 
                 tfree(firstno);
-                tfree(ffirstnof);                
+                tfree(ffirstnof);
                 tfree(secondno);
-                tfree(lastnof);               
+                tfree(lastnof);
                 tfree(lastlastno);
                 tfree(expression);
                 tfree(title_tok);
@@ -4802,23 +4941,27 @@ inp_compat(struct card *card)
               BGxxx int1 0 V = {equation}
             */
             /* search for ' cur=' or ' cur =' */
-            if (((str_ptr = strchr(curr_line, '=')) != NULL) && prefix("cur", skip_back_non_ws(skip_back_ws(str_ptr, curr_line), curr_line))) {
+            if (((str_ptr = strchr(curr_line, '=')) != NULL) &&
+                    prefix("cur",
+                            skip_back_non_ws(skip_back_ws(str_ptr, curr_line),
+                                    curr_line))) {
                 char *m_ptr, *m_token;
                 cut_line = curr_line;
                 /* title and nodes */
                 title_tok = gettok(&cut_line);
-                node1 =  gettok(&cut_line);
-                node2 =  gettok(&cut_line);
+                node1 = gettok(&cut_line);
+                node2 = gettok(&cut_line);
                 /* Find equation, starts with '{', till end of line */
                 str_ptr = strchr(cut_line, '{');
                 if (str_ptr == NULL) {
-                    fprintf(stderr, "ERROR: mal formed G line: %s\n", curr_line);
+                    fprintf(stderr, "ERROR: mal formed G line: %s\n",
+                            curr_line);
                     controlled_exit(EXIT_FAILURE);
                 }
                 /* find multiplier m at end of line */
                 m_ptr = strstr(cut_line, "m=");
                 if (m_ptr) {
-                    m_token = copy(m_ptr + 2); //get only the expression
+                    m_token = copy(m_ptr + 2); // get only the expression
                     *m_ptr = '\0';
                 }
                 else
@@ -4826,11 +4969,11 @@ inp_compat(struct card *card)
                 // Gxxx  n1 n2 int1 0 1
                 // or
                 // Gxxx  n1 n2 int1 0 m='expr'
-                ckt_array[0] = tprintf("%s %s %s %s_int1 0 %s",
-                        title_tok, node1, node2, title_tok, m_token);
+                ckt_array[0] = tprintf("%s %s %s %s_int1 0 %s", title_tok,
+                        node1, node2, title_tok, m_token);
                 // BGxxx int1 0 V = {equation}
-                ckt_array[1] = tprintf("b%s %s_int1 0 v = %s",
-                        title_tok, title_tok, str_ptr);
+                ckt_array[1] = tprintf("b%s %s_int1 0 v = %s", title_tok,
+                        title_tok, str_ptr);
 
                 // comment out current variable g line
                 *(card->line) = '*';
@@ -4858,8 +5001,8 @@ inp_compat(struct card *card)
             if (search_identifier(curr_line, "temper", curr_line)) {
                 cut_line = curr_line;
                 title_tok = gettok(&cut_line);
-                node1 =  gettok(&cut_line);
-                node2 =  gettok(&cut_line);
+                node1 = gettok(&cut_line);
+                node2 = gettok(&cut_line);
                 vnamstr = gettok(&cut_line);
                 equastr = gettok(&cut_line);
                 /*
@@ -4869,15 +5012,15 @@ inp_compat(struct card *card)
                 bFxxx int1 0 i = i(vnam)*{equation}
                 vbFxxx int1 0 0
                 */
-                //Fxxx n1 n2 VBFxxx -1
-                ckt_array[0] = tprintf("%s %s %s vb%s -1",
-                        title_tok, node1, node2, title_tok);
-                //BFxxx BFxxx_int1 0 I = I(vnam)*{equation}
+                // Fxxx n1 n2 VBFxxx -1
+                ckt_array[0] = tprintf("%s %s %s vb%s -1", title_tok, node1,
+                        node2, title_tok);
+                // BFxxx BFxxx_int1 0 I = I(vnam)*{equation}
                 ckt_array[1] = tprintf("b%s %s_int1 0 i = i(%s) * (%s)",
                         title_tok, title_tok, vnamstr, equastr);
-                //VBFxxx int1 0 0
-                ckt_array[2] = tprintf("vb%s %s_int1 0 dc 0",
-                        title_tok, title_tok);
+                // VBFxxx int1 0 0
+                ckt_array[2] =
+                        tprintf("vb%s %s_int1 0 dc 0", title_tok, title_tok);
                 // comment out current variable f line
                 *(card->line) = '*';
                 // insert new three lines immediately after current line
@@ -4904,8 +5047,8 @@ inp_compat(struct card *card)
             if (search_identifier(curr_line, "temper", curr_line)) {
                 cut_line = curr_line;
                 title_tok = gettok(&cut_line);
-                node1 =  gettok(&cut_line);
-                node2 =  gettok(&cut_line);
+                node1 = gettok(&cut_line);
+                node2 = gettok(&cut_line);
                 vnamstr = gettok(&cut_line);
                 equastr = gettok(&cut_line);
                 /*
@@ -4915,15 +5058,15 @@ inp_compat(struct card *card)
                 bHxxx int1 0 i = i(vnam)*{equation}
                 vbHxxx int1 0 0
                 */
-                //Hxxx n1 n2 VBHxxx -1
-                ckt_array[0] = tprintf("%s %s %s vb%s -1",
-                        title_tok, node1, node2, title_tok);
-                //BHxxx BHxxx_int1 0 I = I(vnam)*{equation}
+                // Hxxx n1 n2 VBHxxx -1
+                ckt_array[0] = tprintf("%s %s %s vb%s -1", title_tok, node1,
+                        node2, title_tok);
+                // BHxxx BHxxx_int1 0 I = I(vnam)*{equation}
                 ckt_array[1] = tprintf("b%s %s_int1 0 i = i(%s) * (%s)",
                         title_tok, title_tok, vnamstr, equastr);
-                //VBHxxx int1 0 0
-                ckt_array[2] = tprintf("vb%s %s_int1 0 dc 0",
-                        title_tok, title_tok);
+                // VBHxxx int1 0 0
+                ckt_array[2] =
+                        tprintf("vb%s %s_int1 0 dc 0", title_tok, title_tok);
                 // comment out current variable h line
                 *(card->line) = '*';
                 // insert new three lines immediately after current line
@@ -4946,9 +5089,10 @@ inp_compat(struct card *card)
             cut_line = curr_line;
             /* make BRxxx pos neg I = V(pos, neg)/{equation}*/
             title_tok = gettok(&cut_line);
-            node1 =  gettok(&cut_line);
-            node2 =  gettok(&cut_line);
-            /* check only after skipping Rname and nodes, either may contain time (e.g. Rtime)*/
+            node1 = gettok(&cut_line);
+            node2 = gettok(&cut_line);
+            /* check only after skipping Rname and nodes, either may contain
+             * time (e.g. Rtime)*/
             if (!b_transformation_wanted(cut_line)) {
                 tfree(title_tok);
                 tfree(node1);
@@ -4962,7 +5106,8 @@ inp_compat(struct card *card)
                 /* if not, equation may start with a '(' */
                 str_ptr = strchr(cut_line, '(');
                 if (str_ptr == NULL) {
-                    fprintf(stderr, "ERROR: mal formed R line: %s\n", curr_line);
+                    fprintf(stderr, "ERROR: mal formed R line: %s\n",
+                            curr_line);
                     controlled_exit(EXIT_FAILURE);
                 }
                 equation = gettok_char(&str_ptr, ')', TRUE, TRUE);
@@ -4972,7 +5117,8 @@ inp_compat(struct card *card)
             str_ptr = strstr(cut_line, "tc1");
             if (str_ptr) {
                 /* We need to have 'tc1=something */
-                if (str_ptr[3] && (isspace_c(str_ptr[3]) || (str_ptr[3] == '='))) {
+                if (str_ptr[3] &&
+                        (isspace_c(str_ptr[3]) || (str_ptr[3] == '='))) {
                     tc1_ptr = strchr(str_ptr, '=');
                     if (tc1_ptr) {
                         tc1_ptr++;
@@ -4984,7 +5130,8 @@ inp_compat(struct card *card)
             str_ptr = strstr(cut_line, "tc2");
             if (str_ptr) {
                 /* We need to have 'tc2=something */
-                if (str_ptr[3] && (isspace_c(str_ptr[3]) || (str_ptr[3] == '='))) {
+                if (str_ptr[3] &&
+                        (isspace_c(str_ptr[3]) || (str_ptr[3] == '='))) {
                     tc2_ptr = strchr(str_ptr, '=');
                     if (tc2_ptr) {
                         tc2_ptr++;
@@ -4997,54 +5144,50 @@ inp_compat(struct card *card)
             /* white noise model by x2line, x3line, x4line
                if instance parameter noisy=1 (or noise=1) is set */
             bool rnoise = FALSE;
-            if(strstr(cut_line, "noisy=1") || strstr(cut_line, "noise=1"))
+            if (strstr(cut_line, "noisy=1") || strstr(cut_line, "noise=1"))
                 rnoise = TRUE;
 
             if ((tc1_ptr == NULL) && (tc2_ptr == NULL)) {
-                xline = tprintf("b%s %s %s i = v(%s, %s)/(%s)", title_tok, node1, node2,
-                        node1, node2, equation);
-                if(rnoise){
+                xline = tprintf("b%s %s %s i = v(%s, %s)/(%s)", title_tok,
+                        node1, node2, node1, node2, equation);
+                if (rnoise) {
                     x2line = tprintf("b%s_1 %s %s i = i(v%s_3)/sqrt(%s)",
-                                     title_tok, node1, node2,
-                                     title_tok,
-                                     equation);
-                    x3line = tprintf("r%s_2 %s_3 0 1.0",
-                                     title_tok, title_tok);
-                    x4line = tprintf("v%s_3 %s_3 0 0",
-                                     title_tok, title_tok);
+                            title_tok, node1, node2, title_tok, equation);
+                    x3line =
+                            tprintf("r%s_2 %s_3 0 1.0", title_tok, title_tok);
+                    x4line = tprintf("v%s_3 %s_3 0 0", title_tok, title_tok);
                 }
-            } else if (tc2_ptr == NULL) {
-                xline = tprintf("b%s %s %s i = v(%s, %s)/(%s) tc1=%15.8e reciproctc=1", title_tok, node1, node2,
-                        node1, node2, equation, tc1);
-                if(rnoise) {
+            }
+            else if (tc2_ptr == NULL) {
+                xline = tprintf("b%s %s %s i = v(%s, %s)/(%s) tc1=%15.8e "
+                                "reciproctc=1",
+                        title_tok, node1, node2, node1, node2, equation, tc1);
+                if (rnoise) {
                     x2line = tprintf("b%s_1 %s %s i = i(v%s_3)/sqrt(%s)",
-                                     title_tok, node1, node2,
-                                     title_tok,
-                                     equation);
-                    x3line = tprintf("r%s_2 %s_3 0 1.0 tc1=%15.8e",
-                                     title_tok, title_tok, tc1);
-                    x4line = tprintf("v%s_3 %s_3 0 0",
-                                     title_tok, title_tok);
+                            title_tok, node1, node2, title_tok, equation);
+                    x3line = tprintf("r%s_2 %s_3 0 1.0 tc1=%15.8e", title_tok,
+                            title_tok, tc1);
+                    x4line = tprintf("v%s_3 %s_3 0 0", title_tok, title_tok);
                 }
-            } else {
-                xline = tprintf("b%s %s %s i = v(%s, %s)/(%s) tc1=%15.8e tc2=%15.8e reciproctc=1", title_tok, node1, node2,
-                        node1, node2, equation, tc1, tc2);
-                if(rnoise) {
+            }
+            else {
+                xline = tprintf("b%s %s %s i = v(%s, %s)/(%s) tc1=%15.8e "
+                                "tc2=%15.8e reciproctc=1",
+                        title_tok, node1, node2, node1, node2, equation, tc1,
+                        tc2);
+                if (rnoise) {
                     x2line = tprintf("b%s_1 %s %s i = i(v%s_3)/sqrt(%s)",
-                                     title_tok, node1, node2,
-                                     title_tok,
-                                     equation);
+                            title_tok, node1, node2, title_tok, equation);
                     x3line = tprintf("r%s_2 %s_3 0 1.0 tc1=%15.8e tc2=%15.8e",
-                                     title_tok, title_tok, tc1, tc2);
-                    x4line = tprintf("v%s_3 %s_3 0 0",
-                                     title_tok, title_tok);
+                            title_tok, title_tok, tc1, tc2);
+                    x4line = tprintf("v%s_3 %s_3 0 0", title_tok, title_tok);
                 }
             }
             tc1_ptr = NULL;
             tc2_ptr = NULL;
 
             // comment out current old R line
-            *(card->line)   = '*';
+            *(card->line) = '*';
             // insert new B source line immediately after current line
             card = insert_new_line(card, xline, 0, 0);
             if (rnoise) {
@@ -5067,9 +5210,10 @@ inp_compat(struct card *card)
         else if (*curr_line == 'c') {
             cut_line = curr_line;
             title_tok = gettok(&cut_line);
-            node1 =  gettok(&cut_line);
-            node2 =  gettok(&cut_line);
-            /* check only after skipping Cname and nodes, either may contain time (e.g. Ctime)*/
+            node1 = gettok(&cut_line);
+            node2 = gettok(&cut_line);
+            /* check only after skipping Cname and nodes, either may contain
+             * time (e.g. Ctime)*/
             if (!b_transformation_wanted(cut_line)) {
                 tfree(title_tok);
                 tfree(node1);
@@ -5083,7 +5227,8 @@ inp_compat(struct card *card)
                 /* if not, equation may start with a '(' */
                 str_ptr = strchr(cut_line, '(');
                 if (str_ptr == NULL) {
-                    fprintf(stderr, "ERROR: mal formed C line: %s\n", curr_line);
+                    fprintf(stderr, "ERROR: mal formed C line: %s\n",
+                            curr_line);
                     controlled_exit(EXIT_FAILURE);
                 }
                 equation = gettok_char(&str_ptr, ')', TRUE, TRUE);
@@ -5093,7 +5238,8 @@ inp_compat(struct card *card)
             str_ptr = strstr(cut_line, "tc1");
             if (str_ptr) {
                 /* We need to have 'tc1=something */
-                if (str_ptr[3] && (isspace_c(str_ptr[3]) || (str_ptr[3] == '='))) {
+                if (str_ptr[3] &&
+                        (isspace_c(str_ptr[3]) || (str_ptr[3] == '='))) {
                     tc1_ptr = strchr(str_ptr, '=');
                     if (tc1_ptr) {
                         tc1_ptr++;
@@ -5105,7 +5251,8 @@ inp_compat(struct card *card)
             str_ptr = strstr(cut_line, "tc2");
             if (str_ptr) {
                 /* We need to have 'tc2=something */
-                if (str_ptr[3] && (isspace_c(str_ptr[3]) || (str_ptr[3] == '='))) {
+                if (str_ptr[3] &&
+                        (isspace_c(str_ptr[3]) || (str_ptr[3] == '='))) {
                     tc2_ptr = strchr(str_ptr, '=');
                     if (tc2_ptr) {
                         tc2_ptr++;
@@ -5115,20 +5262,25 @@ inp_compat(struct card *card)
                 }
             }
             // Exxx  n-aux 0  n1 n2  1
-            ckt_array[0] = tprintf("e%s %s_int2 0 %s %s 1",
-                    title_tok, title_tok, node1, node2);
+            ckt_array[0] = tprintf("e%s %s_int2 0 %s %s 1", title_tok,
+                    title_tok, node1, node2);
             // Cxxx  n-aux 0  1
             ckt_array[1] = tprintf("c%s %s_int2 0 1", title_tok, title_tok);
             // Bxxx  n2 n1  I = i(Exxx) * equation
             if ((tc1_ptr == NULL) && (tc2_ptr == NULL)) {
                 ckt_array[2] = tprintf("b%s %s %s i = i(e%s) * (%s)",
                         title_tok, node2, node1, title_tok, equation);
-            } else if (tc2_ptr == NULL) {
-                ckt_array[2] = tprintf("b%s %s %s i = i(e%s) * (%s) tc1=%15.8e reciproctc=1",
+            }
+            else if (tc2_ptr == NULL) {
+                ckt_array[2] = tprintf(
+                        "b%s %s %s i = i(e%s) * (%s) tc1=%15.8e reciproctc=1",
                         title_tok, node2, node1, title_tok, equation, tc1);
-            } else {
-                ckt_array[2] = tprintf("b%s %s %s i = i(e%s) * (%s) tc1=%15.8e tc2=%15.8e reciproctc=1",
-                        title_tok, node2, node1, title_tok, equation, tc1, tc2);
+            }
+            else {
+                ckt_array[2] = tprintf("b%s %s %s i = i(e%s) * (%s) "
+                                       "tc1=%15.8e tc2=%15.8e reciproctc=1",
+                        title_tok, node2, node1, title_tok, equation, tc1,
+                        tc2);
             }
             tc1_ptr = NULL;
             tc2_ptr = NULL;
@@ -5154,8 +5306,8 @@ inp_compat(struct card *card)
             cut_line = curr_line;
             /* title and nodes */
             title_tok = gettok(&cut_line);
-            node1 =  gettok(&cut_line);
-            node2 =  gettok(&cut_line);
+            node1 = gettok(&cut_line);
+            node2 = gettok(&cut_line);
             if (!b_transformation_wanted(cut_line)) {
                 tfree(title_tok);
                 tfree(node1);
@@ -5169,7 +5321,8 @@ inp_compat(struct card *card)
                 /* if not, equation may start with a '(' */
                 str_ptr = strchr(cut_line, '(');
                 if (str_ptr == NULL) {
-                    fprintf(stderr, "ERROR: mal formed L line: %s\n", curr_line);
+                    fprintf(stderr, "ERROR: mal formed L line: %s\n",
+                            curr_line);
                     controlled_exit(EXIT_FAILURE);
                 }
                 equation = gettok_char(&str_ptr, ')', TRUE, TRUE);
@@ -5179,7 +5332,8 @@ inp_compat(struct card *card)
             str_ptr = strstr(cut_line, "tc1");
             if (str_ptr) {
                 /* We need to have 'tc1=something */
-                if (str_ptr[3] && (isspace_c(str_ptr[3]) || (str_ptr[3] == '='))) {
+                if (str_ptr[3] &&
+                        (isspace_c(str_ptr[3]) || (str_ptr[3] == '='))) {
                     tc1_ptr = strchr(str_ptr, '=');
                     if (tc1_ptr) {
                         tc1_ptr++;
@@ -5191,7 +5345,8 @@ inp_compat(struct card *card)
             str_ptr = strstr(cut_line, "tc2");
             if (str_ptr) {
                 /* We need to have 'tc2=something */
-                if (str_ptr[3] && (isspace_c(str_ptr[3]) || (str_ptr[3] == '='))) {
+                if (str_ptr[3] &&
+                        (isspace_c(str_ptr[3]) || (str_ptr[3] == '='))) {
                     tc2_ptr = strchr(str_ptr, '=');
                     if (tc2_ptr) {
                         tc2_ptr++;
@@ -5201,20 +5356,25 @@ inp_compat(struct card *card)
                 }
             }
             // Fxxx  n-aux 0  Bxxx  1
-            ckt_array[0] = tprintf("f%s %s_int2 0 b%s -1",
-                    title_tok, title_tok, title_tok);
+            ckt_array[0] = tprintf(
+                    "f%s %s_int2 0 b%s -1", title_tok, title_tok, title_tok);
             // Lxxx  n-aux 0  1
             ckt_array[1] = tprintf("l%s %s_int2 0 1", title_tok, title_tok);
             // Bxxx  n1 n2  V = v(n-aux) * equation
             if ((tc1_ptr == NULL) && (tc2_ptr == NULL)) {
                 ckt_array[2] = tprintf("b%s %s %s v = v(%s_int2) * (%s)",
                         title_tok, node1, node2, title_tok, equation);
-            } else if (tc2_ptr == NULL) {
-                ckt_array[2] = tprintf("b%s %s %s v = v(%s_int2) * (%s) tc1=%15.8e reciproctc=0",
+            }
+            else if (tc2_ptr == NULL) {
+                ckt_array[2] = tprintf("b%s %s %s v = v(%s_int2) * (%s) "
+                                       "tc1=%15.8e reciproctc=0",
                         title_tok, node2, node1, title_tok, equation, tc1);
-            } else {
-                ckt_array[2] = tprintf("b%s %s %s v = v(%s_int2) * (%s) tc1=%15.8e tc2=%15.8e reciproctc=0",
-                        title_tok, node2, node1, title_tok, equation, tc1, tc2);
+            }
+            else {
+                ckt_array[2] = tprintf("b%s %s %s v = v(%s_int2) * (%s) "
+                                       "tc1=%15.8e tc2=%15.8e reciproctc=0",
+                        title_tok, node2, node1, title_tok, equation, tc1,
+                        tc2);
             }
             tc1_ptr = NULL;
             tc2_ptr = NULL;
@@ -5251,18 +5411,21 @@ inp_compat(struct card *card)
              * + <TD=td> <FROM=val> <TO=val>
              * + <CROSS=# | CROSS=LAST> <RISE=#|RISE=LAST> <FALL=#|FALL=LAST>
              *
-             * .MEASURE {DC|AC|TRAN} result FIND out_variable WHEN out_variable2=val
+             * .MEASURE {DC|AC|TRAN} result FIND out_variable WHEN
+             out_variable2=val
              * + <TD=td> <FROM=val> <TO=val>
              * + <CROSS=# | CROSS=LAST> <RISE=#|RISE=LAST> <FALL=#|FALL=LAST>
              *
-             * .MEASURE {DC|AC|TRAN} result FIND out_variable WHEN out_variable2=out_variable3
+             * .MEASURE {DC|AC|TRAN} result FIND out_variable WHEN
+             out_variable2=out_variable3
              * + <TD=td>
              * + <CROSS=# | CROSS=LAST> <RISE=#|RISE=LAST> <FALL=#|FALL=LAST>
              *
              * .MEASURE {DC|AC|TRAN} result FIND out_variable AT=val
              * + <FROM=val> <TO=val>
              *
-             * .MEASURE {DC|AC|TRAN} result {AVG|MIN|MAX|MIN_AT|MAX_AT|PP|RMS} out_variable
+             * .MEASURE {DC|AC|TRAN} result {AVG|MIN|MAX|MIN_AT|MAX_AT|PP|RMS}
+             out_variable
              * + <TD=td> <FROM=val> <TO=val>
              *
              * .MEASURE {DC|AC|TRAN} result INTEG<RAL> out_variable
@@ -5270,18 +5433,22 @@ inp_compat(struct card *card)
              *
              * .MEASURE {DC|AC|TRAN} result DERIV<ATIVE> out_variable AT=val
              *
-             * .MEASURE {DC|AC|TRAN} result DERIV<ATIVE> out_variable WHEN out_variable2=val
+             * .MEASURE {DC|AC|TRAN} result DERIV<ATIVE> out_variable WHEN
+             out_variable2=val
              * + <TD=td>
              * + <CROSS=# | CROSS=LAST> <RISE=#|RISE=LAST> <FALL=#|FALL=LAST>
              *
-             * .MEASURE {DC|AC|TRAN} result DERIV<ATIVE> out_variable WHEN out_variable2=out_variable3
+             * .MEASURE {DC|AC|TRAN} result DERIV<ATIVE> out_variable WHEN
+             out_variable2=out_variable3
              * + <TD=td>
              * + <CROSS=# | CROSS=LAST> <RISE=#|RISE=LAST> <FALL=#|FALL=LAST>
 
              The user may set any out_variable to par(' expr ').
              We have to replace this by v(pa_xx) and generate a B source line.
 
-             * ----------------------------------------------------------------- */
+             *
+             -----------------------------------------------------------------
+           */
             if (ciprefix(".meas", curr_line)) {
                 if (strstr(curr_line, "par(") == NULL)
                     continue;
@@ -5289,24 +5456,28 @@ inp_compat(struct card *card)
                 // search for 'par('
                 while ((str_ptr = strstr(cut_line, "par(")) != NULL) {
                     if (pai > 99) {
-                        fprintf(stderr, "ERROR: More than 99 function calls to par()\n");
+                        fprintf(stderr,
+                                "ERROR: More than 99 function calls to "
+                                "par()\n");
                         fprintf(stderr, "  Limited to 99 per input file\n");
                         controlled_exit(EXIT_FAILURE);
                     }
 
-                    // we have ' par({ ... })', the right delimeter is a ' ' or '='
-                    if (ciprefix(" par({", (str_ptr-1))) {
+                    // we have ' par({ ... })', the right delimeter is a ' '
+                    // or '='
+                    if (ciprefix(" par({", (str_ptr - 1))) {
                         // find expression
                         beg_ptr = end_ptr = str_ptr + 5;
-                        while ((*end_ptr != ' ') && (*end_ptr != '=') && (*end_ptr != '\0'))
+                        while ((*end_ptr != ' ') && (*end_ptr != '=') &&
+                                (*end_ptr != '\0'))
                             end_ptr++;
-                        exp_ptr = copy_substring(beg_ptr, end_ptr-2);
+                        exp_ptr = copy_substring(beg_ptr, end_ptr - 2);
                         cut_line = str_ptr;
                         // generate node
-                        out_ptr = tprintf("pa_%02d", (int)pai);
+                        out_ptr = tprintf("pa_%02d", (int) pai);
                         // Bout_ptr  out_ptr 0  V = v(expr_ptr)
-                        ckt_array[pai] = tprintf("b%s %s 0 v = %s",
-                                out_ptr, out_ptr, exp_ptr);
+                        ckt_array[pai] = tprintf(
+                                "b%s %s 0 v = %s", out_ptr, out_ptr, exp_ptr);
                         ckt_array[++pai] = NULL;
                         // length of the replacement V(out_ptr)
                         del_ptr = copy_ptr = tprintf("v(%s)", out_ptr);
@@ -5323,18 +5494,19 @@ inp_compat(struct card *card)
                         tfree(exp_ptr);
                         tfree(out_ptr);
                     }
-                    // or we have '={par({ ... })}', the right delimeter is a ' '
-                    else if (ciprefix("={par({", (str_ptr-2))) {
+                    // or we have '={par({ ... })}', the right delimeter is a
+                    // ' '
+                    else if (ciprefix("={par({", (str_ptr - 2))) {
                         // find expression
                         beg_ptr = end_ptr = str_ptr + 5;
                         while ((*end_ptr != ' ') && (*end_ptr != '\0'))
                             end_ptr++;
-                        exp_ptr = copy_substring(beg_ptr, end_ptr-3);
+                        exp_ptr = copy_substring(beg_ptr, end_ptr - 3);
                         // generate node
-                        out_ptr = tprintf("pa_%02d", (int)pai);
+                        out_ptr = tprintf("pa_%02d", (int) pai);
                         // Bout_ptr  out_ptr 0  V = v(expr_ptr)
-                        ckt_array[pai] = tprintf("b%s %s 0 v = %s",
-                                out_ptr, out_ptr, exp_ptr);
+                        ckt_array[pai] = tprintf(
+                                "b%s %s 0 v = %s", out_ptr, out_ptr, exp_ptr);
                         ckt_array[++pai] = NULL;
                         // length of the replacement V(out_ptr)
                         del_ptr = copy_ptr = tprintf("v(%s)", out_ptr);
@@ -5346,12 +5518,14 @@ inp_compat(struct card *card)
                         for (ii = 0; ii < xlen; ii++)
                             if (*copy_ptr)
                                 *cut_line++ = *copy_ptr++;
-                            else *cut_line++ = ' ';
+                            else
+                                *cut_line++ = ' ';
 
                         tfree(del_ptr);
                         tfree(exp_ptr);
                         tfree(out_ptr);
-                    } else {
+                    }
+                    else {
                         // nothing to replace
                         cut_line = str_ptr + 1;
                         continue;
@@ -5368,36 +5542,38 @@ inp_compat(struct card *card)
                     card = insert_new_line(card, ckt_array[ii], 0, 0);
 
                 paui = pai;
-            } else if ((ciprefix(".save", curr_line)) ||
-                       (ciprefix(".four", curr_line)) ||
-                       (ciprefix(".print", curr_line)) ||
-                       (ciprefix(".plot", curr_line)))
-            {
+            }
+            else if ((ciprefix(".save", curr_line)) ||
+                    (ciprefix(".four", curr_line)) ||
+                    (ciprefix(".print", curr_line)) ||
+                    (ciprefix(".plot", curr_line))) {
                 if (strstr(curr_line, "par(") == NULL)
                     continue;
                 cut_line = curr_line;
                 // search for 'par('
                 while ((str_ptr = strstr(cut_line, "par(")) != NULL) {
                     if (pai > 99) {
-                        fprintf(stderr, "ERROR: More than 99 function calls to par()\n");
+                        fprintf(stderr,
+                                "ERROR: More than 99 function calls to "
+                                "par()\n");
                         fprintf(stderr, "  Limited to 99 per input file\n");
                         controlled_exit(EXIT_FAILURE);
                     }
 
                     // we have ' par({ ... })'
-                    if (ciprefix(" par({", (str_ptr-1))) {
+                    if (ciprefix(" par({", (str_ptr - 1))) {
 
                         // find expression
                         beg_ptr = end_ptr = str_ptr + 5;
                         while ((*end_ptr != ' ') && (*end_ptr != '\0'))
                             end_ptr++;
-                        exp_ptr = copy_substring(beg_ptr, end_ptr-2);
+                        exp_ptr = copy_substring(beg_ptr, end_ptr - 2);
                         cut_line = str_ptr;
                         // generate node
-                        out_ptr = tprintf("pa_%02d", (int)pai);
+                        out_ptr = tprintf("pa_%02d", (int) pai);
                         // Bout_ptr  out_ptr 0  V = v(expr_ptr)
-                        ckt_array[pai] = tprintf("b%s %s 0 v = %s",
-                                out_ptr, out_ptr, exp_ptr);
+                        ckt_array[pai] = tprintf(
+                                "b%s %s 0 v = %s", out_ptr, out_ptr, exp_ptr);
                         ckt_array[++pai] = NULL;
                         // length of the replacement V(out_ptr)
                         del_ptr = copy_ptr = tprintf("%s", out_ptr);
@@ -5415,7 +5591,7 @@ inp_compat(struct card *card)
                         tfree(out_ptr);
                     }
                     // or we have '={par({ ... })}'
-                    else if (ciprefix("={par({", (str_ptr-2))) {
+                    else if (ciprefix("={par({", (str_ptr - 2))) {
 
                         // find myoutput
                         beg_ptr = end_ptr = str_ptr - 2;
@@ -5427,10 +5603,10 @@ inp_compat(struct card *card)
                         beg_ptr = end_ptr = str_ptr + 5;
                         while ((*end_ptr != ' ') && (*end_ptr != '\0'))
                             end_ptr++;
-                        exp_ptr = copy_substring(beg_ptr, end_ptr-3);
+                        exp_ptr = copy_substring(beg_ptr, end_ptr - 3);
                         // Bout_ptr  out_ptr 0  V = v(expr_ptr)
-                        ckt_array[pai] = tprintf("b%s %s 0 v = %s",
-                                out_ptr, out_ptr, exp_ptr);
+                        ckt_array[pai] = tprintf(
+                                "b%s %s 0 v = %s", out_ptr, out_ptr, exp_ptr);
                         ckt_array[++pai] = NULL;
                         // length of the replacement V(out_ptr)
                         del_ptr = copy_ptr = tprintf("%s", out_ptr);
@@ -5440,7 +5616,8 @@ inp_compat(struct card *card)
                         for (ii = 0; ii < xlen; ii++)
                             if (*copy_ptr)
                                 *cut_line++ = *copy_ptr++;
-                            else *cut_line++ = ' ';
+                            else
+                                *cut_line++ = ' ';
 
                         tfree(del_ptr);
                         tfree(exp_ptr);
@@ -5472,8 +5649,8 @@ inp_compat(struct card *card)
 /* replace a token (length 4 char) in string by spaces, if it is found
    at the correct position and the total number of tokens is o.k. */
 
-static void
-replace_token(char *string, char *token, int wherereplace, int total)
+static void replace_token(
+        char *string, char *token, int wherereplace, int total)
 {
     int count = 0, i;
     char *actstring = string;
@@ -5514,8 +5691,7 @@ replace_token(char *string, char *token, int wherereplace, int total)
    and other keywords like TEMPER. --> Only parameter replacement in numparam
 */
 
-static void
-inp_bsource_compat(struct card *card)
+static void inp_bsource_compat(struct card *card)
 {
     char *equal_ptr, *str_ptr, *new_str, *final_str;
     int skip_control = 0;
@@ -5526,12 +5702,14 @@ inp_bsource_compat(struct card *card)
 
         /* exclude any command inside .control ... .endc */
         if (ciprefix(".control", curr_line)) {
-            skip_control ++;
+            skip_control++;
             continue;
-        } else if (ciprefix(".endc", curr_line)) {
-            skip_control --;
+        }
+        else if (ciprefix(".endc", curr_line)) {
+            skip_control--;
             continue;
-        } else if (skip_control > 0) {
+        }
+        else if (skip_control > 0) {
             continue;
         }
 
@@ -5542,7 +5720,8 @@ inp_bsource_compat(struct card *card)
             /* exclude special pwl lines */
             if (strstr(curr_line, "=pwl("))
                 continue;
-            /* store starting point for later parsing, beginning of {expression} */
+            /* store starting point for later parsing, beginning of
+             * {expression} */
             equal_ptr = strchr(curr_line, '=');
             /* check for errors */
             if (equal_ptr == NULL) {
@@ -5553,13 +5732,15 @@ inp_bsource_compat(struct card *card)
             if ((str_ptr = strstr(curr_line, "m={m}")) != NULL)
                 memcpy(str_ptr, "     ", 5);
             new_str = inp_modify_exp(equal_ptr + 1);
-            final_str = tprintf("%.*s %s", (int) (equal_ptr + 1 - curr_line), curr_line, new_str);
+            final_str = tprintf("%.*s %s", (int) (equal_ptr + 1 - curr_line),
+                    curr_line, new_str);
 
             // comment out current line (old B source line)
-            *(card->line)   = '*';
+            *(card->line) = '*';
             // insert new B source line immediately after current line
             /* Copy old line numbers into new B source line */
-            card = insert_new_line(card, final_str, card->linenum, card->linenum_orig);
+            card = insert_new_line(
+                    card, final_str, card->linenum, card->linenum_orig);
 
             tfree(new_str);
         } /* end of if 'b' */
@@ -5573,8 +5754,7 @@ inp_bsource_compat(struct card *card)
  * a modified card->line
  */
 
-static bool
-inp_temper_compat(struct card *card)
+static bool inp_temper_compat(struct card *card)
 {
     int skip_control = 0;
     char *beg_str, *end_str, *beg_tstr, *end_tstr, *exp_str;
@@ -5589,12 +5769,14 @@ inp_temper_compat(struct card *card)
             continue;
         /* exclude any command inside .control ... .endc */
         if (ciprefix(".control", curr_line)) {
-            skip_control ++;
+            skip_control++;
             continue;
-        } else if (ciprefix(".endc", curr_line)) {
-            skip_control --;
+        }
+        else if (ciprefix(".endc", curr_line)) {
+            skip_control--;
             continue;
-        } else if (skip_control > 0) {
+        }
+        else if (skip_control > 0) {
             continue;
         }
         /* exclude some elements */
@@ -5612,7 +5794,8 @@ inp_temper_compat(struct card *card)
         curr_line = card->line;
 
         beg_str = beg_tstr = curr_line;
-        while ((beg_tstr = search_identifier(beg_tstr, "temper", curr_line)) != NULL) {
+        while ((beg_tstr = search_identifier(
+                        beg_tstr, "temper", curr_line)) != NULL) {
             char *modified_exp;
             /* set the global variable */
             with_temper = TRUE;
@@ -5625,9 +5808,10 @@ inp_temper_compat(struct card *card)
             /* modify the expression string */
             modified_exp = inp_modify_exp(exp_str);
             tfree(exp_str);
-            /* add the intermediate string between previous and next expression to the new line */
-            new_str = INPstrCat(new_str, ' ',
-                    copy_substring(beg_str, end_str));
+            /* add the intermediate string between previous and next
+             * expression to the new line */
+            new_str =
+                    INPstrCat(new_str, ' ', copy_substring(beg_str, end_str));
             /* add the modified expression string to the new line */
             new_str = INPstrCat(new_str, ' ', modified_exp);
             new_str = INPstrCat(new_str, ' ', copy(" "));
@@ -5656,8 +5840,7 @@ inp_temper_compat(struct card *card)
  * and other keywords like TEMPER. --> Only parameter replacement in numparam
  */
 
-static char *
-inp_modify_exp(char* expr)
+static char *inp_modify_exp(char *expr)
 {
     char *s;
     wordlist *wl = NULL, *wlist = NULL;
@@ -5678,20 +5861,19 @@ inp_modify_exp(char* expr)
 
         wl_append_word(&wlist, &wl, NULL);
 
-        if ((c == ',') || (c == '(') || (c == ')') ||
-            (c == '*') || (c == '/') || (c == '^') ||
-            (c == '+') || (c == '?') || (c == ':') ||
-            (c == '-'))
-        {
+        if ((c == ',') || (c == '(') || (c == ')') || (c == '*') ||
+                (c == '/') || (c == '^') || (c == '+') || (c == '?') ||
+                (c == ':') || (c == '-')) {
             if ((c == '*') && (s[1] == '*')) {
                 wl->wl_word = tprintf("**");
                 s += 2;
-            } else if (c == '-' && c_arith_prev && c_prev != ')') {
+            }
+            else if (c == '-' && c_arith_prev && c_prev != ')') {
                 /* enter whole number string if '-' is a sign */
                 int error1;
                 /* allow 100p, 5MEG etc. */
                 double dvalue = INPevaluate(&s, &error1, 0);
-                if(error1) {
+                if (error1) {
                     wl->wl_word = tprintf("%c", c);
                     s++;
                 }
@@ -5701,25 +5883,27 @@ inp_modify_exp(char* expr)
                     while (isalpha_c(*s))
                         s++;
                 }
-            } else {
+            }
+            else {
                 wl->wl_word = tprintf("%c", c);
                 s++;
             }
             c_arith = TRUE;
-        } else if ((c == '>') || (c == '<') ||
-                   (c == '!') || (c == '='))
-        {
+        }
+        else if ((c == '>') || (c == '<') || (c == '!') || (c == '=')) {
             /* >=, <=, !=, ==, <>, ... */
             char *beg = s++;
             if ((*s == '=') || (*s == '<') || (*s == '>'))
                 s++;
             wl->wl_word = copy_substring(beg, s);
-        } else if ((c == '|') || (c == '&')) {
+        }
+        else if ((c == '|') || (c == '&')) {
             char *beg = s++;
             if ((*s == '|') || (*s == '&'))
                 s++;
             wl->wl_word = copy_substring(beg, s);
-        } else if (isalpha_c(c) || c == '_') {
+        }
+        else if (isalpha_c(c) || c == '_') {
 
             char buf[512];
             int i = 0;
@@ -5730,46 +5914,47 @@ inp_modify_exp(char* expr)
                 buf[i++] = *s++;
                 buf[i] = '\0';
                 wl->wl_word = copy(buf);
-            } else {
-                while (isalnum_c(*s) ||
-                       (*s == '!') || (*s == '#') ||
-                       (*s == '$') || (*s == '%') ||
-                       (*s == '_') || (*s == '[') ||
-                       (*s == ']'))
-                {
+            }
+            else {
+                while (isalnum_c(*s) || (*s == '!') || (*s == '#') ||
+                        (*s == '$') || (*s == '%') || (*s == '_') ||
+                        (*s == '[') || (*s == ']')) {
                     buf[i++] = *s++;
                 }
                 buf[i] = '\0';
                 /* no parens {} around time, hertz, temper, the constants
-                   pi and e which are defined in inpptree.c, around pwl and temp. coeffs */
-                if ((*s == '(') ||
-                    cieq(buf, "hertz") || cieq(buf, "temper") ||
-                    cieq(buf, "time") || cieq(buf, "pi") ||
-                    cieq(buf, "e") || cieq(buf, "pwl"))
-                {
+                   pi and e which are defined in inpptree.c, around pwl and
+                   temp. coeffs */
+                if ((*s == '(') || cieq(buf, "hertz") ||
+                        cieq(buf, "temper") || cieq(buf, "time") ||
+                        cieq(buf, "pi") || cieq(buf, "e") ||
+                        cieq(buf, "pwl")) {
                     wl->wl_word = copy(buf);
-
-                } else if (cieq(buf, "tc1") || cieq(buf, "tc2") ||
-                           cieq(buf, "reciproctc"))
-                {
+                }
+                else if (cieq(buf, "tc1") || cieq(buf, "tc2") ||
+                        cieq(buf, "reciproctc")) {
                     s = skip_ws(s);
                     /* no {} around tc1 = or tc2 = , these are temp coeffs. */
-                    if (s[0] == '='  &&  s[1] != '=') {
+                    if (s[0] == '=' && s[1] != '=') {
                         buf[i++] = '=';
                         buf[i] = '\0';
                         s++;
                         wl->wl_word = copy(buf);
-                    } else {
+                    }
+                    else {
                         wl->wl_word = tprintf("({%s})", buf);
                     }
-                    /* '-' following the '=' is attached to number as its sign */
+                    /* '-' following the '=' is attached to number as its sign
+                     */
                     c_arith = TRUE;
-                } else {
+                }
+                else {
                     /* {} around all other tokens */
                     wl->wl_word = tprintf("({%s})", buf);
                 }
             }
-        } else if (isdigit_c(c) || (c == '.')) { /* allow .5 format too */
+        }
+        else if (isdigit_c(c) || (c == '.')) { /* allow .5 format too */
             int error1;
             /* allow 100p, 5MEG etc. */
             double dvalue = INPevaluate(&s, &error1, 0);
@@ -5777,8 +5962,10 @@ inp_modify_exp(char* expr)
             /* skip the `unit', FIXME INPevaluate() should do this */
             while (isalpha_c(*s))
                 s++;
-        } else { /* strange char */
-            printf("Preparing expression for numparam\nWhat is this?\n%s\n", s);
+        }
+        else { /* strange char */
+            printf("Preparing expression for numparam\nWhat is this?\n%s\n",
+                    s);
             wl->wl_word = tprintf("%c", *s++);
         }
         c_prev = c;
@@ -5798,12 +5985,11 @@ inp_modify_exp(char* expr)
  * function will return the place from where to continue
  */
 
-static char *
-get_quoted_token(char *string, char **token)
+static char *get_quoted_token(char *string, char **token)
 {
     char *s = skip_ws(string);
 
-    if (!*s)            /* nothing found */
+    if (!*s) /* nothing found */
         return string;
 
     if (isquote(*s)) {
@@ -5813,7 +5999,7 @@ get_quoted_token(char *string, char **token)
         while (*t && !isquote(*t))
             t++;
 
-        if (!*t) {        /* teriminator quote not found */
+        if (!*t) { /* teriminator quote not found */
             *token = NULL;
             return string;
         }
@@ -5822,12 +6008,12 @@ get_quoted_token(char *string, char **token)
 
         *token = s;
         return t;
-
-    } else {
+    }
+    else {
 
         char *t = skip_non_ws(s);
 
-        if (t == s) {     /* nothing found */
+        if (t == s) { /* nothing found */
             *token = NULL;
             return string;
         }
@@ -5848,8 +6034,7 @@ get_quoted_token(char *string, char **token)
  * RLxxx_n2_intern__ n2_intern__ n2 rval
  */
 
-static void
-inp_add_series_resistor(struct card *deck)
+static void inp_add_series_resistor(struct card *deck)
 {
     int skip_control = 0;
     struct card *card;
@@ -5878,19 +6063,22 @@ inp_add_series_resistor(struct card *deck)
 
     fprintf(stdout,
             "\nOption rseries given: \n"
-            "resistor %s Ohms added in series to each inductor L\n\n", rval);
+            "resistor %s Ohms added in series to each inductor L\n\n",
+            rval);
 
     for (card = deck; card; card = card->nextcard) {
         char *cut_line = card->line;
 
         /* exclude any command inside .control ... .endc */
         if (ciprefix(".control", cut_line)) {
-            skip_control ++;
+            skip_control++;
             continue;
-        } else if (ciprefix(".endc", cut_line)) {
-            skip_control --;
+        }
+        else if (ciprefix(".endc", cut_line)) {
+            skip_control--;
             continue;
-        } else if (skip_control > 0) {
+        }
+        else if (skip_control > 0) {
             continue;
         }
 
@@ -5901,8 +6089,10 @@ inp_add_series_resistor(struct card *deck)
             char *node2 = gettok(&cut_line);
 
             /* new L line and new R line */
-            char *newL = tprintf("%s %s %s_intern__ %s", title_tok, node1, title_tok, cut_line);
-            char *newR = tprintf("R%s_intern__ %s_intern__ %s %s", title_tok, title_tok, node2, rval);
+            char *newL = tprintf("%s %s %s_intern__ %s", title_tok, node1,
+                    title_tok, cut_line);
+            char *newR = tprintf("R%s_intern__ %s_intern__ %s %s", title_tok,
+                    title_tok, node2, rval);
 
             // comment out current L line
             *(card->line) = '*';
@@ -5929,8 +6119,7 @@ inp_add_series_resistor(struct card *deck)
  *   .param l={x} w={y}
  */
 
-static void
-subckt_params_to_param(struct card *card)
+static void subckt_params_to_param(struct card *card)
 {
     for (; card; card = card->nextcard) {
         char *curr_line = card->line;
@@ -5957,8 +6146,7 @@ subckt_params_to_param(struct card *card)
 
 #ifndef XSPICE
 
-static void
-inp_poly_err(struct card *card)
+static void inp_poly_err(struct card *card)
 {
     size_t skip_control = 0;
 
@@ -5971,29 +6159,33 @@ inp_poly_err(struct card *card)
 
         /* exclude any command inside .control ... .endc */
         if (ciprefix(".control", curr_line)) {
-            skip_control ++;
+            skip_control++;
             continue;
-        } else if (ciprefix(".endc", curr_line)) {
-            skip_control --;
+        }
+        else if (ciprefix(".endc", curr_line)) {
+            skip_control--;
             continue;
-        } else if (skip_control > 0) {
+        }
+        else if (skip_control > 0) {
             continue;
         }
 
         /* get the fourth token in a controlled source line and exit,
            if it is 'poly' */
         if ((ciprefix("e", curr_line)) || (ciprefix("g", curr_line)) ||
-            (ciprefix("f", curr_line)) || (ciprefix("h", curr_line)))
-        {
+                (ciprefix("f", curr_line)) || (ciprefix("h", curr_line))) {
             curr_line = nexttok(curr_line);
             curr_line = nexttok(curr_line);
             curr_line = nexttok(curr_line);
             if (ciprefix("poly", curr_line)) {
                 fprintf(stderr,
-                        "\nError: XSPICE is required to run the 'poly' option in line %d\n",
+                        "\nError: XSPICE is required to run the 'poly' "
+                        "option in line %d\n",
                         card->linenum_orig);
                 fprintf(stderr, "  %s\n", card->line);
-                fprintf(stderr, "\nSee manual chapt. 31 for installation instructions\n");
+                fprintf(stderr,
+                        "\nSee manual chapt. 31 for installation "
+                        "instructions\n");
                 controlled_exit(EXIT_BAD);
             }
         }
@@ -6007,8 +6199,7 @@ inp_poly_err(struct card *card)
  *   tprint(working);
  * somewhere in function inp_readall() of this file to have
  *   a printout of the actual deck written to file "tprint-out.txt" */
-void
-tprint(struct card *t)
+void tprint(struct card *t)
 {
     struct card *tmp;
 
@@ -6016,18 +6207,32 @@ tprint(struct card *t)
     FILE *fd = fopen("tprint-out.txt", "w");
     for (tmp = t; tmp; tmp = tmp->nextcard)
         if (*(tmp->line) != '*')
-            fprintf(fd, "%6d  %6d  %s\n", tmp->linenum_orig, tmp->linenum, tmp->line);
-    fprintf(fd, "\n*********************************************************************************\n");
-    fprintf(fd, "*********************************************************************************\n");
-    fprintf(fd, "*********************************************************************************\n\n");
+            fprintf(fd, "%6d  %6d  %s\n", tmp->linenum_orig, tmp->linenum,
+                    tmp->line);
+    fprintf(fd,
+            "\n**************************************************************"
+            "*******************\n");
+    fprintf(fd,
+            "****************************************************************"
+            "*****************\n");
+    fprintf(fd,
+            "****************************************************************"
+            "*****************\n\n");
     for (tmp = t; tmp; tmp = tmp->nextcard)
-        fprintf(fd, "%6d  %6d  %s\n", tmp->linenum_orig, tmp->linenum, tmp->line);
-    fprintf(fd, "\n*********************************************************************************\n");
-    fprintf(fd, "*********************************************************************************\n");
-    fprintf(fd, "*********************************************************************************\n\n");
+        fprintf(fd, "%6d  %6d  %s\n", tmp->linenum_orig, tmp->linenum,
+                tmp->line);
+    fprintf(fd,
+            "\n**************************************************************"
+            "*******************\n");
+    fprintf(fd,
+            "****************************************************************"
+            "*****************\n");
+    fprintf(fd,
+            "****************************************************************"
+            "*****************\n\n");
     for (tmp = t; tmp; tmp = tmp->nextcard)
         if (*(tmp->line) != '*')
-            fprintf(fd, "%s\n",tmp->line);
+            fprintf(fd, "%s\n", tmp->line);
     fclose(fd);
 }
 
@@ -6035,8 +6240,7 @@ tprint(struct card *t)
 /* prepare .if and .elseif for numparam
    .if(expression) --> .if{expression} */
 
-static void
-inp_dot_if(struct card *card)
+static void inp_dot_if(struct card *card)
 {
     for (; card; card = card->nextcard) {
 
@@ -6049,7 +6253,8 @@ inp_dot_if(struct card *card)
             char *firstbr = strchr(curr_line, '(');
             char *lastbr = strrchr(curr_line, ')');
             if ((!firstbr) || (!lastbr)) {
-                fprintf(cp_err, "Error in netlist line %d\n", card->linenum_orig);
+                fprintf(cp_err, "Error in netlist line %d\n",
+                        card->linenum_orig);
                 fprintf(cp_err, "   Bad syntax: %s\n\n", curr_line);
                 controlled_exit(EXIT_BAD);
             }
@@ -6073,8 +6278,7 @@ inp_dot_if(struct card *card)
 
 static char *inp_functionalise_identifier(char *curr_line, char *identifier);
 
-static void
-inp_fix_temper_in_param(struct card *deck)
+static void inp_fix_temper_in_param(struct card *deck)
 {
     int skip_control = 0, subckt_depth = 0, j, *sub_count;
     char *funcbody, *funcname;
@@ -6082,13 +6286,12 @@ inp_fix_temper_in_param(struct card *deck)
     struct card *card;
 
     sub_count = TMALLOC(int, 16);
-    for(j = 0; j < 16; j++)
+    for (j = 0; j < 16; j++)
         sub_count[j] = 0;
 
-    /* first pass: determine all .param with temper inside and replace by .func
-       .param xxx1 = 'temper + 25'
-       will become
-       .func xxx1() 'temper + 25'
+    /* first pass: determine all .param with temper inside and replace by
+       .func .param xxx1 = 'temper + 25' will become .func xxx1() 'temper +
+       25'
     */
     card = deck;
     for (; card; card = card->nextcard) {
@@ -6100,22 +6303,25 @@ inp_fix_temper_in_param(struct card *deck)
 
         /* determine nested depths of subcircuits */
         if (ciprefix(".subckt", curr_line)) {
-            subckt_depth ++;
+            subckt_depth++;
             sub_count[subckt_depth]++;
             continue;
-        } else if (ciprefix(".ends", curr_line)) {
-            subckt_depth --;
+        }
+        else if (ciprefix(".ends", curr_line)) {
+            subckt_depth--;
             continue;
         }
 
         /* exclude any command inside .control ... .endc */
         if (ciprefix(".control", curr_line)) {
-            skip_control ++;
+            skip_control++;
             continue;
-        } else if (ciprefix(".endc", curr_line)) {
-            skip_control --;
+        }
+        else if (ciprefix(".endc", curr_line)) {
+            skip_control--;
             continue;
-        } else if (skip_control > 0) {
+        }
+        else if (skip_control > 0) {
             continue;
         }
 
@@ -6131,7 +6337,9 @@ inp_fix_temper_in_param(struct card *deck)
             equal_ptr = find_assignment(curr_line);
 
             if (!equal_ptr) {
-                fprintf(stderr, "ERROR: could not find '=' on parameter line '%s'!\n", curr_line);
+                fprintf(stderr,
+                        "ERROR: could not find '=' on parameter line '%s'!\n",
+                        curr_line);
                 controlled_exit(EXIT_FAILURE);
             }
 
@@ -6140,11 +6348,12 @@ inp_fix_temper_in_param(struct card *deck)
              */
 
             if (find_assignment(equal_ptr + 1)) {
-                fprintf(stderr, "ERROR: internal error on line '%s'!\n", curr_line);
+                fprintf(stderr, "ERROR: internal error on line '%s'!\n",
+                        curr_line);
                 controlled_exit(EXIT_FAILURE);
             }
 
-            lhs_b = skip_non_ws(curr_line);   // eat .param
+            lhs_b = skip_non_ws(curr_line); // eat .param
             lhs_b = skip_ws(lhs_b);
 
             lhs_e = skip_back_ws(equal_ptr, curr_line);
@@ -6165,9 +6374,9 @@ inp_fix_temper_in_param(struct card *deck)
             funcname = copy_substring(lhs_b, lhs_e);
             funcbody = copy(equal_ptr + 1);
 
-            *funcs_tail_ptr =
-                inp_new_func(funcname, funcbody, card, sub_count, subckt_depth);
-            funcs_tail_ptr = & (*funcs_tail_ptr)->next;
+            *funcs_tail_ptr = inp_new_func(
+                    funcname, funcbody, card, sub_count, subckt_depth);
+            funcs_tail_ptr = &(*funcs_tail_ptr)->next;
 
             tfree(funcbody);
         }
@@ -6175,16 +6384,16 @@ inp_fix_temper_in_param(struct card *deck)
 
     /* second pass */
     /* for each .func entry in `funcs' start the insertion operation:
-       search each line from the deck which has the suitable subcircuit nesting data.
-       for tokens xxx equalling the funcname, replace xxx by xxx().
-       if the replacement is done in a .param line then
-         convert it to a .func line and append an entry to `funcs'.
-       Continue up to the very end of `funcs'.
+       search each line from the deck which has the suitable subcircuit
+       nesting data. for tokens xxx equalling the funcname, replace xxx by
+       xxx(). if the replacement is done in a .param line then convert it to a
+       .func line and append an entry to `funcs'. Continue up to the very end
+       of `funcs'.
      */
 
     for (f = funcs; f; f = f->next) {
 
-        for(j = 0; j < 16; j++)
+        for (j = 0; j < 16; j++)
             sub_count[j] = 0;
 
         card = deck;
@@ -6199,22 +6408,25 @@ inp_fix_temper_in_param(struct card *deck)
 
             /* determine nested depths of subcircuits */
             if (ciprefix(".subckt", curr_line)) {
-                subckt_depth ++;
+                subckt_depth++;
                 sub_count[subckt_depth]++;
                 continue;
-            } else if (ciprefix(".ends", curr_line)) {
-                subckt_depth --;
+            }
+            else if (ciprefix(".ends", curr_line)) {
+                subckt_depth--;
                 continue;
             }
 
             /* exclude any command inside .control ... .endc */
             if (ciprefix(".control", curr_line)) {
-                skip_control ++;
+                skip_control++;
                 continue;
-            } else if (ciprefix(".endc", curr_line)) {
-                skip_control --;
+            }
+            else if (ciprefix(".endc", curr_line)) {
+                skip_control--;
                 continue;
-            } else if (skip_control > 0) {
+            }
+            else if (skip_control > 0) {
                 continue;
             }
 
@@ -6249,12 +6461,13 @@ inp_fix_temper_in_param(struct card *deck)
                 new_tmp_str = nexttok(new_tmp_str);
                 funcname = gettok_char(&new_tmp_str, '=', FALSE, FALSE);
                 funcbody = copy(new_tmp_str + 1);
-                *funcs_tail_ptr =
-                    inp_new_func(funcname, funcbody, card, sub_count, subckt_depth);
-                funcs_tail_ptr = & (*funcs_tail_ptr)->next;
+                *funcs_tail_ptr = inp_new_func(
+                        funcname, funcbody, card, sub_count, subckt_depth);
+                funcs_tail_ptr = &(*funcs_tail_ptr)->next;
                 tfree(new_str);
                 tfree(funcbody);
-            } else {
+            }
+            else {
                 /* Or just enter new line into deck */
                 insert_new_line(card, new_str, 0, card->linenum);
                 *card->line = '*';
@@ -6269,21 +6482,20 @@ inp_fix_temper_in_param(struct card *deck)
 
 
 /* Convert .param lines containing function 'agauss' and others
-*  (function name handed over by *fcn),  into .func lines:
-* .param xxx1 = 'aunif()'  --->  .func xxx1() 'aunif()'
-* Add info about the functions (name, subcircuit depth, number of
-* subckt) to linked list new_func.
-* Then scan new_func, for each xxx1 scan all lines of deck,
-* find all xxx1 and convert them to a function:
-* xxx1   --->  xxx1()
-*
-* In a second step, after subcircuits have been expanded, all occurencies
-* of agauss in a b-line are replaced by their suitable value (function
-* eval_agauss() in inp.c).
-*/
+ *  (function name handed over by *fcn),  into .func lines:
+ * .param xxx1 = 'aunif()'  --->  .func xxx1() 'aunif()'
+ * Add info about the functions (name, subcircuit depth, number of
+ * subckt) to linked list new_func.
+ * Then scan new_func, for each xxx1 scan all lines of deck,
+ * find all xxx1 and convert them to a function:
+ * xxx1   --->  xxx1()
+ *
+ * In a second step, after subcircuits have been expanded, all occurencies
+ * of agauss in a b-line are replaced by their suitable value (function
+ * eval_agauss() in inp.c).
+ */
 
-static void
-inp_fix_agauss_in_param(struct card *deck, char *fcn)
+static void inp_fix_agauss_in_param(struct card *deck, char *fcn)
 {
     int skip_control = 0, subckt_depth = 0, j, *sub_count;
     char *funcbody, *funcname;
@@ -6345,7 +6557,9 @@ inp_fix_agauss_in_param(struct card *deck, char *fcn)
             equal_ptr = find_assignment(curr_line);
 
             if (!equal_ptr) {
-                fprintf(stderr, "ERROR: could not find '=' on parameter line '%s'!\n", curr_line);
+                fprintf(stderr,
+                        "ERROR: could not find '=' on parameter line '%s'!\n",
+                        curr_line);
                 controlled_exit(EXIT_FAILURE);
             }
 
@@ -6354,11 +6568,12 @@ inp_fix_agauss_in_param(struct card *deck, char *fcn)
              */
 
             if (find_assignment(equal_ptr + 1)) {
-                fprintf(stderr, "ERROR: internal error on line '%s'!\n", curr_line);
+                fprintf(stderr, "ERROR: internal error on line '%s'!\n",
+                        curr_line);
                 controlled_exit(EXIT_FAILURE);
             }
 
-            lhs_b = skip_non_ws(curr_line);   // eat .param
+            lhs_b = skip_non_ws(curr_line); // eat .param
             lhs_b = skip_ws(lhs_b);
 
             lhs_e = skip_back_ws(equal_ptr, curr_line);
@@ -6370,17 +6585,17 @@ inp_fix_agauss_in_param(struct card *deck, char *fcn)
 
             if (temper < equal_ptr) {
                 fprintf(stderr,
-                    "Error: you cannot assign a value to %s\n"
-                    "  Line no. %d, %s\n",
-                    fcn, card->linenum, curr_line);
+                        "Error: you cannot assign a value to %s\n"
+                        "  Line no. %d, %s\n",
+                        fcn, card->linenum, curr_line);
                 controlled_exit(EXIT_BAD);
             }
 
             funcname = copy_substring(lhs_b, lhs_e);
             funcbody = copy(equal_ptr + 1);
 
-            *funcs_tail_ptr =
-                inp_new_func(funcname, funcbody, card, sub_count, subckt_depth);
+            *funcs_tail_ptr = inp_new_func(
+                    funcname, funcbody, card, sub_count, subckt_depth);
             funcs_tail_ptr = &(*funcs_tail_ptr)->next;
 
             tfree(funcbody);
@@ -6474,13 +6689,12 @@ inp_fix_agauss_in_param(struct card *deck, char *fcn)
 
 /* append "()" to each 'identifier' in 'curr_line',
  *   unless already there */
-static char *
-inp_functionalise_identifier(char *curr_line, char *identifier)
+static char *inp_functionalise_identifier(char *curr_line, char *identifier)
 {
     size_t len = strlen(identifier);
     char *p, *str = curr_line;
 
-    for (p = str; (p = search_identifier(p, identifier, str)) != NULL; )
+    for (p = str; (p = search_identifier(p, identifier, str)) != NULL;)
         if (p[len] != '(') {
             int prefix_len = (int) (p + len - str);
             char *x = str;
@@ -6488,8 +6702,9 @@ inp_functionalise_identifier(char *curr_line, char *identifier)
             if (x != curr_line)
                 tfree(x);
             p = str + prefix_len + 2;
-        } else {
-            p ++;
+        }
+        else {
+            p++;
         }
 
     return str;
@@ -6501,9 +6716,8 @@ inp_functionalise_identifier(char *curr_line, char *identifier)
  * and add line to deck
  */
 
-static struct func_temper *
-inp_new_func(char *funcname, char *funcbody, struct card *card,
-             int *sub_count, int subckt_depth)
+static struct func_temper *inp_new_func(char *funcname, char *funcbody,
+        struct card *card, int *sub_count, int subckt_depth)
 {
     struct func_temper *f;
     char *new_str;
@@ -6524,8 +6738,7 @@ inp_new_func(char *funcname, char *funcbody, struct card *card,
 }
 
 
-static void
-inp_delete_funcs(struct func_temper *f)
+static void inp_delete_funcs(struct func_temper *f)
 {
     while (f) {
         struct func_temper *f_next = f->next;
@@ -6538,8 +6751,8 @@ inp_delete_funcs(struct func_temper *f)
 
 /* look for unquoted parameters and quote them */
 /* FIXME, this function seems to be useless and/or buggy and/or naive */
-static void
-inp_quote_params(struct card *c, struct card *end_c, struct dependency *deps, int num_params)
+static void inp_quote_params(struct card *c, struct card *end_c,
+        struct dependency *deps, int num_params)
 {
     bool in_control = FALSE;
 
@@ -6567,8 +6780,8 @@ inp_quote_params(struct card *c, struct card *end_c, struct dependency *deps, in
         if (num_terminals <= 0)
             continue;
 
-        /* There are devices that should not get quotes around tokens following after the terminals.
-           See bug 384 */
+        /* There are devices that should not get quotes around tokens
+           following after the terminals. See bug 384 */
         if (curr_line[0] == 'f' || curr_line[0] == 'h')
             num_terminals++;
 
@@ -6576,19 +6789,18 @@ inp_quote_params(struct card *c, struct card *end_c, struct dependency *deps, in
 
             char *s = curr_line;
 
-            for (j = 0; j < num_terminals+1; j++) {
+            for (j = 0; j < num_terminals + 1; j++) {
                 s = skip_non_ws(s);
                 s = skip_ws(s);
             }
 
-            while ((s = ya_search_identifier(s, deps[i].param_name, curr_line)) != NULL) {
+            while ((s = ya_search_identifier(
+                            s, deps[i].param_name, curr_line)) != NULL) {
 
                 char *rest = s + strlen(deps[i].param_name);
 
-                if (s > curr_line &&
-                    (isspace_c(s[-1]) || s[-1] == '=') &&
-                    (isspace_c(*rest) || *rest == '\0' || *rest == ')'))
-                {
+                if (s > curr_line && (isspace_c(s[-1]) || s[-1] == '=') &&
+                        (isspace_c(*rest) || *rest == '\0' || *rest == ')')) {
                     int prefix_len;
 
                     if (isspace_c(s[-1])) {
@@ -6606,14 +6818,17 @@ inp_quote_params(struct card *c, struct card *end_c, struct dependency *deps, in
                             rest--;
                     }
 
-                    prefix_len = (int)(s - curr_line);
+                    prefix_len = (int) (s - curr_line);
 
-                    curr_line = tprintf("%.*s {%s}%s", prefix_len, curr_line, deps[i].param_name, rest);
-                    s = curr_line + prefix_len + strlen(deps[i].param_name) + 3;
+                    curr_line = tprintf("%.*s {%s}%s", prefix_len, curr_line,
+                            deps[i].param_name, rest);
+                    s = curr_line + prefix_len + strlen(deps[i].param_name) +
+                            3;
 
                     tfree(c->line);
                     c->line = curr_line;
-                } else {
+                }
+                else {
                     s += strlen(deps[i].param_name);
                 }
             }
@@ -6630,8 +6845,7 @@ inp_quote_params(struct card *c, struct card *end_c, struct dependency *deps, in
    Assemble all other tokens in a wordlist, and flatten it
    to become the new .model line.
 */
-static void
-inp_vdmos_model(struct card *deck)
+static void inp_vdmos_model(struct card *deck)
 {
     struct card *card;
     for (card = deck; card; card = card->nextcard) {
@@ -6659,8 +6873,9 @@ inp_vdmos_model(struct card *deck)
             new_line = NULL;
             while (cut_line && *cut_line) {
                 token = gettok_model(&cut_line);
-                if (!ciprefix("pchan", token) && !ciprefix("ron=", token) && !ciprefix("vds=", token) &&
-                        !ciprefix("qg=", token) && !ciprefix("mfg=", token) && !ciprefix("nchan", token))
+                if (!ciprefix("pchan", token) && !ciprefix("ron=", token) &&
+                        !ciprefix("vds=", token) && !ciprefix("qg=", token) &&
+                        !ciprefix("mfg=", token) && !ciprefix("nchan", token))
                     wl_append_word(NULL, &wl, token);
                 if (*cut_line == ')') {
                     wl_append_word(NULL, &wl, ")");
@@ -6676,8 +6891,7 @@ inp_vdmos_model(struct card *deck)
 
 
 /* storage for devices which get voltage source added */
-struct replace_currm
-{
+struct replace_currm {
     struct card *s_start;
     struct card *cline;
     char *rtoken;
@@ -6685,8 +6899,7 @@ struct replace_currm
 };
 
 /* check if fourth token of sname starts with POLY */
-static bool
-is_poly_source(char *sname)
+static bool is_poly_source(char *sname)
 {
     char *nstr = nexttok(sname);
     nstr = nexttok(nstr);
@@ -6708,8 +6921,7 @@ is_poly_source(char *sname)
    Replace I(XYZ) bx I(V_XYZ), add voltage source V_XYZ with
    suitable extra nodes.
 */
-static void
-inp_meas_current(struct card *deck)
+static void inp_meas_current(struct card *deck)
 {
     struct card *card, *subc_start = NULL, *subc_prev = NULL;
     struct replace_currm *new_rep, *act_rep = NULL, *rep = NULL;
@@ -6758,13 +6970,17 @@ inp_meas_current(struct card *deck)
         while (s) {
             /* i( may occur more than once in a line */
             s = u = strstr(s, "i(");
-            /* we have found it, but not (in error) at the beginning of the line */
+            /* we have found it, but not (in error) at the beginning of the
+             * line */
             if (s && s > v) {
-                /* '{' if at beginning of expression, '=' possible in B-line */
-                if (is_arith_char(s[-1]) || s[-1] == '{' || s[-1] == '=' || isspace_c(s[-1])) {
+                /* '{' if at beginning of expression, '=' possible in B-line
+                 */
+                if (is_arith_char(s[-1]) || s[-1] == '{' || s[-1] == '=' ||
+                        isspace_c(s[-1])) {
                     s += 2;
                     if (*s == 'v') {
-                        // printf("i(v...) found in\n%s\n not converted!\n\n", curr_line);
+                        // printf("i(v...) found in\n%s\n not converted!\n\n",
+                        // curr_line);
                         continue;
                     }
                     else {
@@ -6807,11 +7023,12 @@ inp_meas_current(struct card *deck)
 
     /* return if we did not find any i( */
     if (rep == NULL)
-      return;
+        return;
 
-    /* scan through all the devices, search for xyz, modify node 1 by adding _vmeas,
-       add a line with zero voltage v_xyz, having original node 1 and modified node 1.
-       Do this within the top level or the same level of subcircuit only. */
+    /* scan through all the devices, search for xyz, modify node 1 by adding
+       _vmeas, add a line with zero voltage v_xyz, having original node 1 and
+       modified node 1. Do this within the top level or the same level of
+       subcircuit only. */
     new_rep = rep;
     for (; rep; rep = rep->next) {
         card = rep->s_start;
@@ -6858,10 +7075,13 @@ inp_meas_current(struct card *deck)
                 break;
             }
             if (eq(rep->rtoken, tok)) {
-                /* special treatment if we have an e (VCVS) or h (CCVS) source:
-                check if it is a simple linear source, if yes, don't do a
-                replacement, instead undo the already done name conversion */
-                if (((tok[0] == 'e') || (tok[0] == 'h')) && !strchr(curr_line, '=') && !is_poly_source(card->line)) {
+                /* special treatment if we have an e (VCVS) or h (CCVS)
+                source: check if it is a simple linear source, if yes, don't
+                do a replacement, instead undo the already done name
+                conversion */
+                if (((tok[0] == 'e') || (tok[0] == 'h')) &&
+                        !strchr(curr_line, '=') &&
+                        !is_poly_source(card->line)) {
                     /* simple linear e source */
                     char *searchstr = tprintf("i(v_%s)", tok);
                     char *thisline = rep->cline->line;
@@ -6871,7 +7091,8 @@ inp_meas_current(struct card *deck)
                             memcpy(findstr, "  i(", 4);
                         findstr = strstr(thisline, searchstr);
                         if (ft_ngdebug)
-                            printf("i(%s) moved back to i(%s) in\n%s\n\n", searchstr, tok, rep->cline->line);
+                            printf("i(%s) moved back to i(%s) in\n%s\n\n",
+                                    searchstr, tok, rep->cline->line);
                     }
                     tfree(searchstr);
                     tfree(tok);
@@ -6881,7 +7102,8 @@ inp_meas_current(struct card *deck)
                 /* Add _vmeas only once to first device node.
                    Continue if we already have modified device "tok" */
                 if (!strstr(node1, "_vmeas")) {
-                    new_line = tprintf("%s %s_vmeas_%d %s", tok, node1, sn, curr_line);
+                    new_line = tprintf(
+                            "%s %s_vmeas_%d %s", tok, node1, sn, curr_line);
                     tfree(card->line);
                     card->line = new_line;
                 }
@@ -6890,7 +7112,8 @@ inp_meas_current(struct card *deck)
                 /* We have already added a line v_xyz to the deck */
                 if (!ciprefix(new_tok, card->nextcard->line)) {
                     /* add new line */
-                    new_line = tprintf("%s %s %s_vmeas_%d 0", new_tok, node1, node1, sn);
+                    new_line = tprintf(
+                            "%s %s %s_vmeas_%d 0", new_tok, node1, node1, sn);
                     /* insert new_line after card->line */
                     insert_new_line(card, new_line, card->linenum + 1, 0);
                 }
@@ -6913,13 +7136,12 @@ inp_meas_current(struct card *deck)
 
 /* replace the E source TABLE function by a B source pwl
    (used by ST OpAmps and comparators).
-   E_RO_3 VB_3 VB_4  VALUE={ TABLE( V(VCCP,VCCN), 2 , 35 , 3.3 , 15 , 5 , 10 )*I(VreadIo)}
-   will become
-   BE_RO_3_1 TABLE_NEW_1 0 v = pwl( V(VCCP,VCCN), 2 , 35 , 3.3 , 15 , 5 , 10 )
-   E_RO_3 VB_3 VB_4  VALUE={ V(TABLE_NEW_1)*I(VreadIo)}
+   E_RO_3 VB_3 VB_4  VALUE={ TABLE( V(VCCP,VCCN), 2 , 35 , 3.3 , 15 , 5 , 10
+   )*I(VreadIo)} will become BE_RO_3_1 TABLE_NEW_1 0 v = pwl( V(VCCP,VCCN), 2
+   , 35 , 3.3 , 15 , 5 , 10 ) E_RO_3 VB_3 VB_4  VALUE={
+   V(TABLE_NEW_1)*I(VreadIo)}
 */
-static void
-replace_table(struct card *startcard)
+static void replace_table(struct card *startcard)
 {
     struct card *card;
     static int numb = 0;
@@ -6935,8 +7157,11 @@ replace_table(struct card *startcard)
                     /* get the table function */
                     char *tabfun = gettok_char(&ftablebeg, ')', TRUE, TRUE);
                     /* the new e line */
-                    char *neweline = tprintf("%s v(table_new_%d)%s", begline, numb, ftablebeg);
-                    char *newbline = tprintf("btable_new_%d table_new_%d 0 v=pwl%s", numb, numb, tabfun+5);
+                    char *neweline = tprintf(
+                            "%s v(table_new_%d)%s", begline, numb, ftablebeg);
+                    char *newbline =
+                            tprintf("btable_new_%d table_new_%d 0 v=pwl%s",
+                                    numb, numb, tabfun + 5);
                     numb++;
                     tfree(tabfun);
                     tfree(begline);
@@ -6953,8 +7178,9 @@ replace_table(struct card *startcard)
 }
 
 /* find the model requested by ako:model and do the replacement */
-static struct card*
-find_model(struct card *startcard, struct card *changecard, char *searchname, char *newmname, char *newmtype, char *endstr)
+static struct card *find_model(struct card *startcard,
+        struct card *changecard, char *searchname, char *newmname,
+        char *newmtype, char *endstr)
 {
     struct card *nomod, *returncard = changecard;
     char *origmname, *origmtype;
@@ -6982,11 +7208,15 @@ find_model(struct card *startcard, struct card *changecard, char *searchname, ch
             origmtype = gettok_noparens(&origmodline);
             if (cieq(origmname, searchname)) {
                 if (!eq(origmtype, newmtype)) {
-                    fprintf(stderr, "Error: Original (%s) and new (%s) type for AKO model disagree\n", origmtype, newmtype);
+                    fprintf(stderr,
+                            "Error: Original (%s) and new (%s) type for AKO "
+                            "model disagree\n",
+                            origmtype, newmtype);
                     controlled_exit(1);
                 }
                 /* we have got it */
-                char *newmodcard = tprintf(".model %s %s %s%s", newmname, newmtype, origmodline, endstr);
+                char *newmodcard = tprintf(".model %s %s %s%s", newmname,
+                        newmtype, origmodline, endstr);
                 char *tmpstr = strstr(newmodcard, ")(");
                 if (tmpstr) {
                     tmpstr[0] = ' ';
@@ -7009,19 +7239,18 @@ find_model(struct card *startcard, struct card *changecard, char *searchname, ch
 }
 
 /* do the .model replacement required by ako (a kind of)
-* PSPICE does not support ested .subckt definitions, so
-* a simple structure is needed: search for ako:modelname,
-* then for modelname in the subcircuit or in the top level.
-* .model qorig npn (BF=48 IS=2e-7)
-* .model qbip1 ako:qorig NPN (BF=60 IKF=45m)
-* after the replacement we have
-* .model qbip1 NPN (BF=48 IS=2e-7 BF=60 IKF=45m)
-* and we benefit from the fact that if parameters have
-* doubled, the last entry of a parameter (e.g. BF=60)
-* overwrites the previous one (BF=48).
-*/
-static struct card*
-ako_model(struct card *startcard)
+ * PSPICE does not support ested .subckt definitions, so
+ * a simple structure is needed: search for ako:modelname,
+ * then for modelname in the subcircuit or in the top level.
+ * .model qorig npn (BF=48 IS=2e-7)
+ * .model qbip1 ako:qorig NPN (BF=60 IKF=45m)
+ * after the replacement we have
+ * .model qbip1 NPN (BF=48 IS=2e-7 BF=60 IKF=45m)
+ * and we benefit from the fact that if parameters have
+ * doubled, the last entry of a parameter (e.g. BF=60)
+ * overwrites the previous one (BF=48).
+ */
+static struct card *ako_model(struct card *startcard)
 {
     char *newmname, *newmtype;
     struct card *card, *returncard = NULL, *subcktcard = NULL;
@@ -7033,7 +7262,8 @@ ako_model(struct card *startcard)
         else if (ciprefix(".ends", cut_line))
             subcktcard = NULL;
         if (ciprefix(".model", cut_line) &&
-            ((akostr = strstr(cut_line, "ako:")) != NULL) && isspace_c(akostr[-1])) {
+                ((akostr = strstr(cut_line, "ako:")) != NULL) &&
+                isspace_c(akostr[-1])) {
             akostr += 4;
             searchname = gettok(&akostr);
             cut_line = nexttok(cut_line);
@@ -7041,9 +7271,11 @@ ako_model(struct card *startcard)
             newmtype = gettok_noparens(&akostr);
             /* find the model and do the replacement */
             if (subcktcard)
-                returncard = find_model(subcktcard, card, searchname, newmname, newmtype, akostr);
-            if(returncard || !subcktcard)
-                returncard = find_model(startcard, card, searchname, newmname, newmtype, akostr);
+                returncard = find_model(subcktcard, card, searchname,
+                        newmname, newmtype, akostr);
+            if (returncard || !subcktcard)
+                returncard = find_model(startcard, card, searchname, newmname,
+                        newmtype, akostr);
             tfree(searchname);
             tfree(newmname);
             tfree(newmtype);
@@ -7061,8 +7293,7 @@ ako_model(struct card *startcard)
    ron      r_on
    roff     r_off
 */
-static int
-rep_spar(char *inpar[4])
+static int rep_spar(char *inpar[4])
 {
     int i;
     for (i = 0; i < 4; i++) {
@@ -7107,36 +7338,36 @@ struct vsmodels {
 };
 
 /* insert a new model, just behind the given model */
-static struct vsmodels *
-insert_new_model(struct vsmodels *vsmodel, char *name, char *subcktline)
+static struct vsmodels *insert_new_model(
+        struct vsmodels *vsmodel, char *name, char *subcktline)
 {
     struct vsmodels *x = TMALLOC(struct vsmodels, 1);
 
     x->nextmodel = vsmodel ? vsmodel->nextmodel : NULL;
     x->modelname = copy(name);
     x->subcktline = copy(subcktline);
-	if (vsmodel)
-		vsmodel->nextmodel = x;
-	else
-		vsmodel = x;
+    if (vsmodel)
+        vsmodel->nextmodel = x;
+    else
+        vsmodel = x;
 
     return vsmodel;
 }
 
 /* find the model */
-static bool
-find_a_model(struct vsmodels *vsmodel, char *name, char *subcktline)
+static bool find_a_model(
+        struct vsmodels *vsmodel, char *name, char *subcktline)
 {
     struct vsmodels *x;
     for (x = vsmodel; vsmodel; vsmodel = vsmodel->nextmodel)
-        if (eq(vsmodel->modelname, name) && eq(vsmodel->subcktline, subcktline))
+        if (eq(vsmodel->modelname, name) &&
+                eq(vsmodel->subcktline, subcktline))
             return TRUE;
     return FALSE;
 }
 
 /* delete the vsmodels list */
-static bool
-del_models(struct vsmodels *vsmodel)
+static bool del_models(struct vsmodels *vsmodel)
 {
     struct vsmodels *x;
 
@@ -7162,7 +7393,8 @@ del_models(struct vsmodels *vsmodel)
 * add .functions limit, pwr, pwrs, stp, if, int
 * replace
   S1 D S DG GND SWN
- .MODEL SWN VSWITCH(VON = { 0.55 } VOFF = { 0.49 } RON = { 1 / (2 * M*(W / LE)*(KPN / 2) * 10) }  ROFF = { 1G })
+ .MODEL SWN VSWITCH(VON = { 0.55 } VOFF = { 0.49 } RON = { 1 / (2 * M*(W /
+LE)*(KPN / 2) * 10) }  ROFF = { 1G })
 * by
   as1 %vd(DG GND) % gd(D S) aswn
   .model aswn aswitch(cntl_off={0.49} cntl_on={0.55} r_off={1G}
@@ -7172,15 +7404,14 @@ del_models(struct vsmodels *vsmodel)
 * in R instance, replace TC = xx1, xx2 by TC1=xx1 TC2=xx2
 * replace T_ABS by temp and T_REL_GLOBAL by dtemp in .model cards
 * get the area factor for diodes and bipolar devices */
-static struct card *
-pspice_compat(struct card *oldcard)
+static struct card *pspice_compat(struct card *oldcard)
 {
     struct card *card, *newcard, *nextcard;
     struct vsmodels *modelsfound = NULL;
     int skip_control = 0;
 
     /* .model replacement in ako (a kind of) model descriptions
-    * in first .subckt and top level only */
+     * in first .subckt and top level only */
     struct card *errcard;
     if ((errcard = ako_model(oldcard)) != NULL) {
         fprintf(stderr, "Error: no model found for %s\n", errcard->line);
@@ -7213,8 +7444,8 @@ pspice_compat(struct card *oldcard)
     nextcard->nextcard = oldcard;
 
     /* add predefined parameters TEMP, VT after each subckt call */
-    /* FIXME: This should not be necessary if we had a better sense of hierarchy
-    during the evaluation of TEMPER */
+    /* FIXME: This should not be necessary if we had a better sense of
+    hierarchy during the evaluation of TEMPER */
     for (card = newcard; card; card = card->nextcard) {
         char *cut_line = card->line;
         if (ciprefix(".subckt", cut_line)) {
@@ -7249,7 +7480,7 @@ pspice_compat(struct card *oldcard)
             ntok = nexttok(ntok);
             char *tctok = search_plain_identifier(ntok, "tc");
             if (tctok) {
-                char *tctok1 = strchr(tctok,'=');
+                char *tctok1 = strchr(tctok, '=');
                 if (tctok1)
                     /* skip '=' */
                     tctok1 += 1;
@@ -7261,11 +7492,15 @@ pspice_compat(struct card *oldcard)
                 tctok[-1] = '\0';
                 char *newstring;
                 if (tc1 && tc2)
-                    newstring = tprintf("%s tc1=%s tc2=%s", cut_line, tc1, tc2);
+                    newstring =
+                            tprintf("%s tc1=%s tc2=%s", cut_line, tc1, tc2);
                 else if (tc1)
                     newstring = tprintf("%s tc1=%s", cut_line, tc1);
                 else {
-                    fprintf(stderr, "Warning: tc without parameters removed in line \n   %s\n", cut_line);
+                    fprintf(stderr,
+                            "Warning: tc without parameters removed in line "
+                            "\n   %s\n",
+                            cut_line);
                     continue;
                 }
                 tfree(card->line);
@@ -7306,7 +7541,7 @@ pspice_compat(struct card *oldcard)
         if ((t = strstr(card->line, "&")) != NULL) {
             while (t && (t[1] != '&')) {
                 char *tt = NULL;
-                char *tn = copy(t + 1);/*skip |*/
+                char *tn = copy(t + 1); /*skip |*/
                 char *strbeg = copy_substring(card->line, t);
                 tfree(card->line);
                 card->line = tprintf("%s&&%s", strbeg, tn);
@@ -7324,7 +7559,7 @@ pspice_compat(struct card *oldcard)
         if ((t = strstr(card->line, "|")) != NULL) {
             while (t && (t[1] != '|')) {
                 char *tt = NULL;
-                char *tn = copy(t + 1);/*skip |*/
+                char *tn = copy(t + 1); /*skip |*/
                 char *strbeg = copy_substring(card->line, t);
                 tfree(card->line);
                 card->line = tprintf("%s||%s", strbeg, tn);
@@ -7346,9 +7581,9 @@ pspice_compat(struct card *oldcard)
         char *cut_line = card->line;
         if (ciprefix(".model", cut_line)) {
             char *t_str;
-            if((t_str = strstr(cut_line, "t_abs")) != NULL)
+            if ((t_str = strstr(cut_line, "t_abs")) != NULL)
                 memcpy(t_str, " temp", 5);
-            else if((t_str = strstr(cut_line, "t_rel_global")) != NULL)
+            else if ((t_str = strstr(cut_line, "t_rel_global")) != NULL)
                 memcpy(t_str, "       dtemp", 12);
         }
     }
@@ -7396,20 +7631,24 @@ pspice_compat(struct card *oldcard)
                 while (*cut_line && !isspace(*cut_line))
                     if (!isdigit(*cut_line++))
                         is_node4 = FALSE; // already model name
-                if(is_node4)
+                if (is_node4)
                     cut_line = nexttok(cut_line); // model name
             }
-            if (*cut_line && atof(cut_line) > 0.0) { // size of area is a real number
+            if (*cut_line &&
+                    atof(cut_line) > 0.0) { // size of area is a real number
                 char *tmpstr1 = copy_substring(card->line, cut_line);
                 char *tmpstr2 = tprintf("%s area=%s", tmpstr1, cut_line);
                 tfree(tmpstr1);
                 tfree(card->line);
                 card->line = tmpstr2;
             }
-            else if (*cut_line && *(skip_ws(cut_line)) == '{') { // size of area is parametrized inside {}
+            else if (*cut_line &&
+                    *(skip_ws(cut_line)) ==
+                            '{') { // size of area is parametrized inside {}
                 char *tmpstr1 = copy_substring(card->line, cut_line);
                 char *tmpstr2 = gettok_char(&cut_line, '}', TRUE, TRUE);
-                char *tmpstr3 = tprintf("%s area=%s %s", tmpstr1, tmpstr2, cut_line);
+                char *tmpstr3 =
+                        tprintf("%s area=%s %s", tmpstr1, tmpstr2, cut_line);
                 tfree(tmpstr1);
                 tfree(tmpstr2);
                 tfree(card->line);
@@ -7436,16 +7675,19 @@ pspice_compat(struct card *oldcard)
         }
     }
 
-/* replace
-* S1 D S DG GND SWN
-* .MODEL SWN VSWITCH ( VON = {0.55} VOFF = {0.49} RON={1/(2*M*(W/LE)*(KPN/2)*10)}  ROFF={1G} )
-* by
-* a1 %v(DG) %gd(D S) swa
-* .MODEL SWA aswitch(cntl_off=0.49 cntl_on=0.55 r_off=1G r_on={1/(2*M*(W/LE)*(KPN/2)*10)} log=TRUE)
+    /* replace
+    * S1 D S DG GND SWN
+    * .MODEL SWN VSWITCH ( VON = {0.55} VOFF = {0.49}
+    RON={1/(2*M*(W/LE)*(KPN/2)*10)}  ROFF={1G} )
+    * by
+    * a1 %v(DG) %gd(D S) swa
+    * .MODEL SWA aswitch(cntl_off=0.49 cntl_on=0.55 r_off=1G
+    r_on={1/(2*M*(W/LE)*(KPN/2)*10)} log=TRUE)
 
-* simple hierachy, as nested subcircuits are not allowed in PSPICE */
+    * simple hierachy, as nested subcircuits are not allowed in PSPICE */
 
-    /* first scan: find the vswitch models, transform them and put them into a list */
+    /* first scan: find the vswitch models, transform them and put them into a
+     * list */
     for (card = newcard; card; card = card->nextcard) {
         char *str;
         static struct card *subcktline = NULL;
@@ -7470,42 +7712,53 @@ pspice_compat(struct card *oldcard)
                 tfree(modname);
                 continue;
             }
-            /* we have to find 4 parameters, identified by '=', separated by spaces */
+            /* we have to find 4 parameters, identified by '=', separated by
+             * spaces */
             char *equalptr[4];
             equalptr[0] = strstr(str, "=");
             if (!equalptr[0]) {
-                fprintf(stderr, "Error: not enough parameters in vswitch model\n   %s\n", card->line);
+                fprintf(stderr,
+                        "Error: not enough parameters in vswitch model\n   "
+                        "%s\n",
+                        card->line);
                 controlled_exit(1);
             }
             for (i = 1; i < 4; i++) {
                 equalptr[i] = strstr(equalptr[i - 1] + 1, "=");
                 if (!equalptr[i]) {
-                    fprintf(stderr, "Error: not enough parameters in vswitch model\n   %s\n", card->line);
+                    fprintf(stderr,
+                            "Error: not enough parameters in vswitch model\n "
+                            "  %s\n",
+                            card->line);
                     controlled_exit(1);
                 }
             }
             for (i = 0; i < 4; i++) {
                 equalptr[i] = skip_back_ws(equalptr[i], str);
-                while (*(equalptr[i]) != '(' && !isspace_c(*(equalptr[i])) && *(equalptr[i]) != ',')
+                while (*(equalptr[i]) != '(' && !isspace_c(*(equalptr[i])) &&
+                        *(equalptr[i]) != ',')
                     (equalptr[i])--;
                 (equalptr[i])++;
             }
             for (i = 0; i < 3; i++)
                 modpar[i] = copy_substring(equalptr[i], equalptr[i + 1] - 1);
             if (strrchr(equalptr[3], ')'))
-                modpar[3] = copy_substring(equalptr[3], strrchr(equalptr[3], ')'));
+                modpar[3] = copy_substring(
+                        equalptr[3], strrchr(equalptr[3], ')'));
             else
                 /* vswitch defined without parens */
                 modpar[3] = copy(equalptr[3]);
             tfree(card->line);
-            /* replace VON by cntl_on, VOFF by cntl_off, RON by r_on, and ROFF by r_off */
+            /* replace VON by cntl_on, VOFF by cntl_off, RON by r_on, and ROFF
+             * by r_off */
             rep_spar(modpar);
             card->line = tprintf(".model a%s aswitch(%s %s %s %s  log=TRUE)",
-                modname, modpar[0], modpar[1], modpar[2], modpar[3]);
+                    modname, modpar[0], modpar[1], modpar[2], modpar[3]);
             for (i = 0; i < 4; i++)
                 tfree(modpar[i]);
             if (nesting > 0)
-                modelsfound = insert_new_model(modelsfound, modname, subcktline->line);
+                modelsfound = insert_new_model(
+                        modelsfound, modname, subcktline->line);
             else
                 modelsfound = insert_new_model(modelsfound, modname, "top");
             tfree(modname);
@@ -7516,7 +7769,8 @@ pspice_compat(struct card *oldcard)
     if (!modelsfound)
         return newcard;
 
-    /* second scan: find the switch instances s calling a vswitch model and transform them */
+    /* second scan: find the switch instances s calling a vswitch model and
+     * transform them */
     for (card = newcard; card; card = card->nextcard) {
         static struct card *subcktline = NULL;
         static int nesting = 0;
@@ -7549,16 +7803,19 @@ pspice_compat(struct card *oldcard)
             for (i = 0; i < 6; i++)
                 stoks[i] = gettok_node(&cut_line);
             /* rewrite s line and replace it if a model is found */
-            if ((nesting > 0) && find_a_model(modelsfound, stoks[5], subcktline->line)) {
+            if ((nesting > 0) &&
+                    find_a_model(modelsfound, stoks[5], subcktline->line)) {
                 tfree(card->line);
                 card->line = tprintf("a%s %%vd(%s %s) %%gd(%s %s) a%s",
-                    stoks[0], stoks[3], stoks[4], stoks[1], stoks[2], stoks[5]);
+                        stoks[0], stoks[3], stoks[4], stoks[1], stoks[2],
+                        stoks[5]);
             }
             /* if model is not within same subcircuit, search at top level */
             else if (find_a_model(modelsfound, stoks[5], "top")) {
                 tfree(card->line);
                 card->line = tprintf("a%s %%vd(%s %s) %%gd(%s %s) a%s",
-                    stoks[0], stoks[3], stoks[4], stoks[1], stoks[2], stoks[5]);
+                        stoks[0], stoks[3], stoks[4], stoks[1], stoks[2],
+                        stoks[5]);
             }
             for (i = 0; i < 6; i++)
                 tfree(stoks[i]);
@@ -7570,51 +7827,58 @@ pspice_compat(struct card *oldcard)
 }
 
 /* do not modify oldcard address, insert everything after first line only */
-static void
-pspice_compat_a(struct card *oldcard)
+static void pspice_compat_a(struct card *oldcard)
 {
     oldcard->nextcard = pspice_compat(oldcard->nextcard);
 }
 
 
 /**** LTSPICE to ngspice **************
-* add functions uplim, dnlim
-* Replace
-* D1 A K SDMOD
-* .MODEL SDMOD D (Roff=1000 Ron=0.7  Rrev=0.2  Vfwd=1  Vrev=10 Revepsilon=0.2 Epsilon=0.2 Ilimit=7 Revilimit=7)
-* by
-* ad1 a k asdmod
-* .model asdmod sidiode(Roff=1000 Ron=0.7  Rrev=0.2  Vfwd=1  Vrev=10 Revepsilon=0.2 Epsilon=0.2 Ilimit=7 Revilimit=7)
-*/
-struct card *
-ltspice_compat(struct card *oldcard)
+ * add functions uplim, dnlim
+ * Replace
+ * D1 A K SDMOD
+ * .MODEL SDMOD D (Roff=1000 Ron=0.7  Rrev=0.2  Vfwd=1  Vrev=10 Revepsilon=0.2
+ * Epsilon=0.2 Ilimit=7 Revilimit=7) by ad1 a k asdmod .model asdmod
+ * sidiode(Roff=1000 Ron=0.7  Rrev=0.2  Vfwd=1  Vrev=10 Revepsilon=0.2
+ * Epsilon=0.2 Ilimit=7 Revilimit=7)
+ */
+struct card *ltspice_compat(struct card *oldcard)
 {
     struct card *card, *newcard, *nextcard;
     struct vsmodels *modelsfound = NULL;
     int skip_control = 0;
 
     /* add funcs uplim, dnlim to beginning of deck */
-    char *new_str = copy(".func uplim(x, pos, z) { min(x, pos - z) + (1 - (min(max(0, x - pos + z), 2 * z) / 2 / z - 1)**2)*z }");
+    char *new_str =
+            copy(".func uplim(x, pos, z) { min(x, pos - z) + (1 - "
+                 "(min(max(0, x - pos + z), 2 * z) / 2 / z - 1)**2)*z }");
     newcard = insert_new_line(NULL, new_str, 1, 0);
-    new_str = copy(".func dnlim(x, neg, z) { max(x, neg + z) - (1 - (min(max(0, -x + neg + z), 2 * z) / 2 / z - 1)**2)*z }"); 
+    new_str = copy(".func dnlim(x, neg, z) { max(x, neg + z) - (1 - "
+                   "(min(max(0, -x + neg + z), 2 * z) / 2 / z - 1)**2)*z }");
     nextcard = insert_new_line(newcard, new_str, 2, 0);
-    new_str = copy(".func uplim_tanh(x, pos, z) { min(x, pos - z) + tanh(max(0, x - pos + z) / z)*z }");
+    new_str = copy(".func uplim_tanh(x, pos, z) { min(x, pos - z) + "
+                   "tanh(max(0, x - pos + z) / z)*z }");
     nextcard = insert_new_line(nextcard, new_str, 3, 0);
-    new_str = copy(".func dnlim_tanh(x, neg, z) { max(x, neg + z) - tanh(max(0, neg + z - x) / z)*z }");
+    new_str = copy(".func dnlim_tanh(x, neg, z) { max(x, neg + z) - "
+                   "tanh(max(0, neg + z - x) / z)*z }");
     nextcard = insert_new_line(nextcard, new_str, 4, 0);
     nextcard->nextcard = oldcard;
 
-     /* replace
-    * D1 A K SDMOD
-    * .MODEL SDMOD D (Roff=1000 Ron=0.7  Rrev=0.2  Vfwd=1  Vrev=10 Revepsilon=0.2 Epsilon=0.2 Ilimit=7 Revilimit=7)
-    * by
-    * a1 a k SDMOD
-    * .model SDMOD sidiode(Roff=1000 Ron=0.7  Rrev=0.2  Vfwd=1  Vrev=10 Revepsilon=0.2 Epsilon=0.2 Ilimit=7 Revilimit=7)
-    * Do this if one of the parameters, which are uncommon to standard diode model, has been found.
+    /* replace
+   * D1 A K SDMOD
+   * .MODEL SDMOD D (Roff=1000 Ron=0.7  Rrev=0.2  Vfwd=1  Vrev=10
+   Revepsilon=0.2 Epsilon=0.2 Ilimit=7 Revilimit=7)
+   * by
+   * a1 a k SDMOD
+   * .model SDMOD sidiode(Roff=1000 Ron=0.7  Rrev=0.2  Vfwd=1  Vrev=10
+   Revepsilon=0.2 Epsilon=0.2 Ilimit=7 Revilimit=7)
+   * Do this if one of the parameters, which are uncommon to standard diode
+   model, has been found.
 
-    * simple hierachy, as nested subcircuits are not allowed in PSPICE */
+   * simple hierachy, as nested subcircuits are not allowed in PSPICE */
 
-    /* first scan: find the d models, transform them and put them into a list */
+    /* first scan: find the d models, transform them and put them into a list
+     */
     for (card = nextcard; card; card = card->nextcard) {
         char *str;
         static struct card *subcktline = NULL;
@@ -7627,18 +7891,17 @@ ltspice_compat(struct card *oldcard)
         if (ciprefix(".ends", cut_line))
             nesting--;
 
-        if (ciprefix(".model", card->line) && search_plain_identifier(card->line, "d")) {
+        if (ciprefix(".model", card->line) &&
+                search_plain_identifier(card->line, "d")) {
             if (search_plain_identifier(card->line, "roff") ||
-                search_plain_identifier(card->line, "ron") ||
-                search_plain_identifier(card->line, "rrev") ||
-                search_plain_identifier(card->line, "vfwd") ||
-                search_plain_identifier(card->line, "vrev") ||
-                search_plain_identifier(card->line, "revepsilon") ||
-                search_plain_identifier(card->line, "epsilon") ||
-                search_plain_identifier(card->line, "revilimit") ||
-                search_plain_identifier(card->line, "ilimit")
-                )
-            {
+                    search_plain_identifier(card->line, "ron") ||
+                    search_plain_identifier(card->line, "rrev") ||
+                    search_plain_identifier(card->line, "vfwd") ||
+                    search_plain_identifier(card->line, "vrev") ||
+                    search_plain_identifier(card->line, "revepsilon") ||
+                    search_plain_identifier(card->line, "epsilon") ||
+                    search_plain_identifier(card->line, "revilimit") ||
+                    search_plain_identifier(card->line, "ilimit")) {
                 char *modname;
 
                 card->line = str = inp_remove_ws(card->line);
@@ -7655,9 +7918,11 @@ ltspice_compat(struct card *oldcard)
                 tfree(card->line);
                 card->line = tprintf(".model a%s sidiode%s", modname, newstr);
                 if (nesting > 0)
-                    modelsfound = insert_new_model(modelsfound, modname, subcktline->line);
+                    modelsfound = insert_new_model(
+                            modelsfound, modname, subcktline->line);
                 else
-                    modelsfound = insert_new_model(modelsfound, modname, "top");
+                    modelsfound =
+                            insert_new_model(modelsfound, modname, "top");
                 tfree(modname);
                 tfree(newstr);
             }
@@ -7670,7 +7935,8 @@ ltspice_compat(struct card *oldcard)
     if (!modelsfound)
         return newcard;
 
-    /* second scan: find the diode instances d calling a simple diode model and transform them */
+    /* second scan: find the diode instances d calling a simple diode model
+     * and transform them */
     for (card = nextcard; card; card = card->nextcard) {
         static struct card *subcktline = NULL;
         static int nesting = 0;
@@ -7703,16 +7969,17 @@ ltspice_compat(struct card *oldcard)
             for (i = 0; i < 4; i++)
                 stoks[i] = gettok_node(&cut_line);
             /* rewrite d line and replace it if a model is found */
-            if ((nesting > 0) && find_a_model(modelsfound, stoks[3], subcktline->line)) {
+            if ((nesting > 0) &&
+                    find_a_model(modelsfound, stoks[3], subcktline->line)) {
                 tfree(card->line);
-                card->line = tprintf("a%s %s %s a%s",
-                    stoks[0], stoks[1], stoks[2], stoks[3]);
+                card->line = tprintf("a%s %s %s a%s", stoks[0], stoks[1],
+                        stoks[2], stoks[3]);
             }
             /* if model is not within same subcircuit, search at top level */
             else if (find_a_model(modelsfound, stoks[3], "top")) {
                 tfree(card->line);
-                card->line = tprintf("a%s %s %s a%s",
-                    stoks[0], stoks[1], stoks[2], stoks[3]);
+                card->line = tprintf("a%s %s %s a%s", stoks[0], stoks[1],
+                        stoks[2], stoks[3]);
             }
             for (i = 0; i < 4; i++)
                 tfree(stoks[i]);
@@ -7724,8 +7991,7 @@ ltspice_compat(struct card *oldcard)
 }
 
 /* do not modify oldcard address, insert everything after first line only */
-static void
-ltspice_compat_a(struct card *oldcard)
+static void ltspice_compat_a(struct card *oldcard)
 {
     oldcard->nextcard = ltspice_compat(oldcard->nextcard);
 }
@@ -7751,7 +8017,9 @@ static void inp_check_syntax(struct card *deck)
         // check for .control ... .endc
         if (ciprefix(".control", cut_line)) {
             if (check_control > 0) {
-                fprintf(cp_err, "\nError: Nesting of .control statements is not allowed!\n\n");
+                fprintf(cp_err,
+                        "\nError: Nesting of .control statements is not "
+                        "allowed!\n\n");
                 controlled_exit(EXIT_BAD);
             }
             check_control++;
@@ -7765,7 +8033,9 @@ static void inp_check_syntax(struct card *deck)
         else if (ciprefix(".subckt", cut_line)) {
             // nesting may be critical if params are involved
             if (check_subs > 0 && strchr(cut_line, '='))
-                fprintf(cp_err, "\nWarning: Nesting of subcircuits with parameters is only marginally supported!\n\n");
+                fprintf(cp_err,
+                        "\nWarning: Nesting of subcircuits with parameters "
+                        "is only marginally supported!\n\n");
             check_subs++;
             continue;
         }
@@ -7794,7 +8064,8 @@ static void inp_check_syntax(struct card *deck)
         fprintf(cp_err, "    This may cause subsequent errors.\n\n");
     }
     if (check_subs != 0) {
-        fprintf(cp_err, "\nError: Mismatch of .subckt ... .ends statements!\n");
+        fprintf(cp_err,
+                "\nError: Mismatch of .subckt ... .ends statements!\n");
         fprintf(cp_err, "    This will cause subsequent errors.\n\n");
         controlled_exit(EXIT_BAD);
     }
@@ -7805,8 +8076,7 @@ static void inp_check_syntax(struct card *deck)
 }
 
 /* remove the mfg=mfgname entry from the .model cards */
-static void
-rem_mfg_from_models(struct card *deck)
+static void rem_mfg_from_models(struct card *deck)
 {
     struct card *card;
     for (card = deck; card; card = card->nextcard) {
@@ -7815,7 +8085,7 @@ rem_mfg_from_models(struct card *deck)
 
         curr_line = start = card->line;
         /* remove mfg=name */
-        if (ciprefix(".model", curr_line)){
+        if (ciprefix(".model", curr_line)) {
             start = strstr(curr_line, "mfg=");
             if (start) {
                 end = nexttok(start);
@@ -7827,7 +8097,64 @@ rem_mfg_from_models(struct card *deck)
                         start++;
                     }
             }
-
         }
     }
+}
+
+/* model type as input, element identifier as output */
+static char inp_get_elem_ident(char *type)
+{
+    if (cieq(type, "r"))
+        return 'r';
+    else if (cieq(type, "c"))
+        return 'c';
+    else if (cieq(type, "l"))
+        return 'l';
+    else if (cieq(type, "nmos"))
+        return 'm';
+    else if (cieq(type, "pmos"))
+        return 'm';
+    else if (cieq(type, "numos"))
+        return 'm';
+    else if (cieq(type, "d"))
+        return 'd';
+    else if (cieq(type, "numd"))
+        return 'd';
+    else if (cieq(type, "numd2"))
+        return 'd';
+    else if (cieq(type, "npn"))
+        return 'q';
+    else if (cieq(type, "pnp"))
+        return 'q';
+    else if (cieq(type, "nbjt"))
+        return 'q';
+    else if (cieq(type, "nbjt2"))
+        return 'q';
+    else if (cieq(type, "njf"))
+        return 'j';
+    else if (cieq(type, "pjf"))
+        return 'j';
+    else if (cieq(type, "nmf"))
+        return 'z';
+    else if (cieq(type, "pmf"))
+        return 'z';
+    else if (cieq(type, "nhfet"))
+        return 'z';
+    else if (cieq(type, "phfet"))
+        return 'z';
+    else if (cieq(type, "sw"))
+        return 's';
+    else if (cieq(type, "csw"))
+        return 'w';
+    else if (cieq(type, "txl"))
+        return 'y';
+    else if (cieq(type, "cpl"))
+        return 'p';
+    else if (cieq(type, "ltra"))
+        return 'o';
+    else if (cieq(type, "urc"))
+        return 'u';
+    /* xspice code models do not have unique type names */
+    else
+        return 'a';
 }
