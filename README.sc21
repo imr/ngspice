@@ -1,0 +1,7 @@
+README for NGSPICE branch scpoe-inpcom-21
+==================
+Branch is based on pre-master (not on scpoe-inpcom-20)
+
+Adding scoping information to ngspice
+(based on nscope from scope-inpcom-20)
+
