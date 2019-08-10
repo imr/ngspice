@@ -3013,14 +3013,15 @@ static void inp_fix_inst_calls_for_numparam(
             char *subckt_name = inp_get_subckt_name(inst_line);
 
             if (found_mult_param(num_inst_params, inst_param_names)) {
-                struct card *p = find_subckt(c->level, subckt_name)->line;
-                if (p) {
-                    int num_subckt_params = inp_get_params(
-                            p->line, subckt_param_names, subckt_param_values);
+                struct card_assoc *a = find_subckt(c->level, subckt_name);
+                if (a)
+                {
+                    int num_subckt_params = inp_get_params(a->line->line,
+                            subckt_param_names, subckt_param_values);
 
                     if (!found_mult_param(
                                 num_subckt_params, subckt_param_names))
-                        inp_fix_subckt_multiplier(subckt_w_params, p,
+                        inp_fix_subckt_multiplier(subckt_w_params, a->line,
                                 num_subckt_params, subckt_param_names,
                                 subckt_param_values);
 
