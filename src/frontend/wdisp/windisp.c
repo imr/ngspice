@@ -773,7 +773,7 @@ WIN_DrawLine(int x1, int y1, int x2, int y2)
     LineTo(wd->hDC, x2, wd->Area.bottom - y2);
     OldPen = SelectObject(wd->hDC, OldPen);
     DeleteObject(NewPen);
-
+    WaitForIdle();
     return 0;
 }
 
@@ -833,7 +833,7 @@ WIN_Arc(int x0, int y0, int radius, double theta, double delta_theta)
     Arc(wd->hDC, left, yb-top, right, yb-bottom, xs, yb-ys, xe, yb-ye);
     OldPen = SelectObject(wd->hDC, OldPen);
     DeleteObject(NewPen);
-
+    WaitForIdle();
     return 0;
 }
 
