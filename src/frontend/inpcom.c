@@ -1892,6 +1892,9 @@ static int is_a_modelname(const char *s)
 {
     char *st;
     double testval;
+    /* token containing '=' is not a model name */
+    if (strchr(s, '='))
+        return FALSE;
     /* first character of model name is character from alphabet */
     if (isalpha_c(s[0]))
         return TRUE;
