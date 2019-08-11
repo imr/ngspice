@@ -328,7 +328,7 @@ AppendChar(char c)
 
     /* If line is complete, and waiting time has passed, show it in text window.
        If time is less than delay time, always show the line (useful during start-up) */
-    if (c == LF && CompareTime(30, 200)) {
+    if (c == LF && CompareTime(30, 500)) {
         DisplayText();
         WaitForIdle();
     }
