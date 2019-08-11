@@ -160,6 +160,8 @@ static char *search_plain_identifier(char *str, const char *identifier);
 static struct nscope *inp_add_levels(struct card *deck);
 static struct card_assoc *find_subckt(struct nscope *scope, const char *name);
 static void inp_rem_levels(struct nscope *root);
+static void inp_rem_unused_models(struct nscope *root, struct card *deck);
+static struct modellist *inp_find_model(struct nscope *scope, const char *name);
 
 void tprint(struct card *deck);
 static struct card *pspice_compat(struct card *newcard);
@@ -619,8 +621,10 @@ struct card *inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile,
         inp_vdmos_model(working);
         /* don't remove unused model if we have an .if clause, because we
            cannot yet decide here which model we finally will need */
-        if (!has_if)
+        if (!has_if) {
             comment_out_unused_subckt_models(working);
+            inp_rem_unused_models(root, working);
+        }
 
         rem_mfg_from_models(working);
 
@@ -8160,6 +8164,36 @@ static void add_subckt(struct nscope *scope, struct card *subckt_line)
 }
 
 
+/* linked list of models, includes use info */
+struct modellist {
+    struct card *model;
+    char *modelname;
+    bool used;
+    char elemb;
+    struct modellist *next;
+};
+
+
+static struct modellist *inp_find_model_1(struct nscope *scope, const char *name)
+{
+    struct modellist *p = scope->models;
+    for (; p; p = p->next)
+        if (model_name_match(name, p->modelname))
+            break;
+    return p;
+}
+
+
+static struct modellist *inp_find_model(struct nscope *scope, const char *name)
+{
+    for (; scope; scope = scope->next) {
+        struct modellist *p = inp_find_model_1(scope, name);
+        if (p)
+            return p;
+    }
+    return NULL;
+}
+
 /* scan through deck and add level information to all struct card
  * depending on nested subcircuits */
 static struct nscope *inp_add_levels(struct card *deck)
@@ -8170,6 +8204,7 @@ static struct nscope *inp_add_levels(struct card *deck)
     struct nscope *root = TMALLOC(struct nscope, 1);
     root->next = NULL;
     root->subckts = NULL;
+    root->models = NULL;
 
     struct nscope *lvl = root;
 
@@ -8197,6 +8232,7 @@ static struct nscope *inp_add_levels(struct card *deck)
                 // lvl->name = ..., or just point to the deck
                 scope->next = lvl;
                 scope->subckts = NULL;
+                scope->models = NULL;
                 lvl = card->level = scope;
             }
             else if (ciprefix(".ends", curr_line)) {
@@ -8234,4 +8270,149 @@ static void inp_rem_levels(struct nscope *root)
         p = pn;
     }
     tfree(root);
+}
+
+static void rem_unused_xxx(struct nscope *level)
+{
+    struct modellist *m = level->models;
+    while (m) {
+        struct modellist *next_m = m->next;
+        if (!m->used)
+            m->model->line[0] = '*';
+        tfree(m->modelname);
+        tfree(m);
+        m = next_m;
+    }
+    level->models = NULL;
+
+    struct card_assoc *p = level->subckts;
+    for (; p; p = p->next)
+        rem_unused_xxx(p->line->level);
+}
+
+
+static void mark_all_binned(struct nscope *scope, char *name)
+{
+    struct modellist *p = scope->models;
+
+    for (; p; p = p->next)
+        if (model_name_match(name, p->modelname))
+            p->used = TRUE;
+}
+
+
+static void inp_rem_unused_models(struct nscope *root, struct card *deck)
+{
+    struct card *card;
+    int skip_control = 0;
+
+    /* create a list of .model */
+    for (card = deck; card; card = card->nextcard) {
+
+        char *curr_line = card->line;
+
+        /* exclude any command inside .control ... .endc */
+        if (ciprefix(".control", curr_line)) {
+            skip_control++;
+            continue;
+        }
+        else if (ciprefix(".endc", curr_line)) {
+            skip_control--;
+            continue;
+        }
+        else if (skip_control > 0) {
+            continue;
+        }
+
+        if (*curr_line == '*')
+            continue;
+
+        if (ciprefix(".model", curr_line)) {
+            struct modellist *modl_new;
+            modl_new = TMALLOC(struct modellist, 1);
+            char *model_type = get_model_type(curr_line);
+            modl_new->elemb = inp_get_elem_ident(model_type);
+            modl_new->modelname = get_subckt_model_name(curr_line);
+            modl_new->model = card;
+            modl_new->used = FALSE;
+            modl_new->next = card->level->models;
+            card->level->models = modl_new;
+            tfree(model_type);
+        }
+    }
+
+    /* scan through all element lines  that require or may need a model */
+    for (card = deck; card; card = card->nextcard) {
+
+        char *curr_line = card->line;
+
+        /* exclude any command inside .control ... .endc */
+        if (ciprefix(".control", curr_line)) {
+            skip_control++;
+            continue;
+        }
+        else if (ciprefix(".endc", curr_line)) {
+            skip_control--;
+            continue;
+        }
+        else if (skip_control > 0) {
+            continue;
+        }
+
+        switch (*curr_line) {
+            case '*':
+            case '.':
+            case 'v':
+            case 'i':
+            case 'b':
+            case 'x':
+            case 'e':
+            case 'h':
+            case 'g':
+            case 'f':
+            case 'k':
+            case 't':
+                continue;
+                break;
+            default:
+                break;
+        }
+
+        /* check if correct model name */
+        int num_terminals = get_number_terminals(curr_line);
+        /* num_terminals may be 0 for a elements */
+        if ((num_terminals != 0) || (*curr_line == 'a')) {
+            char *elem_model_name;
+            if (*curr_line == 'a')
+                elem_model_name = get_adevice_model_name(curr_line);
+            else
+                elem_model_name = get_model_name(curr_line, num_terminals);
+
+            /* ignore certain cases, for example
+             *    C5 node1 node2 42.0
+             */
+            if (is_a_modelname(elem_model_name)) {
+
+                struct modellist *m =
+                        inp_find_model(card->level, elem_model_name);
+                if (m) {
+                    if (*curr_line != m->elemb)
+                        fprintf(stderr,
+                                "warning, model type mismatch in line\n    "
+                                "%s\n",
+                                curr_line);
+                    mark_all_binned(m->model->level, elem_model_name);
+                }
+                else {
+                    fprintf(stderr, "warning, can't find model %s\n",
+                            elem_model_name);
+                }
+            }
+
+            tfree(elem_model_name);
+        }
+    }
+
+    // disable unused .model lines, and free the models assoc lists
+    rem_unused_xxx(root);
 }
