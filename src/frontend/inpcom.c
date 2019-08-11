@@ -8116,6 +8116,8 @@ static char inp_get_elem_ident(char *type)
         return 'u';
     else if (ciprefix("vdmos", type))
         return 'm';
+    if (cieq(type, "res"))
+        return 'r';
     /* xspice code models do not have unique type names */
     else
         return 'a';
