@@ -1172,7 +1172,6 @@ plotAddComplexValue(dataDesc *desc, IFcomplex value)
 static void
 plotEnd(runDesc *run)
 {
-    fprintf(stderr, "\n");
     fprintf(stdout, "\nNo. of Data Rows : %d\n", run->pointCount);
 }
 
