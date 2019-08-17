@@ -7243,7 +7243,11 @@ pspice_compat(struct card *oldcard)
         }
 
         if (*cut_line == 'r' || *cut_line == 'l' || *cut_line == 'c') {
-            char *tctok = search_plain_identifier(cut_line, "tc");
+            /* Skip name and two nodes */
+            char *ntok = nexttok(cut_line);
+            ntok = nexttok(ntok);
+            ntok = nexttok(ntok);
+            char *tctok = search_plain_identifier(ntok, "tc");
             if (tctok) {
                 char *tctok1 = strchr(tctok,'=');
                 if (tctok1)
