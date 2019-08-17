@@ -7242,7 +7242,7 @@ pspice_compat(struct card *oldcard)
             continue;
         }
 
-        if (*cut_line == 'r') {
+        if (*cut_line == 'r' || *cut_line == 'l' || *cut_line == 'c') {
             char *tctok = search_plain_identifier(cut_line, "tc");
             if (tctok) {
                 char *tctok1 = strchr(tctok,'=');
