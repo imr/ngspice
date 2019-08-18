@@ -7,15 +7,14 @@ Modified: 2000 AlansFixes
 #ifndef ngspice_INPDEFS_H
 #define ngspice_INPDEFS_H
 
-    /* structure declarations used by either/both input package */
+/* structure declarations used by either/both input package */
 
-#include "ngspice/ifsim.h"
 #include "ngspice/gendefs.h"
+#include "ngspice/ifsim.h"
 #include "ngspice/inpptree.h"
 
 typedef struct INPtables INPtables;
 typedef struct INPmodel INPmodel;
-
 
 struct INPtab {
     char *t_ent;
@@ -28,7 +27,7 @@ struct INPnTab {
     struct INPnTab *t_next;
 };
 
-struct INPtables{
+struct INPtables {
     struct INPtab **INPsymtab;
     struct INPnTab **INPtermsymtab;
     int INPsize;
@@ -60,18 +59,21 @@ struct INPtables{
     GENmodel *defZmod;
 };
 
+/* Linked list of scoping information for each netlist line entry */
 struct nscope {
     struct nscope *next;
     struct card_assoc *subckts;
     struct modellist *models;
 };
 
+/* A linked list of netlist line entries, associated for a specific reason */
 struct card_assoc {
     const char *name;
     struct card *line;
     struct card_assoc *next;
 };
 
+/* The linked list of netlist line entries */
 struct card {
     int linenum;
     int linenum_orig;
@@ -83,12 +85,12 @@ struct card {
 };
 
 /* structure used to save models in after they are read during pass 1 */
-struct INPmodel{
-    IFuid INPmodName;   /* uid of model */
-    int INPmodType;     /* type index of device type */
-    INPmodel *INPnextModel;  /* link to next model */
-    struct card *INPmodLine;   /* pointer to line describing model */
-    GENmodel *INPmodfast;   /* high speed pointer to model for access */
+struct INPmodel {
+    IFuid INPmodName; /* uid of model */
+    int INPmodType; /* type index of device type */
+    INPmodel *INPnextModel; /* link to next model */
+    struct card *INPmodLine; /* pointer to line describing model */
+    GENmodel *INPmodfast; /* high speed pointer to model for access */
 };
 
 
@@ -99,11 +101,12 @@ struct INPmodel{
 
 int IFnewUid(CKTcircuit *, IFuid *, IFuid, char *, int, CKTnode **);
 int IFdelUid(CKTcircuit *, IFuid, int);
-int INPaName(char *, IFvalue *, CKTcircuit *, int *, char *, GENinstance **, IFsimulator *, int *,
-        IFvalue *);
+int INPaName(char *, IFvalue *, CKTcircuit *, int *, char *, GENinstance **,
+        IFsimulator *, int *, IFvalue *);
 int INPapName(CKTcircuit *, int, JOB *, char *, IFvalue *);
 void INPcaseFix(char *);
-char *INPdevParse(char **, CKTcircuit *, int, GENinstance *, double *, int *, INPtables *);
+char *INPdevParse(char **, CKTcircuit *, int, GENinstance *, double *, int *,
+        INPtables *);
 char *INPdomodel(CKTcircuit *, struct card *, INPtables *);
 void INPdoOpts(CKTcircuit *, JOB *, struct card *, INPtables *);
 char *INPerrCat(char *, char *);
@@ -128,7 +131,8 @@ int INPmakeMod(char *, int, struct card *);
 char *INPmkTemp(char *);
 void INPpas1(CKTcircuit *, struct card *, INPtables *);
 void INPpas2(CKTcircuit *, struct card *, INPtables *, TSKtask *);
-void INPpas3(CKTcircuit *, struct card *, INPtables *, TSKtask *, IFparm *, int);
+void INPpas3(
+        CKTcircuit *, struct card *, INPtables *, TSKtask *, IFparm *, int);
 int INPpName(char *, IFvalue *, CKTcircuit *, int, GENinstance *);
 int INPtermInsert(CKTcircuit *, char **, INPtables *, CKTnode **);
 int INPmkTerm(CKTcircuit *, char **, INPtables *, CKTnode **);
@@ -137,7 +141,7 @@ int INP2dot(CKTcircuit *, INPtables *, struct card *, TSKtask *, CKTnode *);
 INPtables *INPtabInit(int);
 void INPkillMods(void);
 void INPtabEnd(INPtables *);
-char * INPfindVer(char *line, char *version);
+char *INPfindVer(char *line, char *version);
 int INPgetStr(char **line, char **token, int gobble);
 int INPgetTitle(CKTcircuit **ckt, struct card **data);
 int INPgetUTok(char **line, char **token, int gobble);
