@@ -142,8 +142,10 @@ struct dvec *EVTfindvec(
     }
   }
 
-  if(! found)
+  if(! found) {
+    tfree(name);
     return(NULL);
+  }
 
   /* Get the UDN type index */
   udn_index = node_table[i]->udn_index;
