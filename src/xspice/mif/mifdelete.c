@@ -134,8 +134,11 @@ MIFdelete(GENinstance *gen_inst)
         }
         /* Free the basic port structure allocated in MIFget_port */
         num_port = here->conn[i]->size;
-        for (j = 0; j < num_port; j++)
+        for (j = 0; j < num_port; j++) {
+            /* Memory allocated in mif_inp2.c */
+            FREE(here->conn[i]->port[j]->type_str);
             FREE(here->conn[i]->port[j]);
+        }
         FREE(here->conn[i]->port);
     }
 
