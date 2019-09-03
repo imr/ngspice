@@ -1179,9 +1179,9 @@ main(int argc, char **argv)
                startup time.  */
 
             FILE *tempfile = tmpfile();
+            char *dname = NULL;   /* input file*/
 
 #if defined(HAS_WINGUI) || defined(_MSC_VER) || defined(__MINGW32__)
-            char *dname = NULL;   /* input file*/
             char *tpf = NULL;     /* temporary file */
 
             /* tmpfile() returns NULL, if in MS Windows as non admin user
@@ -1234,11 +1234,9 @@ main(int argc, char **argv)
                     }
                 }
 
-#if defined(HAS_WINGUI) || defined(_MSC_VER) || defined(__MINGW32__)
                 /* Copy the input file name which otherwise will be lost due to the
                    temporary file */
                 dname = copy(arg);
-#endif
 #if defined(HAS_WINGUI)
                 /* write source file name into source window */
                 SetSource(dname);
@@ -1253,13 +1251,9 @@ main(int argc, char **argv)
             fseek(tempfile, 0L, SEEK_SET);
 
             if (tempfile && (!err || !ft_batchmode)) {
-#if defined(HAS_WINGUI) || defined(_MSC_VER) || defined(__MINGW32__)
-                /* Copy the input file name for adding another file search path */
+                /* Copy the input file name for becoming another file search path */
                 inp_spsource(tempfile, FALSE, dname, FALSE);
                 tfree(dname);
-#else
-                inp_spsource(tempfile, FALSE, NULL, FALSE);
-#endif
                 gotone = TRUE;
             }
 
