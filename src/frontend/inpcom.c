@@ -2296,12 +2296,20 @@ static char *inp_spawn_brace(char *s)
 
 /*-------------------------------------------------------------------------*
   removes  " " quotes, returns lower case letters,
-  replaces non-printable characterss with '_' *
+  replaces non-printable characterss with '_', however if
+  non-printable character is the only character in a line,
+  replace it by '*'
   *-------------------------------------------------------------------------*/
 
 void inp_casefix(char *string)
 {
 #ifdef HAVE_CTYPE_H
+    /* single non-printable character */
+    if(string && !isspace_c(*string) && !isprint_c(*string) &&
+    (string[1] == '\0' || isspace_c(string[1]))) {
+        *string = '*';
+        return;
+    }
     if (string)
         while (*string) {
 #ifdef HAS_ASCII
