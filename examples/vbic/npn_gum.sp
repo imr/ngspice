@@ -1,4 +1,4 @@
-BJT Gummel Test Ic=f(Vc,Vb)
+VBIC Gummel Test Ic=f(Vc,Vb)
 
 .include qnva.mod
 

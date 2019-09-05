@@ -1,4 +1,4 @@
-Ask for smalll signal values
+Ask for small signal values of vbic model
 
 .include Infineon_VBIC.lib
 

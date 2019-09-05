@@ -1,4 +1,4 @@
-BJT Output Test Ic=f(Vc,Ib)
+VBIC Output Test Ic=f(Vc,Ib)
 
 .include qnva.mod
 

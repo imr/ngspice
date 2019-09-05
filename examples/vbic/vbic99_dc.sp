@@ -9,7 +9,7 @@ vie ex e 0
 vs sx 0 0
 vis sx s 0
 q1 c b e s dt vbic99 area=1 m=1
-.model vbic npn level=9
+.model vbic99 npn level=9
 +tref = 27.0 rcx = 10.0 rci = 60.0 vo = 2.0
 +gamm = 2e-11 hrcf = 2.0 rbx = 10.0 rbi = 40.0
 +re = 2.0 rs = 20.0 rbp = 40.0 is = 1.0e-16

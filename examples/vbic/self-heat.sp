@@ -1,4 +1,4 @@
-*# VERSION: 99.4
+VBIC Output Test Ic=f(Vc,Ib) vs self heating
 .option absmos=1e-12 relmos=1e-6 relv=1e-6 absv=1e-9 post
 vc c 0 0
 vb b 0 1

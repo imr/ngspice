@@ -1,4 +1,4 @@
-BJT ft Test
+VBIC ft Test
 
 .include Infineon_VBIC.lib
 
