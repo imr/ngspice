@@ -52,6 +52,7 @@ typedef struct sVBICinstance {
     const int VBICbaseNode;   /* number of base node of vbic */
     const int VBICemitNode;   /* number of emitter node of vbic */
     const int VBICsubsNode;   /* number of substrate node of vbic */
+    const int VBICtempNode;  /* number of the temperature node of the vbic */
     int VBICcollCXNode; /* number of internal collector node of vbic */
     int VBICcollCINode; /* number of internal collector node of vbic */
     int VBICbaseBXNode; /* number of internal base node of vbic */
@@ -207,6 +208,27 @@ typedef struct sVBICinstance {
     double *VBICsubsSIBaseBPPtr;   /* pointer to sparse matrix at
                              * (substrate,substrate) */
 
+    /* self heating */
+    double *VBICcollTempPtr;
+    double *VBICbaseTempPtr;
+    double *VBICemitTempPtr;
+    double *VBICsubsTempPtr;
+    double *VBICcollCItempPtr;
+    double *VBICcollCXtempPtr;
+    double *VBICbaseBItempPtr;
+    double *VBICbaseBXtempPtr;
+    double *VBICbaseBPtempPtr;
+    double *VBICemitEItempPtr;
+    double *VBICsubsSItempPtr;
+    double *VBICtempCollCIPtr;
+    double *VBICtempCollCXPtr;
+    double *VBICtempBaseBIPtr;
+    double *VBICtempBaseBXPtr;
+    double *VBICtempBaseBPPtr;
+    double *VBICtempEmitEIPtr;
+    double *VBICtempSubsPtr;
+    double *VBICtempTempPtr;
+
     unsigned VBICareaGiven   :1; /* flag to indicate area was specified */
     unsigned VBICoff         :1; /* 'off' flag for vbic */
     unsigned VBICicVBEGiven  :1; /* flag to indicate VBE init. cond. given */
@@ -221,6 +243,9 @@ typedef struct sVBICinstance {
     double VBICcapbcx;
     double VBICcapbep;
     double VBICcapbcp;
+    double VBICcapcth;
+
+    int VBIC_selfheat; /* self-heating enabled  */
 
 #ifndef NONOISE
       double VBICnVar[NSTATVARS][VBICNSRCS];
@@ -321,7 +346,13 @@ typedef struct sVBICinstance {
 #define VBICirs_Vrs VBICstate+64
 #define VBICire_Vre VBICstate+65
 
-#define VBICnumStates 66
+#define VBICqcth VBICstate+66  /* thermal capacitor charge */
+#define VBICcqcth VBICstate+67 /* thermal capacitor current */
+
+#define VBICvrth VBICstate+68
+#define VBICicth_Vrth VBICstate+69
+
+#define VBICnumStates 70
 
 /* per model data */
 typedef struct sVBICmodel {           /* model structure for a vbic */

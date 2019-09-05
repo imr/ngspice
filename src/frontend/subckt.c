@@ -1873,24 +1873,26 @@ devmodtranslate(struct card *s, char *subname, wordlist * const orig_modnames)
             tfree(name);
             name = gettok_node(&t);  /* this can be either a model name or a node name. */
 
-            wlsub = wl_find(name, orig_modnames);
-
-            if (!wlsub)
-                if (*t) { /* There is another token - perhaps a model */
-                    bxx_printf(&buffer, "%s ", name);
-                    tfree(name);
-                    name = gettok(&t);
+            if (name == NULL) {
+                name = copy(""); /* allow 'tfree' */
+            } else {
+                found = 0;
+                while (!found) {
                     wlsub = wl_find(name, orig_modnames);
-                }
-
-#ifdef ADMS
-            if (!wlsub)
-                if (*t) { /* There is another token - perhaps a model */
-                    bxx_printf(&buffer, "%s ", name);
-                    tfree(name);
-                    name = gettok(&t);
-                }
-#endif
+                    if (wlsub) {
+                        found = 1;
+                        break;
+                    } else {
+                        bxx_printf(&buffer, "%s ", name);
+                        tfree(name);
+                        name = gettok(&t);
+                        if (name == NULL) {  /* No token anymore - leave */
+                            name = copy(""); /* allow 'tfree' */
+                            break;
+                        }
+                    }
+                }  /* while  */
+            }
 
             translate_mod_name(&buffer, name, subname, orig_modnames);
             tfree(name);

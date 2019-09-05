@@ -188,7 +188,8 @@ char *VBICnames[] = {
     "collector",
     "base",
     "emitter",
-    "substrate"
+    "substrate",
+    "temp"
 };
 
 
