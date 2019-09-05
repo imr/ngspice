@@ -21,7 +21,8 @@ model_numnodes(int type)
         type == INPtypelook("bjt504t"))
         return 5;
 #else
-    NG_IGNORE(type);
+    if (type == INPtypelook("VBIC"))
+        return 5;
 #endif
 
     return 4;
@@ -37,13 +38,8 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, struct card *current, CKTnode *gnod
     int type;                   /* the type the model says it is */
     char *line;                 /* the part of the current line left to parse */
     char *name;                 /* the resistor's name */
-#ifdef ADMS
     const int max_i = 5;
     CKTnode *node[5];
-#else
-    const int max_i = 4;
-    CKTnode *node[4];
-#endif
     int error;                  /* error code temporary */
     int numnodes;               /* flag indicating 4 or 5 nodes */
     GENinstance *fast;          /* pointer to the actual instance */

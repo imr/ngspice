@@ -17,7 +17,7 @@ Spice3 Implementation: 2003 Dietmar Warning DAnalyse GmbH
 
 /* ARGSUSED */
 
-int iret, vbic_4T_it_cf_t(double *, double *, double *);
+int iret, vbic_4T_et_cf_t(double *, double *, double *);
 
 int
 VBICtemp(GENmodel *inModel, CKTcircuit *ckt)
@@ -151,7 +151,7 @@ VBICtemp(GENmodel *inModel, CKTcircuit *ckt)
             pnom[106] = model->VBICrevVersion;
             pnom[107] = model->VBICrefVersion;
             
-            iret = vbic_4T_it_cf_t(p,pnom,&TAMB);
+            iret = vbic_4T_et_cf_t(p,pnom,&TAMB);
             
             here->VBICtextCollResist = p[1];
             here->VBICtintCollResist = p[2];
@@ -195,7 +195,7 @@ VBICtemp(GENmodel *inModel, CKTcircuit *ckt)
     return(OK);
 }
 
-int vbic_4T_it_cf_t(double *p, double *pnom, double *TAMB)
+int vbic_4T_et_cf_t(double *p, double *pnom, double *TAMB)
 {
         double Tini, Tdev, Vtv, rT, dT, xvar1;
         double xvar2, xvar3, xvar4, xvar5, xvar6, psiio;
