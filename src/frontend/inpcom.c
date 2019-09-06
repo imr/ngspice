@@ -1001,22 +1001,9 @@ struct inp_read_t inp_read(
          * double quotes are printed. */
         {
             char *s;
-            /* no lower case letters for lines beginning with: */
-            if (!ciprefix("write", buffer) && !ciprefix("wrdata", buffer) &&
-                    !ciprefix(".lib", buffer) && !ciprefix(".inc", buffer) &&
-                    !ciprefix("codemodel", buffer) &&
-                    !ciprefix("echo", buffer) && !ciprefix("shell", buffer) &&
-                    !ciprefix("source", buffer) &&
-                    !ciprefix("load", buffer) && !ciprefix("plot", buffer) &&
-                    !ciprefix("hardcopy", buffer) &&
-                    !ciprefix("setcs", buffer)) {
-                /* lower case for all other lines */
-                for (s = buffer; *s && (*s != '\n'); s++)
-                    *s = tolower_c(*s);
-            }
-            else if (ciprefix("plot", buffer) ||
-                    ciprefix("gnuplot", buffer) ||
-                    ciprefix("hardcopy", buffer)) {
+            if (ciprefix("plot", buffer) ||
+                ciprefix("gnuplot", buffer) ||
+                ciprefix("hardcopy", buffer)) {
                 /* lower case excluded for tokens following title, xlabel,
                  * ylabel. tokens may contain spaces, then they have to be
                  * enclosed in quotes. keywords and tokens have to be
@@ -1080,7 +1067,8 @@ struct inp_read_t inp_read(
                 }
             }
             else if (ciprefix("print", buffer) ||
-                    ciprefix("asciiplot", buffer)) {
+                     ciprefix("eprint", buffer) ||
+                     ciprefix("asciiplot", buffer)) {
                 /* lower case excluded for tokens following output redirection
                  * '>' */
                 bool redir = FALSE;
@@ -1092,8 +1080,30 @@ struct inp_read_t inp_read(
                         *s = tolower_c(*s);
                 }
             }
-            else {
-                /* add Inp_Path to sourcepath variable */
+            /* no lower case letters for lines beginning with: */
+            else if (!ciprefix("write", buffer) &&
+                     !ciprefix("wrdata", buffer) &&                     
+                     !ciprefix(".lib", buffer) &&
+                     !ciprefix(".inc", buffer) &&
+                     !ciprefix("codemodel", buffer) &&
+                     !ciprefix("echo", buffer) &&
+                     !ciprefix("shell", buffer) &&
+                     !ciprefix("source", buffer) &&
+                     !ciprefix("load", buffer) &&
+                     !ciprefix("setcs", buffer)) {
+                /* lower case for all other lines */
+                for (s = buffer; *s && (*s != '\n'); s++)
+                    *s = tolower_c(*s);
+            }
+            else
+            {
+                /* s points to end of buffer for all cases not treated so far */
+                for (s = buffer; *s && (*s != '\n'); s++)
+                    ;
+            }
+            
+            /* add Inp_Path to sourcepath variable */
+            if (cieq(buffer, "set") || cieq(buffer, "setcs")) {    
                 char *p = strstr(buffer, "sourcepath");
                 if (p) {
                     p = strchr(buffer, ')');
@@ -1103,11 +1113,11 @@ struct inp_read_t inp_read(
                                 Inp_Path ? Inp_Path : "", p + 1);
                         tfree(buffer);
                         buffer = p;
+                        /* s points to end of buffer */
+                        for (s = buffer; *s && (*s != '\n'); s++)
+                            ;
                     }
                 }
-                /* exclude commands listed above to preserve filename case */
-                for (s = buffer; *s && (*s != '\n'); s++)
-                    ;
             }
 
             if (!*s) {
