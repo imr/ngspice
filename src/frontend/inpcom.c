@@ -1404,6 +1404,8 @@ static char *readline(FILE *fd)
         if (strlen == 0 && (c == '\t' || c == ' ')) /* Leading spaces away */
             continue;
 
+        if (c == '\r')
+            continue;
         strptr[strlen++] = (char) c;
 
         if (strlen >= memlen) {
