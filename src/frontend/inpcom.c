@@ -872,7 +872,9 @@ struct inp_read_t inp_read(
             tfree(new_title);
             new_title = copy(s);
             if ((s = strchr(new_title, '\n')) != NULL)
-                *s = ' ';
+                *s = '\0';
+            if ((s = strchr(new_title, '\r')) != NULL)
+                *s = '\0';
             *buffer = '*'; /* change .TITLE line to comment line */
         }
 
