@@ -8179,8 +8179,9 @@ static void add_subckt(struct nscope *scope, struct card *subckt_line)
     char *n = skip_ws(skip_non_ws(subckt_line->line));
     char *name = copy_substring(n, skip_non_ws(n));
     if (find_subckt_1(scope, name)) {
-        fprintf(stderr, "redefinition of .subckt %s\n", name);
-        controlled_exit(1);
+        fprintf(stderr, "Warning: redefinition of .subckt %s, ignored\n", name);
+        /* rename the redefined subcircuit */
+        *n = '_';
     }
     struct card_assoc *entry = TMALLOC(struct card_assoc, 1);
     entry->name = name;
