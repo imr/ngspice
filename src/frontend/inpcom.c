@@ -7464,6 +7464,11 @@ static struct card *pspice_compat(struct card *oldcard)
             char *ntok = nexttok(cut_line);
             ntok = nexttok(ntok);
             ntok = nexttok(ntok);
+            if (!ntok){
+                fprintf(stderr, "Error: Missing token in line %d:\n%s\n", card->linenum, cut_line);
+                fprintf(stderr, "    Please correct the input file\n");
+                controlled_exit(1);
+            }
             char *tctok = search_plain_identifier(ntok, "tc");
             if (tctok) {
                 char *tctok1 = strchr(tctok, '=');
