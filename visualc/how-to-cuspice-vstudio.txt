@@ -1,4 +1,5 @@
-ngspice may be compiled by MS Visual Studio Community 2015.
+ngspice may be compiled by MS Visual Studio Community 2017
+ (or 2019 in Visual Studio 2017 mode).
 
 For compilation you need the GNU bison parser generator.
 
@@ -15,15 +16,16 @@ We will invoke the win_bison.exe file
  in this directory during the visual studio compilation.
 
 Install CUDA
-(tested with CUDA 8.0 from https://developer.nvidia.com/cuda-downloads)
+(tested with CUDA 10.1 from https://developer.nvidia.com/cuda-downloads)
 
-Only valid for Visual Studio 2015.
-VS 2017 is not supported by actaul CUDA 8.0 (as of Sept. 2017)!
+Only valid for Visual Studio 2017 and CUDA 10.1.
+Will compile in 64 bit version only.
+VS 2019 tested if in VS 2017 mode.
 
 XSPICE and CIDER are not supported.
 fftw is not yet supported.
 OpenMP is not yet supported (It will compile, but ngspice.exe segfaults).
-Shared nggspice with CUDA is (not yet) supported.
+Shared ngspice with CUDA is (not yet) supported.
 
 Visual Studio is started by double click on cuspice.sln.
 Select 'Build' 'Configuration Manager' and then choose one
