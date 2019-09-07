@@ -4,6 +4,10 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cuspice2017", "cuspice2017.vcxproj", "{83E315C7-EDD3-4F6B-AF28-87A92A4FA49A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C9290F02-DBB3-4ADA-BD2B-F4466463542B} = {C9290F02-DBB3-4ADA-BD2B-F4466463542B}
+		{B8DD41C5-70C6-4183-9018-C4B518E8D36A} = {B8DD41C5-70C6-4183-9018-C4B518E8D36A}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "KLU_REAL", "KLU_REAL\KLU_REAL.vcxproj", "{C9290F02-DBB3-4ADA-BD2B-F4466463542B}"
 EndProject
