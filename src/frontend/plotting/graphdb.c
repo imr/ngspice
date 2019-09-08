@@ -109,6 +109,9 @@ CopyGraph(GRAPH *graph)
     struct _keyed *k;
     struct dveclist *link, *newlink;
 
+    if (!graph)
+        return NULL;
+
     ret = NewGraph();
     memcpy(ret, graph, sizeof(GRAPH)); /* va: compatible pointer types */
 
