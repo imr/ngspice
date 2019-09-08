@@ -60,7 +60,7 @@ com_hardcopy(wordlist *wl)
     // PushGraphContext(currentgraph);
 
 #ifdef HAS_WINGUI
-    if (!wl && hc_button) {
+    if (currentgraph && !wl && hc_button) {
         char *psfname;
         GRAPH *tempgraph;
         if (DevSwitch(devtype))
