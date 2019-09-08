@@ -2389,7 +2389,7 @@ static void inp_stripcomments_deck(struct card *c, bool cf)
  ('$' outside of .control section is o.k. however).
 
  If the comaptibility mode is PS, LTPS or LTPSA, '$' is treated as a valid
- character, not a s end-of-line comment delimiter, except for that it is
+ character, not as end-of-line comment delimiter, except for that it is
  located at the beginning of a line. If inside of a control section,
  still '$ ' is read a an end-of-line comment delimiter.*/
 static void inp_stripcomments_line(char *s, bool cs)
@@ -4452,74 +4452,77 @@ static bool b_transformation_wanted(const char *p)
 
 char *search_identifier(char *str, const char *identifier, char *str_begin)
 {
-    while ((str = strstr(str, identifier)) != NULL) {
-        char before;
+    if (str && identifier) {
+        while ((str = strstr(str, identifier)) != NULL) {
+            char before;
 
-        if (str > str_begin)
-            before = str[-1];
-        else
-            before = '\0';
+            if (str > str_begin)
+                before = str[-1];
+            else
+                before = '\0';
 
-        if (is_arith_char(before) || isspace_c(before) ||
-                strchr("=,{", before)) {
-            char after = str[strlen(identifier)];
-            if (is_arith_char(after) || isspace_c(after) ||
-                    strchr(",}", after))
-                return str;
+            if (is_arith_char(before) || isspace_c(before) ||
+                    strchr("=,{", before)) {
+                char after = str[strlen(identifier)];
+                if (is_arith_char(after) || isspace_c(after) ||
+                        strchr(",}", after))
+                    return str;
+            }
+
+            str++;
         }
-
-        str++;
     }
-
     return NULL;
 }
 
 
 char *ya_search_identifier(char *str, const char *identifier, char *str_begin)
 {
-    while ((str = strstr(str, identifier)) != NULL) {
-        char before;
+    if (str && identifier) {
+        while ((str = strstr(str, identifier)) != NULL) {
+            char before;
 
-        if (str > str_begin)
-            before = str[-1];
-        else
-            before = '\0';
+            if (str > str_begin)
+                before = str[-1];
+            else
+                before = '\0';
 
-        if (is_arith_char(before) || isspace_c(before) ||
-                (str <= str_begin)) {
-            char after = str[strlen(identifier)];
-            if ((is_arith_char(after) || isspace_c(after) || after == '\0'))
-                break;
+            if (is_arith_char(before) || isspace_c(before) ||
+                    (str <= str_begin)) {
+                char after = str[strlen(identifier)];
+                if ((is_arith_char(after) || isspace_c(after) ||
+                            after == '\0'))
+                    break;
+            }
+
+            str++;
         }
-
-        str++;
     }
-
     return str;
 }
 
 
 static char *search_plain_identifier(char *str, const char *identifier)
 {
-    char *str_begin = str;
+    if (str && identifier) {
+        char *str_begin = str;
+        while ((str = strstr(str, identifier)) != NULL) {
+            char before;
 
-    while ((str = strstr(str, identifier)) != NULL) {
-        char before;
+            if (str > str_begin)
+                before = str[-1];
+            else
+                before = '\0';
 
-        if (str > str_begin)
-            before = str[-1];
-        else
-            before = '\0';
+            if (!before || !identifier_char(before)) {
+                char after = str[strlen(identifier)];
+                if (!after || !identifier_char(after))
+                    return str;
+            }
 
-        if (!before || !identifier_char(before)) {
-            char after = str[strlen(identifier)];
-            if (!after || !identifier_char(after))
-                return str;
+            str += strlen(identifier);
         }
-
-        str += strlen(identifier);
     }
-
     return NULL;
 }
 
