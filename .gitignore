@@ -77,3 +77,7 @@ Makefile.in
 # Visual Studio user options files
 **/*.vcxproj.user
 
+src/frontend/parse-bison.c
+src/frontend/parse-bison.h
+src/spicelib/parser/inpptree-parser.c
+src/spicelib/parser/inpptree-parser.h
