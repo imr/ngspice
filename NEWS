@@ -1,3 +1,34 @@
+Ngspice-31, Sep 22nd, 2019
+============
+
+- New features:
+    + if a subcircuit is defined more than once, only read the first one and discard the others
+    + vbic model implementation including self-heating effect
+    + Enable the file input as additional search path for .include files also for non-Windows OSs
+    + add scope to decks and subcircuits (not yet fully implemented)
+    + enable 'res' as valid resistor model identifier
+    + Add variable 'nostepsizelimit' to relieve step size limit defined by TSTEP of the .tran command
+    + Windows GUI: make GUI more responsive
+    + if the comaptibility mode is PS, LTPS or LTPSA, '$' is treated as a valid character, not as
+      end-of-line comment delimiter
+    + allow very short version information with new options -v and -d to 'version' command
+    + the PSPICE area token for a device instance may be not only a number, but also a parametrized
+      token like {tok}
+    + Windows GUI: New history buffering
+    + Windows GUI: Added scrolling to input window
+    + update to hicum version 2.40
+    + allow " around netnames for .plot and .print commands
+    + command 'setcs': like command 'set' but case sensitive
+    + linearized cutout of an original vector by defining the vectors lin-tstart, lin-tstop,
+      and lin-tstep before sending the 'linearize' command
+    + new examples: inverters and ring oscillator using SOI
+    + 'option norefvalue' to suppress printing the reference value
+
+- Bug fixes:
+    + many bugs fixed and code improvements (patches 33 - 64, bug tracker nos. 390,
+      394, 395, 403, 404, 408)
+    + memory leaks removed
+
 Ngspice-30, Jan 1st, 2019
 ============
 
