@@ -916,6 +916,16 @@ immediately */
 IMPEXP
 int  ngSpice_Command(char* comexec)
 {
+    /* Check if command is reasonable */
+    if (comexec == NULL) {
+        fprintf(stderr, "Warning: Received command NULL, ignored");
+        return 1;
+    }
+    if (*comexec == '\0') {
+        fprintf(stderr, "Warning: Received empty string as command, ignored");
+        return 1;
+    }
+
     if ( ! setjmp(errbufc) ) {
 
         immediate = FALSE;
