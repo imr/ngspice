@@ -10,7 +10,7 @@
 /*******************/
 
 #ifdef _MSC_VER
-#define SHAREDSPICE_version "30.0"
+#define SHAREDSPICE_version "31.0"
 #define STDIN_FILENO    0
 #define STDOUT_FILENO   1
 #define STDERR_FILENO   2
@@ -276,6 +276,7 @@ unsigned int main_id, ng_id, command_id;
 mutexType triggerMutex;
 mutexType allocMutex;
 mutexType fputsMutex;
+mutexType evloopMutex;
 #endif
 
 /* initialization status */
@@ -335,8 +336,11 @@ _cthread_run(void *controls)
     pthread_mutex_unlock(&triggerMutex);
 #endif
     fl_exited = FALSE;
-    for (wl = controls; wl; wl = wl->wl_next)
+    for (wl = controls; wl; wl = wl->wl_next) {
+        mutex_lock(&evloopMutex);
         cp_evloop(wl->wl_word);
+        mutex_unlock(&evloopMutex);
+    }
     fl_exited = TRUE;
 #ifdef HAVE_LIBPTHREAD
     cont_condition = FALSE;
@@ -354,7 +358,9 @@ _thread_run(void *string)
     if (!nobgtrwanted)
         bgtr(fl_exited, ng_ident, userptr);
 //  bgtid = thread_self();
+    mutex_lock(&evloopMutex);
     cp_evloop((char *)string);
+    mutex_unlock(&evloopMutex);
     FREE(string);
 // #ifdef __MINGW32__
 //     bgtid.p = NULL;
@@ -453,8 +459,11 @@ exec_controls(wordlist *newcontrols)
 #endif
 #else
     wordlist *wl;
-    for (wl = shcontrols; wl; wl = wl->wl_next)
+    for (wl = shcontrols; wl; wl = wl->wl_next) {
+        mutex_lock(&evloopMutex);
         cp_evloop(wl->wl_word);
+        mutex_unlock(&evloopMutex);
+    }
 #endif
 }
 
@@ -562,16 +571,22 @@ runc(char* command)
             if (fl_running) {
                 if (fl_exited) {
                     _thread_stop();
+                    mutex_lock(&evloopMutex);
                     cp_evloop(buf);
+                    mutex_unlock(&evloopMutex);
                 } else {
                     fprintf(stderr, "Warning: cannot execute \"%s\", type \"bg_halt\" first\n", buf);
                 }
             } else {
                 /*do the command*/
+                mutex_lock(&evloopMutex);
                 cp_evloop(buf);
+                mutex_unlock(&evloopMutex);
             }
 #else
+    mutex_lock(&evloopMutex);
     cp_evloop(buf);
+    mutex_unlock(&evloopMutex);
 #endif /*THREADS*/
     signal(SIGINT, oldHandler);
     return 0;
@@ -715,16 +730,19 @@ ngSpice_Init(SendChar* printfcn, SendStat* statusfcn, ControlledExit* ngspiceexi
     pthread_mutex_init(&triggerMutex, NULL);
     pthread_mutex_init(&allocMutex, NULL);
     pthread_mutex_init(&fputsMutex, NULL);
+    pthread_mutex_init(&evloopMutex, NULL);
     cont_condition = FALSE;
 #else
 #ifdef SRW
     InitializeSRWLock(&triggerMutex);
     InitializeSRWLock(&allocMutex);
     InitializeSRWLock(&fputsMutex);
+    InitializeSRWLock(&evloopMutex);
 #else
     InitializeCriticalSection(&triggerMutex);
     InitializeCriticalSection(&allocMutex);
     InitializeCriticalSection(&fputsMutex);
+    InitializeCriticalSection(&evloopMutex);
 #endif
 #endif
     // Id of primary thread
