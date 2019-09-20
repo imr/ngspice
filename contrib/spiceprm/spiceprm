@@ -1,4 +1,4 @@
-#! /usr/bin/perl
+#!/usr/bin/env perl
 # spiceprm
 # Pass parameters to spice subcircuits.
 # Usage: spiceprm infile [outfile]
