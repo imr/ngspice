@@ -605,6 +605,8 @@ app_rl_readlines(void)
     rl_readline_name = application_name;
     rl_instream = cp_in;
     rl_outstream = cp_out;
+
+#ifndef __APPLE__
 #ifndef X_DISPLAY_MISSING
     if (dispdev->Input == X11_Input)
         rl_event_hook = app_event_func;
@@ -615,6 +617,7 @@ app_rl_readlines(void)
        This variable is not supported by editline. */
 #if defined(HAVE_GNUREADLINE)
     rl_catch_sigwinch = 1;  /* allow readline to respond to resized windows  */
+#endif
 #endif
 
     /* note that we want some mechanism to detect ctrl-D and expand it to exit */
