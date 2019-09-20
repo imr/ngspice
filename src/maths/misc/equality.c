@@ -10,7 +10,7 @@ Copyright 1991 Regents of the University of California.  All rights reserved.
 #define llabs(x) ((x) < 0 ? -(x) : (x))
 #endif
 
-#define int64_min (((int64_t) -1) << 63)
+#define int64_min INT64_MIN
 
 /* From Bruce Dawson, Comparing floating point numbers,
    http://www.cygnus-software.com/papers/comparingfloats/Comparing%20floating%20point%20numbers.htm
