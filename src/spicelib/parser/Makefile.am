@@ -3,6 +3,7 @@
 noinst_LTLIBRARIES = libinp.la
 
 BUILT_SOURCES = inpptree-parser.h
+EXTRA_DIST = inpptree-parser-y.h
 
 libinp_la_SOURCES = \
 		ifeval.c	\

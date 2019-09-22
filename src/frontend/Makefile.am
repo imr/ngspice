@@ -2,7 +2,7 @@
 
 SUBDIRS = plotting help parser wdisp numparam trannoise
 DIST_SUBDIRS = plotting help parser wdisp numparam trannoise
-EXTRA_DIST = testcommands.c
+EXTRA_DIST = testcommands.c parse-bison-y.h
 
 BUILT_SOURCES = parse-bison.h
 
