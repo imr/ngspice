@@ -346,7 +346,8 @@ _cthread_run(void *controls)
     return NULL;
 }
 
-/* starts a background thread, e.g. from command bg_run */
+/* starts a background thread, e.g. from command bg_run,
+   releases controls thread tid2  */
 static void * EXPORT_FLAVOR
 _thread_run(void *string)
 {
@@ -368,18 +369,21 @@ _thread_run(void *string)
     /* notify caller that thread has exited */
     if (!nobgtrwanted)
         bgtr(fl_exited, ng_ident, userptr);
+    /* release thread tid2 */
+    if (tid2) {
 #ifdef HAVE_LIBPTHREAD
-    pthread_mutex_lock(&triggerMutex);
-    cont_condition = TRUE;
-    pthread_cond_signal(&cond);
-    pthread_mutex_unlock(&triggerMutex);
-    pthread_join(tid2, NULL);    
+        pthread_mutex_lock(&triggerMutex);
+        cont_condition = TRUE;
+        pthread_cond_signal(&cond);
+        pthread_mutex_unlock(&triggerMutex);
+        pthread_join(tid2, NULL);
 #elif defined _MSC_VER || defined __MINGW32__
-    ResumeThread(tid2);
+        ResumeThread(tid2);
 #else
 
 #endif
-
+        tid2 = 0;
+    }
     return NULL;
 }
 
