@@ -69,13 +69,13 @@ ft_cpinit(void)
         "vr(x)",    "re(v(x))",
         "vr(x,y)",  "re(v(x) - v(y))"
     };
-
+#ifndef SHARED_MODULE
     /* if TIOCSTI is defined (not available in MS Windows:
        Make escape the break character.
        So the user can type ahead...
        fcn defined in complete.c. */
     cp_ccon(TRUE);
-
+#endif
     /* Initialize io, cp_chars[], variable "history" in init.c. */
     cp_init();
 
