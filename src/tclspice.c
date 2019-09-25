@@ -211,7 +211,7 @@ int  blt_plot(struct dvec *y, struct dvec *x, int new);
 /*helper function*/
 /*inline*/
 static struct plot *
-get_plot(int plot)
+get_plot_by_index(int plot)
 {
     struct plot *pl;
     pl = plot_list;
@@ -293,7 +293,7 @@ spice_data TCL_CMDPROCARGS(clientData, interp, argc, argv)
     } else {
         struct plot *pl;
         struct dvec *v;
-        if (!(pl = get_plot(atoi(argv[1])))) {
+        if (!(pl = get_plot_by_index(atoi(argv[1])))) {
             Tcl_SetResult(interp, "Bad plot number", TCL_STATIC);
             return TCL_ERROR;
         }
@@ -882,7 +882,7 @@ plot_variables TCL_CMDPROCARGS(clientData, interp, argc, argv)
 
     plot = atoi(argv[1]);
 
-    if (!(pl = get_plot(plot))) {
+    if (!(pl = get_plot_by_index(plot))) {
         Tcl_SetResult(interp, "Bad plot given", TCL_STATIC);
         return TCL_ERROR;
     }
@@ -912,7 +912,7 @@ plot_variablesInfo TCL_CMDPROCARGS(clientData, interp, argc, argv)
 
     plot = atoi(argv[1]);
 
-    if (!(pl = get_plot(plot))) {
+    if (!(pl = get_plot_by_index(plot))) {
         Tcl_SetResult(interp, "Bad plot given", TCL_STATIC);
         return TCL_ERROR;
     }
@@ -948,7 +948,7 @@ plot_get_value TCL_CMDPROCARGS(clientData, interp, argc, argv)
     plot = atoi(argv[2]);
     index = atoi(argv[3]);
 
-    if (!(pl = get_plot(plot))) {
+    if (!(pl = get_plot_by_index(plot))) {
         Tcl_SetResult(interp, "Bad plot", TCL_STATIC);
         return TCL_ERROR;
     }
@@ -984,7 +984,7 @@ plot_datapoints TCL_CMDPROCARGS(clientData, interp, argc, argv)
 
     plot = atoi(argv[1]);
 
-    if (!(pl = get_plot(plot))) {
+    if (!(pl = get_plot_by_index(plot))) {
         Tcl_SetResult(interp, "Bad plot", TCL_STATIC);
         return TCL_ERROR;
     }
@@ -1011,7 +1011,7 @@ plot_title TCL_CMDPROCARGS(clientData, interp, argc, argv)
 
     plot = atoi(argv[1]);
 
-    if (!(pl = get_plot(plot))) {
+    if (!(pl = get_plot_by_index(plot))) {
         Tcl_SetResult(interp, "Bad plot", TCL_STATIC);
         return TCL_ERROR;
     }
@@ -1034,7 +1034,7 @@ plot_date TCL_CMDPROCARGS(clientData, interp, argc, argv)
 
     plot = atoi(argv[1]);
 
-    if (!(pl = get_plot(plot))) {
+    if (!(pl = get_plot_by_index(plot))) {
         Tcl_SetResult(interp, "Bad plot", TCL_STATIC);
         return TCL_ERROR;
     }
@@ -1056,7 +1056,7 @@ plot_name TCL_CMDPROCARGS(clientData, interp, argc, argv)
 
     plot = atoi(argv[1]);
 
-    if (!(pl = get_plot(plot))) {
+    if (!(pl = get_plot_by_index(plot))) {
         Tcl_SetResult(interp, "Bad plot", TCL_STATIC);
         return TCL_ERROR;
     }
@@ -1078,7 +1078,7 @@ plot_typename TCL_CMDPROCARGS(clientData, interp, argc, argv)
 
     plot = atoi(argv[1]);
 
-    if (!(pl = get_plot(plot))) {
+    if (!(pl = get_plot_by_index(plot))) {
         Tcl_SetResult(interp, "Bad plot", TCL_STATIC);
         return TCL_ERROR;
     }
@@ -1105,7 +1105,7 @@ plot_nvars TCL_CMDPROCARGS(clientData, interp, argc, argv)
 
     plot = atoi(argv[1]);
 
-    if (!(pl = get_plot(plot))) {
+    if (!(pl = get_plot_by_index(plot))) {
         Tcl_SetResult(interp, "Bad plot", TCL_STATIC);
         return TCL_ERROR;
     }
@@ -1131,7 +1131,7 @@ plot_defaultscale TCL_CMDPROCARGS(clientData, interp, argc, argv)
 
     plot = atoi(argv[1]);
 
-    if (!(pl = get_plot(plot))) {
+    if (!(pl = get_plot_by_index(plot))) {
         Tcl_SetResult(interp, "Bad plot", TCL_STATIC);
         return TCL_ERROR;
     }
@@ -1168,7 +1168,7 @@ plot_getvector TCL_CMDPROCARGS(clientData, interp, argc, argv)
 
     plot = atoi(argv[1]);
 
-    if (!(pl = get_plot(plot))) {
+    if (!(pl = get_plot_by_index(plot))) {
         Tcl_SetResult(interp, "Bad plot", TCL_STATIC);
         return TCL_ERROR;
     }
