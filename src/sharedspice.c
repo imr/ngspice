@@ -1,4 +1,4 @@
-/* Copyright 2013 - 2018 Holger Vogt
+/* Copyright 2013 - 2019 Holger Vogt
  *
  * Modified BSD license
  */
@@ -10,7 +10,7 @@
 /*******************/
 
 #ifdef _MSC_VER
-#define SHAREDSPICE_version "30.0"
+#define SHAREDSPICE_version "31.0"
 #define STDIN_FILENO    0
 #define STDOUT_FILENO   1
 #define STDERR_FILENO   2
@@ -330,8 +330,10 @@ _cthread_run(void *controls)
     if (!cont_condition)
         printf("Prepared to start controls after bg_run has finished\n");
     pthread_mutex_lock(&triggerMutex);
-    while (!cont_condition)
+    cont_condition = FALSE;
+    do {
         pthread_cond_wait(&cond, &triggerMutex);
+    } while (!cont_condition);
     pthread_mutex_unlock(&triggerMutex);
 #endif
     fl_exited = FALSE;
@@ -367,8 +369,11 @@ _thread_run(void *string)
     if (!nobgtrwanted)
         bgtr(fl_exited, ng_ident, userptr);
 #ifdef HAVE_LIBPTHREAD
+    pthread_mutex_lock(&triggerMutex);
     cont_condition = TRUE;
     pthread_cond_signal(&cond);
+    pthread_mutex_unlock(&triggerMutex);
+    pthread_join(tid2, NULL);    
 #elif defined _MSC_VER || defined __MINGW32__
     ResumeThread(tid2);
 #else
@@ -443,7 +448,6 @@ exec_controls(wordlist *newcontrols)
     cont_condition = FALSE;
     usleep(20000); /* wait a little */
     pthread_create(&tid2, NULL, (void * (*)(void *))_cthread_run, (void *)shcontrols);
-    pthread_detach(tid2);  /* automatically release the memory after thread has finished */
 #elif defined _MSC_VER || defined __MINGW32__
     tid2 = (HANDLE)_beginthreadex(NULL, 0, (unsigned int(__stdcall *)(void *))_cthread_run,
         (void*)shcontrols, CREATE_SUSPENDED, NULL);
