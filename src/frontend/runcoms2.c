@@ -163,10 +163,7 @@ com_resume(wordlist *wl)
 }
 
 
-/* Throw out the circuit struct and recreate it from the deck.  This command
- * should be obsolete.
- */
-
+/* Throw out the circuit struct and recreate it from the deck. */
 void
 com_rset(wordlist *wl)
 {
@@ -178,9 +175,6 @@ com_rset(wordlist *wl)
         return;
     }
     com_remcirc(NULL);
-#ifdef SHARED_MODULE
-    exec_controls(NULL);
-#endif
     inp_source_recent();
 #else
     struct variable *v, *next;
