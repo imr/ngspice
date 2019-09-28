@@ -1920,9 +1920,8 @@ static int is_a_modelname(const char *s)
     /* conversion failed, so no number */
     if (eq(s, st))
         return TRUE;
-    else
-            /* test if we have a true number */
-            if (*st == '\0' || isspace(*st))
+    /* test if we have a true number */
+    else if (*st == '\0' || isspace(*st))
         return FALSE;
     else {
         /* look for the scale factor (alphabetic) and skip it.
