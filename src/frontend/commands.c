@@ -610,7 +610,7 @@ struct comm spcp_coms[] = {
     { "check_ifparm", com_check_ifparm, TRUE, FALSE,
       { 0, 0, 0, 0 }, E_DEFHMASK, 0, 0,
       NULL,
-      ": Check model ifparm descriptors (for developpers)" },
+      ": Check model ifparm descriptors (for developers)" },
 #endif
     { NULL, NULL, FALSE, FALSE,
       { 0, 0, 0, 0 }, E_DEFHMASK, 0, LOTS,

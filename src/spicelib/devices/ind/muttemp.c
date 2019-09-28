@@ -197,7 +197,7 @@ MUTtemp(GENmodel *inModel, CKTcircuit *ckt)
                     if (ind->INDinduct < 0)
                         fprintf(stderr, " %s < 0\n", ind->INDname);
                 if (repetitions)
-                    fprintf(stderr, "has dupplicate K instances\n");
+                    fprintf(stderr, "has duplicate K instances\n");
                 if (expect && ckt->CKTindverbosity > 1)
                     fprintf(stderr, "has an incomplete set of K couplings, (missing ones are implicitly 0)\n");
                 fprintf(stderr, "\n");

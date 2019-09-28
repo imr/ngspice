@@ -202,9 +202,9 @@ PS_NewViewport(GRAPH *graph)
     fprintf(plotfile, "%%%%Creator: nutmeg\n");
     fprintf(plotfile, "%%%%BoundingBox: %d %d %d %d\n", x1, y1, x2, y2);
 
-    /* ReEncoding to allow 'extended asccii'
+    /* Re-encoding to allow 'extended asccii'
      * thanks to http://apps.jcns.fz-juelich.de/doku/sc/ps-latin/ */
-    fprintf(plotfile, "/ReEncode { %% inFont outFont encoding | -\n");
+    fprintf(plotfile, "/Re-encode { %% inFont outFont encoding | -\n");
     fprintf(plotfile, "   /MyEncoding exch def\n");
     fprintf(plotfile, "      exch findfont\n");
     fprintf(plotfile, "      dup length dict\n");
@@ -215,7 +215,7 @@ PS_NewViewport(GRAPH *graph)
     fprintf(plotfile, "      end\n");
     fprintf(plotfile, "      definefont\n");
     fprintf(plotfile, "} def\n");
-    fprintf(plotfile, "/%s /%sLatin1 ISOLatin1Encoding ReEncode\n", psfont, psfont);
+    fprintf(plotfile, "/%s /%sLatin1 ISOLatin1Encoding Re-encode\n", psfont, psfont);
 
     fprintf(plotfile, "%g %g scale\n", 1.0 / scale, 1.0 / scale);
     if (colorflag == 1) {

@@ -2340,7 +2340,7 @@ kept only for historical reasons.
 2013-07-12  h_vogt <h_vogt>
  * src/misc/misc_time.c,
  * src/misc/misc_time.h:
-    misc_time.c: make timediff always availabe when timeb.h is found
+    misc_time.c: make timediff always available when timeb.h is found
 
 2013-07-07  dwarning <dwarning>
  * src/spicelib/parser/inp2y.c:

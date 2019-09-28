@@ -145,7 +145,7 @@ int HSMHV2setup(
         printf("HiSIM_HV(%s): 2.20 is selected for VERSION. (default) \n",model->HSMHV2modName);
         model->HSMHV2_subversion = 2 ;
       } else {
-        printf("warning(HiSIM_HV(%s)): invalid version %s is specified, reseted 2.20 \n",
+        printf("warning(HiSIM_HV(%s)): invalid version %s is specified, reset to 2.20 \n",
         model->HSMHV2modName,model->HSMHV2_version);
         model->HSMHV2_subversion = 2 ;
       }
