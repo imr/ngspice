@@ -33,6 +33,7 @@ enum {
     TRAN_TSTEP,
     TRAN_TMAX,
     TRAN_UIC,
+    TRAN_STARTUP,
 };
 
 #endif

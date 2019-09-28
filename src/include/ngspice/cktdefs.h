@@ -189,6 +189,7 @@ struct CKTcircuit {
 
 /* old 'nosolv' paramater */
 #define MODEUIC 0x10000l
+#define MODESTARTUP 0x20000l
 
     int CKTbypass;              /* bypass option, how does it work ?  */
     int CKTdcMaxIter;           /* iteration limit for dc op.  (itl1) */

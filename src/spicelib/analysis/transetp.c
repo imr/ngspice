@@ -53,6 +53,11 @@ TRANsetParm(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
             job->TRANmode |= MODEUIC;
         }
         break;
+    case TRAN_STARTUP:
+        if(value->iValue) {
+            job->TRANmode |= MODESTARTUP;
+        }
+        break;
 
     default:
         return(E_BADPARM);
@@ -67,6 +72,7 @@ static IFparm TRANparms[] = {
     { "tstep",      TRAN_TSTEP,     IF_SET|IF_REAL, "time step" },
     { "tmax",       TRAN_TMAX,      IF_SET|IF_REAL, "maximum time step" },
     { "uic",        TRAN_UIC,       IF_SET|IF_FLAG, "use initial conditions" },
+    { "startup",    TRAN_STARTUP,   IF_SET|IF_FLAG, "turn on independent sources after 20 us" },
 };
 
 SPICEanalysis TRANinfo  = {

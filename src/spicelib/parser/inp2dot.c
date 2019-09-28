@@ -390,6 +390,9 @@ dot_tran(char *line, CKTcircuit *ckt, INPtables *tab, struct card *current,
         if (strcmp(word, "uic") == 0) {
             ptemp.iValue = 1;
             GCA(INPapName, (ckt, which, foo, "uic", &ptemp));
+        } else if (strcmp(word, "startup") == 0) {
+            ptemp.iValue = 1;
+            GCA(INPapName, (ckt, which, foo, "startup", &ptemp));
         } else {
             LITERR(" Error: unknown parameter on .tran - ignored\n");
         }

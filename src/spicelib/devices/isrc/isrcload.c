@@ -391,6 +391,9 @@ INoi1 1 0  DC 0 TRNOISE(0n 0.5n 1 10n) : generate 1/f noise
 #endif
 
                 } // switch
+                if ((ckt->CKTmode&MODESTARTUP) && ckt->CKTtime < 20e-6) {
+                    value *= ckt->CKTtime/20e-6;
+                }
             } // else (line 48)
 loadDone:
 

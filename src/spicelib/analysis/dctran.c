@@ -181,7 +181,7 @@ DCtran(CKTcircuit *ckt,
         ckt->CKTdelta = 0;
         ckt->CKTbreak = 1;
         firsttime = 1;
-        save_mode = (ckt->CKTmode&MODEUIC) | MODETRANOP | MODEINITJCT;
+        save_mode = (ckt->CKTmode&MODEUIC) | (ckt->CKTmode&MODESTARTUP) | MODETRANOP | MODEINITJCT;
         save_order = ckt->CKTorder;
 
 /* Add breakpoints here which have been requested by the user setting the
@@ -210,8 +210,8 @@ DCtran(CKTcircuit *ckt,
         if(ckt->evt->counts.num_insts != 0) {
             /* use new DCOP algorithm */
             converged = EVTop(ckt,
-                        (ckt->CKTmode & MODEUIC) | MODETRANOP | MODEINITJCT,
-                        (ckt->CKTmode & MODEUIC) | MODETRANOP | MODEINITFLOAT,
+                        (ckt->CKTmode & MODEUIC) | (ckt->CKTmode&MODESTARTUP) | MODETRANOP | MODEINITJCT,
+                        (ckt->CKTmode & MODEUIC) | (ckt->CKTmode&MODESTARTUP) | MODETRANOP | MODEINITFLOAT,
                         ckt->CKTdcMaxIter,
                         MIF_TRUE);
             EVTdump(ckt, IPC_ANAL_DCOP, 0.0);
@@ -222,8 +222,8 @@ DCtran(CKTcircuit *ckt,
         } else
 #endif
             converged = CKTop(ckt,
-                (ckt->CKTmode & MODEUIC) | MODETRANOP | MODEINITJCT,
-                (ckt->CKTmode & MODEUIC) | MODETRANOP | MODEINITFLOAT,
+                (ckt->CKTmode & MODEUIC) | (ckt->CKTmode&MODESTARTUP) | MODETRANOP | MODEINITJCT,
+                (ckt->CKTmode & MODEUIC) | (ckt->CKTmode&MODESTARTUP) | MODETRANOP | MODEINITFLOAT,
                 ckt->CKTdcMaxIter);
 
         if(converged != 0) {
@@ -337,7 +337,7 @@ DCtran(CKTcircuit *ckt,
         }
 #endif
 
-        ckt->CKTmode = (ckt->CKTmode&MODEUIC) | MODETRAN | MODEINITTRAN;
+        ckt->CKTmode = (ckt->CKTmode&MODEUIC) | (ckt->CKTmode&MODESTARTUP) | MODETRAN | MODEINITTRAN;
         /* modeinittran set here */
         ckt->CKTag[0]=ckt->CKTag[1]=0;
         memcpy(ckt->CKTstate1, ckt->CKTstate0,
@@ -357,7 +357,7 @@ DCtran(CKTcircuit *ckt,
 #endif
     } else {
         /* saj As traninit resets CKTmode */
-        ckt->CKTmode = (ckt->CKTmode&MODEUIC) | MODETRAN | MODEINITPRED;
+        ckt->CKTmode = (ckt->CKTmode&MODEUIC) | (ckt->CKTmode&MODESTARTUP) | MODETRAN | MODEINITPRED;
         /* saj */
         INIT_STATS();
         if(ckt->CKTminBreak==0) ckt->CKTminBreak=ckt->CKTmaxStep*5e-5;
@@ -782,7 +782,7 @@ resume:
 
 #endif
         ckt->CKTstat->STATtimePts ++;
-        ckt->CKTmode = (ckt->CKTmode&MODEUIC)|MODETRAN | MODEINITPRED;
+        ckt->CKTmode = (ckt->CKTmode&MODEUIC)| (ckt->CKTmode&MODESTARTUP)|MODETRAN | MODEINITPRED;
         if(firsttime) {
             memcpy(ckt->CKTstate2, ckt->CKTstate1,
                    (size_t) ckt->CKTnumStates * sizeof(double));
@@ -809,7 +809,7 @@ resume:
             fflush(stdout);
 #endif
             if(firsttime) {
-                ckt->CKTmode = (ckt->CKTmode&MODEUIC) | MODETRAN | MODEINITTRAN;
+                ckt->CKTmode = (ckt->CKTmode&MODEUIC)| (ckt->CKTmode&MODESTARTUP) | MODETRAN | MODEINITTRAN;
             }
             ckt->CKTorder = 1;
 
@@ -824,7 +824,7 @@ resume:
             g_mif_info.breakpoint.last = ckt->CKTtime + ckt->CKTdelta;
 
             if(firsttime) {
-                ckt->CKTmode = (ckt->CKTmode&MODEUIC)|MODETRAN | MODEINITTRAN;
+                ckt->CKTmode = (ckt->CKTmode&MODEUIC)| (ckt->CKTmode&MODESTARTUP)|MODETRAN | MODEINITTRAN;
             }
             ckt->CKTorder = 1;
 

@@ -405,6 +405,9 @@ VNoi3 3 0  DC 0 TRNOISE(0 0 0 0 15m 22u 50u) : generate RTS noise
 #endif
 
                 } // switch
+                if ((ckt->CKTmode&MODESTARTUP) && ckt->CKTtime < 20e-6) {
+                    value *= ckt->CKTtime/20e-6;
+                }
             } // else (line 48)
 loadDone:
 
