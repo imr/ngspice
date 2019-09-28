@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27703.2000
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29306.81
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vngspice", "vngspice.vcxproj", "{83E315C7-EDD3-4F6B-AF28-87A92A4FA49A}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -98,8 +98,8 @@ Global
 		{7C865696-FA10-43AE-A20B-22AE72A165E2}.console_release|x64.Build.0 = Release|Win32
 		{7C865696-FA10-43AE-A20B-22AE72A165E2}.console_release|x86.ActiveCfg = Release|Win32
 		{7C865696-FA10-43AE-A20B-22AE72A165E2}.console_release|x86.Build.0 = Release|Win32
-		{7C865696-FA10-43AE-A20B-22AE72A165E2}.Debug|x64.ActiveCfg = Debug|x64
-		{7C865696-FA10-43AE-A20B-22AE72A165E2}.Debug|x64.Build.0 = Debug|x64
+		{7C865696-FA10-43AE-A20B-22AE72A165E2}.Debug|x64.ActiveCfg = Debug|Win32
+		{7C865696-FA10-43AE-A20B-22AE72A165E2}.Debug|x64.Build.0 = Debug|Win32
 		{7C865696-FA10-43AE-A20B-22AE72A165E2}.Debug|x86.ActiveCfg = Debug|Win32
 		{7C865696-FA10-43AE-A20B-22AE72A165E2}.Debug|x86.Build.0 = Debug|Win32
 		{7C865696-FA10-43AE-A20B-22AE72A165E2}.Release|x64.ActiveCfg = Release|Win32
