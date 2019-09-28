@@ -1,8 +1,8 @@
 //  HICUM Level_0 Version_1.12: A Verilog-A description
-//  (A simplified version of HICUM Level2 model for BJT) 
+//  (A simplified version of HICUM Level2 model for BJT)
 //  ## It is modified after the first version of HICUM/L0 code    ##
 
-//  12/08: Modifications for ngspice and adms2.2.7 DW 
+//  12/08: Modifications for ngspice and adms2.2.7 DW
 //  Changed VT0 in Vt0 to prevent conflict in compiled C version.
 //  Made a temporary variable cjei_i for cjei output purpose only.
 
@@ -25,7 +25,7 @@
 // Presently this verilog code permits a minimum of 1 milli-Ohm resistance for any
 // series resistance as well as for thermal resistance RTH. If any of the resistance
 // values drops below this minimum value, the corresponding nodes are shorted with
-// zero voltage contribution. We want the model compilers/simulators deal this 
+// zero voltage contribution. We want the model compilers/simulators deal this
 // situation in such a manner that the corresponding node is COLLAPSED.
 // We expect that the simulators should permit current contribution statement
 // for any branch with resistance value more than (or equal to) 1 milli-Ohm without
@@ -146,7 +146,7 @@
     end else begin\
         `QJMODF(vj,cj0,vd,z,2.4,qjf)\
     end
-    
+
 //Temperature dependence of depletion capacitance parameters
 `define TMPHICJ(cj0,vd,z,vg,cj0_t,vd_t)\
 	arg	= 0.5*vd/Vt0;\
@@ -166,7 +166,7 @@
   end\
   le = le*limexp(arg);
 
-// IDEAL DIODE (WITHOUT CAPACITANCE): 
+// IDEAL DIODE (WITHOUT CAPACITANCE):
 // conductance not calculated
 // INPUT:
 //  IS, IST	: saturation currents (model parameter related)
@@ -193,14 +193,14 @@
 	end else begin\
 		Iz	= 0.0;\
         end
-        
 
-module hic0_full (c,b,e,s,tnode);                    
-                                               
-                                            
-//Node definitions 
-                      
-	inout		c,b,e,s,tnode;                                                  
+
+module hic0_full (c,b,e,s,tnode);
+
+
+//Node definitions
+
+	inout		c,b,e,s,tnode;
 	electrical 	c     `P(info="external collector node");
 	electrical 	b     `P(info="external base node");
 	electrical 	e     `P(info="external emitter node");
@@ -209,8 +209,8 @@ module hic0_full (c,b,e,s,tnode);
 	electrical 	bi    `P(info="internal base node");
 	electrical 	ei    `P(info="internal emitter node");
 	electrical 	tnode `P(info="local temperature rise node");
-	
-	
+
+
 	//Branch definitions
 	branch 		(ci,c) 		br_cic_i;
 	branch 		(ci,c) 		br_cic_v;
@@ -219,136 +219,136 @@ module hic0_full (c,b,e,s,tnode);
 	branch		(bi,ei)		br_biei;
 	branch		(bi,ci)		br_bici;
 	branch		(ci,ei)		br_ciei;
-	branch 		(b,bi)  	br_bbi_i;  
-	branch 		(b,bi)  	br_bbi_v; 	
+	branch 		(b,bi)  	br_bbi_i;
+	branch 		(b,bi)  	br_bbi_v;
 	branch		(b,e)		br_be;
 	branch		(b,ci)		br_bci;
 	branch		(b,s)		br_bs;
 	branch		(s,ci)		br_sci;
-	branch		(tnode )	br_sht;                          
-                                        
-//                                             
-// Parameter initialization with default values            
-                                               
-// Collector current                         
-	parameter real is     		= 1.0e-16	from [0:1]	`P(spice:name="is"  info="(Modified) saturation current" m:factor="yes" unit="A");                  
-	parameter real mcf    		= 1.00		from (0:10]	`P(spice:name="mcf" info="Non-ideality coefficient of forward collector current");                  
-	parameter real mcr    		= 1.00		from (0:10]	`P(spice:name="mcr" info="Non-ideality coefficient of reverse collector current");                
-	parameter real vef   		= `INF		from (0:`INF]	`P(spice:name="vef" info="forward Early voltage (normalization volt.)"  unit="V" default:value="infinity");                  
-	parameter real iqf    		= `INF		from (0:`INF]	`P(spice:name="iqf" info="forward d.c. high-injection toll-off current" unit="A" m:factor="yes" default:value="infinity");        
-	parameter real iqr    		= `INF		from (0:`INF]	`P(spice:name="iqr" info="inverse d.c. high-injection roll-off current" unit="A" m:factor="yes" default:value="infinity");               
-	parameter real iqfh   		= `INF		from (0:`INF]	`P(spice:name="iqfh" info="high-injection correction current" unit="A" m:factor="yes");              
-	parameter real tfh    		= 0.0		from [0:`INF)	`P(spice:name="tfh" info="high-injection correction factor" test:value="2e-9" m:factor="yes");                
-                                               
-// Base current                              
-	parameter real ibes   		= 1e-18		from [0:1]	`P(spice:name="ibes" info="BE saturation current" unit="A" m:factor="yes");                 
-	parameter real mbe    		= 1.0		from (0:10]	`P(spice:name="mbe"  info="BE non-ideality factor");                 
-	parameter real ires   		= 0.0		from [0:1]	`P(spice:name="ires" info="BE recombination saturation current" test:value="1e-16" unit="A" m:factor="yes");               
-	parameter real mre    		= 2.0		from (0:10]	`P(spice:name="mre"  info="BE recombination non-ideality factor");        
-	parameter real ibcs  		= 0.0		from [0:1]	`P(spice:name="ibcs" info="BC saturation current" test:value="1e-16" unit="A" m:factor="yes");   
+	branch		(tnode )	br_sht;
+
+//
+// Parameter initialization with default values
+
+// Collector current
+	parameter real is     		= 1.0e-16	from [0:1]	`P(spice:name="is"  info="(Modified) saturation current" m:factor="yes" unit="A");
+	parameter real mcf    		= 1.00		from (0:10]	`P(spice:name="mcf" info="Non-ideality coefficient of forward collector current");
+	parameter real mcr    		= 1.00		from (0:10]	`P(spice:name="mcr" info="Non-ideality coefficient of reverse collector current");
+	parameter real vef   		= `INF		from (0:`INF]	`P(spice:name="vef" info="forward Early voltage (normalization volt.)"  unit="V" default:value="infinity");
+	parameter real iqf    		= `INF		from (0:`INF]	`P(spice:name="iqf" info="forward d.c. high-injection toll-off current" unit="A" m:factor="yes" default:value="infinity");
+	parameter real iqr    		= `INF		from (0:`INF]	`P(spice:name="iqr" info="inverse d.c. high-injection roll-off current" unit="A" m:factor="yes" default:value="infinity");
+	parameter real iqfh   		= `INF		from (0:`INF]	`P(spice:name="iqfh" info="high-injection correction current" unit="A" m:factor="yes");
+	parameter real tfh    		= 0.0		from [0:`INF)	`P(spice:name="tfh" info="high-injection correction factor" test:value="2e-9" m:factor="yes");
+
+// Base current
+	parameter real ibes   		= 1e-18		from [0:1]	`P(spice:name="ibes" info="BE saturation current" unit="A" m:factor="yes");
+	parameter real mbe    		= 1.0		from (0:10]	`P(spice:name="mbe"  info="BE non-ideality factor");
+	parameter real ires   		= 0.0		from [0:1]	`P(spice:name="ires" info="BE recombination saturation current" test:value="1e-16" unit="A" m:factor="yes");
+	parameter real mre    		= 2.0		from (0:10]	`P(spice:name="mre"  info="BE recombination non-ideality factor");
+	parameter real ibcs  		= 0.0		from [0:1]	`P(spice:name="ibcs" info="BC saturation current" test:value="1e-16" unit="A" m:factor="yes");
 	parameter real mbc    		= 1.0		from (0:10]	`P(spice:name="mbc"  info="BC non-ideality factor");
-                                               
-// BE depletion cap                          
+
+// BE depletion cap
 	parameter real cje0   		= 1.0e-20 	from (0:`INF)	`P(spice:name="cje0" info="Zero-bias BE depletion capacitance" unit="F" test:value="2e-14" m:factor="yes");
 	parameter real vde    		= 0.9		from (0:10]	`P(spice:name="vde"  info="BE built-in voltage" unit="V");
-	parameter real ze     		= 0.5		from (0:1]	`P(spice:name="ze"   info="BE exponent factor"); 
+	parameter real ze     		= 0.5		from (0:1]	`P(spice:name="ze"   info="BE exponent factor");
 	parameter real aje    		= 2.5		from [1:`INF)	`P(spice:name="aje"  info="Ratio of maximum to zero-bias value");
-                                               
-// Transit time                              
+
+// Transit time
 	parameter real t0     		= 0.0		from [0:`INF)	`P(spice:name="t0"    info="low current transit time at Vbici=0" test:value="5e-12" unit="s");
 	parameter real dt0h   		= 0.0;		// from [0:`INF)	`P(spice:name="dt0h"  info="Base width modulation contribution" test:value="2e-12" unit="s");
 	parameter real tbvl   		= 0.0		from [0:`INF)	`P(spice:name="tbvl"  info="SCR width modulation contribution" test:value="4e-12" unit="s");
-	parameter real tef0   		= 0.0		from [0:`INF)	`P(spice:name="tef0"  info="Storage time in neutral emitter" test:value="1e-12" unit="s"); 
-	parameter real gte    		= 1.0		from (0:10]	`P(spice:name="gte"   info="Exponent factor for emmiter transit time");                  
+	parameter real tef0   		= 0.0		from [0:`INF)	`P(spice:name="tef0"  info="Storage time in neutral emitter" test:value="1e-12" unit="s");
+	parameter real gte    		= 1.0		from (0:10]	`P(spice:name="gte"   info="Exponent factor for emmiter transit time");
 	parameter real thcs   		= 0.0		from [0:`INF)	`P(spice:name="thcs"  info="Saturation time at high current densities" test:value="3e-11" unit="s");
 	parameter real ahc    		= 0.1		from (0:10]	`P(spice:name="ahc"   info="Smoothing facor for current dependence");
-	parameter real tr     		= 0.0		from [0:`INF)	`P(spice:name="tr"    info="Storage time at inverse operation" unit="s"); 
-	                                             
-// Critical current                          
+	parameter real tr     		= 0.0		from [0:`INF)	`P(spice:name="tr"    info="Storage time at inverse operation" unit="s");
+
+// Critical current
 	parameter real rci0   		= 150		from (0:`INF)	`P(spice:name="rci0"  info="Low-field collector resistance under emitter" test:value="50" unit="Ohm" m:inverse_factor="yes");
-	parameter real vlim   		= 0.5		from (0:10]	`P(spice:name="vlim"  info="Voltage dividing ohmic and satur.region" unit="V");                  
+	parameter real vlim   		= 0.5		from (0:10]	`P(spice:name="vlim"  info="Voltage dividing ohmic and satur.region" unit="V");
 	parameter real vpt    		= 100		from (0:100]	`P(spice:name="vpt"   info="Punch-through voltage" test:value="10" unit="V" default="infinity");
 	parameter real vces  		= 0.1		from [0:1]	`P(spice:name="vces"  info="Saturation voltage" unit="V");
-                                               
-// BC depletion cap intern                   
-	parameter real cjci0  		= 1.0e-20	from (0:`INF)	`P(spice:name="cjci0" info="Total zero-bias BC depletion capacitance" test:value="1e-15" unit="F" m:factor="yes");     
+
+// BC depletion cap intern
+	parameter real cjci0  		= 1.0e-20	from (0:`INF)	`P(spice:name="cjci0" info="Total zero-bias BC depletion capacitance" test:value="1e-15" unit="F" m:factor="yes");
 	parameter real vdci   		= 0.7		from (0:10]	`P(spice:name="vdci"  info="BC built-in voltage" test:value="0.7" unit="V");
-	parameter real zci    		= 0.333		from (0:1]	`P(spice:name="zci"   info="BC exponent factor" test:value="0.4"); 
-	parameter real vptci  		= 100		from (0:100]	`P(spice:name="vptci" info="Punch-through voltage of BC junction" test:value="50" unit="V");       
-                                               
-// BC depletion cap extern                   
-	parameter real cjcx0  		= 1.0e-20	from [0:`INF)	`P(spice:name="cjcx0" info="Zero-bias external BC depletion capacitance" unit="F" test:value="1e-15" m:factor="yes");     
-	parameter real vdcx   		= 0.7		from (0:10]	`P(spice:name="vdcx"  info="External BC built-in voltage" unit="V");  
-	parameter real zcx    		= 0.333		from (0:1]	`P(spice:name="zcx"   info="External BC exponent factor");   
-	parameter real vptcx  		= 100		from (0:100]	`P(spice:name="vptcx" info="Punch-through voltage" unit="V" test:value="5.0" default="infinity");  
-	parameter real fbc    		= 1.0		from [0:1]	`P(spice:name="fbc"   info="Split factor = Cjci0/Cjc0" test:value="0.5");  
-                                               
-// Base resistance                           
-	parameter real rbi0   		= 0.0		from [0:`INF)	`P(spice:name="rbi0"  info="Internal base resistance at zero-bias" test:value="100" unit="Ohm" m:inverse_factor="yes");   
-	parameter real vr0e   		= 2.5		from (0:`INF]	`P(spice:name="vr0e"  info="forward Early voltage (normalization volt.)" unit="V");                 
-	parameter real vr0c   		= `INF		from (0:`INF]	`P(spice:name="vr0c" info="forward Early voltage (normalization volt.)" unit="V" default="infinity" test:value="25.0");                  
-	parameter real fgeo   		= 0.656		from [0:`INF]	`P(spice:name="fgeo"  info="Geometry factor" test:value="0.73"); 
-                                               
-// Series resistances                        
-	parameter real rbx    		= 0.0		from [0:`INF)	`P(spice:name="rbx"   info="External base series resistance" test:value="8.8" unit="Ohm" m:inverse_factor="yes"); 
-	parameter real rcx    		= 0.0		from [0:`INF)	`P(spice:name="rcx"   info="Emitter series resistance" test:value="12.5" unit="Ohm" m:inverse_factor="yes");        
-	parameter real re     		= 0.0		from [0:`INF)	`P(spice:name="re"    info="External collector series resistance" test:value="9.16" unit="Ohm" m:inverse_factor="yes");      
-                                               
-// Substrate transfer current, diode current and cap                   
-	parameter real itss   		= 0.0		from [0:1.0]	`P(spice:name="itss" info="Substrate transistor transfer saturation current" unit="A" test:value="1e-17" m:factor="yes");    
-	parameter real msf    		= 1.0		from (0:10]	`P(spice:name="msf"  info="Substrate transistor transfer current non-ideality factor");   
-	parameter real iscs   		= 0.0		from [0:1.0]	`P(spice:name="iscs" info="SC saturation current" unit="A" test:value="1e-17" m:factor="yes");    
-	parameter real msc    		= 1.0		from (0:10]	`P(spice:name="msc"  info="SC non-ideality factor");   
-	parameter real cjs0   		= 1.0e-20	from [0:`INF)	`P(spice:name="cjs0" info="Zero-bias SC depletion capacitance" unit="F" test:value="1e-15" m:factor="yes");    
-	parameter real vds    		= 0.3		from (0:10]	`P(spice:name="vds"  info="SC built-in voltage" unit="V");     
+	parameter real zci    		= 0.333		from (0:1]	`P(spice:name="zci"   info="BC exponent factor" test:value="0.4");
+	parameter real vptci  		= 100		from (0:100]	`P(spice:name="vptci" info="Punch-through voltage of BC junction" test:value="50" unit="V");
+
+// BC depletion cap extern
+	parameter real cjcx0  		= 1.0e-20	from [0:`INF)	`P(spice:name="cjcx0" info="Zero-bias external BC depletion capacitance" unit="F" test:value="1e-15" m:factor="yes");
+	parameter real vdcx   		= 0.7		from (0:10]	`P(spice:name="vdcx"  info="External BC built-in voltage" unit="V");
+	parameter real zcx    		= 0.333		from (0:1]	`P(spice:name="zcx"   info="External BC exponent factor");
+	parameter real vptcx  		= 100		from (0:100]	`P(spice:name="vptcx" info="Punch-through voltage" unit="V" test:value="5.0" default="infinity");
+	parameter real fbc    		= 1.0		from [0:1]	`P(spice:name="fbc"   info="Split factor = Cjci0/Cjc0" test:value="0.5");
+
+// Base resistance
+	parameter real rbi0   		= 0.0		from [0:`INF)	`P(spice:name="rbi0"  info="Internal base resistance at zero-bias" test:value="100" unit="Ohm" m:inverse_factor="yes");
+	parameter real vr0e   		= 2.5		from (0:`INF]	`P(spice:name="vr0e"  info="forward Early voltage (normalization volt.)" unit="V");
+	parameter real vr0c   		= `INF		from (0:`INF]	`P(spice:name="vr0c" info="forward Early voltage (normalization volt.)" unit="V" default="infinity" test:value="25.0");
+	parameter real fgeo   		= 0.656		from [0:`INF]	`P(spice:name="fgeo"  info="Geometry factor" test:value="0.73");
+
+// Series resistances
+	parameter real rbx    		= 0.0		from [0:`INF)	`P(spice:name="rbx"   info="External base series resistance" test:value="8.8" unit="Ohm" m:inverse_factor="yes");
+	parameter real rcx    		= 0.0		from [0:`INF)	`P(spice:name="rcx"   info="Emitter series resistance" test:value="12.5" unit="Ohm" m:inverse_factor="yes");
+	parameter real re     		= 0.0		from [0:`INF)	`P(spice:name="re"    info="External collector series resistance" test:value="9.16" unit="Ohm" m:inverse_factor="yes");
+
+// Substrate transfer current, diode current and cap
+	parameter real itss   		= 0.0		from [0:1.0]	`P(spice:name="itss" info="Substrate transistor transfer saturation current" unit="A" test:value="1e-17" m:factor="yes");
+	parameter real msf    		= 1.0		from (0:10]	`P(spice:name="msf"  info="Substrate transistor transfer current non-ideality factor");
+	parameter real iscs   		= 0.0		from [0:1.0]	`P(spice:name="iscs" info="SC saturation current" unit="A" test:value="1e-17" m:factor="yes");
+	parameter real msc    		= 1.0		from (0:10]	`P(spice:name="msc"  info="SC non-ideality factor");
+	parameter real cjs0   		= 1.0e-20	from [0:`INF)	`P(spice:name="cjs0" info="Zero-bias SC depletion capacitance" unit="F" test:value="1e-15" m:factor="yes");
+	parameter real vds    		= 0.3		from (0:10]	`P(spice:name="vds"  info="SC built-in voltage" unit="V");
 	parameter real zs     		= 0.3		from (0:1]	`P(spice:name="zs"   info="External SC exponent factor");
-	parameter real vpts   		= 100		from (0:100]	`P(spice:name="vpts" info="SC punch-through voltage" unit="V" test:value="5.0" default="infinity");     
-                                               
-// Parasitic caps                            
-	parameter real cbcpar 		= 0.0		from [0:`INF)	`P(spice:name="cbcpar" info="Collector-base isolation (overlap) capacitance" unit="F" m:factor="yes" test:value="1e-15"); 
-	parameter real cbepar 		= 0.0		from [0:`INF)	`P(spice:name="cbepar" info="Emitter-base oxide capacitance" unit="F" m:factor="yes" test:value="2e-15");  
-                                               
-// BC avalanche current                      
-	parameter real eavl   		= 0.0		from [0:inf)	`P(spice:name="eavl" info="Exponent factor" test:value="1e-14");    
-	parameter real kavl   		= 0.0		from [0:`INF)	`P(spice:name="kavl" info="Prefactor" test:value="1.19");                  
-                                               
-// Flicker noise                             
-	parameter real kf     		= 0.0		from [0:`INF)	`P(spice:name="kf" info="flicker noise coefficient" unit="M^(1-AF)");         
-	parameter real af     		= 2.0		from (0:10]	`P(spice:name="af" info="flicker noise exponent factor");  
-                                               
-// Temperature dependance                    
-	parameter real vgb    		= 1.2		from (0:10]	`P(spice:name="vgb"     info="Bandgap-voltage" unit="V" test:value="1.17"); 
-	parameter real vge    		= 1.17		from (0:10]	`P(spice:name="vge"     info="Effective emitter bandgap-voltage" unit="V" test:value="1.07");  
-	parameter real vgc    		= 1.17		from (0:10]	`P(spice:name="vgc"     info="Effective collector bandgap-voltage" unit="V" test:value="1.14");         
-	parameter real vgs    		= 1.17		from (0:10]	`P(spice:name="vgs"     info="Effective substrate bandgap-voltage" unit="V" test:value="1.17"); 
+	parameter real vpts   		= 100		from (0:100]	`P(spice:name="vpts" info="SC punch-through voltage" unit="V" test:value="5.0" default="infinity");
+
+// Parasitic caps
+	parameter real cbcpar 		= 0.0		from [0:`INF)	`P(spice:name="cbcpar" info="Collector-base isolation (overlap) capacitance" unit="F" m:factor="yes" test:value="1e-15");
+	parameter real cbepar 		= 0.0		from [0:`INF)	`P(spice:name="cbepar" info="Emitter-base oxide capacitance" unit="F" m:factor="yes" test:value="2e-15");
+
+// BC avalanche current
+	parameter real eavl   		= 0.0		from [0:inf)	`P(spice:name="eavl" info="Exponent factor" test:value="1e-14");
+	parameter real kavl   		= 0.0		from [0:`INF)	`P(spice:name="kavl" info="Prefactor" test:value="1.19");
+
+// Flicker noise
+	parameter real kf     		= 0.0		from [0:`INF)	`P(spice:name="kf" info="flicker noise coefficient" unit="M^(1-AF)");
+	parameter real af     		= 2.0		from (0:10]	`P(spice:name="af" info="flicker noise exponent factor");
+
+// Temperature dependence
+	parameter real vgb    		= 1.2		from (0:10]	`P(spice:name="vgb"     info="Bandgap-voltage" unit="V" test:value="1.17");
+	parameter real vge    		= 1.17		from (0:10]	`P(spice:name="vge"     info="Effective emitter bandgap-voltage" unit="V" test:value="1.07");
+	parameter real vgc    		= 1.17		from (0:10]	`P(spice:name="vgc"     info="Effective collector bandgap-voltage" unit="V" test:value="1.14");
+	parameter real vgs    		= 1.17		from (0:10]	`P(spice:name="vgs"     info="Effective substrate bandgap-voltage" unit="V" test:value="1.17");
 	parameter real f1vg   		=-1.02377e-4			`P(spice:name="f1vg" info="Coefficient K1 in T-dependent bandgap equation" unit="V/K");
 	parameter real f2vg   		= 4.3215e-4			`P(spice:name="f2vg" info="Coefficient K2 in T-dependent bandgap equation" unit="V/K");
 	parameter real alt0   		= 0.0				`P(spice:name="alt0"    info="Frist-order TC of tf0" unit="1/K");
-	parameter real kt0    		= 0.0				`P(spice:name="kt0"     info="Second-order TC of tf0" unit="1/K^2");                   
-	parameter real zetact 		= 3.0				`P(spice:name="zetact"  info="Exponent coefficient in transfer current temperature dependence" test:value="3.5");        
-	parameter real zetabet		= 3.5				`P(spice:name="zetabet" info="Exponent coefficient in BE junction current temperature dependence" test:value="4.0");         
-	parameter real zetaci 		= 0.0				`P(spice:name="zetaci"  info="TC of epi-collector diffusivity" test:value="1.6"); 
+	parameter real kt0    		= 0.0				`P(spice:name="kt0"     info="Second-order TC of tf0" unit="1/K^2");
+	parameter real zetact 		= 3.0				`P(spice:name="zetact"  info="Exponent coefficient in transfer current temperature dependence" test:value="3.5");
+	parameter real zetabet		= 3.5				`P(spice:name="zetabet" info="Exponent coefficient in BE junction current temperature dependence" test:value="4.0");
+	parameter real zetaci 		= 0.0				`P(spice:name="zetaci"  info="TC of epi-collector diffusivity" test:value="1.6");
 	parameter real alvs   		= 0.0				`P(spice:name="alvs"    info="Relative TC of satur.drift velocity" unit="1/K" test:value="1e-3");
-	parameter real alces  		= 0.0				`P(spice:name="alces"   info="Relative TC of vces" unit="1/K" test:value="4e-4"); 
-	parameter real zetarbi		= 0.0				`P(spice:name="zetarbi" info="TC of internal base resistance" test:value="0.6"); 
-	parameter real zetarbx		= 0.0				`P(spice:name="zetarbx" info="TC of external base resistance" test:value="0.2"); 
+	parameter real alces  		= 0.0				`P(spice:name="alces"   info="Relative TC of vces" unit="1/K" test:value="4e-4");
+	parameter real zetarbi		= 0.0				`P(spice:name="zetarbi" info="TC of internal base resistance" test:value="0.6");
+	parameter real zetarbx		= 0.0				`P(spice:name="zetarbx" info="TC of external base resistance" test:value="0.2");
 	parameter real zetarcx		= 0.0				`P(spice:name="zetarcx" info="TC of external collector resistance" test:value="0.2");
-	parameter real zetare		= 0.0				`P(spice:name="zetare"  info="TC of emitter resistances"); 
-	parameter real alkav		= 0.0				`P(spice:name="alkav" info="TC of avalanche prefactor" unit="1/K"); 
+	parameter real zetare		= 0.0				`P(spice:name="zetare"  info="TC of emitter resistances");
+	parameter real alkav		= 0.0				`P(spice:name="alkav" info="TC of avalanche prefactor" unit="1/K");
 	parameter real aleav		= 0.0				`P(spice:name="aleav" info="TC of avalanche exponential factor" unit="1/K");
-	
-// Self-heating                              
- 	parameter integer flsh		= 0		from [0:2]	`P(spice:name="flsh"  info="Flag for self-heating calculation" test:value="2");            
- 	parameter real rth		= 0.0		from [0:`INF)	`P(spice:name="rth"  info="Thermal resistance" test:value="200.0" unit="K/W" m:inverse_factor="yes");            
+
+// Self-heating
+ 	parameter integer flsh		= 0		from [0:2]	`P(spice:name="flsh"  info="Flag for self-heating calculation" test:value="2");
+ 	parameter real rth		= 0.0		from [0:`INF)	`P(spice:name="rth"  info="Thermal resistance" test:value="200.0" unit="K/W" m:inverse_factor="yes");
 	parameter real cth		= 0.0		from [0:`INF)	`P(spice:name="cth"  info="Thermal capacitance" test:value="0.1" unit="Ws/K" m:factor="yes");
-	
+
 // Transistor type
 	parameter integer npn		= 1		from [0:1]	`P(spice:isflag="yes" info="model type flag  for npn" );
 	parameter integer pnp		= 0		from [0:1]	`P(info="model type flag  for pnp" );
 
 //Circuit simulator specific parameters
 	parameter real tnom		= 27				`P(spice:name="tnom" info="Temperature for which parameters are valid" unit="C");
-	parameter real dt		= 0.0				`P(spice:name="dt" type="instance" info="Temperature change for particular transistor" unit="K");                   
+	parameter real dt		= 0.0				`P(spice:name="dt" type="instance" info="Temperature change for particular transistor" unit="K");
 
 
 // Declaration of the variables: begin
@@ -363,17 +363,17 @@ module hic0_full (c,b,e,s,tnode);
 	real cmax,cr,ve;
 	real ee1,ez,ezr,vdj1,vdj2,ex1,vr,vj1,vj2,vj4;
 	real qj1,qj2,qj3,qjf;
-	
-	
+
+
 	//Cjfun		*** VT, removed: BA
 	real cj1,cj2,cj3,cjf;
-	
-	
+
+
 	//cjtfun 	*** tnom,VT,mg,Vt0, removed: BA
 	real	vg;
 	real	vdj0,vdjt,cj0_t,vd_t,aj_t;
-	
-	
+
+
 	// temperature and drift
 	real VT,Tamb,Tdev,Tnom,dT,qtt0,ln_qtt0;
 	real vde_t,vdci_t,vdcx_t,vds_t;
@@ -392,8 +392,8 @@ module hic0_full (c,b,e,s,tnode);
 	// be junction
 	real qjei `P(ask="yes" info="B-E internal junction charge" unit="C");
 	real cjei_i `P(ask="yes" info="B-E internal junction capacitance" unit="F"); // dw: adms2.2.7 problem
-	real cjei,vf,vj,x,y,e1,e2;  
-	 
+	real cjei,vf,vj,x,y,e1,e2;
+
 	// transfer and internal base current
 	real cc,qj_2,facl;
 	real tf0,ickf,ickr,itfi,itri,qm;
@@ -401,7 +401,7 @@ module hic0_full (c,b,e,s,tnode);
 	real it `P(ask="yes" info="Transfer Current" unit="A");
 	real ibe,ire,ibi;
 	real itfl,itrl,al,s3l,wl,d_qfh;
-	
+
 	// be diffusion charge
 	real qf,qf0,dqfh,dqef;
 	real dtef,dtfh,tf,ick;
@@ -412,33 +412,33 @@ module hic0_full (c,b,e,s,tnode);
 
 	// avalanche current source
 	real v_bord,a_iavl,lncc;
-	
+
 	// base resistance
-	real rb,eta,rbi,qje,Qz_nom,fQz; 
+	real rb,eta,rbi,qje,Qz_nom,fQz;
 
 	// substrate transistor, diode and cap
 	real qjs,HSa,HSb,HSI_Tsu,HSUM;
 
 	// self heating
 	real pterm;
-	
+
 	// new for temperature dependence
   	real mg,zetabci,zetasct,zetatef,avs;
-  	real k1,k2,vgbe,vgbc,vgsc,dvg;	
+  	real k1,k2,vgbe,vgbc,vgsc,dvg;
   	real xvf,xvf2,dvj,uvc,Vt0;
 
   	// noise
   	real flicker_Pwr,fourkt,twoq;
-  	
+
   	// LIN_EXP
   	real	le,arg,le1,arg1,le2,arg2;
-  	
+
   	//HICDIO
   	real	IS,IST,UM1,U,Iz,DIOY;
-  	
+
   	// branch voltages
   	real   Vbci,Vbici,Vbiei,Vciei,Vsci,Veie,Vbbi,Vcic,Vbe,Vrth;
-	
+
 	//Output to be seen
 	real	ijbc `P(ask="yes" info="Base-collector diode current" unit="A");
 	real	iavl `P(ask="yes" info="Avalanche current" unit="A");
@@ -452,9 +452,9 @@ module hic0_full (c,b,e,s,tnode);
   	real	Qbci,Qbe,Qbici,Qbiei;
 //Declaration of the variables: end
 
-  
+
 //
-//======================== calculation of the transistor =================== 
+//======================== calculation of the transistor ===================
 //
 
 analog begin
@@ -491,7 +491,7 @@ analog begin
 	Tnom	= tnom+273.15;
 	Tamb	= $temperature;
 	Tdev	= Tamb+dt+Vrth;
-	
+
 // Limit temperature to avoid FPE's in equations
 	if(Tdev < `TMIN + 273.15) begin
 	   Tdev = `TMIN + 273.15;
@@ -503,15 +503,15 @@ analog begin
 
 	Vt0     = `P_K*Tnom /`P_Q;
 	VT      = `P_K*Tdev /`P_Q;
-	dT      = Tdev-Tnom;  
+	dT      = Tdev-Tnom;
 	qtt0    = Tdev/Tnom;
 	ln_qtt0 = ln(qtt0);
 	k1      = f1vg*Tnom;
 	k2      = f2vg*Tnom+k1*ln(Tnom);
 	avs     = alvs*Tnom;
-	vgbe    = (vgb+vge)/2;   
-	vgbc    = (vgb+vgc)/2;   
-	vgsc    = (vgs+vgc)/2;   
+	vgbe    = (vgb+vge)/2;
+	vgbc    = (vgb+vgc)/2;
+	vgsc    = (vgs+vgc)/2;
 	mg      = 3-`P_Q*f1vg/`P_K;
 	zetabci = mg+1-zetaci;
 	zetasct = mg-1.5;  //+1-m_upS with m_upS=2.5
@@ -551,13 +551,13 @@ analog begin
 // The cjcx0 value is used to switch between one (cjcx0=0) and two bc parameter sets
 // 1. For one parameter set only the internal bc set is partitioned by fbc
 // 2. For two independent sets only the external set is partitioned by fbc
-	 
-	if (cjcx0_t==0) begin 
+
+	if (cjcx0_t==0) begin
 		cjci0_t_ii	= cjci0_t*fbc;             // zero bias internal portion
 		qjcxi		= 0;
 		cjcx0_t_i	= cjci0_t*(1-fbc);         // zero bias external portion
 		`HICJQ(Vbci,cjcx0_t_i,vdci_t,zci,vptci,qjcx)
-	end else begin  
+	end else begin
 		cjci0_t_ii	= cjci0_t;                 // zero bias internal portion
 		cjcx0_t_ii	= cjcx0_t*fbc;
 		`HICJQ(Vbici,cjcx0_t_ii,vdcx_t,zcx,vptcx,qjcxi)
@@ -566,9 +566,9 @@ analog begin
 	end
 	`HICJQ(Vbici,cjci0_t_ii,vdci_t,zci,vptci,qjci)
 	qjcii	= qjci+qjcxi;
-		
+
 //Internal bc cap without punch through for cc
- 
+
 	//`HICJQ(Vbici,cjci0_t_ii,vdci_t,zci,100,qjciii)
 	`QCMODF(Vbici,cjci0_t_ii,vdci_t,zci,2.4,cjcii)
 	//cjcii	= ddx(qjciii,V(bi));
@@ -582,7 +582,7 @@ analog begin
 // Critical current: ick
 	vc	= Vciei-vces_t;
 	uvc	= vc/VT-1;
-	vceff	= VT*(1+0.5*(uvc+sqrt(uvc*uvc+1.921812)));	
+	vceff	= VT*(1+0.5*(uvc+sqrt(uvc*uvc+1.921812)));
 	x	= (vceff-vlim_t)/vpt;
 	ick	= vceff*(1+0.5*(x+sqrt(x*x+1e-3)))/rci0_t/sqrt(1+vceff*vceff/vlim_t/vlim_t);
 
@@ -590,7 +590,7 @@ analog begin
 
 // Normalized BC cap and carge
 	cc	= cjci0_t_ii/cjcii;
-	qjci	= qjci/cjci0_t_ii; 
+	qjci	= qjci/cjci0_t_ii;
 	qj_2	= (1+qjci/vef)/2;
 
 // Minority charge transit time
@@ -604,7 +604,7 @@ analog begin
 	arg1 = Vbiei/(mcf*VT);
 	`LIN_EXP(le1,arg1)
 	itfi=is_t*le1;
-	
+
 	arg2 = Vbici/(mcr*VT);
 	`LIN_EXP(le2,arg2)
 	itri=is_t*le2;
@@ -617,10 +617,10 @@ analog begin
 	qpt	= qj_2+sqrt((qj_2)*(qj_2)+qm);
 	if (qpt<=1e-20) begin
 		qpt=1e-20;
-	end	
+	end
 
 // Low transfer current
-	itfl	= itfi/qpt; 
+	itfl	= itfi/qpt;
 	itrl	= itri/qpt;
 
 // Normalized injection width with low transfer current
@@ -632,7 +632,7 @@ analog begin
 	s3l	= sqrt(al*al+ahc);
 	wl	= (al+s3l)/(1+sqrt(1+ahc));
 	d_qfh	= (wl*wl+tfh*itfl/ick)*itfl/iqfh;
-	
+
 // Transfer current
 	facl	= 1/(1+d_qfh/qpt);
 	itf	= itfl*facl;
@@ -654,15 +654,15 @@ analog begin
 	tww	= thcs_t*w*w;
 	dqfh	= tww*itf;
 	dtfh	= tww*(1+2*ick/itf/s3);
- 
+
 // Emitter component
 	dtef	= tef0_t*exp(gte*ln(itf/ick));
 	dqef	= dtef*itf/(gte+1.0);
- 
-// Total minority charge and transit time 
+
+// Total minority charge and transit time
 	qf	= qf0+dqef+dqfh;
 	tf	= tf0+dtfh+dtef;
- 
+
 // BC diffusion charge
 	qr	= tr*itr;
 
@@ -679,7 +679,7 @@ analog begin
 // Total base current
 	ibi	= ijbe+ijbc;
 
-// Avalanche current	
+// Avalanche current
 
 	if (Vbici < 0) begin : HICAVL
 		v_bord	= eavl_t*vdci_t;
@@ -687,7 +687,7 @@ analog begin
 			a_iavl	= kavl_t/vdci_t*exp(-cc);
 			iavl	= itf*a_iavl*(v_bord+(1+cc)*(vdci_t-Vbici-v_bord));
 		end else begin
-			lncc	= ln(1/cc);	      
+			lncc	= ln(1/cc);
 			iavl	= kavl_t*itf*exp(-1/zci*lncc-eavl_t*exp((1/zci-1)*lncc));
 		end
 	end else begin
@@ -717,7 +717,7 @@ analog begin
 	end else begin
 		rbi	= 0.0;
 	end
-	// Total base resistance 
+	// Total base resistance
 	rb	= rbi+rbx_t;
 
 // Parasitic substrate transistor transfer current
@@ -739,7 +739,7 @@ analog begin
 // Self heating
 
 	if (flsh == 1 && rth >= `MIN_R) begin
-		pterm	= it*Vciei+iavl*(vdci_t-Vbici); 
+		pterm	= it*Vciei+iavl*(vdci_t-Vbici);
 	end else if (flsh == 2 && rth >= `MIN_R) begin
 		pterm	=  Vciei*it + (vdci_t-Vbici)*iavl + ijbe*Vbiei + ijbc*Vbici + ijsc*Vsci;
 		if (rb >= `MIN_R) begin
@@ -756,7 +756,7 @@ analog begin
 //
 // Compute branch sources
 //
-	
+
 	Ibici = ijbc - iavl;
 
 	Qbci  = cbcpar*Vbci;
@@ -766,22 +766,22 @@ analog begin
 
 	ijsc  = HICUMtype*ijsc;
 	qjs   = HICUMtype*qjs;
-	qjcx  = HICUMtype*qjcx; 
+	qjcx  = HICUMtype*qjcx;
 	Qbci  = HICUMtype*Qbci;
 	Qbe   = HICUMtype*Qbe;
-	
+
 	Ibici = HICUMtype*Ibici;
 	Qbici = HICUMtype*Qbici;
 	ijbe  = HICUMtype*ijbe;
-	Qbiei = HICUMtype*Qbiei; 
+	Qbiei = HICUMtype*Qbiei;
 	it    = HICUMtype*it;
-	
+
 //
 // Define branch sources
 //
 	I(br_biei)	<+ _circuit_gmin*V(br_biei);
 	I(br_bici)	<+ _circuit_gmin*V(br_bici);
-		
+
 	I(br_bs) 		<+ HSI_Tsu;
 	I(br_sci)		<+ ijsc	+ _circuit_gmin*V(br_sci);	//`P(spectre:gmin="add" spectre:pwl_passive="1e10");
 	I(br_sci)		<+ ddt(qjs);
@@ -808,7 +808,7 @@ analog begin
 	I(br_biei)	<+ ijbe + _circuit_gmin*V(br_biei);		//`P(spectre:gmin="add" spectre:pwl_fwd_current="IBEIS*exp(25.0)" spectre:pwl_fwd_node="bi" spectre:pwl_fwd_cond="IBEIS*exp(25.0)/0.025" spectre:pwl_sat_current="IMAX" spectre:pwl_sat_cond="IMAX/0.025" spectre:pwl_passive="1e10");
 	I(br_biei)	<+ ddt(Qbiei);
 	I(br_ciei)	<+ it					`P(spectre:pwl_fwd_current="IS*exp(25.0)" spectre:pwl_fwd_node="bi" spectre:pwl_fwd_cond="IS*exp(25.0)/0.025"   spectre:pwl_rev_current="IMAX" spectre:pwl_rev_cond="IMAX/0.025" spectre:pwl_passive="1e10");
-	
+
 	// Following code is an intermediate solution:
 	// ******************************************
 	if(flsh == 0 || rth < `MIN_R) begin
@@ -818,7 +818,7 @@ analog begin
 		I(br_sht) 	<+ ddt(cth*Vrth);
 	end
 	// ******************************************
-	// For simulators having no problem with V(br_sht) <+ 0.0 
+	// For simulators having no problem with V(br_sht) <+ 0.0
 	// with external thermal node, follwing code may be used.
 	// This external thermal node should remain accessible.
 	// ********************************************
@@ -829,7 +829,7 @@ analog begin
 	//	I(br_sht) 	<+ ddt(cth*Vrth);
 	//end
 	// ********************************************
-	
+
 // Noise sources
 // Thermal noise
 	fourkt 	= 4.0 * `P_K * Tdev;
@@ -847,8 +847,8 @@ analog begin
 	twoq	= 2.0 * `P_Q;
 	I(br_biei)	<+ white_noise(twoq*ijbe);
 	I(br_ciei)	<+ white_noise(twoq*it);
-   
-// Flicker noise   
+
+// Flicker noise
 	flicker_Pwr	= kf*pow(ijbe,af);
 	I(br_biei)	<+ flicker_noise(flicker_Pwr,1.0);
 

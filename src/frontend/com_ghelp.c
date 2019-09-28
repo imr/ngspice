@@ -24,7 +24,7 @@ com_ghelp(wordlist *wl)
 
     NG_IGNORE(wl);
 
-    (void) printf("Internal help is no longer avaialable!\n"
+    (void) printf("Internal help is no longer available!\n"
             "For the latest official ngspice manual in PDF format, "
                     "please see\n"
             "  http://ngspice.sourceforge.net/docs/ngspice-manual.pdf\n"
