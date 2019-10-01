@@ -17,18 +17,18 @@ OPWIEN.CIR - OPAMP WIEN-BRIDGE OSCILLATOR
 IS	0	3	dc 0 PWL(0US 0MA   10US 0.1MA   40US 0.1MA   50US 0MA   10MS 0MA)
 *
 * RC TUNING
-VR2 r2  0 dc 0 trrandom (2 'ttime10' 0 1)  $ Gauss controlling voltage
+VR2 r2  0 dc 0 trrandom (2 'ttime10' 0 1)  ; Gauss controlling voltage
 * 
-*VR2 r2  0 dc 0 trrandom (1 'ttime10' 0 3) $ Uniform within -3 3
+*VR2 r2  0 dc 0 trrandom (1 'ttime10' 0 3) ; Uniform within -3 3
 *
 * If Gauss, factor 0.033 is 10% equivalent to 3 sigma
 * if uniform, uniform between +/- 10%
-R2 4 6  R = 'res + 0.033 * res*V(r2)'  $ behavioral resistor
+R2 4 6  R = 'res + 0.033 * res*V(r2)'  ; behavioral resistor
 *R2 4 6 'res' $ constant R
 
 VC2 c2 0 dc 0  trrandom (2 'ttime10' 0 1)
 *C2	6 	3'cn'  $ constant C
-C2 6 3 C = 'cn + 0.033 * cn*V(c2)'  $ behavioral capacitor
+C2 6 3 C = 'cn + 0.033 * cn*V(c2)'  ; behavioral capacitor
 
 VR1 r1  0 dc 0 trrandom (2 'ttime10' 0 1)
 *VR1 r1  0 dc 0 trrandom (1 'ttime10' 0 3)
