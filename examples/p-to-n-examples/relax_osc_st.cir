@@ -23,6 +23,7 @@ C1 vm1 0 1n
 .control
 save  vs1 vm1 vp1
 run
+rusage time
 plot vs1 vm1 vp1
 linearize vs1
 fft vs1
