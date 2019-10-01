@@ -7569,7 +7569,9 @@ static struct card *pspice_compat(struct card *oldcard)
         }
     }
 
-    /* replace T_ABS by temp and T_REL_GLOBAL by dtemp in .model cards */
+    /* replace T_ABS by temp, T_REL_GLOBAL by dtemp, and T_MEASURED by TNOM
+    in .model cards. What about T_REL_LOCAL ? T_REL_LOCAL is used in conjunction with AKO
+    and is not yet implemented.  */
     for (card = newcard; card; card = card->nextcard) {
         char *cut_line = card->line;
         if (ciprefix(".model", cut_line)) {
@@ -7578,6 +7580,8 @@ static struct card *pspice_compat(struct card *oldcard)
                 memcpy(t_str, " temp", 5);
             else if ((t_str = strstr(cut_line, "t_rel_global")) != NULL)
                 memcpy(t_str, "       dtemp", 12);
+            else if ((t_str = strstr(cut_line, "t_measured")) != NULL)
+                memcpy(t_str, "      tnom", 10);
         }
     }
 
