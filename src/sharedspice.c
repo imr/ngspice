@@ -442,9 +442,14 @@ sighandler_sharedspice(int num)
 void
 exec_controls(wordlist *newcontrols)
 {
-    if (newcontrols) {
+    if (newcontrols && newcontrols->wl_word && !eq(newcontrols->wl_word,"")) {
         shcontrols = newcontrols;
     }
+    else {
+        tid2 = 0;
+        return;
+    }
+
 #ifdef THREADS
 #ifdef HAVE_LIBPTHREAD
     cont_condition = FALSE;
