@@ -443,8 +443,6 @@ void
 exec_controls(wordlist *newcontrols)
 {
     if (newcontrols) {
-        if (shcontrols)
-            wl_free(shcontrols);
         shcontrols = newcontrols;
     }
 #ifdef THREADS
