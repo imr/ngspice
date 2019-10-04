@@ -523,7 +523,7 @@ static void EVTprocess_output(
             return;
         if(delay <= 0.0) {
             printf("\nERROR - Output delay <= 0 not allowed - output ignored!\n");
-            printf("  Instance: %s\nNode: %s\nTime: %f \n",
+            printf("  Instance: %s\n  Node: %s\n  Time: %f \n",
                     g_mif_info.instance->MIFname, node_table[node_index]->name, g_mif_info.ckt->CKTtime);
             return;
         }
