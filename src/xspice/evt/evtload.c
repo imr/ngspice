@@ -519,9 +519,12 @@ static void EVTprocess_output(
     if(g_mif_info.circuit.anal_type == MIF_TRAN) {
         /* If model signaled that output was not posted, */
         /* leave the event struct on the free list and return */
-        if((! changed) || (delay <= 0.0)) {
-            if(changed && (delay <= 0.0))
-                printf("\nERROR - Output delay <= 0 not allowed - output ignored!\n");
+        if(!changed)
+            return;
+        if(delay <= 0.0) {
+            printf("\nERROR - Output delay <= 0 not allowed - output ignored!\n");
+            printf("  Instance: %s\nNode: %s\nTime: %f \n",
+                    g_mif_info.instance->MIFname, node_table[node_index]->name, g_mif_info.ckt->CKTtime);
             return;
         }
         /* Remove the (now used) struct from the head of the free list */
