@@ -244,6 +244,7 @@ spice_destroy_devices(void)
     tfree(DEVicesfl);
 #endif
     tfree(DEVices);
+    DEVNUM = 0;
 }
 
 
@@ -251,9 +252,11 @@ void
 spice_init_devices(void)
 {
     int i;
+    /* Safeguard against double initialization */
+    DEVNUM = NUMELEMS(static_devices);
 
 #ifdef XSPICE
-    /*Initilise the structs and add digital node type */
+    /* Initialize the structs and add digital node type */
     g_evt_udn_info = TMALLOC(Evt_Udn_Info_t  *, 1);
     g_evt_num_udn_types = 1;
     g_evt_udn_info[0] =  &idn_digital_info;
