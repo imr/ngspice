@@ -1,0 +1,36 @@
+Adding transient simulation top generate the operating point of a circuit
+
+The operating point of a circuit has to be established before a transient, ac, 
+or noise simulation may be started.
+
+The procedure, as found in cktop.c is as follows:
+1) Iterate the matrix with the starting values
+If this fails:
+2) Start gmin stepping
+If this fails:
+3) start source stepping
+
+If this again fails, bail out.
+
+In tghis branch a fourth method is added:
+4) Start a transient simulation for a specific amount of time.
+   Keep all data local. Keep the matrix values as an
+   operating point for the simualtion following.
+If this fails, finally stop.
+
+The time for transient is determined a priori. If a transient
+simulation follows, choose 100 time the TSTEP value. If an ac
+or noise simulation follows, take the invers of the starting
+frequency divided by 10 as the optran simulation time.
+
+A method to stop the op transient simulation, when all nodes
+have become stable, might be good, but has not yet been implemented.
+
+Step 1 may be skipped by
+option noopiter
+
+Step 2 may be skipped by
+option gminsteps=0
+
+Step 3 may be skipped by 
+option srcsteps=0
