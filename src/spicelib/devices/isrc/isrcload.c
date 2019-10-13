@@ -11,6 +11,7 @@ Modified: 2000 Alansfixes
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 #include "ngspice/1-f-code.h"
+#include "ngspice/cpextern.h"
 
 #ifdef XSPICE_EXP
 /* gtri - begin - wbk - modify for supply ramping option */
@@ -33,6 +34,12 @@ ISRCload(GENmodel *inModel, CKTcircuit *ckt)
     double value;
     double time;
     double m;
+    static double StartupTime = 0.0;
+
+    if (StartupTime == 0.0) {
+        if (!cp_getvar("startup_time", CP_REAL, &StartupTime, 0))
+            StartupTime = 20.0e-6;
+    }
 
     /*  loop through all the source models */
     for( ; model != NULL; model = ISRCnextModel(model)) {
@@ -391,8 +398,9 @@ INoi1 1 0  DC 0 TRNOISE(0n 0.5n 1 10n) : generate 1/f noise
 #endif
 
                 } // switch
-                if ((ckt->CKTmode&MODESTARTUP) && ckt->CKTtime < 20e-6) {
-                    value *= ckt->CKTtime/20e-6;
+                if ((ckt->CKTmode & MODESTARTUP) &&
+                        ckt->CKTtime < StartupTime) {
+                    value *= ckt->CKTtime / StartupTime;
                 }
             } // else (line 48)
 loadDone:
