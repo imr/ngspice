@@ -1,0 +1,15 @@
+Adding a startup (or ramp) time to independent voltage and current sources.
+
+By adding a flaG 'startup' to the 'tran' command, all independent current
+and voltage source outputs are scaled by the factor time/StartupTime if
+simulation time is smaller than StartupTime. Thus they are ramped up
+linearily between times 0 and StartupTime.
+
+The default value of 20us may be overridden by adding a line
+set startup_time = <value>
+to .spiceinit (or to the top of a .control script), where <value> may
+be any valid ngspice real number representing time. Negativ or 0 entries
+are ignored.
+
+Code changes include introducing a new mode flag MODESTARTUP and the
+scaling in vsrcload.c and isrcload.c.
