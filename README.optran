@@ -20,11 +20,11 @@ If this fails, finally stop.
 
 The time for transient is determined a priori. If a transient
 simulation follows, choose 100 time the TSTEP value. If an ac
-or noise simulation follows, take the invers of the starting
+or noise simulation follows, take the inverted starting
 frequency divided by 10 as the optran simulation time.
 
 A method to stop the op transient simulation, when all nodes
-have become stable, might be good, but has not yet been implemented.
+have become stable, might be desirable, but has not yet been implemented.
 
 Step 1 may be skipped by
 option noopiter
