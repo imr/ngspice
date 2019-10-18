@@ -32,6 +32,10 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 /* gtri - end - 12/12/90 */
 #endif
 
+#ifdef __APPLE__
+#include <sys/sysctl.h>
+#endif
+
 /* We might compile for Windows, but only as a console application (e.g. tcl) */
 #if defined(HAS_WINGUI) || defined(__MINGW32__) || defined(_MSC_VER)
 #define PSAPI_VERSION 1
@@ -284,7 +288,25 @@ printres(char *name)
     }
 
     if (!name || eq(name, "space")) {
+# ifdef __APPLE__
+    #  ifdef HAVE_GETRUSAGE
+        int ret;
+        size_t usage = 0, limit = 0;
+        struct rusage ruse;
+        memset(&ruse, 0, sizeof(ruse));
+        ret = getrusage(RUSAGE_SELF, &ruse);
+        if (ret == -1)
+            perror("getrusage(): ");
+        usage = ruse.ru_maxrss;
 
+        size_t physmem;
+        size_t len = sizeof(physmem);
+        static int mib[2] = { CTL_HW, HW_MEMSIZE };
+
+        if (sysctl (mib, 2, &physmem, &len, NULL, 0) == 0)
+            limit = physmem;
+    # endif
+# else
 #  ifdef HAVE_GETRLIMIT
         size_t usage = 0, limit = 0;
         struct rlimit rld;
@@ -304,6 +326,7 @@ printres(char *name)
         usage = (size_t) (hi - enddata);
 #    endif /* HAVE_ULIMIT */
 #  endif /* HAVE_GETRLIMIT */
+# endif /* !__APPLE__ */
 
 #if defined(HAVE_WIN32) || defined(HAVE__PROC_MEMINFO)
 
