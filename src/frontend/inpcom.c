@@ -7466,10 +7466,13 @@ static struct card *pspice_compat(struct card *oldcard)
             char *ntok = nexttok(cut_line);
             ntok = nexttok(ntok);
             ntok = nexttok(ntok);
-            if (!ntok){
+            if (!ntok || *ntok == '\0'){
                 fprintf(stderr, "Error: Missing token in line %d:\n%s\n", card->linenum, cut_line);
                 fprintf(stderr, "    Please correct the input file\n");
-                controlled_exit(1);
+                if (ft_stricterror)
+                    controlled_exit(1);
+                else
+                    continue;
             }
             char *tctok = search_plain_identifier(ntok, "tc");
             if (tctok) {
@@ -7607,14 +7610,19 @@ static struct card *pspice_compat(struct card *oldcard)
             continue;
         }
         if (*cut_line == 'q') {
+            /* According to PSPICE Reference Guide the fourth (substrate) node
+            has to be put into [] if it is not just a number */
             cut_line = nexttok(cut_line); //.model
             cut_line = nexttok(cut_line); // node1
             cut_line = nexttok(cut_line); // node2
             cut_line = nexttok(cut_line); // node3
-            if (!cut_line) {
-                fprintf(stderr, "Line no. %d, %s missing tokens\n",
+            if (!cut_line || *cut_line == '\0') {
+                fprintf(stderr, "Line no. %d, %s, missing tokens\n",
                         card->linenum_orig, card->line);
-                continue;
+                if (ft_stricterror)
+                    controlled_exit(1);
+                else
+                    continue;
             }
             if (*cut_line == '[') { // node4 not a number
                 *cut_line = ' ';
@@ -7631,7 +7639,7 @@ static struct card *pspice_compat(struct card *oldcard)
                 if (is_node4)
                     cut_line = nexttok(cut_line); // model name
             }
-            if (*cut_line &&
+            if (cut_line && *cut_line &&
                     atof(cut_line) > 0.0) { // size of area is a real number
                 char *tmpstr1 = copy_substring(card->line, cut_line);
                 char *tmpstr2 = tprintf("%s area=%s", tmpstr1, cut_line);
@@ -7639,7 +7647,7 @@ static struct card *pspice_compat(struct card *oldcard)
                 tfree(card->line);
                 card->line = tmpstr2;
             }
-            else if (*cut_line &&
+            else if (cut_line && *cut_line &&
                     *(skip_ws(cut_line)) ==
                             '{') { // size of area is parametrized inside {}
                 char *tmpstr1 = copy_substring(card->line, cut_line);
@@ -7656,13 +7664,16 @@ static struct card *pspice_compat(struct card *oldcard)
             cut_line = nexttok(cut_line); //.model
             cut_line = nexttok(cut_line); // node1
             cut_line = nexttok(cut_line); // node2
-            if (!cut_line) {
-                fprintf(stderr, "Line no. %d, %s missing tokens\n",
+            if (!cut_line || *cut_line == '\0') {
+                fprintf(stderr, "Line no. %d, %s, missing tokens\n",
                         card->linenum_orig, card->line);
-                continue;
+                if (ft_stricterror)
+                    controlled_exit(1);
+                else
+                    continue;
             }
             cut_line = nexttok(cut_line); // model name
-            if (*cut_line && atof(cut_line) > 0.0) { // size of area
+            if (cut_line && *cut_line && atof(cut_line) > 0.0) { // size of area
                 char *tmpstr1 = copy_substring(card->line, cut_line);
                 char *tmpstr2 = tprintf("%s area=%s", tmpstr1, cut_line);
                 tfree(tmpstr1);
