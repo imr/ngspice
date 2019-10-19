@@ -121,6 +121,9 @@ libfte_la_SOURCES = \
     fourier.h   \
     gens.c      \
     gens.h      \
+    get_avail_mem_size.c     \
+    get_resident_set_size.c  \
+    get_phys_mem_size.c      \
     hpgl.c      \
     hpgl.h      \
     inp.c       \
