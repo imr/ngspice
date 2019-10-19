@@ -41,7 +41,21 @@
  */
 unsigned long long getPeakRSS()
 {
-#if defined(HAVE_GETRUSAGE)
+#if defined(HAVE__PROC_MEMINFO)
+    /* Linux ---------------------------------------------------- */
+    unsigned long long rss = 0L;
+    FILE* fp = NULL;
+    if ( (fp = fopen( "/proc/self/statm", "r" )) == NULL )
+            return (unsigned long long) 0L; /* Can't open? */
+    if ( fscanf( fp, "%llu", &rss ) != 1 )
+    {
+        fclose( fp );
+        return 0L;      /* Can't read? */
+    }
+    fclose( fp );
+        return rss * (unsigned long long) sysconf(_SC_PAGESIZE);
+        
+#elif defined(HAVE_GETRUSAGE)
     /* BSD, Linux, and OSX -------------------------------------- 
      * not (yet) available with CYGWIN */
     struct rusage rusage;
