@@ -54,7 +54,7 @@ unsigned long long getAvailableMemorySize( )
     if (match == NULL) /* not found */
         return 0L;
     sscanf(match, "MemFree: %llu", &mem_got);
-    return mem_got * 1024;
+    return mem_got * 1024L;
 
 #elif defined(_WIN32)
     /* Windows. ------------------------------------------------- */
@@ -77,13 +77,13 @@ unsigned long long getAvailableMemorySize( )
 
     if (host_statistics(host_port, HOST_VM_INFO, (host_info_t) &vm_stat,
                 &host_size) != KERN_SUCCESS) {
-        NSLog(@"Failed to fetch vm statistics");
+        fprintf(stderr, "Failed to fetch vm statistics");
     }
 
     /* Stats in bytes */
 /*    natural_t mem_used = (vm_stat.active_count + vm_stat.inactive_count +
                                     vm_stat.wire_count) * pagesize; */
-    return vm_stat.free_count * pagesize;
+    return (unsigned long long)(vm_stat.free_count * pagesize);
 //    natural_t mem_total = mem_used + mem_free;
 
 #elif defined(__unix__) || defined(__unix) || defined(unix)
