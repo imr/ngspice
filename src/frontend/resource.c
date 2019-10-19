@@ -270,10 +270,10 @@ printres(char *name)
 
 #if defined(HAVE__PROC_MEMINFO)
         get_procm(&mem_ng_act);
-        fprintf(cp_out, "Resident set size = ");
-        fprintmem(cp_out, mem_ng_act.resident);
-        fprintf(cp_out, ".\n");
-
+//        fprintf(cp_out, "Resident set size = ");
+//        fprintmem(cp_out, mem_ng_act.resident);
+//        fprintf(cp_out, ".\n");
+        fprintf(cp_out, "\n");  
         fprintf(cp_out, "Shared ngspice pages = ");
         fprintmem(cp_out, mem_ng_act.shared);
         fprintf(cp_out, ".\n");
