@@ -1416,6 +1416,9 @@
     <ClCompile Include="..\src\frontend\fourier.c" />
     <ClCompile Include="..\src\frontend\ftesopt.c" />
     <ClCompile Include="..\src\frontend\gens.c" />
+    <ClCompile Include="..\src\frontend\get_phys_mem_size.c" />
+    <ClCompile Include="..\src\frontend\get_resident_set_size.c" />
+    <ClCompile Include="..\src\frontend\get_avail_mem_size.c" />
     <ClCompile Include="..\src\frontend\hcomp.c" />
     <ClCompile Include="..\src\frontend\help\help.c" />
     <ClCompile Include="..\src\frontend\help\provide.c" />
