@@ -7,7 +7,7 @@ Test OpAmp
 V1 vdd 0 2.2
 V2 vss 0 -2.2
 
-Vin in 0 dc 0 sin(0 100m 500)
+Vin in 0 dc 0 ac 1 sin(0 100m 500)
 
 Rin in opin 1000k
 Rfb opout opin 10000k
@@ -27,6 +27,8 @@ Xop 0 opin vdd vss opout MCP6041
 *.tran 0.1m 10m
 
 .control
+ac dec 10 1 100k
+plot vdb(opout)
 dc Vin -0.2 0.2 0.01
 plot v(opout) v(opin)
 tran 0.1m 10m
