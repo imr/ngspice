@@ -302,7 +302,7 @@ ISRCload(GENmodel *inModel, CKTcircuit *ckt)
                             break;
                         }
                         for(i=0; i < (here->ISRCfunctionOrder / 2) - 1; i++) {
-                            if((*(here->ISRCcoeffs+2*i)==time)) {
+                            if(*(here->ISRCcoeffs+2*i)==time) {
                                 value = *(here->ISRCcoeffs+2*i+1);
                                 goto loadDone;
                             }
