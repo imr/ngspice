@@ -204,6 +204,10 @@ extern double x_atanh(double);
 #pragma warning(disable: 4127)
 #endif
 
+#if defined(__APPLE__) && defined(__MACH__)
+#define finite isfinite
+#endif
+
 #if !defined(NAN)
 #if defined(_MSC_VER)
     /* NAN is not defined in VS 2012 or older */
