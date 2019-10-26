@@ -55,7 +55,7 @@ ft_sigintr_cleanup(void)
 
     /* sjb - what to do for editline???
        The following are not supported in editline */
-#if defined(HAVE_GNUREADLINE) && !defined(__APPLE__)
+#if defined(HAVE_GNUREADLINE)
     /*  Clean up readline after catching signals  */
     /*  One or all of these might be superfluous  */
     (void) rl_free_line_state();
