@@ -287,7 +287,7 @@ com_sttus(wordlist *wl)
             else
                 fprintf(cp_out, "stop");
             printcond(d, cp_out);
-        } else if ((d->db_type == DB_DEADIPLOT)) {
+        } else if (d->db_type == DB_DEADIPLOT) {
             if (isatty(fileno(cp_out))) {
                 fprintf(cp_out, "%-4d exiting iplot %s", d->db_number,
                         d->db_nodename1);
