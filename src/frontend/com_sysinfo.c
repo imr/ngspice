@@ -24,7 +24,7 @@
 #undef BOOLEAN
 #include "windows.h"
 #include <psapi.h>
-
+#include <VersionHelpers.h>
 #endif
 
 #include "stdio.h"
@@ -381,9 +381,8 @@ get_sysmem(struct sys_memory *memall)
 TesError
 tesCreateSystemInfo(TesSystemInfo *info)
 {
-    OSVERSIONINFOA version;
-    char *versionStr = NULL, *procStr, *freeStr;
-    DWORD major, minor;
+    char *procStr, *freeStr;
+    char mversion[32];
     DWORD dwLen = 0;
     HKEY hkBaseCPU;
     LONG lResult;
@@ -392,61 +391,63 @@ tesCreateSystemInfo(TesSystemInfo *info)
     GetSystemInfo(&sysinfo);
 
     info->numPhysicalProcessors =  0;
-    info->numLogicalProcessors = sysinfo.dwNumberOfProcessors; //atoi(getenv("NUMBER_OF_PROCESSORS"));
+    info->numLogicalProcessors = sysinfo.dwNumberOfProcessors;
     info->osName = NULL;
+    mversion[0] = '\0';
 
-    version.dwOSVersionInfoSize = sizeof(OSVERSIONINFOA);
-    if (GetVersionExA(&version) == 0)
-        return TES_FAIL;
-
-    major = version.dwMajorVersion;
-    minor = version.dwMinorVersion;
-    switch (major) {
-    case 4:
-        if (minor == 0)
-            versionStr = "Windows 95/NT4.0";
-        else if (minor == 10)
-            versionStr = "Windows 98";
-        else if (minor == 90)
-            versionStr = "Windows ME";
-        break;
-    case 5:
-        if (minor == 0)
-            versionStr = "Windows 2000";
-        else if (minor == 1)
-            versionStr = "Windows XP";
-        else if (minor == 2)
-            versionStr = "Windows Server 2003";
-        break;
-    case 6:
-        if (minor == 0)
-            versionStr = "Windows Vista";
-        else if (minor == 1)
-            versionStr = "Windows 7";
-        else if (minor == 2)
-            versionStr = "Windows 8";
-        else if (minor == 3)
-            versionStr = "Windows 8.1";
-        break;
-    case 10:
-        if (minor == 0)
-            versionStr = "Windows 10";
-        break;
-    default:
-        break;
+    if (IsWindowsXPOrGreater()) {
+        strcpy(mversion, "Windows XP");
     }
 
-    if (versionStr != NULL) {
-        size_t lengthCSD = strlen(version.szCSDVersion);
-        size_t lengthVer = strlen(versionStr);
-
-        info->osName = TMALLOC(char, lengthVer + lengthCSD + 2);
-        memcpy(info->osName, versionStr, lengthVer);
-        memcpy(info->osName + lengthVer + 1, version.szCSDVersion, lengthCSD);
-        info->osName[lengthVer] = ' ';
-        info->osName[lengthVer + lengthCSD + 1] = '\0';
+    if (IsWindowsXPSP1OrGreater()) {
+        strcpy(mversion, "Windows XP Service Pack 1");
     }
 
+    if (IsWindowsXPSP2OrGreater()) {
+        strcpy(mversion, "Windows XP Service Pack 2");
+    }
+
+    if (IsWindowsXPSP3OrGreater()) {
+        strcpy(mversion, "Windows XP Service Pack 3");
+    }
+
+    if (IsWindowsVistaOrGreater()) {
+        strcpy(mversion, "Windows Vista");
+    }
+
+    if (IsWindowsVistaSP1OrGreater()) {
+        strcpy(mversion, "Windows Vista Service Pack 1");
+    }
+
+    if (IsWindowsVistaSP2OrGreater()) {
+        strcpy(mversion, "Windows Vista Service Pack 2");
+    }
+
+    if (IsWindows7OrGreater()) {
+        strcpy(mversion, "Windows 7");
+    }
+
+    if (IsWindows7SP1OrGreater()) {
+        strcpy(mversion, "Windows 7 Service Pack 1");
+    }
+
+    if (IsWindows8OrGreater()) {
+        strcpy(mversion, "Windows 8");
+    }
+    if (IsWindows8Point1OrGreater()) {
+        strcpy(mversion, "Windows 8.1");
+    }
+#if (_MSC_PLATFORM_TOOLSET > 140)
+    if (IsWindows10OrGreater()) {
+        strcpy(mversion, "Windows 10");
+    }
+#endif
+    if (IsWindowsServer()) {
+        printf("Server\n");
+    }
+
+    if (mversion[0] != '\0')
+        info->osName = tprintf("%s", mversion);
 
     lResult = RegOpenKeyExA(HKEY_LOCAL_MACHINE,
                             "HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0",
