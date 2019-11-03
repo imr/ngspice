@@ -354,7 +354,7 @@ static int
 INPparseNumMod(CKTcircuit *ckt, INPmodel *model, INPtables *tab, char **errMessage)
 {
     struct card *txtCard;    /* Text description of a card */
-    GENcard *tmpCard;        /* Processed description of a card */
+    GENcard *tmpCard = NULL; /* Processed description of a card */
     IFcardInfo *info = NULL; /* Info about the type of card located */
     char *cardName = NULL;   /* name of a card */
     int cardNum = 0;         /* number of this card in the overall line */
