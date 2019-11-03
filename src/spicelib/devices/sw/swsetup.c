@@ -12,7 +12,7 @@ Author: 1985 Gordon Jacobs
 
 #define TSTALLOC(ptr, first, second)                                    \
     do {                                                                \
-        if (!(here->ptr = SMPmakeElt(matrix, here->first, here->second))) \
+        if ((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL) \
             return E_NOMEM;                                             \
     } while (0)
 
