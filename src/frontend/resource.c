@@ -126,14 +126,12 @@ com_rusage(wordlist *wl)
 void
 ft_ckspace(void)
 {
-    unsigned long long freemem, totalmem, usage, avail;
-
 #ifdef SHARED_MODULE
     /* False warning on some OSs, especially on Linux when loaded during runtime.
        The caller then has to take care of memory available */
     return;
-#endif
-
+#else
+    unsigned long long freemem, totalmem, usage, avail;
     freemem = getAvailableMemorySize();
     totalmem = getMemorySize();
     usage = getCurrentRSS();
@@ -150,6 +148,7 @@ ft_ckspace(void)
         fprintmem(cp_err, avail);
         fprintf(cp_err, "\n");
     }
+#endif
 }
 
 
