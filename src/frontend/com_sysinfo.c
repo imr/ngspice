@@ -25,6 +25,7 @@
 #include "windows.h"
 #include <psapi.h>
 #include <VersionHelpers.h>
+#include <ntverp.h>
 #endif
 
 #include "stdio.h"
@@ -437,7 +438,9 @@ tesCreateSystemInfo(TesSystemInfo *info)
     if (IsWindows8Point1OrGreater()) {
         strcpy(mversion, "Windows 8.1");
     }
-#if (_MSC_PLATFORM_TOOLSET > 140)
+    /* SDK has version 10 and thus IsWindows10OrGreater() */
+#if (VER_PRODUCTBUILD > 10000)
+    /* This will deliver the right OS version only if we have a manifest */
     if (IsWindows10OrGreater()) {
         strcpy(mversion, "Windows 10");
     }
