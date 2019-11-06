@@ -168,9 +168,11 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>false</LinkIncremental>
     <GenerateManifest>false</GenerateManifest>
+    <EmbedManifest>true</EmbedManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <EmbedManifest>true</EmbedManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='console_debug|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -182,21 +184,25 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='console_debug|x64'">
     <LinkIncremental>false</LinkIncremental>
     <GenerateManifest>false</GenerateManifest>
+    <EmbedManifest>true</EmbedManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='console_release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <EmbedManifest>true</EmbedManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseOMP|Win32'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseOMP|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <EmbedManifest>true</EmbedManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='console_release_omp|Win32'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='console_release_omp|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <EmbedManifest>true</EmbedManifest>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <PreBuildEvent>
@@ -237,6 +243,9 @@
     <PostBuildEvent>
       <Command>make-install-vngspiced.bat $(OutDir)</Command>
     </PostBuildEvent>
+    <Manifest>
+      <AdditionalManifestFiles>$(ProjectDir)ngspice-x86.exe.manifest</AdditionalManifestFiles>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <PreBuildEvent>
@@ -285,6 +294,9 @@
       make-install-vngspice.bat $(OutDir)
       </Command>
     </PostBuildEvent>
+    <Manifest>
+      <AdditionalManifestFiles>$(ProjectDir)ngspice-x86.exe.manifest</AdditionalManifestFiles>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <PreBuildEvent>
@@ -330,6 +342,9 @@
       make-install-vngspiced.bat $(OutDir) 64
       </Command>
     </PostBuildEvent>
+    <Manifest>
+      <AdditionalManifestFiles>$(ProjectDir)ngspice.exe.manifest %(AdditionalManifestFiles)</AdditionalManifestFiles>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <PreBuildEvent>
@@ -383,6 +398,9 @@
       make-install-vngspice.bat $(OutDir) 64
       </Command>
     </PostBuildEvent>
+    <Manifest>
+      <AdditionalManifestFiles>$(ProjectDir)ngspice.exe.manifest %(AdditionalManifestFiles)</AdditionalManifestFiles>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='console_debug|Win32'">
     <PreBuildEvent>
@@ -423,6 +441,9 @@
     <PostBuildEvent>
       <Command>make-install-vngspiced.bat $(OutDir)</Command>
     </PostBuildEvent>
+    <Manifest>
+      <AdditionalManifestFiles>$(ProjectDir)ngspice-x86.exe.manifest</AdditionalManifestFiles>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='console_release|Win32'">
     <PreBuildEvent>
@@ -469,6 +490,9 @@
     <PostBuildEvent>
       <Command>make-install-vngspice.bat $(OutDir)</Command>
     </PostBuildEvent>
+    <Manifest>
+      <AdditionalManifestFiles>$(ProjectDir)ngspice-x86.exe.manifest</AdditionalManifestFiles>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='console_debug|x64'">
     <PreBuildEvent>
@@ -514,6 +538,9 @@
       make-install-vngspiced.bat $(OutDir) 64
       </Command>
     </PostBuildEvent>
+    <Manifest>
+      <AdditionalManifestFiles>$(ProjectDir)ngspice.exe.manifest %(AdditionalManifestFiles)</AdditionalManifestFiles>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='console_release|x64'">
     <PreBuildEvent>
@@ -565,6 +592,9 @@
       make-install-vngspice.bat $(OutDir) 64
       </Command>
     </PostBuildEvent>
+    <Manifest>
+      <AdditionalManifestFiles>$(ProjectDir)ngspice.exe.manifest %(AdditionalManifestFiles)</AdditionalManifestFiles>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseOMP|Win32'">
     <PreBuildEvent>
@@ -612,6 +642,9 @@
     <PostBuildEvent>
       <Command>make-install-vngspice.bat $(OutDir)</Command>
     </PostBuildEvent>
+    <Manifest>
+      <AdditionalManifestFiles>$(ProjectDir)ngspice-x86.exe.manifest</AdditionalManifestFiles>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseOMP|x64'">
     <PreBuildEvent>
@@ -666,6 +699,9 @@
       make-install-vngspice.bat $(OutDir) 64
       </Command>
     </PostBuildEvent>
+    <Manifest>
+      <AdditionalManifestFiles>$(ProjectDir)ngspice.exe.manifest %(AdditionalManifestFiles)</AdditionalManifestFiles>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='console_release_omp|Win32'">
     <PreBuildEvent>
@@ -713,6 +749,9 @@
     <PostBuildEvent>
       <Command>make-install-vngspice.bat $(OutDir)</Command>
     </PostBuildEvent>
+    <Manifest>
+      <AdditionalManifestFiles>$(ProjectDir)ngspice-x86.exe.manifest</AdditionalManifestFiles>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='console_release_omp|x64'">
     <PreBuildEvent>
@@ -765,6 +804,9 @@
       make-install-vngspice.bat $(OutDir) 64
       </Command>
     </PostBuildEvent>
+    <Manifest>
+      <AdditionalManifestFiles>$(ProjectDir)ngspice.exe.manifest %(AdditionalManifestFiles)</AdditionalManifestFiles>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\src\ciderlib\oned\oneddefs.h" />
