@@ -4634,13 +4634,10 @@ static void inp_compat(struct card *card)
                y1, x2, y2, x2+(x2-x0)/2, y2)
             */
             if ((str_ptr = strstr(curr_line, "table")) != NULL) {
-/*                char *expression, *firstno, *ffirstno, *secondno, *midline,
+                char *expression, *firstno, *ffirstno, *secondno, *midline,
                         *lastno, *lastlastno;
                 double fnumber, lnumber, delta;
-                int nerror; */
-                char *expression, *firstno, *secondno;
-//                char *m_ptr, *m_token;
-                char xar[1024], yar[1024];
+                int nerror;
                 cut_line = curr_line;
                 /* title and nodes */
                 title_tok = gettok(&cut_line);
@@ -4681,57 +4678,6 @@ static void inp_compat(struct card *card)
                         *str_ptr = ' ';
                     if ((str_ptr = strchr(cut_line, '}')) != NULL)
                         *str_ptr = ' ';
-#define newcode
-#ifdef newcode
-                    /* E51 50 51 E51_int1 0 1
-                       BE51 e51_int2 0 v = V(40,41)
-                       ae51 %v(e51_int2) %v(e51_int1) xfer_e51
-                       .model xfer_e51 pwl(x_array=[-10 0 1m 2m 3m]
-                       + y_array=[-1n 0 1m 1 100]
-                       + input_domain=0.1 fraction=TRUE)
-                     */
-                    ckt_array[1] = tprintf("b%s %s_int2 0 v = %s", title_tok,
-                            title_tok, expression);
-                    ckt_array[2] = tprintf(
-                            "a%s %%v(%s_int2) %%v(%s_int1) xfer_%s",
-                            title_tok, title_tok, title_tok, title_tok);
-                    /* (x0, y0) (x1, y1) (x2, y2) to x0 x1 x2, y0 y1 y2 */
-                    xar[0] = '\0';
-                    yar[0] = '\0';
-                    while (*cut_line != '\0') {
-                        firstno = gettok_node(&cut_line);
-                        secondno = gettok_node(&cut_line);
-                        if ((!firstno && secondno) ||
-                                (firstno && !secondno)) {
-                            fprintf(stderr, "Error: Missing token in %s\n",
-                                    curr_line);
-                            break;
-                        }
-                        else if (!firstno && !secondno)
-                            continue;
-                        strcat(xar, firstno);
-                        strcat(xar, " ");
-                        strcat(yar, secondno);
-                        strcat(yar, " ");
-                        tfree(firstno);
-                        tfree(secondno);
-                    }
-                    ckt_array[3] = tprintf(
-                            ".model xfer_%s pwl(x_array=[%s] y_array=[%s] "
-                            "input_domain=0.1 fraction=TRUE)",
-                            title_tok, xar, yar);
-                    // comment out current variable e line
-                    *(card->line) = '*';
-                    // insert new lines immediately after current line
-                    for (i = 0; i < 4; i++)
-                        card = insert_new_line(card, ckt_array[i], 0, 0);
-
-                    tfree(expression);
-                    tfree(title_tok);
-                    tfree(node1);
-                    tfree(node2);
-                }
-#else
                     /* get first two numbers to establish extrapolation */
                     str_ptr = cut_line;
                     ffirstno = gettok_node(&cut_line);
@@ -4795,9 +4741,7 @@ static void inp_compat(struct card *card)
                 tfree(title_tok);
                 tfree(node1);
                 tfree(node2);
-#endif            
-             }
-
+            }
             /* Exxx n1 n2 VOL = {equation}
                -->
                Exxx n1 n2 int1 0 1
