@@ -4526,16 +4526,21 @@ static char *search_plain_identifier(char *str, const char *identifier)
 
 
 /* ps compatibility:
-   ECOMP 3 0 TABLE {V(1,2)} = (-1 0V) (1, 10V)
+   Exxx n1 n2 TABLE {0.45*v(1)} = (-1, -0.5) (-0.5, 0) (0, 2) (0.5, 2) (1, 1)
    -->
-   ECOMP 3 0 int3 int0 1
-   BECOMP int3 int0 V = pwl(V(1,2), -2, 0, -1, 0 , 1, 10V, 2, 10V)
+   exxx n1 n2 exxx_int1 0 1
+   bexxx exxx_int2 0 v=   4.5000000000e-01 * v(1)
+   aexxx %v(exxx_int2) %v(exxx_int1) xfer_exxx
+   .model xfer_exxx pwl(x_array=[-1 -0.5 0 0.5 1 ] y_array=[-0.5 0 2 2 1 ]
+         input_domain=0.1 fraction=TRUE)
 
-   GD16 16 1 TABLE {V(16,1)} ((-100V,-1pV)(0,0)(1m,1u)(2m,1m))
-   -->
-   GD16 16 1 int_16 int_1 1
-   BGD16 int_16 int_1 V = pwl (v(16,1) , -100V , -1pV , 0 , 0 , 1m , 1u , 2m ,
-   1m)
+   gd16 16 1 table {v(16,1)} ((-100,-100e-15)(0,0)(1m,1u)(2m,1m))
+    -->
+   gd16 16 1 gd16_int1 0 1
+   bgd16 gd16_int2 0 v= v(16,1)
+   agd16 %v(gd16_int2) %v(gd16_int1) xfer_gd16
+   .model xfer_gd16 pwl(x_array=[-100 0 1m 2m ] y_array=[-100e-15 0 1u 1m ]
+       input_domain=0.1 fraction=TRUE)
 */
 
 /* hs compatibility:
@@ -4629,15 +4634,16 @@ static void inp_compat(struct card *card)
             }
             /* Exxx n1 n2 TABLE {expression} = (x0, y0) (x1, y1) (x2, y2)
                -->
-               Exxx n1 n2 int1 0 1
-               BExxx int1 0 V = pwl (expression, x0-(x2-x0)/2, y0, x0, y0, x1,
-               y1, x2, y2, x2+(x2-x0)/2, y2)
+             Exxx n1 n2 Exxx_int1 0 1
+             BExxx Exxx_int2 0 v = expression
+             aExxx %v(Exxx_int2) %v(Exxx_int1) xfer_Exxx
+             .model xfer_Exxx pwl(x_array=[x0 x1 x2]
+                   y_array=[y0 y1 y2]
+                   input_domain=0.1 fraction=TRUE)
             */
             if ((str_ptr = strstr(curr_line, "table")) != NULL) {
-                char *expression, *firstno, *ffirstno, *secondno, *midline,
-                        *lastno, *lastlastno;
-                double fnumber, lnumber, delta;
-                int nerror;
+                char *expression, *firstno, *secondno;
+                char xar[1024], yar[1024];
                 cut_line = curr_line;
                 /* title and nodes */
                 title_tok = gettok(&cut_line);
@@ -4678,70 +4684,57 @@ static void inp_compat(struct card *card)
                         *str_ptr = ' ';
                     if ((str_ptr = strchr(cut_line, '}')) != NULL)
                         *str_ptr = ' ';
-                    /* get first two numbers to establish extrapolation */
-                    str_ptr = cut_line;
-                    ffirstno = gettok_node(&cut_line);
-                    if (!ffirstno) {
-                        fprintf(stderr,
-                                "Error: bad syntax in line %d\n  %s\n",
-                                card->linenum_orig, card->line);
-                        controlled_exit(EXIT_BAD);
-                    }
-                    firstno = copy(ffirstno);
-                    fnumber = INPevaluate(&ffirstno, &nerror, TRUE);
-                    secondno = gettok_node(&cut_line);
-                    midline = cut_line;
-                    cut_line = strrchr(str_ptr, '(');
-                    if (!cut_line) {
-                        fprintf(stderr,
-                                "Error: bad syntax in line %d (missing "
-                                "parentheses)\n  %s\n",
-                                card->linenum_orig, card->line);
-                        controlled_exit(EXIT_BAD);
-                    }
-                    /* replace '(' with ',' and ')' with ' ' */
-                    for (; *str_ptr; str_ptr++)
-                        if (*str_ptr == '(')
-                            *str_ptr = ',';
-                        else if (*str_ptr == ')')
-                            *str_ptr = ' ';
-                    /* scan for last two numbers */
-                    lastno = gettok_node(&cut_line);
-                    lnumber = INPevaluate(&lastno, &nerror, FALSE);
-                    /* check for max-min and take half the difference for
-                     * delta */
-                    delta = (lnumber - fnumber) / 2.;
-                    lastlastno = gettok_node(&cut_line);
-                    if (!secondno || (*midline == '\0') || (delta <= 0.) ||
-                            !lastlastno) {
-                        fprintf(stderr,
-                                "Error: bad syntax in line %d\n  %s\n",
-                                card->linenum_orig, card->line);
-                        controlled_exit(EXIT_BAD);
-                    }
-                    ckt_array[1] = tprintf("b%s %s_int1 0 v = pwl(%s, %e, "
-                                           "%s, %s, %s, %s, %e, %s)",
-                            title_tok, title_tok, expression, fnumber - delta,
-                            secondno, firstno, secondno, midline,
-                            lnumber + delta, lastlastno);
 
+                    /* E51 50 51 E51_int1 0 1
+                       BE51 e51_int2 0 v = V(40,41)
+                       ae51 %v(e51_int2) %v(e51_int1) xfer_e51
+                       .model xfer_e51 pwl(x_array=[-10 0 1m 2m 3m]
+                       + y_array=[-1n 0 1m 1 100]
+                       + input_domain=0.1 fraction=TRUE)
+                     */
+                    ckt_array[1] = tprintf("b%s %s_int2 0 v = %s", title_tok,
+                            title_tok, expression);
+                    ckt_array[2] = tprintf(
+                            "a%s %%v(%s_int2) %%v(%s_int1) xfer_%s",
+                            title_tok, title_tok, title_tok, title_tok);
+                    /* (x0, y0) (x1, y1) (x2, y2) to x0 x1 x2, y0 y1 y2 */
+                    xar[0] = '\0';
+                    yar[0] = '\0';
+                    while (*cut_line != '\0') {
+                        firstno = gettok_node(&cut_line);
+                        secondno = gettok_node(&cut_line);
+                        if ((!firstno && secondno) ||
+                                (firstno && !secondno)) {
+                            fprintf(stderr, "Error: Missing token in %s\n",
+                                    curr_line);
+                            break;
+                        }
+                        else if (!firstno && !secondno)
+                            continue;
+                        strcat(xar, firstno);
+                        strcat(xar, " ");
+                        strcat(yar, secondno);
+                        strcat(yar, " ");
+                        tfree(firstno);
+                        tfree(secondno);
+                    }
+                    ckt_array[3] = tprintf(
+                            ".model xfer_%s pwl(x_array=[%s] y_array=[%s] "
+                            "input_domain=0.1 fraction=TRUE)",
+                            title_tok, xar, yar);
                     // comment out current variable e line
                     *(card->line) = '*';
-                    // insert new B source line immediately after current line
-                    for (i = 0; i < 2; i++)
+                    // insert new lines immediately after current line
+                    for (i = 0; i < 4; i++)
                         card = insert_new_line(card, ckt_array[i], 0, 0);
 
-                    tfree(firstno);
-                    tfree(lastlastno);
+                    tfree(expression);
+                    tfree(title_tok);
+                    tfree(node1);
+                    tfree(node2);
                 }
-                else {
-                    /* not used */
-                    tfree(ckt_array[0]);
-                }
-                tfree(title_tok);
-                tfree(node1);
-                tfree(node2);
-            }
+             }
+
             /* Exxx n1 n2 VOL = {equation}
                -->
                Exxx n1 n2 int1 0 1
