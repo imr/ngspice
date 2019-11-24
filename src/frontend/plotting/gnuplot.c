@@ -94,6 +94,8 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
             terminal_type = 4;
         if (cieq(terminal, "eps/quit"))
             terminal_type = 5;
+        if (cieq(terminal, "xterm"))
+            terminal_type = 6;
     }
 
     if (!cp_getvar("xbrushwidth", CP_NUM, &linewidth, 0))
@@ -342,8 +344,10 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
         fprintf(cp_out, "writing plot to file %s.eps\n", filename);
         (void) sprintf(buf, "gnuplot %s", filename_plt);
     }
-    else
+    else if (terminal_type == 6)
         (void) sprintf(buf, "xterm -e gnuplot %s - &", filename_plt);
+    else
+        (void) sprintf(buf, "gnuplot -p %s - &", filename_plt);
 #endif
     err = system(buf);
 
