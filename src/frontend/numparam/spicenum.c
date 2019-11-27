@@ -69,7 +69,7 @@ static long placeholder = 0;
 
 
 static void
-stripsomespace(SPICE_DSTRINGPTR dstr_p, bool incontrol)
+stripsomespace(DSTRINGPTR dstr_p, bool incontrol)
 {
     /* if s starts with one of some markers, strip leading space */
 
@@ -78,7 +78,7 @@ stripsomespace(SPICE_DSTRINGPTR dstr_p, bool incontrol)
         ? "*.&+#$"
         : "*.&+#$" "xX";
 
-    char *s = spice_dstring_value(dstr_p);
+    char *s = ds_get_buf(dstr_p);
 
     int i = 0;
     while (s[i] && (s[i] <= ' '))
@@ -90,15 +90,13 @@ stripsomespace(SPICE_DSTRINGPTR dstr_p, bool incontrol)
 
 
 static int
-stripbraces(SPICE_DSTRINGPTR dstr_p)
+stripbraces(DSTRINGPTR dstr_p)
 /* puts the funny placeholders. returns the number of {...} substitutions */
 {
     int n = 0;
-    char *s = spice_dstring_value(dstr_p);
+    char *s = ds_get_buf(dstr_p);
     char *p, *brace;
-    SPICE_DSTRING tstr;         /* temporary dynamic string */
-
-    spice_dstring_init(&tstr);
+    DS_CREATE(tstr, 200);
     p = s;
 
     while ((brace = strchr(p, '{')) != NULL) {
@@ -132,32 +130,30 @@ stripbraces(SPICE_DSTRINGPTR dstr_p)
         if (*j_ptr >= ' ')
             cadd(&tstr, ' ');
 
-        int ilen = spice_dstring_length(&tstr);
+        int ilen = (int) ds_get_length(&tstr);
         sadd(&tstr, j_ptr);
         scopyd(dstr_p, &tstr);
-        s = spice_dstring_value(dstr_p);
+        s = ds_get_buf(dstr_p);
         p = s + ilen;
     }
 
     dynsubst = placeholder;
-    spice_dstring_free(&tstr);
+    ds_free(&tstr);
 
     return n;
 }
 
 
 static void
-findsubname(dico_t *dico, SPICE_DSTRINGPTR dstr_p)
+findsubname(dico_t *dico, DSTRINGPTR dstr_p)
 /* truncate the parameterized subckt call to regular old Spice */
 /* scan a string from the end, skipping non-idents and {expressions} */
 /* then truncate s after the last subckt(?) identifier */
 {
-    char * const s = spice_dstring_value(dstr_p);
-    char *p = s + spice_dstring_length(dstr_p);
+    char * const s = ds_get_buf(dstr_p);
+    char *p = s + ds_get_length(dstr_p);
 
-    SPICE_DSTRING name;         /* extract a name */
-
-    spice_dstring_init(&name);
+    DS_CREATE(name, 200); /* extract a name */
 
     while (p > s) {
 
@@ -193,23 +189,23 @@ findsubname(dico_t *dico, SPICE_DSTRINGPTR dstr_p)
             else
                 for (t = p; alfanum(*t); t++)
                     ;
-            spice_dstring_reinit(&name);
+            ds_clear(&name);
             pscopy(&name, p, t);
-            entry = entrynb(dico, spice_dstring_value(&name));
+            entry = entrynb(dico, ds_get_buf(&name));
             if (entry && (entry->tp == NUPA_SUBCKT)) {
-                spice_dstring_setlength(dstr_p, (int) (p_end - s));
-                spice_dstring_free(&name);
+                (void) ds_set_length(dstr_p, p_end - s);
+                ds_free(&name);
                 return;
             }
         }
     }
 
-    spice_dstring_free(&name);
+    ds_free(&name);
 }
 
 
 static char
-transform(dico_t *dico, SPICE_DSTRINGPTR dstr_p, bool incontrol)
+transform(dico_t *dico, DSTRINGPTR dstr_p, bool incontrol)
 /*         line s is categorized and crippled down to basic Spice
  *         returns in u control word following dot, if any
  *
@@ -238,7 +234,7 @@ transform(dico_t *dico, SPICE_DSTRINGPTR dstr_p, bool incontrol)
     char category;
     stripsomespace(dstr_p, incontrol);
 
-    s = spice_dstring_value(dstr_p);
+    s = ds_get_buf(dstr_p);
 
     if (s[0] == '.') {
         /* check PS parameter format */
@@ -571,9 +567,8 @@ nupa_copy(struct card *deck)
 
     char *t;
     char c, d;
-    SPICE_DSTRING u;
 
-    spice_dstring_init(&u);
+    DS_CREATE(u, 200);
 
     pscopy(&u, s, s_end);       /* strip trailing space, CrLf and so on */
     dicoS->srcline = linenum;
@@ -599,14 +594,14 @@ nupa_copy(struct card *deck)
         dicoS->dyncategory[linenum] = c;
     } /* keep a local copy and mangle the string */
 
-    t = copy(spice_dstring_value(&u));
+    t = copy(ds_get_buf(&u));
 
     if (!t) {
         fputs("Fatal: String malloc crash in nupa_copy()\n", stderr);
         controlled_exit(EXIT_FAILURE);
     }
 
-    spice_dstring_free(&u);
+    ds_free(&u);
     return t;
 }
 

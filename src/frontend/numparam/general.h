@@ -9,11 +9,11 @@
 #include "ngspice/bool.h"
 
 
-char *pscopy(SPICE_DSTRINGPTR s, const char *str, const char *stop);
-void scopyd(SPICE_DSTRINGPTR a, SPICE_DSTRINGPTR b);
-void scopys(SPICE_DSTRINGPTR a, const char *b);
-void sadd(SPICE_DSTRINGPTR s, const char *t);
-void cadd(SPICE_DSTRINGPTR s, char c);
+void pscopy(DSTRINGPTR s, const char *str, const char *stop);
+void scopyd(DSTRINGPTR dst, const DSTRINGPTR src);
+void scopys(DSTRINGPTR a, const char *b);
+void sadd(DSTRINGPTR s, const char *t);
+void cadd(DSTRINGPTR s, char c);
 
 bool alfa(char c);
 bool alfanum(char c);
