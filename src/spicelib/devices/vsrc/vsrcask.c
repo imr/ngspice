@@ -92,7 +92,10 @@ VSRCask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *
                 strcpy(errMsg,msg);
                 return(E_ASKCURRENT);
             } else {
-                value->rValue = *(ckt->CKTrhsOld+here->VSRCbranch);
+                if (ckt->CKTrhsOld)
+                    value->rValue = *(ckt->CKTrhsOld + here->VSRCbranch);
+                else
+                    value->rValue = 0.;
             }
             return(OK);
         case VSRC_POWER:
