@@ -71,9 +71,11 @@ yes_or_no(void)
  * Function: add string t to dynamic string dstr_p.
  * ----------------------------------------------------------------- */
 void
-sadd(SPICE_DSTRINGPTR dstr_p, const char *t)
+sadd(DSTRINGPTR dstr_p, const char *t)
 {
-    spice_dstring_append(dstr_p, t, -1);
+    if (ds_cat_str(dstr_p, t) != DS_E_OK) {
+        controlled_exit(-1);
+    }
 }
 
 
@@ -81,12 +83,11 @@ sadd(SPICE_DSTRINGPTR dstr_p, const char *t)
  * Function: add character c to dynamic string dstr_p.
  * ----------------------------------------------------------------- */
 void
-cadd(SPICE_DSTRINGPTR dstr_p, char c)
+cadd(DSTRINGPTR dstr_p, char c)
 {
-    char tmp_str[2];
-    tmp_str[0] = c;
-    tmp_str[1] = '\0';
-    spice_dstring_append(dstr_p, tmp_str, -1);
+    if (ds_cat_char(dstr_p, c) != DS_E_OK) {
+        controlled_exit(-1);
+    }
 }
 
 
@@ -95,43 +96,43 @@ cadd(SPICE_DSTRINGPTR dstr_p, char c)
  * terminated.
  * ----------------------------------------------------------------- */
 void
-scopyd(SPICE_DSTRINGPTR s, SPICE_DSTRINGPTR t)  /* returns success flag */
+scopyd(DSTRINGPTR dst, const DSTRINGPTR src)  /* returns success flag */
 {
-    spice_dstring_reinit(s);
-    spice_dstring_append(s, spice_dstring_value(t), -1);
+    (void) ds_clear(dst);
+    if (ds_cat_ds(dst, src) != DS_E_OK) {
+        controlled_exit(-1);
+    }
 }
 
 
 /* -----------------------------------------------------------------
  * Create copy of the string in the dynamic string.  Dynamic strings
- * are always NULLterminated.
+ * are always NULL terminated.
  * ----------------------------------------------------------------- */
 void
-scopys(SPICE_DSTRINGPTR s, const char *t)     /* returns success flag */
+scopys(DSTRINGPTR s, const char *t)     /* returns success flag */
 {
-    spice_dstring_reinit(s);
-    spice_dstring_append(s, t, -1);
+    ds_clear(s);
+    if (ds_cat_str(s, t) != DS_E_OK) {
+        controlled_exit(-1);
+    }
 }
 
 
-char *
-pscopy(SPICE_DSTRINGPTR dstr_p, const char *t, const char *stop)
+/* Copy until stop char (exclusive) or end of string if none given */
+void
+pscopy(DSTRINGPTR dstr_p, const char *t, const char *stop)
 {
-    int i;
-    char *s_p;
-
-    if (!stop)
+    if (!stop) { /* locate end of string if no stop char given */
         stop = strchr(t, '\0');
+    }
 
-    s_p = _spice_dstring_setlength(dstr_p, (int)(stop - t));
+    if (ds_cat_mem(dstr_p, t, stop - t) != DS_E_OK) {
+        controlled_exit(-1);
+    }
 
-    for (i = 0; t < stop;)
-        s_p[i++] = *t++;
-
-    s_p[i] = '\0';
-
-    return s_p;
-}
+    return;
+} /* end of function pscopy */
 
 
 bool
@@ -157,3 +158,6 @@ alfanumps(char c)
 {
     return alfa(c) || ((c >= '0') && (c <= '9')) || c == '-';
 }
+
+
+

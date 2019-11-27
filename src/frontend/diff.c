@@ -9,28 +9,28 @@ Patched: 2010/2012 by Bill Swartz (hash table for vectors)
  * Do a 'diff' of two plots.
  */
 
-#include "ngspice/ngspice.h"
-#include "ngspice/ftedefs.h"
+#include "ngspice/dstring.h"
 #include "ngspice/dvec.h"
+#include "ngspice/ftedefs.h"
+#include "ngspice/hash.h"
+#include "ngspice/ngspice.h"
 #include "ngspice/sim.h"
 
 #include "diff.h"
-#include <ngspice/hash.h>
-#include <ngspice/dstring.h>
 #include "variable.h"
 
-static bool nameeq(const char *n1,const char *n2);
-static char *canonical_name(const char *name, SPICE_DSTRINGPTR dbuf_p,
+static bool nameeq(const char *n1, const char *n2);
+static char *canonical_name(const char *name, DSTRINGPTR dbuf_p,
         bool make_i_name_lower);
 
 
 
 
 static char *
-canonical_name(const char *name, SPICE_DSTRINGPTR dbuf_p,
+canonical_name(const char *name, DSTRINGPTR dbuf_p,
         bool make_i_name_lower)
 {
-    spice_dstring_reinit(dbuf_p); /* Reset dynamic buffer */
+    ds_clear(dbuf_p); /* Reset dynamic buffer */
 
     /* "i(some_name)" -> "some_name#branch" */
     /* "I(some_name)" -> "some_name#branch" */
@@ -38,22 +38,28 @@ canonical_name(const char *name, SPICE_DSTRINGPTR dbuf_p,
         static const char sz_branch[] = "#branch";
         const char *p_start = name + 2;
         size_t n = strlen(p_start) - 1; /* copy all but final ')' */
-        if (make_i_name_lower) {
-            (void) spice_dstring_append_lower(dbuf_p, p_start, (int) n);
+        ds_case_t case_type = make_i_name_lower ?
+                ds_case_lower : ds_case_as_is;
+        bool f_ok = ds_cat_mem_case(dbuf_p, p_start, (int) n,
+                case_type) == DS_E_OK;
+        f_ok &= ds_cat_mem(dbuf_p, sz_branch,
+                sizeof sz_branch / sizeof *sz_branch - 1) == DS_E_OK;
+        if (!f_ok) {
+            controlled_exit(-1);
         }
-        else {
-            (void) spice_dstring_append(dbuf_p, p_start, (int) n);
-        }
-        return spice_dstring_append(dbuf_p, sz_branch,
-                sizeof sz_branch / sizeof *sz_branch - 1);
+        return ds_get_buf(dbuf_p);
     }
 
     /* Convert a name starting with a digit, such as a numbered node to
      * something like v(33) */
     if (isdigit_c(*name)) {
-        (void) spice_dstring_append(dbuf_p, "v(", 2);
-        (void) spice_dstring_append(dbuf_p, name, -1);
-        return spice_dstring_append_char(dbuf_p, ')');
+        bool f_ok = ds_cat_mem(dbuf_p, "v(", 2) == DS_E_OK;
+        f_ok &= ds_cat_str(dbuf_p, name) == DS_E_OK;
+        f_ok &= ds_cat_char(dbuf_p, ')') == DS_E_OK;
+        if (!f_ok) {
+            controlled_exit(-1);
+        }
+        return ds_get_buf(dbuf_p);
     }
 
     /* Finally if neither of the special cases above occur, there is
@@ -62,7 +68,10 @@ canonical_name(const char *name, SPICE_DSTRINGPTR dbuf_p,
      * argument. Making a copy ensures that it can be modified without
      * changing the original, but in the current use cases that is
      * not an issue. */
-    return spice_dstring_append(dbuf_p, name, -1);
+    if (ds_cat_str(dbuf_p, name) != DS_E_OK) {
+        controlled_exit(-1);
+    }
+    return ds_get_buf(dbuf_p);
 } /* end of function canonical_name */
 
 
@@ -79,19 +88,17 @@ nameeq(const char *n1, const char *n2)
         return TRUE;
     }
 
-    SPICE_DSTRING ds1, ds2; /* Buffers to build canonical names */
-
-    /* Init the dynamic string buffers */
-    spice_dstring_init(&ds1);
-    spice_dstring_init(&ds2);
+    /* Init the dynamic string buffers to build canonical names */
+    DS_CREATE(ds1, 100);
+    DS_CREATE(ds2, 100);
 
     /* Compare canonical names */
     const BOOL rc = (BOOL) cieq(canonical_name(n1, &ds1, FALSE),
             canonical_name(n2, &ds2, FALSE));
 
     /* Free the dynamic string buffers */
-    spice_dstring_free(&ds1);
-    spice_dstring_free(&ds2);
+    ds_free(&ds1);
+    ds_free(&ds2);
 
     return rc;
 } /* end of function nameeq */
@@ -110,7 +117,6 @@ com_diff(wordlist *wl)
     char *v1_name;          /* canonical v1 name */
     char *v2_name;          /* canonical v2 name */
     NGHASHPTR crossref_p;   /* cross reference hash table */
-    SPICE_DSTRING ibuf;     /* used to build canonical name */
     wordlist *tw;
     char numbuf[BSIZE_SP], numbuf2[BSIZE_SP], numbuf3[BSIZE_SP], numbuf4[BSIZE_SP]; /* For printnum */
 
@@ -180,7 +186,7 @@ com_diff(wordlist *wl)
     for (v1 = p1->pl_dvecs; v1; v1 = v1->v_next)
         v1->v_link2 = NULL;
 
-    spice_dstring_init(&ibuf);
+    DS_CREATE(ibuf, 100); /* used to build canonical name */
     crossref_p = nghash_init(NGHASH_MIN_SIZE);
     nghash_unique(crossref_p, FALSE);
 
@@ -208,7 +214,7 @@ com_diff(wordlist *wl)
         }
     }
 
-    spice_dstring_free(&ibuf);
+    ds_free(&ibuf);
     nghash_free(crossref_p, NULL, NULL);
 
     for (v1 = p1->pl_dvecs; v1; v1 = v1->v_next)

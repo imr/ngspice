@@ -33,41 +33,45 @@ struct dvec *EVTfindvec(char *node);
 static void
 vec_rebuild_lookup_table(struct plot *pl)
 {
-    int cnt;                            /* count entries */
-    struct dvec *d;                     /* dynamic vector */
-    NGHASHPTR lookup_p;                 /* lookup table for speed */
-    SPICE_DSTRING dbuf;                 /* dynamic buffer */
-    char *lower_name;                   /* lower case name */
-
-    if (pl->pl_lookup_table) {
+    if (pl->pl_lookup_table) { /* existing table */
         nghash_empty(pl->pl_lookup_table, NULL, NULL);
-    } else {
-        cnt = 0;
-        for (d = pl->pl_dvecs; d; d = d->v_next)
+    }
+    else { /* new table */
+        int cnt = 0; /* count entries */
+        struct dvec *d; /* dynamic vector */
+        for (d = pl->pl_dvecs; d; d = d->v_next) { /* get # vec */
             cnt++;
+        }
         pl->pl_lookup_table = nghash_init(cnt);
         /* allow multiple entries */
         nghash_unique(pl->pl_lookup_table, FALSE);
     }
-    lookup_p = pl->pl_lookup_table;
-    spice_dstring_init(&dbuf);
-    for (d = pl->pl_dvecs; d; d = d->v_next) {
-        spice_dstring_reinit(&dbuf);
-        lower_name = spice_dstring_append_lower(&dbuf, d->v_name, -1);
-        nghash_insert(lookup_p, lower_name, d);
+
+    {
+        /* Access lookup table directly for speed */
+        NGHASHPTR lookup_p = pl->pl_lookup_table;
+        DS_CREATE(dbuf, 200); /* make dynamic buffer */
+        struct dvec *d; /* dynamic vector */
+        for (d = pl->pl_dvecs; d; d = d->v_next) {
+            ds_clear(&dbuf);
+            if (ds_cat_str_case(&dbuf, d->v_name, ds_case_lower) != DS_E_OK) {
+                controlled_exit(-1);
+            }
+            char * const lower_name = ds_get_buf(&dbuf);
+            nghash_insert(lookup_p, lower_name, d); /* add lower-cased name */
+        } /* end of loop over vectors */
+        ds_free(&dbuf);
     }
-    spice_dstring_free(&dbuf);
+
     pl->pl_lookup_valid = TRUE;
-}
+} /* end of function vec_rebuild_lookup_table */
+
 
 
 /* Find a named vector in a plot. We are careful to copy the vector if
  * v_link2 is set, because otherwise we will get screwed up.  */
 static struct dvec *
 findvec(char *word, struct plot *pl) {
-    SPICE_DSTRING dbuf;                 /* dynamic buffer */
-    char *lower_name;                   /* lower case name */
-    char *node_name;
     struct dvec *d, *newv = NULL, *end = NULL, *v;
 
     if (pl == NULL)
@@ -152,8 +156,11 @@ findvec(char *word, struct plot *pl) {
     if (!pl->pl_lookup_valid)
         vec_rebuild_lookup_table(pl);
 
-    spice_dstring_init(&dbuf);
-    lower_name = spice_dstring_append_lower(&dbuf, word, -1);
+    DS_CREATE(dbuf, 200); /* make dynamic buffer */
+    if (ds_cat_str_case(&dbuf, word, ds_case_lower) != DS_E_OK) {
+        controlled_exit(-1);
+    }
+    char * const lower_name = ds_get_buf(&dbuf);
 
     for (d = nghash_find(pl->pl_lookup_table, lower_name);
             d;
@@ -163,11 +170,15 @@ findvec(char *word, struct plot *pl) {
     }
 
     if (!d) {
-        spice_dstring_reinit(&dbuf);
-        spice_dstring_append(&dbuf, "v(", -1);
-        spice_dstring_append_lower(&dbuf, word, -1);
-        node_name = spice_dstring_append_char(&dbuf, ')');
-
+        ds_clear(&dbuf);
+        bool f_ok = ds_cat_str(&dbuf, "v(") == DS_E_OK;
+        f_ok &= ds_cat_str_case(&dbuf, word,
+                ds_case_lower) == DS_E_OK;
+        f_ok &= ds_cat_char(&dbuf, ')') == DS_E_OK;
+        if (!f_ok) {
+            controlled_exit(-1);
+        }
+        char * const node_name = ds_get_buf(&dbuf);
         for (d = nghash_find(pl->pl_lookup_table, node_name);
                 d;
                 d = nghash_find_again(pl->pl_lookup_table, node_name)) {
@@ -176,7 +187,7 @@ findvec(char *word, struct plot *pl) {
         }
     }
 
-    spice_dstring_free(&dbuf);
+    ds_free(&dbuf);
 
 #ifdef XSPICE
     /* gtri - begin - Add processing for getting event-driven vector */
@@ -191,8 +202,9 @@ findvec(char *word, struct plot *pl) {
         vec_new(d);
     }
 
-    return (d);
-}
+    return d;
+} /* end of function findvec */
+
 
 
 /* If there are imbedded numeric strings, compare them numerically, not
