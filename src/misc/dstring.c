@@ -1,409 +1,539 @@
 /* -----------------------------------------------------------------
-FILE:	    dstring.c
+FILE:    dstring.c
 DESCRIPTION:This file contains the routines for manipulating dynamic strings.
 ----------------------------------------------------------------- */
-#include "ngspice/ngspice.h"
+#include <ctype.h>
 #include <stdarg.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "ngspice/dstring.h"
 
-/* definitions local to this file only */
 
-/* ********************** TYPE DEFINITIONS ************************* */
+static int ds_reserve_internal(DSTRING *p_ds,
+        size_t n_byte_alloc_opt, size_t n_byte_alloc_min);
 
-/* ********************** STATIC DEFINITIONS ************************* */
-/*
- *----------------------------------------------------------------------
+/* Instantiations of dstring functions in case inlining is not performed */
+int ds_cat_str(DSTRING *p_ds, const char *sz);
+int ds_cat_char(DSTRING *p_ds, char c);
+int ds_cat_ds(DSTRING *p_ds_dst, const DSTRING *p_ds_src);
+int ds_cat_mem(DSTRING *p_ds, const char *p_src, size_t n_char);
+int ds_set_length(DSTRING *p_ds, size_t length);
+void ds_clear(DSTRING *p_ds);
+char *ds_free_move(DSTRING *p_ds, unsigned int opt);
+char *ds_get_buf(DSTRING *p_ds);
+size_t ds_get_length(const DSTRING *p_ds);
+size_t ds_get_buf_size(const DSTRING *p_ds);
+
+
+/* This function initalizes a dstring using *p_buf as the initial backing
  *
- * spice_dstring_init --
+ * Parameters
+ * p_buf: Inital buffer backing the dstring
+ * length_string: Length of string in the initial buffer
+ * n_byte_data: Length of initial buffer. Must be at least 1
+ * type_buffer: Type of buffer providing initial backing
  *
- *	Initializes a dynamic string, discarding any previous contents
- *	of the string (spice_dstring_free should have been called already
- *	if the dynamic string was previously in use).
- *
- * Results:
- *	None.
- *
- * Side effects:
- *	The dynamic string is initialized to be empty.
- *
- *----------------------------------------------------------------------
+ * Return codes
+ * DS_E_OK: Init OK
+ * DS_E_INVALID: n_byte_data = 0 length_string too long,
+ *      or unknown buffer type
  */
-
-void spice_dstring_init(SPICE_DSTRINGPTR dsPtr)
+int ds_init(DSTRING *p_ds, char *p_buf, size_t length_string,
+        size_t n_byte_buf, ds_buf_type_t type_buffer)
 {
-    dsPtr->string = dsPtr->staticSpace ;
-    dsPtr->length = 0 ;
-    dsPtr->spaceAvl = SPICE_DSTRING_STATIC_SIZE ;
-    dsPtr->staticSpace[0] = '\0';
-} /* end spice_dstring_init() */
+    /* Validate buffer size */
+    if (n_byte_buf == 0) {
+        return DS_E_INVALID;
+    }
 
-/*
- *----------------------------------------------------------------------
- *
- * spice_dstring_append --
- *
- *	Append more characters to the current value of a dynamic string.
- *
- * Results:
- *	The return value is a pointer to the dynamic string's new value.
- *
- * Side effects:
- *	Length bytes from string (or all of string if length is less
- *	than zero) are added to the current value of the string. Memory
- *	gets reallocated if needed to accomodate the string's new size.
- *  
- * Notes: char *string;    String to append.  If length is -1 then
- *                         this must be null-terminated.
- *        INT length;	   Number of characters from string to append.  
- *                         If < 0, then append all of string, up to null at end.
- *
- *----------------------------------------------------------------------
- */
-char *spice_dstring_append(SPICE_DSTRINGPTR dsPtr, const char *string, int length)
+    /* Set current buffer */
+    p_ds->p_buf = p_buf;
+
+    /* Set size of current string >= rather than > because this function
+     * adds a terminating null */
+    if (length_string >= n_byte_buf) {
+        return DS_E_INVALID;
+    }
+
+    p_ds->n_byte_alloc = n_byte_buf;
+    p_ds->length = length_string;
+    p_ds->p_buf[length_string] = '\0';
+
+    /* Set stack buffer */
+    if (type_buffer == ds_buf_type_stack) {
+        p_ds->p_stack_buf = p_buf;
+        p_ds->n_byte_stack_buf = n_byte_buf;
+    }
+    else if (type_buffer == ds_buf_type_heap) {
+        p_ds->p_stack_buf = (char *) NULL;
+        p_ds->n_byte_stack_buf = 0;
+    }
+    else { /* unknown buffer type */
+        return DS_E_INVALID;
+    }
+
+    return DS_E_OK;
+} /* end of function ds_init */
+
+
+
+/* This function frees all memory used by the dstring. After calling this
+ * function, the dstring should not be used again. */
+void ds_free(DSTRING *p_ds)
 {
-    int newSize ;			/* needed size */
-    char *newString ;			/* newly allocated string buffer */
-    char *dst ;				/* destination */
-    const char *end ;				/* end of string */
-
-    if( length < 0){
-	length = (int) strlen(string) ;
+    if (p_ds->p_buf != p_ds->p_stack_buf) {
+        free((void *) p_ds->p_buf);
     }
-    newSize = length + dsPtr->length ;
+} /* end of function ds_free */
 
-    /* -----------------------------------------------------------------
-     * Allocate a larger buffer for the string if the current one isn't
-     * large enough. Allocate extra space in the new buffer so that there
-     * will be room to grow before we have to allocate again.
-     ----------------------------------------------------------------- */
-    if (newSize >= dsPtr->spaceAvl) {
-	dsPtr->spaceAvl = 2 * newSize ;
-	newString = TMALLOC(char, dsPtr->spaceAvl) ;
-	memcpy(newString, dsPtr->string, (size_t) dsPtr->length) ;
-	if (dsPtr->string != dsPtr->staticSpace) {
-	    txfree(dsPtr->string) ;
-	}
-	dsPtr->string = newString;
-    }
 
-    /* -----------------------------------------------------------------
-     * Copy the new string into the buffer at the end of the old
-     * one.
-     ----------------------------------------------------------------- */
-    for( dst = dsPtr->string + dsPtr->length, end = string+length;
-	    string < end; string++, dst++) {
-	*dst = *string ;
-    }
-    *dst = '\0' ;
-    dsPtr->length += length ;
 
-    return(dsPtr->string) ;
-
-} /* end spice_dstring_append() */
-
-/*
- *----------------------------------------------------------------------
- *
- * spice_dstring_append_lower --
- *
- *      Append more characters converted to lower case to the current
- *      value of a dynamic string.
- *
- * Results:
- *      The return value is a pointer to the dynamic string's new value.
- *
- * Side effects:
- *      Length bytes from string (or all of string if length is less
- *      than zero) are added to the current value of the string. Memory
- *      gets reallocated if needed to accomodate the string's new size.
- *
- * Notes: char *string;    String to append.  If length is -1 then
- *                         this must be null-terminated.
- *        INT length;      Number of characters from string to append.
- *                         If < 0, then append all of string, up to null at end.
- *
- *----------------------------------------------------------------------
- */
-char *spice_dstring_append_lower(SPICE_DSTRINGPTR dsPtr, const char *string, int length)
+/* Concatenate string */
+int ds_cat_str_case(DSTRING *p_ds, const char *sz, ds_case_t case_type)
 {
-    int newSize ;                       /* needed size */
-    char *newString ;                   /* newly allocated string buffer */
-    char *dst ;                         /* destination */
-    const char *end ;                   /* end of string */
+    return ds_cat_mem_case(p_ds, sz, strlen(sz), case_type);
+} /* end of function ds_cat_str_case */
 
-    if( length < 0){
-        length = (int) strlen(string) ;
-    }
-    newSize = length + dsPtr->length ;
 
-    /* -----------------------------------------------------------------
-     * Allocate a larger buffer for the string if the current one isn't
-     * large enough. Allocate extra space in the new buffer so that there
-     * will be room to grow before we have to allocate again.
-     ----------------------------------------------------------------- */
-    if (newSize >= dsPtr->spaceAvl) {
-        dsPtr->spaceAvl = 2 * newSize ;
-        newString = TMALLOC(char, dsPtr->spaceAvl) ;
-        memcpy(newString, dsPtr->string, (size_t) dsPtr->length) ;
-        if (dsPtr->string != dsPtr->staticSpace) {
-            txfree(dsPtr->string) ;
-        }
-        dsPtr->string = newString;
-    }
 
-    /* -----------------------------------------------------------------
-     * Copy the new string into the buffer at the end of the old
-     * one.
-     ----------------------------------------------------------------- */
-    for( dst = dsPtr->string + dsPtr->length, end = string+length;
-            string < end; string++, dst++) {
-        if( isupper_c(*string) ) {
-          *dst = tolower_c(*string) ;
-        } else {
-          *dst = *string ;
+/* Concatenate character */
+int ds_cat_char_case(DSTRING *p_ds, char c, ds_case_t case_type)
+{
+    return ds_cat_mem_case(p_ds, &c, 1, case_type);
+} /* end of function ds_cat_char_case */
+
+
+
+/* Concatenate another dstring */
+int ds_cat_ds_case(DSTRING *p_ds_dst, const DSTRING *p_ds_src,
+        ds_case_t case_type)
+{
+    return ds_cat_mem_case(p_ds_dst, p_ds_src->p_buf, p_ds_src->length,
+            case_type);
+} /* end of function ds_cat_ds_case */
+
+
+
+/* General concatenation of a memory buffer. A terminating null is added. */
+int ds_cat_mem_case(DSTRING *p_ds, const char *p_src, size_t n_char,
+        ds_case_t type_case)
+{
+    /* Resize buffer if necessary. Double required size, if available,
+     * to reduce the number of allocations */
+    const size_t length_new = p_ds->length + n_char;
+    const size_t n_byte_needed = length_new + 1;
+    if (n_byte_needed > p_ds->n_byte_alloc) {
+        if (ds_reserve_internal(p_ds,
+                2 * n_byte_needed, n_byte_needed) == DS_E_NO_MEMORY) {
+            return DS_E_NO_MEMORY;
         }
     }
-    *dst = '\0' ;
-    dsPtr->length += length ;
 
-    return(dsPtr->string) ;
-
-} /* end spice_dstring_append_lower() */
-
-/* -----------------------------------------------------------------
- * Function: add character c to dynamic string dstr_p.
- * ----------------------------------------------------------------- */
-char *spice_dstring_append_char( SPICE_DSTRINGPTR dstr_p, char c)
-{
-  return spice_dstring_append( dstr_p, &c, 1 ) ;
-} /* end spice_dstring_append_char() */
-
-static int spice_format_length( const char *fmt, va_list args )
-{
-    int i ;					/* integer */
-    int len ;					/* length of format */
-    int size_format ;				/* width of field */
-    int found_special ;				/* look for special characters */
-    char *s ;					/* string */
-    double d ;
-
-    /* -----------------------------------------------------------------
-     * First find length of buffer.
-    ----------------------------------------------------------------- */
-    len = 0 ;
-    while(fmt && *fmt){
-      if( *fmt == '%' ){
-	fmt++ ;
-	if( *fmt == '%' ){
-	  len++ ;
-	} else {
-	  /* -----------------------------------------------------------------
-	   * We have a real formatting character, loop until we get a special
-	   * character.
-	  ----------------------------------------------------------------- */
-	  if( *fmt == '.' || *fmt == '-' ){
-	    fmt++ ; /* skip over these characters */
-	  }
-	  size_format = atoi(fmt) ;
-	  if( size_format > 0 ){
-	    len += size_format ;
-	  }
-	  found_special = FALSE ;
-	  for( ; fmt && *fmt ; fmt++ ){
-	    switch( *fmt ){
-	      case 's':
-		s = va_arg(args, char *) ;
-		if( s ){
-		  len += (int) strlen(s) ;
-		}
-		found_special = TRUE ;
-		break ;
-	      case 'i':
-	      case 'd':
-	      case 'o':
-	      case 'x':
-	      case 'X':
-	      case 'u':
-		i = va_arg(args, int) ;
-		len += 10 ;
-		found_special = TRUE ;
-		break ;
-	      case 'c':
-		i = va_arg(args, int) ;
-		len++ ;
-		found_special = TRUE ;
-		break ;
-	      case 'f':
-	      case 'e':
-	      case 'F':
-	      case 'g':
-	      case 'G':
-		d = va_arg(args, double) ;
-		len += 35 ;
-		found_special = TRUE ;
-		break ;
-	      default:
-		;
-	    } /* end switch() */
-
-	    if( found_special ){
-	      break ;
-	    }
-	  }
-	}
-      } else {
-	len++ ;
-      }
-      fmt++ ;
-    } /* end while() */
-
-    return(len) ;
-
-} /* end Ymessage_format_length() */
-
-
-char *spice_dstring_print( SPICE_DSTRINGPTR dsPtr, const char *format, ... )
-{
-    va_list args ;
-    int format_len ;				/* length of format */
-    int length ;				/* new length */
-    int orig_length ;				/* original length of buffer */
-    char *buffer ;				/* proper length of buffer */
-
-    /* -----------------------------------------------------------------
-     * First get the length of the buffer needed.
-    ----------------------------------------------------------------- */
-    va_start( args, format ) ;
-    format_len = spice_format_length(format, args) ;
-    va_end(args) ;
-
-    /* -----------------------------------------------------------------
-     * Next allocate the proper buffer size.
-    ----------------------------------------------------------------- */
-    orig_length = dsPtr->length ;
-    length = orig_length + format_len + 1 ;
-    buffer = spice_dstring_setlength( dsPtr, length) ;
-
-    /* -----------------------------------------------------------------
-     * Convert the format.
-    ----------------------------------------------------------------- */
-    va_start( args, format ) ;
-    if( format ){
-      vsprintf( buffer + orig_length, format, args ) ;
-      dsPtr->length = (int) strlen(buffer) ;
-    } else {
-      buffer = NULL ;
+    /* For "as-is" can simply memcpy */
+    if (type_case == ds_case_as_is) {
+        char *p_dst = p_ds->p_buf + p_ds->length;
+        (void) memcpy(p_dst, p_src, n_char);
+        p_dst += n_char;
+        *p_dst = '\0';
+        p_ds->length = length_new;
+        return DS_E_OK;
     }
-    va_end(args) ;
-    return( buffer ) ;
 
-} /* end spice_dstring_print() */
-
-/*
- *----------------------------------------------------------------------
+    /* For lowercasing, work char by char */
+    if (type_case == ds_case_lower) {
+        char *p_dst = p_ds->p_buf + p_ds->length;
+        char *p_dst_end = p_dst + n_char;
+        for ( ; p_dst < p_dst_end; p_dst++, p_src++) {
+            *p_dst = (char) tolower(*p_src);
+        }
+        *p_dst_end = '\0';
+        p_ds->length = length_new;
+        return DS_E_OK;
+    }
+
+    /* Uppercasing done like lowercasing. Note that it would be possible to
+     * use a function pointer and select either tolower() or toupper() based
+     * on type_case, but doing so may degrade performance by inhibiting
+     * inlining. */
+    if (type_case == ds_case_upper) {
+        char *p_dst = p_ds->p_buf + p_ds->length;
+        char *p_dst_end = p_dst + n_char;
+        for ( ; p_dst < p_dst_end; p_dst++, p_src++) {
+            *p_dst = (char) toupper(*p_src);
+        }
+        *p_dst_end = '\0';
+        p_ds->length = length_new;
+        return DS_E_OK;
+    }
+
+    return DS_E_INVALID; /* unknown case type */
+} /* end of function ds_cat_mem_case */
+
+
+
+/* Ensure minimum internal buffer size */
+int ds_reserve(DSTRING *p_ds, size_t n_byte_alloc)
+{
+    /* Return if buffer already large enough */
+    if (p_ds->n_byte_alloc >= n_byte_alloc) {
+        return DS_E_OK;
+    }
+
+    return ds_reserve_internal(p_ds, n_byte_alloc, 0);
+} /* end of function ds_reserve */
+
+
+
+/* This function resizes the buffer for the string and handles freeing
+ * the original alloction, if necessary. It is assumed that the requested
+ * size or sizes are larger than the current size.
  *
- * _spice_dstring_setlength --
+ * Parameters
+ * p_ds: Dstring pointer
+ * n_byte_alloc_opt: Optimal alloction amount
+ * n_byte_alloc_min: Absolute minimum allocation amount or 0 if no
+ *      smaller amount can be allocated
  *
- *	Change the length of a dynamic string.  This can cause the
- *	string to either grow or shrink, depending on the value of
- *	length.
+ * Return codes
+ * DS_E_OK: At least the minimum allocation was performed
+ * DS_E_NO_MEMORY: Unable to resize the buffer */
+static int ds_reserve_internal(DSTRING *p_ds,
+        size_t n_byte_alloc_opt, size_t n_byte_alloc_min)
+{
+    size_t n_byte_alloc = n_byte_alloc_opt;
+    /* Allocate. First try (larger) optimal size, and gradually fall back
+     * to min size if that fails and one was provided. */
+    char * p_buf_new;
+    if (n_byte_alloc_min == 0) {
+        n_byte_alloc_min = n_byte_alloc_opt;
+    }
+    for ( ; ; ) {
+        if ((p_buf_new = (char *) malloc(n_byte_alloc)) != (char *) NULL) {
+            break; /* Allocated OK */
+        }
+
+        if (n_byte_alloc == n_byte_alloc_min) { /* min alloc failed */
+            return DS_E_NO_MEMORY;
+        }
+
+        if ((n_byte_alloc /= 2) < n_byte_alloc_min) { /* last try */
+            n_byte_alloc = n_byte_alloc_min;
+        }
+    } /* end of loop trying smaller allocations */
+
+    /* Copy to the new buffer */
+    (void) memcpy(p_buf_new, p_ds->p_buf, p_ds->length + 1);
+
+    /* If there already was a dynamic allocation, free it */
+    if (p_ds->p_buf != p_ds->p_stack_buf) {
+        free((void *) p_ds->p_buf);
+    }
+
+    /* Assign new active buffer and its size */
+    p_ds->p_buf = p_buf_new;
+    p_ds->n_byte_alloc = n_byte_alloc;
+
+    return DS_E_OK;
+} /* end of function ds_reserve_nocheck */
+
+
+
+/* Concatenate the result of a printf-style format
  *
- * Results:
- *	Returns the current string buffer.
+ * Return codes as for ds_cat_vprintf */
+int ds_cat_printf(DSTRING *p_ds, const char *sz_fmt, ...)
+{
+    va_list p_arg;
+    va_start(p_arg, sz_fmt);
+    const int xrc = ds_cat_vprintf(p_ds, sz_fmt, p_arg);
+    va_end(p_arg);
+    return xrc;
+} /* end of function ds_cat_printf */
+
+
+
+/* Concatenate the result of a printf-style format using va_list
  *
- * Side effects:
- *	The length of dsPtr is changed to length but a null byte is not
- *	stored at that position in the string.  Use spice_dstring_setlength
- *	for that function.   If length is larger
- *	than the space allocated for dsPtr, then a panic occurs.
- *
- *----------------------------------------------------------------------
+ * Return codes
+ * DS_E_OK: Formatted OK
+ * DS_E_NO_MEMORY: Unable to allocate memory to resize buffer
+ * DS_E_INVALID: Invalid formatter / data
  */
-
-char *_spice_dstring_setlength(SPICE_DSTRINGPTR dsPtr,int length)
+int ds_cat_vprintf(DSTRING *p_ds, const char *sz_fmt, va_list p_arg)
 {
-    char *newString ;
-
-    if (length < 0) {
-	length = 0 ;
+    /* Make a copy of the argument list in case need to format more than
+     * once */
+    va_list p_arg2;
+    va_copy(p_arg2, p_arg);
+    const size_t n_byte_free = p_ds->n_byte_alloc - p_ds->length;
+    char * const p_dst = p_ds->p_buf + p_ds->length;
+    const int rc = vsnprintf(p_dst, n_byte_free, sz_fmt, p_arg);
+    if (rc < 0) { /* Check for formatting error */
+        return DS_E_INVALID;
     }
-    if (length >= dsPtr->spaceAvl) {
 
-	dsPtr->spaceAvl = length+1;
-	newString = TMALLOC(char, dsPtr->spaceAvl) ;
-	/* -----------------------------------------------------------------
-	 * SPECIAL NOTE: must use memcpy, not strcpy, to copy the string
-	 * to a larger buffer, since there may be embedded NULLs in the
-	 * string in some cases.
-	----------------------------------------------------------------- */
-	memcpy(newString, dsPtr->string, (size_t) dsPtr->length) ;
-	if( dsPtr->string != dsPtr->staticSpace ) {
-	    txfree(dsPtr->string) ;
-	}
-	dsPtr->string = newString ;
+    /* Else check for buffer large enough and set length if it is */
+    if (rc < n_byte_free) {
+        p_ds->length += rc;
+        return DS_E_OK;
     }
-    dsPtr->length = length ;
-    return(dsPtr->string) ;
 
-} /* end _spice_dstring_setlength() */
+    /* Else buffer too small, so resize and format again */
+    {
+        /* Double required size to avoid excessive allocations +1 for
+         * null, which is not included in the count returned by snprintf */
+        const size_t n_byte_alloc_min = p_ds->length + rc + 1;
+        if (ds_reserve_internal(p_ds,
+                2 * n_byte_alloc_min, n_byte_alloc_min) == DS_E_NO_MEMORY) {
+            /* vsnprintf may have written bytes to the buffer.
+             * Ensure that dstring in a consistent state by writing
+             * a null at the length of the string */
+            p_ds->p_buf[p_ds->length] = '\0';
+            return DS_E_NO_MEMORY;
+        }
+        const size_t n_byte_free2 = p_ds->n_byte_alloc - p_ds->length;
+        char * const p_dst2 = p_ds->p_buf + p_ds->length;
+        const int rc2 = vsnprintf(p_dst2, n_byte_free2, sz_fmt, p_arg2);
+        if (rc2 < 0) { /* Check for formatting error */
+            /* vsnprintf may have written bytes to the buffer.
+             * Ensure that dstring in a consistent state by writing
+             * a null at the length of the string */
+            p_ds->p_buf[p_ds->length] = '\0';
+            return DS_E_INVALID;
+        }
 
-
-/*
- *----------------------------------------------------------------------
- *
- * spice_dstring_setlength --
- *
- *	Change the length of a dynamic string.  This can cause the
- *	string to either grow or shrink, depending on the value of
- *	length.
- *
- * Results:
- *	Returns the current string buffer.
- *
- * Side effects:
- *	The length of dsPtr is changed to length and a null byte is
- *	stored at that position in the string.  If length is larger
- *	than the space allocated for dsPtr, then a panic occurs.
- *
- *----------------------------------------------------------------------
- */
+        /* Else update length. No need to check buffer size since it was
+         * sized to fit the string. */
+        p_ds->length += rc2;
+        return DS_E_OK;
+    }
+} /* end of function ds_cat_vprintf */
 
-char *spice_dstring_setlength(SPICE_DSTRINGPTR dsPtr,int length)
+
+
+
+/* Reallocate/free to eliminate unused buffer space.
+ *
+ * Return codes
+ * DS_E_OK: Compacted OK
+ * DS_E_NO_MEMORY: Compaction failed, but dstring still valid */
+int ds_compact(DSTRING *p_ds)
 {
-    char *str_p ;			/* newly create string */
+    const size_t n_byte_alloc_min = p_ds->length + 1;
 
-    str_p = _spice_dstring_setlength( dsPtr,length) ;
-    str_p[length] = '\0' ;
-    return( str_p ) ;
-
-} /* end spice_dstring_setlength() */
-
-/*
- *----------------------------------------------------------------------
- *
- * spice_dstring_free --
- *
- *	Frees up any memory allocated for the dynamic string and
- *	reinitializes the string to an empty state.
- *
- * Results:
- *	None.
- *
- * Side effects:
- *	The previous contents of the dynamic string are lost, and
- *	the new value is an empty string.
- *
- *----------------------------------------------------------------------
- */
-
-void spice_dstring_free(SPICE_DSTRINGPTR dsPtr)
-{
-    if (dsPtr->string != dsPtr->staticSpace) {
-	txfree(dsPtr->string) ;
+    /* If the string is in the stack buffer, there is nothing to do */
+    if (p_ds->p_stack_buf == p_ds->p_buf) {
+        return DS_E_OK;
     }
-    dsPtr->string = dsPtr->staticSpace ;
-    dsPtr->length = 0 ;
-    dsPtr->spaceAvl = SPICE_DSTRING_STATIC_SIZE;
-    dsPtr->staticSpace[0] = '\0' ;
 
-} /* end spice_dstring_free() */
+    /* Else if the string will fit in the stack buffer, copy it there and
+     * free the allocation. */
+    if (p_ds->n_byte_stack_buf >= n_byte_alloc_min) {
+        (void) memcpy(p_ds->p_stack_buf, p_ds->p_buf, n_byte_alloc_min);
+        free((void *) p_ds->p_buf);
+        p_ds->p_buf = p_ds->p_stack_buf;
+        p_ds->n_byte_alloc = p_ds->n_byte_stack_buf;
+        return DS_E_OK;
+    }
+
+    /* Else if the heap buffer is the minimum size, there is nothng to do */
+    if (n_byte_alloc_min == p_ds->n_byte_alloc) {
+        return DS_E_OK;
+    }
+
+    /* Else realloc the heap buffer */
+    {
+        void *p = realloc(p_ds->p_buf, n_byte_alloc_min);
+        if (p == NULL) {
+            return DS_E_NO_MEMORY;
+        }
+        p_ds->p_buf = (char *) p;
+        p_ds->n_byte_alloc = n_byte_alloc_min;
+        return DS_E_OK;
+    }
+} /* end of function ds_compact */
+
+
+
+#ifdef DSTRING_UNIT_TEST
+#if defined (_WIN32) && !defined(CONSOLE)
+#include "ngspice/wstdio.h"
+#endif
+static void ds_print_info(DSTRING *p_ds, FILE *fp, const char *sz_id);
+static int ds_test_from_macro(FILE *fp);
+static int ds_test_from_stack(FILE *fp);
+static int ds_test_from_heap(FILE *fp);
+static int ds_test1(DSTRING *p_ds, FILE *fp);
+
+
+int ds_test(FILE *fp)
+{
+    if (ds_test_from_macro(fp) != 0) { /* create from macro and run test */
+        return -1;
+    }
+    if (ds_test_from_stack(fp) != 0) { /* create from stack */
+        return -1;
+    }
+    if (ds_test_from_heap(fp) != 0) { /* create from heap */
+        return -1;
+    }
+
+    return 0;
+} /* end of function ds_test */
+
+
+
+/* Run tests from a macro-created dstring */
+static int ds_test_from_macro(FILE *fp)
+{
+    DS_CREATE(ds, 10);
+    (void) fprintf(fp, "Macro initialization\n");
+    return ds_test1(&ds, fp);
+} /* end of function ds_test_from_macro */
+
+
+
+/* Run tests from a manually created stack-backed dstring */
+static int ds_test_from_stack(FILE *fp)
+{
+    static char p_buf[30] = "Hello World";
+    DSTRING ds;
+    (void) fprintf(fp, "Stack initialization\n");
+    (void) ds_init(&ds, p_buf, 11, sizeof p_buf,  ds_buf_type_stack);
+    return ds_test1(&ds, fp);
+} /* end of function ds_test_from_stack */
+
+
+
+/* Run tests from a heap-backed dstring */
+static int ds_test_from_heap(FILE *fp)
+{
+    char *p_buf = (char *) malloc(25);
+    if (p_buf == (char *) NULL) {
+        return -1;
+    }
+    (void) memcpy(p_buf, "Heap", 4);
+    DSTRING ds;
+    (void) ds_init(&ds, p_buf, 4, 25,  ds_buf_type_heap);
+    (void) fprintf(fp, "Heap initialization\n");
+    return ds_test1(&ds, fp);
+} /* end of function ds_test_from_heap */
+
+
+
+static int ds_test1(DSTRING *p_ds, FILE *fp)
+{
+    /* Print info on entry */
+    ds_print_info(p_ds, fp, "On entry to ds_test1\n");
+
+    int i;
+    for (i = 0; i < 10; i++) {
+        if (ds_cat_str(p_ds, "Abc") != 0) {
+            (void) fprintf(fp, "Unable to cat string %d.\n", i);
+            return -1;
+        }
+        if (ds_cat_str_case(p_ds, "Abc", ds_case_as_is) != 0) {
+            (void) fprintf(fp, "Unable to cat string as-is %d.\n", i);
+            return -1;
+        }
+        if (ds_cat_str_case(p_ds, "Abc", ds_case_upper) != 0) {
+            (void) fprintf(fp, "Unable to cat string upper %d.\n", i);
+            return -1;
+        }
+        if (ds_cat_str_case(p_ds, "Abc", ds_case_lower) != 0) {
+            (void) fprintf(fp, "Unable to cat string lower %d.\n", i);
+            return -1;
+        }
+        if (ds_cat_char(p_ds, 'z') != 0) {
+            (void) fprintf(fp, "Unable to cat char %d.\n", i);
+            return -1;
+        }
+        if (ds_cat_char_case(p_ds, 'z', ds_case_as_is) != 0) {
+            (void) fprintf(fp, "Unable to cat char as-is %d.\n", i);
+            return -1;
+        }
+        if (ds_cat_char_case(p_ds, 'z', ds_case_upper) != 0) {
+            (void) fprintf(fp, "Unable to cat char upper %d.\n", i);
+            return -1;
+        }
+        if (ds_cat_char_case(p_ds, 'Z', ds_case_lower) != 0) {
+            (void) fprintf(fp, "Unable to cat char lower %d.\n", i);
+            return -1;
+        }
+
+        if (ds_cat_mem(p_ds, "Zyxw", 4) != 0) {
+            (void) fprintf(fp, "Unable to cat string %d.\n", i);
+            return -1;
+        }
+        if (ds_cat_mem_case(p_ds, "Zyxw", 4, ds_case_as_is) != 0) {
+            (void) fprintf(fp, "Unable to cat string as-is %d.\n", i);
+            return -1;
+        }
+        if (ds_cat_mem_case(p_ds, "Zyxw", 4, ds_case_upper) != 0) {
+            (void) fprintf(fp, "Unable to cat string upper %d.\n", i);
+            return -1;
+        }
+        if (ds_cat_mem_case(p_ds, "Zyxw", 4, ds_case_lower) != 0) {
+            (void) fprintf(fp, "Unable to cat string lower %d.\n", i);
+            return -1;
+        }
+
+        if (ds_cat_printf(p_ds, "--- And finally a formatted %s (%d)",
+                "string", i) != 0) {
+            (void) fprintf(fp, "Unable to cat formatted string %d.\n", i);
+            return -1;
+        }
+
+        /* Print info after cats */
+        ds_print_info(p_ds, fp, "After appending strings");
+
+        /* Truncate the string */
+        if (ds_set_length(p_ds, i * (size_t) 10) != 0) {
+            (void) fprintf(fp, "Unable to set size %d.\n", i);
+            return -1;
+        }
+
+        /* Print info after truncation */
+        ds_print_info(p_ds, fp, "After setting length");
+
+        /* Compact the string */
+        if (ds_compact(p_ds) != 0) {
+            (void) fprintf(fp, "Unable to compact %d.\n", i);
+            return -1;
+        }
+
+        /* Print info after compaction */
+        ds_print_info(p_ds, fp, "After compacting the string");
+    } /* end of loop over tests */
+
+    ds_free(p_ds); /* free buffer if allocated */
+
+    return 0;
+} /* end of funtion ds_test */
+
+
+
+/* Print some info about the DSTRING */
+static void ds_print_info(DSTRING *p_ds, FILE *fp, const char *sz_id)
+{
+    (void) fprintf(fp, "%s: length = %zu; "
+            "allocated buffer size = %zu; value = \"%s\"; "
+            "address of active buffer = %p; "
+            "address of stack buffer = %p; "
+            "size of stack buffer = %zu\n",
+            sz_id,
+            ds_get_length(p_ds), ds_get_buf_size(p_ds),
+            ds_get_buf(p_ds), ds_get_buf(p_ds),
+            p_ds->p_stack_buf, p_ds->n_byte_stack_buf);
+} /* end of function ds_print_info */
+
+
+
+#endif /* DSTRING_UNIT_TEST */
+
+
+
