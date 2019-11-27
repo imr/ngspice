@@ -17,6 +17,7 @@ Spice3 Implementation: 2003 Dietmar Warning DAnalyse GmbH
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
+#define R_MIN 0.01
 
 int
 VBICmParam(int param, IFvalue *value, GENmodel *inModel)
@@ -41,12 +42,16 @@ VBICmParam(int param, IFvalue *value, GENmodel *inModel)
             break;
         case VBIC_MOD_RCX:
             mods->VBICextCollResist = value->rValue;
-            if (mods->VBICextCollResist < 0.01) mods->VBICextCollResist = 0.01;
+            if (mods->VBICextCollResist < R_MIN) {
+                mods->VBICextCollResist = R_MIN;
+            }
             mods->VBICextCollResistGiven = TRUE;
             break;
         case VBIC_MOD_RCI:
             mods->VBICintCollResist = value->rValue;
-            if (mods->VBICintCollResist < 0.01) mods->VBICintCollResist = 0.01;
+            if (mods->VBICintCollResist < R_MIN) {
+                mods->VBICintCollResist = R_MIN;
+            }
             mods->VBICintCollResistGiven = TRUE;
             break;
         case VBIC_MOD_VO:
@@ -63,27 +68,37 @@ VBICmParam(int param, IFvalue *value, GENmodel *inModel)
             break;
         case VBIC_MOD_RBX:
             mods->VBICextBaseResist = value->rValue;
-            if (mods->VBICextBaseResist < 0.01) mods->VBICextBaseResist = 0.01;
+            if (mods->VBICextBaseResist < R_MIN) {
+                mods->VBICextBaseResist = R_MIN;
+            }
             mods->VBICextBaseResistGiven = TRUE;
             break;
         case VBIC_MOD_RBI:
             mods->VBICintBaseResist = value->rValue;
-            if (mods->VBICintBaseResist < 0.01) mods->VBICintBaseResist = 0.01;
+            if (mods->VBICintBaseResist < R_MIN) {
+                mods->VBICintBaseResist = R_MIN;
+            }
             mods->VBICintBaseResistGiven = TRUE;
             break;
         case VBIC_MOD_RE:
             mods->VBICemitterResist = value->rValue;
-            if (mods->VBICemitterResist < 0.01) mods->VBICemitterResist = 0.01;
+            if (mods->VBICemitterResist < R_MIN) {
+                mods->VBICemitterResist = R_MIN;
+            }
             mods->VBICemitterResistGiven = TRUE;
             break;
         case VBIC_MOD_RS:
             mods->VBICsubstrateResist = value->rValue;
-            if (mods->VBICsubstrateResist < 0.01) mods->VBICsubstrateResist = 0.01;
+            if (mods->VBICsubstrateResist < R_MIN) {
+                mods->VBICsubstrateResist = R_MIN;
+            }
             mods->VBICsubstrateResistGiven = TRUE;
             break;
         case VBIC_MOD_RBP:
             mods->VBICparBaseResist = value->rValue;
-            if (mods->VBICparBaseResist < 0.01) mods->VBICparBaseResist = 0.01;
+            if (mods->VBICparBaseResist < R_MIN) {
+                mods->VBICparBaseResist = R_MIN;
+            }
             mods->VBICparBaseResistGiven = TRUE;
             break;
         case VBIC_MOD_IS:
