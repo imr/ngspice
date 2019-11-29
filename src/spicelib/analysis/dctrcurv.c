@@ -140,7 +140,7 @@ DCtrCurv(CKTcircuit *ckt, int restart)
                     }
         }
 
-        if (!strcmp(job->TRCVvName[i], "temp")) {
+        if (cieq(job->TRCVvName[i], "temp")) {
             job->TRCVvSave[i] = ckt->CKTtemp; /* Saves the old circuit temperature */
             job->TRCVvType[i] = TEMP_CODE;    /* Set the sweep type code */
             ckt->CKTtemp = job->TRCVvStart[i] + CONSTCtoK; /* Set the new circuit temp */
