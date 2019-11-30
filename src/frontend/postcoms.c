@@ -31,31 +31,49 @@ static void DelPlotWindows(struct plot *pl);
 /* check if the user want's to delete the scale vector of the current plot.
    This should not happen, because then redrawing the graph crashes ngspice */
 static bool
-check_cp(char* vecname)
+is_scale_vec_of_current_plot(const char *v_name)
 {
-    if (plot_cur && plot_cur->pl_scale && plot_cur->pl_scale->v_name && eq(plot_cur->pl_scale->v_name, vecname)) {
-        fprintf(cp_err, "\nWarning: Scale vector '%s' of current plot cannot be deleted!\n", vecname);
-        fprintf(cp_err, "    Command 'unlet %s' is ignored.\n\n", vecname);
-        return TRUE;
-    }
-    else
+    if (!plot_cur) { /* no current plot */
         return FALSE;
-}
+    }
 
+    const struct dvec * const pl_scale = plot_cur->pl_scale;
+    if (!pl_scale) { /* no scale vector */
+        return FALSE;
+    }
+
+    /* Test if this vector's name matches the scale vector's name */
+    return cieq(v_name, pl_scale->v_name);
+} /* end of function is_scale_vec_of_current_plot */
+
+
+
+/* Remove vectors in the wordlist from the current plot */
 void
 com_unlet(wordlist *wl)
 {
-    while (wl) {
-        /* don't delete the scale vector of the current plot */
-        if (!check_cp(wl->wl_word))
-            vec_remove(wl->wl_word);
-        wl = wl->wl_next;
-    }
-}
+    for ( ; wl != (wordlist *) NULL; wl = wl->wl_next) {
+        /* Don't delete the scale vector of the current plot */
+        const char * const vector_name = wl->wl_word;
+        if (is_scale_vec_of_current_plot(vector_name)) {
+            /* If it is the scale vector of the current plot, print a
+             * warning. Note that if it is true,  the scale vector name must
+             * exist, so no part of plot_cur->pl_scale->v_name can be null. */
+            fprintf(cp_err,
+                    "\nWarning: Scale vector '%s' of the current plot "
+                    "cannot be deleted!\n"
+                    "Command 'unlet %s' is ignored.\n\n",
+                    plot_cur->pl_scale->v_name, vector_name);
+        }
+        else {
+            vec_remove(vector_name);
+        }
+    } /* end of loop over vectors to delete */
+} /* end of function com_unlet */
+
 
 
 /* Load in a file. */
-
 void
 com_load(wordlist *wl)
 {
@@ -461,7 +479,7 @@ com_write(wordlist *wl)
                 /* Note that since we are building a new plot
                  * we don't want to vec_new this one...
                  */
-                tfree(vv->v_name);
+                txfree(vv->v_name);
                 vv->v_name = basename;
 
                 if (end)
@@ -512,10 +530,7 @@ com_write(wordlist *wl)
             /* Otherwise loop through again... */
         }
 
-        if (ascii)
-            raw_write(file, &newplot, appendwrite, FALSE);
-        else
-            raw_write(file, &newplot, appendwrite, TRUE);
+        raw_write(file, &newplot, appendwrite, !ascii);
 
         for (vv = newplot.pl_dvecs; vv;) {
             struct dvec *next_vv = vv->v_next;
