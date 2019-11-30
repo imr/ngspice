@@ -95,7 +95,7 @@ com_stop(wordlist *wl)
                 charr[1] = copy("eq");
                 charr[2] = tokafter;
                 charr[3] = NULL;
-                wln = wl_build(charr);
+                wln = wl_build((const char * const *) charr);
                 wl_splice(wl->wl_next, wln);
             }
             /* continue with parsing the enhanced wordlist */

@@ -1469,7 +1469,7 @@ com_alter_mod(wordlist *wl)
             }
             arglist[2] = inptoken;
             /* create a new wordlist from array arglist */
-            newcommand = wl_build(arglist);
+            newcommand = wl_build((const char * const *) arglist);
             com_alter_common(newcommand->wl_next, 1);
             wl_free(newcommand);
             tfree(inptoken);
