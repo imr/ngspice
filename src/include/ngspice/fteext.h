@@ -336,7 +336,7 @@ extern int ft_typnum(char *);
 
 /* vectors.c */
 
-extern bool vec_iszero(struct dvec *v);
+extern bool vec_iszero(const struct dvec *v);
 extern bool vec_eq(struct dvec *v1, struct dvec *v2);
 extern int plot_num;
 extern struct dvec *vec_fromplot(char *word, struct plot *plot);
@@ -363,7 +363,6 @@ extern void plot_setcur(char *name);
 extern struct plot *get_plot(char* name);
 extern void plot_new(struct plot *pl);
 extern char *vec_basename(struct dvec *v);
-extern bool plot_prefix(char *pre, char *str);
 extern void vec_transpose(struct dvec *v);
 
 /* main.c */
