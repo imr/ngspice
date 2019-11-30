@@ -579,7 +579,7 @@ com_write_sparam(wordlist *wl)
     sbuf[3] = "S12";
     sbuf[4] = "S22";
     sbuf[5] = NULL;
-    wl_sparam = wl_build(sbuf);
+    wl_sparam = wl_build((const char * const *) sbuf);
 
     names = ft_getpnames(wl_sparam, TRUE);
     if (names == NULL)
