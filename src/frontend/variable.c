@@ -163,8 +163,14 @@ cp_vset(char *varname, enum cp_types type, void *value)
         cp_noclobber = TRUE;
     else if (eq(varname, "echo"))   /*CDHW*/
         cp_echo = TRUE;             /*CDHW*/
-    else if (eq(copyvarname, "prompt") && (type == CP_STRING))
-        cp_promptstring = v->va_string;
+    else if (eq(copyvarname, "prompt")) {
+        if (type == CP_STRING) {
+            cp_promptstring = v->va_string;
+        }
+        else { /* use a default string since prompt is not a string */
+            cp_promptstring = "-> ";
+        }
+    }
     else if (eq(copyvarname, "ignoreeof"))
         cp_ignoreeof = TRUE;
     else if (eq(copyvarname, "cpdebug")) {
@@ -272,7 +278,11 @@ cp_setparse(wordlist *wl)
     struct variable *listv = NULL, *vv, *lv = NULL;
     struct variable *vars = NULL;
     int balance;
-
+    /* Step through the list of words. Words may be various combinations of
+     * the information needed to set a variable. For example, to set x to
+     * the value 3, the data could be supplied as one word x=3, two words
+     * x= 3 or x =3 or three words x = 3. Additionally words may be quoted
+     * or unquoted. Each iteration through the loop handles one variable */
     while (wl) {
 
         if (name) {
@@ -283,8 +293,8 @@ cp_setparse(wordlist *wl)
 
         wl = wl->wl_next;
         if ((!wl || (*wl->wl_word != '=')) && !strchr(name, '=')) {
-            vars = var_alloc_bool(copy(name), TRUE, vars);
-            tfree(name);        /*DG: cp_unquote Memory leak*/
+            vars = var_alloc_bool(name, TRUE, vars);
+            name = (char *) NULL; /* Given to variable vars */
             continue;
         }
 
@@ -392,18 +402,19 @@ cp_setparse(wordlist *wl)
             td = ft_numparse(&ss, FALSE);
             if (td) {
                 /*** We should try to get CP_NUM's... */
-                vars = var_alloc_real(copy(name), *td, vars);
+                vars = var_alloc_real(name, *td, vars);
             }
             else {
-                vars = var_alloc_string(copy(name), copy(val), vars);
+                vars = var_alloc_string(name, copy(val), vars);
             }
         }
+        name = (char *) NULL; /* name given to variable via var_alloc_* */
         tfree(copyval); /*DG: must free ss any way to avoid cp_unquote memory leak */
-        tfree(name);  /* va: cp_unquote memory leak: free name for every loop */
     }
 
-    if (name)
+    if (name) {
         tfree(name);
+    }
     return (vars);
 }
 
