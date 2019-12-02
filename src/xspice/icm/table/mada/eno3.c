@@ -78,6 +78,9 @@ sf_eno3_close(sf_eno3 pnt)
 {
     int i2, i3;
 
+    if (!pnt)
+        return;
+
     sf_eno2_close (pnt->jnt);
     for (i3 = 0; i3 < pnt->n3; i3++) {
         for (i2 = 0; i2 < pnt->n2; i2++)
