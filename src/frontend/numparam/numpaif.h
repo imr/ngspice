@@ -16,7 +16,7 @@ struct card;
 extern char  *nupa_copy(struct card *c);
 extern int    nupa_eval(struct card *card);
 extern void   nupa_signal(int sig);
-extern void   nupa_scan(struct card *card);
+extern void   nupa_scan(const struct card *card);
 extern void   nupa_list_params(FILE *cp_out);
 extern double nupa_get_param(char *param_name, int *found);
 extern void   nupa_add_param(char *param_name, double value);

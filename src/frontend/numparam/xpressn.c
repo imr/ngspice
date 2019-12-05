@@ -494,7 +494,7 @@ nupa_define(dico_t *dico,
 
 
 bool
-defsubckt(dico_t *dico, struct card *card)
+defsubckt(dico_t *dico, const struct card *card)
 /* called on 1st pass of spice source code,
    to enter subcircuit names
 */
