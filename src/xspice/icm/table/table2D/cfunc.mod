@@ -298,6 +298,8 @@ cm_table2D_callback(ARGS, Mif_Callback_Reason_t reason)
         case MIF_CB_DESTROY: {
             int i;
             Local_Data_t *loc = STATIC_VAR (locdata);
+            if (!loc)
+                break;
             free(loc->state);
             for (i = 0; i < loc->iy; i++)
                free(loc->table[i]);
@@ -306,6 +308,7 @@ cm_table2D_callback(ARGS, Mif_Callback_Reason_t reason)
             free(loc->ycol);
             sf_eno2_close (loc->newtable);
             free(loc);
+            STATIC_VAR (locdata) = loc = NULL;
             break;
         }
     }
@@ -428,8 +431,9 @@ cm_table2D(ARGS)   /* structure holding parms, inputs, outputs, etc. */
         struct stat st;
         if (!loc->state->fp || fstat(fileno(loc->state->fp), &st)) {
             cm_message_printf("cannot open file %s", PARAM(file));
-            loc->state->atend = 1;
-            loc->init_err = 1;
+            free(loc->state);
+            free(loc);
+            STATIC_VAR (locdata) = loc = NULL;
             return;
         }
         /* get file length */
@@ -441,8 +445,9 @@ cm_table2D(ARGS)   /* structure holding parms, inputs, outputs, etc. */
         cThisLine = calloc(lFileLen + 1, sizeof(char));
         if (cFile == NULL || cThisLine == NULL) {
             cm_message_printf("Insufficient memory to read file %s", PARAM(file));
-            loc->state->atend = 1;
-            loc->init_err = 1;
+            free(loc->state);
+            free(loc);
+            STATIC_VAR (locdata) = loc = NULL;
             if(cFile) free(cFile);
             if(cThisLine) free(cThisLine);
             return;
@@ -627,7 +632,7 @@ cm_table2D(ARGS)   /* structure holding parms, inputs, outputs, etc. */
     loc = STATIC_VAR (locdata);
 
     /* return immediately if there was an initialization error */
-    if (loc->init_err == 1)
+    if (!loc || loc->init_err == 1)
         return;
 
     /* get input x, y,

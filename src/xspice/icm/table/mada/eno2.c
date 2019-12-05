@@ -72,6 +72,9 @@ sf_eno2_close (sf_eno2 pnt)
 {
     int i2;
 
+    if (!pnt)
+        return;
+
     sf_eno_close (pnt->jnt);
     for (i2 = 0; i2 < pnt->n2; i2++)
         sf_eno_close (pnt->ent[i2]);

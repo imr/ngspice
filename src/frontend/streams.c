@@ -82,16 +82,20 @@ cp_redirect(wordlist *wl)
 #endif
 
             fp = fopen(fname, "r");
-            tfree(fname);
-
             if (!fp) {
                 perror(fname);
+                tfree(fname);
                 goto error;
             }
-
+			
+			tfree(fname);
             cp_in = fp;
 
-            wl_delete_slice(beg, w);
+            /* special case for set command:
+               keep i/o information (handled in com_set.c)  */
+            wordlist* bw = beg->wl_prev->wl_prev;
+            if (!(bw && cieq(bw->wl_word, "set")))
+                wl_delete_slice(beg, w);
 
         } else if (*w->wl_word == cp_gt) {
 
