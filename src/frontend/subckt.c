@@ -239,13 +239,17 @@ inp_subcktexpand(struct card *deck) {
 
         nupa_signal(NUPADECKCOPY);
         /* get the subckt names from the deck */
-        for (c = deck; c; c = c->nextcard)    /* first Numparam pass */
-            if (ciprefix(".subckt", c->line))
+        for (c = deck; c; c = c->nextcard) {    /* first Numparam pass */
+            if (ciprefix(".subckt", c->line)) {
                 nupa_scan(c);
+            }
+        }
+
         /* now copy instances */
         for (c = deck; c; c = c->nextcard) {  /* first Numparam pass */
-            if (*(c->line) == '*')
+            if (*(c->line) == '*') {
                 continue;
+            }
             c->line = nupa_copy(c);
         }
 
@@ -456,7 +460,6 @@ doit(struct card *deck, wordlist *modnames) {
         struct card *prev_of_c = NULL;
 
         while (c) {
-
             if (ciprefix(sbend, c->line)) {  /* if line == .ends  */
                 fprintf(cp_err, "Error: misplaced %s line: %s\n", sbend,
                         c->line);
