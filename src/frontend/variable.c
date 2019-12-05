@@ -29,8 +29,13 @@ bool cp_echo = FALSE;   /* CDHW */
 struct variable *variables = NULL;
 
 
-wordlist *
-cp_varwl(struct variable *var)
+
+static void update_option_variables(const char *sz_var_name,
+    struct variable *p_v);
+
+
+
+wordlist *cp_varwl(struct variable *var)
 {
     wordlist *wl = NULL, *w, *wx = NULL;
     char *buf;
@@ -49,25 +54,26 @@ cp_varwl(struct variable *var)
         buf = tprintf("%G", var->va_real);
         break;
     case CP_STRING:
-        buf = cp_unquote(var->va_string);
+        buf = copy(var->va_string);
         break;
     case CP_LIST:   /* The tricky case. */
         for (vt = var->va_vlist; vt; vt = vt->va_next) {
-            w = cp_varwl(vt);
+            w = cp_varwl(vt); /* recursive call */
             if (wl == NULL) {
                 wl = wx = w;
-            } else {
+            }
+            else {
                 wx->wl_next = w;
                 w->wl_prev = wx;
                 wx = w;
             }
         }
-        return (wl);
+        return wl;
     default:
         fprintf(cp_err,
                 "cp_varwl: Internal Error: bad variable type %d\n",
                 var->va_type);
-        return (NULL);
+        return NULL;
     }
 
     return wl_cons(buf, NULL);
@@ -75,8 +81,7 @@ cp_varwl(struct variable *var)
 
 
 /* Set a variable. */
-void
-cp_vset(char *varname, enum cp_types type, void *value)
+void cp_vset(const char *varname, enum cp_types type, const void *value)
 {
     struct variable *v, *u, *w;
     int i;
@@ -118,7 +123,9 @@ cp_vset(char *varname, enum cp_types type, void *value)
             }
             tfree(copyvarname);
             return;
-        } else {
+        }
+        else {
+            /* The variable only exists in TRUE state */
             var_set_bool(v, TRUE);
         }
         break;
@@ -147,39 +154,8 @@ cp_vset(char *varname, enum cp_types type, void *value)
         return;
     }
 
-    /* Now, see if there is anything interesting going on. We
-     * recognise these special variables: noglob, nonomatch, history,
-     * echo, noclobber, prompt, and verbose. cp_remvar looks for these
-     * variables too. The host program will get any others.  */
-    if (eq(copyvarname, "noglob"))
-        cp_noglob = TRUE;
-    else if (eq(copyvarname, "nonomatch"))
-        cp_nonomatch = TRUE;
-    else if (eq(copyvarname, "history") && (type == CP_NUM))
-        cp_maxhistlength = v->va_num;
-    else if (eq(copyvarname, "history") && (type == CP_REAL))
-        cp_maxhistlength = (int)floor(v->va_real + 0.5);
-    else if (eq(copyvarname, "noclobber"))
-        cp_noclobber = TRUE;
-    else if (eq(varname, "echo"))   /*CDHW*/
-        cp_echo = TRUE;             /*CDHW*/
-    else if (eq(copyvarname, "prompt")) {
-        if (type == CP_STRING) {
-            cp_promptstring = v->va_string;
-        }
-        else { /* use a default string since prompt is not a string */
-            cp_promptstring = "-> ";
-        }
-    }
-    else if (eq(copyvarname, "ignoreeof"))
-        cp_ignoreeof = TRUE;
-    else if (eq(copyvarname, "cpdebug")) {
-        cp_debug = TRUE;
-#ifndef CPDEBUG
-        fprintf(cp_err,
-                "Warning: program not compiled with cshpar debug messages\n");
-#endif
-    }
+    /* Update variables controlling options */
+    update_option_variables(copyvarname, v);
 
     switch (i = cp_usrset(v, TRUE)) {
 
@@ -260,7 +236,148 @@ cp_vset(char *varname, enum cp_types type, void *value)
     }
 
     tfree(copyvarname);
-}
+} /* end of function cp_vset */
+
+
+
+/* Process special variables: noglob, nonomatch, history,
+ * noclobber, echo, prompt, ignoreeof, cpdebug, and no_histsubst
+ * by setting the values of associated option variables.
+ *
+ * Parmeters
+ * sz_var_name: Name of variable
+ * p_v: Variable if it is being added or NULL if being removed.
+ */
+static void update_option_variables(const char *sz_var_name,
+    struct variable *p_v)
+{
+    static const unsigned char p_ch0['p' - 'a' + 1] = {
+        ['n' - 'a'] = 1, /* noglob, nonomatch, noclobber, no_histsubst */
+        ['h' - 'a'] = 2, /* history */
+        ['e' - 'a'] = 3, /* echo */
+        ['p' - 'a'] = 4, /* prompt, program */
+        ['i' - 'a'] = 5, /* ignoreeof */
+        ['c' - 'a'] = 6 /* cpdebug */
+    };
+
+    unsigned int index0 = (unsigned int) sz_var_name[0] - 'a';
+
+    /* Check if first char of is in range of interest.
+     * Note that if < 0, as unsigned, it will be very large so this
+     * single compare checks both < 'a' and > 'p' */
+    if (index0 >= sizeof p_ch0) {
+        return;
+    }
+
+    unsigned int id0 = (unsigned int) p_ch0[index0];
+    if (id0 == 0) { /* not of interest */
+        return;
+    }
+
+    /* Flag that bool values should be set is based on if the
+     * variable is being added (via a set) or removed */
+    const bool f_set = p_v != (struct variable *) NULL;
+
+    switch (id0) {
+    case 1:
+        /* noglob, nonomatch, noclobber, no_histsubst */
+        if (sz_var_name[1] != 'o') {
+            return;
+        }
+        {
+            bool *p_var;
+            const char *sz_rest = sz_var_name + 2;
+            if (eq(sz_rest, "glob")) {
+                p_var = &cp_noglob;
+            }
+            else if (eq(sz_rest, "nomatch")) {
+                p_var = &cp_nonomatch;
+            }
+            else if (eq(sz_rest, "clobber")) {
+                p_var = &cp_noclobber;
+            }
+            else if (eq(sz_rest, "_histsubst")) {
+                p_var = &cp_no_histsubst;
+            }
+            else { /* not a variable of interest */
+                return;
+            }
+            *p_var = f_set;
+        }
+        return;
+    case 2: /* history */
+        if (eq(sz_var_name + 1, "istory")) {
+            if (f_set) {
+                int n = -1;
+                enum cp_types type = p_v->va_type;
+                if (type == CP_NUM) {
+                    n = p_v->va_num;
+                }
+                else if (type == CP_REAL) {
+                    n = (int) round(p_v->va_real);
+                }
+                if (n >= 0) {
+                    cp_maxhistlength = n;
+                }
+            }
+            /* Note that 'unset history' doesn't do anything here... Causes
+             * trouble...  */
+        }
+        return;
+    case 3: /* echo */
+        if (eq(sz_var_name + 1, "cho")) {
+            cp_echo = f_set;
+        }
+        return;
+    case 4: /* prompt, program */
+        if (sz_var_name[1] != 'r') {
+            return;
+        }
+        if (sz_var_name[2] != 'o') {
+            return;
+        }
+        const char *sz_rest = sz_var_name + 3;
+        if (eq(sz_rest, "mpt")) { /* prompt */
+            if (f_set && p_v->va_type == CP_STRING) {
+                cp_promptstring = p_v->va_string;
+            }
+            else {
+                /* Use a default string since prompt is not a string or the
+                 * previous prompt string was freed */
+                cp_promptstring = "-> ";
+            }
+            return;
+        }
+        if (eq(sz_rest, "gram")) { /* program */
+            if (f_set && p_v->va_type == CP_STRING) {
+                cp_program = p_v->va_string;
+            }
+            else {
+                /* Use a default string since program is not a string or the
+                 * previous program string was freed */
+                cp_program = "";
+            }
+            return;
+        }
+        return; /* not of interest */
+    case 5:
+        if (eq(sz_var_name + 1, "gnoreeof")) { /* ignoreeof */
+            cp_ignoreeof = f_set;
+        }
+        return;
+    case 6:
+        if (eq(sz_var_name + 1, "pdebug")) { /* cpdebug */
+            cp_debug = f_set;
+#ifndef CPDEBUG
+            if (cp_debug) {
+                fprintf(cp_err, "Warning: program not compiled "
+                        "with cshpar debug messages\n");
+            }
+#endif
+        }
+    } /* end of switch over index for first char */
+} /* end of function update_option_variables */
+
 
 
 /* Read a wordlist, e.g. from the options or set commands 
@@ -437,8 +554,7 @@ free_struct_variable(struct variable *v)
 }
 
 
-void
-cp_remvar(char *varname)
+void cp_remvar(char *varname)
 {
     struct variable *v, **p;
     struct variable *uv1;
@@ -446,49 +562,45 @@ cp_remvar(char *varname)
 
     uv1 = cp_usrvars();
 
-    for (p = &variables; *p; p = &(*p)->va_next)
-        if (eq((*p)->va_name, varname))
+    for (p = &variables; *p; p = &(*p)->va_next) {
+        if (eq((*p)->va_name, varname)) {
             break;
+        }
+    }
 
-    if (*p == NULL)
-        for (p = &uv1; *p; p = &(*p)->va_next)
-            if (eq((*p)->va_name, varname))
+    if (*p == NULL) {
+        for (p = &uv1; *p; p = &(*p)->va_next) {
+            if (eq((*p)->va_name, varname)) {
                 break;
+            }
+        }
+    }
 
-    if (*p == NULL && plot_cur)
-        for (p = &plot_cur->pl_env; *p; p = &(*p)->va_next)
-            if (eq((*p)->va_name, varname))
+    if (*p == NULL && plot_cur) {
+        for (p = &plot_cur->pl_env; *p; p = &(*p)->va_next) {
+            if (eq((*p)->va_name, varname)) {
                 break;
+            }
+        }
+    }
 
-    if (*p == NULL && ft_curckt)
-        for (p = &ft_curckt->ci_vars; *p; p = &(*p)->va_next)
-            if (eq((*p)->va_name, varname))
+    if (*p == NULL && ft_curckt) {
+        for (p = &ft_curckt->ci_vars; *p; p = &(*p)->va_next) {
+            if (eq((*p)->va_name, varname)) {
                 break;
+            }
+        }
+    }
 
     v = *p;
 
     /* make up an auxiliary struct variable for cp_usrset() */
-    if (!v)
+    if (!v) {
         v = var_alloc_num(copy(varname), 0, NULL);
+    }
 
-    /* Note that 'unset history' doesn't do anything here... Causes
-     * trouble...  */
-    if (eq(varname, "noglob"))
-        cp_noglob = FALSE;
-    else if (eq(varname, "nonomatch"))
-        cp_nonomatch = FALSE;
-    else if (eq(varname, "noclobber"))
-        cp_noclobber = FALSE;
-    else if (eq(varname, "echo")) /*CDHW*/
-        cp_echo = FALSE;          /*CDHW*/
-    else if (eq(varname, "prompt"))
-        cp_promptstring = NULL;
-    else if (eq(varname, "cpdebug"))
-        cp_debug = FALSE;
-    else if (eq(varname, "ignoreeof"))
-        cp_ignoreeof = FALSE;
-    else if (eq(varname, "program"))
-        cp_program = "";
+    /* Update options that depend on variables */
+    update_option_variables(varname, (struct variable *) NULL);
 
     switch (i = cp_usrset(v, FALSE)) {
 
@@ -540,7 +652,8 @@ cp_remvar(char *varname)
     free_struct_variable(v);
 
     free_struct_variable(uv1);
-}
+} /* end of function cp_remvar */
+
 
 
 /* Determine the value of a variable.  Fail if the variable is unset,
