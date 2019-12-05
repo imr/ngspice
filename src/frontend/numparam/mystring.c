@@ -98,7 +98,7 @@ cadd(DSTRINGPTR dstr_p, char c)
 void
 scopyd(DSTRINGPTR dst, const DSTRINGPTR src)  /* returns success flag */
 {
-    (void) ds_clear(dst);
+    ds_clear(dst);
     if (ds_cat_ds(dst, src) != DS_E_OK) {
         controlled_exit(-1);
     }
@@ -127,6 +127,7 @@ pscopy(DSTRINGPTR dstr_p, const char *t, const char *stop)
         stop = strchr(t, '\0');
     }
 
+    ds_clear(dstr_p);
     if (ds_cat_mem(dstr_p, t, stop - t) != DS_E_OK) {
         controlled_exit(-1);
     }

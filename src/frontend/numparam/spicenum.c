@@ -246,8 +246,9 @@ transform(dico_t *dico, DSTRINGPTR dstr_p, bool incontrol)
             char *params;
             /* split off any "params" tail */
             params = strstr(s, "params:");
-            if (params)
-                pscopy(dstr_p, s, params);
+            if (params) {
+                ds_set_length(dstr_p, params - s);
+            }
             category = 'S';
         } else if (prefix(".control", s)) {
             category = 'C';
@@ -387,7 +388,7 @@ nupa_done(void)
 
 /* SJB - Scan the line for subcircuits */
 void
-nupa_scan(struct card *card)
+nupa_scan(const struct card *card)
 {
     defsubckt(dicoS, card);
 }
