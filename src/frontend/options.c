@@ -140,7 +140,8 @@ cp_usrvars(void)
     }
 
     return v;
-}
+} /* end of function cp_usrvars */
+
 
 
 /* Extract the .option lines from the deck */
@@ -226,8 +227,6 @@ cp_usrset(struct variable *var, bool isset)
         fprintf(cp_err, "Warning: %s compiled without debug messages\n",
                 cp_program);
 #endif
-    } else if (eq(var->va_name, "program")) {
-        cp_program = var->va_string;
     } else if (eq(var->va_name, "rawfile")) {
         ft_rawfile = copy(var->va_string);
     } else if (eq(var->va_name, "acct")) {

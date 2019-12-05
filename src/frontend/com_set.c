@@ -7,19 +7,37 @@
 #include "com_set.h"
 
 
-/* The set command. Syntax is set [opt ...] [opt = val ...]. Val may
- * be a string, an int, a float, or a list of the form (elt1 elt2
- * ...).  */
-void
-com_set(wordlist *wl)
+/* The set command.
+ *
+ * Syntax is set [var [= val] ...]
+ *
+ * var is the name of the variable to be defined. Quoting allows special
+ *      characters such as = to be included as part of the name.
+ * val may be a string, an int, a float, a bool, or a list of the form
+ * ( elt1 ... ).
+ *
+ * With no var value, all variables that are currently defined are printed
+ * Without the "= val" portion, the variable becomes a Boolean set to true.
+ * Lists must have spaces both after the leading '(' and before the
+ *      trailing ')'. Individual elements may be of any type.
+ * Quoted expressions are taken to be strings in all cases and quoting a
+ *      grouping character ("(" or ")") suppresses its special properties.
+ *      Further, words "(" and ")" within a list are ordinary words.
+ *
+ * This function may alter the input wordlist, but on return its resources
+ * can be freed in the normal manner.
+ */
+void com_set(wordlist *wl)
 {
-    struct variable *vars, *oldvar;
-
-    if (wl == NULL) {
+    /* Handle case of printing defined variables */
+    if (wl == (wordlist *) NULL) {
         cp_vprint();
         return;
     }
-    vars = cp_setparse(wl);
+
+    struct variable *oldvar;
+
+    struct variable *vars = cp_setparse(wl);
 
     /* This is sort of a hassle... */
     while (vars) {
@@ -46,11 +64,13 @@ com_set(wordlist *wl)
         cp_vset(vars->va_name, vars->va_type, s);
         oldvar = vars;
         vars = vars->va_next;
-        /* va: avoid memory leak: free oldvar carefully */
-        tfree(oldvar->va_name);
-        if (oldvar->va_type == CP_STRING)
-            tfree(oldvar->va_string); /* copied in cp_vset */
+
+        /* Free allocations associated with the current variable */
+        txfree(oldvar->va_name);
+        if (oldvar->va_type == CP_STRING){
+            txfree(oldvar->va_string); /* copied in cp_vset */
+        }
         /* don't free oldvar->va_list! This structure is used furthermore! */
-        tfree(oldvar);
+        txfree(oldvar);
     }
 }

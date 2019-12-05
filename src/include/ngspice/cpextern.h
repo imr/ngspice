@@ -57,6 +57,7 @@ extern FILE *cp_curin;
 extern FILE *cp_curout;
 extern FILE *cp_curerr;
 extern bool cp_debug;
+extern bool cp_no_histsubst; /* controlled by "no_histsubst" true/false */
 extern char cp_amp;
 extern char cp_gt;
 extern char cp_lt;
@@ -162,7 +163,7 @@ extern bool cp_noglob;
 extern bool cp_nonomatch;
 extern char cp_dol;
 extern void cp_remvar(char *varname);
-extern void cp_vset(char *varname, enum cp_types type, void *value);
+void cp_vset(const char *varname, enum cp_types type, const void *value);
 extern struct variable *cp_setparse(wordlist *wl);
 extern wordlist *vareval(char *string);
 extern char *span_var_expr(char *t);
