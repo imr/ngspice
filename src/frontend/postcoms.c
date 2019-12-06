@@ -444,8 +444,9 @@ com_write(wordlist *wl)
     else
         names = ft_getpnames(&all, TRUE);
 
-    if (names == NULL)
+    if (names == NULL) {
         return;
+    }
 
     for (pn = names; pn; pn = pn->pn_next) {
         d = ft_evaluate(pn);
@@ -731,22 +732,27 @@ com_transpose(wordlist *wl)
     struct dvec *d;
     char *s;
 
-    while (wl) {
+    /* For each vector named in the wordlist, perform the transform to
+     * it and the vectors associated with it through v_link2 */
+    for ( ; wl != (wordlist *) NULL; wl = wl->wl_next) {
         s = cp_unquote(wl->wl_word);
         d = vec_get(s);
         tfree(s); /*DG: Avoid Memory Leak */
-        if (d == NULL)
+        if (d == NULL) {
+            /* Print error message, but continue with other vectors */
             fprintf(cp_err, "Error: no such vector as %s.\n", wl->wl_word);
-        else
+       }
+        else {
+            /* Transpose the named vector and vectors tied to it
+             * through v_link2 */
             while (d) {
                 vec_transpose(d);
                 d = d->v_link2;
             }
-        if (wl->wl_next == NULL)
-            return;
-        wl = wl->wl_next;
-    }
-}
+        }
+    } /* end of loop over words in wordlist */
+} /* end of function com_transpose */
+
 
 
 /* Take a set of vectors and form a new vector of the nth elements of each. */
@@ -758,19 +764,23 @@ com_cross(wordlist *wl)
     struct pnode *pn, *names;
     int i, ind;
     bool comp = FALSE;
-    double *d;
 
     newvec = wl->wl_word;
     wl = wl->wl_next;
     s = wl->wl_word;
-    if ((d = ft_numparse(&s, FALSE)) == NULL) {
-        fprintf(cp_err, "Error: bad number %s\n", wl->wl_word);
-        return;
+
+    {
+        double val;
+        if (ft_numparse(&s, FALSE, &val) <= 0) {
+            fprintf(cp_err, "Error: bad index value %s\n", wl->wl_word);
+            return;
+        }
+        if ((ind = (int) val) < 0) {
+            fprintf(cp_err, "Error: badstrchr %d\n", ind);
+            return;
+        }
     }
-    if ((ind = (int)*d) < 0) {
-        fprintf(cp_err, "Error: badstrchr %d\n", ind);
-        return;
-    }
+
     wl = wl->wl_next;
     names = ft_getpnames(wl, TRUE);
     for (pn = names; pn; pn = pn->pn_next) {

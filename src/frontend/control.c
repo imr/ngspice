@@ -29,13 +29,13 @@ static void cp_free_control(void); /* needed by resetcontrol */
  * more clever. */
 
 bool cp_cwait = FALSE;
-char *cp_csep = ";";
+char *cp_csep = ";"; /* character that separates commands */
 
 bool cp_dounixcom = FALSE;
 
 /* We have to keep the control structures in a stack, so that when we
  * do a 'source', we can push a fresh set onto the top...  Actually
- * there have to be two stacks -- one for the pointer to the list of
+ * there has to be two stacks -- one for the pointer to the list of
  * control structs, and one for the 'current command' pointer...  */
 struct control *control[CONTROLSTACKSIZE];
 struct control *cend[CONTROLSTACKSIZE];
@@ -62,12 +62,13 @@ int stackp = 0;
 static char *noredirect[] = { "stop", "define", NULL };
 
 
-static struct control *
-findlabel(char *s, struct control *ct)
+/* This function returns the (first) structure wit the label s */
+static struct control *findlabel(const char *s, struct control *ct)
 {
     while (ct) {
-        if ((ct->co_type == CO_LABEL) && eq(s, ct->co_text->wl_word))
+        if ((ct->co_type == CO_LABEL) && eq(s, ct->co_text->wl_word)) {
             break;
+        }
         ct = ct->co_next;
     }
     return (ct);
@@ -116,7 +117,7 @@ ctl_free(struct control *ctrl)
 
     wl_free(ctrl->co_cond);
     ctrl->co_cond = NULL;
-    tfree(ctrl->co_foreachvar);
+    txfree(ctrl->co_foreachvar);
     ctrl->co_foreachvar = NULL;
     wl_free(ctrl->co_text);
     ctrl->co_text = NULL;
@@ -288,8 +289,9 @@ doblock(struct control *bl, int *num)
     switch (bl->co_type) {
     case CO_WHILE:
         if (!bl->co_children) {
-            fprintf(cp_err, "Warning: Executing empty 'while' block.\n");
-            fprintf(cp_err, "         (Use a label statement as a no-op to suppress this warning.)\n");
+            fprintf(cp_err, "Warning: Executing empty 'while' block.\n"
+                    "         (Use a label statement as a no-op "
+                    "to suppress this warning.)\n");
         }
         while (bl->co_cond && cp_istrue(bl->co_cond)) {
             if (!bl->co_children) cp_periodic();  /*CDHW*/
@@ -558,11 +560,11 @@ doblock(struct control *bl, int *num)
 char *
 get_alt_prompt(void)
 {
-    int i = 0, j;
+    int i = 0;
     static char buf[MAX_CHEVRONS + 2];  /* includes terminating space & null */
     struct control *c;
 
-    /* if nothing on the command stack return NULL */
+    /* If nothing on the command stack return NULL */
     if (cend[stackp] == NULL)
         return NULL;
 
@@ -570,8 +572,9 @@ get_alt_prompt(void)
     for (c = cend[stackp]->co_parent; c; c = c->co_parent)
         i++;
 
-    if (i <= 0)
+    if (i == 0) {
         return NULL;
+    }
 
     /* Avoid overflow of buffer and
        indicate when we've limited the chevrons by starting with a '+' */
@@ -583,15 +586,19 @@ get_alt_prompt(void)
     }
 
     /* return one chevron per command stack depth */
-    for (j = 1; j < i; j++)
-        buf[j] = '>';
+    {
+        int j;
+        for (j = 1; j < i; j++)
+            buf[j] = '>';
 
-    /* Add space and terminate */
-    buf[j] = ' ';
-    buf[j + 1] = '\0';
+        /* Add space and terminate */
+        buf[j] = ' ';
+        buf[j + 1] = '\0';
+    }
 
     return buf;
-}
+} /* end of function get_alt_prompt */
+
 
 
 /* Get a command. This does all the bookkeeping things like turning
@@ -601,8 +608,9 @@ getcommand(char *string)
 {
     wordlist *wlist;
 
-    if (cp_debug)
+    if (cp_debug) {
         fprintf(cp_err, "calling getcommand %s\n", string ? string : "");
+    }
 
 #if !defined(HAVE_GNUREADLINE) && !defined(HAVE_BSDEDITLINE)
     /* set cp_altprompt for use by the lexer - see parser/lexical.c */
@@ -617,7 +625,7 @@ getcommand(char *string)
         wl_print(wlist, stdout);
         putc('\n', stdout);
     }
-    return (wlist);
+    return wlist;
 }
 
 
@@ -628,7 +636,6 @@ cp_evloop(char *string)
     wordlist *wlist, *ww, *freewl;
     struct control *x;
     char *i;
-    int nn;
 
 #define newblock                                                \
     do {                                                        \
@@ -653,8 +660,9 @@ cp_evloop(char *string)
             /* User just typed return. */
             wl_free(wlist); /* va, avoid memory leak */
             if (string) {
-                return (1);
-            } else {
+                return 1;
+            }
+            else {
                 cp_event--;
                 continue;
             }
@@ -708,22 +716,23 @@ cp_evloop(char *string)
                 cend[stackp]->co_numtimes = -1;
             } else {
                 char *s;
-                double *dd;
+                double val;
 
                 struct wordlist *t;  /*CDHW*/
                 /*CDHW wlist = cp_variablesubst(cp_bquote(cp_doglob(wl_copy(wlist)))); Wrong order? Leak? CDHW*/
                 t = cp_doglob(cp_bquote(cp_variablesubst(wl_copy(wlist)))); /*CDHW leak from cp_doglob? */
                 s = t->wl_next->wl_word;
 
-                dd = ft_numparse(&s, FALSE);
-                if (dd) {
-                    if (*dd < 0) {
+                if (ft_numparse(&s, FALSE, &val) > 0) {
+                    /* Can be converted to int */
+                    if (val < 0) {
                         fprintf(cp_err,
                                 "Error: can't repeat a negative number of times\n");
-                        *dd = 0.0;
+                        val = 0.0;
                     }
-                    cend[stackp]->co_numtimes = (int) *dd;
-                } else {
+                    cend[stackp]->co_numtimes = (int) val;
+                }
+                else {
                     fprintf(cp_err,
                             "Error: bad repeat argument %s\n",
                             t->wl_next->wl_word); /* CDHW */
@@ -805,7 +814,7 @@ cp_evloop(char *string)
                 cend[stackp]->co_numtimes = 1;
             }
         } else if (eq(wlist->wl_word, "end")) {
-            /* Throw away this thing. */
+            /* Throw away this thing if not in a block. */
             if (!cend[stackp]->co_parent) {
                 fprintf(stderr, "Error: no block to end.\n");
                 cend[stackp]->co_type = CO_UNFILLED;
@@ -824,8 +833,7 @@ cp_evloop(char *string)
             }
         } else if (eq(wlist->wl_word, "else")) {
             if (!cend[stackp]->co_parent ||
-                (cend[stackp]->co_parent->co_type !=
-                 CO_IF)) {
+                    (cend[stackp]->co_parent->co_type != CO_IF)) {
                 fprintf(stderr, "Error: misplaced else.\n");
                 cend[stackp]->co_type = CO_UNFILLED;
             } else {
@@ -847,7 +855,7 @@ cp_evloop(char *string)
              * that gotos at the top level will work.
              */
             do {
-                nn = 0; /* CDHW */
+                int nn = 0; /* CDHW */
                 i = doblock(x, &nn);
                 switch (*i) {
                 case NORMAL:
@@ -873,8 +881,8 @@ cp_evloop(char *string)
         wl_free(freewl);
         if (string)
             return (1); /* The return value is irrelevant. */
-    }
-}
+    } /* end of unconditional loop */
+} /* end of function cp_evloop */
 
 
 /* This blows away the control structures... */
