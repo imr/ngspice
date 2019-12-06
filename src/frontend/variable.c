@@ -77,11 +77,13 @@ wordlist *cp_varwl(struct variable *var)
     }
 
     return wl_cons(buf, NULL);
-}
+} /* end of function cp_varwl */
+
 
 
 /* Set a variable. */
-void cp_vset(const char *varname, enum cp_types type, const void *value)
+void cp_vset(const char *varname, enum cp_types type,
+        const void *value)
 {
     struct variable *v, *u, *w;
     int i;
@@ -387,14 +389,12 @@ static void update_option_variables(const char *sz_var_name,
    Generate variables (real, string or list) 
    Value in double quotes will always become string variable.
    Without quotes tokens like 2N5401_C will be evaluated as real number 2n, i.e. 2e-9 */
-struct variable *
-cp_setparse(wordlist *wl)
+struct variable *cp_setparse(wordlist *wl)
 {
     char *name = NULL, *val, *copyval, *s, *ss;
-    double *td;
     struct variable *listv = NULL, *vv, *lv = NULL;
     struct variable *vars = NULL;
-    int balance;
+
     /* Step through the list of words. Words may be various combinations of
      * the information needed to set a variable. For example, to set x to
      * the value 3, the data could be supplied as one word x=3, two words
@@ -415,21 +415,22 @@ cp_setparse(wordlist *wl)
             continue;
         }
 
-        if (wl && eq(wl->wl_word, "=")) {
+        if (wl && eq(wl->wl_word, "=")) { /* name<space>= */
             wl = wl->wl_next;
             if (wl == NULL) {
                 fprintf(cp_err, "Error: bad set form.\n");
                 tfree(name);    /*DG: cp_unquote Memory leak*/
                 if (ft_stricterror)
                     controlled_exit(EXIT_BAD);
-                return (NULL);
+                return NULL;
             }
             val = wl->wl_word;
             wl = wl->wl_next;
-        } else if (wl && (*wl->wl_word == '=')) {
+        } else if (wl && (*wl->wl_word == '=')) { /* name<space>=val */
             val = wl->wl_word + 1;
             wl = wl->wl_next;
         } else if ((s = strchr(name, '=')) != NULL) {
+            /* name=<space>value or name=value */
             val = s + 1;
             *s = '\0';
             if (*val == '\0') {
@@ -438,18 +439,19 @@ cp_setparse(wordlist *wl)
                     tfree(name); /*DG: cp_unquote Memory leak: free name before exiting*/
                     if (ft_stricterror)
                         controlled_exit(EXIT_BAD);
-                    return (NULL);
+                    return NULL;
                 } else {
                     val = wl->wl_word;
                     wl = wl->wl_next;
                 }
             }
-        } else {
+        }
+        else {
             fprintf(cp_err, "Error: bad set form.\n");
             tfree(name); /*DG: cp_unquote Memory leak: free name befor exiting */
             if (ft_stricterror)
                 controlled_exit(EXIT_BAD);
-            return (NULL);
+            return NULL;
         }
 
         /* if val is in double quotes, treat as string */
@@ -463,11 +465,12 @@ cp_setparse(wordlist *wl)
         strcpy(val, copyval);
         tfree(copyval);
 
+        /* Test for a list variable */
         if (eq(val, "(")) {
             /* The beginning of a list... We have to walk down the
              * list until we find a close paren... If there are nested
              * ()'s, treat them as tokens...  */
-            balance = 1;
+            int balance = 1;
             while (wl && wl->wl_word) {
                 if (eq(wl->wl_word, "(")) {
                     balance++;
@@ -481,11 +484,13 @@ cp_setparse(wordlist *wl)
                     vv = var_alloc_string(NULL, copy(ss), NULL);
                 }
                 else {
-                    td = ft_numparse(&ss, FALSE);
-                    if (td)
-                        vv = var_alloc_real(NULL, *td, NULL);
-                    else
+					double dbl_val;
+                    if (ft_numparse(&ss, FALSE, &dbl_val) >= 0) {
+                        vv = var_alloc_real(NULL, dbl_val, NULL);
+                    }
+                    else {
                         vv = var_alloc_string(NULL, copy(ss), NULL);
+                    }
                 }
                 tfree(copyval);
                 if (listv) {
@@ -501,9 +506,10 @@ cp_setparse(wordlist *wl)
                 tfree(name); /* va: cp_unquote memory leak: free name before exiting */
                 if (ft_stricterror)
                     controlled_exit(EXIT_BAD);
-                return (NULL);
+                return NULL;
             }
 
+            /* Add list variable to linked list of variables. */
             vars = var_alloc_vlist(copy(name), listv, vars);
 
             wl = wl->wl_next;
@@ -516,10 +522,10 @@ cp_setparse(wordlist *wl)
             vars = var_alloc_string(copy(name), copy(copyval), vars);
         }
         else {
-            td = ft_numparse(&ss, FALSE);
-            if (td) {
+            double dbl_val;
+            if (ft_numparse(&ss, FALSE, &dbl_val) >= 0) {
                 /*** We should try to get CP_NUM's... */
-                vars = var_alloc_real(name, *td, vars);
+                vars = var_alloc_real(name, dbl_val, vars);
             }
             else {
                 vars = var_alloc_string(name, copy(val), vars);
@@ -532,8 +538,9 @@ cp_setparse(wordlist *wl)
     if (name) {
         tfree(name);
     }
-    return (vars);
-}
+    return vars;
+} /* end of function cp_setparse */
+
 
 
 /* free the struct variable. The type of the union is given by va_type */
@@ -543,15 +550,15 @@ free_struct_variable(struct variable *v)
     while (v) {
         struct variable *next_v = v->va_next;
         if (v->va_name)
-            tfree(v->va_name);
+            txfree(v->va_name);
         if (v->va_type == CP_LIST)
             free_struct_variable(v->va_vlist);
         if (v->va_type == CP_STRING)
-            tfree(v->va_string);
-        tfree(v);
+            txfree(v->va_string);
+        txfree(v);
         v = next_v;
     }
-}
+} /* end of function free_struct_variable */
 
 
 void cp_remvar(char *varname)
@@ -770,11 +777,19 @@ char cp_dol = '$';
 /* Non-alphanumeric characters that may appear in variable names. < is very
  * special...
  */
-
 #define VALIDCHARS "$-_<#?@.()[]&"
 
-char *
-span_var_expr(char *t)
+/* This function determines the first character after a variable name and
+ * returns its address.
+ *
+ * Parameter
+ * t: Address of the variable name whose end is to be found. This is the
+ *      address of the first character following the leading $
+ *
+ * Return value
+ * Address of the first character after the variable name.
+ */
+char *span_var_expr(char *t)
 {
     int parenthesis = 0;
     int brackets = 0;
@@ -805,12 +820,11 @@ span_var_expr(char *t)
         }
 
     return t;
-}
+} /* end of function span_var_expr */
 
 
 /* Substitute variable name by its value and restore to wordlist */
-wordlist *
-cp_variablesubst(wordlist *wlist)
+wordlist *cp_variablesubst(wordlist *wlist)
 {
     wordlist *wl;
 
@@ -849,24 +863,26 @@ cp_variablesubst(wordlist *wlist)
                 tfree(x);
             } else {
                 wordlist *next = wl->wl_next;
-                if (wlist == wl)
+                if (wlist == wl) {
                     wlist = next;
+                }
                 wl_delete_slice(wl, next);
-                if (!next)
+                if (!next) { /* wordlist ends after wl */
                     return wlist;
+                }
                 wl = next;
                 i = 0;
             }
-        }
-    }
+        } /* end of loop over parts of wordlist node */
+    } /* end of loop over words in wordlist */
 
-    return (wlist);
-}
+    return wlist;
+} /* end of function cp_variablesubst */
+
 
 
 /* Evaluate a variable. */
-wordlist *
-vareval(char *string)
+wordlist *vareval(/* NOT const */ char *string)
 {
     struct variable *v, *vfree = NULL;
     wordlist *wl;
@@ -887,8 +903,8 @@ vareval(char *string)
 
     case '$':
         wl = wl_cons(tprintf("%d", getpid()), NULL);
-        tfree(oldstring);
-        return (wl);
+        txfree(oldstring);
+        return wl;
 
     case '<':
         (void) fflush(cp_out);
@@ -903,8 +919,8 @@ vareval(char *string)
         /* This is a hack. */
         if (!wl->wl_word)
             wl->wl_word = copy("");
-        tfree(oldstring);
-        return (wl);
+        txfree(oldstring);
+        return wl;
 
     case '?':
         string++;
@@ -918,8 +934,8 @@ vareval(char *string)
         }
         wl = wl_cons(copy(v ? "1" : "0"), NULL);
         free_struct_variable(vfree);
-        tfree(oldstring);
-        return (wl);
+        txfree(oldstring);
+        return wl;
 
     case '#':
         string++;
@@ -933,23 +949,26 @@ vareval(char *string)
         }
         if (!v) {
             fprintf(cp_err, "Error: %s: no such variable.\n", string);
-            tfree(oldstring);
-            return (NULL);
+            txfree(oldstring);
+            return NULL;
         }
-        if (v->va_type == CP_LIST)
-            for (v = v->va_vlist, i = 0; v; v = v->va_next)
+        if (v->va_type == CP_LIST) {
+            for (v = v->va_vlist, i = 0; v; v = v->va_next) {
                 i++;
-        else
+            }
+        }
+        else {
             i = (v->va_type != CP_BOOL);
+        }
         wl = wl_cons(tprintf("%d", i), NULL);
-        tfree(oldstring);
+        txfree(oldstring);
         free_struct_variable(vfree);
-        return (wl);
+        return wl;
 
     case '\0':
         wl = wl_cons(copy("$"), NULL);
-        tfree(oldstring);
-        return (wl);
+        txfree(oldstring);
+        return wl;
     }
 
     vfree = NULL; //just in case ...
@@ -980,8 +999,8 @@ vareval(char *string)
     }
     if (!v) {
         fprintf(cp_err, "Error: %s: no such variable.\n", string);
-        tfree(oldstring);
-        return (NULL);
+        txfree(oldstring);
+        return NULL;
     }
     wl = cp_varwl(v);
     free_struct_variable(vfree);
@@ -1000,7 +1019,7 @@ vareval(char *string)
             r = vareval(range);
             if (!r || r->wl_next) {
                 fprintf(cp_err, "Error: %s: illegal index.\n", string);
-                tfree(oldstring);
+                txfree(oldstring);
                 wl_free(r);
                 return NULL;
             }
@@ -1018,8 +1037,9 @@ vareval(char *string)
         up--, low--;
         wl = wl_range(wl, low, up);
         wl_free(r);
-    }
-    tfree(oldstring);
+    } /* end of case of range given for variable */
+
+    txfree(oldstring);
     return (wl);
 }
 

@@ -21,8 +21,8 @@ typedef enum {
     MEASUREMENT_FAILURE = 1
 } MEASURE_VAL_T;
 
-#define MEASURE_DEFAULT -1
-#define MEASURE_LAST_TRANSITION  -2
+#define MEASURE_DEFAULT (-1)
+#define MEASURE_LAST_TRANSITION (-2)
 
 typedef struct measure
 {
@@ -1152,7 +1152,7 @@ measure_parse_stdParams(
 {
     int pCnt;
     char *p, *pName, *pValue;
-    double *engVal, engVal1;
+    double engVal1;
 
     pCnt = 0;
     while (wl != wlBreak) {
@@ -1176,12 +1176,12 @@ measure_parse_stdParams(
 
         if (strcasecmp(pValue, "LAST") == 0) {
             engVal1 = MEASURE_LAST_TRANSITION;
-        } else {
-            if ((engVal = ft_numparse(&pValue, FALSE)) == NULL) {
+        }
+        else {
+            if (ft_numparse(&pValue, FALSE, &engVal1) < 0) {
                 sprintf(errbuf, "bad syntax of ??\n");
                 return 0;
             }
-            engVal1 = *engVal;  // What is this ??
         }
 
         if (strcasecmp(pName, "RISE") == 0) {
@@ -1257,8 +1257,6 @@ measure_parse_find(
     )
 {
     int pCnt;
-    char *p, *pName, *pVal;
-    double *engVal, engVal1;
 
     meas->m_vec = NULL;
     meas->m_vec2 = NULL;
@@ -1280,7 +1278,7 @@ measure_parse_find(
 
     pCnt = 0;
     while (wl != wlBreak) {
-        p = wl->wl_word;
+        char *p = wl->wl_word;
 
         if (pCnt == 0) {
             meas->m_vec = cp_unquote(wl->wl_word);
@@ -1288,8 +1286,8 @@ measure_parse_find(
             if (cieq("ac", meas->m_analysis) || cieq("sp", meas->m_analysis))
                 correct_vec(meas);
         } else if (pCnt == 1) {
-            pName = strtok(p, "=");
-            pVal = strtok(NULL, "=");
+            char * const pName = strtok(p, "=");
+            char * const pVal = strtok(NULL, "=");
 
             if (pVal == NULL) {
                 sprintf(errbuf, "bad syntax of WHEN\n");
@@ -1297,16 +1295,12 @@ measure_parse_find(
             }
 
             if (strcasecmp(pName, "AT") == 0) {
-                if ((engVal = ft_numparse(&pVal, FALSE)) == NULL) {
+                if (ft_numparse((char **) &pVal, FALSE, &meas->m_at) < 0) {
                     sprintf(errbuf, "bad syntax of WHEN\n");
                     return 0;
                 }
-
-                engVal1 = *engVal;
-
-                meas->m_at = engVal1;
-
-            } else {
+            }
+            else {
                 sprintf(errbuf, "bad syntax of WHEN\n");
                 return 0;
             }

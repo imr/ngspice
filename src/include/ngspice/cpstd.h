@@ -12,10 +12,7 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
 #define ngspice_CPSTD_H
 
 
-#ifndef FILE
-/* XXX Bogus */
-#  include <stdio.h>
-#endif
+#include <stdio.h>
 
 /* FIXME: Split this file and adjust all callers to use new header files */
 #if 0
@@ -23,6 +20,7 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
 #endif
 
 #include "ngspice/bool.h"
+#include "ngspice/dstring.h"
 #include "ngspice/wordlist.h"
 #include "ngspice/complex.h"
 
@@ -30,8 +28,12 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 extern char *tildexpand(char *string);
 extern void printnum(char *buf, double num);
+int printnum_ds(DSTRING *p_ds, double num);
 extern int cp_numdgt;
 
 extern void cp_printword(char *string, FILE *fp);
+
+
+
 
 #endif
