@@ -46,7 +46,6 @@ com_stop(wordlist *wl)
     struct dbcomm *d = NULL;
     char *s, buf[64];
     int i;
-    double *val;
 
     while (wl) {
         if (thisone == NULL) {
@@ -80,10 +79,9 @@ com_stop(wordlist *wl)
             /* cp_lexer(string) will not discriminate '=', so we have
                to do it here */
             if (strchr(wl->wl_next->wl_word, '=') &&
-                (!(wl->wl_next->wl_next) ||
-                 strstr(wl->wl_next->wl_next->wl_word, "when") ||
-                 strstr(wl->wl_next->wl_next->wl_word, "after")))
-            {
+                    (!(wl->wl_next->wl_next) ||
+                    strstr(wl->wl_next->wl_next->wl_word, "when") ||
+                    strstr(wl->wl_next->wl_next->wl_word, "after"))) {
                 /* we have vec=val in a single word */
                 wordlist *wln;
                 char **charr = TMALLOC(char*, 4);
@@ -98,17 +96,23 @@ com_stop(wordlist *wl)
                 wln = wl_build((const char * const *) charr);
                 wl_splice(wl->wl_next, wln);
             }
+
             /* continue with parsing the enhanced wordlist */
             if (wl->wl_next->wl_next && wl->wl_next->wl_next->wl_next) {
                 wl = wl->wl_next;
                 d->db_number = debugnumber;
                 d->db_type = DB_STOPWHEN;
                 s = wl->wl_word;
-                val = ft_numparse(&s, FALSE);
-                if (val)
-                    d->db_value1 = *val;
-                else
-                    d->db_nodename1 = copy(wl->wl_word);
+
+                {
+                    double val;
+                    if (ft_numparse(&s, FALSE, &val) >= 0) {
+                        d->db_value1 = val;
+                    }
+                    else {
+                        d->db_nodename1 = copy(wl->wl_word);
+                    }
+                }
                 wl = wl->wl_next;
 
                 /* Now get the condition */
@@ -130,17 +134,23 @@ com_stop(wordlist *wl)
 
                 /* Now see about the second one. */
                 s = wl->wl_word;
-                val = ft_numparse(&s, FALSE);
-                if (val)
-                    d->db_value2 = *val;
-                else
+
+                {
+                    double val;
+                    if (ft_numparse(&s, FALSE, &val) >= 0) {
+                        d->db_value2 = val;
+                    }
+                    else {
                     d->db_nodename2 = copy(wl->wl_word);
+                    }
+                }
                 wl = wl->wl_next;
-            } else {
+            }
+            else {
                 goto bad;
             }
-        }
-    }
+        } /* end of case of word "when" */
+    } /* end of loop over wordlist */
 
     if (thisone) {
         if (dbs) {
@@ -159,11 +169,11 @@ com_stop(wordlist *wl)
 
 bad:
     fprintf(cp_err, "Syntax error parsing breakpoint specification.\n");
-}
+} /* end of funtion com_stop */
+
 
 
 /* Trace a node (have wrd_point print it). Usage is "trace node ..."*/
-
 void
 com_trce(wordlist *wl)
 {

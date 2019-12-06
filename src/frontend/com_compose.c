@@ -1,5 +1,7 @@
 /* The 'compose' command.  This is a more powerful and convenient form
  * of the 'let' command.  */
+#include <math.h>       /* log10 */
+
 #include "ngspice/ngspice.h"
 #include "ngspice/complex.h"
 #include "ngspice/dvec.h"
@@ -14,7 +16,6 @@
 #include "com_compose.h"
 #include "completion.h"
 
-#include <math.h>       /* log10 */
 
 /* Copy the data from a vector into a buffer with larger dimensions. */
 static void
@@ -103,8 +104,7 @@ com_compose(wordlist *wl)
     int  log = 0, dec = 0, oct = 0, gauss = 0, unif = 0;
     int i;
 
-    char *s, *var, *val;
-    double *td, tt;
+    double tt;
     double *data = NULL;
     ngcomplex_t *cdata = NULL;
     int length = 0;
@@ -227,9 +227,11 @@ com_compose(wordlist *wl)
         }
 
         length *= blocksize;
-    } else {
+    }
+    else {
         /* Parse the line... */
         while (wl) {
+            char *s, *var, *val;
             if ((s = strchr(wl->wl_word, '=')) != NULL && s[1]) {
                 /* This is var=val. */
                 *s = '\0';
@@ -278,109 +280,124 @@ com_compose(wordlist *wl)
             }
             if (cieq(var, "start")) {
                 startgiven = TRUE;
-                if ((td = ft_numparse(&val, FALSE)) == NULL) {
+                if (ft_numparse(&val, FALSE, &start) < 0) {
                     fprintf(cp_err,
                             "Error: compose -> bad parm %s = %s\n", var, val);
                     goto done;
                 }
-                start = *td;
-            } else if (cieq(var, "stop")) {
+            }
+            else if (cieq(var, "stop")) {
                 stopgiven = TRUE;
-                if ((td = ft_numparse(&val, FALSE)) == NULL) {
+                if (ft_numparse(&val, FALSE, &stop) < 0) {
                     fprintf(cp_err,
                             "Error: compose -> bad parm %s = %s\n", var, val);
                     goto done;
                 }
-                stop = *td;
-            } else if (cieq(var, "step")) {
+            }
+            else if (cieq(var, "step")) {
                 stepgiven = TRUE;
-                if ((td = ft_numparse(&val, FALSE)) == NULL) {
+                if (ft_numparse(&val, FALSE, &step) < 0) {
                     fprintf(cp_err,
                             "Error: compose -> bad parm %s = %s\n", var, val);
                     goto done;
                 }
-                step = *td;
-            } else if (cieq(var, "center")) {
+            }
+            else if (cieq(var, "center")) {
                 centergiven = TRUE;
-                if ((td = ft_numparse(&val, FALSE)) == NULL) {
+                if (ft_numparse(&val, FALSE, &center) < 0) {
                     fprintf(cp_err,
                             "Error: compose -> bad parm %s = %s\n", var, val);
                     goto done;
                 }
-                center = *td;
-            } else if (cieq(var, "span")) {
+            }
+            else if (cieq(var, "span")) {
                 spangiven = TRUE;
-                if ((td = ft_numparse(&val, FALSE)) == NULL) {
+                if (ft_numparse(&val, FALSE, &span) < 0) {
                     fprintf(cp_err,
                             "Error: compose -> bad parm %s = %s\n", var, val);
                     goto done;
                 }
-                span = *td;
-            } else if (cieq(var, "mean")) {
+            }
+            else if (cieq(var, "mean")) {
                 meangiven = TRUE;
-                if ((td = ft_numparse(&val, FALSE)) == NULL) {
+                if (ft_numparse(&val, FALSE, &mean) < 0) {
                     fprintf(cp_err,
                             "Error: compose -> bad parm %s = %s\n", var, val);
                     goto done;
                 }
-                mean = *td;
-            } else if (cieq(var, "sd")) {
+            }
+            else if (cieq(var, "sd")) {
                 sdgiven = TRUE;
-                if ((td = ft_numparse(&val, FALSE)) == NULL) {
+                if (ft_numparse(&val, FALSE, &sd) < 0) {
                     fprintf(cp_err,
                             "Error: compose -> bad parm %s = %s\n", var, val);
                     goto done;
                 }
-                sd = *td;
-            } else if (cieq(var, "lin")) {
+            }
+            else if (cieq(var, "lin")) {
                 lingiven = TRUE;
-                if ((td = ft_numparse(&val, FALSE)) == NULL) {
+                if (ft_numparse(&val, FALSE, &lin) < 0) {
                     fprintf(cp_err,
                             "Error: compose -> bad parm %s = %s\n", var, val);
                     goto done;
                 }
-                lin = *td;
-            } else if (cieq(var, "log")) {
+            }
+            else if (cieq(var, "log")) {
+                double dbl_val;
                 loggiven = TRUE;
-                if ((td = ft_numparse(&val, FALSE)) == NULL) {
+                if (ft_numparse(&val, FALSE, &dbl_val) <= 0) {
+                    /* Cannot convert value to int */
                     fprintf(cp_err,
                             "Error: compose -> bad parm %s = %s\n", var, val);
                     goto done;
                 }
-                log = (int)(*td);
-            } else if (cieq(var, "dec")) {
+                log = (int) dbl_val;
+            }
+            else if (cieq(var, "dec")) {
+                double dbl_val;
                 decgiven = TRUE;
-                if ((td = ft_numparse(&val, FALSE)) == NULL) {
+                if (ft_numparse(&val, FALSE, &dbl_val) <= 0) {
+                    /* Cannot convert value to int */
                     fprintf(cp_err,
                             "Error: compose -> bad parm %s = %s\n", var, val);
                     goto done;
                 }
-                dec = (int)(*td);
-            } else if (cieq(var, "oct")) {
+                dec = (int) dbl_val;
+            }
+            else if (cieq(var, "oct")) {
+                double dbl_val;
                 octgiven = TRUE;
-                if ((td = ft_numparse(&val, FALSE)) == NULL) {
+                if (ft_numparse(&val, FALSE, &dbl_val) <= 0) {
+                    /* Cannot convert value to integer */
                     fprintf(cp_err,
                             "Error: compose -> bad parm %s = %s\n", var, val);
                     goto done;
                 }
-                oct = (int)(*td);
-            } else if (cieq(var, "gauss")) {
+                oct = (int) dbl_val;
+            }
+            else if (cieq(var, "gauss")) {
+                double dbl_val;
                 gaussgiven = TRUE;
-                if ((td = ft_numparse(&val, FALSE)) == NULL) {
+                if (ft_numparse(&val, FALSE, &dbl_val) <= 0) {
+                    /* Cannot convert value to int */
                     fprintf(cp_err,
                             "Error: compose -> bad parm %s = %s\n", var, val);
                     goto done;
                 }
-                gauss = (int)(*td);
-            } else if (cieq(var, "unif")) {
+                gauss = (int) dbl_val;
+            }
+            else if (cieq(var, "unif")) {
+                double dbl_val;
                 unifgiven = TRUE;
-                if ((td = ft_numparse(&val, FALSE)) == NULL) {
+                if (ft_numparse(&val, FALSE, &dbl_val)<= 0) {
+                    /* cannot convert to int */
                     fprintf(cp_err,
                             "Error: compose -> bad parm %s = %s\n", var, val);
                     goto done;
                 }
-                unif = (int)(*td);
-            } else {
+                unif = (int) dbl_val;
+            }
+            else {
                 fprintf(cp_err, "Error: compose -> bad parm %s\n", var);
                 goto done;
             }
@@ -405,7 +422,8 @@ com_compose(wordlist *wl)
             fprintf(cp_err,
                     "Error: compose -> can have at most one of (lin, log, dec, oct, unif, gauss)\n");
             goto done;
-        } else if (lingiven + loggiven + decgiven + octgiven + unifgiven + gaussgiven == 0) {
+        }
+        else if (lingiven + loggiven + decgiven + octgiven + unifgiven + gaussgiven == 0) {
             /* Hmm, if we have a start, stop, and step we're ok. */
             if (startgiven && stopgiven && stepgiven) {
                 lingiven = TRUE;
@@ -415,7 +433,8 @@ com_compose(wordlist *wl)
                 }
                 lin = (stop - start) / step + 1.;
                 stepgiven = FALSE;  /* Problems below... */
-            } else {
+            }
+            else {
                 fprintf(cp_err,
                         "Error: compose -> either one of (lin, log, dec, oct, unif, gauss) must be given, or all\n");
                 fprintf(cp_err,
@@ -463,10 +482,12 @@ com_compose(wordlist *wl)
                 step = (stop - start) / (lin - 1.0);
             }
 
-            for (i = 0, tt = start; i < length; i++, tt += step)
+            for (i = 0, tt = start; i < length; i++, tt += step) {
                 data[i] = tt;
+        }
 
-        } else if (loggiven || decgiven || octgiven) {
+        }
+        else if (loggiven || decgiven || octgiven) {
             /* Create a log sweep... */
             if (centergiven && spangiven) {
                 if (center <= span/2.0) {
@@ -505,7 +526,8 @@ com_compose(wordlist *wl)
             for (i = 0; i < length; i++)
                 data[i] = start * pow(stop/start, (double)i/(log-1.0));
 
-        } else if (unifgiven) {
+        }
+        else if (unifgiven) {
             /* Create a set of uniform distributed values... */
             if (startgiven || stopgiven) {
                 if (!startgiven || !stopgiven) {
@@ -541,7 +563,8 @@ com_compose(wordlist *wl)
             for (i = 0; i < length; i++)
                 data[i] = mean + span * 0.5 * drand();
 
-        } else if (gaussgiven) {
+        }
+        else if (gaussgiven) {
             /* Create a gaussian distribution... */
             if (gauss <= 0) {
                 fprintf(cp_err,
@@ -558,8 +581,9 @@ com_compose(wordlist *wl)
             }
             length = gauss;
             data = TMALLOC(double, length);
-            for (i = 0; i < length; i++)
+            for (i = 0; i < length; i++) {
                 data[i] = mean + sd * gauss1();
+            }
         }
     }
 
@@ -589,5 +613,5 @@ com_compose(wordlist *wl)
 
 done:
     free_pnode(names);
-    tfree(resname);
-}
+    txfree(resname);
+} /* end of function com_compose */

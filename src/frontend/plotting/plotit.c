@@ -29,7 +29,6 @@ static bool sameflag;
 static double *
 getlims(wordlist *wl, char *name, int number)
 {
-    double *d;
     wordlist *beg, *wk;
     int n;
 
@@ -43,39 +42,35 @@ getlims(wordlist *wl, char *name, int number)
 
     wk = beg->wl_next;
 
-    d = TMALLOC(double, number);
+    double * const d = TMALLOC(double, number); /* alloc for returned vals */
 
     for (n = 0; n < number; n++) {
 
         char *ss;
-        double *td;
 
         if (!wk) {
             fprintf(cp_err,
                     "Syntax error: not enough parameters for \"%s\".\n", name);
             txfree(d);
-            return NULL;
+            return (double *) NULL;
         }
 
         ss = wk->wl_word;
-        td = ft_numparse(&ss, FALSE);
-
-        if (!td) {
+        if (ft_numparse(&ss, FALSE, d + n) < 0) { /* put val in d[n] */
             fprintf(cp_err,
                     "Syntax error: bad parameters for \"%s\".\n", name);
             txfree(d);
-            return NULL;
+            return (double *) NULL;
         }
 
-        d[n] = *td;
-
         wk = wk->wl_next;
-    }
+    } /* end of loop over numbers */
 
-    wl_delete_slice(beg, wk);
+    wl_delete_slice(beg, wk); /* remove param name and its value nodes */
 
     return d;
-}
+} /* end of function getlims */
+
 
 
 /* Extend a data vector to length by replicating the last element, or

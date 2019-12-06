@@ -12,6 +12,7 @@ Modified: 2000 AlansFixes
 #include <assert.h>
 #include "ngspice/cpdefs.h"
 #include "ngspice/ftedefs.h"
+#include "ngspice/dstring.h"
 #include "ngspice/dvec.h"
 #include "ngspice/fteinp.h"
 #include "ngspice/sim.h"
@@ -200,8 +201,9 @@ ft_cktcoms(bool terse)
     all.wl_next = NULL;
     all.wl_word = "all";
 
-    if (!ft_curckt)
+    if (!ft_curckt) {
         return 1;
+    }
 
     plot_cur = setcplot("op");
     if (!ft_curckt->ci_commands && !plot_cur)
@@ -249,8 +251,9 @@ ft_cktcoms(bool terse)
                     }
                 fprintf(cp_out, "\n");
 
-                if (!ft_nomod)
+                if (!ft_nomod) {
                     com_showmod(&all);
+                }
                 com_show(&all);
             }
         }
@@ -271,8 +274,10 @@ ft_cktcoms(bool terse)
     /* Now all the '.' lines */
     while (coms) {
         command = cp_lexer(coms->wl_word);
-        if (!command)
+        if (!command || command->wl_word == (char *) NULL) {
+            /* Line not converted to a wordlist */
             goto bad;
+        }
         if (eq(command->wl_word, ".width")) {
             do
                 command = command->wl_next;
@@ -360,12 +365,11 @@ ft_cktcoms(bool terse)
                    !eq(command->wl_word, ".op") &&
                    // !eq(command->wl_word, ".measure") &&
                    !ciprefix(".meas", command->wl_word) &&
-                   !eq(command->wl_word, ".tf"))
-        {
+                   !eq(command->wl_word, ".tf")) {
             goto bad;
         }
-        coms = coms->wl_next;
-    }
+        coms = coms->wl_next; /* go to next line */
+    } /* end of loop over '.' lines */
 
 nocmds:
     /* Now the node table
@@ -399,7 +403,7 @@ bad:
 
 
 /* These routines make sure that the arguments to .plot and .print in
- * spice2 decks are acceptable to spice3. The things we look for are:
+ * spice2 decks are acceptable to spice3. The things we look for are
  *  trailing (a,b) in .plot -> xlimit a b
  *  vm(x) -> mag(v(x))
  *  vp(x) -> ph(v(x))
@@ -410,60 +414,70 @@ bad:
 static void
 fixdotplot(wordlist *wl)
 {
-    char *s;
-    char numbuf[128]; /* Printnum Fix */
-    double *d, d1, d2;
+    /* Create a buffer for printing numbers */
+    DS_CREATE(numbuf, 100);
 
     while (wl) {
         wl->wl_word = fixem(wl->wl_word);
 
-        /* Is this a trailing (a,b) ? Note that we require it to be
-         * one word.
-         */
+        /* Is this a trailing "(a,b)"? Note that we require it to be
+         * one word. */
         if (!wl->wl_next && (*wl->wl_word == '(')) {
-            s = wl->wl_word + 1;
-            d = ft_numparse(&s, FALSE);
-            if (*s != ',') {
+            double d1, d2;
+            char *s = wl->wl_word + 1;
+            if (ft_numparse(&s, FALSE, &d1) < 0 ||
+                    *s != ',') {
                 fprintf(cp_err, "Error: bad limits \"%s\"\n",
                         wl->wl_word);
-                return;
+                goto EXITPOINT;
             }
-            d1 = *d;
-            s++;
-            d = ft_numparse(&s, FALSE);
-            if ((*s != ')') || s[1]) {
+            s++; /* step past comma */
+            if (ft_numparse(&s, FALSE, &d2) < 0 ||
+                    *s != ')' || s[1] != '\0') { /* must end with ")" */
                 fprintf(cp_err, "Error: bad limits \"%s\"\n",
                         wl->wl_word);
-                return;
+                goto EXITPOINT;
             }
-            d2 = *d;
+
             tfree(wl->wl_word);
             wl->wl_word = copy("xlimit");
-            printnum(numbuf, d1);
-            wl_append_word(NULL, &wl, copy(numbuf));
-            printnum(numbuf, d2);
-            wl_append_word(NULL, &wl, copy(numbuf));
-        }
+            ds_clear(&numbuf);
+            if (printnum_ds(&numbuf, d1) != 0) {
+                fprintf(cp_err, "Unable to print limit 1: %g\n", d1);
+                goto EXITPOINT;
+            }
+            wl_append_word(NULL, &wl, copy(ds_get_buf(&numbuf)));
+            ds_clear(&numbuf);
+            if (printnum_ds(&numbuf, d2) != 0) {
+                fprintf(cp_err, "Unable to print limit 2: %g\n", d2);
+                goto EXITPOINT;
+            }
+            wl_append_word(NULL, &wl, copy(ds_get_buf(&numbuf)));
+        } /* end of case of start of potential (a,b) */
         wl = wl->wl_next;
-    }
-}
+    } /* end of loop over words */
+
+EXITPOINT:
+    ds_free(&numbuf); /* Free DSTRING resources */
+} /* end of function fixdotplot */
 
 
-static void
-fixdotprint(wordlist *wl)
+
+static void fixdotprint(wordlist *wl)
 {
+    /* Process each word in the wordlist */
     while (wl) {
         wl->wl_word = fixem(wl->wl_word);
         wl = wl->wl_next;
     }
-}
+} /* end of function fixdotprint */
 
 
-static char *
-fixem(char *string)
+
+static char *fixem(char *string)
 {
     char buf[BSIZE_SP], *s, *t;
-    char *ss = string;          /* Get rid of ss ? */
+    char *ss = string; /* save addr of string in case it is freed */
 
     if (ciprefix("v(", string) &&strchr(string, ',')) {
         for (s = string; *s && (*s != ','); s++)
@@ -550,14 +564,15 @@ fixem(char *string)
         string += 2;
         (void) sprintf(buf, "%s#branch", string);
     } else {
-        return (string);
+        return string;
     }
 
-    tfree(ss);
+    txfree(ss);
     string = copy(buf);
 
-    return (string);
-}
+    return string;
+} /* end of function fixem */
+
 
 
 wordlist *
@@ -611,7 +626,8 @@ gettoks(char *s)
             sprintf(buf, "%s#branch", l + 1);
             wl->wl_word = copy(buf);
             c = r = NULL;
-        } else {
+        }
+        else {
             wl->wl_word = copy(l + 1);
         }
 
@@ -622,7 +638,11 @@ gettoks(char *s)
             prevp = &wl->wl_next;
         }
         tfree(t);
-    }
-    tfree(s0);
+    } /* end of loop parsing string */
+
+    txfree(s0);
     return list;
-}
+} /* end of function gettoks */
+
+
+

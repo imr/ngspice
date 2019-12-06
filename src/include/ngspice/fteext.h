@@ -245,7 +245,7 @@ extern void ft_polyderiv(double *coeffs, int degree);
 /* numparse.c */
 
 extern bool ft_strictnumparse;
-double *ft_numparse(char **s, bool whole);
+int ft_numparse(char **s, bool whole, double *p_val);
 
 /* options.c */
 

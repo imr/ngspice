@@ -241,7 +241,7 @@ com_psd(wordlist *wl)
 {
     ngcomplex_t **fdvec = NULL;
     double  **tdvec = NULL;
-    double  *freq, *win = NULL, *time, *ave;
+    double  *freq, *win = NULL, *time;
     double  span, noipower;
     int ngood, fpts, i, j, jj, length, smooth, hsmooth;
     char    *s;
@@ -278,12 +278,15 @@ com_psd(wordlist *wl)
 
     // get filter length from parameter input
     s = wl->wl_word;
-    ave = ft_numparse(&s, FALSE);
-    if (!ave || (*ave < 1.0)) {
-        fprintf(cp_out, "Number of averaged data points:  %d\n", 1);
-        smooth = 1;
-    } else {
-        smooth = (int)(*ave);
+    {
+        double val;
+        if (ft_numparse(&s, FALSE, &val) <= 0 || val < 1.0) {
+            fprintf(cp_out, "Number of averaged data points:  1\n");
+            smooth = 1;
+        }
+        else {
+            smooth = (int) val;
+        }
     }
 
     wl = wl->wl_next;
