@@ -509,15 +509,15 @@ defsubckt(dico_t *dico, const struct card *card)
     while (*s && (*s != '.'))
         s++;                    /* skip 1st dotword */
 
-    while (*s && (*s > ' '))
+    while (*s && ((unsigned char) (*s) > ' '))
         s++;
 
-    while (*s && (*s <= ' '))
+    while (*s && ((unsigned char) (*s) <= ' '))
         s++;                    /* skip blank */
 
     s_end = s;
 
-    while (*s_end && (*s_end > ' '))
+    while (*s_end && ((unsigned char) (*s_end) > ' '))
         s_end++;
 
     if (s_end > s) {
@@ -574,7 +574,7 @@ keyword(const char *keys, const char *s, const char *s_end)
         const char *p = s;
         while ((p < s_end) && (*p == *keys))
             p++, keys++;
-        if ((p >= s_end) && (*keys <= ' '))
+        if ((p >= s_end) && ((unsigned char) (*keys) <= ' '))
             return j;
         keys = strchr(keys, ' ');
         if (!keys)
@@ -723,7 +723,7 @@ fetchoperator(dico_t *dico,
         level = 8;
     } else {
         state = S_init;
-        if (c > ' ')
+        if ((unsigned char) c > ' ')
             error = message(dico, "Syntax error: letter [%c]\n", c);
     }
 
@@ -859,7 +859,7 @@ formula(dico_t *dico, const char *s, const char *s_end, bool *perror)
     }
 
     /* trim trailing whitespace */
-    while ((s_end > s) && (s_end[-1] <= ' '))
+    while ((s_end > s) && ((unsigned char) (s_end[-1]) <= ' '))
         s_end--;
 
     state = S_init;
@@ -1222,7 +1222,7 @@ getexpress(nupa_type *type, DSTRINGPTR tstr_p, const char *s)
     const char *p;
     nupa_type tpe;
 
-    while ((s < s_end - 1) && (*s <= ' '))
+    while ((s < s_end - 1) && ((unsigned char)(* s) <= ' '))
         s++;                    /*white space ? */
 
     if (*s == '"') {            /* string constant */
@@ -1235,7 +1235,7 @@ getexpress(nupa_type *type, DSTRINGPTR tstr_p, const char *s)
 
         do
             p++;
-        while ((p < s_end) && (*p <= ' '));
+        while ((p < s_end) && ((unsigned char)(*p) <= ' '));
 
         tpe = NUPA_STRING;
 
@@ -1309,11 +1309,11 @@ nupa_assignment(dico_t *dico, const char *s, char mode)
     DS_CREATE(tstr, 200); /* temporary dstrings */
     DS_CREATE(ustr, 200);
 
-    while ((p < s_end) && (*p <= ' '))
+    while ((p < s_end) && ((unsigned char) (*p) <= ' '))
         p++;
 
     if (*p == '.')            /* skip any dot keyword */
-        while (*p > ' ')
+        while ((unsigned char) (*p) > ' ')
             p++;
 
     while (p < s_end) {
@@ -1509,7 +1509,7 @@ nupa_subcktcall(dico_t *dico, const char *s, const char *x,
                     jp = getexpress(NULL, &ustr, jp);
                 } else {
                     jp++;
-                    if (*kp > ' ')
+                    if ((unsigned char) (*kp) > ' ')
                         message(dico, "Subckt call, symbol %c not understood\n", *kp);
                 }
 
