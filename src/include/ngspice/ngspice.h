@@ -241,6 +241,7 @@ extern double x_atanh(double);
 #define HUGE HUGE_VAL
 #endif
 
+void findtok_noparen(char **p_str, char **p_token, char **p_token_end);
 extern char *gettok_noparens(char **s);
 extern char *gettok_node(char **s);
 extern char *gettok_iv(char **s);
