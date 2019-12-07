@@ -2,14 +2,14 @@
 .control
 
 * for CYGWIN
-setcf xfont='Noto Sans CJK JP Medium'
+setcs xfont='Noto Sans CJK JP Medium'
 set xfont_size=16
 * for LINUX
-*setcf xfont='Noto Sans Korean'
+*setcs xfont='Noto Sans Korean'
 
 let x = vector(5)
 let y = exp(x)
-setcf wfont='Arial'
+setcs wfont='Arial'
 set wfont_size=18
 plot y vs x xlabel 'Labellisé X' ylabel 'Labellisé Y: ÜüÖöÄäÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ' title 'Titré 11'
 plot y vs x xlabel '我能吞下玻璃而不伤身体' ylabel 'Я могу есть стекло, оно мне не вредит' title 'Titré 12 أنا قادر على أكل الزجاج و هذا لا يؤلمني.'
@@ -17,15 +17,15 @@ plot y vs x+0.001 xlabel 'Labellisé X' ylabel 'Labellisé Y' title 'Titré 13 �
 plot y vs x+0.001 xlabel 'Titré 私はガラスを食べられます。それは私を傷つけません' ylabel '나는 유리를 먹을 수 있어요. 그래도 아프지 않아요' title 'Titré 14 我能吞下玻璃而不伤身体。' loglog
 
 * for CYGWIN
-*setcf xfont='Adobe Times'
+*setcs xfont='Adobe Times'
 * for LINUX
-setcf xfont='Efont Biwidth'
+setcs xfont='Efont Biwidth'
 plot y vs x+0.001 xlabel 'Labellisé X' ylabel ' أنا قادر على أكل الزجاج و هذا لا يؤلمني.' title 'Titré 15' loglog
 
 write D:/Spice_general/tests/utf-8/'стекло'/'있어요'/ext-utf8-1.out  x y
 
-setcf sourcepath = ( 'D:/Spice_general/tests/utf-8/стекло/있어요' )
-*setcf sourcepath = ( './utf-8/стекло/있어요' )
+setcs sourcepath = ( 'D:/Spice_general/tests/utf-8/стекло/있어요' )
+*setcs sourcepath = ( './utf-8/стекло/있어요' )
 source ext-utf8-2.cir
 
 *source 'D:/Spice_general/tests/utf-8/стекло/있어요/ext-utf8-2.cir'
