@@ -17,3 +17,9 @@ Better looking fonts are now used for labelling the axes.
 Variables xbrushwidth and gridwidth (to be set e.g. in
 .spiceinit) allow setting separately the linewidths of the
 graph (xbrushwidth) and the grid (gridwidth).
+
+Slight modification of the Windows GUI string window to
+enhance readability.
+
+Windows GUI is now more responsive during lengthy op
+calculations.
