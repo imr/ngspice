@@ -81,7 +81,7 @@ stripsomespace(DSTRINGPTR dstr_p, bool incontrol)
     char *s = ds_get_buf(dstr_p);
 
     int i = 0;
-    while (s[i] && (s[i] <= ' '))
+    while (s[i] && ((unsigned char)s[i] <= ' '))
         i++;
 
     if ((i > 0) && s[i] && strchr(markers, s[i]))
@@ -116,7 +116,7 @@ stripbraces(DSTRINGPTR dstr_p)
 
         pscopy(&tstr, s, brace);
 
-        if (brace[-1] > ' ')
+        if ((unsigned char)brace[-1] > ' ')
             cadd(&tstr, ' ');
 
         cadd(&tstr, ' ');
@@ -127,7 +127,7 @@ stripbraces(DSTRINGPTR dstr_p)
         }
         cadd(&tstr, ' ');
 
-        if (*j_ptr >= ' ')
+        if ((unsigned char)(* j_ptr) >= ' ')
             cadd(&tstr, ' ');
 
         int ilen = (int) ds_get_length(&tstr);
