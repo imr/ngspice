@@ -4,6 +4,7 @@
    Copyright: Holger Vogt
    Stand: 09.01.2018
    Stand: 20.07.2019
+   Stand: 07.12.2019
    Modified BSD license
 */
 
@@ -181,7 +182,7 @@ SetSource(char *Name)
 #else
         wchar_t *NameW;
         NameW = TMALLOC(wchar_t, 2 * strlen(Name) + 1);
-        MultiByteToWideChar(CP_UTF8, 0, Name, -1, NameW, 2 * strlen(Name) + 1);
+        MultiByteToWideChar(CP_UTF8, 0, Name, -1, NameW, 2 * (int)strlen(Name) + 1);
         SetWindowTextW(hwSource, NameW);
         tfree(NameW);
 #endif
@@ -210,7 +211,7 @@ SetAnalyse(char *Analyse,   /* in: analysis type */
 
     WaitForIdle();
 
-    if ((DecaPercent == OldPercent) && !strcmp(OldAn, Analyse))
+    if (((DecaPercent == OldPercent) && !strcmp(OldAn, Analyse)) || !strcmp(Analyse, "or"))
         return;
 
     /* get actual time */
@@ -398,7 +399,7 @@ DisplayText(void)
 #else
     wchar_t *TWBuffer;
     TWBuffer = TMALLOC(wchar_t, 2 * strlen(TBuffer) + 1);
-    if (MultiByteToWideChar(CP_UTF8, 0, TBuffer, -1, TWBuffer, 2 * strlen(TBuffer) + 1) == 0)
+    if (MultiByteToWideChar(CP_UTF8, 0, TBuffer, -1, TWBuffer, 2 * (int)strlen(TBuffer) + 1) == 0)
         swprintf(TWBuffer, 2 * strlen(TBuffer), L"UTF-8 to UTF-16 conversion failed with 0x%x\n%hs could not be converted\n", GetLastError(), TBuffer);
     SetWindowTextW(twText, TWBuffer);
     tfree(TWBuffer);
@@ -1213,7 +1214,7 @@ wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR
         goto THE_END;
     {
         HDC stringDC;
-        TEXTMETRIC tm;
+        TEXTMETRICW tm;
         stringDC = GetDC(swString);
         if (stringDC) {
             if (GetTextMetricsW(stringDC, &tm))
