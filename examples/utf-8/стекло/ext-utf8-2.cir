@@ -4,12 +4,12 @@ set hcopydevtype = postscript
 set hcopypscolor=1
 set hcopyscale=0.5
 set color2=rgb:F/0/0
-setcf hcopyfont=Arial
+setcs hcopyfont=Arial
 set hcopyfontsize=14
 
 let x = vector(5)
 let y = exp(x)
-setcf wfont=Arial
+setcs wfont=Arial
 set wfont_size=18
 plot y vs x xlabel 'Labellisé X' ylabel 'Labellisé Y: ÜüÖöÄäÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ' title 'Titré'
 plot y vs x xlabel '我能吞下玻璃而不伤身体' ylabel 'Я могу есть стекло, оно мне не вредит' title ' أنا قادر على أكل الزجاج و هذا لا يؤلمني.'

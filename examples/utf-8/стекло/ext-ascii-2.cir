@@ -1,4 +1,6 @@
 * test de titré
+* file is encoded as ASCII !
+* It will fail in utf8 mode.
 
 .control
 set encoding=extended_ascii
@@ -6,12 +8,12 @@ set hcopydevtype = postscript
 set hcopypscolor=1
 set hcopyscale=0.5
 set color2=rgb:F/0/0
-setcf hcopyfont="Garamond"
+setcs hcopyfont="Garamond"
 set hcopyfontsize=14
 
 let x = vector(5)
 let y = exp(x)
-setcf wfont="Garamond Fett"
+setcs wfont="Garamond Fett"
 set wfont_size=16
 plot y vs x xlabel 'Labellisé X' ylabel 'Labellisé Y' title 'Titré'
 plot y vs x xlabel 'Labellisé X' title 'Titré'
