@@ -245,6 +245,8 @@ GL_Arc(int x0, int y0, int r, double theta, double delta_theta)
 int
 GL_Text(char *text, int x, int y, int angle)
 {
+    NG_IGNORE(angle);
+
     /* move to (x, y) */
     NG_IGNORE(angle);
 
