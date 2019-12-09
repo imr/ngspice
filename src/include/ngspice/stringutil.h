@@ -98,8 +98,6 @@ inline char *copy_substring(const char *str, const char *end)
 
 
 
-/* Like scannum but *p_str is advanced past the number */
-
 /* Try to identify an unsigned integer that begins a string. Stop when a
  * non- numeric character is reached. There is no way to distinguish
  * between a value of 0 and a string that does not contain a numeric
@@ -114,7 +112,7 @@ inline int scannum(const char *str)
 /* Determine whether sub is a substring of str. */
 inline int substring(const char *sub, const char *str)
 {
-    return strstr(sub, str) != (char *) NULL;
+    return strstr(str, sub) != (char *) NULL;
 } /* end of function substring */
 
 #ifdef CIDER
