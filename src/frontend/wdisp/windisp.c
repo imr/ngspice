@@ -142,18 +142,6 @@ WIN_Init(void)
         else isblack = TRUE;
     }
 
-    /* get linewidth information from spinit */
-    if (!cp_getvar("xbrushwidth", CP_NUM, &linewidth, 0))
-        linewidth = 0;
-    if (linewidth < 0)
-        linewidth = 0;
-
-    /* get linewidth for grid from spinit */
-    if (!cp_getvar("gridwidth", CP_NUM, &gridlinewidth, 0))
-        gridlinewidth = linewidth;
-    if (gridlinewidth < 0)
-        gridlinewidth = 0;
-
     /* only for the first time: */
     if (!IsRegistered) {
 
@@ -807,6 +795,18 @@ WIN_NewViewport(GRAPH *graph)
     graph->absolute.ypos   = 0;
     graph->absolute.width  = wd->Area.right;
     graph->absolute.height = wd->Area.bottom;
+
+    /* get linewidth information from .spiceinit or .control section */
+    if (!cp_getvar("xbrushwidth", CP_NUM, &linewidth, 0))
+        linewidth = 0;
+    if (linewidth < 0)
+        linewidth = 0;
+
+    /* get linewidth information from .spiceinit or .control section */
+    if (!cp_getvar("gridwidth", CP_NUM, &gridlinewidth, 0))
+        gridlinewidth = 0;
+    if (gridlinewidth < 0)
+        gridlinewidth = 0;
 
     /* wait until the window is really there */
     WaitForIdle();

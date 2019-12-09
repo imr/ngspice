@@ -152,7 +152,7 @@ X11_Init(void)
         return (1);
     }
 
-    if (cp_getvar("old_x11", CP_BOOL, NULL))
+    if (cp_getvar("old_x11", CP_BOOL, NULL, 0))
         old_x11 = TRUE;
 
 #  ifdef DEBUG
@@ -477,7 +477,7 @@ X11_NewViewport(GRAPH *graph)
     }
 
         /* font size */
-    if (!cp_getvar("xfont_size", CP_NUM, &xfont_size))
+    if (!cp_getvar("xfont_size", CP_NUM, &xfont_size, 0))
         xfont_size = 16;
 
     if(old_x11) {

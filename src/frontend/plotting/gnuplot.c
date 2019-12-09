@@ -101,10 +101,11 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
     /* get linewidth for plotting the graph from .spiceinit */
     if (!cp_getvar("xbrushwidth", CP_NUM, &linewidth, 0))
         linewidth = 1;
-    if (linewidth < 1) linewidth = 1;
+    if (linewidth < 1)
+        linewidth = 1;
     /* get linewidth for grid from .spiceinit */
     if (!cp_getvar("gridwidth", CP_NUM, &gridlinewidth, 0))
-        gridlinewidth = linewidth;
+        gridlinewidth = 1;
     if (gridlinewidth < 1)
         gridlinewidth = 1;
 
