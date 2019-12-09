@@ -181,7 +181,7 @@ extern void cp_periodic(void);
 extern void ft_cpinit(void);
 extern struct comm *cp_coms;
 extern char *cp_program;
-extern struct variable *cp_enqvar(char *word, int *tbfreed);
+extern struct variable *cp_enqvar(const char *word, int *tbfreed);
 extern struct variable *cp_usrvars(void);
 int cp_usrset(struct variable *var, bool isset);
 extern void fatal(void);
