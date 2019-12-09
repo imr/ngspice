@@ -6,7 +6,7 @@
 # Install gcc, bison, flex, libtool, autoconf, automake, 
 # libx11 and libx11-dev (headers), libXaw and libXaw-dev, libreadline and dev
 # Declare 'compile_linux.sh' executable and start compiling with
-# './compile_linux.sh' or './compile_min.sh 64' from the ngspice directory.
+# './compile_linux.sh' or './compile_linux.sh 64' from the ngspice directory.
 # Options:
 # --adms and --enable-adms will install extra HICUM, EKV and MEXTRAM models via the 
 # adms interface. You need to download and install the *.va files via ng-adms-va.tgz 
@@ -69,8 +69,7 @@ echo "compiling (see make.log)"
 make 2>&1 -j8 | tee make.log
 exitcode=${PIPESTATUS[0]}
 if [ $exitcode -ne 0 ]; then  echo "make failed"; exit 1 ; fi
-# 32 bit: Install to C:\Spice
-# 64 bit: Install to C:\Spice64
+# Install to /usr/local
 echo "installing (see make_install.log)"
 make install 2>&1 | tee make_install.log 
 exitcode=${PIPESTATUS[0]}
