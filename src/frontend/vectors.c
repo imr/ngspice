@@ -441,36 +441,36 @@ struct dvec *vec_fromplot(char *word, struct plot *plot) {
         return d;
     }
 
-    /* Consider forms I(node) and i(node) -> node#branch */
-    if (tolower(word[0]) != (int) 'i') { /* Not i of I.* */
-        return (struct dvec *) NULL;
-    }
+    /* Forms I(node) and i(node) are converted to node#branch;
+     * forms x(node), x != i, x != I, and x != '(' are converted to node */
+    if (word[0] != '\0' && word[0] != '(') { /* 1 or more char, not '(' */
+        if (word[1] == '(') { /* x(, x != '(' */
+            const char * const p_last_close_paren = strrchr(word + 2, ')');
+            if (p_last_close_paren != (char *) NULL &&
+                    p_last_close_paren - word > (ptrdiff_t) 3 &&
+                    p_last_close_paren[1] == '\0') {
+                /* Of form x(node). Create node string. */
+                DS_CREATE(ds, 100);
+                const char * const node_start = word + 2;
+                bool ds_ok = ds_cat_mem(&ds, node_start,
+                        p_last_close_paren - node_start) == DS_E_OK;
+                /* If i(node) or I(node), append #branch */
+                if (tolower(word[0]) == (int) 'i') {
+                    /* i(node) or I(node) */
+                    ds_ok &= ds_cat_mem(&ds, "#branch", 7) == DS_E_OK;
+                }
+                if (!ds_ok) { /* Dstring error (allocation failure) */
+                    (void) fprintf(cp_err, "Unable to build vector name.\n");
+                }
+                else { /* name built OK */
+                    d = findvec(ds_get_buf(&ds), plot);
+                } /* end of case of vector name built OK */
+                ds_free(&ds);
+            } /* end of case of x(node) */
+        } /* end of case of x( */
+    } /* end of case of non-empty string and not leading '(' */
 
-    if (word[1] != '(') { /* Not i or I(.* */
-        return (struct dvec *) NULL;
-    }
-
-    {
-        const char * const p_node = word + 2;
-        const char *p_end = p_node + strlen(p_node);
-        if (*--p_end != ')') { /* Not i or I then '(' with a closing ')' */
-            return (struct dvec *) NULL;
-        }
-
-        /* Form is correct, so see if node#branch exists */
-        DS_CREATE(ds, 100);
-        if (ds_cat_mem(&ds, p_node, p_end - p_node) != DS_E_OK) {
-            controlled_exit(-1);
-        }
-        if (ds_cat_str(&ds, "#branch") != DS_E_OK) {
-            controlled_exit(-1);
-        }
-
-        d = findvec(ds_get_buf(&ds), plot);
-        ds_free(&ds);
-
-        return d;
-    }
+    return d;
 } /* end of function vec_fromplot */
 
 
