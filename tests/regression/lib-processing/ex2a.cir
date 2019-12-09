@@ -15,19 +15,32 @@ Vcheck2  9 check2  2.0V
 .control
 op
 
+let n_pass = 0
+
 echo "Note: v(check1) = $&v(check1)"
 echo "Note: v(check2) = $&v(check2)"
 
-if abs(v(check1)) > 1e-9
-  quit 1
+if abs(v(check1)) <= 1e-9
+    let n_pass = n_pass + 1
+else
+    echo "ERROR: Test 1 failed"
 end
 
-if abs(v(check2)) > 1e-9
-  quit 1
+
+if abs(v(check2)) <= 1e-9
+    let n_pass = n_pass + 1
+else
+    echo "ERROR: Test 2 failed"
 end
 
-echo "INFO: ok"
-quit 0
+
+if n_pass = 2
+    echo "INFO: ok"
+    quit 0
+end
+
+echo ERROR: $&n_pass of 2 tests passed
+quit 1
 
 .endc
 
