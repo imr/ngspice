@@ -484,11 +484,15 @@ struct variable *cp_setparse(wordlist *wl)
                     vv = var_alloc_string(NULL, copy(ss), NULL);
                 }
                 else {
-					double dbl_val;
-                    if (ft_numparse(&ss, FALSE, &dbl_val) >= 0) {
+                    double dbl_val;
+                    switch (ft_numparse(&ss, FALSE, &dbl_val)) {
+                    case 0: /* CP_REAL */
                         vv = var_alloc_real(NULL, dbl_val, NULL);
-                    }
-                    else {
+                        break;
+                    case +1: /* CP_NUM */
+                        vv = var_alloc_num(NULL, (int) dbl_val, NULL);
+                        break;
+                    default: /* CP_STRING */
                         vv = var_alloc_string(NULL, copy(ss), NULL);
                     }
                 }
@@ -523,13 +527,18 @@ struct variable *cp_setparse(wordlist *wl)
         }
         else {
             double dbl_val;
-            if (ft_numparse(&ss, FALSE, &dbl_val) >= 0) {
-                /*** We should try to get CP_NUM's... */
+            switch (ft_numparse(&ss, FALSE, &dbl_val)) {
+            case 0: /* CP_REAL */
                 vars = var_alloc_real(name, dbl_val, vars);
-            }
-            else {
+                break;
+            case +1: /* CP_NUM */
+                vars = var_alloc_num(name, (int) dbl_val, vars);
+                break;
+            default: /* CP_STRING */
                 vars = var_alloc_string(name, copy(val), vars);
             }
+
+
         }
         name = (char *) NULL; /* name given to variable via var_alloc_* */
         tfree(copyval); /*DG: must free ss any way to avoid cp_unquote memory leak */
