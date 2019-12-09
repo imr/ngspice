@@ -3,7 +3,7 @@
  * Wolfgang Muees 27.10.97
  * Holger Vogt  07.12.01
  * Holger Vogt  05.12.07
- * Holger Vogt  01.11.18						
+ * Holger Vogt  01.11.18
  */
 
 #include "ngspice/ngspice.h"
@@ -822,6 +822,18 @@ int WIN_NewViewport(GRAPH *graph)
     graph->absolute.ypos   = 0;
     graph->absolute.width  = wd->Area.right;
     graph->absolute.height = wd->Area.bottom;
+
+    /* get linewidth information from .spiceinit or .control section */
+    if (!cp_getvar("xbrushwidth", CP_NUM, &linewidth, 0))
+        linewidth = 0;
+    if (linewidth < 0)
+        linewidth = 0;
+
+    /* get linewidth information from .spiceinit or .control section */
+    if (!cp_getvar("gridwidth", CP_NUM, &gridlinewidth, 0))
+        gridlinewidth = 0;
+    if (gridlinewidth < 0)
+        gridlinewidth = 0;
 
     /* wait until the window is really there */
     WaitForIdle();
