@@ -236,7 +236,7 @@ int get_int_n(const char *str, size_t n, int *p_value)
 
     /* Test for overflow.
      * If negative, can be 1 greater (-2**n vs 2**n -1) */
-    if (value - f_neg > INT_MAX) {
+    if (value - f_neg > (unsigned int) INT_MAX) {
         return -2;
     }
 
