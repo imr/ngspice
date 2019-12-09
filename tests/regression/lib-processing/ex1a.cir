@@ -17,12 +17,13 @@ op
 
 echo "Note: v(check0) = $&v(check0)"
 
-if abs(v(check0)) > 1e-9
-  quit 1
+if abs(v(check0)) <= 1e-9
+    echo "INFO: ok"
+    quit 0
 end
 
-echo "INFO: ok"
-quit 0
+echo ERROR: Test failure
+quit 1
 
 .endc
 
