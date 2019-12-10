@@ -12,10 +12,6 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "variable.h"
 
 
-char cp_chars[128]; /* used in fcn cp_lexer() from lexical.c */
-
-static char *singlec = "<>;&";
-
 void
 cp_init(void)
 /* called from ft_cpinit() in cpitf.c.
@@ -25,13 +21,6 @@ cp_init(void)
    cp_curin, cp_curout, cp_curerr (defined in streams.c)
 */
 {
-    char *s;
-
-    memset(cp_chars, 0, 128);
-    for (s = singlec; *s; s++)
-        /* break word to right or left of characters <>;&*/
-        cp_chars[(int) *s] = (CPC_BRR | CPC_BRL);
-
     cp_vset("history", CP_NUM, &cp_maxhistlength);
 
     cp_curin = stdin;
