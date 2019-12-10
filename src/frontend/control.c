@@ -761,9 +761,12 @@ cp_evloop(char *string)
                 cend[stackp]->co_foreachvar =
                     copy(wlist->wl_word);
                 wlist = wlist->wl_next;
-            } else {
+            }
+            else {
                 fprintf(stderr,
                         "Error: missing foreach variable.\n");
+                wl_free(wlist);
+                continue;
             }
             wlist = cp_doglob(wlist);
             cend[stackp]->co_text = wl_copy(wlist);
