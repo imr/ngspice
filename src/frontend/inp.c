@@ -49,20 +49,24 @@ Author: 1985 Wayne A. Christopher
         line = NULL;                            \
     } while(0)
 
-static char *upper(register char *string);
-static bool doedit(char *filename);
+
 static struct card *com_options = NULL;
 static struct card *mc_deck = NULL;
 static struct card *recent_deck = NULL;
+
 static void cktislinear(CKTcircuit *ckt, struct card *deck);
-static void dotifeval(struct card *deck);
-static void recifeval(struct card *pdeck);
-
-static wordlist *inp_savecurrents(struct card *deck, struct card *options, wordlist *wl, wordlist *controls);
-
-static void eval_agauss(struct card *deck, char *fcn);
-void line_free_x(struct card *deck, bool recurse);
 void create_circbyline(char *line);
+static bool doedit(char *filename);
+static void dotifeval(struct card *deck);
+static void eval_agauss(struct card *deck, char *fcn);
+static wordlist *inp_savecurrents(struct card *deck, struct card *options,
+        wordlist *wl, wordlist *controls);
+void line_free_x(struct card *deck, bool recurse);
+static void recifeval(struct card *pdeck);
+static char *upper(register char *string);
+
+
+
 //void inp_source_recent(void);
 //void inp_mc_free(void);
 //void inp_remove_recent(void);
@@ -641,13 +645,14 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                 else
                     fprintf(cp_err, "Warning: misplaced .endc card\n");
             } else if (commands || prefix("*#", dd->line)) {
-                /* assemble all commands starting with pre_ after stripping pre_,
-                to be executed before circuit parsing */
+                /* assemble all commands starting with pre_ after stripping
+                 * pre_, to be executed before circuit parsing */
                 if (ciprefix("pre_", dd->line)) {
                     s = copy(dd->line + 4);
                     pre_controls = wl_cons(s, pre_controls);
                 }
-                /* assemble all other commands to be executed after circuit parsing */
+                /* assemble all other commands to be executed after circuit
+                 * parsing */
                 else {
                     /* special control lines outside of .control section*/
                     if (prefix("*#", dd->line)) {
@@ -673,14 +678,13 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                 if (!eq(s, ".plot") && !eq(s, ".print"))
                     inp_casefix(dd->line);
                 if (eq(s, ".width") ||
-                    ciprefix(".four", s) ||
-                    eq(s, ".plot") ||
-                    eq(s, ".print") ||
-                    eq(s, ".save") ||
-                    eq(s, ".op") ||
-                    ciprefix(".meas", s) ||
-                    eq(s, ".tf"))
-                {
+                        ciprefix(".four", s) ||
+                        eq(s, ".plot") ||
+                        eq(s, ".print") ||
+                        eq(s, ".save") ||
+                        eq(s, ".op") ||
+                        ciprefix(".meas", s) ||
+                        eq(s, ".tf")) {
                     wl_append_word(&wl_first, &end, copy(dd->line));
 
                     if (!eq(s, ".op") && !eq(s, ".tf") && !ciprefix(".meas", s)) {
@@ -782,8 +786,9 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                     cstoken[0] = gettok_char(&s, '=', FALSE, FALSE);
                     cstoken[1] = gettok_char(&s, '=', TRUE, FALSE);
                     cstoken[2] = gettok(&s);
-                    for (i = 3; --i >= 0;)
+                    for (i = 3; --i >= 0; ) {
                         wlist = wl_cons(cstoken[i], wlist);
+                    }
                     com_let(wlist);
                     wl_free(wlist);
                 }
@@ -1599,9 +1604,11 @@ com_source(wordlist *wl)
 }
 
 
-void
-inp_source(char *file)
+void inp_source(char *file)
 {
+    /* This wordlist is special in that nothing in it should be freed --
+     * the file name word is "borrowed" from the argument to file and
+     * the wordlist is allocated on the stack. */
     static struct wordlist wl = { NULL, NULL, NULL };
     wl.wl_word = file;
     com_source(&wl);
@@ -1612,8 +1619,7 @@ inp_source(char *file)
    for linear elements. If only linear elements are found,
    ckt->CKTisLinear is set to 1. Return immediately if a first
    non-linear element is found. */
-static void
-cktislinear(CKTcircuit *ckt, struct card *deck)
+static void cktislinear(CKTcircuit *ckt, struct card *deck)
 {
     struct card *dd;
     char firstchar;
@@ -1646,40 +1652,51 @@ cktislinear(CKTcircuit *ckt, struct card *deck)
 
 
 /* global array for assembling circuit lines entered by fcn circbyline
-   or receiving array from external caller. Array is created once per ngspice call.
-   Last line of the array has to get the value NULL */
+ * or receiving array from external caller. Array is created whenever
+ * a new deck is started. Last line of the array has to get the value NULL */
 char **circarray;
 
 
-void
-create_circbyline(char *line)
+void create_circbyline(char *line)
 {
-    static int linec = 0;
-    static int memlen = 256;
-    FILE *fp = NULL;
-    if (!circarray)
-        circarray = TMALLOC(char*, memlen);
-    char *p = skip_ws(line);
-    if (line < p)
-        memmove(line, p, strlen(p) + 1);
-    circarray[linec++] = line;
-    if (linec < memlen) {
-        if (ciprefix(".end", line) && (line[4] == '\0' || isspace_c(line[4]))) {
-            circarray[linec] = NULL;
-            inp_spsource(fp, FALSE, NULL, TRUE);
-            linec = 0;
+    static unsigned int linec = 0;
+    static unsigned int n_elem_alloc = 0;
+
+    /* Ensure up to 2 cards can be added */
+    if (n_elem_alloc < linec + 2) {
+        n_elem_alloc = n_elem_alloc == 0 ? 256 : 2 * n_elem_alloc;
+        circarray = TREALLOC(char *, circarray, n_elem_alloc);
+    }
+
+    /* Remove any leading whitespace by shifting */
+    char *p_src = skip_ws(line);
+    if (p_src != line) {
+        char *p_dst = line;
+        char ch_cur;
+        do {
+            ch_cur = *p_dst++ = *p_src++;
         }
+        while (ch_cur != '\0');
     }
-    else {
-        memlen += memlen;
-        circarray = TREALLOC(char*, circarray, memlen);
+
+    circarray[linec++] = line; /* add card to deck */
+
+    /* If the card added ended the deck, send it for processing and
+     * free the deck. The card allocations themselves will be freed
+     * elsewhere */
+    if (ciprefix(".end", line) && (line[4] == '\0' || isspace_c(line[4]))) {
+        circarray[linec] = NULL; /* termiante the deck */
+        inp_spsource((FILE *) NULL, FALSE, NULL, TRUE); /* process */
+        tfree(circarray); /* set to empty */
+        linec = 0;
+        n_elem_alloc = 0;
     }
-}
+} /* end of function create_circbyline */
+
 
 
 /* fcn called by command 'circbyline' */
-void
-com_circbyline(wordlist *wl)
+void com_circbyline(wordlist *wl)
 {
     /* undo the automatic wordline creation.
        wl_flatten allocates memory on the heap for each newline.
@@ -1693,8 +1710,7 @@ com_circbyline(wordlist *wl)
    numparam has evaluated .if('boolean expression') to
    .if (   1.000000000e+000  ) or .elseif (   0.000000000e+000  ).
    Evaluation is done recursively, starting with .IF, ending with .ENDIF*/
-static void
-recifeval(struct card *pdeck)
+static void recifeval(struct card *pdeck)
 {
     struct card *nd;
     int iftrue = 0, elseiftrue = 0, elsetrue = 0, iffound = 0, elseiffound = 0, elsefound = 0;
@@ -1753,8 +1769,7 @@ recifeval(struct card *pdeck)
 }
 
 /* Scan through all lines of the deck */
-static void
-dotifeval(struct card *deck)
+static void dotifeval(struct card *deck)
 {
     struct card *dd;
     char *dottoken;
@@ -1806,8 +1821,8 @@ dotifeval(struct card *deck)
        to the model parameters or device instance parameters.
 */
 
-static int
-inp_parse_temper(struct card *card, struct pt_temper **modtlist_p, struct pt_temper **devtlist_p)
+static int inp_parse_temper(struct card *card, struct pt_temper **modtlist_p,
+            struct pt_temper **devtlist_p)
 {
     int error = 0;
 
@@ -1930,8 +1945,8 @@ rem_tlist(struct pt_temper *p)
 }
 
 
-void
-inp_evaluate_temper(struct circ *circ)
+
+void inp_evaluate_temper(struct circ *circ)
 {
     struct pt_temper *d;
     double result;
@@ -1944,20 +1959,24 @@ inp_evaluate_temper(struct circ *circ)
         com_alter(d->wl);
     }
 
+    /* Step through the nodes of the linked list at circ->modtlist */
     for(d = circ->modtlist; d; d = d->next) {
         char *name = d->wl->wl_word;
         INPretrieve(&name, circ->ci_symtab);
         /* only evaluate models which have been entered into the
            hash table ckt->MODnameHash */
-        if (ft_sim->findModel (circ->ci_ckt, name) == NULL)
+        if (ft_sim->findModel (circ->ci_ckt, name) == NULL) {
             continue;
+        }
+
         IFeval((IFparseTree *) d->pt, 1e-12, &result, NULL, NULL);
         if (d->wlend->wl_word)
             tfree(d->wlend->wl_word);
         d->wlend->wl_word = tprintf("%g", result);
         com_altermod(d->wl);
     }
-}
+} /* end of funtion inp_evaluate_temper */
+
 
 
 /*
@@ -1998,10 +2017,12 @@ inp_savecurrents(struct card *deck, struct card *options, wordlist *wl, wordlist
                 break;
 
     /* if not found, then add '.save all' */
-    if (!p)
+    if (!p) {
         p = wl_cons(copy(".save all"), NULL);
-    else
+    }
+    else {
         p = NULL;
+    }
 
     /* Scan the deck for devices with their terminals.
      * We currently serve bipolars, resistors, MOS1, capacitors, inductors,
