@@ -84,11 +84,6 @@ struct alias {
     struct alias *al_prev;
 } ;
 
-/* The current record of what characters are special. */
-
-#define CPC_BRR  004 /* Break word to right of character. */
-#define CPC_BRL  010 /* Break word to left of character. */
-
 
 #define CT_ALIASES  1
 #define CT_LABEL    15
