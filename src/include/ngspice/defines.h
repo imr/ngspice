@@ -13,6 +13,10 @@
 #ifndef ngspice_DEFINES_H
 #define ngspice_DEFINES_H
 
+/* Floating point and integral limits */
+#include <float.h>
+#include <limits.h>
+
 /* 
  * Physical constants (const.h)
  */
@@ -20,6 +24,13 @@
   * CONSTepsSi02, CONSTmuZero, REFTEMP */
 #include "ngspice/const.h"
 
+/* These constants are defined by GCC in math.h, but they are not part of
+ * the ANSI C standard. The #ifndefs will prevent warnings regarding macro
+ * redefinitions if this file is included AFTER math.h. However, if the
+ * order is reversed, the warnings will occur. Thus, they introduce a header
+ * order dependency. A better solution would be to rename the macros to
+ * something like NGM_* (ngspice math) throughout the source code. Then there
+ * would be no header ordering dependency. */
 #ifndef M_PI
 #define M_PI       CONSTpi
 #endif
@@ -37,60 +48,43 @@
  *  IEEE Floating point
  */
 
-#define MAX_EXP_ARG	709.0
-
-#ifndef DBL_EPSILON
-# define DBL_EPSILON	2.2204460492503131e-16
-#endif
-#ifndef DBL_MAX
-# define DBL_MAX	1.79769313486231e+308
-#endif
-#ifndef DBL_MIN
-# define DBL_MIN	2.22507385850721e-308
-#endif
-#ifndef SHRT_MAX
-# define SHRT_MAX	32766
-#endif
-#ifndef INT_MAX
-# define INT_MAX	2147483646
-#endif
-#ifndef LONG_MAX
-# define LONG_MAX	2147483646
-#endif
-
-#define MAXPOSINT	INT_MAX
+/* Largest exponent such that exp(MAX_EXP_ARG) <= DBL_MAX
+ * Actual max is ln(DBL_MAX) = 709.78. Unsure if there was any reason
+ * for setting the value lower */
+#define MAX_EXP_ARG 709.0
 
 
 
 /* Standard initialisation file name */
-#define INITSTR		".spiceinit"
+#define INITSTR            ".spiceinit"
 
 /* Alternate initialisation file name */
-#define ALT_INITSTR	"spice.rc"	
+#define ALT_INITSTR         "spice.rc"
 
 #if defined(__MINGW32__) || defined(_MSC_VER) || defined (HAS_WINGUI)
-#define DIR_PATHSEP	"\\"
-#define DIR_TERM	'\\'
-#define DIR_PATHSEP_LINUX	"/"
-#define DIR_TERM_LINUX	'/'
-#define DIR_CWD		"."
+#define DIR_PATHSEP         "\\"
+#define DIR_TERM            '\\'
+#define DIR_PATHSEP_LINUX   "/"
+#define DIR_TERM_LINUX      '/'
+#define DIR_CWD             "."
 
-#define TEMPFORMAT	"%s%d.tmp"
+#define TEMPFORMAT          "%s%d.tmp"
+
 /*
-#define SYSTEM_PLOT5LPR	"lpr -P%s -g %s"
-#define SYSTEM_PSLPR	"lpr -P%s %s"
-#define SYSTEM_MAIL	"Mail -s \"%s (%s) Bug Report\" %s"
+#define SYSTEM_PLOT5LPR     "lpr -P%s -g %s"
+#define SYSTEM_PSLPR        "lpr -P%s %s"
+#define SYSTEM_MAIL         "Mail -s \"%s (%s) Bug Report\" %s"
 */
 #else
 
-#define DIR_PATHSEP	"/"
-#define DIR_TERM	'/'
-#define DIR_CWD		"."
+#define DIR_PATHSEP         "/"
+#define DIR_TERM            '/'
+#define DIR_CWD             "."
 
-#define TEMPFORMAT	"/tmp/%s%d"
-#define SYSTEM_PLOT5LPR	"lpr -P%s -g %s"
-#define SYSTEM_PSLPR	"lpr -P%s %s"
-#define SYSTEM_MAIL	"Mail -s \"%s (%s) Bug Report\" %s"
+#define TEMPFORMAT          "/tmp/%s%d"
+#define SYSTEM_PLOT5LPR     "lpr -P%s -g %s"
+#define SYSTEM_PSLPR        "lpr -P%s %s"
+#define SYSTEM_MAIL         "Mail -s \"%s (%s) Bug Report\" %s"
 
 #endif
 
