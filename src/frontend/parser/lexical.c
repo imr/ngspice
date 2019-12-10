@@ -225,8 +225,11 @@ nloop:
                 tfree(linebuf.s);
                 return NULL;
             }
-            while (((c = cp_readchar(&string, cp_inp_cur)) != '\n') && (c != EOF))
+            while (((c = cp_readchar(&string, cp_inp_cur)) != '\n') &&
+                    (c != EOF)) {
                 ;
+            }
+            prompt();
             goto nloop;
         }
 
