@@ -47,6 +47,9 @@ struct comm {
     char *co_help;
 };
 
+/* These macros are used only in definitions of commands, where they
+ * are used as the upper limit to the number of arguments for a command
+ * when that number is essentially arbitrary, with NLOTS being even more */
 #define LOTS        1000
 #define NLOTS       10000
 
