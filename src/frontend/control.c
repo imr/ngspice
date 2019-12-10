@@ -648,11 +648,12 @@ cp_evloop(char *string)
 
     for (;;) {
         freewl = wlist = getcommand(string);
-        if (wlist == NULL) {    /* End of file or end of user input. */
+        if (wlist == NULL) { /* End of file or end of user input. */
             if (cend[stackp] && cend[stackp]->co_parent && !string) {
                 cp_resetcontrol();
                 continue;
-            } else {
+            }
+            else {
                 return (0);
             }
         }
@@ -669,12 +670,14 @@ cp_evloop(char *string)
         }
 
         /* Just a check... */
-        for (ww = wlist; ww; ww = ww->wl_next)
+        for (ww = wlist; ww; ww = ww->wl_next) {
             if (!ww->wl_word) {
                 fprintf(cp_err,
                         "cp_evloop: Internal Error: NULL word pointer\n");
+                wl_free(wlist);
                 continue;
             }
+        }
 
 
         /* Add this to the control structure list. If cend->co_type is
