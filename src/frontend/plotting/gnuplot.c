@@ -47,8 +47,11 @@ quote_gnuplot_string(FILE *stream, char *s)
 }
 
 
-void
-ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlabel, char *ylabel, GRIDTYPE gridtype, PLOTTYPE plottype, struct dvec *vecs)
+void ft_gnuplot(double *xlims, double *ylims,
+        const char *filename, const char *title,
+        const char *xlabel, const char *ylabel,
+        GRIDTYPE gridtype, PLOTTYPE plottype,
+        struct dvec *vecs)
 {
     FILE *file, *file_data;
     struct dvec *v, *scale = NULL;
@@ -82,20 +85,27 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
 
     extrange = 0.05 * (ylims[1] - ylims[0]);
 
-    if (!cp_getvar("gnuplot_terminal", CP_STRING, terminal, sizeof(terminal))) {
+    if (!cp_getvar("gnuplot_terminal", CP_STRING,
+            terminal, sizeof(terminal))) {
         terminal_type = 1;
-    } else {
+    }
+    else {
         terminal_type = 1;
-        if (cieq(terminal,"png"))
+        if (cieq(terminal,"png")) {
             terminal_type = 2;
-        if (cieq(terminal,"png/quit"))
+        }
+        else if (cieq(terminal,"png/quit")) {
             terminal_type = 3;
-        if (cieq(terminal, "eps"))
+        }
+        else if (cieq(terminal, "eps")) {
             terminal_type = 4;
-        if (cieq(terminal, "eps/quit"))
+        }
+        else if (cieq(terminal, "eps/quit")) {
             terminal_type = 5;
-        if (cieq(terminal, "xterm"))
+        }
+        else if (cieq(terminal, "xterm")) {
             terminal_type = 6;
+        }
     }
 
     if (!cp_getvar("xbrushwidth", CP_NUM, &linewidth, 0))
@@ -344,10 +354,12 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
         fprintf(cp_out, "writing plot to file %s.eps\n", filename);
         (void) sprintf(buf, "gnuplot %s", filename_plt);
     }
-    else if (terminal_type == 6)
+    else if (terminal_type == 6) {
         (void) sprintf(buf, "xterm -e gnuplot %s - &", filename_plt);
-    else
+    }
+    else {
         (void) sprintf(buf, "gnuplot -p %s - &", filename_plt);
+    }
 #endif
     err = system(buf);
 
@@ -379,8 +391,11 @@ ft_gnuplot(double *xlims, double *ylims, char *filename, char *title, char *xlab
    if scale vectors are of same length (there is little risk here!).
    Width of numbers printed is set by option 'numdgt'.
  */
-void
-ft_writesimple(double *xlims, double *ylims, char *filename, char *title, char *xlabel, char *ylabel, GRIDTYPE gridtype, PLOTTYPE plottype, struct dvec *vecs)
+void ft_writesimple(double *xlims, double *ylims,
+        const char *filename, const char *title,
+        const char *xlabel, const char *ylabel,
+        GRIDTYPE gridtype, PLOTTYPE plottype,
+        struct dvec *vecs)
 {
     FILE *file_data;
     struct dvec *v;

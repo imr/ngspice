@@ -108,7 +108,7 @@ struct graph {
         and de-allocated by DestroyGraph.
     */
     void *devdep;
-
+    size_t n_byte_devdep; /* Size of devdep. Needed to allow copying */
 };
 
 

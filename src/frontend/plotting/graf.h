@@ -9,18 +9,20 @@
 #include "ngspice/graph.h"
 
 int gr_init(double *xlims, double *ylims,
-            char *xname, char *plotname,
-            char *hcopy,
-            int nplots,
-            double xdelta, double ydelta,
-            GRIDTYPE gridtype,
-            PLOTTYPE plottype,
-            char *xlabel, char *ylabel,
-            int xtype, int ytype,
-            char *pname, char *commandline);
+        const char *xname,
+        const char *plotname,
+        const char *hcopy,
+        int nplots,
+        double xdelta, double ydelta,
+        GRIDTYPE gridtype,
+        PLOTTYPE plottype,
+        const char *xlabel,
+        const char *ylabel, /* Labels for axes. */
+        int xtype, int ytype,
+        const char *pname, const char *commandline);
 void gr_point(struct dvec *dv,
-              double newx, double newy,
-              double oldx, double oldy, int np);
+        double newx, double newy,
+        double oldx, double oldy, int np);
 void gr_start(struct dvec *dv);
 void gr_relinestyle(GRAPH *graph);
 void drawlegend(GRAPH *graph, int plotno, struct dvec *dv);

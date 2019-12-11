@@ -68,27 +68,28 @@ static char *ticlist = ticbuf;
  *
  */
 
-int
-gr_init(double *xlims, double *ylims, /* The size of the screen. */
-        char *xname, char *plotname,  /* What to label things. */
-        char *hcopy,                  /* The raster file. */
-        int nplots,                   /* How many plots there will be. */
+int gr_init(double *xlims, double *ylims, /* The size of the screen. */
+        const char *xname,
+        const char *plotname, /* What to label things. */
+        const char *hcopy, /* The raster file. */
+        int nplots, /* How many plots there will be. */
         double xdelta, double ydelta, /* Line increments for the scale. */
-        GRIDTYPE gridtype,            /* The grid type */
-        PLOTTYPE plottype,            /*  and the plot type. */
-        char *xlabel, char *ylabel,   /* Labels for axes. */
-        int xtype, int ytype,         /* The types of the data graphed. */
-        char *pname,
-        char *commandline)            /* For xi_zoomdata() */
+        GRIDTYPE gridtype, /* The grid type */
+        PLOTTYPE plottype, /*  and the plot type. */
+        const char *xlabel,
+        const char *ylabel, /* Labels for axes. */
+        int xtype, int ytype, /* The types of the data graphed. */
+        const char *pname,
+        const char *commandline) /* For xi_zoomdata() */
 {
     GRAPH *graph;
     wordlist *wl;
-    char *comb_title;
 
     NG_IGNORE(nplots);
 
-    if ((graph = NewGraph()) == NULL)
-        return (FALSE);
+    if ((graph = NewGraph()) == (GRAPH *) NULL) {
+        return FALSE;
+    }
 
     /*
       The global currentgraph will always be the current graph.
@@ -98,8 +99,10 @@ gr_init(double *xlims, double *ylims, /* The size of the screen. */
     graph->onevalue = (xname ? FALSE : TRUE);
 
     /* communicate filename to plot 5 driver */
-    if (hcopy)
-        graph->devdep = hcopy;
+    if (hcopy) {
+        graph->devdep = copy(hcopy);
+        graph->n_byte_devdep = strlen(hcopy) + 1;
+    }
 
     cur.plotno = 0;
 
@@ -108,23 +111,26 @@ gr_init(double *xlims, double *ylims, /* The size of the screen. */
         (void) strcpy(pointchars, DEFPOINTCHARS);
 
     if (!cp_getvar("ticmarks", CP_NUM, &graph->ticmarks, 0)) {
-        if (cp_getvar("ticmarks", CP_BOOL, NULL, 0))
+        if (cp_getvar("ticmarks", CP_BOOL, NULL, 0)) {
             graph->ticmarks = 10;
-        else
+        }
+        else {
             graph->ticmarks = 0;
+        }
     }
 
     if (cp_getvar("ticlist", CP_LIST, ticlist, 0)) {
         wl = vareval("ticlist");
         ticlist = wl_flatten(wl);
         graph->ticdata = readtics(ticlist);
-    } else {
+    }
+    else {
         graph->ticdata = NULL;
     }
 
     if (!xlims || !ylims) {
         internalerror("gr_init:  no range specified");
-        return (FALSE);
+        return FALSE;
     }
 
     /* save upper and lower limits */
@@ -134,13 +140,14 @@ gr_init(double *xlims, double *ylims, /* The size of the screen. */
     graph->data.ymax = ylims[1];
 
     /* get title into plot window */
-    if (!pname)
+    if (!pname) {
         pname = "(unknown)";
-    if (!plotname)
+    }
+    if (!plotname) {
         plotname = "(unknown)";
+    }
 
-    comb_title = tprintf("%s: %s", pname, plotname);
-    graph->plotname = comb_title;
+    graph->plotname = tprintf("%s: %s", pname, plotname);
 
     /* note: have enum here or some better convention */
     if (NewViewport(graph) == 1) {
@@ -167,47 +174,60 @@ gr_init(double *xlims, double *ylims, /* The size of the screen. */
     graph->grid.xsized = 0;
 
     if (!graph->onevalue) {
-        if (xlabel)
-            graph->grid.xlabel = xlabel;
-        else
-            graph->grid.xlabel = xname;
+        if (xlabel) {
+            graph->grid.xlabel = copy(xlabel);
+        }
+        else {
+            graph->grid.xlabel = copy(xname);
+        }
 
-        if (ylabel)
-            graph->grid.ylabel = ylabel;
-    } else {
-        if (xlabel)
-            graph->grid.xlabel = xlabel;
-        else
-            graph->grid.xlabel = "real";
+        if (ylabel) {
+            graph->grid.ylabel = copy(ylabel);
+        }
+        else {
+            graph->grid.ylabel = (char *) NULL;
+        }
+    }
+    else {
+        if (xlabel) {
+            graph->grid.xlabel = copy(xlabel);
+        }
+        else {
+            graph->grid.xlabel = copy("real");
+        }
 
-        if (ylabel)
-            graph->grid.ylabel = ylabel;
-        else
-            graph->grid.ylabel = "imag";
+        if (ylabel) {
+            graph->grid.ylabel = copy(ylabel);
+        }
+        else {
+            graph->grid.ylabel = copy("imag");
+        }
     }
 
     gr_resize_internal(graph);
     gr_redrawgrid(graph);
 
     /* Set up colors and line styles. */
-    if (dispdev->numlinestyles == 1)
+    if (dispdev->numlinestyles == 1) {
         cur.linestyle = 0; /* Use the same one all the time. */
-    else
+    }
+    else {
         cur.linestyle = 1;
+    }
 
     /* XXX Special exception for SMITH */
     if (dispdev->numcolors > 2 &&
-        (graph->grid.gridtype == GRID_SMITH ||
-         graph->grid.gridtype == GRID_SMITHGRID))
-    {
+            (graph->grid.gridtype == GRID_SMITH ||
+            graph->grid.gridtype == GRID_SMITHGRID)) {
         cur.color = 3;
-    } else {
+    }
+    else {
         cur.color = 1;
     }
 
     graph->commandline = copy(commandline);
 
-    return (TRUE);
+    return TRUE;
 }
 
 
@@ -315,8 +335,7 @@ gr_point(struct dvec *dv,
 }
 
 
-static void
-gr_start_internal(struct dvec *dv, bool copyvec)
+static void gr_start_internal(struct dvec *dv, bool copyvec)
 {
     struct dveclist *link;
 
@@ -325,34 +344,41 @@ gr_start_internal(struct dvec *dv, bool copyvec)
     if (dv->v_type == SV_POLE) {
         dv->v_linestyle = 'x';
         return;
-    } else if (dv->v_type == SV_ZERO) {
+    }
+    else if (dv->v_type == SV_ZERO) {
         dv->v_linestyle = 'o';
         return;
     }
 
     /* Find a (hopefully) new line style and color. */
     if (currentgraph->plottype == PLOT_POINT) {
-        if (pointchars[cur.linestyle - 1])
+        if (pointchars[cur.linestyle - 1]) {
             cur.linestyle++;
-        else
+        }
+        else {
             cur.linestyle = 2;
-    } else if ((cur.linestyle > 0) && (++cur.linestyle == dispdev->numlinestyles)) {
+        }
+    }
+    else if ((cur.linestyle > 0) &&
+            (++cur.linestyle == dispdev->numlinestyles)) {
         cur.linestyle = 2;
     }
 
     if ((cur.color > 0) && (++cur.color == dispdev->numcolors))
         cur.color = (((currentgraph->grid.gridtype == GRID_SMITH ||
-                      currentgraph->grid.gridtype == GRID_SMITHGRID) &&
-                     (dispdev->numcolors > 3)) ? 4 : 2);
+                currentgraph->grid.gridtype == GRID_SMITHGRID) &&
+                (dispdev->numcolors > 3)) ? 4 : 2);
 
-    if (currentgraph->plottype == PLOT_POINT)
+    if (currentgraph->plottype == PLOT_POINT) {
         dv->v_linestyle = pointchars[cur.linestyle - 2];
-    else
+    }
+    else {
         dv->v_linestyle = cur.linestyle;
+    }
 
     dv->v_color = cur.color;
 
-    /* save the data so we can refresh */
+    /* Save the data so we can refresh */
     link = TMALLOC(struct dveclist, 1);
     link->next = currentgraph->plotdata;
 
@@ -368,17 +394,36 @@ gr_start_internal(struct dvec *dv, bool copyvec)
 
     currentgraph->plotdata = link;
 
+    /* Add the scale vector to the list of vectors associated with the plot
+     * and use the copy instead of the original scale vector */
+    link = TMALLOC(struct dveclist, 1);
+    link->next = currentgraph->plotdata;
+
+    if (copyvec) {
+        link->vector = vec_copy(dv->v_scale);
+        link->vector->v_flags |= VF_PERMANENT;
+        link->next->vector->v_scale = link->vector;
+    }
+    else {
+        link->vector = dv->v_scale;
+    }
+
+    /* Make the new vector the start of the list of vectors */
+    currentgraph->plotdata = link;
+
+
     /* Put the legend entry on the screen. */
     drawlegend(currentgraph, cur.plotno++, dv);
-}
+} /* end of function gr_start_internal */
 
 
-/* start one plot of a graph */
-void
-gr_start(struct dvec *dv)
+
+/* Start one plot of a graph */
+void gr_start(struct dvec *dv)
 {
     gr_start_internal(dv, TRUE);
-}
+} /* end of function gr_start */
+
 
 
 /* make sure the linestyles in this graph don't exceed the number of
@@ -400,30 +445,28 @@ gr_relinestyle(GRAPH *graph)
 
 
 /* PN  static */
-void
-drawlegend(GRAPH *graph, int plotno, struct dvec *dv)
+void drawlegend(GRAPH *graph, int plotno, struct dvec *dv)
 {
-    int x, y, i;
-    char buf[16];
-
-    x = ((plotno % 2) ? graph->viewportxoff :
-         ((graph->viewport.width) / 2));
-    y = graph->absolute.height - graph->fontheight
+    const int x = (plotno % 2) ?
+            graph->viewportxoff : (graph->viewport.width / 2);
+    const int x_base = x + graph->viewport.width / 20;
+    const int y = graph->absolute.height - graph->fontheight
         - ((plotno + 2) / 2) * (graph->fontheight);
-    i = y + graph->fontheight / 2 + 1;
+    const int i = y + graph->fontheight / 2 + 1;
     SetColor(dv->v_color);
     if (graph->plottype == PLOT_POINT) {
+        char buf[16];
         (void) sprintf(buf, "%c : ", dv->v_linestyle);
-        DevDrawText(buf, x + graph->viewport.width / 20
-                    - 3 * graph->fontwidth, y, 0);
-    } else {
+        DevDrawText(buf, x_base - 3 * graph->fontwidth, y, 0);
+    }
+    else {
         SetLinestyle(dv->v_linestyle);
-        DevDrawLine(x, i, x + graph->viewport.width / 20, i);
+        DevDrawLine(x, i, x_base, i);
     }
     SetColor(1);
-    DevDrawText(dv->v_name, x + graph->viewport.width / 20
-                + graph->fontwidth, y, 0);
-}
+    DevDrawText(dv->v_name, x_base + graph->fontwidth, y, 0);
+} /* end of function drawlegend */
+
 
 
 /* end one plot of a graph */
