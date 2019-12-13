@@ -47,13 +47,13 @@ wordlist *cp_redirect(wordlist *wl)
 {
     int gotinput = 0, gotoutput = 0, goterror = 0, append = 0;
     wordlist *w;
-    char *fname;
     FILE *fp;
 
     w = wl->wl_next;    /* Don't consider empty commands. */
 
     while (w) {
-        if (*w->wl_word == cp_lt) {
+        char *fname;
+        if (*w->wl_word == cp_lt && w->wl_word[1] == '\0') {
 
             wordlist *beg = w;
 
@@ -63,14 +63,14 @@ wordlist *cp_redirect(wordlist *wl)
             }
             w = w->wl_next;
 
-            if (w && *w->wl_word == cp_lt) {
+            if (w && *w->wl_word == cp_lt && w->wl_word[1] == '\0') {
                 fprintf(cp_err, "Error: `<<' redirection is not implemented.\n");
                 goto error;
             }
 
             if (!w) {
                 fprintf(cp_err, "Error: missing name for input.\n");
-                return (NULL);
+                return (wordlist *) NULL;
             }
 
             fname = cp_unquote(w->wl_word);
@@ -100,7 +100,7 @@ wordlist *cp_redirect(wordlist *wl)
             }
 
         }
-        else if (*w->wl_word == cp_gt) {
+        else if (*w->wl_word == cp_gt && w->wl_word[1] == '\0') {
             wordlist *beg = w;
 
             if (gotoutput++) {
@@ -109,7 +109,7 @@ wordlist *cp_redirect(wordlist *wl)
             }
             w = w->wl_next;
 
-            if (w && *w->wl_word == cp_gt) {
+            if (w && *w->wl_word == cp_gt && w->wl_word[1] == '\0') {
                 append++;
                 w = w->wl_next;
             }
@@ -163,7 +163,7 @@ wordlist *cp_redirect(wordlist *wl)
         else {
             w = w->wl_next;
         }
-    }
+    } /* end of loop over arguments */
     return wl;
 
 error:
