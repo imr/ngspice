@@ -938,8 +938,9 @@ wordlist *vareval(/* NOT const */ char *string)
                 break;
         if (!v) {
             v = cp_enqvar(string, &tbfreed);
-            if (tbfreed)
+            if (tbfreed) {
                 vfree = v;
+            }
         }
         wl = wl_cons(copy(v ? "1" : "0"), NULL);
         free_struct_variable(vfree);
@@ -948,13 +949,16 @@ wordlist *vareval(/* NOT const */ char *string)
 
     case '#':
         string++;
-        for (v = variables; v; v = v->va_next)
-            if (eq(v->va_name, string))
+        for (v = variables; v; v = v->va_next) {
+            if (eq(v->va_name, string)) {
                 break;
+            }
+        }
         if (!v) {
             v = cp_enqvar(string, &tbfreed);
-            if (tbfreed)
+            if (tbfreed) {
                 vfree = v;
+            }
         }
         if (!v) {
             fprintf(cp_err, "Error: %s: no such variable.\n", string);
@@ -989,17 +993,20 @@ wordlist *vareval(/* NOT const */ char *string)
         if (eq(v->va_name, string))
             break;
     if (!v && isdigit_c(*string)) {
-        for (v = variables; v; v = v->va_next)
-            if (eq(v->va_name, "argv"))
+        for (v = variables; v; v = v->va_next) {
+            if (eq(v->va_name, "argv")) {
                 break;
+            }
+        }
         range = string;
     }
     if (!v) {
         range = NULL;
         string = oldstring;
         v = cp_enqvar(string, &tbfreed);
-        if (tbfreed)
+        if (tbfreed) {
             vfree = v;
+        }
     }
     if (!v && (s = getenv(string)) != NULL) {
         wl = wl_cons(copy(s), NULL);
@@ -1020,10 +1027,12 @@ wordlist *vareval(/* NOT const */ char *string)
         wordlist *r = NULL;
         if (*range == '$') {
             char *t = ++range;
-            if (*t == '&')
+            if (*t == '&') {
                 t++;
-            while (isalnum_c(*t))
+            }
+            while (isalnum_c(*t)) {
                 t++;
+            }
             *t = '\0';
             r = vareval(range);
             if (!r || r->wl_next) {
@@ -1034,15 +1043,20 @@ wordlist *vareval(/* NOT const */ char *string)
             }
             range = r->wl_word;
         }
-        for (low = 0; isdigit_c(*range); range++)
+        for (low = 0; isdigit_c(*range); range++) {
             low = low * 10 + *range - '0';
-        if ((*range == '-') && isdigit_c(range[1]))
-            for (up = 0, range++; isdigit_c(*range); range++)
+        }
+        if ((*range == '-') && isdigit_c(range[1])) {
+            for (up = 0, range++; isdigit_c(*range); range++) {
                 up = up * 10 + *range - '0';
-        else if (*range == '-')
+            }
+        }
+        else if (*range == '-') {
             up = wl_length(wl);
-        else
+        }
+        else {
             up = low;
+        }
         up--, low--;
         wl = wl_range(wl, low, up);
         wl_free(r);
@@ -1059,23 +1073,23 @@ struct xxx {
 };
 
 
-static int
-vcmp(const void *a, const void *b)
+static int vcmp(const void *a, const void *b)
 {
     int i;
     struct xxx *v1 = (struct xxx *) a;
     struct xxx *v2 = (struct xxx *) b;
 
-    if ((i = strcmp(v1->x_v->va_name, v2->x_v->va_name)) != 0)
-        return (i);
-    else
-        return (v1->x_char - v2->x_char);
+    if ((i = strcmp(v1->x_v->va_name, v2->x_v->va_name)) != 0) {
+        return i;
+    }
+    else {
+        return v1->x_char - v2->x_char;
+    }
 }
 
 
 /* Print the values of currently defined variables. */
-void
-cp_vprint(void)
+void cp_vprint(void)
 {
     struct variable *v;
     struct variable *uv1;
@@ -1086,16 +1100,22 @@ cp_vprint(void)
 
     uv1 = cp_usrvars();
 
-    for (v = variables, i = 0; v; v = v->va_next)
+    for (v = variables, i = 0; v; v = v->va_next) {
         i++;
-    for (v = uv1; v; v = v->va_next)
+    }
+    for (v = uv1; v; v = v->va_next) {
         i++;
-    if (plot_cur)
-        for (v = plot_cur->pl_env; v; v = v->va_next)
+    }
+    if (plot_cur) {
+        for (v = plot_cur->pl_env; v; v = v->va_next) {
             i++;
-    if (ft_curckt)
-        for (v = ft_curckt->ci_vars; v; v = v->va_next)
+        }
+    }
+    if (ft_curckt) {
+        for (v = ft_curckt->ci_vars; v; v = v->va_next) {
             i++;
+        }
+    }
 
     vars = TMALLOC(struct xxx, i);
 
@@ -1108,26 +1128,30 @@ cp_vprint(void)
         vars[i].x_v = v;
         vars[i].x_char = '*';
     }
-    if (plot_cur)
+    if (plot_cur) {
         for (v = plot_cur->pl_env; v; v = v->va_next, i++) {
             vars[i].x_v = v;
             vars[i].x_char = '*';
         }
-    if (ft_curckt)
+    }
+    if (ft_curckt) {
         for (v = ft_curckt->ci_vars; v; v = v->va_next, i++) {
             vars[i].x_v = v;
             vars[i].x_char = '+';
         }
+    }
 
     qsort(vars, (size_t) i, sizeof(*vars), vcmp);
 
     for (j = 0; j < i; j++) {
-        if (j && eq(vars[j].x_v->va_name, vars[j-1].x_v->va_name))
+        if (j && eq(vars[j].x_v->va_name, vars[j-1].x_v->va_name)) {
             continue;
+        }
         v = vars[j].x_v;
         if (v->va_type == CP_BOOL) {
             out_printf("%c %s\n", vars[j].x_char, v->va_name);
-        } else {
+        }
+        else {
             out_printf("%c %s\t", vars[j].x_char, v->va_name);
             wl = vareval(v->va_name);
             s = wl_flatten(wl);
@@ -1140,88 +1164,86 @@ cp_vprint(void)
 
     free_struct_variable(uv1);
     tfree(vars);
-}
+} /* end of function cp_vprint */
 
-struct variable *
-var_alloc(char *name, struct variable *next)
+
+
+struct variable *var_alloc(char *name, struct variable *next)
 {
-  struct variable *v = TMALLOC(struct variable, 1);
-  ZERO(v, struct variable);
-  v -> va_name = name;
-  v -> va_next = next;
-  return v;
+    struct variable * const v = TMALLOC(struct variable, 1);
+    ZERO(v, struct variable);
+    v -> va_name = name;
+    v -> va_next = next;
+    return v;
 }
 
-struct variable *
-var_alloc_bool(char *name, bool value, struct variable *next)
+
+
+struct variable *var_alloc_bool(char *name, bool value,
+        struct variable *next)
 {
     struct variable *v = var_alloc(name, next);
     var_set_bool(v, value);
     return v;
 }
 
-struct variable *
-var_alloc_num(char *name, int value, struct variable *next)
+struct variable *var_alloc_num(char *name, int value,
+        struct variable *next)
 {
     struct variable *v = var_alloc(name, next);
     var_set_num(v, value);
     return v;
 }
 
-struct variable *
-var_alloc_real(char *name, double value, struct variable *next)
+struct variable *var_alloc_real(char *name, double value,
+        struct variable *next)
 {
     struct variable *v = var_alloc(name, next);
     var_set_real(v, value);
     return v;
 }
 
-struct variable *
-var_alloc_string(char *name, char * value, struct variable *next)
+struct variable *var_alloc_string(char *name, char * value,
+        struct variable *next)
 {
     struct variable *v = var_alloc(name, next);
     var_set_string(v, value);
     return v;
 }
 
-struct variable *
-var_alloc_vlist(char *name, struct variable * value, struct variable *next)
+struct variable * var_alloc_vlist(char *name, struct variable * value,
+        struct variable *next)
 {
     struct variable *v = var_alloc(name, next);
     var_set_vlist(v, value);
     return v;
 }
 
-void
-var_set_bool(struct variable *v, bool value)
+void var_set_bool(struct variable *v, bool value)
 {
   v->va_type = CP_BOOL;
   v->va_bool = value;
 }
 
-void
-var_set_num(struct variable *v, int value)
+void var_set_num(struct variable *v, int value)
 {
   v->va_type = CP_NUM;
   v->va_num = value;
 }
 
-void
-var_set_real(struct variable *v, double value)
+void var_set_real(struct variable *v, double value)
 {
   v->va_type = CP_REAL;
   v->va_real = value;
 }
 
-void
-var_set_string(struct variable *v, char *value)
+void var_set_string(struct variable *v, char *value)
 {
   v->va_type = CP_STRING;
   v->va_string = value;
 }
 
-void
-var_set_vlist(struct variable *v, struct variable *value)
+void var_set_vlist(struct variable *v, struct variable *value)
 {
   v->va_type = CP_LIST;
   v->va_vlist = value;

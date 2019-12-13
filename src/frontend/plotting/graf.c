@@ -17,19 +17,18 @@ Author: 1988 Jeffrey M. Hsu
 #include "ngspice/dvec.h"               /* for struct dvec */
 #include "ngspice/ftedefs.h"            /* for FTEextern.h and IPOINT{MIN,MAX} */
 #include "ngspice/fteinput.h"
-#include "ngspice/graph.h"
 #include "ngspice/ftedbgra.h"
 #include "ngspice/ftedev.h"
+#include "ngspice/graph.h"
+#include "ngspice/grid.h"
 #include "ngspice/sim.h"
-#include <terminal.h>
+#include "ngspice/stringskip.h"
+#include "breakp2.h"
+#include "display.h"
 #include "graf.h"
 #include "graphdb.h"
-#include "ngspice/grid.h"
-#include "../terminal.h"
-#include "../breakp2.h"
-#include "../display.h"
-#include "../runcoms.h"
-#include "ngspice/stringskip.h"
+#include "runcoms.h"
+#include "terminal.h"
 
 
 static void gr_start_internal(struct dvec *dv, bool copyvec);
@@ -107,8 +106,10 @@ int gr_init(double *xlims, double *ylims, /* The size of the screen. */
     cur.plotno = 0;
 
     /* note: should do only once, maybe in gr_init_once */
-    if (!cp_getvar("pointchars", CP_STRING, pointchars, sizeof(pointchars)))
+    if (!cp_getvar("pointchars", CP_STRING,
+            pointchars, sizeof(pointchars))) {
         (void) strcpy(pointchars, DEFPOINTCHARS);
+    }
 
     if (!cp_getvar("ticmarks", CP_NUM, &graph->ticmarks, 0)) {
         if (cp_getvar("ticmarks", CP_BOOL, NULL, 0)) {
@@ -242,8 +243,7 @@ int gr_init(double *xlims, double *ylims, /* The size of the screen. */
  *  We pass two points in so we can multiplex plots.
  *
  */
-void
-gr_point(struct dvec *dv,
+void gr_point(struct dvec *dv,
          double newx, double newy,
          double oldx, double oldy,
          int np)
@@ -262,11 +262,13 @@ gr_point(struct dvec *dv,
     oldtox = tox; oldtoy = toy;
     if (!currentgraph->grid.circular) {
         if (clip_line(&fromx, &fromy, &tox, &toy,
-                      currentgraph->viewportxoff, currentgraph->viewportyoff,
-                      currentgraph->viewport.width + currentgraph->viewportxoff,
-                      currentgraph->viewport.height + currentgraph->viewportyoff))
+                currentgraph->viewportxoff, currentgraph->viewportyoff,
+                currentgraph->viewport.width + currentgraph->viewportxoff,
+                currentgraph->viewport.height + currentgraph->viewportyoff)) {
             return;
-    } else {
+        }
+    }
+    else {
         if (clip_to_circle(&fromx, &fromy, &tox, &toy,
                            currentgraph->grid.xaxis.circular.center,
                            currentgraph->grid.yaxis.circular.center,
@@ -276,11 +278,13 @@ gr_point(struct dvec *dv,
 
     if (currentgraph->plottype != PLOT_POINT) {
         SetLinestyle(dv->v_linestyle);
-    } else {
+    }
+    else {
         /* if PLOT_POINT,
            don't want to plot an endpoint which have been clipped */
-        if (tox != oldtox || toy != oldtoy)
+        if (tox != oldtox || toy != oldtoy) {
             return;
+        }
     }
     SetColor(dv->v_color);
 
@@ -290,8 +294,9 @@ gr_point(struct dvec *dv,
     case PLOT_MONOLIN:
         /* If it's a linear plot, ignore first point since we don't
            want to connect with oldx and oldy. */
-        if (np)
+        if (np) {
             DevDrawLine(fromx, fromy, tox, toy);
+        }
         if ((tics = currentgraph->ticdata) != NULL) {
             for (; *tics < HUGE; tics++)
                 if (*tics == (double) np) {
@@ -304,9 +309,9 @@ gr_point(struct dvec *dv,
                           (int) (toy - currentgraph->fontheight / 2)); */
                     break;
                 }
-        } else if ((currentgraph->ticmarks >0) && (np > 0) &&
-                   (np % currentgraph->ticmarks == 0))
-        {
+        }
+        else if ((currentgraph->ticmarks >0) && (np > 0) &&
+                   (np % currentgraph->ticmarks == 0)) {
             /* Draw an 'x' */
             DevDrawText("x", (int) (tox - currentgraph->fontwidth / 2),
                         (int) (toy - currentgraph->fontheight / 2), 0);
@@ -382,34 +387,45 @@ static void gr_start_internal(struct dvec *dv, bool copyvec)
     link = TMALLOC(struct dveclist, 1);
     link->next = currentgraph->plotdata;
 
+    /* Either reuse input vector or copy depnding on copyvec */
     if (copyvec) {
         link->vector = vec_copy(dv);
         /* vec_copy doesn't set v_color or v_linestyle */
         link->vector->v_color = dv->v_color;
         link->vector->v_linestyle = dv->v_linestyle;
         link->vector->v_flags |= VF_PERMANENT;
-    } else {
+        link->f_own_vector = TRUE;
+    }
+    else {
         link->vector = dv;
+        link->f_own_vector = FALSE;
     }
 
     currentgraph->plotdata = link;
 
     /* Add the scale vector to the list of vectors associated with the plot
-     * and use the copy instead of the original scale vector */
-    link = TMALLOC(struct dveclist, 1);
-    link->next = currentgraph->plotdata;
+     * and use the copy instead of the original scale vector if requested */
+    {
+        struct dvec * const custom_scale = dv->v_scale;
+        if (custom_scale != (struct dvec *) NULL) {
+            link = TMALLOC(struct dveclist, 1);
+            link->next = currentgraph->plotdata;
 
-    if (copyvec) {
-        link->vector = vec_copy(dv->v_scale);
-        link->vector->v_flags |= VF_PERMANENT;
-        link->next->vector->v_scale = link->vector;
-    }
-    else {
-        link->vector = dv->v_scale;
-    }
+            if (copyvec) {
+                link->vector = vec_copy(dv->v_scale);
+                link->vector->v_flags |= VF_PERMANENT;
+                link->next->vector->v_scale = link->vector;
+                link->f_own_vector = TRUE;
+            }
+            else {
+                link->vector = dv->v_scale;
+                link->f_own_vector = FALSE;
+            }
 
-    /* Make the new vector the start of the list of vectors */
-    currentgraph->plotdata = link;
+            /* Make the new vector the start of the list of vectors */
+            currentgraph->plotdata = link;
+        }
+    }
 
 
     /* Put the legend entry on the screen. */
@@ -470,8 +486,7 @@ void drawlegend(GRAPH *graph, int plotno, struct dvec *dv)
 
 
 /* end one plot of a graph */
-void
-gr_end(struct dvec *dv)
+void gr_end(struct dvec *dv)
 {
     NG_IGNORE(dv);
     DevUpdate();
@@ -480,8 +495,7 @@ gr_end(struct dvec *dv)
 
 /* Print text in the bottom line. */
 
-void
-gr_pmsg(char *text)
+void gr_pmsg(char *text)
 {
     char buf[BSIZE_SP];
     buf[0] = '\0';
@@ -503,16 +517,14 @@ gr_pmsg(char *text)
 }
 
 
-void
-gr_clean(void)
+void gr_clean(void)
 {
     DevUpdate();
 }
 
 
 /* call this routine after viewport size changes */
-void
-gr_resize(GRAPH *graph)
+void gr_resize(GRAPH *graph)
 {
     double oldxratio, oldyratio;
     double scalex, scaley;
@@ -552,8 +564,7 @@ gr_resize(GRAPH *graph)
 
 
 /* PN static */
-void
-gr_resize_internal(GRAPH *graph)
+void gr_resize_internal(GRAPH *graph)
 {
     if (!graph->grid.xsized)
         graph->viewport.width = (int)(graph->absolute.width -
@@ -579,8 +590,7 @@ gr_resize_internal(GRAPH *graph)
 
 
 /* redraw everything in struct graph */
-void
-gr_redraw(GRAPH *graph)
+void gr_redraw(GRAPH *graph)
 {
     struct dveclist *link;
 
@@ -616,8 +626,7 @@ gr_redraw(GRAPH *graph)
 }
 
 
-void
-gr_restoretext(GRAPH *graph)
+void gr_restoretext(GRAPH *graph)
 {
     struct _keyed *k;
 
@@ -633,7 +642,8 @@ gr_restoretext(GRAPH *graph)
  *
  * First, if length < IPOINTMIN, don't do anything.
  *
- * Second, if length = IPOINTMIN, plot what we have so far.
+ * Second, if length = IPOINTMIN, plot what we have so far. This step
+ * is essentially the initializaiton for the graph.
  *
  * Third, if length > IPOINTMIN, plot the last points and resize if
  * needed.
@@ -643,16 +653,25 @@ gr_restoretext(GRAPH *graph)
  * FIXME: there is a problem with multiple iplots that use the same
  * vector, namely, that vector has the same color throughout.  This is
  * another reason why we need to pull color and linestyle out of dvec
- * XXX Or maybe even something more drastic ?? */
-
-static int
-iplot(struct plot *pl, int id)
+ * XXX Or maybe even something more drastic ??
+ * It would be better to associate a color with an instance using a
+ * vector than the vector itself, for which color is something artificial. */
+static int iplot(struct plot *pl, int id)
 {
     int len = pl->pl_scale->v_length;
+
+    if (ft_grdb) {
+        fprintf(cp_err, "Entering iplot, len = %d\n", len);
+    }
+
+    /* Do simple check for exit first */
+    if (len < IPOINTMIN) { /* Nothing yet */
+        return 0;
+    }
+
     struct dvec *v, *xs = pl->pl_scale;
     double *lims, dy;
     double start, stop, step;
-    register int j;
     bool changed = FALSE;
     int yt;
     char *yl = NULL;
@@ -660,51 +679,61 @@ iplot(struct plot *pl, int id)
     static REQUEST reqst = { checkup_option, NULL };
     int inited = 0;
     char commandline[513];
+    int n_vec_plot = 0;
 
-    for (j = 0, v = pl->pl_dvecs; v; v = v->v_next)
-        if (v->v_flags & VF_PLOT)
-            j++;
-    if (!j)
-        return (0);
-    if (ft_grdb)
-        fprintf(cp_err, "Entering iplot, len = %d\n", len);
+    /* Exit if nothing is being plotted */
+    for (v = pl->pl_dvecs; v; v = v->v_next) {
+        if (v->v_flags & VF_PLOT) {
+            ++n_vec_plot;
+        }
+    }
 
-    if (len < IPOINTMIN) {
-        /* Nothing yet */
-        return (0);
-    } else if (len == IPOINTMIN || !id) {
+    if (n_vec_plot == 0) {
+        return 0;
+    }
+
+    if (len == IPOINTMIN || !id) { /* Do initialization */
         resumption = FALSE;
         /* Draw the grid for the first time, and plot everything. */
         lims = ft_minmax(xs, TRUE);
         xlims[0] = lims[0];
         xlims[1] = lims[1];
         ylims[0] = HUGE;
-        ylims[1] = - ylims[0];
-        for (v = pl->pl_dvecs; v; v = v->v_next)
+        ylims[1] = -ylims[0];
+        for (v = pl->pl_dvecs; v; v = v->v_next) {
             if (v->v_flags & VF_PLOT) {
                 lims = ft_minmax(v, TRUE);
-                if (ylims[0] > lims[0])
+                if (ylims[0] > lims[0]) {
                     ylims[0] = lims[0];
-                if (ylims[1] < lims[1])
+                }
+                if (ylims[1] < lims[1]) {
                     ylims[1] = lims[1];
-                if (!yl)
+                }
+                if (!yl) {
                     yl = v->v_name;
+                }
             }
-        /* generate a small difference between ymin and ymax
-           to catch the y=const case */
-        if (ylims[0] == ylims[1])
-            ylims[1] += 1e-9;
+        }
 
-        if (ft_grdb)
+        /* Generate a small difference between ymin and ymax
+           to catch the y=const case */
+        if (ylims[0] == ylims[1]) {
+            ylims[1] += 1e-9;
+        }
+
+        if (ft_grdb) {
             fprintf(cp_err,
                     "iplot: after 5, xlims = %G, %G, ylims = %G, %G\n",
                     xlims[0], xlims[1], ylims[0], ylims[1]);
+        }
 
-        for (yt = pl->pl_dvecs->v_type, v = pl->pl_dvecs->v_next; v; v = v->v_next)
+        for (yt = pl->pl_dvecs->v_type, v = pl->pl_dvecs->v_next; v;
+                v = v->v_next) {
             if ((v->v_flags & VF_PLOT) && (v->v_type != yt)) {
                 yt = SV_NOTYPE;
                 break;
             }
+        }
 
         /* note: have command options for iplot to specify xdelta,
            etc.  So don't need static variables hack.  Assume default
@@ -712,25 +741,28 @@ iplot(struct plot *pl, int id)
         sprintf(commandline, "plot %s", yl);
 
         (void) gr_init(xlims, ylims, xs->v_name,
-                       pl->pl_title, NULL, j, 0.0, 0.0,
-                       GRID_LIN, PLOT_LIN, xs->v_name, yl, xs->v_type, yt,
-                       plot_cur->pl_typename, commandline);
+                pl->pl_title, NULL, n_vec_plot, 0.0, 0.0,
+                GRID_LIN, PLOT_LIN, xs->v_name, yl, xs->v_type, yt,
+                plot_cur->pl_typename, commandline);
 
-        for (v = pl->pl_dvecs; v; v = v->v_next)
+        for (v = pl->pl_dvecs; v; v = v->v_next) {
             if (v->v_flags & VF_PLOT) {
                 gr_start_internal(v, FALSE);
                 ft_graf(v, xs, TRUE);
             }
+        }
         inited = 1;
 
-    } else {
+    }
+    else {
         /* plot the last points and resize if needed */
         Input(&reqst, NULL);
         /* First see if we have to make the screen bigger */
         dy = (isreal(xs) ? xs->v_realdata[len - 1] :
               realpart(xs->v_compdata[len - 1]));
-        if (ft_grdb)
+        if (ft_grdb) {
             fprintf(cp_err, "x = %G\n", dy);
+        }
         if (!if_tranparams(ft_curckt, &start, &stop, &step) ||
             !ciprefix("tran", pl->pl_typename)) {
             stop = HUGE;
@@ -739,32 +771,35 @@ iplot(struct plot *pl, int id)
         /* checking for x lo */
         while (dy < currentgraph->data.xmin) {
             changed = TRUE;
-            if (ft_grdb)
+            if (ft_grdb) {
                 fprintf(cp_err, "resize: xlo %G -> %G\n",
                         currentgraph->data.xmin,
                         currentgraph->data.xmin -
                         (currentgraph->data.xmax - currentgraph->data.xmin)
                         * XFACTOR);
+            }
             /* set the new x lo value */
             currentgraph->data.xmin -=
-                (currentgraph->data.xmax - currentgraph->data.xmin)
-                * XFACTOR;
+                    (currentgraph->data.xmax - currentgraph->data.xmin)
+                    * XFACTOR;
             if (currentgraph->data.xmin < start) {
                 currentgraph->data.xmin = start;
                 break;
             }
         }
-        if (currentgraph->data.xmax < currentgraph->data.xmin)
+        if (currentgraph->data.xmax < currentgraph->data.xmin) {
             currentgraph->data.xmax = currentgraph->data.xmin;
+        }
         /* checking for x hi */
         while (dy > currentgraph->data.xmax) {
             changed = TRUE;
-            if (ft_grdb)
+            if (ft_grdb) {
                 fprintf(cp_err, "resize: xhi %G -> %G\n",
                         currentgraph->data.xmax,
                         currentgraph->data.xmax +
                         (currentgraph->data.xmax - currentgraph->data.xmin)
                         * XFACTOR);
+            }
             /* set the new x hi value */
             currentgraph->data.xmax +=
                 (currentgraph->data.xmax - currentgraph->data.xmin) *
@@ -776,21 +811,24 @@ iplot(struct plot *pl, int id)
         }
         /* checking for all y values */
         for (v = pl->pl_dvecs; v; v = v->v_next) {
-            if (!(v->v_flags & VF_PLOT))
+            if (!(v->v_flags & VF_PLOT)) {
                 continue;
+            }
             dy = (isreal(v) ? v->v_realdata[len - 1] :
                   realpart(v->v_compdata[len - 1]));
-            if (ft_grdb)
+            if (ft_grdb) {
                 fprintf(cp_err, "y = %G\n", dy);
+            }
             /* checking for y lo */
             while (dy < currentgraph->data.ymin) {
                 changed = TRUE;
-                if (ft_grdb)
+                if (ft_grdb) {
                     fprintf(cp_err, "resize: ylo %G -> %G\n",
                             currentgraph->data.ymin,
                             currentgraph->data.ymin -
                             (currentgraph->data.ymax - currentgraph->data.ymin)
                             * YFACTOR);
+                }
                 /* set the new y lo value */
                 currentgraph->data.ymin -=
                     (currentgraph->data.ymax - currentgraph->data.ymin)
@@ -800,17 +838,19 @@ iplot(struct plot *pl, int id)
                 /* currentgraph->data.ymin = dy;
                   currentgraph->data.ymin *= (1 + YFACTOR); */
             }
-            if (currentgraph->data.ymax < currentgraph->data.ymin)
+            if (currentgraph->data.ymax < currentgraph->data.ymin) {
                 currentgraph->data.ymax = currentgraph->data.ymin;
+            }
             /* checking for y hi */
             while (dy > currentgraph->data.ymax) {
                 changed = TRUE;
-                if (ft_grdb)
+                if (ft_grdb) {
                     fprintf(cp_err, "resize: yhi %G -> %G\n",
                             currentgraph->data.ymax,
                             currentgraph->data.ymax +
                             (currentgraph->data.ymax - currentgraph->data.ymin)
                             * YFACTOR);
+                }
                 /* set the new y hi value */
                 currentgraph->data.ymax +=
                     (currentgraph->data.ymax - currentgraph->data.ymin)
@@ -829,10 +869,11 @@ iplot(struct plot *pl, int id)
 #ifndef X_DISPLAY_MISSING
             gr_redraw(currentgraph);
 #endif
-        } else {
+        }
+        else {
             /* Just connect the last two points. This won't be done
              * with curve interpolation, so it might look funny.  */
-            for (v = pl->pl_dvecs; v; v = v->v_next)
+            for (v = pl->pl_dvecs; v; v = v->v_next) {
                 if (v->v_flags & VF_PLOT) {
                     gr_point(v,
                              (isreal(xs) ? xs->v_realdata[len - 1] :
@@ -845,15 +886,15 @@ iplot(struct plot *pl, int id)
                               realpart(v->v_compdata[len - 2])),
                              len - 1);
                 }
+            }
         }
     }
     DevUpdate();
-    return (inited);
+    return inited;
 }
 
 
-static void
-set(struct plot *plot, struct dbcomm *db, bool unset, short mode)
+static void set(struct plot *plot, struct dbcomm *db, bool unset, short mode)
 {
     struct dvec *v;
     struct dbcomm *dc;
@@ -885,8 +926,7 @@ set(struct plot *plot, struct dbcomm *db, bool unset, short mode)
 }
 
 
-static char *
-getitright(char *buf, double num)
+static char *getitright(char *buf, double num)
 {
     char *p;
     int k;
@@ -909,16 +949,14 @@ getitright(char *buf, double num)
 static int hit, hit2;
 
 
-void
-reset_trace(void)
+void reset_trace(void)
 {
     hit = -1;
     hit2 = -1;
 }
 
 
-void
-gr_iplot(struct plot *plot)
+void gr_iplot(struct plot *plot)
 {
     struct dbcomm *db;
     int dontpop;        /* So we don't pop w/o push. */
@@ -959,10 +997,12 @@ gr_iplot(struct plot *plot)
                 if (v->v_flags & VF_PRINT) {
                     u = plot->pl_scale;
                     if (len <= 1 || hit <= 0 || hit2 < 0) {
-                        if (len <= 1 || hit2 < 0)
+                        if (len <= 1 || hit2 < 0) {
                             term_clear();
-                        else
+                        }
+                        else {
                             term_home();
+                        }
                         hit = 1;
                         hit2 = 1;
                         printf(
@@ -975,7 +1015,8 @@ gr_iplot(struct plot *plot)
                             if (isreal(u)) {
                                 printf("%s",
                                        getitright(buf, u->v_realdata[len - 1]));
-                            } else {
+                            }
+                            else {
                                 /* MW. Complex data here, realdata is NULL
                                    (why someone use realdata here again) */
                                 printf("%s",
@@ -987,12 +1028,14 @@ gr_iplot(struct plot *plot)
                             printf("\n");
                         }
                     }
-                    if (v == u)
+                    if (v == u) {
                         continue;
+                    }
                     printf("%12s:", v->v_name);
                     if (isreal(v)) {
                         printf("%s", getitright(buf, v->v_realdata[len - 1]));
-                    } else {
+                    }
+                    else {
                         /* MW. Complex data again */
                         printf("%s", getitright(buf, v->v_compdata[len - 1].cx_real));
                         printf(", %s", getitright(buf, v->v_compdata[len - 1].cx_imag));
@@ -1014,8 +1057,7 @@ gr_iplot(struct plot *plot)
  * Note: This is a clear case for separating the linestyle and color
  * fields from dvec.  */
 
-void
-gr_end_iplot(void)
+void gr_end_iplot(void)
 {
     struct dbcomm *db, *prev, *next;
     GRAPH *graph;
@@ -1034,7 +1076,8 @@ gr_end_iplot(void)
                     ft_curckt->ci_dbs = dbs = next;
                 dbfree1(db);
             }
-        } else if (db->db_type == DB_IPLOT || db->db_type == DB_IPLOTALL) {
+        }
+        else if (db->db_type == DB_IPLOT || db->db_type == DB_IPLOTALL) {
             if (db->db_graphid) {
 
                 /* get private copy of dvecs */
@@ -1063,8 +1106,7 @@ gr_end_iplot(void)
 }
 
 
-double *
-readtics(char *string)
+double *readtics(char *string)
 {
     int k;
     char *words, *worde;

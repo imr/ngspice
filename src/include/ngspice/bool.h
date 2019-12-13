@@ -4,7 +4,7 @@
 //typedef unsigned char bool;
 typedef int bool;
 
-typedef int BOOL ;
+typedef int BOOL;
 
 #define BOOLEAN int
 #define TRUE  1
