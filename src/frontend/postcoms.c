@@ -835,90 +835,111 @@ done:
     free_pnode(names);
 }
 
-
-void
-com_destroy(wordlist *wl)
+/* Free resources associated with "plot" datasets. The wordlist contains
+ * the names of the plots to delete or the word "all" to delete all but the
+ * default "const" plot, which cannot be deleted, even by name. If there are
+ * no names given, the current plot is deleted */
+void com_destroy(wordlist *wl)
 {
-    struct plot *pl, *npl = NULL;
-
+    /* If no name given, delete the current output data */
     if (!wl) {
         DelPlotWindows(plot_cur);
         killplot(plot_cur);
-    } else if (eq(wl->wl_word, "all")) {
+    }
+    else if (eq(wl->wl_word, "all")) { /* "all" -> all plots deleted */
+        struct plot *pl, *npl = NULL;
         for (pl = plot_list; pl; pl = npl) {
             npl = pl->pl_next;
             if (!eq(pl->pl_typename, "const")) {
                 DelPlotWindows(pl);
                 killplot(pl);
-            } else {
+            }
+            else {
                 plot_num = 1;
             }
         }
-    } else {
+    }
+    else { /* list of plots by name */
         while (wl) {
-            for (pl = plot_list; pl; pl = pl->pl_next)
-                if (eq(pl->pl_typename, wl->wl_word))
+            struct plot *pl;
+            for (pl = plot_list; pl; pl = pl->pl_next) {
+                if (eq(pl->pl_typename, wl->wl_word)) {
                     break;
+                }
+            }
             if (pl) {
                 DelPlotWindows(pl);
                 killplot(pl);
-            } else {
+            }
+            else {
                 fprintf(cp_err, "Error: no such plot %s\n", wl->wl_word);
             }
             wl = wl->wl_next;
         }
     }
-}
+} /* end of function com_destroy */
 
 
-static void
-killplot(struct plot *pl)
+
+static void killplot(struct plot *pl)
 {
-    struct dvec *v, *nv = NULL;
-    struct plot *op;
-
     if (eq(pl->pl_typename, "const")) {
         fprintf(cp_err, "Error: can't destroy the constant plot\n");
         return;
     }
     /*  pl_dvecs, pl_scale */
-    for (v = pl->pl_dvecs; v; v = nv) {
-        nv = v->v_next;
-        vec_free(v);
+    {
+        struct dvec *v;
+        struct dvec *nv;
+        for (v = pl->pl_dvecs; v; v = nv) {
+            nv = v->v_next;
+            vec_free(v);
+        }
     }
+
     /* unlink from plot_list (linked via pl_next) */
-    if (pl == plot_list) {
+    if (pl == plot_list) { /* First in list */
         plot_list = pl->pl_next;
-        if (pl == plot_cur)
+        if (pl == plot_cur) {
             plot_cur = plot_list;
-    } else {
-        for (op = plot_list; op; op = op->pl_next)
-            if (op->pl_next == pl)
+        }
+    }
+    else { /* inside list */
+        struct plot *op;
+        for (op = plot_list; op; op = op->pl_next) {
+            if (op->pl_next == pl) {
                 break;
-        if (!op)
+            }
+        }
+        if (!op) {
             fprintf(cp_err,
                     "Internal Error: kill plot -- not in list\n");
+            return;
+        }
         op->pl_next = pl->pl_next;
-        if (pl == plot_cur)
+        if (pl == plot_cur) {
             plot_cur = op;
+        }
     }
     /* delete the hash table entry for this plot */
-    if (pl->pl_lookup_table)
+    if (pl->pl_lookup_table) {
         nghash_free(pl->pl_lookup_table, NULL, NULL);
-    tfree(pl->pl_title);
-    tfree(pl->pl_name);
-    tfree(pl->pl_typename);
+    }
+    txfree(pl->pl_title);
+    txfree(pl->pl_name);
+    txfree(pl->pl_typename);
     wl_free(pl->pl_commands);
-    tfree(pl->pl_date); /* va: also tfree (memory leak) */
-    if (pl->pl_ccom)    /* va: also tfree (memory leak) */
+    txfree(pl->pl_date); /* va: also tfree (memory leak) */
+    if (pl->pl_ccom)  { /* va: also tfree (memory leak) */
         throwaway(pl->pl_ccom);
+    }
 
     if (pl->pl_env) { /* The 'environment' for this plot. */
         /* va: HOW to do? */
         printf("va: killplot should tfree pl->pl_env=(%p)\n", pl->pl_env);
         fflush(stdout);
     }
-    tfree(pl); /* va: also tfree pl itself (memory leak) */
+    txfree(pl); /* va: also tfree pl itself (memory leak) */
 }
 
 
