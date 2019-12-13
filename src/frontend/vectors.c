@@ -1065,7 +1065,7 @@ vec_basename(struct dvec *v)
 }
 
 /* get address of plot named 'name' */
-struct plot *get_plot(char* name)
+struct plot *get_plot(const char *name)
 
 
 {
@@ -1086,9 +1086,7 @@ struct plot *get_plot(char* name)
  * va: ATTENTION: has unlinked old keyword-class-tree from keywords[CT_VECTOR]
  *                (potentially memory leak)
  */
-
-void
-plot_setcur(char *name)
+void plot_setcur(const char *name)
 {
     struct plot *pl;
 
@@ -1103,28 +1101,43 @@ plot_setcur(char *name)
     }
     /* plots are listed in pl in reverse order */
     else if (cieq(name, "previous")) {
-        if (plot_cur->pl_next)
+        if (plot_cur->pl_next) {
             plot_cur = plot_cur->pl_next;
-        else
-            fprintf(cp_err, "Warning: Switching to previous plot not possible, stay with current plot (%s)\n", plot_cur->pl_typename);
-        return;
-    } else if (cieq(name, "next")) {
-        struct plot *prev_pl = NULL;
-        for (pl = plot_list; pl; pl = pl->pl_next) {
-            if (pl == plot_cur)
-                break;
-            prev_pl = pl;
         }
-        if (!prev_pl) {
-            fprintf(cp_err, "Warning: Switching to next plot not possible, stay with current plot (%s)\n", plot_cur->pl_typename);
-            return;
+        else {
+            fprintf(cp_err,
+                    "Warning: No previous plot is available. "
+                    "Plot remains unchanged (%s).\n",
+                    plot_cur->pl_typename);
         }
-        plot_cur = prev_pl;
         return;
     }
-    pl = get_plot(name);
-    if (!pl)
+    else if (cieq(name, "next")) {
+        /* Step through the list, which has plots in reverse order */
+        struct plot *prev_pl = NULL;
+        for (pl = plot_list; pl; pl = pl->pl_next) {
+            if (pl == plot_cur) {
+                break;
+            }
+            prev_pl = pl;
+        }
+        if (prev_pl) { /* found */
+            plot_cur = prev_pl;
+        }
+        else { /* no next plot */
+            fprintf(cp_err,
+                    "Warning: No next plot is available. "
+                    "Plot remains unchanged (%s).\n",
+                    plot_cur->pl_typename);
+        }
         return;
+    }
+
+    pl = get_plot(name);
+    if (!pl) {
+        return;
+    }
+
     /* va: we skip cp_kwswitch, because it confuses the keyword-tree management for
      *     repeated op-commands. When however cp_kwswitch is necessary for other
      *     reasons, we should hold the original keyword table pointer in an
@@ -1135,15 +1148,14 @@ plot_setcur(char *name)
      }
     */
     plot_cur = pl;
-}
+} /* end of function plot_setcur */
+
 
 
 /* Add a plot to the plot list. This is different from plot_add() in that
  * all this does is update the list and the variable $plots.
  */
-
-void
-plot_new(struct plot *pl)
+void plot_new(struct plot *pl)
 {
     pl->pl_next = plot_list;
     plot_list = pl;

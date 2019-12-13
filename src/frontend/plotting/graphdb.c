@@ -44,232 +44,320 @@ static GBUCKET GBucket[NUMGBUCKETS];
 /* note: Zero is not a valid id.  This is used in plot() in graf.c. */
 static int RunningId = 1;
 
-/* initialize graph structure */
-#define SETGRAPH(pgraph, id)                    \
-    do {                                        \
-        (pgraph)->graphid = (id);               \
-        (pgraph)->degree = 1;                   \
-        (pgraph)->linestyle = -1;               \
-    } while(0)
-
-
-/* returns NULL on error */
-
-GRAPH *
-NewGraph(void)
+/* Initialize graph structure */
+static inline void setgraph(GRAPH *pgraph, int id)
 {
-    GRAPH *pgraph;
+    pgraph->graphid = id;
+    pgraph->degree = 1;
+    pgraph->linestyle = -1;
+} /* end of function setgraph */
+
+
+
+/* Creates a new graph. Returns NULL on error */
+GRAPH *NewGraph(void)
+{
     LISTGRAPH *list;
-    int BucketId = RunningId % NUMGBUCKETS;
+    const int BucketId = RunningId % NUMGBUCKETS;
 
     if ((list = TMALLOC(LISTGRAPH, 1)) == NULL) {
         internalerror("can't allocate a listgraph");
-        return (NULL);
+        return (GRAPH *) NULL;
     }
 
-    pgraph = &list->graph;
-    SETGRAPH(pgraph, RunningId);
+    GRAPH * const pgraph = &list->graph;
+    setgraph(pgraph, RunningId);
+    GBUCKET *p_bucket = GBucket + BucketId;
 
-    if (!GBucket[BucketId].list) {
-        GBucket[BucketId].list = list;
-    } else {
+    /* Add to the appropriate bucket at the front of the linked list */
+    if (!p_bucket->list) { /* no list yet */
+        p_bucket->list = list;
+    }
+    else {
         /* insert at front of current list */
-        list->next = GBucket[BucketId].list;
-        GBucket[BucketId].list = list;
+        list->next = p_bucket->list;
+        p_bucket->list = list;
     }
 
     RunningId++;
 
-    return (pgraph);
-}
+    return pgraph;
+} /* end of function NewGraph */
+
 
 
 /* Given graph id, return graph */
-GRAPH *
-FindGraph(int id)
+GRAPH *FindGraph(int id)
 {
     LISTGRAPH *list;
 
+    /* Step through list of graphs until found or list ends */
     for (list = GBucket[id % NUMGBUCKETS].list;
-         list && list->graph.graphid != id;
-         list = list->next)
+            list && list->graph.graphid != id;
+            list = list->next) {
         ;
+    }
 
-    if (list)
-        return (&list->graph);
-    else
-        return (NULL);
-}
+    if (list) { /* found */
+        return &list->graph;
+    }
+    else {
+        return (GRAPH *) NULL;
+    }
+} /* end of function FindGraph */
 
 
-GRAPH *
-CopyGraph(GRAPH *graph)
+
+GRAPH *CopyGraph(GRAPH *graph)
 {
     GRAPH *ret;
-    struct _keyed *k;
     struct dveclist *link, *newlink;
 
-    if (!graph)
+    if (!graph) {
         return NULL;
+    }
 
     ret = NewGraph();
-    memcpy(ret, graph, sizeof(GRAPH)); /* va: compatible pointer types */
 
-    ret->graphid = RunningId - 1;   /* restore id */
+    {
+        const int id = ret->graphid; /* save ID of the new graph */
+        memcpy(ret, graph, sizeof(GRAPH)); /* copy graph info (inc. ID) */
+        ret->graphid = id;   /* restore ID */
+    }
 
     /* copy keyed */
-    for (ret->keyed = NULL, k = graph->keyed; k; k = k->next)
-        SaveText(ret, k->text, k->x, k->y);
-
-    /* copy dvecs */
-    ret->plotdata = NULL;
-    for (link = graph->plotdata; link; link = link->next) {
-        newlink = TMALLOC(struct dveclist, 1);
-        newlink->next = ret->plotdata;
-        newlink->vector = vec_copy(link->vector);
-        /* vec_copy doesn't set v_color or v_linestyle */
-        newlink->vector->v_color = link->vector->v_color;
-        newlink->vector->v_linestyle = link->vector->v_linestyle;
-        newlink->vector->v_flags |= VF_PERMANENT;
-        ret->plotdata = newlink;
+    {
+        struct _keyed *k;
+        for (ret->keyed = NULL, k = graph->keyed; k; k = k->next) {
+            SaveText(ret, k->text, k->x, k->y);
+        }
     }
+
+    /* copy dvecs or reuse if "borrowed" already */
+    {
+        struct dveclist *new_plotdata = (struct dveclist *) NULL;
+        for (link = graph->plotdata; link; link = link->next) {
+            if (link->f_own_vector) {
+                struct dvec * const old_vector = link->vector;
+                struct dvec * const new_vector = vec_copy(old_vector);
+                /* vec_copy doesn't set v_color or v_linestyle */
+                new_vector->v_color = old_vector->v_color;
+                new_vector->v_linestyle = old_vector->v_linestyle;
+                new_vector->v_flags |= VF_PERMANENT;
+                newlink = TMALLOC(struct dveclist, 1);
+                newlink->next = new_plotdata;
+                newlink->f_own_vector = TRUE;
+                newlink->vector = new_vector;
+
+                /* If the link owns the vector, it also owns its scale
+                 * vector, if present */
+                struct dvec *old_scale = old_vector->v_scale;
+                if (old_scale != (struct dvec *) NULL) {
+                    new_plotdata = newlink; /* put in front */
+                    struct dvec * const new_scale = vec_copy(old_scale);
+                    new_scale->v_flags |= VF_PERMANENT;
+                    newlink = TMALLOC(struct dveclist, 1);
+                    newlink->next = new_plotdata;
+                    newlink->f_own_vector = TRUE;
+                    newlink->vector = new_scale;
+                    newlink->next = new_plotdata;
+                }
+            }
+            else {
+                newlink->vector = link->vector;
+                newlink->f_own_vector = FALSE;
+            }
+           new_plotdata = newlink; /* put in front */
+        }
+
+        ret->plotdata = new_plotdata; /* give vector list to plot */
+    } /* end of block copying or reusing dvecs */
 
     ret->commandline = copy(graph->commandline);
     ret->plotname = copy(graph->plotname);
 
-    return (ret);
-}
+    {
+        const char * const lbl = graph->grid.xlabel;
+        if (lbl) {
+            ret->grid.xlabel = copy(lbl);
+        }
+    }
+
+    {
+        const char * const lbl = graph->grid.ylabel;
+        if (lbl) {
+            ret->grid.ylabel = copy(lbl);
+        }
+    }
+
+    /* Copy devdep information and size if present */
+    {
+        const void * const p = graph->devdep;
+        if (p != NULL) {
+            const size_t n = ret->n_byte_devdep = graph->n_byte_devdep;
+            void * const dst = ret->devdep = tmalloc(n);
+            (void) memcpy(dst, graph->devdep, n);
+        }
+    }
+
+    return ret;
+} /* end of function CopyGraph */
 
 
-int
-DestroyGraph(int id)
+
+int DestroyGraph(int id)
 {
-    LISTGRAPH *list, *lastlist;
-    struct _keyed *k, *nextk;
-    struct dveclist *d, *nextd;
-    struct dbcomm *db;
+    /* Locate hash bucket for this graph */
+    const int index = id % NUMGBUCKETS;
+    LISTGRAPH *list = GBucket[index].list;
 
-    list = GBucket[id % NUMGBUCKETS].list;
-    lastlist = NULL;
+    /* Pointer before current one. Allows fixing list when the current
+     * node is deleted. Init to NULL to indicate that at head of list */
+    LISTGRAPH *lastlist = (LISTGRAPH *) NULL;
+
+    /* Step through graphs in the bucket until the one with id is found */
     while (list) {
         if (list->graph.graphid == id) {  /* found it */
+            struct _keyed *k, *nextk;
+            struct dbcomm *db;
 
             /* Fix the iplot/trace dbs list */
-            for (db = dbs; db && db->db_graphid != id; db = db->db_next)
+            for (db = dbs; db && db->db_graphid != id; db = db->db_next) {
                 ;
-
-            if (db && (db->db_type == DB_IPLOT ||
-                       db->db_type == DB_IPLOTALL))
-            {
-                db->db_type = DB_DEADIPLOT;
-                /* Delete this later */
-                return (0);
             }
 
-            /* adjust bucket pointers */
-            if (lastlist)
-                lastlist->next = list->next;
-            else
-                GBucket[id % NUMGBUCKETS].list = list->next;
+            if (db && (db->db_type == DB_IPLOT ||
+                    db->db_type == DB_IPLOTALL)) {
+                db->db_type = DB_DEADIPLOT;
+                /* Delete this later */
+                return 0;
+            }
 
-            /* run through and de-allocate dynamically allocated keyed list */
+            /* Adjust bucket pointers to remove the current node */
+            if (lastlist) { /* not at front */
+                lastlist->next = list->next;
+            }
+            else { /* at front */
+                GBucket[index].list = list->next;
+            }
+
+            /* Run through and de-allocate dynamically allocated keyed list */
             k = list->graph.keyed;
             while (k) {
                 nextk = k->next;
-                tfree(k->text);
-                tfree(k);
+                txfree(k->text);
+                txfree(k);
                 k = nextk;
             }
 
-            /* de-allocate dveclist */
-            d = list->graph.plotdata;
-            while (d) {
-                nextd = d->next;
-                dvec_free(d->vector);
-                tfree(d);
-                d = nextd;
+            /* Free vectors owned by this graph and free the list */
+            {
+                struct dveclist *d = list->graph.plotdata;
+                struct dveclist *nextd;
+                while (d != (struct dveclist *) NULL) {
+                    nextd = d->next;
+                    if (d->f_own_vector) {
+                        /* list responsible for freeing this vector */
+                        dvec_free(d->vector);
+                    }
+                    txfree(d);
+                    d = nextd;
+                }
             }
 
-            tfree(list->graph.commandline);
-            tfree(list->graph.plotname);
+            txfree(list->graph.commandline);
+            txfree(list->graph.plotname);
+            txfree(list->graph.grid.xlabel);
+            txfree(list->graph.grid.ylabel);
 
-            /* If device dependent space allocated, free it. */
-            if (list->graph.devdep)
-                tfree(list->graph.devdep);
-            tfree(list);
+            /* If device-dependent space was allocated, free it. */
+            {
+                void * const p = list->graph.devdep;
+                if (p) {
+                    txfree(p);
+                }
+            }
 
-            return (1);
-        }
-        lastlist = list;
-        list = list->next;
-    }
+            txfree(list);
 
+            return 1;
+        } /* end of case that graph ID was found */
+
+        lastlist = list; /* update previous node */
+        list = list->next; /* step to next node */
+    } /* end of loop over graphs in the current bucket */
+
+    /* The graph with ID id was not found */
     internalerror("tried to destroy non-existent graph");
-    return (0);
-}
+    return 0;
+} /* end of function DestroyGraph */
 
 
-/* free up all dynamically allocated data structures */
-void
-FreeGraphs(void)
+
+/* Free up all dynamically allocated data structures */
+void FreeGraphs(void)
 {
+    /* Iterate over all hash buckets */
     GBUCKET *gbucket;
-    LISTGRAPH *list, *deadl;
-
     for (gbucket = GBucket; gbucket < &GBucket[NUMGBUCKETS]; gbucket++) {
-        list = gbucket->list;
-        while (list) {
-            deadl = list;
+        LISTGRAPH * list = gbucket->list; /* linked list of graphs here */
+        while (list) { /* Free each until end of list */
+            LISTGRAPH *deadl = list;
             list = list->next;
-            tfree(deadl);
+            txfree(deadl);
         }
     }
-}
+} /* end of functdion FreeGraphs */
 
 
-void
-SetGraphContext(int graphid)
+
+/* This function sets global varial currentgraph based on graphid */
+void SetGraphContext(int graphid)
 {
     currentgraph = FindGraph(graphid);
-}
+} /* end of function SetGraphContext */
 
 
+
+/* Stack of graph objects implemented as a linked list */
 typedef struct gcstack {
     GRAPH *pgraph;
     struct gcstack *next;
 } GCSTACK;
 
-GCSTACK *gcstacktop;
+static GCSTACK *gcstacktop; /* top of the stack of graphs */
 
 
 /* note: This Push and Pop has tricky semantics.
    Push(graph) will push the currentgraph onto the stack
    and set currentgraph to graph.
-   Pop() simply sets currentgraph to the top of the stack and pops stack.
+   Pop() simply sets currentgraph to previous value at the top of the stack
+   and pops stack.
 */
-void
-PushGraphContext(GRAPH *graph)
+void PushGraphContext(GRAPH *graph)
 {
     GCSTACK *gcstack = TMALLOC(GCSTACK, 1);
 
     if (!gcstacktop) {
         gcstacktop = gcstack;
-    } else {
+    }
+    else {
         gcstack->next = gcstacktop;
         gcstacktop = gcstack;
     }
     gcstacktop->pgraph = currentgraph;
     currentgraph = graph;
-}
+} /* end of function PushGraphContext */
 
 
-void
-PopGraphContext(void)
+
+void PopGraphContext(void)
 {
-    GCSTACK *dead;
-
-    currentgraph = gcstacktop->pgraph;
-    dead = gcstacktop;
+    currentgraph = gcstacktop->pgraph; /* pop from stack, making current */
+    GCSTACK *dead = gcstacktop; /* remove from stack */
     gcstacktop = gcstacktop->next;
-    tfree(dead);
-}
+    txfree(dead); /* free allocation */
+} /* end of function PopGraphContext */
+
+
+

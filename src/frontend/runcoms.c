@@ -369,8 +369,7 @@ dosim(
 
 /* Usage is run [filename] */
 
-void
-com_run(wordlist *wl)
+void com_run(wordlist *wl)
 {
     /* ft_getsaves(); */
     dosim("run", wl);
