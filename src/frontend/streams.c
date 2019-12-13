@@ -29,21 +29,21 @@ FILE *cp_curout = NULL;
 FILE *cp_curerr = NULL;
 
 
-static bool
-fileexists(char *name)
+static bool fileexists(const char *name)
 {
 #ifdef HAVE_ACCESS
-    if (access(name, 0) == 0)
-        return (TRUE);
+    if (access(name, 0) == 0) {
+        return TRUE;
+    }
 #endif
-    return (FALSE);
+    return FALSE;
 }
+
 
 
 /* This routine sets the cp_{in,out,err} pointers and takes the io
  * directions out of the command line.  */
-wordlist *
-cp_redirect(wordlist *wl)
+wordlist *cp_redirect(wordlist *wl)
 {
     int gotinput = 0, gotoutput = 0, goterror = 0, append = 0;
     wordlist *w;
@@ -77,8 +77,9 @@ cp_redirect(wordlist *wl)
             w = w->wl_next;
 
 #ifdef CPDEBUG
-            if (cp_debug)
+            if (cp_debug) {
                 fprintf(cp_err, "Input file is %s...\n", fname);
+            }
 #endif
 
             fp = fopen(fname, "r");
@@ -87,18 +88,19 @@ cp_redirect(wordlist *wl)
                 tfree(fname);
                 goto error;
             }
-			
-			tfree(fname);
+
+            tfree(fname);
             cp_in = fp;
 
             /* special case for set command:
                keep i/o information (handled in com_set.c)  */
             wordlist* bw = beg->wl_prev->wl_prev;
-            if (!(bw && cieq(bw->wl_word, "set")))
+            if (!(bw && cieq(bw->wl_word, "set"))) {
                 wl_delete_slice(beg, w);
+            }
 
-        } else if (*w->wl_word == cp_gt) {
-
+        }
+        else if (*w->wl_word == cp_gt) {
             wordlist *beg = w;
 
             if (gotoutput++) {
@@ -115,14 +117,14 @@ cp_redirect(wordlist *wl)
             if (w && *w->wl_word == cp_amp) {
                 if (goterror++) {
                     fprintf(cp_err, "Error: ambiguous error redirect.\n");
-                    return (NULL);
+                    return (wordlist *) NULL;
                 }
                 w = w->wl_next;
             }
 
             if (!w) {
                 fprintf(cp_err, "Error: missing name for output.\n");
-                return (NULL);
+                return (wordlist *) NULL;
             }
 
             fname = cp_unquote(w->wl_word);
@@ -140,31 +142,35 @@ cp_redirect(wordlist *wl)
             }
 
             fp = fopen(fname, append ? "a" : "w+");
-            tfree(fname);
 
             if (!fp) {
+                tfree(fname);
                 perror(fname);
                 goto error;
             }
+            tfree(fname);
 
             cp_out = fp;
-            if (goterror)
+            if (goterror) {
                 cp_err = fp;
+            }
 
             out_isatty = FALSE;
 
             wl_delete_slice(beg, w);
 
-        } else {
+        }
+        else {
             w = w->wl_next;
         }
     }
-    return (wl);
+    return wl;
 
 error:
     wl_free(wl);                /* FIXME, Ouch !! */
-    return (NULL);
-}
+    return (wordlist *) NULL;
+} /* end of function cp_redirect */
+
 
 
 /* Reset the cp_* FILE pointers to the standard ones.  This is tricky,
@@ -174,19 +180,23 @@ error:
  * bar" where foo is a script, and it has redirections of its own
  * inside of it, none of the output from foo will get sent to
  * stdout...  */
-
-void
-cp_ioreset(void)
+void cp_ioreset(void)
 {
-    if (cp_in != cp_curin)
-        if (cp_in)
+    if (cp_in != cp_curin) {
+        if (cp_in) {
             fclose(cp_in);
-    if (cp_out != cp_curout)
-        if (cp_out)
+        }
+    }
+    if (cp_out != cp_curout) {
+        if (cp_out) {
             fclose(cp_out);
-    if (cp_err != cp_curerr)
-        if (cp_err  &&  cp_err != cp_out)
+        }
+    }
+    if (cp_err != cp_curerr) {
+        if (cp_err  &&  cp_err != cp_out) {
             fclose(cp_err);
+        }
+    }
 
     cp_in  = cp_curin;
     cp_out = cp_curout;
@@ -194,18 +204,30 @@ cp_ioreset(void)
 
     /*** Minor bug here... */
     out_isatty = TRUE;
-}
+} /* end of function cp_ioreset */
+
 
 
 /* Do this only right before an exec, since we lose the old std*'s. */
-
-void
-fixdescriptors(void)
+void fixdescriptors(void)
 {
-    if (cp_in != stdin)
-        dup2(fileno(cp_in), fileno(stdin));
-    if (cp_out != stdout)
-        dup2(fileno(cp_out), fileno(stdout));
-    if (cp_err != stderr)
-        dup2(fileno(cp_err), fileno(stderr));
-}
+    bool dup2_fail = FALSE;
+    if (cp_in != stdin) {
+        dup2_fail |= dup2(fileno(cp_in), fileno(stdin)) == -1;
+    }
+    if (cp_out != stdout) {
+        dup2_fail |= dup2(fileno(cp_out), fileno(stdout)) == -1;
+    }
+    if (cp_err != stderr) {
+        dup2_fail |= dup2(fileno(cp_err), fileno(stderr)) == -1;
+    }
+
+    /* Warn if there was some failure */
+    if (dup2_fail) {
+        (void) fprintf(cp_err,
+                "I/O descriptior failure: %s.\n", strerror(errno));
+    }
+} /* end of function fixdescriptors */
+
+
+
