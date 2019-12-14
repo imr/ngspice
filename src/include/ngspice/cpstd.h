@@ -26,7 +26,7 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 /* Externs defined in std.c */
 
-extern char *tildexpand(char *string);
+extern char *tildexpand(const char *string);
 extern void printnum(char *buf, double num);
 int printnum_ds(DSTRING *p_ds, double num);
 extern int cp_numdgt;

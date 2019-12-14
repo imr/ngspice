@@ -1,6 +1,8 @@
 /*************
  * streams.c
  ************/
+#include <errno.h>
+#include <string.h>
 
 #include "ngspice/ngspice.h"
 #include "ngspice/wordlist.h"
