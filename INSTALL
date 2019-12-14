@@ -628,7 +628,7 @@ Most of the options now following are not well maintained, are not tested or eve
  strings.h has been necessary during setting up the project.
 
  Install Microsoft Visual Studio 2019 Community with C/C++. For
- example the  German edition is available at no cost from
+ example, the German edition is available at no cost from
  https://www.visualstudio.com/de/vs/community/.
 
  Goto  /ngspice/visualc.
