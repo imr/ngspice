@@ -28,8 +28,7 @@ static char *linestyle[] = {
 static int currentlinestyle = SOLID;
 
 
-int
-Plt5_Init(void)
+int Plt5_Init(void)
 {
     dispdev->numlinestyles = 4;
     dispdev->numcolors = 2;
@@ -38,17 +37,18 @@ Plt5_Init(void)
     dispdev->width = 1000;
     dispdev->height = 1000;
 
-    return (0);
+    return 0;
 }
 
 
-int
-Plt5_NewViewport(GRAPH *graph)
+int Plt5_NewViewport(GRAPH *graph)
 {
     if ((plotfile = fopen((char*) graph->devdep, "w")) == NULL) {
+        perror((char *) graph->devdep);
+        free(graph->devdep);
         graph->devdep = NULL;
-        perror((char*) graph->devdep);
-        return (1);
+        graph->n_byte_devdep = 0;
+        return 1;
     }
 
     if (graph->absolute.width) {
@@ -64,7 +64,8 @@ Plt5_NewViewport(GRAPH *graph)
         /* re-scale linestyles */
         gr_relinestyle(graph);
 
-    } else {
+    }
+    else {
         /* scale space */
         putc('s', plotfile);
         putsi(0);
@@ -83,13 +84,13 @@ Plt5_NewViewport(GRAPH *graph)
 
     /* set to NULL so graphdb doesn't incorrectly de-allocate it */
     graph->devdep = NULL;
+    graph->n_byte_devdep = 0;
 
-    return (0);
+    return 0;
 }
 
 
-int
-Plt5_Close(void)
+int Plt5_Close(void)
 {
     /* in case Plt5_Close is called as part of an abort,
        w/o having reached Plt5_NewViewport */
@@ -100,16 +101,14 @@ Plt5_Close(void)
 }
 
 
-int
-Plt5_Clear(void)
+int Plt5_Clear(void)
 {
     /* do nothing */
     return 0;
 }
 
 
-int
-Plt5_DrawLine(int x1, int y1, int x2, int y2)
+int Plt5_DrawLine(int x1, int y1, int x2, int y2)
 {
     putc('l', plotfile);
     putsi(x1);
@@ -121,8 +120,7 @@ Plt5_DrawLine(int x1, int y1, int x2, int y2)
 }
 
 
-int
-Plt5_Arc(int xc, int yc, int radius, double theta, double delta_theta)
+int Plt5_Arc(int xc, int yc, int radius, double theta, double delta_theta)
 {
     int x0, y0, x1, y1;
 
@@ -169,8 +167,7 @@ Plt5_Arc(int xc, int yc, int radius, double theta, double delta_theta)
 }
 
 
-int
-Plt5_Text(char *text, int x, int y, int angle)
+int Plt5_Text(char *text, int x, int y, int angle)
 {
     int savedlstyle;
     NG_IGNORE(angle);
@@ -195,8 +192,7 @@ Plt5_Text(char *text, int x, int y, int angle)
 }
 
 
-int
-Plt5_SetLinestyle(int linestyleid)
+int Plt5_SetLinestyle(int linestyleid)
 {
     if (linestyleid < 0 || linestyleid > dispdev->numlinestyles) {
         internalerror("bad linestyleid");
@@ -211,8 +207,7 @@ Plt5_SetLinestyle(int linestyleid)
 
 
 /* ARGSUSED */
-int
-Plt5_SetColor(int colorid)
+int Plt5_SetColor(int colorid)
 {
     NG_IGNORE(colorid);
 
@@ -221,8 +216,7 @@ Plt5_SetColor(int colorid)
 }
 
 
-int
-Plt5_Update(void)
+int Plt5_Update(void)
 {
     fflush(plotfile);
     return 0;

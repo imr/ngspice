@@ -79,8 +79,7 @@ void PS_Stroke(void);
 
 
 /* Set scale, color and size of the plot */
-int
-PS_Init(void)
+int PS_Init(void)
 {
     char pswidth[30], psheight[30];
 
@@ -108,7 +107,8 @@ PS_Init(void)
     /* plot size */
     if (!cp_getvar("hcopywidth", CP_STRING, pswidth, sizeof( pswidth))) {
         dispdev->width = (int)(7.75 * 72.0 * scale);       /* (8 1/2 - 3/4) * 72 */
-    } else {
+    }
+    else {
         sscanf(pswidth, "%d", &(dispdev->width));
         if (dispdev->width <= 100)
             dispdev->width = 100;
@@ -117,7 +117,8 @@ PS_Init(void)
     }
     if (!cp_getvar("hcopyheight", CP_STRING, psheight, sizeof(psheight))) {
         dispdev->height = dispdev->width;
-    } else {
+    }
+    else {
         sscanf(psheight, "%d", &(dispdev->height));
         if (dispdev->height <= 100)
             dispdev->height = 100;
@@ -135,15 +136,17 @@ PS_Init(void)
      * viewport.height = absolute.height - 2 * viewportyoff
      */
 
-    if (!cp_getvar("hcopyfont", CP_STRING, psfont, sizeof(psfont)))
+    if (!cp_getvar("hcopyfont", CP_STRING, psfont, sizeof(psfont))) {
         strcpy(psfont, "Helvetica");
+    }
     if (!cp_getvar("hcopyfontsize", CP_STRING, psfontsize, sizeof(psfontsize))) {
         fontsize = 10;
         fontwidth = 6;
         fontheight = 14;
         xtadj = (int)(XTADJ * scale);
         ytadj = (int)(YTADJ * scale);
-    } else {
+    }
+    else {
         sscanf(psfontsize, "%d", &fontsize);
         if ((fontsize < 10) || (fontsize > 14))
             fontsize = 10;
@@ -157,21 +160,23 @@ PS_Init(void)
     dispdev->minx = (int)(XOFF / scale);
     dispdev->miny = (int)(YOFF / scale);
 
-    return (0);
-}
+    return 0;
+} /* end of function PS_Init */
+
 
 
 /* Plot and fill bounding box */
-int
-PS_NewViewport(GRAPH *graph)
+int PS_NewViewport(GRAPH *graph)
 {
     int x1, x2, y1, y2;
     hcopygraphid = graph->graphid;
     /* devdep initially contains name of output file */
     if ((plotfile = fopen((char*)graph->devdep, "w")) == NULL) {
-        perror((char*)graph->devdep);
+        perror((char *) graph->devdep);
+        free(graph->devdep);
         graph->devdep = NULL;
-        return (1);
+        graph->n_byte_devdep = 0;
+        return 1;
     }
 
     if (graph->absolute.width) {
@@ -233,6 +238,7 @@ PS_NewViewport(GRAPH *graph)
             psfont, (int) (fontsize * scale));
 
     graph->devdep = TMALLOC(PSdevdep, 1);
+    graph->n_byte_devdep = sizeof(PSdevdep);
     DEVDEP(graph).lastlinestyle = -1;
     DEVDEP(graph).lastcolor = -1;
     DEVDEP(graph).lastx = -1;
@@ -245,8 +251,7 @@ PS_NewViewport(GRAPH *graph)
 }
 
 
-int
-PS_Close(void)
+int PS_Close(void)
 {
     /* in case PS_Close is called as part of an abort,
        w/o having reached PS_NewViewport */
@@ -267,16 +272,14 @@ PS_Close(void)
 }
 
 
-int
-PS_Clear(void)
+int PS_Clear(void)
 {
     /* do nothing */
     return 0;
 }
 
 
-int
-PS_DrawLine(int x1, int y1, int x2, int y2)
+int PS_DrawLine(int x1, int y1, int x2, int y2)
 {
     /* note: this is not extendible to more than one graph
        => will have to give NewViewport a writeable graph XXX */
@@ -303,8 +306,7 @@ PS_DrawLine(int x1, int y1, int x2, int y2)
 }
 
 
-int
-PS_Arc(int x0, int y0, int r, double theta, double delta_theta)
+int PS_Arc(int x0, int y0, int r, double theta, double delta_theta)
 {
     double x1, y1;
     double angle1, angle2;
@@ -325,8 +327,7 @@ PS_Arc(int x0, int y0, int r, double theta, double delta_theta)
 }
 
 
-int
-PS_Text(char *text, int x, int y, int angle)
+int PS_Text(char *text, int x, int y, int angle)
 {
     int savedlstyle, savedcolor;
 
@@ -368,8 +369,7 @@ PS_Text(char *text, int x, int y, int angle)
 /* PS_DefineColor */
 /* PS_DefineLinestyle */
 
-int
-PS_SetLinestyle(int linestyleid)
+int PS_SetLinestyle(int linestyleid)
 {
     /* special case
        get it when PS_Text restores a -1 linestyle */
@@ -387,16 +387,14 @@ PS_SetLinestyle(int linestyleid)
 }
 
 
-int
-PS_SetColor(int colorid)
+int PS_SetColor(int colorid)
 {
     PS_LinestyleColor(currentgraph->linestyle, colorid);
     return 0;
 }
 
 
-int
-PS_Update(void)
+int PS_Update(void)
 {
     fflush(plotfile);
     return 0;
@@ -405,8 +403,7 @@ PS_Update(void)
 
 /**************** PRIVAT FUNCTIONS OF PS FRONTEND *****************************/
 
-void
-PS_SelectColor(int colorid)           /* should be replaced by PS_DefineColor */
+void PS_SelectColor(int colorid)           /* should be replaced by PS_DefineColor */
 {
     char colorN[30] = "", colorstring[30] = "";
     char rgb[30], s_red[30] = "0x", s_green[30] = "0x", s_blue[30] = "0x";
@@ -468,8 +465,7 @@ PS_SelectColor(int colorid)           /* should be replaced by PS_DefineColor */
 }
 
 
-void
-PS_LinestyleColor(int linestyleid, int colorid)
+void PS_LinestyleColor(int linestyleid, int colorid)
 {
     /* we have some different linestyles and colors:
        - color and linestyle we got via function call
@@ -519,8 +515,7 @@ PS_LinestyleColor(int linestyleid, int colorid)
 }
 
 
-void
-PS_Stroke(void)
+void PS_Stroke(void)
 {
     /* strokes an open path */
     if (DEVDEP(currentgraph).linecount > 0) {

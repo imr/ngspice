@@ -107,9 +107,7 @@ WIN_Init() returns 0, if no error ocurred.
 
 WIN_Init() does not yet open a window, this happens only in WIN_NewViewport()
 ******************************************************************************/
-
-int
-WIN_Init(void)
+int WIN_Init(void)
 {
     char colorstring[BSIZE_SP];
 
@@ -126,10 +124,12 @@ WIN_Init(void)
         isblack = !cieq(colorstring, "white");
 
     /* get linewidth information from spinit */
-    if (!cp_getvar("xbrushwidth", CP_NUM, &linewidth, 0))
+    if (!cp_getvar("xbrushwidth", CP_NUM, &linewidth, 0)) {
         linewidth = 0;
-    if (linewidth < 0)
+    }
+    if (linewidth < 0) {
         linewidth = 0;
+    }
 
     /* only for the first time: */
     if (!IsRegistered) {
@@ -165,10 +165,12 @@ WIN_Init(void)
         ColorTable[11] = RGB(255, 128, 128);   /* pink */
 
         /* 2. color bank (with different line style */
-        if (isblack)
+        if (isblack) {
             ColorTable[12] = RGB(255, 255, 255);   /* white */
-        else
+        }
+        else {
             ColorTable[12] = RGB(  0,   0,   0);   /* black */
+        }
 
         ColorTable[13] = RGB(  0, 255,   0);   /* green */
         ColorTable[14] = RGB(255,   0,   0);   /* red */
@@ -192,17 +194,20 @@ WIN_Init(void)
         TheWndClass.lpszMenuName   = NULL;
         TheWndClass.hCursor        = LoadCursor(NULL, IDC_ARROW);
 
-        if (isblack)
+        if (isblack) {
             TheWndClass.hbrBackground  = GetStockObject(BLACK_BRUSH);
-        else
+        }
+        else {
             TheWndClass.hbrBackground  = GetStockObject(WHITE_BRUSH);
+        }
 
         TheWndClass.hIcon          = LoadIcon(hInst, MAKEINTRESOURCE(2));
         TheWndClass.cbClsExtra     = 0;
         TheWndClass.cbWndExtra     = sizeof(GRAPH *);
 
-        if (!RegisterClass(&TheWndClass))
+        if (!RegisterClass(&TheWndClass)) {
             return 1;
+        }
     }
     /* not first time */
     else if (isblackold != isblack) {
@@ -214,10 +219,12 @@ WIN_Init(void)
             ColorTable[0]  = RGB(255, 255, 255);   /* white   = background */
             ColorTable[1]  = RGB(  0,   0,   0);   /* black   = text and grid */
         }
-        if (isblack)
+        if (isblack) {
             ColorTable[12] = RGB(255, 255, 255);   /* white */
-        else
+        }
+        else {
             ColorTable[12] = RGB(  0,   0,   0);   /* black */
+        }
 
         isblackold = isblack;
     }
@@ -230,28 +237,27 @@ WIN_Init(void)
 
 /* get pointer to graph */
 /* (attach to window) */
-static GRAPH *
-pGraph(HWND hwnd)
+static GRAPH *pGraph(HWND hwnd)
 {
     return (GRAPH *) GetWindowLongPtr(hwnd, 0);
 }
 
 
 /* return line style for plotting */
-static int
-LType(int ColorIndex)
+static int LType(int ColorIndex)
 {
-    if (ColorIndex >= 12)
+    if (ColorIndex >= 12) {
         return PS_DOT;
-    else
+    }
+    else {
         return PS_SOLID;
+    }
 }
 
 
 /* postscript hardcopy from a plot window */
 /* called by SystemMenue / Postscript hardcopy */
-static LRESULT
-HcpyPlot(HWND hwnd)
+static LRESULT HcpyPlot(HWND hwnd)
 {
     int colorval = isblack? 0 : 1;
     NG_IGNORE(hwnd);
@@ -261,13 +267,13 @@ HcpyPlot(HWND hwnd)
 }
 
 
-static LRESULT
-HcpyPlotBW(HWND hwnd)
+static LRESULT HcpyPlotBW(HWND hwnd)
 {
     int bgcolor;
     NG_IGNORE(hwnd);
-    if (cp_getvar("hcopypscolor", CP_NUM, &bgcolor, 0))
+    if (cp_getvar("hcopypscolor", CP_NUM, &bgcolor, 0)) {
         cp_remvar("hcopypscolor");
+    }
     com_hardcopy(NULL);
     return 0;
 }
@@ -275,8 +281,7 @@ HcpyPlotBW(HWND hwnd)
 
 /* print a plot window */
 /* called by SystemMenue / Print */
-static LRESULT
-PrintPlot(HWND hwnd)
+static LRESULT PrintPlot(HWND hwnd)
 {
     GRAPH *graph;
     GRAPH *temp;
@@ -288,20 +293,23 @@ PrintPlot(HWND hwnd)
 
     /* switch to printer */
     /* (results in WPRINT_Init()) */
-    if (DevSwitch("WinPrint"))
+    if (DevSwitch("WinPrint")) {
         return 0;
+    }
 
     /* Cursor = wait */
     SetCursor(LoadCursor(NULL, IDC_WAIT));
 
     /* copy graph */
     temp = CopyGraph(graph);
-    if (!temp)
+    if (!temp) {
         goto PrintEND;
+    }
 
     /* add to the copy the new printer data */
-    if (NewViewport(temp))
+    if (NewViewport(temp)) {
         goto PrintEND2;
+    }
 
     /* make correction to placement of grid (copy from gr_init) */
     temp->viewportxoff = temp->fontwidth  * 8;
@@ -326,8 +334,7 @@ PrintPlot(HWND hwnd)
 
 
 /* initialze printer */
-static LRESULT
-PrintInit(HWND hwnd)
+static LRESULT PrintInit(HWND hwnd)
 {
     /* hand over to printer module */
     WPRINT_PrintInit(hwnd);
@@ -336,8 +343,8 @@ PrintInit(HWND hwnd)
 
 
 /* window procedure */
-LRESULT CALLBACK
-PlotWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK PlotWindowProc(HWND hwnd, UINT uMsg,
+        WPARAM wParam, LPARAM lParam)
 {
     static int x0, y0, xep, yep;
     int xe, ye, prevmix;
@@ -380,10 +387,12 @@ PlotWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         /* left mouse button: connect coordinate pair by dashed pair of x, y lines */
         if (wParam & MK_LBUTTON) {
             hdc = GetDC(hwnd);
-            if (isblack)
+            if (isblack) {
                 prevmix = SetROP2(hdc, R2_XORPEN);
-            else
+            }
+            else {
                 prevmix = SetROP2(hdc, R2_NOTXORPEN);
+            }
             /* Create white dashed pen */
             NewPen = CreatePen(LType(12), 0, ColorTable[1]);
             OldPen = SelectObject(hdc, NewPen);
@@ -466,7 +475,8 @@ PlotWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                         hypot(fx0, fy0),
                         (angle > 0) ? angle : 360.0 + angle);
             }
-        } else  {
+        }
+        else  {
             /* need to print info about two points */
             fprintf(stdout, "\nx0 = %g, y0 = %g    x1 = %g, y1 = %g\n",
                     fx0, fy0, fxe, fye);
@@ -601,8 +611,7 @@ PlotWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 ******************************************************************************/
 
-int
-WIN_NewViewport(GRAPH *graph)
+int WIN_NewViewport(GRAPH *graph)
 {
     int      i;
     HWND     window;
@@ -612,8 +621,9 @@ WIN_NewViewport(GRAPH *graph)
     HMENU    sysmenu;
 
     /* test the parameters */
-    if (!graph)
+    if (!graph) {
         return 1;
+    }
 
     /* initialize if not yet done */
     if (WIN_Init() != 0) {
@@ -623,24 +633,30 @@ WIN_NewViewport(GRAPH *graph)
 
     /* allocate device dependency info */
     wd = calloc(1, sizeof(tWindowData));
-    if (!wd)
+    if (!wd) {
         return 1;
+    }
 
     graph->devdep = wd;
+    graph->n_byte_devdep = sizeof(tWindowData);
 
     /* Create the window */
     i = GetSystemMetrics(SM_CYSCREEN) / 3;
     window = CreateWindow(WindowName, graph->plotname, WS_OVERLAPPEDWINDOW,
                           0, 0, WinLineWidth, i * 2 - 22, NULL, NULL, hInst, NULL);
-    if (!window)
+    if (!window) {
         return 1;
+    }
+
 
     /* change the background color of all windows (both new and already plotted)
        by assessing the registered window class */
-    if (isblack)
+    if (isblack) {
         SetClassLongPtr(window, GCLP_HBRBACKGROUND, (LONG_PTR)GetStockObject(BLACK_BRUSH));
-    else
+    }
+    else {
         SetClassLongPtr(window, GCLP_HBRBACKGROUND, (LONG_PTR)GetStockObject(WHITE_BRUSH));
+    }
 
 
     wd->wnd = window;
@@ -709,8 +725,7 @@ to the printer. Therefore WIN_Close is not allowed to do anything, cancelling
 of the structures occurs at program termination.
 ******************************************************************************/
 
-int
-WIN_Close(void)
+int WIN_Close(void)
 {
     return 0;
 }
@@ -733,8 +748,7 @@ RealClose(void)
 #endif
 
 
-int
-WIN_Clear(void)
+int WIN_Clear(void)
 {
     tpWindowData wd;
 
@@ -753,8 +767,7 @@ WIN_Clear(void)
 }
 
 
-int
-WIN_DrawLine(int x1, int y1, int x2, int y2)
+int WIN_DrawLine(int x1, int y1, int x2, int y2)
 {
     tpWindowData wd;
     HPEN      OldPen;
@@ -778,8 +791,7 @@ WIN_DrawLine(int x1, int y1, int x2, int y2)
 }
 
 
-int
-WIN_Arc(int x0, int y0, int radius, double theta, double delta_theta)
+int WIN_Arc(int x0, int y0, int radius, double theta, double delta_theta)
 /*
  * Notes:
  *    Draws an arc of <radius> and center at (x0,y0) beginning at
@@ -859,8 +871,7 @@ WIN_Text_old(char *text, int x, int y, int degrees)
 #endif
 
 
-int
-WIN_Text(char *text, int x, int y, int angle)
+int WIN_Text(char *text, int x, int y, int angle)
 {
     tpWindowData wd;
     HFONT hfont;
@@ -906,8 +917,7 @@ WIN_Text(char *text, int x, int y, int angle)
 }
 
 
-int
-WIN_DefineColor(int colorid, double red, double green, double blue)
+int WIN_DefineColor(int colorid, double red, double green, double blue)
 {
     NG_IGNORE(colorid);
     NG_IGNORE(red);
@@ -917,8 +927,7 @@ WIN_DefineColor(int colorid, double red, double green, double blue)
 }
 
 
-int
-WIN_DefineLinestyle(int num, int mask)
+int WIN_DefineLinestyle(int num, int mask)
 {
     NG_IGNORE(num);
     NG_IGNORE(mask);
@@ -926,16 +935,14 @@ WIN_DefineLinestyle(int num, int mask)
 }
 
 
-int
-WIN_SetLinestyle(int style)
+int WIN_SetLinestyle(int style)
 {
     NG_IGNORE(style);
     return 0;
 }
 
 
-int
-WIN_SetColor(int color)
+int WIN_SetColor(int color)
 {
     tpWindowData wd;
 
@@ -952,8 +959,7 @@ WIN_SetColor(int color)
 }
 
 
-int
-WIN_Update(void)
+int WIN_Update(void)
 {
     tpWindowData wd;
 
@@ -973,16 +979,14 @@ WIN_Update(void)
 
 
 #if 0
-int
-WIN_DiagramReady(void)
+int WIN_DiagramReady(void)
 {
     return 0;
 }
 #endif
 
 
-void
-RemoveWindow(GRAPH *dgraph)
+void RemoveWindow(GRAPH *dgraph)
 {
     tpWindowData wd;
 
@@ -998,15 +1002,15 @@ static void WIN_ScreentoData(GRAPH *graph, int x, int y, double *fx, double *fy)
     double lmin, lmax;
 
     if (graph->grid.gridtype == GRID_XLOG ||
-        graph->grid.gridtype == GRID_LOGLOG)
-    {
+            graph->grid.gridtype == GRID_LOGLOG) {
         lmin = log10(graph->datawindow.xmin);
         lmax = log10(graph->datawindow.xmax);
         *fx = exp(((x - graph->viewportxoff) *
-                   (lmax - lmin) / graph->viewport.width + lmin) * M_LN10);
-    } else {
+                (lmax - lmin) / graph->viewport.width + lmin) * M_LN10);
+    }
+    else {
         *fx = (x - graph->viewportxoff) * graph->aspectratiox +
-            graph->datawindow.xmin;
+                graph->datawindow.xmin;
     }
 
     if (graph->grid.gridtype == GRID_YLOG ||
@@ -1015,10 +1019,10 @@ static void WIN_ScreentoData(GRAPH *graph, int x, int y, double *fx, double *fy)
         lmin = log10(graph->datawindow.ymin);
         lmax = log10(graph->datawindow.ymax);
         *fy = exp(((graph->absolute.height - y - graph->viewportyoff) *
-                   (lmax - lmin) / graph->viewport.height + lmin) * M_LN10);
+                (lmax - lmin) / graph->viewport.height + lmin) * M_LN10);
     } else {
         *fy = ((graph->absolute.height - y) - graph->viewportyoff) *
-            graph->aspectratioy + graph->datawindow.ymin;
+                graph->aspectratioy + graph->datawindow.ymin;
     }
 
 }
