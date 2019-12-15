@@ -10,7 +10,6 @@ Copyright 1991 Regents of the University of California.  All rights reserved.
 #define llabs(x) ((x) < 0 ? -(x) : (x))
 #endif
 
-#define int64_min INT64_MIN
 
 /* From Bruce Dawson, Comparing floating point numbers,
    http://www.cygnus-software.com/papers/comparingfloats/Comparing%20floating%20point%20numbers.htm
@@ -43,13 +42,13 @@ bool AlmostEqualUlps(double A, double B, int maxUlps)
     aInt = uA.i;
     /* Make aInt lexicographically ordered as a twos-complement int */
     if (aInt < 0)
-        aInt = int64_min - aInt;
+        aInt = INT64_MIN - aInt;
 
     uB.d = B;
     bInt = uB.i;
     /* Make bInt lexicographically ordered as a twos-complement int */
     if (bInt < 0)
-        bInt = int64_min - bInt;
+        bInt = INT64_MIN - bInt;
 
     intDiff = llabs(aInt - bInt);
 
