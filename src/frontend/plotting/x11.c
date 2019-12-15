@@ -383,6 +383,7 @@ X11_NewViewport(GRAPH *graph)
     int trys;
 
     graph->devdep = TMALLOC(X11devdep, 1);
+    graph->n_byte_devdep = sizeof(X11devdep);
 
     /* set up new shell */
     DEVDEP(graph).shell = XtCreateApplicationShell
@@ -855,7 +856,7 @@ hardcopy(Widget w, XtPointer client_data, XtPointer call_data)
     NG_IGNORE(call_data);
     NG_IGNORE(w);
 
-    /* com_hardcopy() -> gr_resize() -> setcolor() dirung postscript
+    /* com_hardcopy() -> gr_resize() -> setcolor() during postscript
        printing will act on currentgraph with a DEVDEP inherited from PSdevdep.
        But currentgraph had not changed its devdep, which was derived from
        incompatible X11devdep, thus overwriting some variables. Here you find a
@@ -893,16 +894,16 @@ killwin(Widget w, XtPointer client_data, XtPointer call_data)
 }
 
 
+
 /* called from postcoms.c
    In the command 'destroy ac2' Will remove window associated with
    the plot (e.g. ac2) just before data of the plot are deleted.*/
-void
-RemoveWindow(GRAPH *graph)
+void RemoveWindow(GRAPH *graph)
 {
     if (graph->devdep) {
         /* Iplots are done asynchronously */
         DEVDEP(graph).isopen = 0;
-        /* MW. Not sure but DestroyGraph might free() to much - try Xt...() first */
+        /* MW. Not sure but DestroyGraph might free() too much - try Xt...() first */
         XtUnmapWidget(DEVDEP(graph).shell);
         XtDestroyWidget(DEVDEP(graph).shell);
         XFreeFont(display, DEVDEP(graph).font);
@@ -913,7 +914,8 @@ RemoveWindow(GRAPH *graph)
         currentgraph = NULL;
 
     DestroyGraph(graph->graphid);
-}
+} /* end of function RemoveWindow */
+
 
 
 /* call higher gr_redraw routine */
