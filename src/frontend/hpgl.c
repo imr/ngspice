@@ -89,7 +89,8 @@ int GL_Init(void)
 {
     if (!cp_getvar("hcopyscale", CP_STRING, psscale, sizeof(psscale))) {
         scale = 1.0;
-    } else {
+    }
+    else {
         sscanf(psscale, "%lf", &scale);
         if ((scale <= 0) || (scale > 10))
             scale = 1.0;
@@ -106,20 +107,21 @@ int GL_Init(void)
     dispdev->minx = (int)(XOFF * 1.0);
     dispdev->miny = (int)(YOFF * 1.0);
 
-    return (0);
+    return 0;
 }
 
 
 /* devdep initially contains name of output file */
-int
-GL_NewViewport(GRAPH *graph)
+int GL_NewViewport(GRAPH *graph)
 {
     hcopygraphid = graph->graphid;
 
     if ((plotfile = fopen((char*) graph->devdep, "w")) == NULL) {
-        perror((char*) graph->devdep);
+        perror((char *) graph->devdep);
+        free(graph->devdep);
         graph->devdep = NULL;
-        return (1);
+        graph->n_byte_devdep = 0;
+        return 1;
     }
 
     if (graph->absolute.width) {
@@ -146,13 +148,18 @@ GL_NewViewport(GRAPH *graph)
 
     /* start file off with a % */
     fprintf(plotfile, "IN;DF;PA;");
-    fprintf(plotfile, "SI %f,%f;", tocm*jgmult*fontwidth*scale, tocm*jgmult*fontheight*scale);
+    fprintf(plotfile, "SI %f,%f;",
+            tocm * jgmult * fontwidth * scale,
+            tocm * jgmult * fontheight * scale);
 
 #ifdef notdef
     if (!screenflag)
 #endif
-
+    {
         graph->devdep = TMALLOC(GLdevdep, 1);
+        graph->n_byte_devdep = sizeof(GLdevdep);
+    }
+
     DEVDEP(graph).lastlinestyle = -1;
     DEVDEP(graph).lastx = -1;
     DEVDEP(graph).lasty = -1;
@@ -163,8 +170,7 @@ GL_NewViewport(GRAPH *graph)
 }
 
 
-int
-GL_Close(void)
+int GL_Close(void)
 {
     /* in case GL_Close is called as part of an abort,
        w/o having reached GL_NewViewport */
@@ -187,8 +193,7 @@ GL_Close(void)
 }
 
 
-int
-GL_Clear(void)
+int GL_Clear(void)
 {
     /* do nothing */
 
@@ -196,21 +201,21 @@ GL_Clear(void)
 }
 
 
-int
-GL_DrawLine(int x1, int y1, int x2, int y2)
+int GL_DrawLine(int x1, int y1, int x2, int y2)
 {
     /* note: this is not extendible to more than one graph
        => will have to give NewViewport a writeable graph XXX */
 
 
     if (DEVDEP(currentgraph).linecount == 0
-        || x1 != DEVDEP(currentgraph).lastx
-        || y1 != DEVDEP(currentgraph).lasty)
-    {
-        fprintf(plotfile, "PU;PA %d , %d ;", jgmult*(x1 + xoff), jgmult*(y1 + yoff));
+            || x1 != DEVDEP(currentgraph).lastx
+            || y1 != DEVDEP(currentgraph).lasty) {
+        fprintf(plotfile, "PU;PA %d , %d ;",
+                jgmult * (x1 + xoff), jgmult * (y1 + yoff));
     }
     if (x1 != x2 || y1 != y2) {
-        fprintf(plotfile, "PD;PA %d , %d ;", jgmult*(x2 + xoff), jgmult*(y2 + yoff));
+        fprintf(plotfile, "PD;PA %d , %d ;",
+                jgmult * (x2 + xoff), jgmult * (y2 + yoff));
         DEVDEP(currentgraph).linecount += 1;
     }
 
@@ -223,8 +228,7 @@ GL_DrawLine(int x1, int y1, int x2, int y2)
 
 
 /* ARGSUSED */
-int
-GL_Arc(int x0, int y0, int r, double theta, double delta_theta)
+int GL_Arc(int x0, int y0, int r, double theta, double delta_theta)
 {
     int  x1, y1, angle;
 
@@ -233,8 +237,10 @@ GL_Arc(int x0, int y0, int r, double theta, double delta_theta)
 
     angle = (int)(RAD_TO_DEG * delta_theta);
 
-    fprintf(plotfile, "PU;PA %d , %d;", jgmult*(x1+xoff+XTADJ), jgmult*(y1+yoff+YTADJ));
-    fprintf(plotfile, "PD;AA %d , %d, %d;", jgmult*(x0+xoff+XTADJ), jgmult*(y0+yoff+YTADJ), angle);
+    fprintf(plotfile, "PU;PA %d , %d;",
+            jgmult * (x1 + xoff + XTADJ), jgmult * (y1 + yoff + YTADJ));
+    fprintf(plotfile, "PD;AA %d , %d, %d;",
+            jgmult * (x0 + xoff + XTADJ), jgmult*(y0 + yoff + YTADJ), angle);
 
     DEVDEP(currentgraph).linecount = 0;
 
@@ -242,13 +248,13 @@ GL_Arc(int x0, int y0, int r, double theta, double delta_theta)
 }
 
 
-int
-GL_Text(char *text, int x, int y, int angle)
+int GL_Text(char *text, int x, int y, int angle)
 {
     /* move to (x, y) */
     NG_IGNORE(angle);
 
-    fprintf(plotfile, "PU;PA %d , %d;", jgmult*(x+xoff+XTADJ), jgmult*(y+yoff+YTADJ));
+    fprintf(plotfile, "PU;PA %d , %d;",
+            jgmult * (x + xoff + XTADJ), jgmult * (y + yoff + YTADJ));
     fprintf(plotfile, "LB %s \x03", text);
 
     DEVDEP(currentgraph).lastx = -1;
@@ -258,8 +264,7 @@ GL_Text(char *text, int x, int y, int angle)
 }
 
 
-int
-GL_SetLinestyle(int linestyleid)
+int GL_SetLinestyle(int linestyleid)
 {
     /* special case
        get it when GL_Text restores a -1 linestyle */
@@ -283,8 +288,7 @@ GL_SetLinestyle(int linestyleid)
 
 
 /* ARGSUSED */
-int
-GL_SetColor(int colorid)
+int GL_SetColor(int colorid)
 {
     fprintf(plotfile, "SP %d;", colorid);
 
@@ -292,8 +296,7 @@ GL_SetColor(int colorid)
 }
 
 
-int
-GL_Update(void)
+int GL_Update(void)
 {
     fflush(plotfile);
 
