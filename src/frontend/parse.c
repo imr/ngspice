@@ -161,6 +161,7 @@ struct func ft_funcs[] = {
     { "re",          cx_real },
     { "imag",        cx_imag },
     { "im",          cx_imag },
+    { "conj",        cx_conj },
     { "db",          cx_db },
     { "log",         cx_log },
     { "log10",       cx_log10 },
