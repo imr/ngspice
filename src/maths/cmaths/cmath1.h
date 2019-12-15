@@ -14,6 +14,7 @@ void * cx_unwrap(void *data, short int type, int length, int *newlength, short i
 void * cx_j(void *data, short int type, int length, int *newlength, short int *newtype);
 void * cx_real(void *data, short int type, int length, int *newlength, short int *newtype);
 void * cx_imag(void *data, short int type, int length, int *newlength, short int *newtype);
+void * cx_conj(void *data, short int type, int length, int *newlength, short int *newtype);
 void * cx_pos(void *data, short int type, int length, int *newlength, short int *newtype);
 void * cx_db(void *data, short int type, int length, int *newlength, short int *newtype);
 void * cx_log10(void *data, short int type, int length, int *newlength, short int *newtype);
