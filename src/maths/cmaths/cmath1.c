@@ -117,67 +117,108 @@ cx_unwrap(void *data, short int type, int length, int *newlength, short int *new
 }
 
 /* If this is pure imaginary we might get real, but never mind... */
-
-void *
-cx_j(void *data, short int type, int length, int *newlength, short int *newtype)
+void *cx_j(void *data, short int type, int length, int *newlength,
+        short int *newtype)
 {
     ngcomplex_t *c = alloc_c(length);
-    ngcomplex_t *cc = (ngcomplex_t *) data;
-    double *dd = (double *) data;
-    int i;
-
     *newlength = length;
     *newtype = VF_COMPLEX;
-    if (type == VF_COMPLEX)
+
+    if (type == VF_COMPLEX) {
+        ngcomplex_t *cc = (ngcomplex_t *) data;
+        int i;
         for (i = 0; i < length; i++) {
-            realpart(c[i]) = - imagpart(cc[i]);
+            realpart(c[i]) = -imagpart(cc[i]);
             imagpart(c[i]) = realpart(cc[i]);
         }
-    else
+    }
+    else {
+        double *dd = (double *) data;
+        int i;
         for (i = 0; i < length; i++) {
             imagpart(c[i]) = dd[i];
             /* Real part is already 0. */
         }
-    return ((void *) c);
+    }
+    return (void *) c;
 }
 
-void *
-cx_real(void *data, short int type, int length, int *newlength, short int *newtype)
+void *cx_real(void *data, short int type, int length, int *newlength,
+        short int *newtype)
 {
     double *d = alloc_d(length);
-    double *dd = (double *) data;
-    ngcomplex_t *cc = (ngcomplex_t *) data;
-    int i;
 
     *newlength = length;
     *newtype = VF_REAL;
-    if (type == VF_COMPLEX)
-        for (i = 0; i < length; i++)
+    if (type == VF_COMPLEX) {
+        ngcomplex_t *cc = (ngcomplex_t *) data;
+        int i;
+        for (i = 0; i < length; i++) {
             d[i] = realpart(cc[i]);
-    else
-        for (i = 0; i < length; i++)
+        }
+    }
+    else {
+        double *dd = (double *) data;
+        int i;
+        for (i = 0; i < length; i++) {
             d[i] = dd[i];
-    return ((void *) d);
+        }
+    }
+    return (void *) d;
 }
 
-void *
-cx_imag(void *data, short int type, int length, int *newlength, short int *newtype)
+void *cx_imag(void *data, short int type, int length, int *newlength,
+        short int *newtype)
 {
     double *d = alloc_d(length);
-    double *dd = (double *) data;
-    ngcomplex_t *cc = (ngcomplex_t *) data;
-    int i;
 
     *newlength = length;
     *newtype = VF_REAL;
-    if (type == VF_COMPLEX)
-        for (i = 0; i < length; i++)
+    if (type == VF_COMPLEX) {
+        ngcomplex_t *cc = (ngcomplex_t *) data;
+        int i;
+        for (i = 0; i < length; i++) {
             d[i] = imagpart(cc[i]);
-    else
-        for (i = 0; i < length; i++)
+        }
+    }
+    else {
+        double *dd = (double *) data;
+        int i;
+        for (i = 0; i < length; i++) {
             d[i] = dd[i];
-    return ((void *) d);
+        }
+    }
+    return (void *) d;
 }
+
+
+
+/* Create complex conjugate of data */
+void *cx_conj(void *data, short int type, int length,
+        int *p_newlength, short int *p_newtype)
+{
+    /* Length and type do not change */
+    *p_newlength = length;
+    *p_newtype = type;
+
+    /* For complex, copy with conjugation */
+    if (type == VF_COMPLEX) {
+        ngcomplex_t * const c_dst = alloc_c(length);
+        ngcomplex_t *c_dst_cur = c_dst;
+        ngcomplex_t *c_src_cur = (ngcomplex_t *) data;
+        ngcomplex_t * const c_src_end = c_src_cur + length; 
+        for ( ; c_src_cur < c_src_end;  c_src_cur++, c_dst_cur++) {
+            c_dst_cur->cx_real = c_src_cur->cx_real;
+            c_dst_cur->cx_imag = -c_src_cur->cx_imag;
+        }
+        return (void *) c_dst;
+    }
+
+    /* Else real, so just copy */
+    return memcpy(alloc_d(length), data, length * sizeof(double));
+} /* end of function cx_conj */
+
+
 
 /* This is obsolete... */
 
