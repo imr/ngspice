@@ -187,14 +187,14 @@ com_pss(wordlist *wl)
 #endif
 
 
-static int
-dosim(
-    char *what, /* in: command (pz,op,dc,ac,tf,tran,sens,disto,noise,run) */
-    wordlist *wl /* in: command option */
-    /* global variables in: ft_curckt, ft_circuits,
-       out: ft_setflag, ft_intrpt, rawfileFp, rawfileBinary,
-       last_used_rawfile
-    */
+static int dosim(
+        char *what, /* in: command
+                     * (pz,op,dc,ac,tf,tran,sens,disto,noise,run) */
+        wordlist *wl /* in: command option */
+        /* global variables in: ft_curckt, ft_circuits,
+         * out: ft_setflag, ft_intrpt, rawfileFp, rawfileBinary,
+         *      last_used_rawfile
+         */
     )
 {
     wordlist *ww = NULL;
@@ -205,8 +205,9 @@ dosim(
     /* set file type to binary or to what is given by environmental
        variable SPICE_ASCIIRAWFILE in ivars.c */
     bool ascii = AsciiRawFile;
-    if (eq(what, "run") && wl)
+    if (eq(what, "run") && wl) {
         dofile = TRUE;
+    }
     /* add "what" to beginning of wordlist wl, except "what" equals "run"
        and a rawfile name is given (in wl) */
     if (!dofile) {
@@ -214,10 +215,12 @@ dosim(
     }
     /* reset output file type according to variable given in spinit */
     if (cp_getvar("filetype", CP_STRING, buf, sizeof(buf))) {
-        if (eq(buf, "binary"))
+        if (eq(buf, "binary")) {
             ascii = FALSE;
-        else if (eq(buf, "ascii"))
+        }
+        else if (eq(buf, "ascii")) {
             ascii = TRUE;
+        }
         else {
             fprintf(cp_err,
                     "Warning: strange file type \"%s\" (using \"ascii\")\n", buf);
@@ -228,17 +231,19 @@ dosim(
     if (!ft_curckt) {
         fprintf(cp_err, "Error: there aren't any circuits loaded.\n");
         return 1;
-    } else if (ft_curckt->ci_ckt == NULL) { /* Set noparse? */
+    }
+    else if (ft_curckt->ci_ckt == NULL) { /* Set noparse? */
         fprintf(cp_err, "Error: circuit not parsed.\n");
         return 1;
     }
-    for (ct = ft_circuits; ct; ct = ct->ci_next)
+    for (ct = ft_circuits; ct; ct = ct->ci_next) {
         if (ct->ci_inprogress && (ct != ft_curckt)) {
             fprintf(cp_err,
                     "Warning: losing old state for circuit '%s'\n",
                     ct->ci_name);
             ct->ci_inprogress = FALSE;
         }
+    }
     /* "resume" will never occur in ngspice */
     if (ft_curckt->ci_inprogress && eq(what, "resume")) {
         ft_setflag = TRUE;  /* don't allow abort upon interrupt during run  */
@@ -257,9 +262,10 @@ dosim(
     ft_intrpt = FALSE;
     /* command "run" is given with rawfile name in wl */
     if (dofile) {
-        if (!*wl->wl_word)
+        if (!*wl->wl_word) {
             rawfileFp = stdout;
-#if defined(__MINGW32__) || defined(_MSC_VER)
+        }
+
         /* ask if binary or ASCII, open file with wb or w */
         else if (ascii) {
             if ((rawfileFp = fopen(wl->wl_word, "w")) == NULL) {
@@ -269,7 +275,7 @@ dosim(
             }
             fprintf(cp_out, "ASCII raw file \"%s\"\n", wl->wl_word);
         }
-        else if (!ascii) {
+        else { /* binary */
             if ((rawfileFp = fopen(wl->wl_word, "wb")) == NULL) {
                 perror(wl->wl_word);
                 ft_setflag = FALSE;
@@ -277,26 +283,22 @@ dosim(
             }
             fprintf(cp_out, "binary raw file \"%s\"\n", wl->wl_word);
         }
-/*---------------------------------------------------------------------------*/
-#else
-        else if (!(rawfileFp = fopen(wl->wl_word, "w"))) {
-            perror(wl->wl_word);
-            ft_setflag = FALSE;
-            return 1;
-        }
-#endif /* __MINGW32__ */
         rawfileBinary = !ascii;
-    } else {
+    }
+    else {
         rawfileFp = NULL;
     }
 
     /*save rawfile name */
-    if (last_used_rawfile)
+    if (last_used_rawfile) {
         tfree(last_used_rawfile);
-    if (rawfileFp)
+    }
+    if (rawfileFp) {
         last_used_rawfile = copy(wl->wl_word);
-    else
+    }
+    else {
         last_used_rawfile = NULL;
+    }
 
     ft_curckt->ci_inprogress = TRUE;
     cp_vset("sim_status", CP_NUM, &err);
@@ -308,15 +310,18 @@ dosim(
 #ifdef XSPICE
             /* gtri - add - 12/12/90 - wbk - record error and return errchk */
             g_ipc.run_error = IPC_TRUE;
-            if (g_ipc.enabled)
+            if (g_ipc.enabled) {
                 ipc_send_errchk();
+            }
             /* gtri - end - 12/12/90 */
 #endif
-        } else {
+        }
+        else {
             ft_curckt->ci_inprogress = FALSE;
         }
         /* Do a run of the circuit */
-    } else {
+    }
+    else {
         err = if_run(ft_curckt->ci_ckt, what, ww, ft_curckt->ci_symtab);
         if (err == 1) {
             /* The circuit was interrupted somewhere. */
@@ -324,17 +329,20 @@ dosim(
 #ifdef XSPICE
             /* record error and return errchk */
             g_ipc.run_error = IPC_TRUE;
-            if (g_ipc.enabled)
+            if (g_ipc.enabled) {
                 ipc_send_errchk();
+            }
             /* gtri - end - 12/12/90 */
 #endif
             err = 0;
-        } else if (err == 2) {
+        }
+        else if (err == 2) {
             fprintf(cp_err, "%s simulation(s) aborted\n", what);
             ft_curckt->ci_inprogress = FALSE;
             err = 1;
             cp_vset("sim_status", CP_NUM, &err);
-        } else {
+        }
+        else {
             ft_curckt->ci_inprogress = FALSE;
         }
     }
@@ -342,9 +350,11 @@ dosim(
     if (rawfileFp) {
         if (ftell(rawfileFp) == 0) {
             (void) fclose(rawfileFp);
-            if (wl)
+            if (wl) {
                 (void) unlink(wl->wl_word);
-        } else {
+            }
+        }
+        else {
             (void) fclose(rawfileFp);
         }
     }
@@ -353,22 +363,24 @@ dosim(
 
     /* va: garbage collection: unlink first word (inserted here) and tfree it */
     if (!dofile) {
-        tfree(ww->wl_word);
-        if (wl)
+        txfree(ww->wl_word);
+        if (wl) {
             wl->wl_prev = NULL;
-        tfree(ww);
+        }
+        txfree(ww);
     }
 
     /* execute the .measure statements */
-    if (!err && ft_curckt->ci_last_an && ft_curckt->ci_meas)
+    if (!err && ft_curckt->ci_last_an && ft_curckt->ci_meas) {
         do_measure(ft_curckt->ci_last_an, FALSE);
+    }
 
     return err;
-}
+} /* end of function dosim */
+
 
 
 /* Usage is run [filename] */
-
 void com_run(wordlist *wl)
 {
     /* ft_getsaves(); */
