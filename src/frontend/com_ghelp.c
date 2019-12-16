@@ -17,19 +17,20 @@
  * Internet Archive using the link below.
  * https://web.archive.org/web/20180221111839/http://newton.ex.ac.uk/teaching/CDHW/Electronics2/userguide/
  */
-void
-com_ghelp(wordlist *wl)
+#define BASE_HELP_URL "http://ngspice.sourceforge.net/docs"
+void com_ghelp(wordlist *wl)
 {
-#if defined(HAS_WINGUI) || defined(_MSC_VER) || defined(__MINGW32__) || defined(X_DISPLAY_MISSING) || defined(NOINTHELP)
+#if defined(HAS_WINGUI) || defined(_MSC_VER) || defined(__MINGW32__) ||\
+        defined(X_DISPLAY_MISSING) || defined(NOINTHELP)
+    com_help(wl);
 
-    NG_IGNORE(wl);
-
-    (void) printf("Internal help is no longer available!\n"
-            "For the latest official ngspice manual in PDF format, "
-                    "please see\n"
-            "  http://ngspice.sourceforge.net/docs/ngspice-manual.pdf\n"
-           "Or for HTML see\n"
-           "  http://ngspice.sourceforge.net/docs/ngspice-html-manual/manual.html\n");
+    /* After brief help from com_help, add info on the web links to the
+     * the PDF and HTML versions of the manual */
+    (void) out_printf("For further details please see the latest official "
+            "ngspice manual in PDF format at\n"
+            "  " BASE_HELP_URL "/ngspice-manual.pdf\n"
+           "or in HTML format at\n"
+           "  " BASE_HELP_URL "/ngspice-html-manual/manual.html\n\n");
     return;
 
 #else
