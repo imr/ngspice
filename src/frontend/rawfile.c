@@ -35,8 +35,7 @@ int raw_prec = -1;        /* How many sigfigs to use, default 15 (max).  */
 
 /* Write a raw file.  We write everything in the plot pointed to. */
 
-void
-raw_write(char *name, struct plot *pl, bool app, bool binary)
+void raw_write(char *name, struct plot *pl, bool app, bool binary)
 {
     FILE *fp;
     bool realflag = TRUE, writedims;
@@ -58,12 +57,12 @@ raw_write(char *name, struct plot *pl, bool app, bool binary)
         return;
     }
 
-    if (raw_prec != -1)
+    if (raw_prec != -1) {
         prec = raw_prec;
-    else
+    }
+    else {
         prec = DEFPREC;
-
-#if defined(__MINGW32__) || defined(_MSC_VER)
+    }
 
     /* - Binary file binary write -  hvogt 15.03.2000 ---------------------*/
     if (binary) {
@@ -72,7 +71,8 @@ raw_write(char *name, struct plot *pl, bool app, bool binary)
             return;
         }
         fprintf(cp_out, "binary raw file \"%s\"\n", name);
-    } else {
+    }
+    else {
         if ((fp = fopen(name, app ? "a" : "w")) == NULL) {
             perror(name);
             return;
@@ -81,19 +81,11 @@ raw_write(char *name, struct plot *pl, bool app, bool binary)
     }
     /* --------------------------------------------------------------------*/
 
-#else
-
-    if (!(fp = fopen(name, app ? "a" : "w"))) {
-        perror(name);
-        return;
-    }
-
-#endif
-
     numdims = nvars = length = 0;
     for (v = pl->pl_dvecs; v; v = v->v_next) {
-        if (iscomplex(v))
+        if (iscomplex(v)) {
             realflag = FALSE;
+        }
         nvars++;
         /* Find the length and dimensions of the longest vector
          * in the plot.
@@ -125,20 +117,24 @@ raw_write(char *name, struct plot *pl, bool app, bool binary)
         fprintf(fp, "Dimensions: %s\n", buf);
     }
 
-    for (wl = pl->pl_commands; wl; wl = wl->wl_next)
+    for (wl = pl->pl_commands; wl; wl = wl->wl_next) {
         fprintf(fp, "Command: %s\n", wl->wl_word);
+    }
 
     for (vv = pl->pl_env; vv; vv = vv->va_next) {
         wl = cp_varwl(vv);
         if (vv->va_type == CP_BOOL) {
             fprintf(fp, "Option: %s\n", vv->va_name);
-        } else {
+        }
+        else {
             fprintf(fp, "Option: %s = ", vv->va_name);
-            if (vv->va_type == CP_LIST)
+            if (vv->va_type == CP_LIST) {
                 fprintf(fp, "( ");
+            }
             wl_print(wl, fp);
-            if (vv->va_type == CP_LIST)
+            if (vv->va_type == CP_LIST) {
                 fprintf(fp, " )");
+            }
             (void) putc('\n', fp);
         }
     }
@@ -146,8 +142,9 @@ raw_write(char *name, struct plot *pl, bool app, bool binary)
     /* Before we write the stuff out, make sure that the scale is the first
      * in the list.
      */
-    for (lv = NULL, v = pl->pl_dvecs; v != pl->pl_scale; v = v->v_next)
+    for (lv = NULL, v = pl->pl_dvecs; v != pl->pl_scale; v = v->v_next) {
         lv = v;
+    }
     if (lv) {
         lv->v_next = v->v_next;
         v->v_next = pl->pl_dvecs;
@@ -163,26 +160,34 @@ raw_write(char *name, struct plot *pl, bool app, bool binary)
             }
             fprintf(fp, "\t%d\ti(%s)\t%s", i++, v->v_name, ft_typenames(v->v_type));
             if (branch != NULL) *branch = '#';
-        } else if (v->v_type == SV_VOLTAGE) {
-            fprintf(fp, "\t%d\t%s\t%s", i++, v->v_name, ft_typenames(v->v_type));
-        } else {
+        }
+        else if (v->v_type == SV_VOLTAGE) {
             fprintf(fp, "\t%d\t%s\t%s", i++, v->v_name, ft_typenames(v->v_type));
         }
-        if (v->v_flags & VF_MINGIVEN)
+        else {
+            fprintf(fp, "\t%d\t%s\t%s", i++, v->v_name, ft_typenames(v->v_type));
+        }
+        if (v->v_flags & VF_MINGIVEN) {
             fprintf(fp, " min=%e", v->v_minsignal);
-        if (v->v_flags & VF_MAXGIVEN)
+        }
+        if (v->v_flags & VF_MAXGIVEN) {
             fprintf(fp, " max=%e", v->v_maxsignal);
-        if (v->v_defcolor)
+        }
+        if (v->v_defcolor) {
             fprintf(fp, " color=%s", v->v_defcolor);
-        if (v->v_gridtype)
+        }
+        if (v->v_gridtype) {
             fprintf(fp, " grid=%d", v->v_gridtype);
-        if (v->v_plottype)
+        }
+        if (v->v_plottype) {
             fprintf(fp, " plot=%d", v->v_plottype);
+        }
         /* Only write dims if they are different from default. */
         writedims = FALSE;
         if (v->v_numdims != numdims) {
             writedims = TRUE;
-        } else {
+        }
+        else {
             for (j = 0; j < numdims; j++)
                 if (dims[j] != v->v_dims[j])
                     writedims = TRUE;
@@ -204,58 +209,70 @@ raw_write(char *name, struct plot *pl, bool app, bool binary)
                         dd = (isreal(v) ? v->v_realdata[i] :
                               realpart(v->v_compdata[i]));
                         (void) fwrite(&dd, sizeof(double), 1, fp);
-                    } else if (isreal(v)) {
+                    }
+                    else if (isreal(v)) {
                         dd = v->v_realdata[i];
                         (void) fwrite(&dd, sizeof(double), 1, fp);
                         dd = 0.0;
                         (void) fwrite(&dd, sizeof(double), 1, fp);
-                    } else {
+                    }
+                    else {
                         dd = realpart(v->v_compdata[i]);
                         (void) fwrite(&dd, sizeof(double), 1, fp);
                         dd = imagpart(v->v_compdata[i]);
                         (void) fwrite(&dd, sizeof(double), 1, fp);
                     }
-                } else if (raw_padding) {
+                }
+                else if (raw_padding) {
                     dd = 0.0;
                     if (realflag) {
                         (void) fwrite(&dd, sizeof(double), 1, fp);
-                    } else {
+                    }
+                    else {
                         (void) fwrite(&dd, sizeof(double), 1, fp);
                         (void) fwrite(&dd, sizeof(double), 1, fp);
                     }
                 }
             }
         }
-    } else {
+    }
+    else {
         fprintf(fp, "Values:\n");
         for (i = 0; i < length; i++) {
             fprintf(fp, " %d", i);
             for (v = pl->pl_dvecs; v; v = v->v_next) {
                 if (i < v->v_length) {
-                    if (realflag)
+                    if (realflag) {
                         fprintf(fp, "\t%.*e\n", prec,
                                 isreal(v) ? v->v_realdata[i] :
                                 realpart(v->v_compdata[i]));
-                    else if (isreal(v))
+                    }
+                    else if (isreal(v)) {
                         fprintf(fp, "\t%.*e,0.0\n", prec,
                                 v->v_realdata[i]);
-                    else
+                    }
+                    else {
                         fprintf(fp, "\t%.*e,%.*e\n", prec,
                                 realpart(v->v_compdata[i]),
                                 prec,
                                 imagpart(v->v_compdata[i]));
-                } else if (raw_padding) {
-                    if (realflag)
+                    }
+                }
+                else if (raw_padding) {
+                    if (realflag) {
                         fprintf(fp, "\t%.*e\n", prec, 0.0);
-                    else
+                    }
+                    else {
                         fprintf(fp, "\t%.*e,%.*e\n", prec, 0.0, prec, 0.0);
+                    }
                 }
             }
             (void) putc('\n', fp);
         }
     }
     (void) fclose(fp);
-}
+} /* end of function raw_write */
+
 
 
 /* Read a raw file.  Returns a list of plot structures.  This routine should be
