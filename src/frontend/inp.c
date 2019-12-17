@@ -1604,13 +1604,13 @@ com_source(wordlist *wl)
 }
 
 
-void inp_source(char *file)
+void inp_source(const char *file)
 {
     /* This wordlist is special in that nothing in it should be freed --
      * the file name word is "borrowed" from the argument to file and
      * the wordlist is allocated on the stack. */
     static struct wordlist wl = { NULL, NULL, NULL };
-    wl.wl_word = file;
+    wl.wl_word = (char *) file;
     com_source(&wl);
 }
 
