@@ -1,6 +1,7 @@
 #ifndef ngspice_WORDLIST_H
 #define ngspice_WORDLIST_H
 
+#include <stdio.h>
 
 /* Doubly linked lists of words. */
 struct wordlist {
