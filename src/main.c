@@ -1143,24 +1143,39 @@ int main(int argc, char **argv)
             /* load user's initialisation file
                try accessing the initialisation file in the current directory
                if that fails try the alternate name */
-            if (FALSE == read_initialisation_file("", INITSTR)  &&
-                FALSE == read_initialisation_file("", ALT_INITSTR)) {
-                /* if that failed try in the user's home directory
-                   if their HOME environment variable is set */
-                char *homedir = getenv("HOME");
-                if (homedir == (char *) NULL) { /* no HOME env variable */
-                    /* If there is no HOME environment (e.g. MS Windows),
-                     * try user's profile directory */
-                    homedir = getenv("USERPROFILE");
+            do {
+                if (read_initialisation_file("", INITSTR) != FALSE) {
+                    break;
+                }
+                if (read_initialisation_file("", ALT_INITSTR) != FALSE) {
+                    break;
                 }
 
-                if (homedir) { /* Found a home location */
-                    if (FALSE == read_initialisation_file(homedir, INITSTR)) {
-                        (void) read_initialisation_file(homedir, ALT_INITSTR);
+                {
+                    const char * const home = getenv("HOME");
+                    if (home) {
+                        if (read_initialisation_file(home, INITSTR) != FALSE) {
+                            break;
+                        }
+                        if (read_initialisation_file(home, ALT_INITSTR) != FALSE) {
+                            break;
+                        }
                     }
                 }
-            } /* end of case init file not found in current directory */
-        } /* end of case that init file is to be read */
+
+                {
+                    const char * const usr = getenv("USERPROFILE");
+                    if (usr) {
+                        if (read_initialisation_file(usr, INITSTR) != FALSE) {
+                            break;
+                        }
+                        if (read_initialisation_file(usr, ALT_INITSTR) != FALSE) {
+                            break;
+                        }
+                    }
+                }
+            } while (0);
+        } /* end of case that init file is read */
 
         if (!ft_batchmode) {
             com_version(NULL);
