@@ -2,7 +2,7 @@
 #include "ngspice/dvec.h"
 
 
-struct dvec *dvec_alloc(const char *name,
+struct dvec *dvec_alloc(/* NOT const -- assigned to char */ char *name,
         int type, short flags, int length, void *storage)
 {
     struct dvec * const rv = TMALLOC(struct dvec, 1);
@@ -26,6 +26,8 @@ struct dvec *dvec_alloc(const char *name,
     rv->v_flags = flags;
     rv->v_length = length;
     rv->v_alloc_length = length;
+    rv->v_numdims = 1; /* Assume 1 D */
+    rv->v_dims[0] = length;
 
     if (length == 0) { /* Redundant due to ZERO() call above */
         rv->v_realdata = NULL;
@@ -51,7 +53,6 @@ struct dvec *dvec_alloc(const char *name,
      * the ZERO() call */
     rv->v_plot = NULL;
     rv->v_scale = NULL;
-    rv->v_numdims = 0; /* Really "unknown" */
 
     return rv;
 } /* end of function dvec_alloc */
