@@ -892,7 +892,7 @@ int main(int argc, char **argv)
 
         int option_index = 0;
 
-        int c = getopt_long(argc, argv, "D:bac:ino:pqr:st:",
+        int c = getopt_long(argc, argv, "D:hvbac:ino:pqr:st:",
                             long_options, &option_index);
 
         if (c == -1) {
