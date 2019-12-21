@@ -78,36 +78,39 @@ HWND            hwAnalyse;          /* analysis window */
 HWND            hwQuitButton;       /* Pause button */
 static int      nReturnCode = 0;    /* WinMain return value */
 static int      nShowState;         /* Display mode of main window */
+#ifdef EXT_ASC
 static WNDCLASS hwMainClass;        /* Class definition for the main window */
-static WNDCLASSW hwMainClassW;        /* Class definition for the main window */
 static LPCTSTR  hwClassName  = "SPICE_TEXT_WND";/* Class name of the main window */
 static LPCTSTR hwWindowName = PACKAGE_STRING;   /* main window displayed name */
-static LPCWSTR  hwClassNameW = L"SPICE_TEXT_WND";/* Class name of the main window */
-static LPCWSTR hwWindowNameW = L"ngspice 26";   /* main window displayed name */
 static WNDCLASS twTextClass;                    /* Class definition for the text box */
-static WNDCLASSW twTextClassW;                    /* Class definition for the text box */
 static LPCTSTR twClassName  = "SPICE_TEXT_BOX"; /* Class name for the text box */
 static LPCTSTR twWindowName = "TextOut";        /* text box name */
-static LPCWSTR twClassNameW = L"SPICE_TEXT_BOX"; /* Class name for the text box */
-static LPCWSTR twWindowNameW = L"TextOut";        /* text box name */
-static size_t   TBufEnd = 0;                    /* Pointer to \0 */
-static char TBuffer[TBufSize + 1];              /* Text buffer */
-static SBufLine SBuffer;                        /* Input buffer */
 static WNDCLASS swStringClass;                  /* Class definition of string window */
 static LPCTSTR swClassName  = "SPICE_STR_IN";   /* Class name of text input */
 static LPCTSTR swWindowName = "StringIn";       /* Window name */
-static WNDCLASSW swStringClassW;                  /* Class definition of string window */
-static LPCWSTR swClassNameW = L"SPICE_STR_IN";   /* Class name of text input */
-static LPCWSTR swWindowNameW = L"StringIn";       /* Window name */
-static char CRLF[] = {CR, LF, SE};              /* CR/LF */
 static WNDCLASS hwElementClass;                 /* Class definition of status displays */
 static LPCTSTR hwElementClassName = "ElementClass";
 static LPCTSTR hwSourceWindowName = "SourceDisplay";
 static LPCTSTR hwAnalyseWindowName = "AnalyseDisplay";
+#else
+static WNDCLASSW hwMainClassW;        /* Class definition for the main window */
+static LPCWSTR  hwClassNameW = L"SPICE_TEXT_WND";/* Class name of the main window */
+static LPCWSTR hwWindowNameW = L"ngspice 26";   /* main window displayed name */
+static WNDCLASSW twTextClassW;                    /* Class definition for the text box */
+static LPCWSTR twClassNameW = L"SPICE_TEXT_BOX"; /* Class name for the text box */
+static LPCWSTR twWindowNameW = L"TextOut";        /* text box name */
+static WNDCLASSW swStringClassW;                  /* Class definition of string window */
+static LPCWSTR swClassNameW = L"SPICE_STR_IN";   /* Class name of text input */
+static LPCWSTR swWindowNameW = L"StringIn";       /* Window name */
 static WNDCLASSW hwElementClassW;                 /* Class definition of status displays */
 static LPCWSTR hwElementClassNameW = L"ElementClass";
 static LPCWSTR hwSourceWindowNameW = L"SourceDisplay";
 static LPCWSTR hwAnalyseWindowNameW = L"AnalyseDisplay";
+#endif
+static size_t   TBufEnd = 0;                    /* Pointer to \0 */
+static char TBuffer[TBufSize + 1];              /* Text buffer */
+static SBufLine SBuffer;                        /* Input buffer */
+static char CRLF[] = {CR, LF, SE};              /* CR/LF */
 static int RowHeight = 16;             /* Height of line of text */
 static int LineHeight = 25;            /* Height of input line */
 static int VisibleRows = 10;           /* Number of visible lines in text window */
@@ -122,11 +125,7 @@ extern FILE *flogp;     /* definition see xmain.c, stdout redirected to file */
 
 extern void cp_doquit(void);
 
-
-
 static struct History_info *init_history(void);
-
-
 
 // ---------------------------<Message Handling>-------------------------------
 
@@ -563,16 +562,33 @@ StringWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     switch (uMsg) {
     case WM_CREATE:
         /* Get access to history information */
+#ifdef EXT_ASC
         pp_hi = (struct History_info **)
                 ((LPCREATESTRUCT) lParam)->lpCreateParams;
+#else
+        pp_hi = (struct History_info **)
+                ((LPCREATESTRUCTW) lParam)->lpCreateParams;
+#endif
         break;
     case WM_KEYDOWN: {
         const UINT i = (UINT) wParam;
         if ((i == VK_UP) || (i == VK_DOWN)) {
             /* Set old text to new */
+#ifdef EXT_ASC
             SetWindowText(hwnd, (i == VK_UP) ?
                     history_get_prev(*pp_hi, NULL) :
                     history_get_next(*pp_hi, NULL));
+#else
+            const char *newtext = (i == VK_UP) ?
+                    history_get_prev(*pp_hi, NULL) :
+                    history_get_next(*pp_hi, NULL);
+            wchar_t *newtextW;
+            newtextW = TMALLOC(wchar_t, 2 * strlen(newtext) + 1);
+            MultiByteToWideChar(
+                    CP_UTF8, 0, newtext, -1, newtextW, 2 * (int) strlen(newtext) + 1);
+            SetWindowTextW(hwSource, newtextW);
+            tfree(newtextW);
+#endif
             /* Put cursor to end of line */
             CallWindowProc(swProc, hwnd, uMsg, (WPARAM) VK_END, lParam);
             return 0;
@@ -592,8 +608,17 @@ StringWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
              * buffer for writing the string + NULL. The NULL will be
              * overwritten by the strcpy below, so it should not be
              * counted in the size needed for the CRLF string. */
+#ifdef EXT_ASC
             const int n_char_returned = GetWindowText(
                     hwnd, SBuffer, sizeof SBuffer - (sizeof CRLF - 1));
+#else
+            wchar_t *WBuffer = TMALLOC(wchar_t, sizeof(SBuffer));
+            const int n_char_returned = GetWindowTextW(
+                    hwnd, WBuffer, sizeof SBuffer - (sizeof CRLF - 1));
+            WideCharToMultiByte(CP_UTF8, 0, WBuffer, -1, SBuffer,
+                    1023, NULL, NULL);
+            tfree(WBuffer);
+#endif
             unsigned int n_char_prev_cmd;
 
             /* Add the command to the history if it is different from the
@@ -1209,7 +1234,9 @@ wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR
 	}
 #else
     swString = CreateWindowExW(WS_EX_NOPARENTNOTIFY, swClassNameW, swWindowNameW,
-        ES_LEFT | WS_CHILD | WS_BORDER, 20, 20, 300, 100, hwMain, NULL, hInst, NULL);
+        ES_LEFT | WS_CHILD | WS_BORDER |
+                ES_AUTOHSCROLL, /* Allow text to scroll */
+        20, 20, 300, 100, hwMain, NULL, hInst, &p_hi);
     if (!swString)
         goto THE_END;
     {
