@@ -73,10 +73,18 @@ void com_hardcopy(wordlist *wl)
     if (!wl && hc_button) {
         char *psfname;
         GRAPH *tempgraph;
-        if (DevSwitch(devtype)) {
+        /* initialze PS by calling PS_Init() */
+        if (DevSwitch(devtype))
+            return;
+        if (currentgraph)
+            tempgraph = CopyGraph(currentgraph);
+        else {
+            fprintf(stderr,
+                    "No parameters for hardcopy command, not previous plot:\n");
+            fprintf(stderr, "    Command hardcopy cannot be executed\n ");
             return;
         }
-        tempgraph = CopyGraph(currentgraph);
+
         /* change .tmp to .ps */
         psfname = strchr(fname, '.');
         if (psfname) {
@@ -150,7 +158,7 @@ void com_hardcopy(wordlist *wl)
     PushGraphContext(currentgraph);
 
     if (!foundit) {
-        if (!wl) {
+        if (!wl && cp_getvar("interactive", CP_BOOL, NULL, 0)) {
             char *buf2;
             outmenuprompt("which variable ? ");
             buf2 = prompt(cp_in);
