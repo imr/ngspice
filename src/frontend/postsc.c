@@ -40,6 +40,36 @@ Author: 1988 Jeffrey M. Hsu
 #define FONTWIDTH     6       /* printer default fontwidth */
 #define FONTHEIGHT    14      /* printer default fontheight */
 
+
+typedef struct {
+    int red, green, blue;
+} COLOR;
+
+/* duplicated colors from src/frontend/plotting/x11.c in rgb-style */
+static const COLOR colors[] = {{  0,   0,   0},    /*0: black */
+                               {255, 255, 255},    /*1: white */
+                               {255,   0,   0},    /*2: red */
+                               {  0,   0, 255},    /*3: blue */
+                               {255, 165,   0},    /*4: orange */
+                               {  0, 255,   0},    /*5: green */
+                               {255, 192, 203},    /*6: pink */
+                               {165,  42,  42},    /*7: brown */
+                               {240, 230, 140},    /*8: khaki */
+                               {221, 160, 221},    /*9: plum */
+                               {218, 112, 214},    /*10: orchid */
+                               {238, 130, 238},    /*11: violet */
+                               {176,  48,  96},    /*12: maroon */
+                               { 64, 224, 208},    /*13: turqoise */
+                               {160,  82,  45},    /*14: sienna */
+                               {255, 127,  80},    /*15: coral */
+                               {  0, 255, 255},    /*16: cyan */
+                               {255,   0, 255},    /*17: magenta */
+                               {255, 215,   0},    /*18: gold */
+                               {255, 255,   0},    /*19: yello */
+                               { 96,  96,  96},    /*20: gray for smith grid */
+                               {150, 150, 150},    /*21: gray for smith grid */
+                               {128, 128, 128}};   /*22: gray for normal grid */
+
 typedef struct {
     int lastlinestyle, lastcolor; /* initial invalid value */
     int lastx, lasty, linecount;
@@ -73,6 +103,7 @@ static int ytadj;     /* text adjustment y */
 static int hcopygraphid;
 static double linewidth;
 static double gridlinewidth;
+static int maxcolor = 2;
 
 void PS_LinestyleColor(int linestyleid, int colorid);
 void PS_SelectColor(int colorid);
@@ -84,6 +115,8 @@ size_t utf8_to_latin9(char *const output, const char *const input, const size_t 
 int PS_Init(void)
 {
     char pswidth[30], psheight[30];
+
+    maxcolor = NUMELEMS(colors);
 
     if (!cp_getvar("hcopyscale", CP_STRING, psscale, sizeof(psscale))) {
         scale = 1.0;
@@ -100,10 +133,24 @@ int PS_Init(void)
         dispdev->numcolors = 2;
 
     } else {
-        /* get backgroung color and set plot to color */
+        /* get text color and set plot to color */
         colorflag = 1;
-        dispdev->numcolors = 21;   /* don't know what the maximum should be */
+        dispdev->numcolors = maxcolor;
         cp_getvar("hcopypstxcolor", CP_NUM, &settxcolor, 0);
+    }
+
+    if (settxcolor > maxcolor || settxcolor < 0) {
+        fprintf(stderr, "Bad PS text color selection %d\n", settxcolor);
+        fprintf(stderr, "    Maximum for hcopypstxcolor is %d\n", maxcolor - 1);
+        colorflag = 0;
+        dispdev->numcolors = 2;
+    }
+
+    if (setbgcolor > maxcolor || setbgcolor < 0) {
+        fprintf(stderr, "Bad PS background color selection %d\n", setbgcolor);
+        fprintf(stderr, "    Maximum for hcopypscolor is %d\n", maxcolor - 1);
+        fprintf(stderr, "    Set to 1 (white)\n");
+        setbgcolor = 1;
     }
 
     /* plot size */
@@ -163,7 +210,7 @@ int PS_Init(void)
     }
     else {
         sscanf(psfontsize, "%d", &fontsize);
-        if ((fontsize < 10) || (fontsize > 14))
+        if ((fontsize < 10) || (fontsize > 18))
             fontsize = 10;
         fontwidth = (int)(0.5 + 0.6 * fontsize);
         fontheight = (int)(2.5 + 1.2 * fontsize);
@@ -214,13 +261,13 @@ int PS_NewViewport(GRAPH *graph)
     xoff = (int)(scale * XOFF);
     yoff = (int)(scale * YOFF);
 
-    x1 = (int)(0.75 * 72);
+    x1 = (int) (0.5 * 72 - fontheight);
     y1 = x1;
-    x2 = (int)(graph->absolute.width + .75 * 72);
+    x2 = (int)(graph->absolute.width + .5 * 72);
     y2 = (int)(graph->absolute.height + .75 * 72);
     /* start file off with a % */
     fprintf(plotfile, "%%!PS-Adobe-3.0 EPSF-3.0\n");
-    fprintf(plotfile, "%%%%Creator: nutmeg\n");
+    fprintf(plotfile, "%%%%Creator: ngspice\n");
     fprintf(plotfile, "%%%%BoundingBox: %d %d %d %d\n", x1, y1, x2, y2);
 
     /* Re-encoding to allow 'extended asccii'
@@ -432,31 +479,6 @@ void PS_SelectColor(int colorid)           /* should be replaced by PS_DefineCol
     char rgb[30], s_red[30] = "0x", s_green[30] = "0x", s_blue[30] = "0x";
     int  red = 0, green = 0, blue = 0, maxval = 1;
     int i;
-    typedef struct { int red, green, blue;} COLOR;
-    /* duplicated colors from src/frontend/plotting/x11.c in rgb-style */
-    const COLOR colors[] = {{  0,   0,   0},    /*0: black */
-                            {255, 255, 255},    /*1: white */
-                            {255,   0,   0},    /*2: red */
-                            {  0,   0, 255},    /*3: blue */
-                            {255, 165,   0},    /*4: orange */
-                            {  0, 255,   0},    /*5: green */
-                            {255, 192, 203},    /*6: pink */
-                            {165,  42,  42},    /*7: brown */
-                            {240, 230, 140},    /*8: khaki */
-                            {221, 160, 221},    /*9: plum */
-                            {218, 112, 214},    /*10: orchid */
-                            {238, 130, 238},    /*11: violet */
-                            {176,  48,  96},    /*12: maroon */
-                            { 64, 224, 208},    /*13: turqoise */
-                            {160,  82,  45},    /*14: sienna */
-                            {255, 127,  80},    /*15: coral */
-                            {  0, 255, 255},    /*16: cyan */
-                            {255,   0, 255},    /*17: magenta */
-                            /*{255, 215,   0},    18: gold */
-                            { 96,  96,  96},    /*18: gray for smith grid */
-                            /*{255, 255,   0},    19: yello */
-                            {150, 150, 150},    /*19: gray for smith grid */
-                            {128, 128, 128}};   /*20: gray for normal grid */
 
     /* Extract the rgbcolor, format is: "rgb:<red>/<green>/<blue>" */
     sprintf(colorN, "color%d", colorid);
@@ -478,7 +500,7 @@ void PS_SelectColor(int colorid)           /* should be replaced by PS_DefineCol
             strcpy(pscolor, colorstring);
         }
     }
-    if (colorid < 0 || colorid > 20) {
+    if (colorid < 0 || colorid >= maxcolor) {
         internalerror("bad colorid inside PS_SelectColor");
     } else if (maxval == 1) {  /* colorN is not an rgbstring, use default color */
         sprintf(colorstring, "%1.3f %1.3f %1.3f", colors[colorid].red/255.0,
