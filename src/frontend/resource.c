@@ -123,33 +123,33 @@ com_rusage(wordlist *wl)
 /* Find out if the user is approaching his maximum data size.
    If usage is withing 95% of total available then a warning message is sent
    to the error stream (cp_err) */
-void
-ft_ckspace(void)
+void ft_ckspace(void)
 {
 #ifdef SHARED_MODULE
     /* False warning on some OSs, especially on Linux when loaded during runtime.
        The caller then has to take care of memory available */
     return;
 #else
-    unsigned long long freemem, totalmem, usage, avail;
-    freemem = getAvailableMemorySize();
-    totalmem = getMemorySize();
-    usage = getCurrentRSS();
-    avail = usage + freemem;
+    const unsigned long long freemem = getAvailableMemorySize();
+    const unsigned long long usage = getCurrentRSS();
 
-    if (totalmem == 0 || freemem == 0 || usage == 0)
+    if (freemem == 0 || usage == 0) { /* error obtaining data */
         return;
+    }
 
-    if ((double)freemem < (double)totalmem * 0.05) {
-        fprintf(cp_err, "Warning - approaching max data size: ");
-        fprintf(cp_err, "current size = ");
+    const unsigned long long avail = usage + freemem;
+    if ((double) usage > (double) avail * 0.95) {
+        (void) fprintf(cp_err,
+                "Warning - approaching max data size: "
+                "current size = ");
         fprintmem(cp_err, usage);
-        fprintf(cp_err, ", limit = ");
+        (void) fprintf(cp_err, ", limit = ");
         fprintmem(cp_err, avail);
-        fprintf(cp_err, "\n");
+        (void) fprintf(cp_err, "\n");
     }
 #endif
-}
+} /* end of function ft_chkspace */
+
 
 
 /* Print out one piece of resource usage information. */
