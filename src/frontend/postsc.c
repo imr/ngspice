@@ -142,7 +142,7 @@ PS_Init(void)
 
     if (settxcolor > maxcolor || settxcolor < 0) {
         fprintf(stderr, "Bad PS text color selection %d\n", settxcolor);
-        fprintf(stderr, "    Maximum for hcopypstxcolor is %d\n", maxcolor - 1);
+        fprintf(stderr, "    Maximum for hcopypstxcolor is %d\n\n", maxcolor - 1);
         colorflag = 0;
         dispdev->numcolors = 2;
     }
@@ -150,7 +150,7 @@ PS_Init(void)
     if (setbgcolor > maxcolor || setbgcolor < 0) {
         fprintf(stderr, "Bad PS background color selection %d\n", setbgcolor);
         fprintf(stderr, "    Maximum for hcopypscolor is %d\n", maxcolor - 1);
-        fprintf(stderr, "    Set to 1 (white)\n");
+        fprintf(stderr, "    Set to 1 (white)\n\n");
         setbgcolor = 1;
     }
 
@@ -322,7 +322,8 @@ PS_Close(void)
      * and reset currentgraph to graphid 1, if possible
      */
     if (!screenflag) {
-        DestroyGraph(hcopygraphid);
+        if (hcopygraphid > 0)
+            DestroyGraph(hcopygraphid);
         currentgraph = FindGraph(1);
     }
     return 0;
