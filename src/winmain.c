@@ -42,7 +42,7 @@
 #define LF 10               // Line Feed
 #define SE 0                // String termination
 #define BorderSize 8        // Umrandung des Stringfeldes
-#define SBufSize 100        // Groesze des Stringbuffers
+#define SBufSize 300        // Groesze des Stringbuffers
 #define IOBufSize 16348      // Groesze des printf-Buffers
 #define HIST_SIZE   20  /* Max # commands held in history */
 #define N_BYTE_HIST_BUF 512 /* Initial size of history buffer in bytes */
@@ -578,6 +578,8 @@ StringWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             SetWindowText(hwnd, (i == VK_UP) ?
                     history_get_prev(*pp_hi, NULL) :
                     history_get_next(*pp_hi, NULL));
+            /* Put cursor to end of line */
+            CallWindowProc(swProc, hwnd, uMsg, (WPARAM) VK_END, lParam);
 #else
             const char *newtext = (i == VK_UP) ?
                     history_get_prev(*pp_hi, NULL) :
@@ -586,11 +588,11 @@ StringWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             newtextW = TMALLOC(wchar_t, 2 * strlen(newtext) + 1);
             MultiByteToWideChar(
                     CP_UTF8, 0, newtext, -1, newtextW, 2 * (int) strlen(newtext) + 1);
-            SetWindowTextW(hwSource, newtextW);
+            SetWindowTextW(swString, newtextW);
             tfree(newtextW);
-#endif
             /* Put cursor to end of line */
-            CallWindowProc(swProc, hwnd, uMsg, (WPARAM) VK_END, lParam);
+            CallWindowProcW(swProc, hwnd, uMsg, (WPARAM) VK_END, lParam);
+#endif
             return 0;
         }
         if (i == VK_ESCAPE) {
@@ -613,10 +615,11 @@ StringWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                     hwnd, SBuffer, sizeof SBuffer - (sizeof CRLF - 1));
 #else
             wchar_t *WBuffer = TMALLOC(wchar_t, sizeof(SBuffer));
-            const int n_char_returned = GetWindowTextW(
-                    hwnd, WBuffer, sizeof SBuffer - (sizeof CRLF - 1));
-            WideCharToMultiByte(CP_UTF8, 0, WBuffer, -1, SBuffer,
-                    1023, NULL, NULL);
+            /* for utf-8 the number of characters is not the number of bytes returned */
+            GetWindowTextW(hwnd, WBuffer, sizeof SBuffer - (sizeof CRLF - 1));
+            /* retrive here the number of bytes returned */
+            const int n_char_returned = WideCharToMultiByte(CP_UTF8, 0, WBuffer,
+                     -1, SBuffer, sizeof SBuffer - 1, NULL, NULL);
             tfree(WBuffer);
 #endif
             unsigned int n_char_prev_cmd;
@@ -637,7 +640,6 @@ StringWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             else {
                 history_reset_pos(*pp_hi);
             } 
-
 
             strcpy(SBuffer + n_char_returned, CRLF);
             ClearInput();
