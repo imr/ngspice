@@ -75,6 +75,11 @@ extern bool ft_batchmode;
 extern void exec_controls(wordlist *controls);
 #endif
 
+/* display the source file name in the source window */
+#ifdef HAS_WINGUI
+extern void SetSource(char *Name);
+#endif
+
 /* structure used to save expression parse trees for .model and
  * device instance lines
  */
@@ -1586,6 +1591,10 @@ com_source(wordlist *wl)
     if (ft_nutmeg || substring(INITSTR, owl->wl_word) || substring(ALT_INITSTR, owl->wl_word))
         inp_spsource(fp, TRUE, tempfile ? NULL : wl->wl_word, FALSE);
     else {
+#ifdef HAS_WINGUI
+        /* set the source window */
+        SetSource(wl->wl_word);
+#endif
         /* Save path name for use in XSPICE fopen_with_path() */
         if (Infile_Path)
             tfree(Infile_Path);
