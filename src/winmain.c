@@ -617,9 +617,10 @@ StringWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             wchar_t *WBuffer = TMALLOC(wchar_t, sizeof(SBuffer));
             /* for utf-8 the number of characters is not the number of bytes returned */
             GetWindowTextW(hwnd, WBuffer, sizeof SBuffer - (sizeof CRLF - 1));
-            /* retrive here the number of bytes returned */
-            const int n_char_returned = WideCharToMultiByte(CP_UTF8, 0, WBuffer,
+            WideCharToMultiByte(CP_UTF8, 0, WBuffer,
                      -1, SBuffer, sizeof SBuffer - 1, NULL, NULL);
+            /* retrive here the number of bytes returned */
+            const int n_char_returned = (int)strlen(SBuffer);
             tfree(WBuffer);
 #endif
             unsigned int n_char_prev_cmd;
