@@ -72,6 +72,7 @@ com_hardcopy(wordlist *wl)
             fprintf(stderr,
                     "No parameters for hardcopy command, not previous plot:\n");
             fprintf(stderr, "    Command hardcopy cannot be executed\n ");
+            DevSwitch(NULL);
             return;
         }
 
