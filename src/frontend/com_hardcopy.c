@@ -66,9 +66,6 @@ void com_hardcopy(wordlist *wl)
     /* enable screen plot selection for these display types */
     foundit = 0;
 
-
-    // PushGraphContext(currentgraph);
-
 #ifdef HAS_WINGUI
     if (!wl && hc_button) {
         char *psfname;
@@ -81,7 +78,7 @@ void com_hardcopy(wordlist *wl)
         else {
             fprintf(stderr,
                     "No parameters for hardcopy command, not previous plot:\n");
-            fprintf(stderr, "    Command hardcopy cannot be executed\n ");
+            fprintf(stderr, "    Command hardcopy cannot be executed\n\n");
             DevSwitch(NULL);
             return;
         }
