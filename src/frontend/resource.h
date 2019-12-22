@@ -6,10 +6,10 @@
 #ifndef ngspice_RESOURCE_H
 #define ngspice_RESOURCE_H
 
-extern size_t getMemorySize(void);
-extern size_t getPeakRSS(void);
-extern size_t getCurrentRSS(void);
-extern size_t getAvailableMemorySize(void);
+extern unsigned long long getMemorySize(void);
+extern unsigned long long getPeakRSS(void);
+extern unsigned long long getCurrentRSS(void);
+extern unsigned long long getAvailableMemorySize(void);
 
 void init_rlimits(void);
 void init_time(void);
