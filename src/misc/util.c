@@ -250,6 +250,7 @@ ngdirname(const char *name)
 
 #endif
 
+/* Replacement for fopen, when using wide chars (utf-16) */
 #ifndef EXT_ASC
 #if defined(__MINGW__) || defined(_MSC_VER)
 #undef BOOLEAN
@@ -257,10 +258,11 @@ ngdirname(const char *name)
 FILE *
 newfopen(char *fn, char* md)
 {
+    if (fn == NULL)
+        return NULL;
     wchar_t wfn[BSIZE_SP];
     wchar_t wmd[16];
     MultiByteToWideChar(CP_UTF8, 0, md, -1, wmd, 15);
-    MultiByteToWideChar(CP_UTF8, 0, fn, -1, wfn, BSIZE_SP - 1);
     if (MultiByteToWideChar(CP_UTF8, 0, fn, -1, wfn, BSIZE_SP - 1) == 0) {
         fprintf(stderr, "UTF-8 to UTF-16 conversion failed with 0x%x\n", GetLastError());
         fprintf(stderr, "%s could not be converted\n", fn);
