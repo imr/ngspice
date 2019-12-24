@@ -63,14 +63,14 @@ void preprocess_ifs_file(void)
 
     Ifs_Table_t     ifs_table;   /* Repository for info read from ifspec.ifs file */
 
-    Status_t        status;      /* Return status */
+    int status;      /* Return status */
 
 
     /* Read the entire ifspec.ifs file and load the data into ifs_table */
 
     status = read_ifs_file(IFSPEC_FILENAME,GET_IFS_TABLE,&ifs_table);
 
-    if(status != OK) {
+    if(status != 0) {
         exit(1);
     }
 
@@ -79,7 +79,7 @@ void preprocess_ifs_file(void)
 
     status = write_ifs_c_file("ifspec.c",&ifs_table);
 
-    if(status != OK) {
+    if(status != 0) {
         exit(1);
     }
 

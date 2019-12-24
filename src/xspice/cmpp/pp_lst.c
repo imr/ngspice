@@ -63,15 +63,15 @@ typedef struct {
     char        *path_name;     /* Pathname read from model path file */
     char        *spice_name;    /* Name of model from ifspec.ifs  */
     char        *cfunc_name;    /* Name of C fcn from ifspec.ifs  */
-    Boolean_t   spice_unique;   /* True if spice name unique */
-    Boolean_t   cfunc_unique;   /* True if C fcn name unique */
+    bool   spice_unique;   /* True if spice name unique */
+    bool   cfunc_unique;   /* True if C fcn name unique */
 } Model_Info_t;
 
 
 typedef struct {
     char        *path_name;     /* Pathname read from udn path file */
     char        *node_name;     /* Name of node type  */
-    Boolean_t   unique;         /* True if node type name unique */
+    bool   unique;         /* True if node type name unique */
 } Node_Info_t;
 
 
@@ -79,19 +79,19 @@ typedef struct {
 /* *********************************************************************** */
 
 
-static Status_t read_modpath(int *num_models, Model_Info_t **model_info);
-static Status_t read_udnpath(int *num_nodes, Node_Info_t **node_info);
-static Status_t read_model_names(int num_models, Model_Info_t *model_info);
-static Status_t read_node_names(int num_nodes, Node_Info_t *node_info);
-static Status_t check_uniqueness(int num_models, Model_Info_t *model_info,
+static int read_modpath(int *num_models, Model_Info_t **model_info);
+static int read_udnpath(int *num_nodes, Node_Info_t **node_info);
+static int read_model_names(int num_models, Model_Info_t *model_info);
+static int read_node_names(int num_nodes, Node_Info_t *node_info);
+static int check_uniqueness(int num_models, Model_Info_t *model_info,
                                  int num_nodes, Node_Info_t *node_info);
-static Status_t write_CMextrn(int num_models, Model_Info_t *model_info);
-static Status_t write_CMinfo(int num_models, Model_Info_t *model_info);
-static Status_t write_UDNextrn(int num_nodes, Node_Info_t *node_info);
-static Status_t write_UDNinfo(int num_nodes, Node_Info_t *node_info);
-static Status_t write_objects_inc(int num_models, Model_Info_t *model_info,
+static int write_CMextrn(int num_models, Model_Info_t *model_info);
+static int write_CMinfo(int num_models, Model_Info_t *model_info);
+static int write_UDNextrn(int num_nodes, Node_Info_t *node_info);
+static int write_UDNinfo(int num_nodes, Node_Info_t *node_info);
+static int write_objects_inc(int num_models, Model_Info_t *model_info,
                                   int num_nodes, Node_Info_t *node_info);
-static Status_t read_udn_type_name(const char *path, char **node_name);
+static int read_udn_type_name(const char *path, char **node_name);
 
 
 /* *********************************************************************** */
@@ -119,7 +119,7 @@ into the simulator.
 
 void preprocess_lst_files(void)
 {
-    Status_t        status;      /* Return status */
+    int        status;      /* Return status */
     Model_Info_t    *model_info; /* Info about each model */
     Node_Info_t     *node_info;  /* Info about each user-defined node type */
     int             num_models;  /* The number of models */
@@ -128,26 +128,26 @@ void preprocess_lst_files(void)
 
     /* Get list of models from model pathname file */
     status = read_modpath(&num_models, &model_info);
-    if(status != OK) {
+    if(status != 0) {
         exit(1);
     }
 
     /* Get list of node types from udn pathname file */
     status = read_udnpath(&num_nodes, &node_info);
-    if(status != OK) {
+    if(status != 0) {
         exit(1);
     }
 
 
     /* Get the spice and C function names from the ifspec.ifs files */
     status = read_model_names(num_models, model_info);
-    if(status != OK) {
+    if(status != 0) {
         exit(1);
     }
 
     /* Get the user-defined node type names */
     status = read_node_names(num_nodes, node_info);
-    if(status != OK) {
+    if(status != 0) {
         exit(1);
     }
 
@@ -155,33 +155,33 @@ void preprocess_lst_files(void)
     /* Check to be sure the names are unique */
     status = check_uniqueness(num_models, model_info,
                               num_nodes, node_info);
-    if(status != OK) {
+    if(status != 0) {
         exit(1);
     }
 
 
     /* Write out the CMextrn.h file used to compile SPIinit.c */
     status = write_CMextrn(num_models, model_info);
-    if(status != OK) {
+    if(status != 0) {
         exit(1);
     }
 
     /* Write out the CMinfo.h file used to compile SPIinit.c */
     status = write_CMinfo(num_models, model_info);
-    if(status != OK) {
+    if(status != 0) {
         exit(1);
     }
 
 
     /* Write out the UDNextrn.h file used to compile SPIinit.c */
     status = write_UDNextrn(num_nodes, node_info);
-    if(status != OK) {
+    if(status != 0) {
         exit(1);
     }
 
     /* Write out the UDNinfo.h file used to compile SPIinit.c */
     status = write_UDNinfo(num_nodes, node_info);
-    if(status != OK) {
+    if(status != 0) {
         exit(1);
     }
 
@@ -190,7 +190,7 @@ void preprocess_lst_files(void)
     /* user-defined node functions with the simulator */
     status = write_objects_inc(num_models, model_info,
                               num_nodes, node_info);
-    if(status != OK) {
+    if(status != 0) {
         exit(1);
     }
 
@@ -210,7 +210,7 @@ processing.
 */
 
 
-static Status_t read_modpath(
+static int read_modpath(
     int            *num_models,       /* Number of model pathnames found */
     Model_Info_t   **model_info       /* Info about each model */
 )
@@ -234,9 +234,9 @@ static Status_t read_modpath(
     /* Open the model pathname file */
     fp = fopen_cmpp(&filename, "r");
 
-    if(fp == NULL) {
+    if (fp == NULL) {
         print_error("ERROR - File not found: %s", filename);
-        return(ERROR);
+        return -1;
     }
 
     /* Read the pathnames from the file, one line at a time until EOF */
@@ -251,7 +251,7 @@ static Status_t read_modpath(
         if(len > MAX_PATH_LEN) {
             print_error("ERROR - Line %d of %s exceeds %d characters",
                         line_num, filename, MAX_PATH_LEN);
-            return(ERROR);
+            return -1;
         }
 
         /* Strip white space including newline */
@@ -280,7 +280,7 @@ static Status_t read_modpath(
         if(len > (MAX_PATH_LEN - (MAX_FN_LEN + 1)) ) {
             print_error("ERROR - Pathname on line %d of %s exceeds %d characters",
                         line_num, filename, (MAX_PATH_LEN - (MAX_FN_LEN + 1)));
-            return(ERROR);
+            return -1;
         }
 
         /* Allocate and initialize a new model info structure */
@@ -291,8 +291,8 @@ static Status_t read_modpath(
         model[n].path_name = NULL;
         model[n].spice_name = NULL;
         model[n].cfunc_name = NULL;
-        model[n].spice_unique = TRUE;
-        model[n].cfunc_unique = TRUE;
+        model[n].spice_unique = true;
+        model[n].cfunc_unique = true;
 
         /* Put pathname into info structure */
         model[n].path_name = (char *) malloc((size_t) (len+1));
@@ -309,7 +309,7 @@ static Status_t read_modpath(
     *num_models = n;
     *model_info = model;
 
-    return(OK);
+    return 0;
 
 }
 
@@ -326,7 +326,7 @@ processing.
 */
 
 
-static Status_t read_udnpath(
+static int read_udnpath(
     int            *num_nodes,       /* Number of node pathnames found */
     Node_Info_t    **node_info       /* Info about each node */
 )
@@ -353,7 +353,7 @@ static Status_t read_udnpath(
     /* For backward compatibility, return with WARNING only if file not found */
     if(fp == NULL) {
         print_error("WARNING - File not found: %s", filename);
-        return(OK);
+        return 0;
     }
 
     /* Read the pathnames from the file, one line at a time until EOF */
@@ -368,7 +368,7 @@ static Status_t read_udnpath(
         if(len > MAX_PATH_LEN) {
             print_error("ERROR - Line %d of %s exceeds %d characters",
                         line_num, filename, MAX_PATH_LEN);
-            return(ERROR);
+            return -1;
         }
 
         /* Strip white space including newline */
@@ -397,7 +397,7 @@ static Status_t read_udnpath(
         if(len > (MAX_PATH_LEN - (MAX_FN_LEN + 1)) ) {
             print_error("ERROR - Pathname on line %d of %s exceeds %d characters",
                         line_num, filename, (MAX_PATH_LEN - (MAX_FN_LEN + 1)));
-            return(ERROR);
+            return -1;
         }
 
         /* Allocate and initialize a new node info structure */
@@ -407,7 +407,7 @@ static Status_t read_udnpath(
             node = (Node_Info_t *) realloc(node, (size_t) (n + 1) * sizeof(Node_Info_t));
         node[n].path_name = NULL;
         node[n].node_name = NULL;
-        node[n].unique = TRUE;
+        node[n].unique = true;
 
         /* Put pathname into info structure */
         node[n].path_name = (char *) malloc((size_t) (len+1));
@@ -424,7 +424,7 @@ static Status_t read_udnpath(
     *num_nodes = n;
     *node_info = node;
 
-    return(OK);
+    return 0;
 
 }
 
@@ -440,22 +440,22 @@ This function opens each of the models and gets the names of the model
 and the C function into the internal model information structure.
 */
 
-static Status_t read_model_names(
+static int read_model_names(
     int            num_models,  /* Number of model pathnames */
     Model_Info_t   *model_info  /* Info about each model */
 )
 {
-    Boolean_t   all_found;               /* True if all ifspec files read */
+    bool   all_found;               /* True if all ifspec files read */
     int         i;                       /* A temporary counter */
     char        path[MAX_PATH_LEN+1];    /* full pathname to ifspec file */
-    Status_t    status;                  /* Return status */
+    int    status;                  /* Return status */
     Ifs_Table_t ifs_table;   /* Repository for info read from ifspec file */
 
 
     /* For each model found in model pathname file, read the interface */
     /* spec file to get the SPICE and C function names into model_info */
 
-    for(i = 0, all_found = TRUE; i < num_models; i++) {
+    for(i = 0, all_found = true; i < num_models; i++) {
 
         /* Form the full pathname to the interface spec file */
         strcpy(path, model_info[i].path_name);
@@ -466,21 +466,21 @@ static Status_t read_model_names(
         status = read_ifs_file(path, GET_IFS_NAME, &ifs_table);
 
         /* Transfer the names into the model_info structure */
-        if(status == OK) {
+        if(status == 0) {
             model_info[i].spice_name = ifs_table.name.model_name;
             model_info[i].cfunc_name = ifs_table.name.c_fcn_name;
         }
         else {
-            all_found = FALSE;
+            all_found = false;
             print_error("ERROR - Problems reading %s in directory %s",
                         IFSPEC_FILENAME, model_info[i].path_name);
         }
     }
 
     if(all_found)
-        return(OK);
+        return 0;
     else
-        return(ERROR);
+        return -1;
 
 }
 
@@ -496,21 +496,21 @@ and gets the names of the node into the internal information structure.
 */
 
 
-static Status_t read_node_names(
+static int read_node_names(
     int           num_nodes,  /* Number of node pathnames */
     Node_Info_t   *node_info  /* Info about each node */
 )
 {
-    Boolean_t   all_found;               /* True if all files read OK */
+    bool   all_found;               /* True if all files read OK */
     int         i;                       /* A temporary counter */
     char        path[MAX_PATH_LEN+1];    /* full pathname to file */
-    Status_t    status;                  /* Return status */
+    int    status;                  /* Return status */
     char        *node_name;              /* Name of node type read from file */
 
     /* For each node found in node pathname file, read the udnfunc.c */
     /* file to get the node type names into node_info */
 
-    for(i = 0, all_found = TRUE; i < num_nodes; i++) {
+    for(i = 0, all_found = true; i < num_nodes; i++) {
 
         /* Form the full pathname to the interface spec file */
         strcpy(path, node_info[i].path_name);
@@ -521,20 +521,20 @@ static Status_t read_node_names(
         status = read_udn_type_name(path, &node_name);
 
         /* Transfer the names into the node_info structure */
-        if(status == OK) {
+        if(status == 0) {
             node_info[i].node_name = node_name;
         }
         else {
-            all_found = FALSE;
+            all_found = false;
             print_error("ERROR - Problems reading %s in directory %s",
                         UDNFUNC_FILENAME, node_info[i].path_name);
         }
     }
 
     if(all_found)
-        return(OK);
+        return 0;
     else
-        return(ERROR);
+        return -1;
 
 }
 
@@ -551,7 +551,7 @@ names are unique with respect to each other and to the models and
 functions internal to SPICE 3C1.
 */
 
-static Status_t check_uniqueness(
+static int check_uniqueness(
     int            num_models,  /* Number of model pathnames */
     Model_Info_t   *model_info, /* Info about each model */
     int            num_nodes,   /* Number of node type pathnames */
@@ -560,7 +560,7 @@ static Status_t check_uniqueness(
 {
     int         i;                       /* A temporary counter */
     int         j;                       /* A temporary counter */
-    Boolean_t   all_unique;              /* true if names are unique */
+    bool   all_unique;              /* true if names are unique */
 
     /* Define a list of model names used internally by XSPICE */
     /* These names (except 'poly') are defined in src/sim/INP/INPdomodel.c and */
@@ -609,19 +609,19 @@ static Status_t check_uniqueness(
 
     /* Then, loop through all model names and report errors if same as SPICE */
     /* model name or same as another model name in list */
-    for(i = 0, all_unique = TRUE; i < num_models; i++) {
+    for(i = 0, all_unique = true; i < num_models; i++) {
 
         /* First check against list of SPICE internal names */
         for(j = 0; j < numSPICEmodels; j++) {
             if(strcmp(model_info[i].spice_name, SPICEmodel[j]) == 0) {
-                all_unique = FALSE;
+                all_unique = false;
                 print_error("ERROR - Model name '%s' is same as internal SPICE model name\n",
                             model_info[i].spice_name);
             }
         }
 
         /* Skip if already seen once */
-        if(model_info[i].spice_unique == FALSE)
+        if(model_info[i].spice_unique == false)
             continue;
 
         /* Then check against other names in list */
@@ -633,9 +633,9 @@ static Status_t check_uniqueness(
 
             /* Compare the names */
             if(strcmp(model_info[i].spice_name, model_info[j].spice_name) == 0) {
-                all_unique = FALSE;
-                model_info[i].spice_unique = FALSE;
-                model_info[j].spice_unique = FALSE;
+                all_unique = false;
+                model_info[i].spice_unique = false;
+                model_info[j].spice_unique = false;
                 print_error("ERROR - Model name '%s' in directory: %s",
                             model_info[i].spice_name,
                             model_info[i].path_name);
@@ -652,7 +652,7 @@ static Status_t check_uniqueness(
     for(i = 0; i < num_models; i++) {
 
         /* Skip if already seen once */
-        if(model_info[i].cfunc_unique == FALSE)
+        if(model_info[i].cfunc_unique == false)
             continue;
 
         /* Check against other names in list only, not against SPICE identifiers */
@@ -665,9 +665,9 @@ static Status_t check_uniqueness(
 
             /* Compare the names */
             if(strcmp(model_info[i].cfunc_name, model_info[j].cfunc_name) == 0) {
-                all_unique = FALSE;
-                model_info[i].cfunc_unique = FALSE;
-                model_info[j].cfunc_unique = FALSE;
+                all_unique = false;
+                model_info[i].cfunc_unique = false;
+                model_info[j].cfunc_unique = false;
                 print_error("ERROR - C function name '%s' in directory: %s",
                             model_info[i].cfunc_name,
                             model_info[i].path_name);
@@ -687,14 +687,14 @@ static Status_t check_uniqueness(
         /* First check against list of internal names */
         for(j = 0; j < numUDNidentifiers; j++) {
             if(strcmp(node_info[i].node_name, UDNidentifier[j]) == 0) {
-                all_unique = FALSE;
+                all_unique = false;
                 print_error("ERROR - Node type '%s' is same as internal node type\n",
                             node_info[i].node_name);
             }
         }
 
         /* Skip if already seen once */
-        if(node_info[i].unique == FALSE)
+        if(node_info[i].unique == false)
             continue;
 
         /* Then check against other names in list */
@@ -706,9 +706,9 @@ static Status_t check_uniqueness(
 
             /* Compare the names */
             if(strcmp(node_info[i].node_name, node_info[j].node_name) == 0) {
-                all_unique = FALSE;
-                node_info[i].unique = FALSE;
-                node_info[j].unique = FALSE;
+                all_unique = false;
+                node_info[i].unique = false;
+                node_info[j].unique = false;
                 print_error("ERROR - Node type '%s' in directory: %s",
                             node_info[i].node_name,
                             node_info[i].path_name);
@@ -723,9 +723,9 @@ static Status_t check_uniqueness(
 
     /* Return error status */
     if(all_unique)
-        return(OK);
+        return 0;
     else
-        return(ERROR);
+        return -1;
 
 }
 
@@ -743,7 +743,7 @@ mentioned in the include file to define the models known to the
 simulator.
 */
 
-static Status_t write_CMextrn(
+static int write_CMextrn(
     int            num_models,  /* Number of model pathnames */
     Model_Info_t   *model_info  /* Info about each model */
 )
@@ -757,7 +757,7 @@ static Status_t write_CMextrn(
     fp = fopen_cmpp(&filename, "w");
     if(fp == NULL) {
         print_error("ERROR - Problems opening %s for write", filename);
-        return(ERROR);
+        return -1;
     }
 
     /* Write out the data */
@@ -767,7 +767,7 @@ static Status_t write_CMextrn(
 
     /* Close the file and return */
     fclose(fp);
-    return(OK);
+    return 0;
 }
 
 
@@ -784,7 +784,7 @@ the include file to define the models known to the simulator.
 */
 
 
-static Status_t write_CMinfo(
+static int write_CMinfo(
     int            num_models,  /* Number of model pathnames */
     Model_Info_t   *model_info  /* Info about each model */
 )
@@ -798,7 +798,7 @@ static Status_t write_CMinfo(
     fp = fopen_cmpp(&filename, "w");
     if(fp == NULL) {
         print_error("ERROR - Problems opening %s for write", filename);
-        return(ERROR);
+        return -1;
     }
 
     /* Write out the data */
@@ -808,7 +808,7 @@ static Status_t write_CMinfo(
 
     /* Close the file and return */
     fclose(fp);
-    return(OK);
+    return 0;
 }
 
 
@@ -829,7 +829,7 @@ simulator.
 
 
 
-static Status_t write_UDNextrn(
+static int write_UDNextrn(
     int            num_nodes,  /* Number of node pathnames */
     Node_Info_t    *node_info  /* Info about each node */
 )
@@ -843,7 +843,7 @@ static Status_t write_UDNextrn(
     fp = fopen_cmpp(&filename, "w");
     if(fp == NULL) {
         print_error("ERROR - Problems opening %s for write", filename);
-        return(ERROR);
+        return -1;
     }
 
     /* Write out the data */
@@ -853,7 +853,7 @@ static Status_t write_UDNextrn(
 
     /* Close the file and return */
     fclose(fp);
-    return(OK);
+    return 0;
 }
 
 
@@ -872,7 +872,7 @@ simulator.
 
 
 
-static Status_t write_UDNinfo(
+static int write_UDNinfo(
     int            num_nodes,  /* Number of node pathnames */
     Node_Info_t    *node_info  /* Info about each node */
 )
@@ -886,7 +886,7 @@ static Status_t write_UDNinfo(
     fp = fopen_cmpp(&filename, "w");
     if(fp == NULL) {
         print_error("ERROR - Problems opening %s for write", filename);
-        return(ERROR);
+        return -1;
     }
 
     /* Write out the data */
@@ -896,7 +896,7 @@ static Status_t write_UDNinfo(
 
     /* Close the file and return */
     fclose(fp);
-    return(OK);
+    return 0;
 }
 
 
@@ -910,7 +910,7 @@ the make utility to locate the object modules needed to link the
 simulator with the code models and user-defined node types.
 */
 
-static Status_t write_objects_inc(
+static int write_objects_inc(
     int            num_models,  /* Number of model pathnames */
     Model_Info_t   *model_info, /* Info about each model */
     int            num_nodes,   /* Number of udn pathnames */
@@ -926,7 +926,7 @@ static Status_t write_objects_inc(
     fp = fopen_cmpp(&filename, "w");
     if(fp == NULL) {
         print_error("ERROR - Problems opening %s for write", filename);
-        return(ERROR);
+        return -1;
     }
 
     /* Write out the data */
@@ -947,7 +947,7 @@ static Status_t write_objects_inc(
 
     /* Close the file and return */
     fclose(fp);
-    return(OK);
+    return 0;
 }
 
 
@@ -960,14 +960,14 @@ is found, and then gets the name of the node type from the first
 member of the structure.
 */
 
-static Status_t read_udn_type_name(
+static int read_udn_type_name(
     const char *path,           /* the path to the node definition file */
     char **node_name            /* the node type name found in the file */
 )
 {
     FILE        *fp;                    /* file pointer for opened file */
-    Boolean_t   found;                  /* true if name found successfully */
-    Boolean_t   in_struct;              /* true if found struct with name */
+    bool   found;                  /* true if name found successfully */
+    bool   in_struct;              /* true if found struct with name */
     char        name[MAX_NAME_LEN + 1]; /* temporary storage for name read */
     int         c;                      /* a character read from the file */
     int         i;                      /* a counter */
@@ -977,12 +977,12 @@ static Status_t read_udn_type_name(
     /* Open the file from which the node type name will be read */
     fp = fopen_cmpp(&path, "r");
     if(fp == NULL)
-        return(ERROR);
+        return -1;
 
     /* Read the file until the definition of the Evt_Udn_Info_t struct */
     /* is found, then get the name of the node type from the first */
     /* member of the structure */
-    found = FALSE;
+    found = false;
     do {
         /* read the next character */
         c = fgetc(fp);
@@ -1007,11 +1007,11 @@ static Status_t read_udn_type_name(
             break;
 
         /* read until "Evt_Udn_Info_t" is encountered */
-        for(i = 0, in_struct = FALSE; ; i++) {
+        for(i = 0, in_struct = false; ; i++) {
             if(c != struct_type[i])
                 break;
             else if(i == (sizeof(struct_type) - 2)) {
-                in_struct = TRUE;
+                in_struct = true;
                 break;
             }
             else
@@ -1027,7 +1027,7 @@ static Status_t read_udn_type_name(
                     do {
                         c = fgetc(fp);
                         if(c == '"') {
-                            found = TRUE;
+                            found = true;
                             name[i] = '\0';
                         }
                         else if(c != EOF)
@@ -1045,11 +1045,11 @@ static Status_t read_udn_type_name(
     if(found) {
         *node_name = (char *) malloc(strlen(name) + 1);
         strcpy(*node_name, name);
-        return(OK);
+        return 0;
     }
     else {
         *node_name = NULL;
-        return(ERROR);
+        return -1;
     }
 }
 

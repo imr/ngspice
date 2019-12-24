@@ -38,6 +38,7 @@ NON-STANDARD FEATURES
 ============================================================================*/
 
 
+#include <stdbool.h>
 #include <stdio.h>
 
 #define IFSPEC_FILENAME  "ifspec.ifs"
@@ -47,6 +48,7 @@ NON-STANDARD FEATURES
 
 #ifdef _MSC_VER
 #include <io.h>
+#include <string.h>
 #define strdup _strdup
 #define unlink _unlink
 #define isatty _isatty
@@ -54,15 +56,6 @@ NON-STANDARD FEATURES
 #endif
 
 /* *********************************************************************** */
-
-typedef enum {
-
-   OK,       /* Returned with no error */
-   ERROR,    /* Returned with error */
-
-} Status_t;
-
-
 
 #define  GET_IFS_TABLE    0  /* Read the entire ifs table */
 #define  GET_IFS_NAME     1  /* Get the C function name out of the table only */
@@ -77,23 +70,13 @@ typedef enum {
 /* ******************************************************************** */
 
 /*
- * The boolean type
- */
-
-typedef enum {
-    FALSE,
-    TRUE,
-} Boolean_t;
-
-
-/*
  * The direction of a connector
  */
 
 typedef enum {
-    IN,
-    OUT,
-    INOUT,
+    CMPP_IN,
+    CMPP_OUT,
+    CMPP_INOUT,
 } Dir_t;
 
 
@@ -122,14 +105,13 @@ typedef enum {
  */
 
 typedef enum {
-    BOOLEAN,
-    INTEGER,
-    REAL,
-    COMPLEX,
-    STRING,
-    POINTER,   /* NOTE: POINTER should not be used for Parameters - only
-		* Static_Vars  - this is enforced by the cmpp.
-		*/
+    CMPP_BOOLEAN,
+    CMPP_INTEGER,
+    CMPP_REAL,
+    CMPP_COMPLEX,
+    CMPP_STRING,
+    CMPP_POINTER, /* NOTE: CMPP_POINTER should not be used for Parameters -
+                   * only Static_Vars  - this is enforced by the cmpp. */
  } Data_Type_t;
 
 
@@ -157,7 +139,7 @@ typedef struct {
 
 typedef struct {
 
-    Boolean_t   bvalue;         /* For BOOLEAN parameters */
+    bool        bvalue;         /* For BOOLEAN parameters */
     int         ivalue;         /* For INTEGER parameters */
     double      rvalue;         /* For REAL parameters    */
     Complex_t   cvalue;         /* For COMPLEX parameters */
@@ -198,14 +180,14 @@ typedef struct {
     int             num_allowed_types;  /* The size of the allowed type arrays */
     Port_Type_t     *allowed_port_type; /* Array of allowed types */
     char            **allowed_type;     /* Array of allowed types in string form */
-    Boolean_t       is_array;           /* True if connection is an array       */
-    Boolean_t       has_conn_ref;     /* True if there is associated with an array conn */
+    bool            is_array;           /* True if connection is an array       */
+    bool            has_conn_ref;     /* True if there is associated with an array conn */
     int             conn_ref;         /* Subscript of the associated array conn */
-    Boolean_t       has_lower_bound;    /* True if there is an array size lower bound */
+    bool            has_lower_bound;    /* True if there is an array size lower bound */
     int             lower_bound;        /* Array size lower bound */
-    Boolean_t       has_upper_bound;    /* True if there is an array size upper bound */
+    bool            has_upper_bound;    /* True if there is an array size upper bound */
     int             upper_bound;        /* Array size upper bound */
-    Boolean_t       null_allowed;       /* True if null is allowed for this connection */
+    bool            null_allowed;       /* True if null is allowed for this connection */
 
 } Conn_Info_t;
 
@@ -221,20 +203,20 @@ typedef struct {
     char            *name;            /* Name of this parameter */
     char            *description;     /* Description of this parameter */
     Data_Type_t     type;             /* Data type, e.g. REAL, INTEGER, ... */
-    Boolean_t       has_default;      /* True if there is a default value */
+    bool            has_default;      /* True if there is a default value */
     Value_t         default_value;    /* The default value */
-    Boolean_t       has_lower_limit;  /* True if there is a lower limit */
+    bool            has_lower_limit;  /* True if there is a lower limit */
     Value_t         lower_limit;      /* The lower limit for this parameter */
-    Boolean_t       has_upper_limit;  /* True if there is a upper limit */
+    bool            has_upper_limit;  /* True if there is a upper limit */
     Value_t         upper_limit;      /* The upper limit for this parameter */
-    Boolean_t       is_array;         /* True if parameter is an array       */
-    Boolean_t       has_conn_ref;     /* True if there is associated with an array conn */
+    bool            is_array;         /* True if parameter is an array       */
+    bool            has_conn_ref;     /* True if there is associated with an array conn */
     int             conn_ref;         /* Subscript of the associated array conn */
-    Boolean_t       has_lower_bound;  /* True if there is an array size lower bound */
+    bool            has_lower_bound;  /* True if there is an array size lower bound */
     int             lower_bound;      /* Array size lower bound */
-    Boolean_t       has_upper_bound;  /* True if there is an array size upper bound */
+    bool            has_upper_bound;  /* True if there is an array size upper bound */
     int             upper_bound;      /* Array size upper bound */
-    Boolean_t       null_allowed;     /* True if null is allowed for this parameter */
+    bool            null_allowed;     /* True if null is allowed for this parameter */
 
 } Param_Info_t;
 
@@ -248,7 +230,7 @@ typedef struct {
     char            *name;            /* Name of this parameter */
     char            *description;     /* Description of this parameter */
     Data_Type_t     type;             /* Data type, e.g. REAL, INTEGER, ... */
-    Boolean_t       is_array;         /* True if parameter is an array       */
+    bool            is_array;         /* True if parameter is an array       */
 
 } Inst_Var_Info_t;
 
@@ -294,9 +276,9 @@ void print_error(const char *fmt, ...);
 void str_to_lower(char *s);
 
 
-Status_t read_ifs_file(const char *filename, int mode, Ifs_Table_t *ifs_table);
+int read_ifs_file(const char *filename, int mode, Ifs_Table_t *ifs_table);
 
-Status_t write_ifs_c_file(const char *filename, Ifs_Table_t *ifs_table);
+int write_ifs_c_file(const char *filename, Ifs_Table_t *ifs_table);
 
 
 FILE *fopen_cmpp(const char **path_p, const char *mode);

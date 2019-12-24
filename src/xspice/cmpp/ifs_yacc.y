@@ -94,21 +94,21 @@ extern double yydval;
 extern char *ifs_yytext;
  extern int ifs_yylex(void);
 
-Boolean_t parser_just_names;
-static Boolean_t saw_model_name;
-static Boolean_t saw_function_name;
+bool parser_just_names;
+static bool saw_model_name;
+static bool saw_function_name;
 
 static char *dtype_to_str[] = {
    "BOOLEAN", "INTEGER", "REAL", "COMPLEX", "STRING", "POINTER"
    };
 
-static Boolean_t did_default_type;
-static Boolean_t did_allowed_types;
+static bool did_default_type;
+static bool did_allowed_types;
 
 static int num_items;
 static int item;
 static int item_offset;
-static Boolean_t num_items_fixed;
+static bool num_items_fixed;
 
 Ifs_Table_t *parser_ifs_table;
 #define TBL parser_ifs_table
@@ -149,21 +149,21 @@ Context_t context;
 
 #define ASSIGN_BOUNDS(struct_name, i) \
   if (ITEM_BUF(i).range.is_named) {\
-    TBL->struct_name[i].has_conn_ref = TRUE;\
+    TBL->struct_name[i].has_conn_ref = true;\
     TBL->struct_name[i].conn_ref = find_conn_ref (ITEM_BUF(i).range.u.name);\
   } else {\
-    TBL->struct_name[i].has_conn_ref = FALSE;\
+    TBL->struct_name[i].has_conn_ref = false;\
     TBL->struct_name[i].has_lower_bound =\
        ITEM_BUF(i).range.u.bounds.lower.has_bound;\
     TBL->struct_name[i].has_upper_bound =\
        ITEM_BUF(i).range.u.bounds.upper.has_bound;\
     if (TBL->struct_name[i].has_lower_bound) {\
-      assert (ITEM_BUF(i).range.u.bounds.lower.bound.kind == INTEGER);\
+      assert (ITEM_BUF(i).range.u.bounds.lower.bound.kind == CMPP_INTEGER);\
        TBL->struct_name[i].lower_bound =\
 	ITEM_BUF(i).range.u.bounds.lower.bound.u.ivalue;\
     }\
     if (TBL->struct_name[i].has_upper_bound) {\
-       assert (ITEM_BUF(i).range.u.bounds.upper.bound.kind == INTEGER);\
+       assert (ITEM_BUF(i).range.u.bounds.upper.bound.kind == CMPP_INTEGER);\
        TBL->struct_name[i].upper_bound =\
 	  ITEM_BUF(i).range.u.bounds.upper.bound.u.ivalue;\
     }\
@@ -228,7 +228,7 @@ static void check_port_type_direction (Dir_t dir, Port_Type_t port_type)
        */
       break;
    case VSOURCE_CURRENT:
-      if (dir != IN) {
+      if (dir != CMPP_IN) {
 	 yyerror ("Port type `vnam' is only valid for `in' ports");
 	 ifs_num_errors++;
       }
@@ -237,7 +237,7 @@ static void check_port_type_direction (Dir_t dir, Port_Type_t port_type)
    case DIFF_CONDUCTANCE:
    case RESISTANCE:
    case DIFF_RESISTANCE:
-      if (dir != INOUT) {
+      if (dir != CMPP_INOUT) {
 	 yyerror ("Port types `g', `gd', `h', `hd' are only valid for `inout' ports");
 	 ifs_num_errors++;
       }
@@ -250,7 +250,7 @@ static void check_port_type_direction (Dir_t dir, Port_Type_t port_type)
 /*---------------------------------------------------------------------------*/
 static void check_dtype_not_pointer (Data_Type_t dtype)
 {
-   if (dtype == POINTER) {
+   if (dtype == CMPP_POINTER) {
       yyerror("Invalid parameter type - POINTER type valid only for STATIC_VARs");
       ifs_num_errors++;
    }
@@ -312,7 +312,7 @@ static void
 assign_value (Data_Type_t type, Value_t *dest_value, My_Value_t src_value)
 {
    char str[200];
-   if ((type == REAL) && (src_value.kind == INTEGER)) {
+   if ((type == CMPP_REAL) && (src_value.kind == CMPP_INTEGER)) {
       dest_value->rvalue = src_value.u.ivalue;
       return;
    } else if (type != src_value.kind) {
@@ -323,19 +323,19 @@ assign_value (Data_Type_t type, Value_t *dest_value, My_Value_t src_value)
       ifs_num_errors++;
    } 
    switch (type) {
-   case BOOLEAN:
+   case CMPP_BOOLEAN:
       dest_value->bvalue = src_value.u.bvalue;
       break;
-   case INTEGER:
+   case CMPP_INTEGER:
       dest_value->ivalue = src_value.u.ivalue;
       break;
-   case REAL:
+   case CMPP_REAL:
       dest_value->rvalue = src_value.u.rvalue;
       break;
-   case COMPLEX:
+   case CMPP_COMPLEX:
       dest_value->cvalue = src_value.u.cvalue;
       break;
-   case STRING:
+   case CMPP_STRING:
       dest_value->svalue = src_value.u.svalue;
       break;
    default:
@@ -421,7 +421,7 @@ check_end_item_num (void)
       }
    } else {
       num_items = item;
-      num_items_fixed = TRUE;
+      num_items_fixed = true;
       switch (context.table) {
       case TBL_NAME:
 	 break;
@@ -439,7 +439,7 @@ check_end_item_num (void)
    item = item_offset;
 }
 
-#define INIT(n) item = (n); item_offset = (n); num_items = (n); num_items_fixed = FALSE
+#define INIT(n) item = (n); item_offset = (n); num_items = (n); num_items_fixed = false
 #define ITEM check_item_num()
 #define END  check_end_item_num()
    
@@ -499,7 +499,7 @@ check_end_item_num (void)
 %union {
    Ctype_List_t 	*ctype_list;
    Dir_t		dir;
-   Boolean_t		bool;
+   bool			btype;
    Range_t		range;
    Data_Type_t		dtype;
    My_Port_Type_t	ctype;
@@ -518,7 +518,7 @@ check_end_item_num (void)
 %type	<range>		range int_range
 %type	<value>		value number integer_value value_or_dash
 %type	<str>		identifier string
-%type	<bool>		bool
+%type	<btype>		btype
 %type	<bound>		int_or_dash number_or_dash
 %type	<ival>		integer
 %type	<rval>		real
@@ -545,8 +545,8 @@ ifs_file		: {TBL->num_conn = 0;
 			   TBL->num_param = 0;
 			   TBL->num_inst_var = 0;
 
-			   saw_function_name = FALSE;
-			   saw_model_name = FALSE;
+			   saw_function_name = false;
+			   saw_model_name = false;
 
 			   alloced_size [TBL_PORT] = DEFAULT_SIZE_CONN;
 			   alloced_size [TBL_PARAMETER] = DEFAULT_SIZE_PARAM;
@@ -579,8 +579,8 @@ table			: TOK_NAME_TABLE
 			  name_table
    			| TOK_PORT_TABLE
 			    {context.table = TBL_PORT;
-			     did_default_type = FALSE;
-			     did_allowed_types = FALSE;
+			     did_default_type = false;
+			     did_allowed_types = false;
 			     INIT (TBL->num_conn);}
 			  port_table
 			    {TBL->num_conn = num_items;}
@@ -602,11 +602,11 @@ name_table		: /* empty */
 
 name_table_item		: TOK_C_FUNCTION_NAME identifier
 			  {TBL->name.c_fcn_name =strdup (ifs_yytext);
- 			   saw_function_name = TRUE;
+ 			   saw_function_name = true;
 			   if (parser_just_names && saw_model_name) return 0;}
 			| TOK_SPICE_MODEL_NAME identifier
 			  {TBL->name.model_name = strdup (ifs_yytext);
- 			   saw_model_name = TRUE;
+ 			   saw_model_name = true;
 			   if (parser_just_names && saw_function_name) return 0;}
 			| TOK_DESCRIPTION string
 			  {TBL->name.description = strdup (ifs_yytext);}
@@ -637,7 +637,7 @@ port_table_item	: TOK_PORT_NAME list_of_ids
 			| TOK_DEFAULT_TYPE list_of_ctypes 
 			  {int i;
 			   END;
-			   did_default_type = TRUE;
+			   did_default_type = true;
 			   FOR_ITEM (i) {
 			      TBL->conn[i].default_port_type = 
 				 ITEM_BUF(i).ctype.kind;
@@ -649,7 +649,7 @@ port_table_item	: TOK_PORT_NAME list_of_ids
 			| TOK_ALLOWED_TYPES list_of_ctype_lists 
 			  {int i;
 			   END;
-			   did_allowed_types = TRUE;
+			   did_allowed_types = true;
 			   FOR_ITEM (i) {
 			      assign_ctype_list (&TBL->conn[i],
 						 ITEM_BUF(i).ctype_list);
@@ -661,7 +661,7 @@ port_table_item	: TOK_PORT_NAME list_of_ids
 			  {int i;
 			   END;
 			   FOR_ITEM (i) {
-			      TBL->conn[i].is_array = ITEM_BUF(i).bool;
+			      TBL->conn[i].is_array = ITEM_BUF(i).btype;
 			   }}
 			| TOK_ARRAY_BOUNDS list_of_array_bounds 
 			  {int i;
@@ -674,7 +674,7 @@ port_table_item	: TOK_PORT_NAME list_of_ids
 			  {int i;
 			   END;
 			   FOR_ITEM (i) {
-			      TBL->conn[i].null_allowed = ITEM_BUF(i).bool;
+			      TBL->conn[i].null_allowed = ITEM_BUF(i).btype;
 			   }}
 			;
 
@@ -725,7 +725,7 @@ parameter_table_item	: TOK_PARAMETER_NAME list_of_ids
 			  {int i;
 			   END;
 			   FOR_ITEM (i) {
-			      TBL->param[i].is_array = ITEM_BUF(i).bool;
+			      TBL->param[i].is_array = ITEM_BUF(i).btype;
 			   }}
 			| TOK_ARRAY_BOUNDS list_of_array_bounds 
 			  {int i;
@@ -737,7 +737,7 @@ parameter_table_item	: TOK_PARAMETER_NAME list_of_ids
 			  {int i;
 			   END;
 			   FOR_ITEM (i) {
-			      TBL->param[i].null_allowed = ITEM_BUF(i).bool;
+			      TBL->param[i].null_allowed = ITEM_BUF(i).btype;
 			   }}
 			;
 
@@ -767,7 +767,7 @@ static_var_table_item	: TOK_STATIC_VAR_NAME list_of_ids
 			  {int i;
 			   END;
 			   FOR_ITEM (i) {
-			      TBL->inst_var[i].is_array = ITEM_BUF(i).bool;
+			      TBL->inst_var[i].is_array = ITEM_BUF(i).btype;
 			   }}
 			;
 
@@ -781,7 +781,7 @@ list_of_array_bounds	: /* empty */
 			    BUF.range = $2;}
 			| list_of_array_bounds identifier 
 			   {ITEM; 
-			    BUF.range.is_named = TRUE;
+			    BUF.range.is_named = true;
 			    BUF.range.u.name = $2;}
 			;
 
@@ -793,13 +793,13 @@ list_of_directions	: /* empty */
 			| list_of_directions direction {ITEM; BUF.dir = $2;}
 			;
 
-direction		: TOK_DIR_IN	{$$ = IN;}
-			| TOK_DIR_OUT	{$$ = OUT;}
-			| TOK_DIR_INOUT	{$$ = INOUT;}
+direction		: TOK_DIR_IN	{$$ = CMPP_IN;}
+			| TOK_DIR_OUT	{$$ = CMPP_OUT;}
+			| TOK_DIR_INOUT	{$$ = CMPP_INOUT;}
 			;
 
 list_of_bool		: /* empty */
-			| list_of_bool bool {ITEM; BUF.bool = $2;}
+			| list_of_bool btype {ITEM; BUF.btype = $2;}
 			;
 
 list_of_ctypes		: /* empty */
@@ -824,24 +824,24 @@ list_of_dtypes		: /* empty */
 			| list_of_dtypes dtype {ITEM; BUF.dtype = $2;}
 			;
 
-dtype			: TOK_DTYPE_REAL	{$$ = REAL;}
-			| TOK_DTYPE_INT		{$$ = INTEGER;}
-			| TOK_DTYPE_BOOLEAN	{$$ = BOOLEAN;}
-			| TOK_DTYPE_COMPLEX	{$$ = COMPLEX;}
-			| TOK_DTYPE_STRING	{$$ = STRING;}
-			| TOK_DTYPE_POINTER	{$$ = POINTER;}
+dtype			: TOK_DTYPE_REAL	{$$ = CMPP_REAL;}
+			| TOK_DTYPE_INT		{$$ = CMPP_INTEGER;}
+			| TOK_DTYPE_BOOLEAN	{$$ = CMPP_BOOLEAN;}
+			| TOK_DTYPE_COMPLEX	{$$ = CMPP_COMPLEX;}
+			| TOK_DTYPE_STRING	{$$ = CMPP_STRING;}
+			| TOK_DTYPE_POINTER	{$$ = CMPP_POINTER;}
 			;
 
 list_of_ranges		: /* empty */
 			| list_of_ranges range {ITEM; BUF.range = $2;}
 			;
 
-int_range		: TOK_DASH {$$.is_named = FALSE; 
-				    $$.u.bounds.lower.has_bound = FALSE;
-				    $$.u.bounds.upper.has_bound = FALSE;}
+int_range		: TOK_DASH {$$.is_named = false; 
+				    $$.u.bounds.lower.has_bound = false;
+				    $$.u.bounds.upper.has_bound = false;}
 			| TOK_LBRACKET int_or_dash maybe_comma int_or_dash
 			  TOK_RBRACKET
-			   {$$.is_named = FALSE;
+			   {$$.is_named = false;
 			    $$.u.bounds.lower = $2;
 			    $$.u.bounds.upper = $4;}
 			;
@@ -850,23 +850,23 @@ maybe_comma		: /* empty */
 			| TOK_COMMA
 			;
 
-int_or_dash		: TOK_DASH {$$.has_bound = FALSE;}
-			| integer_value   {$$.has_bound = TRUE; 
+int_or_dash		: TOK_DASH {$$.has_bound = false;}
+			| integer_value   {$$.has_bound = true; 
 				           $$.bound = $1;}
    			;
 
-range			: TOK_DASH {$$.is_named = FALSE; 
-				    $$.u.bounds.lower.has_bound = FALSE;
-				    $$.u.bounds.upper.has_bound = FALSE;}
+range			: TOK_DASH {$$.is_named = false; 
+				    $$.u.bounds.lower.has_bound = false;
+				    $$.u.bounds.upper.has_bound = false;}
 			| TOK_LBRACKET number_or_dash maybe_comma 
 			  number_or_dash TOK_RBRACKET 
-			   {$$.is_named = FALSE;
+			   {$$.is_named = false;
 			    $$.u.bounds.lower = $2;
 			    $$.u.bounds.upper = $4;}
 			;
 
-number_or_dash		: TOK_DASH {$$.has_bound = FALSE;}
-			| number {$$.has_bound = TRUE; 
+number_or_dash		: TOK_DASH {$$.has_bound = false;}
+			| number {$$.has_bound = true; 
 				  $$.bound = $1;}
    			;
 
@@ -874,18 +874,18 @@ list_of_values		: /* empty */
 			| list_of_values value_or_dash {ITEM; BUF.value = $2;}
 			;
 
-value_or_dash		: TOK_DASH {$$.has_value = FALSE;}
+value_or_dash		: TOK_DASH {$$.has_value = false;}
 			| value
 			;
 
-value			: string	{$$.has_value = TRUE;
-					 $$.kind = STRING;
+value			: string	{$$.has_value = true;
+					 $$.kind = CMPP_STRING;
 					 $$.u.svalue = $1;}
-			| bool		{$$.has_value = TRUE;
-					 $$.kind = BOOLEAN;
+			| btype		{$$.has_value = true;
+					 $$.kind = CMPP_BOOLEAN;
 					 $$.u.bvalue = $1;}
-			| complex	{$$.has_value = TRUE;
-					 $$.kind = COMPLEX;
+			| complex	{$$.has_value = true;
+					 $$.kind = CMPP_COMPLEX;
 					 $$.u.cvalue = $1;}
 			| number
 			;
@@ -924,8 +924,8 @@ ctype_list		: ctype
 			    $1->next = $$;*/}
 			;
 
-bool			: TOK_BOOL_YES	{$$ = TRUE;}
-			| TOK_BOOL_NO	{$$ = FALSE;}
+btype			: TOK_BOOL_YES	{$$ = true;}
+			| TOK_BOOL_NO	{$$ = false;}
 			;
 
 string			: TOK_STRING_LITERAL {$$ = strdup(ifs_yytext);}
@@ -934,14 +934,14 @@ string			: TOK_STRING_LITERAL {$$ = strdup(ifs_yytext);}
 identifier		: TOK_IDENTIFIER {$$ = strdup(ifs_yytext);}
 			;
 
-number			: real	{$$.has_value = TRUE;
-				 $$.kind = REAL;
+number			: real	{$$.has_value = true;
+				 $$.kind = CMPP_REAL;
 				 $$.u.rvalue = $1;}
 			| integer_value
 			;
 
-integer_value		: integer	{$$.has_value = TRUE;
-					 $$.kind = INTEGER;
+integer_value		: integer	{$$.has_value = true;
+					 $$.kind = CMPP_INTEGER;
 					 $$.u.ivalue = $1;}
 			;
 
