@@ -16,6 +16,14 @@ cmpp_SOURCES = main.c cmpp.h \
 	ifs_lex.l ifs_yacc.y ifs_yacc_y.h \
 	mod_lex.l mod_yacc.y mod_yacc_y.h
 
+if WINGUI
+cmpp_LDADD = -lShlwapi
+endif
+
+if WINCONSOLE
+cmpp_LDADD = -lShlwapi
+endif
+
 mod_lex.c : mod_lex.l
 	$(am__skiplex) $(LEXCOMPILE) -o $@ $<
 

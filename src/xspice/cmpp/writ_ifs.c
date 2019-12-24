@@ -74,7 +74,7 @@ static char  *value_to_str(Data_Type_t type, Value_t value);
 
 static char  *no_value_to_str(void);
 
-static char  *boolean_to_str(Boolean_t value);
+static char  *boolean_to_str(bool value);
 
 static char  *integer_to_str(int value);
 
@@ -109,7 +109,7 @@ The output file is then closed.
 
 
 
-Status_t write_ifs_c_file(
+int write_ifs_c_file(
     const char  *filename,    /* File to write to */
     Ifs_Table_t *ifs_table)   /* Table of Interface Specification data */
 {
@@ -123,7 +123,7 @@ Status_t write_ifs_c_file(
 
     if(fp == NULL) {
         print_error("ERROR - Can't create file: %s", filename);
-        return(ERROR);
+        return -1;
     }
 
 
@@ -155,12 +155,13 @@ Status_t write_ifs_c_file(
     /* Close the ifspec.c file and return */
 
     int_status = fclose(fp);
-    if(filename)
-        free((char*)filename);
-    if(int_status == 0)
-        return(OK);
-    else
-        return(ERROR);
+
+    if (int_status == 0) {
+        return 0;
+    }
+    else {
+        return -1;
+    }
 }
 
 
@@ -244,7 +245,7 @@ static void  write_pTable(
 
     int             i;
     char            str[80];
-    Boolean_t       is_array;
+    bool       is_array;
     Data_Type_t     type;
 
 
@@ -284,33 +285,33 @@ static void  write_pTable(
 
         strcpy(str,"");
 
-        if(is_array == TRUE) {
+        if(is_array == true) {
             strcat(str,"(");
         }
 
-        if(type == BOOLEAN) {
+        if(type == CMPP_BOOLEAN) {
             strcat(str,"IF_FLAG");   /* There is no BOOLEAN in SPICE3 */
         }
-        else if(type == INTEGER) {
+        else if(type == CMPP_INTEGER) {
             strcat(str,"IF_INTEGER");
         }
-        else if(type == REAL) {
+        else if(type == CMPP_REAL) {
             strcat(str,"IF_REAL");        
         }
-        else if(type == COMPLEX) {
+        else if(type == CMPP_COMPLEX) {
             strcat(str,"IF_COMPLEX");        
         }
-        else if(type == STRING) {
+        else if(type == CMPP_STRING) {
             strcat(str,"IF_STRING");        
         }
-        else if(type == POINTER) {
+        else if(type == CMPP_POINTER) {
             strcat(str,"IF_STRING"); 
         }
         else {
             print_error("INTERNAL ERROR - write_pTable() - Impossible data type.");
         }
 
-        if(is_array == TRUE) {
+        if(is_array == true) {
             strcat(str,"|IF_VECTOR)");
         }
 
@@ -351,7 +352,7 @@ static void  write_mPTable(
 
     int             i;
     char            str[80];
-    Boolean_t       is_array;
+    bool       is_array;
     Data_Type_t     type;
 
 
@@ -391,30 +392,30 @@ static void  write_mPTable(
 
         strcpy(str,"");
 
-        if(is_array == TRUE) {
+        if(is_array == true) {
             strcat(str,"(");
         }
 
-        if(type == BOOLEAN) {
+        if(type == CMPP_BOOLEAN) {
             strcat(str,"IF_FLAG");   /* There is no BOOLEAN in SPICE3 */
         }
-        else if(type == INTEGER) {
+        else if(type == CMPP_INTEGER) {
             strcat(str,"IF_INTEGER");
         }
-        else if(type == REAL) {
+        else if(type == CMPP_REAL) {
             strcat(str,"IF_REAL");        
         }
-        else if(type == COMPLEX) {
+        else if(type == CMPP_COMPLEX) {
             strcat(str,"IF_COMPLEX");        
         }
-        else if(type == STRING) {
+        else if(type == CMPP_STRING) {
             strcat(str,"IF_STRING");        
         }
         else {
             print_error("INTERNAL ERROR - write_mPTable() - Impossible data type.");
         }
 
-        if(is_array == TRUE) {
+        if(is_array == true) {
             strcat(str,"|IF_VECTOR)");
         }
 
@@ -541,26 +542,26 @@ static void  write_conn_info(
         str = boolean_to_str(ifs_table->conn[i].is_array);
         fprintf(fp, "    %s,\n", str);
 
-        if(ifs_table->conn[i].is_array == FALSE) {
+        if(ifs_table->conn[i].is_array == false) {
 
-            str = boolean_to_str(FALSE);    /* has_lower_bound */
+            str = boolean_to_str(false);    /* has_lower_bound */
             fprintf(fp, "    %s,\n", str);
 
             str = integer_to_str(0);        /* lower_bound */
             fprintf(fp, "    %s,\n", str);
 
-            str = boolean_to_str(FALSE);    /* has_upper_bound */
+            str = boolean_to_str(false);    /* has_upper_bound */
             fprintf(fp, "    %s,\n", str);
 
             str = integer_to_str(0);        /* upper_bound */
             fprintf(fp, "    %s,\n", str);
         }
-        else {  /* is_array == TRUE */
+        else {  /* is_array == true */
 
             str = boolean_to_str(ifs_table->conn[i].has_lower_bound);
             fprintf(fp, "    %s,\n", str);
 
-            if(ifs_table->conn[i].has_lower_bound == TRUE)
+            if(ifs_table->conn[i].has_lower_bound == true)
                 str = integer_to_str(ifs_table->conn[i].lower_bound);
             else
                 str = integer_to_str(0);
@@ -569,7 +570,7 @@ static void  write_conn_info(
             str = boolean_to_str(ifs_table->conn[i].has_upper_bound);
             fprintf(fp, "    %s,\n", str);
 
-            if(ifs_table->conn[i].has_upper_bound == TRUE)
+            if(ifs_table->conn[i].has_upper_bound == true)
                 str = integer_to_str(ifs_table->conn[i].upper_bound);
             else
                 str = integer_to_str(0);
@@ -648,7 +649,7 @@ static void  write_param_info(
         str = boolean_to_str(ifs_table->param[i].has_default);
         fprintf(fp, "    %s,\n", str);
 
-        if(ifs_table->param[i].has_default == TRUE)
+        if(ifs_table->param[i].has_default == true)
             str = value_to_str(ifs_table->param[i].type, ifs_table->param[i].default_value);
         else
             str = no_value_to_str();
@@ -657,7 +658,7 @@ static void  write_param_info(
         str = boolean_to_str(ifs_table->param[i].has_lower_limit);
         fprintf(fp, "    %s,\n", str);
 
-        if(ifs_table->param[i].has_lower_limit == TRUE)
+        if(ifs_table->param[i].has_lower_limit == true)
             str = value_to_str(ifs_table->param[i].type, ifs_table->param[i].lower_limit);
         else
             str = no_value_to_str();
@@ -666,7 +667,7 @@ static void  write_param_info(
         str = boolean_to_str(ifs_table->param[i].has_upper_limit);
         fprintf(fp, "    %s,\n", str);
 
-        if(ifs_table->param[i].has_upper_limit == TRUE)
+        if(ifs_table->param[i].has_upper_limit == true)
             str = value_to_str(ifs_table->param[i].type, ifs_table->param[i].upper_limit);
         else
             str = no_value_to_str();
@@ -675,49 +676,49 @@ static void  write_param_info(
         str = boolean_to_str(ifs_table->param[i].is_array);
         fprintf(fp, "    %s,\n", str);
 
-        if(ifs_table->param[i].is_array == FALSE) {
+        if(ifs_table->param[i].is_array == false) {
 
-            str = boolean_to_str(FALSE);    /* has_conn_ref */
+            str = boolean_to_str(false);    /* has_conn_ref */
             fprintf(fp, "    %s,\n", str);
 
             str = integer_to_str(0);        /* conn_ref */
             fprintf(fp, "    %s,\n", str);
 
-            str = boolean_to_str(FALSE);    /* has_lower_bound */
+            str = boolean_to_str(false);    /* has_lower_bound */
             fprintf(fp, "    %s,\n", str);
 
             str = integer_to_str(0);        /* lower_bound */
             fprintf(fp, "    %s,\n", str);
 
-            str = boolean_to_str(FALSE);    /* has_upper_bound */
+            str = boolean_to_str(false);    /* has_upper_bound */
             fprintf(fp, "    %s,\n", str);
 
             str = integer_to_str(0);        /* upper_bound */
             fprintf(fp, "    %s,\n", str);
         }
-        else {  /* is_array == TRUE */
+        else {  /* is_array == true */
 
             str = boolean_to_str(ifs_table->param[i].has_conn_ref);
             fprintf(fp, "    %s,\n", str);
 
-            if(ifs_table->param[i].has_conn_ref == TRUE) {
+            if(ifs_table->param[i].has_conn_ref == true) {
 
                 str = integer_to_str(ifs_table->param[i].conn_ref);
                 fprintf(fp, "    %s,\n", str);
 
-                str = boolean_to_str(FALSE);    /* has_lower_bound */
+                str = boolean_to_str(false);    /* has_lower_bound */
                 fprintf(fp, "    %s,\n", str);
 
                 str = integer_to_str(0);        /* lower_bound */
                 fprintf(fp, "    %s,\n", str);
 
-                str = boolean_to_str(FALSE);    /* has_upper_bound */
+                str = boolean_to_str(false);    /* has_upper_bound */
                 fprintf(fp, "    %s,\n", str);
 
                 str = integer_to_str(0);        /* upper_bound */
                 fprintf(fp, "    %s,\n", str);
             }
-            else {  /* has_conn_ref == FALSE */
+            else {  /* has_conn_ref == false */
 
                 str = integer_to_str(0);        /* conn_ref */
                 fprintf(fp, "    %s,\n", str);
@@ -725,7 +726,7 @@ static void  write_param_info(
                 str = boolean_to_str(ifs_table->param[i].has_lower_bound);
                 fprintf(fp, "    %s,\n", str);
 
-                if(ifs_table->param[i].has_lower_bound == TRUE)
+                if(ifs_table->param[i].has_lower_bound == true)
                     str = integer_to_str(ifs_table->param[i].lower_bound);
                 else
                     str = integer_to_str(0);
@@ -734,7 +735,7 @@ static void  write_param_info(
                 str = boolean_to_str(ifs_table->param[i].has_upper_bound);
                 fprintf(fp, "    %s,\n", str);
 
-                if(ifs_table->param[i].has_upper_bound == TRUE)
+                if(ifs_table->param[i].has_upper_bound == true)
                     str = integer_to_str(ifs_table->param[i].upper_bound);
                 else
                     str = integer_to_str(0);
@@ -981,27 +982,27 @@ static char  *data_type_to_str(Data_Type_t type)
 
     switch(type) {
 
-        case BOOLEAN:
+        case CMPP_BOOLEAN:
             strcpy(str,"MIF_BOOLEAN");
             break;
 
-        case INTEGER:
+        case CMPP_INTEGER:
             strcpy(str,"MIF_INTEGER");
             break;
 
-        case REAL:
+        case CMPP_REAL:
             strcpy(str,"MIF_REAL");
             break;
 
-        case COMPLEX:
+        case CMPP_COMPLEX:
             strcpy(str,"MIF_COMPLEX");
             break;
 
-        case STRING:
+        case CMPP_STRING:
             strcpy(str,"MIF_STRING");
             break;
 
-	case POINTER:
+	case CMPP_POINTER:
             strcpy(str,"MIF_STRING");
             break;
 
@@ -1151,15 +1152,15 @@ static char  *dir_to_str(Dir_t dir)
 
     switch(dir) {
 
-        case IN:
+        case CMPP_IN:
             strcpy(str,"MIF_IN");
             break;
 
-        case OUT:
+        case CMPP_OUT:
             strcpy(str,"MIF_OUT");
             break;
 
-        case INOUT:
+        case CMPP_INOUT:
             strcpy(str,"MIF_INOUT");
             break;
 
@@ -1190,25 +1191,25 @@ static char  *value_to_str(Data_Type_t type, Value_t value)
 
     switch(type) {
 
-        case BOOLEAN:
+        case CMPP_BOOLEAN:
             bool_str = boolean_to_str(value.bvalue);
             sprintf(str, "{%s, 0, 0.0, {0.0, 0.0}, NULL}", bool_str);
             break;
 
-        case INTEGER:
+        case CMPP_INTEGER:
             sprintf(str, "{MIF_FALSE, %d, 0.0, {0.0, 0.0}, NULL}", value.ivalue);
             break;
 
-        case REAL:
+        case CMPP_REAL:
             sprintf(str, "{MIF_FALSE, 0, %e, {0.0, 0.0}, NULL}", value.rvalue);
             break;
 
-        case COMPLEX:
+        case CMPP_COMPLEX:
             sprintf(str, "{MIF_FALSE, 0, 0.0, {%e, %e}, NULL}",
                                       value.cvalue.real, value.cvalue.imag);
             break;
 
-        case STRING:
+        case CMPP_STRING:
             /* be careful, the string could conceivably be very long... */
             str_len = (int) strlen(value.svalue);
             if((str_len + BASE_STR_LEN) > max_len) {
@@ -1229,29 +1230,17 @@ static char  *value_to_str(Data_Type_t type, Value_t value)
 
 /* *********************************************************************** */
 
-static char  *boolean_to_str(Boolean_t value)
+static char  *boolean_to_str(bool value)
 {
     static char *str = NULL;
 
-    if(str == NULL)
+    if (str == NULL) {
         str = (char *) malloc(BASE_STR_LEN+1);
-
-    switch(value) {
-
-        case TRUE:
-            strcpy(str,"MIF_TRUE");
-            break;
-
-        case FALSE:
-            strcpy(str,"MIF_FALSE");
-            break;
-
-        default:
-            print_error("INTERNAL ERROR - boolean_to_str() - Impossible boolean value.");
-
     }
 
-    return(str);
+    strcpy(str, value ? "MIF_TRUE" : "MIF_FALSE");
+
+    return str;
 }
 
 
