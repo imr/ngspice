@@ -49,6 +49,7 @@ NON-STANDARD FEATURES
 
 
 #include <assert.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "mod_yacc_y.h"
@@ -147,22 +148,22 @@ static void put_type (FILE *fp, Data_Type_t type)
    char ch = ' ';
    
    switch (type) {
-   case INTEGER:
+   case CMPP_INTEGER:
       ch = 'i';
       break;
-   case REAL:
+   case CMPP_REAL:
       ch = 'r';
       break;
-   case COMPLEX:
+   case CMPP_COMPLEX:
       ch = 'c';
       break;
-   case BOOLEAN:
+   case CMPP_BOOLEAN:
       ch = 'b';
       break;
-   case STRING:
+   case CMPP_STRING:
       ch = 's';
       break;
-   case POINTER:
+   case CMPP_POINTER:
       ch = 'p';
       break;
    }
@@ -199,13 +200,13 @@ static void check_dir (int conn_number, Dir_t dir, char *context)
        * an error.
        */
       conn_dir = mod_ifs_table->conn[conn_number].direction;
-      if ((conn_dir != dir) && (conn_dir != INOUT)) {
+      if ((conn_dir != dir) && (conn_dir != CMPP_INOUT)) {
 	 char error_str[200];
 	 
 	 sprintf (error_str,
 		  "Direction of port `%s' in %s() is not %s or INOUT",
 		  mod_ifs_table->conn[conn_number].name, context,
-		  (dir == IN) ? "IN" : "OUT");
+		  (dir == CMPP_IN) ? "IN" : "OUT");
 	 yyerror (error_str);
 	 mod_num_errors++;
       }
@@ -213,8 +214,8 @@ static void check_dir (int conn_number, Dir_t dir, char *context)
 }
 
 /*---------------------------------------------------------------------------*/
-static void check_subscript (Boolean_t formal, Boolean_t actual,
-			     Boolean_t missing_actual_ok,
+static void check_subscript (bool formal, bool actual,
+			     bool missing_actual_ok,
 			     char *context, char *id)
 {
    char error_str[200];
@@ -237,7 +238,7 @@ static void check_subscript (Boolean_t formal, Boolean_t actual,
 }
 
 /*---------------------------------------------------------------------------*/
-static int check_id (Sub_Id_t sub_id, Id_Kind_t kind, Boolean_t do_subscript)
+static int check_id (Sub_Id_t sub_id, Id_Kind_t kind, bool do_subscript)
 {
    int i;
    char error_str[200];
@@ -248,7 +249,7 @@ static int check_id (Sub_Id_t sub_id, Id_Kind_t kind, Boolean_t do_subscript)
 	 if (0 == local_strcmpi (sub_id.id, mod_ifs_table->conn[i].name)) {
 	    if (do_subscript) {
 	       check_subscript (mod_ifs_table->conn[i].is_array,
-				sub_id.has_subscript, FALSE, "Port",
+				sub_id.has_subscript, false, "Port",
 				sub_id.id);
 	    }
 	    return i;
@@ -260,7 +261,7 @@ static int check_id (Sub_Id_t sub_id, Id_Kind_t kind, Boolean_t do_subscript)
       	 if (0 == local_strcmpi (sub_id.id, mod_ifs_table->param[i].name)) {
 	    if (do_subscript) {
 	       check_subscript (mod_ifs_table->param[i].is_array,
-				sub_id.has_subscript, FALSE, "Parameter",
+				sub_id.has_subscript, false, "Parameter",
 				sub_id.id);
 	    }
 	    return i;
@@ -272,7 +273,7 @@ static int check_id (Sub_Id_t sub_id, Id_Kind_t kind, Boolean_t do_subscript)
       	 if (0 == local_strcmpi (sub_id.id, mod_ifs_table->inst_var[i].name)) {
 	    if (do_subscript) {
 	       check_subscript (mod_ifs_table->inst_var[i].is_array,
-				sub_id.has_subscript, TRUE,
+				sub_id.has_subscript, true,
 				"Static Variable",
 				sub_id.id);
 	    }
@@ -297,13 +298,13 @@ static int check_id (Sub_Id_t sub_id, Id_Kind_t kind, Boolean_t do_subscript)
 /*---------------------------------------------------------------------------*/
 static int valid_id (Sub_Id_t sub_id, Id_Kind_t kind)
 {
-    return check_id (sub_id, kind, FALSE);
+    return check_id (sub_id, kind, false);
 }
 
 /*---------------------------------------------------------------------------*/
 static int valid_subid (Sub_Id_t sub_id, Id_Kind_t kind)
 {
-    return check_id (sub_id, kind, TRUE);
+    return check_id (sub_id, kind, true);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -467,16 +468,16 @@ macro			: TOK_INIT
 			  subscriptable_id TOK_RPAREN
 			   {int i = valid_subid ($3, CONN);
 			    int j = valid_subid ($5, CONN);
-			    check_dir (i, OUT, "PARTIAL");
-			    check_dir (j, IN, "PARTIAL");
+			    check_dir (i, CMPP_OUT, "PARTIAL");
+			    check_dir (j, CMPP_IN, "PARTIAL");
 			    fprintf (mod_yyout, "mif_private->conn[%d]->port[%s]->partial[%d].port[%s]",
 				     i, subscript($3), j, subscript($5));}
 			| TOK_AC_GAIN TOK_LPAREN subscriptable_id TOK_COMMA
 			  subscriptable_id TOK_RPAREN
 			   {int i = valid_subid ($3, CONN);
 			    int j = valid_subid ($5, CONN);
-			    check_dir (i, OUT, "AC_GAIN");
-			    check_dir (j, IN, "AC_GAIN");
+			    check_dir (i, CMPP_OUT, "AC_GAIN");
+			    check_dir (j, CMPP_IN, "AC_GAIN");
 			    fprintf (mod_yyout, 
 				     "mif_private->conn[%d]->port[%s]->ac_gain[%d].port[%s]",
 				     i, subscript($3), j, subscript($5));}
@@ -502,19 +503,19 @@ macro			: TOK_INIT
 				    i);}
 			| TOK_OUTPUT_DELAY TOK_LPAREN subscriptable_id TOK_RPAREN
 			   {int i = valid_subid ($3, CONN);
-			    check_dir (i, OUT, "OUTPUT_DELAY");
+			    check_dir (i, CMPP_OUT, "OUTPUT_DELAY");
 			    fprintf (mod_yyout, 
 				     "mif_private->conn[%d]->port[%s]->delay", i,
 				     subscript($3));}
 			| TOK_CHANGED TOK_LPAREN subscriptable_id TOK_RPAREN
 			   {int i = valid_subid ($3, CONN);
-			    check_dir (i, OUT, "CHANGED");
+			    check_dir (i, CMPP_OUT, "CHANGED");
 			    fprintf (mod_yyout, 
 				     "mif_private->conn[%d]->port[%s]->changed", i,
 				     subscript($3));}
 			| TOK_INPUT TOK_LPAREN subscriptable_id TOK_RPAREN
 			   {int i = valid_subid ($3, CONN);
- 			    check_dir (i, IN, "INPUT");
+ 			    check_dir (i, CMPP_IN, "INPUT");
 			    fprintf (mod_yyout, 
 				     "mif_private->conn[%d]->port[%s]->input",
 				     i, subscript($3));
@@ -522,19 +523,19 @@ macro			: TOK_INIT
 			       mod_ifs_table->conn[i].allowed_port_type[0]);}
 			| TOK_INPUT_TYPE TOK_LPAREN subscriptable_id TOK_RPAREN
 			   {int i = valid_subid ($3, CONN);
- 			    check_dir (i, IN, "INPUT_TYPE");
+ 			    check_dir (i, CMPP_IN, "INPUT_TYPE");
 			    fprintf (mod_yyout, 
 				     "mif_private->conn[%d]->port[%s]->type_str",
 				     i, subscript($3)); }
 			| TOK_OUTPUT_TYPE TOK_LPAREN subscriptable_id TOK_RPAREN
 			   {int i = valid_subid ($3, CONN);
- 			    check_dir (i, OUT, "OUTPUT_TYPE");
+ 			    check_dir (i, CMPP_OUT, "OUTPUT_TYPE");
 			    fprintf (mod_yyout, 
 				     "mif_private->conn[%d]->port[%s]->type_str",
 				     i, subscript($3)); }
 			| TOK_INPUT_STRENGTH TOK_LPAREN subscriptable_id TOK_RPAREN
 			   {int i = valid_subid ($3, CONN);
- 			    check_dir (i, IN, "INPUT_STRENGTH");
+ 			    check_dir (i, CMPP_IN, "INPUT_STRENGTH");
 			    fprintf (mod_yyout, 
 				     "((Digital_t*)(mif_private->conn[%d]->port[%s]->input",
 				     i, subscript($3));
@@ -543,7 +544,7 @@ macro			: TOK_INIT
 			    fprintf (mod_yyout, "))->strength");}
 			| TOK_INPUT_STATE TOK_LPAREN subscriptable_id TOK_RPAREN
 			   {int i = valid_subid ($3, CONN);
- 			    check_dir (i, IN, "INPUT_STATE");
+ 			    check_dir (i, CMPP_IN, "INPUT_STATE");
 			    fprintf (mod_yyout, 
 				     "((Digital_t*)(mif_private->conn[%d]->port[%s]->input",
 				     i, subscript($3));
@@ -552,7 +553,7 @@ macro			: TOK_INIT
 			    fprintf (mod_yyout, "))->state");}
 			| TOK_OUTPUT TOK_LPAREN subscriptable_id TOK_RPAREN
 			   {int i = valid_subid ($3, CONN);
- 			    check_dir (i, OUT, "OUTPUT");
+ 			    check_dir (i, CMPP_OUT, "OUTPUT");
 			    fprintf (mod_yyout, 
 				     "mif_private->conn[%d]->port[%s]->output",
 				     i, subscript($3));
@@ -560,7 +561,7 @@ macro			: TOK_INIT
 			       mod_ifs_table->conn[i].allowed_port_type[0]);}
 			| TOK_OUTPUT_STRENGTH TOK_LPAREN subscriptable_id TOK_RPAREN
 			   {int i = valid_subid ($3, CONN);
- 			    check_dir (i, OUT, "OUTPUT_STRENGTH");
+ 			    check_dir (i, CMPP_OUT, "OUTPUT_STRENGTH");
 			    fprintf (mod_yyout, 
 				     "((Digital_t*)(mif_private->conn[%d]->port[%s]->output",
 				     i, subscript($3));
@@ -569,7 +570,7 @@ macro			: TOK_INIT
 			    fprintf (mod_yyout, "))->strength");}
 			| TOK_OUTPUT_STATE TOK_LPAREN subscriptable_id TOK_RPAREN
 			   {int i = valid_subid ($3, CONN);
- 			    check_dir (i, OUT, "OUTPUT_STATE");
+ 			    check_dir (i, CMPP_OUT, "OUTPUT_STATE");
 			    fprintf (mod_yyout, 
 				     "((Digital_t*)(mif_private->conn[%d]->port[%s]->output",
 				     i, subscript($3));
@@ -601,12 +602,12 @@ macro			: TOK_INIT
 subscriptable_id	: id
 			| id TOK_LBRACKET buffered_c_code TOK_RBRACKET
 			  {$$ = $1;
-			   $$.has_subscript = TRUE;
+			   $$.has_subscript = true;
 			   $$.subscript = $3;}
 			;
 
 id			: TOK_IDENTIFIER
-			     {$$.has_subscript = FALSE;
+			     {$$.has_subscript = false;
 			      $$.id = strdup (mod_yytext);}
 			;
 

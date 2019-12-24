@@ -113,7 +113,7 @@ void preprocess_mod_file (
    
    
    Ifs_Table_t     ifs_table;   /* info read from ifspec.ifs file */
-   Status_t        status;      /* Return status */
+   int status;      /* Return status */
    const char     *output_filename;
    
    /*
@@ -122,7 +122,7 @@ void preprocess_mod_file (
    
    status = read_ifs_file (IFSPEC_FILENAME, GET_IFS_TABLE, &ifs_table);
    
-   if (status != OK) {
+   if (status != 0) {
       exit(1);
    }
    
