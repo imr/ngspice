@@ -312,9 +312,10 @@ static int find_indices(char *s, index_range_t *p_index, int *p_n_index)
         s = p_end + 1;
 
         /* Only white space is allowed after closing brace */
-        if ((s = skip_ws(s)) != '\0') {
+        if (*(s = skip_ws(s)) != '\0') {
             (void) fprintf(cp_err, "Invalid text was found "
-                    "after dimension data for vector.\n");
+                    "after dimension data for vector: \"%s\".\n",
+                    s);
             return -1;
         }
 
