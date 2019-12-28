@@ -96,7 +96,7 @@ static int fontheight = FONTHEIGHT;
 static int screenflag = 0;
 static int colorflag = 0;
 static int setbgcolor = 0;
-static int settxcolor = -1;
+static int settxcolor = 1;
 static double scale;  /* Used for fine tuning */
 static int xtadj;     /* text adjustment x */
 static int ytadj;     /* text adjustment y */
