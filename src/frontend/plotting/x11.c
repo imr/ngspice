@@ -76,6 +76,11 @@ typedef struct x11info {
     char bgcolor[16];
     char fname[BSIZE_SP];
     int fsize;
+    XftFont *font0;
+    XftFont *font90;
+    XftDraw* draw;
+    XftColor color;
+    Colormap cmap;
 } X11devdep;
 
 #define DEVDEP(g) (*((X11devdep *) (g)->devdep))
@@ -112,6 +117,7 @@ static void linear_arc(int x0, int y0, int radius, double theta, double delta_th
 static void slopelocation(GRAPH *graph, int x0, int y0);
 static void zoomin(GRAPH *graph);
 static int Xget_str_length(char *text, int* wlen, int* wheight, XftFont* gfont, char* name, int fsize);
+static int X11_DefineXft(GRAPH *graph);
 
 //XtEventHandler
 static void handlekeypressed(Widget w, XtPointer clientdata, XEvent *ev, Boolean *continue_dispatch);
@@ -528,6 +534,7 @@ X11_NewViewport(GRAPH *graph)
     cursor = XCreateFontCursor(display, XC_left_ptr);
     XDefineCursor(display, DEVDEP(graph).window, cursor);
 
+    X11_DefineXft(graph);
 
     /* WM_DELETE_WINDOW protocol */
     atom_wm_protocols = XInternAtom(display, "WM_PROTOCOLS", False);
@@ -618,45 +625,65 @@ X11_Text(char *text, int x, int y, int angle)
         return 0;
     }
 
-    /* new font selection with rotation */
-    XftPattern *new_pat = XftPatternCreate(); // the pattern we will use for rotating
-    XftPatternAddString(new_pat, XFT_FAMILY, DEVDEP(currentgraph).fname);
-    XftPatternAddDouble (new_pat, XFT_PIXEL_SIZE, (double)DEVDEP(currentgraph).fsize);
-
-    if(angle != 0){
-        XftMatrix m;
-        XftMatrixInit(&m);
-        XftMatrixRotate(&m,cos(M_PI*angle/180.),sin(M_PI*angle/180.));
-        XftPatternAddMatrix (new_pat, XFT_MATRIX,&m);
-    }
-
-    XftResult rot_result;
-    XftPattern *rot_pat = XftFontMatch(display, 0, new_pat, &rot_result); /* do not destroy!*/
-    XftFont *new_font = XftFontOpenPattern(display, rot_pat);
-    XftPatternDestroy(new_pat);
-
-    /* calculate and add offset, if ylabel with angle 90° */
-    if (angle == 90) {
-        Xget_str_length(text, &wlen, &wheight, new_font, NULL, 0);
-    }
-
-    Colormap cmap = DefaultColormap(display, 0);
-    XftColor color;
-    XftColorAllocName(display, DefaultVisual(display, 0), cmap, DEVDEP(currentgraph).txtcolor, &color);
-    XftDraw* draw = XftDrawCreate(
-        display, DEVDEP(currentgraph).window, DefaultVisual(display, 0), cmap
-    );
     /* Draw text */
-    XftDrawStringUtf8(
-        draw, &color, new_font,
-        x + (int)(1.5 * wlen), currentgraph->absolute.height - y + (int)(0.5 * wheight), (FcChar8*)text, strlen(text)
-    );
-    XftFontClose( display, new_font);
-    XftDrawDestroy(draw);
-    XftColorFree(display, DefaultVisual(display, 0), cmap, &color);
+    if(angle == 0) {
+         XftDrawStringUtf8(
+            DEVDEP(currentgraph).draw, &DEVDEP(currentgraph).color, DEVDEP(currentgraph).font0,
+                x, currentgraph->absolute.height - y, (FcChar8*)text, strlen(text));
+    }
+    else if (angle == 90) {
+        int wlen, wheight;
+        /* calculate and add offset, if ylabel with angle 90Â° */
+        Xget_str_length(text, &wlen, &wheight, DEVDEP(currentgraph).font90, NULL, 0);
+
+        XftDrawStringUtf8(
+            DEVDEP(currentgraph).draw, &DEVDEP(currentgraph).color, DEVDEP(currentgraph).font90,
+                x + (int)(1.5 * wlen), currentgraph->absolute.height - y + (int)(0.5 * wheight), (FcChar8*)text, strlen(text));
+    }
+    else
+        fprintf(stderr, " Xft: angles other than 0 or 90 are not supported in ngspice\n");
+
     return 0;
 }
 
+
+int X11_DefineXft(GRAPH *graph)
+{
+/*  font selection with rotation */
+    XftPattern *new_pat = XftPatternCreate(); // the pattern we will use for rotating
+    XftPatternAddString(new_pat, XFT_FAMILY, DEVDEP(graph).fname);
+    XftPatternAddDouble (new_pat, XFT_PIXEL_SIZE, (double)DEVDEP(graph).fsize);
+
+
+    XftResult rot_result;
+    XftPattern *rot_pat = XftFontMatch(display, 0, new_pat, &rot_result); /* do not destroy!*/
+    DEVDEP(graph).font0 = XftFontOpenPattern(display, rot_pat);
+    if(DEVDEP(graph).font0 == NULL) {
+        fprintf(stderr, "Can't load font pattern %s\n", DEVDEP(graph).fname);
+    }
+
+    /* for angle 90 deg */
+    XftMatrix m;
+    XftMatrixInit(&m);
+    int angle = 90;
+    XftMatrixRotate(&m,cos(M_PI*angle/180.),sin(M_PI*angle/180.));
+    XftPatternAddMatrix (new_pat, XFT_MATRIX,&m);
+
+    XftPattern *rot_pat2 = XftFontMatch(display, 0, new_pat, &rot_result); /* do not destroy!*/
+    DEVDEP(graph).font90 = XftFontOpenPattern(display, rot_pat2);
+
+    XftPatternDestroy(new_pat);
+
+    Colormap cmap = DefaultColormap(display, 0);
+    XftColor color;
+    XftColorAllocName(display, DefaultVisual(display, 0), cmap, DEVDEP(graph).txtcolor, &color);
+    DEVDEP(graph).color = color;
+    DEVDEP(graph).cmap = cmap;
+    DEVDEP(graph).draw = XftDrawCreate(
+        display, DEVDEP(graph).window, DefaultVisual(display, 0), cmap
+    );
+    return 0;
+}
 
 int
 X11_DefineColor(int colorid, double red, double green, double blue)
@@ -1000,6 +1027,11 @@ RemoveWindow(GRAPH *graph)
         if (old_x11)
             XFreeFont(display, DEVDEP(graph).font);
         XFreeGC(display, DEVDEP(graph).gc);
+
+        XftFontClose( display, DEVDEP(graph).font0);
+        XftFontClose( display, DEVDEP(graph).font90);
+        XftDrawDestroy(DEVDEP(graph).draw);
+        XftColorFree(display, DefaultVisual(display, 0), DEVDEP(graph).cmap, &DEVDEP(graph).color);
     }
 
     if (graph == currentgraph)
@@ -1198,7 +1230,7 @@ linear_arc(int x0, int y0, int radius, double theta, double delta_theta)
 
     /* After font selection for XftTextExtentsUtf8
      * to measure character string length.
-     * Same as rotation below, but 0° angle */
+     * Same as rotation below, but 0Â° angle */
 static int
 Xget_str_length(char *text, int* wlen, int* wheight, XftFont* gfont, char* foname, int fsize) {
     XGlyphInfo extents;
