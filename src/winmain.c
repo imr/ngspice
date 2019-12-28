@@ -212,7 +212,7 @@ SetAnalyse(char *Analyse,   /* in: analysis type */
 
     WaitForIdle();
 
-    OldAn[0] = '\0';
+    OldAn[127] = '\0';
 
     if (((DecaPercent == OldPercent) && !strcmp(OldAn, Analyse)) || !strcmp(Analyse, "or"))
         return;
