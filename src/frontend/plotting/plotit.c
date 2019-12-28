@@ -287,7 +287,6 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
     int i, y_type, xt;
     wordlist *wwl;
     char *nxlabel = NULL, *nylabel = NULL, *ntitle = NULL;
-
     double tstep, tstart, tstop, ttime;
 
     /* Save start of vectors on entry for cleaning up junk left behind
