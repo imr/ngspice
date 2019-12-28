@@ -117,7 +117,9 @@ static int VisibleRows = 10;           /* Number of visible lines in text window
 static BOOL DoUpdate = FALSE;          /* Update text window */
 static WNDPROC swProc = NULL;          /* original string window procedure */
 static WNDPROC twProc = NULL;          /* original text window procedure */
-static HFONT sfont;                    /* Font for source and analysis window */
+static HFONT efont;                    /* Font for element windows */
+static HFONT tfont;                    /* Font for text window */
+static HFONT sfont;                    /* Font for string window */
 
 extern bool ft_ngdebug; /* some additional debug info printed */
 extern bool ft_batchmode;
@@ -210,6 +212,8 @@ SetAnalyse(char *Analyse,   /* in: analysis type */
 
     WaitForIdle();
 
+    OldAn[0] = '\0';
+
     if (((DecaPercent == OldPercent) && !strcmp(OldAn, Analyse)) || !strcmp(Analyse, "or"))
         return;
 
@@ -263,14 +267,16 @@ SetAnalyse(char *Analyse,   /* in: analysis type */
         wchar_t tw[256];
         swprintf(sw, 256, L"%S", s);
         swprintf(tw, 256, L"%S", t);
+        /* Analysis window */
         SetWindowTextW(hwAnalyse, sw);
+        /* ngspice task bar */
         SetWindowTextW(hwMain, tw);
 #endif
         InvalidateRgn(hwAnalyse, NULL, TRUE);
+        UpdateWindow(hwAnalyse);
         InvalidateRgn(hwMain, NULL, TRUE);
+        UpdateWindow(hwMain);
     }
-    UpdateWindow(hwAnalyse);
-    UpdateWindow(hwMain);
 }
 
 
@@ -544,7 +550,7 @@ MainWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
     default:
     DEFAULT_AFTER:
-#ifdef EXT_ASC			  
+#ifdef EXT_ASC
         return DefWindowProc(hwnd, uMsg, wParam, lParam);
 #else
         return DefWindowProcW(hwnd, uMsg, wParam, lParam);
@@ -640,7 +646,7 @@ StringWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             }
             else {
                 history_reset_pos(*pp_hi);
-            } 
+            }
 
             strcpy(SBuffer + n_char_returned, CRLF);
             ClearInput();
@@ -775,7 +781,7 @@ Element_OnPaint(HWND hwnd)
     o = GetSysColorBrush(COLOR_BTNFACE);
     FillRect(hdc, &s, o);
     SetBkMode(hdc, TRANSPARENT);
-    SelectObject(hdc, sfont);
+    SelectObject(hdc, efont);
     ExtTextOutW(hdc, s.left + 1, s.top + 1, ETO_CLIPPED, &s, bufferW, (unsigned)i, NULL);
 #endif
     /* End */
@@ -952,7 +958,7 @@ MakeArgcArgv(char *cmdline, int *argc, char ***argv)
 
 
 /* Main entry point for our Windows application */
-#ifdef EXT_ASC	  
+#ifdef EXT_ASC
 int WINAPI
 WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpszCmdLine, _In_ int nCmdShow)
 #elif __MINGW32__ /* MINGW bug not knowing wWinMain */
@@ -1052,7 +1058,7 @@ wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR
 #endif
 
     /* Define text window class */
-#ifdef EXT_ASC			  
+#ifdef EXT_ASC
     if (!GetClassInfo(NULL, "EDIT", &twTextClass))
         goto THE_END;
 
@@ -1076,7 +1082,7 @@ wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR
 #endif
 
     /* Define string window class */
-#ifdef EXT_ASC			  
+#ifdef EXT_ASC
     if (!GetClassInfo(NULL, "EDIT", &swStringClass))
         goto THE_END;
 
@@ -1100,7 +1106,7 @@ wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR
 #endif
 
     /* Define status element class */
-#ifdef EXT_ASC			  
+#ifdef EXT_ASC
     hwElementClass.style            = CS_HREDRAW | CS_VREDRAW;
     hwElementClass.lpfnWndProc      = ElementWindowProc;
     hwElementClass.cbClsExtra       = 0;
@@ -1129,9 +1135,19 @@ wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR
         goto THE_END;
 #endif
 
-    /* Font for element status windows (source, analysis) */
-    sfont = CreateFontW(16, 0, 0, 0, FW_SEMIBOLD, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY, VARIABLE_PITCH, L"");
-//    sfont = CreateFontW(15, 0, 0, 0, FW_SEMIBOLD, FALSE, FALSE, FALSE, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, NONANTIALIASED_QUALITY, FIXED_PITCH | FF_MODERN, L"Courier");    /*Create main window */
+    /* Font for element status windows (source, analysis, Quit button) */
+    efont = CreateFontW(16, 6, 0, 0, FW_SEMIBOLD, FALSE, FALSE, FALSE,
+        ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
+        ANTIALIASED_QUALITY, VARIABLE_PITCH, L"");
+/*    efont = CreateFontW(16, 0, 0, 0, FW_SEMIBOLD, FALSE, FALSE, FALSE,
+            DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
+            NONANTIALIASED_QUALITY, VARIABLE_PITCH, L"Segoe UI");*/
+/*    efont = CreateFontW(15, 0, 0, 0, FW_MEDIUM, FALSE, FALSE, FALSE,
+            ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
+            NONANTIALIASED_QUALITY, FIXED_PITCH | FF_MODERN, L"Courier");*/
+    if (!efont)
+        efont = GetStockFont(ANSI_FIXED_FONT);
+
 #ifdef EXT_ASC
     SystemParametersInfo(SPI_GETWORKAREA, 0, &wsize, 0);
 #else
@@ -1148,7 +1164,7 @@ wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR
                            0, iyt * 2, ix, iyt, NULL, NULL, hInst, NULL);
 #endif
 #else
-#ifdef EXT_ASC		
+#ifdef EXT_ASC
     hwMain = CreateWindow(hwClassName, hwWindowName, WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
                           0, 0, ix, iy, NULL, NULL, hInst, NULL);
 #else
@@ -1173,17 +1189,15 @@ wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR
     if (!twText)
         goto THE_END;
 
-    /* Ansii fixed font */
-#ifdef EXT_ASC	
+#ifdef EXT_ASC
     {
         HDC textDC;
-        HFONT font;
         TEXTMETRIC tm;
-        font = GetStockFont(ANSI_FIXED_FONT);
-        SetWindowFont(twText, font, FALSE);
+        tfont = GetStockFont(ANSI_FIXED_FONT);
+        SetWindowFont(twText, tfont, FALSE);
         textDC = GetDC(twText);
         if (textDC) {
-            SelectObject(textDC, font);
+            SelectObject(textDC, tfont);
             if (GetTextMetrics(textDC, &tm)) {
                 RowHeight = tm.tmHeight;
                 WinLineWidth = 90 * tm.tmAveCharWidth;
@@ -1192,19 +1206,19 @@ wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR
         }
     }
 #else
-    {    
+    {
 	    HDC textDC;
-        HFONT font;
         TEXTMETRICW tm;
-//        font = CreateFontW(14, 0, 0, 0, FW_MEDIUM, FALSE, FALSE, FALSE, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, NONANTIALIASED_QUALITY, FIXED_PITCH | FF_MODERN, L"Lucida Console");
-//        if(!font)
-        font = CreateFontW(15, 0, 0, 0, FW_MEDIUM, FALSE, FALSE, FALSE, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, NONANTIALIASED_QUALITY, FIXED_PITCH | FF_MODERN, L"Courier");
-        if(!font)
-            font = GetStockFont(ANSI_FIXED_FONT);
-        SetWindowFont( twText, font, FALSE);
+        tfont = CreateFontW(15, 0, 0, 0, FW_MEDIUM, FALSE, FALSE,
+            FALSE, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
+            NONANTIALIASED_QUALITY, FIXED_PITCH | FF_MODERN, L"Courier");
+        /* Ansi fixed font */
+        if(!tfont)
+            tfont = GetStockFont(ANSI_FIXED_FONT);
+        SetWindowFont( twText, tfont, FALSE);
         textDC = GetDC( twText);
         if (textDC) {
-            SelectObject( textDC, font);
+            SelectObject( textDC, tfont);
             if (GetTextMetricsW( textDC, &tm)) {
                 RowHeight = tm.tmHeight;
                 WinLineWidth = 90 * tm.tmAveCharWidth;
@@ -1216,7 +1230,14 @@ wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR
 
     /* Create string window for input. Give a handle to history info to
      * the window for saving and retrieving commands */
-#ifdef EXT_ASC	 
+    /* Font for element status windows (source, analysis) */
+    sfont = CreateFontW(16, 0, 0, 0, FW_SEMIBOLD, FALSE, FALSE, FALSE,
+        DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
+        ANTIALIASED_QUALITY, VARIABLE_PITCH, L"");
+    /* Ansi fixed font */
+    if(!sfont)
+        sfont = GetStockFont(ANSI_FIXED_FONT);
+#ifdef EXT_ASC
     swString = CreateWindowEx(WS_EX_NOPARENTNOTIFY, swClassName, swWindowName,
             ES_LEFT | WS_CHILD | WS_BORDER |
                     ES_AUTOHSCROLL, /* Allow text to scroll */
@@ -1247,6 +1268,7 @@ wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR
         TEXTMETRICW tm;
         stringDC = GetDC(swString);
         if (stringDC) {
+            SelectObject(stringDC, sfont);
             if (GetTextMetricsW(stringDC, &tm))
                 LineHeight = tm.tmHeight + tm.tmExternalLeading + BorderSize;
             ReleaseDC(swString, stringDC);
@@ -1254,23 +1276,21 @@ wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR
 	}
 #endif
 
-
-	
-
+    /* Element windows */
     /* Create source window */
 #ifdef EXT_ASC
     hwSource = CreateWindowEx(WS_EX_NOPARENTNOTIFY, hwElementClassName, hwSourceWindowName,
                               WS_CHILD,
                               0, 0, SourceLength, StatusElHeight, hwMain, NULL, hInst, NULL);
-    if (!hwSource)
-        goto THE_END;
 #else
     hwSource = CreateWindowExW(WS_EX_NOPARENTNOTIFY, hwElementClassNameW, hwSourceWindowNameW,
                                WS_CHILD,
                                0, 0, SourceLength, StatusElHeight, hwMain, NULL, hInst, NULL);
-    if (!hwSource) goto THE_END;
 #endif
+    if (!hwSource)
+        goto THE_END;
 
+    SetWindowFont(hwSource, efont, FALSE);
 
     /* Create analysis window */
 #ifdef EXT_ASC
@@ -1285,6 +1305,8 @@ wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR
     if (!hwAnalyse)
         goto THE_END;
 
+    SetWindowFont(hwAnalyse, efont, FALSE);
+
     /* Create "Quit" button */
 #ifdef EXT_ASC
     hwQuitButton = CreateWindow("BUTTON", "Quit", WS_CHILD | BS_PUSHBUTTON, 0, 0, QuitButtonLength,
@@ -1296,6 +1318,9 @@ wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR
 
     if (!hwQuitButton)
         goto THE_END;
+
+    SetWindowFont(hwQuitButton, efont, FALSE);
+
     /* Define a minimum width */
     int MinWidth = AnalyseLength + SourceLength + QuitButtonLength + 48;
     if (WinLineWidth < MinWidth)
