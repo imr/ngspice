@@ -2,7 +2,7 @@
 .control
 set hcopydevtype = postscript
 set hcopypscolor=1
-set hcopyscale=0.5
+set hcopyscale=1
 set color2=rgb:F/0/0
 *setcs hcopyfont=Arial
 *
@@ -33,9 +33,9 @@ plot y vs x+0.001 xlabel 'Labellisé X' ylabel ' أنا قادر على أكل �
 
 hardcopy plot_5.ps y vs x xlabel 'Labellisé X' ylabel 'Labellisé Y' title 'Titré Äü @µ€~'
 * for MS Windows only
-*shell Start /B plot_5.ps
+shell Start /B plot_5.ps
 * for CYGWIN
-shell xterm -e gs  plot_5.ps &
+*shell xterm -e gs  plot_5.ps &
 
 echo  些 𣎏 世 咹 水 晶 𦓡 空 𣎏 害 咦 
 echo אני יכול לאכול זכוכית וזה לא מזיק לי.
