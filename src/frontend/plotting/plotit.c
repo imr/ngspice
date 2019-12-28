@@ -222,7 +222,6 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     wordlist *wwl, *tail;
     char *cline = NULL, buf[BSIZE_SP], *pname;
     char *nxlabel = NULL, *nylabel = NULL, *ntitle = NULL;
-
     double tstep, tstart, tstop, ttime;
 
     /* return value, error by default */
@@ -1040,8 +1039,9 @@ plotit(wordlist *wl, char *hcopy, char *devname)
                  hcopy, i,
                  xdelta ? *xdelta : 0.0,
                  ydelta ? *ydelta : 0.0,
-                 gtype, ptype, xlabel, ylabel, xt, y_type, pname, cline))
+                 gtype, ptype, copy(xlabel), copy(ylabel), xt, y_type, pname, cline)) {
         goto quit;
+    }
 
     /* Now plot all the graphs. */
     for (d = vecs; d; d = d->v_link2)
@@ -1051,9 +1051,13 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     rtn = TRUE;
 
 quit:
+    if (!sameflag){
+        tfree(xlabel);
+        tfree(ylabel);
+        tfree(title);
+    }
     tfree(cline);
     free_pnode(names);
-    FREE(title);
 quit1:
     wl_free(wl);
     return rtn;
