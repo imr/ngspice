@@ -317,8 +317,11 @@ case $host_os in
 	*linux* )
 		AC_DEFINE([OS_COMPILED], [6], [Linux])
 		;;
+	*darwin* )
+		AC_DEFINE([OS_COMPILED], [7], [macOS])
+		;;
 	* )
-		AC_DEFINE([OS_COMPILED], [7], [Other Operating System])
+		AC_DEFINE([OS_COMPILED], [8], [Other Operating System])
 		;;
 esac
 
