@@ -668,16 +668,10 @@ fi
 # Checks for X libraries - if X11 wasn't found then don't make following
 # tests and compile without X11 support - otherwise, check if the following
 # libraries are present (error if they are not)
-# In CYGWIN library ordering has to be changed. Is this compatible to LINUX?
 # XShmAttach is a struct in CYGWIN, not a function
-# SJB: 13th march 2005
-# Library order is giving linker warnings on MacOSX
-# It's not clear to me which order is required for Cygwin (see comment above)
-# and neither can I find any authoritative answer for the correct link order
-# for MacOSX or Linux, but
-#            -lXaw -lXmu -lXt -lXext -lX11
-# seems to be the popular choice.
-# (The previous order was -lX11 -lXt -lXext -lXmu -lXaw)
+# Library order is
+#            -lXaw -lXmu -lXt -lXext -lX11 (-lXft -lfontconfig -lXrender -lfreetype)
+# Xft is optional, allows text rotation in plots
 
 if test "x$no_x" != xyes ; then
     X_CFLAGS="$X_CFLAGS -I/usr/include/freetype2"
@@ -688,11 +682,16 @@ if test "x$no_x" != xyes ; then
     X_LIBS="$X_LIBS -lXt"
     AC_CHECK_LIB([Xext], [XShmAttach], [X_LIBS="$X_LIBS -lXext"],
         [AC_MSG_ERROR([Couldn't find Xext library])], [$X_LIBS $X_EXTRA_LIBS])
-    AC_CHECK_LIB([Xft], [main], [X_LIBS="$X_LIBS -lXft"],
-        [AC_MSG_ERROR([Couldn't find Xft library])], [$X_LIBS $X_EXTRA_LIBS])
     X_LIBS="$X_LIBS -lX11"
-    AC_CHECK_LIB([fontconfig], [main], [X_LIBS="$X_LIBS -lfontconfig"],
-        [AC_MSG_ERROR([Couldn't find fontconfig library])], [$X_LIBS $X_EXTRA_LIBS])
+	AC_CHECK_LIB([Xft], [main],
+        [AC_DEFINE([HAVE_LIBXFT], [], [Have xft routines in libxft])
+         LIBS="$LIBS -lXft"
+		 AC_CHECK_LIB([fontconfig], [main], [X_LIBS="$X_LIBS -lfontconfig"],
+			[AC_MSG_ERROR([Couldn't find fontconfig library])], [$X_LIBS $X_EXTRA_LIBS])
+		 AC_CHECK_LIB([Xrender], [main], [X_LIBS="$X_LIBS -lXrender"],
+			[AC_MSG_ERROR([Couldn't find Xrender library])], [$X_LIBS $X_EXTRA_LIBS])
+		 AC_CHECK_LIB([freetype], [main], [X_LIBS="$X_LIBS -lfreetype"],
+			[AC_MSG_ERROR([Couldn't find freetype library])], [$X_LIBS $X_EXTRA_LIBS])])
     has_no_x=false
 else
     AC_DEFINE([X_DISPLAY_MISSING])
@@ -719,7 +718,7 @@ if test "x$enable_oldapps" = xyes ; then
     AC_MSG_RESULT([ngnutmeg ngsconvert ngproc2mod ngmultidec ngmakeidx nghelp are made.])
 else
     AC_MSG_RESULT([ngnutmeg ngsconvert ngproc2mod ngmultidec ngmakeidx nghelp are not made.])
-    AC_MSG_RESULT([No internal help available.])    
+    AC_MSG_RESULT([No internal help available.])
     AC_DEFINE([NOINTHELP], [1], [Internal (old) help not available])
 fi
 AM_CONDITIONAL([OLDAPPS], [test "x$enable_oldapps" = xyes])
