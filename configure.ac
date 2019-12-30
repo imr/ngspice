@@ -296,6 +296,32 @@ else
     dprefix=$prefix
 fi
 
+####
+### check for operating system at compile time
+case $host_os in
+	*mingw* | *msys* )
+		AC_DEFINE([OS_COMPILED], [1], [MINGW for MS Windows])
+		;;
+	*cygwin* )
+		AC_DEFINE([OS_COMPILED], [2], [Cygwin for MS Windows])
+		;;
+	*freebsd* )
+		AC_DEFINE([OS_COMPILED], [3], [FreeBSD])
+		;;
+	*openbsd* )
+		AC_DEFINE([OS_COMPILED], [4], [OpenBSD])
+		;;
+	*solaris* )
+		AC_DEFINE([OS_COMPILED], [5], [Solaris])
+		;;
+	*linux* )
+		AC_DEFINE([OS_COMPILED], [6], [Linux])
+		;;
+	* )
+		AC_DEFINE([OS_COMPILED], [7], [Other Operating System])
+		;;
+esac
+
 ##########################################################################
 #
 # ngspice as shared library (ngspice.so or ngspice.dll)
