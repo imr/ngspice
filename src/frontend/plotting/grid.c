@@ -32,12 +32,7 @@ typedef tWindowData *tpWindowData;       /* pointer to it */
 #endif
 
 #ifndef X_DISPLAY_MISSING
-extern bool old_x11;
 extern int X11_GetLenStr(GRAPH *gr, char* instring);
-#endif
-
-#ifndef X_DISPLAY_MISSING
-extern bool old_x11;
 #endif
 
 #define RAD_TO_DEG      (180.0 / M_PI)
@@ -163,10 +158,12 @@ gr_redrawgrid(GRAPH *graph)
                     wlen++;
                 i++;
             }
+#ifdef HAVE_LIBXFT
             /* string lenth in pixels */
             int strsize = X11_GetLenStr(graph, graph->grid.xlabel);
             DevDrawText(graph->grid.xlabel,
                 (int)((graph->absolute.width - strsize) / 2), graph->fontheight, 0);
+
             /* fix the position of the UNIT label */
             if (RELPOSXUNIT * graph->absolute.width < ((graph->absolute.width + strsize) / 2 + graph->fontwidth))
                 unitshift = (int)((graph->absolute.width + strsize) / 2
@@ -174,6 +171,12 @@ gr_redrawgrid(GRAPH *graph)
                                    + graph->fontwidth;
             else
                 unitshift = 0; /* reset for next plot window */
+#else
+            DevDrawText(graph->grid.xlabel,
+                    (int) (graph->absolute.width * 0.35), graph->fontheight,
+                    0);
+            unitshift = 0;
+#endif
         }
 #endif
 #ifdef HAS_WINGUI
@@ -256,21 +259,20 @@ gr_redrawgrid(GRAPH *graph)
                 }
             }
 #endif
-#ifndef X_DISPLAY_MISSING
-            /* new x11 with xft and utf-8 */
-            else if (!old_x11) {
-                /* calculate and add offsets in fcn X11_Text in X11.c */
-                DevDrawText(graph->grid.ylabel,
-                        0,
-                        /*vertical text, y is midpoint of graph height */
-                        (graph->absolute.height) / 2, 90);
-            }
-#endif
 #endif
             else /* others */
                 DevDrawText(graph->grid.ylabel,
-                        graph->fontwidth,
-                        graph->absolute.height / 2, 90);
+#if !defined(X_DISPLAY_MISSING) && defined(HAVE_LIBXFT)
+                    /* new x11 with xft and utf-8
+                     * calculate and add offsets in fcn X11_Text in X11.c
+                     */
+                    0,
+#else
+                    graph->fontwidth,
+#endif
+                    /*vertical text, y is midpoint of graph height */    
+                    graph->absolute.height / 2, 90);
+
         }
     }
 
