@@ -278,10 +278,10 @@ int WIN_Init(void)
     lf.lfQuality = 0;
     lf.lfPitchAndFamily = 0;
     /* set up fonts */
-    if (!cp_getvar("wfont", CP_STRING, lf.lfFaceName)) {
+    if (!cp_getvar("wfont", CP_STRING, lf.lfFaceName, strlen(lf.lfFaceName))) {
         (void)lstrcpy(lf.lfFaceName, DEF_FONTW);
     }
-    if (!cp_getvar("wfont_size", CP_NUM, &(lf.lfHeight))) {
+    if (!cp_getvar("wfont_size", CP_NUM, &(lf.lfHeight), 0)) {
         lf.lfHeight = 18;
     }
     PlotFont = CreateFontIndirect(&lf);
