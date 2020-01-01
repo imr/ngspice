@@ -713,14 +713,20 @@ if test "x$no_x" != xyes ; then
         [AC_MSG_ERROR([Couldn't find Xext library])], [$X_LIBS $X_EXTRA_LIBS])
     X_LIBS="$X_LIBS -lX11"
 	AC_CHECK_LIB([Xft], [main],
-        [AC_DEFINE([HAVE_LIBXFT], [], [Have xft routines in libxft])
-         LIBS="$LIBS -lXft"
-		 AC_CHECK_LIB([fontconfig], [main], [X_LIBS="$X_LIBS -lfontconfig"],
-			[AC_MSG_ERROR([Couldn't find fontconfig library])], [$X_LIBS $X_EXTRA_LIBS])
-		 AC_CHECK_LIB([Xrender], [main], [X_LIBS="$X_LIBS -lXrender"],
-			[AC_MSG_ERROR([Couldn't find Xrender library])], [$X_LIBS $X_EXTRA_LIBS])
-		 AC_CHECK_LIB([freetype], [main], [X_LIBS="$X_LIBS -lfreetype"],
-			[AC_MSG_ERROR([Couldn't find freetype library])], [$X_LIBS $X_EXTRA_LIBS])])
+        [AC_DEFINE([HAVE_LIBXFT], [1], [Have xft routines in libxft])]
+        X_LIBS="$X_LIBS -lXft -lfontconfig -lXrender -lfreetype"
+        has_xft=yes,
+        [has_xft=no], [$X_LIBS $X_EXTRA_LIBS])
+
+    if test "x$has_xft" = xyes ; then
+        AC_CHECK_LIB([fontconfig], [main], [],
+            [AC_MSG_ERROR([Couldn't find fontconfig library])], [$X_LIBS $X_EXTRA_LIBS])
+#        AC_CHECK_LIB([Xrender], [main], [],
+#            [AC_MSG_ERROR([Couldn't find Xrender library])], [$X_LIBS $X_EXTRA_LIBS])
+        AC_CHECK_LIB([freetype], [main], [],
+            [AC_MSG_ERROR([Couldn't find freetype library])], [$X_LIBS $X_EXTRA_LIBS])
+    fi
+
     has_no_x=false
 else
     AC_DEFINE([X_DISPLAY_MISSING])
