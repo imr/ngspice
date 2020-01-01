@@ -23,6 +23,6 @@ plot y vs x
 hardcopy plot_4.ps y vs x
 
 plot y vs x xlabel 'Labellisé X' ylabel 'Labellisée Y' title 'Titré'
-hardcopy plot_5.ps y vs x xlabel 'Labellisé X' title 'Labellisé Y' title 'Titré'
+hardcopy plot_5.ps y vs x xlabel 'Labellisé X' ylabel 'Labellisé Y' title 'Titré'
 
 .endc
