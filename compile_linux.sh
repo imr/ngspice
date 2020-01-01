@@ -6,7 +6,7 @@
 # Install gcc, bison, flex, libtool, autoconf, automake, 
 # libx11 and libx11-dev (headers), libXaw and libXaw-dev, libreadline and dev
 # Declare 'compile_linux.sh' executable and start compiling with
-# './compile_linux.sh' or './compile_min.sh 64' from the ngspice directory.
+# './compile_linux.sh' or './compile_min.sh 32' from the ngspice directory.
 # Options:
 # --adms and --enable-adms will install extra HICUM, EKV and MEXTRAM models via the 
 # adms interface. You need to download and install the *.va files via ng-adms-va.tgz 
@@ -19,10 +19,10 @@
 # Add (optionally) --enable-relpath to avoid absolute paths when searching for code models.
 # It might be necessary to uncomment and run ./autogen.sh .
 
-if test "$1" = "64"; then
-   if [ ! -d "release64" ]; then
-      mkdir release64
-      if [ $? -ne 0 ]; then  echo "mkdir release64 failed"; exit 1 ; fi
+if test "$1" = "32"; then
+   if [ ! -d "release32" ]; then
+      mkdir release32
+      if [ $? -ne 0 ]; then  echo "mkdir release32 failed"; exit 1 ; fi
    fi   
 else
    if [ ! -d "release" ]; then
@@ -42,20 +42,20 @@ if [ $? -ne 0 ]; then  echo "./autogen.sh failed"; exit 1 ; fi
 #if [ $? -ne 0 ]; then  echo "./autogen.sh failed"; exit 1 ; fi
 
 echo
-if test "$1" = "64"; then
-   cd release64
-   if [ $? -ne 0 ]; then  echo "cd release64 failed"; exit 1 ; fi
-  echo "configuring for 64 bit"
-  echo
-# You may add  --enable-adms to the following command for adding adms generated devices 
-  ../configure --with-x --enable-xspice --enable-cider --with-readline=yes --enable-openmp --disable-debug CFLAGS="-m64 -O2" LDFLAGS="-m64 -s"
-else
-   cd release
-   if [ $? -ne 0 ]; then  echo "cd release failed"; exit 1 ; fi
+if test "$1" = "32"; then
+   cd release32
+   if [ $? -ne 0 ]; then  echo "cd release32 failed"; exit 1 ; fi
   echo "configuring for 32 bit"
   echo
 # You may add  --enable-adms to the following command for adding adms generated devices 
   ../configure --with-x --enable-xspice --enable-cider --with-readline=yes --enable-openmp --disable-debug CFLAGS="-m32 -O2" LDFLAGS="-m32 -s"
+else
+   cd release
+   if [ $? -ne 0 ]; then  echo "cd release failed"; exit 1 ; fi
+  echo "configuring for 64 bit"
+  echo
+# You may add  --enable-adms to the following command for adding adms generated devices 
+  ../configure --with-x --enable-xspice --enable-cider --with-readline=yes --enable-openmp --disable-debug CFLAGS="-m64 -O2" LDFLAGS="-m64 -s"
 fi
 if [ $? -ne 0 ]; then  echo "../configure failed"; exit 1 ; fi
 
