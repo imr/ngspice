@@ -9,7 +9,7 @@
 #     (allows to generate either 32 or 64 bit executables by setting flag -m32 or -m64)
 # set path to compiler in msys/xx/etc/fstab (e.g. c:/MinGW64 /mingw)
 # start compiling with
-# './compile_min.sh' or './compile_min.sh 64'
+# './compile_min.sh 32' or './compile_min.sh'
 # As an (more recent) alternative install MSYS2 and the tools cited above.
 
 # Options:
@@ -25,10 +25,10 @@
 # Add (optionally) --enable-relpath to avoid absolute paths when searching for code models.
 # It might be necessary to uncomment and run ./autogen.sh .
 
-if test "$1" = "64"; then
-   if [ ! -d "release64" ]; then
-      mkdir release64
-      if [ $? -ne 0 ]; then  echo "mkdir release64 failed"; exit 1 ; fi
+if test "$1" = "32"; then
+   if [ ! -d "release32" ]; then
+      mkdir release32
+      if [ $? -ne 0 ]; then  echo "mkdir release32 failed"; exit 1 ; fi
    fi   
 else
    if [ ! -d "release" ]; then
@@ -48,20 +48,20 @@ fi
 #if [ $? -ne 0 ]; then  echo "./autogen.sh failed"; exit 1 ; fi
 
 echo
-if test "$1" = "64"; then
-   cd release64
-   if [ $? -ne 0 ]; then  echo "cd release64 failed"; exit 1 ; fi
-  echo "configuring for 64 bit"
-  echo
-# You may add  --enable-adms to the following command for adding adms generated devices 
-  ../configure --with-wingui --enable-xspice --enable-cider --enable-openmp --disable-debug prefix="C:/Spice64" CFLAGS="-m64 -O2" LDFLAGS="-m64 -s"
-else
-   cd release
-   if [ $? -ne 0 ]; then  echo "cd release failed"; exit 1 ; fi
+if test "$1" = "32"; then
+   cd release32
+   if [ $? -ne 0 ]; then  echo "cd release32 failed"; exit 1 ; fi
   echo "configuring for 32 bit"
   echo
 # You may add  --enable-adms to the following command for adding adms generated devices 
   ../configure --with-wingui --enable-xspice --enable-cider --enable-openmp --disable-debug prefix="C:/Spice" CFLAGS="-m32 -O2" LDFLAGS="-m32 -s"
+else
+   cd release
+   if [ $? -ne 0 ]; then  echo "cd release failed"; exit 1 ; fi
+  echo "configuring for 64 bit"
+  echo
+# You may add  --enable-adms to the following command for adding adms generated devices 
+  ../configure --with-wingui --enable-xspice --enable-cider --enable-openmp --disable-debug prefix="C:/Spice64" CFLAGS="-m64 -O2" LDFLAGS="-m64 -s"
 fi
 if [ $? -ne 0 ]; then  echo "../configure failed"; exit 1 ; fi
 
