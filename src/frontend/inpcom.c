@@ -1338,7 +1338,7 @@ static char *inp_pathresolve(const char *name)
     if (stat(name, &st) == 0)
         return copy(name);
 	
-#if defined(__MINGW32__) || defined(_MSC_VER)
+#if !defined(EXT_ASC) && (defined(__MINGW32__) || defined(_MSC_VER))
     wchar_t wname[BSIZE_SP];
     if (MultiByteToWideChar(CP_UTF8, 0, name, -1, wname, 2 * (int)strlen(name) + 1) == 0) {
         fprintf(stderr, "UTF-8 to UTF-16 conversion failed with 0x%x\n", GetLastError());
