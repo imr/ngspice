@@ -1159,6 +1159,7 @@ wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR
     const int iyt = iy / 3; /* height of screen divided by 3 */
 #ifdef EXT_ASC
     hwMain = CreateWindow(hwClassName, hwWindowName, WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
+                           0, iyt * 2, ix, iyt, NULL, NULL, hInst, NULL);
 #else
     hwMain = CreateWindowW(hwClassNameW, hwWindowNameW, WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
                            0, iyt * 2, ix, iyt, NULL, NULL, hInst, NULL);
