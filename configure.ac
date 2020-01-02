@@ -321,7 +321,7 @@ case $host_os in
 		AC_DEFINE([OS_COMPILED], [7], [macOS])
 		;;
 	* )
-		AC_DEFINE([OS_COMPILED], [8], [Other Operating System])
+		AC_DEFINE([OS_COMPILED], [0], [Other Operating System])
 		;;
 esac
 
