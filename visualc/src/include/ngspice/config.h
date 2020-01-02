@@ -554,4 +554,4 @@
 
 #define HAVE_XFT
 
-#define EXT_ASC
+//#define EXT_ASC
