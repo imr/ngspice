@@ -35,9 +35,19 @@ plot y vs x     xlabel '래도 아프지 않아요'      ylabel '私はガラス
 * With Linux the next one requires: export LC_CTYPE ="de_DE.UTF-8"
 **gnuplot test2.gn y vs x xlabel 'Labellisé X' ylabel 'tüTÄtö Äü @µ€~' title 'ฉันกินกระจกได้ แต่มันไม่ทำให้ฉันเจ็บ '
 
-**hardcopy plot_5.ps y vs x xlabel 'Labellisé X' ylabel 'Labellisé Y' title 'Titré Äü @µ€~'
-*shell Start /B plot_5.ps
-**shell gv plot_5.ps &
+hardcopy plot_5.ps y vs x xlabel 'Labellisé X' ylabel 'Labellisé Y' title 'Titré Äü @µ€~'
+if ($oscompiled = 1) or ($oscompiled = 8)
+  shell Start /B plot_5.ps
+endif
+if ($oscompiled = 2)
+  shell xterm -e gs plot_5.ps &
+endif
+if ($oscompiled = 6)
+  shell gv plot_5.ps &
+endif
+if ($oscompiled = 7)
+  shell open -a Preview plot_5.ps &
+endif
 
 wrdata test.out y vs x
 **asciiplot atest.out y vs x
