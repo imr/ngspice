@@ -301,6 +301,7 @@ Status_t write_ifs_c_file(const char *filename, Ifs_Table_t *ifs_table);
 
 FILE *fopen_cmpp(const char **path_p, const char *mode);
 
+void rem_ifs_table(Ifs_Table_t *ifs_table);
 
 /*
  * type safe variants of the <ctype.h> functions for char arguments
