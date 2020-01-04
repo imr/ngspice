@@ -159,7 +159,10 @@ void preprocess_mod_file (
       exit (1);
    }
    fclose (mod_yyout);
-   mod_yyrestart(NULL);
+    if(output_filename)
+        free((char*)output_filename);
+    rem_ifs_table(&ifs_table);
+    mod_yyrestart(NULL);
 }
 
 /*---------------------------------------------------------------------------*/
