@@ -1169,7 +1169,7 @@ measure_parse_stdParams(
                 wl = wl->wl_next;
                 continue;
             } else {
-                sprintf(errbuf, "bad syntax of ??\n");
+                sprintf(errbuf, "bad syntax. equal sign missing ?\n");
                 return 0;
             }
         }
@@ -1179,7 +1179,7 @@ measure_parse_stdParams(
         }
         else {
             if (ft_numparse(&pValue, FALSE, &engVal1) < 0) {
-                sprintf(errbuf, "bad syntax of ??\n");
+                sprintf(errbuf, "bad syntax, cannot evaluate right hand side of %s=%s\n", pName, pValue);
                 return 0;
             }
         }
@@ -1216,7 +1216,7 @@ measure_parse_stdParams(
     }
 
     if (pCnt == 0) {
-        sprintf(errbuf, "bad syntax of ??\n");
+        sprintf(errbuf, "bad syntax of %s\n", pName);
         return 0;
     }
 
