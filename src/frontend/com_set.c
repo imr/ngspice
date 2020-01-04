@@ -6,7 +6,7 @@
 #include "variable.h"
 #include "com_set.h"
 
-wordlist* readifile(wordlist*);
+static wordlist* readifile(wordlist*);
 
 
 /* The set command.
@@ -37,7 +37,15 @@ void com_set(wordlist *wl)
         return;
     }
 
-    struct variable *oldvar;
+    /* Handle special case input redirection. The file contents is
+     * converted to a list that can be handled by cp_setparse(). */
+    {
+        const wordlist * const ww = wl->wl_next;
+        if (ww && eq(ww->wl_word, "<")) {
+            wl = readifile(wl);
+        }
+    }
+
     struct variable *vars = cp_setparse(wl);
 
     /* This is sort of a hassle... */
@@ -63,7 +71,7 @@ void com_set(wordlist *wl)
             s = NULL;
         }
         cp_vset(vars->va_name, vars->va_type, s);
-        oldvar = vars;
+        struct variable * const oldvar = vars;
         vars = vars->va_next;
 
         /* Free allocations associated with the current variable */
@@ -74,12 +82,14 @@ void com_set(wordlist *wl)
         /* don't free oldvar->va_list! This structure is used furthermore! */
         txfree(oldvar);
     }
-}
+} /* end of function com_set */
+
+
 
 /* read a file from cp_in, add the tokens to a wordlist and
    create an input for a string list like set ccc = ( 3 5 7 ).
    Comment lines in input file (starting with '*') are ignored. */
-wordlist*
+static wordlist*
 readifile(wordlist* win)
 {
     /* max file size */
@@ -93,17 +103,16 @@ readifile(wordlist* win)
     wl_append_word(&win, &win, copy("="));
     wl_append_word(&win, &win, copy("("));
     /* read a line. If it starts with '*', ignore it */
-    while (fgets(intoken, 4096, cp_in) != NULL) {
-        if (intoken[0] == '*')
+    while (fgets(intoken, sizeof intoken, cp_in) != NULL) {
+        if (intoken[0] == '*') { /* skip comment lines */
             continue;
-        char* delstr;
-        char* instr = delstr = copy(intoken);
+        }
+        char *instr = intoken;
         /* get all tokens, ignoring '\n' 
            and add to string list */
         while ((tmpstr = gettok(&instr)) != NULL) {
             wl_append_word(&win, &win, tmpstr);
         }
-        tfree(delstr);
     }
     wl_append_word(&win, &win, copy(")"));
     /* close and reset cp_in 
