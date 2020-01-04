@@ -193,7 +193,16 @@ void preprocess_lst_files(void)
     if(status != OK) {
         exit(1);
     }
-
+    /* remove model_info and node_info */
+    if (model_info) {
+        if(model_info->cfunc_name) free(model_info->cfunc_name);
+        if(model_info->path_name) free(model_info->path_name);
+        if(model_info->spice_name) free(model_info->spice_name);        
+    }
+    if (node_info) {
+        if(node_info->node_name) free(node_info->node_name);
+        if(node_info->path_name) free(node_info->path_name);
+    }
 }
 
 
@@ -308,6 +317,9 @@ static Status_t read_modpath(
 
     *num_models = n;
     *model_info = model;
+
+    if(filename)
+        free((char*)filename);
 
     return(OK);
 
@@ -424,6 +436,9 @@ static Status_t read_udnpath(
     *num_nodes = n;
     *node_info = node;
 
+    if(filename)
+        free((char*)filename);
+
     return(OK);
 
 }
@@ -467,14 +482,17 @@ static Status_t read_model_names(
 
         /* Transfer the names into the model_info structure */
         if(status == OK) {
-            model_info[i].spice_name = ifs_table.name.model_name;
-            model_info[i].cfunc_name = ifs_table.name.c_fcn_name;
+            model_info[i].spice_name = strdup(ifs_table.name.model_name);
+            model_info[i].cfunc_name = strdup(ifs_table.name.c_fcn_name);
         }
         else {
             all_found = FALSE;
             print_error("ERROR - Problems reading %s in directory %s",
                         IFSPEC_FILENAME, model_info[i].path_name);
         }
+
+        /* Remove the ifs_table */
+        rem_ifs_table(&ifs_table);
     }
 
     if(all_found)
@@ -767,6 +785,8 @@ static Status_t write_CMextrn(
 
     /* Close the file and return */
     fclose(fp);
+    if(filename)
+        free((char*)filename);
     return(OK);
 }
 
@@ -808,6 +828,8 @@ static Status_t write_CMinfo(
 
     /* Close the file and return */
     fclose(fp);
+    if(filename)
+        free((char*)filename);
     return(OK);
 }
 
@@ -853,6 +875,8 @@ static Status_t write_UDNextrn(
 
     /* Close the file and return */
     fclose(fp);
+    if(filename)
+        free((char*)filename);  
     return(OK);
 }
 
@@ -895,6 +919,8 @@ static Status_t write_UDNinfo(
     }
 
     /* Close the file and return */
+    if(filename)
+        free((char*)filename);
     fclose(fp);
     return(OK);
 }
@@ -947,6 +973,8 @@ static Status_t write_objects_inc(
 
     /* Close the file and return */
     fclose(fp);
+    if(filename)
+        free((char*)filename);
     return(OK);
 }
 
@@ -976,6 +1004,7 @@ static Status_t read_udn_type_name(
 
     /* Open the file from which the node type name will be read */
     fp = fopen_cmpp(&path, "r");
+    free((char*)path);
     if(fp == NULL)
         return(ERROR);
 

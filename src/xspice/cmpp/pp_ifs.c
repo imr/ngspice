@@ -44,6 +44,11 @@ NON-STANDARD FEATURES
 
 /* *********************************************************************** */
 
+static void txfree(void *ptr)
+{
+    if(ptr)
+        free(ptr);
+};
 
 /*
 preprocess_ifs_file
@@ -65,7 +70,6 @@ void preprocess_ifs_file(void)
 
     Status_t        status;      /* Return status */
 
-
     /* Read the entire ifspec.ifs file and load the data into ifs_table */
 
     status = read_ifs_file(IFSPEC_FILENAME,GET_IFS_TABLE,&ifs_table);
@@ -82,7 +86,34 @@ void preprocess_ifs_file(void)
     if(status != OK) {
         exit(1);
     }
+    rem_ifs_table(&ifs_table);
+}
 
+void rem_ifs_table(Ifs_Table_t *ifs_table)
+{
+    int i;
+    /* Remove the ifs_table */
+    txfree(ifs_table->name.c_fcn_name);
+    txfree(ifs_table->name.description);
+    txfree(ifs_table->name.model_name);
+
+    for(i = 0; i < ifs_table->num_conn; i++) {
+        txfree(ifs_table->conn[i].name);
+        txfree(ifs_table->conn[i].description);
+        txfree(ifs_table->conn[i].default_type);              
+    }
+
+    for(i = 0; i < ifs_table->num_param; i++) {
+        txfree(ifs_table->param[i].name);
+        txfree(ifs_table->param[i].description);        
+    }
+    for(i = 0; i < ifs_table->num_inst_var; i++) {
+        txfree(ifs_table->inst_var[i].name);
+        txfree(ifs_table->inst_var[i].description);        
+    }
+    txfree(ifs_table->conn);
+    txfree(ifs_table->param);
+    txfree(ifs_table->inst_var);
 }
 
 

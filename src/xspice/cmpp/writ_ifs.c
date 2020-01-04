@@ -155,7 +155,8 @@ Status_t write_ifs_c_file(
     /* Close the ifspec.c file and return */
 
     int_status = fclose(fp);
-
+    if(filename)
+        free((char*)filename);
     if(int_status == 0)
         return(OK);
     else

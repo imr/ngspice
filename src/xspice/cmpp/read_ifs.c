@@ -150,6 +150,10 @@ static Status_t read_ifs_table(
    assert (ifs_table);
    assert (fp);
 
+   ifs_table->name.description = 
+   ifs_table->name.c_fcn_name = 
+   ifs_table->name.model_name = NULL;
+
    ifs_yylineno = 1;
    ifs_yyin = fp;
    parser_just_names = (mode == GET_IFS_NAME) ? TRUE : FALSE;
