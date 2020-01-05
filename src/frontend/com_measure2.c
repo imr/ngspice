@@ -1151,7 +1151,7 @@ measure_parse_stdParams(
     )
 {
     int pCnt;
-    char *p, *pName, *pValue;
+    char *p, *pName = NULL, *pValue;
     double engVal1;
 
     pCnt = 0;
@@ -1216,7 +1216,10 @@ measure_parse_stdParams(
     }
 
     if (pCnt == 0) {
-        sprintf(errbuf, "bad syntax of %s\n", pName);
+        if (pName)
+            sprintf(errbuf, "bad syntax of %s\n", pName);
+        else
+            sprintf(errbuf, "bad syntax of\n");
         return 0;
     }
 
