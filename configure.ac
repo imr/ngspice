@@ -220,7 +220,7 @@ if test "x$ext_CFLAGS" != xyes; then
     else
         AC_DEFINE([NGDEBUG], [1], [Compile with debug info])
         if test "x$GCC" = xyes; then
-            CFLAGS="-g -O1"
+            CFLAGS="-g -O0"
         else
             CFLAGS="-g"
         fi
