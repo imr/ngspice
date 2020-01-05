@@ -4,7 +4,6 @@ DESCRIPTION:This file contains the routines for manipulating dynamic strings.
 ----------------------------------------------------------------- */
 #include <ctype.h>
 #include <stdarg.h>
-#include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -347,7 +346,7 @@ int ds_compact(DSTRING *p_ds)
 
     /* Else realloc the heap buffer */
     {
-        void *p = realloc(p_ds->p_buf, n_byte_alloc_min);
+        void *p = TREALLOC(char, p_ds->p_buf, n_byte_alloc_min);
         if (p == NULL) {
             return DS_E_NO_MEMORY;
         }
