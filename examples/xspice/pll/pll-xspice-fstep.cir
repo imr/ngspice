@@ -17,7 +17,7 @@ vdd dd 0 dc 'vcc'
 
 * 10 MHz reference frequency
 * PULSE(V1 V2 TD TR TF PW PER)
-vref ref 0 dc 0 pulse(0 'vcc' 10n 1n 1n  '1/fref/2' '1/fref')
+vref ref 0 dc 0 pulse(0 'vcc' 10n 2n 2n  '1/fref/2' '1/fref')
 abridgeref [ref] [d_ref] adc_vbuf
 .model adc_vbuf adc_bridge(in_low = 0.5 in_high = 0.5)
 
@@ -66,7 +66,10 @@ abridge-w1 [d_divout d_ref d_Un d_D] [s1 s2 u1 d1] dac1 ; change to d_u or d_Un
 
 .control
 save cont s1 s2 u1 d1
-iplot cont
+let isbmode = $?batchmode
+if isbmode = 0
+  iplot cont
+endif
 * calculate breakpoint for switching frequency
 let t1_3 = simtime/3
 set ti1_3 ="$&t1_3"
@@ -80,7 +83,7 @@ let pw2 = per2/2
 let per3=1/f3
 let pw3 = per3/2
 *simulate
-tran 0.1n $&simtime 0 0.5n uic
+tran 10n $&simtime 0 1n uic
 *change frequency after stopping
 * first pair of [] without spaces, second pair with spaces
 alter @vref[pulse] = [ 0 3.3 10n 1n 1n  $&pw2 $&per2 ]
@@ -89,8 +92,11 @@ resume
 alter @vref[pulse] = [ 0 3.3 10n 1n 1n  $&pw3 $&per3 ]
 resume
 rusage
-plot cont s1 s2+1.2 u1+2.4 d1+3.6 xlimit 15u 16u
-*plot cont
+if isbmode = 0
+  plot cont s1 s2+1.2 u1+2.4 d1+3.6 xlimit 15u 16u
+else
+  write pll.raw all
+endif
 .endc
 
 *model = bsim3v3
