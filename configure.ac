@@ -1173,6 +1173,7 @@ AC_CONFIG_FILES([Makefile
                  src/spicelib/devices/isrc/Makefile
                  src/spicelib/devices/hfet1/Makefile
                  src/spicelib/devices/hfet2/Makefile
+                 src/spicelib/devices/hicum2/Makefile
                  src/spicelib/devices/hisim2/Makefile
                  src/spicelib/devices/hisimhv1/Makefile
                  src/spicelib/devices/hisimhv2/Makefile

@@ -27,6 +27,7 @@ SUBDIRS = \
 	isrc	\
 	hfet1	\
 	hfet2	\
+	hicum2	\
 	hisim2	\
 	hisimhv1	\
 	hisimhv2	\
@@ -88,6 +89,7 @@ DIST_SUBDIRS = \
 	isrc	\
 	hfet1	\
 	hfet2	\
+	hicum2	\
 	hisim2	\
 	hisimhv1	\
 	hisimhv2	\
