@@ -1080,8 +1080,8 @@ static struct History_info *init_history(void)
     }
 
     {
-        /* Initialize history buffer with a greeting */
-        static const char cmd_welcome[] = "# Welcome to ngspice!";
+        /* Initialize history buffer with empty input line */
+        static const char cmd_welcome[] = "";
         (void) history_add(&p_hi, sizeof cmd_welcome - 1, cmd_welcome);
     }
 
