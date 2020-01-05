@@ -517,7 +517,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Icic_Vcic;
     double Ibci,  Ibci_Vbci;
 //    double Icxf, Icxf1, Icxf2, Ibxf, Ibxf1, Ibxf2;
-    double hjei_vbe_Vbiei, ibet_Vbpei, ibet_Vbiei, czz_Vbiei, czz_Vbpei;
+    double hjei_vbe_Vbiei, ibet_Vbpei=0.0, ibet_Vbiei=0.0, ibh_rec_Vbiei;
     double irei_Vbiei, irep_Vbpei, iavl_Vbici, itf_Vbiei, itr_Vbici, rbi_Vbiei, rbi_Vbici;
 
     double Qbepar1;
@@ -1087,14 +1087,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             //Inverse of low-field internal collector resistance: needed in HICICK
             Orci0_t = 1.0/here->HICUMrci0_t;
 
-            //Initialization
-            //Transfer current, minority charges and transit times
-
-            Tr      = model->HICUMtr;
-            VT_f    = model->HICUMmcf*here->HICUMvt;
-            i_0f    = here->HICUMc10_t * exp(Vbiei/VT_f);
-            i_0r    = here->HICUMc10_t * exp(Vbici/here->HICUMvt);
-
             //Internal b-e and b-c junction capacitances and charges
             //QJMODF(here->HICUMvt,cjei0_t,vdei_t,model->HICUMzei,ajei_t,V(br_biei),Qjei)
             //Cjei    = ddx(Qjei,V(bi));
@@ -1171,6 +1163,14 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
             }
 
+            //Initialization
+            //Transfer current, minority charges and transit times
+
+            Tr      = model->HICUMtr;
+            VT_f    = model->HICUMmcf*here->HICUMvt;
+            i_0f    = here->HICUMc10_t * exp(Vbiei/VT_f);
+            i_0r    = here->HICUMc10_t * exp(Vbici/here->HICUMvt);
+//todo: derivatives of i_0f and i_0r must considered below
             //Initial formulation of forward and reverse component of transfer current
             Q_p     = Q_0;
             if (T_f0 > 0.0 || Tr > 0.0) {
@@ -1178,7 +1178,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 A       = 0.5*Q_0;
                 Q_p     = A+sqrt(A*A+T_f0*i_0f+Tr*i_0r);
             }
-            I_Tf1   =i_0f/Q_p;
+            I_Tf1   = i_0f/Q_p;
             a_h     = Oich*I_Tf1;
             itf     = I_Tf1*(1.0+a_h);
             itr     = i_0r/Q_p;
@@ -1290,6 +1290,8 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
             //Excess base current from recombination at the b-c barrier
             ibh_rec = Q_bf*Otbhrec;
+//todo: Q_bf derivatives to Vbiei
+            ibh_rec_Vbiei = 0.0;
 
 //todo: Qf derivatives to Vbiei, Vbici
             //Internal base resistance = f(Vbiei, Vbici)
@@ -1346,15 +1348,13 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 if(model->HICUMtunode==1 && here->HICUMcjep0_t > 0.0 && here->HICUMvdep_t >0.0) {
                     pocce   = exp((1-1/model->HICUMzep)*log(Cjep/here->HICUMcjep0_t));
                     czz     = -(Vbpei/here->HICUMvdep_t)*here->HICUMibets_t*pocce;
-                    czz_Vbpei = -(1/here->HICUMvdep_t)*here->HICUMibets_t*pocce;
                     ibet    = czz*exp(-here->HICUMabet_t/pocce);
-                    ibet_Vbpei = czz_Vbpei*exp(-here->HICUMabet_t/pocce);
+                    ibet_Vbpei = -here->HICUMibets_t*pocce/here->HICUMvdep_t*exp(-here->HICUMabet_t/pocce);
                 } else if (model->HICUMtunode==0 && here->HICUMcjei0_t > 0.0 && here->HICUMvdei_t >0.0) {
                     pocce   = exp((1-1/model->HICUMzei)*log(Cjei/here->HICUMcjei0_t));
                     czz     = -(Vbiei/here->HICUMvdei_t)*here->HICUMibets_t*pocce;
-                    czz_Vbiei = -(1/here->HICUMvdei_t)*here->HICUMibets_t*pocce;
                     ibet    = czz*exp(-here->HICUMabet_t/pocce);
-                    ibet_Vbiei = czz_Vbiei*exp(-here->HICUMabet_t/pocce);
+                    ibet_Vbiei = -here->HICUMibets_t*pocce/here->HICUMvdei_t*exp(-here->HICUMabet_t/pocce);
                 } else {
                     ibet    = 0.0;
                     ibet_Vbpei = 0.0;
@@ -1494,6 +1494,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             Ibiei       += model->HICUMtype*irei;
             Ibiei_Vbiei += model->HICUMtype*irei_Vbiei;
             Ibiei       += model->HICUMtype*ibh_rec;
+            Ibiei_Vbiei += model->HICUMtype*ibh_rec_Vbiei;
 //            Ibiei      += ddt(model->HICUMtype*(Qdeix+Qjei));
             if (model->HICUMtunode==1.0) {
                 Ibpei  += -model->HICUMtype*ibet;
@@ -1502,7 +1503,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 Ibiei  += -model->HICUMtype*ibet;
                 Ibiei_Vbiei += -model->HICUMtype*ibet_Vbiei;
             }
-
+//printf("Vbiei: %f ibei: %g irei: %g ibh_rec: %g ibet: %g\n",Vbiei,ibei,irei,ibh_rec,ibet);
             Ibpsi       = model->HICUMtype*HSI_Tsu;
 
             Ibpci       = model->HICUMtype*ijbcx;
