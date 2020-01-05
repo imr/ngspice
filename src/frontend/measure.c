@@ -69,7 +69,7 @@ com_meas(wordlist *wl)
             wl_index = wl_index->wl_next;
             if (wl_index == NULL) {
                 line_in = wl_flatten(wl);
-                fprintf(stderr, "\nError: meas %s failed!\n\n", line_in);
+                fprintf(stderr, "\nError: meas failed due to missing token in \n    meas %s \n\n", line_in);
                 tfree(line_in);
                 return;
             }
