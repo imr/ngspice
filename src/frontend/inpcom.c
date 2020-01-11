@@ -7518,7 +7518,7 @@ static struct card *pspice_compat(struct card *oldcard)
         }
     }
 
-    /* replace & with && and | with || and *# with * # */
+    /* replace & with && , | with || , *# with * # , and ~ with ! */
     for (card = newcard; card; card = card->nextcard) {
         char *t;
         char *cut_line = card->line;
@@ -7579,6 +7579,18 @@ static struct card *pspice_compat(struct card *oldcard)
                     break;
                 else
                     t = strstr(tt, "|");
+            }
+        }
+        /* We may have '~' in path names or A devices */
+        char *firsttok = nexttok(card->line); /* skip over whitespaces */
+        if (ciprefix(".inc", firsttok) || ciprefix(".lib", firsttok) ||
+                ciprefix("A", firsttok))
+            continue;
+
+        if ((t = strstr(card->line, "~")) != NULL) {
+            while (t) {
+                *t = '!';
+                t = strstr(t, "~");
             }
         }
     }
