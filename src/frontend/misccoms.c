@@ -38,6 +38,7 @@ extern void rem_controls(void);
 
 extern IFsimulator SIMinfo;
 extern void spice_destroy_devices(void); /* FIXME need a better place */
+extern void pl_rempar(void); /* plotit.c */
 static void byemesg(void);
 static int  confirm_quit(void);
 
@@ -55,6 +56,7 @@ com_quit(wordlist *wl)
     /* update screen and reset terminal */
     gr_clean();
     cp_ccon(FALSE);
+
 
     /* Make sure the guy really wants to quit. */
     if (!ft_nutmeg)
@@ -90,6 +92,9 @@ com_quit(wordlist *wl)
     cp_destroy_keywords();
     destroy_ivars();
 #else
+    /* remove plotting parameters */
+    pl_rempar();
+
     while (ft_curckt)
         com_remcirc(NULL);
 #endif
