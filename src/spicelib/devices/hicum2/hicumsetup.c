@@ -42,7 +42,7 @@ HICUMsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             model->HICUMtype = NPN;
         }
         if(!model->HICUMtnomGiven) {
-            model->HICUMtnom = 27.0;
+            model->HICUMtnom = ckt->CKTnomTemp;
         }
 //Transfer current
         if(!model->HICUMc10Given) {

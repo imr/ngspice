@@ -139,10 +139,12 @@ IFparm HICUMmPTable[] = { /* model parameters */
   IOP("vdei",   HICUM_MOD_VDEI  , IF_REAL, "Internal B-E built-in potential"),
   IOP("zei",    HICUM_MOD_ZEI   , IF_REAL, "Internal B-E grading coefficient"),
   IOP("ajei",   HICUM_MOD_AJEI  , IF_REAL, "Ratio of maximum to zero-bias value of internal B-E capacitance"),
+  IOPR("aljei", HICUM_MOD_AJEI  , IF_REAL, "Ratio of maximum to zero-bias value of internal B-E capacitance"),
   IOP("cjep0",  HICUM_MOD_CJEP0 , IF_REAL, "Peripheral B-E zero-bias depletion capacitance"),
   IOP("vdep",   HICUM_MOD_VDEP  , IF_REAL, "Peripheral B-E built-in potential"),
   IOP("zep",    HICUM_MOD_ZEP   , IF_REAL, "Peripheral B-E grading coefficient"),
   IOP("ajep",   HICUM_MOD_AJEP  , IF_REAL, "Ratio of maximum to zero-bias value of peripheral B-E capacitance"),
+  IOPR("aljep", HICUM_MOD_AJEP  , IF_REAL, "Ratio of maximum to zero-bias value of peripheral B-E capacitance"),
   IOP("cjci0",  HICUM_MOD_CJCI0 , IF_REAL, "Internal B-C zero-bias depletion capacitance"),
   IOP("vdci",   HICUM_MOD_VDCI  , IF_REAL, "Internal B-C built-in potential"),
   IOP("zci",    HICUM_MOD_ZCI   , IF_REAL, "Internal B-C grading coefficient"),
@@ -152,7 +154,9 @@ IFparm HICUMmPTable[] = { /* model parameters */
   IOP("zcx",    HICUM_MOD_ZCX   , IF_REAL, "External B-C grading coefficient"),
   IOP("vptcx",  HICUM_MOD_VPTCX , IF_REAL, "External B-C punch-through voltage"),
   IOP("fbcpar", HICUM_MOD_FBCPAR, IF_REAL, "Partitioning factor of parasitic B-C cap"),
+  IOPR("fbc",   HICUM_MOD_FBCPAR, IF_REAL, "Partitioning factor of parasitic B-C cap"),
   IOP("fbepar", HICUM_MOD_FBEPAR, IF_REAL, "Partitioning factor of parasitic B-E cap"),
+  IOPR("fbe",   HICUM_MOD_FBEPAR, IF_REAL, "Partitioning factor of parasitic B-E cap"),
   IOP("cjs0",   HICUM_MOD_CJS0  , IF_REAL, "C-S zero-bias depletion capacitance"),
   IOP("vds",    HICUM_MOD_VDS   , IF_REAL, "C-S built-in potential"),
   IOP("zs",     HICUM_MOD_ZS    , IF_REAL, "C-S grading coefficient"),
@@ -170,6 +174,7 @@ IFparm HICUMmPTable[] = { /* model parameters */
   IOP("gtfe",  HICUM_MOD_GTFE , IF_REAL, "Exponent factor for current dependence of neutral emitter storage time"),
   IOP("thcs",  HICUM_MOD_THCS , IF_REAL, "Saturation time constant at high current densities"),
   IOP("ahc",   HICUM_MOD_AHC  , IF_REAL, "Smoothing factor for current dependence of base and collector transit time"),
+  IOPR("alhc", HICUM_MOD_AHC  , IF_REAL, "Smoothing factor for current dependence of base and collector transit time"),
   IOP("fthc",  HICUM_MOD_FTHC , IF_REAL, "Partitioning factor for base and collector portion"),
   IOP("rci0",  HICUM_MOD_RCI0 , IF_REAL, "Internal collector resistance at low electric field"),
   IOP("vlim",  HICUM_MOD_VLIM , IF_REAL, "Voltage separating ohmic and saturation velocity regime"),
@@ -184,7 +189,9 @@ IFparm HICUMmPTable[] = { /* model parameters */
 
 //Isolation Capacitances
   IOP("cbepar", HICUM_MOD_CBEPAR, IF_REAL, "Total parasitic B-E capacitance"),
+  IOPR("ceox",  HICUM_MOD_CBEPAR, IF_REAL, "Total parasitic B-E capacitance"),
   IOP("cbcpar", HICUM_MOD_CBCPAR, IF_REAL, "Total parasitic B-C capacitance"),
+  IOPR("ccox",  HICUM_MOD_CBCPAR, IF_REAL, "Total parasitic B-C capacitance"),
 
 //Non-quasi-static Effect
   IOP("alqf",  HICUM_MOD_ALQF,  IF_REAL, "Factor for additional delay time of minority charge"),

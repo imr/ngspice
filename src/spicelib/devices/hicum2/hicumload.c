@@ -27,14 +27,14 @@ Spice3 Implementation: 2019 Dietmar Warning
 #define LN_EXP_LIMIT    11.0
 #define MIN_R           0.001
 
-void QJMODF(double , double , double , double , double , double , double *, double *);
-void QJMOD(double ,double , double , double , double , double , double , double *, double *);
-void HICJQ(double , double , double , double , double , double , double *, double *);
-void HICFCI(double , double , double , double *, double *);
-void HICFCT(double , double , double *, double *);
-void HICQFC(HICUMinstance *here, HICUMmodel *model, double , double , double , double *, double *, double *, double *);
-void HICQFF(HICUMinstance *here, HICUMmodel *model, double , double , double *, double *, double *, double *, double *);
-void HICDIO(double , double , double , double , double , double *, double *);
+void QJMODF(double, double, double, double, double, double, double *, double *, double *);
+void QJMOD(double,double, double, double, double, double, double, double *, double *, double *);
+void HICJQ(double, double, double, double, double, double, double *, double *, double *);
+void HICFCI(double, double, double, double *, double *);
+void HICFCT(double, double, double *, double *);
+void HICQFC(HICUMinstance *here, HICUMmodel *model, double, double, double, double *, double *, double *, double *);
+void HICQFF(HICUMinstance *here, HICUMmodel *model, double, double, double *, double *, double *, double *, double *);
+void HICDIO(double, double, double, double, double, double *, double *);
 
 double FFdVc, FFdVc_ditf;
 
@@ -82,23 +82,36 @@ HICUMlimitlog(
 // OUTPUT:
 //  Qz      : depletion Charge
 //  C       : depletion capacitance
-void QJMODF(double vt, double c_0, double u_d, double z, double a_j, double U_cap, double *C, double *Qz)
+void QJMODF(double vt, double c_0, double u_d, double z, double a_j, double U_cap, double *C, double *dC_dV, double *Qz)
 {
 double DFV_f,DFv_e,DFs_q,DFs_q2,DFv_j,DFdvj_dv,DFb,DFC_j1,DFQ_j;
+double C1,DFv_e_u,DFs_q_u,DFs_q2_u,DFv_j_u,DFdvj_dv_u,DFb_u,d1,d1_u,DFC_j1_u;
     if(c_0 > 0.0) {
-        DFV_f    = u_d*(1.0-exp(-log(a_j)/z));
+        C1       = 1.0-exp(-log(a_j)/z);
+        DFV_f    = u_d*C1;
         DFv_e    = (DFV_f-U_cap)/vt;
+        DFv_e_u  = -1.0/vt;
         DFs_q    = sqrt(DFv_e*DFv_e+DFa_fj);
+        DFs_q_u  = DFv_e*DFv_e_u/DFs_q;
         DFs_q2   = (DFv_e+DFs_q)*0.5;
+        DFs_q2_u = (DFv_e_u+DFs_q_u)*0.5;
         DFv_j    = DFV_f-vt*DFs_q2;
+        DFv_j_u  = -vt*DFs_q2_u;
         DFdvj_dv = DFs_q2/DFs_q;
+        DFdvj_dv_u=(DFs_q2_u*DFs_q-DFs_q_u*DFs_q2)/(DFs_q*DFs_q);
         DFb      = log(1.0-DFv_j/u_d);
-        DFC_j1   = c_0*exp(-z*DFb)*DFdvj_dv;
+        DFb_u    = -DFv_j_u/(1-DFv_j/u_d)/u_d;
+        d1       = c_0*exp(-z*DFb);
+        d1_u     = -d1*DFb_u*z;
+        DFC_j1   = d1*DFdvj_dv;
+        DFC_j1_u = d1*DFdvj_dv_u + d1_u*DFdvj_dv_u;
         *C       = DFC_j1+a_j*c_0*(1.0-DFdvj_dv);
+        *dC_dV   = DFC_j1_u-a_j*c_0*DFdvj_dv_u;
         DFQ_j    = c_0*u_d*(1.0-exp(DFb*(1.0-z)))/(1.0-z);
         *Qz      = DFQ_j+a_j*c_0*(U_cap-DFv_j);
     } else {
         *C       = 0.0;
+        *dC_dV   = 0.0;
         *Qz      = 0.0;
     }
 }
@@ -120,49 +133,73 @@ double DFV_f,DFv_e,DFs_q,DFs_q2,DFv_j,DFdvj_dv,DFb,DFC_j1,DFQ_j;
 // OUTPUT:
 //  Qz      : depletion charge
 //  C       : depletion capacitance
-void QJMOD(double vt,double c_0, double u_d, double z, double a_j, double v_pt, double U_cap, double *C, double *Qz)
+void QJMOD(double vt,double c_0, double u_d, double z, double a_j, double v_pt, double U_cap, double *C, double *C_u, double *Qz)
 {
 double Dz_r,Dv_p,DV_f,DC_max,DC_c,Dv_e,De,De_1,Dv_j1,Da,Dv_r,De_2,Dv_j2,Dv_j4,DCln1,DCln2,Dz1,Dzr1,DC_j1,DC_j2,DC_j3,DQ_j1,DQ_j2,DQ_j3;
+double d1,d1_u,d2,Dv_e_u,De_u,De_1_u,Dv_j1_u,Dv_r_u,De_2_u,Dv_j2_u,Dv_j4_u,DCln1_u,DCln2_u,DC_j1_u,DC_j2_u,DC_j3_u;
     if(c_0 > 0.0) {
-        Dz_r    = z/4.0;
-        Dv_p    = v_pt-u_d;
-        DV_f    = u_d*(1.0-exp(-log(a_j)/z));
-        DC_max  = a_j*c_0;
-        DC_c    = c_0*exp((Dz_r-z)*log(v_pt/u_d));
-        Dv_e    = (DV_f-U_cap)/vt;
+        Dz_r   = z/4.0;
+        Dv_p   = v_pt-u_d;
+        DV_f   = u_d*(1.0-exp(-log(a_j)/z));
+        DC_max = a_j*c_0;
+        DC_c   = c_0*exp((Dz_r-z)*log(v_pt/u_d));
+        Dv_e   = (DV_f-U_cap)/vt;
+        Dv_e_u = -1.0/vt;
         if(Dv_e < Cexp_lim) {
             De      = exp(Dv_e);
+            De_u    = De*Dv_e_u;
             De_1    = De/(1.0+De);
+            De_1_u  = De_u/(1.0+De)-De*De_u/((1.0+De)*(1.0 + De));
             Dv_j1   = DV_f-vt*log(1.0+De);
+            Dv_j1_u = -De_u*vt/(1.0+De);
         } else {
             De_1    = 1.0;
+            De_1_u  = 0.0;
             Dv_j1   = U_cap;
+            Dv_j1_u = 1.0;
         }
         Da      = 0.1*Dv_p+4.0*vt;
         Dv_r    = (Dv_p+Dv_j1)/Da;
+        Dv_r_u  = Dv_j1_u/Da;
         if(Dv_r < Cexp_lim) {
             De      = exp(Dv_r);
+            De_u    = De*Dv_r_u;
             De_2    = De/(1.0+De);
-            Dv_j2   = -Dv_p+Da*(log(1.0+De)-exp(-(Dv_p+DV_f)/Da));
+            De_2_u  = De_u/(1.0+De)-De*De_u/((1.0+De)*(1.0 + De));
+            Dv_j2   = -Dv_p+Da*log(1.0+De)-exp(-(Dv_p+DV_f/Da));
+            Dv_j2_u = Da*De_u/(1.0+De);
         } else {
             De_2    = 1.0;
+            De_2_u  = 0.0;
             Dv_j2   = Dv_j1;
+            Dv_j2_u = Dv_j1_u;
         }
         Dv_j4   = U_cap-Dv_j1;
+        Dv_j4_u = 1.0-Dv_j1_u;
         DCln1   = log(1.0-Dv_j1/u_d);
+        DCln1_u = -Dv_j1_u/((1.0-Dv_j1/u_d)*u_d);
         DCln2   = log(1.0-Dv_j2/u_d);
+        DCln2_u = -Dv_j2_u/((1.0-Dv_j2/u_d)*u_d);
         Dz1     = 1.0-z;
         Dzr1    = 1.0-Dz_r;
-        DC_j1   = c_0*exp(DCln2*(-z))*De_1*De_2;
-        DC_j2   = DC_c*exp(DCln1*(-Dz_r))*(1.0-De_2);
+        d1      = c_0*exp(DCln2*(-z));
+        d1_u    =-d1*z*DCln2_u;
+        DC_j1   = d1*De_1*De_2;
+        DC_j1_u = De_1*De_2*d1_u+De_1*d1_u*De_2_u+De_1_u*d1*De_2;
+        d2      = DC_c*exp(DCln1*(-Dz_r));
+        DC_j2   = d2*(1.0-De_2);
+        DC_j2_u =-d2*De_2_u-Dz_r*d2*(1-De_2)*DCln1_u;
         DC_j3   = DC_max*(1.0-De_1);
-        *C      = DC_j1+DC_j2+DC_j3;
+        DC_j3_u =-DC_max*De_1_u;
+        *C       = DC_j1+DC_j2+DC_j3;
+        *C_u     = DC_j1_u+DC_j2_u+DC_j3_u;
         DQ_j1   = c_0*(1.0-exp(DCln2*Dz1))/Dz1;
         DQ_j2   = DC_c*(1.0-exp(DCln1*Dzr1))/Dzr1;
         DQ_j3   = DC_c*(1.0-exp(DCln2*Dzr1))/Dzr1;
         *Qz     = (DQ_j1+DQ_j2-DQ_j3)*u_d+DC_max*Dv_j4;
     } else {
         *C      = 0.0;
+        *C_u    = 0.0;
         *Qz     = 0.0;
     }
 }
@@ -170,12 +207,12 @@ double Dz_r,Dv_p,DV_f,DC_max,DC_c,Dv_e,De,De_1,Dv_j1,Da,Dv_r,De_2,Dv_j2,Dv_j4,DC
 // DEPLETION CHARGE & CAPACITANCE CALCULATION SELECTOR
 // Dependent on junction punch-through voltage
 // Important for collector related junctions
-void HICJQ(double vt, double c_0, double u_d, double z, double v_pt, double U_cap, double *C, double *Qz)
+void HICJQ(double vt, double c_0, double u_d, double z, double v_pt, double U_cap, double *C, double *dC_dV, double *Qz)
 {
     if(v_pt < VPT_thresh) {
-        QJMOD(vt,c_0,u_d,z,2.4,v_pt,U_cap,C,Qz);
+        QJMOD(vt,c_0,u_d,z,2.4,v_pt,U_cap,C,dC_dV,Qz);
     } else {
-        QJMODF(vt,c_0,u_d,z,2.4,U_cap,C,Qz);
+        QJMODF(vt,c_0,u_d,z,2.4,U_cap,C,dC_dV,Qz);
     }
 }
 
@@ -519,7 +556,10 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 //    double Icxf, Icxf1, Icxf2, Ibxf, Ibxf1, Ibxf2;
     double hjei_vbe_Vbiei, ibet_Vbpei=0.0, ibet_Vbiei=0.0, ibh_rec_Vbiei;
     double irei_Vbiei, irep_Vbpei, iavl_Vbici, itf_Vbiei, itr_Vbici, rbi_Vbiei, rbi_Vbici;
+    double Q_0_Vbiei, Q_0_Vbici, b_q_Vbiei, b_q_Vbici;
 
+    double Cjei_Vbiei,Cjci_Vbici,Cjep_Vbpei,CjCx_i_Vbci,CjCx_ii_Vbpci,Cjs_Vsici,Cscp_Vsc,Cjcit_Vbici,i_0f_Vbiei,i_0r_Vbici;
+	double cc_Vbici, T_f0_Vbici;
     double Qbepar1;
     double Qbepar2;
     double Qbcpar1;
@@ -531,9 +571,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Qrbi_Vbiei;
     double Qrbi_Vbici;
     double Qdeix_Vbiei;
-    double Qjei_Vbiei;
     double Qdci_Vbici;
-    double Qjci_Vbici;
     double Qjep_Vbpei;
     double qjcx0_t_i_Vbci;
     double qjcx0_t_ii_Vbpci;
@@ -1090,53 +1128,77 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             //Internal b-e and b-c junction capacitances and charges
             //QJMODF(here->HICUMvt,cjei0_t,vdei_t,model->HICUMzei,ajei_t,V(br_biei),Qjei)
             //Cjei    = ddx(Qjei,V(bi));
-            QJMODF(here->HICUMvt,here->HICUMcjei0_t,here->HICUMvdei_t,model->HICUMzei,here->HICUMajei_t,Vbiei,&Cjei,&Qjei);
-//todo: hjei_vbe_Vbiei
+            QJMODF(here->HICUMvt,here->HICUMcjei0_t,here->HICUMvdei_t,model->HICUMzei,here->HICUMajei_t,Vbiei,&Cjei,&Cjei_Vbiei,&Qjei);
+
             if (model->HICUMahjei == 0.0) {
                 hjei_vbe = model->HICUMhjei;
                 hjei_vbe_Vbiei = 0.0;
             } else {
-                double vj, vj_z;
+                double vj, vj_z, vj1, vj1_Vbiei, vj2, vj2_Vbiei, vj3, vj3_Vbiei, vj_z_Vbiei;
                 //vendhjei = vdei_t*(1.0-exp(-log(ajei_t)/z_h));
-                vj = (here->HICUMvdei_t-Vbiei)/(model->HICUMrhjei*here->HICUMvt);
-                vj = here->HICUMvdei_t-model->HICUMrhjei*here->HICUMvt*(vj+sqrt(vj*vj+DFa_fj))*0.5;
-                vj = (vj-here->HICUMvt)/here->HICUMvt;
-                vj = here->HICUMvt*(1.0+(vj+sqrt(vj*vj+DFa_fj))*0.5);
-                vj_z = (1.0-exp(model->HICUMzei*log(1.0-vj/here->HICUMvdei_t)))*here->HICUMahjei_t;
-                hjei_vbe = here->HICUMhjei0_t*(exp(vj_z)-1.0)/vj_z;
-                hjei_vbe_Vbiei = 0.0;
+                vj             = (here->HICUMvdei_t-Vbiei)/(model->HICUMrhjei*here->HICUMvt);
+                vj1            = here->HICUMvdei_t-model->HICUMrhjei*here->HICUMvt*(vj+sqrt(vj*vj+DFa_fj))*0.5;
+                vj1_Vbiei      = vj/2/(sqrt(vj*vj+DFa_fj));
+                vj2            = (vj1-here->HICUMvt)/here->HICUMvt;
+                vj2_Vbiei      = vj1_Vbiei/here->HICUMvt;
+                vj3            = here->HICUMvt*(1.0+(vj2+sqrt(vj2*vj2+DFa_fj))*0.5);
+                vj3_Vbiei      = 0.5*(vj2*vj2_Vbiei/sqrt(vj2*vj2+DFa_fj)+vj2_Vbiei)*here->HICUMvt;
+                vj_z           = (1.0-exp(model->HICUMzei*log(1.0-vj3/here->HICUMvdei_t)))*here->HICUMahjei_t;
+                vj_z_Vbiei     = vj3_Vbiei*(here->HICUMahjei_t-vj_z)/(here->HICUMvdei_t-vj3);
+                hjei_vbe       = here->HICUMhjei0_t*(exp(vj_z)-1.0)/vj_z;
+                hjei_vbe_Vbiei = here->HICUMhjei0_t*exp(vj_z)*vj_z_Vbiei/vj_z-hjei_vbe*vj_z_Vbiei/(vj_z*vj_z);
             }
+
 
             //HICJQ(here->HICUMvt,cjci0_t,vdci_t,model->HICUMzci,vptci_t,V(br_bici),Qjci);
             //Cjci    = ddx(Qjci,V(bi));
-            HICJQ(here->HICUMvt,here->HICUMcjci0_t,here->HICUMvdci_t,model->HICUMzci,here->HICUMvptci_t,Vbici,&Cjci,&Qjci);
+            HICJQ(here->HICUMvt,here->HICUMcjci0_t,here->HICUMvdci_t,model->HICUMzci,here->HICUMvptci_t,Vbici,&Cjci,&Cjci_Vbici,&Qjci);
 
             //Hole charge at low bias
             a_bpt   = 0.05;
             Q_0     = here->HICUMqp0_t + hjei_vbe*Qjei + model->HICUMhjci*Qjci;
+            Q_0_Vbiei = hjei_vbe_Vbiei*Qjei+hjei_vbe*Cjei;
+            Q_0_Vbici = model->HICUMhjci*Cjci;
             Q_bpt   = a_bpt*here->HICUMqp0_t;
             b_q     = Q_0/Q_bpt-1;
+            b_q_Vbiei = Q_0_Vbiei/Q_bpt;
+            b_q_Vbici = Q_0_Vbici/Q_bpt;
             Q_0     = Q_bpt*(1+(b_q +sqrt(b_q*b_q+1.921812))/2);
+            Q_0_Vbiei = Q_bpt*(b_q*b_q_Vbiei/sqrt(b_q*b_q+1.921812)+b_q_Vbiei)/2;
+            Q_0_Vbici = Q_bpt*(b_q*b_q_Vbici/sqrt(b_q*b_q+1.921812)+b_q_Vbici)/2;
 
             //Transit time calculation at low current density
             if(here->HICUMcjci0_t > 0.0) { // CJMODF
                 double cV_f,cv_e,cs_q,cs_q2,cv_j,cdvj_dv;
-                cV_f    = here->HICUMvdci_t*(1.0-exp(-log(2.4)/model->HICUMzci));
-                cv_e    = (cV_f-Vbici)/here->HICUMvt;
-                cs_q    = sqrt(cv_e*cv_e+1.921812);
-                cs_q2   = (cv_e+cs_q)*0.5;
-                cv_j    = cV_f-here->HICUMvt*cs_q2;
-                cdvj_dv = cs_q2/cs_q;
-                Cjcit   = here->HICUMcjci0_t*exp(-model->HICUMzci*log(1.0-cv_j/here->HICUMvdci_t))*cdvj_dv+2.4*here->HICUMcjci0_t*(1.0-cdvj_dv);
+                double cv_e_Vbici,cs_q_Vbici,cs_q2_Vbici,cv_j_Vbici,cdvj_dv_Vbici,dpart,dpart_Vbici;
+                cV_f          = here->HICUMvdci_t*(1.0-exp(-log(2.4)/model->HICUMzci));
+                cv_e          = (cV_f-Vbici)/here->HICUMvt;
+                cv_e_Vbici    =-1/here->HICUMvt;
+                cs_q          = sqrt(cv_e*cv_e+1.921812);
+                cs_q_Vbici    = cv_e*cv_e_Vbici/cs_q;
+                cs_q2         = (cv_e+cs_q)*0.5;
+                cs_q2_Vbici   = (cv_e_Vbici+cs_q_Vbici)*0.5;
+                cv_j          = cV_f-here->HICUMvt*cs_q2;
+                cv_j_Vbici    =-here->HICUMvt*cs_q2_Vbici;
+                cdvj_dv       = cs_q2/cs_q;
+                cdvj_dv_Vbici = (cs_q2_Vbici*cs_q-cs_q_Vbici*cs_q2)/(cs_q*cs_q);
+                dpart         = here->HICUMcjci0_t*exp(-model->HICUMzci*log(1.0-cv_j/here->HICUMvdci_t));
+                dpart_Vbici   = cv_j_Vbici*model->HICUMzci*dpart/((1.0-cv_j/here->HICUMvdci_t)*here->HICUMvdci_t);
+                Cjcit         = dpart*cdvj_dv+2.4*here->HICUMcjci0_t*(1.0-cdvj_dv);
+                Cjcit_Vbici   = dpart_Vbici*cdvj_dv+dpart*cdvj_dv_Vbici-2.4*here->HICUMcjci0_t*cdvj_dv_Vbici;
             } else {
                 Cjcit   = 0.0;
+                Cjcit_Vbici   = 0.0;
             }
             if(Cjcit > 0.0) {
-                cc      = here->HICUMcjci0_t/Cjcit;
+                cc       = here->HICUMcjci0_t/Cjcit;
+                cc_Vbici = -here->HICUMcjci0_t*Cjcit_Vbici/(Cjcit*Cjcit);
             } else {
-                cc      = 1.0;
+                cc       = 1.0;
+                cc_Vbici = 0.0;
             }
             T_f0    = here->HICUMt0_t+model->HICUMdt0h*(cc-1.0)+model->HICUMtbvl*(1/cc-1.0);
+            T_f0_Vbici = model->HICUMdt0h*cc_Vbici+model->HICUMtbvl*(-cc_Vbici*cc/(cc*cc));
 
             //Effective collector voltage
             vc      = Vciei-here->HICUMvces_t;
@@ -1169,8 +1231,10 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             Tr      = model->HICUMtr;
             VT_f    = model->HICUMmcf*here->HICUMvt;
             i_0f    = here->HICUMc10_t * exp(Vbiei/VT_f);
+            i_0f_Vbiei = i_0f/VT_f;
             i_0r    = here->HICUMc10_t * exp(Vbici/here->HICUMvt);
-//todo: derivatives of i_0f and i_0r must considered below
+            i_0r_Vbici = i_0r/here->HICUMvt;
+//todo: derivatives of T_f0, Q_0, i_0f and i_0r must considered below
             //Initial formulation of forward and reverse component of transfer current
             Q_p     = Q_0;
             if (T_f0 > 0.0 || Tr > 0.0) {
@@ -1259,6 +1323,9 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             Cdci    = model->HICUMtr*itr/here->HICUMvt;
             Crbi    = model->HICUMfcrbi*(Cjei+Cjci+Cdei+Cdci);
             Qrbi    = Crbi*Vbpbi;
+            Qrbi_Vbpbi = Crbi;
+            Qrbi_Vbiei = Vbpbi*model->HICUMfcrbi*(T_f0*itf_Vbiei+Cjei_Vbiei);
+            Qrbi_Vbici = Vbpbi*model->HICUMfcrbi*(model->HICUMtr*itr_Vbici+Cjci_Vbici);
 
             // Qrbi = model->HICUMfcrbi*(Qjei+Qjci+Qdei+Qdci);
 
@@ -1269,17 +1336,19 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
             //Avalanche current
             if((Vbici < 0.0) && (here->HICUMfavl_t > 0.0) && (here->HICUMcjci0_t > 0.0)) { // HICAVL
-                double v_bord,v_q,U0,av,avl,avl_Vbici;
+                double v_bord,v_q,U0,av,avl,avl_Vbici,v_q_Vbici,av_Vbici;
                 v_bord  = here->HICUMvdci_t-Vbici;
                 v_q     = here->HICUMqavl_t/Cjci;
+                v_q_Vbici = -here->HICUMqavl_t*Cjci_Vbici/(Cjci*Cjci);
                 U0      = here->HICUMqavl_t/here->HICUMcjci0_t;
                 if(v_bord > U0) {
                     av        = here->HICUMfavl_t*exp(-v_q/U0);
+                    av_Vbici  = -av*v_q_Vbici/U0;
                     avl       = av*(U0+(1.0+v_q/U0)*(v_bord-U0));
-                    avl_Vbici = (-here->HICUMcjci0_t/Cjci-1)*here->HICUMfavl_t*exp(-here->HICUMcjci0_t/Cjci);
+                    avl_Vbici = av*((-v_q/U0-1)+(v_bord-U0)*v_q_Vbici/U0)+((v_q/U0+1)*(v_bord-U0)+U0)*av_Vbici;
                 } else {
                     avl       = here->HICUMfavl_t*v_bord*exp(-v_q/v_bord);
-                    avl_Vbici = -(v_q*here->HICUMfavl_t*exp(-v_q/v_bord)/v_bord) - here->HICUMfavl_t*exp(-v_q/v_bord);
+                    avl_Vbici = avl*(-v_q/(v_bord*v_bord)-v_q_Vbici/v_bord)-avl/v_bord;
                 }
                 iavl       = itf*avl;
                 iavl_Vbici = itf*avl_Vbici;
@@ -1296,15 +1365,18 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 //todo: Qf derivatives to Vbiei, Vbici
             //Internal base resistance = f(Vbiei, Vbici)
             if(here->HICUMrbi0_t > 0.0) { // HICRBI
-                double Qz_nom,f_QR,ETA,Qz0,fQz,ETA_Vbiei,ETA_Vbici, fQz_Vbiei,fQz_Vbici;
+                double Qz_nom,f_QR,ETA,Qz0,fQz,ETA_Vbiei,ETA_Vbici,fQz_Vbiei,fQz_Vbici,Qz_nom_Vbiei,Qz_nom_Vbici,d1;
                 // Consideration of conductivity modulation
                 // To avoid convergence problem hyperbolic smoothing used
                 f_QR    = (1+model->HICUMfdqr0)*here->HICUMqp0_t;
                 Qz0     = Qjei+Qjci+Qf;
                 Qz_nom  = 1+Qz0/f_QR;
-                fQz     = 0.5*(Qz_nom+sqrt(Qz_nom*Qz_nom+0.01));
-                fQz_Vbiei=Cjei/f_QR;
-                fQz_Vbici=Cjci/f_QR;
+                Qz_nom_Vbiei=Cjei/f_QR;
+                Qz_nom_Vbici=Cjci/f_QR;
+                d1      = sqrt(Qz_nom*Qz_nom+0.01);
+                fQz     = 0.5*(Qz_nom+d1);
+                fQz_Vbiei=0.5*(Qz_nom*Qz_nom_Vbiei/d1+Qz_nom_Vbiei);
+                fQz_Vbici=0.5*(Qz_nom*Qz_nom_Vbici/d1+Qz_nom_Vbici);
                 rbi     = here->HICUMrbi0_t/fQz;
                 rbi_Vbiei=-here->HICUMrbi0_t*fQz_Vbiei/(fQz*fQz);
                 rbi_Vbici=-here->HICUMrbi0_t*fQz_Vbici/(fQz*fQz);
@@ -1340,21 +1412,25 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             HICDIO(here->HICUMvt,model->HICUMireps,here->HICUMireps_t,model->HICUMmrep,Vbpei,&irep,&irep_Vbpei);
 
             //Peripheral b-e junction capacitance and charge
-            QJMODF(here->HICUMvt,here->HICUMcjep0_t,here->HICUMvdep_t,model->HICUMzep,here->HICUMajep_t,Vbpei,&Cjep,&Qjep);
+            QJMODF(here->HICUMvt,here->HICUMcjep0_t,here->HICUMvdep_t,model->HICUMzep,here->HICUMajep_t,Vbpei,&Cjep,&Cjep_Vbpei,&Qjep);
 
             //Tunneling current
             if (model->HICUMibets > 0 && (Vbpei <0.0 || Vbiei < 0.0)) { // HICTUN
-                double pocce,czz;
+                double pocce,czz,pocce_Vbpei,czz_Vbpei,pocce_Vbiei,czz_Vbiei;
                 if(model->HICUMtunode==1 && here->HICUMcjep0_t > 0.0 && here->HICUMvdep_t >0.0) {
                     pocce   = exp((1-1/model->HICUMzep)*log(Cjep/here->HICUMcjep0_t));
+                    pocce_Vbpei = Cjep_Vbpei*(1-1/model->HICUMzep)*pocce/Cjep;
                     czz     = -(Vbpei/here->HICUMvdep_t)*here->HICUMibets_t*pocce;
+                    czz_Vbpei = -here->HICUMibets_t/here->HICUMvdep_t*(pocce+Vbpei*pocce_Vbpei);
                     ibet    = czz*exp(-here->HICUMabet_t/pocce);
-                    ibet_Vbpei = -here->HICUMibets_t*pocce/here->HICUMvdep_t*exp(-here->HICUMabet_t/pocce);
+                    ibet_Vbpei = ibet*(here->HICUMabet_t*pocce_Vbpei/(pocce*pocce)+czz_Vbpei/czz);
                 } else if (model->HICUMtunode==0 && here->HICUMcjei0_t > 0.0 && here->HICUMvdei_t >0.0) {
                     pocce   = exp((1-1/model->HICUMzei)*log(Cjei/here->HICUMcjei0_t));
+                    pocce_Vbiei = Cjei_Vbiei*(1-1/model->HICUMzei)*pocce/Cjei;
                     czz     = -(Vbiei/here->HICUMvdei_t)*here->HICUMibets_t*pocce;
+                    czz_Vbiei = -here->HICUMibets_t/here->HICUMvdei_t*(pocce+Vbiei*pocce_Vbiei);
                     ibet    = czz*exp(-here->HICUMabet_t/pocce);
-                    ibet_Vbiei = -here->HICUMibets_t*pocce/here->HICUMvdei_t*exp(-here->HICUMabet_t/pocce);
+                    ibet_Vbiei = ibet*(here->HICUMabet_t*pocce_Vbiei/(pocce*pocce)+czz_Vbiei/czz);
                 } else {
                     ibet    = 0.0;
                     ibet_Vbpei = 0.0;
@@ -1371,22 +1447,24 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             HICDIO(here->HICUMvt,model->HICUMibcxs,here->HICUMibcxs_t,model->HICUMmbcx,Vbpci,&ijbcx,&Ibpci_Vbpci);
 
             //Depletion capacitance and charge at external b-c junction (b,ci)
-            HICJQ(here->HICUMvt,here->HICUMcjcx01_t,here->HICUMvdcx_t,model->HICUMzcx,here->HICUMvptcx_t,Vbci,&CjCx_i,&qjcx0_t_i);
+            HICJQ(here->HICUMvt,here->HICUMcjcx01_t,here->HICUMvdcx_t,model->HICUMzcx,here->HICUMvptcx_t,Vbci,&CjCx_i,&CjCx_i_Vbci,&qjcx0_t_i);
 
             //Depletion capacitance and charge at peripheral b-c junction (bp,ci)
-            HICJQ(here->HICUMvt,here->HICUMcjcx02_t,here->HICUMvdcx_t,model->HICUMzcx,here->HICUMvptcx_t,Vbpci,&CjCx_ii,&qjcx0_t_ii);
+            HICJQ(here->HICUMvt,here->HICUMcjcx02_t,here->HICUMvdcx_t,model->HICUMzcx,here->HICUMvptcx_t,Vbpci,&CjCx_ii,&CjCx_ii_Vbpci,&qjcx0_t_ii);
 
             //Depletion substrate capacitance and charge at inner s-c junction (si,ci)
-            HICJQ(here->HICUMvt,here->HICUMcjs0_t,here->HICUMvds_t,model->HICUMzs,here->HICUMvpts_t,Vsici,&Cjs,&Qjs);
+            HICJQ(here->HICUMvt,here->HICUMcjs0_t,here->HICUMvds_t,model->HICUMzs,here->HICUMvpts_t,Vsici,&Cjs,&Cjs_Vsici,&Qjs);
             /* Peripheral substrate capacitance and charge at s-c junction (s,c)
              * Bias dependent only if model->HICUMvdsp > 0
              */
             if (model->HICUMvdsp > 0) {
-                HICJQ(here->HICUMvt,here->HICUMcscp0_t,here->HICUMvdsp_t,model->HICUMzsp,here->HICUMvptsp_t,Vsc,&Cscp,&Qscp);
+                HICJQ(here->HICUMvt,here->HICUMcscp0_t,here->HICUMvdsp_t,model->HICUMzsp,here->HICUMvptsp_t,Vsc,&Cscp,&Cscp_Vsc,&Qscp);
+                Qscp_Vsc = Cscp;
             } else {
                 // Constant, temperature independent capacitance
                 Cscp = model->HICUMcscp0;
                 Qscp = model->HICUMcscp0*Vsc;
+                Qscp_Vsc = model->HICUMcscp0;
             }
 
             //Parasitic substrate transistor transfer current and diffusion charge
@@ -1613,23 +1691,17 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             Ieie_Veie    = 1/here->HICUMre_t;
             Isis_Vsis    = 1/model->HICUMrsu;
 
-            Qrbi_Vbpbi       = Crbi;
-            Qrbi_Vbiei       = 0.0;
-            Qrbi_Vbici       = 0.0;
-            Qdeix_Vbiei      = Cdei;
-            Qjei_Vbiei       = Cjei;
-            Qdci_Vbici       = Cdci;
-            Qjci_Vbici       = Cjci;
-            Qjep_Vbpei       = Cjep;
             qjcx0_t_i_Vbci   = CjCx_i;
             qjcx0_t_ii_Vbpci = CjCx_ii;
-            Qjs_Vsici        = Cjs;
-            Qscp_Vsc         = Cscp;
+            Qjep_Vbpei       = Cjep;
+            Qdeix_Vbiei      = Cdei;
+            Qdci_Vbici       = Cdci;
             Qbepar1_Vbe      = cbepar1;
             Qbepar2_Vbpe     = cbepar2;
             Qbcpar1_Vbci     = cbcpar1;
             Qbcpar2_Vbpci    = cbcpar2;
             Qsu_Vsis         = model->HICUMcsu;
+            Qjs_Vsici        = Cjs;
 
 //todo: all the derivatives have to be known dI/dT
             Ibbp_Vrth = 0.0;
@@ -1717,9 +1789,9 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                     if(ckt->CKTmode & MODEINITSMSIG) {
                         *(ckt->CKTstate0 + here->HICUMcqrbi)      = Qrbi_Vbpbi;
                         *(ckt->CKTstate0 + here->HICUMcqdeix)     = Qdeix_Vbiei;
-                        *(ckt->CKTstate0 + here->HICUMcqjei)      = Qjei_Vbiei;
+                        *(ckt->CKTstate0 + here->HICUMcqjei)      = Cjei;
                         *(ckt->CKTstate0 + here->HICUMcqdci)      = Qdci_Vbici;
-                        *(ckt->CKTstate0 + here->HICUMcqjci)      = Qjci_Vbici;
+                        *(ckt->CKTstate0 + here->HICUMcqjci)      = Cjci;
                         *(ckt->CKTstate0 + here->HICUMcqjep)      = Qjep_Vbpei;
                         *(ckt->CKTstate0 + here->HICUMcqcx0_t_i)  = qjcx0_t_i_Vbci;
                         *(ckt->CKTstate0 + here->HICUMcqcx0_t_ii) = qjcx0_t_ii_Vbpci;
