@@ -1,0 +1,15 @@
+logic test, PSPICE
+* requires 'set ngbehavior=psa'
+
+v8 8 0 1 Pulse (0 1 0.45 1m 1m 5 10)
+v9 9 0 0
+
+B1 1 0 V=~(~v(9)&v(8)) + 0.5
+
+.control
+tran 1m 1
+plot v(1) v(8) v(9)
+listing
+.endc
+
+.end
