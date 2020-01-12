@@ -922,6 +922,7 @@
     <ClInclude Include="..\src\frontend\variable.h" />
     <ClInclude Include="..\src\frontend\vectors.h" />
     <ClInclude Include="..\src\frontend\wdisp\ftegraf.h" />
+    <ClInclude Include="..\src\frontend\wdisp\wincolor.h" />
     <ClInclude Include="..\src\frontend\wdisp\windisp.h" />
     <ClInclude Include="..\src\frontend\wdisp\winprint.h" />
     <ClInclude Include="..\src\frontend\where.h" />
@@ -939,6 +940,7 @@
     <ClInclude Include="..\src\include\ngspice\cmconstants.h" />
     <ClInclude Include="..\src\include\ngspice\cmproto.h" />
     <ClInclude Include="..\src\include\ngspice\cmtypes.h" />
+    <ClInclude Include="..\src\include\ngspice\wincolornames.h" />
     <ClInclude Include="..\src\include\ngspice\compatmode.h" />
     <ClInclude Include="..\src\include\ngspice\complex.h" />
     <ClInclude Include="..\src\include\ngspice\const.h" />
@@ -1531,6 +1533,7 @@
     <ClCompile Include="..\src\frontend\typesdef.c" />
     <ClCompile Include="..\src\frontend\variable.c" />
     <ClCompile Include="..\src\frontend\vectors.c" />
+    <ClCompile Include="..\src\frontend\wdisp\wincolor.c" />
     <ClCompile Include="..\src\frontend\wdisp\windisp.c" />
     <ClCompile Include="..\src\frontend\wdisp\winprint.c" />
     <ClCompile Include="..\src\frontend\where.c" />
