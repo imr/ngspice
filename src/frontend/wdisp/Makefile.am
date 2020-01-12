@@ -7,6 +7,7 @@ libwindisp_la_SOURCES = \
 	windisp.h	\
 	winprint.c	\
 	winprint.h	\
+	wincolor.c	\
 	ftegraf.h
 
 
