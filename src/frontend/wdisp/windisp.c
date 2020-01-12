@@ -103,6 +103,9 @@ static bool          isblackold = TRUE;
 static int           linewidth = 0;                /* linewidth of grid and plot */
 static int           gridlinewidth = 0;            /* linewidth of grid */
 
+extern void wincolor_init(COLORREF *ColorTable, int noc);
+extern void wincolor_redo(COLORREF *ColorTable, int noc);
+
 /******************************************************************************
 WIN_Init() makes connection to graphics. We have to determine
 
@@ -117,7 +120,6 @@ WIN_Init() does not yet open a window, this happens only in WIN_NewViewport()
 ******************************************************************************/
 int WIN_Init(void)
 {
-    char colorstring[BSIZE_SP];
     char facename[32];
 
 #ifdef EXT_ASC
@@ -132,75 +134,11 @@ int WIN_Init(void)
     dispdev->numlinestyles = 5;   /* see implications in WinPrint! */
     dispdev->numcolors     = NumWinColors;
 
-    /* always, user may have set color0 to white */
-    /* get background color information from spinit, only "white"
-       is recognized as a suitable option! */
-    if (cp_getvar("color0", CP_STRING, colorstring, sizeof(colorstring))) {
-        if (cieq(colorstring, "white")) isblack = FALSE;
-        else isblack = TRUE;
-    }
-
-    /* get linewidth information from spinit */
-    if (!cp_getvar("xbrushwidth", CP_NUM, &linewidth, 0)) {
-        linewidth = 0;
-    }
-    if (linewidth < 0) {
-        linewidth = 0;
-    }
-
-    /* get linewidth for grid from spinit */
-    if (!cp_getvar("gridwidth", CP_NUM, &gridlinewidth, 0))
-        gridlinewidth = linewidth;
-    if (gridlinewidth < 0)
-        gridlinewidth = 0;
-
     /* only for the first time: */
     if (!IsRegistered) {
 
-        isblackold = isblack;
+        wincolor_init(ColorTable, NumWinColors);
 
-        /* Initialize colors */
-        if (isblack) {
-            ColorTable[0] = RGB(  0,   0,   0);   /* black   = background */
-            ColorTable[1] = RGB(255, 255, 255);   /* white   = text and grid */
-        }
-        else {
-            ColorTable[0] = RGB(255, 255, 255);   /* white   = background */
-            ColorTable[1] = RGB(  0,   0,   0);   /* black   = text and grid */
-        }
-
-        ColorTable[2]  = RGB(  0, 255,   0);   /* green   = first line */
-        ColorTable[3]  = RGB(255,   0,   0);   /* red */
-        ColorTable[4]  = RGB(  0,   0, 255);   /* blue */
-        ColorTable[5]  = RGB(255, 255,   0);   /* yellow */
-        ColorTable[6]  = RGB(255,   0, 255);   /* violett */
-        ColorTable[7]  = RGB(  0, 255, 255);   /* azur */
-        ColorTable[8]  = RGB(255, 128,   0);   /* orange */
-        ColorTable[9]  = RGB(128,  64,   0);   /* brown */
-        ColorTable[10] = RGB(128,   0, 255);   /* light violett */
-        ColorTable[11] = RGB(255, 128, 128);   /* pink */
-
-        /* 2. color bank (with different line style */
-        if (isblack) {
-            ColorTable[12] = RGB(255, 255, 255);   /* white */
-        }
-        else {
-            ColorTable[12] = RGB(  0,   0,   0);   /* black */
-        }
-
-        ColorTable[13] = RGB(  0, 255,   0);   /* green */
-        ColorTable[14] = RGB(255,   0,   0);   /* red */
-        ColorTable[15] = RGB(  0,   0, 255);   /* blue */
-        ColorTable[16] = RGB(255, 255,   0);   /* yellow */
-        ColorTable[17] = RGB(255,   0, 255);   /* violett */
-        ColorTable[18] = RGB(  0, 255, 255);   /* azur */
-        ColorTable[19] = RGB(255, 128,   0);   /* orange */
-        ColorTable[20] = RGB(128,  64,   0);   /* brown */
-        ColorTable[21] = RGB(128,   0, 255);   /* light violett */
-        ColorTable[22] = RGB(255, 128, 128);   /* pink */
-
-        /* Ansii fixed font */
-//        PlotFont = GetStockFont(ANSI_FIXED_FONT);
 #ifdef EXT_ASC
         /* register window class */
         TheWndClass.lpszClassName  = WindowName;
@@ -241,28 +179,11 @@ int WIN_Init(void)
         TheWndClassW.cbWndExtra = sizeof(GRAPH *);
         if (!RegisterClassW(&TheWndClassW)) return 1;
 #endif
-
+        IsRegistered = 1;
     }
-    /* not first time */
-    else if (isblackold != isblack) {
-        if (isblack) {
-            ColorTable[0]  = RGB(  0,   0,   0);   /* black   = background */
-            ColorTable[1]  = RGB(255, 255, 255);   /* white    = text and grid */
-        }
-        else {
-            ColorTable[0]  = RGB(255, 255, 255);   /* white   = background */
-            ColorTable[1]  = RGB(  0,   0,   0);   /* black   = text and grid */
-        }
-        if (isblack) {
-            ColorTable[12] = RGB(255, 255, 255);   /* white */
-        }
-        else {
-            ColorTable[12] = RGB(  0,   0,   0);   /* black */
-        }
+    else
+        wincolor_redo(ColorTable, NumWinColors);
 
-        isblackold = isblack;
-    }
-    IsRegistered = 1;
 #ifdef EXT_ASC
     //          lf.lfHeight = 18;
     lf.lfWidth = 0;
@@ -756,15 +677,15 @@ int WIN_NewViewport(GRAPH *graph)
     if (!window)
         return 1;
 
-    /* change the background color of all windows (both new and already plotted)
-       by assessing the registered window class */
-    if (isblack) {
-        SetClassLongPtr(window, GCLP_HBRBACKGROUND, (LONG_PTR)GetStockObject(BLACK_BRUSH));
-    }
-    else {
-        SetClassLongPtr(window, GCLP_HBRBACKGROUND, (LONG_PTR)GetStockObject(WHITE_BRUSH));
-    }
+    SetClassLongPtr(window, GCLP_HBRBACKGROUND, (LONG_PTR)GetStockObject(DC_BRUSH));
+    
+    /* get the DC */  
+    dc = GetDC(window);
+    wd->hDC = dc;
 
+   /* set the background color */
+    SelectObject(dc, GetStockObject(DC_BRUSH));
+    SetDCBrushColor(dc, ColorTable[0]);
 
     wd->wnd = window;
     SetWindowLongPtr(window, 0, (LONG_PTR)graph);
@@ -775,9 +696,8 @@ int WIN_NewViewport(GRAPH *graph)
     /* get the mask */
     GetClientRect(window, &(wd->Area));
 
-    /* get the DC */
-    dc = GetDC(window);
-    wd->hDC = dc;
+
+
 
     /* set the Color Index */
     wd->ColorIndex = 0;
