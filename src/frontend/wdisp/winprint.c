@@ -42,21 +42,23 @@ typedef tPrintData *tpPrintData; /* Zeiger darauf */
 #define pPrintData(g) ((tpPrintData)(g->devdep))
 
 /* externals */
-void WaitForIdle(void); /* Warte, bis keine Events da */
+
+void WaitForIdle(void);                            /* wait until no events */
+extern void wincolor_init(COLORREF* ColorTable, int noc);
 
 /* lokale Variablen */
-static HFONT PlotFont = NULL; /* Font-Merker */
-static HFONT OldFont  = NULL;
-#define NumLines 7 /* Anzahl der LineStyles */
-static int LineTable[NumLines]; /* Speicher fuer die LineStyles */
-static HDC PrinterDC = NULL; /* Device Context */
-#define NumPrintColors 2 /* vordef. Farben */
-static COLORREF ColorTable[NumPrintColors];/* Speicher fuer die Farben */
-static int PrinterWidth  = 1000; /* Breite des Papiers */
-static int PrinterHeight = 1000; /* Hoehe des Papiers */
+static HFONT            PlotFont = NULL;
+static HFONT            OldFont  = NULL;
+#define NumLines 7                                  /* number of LineStyles */
+static int              LineTable[NumLines];        /* LineStyle memory */
+static HDC              PrinterDC = NULL;           /* Device Context */
+#define NumPrintColors 23                           /* number of pre-defined colors */
+static COLORREF         ColorTable[NumPrintColors]; /* color memory */
+static int              PrinterWidth  = 1000;       /* paper width */
+static int              PrinterHeight = 1000;       /* paper height */
 
 /******************************************************************************
- Drucker-Initialisierung
+ printer initialization
 ******************************************************************************/
 
 void WPRINT_PrintInit(HWND hwnd)
@@ -156,39 +158,33 @@ int WPRINT_Init(void)
         pd.hSetupTemplate = NULL;
 
         /* Default-Drucker initialisieren */
-        (void) PrintDlg(&pd);
+        (void) PrintDlg( &pd);
 
         /* Speicher freigeben */
-        if (pd.hDevMode) {
-            GlobalFree(pd.hDevMode);
-        }
-        if (pd.hDevNames) {
-            GlobalFree(pd.hDevNames);
-        }
+        if( pd.hDevMode)  GlobalFree( pd.hDevMode);
+        if( pd.hDevNames) GlobalFree( pd.hDevNames);
 
         /* DC holen */
         PrinterDC = pd.hDC;
         if (!PrinterDC) return 1;
 
         /* Abmasze bestimmen */
-        PrinterWidth    = GetDeviceCaps(PrinterDC, HORZRES);
-        PrinterHeight   = GetDeviceCaps(PrinterDC, VERTRES);
-        pWidth          = GetDeviceCaps(PrinterDC, HORZSIZE);
-        pHeight         = GetDeviceCaps(PrinterDC, VERTSIZE);
+        PrinterWidth    = GetDeviceCaps( PrinterDC, HORZRES);
+        PrinterHeight   = GetDeviceCaps( PrinterDC, VERTRES);
+        pWidth          = GetDeviceCaps( PrinterDC, HORZSIZE);
+        pHeight         = GetDeviceCaps( PrinterDC, VERTSIZE);
 
         /* Mapping Mode setzen (fuer Kreise) */
-        if (pWidth > pHeight) {
+        if ( pWidth > pHeight)
             /* Querformat */
             PrinterWidth = (PrinterHeight * pWidth) / pHeight;
-        }
-        else {
+        else
             /* Hochformat */
             PrinterHeight = (PrinterWidth * pHeight) / pWidth;
-        }
 
-        SetMapMode(PrinterDC, MM_ISOTROPIC);
-        SetWindowExtEx(PrinterDC, PrinterWidth, PrinterHeight, NULL);
-        SetViewportExtEx(PrinterDC, PrinterWidth, PrinterHeight, NULL);
+        SetMapMode( PrinterDC, MM_ISOTROPIC);
+        SetWindowExtEx( PrinterDC, PrinterWidth, PrinterHeight, NULL);
+        SetViewportExtEx( PrinterDC, PrinterWidth, PrinterHeight, NULL);
 
         /* nicht hoeher als breit zeichnen */
         if (pWidth < pHeight) {
@@ -203,8 +199,7 @@ int WPRINT_Init(void)
         dispdev->numcolors     = NumPrintColors;
 
         /* Farben initialisieren */
-        ColorTable[0] = RGB(255,255,255);   /* Weisz */
-        ColorTable[1] = RGB(0,  0,  0); /* Schwarz */
+         wincolor_init(ColorTable, NumPrintColors);
 
         /* LineStyles initialisieren */
         LineTable[0] = PS_SOLID;
@@ -217,16 +212,16 @@ int WPRINT_Init(void)
 
         /* Font */
         if (!PlotFont) {
-            PlotFont = CreateFont(0,0,0,0, FW_DONTCARE, FALSE, FALSE, FALSE,
+            PlotFont = CreateFont( 0,0,0,0, FW_DONTCARE, FALSE, FALSE, FALSE,
                 ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
                 PROOF_QUALITY, FIXED_PITCH, NULL);
         }
 
         /* Abort-Prozedur setzen */
-        SetAbortProc(PrinterDC, WPRINT_Abort);
+        SetAbortProc( PrinterDC, WPRINT_Abort);
     }
     /* fertig */
-    return 0;
+    return (0);
 }
 
 
@@ -239,14 +234,13 @@ int WPRINT_Init(void)
 
 int WPRINT_NewViewport(GRAPH * graph)
 {
+
     TEXTMETRIC      tm;
     tpPrintData     pd;
     DOCINFO         di;
 
     /* Parameter testen */
-    if (!graph) {
-        return 1;
-    }
+    if (!graph) return 1;
 
     /* Initialisiere, falls noch nicht geschehen */
     if (WPRINT_Init() != 0) {
@@ -258,16 +252,15 @@ int WPRINT_NewViewport(GRAPH * graph)
     pd = calloc(1, sizeof(tPrintData));
     if (!pd) return 1;
     graph->devdep = pd;
-    graph->n_byte_devdep = sizeof(tPrintData);
 
     /* Setze den Color-Index */
     pd->ColorIndex = 0;
 
     /* Font setzen */
-    OldFont = SelectObject(PrinterDC, PlotFont);
+    OldFont = SelectObject( PrinterDC, PlotFont);
 
     /* Font-Parameter abfragen */
-    if (GetTextMetrics(PrinterDC, &tm)) {
+    if (GetTextMetrics( PrinterDC, &tm)) {
         graph->fontheight = tm.tmHeight;
         graph->fontwidth  = tm.tmAveCharWidth;
     }
@@ -286,28 +279,32 @@ int WPRINT_NewViewport(GRAPH * graph)
     graph->absolute.height  = PrinterHeight;
 
     /* Druckauftrag anmelden */
-    di.cbSize       = sizeof(DOCINFO);
+    di.cbSize       = sizeof( DOCINFO);
     di.lpszDocName  = graph->plotname;
     di.lpszOutput   = NULL;
-    if (StartDoc(PrinterDC, &di) <= 0) {
-        return 1;
-    }
-    if (StartPage(PrinterDC) <= 0) {
-        return 1;
-    }
+    if (StartDoc( PrinterDC, &di) <= 0) return 1;
+    if (StartPage( PrinterDC) <= 0) return 1;
 
     /* titel drucken */
     if (graph->plotname) {
         UINT align;
-        align = GetTextAlign(PrinterDC);
-        SetTextAlign(PrinterDC, TA_RIGHT | TA_TOP | TA_NOUPDATECP);
-        TextOut(PrinterDC, PrinterWidth-graph->fontwidth, 1, graph->plotname,
-                (int) strlen(graph->plotname));
-        SetTextAlign(PrinterDC, align);
+        align = GetTextAlign( PrinterDC);
+        SetTextAlign( PrinterDC, TA_RIGHT | TA_TOP | TA_NOUPDATECP);
+#ifdef EXT_ASC
+        TextOut(PrinterDC, PrinterWidth - graph->fontwidth, 1, graph->plotname,
+            (int)strlen(graph->plotname));
+#else
+        wchar_t* wtext;
+        wtext = TMALLOC(wchar_t, 2 * strlen(graph->plotname) + 1);
+        MultiByteToWideChar(CP_UTF8, 0, graph->plotname, -1, wtext, 2 * strlen(graph->plotname) + 1);
+        TextOutW(PrinterDC, PrinterWidth - graph->fontwidth, 1, wtext, 2 * (int)strlen(graph->plotname) + 1);
+        tfree(wtext);
+#endif
+        SetTextAlign( PrinterDC, align);
     }
 
     /* fertig */
-    return 0;
+    return(0);
 }
 
 int WPRINT_Close(void)
@@ -348,8 +345,6 @@ int WPRINT_DrawLine(int x1, int y1, int x2, int y2, bool isgrid)
 
     /* Farben/Dicke */
     ColIndex = pd->ColorIndex;
-    if (ColIndex > 1)
-        ColIndex = 1;
 
     MoveToEx(PrinterDC, x1, PrinterHeight - y1, NULL);
     NewPen = CreatePen( LineTable[pd->LineIndex], 0, ColorTable[ColIndex] );
@@ -380,18 +375,11 @@ int WPRINT_Arc(int x0, int y0, int radius, double theta, double delta_theta)
     double  dx0;
     double  dy0;
 
-    if (!currentgraph) {
-        return 0;
-    }
+    if (!currentgraph) return 0;
     pd = pPrintData(currentgraph);
-    if (!pd) {
-        return 0;
-    }
+    if (!pd) return 0;
 
     ColIndex = pd->ColorIndex;
-    if (ColIndex > 1) {
-        ColIndex = 1;
-    }
 
     direction = AD_COUNTERCLOCKWISE;
     if (delta_theta < 0) {
@@ -399,7 +387,7 @@ int WPRINT_Arc(int x0, int y0, int radius, double theta, double delta_theta)
         delta_theta = - delta_theta;
         direction = AD_CLOCKWISE;
     }
-    SetArcDirection(PrinterDC, direction);
+    SetArcDirection( PrinterDC, direction);
 
     /* Geometrische Vorueberlegungen */
     yb      = PrinterHeight;
@@ -411,17 +399,17 @@ int WPRINT_Arc(int x0, int y0, int radius, double theta, double delta_theta)
     r = radius;
     dx0 = x0;
     dy0 = y0;
-    xs = (int) (dx0 + (r * cos(theta)));
-    ys = (int) (dy0 + (r * sin(theta)));
-    xe = (int) (dx0 + (r * cos(theta + delta_theta)));
-    ye = (int) (dy0 + (r * sin(theta + delta_theta)));
+    xs = (int)(dx0 + (r * cos(theta)));
+    ys = (int)(dy0 + (r * sin(theta)));
+    xe = (int)(dx0 + (r * cos(theta + delta_theta)));
+    ye = (int)(dy0 + (r * sin(theta + delta_theta)));
 
     /* Zeichnen */
-    NewPen = CreatePen(LineTable[pd->LineIndex], 0, ColorTable[ColIndex] );
+    NewPen = CreatePen( LineTable[pd->LineIndex], 0, ColorTable[ColIndex] );
     OldPen = SelectObject(PrinterDC, NewPen);
-    Arc(PrinterDC, left, yb-top, right, yb-bottom, xs, yb-ys, xe, yb-ye);
+    Arc( PrinterDC, left, yb-top, right, yb-bottom, xs, yb-ys, xe, yb-ye);
     OldPen = SelectObject(PrinterDC, OldPen);
-    DeleteObject(NewPen);
+    DeleteObject( NewPen);
 
     return 0;
 }
@@ -432,23 +420,24 @@ int WPRINT_Text(char * text, int x, int y, int degrees)
     int ColIndex;
     NG_IGNORE(degrees);
 
-    if (!currentgraph) {
-        return 0;
-    }
+    if (!currentgraph) return 0;
     pd = pPrintData(currentgraph);
-    if (!pd) {
-        return 0;
-    }
+    if (!pd) return 0;
 
     ColIndex = pd->ColorIndex;
-    if (ColIndex > 1) {
-        ColIndex = 1;
-    }
 
-    SetTextColor(PrinterDC, ColorTable[ColIndex]);
-    TextOut(PrinterDC, x, PrinterHeight - y - currentgraph->fontheight,
-            text, (int) strlen(text));
-    return 0;
+    SetTextColor( PrinterDC, ColorTable[ColIndex]);
+
+#ifdef EXT_ASC
+    TextOut(PrinterDC, x, PrinterHeight - y - currentgraph->fontheight, text, (int)strlen(text));
+#else
+    wchar_t* wtext;
+    wtext = TMALLOC(wchar_t, 2 * strlen(text) + 1);
+    MultiByteToWideChar(CP_UTF8, 0, text, -1, wtext, 2 * strlen(text) + 1);
+    TextOutW(PrinterDC, x, PrinterHeight - y - currentgraph->fontheight, wtext, 2 * (int)strlen(text) + 1);
+    tfree(wtext);
+#endif
+    return (0);
 }
 
 
