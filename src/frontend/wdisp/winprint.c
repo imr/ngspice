@@ -43,6 +43,7 @@ typedef tPrintData * tpPrintData;			/* Zeiger darauf */
 
 /* externals */
 void WaitForIdle(void);						/* Warte, bis keine Events da */
+extern void wincolor_init(COLORREF* ColorTable, int noc);
 
 /* lokale Variablen */
 static HFONT			PlotFont = NULL;		/* Font-Merker */
@@ -50,7 +51,7 @@ static HFONT			OldFont  = NULL;
 #define NumLines 7						/* Anzahl der LineStyles */
 static int 			LineTable[NumLines];		/* Speicher fuer die LineStyles */
 static HDC				PrinterDC = NULL;	/* Device Context */
-#define NumPrintColors 2       				/* vordef. Farben */
+#define NumPrintColors 23       				/* vordef. Farben */
 static COLORREF 		ColorTable[NumPrintColors];/* Speicher fuer die Farben */
 static int				PrinterWidth  = 1000;		/* Breite des Papiers */
 static int				PrinterHeight = 1000;		/* Hoehe des Papiers */
@@ -193,8 +194,7 @@ int WPRINT_Init(void)
 		dispdev->numcolors     = NumPrintColors;
 
 		/* Farben initialisieren */
-		ColorTable[0] = RGB(255,255,255);	/* Weisz */
-		ColorTable[1] = RGB(  0,  0,  0);	/* Schwarz */
+		 wincolor_init(ColorTable, NumPrintColors);
 
 		/* LineStyles initialisieren */
 		LineTable[0] = PS_SOLID;
@@ -284,8 +284,16 @@ int WPRINT_NewViewport( GRAPH * graph)
 		UINT align;
 		align = GetTextAlign( PrinterDC);
 		SetTextAlign( PrinterDC, TA_RIGHT | TA_TOP | TA_NOUPDATECP);
-		TextOut( PrinterDC, PrinterWidth-graph->fontwidth, 1, graph->plotname,
+#ifdef EXT_ASC
+		TextOut(PrinterDC, PrinterWidth - graph->fontwidth, 1, graph->plotname,
 			(int)strlen(graph->plotname));
+#else
+		wchar_t* wtext;
+		wtext = TMALLOC(wchar_t, 2 * strlen(graph->plotname) + 1);
+		MultiByteToWideChar(CP_UTF8, 0, graph->plotname, -1, wtext, 2 * strlen(graph->plotname) + 1);
+		TextOutW(PrinterDC, PrinterWidth - graph->fontwidth, 1, wtext, 2 * (int)strlen(graph->plotname) + 1);
+		tfree(wtext);
+#endif
 		SetTextAlign( PrinterDC, align);
 	}
 
@@ -331,8 +339,6 @@ int WPRINT_DrawLine(int x1, int y1, int x2, int y2, bool isgrid)
 
 	/* Farben/Dicke */
 	ColIndex = pd->ColorIndex;
-	if (ColIndex > 1)
-		ColIndex = 1;
 
 	MoveToEx(PrinterDC, x1, PrinterHeight - y1, NULL);
 	NewPen = CreatePen( LineTable[pd->LineIndex], 0, ColorTable[ColIndex] );
@@ -368,8 +374,6 @@ int WPRINT_Arc(int x0, int y0, int radius, double theta, double delta_theta)
 	if (!pd) return 0;
 
 	ColIndex = pd->ColorIndex;
-	if (ColIndex > 1)
-		ColIndex = 1;
 
 	direction = AD_COUNTERCLOCKWISE;
 	if (delta_theta < 0) {
@@ -415,12 +419,18 @@ int WPRINT_Text( char * text, int x, int y, int degrees)
 	if (!pd) return 0;
 
 	ColIndex = pd->ColorIndex;
-	if (ColIndex > 1) {
-		ColIndex = 1;
-	}
 
 	SetTextColor( PrinterDC, ColorTable[ColIndex]);
-	TextOut( PrinterDC, x, PrinterHeight - y - currentgraph->fontheight, text, (int) strlen(text));
+
+#ifdef EXT_ASC
+	TextOut(PrinterDC, x, PrinterHeight - y - currentgraph->fontheight, text, (int)strlen(text));
+#else
+	wchar_t* wtext;
+	wtext = TMALLOC(wchar_t, 2 * strlen(text) + 1);
+	MultiByteToWideChar(CP_UTF8, 0, text, -1, wtext, 2 * strlen(text) + 1);
+	TextOutW(PrinterDC, x, PrinterHeight - y - currentgraph->fontheight, wtext, 2 * (int)strlen(text) + 1);
+	tfree(wtext);
+#endif
 	return (0);
 }
 
