@@ -4,6 +4,9 @@
 
 
 #include "ngspice/ngspice.h"
+
+#ifdef HAS_WINGUI
+
 #include "ngspice/cpextern.h"
 #include "ngspice/hash.h"
 #include "ngspice/macros.h"
@@ -99,8 +102,9 @@ void wincolor_redo(COLORREF* ColorTable, int noc)
         if (!cp_getvar(buf, CP_STRING, colorstring, sizeof(colorstring))) {
             if (i == 1) {
                 /* switch the grid and text color depending on background */
-                int tcolor = GetRValue(ColorTable[0]) + GetGValue(ColorTable[0]) + GetBValue(ColorTable[0]);
-                if (tcolor > 250) {
+                int tcolor = GetRValue(ColorTable[0]) + 
+                    (int)(1.5 * GetGValue(ColorTable[0])) + GetBValue(ColorTable[0]);
+                if (tcolor > 360) {
                     ColorTable[1] = RGB(0, 0, 0);
                     i++;
                     bgisblack = FALSE;
@@ -143,4 +147,4 @@ static COLORREF get_wincolor(char *name, int nocolor)
     return RGB(0, 255, 0);
 }
 
-
+#endif
