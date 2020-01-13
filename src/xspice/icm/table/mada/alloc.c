@@ -33,15 +33,19 @@ sf_alloc(int n       /* number of elements */,
 {
     void *ptr;
 
-    size *= (size_t) n;
+    if (n < 0) {
+        cm_message_printf("%s: illegal allocation(%d X %zd bytes)",
+                __FILE__, n, size);
+        return NULL;
+    }
 
-    if (0 >= size)
-        cm_message_printf("%s: illegal allocation(%d bytes)", __FILE__, (int) size);
-
-    ptr = malloc(size);
-
-    if (NULL == ptr)
-        cm_message_printf("%s: cannot allocate %d bytes : ", __FILE__, (int) size);
+    /* Use calloc so that any internal allocations will be set to NULL to
+     * facilitate error recovery */
+    if ((ptr = calloc(n, size)) == NULL) {
+        cm_message_printf("%s: cannot allocate %zd bytes : ",
+                __FILE__, n * size);
+        return NULL;
+    }
 
     return ptr;
 }

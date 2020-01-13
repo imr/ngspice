@@ -204,6 +204,7 @@ call .\aux-udnfunc.bat $(ProjectName)</Command>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\misc\dstring.c" />
     <ClCompile Include="icm\xtraevt\d_to_real\d_to_real-cfunc.c" />
     <ClCompile Include="icm\xtraevt\d_to_real\d_to_real-ifspec.c" />
     <ClCompile Include="icm\xtraevt\int\int-udnfunc.c" />
@@ -225,6 +226,9 @@ call .\aux-udnfunc.bat $(ProjectName)</Command>
     <None Include="..\..\src\xspice\icm\xtraevt\real_gain\ifspec.ifs" />
     <None Include="..\..\src\xspice\icm\xtraevt\real_to_v\cfunc.mod" />
     <None Include="..\..\src\xspice\icm\xtraevt\real_to_v\ifspec.ifs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\include\ngspice\dstring.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -203,6 +203,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\misc\dstring.c" />
     <ClCompile Include="icm\digital\adc_bridge\adc_bridge-cfunc.c">
       <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -242,7 +243,7 @@
     <ClCompile Include="icm\digital\d_lut\d_lut-cfunc.c" />
     <ClCompile Include="icm\digital\d_lut\d_lut-ifspec.c" />
     <ClCompile Include="icm\digital\d_genlut\d_genlut-cfunc.c" />
-    <ClCompile Include="icm\digital\d_genlut\d_genlut-ifspec.c" />    
+    <ClCompile Include="icm\digital\d_genlut\d_genlut-ifspec.c" />
     <ClCompile Include="icm\digital\d_nand\d_nand-cfunc.c">
       <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -329,7 +330,7 @@
     <None Include="..\..\src\xspice\icm\digital\d_fdiv\cfunc.mod" />
     <None Include="..\..\src\xspice\icm\digital\d_fdiv\ifspec.ifs" />
     <None Include="..\..\src\xspice\icm\digital\d_genlut\cfunc.mod" />
-    <None Include="..\..\src\xspice\icm\digital\d_genlut\ifspec.ifs" />    
+    <None Include="..\..\src\xspice\icm\digital\d_genlut\ifspec.ifs" />
     <None Include="..\..\src\xspice\icm\digital\d_inverter\cfunc.mod" />
     <None Include="..\..\src\xspice\icm\digital\d_inverter\ifspec.ifs" />
     <None Include="..\..\src\xspice\icm\digital\d_jkff\cfunc.mod" />
@@ -370,6 +371,9 @@
     <None Include="..\..\src\xspice\icm\digital\d_xnor\ifspec.ifs" />
     <None Include="..\..\src\xspice\icm\digital\d_xor\cfunc.mod" />
     <None Include="..\..\src\xspice\icm\digital\d_xor\ifspec.ifs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\include\ngspice\dstring.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -62,7 +62,7 @@ NON-STANDARD FEATURES
 ===============================================================================*/
 
 /*=== INCLUDE FILES ====================*/
-
+#include <stdbool.h>
 #include <stdio.h>
 #include <ctype.h>
 #include <stdlib.h>
@@ -74,10 +74,21 @@ NON-STANDARD FEATURES
 
 #include "mada/eno2.h"
 
-/*=== CONSTANTS ========================*/
+typedef struct {
+    int   ix;   /* size of array in x */
+    int   iy;   /* size of array in y */
 
-#define OK 0
-#define FAIL 1
+    sf_eno2 newtable;   /* the table, code borrowed from madagascar project */
+
+    /* Input values corresponding to each index. They define the value
+     * in the domain at each index value */
+    double *xcol;   /* array of doubles in x */
+    double *ycol;   /* array of doubles in y */
+
+    double **table; /* f(xi, yj) */
+} Table2_Data_t;
+
+typedef Table2_Data_t Local_Data_t;
 
 /*=== MACROS ===========================*/
 
@@ -100,35 +111,22 @@ struct filesource_state {
 };
 
 
-typedef struct {
 
-    int   ix;   /* size of array in x */
-    int   iy;   /* size of array in y */
 
-    struct filesource_state  *state;   /* the storage array for the
-                                          filesource status. */
-    int init_err;
-
-    sf_eno2 newtable;   /* the table, code borrowed from madagascar project */
-
-    double *xcol;   /* array of floats in x */
-    double *ycol;   /* array of floats in y */
-
-    double **table;
-
-} Local_Data_t;
-
-/* Type definition for each possible token returned. */
-typedef enum token_type_s {CNV_NO_TOK, CNV_STRING_TOK} Cnv_Token_Type_t;
-
-typedef char line_t[82]; /* A SPICE size line. <= 80 characters plus '\n\0' */
 
 /*=== FUNCTION PROTOTYPE DEFINITIONS ===*/
 
-extern int findCrossOver(double arr[], int low, int high, double x);
-extern double BilinearInterpolation(double q11, double q12, double q21, double q22, double x1, double x2, double y1, double y2, double x, double y);
-
+double BilinearInterpolation(double x, double y,
+        int xind, int yind, double **td);
 extern char *CNVgettok(char **s);
+int cnv_get_spice_value(char *str, double *p_value);
+extern int findCrossOver(double arr[], int n, double x);
+
+static void free_local_data(Table2_Data_t *loc);
+static inline double get_local_diff(int n, double *col, int ind);
+static Table2_Data_t *init_local_data(const char *filename, int order);
+
+
 
 /*==============================================================================
 
@@ -168,151 +166,23 @@ NON-STANDARD FEATURES
 
 ==============================================================================*/
 
-/*=== Static CNV_get_spice_value ROUTINE =============*/
-
-/*
-  Function takes as input a string token from a SPICE
-  deck and returns a floating point equivalent value.
-*/
 
 
-static int
-cnv_get_spice_value(char   *str,       /* IN - The value text e.g. 1.2K */
-                    double *p_value)   /* OUT - The numerical value     */
-{
-    /* the following were "int4" devices - jpm */
-    size_t  len;
-    size_t  i;
-    int     n_matched;
 
-    line_t  val_str;
-
-    char    c = ' ';
-    char    c1;
-
-    double  scale_factor;
-    double  value;
-
-    /* Scan the input string looking for an alpha character that is not  */
-    /* 'e' or 'E'.  Such a character is assumed to be an engineering     */
-    /* suffix as defined in the Spice 2G.6 user's manual.                */
-
-    len = strlen(str);
-    if (len > sizeof(val_str) - 1)
-        len = sizeof(val_str) - 1;
-
-    for (i = 0; i < len; i++) {
-        c = str[i];
-        if (isalpha_c(c) && (c != 'E') && (c != 'e'))
-            break;
-        else if (isspace_c(c))
-            break;
-        else
-            val_str[i] = c;
-    }
-    val_str[i] = '\0';
-
-    /* Determine the scale factor */
-
-    if ((i >= len) || !isalpha_c(c))
-        scale_factor = 1.0;
-    else {
-
-        if (isupper_c(c))
-            c = tolower_c(c);
-
-        switch (c) {
-
-        case 't':
-            scale_factor = 1.0e12;
-            break;
-
-        case 'g':
-            scale_factor = 1.0e9;
-            break;
-
-        case 'k':
-            scale_factor = 1.0e3;
-            break;
-
-        case 'u':
-            scale_factor = 1.0e-6;
-            break;
-
-        case 'n':
-            scale_factor = 1.0e-9;
-            break;
-
-        case 'p':
-            scale_factor = 1.0e-12;
-            break;
-
-        case 'f':
-            scale_factor = 1.0e-15;
-            break;
-
-        case 'm':
-            i++;
-            if (i >= len) {
-                scale_factor = 1.0e-3;
-                break;
-            }
-            c1 = str[i];
-            if (!isalpha_c(c1)) {
-                scale_factor = 1.0e-3;
-                break;
-            }
-            if (islower_c(c1))
-                c1 = toupper_c(c1);
-            if (c1 == 'E')
-                scale_factor = 1.0e6;
-            else if (c1 == 'I')
-                scale_factor = 25.4e-6;
-            else
-                scale_factor = 1.0e-3;
-            break;
-
-        default:
-            scale_factor = 1.0;
-        }
-    }
-
-    /* Convert the numeric portion to a float and multiply by the */
-    /* scale factor.                                              */
-
-    n_matched = sscanf(val_str, "%le", &value);
-
-    if (n_matched < 1) {
-        *p_value = 0.0;
-        return FAIL;
-    }
-
-    *p_value = value * scale_factor;
-    return OK;
-}
-
-static void
-cm_table2D_callback(ARGS, Mif_Callback_Reason_t reason)
+static void cm_table2D_callback(ARGS,
+        Mif_Callback_Reason_t reason)
 {
     switch (reason) {
         case MIF_CB_DESTROY: {
-            int i;
-            Local_Data_t *loc = STATIC_VAR (locdata);
-            if (!loc)
-                break;
-            free(loc->state);
-            for (i = 0; i < loc->iy; i++)
-               free(loc->table[i]);
-            free(loc->table);
-            free(loc->xcol);
-            free(loc->ycol);
-            sf_eno2_close (loc->newtable);
-            free(loc);
-            STATIC_VAR (locdata) = loc = NULL;
+            Table2_Data_t *loc = STATIC_VAR(locdata);
+            if (loc) {
+                free_local_data(loc);
+                STATIC_VAR(locdata) = loc = NULL;
+            }
             break;
-        }
-    }
-}
+        } /* end of case MIF_CB_DESTROY */
+    } /* end of switch over reason being called */
+} /* end of function cm_table2D_callback */
 
 
 
@@ -359,7 +229,7 @@ ix
 iy
 * x row independent variables
 x0 x1 x2 x3 ... xix-1
-y column independent variables
+* y column independent variables
 y0 y1 y2 y3 ... yiy-1
 * table
 x0y0 x1y0 x2y0 ... xix-1y0
@@ -374,339 +244,89 @@ x0yiy-1 x1yiy-1 x2yiy-1 ... xix-1yiy-1
 /*=== CM_table2D ROUTINE ===*/
 
 
-void
-cm_table2D(ARGS)   /* structure holding parms, inputs, outputs, etc. */
+void cm_table2D(ARGS)   /* structure holding parms, inputs, outputs, etc. */
 {
     int size, xind, yind;
     double xval, yval, xoff, yoff, xdiff, ydiff;
     double derivval[2], outval;
-    double q11, q12, q21, q22, x1, x2, y1, y2;
 
-    Local_Data_t *loc;   /* Pointer to local static data, not to be included
+    Table2_Data_t *loc;   /* Pointer to local static data, not to be included
                             in the state vector */
-    Mif_Complex_t ac_gain;
 
     size = PORT_SIZE(out);
-    if (INIT == 1) {
-
-        int i;
-        int ix = 0,   /* elements in a row */
-            iy = 0;   /* number of rows */
-        double **table_data;
-        double tmp;
-        char *cFile, *cThisPtr, *cThisLine, *cThisLinePtr;
-        int   isNewline;     /* Boolean indicating we've read a CR or LF */
-        size_t lFileLen;     /* Length of file */
-        size_t lFileRead;    /* Length of file read in */
-        long  lIndex;        /* Index into cThisLine array */
-        int   lLineCount;    /* Current line number */
-        size_t lStartPos;    /* Offset of start of current line */
-        size_t lTotalChars;  /* Total characters read */
-        int   interporder;   /* order of interpolation for eno */
-
+    if (INIT == 1) { /* Must do initializations */
+        STATIC_VAR(locdata) = init_local_data(
+                PARAM(file),
+                PARAM(order));
         CALLBACK = cm_table2D_callback;
-
-        /* allocate static storage for *loc */
-        STATIC_VAR (locdata) = calloc(1, sizeof(Local_Data_t));
-        loc = STATIC_VAR (locdata);
-
-        /* Allocate storage for internal state */
-        loc->state = (struct filesource_state*) malloc(sizeof(struct filesource_state));
-        loc->ix = loc->iy = 0;
-
-        /* open file */
-        loc->state->fp = fopen_with_path(PARAM(file), "r");
-        loc->state->pos = 0;
-        loc->state->atend = 0;
-        if (!loc->state->fp) {
-            char *lbuffer, *p;
-            lbuffer = getenv("NGSPICE_INPUT_DIR");
-            if (lbuffer && *lbuffer) {
-                p = (char*) malloc(strlen(lbuffer) + strlen(DIR_PATHSEP) + strlen(PARAM(file)) + 1);
-                sprintf(p, "%s%s%s", lbuffer, DIR_PATHSEP, PARAM(file));
-                loc->state->fp = fopen(p, "r");
-                free(p);
-            }
-        }
-        struct stat st;
-        if (!loc->state->fp || fstat(fileno(loc->state->fp), &st)) {
-            cm_message_printf("cannot open file %s", PARAM(file));
-            free(loc->state);
-            free(loc);
-            STATIC_VAR (locdata) = loc = NULL;
-            return;
-        }
-        /* get file length */
-        lFileLen = (size_t) st.st_size;
-
-        /* create string to hold the whole file */
-        cFile = calloc(lFileLen + 1, sizeof(char));
-        /* create another string long enough for file manipulation */
-        cThisLine = calloc(lFileLen + 1, sizeof(char));
-        if (cFile == NULL || cThisLine == NULL) {
-            cm_message_printf("Insufficient memory to read file %s", PARAM(file));
-            free(loc->state);
-            free(loc);
-            STATIC_VAR (locdata) = loc = NULL;
-            if(cFile) free(cFile);
-            if(cThisLine) free(cThisLine);
-            return;
-        }
-        /* read whole file into cFile */
-        lFileRead = fread(cFile, sizeof(char), lFileLen, loc->state->fp);
-        fclose(loc->state->fp);
-        /* Number of chars read may be less than lFileLen, because /r are skipt by 'fread' */
-        cFile[lFileRead] = '\0';
-
-        cThisPtr = cFile;
-        cThisLinePtr = cThisLine;
-        lLineCount  = 0L;
-        lTotalChars = 0L;
-
-        while (*cThisPtr) {               /* Read until reaching null char */
-
-            lIndex    = 0L;               /* Reset counters and flags */
-            isNewline = 0;
-            lStartPos = lTotalChars;
-
-            while (*cThisPtr) {
-                if (!isNewline) {         /* Haven't read a LF yet */
-                    if (*cThisPtr == '\n') /* This char is LF */
-                        isNewline = 1;    /* Set flag */
-                }
-                else if (*cThisPtr != '\n') /* Already found LF */
-                    break;                /* Done with line */
-
-                cThisLinePtr[lIndex++] = *cThisPtr++; /* Add char to output and increment */
-                lTotalChars++;
-            }
-
-            cThisLinePtr[lIndex] = '\0';       /* Terminate the string */
-            lLineCount++;                      /* Increment the line counter */
-            /* continue if comment or empty */
-            if (cThisLinePtr[0] == '*' || cThisLinePtr[0] == '\n') {
-                lLineCount--;   /* we count only real lines */
-                continue;
-            }
-
-            if (lLineCount == 1) {
-                cnv_get_spice_value(cThisLinePtr, &tmp);
-                loc->ix = ix = (int) tmp;
-                /* generate row  data structure (x) */
-                loc->xcol = (double*) calloc((size_t) ix, sizeof(double));
-            }
-            else if (lLineCount == 2) {
-                cnv_get_spice_value(cThisLinePtr, &tmp);
-                loc->iy = iy = (int) tmp;
-                /* generate  column data structure (y) */
-                loc->ycol = (double*) calloc((size_t) iy, sizeof(double));
-            }
-            else if (lLineCount == 3) {
-                char *token = CNVgettok(&cThisLinePtr);
-                i = 0;
-                while (token) {
-                    if (i == ix) {
-                        cm_message_printf("Too many numbers in x row.");
-                        loc->init_err = 1;
-                        return;
-                    }
-                    cnv_get_spice_value(token, &loc->xcol[i++]);
-                    free(token);
-                    token = CNVgettok(&cThisLinePtr);
-                }
-                if (i < ix) {
-                    cm_message_printf("Not enough numbers in x row.");
-                    loc->init_err = 1;
-                    return;
-                }
-            }
-            else if (lLineCount == 4) {
-                char *token = CNVgettok(&cThisLinePtr);
-                i = 0;
-                while (token) {
-                    if (i == iy) {
-                        cm_message_printf("Too many numbers in y row.");
-                        loc->init_err = 1;
-                        return;
-                    }
-                    cnv_get_spice_value(token, &loc->ycol[i++]);
-                    free(token);
-                    token = CNVgettok(&cThisLinePtr);
-                }
-                if (i < iy) {
-                    cm_message_printf("Not enough numbers in y row.");
-                    loc->init_err = 1;
-                    return;
-                }
-                /* jump out of while loop to read in the table */
-                break;
-            }
-        }
-
-        /* generate table core */
-        interporder = PARAM(order);
-        /* boundary limits set to param 'order' aren't recognized,
-           so limit them here */
-        if (interporder < 2) {
-            cm_message_printf("Parameter Order=%d not possible, set to minimum value 2", interporder);
-            interporder = 2;
-        }
-        /* int order : interpolation order,
-           int n1, int n2 : data dimensions */
-        loc->newtable = sf_eno2_init(interporder, ix, iy);
-
-        /* create table_data in memory */
-        /* data [n2][n1] */
-        table_data = calloc((size_t) iy, sizeof(double *));
-        for (i = 0; i < iy; i++)
-            table_data[i] = calloc((size_t) ix, sizeof(double));
-
-        loc->table = table_data;
-
-        /* continue reading from cFile */
-        lLineCount = 0;
-        while (*cThisPtr) {               /* Read until reaching null char */
-            char *token;
-
-            lIndex    = 0L;               /* Reset counters and flags */
-            isNewline = 0;
-            lStartPos = lTotalChars;
-
-            while (*cThisPtr) {           /* Read until reaching null char */
-
-                if (!isNewline) {         /* Haven't read a LF yet */
-                    if (*cThisPtr == '\n') /* This char is a LF */
-                        isNewline = 1;    /* Set flag */
-                }
-
-                else if (*cThisPtr != '\n') /* Already found LF */
-                    break;                /* Done with line */
-
-                cThisLinePtr[lIndex++] = *cThisPtr++; /* Add char to output and increment */
-                lTotalChars++;
-            }
-
-            cThisLinePtr[lIndex] = '\0';       /* Terminate the string */
-            lLineCount++;                      /* Increment the line counter */
-            /* continue if comment or empty */
-            if (cThisLinePtr[0] == '*' || cThisLinePtr[0] == '\0') {
-                if (lTotalChars >= lFileLen) {
-                    cm_message_printf("Not enough data in file %s", PARAM(file));
-                    loc->init_err = 1;
-                    return;
-                }
-                lLineCount--;   /* we count only real lines */
-                continue;
-            }
-            token = CNVgettok(&cThisLinePtr);
-            i = 0;
-            while (token) {
-                double tmpval;
-                if (i == ix) {
-                    cm_message_printf("Too many numbers in y row no. %d.", lLineCount);
-                    loc->init_err = 1;
-                    return;
-                }
-
-                /* read table core from cFile, fill local static table structure table_data */
-                cnv_get_spice_value(token, &tmpval);
-                table_data[lLineCount - 1][i++] = tmpval;
-                free(token);
-                token = CNVgettok(&cThisLinePtr);
-            }
-            if (i < ix) {
-                cm_message_printf("Not enough numbers in y row no. %d.", lLineCount);
-                loc->init_err = 1;
-                return;
-            }
-        }
-
-        /* fill table data into eno2 structure */
-        sf_eno2_set (loc->newtable, table_data /* data [n2][n1] */);
-
-        /* free the file memory allocated */
-        free(cFile);
-        free(cThisLine);
-    } /* end of initialization "if (INIT == 1)" */
-
-    loc = STATIC_VAR (locdata);
+    }
 
     /* return immediately if there was an initialization error */
-    if (!loc || loc->init_err == 1)
+    if ((loc = STATIC_VAR(locdata)) == (Table2_Data_t *) NULL) {
         return;
+    }
 
-    /* get input x, y,
-       find corresponding indices,
-       get x and y offsets,
-       call interpolation function with value and derivative */
+    /* get input x, y;
+       find corresponding indices;
+       get x and y offsets;
+       call interpolation functions with value and derivative */
     xval = INPUT(inx);
     yval = INPUT(iny);
 
-    /* find index */
+    /* check table ranges */
     if (xval < loc->xcol[0] || xval > loc->xcol[loc->ix - 1]) {
-        if (PARAM(verbose) > 0)
+        if (PARAM(verbose) > 0) {
             cm_message_printf("x value %g exceeds table limits,\n"
-                              "  please enlarge range of your table",
-                              xval);
+                    "  please enlarge range of your table",
+                    xval);
+        }
         return;
     }
     if (yval < loc->ycol[0] || yval > loc->ycol[loc->iy - 1]) {
-        if (PARAM(verbose) > 0)
+        if (PARAM(verbose) > 0) {
             cm_message_printf("y value %g exceeds table limits,\n"
-                              "  please enlarge range of your table",
-                              yval);
+                    "  please enlarge range of your table",
+                    yval);
+        }
         return;
     }
 
+
+    /*** find indices where interpolation will be done ***/
     /* something like binary search to get the index */
-    xind = findCrossOver(loc->xcol, 0, loc->ix - 1, xval);
-    /* find index with minimum distance between xval and row value */
-    if (fabs(loc->xcol[xind + 1] - xval) < fabs(xval - loc->xcol[xind]))
-        xind++;
+    xind = findCrossOver(loc->xcol, loc->ix, xval);
     xoff = xval - loc->xcol[xind];
-    yind = findCrossOver(loc->ycol, 0, loc->iy - 1, yval);
-    /* find index with minimum distance between yval and column value */
-    if (fabs(loc->ycol[yind + 1] - yval) < fabs(yval - loc->ycol[yind]))
-        yind++;
+    yind = findCrossOver(loc->ycol, loc->iy, yval);
     yoff = yval - loc->ycol[yind];
 
-    /* find local difference around index of independent row and column values */
-    if (xind == loc->ix - 1)
-        xdiff = loc->xcol[xind] - loc->xcol[xind - 1];
-    else if (xind == 0)
-        xdiff = loc->xcol[xind + 1] - loc->xcol[xind];
-    else
-        xdiff = 0.5 * (loc->xcol[xind + 1] - loc->xcol[xind - 1]);
-
-    if (yind == loc->iy - 1)
-        ydiff = loc->ycol[yind] - loc->ycol[yind - 1];
-    else if (yind == 0)
-        ydiff = loc->ycol[yind + 1] - loc->ycol[yind];
-    else
-        ydiff = 0.5 * (loc->ycol[yind + 1] - loc->ycol[yind - 1]);
+    /* Find local difference around index of independent row and
+     * column values */
+    xdiff = get_local_diff(loc->ix, loc->xcol, xind);
+    ydiff = get_local_diff(loc->iy, loc->ycol, yind);
 
     /* Essentially non-oscillatory (ENO) interpolation to obtain the derivatives only.
        Using outval for now yields ngspice op non-convergence */
-    sf_eno2_apply (loc->newtable,
-                   xind, yind,   /* grid location */
-                   xoff, yoff,   /* offset from grid */
-                   &outval,      /* output data value */
-                   derivval,     /* output derivatives [2] */
-                   DER           /* what to compute [FUNC, DER, BOTH] */
-                   );
+    sf_eno2_apply(loc->newtable,
+                  xind, yind,   /* grid location */
+                  xoff, yoff,   /* offset from grid */
+                  &outval,      /* output data value */
+                  derivval,     /* output derivatives [2] */
+                  DER           /* what to compute [FUNC, DER, BOTH] */
+                  );
 
-    /* bilinear interpolation to obtain the output value */
-    xind = findCrossOver(loc->xcol, 0, loc->ix - 1, xval);
-    yind = findCrossOver(loc->ycol, 0, loc->iy - 1, yval);
-    x1 = loc->xcol[xind];
-    x2 = loc->xcol[xind + 1];
-    y1 = loc->ycol[yind];
-    y2 = loc->ycol[yind + 1];
-    q11 = loc->table[yind][xind];
-    q12 = loc->table[yind + 1][xind];
-    q21 = loc->table[yind][xind + 1];
-    q22 = loc->table[yind + 1][xind + 1];
-    outval = BilinearInterpolation(q11, q12, q21, q22, x1, x2, y1, y2, xval, yval);
+    /* xind and yind may become too large */
+    if (xind == loc->ix - 1) {
+        --xind;
+    }
+    if (yind == loc->iy - 1) {
+        --yind;
+    }
+
+    /* Overwrite outval from sf_eno2_apply by bilinear interpolation */
+    outval = BilinearInterpolation(
+            xoff / (loc->xcol[xind + 1] - loc->xcol[xind]),
+            yoff / (loc->ycol[yind + 1] - loc->ycol[yind]),
+            xind, yind, loc->table);
 
     if (ANALYSIS != MIF_AC) {
         double xderiv, yderiv, outv;
@@ -717,10 +337,14 @@ cm_table2D(ARGS)   /* structure holding parms, inputs, outputs, etc. */
         yderiv = PARAM(gain) * derivval[1] / ydiff;
         PARTIAL(out, iny) = yderiv;
 
-        if (PARAM(verbose) > 1)
-            cm_message_printf("\nI: %g, xval: %g, yval: %g, xderiv: %g, yderiv: %g", outv, xval, yval, xderiv, yderiv);
+        if (PARAM(verbose) > 1) {
+            cm_message_printf("\nI: %g, xval: %g, yval: %g, "
+                    "xderiv: %g, yderiv: %g",
+                    outv, xval, yval, xderiv, yderiv);
+        }
     }
     else {
+        Mif_Complex_t ac_gain;
         ac_gain.real = PARAM(gain) * derivval[0] / xdiff;
         ac_gain.imag= 0.0;
         AC_GAIN(out, inx) = ac_gain;
@@ -728,5 +352,388 @@ cm_table2D(ARGS)   /* structure holding parms, inputs, outputs, etc. */
         ac_gain.imag= 0.0;
         AC_GAIN(out, iny) = ac_gain;
     }
+} /* end of function cm_table2D */
 
-}
+
+
+/* This function initializes local data */
+static Table2_Data_t *init_local_data(const char *filename, int order)
+{
+    int xrc = 0;
+    int ix = 0,   /* elements in a row */
+        iy = 0;   /* number of rows */
+
+    double **table_data;
+    double tmp;
+    FILE *fp = (FILE *) NULL; /* Handle to file */
+    char *cFile = (char *) NULL;
+    char *cThisLine = (char *) NULL;
+    char *cThisPtr, *cThisLinePtr;
+    size_t lFileLen;     /* Length of file */
+    size_t lFileRead;    /* Length of file read in */
+    int   lLineCount;    /* Current line number */
+    size_t lTotalChar;   /* Total characters read */
+    int   interporder;   /* order of interpolation for eno */
+    Table2_Data_t *loc = (Table2_Data_t *) NULL; /* local data */
+
+
+    /* Allocate static storage for *loc */
+    if ((loc = (Table2_Data_t *) calloc(1,
+            sizeof(Table2_Data_t))) == (Table2_Data_t *) NULL) {
+        cm_message_printf("cannot allocate memory for lookup table.");
+        xrc = -1;
+        goto EXITPOINT;
+    }
+
+    /* Init row and column counts to 0 (actually already were due
+     * to calloc) */
+    loc->ix = loc->iy = 0;
+
+    /* open file */
+    fp = fopen_with_path(filename, "r");
+    if (!fp) { /* Standard open attempt failed */
+        const char * const lbuffer = getenv("NGSPICE_INPUT_DIR");
+        if (lbuffer && *lbuffer) {
+            char * const p = (char *) malloc(strlen(lbuffer) +
+                    strlen(DIR_PATHSEP) +
+                    strlen(filename) + 1);
+            if (p == (char *) NULL) {
+                cm_message_printf("cannot allocate buffer to "
+                        "attempt alternate file open.");
+                xrc = -1;
+                goto EXITPOINT;
+            }
+            (void) sprintf(p, "%s%s%s",
+                    lbuffer, DIR_PATHSEP, filename);
+            fp = fopen(p, "r");
+            free(p);
+        }
+    }
+
+    /* Test for valid file pointer */
+    if (!fp) {
+        cm_message_printf("cannot open file %s", filename);
+        xrc = -1;
+        goto EXITPOINT;
+    }
+
+    /* Find the size of the data file */
+    {
+        struct stat st;
+        if (fstat(fileno(fp), &st)) {
+            cm_message_printf("cannot get length of file %s",
+                    filename);
+            xrc = -1;
+            goto EXITPOINT;
+        }
+        /* Copy file length */
+        lFileLen = (size_t) st.st_size;
+    }
+
+    /* create string to hold the whole file */
+    cFile = calloc(lFileLen + 1, sizeof(char));
+    /* create another string long enough for file manipulation */
+    cThisLine = calloc(lFileLen + 1, sizeof(char));
+    if (cFile == NULL || cThisLine == NULL) {
+        cm_message_printf("Insufficient memory to read file %s",
+                filename);
+        xrc = -1;
+        goto EXITPOINT;
+    }
+
+    /* read whole file into cFile */
+    {
+        /* Number of chars read may be less than lFileLen, because /r are
+         * skipped by 'fread' when file opened in text mode */
+        lFileRead = fread(cFile, sizeof(char), lFileLen, fp);
+        const int file_error = ferror(fp);
+        fclose(fp); /* done with file */
+        if (file_error) {
+            cm_message_printf("Error reading data file %s", filename);
+            xrc = -1;
+            goto EXITPOINT;
+        }
+    }
+    /* Number of chars read may be less than lFileLen, because /r are
+     * skipped by 'fread' when file opened in text mode */
+    cFile[lFileRead] = '\0';
+
+    cThisPtr = cFile;
+    cThisLinePtr = cThisLine;
+    lLineCount  = 0L;
+    lTotalChar = 0L;
+
+    while (*cThisPtr) { /* Read until reaching null char */
+        long lIndex = 0L; /* Index into cThisLine array */
+        bool isNewline = false; /* Boolean indicating read a CR or LF */
+
+        while (*cThisPtr) { /* Read until reaching null char */
+            if (!isNewline) { /* Haven't read a LF yet */
+                if (*cThisPtr == '\n') { /* This char is a LF */
+                    isNewline = true;    /* Set flag */
+                }
+            }
+            else if (*cThisPtr != '\n') { /* Already found LF */
+                break;                /* Done with line */
+            }
+
+            /* Add char to output and increment */
+            cThisLinePtr[lIndex++] = *cThisPtr++;
+            lTotalChar++;
+        }
+
+        cThisLinePtr[lIndex] = '\0';       /* Terminate the string */
+        lLineCount++;                      /* Increment the line counter */
+        /* continue if comment or empty */
+        if (cThisLinePtr[0] == '*' || cThisLinePtr[0] == '\n') {
+            lLineCount--;   /* we count only real lines */
+            continue;
+        }
+
+        if (lLineCount == 1) {
+            cnv_get_spice_value(cThisLinePtr, &tmp);
+            loc->ix = ix = (int) tmp;
+            /* generate row  data structure (x) */
+            if ((loc->xcol = (double *) calloc((size_t) ix,
+                    sizeof(double))) == (double *) NULL) {
+                cm_message_printf("Unable to allocate row structure.");
+                xrc = -1;
+                goto EXITPOINT;
+            }
+        }
+        else if (lLineCount == 2) {
+            cnv_get_spice_value(cThisLinePtr, &tmp);
+            loc->iy = iy = (int) tmp;
+            /* generate  column data structure (y) */
+            if ((loc->ycol = (double *) calloc((size_t) iy,
+                    sizeof(double))) == (double *) NULL) {
+                cm_message_printf("Unable to allocate colum structure.");
+                xrc = -1;
+                goto EXITPOINT;
+            }
+        }
+        else if (lLineCount == 3) {
+            char *token = CNVgettok(&cThisLinePtr);
+            int i = 0;
+            while (token) {
+                if (i == ix) {
+                    cm_message_printf("Too many numbers in x row.");
+                    xrc = -1;
+                    goto EXITPOINT;
+                }
+                cnv_get_spice_value(token, &loc->xcol[i++]);
+                free(token);
+                token = CNVgettok(&cThisLinePtr);
+            }
+            if (i < ix) {
+                cm_message_printf("Not enough numbers in x row.");
+                xrc = -1;
+                goto EXITPOINT;
+            }
+        }
+        else if (lLineCount == 4) {
+            char *token = CNVgettok(&cThisLinePtr);
+            int i = 0;
+            while (token) {
+                if (i == iy) {
+                    cm_message_printf("Too many numbers in y row.");
+                    xrc = -1;
+                    goto EXITPOINT;
+                }
+                cnv_get_spice_value(token, &loc->ycol[i++]);
+                free(token);
+                token = CNVgettok(&cThisLinePtr);
+            }
+            if (i < iy) {
+                cm_message_printf("Not enough numbers in y row.");
+                xrc = -1;
+                goto EXITPOINT;
+
+            }
+            /* jump out of while loop to read in the table */
+            break;
+        }
+    }
+
+    /* generate table core */
+    interporder = order;
+    /* boundary limits set to param 'order' aren't recognized,
+       so limit them here */
+    if (interporder < 2) {
+        cm_message_printf("Parameter Order=%d not possible, "
+                "set to minimum value 2",
+                interporder);
+        interporder = 2;
+    }
+    /* int order : interpolation order,
+       int n1, int n2 : data dimensions */
+    if ((loc->newtable = sf_eno2_init(
+            interporder, ix, iy)) == (sf_eno2) NULL) {
+        cm_message_printf("eno2 initialization failure.");
+        xrc = -1;
+        goto EXITPOINT;
+
+    }
+
+    /* create table_data in memory */
+    /* data [n2][n1] */
+    if ((loc->table = table_data = (double **) calloc((size_t) iy,
+            sizeof(double *))) == (double **) NULL) {
+        cm_message_printf("Unable to allocate data table.");
+        free(cFile);
+        free(cThisLine);
+        free_local_data(loc);
+        return (Local_Data_t *) NULL;
+    }
+
+    {
+        int i;
+        for (i = 0; i < iy; i++) {
+            if ((table_data[i] = (double *) calloc((size_t) ix,
+                    sizeof(double))) == (double *) NULL) {
+                cm_message_printf("Unable to allocate data table "
+                        "row %d", i + 1);
+                free(cFile);
+                free(cThisLine);
+                free_local_data(loc);
+                return (Local_Data_t *) NULL;
+            }
+        }
+    }
+
+    loc->table = table_data; /* give to local data structure */
+
+
+    /* continue reading f(x,y) values from cFile */
+    lLineCount = 0;
+    while (*cThisPtr) {           /* Read until reaching null char */
+            char *token;
+            long int lIndex = 0;    /* Index into cThisLine array */
+            bool isNewline = 0;
+
+        while (*cThisPtr) {       /* Read until reaching null char */
+
+            if (!isNewline) {         /* Haven't read a LF yet */
+                if (*cThisPtr == '\n') /* This char is a LF */
+                    isNewline = 1;    /* Set flag */
+            }
+
+            else if (*cThisPtr != '\n') { /* Already found LF */
+                break;                /* Done with line */
+            }
+
+            /* Add char to output and increment */
+            cThisLinePtr[lIndex++] = *cThisPtr++;
+            lTotalChar++;
+        }
+
+        cThisLinePtr[lIndex] = '\0'; /* Terminate the string */
+        lLineCount++; /* Increment the line counter */
+        /* continue if comment or empty */
+        if (cThisLinePtr[0] == '*' || cThisLinePtr[0] == '\0') {
+            if (lTotalChar >= lFileLen) {
+                cm_message_printf("Not enough data in file %s",
+                        filename);
+                free(cFile);
+                free(cThisLine);
+                free_local_data(loc);
+                return (Local_Data_t *) NULL;
+            }
+            lLineCount--;   /* we count only real lines */
+            continue;
+        }
+        token = CNVgettok(&cThisLinePtr);
+        {
+            int i = 0;
+            while (token) {
+                double tmpval;
+                if (i == ix) {
+                    cm_message_printf("Too many numbers in y row no. %d.",
+                            lLineCount);
+                    xrc = -1;
+                    goto EXITPOINT;
+                }
+
+                /* read table core from cFile, fill local static table
+                 * structure table_data */
+                cnv_get_spice_value(token, &tmpval);
+                table_data[lLineCount - 1][i++] = tmpval;
+                free(token);
+                token = CNVgettok(&cThisLinePtr);
+            }
+            if (i < ix) {
+                cm_message_printf("Not enough numbers in y row no. %d.",
+                        lLineCount);
+                xrc = -1;
+                goto EXITPOINT;
+            }
+        }
+    } /* end of loop over characters read from file */
+
+    /* fill table data into eno2 structure */
+    sf_eno2_set(loc->newtable, table_data /* data [n2][n1] */);
+
+EXITPOINT:
+    /* free the file and memory allocated */
+    if (cFile != (char *) NULL) {
+        free(cFile);
+    }
+    if (cThisLine != (char *) NULL) {
+        free(cThisLine);
+    }
+    if (fp != (FILE *) NULL) {
+        (void) fclose(fp);
+    }
+
+    /* On error free any initialization that was started */
+    if (xrc != 0) {
+        if (loc != (Table2_Data_t *) NULL) {
+            free_local_data(loc);
+            loc = (Table2_Data_t *) NULL;
+        }
+    }
+    return loc;
+} /* end of function init_local_data */
+
+
+
+/* Free memory allocations in Local_Data_t structure */
+static void free_local_data(Table2_Data_t *loc)
+{
+    if (loc == (Table2_Data_t *) NULL) {
+        return;
+    }
+
+    /* Free data table and related values */
+    if (loc->table) {
+        int i;
+        int n_y = loc->iy;
+        for (i = 0; i < n_y; i++) {
+            free(loc->table[i]);
+        }
+
+        free(loc->table);
+    }
+
+    free(loc->xcol);
+    free(loc->ycol);
+    sf_eno2_close(loc->newtable);
+    free(loc);
+} /* end of function free_local_data */
+
+
+
+/* Finds difference between column values */
+static inline double get_local_diff(int n, double *col, int ind)
+{
+    if (ind >= n - 1) {
+        return col[n - 1] - col[n - 2];
+    }
+    if (ind <= 0) {
+        return col[1] - col[0];
+    }
+    return 0.5 * (col[ind + 1] - col[ind - 1]);
+} /* end of function get_local_diff */
+
+
+

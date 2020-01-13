@@ -203,6 +203,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\misc\dstring.c" />
     <ClCompile Include="icm\analog\climit\climit-cfunc.c" />
     <ClCompile Include="icm\analog\climit\climit-ifspec.c" />
     <ClCompile Include="icm\analog\divide\divide-cfunc.c" />
@@ -290,6 +291,9 @@
     <None Include="..\..\src\xspice\icm\analog\triangle\ifspec.ifs" />
     <None Include="..\..\src\xspice\icm\analog\file_source\cfunc.mod" />
     <None Include="..\..\src\xspice\icm\analog\file_source\ifspec.ifs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\include\ngspice\dstring.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
