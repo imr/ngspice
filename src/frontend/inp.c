@@ -522,13 +522,14 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
         }
     }
     endTime = seconds();
-    /* store input directory to a variable*/
+    /* store input directory to a variable */
     if (fp) {
         cp_vset("inputdir", CP_STRING, dir_name);
     }
     tfree(dir_name);
 
-    /* if nothing came back from inp_readall, just close fp and return to caller */
+    /* if nothing came back from inp_readall, just close fp and return to
+     * caller */
     if (!deck) {
         if (!intfile && fp)
             fclose(fp);
@@ -549,11 +550,13 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
 
         /* Save the title before INPgetTitle gets it. */
         tt = copy(deck->line);
-        if (!deck->nextcard)
+        if (!deck->nextcard) {
             fprintf(cp_err, "Warning: no lines in input\n");
+        }
     }
-    if (fp && !intfile)
+    if (fp && !intfile) {
         fclose(fp);
+    }
 
     /* Now save the IO context and start a new control set.  After we
        are done with the source we'll put the old file descriptors
@@ -599,14 +602,15 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
         ft_dotsaves();
     } /* end if (comfile) */
 
-    else {    /* must be regular deck . . . . */
+    else {  /* must be regular deck . . . . */
         /* loop through deck and handle control cards */
         for (dd = deck->nextcard; dd; dd = ld->nextcard) {
             /* get temp from deck */
             if (ciprefix(".temp", dd->line)) {
                 s = skip_ws(dd->line + 5);
-                if (temperature)
+                if (temperature) {
                     txfree(temperature);
+                }
                 temperature = copy(s);
             }
             /* Ignore comment lines, but not lines begining with '*#',
