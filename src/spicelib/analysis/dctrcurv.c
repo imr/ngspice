@@ -150,7 +150,9 @@ DCtrCurv(CKTcircuit *ckt, int restart)
         }
 
         SPfrontEnd->IFerrorf (ERR_FATAL,
-                              "DCtrCurv: source / resistor %s not in circuit", job->TRCVvName[i]);
+                "DC Transfer Function: Voltage source, current source, or "
+                "resistor named \"%s\" is not in the circuit",
+                job->TRCVvName[i]);
         return(E_NODEV);
 
     found:;
