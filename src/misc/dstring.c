@@ -276,7 +276,7 @@ int ds_cat_vprintf(DSTRING *p_ds, const char *sz_fmt, va_list p_arg)
     }
 
     /* Else check for buffer large enough and set length if it is */
-    if (rc < n_byte_free) {
+    if ((size_t) rc < n_byte_free) {
         p_ds->length += rc;
         return DS_E_OK;
     }
