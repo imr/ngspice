@@ -188,7 +188,7 @@ typedef enum {
  * Complex numbers
  */
 
-typedef struct {
+typedef struct Mif_Complex {
 
     double  real;
     double  imag;
