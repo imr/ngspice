@@ -10,7 +10,8 @@ include makedefs
 CMDIRS = spice2poly digital analog xtradev xtraevt table
 
 
-all:
+#Invoke $(MAKE) for each of the CMDDIRS
+all: dstring.o # One common dstring object file for all code modules
 	for cm in $(CMDIRS) ; do \
 		$(MAKE) cm=$$cm $$cm/$$cm.cm \
 		|| exit 1; \
@@ -34,6 +35,7 @@ uninstall:
 
 
 clean:
+	rm -f dstring.o
 	for cm in $(CMDIRS) ; do \
 		$(MAKE) cm=$$cm cm-clean \
 		|| exit 1; \
@@ -41,6 +43,10 @@ clean:
 
 
 #-----------------------------------------------------------------------------
+NGSRCDIR = $(CURDIR)/../../../../src
+
+dstring.o : $(NGSRCDIR)/misc/dstring.c $(NGSRCDIR)/include/ngspice/dstring.h
+	$(COMPILE) -I $(NGSRCDIR)/include/ngspice -o $@ -c $<
 
 ifdef cm
 
@@ -57,6 +63,7 @@ cm-gens := \
 
 cm-objs := \
 	$(cm)/dlmain.o \
+	dstring.o \
 	$(modlst:%=$(cm)/%/cfunc.o) \
 	$(modlst:%=$(cm)/%/ifspec.o) \
 	$(udnlst:%=$(cm)/%/udnfunc.o)
