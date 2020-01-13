@@ -700,8 +700,7 @@ doit(struct card *deck, wordlist *modnames) {
 /*-------------------------------------------------------------------*/
 /* Copy a deck, including the actual lines.                          */
 /*-------------------------------------------------------------------*/
-struct card *
-inp_deckcopy(struct card *deck) {
+struct card * inp_deckcopy(struct card *deck) {
     struct card *d = NULL, *nd = NULL;
 
     while (deck) {
@@ -727,8 +726,7 @@ inp_deckcopy(struct card *deck) {
  * without .control section(s).
  * First line is always copied (except being .control).
  */
-struct card *
-inp_deckcopy_oc(struct card *deck)
+struct card *inp_deckcopy_oc(struct card * deck)
 {
     struct card *d = NULL, *nd = NULL;
     int skip_control = 0, i = 0;
@@ -749,26 +747,29 @@ inp_deckcopy_oc(struct card *deck)
             deck = deck->nextcard;
             continue;
         }
-        if (nd) {
-            d->nextcard = TMALLOC(struct card, 1);
-            d = d->nextcard;
+        if (nd) { /* First card already found */
+            /* d is the card at the end of the deck */
+            d = d->nextcard = TMALLOC(struct card, 1);
         }
-        else {
+        else { /* This is the first card */
             nd = d = TMALLOC(struct card, 1);
         }
         d->linenum_orig = deck->linenum;
         d->linenum = i++;
         d->line = copy(deck->line);
-        if (deck->error)
+        if (deck->error) {
             d->error = copy(deck->error);
+        }
         d->actualLine = NULL;
         deck = deck->nextcard;
-        while (deck && *(deck->line) == '*')
+        while (deck && *(deck->line) == '*') { /* skip comments */
             deck = deck->nextcard;
-    }
+        }
+    } /* end of loop over cards in the source deck */
 
-    return (nd);
-}
+    return nd;
+} /* end of function inp_deckcopy_oc */
+
 
 
 /*-------------------------------------------------------------------
