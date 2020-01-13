@@ -1,10 +1,10 @@
 * test de titré
 .control
 set hcopydevtype = postscript
-set hcopypscolor=25
+set hcopypscolor=18
 set hcopypstxcolor=21
 set hcopyscale=1
-set color2=rgb:F/0/0
+set color2=rgb:FF/0/0
 setcs hcopyfont=Arial
 set hcopyfontsize=18
 
@@ -17,8 +17,6 @@ setcs xfont='Noto Sans Chinese'
 
 set gridwidth=4
 set xbrushwidth=1
-
-hardcopy
 
 plot y vs x xlabel 'Labellisé X' ylabel 'Labellisé Y: ÜüÖöÄäÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ' title 'Titré'
 plot y vs x xlabel '我能吞下玻璃而不伤身体' ylabel 'Я могу есть стекло, оно мне не вредит' title ' أنا قادر على أكل الزجاج و هذا لا يؤلمني.'
