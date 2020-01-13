@@ -1,4 +1,4 @@
-titré 'test of various color inputs for background, text/grid and graphs 1'
+* titré 'test of various color inputs for background, text/grid and graphs 2'
 .control
 set hcopydevtype = postscript
 set hcopypscolor=25
@@ -20,7 +20,8 @@ setcs xfont='Noto Sans'
 set gridwidth=4
 set xbrushwidth=1
 set color0=white
-set color2=brown
+*set color2=brown
+set color2=rgbd:255/0/0
 plot y vs x xlabel 'Labellisé X' ylabel 'Labellisé Y: ÜüÖöÄäÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ' title 'Titré'
 set color0=black
 plot y vs x xlabel '我能吞下玻璃而不伤身体' ylabel 'Я могу есть стекло, оно мне не вредит' title ' أنا قادر على أكل الزجاج و هذا لا يؤلمني.'
@@ -28,7 +29,7 @@ plot y vs x xlabel '我能吞下玻璃而不伤身体' ylabel 'Я могу ес�
 *gnuplot test.gn y vs x xlabel 'Labellisé X' ylabel 'tüTÄtö Äü @µ€~' title 'ฉันกินกระจกได้ แต่มันไม่ทำให้ฉันเจ็บ '
 set color0=Blue
 set color1=Yellow
-set color2=Lime
+set color2=rgb:00/FF/00
 set gridwidth=1
 set xbrushwidth=4
 plot y vs x+0.001 xlabel 'Labellisé X' ylabel 'Labellisé Y' title 'Titré 私はガラスを食べられます。それは私を傷つけません' loglog
@@ -37,7 +38,7 @@ set color0=MediumBlue
 set color2=Magenta
 plot y vs x+0.001 xlabel 'Labellisé X' title 'Titré' loglog
 set color0=GreenYellow
-set color2=Magenta
+set color2=rgbd:128/128/75
 plot y vs x+0.001 xlabel 'Labellisé X' title 'Titré' loglog
 set color0=black
 set color2=pink
