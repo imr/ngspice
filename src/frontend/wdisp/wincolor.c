@@ -43,7 +43,57 @@ void wincolor_init_hash(COLORREF *ColorTable, int noc)
             ColorTable[i] = 0; 
     }
 }
+/* evaluate rgb:0/FF/F0 rgb:0/F/0 rgbd:295/0/128 */
+static COLORREF get_wincolor_rgb(char *costr)
+{
+    char *tmpstr;
+    if (ciprefix("rgb:", costr)) {
+        char *t1, *t2, *t3;
+        tmpstr = costr + 4;
+        if (tmpstr) {
+            t1 = gettok_char(&tmpstr, '/', FALSE, FALSE);
+            tmpstr++;
+            t2 = gettok_char(&tmpstr, '/', FALSE, FALSE);
+            tmpstr++;
+            t3 = copy(tmpstr);
+            if (t1 && t2 && t3) {
+                int c1, c2, c3;
+                c1 = (int) strtol(t1, NULL, 16);
+                c2 = (int) strtol(t2, NULL, 16);
+                c3 = (int) strtol(t3, NULL, 16);
+                tfree(t1);
+                tfree(t2);
+                tfree(t3);
+                return RGB(c1, c2, c3);
+            }
+        }
 
+    }
+    else if (ciprefix("rgbd:", costr)) {
+        char *t1, *t2, *t3;
+        tmpstr = costr + 5;
+        if (tmpstr) {
+            t1 = gettok_char(&tmpstr, '/', FALSE, FALSE);
+            tmpstr++;
+            t2 = gettok_char(&tmpstr, '/', FALSE, FALSE);
+            tmpstr++;
+            t3 = copy(tmpstr);
+            if (t1 && t2 && t3) {
+                int c1, c2, c3;
+                c1 = (int) strtol(t1, NULL, 10);
+                c2 = (int) strtol(t2, NULL, 10);
+                c3 = (int) strtol(t3, NULL, 10);
+                tfree(t1);
+                tfree(t2);
+                tfree(t3);
+                return RGB(c1, c2, c3);
+            }
+        }
+    }
+
+    fprintf(stderr, "Error: Cannot detect color in string %s, setting Web Green\n", costr);
+    return RGB(0, 128, 0);
+}
 
 /* ColorTable[0]: background, ColorTable[1]: grid, text */
 void wincolor_init(COLORREF* ColorTable, int noc)
@@ -64,8 +114,9 @@ void wincolor_init(COLORREF* ColorTable, int noc)
         if (!cp_getvar(buf, CP_STRING, colorstring, sizeof(colorstring))) {
             if (i == 1) {
                 /* switch the grid and text color depending on background */
-                int tcolor = GetRValue(ColorTable[0]) + GetGValue(ColorTable[0]) + GetBValue(ColorTable[0]);
-                if (tcolor > 250) {
+                int tcolor = GetRValue(ColorTable[0]) +
+                    (int)(1.5 * GetGValue(ColorTable[0])) + GetBValue(ColorTable[0]);
+                if (tcolor > 360) {
                     ColorTable[1] = RGB(0, 0, 0);
                     i++;
                     bgisblack = FALSE;
@@ -84,6 +135,11 @@ void wincolor_init(COLORREF* ColorTable, int noc)
             else
                 (void)strcpy(colorstring, stdcolornames[i]);
         }
+        else if (ciprefix("rgb", colorstring)){
+            ColorTable[i] =  get_wincolor_rgb(colorstring);
+            i++;
+            continue;
+        }
         ColorTable[i] =  get_wincolor(colorstring, nocolor);
         i++;
     }
@@ -97,7 +153,10 @@ void wincolor_redo(COLORREF* ColorTable, int noc)
     int nocolor = NUMELEMS(ctable);
 
     while (i < noc) {
-        /* when color0 is set to white and color1 is not given, set ColorTable[2] to black */
+        /* when color0 is set to white and color1 is not given, set text and grid color 
+        as ColorTable[1] to black, when color0 is any other color, select black or 
+        white text and grid color according to a weighted value derived from color0. 
+        This selection is a compromise based on visibility.*/
         (void)sprintf(buf, "color%d", i);
         if (!cp_getvar(buf, CP_STRING, colorstring, sizeof(colorstring))) {
             if (i == 1) {
@@ -122,6 +181,11 @@ void wincolor_redo(COLORREF* ColorTable, int noc)
                 (void)strcpy(colorstring, "black");
             else
                 (void)strcpy(colorstring, stdcolornames[i]);
+        }
+        else if (ciprefix("rgb", colorstring)) {
+            ColorTable[i] = get_wincolor_rgb(colorstring);
+            i++;
+            continue;
         }
         ColorTable[i] = get_wincolor(colorstring, nocolor);
         i++;
