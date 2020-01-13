@@ -36,23 +36,74 @@ sf_eno2_init (int order,      /* interpolation order */
               int n1, int n2  /* data dimensions */)
 /*< Initialize interpolation object >*/
 {
-    sf_eno2 pnt;
-    int i2;
+    int xrc = 0;
+    sf_eno2 pnt = (sf_eno2) NULL;
 
-    pnt = (sf_eno2) sf_alloc(1, sizeof(*pnt));
+    if ((pnt = (sf_eno2) sf_alloc(
+            1, sizeof(*pnt))) == (sf_eno2) NULL) {
+        cm_message_printf("Unable to allocate sf_eno2 structure "
+                "in sf_eno2_init");
+        xrc = -1;
+        goto EXITPOINT;
+    }
+
     pnt->order = order;
     pnt->n1 = n1;
     pnt->n2 = n2;
     pnt->ng = 2 * order - 2;
-    if (pnt->ng > pnt->n2)
+    if (pnt->ng > pnt->n2) {
         cm_message_printf("%s: ng=%d is too big", __FILE__, pnt->ng);
-    pnt->jnt = sf_eno_init (order, pnt->ng);
-    pnt->f  = sf_doublealloc (pnt->ng);
-    pnt->f1 = sf_doublealloc (pnt->ng);
-    pnt->ent = (sf_eno*) sf_alloc(n2, sizeof(sf_eno));
-    for (i2 = 0; i2 < n2; i2++)
-        pnt->ent[i2] = sf_eno_init (order, n1);
+        xrc = -1;
+        goto EXITPOINT;
+    }
 
+    if ((pnt->jnt = sf_eno_init(order, pnt->ng)) == (sf_eno) NULL) {
+        cm_message_printf("Unable to initialize field jnt "
+                "in sf_eno2_init");
+        xrc = -1;
+        goto EXITPOINT;
+    }
+
+    if ((pnt->f  = sf_doublealloc (pnt->ng)) == (double *) NULL) {
+        cm_message_printf("Unable to allocate field f in sf_eno2_init()");
+        xrc = -1;
+        goto EXITPOINT;
+    }
+
+    if ((pnt->f1  = sf_doublealloc (pnt->ng)) == (double *) NULL) {
+        cm_message_printf("Unable to allocate field f1 in sf_eno2_init()");
+        xrc = -1;
+        goto EXITPOINT;
+    }
+
+    if ((pnt->ent = (sf_eno *) sf_alloc(
+            n2, sizeof(sf_eno))) == (sf_eno *) NULL) {
+        cm_message_printf("Unable to allocate field ent in sf_eno2_init()");
+        xrc = -1;
+        goto EXITPOINT;
+    }
+
+    {
+        int i2;
+        for (i2 = 0; i2 < n2; i2++) {
+            if ((pnt->ent[i2] = sf_eno_init(
+                    order, n1)) == (sf_eno) NULL) {
+                cm_message_printf("Unable to initialize field ent[%d] "
+                        "in sf_eno3_init()",
+                        i2);
+                xrc = -1;
+                goto EXITPOINT;
+            }
+        }
+    }
+
+EXITPOINT:
+    if (xrc != 0) {
+        if (pnt != (sf_eno2) NULL) {
+            sf_eno2_close(pnt);
+            pnt = (sf_eno2) NULL;
+        }
+    }
     return pnt;
 }
 

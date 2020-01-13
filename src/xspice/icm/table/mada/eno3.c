@@ -37,27 +37,88 @@ sf_eno3_init(int order,             /* interpolation order */
              int n1, int n2, int n3 /* data dimensions */)
 /*< Initialize interpolation object >*/
 {
-    sf_eno3 pnt;
-    int i2, i3;
+    int xrc = 0;
+    sf_eno3 pnt = (sf_eno3) NULL;
 
-    pnt = (sf_eno3) sf_alloc (1, sizeof(*pnt));
+    /* Allocate base structrue */
+    if ((pnt = (sf_eno3) sf_alloc (1, sizeof *pnt)) == (sf_eno3) NULL) {
+        cm_message_printf("Unable to allocate sf_eno3 structure "
+                "in sf_eno3_init");
+        xrc = -1;
+        goto EXITPOINT;
+    }
+
     pnt->order = order;
     pnt->n1 = n1;
     pnt->n2 = n2;
     pnt->n3 = n3;
     pnt->ng = 2 * order - 2;
-    if (pnt->ng > n2 || pnt->ng > n3)
+
+    if (pnt->ng > n2 || pnt->ng > n3) {
         cm_message_printf("%s: ng=%d is too big", __FILE__, pnt->ng);
-    pnt->jnt = sf_eno2_init (order, pnt->ng, pnt->ng);
-    pnt->f   = sf_doublealloc2 (pnt->ng, pnt->ng);
-    pnt->f1  = sf_doublealloc2 (pnt->ng, pnt->ng);
-    pnt->ent = (sf_eno**) sf_alloc (n3, sizeof(sf_eno*));
-    for (i3 = 0; i3 < n3; i3++) {
-        pnt->ent[i3] = (sf_eno*) sf_alloc (n2, sizeof(sf_eno));
-        for (i2 = 0; i2 < n2; i2++)
-            pnt->ent[i3][i2] = sf_eno_init (order, n1);
+        xrc = -1;
+        goto EXITPOINT;
     }
 
+    if ((pnt->jnt = sf_eno2_init(
+            order, pnt->ng, pnt->ng)) == (sf_eno2) NULL) {
+        cm_message_printf("Unable to initialize field jnt "
+                "in sf_eno3_init");
+        xrc = -1;
+        goto EXITPOINT;
+    }
+
+    if ((pnt->f = sf_doublealloc2(pnt->ng, pnt->ng)) == (double **) NULL) {
+        cm_message_printf("Unable to allocate field f in sf_eno3_init()");
+        xrc = -1;
+        goto EXITPOINT;
+    }
+
+    if ((pnt->f1 = sf_doublealloc2(pnt->ng, pnt->ng)) == (double **) NULL) {
+        cm_message_printf("Unable to allocate field f1 in sf_eno3_init()");
+        xrc = -1;
+        goto EXITPOINT;
+    }
+
+    if ((pnt->ent = (sf_eno **) sf_alloc(
+            n3, sizeof(sf_eno*))) == (sf_eno **) NULL) {
+        cm_message_printf("Unable to allocate field ent in sf_eno3_init()");
+        xrc = -1;
+        goto EXITPOINT;
+    }
+
+    {
+        int i3;
+        for (i3 = 0; i3 < n3; i3++) {
+            if ((pnt->ent[i3] = (sf_eno*) sf_alloc(
+                    n2, sizeof(sf_eno))) == (sf_eno *) NULL) {
+                cm_message_printf("Unable to allocate field ent[%d] "
+                        "in sf_eno3_init()", i3);
+                xrc = -1;
+                goto EXITPOINT;
+            }
+            int i2;
+            for (i2 = 0; i2 < n2; i2++) {
+                if ((pnt->ent[i3][i2] = sf_eno_init(
+                        order, n1)) == (sf_eno) NULL) {
+                    cm_message_printf("Unable to initialize field "
+                            "ent[%d][%d] in sf_eno3_init()",
+                            i2, i3);
+                    xrc = -1;
+                    goto EXITPOINT;
+                }
+            }
+        }
+    }
+
+EXITPOINT:
+    if (xrc != 0) {
+        if (pnt != (sf_eno3) NULL) {
+            sf_eno3_close(pnt);
+            free(pnt);
+            pnt = (sf_eno3) NULL;
+        }
+    }
     return pnt;
 }
 
