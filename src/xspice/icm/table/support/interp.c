@@ -13,39 +13,33 @@ typedef struct Point3Struct {   /* 3d point */
         } Point3;
 typedef Point3 Vector3;
 
-//FIXME
-double BilinearInterpolation(double q11, double q12, double q21, double q22, double x1, double x2, double y1, double y2, double x, double y);
-
 
 /* Function to find the cross over point (the point before
    which elements are smaller than or equal to x and after
    which greater than x)
-   http://www.geeksforgeeks.org/find-k-closest-elements-given-value/ */
-int
-findCrossOver(double arr[], int low, int high, double x)
+   Returns the highest index of an element in arr whose value is less than
+   or equal to x or 0 if all elements are greater than x. It is assumed that
+   arr is sorted in order of increasing values. */
+int findCrossOver(double arr[], int n, double x)
 {
-    int mid;
-    // Base cases
-    if (arr[high] <= x) // x is greater than all
-        return high;
-    if (arr[low] > x)  // x is smaller than all
-        return low;
+    int low = 0;
+    int high = n; /* 1 more than highest index */
+    while (high - low > 1) {
+        const int mid = (low + high) / 2;
+        if (arr[mid] > x) { /* search lower */
+            high = mid;
+        }
+        else { /* search higher */
+            low = mid;
+        }
+    } /* end of bisecting loop */
 
-    // Find the middle point
-    mid = (low + high)/2;  /* low + (high - low)/2 */
+    return low;
+} /* end of function findCrossOver */
 
-    /* If x is same as middle element, then return mid */
-    if (arr[mid] <= x && arr[mid+1] > x)
-        return mid;
 
-    /* If x is greater than arr[mid], then either arr[mid + 1]
-      is ceiling of x or ceiling lies in arr[mid+1...high] */
-    if (arr[mid] < x)
-        return findCrossOver(arr, mid+1, high, x);
 
-  return findCrossOver(arr, low, mid - 1, x);
-}
-
+#if 0
 /* https://helloacm.com/cc-function-to-compute-the-bilinear-interpolation/ */
 double
 BilinearInterpolation(double q11, double q12, double q21, double q22, double x1, double x2, double y1, double y2, double x, double y)
@@ -74,7 +68,6 @@ BilinearInterpolation(double q11, double q12, double q21, double q22, double x1,
  *
  */
 
-#if 0
 
 double
 trilinear(Point3 *p, double *d, int xsize, int ysize, int zsize, double def)
@@ -152,13 +145,31 @@ trilinear(Point3 *p, double *d, int xsize, int ysize, int zsize, double def)
 #endif
 
 
+double BilinearInterpolation(double x, double y,
+        int xind, int yind, double **td)
+{
+    double V00, V10, V01, V11, Vxyz;
+
+    V00 = td[yind][xind];
+    V10 = td[yind][xind+1];
+    V01 = td[yind+1][xind];
+    V11 = td[yind+1][xind+1];
+
+    Vxyz = V00 * (1 - x) * (1 - y) +
+            V10 * x * (1 - y) +
+            V01 * (1 - x) * y +
+            V11 * x * y;
+    return Vxyz;
+} /* end of function BilinearInterpolation */
+
+
+
 /* trilinear interpolation
 Paul Bourke
 July 1997
 http://paulbourke.net/miscellaneous/interpolation/ */
-
-double
-TrilinearInterpolation(double x, double y, double z, int xind, int yind, int zind, double ***td)
+double TrilinearInterpolation(double x, double y, double z,
+        int xind, int yind, int zind, double ***td)
 {
     double V000, V100, V010, V001, V101, V011, V110, V111, Vxyz;
 
@@ -172,12 +183,18 @@ TrilinearInterpolation(double x, double y, double z, int xind, int yind, int zin
     V111 = td[zind+1][yind+1][xind+1];
 
     Vxyz = V000 * (1 - x) * (1 - y) * (1 - z) +
-        V100 * x * (1 - y) * (1 - z) +
-        V010 * (1 - x) * y * (1 - z) +
-        V001 * (1 - x) * (1 - y) * z +
-        V101 * x * (1 - y) * z +
-        V011 * (1 - x) * y * z +
-        V110 * x * y * (1 - z) +
-        V111 * x * y * z;
+            V100 * x * (1 - y) * (1 - z) +
+            V010 * (1 - x) * y * (1 - z) +
+            V001 * (1 - x) * (1 - y) * z +
+            V101 * x * (1 - y) * z +
+            V011 * (1 - x) * y * z +
+            V110 * x * y * (1 - z) +
+            V111 * x * y * z;
     return Vxyz;
 }
+
+
+
+
+
+

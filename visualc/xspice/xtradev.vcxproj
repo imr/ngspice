@@ -203,6 +203,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\misc\dstring.c" />
     <ClCompile Include="icm\xtradev\aswitch\aswitch-cfunc.c">
       <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -270,6 +271,9 @@
     <None Include="..\..\src\xspice\icm\xtradev\zener\ifspec.ifs" />
     <None Include="..\..\src\xspice\icm\xtradev\memristor\cfunc.mod" />
     <None Include="..\..\src\xspice\icm\xtradev\memristor\ifspec.ifs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\include\ngspice\dstring.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

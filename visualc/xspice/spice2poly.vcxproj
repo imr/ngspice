@@ -203,12 +203,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\misc\dstring.c" />
     <ClCompile Include="icm\spice2poly\icm_spice2poly\icm_spice2poly-cfunc.c" />
     <ClCompile Include="icm\spice2poly\icm_spice2poly\icm_spice2poly-ifspec.c" />
     <ClCompile Include="..\..\src\xspice\icm\dlmain.c" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src\xspice\icm\spice2poly\icm_spice2poly\cfunc.mod" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\include\ngspice\dstring.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

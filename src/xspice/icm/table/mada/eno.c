@@ -21,8 +21,9 @@
 #include <float.h>
 #include <stdlib.h>
 
-#include "eno.h"
+#include "../xspice/icm/dlmain.h"
 #include "alloc.h"
+#include "eno.h"
 
 #define SF_MAX(a,b) ((a) < (b) ? (b) : (a))
 #define SF_MIN(a,b) ((a) < (b) ? (a) : (b))
@@ -39,16 +40,49 @@ sf_eno_init (int order, /* interpolation order */
              int n      /* data size */)
 /*< Initialize interpolation object. >*/
 {
-    sf_eno ent;
-    int i;
+    int xrc = 0;
+    sf_eno ent = (sf_eno) NULL;
 
-    ent = (sf_eno) sf_alloc(1, sizeof(*ent));
+    if ((ent = (sf_eno) sf_alloc(
+            1, sizeof(*ent))) == (sf_eno) NULL) {
+        cm_message_printf("Unable to allocate sf_eno structure "
+                "in sf_eno_init");
+        xrc = -1;
+        goto EXITPOINT;
+    }
+
     ent->order = order;
     ent->n = n;
-    ent->diff = (double**) sf_alloc(order, sizeof(double*));
-    for (i = 0; i < order; i++)
-        ent->diff[i] = sf_doublealloc(n - i);
+    
+    if ((ent->diff = (double **) sf_alloc(
+            order, sizeof(double *))) == (double **) NULL) {
+        cm_message_printf("Unable to allocate diff field "
+                "in sf_eno_init");
+        xrc = -1;
+        goto EXITPOINT;
+    }
 
+    {
+        int i;
+        for (i = 0; i < order; i++) {
+            if ((ent->diff[i] = sf_doublealloc(
+                    n - i)) == (double *) NULL) {
+                cm_message_printf("Unable to allocate in sf_eno_init "
+                        "at index %d.",
+                        i);
+                xrc = -1;
+                goto EXITPOINT;
+            }
+        }
+    }
+
+EXITPOINT:
+    if (xrc != 0) {
+        if (ent != (sf_eno) NULL) {
+            sf_eno_close(ent);
+            ent = (sf_eno) NULL;
+        }
+    }
     return ent;
 }
 
@@ -56,10 +90,15 @@ void
 sf_eno_close (sf_eno ent)
 /*< Free internal storage >*/
 {
-    int i;
+    if (ent == (sf_eno) NULL) {
+        return;
+    }
 
-    for (i = 0; i < ent->order; i++)
+    int i;
+    const int n = ent->order;
+    for (i = 0; i < n; i++) {
         free (ent->diff[i]);
+    }
     free (ent->diff);
     free (ent);
 }
