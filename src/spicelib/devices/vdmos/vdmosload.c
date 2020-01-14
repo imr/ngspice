@@ -105,7 +105,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
         for (here = VDMOSinstances(model); here != NULL;
                 here = VDMOSnextInstance(here)) {
 
-            selfheat = (model->VDMOSshMod == 1) && (here->VDMOSrth0 != 0.0);
+            selfheat = (here->VDMOSslfh == 1) && (model->VDMOSrthjc != 0.0);
             if (selfheat)
                 Check_mos = 1;
             else
@@ -483,7 +483,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                 DevCapVDMOS(vgd, cgdmin, cgdmax, a, cgs,
                             (ckt->CKTstate0 + here->VDMOScapgs),
                             (ckt->CKTstate0 + here->VDMOScapgd));
-                *(ckt->CKTstate0 + here->VDMOScapth) = here->VDMOScth0; /* always constant */
+                *(ckt->CKTstate0 + here->VDMOScapth) = model->VDMOScthj; /* always constant */
 
                 vgs1 = *(ckt->CKTstate1 + here->VDMOSvgs);
                 vgd1 = vgs1 - *(ckt->CKTstate1 + here->VDMOSvds);
@@ -565,7 +565,7 @@ bypass:
                 if (selfheat)
                 {
                     error = NIintegrate(ckt, &gcTt, &ceqqth, 0.0, here->VDMOSqth);
-                    gcTt = here->VDMOScth0 * ckt->CKTag[0];
+                    gcTt = model->VDMOScthj * ckt->CKTag[0];
                     ceqqth = *(ckt->CKTstate0 + here->VDMOScqth) - gcTt * delTemp;
                 }
             }
@@ -654,7 +654,7 @@ bypass:
                 (*(here->VDMOSDPtempPtr) += GmT);
                 (*(here->VDMOSSPtempPtr) += -GmT);
                 (*(here->VDMOSGPtempPtr) += 0.0);
-                (*(here->VDMOSTemptempPtr) += gTtt + 1/here->VDMOSrth0 + gcTt);
+                (*(here->VDMOSTemptempPtr) += gTtt + 1/model->VDMOSrthjc + gcTt);
                 (*(here->VDMOSTempgpPtr) += gTtg);
                 (*(here->VDMOSTempdpPtr) += gTtdp);
                 (*(here->VDMOSTempspPtr) += gTtsp);

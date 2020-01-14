@@ -117,14 +117,15 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
         if (!model->VDMOSegGiven) {
             model->VDMOSeg = 1.11;
         }
-        if (!model->VDMOSshModGiven)
-            model->VDMOSshMod = 0;
 
-        if (!model->VDMOSrth0Given)
-            model->VDMOSrth0 = 0;
+        if (!model->VDMOSrthjcGiven)
+            model->VDMOSrthjc = 0;
 
-        if (!model->VDMOScth0Given)
-            model->VDMOScth0 = 1e-5;
+        if (!model->VDMOSrthcaGiven)
+            model->VDMOSrthca = 0;
+
+        if (!model->VDMOScthjGiven)
+            model->VDMOScthj = 1e-5;
 
         if (!model->VDMOSmuGiven)
             model->VDMOSmu = -1.5;
@@ -212,12 +213,6 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
             } else {
                 here->VDIOconductance = here->VDMOSm / 1.0e-03;
             }
-
-            if (!here->VDMOSrth0Given)
-                here->VDMOSrth0 = model->VDMOSrth0;
-
-            if (!here->VDMOScth0Given)
-                here->VDMOScth0 = model->VDMOScth0;
 
             if (model->VDMOSdrainResistance != 0) {
                 if (here->VDMOSdNodePrime == 0) {
@@ -319,7 +314,7 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     return(E_NOMEM);\
 } } while(0)
 
-            if ((model->VDMOSshMod == 1) && (here->VDMOSrth0!=0.0)) {
+            if ((here->VDMOSslfh == 1) && (model->VDMOSrthjc!=0.0)) {
                 TSTALLOC(VDMOSTemptempPtr, VDMOStempNode, VDMOStempNode);
                 TSTALLOC(VDMOSTempdpPtr, VDMOStempNode, VDMOSdNodePrime);
                 TSTALLOC(VDMOSTempspPtr, VDMOStempNode, VDMOSsNodePrime);

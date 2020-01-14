@@ -91,7 +91,7 @@ VDMOSnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
         switch (mode) {
 
         case N_DENS:
-            if ((model->VDMOSshMod == 1) && (inst->VDMOSrth0 != 0.0))  
+            if ((inst->VDMOSslfh == 1) && (model->VDMOSrthjc != 0.0))  
                 tempRatioSH = inst->VDMOSTempSH / ckt->CKTtemp;
             else
                 tempRatioSH = 1.0;

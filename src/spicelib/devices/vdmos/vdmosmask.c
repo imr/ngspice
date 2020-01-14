@@ -125,11 +125,14 @@ VDMOSmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case VDMOS_MOD_XTI:
             value->rValue = model->VDMOSxti;
             return(OK);
-        case VDMOS_MOD_RTH0:
-            value->rValue = model->VDMOSrth0; 
+        case VDMOS_MOD_RTHJC:
+            value->rValue = model->VDMOSrthjc; 
             return(OK);
-        case VDMOS_MOD_CTH0:
-            value->rValue = model->VDMOScth0; 
+        case VDMOS_MOD_RTHCA:
+            value->rValue = model->VDMOSrthca; 
+            return(OK);
+        case VDMOS_MOD_CTHJ:
+            value->rValue = model->VDMOScthj; 
             return(OK);
         case VDMOS_MOD_MU:
             value->rValue = model->VDMOSmu; 

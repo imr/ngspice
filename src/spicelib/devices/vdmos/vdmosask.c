@@ -50,11 +50,8 @@ VDMOSask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
         case VDMOS_OFF:
             value->rValue = here->VDMOSoff;
             return(OK);
-        case VDMOS_RTH0:
-            value->rValue = here->VDMOSrth0;
-            return(OK);
-        case VDMOS_CTH0:
-            value->rValue = here->VDMOScth0;
+        case VDMOS_SLFH:
+            value->rValue = here->VDMOSslfh;
             return(OK);
         case VDMOS_IC_VDS:
             value->rValue = here->VDMOSicVDS;

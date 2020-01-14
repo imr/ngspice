@@ -34,7 +34,7 @@ VDMOSacLoad(GENmodel *inModel, CKTcircuit *ckt)
         for(here = VDMOSinstances(model); here!= NULL;
                 here = VDMOSnextInstance(here)) {
 
-            selfheat = (model->VDMOSshMod == 1) && (here->VDMOSrth0 != 0.0);
+            selfheat = (here->VDMOSslfh == 1) && (model->VDMOSrthjc != 0.0);
             if (here->VDMOSmode < 0) {
                 xnrm=0;
                 xrev=1;
@@ -47,7 +47,7 @@ VDMOSacLoad(GENmodel *inModel, CKTcircuit *ckt)
                 GmT = model->VDMOStype * here->VDMOSgmT;
                 cgT  = model->VDMOStype * here->VDMOScgT;
                 cdT  = model->VDMOStype * here->VDMOScdT;
-                cTt = model->VDMOScth0;
+                cTt = model->VDMOScthj;
                 gTtg  = here->VDMOSgtempg;
                 gTtdp = here->VDMOSgtempd;
                 gTtt  = here->VDMOSgtempT;
@@ -56,7 +56,7 @@ VDMOSacLoad(GENmodel *inModel, CKTcircuit *ckt)
                 GmT = -model->VDMOStype * here->VDMOSgmT;
                 cgT  = -model->VDMOStype * here->VDMOScgT;
                 cdT  = -model->VDMOStype * here->VDMOScdT;
-                cTt = -model->VDMOScth0;
+                cTt = -model->VDMOScthj;
                 gTtg  = -here->VDMOSgtempg;
                 gTtdp = -here->VDMOSgtempd;
                 gTtt  = -here->VDMOSgtempT;
@@ -136,7 +136,7 @@ VDMOSacLoad(GENmodel *inModel, CKTcircuit *ckt)
             {
                *(here->VDMOSDPtempPtr) += GmT;
                *(here->VDMOSSPtempPtr) += -GmT;
-               *(here->VDMOSTemptempPtr) += gTtt + 1/model->VDMOSrth0;
+               *(here->VDMOSTemptempPtr) += gTtt + 1/model->VDMOSrthjc;
                *(here->VDMOSTempgpPtr) += gTtg;
                *(here->VDMOSTempdpPtr) += gTtdp;
                *(here->VDMOSTempspPtr) += gTtsp;

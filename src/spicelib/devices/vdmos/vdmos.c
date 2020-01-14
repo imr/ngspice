@@ -22,8 +22,7 @@ IFparm VDMOSpTable[] = { /* parameters */
  IOPU("dtemp",      VDMOS_DTEMP,      IF_REAL,    "Instance temperature difference"),
  IP( "ic",          VDMOS_IC,         IF_REALVEC, "Vector of D-S, G-S voltages"),
 
- IOP( "rth0",       VDMOS_RTH0,       IF_REAL,    "Instance Thermal Resistance"),
- IOP( "cth0",       VDMOS_CTH0,       IF_REAL,    "Instance Thermal Capacitance"),
+ IP("slfh",         VDMOS_SLFH,       IF_FLAG,    "Thermal model switch on/off"),
 
  OP( "id",          VDMOS_CD,         IF_REAL,    "Drain current"),
  OP( "is",          VDMOS_CS,         IF_REAL,    "Source current"),
@@ -37,7 +36,8 @@ IFparm VDMOSpTable[] = { /* parameters */
  OPU( "dnode",      VDMOS_DNODE,      IF_INTEGER, "Number of the drain node "),
  OPU( "gnode",      VDMOS_GNODE,      IF_INTEGER, "Number of the gate node "),
  OPU( "snode",      VDMOS_SNODE,      IF_INTEGER, "Number of the source node "),
- OPU(" tempnode",   VDMOS_TNODE,      IF_INTEGER, "Number of temperature node"),
+ OPU( "tempnode",   VDMOS_TNODE,      IF_INTEGER, "Number of temperature node"),
+ OPU( "tcasenode",  VDMOS_TCASE,      IF_INTEGER, "Number of 2nd temperature node"),
  OPU( "dnodeprime", VDMOS_DNODEPRIME, IF_INTEGER, "Number of int. drain node"),
  OPU( "snodeprime", VDMOS_SNODEPRIME, IF_INTEGER, "Number of int. source node "),
 
@@ -119,9 +119,9 @@ IFparm VDMOSmPTable[] = { /* model parameters */
  IOPA("cgs",    VDMOS_MOD_CGS,    IF_REAL, "Gate-source capacitance"),
 
 /* self heating */
- IOP("shmod", VDMOS_MOD_SHMOD, IF_INTEGER, "Self heating mode selector"),
- IOP("rth0",  VDMOS_MOD_RTH0,  IF_REAL, "Self-heating thermal resistance"),
- IOP("cth0",  VDMOS_MOD_CTH0,  IF_REAL, "Self-heating thermal capacitance"),
+ IOP("rthjc",  VDMOS_MOD_RTHJC,  IF_REAL, "Self-heating thermal resistance"),
+ IOP("rthca",  VDMOS_MOD_RTHCA,  IF_REAL, "Self-heating thermal resistance"),
+ IOP("cthj",   VDMOS_MOD_CTHJ,  IF_REAL, "Self-heating thermal capacitance"),
  
 /* soa check */
  IOP("vgs_max", VDMOS_MOD_VGS_MAX, IF_REAL, "maximum voltage G-S branch"),
@@ -135,7 +135,8 @@ char *VDMOSnames[] = {
     "Drain",
     "Gate",
     "Source",
-    "Temp"
+    "Temp",
+    "Tcase"
 };
 
 int VDMOSnSize = NUMELEMS(VDMOSnames);

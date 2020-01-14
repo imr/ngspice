@@ -42,6 +42,7 @@ typedef struct sVDMOSinstance {
     const int VDMOSgNode;  /* number of the gate node of the mosfet */
     const int VDMOSsNode;  /* number of the source node of the mosfet */
     const int VDMOStempNode;  /* number of the temperature node of the mosfet */
+    const int VDMOStcaseNode;  /* number of the 2nd temperature node of the mosfet */
     int VDMOSdNodePrime; /* number of the internal drain node of the mosfet */
     int VDMOSsNodePrime; /* number of the internal source node of the mosfet */
     int VDMOSgNodePrime; /* number of the internal gate node of the mosfet */
@@ -91,8 +92,6 @@ typedef struct sVDMOSinstance {
     double VDIOtF3;
 
     double VDMOSTempSH;      /* for portability of SH temp to noise analysis */
-    double VDMOSrth0;
-    double VDMOScth0;
 
     double VDMOSgmT;
     double VDMOSgtempg;
@@ -156,8 +155,7 @@ typedef struct sVDMOSinstance {
     unsigned VDMOSvdsatGiven :1;
     unsigned VDMOSmodeGiven  :1;
 
-    unsigned VDMOSrth0Given :1;
-    unsigned VDMOScth0Given :1;
+    unsigned VDMOSslfh:1;    /* non-zero self heating flag */
 
     double *VDMOSDdPtr;      /* pointer to sparse matrix element at
                                      * (Drain node,drain node) */
@@ -275,7 +273,6 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
 #define VDMOSmodName gen.GENmodName
 
     int VDMOStype;       /* device type : 1 = nmos,  -1 = pmos */
-    int VDMOSshMod;
     double VDMOStnom;        /* temperature at which parameters measured */
     double VDMOSdrainResistance;
     double VDMOSsourceResistance;
@@ -319,8 +316,9 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
     double VDIOgradCoeffTemp1;
     double VDIOgradCoeffTemp2;
 
-    double VDMOSrth0;
-    double VDMOScth0;
+    double VDMOSrthjc;
+    double VDMOSrthca;
+    double VDMOScthj;
     double VDMOSmu;
     double VDMOStexp0;
     double VDMOStexp1;
@@ -371,9 +369,9 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
     unsigned VDMOSegGiven   :1;
     unsigned VDMOSxtiGiven   :1;
 
-    unsigned VDMOSshModGiven :1;
-    unsigned VDMOSrth0Given :1;
-    unsigned VDMOScth0Given :1;
+    unsigned VDMOSrthjcGiven :1;
+    unsigned VDMOSrthcaGiven :1;
+    unsigned VDMOScthjGiven :1;
     unsigned VDMOSmuGiven :1;
     unsigned VDMOStexp0Given :1;
     unsigned VDMOStexp1Given :1;
@@ -405,8 +403,7 @@ enum {
     VDMOS_TEMP,
     VDMOS_M,
     VDMOS_DTEMP,
-    VDMOS_RTH0,
-    VDMOS_CTH0,
+    VDMOS_SLFH,
 };
 
 /* model parameters */
@@ -450,8 +447,9 @@ enum {
     VDMOS_MOD_EG,
     VDMOS_MOD_XTI,
     VDMOS_MOD_SHMOD,
-    VDMOS_MOD_RTH0,
-    VDMOS_MOD_CTH0,
+    VDMOS_MOD_RTHJC,
+    VDMOS_MOD_RTHCA,
+    VDMOS_MOD_CTHJ,
     VDMOS_MOD_MU,
     VDMOS_MOD_TEXP0,
     VDMOS_MOD_TEXP1,
@@ -472,6 +470,7 @@ enum {
     VDMOS_GNODE,
     VDMOS_SNODE,
     VDMOS_TNODE,
+    VDMOS_TCASE,
     VDMOS_DNODEPRIME,
     VDMOS_SNODEPRIME,
     VDMOS_SOURCECONDUCT,
