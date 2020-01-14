@@ -577,7 +577,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double qjcx0_t_ii_Vbpci;
     double Qdsu_Vbpci;
     double Qjs_Vsici;
-    double Qscp_Vsc;
     double Qbepar1_Vbe;
     double Qbepar2_Vbpe;
     double Qbcpar1_Vbci;
@@ -1474,12 +1473,10 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
              */
             if (model->HICUMvdsp > 0) {
                 HICJQ(here->HICUMvt,here->HICUMcscp0_t,here->HICUMvdsp_t,model->HICUMzsp,here->HICUMvptsp_t,Vsc,&Cscp,&Cscp_Vsc,&Qscp);
-                Qscp_Vsc = Cscp;
             } else {
                 // Constant, temperature independent capacitance
                 Cscp = model->HICUMcscp0;
                 Qscp = model->HICUMcscp0*Vsc;
-                Qscp_Vsc = model->HICUMcscp0;
             }
 
             //Parasitic substrate transistor transfer current and diffusion charge
@@ -1812,7 +1809,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                         *(ckt->CKTstate0 + here->HICUMcqcx0_t_ii) = qjcx0_t_ii_Vbpci;
                         *(ckt->CKTstate0 + here->HICUMcqdsu)      = Qdsu_Vbpci;
                         *(ckt->CKTstate0 + here->HICUMcqjs)       = Qjs_Vsici;
-                        *(ckt->CKTstate0 + here->HICUMcqscp)      = Qscp_Vsc;
+                        *(ckt->CKTstate0 + here->HICUMcqscp)      = Cscp;
                         *(ckt->CKTstate0 + here->HICUMcqbepar1)   = Qbepar1_Vbe;
                         *(ckt->CKTstate0 + here->HICUMcqbepar2)   = Qbepar2_Vbpe;
                         *(ckt->CKTstate0 + here->HICUMcqbcpar1)   = Qbcpar1_Vbci;
@@ -1892,11 +1889,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                     Ibpei_Vbpei += geq;
                     Ibpei += *(ckt->CKTstate0 + here->HICUMcqjep);
 
-                    error = NIintegrate(ckt,&geq,&ceq,CjCx_ii,here->HICUMqjcx0_ii);
-                    if(error) return(error);
-                    Ibpci_Vbpci += geq;
-                    Ibpci += *(ckt->CKTstate0 + here->HICUMcqcx0_t_ii);
-
                     error = NIintegrate(ckt,&geq,&ceq,Qdsu_Vbpci,here->HICUMqdsu);
                     if(error) return(error);
                     Ibpci_Vbpci += geq;
@@ -1911,6 +1903,11 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                     if(error) return(error);
                     Ibci_Vbci = geq;
                     Ibci = *(ckt->CKTstate0 + here->HICUMcqcx0_t_i);
+
+                    error = NIintegrate(ckt,&geq,&ceq,CjCx_ii,here->HICUMqjcx0_ii);
+                    if(error) return(error);
+                    Ibpci_Vbpci += geq;
+                    Ibpci += *(ckt->CKTstate0 + here->HICUMcqcx0_t_ii);
 
                     error = NIintegrate(ckt,&geq,&ceq,Cscp,here->HICUMqscp);
                     if(error) return(error);
