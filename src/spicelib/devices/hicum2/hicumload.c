@@ -555,11 +555,11 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Ibci,  Ibci_Vbci;
 //    double Icxf, Icxf1, Icxf2, Ibxf, Ibxf1, Ibxf2;
     double hjei_vbe_Vbiei, ibet_Vbpei=0.0, ibet_Vbiei=0.0, ibh_rec_Vbiei;
-    double irei_Vbiei, irep_Vbpei, iavl_Vbici, itf_Vbiei, itr_Vbici, rbi_Vbiei, rbi_Vbici;
+    double irei_Vbiei, irep_Vbpei, iavl_Vbici, rbi_Vbiei, rbi_Vbici;
     double Q_0_Vbiei, Q_0_Vbici, b_q_Vbiei, b_q_Vbici;
 
     double Cjei_Vbiei,Cjci_Vbici,Cjep_Vbpei,CjCx_i_Vbci,CjCx_ii_Vbpci,Cjs_Vsici,Cscp_Vsc,Cjcit_Vbici,i_0f_Vbiei,i_0r_Vbici;
-	double cc_Vbici, T_f0_Vbici;
+    double cc_Vbici,T_f0_Vbici,Q_p_Vbiei,Q_p_Vbici,I_Tf1_Vbiei,I_Tf1_Vbici,itf_Vbiei,itf_Vbici,itr_Vbiei,itr_Vbici;
     double Qbepar1;
     double Qbepar2;
     double Qbcpar1;
@@ -1234,18 +1234,33 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             i_0f_Vbiei = i_0f/VT_f;
             i_0r    = here->HICUMc10_t * exp(Vbici/here->HICUMvt);
             i_0r_Vbici = i_0r/here->HICUMvt;
-//todo: derivatives of T_f0, Q_0, i_0f and i_0r must considered below
+
             //Initial formulation of forward and reverse component of transfer current
             Q_p     = Q_0;
+            Q_p_Vbiei=Q_0_Vbiei;
+            Q_p_Vbici=Q_0_Vbici;
             if (T_f0 > 0.0 || Tr > 0.0) {
-                double A;
+                double A,A_Vbiei,A_Vbici,d1,d1_Vbiei,d1_Vbici;
                 A       = 0.5*Q_0;
-                Q_p     = A+sqrt(A*A+T_f0*i_0f+Tr*i_0r);
+                A_Vbiei = 0.5*Q_0_Vbiei;
+                A_Vbici = 0.5*Q_0_Vbici;
+                d1      = sqrt(A*A+T_f0*i_0f+Tr*i_0r);
+                d1_Vbiei= (2*A*A_Vbiei+T_f0*i_0f_Vbiei)/(2*d1);
+                d1_Vbici= (2*A*A_Vbici+Tr*i_0r_Vbici)/(2*d1);
+                Q_p     = A+d1;
+                Q_p_Vbiei=A_Vbiei+d1_Vbiei;
+                Q_p_Vbici=A_Vbici+d1_Vbici;
             }
             I_Tf1   = i_0f/Q_p;
+            I_Tf1_Vbiei=(i_0f_Vbiei*Q_p-i_0f*Q_p_Vbiei)/(Q_p*Q_p);
+            I_Tf1_Vbici=-i_0f*Q_p_Vbici/(Q_p*Q_p);
             a_h     = Oich*I_Tf1;
             itf     = I_Tf1*(1.0+a_h);
+            itf_Vbiei=(Oich*I_Tf1+1.0)*I_Tf1_Vbiei+Oich*I_Tf1*I_Tf1_Vbiei;
+            itf_Vbici=(Oich*I_Tf1+1.0)*I_Tf1_Vbici+Oich*I_Tf1*I_Tf1_Vbici;
             itr     = i_0r/Q_p;
+            itr_Vbiei=-i_0r*Q_p_Vbiei/(Q_p*Q_p);
+            itr_Vbici=(i_0r_Vbici*Q_p-i_0r*Q_p_Vbiei)/(Q_p*Q_p);
 
             //Initial formulation of forward transit time, diffusion, GICCR and excess b-c charge
             Q_bf    = 0.0;
