@@ -243,6 +243,29 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
                 here->VDMOSdNodePrime = here->VDMOSdNode;
             }
 
+            if (model->VDMOSgateResistance != 0 ) {
+                if (here->VDMOSgNodePrime == 0) {
+                    error = CKTmkVolt(ckt, &tmp, here->VDMOSname, "gate");
+                    if (error) return(error);
+                    here->VDMOSgNodePrime = tmp->number;
+
+                    if (ckt->CKTcopyNodesets) {
+                        CKTnode *tmpNode;
+                        IFuid tmpName;
+
+                        if (CKTinst2Node(ckt, here, 2, &tmpNode, &tmpName) == OK) {
+                            if (tmpNode->nsGiven) {
+                                tmp->nodeset = tmpNode->nodeset;
+                                tmp->nsGiven = tmpNode->nsGiven;
+                            }
+                        }
+                    }
+                }
+            }
+            else {
+                here->VDMOSgNodePrime = here->VDMOSgNode;
+            }
+
             if (model->VDMOSsourceResistance != 0) {
                 if (here->VDMOSsNodePrime == 0) {
                     error = CKTmkVolt(ckt, &tmp, here->VDMOSname, "source");
@@ -265,29 +288,6 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
             }
             else {
                 here->VDMOSsNodePrime = here->VDMOSsNode;
-            }
-
-            if (model->VDMOSgateResistance != 0 ) {
-                if (here->VDMOSgNodePrime == 0) {
-                    error = CKTmkVolt(ckt, &tmp, here->VDMOSname, "gate");
-                    if (error) return(error);
-                    here->VDMOSgNodePrime = tmp->number;
-
-                    if (ckt->CKTcopyNodesets) {
-                        CKTnode *tmpNode;
-                        IFuid tmpName;
-
-                        if (CKTinst2Node(ckt, here, 3, &tmpNode, &tmpName) == OK) {
-                            if (tmpNode->nsGiven) {
-                                tmp->nodeset = tmpNode->nodeset;
-                                tmp->nsGiven = tmpNode->nsGiven;
-                            }
-                        }
-                    }
-                }
-            }
-            else {
-                here->VDMOSgNodePrime = here->VDMOSgNode;
             }
 
             if (model->VDIOresistance != 0 ) {
