@@ -37,7 +37,7 @@ IFparm VDMOSpTable[] = { /* parameters */
  OPU( "dnode",      VDMOS_DNODE,      IF_INTEGER, "Number of the drain node "),
  OPU( "gnode",      VDMOS_GNODE,      IF_INTEGER, "Number of the gate node "),
  OPU( "snode",      VDMOS_SNODE,      IF_INTEGER, "Number of the source node "),
- OPU(" tempnode",   VDMOS_TNODE,      IF_INTEGER, "Number of temperature node"),
+ OPU( "tempnode",   VDMOS_TNODE,      IF_INTEGER, "Number of temperature node"),
  OPU( "dnodeprime", VDMOS_DNODEPRIME, IF_INTEGER, "Number of int. drain node"),
  OPU( "snodeprime", VDMOS_SNODEPRIME, IF_INTEGER, "Number of int. source node "),
 
