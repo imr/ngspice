@@ -238,6 +238,29 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
                 here->VDMOSdNodePrime = here->VDMOSdNode;
             }
 
+            if (model->VDMOSgateResistance != 0 ) {
+                if (here->VDMOSgNodePrime == 0) {
+                    error = CKTmkVolt(ckt, &tmp, here->VDMOSname, "gate");
+                    if (error) return(error);
+                    here->VDMOSgNodePrime = tmp->number;
+
+                    if (ckt->CKTcopyNodesets) {
+                        CKTnode *tmpNode;
+                        IFuid tmpName;
+
+                        if (CKTinst2Node(ckt, here, 2, &tmpNode, &tmpName) == OK) {
+                            if (tmpNode->nsGiven) {
+                                tmp->nodeset = tmpNode->nodeset;
+                                tmp->nsGiven = tmpNode->nsGiven;
+                            }
+                        }
+                    }
+                }
+            }
+            else {
+                here->VDMOSgNodePrime = here->VDMOSgNode;
+            }
+
             if (model->VDMOSsourceResistance != 0) {
                 if (here->VDMOSsNodePrime == 0) {
                     error = CKTmkVolt(ckt, &tmp, here->VDMOSname, "source");
@@ -260,29 +283,6 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
             }
             else {
                 here->VDMOSsNodePrime = here->VDMOSsNode;
-            }
-
-            if (model->VDMOSgateResistance != 0 ) {
-                if (here->VDMOSgNodePrime == 0) {
-                    error = CKTmkVolt(ckt, &tmp, here->VDMOSname, "gate");
-                    if (error) return(error);
-                    here->VDMOSgNodePrime = tmp->number;
-
-                    if (ckt->CKTcopyNodesets) {
-                        CKTnode *tmpNode;
-                        IFuid tmpName;
-
-                        if (CKTinst2Node(ckt, here, 3, &tmpNode, &tmpName) == OK) {
-                            if (tmpNode->nsGiven) {
-                                tmp->nodeset = tmpNode->nodeset;
-                                tmp->nsGiven = tmpNode->nsGiven;
-                            }
-                        }
-                    }
-                }
-            }
-            else {
-                here->VDMOSgNodePrime = here->VDMOSgNode;
             }
 
             if (model->VDIOresistance != 0 ) {
@@ -308,11 +308,18 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
                 here->VDIOposPrimeNode = here->VDMOSsNode;
             }
 
-            if(here->VDMOSvcktTbranch == 0) {
-                error = CKTmkCur(ckt,&tmp,here->VDMOSname,"cktT");
-                if(error) return(error);
-                here->VDMOSvcktTbranch = tmp->number;
-            } 
+            if ((here->VDMOSslfh == 1) && (model->VDMOSrthjc!=0.0)) {
+                if(here->VDMOSvcktTbranch == 0) {
+                    error = CKTmkCur(ckt,&tmp,here->VDMOSname,"cktT");
+                    if(error) return(error);
+                    here->VDMOSvcktTbranch = tmp->number;
+                } 
+                if (here->VDMOStNodePrime == 0) {
+                    error = CKTmkVolt(ckt, &tmp, here->VDMOSname, "thermal node");
+                    if (error) return(error);
+                    here->VDMOStNodePrime = tmp->number;
+                }
+            }
 
             /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
@@ -405,6 +412,15 @@ VDMOSunsetup(GENmodel *inModel, CKTcircuit *ckt)
                 && here->VDIOposPrimeNode != here->VDMOSsNode)
                 CKTdltNNum(ckt, here->VDIOposPrimeNode);
             here->VDIOposPrimeNode = 0;
+
+            if ((here->VDMOSslfh == 1) && (model->VDMOSrthjc!=0.0)) {
+                if (here->VDMOSvcktTbranch > 0)
+                    CKTdltNNum(ckt, here->VDMOSvcktTbranch);
+                here->VDMOSvcktTbranch = 0;
+                if (here->VDMOStNodePrime > 0)
+                    CKTdltNNum(ckt, here->VDMOStNodePrime);
+                here->VDMOStNodePrime = 0;
+            }
 
         }
     }
