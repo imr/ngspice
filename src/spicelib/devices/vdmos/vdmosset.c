@@ -308,6 +308,12 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
                 here->VDIOposPrimeNode = here->VDMOSsNode;
             }
 
+            if(here->VDMOSvcktTbranch == 0) {
+                error = CKTmkCur(ckt,&tmp,here->VDMOSname,"cktT");
+                if(error) return(error);
+                here->VDMOSvcktTbranch = tmp->number;
+            } 
+
             /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
 do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
@@ -322,6 +328,18 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
                 TSTALLOC(VDMOSGPtempPtr, VDMOSgNodePrime, VDMOStempNode);
                 TSTALLOC(VDMOSDPtempPtr, VDMOSdNodePrime, VDMOStempNode);
                 TSTALLOC(VDMOSSPtempPtr, VDMOSsNodePrime, VDMOStempNode);
+
+                TSTALLOC(VDMOSTcasetcasePtr, VDMOStcaseNode, VDMOStcaseNode); /* for Rthjc */
+                TSTALLOC(VDMOSTcasetempPtr, VDMOStcaseNode, VDMOStempNode);
+                TSTALLOC(VDMOSTemptcasePtr, VDMOStempNode, VDMOStcaseNode);
+
+                TSTALLOC(VDMOSTptpPtr, VDMOStNodePrime, VDMOStNodePrime); /* for Rthca */
+                TSTALLOC(VDMOSTptempPtr, VDMOStNodePrime, VDMOStempNode);
+                TSTALLOC(VDMOSTemptpPtr, VDMOStempNode, VDMOStNodePrime);
+
+                TSTALLOC(VDMOSCktTcktTPtr, VDMOSvcktTbranch, VDMOSvcktTbranch); /* for VcktTemp */
+                TSTALLOC(VDMOSCktTtpPtr, VDMOSvcktTbranch, VDMOStNodePrime);
+                TSTALLOC(VDMOSTpcktTPtr, VDMOStNodePrime, VDMOSvcktTbranch);
             }
             TSTALLOC(VDMOSDdPtr, VDMOSdNode, VDMOSdNode);
             TSTALLOC(VDMOSGgPtr, VDMOSgNode, VDMOSgNode);

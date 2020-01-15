@@ -614,7 +614,8 @@ bypass:
             *(ckt->CKTrhs + here->VDMOSdNodePrime) += (-cdreq + model->VDMOStype * ceqgd);
             *(ckt->CKTrhs + here->VDMOSsNodePrime) +=   cdreq + model->VDMOStype * ceqgs;
             if (selfheat) {
-                *(ckt->CKTrhs + here->VDMOStempNode) -= here->VDMOScth + ceqqth; /* dissipated power + Cth current*/
+                *(ckt->CKTrhs + here->VDMOStempNode) -= here->VDMOScth + ceqqth; /* dissipated power + Cthj current */
+                *(ckt->CKTrhs + here->VDMOSvcktTbranch) += ckt->CKTtemp; /* ckt temperature */
             }
 
             /*
@@ -654,10 +655,21 @@ bypass:
                 (*(here->VDMOSDPtempPtr) += GmT);
                 (*(here->VDMOSSPtempPtr) += -GmT);
                 (*(here->VDMOSGPtempPtr) += 0.0);
-                (*(here->VDMOSTemptempPtr) += gTtt + 1/model->VDMOSrthjc + gcTt);
+                (*(here->VDMOSTemptempPtr) += gTtt + 1/model->VDMOSrthjc + 1/model->VDMOSrthca + gcTt);
                 (*(here->VDMOSTempgpPtr) += gTtg);
                 (*(here->VDMOSTempdpPtr) += gTtdp);
                 (*(here->VDMOSTempspPtr) += gTtsp);
+
+                (*(here->VDMOSTcasetcasePtr) +=  1/model->VDMOSrthjc);
+                (*(here->VDMOSTemptcasePtr)  += -1/model->VDMOSrthjc);
+                (*(here->VDMOSTcasetempPtr)  += -1/model->VDMOSrthjc);
+
+                (*(here->VDMOSTptpPtr)   +=  1/model->VDMOSrthca);
+                (*(here->VDMOSTptempPtr) += -1/model->VDMOSrthca);
+                (*(here->VDMOSTemptpPtr) += -1/model->VDMOSrthca);
+
+                (*(here->VDMOSCktTtpPtr) += 1.0);
+                (*(here->VDMOSTpcktTPtr) += 1.0);
             }
 
             /* body diode model

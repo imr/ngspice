@@ -46,7 +46,10 @@ typedef struct sVDMOSinstance {
     int VDMOSdNodePrime; /* number of the internal drain node of the mosfet */
     int VDMOSsNodePrime; /* number of the internal source node of the mosfet */
     int VDMOSgNodePrime; /* number of the internal gate node of the mosfet */
+    int VDMOStNodePrime; /* number of the internal temp node between voltage source and Rthca */
     int VDIOposPrimeNode; /* number of the internal node of the body diode */
+
+    int VDMOSvcktTbranch; /* equation number of branch equation added for cktTemp source */ 
 
     double VDMOSm;   /* parallel device multiplier */
 
@@ -226,6 +229,18 @@ typedef struct sVDMOSinstance {
     double *VDMOSGPtempPtr;
     double *VDMOSDPtempPtr;
     double *VDMOSSPtempPtr;
+
+    double *VDMOSTcasetcasePtr;
+    double *VDMOSTcasetempPtr;
+    double *VDMOSTemptcasePtr;
+
+    double *VDMOSTptpPtr;
+    double *VDMOSTptempPtr;
+    double *VDMOSTemptpPtr;
+
+    double *VDMOSCktTcktTPtr;
+    double *VDMOSCktTtpPtr;
+    double *VDMOSTpcktTPtr;
 
 } VDMOSinstance ;
 
