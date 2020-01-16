@@ -27,105 +27,104 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
     /*  loop through all the VDMOS device models */
     for (; model != NULL; model = VDMOSnextModel(model)) {
 
-        if (!model->VDMOStypeGiven) {
+        if (!model->VDMOStypeGiven)
             model->VDMOStype = NMOS;
-        }
-        if (!model->VDIOjctSatCurGiven) {
+
+        if (!model->VDIOjctSatCurGiven)
             model->VDIOjctSatCur = 1e-14;
-        }
-        if (!model->VDMOStransconductanceGiven) {
+
+        if (!model->VDMOStransconductanceGiven)
             model->VDMOStransconductance = 1;
-        }
-        if (!model->VDMOSvth0Given) {
+
+        if (!model->VDMOSvth0Given)
             model->VDMOSvth0 = 0;
-        }
-        if (!model->VDIOjunctionPotGiven) {
+
+        if (!model->VDIOjunctionPotGiven)
             model->VDIOjunctionPot = .8;
-        }
-        if (!model->VDIOgradCoeffGiven) {
+
+        if (!model->VDIOgradCoeffGiven)
             model->VDIOgradCoeff = .5;
-        }
-        if (!model->VDIOdepletionCapCoeffGiven) {
+
+        if (!model->VDIOdepletionCapCoeffGiven)
             model->VDIOdepletionCapCoeff = .5;
-        }
-        if (!model->VDMOSphiGiven) {
+
+        if (!model->VDMOSphiGiven)
             model->VDMOSphi = .6;
-        }
-        if (!model->VDMOSlambdaGiven) {
+
+        if (!model->VDMOSlambdaGiven)
             model->VDMOSlambda = 0;
-        }
-        if (!model->VDMOSthetaGiven) {
+
+        if (!model->VDMOSthetaGiven)
             model->VDMOStheta = 0;
-        }
-        if (!model->VDMOSfNcoefGiven) {
+
+        if (!model->VDMOSfNcoefGiven)
             model->VDMOSfNcoef = 0;
-        }
-        if (!model->VDMOSfNexpGiven) {
+
+        if (!model->VDMOSfNexpGiven)
             model->VDMOSfNexp = 1;
-        }
-        if (!model->VDMOScgdminGiven) {
+
+        if (!model->VDMOScgdminGiven)
             model->VDMOScgdmin = 0;
-        }
-        if (!model->VDMOScgdmaxGiven) {
+
+        if (!model->VDMOScgdmaxGiven)
             model->VDMOScgdmax = 0;
-        }
-        if (!model->VDMOScgsGiven) {
+
+        if (!model->VDMOScgsGiven)
             model->VDMOScgs = 0;
-        }
-        if (!model->VDMOSaGiven) {
+
+        if (!model->VDMOSaGiven)
             model->VDMOSa = 1.;
-        }
-        if (!model->VDMOSsubshiftGiven) {
+
+        if (!model->VDMOSsubshiftGiven)
             model->VDMOSsubshift = 0;
-        }
-        if (!model->VDMOSksubthresGiven) {
+
+        if (!model->VDMOSksubthresGiven)
             model->VDMOSksubthres = 0.1;
-        }
-        if (!model->VDMOSmtrGiven) {
+
+        if (!model->VDMOSmtrGiven)
             model->VDMOSmtr = 1.;
-        }
-        if (!model->VDMOSbvGiven) {
+
+        if (!model->VDMOSbvGiven)
             model->VDMOSbv = 1.0e30;
-        }
-        if (!model->VDMOSibvGiven) {
+
+        if (!model->VDMOSibvGiven)
             model->VDMOSibv = 1.0e-10;
-        }
-        if (!model->VDIObrkdEmissionCoeffGiven) {
+
+        if (!model->VDIObrkdEmissionCoeffGiven)
             model->VDIObrkdEmissionCoeff = 1.;
-        }
-        if (!model->VDMOSdrainResistanceGiven) {
+
+        if (!model->VDMOSdrainResistanceGiven)
             model->VDMOSdrainResistance = 1.0e-03;
-        }
-        if (!model->VDMOSsourceResistanceGiven) {
+
+        if (!model->VDMOSsourceResistanceGiven)
             model->VDMOSsourceResistance = 1.0e-03;
-        }
-        if (!model->VDMOSgateResistanceGiven) {
+
+        if (!model->VDMOSgateResistanceGiven)
             model->VDMOSgateResistance = 1.0e-03;
-        }
-        if (!model->VDMOSrdsGiven) {
+
+        if (!model->VDMOSrdsGiven)
             model->VDMOSrds = 1.0e+15;
-        }
-        if (!model->VDIOresistanceGiven) {
+
+        if (!model->VDIOresistanceGiven)
             model->VDIOresistance = 1.0e-03;
-        }
-        if (!model->VDMOSnGiven) {
+
+        if (!model->VDMOSnGiven)
             model->VDMOSn = 1.;
-        }
-        if (!model->VDIOtransitTimeGiven) {
+
+        if (!model->VDIOtransitTimeGiven)
             model->VDIOtransitTime = 0.;
-        }
-        if (!model->VDMOSegGiven) {
+
+        if (!model->VDMOSegGiven)
             model->VDMOSeg = 1.11;
-        }
 
         if (!model->VDMOSrthjcGiven)
             model->VDMOSrthjc = 0;
 
         if (!model->VDMOSrthcaGiven)
-            model->VDMOSrthca = 0;
+            model->VDMOSrthca = 1e-03;
 
         if (!model->VDMOScthjGiven)
-            model->VDMOScthj = 1e-5;
+            model->VDMOScthj = 10e-06;
 
         if (!model->VDMOSmuGiven)
             model->VDMOSmu = -1.5;
@@ -141,12 +140,16 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
 
         if (!model->VDMOSvgsMaxGiven)
             model->VDMOSvgsMax = 1e99;
+
         if (!model->VDMOSvgdMaxGiven)
             model->VDMOSvgdMax = 1e99;
+
         if (!model->VDMOSvdsMaxGiven)
             model->VDMOSvdsMax = 1e99;
+
         if (!model->VDMOSvgsrMaxGiven)
             model->VDMOSvgsrMax = 1e99;
+
         if (!model->VDMOSvgdrMaxGiven)
             model->VDMOSvgdrMax = 1e99;
 

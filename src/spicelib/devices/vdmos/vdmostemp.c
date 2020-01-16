@@ -174,7 +174,7 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
                 if (cbv < here->VDIOtSatCur * tBreakdownVoltage / vt) {
                     cbv = here->VDIOtSatCur * tBreakdownVoltage / vt;
 #ifdef TRACE
-                    SPfrontEnd->IFerrorf(ERR_WARNING, "%s: breakdown current increased to %g to resolve", here->DIOname, cbv);
+                    SPfrontEnd->IFerrorf(ERR_WARNING, "%s: breakdown current increased to %g to resolve", here->VDMOSname, cbv);
                     SPfrontEnd->IFerrorf(ERR_WARNING,
                         "incompatibility with specified saturation current");
 #endif
@@ -193,7 +193,7 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
                         if (fabs(xcbv - cbv) <= tol) goto matched;
                     }
 #ifdef TRACE
-                    SPfrontEnd->IFerrorf(ERR_WARNING, "%s: unable to match forward and reverse diode regions: bv = %g, ibv = %g", here->DIOname, xbv, xcbv);
+                    SPfrontEnd->IFerrorf(ERR_WARNING, "%s: unable to match forward and reverse diode regions: bv = %g, ibv = %g", here->VDMOSname, xbv, xcbv);
 #endif
                 }
             matched:

@@ -615,7 +615,7 @@ bypass:
             *(ckt->CKTrhs + here->VDMOSsNodePrime) +=   cdreq + model->VDMOStype * ceqgs;
             if (selfheat) {
                 *(ckt->CKTrhs + here->VDMOStempNode) -= here->VDMOScth + ceqqth; /* dissipated power + Cthj current */
-                *(ckt->CKTrhs + here->VDMOSvcktTbranch) += ckt->CKTtemp; /* ckt temperature */
+                *(ckt->CKTrhs + here->VDMOSvcktTbranch) += ckt->CKTtemp-CONSTCtoK; /* ckt temperature */
             }
 
             /*
@@ -678,17 +678,13 @@ bypass:
              */
 
             double vd;      /* current diode voltage */
-            double vdtemp;
             double vte;
             double vtebrk, vbrknp;
             double cd, cdb, csat, cdeq;
-            double czero;
-            double czof2;
             double capd;
             double gd, gdb, gspr;
             double delvd;   /* change in diode voltage temporary */
-            double diffcharge, deplcharge, diffcap, deplcap;
-            double evd, evrev;
+            double evrev;
 #ifndef NOBYPASS
             double tol;     /* temporary for tolerance calculations */
 #endif
@@ -759,6 +755,7 @@ bypass:
                 */
                 if ((model->VDMOSbvGiven) &&
                         (vd < MIN(0, -vbrknp + 10 * vtebrk))) {
+                    double vdtemp;
                     vdtemp = -(vd + vbrknp);
                     vdtemp = DEVpnjlim(vdtemp,
                                        -(*(ckt->CKTstate0 + here->VDIOvoltage) +
@@ -774,6 +771,7 @@ bypass:
             *   compute dc current and derivatives
             */
             if (vd >= -3 * vte) {                 /* bottom current forward */
+                double evd;
 
                 evd = exp(vd / vte);
                 cdb = csat*(evd - 1);
@@ -807,6 +805,7 @@ bypass:
                 /*
                 *   charge storage elements
                 */
+                double czero, czof2, diffcharge, deplcharge, diffcap, deplcap;
                 czero = here->VDIOtJctCap;
                 if (vd < here->VDIOtDepCap) {
                     arg = 1 - vd / here->VDIOtJctPot;
