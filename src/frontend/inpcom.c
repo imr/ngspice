@@ -3901,7 +3901,7 @@ get_number_terminals(char *c)
             char *inst = gettok_instance(&c);
             strncpy(nam_buf, inst, sizeof(nam_buf) - 1);
             txfree(inst);
-            if (strstr(nam_buf, "off") || strchr(nam_buf, '='))
+            if (strstr(nam_buf, "off") || strchr(nam_buf, '=') || strstr(nam_buf, "tnodeout"))
                 break;
             i++;
         }
@@ -6706,7 +6706,7 @@ inp_vdmos_model(struct card *deck)
             if (found) {
                 /* if token2 is modelname, check if token3 is empty or has '=', if not, raise error */
                 token3 = gettok(&cut_line);
-                if (token3 && !strchr(token3, '=')) {
+                if (token3 && (!strchr(token3, '=') && !strstr(token3, "tnodeout"))) {
                     fprintf(stderr, "Warning: Possible syntax error in line %s\n   Wrong model or instance parameter?\n", curr_line);
                     goto endloop;
                 }
