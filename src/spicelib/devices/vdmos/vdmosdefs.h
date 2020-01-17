@@ -63,6 +63,7 @@ typedef struct sVDMOSinstance {
     double VDMOSdsConductance;    /*conductance of drain to source:set in setup*/
     double VDMOStemp;    /* operating temperature of this instance */
     double VDMOSdtemp;   /* operating temperature of the instance relative to circuit temperature*/
+    int    VDMOStnodeout;  /* flag indicate self heating on */
 
     double VDMOStTransconductance;   /* temperature corrected transconductance*/
     double VDMOStPhi;                /* temperature corrected Phi */
@@ -150,15 +151,14 @@ typedef struct sVDMOSinstance {
     unsigned VDMOSmGiven :1;
     unsigned VDMOSlGiven :1;
     unsigned VDMOSwGiven :1;
-    unsigned VDMOSdNodePrimeSet  :1;
-    unsigned VDMOSsNodePrimeSet  :1;
+    unsigned VDMOSdNodePrimeSet :1;
+    unsigned VDMOSsNodePrimeSet :1;
     unsigned VDMOSicVDSGiven :1;
     unsigned VDMOSicVGSGiven :1;
-    unsigned VDMOSvonGiven   :1;
+    unsigned VDMOStnodeoutGiven : 1; /* flag indicate self heating on */
+    unsigned VDMOSvonGiven : 1;
     unsigned VDMOSvdsatGiven :1;
-    unsigned VDMOSmodeGiven  :1;
-
-    unsigned VDMOSslfh:1;    /* non-zero self heating flag */
+    unsigned VDMOSmodeGiven :1;
 
     double *VDMOSDdPtr;      /* pointer to sparse matrix element at
                                      * (Drain node,drain node) */
@@ -418,7 +418,7 @@ enum {
     VDMOS_TEMP,
     VDMOS_M,
     VDMOS_DTEMP,
-    VDMOS_SLFH,
+    VDMOS_TNODEOUT,
 };
 
 /* model parameters */

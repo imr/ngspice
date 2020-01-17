@@ -311,7 +311,7 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
                 here->VDIOposPrimeNode = here->VDMOSsNode;
             }
 
-            if ((here->VDMOSslfh == 1) && (model->VDMOSrthjc!=0.0)) {
+            if ((here->VDMOStnodeoutGiven) && (model->VDMOSrthjc!=0.0)) {
                 if(here->VDMOSvcktTbranch == 0) {
                     error = CKTmkCur(ckt,&tmp,here->VDMOSname,"cktT");
                     if(error) return(error);
@@ -330,7 +330,7 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     return(E_NOMEM);\
 } } while(0)
 
-            if ((here->VDMOSslfh == 1) && (model->VDMOSrthjc!=0.0)) {
+            if ((here->VDMOStnodeoutGiven) && (model->VDMOSrthjc!=0.0)) {
                 TSTALLOC(VDMOSTemptempPtr, VDMOStempNode, VDMOStempNode);
                 TSTALLOC(VDMOSTempdpPtr, VDMOStempNode, VDMOSdNodePrime);
                 TSTALLOC(VDMOSTempspPtr, VDMOStempNode, VDMOSsNodePrime);
@@ -416,7 +416,7 @@ VDMOSunsetup(GENmodel *inModel, CKTcircuit *ckt)
                 CKTdltNNum(ckt, here->VDIOposPrimeNode);
             here->VDIOposPrimeNode = 0;
 
-            if ((here->VDMOSslfh == 1) && (model->VDMOSrthjc!=0.0)) {
+            if ((here->VDMOStnodeoutGiven) && (model->VDMOSrthjc!=0.0)) {
                 if (here->VDMOSvcktTbranch > 0)
                     CKTdltNNum(ckt, here->VDMOSvcktTbranch);
                 here->VDMOSvcktTbranch = 0;

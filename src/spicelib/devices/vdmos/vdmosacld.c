@@ -34,7 +34,7 @@ VDMOSacLoad(GENmodel *inModel, CKTcircuit *ckt)
         for(here = VDMOSinstances(model); here!= NULL;
                 here = VDMOSnextInstance(here)) {
 
-            selfheat = (here->VDMOSslfh == 1) && (model->VDMOSrthjc != 0.0);
+            selfheat = (here->VDMOStnodeoutGiven) && (model->VDMOSrthjc != 0.0);
             if (here->VDMOSmode < 0) {
                 xnrm=0;
                 xrev=1;
