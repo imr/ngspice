@@ -211,7 +211,7 @@ extern bool gr_circular;
 void inp_dodeck(struct card *deck, char *tt, wordlist *end, bool reuse,
                 struct card *options, char *filename);
 extern void inp_source(const char *file);
-void inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile);
+int inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile);
 extern void inp_casefix(char *string);
 extern void inp_list(FILE *file, struct card *deck, struct card *extras, int type);
 extern struct card *inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile, bool *expr_w_temper);

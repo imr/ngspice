@@ -434,7 +434,7 @@ eval_seed_opt(struct card *deck)
  * filter out the following cards: .save, .width, .four, .print, and
  * .plot, to perform after the run is over.
  * Then, we run dodeck, which parses up the deck.             */
-void
+int
 inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
 /* arguments:
  *  *fp = pointer to the input file
@@ -532,7 +532,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
     if (!deck) {
         if (!intfile && fp)
             fclose(fp);
-        return;
+        return 1;
     }
 
     /* files starting with *ng_script are user supplied command files */
@@ -738,7 +738,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                     line_free(realdeck, TRUE);
                     line_free(deck->actualLine, TRUE);
                     tfree(tt);
-                    return;
+                    return 1;
                 }
 
             /* Now handle translation of spice2c6 POLYs. */
@@ -977,6 +977,8 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
     cp_curerr = lasterr;
 
     tfree(tt);
+
+    return 0;
 }
 
 
