@@ -1306,7 +1306,9 @@ int main(int argc, char **argv)
 
             if (tempfile && (!err || !ft_batchmode)) {
                 /* Copy the input file name for becoming another file search path */
-                inp_spsource(tempfile, FALSE, dname, FALSE);
+                if (inp_spsource(tempfile, FALSE, dname, FALSE) != 0) {
+                    fprintf(stderr, "    Simulation interrupted due to error!\n\n");
+                }
                 tfree(dname);
                 gotone = TRUE;
             }
@@ -1318,7 +1320,9 @@ int main(int argc, char **argv)
         }   /* ---  if (!ft_servermode) --- */
 
         if (!gotone && ft_batchmode) {
-            inp_spsource(circuit_file, FALSE, NULL, FALSE);
+            if (inp_spsource(circuit_file, FALSE, NULL, FALSE) != 0) {
+                    fprintf(stderr, "    Simulation interrupted due to error!\n\n");
+            }
         }
 
     }
