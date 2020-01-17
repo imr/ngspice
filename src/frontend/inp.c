@@ -824,7 +824,8 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             wl_first = inp_savecurrents(deck, options, wl_first, controls);
 
             /* now load deck into ft_curckt -- the current circuit. */
-            inp_dodeck(deck, tt, wl_first, FALSE, options, filename);
+            if(inp_dodeck(deck, tt, wl_first, FALSE, options, filename) != 0)
+                return 1;
 
             if (ft_curckt) {
                 ft_curckt->devtlist = devtlist;
@@ -990,7 +991,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
  * It appears that inp_dodeck adds the circuit described by *deck
  * to the current circuit (ft_curckt).
  *-----------------------------------------------------------------*/
-void
+int
 inp_dodeck(
     struct card *deck,     /*in: the spice deck */
     char *tt,              /*in: the title of the deck */
@@ -1156,6 +1157,7 @@ inp_dodeck(
                         out_printf("Error on line %d :\n  %s\n%s\n",
                                    dd->linenum_orig, dd->line, dd->error);
                         have_err = TRUE;
+                        return 1;
                     }
                     if (ft_stricterror)
                         controlled_exit(EXIT_BAD);
@@ -1277,6 +1279,7 @@ inp_dodeck(
 #if 0
     cp_addkword(CT_CKTNAMES, tt);
 #endif
+    return 0;
 }
 
 
@@ -1597,7 +1600,9 @@ com_source(wordlist *wl)
         if (Infile_Path)
             tfree(Infile_Path);
         Infile_Path = ngdirname(firstfile);
-        inp_spsource(fp, FALSE, tempfile ? NULL : wl->wl_word, FALSE);
+        if (inp_spsource(fp, FALSE, tempfile ? NULL : wl->wl_word, FALSE) != 0) {
+            fprintf(stderr, "    Simulation interrupted due to error!\n\n");
+        }
     }
 
     cp_interactive = inter;

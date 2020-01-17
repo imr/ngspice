@@ -208,7 +208,7 @@ extern bool gr_circular;
 
 /* inp.c */
 
-void inp_dodeck(struct card *deck, char *tt, wordlist *end, bool reuse,
+int inp_dodeck(struct card *deck, char *tt, wordlist *end, bool reuse,
                 struct card *options, char *filename);
 extern void inp_source(const char *file);
 int inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile);
