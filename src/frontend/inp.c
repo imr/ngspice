@@ -528,11 +528,12 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
     }
     tfree(dir_name);
 
-    /* if nothing came back from inp_readall, just close fp and return to caller */
+    /* if nothing came back from inp_readall, e.g. after calling ngspice without parameters,
+    just close fp and return to caller */
     if (!deck) {
         if (!intfile && fp)
             fclose(fp);
-        return 1;
+        return 0;
     }
 
     /* files starting with *ng_script are user supplied command files */
