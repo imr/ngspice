@@ -857,7 +857,7 @@ twoSideSpacing(double width, double hStart, double hEnd, double rWanted,
   double dSpaceT;		/* Exact value of nSpaceT */
   double dDiff;			/* Difference between dSpaceS & dSpaceE */
   double remaining;		/* Length of span between hs and he */
-  double rTempS, rTempE;	/* For temporarily calc'ed ratios */
+  double rTempS = 0.0, rTempE = 0.0;	/* For temporarily calc'ed ratios */
   double hsLast, heLast;	/* Used to ensure ratio is valid */
   double rConnect;		/* " */
   double hMax, hMin;		/* Max and min between hStart and hEnd */

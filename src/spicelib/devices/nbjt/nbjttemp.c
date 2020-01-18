@@ -31,7 +31,7 @@ NBJTtemp(GENmodel *inModel, CKTcircuit *ckt)
   ONEmaterial *pM, *pMaterial, *pNextMaterial;
   ONEdevice *pDevice;
   double startTime;
-  int baseIndex, indexBE, indexBC;
+  int baseIndex, indexBE=0, indexBC=0;
 
 
   /* loop through all the bjt models */
