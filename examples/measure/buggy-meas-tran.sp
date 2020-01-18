@@ -30,12 +30,14 @@ vac2 2 0 DC 0 sin(0 1.2 0.9k 0 0)
 .measure tran vtest find par('v(2)*v(1)') AT=2.3m
 *
 .control
+echo
+echo **** buggy .measure lines
 run
-plot v(1) v(2)
-plot i(vac1)
+*plot v(1) v(2)
+*plot i(vac1)
 
 echo
-echo good meas lines
+echo **** good meas lines
 meas tran tdiff TRIG v(1) VAL=0.5 RISE=1 TARG v(1) VAL=0.5 RISE=2
 meas tran tdiff TRIG v(1) VAL=0.5 RISE=1 TARG v(1) VAL=0.5 RISE=3
 meas tran tdiff TRIG v(1) VAL=0.5 RISE=1 TARG v(1) VAL=0.5 FALL=1
@@ -57,7 +59,14 @@ meas tran ymax MAX v(2) from=2m to=3m
 meas tran tmax WHEN v(2)=YMAX from=1m to=2m
 
 echo
-echo buggy input lines
+echo **** out of intervall examples
+meas tran tdiff TRIG v(1) VAL=0.5 RISE=1 TARG v(1) VAL=0.5 RISE=25
+meas tran tdiff TRIG v(1) VAL=0.5 RISE=3 TARG v(1) VAL=0.5 RISE=2
+meas tran teval WHEN v(2)=70 CROSS=LAST
+meas tran yeval FIND v(2) AT=2
+
+echo
+echo **** buggy input lines
 meas tran tdiff TRIG v(1) VAL=0.5 RISE=1 TARG v(1) VAL=0.5 RISE=2
 meas tran tdiff TRIG v(1) VAL=0.5 RISE=1 TARG v(1) VAL=0.5
 meas tran tdiff TRIG v(1) VAL=0.5 RISE=1 TARG v(1)
@@ -70,7 +79,7 @@ meas tran tdiff
 meas tran
 meas
 echo
-echo more buggy lines
+echo **** more buggy lines
 meas tran tdiff TRIG v(1) VAL=0.5 RISE=1 TARG v(1) VAL=0.5 RISE=2
 meas tran TRIG v(1) VAL=0.5 RISE=1 TARG v(1) VAL=0.5 RISE=2
 meas tran tdiff v(1) VAL=0.5 RISE=1 TARG v(1) VAL=0.5 RISE=2
