@@ -68,7 +68,7 @@ end
 + Is=60p N=1.1 Rb=14m XTI=3
 + Cjo=1.5n Vj=0.8 m=0.5
 + tcvth=0.0065 MU=-1.27 texp0=1.5
-*+ shmod=1 RTH0=1.8k CTH0=1e-3
+*+ Rthjc=1.8k Cthj=1e-3
 + mtriode=0.8
 .model IRFP9240 VDMOS pchan
 + Vto=-4 Kp=8.8 Lambda=.003 Theta=0.08 ksubthres=.35
@@ -77,7 +77,7 @@ end
 + Is=150p N=1.3 Rb=16m XTI=2
 + Cjo=1.3n Vj=0.8 m=0.5
 + tcvth=0.004 MU=-1.27 texp0=1.5
-*+ shmod=1 RTH0=1.8k CTH0=1e-3
+*+ Rthjc=1.8k Cthj=1e-3
 + mtriode=0.6
 *
 .model MJE340 NPN(Is=1.03431e-13 BF=172.974 NF=.939811 VAF=27.3487 IKF=0.0260146 ISE=4.48447e-11 Ne=1.61605 Br=16.6725

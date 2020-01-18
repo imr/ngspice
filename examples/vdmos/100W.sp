@@ -5,10 +5,10 @@
 *R24 & R25 are optional output offset trimming
 *
 VTamb tamb 0 25
-MQ1 +V N010 N012 tn IRFP240
-X1 tn tamb junction-ambient
-MQ2 -V N020 N017 tp IRFP9240
-X2 tp tamb junction-ambient
+MQ1 +V N010 N012 tn tcn IRFP240 tnodeout
+X1 tcn tamb case-ambient
+MQ2 -V N020 N017 tp tcp IRFP9240 tnodeout
+X2 tcp tamb case-ambient
 R1 OUT N017 .33
 R2 N012 OUT .33
 C1 OUT N016 100n
@@ -54,7 +54,7 @@ V3 OUT OUT1 dc 0 ac 1
 C8 OUT1 N011 3p
 *
 .param V=1.44 ; 100W RMS
-.save @r1[i] @r2[i] v(out1) v(out) @rload[i] v(tn) v(tp) inoise_spectrum
+.save @r1[i] @r2[i] v(out1) v(out) @rload[i] v(tcn) v(tcp) inoise_spectrum
 .control
 op
 print v(out) @r1[i] @r2[i]
@@ -65,8 +65,8 @@ plot ph(V(out)/V(out1))
 tran 1u 1000m
 fourier 1K V(out)
 plot v(out)*@rload[i]
-settype temperature v(tn) v(tp)
-plot v(tn) v(tp)
+settype temperature v(tcn) v(tcp)
+plot v(tcn) v(tcp)
 linearize v(out)
 fft v(out)
 plot db(v(out)) xlimit 0 20k
@@ -84,7 +84,7 @@ plot inoise_spectrum
 + Is=60p N=1.1 Rb=14m XTI=3
 + Cjo=1.5n Vj=0.8 m=0.5
 + tcvth=0.0065 MU=-1.27 texp0=1.5
-+ shmod=1 RTH0=1.8k CTH0=1e-3
++ Rthjc=0.4 Cthj=5e-3
 + mtriode=0.8
 .model IRFP9240 VDMOS pchan
 + Vto=-4 Kp=8.8 Lambda=.003 Theta=0.08 ksubthres=.35
@@ -93,7 +93,7 @@ plot inoise_spectrum
 + Is=150p N=1.3 Rb=16m XTI=2
 + Cjo=1.3n Vj=0.8 m=0.5
 + tcvth=0.004 MU=-1.27 texp0=1.5
-+ shmod=1 RTH0=1.8k CTH0=1e-3
++ Rthjc=0.4 Cthj=5e-3
 + mtriode=0.6
 *
 .model MJE340 NPN(Is=1.03431e-13 BF=172.974 NF=.939811 VAF=27.3487 IKF=0.0260146 ISE=4.48447e-11 Ne=1.61605 Br=16.6725
@@ -105,12 +105,10 @@ plot inoise_spectrum
 + XTB=1.03638 XTI=3.8424 Eg=1.206 Cje=1e-11 Vje=0.75 Mje=0.33 TF=1e-09 XTF=1 VTF=10 ITF=0.01 Cjc=1e-11 Vjc=0.75
 + Mjc=0.33 XCJC=0.9 Fc=0.5 Cjs=0 Vjs=0.75 Mjs=0.5 TR=1e-07 PTF=0 KF=1e-15 AF=1)
 *
-.subckt junction-ambient jct amb
-rjc jct 1 0.4
-ccs 1 0 5m
-rcs 1 2 0.1
-csa 2 0 30m
-rsa 2 amb 1.3
+.subckt case-ambient case amb
+rcs case 1 0.1
+csa 1 0 30m
+rsa 1 amb 1.3
 .ends
 
 .end

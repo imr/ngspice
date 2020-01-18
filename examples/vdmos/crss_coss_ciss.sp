@@ -41,7 +41,7 @@ plot 'i(v6)/deriv(v(d4))' vs v(d2p) xlog xlimit 1 100 ylimit 0 3n title "IRFP924
 + Is=60p N=1.1 Rb=14m XTI=3
 + Cjo=1.5n Vj=0.8 m=0.5
 + tcvth=0.0065 MU=-1.27 texp0=1.5
-*+ shmod=1 RTH0=1.8k CTH0=1e-3
+*+ Rthjc=1.8k Cthj=1e-3
 + mtriode=0.8
 .model IRFP9240 VDMOS pchan
 + Vto=-4 Kp=8.8 Lambda=.003 Theta=0.08 ksubthres=.35
@@ -50,7 +50,7 @@ plot 'i(v6)/deriv(v(d4))' vs v(d2p) xlog xlimit 1 100 ylimit 0 3n title "IRFP924
 + Is=150p N=1.3 Rb=16m XTI=2
 + Cjo=1.3n Vj=0.8 m=0.5
 + tcvth=0.004 MU=-1.27 texp0=1.5
-*+ shmod=1 RTH0=1.8k CTH0=1e-3
+*+ Rthjc=1.8k Cthj=1e-3
 + mtriode=0.6
 .end
 
