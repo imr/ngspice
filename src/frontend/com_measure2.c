@@ -1563,6 +1563,8 @@ get_measure2(
                     printf("Error: measure  %s  :\n", mName);
                     printf("\tno such function as '%s'\n", words->wl_word);
                 }
+                tfree(mName);
+                tfree(mAnalysis);
                 return MEASUREMENT_FAILURE;
             }
             break;
@@ -1588,6 +1590,8 @@ get_measure2(
         printf("\tmeasure '%s'  failed\n", mName);
         printf("Error: measure  %s  :\n", mName);
         printf("\tinvalid num params\n");
+        tfree(mName);
+        tfree(mAnalysis);
         return MEASUREMENT_FAILURE;
     }
 
