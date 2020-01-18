@@ -79,8 +79,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
 #ifndef PREDICTOR
     double xfact = 0.0;
 #endif
-    int xnrm;
-    int xrev;
+    int xnrm, xrev;
     double capgs = 0.0;   /* total gate-source capacitance */
     double capgd = 0.0;   /* total gate-drain capacitance */
     double capth = 0.0;   /* total thermal capacitance */
@@ -90,8 +89,8 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
     register int selfheat;
     double rd0T, rd1T, dBeta_dT, drd0T_dT, drd1T_dT, dIds_dT;
     double deldelTemp, delTemp, delTemp1, Temp, Vds, Vgs;
-    double ceqqth;
-    double GmT, gTtg, gTtdp, gTtt, gTtsp, gcTt;
+    double ceqqth=0.0;
+    double GmT, gTtg, gTtdp, gTtt, gTtsp, gcTt=0.0;
 
     /*  loop through all the VDMOS device models */
     for (; model != NULL; model = VDMOSnextModel(model)) {
