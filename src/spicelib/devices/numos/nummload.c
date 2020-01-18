@@ -34,12 +34,11 @@ NUMOSload(GENmodel *inModel, CKTcircuit *ckt)
   double startTime, startTime2, totalTime, totalTime2;
   double tol;
   double xfact;
-  double id, is, ig;
+  double id = 0.0, is = 0.0, ig = 0.0;
   double ideq, iseq, igeq;
   double idhat = 0.0, ishat = 0.0, ighat = 0.0;
   double delVdb, delVsb, delVgb;
   double vdb, vsb, vgb;
-  struct mosConductances g;
   int icheck;
   int icheck1;
   int i;
@@ -51,6 +50,17 @@ NUMOSload(GENmodel *inModel, CKTcircuit *ckt)
   int doVoltPred;
   char *initStateName;
 
+  struct mosConductances g;
+  /* remove compiler warning */
+  g.dIdDVdb = 0.0;
+  g.dIdDVsb = 0.0;
+  g.dIdDVgb = 0.0;
+  g.dIsDVdb = 0.0;
+  g.dIsDVsb = 0.0;
+  g.dIsDVgb = 0.0;
+  g.dIgDVdb = 0.0;
+  g.dIgDVsb = 0.0;
+  g.dIgDVgb = 0.0;
   /* loop through all the models */
   for (; model != NULL; model = NUMOSnextModel(model)) {
     FieldDepMobility = model->NUMOSmodels->MODLfieldDepMobility;

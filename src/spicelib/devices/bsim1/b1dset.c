@@ -122,7 +122,69 @@ B1dSetup(GENmodel *inModel, CKTcircuit *ckt)
   Dderivs d_VgsVth, d_G, d_A, d_Arg, d_DrCur;
   Dderivs d_Ugs, d_Uds, d_Eta, d_Vpb, d_SqrtVpb, d_Von;
   Dderivs d_p, d_q, d_r, d_zero;
+  /* remove compiler warnings */
+  d_qg.value = 0.0;
+  d_qg.d1_p = 0.0;
+  d_qg.d1_q = 0.0;
+  d_qg.d1_r = 0.0;
+  d_qg.d2_p2 = 0.0;
+  d_qg.d2_q2 = 0.0;
+  d_qg.d2_r2 = 0.0;
+  d_qg.d2_pq = 0.0;
+  d_qg.d2_qr = 0.0;
+  d_qg.d2_pr = 0.0;
+  d_qg.d3_p3 = 0.0;
+  d_qg.d3_q3 = 0.0;
+  d_qg.d3_r3 = 0.0;
+  d_qg.d3_p2q = 0.0;
+  d_qg.d3_p2r = 0.0;
+  d_qg.d3_pq2 = 0.0;
+  d_qg.d3_q2r = 0.0;
+  d_qg.d3_pr2 = 0.0;
+  d_qg.d3_qr2 = 0.0;
+  d_qg.d3_pqr = 0.0;
 
+  d_qb.value = 0.0;
+  d_qb.d1_p = 0.0;
+  d_qb.d1_q = 0.0;
+  d_qb.d1_r = 0.0;
+  d_qb.d2_p2 = 0.0;
+  d_qb.d2_q2 = 0.0;
+  d_qb.d2_r2 = 0.0;
+  d_qb.d2_pq = 0.0;
+  d_qb.d2_qr = 0.0;
+  d_qb.d2_pr = 0.0;
+  d_qb.d3_p3 = 0.0;
+  d_qb.d3_q3 = 0.0;
+  d_qb.d3_r3 = 0.0;
+  d_qb.d3_p2q = 0.0;
+  d_qb.d3_p2r = 0.0;
+  d_qb.d3_pq2 = 0.0;
+  d_qb.d3_q2r = 0.0;
+  d_qb.d3_pr2 = 0.0;
+  d_qb.d3_qr2 = 0.0;
+  d_qb.d3_pqr = 0.0;
+
+  d_qd.value = 0.0;
+  d_qd.d1_p = 0.0;
+  d_qd.d1_q = 0.0;
+  d_qd.d1_r = 0.0;
+  d_qd.d2_p2 = 0.0;
+  d_qd.d2_q2 = 0.0;
+  d_qd.d2_r2 = 0.0;
+  d_qd.d2_pq = 0.0;
+  d_qd.d2_qr = 0.0;
+  d_qd.d2_pr = 0.0;
+  d_qd.d3_p3 = 0.0;
+  d_qd.d3_q3 = 0.0;
+  d_qd.d3_r3 = 0.0;
+  d_qd.d3_p2q = 0.0;
+  d_qd.d3_p2r = 0.0;
+  d_qd.d3_pq2 = 0.0;
+  d_qd.d3_q2r = 0.0;
+  d_qd.d3_pr2 = 0.0;
+  d_qd.d3_qr2 = 0.0;
+  d_qd.d3_pqr = 0.0;
 
   /*  loop through all the B1 device models */
   for( ; model != NULL; model = B1nextModel(model)) {

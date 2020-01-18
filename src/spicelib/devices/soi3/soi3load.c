@@ -136,6 +136,13 @@ SOI3load(GENmodel *inModel, CKTcircuit *ckt)
    double gcbgf,gcbd,gcbs,gcbdeltaT,gcbgb;
    double gcgbgf,gcgbd,gcgbs,gcgbdeltaT,gcgbgb;
 
+   /* remove compiler warnings */
+   cgfgf=cgfd=cgfs=cgfdeltaT=cgfgb = 0;
+   cdgf=cdd=cds=cddeltaT=cdgb = 0;
+   csgf=csd=css=csdeltaT=csgb = 0;
+   cbgf=cbd=cbs=cbdeltaT=cbgb = 0;
+   cgbgf=cgbd=cgbs=cgbdeltaT=cgbgb = 0;
+
     double alphaBJT;
     double tauFBJTeff,tauRBJTeff;
     double ISts,IS1ts,IStd,IS1td;

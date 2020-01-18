@@ -111,7 +111,7 @@ GRAPH *FindGraph(int id)
 GRAPH *CopyGraph(GRAPH *graph)
 {
     GRAPH *ret;
-    struct dveclist *link, *newlink;
+    struct dveclist *link = NULL, *newlink = NULL;
 
     if (!graph) {
         return NULL;

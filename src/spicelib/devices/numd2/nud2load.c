@@ -31,10 +31,10 @@ NUMD2load(GENmodel *inModel, CKTcircuit *ckt)
   register NUMD2instance *inst;
   register TWOdevice *pDevice;
   double startTime, startTime2, totalTime, totalTime2;
-  double id;
+  double id=0.;
   double idhat = 0.0;
   double ideq;
-  double gd;
+  double gd=0.;
   double xfact;
   double tol;			/* temporary for tolerance calculations */
   double vd;			/* current diode voltage */
