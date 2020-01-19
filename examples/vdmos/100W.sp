@@ -54,7 +54,7 @@ V3 OUT OUT1 dc 0 ac 1
 C8 OUT1 N011 3p
 *
 .param V=1.44 ; 100W RMS
-.save @r1[i] @r2[i] v(out1) v(out) @rload[i] v(tcn) v(tcp) inoise_spectrum
+.save @r1[i] @r2[i] v(out1) v(out) @rload[i] v(tn) v(tp) v(tcn) v(tcp) inoise_spectrum
 .control
 op
 print v(out) @r1[i] @r2[i]
@@ -65,8 +65,8 @@ plot ph(V(out)/V(out1))
 tran 1u 1000m
 fourier 1K V(out)
 plot v(out)*@rload[i]
-settype temperature v(tcn) v(tcp)
-plot v(tcn) v(tcp)
+settype temperature v(tn) v(tp) v(tcn) v(tcp)
+plot v(tn) v(tp) v(tcn) v(tcp)
 linearize v(out)
 fft v(out)
 plot db(v(out)) xlimit 0 20k
