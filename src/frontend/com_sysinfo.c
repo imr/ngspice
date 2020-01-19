@@ -393,6 +393,10 @@ static int get_sysmem(struct sys_memory *memall)
     fprintf(stderr, "System memory info is not available\n");
     return -1;
 }
+/* Get system information */
+static void set_static_system_info(void)
+{
+}
 
 #elif defined(_WIN32)
 
