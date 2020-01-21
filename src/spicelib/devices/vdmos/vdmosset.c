@@ -313,13 +313,11 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
             }
 
             if ((here->VDMOStnodeoutGiven) && (model->VDMOSrthjc!=0.0)) {
-                if (model->VDMOSrthcaGiven) {
-                    if(here->VDMOSvcktTbranch == 0) {
-                        error = CKTmkCur(ckt,&tmp,here->VDMOSname,"cktT");
-                        if(error) return(error);
-                        here->VDMOSvcktTbranch = tmp->number;
-                    } 
-                }
+                if(here->VDMOSvcktTbranch == 0) {
+                    error = CKTmkCur(ckt,&tmp,here->VDMOSname,"VcktTemp");
+                    if(error) return(error);
+                    here->VDMOSvcktTbranch = tmp->number;
+                } 
                 if (here->VDMOStNodePrime == 0) {
                     error = CKTmkVolt(ckt, &tmp, here->VDMOSname, "thermal node");
                     if (error) return(error);
@@ -342,18 +340,15 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
                 TSTALLOC(VDMOSDPtempPtr, VDMOSdNodePrime, VDMOStempNode);
                 TSTALLOC(VDMOSSPtempPtr, VDMOSsNodePrime, VDMOStempNode);
 
-                TSTALLOC(VDMOSTcasetcasePtr, VDMOStcaseNode, VDMOStcaseNode); /* for Rthjc */
+                TSTALLOC(VDMOSTcasetcasePtr, VDMOStcaseNode, VDMOStcaseNode); /* Rthjc between tj and tcase*/
                 TSTALLOC(VDMOSTcasetempPtr, VDMOStcaseNode, VDMOStempNode);
                 TSTALLOC(VDMOSTemptcasePtr, VDMOStempNode, VDMOStcaseNode);
-
-                if (model->VDMOSrthcaGiven) {
-                    TSTALLOC(VDMOSTptpPtr, VDMOStNodePrime, VDMOStNodePrime); /* for Rthca */
-                    TSTALLOC(VDMOSTptempPtr, VDMOStNodePrime, VDMOStempNode);
-                    TSTALLOC(VDMOSTemptpPtr, VDMOStempNode, VDMOStNodePrime);
-                    TSTALLOC(VDMOSCktTcktTPtr, VDMOSvcktTbranch, VDMOSvcktTbranch); /* for VcktTemp */
-                    TSTALLOC(VDMOSCktTtpPtr, VDMOSvcktTbranch, VDMOStNodePrime);
-                    TSTALLOC(VDMOSTpcktTPtr, VDMOStNodePrime, VDMOSvcktTbranch);
-                }
+                TSTALLOC(VDMOSTptpPtr, VDMOStNodePrime, VDMOStNodePrime); /* Rthca between tcase and Vsrc */
+                TSTALLOC(VDMOSTptcasePtr, VDMOStNodePrime, VDMOStempNode);
+                TSTALLOC(VDMOSTcasetpPtr, VDMOStempNode, VDMOStNodePrime);
+                TSTALLOC(VDMOSCktTcktTPtr, VDMOSvcktTbranch, VDMOSvcktTbranch); /* Vsrc=cktTemp to gnd */
+                TSTALLOC(VDMOSCktTtpPtr, VDMOSvcktTbranch, VDMOStNodePrime);
+                TSTALLOC(VDMOSTpcktTPtr, VDMOStNodePrime, VDMOSvcktTbranch);
             }
             TSTALLOC(VDMOSDdPtr, VDMOSdNode, VDMOSdNode);
             TSTALLOC(VDMOSGgPtr, VDMOSgNode, VDMOSgNode);
@@ -424,11 +419,9 @@ VDMOSunsetup(GENmodel *inModel, CKTcircuit *ckt)
                 if (here->VDMOStNodePrime > 0)
                     CKTdltNNum(ckt, here->VDMOStNodePrime);
                 here->VDMOStNodePrime = 0;
-                if (model->VDMOSrthcaGiven) {
-                    if (here->VDMOSvcktTbranch > 0)
-                        CKTdltNNum(ckt, here->VDMOSvcktTbranch);
-                    here->VDMOSvcktTbranch = 0;
-                }
+                if (here->VDMOSvcktTbranch > 0)
+                    CKTdltNNum(ckt, here->VDMOSvcktTbranch);
+                here->VDMOSvcktTbranch = 0;
             }
 
         }

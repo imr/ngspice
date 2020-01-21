@@ -22,7 +22,7 @@ IFparm VDMOSpTable[] = { /* parameters */
  IOPU("dtemp",      VDMOS_DTEMP,      IF_REAL,    "Instance temperature difference"),
  IP( "ic",          VDMOS_IC,         IF_REALVEC, "Vector of D-S, G-S voltages"),
 
- IOP("tnodeout",        VDMOS_TNODEOUT,       IF_FLAG,    "Thermal model switch on/off"),
+ IOP("tnodeout",    VDMOS_TNODEOUT,   IF_FLAG,    "Thermal model switch on/off"),
 
  OP( "id",          VDMOS_CD,         IF_REAL,    "Drain current"),
  OP( "is",          VDMOS_CS,         IF_REAL,    "Source current"),

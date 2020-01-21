@@ -231,15 +231,15 @@ typedef struct sVDMOSinstance {
     double *VDMOSDPtempPtr;
     double *VDMOSSPtempPtr;
 
-    double *VDMOSTcasetcasePtr;
+    double *VDMOSTcasetcasePtr; /* for Rthjc */
     double *VDMOSTcasetempPtr;
     double *VDMOSTemptcasePtr;
 
-    double *VDMOSTptpPtr;
-    double *VDMOSTptempPtr;
-    double *VDMOSTemptpPtr;
+    double *VDMOSTptpPtr;       /* for Rthca */
+    double *VDMOSTptcasePtr;
+    double *VDMOSTcasetpPtr;
 
-    double *VDMOSCktTcktTPtr;
+    double *VDMOSCktTcktTPtr;   /* for VcktTemp */
     double *VDMOSCktTtpPtr;
     double *VDMOSTpcktTPtr;
 
@@ -462,7 +462,6 @@ enum {
     VDMOS_MOD_TT,
     VDMOS_MOD_EG,
     VDMOS_MOD_XTI,
-    VDMOS_MOD_SHMOD,
     VDMOS_MOD_RTHJC,
     VDMOS_MOD_RTHCA,
     VDMOS_MOD_CTHJ,
