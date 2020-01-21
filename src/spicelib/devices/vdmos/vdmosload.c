@@ -651,21 +651,21 @@ bypass:
 
             if (selfheat)
             {
-                (*(here->VDMOSDPtempPtr) += GmT);
-                (*(here->VDMOSSPtempPtr) += -GmT);
-                (*(here->VDMOSGPtempPtr) += 0.0);
-                (*(here->VDMOSTemptempPtr) += gTtt + 1/model->VDMOSrthjc + gcTt);
-                (*(here->VDMOSTempgpPtr) += gTtg);
-                (*(here->VDMOSTempdpPtr) += gTtdp);
-                (*(here->VDMOSTempspPtr) += gTtsp);
+                (*(here->VDMOSDPtempPtr)     += GmT);
+                (*(here->VDMOSSPtempPtr)     += -GmT);
+                (*(here->VDMOSGPtempPtr)     += 0.0);
+                (*(here->VDMOSTemptempPtr)   += gTtt + 1/model->VDMOSrthjc + gcTt);
+                (*(here->VDMOSTempgpPtr)     += gTtg);
+                (*(here->VDMOSTempdpPtr)     += gTtdp);
+                (*(here->VDMOSTempspPtr)     += gTtsp);
                 (*(here->VDMOSTemptcasePtr)  += -1/model->VDMOSrthjc);
                 (*(here->VDMOSTcasetempPtr)  += -1/model->VDMOSrthjc);
                 (*(here->VDMOSTcasetcasePtr) +=  1/model->VDMOSrthjc + 1/model->VDMOSrthca);
-                (*(here->VDMOSTptpPtr)    +=  1/model->VDMOSrthca);
-                (*(here->VDMOSTptcasePtr) += -1/model->VDMOSrthca);
-                (*(here->VDMOSTcasetpPtr) += -1/model->VDMOSrthca);
-                (*(here->VDMOSCktTtpPtr)  += 1.0);
-                (*(here->VDMOSTpcktTPtr)  += 1.0);
+                (*(here->VDMOSTptpPtr)       +=  1/model->VDMOSrthca);
+                (*(here->VDMOSTptcasePtr)    += -1/model->VDMOSrthca);
+                (*(here->VDMOSTcasetpPtr)    += -1/model->VDMOSrthca);
+                (*(here->VDMOSCktTtpPtr)     +=  1.0);
+                (*(here->VDMOSTpcktTPtr)     +=  1.0);
             }
 
             /* body diode model

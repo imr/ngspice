@@ -95,13 +95,7 @@ VDMOSacLoad(GENmodel *inModel, CKTcircuit *ckt)
             *(here->VDMOSGPspPtr +1) -= xgs;
             *(here->VDMOSDPgpPtr +1) -= xgd;
             *(here->VDMOSSPgpPtr +1) -= xgs;
-            if (selfheat)
-            {
-               *(here->VDMOSTemptempPtr + 1) += xcTt;
-               *(here->VDMOSDPtempPtr + 1) += xcdT;
-               *(here->VDMOSSPtempPtr + 1) += xcsT;
-               *(here->VDMOSGPtempPtr + 1) += xcgT;
-            }
+
             *(here->VDMOSDdPtr) += here->VDMOSdrainConductance;
             *(here->VDMOSSsPtr) += here->VDMOSsourceConductance;
             *(here->VDMOSDPdpPtr) += here->VDMOSdrainConductance+
@@ -135,12 +129,26 @@ VDMOSacLoad(GENmodel *inModel, CKTcircuit *ckt)
             *(here->VDIORPdPtr +1) -= xceq;
             if (selfheat)
             {
-               *(here->VDMOSDPtempPtr) += GmT;
-               *(here->VDMOSSPtempPtr) += -GmT;
-               *(here->VDMOSTemptempPtr) += gTtt + 1/model->VDMOSrthjc;
-               *(here->VDMOSTempgpPtr) += gTtg;
-               *(here->VDMOSTempdpPtr) += gTtdp;
-               *(here->VDMOSTempspPtr) += gTtsp;
+               *(here->VDMOSDPtempPtr)       += GmT;
+               *(here->VDMOSSPtempPtr)       += -GmT;
+
+               *(here->VDMOSTemptempPtr)     += gTtt + 1/model->VDMOSrthjc;
+               *(here->VDMOSTempgpPtr)       += gTtg;
+               *(here->VDMOSTempdpPtr)       += gTtdp;
+               *(here->VDMOSTempspPtr)       += gTtsp;
+               *(here->VDMOSTemptcasePtr)    += -1/model->VDMOSrthjc;
+               *(here->VDMOSTcasetempPtr)    += -1/model->VDMOSrthjc;
+               *(here->VDMOSTcasetcasePtr)   +=  1/model->VDMOSrthjc + 1/model->VDMOSrthca;
+               *(here->VDMOSTptpPtr)         +=  1/model->VDMOSrthca;
+               *(here->VDMOSTptcasePtr)      += -1/model->VDMOSrthca;
+               *(here->VDMOSTcasetpPtr)      += -1/model->VDMOSrthca;
+               *(here->VDMOSCktTtpPtr)       +=  1.0;
+               *(here->VDMOSTpcktTPtr)       +=  1.0;
+
+               *(here->VDMOSTemptempPtr + 1) += xcTt;
+               *(here->VDMOSDPtempPtr + 1)   += xcdT;
+               *(here->VDMOSSPtempPtr + 1)   += xcsT;
+               *(here->VDMOSGPtempPtr + 1)   += xcgT;
             }
         }
     }
