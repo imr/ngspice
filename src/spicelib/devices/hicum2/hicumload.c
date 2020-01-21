@@ -1100,18 +1100,18 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 //todo: check for double multiplication on pnp's
             Vbiei = model->HICUMtype*Vbiei;
             Vbici = model->HICUMtype*Vbici;
-            Vciei = model->HICUMtype*Vciei;
+            Vciei = Vbiei-Vbici;
             Vbpei = model->HICUMtype*Vbpei;
             Vbpci = model->HICUMtype*Vbpci;
             Vbci  = model->HICUMtype*Vbci;
             Vsici = model->HICUMtype*Vsici;
             Vsc   = model->HICUMtype*Vsc;
+
             if (model->HICUMflsh!=0 && model->HICUMrth >= MIN_R) { // Thermal_update_with_self_heating
-
                 here->HICUMtemp = here->HICUMtemp+Vrth;
-
                 iret = hicum_thermal_update(model, here);
             }
+
             // Model_evaluation
 
             //Intrinsic transistor
@@ -1279,7 +1279,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 d_Q     = Q_pT;
                 while (fabs(d_Q) >= RTOLC*fabs(Q_pT) && l_it <= l_itmax) {
                     double a;
-//                    d_Q0    = d_Q;
                     I_Tf1   = i_0f/Q_pT;
                     a_h     = Oich*I_Tf1;
                     itf     = I_Tf1*(1.0+a_h);
@@ -1622,9 +1621,9 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             // Following code is an intermediate solution (if branch contribution is not supported):
             // ******************************************
             //if(model->HICUMflsh == 0 || model->HICUMrth < MIN_R) {
-            //      I[br_sht]       <+ Vrth]/MIN_R;
+            //      I[br_sht]       <+ Vrth/MIN_R;
             //} else {
-            //      I[br_sht]       <+ Vrth]/rth_t-pterm;
+            //      I[br_sht]       <+ Vrth/rth_t-pterm;
             //      I[br_sht]       <+ ddt(model->HICUMcth*Vrth]);
             //}
 
