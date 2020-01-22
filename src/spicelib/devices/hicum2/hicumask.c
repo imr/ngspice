@@ -100,17 +100,20 @@ HICUMask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFval
         case HICUM_QUEST_GM:
             value->rValue = *(ckt->CKTstate0 + here->HICUMiciei_Vbiei);
             return(OK);
-        case HICUM_QUEST_GO:
-            value->rValue = *(ckt->CKTstate0 + here->HICUMiciei_Vbici);
-            return(OK);
         case HICUM_QUEST_GPI:
             value->rValue = *(ckt->CKTstate0 + here->HICUMibiei_Vbiei);
+            return(OK);
+        case HICUM_QUEST_GPX:
+            value->rValue = *(ckt->CKTstate0 + here->HICUMibpei_Vbpei);
             return(OK);
         case HICUM_QUEST_GMU:
             value->rValue = *(ckt->CKTstate0 + here->HICUMibici_Vbici);
             return(OK);
         case HICUM_QUEST_GX:
             value->rValue = *(ckt->CKTstate0 + here->HICUMibpbi_Vbpbi);
+            return(OK);
+        case HICUM_QUEST_GO:
+            value->rValue = *(ckt->CKTstate0 + here->HICUMiciei_Vbici);
             return(OK);
         case HICUM_QUEST_CJBE:
             value->rValue = here->HICUMcapjei;
