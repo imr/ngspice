@@ -1266,7 +1266,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             Tf      = T_f0;
             Qf      = T_f0*itf;
             HICQFF(here, model, itf,ick,&Tf,&Qf,&T_fT,&Q_fT,&Q_bf);
-
+//todo: itf=f(Vbiei,Vbici) -> Qf, Q_bf Ableitungen nach Vbiei, Vbici
             //Initial formulation of reverse diffusion charge
             Qr      = Tr*itr;
 
