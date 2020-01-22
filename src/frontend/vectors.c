@@ -253,7 +253,6 @@ static struct dvec *find_permanent_vector_by_name(
         NGHASHPTR pl_lookup_table, char *name)
 {
     struct dvec *d;
-
     /* Find the first vector with the given name and then find others
      * until one having the VF_PERMANENT flag set is found. */
     for (d = nghash_find(pl_lookup_table, name);
@@ -264,7 +263,18 @@ static struct dvec *find_permanent_vector_by_name(
             return d;
         }
     } /* end of loop over vectors in the plot having this name */
-
+    /* try again, this time without quotes around the name */
+    char *nname = cp_unquote(name);
+    for (d = nghash_find(pl_lookup_table, nname);
+            d;
+            d = nghash_find_again(pl_lookup_table, nname)) {
+        if (d->v_flags & VF_PERMANENT) {
+            /* A "permanent" vector was found with the name, so done */
+            tfree(nname);
+            return d;
+        }
+    } /* end of loop over vectors in the plot having this name */
+    tfree(nname);
     return (struct dvec *) NULL; /* not found */
 } /* end of function find_permanent_vector_by_name */
 
