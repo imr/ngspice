@@ -19,7 +19,6 @@ Rfb ino outo 3k
 vin in 0 DC 0 PULSE(-0.5 0.5 2uS 200NS 200NS 5uS 10uS)
 .tran 100n 10u
 
-.options vntol=10u
 .control
 run
 plot v(in) v(outo)
