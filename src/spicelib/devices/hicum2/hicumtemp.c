@@ -253,6 +253,7 @@ int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance)
     //Avalanche current factors
     here->HICUMfavl_t  = model->HICUMfavl*exp(model->HICUMalfav*dT);
     here->HICUMqavl_t  = model->HICUMqavl*exp(model->HICUMalqav*dT);
+    here->HICUMkavl_t  = model->HICUMkavl*exp(model->HICUMalkav*dT);
 
     //Zero bias internal base resistance
     here->HICUMrbi0_t  = model->HICUMrbi0*exp(model->HICUMzetarbi*here->HICUMln_qtt0);

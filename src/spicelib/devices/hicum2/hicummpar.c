@@ -171,6 +171,10 @@ HICUMmParam(int param, IFvalue *value, GENmodel *inModel)
             model->HICUMqavl = value->rValue;
             model->HICUMqavlGiven = TRUE;
             break;
+        case HICUM_MOD_KAVL:
+            model->HICUMkavl = value->rValue;
+            model->HICUMkavlGiven = TRUE;
+            break;
         case HICUM_MOD_ALFAV:
             model->HICUMalfav = value->rValue;
             model->HICUMalfavGiven = TRUE;
@@ -178,6 +182,10 @@ HICUMmParam(int param, IFvalue *value, GENmodel *inModel)
         case HICUM_MOD_ALQAV:
             model->HICUMalqav = value->rValue;
             model->HICUMalqavGiven = TRUE;
+            break;
+        case HICUM_MOD_ALKAV:
+            model->HICUMalkav = value->rValue;
+            model->HICUMalkavGiven = TRUE;
             break;
 
 //Series resistances

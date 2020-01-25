@@ -135,11 +135,17 @@ HICUMmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
         case HICUM_MOD_QAVL:
             value->rValue = here->HICUMqavl;
             return(OK);
+        case HICUM_MOD_KAVL:
+            value->rValue = here->HICUMkavl;
+            return(OK);
         case HICUM_MOD_ALFAV:
             value->rValue = here->HICUMalfav;
             return(OK);
         case HICUM_MOD_ALQAV:
             value->rValue = here->HICUMalqav;
+            return(OK);
+        case HICUM_MOD_ALKAV:
+            value->rValue = here->HICUMalkav;
             return(OK);
 
 //Series resistances

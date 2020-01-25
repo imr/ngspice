@@ -57,9 +57,9 @@ typedef struct sHICUMinstance {
     int HICUMemitEINode; /* number of internal emitter node of hicum */
     int HICUMbaseBPNode; /* number of internal base node of hicum */
     int HICUMsubsSINode; /* number of internal substrate node */
-    int HICUMxfNode;     /* number of internal excess phase node */
-    int HICUMxf1Node;    /* number of internal excess phase node */
-    int HICUMxf2Node;    /* number of internal excess phase node */
+    int HICUMxfNode;     /* number of internal excess phase node qdei */
+    int HICUMxf1Node;    /* number of internal excess phase node itf */
+    int HICUMxf2Node;    /* number of internal excess phase node itf */
 
     double HICUMarea;     /* area factor for the hicum */
     double HICUMicVBE;    /* initial condition voltage B-E */
@@ -92,6 +92,7 @@ typedef struct sHICUMinstance {
     double HICUMthcs_t;
     double HICUMfavl_t;
     double HICUMqavl_t;
+    double HICUMkavl_t;
     double HICUMrbi0_t;
     double HICUMibets_t;
     double HICUMabet_t;
@@ -211,6 +212,7 @@ typedef struct sHICUMinstance {
     double *HICUMsubsCollPtr;
     double *HICUMcollSubsPtr;
 
+    /* excess phase */
     double *HICUMxfXfPtr;
     double *HICUMxf1Xf1Ptr;
     double *HICUMxf2Xf2Ptr;
@@ -254,6 +256,8 @@ typedef struct sHICUMinstance {
     double HICUMcapscp;
     double HICUMcapsu;
     double HICUMcapcth;
+
+    double HICUMcapxf;
 
     double HICUMtVcrit;
     double HICUMbetadc;
@@ -367,10 +371,16 @@ typedef struct sHICUMinstance {
 #define HICUMvrth        HICUMstate+67
 #define HICUMicth_Vrth   HICUMstate+68
 
-//#define HICUMvbxf        HICUMstate+73
-//#define HICUMvbxf1       HICUMstate+74
-//#define HICUMvbxf2       HICUMstate+75
-#define HICUMnumStates 69
+#define HICUMvxf         HICUMstate+69
+#define HICUMqxf         HICUMstate+70
+#define HICUMcqxf        HICUMstate+71
+#define HICUMgqxf        HICUMstate+72
+#define HICUMixf_Vbiei   HICUMstate+73
+#define HICUMixf_Vbici   HICUMstate+74
+
+#define HICUMvxf1        HICUMstate+75
+#define HICUMvxf2        HICUMstate+76
+#define HICUMnumStates 77
 
 /* per model data */
 typedef struct sHICUMmodel {           /* model structure for a hicum */
@@ -426,8 +436,10 @@ typedef struct sHICUMmodel {           /* model structure for a hicum */
 //Base-Collector avalanche current
     double HICUMfavl;
     double HICUMqavl;
+    double HICUMkavl;
     double HICUMalfav;
     double HICUMalqav;
+    double HICUMalkav;
 
 //Series resistances
     double HICUMrbi0;
@@ -602,8 +614,10 @@ typedef struct sHICUMmodel {           /* model structure for a hicum */
 //Base-Collector avalanche current
     unsigned HICUMfavlGiven : 1;
     unsigned HICUMqavlGiven : 1;
+    unsigned HICUMkavlGiven : 1;
     unsigned HICUMalfavGiven : 1;
     unsigned HICUMalqavGiven : 1;
+    unsigned HICUMalkavGiven : 1;
 
 //Series resistances
     unsigned HICUMrbi0Given : 1;
@@ -798,8 +812,10 @@ enum {
 //Base-Collector avalanche current
     HICUM_MOD_FAVL,
     HICUM_MOD_QAVL,
+    HICUM_MOD_KAVL,
     HICUM_MOD_ALFAV,
     HICUM_MOD_ALQAV,
+    HICUM_MOD_ALKAV,
 
 //Series resistances
     HICUM_MOD_RBI0,
@@ -944,9 +960,9 @@ enum {
     HICUM_QUEST_BASEBINODE,
     HICUM_QUEST_EMITEINODE,
     HICUM_QUEST_SUBSSINODE,
-//    HICUM_QUEST_XFNODE,
-//    HICUM_QUEST_XF1NODE,
-//    HICUM_QUEST_XF2NODE,
+    HICUM_QUEST_XFNODE,
+    HICUM_QUEST_XF1NODE,
+    HICUM_QUEST_XF2NODE,
     HICUM_QUEST_VBE,
     HICUM_QUEST_VBC,
     HICUM_QUEST_CC,

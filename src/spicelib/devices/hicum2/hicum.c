@@ -34,9 +34,9 @@ IFparm HICUMpTable[] = { /* parameters */
  OPU("baseBInode", HICUM_QUEST_BASEBINODE, IF_INTEGER, "Internal base node"),
  OPU("emitEInode", HICUM_QUEST_EMITEINODE, IF_INTEGER, "Internal emitter node"),
  OPU("subsSInode", HICUM_QUEST_SUBSSINODE, IF_INTEGER, "Internal substrate node"),
-// OPU("xfnode",  HICUM_QUEST_XFNODE,  IF_INTEGER, "Internal phase node xf"),
-// OPU("xf1node", HICUM_QUEST_XF1NODE, IF_INTEGER, "Internal phase node xf1"),
-// OPU("xf2node", HICUM_QUEST_XF2NODE, IF_INTEGER, "Internal phase node xf2"),
+ OPU("xfnode",  HICUM_QUEST_XFNODE,  IF_INTEGER, "Internal phase node xf"),
+ OPU("xf1node", HICUM_QUEST_XF1NODE, IF_INTEGER, "Internal phase node xf1"),
+ OPU("xf2node", HICUM_QUEST_XF2NODE, IF_INTEGER, "Internal phase node xf2"),
  OP("vbe",    HICUM_QUEST_VBE,   IF_REAL, "B-E voltage"),
  OP("vbc",    HICUM_QUEST_VBC,   IF_REAL, "B-C voltage"),
  OP("ic",     HICUM_QUEST_CC,    IF_REAL, "Collector current"),
@@ -110,8 +110,10 @@ IFparm HICUMmPTable[] = { /* model parameters */
 //Base-Collector avalanche current
   IOP("favl",  HICUM_MOD_FAVL , IF_REAL, "Avalanche current factor"),
   IOP("qavl",  HICUM_MOD_QAVL , IF_REAL, "Exponent factor for avalanche current"),
+  IOP("kavl",  HICUM_MOD_KAVL , IF_REAL, "Flag/factor for turning strong avalanche on"),
   IOP("alfav", HICUM_MOD_ALFAV, IF_REAL, "Relative TC for FAVL"),
   IOP("alqav", HICUM_MOD_ALQAV, IF_REAL, "Relative TC for QAVL"),
+  IOP("alkav", HICUM_MOD_ALKAV, IF_REAL, "Relative TC for KAVL"),
 
 //Series resistances
   IOP("rbi0",  HICUM_MOD_RBI0 , IF_REAL, "Zero bias internal base resistance"),
