@@ -620,7 +620,7 @@ http://ltwiki.org/index.php5?title=Undocumented_LTspice#VDMOS:_Breakdown_and_Sub
 void
 DevCapVDMOS(double vgd, double cgdmin,
             double cgdmax, double a, double cgs,
-            double *capgs, double *capgd, double *capgb)
+            double *capgs, double *capgd)
 {
     double s = (cgdmax - cgdmin) / (1 + M_PI / 2);
     double y = cgdmax - s;
@@ -629,7 +629,6 @@ DevCapVDMOS(double vgd, double cgdmin,
     else
         *capgd = 0.5 * (s * atan(a * vgd) + y);
     *capgs = 0.5 * cgs;
-    *capgb = 0;
 }
 
 /* Compute the MOS overlap capacitances as functions of the device

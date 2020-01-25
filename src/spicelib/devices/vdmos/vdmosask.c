@@ -43,19 +43,22 @@ VDMOSask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
             return(OK);
         case VDMOS_L:
             value->rValue = here->VDMOSl;
-                return(OK);
+            return(OK);
         case VDMOS_W:
             value->rValue = here->VDMOSw;
-                return(OK);
+            return(OK);
         case VDMOS_OFF:
-            value->rValue = here->VDMOSoff;
-                return(OK);
+            value->iValue = here->VDMOSoff;
+            return(OK);
+        case VDMOS_TNODEOUT:
+            value->iValue = here->VDMOStnodeout;
+            return(OK);
         case VDMOS_IC_VDS:
             value->rValue = here->VDMOSicVDS;
-                return(OK);
+            return(OK);
         case VDMOS_IC_VGS:
             value->rValue = here->VDMOSicVGS;
-                return(OK);
+            return(OK);
         case VDMOS_DNODE:
             value->iValue = here->VDMOSdNode;
             return(OK);
@@ -64,6 +67,9 @@ VDMOSask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
             return(OK);
         case VDMOS_SNODE:
             value->iValue = here->VDMOSsNode;
+            return(OK);
+        case VDMOS_TNODE:
+            value->iValue = here->VDMOStempNode;
             return(OK);
         case VDMOS_SNODEPRIME:
             value->iValue = here->VDMOSsNodePrime;
@@ -88,15 +94,6 @@ VDMOSask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
             return(OK);
         case VDMOS_VON:
             value->rValue = here->VDMOSvon;
-            return(OK);
-        case VDMOS_VDSAT:
-            value->rValue = here->VDMOSvdsat;
-            return(OK);
-        case VDMOS_SOURCEVCRIT:
-            value->rValue = here->VDMOSsourceVcrit;
-            return(OK);
-        case VDMOS_DRAINVCRIT:
-            value->rValue = here->VDMOSdrainVcrit;
             return(OK);
         case VDMOS_CD:
             value->rValue = here->VDMOScd;

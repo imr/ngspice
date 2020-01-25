@@ -44,8 +44,13 @@ VDMOSpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
             capgd = ( 2* *(ckt->CKTstate0+here->VDMOScapgd));
             xgs = capgs;
             xgd = capgd;
-            /*printf("vdmos: xgs=%g, xgd=%g\n",
-                    xgs,xgd);*/
+
+            /* body diode */
+            double gspr, geq, xceq;
+            gspr = here->VDIOtConductance;
+            geq = *(ckt->CKTstate0 + here->VDIOconduct);
+            xceq = *(ckt->CKTstate0 + here->VDIOcapCurrent);
+
             /*
              *    load matrix
              */
@@ -67,21 +72,34 @@ VDMOSpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
             *(here->VDMOSDdPtr) += here->VDMOSdrainConductance;
             *(here->VDMOSSsPtr) += here->VDMOSsourceConductance;
             *(here->VDMOSDPdpPtr) += here->VDMOSdrainConductance+
-                    here->VDMOSgds+
-                    xrev*(here->VDMOSgm);
+                    here->VDMOSgds+xrev*(here->VDMOSgm);
             *(here->VDMOSSPspPtr) += here->VDMOSsourceConductance+
-                    here->VDMOSgds+
-                    xnrm*(here->VDMOSgm);
+                    here->VDMOSgds+xnrm*(here->VDMOSgm);
             *(here->VDMOSDdpPtr) -= here->VDMOSdrainConductance;
             *(here->VDMOSSspPtr) -= here->VDMOSsourceConductance;
             *(here->VDMOSDPdPtr) -= here->VDMOSdrainConductance;
-            *(here->VDMOSDPgPtr) += (xnrm-xrev)*here->VDMOSgm;
-            *(here->VDMOSDPspPtr) -= here->VDMOSgds+
-                    xnrm*(here->VDMOSgm);
-            *(here->VDMOSSPgPtr) -= (xnrm-xrev)*here->VDMOSgm;
+            *(here->VDMOSDPgpPtr) += (xnrm-xrev)*here->VDMOSgm;
+            *(here->VDMOSDPspPtr) -= here->VDMOSgds+xnrm*(here->VDMOSgm);
+            *(here->VDMOSSPgpPtr) -= (xnrm-xrev)*here->VDMOSgm;
             *(here->VDMOSSPsPtr) -= here->VDMOSsourceConductance;
-            *(here->VDMOSSPdpPtr) -= here->VDMOSgds+
-                    xrev*(here->VDMOSgm);
+            *(here->VDMOSSPdpPtr) -= here->VDMOSgds+xrev*(here->VDMOSgm);
+            /* gate resistor */
+            *(here->VDMOSGgPtr) += (here->VDMOSgateConductance);
+            *(here->VDMOSGPgpPtr) += (here->VDMOSgateConductance);
+            *(here->VDMOSGgpPtr) -= here->VDMOSgateConductance;
+            *(here->VDMOSGPgPtr) -= here->VDMOSgateConductance;
+            /* body diode */
+            *(here->VDMOSSsPtr) += gspr;
+            *(here->VDMOSDdPtr) += geq + xceq * s->real;
+            *(here->VDMOSDdPtr +1 ) += xceq * s->imag;
+            *(here->VDIORPrpPtr) += geq + gspr + xceq * s->real;
+            *(here->VDIORPrpPtr +1) += xceq * s->imag;
+            *(here->VDIOSrpPtr) -= gspr;
+            *(here->VDIODrpPtr) -= geq + xceq * s->real;
+            *(here->VDIODrpPtr +1) -= xceq * s->imag;
+            *(here->VDIORPsPtr) -= gspr;
+            *(here->VDIORPdPtr) -= geq + xceq * s->real;
+            *(here->VDIORPdPtr +1 ) -= xceq * s->imag;
 
         }
     }

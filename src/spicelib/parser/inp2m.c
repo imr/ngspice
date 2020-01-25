@@ -33,7 +33,7 @@ model_numnodes(int type)
 
     if (type == INPtypelook("VDMOS"))       /* 3 ; VDMOSnames */
     {
-        return 3;
+        return 5;
     }
 
     return 4;
