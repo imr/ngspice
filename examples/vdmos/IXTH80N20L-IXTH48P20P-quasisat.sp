@@ -36,7 +36,7 @@ plot dc3.vs2#branch vs2#branch
 + VTO=4 KP=15
 + Lambda=3m  $ will be reset by altermod to original 2m
 + Mtriode=0.4
-+ subslope=120m
++ Ksubthres=120m
 + subshift=160m
 + Rs=5m Rd=10m Rds=200e6
 + Cgdmax=9000p Cgdmin=300p A=0.25
