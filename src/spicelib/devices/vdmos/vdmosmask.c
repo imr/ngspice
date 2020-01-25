@@ -24,8 +24,8 @@ VDMOSmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case VDMOS_MOD_TNOM:
             value->rValue = model->VDMOStnom-CONSTCtoK;
             return(OK);
-        case VDMOS_MOD_VTO:
-            value->rValue = model->VDMOSvt0;
+        case VDMOS_MOD_VTH:
+            value->rValue = model->VDMOSvth0;
             return(OK);
         case VDMOS_MOD_KP:
             value->rValue = model->VDMOStransconductance;
@@ -56,9 +56,6 @@ VDMOSmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
             return(OK);
         case VDMOS_MOD_MTRIODE:
             value->rValue = model->VDMOSmtr;
-            return(OK);
-        case VDMOS_MOD_SUBSLOPE:
-            value->rValue = model->VDMOSsubsl;
             return(OK);
         case VDMOS_MOD_SUBSHIFT:
             value->rValue = model->VDMOSsubshift;
@@ -93,7 +90,7 @@ VDMOSmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
             value->rValue = model->VDIOjctSatCur;
             return(OK);
         case VDMOS_MOD_N:
-            value->rValue = model->VDMOSDn;
+            value->rValue = model->VDMOSn;
             return(OK);
         case VDMOS_MOD_VJ:
             value->rValue = model->VDIOjunctionPot;
@@ -105,10 +102,10 @@ VDMOSmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
             value->rValue = model->VDIOgradCoeff;
             return(OK);
         case VDMOS_MOD_BV:
-            value->rValue = model->VDMOSDbv;
+            value->rValue = model->VDMOSbv;
             return(OK);
         case VDMOS_MOD_IBV:
-            value->rValue = model->VDMOSDibv;
+            value->rValue = model->VDMOSibv;
             return(OK);
         case VDMOS_MOD_NBV:
             value->rValue = model->VDIObrkdEmissionCoeff;
@@ -123,10 +120,46 @@ VDMOSmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
             value->rValue = model->VDIOtransitTime;
             return(OK);
         case VDMOS_MOD_EG:
-            value->rValue = model->VDMOSDeg;
+            value->rValue = model->VDMOSeg;
             return(OK);
         case VDMOS_MOD_XTI:
-            value->rValue = model->VDMOSDxti;
+            value->rValue = model->VDMOSxti;
+            return(OK);
+        case VDMOS_MOD_RTHJC:
+            value->rValue = model->VDMOSrthjc; 
+            return(OK);
+        case VDMOS_MOD_RTHCA:
+            value->rValue = model->VDMOSrthca; 
+            return(OK);
+        case VDMOS_MOD_CTHJ:
+            value->rValue = model->VDMOScthj; 
+            return(OK);
+        case VDMOS_MOD_MU:
+            value->rValue = model->VDMOSmu; 
+            return(OK);
+        case VDMOS_MOD_TEXP0:
+            value->rValue = model->VDMOStexp0; 
+            return(OK);
+        case VDMOS_MOD_TEXP1:
+            value->rValue = model->VDMOStexp1; 
+            return(OK);
+        case VDMOS_MOD_TCVTH:
+            value->rValue = model->VDMOStcvth;
+            return(OK);
+        case VDMOS_MOD_VGS_MAX:
+            value->rValue = model->VDMOSvgsMax;
+            return(OK);
+        case VDMOS_MOD_VGD_MAX:
+            value->rValue = model->VDMOSvgdMax;
+            return(OK);
+        case VDMOS_MOD_VDS_MAX:
+            value->rValue = model->VDMOSvdsMax;
+            return(OK);
+        case VDMOS_MOD_VGSR_MAX:
+            value->rValue = model->VDMOSvgsrMax;
+            return(OK);
+        case VDMOS_MOD_VGDR_MAX:
+            value->rValue = model->VDMOSvgdrMax;
             return(OK);
         default:
             return(E_BADPARM);

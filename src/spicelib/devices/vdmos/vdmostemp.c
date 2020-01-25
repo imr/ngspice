@@ -2,6 +2,7 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 Modified: 2000 AlansFixes
+VDMOS: 2018 Holger Vogt, 2020 Dietmar Warning
 **********/
 
 #include "ngspice/ngspice.h"
@@ -21,7 +22,7 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
     double fact1,fact2;
     double kt,kt1;
     double arg1;
-    double ratio,ratio4;
+    double ratio;
     double phio;
     double pbfact1,pbfact;
     double vt,vtnom;
@@ -45,22 +46,21 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
         pbfact1 = -2*vtnom *(1.5*log(fact1)+CHARGE*arg1);
 
         /* now model parameter preprocessing */
-
         if (model->VDMOSphi <= 0.0) {
             SPfrontEnd->IFerrorf(ERR_FATAL,
                 "%s: Phi is not positive.", model->VDMOSmodName);
             return(E_BADPARM);
         }
 
-        model->VDMOSoxideCapFactor = 0;
+        model->VDMOSoxideCapFactor = 3.9 * 8.854214871e-12 / 1e-07; /* use default Tox of 100nm */
 
-        /* bulk diode model */
+        /* body diode model */
         /* limit activation energy to min of .1 */
-        if (model->VDMOSDeg<.1) {
+        if (model->VDMOSeg<.1) {
             SPfrontEnd->IFerrorf(ERR_WARNING,
-                "%s: bulk diode activation energy too small, limited to 0.1",
+                "%s: body diode activation energy too small, limited to 0.1",
                 model->VDMOSmodName);
-            model->VDMOSDeg = .1;
+            model->VDMOSeg = .1;
         }
         /* limit depletion cap coeff to max of .95 */
         if (model->VDIOdepletionCapCoeff>.95) {
@@ -72,12 +72,7 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
         /* set lower limit of saturation current */
         if (model->VDIOjctSatCur < ckt->CKTepsmin)
             model->VDIOjctSatCur = ckt->CKTepsmin;
-        if ((!model->VDIOresistanceGiven) || (model->VDIOresistance == 0)) {
-            model->VDIOconductance = 0.0;
-        }
-        else {
-            model->VDIOconductance = 1 / model->VDIOresistance;
-        }
+
         xfc = log(1 - model->VDIOdepletionCapCoeff);
 
         /* loop through all instances of the model */
@@ -86,15 +81,29 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
             double arg;     /* 1 - fc */
 
             /* perform the parameter defaulting */
-
             if(!here->VDMOSdtempGiven) {
                 here->VDMOSdtemp = 0.0;
             }
             if(!here->VDMOStempGiven) {
                 here->VDMOStemp = ckt->CKTtemp + here->VDMOSdtemp;
             }
-            vt = here->VDMOStemp * CONSTKoverQ;
+
+            double dt = here->VDMOStemp - model->VDMOStnom;
+
+            /* vdmos temperature model */
             ratio = here->VDMOStemp/model->VDMOStnom;
+            here->VDMOStTransconductance = model->VDMOStransconductance 
+                                           * here->VDMOSm * here->VDMOSw / here->VDMOSl 
+                                           * pow(ratio, model->VDMOSmu);
+
+            here->VDMOStVth = model->VDMOSvth0 - model->VDMOStype * model->VDMOStcvth * dt;
+
+            here->VDMOSdrainResistance =  model->VDMOSdrainResistance / here->VDMOSm * pow(ratio, model->VDMOStexp0);
+
+            if (model->VDMOSqsGiven)
+                here->VDMOSqsResistance = model->VDMOSqsResistance / here->VDMOSm * pow(ratio, model->VDMOStexp1);
+
+            vt = here->VDMOStemp * CONSTKoverQ;
             fact2 = here->VDMOStemp/REFTEMP;
             kt = here->VDMOStemp * CONSTboltz;
             egfet = 1.16-(7.02e-4*here->VDMOStemp*here->VDMOStemp)/
@@ -102,82 +111,15 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
             arg = -egfet/(kt+kt)+1.1150877/(CONSTboltz*(REFTEMP+REFTEMP));
             pbfact = -2*vt *(1.5*log(fact2)+CHARGE*arg);
 
-            if(!here->VDMOSmGiven) {
-                here->VDMOSm = 1;
-            }
-            if(!here->VDMOSlGiven) {
-                here->VDMOSl = 1;
-            }
-            if(!here->VDMOSwGiven) {
-                here->VDMOSw = 1;
-            }
-
-            ratio4 = ratio * sqrt(ratio);
-            here->VDMOStTransconductance = model->VDMOStransconductance / ratio4;
             phio = (model->VDMOSphi - pbfact1) / fact1;
-            here->VDMOStPhi = fact2 * phio + pbfact;
-            here->VDMOStVto = model->VDMOSvt0;
+            here->VDMOStPhi = fact2 * phio + pbfact; /* needed for distortion analysis */
 
-            here->VDMOSf2d = 0;
-            here->VDMOSf3d = 0;
-            here->VDMOSf4d = 0;
-
-            here->VDMOSf2s = 0;
-            here->VDMOSf3s = 0;
-            here->VDMOSf4s = 0;
-
-
-            if (model->VDMOSdrainResistanceGiven) {
-                if (model->VDMOSdrainResistance != 0) {
-                    here->VDMOSdrainConductance = here->VDMOSm /
-                        model->VDMOSdrainResistance;
-                }
-                else {
-                    here->VDMOSdrainConductance = 0;
-                }
-            } else {
-                here->VDMOSdrainConductance = 0;
-            }
-            if(model->VDMOSsourceResistanceGiven) {
-                if(model->VDMOSsourceResistance != 0) {
-                   here->VDMOSsourceConductance = here->VDMOSm /
-                                         model->VDMOSsourceResistance;
-                } else {
-                    here->VDMOSsourceConductance = 0;
-                }
-            } else {
-                here->VDMOSsourceConductance = 0;
-            }
-            if (model->VDMOSgateResistanceGiven) {
-                if (model->VDMOSgateResistance != 0) {
-                    here->VDMOSgateConductance = here->VDMOSm /
-                        model->VDMOSgateResistance;
-                } else {
-                    here->VDMOSgateConductance = 0;
-                }
-            } else {
-                here->VDMOSgateConductance = 0;
-            }
-            if (model->VDMOSrdsGiven) {
-                if (model->VDMOSrds != 0) {
-                    here->VDMOSdsConductance = here->VDMOSm /
-                        model->VDMOSrds;
-                }
-                else {
-                    here->VDMOSdsConductance = 0;
-                }
-            }
-            else {
-                here->VDMOSdsConductance = 0;
-            }
-
-            /* bulk diode model */
+            /* body diode temperature model */
             double pbo, gmaold;
             double gmanew, factor;
             double tBreakdownVoltage, vte, cbv;
-            double xbv, xcbv, tol, iter, dt;
+            double xbv, xcbv, tol, iter;
 
-            dt = here->VDMOStemp - model->VDMOStnom;
             /* Junction grading temperature adjust */
             factor = 1.0 + (model->VDIOgradCoeffTemp1 * dt)
                 + (model->VDIOgradCoeffTemp2 * dt * dt);
@@ -185,7 +127,7 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
 
             pbo = (model->VDIOjunctionPot - pbfact1) / fact1;
             gmaold = (model->VDIOjunctionPot - pbo) / pbo;
-            here->VDIOtJctCap = model->VDIOjunctionCap /
+            here->VDIOtJctCap = here->VDMOSm * model->VDIOjunctionCap /
                 (1 + here->VDIOtGradingCoeff*
                 (400e-6*(model->VDMOStnom - REFTEMP) - gmaold));
             here->VDIOtJctPot = pbfact + fact2*pbo;
@@ -193,10 +135,10 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
             here->VDIOtJctCap *= 1 + here->VDIOtGradingCoeff*
                 (400e-6*(here->VDMOStemp - REFTEMP) - gmanew);
 
-            here->VDIOtSatCur = model->VDIOjctSatCur * exp(
+            here->VDIOtSatCur = here->VDMOSm * model->VDIOjctSatCur * exp(
                 ((here->VDMOStemp / model->VDMOStnom) - 1) *
-                model->VDMOSDeg / (model->VDMOSDn*vt) +
-                model->VDMOSDxti / model->VDMOSDn *
+                model->VDMOSeg / (model->VDMOSn*vt) +
+                model->VDMOSxti / model->VDMOSn *
                 log(here->VDMOStemp / model->VDMOStnom));
 
             /* the defintion of f1, just recompute after temperature adjusting
@@ -209,14 +151,14 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
                 here->VDIOtJctPot;
 
             /* and Vcrit */
-            vte = model->VDMOSDn*vt;
+            vte = model->VDMOSn*vt;
 
             here->VDIOtVcrit = vte * log(vte / (CONSTroot2*here->VDIOtSatCur));
 
             /* limit junction potential to max of 1/FC */
-            if (here->VDIOtDepCap > 1.0) {
-                here->VDIOtJctPot = 1.0 / model->VDMOSDn;
-                here->VDIOtDepCap = model->VDMOSDn*here->VDIOtJctPot;
+            if (here->VDIOtDepCap > 2.5) {
+                here->VDIOtJctPot = 2.5 / model->VDMOSn;
+                here->VDIOtDepCap = model->VDMOSn*here->VDIOtJctPot;
                 SPfrontEnd->IFerrorf(ERR_WARNING,
                     "%s: junction potential VJ too large, limited to %f",
                     model->VDMOSmodName, here->VDIOtJctPot);
@@ -224,16 +166,16 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
 
             /* and now to compute the breakdown voltage, again, using
             * temperature adjusted basic parameters */
-            if (model->VDMOSDbvGiven) {
+            if (model->VDMOSbvGiven) {
                 /* tlev == 0 */
-                tBreakdownVoltage = fabs(model->VDMOSDbv);
+                tBreakdownVoltage = fabs(model->VDMOSbv);
 
-                cbv = model->VDMOSDibv;
+                cbv = model->VDMOSibv;
 
                 if (cbv < here->VDIOtSatCur * tBreakdownVoltage / vt) {
                     cbv = here->VDIOtSatCur * tBreakdownVoltage / vt;
 #ifdef TRACE
-                    SPfrontEnd->IFerrorf(ERR_WARNING, "%s: breakdown current increased to %g to resolve", here->DIOname, cbv);
+                    SPfrontEnd->IFerrorf(ERR_WARNING, "%s: breakdown current increased to %g to resolve", here->VDMOSname, cbv);
                     SPfrontEnd->IFerrorf(ERR_WARNING,
                         "incompatibility with specified saturation current");
 #endif
@@ -252,7 +194,7 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
                         if (fabs(xcbv - cbv) <= tol) goto matched;
                     }
 #ifdef TRACE
-                    SPfrontEnd->IFerrorf(ERR_WARNING, "%s: unable to match forward and reverse diode regions: bv = %g, ibv = %g", here->DIOname, xbv, xcbv);
+                    SPfrontEnd->IFerrorf(ERR_WARNING, "%s: unable to match forward and reverse diode regions: bv = %g, ibv = %g", here->VDMOSname, xbv, xcbv);
 #endif
                 }
             matched:
@@ -264,13 +206,8 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
                 + (model->VDIOtranTimeTemp2 * dt * dt);
             here->VDIOtTransitTime = model->VDIOtransitTime * factor;
 
-            /* Series resistance temperature adjust */
-            here->VDIOtConductance = model->VDIOconductance;
-            if (model->VDIOresistanceGiven && model->VDIOresistance != 0.0) {
-                factor = 1.0 + (model->VDIOresistTemp1) * dt
-                    + (model->VDIOresistTemp2 * dt * dt);
-                here->VDIOtConductance = model->VDIOconductance / factor;
-            }
+            /* Series resistance temperature adjust (not implemented yet) */
+            here->VDIOtConductance = here->VDIOconductance;
 
             here->VDIOtF2 = exp((1 + here->VDIOtGradingCoeff)*xfc);
             here->VDIOtF3 = 1 - model->VDIOdepletionCapCoeff*

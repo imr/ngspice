@@ -20,3 +20,4 @@ extern int VDMOSconvTest(GENmodel*,CKTcircuit*);
 extern int VDMOSdisto(int,GENmodel*,CKTcircuit*);
 extern int VDMOSnoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int VDMOSdSetup(GENmodel*,CKTcircuit*);
+extern int VDMOSsoaCheck(CKTcircuit *, GENmodel *);

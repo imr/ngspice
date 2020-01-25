@@ -2555,6 +2555,7 @@
     <ClCompile Include="..\src\spicelib\devices\vdmos\vdmospar.c" />
     <ClCompile Include="..\src\spicelib\devices\vdmos\vdmospzld.c" />
     <ClCompile Include="..\src\spicelib\devices\vdmos\vdmosset.c" />
+    <ClCompile Include="..\src\spicelib\devices\vdmos\vdmossoachk.c" />
     <ClCompile Include="..\src\spicelib\devices\vdmos\vdmostemp.c" />
     <ClCompile Include="..\src\spicelib\devices\vdmos\vdmostrun.c" />
     <ClCompile Include="..\src\spicelib\devices\vsrc\vsrc.c" />

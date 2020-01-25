@@ -58,7 +58,7 @@ SPICEdev VDMOSinfo = {
     .DEVsenTrunc = NULL,
     .DEVdisto = VDMOSdisto,
     .DEVnoise = VDMOSnoise,
-    .DEVsoaCheck = NULL,
+    .DEVsoaCheck = VDMOSsoaCheck,
     .DEVinstSize = &VDMOSiSize,
     .DEVmodSize = &VDMOSmSize,
 
