@@ -457,7 +457,7 @@ struct dvec *vec_fromplot(char *word, struct plot *plot) {
         if (word[1] == '(') { /* x(, x != '(' */
             const char * const p_last_close_paren = strrchr(word + 2, ')');
             if (p_last_close_paren != (char *) NULL &&
-                    p_last_close_paren - word > (ptrdiff_t) 3 &&
+                    p_last_close_paren - word > (ptrdiff_t) 2 &&
                     p_last_close_paren[1] == '\0') {
                 /* Of form x(node). Create node string. */
                 DS_CREATE(ds, 100);
