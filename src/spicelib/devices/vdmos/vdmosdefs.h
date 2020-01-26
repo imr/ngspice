@@ -42,8 +42,8 @@ typedef struct sVDMOSinstance {
     const int VDMOSdNode;  /* number of the gate node of the mosfet */
     const int VDMOSgNode;  /* number of the gate node of the mosfet */
     const int VDMOSsNode;  /* number of the source node of the mosfet */
-    const int VDMOStempNode;  /* number of the temperature node of the mosfet */
-    const int VDMOStcaseNode;  /* number of the 2nd temperature node of the mosfet */
+    int VDMOStempNode;  /* number of the temperature node of the mosfet */
+    int VDMOStcaseNode;  /* number of the 2nd temperature node of the mosfet */
     int VDMOSdNodePrime; /* number of the internal drain node of the mosfet */
     int VDMOSsNodePrime; /* number of the internal source node of the mosfet */
     int VDMOSgNodePrime; /* number of the internal gate node of the mosfet */
