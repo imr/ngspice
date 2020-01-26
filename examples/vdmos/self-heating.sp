@@ -1,5 +1,5 @@
 VDMOS self heating test
-M1 D G 0 t tc IRFP240 tnodeout
+M1 D G 0 tj tc IRFP240 tnodeout
 rthk tc 0 0.05
 VG G 0 5V Pulse 0 10 0 1m 1m 100m 200m
 *RD D D1 4
@@ -16,8 +16,8 @@ VD D 0 2V
 .control
 dc vd 0.1 50 .1 vg 5 13 2
 plot -i(vd)
-settype temperature v(t) v(tc)
-plot v(t) v(tc)
+settype temperature v(tj) v(tc)
+plot v(tj) v(tc)
 *tran 1m 0.01
 *plot v(d) v(g)
 .endc
