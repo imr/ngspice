@@ -95,7 +95,7 @@ void vprint_error(const char *fmt, va_list p_arg)
     fprintf(stderr, "%s: ", prog_name);
     vfprintf(stderr, fmt, p_arg);
     fprintf(stderr, "\n");
-} /* end of functoin vprint_error */
+} /* end of function vprint_error */
 
 
 
