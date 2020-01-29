@@ -40,45 +40,31 @@ NON-STANDARD FEATURES
 
 
 #include <assert.h>
+#include <errno.h>
 #include <stdlib.h>
 #include <string.h>
 #include  "cmpp.h"
 
 /* Local function prototypes */
-
-static void  write_comment(FILE *fp, Ifs_Table_t *ifs_table);
-
-static void  write_includes(FILE *fp);
-
-static void  write_mPTable(FILE *fp, Ifs_Table_t *ifs_table);
-
-static void  write_pTable(FILE *fp, Ifs_Table_t *ifs_table);
-
-static void  write_conn_info(FILE *fp, Ifs_Table_t *ifs_table);
-
-static void  write_param_info(FILE *fp, Ifs_Table_t *ifs_table);
-
-static void  write_inst_var_info(FILE *fp, Ifs_Table_t *ifs_table);
-
-static void  write_SPICEdev(FILE *fp, Ifs_Table_t *ifs_table);
+static int write_comment(FILE *fp, Ifs_Table_t *ifs_table);
+static int write_includes(FILE *fp);
+static int write_mPTable(FILE *fp, Ifs_Table_t *ifs_table);
+static int write_pTable(FILE *fp, Ifs_Table_t *ifs_table);
+static int write_conn_info(FILE *fp, Ifs_Table_t *ifs_table);
+static int write_param_info(FILE *fp, Ifs_Table_t *ifs_table);
+static int write_inst_var_info(FILE *fp, Ifs_Table_t *ifs_table);
+static int write_SPICEdev(FILE *fp, Ifs_Table_t *ifs_table);
 
 
 
-static char  *data_type_to_str(Data_Type_t type);
-
-static char  *port_type_to_str(Port_Type_t port);
-
-static char  *dir_to_str(Dir_t dir);
-
+static const char *data_type_to_str(Data_Type_t type);
+static const char *port_type_to_str(Port_Type_t port);
+static const char  *dir_to_str(Dir_t dir);
 static char  *value_to_str(Data_Type_t type, Value_t value);
-
-static char  *no_value_to_str(void);
-
-static char  *boolean_to_str(bool value);
-
+static const char *no_value_to_str(void);
+static const char  *boolean_to_str(bool value);
 static char  *integer_to_str(int value);
-
-static char  *gen_port_type_str(Port_Type_t port);
+static const char *gen_port_type_str(Port_Type_t port);
 
 
 
@@ -110,59 +96,102 @@ The output file is then closed.
 
 
 int write_ifs_c_file(
-    const char  *filename,    /* File to write to */
+    const char  *filename_in,    /* File to write to */
     Ifs_Table_t *ifs_table)   /* Table of Interface Specification data */
 {
-    FILE     *fp;                     /* File pointer */
-    int      int_status;              /* returned status from fclose */
+    FILE     *fp = (FILE *) NULL; /* File pointer */
+    char *filename = (char *) NULL;
+    int xrc = 0;
 
 
     /* Open the ifspec.c file for write access */
-
-    fp = fopen_cmpp(&filename, "w");
-
-    if(fp == NULL) {
-        print_error("ERROR - Can't create file: %s", filename);
-        return -1;
+    if ((filename = gen_filename(filename_in, "w")) == (char *) NULL) {
+        print_error("ERROR - Unable to build path to \"%s\".", filename);
+        xrc = -1;
+        goto EXITPOINT;
     }
-
+    fp = fopen(filename, "w");
+    if(fp == NULL) {
+        print_error("ERROR - Problems opening \"%s\" for write", filename);
+        xrc = -1;
+        goto EXITPOINT;
+    }
 
     /* Write out a comment section at the top of the file */
-    write_comment(fp, ifs_table);
+    if (write_comment(fp, ifs_table) != 0) {
+        print_error("ERROR - Problems writing comment to \"%s\"", filename);
+        xrc = -1;
+        goto EXITPOINT;
+    }
 
     /* Put in the # includes */
-    write_includes(fp);
+    if (write_includes(fp) != 0) {
+        print_error("ERROR - Problems writing includes to \"%s\"", filename);
+        xrc = -1;
+        goto EXITPOINT;
+    }
 
     /* Write the SPICE3 required XXXmPTable structure */
-    write_mPTable(fp, ifs_table);
+    if (write_mPTable(fp, ifs_table) != 0) {
+        print_error("ERROR - Problems writing mPTable to \"%s\"", filename);
+        xrc = -1;
+        goto EXITPOINT;
+    }
 
     /* Write the SPICE3 required XXXpTable structure */
-    write_pTable(fp, ifs_table);
+    if (write_pTable(fp, ifs_table) != 0) {
+        print_error("ERROR - Problems writing pTable to \"%s\"", filename);
+        xrc = -1;
+        goto EXITPOINT;
+    }
 
     /* Write out the connector table required for the code model element parser */
-    write_conn_info(fp, ifs_table);
+    if (write_conn_info(fp, ifs_table) != 0) {
+        print_error("ERROR - Problems writing includes to \"%s\"", filename);
+        xrc = -1;
+        goto EXITPOINT;
+    }
 
     /* Write out the parameter table required for the code model element parser */
-    write_param_info(fp, ifs_table);
+    if (write_param_info(fp, ifs_table) != 0) {
+        print_error("ERROR - Problems writing params to \"%s\"", filename);
+        xrc = -1;
+        goto EXITPOINT;
+    }
 
     /* Write out the instance variable table required for the code model element parser */
-    write_inst_var_info(fp, ifs_table);
+    if (write_inst_var_info(fp, ifs_table) != 0) {
+        print_error("ERROR - Problems writing instaice variables to \"%s\"",
+                filename);
+        xrc = -1;
+        goto EXITPOINT;
+    }
 
     /* Write out the externally visible structure for this model */
-    write_SPICEdev(fp, ifs_table);
-
-
-    /* Close the ifspec.c file and return */
-
-    int_status = fclose(fp);
-
-    if (int_status == 0) {
-        return 0;
+    if (write_SPICEdev(fp, ifs_table) != 0) {
+        print_error("ERROR - Problems writing model structureto  \"%s\"",
+                filename);
+        xrc = -1;
+        goto EXITPOINT;
     }
-    else {
-        return -1;
+
+
+EXITPOINT:
+    /* Close the ifspec.c file, free allocation, and return */
+    if (fp != (FILE *) NULL) {
+        if (fclose(fp) != 0) {
+            print_error("ERROR - Problems closing \"%s\": %s.",
+                    filename, strerror(errno));
+            xrc = -1;
+        }
     }
-}
+
+    if (filename != (char *) NULL) {
+        free(filename);
+    }
+
+    return xrc;
+} /* end of function write_ifs_c_file */
 
 
 
@@ -178,21 +207,29 @@ generated and should not be edited.
 */
 
 
-static void  write_comment(
+static int write_comment(
     FILE        *fp,          /* File to write to */
     Ifs_Table_t *ifs_table)   /* Table of Interface Specification data */
 {
-    fprintf(fp, "\n");
-    fprintf(fp, "/*\n");
-    fprintf(fp, " * Structures for model: %s\n", ifs_table->name.model_name);
-    fprintf(fp, " *\n");
-    fprintf(fp, " * Automatically generated by cmpp preprocessor\n");
-    fprintf(fp, " *\n");
-    fprintf(fp, " * !!! DO NOT EDIT !!!\n");
-    fprintf(fp, " *\n");
-    fprintf(fp, " */\n");
-    fprintf(fp, "\n");
-}
+    const int rc = fprintf(fp,
+            "\n"
+            "/*\n"
+            " * Structures for model: %s\n"
+            " *\n"
+            " * Automatically generated by cmpp preprocessor\n"
+            " *\n"
+            " * !!! DO NOT EDIT !!!\n"
+            " *\n"
+            " */\n"
+            "\n",
+            ifs_table->name.model_name);
+    if (rc < 0) {
+        print_error("Comment writing failed.");
+        return -1;
+    }
+    return 0;
+} /* end of function write_comment */
+
 
 
 /* *********************************************************************** */
@@ -205,21 +242,28 @@ ifspec.c.
 */
 
 
-static void  write_includes(
+static int write_includes(
     FILE *fp)                /* File to write to */
 {
-    fprintf(fp, "\n");
-	fprintf(fp, "#include \"ngspice/ngspice.h\"\n");
-/*  fprintf(fp, "#include \"ngspice/prefix.h\"\n");*/
-    fprintf(fp, "#include <stdio.h>\n");
-    fprintf(fp, "#include \"ngspice/devdefs.h\"\n");
-    fprintf(fp, "#include \"ngspice/ifsim.h\"\n");
-    fprintf(fp, "#include \"ngspice/mifdefs.h\"\n");
-    fprintf(fp, "#include \"ngspice/mifproto.h\"\n");
-    fprintf(fp, "#include \"ngspice/mifparse.h\"\n");
-/*  fprintf(fp, "#include \"ngspice/suffix.h\"\n");*/
-    fprintf(fp, "\n");
-}
+    const int rc = fprintf(fp,
+            "\n"
+            "#include \"ngspice/ngspice.h\"\n"
+/*          "#include \"ngspice/prefix.h\"\n"*/
+            "#include <stdio.h>\n"
+            "#include \"ngspice/devdefs.h\"\n"
+            "#include \"ngspice/ifsim.h\"\n"
+            "#include \"ngspice/mifdefs.h\"\n"
+            "#include \"ngspice/mifproto.h\"\n"
+            "#include \"ngspice/mifparse.h\"\n"
+/*          "#include \"ngspice/suffix.h\"\n"*/
+            "\n");
+    if (rc < 0) {
+        print_error("Include writing failed.");
+        return -1;
+    }
+    return 0;
+} /* end of function write_includes */
+
 
 
 /* *********************************************************************** */
@@ -238,28 +282,28 @@ that can be queried using the SPICE 3C1 .save feature.
 */
 
 
-static void  write_pTable(
+static int write_pTable(
     FILE        *fp,         /* File to write to */
     Ifs_Table_t *ifs_table)  /* Table of Interface Specification data */
 {
-
+    int xrc = 0;
     int             i;
-    char            str[80];
     bool       is_array;
     Data_Type_t     type;
 
 
     /* Only write the pTable if there is something to put in it.         */
     /* Otherwise, we will put NULL in the SPICEdev structure in its slot */
+    if (ifs_table->num_inst_var == 0) {
+        return 0;
+    }
 
-    if(ifs_table->num_inst_var == 0)
-        return;
-
+    int rc = 0;
 
     /* Write the structure beginning */
-
-    fprintf(fp, "\n");
-    fprintf(fp, "static IFparm MIFpTable[] = {\n");
+    rc |= fprintf(fp,
+            "\n"
+            "static IFparm MIFpTable[] = {\n");
 
 
     /* Write out an entry for each instance variable in the table       */
@@ -267,68 +311,71 @@ static void  write_pTable(
     /* Use the index of the element in the instance variable info array */
     /* ADDED TO the number of parameters as the SPICE3 integer tag.  */
 
-    for(i = 0; i < ifs_table->num_inst_var; i++) {
+    for (i = 0; i < ifs_table->num_inst_var; i++) {
 
         /* Use the SPICE3 OP macro since instance vars are output-only */
 
-        fprintf(fp, "    OP(");
+        rc |= fprintf(fp, "    OP(");
 
         /* Put in the name of the parameter and the integer tag */
 
-        fprintf(fp, "\"%s\", ", ifs_table->inst_var[i].name);
-        fprintf(fp, "%d, ", i + ifs_table->num_param);
+        rc |= fprintf(fp, "\"%s\", ", ifs_table->inst_var[i].name);
+        rc |= fprintf(fp, "%d, ", i + ifs_table->num_param);
 
         /* Format SPICE3 type according to parameter type field */
 
         type = ifs_table->inst_var[i].type;
         is_array = ifs_table->inst_var[i].is_array;
 
-        strcpy(str,"");
-
         if(is_array == true) {
-            strcat(str,"(");
+            rc |= fprintf(fp, "(");
         }
 
         if(type == CMPP_BOOLEAN) {
-            strcat(str,"IF_FLAG");   /* There is no BOOLEAN in SPICE3 */
+            rc |= fprintf(fp, "IF_FLAG");   /* no BOOLEAN in SPICE3 */
         }
         else if(type == CMPP_INTEGER) {
-            strcat(str,"IF_INTEGER");
+            rc |= fprintf(fp, "IF_INTEGER");
         }
         else if(type == CMPP_REAL) {
-            strcat(str,"IF_REAL");        
+            rc |= fprintf(fp, "IF_REAL");
         }
         else if(type == CMPP_COMPLEX) {
-            strcat(str,"IF_COMPLEX");        
+            rc |= fprintf(fp, "IF_COMPLEX");
         }
         else if(type == CMPP_STRING) {
-            strcat(str,"IF_STRING");        
+            rc |= fprintf(fp, "IF_STRING");
         }
         else if(type == CMPP_POINTER) {
-            strcat(str,"IF_STRING"); 
+            rc |= fprintf(fp, "IF_STRING");
         }
         else {
             print_error("INTERNAL ERROR - write_pTable() - Impossible data type.");
+            xrc = -1;
+            rc |= fprintf(fp, "INVALID DATA TYPE");
         }
 
         if(is_array == true) {
-            strcat(str,"|IF_VECTOR)");
+            rc |= fprintf(fp, "|IF_VECTOR)");
         }
 
-        fprintf(fp, "%s, ", str);
 
         /* Put in the description string and finish this line off */
-
-        fprintf(fp, "\"%s\"", ifs_table->inst_var[i].description);
-        fprintf(fp, "),\n");
-
-    }
+        rc |= fprintf(fp, ", \"%s\"),\n", ifs_table->inst_var[i].description);
+    } /* end of loop over instance variables */
 
     /* Finish off the structure */
+    rc |= fprintf(fp, "};\n\n");
 
-    fprintf(fp, "};\n");
-    fprintf(fp, "\n");
-}
+    /* Check outputs */
+    if (rc < 0) {
+        print_error("pTable writing failed.");
+        xrc = -1;
+    }
+
+    return xrc;
+} /* end of function write_pTable */
+
 
 
 /* *********************************************************************** */
@@ -345,95 +392,95 @@ model parameters are derived from the Interface Specification's
 PARAMETER table.
 */
 
-static void  write_mPTable(
+static int write_mPTable(
     FILE        *fp,         /* File to write to */
     Ifs_Table_t *ifs_table)  /* Table of Interface Specification data */
 {
-
+    int xrc = 0;
     int             i;
-    char            str[80];
-    bool       is_array;
-    Data_Type_t     type;
 
 
     /* Only write the mPTable if there is something to put in it.         */
     /* Otherwise, we will put NULL in the SPICEdev structure in its slot */
 
-    if(ifs_table->num_param == 0)
-        return;
+    if (ifs_table->num_param == 0) {
+        return 0;
+    }
 
+    int rc = 0;
 
     /* Write the structure beginning */
-
-    fprintf(fp, "\n");
-    fprintf(fp, "static IFparm MIFmPTable[] = {\n");
+    rc |= fprintf(fp,
+            "\n"
+            "static IFparm MIFmPTable[] = {\n");
 
 
     /* Write out an entry for each parameter in the table               */
 
     /* Use the index of the element in the parameter info array */
     /* as the SPICE3 integer tag.                                       */
-
+    Param_Info_t *param = ifs_table->param;
     for(i = 0; i < ifs_table->num_param; i++) {
+        Param_Info_t *param_cur = param + i;
 
         /* Use the SPICE3 IOP macro since model parameters are input/output */
 
-        fprintf(fp, "    IOP(");
+        rc |= fprintf(fp, "    IOP(");
 
         /* Put in the name of the parameter and the integer tag */
-
-        fprintf(fp, "\"%s\", ", ifs_table->param[i].name);
-        fprintf(fp, "%d, ", i);
+        rc |= fprintf(fp, "\"%s\", ", param_cur->name);
+        rc |= fprintf(fp, "%d, ", i);
 
         /* Format SPICE3 type according to parameter type field */
 
-        type = ifs_table->param[i].type;
-        is_array = ifs_table->param[i].is_array;
+        const bool is_array = param_cur->is_array;
+        const Data_Type_t type = param_cur->type;
 
-        strcpy(str,"");
-
-        if(is_array == true) {
-            strcat(str,"(");
+        if (is_array) {
+            rc |= fprintf(fp, "(");
         }
 
-        if(type == CMPP_BOOLEAN) {
-            strcat(str,"IF_FLAG");   /* There is no BOOLEAN in SPICE3 */
+        if (type == CMPP_BOOLEAN) {
+            rc |= fprintf(fp, "IF_FLAG");   /* no BOOLEAN in SPICE3 */
         }
-        else if(type == CMPP_INTEGER) {
-            strcat(str,"IF_INTEGER");
+        else if (type == CMPP_INTEGER) {
+            rc |= fprintf(fp, "IF_INTEGER");
         }
-        else if(type == CMPP_REAL) {
-            strcat(str,"IF_REAL");        
+        else if (type == CMPP_REAL) {
+            rc |= fprintf(fp, "IF_REAL");
         }
-        else if(type == CMPP_COMPLEX) {
-            strcat(str,"IF_COMPLEX");        
+        else if (type == CMPP_COMPLEX) {
+            rc |= fprintf(fp, "IF_COMPLEX");
         }
-        else if(type == CMPP_STRING) {
-            strcat(str,"IF_STRING");        
+        else if (type == CMPP_STRING) {
+            rc |= fprintf(fp, "IF_STRING");
         }
         else {
             print_error("INTERNAL ERROR - write_mPTable() - Impossible data type.");
+            xrc = -1;
         }
 
-        if(is_array == true) {
-            strcat(str,"|IF_VECTOR)");
+        if (is_array) {
+            rc |= fprintf(fp, "|IF_VECTOR)");
         }
 
-        fprintf(fp, "%s, ", str);
 
         /* Put in the description string and finish this line off */
-
-        fprintf(fp, "\"%s\"", ifs_table->param[i].description);
-        fprintf(fp, "),\n");
-
-    }
+        rc |= fprintf(fp, ", \"%s\"),\n", ifs_table->param[i].description);
+    } /* end of loop over parameters */
 
     /* Finish off the structure */
+    rc |= fprintf(fp, "};\n\n");
 
-    fprintf(fp, "};\n");
-    fprintf(fp, "\n");
+    /* Check outputs */
+    if (rc < 0) {
+        print_error("mPTable writing failed.");
+        xrc = -1;
+    }
 
-}
+    return xrc;
+} /* end of function write_mPTable */
+
 
 
 /* *********************************************************************** */
@@ -450,147 +497,164 @@ derived from the Interface Specification file's PORT table.
 
 
 
-static void  write_conn_info(
+static int write_conn_info(
     FILE        *fp,          /* File to write to */
     Ifs_Table_t *ifs_table)   /* Table of Interface Specification data */
 {
-
+    int xrc = 0;
     int             i;
     int             j;
-    char            *str;
+    const char *str;
+    int rc = 0;
 
     /* Only write the connTable if there is something to put in it.      */
     /* Otherwise, we will put NULL in the SPICEdev structure in its slot */
 
-    if(ifs_table->num_conn == 0)  /* An unlikely condition for sure ... */
-        return;
+    if (ifs_table->num_conn == 0) { /* An unlikely condition for sure ... */
+        return 0;
+    }
 
     /* First, we must define arrays of port types */
 
     /* Note that there should be always at least one allowed port type */
     /* so we don't have to worry about arrays with no elements         */
 
-    for(i = 0; i < ifs_table->num_conn; i++) {
+    const Conn_Info_t * const conn = ifs_table->conn;
+    const int num_conn = ifs_table->num_conn;
+    for (i = 0; i < num_conn; i++) {
+        const Conn_Info_t * const p_conn_cur = conn + i;
+        rc |= fprintf(fp,
+                "\n"
+                "static Mif_Port_Type_t MIFportEnum%d[] = {\n", i);
 
-        fprintf(fp, "\n");
-        fprintf(fp, "static Mif_Port_Type_t MIFportEnum%d[] = {\n", i);
+        if (p_conn_cur->num_allowed_types < 1) {
+            print_error("ERROR - write_conn_info() - "
+                    "Number of allowed types cannot be zero");
+            xrc = -1;
+        }
 
-        if(ifs_table->conn[i].num_allowed_types < 1)
-            print_error("ERROR - write_conn_info() - Number of allowed types cannot be zero");
-
-        for(j = 0; j < ifs_table->conn[i].num_allowed_types; j++) {
-
-            str = port_type_to_str(ifs_table->conn[i].allowed_port_type[j]);
-            fprintf(fp, "\t%s,\n", str);
-
+        const int num_allowed_types = p_conn_cur->num_allowed_types;
+        for (j = 0; j < num_allowed_types; j++) {
+            rc |= fprintf(fp, "    %s,\n",
+                    port_type_to_str(p_conn_cur->allowed_port_type[j]));
         }  /* for number of allowed types */
 
-        fprintf(fp, "};\n");
-        fprintf(fp, "\n");
+        rc |= fprintf(fp,
+                "};\n"
+                "\n"
+                "\n"
+                "static char *MIFportStr%d[] = {\n", i);
 
-
-        fprintf(fp, "\n");
-        fprintf(fp, "static char *MIFportStr%d[] = {\n", i);
-
-        for(j = 0; j < ifs_table->conn[i].num_allowed_types; j++) {
-            if(ifs_table->conn[i].allowed_port_type[j] == USER_DEFINED)
-                fprintf(fp, "\t\"%s\",\n", ifs_table->conn[i].allowed_type[j]);
+        for (j = 0; j < num_allowed_types; j++) {
+            if (p_conn_cur->allowed_port_type[j] == USER_DEFINED) {
+                rc |= fprintf(fp, "    \"%s\",\n",
+                        p_conn_cur->allowed_type[j]);
+            }
             else {
-                str = gen_port_type_str(ifs_table->conn[i].allowed_port_type[j]);
-                fprintf(fp, "\t\"%s\",\n", str);
+                str = gen_port_type_str(p_conn_cur->allowed_port_type[j]);
+                rc |= fprintf(fp, "    \"%s\",\n", str);
             }
         }  /* for number of allowed types */
 
-        fprintf(fp, "};\n");
-        fprintf(fp, "\n");
-
+        rc |= fprintf(fp,
+                "};\n"
+                "\n");
     }  /* for number of connections */
 
 
 
     /* Now write the structure */
-
-    fprintf(fp, "\n");
-    fprintf(fp, "static Mif_Conn_Info_t MIFconnTable[] = {\n");
+    rc |= fprintf(fp,
+            "\n"
+            "static Mif_Conn_Info_t MIFconnTable[] = {\n");
 
 
     /* Write out an entry for each parameter in the table               */
 
-    for(i = 0; i < ifs_table->num_conn; i++) {
+    for (i = 0; i < num_conn; i++) {
+        const Conn_Info_t * const p_conn_cur = conn + i;
 
-        fprintf(fp, "  {\n");
-        fprintf(fp, "    \"%s\",\n",ifs_table->conn[i].name);
-        fprintf(fp, "    \"%s\",\n",ifs_table->conn[i].description);
+        rc |= fprintf(fp, "  {\n");
+        rc |= fprintf(fp, "    \"%s\",\n", p_conn_cur->name);
+        rc |= fprintf(fp, "    \"%s\",\n", p_conn_cur->description);
 
-        str = dir_to_str(ifs_table->conn[i].direction);
-        fprintf(fp, "    %s,\n", str);
+        str = dir_to_str(p_conn_cur->direction);
+        rc |= fprintf(fp, "    %s,\n", str);
 
-        str = port_type_to_str(ifs_table->conn[i].default_port_type);
-        fprintf(fp, "    %s,\n", str);
+        rc |= fprintf(fp, "    %s,\n",
+                port_type_to_str(p_conn_cur->default_port_type));
 
-        fprintf(fp, "    \"%s\",\n",
-		(ifs_table->conn[i].default_port_type == USER_DEFINED)
-		? ifs_table->conn[i].default_type
-		: gen_port_type_str (ifs_table->conn[i].default_port_type));
+        rc |= fprintf(fp, "    \"%s\",\n",
+                (p_conn_cur->default_port_type == USER_DEFINED)
+                ? p_conn_cur->default_type
+                : gen_port_type_str(p_conn_cur->default_port_type));
 
-        fprintf(fp,"    %d,\n",ifs_table->conn[i].num_allowed_types);
-	
-        fprintf(fp, "    MIFportEnum%d,\n", i);
-        fprintf(fp, "    MIFportStr%d,\n", i);
+        rc |= fprintf(fp,"    %d,\n", p_conn_cur->num_allowed_types);
+        rc |= fprintf(fp, "    MIFportEnum%d,\n", i);
+        rc |= fprintf(fp, "    MIFportStr%d,\n", i);
 
 
-        str = boolean_to_str(ifs_table->conn[i].is_array);
-        fprintf(fp, "    %s,\n", str);
+        str = boolean_to_str(p_conn_cur->is_array);
+        rc |= fprintf(fp, "    %s,\n", str);
 
-        if(ifs_table->conn[i].is_array == false) {
+        if (p_conn_cur->is_array == false) {
 
             str = boolean_to_str(false);    /* has_lower_bound */
-            fprintf(fp, "    %s,\n", str);
+            rc |= fprintf(fp, "    %s,\n", str);
 
             str = integer_to_str(0);        /* lower_bound */
-            fprintf(fp, "    %s,\n", str);
+            rc |= fprintf(fp, "    %s,\n", str);
 
             str = boolean_to_str(false);    /* has_upper_bound */
-            fprintf(fp, "    %s,\n", str);
+            rc |= fprintf(fp, "    %s,\n", str);
 
             str = integer_to_str(0);        /* upper_bound */
-            fprintf(fp, "    %s,\n", str);
+            rc |= fprintf(fp, "    %s,\n", str);
         }
         else {  /* is_array == true */
 
-            str = boolean_to_str(ifs_table->conn[i].has_lower_bound);
-            fprintf(fp, "    %s,\n", str);
+            str = boolean_to_str(p_conn_cur->has_lower_bound);
+            rc |= fprintf(fp, "    %s,\n", str);
 
-            if(ifs_table->conn[i].has_lower_bound == true)
-                str = integer_to_str(ifs_table->conn[i].lower_bound);
+            if (p_conn_cur->has_lower_bound == true)
+                str = integer_to_str(p_conn_cur->lower_bound);
             else
                 str = integer_to_str(0);
-            fprintf(fp, "    %s,\n", str);
+            rc |= fprintf(fp, "    %s,\n", str);
 
-            str = boolean_to_str(ifs_table->conn[i].has_upper_bound);
-            fprintf(fp, "    %s,\n", str);
+            str = boolean_to_str(p_conn_cur->has_upper_bound);
+            rc |= fprintf(fp, "    %s,\n", str);
 
-            if(ifs_table->conn[i].has_upper_bound == true)
-                str = integer_to_str(ifs_table->conn[i].upper_bound);
+            if (p_conn_cur->has_upper_bound == true)
+                str = integer_to_str(p_conn_cur->upper_bound);
             else
                 str = integer_to_str(0);
-            fprintf(fp, "    %s,\n", str);
+            rc |= fprintf(fp, "    %s,\n", str);
 
         }  /* if is_array */
     
-        str = boolean_to_str(ifs_table->conn[i].null_allowed);
-        fprintf(fp, "    %s,\n", str);
+        str = boolean_to_str(p_conn_cur->null_allowed);
+        rc |= fprintf(fp, "    %s,\n", str);
 
-        fprintf(fp, "  },\n");
+        rc |= fprintf(fp, "  },\n");
 
     } /* for number of parameters */
 
 
     /* Finish off the structure */
+    rc |= fprintf(fp,
+            "};\n"
+            "\n");
 
-    fprintf(fp, "};\n");
-    fprintf(fp, "\n");
-}
+    /* Check outputs */
+    if (rc < 0) {
+        print_error("Writing of connection information failed.");
+        xrc = -1;
+    }
+
+    return xrc;
+} /* end of function write_conn_info */
+
 
 
 /* *********************************************************************** */
@@ -613,152 +677,162 @@ input deck.
 
 
 
-static void  write_param_info(
+static int write_param_info(
     FILE        *fp,           /* File to write to */
     Ifs_Table_t *ifs_table)    /* Table of Interface Specification data */
 {
-
+    int xrc = 0;
     int             i;
-    char            *str;
+    const char *str;
 
 
     /* Only write the paramTable if there is something to put in it.      */
     /* Otherwise, we will put NULL in the SPICEdev structure in its slot */
 
-    if(ifs_table->num_param == 0)
-        return;
+    if (ifs_table->num_param == 0) {
+        return 0;
+    }
 
 
     /* Write the structure beginning */
-
-    fprintf(fp, "\n");
-    fprintf(fp, "static Mif_Param_Info_t MIFparamTable[] = {\n");
+    int rc = 0;
+    rc |= fprintf(fp,
+            "\n"
+            "static Mif_Param_Info_t MIFparamTable[] = {\n");
 
 
     /* Write out an entry for each parameter in the table               */
+    const Param_Info_t * const param = ifs_table->param;
+    const int num_param = ifs_table->num_param;
+    for (i = 0; i < num_param; i++) {
+        const Param_Info_t * const p_param_cur = param + i;
 
-    for(i = 0; i < ifs_table->num_param; i++) {
+        rc |= fprintf(fp, "  {\n");
+        rc |= fprintf(fp, "    \"%s\",\n", p_param_cur->name);
+        rc |= fprintf(fp, "    \"%s\",\n", p_param_cur->description);
 
-        fprintf(fp, "  {\n");
-        fprintf(fp, "    \"%s\",\n",ifs_table->param[i].name);
-        fprintf(fp, "    \"%s\",\n",ifs_table->param[i].description);
+        rc |= fprintf(fp, "    %s,\n",
+                data_type_to_str(p_param_cur->type));
 
-        str = data_type_to_str(ifs_table->param[i].type);
-        fprintf(fp, "    %s,\n", str);
+        str = boolean_to_str(p_param_cur->has_default);
+        rc |= fprintf(fp, "    %s,\n", str);
 
-        str = boolean_to_str(ifs_table->param[i].has_default);
-        fprintf(fp, "    %s,\n", str);
-
-        if(ifs_table->param[i].has_default == true)
-            str = value_to_str(ifs_table->param[i].type, ifs_table->param[i].default_value);
+        if (p_param_cur->has_default == true)
+            str = value_to_str(p_param_cur->type, p_param_cur->default_value);
         else
             str = no_value_to_str();
-        fprintf(fp, "    %s,\n", str);
+        rc |= fprintf(fp, "    %s,\n", str);
 
-        str = boolean_to_str(ifs_table->param[i].has_lower_limit);
-        fprintf(fp, "    %s,\n", str);
+        str = boolean_to_str(p_param_cur->has_lower_limit);
+        rc |= fprintf(fp, "    %s,\n", str);
 
-        if(ifs_table->param[i].has_lower_limit == true)
-            str = value_to_str(ifs_table->param[i].type, ifs_table->param[i].lower_limit);
+        if (p_param_cur->has_lower_limit == true)
+            str = value_to_str(p_param_cur->type, p_param_cur->lower_limit);
         else
             str = no_value_to_str();
-        fprintf(fp, "    %s,\n", str);
+        rc |= fprintf(fp, "    %s,\n", str);
 
-        str = boolean_to_str(ifs_table->param[i].has_upper_limit);
-        fprintf(fp, "    %s,\n", str);
+        str = boolean_to_str(p_param_cur->has_upper_limit);
+        rc |= fprintf(fp, "    %s,\n", str);
 
-        if(ifs_table->param[i].has_upper_limit == true)
-            str = value_to_str(ifs_table->param[i].type, ifs_table->param[i].upper_limit);
+        if (p_param_cur->has_upper_limit == true)
+            str = value_to_str(p_param_cur->type, p_param_cur->upper_limit);
         else
             str = no_value_to_str();
-        fprintf(fp, "    %s,\n", str);
+        rc |= fprintf(fp, "    %s,\n", str);
 
-        str = boolean_to_str(ifs_table->param[i].is_array);
-        fprintf(fp, "    %s,\n", str);
+        str = boolean_to_str(p_param_cur->is_array);
+        rc |= fprintf(fp, "    %s,\n", str);
 
-        if(ifs_table->param[i].is_array == false) {
+        if (!p_param_cur->is_array) {
 
             str = boolean_to_str(false);    /* has_conn_ref */
-            fprintf(fp, "    %s,\n", str);
+            rc |= fprintf(fp, "    %s,\n", str);
 
             str = integer_to_str(0);        /* conn_ref */
-            fprintf(fp, "    %s,\n", str);
+            rc |= fprintf(fp, "    %s,\n", str);
 
             str = boolean_to_str(false);    /* has_lower_bound */
-            fprintf(fp, "    %s,\n", str);
+            rc |= fprintf(fp, "    %s,\n", str);
 
             str = integer_to_str(0);        /* lower_bound */
-            fprintf(fp, "    %s,\n", str);
+            rc |= fprintf(fp, "    %s,\n", str);
 
             str = boolean_to_str(false);    /* has_upper_bound */
-            fprintf(fp, "    %s,\n", str);
+            rc |= fprintf(fp, "    %s,\n", str);
 
             str = integer_to_str(0);        /* upper_bound */
-            fprintf(fp, "    %s,\n", str);
+            rc |= fprintf(fp, "    %s,\n", str);
         }
         else {  /* is_array == true */
 
-            str = boolean_to_str(ifs_table->param[i].has_conn_ref);
-            fprintf(fp, "    %s,\n", str);
+            str = boolean_to_str(p_param_cur->has_conn_ref);
+            rc |= fprintf(fp, "    %s,\n", str);
 
-            if(ifs_table->param[i].has_conn_ref == true) {
+            if (p_param_cur->has_conn_ref) {
 
-                str = integer_to_str(ifs_table->param[i].conn_ref);
-                fprintf(fp, "    %s,\n", str);
+                str = integer_to_str(p_param_cur->conn_ref);
+                rc |= fprintf(fp, "    %s,\n", str);
 
                 str = boolean_to_str(false);    /* has_lower_bound */
-                fprintf(fp, "    %s,\n", str);
+                rc |= fprintf(fp, "    %s,\n", str);
 
                 str = integer_to_str(0);        /* lower_bound */
-                fprintf(fp, "    %s,\n", str);
+                rc |= fprintf(fp, "    %s,\n", str);
 
                 str = boolean_to_str(false);    /* has_upper_bound */
-                fprintf(fp, "    %s,\n", str);
+                rc |= fprintf(fp, "    %s,\n", str);
 
                 str = integer_to_str(0);        /* upper_bound */
-                fprintf(fp, "    %s,\n", str);
+                rc |= fprintf(fp, "    %s,\n", str);
             }
             else {  /* has_conn_ref == false */
 
                 str = integer_to_str(0);        /* conn_ref */
-                fprintf(fp, "    %s,\n", str);
+                rc |= fprintf(fp, "    %s,\n", str);
 
-                str = boolean_to_str(ifs_table->param[i].has_lower_bound);
-                fprintf(fp, "    %s,\n", str);
+                str = boolean_to_str(p_param_cur->has_lower_bound);
+                rc |= fprintf(fp, "    %s,\n", str);
 
-                if(ifs_table->param[i].has_lower_bound == true)
-                    str = integer_to_str(ifs_table->param[i].lower_bound);
+                if (p_param_cur->has_lower_bound)
+                    str = integer_to_str(p_param_cur->lower_bound);
                 else
                     str = integer_to_str(0);
-                fprintf(fp, "    %s,\n", str);
+                rc |= fprintf(fp, "    %s,\n", str);
 
-                str = boolean_to_str(ifs_table->param[i].has_upper_bound);
-                fprintf(fp, "    %s,\n", str);
+                str = boolean_to_str(p_param_cur->has_upper_bound);
+                rc |= fprintf(fp, "    %s,\n", str);
 
-                if(ifs_table->param[i].has_upper_bound == true)
-                    str = integer_to_str(ifs_table->param[i].upper_bound);
+                if (p_param_cur->has_upper_bound)
+                    str = integer_to_str(p_param_cur->upper_bound);
                 else
                     str = integer_to_str(0);
-                fprintf(fp, "    %s,\n", str);
+                rc |= fprintf(fp, "    %s,\n", str);
 
             }  /* if has_conn_ref */
 
         }  /* if is_array */
     
-        str = boolean_to_str(ifs_table->param[i].null_allowed);
-        fprintf(fp, "    %s,\n", str);
+        str = boolean_to_str(p_param_cur->null_allowed);
+        rc |= fprintf(fp, "    %s,\n", str);
 
-        fprintf(fp, "  },\n");
+        rc |= fprintf(fp, "  },\n");
 
     } /* for number of parameters */
 
 
     /* Finish off the structure */
 
-    fprintf(fp, "};\n");
-    fprintf(fp, "\n");
+    rc |= fprintf(fp, "};\n\n");
 
-}
+    /* Check outputs */
+    if (rc < 0) {
+        print_error("Writing of param information failed.");
+        xrc = -1;
+    }
+
+    return xrc;
+} /* end of function write_param_info */
 
 
 
@@ -780,53 +854,59 @@ written by write_inst_var_info is more extensive.
 
 
 
-static void  write_inst_var_info(
+static int write_inst_var_info(
     FILE        *fp,         /* File to write to */
     Ifs_Table_t *ifs_table)  /* Table of Interface Specification data */
 {
-
+    int xrc = 0;
     int             i;
-    char            *str;
+    const char *str;
 
     /* Only write the inst_varTable if there is something to put in it.  */
     /* Otherwise, we will put NULL in the SPICEdev structure in its slot */
 
-    if(ifs_table->num_inst_var == 0)
-        return;
+    if (ifs_table->num_inst_var == 0)
+        return 0;
 
 
     /* Write the structure beginning */
-
-    fprintf(fp, "\n");
-    fprintf(fp, "static Mif_Inst_Var_Info_t MIFinst_varTable[] = {\n");
+    int rc = 0;
+    rc |= fprintf(fp,
+            "\n"
+            "static Mif_Inst_Var_Info_t MIFinst_varTable[] = {\n");
 
 
     /* Write out an entry for each parameter in the table               */
 
     for(i = 0; i < ifs_table->num_inst_var; i++) {
 
-        fprintf(fp, "  {\n");
-        fprintf(fp, "    \"%s\",\n",ifs_table->inst_var[i].name);
-        fprintf(fp, "    \"%s\",\n",ifs_table->inst_var[i].description);
+        rc |= fprintf(fp, "  {\n");
+        rc |= fprintf(fp, "    \"%s\",\n",ifs_table->inst_var[i].name);
+        rc |= fprintf(fp, "    \"%s\",\n",ifs_table->inst_var[i].description);
 
-        str = data_type_to_str(ifs_table->inst_var[i].type);
-        fprintf(fp, "    %s,\n", str);
+        rc |= fprintf(fp, "    %s,\n",
+                data_type_to_str(ifs_table->inst_var[i].type));
 
         str = boolean_to_str(ifs_table->inst_var[i].is_array);
-        fprintf(fp, "    %s,\n", str);
+        rc |= fprintf(fp, "    %s,\n", str);
 
-        fprintf(fp, "  },\n");
+        rc |= fprintf(fp, "  },\n");
 
     } /* for number of parameters */
 
 
     /* Finish off the structure */
 
-    fprintf(fp, "};\n");
-    fprintf(fp, "\n");
+    rc |= fprintf(fp, "};\n\n");
 
-}
+    /* Check outputs */
+    if (rc < 0) {
+        print_error("Writing of instance variable information failed.");
+        xrc = -1;
+    }
 
+    return xrc;
+} /* end of function write_inst_var_info */
 
 
 
@@ -845,118 +925,133 @@ pointers to all of the above data structures.
 
 
 
-static void  write_SPICEdev(
+static int write_SPICEdev(
     FILE        *fp,         /* File to write to */
     Ifs_Table_t *ifs_table)  /* Table of Interface Specification data */
 {
-	
-    /* Extern the code model function name */
-    fprintf(fp, "\n");
-    fprintf(fp, "extern void %s(Mif_Private_t *);\n",
-                 ifs_table->name.c_fcn_name);
+    int rc = 0; /* init print rc to nonnegative (no error) */
+    int xrc = 0;
 
-	/* SPICE now needs these static integers */
-	fprintf(fp, "\n");
-	fprintf(fp, "static int val_terms             = 0;\n");
-	fprintf(fp, "static int val_numNames          = 0;\n");
-	fprintf(fp, "static int val_numInstanceParms  = %d;\n",ifs_table->num_inst_var);
-	fprintf(fp, "static int val_numModelParms     = %d;\n",ifs_table->num_param);
-	fprintf(fp, "static int val_sizeofMIFinstance = sizeof(MIFinstance);\n");
-	fprintf(fp, "static int val_sizeofMIFmodel    = sizeof(MIFmodel);\n");
+    /* Extern the code model function name */
+    rc |= fprintf(fp,
+            "\n"
+            "extern void %s(Mif_Private_t *);\n",
+            ifs_table->name.c_fcn_name);
+
+    /* SPICE now needs these static integers */
+    rc |= fprintf(fp,
+            "\n"
+            "static int val_terms             = 0;\n"
+            "static int val_numNames          = 0;\n"
+            "static int val_numInstanceParms  = %d;\n"
+            "static int val_numModelParms     = %d;\n"
+            "static int val_sizeofMIFinstance = sizeof(MIFinstance);\n"
+            "static int val_sizeofMIFmodel    = sizeof(MIFmodel);\n",
+            ifs_table->num_inst_var, ifs_table->num_param);
 
     /* Write out the structure beginning */
 
     /* Use the c function external identifier appended with _info as the */
     /* external identifier for the structure.                            */
 
-    fprintf(fp, "\n");
-    fprintf(fp, "SPICEdev %s_info = {\n", ifs_table->name.c_fcn_name);
+    rc |= fprintf(fp,
+            "\n"
+            "SPICEdev %s_info = {\n", ifs_table->name.c_fcn_name);
 
     /* Write the IFdevice structure */
 
-    fprintf(fp, "    .DEVpublic = {\n");
-    fprintf(fp, "        .name = \"%s\",\n", ifs_table->name.model_name);
-    fprintf(fp, "        .description = \"%s\",\n", ifs_table->name.description);
-    fprintf(fp, "        .terms = &val_terms,\n");
-    fprintf(fp, "        .numNames = &val_numNames,\n");
-    fprintf(fp, "        .termNames = NULL,\n");
+    rc |= fprintf(fp, "    .DEVpublic = {\n");
+    rc |= fprintf(fp, "        .name = \"%s\",\n", ifs_table->name.model_name);
+    rc |= fprintf(fp, "        .description = \"%s\",\n", ifs_table->name.description);
+    rc |= fprintf(fp,
+            "        .terms = &val_terms,\n"
+            "        .numNames = &val_numNames,\n"
+            "        .termNames = NULL,\n"
+            "        .numInstanceParms = &val_numInstanceParms,\n");
 
-    fprintf(fp, "        .numInstanceParms = &val_numInstanceParms,\n");
     if(ifs_table->num_inst_var > 0)
-        fprintf(fp, "        .instanceParms = MIFpTable,\n");
+        rc |= fprintf(fp, "        .instanceParms = MIFpTable,\n");
     else
-        fprintf(fp, "        .instanceParms = NULL,\n");
+        rc |= fprintf(fp, "        .instanceParms = NULL,\n");
 
-    fprintf(fp, "        .numModelParms = &val_numModelParms,\n");
+    rc |= fprintf(fp, "        .numModelParms = &val_numModelParms,\n");
     if(ifs_table->num_param > 0)
-        fprintf(fp, "        .modelParms = MIFmPTable,\n");
+        rc |= fprintf(fp, "        .modelParms = MIFmPTable,\n");
     else
-        fprintf(fp, "        .modelParms = NULL,\n");
-    fprintf(fp, "        .flags = 0,\n\n");
+        rc |= fprintf(fp, "        .modelParms = NULL,\n");
+    rc |= fprintf(fp, "        .flags = 0,\n\n");
 
-    fprintf(fp, "        .cm_func = %s,\n", ifs_table->name.c_fcn_name);
+    rc |= fprintf(fp, "        .cm_func = %s,\n", ifs_table->name.c_fcn_name);
 
-    fprintf(fp, "        .num_conn = %d,\n", ifs_table->num_conn);
+    rc |= fprintf(fp, "        .num_conn = %d,\n", ifs_table->num_conn);
     if(ifs_table->num_conn > 0)
-        fprintf(fp, "        .conn = MIFconnTable,\n");
+        rc |= fprintf(fp, "        .conn = MIFconnTable,\n");
     else
-        fprintf(fp, "        .conn = NULL,\n");
+        rc |= fprintf(fp, "        .conn = NULL,\n");
 
-    fprintf(fp, "        .num_param = %d,\n", ifs_table->num_param);
+    rc |= fprintf(fp, "        .num_param = %d,\n", ifs_table->num_param);
     if(ifs_table->num_param > 0)
-        fprintf(fp, "        .param = MIFparamTable,\n");
+        rc |= fprintf(fp, "        .param = MIFparamTable,\n");
     else
-        fprintf(fp, "        .param = NULL,\n");
+        rc |= fprintf(fp, "        .param = NULL,\n");
 
-    fprintf(fp, "        .num_inst_var = %d,\n", ifs_table->num_inst_var);
+    rc |= fprintf(fp, "        .num_inst_var = %d,\n", ifs_table->num_inst_var);
     if(ifs_table->num_inst_var > 0)
-        fprintf(fp, "        .inst_var = MIFinst_varTable,\n");
+        rc |= fprintf(fp, "        .inst_var = MIFinst_varTable,\n");
     else
-        fprintf(fp, "        .inst_var = NULL,\n");
+        rc |= fprintf(fp, "        .inst_var = NULL,\n");
 
-    fprintf(fp, "    },\n\n");
+    rc |= fprintf(fp, "    },\n\n");
 
     /* Write the names of the generic code model functions */
 
-    fprintf(fp, "    .DEVparam = NULL,\n");
-    fprintf(fp, "    .DEVmodParam = MIFmParam,\n");
-    fprintf(fp, "    .DEVload = MIFload,\n");
-    fprintf(fp, "    .DEVsetup = MIFsetup,\n");
-    fprintf(fp, "    .DEVunsetup = MIFunsetup,\n");
-    fprintf(fp, "    .DEVpzSetup = NULL,\n");
-    fprintf(fp, "    .DEVtemperature = NULL,\n");
-    fprintf(fp, "    .DEVtrunc = MIFtrunc,\n");
-    fprintf(fp, "    .DEVfindBranch = NULL,\n");
-    fprintf(fp, "    .DEVacLoad = MIFload,\n");
-    fprintf(fp, "    .DEVaccept = NULL,\n");
-    fprintf(fp, "    .DEVdestroy = MIFdestroy,\n");
-    fprintf(fp, "    .DEVmodDelete = MIFmDelete,\n");
-    fprintf(fp, "    .DEVdelete = MIFdelete,\n");
-    fprintf(fp, "    .DEVsetic = NULL,\n");
-    fprintf(fp, "    .DEVask = MIFask,\n");
-    fprintf(fp, "    .DEVmodAsk = MIFmAsk,\n");
-    fprintf(fp, "    .DEVpzLoad = NULL,\n");
-    fprintf(fp, "    .DEVconvTest = MIFconvTest,\n");
-    fprintf(fp, "    .DEVsenSetup = NULL,\n");
-    fprintf(fp, "    .DEVsenLoad = NULL,\n");
-    fprintf(fp, "    .DEVsenUpdate = NULL,\n");
-    fprintf(fp, "    .DEVsenAcLoad = NULL,\n");
-    fprintf(fp, "    .DEVsenPrint = NULL,\n");
-    fprintf(fp, "    .DEVsenTrunc = NULL,\n");
-    fprintf(fp, "    .DEVdisto = NULL,\n");
-    fprintf(fp, "    .DEVnoise = NULL,\n");
-    fprintf(fp, "    .DEVsoaCheck = NULL,\n");
-    fprintf(fp, "    .DEVinstSize = &val_sizeofMIFinstance,\n");
-    fprintf(fp, "    .DEVmodSize = &val_sizeofMIFmodel,\n");
-    fprintf(fp, "\n");
-    fprintf(fp, "#ifdef CIDER\n");
-    fprintf(fp, "    .DEVdump = NULL,\n");
-    fprintf(fp, "    .DEVacct = NULL,\n");
-    fprintf(fp, "#endif\n");
-    fprintf(fp, "};\n");
-    fprintf(fp, "\n");
-}
+    rc |= fprintf(fp,
+            "    .DEVparam = NULL,\n"
+            "    .DEVmodParam = MIFmParam,\n"
+            "    .DEVload = MIFload,\n"
+            "    .DEVsetup = MIFsetup,\n"
+            "    .DEVunsetup = MIFunsetup,\n"
+            "    .DEVpzSetup = NULL,\n"
+            "    .DEVtemperature = NULL,\n"
+            "    .DEVtrunc = MIFtrunc,\n"
+            "    .DEVfindBranch = NULL,\n"
+            "    .DEVacLoad = MIFload,\n"
+            "    .DEVaccept = NULL,\n"
+            "    .DEVdestroy = MIFdestroy,\n"
+            "    .DEVmodDelete = MIFmDelete,\n"
+            "    .DEVdelete = MIFdelete,\n"
+            "    .DEVsetic = NULL,\n"
+            "    .DEVask = MIFask,\n"
+            "    .DEVmodAsk = MIFmAsk,\n"
+            "    .DEVpzLoad = NULL,\n"
+            "    .DEVconvTest = MIFconvTest,\n"
+            "    .DEVsenSetup = NULL,\n"
+            "    .DEVsenLoad = NULL,\n"
+            "    .DEVsenUpdate = NULL,\n"
+            "    .DEVsenAcLoad = NULL,\n"
+            "    .DEVsenPrint = NULL,\n"
+            "    .DEVsenTrunc = NULL,\n"
+            "    .DEVdisto = NULL,\n"
+            "    .DEVnoise = NULL,\n"
+            "    .DEVsoaCheck = NULL,\n"
+            "    .DEVinstSize = &val_sizeofMIFinstance,\n"
+            "    .DEVmodSize = &val_sizeofMIFmodel,\n"
+            "\n"
+            "#ifdef CIDER\n"
+            "    .DEVdump = NULL,\n"
+            "    .DEVacct = NULL,\n"
+            "#endif\n"
+            "};\n\n"
+            );
 
+    /* Check outputs */
+    if (rc < 0) {
+        print_error("Writing of SPICE device information failed.");
+        xrc = -1;
+    }
+
+    return xrc;
+} /* end of function write_SPICEdev */
 
 
 
@@ -973,202 +1068,111 @@ being created.
 #define BASE_STR_LEN  80
 
 
-static char  *data_type_to_str(Data_Type_t type)
+static const char *data_type_to_str(Data_Type_t type)
 {
-    static char *str = NULL;
-
-    if(str == NULL)
-        str = (char *) malloc(BASE_STR_LEN+1);
-
-    switch(type) {
-
+    switch (type) {
         case CMPP_BOOLEAN:
-            strcpy(str,"MIF_BOOLEAN");
-            break;
-
+            return "MIF_BOOLEAN";
         case CMPP_INTEGER:
-            strcpy(str,"MIF_INTEGER");
-            break;
-
+            return "MIF_INTEGER";
         case CMPP_REAL:
-            strcpy(str,"MIF_REAL");
-            break;
-
+            return "MIF_REAL";
         case CMPP_COMPLEX:
-            strcpy(str,"MIF_COMPLEX");
-            break;
-
+            return "MIF_COMPLEX";
         case CMPP_STRING:
-            strcpy(str,"MIF_STRING");
-            break;
-
-	case CMPP_POINTER:
-            strcpy(str,"MIF_STRING");
-            break;
-
+        case CMPP_POINTER:
+            return "MIF_STRING";
         default:
             print_error("INTERNAL ERROR - data_type_to_str() - Impossible data type.");
+            return "INVALID DATA TYPE";
     }
-
-    return(str);
 }
 
 
 /* *********************************************************************** */
 
-static char  *port_type_to_str(Port_Type_t port)
+static const char *port_type_to_str(Port_Type_t port)
 {
-    static char *str = NULL;
-
-    if(str == NULL)
-        str = (char *) malloc(BASE_STR_LEN+1);
-
-    switch(port) {
-
+    switch (port) {
         case VOLTAGE:
-            strcpy(str,"MIF_VOLTAGE");
-            break;
-
+            return "MIF_VOLTAGE";
         case DIFF_VOLTAGE:
-            strcpy(str,"MIF_DIFF_VOLTAGE");
-            break;
-
+            return "MIF_DIFF_VOLTAGE";
         case CURRENT:
-            strcpy(str,"MIF_CURRENT");
-            break;
-
+            return "MIF_CURRENT";
         case DIFF_CURRENT:
-            strcpy(str,"MIF_DIFF_CURRENT");
-            break;
-
+            return "MIF_DIFF_CURRENT";
         case VSOURCE_CURRENT:
-            strcpy(str,"MIF_VSOURCE_CURRENT");
-            break;
-
+            return "MIF_VSOURCE_CURRENT";
         case CONDUCTANCE:
-            strcpy(str,"MIF_CONDUCTANCE");
-            break;
-
+            return "MIF_CONDUCTANCE";
         case DIFF_CONDUCTANCE:
-            strcpy(str,"MIF_DIFF_CONDUCTANCE");
-            break;
-
+            return "MIF_DIFF_CONDUCTANCE";
         case RESISTANCE:
-            strcpy(str,"MIF_RESISTANCE");
-            break;
-
+            return "MIF_RESISTANCE";
         case DIFF_RESISTANCE:
-            strcpy(str,"MIF_DIFF_RESISTANCE");
-            break;
-
+            return "MIF_DIFF_RESISTANCE";
         case DIGITAL:
-            strcpy(str,"MIF_DIGITAL");
-            break;
-
+            return "MIF_DIGITAL";
         case USER_DEFINED:
-            strcpy(str,"MIF_USER_DEFINED");
-            break;
-
+            return "MIF_USER_DEFINED";
         default:
             print_error("INTERNAL ERROR - port_type_to_str() - Impossible port type.");
+            return "INVALID PORT TYPE";
     }
-
-    return(str);
-
 }
 
 /* *********************************************************************** */
 
-static char  *gen_port_type_str(Port_Type_t port)
+static const char *gen_port_type_str(Port_Type_t port)
 {
-    static char *str = NULL;
-
-    if(str == NULL)
-        str = (char *) malloc(BASE_STR_LEN+1);
-
-    switch(port) {
-
+    switch (port) {
         case VOLTAGE:
-            strcpy(str,"v");
-            break;
-
+            return "v";
         case DIFF_VOLTAGE:
-            strcpy(str,"vd");
-            break;
-
+            return "vd";
         case CURRENT:
-            strcpy(str,"i");
-            break;
-
+            return "i";
         case DIFF_CURRENT:
-            strcpy(str,"id");
-            break;
-
+            return "id";
         case VSOURCE_CURRENT:
-            strcpy(str,"vnam");
-            break;
-
+            return "vnam";
         case CONDUCTANCE:
-            strcpy(str,"g");
-            break;
-
+            return "g";
         case DIFF_CONDUCTANCE:
-            strcpy(str,"gd");
-            break;
-
+            return "gd";
         case RESISTANCE:
-            strcpy(str,"h");
-            break;
-
+            return "h";
         case DIFF_RESISTANCE:
-            strcpy(str,"hd");
-            break;
-
+            return "hd";
         case DIGITAL:
-            strcpy(str,"d");
-            break;
-
+            return "d";
         case USER_DEFINED:
-            strcpy(str,"");
-            break;
-
+            return "";
         default:
-            print_error("INTERNAL ERROR - gen_port_type_str() - Impossible port type.");
+            print_error("INTERNAL ERROR - gen_port_type_str() - "
+                    "Impossible port type.");
+            return "INVALID PORT TYPE";
     }
+} /* end of function gen_port_type_str */
 
-    return(str);
-
-}
 
 
 /* *********************************************************************** */
 
-static char  *dir_to_str(Dir_t dir)
+static const char *dir_to_str(Dir_t dir)
 {
-    static char *str = NULL;
-
-    if(str == NULL)
-        str = (char *) malloc(BASE_STR_LEN+1);
-
     switch(dir) {
-
         case CMPP_IN:
-            strcpy(str,"MIF_IN");
-            break;
-
+            return "MIF_IN";
         case CMPP_OUT:
-            strcpy(str,"MIF_OUT");
-            break;
-
+            return "MIF_OUT";
         case CMPP_INOUT:
-            strcpy(str,"MIF_INOUT");
-            break;
-
+            return "MIF_INOUT";
         default:
             print_error("INTERNAL ERROR - dir_to_str() - Impossible direction type.");
+            return "MIF_DIRECTION_INVALID";
     }
-
-    return(str);
 }
 
 
@@ -1180,12 +1184,15 @@ static char  *value_to_str(Data_Type_t type, Value_t value)
     static char *str = NULL;
     static int  max_len = 0;
 
-    char *bool_str;
+    const char *bool_str;
     int  str_len;
 
 
     if(str == NULL) {
-        str = (char *) malloc(2 * BASE_STR_LEN + 1);
+        if ((str = (char *) malloc(2 * BASE_STR_LEN + 1)) == (char *) NULL) {
+            (void) fprintf(stderr, "Unable to allocate string buffer.\n");
+            return (char *) NULL;
+        }
         max_len = 2 * BASE_STR_LEN;
     }
 
@@ -1212,35 +1219,38 @@ static char  *value_to_str(Data_Type_t type, Value_t value)
         case CMPP_STRING:
             /* be careful, the string could conceivably be very long... */
             str_len = (int) strlen(value.svalue);
-            if((str_len + BASE_STR_LEN) > max_len) {
-                str = (char *) realloc(str, (size_t) (max_len + str_len + 1));
+            if ((str_len + BASE_STR_LEN) > max_len) {
+                size_t n_byte_alloc = max_len + str_len + 1;
+                void * const p = realloc(str, n_byte_alloc);
+                if (p == NULL) {
+                    (void) fprintf(stderr, "Unable to resize string "
+                            "buffer to size %zu.\n",
+                            n_byte_alloc);
+                    free(str);
+                    return (char *) NULL;
+                }
+                str = (char *) p;
                 max_len += str_len;
-            }
+            } /* end of resize */
+
             sprintf(str, "{MIF_FALSE, 0, 0.0, {0.0, 0.0}, \"%s\"}", value.svalue);
             break;
 
         default:
             print_error("INTERNAL ERROR - value_to_str() - Impossible data type.");
 
-    }
+    } /* end of switch */
 
-    return(str);
-}
+    return str;
+} /* end of function value_to_string */
+
 
 
 /* *********************************************************************** */
 
-static char  *boolean_to_str(bool value)
+static const char *boolean_to_str(bool value)
 {
-    static char *str = NULL;
-
-    if (str == NULL) {
-        str = (char *) malloc(BASE_STR_LEN+1);
-    }
-
-    strcpy(str, value ? "MIF_TRUE" : "MIF_FALSE");
-
-    return str;
+    return value ? "MIF_TRUE" : "MIF_FALSE";
 }
 
 
@@ -1248,31 +1258,17 @@ static char  *boolean_to_str(bool value)
 
 static char  *integer_to_str(int value)
 {
-    static char *str = NULL;
-
-    if(str == NULL) {
-        str = (char *) malloc(BASE_STR_LEN + 1);
-    }
-
+    static char str[3 * sizeof(int) + 1];
     sprintf(str, "%d", value);
-
-    return(str);
+    return str;
 }
 
 
 /* *********************************************************************** */
 
-static char  *no_value_to_str(void)
+static const char *no_value_to_str(void)
 {
-    static char *str = NULL;
-
-    if(str == NULL) {
-        str = (char *) malloc(BASE_STR_LEN + 1);
-    }
-
-    sprintf(str, "{MIF_FALSE, 0, 0.0, {0.0, 0.0}, NULL}");
-
-    return(str);
+    return "{MIF_FALSE, 0, 0.0, {0.0, 0.0}, NULL}";
 }
 
 

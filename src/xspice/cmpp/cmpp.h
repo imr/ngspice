@@ -38,6 +38,7 @@ NON-STANDARD FEATURES
 ============================================================================*/
 
 
+#include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
 
@@ -49,20 +50,25 @@ NON-STANDARD FEATURES
 #ifdef _MSC_VER
 #include <io.h>
 #include <string.h>
+
+/* If CRT debugging is being used so that crtdbg.h is included, strdup will
+ * be defined to a debug version. In this case, strdup should not be
+ * redefined to the standard version. */
+#ifndef strdup
 #define strdup _strdup
+#endif
+
 #define unlink _unlink
 #define isatty _isatty
 #define fileno _fileno
-#endif
+#endif /* _MSC_VER */
 
 /* *********************************************************************** */
 
 #define  GET_IFS_TABLE    0  /* Read the entire ifs table */
 #define  GET_IFS_NAME     1  /* Get the C function name out of the table only */
 
-#define  MAX_PATH_LEN  1024  /* Maximum pathname length */
 #define  MAX_NAME_LEN  1024  /* Maximum SPICE name length */
-#define  MAX_FN_LEN      31  /* Maximum filename length */
 
 
 /* ******************************************************************** */
@@ -262,7 +268,9 @@ void preprocess_ifs_file(void);
 
 void preprocess_lst_files(void);
 
-void preprocess_mod_file(char *filename);
+void preprocess_mod_file(const char *filename);
+
+int output_paths_from_lst_file(const char *filename);
 
 
 void init_error (char *program_name);
@@ -272,6 +280,7 @@ void print_error(const char *fmt, ...) __attribute__ ((format (__printf__, 1, 2)
 #else
 void print_error(const char *fmt, ...);
 #endif
+void vprint_error(const char *fmt, va_list p);
 
 void str_to_lower(char *s);
 
@@ -281,7 +290,7 @@ int read_ifs_file(const char *filename, int mode, Ifs_Table_t *ifs_table);
 int write_ifs_c_file(const char *filename, Ifs_Table_t *ifs_table);
 
 
-FILE *fopen_cmpp(const char **path_p, const char *mode);
+char *gen_filename(const char *filename, const char *mode);
 
 void rem_ifs_table(Ifs_Table_t *ifs_table);
 

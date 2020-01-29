@@ -84,13 +84,18 @@ void print_error(const char *fmt, ...)
 {
     va_list ap;
     va_start(ap, fmt);
-
-    fprintf(stderr, "%s: ", prog_name);
-    vfprintf(stderr, fmt, ap);
-    fprintf(stderr, "\n");
-
+    vprint_error(fmt, ap);
     va_end(ap);
 } /* end of function print_error */
+
+
+
+void vprint_error(const char *fmt, va_list p_arg)
+{
+    fprintf(stderr, "%s: ", prog_name);
+    vfprintf(stderr, fmt, p_arg);
+    fprintf(stderr, "\n");
+} /* end of function vprint_error */
 
 
 
@@ -110,24 +115,22 @@ void str_to_lower(char *s)
 /* If *path_p is relative, prefix with the value of the CMPP output or
  * input environment variable. Open the file and return the path that
  * was used to open it. */
-FILE *fopen_cmpp(const char **path_p, const char *mode)
+char *gen_filename(const char *filename, const char *mode)
 {
-    const char *path = *path_p;
     char *buf = (char *) NULL;
 
     /* If absoulte path, prefix with CMPP_ODIR/CMPP_IDIR env value */
-    if (!is_absolute_pathname(path)) { /* relative path */
+    if (!is_absolute_pathname(filename)) { /* relative path */
         const char *e = getenv((*mode == 'w' || *mode == 'a') ?
                     "CMPP_ODIR" : "CMPP_IDIR");
         if (e) { /* have env var */
             const size_t len_prefix = strlen(e);
-            const size_t len_path = strlen(path);
-            const size_t n_char = len_prefix + len_path + 1;
+            const size_t len_filename = strlen(filename);
+            const size_t n_char = len_prefix + len_filename + 1;
 
             /* Allocate buffer to build full file name */
             if ((buf = (char *) malloc(n_char + 1)) == (char *) NULL) {
-                *path_p = (char *) NULL;
-                return (FILE *) NULL;
+                return (char *) NULL;
             }
 
             /* Build the full file name */
@@ -136,24 +139,21 @@ FILE *fopen_cmpp(const char **path_p, const char *mode)
                 (void) memcpy(p_cur, e, len_prefix);
                 p_cur += len_prefix;
                 *p_cur++ = DIR_TERM_UNIX;
-                (void) memcpy(p_cur, path, len_path + 1);
+                (void) memcpy(p_cur, filename, len_filename + 1);
             }
         } /* end of case that env variable found */
     } /* end of case that path is absolute */
 
-    /* If did not build full file name yet, copy the original
-     * name of the file */
+    /* If did not build full file name yet, make the original
+     * name of the file the full file name */
     if (buf == (char *) NULL) {
-        if ((buf = strdup(path)) == (char *) NULL) { /* failed */
-            *path_p = (char *) NULL;
-            return (FILE *) NULL;
+        if ((buf = strdup(filename)) == (char *) NULL) { /* failed */
+            return (char *) NULL;
         }
     }
 
-    /* Return copy of file name and opened file */
-    *path_p = buf;
-    return fopen(buf, mode);
-} /* end of function fopen_cmpp */
+    return buf;
+} /* end of function gen_filename */
 
 
 
