@@ -42,14 +42,6 @@ NON-STANDARD FEATURES
 
 
 
-/* *********************************************************************** */
-
-static void txfree(void *ptr)
-{
-    if(ptr)
-        free(ptr);
-};
-
 /*
 preprocess_ifs_file
 
@@ -91,30 +83,51 @@ void preprocess_ifs_file(void)
 
 void rem_ifs_table(Ifs_Table_t *ifs_table)
 {
-    int i;
     /* Remove the ifs_table */
-    txfree(ifs_table->name.c_fcn_name);
-    txfree(ifs_table->name.description);
-    txfree(ifs_table->name.model_name);
+    free(ifs_table->name.c_fcn_name);
+    free(ifs_table->name.description);
+    free(ifs_table->name.model_name);
 
-    for(i = 0; i < ifs_table->num_conn; i++) {
-        txfree(ifs_table->conn[i].name);
-        txfree(ifs_table->conn[i].description);
-        txfree(ifs_table->conn[i].default_type);              
+    {
+        Conn_Info_t * const p_conn = ifs_table->conn;
+        const int num_conn = ifs_table->num_conn;
+        int i;
+        for (i = 0; i < num_conn; ++i) {
+            Conn_Info_t *p_conn_cur = p_conn + i;
+            free(p_conn_cur->name);
+            free(p_conn_cur->description);
+            free(p_conn_cur->default_type);
+        }
     }
 
-    for(i = 0; i < ifs_table->num_param; i++) {
-        txfree(ifs_table->param[i].name);
-        txfree(ifs_table->param[i].description);        
+    {
+        Param_Info_t * const p_param = ifs_table->param;
+        const int num_param = ifs_table->num_param;
+        int i;
+        for (i = 0; i < num_param; ++i) {
+            Param_Info_t *p_param_cur = p_param + i;
+            free(p_param_cur->name);
+            free(p_param_cur->description);
+        }
     }
-    for(i = 0; i < ifs_table->num_inst_var; i++) {
-        txfree(ifs_table->inst_var[i].name);
-        txfree(ifs_table->inst_var[i].description);        
+
+    {
+        Inst_Var_Info_t * const p_inst_var = ifs_table->inst_var;
+        const int num_inst_var = ifs_table->num_inst_var;
+        int i;
+        for(i = 0; i < num_inst_var; ++i) {
+            Inst_Var_Info_t *p_inst_var_cur = p_inst_var + i;
+            free(p_inst_var_cur->name);
+            free(p_inst_var_cur->description);
+        }
     }
-    txfree(ifs_table->conn);
-    txfree(ifs_table->param);
-    txfree(ifs_table->inst_var);
-}
+
+    free(ifs_table->conn);
+    free(ifs_table->param);
+    free(ifs_table->inst_var);
+} /* end of function rem_ifs_table */
+
+
 
 
 
