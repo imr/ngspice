@@ -1,6 +1,7 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
+VDMOS: 2018 Holger Vogt, 2020 Dietmar Warning
 **********/
 
 #include "ngspice/ngspice.h"
@@ -19,9 +20,9 @@ VDMOSmParam(int param, IFvalue *value, GENmodel *inModel)
             model->VDMOStnom = value->rValue + CONSTCtoK;
             model->VDMOStnomGiven = TRUE;
             break;
-        case VDMOS_MOD_VTO:
-            model->VDMOSvt0 = value->rValue;
-            model->VDMOSvt0Given = TRUE;
+        case VDMOS_MOD_VTH:
+            model->VDMOSvth0 = value->rValue;
+            model->VDMOSvth0Given = TRUE;
             break;
         case VDMOS_MOD_KP:
             model->VDMOStransconductance = value->rValue;
@@ -54,20 +55,14 @@ VDMOSmParam(int param, IFvalue *value, GENmodel *inModel)
         case VDMOS_MOD_RQ:
             model->VDMOSqsResistance = value->rValue;
             model->VDMOSqsResistanceGiven = TRUE;
-            if (model->VDMOSqsVoltageGiven)
-                model->VDMOSqsGiven = TRUE;
             break;
         case VDMOS_MOD_VQ:
             model->VDMOSqsVoltage = value->rValue;
             model->VDMOSqsVoltageGiven = TRUE;
-            if (model->VDMOSqsResistanceGiven)
-                model->VDMOSqsGiven = TRUE;
             break;
         case VDMOS_MOD_RB:
             model->VDIOresistance = value->rValue;
             model->VDIOresistanceGiven = TRUE;
-            model->VDIOresistTemp1 = 0;
-            model->VDIOresistTemp2 = 0;
             break;
         case VDMOS_MOD_IS:
             model->VDIOjctSatCur = value->rValue;
@@ -137,10 +132,6 @@ VDMOSmParam(int param, IFvalue *value, GENmodel *inModel)
             model->VDMOSmtr = value->rValue;
             model->VDMOSmtrGiven = TRUE;
             break;
-        case VDMOS_MOD_SUBSLOPE:
-            model->VDMOSsubsl = value->rValue;
-            model->VDMOSsubslGiven = TRUE;
-            break;
         case VDMOS_MOD_SUBSHIFT:
             model->VDMOSsubshift = value->rValue;
             model->VDMOSsubshiftGiven = TRUE;
@@ -150,12 +141,12 @@ VDMOSmParam(int param, IFvalue *value, GENmodel *inModel)
             model->VDMOSksubthresGiven = TRUE;
             break;
         case VDMOS_MOD_BV:
-            model->VDMOSDbv = value->rValue;
-            model->VDMOSDbvGiven = TRUE;
+            model->VDMOSbv = value->rValue;
+            model->VDMOSbvGiven = TRUE;
             break;
         case VDMOS_MOD_IBV:
-            model->VDMOSDibv = value->rValue;
-            model->VDMOSDibvGiven = TRUE;
+            model->VDMOSibv = value->rValue;
+            model->VDMOSibvGiven = TRUE;
             break;
         case VDMOS_MOD_NBV:
             model->VDIObrkdEmissionCoeff = value->rValue;
@@ -166,8 +157,8 @@ VDMOSmParam(int param, IFvalue *value, GENmodel *inModel)
             model->VDMOSrdsGiven = TRUE;
             break;
         case VDMOS_MOD_N:
-            model->VDMOSDn = value->rValue;
-            model->VDMOSDnGiven = TRUE;
+            model->VDMOSn = value->rValue;
+            model->VDMOSnGiven = TRUE;
             break;
         case VDMOS_MOD_TT:
             model->VDIOtransitTime = value->rValue;
@@ -176,12 +167,60 @@ VDMOSmParam(int param, IFvalue *value, GENmodel *inModel)
             model->VDIOtranTimeTemp2 = 0;
             break;
         case VDMOS_MOD_EG:
-            model->VDMOSDeg = value->rValue;
-            model->VDMOSDegGiven = TRUE;
+            model->VDMOSeg = value->rValue;
+            model->VDMOSegGiven = TRUE;
             break;
         case VDMOS_MOD_XTI:
-            model->VDMOSDxti = value->rValue;
-            model->VDMOSDxtiGiven = TRUE;
+            model->VDMOSxti = value->rValue;
+            model->VDMOSxtiGiven = TRUE;
+            break;
+        case  VDMOS_MOD_RTHJC:
+            model->VDMOSrthjc = value->rValue;
+            model->VDMOSrthjcGiven = TRUE;
+            break;
+        case  VDMOS_MOD_RTHCA:
+            model->VDMOSrthca = value->rValue;
+            model->VDMOSrthcaGiven = TRUE;
+            break;
+        case  VDMOS_MOD_CTHJ:
+            model->VDMOScthj = value->rValue;
+            model->VDMOScthjGiven = TRUE;
+            break;
+        case  VDMOS_MOD_MU:
+            model->VDMOSmu = value->rValue;
+            model->VDMOSmuGiven = TRUE;
+            break;
+        case  VDMOS_MOD_TEXP0:
+            model->VDMOStexp0 = value->rValue;
+            model->VDMOStexp0Given = TRUE;
+            break;
+        case  VDMOS_MOD_TEXP1:
+            model->VDMOStexp1 = value->rValue;
+            model->VDMOStexp1Given = TRUE;
+            break;
+        case VDMOS_MOD_TCVTH:
+            model->VDMOStcvth = value->rValue;
+            model->VDMOStcvthGiven = TRUE;
+            break;
+        case VDMOS_MOD_VGS_MAX:
+            model->VDMOSvgsMax = value->rValue;
+            model->VDMOSvgsMaxGiven = TRUE;
+            break;
+        case VDMOS_MOD_VGD_MAX:
+            model->VDMOSvgdMax = value->rValue;
+            model->VDMOSvgdMaxGiven = TRUE;
+            break;
+        case VDMOS_MOD_VDS_MAX:
+            model->VDMOSvdsMax = value->rValue;
+            model->VDMOSvdsMaxGiven = TRUE;
+            break;
+        case VDMOS_MOD_VGSR_MAX:
+            model->VDMOSvgsrMax = value->rValue;
+            model->VDMOSvgsrMaxGiven = TRUE;
+            break;
+        case VDMOS_MOD_VGDR_MAX:
+            model->VDMOSvgdrMax = value->rValue;
+            model->VDMOSvgdrMaxGiven = TRUE;
             break;
         default:
             return(E_BADPARM);

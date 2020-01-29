@@ -2,6 +2,7 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 Modified: 2000 AlansFixes
+VDMOS: 2018 Holger Vogt, 2020 Dietmar Warning
 **********/
 /*
  */
@@ -59,6 +60,10 @@ VDMOSparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
         case VDMOS_IC_VGS:
             here->VDMOSicVGS = value->rValue;
             here->VDMOSicVGSGiven = TRUE;
+            break;
+        case VDMOS_TNODEOUT:
+            here->VDMOStnodeout = (value->iValue != 0);
+            here->VDMOStnodeoutGiven = TRUE;
             break;
         case VDMOS_IC:
             switch(value->v.numValue){

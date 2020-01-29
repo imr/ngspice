@@ -21,7 +21,7 @@ LTRAload(GENmodel *inModel, CKTcircuit *ckt)
   LTRAinstance *here;
   double t1=0.0, t2=0.0, t3=0.0;
   double qf1=0.0, qf2=0.0, qf3=0.0;
-  double lf2, lf3;
+  double lf2=0.0, lf3=0.0;
   double v1d = 0.0, v2d = 0.0, i1d = 0.0, i2d = 0.0;
   double dummy1=0.0, dummy2=0.0;
   int isaved = 0;

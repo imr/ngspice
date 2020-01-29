@@ -34,12 +34,12 @@ NUMDload(GENmodel *inModel, CKTcircuit *ckt)
   register ONEdevice *pDevice;
   double startTime, startTime2, totalTime, totalTime2;
   double tol;			/* temporary for tolerance calculations */
-  double id;
+  double id = 0.0;
   double ideq;
   double idhat = 0.0;
   double delVd;
   double vd;			/* current diode voltage */
-  double gd;
+  double gd = 0.0;
   double xfact;
   int check;
   int i;

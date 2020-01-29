@@ -58,7 +58,7 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
     double vt;      /* K t / Q */
     double vte, vtesw, vtetun;
     double vtebrk;
-    int Check;
+    int Check = 0;
     int error;
     int SenCond=0;    /* sensitivity condition */
     double diffcharge, diffchargeSW, deplcharge, deplchargeSW, diffcap, diffcapSW, deplcap, deplcapSW;

@@ -518,7 +518,7 @@ next1:      if(vbs <= -3*vt) {
             double delta4;
             double xvalid = 0.0;
             double bsarg = 0.0;
-            double dbsrdb;
+            double dbsrdb = 0.0;
             double bodys = 0.0;
             double gdbdvs = 0.0;
             double sargv;

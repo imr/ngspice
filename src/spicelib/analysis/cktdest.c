@@ -28,6 +28,9 @@ CKTdestroy(CKTcircuit *ckt)
     CKTnode *node;
     CKTnode *nnode;
 
+    if (!ckt)
+        return (E_NOTFOUND);
+
 
 #ifdef WANT_SENSE2
     if(ckt->CKTsenInfo){

@@ -60,14 +60,35 @@ MOS2dSetup(GENmodel *inModel, CKTcircuit *ckt)
     double lgbs, lgbs2, lgbs3;
     double lgbd, lgbd2, lgbd3;
             double vgst;
-double lcapbs, lcapbs2, lcapbs3;
-double lcapbd, lcapbd2, lcapbd3;
-double gm2, gb2, gds2;
-double gmb, gmds, gbds;
-double gm3, gb3, gds3;
-double gm2b, gm2ds, gmb2, gmds2, gbds2, gb2ds;
-double gmbds;
-    Dderivs d_cdrain;
+	double lcapbs, lcapbs2, lcapbs3;
+	double lcapbd, lcapbd2, lcapbd3;
+	double gm2, gb2, gds2;
+	double gmb, gmds, gbds;
+	double gm3, gb3, gds3;
+	double gm2b, gm2ds, gmb2, gmds2, gbds2, gb2ds;
+	double gmbds;
+		Dderivs d_cdrain;
+	/*remove compiler warnings */
+	d_cdrain.value = 0.0;
+	d_cdrain.d1_p = 0.0;
+	d_cdrain.d1_q = 0.0;
+	d_cdrain.d1_r = 0.0;
+	d_cdrain.d2_p2 = 0.0;
+	d_cdrain.d2_q2 = 0.0;
+	d_cdrain.d2_r2 = 0.0;
+	d_cdrain.d2_pq = 0.0;
+	d_cdrain.d2_qr = 0.0;
+	d_cdrain.d2_pr = 0.0;
+	d_cdrain.d3_p3 = 0.0;
+	d_cdrain.d3_q3 = 0.0;
+	d_cdrain.d3_r3 = 0.0;
+	d_cdrain.d3_p2q = 0.0;
+	d_cdrain.d3_p2r = 0.0;
+	d_cdrain.d3_pq2 = 0.0;
+	d_cdrain.d3_q2r = 0.0;
+	d_cdrain.d3_pr2 = 0.0;
+	d_cdrain.d3_qr2 = 0.0;
+	d_cdrain.d3_pqr = 0.0;
 
     /*  loop through all the MOS2 device models */
     for( ; model != NULL; model = MOS2nextModel(model)) {
@@ -231,8 +252,8 @@ double gmbds;
             double y3;
             double delta4;
             double xvalid = 0.0;
-            double bsarg;
-            double bodys;
+            double bsarg = 0.0;
+            double bodys = 0.0;
             double sargv;
             double xlfact;
             double xdv;

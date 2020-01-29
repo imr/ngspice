@@ -4009,7 +4009,7 @@ static int get_number_terminals(char *c)
                 char *inst = gettok_instance(&c);
                 strncpy(nam_buf, inst, sizeof(nam_buf) - 1);
                 txfree(inst);
-                if (strstr(nam_buf, "off") || strchr(nam_buf, '='))
+                if (strstr(nam_buf, "off") || strchr(nam_buf, '=') || strstr(nam_buf, "tnodeout"))
                     break;
                 i++;
             }
@@ -7389,7 +7389,7 @@ static bool del_models(struct vsmodels *vsmodel)
 * add predefined params TEMP, VT, GMIN to beginning of deck
 * add predefined params TEMP, VT, GMIN to beginning of each .subckt call
 * add .functions limit, pwr, pwrs, stp, if, int
-* replace
+* replace vswitch part S
   S1 D S DG GND SWN
  .MODEL SWN VSWITCH(VON = { 0.55 } VOFF = { 0.49 }
      RON = { 1 / (2 * M*(W / LE)*(KPN / 2) * 10) }  ROFF = { 1G })
@@ -7397,6 +7397,15 @@ static bool del_models(struct vsmodels *vsmodel)
   as1 %vd(DG GND) % gd(D S) aswn
   .model aswn aswitch(cntl_off={0.49} cntl_on={0.55} r_off={1G}
   + r_on={ 1 / (2 * M*(W / LE)*(KPN / 2) * 10) } log = TRUE)
+* replace vsitch part S_ST
+  S1 D S DG GND S_ST
+ .MODEL S_ST VSWITCH(VT = { 1.5 } VH = { 0.s }
+     RON = { 1 / (2 * M*(W / LE)*(KPN / 2) * 10) }  ROFF = { 1G })
+* by the classical voltage controlled ngspice switch
+  S1 D S DG GND SWN
+ .MODEL S_ST SW(VT = { 1.5 } VH = { 0.s }
+     RON = { 1 / (2 * M*(W / LE)*(KPN / 2) * 10) }  ROFF = { 1G })
+  switch parameter td is not yet supported
 * replace & by &&
 * replace | by ||
 * in R instance, replace TC = xx1, xx2 by TC1=xx1 TC2=xx2
@@ -7708,19 +7717,31 @@ static struct card *pspice_compat(struct card *oldcard)
         }
     }
 
-    /* replace
-    * S1 D S DG GND SWN
-    * .MODEL SWN VSWITCH ( VON = {0.55} VOFF = {0.49}
-    *         RON={1/(2*M*(W/LE)*(KPN/2)*10)}  ROFF={1G} )
-    * by
-    * a1 %v(DG) %gd(D S) swa
-    * .MODEL SWA aswitch(cntl_off=0.49 cntl_on=0.55 r_off=1G
-    *         r_on={1/(2*M*(W/LE)*(KPN/2)*10)} log=TRUE)
-    *
-    * simple hierachy, as nested subcircuits are not allowed in PSPICE */
+    /* if vswitch part s, replace
+     * S1 D S DG GND SWN
+     * .MODEL SWN VSWITCH ( VON = {0.55} VOFF = {0.49}
+     *         RON={1/(2*M*(W/LE)*(KPN/2)*10)}  ROFF={1G} )
+     * by
+     * a1 %v(DG) %gd(D S) swa
+     * .MODEL SWA aswitch(cntl_off=0.49 cntl_on=0.55 r_off=1G
+     *         r_on={1/(2*M*(W/LE)*(KPN/2)*10)} log=TRUE)
+     *
+     * if vswitch part s_st, don't replace instance, only model
+     * replace
+     * S1 D S DG GND S_ST
+     * .MODEL S_ST VSWITCH(VT = { 1.5 } VH = { 0.s }
+           RON = { 1 / (2 * M*(W / LE)*(KPN / 2) * 10) }  ROFF = { 1G })
+     * by the classical voltage controlled ngspice switch
+     * S1 D S DG GND S_ST
+     * .MODEL S_ST SW(VT = { 1.5 } VH = { 0.s }
+             RON = { 1 / (2 * M*(W / LE)*(KPN / 2) * 10) }  ROFF = { 1G })
+     * vswitch delay parameter td is not yet supported
+
+     * simple hierachy, as nested subcircuits are not allowed in PSPICE */
 
     /* first scan: find the vswitch models, transform them and put them into a
      * list */
+    bool have_vt = FALSE, have_vh = FALSE;
     for (card = newcard; card; card = card->nextcard) {
         char *str;
         static struct card *subcktline = NULL;
@@ -7781,12 +7802,28 @@ static struct card *pspice_compat(struct card *oldcard)
             else
                 /* vswitch defined without parens */
                 modpar[3] = copy(equalptr[3]);
-            tfree(card->line);
-            /* replace VON by cntl_on, VOFF by cntl_off, RON by r_on, and ROFF
-             * by r_off */
-            rep_spar(modpar);
-            card->line = tprintf(".model a%s aswitch(%s %s %s %s  log=TRUE)",
-                    modname, modpar[0], modpar[1], modpar[2], modpar[3]);
+
+            /* check if we have parameters VT and VH */
+            for (i = 0; i < 4; i++) {
+                if (ciprefix("vh", modpar[i]))
+                    have_vh = TRUE;
+                if (ciprefix("vt", modpar[i]))
+                    have_vt = TRUE;
+            }
+            if (have_vh && have_vt) {
+                /* replace vswitch by sw */
+                char *vs = strstr(card->line, "vswitch");
+                memmove(vs, "     sw", 7);
+            }
+            else {
+                /* replace VON by cntl_on, VOFF by cntl_off, RON by r_on, and
+                 * ROFF by r_off */
+                tfree(card->line);
+                rep_spar(modpar);
+                card->line = tprintf(
+                        ".model a%s aswitch(%s %s %s %s  log=TRUE)", modname,
+                        modpar[0], modpar[1], modpar[2], modpar[3]);
+            }
             for (i = 0; i < 4; i++)
                 tfree(modpar[i]);
             if (nesting > 0)
@@ -7800,6 +7837,10 @@ static struct card *pspice_compat(struct card *oldcard)
 
     /* no need to continue if no vswitch is found */
     if (!modelsfound)
+        return newcard;
+
+    /* no need to change the switch instances if switch sw is used */
+    if (have_vh && have_vt)
         return newcard;
 
     /* second scan: find the switch instances s calling a vswitch model and

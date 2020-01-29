@@ -434,7 +434,7 @@ eval_seed_opt(struct card *deck)
  * filter out the following cards: .save, .width, .four, .print, and
  * .plot, to perform after the run is over.
  * Then, we run dodeck, which parses up the deck.             */
-void
+int
 inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
 /* arguments:
  *  *fp = pointer to the input file
@@ -528,12 +528,12 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
     }
     tfree(dir_name);
 
-    /* if nothing came back from inp_readall, just close fp and return to
-     * caller */
+    /* if nothing came back from inp_readall, e.g. after calling ngspice
+     * without parameters, just close fp and return to caller */
     if (!deck) {
         if (!intfile && fp)
             fclose(fp);
-        return;
+        return 0;
     }
 
     /* files starting with *ng_script are user supplied command files */
@@ -730,19 +730,22 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
 #ifdef HAS_PROGREP
             SetAnalyse("Prepare Deck", 0);
 #endif
-            /*FIXME This is for the globel param setting only */
-            /* replace agauss(x,y,z) in each b-line by suitable value */
-            static char *statfcn[] = { "agauss", "gauss", "aunif", "unif", "limit" };
-            int ii;
-            for (ii = 0; ii < 5; ii++)
-                eval_agauss(deck, statfcn[ii]);
+            /*This is for the globel param setting only */
+            /* replace agauss(x,y,z) in each b-line by suitable value, one for all */
+            bool statlocal = cp_getvar("statlocal", CP_BOOL, NULL, 0);
+            if (!statlocal) {
+                static char *statfcn[] = {"agauss", "gauss", "aunif", "unif", "limit"};
+                int ii;
+                for (ii = 0; ii < 5; ii++)
+                    eval_agauss(deck, statfcn[ii]);
+            }
             /* Now expand subcircuit macros and substitute numparams.*/
             if (!cp_getvar("nosubckt", CP_BOOL, NULL, 0))
                 if ((deck->nextcard = inp_subcktexpand(deck->nextcard)) == NULL) {
                     line_free(realdeck, TRUE);
                     line_free(deck->actualLine, TRUE);
                     tfree(tt);
-                    return;
+                    return 1;
                 }
 
             /* Now handle translation of spice2c6 POLYs. */
@@ -818,17 +821,20 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
 
             /* replace agauss(x,y,z) in each b-line by suitable value */
             /* FIXME: This is for the local param setting (not yet implemented in
-            inp_fix_agauss_in_param() for model parameters according to HSPICE manual)
-            static char *statfcn[] = { "agauss", "gauss", "aunif", "unif", "limit" };
-            int ii;
-            for (ii = 0; ii < 5; ii++)
-                eval_agauss(deck, statfcn[ii]); */
+            inp_fix_agauss_in_param() for model parameters according to HSPICE manual)*/
+            if (statlocal) {
+                static char *statfcn[] = {"agauss", "gauss", "aunif", "unif", "limit"};
+                int ii;
+                for (ii = 0; ii < 5; ii++)
+                    eval_agauss(deck, statfcn[ii]);
+            }
             /* If user wants all currents saved (.options savecurrents), add .save 
             to wl_first with all terminal currents available on selected devices */
             wl_first = inp_savecurrents(deck, options, wl_first, controls);
 
             /* now load deck into ft_curckt -- the current circuit. */
-            inp_dodeck(deck, tt, wl_first, FALSE, options, filename);
+            if(inp_dodeck(deck, tt, wl_first, FALSE, options, filename) != 0)
+                return 1;
 
             if (ft_curckt) {
                 ft_curckt->devtlist = devtlist;
@@ -981,6 +987,8 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
     cp_curerr = lasterr;
 
     tfree(tt);
+
+    return 0;
 }
 
 
@@ -992,7 +1000,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
  * It appears that inp_dodeck adds the circuit described by *deck
  * to the current circuit (ft_curckt).
  *-----------------------------------------------------------------*/
-void
+int
 inp_dodeck(
     struct card *deck,     /*in: the spice deck */
     char *tt,              /*in: the title of the deck */
@@ -1158,6 +1166,7 @@ inp_dodeck(
                         out_printf("Error on line %d :\n  %s\n%s\n",
                                    dd->linenum_orig, dd->line, dd->error);
                         have_err = TRUE;
+                        return 1;
                     }
                     if (ft_stricterror)
                         controlled_exit(EXIT_BAD);
@@ -1279,6 +1288,7 @@ inp_dodeck(
 #if 0
     cp_addkword(CT_CKTNAMES, tt);
 #endif
+    return 0;
 }
 
 
@@ -1599,7 +1609,9 @@ com_source(wordlist *wl)
         if (Infile_Path)
             tfree(Infile_Path);
         Infile_Path = ngdirname(firstfile);
-        inp_spsource(fp, FALSE, tempfile ? NULL : wl->wl_word, FALSE);
+        if (inp_spsource(fp, FALSE, tempfile ? NULL : wl->wl_word, FALSE) != 0) {
+            fprintf(stderr, "    Simulation interrupted due to error!\n\n");
+        }
     }
 
     cp_interactive = inter;

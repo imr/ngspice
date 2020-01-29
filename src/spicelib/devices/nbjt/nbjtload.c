@@ -35,13 +35,13 @@ NBJTload(GENmodel *inModel, CKTcircuit *ckt)
   register ONEdevice *pDevice;
   double startTime, startTime2, totalTime, totalTime2;
   double tol;
-  double ic, ie;
+  double ic=0, ie=0;
   double iceq, ieeq;
   double ichat = 0.0, iehat = 0.0;
   double delVce, delVbe;
   double vce, vbe /*, vbc*/;
-  double dIeDVce, dIeDVbe;
-  double dIcDVce, dIcDVbe;
+  double dIeDVce=0, dIeDVbe=0;
+  double dIcDVce=0, dIcDVbe=0;
   double xfact;
   int icheck;
   int icheck1;
