@@ -1,28 +1,28 @@
 ## Process this file with automake to produce Makefile.in
 
-noinst_LTLIBRARIES = libhicum.la
+noinst_LTLIBRARIES = libhicum2.la
 
-libhicum_la_SOURCES =	\
-	hicum.c		\
-	hicumacld.c	\
-	hicumask.c	\
-	hicumconv.c	\
-	hicumdefs.h	\
-	hicumext.h	\
-	hicumgetic.c	\
-	hicuminit.c	\
-	hicuminit.h	\
-	hicumitf.h	\
-	hicumload.c	\
-	hicummask.c	\
-	hicummpar.c	\
-	hicumnoise.c	\
-	hicumparam.c	\
-	hicumpzld.c	\
-	hicumsetup.c	\
-	hicumsoachk.c	\
-	hicumtemp.c	\
-	hicumtrunc.c
+libhicum2_la_SOURCES =	\
+	hicum2.c		\
+	hicum2acld.c	\
+	hicum2ask.c	\
+	hicum2conv.c	\
+	hicum2defs.h	\
+	hicum2ext.h	\
+	hicum2getic.c	\
+	hicum2init.c	\
+	hicum2init.h	\
+	hicum2itf.h	\
+	hicum2load.c	\
+	hicum2mask.c	\
+	hicum2mpar.c	\
+	hicum2noise.c	\
+	hicum2param.c	\
+	hicum2pzld.c	\
+	hicum2setup.c	\
+	hicum2soachk.c	\
+	hicum2temp.c	\
+	hicum2trunc.c
 
 
 
