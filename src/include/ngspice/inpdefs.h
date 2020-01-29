@@ -68,7 +68,7 @@ struct nscope {
 
 /* A linked list of netlist line entries, associated for a specific reason */
 struct card_assoc {
-    const char *name;
+    char *name;
     struct card *line;
     struct card_assoc *next;
 };

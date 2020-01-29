@@ -129,10 +129,10 @@ sf_eno2_close (sf_eno2 pnt)
     sf_eno_close (pnt->jnt);
     for (i2 = 0; i2 < pnt->n2; i2++)
         sf_eno_close (pnt->ent[i2]);
-    free (pnt->f);
-    free (pnt->f1);
-    free (pnt->ent);
-    free (pnt);
+    txfree (pnt->f);
+    txfree (pnt->f1);
+    txfree (pnt->ent);
+    txfree (pnt);
 }
 
 void

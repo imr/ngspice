@@ -45,7 +45,10 @@ Ipc_Status_t ipc_transport_get_line (
    NG_IGNORE(wait);
 
    printf ("GET_LINE\n");
-   gets (str);
+   fgets (str, 512, stdin);
+   char *tmp = strchr(str, '\n');
+   if (tmp)
+       *tmp = '\0';
    *len = (int) strlen (str);
    return IPC_STATUS_OK;
 }

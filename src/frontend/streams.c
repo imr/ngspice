@@ -4,15 +4,15 @@
 #include <errno.h>
 #include <string.h>
 
+#include "ngspice/bool.h"
+#include "ngspice/cpextern.h"
 #include "ngspice/ngspice.h"
 #include "ngspice/wordlist.h"
-#include "ngspice/bool.h"
 
-#include "variable.h"
-#include "terminal.h"
 #include "quote.h"
-#include "ngspice/cpextern.h"
 #include "streams.h"
+#include "terminal.h"
+#include "variable.h"
 
 
 bool cp_debug = FALSE;

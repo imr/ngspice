@@ -75,7 +75,8 @@ struct dveclist {
     bool f_own_vector;
 };
 
-struct dvec *dvec_alloc(/* NOT CONST -- assigned to const */ char *name,
+struct dvec *dvec_alloc(
+        /* not const -- given to non-const struct */ char *name,
         int type, short flags, int length, void *storage);
 void dvec_realloc(struct dvec *v, int length, void *storage);
 void dvec_extend(struct dvec *v, int length);

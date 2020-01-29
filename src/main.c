@@ -722,6 +722,7 @@ append_to_stream(FILE *dest, FILE *source)
    SJB 25th April 2005 */
 static bool read_initialisation_file(const char *dir, const char *name)
 {
+    char *full_name = (char *) NULL;
     const char *path;
     bool result = FALSE;
 
@@ -735,7 +736,7 @@ static bool read_initialisation_file(const char *dir, const char *name)
         path = name;
     }
     else {
-        path = tprintf("%s" DIR_PATHSEP "%s", dir, name);
+        path = full_name = tprintf("%s" DIR_PATHSEP "%s", dir, name);
         if (!path) {
             return FALSE;    /* memory allocation error */
         }
@@ -763,8 +764,8 @@ static bool read_initialisation_file(const char *dir, const char *name)
 #endif
     }
 
-    if (path != name) { /* Allocated by tprintf() */
-        txfree(path);
+    if (full_name != (char *) NULL) { /* Allocated by tprintf() */
+        txfree(full_name);
     }
 
     return result;
@@ -776,7 +777,7 @@ static bool read_initialisation_file(const char *dir, const char *name)
 static void print_news(void)
 {
     if (News_File && *News_File) {
-        const char * const fname = cp_tildexpand(News_File); /*DG  Memory leak */
+        char * const fname = cp_tildexpand(News_File); /*DG  Memory leak */
         FILE * const fp = fopen(fname, "r");
         txfree(fname);
         if (fp) {

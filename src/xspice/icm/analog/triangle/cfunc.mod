@@ -57,9 +57,12 @@ NON-STANDARD FEATURES
 
 /*=== CONSTANTS ========================*/
 
-char *triangle_allocation_error = "\n**** Error ****\nTRIANGLE: Error allocating triangle block storage \n";
-char *triangle_freq_clamp = "\n**** Warning ****\nTRIANGLE: Extrapolated Minimum Frequency Set to 1e-16 Hz \n";
-char *triangle_array_error = "\n**** Error ****\nTRIANGLE: Size of control array different than frequency array \n";
+const char * const triangle_freq_clamp =
+        "\n**** Warning ****\nTRIANGLE: Extrapolated Minimum Frequency "
+        "Set to 1e-16 Hz \n";
+const char * const triangle_array_error =
+        "\n**** Error ****\nTRIANGLE: Size of control array different "
+        "than frequency array \n";
 
 #define INT1 1
 #define T1   2

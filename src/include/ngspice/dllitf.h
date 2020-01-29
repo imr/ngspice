@@ -16,7 +16,8 @@
 struct coreInfo_t {
 	/* MIF stuff */
 	void      ((*dllitf_MIF_INP2A)(CKTcircuit *, INPtables *, struct card *));
-	char *    ((*dllitf_MIFgetMod)(CKTcircuit *, char *, INPmodel  **, INPtables *));
+    char *    ((*dllitf_MIFgetMod)(CKTcircuit *, const char *, INPmodel  **,
+            INPtables *));
 	IFvalue * ((*dllitf_MIFgetValue)(CKTcircuit *, char **, int, INPtables *, char **));
 	int		  ((*dllitf_MIFsetup)(SMPmatrix *, GENmodel *, CKTcircuit *, int *));
 	int		  ((*dllitf_MIFunsetup)(GENmodel *, CKTcircuit *));
@@ -32,7 +33,7 @@ struct coreInfo_t {
 	char *    ((*dllitf_MIFgettok)(char **));
 	char *    ((*dllitf_MIFget_token)(char **, Mif_Token_Type_t *));
 	Mif_Cntl_Src_Type_t ((*dllitf_MIFget_cntl_src_type)(Mif_Port_Type_t, Mif_Port_Type_t));
-	char *    ((*dllitf_MIFcopy)(char *));
+	char *    ((*dllitf_MIFcopy)(const char *));
 	/* CM stuff */
 	void      ((*dllitf_cm_climit_fcn)(double, double, double, double, double, double, 
 		                               double, double, int, double *, double *, double *, 
@@ -55,7 +56,7 @@ struct coreInfo_t {
 	void *    ((*dllitf_cm_event_get_ptr)(int, int));
 	int       ((*dllitf_cm_event_queue)(double));
 	char *    ((*dllitf_cm_message_get_errmsg)(void));
-	int       ((*dllitf_cm_message_send)(char *));
+	int       ((*dllitf_cm_message_send)(const char *));
 	double    ((*dllitf_cm_netlist_get_c)(void));
 	double    ((*dllitf_cm_netlist_get_l)(void));
 	Complex_t ((*dllitf_cm_complex_set)(double, double));
@@ -71,11 +72,32 @@ struct coreInfo_t {
   /*Other stuff*/
 	void *    ((*dllitf_malloc_pj)(size_t));
 	void *    ((*dllitf_calloc_pj)(size_t, size_t));
-	void *    ((*dllitf_realloc_pj)(const void *, size_t));
-	void      ((*dllitf_free_pj)(const void *));
+	void *    ((*dllitf_realloc_pj)(void *, size_t));
+	void      ((*dllitf_free_pj)(void *));
 	void *    ((*dllitf_tmalloc)(size_t));
-	void *    ((*dllitf_trealloc)(const void *, size_t));
-	void      ((*dllitf_txfree)(const void *));
+	void *    ((*dllitf_trealloc)(void *, size_t));
+	void      ((*dllitf_txfree)(void *));
+
+    /***   VERSION 2 ADDITIONS   ***/
+    const char *(*dllitf_ngspice_version)(void);
+                                 /* version string of ngspice using the cm */
+    void *(*dllitf_tmalloc_raw)(size_t size);
+                                 /* mutex-protected malloc() that will not
+                                  * cause program termination on failure */
+    void *(*dllitf_tcalloc_raw)(size_t num, size_t size);
+                                 /* mutex-protected calloc() that will not
+                                  * cause program termination on failure */
+    void *(*dllitf_trealloc_raw)(void *p, size_t size);
+                                 /* mutex-protected realloc() that will not
+                                  * cause program termination on failure */
+    char *(*dllitf_tstrdup)(const char *sz);
+                                 /* mutex-protected strdup() that WILL
+                                  * cause program termination on failure */
+    char *(*dllitf_tstrdup_raw)(const char *sz);
+                                 /* mutex-protected strdup() that will not
+                                  * cause program termination on failure */
 };
 
-#endif
+extern const struct coreInfo_t  coreInfo;
+
+#endif /* include guard */

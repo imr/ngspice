@@ -75,7 +75,7 @@ cm_spice2poly_callback(ARGS, Mif_Callback_Reason_t reason)
         case MIF_CB_DESTROY: {
             Mif_Inst_Var_Data_t *p = STATIC_VAR_INST(acgains);
             if(p->element) {
-                free(p->element);
+                txfree(p->element);
                 p->element = NULL;
             }
             break;
@@ -89,15 +89,15 @@ void spice2poly (ARGS)
 {
     int         num_inputs;   /* Number of inputs to model */
     int         num_coefs;    /* Number of coefficients */
-    int         *exp;         /* List of exponents in products */
+    int *exp = (int *) NULL;  /* List of exponents in products */
                               /* One for each input */
 
     int         i;            /* Counter */
     int         j;            /* Counter */
     int         k;            /* Counter */
 
-    double      *in;          /* Values of inputs to model */
-    double      *coef;        /* Values of coefficients    */
+    double *in = (double *) NULL; /* Values of inputs to model */
+    double *coef = (double *) NULL; /* Values of coefficients */
 
     double      sum;          /* Temporary for accumulating sum of terms */
     double      product;      /* Temporary for accumulating product */
@@ -112,10 +112,16 @@ void spice2poly (ARGS)
     /* array */
 
     if(INIT) {
-        CALLBACK = cm_spice2poly_callback;
         Mif_Inst_Var_Data_t *p = STATIC_VAR_INST(acgains);
         p -> size    = num_inputs;
-        p -> element = (Mif_Value_t *) malloc((size_t) num_inputs * sizeof(Mif_Value_t));
+        if ((p->element = (Mif_Value_t *) tmalloc_raw((size_t) num_inputs *
+                sizeof(Mif_Value_t))) == (Mif_Value_t *) NULL) {
+            cm_message_send("Unable to allocate element array "
+                    "in spice2poly()");
+            return;
+        }
+        CALLBACK = cm_spice2poly_callback;
+
         for(i = 0; i < num_inputs; i++)
             STATIC_VAR(acgains[i]) = 0.0;
     }
@@ -133,19 +139,34 @@ void spice2poly (ARGS)
 
     /* Get input values and coefficients to local storage for faster access */
 
-    in = (double *) malloc((size_t) num_inputs * sizeof(double));
+    if ((in = (double *) tmalloc_raw((size_t) num_inputs *
+            sizeof(double))) == (double *) NULL) {
+        cm_message_send("Unable to allocate array for inputs "
+                "in spice2poly()");
+        goto EXITPOINT;
+    }
     for(i = 0; i < num_inputs; i++)
         in[i] = INPUT(in[i]);
 
     num_coefs = PARAM_SIZE(coef);
 
-    coef = (double *) malloc((size_t) num_coefs * sizeof(double));
+    if ((coef = (double *) tmalloc_raw((size_t) num_coefs *
+            sizeof(double))) == (double *) NULL) {
+        cm_message_send("Unable to allocate array for coef "
+                "in spice2poly()");
+        goto EXITPOINT;
+    }
     for(i = 0; i < num_coefs; i++)
         coef[i] = PARAM(coef[i]);
 
 
     /* Allocate the array of exponents used in computing the poly terms */
-    exp = (int *) malloc((size_t) num_inputs * sizeof(int));
+    if ((exp = (int *) tmalloc_raw((size_t) num_inputs *
+            sizeof(int))) == (int *) NULL) {
+        cm_message_send("Unable to allocate array for exp "
+                "in spice2poly()");
+        goto EXITPOINT;
+    }
 
     /* Initialize the exponents to zeros */
     for(i = 0; i < num_inputs; i++)
@@ -211,12 +232,20 @@ void spice2poly (ARGS)
     }
 
     /* Free the allocated items and return */
-    free(in);
-    free(coef);
-    free(exp);
+EXITPOINT:
+    if (in != (double *) NULL) {
+        txfree(in);
+    }
+    if (coef != (double *) NULL) {
+        txfree(coef);
+    }
+    if (exp != (int *) NULL) {
+        txfree(exp);
+    }
 
     return;
-}
+} /* end of function spice2poly */
+
 
 
 /* Function evterm computes the value of x**n */
@@ -308,6 +337,56 @@ stmt70: PWRSEQ(k) = PWRSEQ(k) + psum;
 stmt80: PWRSEQ(1) = PWRSEQ(1) + 1;
 
 stmt100: return;
+
+
+#if 0
+/* First cut at a "normal" translation. Would suggest doing the
+ * translation independently and checking for differences */
+    if (pdim == 1) {
+        ++pwrseq[0];
+        return;
+    }
+
+    for (k = pdim; k != 0; --k) {
+        if (pwrseq[k - 1] != 0) {
+            break;
+        }
+    }
+    if (k == 0) {
+        ++pwrseq[0];
+        return;
+    }
+
+    if (k != pdim) {
+        --pwrseq[k - 1];
+        ++pwrseq[k];
+        return;
+    }
+
+    km1 = k - 1;
+    for (i = 1; i <= km1; i++) {
+        if (pwrseq[i - 1] != 0) {
+            psum = 1;
+            k = pdim;
+            for ( ; ; ) {
+                if (pwrseq[k - 2] >= 1) {
+                    break;
+                }
+                psum += pwrseq[k - 1];
+                pwrseq[k - 1] = 0;
+                --k;
+            }
+
+            pwrseq[k - 1] += psum;
+            --pwrseq[k - 2];
+            return;
+        }
+    }
+    pwrseq[1 - 1] = pwrseq[pdim - 1] + 1;
+    pwrseq[pdim - 1] = 0;
+    return;
+#endif
+
 
 }
 

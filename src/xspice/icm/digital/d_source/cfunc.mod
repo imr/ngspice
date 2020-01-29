@@ -105,6 +105,8 @@ typedef enum token_type_s {CNV_NO_TOK,CNV_STRING_TOK} Cnv_Token_Type_t;
 
 
 
+static void free_local_data(Local_Data_t *loc);
+static void cm_d_source_callback(ARGS, Mif_Callback_Reason_t reason);
 
 
 
@@ -144,6 +146,8 @@ NON-STANDARD FEATURES
     NONE
 
 ==============================================================================*/
+///XXX TODO: The CNVgettok, etc. functions are repeated in d_sorce and
+///XXX TODO d_state. They should be put in a common place and built once
 
 /*=== Static CNVgettok ROUTINE ================*/
 /*
@@ -153,21 +157,20 @@ string is copied to malloced storage and a pointer to that storage
 is returned.  The original input string is undisturbed.
 */
 
-#include <stdlib.h>
-
 static char  *CNVgettok(char **s)
-
 {
 
     char    *buf;       /* temporary storage to copy token into */
     /*char    *temp;*/      /* temporary storage to copy token into */
-    char    *ret_str;   /* storage for returned string */
 
     int     i;
 
     /* allocate space big enough for the whole string */
 
-    buf = (char *) malloc(strlen(*s) + 1);
+    if ((buf = (char *) tmalloc_raw(strlen(*s) + 1)) == (char *) NULL) {
+        cm_message_send("Unable to allocate buffer in CNVgettok()");
+        return (char *) NULL;
+    }
 
     /* skip over any white space */
 
@@ -180,18 +183,17 @@ static char  *CNVgettok(char **s)
     switch(**s) {
 
     case '\0':           /* End of string found */
-        if(buf) free(buf);
-        return(NULL);
-
+        txfree(buf);
+        return (char *) NULL;
 
     default:             /* Otherwise, we are dealing with a    */
                          /* string representation of a number   */
                          /* or a mess o' characters.            */
         i = 0;
         while( (**s != '\0') &&
-               (! ( isspace_c(**s) || (**s == '=') ||
-                    (**s == '(') || (**s == ')') ||
-                    (**s == ',')
+               (! ( isspace_c(**s) || (**s == '=') || 
+                    (**s == '(') || (**s == ')') || 
+                    (**s == ',') 
              ) )  ) {
             buf[i] = **s;
             i++;
@@ -210,13 +212,20 @@ static char  *CNVgettok(char **s)
     /* make a copy using only the space needed by the string length */
 
 
-    ret_str = (char *) malloc(strlen(buf) + 1);
-    ret_str = strcpy(ret_str,buf);
+    {
+        char * const ret_str = (char *) tmalloc_raw(strlen(buf) + 1);
+        if (ret_str == (char *) NULL) {
+            cm_message_send("Unable to allocate return buffer "
+                    "in CNVgettok()");
+            return (char *) NULL;
+        }
+        strcpy(ret_str, buf);
+        txfree(buf);
 
-    if(buf) free(buf);
+        return ret_str;
+    }
+} /* end of function CNVgettok */
 
-    return(ret_str);
-}
 
 
 /*==============================================================================
@@ -267,21 +276,16 @@ is returned.  The original input string is undisturbed.
 */
 
 static char  *CNVget_token(char **s, Cnv_Token_Type_t *type)
-
 {
-
-    char    *ret_str;   /* storage for returned string */
-
+    /* storage for returned string */
     /* get the token from the input line */
-
-    ret_str = CNVgettok(s);
+    char * const ret_str = CNVgettok(s);
 
 
     /* if no next token, return */
-
-    if(ret_str == NULL) {
+    if (ret_str == (char *) NULL) {
         *type = CNV_NO_TOK;
-        return(NULL);
+        return (char *) NULL;
     }
 
     /* else, determine and return token type */
@@ -295,8 +299,7 @@ static char  *CNVget_token(char **s, Cnv_Token_Type_t *type)
     }
 
     return(ret_str);
-}
-
+} /* end of function CNVget_token */
 
 
 
@@ -695,7 +698,6 @@ NON-STANDARD FEATURES
 
 static int cm_read_source(FILE *source, Local_Data_t *loc)
 {
-    int         n;  /* loop index */
     int         i,  /* indexing variable    */
                 j,  /* indexing variable    */
        num_tokens;  /* number of tokens in a given string    */
@@ -735,7 +737,7 @@ static int cm_read_source(FILE *source, Local_Data_t *loc)
                 while ( type != CNV_NO_TOK ) {
                     token = CNVget_token(&s, &type);
                     if (token)
-                        free(token);
+                        txfree(token);
                     j++;
                 }
                 num_tokens = j;
@@ -749,9 +751,13 @@ static int cm_read_source(FILE *source, Local_Data_t *loc)
                 s = base_address;
 
                 /* set storage space for bits in a row and set them to 0*/
-                loc->all_data[i] = (char*)malloc(sizeof(char) * (size_t) loc->width);
-                for (n = 0; n < loc->width; n++)
-                    loc->all_data[i][n] = 0;
+                if ((loc->all_data[i] = (char *) tcalloc_raw(
+                        (size_t) loc->width,
+                        sizeof(char))) == (char *) NULL) {
+                    cm_message_send("Unable to allocate buffer "
+                            "for all_data bits in cm_d_source()");
+                    return -1;
+                }
 
                 /** Retrieve each token, analyze, and       **/
                 /** store the timepoint and bit information **/
@@ -807,7 +813,7 @@ static int cm_read_source(FILE *source, Local_Data_t *loc)
                         }
                     }
                     if (token)
-                        free(token);
+                        txfree(token);
                 }
                 i++;
             }
@@ -910,7 +916,9 @@ void cm_d_source(ARGS)
                               *s;   /* main string variable */
 
 
-    char *loading_error = "\nERROR **\n D_SOURCE: source.in file was not read successfully. \n";
+    const char *loading_error =
+            "\nERROR **\n D_SOURCE: source.in file "
+            "was not read successfully.";
 
     Local_Data_t *loc;        /* Pointer to local static data, not to be included
                                        in the state vector (save memory!) */
@@ -928,10 +936,16 @@ void cm_d_source(ARGS)
             char *lbuffer, *p;
             lbuffer = getenv("NGSPICE_INPUT_DIR");
             if (lbuffer && *lbuffer) {
-                p = (char*) malloc(strlen(lbuffer) + strlen(DIR_PATHSEP) + strlen(PARAM(input_file)) + 1);
+                p = (char *) tmalloc_raw(strlen(lbuffer) +
+                    strlen(DIR_PATHSEP) + strlen(PARAM(input_file)) + 1);
+                if (p == (char *) NULL) {
+                    cm_message_send("Unable to allocate buffer "
+                            "for building file name in cm_d_source()");
+                    return;
+                }
                 sprintf(p, "%s%s%s", lbuffer, DIR_PATHSEP, PARAM(input_file));
                 source = fopen(p, "r");
-                free(p);
+                txfree(p);
             }
             if (!source)
                 cm_message_printf("cannot open file %s", PARAM(input_file));
@@ -952,8 +966,12 @@ void cm_d_source(ARGS)
         }
 
         /*** allocate static storage for *loc ***/
-        STATIC_VAR (locdata) = calloc (1 , sizeof ( Local_Data_t ));
-        loc = STATIC_VAR (locdata);
+        if ((loc = (Local_Data_t *) (STATIC_VAR(locdata) = tcalloc_raw(1,
+                sizeof(Local_Data_t)))) == (Local_Data_t *) NULL) {
+            cm_message_send("Unable to allocate buffer "
+                    "for building file name in cm_d_source()");
+            return;
+        }
 
         /*** allocate storage for *index, *bits & *timepoint ***/
 
@@ -976,8 +994,22 @@ void cm_d_source(ARGS)
         loc->width = PORT_SIZE(out);
 
         /*** allocate storage for **all_data, & *all_timepoints ***/
-        loc->all_timepoints = (double*)calloc((size_t) i, sizeof(double));
-        loc->all_data = (char**)calloc((size_t) i, sizeof(char*));
+        if ((loc->all_timepoints = (double *) tcalloc_raw((size_t) i,
+                sizeof(double))) == (double *) NULL) {
+            cm_message_send("Unable to allocate all_timepoints "
+                    "in cm_d_source()");
+            free_local_data(loc);
+            STATIC_VAR(locdata) = NULL;
+            return;
+        }
+        if ((loc->all_data = (char **) tcalloc_raw((size_t) i,
+                sizeof(char *))) == (char **) NULL) {
+            cm_message_send("Unable to allocate all_data "
+                    "in cm_d_source()");
+            free_local_data(loc);
+            STATIC_VAR(locdata) = NULL;
+            return;
+        }
 
         /* Send file pointer and the two array storage pointers */
         /* to "cm_read_source()". This will return after        */
@@ -993,36 +1025,50 @@ void cm_d_source(ARGS)
           err=1;
         }
 
+        /* close source file */
+        if (source) {
+            fclose(source);
+        }
+
         if (err) { /* problem occurred in load...send error msg. */
             cm_message_send(loading_error);
 
             switch (err)
             {
+            case -1:
+                cm_message_send(" Allocation failure "
+                        "while allocating memory for bits" );
+                break;
             case 2:
-                cm_message_send(" d_source word length and number of columns in file differ.\n" );
+                cm_message_send(" d_source word length and number of columns in file differ." );
                 break;
             case 3:
-                cm_message_send(" Time values in first column have to increase monotonically.\n");
+                cm_message_send(" Time values in first column have to increase monotonically.");
                 break;
             case 4:
-                cm_message_send(" Unknown bit value.\n");
+                cm_message_send(" Unknown bit value.");
                 break;
             default:
                 break;
             }
-        }
 
-        /* close source file */
-        if (source)
-            fclose(source);
+            free_local_data(loc);
+            STATIC_VAR(locdata) = NULL;
+            return;
+        }
+        CALLBACK = cm_d_source_callback;
     }
     else {      /*** Retrieve previous values ***/
+        if ((loc = (Local_Data_t *) STATIC_VAR (locdata)) ==
+                (Local_Data_t *) NULL) {
+            cm_message_send("Attempt to use unallocated Local_Data_t "
+                    "in cm_d_source()");
+        }
 
         /** Retrieve info... **/
         row_index = (int *) cm_event_get_ptr(0,0);
         row_index_old  = (int *) cm_event_get_ptr(0,1);
 
-        loc = STATIC_VAR (locdata);
 
         /* Set old values to new... */
         *row_index = *row_index_old;
@@ -1147,7 +1193,59 @@ void cm_d_source(ARGS)
             }
         }
     }
-}
+} /* end of  function cm_d_source */
+
+
+
+/* This function frees resources when called with reason argument
+ * MIF_CB_DESTROY */
+static void cm_d_source_callback(ARGS, Mif_Callback_Reason_t reason)
+{
+    switch (reason) {
+        case MIF_CB_DESTROY: {
+            Local_Data_t *loc = (Local_Data_t *) STATIC_VAR(locdata);
+            if (loc != (Local_Data_t *) NULL) {
+                free_local_data(loc);
+            }
+            break;
+        }
+    }
+} /* end of function cm_d_state_callback */
+
+
+
+static void free_local_data(Local_Data_t *loc)
+{
+    /* Immediate return if no structure */
+    if (loc == (Local_Data_t *) NULL) {
+        return;
+    }
+
+    /* Free all_data and internal allocations */
+    {
+        char ** const all_data = loc->all_data;
+        if (all_data != (char **) NULL) {
+            const int n = loc->width;
+            int i;
+            for (i = 0; i != n; ++i) { /* free individual allocs */
+                if (all_data[i] != (char *) NULL) {
+                    txfree(all_data[i]);
+                }
+            }
+            txfree(all_data);
+        }
+    }
+
+    /* Free all_timepoints */
+    {
+        void * const p = loc->all_timepoints;
+        if (p != NULL) {
+            txfree(p);
+        }
+    }
+
+    txfree(loc);
+} /* end of function free_local_data */
 
 
 

@@ -155,6 +155,8 @@ NON-STANDARD FEATURES
 
 #include <stdlib.h>
 
+static void cm_oneshot_callback(ARGS, Mif_Callback_Reason_t reason);
+
 void cm_oneshot(ARGS)  /* structure holding parms,
                                    inputs, outputs, etc.     */
 {
@@ -251,24 +253,31 @@ void cm_oneshot(ARGS)  /* structure holding parms,
         cm_analog_alloc(OUTPUT_OLD,sizeof(double));
 
         /*** allocate static storage for *loc ***/
-        STATIC_VAR (locdata) = calloc (1 , sizeof ( Local_Data_t ));
-        loc = STATIC_VAR (locdata);
+        if ((loc = (Local_Data_t *) (STATIC_VAR(locdata) = tcalloc_raw(1,
+                sizeof(Local_Data_t)))) == (Local_Data_t *) NULL) {
+            cm_message_send("Unable to allocate Local_Data_t "
+                    "in cm_oneshot()");
+            cm_oneshot_callback(mif_private, MIF_CB_DESTROY);
+            return;
+        }
 
         /* Allocate storage for breakpoint domain & pulse width values */
-        x = loc->control = (double *) calloc((size_t) cntl_size, sizeof(double));
-        if (!x) {
+        if ((x = loc->control = (double *) tcalloc_raw((size_t) cntl_size,
+                sizeof(double))) == (double *) NULL) {
             cm_message_send(oneshot_allocation_error);
+            cm_oneshot_callback(mif_private, MIF_CB_DESTROY);
             return;
         }
-        y = loc->pw = (double *) calloc((size_t) pw_size, sizeof(double));
-        if (!y) {
+        if ((y = loc->pw = (double *) tcalloc_raw((size_t) pw_size,
+                sizeof(double))) == (double *) NULL) {
             cm_message_send(oneshot_allocation_error);
+            cm_oneshot_callback(mif_private, MIF_CB_DESTROY);
             return;
         }
+        CALLBACK = cm_oneshot_callback;
 
         loc->tran_init = FALSE;
-
-    }
+    } /* end of initialization */
 
     if(ANALYSIS == MIF_DC) {
 
@@ -339,7 +348,12 @@ void cm_oneshot(ARGS)  /* structure holding parms,
 
             OUTPUT(out) = output_low;
         } else {
-            loc = STATIC_VAR (locdata);
+            if ((loc = (Local_Data_t *) STATIC_VAR(locdata)) ==
+                    (Local_Data_t *) NULL) {
+                cm_message_send("Attempt to use uninitialized Local_Data_t "
+                        "in cm_oneshot()");
+                return;
+            }
             x = loc->control;
             y = loc->pw;
 
@@ -544,5 +558,28 @@ void cm_oneshot(ARGS)  /* structure holding parms,
         ac_gain.imag= 0.0;
         AC_GAIN(out,clk) = ac_gain;
     }
-}
+} /* end of function cm_oneshot */
+
+
+
+/* This function frees resources when called with reason argument
+ * MIF_CB_DESTROY */
+static void cm_oneshot_callback(ARGS, Mif_Callback_Reason_t reason)
+{
+    switch (reason) {
+        case MIF_CB_DESTROY: {
+            Local_Data_t *loc = STATIC_VAR(locdata);
+            if (loc == (Local_Data_t *) NULL) {
+                break;
+            }
+            txfree(loc->control);
+            txfree(loc->pw);
+            txfree(loc);
+            STATIC_VAR(locdata) = (Local_Data_t *) NULL;
+            break;
+        }
+    }
+} /* end of function cm_oneshot_callback */
+
+
 

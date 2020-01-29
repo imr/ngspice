@@ -18,10 +18,35 @@
 #include "graf.h"
 
 static bool sameflag;
-
+/* All these things are static so that "samep" will work.
+  They are outside of plotit() to allow deleting */
+static double *xcompress = NULL, *xindices = NULL;
+static double *xlim = NULL, *ylim = NULL;
+static double *xdelta = NULL, *ydelta = NULL;
+static char *xlabel = NULL, *ylabel = NULL, *title = NULL;
 #ifdef TCL_MODULE
 #include "ngspice/tclspice.h"
 #endif
+
+/* remove the malloced parameters upon ngspice quit */
+void pl_rempar(void)
+{
+    txfree(xcompress);
+    txfree(xindices);
+    txfree(xlim);
+    txfree(ylim);
+    txfree(xdelta);
+    txfree(ydelta);
+    txfree(xlabel);
+    txfree(ylabel);
+}
+
+static struct dvec *vec_self(struct dvec *v);
+static struct dvec *vec_scale(struct dvec *v);
+static void find_axis_limits(double *lim, bool oneval, bool f_real,
+        struct dvec *vecs,
+        struct dvec *(*p_get_axis_dvec)(struct dvec *dvec),
+        double *lims);
 
 
 static struct dvec *vec_self(struct dvec *v);
@@ -258,11 +283,6 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
         return FALSE;
     }
 
-    /* All these things are static so that "samep" will work. */
-    static double *xcompress = NULL, *xindices = NULL;
-    static double *xlim = NULL, *ylim = NULL;
-    static double *xdelta = NULL, *ydelta = NULL;
-    static char *xlabel = NULL, *ylabel = NULL, *title = NULL;
     static bool nointerp = FALSE;
     static GRIDTYPE gtype = GRID_LIN;
     static PLOTTYPE ptype = PLOT_LIN;
@@ -317,7 +337,11 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
     /* Build the plot command. This construction had been done with wordlists
      * and reversing, and flattening, but it is clearer as well as much more
      * efficient to use a dstring. */
-    rc_ds |= ds_cat_printf(&ds_cline, "plot %s", wl_flatten(wwl->wl_next));
+    {
+        char * const flatstr = wl_flatten(wwl->wl_next);
+        rc_ds |= ds_cat_printf(&ds_cline, "plot %s", flatstr);
+        txfree(flatstr);
+    }
     wl_free(wwl);
 
     /* Add title, xlabel or ylabel, if available, with quotes ''. */
@@ -343,6 +367,7 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
     sameflag = getflag(wl, "samep");
 
     if (!sameflag || !xlim) {
+        txfree(xlim);
         xlim = getlims(wl, "xl", 2);
         if (!xlim) {
             xlim = getlims(wl, "xlimit", 2);
@@ -354,6 +379,7 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
     }
 
     if (!sameflag || !ylim) {
+        txfree(ylim);
         ylim = getlims(wl, "yl", 2);
         if (!ylim) {
             ylim = getlims(wl, "ylimit", 2);
@@ -365,6 +391,7 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
     }
 
     if (!sameflag || !xcompress) {
+        txfree(xcompress);
         xcompress = getlims(wl, "xcompress", 1);
         if (!xcompress) {
             xcompress = getlims(wl, "xcomp", 1);
@@ -376,6 +403,7 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
     }
 
     if (!sameflag || !xindices) {
+        txfree(xindices);
         xindices = getlims(wl, "xindices", 2);
         if (!xindices) {
             xindices = getlims(wl, "xind", 2);
@@ -387,6 +415,7 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
     }
 
     if (!sameflag || !xdelta) {
+        txfree(xdelta);
         xdelta = getlims(wl, "xdelta", 1);
         if (!xdelta) {
             xdelta = getlims(wl, "xdel", 1);
@@ -397,6 +426,7 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
     }
 
     if (!sameflag || !ydelta) {
+        txfree(ydelta);
         ydelta = getlims(wl, "ydelta", 1);
         if (!ydelta) {
             ydelta = getlims(wl, "ydel", 1);

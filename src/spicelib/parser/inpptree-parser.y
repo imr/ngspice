@@ -84,7 +84,7 @@ expression: exp
 
 exp:
     TOK_NUM                           { $$ = PT_mknnode($1); }
-  | TOK_STR                           { $$ = PT_mksnode($1, ckt); txfree($1); }
+  | TOK_STR                           { $$ = PT_mksnode($1, ckt); txfree((void *) $1); }
 
   | exp '+' exp                       { $$ = PT_mkbnode("+", $1, $3); }
   | exp '-' exp                       { $$ = PT_mkbnode("-", $1, $3); }
@@ -100,7 +100,7 @@ exp:
   | TOK_STR '(' nonempty_arglist ')'  { $$ = PT_mkfnode($1, $3);
                                         if (!$$)
                                             YYERROR;
-                                        txfree($1); }
+                                        txfree((void *) $1); }
 
   | TOK_pnode
 

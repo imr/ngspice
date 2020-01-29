@@ -12,6 +12,13 @@
 * These tables will contain pure dc data. For transient simulation you may
 * need to add some capacitors to the device model for a 'real world' simulation.
 
+* In case the script is called with existing DC* plots, must free up everyting
+* or the plot created will not be DC1, which will cause the later destroy
+* in the loop to remove the wrong one, and a new data sets will be added
+* at each loop iteration. Also the control variables like loopy will be hidden
+* in another plot.
+destroy all
+
 *NMOS
 *.csparam vdstart=-0.1
 *.csparam vdstop=1.8
@@ -88,6 +95,9 @@ while lcy < ycount
 *  end
   let xvec = i(vss)
   echo $&xvec >> $outfile
+
+* Free the plot data that was just created. Then the name dc1 will be used
+* again.
   destroy dc1
   let loopy = loopy + vgstep
   let lcy = lcy + 1

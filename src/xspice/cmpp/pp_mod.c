@@ -54,6 +54,7 @@ NON-STANDARD FEATURES
 
 ============================================================================*/
 
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -74,21 +75,33 @@ extern int   mod_num_errors;
 
 extern Ifs_Table_t *mod_ifs_table;
 
-extern const char *current_filename;
+extern char *current_filename;
 extern char *prog_name;
 
 /*---------------------------------------------------------------------------*/
-static char *change_extension (char *filename, char *ext)
+/* Allocate and build a file name from the input filename by changing its
+ * extension (text after the last '.') in filename to ext or append .ext if
+ * the filename has no extension */
+static char *change_extension(const char *filename, const char *ext)
 {
-   char *p = strrchr(filename, '.');
-   size_t prefix_len = p ? (size_t) (p-filename+1) : strlen(filename);
-   char *new_filename = malloc(prefix_len + strlen(ext) + 1);
+   const char * const p = strrchr(filename, '.');
+   const size_t prefix_len = p ? (size_t) (p - filename) : strlen(filename);
+   const size_t ext_len = strlen(ext);
+   char * const new_filename = malloc(prefix_len + ext_len + 2);
+                                                /* +1 for '.' +1 for '\0' */
+   if (new_filename == (char *) NULL) {
+       return (char *) NULL;
+   }
 
-   strncpy(new_filename, filename, prefix_len);
-   strcpy(new_filename+prefix_len, ext);
+   {
+       char *p_cur = (char *) memcpy(new_filename, filename, prefix_len) +
+            prefix_len;
+       *p_cur++ = '.';
+       (void) memcpy(p_cur, ext, ext_len + 1);
+   }
 
    return new_filename;
-}
+} /* end of function change_extension */
 
 /*---------------------------------------------------------------------------*/
 
@@ -108,14 +121,12 @@ utilities.
 
 
 void preprocess_mod_file (
-    char *filename)         /* The file to read */
+        const char *filename)         /* The file to read */
 {
-   
-   
-   Ifs_Table_t     ifs_table;   /* info read from ifspec.ifs file */
-   int status;      /* Return status */
-   const char     *output_filename;
-   
+    Ifs_Table_t     ifs_table;   /* info read from ifspec.ifs file */
+    int status;      /* Return status */
+    char *output_filename = (char *) NULL; /* .mod file being written */
+
    /*
     * Read the entire ifspec.ifs file and load the data into ifs_table
     */
@@ -125,42 +136,80 @@ void preprocess_mod_file (
    if (status != 0) {
       exit(1);
    }
-   
-   current_filename = filename;
 
-   mod_yyin = fopen_cmpp (&current_filename, "r");
-   if (mod_yyin == NULL) {
-      print_error("ERROR - Could not open input .mod file: %s", current_filename);
-      exit(1);
-   }
-   
-   output_filename = change_extension (filename, "c");
-   mod_yyout = fopen_cmpp (&output_filename, "w");
+    /* Open the cfunc.mod file defining the code model function */
+    if ((current_filename = gen_filename(filename, "r")) == (char *) NULL) {
+        print_error("ERROR - Unable to build mod file name");
+        exit(1);
+    }
+    if ((mod_yyin = fopen(current_filename, "r")) == (FILE *) NULL) {
+        print_error("ERROR - Unable to open mod file \"%s\": %s",
+                current_filename, strerror(errno));
+        exit(1);
+    }
 
-   if (mod_yyout == NULL) {
-      print_error("ERROR - Could not open output .c file: %s", output_filename);
-      exit(1);
-   }
-   
+    {
+        char *output_filename_base = (char *) NULL;
+        if ((output_filename_base = change_extension(
+                filename, "c")) == (char *) NULL) {
+            print_error("ERROR - Could not change extension of "
+                    "\"%s\".", filename);
+            exit(1);
+        }
+
+        if ((output_filename = gen_filename(
+                output_filename_base, "w")) == (char *) NULL) {
+            print_error("ERROR - Unable to build output file name");
+            exit(1);
+        }
+
+        free(output_filename_base);
+    }
+
+    if ((mod_yyout = fopen(output_filename, "w")) == (FILE *) NULL) {
+        /* .c file could not be opened */
+        print_error("ERROR - Could not open output .c file\"%s\": %s",
+                output_filename, strerror(errno));
+        exit(1);
+    }
+
    mod_ifs_table = &ifs_table;
    mod_num_errors = 0;
 
+/* Define DEBUG_WITH_MOD_FILE to have the compiler use the cfunc.mod file for
+ * deugging instead of the cfunc.c file. */
+#ifdef DEBUG_WITH_MOD_FILE
    fprintf (mod_yyout, "#line 1 \"%s\"\n", current_filename);
+#endif
    fprintf (mod_yyout, "#include \"ngspice/cm.h\"\n");
    fprintf (mod_yyout, "extern void %s(Mif_Private_t *);\n",
-      ifs_table.name.c_fcn_name);
+          ifs_table.name.c_fcn_name);
+#ifdef DEBUG_WITH_MOD_FILE
    fprintf (mod_yyout, "#line 1 \"%s\"\n", current_filename);
+#endif
 
    mod_yylineno = 1;
 
-   if (mod_yyparse() || (mod_num_errors > 0)) {
-      print_error("Error parsing .mod file: \"%s\"", current_filename);
-      unlink (output_filename);
-      exit (1);
-   }
-   fclose (mod_yyout);
-   mod_yyrestart(NULL);
-}
+    if (mod_yyparse() || (mod_num_errors > 0)) {
+        print_error("Error parsing .mod file: \"%s\"", current_filename);
+        unlink(output_filename);
+        exit(1);
+    }
+
+    if (fclose(mod_yyout) != 0) {
+        print_error("Error closing output file \"%s\": %s",
+                current_filename, strerror(errno));
+        unlink(output_filename);
+        exit(1);
+    }
+
+    rem_ifs_table(&ifs_table);
+    mod_yyrestart(NULL);
+    free(output_filename);
+    free(current_filename);
+} /* end of function preprocess_mod_file */
+
+
 
 /*---------------------------------------------------------------------------*/
 void

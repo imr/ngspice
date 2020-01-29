@@ -4,13 +4,13 @@ DESCRIPTION:This file contains the routines for manipulating dynamic strings.
 ----------------------------------------------------------------- */
 #include <ctype.h>
 #include <stdarg.h>
-#include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "ngspice/dstring.h"
+#include "ngspice/alloc.h"
 
 
 static int ds_reserve_internal(DSTRING *p_ds,
@@ -86,7 +86,7 @@ int ds_init(DSTRING *p_ds, char *p_buf, size_t length_string,
 void ds_free(DSTRING *p_ds)
 {
     if (p_ds->p_buf != p_ds->p_stack_buf) {
-        free((void *) p_ds->p_buf);
+        txfree((void *) p_ds->p_buf);
     }
 } /* end of function ds_free */
 
@@ -212,7 +212,8 @@ static int ds_reserve_internal(DSTRING *p_ds,
         n_byte_alloc_min = n_byte_alloc_opt;
     }
     for ( ; ; ) {
-        if ((p_buf_new = (char *) malloc(n_byte_alloc)) != (char *) NULL) {
+        if ((p_buf_new = (char *) tmalloc_raw(
+                n_byte_alloc)) != (char *) NULL) {
             break; /* Allocated OK */
         }
 
@@ -230,7 +231,7 @@ static int ds_reserve_internal(DSTRING *p_ds,
 
     /* If there already was a dynamic allocation, free it */
     if (p_ds->p_buf != p_ds->p_stack_buf) {
-        free((void *) p_ds->p_buf);
+        txfree((void *) p_ds->p_buf);
     }
 
     /* Assign new active buffer and its size */
@@ -334,7 +335,7 @@ int ds_compact(DSTRING *p_ds)
      * free the allocation. */
     if (p_ds->n_byte_stack_buf >= n_byte_alloc_min) {
         (void) memcpy(p_ds->p_stack_buf, p_ds->p_buf, n_byte_alloc_min);
-        free((void *) p_ds->p_buf);
+        txfree((void *) p_ds->p_buf);
         p_ds->p_buf = p_ds->p_stack_buf;
         p_ds->n_byte_alloc = p_ds->n_byte_stack_buf;
         return DS_E_OK;
@@ -347,7 +348,7 @@ int ds_compact(DSTRING *p_ds)
 
     /* Else realloc the heap buffer */
     {
-        void *p = realloc(p_ds->p_buf, n_byte_alloc_min);
+        void * const p = trealloc_raw(p_ds->p_buf, n_byte_alloc_min);
         if (p == NULL) {
             return DS_E_NO_MEMORY;
         }

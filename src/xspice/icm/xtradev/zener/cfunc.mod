@@ -69,9 +69,9 @@ NON-STANDARD FEATURES
 /*=== FUNCTION PROTOTYPE DEFINITIONS ===*/
 
 
+static void cm_zener_callback(ARGS, Mif_Callback_Reason_t reason);
 
 
-                   
 /*==============================================================================
 
 FUNCTION void cm_zener()
@@ -174,16 +174,25 @@ void cm_zener(ARGS)  /* structure holding parms,
     if (INIT==1) {  /* First pass...allocate storage for previous value... */
 
         /* Allocate storage for frequencies */
-        STATIC_VAR(previous_voltage) = (double *) malloc(sizeof(double));
-        previous_voltage = (double *) STATIC_VAR(previous_voltage);
+        if ((previous_voltage = (double *) (STATIC_VAR(previous_voltage) =
+                tmalloc_raw(sizeof(double)))) == (double *) NULL) {
+            cm_message_send("Unable to allocate memory for previous "
+                    "voltage in cm_zener()");
+            return;
+        }
+        CALLBACK = cm_zener_callback;
 
         /* Set previous_voltage value to zero... */
         *previous_voltage = 0.0;
 
     }  
     else {
-
-        previous_voltage = (double *) STATIC_VAR(previous_voltage);
+        if ((previous_voltage = (double *) STATIC_VAR(
+                previous_voltage)) == (double *) NULL) {
+            cm_message_send("Attempt to use uninitialized previous "
+                    "voltage in cm_zener()");
+            return;
+        }
 
     }
                        
@@ -352,5 +361,23 @@ void cm_zener(ARGS)  /* structure holding parms,
         ac_gain.imag= 0.0;
         AC_GAIN(z,z) = ac_gain;
     }
-} 
+} /* end of function cm_zener */
+
+
+
+static void cm_zener_callback(ARGS, Mif_Callback_Reason_t reason)
+{
+    switch (reason) {
+        case MIF_CB_DESTROY: {
+            double * const p_prev_voltage =
+                    (double *) STATIC_VAR(previous_voltage);
+            if (p_prev_voltage != (double *) NULL) {
+                txfree(p_prev_voltage);
+            }
+            break;
+        }
+    }
+} /* end of function cm_zener_callback */
+
+
 

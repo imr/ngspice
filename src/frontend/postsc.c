@@ -173,7 +173,7 @@ int PS_NewViewport(GRAPH *graph)
     /* devdep initially contains name of output file */
     if ((plotfile = fopen((char*)graph->devdep, "w")) == NULL) {
         perror((char *) graph->devdep);
-        free(graph->devdep);
+        txfree(graph->devdep);
         graph->devdep = NULL;
         graph->n_byte_devdep = 0;
         return 1;

@@ -92,7 +92,6 @@ typedef struct {
     double ***table; /* f(xi, yj, zk) */
 } Table3_Data_t;
 
-typedef Table3_Data_t Local_Data_t;
 
 /*=== MACROS ===========================*/
 
@@ -102,10 +101,6 @@ typedef Table3_Data_t Local_Data_t;
 #define DIR_PATHSEP    "/"
 #endif
 
-#if defined(_MSC_VER)
-#define strdup _strdup
-#endif
-
 /*=== LOCAL VARIABLES & TYPEDEFS =======*/
 
 
@@ -113,74 +108,13 @@ typedef Table3_Data_t Local_Data_t;
 
 /*=== FUNCTION PROTOTYPE DEFINITIONS ===*/
 
-extern char *CNVgettok(char **s);
-extern double TrilinearInterpolation(double x, double y, double z, int xind, int yind, int zind, double ***td);
-int cnv_get_spice_value(char *str, double *p_value);
+extern double TrilinearInterpolation(double x, double y, double z,
+        int xind, int yind, int zind, double ***td);
+static void cm_table3D_callback(ARGS, Mif_Callback_Reason_t reason);
 extern int findCrossOver(double arr[], int n, double x);
-
 static void free_local_data(Table3_Data_t *loc);
 static inline double get_local_diff(int n, double *col, int ind);
 static Table3_Data_t *init_local_data(const char *filename, int order);
-
-
-
-/*==============================================================================
-
-FUNCTION cnv_get_spice_value()
-
-AUTHORS
-
-    ???             Bill Kuhn
-
-MODIFICATIONS
-
-    30 Sep 1991     Jeffrey P. Murray
-
-SUMMARY
-
-    This function takes as input a string token from a SPICE
-    deck and returns a floating point equivalent value.
-
-INTERFACES
-
-    FILE                 ROUTINE CALLED
-
-    N/A                  N/A
-
-RETURNED VALUE
-
-    Returns the floating point value in pointer *p_value. Also
-    returns an integer representing successful completion.
-
-GLOBAL VARIABLES
-
-    NONE
-
-NON-STANDARD FEATURES
-
-    NONE
-
-==============================================================================*/
-
-
-
-
-
-static void cm_table3D_callback(ARGS,
-        Mif_Callback_Reason_t reason)
-{
-    switch (reason) {
-        case MIF_CB_DESTROY: {
-            Table3_Data_t *loc = STATIC_VAR(locdata);
-            if (loc) {
-                free_local_data(loc);
-                STATIC_VAR(locdata) = loc = NULL;
-            }
-            break;
-        } /* end of case MIF_CB_DESTROY */
-    } /* end of switch over reason being called */
-} /* end of function cm_table2D_callback */
-
 
 
 /*==============================================================================
@@ -261,7 +195,8 @@ void cm_table3D(ARGS) /* structure holding parms, inputs, outputs, etc. */
     }
 
     /* return immediately if there was an initialization error */
-    if ((loc = STATIC_VAR(locdata)) == (Table3_Data_t *) NULL) {
+    if ((loc = (Table3_Data_t *) STATIC_VAR(locdata)) ==
+            (Table3_Data_t *) NULL) {
         return;
     }
 
@@ -362,15 +297,13 @@ void cm_table3D(ARGS) /* structure holding parms, inputs, outputs, etc. */
     }
     else {
         Mif_Complex_t ac_gain;
-        ac_gain.real = PARAM(gain) * derivval[0] / xdiff;
         ac_gain.imag= 0.0;
+        ac_gain.real = PARAM(gain) * derivval[0] / xdiff;
         AC_GAIN(out, inx) = ac_gain;
         ac_gain.real = PARAM(gain) * derivval[1] / ydiff;
-        ac_gain.imag= 0.0;
         AC_GAIN(out, iny) = ac_gain;
         ac_gain.real = PARAM(gain) * derivval[2] / zdiff;
-        ac_gain.imag= 0.0;
-        AC_GAIN(out, iny) = ac_gain;
+        AC_GAIN(out, inz) = ac_gain;
     }
 } /* end of function cm_table3D */
 
@@ -398,7 +331,7 @@ static Table3_Data_t *init_local_data(const char *filename, int interporder)
 
 
     /* Allocate static storage for *loc */
-    if ((loc = (Table3_Data_t *) calloc(1,
+    if ((loc = (Table3_Data_t *) tcalloc_raw(1,
             sizeof(Table3_Data_t))) == (Table3_Data_t *) NULL) {
         cm_message_printf("cannot allocate memory for lookup table.");
         xrc = -1;
@@ -414,7 +347,7 @@ static Table3_Data_t *init_local_data(const char *filename, int interporder)
     if (!fp) { /* Standard open attempt failed */
         const char * const lbuffer = getenv("NGSPICE_INPUT_DIR");
         if (lbuffer && *lbuffer) {
-            char * const p = (char *) malloc(strlen(lbuffer) +
+            char * const p = (char *) tmalloc_raw(strlen(lbuffer) +
                     strlen(DIR_PATHSEP) +
                     strlen(filename) + 1);
             if (p == (char *) NULL) {
@@ -426,7 +359,7 @@ static Table3_Data_t *init_local_data(const char *filename, int interporder)
             (void) sprintf(p, "%s%s%s",
                     lbuffer, DIR_PATHSEP, filename);
             fp = fopen(p, "r");
-            free(p);
+            txfree(p);
         }
     }
 
@@ -451,9 +384,9 @@ static Table3_Data_t *init_local_data(const char *filename, int interporder)
     }
 
     /* create string to hold the whole file */
-    cFile = calloc(lFileLen + 1, sizeof(char));
+    cFile = tcalloc_raw(lFileLen + 1, sizeof(char));
     /* create another string long enough for file manipulation */
-    cThisLine = calloc(lFileLen + 1, sizeof(char));
+    cThisLine = tcalloc_raw(lFileLen + 1, sizeof(char));
     if (cFile == NULL || cThisLine == NULL) {
         cm_message_printf("Insufficient memory to read file %s",
                 filename);
@@ -514,7 +447,7 @@ static Table3_Data_t *init_local_data(const char *filename, int interporder)
             cnv_get_spice_value(cThisLinePtr, &tmp);
             loc->ix = ix = (int) tmp;
             /* generate row  data structure (x) */
-            if ((loc->xcol = (double *) calloc((size_t) ix,
+            if ((loc->xcol = (double *) tcalloc_raw((size_t) ix,
                     sizeof(double))) == (double *) NULL) {
                 cm_message_printf("Unable to allocate row structure.");
                 xrc = -1;
@@ -525,7 +458,7 @@ static Table3_Data_t *init_local_data(const char *filename, int interporder)
             cnv_get_spice_value(cThisLinePtr, &tmp);
             loc->iy = iy = (int) tmp;
             /* generate  column data structure (y) */
-            if ((loc->ycol = (double *) calloc((size_t) iy,
+            if ((loc->ycol = (double *) tcalloc_raw((size_t) iy,
                     sizeof(double))) == (double *) NULL) {
                 cm_message_printf("Unable to allocate colum structure.");
                 xrc = -1;
@@ -536,7 +469,7 @@ static Table3_Data_t *init_local_data(const char *filename, int interporder)
             cnv_get_spice_value(cThisLinePtr, &tmp);
             loc->iz = iz = (int) tmp;
             /* generate  column data structure (z) */
-            if ((loc->zcol = (double *) calloc((size_t) iz,
+            if ((loc->zcol = (double *) tcalloc_raw((size_t) iz,
                     sizeof(double))) == (double *) NULL) {
                 cm_message_printf("Unable to allocate \"z\" structure.");
                 xrc = -1;
@@ -553,7 +486,7 @@ static Table3_Data_t *init_local_data(const char *filename, int interporder)
                     goto EXITPOINT;
                 }
                 cnv_get_spice_value(token, &loc->xcol[i++]);
-                free(token);
+                txfree(token);
                 token = CNVgettok(&cThisLinePtr);
             }
             if (i < ix) {
@@ -572,7 +505,7 @@ static Table3_Data_t *init_local_data(const char *filename, int interporder)
                     goto EXITPOINT;
                 }
                 cnv_get_spice_value(token, &loc->ycol[i++]);
-                free(token);
+                txfree(token);
                 token = CNVgettok(&cThisLinePtr);
             }
             if (i < iy) {
@@ -591,7 +524,7 @@ static Table3_Data_t *init_local_data(const char *filename, int interporder)
                     goto EXITPOINT;
                 }
                 cnv_get_spice_value(token, &loc->zcol[i++]);
-                free(token);
+                txfree(token);
                 token = CNVgettok(&cThisLinePtr);
             }
             if (i < iz) {
@@ -618,16 +551,16 @@ static Table3_Data_t *init_local_data(const char *filename, int interporder)
        int n1, int n2, int n3 : data dimensions */
     if ((loc->newtable = sf_eno3_init(
             interporder, ix, iy, iz)) == (sf_eno3) NULL) {
-        cm_message_printf("eno3 initialization failure.");
+        cm_message_send("eno3 initialization failure.");
         xrc = -1;
         goto EXITPOINT;
     }
 
     /* create table_data in memory */
     /* data [n3][n2][n1] */
-    if ((loc->table = table_data = (double ***) calloc((size_t) iz,
+    if ((loc->table = table_data = (double ***) tcalloc_raw((size_t) iz,
             sizeof(double **))) == (double ***) NULL) {
-        cm_message_printf("Unable to allocate data table.");
+        cm_message_send("Unable to allocate data table.");
         xrc = -1;
         goto EXITPOINT;
     }
@@ -635,7 +568,7 @@ static Table3_Data_t *init_local_data(const char *filename, int interporder)
     {
         int i, j;
         for (i = 0; i < iz; i++) {
-            if ((table_data[i] = (double **) calloc((size_t) iy,
+            if ((table_data[i] = (double **) tcalloc_raw((size_t) iy,
                     sizeof(double *))) == (double **) NULL) {
                 cm_message_printf("Unable to allocate data table "
                         "z=%d",
@@ -644,7 +577,7 @@ static Table3_Data_t *init_local_data(const char *filename, int interporder)
                 goto EXITPOINT;
             }
             for (j = 0; j < iy; j++) {
-                if ((table_data[i][j] = (double *) calloc((size_t) ix,
+                if ((table_data[i][j] = (double *) tcalloc_raw((size_t) ix,
                         sizeof(double))) == (double *) NULL) {
                     cm_message_printf("Unable to allocate data table "
                             "z=%d y=%d",
@@ -709,7 +642,7 @@ static Table3_Data_t *init_local_data(const char *filename, int interporder)
 
                     table_data[lTableCount][lLineCount][i++] = tmpval;
 
-                    free(token);
+                    txfree(token);
                     token = CNVgettok(&cThisLinePtr);
                 }
                 if (i < ix) {
@@ -730,10 +663,10 @@ static Table3_Data_t *init_local_data(const char *filename, int interporder)
 EXITPOINT:
     /* free the file and memory allocated */
     if (cFile != (char *) NULL) {
-        free(cFile);
+        txfree(cFile);
     }
     if (cThisLine != (char *) NULL) {
-        free(cThisLine);
+        txfree(cThisLine);
     }
     if (fp != (FILE *) NULL) {
         (void) fclose(fp);
@@ -760,24 +693,35 @@ static void free_local_data(Table3_Data_t *loc)
 
     /* Free data table and related values */
     if (loc->table) {
-        int i, j;
+        int i;
         int n_y = loc->iy;
         int n_z = loc->iz;
         for (i = 0; i < n_z; i++) {
+            int j;
             for (j = 0; j < n_y; j++) {
-                free(loc->table[i][j]);
+                txfree(loc->table[i][j]);
             }
-            free(loc->table[i]);
+            txfree(loc->table[i]);
         }
 
-        free(loc->table);
+        txfree(loc->table);
     }
 
-    free(loc->xcol);
-    free(loc->ycol);
-    free(loc->zcol);
-    sf_eno3_close(loc->newtable);
-    free(loc);
+    if (loc->xcol != (double *) NULL) {
+        txfree(loc->xcol);
+    }
+    if (loc->ycol != (double *) NULL) {
+        txfree(loc->ycol);
+    }
+    if (loc->zcol != (double *) NULL) {
+        txfree(loc->zcol);
+    }
+
+    if (loc->newtable != (sf_eno3) NULL) {
+        sf_eno3_close(loc->newtable);
+    }
+
+    txfree(loc);
 } /* end of function free_local_data */
 
 
@@ -793,6 +737,25 @@ static inline double get_local_diff(int n, double *col, int ind)
     }
     return 0.5 * (col[ind + 1] - col[ind - 1]);
 } /* end of function get_local_diff */
+
+
+
+/* This function frees resources when called with reason argument
+ * MIF_CB_DESTROY */
+static void cm_table3D_callback(ARGS, Mif_Callback_Reason_t reason)
+{
+    switch (reason) {
+        case MIF_CB_DESTROY: {
+            Table3_Data_t *loc = (Table3_Data_t *) STATIC_VAR(locdata);
+            if (loc) {
+                free_local_data(loc);
+                STATIC_VAR(locdata) = NULL;
+            }
+            break;
+        } /* end of case MIF_CB_DESTROY */
+    } /* end of switch over reason being called */
+} /* end of function cm_table3D_callback */
+
 
 
 /* These includes add functions from extra source code files,

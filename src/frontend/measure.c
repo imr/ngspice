@@ -67,6 +67,12 @@ com_meas(wordlist *wl)
            May be in the next wl_word */
         if (token[strlen(token) - 1] == '=') {
             wl_index = wl_index->wl_next;
+            if (wl_index == NULL) {
+                line_in = wl_flatten(wl);
+                fprintf(stderr, "\nError: meas failed due to missing token in \n    meas %s \n\n", line_in);
+                tfree(line_in);
+                return;
+            }
             vec_found = wl_index->wl_word;
             /* token may be already a value, maybe 'LAST', which we have to keep, or maybe a vector */
             if (!cieq(vec_found, "LAST")) {

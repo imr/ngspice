@@ -44,6 +44,7 @@ NON-STANDARD FEATURES
 #include "ngspice/cmconstants.h"
 #include "ngspice/cmproto.h"
 #include "ngspice/mifcmdat.h"
+#include "ngspice/mifproto.h"
 
 #include <math.h>
 

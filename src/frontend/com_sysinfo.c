@@ -492,7 +492,7 @@ static int registry_value_to_ds(const char *sz_subkey,
         size_t n_byte_reserve = (size_t) n_byte_data + 1;
         if (ds_reserve(p_ds, n_byte_reserve) != 0) {
             (void) fprintf(cp_err,
-                    "Unable to reserve a buffer of %u bytes for data.\n",
+                    "Unable to reserve a buffer of %zu bytes for data.\n",
                     n_byte_reserve);
             xrc = -1;
             goto EXITPOINT;
@@ -924,7 +924,8 @@ static void get_physical_processor_count(void)
 
     /* Allocate buffer to get the info */
     SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX * const buf =
-            (SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX *) malloc(n_byte_buf);
+            (SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX *) TMALLOC(
+                    char, n_byte_buf);
     if (buf == (SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX *) NULL) {
         fprintf(cp_err,
                 "Unable to allocate a buffer of %lu bytes "

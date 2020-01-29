@@ -123,7 +123,7 @@ one_exp:
 
 exp:
     TOK_NUM                           { $$ = PP_mknnode($1); }
-  | TOK_STR                           { $$ = PP_mksnode($1); txfree($1); }
+  | TOK_STR                           { $$ = PP_mksnode($1); txfree((void *) $1); }
 
   | exp ',' exp                       { $$ = PP_mkbnode(PT_OP_COMMA,  $1, $3); }
   | exp '+' exp                       { $$ = PP_mkbnode(PT_OP_PLUS,   $1, $3); }
@@ -139,7 +139,7 @@ exp:
   | '~' exp                           { $$ = PP_mkunode(PT_OP_NOT, $2); }
 
   | TOK_STR '(' exp ')'               { $$ = PP_mkfnode($1, $3);
-                                        txfree($1);
+                                        txfree((void *) $1);
                                         if(!$$)
                                             YYABORT;
                                       }

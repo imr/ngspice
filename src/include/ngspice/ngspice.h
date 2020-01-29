@@ -172,7 +172,7 @@ extern double x_acosh(double);
 extern double x_atanh(double);
 #define hypot _hypot
 #endif
-#define strdup _strdup
+/////#define strdup _strdup
 #define unlink _unlink
 #define fileno _fileno
 #define getcwd _getcwd

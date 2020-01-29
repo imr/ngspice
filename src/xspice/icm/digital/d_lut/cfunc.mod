@@ -64,6 +64,7 @@ NON-STANDARD FEATURES
 /*=== FUNCTION PROTOTYPE DEFINITIONS ===*/
 
 
+static void cm_d_lut_callback(ARGS, Mif_Callback_Reason_t reason);
 
 
 
@@ -132,10 +133,15 @@ void cm_d_lut(ARGS)
     /*** Setup required state variables ***/
 
     if (INIT) {  /* initial pass */
-
         /* allocate storage for the lookup table */
-        STATIC_VAR (locdata) = calloc((size_t) tablelen, sizeof(Digital_State_t));
-        lookup_table = STATIC_VAR (locdata);
+        if ((lookup_table = (Digital_State_t *) (STATIC_VAR (locdata) =
+                tcalloc_raw((size_t) tablelen, sizeof(Digital_State_t)))) ==
+                (Digital_State_t *) NULL) {
+            cm_message_send("Unable to allocate Digital_t structure "
+                    "in cm_d_lut()");
+            return;
+        }
+        CALLBACK = cm_d_lut_callback;
 
         /* allocate storage for the outputs */
         cm_event_alloc(0, sizeof(Digital_State_t));
@@ -251,4 +257,24 @@ void cm_d_lut(ARGS)
     }
 
     OUTPUT_STRENGTH(out) = STRONG;
-}
+} /* end of function cm_d_lut */
+
+
+
+/* This function frees resources when called with reason argument
+ * MIF_CB_DESTROY */
+static void cm_d_lut_callback(ARGS, Mif_Callback_Reason_t reason)
+{
+    switch (reason) {
+        case MIF_CB_DESTROY: {
+            void * const p = STATIC_VAR(locdata);
+            if (p != NULL) {
+                txfree(p);
+            }
+            break;
+        }
+    }
+} /* end of function cm_d_genlut_callback */
+
+
+

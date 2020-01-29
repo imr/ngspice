@@ -105,7 +105,8 @@ void cm_analog_alloc(
     }
 
     /* Compute number of doubles needed and allocate space in ckt->CKTstates[i] */
-    doubles_needed = bytes / (int) sizeof(double) + 1;
+    doubles_needed =
+            (bytes + (int) sizeof(double) - 1) / (int) sizeof(double);
 
     /* Allocate space in instance struct for this state descriptor */
     if(here->num_state == 0) {
@@ -133,7 +134,8 @@ void cm_analog_alloc(
         else
             ckt->CKTstates[i] = TREALLOC(double, ckt->CKTstates[i], ckt->CKTnumStates);
     }
-}
+} /* end of function cm_analog_alloc */
+
 
 
 /*
@@ -657,8 +659,7 @@ the instance name.
 */
 
 
-int cm_message_send(
-    char *msg)        /* The message to output. */
+int cm_message_send(const char *msg)        /* The message to output. */
 {
     MIFinstance *here;
 

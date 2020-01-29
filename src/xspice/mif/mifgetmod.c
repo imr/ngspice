@@ -82,7 +82,7 @@ successful, and an error string on failure.
 
 char *MIFgetMod( 
     CKTcircuit *ckt,    /* The circuit structure */
-    char      *name,    /* The name of the model to look for */
+    const char *name,    /* The name of the model to look for */
     INPmodel  **model,  /* The model found/created */
     INPtables *tab      /* Table of model info from first pass */
     )

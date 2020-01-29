@@ -86,19 +86,7 @@ typedef struct {
 
 /*=== FUNCTION PROTOTYPE DEFINITIONS ===*/
 
-
-static void
-cm_sidiode_callback(ARGS, Mif_Callback_Reason_t reason)
-{
-    switch (reason) {
-        case MIF_CB_DESTROY: {
-            Local_Data_t *loc = STATIC_VAR (locdata);
-            free(loc);
-            break;
-        }
-    }
-}
-
+static void cm_sidiode_callback(ARGS, Mif_Callback_Reason_t reason);
 
 
 /*==============================================================================
@@ -127,11 +115,12 @@ void cm_sidiode(ARGS)  /* structure holding parms,
 
         double grev, goff, gon, Va, Vb, Vc, Vd, hEpsilon, hRevepsilon;
 
-        CALLBACK = cm_sidiode_callback;
-
         /* allocate static storage for *loc */
-        STATIC_VAR(locdata) = calloc (1, sizeof(Local_Data_t));
-        loc = STATIC_VAR(locdata);
+        if ((loc = (Local_Data_t *) (STATIC_VAR(locdata) = tcalloc_raw(1,
+                sizeof(Local_Data_t)))) == (Local_Data_t *) NULL) {
+            cm_message_send("Unable to allocate locdata in cm_sidiode().");
+        }
+        CALLBACK = cm_sidiode_callback;
 
         goff = 1./PARAM(roff);
         gon = 1./PARAM(ron);
@@ -177,8 +166,14 @@ void cm_sidiode(ARGS)  /* structure holding parms,
         loc->goff = goff;
         loc->gon = gon;
     }
-    else
-        loc = STATIC_VAR(locdata);
+    else {
+        if ((loc = (Local_Data_t *) STATIC_VAR(locdata)) ==
+                (Local_Data_t *) NULL) {
+            cm_message_send("Attempt  to use uninitialized locdata "
+                    "in cm_sidiode()");
+            return;
+        }
+    }
 
 
     /* Calculate diode current Id and its derivative deriv=dId/dVin */
@@ -233,4 +228,24 @@ void cm_sidiode(ARGS)  /* structure holding parms,
         ac_gain.imag= 0.0;
         AC_GAIN(ds,ds) = ac_gain;
     }
-}
+} /* end of function cm_sidiode */
+
+
+
+/* This function frees resources when called with reason argument
+ * MIF_CB_DESTROY */
+static void cm_sidiode_callback(ARGS, Mif_Callback_Reason_t reason)
+{
+    switch (reason) {
+        case MIF_CB_DESTROY: {
+            Local_Data_t *loc = (Local_Data_t *) STATIC_VAR(locdata);
+            if (loc != (Local_Data_t *) NULL) {
+                txfree(loc);
+            }
+            break;
+        }
+    }
+} /* end of function cm_sidiode_callback */
+
+
+

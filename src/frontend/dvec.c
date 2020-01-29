@@ -2,7 +2,8 @@
 #include "ngspice/dvec.h"
 
 
-struct dvec *dvec_alloc(/* NOT const -- assigned to char */ char *name,
+struct dvec *dvec_alloc(
+        /* not const -- given to non-const struct */ char *name,
         int type, short flags, int length, void *storage)
 {
     struct dvec * const rv = TMALLOC(struct dvec, 1);

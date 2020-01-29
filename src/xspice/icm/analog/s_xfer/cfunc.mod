@@ -208,18 +208,23 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
 	double *in;                  /* pointer to the input */
 	double in_offset;            /* input offset */
 	double *gain;                /* pointer to the gain */
-	double **den_coefficient;    /* dynamic array that holds the denominator
-									coefficients */
-	double **old_den_coefficient;/* dynamic array that holds the old 
-									denonminator coefficients */
-	double **num_coefficient;    /* dynamic array that holds the numerator
-									coefficients */
-	double **old_num_coefficient;/* dynamic array that holds the old numerator
-									coefficients */
+	double **den_coefficient = (double **) NULL;
+                                /* dynamic array that holds the denominator
+                                 * coefficients */
+	double **old_den_coefficient = (double **) NULL;
+                                /* dynamic array that holds the old 
+                                 * denonminator coefficients */
+	double **num_coefficient = (double **) NULL;
+                                /* dynamic array that holds the numerator
+                                 * coefficients */
+	double **old_num_coefficient = (double **) NULL;
+                                /* dynamic array that holds the old numerator
+                                 * coefficients */
 	double factor;               /* gain factor in case the highest
 									denominator coefficient is not 1 */
-    double **integrator;         /* outputs of the integrators       */
-	double **old_integrator;     /* previous integrator outputs      */
+    double **integrator = (double **) NULL; /* outputs of the integrators */
+	double **old_integrator = (double **) NULL;
+                                /* previous integrator outputs */
 	double null;                 /* dummy pointer for use with the
 									integrate function               */
 	double pout_pin;             /* partial out wrt in               */
@@ -246,8 +251,9 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
 	int den_size;                /* size of the denominator coefficient array */
 	int num_size;                /* size of the numerator coefficient array */ 
 
-    char *num_size_error="\n***ERROR***\nS_XFER: Numerator coefficient array size greater than\ndenominator coefficiant array size.\n";
-
+    const char * const num_size_error="\n***ERROR***\n"
+            "S_XFER: Numerator coefficient array size greater than\n"
+            "denominator coefficiant array size.\n";
 
 
     /** Retrieve frequently used parameters (used by all analyses)... **/
@@ -267,41 +273,62 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
         return;
     }
 
+    /*  We have to allocate memory and use cm_analog_alloc, because the
+     * ITP variables are not functional */
+    integrator = (double **) tcalloc_raw((size_t) den_size,
+            sizeof(double *));
+    old_integrator = (double **) tcalloc_raw((size_t) den_size,
+            sizeof(double *));
+
+    /* Allocate storage for coefficient values */
+    den_coefficient = (double **) tcalloc_raw((size_t) den_size,
+            sizeof(double *));
+    old_den_coefficient = (double **) tcalloc_raw((size_t) den_size,
+            sizeof(double *));
+
+    num_coefficient = (double **) tcalloc_raw((size_t) num_size,
+            sizeof(double *));
+    old_num_coefficient = (double **) tcalloc_raw((size_t) num_size,
+            sizeof(double *));
+
+    if (integrator == (double **) NULL ||
+            old_integrator == (double **) NULL ||
+            den_coefficient == (double **) NULL ||
+            old_den_coefficient == (double **) NULL ||
+            num_coefficient == (double **) NULL ||
+            old_num_coefficient == (double **) NULL) {
+        if (INIT == 1) {
+            /* If init step, execute cm_analog_alloc() calls anyhow
+             * in case the function is called again and the above
+             * allocations succeed on that call. Under those conditions
+             * access violations would occur without the
+             * cm_analog_alloc() calls. */
+            const int n = 2 * den_size + num_size + 3;
+            for (i = 0; i < n; ++i) {
+                  cm_analog_alloc(i, sizeof(double));
+            }
+        }
+
+        cm_message_send("Unable to allocate arrays of double pointers "
+                "for integrator and coefficients in cm_s_xfer()");
+        goto EXITPOINT;
+     } /* end of double ** allocations */
+
     /** Test for INIT; if so, allocate storage, otherwise, retrieve previous       **/
     /** timepoint input values as necessary in subsequent analysis sections...     **/
-
     if (INIT==1) {  /* First pass...allocate storage for previous values... */
-       
-        /* Allocate rotational storage for integrator outputs, in & out */
-
-
-/*****  The following two lines may be unnecessary in the final version *****/
-
-/*  We have to allocate memory and use cm_analog_alloc, because the ITP variables
-	are not functional */
-
-        integrator     = (double **) calloc((size_t) den_size, sizeof(double *));
-        old_integrator = (double **) calloc((size_t) den_size, sizeof(double *));
-
-        /* Allocate storage for coefficient values */
-
-        den_coefficient     = (double **) calloc((size_t) den_size, sizeof(double *));
-        old_den_coefficient = (double **) calloc((size_t) den_size, sizeof(double *));
-
-        num_coefficient     = (double **) calloc((size_t) num_size, sizeof(double *));
-        old_num_coefficient = (double **) calloc((size_t) num_size, sizeof(double *));
-
-        for (i=0; i < (2*den_size + num_size + 3); i++)
+        /* Do allocs */
+        for (i=0; i < (2*den_size + num_size + 3); i++) {
               cm_analog_alloc(i,sizeof(double));
+        }
 
    /*     ITP_VAR_SIZE(den) = den_size;  */
 
-     /*   gain = (double *) calloc(1,sizeof(double));
+     /*   gain = (double *) tcalloc_raw(1, sizeof(double));
         ITP_VAR(total_gain) = gain;
         ITP_VAR_SIZE(total_gain) = 1.0;  */
 
 		// Retrieve pointers
-        
         for (i=0; i<den_size; i++) {
             integrator[i]     = (double *) cm_analog_get_ptr(i,0);
             old_integrator[i] = (double *) cm_analog_get_ptr(i,0);
@@ -322,13 +349,8 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
 
         gain = (double *) cm_analog_get_ptr(2*den_size+num_size+2,0);
 
-    }else { /* Allocation was not necessary...retrieve previous values */
-    
-        /* Set pointers to storage locations for in, out, and integrators...*/
- 
-        integrator = (double **) calloc((size_t) den_size, sizeof(double *));
-        old_integrator = (double **) calloc((size_t) den_size, sizeof(double *));
-
+    }
+    else { /* Allocation was not necessary...retrieve previous values */
         for (i=0; i<den_size; i++) {
             integrator[i] = (double *) cm_analog_get_ptr(i,0);
             old_integrator[i] = (double *) cm_analog_get_ptr(i,1);
@@ -341,8 +363,6 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
         /* Set den_coefficient & gain pointers to ITP values */
         /* for denominator coefficients & gain...      */
 
-        old_den_coefficient = (double **) calloc((size_t) den_size, sizeof(double));  
-        den_coefficient = (double **) calloc((size_t) den_size, sizeof(double));  
 
 		for(i=den_size;i<2*den_size;i++){
             old_den_coefficient[i-den_size] = (double *) cm_analog_get_ptr(i,1);
@@ -350,8 +370,6 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
             *(den_coefficient[i-den_size]) = *(old_den_coefficient[i-den_size]);
 		} 
 
-        num_coefficient = (double **) calloc((size_t) num_size, sizeof(double));  
-		old_num_coefficient = (double **) calloc((size_t) num_size, sizeof(double));  
 
 		for(i=2*den_size;i<2*den_size+num_size;i++){
 		    old_num_coefficient[i-2*den_size] = (double *) cm_analog_get_ptr(i,1);
@@ -417,7 +435,7 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
         /* Test denominator highest order coefficient...if that value   */
         /* is other than 1.0, then divide all denominator coefficients  */
         /* and the gain by that value...                                */
-		// if ( (factor = PARAM(den_coeff[den_size-1])) != 1.0 ) {
+		// if ( (factor = PARAM(den_coeff[den_size-1])) != 1.0 ) 
 		if ( (factor = *den_coefficient[den_size-1]) != 1.0 ) {
             for (i=0; i<den_size; i++) {
                 *(den_coefficient[i]) = *(den_coefficient[i]) / factor;
@@ -428,7 +446,6 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
                   /* only need to adjust gain value.         */
             *gain = PARAM(gain); 
         }
-        
     }
                                  
 
@@ -436,7 +453,7 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
     if (ANALYSIS != MIF_AC) {     
 
         /**** DC Analysis - Not needed JPM 10/29/91 *****************/
-/*        if (ANALYSIS == MIF_DC) {    
+/*        if (ANALYSIS == MIF_DC) {
             
             ?* Test to see if a term exists for the zero-th order
                denom coeff...       
@@ -470,7 +487,7 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
  
 
 
-        else {   
+        else    
 */
 
 
@@ -600,18 +617,27 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
         AC_GAIN(out,in) = ac_gain;
     }
 
-	  /* free all allocated memory */
-		if(integrator) free(integrator);
-		if(old_integrator) free(old_integrator);
-		if(den_coefficient) free(den_coefficient);
-		if(old_den_coefficient) free(old_den_coefficient);
-		if(num_coefficient) free(num_coefficient);
-		if(old_num_coefficient) free(old_num_coefficient);
-}
-
-
-
-
+EXITPOINT:
+    /* free all allocated memory */
+    if (old_integrator != (double **) NULL) {
+        txfree(old_integrator);
+    }
+    if (integrator != (double **) NULL) {
+        txfree(integrator);
+    }
+    if (den_coefficient != (double **) NULL) {
+        txfree(den_coefficient);
+    }
+    if (old_den_coefficient != (double **) NULL) {
+        txfree(old_den_coefficient);
+    }
+    if (num_coefficient != (double **) NULL) {
+        txfree(num_coefficient);
+    }
+    if (old_num_coefficient != (double **) NULL) {
+        txfree(old_num_coefficient);
+    }
+} /* end of function cm_s_xfer */
 
 
 

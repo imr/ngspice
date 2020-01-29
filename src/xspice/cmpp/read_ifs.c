@@ -47,7 +47,11 @@ NON-STANDARD FEATURES
 ============================================================================*/
 
 #include <assert.h>
+#include <errno.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include  "ifs_yacc_y.h"
 
 extern char *prog_name;
@@ -65,7 +69,7 @@ extern int ifs_num_errors;
 
 static int read_ifs_table(FILE *fp, int mode, Ifs_Table_t *ifs_table);
 
-const char *current_filename;
+char *current_filename;
 
 /* *********************************************************************** */
 
@@ -94,35 +98,42 @@ int read_ifs_file(
     int         mode,        /* Get names only or get everything? */
     Ifs_Table_t *ifs_table)  /* Table to put info in */
 {
-   
-   FILE     *fp;                     /* Ifs file pointer */
-   
-   int status;                  /* returned status from function */
-   
-   
+   FILE *fp = (FILE *) NULL; /* Ifs file pointer */
+   int status = 0; /* returned status from function */
+ 
+ 
    /* Open the ifs file for read access */
    
-   fp = fopen_cmpp(&filename, "r");
-   
-   if(fp == NULL) {
-      perror (prog_name);
-      print_error("ERROR - File not found: %s", filename);
-      return -1;
+    /* Open the model pathname file */
+    if ((current_filename = gen_filename(filename, "r")) == (char *) NULL) {
+        print_error("ERROR - Unable to build full file name");
+        return -1;
+    }
+    if ((fp = fopen(current_filename, "r")) == (FILE *) NULL) {
+        print_error("ERROR - Unable to open \"%s\": %s",
+                current_filename, strerror(errno));
+        status = -1;
+        goto EXITPOINT;
+    }
+
+   /* Get the stuff from the file into the ifs_table struct. Here mode
+    * defines the data that will be added to the structure */
+   status = read_ifs_table(fp, mode, ifs_table);
+
+   EXITPOINT:
+   /* Close file and return */
+   if (fp != (FILE *) NULL) {
+       if (fclose(fp) != 0) {
+            print_error("ERROR - Unable to close \"%s\": %s",
+                    current_filename, strerror(errno));
+            status = -1;
+       }
    }
 
-   current_filename = filename;
-   
-   /* Get the stuff from the file into the ifs_table struct */
-   
-   status = read_ifs_table(fp, mode, ifs_table);
-   
-   /* Close file and return */
-   
-   fclose(fp);
-   
-   return(status);
-   
-}
+   free(current_filename);
+   current_filename = (char *) NULL;
+   return status;
+} /* end of function read_ifs_file */
 
 
 
@@ -146,9 +157,12 @@ static int read_ifs_table(
     int         mode,         /* Get names only or get everything? */
     Ifs_Table_t *ifs_table)   /* Table to put info in */
 {
-
    assert (ifs_table);
    assert (fp);
+
+   ifs_table->name.description = 
+   ifs_table->name.c_fcn_name = 
+   ifs_table->name.model_name = NULL;
 
    ifs_yylineno = 1;
    ifs_yyin = fp;

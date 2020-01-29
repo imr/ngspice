@@ -1,0 +1,31 @@
+* Standard ngspice init file
+alias exit quit
+alias acct rusage all
+set x11lineararcs
+*set rndseed=12
+** ascii rawfile **
+set filetype=ascii
+** frontend debug output **
+*set ngdebug
+** asking after quit **
+*set askquit
+** set the number of threads in openmp
+** default (if compiled with --enable-openmp) is: 2
+set num_threads=4
+set interactive
+set stepsizelimit
+
+strcmp __flag $program "ngspice"
+if $__flag = 0
+
+* Load the codemodels
+ codemodel spice2poly64.cm
+ codemodel analog64.cm
+ codemodel digital64.cm
+ codemodel xtradev64.cm
+ codemodel xtraevt64.cm
+ codemodel table64.cm
+
+
+end
+unset __flag

@@ -150,9 +150,8 @@ typedef char line_t[82]; /* A SPICE size line. <= 80 characters plus '\n\0' */
 /*=== FUNCTION PROTOTYPE DEFINITIONS ===*/
 
 
-                   
-
-                                      
+static void cm_d_state_callback(ARGS, Mif_Callback_Reason_t reason);
+static void free_state_fields(State_Table_t *p_state);
 
 /*==============================================================================
 
@@ -201,18 +200,19 @@ is returned.  The original input string is undisturbed.
 */
 
 static char  *CNVgettok(char **s)
-
 {
 
     char    *buf;       /* temporary storage to copy token into */
     /*char    *temp;*/      /* temporary storage to copy token into */
-    char    *ret_str;   /* storage for returned string */
 
     int     i;
 
     /* allocate space big enough for the whole string */
 
-    buf = (char *) malloc(strlen(*s) + 1);
+    if ((buf = (char *) tmalloc_raw(strlen(*s) + 1)) == (char *) NULL) {
+        cm_message_send("Unable to allocate buffer in CNVgettok()");
+        return (char *) NULL;
+    }
 
     /* skip over any white space */
 
@@ -225,9 +225,8 @@ static char  *CNVgettok(char **s)
     switch(**s) {
 
     case '\0':           /* End of string found */
-        if(buf) free(buf);
-        return(NULL);
-
+        txfree(buf);
+        return (char *) NULL;
 
     default:             /* Otherwise, we are dealing with a    */
                          /* string representation of a number   */
@@ -255,13 +254,20 @@ static char  *CNVgettok(char **s)
     /* make a copy using only the space needed by the string length */
 
 
-    ret_str = (char *) malloc(strlen(buf) + 1);
-    ret_str = strcpy(ret_str,buf);
+    {
+        char * const ret_str = (char *) tmalloc_raw(strlen(buf) + 1);
+        if (ret_str == (char *) NULL) {
+            cm_message_send("Unable to allocate return buffer "
+                    "in CNVgettok()");
+            return (char *) NULL;
+        }
+        strcpy(ret_str, buf);
+        txfree(buf);
 
-    if(buf) free(buf);
+        return ret_str;
+    }
+} /* end of function CNVgettok */
 
-    return(ret_str);
-}
 
 
 /*==============================================================================
@@ -312,21 +318,16 @@ is returned.  The original input string is undisturbed.
 */
 
 static char  *CNVget_token(char **s, Cnv_Token_Type_t *type)
-
 {
-
-    char    *ret_str;   /* storage for returned string */
-
+    /* storage for returned string */
     /* get the token from the input line */
-
-    ret_str = CNVgettok(s);
+    char * const ret_str = CNVgettok(s);
 
 
     /* if no next token, return */
-
-    if(ret_str == NULL) {
+    if (ret_str == (char *) NULL) {
         *type = CNV_NO_TOK;
-        return(NULL);
+        return (char *) NULL;
     }
 
     /* else, determine and return token type */
@@ -340,8 +341,7 @@ static char  *CNVget_token(char **s, Cnv_Token_Type_t *type)
     }
 
     return(ret_str);
-}
-
+} /* end of function CNVget_token */
 
 
 
@@ -395,8 +395,6 @@ static int cnv_get_spice_value(
 char    *str,        /* IN - The value text e.g. 1.2K */
 double  *p_value )   /* OUT - The numerical value     */
 {
-
-
     /* the following were "int4" devices - jpm */
     size_t len;
     size_t i;
@@ -482,8 +480,7 @@ double  *p_value )   /* OUT - The numerical value     */
                 scale_factor = 1.0e-3;
                 break;
             }
-            if(islower_c(c1))
-                c1 = toupper_c(c1);
+            c1 = toupper_c(c1);
             if(c1 == 'E')
                 scale_factor = 1.0e6;
             else if(c1 == 'I')
@@ -1807,11 +1804,26 @@ void cm_d_state(ARGS)
         
 
         /* assign storage for arrays to pointers in states table    */
-        states->state = (int *) calloc((size_t) (states->depth + 1), sizeof(int));
-        states->bits = (short *) calloc((size_t) (states->num_outputs * states->depth / 4 + 1), sizeof(short));
-        states->inputs = (short *) calloc((size_t) (states->num_inputs * states->depth / 8 + 1), sizeof(short));
-        states->next_state = (int *) calloc((size_t) (states->depth + 1), sizeof(int));
-        
+        states->state = (int *) tcalloc_raw(
+                (size_t) (states->depth + 1), sizeof(int));
+        states->bits = (short *) tcalloc_raw(
+                (size_t) (states->num_outputs * states->depth / 4 + 1),
+                sizeof(short));
+        states->inputs = (short *) tcalloc_raw(
+                (size_t) (states->num_inputs * states->depth / 8 + 1),
+                sizeof(short));
+        states->next_state = (int *) tcalloc_raw(
+                (size_t) (states->depth + 1), sizeof(int));
+        if (states->state == (int *) NULL ||
+                states->bits == (short *) NULL ||
+                states->inputs == (short *) NULL ||
+                states->next_state == (int *) NULL) {
+            cm_message_send("Unable to allocate state fields "
+                    "in cm_d_state()");
+            free_state_fields(states);
+            return;
+        }
+        CALLBACK = cm_d_state_callback;
 
         /* Initialize *state, *bits, *inputs & *next_state to zero  */
         for (i=0; i<states->depth; i++) {
@@ -1872,7 +1884,7 @@ void cm_d_state(ARGS)
 
         /* declare load values */
        
-        // for (i=0; i<states->num_outputs; i++) {
+        // for (i=0; i<states->num_outputs; i++)
         for (i=0; i<states->num_inputs; i++) {
             LOAD(in[i]) = PARAM(input_load);
         }              
@@ -1885,6 +1897,14 @@ void cm_d_state(ARGS)
     else {  /**** Retrieve previous values ****/
 
         states = (State_Table_t *) cm_event_get_ptr(0,0);
+        /* Need only check one allocation since will either be all
+         * allocated or not */
+        if (states->state == (int *) NULL) {
+            cm_message_send("Attempt to use unallocated state arrays "
+                    "in cm_d_state()");
+            return;
+        }
+
 		states_old = (State_Table_t *) cm_event_get_ptr(0,1);
 		// Copy storage
 		*states = *states_old;
@@ -2089,7 +2109,49 @@ void cm_d_state(ARGS)
             }
         }        
     }
-}
+} /* end of function cm_d_state */
+
+
+
+/* This function frees resources when called with reason argument
+ * MIF_CB_DESTROY */
+static void cm_d_state_callback(ARGS, Mif_Callback_Reason_t reason)
+{
+    CM_IGNORE(mif_private);
+
+    switch (reason) {
+        case MIF_CB_DESTROY: {
+            State_Table_t *p_state =
+                    (State_Table_t *) cm_event_get_ptr(0, 0);
+            free_state_fields(p_state);
+            break;
+        }
+    }
+} /* end of function cm_d_state_callback */
+
+
+
+/* Free fields in State_Table_t structure */
+static void free_state_fields(State_Table_t *p_state)
+{
+    void *p;
+    if ((p = p_state->state) != NULL) {
+        txfree(p);
+        p_state->state = (int *) NULL;
+    }
+    if ((p = p_state->bits) != NULL) {
+        txfree(p);
+        p_state->bits = (short *) NULL;
+    }
+    if ((p = p_state->inputs) != NULL) {
+        txfree(p);
+        p_state->inputs = (short *) NULL;
+    }
+    if ((p = p_state->next_state) != NULL) {
+        txfree(p);
+        p_state->next_state = (int *) NULL;
+    }
+} /* end of function free_state_fields */
 
 
 

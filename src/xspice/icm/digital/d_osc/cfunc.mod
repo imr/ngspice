@@ -277,16 +277,16 @@ void cm_d_osc(ARGS)
 
             /* Allocate storage for breakpoint domain & freq. range values */
         
-            x = (double *) calloc((size_t) cntl_size, sizeof(double));
+            x = (double *) tcalloc_raw((size_t) cntl_size, sizeof(double));
             if (!x) {
                 cm_message_send(d_osc_allocation_error); 
                 return;
             }
         
-            y = (double *) calloc((size_t) freq_size, sizeof(double));
+            y = (double *) tcalloc_raw((size_t) freq_size, sizeof(double));
             if (!y) {
                 cm_message_send(d_osc_allocation_error);  
-                if(x) free(x);
+                txfree(x);
                 return;
             }
         
@@ -394,8 +394,8 @@ void cm_d_osc(ARGS)
 
 
             
-            if(x) free(x);
-            if(y) free(y);
+            txfree(x);
+            txfree(y);
 
 
         }

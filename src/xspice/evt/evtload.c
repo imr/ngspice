@@ -340,6 +340,7 @@ static void EVTcreate_state(
 	{
         new_state = state_data->free[inst_index];
         state_data->free[inst_index] = new_state->next;
+        new_state->next = NULL; // reusing dirty memory: next must be reset
     }
     else 
 	{

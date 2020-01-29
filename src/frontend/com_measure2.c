@@ -1151,7 +1151,7 @@ measure_parse_stdParams(
     )
 {
     int pCnt;
-    char *p, *pName, *pValue;
+    char *p, *pName = NULL, *pValue;
     double engVal1;
 
     pCnt = 0;
@@ -1169,7 +1169,7 @@ measure_parse_stdParams(
                 wl = wl->wl_next;
                 continue;
             } else {
-                sprintf(errbuf, "bad syntax of ??\n");
+                sprintf(errbuf, "bad syntax. equal sign missing ?\n");
                 return 0;
             }
         }
@@ -1179,7 +1179,8 @@ measure_parse_stdParams(
         }
         else {
             if (ft_numparse(&pValue, FALSE, &engVal1) < 0) {
-                sprintf(errbuf, "bad syntax of ??\n");
+                sprintf(errbuf, "bad syntax, cannot evaluate right hand side "
+                        "of %s=%s\n", pName, pValue);
                 return 0;
             }
         }
@@ -1216,7 +1217,10 @@ measure_parse_stdParams(
     }
 
     if (pCnt == 0) {
-        sprintf(errbuf, "bad syntax of ??\n");
+        if (pName)
+            sprintf(errbuf, "bad syntax of %s\n", pName);
+        else
+            sprintf(errbuf, "bad syntax of\n");
         return 0;
     }
 
@@ -1477,6 +1481,7 @@ get_measure2(
     )
 {
     wordlist *words, *wlTarg, *wlWhen;
+///XXX TODO -- errbuf can be overrun -- convert to dstring
     char errbuf[100];
     char *mAnalysis = NULL;     // analysis type
     char *mName = NULL;         // name given to the measured output

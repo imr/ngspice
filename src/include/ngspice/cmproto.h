@@ -45,8 +45,8 @@ NON-STANDARD FEATURES
 /* The actual functions reside in ../ICM/CMutil.c        */
 /*                                         12/17/90      */
 
-
 #include  <stdio.h>
+
 #include "ngspice/cmtypes.h"
 #include "ngspice/cktdefs.h"
 
@@ -78,21 +78,11 @@ int  cm_analog_set_temp_bkpt(double time);
 int  cm_analog_set_perm_bkpt(double time);
 void cm_analog_not_converged(void);
 void cm_analog_auto_partial(void);
-
 void cm_event_alloc(int tag, int bytes);
 void *cm_event_get_ptr(int tag, int timepoint);
 int  cm_event_queue(double time);
-
 char *cm_message_get_errmsg(void);
-int  cm_message_send(char *msg);
-
-#ifdef __GNUC__
-int cm_message_printf(const char *fmt, ...) __attribute__ ((format (__printf__, 1, 2)));
-#else
-int cm_message_printf(const char *fmt, ...);
-#endif
-
-
+int  cm_message_send(const char *msg);
 double cm_netlist_get_c(void);
 double cm_netlist_get_l(void);
 
@@ -111,9 +101,29 @@ FILE *cm_stream_err(void);
 
 void *malloc_pj(size_t s);
 void *calloc_pj(size_t s1, size_t s2);
-void *realloc_pj(const void *ptr, size_t s);
-void  free_pj(const void *ptr);
+void *realloc_pj(void *ptr, size_t s);
+void  free_pj(void *ptr);
+void *tmalloc(size_t s);
+void *trealloc(void *ptr, size_t s);
+void txfree(void *ptr);
+const char *ngspice_version(void);
+void *tmalloc_raw(size_t s);
+void *tcalloc_raw(size_t n, size_t s);
+void *trealloc_raw(void *ptr, size_t s);
+char *tstrdup(const char *str_in);
+char *tstrdup_raw(const char *str_in);
 
 FILE *fopen_with_path(const char *path, const char *mode);
+
+#ifdef __GNUC__
+int cm_message_printf(const char *fmt, ...)
+        __attribute__ ((format (__printf__, 1, 2)));
+#else
+int cm_message_printf(const char *fmt, ...);
+#endif
+
+#ifndef CM_IGNORE
+#define CM_IGNORE(x) (x)
+#endif
 
 #endif

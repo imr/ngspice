@@ -42,9 +42,6 @@ NON-STANDARD FEATURES
 
 
 
-/* *********************************************************************** */
-
-
 /*
 preprocess_ifs_file
 
@@ -65,7 +62,6 @@ void preprocess_ifs_file(void)
 
     int status;      /* Return status */
 
-
     /* Read the entire ifspec.ifs file and load the data into ifs_table */
 
     status = read_ifs_file(IFSPEC_FILENAME,GET_IFS_TABLE,&ifs_table);
@@ -82,8 +78,56 @@ void preprocess_ifs_file(void)
     if(status != 0) {
         exit(1);
     }
-
+    rem_ifs_table(&ifs_table);
 }
+
+void rem_ifs_table(Ifs_Table_t *ifs_table)
+{
+    /* Remove the ifs_table */
+    free(ifs_table->name.c_fcn_name);
+    free(ifs_table->name.description);
+    free(ifs_table->name.model_name);
+
+    {
+        Conn_Info_t * const p_conn = ifs_table->conn;
+        const int num_conn = ifs_table->num_conn;
+        int i;
+        for (i = 0; i < num_conn; ++i) {
+            Conn_Info_t *p_conn_cur = p_conn + i;
+            free(p_conn_cur->name);
+            free(p_conn_cur->description);
+            free(p_conn_cur->default_type);
+        }
+    }
+
+    {
+        Param_Info_t * const p_param = ifs_table->param;
+        const int num_param = ifs_table->num_param;
+        int i;
+        for (i = 0; i < num_param; ++i) {
+            Param_Info_t *p_param_cur = p_param + i;
+            free(p_param_cur->name);
+            free(p_param_cur->description);
+        }
+    }
+
+    {
+        Inst_Var_Info_t * const p_inst_var = ifs_table->inst_var;
+        const int num_inst_var = ifs_table->num_inst_var;
+        int i;
+        for(i = 0; i < num_inst_var; ++i) {
+            Inst_Var_Info_t *p_inst_var_cur = p_inst_var + i;
+            free(p_inst_var_cur->name);
+            free(p_inst_var_cur->description);
+        }
+    }
+
+    free(ifs_table->conn);
+    free(ifs_table->param);
+    free(ifs_table->inst_var);
+} /* end of function rem_ifs_table */
+
+
 
 
 

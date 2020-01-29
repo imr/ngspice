@@ -59,7 +59,7 @@ extern void MIF_INP2A(
 
 extern char * MIFgetMod(
     CKTcircuit *ckt,
-    char      *name,
+    const char *name,
     INPmodel  **model,
     INPtables *tab 
 );
@@ -152,7 +152,11 @@ extern Mif_Cntl_Src_Type_t MIFget_cntl_src_type(
     Mif_Port_Type_t out_port_type
 );
 
-extern char *MIFcopy(char *);
+extern char *MIFcopy(const char *);
 
+
+#ifndef CM_IGNORE
+#define CM_IGNORE(x) (x)
+#endif
 
 #endif

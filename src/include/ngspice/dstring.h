@@ -9,6 +9,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "ngspice/memory.h"
+
 /* Error codes */
 #define DS_E_OK         0
 #define DS_E_INVALID    (-1)
@@ -192,7 +194,7 @@ inline char *ds_free_move(DSTRING *p_ds, unsigned int opt)
         if (opt & DS_FREE_MOVE_OPT_FORCE_ALLOC) {
             /* Allocate to minimum size */
             size_t n_byte_alloc = p_ds->length + 1;
-            char * const p_ret = (char *) malloc(n_byte_alloc);
+            char * const p_ret = (char *) tmalloc_raw(n_byte_alloc);
             if (p_ret == (char *) NULL) {
                 return (char *) NULL;
             }
@@ -204,7 +206,7 @@ inline char *ds_free_move(DSTRING *p_ds, unsigned int opt)
     if (opt & DS_FREE_MOVE_OPT_COMPACT) {
         /* Allocate to minimum size */
         size_t n_byte_alloc = p_ds->length + 1;
-        char * const p_ret = (char *) realloc(p_buf_active, n_byte_alloc);
+        char * const p_ret = (char *) trealloc_raw(p_buf_active, n_byte_alloc);
         if (p_ret == (char *) NULL) {
             /* Realloc to smaller size somehow failed! */
             return (char *) NULL;

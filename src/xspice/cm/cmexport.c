@@ -1,12 +1,9 @@
 #include "ngspice/ngspice.h"
 #include "ngspice/mif.h"
 #include "ngspice/cm.h"
+#include "ngspice/cpextern.h"
 #include "ngspice/dllitf.h"
-
-/*how annoying!, needed for structure below*/
-static void *tcalloc(size_t a, size_t b) {
-  return tmalloc(a*b);          /* FIXME, tcalloc must zero !?!? */
-}
+#include "ngspice/alloc.h"
 
 #ifdef HAVE_LIBGC
 static void no_free(const void *p) {
@@ -14,11 +11,31 @@ static void no_free(const void *p) {
 }
 #endif
 
-static FILE * no_file(void) {
-  return NULL;
+/* Returns the version string for ngspice */
+static const char *get_ngspice_version(void)
+{
+    const char *buf = VERSION;
+    return buf;
+} /* end of function get_ngspice_version */
+
+
+/* Returns stdout, stdin, and stderr */
+static FILE *get_stdout(void)
+{
+    return cp_out;
+}
+static FILE *get_stdin(void)
+{
+    return cp_in;
+}
+static FILE *get_stderr(void)
+{
+    return cp_err;
 }
 
-struct coreInfo_t  coreInfo =
+
+
+const struct coreInfo_t coreInfo =
 {
   MIF_INP2A,
   MIFgetMod,
@@ -65,24 +82,21 @@ struct coreInfo_t  coreInfo =
   cm_complex_divide,
   cm_get_path,
   cm_get_circuit,
-  no_file,
-  no_file,
-  no_file,
-#ifndef HAVE_LIBGC
-  tmalloc,
-  tcalloc,
-  trealloc,
-  txfree,
-  tmalloc,
-  trealloc,
-  txfree
-#else
-  GC_malloc,
-  tcalloc,
-  GC_realloc,
-  no_free,
-  GC_malloc,
-  GC_realloc,
-  no_free
-#endif
+    &get_stdout,
+    &get_stdin,
+    &get_stderr,
+    &tmalloc,
+    &tcalloc,
+    &trealloc,
+    &txfree,
+    &tmalloc,
+    &trealloc,
+    &txfree,
+    /* Version 2 additions */
+    &get_ngspice_version,
+    &tmalloc_raw,
+    &tcalloc_raw,
+    &trealloc_raw,
+    &tstrdup,
+    &tstrdup_raw
 };

@@ -100,6 +100,8 @@ NON-STANDARD FEATURES
 
 ==============================================================================*/
 
+static void cm_d_genlut_callback(ARGS, Mif_Callback_Reason_t reason);
+
 /*=== CM_D_LUT ROUTINE ===*/
 
 /************************************************
@@ -166,10 +168,15 @@ void cm_d_genlut(ARGS)
     /*** Setup required state variables ***/
 
     if (INIT) {  /* initial pass */
-
         /* allocate storage for the lookup table */
-        STATIC_VAR (locdata) = calloc((size_t) tablelen, sizeof(Digital_t));
-        lookup_table = STATIC_VAR (locdata);
+        if ((lookup_table = (Digital_t *) (STATIC_VAR(locdata) = tcalloc_raw(
+                (size_t) tablelen, sizeof(Digital_t)))) ==
+                (Digital_t *) NULL) {
+            cm_message_send("Unable to allocate Digital_t structure "
+                    "in cm_d_genlut()");
+            return;
+        }
+        CALLBACK = cm_d_genlut_callback;
 
         /* allocate storage for the outputs */
         cm_event_alloc(0, osize * (int) sizeof(Digital_t));
@@ -216,10 +223,15 @@ void cm_d_genlut(ARGS)
             lookup_table[idx].state = UNKNOWN;
             lookup_table[idx].strength = UNDETERMINED;
         }
-    } else {    /* Retrieve previous values */
-
+    }
+    else {    /* Retrieve previous values */
         /* retrieve lookup table */
-        lookup_table = STATIC_VAR (locdata);
+        if ((lookup_table = (Digital_t *) STATIC_VAR(locdata)) ==
+                (Digital_t *) NULL) {
+            cm_message_send("Attempt to use unallocated lookup_table "
+                    "in cm_d_genlut()");
+            return;
+        }
 
         /* retrieve storage for the inputs and outputs */
         out = (Digital_t *) cm_event_get_ptr(0, 0);
@@ -383,4 +395,24 @@ void cm_d_genlut(ARGS)
             }
         }
     }
-}
+} /* end of  function cm_d_genlut */
+
+
+
+/* This function frees resources when called with reason argument
+ * MIF_CB_DESTROY */
+static void cm_d_genlut_callback(ARGS, Mif_Callback_Reason_t reason)
+{
+    switch (reason) {
+        case MIF_CB_DESTROY: {
+            void * const p = STATIC_VAR(locdata);
+            if (p != NULL) {
+                txfree(p);
+            }
+            break;
+        }
+    }
+} /* end of function cm_d_genlut_callback */
+
+
+

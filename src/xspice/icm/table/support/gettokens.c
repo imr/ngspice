@@ -20,13 +20,15 @@ char *CNVgettok(char **s)
 {
     char    *buf;       /* temporary storage to copy token into */
     /*char    *temp;*/      /* temporary storage to copy token into */
-    char    *ret_str;   /* storage for returned string */
 
     int     i;
 
     /* allocate space big enough for the whole string */
 
-    buf = (char *) malloc(strlen(*s) + 1);
+    if ((buf = (char *) tmalloc_raw(strlen(*s) + 1)) == (char *) NULL) {
+        cm_message_printf("cannot allocate buffer to tokenize");
+        return (char *) NULL;
+    }
 
     /* skip over any white space */
 
@@ -39,8 +41,9 @@ char *CNVgettok(char **s)
     switch (**s) {
 
     case '\0':           /* End of string found */
-        if (buf)
-                    free(buf);
+        if (buf) {
+            txfree(buf);
+        }
         return NULL;
 
 
@@ -70,12 +73,15 @@ char *CNVgettok(char **s)
     /* make a copy using only the space needed by the string length */
 
 
-    ret_str = (char *) malloc(strlen(buf) + 1);
-    ret_str = strcpy(ret_str,buf);
-
-    if (buf) free(buf);
-
-    return ret_str;
+    {
+        char * const ret_str = (char *) tmalloc_raw(strlen(buf) + 1);
+        if (ret_str == (char *) NULL) {
+            return (char *) NULL;
+        }
+        (void) strcpy(ret_str, buf);
+        txfree(buf);
+        return ret_str;
+    }
 } /* end of function CNVgettok */
 
 

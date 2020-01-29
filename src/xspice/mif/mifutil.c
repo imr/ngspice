@@ -394,7 +394,7 @@ MIFcopy
 This function allocates a new copy of a string.
 */
 
-char *MIFcopy(char *str)
+char *MIFcopy(const char *str)
 {
 	if(str)
 		return copy(str);

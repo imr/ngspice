@@ -1,28 +1,29 @@
-adc_bridge
-dac_bridge
-d_and
-d_buffer
-d_dff
-d_dlatch
-d_fdiv
-d_genlut
-d_inverter
-d_jkff
-d_lut
-d_nand
-d_nor
-d_open_c
-d_open_e
-d_or
-d_osc
-d_pulldown
-d_pullup
-d_ram
-d_source
-d_srff
-d_srlatch
-d_state
-d_tff
-d_tristate
-d_xnor
-d_xor
+#Directory          Version
+adc_bridge              1
+dac_bridge              1
+d_and                   1
+d_buffer                1
+d_dff                   1
+d_dlatch                1
+d_fdiv                  1
+d_genlut                 2
+d_inverter              1
+d_jkff                  1
+d_lut                    2
+d_nand                  1
+d_nor                   1
+d_open_c                1
+d_open_e                1
+d_or                    1
+d_osc                    2
+d_pulldown              1
+d_pullup                1
+d_ram                   1
+d_source                 2
+d_srff                  1
+d_srlatch               1
+d_state                  2
+d_tff                   1
+d_tristate              1
+d_xnor                  1
+d_xor                   1

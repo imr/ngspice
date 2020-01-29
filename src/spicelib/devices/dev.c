@@ -42,20 +42,22 @@
 #include <string.h> /* for strcpy, strcat*/
 #if (!defined HAS_WINGUI) && (!defined __MINGW32__) && (!defined _MSC_VER)
 #include <dlfcn.h> /* to load libraries*/
-typedef void *  funptr_t;
+typedef void * funptr_t;
+#define FREE_DLERR_MSG(msg)
 #else /* ifdef HAS_WINGUI */
 #undef BOOLEAN
 #include <windows.h>
 typedef FARPROC funptr_t;
-void *dlopen (const char *, int);
-funptr_t dlsym (void *, const char *);
-int dlclose (void *);
-char *dlerror (void);
+void *dlopen(const char *, int);
+funptr_t dlsym(void *, const char *);
+char *dlerror(void);
+#define FREE_DLERR_MSG(msg) free_dlerr_msg(msg)
+static void free_dlerr_msg(char *msg);
 #define RTLD_LAZY	1	/* lazy function call binding */
 #define RTLD_NOW	2	/* immediate function call binding */
 #define RTLD_GLOBAL	4	/* symbols in this dlopen'ed obj are visible to other dlopen'ed objs */
-static char errstr[128];
 #endif /* ifndef HAS_WINGUI */
+
 #include "ngspice/dllitf.h" /* the coreInfo Structure*/
 #include "ngspice/evtudn.h" /*Use defined nodes */
 
@@ -400,115 +402,198 @@ int add_udn(int n,Evt_Udn_Info_t **udns){
   return 0;
 }
 
-extern struct coreInfo_t  coreInfo;
 
-int load_opus(char *name){
-  void *lib;
-  const char *msg;
-  int *num=NULL;
-  struct coreInfo_t **core;
-  SPICEdev **devs;
-  Evt_Udn_Info_t  **udns;
-  funptr_t fetch;
+int load_opus(const char *name)
+{
+    void *lib;
+    char *msg;
+    int num;
+    SPICEdev **devs;
+    Evt_Udn_Info_t **udns;
+    funptr_t fetch;
 
-  lib = dlopen(name,RTLD_NOW);
-  if(!lib){
-    msg = dlerror();
-    printf("%s\n", msg);
-    return 1;
-  }
-  
-  fetch = dlsym(lib,"CMdevNum");
-  if(fetch){
-    num = ((int * (*)(void)) fetch) ();
+    lib = dlopen(name, RTLD_NOW);
+    if (!lib) {
+        msg = dlerror();
+        printf("Error opening code model \"%s\": %s\n", name, msg);
+        FREE_DLERR_MSG(msg);
+        return 1;
+    }
+
+
+    /* Get code models defined by the library */
+    if ((fetch = dlsym(lib, "CMdevNum2")) != (funptr_t) NULL) {
+        /* Version 2 code models present */
+        num = *(*(int * (*)(void)) fetch)();
+        fetch = dlsym(lib, "CMdevs2");
+        if (fetch != (funptr_t) NULL) {
+            devs = (*(SPICEdev ** (*)(void)) fetch)();
+        }
+        else {
+            msg = dlerror();
+            printf("Error getting the list of version 2 devices: %s\n",
+                    msg);
+            FREE_DLERR_MSG(msg);
+            return 1;
+        }
+    }
+    else { /* no version 2, so try version 1 */
+        if ((fetch = dlsym(lib, "CMdevNum")) != (funptr_t) NULL) {
+            num = *(*(int * (*)(void)) fetch)();
+            fetch = dlsym(lib, "CMdevs");
+            if (fetch != (funptr_t) NULL) {
+                devs = (*(SPICEdev ** (*)(void)) fetch)();
+            }
+            else {
+                msg = dlerror();
+                printf("Error getting the list of version 1 devices: %s\n",
+                        msg);
+                FREE_DLERR_MSG(msg);
+                return 1;
+            }
+        } /* end of case that got version 1 */
+        else { /* no version 2 or version 1 */
+            msg = dlerror();
+            printf("Error finding the number of devices: %s\n", msg);
+            FREE_DLERR_MSG(msg);
+            return 1;
+        }
+    } /* end of case of no version 2 */
+
+    add_device(num, devs, 1);
+
 #ifdef TRACE
-    printf("Got %u devices.\n",*num);
+        printf("Got %u devices.\n", num);
 #endif
-  }else{
-    msg = dlerror();
-    printf("%s\n", msg);
-    return 1;
-  }
 
-  fetch = dlsym(lib,"CMdevs");
-  if(fetch){
-    devs = ((SPICEdev ** (*)(void)) fetch) ();
-  }else{
-    msg = dlerror();
-    printf("%s\n", msg);
-    return 1;
-  }
 
-  fetch = dlsym(lib,"CMgetCoreItfPtr");
-  if(fetch){
-    core = ((struct coreInfo_t ** (*)(void)) fetch) ();
-    *core = &coreInfo;
-  }else{
-    msg = dlerror();
-    printf("%s\n", msg);
-    return 1;
-  }
-  add_device(*num,devs,1);
+    /* Get user-defined ndes defined by the library */
+    if ((fetch = dlsym(lib, "CMudnNum2")) != (funptr_t) NULL) {
+        /* Version 2 user-defined types present */
+        num = *(*(int * (*)(void)) fetch)();
+        fetch = dlsym(lib, "CMudns2");
+        if (fetch != (funptr_t) NULL) {
+            udns = (*(Evt_Udn_Info_t ** (*)(void)) fetch)();
+        }
+        else {
+            msg = dlerror();
+            printf("Error getting the list of version 2 "
+                    "user-defined types: %s\n",
+                    msg);
+            FREE_DLERR_MSG(msg);
+            return 1;
+        }
+    }
+    else { /* no version 2, so try version 1 */
+        if ((fetch = dlsym(lib, "CMudnNum")) != (funptr_t) NULL) {
+            num = *(*(int * (*)(void)) fetch)();
+            fetch = dlsym(lib, "CMudns");
+            if (fetch != (funptr_t) NULL) {
+                udns = (*(Evt_Udn_Info_t ** (*)(void)) fetch)();
+            }
+            else {
+                msg = dlerror();
+                printf("Error getting the list of version 1 "
+                        "user-defined types: %s\n",
+                        msg);
+                FREE_DLERR_MSG(msg);
+                return 1;
+            }
+        } /* end of case that got version 1 */
+        else { /* no version 2 or version 1 */
+            msg = dlerror();
+            printf("Error finding the number of "
+                    "user-defined types: %s\n", msg);
+            FREE_DLERR_MSG(msg);
+            return 1;
+        }
+    } /* end of case of no version 2 */
 
-  fetch = dlsym(lib,"CMudnNum");
-  if(fetch){
-    num = ((int * (*)(void)) fetch) ();
+    add_udn(num, udns);
 #ifdef TRACE
-    printf("Got %u udns.\n",*num);
+        printf("Got %u udns.\n", num);
 #endif
-  }else{
-    msg = dlerror();
-    printf("%s\n", msg);
-    return 1;
-  }
 
-  fetch = dlsym(lib,"CMudns");
-  if(fetch){
-    udns = ((Evt_Udn_Info_t  ** (*)(void)) fetch) ();
-  }else{
-    msg = dlerror();
-    printf("%s\n", msg);
-    return 1;
-  }
 
-  add_udn(*num,udns);
+    /* Give the code model access to facilities provided by ngspice. Note
+     * that older versions of code models will not access the functions
+     * added by newer versions of ngspice since it is unaware of them and
+     * newer versions of code models will not use newer (undefined)
+     * functions from ngspice because any of its models that use them
+     * will not be recognized and used by ngspice. */
+    if ((fetch = dlsym(lib,"CMgetCoreItfPtr")) != (funptr_t) NULL) {
+        const struct coreInfo_t ** const core =
+                (*(const struct coreInfo_t ** const (*)(void)) fetch)();
+        *core = &coreInfo;
+    }
+    else {
+        msg = dlerror();
+        printf("Error getting interface pointer: %s\n", msg);
+        FREE_DLERR_MSG(msg);
+        return 1;
+    }
 
-  return 0;
-}
+
+    return 0;
+} /* end of function load_opus */
+
+
 
 #if defined(__MINGW32__) || defined(HAS_WINGUI) || defined(_MSC_VER)
 
-void *dlopen(const char *name,int type)
+/* For reporting error message if formatting fails */
+static const char errstr_fmt[] =
+        "Unable to find message in dlerr(). System code = %lu";
+static char errstr[sizeof errstr_fmt - 3 + 3 * sizeof(unsigned long)];
+
+/* Emulations of POSIX dlopen(), dlsym(), and dlerror(). */
+void *dlopen(const char *name, int type)
 {
-	NG_IGNORE(type);
-	return LoadLibrary(name);
+    NG_IGNORE(type);
+    return LoadLibrary(name);
 }
 
 funptr_t dlsym(void *hDll, const char *funcname)
 {
-	return GetProcAddress(hDll, funcname);
+    return GetProcAddress(hDll, funcname);
 }
 
 char *dlerror(void)
 {
-	LPVOID lpMsgBuf;
+    LPVOID lpMsgBuf;
 
-	FormatMessage(
-		FORMAT_MESSAGE_ALLOCATE_BUFFER |
-		FORMAT_MESSAGE_FROM_SYSTEM |
-		FORMAT_MESSAGE_IGNORE_INSERTS,
-		NULL,
-		GetLastError(),
-		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-		(LPTSTR) &lpMsgBuf,
-		0,
-		NULL
-	);
-	strcpy(errstr,lpMsgBuf);
-	LocalFree(lpMsgBuf);
-	return errstr;
-}
-#endif
+    DWORD rc = FormatMessage(
+            FORMAT_MESSAGE_ALLOCATE_BUFFER |
+            FORMAT_MESSAGE_FROM_SYSTEM |
+            FORMAT_MESSAGE_IGNORE_INSERTS,
+            NULL,
+            GetLastError(),
+            MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+            (LPTSTR) &lpMsgBuf,
+            0,
+            NULL
+            );
 
+    if (rc == 0) { /* FormatMessage failed */
+        (void) sprintf(errstr, errstr_fmt, (unsigned long) GetLastError());
+        return errstr;
+    }
+
+    return lpMsgBuf; /* Return the formatted message */
+} /* end of function dlerror */
+
+
+
+/* Free message related to dynamic loading */
+static void free_dlerr_msg(char *msg)
+{
+    if (msg != errstr) { /* msg is an allocation */
+        LocalFree(msg);
+    }
+} /* end of function free_dlerr_msg */
+
+
+
+#endif /* Windows emulation of dlopen, dlsym, and dlerr */
 #endif
 /*--------------------   end of XSPICE additions  ----------------------*/

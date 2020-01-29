@@ -56,10 +56,12 @@ NON-STANDARD FEATURES
 
 /*=== CONSTANTS ========================*/
 
-char *square_allocation_error = "\n**** Error ****\nSQUARE: Error allocating square block storage \n";
-char *square_limit_error = "\n**** Error ****\nSQUARE: Smoothing domain value too large \n";
-char *square_freq_clamp = "\n**** WARNING  ****\nSQUARE: Frequency extrapolation limited to 1e-16 \n";
-char *square_array_error = "\n**** Error ****\nSQUARE: Size of control array different than frequency array \n";
+const char * const square_freq_clamp =
+        "\n**** WARNING  ****\nSQUARE: Frequency extrapolation limited "
+        "to 1e-16 \n";
+const char * const square_array_error =
+        "\n**** Error ****\nSQUARE: Size of control array different "
+        "than frequency array \n";
 
 #define INT1 1
 #define T1   2

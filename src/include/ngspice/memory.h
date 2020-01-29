@@ -3,33 +3,23 @@
 
 #include <stddef.h>
 
-#define TMALLOC(t, n)       (t*) tmalloc(sizeof(t) * (size_t)(n))
-#define TREALLOC(t, p, n)   (t*) trealloc(p, sizeof(t) * (size_t)(n))
+#include "ngspice/alloc.h"
+
+/* "Type" allocations */
+#define TMALLOC(t, n)       (t *) tmalloc(sizeof(t) * (size_t)(n))
+#define TREALLOC(t, p, n)   (t *) trealloc(p, sizeof(t) * (size_t)(n))
 
 
-#ifndef HAVE_LIBGC
-
-extern void *tmalloc(size_t num);
-extern void *trealloc(const void *str, size_t num);
-extern void txfree(const void *ptr);
-
-#define tfree(x) (txfree(x), (x) = 0)
-
-#else
-
-#include <gc/gc.h>
-
-#define tmalloc(m)      GC_malloc(m)
-#define trealloc(m, n)  GC_realloc((m), (n))
+#ifdef HAVE_LIBGC
 #define tfree(m)
-#define txfree(m)
-
+#else
+#define tfree(x) (txfree(x), (x) = 0)
 #endif /* HAVE_LIBGC */
 
 
 #include "ngspice/stringutil.h"
 
-#define FREE(x)          do { if(x) { txfree(x); (x) = NULL; } } while(0)
+#define FREE(x)          do { if (x) { txfree(x); (x) = NULL; } } while(0)
 #define ZERO(PTR, TYPE)  memset(PTR, 0, sizeof(TYPE))
 
 
@@ -59,4 +49,4 @@ extern void txfree(const void *ptr);
 
 #endif /* CIDER */
 
-#endif
+#endif /* include guard */

@@ -229,19 +229,30 @@ cm_pwl_callback(ARGS, Mif_Callback_Reason_t reason)
 {
     switch (reason) {
         case MIF_CB_DESTROY: {
-            double *last_x_value = STATIC_VAR (last_x_value);
-            double *x = STATIC_VAR (x);            
-            double *y = STATIC_VAR (y);            
-            free(last_x_value);
-            free(x);
-            free(y);
+            void *p = STATIC_VAR(last_x_value);
+            if (p != NULL) {
+                txfree(p);
+            }
+
+            p = STATIC_VAR(x);
+            if (p != NULL) {
+                txfree(p);
+            }
+
+            p = STATIC_VAR(y);
+            if (p != NULL) {
+                txfree(p);
+            }
+
             STATIC_VAR (last_x_value) = NULL;
             STATIC_VAR (x) = NULL;
-            STATIC_VAR (y) = NULL;            
+            STATIC_VAR (y) = NULL;
             break;
         }
     }
-}
+} /* end of function cm_pwl_callback */
+
+
 
 /*=== CM_PWL ROUTINE ================*/
 
@@ -270,10 +281,11 @@ void cm_pwl(ARGS)  /* structure holding parms,
 
     Mif_Complex_t ac_gain;
 
-    CALLBACK = cm_pwl_callback;
 
-    char *allocation_error="\n***ERROR***\nPWL: Allocation calloc failed!\n";
-    char *limit_error="\n***ERROR***\nPWL: Violation of 50% rule in breakpoints!\n";
+    static const char * const allocation_error = "\n***ERROR***\n"
+            "PWL: Allocation failed!\n";
+    static const char * const limit_error = "\n***ERROR***\n"
+            "PWL: Violation of 50% rule in breakpoints!\n";
 
     /* Retrieve frequently used parameters... */
 
@@ -282,25 +294,22 @@ void cm_pwl(ARGS)  /* structure holding parms,
     size = PARAM_SIZE(x_array);           
 
 
-      
     if (INIT==1) {  /* First pass...allocate storage for previous value... */
 
         /* Allocate storage for last_x_value */
-        STATIC_VAR(last_x_value) = (double *) malloc(sizeof(double));
-        last_x_value = (double *) STATIC_VAR(last_x_value);
-
-        /* Allocate storage for breakpoint domain & range values */
-        STATIC_VAR(x) = (double *) calloc((size_t) size, sizeof(double));
-        x = (double *) STATIC_VAR(x);
-        if (!x) {
-            cm_message_send(allocation_error); 
+        last_x_value = (double *) (STATIC_VAR(last_x_value) = tmalloc_raw(
+                sizeof(double)));
+        x = (double *) (STATIC_VAR(x) = tcalloc_raw((size_t) size,
+                sizeof(double)));
+        y = (double *) (STATIC_VAR(y) = tcalloc_raw((size_t) size,
+                sizeof(double)));
+        if (last_x_value == (double *) NULL ||
+                x == (double *) NULL || y == (double *) NULL) {
+            cm_message_send(allocation_error);
+            cm_pwl_callback(mif_private, MIF_CB_DESTROY);
+            return;
         }
-
-        STATIC_VAR(y) = (double *) calloc((size_t) size, sizeof(double));
-        y = (double *) STATIC_VAR(y);
-        if (!y) {
-            cm_message_send(allocation_error);  
-        }
+        CALLBACK = cm_pwl_callback;
 
         /* Retrieve x and y values. */       
         for (i=0; i<size; i++) {
@@ -310,17 +319,16 @@ void cm_pwl(ARGS)  /* structure holding parms,
 
     }  
     else {
-
         last_x_value = (double *) STATIC_VAR(last_x_value);
-
         x = (double *) STATIC_VAR(x);
-
         y = (double *) STATIC_VAR(y);
 
+        /* Need only check one since will be all alloc or none will */
+        if (last_x_value == (double *) NULL) {
+            cm_message_send("attempt to use unallocated x and y values");
+            return;
+        }
     }
-
-
-
 
 
     /* See if input_domain is absolute...if so, test against   */
@@ -538,5 +546,5 @@ void cm_pwl(ARGS)  /* structure holding parms,
         ac_gain.imag= 0.0;
         AC_GAIN(out,in) = ac_gain;
     }
-} 
+} /* end of function cm_pwl */
 
