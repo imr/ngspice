@@ -165,7 +165,7 @@ ACan(CKTcircuit *ckt, int restart)
                                    NULL, IF_REAL,
                                    numNames, nameList, IF_REAL,
                                    &acPlot);
-        tfree(nameList);
+        txfree(nameList);
 
         ipc_send_dcop_prefix();
         CKTdump(ckt, 0.0, acPlot);

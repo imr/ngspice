@@ -21,8 +21,8 @@ Author: 1987 Kanwar Jit Singh
  * pointers needed later for fast matrix loading
  */
 
-int
-ASRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
+int ASRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
+        const int *states)
 {
     ASRCinstance *here;
     ASRCmodel *model = (ASRCmodel*) inModel;
