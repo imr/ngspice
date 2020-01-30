@@ -54,6 +54,10 @@ typedef enum AnalysisType {
     AT_ERR, AT_ERR1, AT_ERR2, AT_ERR3, AT_MIN_AT, AT_MAX_AT
 } ANALYSIS_TYPE_T;
 
+static void measure_errMessage(const char *mName, const char *mFunction,
+        const char *trigTarg, const char *errMsg, int chk_only);
+
+
 
 /** return precision (either 5 or value of environment variable NGSPICE_MEAS_PRECISION) */
 int
@@ -69,8 +73,8 @@ measure_get_precision(void)
 }
 
 
-static void
-measure_errMessage(char *mName, char *mFunction, char *trigTarg, char *errMsg, int chk_only)
+static void measure_errMessage(const char *mName, const char *mFunction,
+        const char *trigTarg, const char *errMsg, int chk_only)
 {
     if (!chk_only) {
         printf("\nError: measure  %s  %s(%s) : ", mName, mFunction, trigTarg);

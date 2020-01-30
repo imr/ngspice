@@ -328,9 +328,9 @@ ft_agraf(double *xlims, double *ylims, struct dvec *xscale, struct plot *plot, s
 
     out_printf("%s\n%s\n", line1, line2);
 
-    tfree(field);
-    tfree(line1);
-    tfree(line2);
+    txfree(field);
+    txfree(line1);
+    txfree(line2);
     if (!novalue)
-        tfree(values);
+        txfree(values);
 }

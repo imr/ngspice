@@ -104,8 +104,8 @@ f_alpha(int n_pts, int n_exp, double X[], double Q_d, double alpha)
 
 #endif
 
-    tfree(hfa);
-    tfree(wfa);
+    txfree(hfa);
+    txfree(wfa);
     /* fft tables will be freed in vsrcaccept.c and isrcaccept.c
        fftFree(); */
     fprintf(stdout, "%d 1/f noise values in time domain created\n", n_pts);
@@ -247,6 +247,6 @@ trnoise_state_free(struct trnoise_state *this)
 {
     if (!this)
         return;
-    tfree(this->oneof);
-    tfree(this);
+    txfree(this->oneof);
+    txfree(this);
 }
