@@ -7,15 +7,14 @@
 #define ngspice_ARG_H
 
 char *prompt(FILE *fp);
-int countargs(wordlist *wl);
 wordlist *process(wordlist *wlist);
-void arg_print(wordlist *wl, struct comm *command);
-void arg_plot(wordlist *wl, struct comm *command);
-void arg_load(wordlist *wl, struct comm *command);
-void arg_let(wordlist *wl, struct comm *command);
-void arg_set(wordlist *wl, struct comm *command);
-void arg_display(wordlist *wl, struct comm *command);
-void outmenuprompt(char *string);
+void arg_print(const wordlist *wl, const struct comm *command);
+void arg_plot(const wordlist *wl, const struct comm *command);
+void arg_load(wordlist *wl, const struct comm *command);
+void arg_let(const wordlist *wl, const struct comm *command);
+void arg_set(const wordlist *wl, const struct comm *command);
+void arg_display(const wordlist *wl, const struct comm *command);
+void outmenuprompt(const char *string);
 
 
 #endif
