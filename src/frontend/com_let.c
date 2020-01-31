@@ -199,11 +199,14 @@ void com_let(wordlist *wl)
 
                 /* Check # elem required vs available */
                 if (n_dst_elem != vec_src->v_length) {
+                    const int v_length = vec_src->v_length;
+                    const bool f_1 = v_length == 1;
                     (void) fprintf(cp_err, "Data for an index vector must "
                             "fit exactly. The indexed range required %d "
-                            "elements to fill it, but there were %d "
-                            "elements supplied.\n",
-                            n_dst_elem, vec_src->v_length);
+                            "element%s to fill it, but there %s %d "
+                            "element%s supplied.\n",
+                            n_dst_elem, n_dst_elem == 1 ? "" : "s",
+                            f_1 ? "was" : "were", v_length, f_1 ? "" : "s");
                     goto quit;
                 }
             }
