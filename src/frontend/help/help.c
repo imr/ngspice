@@ -13,7 +13,7 @@ Modified 1999 Emmanuel Rouat
 #include "ngspice/hlpdefs.h"
 #include "ngspice/suffix.h"
 
-extern char *cp_tildexpand(char *string);
+extern char *cp_tildexpand(const char *string);
 
 char *hlp_directory;
 extern char *hlp_filelist[];
