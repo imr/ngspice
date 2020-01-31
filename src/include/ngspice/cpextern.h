@@ -79,8 +79,8 @@ extern void cp_pushcontrol(void);
 
 /* glob.c */
 
-extern bool cp_globmatch(char *p, char *s);
-extern char *cp_tildexpand(char *string);
+extern bool cp_globmatch(const char *p, const char *s);
+extern char *cp_tildexpand(const char *string);
 extern char cp_cbrac;
 extern char cp_ccurl;
 extern char cp_comma;

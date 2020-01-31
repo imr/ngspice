@@ -390,7 +390,7 @@ static wordlist_l *brac2(const char *string,
 
 
 /* Expand tildes. */
-char *cp_tildexpand(char *string)
+char *cp_tildexpand(const char *string)
 {
     /* Attempt to do the tilde expansion */
     char * const result = tildexpand(string);
