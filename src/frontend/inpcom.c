@@ -20,6 +20,7 @@ Author: 1985 Wayne A. Christopher
 
 #include "ngspice/compatmode.h"
 #include "ngspice/cpdefs.h"
+#include "ngspice/dstring.h"
 #include "ngspice/dvec.h"
 #include "ngspice/ftedefs.h"
 #include "ngspice/fteext.h"
@@ -119,7 +120,8 @@ static void inp_stripcomments_line(char *s, bool cs);
 static void inp_fix_for_numparam(
         struct names *subckt_w_params, struct card *deck);
 static void inp_remove_excess_ws(struct card *deck);
-static void expand_section_references(struct card *deck, char *dir_name);
+static void expand_section_references(struct card *deck,
+        const char *dir_name);
 static void inp_grab_func(struct function_env *, struct card *deck);
 static void inp_fix_inst_calls_for_numparam(
         struct names *subckt_w_params, struct card *deck);
@@ -163,7 +165,7 @@ static void inp_check_syntax(struct card *deck);
 static char *inp_spawn_brace(char *s);
 
 static char *inp_pathresolve(const char *name);
-static char *inp_pathresolve_at(char *name, char *dir);
+static char *inp_pathresolve_at(const char *name, const char *dir);
 static char *search_plain_identifier(char *str, const char *identifier);
 
 static struct nscope *inp_add_levels(struct card *deck);
@@ -184,8 +186,8 @@ struct inp_read_t {
     int line_number;
 };
 
-static struct inp_read_t inp_read(
-        FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile);
+struct inp_read_t inp_read( FILE *fp, int call_depth, const char *dir_name,
+        bool comfile, bool intfile);
 
 
 #ifndef XSPICE
@@ -302,8 +304,7 @@ static struct card *find_section_definition(struct card *c, char *name)
     return NULL;
 }
 
-
-static struct library *read_a_lib(char *y, char *dir_name)
+static struct library *read_a_lib(const char *y, const char *dir_name)
 {
     char *yy, *y_resolved;
 
@@ -355,7 +356,8 @@ static struct library *read_a_lib(char *y, char *dir_name)
     txfree(y_resolved);
 
     return lib;
-}
+} /* end of function read_a_lib */
+
 
 
 static struct names *new_names(void)
@@ -587,8 +589,8 @@ static COMPATMODE_T ngspice_compat_mode(void)
   remove the 'level' entries from each card
   *-------------------------------------------------------------------------*/
 
-struct card *inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile,
-        bool *expr_w_temper_p)
+struct card *inp_readall(FILE *fp, const char *dir_name,
+        bool comfile, bool intfile, bool *expr_w_temper_p)
 {
     struct card *cc;
     struct inp_read_t rv;
@@ -762,8 +764,8 @@ struct card *inp_readall(FILE *fp, char *dir_name, bool comfile, bool intfile,
 }
 
 
-struct inp_read_t inp_read(
-        FILE *fp, int call_depth, char *dir_name, bool comfile, bool intfile)
+struct inp_read_t inp_read( FILE *fp, int call_depth, const char *dir_name,
+        bool comfile, bool intfile)
 /* fp: in, pointer to file to be read,
    call_depth: in, nested call to fcn
    dir_name: in, name of directory of file to be read
@@ -1264,18 +1266,19 @@ is_plain_filename(const char *p)
 #endif
 
 
-FILE *inp_pathopen(char *name, char *mode)
+FILE *inp_pathopen(const char *name, const char *mode)
 {
-    char *path = inp_pathresolve(name);
+    char * const path = inp_pathresolve(name);
 
     if (path) {
         FILE *fp = fopen(path, mode);
-        tfree(path);
+        txfree(path);
         return fp;
     }
 
-    return NULL;
-}
+    return (FILE *) NULL;
+} /* end of function inp_pathopen */
+
 
 
 /*-------------------------------------------------------------------------*
@@ -1285,7 +1288,6 @@ FILE *inp_pathopen(char *name, char *mode)
 
 static char *inp_pathresolve(const char *name)
 {
-    char buf[BSIZE_SP];
     struct variable *v;
     struct stat st;
 
@@ -1295,10 +1297,17 @@ static char *inp_pathresolve(const char *name)
     if (cp_getvar("mingwpath", CP_BOOL, NULL, 0) &&
             name[0] == DIR_TERM_LINUX && isalpha_c(name[1]) &&
             name[2] == DIR_TERM_LINUX) {
-        strcpy(buf, name);
+        DS_CREATE(ds, 100);
+        if (ds_cat_str(&ds, name) != 0) {
+            fprintf(stderr, "Unable to copy string while resolving path");
+            controlled_exit(EXIT_FAILURE);
+        }
+        char *const buf = ds_get_buf(&ds);
         buf[0] = buf[1];
         buf[1] = ':';
-        return inp_pathresolve(buf);
+        char * const resolved_path = inp_pathresolve(buf);
+        ds_free(&ds);
+        return resolved_path;
     }
 
 #endif
@@ -1310,55 +1319,77 @@ static char *inp_pathresolve(const char *name)
     /* fail if this was an absolute filename or if there is no sourcepath var
      */
     if (is_absolute_pathname(name) ||
-            !cp_getvar("sourcepath", CP_LIST, &v, 0))
-        return NULL;
-
-    for (; v; v = v->va_next) {
-
-        switch (v->va_type) {
-            case CP_STRING:
-                cp_wstrip(v->va_string);
-                (void) sprintf(buf, "%s%s%s",
-                        v->va_string, DIR_PATHSEP, name);
-                break;
-            case CP_NUM:
-                (void) sprintf(buf, "%d%s%s", v->va_num, DIR_PATHSEP, name);
-                break;
-            case CP_REAL: /* This is foolish */
-                (void) sprintf(buf, "%g%s%s", v->va_real, DIR_PATHSEP, name);
-                break;
-            default:
-                fprintf(stderr,
-                        "ERROR: enumeration value `CP_BOOL' or `CP_LIST' not "
-                        "handled in inp_pathresolve\nAborting...\n");
-                controlled_exit(EXIT_FAILURE);
-                break;
-        }
-
-        if (stat(buf, &st) == 0)
-            return copy(buf);
+            !cp_getvar("sourcepath", CP_LIST, &v, 0)) {
+        return (char *) NULL;
     }
 
-    return (NULL);
-}
+    {
+        DS_CREATE(ds, 100);
+        for (; v; v = v->va_next) {
+            int rc_ds;
+            ds_clear(&ds); /* empty buffer */
+
+            switch (v->va_type) {
+                case CP_STRING:
+                    cp_wstrip(v->va_string);
+                    rc_ds = ds_cat_printf(&ds, "%s%s%s",
+                            v->va_string, DIR_PATHSEP, name);
+                    break;
+                case CP_NUM:
+                    rc_ds = ds_cat_printf(&ds, "%d%s%s",
+                            v->va_num, DIR_PATHSEP, name);
+                    break;
+                case CP_REAL: /* This is foolish */
+                    rc_ds = ds_cat_printf(&ds, "%g%s%s",
+                            v->va_real, DIR_PATHSEP, name);
+                    break;
+                default:
+                    fprintf(stderr,
+                            "ERROR: enumeration value `CP_BOOL' or `CP_LIST' "
+                            "not handled in inp_pathresolve\nAborting...\n");
+                    controlled_exit(EXIT_FAILURE);
+            }
+
+            if (rc_ds != 0) { /* unable to build string */
+                (void) fprintf(cp_err,
+                        "Unable to build path name in inp_pathresolve");
+                controlled_exit(EXIT_FAILURE);
+            }
+
+            /* Test if the file is found */
+            {
+                const char * const buf = ds_get_buf(&ds);
+                if (stat(buf, &st) == 0) {
+                    char * const buf_cpy = dup_string(
+                            buf, ds_get_length(&ds));
+                    ds_free(&ds);
+                    return buf_cpy;
+                }
+                /* Else contiue with next attempt */
+            }
+        } /* end of loop over linked variables */
+        ds_free(&ds);
+    } /* end of block trying to find a valid name */
+
+    return (char *) NULL;
+} /* end of function inp_pathresolve */
 
 
-static char *inp_pathresolve_at(char *name, char *dir)
+
+static char *inp_pathresolve_at(const char *name, const char *dir)
 {
-    char buf[BSIZE_SP], *end;
-
     /* if name is an absolute path name,
      *   or if we haven't anything to prepend anyway
      */
-
-    if (is_absolute_pathname(name) || !dir || !dir[0])
+    if (is_absolute_pathname(name) || !dir || !dir[0]) {
         return inp_pathresolve(name);
+    }
 
     if (name[0] == '~' && name[1] == '/') {
-        char *y = cp_tildexpand(name);
+        char * const y = cp_tildexpand(name);
         if (y) {
-            char *r = inp_pathresolve(y);
-            tfree(y);
+            char * const r = inp_pathresolve(y);
+            txfree(y);
             return r;
         }
     }
@@ -1369,28 +1400,49 @@ static char *inp_pathresolve_at(char *name, char *dir)
      * sourcepath
      */
 
-    strcpy(buf, ".");
+    {
+        DS_CREATE(ds, 100);
+        if (ds_cat_printf(&ds, ".%c%s", DIR_TERM, name) != 0) {
+            (void) fprintf(cp_err,
+                    "Unable to build \".\" path name in inp_pathresolve_at");
+            controlled_exit(EXIT_FAILURE);
+        }
+        char * const r = inp_pathresolve(ds_get_buf(&ds));
+        ds_free(&ds);
+        if (r != (char *) NULL) {
+            return r;
+        }
+    }
 
-    end = strchr(buf, '\0');
-    if (end[-1] != DIR_TERM)
-        *end++ = DIR_TERM;
+    {
+        DS_CREATE(ds, 100);
+        int rc_ds = 0;
+        rc_ds |= ds_cat_str(&ds, dir); /* copy the dir name */
+        const size_t n = ds_get_length(&ds); /* end of copied dir name */
 
-    strcpy(end, name);
+        /* Append a directory separator if not present already */
+        const char ch_last = n > 0 ? dir[n - 1] : '\0';
+        if (ch_last != DIR_TERM
+#ifdef _WIN32
+                && ch_last != DIR_TERM_LINUX
+#endif
+                ) {
+            rc_ds |= ds_cat_char(&ds, DIR_TERM);
+        }
+        rc_ds |= ds_cat_str(&ds, name); /* append the file name */
 
-    char *r = inp_pathresolve(buf);
-    if (r)
+        if (rc_ds != 0) {
+            (void) fprintf(cp_err, "Unable to build \"dir\" path name "
+                    "in inp_pathresolve_at");
+            controlled_exit(EXIT_FAILURE);
+        }
+
+        char * const r = inp_pathresolve(ds_get_buf(&ds));
+        ds_free(&ds);
         return r;
+    }
+} /* end of function inp_pathresolve_at */
 
-    strcpy(buf, dir);
-
-    end = strchr(buf, '\0');
-    if (end[-1] != DIR_TERM)
-        *end++ = DIR_TERM;
-
-    strcpy(end, name);
-
-    return inp_pathresolve(buf);
-}
 
 
 /*-------------------------------------------------------------------------*
@@ -2744,7 +2796,7 @@ static void inp_remove_excess_ws(struct card *c)
 }
 
 
-static struct card *expand_section_ref(struct card *c, char *dir_name)
+static struct card *expand_section_ref(struct card *c, const char *dir_name)
 {
     char *line = c->line;
 
@@ -2845,7 +2897,7 @@ static struct card *expand_section_ref(struct card *c, char *dir_name)
  *    just those references occuring in the given library section definition
  */
 
-static void expand_section_references(struct card *c, char *dir_name)
+static void expand_section_references(struct card *c, const char *dir_name)
 {
     for (; c; c = c->nextcard)
         if (ciprefix(".lib", c->line))
