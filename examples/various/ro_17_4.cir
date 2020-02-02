@@ -62,7 +62,7 @@ c1 18 0 .1p
 option xmu = 0.49
 * set xmu=0.49
 
-set num_threads=4
+set num_threads=8
 set noinit
 run
 
