@@ -1,7 +1,7 @@
 * test de titré
 .control
 set hcopydevtype = postscript
-set hcopypscolor=5
+set hcopypscolor=1
 set hcopypstxcolor=21
 set hcopyscale=1
 set color2=rgb:F/0/0
