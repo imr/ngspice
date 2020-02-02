@@ -91,6 +91,10 @@ AC_ARG_WITH([tcl],
 AC_ARG_WITH([ngshared],
     [AS_HELP_STRING([--with-ngshared], [Compiles ngspice as shared library (dll)])])
 
+# --disable-utf8: don't use utf-8 and tchar for string representation, UNICODE support disabled
+AC_ARG_ENABLE([utf8],
+    [AS_HELP_STRING([--disable-utf8], [Don't use utf-8 or tchar (default is UNICODE support with utf-8)])])
+
 # old options, not maintained, may even not work at all
 
 # --enable-ansi: try to force --ansi option to the compiler
@@ -970,6 +974,10 @@ fi
 if test "x$enable_smltmsdebug" = xyes; then
     AC_DEFINE([D_DBG_SMALLTIMES], [], [Define if we want debug distortion analysis (SMALLTIMES)])
     AC_MSG_RESULT([WARNING: Distortion analysis debug *D_DBG_SMALLTIMES* is enabled])
+fi
+if test "x$enable_utf8" = xno; then
+    AC_DEFINE([EXT_ASC], [], [Define if you want to disable UNICODE support])
+    AC_MSG_RESULT([WARNING: UNICOPDE support is disabled, extended ascii is enabled instead])
 fi
 
 AC_PROG_YACC
