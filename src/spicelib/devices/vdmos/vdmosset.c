@@ -139,6 +139,36 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
         if (!model->VDMOStexp1Given)
             model->VDMOStexp1 = 0.3;
 
+        if (!model->VDMOStrd1Given)
+            model->VDMOStrd1 = 0.0;
+
+        if (!model->VDMOStrd2Given)
+            model->VDMOStrd2 = 0.0;
+
+        if (!model->VDMOStrg1Given)
+            model->VDMOStrg1 = 0.0;
+
+        if (!model->VDMOStrg2Given)
+            model->VDMOStrg2 = 0.0;
+
+        if (!model->VDMOStrs1Given)
+            model->VDMOStrs1 = 0.0;
+
+        if (!model->VDMOStrs2Given)
+            model->VDMOStrs2 = 0.0;
+
+        if (!model->VDMOStrb1Given)
+            model->VDMOStrb1 = 0.0;
+
+        if (!model->VDMOStrb2Given)
+            model->VDMOStrb2 = 0.0;
+
+        if (!model->VDMOStksubthres1Given)
+            model->VDMOStksubthres1 = 0.0;
+
+        if (!model->VDMOStksubthres2Given)
+            model->VDMOStksubthres2 = 0.0;
+
         if (!model->VDMOSvgsMaxGiven)
             model->VDMOSvgsMax = 1e99;
 

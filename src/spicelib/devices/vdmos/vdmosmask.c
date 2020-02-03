@@ -125,6 +125,9 @@ VDMOSmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case VDMOS_MOD_XTI:
             value->rValue = model->VDMOSxti;
             return(OK);
+        case VDMOS_MOD_TCVTH:
+            value->rValue = model->VDMOStcvth;
+            return(OK);
         case VDMOS_MOD_RTHJC:
             value->rValue = model->VDMOSrthjc; 
             return(OK);
@@ -143,8 +146,35 @@ VDMOSmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case VDMOS_MOD_TEXP1:
             value->rValue = model->VDMOStexp1; 
             return(OK);
-        case VDMOS_MOD_TCVTH:
-            value->rValue = model->VDMOStcvth;
+        case VDMOS_MOD_TRD1:
+            value->rValue = model->VDMOStrd1; 
+            return(OK);
+        case VDMOS_MOD_TRD2:
+            value->rValue = model->VDMOStrd2; 
+            return(OK);
+        case VDMOS_MOD_TRG1:
+            value->rValue = model->VDMOStrg1; 
+            return(OK);
+        case VDMOS_MOD_TRG2:
+            value->rValue = model->VDMOStrg2; 
+            return(OK);
+        case VDMOS_MOD_TRS1:
+            value->rValue = model->VDMOStrs1; 
+            return(OK);
+        case VDMOS_MOD_TRS2:
+            value->rValue = model->VDMOStrs2; 
+            return(OK);
+        case VDMOS_MOD_TRB1:
+            value->rValue = model->VDMOStrb1; 
+            return(OK);
+        case VDMOS_MOD_TRB2:
+            value->rValue = model->VDMOStrb2; 
+            return(OK);
+        case VDMOS_MOD_TKSUBTHRES1:
+            value->rValue = model->VDMOStksubthres1; 
+            return(OK);
+        case VDMOS_MOD_TKSUBTHRES2:
+            value->rValue = model->VDMOStksubthres2; 
             return(OK);
         case VDMOS_MOD_VGS_MAX:
             value->rValue = model->VDMOSvgsMax;

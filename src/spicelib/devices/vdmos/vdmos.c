@@ -89,10 +89,20 @@ IFparm VDMOSmPTable[] = { /* model parameters */
  IOPR("bex",   VDMOS_MOD_MU,    IF_REAL,  "Exponent of gain temperature dependency"),
  IOP( "texp0", VDMOS_MOD_TEXP0, IF_REAL,  "Drain resistance rd0 temperature exponent"),
  IOP( "texp1", VDMOS_MOD_TEXP1, IF_REAL,  "Drain resistance rd1 temperature exponent"),
+ IOP( "trd1",  VDMOS_MOD_TRD1,  IF_REAL,  "Drain resistance linear temperature coefficient"),
+ IOP( "trd2",  VDMOS_MOD_TRD2,  IF_REAL,  "Drain resistance quadratic temperature coefficient"),
+ IOP( "trg1",  VDMOS_MOD_TRG1,  IF_REAL,  "Gate resistance linear temperature coefficient"),
+ IOP( "trg2",  VDMOS_MOD_TRG2,  IF_REAL,  "Gate resistance quadratic temperature coefficient"),
+ IOP( "trs1",  VDMOS_MOD_TRS1,  IF_REAL,  "Source resistance linear temperature coefficient"),
+ IOP( "trs2",  VDMOS_MOD_TRS2,  IF_REAL,  "Source resistance quadratic temperature coefficient"),
+ IOP( "trb1",  VDMOS_MOD_TRB1,  IF_REAL,  "Body resistance linear temperature coefficient"),
+ IOP( "trb2",  VDMOS_MOD_TRB2,  IF_REAL,  "Body resistance quadratic temperature coefficient"),
 
  /* weak inversion */
  IOP("subshift",  VDMOS_MOD_SUBSHIFT,   IF_REAL, "Shift of weak inversion plot on the vgs axis"),
  IOP("ksubthres", VDMOS_MOD_KSUBTHRES,  IF_REAL, "Slope of weak inversion log current versus vgs"),
+ IOP("tksubthres1", VDMOS_MOD_TKSUBTHRES1, IF_REAL,  "Linear temperature coefficient of ksubthres"),
+ IOP("tksubthres2", VDMOS_MOD_TKSUBTHRES2, IF_REAL,  "Quadratic temperature coefficient of ksubthres"),
 
 /* body diode */
  IOP("bv",    VDMOS_MOD_BV,    IF_REAL,   "Vds breakdown voltage"),
