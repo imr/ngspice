@@ -69,6 +69,7 @@ typedef struct sVDMOSinstance {
     double VDMOStTransconductance;   /* temperature corrected transconductance*/
     double VDMOStPhi;                /* temperature corrected Phi */
     double VDMOStVth;                /* temperature corrected Vth */
+    double VDMOStksubthres;          /* temperature weak inversion slope */
 
     double VDMOSicVDS;   /* initial condition D-S voltage */
     double VDMOSicVGS;   /* initial condition G-S voltage */
@@ -332,13 +333,23 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
     double VDIOgradCoeffTemp1;
     double VDIOgradCoeffTemp2;
 
+    double VDMOStcvth;
     double VDMOSrthjc;
     double VDMOSrthca;
     double VDMOScthj;
     double VDMOSmu;
     double VDMOStexp0;
     double VDMOStexp1;
-    double VDMOStcvth;
+    double VDMOStrd1;
+    double VDMOStrd2;
+    double VDMOStrg1;
+    double VDMOStrg2;
+    double VDMOStrs1;
+    double VDMOStrs2;
+    double VDMOStrb1;
+    double VDMOStrb2;
+    double VDMOStksubthres1;
+    double VDMOStksubthres2;
 
     double VDMOSvgsMax;
     double VDMOSvgdMax;
@@ -385,13 +396,23 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
     unsigned VDMOSegGiven   :1;
     unsigned VDMOSxtiGiven   :1;
 
+    unsigned VDMOStcvthGiven :1;
     unsigned VDMOSrthjcGiven :1;
     unsigned VDMOSrthcaGiven :1;
     unsigned VDMOScthjGiven :1;
     unsigned VDMOSmuGiven :1;
     unsigned VDMOStexp0Given :1;
     unsigned VDMOStexp1Given :1;
-    unsigned VDMOStcvthGiven :1;
+    unsigned VDMOStrd1Given :1;
+    unsigned VDMOStrd2Given :1;
+    unsigned VDMOStrg1Given :1;
+    unsigned VDMOStrg2Given :1;
+    unsigned VDMOStrs1Given :1;
+    unsigned VDMOStrs2Given :1;
+    unsigned VDMOStrb1Given :1;
+    unsigned VDMOStrb2Given :1;
+    unsigned VDMOStksubthres1Given :1;
+    unsigned VDMOStksubthres2Given :1;
 
     unsigned VDMOSvgsMaxGiven  :1;
     unsigned VDMOSvgdMaxGiven  :1;
@@ -462,13 +483,23 @@ enum {
     VDMOS_MOD_TT,
     VDMOS_MOD_EG,
     VDMOS_MOD_XTI,
+    VDMOS_MOD_TCVTH,
     VDMOS_MOD_RTHJC,
     VDMOS_MOD_RTHCA,
     VDMOS_MOD_CTHJ,
     VDMOS_MOD_MU,
     VDMOS_MOD_TEXP0,
     VDMOS_MOD_TEXP1,
-    VDMOS_MOD_TCVTH,
+    VDMOS_MOD_TRD1,
+    VDMOS_MOD_TRD2,
+    VDMOS_MOD_TRG1,
+    VDMOS_MOD_TRG2,
+    VDMOS_MOD_TRS1,
+    VDMOS_MOD_TRS2,
+    VDMOS_MOD_TRB1,
+    VDMOS_MOD_TRB2,
+    VDMOS_MOD_TKSUBTHRES1,
+    VDMOS_MOD_TKSUBTHRES2,
     VDMOS_MOD_VGS_MAX,
     VDMOS_MOD_VGD_MAX,
     VDMOS_MOD_VDS_MAX,

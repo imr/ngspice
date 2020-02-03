@@ -372,7 +372,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                  * Scale the voltage overdrive vgst logarithmically in weak inversion.
                  * Best fits LTSPICE curves with shift=0
                  */
-                double slope = model->VDMOSksubthres;
+                double slope = here->VDMOStksubthres;
                 double lambda = model->VDMOSlambda;
                 double theta = model->VDMOStheta;
                 double shift = model->VDMOSsubshift;
