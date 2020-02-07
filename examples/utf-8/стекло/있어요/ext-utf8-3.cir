@@ -18,6 +18,8 @@ setcs xfont='Noto Sans CJK JP Medium'
 set gridwidth=4
 set xbrushwidth=1
 
+set nolegend
+
 *hardcopy
 
 **plot y vs x xlabel 'Labellisé X' ylabel 'Labellisé Y: ÜüÖöÄäÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ' title 'Titré'
