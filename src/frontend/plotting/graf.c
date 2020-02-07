@@ -120,6 +120,10 @@ int gr_init(double *xlims, double *ylims, /* The size of the screen. */
         }
     }
 
+    if (!cp_getvar("ticchar", CP_STRING, graph->ticchar, 1)) {
+        strcpy(graph->ticchar, "X");
+    }
+
     if (cp_getvar("ticlist", CP_LIST, ticlist, 0)) {
         wl = vareval("ticlist");
         ticlist = wl_flatten(wl);
@@ -300,26 +304,16 @@ void gr_point(struct dvec *dv,
         if ((tics = currentgraph->ticdata) != NULL) {
             for (; *tics < HUGE; tics++)
                 if (*tics == (double) np) {
-                    DevDrawText("x", (int) (tox - currentgraph->fontwidth / 2),
+                    DevDrawText(currentgraph->ticchar, (int) (tox - currentgraph->fontwidth / 2),
                                 (int) (toy - currentgraph->fontheight / 2), 0);
-                    /* gr_redraw will redraw this w/o our having to save it
-                       Guenther Roehrich 22-Jan-99 */
-                    /*    SaveText(currentgraph, "x",
-                          (int) (tox - currentgraph->fontwidth / 2),
-                          (int) (toy - currentgraph->fontheight / 2)); */
                     break;
                 }
         }
         else if ((currentgraph->ticmarks >0) && (np > 0) &&
                    (np % currentgraph->ticmarks == 0)) {
             /* Draw an 'x' */
-            DevDrawText("x", (int) (tox - currentgraph->fontwidth / 2),
+            DevDrawText(currentgraph->ticchar, (int) (tox - currentgraph->fontwidth / 2),
                         (int) (toy - currentgraph->fontheight / 2), 0);
-            /* gr_redraw will redraw this w/o our having to save it
-               Guenther Roehrich 22-Jan-99 */
-            /*  SaveText(currentgraph, "x",
-                (int) (tox - currentgraph->fontwidth / 2),
-                (int) (toy - currentgraph->fontheight / 2)); */
         }
         break;
     case PLOT_COMB:
