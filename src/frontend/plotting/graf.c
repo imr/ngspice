@@ -423,9 +423,9 @@ static void gr_start_internal(struct dvec *dv, bool copyvec)
 
 
     /* Put the legend entry on the screen. */
-    drawlegend(currentgraph, cur.plotno++, dv);
-} /* end of function gr_start_internal */
-
+    if (!cp_getvar("nolegend", CP_BOOL, NULL, 0))
+        drawlegend(currentgraph, cur.plotno++, dv);
+}
 
 
 /* Start one plot of a graph */
@@ -599,7 +599,8 @@ void gr_redraw(GRAPH *graph)
     cur.plotno = 0;
     for (link = graph->plotdata; link; link = link->next) {
         /* redraw legend */
-        drawlegend(graph, cur.plotno++, link->vector);
+        if (!cp_getvar("nolegend", CP_BOOL, NULL, 0))
+            drawlegend(graph, cur.plotno++, link->vector);
 
         /* replot data
            if onevalue, pass it a NULL scale
