@@ -61,6 +61,7 @@ struct graph {
 
     int ticmarks;           /* mark every ticmark'th point */
     double *ticdata;
+    char ticchar[2];
     int fontwidth, fontheight;  /* for use in grid */
 
     PLOTTYPE plottype;      /* defined in FTEconstant.h */
