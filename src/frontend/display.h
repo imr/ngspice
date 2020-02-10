@@ -23,7 +23,7 @@ void DevDrawText(char *text, int x, int y, int angle);
 void DefineColor(int colorid, double red, double green, double blue);
 void DefineLinestyle(int linestyleid, int mask);
 void SetLinestyle(int linestyleid);
-void SetColor(int colorid);
+void SetColor(int colorid, GRAPH* graph);
 void DevUpdate(void);
 void DatatoScreen(GRAPH *graph, double x, double y, int *screenx, int *screeny);
 void Input(REQUEST *request, RESPONSE *response);

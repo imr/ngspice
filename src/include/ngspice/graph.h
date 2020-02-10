@@ -105,6 +105,16 @@ struct graph {
     /* for zoomin */
     char *commandline;
 
+    /* colors used */
+    unsigned long colorarray[25];
+
+    /* we have a mother graph */
+    int mgraphid;
+
+    /* linewidths */
+    int graphwidth;
+    int gridwidth;
+
     /* Space here is allocated by NewViewport
         and de-allocated by DestroyGraph.
     */
