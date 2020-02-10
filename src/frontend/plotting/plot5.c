@@ -210,9 +210,11 @@ int Plt5_SetLinestyle(int linestyleid)
 
 
 /* ARGSUSED */
-int Plt5_SetColor(int colorid)
+
+int Plt5_SetColor(int colorid, GRAPH *graph)
 {
     NG_IGNORE(colorid);
+    NG_IGNORE(graph);
 
     /* do nothing */
     return 0;

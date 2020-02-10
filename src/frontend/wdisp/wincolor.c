@@ -13,6 +13,7 @@
 #undef BOOLEAN
 #include <windows.h>
 #include "ngspice/wincolornames.h"
+#include "ngspice/graph.h"
 
 
 
@@ -142,6 +143,14 @@ void wincolor_init(COLORREF* ColorTable, int noc)
         }
         ColorTable[i] =  get_wincolor(colorstring, nocolor);
         i++;
+    }
+}
+
+void wincolor_graph(COLORREF* ColorTable, int noc, GRAPH *graph)
+{
+    int i;
+    for (i = 0; i < noc; i++) {
+        graph->colorarray[i] = ColorTable[i];
     }
 }
 

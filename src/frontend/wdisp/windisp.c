@@ -4,6 +4,7 @@
  * Holger Vogt  07.12.01
  * Holger Vogt  05.12.07
  * Holger Vogt  01.11.18
+ * Holger Vogt  09.02.20
  */
 
 #include "ngspice/ngspice.h"
@@ -64,6 +65,7 @@ extern HWND        swString;      /* string input window of main window */
 extern int         DevSwitch(char *devname);
 extern int         NewViewport(GRAPH *pgraph);
 extern void        com_hardcopy(wordlist *wl);
+extern void        wincolor_graph(COLORREF* ColorTable, int noc, GRAPH* graph);
 
 /* defines */
 #define RAD_TO_DEG   (180.0 / M_PI)
@@ -349,6 +351,19 @@ static LRESULT PrintInit(HWND hwnd)
     return 0;
 }
 
+/* check if background color is dark enough.
+   Threshold is empirical by looking at color tables */
+static bool get_black(GRAPH* graph)
+{
+    int tcolor = GetRValue(graph->colorarray[0]) +
+        (int)(1.5 * GetGValue(graph->colorarray[0])) + 
+        GetBValue(graph->colorarray[0]);
+    if (tcolor > 360) {
+        return FALSE;
+    }
+    else
+        return TRUE;
+}
 
 /* window procedure */
 LRESULT CALLBACK PlotWindowProc(HWND hwnd, UINT uMsg,
@@ -395,14 +410,16 @@ LRESULT CALLBACK PlotWindowProc(HWND hwnd, UINT uMsg,
         /* left mouse button: connect coordinate pair by dashed pair of x, y lines */
         if (wParam & MK_LBUTTON) {
             hdc = GetDC(hwnd);
-            if (isblack) {
+            GRAPH* gr = pGraph(hwnd);
+            isblack = get_black(gr);
+            if (isblack)
                 prevmix = SetROP2(hdc, R2_XORPEN);
             }
             else {
                 prevmix = SetROP2(hdc, R2_NOTXORPEN);
             }
             /* Create white dashed pen */
-            NewPen = CreatePen(LType(12), 0, ColorTable[1]);
+            NewPen = CreatePen(LType(12), 0, gr->colorarray[1]);
             OldPen = SelectObject(hdc, NewPen);
             /* draw lines with previous coodinates -> delete old line because of XOR */
             MoveToEx (hdc, x0, y0, NULL);
@@ -427,12 +444,14 @@ LRESULT CALLBACK PlotWindowProc(HWND hwnd, UINT uMsg,
         /* right mouse button: create white (black) dashed box */
         else if (wParam & MK_RBUTTON) {
             hdc = GetDC (hwnd);
+            GRAPH* gr = pGraph(hwnd);
+            isblack = get_black(gr);
             if (isblack)
                 prevmix = SetROP2(hdc, R2_XORPEN);
             else
                 prevmix = SetROP2(hdc, R2_NOTXORPEN);
             /* Create white (black) dashed pen */
-            NewPen = CreatePen(LType(12), 0, ColorTable[1]);
+            NewPen = CreatePen(LType(12), 0, gr->colorarray[1]);
             OldPen = SelectObject(hdc, NewPen);
             /* draw box with previous coodinates -> delete old lines because of XOR */
             MoveToEx (hdc, x0, y0, NULL);
@@ -535,11 +554,11 @@ LRESULT CALLBACK PlotWindowProc(HWND hwnd, UINT uMsg,
         if (!eq(plot_cur->pl_typename, buf2)) {
             (void) sprintf(buf,
 //       "setplot %s; %s xlimit %e %e ylimit %e %e; setplot $curplot\n",
-                           "setplot %s; %s xlimit %e %e ylimit %e %e\n",
-                           buf2, gr->commandline, fx0, fxe, fy0, fye);
+                           "setplot %s; %s xlimit %e %e ylimit %e %e sgraphid %d\n",
+                           buf2, gr->commandline, fx0, fxe, fy0, fye, gr->graphid);
         } else {
-            (void) sprintf(buf, "%s xlimit %e %e ylimit %e %e\n",
-                           gr->commandline, fx0, fxe, fy0, fye);
+            (void) sprintf(buf, "%s xlimit %e %e ylimit %e %e sgraphid %d\n",
+                           gr->commandline, fx0, fxe, fy0, fye, gr->graphid);
         }
 
         (void) cp_evloop(buf);
@@ -635,6 +654,7 @@ int WIN_NewViewport(GRAPH *graph)
 #endif
     tpWindowData   wd;
     HMENU    sysmenu;
+    GRAPH* pgraph = NULL;
 
     /* test the parameters */
     if (!graph) {
@@ -645,6 +665,16 @@ int WIN_NewViewport(GRAPH *graph)
     if (WIN_Init() != 0) {
         externalerror("Can't initialize GDI.");
         return 1;
+    }
+
+    /* get the colors into graph struct */
+    wincolor_graph(ColorTable, NumWinColors, graph);
+    /* If we had a previous graph, e.g. after zooming, we
+    have to set the background color already here, because
+    background is set below */
+    if (graph->mgraphid > 0) {
+        pgraph = FindGraph(graph->mgraphid);
+        graph->colorarray[0] = pgraph->colorarray[0];
     }
 
     /* allocate device dependency info */
@@ -685,7 +715,7 @@ int WIN_NewViewport(GRAPH *graph)
 
    /* set the background color */
     SelectObject(dc, GetStockObject(DC_BRUSH));
-    SetDCBrushColor(dc, ColorTable[0]);
+    SetDCBrushColor(dc, graph->colorarray[0]);
 
     wd->wnd = window;
     SetWindowLongPtr(window, 0, (LONG_PTR)graph);
@@ -695,9 +725,6 @@ int WIN_NewViewport(GRAPH *graph)
 
     /* get the mask */
     GetClientRect(window, &(wd->Area));
-
-
-
 
     /* set the Color Index */
     wd->ColorIndex = 0;
@@ -715,7 +742,7 @@ int WIN_NewViewport(GRAPH *graph)
     AppendMenu(sysmenu, MF_STRING, ID_HARDCOPY_BW, STR_HARDCOPY_BW);
 
     /* set default parameters of DC */
-    SetBkColor(dc, ColorTable[0]);
+    SetBkColor(dc, graph->colorarray[0]);
     SetBkMode(dc, TRANSPARENT );
 
     /* set font */
@@ -748,12 +775,21 @@ int WIN_NewViewport(GRAPH *graph)
         linewidth = 0;
     if (linewidth < 0)
         linewidth = 0;
+    if (pgraph)
+        graph->graphwidth = pgraph->graphwidth;
+    else
+        graph->graphwidth = linewidth;
 
     /* get linewidth information from .spiceinit or .control section */
     if (!cp_getvar("gridwidth", CP_NUM, &gridlinewidth, 0))
         gridlinewidth = 0;
     if (gridlinewidth < 0)
         gridlinewidth = 0;
+
+    if (pgraph)
+        graph->gridwidth = pgraph->gridwidth;
+    else
+        graph->gridwidth = gridlinewidth;
 
     /* wait until the window is really there */
     WaitForIdle();
@@ -828,9 +864,9 @@ WIN_DrawLine(int x1, int y1, int x2, int y2, bool isgrid)
 
     MoveToEx(wd->hDC, x1, wd->Area.bottom - y1, NULL);
     if (isgrid)
-        NewPen = CreatePen(LType(wd->ColorIndex), gridlinewidth, ColorTable[wd->ColorIndex]);
+        NewPen = CreatePen(LType(wd->ColorIndex), currentgraph->gridwidth, currentgraph->colorarray[wd->ColorIndex]);
     else
-        NewPen = CreatePen(LType(wd->ColorIndex), linewidth, ColorTable[wd->ColorIndex]);
+        NewPen = CreatePen(LType(wd->ColorIndex), currentgraph->graphwidth, currentgraph->colorarray[wd->ColorIndex]);
     OldPen = SelectObject(wd->hDC, NewPen);
     LineTo(wd->hDC, x2, wd->Area.bottom - y2);
     OldPen = SelectObject(wd->hDC, OldPen);
@@ -889,7 +925,7 @@ int WIN_Arc(int x0, int y0, int radius, double theta, double delta_theta)
     ye = (int)(dy0 + (r * sin(theta + delta_theta)));
 
     /* plot */
-    NewPen = CreatePen(LType(wd->ColorIndex), linewidth, ColorTable[wd->ColorIndex]);
+    NewPen = CreatePen(LType(wd->ColorIndex), linewidth, currentgraph->colorarray[wd->ColorIndex]);
     OldPen = SelectObject(wd->hDC, NewPen);
     Arc(wd->hDC, left, yb-top, right, yb-bottom, xs, yb-ys, xe, yb-ye);
     OldPen = SelectObject(wd->hDC, OldPen);
@@ -1002,7 +1038,7 @@ int WIN_Text(char *text, int x, int y, int angle)
 #endif
     SelectObject(wd->hDC, hfont);
 
-    SetTextColor(wd->hDC, ColorTable[wd->ColorIndex]);
+    SetTextColor(wd->hDC, currentgraph->colorarray[wd->ColorIndex]);
 #ifdef EXT_ASC
     TextOut(wd->hDC, x, wd->Area.bottom - y - currentgraph->fontheight, text, (int)strlen(text));
 #else
@@ -1043,8 +1079,9 @@ int WIN_SetLinestyle(int style)
 }
 
 
-int WIN_SetColor(int color)
+int WIN_SetColor(int color, GRAPH *graph)
 {
+    NG_IGNORE(graph);
     tpWindowData wd;
 
     if (!currentgraph)

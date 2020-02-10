@@ -19,7 +19,8 @@ int gr_init(double *xlims, double *ylims,
         const char *xlabel,
         const char *ylabel, /* Labels for axes. */
         int xtype, int ytype,
-        const char *pname, const char *commandline);
+        const char *pname, const char *commandline,
+        int prevgraph);
 void gr_point(struct dvec *dv,
         double newx, double newy,
         double oldx, double oldy, int np);

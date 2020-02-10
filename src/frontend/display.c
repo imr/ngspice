@@ -275,9 +275,9 @@ SetLinestyle(int linestyleid)
 
 
 void
-SetColor(int colorid)
+SetColor(int colorid, GRAPH *graph)
 {
-    dispdev->SetColor (colorid);
+    dispdev->SetColor (colorid, graph);
 }
 
 

@@ -24,7 +24,7 @@ typedef int  disp_fn_Text_t (char *text, int x, int y, int angle);
 typedef int  disp_fn_DefineColor_t (int colorid, double red, double green, double blue);
 typedef int  disp_fn_DefineLinestyle_t (int linestyleid, int mask);
 typedef int  disp_fn_SetLinestyle_t (int linestyleid);
-typedef int  disp_fn_SetColor_t (int colorid);
+typedef int  disp_fn_SetColor_t (int colorid, GRAPH *graf);
 typedef int  disp_fn_Update_t (void);
 typedef int  disp_fn_Track_t (void);
 typedef int  disp_fn_MakeMenu_t (void);

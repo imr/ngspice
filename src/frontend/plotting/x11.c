@@ -354,7 +354,7 @@ handlekeypressed(Widget w, XtPointer client_data, XEvent *ev, Boolean *continue_
     /* write it */
     PushGraphContext(graph);
     text[nbytes] = '\0';
-    SetColor(1);
+    SetColor(1, graph);
     DevDrawText(text, keyev->x, graph->absolute.height - keyev->y, 0);
     /* save it */
     SaveText(graph, text, keyev->x, graph->absolute.height - keyev->y);

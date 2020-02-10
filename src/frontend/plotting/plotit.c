@@ -275,6 +275,14 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
         return FALSE;
     }
 
+    /* All these things are static so that "samep" will work. 
+    static double *xcompress = NULL, *xindices = NULL;
+    static double *xlim = NULL, *ylim = NULL, *xynull;
+    static double *xdelta = NULL, *ydelta = NULL;
+    static char *xlabel = NULL, *ylabel = NULL, *title = NULL;
+    static double *xprevgraph = NULL;*/
+
+    int prevgraph = 0;
     static bool nointerp = FALSE;
     static GRIDTYPE gtype = GRID_LIN;
     static PLOTTYPE ptype = PLOT_LIN;
@@ -324,6 +332,8 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
     nxlabel = getword(wwl, "xlabel");
     nylabel = getword(wwl, "ylabel");
     ntitle = getword(wwl, "title");
+    /* remove sgraphid */
+    txfee(getlims(wwl, "sgraphid", 1));
 
     /* Build the plot command. This construction had been done with wordlists
      * and reversing, and flattening, but it is clearer as well as much more
@@ -426,6 +436,13 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
         txfree(getlims(wl, "ydel", 1));
     }
 
+    if (!sameflag || !xprevgraph) {
+        xprevgraph = getlims(wl, "sgraphid", 1);
+        if(xprevgraph)
+            prevgraph = (int)(*xprevgraph);
+    } else {
+        txfree(getlims(wl, "sgraphid", 1));
+    }
     /* Get the grid type and the point type.  Note we can't do if-else
      * here because we want to catch all the grid types.
      */
@@ -1122,7 +1139,7 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
             xdelta ? *xdelta : 0.0,
             ydelta ? *ydelta : 0.0,
             gtype, ptype, xlabel, ylabel, xt, y_type,
-            plot_cur->pl_typename, ds_get_buf(&ds_cline))) {
+            plot_cur->pl_typename, ds_get_buf(&ds_cline), prevgraph)) {
         goto quit;
     }
 
