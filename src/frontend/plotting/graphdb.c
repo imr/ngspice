@@ -60,6 +60,7 @@ GRAPH *NewGraph(void)
     LISTGRAPH *list;
     const int BucketId = RunningId % NUMGBUCKETS;
 
+    /* allocate memory for graph via LISTGRAPH */
     if ((list = TMALLOC(LISTGRAPH, 1)) == NULL) {
         internalerror("can't allocate a listgraph");
         return (GRAPH *) NULL;

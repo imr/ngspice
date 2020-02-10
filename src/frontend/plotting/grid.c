@@ -74,7 +74,7 @@ gr_fixgrid(GRAPH *graph, double xdelta, double ydelta, int xtype, int ytype)
     if (graph->grid.gridtype == GRID_NONE)
         graph->grid.gridtype = GRID_LIN;
 
-    SetColor(1);
+    SetColor(1, graph);
     SetLinestyle(1);
 
     if ((graph->data.xmin > graph->data.xmax) ||
@@ -132,7 +132,7 @@ void
 gr_redrawgrid(GRAPH *graph)
 {
 
-    SetColor(1);
+    SetColor(1, graph);
     SetLinestyle(1);
     /* draw labels */
     if (graph->grid.xlabel) {
@@ -1477,7 +1477,7 @@ arcset(GRAPH *graph, double rad, double prevrad, double irad, double iprevrad, d
     /* Let's be lazy and just draw everything -- we won't get called too
      * much and the circles get clipped anyway...
      */
-    SetColor(18);
+    SetColor(18, graph);
 
     cliparc((double) (centx + xoffset + radoff - rad),
             (double) (centy + yoffset), rad, 2*angle,
@@ -1491,7 +1491,7 @@ arcset(GRAPH *graph, double rad, double prevrad, double irad, double iprevrad, d
             M_PI - 2 * angle, centx, centy, maxrad, 0);
 
     /* Draw the upper and lower circles.  */
-    SetColor(19);
+    SetColor(19, graph);
     aclip = cliparc((double) (centx + xoffset + radoff),
                     (double) (centy + yoffset + irad), irad,
                     (double) (M_PI * 1.5 + 2 * iangle),
@@ -1500,7 +1500,7 @@ arcset(GRAPH *graph, double rad, double prevrad, double irad, double iprevrad, d
         xlab = (int)(centx + xoffset + radoff + irad * cos(aclip));
         ylab = (int)(centy + yoffset + irad * (1 + sin(aclip)));
         if ((ylab - gr_ycenter) > graph->fontheight) {
-            SetColor(1);
+            SetColor(1, graph);
             adddeglabel(graph, pdeg, xlab, ylab,
                         gr_xcenter, gr_ycenter, gr_xcenter, gr_ycenter);
             /*
@@ -1508,7 +1508,7 @@ arcset(GRAPH *graph, double rad, double prevrad, double irad, double iprevrad, d
               adddeglabel(graph, ndeg, xlab, ylab,
               gr_xcenter, gr_ycenter, gr_xcenter, gr_ycenter);
             */
-            SetColor(19);
+            SetColor(19, graph);
         }
     }
     aclip = cliparc((double) (centx + xoffset + radoff),
@@ -1519,14 +1519,14 @@ arcset(GRAPH *graph, double rad, double prevrad, double irad, double iprevrad, d
     if ((aclip >= 0 && aclip < 2*M_PI - M_PI/180) && (pdeg < 359)) {
         xlab = (int)(centx + xoffset + radoff + irad * cos(aclip));
         ylab = (int)(centy + yoffset + irad * (sin(aclip) - 1));
-        SetColor(1);
+        SetColor(1, graph);
         adddeglabel(graph, ndeg, xlab, ylab,
                     gr_xcenter, gr_ycenter, gr_xcenter, gr_ycenter);
-        SetColor(19);
+        SetColor(19, graph);
     }
 
     /* Now toss the labels on... */
-    SetColor(1);
+    SetColor(1, graph);
 
     x = centx + xoffset + (int)radoff - 2 * (int)rad -
         gi_fntwidth * (int) strlen(plab) - 2;
