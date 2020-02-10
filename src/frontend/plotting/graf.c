@@ -79,7 +79,8 @@ gr_init(double *xlims, double *ylims, /* The size of the screen. */
         char *xlabel, char *ylabel,   /* Labels for axes. */
         int xtype, int ytype,         /* The types of the data graphed. */
         char *pname,
-        char *commandline)            /* For xi_zoomdata() */
+        char *commandline,            /* For xi_zoomdata() */
+        int prevgraph)                /* plot id, if started from a previous plot*/
 {
     GRAPH *graph;
     wordlist *wl;
@@ -146,12 +147,35 @@ gr_init(double *xlims, double *ylims, /* The size of the screen. */
     comb_title = tprintf("%s: %s", pname, plotname);
     graph->plotname = comb_title;
 
+
+    /* restore background color from previous graph, e.g. for zooming,
+       it will be used in NewViewport(graph) */
+    if (prevgraph > 0) {
+        graph->mgraphid = prevgraph;
+    }
+    else {
+        graph->mgraphid = 0;
+    }
+
     /* note: have enum here or some better convention */
     if (NewViewport(graph) == 1) {
         /* note: where is the error message generated? */
         /* note: undo tmallocs */
         fprintf(cp_err, "Can't open viewport for graphics.\n");
         return (FALSE);
+    }
+
+    /* restore data from previous graph, e.g. for zooming */
+    if (prevgraph > 0) {
+        int i;
+        GRAPH* pgraph = FindGraph(prevgraph);
+        /* transmit colors */
+        for (i = 0; i < 25; i++) {
+            graph->colorarray[i] = pgraph->colorarray[i];
+        }
+        strcpy(graph->ticchar, pgraph->ticchar);
+        graph->ticdata = pgraph->ticdata;
+        graph->ticmarks = pgraph->ticmarks;
     }
 
     /* layout decisions */
@@ -266,7 +290,7 @@ gr_point(struct dvec *dv,
         if (tox != oldtox || toy != oldtoy)
             return;
     }
-    SetColor(dv->v_color);
+    SetColor(dv->v_color, currentgraph);
 
     switch (currentgraph->plottype) {
         double    *tics;
@@ -406,7 +430,7 @@ drawlegend(GRAPH *graph, int plotno, struct dvec *dv)
     y = graph->absolute.height - graph->fontheight
         - ((plotno + 2) / 2) * (graph->fontheight);
     i = y + graph->fontheight / 2 + 1;
-    SetColor(dv->v_color);
+    SetColor(dv->v_color, graph);
     if (graph->plottype == PLOT_POINT) {
         (void) sprintf(buf, "%c : ", dv->v_linestyle);
         DevDrawText(buf, x + graph->viewport.width / 20
@@ -415,7 +439,7 @@ drawlegend(GRAPH *graph, int plotno, struct dvec *dv)
         SetLinestyle(dv->v_linestyle);
         DevDrawLine(x, i, x + graph->viewport.width / 20, i, FALSE);
     }
-    SetColor(1);
+    SetColor(1, graph);
     DevDrawText(dv->v_name, x + graph->viewport.width / 20
                 + graph->fontwidth, y, 0);
 }
@@ -576,7 +600,7 @@ gr_restoretext(GRAPH *graph)
 
     /* restore text */
     for (k = graph->keyed; k; k = k->next) {
-        SetColor(k->colorindex);
+        SetColor(k->colorindex, graph);
         DevDrawText(k->text, k->x, k->y, 0);
     }
 }
@@ -667,7 +691,7 @@ iplot(struct plot *pl, int id)
         (void) gr_init(xlims, ylims, xs->v_name,
                        pl->pl_title, NULL, j, 0.0, 0.0,
                        GRID_LIN, PLOT_LIN, xs->v_name, yl, xs->v_type, yt,
-                       plot_cur->pl_typename, commandline);
+                       plot_cur->pl_typename, commandline, 0);
 
         for (v = pl->pl_dvecs; v; v = v->v_next)
             if (v->v_flags & VF_PLOT) {

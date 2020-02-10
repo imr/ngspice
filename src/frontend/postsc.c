@@ -408,12 +408,12 @@ PS_Text(char *text, int x, int y, int angle)
     PS_SetLinestyle(SOLID);
     /* set text color to black if background is not white */
     if (setbgcolor > 0)
-        PS_SetColor(0);
+        PS_SetColor(0, currentgraph);
     else
-        PS_SetColor(1);
+        PS_SetColor(1, currentgraph);
     /* if color is given by set hcopytxpscolor=settxcolor, give it a try */
     if (settxcolor >= 0)
-        PS_SetColor(settxcolor);
+        PS_SetColor(settxcolor, currentgraph);
     /* stroke the path if there's an open one */
     PS_Stroke();
     /* move to (x, y) */
@@ -429,7 +429,7 @@ PS_Text(char *text, int x, int y, int angle)
 
     /* restore old linestyle */
 
-    PS_SetColor(savedcolor);
+    PS_SetColor(savedcolor, currentgraph);
     PS_SetLinestyle(savedlstyle);
     return 0;
 }
@@ -458,8 +458,9 @@ PS_SetLinestyle(int linestyleid)
 
 
 int
-PS_SetColor(int colorid)
+PS_SetColor(int colorid, GRAPH *graph)
 {
+    NG_IGNORE(graph);
     PS_LinestyleColor(currentgraph->linestyle, colorid);
     return 0;
 }

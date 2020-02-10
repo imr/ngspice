@@ -209,6 +209,8 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     static double *xlim = NULL, *ylim = NULL, *xynull;
     static double *xdelta = NULL, *ydelta = NULL;
     static char *xlabel = NULL, *ylabel = NULL, *title = NULL;
+    static double *xprevgraph = NULL;
+    int prevgraph = 0;
     static bool nointerp = FALSE;
     static GRIDTYPE gtype = GRID_LIN;
     static PLOTTYPE ptype = PLOT_LIN;
@@ -252,6 +254,9 @@ plotit(wordlist *wl, char *hcopy, char *devname)
     nxlabel = getword(wwl, "xlabel");
     nylabel = getword(wwl, "ylabel");
     ntitle = getword(wwl, "title");
+    /* remove sgraphid */
+    xynull = getlims(wwl, "sgraphid", 1);
+    tfree(xynull);
     pname = wl_flatten(wwl->wl_next);
     tail = wl_cons(tprintf("plot %s", pname), NULL);
     tfree(pname);
@@ -333,6 +338,13 @@ plotit(wordlist *wl, char *hcopy, char *devname)
         txfree(getlims(wl, "ydel", 1));
     }
 
+    if (!sameflag || !xprevgraph) {
+        xprevgraph = getlims(wl, "sgraphid", 1);
+        if(xprevgraph)
+            prevgraph = (int)(*xprevgraph);
+    } else {
+        txfree(getlims(wl, "sgraphid", 1));
+    }
     /* Get the grid type and the point type.  Note we can't do if-else
      * here because we want to catch all the grid types.
      */
@@ -1039,7 +1051,7 @@ plotit(wordlist *wl, char *hcopy, char *devname)
                  hcopy, i,
                  xdelta ? *xdelta : 0.0,
                  ydelta ? *ydelta : 0.0,
-                 gtype, ptype, copy(xlabel), copy(ylabel), xt, y_type, pname, cline)) {
+                 gtype, ptype, copy(xlabel), copy(ylabel), xt, y_type, pname, cline, prevgraph)) {
         goto quit;
     }
 

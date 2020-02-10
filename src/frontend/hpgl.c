@@ -287,8 +287,9 @@ GL_SetLinestyle(int linestyleid)
 
 /* ARGSUSED */
 int
-GL_SetColor(int colorid)
+GL_SetColor(int colorid, GRAPH* graph)
 {
+    NG_IGNORE(graph);
     fprintf(plotfile, "SP %d;", colorid);
 
     return 0;

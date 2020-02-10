@@ -17,7 +17,7 @@ int gr_init(double *xlims, double *ylims,
             PLOTTYPE plottype,
             char *xlabel, char *ylabel,
             int xtype, int ytype,
-            char *pname, char *commandline);
+            char *pname, char *commandline, int prevgraph);
 void gr_point(struct dvec *dv,
               double newx, double newy,
               double oldx, double oldy, int np);
