@@ -8,12 +8,14 @@ let y = exp(x)
 
 *setcs xfont='Baekmuk Dotum'
 setcs  xfont='Noto Sans CJK JP'
-*set xfont_size=18
+*setcs xfont='맑은 고딕'
+set xfont_size=20
 
 set gridwidth=1
 set xbrushwidth=8
 set color2=rgbd:0/126/0
 set color0=blue
+unset nolegend
 * color1 (text/grid) selected automatically
 plot y vs x xlabel '我能吞下玻璃而不伤身体' ylabel 'Я могу есть стекло, оно мне не вредит' title ' أنا قادر على أكل الزجاج و هذا لا يؤلمني.'
 set color2=rgbd:0/0/255
