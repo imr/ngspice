@@ -314,7 +314,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
             if (selfheat) {
                 double TempRatio = Temp / here->VDMOStemp;
                 Beta = here->VDMOStTransconductance * pow(TempRatio,model->VDMOSmu);
-                dBeta_dT = here->VDMOStTransconductance * model->VDMOSmu / (here->VDMOStemp * pow(TempRatio,1-model->VDMOSmu));
+                dBeta_dT = Beta * model->VDMOSmu / Temp;
                 rd0T =  here->VDMOSdrainResistance * pow(TempRatio, model->VDMOStexp0);
                 drd0T_dT = rd0T * model->VDMOStexp0 / Temp;
                 rd1T = 0.0;
