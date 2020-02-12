@@ -151,7 +151,6 @@ X11_Init(void)
 
     XGCValues gcvalues;
 
-    /* grrr, Xtk forced contortions */
     char *argv[2];
     int argc = 2;
 
@@ -245,11 +244,11 @@ initcolors(GRAPH *graph)
     if (numdispplanes == 1) {
         /* black and white */
         xmaxcolors = 2;
-        DEVDEP(graph).colors[0] = DEVDEP(graph).view->core.background_pixel;
-        if (DEVDEP(graph).colors[0] == WhitePixel(display, DefaultScreen(display)))
-            DEVDEP(graph).colors[1] = BlackPixel(display, DefaultScreen(display));
+        graph->colorarray[0] = DEVDEP(graph).view->core.background_pixel;
+        if (graph->colorarray[0] == WhitePixel(display, DefaultScreen(display)))
+            graph->colorarray[1] = BlackPixel(display, DefaultScreen(display));
         else
-            DEVDEP(graph).colors[1] = WhitePixel(display, DefaultScreen(display));
+            graph->colorarray[1] = WhitePixel(display, DefaultScreen(display));
 
     } else {
         if (numdispplanes < NXPLANES)
@@ -298,7 +297,7 @@ initcolors(GRAPH *graph)
                 (void) sprintf(ErrorMessage,
                                "can't get color %s\n", colorstring);
                 externalerror(ErrorMessage);
-                DEVDEP(graph).colors[i] = i ? BlackPixel(display,
+                graph->colorarray[i] = i ? BlackPixel(display,
                                                          DefaultScreen(display))
                     : WhitePixel(display, DefaultScreen(display));
                 continue;
@@ -313,26 +312,24 @@ initcolors(GRAPH *graph)
                 /* switch the grid and text color depending on background */
                 int tcolor = (int)bgcolor.red + (int)(1.5 * bgcolor.green) + (int)bgcolor.blue;
                 if (tcolor > 92160) {
-                    DEVDEP(graph).colors[1] = BlackPixel(display, DefaultScreen(display));
+                    graph->colorarray[1] = BlackPixel(display, DefaultScreen(display));
                     strncpy(DEVDEP(graph).txtcolor, "black", 15);
                 }
                 else {
-                    DEVDEP(graph).colors[1] = WhitePixel(display, DefaultScreen(display));
+                    graph->colorarray[1] = WhitePixel(display, DefaultScreen(display));
                     strncpy(DEVDEP(graph).txtcolor, "white", 15);
                 }
             }
             else {
-                DEVDEP(graph).colors[i] = visualcolor.pixel;
+                graph->colorarray[i] = visualcolor.pixel;
                 if (i == 1)
                     strncpy(DEVDEP(graph).txtcolor, colorstring, 15);
             }
         }
-        /* MW. Set Beackgroound here */
-        XSetWindowBackground(display, DEVDEP(graph).window, DEVDEP(graph).colors[0]);
     }
 
     for (i = xmaxcolors; i < NUMCOLORS; i++) {
-        DEVDEP(graph).colors[i] = DEVDEP(graph).colors[i + 1 - xmaxcolors];
+        graph->colorarray[i] = graph->colorarray[i + 1 - xmaxcolors];
     }
 }
 
@@ -422,6 +419,7 @@ X11_NewViewport(GRAPH *graph)
     XSetWindowAttributes w_attrs;
     XGCValues gcvalues;
     XGCValues gridgcvalues;
+    GRAPH *pgraph = NULL;
 
     static Arg formargs[ ] = {
         { XtNleft, (XtArgVal) XtChainLeft },
@@ -553,15 +551,34 @@ X11_NewViewport(GRAPH *graph)
     XChangeWindowAttributes(display, DEVDEP(graph).window, CWBitGravity,
                             &w_attrs);
 
-    int linewidth, gridwidth;
+    int linewidth, gridlinewidth;
+    /* If we had a previous graph, e.g. after zooming, we
+    have to set the background color already here, because
+    background is set below */
+    if (graph->mgraphid > 0) {
+        pgraph = FindGraph(graph->mgraphid);
+    }
+    /* get linewidth information from .spiceinit or .control section */
     if (!cp_getvar("xbrushwidth", CP_NUM, &linewidth, 0))
-        gcvalues.line_width = MW_LINEWIDTH;
+        linewidth = MW_LINEWIDTH;
+    if (linewidth < 0)
+        linewidth = MW_LINEWIDTH;
+    if (pgraph)
+        gcvalues.line_width = graph->graphwidth = pgraph->graphwidth;
     else
-        gcvalues.line_width = linewidth;
-    if (!cp_getvar("gridwidth", CP_NUM, &gridwidth, 0))
-        gridgcvalues.line_width = MW_LINEWIDTH;
+        gcvalues.line_width = graph->graphwidth = linewidth;
+
+    /* get linewidth information from .spiceinit or .control section */
+    if (!cp_getvar("gridwidth", CP_NUM, &gridlinewidth, 0))
+        gridlinewidth = MW_LINEWIDTH;
+    if (gridlinewidth < 0)
+        gridlinewidth = MW_LINEWIDTH;
+
+    if (pgraph)
+        gridgcvalues.line_width = graph->gridwidth = pgraph->gridwidth;
     else
-        gridgcvalues.line_width = gridwidth;
+        gridgcvalues.line_width = graph->gridwidth = gridlinewidth;
+
     gridgcvalues.cap_style = gcvalues.cap_style = CapNotLast;
     gridgcvalues.function = gcvalues.function = GXcopy;
 #ifndef HAVE_LIBXFT
@@ -585,6 +602,15 @@ X11_NewViewport(GRAPH *graph)
 
     initlinestyles();
     initcolors(graph);
+
+    /* we have a 'mother' graph and want to get its colors */
+    int i;
+    if(pgraph) {
+        for(i = 0; i < 25; i++)
+            graph->colorarray[i] = pgraph->colorarray[i];
+    }
+
+    XSetWindowBackground(display, DEVDEP(graph).window, graph->colorarray[0]);
 
     /* set up cursor */
     cursor = XCreateFontCursor(display, XC_left_ptr);
@@ -738,7 +764,16 @@ int X11_DefineXft(GRAPH *graph)
 
     Colormap cmap = DefaultColormap(display, 0);
     XftColor color;
-    XftColorAllocName(display, DefaultVisual(display, 0), cmap, DEVDEP(graph).txtcolor, &color);
+    XRenderColor rcolor;
+    XColor xxcolor;
+     /* pixel -> XColor -> XftColor */
+    xxcolor.pixel = graph->colorarray[1];
+    XQueryColor(display, cmap, &xxcolor);
+    rcolor.alpha = 65535;
+    rcolor.red = xxcolor.red;
+    rcolor.green = xxcolor.green;
+    rcolor.blue = xxcolor.blue;
+    XftColorAllocValue(display, DefaultVisual(display, 0), cmap, &rcolor, &color);
     DEVDEP(graph).color = color;
     DEVDEP(graph).cmap = cmap;
     DEVDEP(graph).draw = XftDrawCreate(
@@ -803,13 +838,13 @@ X11_SetLinestyle(int linestyleid)
 
 
 int
-X11_SetColor(int colorid)
+X11_SetColor(int colorid, GRAPH *graph)
 {
     currentgraph->currentcolor = colorid;
     XSetForeground(display, DEVDEP(currentgraph).gc,
-                   DEVDEP(currentgraph).colors[colorid]);
+                   currentgraph->colorarray[colorid]);
     XSetForeground(display, DEVDEP(currentgraph).gridgc,
-                   DEVDEP(currentgraph).colors[colorid]);
+                   currentgraph->colorarray[colorid]);
     return 0;
 }
 
@@ -1010,12 +1045,12 @@ zoomin(GRAPH *graph)
 
     if (!eq(plot_cur->pl_typename, buf2)) {
         (void) sprintf(buf,
-                       "setplot %s; %s xlimit %.20e %.20e ylimit %.20e %.20e; setplot $curplot\n",
-                       buf2, graph->commandline, fx0, fx1, fy0, fy1);
+                       "setplot %s; %s xlimit %.20e %.20e ylimit %.20e %.20e sgraphid %d; setplot $curplot\n",
+                       buf2, graph->commandline, fx0, fx1, fy0, fy1, graph->graphid);
     } else {
         /* set the foreground and background colors to the "calling" window's colors */
-        (void) sprintf(buf, "set color0=%s; set color1=%s; %s xlimit %e %e ylimit %e %e\n",
-                       DEVDEP(graph).bgcolor, DEVDEP(graph).txtcolor, graph->commandline, fx0, fx1, fy0, fy1);
+            (void) sprintf(buf, "%s xlimit %e %e ylimit %e %e sgraphid %d\n",
+                           graph->commandline, fx0, fx1, fy0, fy1, graph->graphid);
     }
 
 /* don't use the following if using GNU Readline or BSD EditLine */
