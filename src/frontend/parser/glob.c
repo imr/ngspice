@@ -407,18 +407,6 @@ char *cp_tildexpand(const char *string)
 } /* end of function cp_tildexpand */
 
 
-
-/* Say whether the pattern p can match the string s. */
-
-/* MW. Now simply compare strings */
-
-bool cp_globmatch(char *p, char *s)
-{
-    return !(strcmp(p, s));
-} /* end of function cp_globmatch */
-
-
-
 /* This function expands the leading ~ of wl_node. */
 static void tilde_expand_word(wordlist *wl_node)
 {
