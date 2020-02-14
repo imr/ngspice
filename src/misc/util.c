@@ -210,7 +210,7 @@ char *ngdirname(const char *name)
         const char *p0 = name + start; /* 1st char past drive */
         const char *p;
         for (p = p0 + strlen(name + start) - 1; p >= p0; --p) {
-            const char *ch_cur = *p;
+            const char ch_cur = *p;
             if (ch_cur == '/' || ch_cur == '\\') { /* at last dir sep */
                 /* Stop copy at last dir sep or right after if
                  * it is the first char after any drive spec.
