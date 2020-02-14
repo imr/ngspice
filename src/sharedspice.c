@@ -1628,7 +1628,7 @@ char* outstorage(char* wordin, bool write)
    An update occurs only every DELTATIME milliseconds. */
 #define DELTATIME 150
 void SetAnalyse(
-   char * Analyse, /*in: analysis type */
+   const char * Analyse, /*in: analysis type */
    int DecaPercent /*in: 10 times the progress [%]*/
    /*HWND hwAnalyse, in: global handle to analysis window */
 ) {
@@ -1995,7 +1995,6 @@ getvsrcval(double time, char *vname)
     if (!wantvdat) {
         fprintf(stderr, "Error: No callback supplied for source %s\n", vname);
         shared_exit(EXIT_BAD);
-        return(EXIT_BAD);
     }
     else {
         /* callback fcn */
@@ -2013,7 +2012,6 @@ getisrcval(double time, char *iname)
     if (!wantidat) {
         fprintf(stderr, "Error: No callback supplied for source %s\n", iname);
         shared_exit(EXIT_BAD);
-        return(EXIT_BAD);
     }
     else {
         /* callback fcn */
