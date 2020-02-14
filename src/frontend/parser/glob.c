@@ -412,7 +412,7 @@ char *cp_tildexpand(const char *string)
 
 /* MW. Now simply compare strings */
 
-bool cp_globmatch(char *p, char *s)
+bool cp_globmatch(const char *p, const char *s)
 {
     return !(strcmp(p, s));
 } /* end of function cp_globmatch */

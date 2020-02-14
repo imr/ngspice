@@ -1641,4 +1641,14 @@ winmessage(char *new_msg)
 }
 
 
+
+#else /* HAS_WINGUI not defined */
+/* Prevent warning regarding empty translation unit */
+static void dummy(void)
+{
+    return;
+} /* end of function dummy */
+
+
+
 #endif /* HAS_WINGUI */

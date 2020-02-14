@@ -142,7 +142,6 @@ char  *MIFgettok(char **s)
         }
         break;
     }
-    return NULL; /* should not happen */
 }
 
 #if 0
