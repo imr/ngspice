@@ -47,6 +47,7 @@ NON-STANDARD FEATURES
 
 #include  <stdio.h>
 
+#include "ngspice/alloc.h"
 #include "ngspice/cmtypes.h"
 #include "ngspice/cktdefs.h"
 
@@ -103,15 +104,10 @@ void *malloc_pj(size_t s);
 void *calloc_pj(size_t s1, size_t s2);
 void *realloc_pj(void *ptr, size_t s);
 void  free_pj(void *ptr);
-void *tmalloc(size_t s);
-void *trealloc(void *ptr, size_t s);
-void txfree(void *ptr);
-const char *ngspice_version(void);
-void *tmalloc_raw(size_t s);
-void *tcalloc_raw(size_t n, size_t s);
-void *trealloc_raw(void *ptr, size_t s);
+
 char *tstrdup(const char *str_in);
 char *tstrdup_raw(const char *str_in);
+const char *ngspice_version(void);
 
 FILE *fopen_with_path(const char *path, const char *mode);
 
