@@ -1511,7 +1511,6 @@
     <ClCompile Include="..\src\frontend\plotting\plotting.c" />
     <ClCompile Include="..\src\frontend\plotting\pvec.c" />
     <ClCompile Include="..\src\frontend\plotting\x11.c" />
-    <ClCompile Include="..\src\frontend\plotting\xgraph.c" />
     <ClCompile Include="..\src\frontend\points.c" />
     <ClCompile Include="..\src\frontend\postcoms.c" />
     <ClCompile Include="..\src\frontend\postsc.c" />
