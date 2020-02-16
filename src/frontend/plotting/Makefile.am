@@ -26,9 +26,8 @@ libplotting_la_SOURCES = \
 if !NO_X
 libplotting_la_SOURCES += \
 	x11.c		\
-	x11.h		\
-	xgraph.c	\
-	xgraph.h
+	x11.h
+
 endif
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include -I$(top_srcdir)/src/frontend @X_CFLAGS@

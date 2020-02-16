@@ -13,7 +13,6 @@
 #include "plotit.h"
 #include "points.h"
 #include "agraf.h"
-#include "xgraph.h"
 #include "gnuplot.h"
 #include "graf.h"
 
@@ -1072,19 +1071,6 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
     }
 
     y_type = d ? SV_NOTYPE : vecs->v_type;
-
-#ifndef X_DISPLAY_MISSING
-    if (devname && eq(devname, "xgraph")) {
-        /* Interface to XGraph-11 Plot Program */
-        ft_xgraph(xlims, ylims, hcopy,
-                  title ? title : vecs->v_plot->pl_title,
-                  xlabel ? xlabel : ft_typabbrev(vecs->v_scale->v_type),
-                  ylabel ? ylabel : ft_typabbrev(y_type),
-                  gtype, ptype, vecs);
-        rtn = TRUE;
-        goto quit;
-    }
-#endif
 
     if (devname && eq(devname, "gnuplot")) {
         /* Interface to Gnuplot Plot Program */

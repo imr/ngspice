@@ -1,5 +1,4 @@
 /**********
- * From xgraph.c:
  * Copyright 1992 Regents of the University of California.  All rights reserved.
  * Author: 1992 David A. Gates, U. C. Berkeley CAD Group
  *
