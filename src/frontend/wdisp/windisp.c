@@ -755,8 +755,6 @@ int WIN_NewViewport(GRAPH *graph)
 #endif
     if (!window)
         return 1;
-    }
-
 
     /* change the background color of all windows (both new and already plotted)
        by assessing the registered window class */
