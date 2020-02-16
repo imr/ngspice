@@ -3,7 +3,6 @@
 #include "ngspice/dvec.h"
 
 #include "com_setscale.h"
-#include "quote.h"
 #include "ngspice/cpextern.h"
 #include "vectors.h"
 #include "plotting/plotting.h"

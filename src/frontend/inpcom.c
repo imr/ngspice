@@ -1364,7 +1364,6 @@ static char *inp_pathresolve(const char *name)
 
             switch (v->va_type) {
                 case CP_STRING:
-                    cp_wstrip(v->va_string);
                     rc_ds = ds_cat_printf(&ds, "%s%s%s",
                             v->va_string, DIR_PATHSEP, name);
                     break;
@@ -2431,11 +2430,6 @@ void inp_casefix(char *string)
     }
     if (string)
         while (*string) {
-#ifdef HAS_ASCII
-            /* ((*string) & 0177): mask off all but the first seven bits,
-             * 0177: octal */
-            *string = (char) strip(*string);
-#endif
             if (*string == '"') {
                 *string++ = ' ';
                 while (*string && *string != '"')

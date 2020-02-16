@@ -200,13 +200,10 @@ nloop:
         if (c != EOF)
             numeofs = 0;
 
-        if (c != EOF)           /* Don't need to do this really. */
-            c = strip(c);
-
         /* if '\' or '^', add following character to linebuf */
         if ((c == '\\' && DIR_TERM != '\\') || (c == '\026') /* ^V */ ) {
-            c = quote(cp_readchar(&string, cp_inp_cur));
-            push(&linebuf, strip(c));
+            c = cp_readchar(&string, cp_inp_cur);
+            push(&linebuf, c);
         }
 
         /* if reading from fcn backeval() for backquote subst. */
@@ -265,7 +262,7 @@ nloop:
             {
                 if ((c == '\n') || (c == EOF) || (c == ESCAPE))
                     goto gotchar;
-                push(&buf, quote(c));
+                push(&buf, c);
                 push(&linebuf, c);
             }
             push(&linebuf, '\'');
@@ -285,7 +282,7 @@ nloop:
                 if (c == '\\') {
                     push(&linebuf, c);
                     c = cp_readchar(&string, cp_inp_cur);
-                    push(&buf, quote(c));
+                    push(&buf, c);
                     push(&linebuf, c);
                 } else {
                     push(&buf, c);
@@ -459,15 +456,15 @@ prompt(void)
         s = "-> ";
 
     while (*s) {
-        switch (strip(*s)) {
+        switch (*s) {
         case '!':
             fprintf(cp_out, "%d", cp_event);
             break;
         case '\\':
             if (s[1])
-                (void) putc(strip(*++s), cp_out);
+                (void) putc((*++s), cp_out);
         default:
-            (void) putc(strip(*s), cp_out);
+            (void) putc((*s), cp_out);
         }
         s++;
     }
