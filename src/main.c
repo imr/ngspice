@@ -544,14 +544,14 @@ prompt(void)
         s = "->";
 
     while (*s) {
-        char c = (char) strip(*s++);
+        char c = (char) (*s++);
         switch (c) {
         case '!':
             p += sprintf(p, "%d", where_history() + 1);
             break;
         case '\\':
             if (*s)
-                c = (char) strip(*s++);
+                c = (char) (*s++);
         default:
             *p++ = c;
             break;

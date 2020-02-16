@@ -4,7 +4,6 @@
 #include "ngspice/wordlist.h"
 
 #include "com_strcmp.h"
-#include "quote.h"
 #include "variable.h"
 
 

@@ -12,7 +12,6 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ngspice/ftedefs.h"
 #include "ngspice/dvec.h"
 #include "ngspice/ftedebug.h"
-#include "quote.h"
 #include "breakp2.h"
 
 

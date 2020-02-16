@@ -262,7 +262,6 @@ ft_cpinit(void)
         {
             wordlist *wl;
             wl = cp_doglob(cp_lexer(buf));
-            cp_striplist(wl);
             com_set(wl);
             wl_free(wl);
         }
@@ -339,8 +338,6 @@ cp_istrue(wordlist *wl)
         return FALSE;
     /* backquote '`' substitution */
     wl = cp_bquote(wl);
-    /* strip bit number eight */
-    cp_striplist(wl);
 
     /* parse the condition */
     names = ft_getpnames(wl, TRUE);

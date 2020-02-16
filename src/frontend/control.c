@@ -192,9 +192,6 @@ docommand(wordlist *wlist)
                 return;
             }
 
-        /* Get rid of all the 8th bits now... */
-        cp_striplist(wlist);
-
         s = wlist->wl_word;
 
         /* Look for the command in the command list. */

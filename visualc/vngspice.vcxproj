@@ -906,7 +906,6 @@
     <ClInclude Include="..\src\frontend\points.h" />
     <ClInclude Include="..\src\frontend\postcoms.h" />
     <ClInclude Include="..\src\frontend\postsc.h" />
-    <ClInclude Include="..\src\frontend\quote.h" />
     <ClInclude Include="..\src\frontend\rawfile.h" />
     <ClInclude Include="..\src\frontend\resource.h" />
     <ClInclude Include="..\src\frontend\runcoms.h" />
