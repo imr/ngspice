@@ -91,7 +91,6 @@ cp_ccom(wordlist *wlist, char *buf, bool esc)
     int j, arg;
 
     buf = cp_unquote(copy(buf));
-    cp_wstrip(buf);
     if (wlist) {   /* Not the first word. */
         cc = getccom(wlist->wl_word);
         if (cc && cc->cc_invalid)
