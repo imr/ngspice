@@ -412,7 +412,7 @@ LRESULT CALLBACK PlotWindowProc(HWND hwnd, UINT uMsg,
             hdc = GetDC(hwnd);
             GRAPH* gr = pGraph(hwnd);
             isblack = get_black(gr);
-            if (isblack)
+            if (isblack) {
                 prevmix = SetROP2(hdc, R2_XORPEN);
             }
             else {
