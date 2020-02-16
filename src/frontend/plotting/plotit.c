@@ -275,14 +275,9 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
         return FALSE;
     }
 
-    /* All these things are static so that "samep" will work. 
-    static double *xcompress = NULL, *xindices = NULL;
-    static double *xlim = NULL, *ylim = NULL, *xynull;
-    static double *xdelta = NULL, *ydelta = NULL;
-    static char *xlabel = NULL, *ylabel = NULL, *title = NULL;
-    static double *xprevgraph = NULL;*/
-
+    static double *xprevgraph = NULL;
     int prevgraph = 0;
+
     static bool nointerp = FALSE;
     static GRIDTYPE gtype = GRID_LIN;
     static PLOTTYPE ptype = PLOT_LIN;
@@ -333,7 +328,7 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
     nylabel = getword(wwl, "ylabel");
     ntitle = getword(wwl, "title");
     /* remove sgraphid */
-    txfee(getlims(wwl, "sgraphid", 1));
+    txfree(getlims(wwl, "sgraphid", 1));
 
     /* Build the plot command. This construction had been done with wordlists
      * and reversing, and flattening, but it is clearer as well as much more

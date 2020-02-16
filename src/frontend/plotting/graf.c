@@ -79,7 +79,7 @@ int gr_init(double *xlims, double *ylims, /* The size of the screen. */
         const char *ylabel, /* Labels for axes. */
         int xtype, int ytype, /* The types of the data graphed. */
         const char *pname,
-        const char *commandline) /* For xi_zoomdata() */
+        const char *commandline, /* For xi_zoomdata() */
         int prevgraph)                /* plot id, if started from a previous plot*/
 {
     GRAPH *graph;
@@ -762,7 +762,7 @@ static int iplot(struct plot *pl, int id)
         (void) gr_init(xlims, ylims, xs->v_name,
                 pl->pl_title, NULL, n_vec_plot, 0.0, 0.0,
                 GRID_LIN, PLOT_LIN, xs->v_name, yl, xs->v_type, yt,
-                plot_cur->pl_typename, commandline);
+                plot_cur->pl_typename, commandline, 0);
 
         for (v = pl->pl_dvecs; v; v = v->v_next) {
             if (v->v_flags & VF_PLOT) {
