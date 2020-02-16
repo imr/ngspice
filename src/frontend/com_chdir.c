@@ -11,7 +11,6 @@
 #endif
 
 #include "com_chdir.h"
-#include "quote.h"
 #include "ngspice/cpextern.h"
 
 

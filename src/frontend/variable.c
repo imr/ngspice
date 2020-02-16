@@ -15,7 +15,6 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 #include "circuits.h"
 #include "com_history.h"
-#include "quote.h"
 #include "ngspice/cpextern.h"
 #include "variable.h"
 
@@ -728,7 +727,6 @@ cp_getvar(char *name, enum cp_types type, void *retval, size_t rsize)
                 break;
             case CP_STRING: {   /* Gotta be careful to have room. */
                 char *s = cp_unquote(v->va_string);
-                cp_wstrip(s);
                 if (strlen(s) > rsize) {
                     fprintf(stderr, "Warning: string length for variable %s is limited to %zu chars\n", v->va_name, rsize);
                     /* limit the string length */
@@ -902,7 +900,6 @@ wordlist *vareval(/* NOT const */ char *string)
 
     /* usage of vfree: variable v has to be freed only if created by cp_enqvar()! */
 
-    cp_wstrip(string);
     if ((s = strchr(string, '[')) != NULL) {
         *s = '\0';
         range = s + 1;

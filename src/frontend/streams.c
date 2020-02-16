@@ -10,7 +10,6 @@
 
 #include "variable.h"
 #include "terminal.h"
-#include "quote.h"
 #include "ngspice/cpextern.h"
 #include "streams.h"
 

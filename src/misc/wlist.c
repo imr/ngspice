@@ -82,7 +82,7 @@ printword(const char *string, FILE *fp)
 {
     if (string) {
         while (*string) {
-            putc(strip(*string++), fp);
+            putc((*string++), fp);
         }
     }
 }
