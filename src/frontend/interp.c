@@ -21,12 +21,17 @@ lincopy(struct dvec *ov, double *newscale, int newlen, struct dvec *oldscale)
     double *nd;
 
     if (!isreal(ov)) {
-        fprintf(cp_err, "Warning: %s is not real\n", ov->v_name);
+        fprintf(cp_err, "Warning: vector %s is not real - no interpolation\n", ov->v_name);
+        return;
+    }
+
+    if (ov->v_length == 1) {
+        fprintf(cp_err, "Warning: %s is not a vector - no interpolation\n", ov->v_name);
         return;
     }
 
     if (ov->v_length < oldscale->v_length) {
-        fprintf(cp_err, "Warning: %s is too short\n", ov->v_name);
+        fprintf(cp_err, "Warning: vector %s is too short - no interpolation\n", ov->v_name);
         return;
     }
 
