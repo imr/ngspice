@@ -237,15 +237,15 @@ SetAnalyse(char *Analyse,   /* in: analysis type */
             sprintf(t, "%s", PACKAGE_STRING);
         }
         else if (DecaPercent == 0) {
-            sprintf(s, "%s", Analyse);
+            sprintf(s, " %s", Analyse);
             sprintf(t, "%s   %s", PACKAGE_STRING, Analyse);
         }
         else if (!strcmp(Analyse, "shooting")) {
-            sprintf(s, "%s: %d", Analyse, DecaPercent);
+            sprintf(s, " %s: %d", Analyse, DecaPercent);
             sprintf(t, "%s   %d", PACKAGE_STRING, DecaPercent);
         }
         else {
-            sprintf(s, "%s: %3.1f%%", Analyse, (double)DecaPercent/10.);
+            sprintf(s, " %s: %3.1f%%", Analyse, (double)DecaPercent/10.);
             sprintf(t, "%s   %3.1f%%", PACKAGE_STRING, (double)DecaPercent/10.);
         }
         timebefore.dstflag = timenow.dstflag;
