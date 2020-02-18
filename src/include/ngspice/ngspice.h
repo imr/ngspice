@@ -221,7 +221,7 @@ extern double x_atanh(double);
 #ifndef EXT_ASC
 #if defined(__MINGW__) || defined(_MSC_VER)
 #define fopen newfopen
-extern FILE *newfopen(char *fn, char* md);
+extern FILE *newfopen(const char *fn, const char* md);
 #endif
 #endif
 

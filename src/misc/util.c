@@ -264,7 +264,7 @@ ngdirname(const char *name)
 #undef BOOLEAN
 #include <windows.h>
 FILE *
-newfopen(char *fn, char* md)
+newfopen(const char *fn, const char* md)
 {
     if (fn == NULL)
         return NULL;
