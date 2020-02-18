@@ -6935,10 +6935,10 @@ static int inp_vdmos_model(struct card *deck)
             wl_append_word(&wl, &wl, copy_substring(curr_line, cut_line));
             wlb = wl;
             if (strstr(cut_line, "pchan")) {
-                wl_append_word(NULL, &wl, "vdmosp (");
+                wl_append_word(NULL, &wl, copy("vdmosp ("));
             }
             else {
-                wl_append_word(NULL, &wl, "vdmosn (");
+                wl_append_word(NULL, &wl, copy("vdmosn ("));
             }
             cut_line = cut_line + 5;
 
@@ -6949,17 +6949,20 @@ static int inp_vdmos_model(struct card *deck)
             while (cut_line && *cut_line) {
                 token = gettok_model(&cut_line);
                 if (!ciprefix("pchan", token) && !ciprefix("ron=", token) &&
-                        !ciprefix("vds=", token) && !ciprefix("qg=", token) &&
-                        !ciprefix("mfg=", token) && !ciprefix("nchan", token))
+                    !ciprefix("vds=", token) && !ciprefix("qg=", token) &&
+                    !ciprefix("mfg=", token) && !ciprefix("nchan", token))
                     wl_append_word(NULL, &wl, token);
+                else
+                    tfree(token);
                 if (*cut_line == ')') {
-                    wl_append_word(NULL, &wl, ")");
+                    wl_append_word(NULL, &wl, copy(")"));
                     break;
                 }
             }
             new_line = wl_flatten(wlb);
             tfree(card->line);
             card->line = new_line;
+            wl_free(wlb);
         }
         /* we have a VDMOS instance line with 'tnodeout' and thus need exactly 5 nodes
          */
