@@ -448,6 +448,7 @@ static Table2_Data_t *init_local_data(const char *filename, int order)
         lFileRead = fread(cFile, sizeof(char), lFileLen, fp);
         const int file_error = ferror(fp);
         fclose(fp); /* done with file */
+        fp = (FILE *) NULL;
         if (file_error) {
             cm_message_printf("Error reading data file %s", filename);
             xrc = -1;
