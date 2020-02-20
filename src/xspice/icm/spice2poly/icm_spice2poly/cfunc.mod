@@ -114,7 +114,7 @@ void spice2poly (ARGS)
     if(INIT) {
         Mif_Inst_Var_Data_t *p = STATIC_VAR_INST(acgains);
         p -> size    = num_inputs;
-        if ((p->element = (Mif_Value_t *) tmalloc_raw((size_t) num_inputs *
+        if ((p->element = (Mif_Value_t *) malloc((size_t) num_inputs *
                 sizeof(Mif_Value_t))) == (Mif_Value_t *) NULL) {
             cm_message_send("Unable to allocate element array "
                     "in spice2poly()");
@@ -139,7 +139,7 @@ void spice2poly (ARGS)
 
     /* Get input values and coefficients to local storage for faster access */
 
-    if ((in = (double *) tmalloc_raw((size_t) num_inputs *
+    if ((in = (double *) malloc((size_t) num_inputs *
             sizeof(double))) == (double *) NULL) {
         cm_message_send("Unable to allocate array for inputs "
                 "in spice2poly()");
@@ -150,7 +150,7 @@ void spice2poly (ARGS)
 
     num_coefs = PARAM_SIZE(coef);
 
-    if ((coef = (double *) tmalloc_raw((size_t) num_coefs *
+    if ((coef = (double *) malloc((size_t) num_coefs *
             sizeof(double))) == (double *) NULL) {
         cm_message_send("Unable to allocate array for coef "
                 "in spice2poly()");
@@ -161,7 +161,7 @@ void spice2poly (ARGS)
 
 
     /* Allocate the array of exponents used in computing the poly terms */
-    if ((exp = (int *) tmalloc_raw((size_t) num_inputs *
+    if ((exp = (int *) malloc((size_t) num_inputs *
             sizeof(int))) == (int *) NULL) {
         cm_message_send("Unable to allocate array for exp "
                 "in spice2poly()");

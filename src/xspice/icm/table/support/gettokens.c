@@ -25,7 +25,7 @@ char *CNVgettok(char **s)
 
     /* allocate space big enough for the whole string */
 
-    if ((buf = (char *) tmalloc_raw(strlen(*s) + 1)) == (char *) NULL) {
+    if ((buf = (char *) malloc(strlen(*s) + 1)) == (char *) NULL) {
         cm_message_printf("cannot allocate buffer to tokenize");
         return (char *) NULL;
     }
@@ -74,7 +74,7 @@ char *CNVgettok(char **s)
 
 
     {
-        char * const ret_str = (char *) tmalloc_raw(strlen(buf) + 1);
+        char * const ret_str = (char *) malloc(strlen(buf) + 1);
         if (ret_str == (char *) NULL) {
             return (char *) NULL;
         }

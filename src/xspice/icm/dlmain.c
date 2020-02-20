@@ -32,26 +32,14 @@ const SPICEdev * const cmDEVices[] = {
     NULL
 };
 
-const SPICEdev * const cmDEVices2[] = {
-#include "cminfo2.h"
-    NULL
-};
-
 const int cmDEVicesCNT = sizeof(cmDEVices) / sizeof(SPICEdev *) - 1;
-const int cmDEVicesCNT2 = sizeof(cmDEVices2) / sizeof(SPICEdev *) - 1;
 
 const Evt_Udn_Info_t * const cmEVTudns[] = {
 #include "udninfo.h"
     NULL
 };
 
-const Evt_Udn_Info_t * const cmEVTudns2[] = {
-#include "udninfo2.h"
-    NULL
-};
-
 const int cmEVTudnCNT = sizeof(cmEVTudns) / sizeof(Evt_Udn_Info_t *) - 1;
-const int cmEVTudnCNT2 = sizeof(cmEVTudns2) / sizeof(Evt_Udn_Info_t *) - 1;
 
 // Pointer to core info structure containing pointers to core functions.
 struct coreInfo_t *coreitf;
@@ -91,19 +79,11 @@ CM_EXPORT void *CMdevs(void)
 {
     return (void *) cmDEVices;
 }
-CM_EXPORT void *CMdevs2(void)
-{
-    return (void *) cmDEVices2;
-}
 
 // This one returns the device count
 CM_EXPORT void *CMdevNum(void)
 {
     return (void *) &cmDEVicesCNT;
-}
-CM_EXPORT void *CMdevNum2(void)
-{
-    return (void *) &cmDEVicesCNT2;
 }
 
 // This one returns the UDN table
@@ -111,19 +91,11 @@ CM_EXPORT void *CMudns(void)
 {
     return (void *) cmEVTudns;
 }
-CM_EXPORT void *CMudns2(void)
-{
-    return (void *) cmEVTudns2;
-}
 
 // This one returns the UDN count
 CM_EXPORT void *CMudnNum(void)
 {
     return (void *) &cmEVTudnCNT;
-}
-CM_EXPORT void *CMudnNum2(void)
-{
-    return (void *) &cmEVTudnCNT2;
 }
 
 // This one returns the pointer to the pointer to the core interface structure
@@ -526,11 +498,26 @@ cm_message_printf(const char *fmt, ...)
             break;
         }
 
-        if (p == buf)
-            p = tmalloc((size_t) size * sizeof(char));
-        else
-            p = trealloc(p, (size_t) size * sizeof(char));
-    }
+        /* Allocate a larger buffer to prepare for another format attempt */
+        {
+            void *p_new;
+            if (p == buf) { /* was using buffer from stack */
+                p_new = malloc((size_t) size * sizeof(char));
+            }
+            else {
+                p_new = realloc(p, (size_t) size * sizeof(char));
+            }
+            if (p_new == NULL) {
+                /* allocation failure, so just send the format string */
+                (void) cm_message_send(fmt);
+                if (p != buf) {
+                    free(p);
+                }
+                return -1;
+            }
+            p = (char *) p_new; /* give new allocation to p */
+        }
+    } /* end of loop formatting message */
 
     rv = cm_message_send(p);
     if (p != buf)
@@ -542,48 +529,6 @@ cm_message_printf(const char *fmt, ...)
 
 
 
-/****   V E R S I O N   2   A D D I T I O N S   ***/
-/* Declared in cmproto.h */
-const char *ngspice_version(void)
-{
-    return (*coreitf->dllitf_ngspice_version)();
-}
-
-/* Wrapper functions around interface function pointers that are used to get
- * access to "raw" malloc(), calloc(), and realloc() under mutex protection
- * when necessary */
-/* Declared in cmproto.h */
-void *tmalloc_raw(size_t s)
-{
-    return (*coreitf->dllitf_tmalloc_raw)(s);
-}
-
-/* Declared in cmproto.h */
-void *tcalloc_raw(size_t n, size_t s)
-{
-    return (*coreitf->dllitf_tcalloc_raw)(n, s);
-}
-
-/* Declared in cmproto.h */
-void *trealloc_raw(void *ptr, size_t s)
-{
-    return (*coreitf->dllitf_trealloc_raw)(ptr, s);
-}
-
-/* Declared in cmproto.h */
-char *tstrdup(const char *sz_in)
-{
-    return (*coreitf->dllitf_tstrdup)(sz_in);
-} /* end of function tstrdup */
-
-/* Declared in cmproto.h */
-char *tstrdup_raw(const char *sz_in)
-{
-    return (*coreitf->dllitf_tstrdup_raw)(sz_in);
-} /* end of function tstrdup_raw */
-
-
-
 /*
 fopen_with_path()
 Opens an input file <infile>. Called from d_state, file_source, d_source.
@@ -592,8 +537,6 @@ Then searches for (and opens) <infile> an a sequence from
 Infile_Path/<infile>
 NGSPICE_INPUT_DIR/<infile>, where the path is given by the environmental variable
 <infile>, where the path is the current directory
-
-Requires version 2 due to DSTRING, which uses raw allocations.
 */
 #define DFLT_BUF_SIZE   256
 /* Declared in cmproto.h */

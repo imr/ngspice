@@ -253,7 +253,7 @@ void cm_oneshot(ARGS)  /* structure holding parms,
         cm_analog_alloc(OUTPUT_OLD,sizeof(double));
 
         /*** allocate static storage for *loc ***/
-        if ((loc = (Local_Data_t *) (STATIC_VAR(locdata) = tcalloc_raw(1,
+        if ((loc = (Local_Data_t *) (STATIC_VAR(locdata) = calloc(1,
                 sizeof(Local_Data_t)))) == (Local_Data_t *) NULL) {
             cm_message_send("Unable to allocate Local_Data_t "
                     "in cm_oneshot()");
@@ -262,13 +262,13 @@ void cm_oneshot(ARGS)  /* structure holding parms,
         }
 
         /* Allocate storage for breakpoint domain & pulse width values */
-        if ((x = loc->control = (double *) tcalloc_raw((size_t) cntl_size,
+        if ((x = loc->control = (double *) calloc((size_t) cntl_size,
                 sizeof(double))) == (double *) NULL) {
             cm_message_send(oneshot_allocation_error);
             cm_oneshot_callback(mif_private, MIF_CB_DESTROY);
             return;
         }
-        if ((y = loc->pw = (double *) tcalloc_raw((size_t) pw_size,
+        if ((y = loc->pw = (double *) calloc((size_t) pw_size,
                 sizeof(double))) == (double *) NULL) {
             cm_message_send(oneshot_allocation_error);
             cm_oneshot_callback(mif_private, MIF_CB_DESTROY);

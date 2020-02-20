@@ -167,7 +167,7 @@ static char  *CNVgettok(char **s)
 
     /* allocate space big enough for the whole string */
 
-    if ((buf = (char *) tmalloc_raw(strlen(*s) + 1)) == (char *) NULL) {
+    if ((buf = (char *) malloc(strlen(*s) + 1)) == (char *) NULL) {
         cm_message_send("Unable to allocate buffer in CNVgettok()");
         return (char *) NULL;
     }
@@ -213,7 +213,7 @@ static char  *CNVgettok(char **s)
 
 
     {
-        char * const ret_str = (char *) tmalloc_raw(strlen(buf) + 1);
+        char * const ret_str = (char *) malloc(strlen(buf) + 1);
         if (ret_str == (char *) NULL) {
             cm_message_send("Unable to allocate return buffer "
                     "in CNVgettok()");
@@ -751,7 +751,7 @@ static int cm_read_source(FILE *source, Local_Data_t *loc)
                 s = base_address;
 
                 /* set storage space for bits in a row and set them to 0*/
-                if ((loc->all_data[i] = (char *) tcalloc_raw(
+                if ((loc->all_data[i] = (char *) calloc(
                         (size_t) loc->width,
                         sizeof(char))) == (char *) NULL) {
                     cm_message_send("Unable to allocate buffer "
@@ -936,7 +936,7 @@ void cm_d_source(ARGS)
             char *lbuffer, *p;
             lbuffer = getenv("NGSPICE_INPUT_DIR");
             if (lbuffer && *lbuffer) {
-                p = (char *) tmalloc_raw(strlen(lbuffer) +
+                p = (char *) malloc(strlen(lbuffer) +
                     strlen(DIR_PATHSEP) + strlen(PARAM(input_file)) + 1);
                 if (p == (char *) NULL) {
                     cm_message_send("Unable to allocate buffer "
@@ -966,7 +966,7 @@ void cm_d_source(ARGS)
         }
 
         /*** allocate static storage for *loc ***/
-        if ((loc = (Local_Data_t *) (STATIC_VAR(locdata) = tcalloc_raw(1,
+        if ((loc = (Local_Data_t *) (STATIC_VAR(locdata) = calloc(1,
                 sizeof(Local_Data_t)))) == (Local_Data_t *) NULL) {
             cm_message_send("Unable to allocate buffer "
                     "for building file name in cm_d_source()");
@@ -994,7 +994,7 @@ void cm_d_source(ARGS)
         loc->width = PORT_SIZE(out);
 
         /*** allocate storage for **all_data, & *all_timepoints ***/
-        if ((loc->all_timepoints = (double *) tcalloc_raw((size_t) i,
+        if ((loc->all_timepoints = (double *) calloc((size_t) i,
                 sizeof(double))) == (double *) NULL) {
             cm_message_send("Unable to allocate all_timepoints "
                     "in cm_d_source()");
@@ -1002,7 +1002,7 @@ void cm_d_source(ARGS)
             STATIC_VAR(locdata) = NULL;
             return;
         }
-        if ((loc->all_data = (char **) tcalloc_raw((size_t) i,
+        if ((loc->all_data = (char **) calloc((size_t) i,
                 sizeof(char *))) == (char **) NULL) {
             cm_message_send("Unable to allocate all_data "
                     "in cm_d_source()");

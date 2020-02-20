@@ -135,7 +135,7 @@ void cm_d_lut(ARGS)
     if (INIT) {  /* initial pass */
         /* allocate storage for the lookup table */
         if ((lookup_table = (Digital_State_t *) (STATIC_VAR (locdata) =
-                tcalloc_raw((size_t) tablelen, sizeof(Digital_State_t)))) ==
+                calloc((size_t) tablelen, sizeof(Digital_State_t)))) ==
                 (Digital_State_t *) NULL) {
             cm_message_send("Unable to allocate Digital_t structure "
                     "in cm_d_lut()");

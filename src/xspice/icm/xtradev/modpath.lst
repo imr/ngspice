@@ -1,12 +1,12 @@
-#Directory          Version
-aswitch                 1
-capacitor               1
-cmeter                  1
-core                    1
-inductor                1
-lcouple                 1
-lmeter                  1
-potentiometer           1
-zener                    2
-memristor               1
-sidiode                 1
+#Directory
+aswitch
+capacitor
+cmeter
+core
+inductor
+lcouple
+lmeter
+potentiometer
+zener
+memristor
+sidiode

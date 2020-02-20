@@ -175,7 +175,7 @@ void cm_zener(ARGS)  /* structure holding parms,
 
         /* Allocate storage for frequencies */
         if ((previous_voltage = (double *) (STATIC_VAR(previous_voltage) =
-                tmalloc_raw(sizeof(double)))) == (double *) NULL) {
+                malloc(sizeof(double)))) == (double *) NULL) {
             cm_message_send("Unable to allocate memory for previous "
                     "voltage in cm_zener()");
             return;

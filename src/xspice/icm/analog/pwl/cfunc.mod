@@ -297,11 +297,11 @@ void cm_pwl(ARGS)  /* structure holding parms,
     if (INIT==1) {  /* First pass...allocate storage for previous value... */
 
         /* Allocate storage for last_x_value */
-        last_x_value = (double *) (STATIC_VAR(last_x_value) = tmalloc_raw(
+        last_x_value = (double *) (STATIC_VAR(last_x_value) = malloc(
                 sizeof(double)));
-        x = (double *) (STATIC_VAR(x) = tcalloc_raw((size_t) size,
+        x = (double *) (STATIC_VAR(x) = calloc((size_t) size,
                 sizeof(double)));
-        y = (double *) (STATIC_VAR(y) = tcalloc_raw((size_t) size,
+        y = (double *) (STATIC_VAR(y) = calloc((size_t) size,
                 sizeof(double)));
         if (last_x_value == (double *) NULL ||
                 x == (double *) NULL || y == (double *) NULL) {

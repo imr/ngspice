@@ -67,14 +67,12 @@ typedef struct {
     char        *path_name;     /* Pathname read from model path file */
     char        *spice_name;    /* Name of model from ifspec.ifs  */
     char        *cfunc_name;    /* Name of C fcn from ifspec.ifs  */
-    unsigned int version; /* version of the code model */
 } Model_Info_t;
 
 
 typedef struct {
     char        *path_name;     /* Pathname read from udn path file */
     char        *node_name;     /* Name of node type  */
-    unsigned int version; /* version of the code model */
 } Node_Info_t;
 
 
@@ -111,10 +109,8 @@ static bool test_for_duplicates(unsigned int n, struct Key_src *p_ks,
 static inline void trim_slash(size_t *p_n, char *p);
 static int write_CMextrn(int num_models, Model_Info_t *model_info);
 static int write_CMinfo(int num_models, Model_Info_t *model_info);
-static int write_CMinfo2(int num_models, Model_Info_t *model_info);
 static int write_UDNextrn(int num_nodes, Node_Info_t *node_info);
 static int write_UDNinfo(int num_nodes, Node_Info_t *node_info);
-static int write_UDNinfo2(int num_nodes, Node_Info_t *node_info);
 static int write_objects_inc(int num_models, Model_Info_t *model_info,
         int num_nodes, Node_Info_t *node_info);
 static int read_udn_type_name(const char *path, char **node_name);
@@ -192,10 +188,6 @@ void preprocess_lst_files(void)
     if(status != 0) {
         exit(1);
     }
-    status = write_CMinfo2(num_models, model_info);
-    if(status != 0) {
-        exit(1);
-    }
 
     /* Write out the UDNextrn.h file used to compile SPIinit.c */
     status = write_UDNextrn(num_nodes, node_info);
@@ -205,10 +197,6 @@ void preprocess_lst_files(void)
 
     /* Write out the UDNinfo.h file used to compile SPIinit.c */
     status = write_UDNinfo(num_nodes, node_info);
-    if(status != 0) {
-        exit(1);
-    }
-    status = write_UDNinfo2(num_nodes, node_info);
     if(status != 0) {
         exit(1);
     }
@@ -249,40 +237,10 @@ int output_paths_from_lst_file(const char *filename)
         goto EXITPOINT;
     }
 
-    bool f_have_path = false; /* do not have a path to store */
-    FBTYPE fbtype;
-    FBOBJ fbobj;
+    FBSTRING fbstr;
     for ( ; ; ) { /* Read items until end of file */
         /* Get the next path if not found yet */
-        if (!f_have_path) {
-            const int rc = fbget(fbp, 0, (FBTYPE *) NULL, &fbtype, &fbobj);
-            if (rc != 0) {
-                if (rc == -1) { /* Error */
-                    print_error("ERROR - Unable to read item to buffer");
-                    xrc = -1;
-                    goto EXITPOINT;
-                }
-                else { /* +1 -- EOF */
-                    break;
-                }
-            } /* end of abnormal case */
-
-            /* Remove trailing slash if appended to path */
-            trim_slash(&fbobj.str_value.n_char, fbobj.str_value.sz);
-        }
-
-        /* Output the file that was found */
-        if (fprintf(stdout, "%s\n", fbobj.str_value.sz) < 0) {
-            print_error("ERROR - Unable to output path name to stdout: %s",
-                    strerror(errno));
-            xrc = -1;
-            goto EXITPOINT;
-        }
-        ++n_path; /* 1 more path printed OK */
-
-        /* Try getting a version. If found, it will be discarded */
-        FBTYPE type_wanted = BUF_TYPE_ULONG;
-        const int rc = fbget(fbp, 1, &type_wanted, &fbtype, &fbobj);
+        const int rc = fbget(fbp, &fbstr);
         if (rc != 0) {
             if (rc == -1) { /* Error */
                 print_error("ERROR - Unable to read item to buffer");
@@ -294,15 +252,17 @@ int output_paths_from_lst_file(const char *filename)
             }
         } /* end of abnormal case */
 
-        if (fbtype == BUF_TYPE_ULONG) { /* found version number */
-            f_have_path = false;
-        }
-        else { /* it was a string, so it is the next path */
-            f_have_path = true;
+        /* Remove trailing slash if appended to path */
+        trim_slash(&fbstr.n_char, fbstr.sz);
 
-            /* Remove trailing slash if appended to path */
-            trim_slash(&fbobj.str_value.n_char, fbobj.str_value.sz);
+        /* Output the file that was found */
+        if (fprintf(stdout, "%s\n", fbstr.sz) < 0) {
+            print_error("ERROR - Unable to output path name to stdout: %s",
+                    strerror(errno));
+            xrc = -1;
+            goto EXITPOINT;
         }
+        ++n_path; /* 1 more path printed OK */
     } /* end of loop reading items into buffer */
 
 EXITPOINT:
@@ -377,27 +337,23 @@ static int read_modpath(
     }
     n_model_info_alloc = N_MODEL_INIT;
 
-    bool f_have_path = false; /* do not have a path to store */
-    FBTYPE fbtype;
-    FBOBJ fbobj;
+    FBSTRING fbstr;
     for ( ; ; ) { /* Read items until end of file */
         /* Get the next path if not found yet */
-        if (!f_have_path) {
-            const int rc = fbget(fbp, 0, (FBTYPE *) NULL, &fbtype, &fbobj);
-            if (rc != 0) {
-                if (rc == -1) { /* Error */
-                    print_error("ERROR - Unable to read item to buffer");
-                    xrc = -1;
-                    goto EXITPOINT;
-                }
-                else { /* +1 -- EOF */
-                    break;
-                }
-            } /* end of abnormal case */
+        const int rc = fbget(fbp, &fbstr);
+        if (rc != 0) {
+            if (rc == -1) { /* Error */
+                print_error("ERROR - Unable to read item to buffer");
+                xrc = -1;
+                goto EXITPOINT;
+            }
+            else { /* +1 -- EOF */
+                break;
+            }
+        } /* end of abnormal case */
 
-            /* Remove trailing slash if appended to path */
-            trim_slash(&fbobj.str_value.n_char, fbobj.str_value.sz);
-        }
+        /* Remove trailing slash if appended to path */
+        trim_slash(&fbstr.n_char, fbstr.sz);
 
         /* Enlarge model array if full */
         if (n_model_info_alloc == n_model_info) {
@@ -417,44 +373,18 @@ static int read_modpath(
                 n_model_info;
 
         if ((p_model_info_cur->path_name = (char *) malloc(
-                fbobj.str_value.n_char + 1)) == (char *) NULL) {
+                fbstr.n_char + 1)) == (char *) NULL) {
             print_error("ERROR - Unable to allocate path name");
             xrc = -1;
             goto EXITPOINT;
         }
 
-        strcpy(p_model_info_cur->path_name, fbobj.str_value.sz);
+        strcpy(p_model_info_cur->path_name, fbstr.sz);
         p_model_info_cur->spice_name = (char *) NULL;
         p_model_info_cur->cfunc_name = (char *) NULL;
 
         /* Must set before returning due to EOF. */
-        p_model_info_cur->version = 1;
         ++n_model_info;
-
-        /* Try getting a version */
-        FBTYPE type_wanted = BUF_TYPE_ULONG;
-        const int rc = fbget(fbp, 1, &type_wanted, &fbtype, &fbobj);
-        if (rc != 0) {
-            if (rc == -1) { /* Error */
-                print_error("ERROR - Unable to read item to buffer");
-                xrc = -1;
-                goto EXITPOINT;
-            }
-            else { /* +1 -- EOF */
-                break;
-            }
-        } /* end of abnormal case */
-
-        if (fbtype == BUF_TYPE_ULONG) { /* found version number */
-            f_have_path = false;
-            p_model_info_cur->version = (unsigned int) fbobj.ulong_value;
-        }
-        else { /* it was a string, so it is the next path */
-            f_have_path = true;
-
-            /* Remove trailing slash if appended to path */
-            trim_slash(&fbobj.str_value.n_char, fbobj.str_value.sz);
-        }
     } /* end of loop reading items into buffer */
 
 EXITPOINT:
@@ -552,29 +482,24 @@ static int read_udnpath(
     }
     n_node_info_alloc = N_NODE_INIT;
 
-    bool f_have_path = false; /* do not have a path to store */
-    FBTYPE fbtype;
-    FBOBJ fbobj;
+    FBSTRING fbstr;
 
     for ( ; ; ) { /* Read items until end of file */
         /* Get the next path if not found yet */
-        if (!f_have_path) {
-            const int rc = fbget(fbp, 0, (FBTYPE *) NULL, &fbtype, &fbobj);
-            if (rc != 0) {
-                if (rc == -1) { /* Error */
-                    print_error("ERROR - Unable to read item to buffer");
-                    xrc = -1;
-                    goto EXITPOINT;
-                }
-                else { /* +1 -- EOF */
-                    break;
-                }
-            } /* end of abnormal case */
+        const int rc = fbget(fbp, &fbstr);
+        if (rc != 0) {
+            if (rc == -1) { /* Error */
+                print_error("ERROR - Unable to read item to buffer");
+                xrc = -1;
+                goto EXITPOINT;
+            }
+            else { /* +1 -- EOF */
+                break;
+            }
+        } /* end of abnormal case */
 
-            /* Remove trailing slash if appended to path */
-            trim_slash(&fbobj.str_value.n_char, fbobj.str_value.sz);
-        }
-
+        /* Remove trailing slash if appended to path */
+        trim_slash(&fbstr.n_char, fbstr.sz);
 
         /* Enlarge node array if full */
         if (n_node_info_alloc == n_node_info) {
@@ -594,44 +519,14 @@ static int read_udnpath(
                 n_node_info;
 
         if ((p_node_info_cur->path_name = (char *) malloc(
-                fbobj.str_value.n_char + 1)) == (char *) NULL) {
+                fbstr.n_char + 1)) == (char *) NULL) {
             print_error("ERROR - Unable to allocate path name");
             xrc = -1;
             goto EXITPOINT;
         }
 
-        strcpy(p_node_info_cur->path_name, fbobj.str_value.sz);
+        strcpy(p_node_info_cur->path_name, fbstr.sz);
         p_node_info_cur->node_name = NULL;
-
-        /* Must set before returning due to EOF. */
-        p_node_info_cur->version = 1;
-        ++n_node_info;
-
-        /* Try getting a version */
-        FBTYPE type_wanted = BUF_TYPE_ULONG;
-        const int rc = fbget(fbp, 1, &type_wanted, &fbtype, &fbobj);
-        if (rc != 0) {
-            if (rc == -1) { /* Error */
-                print_error("ERROR - Unable to read item to buffer");
-                xrc = -1;
-                goto EXITPOINT;
-            }
-            else { /* +1 -- EOF */
-                break;
-            }
-        } /* end of abnormal case */
-
-        if (fbtype == BUF_TYPE_ULONG) { /* found version number */
-            f_have_path = false;
-            p_node_info_cur->version = (unsigned int) fbobj.ulong_value;
-        }
-        else { /* it was a string, so it is the next path */
-            f_have_path = true;
-
-            /* Remove trailing slash if appended to path */
-            trim_slash(&fbobj.str_value.n_char, fbobj.str_value.sz);
-        }
-
     } /* end of loop reading items into buffer */
 
 EXITPOINT:
@@ -1230,10 +1125,7 @@ static int write_CMinfo(
 
     /* Write out the data */
     for(i = 0; i < num_models; i++) {
-        Model_Info_t *p_mi_cur = model_info + i;
-        if (p_mi_cur->version == 1) {
-            fprintf(fp, "&%s_info,\n", model_info[i].cfunc_name);
-        }
+        fprintf(fp, "&%s_info,\n", model_info[i].cfunc_name);
     }
 
     /* Close the file and return */
@@ -1246,49 +1138,6 @@ static int write_CMinfo(
     free(filename);
     return 0;
 } /* end of function write_CMinfo */
-
-
-
-static int write_CMinfo2(
-    int            num_models,  /* Number of model pathnames */
-    Model_Info_t   *model_info  /* Info about each model */
-)
-{
-    int         i;                       /* A temporary counter */
-    FILE        *fp;   /* File pointer for writing CMinfo.h */
-
-    char *filename = (char *) NULL;
-
-    /* Open the file to be written */
-    if ((filename = gen_filename("cminfo2.h", "w")) == (char *) NULL) {
-        print_error("ERROR - Unable to build path to cminfo2.h");
-        return -1;
-    }
-    fp = fopen(filename, "w");
-    if(fp == NULL) {
-        print_error("ERROR - Problems opening %s for write", filename);
-        free(filename);
-        return -1;
-    }
-
-    /* Write out the data */
-    for (i = 0; i < num_models; i++) {
-        Model_Info_t *p_mi_cur = model_info + i;
-        if (p_mi_cur->version <= 2) {
-            fprintf(fp, "&%s_info,\n", model_info[i].cfunc_name);
-        }
-    }
-
-    /* Close the file and return */
-    if (fclose(fp) != 0) {
-        print_error("ERROR - Problems closing %s", filename);
-        free(filename);
-        return -1;
-    }
-
-    free(filename);
-    return 0;
-} /* end of function write_CMinfo2 */
 
 
 
@@ -1383,51 +1232,7 @@ static int write_UDNinfo(
     /* Write out the data */
     for(i = 0; i < num_nodes; i++) {
         Node_Info_t *p_ni_cur = node_info + i;
-        if (p_ni_cur->version == 1) {
-            fprintf(fp, "&udn_%s_info,\n", p_ni_cur->node_name);
-        }
-    }
-
-    /* Close the file and return */
-    if (fclose(fp) != 0) {
-        print_error("ERROR - Problems closing %s", filename);
-        free(filename);
-        return -1;
-    }
-
-    free(filename);
-    return 0;
-} /* end of function write_UDNinfo */
-
-
-
-static int write_UDNinfo2(
-    int            num_nodes,  /* Number of node pathnames */
-    Node_Info_t    *node_info  /* Info about each node */
-)
-{
-    int         i;                       /* A temporary counter */
-    FILE        *fp;   /* File pointer for writing UDNinfo.h */
-
-    char *filename = (char *) NULL;
-
-    /* Open the file to be written */
-    if ((filename = gen_filename("udninfo2.h", "w")) == (char *) NULL) {
-        print_error("ERROR - Unable to build path to udninfo2.h");
-        return -1;
-    }
-    fp = fopen(filename, "w");
-    if(fp == NULL) {
-        print_error("ERROR - Problems opening %s for write", filename);
-        return -1;
-    }
-
-    /* Write out the data */
-    for(i = 0; i < num_nodes; i++) {
-        Node_Info_t *p_ni_cur = node_info + i;
-        if (p_ni_cur->version <= 2) {
-            fprintf(fp, "&udn_%s_info,\n", p_ni_cur->node_name);
-        }
+        fprintf(fp, "&udn_%s_info,\n", p_ni_cur->node_name);
     }
 
     /* Close the file and return */

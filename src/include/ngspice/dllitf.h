@@ -77,25 +77,6 @@ struct coreInfo_t {
 	void *    ((*dllitf_tmalloc)(size_t));
 	void *    ((*dllitf_trealloc)(void *, size_t));
 	void      ((*dllitf_txfree)(void *));
-
-    /***   VERSION 2 ADDITIONS   ***/
-    const char *(*dllitf_ngspice_version)(void);
-                                 /* version string of ngspice using the cm */
-    void *(*dllitf_tmalloc_raw)(size_t size);
-                                 /* mutex-protected malloc() that will not
-                                  * cause program termination on failure */
-    void *(*dllitf_tcalloc_raw)(size_t num, size_t size);
-                                 /* mutex-protected calloc() that will not
-                                  * cause program termination on failure */
-    void *(*dllitf_trealloc_raw)(void *p, size_t size);
-                                 /* mutex-protected realloc() that will not
-                                  * cause program termination on failure */
-    char *(*dllitf_tstrdup)(const char *sz);
-                                 /* mutex-protected strdup() that WILL
-                                  * cause program termination on failure */
-    char *(*dllitf_tstrdup_raw)(const char *sz);
-                                 /* mutex-protected strdup() that will not
-                                  * cause program termination on failure */
 };
 
 extern const struct coreInfo_t  coreInfo;

@@ -303,7 +303,7 @@ static Table2_Data_t *init_local_data(const char *filename, int interporder)
 
 
     /* Allocate static storage for *loc */
-    if ((loc = (Table2_Data_t *) tcalloc_raw(1,
+    if ((loc = (Table2_Data_t *) calloc(1,
             sizeof(Table2_Data_t))) == (Table2_Data_t *) NULL) {
         cm_message_printf("cannot allocate memory for lookup table.");
         xrc = -1;
@@ -319,7 +319,7 @@ static Table2_Data_t *init_local_data(const char *filename, int interporder)
     if (!fp) { /* Standard open attempt failed */
         const char * const lbuffer = getenv("NGSPICE_INPUT_DIR");
         if (lbuffer && *lbuffer) {
-            char * const p = (char *) tmalloc_raw(strlen(lbuffer) +
+            char * const p = (char *) malloc(strlen(lbuffer) +
                     strlen(DIR_PATHSEP) +
                     strlen(filename) + 1);
             if (p == (char *) NULL) {
@@ -356,9 +356,9 @@ static Table2_Data_t *init_local_data(const char *filename, int interporder)
     }
 
     /* create string to hold the whole file */
-    cFile = tcalloc_raw(lFileLen + 1, sizeof(char));
+    cFile = calloc(lFileLen + 1, sizeof(char));
     /* create another string long enough for file manipulation */
-    cThisLine = tcalloc_raw(lFileLen + 1, sizeof(char));
+    cThisLine = calloc(lFileLen + 1, sizeof(char));
     if (cFile == NULL || cThisLine == NULL) {
         cm_message_printf("Insufficient memory to read file %s",
                 filename);
@@ -419,7 +419,7 @@ static Table2_Data_t *init_local_data(const char *filename, int interporder)
             cnv_get_spice_value(cThisLinePtr, &tmp);
             loc->ix = ix = (int) tmp;
             /* generate row  data structure (x) */
-            if ((loc->xcol = (double *) tcalloc_raw((size_t) ix,
+            if ((loc->xcol = (double *) calloc((size_t) ix,
                     sizeof(double))) == (double *) NULL) {
                 cm_message_printf("Unable to allocate row structure.");
                 xrc = -1;
@@ -430,7 +430,7 @@ static Table2_Data_t *init_local_data(const char *filename, int interporder)
             cnv_get_spice_value(cThisLinePtr, &tmp);
             loc->iy = iy = (int) tmp;
             /* generate  column data structure (y) */
-            if ((loc->ycol = (double *) tcalloc_raw((size_t) iy,
+            if ((loc->ycol = (double *) calloc((size_t) iy,
                     sizeof(double))) == (double *) NULL) {
                 cm_message_printf("Unable to allocate colum structure.");
                 xrc = -1;
@@ -500,7 +500,7 @@ static Table2_Data_t *init_local_data(const char *filename, int interporder)
 
     /* create table_data in memory */
     /* data [n2][n1] */
-    if ((loc->table = table_data = (double **) tcalloc_raw((size_t) iy,
+    if ((loc->table = table_data = (double **) calloc((size_t) iy,
             sizeof(double *))) == (double **) NULL) {
         cm_message_send("Unable to allocate data table.");
         xrc = -1;
@@ -510,7 +510,7 @@ static Table2_Data_t *init_local_data(const char *filename, int interporder)
     {
         int i;
         for (i = 0; i < iy; i++) {
-            if ((table_data[i] = (double *) tcalloc_raw((size_t) ix,
+            if ((table_data[i] = (double *) calloc((size_t) ix,
                     sizeof(double))) == (double *) NULL) {
                 cm_message_printf("Unable to allocate data table "
                         "row %d", i + 1);

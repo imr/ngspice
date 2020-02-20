@@ -275,20 +275,20 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
 
     /*  We have to allocate memory and use cm_analog_alloc, because the
      * ITP variables are not functional */
-    integrator = (double **) tcalloc_raw((size_t) den_size,
+    integrator = (double **) calloc((size_t) den_size,
             sizeof(double *));
-    old_integrator = (double **) tcalloc_raw((size_t) den_size,
+    old_integrator = (double **) calloc((size_t) den_size,
             sizeof(double *));
 
     /* Allocate storage for coefficient values */
-    den_coefficient = (double **) tcalloc_raw((size_t) den_size,
+    den_coefficient = (double **) calloc((size_t) den_size,
             sizeof(double *));
-    old_den_coefficient = (double **) tcalloc_raw((size_t) den_size,
+    old_den_coefficient = (double **) calloc((size_t) den_size,
             sizeof(double *));
 
-    num_coefficient = (double **) tcalloc_raw((size_t) num_size,
+    num_coefficient = (double **) calloc((size_t) num_size,
             sizeof(double *));
-    old_num_coefficient = (double **) tcalloc_raw((size_t) num_size,
+    old_num_coefficient = (double **) calloc((size_t) num_size,
             sizeof(double *));
 
     if (integrator == (double **) NULL ||
@@ -324,7 +324,7 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
 
    /*     ITP_VAR_SIZE(den) = den_size;  */
 
-     /*   gain = (double *) tcalloc_raw(1, sizeof(double));
+     /*   gain = (double *) calloc(1, sizeof(double));
         ITP_VAR(total_gain) = gain;
         ITP_VAR_SIZE(total_gain) = 1.0;  */
 

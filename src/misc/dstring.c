@@ -212,8 +212,7 @@ static int ds_reserve_internal(DSTRING *p_ds,
         n_byte_alloc_min = n_byte_alloc_opt;
     }
     for ( ; ; ) {
-        if ((p_buf_new = (char *) tmalloc_raw(
-                n_byte_alloc)) != (char *) NULL) {
+        if ((p_buf_new = (char *) malloc(n_byte_alloc)) != (char *) NULL) {
             break; /* Allocated OK */
         }
 
@@ -348,7 +347,7 @@ int ds_compact(DSTRING *p_ds)
 
     /* Else realloc the heap buffer */
     {
-        void * const p = trealloc_raw(p_ds->p_buf, n_byte_alloc_min);
+        void * const p = realloc(p_ds->p_buf, n_byte_alloc_min);
         if (p == NULL) {
             return DS_E_NO_MEMORY;
         }

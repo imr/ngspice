@@ -92,11 +92,4 @@ const struct coreInfo_t coreInfo =
     &tmalloc,
     &trealloc,
     &txfree,
-    /* Version 2 additions */
-    &get_ngspice_version,
-    &tmalloc_raw,
-    &tcalloc_raw,
-    &trealloc_raw,
-    &tstrdup,
-    &tstrdup_raw
 };

@@ -169,7 +169,7 @@ void cm_d_genlut(ARGS)
 
     if (INIT) {  /* initial pass */
         /* allocate storage for the lookup table */
-        if ((lookup_table = (Digital_t *) (STATIC_VAR(locdata) = tcalloc_raw(
+        if ((lookup_table = (Digital_t *) (STATIC_VAR(locdata) = calloc(
                 (size_t) tablelen, sizeof(Digital_t)))) ==
                 (Digital_t *) NULL) {
             cm_message_send("Unable to allocate Digital_t structure "

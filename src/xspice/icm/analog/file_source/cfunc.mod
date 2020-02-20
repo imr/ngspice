@@ -65,6 +65,12 @@ NON-STANDARD FEATURES
 #define DIR_PATHSEP    "/"
 #endif
 
+/* For WIN32, make  strdup become _strdup unless it is defined already,
+ * as it would be if CRT debugging is being used */
+#if defined(_WIN32) && !defined(strdup)
+#define strdup _strdup
+#endif
+
 /*=== LOCAL VARIABLES & TYPEDEFS =======*/                         
 
 struct filesource_state {
@@ -167,7 +173,7 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
         int count;
 
         /*** allocate static storage for *loc ***/
-        if ((loc = (Local_Data_t *) (STATIC_VAR(locdata) = tcalloc_raw(1,
+        if ((loc = (Local_Data_t *) (STATIC_VAR(locdata) = calloc(1,
                 sizeof(Local_Data_t)))) == (Local_Data_t *) NULL) {
             cm_message_send("Unable to allocate Local_Data_t "
                     "in cm_filesource()");
@@ -175,14 +181,14 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
         }
 
         /* Allocate storage for internal state */
-        loc->timeinterval = (double *) tcalloc_raw(2, sizeof(double));
-        loc->amplinterval = (double *) tcalloc_raw(2 * (size_t) size,
+        loc->timeinterval = (double *) calloc(2, sizeof(double));
+        loc->amplinterval = (double *) calloc(2 * (size_t) size,
                 sizeof(double));
-        loc->state = (struct filesource_state *) tcalloc_raw(1,
+        loc->state = (struct filesource_state *) calloc(1,
                 sizeof(struct filesource_state)); /* calloc to null fp */
-        loc->indata = (struct infiledata *) tmalloc_raw(
+        loc->indata = (struct infiledata *) malloc(
                 sizeof(struct infiledata));
-        loc->indata->datavec = (double *) tmalloc_raw(sizeof(double) *
+        loc->indata->datavec = (double *) malloc(sizeof(double) *
                 stepsize * 1000);
 
         /* Check allocations */
@@ -212,7 +218,7 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
             lbuffer = getenv("NGSPICE_INPUT_DIR");
             if (lbuffer && *lbuffer) {
                 char *p;
-                if ((p = (char *) tmalloc_raw(strlen(lbuffer) +
+                if ((p = (char *) malloc(strlen(lbuffer) +
                         strlen(DIR_PATHSEP) + strlen(PARAM(file)) + 1)) ==
                         (char *) NULL) {
                     cm_message_send("Unable to allocate buffer "
@@ -243,7 +249,7 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
                 loc->state->atend = 1;
                 break;
             }
-            if ((cpdel = cp = tstrdup_raw(line)) == (char *) NULL) {
+            if ((cpdel = cp = strdup(line)) == (char *) NULL) {
                 cm_message_send("Unable to duplicate string "
                         "cm_filesource()");
                 loc->state->atend = 1;
@@ -276,7 +282,7 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
                If not, add another 1000*size doubles */
             if (count > loc->indata->vecallocated - size) {
                 loc->indata->vecallocated += size * 1000;
-                void * const p = trealloc_raw(loc->indata->datavec,
+                void * const p = realloc(loc->indata->datavec,
                         sizeof(double) * loc->indata->vecallocated);
                 if (p == NULL) {
                     cm_message_printf("cannot allocate enough memory");

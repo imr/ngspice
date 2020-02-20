@@ -53,9 +53,10 @@ funptr_t dlsym(void *, const char *);
 char *dlerror(void);
 #define FREE_DLERR_MSG(msg) free_dlerr_msg(msg)
 static void free_dlerr_msg(char *msg);
-#define RTLD_LAZY	1	/* lazy function call binding */
-#define RTLD_NOW	2	/* immediate function call binding */
-#define RTLD_GLOBAL	4	/* symbols in this dlopen'ed obj are visible to other dlopen'ed objs */
+#define RTLD_LAZY   1 /* lazy function call binding */
+#define RTLD_NOW    2 /* immediate function call binding */
+#define RTLD_GLOBAL 4 /* symbols in this dlopen'ed obj are visible to other
+                       * dlopen'ed objs */
 #endif /* ifndef HAS_WINGUI */
 
 #include "ngspice/dllitf.h" /* the coreInfo Structure*/
@@ -422,43 +423,26 @@ int load_opus(const char *name)
 
 
     /* Get code models defined by the library */
-    if ((fetch = dlsym(lib, "CMdevNum2")) != (funptr_t) NULL) {
-        /* Version 2 code models present */
+    if ((fetch = dlsym(lib, "CMdevNum")) != (funptr_t) NULL) {
         num = *(*(int * (*)(void)) fetch)();
-        fetch = dlsym(lib, "CMdevs2");
+        fetch = dlsym(lib, "CMdevs");
         if (fetch != (funptr_t) NULL) {
             devs = (*(SPICEdev ** (*)(void)) fetch)();
         }
         else {
             msg = dlerror();
-            printf("Error getting the list of version 2 devices: %s\n",
+            printf("Error getting the list of devices: %s\n",
                     msg);
             FREE_DLERR_MSG(msg);
             return 1;
         }
     }
-    else { /* no version 2, so try version 1 */
-        if ((fetch = dlsym(lib, "CMdevNum")) != (funptr_t) NULL) {
-            num = *(*(int * (*)(void)) fetch)();
-            fetch = dlsym(lib, "CMdevs");
-            if (fetch != (funptr_t) NULL) {
-                devs = (*(SPICEdev ** (*)(void)) fetch)();
-            }
-            else {
-                msg = dlerror();
-                printf("Error getting the list of version 1 devices: %s\n",
-                        msg);
-                FREE_DLERR_MSG(msg);
-                return 1;
-            }
-        } /* end of case that got version 1 */
-        else { /* no version 2 or version 1 */
-            msg = dlerror();
-            printf("Error finding the number of devices: %s\n", msg);
-            FREE_DLERR_MSG(msg);
-            return 1;
-        }
-    } /* end of case of no version 2 */
+    else {
+        msg = dlerror();
+        printf("Error finding the number of devices: %s\n", msg);
+        FREE_DLERR_MSG(msg);
+        return 1;
+    }
 
     add_device(num, devs, 1);
 
@@ -468,46 +452,26 @@ int load_opus(const char *name)
 
 
     /* Get user-defined ndes defined by the library */
-    if ((fetch = dlsym(lib, "CMudnNum2")) != (funptr_t) NULL) {
-        /* Version 2 user-defined types present */
+    if ((fetch = dlsym(lib, "CMudnNum")) != (funptr_t) NULL) {
         num = *(*(int * (*)(void)) fetch)();
-        fetch = dlsym(lib, "CMudns2");
+        fetch = dlsym(lib, "CMudns");
         if (fetch != (funptr_t) NULL) {
             udns = (*(Evt_Udn_Info_t ** (*)(void)) fetch)();
         }
         else {
             msg = dlerror();
-            printf("Error getting the list of version 2 "
-                    "user-defined types: %s\n",
+            printf("Error getting the list of user-defined types: %s\n",
                     msg);
             FREE_DLERR_MSG(msg);
             return 1;
         }
     }
-    else { /* no version 2, so try version 1 */
-        if ((fetch = dlsym(lib, "CMudnNum")) != (funptr_t) NULL) {
-            num = *(*(int * (*)(void)) fetch)();
-            fetch = dlsym(lib, "CMudns");
-            if (fetch != (funptr_t) NULL) {
-                udns = (*(Evt_Udn_Info_t ** (*)(void)) fetch)();
-            }
-            else {
-                msg = dlerror();
-                printf("Error getting the list of version 1 "
-                        "user-defined types: %s\n",
-                        msg);
-                FREE_DLERR_MSG(msg);
-                return 1;
-            }
-        } /* end of case that got version 1 */
-        else { /* no version 2 or version 1 */
-            msg = dlerror();
-            printf("Error finding the number of "
-                    "user-defined types: %s\n", msg);
-            FREE_DLERR_MSG(msg);
-            return 1;
-        }
-    } /* end of case of no version 2 */
+    else {
+        msg = dlerror();
+        printf("Error finding the number of user-defined types: %s\n", msg);
+        FREE_DLERR_MSG(msg);
+        return 1;
+    }
 
     add_udn(num, udns);
 #ifdef TRACE

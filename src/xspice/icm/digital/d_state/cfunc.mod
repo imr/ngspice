@@ -209,7 +209,7 @@ static char  *CNVgettok(char **s)
 
     /* allocate space big enough for the whole string */
 
-    if ((buf = (char *) tmalloc_raw(strlen(*s) + 1)) == (char *) NULL) {
+    if ((buf = (char *) malloc(strlen(*s) + 1)) == (char *) NULL) {
         cm_message_send("Unable to allocate buffer in CNVgettok()");
         return (char *) NULL;
     }
@@ -255,7 +255,7 @@ static char  *CNVgettok(char **s)
 
 
     {
-        char * const ret_str = (char *) tmalloc_raw(strlen(buf) + 1);
+        char * const ret_str = (char *) malloc(strlen(buf) + 1);
         if (ret_str == (char *) NULL) {
             cm_message_send("Unable to allocate return buffer "
                     "in CNVgettok()");
@@ -1804,15 +1804,15 @@ void cm_d_state(ARGS)
         
 
         /* assign storage for arrays to pointers in states table    */
-        states->state = (int *) tcalloc_raw(
+        states->state = (int *) calloc(
                 (size_t) (states->depth + 1), sizeof(int));
-        states->bits = (short *) tcalloc_raw(
+        states->bits = (short *) calloc(
                 (size_t) (states->num_outputs * states->depth / 4 + 1),
                 sizeof(short));
-        states->inputs = (short *) tcalloc_raw(
+        states->inputs = (short *) calloc(
                 (size_t) (states->num_inputs * states->depth / 8 + 1),
                 sizeof(short));
-        states->next_state = (int *) tcalloc_raw(
+        states->next_state = (int *) calloc(
                 (size_t) (states->depth + 1), sizeof(int));
         if (states->state == (int *) NULL ||
                 states->bits == (short *) NULL ||

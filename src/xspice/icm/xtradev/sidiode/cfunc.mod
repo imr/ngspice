@@ -116,7 +116,7 @@ void cm_sidiode(ARGS)  /* structure holding parms,
         double grev, goff, gon, Va, Vb, Vc, Vd, hEpsilon, hRevepsilon;
 
         /* allocate static storage for *loc */
-        if ((loc = (Local_Data_t *) (STATIC_VAR(locdata) = tcalloc_raw(1,
+        if ((loc = (Local_Data_t *) (STATIC_VAR(locdata) = calloc(1,
                 sizeof(Local_Data_t)))) == (Local_Data_t *) NULL) {
             cm_message_send("Unable to allocate locdata in cm_sidiode().");
         }
