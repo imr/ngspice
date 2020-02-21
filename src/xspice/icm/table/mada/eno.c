@@ -97,10 +97,10 @@ sf_eno_close (sf_eno ent)
     int i;
     const int n = ent->order;
     for (i = 0; i < n; i++) {
-        txfree (ent->diff[i]);
+        free (ent->diff[i]);
     }
-    txfree (ent->diff);
-    txfree (ent);
+    free (ent->diff);
+    free (ent);
 }
 
 void

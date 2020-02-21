@@ -111,7 +111,67 @@ static void cm_table2D_callback(ARGS, Mif_Callback_Reason_t reason);
 extern int findCrossOver(double arr[], int n, double x);
 static void free_local_data(Table2_Data_t *loc);
 static inline double get_local_diff(int n, double *col, int ind);
-static Table2_Data_t *init_local_data(const char *filename, int order);
+static Table2_Data_t *init_local_data(const char *filename, int interporder);
+
+
+
+/*==============================================================================
+
+FUNCTION cnv_get_spice_value()
+
+AUTHORS
+
+    ???             Bill Kuhn
+
+MODIFICATIONS
+
+    30 Sep 1991     Jeffrey P. Murray
+
+SUMMARY
+
+    This function takes as input a string token from a SPICE
+    deck and returns a floating point equivalent value.
+
+INTERFACES
+
+    FILE                 ROUTINE CALLED
+
+    N/A                  N/A
+
+RETURNED VALUE
+
+    Returns the floating point value in pointer *p_value. Also
+    returns an integer representing successful completion.
+
+GLOBAL VARIABLES
+
+    NONE
+
+NON-STANDARD FEATURES
+
+    NONE
+
+==============================================================================*/
+
+
+
+
+static void cm_table2D_callback(ARGS,
+        Mif_Callback_Reason_t reason)
+{
+    switch (reason) {
+        case MIF_CB_DESTROY: {
+            Table2_Data_t *loc = (Table2_Data_t *) STATIC_VAR(locdata);
+            if (loc) {
+                free_local_data(loc);
+                loc = (Table2_Data_t *) (STATIC_VAR(locdata) = NULL);
+            }
+            break;
+        } /* end of case MIF_CB_DESTROY */
+    } /* end of switch over reason being called */
+} /* end of function cm_table2D_callback */
+
+
 
 /*==============================================================================
 
@@ -289,6 +349,7 @@ static Table2_Data_t *init_local_data(const char *filename, int interporder)
     int xrc = 0;
     int ix = 0,   /* elements in a row */
         iy = 0;   /* number of rows */
+
     double **table_data;
     double tmp;
     FILE *fp = (FILE *) NULL; /* Handle to file */
@@ -331,7 +392,7 @@ static Table2_Data_t *init_local_data(const char *filename, int interporder)
             (void) sprintf(p, "%s%s%s",
                     lbuffer, DIR_PATHSEP, filename);
             fp = fopen(p, "r");
-            txfree(p);
+            free(p);
         }
     }
 
@@ -373,6 +434,7 @@ static Table2_Data_t *init_local_data(const char *filename, int interporder)
         lFileRead = fread(cFile, sizeof(char), lFileLen, fp);
         const int file_error = ferror(fp);
         fclose(fp); /* done with file */
+        fp = (FILE *) NULL;
         if (file_error) {
             cm_message_printf("Error reading data file %s", filename);
             xrc = -1;
@@ -447,7 +509,7 @@ static Table2_Data_t *init_local_data(const char *filename, int interporder)
                     goto EXITPOINT;
                 }
                 cnv_get_spice_value(token, &loc->xcol[i++]);
-                txfree(token);
+                free(token);
                 token = CNVgettok(&cThisLinePtr);
             }
             if (i < ix) {
@@ -466,7 +528,7 @@ static Table2_Data_t *init_local_data(const char *filename, int interporder)
                     goto EXITPOINT;
                 }
                 cnv_get_spice_value(token, &loc->ycol[i++]);
-                txfree(token);
+                free(token);
                 token = CNVgettok(&cThisLinePtr);
             }
             if (i < iy) {
@@ -489,7 +551,7 @@ static Table2_Data_t *init_local_data(const char *filename, int interporder)
                 interporder);
         interporder = 2;
     }
-    /* int order : interpolation order,
+    /* int interporder : interpolation order,
        int n1, int n2 : data dimensions */
     if ((loc->newtable = sf_eno2_init(
             interporder, ix, iy)) == (sf_eno2) NULL) {
@@ -573,7 +635,7 @@ static Table2_Data_t *init_local_data(const char *filename, int interporder)
                  * structure table_data */
                 cnv_get_spice_value(token, &tmpval);
                 table_data[lLineCount - 1][i++] = tmpval;
-                txfree(token);
+                free(token);
                 token = CNVgettok(&cThisLinePtr);
             }
             if (i < ix) {
@@ -591,10 +653,10 @@ static Table2_Data_t *init_local_data(const char *filename, int interporder)
 EXITPOINT:
     /* free the file and memory allocated */
     if (cFile != (char *) NULL) {
-        txfree(cFile);
+        free(cFile);
     }
     if (cThisLine != (char *) NULL) {
-        txfree(cThisLine);
+        free(cThisLine);
     }
     if (fp != (FILE *) NULL) {
         (void) fclose(fp);
@@ -624,24 +686,16 @@ static void free_local_data(Table2_Data_t *loc)
         int i;
         int n_y = loc->iy;
         for (i = 0; i < n_y; i++) {
-            txfree(loc->table[i]);
+            free(loc->table[i]);
         }
 
-        txfree(loc->table);
+        free(loc->table);
     }
 
-    if (loc->xcol != (double *) NULL) {
-        txfree(loc->xcol);
-    }
-    if (loc->ycol != (double *) NULL) {
-        txfree(loc->ycol);
-    }
-
-    if (loc->newtable != (sf_eno2) NULL) {
-        sf_eno2_close(loc->newtable);
-    }
-
-    txfree(loc);
+    free(loc->xcol);
+    free(loc->ycol);
+    sf_eno2_close(loc->newtable);
+    free(loc);
 } /* end of function free_local_data */
 
 
@@ -657,24 +711,6 @@ static inline double get_local_diff(int n, double *col, int ind)
     }
     return 0.5 * (col[ind + 1] - col[ind - 1]);
 } /* end of function get_local_diff */
-
-
-
-/* This function frees resources when called with reason argument
- * MIF_CB_DESTROY */
-static void cm_table2D_callback(ARGS, Mif_Callback_Reason_t reason)
-{
-    switch (reason) {
-        case MIF_CB_DESTROY: {
-            Table2_Data_t *loc = (Table2_Data_t *) STATIC_VAR(locdata);
-            if (loc) {
-                free_local_data(loc);
-                STATIC_VAR(locdata) = NULL;
-            }
-            break;
-        } /* end of case MIF_CB_DESTROY */
-    } /* end of switch over reason being called */
-} /* end of function cm_table2D_callback */
 
 
 

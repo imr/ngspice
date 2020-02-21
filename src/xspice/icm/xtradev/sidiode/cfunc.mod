@@ -86,7 +86,22 @@ typedef struct {
 
 /*=== FUNCTION PROTOTYPE DEFINITIONS ===*/
 
-static void cm_sidiode_callback(ARGS, Mif_Callback_Reason_t reason);
+/* This function frees resources when called with reason argument
+ * MIF_CB_DESTROY */
+static void cm_sidiode_callback(ARGS, Mif_Callback_Reason_t reason)
+{
+    switch (reason) {
+        case MIF_CB_DESTROY: {
+            Local_Data_t *loc = (Local_Data_t *) STATIC_VAR(locdata);
+            if (loc != (Local_Data_t *) NULL) {
+                txfree(loc);
+            }
+            break;
+        }
+    }
+} /* end of function cm_sidiode_callback */
+
+
 
 
 /*==============================================================================
@@ -119,6 +134,7 @@ void cm_sidiode(ARGS)  /* structure holding parms,
         if ((loc = (Local_Data_t *) (STATIC_VAR(locdata) = calloc(1,
                 sizeof(Local_Data_t)))) == (Local_Data_t *) NULL) {
             cm_message_send("Unable to allocate locdata in cm_sidiode().");
+            return;
         }
         CALLBACK = cm_sidiode_callback;
 
@@ -230,22 +246,6 @@ void cm_sidiode(ARGS)  /* structure holding parms,
     }
 } /* end of function cm_sidiode */
 
-
-
-/* This function frees resources when called with reason argument
- * MIF_CB_DESTROY */
-static void cm_sidiode_callback(ARGS, Mif_Callback_Reason_t reason)
-{
-    switch (reason) {
-        case MIF_CB_DESTROY: {
-            Local_Data_t *loc = (Local_Data_t *) STATIC_VAR(locdata);
-            if (loc != (Local_Data_t *) NULL) {
-                txfree(loc);
-            }
-            break;
-        }
-    }
-} /* end of function cm_sidiode_callback */
 
 
 

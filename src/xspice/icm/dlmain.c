@@ -63,13 +63,9 @@ struct coreInfo_t *coreitf;
 #endif
 
 extern CM_EXPORT void *CMdevs(void);
-extern CM_EXPORT void *CMdevs2(void);
 extern CM_EXPORT void *CMdevNum(void);
-extern CM_EXPORT void *CMdevNum2(void);
 extern CM_EXPORT void *CMudns(void);
-extern CM_EXPORT void *CMudns2(void);
 extern CM_EXPORT void *CMudnNum(void);
-extern CM_EXPORT void *CMudnNum2(void);
 extern CM_EXPORT void *CMgetCoreItfPtr(void);
 
 
@@ -472,62 +468,6 @@ void txfree(void *ptr) {
 	(coreitf->dllitf_txfree)(ptr);
 }
 
-/* Declared in cmproto.h */
-int
-cm_message_printf(const char *fmt, ...)
-{
-    char buf[1024];
-    char *p = buf;
-    int size = sizeof(buf);
-    int rv;
-
-    for (;;) {
-
-        int nchars;
-        va_list ap;
-
-        va_start(ap, fmt);
-        nchars = vsnprintf(p, (size_t) size, fmt, ap);
-        va_end(ap);
-
-        if (nchars == -1) {     // compatibility to old implementations
-            size *= 2;
-        } else if (size < nchars + 1) {
-            size = nchars + 1;
-        } else {
-            break;
-        }
-
-        /* Allocate a larger buffer to prepare for another format attempt */
-        {
-            void *p_new;
-            if (p == buf) { /* was using buffer from stack */
-                p_new = malloc((size_t) size * sizeof(char));
-            }
-            else {
-                p_new = realloc(p, (size_t) size * sizeof(char));
-            }
-            if (p_new == NULL) {
-                /* allocation failure, so just send the format string */
-                (void) cm_message_send(fmt);
-                if (p != buf) {
-                    free(p);
-                }
-                return -1;
-            }
-            p = (char *) p_new; /* give new allocation to p */
-        }
-    } /* end of loop formatting message */
-
-    rv = cm_message_send(p);
-    if (p != buf)
-        txfree(p);
-    return rv;
-}
-
-
-
-
 
 /*
 fopen_with_path()
@@ -611,3 +551,51 @@ FILE *fopen_with_path(const char *path, const char *mode)
 
 
 
+int
+cm_message_printf(const char *fmt, ...)
+{
+    char buf[1024];
+    char *p = buf;
+    int size = sizeof(buf);
+
+
+    for (;;) {
+
+        int nchars;
+        va_list ap;
+
+        va_start(ap, fmt);
+        nchars = vsnprintf(p, (size_t) size, fmt, ap);
+        va_end(ap);
+
+        if (nchars == -1) {     // compatibility to old implementations
+            size *= 2;
+        } else if (size < nchars + 1) {
+            size = nchars + 1;
+        } else {
+            break;
+        }
+
+        {
+            void *p_new;
+            if (p == buf) {
+                p_new = tmalloc((size_t) size * sizeof(char));
+            }
+            else {
+                p_new = trealloc(p, (size_t) size * sizeof(char));
+            }
+            if (p_new == NULL) { /* Allocation failure, so just print fmt */
+                cm_message_send(fmt);
+                if (p != buf) {
+                    free(p);
+                }
+                return -1;
+            }
+        }
+    }
+
+    const int rv = cm_message_send(p);
+    if (p != buf)
+        free(p);
+    return rv;
+}

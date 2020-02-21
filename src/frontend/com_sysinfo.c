@@ -934,8 +934,7 @@ static void get_physical_processor_count(void)
 
     /* Allocate buffer to get the info */
     SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX * const buf =
-            (SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX *) TMALLOC(
-                    char, n_byte_buf);
+            (SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX *) malloc(n_byte_buf);
     if (buf == (SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX *) NULL) {
         fprintf(cp_err,
                 "Unable to allocate a buffer of %lu bytes "

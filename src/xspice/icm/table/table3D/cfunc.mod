@@ -112,9 +112,26 @@ extern double TrilinearInterpolation(double x, double y, double z,
         int xind, int yind, int zind, double ***td);
 static void cm_table3D_callback(ARGS, Mif_Callback_Reason_t reason);
 extern int findCrossOver(double arr[], int n, double x);
+
 static void free_local_data(Table3_Data_t *loc);
 static inline double get_local_diff(int n, double *col, int ind);
-static Table3_Data_t *init_local_data(const char *filename, int order);
+static Table3_Data_t *init_local_data(const char *filename, int interporder);
+
+static void cm_table3D_callback(ARGS,
+        Mif_Callback_Reason_t reason)
+{
+    switch (reason) {
+        case MIF_CB_DESTROY: {
+            Table3_Data_t *loc = (Table3_Data_t *) STATIC_VAR(locdata);
+            if (loc) {
+                free_local_data(loc);
+                loc = (Table3_Data_t *) (STATIC_VAR(locdata) = NULL);
+            }
+            break;
+        } /* end of case MIF_CB_DESTROY */
+    } /* end of switch over reason being called */
+} /* end of function cm_table2D_callback */
+
 
 
 /*==============================================================================
@@ -359,7 +376,7 @@ static Table3_Data_t *init_local_data(const char *filename, int interporder)
             (void) sprintf(p, "%s%s%s",
                     lbuffer, DIR_PATHSEP, filename);
             fp = fopen(p, "r");
-            txfree(p);
+            free(p);
         }
     }
 
@@ -486,7 +503,7 @@ static Table3_Data_t *init_local_data(const char *filename, int interporder)
                     goto EXITPOINT;
                 }
                 cnv_get_spice_value(token, &loc->xcol[i++]);
-                txfree(token);
+                free(token);
                 token = CNVgettok(&cThisLinePtr);
             }
             if (i < ix) {
@@ -505,7 +522,7 @@ static Table3_Data_t *init_local_data(const char *filename, int interporder)
                     goto EXITPOINT;
                 }
                 cnv_get_spice_value(token, &loc->ycol[i++]);
-                txfree(token);
+                free(token);
                 token = CNVgettok(&cThisLinePtr);
             }
             if (i < iy) {
@@ -524,7 +541,7 @@ static Table3_Data_t *init_local_data(const char *filename, int interporder)
                     goto EXITPOINT;
                 }
                 cnv_get_spice_value(token, &loc->zcol[i++]);
-                txfree(token);
+                free(token);
                 token = CNVgettok(&cThisLinePtr);
             }
             if (i < iz) {
@@ -642,7 +659,7 @@ static Table3_Data_t *init_local_data(const char *filename, int interporder)
 
                     table_data[lTableCount][lLineCount][i++] = tmpval;
 
-                    txfree(token);
+                    free(token);
                     token = CNVgettok(&cThisLinePtr);
                 }
                 if (i < ix) {
@@ -663,10 +680,10 @@ static Table3_Data_t *init_local_data(const char *filename, int interporder)
 EXITPOINT:
     /* free the file and memory allocated */
     if (cFile != (char *) NULL) {
-        txfree(cFile);
+        free(cFile);
     }
     if (cThisLine != (char *) NULL) {
-        txfree(cThisLine);
+        free(cThisLine);
     }
     if (fp != (FILE *) NULL) {
         (void) fclose(fp);
@@ -684,7 +701,7 @@ EXITPOINT:
 
 
 
-/* Free memory allocations in Local_Data_t structure */
+/* Free memory allocations in Table3_Data_t structure */
 static void free_local_data(Table3_Data_t *loc)
 {
     if (loc == (Table3_Data_t *) NULL) {
@@ -699,29 +716,19 @@ static void free_local_data(Table3_Data_t *loc)
         for (i = 0; i < n_z; i++) {
             int j;
             for (j = 0; j < n_y; j++) {
-                txfree(loc->table[i][j]);
+                free(loc->table[i][j]);
             }
-            txfree(loc->table[i]);
+            free(loc->table[i]);
         }
 
-        txfree(loc->table);
+        free(loc->table);
     }
 
-    if (loc->xcol != (double *) NULL) {
-        txfree(loc->xcol);
-    }
-    if (loc->ycol != (double *) NULL) {
-        txfree(loc->ycol);
-    }
-    if (loc->zcol != (double *) NULL) {
-        txfree(loc->zcol);
-    }
-
-    if (loc->newtable != (sf_eno3) NULL) {
-        sf_eno3_close(loc->newtable);
-    }
-
-    txfree(loc);
+    free(loc->xcol);
+    free(loc->ycol);
+    free(loc->zcol);
+    sf_eno3_close(loc->newtable);
+    free(loc);
 } /* end of function free_local_data */
 
 
@@ -737,25 +744,6 @@ static inline double get_local_diff(int n, double *col, int ind)
     }
     return 0.5 * (col[ind + 1] - col[ind - 1]);
 } /* end of function get_local_diff */
-
-
-
-/* This function frees resources when called with reason argument
- * MIF_CB_DESTROY */
-static void cm_table3D_callback(ARGS, Mif_Callback_Reason_t reason)
-{
-    switch (reason) {
-        case MIF_CB_DESTROY: {
-            Table3_Data_t *loc = (Table3_Data_t *) STATIC_VAR(locdata);
-            if (loc) {
-                free_local_data(loc);
-                STATIC_VAR(locdata) = NULL;
-            }
-            break;
-        } /* end of case MIF_CB_DESTROY */
-    } /* end of switch over reason being called */
-} /* end of function cm_table3D_callback */
-
 
 
 /* These includes add functions from extra source code files,

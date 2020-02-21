@@ -115,7 +115,7 @@ EXITPOINT:
     if (xrc != 0) {
         if (pnt != (sf_eno3) NULL) {
             sf_eno3_close(pnt);
-            txfree(pnt);
+            free(pnt);
             pnt = (sf_eno3) NULL;
         }
     }
@@ -146,14 +146,14 @@ sf_eno3_close(sf_eno3 pnt)
     for (i3 = 0; i3 < pnt->n3; i3++) {
         for (i2 = 0; i2 < pnt->n2; i2++)
             sf_eno_close (pnt->ent[i3][i2]);
-        txfree(pnt->ent[i3]);
+        free(pnt->ent[i3]);
     }
-    txfree(pnt->ent);
-    txfree(pnt->f[0]);
-    txfree(pnt->f);
-    txfree(pnt->f1[0]);
-    txfree(pnt->f1);
-    txfree(pnt);
+    free(pnt->ent);
+    free(pnt->f[0]);
+    free(pnt->f);
+    free(pnt->f1[0]);
+    free(pnt->f1);
+    free(pnt);
 }
 
 void

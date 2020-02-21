@@ -172,7 +172,12 @@ extern double x_acosh(double);
 extern double x_atanh(double);
 #define hypot _hypot
 #endif
-/////#define strdup _strdup
+
+/* Do not override macro used by CRT debugging */
+#ifndef strdup
+#define strdup _strdup
+#endif
+
 #define unlink _unlink
 #define fileno _fileno
 #define getcwd _getcwd

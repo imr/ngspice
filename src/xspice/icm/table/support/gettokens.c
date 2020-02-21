@@ -42,7 +42,7 @@ char *CNVgettok(char **s)
 
     case '\0':           /* End of string found */
         if (buf) {
-            txfree(buf);
+            free(buf);
         }
         return NULL;
 
@@ -79,7 +79,7 @@ char *CNVgettok(char **s)
             return (char *) NULL;
         }
         (void) strcpy(ret_str, buf);
-        txfree(buf);
+        free(buf);
         return ret_str;
     }
 } /* end of function CNVgettok */
