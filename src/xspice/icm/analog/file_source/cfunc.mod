@@ -227,7 +227,7 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
                 else {
                     sprintf(p, "%s%s%s", lbuffer, DIR_PATHSEP, PARAM(file));
                     loc->state->fp = fopen(p, "r");
-                    txfree(p);
+                    free(p);
                 }
             }
             if (!loc->state->fp) {
@@ -260,12 +260,12 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
             while (*cp && isspace_c(*cp))
                 ++cp;
             if (*cp == '*' || *cp == '#' || *cp == ';') {
-                txfree(cpdel);
+                free(cpdel);
                 continue;
             }
             t = strtod(cp, &cp2);
             if (cp2 == cp) {
-                txfree(cpdel);
+                free(cpdel);
                 continue;
             }
             cp = cp2;
@@ -306,7 +306,7 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
                     t += PARAM(amploffset[i]);
                 loc->indata->datavec[count++] = t;
             }
-            txfree(cpdel);
+            free(cpdel);
         }
         loc->indata->maxoccupied = count;
 
@@ -381,25 +381,25 @@ static void cm_filesource_callback(ARGS, Mif_Callback_Reason_t reason)
                 if (loc->state->fp != (FILE *) NULL) {
                     fclose(loc->state->fp);
                 }
-                txfree(loc->state);
+                free(loc->state);
             }
 
             if (loc->amplinterval != (double *) NULL) {
-                txfree(loc->amplinterval);
+                free(loc->amplinterval);
             }
 
             if (loc->timeinterval != (double *) NULL) {
-                txfree(loc->timeinterval);
+                free(loc->timeinterval);
             }
 
             if (loc->indata) {
                 if (loc->indata->datavec) {
-                    txfree(loc->indata->datavec);
+                    free(loc->indata->datavec);
                 }
-                txfree(loc->indata);
+                free(loc->indata);
             }
 
-            txfree(loc);
+            free(loc);
 
             STATIC_VAR(locdata) = NULL;
             break;

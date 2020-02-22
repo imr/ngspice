@@ -94,7 +94,7 @@ static void cm_sidiode_callback(ARGS, Mif_Callback_Reason_t reason)
         case MIF_CB_DESTROY: {
             Local_Data_t *loc = (Local_Data_t *) STATIC_VAR(locdata);
             if (loc != (Local_Data_t *) NULL) {
-                txfree(loc);
+                free(loc);
             }
             break;
         }

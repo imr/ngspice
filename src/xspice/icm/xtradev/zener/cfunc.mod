@@ -372,7 +372,7 @@ static void cm_zener_callback(ARGS, Mif_Callback_Reason_t reason)
             double * const p_prev_voltage =
                     (double *) STATIC_VAR(previous_voltage);
             if (p_prev_voltage != (double *) NULL) {
-                txfree(p_prev_voltage);
+                free(p_prev_voltage);
             }
             break;
         }

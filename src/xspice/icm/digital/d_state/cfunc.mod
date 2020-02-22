@@ -225,7 +225,7 @@ static char  *CNVgettok(char **s)
     switch(**s) {
 
     case '\0':           /* End of string found */
-        txfree(buf);
+        free(buf);
         return (char *) NULL;
 
     default:             /* Otherwise, we are dealing with a    */
@@ -262,7 +262,7 @@ static char  *CNVgettok(char **s)
             return (char *) NULL;
         }
         strcpy(ret_str, buf);
-        txfree(buf);
+        free(buf);
 
         return ret_str;
     }
@@ -2136,19 +2136,19 @@ static void free_state_fields(State_Table_t *p_state)
 {
     void *p;
     if ((p = p_state->state) != NULL) {
-        txfree(p);
+        free(p);
         p_state->state = (int *) NULL;
     }
     if ((p = p_state->bits) != NULL) {
-        txfree(p);
+        free(p);
         p_state->bits = (short *) NULL;
     }
     if ((p = p_state->inputs) != NULL) {
-        txfree(p);
+        free(p);
         p_state->inputs = (short *) NULL;
     }
     if ((p = p_state->next_state) != NULL) {
-        txfree(p);
+        free(p);
         p_state->next_state = (int *) NULL;
     }
 } /* end of function free_state_fields */

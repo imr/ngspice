@@ -620,22 +620,22 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
 EXITPOINT:
     /* free all allocated memory */
     if (old_integrator != (double **) NULL) {
-        txfree(old_integrator);
+        free(old_integrator);
     }
     if (integrator != (double **) NULL) {
-        txfree(integrator);
+        free(integrator);
     }
     if (den_coefficient != (double **) NULL) {
-        txfree(den_coefficient);
+        free(den_coefficient);
     }
     if (old_den_coefficient != (double **) NULL) {
-        txfree(old_den_coefficient);
+        free(old_den_coefficient);
     }
     if (num_coefficient != (double **) NULL) {
-        txfree(num_coefficient);
+        free(num_coefficient);
     }
     if (old_num_coefficient != (double **) NULL) {
-        txfree(old_num_coefficient);
+        free(old_num_coefficient);
     }
 } /* end of function cm_s_xfer */
 

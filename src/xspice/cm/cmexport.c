@@ -11,12 +11,6 @@ static void no_free(const void *p) {
 }
 #endif
 
-/* Returns the version string for ngspice */
-static const char *get_ngspice_version(void)
-{
-    const char *buf = VERSION;
-    return buf;
-} /* end of function get_ngspice_version */
 
 
 /* Returns stdout, stdin, and stderr */

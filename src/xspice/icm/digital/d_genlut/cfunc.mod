@@ -407,7 +407,7 @@ static void cm_d_genlut_callback(ARGS, Mif_Callback_Reason_t reason)
         case MIF_CB_DESTROY: {
             void * const p = STATIC_VAR(locdata);
             if (p != NULL) {
-                txfree(p);
+                free(p);
             }
             break;
         }

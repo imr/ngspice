@@ -231,17 +231,17 @@ cm_pwl_callback(ARGS, Mif_Callback_Reason_t reason)
         case MIF_CB_DESTROY: {
             void *p = STATIC_VAR(last_x_value);
             if (p != NULL) {
-                txfree(p);
+                free(p);
             }
 
             p = STATIC_VAR(x);
             if (p != NULL) {
-                txfree(p);
+                free(p);
             }
 
             p = STATIC_VAR(y);
             if (p != NULL) {
-                txfree(p);
+                free(p);
             }
 
             STATIC_VAR (last_x_value) = NULL;

@@ -75,7 +75,7 @@ cm_spice2poly_callback(ARGS, Mif_Callback_Reason_t reason)
         case MIF_CB_DESTROY: {
             Mif_Inst_Var_Data_t *p = STATIC_VAR_INST(acgains);
             if(p->element) {
-                txfree(p->element);
+                free(p->element);
                 p->element = NULL;
             }
             break;
@@ -234,13 +234,13 @@ void spice2poly (ARGS)
     /* Free the allocated items and return */
 EXITPOINT:
     if (in != (double *) NULL) {
-        txfree(in);
+        free(in);
     }
     if (coef != (double *) NULL) {
-        txfree(coef);
+        free(coef);
     }
     if (exp != (int *) NULL) {
-        txfree(exp);
+        free(exp);
     }
 
     return;

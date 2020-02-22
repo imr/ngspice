@@ -183,7 +183,7 @@ static char  *CNVgettok(char **s)
     switch(**s) {
 
     case '\0':           /* End of string found */
-        txfree(buf);
+        free(buf);
         return (char *) NULL;
 
     default:             /* Otherwise, we are dealing with a    */
@@ -220,7 +220,7 @@ static char  *CNVgettok(char **s)
             return (char *) NULL;
         }
         strcpy(ret_str, buf);
-        txfree(buf);
+        free(buf);
 
         return ret_str;
     }
@@ -737,7 +737,7 @@ static int cm_read_source(FILE *source, Local_Data_t *loc)
                 while ( type != CNV_NO_TOK ) {
                     token = CNVget_token(&s, &type);
                     if (token)
-                        txfree(token);
+                        free(token);
                     j++;
                 }
                 num_tokens = j;
@@ -813,7 +813,7 @@ static int cm_read_source(FILE *source, Local_Data_t *loc)
                         }
                     }
                     if (token)
-                        txfree(token);
+                        free(token);
                 }
                 i++;
             }
@@ -945,7 +945,7 @@ void cm_d_source(ARGS)
                 }
                 sprintf(p, "%s%s%s", lbuffer, DIR_PATHSEP, PARAM(input_file));
                 source = fopen(p, "r");
-                txfree(p);
+                free(p);
             }
             if (!source)
                 cm_message_printf("cannot open file %s", PARAM(input_file));
@@ -1229,10 +1229,10 @@ static void free_local_data(Local_Data_t *loc)
             int i;
             for (i = 0; i != n; ++i) { /* free individual allocs */
                 if (all_data[i] != (char *) NULL) {
-                    txfree(all_data[i]);
+                    free(all_data[i]);
                 }
             }
-            txfree(all_data);
+            free(all_data);
         }
     }
 
@@ -1240,11 +1240,11 @@ static void free_local_data(Local_Data_t *loc)
     {
         void * const p = loc->all_timepoints;
         if (p != NULL) {
-            txfree(p);
+            free(p);
         }
     }
 
-    txfree(loc);
+    free(loc);
 } /* end of function free_local_data */
 
 

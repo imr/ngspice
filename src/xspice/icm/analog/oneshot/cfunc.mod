@@ -572,9 +572,9 @@ static void cm_oneshot_callback(ARGS, Mif_Callback_Reason_t reason)
             if (loc == (Local_Data_t *) NULL) {
                 break;
             }
-            txfree(loc->control);
-            txfree(loc->pw);
-            txfree(loc);
+            free(loc->control);
+            free(loc->pw);
+            free(loc);
             STATIC_VAR(locdata) = (Local_Data_t *) NULL;
             break;
         }
