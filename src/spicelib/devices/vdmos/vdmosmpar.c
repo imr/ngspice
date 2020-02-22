@@ -174,6 +174,10 @@ VDMOSmParam(int param, IFvalue *value, GENmodel *inModel)
             model->VDMOSxti = value->rValue;
             model->VDMOSxtiGiven = TRUE;
             break;
+        case VDMOS_MOD_TCVTH:
+            model->VDMOStcvth = value->rValue;
+            model->VDMOStcvthGiven = TRUE;
+            break;
         case  VDMOS_MOD_RTHJC:
             model->VDMOSrthjc = value->rValue;
             model->VDMOSrthjcGiven = TRUE;
@@ -198,9 +202,45 @@ VDMOSmParam(int param, IFvalue *value, GENmodel *inModel)
             model->VDMOStexp1 = value->rValue;
             model->VDMOStexp1Given = TRUE;
             break;
-        case VDMOS_MOD_TCVTH:
-            model->VDMOStcvth = value->rValue;
-            model->VDMOStcvthGiven = TRUE;
+        case  VDMOS_MOD_TRD1:
+            model->VDMOStrd1 = value->rValue;
+            model->VDMOStrd1Given = TRUE;
+            break;
+        case  VDMOS_MOD_TRD2:
+            model->VDMOStrd2 = value->rValue;
+            model->VDMOStrd2Given = TRUE;
+            break;
+        case  VDMOS_MOD_TRG1:
+            model->VDMOStrg1 = value->rValue;
+            model->VDMOStrg1Given = TRUE;
+            break;
+        case  VDMOS_MOD_TRG2:
+            model->VDMOStrg2 = value->rValue;
+            model->VDMOStrg2Given = TRUE;
+            break;
+        case  VDMOS_MOD_TRS1:
+            model->VDMOStrs1 = value->rValue;
+            model->VDMOStrs1Given = TRUE;
+            break;
+        case  VDMOS_MOD_TRS2:
+            model->VDMOStrs2 = value->rValue;
+            model->VDMOStrs2Given = TRUE;
+            break;
+        case  VDMOS_MOD_TRB1:
+            model->VDMOStrb1 = value->rValue;
+            model->VDMOStrb1Given = TRUE;
+            break;
+        case  VDMOS_MOD_TRB2:
+            model->VDMOStrb2 = value->rValue;
+            model->VDMOStrb2Given = TRUE;
+            break;
+        case  VDMOS_MOD_TKSUBTHRES1:
+            model->VDMOStksubthres1 = value->rValue;
+            model->VDMOStksubthres1Given = TRUE;
+            break;
+        case  VDMOS_MOD_TKSUBTHRES2:
+            model->VDMOStksubthres2 = value->rValue;
+            model->VDMOStksubthres2Given = TRUE;
             break;
         case VDMOS_MOD_VGS_MAX:
             model->VDMOSvgsMax = value->rValue;

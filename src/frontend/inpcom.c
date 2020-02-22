@@ -159,7 +159,7 @@ static void inp_add_series_resistor(struct card *deck);
 static void subckt_params_to_param(struct card *deck);
 static void inp_fix_temper_in_param(struct card *deck);
 static void inp_fix_agauss_in_param(struct card *deck, char *fcn);
-static void inp_vdmos_model(struct card *deck);
+static int inp_vdmos_model(struct card *deck);
 static void inp_check_syntax(struct card *deck);
 
 static char *inp_spawn_brace(char *s);
@@ -638,7 +638,9 @@ struct card *inp_readall(FILE *fp, const char *dir_name,
 
         inp_remove_excess_ws(working);
 
-        inp_vdmos_model(working);
+        if(inp_vdmos_model(working))
+            return NULL;;
+
         /* don't remove unused model if we have an .if clause, because we
            cannot yet decide here which model we finally will need */
         if (!has_if) {
@@ -6892,13 +6894,14 @@ static void inp_quote_params(struct card *c, struct card *end_c,
    Assemble all other tokens in a wordlist, and flatten it
    to become the new .model line.
 */
-static void inp_vdmos_model(struct card *deck)
+static int inp_vdmos_model(struct card *deck)
 {
     struct card *card;
     for (card = deck; card; card = card->nextcard) {
 
         char *curr_line, *cut_line, *token, *new_line;
         wordlist *wl = NULL, *wlb;
+        int i;
 
         curr_line = cut_line = card->line;
 
@@ -6933,7 +6936,22 @@ static void inp_vdmos_model(struct card *deck)
             tfree(card->line);
             card->line = new_line;
         }
+        /* we have a VDMOS instance line with 'tnodeout' and thus need exactly 5 nodes
+         */
+        else if (strstr(curr_line, "tnodeout")) {
+            for (i = 0; i < 7; i++)
+                curr_line = nexttok(curr_line);
+            if (!ciprefix("tnodeout", curr_line)) {
+                fprintf(cp_err,
+                        "Error: We need exactly 5 nodes\n"
+                        "    drain, gate, source, tjunction, tcase\n"
+                        "    in VDMOS instance line\n"
+                        "    %s\n", card->line);
+                return 1;
+            }
+        }
     }
+    return 0;
 }
 
 

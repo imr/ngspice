@@ -1332,7 +1332,7 @@ devexpand(char *name)
     if (strchr(name, '*') || strchr(name, '[') || strchr(name, '?')) {
         devices = cp_cctowl(ft_curckt->ci_devices);
         for (wl = NULL; devices; devices = devices->wl_next)
-            if (cp_globmatch(name, devices->wl_word))
+            if (!strcmp(name, devices->wl_word))
                 wl = wl_cons(devices->wl_word, wl);
     } else if (cieq(name, "all")) {
         wl = cp_cctowl(ft_curckt->ci_devices);

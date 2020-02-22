@@ -98,7 +98,16 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
 
             here->VDMOStVth = model->VDMOSvth0 - model->VDMOStype * model->VDMOStcvth * dt;
 
-            here->VDMOSdrainResistance =  model->VDMOSdrainResistance / here->VDMOSm * pow(ratio, model->VDMOStexp0);
+            here->VDMOStksubthres =  model->VDMOSksubthres * (1.0 + (model->VDMOStksubthres1 * dt) + (model->VDMOStksubthres2 * dt * dt));
+
+            if (model->VDMOStexp0Given)
+                here->VDMOSdrainResistance =  model->VDMOSdrainResistance / here->VDMOSm * pow(ratio, model->VDMOStexp0);
+            else
+                here->VDMOSdrainResistance =  model->VDMOSdrainResistance / here->VDMOSm * (1.0 + (model->VDMOStrd1 * dt) + (model->VDMOStrd2 * dt * dt));
+
+            here->VDMOSgateConductance =  here->VDMOSgateConductance / (1.0 + (model->VDMOStrg1 * dt) + (model->VDMOStrg2 * dt * dt));
+
+            here->VDMOSsourceConductance =  here->VDMOSsourceConductance / (1.0 + (model->VDMOStrs1 * dt) + (model->VDMOStrs2 * dt * dt));
 
             if (model->VDMOSqsGiven)
                 here->VDMOSqsResistance = model->VDMOSqsResistance / here->VDMOSm * pow(ratio, model->VDMOStexp1);
@@ -206,8 +215,8 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
                 + (model->VDIOtranTimeTemp2 * dt * dt);
             here->VDIOtTransitTime = model->VDIOtransitTime * factor;
 
-            /* Series resistance temperature adjust (not implemented yet) */
-            here->VDIOtConductance = here->VDIOconductance;
+            /* Series resistance temperature adjust */
+            here->VDIOtConductance = here->VDIOconductance / (1.0 + (model->VDMOStrb1 * dt) + (model->VDMOStrb2 * dt * dt));
 
             here->VDIOtF2 = exp((1 + here->VDIOtGradingCoeff)*xfc);
             here->VDIOtF3 = 1 - model->VDIOdepletionCapCoeff*

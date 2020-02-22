@@ -115,7 +115,7 @@ extern int findCrossOver(double arr[], int n, double x);
 
 static void free_local_data(Table3_Data_t *loc);
 static inline double get_local_diff(int n, double *col, int ind);
-static Table3_Data_t *init_local_data(const char *filename, int interporder);
+static Table3_Data_t *init_local_data(const char *filename, int order);
 
 static void cm_table3D_callback(ARGS,
         Mif_Callback_Reason_t reason)

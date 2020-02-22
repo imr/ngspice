@@ -24,7 +24,7 @@ com_spec(wordlist *wl)
 {
     ngcomplex_t **fdvec = NULL;
     double  **tdvec = NULL;
-    double  *win = NULL, *time, *dc = NULL;
+    double  *freq, *win = NULL, *time, *dc = NULL;
     double  startf, stopf, stepf, span;
     int     fpts, i, j, k, tlen, ngood;
     bool    trace;
@@ -209,6 +209,7 @@ com_spec(wordlist *wl)
                    VF_REAL | VF_PERMANENT | VF_PRINT,
                    fpts, NULL);
     vec_new(f);
+    freq = f->v_realdata;
 
     tdvec = TMALLOC(double *, ngood);
     fdvec = TMALLOC(ngcomplex_t *, ngood);
@@ -235,40 +236,37 @@ com_spec(wordlist *wl)
     }
     trace = cp_getvar("spectrace", CP_BOOL, NULL, 0);
 
-    {
-        double * const freq = f->v_realdata;
-        for (j = (startf == 0 ? 1 : 0); j < fpts; j++) {
-            freq[j] = startf + j*stepf;
-            if (trace) {
-                fprintf(cp_err, "spec: %e Hz: \r", freq[j]);
-            }
-            for (i = 0; i < ngood; i++) {
-                fdvec[i][j].cx_real = 0;
-                fdvec[i][j].cx_imag = 0;
-            }
-            for (k = 1; k < tlen; k++) {
-                double
-                    amp = 2*win[k]/(tlen-1),
-                    rad = 2*M_PI*time[k]*freq[j],
-                    cosa = amp*cos(rad),
-                    sina = amp*sin(rad);
-                for (i = 0; i < ngood; i++) {
-                    double value = tdvec[i][k]-dc[i];
-                    fdvec[i][j].cx_real += value*cosa;
-                    fdvec[i][j].cx_imag += value*sina;
-                }
-            }
-#ifdef HAS_PROGREP
-            SetAnalyse("spec", (int)(j * 1000./ fpts));
-#endif
+    for (j = (startf == 0 ? 1 : 0); j < fpts; j++) {
+        freq[j] = startf + j*stepf;
+        if (trace) {
+            fprintf(cp_err, "spec: %e Hz: \r", freq[j]);
         }
-
-        if (startf == 0) {
-            freq[0] = 0;
+        for (i = 0; i < ngood; i++) {
+            fdvec[i][j].cx_real = 0;
+            fdvec[i][j].cx_imag = 0;
+        }
+        for (k = 1; k < tlen; k++) {
+            double
+                amp = 2*win[k]/(tlen-1),
+                rad = 2*M_PI*time[k]*freq[j],
+                cosa = amp*cos(rad),
+                sina = amp*sin(rad);
             for (i = 0; i < ngood; i++) {
-                fdvec[i][0].cx_real = dc[i];
-                fdvec[i][0].cx_imag = 0;
+                double value = tdvec[i][k]-dc[i];
+                fdvec[i][j].cx_real += value*cosa;
+                fdvec[i][j].cx_imag += value*sina;
             }
+        }
+#ifdef HAS_PROGREP
+        SetAnalyse("spec", (int)(j * 1000./ fpts));
+#endif
+    }
+
+    if (startf == 0) {
+        freq[0] = 0;
+        for (i = 0; i < ngood; i++) {
+            fdvec[i][0].cx_real = dc[i];
+            fdvec[i][0].cx_imag = 0;
         }
     }
 

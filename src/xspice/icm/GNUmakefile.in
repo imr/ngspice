@@ -43,8 +43,8 @@ clean:
 
 
 #-----------------------------------------------------------------------------
-NGSRCDIR = $(CURDIR)/../../../../src
-COMPILE = $(CC) $(CFLAGS) $(EXTRA_CFLAGS) $(VIS_CFLAGS)
+NGSRCDIR = $(srcdir)/../../
+
 dstring.o : $(NGSRCDIR)/misc/dstring.c $(NGSRCDIR)/include/ngspice/dstring.h
 	$(COMPILE) -I $(NGSRCDIR)/include -o $@ -c $<
 

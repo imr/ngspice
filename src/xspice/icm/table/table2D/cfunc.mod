@@ -551,7 +551,7 @@ static Table2_Data_t *init_local_data(const char *filename, int interporder)
                 interporder);
         interporder = 2;
     }
-    /* int interporder : interpolation order,
+    /* int order : interpolation order,
        int n1, int n2 : data dimensions */
     if ((loc->newtable = sf_eno2_init(
             interporder, ix, iy)) == (sf_eno2) NULL) {
