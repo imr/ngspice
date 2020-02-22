@@ -113,7 +113,7 @@ void ft_gnuplot(double *xlims, double *ylims,
     if (linewidth < 1)
         linewidth = 1;
     /* get linewidth for grid from .spiceinit */
-    if (!cp_getvar("gridwidth", CP_NUM, &gridlinewidth, 0))
+    if (!cp_getvar("xgridwidth", CP_NUM, &gridlinewidth, 0))
         gridlinewidth = 1;
     if (gridlinewidth < 1)
         gridlinewidth = 1;

@@ -569,7 +569,7 @@ X11_NewViewport(GRAPH *graph)
         gcvalues.line_width = graph->graphwidth = linewidth;
 
     /* get linewidth information from .spiceinit or .control section */
-    if (!cp_getvar("gridwidth", CP_NUM, &gridlinewidth, 0))
+    if (!cp_getvar("xgridwidth", CP_NUM, &gridlinewidth, 0))
         gridlinewidth = MW_LINEWIDTH;
     if (gridlinewidth < 0)
         gridlinewidth = MW_LINEWIDTH;
