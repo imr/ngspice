@@ -420,7 +420,8 @@ static void gr_start_internal(struct dvec *dv, bool copyvec)
     }
 
     currentgraph->plotdata = link;
-
+#if 0
+    /* FIXME: this piece of code causes bug no. #472 */
     /* Add the scale vector to the list of vectors associated with the plot
      * and use the copy instead of the original scale vector if requested */
     {
@@ -444,6 +445,7 @@ static void gr_start_internal(struct dvec *dv, bool copyvec)
             currentgraph->plotdata = link;
         }
     }
+#endif      
 
 
     /* Put the legend entry on the screen. */
