@@ -1879,7 +1879,9 @@ void cm_d_state(ARGS)
 
         LOAD(clk) = PARAM(clk_load);
 
-        LOAD(reset) = PARAM(reset_load);
+        if ( !PORT_NULL(reset) ) {
+            LOAD(reset) = PARAM(reset_load);
+        }
 
     }
     else {  /**** Retrieve previous values ****/
