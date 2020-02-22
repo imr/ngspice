@@ -105,10 +105,6 @@ void *calloc_pj(size_t s1, size_t s2);
 void *realloc_pj(void *ptr, size_t s);
 void  free_pj(void *ptr);
 
-char *tstrdup(const char *str_in);
-char *tstrdup_raw(const char *str_in);
-const char *ngspice_version(void);
-
 FILE *fopen_with_path(const char *path, const char *mode);
 
 #ifdef __GNUC__
