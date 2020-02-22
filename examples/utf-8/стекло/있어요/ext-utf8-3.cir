@@ -15,7 +15,7 @@ set wfont_size=18
 setcs xfont='Noto Sans CJK JP Medium'
 *set xfont_size=16
 
-set gridwidth=4
+set xgridwidth=4
 set xbrushwidth=1
 
 set nolegend
@@ -27,7 +27,7 @@ plot y vs x  xlabel '我能吞下玻璃而不伤身体'    ylabel 'Я могу �
 * With Linux the next one requires: export LC_CTYPE ="de_DE.UTF-8"
 **gnuplot test.gn y vs x   xlabel 'Labellisé X'     ylabel 'tüTÄtö Äü @µ€~'      title 'ฉันกินกระจกได้ แต่มันไม่ทำให้ฉันเจ็บ '
 
-set gridwidth=1
+set xgridwidth=1
 set xbrushwidth=4
 
 **plot y vs x+0.001 xlabel 'Labellisé X' ylabel 'Labellisé Y' title 'Titré 私はガラスを食べられます。それは私を傷つけません' loglog

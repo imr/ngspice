@@ -182,7 +182,7 @@ int PS_Init(void)
         linewidth = 0;
 
     /* get linewidth for grid from spinit */
-    if (!cp_getvar("gridwidth", CP_REAL, &gridlinewidth, 0))
+    if (!cp_getvar("xgridwidth", CP_REAL, &gridlinewidth, 0))
         gridlinewidth = linewidth;
     if (gridlinewidth < 0)
         gridlinewidth = 0;
