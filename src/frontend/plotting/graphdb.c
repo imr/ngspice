@@ -259,6 +259,8 @@ int DestroyGraph(int id)
                     nextd = d->next;
                     if (d->f_own_vector) {
                         /* list responsible for freeing this vector */
+                        if (d->vector->v_scale)
+                            dvec_free(d->vector->v_scale);
                         dvec_free(d->vector);
                     }
                     txfree(d);
