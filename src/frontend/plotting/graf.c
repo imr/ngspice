@@ -319,7 +319,7 @@ void gr_point(struct dvec *dv,
     switch (currentgraph->plottype) {
         double    *tics;
     case PLOT_LIN:
-    case PLOT_MONOLIN:
+    case PLOT_RETLIN:
         /* If it's a linear plot, ignore first point since we don't
            want to connect with oldx and oldy. */
         if (np)
@@ -421,31 +421,17 @@ static void gr_start_internal(struct dvec *dv, bool copyvec)
 
     currentgraph->plotdata = link;
 
-    /* FIXME: this piece of code causes bug no. #472 */
-    /* Add the scale vector to the list of vectors associated with the plot
+    /* Copy the scale vector, add it to the vector as v_scale
      * and use the copy instead of the original scale vector if requested */
     {
         struct dvec * const custom_scale = dv->v_scale;
-        if (custom_scale != (struct dvec *) NULL) {
-            link = TMALLOC(struct dveclist, 1);
-            link->next = currentgraph->plotdata;
-
+        if (custom_scale != (struct dvec*) NULL) {
             if (copyvec) {
-                link->vector = vec_copy(dv->v_scale);
-                link->vector->v_flags |= VF_PERMANENT;
-                link->next->vector->v_scale = link->vector;
-                link->f_own_vector = TRUE;
+                currentgraph->plotdata->vector->v_scale = vec_copy(dv->v_scale);
+                currentgraph->plotdata->vector->v_scale->v_flags |= VF_PERMANENT;
             }
-            else {
-                link->vector = dv->v_scale;
-                link->f_own_vector = FALSE;
-            }
-
-            /* Make the new vector the start of the list of vectors */
-            currentgraph->plotdata = link;
         }
     }
-
 
     /* Put the legend entry on the screen. */
     if (!cp_getvar("nolegend", CP_BOOL, NULL, 0))
