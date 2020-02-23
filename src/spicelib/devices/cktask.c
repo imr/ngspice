@@ -35,6 +35,7 @@ CKTask(CKTcircuit *ckt, GENinstance *instance, int which, IFvalue *value, IFvalu
     if (error && ft_ngdebug) {
         printf("\nWarning: %s\n", errMsg);
     }
-    FREE(errMsg);
+    if (errMsg)
+        FREE(errMsg);
     return(error);
 }
