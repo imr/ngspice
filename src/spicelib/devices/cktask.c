@@ -29,7 +29,12 @@ CKTask(CKTcircuit *ckt, GENinstance *instance, int which, IFvalue *value, IFvalu
     }
     if (error && ft_stricterror) {
         fprintf(stderr, "\nError: %s\n", errMsg);
+        FREE(errMsg);
         controlled_exit(EXIT_BAD);
     }
+    if (error && ft_ngdebug) {
+        printf("\nWarning: %s\n", errMsg);
+    }
+    FREE(errMsg);
     return(error);
 }
