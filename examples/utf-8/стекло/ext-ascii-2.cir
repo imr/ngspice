@@ -1,6 +1,7 @@
 * test de titré
 * file is encoded as ASCII !
-* It will fail in utf8 mode.
+* will lead to error in the ngspice UNICODE utf8 version
+* is o.k. only if ngspice is compiled with --disable-utf8 flag
 
 .control
 set encoding=extended_ascii
