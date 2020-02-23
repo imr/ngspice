@@ -674,7 +674,7 @@ drawlingrid(GRAPH *graph, char *units, int spacing, int nsp, double dst, double 
                         ((int) strlen(buf) * graph->fontwidth) / 2,
                         (int) (graph->fontheight * 2.5), 0);
         else
-            DevDrawText(buf, graph->viewportxoff -
+            DevDrawText(buf, graph->viewportxoff - 2 -
                         graph->fontwidth * (int) strlen(buf),
                         graph->viewportyoff + i -
                         graph->fontheight / 2, 0);
@@ -684,7 +684,7 @@ drawlingrid(GRAPH *graph, char *units, int spacing, int nsp, double dst, double 
             j += 1000;
     }
     if (axis == x_axis)
-        DevDrawText(units, (int) (graph->absolute.width * RELPOSXUNIT + unitshift),                    graph->fontheight, 0);
+        DevDrawText(units, (int) (graph->absolute.width * RELPOSXUNIT + unitshift), graph->fontheight, 0);
     else
         DevDrawText(units, graph->fontwidth,
                     (int) (graph->absolute.height - 2 * graph->fontheight), 0);
