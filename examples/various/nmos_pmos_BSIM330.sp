@@ -26,6 +26,8 @@ vbsp 44 0 0
 *.model p1 PMOS level=49 version=3.3.0
 
 .control
+set xgridwidth=2
+set xbrushwidth=3
 dc vgs 0 1.5 0.05 vbs 0 -2.5 -0.5
 plot vss#branch
 dc vds 0 2 0.05 vgs 0 2 0.4
