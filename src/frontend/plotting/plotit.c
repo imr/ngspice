@@ -600,14 +600,14 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
             pfound = TRUE;
         }
     }
-    if (getflag(wl, "noretraceplot")) {
+    if (getflag(wl, "retraceplot")) {
         if (pfound) {
             fprintf(cp_err,
                     "Warning: too many plot types given. "
-                    "\"noretraceplot\" is ignored.\n");
+                    "\"retraceplot\" is ignored.\n");
         }
         else {
-            ptype = PLOT_MONOLIN;
+            ptype = PLOT_RETLIN;
             pfound = TRUE;
         }
     }
@@ -640,8 +640,8 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
             if (eq(buf, "linplot")) {
                 ptype = PLOT_LIN;
             }
-            else if (eq(buf, "noretraceplot")) {
-                ptype = PLOT_MONOLIN;
+            else if (eq(buf, "retraceplot")) {
+                ptype = PLOT_RETLIN;
             }
             else if (eq(buf, "combplot")) {
                 ptype = PLOT_COMB;

@@ -319,7 +319,7 @@ void ft_gnuplot(double *xlims, double *ylims,
     (void) fclose(file);
 
     /* Write out the data and setup arrays */
-    bool mono = (plottype == PLOT_MONOLIN);
+    bool mono = (plottype != PLOT_RETLIN);
     dir = 0;
     prev_xval = NAN;
     for (i = 0; i < scale->v_length; i++) {

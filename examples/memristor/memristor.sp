@@ -57,9 +57,9 @@ plot tran1.alli tran2.alli alli title 'Memristor with threshold: Internal Progra
 settype impedance xmem.x1 tran1.xmem.x1 tran2.xmem.x1
 plot xmem.x1 tran1.xmem.x1 tran2.xmem.x1 title 'Memristor with threshold: resistance'
 * resistance versus voltage (change occurs only above threshold!)
-plot xmem.x1 vs v(1) tran1.xmem.x1 vs tran1.v(1) tran2.xmem.x1 vs tran2.v(1) title 'Memristor with threshold: resistance'
+plot xmem.x1 vs v(1) tran1.xmem.x1 vs tran1.v(1) tran2.xmem.x1 vs tran2.v(1) retraceplot title 'Memristor with threshold: resistance'
 * current through resistor for all plots versus voltage
-plot i(v1) vs v(1) tran1.i(v1) vs tran1.v(1) tran2.i(v1) vs tran2.v(1) title 'Memristor with threshold: external current loops'
+plot i(v1) vs v(1) tran1.i(v1) vs tran1.v(1) tran2.i(v1) vs tran2.v(1) retraceplot title 'Memristor with threshold: external current loops'
 .endc
 
 .end
