@@ -1,5 +1,7 @@
 * test de titre
 * file is encoded as ASCII !
+* will lead to error in the ngspice UNICODE utf8 version
+* is o.k. only if ngspice is compiled with --disable-utf8 flag
 
 .control
 
