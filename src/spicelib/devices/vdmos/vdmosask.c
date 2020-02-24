@@ -50,8 +50,8 @@ VDMOSask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
         case VDMOS_OFF:
             value->iValue = here->VDMOSoff;
             return(OK);
-        case VDMOS_TNODEOUT:
-            value->iValue = here->VDMOStnodeout;
+        case VDMOS_THERMAL:
+            value->iValue = here->VDMOSthermal;
             return(OK);
         case VDMOS_IC_VDS:
             value->rValue = here->VDMOSicVDS;

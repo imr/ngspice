@@ -1,5 +1,5 @@
 VDMOS self heating test
-M1 D G 0 tj tc IRFP240 tnodeout
+M1 D G 0 tj tc IRFP240 thermal
 rthk tc 0 0.05
 VG G 0 5V Pulse 0 10 0 1m 1m 100m 200m
 *RD D D1 4
