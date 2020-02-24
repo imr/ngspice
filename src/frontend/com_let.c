@@ -23,9 +23,11 @@ static void copy_vector_data(struct dvec *vec_dst,
 static void copy_vector_data_with_stride(struct dvec *vec_dst,
         const struct dvec *vec_src,
         int n_dst_index, const index_range_t *p_dst_index);
-static int find_indices(char *s, index_range_t *p_index, int *p_n_index);
-static int get_index_values(char *s, index_range_t *p_range);
-int get_one_index_value(char *s, int *p_index);
+static int find_indices(char *s, const struct dvec *vec_dst,
+        index_range_t *p_index);
+static int get_index_values(char *s, int n_elem_this_dim,
+        index_range_t *p_range);
+int get_one_index_value(const char *s, int *p_index);
 
 /* let <vec_name> = <expr>
  * let <vec_name>[<bracket_expr>] = <expr>
@@ -43,6 +45,9 @@ void com_let(wordlist *wl)
     struct pnode *names = (struct pnode *) NULL;
     struct dvec *vec_src = (struct dvec *) NULL;
     char *rhs;
+
+    /* Start of index NULL is a flag for no index */
+    char *p_index_start = (char *) NULL;
 
 
     /* let with no arguments is equivalent to display */
@@ -66,15 +71,15 @@ void com_let(wordlist *wl)
      * p = leftmost part of orig p up to first '['. So p always
      * becomes the vector name, possibly with some spaces at the end. */
     if ((s = strchr(p, '[')) != NULL) {
+        /* This null makes the dest vector name a null-terminated string */
         *s = '\0';
-        if (find_indices(s + 1, p_dst_index, &n_dst_index) != 0) {
-            txfree(p);
-            return;
-        }
-    } /* end of case that an indexing bracket '[' was found */
+        p_index_start = s + 1;
+    }
 
-
-    /* "Remove" any spaces at the end of the vector name at p */
+    /* "Remove" any spaces at the end of the vector name at p by stepping
+     * from the end of the word to the first charatcter that is not
+     * whitespace and then overwriting the next character (which will be
+     * the original NULL if there was no whitespace) with a NULL. */
     {
         char *q;
         for (q = p + strlen(p) - 1; *q <= ' ' && p <= q; q--) {
@@ -89,14 +94,45 @@ void com_let(wordlist *wl)
         goto quit;
     }
 
+    /* Locate the vector being assigned values. If NULL, the vector
+     * does not exist */
+    struct dvec *vec_dst = vec_get(p);
+    if (vec_dst != (struct dvec *) NULL) {
+        /* Fix-up dimension count and limit. Sometimes these are
+         * not set properly. If not set, give the vector 1 dimension and
+         * ensure the right length */
+        if (vec_dst->v_numdims < 1) {
+            vec_dst->v_numdims = 1;
+        }
+        if (vec_dst->v_numdims == 1) {
+            vec_dst->v_dims[0] = vec_dst->v_length;
+        }
+    }
+
+    /* If the vector was indexed, find the indices */
+    if (p_index_start != (char *) NULL) {
+        /* Test for an attempt to index an undefined vector */
+        if (vec_dst == (struct dvec *) NULL) {
+            fprintf(cp_err,
+                    "When creating a new vector, it cannot be indexed.\n");
+            goto quit;
+        }
+
+        if (find_indices(p_index_start, vec_dst, p_dst_index) != 0) {
+            txfree(p);
+            return;
+        }
+        n_dst_index = vec_dst->v_numdims;
+    } /* end of case that an indexing bracket '[' was found */
+
+
     /* Evaluate rhs */
-    names = ft_getpnames_from_string(rhs, TRUE);
-    if (names == (struct pnode *) NULL) {
+    if ((names = ft_getpnames_from_string(
+            rhs, TRUE)) == (struct pnode *) NULL) {
         fprintf(cp_err, "Error: RHS \"%s\" invalid\n", rhs);
         goto quit;
     }
-    vec_src = ft_evaluate(names);
-    if (!vec_src) {
+    if ((vec_src = ft_evaluate(names)) == (struct dvec *) NULL) {
         fprintf(cp_err, "Error: Can't evaluate \"%s\"\n", rhs);
         goto quit;
     }
@@ -106,7 +142,7 @@ void com_let(wordlist *wl)
     }
 
     /* Fix-up dimension count and limit. Sometimes these are
-     * not set properly. If not set, make 1-d vector and ensure
+     * not set properly. If not set, give the vector 1 dimension and ensure
      * the right length */
     if (vec_src->v_numdims < 1) {
         vec_src->v_numdims = 1;
@@ -115,20 +151,9 @@ void com_let(wordlist *wl)
         vec_src->v_dims[0] = vec_src->v_length;
     }
 
-    /* Locate the vector being assigned values. If NULL, the vector
-     * does not exist */
-    struct dvec * vec_dst = vec_get(p);
-
     if (vec_dst == (struct dvec *) NULL) {
         /* p is not an existing vector. So make a new one equal to vec_src
          * in all ways, except enforce that it is a permanent vector. */
-        if (n_dst_index > 0) {
-            fprintf(cp_err,
-                    "When creating a new vector, it cannot be indexed.\n");
-            goto quit;
-        }
-
-        /* Create and assign a new vector */
         vec_dst = dvec_alloc(copy(p),
                 vec_src->v_type,
                 vec_src->v_flags | VF_PERMANENT,
@@ -140,15 +165,6 @@ void com_let(wordlist *wl)
     } /* end of case of new vector */
     else {
         /* Existing vector.*/
-        /* Fix-up dimension count and limit. Sometimes these are
-         * not set properly. If not set, make 1-d vector and ensure
-         * the right length */
-        if (vec_dst->v_numdims < 1) {
-            vec_dst->v_numdims = 1;
-        }
-        if (vec_dst->v_numdims == 1) {
-            vec_dst->v_dims[0] = vec_dst->v_length;
-        }
 
         if (n_dst_index == 0) {
             /* Not indexed, so make equal to source vector as if it
@@ -219,29 +235,6 @@ void com_let(wordlist *wl)
                 goto quit;
             }
 
-            /* Check dimension numbers */
-            if (n_dst_index != vec_dst->v_numdims) {
-                fprintf(cp_err, "Number of vector indices given (%d) "
-                        "does not match the dimension of the vector (%d).\n",
-                        n_dst_index, vec_dst->v_numdims);
-                goto quit;
-            }
-
-            /* Check dimension ranges */
-            {
-                int i;
-                int *vec_dst_dims = vec_dst->v_dims;
-                for (i = 0; i < n_dst_index; ++i) {
-                    const int n_dst_cur = vec_dst_dims[i];
-                    if (p_dst_index[i].high >= n_dst_cur) {
-                        fprintf(cp_err,
-                                "Vector index %d out of range (%d).\n",
-                                i + 1, n_dst_cur);
-                        goto quit;
-                    }
-                } /* end of loop over dimensions */
-            }
-
             /* OK to copy, so copy */
             copy_vector_data_with_stride(vec_dst, vec_src,
                     n_dst_index, p_dst_index);
@@ -269,20 +262,25 @@ quit:
 
 /* Process indexing portion of a let command. On entry, s is the address
  * of the first byte after the first opening index bracket */
-static int find_indices(char *s, index_range_t *p_index, int *p_n_index)
+static int find_indices(char *s, const struct dvec *vec_dst,
+        index_range_t *p_index)
 {
+    const int v_numdims_dst = vec_dst->v_numdims;
+    const int * const v_dims_dst = vec_dst->v_dims;
+    int dim_cur = 0; /* current dimension being set */
+
+
     /* Can be either comma-separated or individual dimensions */
     if (strchr(s, ',') != 0) { /* has commas */
         char *p_end;
-        int dim_cur = 0;
-        const int dim_max = MAXDIMS - 1;
         while ((p_end = strchr(s, ',')) != (char *) NULL) {
             *p_end = '\0';
-            if (dim_cur == dim_max) {
+            if (dim_cur == v_numdims_dst) {
                 (void) fprintf(cp_err, "Too many dimensions given.\n");
                 return -1;
             }
-            if (get_index_values(s, p_index + dim_cur) != 0) {
+            if (get_index_values(s, v_dims_dst[dim_cur],
+                    p_index + dim_cur) != 0) {
                 (void) fprintf(cp_err, "Dimension ranges "
                         "for dimension %d could not be found.\n",
                         dim_cur + 1);
@@ -300,12 +298,13 @@ static int find_indices(char *s, index_range_t *p_index, int *p_n_index)
         }
 
         *p_end = '\0';
-        if (dim_cur == dim_max) {
+        if (dim_cur == v_numdims_dst) {
             (void) fprintf(cp_err,
                     "Final dimension exceded maximum number.\n");
             return -1;
         }
-        if (get_index_values(s, p_index + dim_cur) != 0) {
+        if (get_index_values(s, v_dims_dst[dim_cur],
+                p_index + dim_cur) != 0) {
             (void) fprintf(cp_err, "Dimension ranges "
                     "for last dimension (%d) could not be found.\n",
                     dim_cur + 1);
@@ -321,21 +320,18 @@ static int find_indices(char *s, index_range_t *p_index, int *p_n_index)
                     s);
             return -1;
         }
-
-        *p_n_index = dim_cur;
-        return 0;
     } /* end of case x[ , , ] */
     else { /* x[][][] */
         char *p_end;
-        int dim_cur = 0;
-        const int dim_max = MAXDIMS - 1;
         while ((p_end = strchr(s, ']')) != (char *) NULL) {
             *p_end = '\0';
-            if (dim_cur == dim_max) {
-                (void) fprintf(cp_err, "Too many dimensions given.\n");
+            if (dim_cur == v_numdims_dst) {
+                (void) fprintf(cp_err, "Too many dimensions given. "
+                        "Only %d are present.\n", v_numdims_dst);
                 return -1;
             }
-               if (get_index_values(s, p_index + dim_cur) != 0) {
+            if (get_index_values(s, v_dims_dst[dim_cur],
+                    p_index + dim_cur) != 0) {
                 (void) fprintf(cp_err, "Dimension ranges "
                         "for dimension %d could not be found.\n",
                         dim_cur + 1);
@@ -344,8 +340,7 @@ static int find_indices(char *s, index_range_t *p_index, int *p_n_index)
             ++dim_cur;
             s = p_end + 1; /* after (former) ']' */
             if (*(s = skip_ws(s)) == '\0') { /* reached end */
-                *p_n_index = dim_cur;
-                return 0;
+                break;
             }
 
             /* Not end of expression, so must be '[' */
@@ -358,11 +353,35 @@ static int find_indices(char *s, index_range_t *p_index, int *p_n_index)
             s++; /* past '[' */
         } /* end of loop over individual bracketed entries */
 
-        /* Did not find a single ']' in the string */
-        (void) fprintf(cp_err, "The ']' for dimension 1 "
-                "could not be found.\n");
-        return -1;
+        if (dim_cur == 0) {
+            /* Did not find a single ']' in the string */
+            (void) fprintf(cp_err, "The ']' for dimension 1 "
+                    "could not be found.\n");
+            return -1;
+        }
     } /* end of case x[][][][] */
+
+    /* Finalize dimensions. There must be the same number or one less than
+     * the number of dimensions of the vector. For the special case of one
+     * less, the final dimension is set to the full range of the last
+     * dimension. Note that checks for too many dimensions have already
+     * been performed while the index information was found. */
+    if (dim_cur != v_numdims_dst) { /* special case or error */
+        if (dim_cur == v_numdims_dst - 1) { /* special case */
+            index_range_t * const p_index_last = p_index + dim_cur;
+            p_index_last->low = 0;
+            p_index_last->high = vec_dst->v_dims[dim_cur] - 1;
+        }
+        else {
+            (void) fprintf(cp_err, "Error: Only %d dimensions "
+                    "were supplied, but %d are needed. The last dimension "
+                    "may be omitted, in which case it will defalt to the "
+                    "full range of that dimension.\n",
+                    dim_cur, v_numdims_dst);
+        }
+    }
+
+    return 0;
 } /* end of function find_indices */
 
 
@@ -370,9 +389,13 @@ static int find_indices(char *s, index_range_t *p_index, int *p_n_index)
 /* Convert expresion expr -> low and high ranges equal or
  * expression expr1 : epr2 -> low = expr1 and high = expr2.
  * Values are tested to ensure they are positive and that the low
- * value does not exceed the high value. Since the extent of the index
- * is not known, that cannot be checked. */
-static int get_index_values(char *s, index_range_t *p_range)
+ * value does not exceed the high value.
+ *
+ * If expr1 is whitespace or empty, it defaults to 0. For high, the
+ * largest possible values is used.
+ */
+static int get_index_values(char *s, int n_elem_this_dim,
+        index_range_t *p_range)
 {
     char *p_colon;
     if ((p_colon = strchr(s, ':')) == (char *) NULL) { /* One expression */
@@ -382,21 +405,43 @@ static int get_index_values(char *s, index_range_t *p_range)
         }
         p_range->high = p_range->low;
     }
-    else { /* l:h */
+    else { /* l:h. If l defaults to 0 and h to dim size - 1 */
         *p_colon = '\0';
-        if (get_one_index_value(s, &p_range->low) != 0) {
-            (void) fprintf(cp_err, "Error geting low range.\n");
-            return -1;
+        {
+            const int rc = get_one_index_value(s, &p_range->low);
+            if (rc != 0) {
+                if (rc < 0) { /* error */
+                    (void) fprintf(cp_err, "Error geting low range.\n");
+                    return -1;
+                }
+                /* +1 -> Else use defalt */
+                p_range->low = 0;
+            }
         }
         s = p_colon + 1; /* past (former) colon */
-        if (get_one_index_value(s, &p_range->high) != 0) {
-            (void) fprintf(cp_err, "Error geting high range.\n");
-            return -1;
+        {
+            const int rc = get_one_index_value(s, &p_range->high);
+            if (rc != 0) {
+                if (rc < 0) { /* error */
+                    (void) fprintf(cp_err, "Error geting high range.\n");
+                    return -1;
+                }
+                /* +1 -> Else use defalt */
+                p_range->high = n_elem_this_dim - 1;
+            }
         }
+
+        /* Ensure ranges given were valid */
         if (p_range->low > p_range->high) {
-            (void) fprintf(cp_err, "Error low range (%d) is greater "
+            (void) fprintf(cp_err, "Error: low range (%d) is greater "
                     "than high range (%d).\n",
                     p_range->low, p_range->high);
+            return -1;
+        }
+        if (p_range->high >= n_elem_this_dim) {
+            (void) fprintf(cp_err, "Error: high range (%d) exceeds "
+                    "the maximum value (%d).\n",
+                    p_range->high, n_elem_this_dim - 1);
             return -1;
         }
     }
@@ -405,9 +450,20 @@ static int get_index_values(char *s, index_range_t *p_range)
 
 
 
-/* Get an index value */
-int get_one_index_value(char *s, int *p_index)
+/* Get an index value
+ *
+ * Return codes
+ * +1: String empty or all whitespace
+ * 0: Normal
+ * -1: Error
+ */
+int get_one_index_value(const char *s, int *p_index)
 {
+    /* Test for a string of whitespace */
+    if (*(s = skip_ws(s)) == '\0') {
+        return +1;
+    }
+
     /* Parse the expression */
     struct pnode * const names = ft_getpnames_from_string(s, TRUE);
     if (names == (struct pnode *) NULL) {
@@ -447,7 +503,7 @@ int get_one_index_value(char *s, int *p_index)
     free_pnode_x(names);
 
     return xrc;
-    } /* end of function get_one_index_value */
+} /* end of function get_one_index_value */
 
 
 
