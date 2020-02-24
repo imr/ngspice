@@ -5,9 +5,9 @@
 *R24 & R25 are optional output offset trimming
 *
 VTamb tamb 0 25
-MQ1 +V N010 N012 tn tcn IRFP240 tnodeout
+MQ1 +V N010 N012 tn tcn IRFP240 thermal
 X1 tcn tamb case-ambient
-MQ2 -V N020 N017 tp tcp IRFP9240 tnodeout
+MQ2 -V N020 N017 tp tcp IRFP9240 thermal
 X2 tcp tamb case-ambient
 R1 OUT N017 .33
 R2 N012 OUT .33

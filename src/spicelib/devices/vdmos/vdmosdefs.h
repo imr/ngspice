@@ -64,7 +64,7 @@ typedef struct sVDMOSinstance {
     double VDMOSdsConductance;    /*conductance of drain to source:set in setup*/
     double VDMOStemp;    /* operating temperature of this instance */
     double VDMOSdtemp;   /* operating temperature of the instance relative to circuit temperature*/
-    int    VDMOStnodeout;  /* flag indicate self heating on */
+    int    VDMOSthermal;  /* flag indicate self heating on */
 
     double VDMOStTransconductance;   /* temperature corrected transconductance*/
     double VDMOStPhi;                /* temperature corrected Phi */
@@ -157,7 +157,7 @@ typedef struct sVDMOSinstance {
     unsigned VDMOSsNodePrimeSet :1;
     unsigned VDMOSicVDSGiven :1;
     unsigned VDMOSicVGSGiven :1;
-    unsigned VDMOStnodeoutGiven : 1; /* flag indicate self heating on */
+    unsigned VDMOSthermalGiven : 1; /* flag indicate self heating on */
     unsigned VDMOSvonGiven : 1;
     unsigned VDMOSvdsatGiven :1;
     unsigned VDMOSmodeGiven :1;
@@ -440,7 +440,7 @@ enum {
     VDMOS_TEMP,
     VDMOS_M,
     VDMOS_DTEMP,
-    VDMOS_TNODEOUT,
+    VDMOS_THERMAL,
 };
 
 /* model parameters */
