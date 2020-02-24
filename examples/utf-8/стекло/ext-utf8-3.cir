@@ -1,0 +1,66 @@
+* test de titré
+* set oscompiled nn [0..8]
+* nn: Other MINGW Cygwin FreeBSD OpenBSD Solaris Linux macOS Visual_Studio
+* all text snippets (nonsense text) from http://kermitproject.org/utf8.html
+
+.control
+set hcopydevtype = postscript
+set hcopypscolor=25
+set hcopypstxcolor=21
+set hcopyscale=1
+if $oscompiled = 8
+   set color2=rgb:FF/0/0
+else
+   set color2=rgb:F/0/0
+endif
+setcs hcopyfont=Arial
+set hcopyfontsize=18
+
+let x = vector(5)
+let y = exp(x)
+setcs wfont=Arial
+set wfont_size=18
+setcs xfont='Noto Sans'
+*set xfont_size=18
+
+set xgridwidth=4
+set xbrushwidth=1
+
+*hardcopy
+
+plot y vs x xlabel 'Labellisé X' ylabel 'Labellisé Y: ÜüÖöÄäÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ' title 'Titré'
+plot y vs x xlabel '我能吞下玻璃而不伤身体' ylabel 'Я могу есть стекло, оно мне не вредит' title ' أنا قادر على أكل الزجاج و هذا لا يؤلمني.'
+* With Linux the next one requires: export LC_CTYPE ="de_DE.UTF-8"
+if $oscompiled = 6
+  shell export LC_CTYPE ="de_DE.UTF-8"
+endif
+gnuplot test.gn y vs x xlabel 'Labellisé X' ylabel 'tüTÄtö Äü @µ€~' title 'ฉันกินกระจกได้ แต่มันไม่ทำให้ฉันเจ็บ '
+
+set xgridwidth=1
+set xbrushwidth=4
+
+plot y vs x+0.001 xlabel 'Labellisé X' ylabel 'Labellisé Y' title 'Titré 私はガラスを食べられます。それは私を傷つけません' loglog
+plot y vs x xlabel '래도 아프지 않아요' ylabel '私はガラスを食べられます' title ' أنا قادر على أكل الزجاج و هذا لا يؤلمني.'
+
+* With Linux the next one requires: export LC_CTYPE ="de_DE.UTF-8"
+if $oscompiled = 6
+  shell export LC_CTYPE ="de_DE.UTF-8"
+endif
+gnuplot test2.gn y vs x xlabel 'Labellisé X' ylabel 'tüTÄtö Äü @µ€~' title 'ฉันกินกระจกได้ แต่มันไม่ทำให้ฉันเจ็บ '
+
+hardcopy plot_5.ps y vs x xlabel 'Labellisé X' ylabel 'Labellisé Y' title 'Titré Äü @µ€~'
+if $oscompiled = 8 or $oscompiled = 1
+  shell Start /B plot_5.ps
+else
+  shell gv plot_5.ps &
+endif
+
+*wrdata test.out y vs x
+*asciiplot atest.out y vs x
+
+echo 나는 유리를 먹을 수 있어요. 그래도 아프지 않아요
+echo 私はガラスを食べられます。それは私を傷つけません
+echo 我能吞下玻璃而不伤身体
+
+*quit
+.endc

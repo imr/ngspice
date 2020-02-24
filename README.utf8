@@ -1,0 +1,35 @@
+use utf-8 for encoding of strings, this enables UNICODE
+international characters sets (of nearly any language)
+in plot titles and labels, file and folder names.
+
+Windows uses utf-16 and conversion functions between utf-8
+and utf-16, if access to Windows API functions is needed.
+A special fopen has been defined.
+
+In addition, plot labels on the y axis now are placed
+vertically, 90°, by using the Windows API or the Linux Xft library.
+
+Postscript plotting uses only a UNICODE subset, namely
+ISO-8859-1/ISO-8859-15, that allows extended ascii.
+
+Better looking fonts are now used for labelling the axes.
+
+Variables xbrushwidth and xgridwidth (to be set e.g. in
+.spiceinit or directly before a plot command) allow setting 
+separately the linewidths of the graph (xbrushwidth) and 
+the grid (xgridwidth).
+
+Slight modification of the Windows GUI string window to
+enhance readability.
+
+Windows GUI is now more responsive during lengthy op
+calculations.
+
+UNICODE in Gnuplot and (limited) in Postscript are supported.
+You will need to download and install gnuplot and a PS viewer
+(e.g. ghostscript, gv or others).
+
+Input files to ngspice now have to be utf-8 encoded. ANSI 
+encoded files will fail (Notepad++ on Windows allows a simple
+conversion). For an ANSI version of ngspice you have to
+compile it with the configure flag --disable-utf8.

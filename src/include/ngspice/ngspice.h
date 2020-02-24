@@ -223,6 +223,13 @@ extern double x_atanh(double);
 #endif
 #endif
 
+#ifndef EXT_ASC
+#if defined(__MINGW__) || defined(_MSC_VER)
+#define fopen newfopen
+extern FILE *newfopen(const char *fn, const char* md);
+#endif
+#endif
+
 #if defined(__GNUC__)
 #define ATTRIBUTE_NORETURN __attribute__ ((noreturn))
 #elif defined(_MSC_VER)

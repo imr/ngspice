@@ -1501,7 +1501,6 @@ lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3
     <ClCompile Include="..\src\frontend\plotting\plotting.c" />
     <ClCompile Include="..\src\frontend\plotting\pvec.c" />
     <ClCompile Include="..\src\frontend\plotting\x11.c" />
-    <ClCompile Include="..\src\frontend\plotting\xgraph.c" />
     <ClCompile Include="..\src\frontend\points.c" />
     <ClCompile Include="..\src\frontend\postcoms.c" />
     <ClCompile Include="..\src\frontend\postsc.c" />

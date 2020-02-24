@@ -233,9 +233,9 @@ DevClear(void)
 
 
 void
-DevDrawLine(int x1, int y1, int x2, int y2)
+DevDrawLine(int x1, int y1, int x2, int y2, bool isgrid)
 {
-    dispdev->DrawLine (x1, y1, x2, y2);
+    dispdev->DrawLine (x1, y1, x2, y2, isgrid);
 }
 
 
@@ -275,9 +275,9 @@ SetLinestyle(int linestyleid)
 
 
 void
-SetColor(int colorid)
+SetColor(int colorid, GRAPH *graph)
 {
-    dispdev->SetColor (colorid);
+    dispdev->SetColor (colorid, graph);
 }
 
 

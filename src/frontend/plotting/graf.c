@@ -79,7 +79,8 @@ int gr_init(double *xlims, double *ylims, /* The size of the screen. */
         const char *ylabel, /* Labels for axes. */
         int xtype, int ytype, /* The types of the data graphed. */
         const char *pname,
-        const char *commandline) /* For xi_zoomdata() */
+        const char *commandline, /* For xi_zoomdata() */
+        int prevgraph)                /* plot id, if started from a previous plot*/
 {
     GRAPH *graph;
     wordlist *wl;
@@ -120,6 +121,10 @@ int gr_init(double *xlims, double *ylims, /* The size of the screen. */
         }
     }
 
+    if (!cp_getvar("ticchar", CP_STRING, graph->ticchar, 1)) {
+        strcpy(graph->ticchar, "X");
+    }
+
     if (cp_getvar("ticlist", CP_LIST, ticlist, 0)) {
         wl = vareval("ticlist");
         ticlist = wl_flatten(wl);
@@ -150,12 +155,35 @@ int gr_init(double *xlims, double *ylims, /* The size of the screen. */
 
     graph->plotname = tprintf("%s: %s", pname, plotname);
 
+
+    /* restore background color from previous graph, e.g. for zooming,
+       it will be used in NewViewport(graph) */
+    if (prevgraph > 0) {
+        graph->mgraphid = prevgraph;
+    }
+    else {
+        graph->mgraphid = 0;
+    }
+
     /* note: have enum here or some better convention */
     if (NewViewport(graph) == 1) {
         /* note: where is the error message generated? */
         /* note: undo tmallocs */
         fprintf(cp_err, "Can't open viewport for graphics.\n");
         return (FALSE);
+    }
+
+    /* restore data from previous graph, e.g. for zooming */
+    if (prevgraph > 0) {
+        int i;
+        GRAPH* pgraph = FindGraph(prevgraph);
+        /* transmit colors */
+        for (i = 0; i < 25; i++) {
+            graph->colorarray[i] = pgraph->colorarray[i];
+        }
+        strcpy(graph->ticchar, pgraph->ticchar);
+        graph->ticdata = pgraph->ticdata;
+        graph->ticmarks = pgraph->ticmarks;
     }
 
     /* layout decisions */
@@ -286,47 +314,37 @@ void gr_point(struct dvec *dv,
             return;
         }
     }
-    SetColor(dv->v_color);
+    SetColor(dv->v_color, currentgraph);
 
     switch (currentgraph->plottype) {
         double    *tics;
     case PLOT_LIN:
-    case PLOT_MONOLIN:
+    case PLOT_RETLIN:
         /* If it's a linear plot, ignore first point since we don't
            want to connect with oldx and oldy. */
-        if (np) {
-            DevDrawLine(fromx, fromy, tox, toy);
-        }
+        if (np)
+            DevDrawLine(fromx, fromy, tox, toy, FALSE);
+
         if ((tics = currentgraph->ticdata) != NULL) {
             for (; *tics < HUGE; tics++)
                 if (*tics == (double) np) {
-                    DevDrawText("x", (int) (tox - currentgraph->fontwidth / 2),
+                    DevDrawText(currentgraph->ticchar, (int) (tox - currentgraph->fontwidth / 2),
                                 (int) (toy - currentgraph->fontheight / 2), 0);
-                    /* gr_redraw will redraw this w/o our having to save it
-                       Guenther Roehrich 22-Jan-99 */
-                    /*    SaveText(currentgraph, "x",
-                          (int) (tox - currentgraph->fontwidth / 2),
-                          (int) (toy - currentgraph->fontheight / 2)); */
                     break;
                 }
         }
         else if ((currentgraph->ticmarks >0) && (np > 0) &&
                    (np % currentgraph->ticmarks == 0)) {
             /* Draw an 'x' */
-            DevDrawText("x", (int) (tox - currentgraph->fontwidth / 2),
+            DevDrawText(currentgraph->ticchar, (int) (tox - currentgraph->fontwidth / 2),
                         (int) (toy - currentgraph->fontheight / 2), 0);
-            /* gr_redraw will redraw this w/o our having to save it
-               Guenther Roehrich 22-Jan-99 */
-            /*  SaveText(currentgraph, "x",
-                (int) (tox - currentgraph->fontwidth / 2),
-                (int) (toy - currentgraph->fontheight / 2)); */
         }
         break;
     case PLOT_COMB:
         DatatoScreen(currentgraph,
                      0.0, currentgraph->datawindow.ymin,
                      &dummy, &ymin);
-        DevDrawLine(tox, ymin, tox, toy);
+        DevDrawLine(tox, ymin, tox, toy, FALSE);
         break;
     case PLOT_POINT:
         /* Here, gi_linestyle is the character used for the point.  */
@@ -403,35 +421,22 @@ static void gr_start_internal(struct dvec *dv, bool copyvec)
 
     currentgraph->plotdata = link;
 
-    /* Add the scale vector to the list of vectors associated with the plot
+    /* Copy the scale vector, add it to the vector as v_scale
      * and use the copy instead of the original scale vector if requested */
     {
         struct dvec * const custom_scale = dv->v_scale;
-        if (custom_scale != (struct dvec *) NULL) {
-            link = TMALLOC(struct dveclist, 1);
-            link->next = currentgraph->plotdata;
-
+        if (custom_scale != (struct dvec*) NULL) {
             if (copyvec) {
-                link->vector = vec_copy(dv->v_scale);
-                link->vector->v_flags |= VF_PERMANENT;
-                link->next->vector->v_scale = link->vector;
-                link->f_own_vector = TRUE;
+                currentgraph->plotdata->vector->v_scale = vec_copy(dv->v_scale);
+                currentgraph->plotdata->vector->v_scale->v_flags |= VF_PERMANENT;
             }
-            else {
-                link->vector = dv->v_scale;
-                link->f_own_vector = FALSE;
-            }
-
-            /* Make the new vector the start of the list of vectors */
-            currentgraph->plotdata = link;
         }
     }
 
-
     /* Put the legend entry on the screen. */
-    drawlegend(currentgraph, cur.plotno++, dv);
-} /* end of function gr_start_internal */
-
+    if (!cp_getvar("nolegend", CP_BOOL, NULL, 0))
+        drawlegend(currentgraph, cur.plotno++, dv);
+}
 
 
 /* Start one plot of a graph */
@@ -469,7 +474,7 @@ void drawlegend(GRAPH *graph, int plotno, struct dvec *dv)
     const int y = graph->absolute.height - graph->fontheight
         - ((plotno + 2) / 2) * (graph->fontheight);
     const int i = y + graph->fontheight / 2 + 1;
-    SetColor(dv->v_color);
+    SetColor(dv->v_color, graph);
     if (graph->plottype == PLOT_POINT) {
         char buf[16];
         (void) sprintf(buf, "%c : ", dv->v_linestyle);
@@ -477,12 +482,12 @@ void drawlegend(GRAPH *graph, int plotno, struct dvec *dv)
     }
     else {
         SetLinestyle(dv->v_linestyle);
-        DevDrawLine(x, i, x_base, i);
+        DevDrawLine(x, i, x + graph->viewport.width / 20, i, FALSE);
     }
-    SetColor(1);
-    DevDrawText(dv->v_name, x_base + graph->fontwidth, y, 0);
-} /* end of function drawlegend */
-
+    SetColor(1, graph);
+    DevDrawText(dv->v_name, x + graph->viewport.width / 20
+                + graph->fontwidth, y, 0);
+}
 
 
 /* end one plot of a graph */
@@ -605,7 +610,8 @@ void gr_redraw(GRAPH *graph)
     cur.plotno = 0;
     for (link = graph->plotdata; link; link = link->next) {
         /* redraw legend */
-        drawlegend(graph, cur.plotno++, link->vector);
+        if (!cp_getvar("nolegend", CP_BOOL, NULL, 0))
+            drawlegend(graph, cur.plotno++, link->vector);
 
         /* replot data
            if onevalue, pass it a NULL scale
@@ -632,7 +638,7 @@ void gr_restoretext(GRAPH *graph)
 
     /* restore text */
     for (k = graph->keyed; k; k = k->next) {
-        SetColor(k->colorindex);
+        SetColor(k->colorindex, graph);
         DevDrawText(k->text, k->x, k->y, 0);
     }
 }
@@ -743,7 +749,7 @@ static int iplot(struct plot *pl, int id)
         (void) gr_init(xlims, ylims, xs->v_name,
                 pl->pl_title, NULL, n_vec_plot, 0.0, 0.0,
                 GRID_LIN, PLOT_LIN, xs->v_name, yl, xs->v_type, yt,
-                plot_cur->pl_typename, commandline);
+                plot_cur->pl_typename, commandline, 0);
 
         for (v = pl->pl_dvecs; v; v = v->v_next) {
             if (v->v_flags & VF_PLOT) {

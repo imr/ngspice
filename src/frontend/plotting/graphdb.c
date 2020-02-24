@@ -60,6 +60,7 @@ GRAPH *NewGraph(void)
     LISTGRAPH *list;
     const int BucketId = RunningId % NUMGBUCKETS;
 
+    /* allocate memory for graph via LISTGRAPH */
     if ((list = TMALLOC(LISTGRAPH, 1)) == NULL) {
         internalerror("can't allocate a listgraph");
         return (GRAPH *) NULL;
@@ -258,6 +259,8 @@ int DestroyGraph(int id)
                     nextd = d->next;
                     if (d->f_own_vector) {
                         /* list responsible for freeing this vector */
+                        if (d->vector->v_scale)
+                            dvec_free(d->vector->v_scale);
                         dvec_free(d->vector);
                     }
                     txfree(d);

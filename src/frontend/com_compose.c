@@ -11,8 +11,6 @@
 #include "ngspice/fteext.h"
 #include "ngspice/cpextern.h"
 #include "ngspice/randnumb.h"
-
-#include "quote.h"
 #include "com_compose.h"
 #include "completion.h"
 

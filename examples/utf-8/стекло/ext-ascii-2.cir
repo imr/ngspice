@@ -1,0 +1,28 @@
+* test de titré
+* file is encoded as ASCII !
+* will lead to error in the ngspice UNICODE utf8 version
+* is o.k. only if ngspice is compiled with --disable-utf8 flag
+
+.control
+set encoding=extended_ascii
+set hcopydevtype = postscript
+set hcopypscolor=1
+set hcopyscale=0.5
+set color2=rgb:F/0/0
+setcs hcopyfont="Garamond"
+set hcopyfontsize=14
+
+let x = vector(5)
+let y = exp(x)
+setcs wfont="Garamond Fett"
+set wfont_size=16
+plot y vs x xlabel 'Labellisé X' ylabel 'Labellisé Y' title 'Titré'
+plot y vs x xlabel 'Labellisé X' title 'Titré'
+plot y vs x+0.001 xlabel 'Labellisé X' ylabel 'Labellisé Y' title 'Titré' loglog
+plot y vs x+0.001 xlabel 'Labellisé X' title 'Titré' loglog
+
+hardcopy plot_5.ps y vs x xlabel 'Labellisé X' ylabel 'Labellisé Y' title 'Titré'
+shell Start /B plot_5.ps
+write D:\Spice_general\tests\ext_unic_test.raw y x
+*quit
+.endc

@@ -40,6 +40,36 @@ Author: 1988 Jeffrey M. Hsu
 #define FONTWIDTH     6       /* printer default fontwidth */
 #define FONTHEIGHT    14      /* printer default fontheight */
 
+
+typedef struct {
+    int red, green, blue;
+} COLOR;
+
+/* duplicated colors from src/frontend/plotting/x11.c in rgb-style */
+static const COLOR colors[] = {{  0,   0,   0},    /*0: black */
+                               {255, 255, 255},    /*1: white */
+                               {255,   0,   0},    /*2: red */
+                               {  0,   0, 255},    /*3: blue */
+                               {255, 165,   0},    /*4: orange */
+                               {  0, 255,   0},    /*5: green */
+                               {255, 192, 203},    /*6: pink */
+                               {165,  42,  42},    /*7: brown */
+                               {240, 230, 140},    /*8: khaki */
+                               {221, 160, 221},    /*9: plum */
+                               {218, 112, 214},    /*10: orchid */
+                               {238, 130, 238},    /*11: violet */
+                               {176,  48,  96},    /*12: maroon */
+                               { 64, 224, 208},    /*13: turqoise */
+                               {160,  82,  45},    /*14: sienna */
+                               {255, 127,  80},    /*15: coral */
+                               {  0, 255, 255},    /*16: cyan */
+                               {255,   0, 255},    /*17: magenta */
+                               {255, 215,   0},    /*18: gold */
+                               {255, 255,   0},    /*19: yello */
+                               { 96,  96,  96},    /*20: gray for smith grid */
+                               {150, 150, 150},    /*21: gray for smith grid */
+                               {128, 128, 128}};   /*22: gray for normal grid */
+
 typedef struct {
     int lastlinestyle, lastcolor; /* initial invalid value */
     int lastx, lasty, linecount;
@@ -66,22 +96,27 @@ static int fontheight = FONTHEIGHT;
 static int screenflag = 0;
 static int colorflag = 0;
 static int setbgcolor = 0;
-static int settxcolor = -1;
+static int settxcolor = 1;
 static double scale;  /* Used for fine tuning */
 static int xtadj;     /* text adjustment x */
 static int ytadj;     /* text adjustment y */
 static int hcopygraphid;
-
+static double linewidth;
+static double gridlinewidth;
+static int maxcolor = 2;
 
 void PS_LinestyleColor(int linestyleid, int colorid);
 void PS_SelectColor(int colorid);
 void PS_Stroke(void);
+size_t utf8_to_latin9(char *const output, const char *const input, const size_t length);
 
 
 /* Set scale, color and size of the plot */
 int PS_Init(void)
 {
     char pswidth[30], psheight[30];
+
+    maxcolor = NUMELEMS(colors);
 
     if (!cp_getvar("hcopyscale", CP_STRING, psscale, sizeof(psscale))) {
         scale = 1.0;
@@ -98,10 +133,24 @@ int PS_Init(void)
         dispdev->numcolors = 2;
 
     } else {
-        /* get backgroung color and set plot to color */
+        /* get text color and set plot to color */
         colorflag = 1;
-        dispdev->numcolors = 21;   /* don't know what the maximum should be */
+        dispdev->numcolors = maxcolor;
         cp_getvar("hcopypstxcolor", CP_NUM, &settxcolor, 0);
+    }
+
+    if (settxcolor > maxcolor || settxcolor < 0) {
+        fprintf(stderr, "Bad PS text color selection %d\n", settxcolor);
+        fprintf(stderr, "    Maximum for hcopypstxcolor is %d\n\n", maxcolor - 1);
+        colorflag = 0;
+        dispdev->numcolors = 2;
+    }
+
+    if (setbgcolor > maxcolor || setbgcolor < 0) {
+        fprintf(stderr, "Bad PS background color selection %d\n", setbgcolor);
+        fprintf(stderr, "    Maximum for hcopypscolor is %d\n", maxcolor - 1);
+        fprintf(stderr, "    Set to 1 (white)\n\n");
+        setbgcolor = 1;
     }
 
     /* plot size */
@@ -126,6 +175,19 @@ int PS_Init(void)
             dispdev->height = 10000;
     }
 
+    /* get linewidth information from spinit */
+    if (!cp_getvar("xbrushwidth", CP_REAL, &linewidth, 0))
+        linewidth = 0;
+    if (linewidth < 0)
+        linewidth = 0;
+
+    /* get linewidth for grid from spinit */
+    if (!cp_getvar("xgridwidth", CP_REAL, &gridlinewidth, 0))
+        gridlinewidth = linewidth;
+    if (gridlinewidth < 0)
+        gridlinewidth = 0;
+
+
     /* The following side effects have to be considered
      * when the printer is called by com_hardcopy !
      * gr_init:
@@ -148,7 +210,7 @@ int PS_Init(void)
     }
     else {
         sscanf(psfontsize, "%d", &fontsize);
-        if ((fontsize < 10) || (fontsize > 14))
+        if ((fontsize < 10) || (fontsize > 18))
             fontsize = 10;
         fontwidth = (int)(0.5 + 0.6 * fontsize);
         fontheight = (int)(2.5 + 1.2 * fontsize);
@@ -170,6 +232,7 @@ int PS_NewViewport(GRAPH *graph)
 {
     int x1, x2, y1, y2;
     hcopygraphid = graph->graphid;
+
     /* devdep initially contains name of output file */
     if ((plotfile = fopen((char*)graph->devdep, "w")) == NULL) {
         perror((char *) graph->devdep);
@@ -198,13 +261,13 @@ int PS_NewViewport(GRAPH *graph)
     xoff = (int)(scale * XOFF);
     yoff = (int)(scale * YOFF);
 
-    x1 = (int)(0.75 * 72);
+    x1 = (int) (0.5 * 72 - fontheight);
     y1 = x1;
-    x2 = (int)(graph->absolute.width + .75 * 72);
+    x2 = (int)(graph->absolute.width + .5 * 72);
     y2 = (int)(graph->absolute.height + .75 * 72);
     /* start file off with a % */
     fprintf(plotfile, "%%!PS-Adobe-3.0 EPSF-3.0\n");
-    fprintf(plotfile, "%%%%Creator: nutmeg\n");
+    fprintf(plotfile, "%%%%Creator: ngspice\n");
     fprintf(plotfile, "%%%%BoundingBox: %d %d %d %d\n", x1, y1, x2, y2);
 
     /* Re-encoding to allow 'extended asccii'
@@ -221,7 +284,6 @@ int PS_NewViewport(GRAPH *graph)
     fprintf(plotfile, "      definefont\n");
     fprintf(plotfile, "} def\n");
     fprintf(plotfile, "/%s /%sLatin1 ISOLatin1Encoding Re-encode\n", psfont, psfont);
-
     fprintf(plotfile, "%g %g scale\n", 1.0 / scale, 1.0 / scale);
     if (colorflag == 1) {
         /* set the background to color given in spinit (or 0) */
@@ -233,10 +295,10 @@ int PS_NewViewport(GRAPH *graph)
         fprintf(plotfile, "closepath fill\n");
     }
 
+
     /* set up a reasonable font */
     fprintf(plotfile, "/%sLatin1 findfont %d scalefont setfont\n\n",
             psfont, (int) (fontsize * scale));
-
     graph->devdep = TMALLOC(PSdevdep, 1);
     graph->n_byte_devdep = sizeof(PSdevdep);
     DEVDEP(graph).lastlinestyle = -1;
@@ -265,7 +327,8 @@ int PS_Close(void)
      * and reset currentgraph to graphid 1, if possible
      */
     if (!screenflag) {
-        DestroyGraph(hcopygraphid);
+        if (hcopygraphid > 0)
+            DestroyGraph(hcopygraphid);
         currentgraph = FindGraph(1);
     }
     return 0;
@@ -279,7 +342,8 @@ int PS_Clear(void)
 }
 
 
-int PS_DrawLine(int x1, int y1, int x2, int y2)
+int
+PS_DrawLine(int x1, int y1, int x2, int y2, bool isgrid)
 {
     /* note: this is not extendible to more than one graph
        => will have to give NewViewport a writeable graph XXX */
@@ -298,6 +362,10 @@ int PS_DrawLine(int x1, int y1, int x2, int y2)
     if (x1 != x2 || y1 != y2) {
         fprintf(plotfile, "%d %d lineto\n", x2 + xoff, y2 + yoff);
         DEVDEP(currentgraph).linecount += 1;
+        if(isgrid)
+            fprintf(plotfile, "%f setlinewidth\n", gridlinewidth);
+        else
+            fprintf(plotfile, "%f setlinewidth\n", linewidth);
     }
 
     DEVDEP(currentgraph).lastx = x2;
@@ -331,6 +399,9 @@ int PS_Text(char *text, int x, int y, int angle)
 {
     int savedlstyle, savedcolor;
 
+#ifndef EXT_ASC
+       utf8_to_latin9(text, text, strlen(text));
+#endif
     /* set linestyle to solid
        or may get funny color text on some plotters */
     savedlstyle = currentgraph->linestyle;
@@ -339,12 +410,12 @@ int PS_Text(char *text, int x, int y, int angle)
     PS_SetLinestyle(SOLID);
     /* set text color to black if background is not white */
     if (setbgcolor > 0)
-        PS_SetColor(0);
+        PS_SetColor(0, currentgraph);
     else
-        PS_SetColor(1);
+        PS_SetColor(1, currentgraph);
     /* if color is given by set hcopytxpscolor=settxcolor, give it a try */
     if (settxcolor >= 0)
-        PS_SetColor(settxcolor);
+        PS_SetColor(settxcolor, currentgraph);
     /* stroke the path if there's an open one */
     PS_Stroke();
     /* move to (x, y) */
@@ -360,7 +431,7 @@ int PS_Text(char *text, int x, int y, int angle)
 
     /* restore old linestyle */
 
-    PS_SetColor(savedcolor);
+    PS_SetColor(savedcolor, currentgraph);
     PS_SetLinestyle(savedlstyle);
     return 0;
 }
@@ -387,8 +458,9 @@ int PS_SetLinestyle(int linestyleid)
 }
 
 
-int PS_SetColor(int colorid)
+int PS_SetColor(int colorid, GRAPH *graph)
 {
+    NG_IGNORE(graph);
     PS_LinestyleColor(currentgraph->linestyle, colorid);
     return 0;
 }
@@ -409,31 +481,6 @@ void PS_SelectColor(int colorid)           /* should be replaced by PS_DefineCol
     char rgb[30], s_red[30] = "0x", s_green[30] = "0x", s_blue[30] = "0x";
     int  red = 0, green = 0, blue = 0, maxval = 1;
     int i;
-    typedef struct { int red, green, blue;} COLOR;
-    /* duplicated colors from src/frontend/plotting/x11.c in rgb-style */
-    const COLOR colors[] = {{  0,   0,   0},    /*0: black */
-                            {255, 255, 255},    /*1: white */
-                            {255,   0,   0},    /*2: red */
-                            {  0,   0, 255},    /*3: blue */
-                            {255, 165,   0},    /*4: orange */
-                            {  0, 255,   0},    /*5: green */
-                            {255, 192, 203},    /*6: pink */
-                            {165,  42,  42},    /*7: brown */
-                            {240, 230, 140},    /*8: khaki */
-                            {221, 160, 221},    /*9: plum */
-                            {218, 112, 214},    /*10: orchid */
-                            {238, 130, 238},    /*11: violet */
-                            {176,  48,  96},    /*12: maroon */
-                            { 64, 224, 208},    /*13: turqoise */
-                            {160,  82,  45},    /*14: sienna */
-                            {255, 127,  80},    /*15: coral */
-                            {  0, 255, 255},    /*16: cyan */
-                            {255,   0, 255},    /*17: magenta */
-                            /*{255, 215,   0},    18: gold */
-                            { 96,  96,  96},    /*18: gray for smith grid */
-                            /*{255, 255,   0},    19: yello */
-                            {150, 150, 150},    /*19: gray for smith grid */
-                            {128, 128, 128}};   /*20: gray for normal grid */
 
     /* Extract the rgbcolor, format is: "rgb:<red>/<green>/<blue>" */
     sprintf(colorN, "color%d", colorid);
@@ -455,7 +502,7 @@ void PS_SelectColor(int colorid)           /* should be replaced by PS_DefineCol
             strcpy(pscolor, colorstring);
         }
     }
-    if (colorid < 0 || colorid > 20) {
+    if (colorid < 0 || colorid >= maxcolor) {
         internalerror("bad colorid inside PS_SelectColor");
     } else if (maxval == 1) {  /* colorN is not an rgbstring, use default color */
         sprintf(colorstring, "%1.3f %1.3f %1.3f", colors[colorid].red/255.0,
@@ -522,4 +569,140 @@ void PS_Stroke(void)
         fprintf(plotfile, "stroke\n");
         DEVDEP(currentgraph).linecount = 0;
     }
+}
+
+/* UTF-8 to ISO-8859-1/ISO-8859-15 mapper.
+* Return 0..255 for valid ISO-8859-15 code points, 256 otherwise.
+*/
+static inline unsigned int to_latin9(const unsigned int code)
+{
+    /* Code points 0 to U+00FF are the same in both. */
+    if (code < 256U)
+        return code;
+    switch (code) {
+    case 0x0152U: return 188U; /* U+0152 = 0xBC: OE ligature */
+    case 0x0153U: return 189U; /* U+0153 = 0xBD: oe ligature */
+    case 0x0160U: return 166U; /* U+0160 = 0xA6: S with caron */
+    case 0x0161U: return 168U; /* U+0161 = 0xA8: s with caron */
+    case 0x0178U: return 190U; /* U+0178 = 0xBE: Y with diaresis */
+    case 0x017DU: return 180U; /* U+017D = 0xB4: Z with caron */
+    case 0x017EU: return 184U; /* U+017E = 0xB8: z with caron */
+    case 0x20ACU: return 164U; /* U+20AC = 0xA4: Euro */
+    default:      return 256U;
+    }
+}
+
+/* Convert an UTF-8 string to ISO-8859-15.
+* All invalid sequences are ignored.
+* Note: output == input is allowed,
+* but   input < output < input + length
+* is not.
+* Output has to have room for (length+1) chars, including the trailing NUL byte.
+from http://stackoverflow.com/questions/11156473/is-there-a-way-to-convert-from-utf8-to-iso-8859-1#11173493 
+*/
+size_t utf8_to_latin9(char *const output, const char *const input, const size_t length)
+{
+    unsigned char             *out = (unsigned char *)output;
+    const unsigned char       *in = (const unsigned char *)input;
+    const unsigned char *const end = (const unsigned char *)input + length;
+    unsigned int               c;
+
+    while (in < end)
+        if (*in < 128)
+            *(out++) = *(in++); /* Valid codepoint */
+        else
+            if (*in < 192)
+                in++;               /* 10000000 .. 10111111 are invalid */
+            else
+                if (*in < 224) {        /* 110xxxxx 10xxxxxx */
+                    if (in + 1 >= end)
+                        break;
+                    if ((in[1] & 192U) == 128U) {
+                        c = to_latin9((((unsigned int)(in[0] & 0x1FU)) << 6U)
+                            | ((unsigned int)(in[1] & 0x3FU)));
+                        if (c < 256)
+                            *(out++) = (unsigned char)c;
+                    }
+                    in += 2;
+
+                }
+                else
+                    if (*in < 240) {        /* 1110xxxx 10xxxxxx 10xxxxxx */
+                        if (in + 2 >= end)
+                            break;
+                        if ((in[1] & 192U) == 128U &&
+                            (in[2] & 192U) == 128U) {
+                            c = to_latin9((((unsigned int)(in[0] & 0x0FU)) << 12U)
+                                | (((unsigned int)(in[1] & 0x3FU)) << 6U)
+                                | ((unsigned int)(in[2] & 0x3FU)));
+                            if (c < 256)
+                                *(out++) = (unsigned char)c;
+                        }
+                        in += 3;
+
+                    }
+                    else
+                        if (*in < 248) {        /* 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx */
+                            if (in + 3 >= end)
+                                break;
+                            if ((in[1] & 192U) == 128U &&
+                                (in[2] & 192U) == 128U &&
+                                (in[3] & 192U) == 128U) {
+                                c = to_latin9((((unsigned int)(in[0] & 0x07U)) << 18U)
+                                    | (((unsigned int)(in[1] & 0x3FU)) << 12U)
+                                    | (((unsigned int)(in[2] & 0x3FU)) << 6U)
+                                    | ((unsigned int)(in[3] & 0x3FU)));
+                                if (c < 256)
+                                    *(out++) = (unsigned char)c;
+                            }
+                            in += 4;
+
+                        }
+                        else
+                            if (*in < 252) {        /* 111110xx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx */
+                                if (in + 4 >= end)
+                                    break;
+                                if ((in[1] & 192U) == 128U &&
+                                    (in[2] & 192U) == 128U &&
+                                    (in[3] & 192U) == 128U &&
+                                    (in[4] & 192U) == 128U) {
+                                    c = to_latin9((((unsigned int)(in[0] & 0x03U)) << 24U)
+                                        | (((unsigned int)(in[1] & 0x3FU)) << 18U)
+                                        | (((unsigned int)(in[2] & 0x3FU)) << 12U)
+                                        | (((unsigned int)(in[3] & 0x3FU)) << 6U)
+                                        | ((unsigned int)(in[4] & 0x3FU)));
+                                    if (c < 256)
+                                        *(out++) = (unsigned char)c;
+                                }
+                                in += 5;
+
+                            }
+                            else
+                                if (*in < 254) {        /* 1111110x 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx */
+                                    if (in + 5 >= end)
+                                        break;
+                                    if ((in[1] & 192U) == 128U &&
+                                        (in[2] & 192U) == 128U &&
+                                        (in[3] & 192U) == 128U &&
+                                        (in[4] & 192U) == 128U &&
+                                        (in[5] & 192U) == 128U) {
+                                        c = to_latin9((((unsigned int)(in[0] & 0x01U)) << 30U)
+                                            | (((unsigned int)(in[1] & 0x3FU)) << 24U)
+                                            | (((unsigned int)(in[2] & 0x3FU)) << 18U)
+                                            | (((unsigned int)(in[3] & 0x3FU)) << 12U)
+                                            | (((unsigned int)(in[4] & 0x3FU)) << 6U)
+                                            | ((unsigned int)(in[5] & 0x3FU)));
+                                        if (c < 256)
+                                            *(out++) = (unsigned char)c;
+                                    }
+                                    in += 6;
+
+                                }
+                                else
+                                    in++;               /* 11111110 and 11111111 are invalid */
+
+                                                        /* Terminate the output string. */
+    *out = '\0';
+
+    return (size_t)(out - (unsigned char *)output);
 }

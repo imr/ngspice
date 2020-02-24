@@ -14,6 +14,7 @@ Author: 1988 Jeffrey M. Hsu
 #  include <sys/time.h>
 #  include <sys/types.h>  /* PN */
 #  include <unistd.h>     /* PN */
+#  include <locale.h>
 
 #  include "ngspice/graph.h"
 #  include "ngspice/ftedbgra.h"
@@ -36,6 +37,10 @@ Author: 1988 Jeffrey M. Hsu
 #  include <X11/Xaw/Form.h>
 #  include <X11/Shell.h>
 #  include <X11/Intrinsic.h>
+
+#ifdef HAVE_LIBXFT
+#include <X11/Xft/Xft.h>
+#endif
 
 #  ifdef DEBUG
 #     include <X11/Xlib.h> /* for _Xdebug */
@@ -62,10 +67,23 @@ typedef struct x11info {
     int isopen;
     Widget shell, form, view, buttonbox, buttons[2];
     XFontStruct *font;
-    GC gc;
+    GC gc; /* graphics context for graphs */
+    GC gridgc; /* graphics context for grid, linewidth may differ */
     int lastx, lasty;   /* used in X_DrawLine */
     int lastlinestyle;  /* used in X_DrawLine */
     Pixel colors[NUMCOLORS];
+    char txtcolor[16];
+    char bgcolor[16];
+    char fname[BSIZE_SP];
+    int fsize;
+    /* use with xft */
+#ifdef HAVE_LIBXFT
+    XftFont *font0;
+    XftFont *font90;
+    XftDraw* draw;
+    XftColor color;
+    Colormap cmap;
+#endif
 } X11devdep;
 
 #define DEVDEP(g) (*((X11devdep *) (g)->devdep))
@@ -91,6 +109,8 @@ static Bool noclear = False;
 static GRAPH *lasthardcopy; /* graph user selected */
 static int X11_Open = 0;
 static int numdispplanes;
+static int xfont_size;
+static char fontname[513];
 
 /* static functions */
 static void initlinestyles(void);
@@ -99,7 +119,10 @@ static void X_ScreentoData(GRAPH *graph, int x, int y, double *fx, double *fy);
 static void linear_arc(int x0, int y0, int radius, double theta, double delta_theta);
 static void slopelocation(GRAPH *graph, int x0, int y0);
 static void zoomin(GRAPH *graph);
-
+#ifdef HAVE_LIBXFT
+static int Xget_str_length(char *text, int* wlen, int* wheight, XftFont* gfont, char* name, int fsize);
+static int X11_DefineXft(GRAPH *graph);
+#endif
 //XtEventHandler
 static void handlekeypressed(Widget w, XtPointer clientdata, XEvent *ev, Boolean *continue_dispatch);
 static void handlebuttonev(Widget w, XtPointer graph, XEvent *ev, Boolean *continue_dispatch);
@@ -128,7 +151,6 @@ X11_Init(void)
 
     XGCValues gcvalues;
 
-    /* grrr, Xtk forced contortions */
     char *argv[2];
     int argc = 2;
 
@@ -149,20 +171,16 @@ X11_Init(void)
   argv[2] = "-geometry";
   argv[3] = "=1x1+2+2";
 */
-
+    /* initialze internationalization (i18n) */
+    XtSetLanguageProc(NULL, NULL, NULL);
     /* initialize X toolkit */
     toplevel = XtInitialize("ngspice", "Nutmeg", NULL, 0, &argc, argv);
+    setlocale(LC_NUMERIC, "C");
 
     display = XtDisplay(toplevel);
 
     X11_Open = 1;
 
-    /* "invert" works better than "xor" for B&W */
-
-    /* xor gc should be a function of the pixels that are written on */
-    /* gcvalues.function = GXxor; */
-    /* this patch makes lines visible on true color displays
-       Guenther Roehrich 22-Jan-99 */
     gcvalues.function = GXinvert;
     gcvalues.line_width = 1;
     gcvalues.foreground = 1;
@@ -200,10 +218,15 @@ initlinestyles(void)
 }
 
 
+/* initialize color selection for grid/text, background and graphs.
+   Input is by setting the variables color0 (background), color1
+   (grid/text) and color%id with %id from2 to 19. color%id may be set
+   to color name string or rgb:0/FF/F0 rgb:0/F/0 rgbd:295/0/128 */
 static void
 initcolors(GRAPH *graph)
 {
     int i;
+    bool gridgiven = TRUE;
     static char *colornames[] = {   "black",    /* white */
                                     "white", "red", "blue",
                                     "orange", "green", "pink",
@@ -214,18 +237,18 @@ initcolors(GRAPH *graph)
                                     "yellow", ""
     };
 
-    XColor visualcolor, exactcolor;
+    XColor visualcolor, exactcolor, bgcolor;
     char buf[BSIZE_SP], colorstring[BSIZE_SP];
     int xmaxcolors = NUMCOLORS; /* note: can we get rid of this? */
 
     if (numdispplanes == 1) {
         /* black and white */
         xmaxcolors = 2;
-        DEVDEP(graph).colors[0] = DEVDEP(graph).view->core.background_pixel;
-        if (DEVDEP(graph).colors[0] == WhitePixel(display, DefaultScreen(display)))
-            DEVDEP(graph).colors[1] = BlackPixel(display, DefaultScreen(display));
+        graph->colorarray[0] = DEVDEP(graph).view->core.background_pixel;
+        if (graph->colorarray[0] == WhitePixel(display, DefaultScreen(display)))
+            graph->colorarray[1] = BlackPixel(display, DefaultScreen(display));
         else
-            DEVDEP(graph).colors[1] = WhitePixel(display, DefaultScreen(display));
+            graph->colorarray[1] = WhitePixel(display, DefaultScreen(display));
 
     } else {
         if (numdispplanes < NXPLANES)
@@ -233,38 +256,80 @@ initcolors(GRAPH *graph)
 
         for (i = 0; i < xmaxcolors; i++) {
             (void) sprintf(buf, "color%d", i);
-            if (!cp_getvar(buf, CP_STRING, colorstring, sizeof(colorstring)))
+            if (!cp_getvar(buf, CP_STRING, colorstring, sizeof(colorstring))) {
                 (void) strcpy(colorstring, colornames[i]);
+                if(i == 1)
+                    gridgiven = FALSE;
+            }
+            /* colorstring by integer numbers between 0 and 255 */
+            else if (ciprefix("rgbd:", colorstring)) {
+                char *t1, *t2, *t3, *tmpstr;
+                tmpstr = colorstring + 5;
+                if (tmpstr) {
+                    t1 = gettok_char(&tmpstr, '/', FALSE, FALSE);
+                    tmpstr++;
+                    t2 = gettok_char(&tmpstr, '/', FALSE, FALSE);
+                    tmpstr++;
+                    t3 = copy(tmpstr);
+                    if (t1 && t2 && t3) {
+                        double c1, c2, c3;
+                        c1 = strtol(t1, NULL, 10) / 255.;
+                        c2 = strtol(t2, NULL, 10) / 255.;
+                        c3 = strtol(t3, NULL, 10) / 255.;
+                        c1 = fmax(0., fmin(c1, 1.));
+                        c2 = fmax(0., fmin(c2, 1.));
+                        c3 = fmax(0., fmin(c3, 1.));
+                        tfree(t1);
+                        tfree(t2);
+                        tfree(t3);
+                        sprintf(colorstring, "RGBi:%.3f/%.3f/%.3f", c1, c2, c3);
+                    }
+                    else {
+                        fprintf(cp_err, "Error: Could not evaluate color%d", i);
+                        continue;
+                    }
+                }
+            }
+
             if (!XAllocNamedColor(display,
                                   DefaultColormap(display, DefaultScreen(display)),
                                   colorstring, &visualcolor, &exactcolor)) {
                 (void) sprintf(ErrorMessage,
                                "can't get color %s\n", colorstring);
                 externalerror(ErrorMessage);
-                DEVDEP(graph).colors[i] = i ? BlackPixel(display,
+                graph->colorarray[i] = i ? BlackPixel(display,
                                                          DefaultScreen(display))
                     : WhitePixel(display, DefaultScreen(display));
                 continue;
             }
-            DEVDEP(graph).colors[i] = visualcolor.pixel;
-
-            /* MW. I don't need this, everyone must know what he is doing
-               if (i > 0 &&
-               DEVDEP(graph).colors[i] == DEVDEP(graph).view->core.background_pixel) {
-               DEVDEP(graph).colors[i] = DEVDEP(graph).colors[0];
-               } */
-
+            if (i == 0) {
+                bgcolor = visualcolor;
+                strncpy(DEVDEP(graph).bgcolor, colorstring, 15);
+            }
+            if ((!gridgiven) && (i == 1)) {
+                /* select grid color according to background color.
+                   Empirical selection using the color depth of the background */
+                /* switch the grid and text color depending on background */
+                int tcolor = (int)bgcolor.red + (int)(1.5 * bgcolor.green) + (int)bgcolor.blue;
+                if (tcolor > 92160) {
+                    graph->colorarray[1] = BlackPixel(display, DefaultScreen(display));
+                    strncpy(DEVDEP(graph).txtcolor, "black", 15);
+                }
+                else {
+                    graph->colorarray[1] = WhitePixel(display, DefaultScreen(display));
+                    strncpy(DEVDEP(graph).txtcolor, "white", 15);
+                }
+            }
+            else {
+                graph->colorarray[i] = visualcolor.pixel;
+                if (i == 1)
+                    strncpy(DEVDEP(graph).txtcolor, colorstring, 15);
+            }
         }
-        /* MW. Set Beackgroound here */
-        XSetWindowBackground(display, DEVDEP(graph).window, DEVDEP(graph).colors[0]);
-
-        /* if (DEVDEP(graph).colors[0] != DEVDEP(graph).view->core.background_pixel) {
-        DEVDEP(graph).colors[0] = DEVDEP(graph).view->core.background_pixel;
-        } */
     }
 
     for (i = xmaxcolors; i < NUMCOLORS; i++) {
-        DEVDEP(graph).colors[i] = DEVDEP(graph).colors[i + 1 - xmaxcolors];
+        graph->colorarray[i] = graph->colorarray[i + 1 - xmaxcolors];
     }
 }
 
@@ -286,7 +351,7 @@ handlekeypressed(Widget w, XtPointer client_data, XEvent *ev, Boolean *continue_
     /* write it */
     PushGraphContext(graph);
     text[nbytes] = '\0';
-    SetColor(1);
+    SetColor(1, graph);
     DevDrawText(text, keyev->x, graph->absolute.height - keyev->y, 0);
     /* save it */
     SaveText(graph, text, keyev->x, graph->absolute.height - keyev->y);
@@ -348,11 +413,13 @@ handle_wm_messages(Widget w, XtPointer client_data, XEvent *ev, Boolean *cont)
 int
 X11_NewViewport(GRAPH *graph)
 {
-    char fontname[513]; /* who knows . . . */
+//    char fontname[513]; /* who knows . . . */
     char *p, *q;
     Cursor cursor;
     XSetWindowAttributes w_attrs;
     XGCValues gcvalues;
+    XGCValues gridgcvalues;
+    GRAPH *pgraph = NULL;
 
     static Arg formargs[ ] = {
         { XtNleft, (XtArgVal) XtChainLeft },
@@ -376,8 +443,8 @@ X11_NewViewport(GRAPH *graph)
     };
     static Arg viewargs[] = {
         { XtNresizable, (XtArgVal) TRUE },
-        { XtNwidth, (XtArgVal) 300 },
-        { XtNheight, (XtArgVal) 300 },
+        { XtNwidth, (XtArgVal) 600 },
+        { XtNheight, (XtArgVal) 500 },
         { XtNright, (XtArgVal) XtChainRight }
     };
     int trys;
@@ -389,6 +456,7 @@ X11_NewViewport(GRAPH *graph)
     DEVDEP(graph).shell = XtCreateApplicationShell
         ("shell", topLevelShellWidgetClass, NULL, 0);
 
+    XtVaSetValues(DEVDEP(graph).shell, XtNtitleEncoding, XInternAtom(display, "UTF8_STRING", False), NULL);
     XtVaSetValues(DEVDEP(graph).shell, XtNtitle, graph->plotname, NULL);
 
     /* set up form widget */
@@ -428,7 +496,9 @@ X11_NewViewport(GRAPH *graph)
     /* set up fonts */
     if (!cp_getvar("xfont", CP_STRING, fontname, sizeof(fontname)))
         (void) strcpy(fontname, DEF_FONT);
+    strncpy(DEVDEP(graph).fname, fontname, BSIZE_SP - 1);
 
+#ifndef HAVE_LIBXFT
     for (p = fontname; *p && *p <= ' '; p++)
         ;
 
@@ -437,7 +507,6 @@ X11_NewViewport(GRAPH *graph)
             ;
         *q = '\0';
     }
-
     trys = 1;
     while (!(DEVDEP(graph).font = XLoadQueryFont(display, fontname))) {
         sprintf(ErrorMessage, "can't open font %s", fontname);
@@ -449,11 +518,30 @@ X11_NewViewport(GRAPH *graph)
         }
         trys += 1;
     }
+#endif
 
+        /* font size */
+    if (!cp_getvar("xfont_size", CP_NUM, &xfont_size, 0))
+        xfont_size = 16;
+
+#ifndef HAVE_LIBXFT
     graph->fontwidth = DEVDEP(graph).font->max_bounds.rbearing -
         DEVDEP(graph).font->min_bounds.lbearing + 1;
     graph->fontheight = DEVDEP(graph).font->max_bounds.ascent +
         DEVDEP(graph).font->max_bounds.descent + 1;
+#else
+    int wl, wh;
+    int ret = Xget_str_length("ABCD", &wl, &wh, NULL, fontname, xfont_size);
+    if (ret == 1)
+        ret = Xget_str_length("我能吞下", &wl, &wh, NULL, fontname, xfont_size);
+    if (ret == 1) {
+        fprintf(cp_err, "Error: Could not establish a font for %s\n", fontname);
+        return 1;
+    }
+    graph->fontwidth = (int)(wl / 4);
+    graph->fontheight = wh;
+    DEVDEP(graph).fsize = xfont_size;
+#endif
 
     XtRealizeWidget(DEVDEP(graph).shell);
 
@@ -462,14 +550,50 @@ X11_NewViewport(GRAPH *graph)
     w_attrs.bit_gravity = ForgetGravity;
     XChangeWindowAttributes(display, DEVDEP(graph).window, CWBitGravity,
                             &w_attrs);
-    /* have to note font and set mask GCFont in XCreateGC, p.w.h. */
-    gcvalues.font = DEVDEP(graph).font->fid;
-    gcvalues.line_width = MW_LINEWIDTH;
-    gcvalues.cap_style = CapNotLast;
-    gcvalues.function = GXcopy;
-    DEVDEP(graph).gc = XCreateGC(display, DEVDEP(graph).window,
-                                 GCFont | GCLineWidth | GCCapStyle | GCFunction, &gcvalues);
 
+    int linewidth, gridlinewidth;
+    /* If we had a previous graph, e.g. after zooming, we
+    have to set the background color already here, because
+    background is set below */
+    if (graph->mgraphid > 0) {
+        pgraph = FindGraph(graph->mgraphid);
+    }
+    /* get linewidth information from .spiceinit or .control section */
+    if (!cp_getvar("xbrushwidth", CP_NUM, &linewidth, 0))
+        linewidth = MW_LINEWIDTH;
+    if (linewidth < 0)
+        linewidth = MW_LINEWIDTH;
+    if (pgraph)
+        gcvalues.line_width = graph->graphwidth = pgraph->graphwidth;
+    else
+        gcvalues.line_width = graph->graphwidth = linewidth;
+
+    /* get linewidth information from .spiceinit or .control section */
+    if (!cp_getvar("xgridwidth", CP_NUM, &gridlinewidth, 0))
+        gridlinewidth = MW_LINEWIDTH;
+    if (gridlinewidth < 0)
+        gridlinewidth = MW_LINEWIDTH;
+
+    if (pgraph)
+        gridgcvalues.line_width = graph->gridwidth = pgraph->gridwidth;
+    else
+        gridgcvalues.line_width = graph->gridwidth = gridlinewidth;
+
+    gridgcvalues.cap_style = gcvalues.cap_style = CapNotLast;
+    gridgcvalues.function = gcvalues.function = GXcopy;
+#ifndef HAVE_LIBXFT
+    gridgcvalues.font = gcvalues.font = DEVDEP(graph).font->fid;
+    DEVDEP(graph).gc = XCreateGC(display, DEVDEP(graph).window,
+                                GCFont | GCLineWidth | GCCapStyle | GCFunction, &gcvalues);
+    DEVDEP(graph).gridgc = XCreateGC(display, DEVDEP(graph).window,
+                                GCFont | GCLineWidth | GCCapStyle | GCFunction, &gridgcvalues);
+#else
+    DEVDEP(graph).gc = XCreateGC(display, DEVDEP(graph).window,
+                                GCLineWidth | GCCapStyle | GCFunction, &gcvalues);
+    DEVDEP(graph).gridgc = XCreateGC(display, DEVDEP(graph).window,
+                                GCLineWidth | GCCapStyle | GCFunction, &gridgcvalues);
+
+#endif
     /* should absolute.positions really be shell.pos? */
     graph->absolute.xpos = DEVDEP(graph).view->core.x;
     graph->absolute.ypos = DEVDEP(graph).view->core.y;
@@ -479,9 +603,22 @@ X11_NewViewport(GRAPH *graph)
     initlinestyles();
     initcolors(graph);
 
+    /* we have a 'mother' graph and want to get its colors */
+    int i;
+    if(pgraph) {
+        for(i = 0; i < 25; i++)
+            graph->colorarray[i] = pgraph->colorarray[i];
+    }
+
+    XSetWindowBackground(display, DEVDEP(graph).window, graph->colorarray[0]);
+
     /* set up cursor */
     cursor = XCreateFontCursor(display, XC_left_ptr);
     XDefineCursor(display, DEVDEP(graph).window, cursor);
+
+ #ifdef HAVE_LIBXFT
+        X11_DefineXft(graph);
+#endif
 
     /* WM_DELETE_WINDOW protocol */
     atom_wm_protocols = XInternAtom(display, "WM_PROTOCOLS", False);
@@ -513,14 +650,21 @@ X11_Close(void)
 
 
 int
-X11_DrawLine(int x1, int y1, int x2, int y2)
+X11_DrawLine(int x1, int y1, int x2, int y2, bool isgrid)
 {
     if (DEVDEP(currentgraph).isopen)
-        XDrawLine(display, DEVDEP(currentgraph).window,
+        if (isgrid) {
+            XDrawLine(display, DEVDEP(currentgraph).window,
+                  DEVDEP(currentgraph).gridgc,
+                  x1, currentgraph->absolute.height - y1,
+                  x2, currentgraph->absolute.height - y2);
+        }
+        else {
+            XDrawLine(display, DEVDEP(currentgraph).window,
                   DEVDEP(currentgraph).gc,
                   x1, currentgraph->absolute.height - y1,
                   x2, currentgraph->absolute.height - y2);
-
+        }
     return 0;
 }
 
@@ -554,19 +698,90 @@ X11_Text(char *text, int x, int y, int angle)
 {
     /* We specify text position by lower left corner, so have to adjust for
        X11's font nonsense. */
-    NG_IGNORE(angle);
 
-    if (DEVDEP(currentgraph).isopen)
-        XDrawString(display, DEVDEP(currentgraph).window,
-                    DEVDEP(currentgraph).gc, x,
-                    currentgraph->absolute.height
-                    - (y + DEVDEP(currentgraph).font->max_bounds.descent),
-                    text, (int) strlen(text));
+    int wlen = 0, wheight = 0;
 
-    /* note: unlike before, we do not save any text here */
+#ifndef HAVE_LIBXFT
+        if (DEVDEP(currentgraph).isopen)
+            XDrawString(display, DEVDEP(currentgraph).window,
+                        DEVDEP(currentgraph).gc, x,
+                        currentgraph->absolute.height
+                        - (y + DEVDEP(currentgraph).font->max_bounds.descent),
+                        text, (int) strlen(text));
+
+        /* note: unlike before, we do not save any text here */
+#else
+    /* Draw text */
+    if(angle == 0) {
+         XftDrawStringUtf8(
+            DEVDEP(currentgraph).draw, &DEVDEP(currentgraph).color, DEVDEP(currentgraph).font0,
+                x, currentgraph->absolute.height - y, (FcChar8*)text, strlen(text));
+    }
+    else if (angle == 90) {
+        int wlen, wheight;
+        /* calculate and add offset, if ylabel with angle 90° */
+        Xget_str_length(text, &wlen, &wheight, DEVDEP(currentgraph).font90, NULL, 0);
+
+        XftDrawStringUtf8(
+            DEVDEP(currentgraph).draw, &DEVDEP(currentgraph).color, DEVDEP(currentgraph).font90,
+                x + (int)(1.5 * wlen), currentgraph->absolute.height - y + (int)(0.5 * wheight), (FcChar8*)text, strlen(text));
+    }
+    else
+        fprintf(stderr, " Xft: angles other than 0 or 90 are not supported in ngspice\n");
+
+#endif
     return 0;
 }
 
+#ifdef HAVE_LIBXFT
+int X11_DefineXft(GRAPH *graph)
+{
+/*  font selection with rotation */
+    XftPattern *new_pat = XftPatternCreate(); // the pattern we will use for rotating
+    XftPatternAddString(new_pat, XFT_FAMILY, DEVDEP(graph).fname);
+    XftPatternAddDouble (new_pat, XFT_PIXEL_SIZE, (double)DEVDEP(graph).fsize);
+
+
+    XftResult rot_result;
+    XftPattern *rot_pat = XftFontMatch(display, 0, new_pat, &rot_result); /* do not destroy!*/
+    DEVDEP(graph).font0 = XftFontOpenPattern(display, rot_pat);
+
+    if(DEVDEP(graph).font0 == NULL) {
+        fprintf(stderr, "Can't load font pattern %s\n", DEVDEP(graph).fname);
+    }
+
+    /* for angle 90 deg */
+    XftMatrix m;
+    XftMatrixInit(&m);
+    int angle = 90;
+    XftMatrixRotate(&m,cos(M_PI*angle/180.),sin(M_PI*angle/180.));
+    XftPatternAddMatrix (new_pat, XFT_MATRIX,&m);
+
+    XftPattern *rot_pat2 = XftFontMatch(display, 0, new_pat, &rot_result); /* do not destroy!*/
+    DEVDEP(graph).font90 = XftFontOpenPattern(display, rot_pat2);
+
+    XftPatternDestroy(new_pat);
+
+    Colormap cmap = DefaultColormap(display, 0);
+    XftColor color;
+    XRenderColor rcolor;
+    XColor xxcolor;
+     /* pixel -> XColor -> XftColor */
+    xxcolor.pixel = graph->colorarray[1];
+    XQueryColor(display, cmap, &xxcolor);
+    rcolor.alpha = 65535;
+    rcolor.red = xxcolor.red;
+    rcolor.green = xxcolor.green;
+    rcolor.blue = xxcolor.blue;
+    XftColorAllocValue(display, DefaultVisual(display, 0), cmap, &rcolor, &color);
+    DEVDEP(graph).color = color;
+    DEVDEP(graph).cmap = cmap;
+    DEVDEP(graph).draw = XftDrawCreate(
+        display, DEVDEP(graph).window, DefaultVisual(display, 0), cmap
+    );
+    return 0;
+}
+#endif
 
 int
 X11_DefineColor(int colorid, double red, double green, double blue)
@@ -608,10 +823,13 @@ X11_SetLinestyle(int linestyleid)
         }
 
         XChangeGC(display, DEVDEP(currentgraph).gc, GCLineStyle, &values);
-
+        XChangeGC(display, DEVDEP(currentgraph).gridgc, GCLineStyle, &values);
         currentgraph->linestyle = linestyleid;
 
         XSetDashes(display, DEVDEP(currentgraph).gc, 0,
+                   xlinestyles[linestyleid], 4);
+
+        XSetDashes(display, DEVDEP(currentgraph).gridgc, 0,
                    xlinestyles[linestyleid], 4);
     }
 
@@ -620,11 +838,13 @@ X11_SetLinestyle(int linestyleid)
 
 
 int
-X11_SetColor(int colorid)
+X11_SetColor(int colorid, GRAPH *graph)
 {
     currentgraph->currentcolor = colorid;
     XSetForeground(display, DEVDEP(currentgraph).gc,
-                   DEVDEP(currentgraph).colors[colorid]);
+                   currentgraph->colorarray[colorid]);
+    XSetForeground(display, DEVDEP(currentgraph).gridgc,
+                   currentgraph->colorarray[colorid]);
     return 0;
 }
 
@@ -825,11 +1045,12 @@ zoomin(GRAPH *graph)
 
     if (!eq(plot_cur->pl_typename, buf2)) {
         (void) sprintf(buf,
-                       "setplot %s; %s xlimit %.20e %.20e ylimit %.20e %.20e; setplot $curplot\n",
-                       buf2, graph->commandline, fx0, fx1, fy0, fy1);
+                       "setplot %s; %s xlimit %.20e %.20e ylimit %.20e %.20e sgraphid %d; setplot $curplot\n",
+                       buf2, graph->commandline, fx0, fx1, fy0, fy1, graph->graphid);
     } else {
-        (void) sprintf(buf, "%s xlimit %e %e ylimit %e %e\n",
-                       graph->commandline, fx0, fx1, fy0, fy1);
+        /* set the foreground and background colors to the "calling" window's colors */
+            (void) sprintf(buf, "%s xlimit %e %e ylimit %e %e sgraphid %d\n",
+                           graph->commandline, fx0, fx1, fy0, fy1, graph->graphid);
     }
 
 /* don't use the following if using GNU Readline or BSD EditLine */
@@ -906,8 +1127,17 @@ void RemoveWindow(GRAPH *graph)
         /* MW. Not sure but DestroyGraph might free() too much - try Xt...() first */
         XtUnmapWidget(DEVDEP(graph).shell);
         XtDestroyWidget(DEVDEP(graph).shell);
+#ifndef HAVE_LIBXFT
         XFreeFont(display, DEVDEP(graph).font);
+#endif
         XFreeGC(display, DEVDEP(graph).gc);
+        XFreeGC(display, DEVDEP(graph).gridgc);
+#ifdef HAVE_LIBXFT
+        XftFontClose( display, DEVDEP(graph).font0);
+        XftFontClose( display, DEVDEP(graph).font90);
+        XftDrawDestroy(DEVDEP(graph).draw);
+        XftColorFree(display, DefaultVisual(display, 0), DEVDEP(graph).cmap, &DEVDEP(graph).color);
+#endif
     }
 
     if (graph == currentgraph)
@@ -1101,10 +1331,51 @@ linear_arc(int x0, int y0, int radius, double theta, double delta_theta)
         y1 = y2;
         x2 = x0 + (int)(radius * cos(theta + i*dphi));
         y2 = y0 + (int)(radius * sin(theta + i*dphi));
-        X11_DrawLine(x1, y1, x2, y2);
+        X11_DrawLine(x1, y1, x2, y2, FALSE);
     }
 }
 
+#ifdef HAVE_LIBXFT
+    /* After font selection for XftTextExtentsUtf8
+     * to measure character string length.
+     * Same as rotation below, but 0° angle */
+static int
+Xget_str_length(char *text, int* wlen, int* wheight, XftFont* gfont, char* foname, int fsize) {
+    XGlyphInfo extents;
+    XftFont* hfont = NULL;
+    /* if font name and font size are given */
+    if (gfont == NULL) {
+        XftPattern *ext_pat = XftPatternCreate(); // the pattern we will use for rotating
+        XftPatternAddString(ext_pat, XFT_FAMILY, foname);
+        XftPatternAddDouble(ext_pat, XFT_PIXEL_SIZE, (double)fsize);
+        XftResult ext_result;
+        XftPattern *font_pat = XftFontMatch(display, 0, ext_pat, &ext_result);
+        hfont = gfont = XftFontOpenPattern(display, font_pat);
+        XftPatternDestroy(ext_pat);
+    }
+    if(gfont)
+        XftTextExtentsUtf8( display, gfont, (XftChar8 *)text, strlen(text), &extents );
+    else {
+        return 1;
+    }
+    if(hfont)
+        XftFontClose( display,hfont);
+
+    /* size of the string */
+    *wlen = extents.width;
+    *wheight = extents.height;
+    return 0;
+}
+
+/* get the length of an utf-8 string in pixels */
+int
+X11_GetLenStr(GRAPH *gr, char* instring)
+{
+    int wl, wh;
+    Xget_str_length(instring, &wl, &wh, NULL, DEVDEP(gr).fname, DEVDEP(gr).fsize);
+    return wl;
+}
+#endif
 
 #else
 

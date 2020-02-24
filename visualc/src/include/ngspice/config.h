@@ -551,3 +551,7 @@
 
 /* Define as `fork' if `vfork' does not work. */
 #define vfork fork
+
+#define HAVE_XFT
+
+//#define EXT_ASC

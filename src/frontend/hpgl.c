@@ -201,8 +201,10 @@ int GL_Clear(void)
 }
 
 
-int GL_DrawLine(int x1, int y1, int x2, int y2)
+int
+GL_DrawLine(int x1, int y1, int x2, int y2, bool isgrid)
 {
+    NG_IGNORE(isgrid);
     /* note: this is not extendible to more than one graph
        => will have to give NewViewport a writeable graph XXX */
 
@@ -250,6 +252,8 @@ int GL_Arc(int x0, int y0, int r, double theta, double delta_theta)
 
 int GL_Text(char *text, int x, int y, int angle)
 {
+    NG_IGNORE(angle);
+
     /* move to (x, y) */
     NG_IGNORE(angle);
 
@@ -287,9 +291,9 @@ int GL_SetLinestyle(int linestyleid)
 }
 
 
-/* ARGSUSED */
-int GL_SetColor(int colorid)
+int GL_SetColor(int colorid, GRAPH* graph)
 {
+    NG_IGNORE(graph);
     fprintf(plotfile, "SP %d;", colorid);
 
     return 0;

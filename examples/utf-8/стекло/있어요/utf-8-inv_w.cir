@@ -1,0 +1,53 @@
+  4 BIT ALL-NAND-GATE BINARY ADDER with node names 能 and せん
+
+.param W咦 = 3u   
+  
+*** SUBCIRCUIT DEFINITIONS
+.SUBCKT NAдND 能 せん out VDD
+*   NODES:  INPUT(2), OUTPUT, VCC
+M1 out せん Vdd Vdd p1 W=7.5u L=0.35u pd=13.5u ad=22.5p ps=13.5u as=22.5p
+M2 net.1 せん 0 0 n1  W='W咦'   L=0.35u pd=9u    ad=9p    ps=9u    as=9p
+M3 out 能 Vdd Vdd p1 W=7.5u L=0.35u pd=13.5u ad=22.5p ps=13.5u as=22.5p
+M4 out 能 net.1 0 n1 W='W咦'   L=0.35u pd=9u    ad=9p    ps=9u    as=9p
+.ENDS NAдND
+
+X않1  1  は2  7  99   NAдND
+
+*** POWER
+V을을   99  0   DC 3.3V
+
+*** ALL INPUTS
+VIN1A  1  0   DC 0 PULSE(0 3 0 5NS 5NS   20NS   50NS)
+VIN1B  は2  0   DC 0 PULSE(0 3 0 5NS 5NS   30NS  100NS)
+
+.option noinit acct
+.TRAN 500p 500NS
+* save inputs
+.save V(1) V(は2) V(7) 
+
+* use BSIM3 model with default parameters
+.model n1 nmos level=49 version=3.3.0
+.model p1 pmos level=49 version=3.3.0
+*.include ./Modelcards/modelcard32.nmos
+*.include ./Modelcards/modelcard32.pmos
+
+.control
+* for CYGWIN
+setcs xfont='Noto Sans CJK JP Medium'
+set xfont_size=16
+
+if $?batchmode
+else
+pre_set strict_errorhandling
+unset ngdebug
+*save outputs and specials
+run
+display
+* plot the inputs and outputs, use offset to plot on top of each other
+let れ1 = 4
+let れ2 = 8
+plot  v(1) v(は2)+れ1 v(7)+れ2
+endif
+.endc
+
+.END

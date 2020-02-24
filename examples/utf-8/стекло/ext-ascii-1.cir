@@ -1,0 +1,30 @@
+* test de titre
+* file is encoded as ASCII !
+* will lead to error in the ngspice UNICODE utf8 version
+* is o.k. only if ngspice is compiled with --disable-utf8 flag
+
+.control
+
+set hcopydevtype = postscript
+set hcopypscolor=1
+set color2=rgb:F/0/0
+
+let x = vector(5)
+let y = exp(x)
+
+plot y vs x xlabel 'Mon x' ylabel 'Mon y'
+hardcopy plot_1.ps y vs x xlabel 'Mon X' ylabel 'Mon Y'
+
+plot y vs x xlabel 'Mon x' title 'Mon titre'
+hardcopy plot_2.ps y vs x xlabel 'Mon x' title 'Mon titre'
+
+plot y vs x xlabel test
+hardcopy plot_3.ps y vs x xlabel test
+
+plot y vs x
+hardcopy plot_4.ps y vs x
+
+plot y vs x xlabel 'Labellisé X' ylabel 'Labellisée Y' title 'Titré'
+hardcopy plot_5.ps y vs x xlabel 'Labellisé X' ylabel 'Labellisé Y' title 'Titré'
+
+.endc

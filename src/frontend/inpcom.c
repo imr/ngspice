@@ -181,6 +181,15 @@ static void pspice_compat_a(struct card *oldcard);
 static struct card *ltspice_compat(struct card *oldcard);
 static void ltspice_compat_a(struct card *oldcard);
 
+#if defined(__MINGW32__) || defined(_MSC_VER)
+#ifndef EXT_ASC
+static int newstat(const char *name, struct _stat *st);
+#endif
+#endif
+#ifndef EXT_ASC
+static void utf8_syntax_check(struct card *deck);
+#endif
+
 struct inp_read_t {
     struct card *cc;
     int line_number;
@@ -619,6 +628,10 @@ struct card *inp_readall(FILE *fp, const char *dir_name,
         struct card *working = cc->nextcard;
 
         delete_libs();
+		
+#ifndef EXT_ASC
+        utf8_syntax_check(working);
+#endif		
 
         /* some syntax checks, including title line */
         inp_check_syntax(cc);
@@ -1282,6 +1295,13 @@ FILE *inp_pathopen(const char *name, const char *mode)
 } /* end of function inp_pathopen */
 
 
+/* for MultiByteToWideChar */
+#if defined(__MINGW32__) || defined(_MSC_VER)
+#ifndef EXT_ASC
+#undef BOOLEAN
+#include <windows.h>
+#endif
+#endif
 
 /*-------------------------------------------------------------------------*
   Look up the variable sourcepath and try everything in the list in order
@@ -1317,6 +1337,17 @@ static char *inp_pathresolve(const char *name)
     /* just try it */
     if (stat(name, &st) == 0)
         return copy(name);
+	
+#if !defined(EXT_ASC) && (defined(__MINGW32__) || defined(_MSC_VER))
+    wchar_t wname[BSIZE_SP];
+    if (MultiByteToWideChar(CP_UTF8, 0, name, -1, wname, 2 * (int)strlen(name) + 1) == 0) {
+        fprintf(stderr, "UTF-8 to UTF-16 conversion failed with 0x%x\n", GetLastError());
+        fprintf(stderr, "%s could not be converted\n", name);
+        return NULL;
+    }
+    if (_waccess(wname, 0) == 0)
+        return copy(name);
+#endif	
 
     /* fail if this was an absolute filename or if there is no sourcepath var
      */
@@ -1333,7 +1364,6 @@ static char *inp_pathresolve(const char *name)
 
             switch (v->va_type) {
                 case CP_STRING:
-                    cp_wstrip(v->va_string);
                     rc_ds = ds_cat_printf(&ds, "%s%s%s",
                             v->va_string, DIR_PATHSEP, name);
                     break;
@@ -2400,11 +2430,6 @@ void inp_casefix(char *string)
     }
     if (string)
         while (*string) {
-#ifdef HAS_ASCII
-            /* ((*string) & 0177): mask off all but the first seven bits,
-             * 0177: octal */
-            *string = (char) strip(*string);
-#endif
             if (*string == '"') {
                 *string++ = ' ';
                 while (*string && *string != '"')
@@ -6910,10 +6935,10 @@ static int inp_vdmos_model(struct card *deck)
             wl_append_word(&wl, &wl, copy_substring(curr_line, cut_line));
             wlb = wl;
             if (strstr(cut_line, "pchan")) {
-                wl_append_word(NULL, &wl, "vdmosp (");
+                wl_append_word(NULL, &wl, copy("vdmosp ("));
             }
             else {
-                wl_append_word(NULL, &wl, "vdmosn (");
+                wl_append_word(NULL, &wl, copy("vdmosn ("));
             }
             cut_line = cut_line + 5;
 
@@ -6924,17 +6949,20 @@ static int inp_vdmos_model(struct card *deck)
             while (cut_line && *cut_line) {
                 token = gettok_model(&cut_line);
                 if (!ciprefix("pchan", token) && !ciprefix("ron=", token) &&
-                        !ciprefix("vds=", token) && !ciprefix("qg=", token) &&
-                        !ciprefix("mfg=", token) && !ciprefix("nchan", token))
+                    !ciprefix("vds=", token) && !ciprefix("qg=", token) &&
+                    !ciprefix("mfg=", token) && !ciprefix("nchan", token))
                     wl_append_word(NULL, &wl, token);
+                else
+                    tfree(token);
                 if (*cut_line == ')') {
-                    wl_append_word(NULL, &wl, ")");
+                    wl_append_word(NULL, &wl, copy(")"));
                     break;
                 }
             }
             new_line = wl_flatten(wlb);
             tfree(card->line);
             card->line = new_line;
+            wl_free(wlb);
         }
         /* we have a VDMOS instance line with 'tnodeout' and thus need exactly 5 nodes
          */
@@ -8604,3 +8632,82 @@ static void inp_rem_unused_models(struct nscope *root, struct card *deck)
     // disable unused .model lines, and free the models assoc lists
     rem_unused_xxx(root);
 }
+
+/* Markus Kuhn <http://www.cl.cam.ac.uk/~mgk25/> -- 2005-03-30
+ * License: Modified BSD (see http://www.cl.cam.ac.uk/~mgk25/short-license.html)
+ * The utf8_check() function scans the '\0'-terminated string starting
+ * at s. It returns a pointer to the first byte of the first malformed
+ * or overlong UTF-8 sequence found, or NULL if the string contains
+ * only correct UTF-8. It also spots UTF-8 sequences that could cause
+ * trouble if converted to UTF-16, namely surrogate characters
+ * (U+D800..U+DFFF) and non-Unicode positions (U+FFFE..U+FFFF).*/
+#ifndef EXT_ASC
+static unsigned char*
+utf8_check(unsigned char *s)
+{
+    while (*s) {
+        if (*s < 0x80)
+            /* 0xxxxxxx */
+            s++;
+        else if ((s[0] & 0xe0) == 0xc0) {
+            /* 110XXXXx 10xxxxxx */
+            if ((s[1] & 0xc0) != 0x80 ||
+                (s[0] & 0xfe) == 0xc0)                        /* overlong? */
+                return s;
+            else
+                s += 2;
+        }
+        else if ((s[0] & 0xf0) == 0xe0) {
+            /* 1110XXXX 10Xxxxxx 10xxxxxx */
+            if ((s[1] & 0xc0) != 0x80 ||
+                (s[2] & 0xc0) != 0x80 ||
+                (s[0] == 0xe0 && (s[1] & 0xe0) == 0x80) ||    /* overlong? */
+                (s[0] == 0xed && (s[1] & 0xe0) == 0xa0) ||    /* surrogate? */
+                (s[0] == 0xef && s[1] == 0xbf &&
+                (s[2] & 0xfe) == 0xbe))                      /* U+FFFE or U+FFFF? */
+                return s;
+            else
+                s += 3;
+        }
+        else if ((s[0] & 0xf8) == 0xf0) {
+            /* 11110XXX 10XXxxxx 10xxxxxx 10xxxxxx */
+            if ((s[1] & 0xc0) != 0x80 ||
+                (s[2] & 0xc0) != 0x80 ||
+                (s[3] & 0xc0) != 0x80 ||
+                (s[0] == 0xf0 && (s[1] & 0xf0) == 0x80) ||    /* overlong? */
+                (s[0] == 0xf4 && s[1] > 0x8f) || s[0] > 0xf4) /* > U+10FFFF? */
+                return s;
+            else
+                s += 4;
+        }
+        else
+            return s;
+    }
+
+    return NULL;
+}
+
+/* Scan through input deck and check for utf-8 syntax errors */
+static void
+utf8_syntax_check(struct card *deck)
+{
+    struct card *card;
+    unsigned char *s;
+
+    for (card = deck; card; card = card->nextcard) {
+
+        char *curr_line = card->line;
+
+        if (*curr_line == '*')
+            continue;
+
+        s = utf8_check((unsigned char*)curr_line);
+
+        if (s) {
+            fprintf(stderr, "Error: UTF-8 syntax error in line %d at %s\n", card->linenum_orig, s);
+            controlled_exit(1);
+        }
+    }
+}
+#endif
+

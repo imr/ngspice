@@ -7,7 +7,6 @@
 #include "ngspice/bool.h"
 
 #include "com_echo.h"
-#include "quote.h"
 #include "ngspice/cpextern.h"
 
 

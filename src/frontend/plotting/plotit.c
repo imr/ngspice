@@ -13,7 +13,6 @@
 #include "plotit.h"
 #include "points.h"
 #include "agraf.h"
-#include "xgraph.h"
 #include "gnuplot.h"
 #include "graf.h"
 
@@ -283,6 +282,9 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
         return FALSE;
     }
 
+    static double *xprevgraph = NULL;
+    int prevgraph = 0;
+
     static bool nointerp = FALSE;
     static GRIDTYPE gtype = GRID_LIN;
     static PLOTTYPE ptype = PLOT_LIN;
@@ -295,7 +297,6 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
     int i, y_type, xt;
     wordlist *wwl;
     char *nxlabel = NULL, *nylabel = NULL, *ntitle = NULL;
-
     double tstep, tstart, tstop, ttime;
 
     /* Save start of vectors on entry for cleaning up junk left behind
@@ -333,6 +334,8 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
     nxlabel = getword(wwl, "xlabel");
     nylabel = getword(wwl, "ylabel");
     ntitle = getword(wwl, "title");
+    /* remove sgraphid */
+    txfree(getlims(wwl, "sgraphid", 1));
 
     /* Build the plot command. This construction had been done with wordlists
      * and reversing, and flattening, but it is clearer as well as much more
@@ -437,6 +440,13 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
         txfree(getlims(wl, "ydel", 1));
     }
 
+    if (!sameflag || !xprevgraph) {
+        xprevgraph = getlims(wl, "sgraphid", 1);
+        if(xprevgraph)
+            prevgraph = (int)(*xprevgraph);
+    } else {
+        txfree(getlims(wl, "sgraphid", 1));
+    }
     /* Get the grid type and the point type.  Note we can't do if-else
      * here because we want to catch all the grid types.
      */
@@ -600,14 +610,14 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
             pfound = TRUE;
         }
     }
-    if (getflag(wl, "noretraceplot")) {
+    if (getflag(wl, "retraceplot")) {
         if (pfound) {
             fprintf(cp_err,
                     "Warning: too many plot types given. "
-                    "\"noretraceplot\" is ignored.\n");
+                    "\"retraceplot\" is ignored.\n");
         }
         else {
-            ptype = PLOT_MONOLIN;
+            ptype = PLOT_RETLIN;
             pfound = TRUE;
         }
     }
@@ -640,8 +650,8 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
             if (eq(buf, "linplot")) {
                 ptype = PLOT_LIN;
             }
-            else if (eq(buf, "noretraceplot")) {
-                ptype = PLOT_MONOLIN;
+            else if (eq(buf, "retraceplot")) {
+                ptype = PLOT_RETLIN;
             }
             else if (eq(buf, "combplot")) {
                 ptype = PLOT_COMB;
@@ -1072,19 +1082,6 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
 
     y_type = d ? SV_NOTYPE : vecs->v_type;
 
-#ifndef X_DISPLAY_MISSING
-    if (devname && eq(devname, "xgraph")) {
-        /* Interface to XGraph-11 Plot Program */
-        ft_xgraph(xlims, ylims, hcopy,
-                  title ? title : vecs->v_plot->pl_title,
-                  xlabel ? xlabel : ft_typabbrev(vecs->v_scale->v_type),
-                  ylabel ? ylabel : ft_typabbrev(y_type),
-                  gtype, ptype, vecs);
-        rtn = TRUE;
-        goto quit;
-    }
-#endif
-
     if (devname && eq(devname, "gnuplot")) {
         /* Interface to Gnuplot Plot Program */
         ft_gnuplot(xlims, ylims, hcopy,
@@ -1133,7 +1130,7 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
             xdelta ? *xdelta : 0.0,
             ydelta ? *ydelta : 0.0,
             gtype, ptype, xlabel, ylabel, xt, y_type,
-            plot_cur->pl_typename, ds_get_buf(&ds_cline))) {
+            plot_cur->pl_typename, ds_get_buf(&ds_cline), prevgraph)) {
         goto quit;
     }
 

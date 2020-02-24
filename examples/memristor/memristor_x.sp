@@ -47,11 +47,11 @@ Rmem plus minus r={V(x)}
 op 
 print all
 ac lin 101 1 100k
-plot v(11)
+*plot v(11)
 * approx. 100 simulation points
 let deltime = stime/100
 tran $&deltime $&stime uic
-* plot i(v1) vs v(1)
+*plot i(v1) vs v(1) retrace
 *** you may just stop here ***
 * raise the frequency
 let newfreq = 1.2/stime
@@ -75,9 +75,9 @@ let res2 = tran2.v(1)/(tran2.I(v1) + 1e-16)
 settype impedance res res1 res2
 plot res vs time res1 vs tran1.time res2 vs tran2.time  title 'Memristor with threshold: resistance'
 * resistance versus voltage (change occurs only above threshold!)
-plot res vs v(1) res1 vs tran1.v(1) res2 vs tran2.v(1) title 'Memristor with threshold: resistance'
+plot res vs v(1) res1 vs tran1.v(1) res2 vs tran2.v(1) retraceplot title 'Memristor with threshold: resistance'
 * current through resistor for all plots versus voltage
-plot i(v1) vs v(1) tran1.i(v1) vs tran1.v(1) tran2.i(v1) vs tran2.v(1) title 'Memristor with threshold: external current loops'
+plot i(v1) vs v(1) tran1.i(v1) vs tran1.v(1) tran2.i(v1) vs tran2.v(1) retraceplot title 'Memristor with threshold: external current loops'
 .endc
 
 .end

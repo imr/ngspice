@@ -134,11 +134,6 @@ extern void out_send(char *string);
 /* quote.c */
 
 extern char *cp_unquote(const char *string);
-extern void cp_quoteword(char *str);
-extern void cp_striplist(wordlist *wlist);
-extern void cp_wstrip(char *str);
-
-
 
 /* unixcom.c */
 

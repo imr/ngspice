@@ -2,7 +2,9 @@
    Autor: Wolfgang Muees
    Stand: 28.10.97
    Copyright: Holger Vogt
+   Stand: 09.01.2018
    Stand: 20.07.2019
+   Stand: 07.12.2019
    Modified BSD license
 */
 
@@ -30,6 +32,7 @@
 #include "hist_info.h" /* history management */
 #include "ngspice/bool.h"   /* bool defined as unsigned char */
 #include "misc/misc_time.h" /* timediff */
+#include "ngspice/memory.h" /* TMALLOC */
 #include "winmain.h"
 
 /* Constants */
@@ -39,7 +42,7 @@
 #define LF 10               // Line Feed
 #define SE 0                // String termination
 #define BorderSize 8        // Umrandung des Stringfeldes
-#define SBufSize 100        // Groesze des Stringbuffers
+#define SBufSize 300        // Groesze des Stringbuffers
 #define IOBufSize 16348      // Groesze des printf-Buffers
 #define HIST_SIZE   20  /* Max # commands held in history */
 #define N_BYTE_HIST_BUF 512 /* Initial size of history buffer in bytes */
@@ -75,29 +78,48 @@ HWND            hwAnalyse;          /* analysis window */
 HWND            hwQuitButton;       /* Pause button */
 static int      nReturnCode = 0;    /* WinMain return value */
 static int      nShowState;         /* Display mode of main window */
+#ifdef EXT_ASC
 static WNDCLASS hwMainClass;        /* Class definition for the main window */
 static LPCTSTR  hwClassName  = "SPICE_TEXT_WND";/* Class name of the main window */
 static LPCTSTR hwWindowName = PACKAGE_STRING;   /* main window displayed name */
 static WNDCLASS twTextClass;                    /* Class definition for the text box */
 static LPCTSTR twClassName  = "SPICE_TEXT_BOX"; /* Class name for the text box */
 static LPCTSTR twWindowName = "TextOut";        /* text box name */
-static size_t   TBufEnd = 0;                    /* Pointer to \0 */
-static char TBuffer[TBufSize + 1];              /* Text buffer */
-static SBufLine SBuffer;                        /* Input buffer */
 static WNDCLASS swStringClass;                  /* Class definition of string window */
 static LPCTSTR swClassName  = "SPICE_STR_IN";   /* Class name of text input */
 static LPCTSTR swWindowName = "StringIn";       /* Window name */
-static char CRLF[] = {CR, LF, SE};              /* CR/LF */
 static WNDCLASS hwElementClass;                 /* Class definition of status displays */
 static LPCTSTR hwElementClassName = "ElementClass";
 static LPCTSTR hwSourceWindowName = "SourceDisplay";
 static LPCTSTR hwAnalyseWindowName = "AnalyseDisplay";
+#else
+static WNDCLASSW hwMainClassW;        /* Class definition for the main window */
+static LPCWSTR  hwClassNameW = L"SPICE_TEXT_WND";/* Class name of the main window */
+static LPCWSTR hwWindowNameW = L"ngspice 26";   /* main window displayed name */
+static WNDCLASSW twTextClassW;                    /* Class definition for the text box */
+static LPCWSTR twClassNameW = L"SPICE_TEXT_BOX"; /* Class name for the text box */
+static LPCWSTR twWindowNameW = L"TextOut";        /* text box name */
+static WNDCLASSW swStringClassW;                  /* Class definition of string window */
+static LPCWSTR swClassNameW = L"SPICE_STR_IN";   /* Class name of text input */
+static LPCWSTR swWindowNameW = L"StringIn";       /* Window name */
+static WNDCLASSW hwElementClassW;                 /* Class definition of status displays */
+static LPCWSTR hwElementClassNameW = L"ElementClass";
+static LPCWSTR hwSourceWindowNameW = L"SourceDisplay";
+static LPCWSTR hwAnalyseWindowNameW = L"AnalyseDisplay";
+#endif
+static size_t   TBufEnd = 0;                    /* Pointer to \0 */
+static char TBuffer[TBufSize + 1];              /* Text buffer */
+static SBufLine SBuffer;                        /* Input buffer */
+static char CRLF[] = {CR, LF, SE};              /* CR/LF */
 static int RowHeight = 16;             /* Height of line of text */
 static int LineHeight = 25;            /* Height of input line */
 static int VisibleRows = 10;           /* Number of visible lines in text window */
 static BOOL DoUpdate = FALSE;          /* Update text window */
 static WNDPROC swProc = NULL;          /* original string window procedure */
 static WNDPROC twProc = NULL;          /* original text window procedure */
+static HFONT efont;                    /* Font for element windows */
+static HFONT tfont;                    /* Font for text window */
+static HFONT sfont;                    /* Font for string window */
 
 extern bool ft_ngdebug; /* some additional debug info printed */
 extern bool ft_batchmode;
@@ -105,11 +127,7 @@ extern FILE *flogp;     /* definition see xmain.c, stdout redirected to file */
 
 extern void cp_doquit(void);
 
-
-
 static struct History_info *init_history(void);
-
-
 
 // ---------------------------<Message Handling>-------------------------------
 
@@ -160,9 +178,17 @@ void
 SetSource(char *Name)
 {
     if (hwSource) {
+#ifdef EXT_ASC
         SetWindowText(hwSource, Name);
+#else
+        wchar_t *NameW;
+        NameW = TMALLOC(wchar_t, 2 * strlen(Name) + 1);
+        MultiByteToWideChar(CP_UTF8, 0, Name, -1, NameW, 2 * (int)strlen(Name) + 1);
+        SetWindowTextW(hwSource, NameW);
+        tfree(NameW);
+#endif
         InvalidateRgn(hwSource, NULL, TRUE);
-    }
+	}
 }
 
 
@@ -186,7 +212,9 @@ SetAnalyse(char *Analyse,   /* in: analysis type */
 
     WaitForIdle();
 
-    if ((DecaPercent == OldPercent) && !strcmp(OldAn, Analyse))
+    OldAn[127] = '\0';
+
+    if (((DecaPercent == OldPercent) && !strcmp(OldAn, Analyse)) || !strcmp(Analyse, "or"))
         return;
 
     /* get actual time */
@@ -203,21 +231,21 @@ SetAnalyse(char *Analyse,   /* in: analysis type */
     OldPercent = DecaPercent;
     /* output only into hwAnalyse window and if time elapsed is larger than
        DELTATIME given value, or if analysis has changed, else return */
-    if (((diffsec > 0) || (diffmillisec > DELTATIME) || strcmp(OldAn, Analyse))) {
+    if (hwAnalyse && ((diffsec > 0) || (diffmillisec > DELTATIME) || strcmp(OldAn, Analyse))) {
         if (DecaPercent < 0) {
-            sprintf(s, "--ready--");
+            sprintf(s, "   -- ready --");
             sprintf(t, "%s", PACKAGE_STRING);
         }
         else if (DecaPercent == 0) {
-            sprintf(s, "%s", Analyse);
+            sprintf(s, " %s", Analyse);
             sprintf(t, "%s   %s", PACKAGE_STRING, Analyse);
         }
         else if (!strcmp(Analyse, "shooting")) {
-            sprintf(s, "%s: %d", Analyse, DecaPercent);
+            sprintf(s, " %s: %d", Analyse, DecaPercent);
             sprintf(t, "%s   %d", PACKAGE_STRING, DecaPercent);
         }
         else {
-            sprintf(s, "%s: %3.1f%%", Analyse, (double)DecaPercent/10.);
+            sprintf(s, " %s: %3.1f%%", Analyse, (double)DecaPercent/10.);
             sprintf(t, "%s   %3.1f%%", PACKAGE_STRING, (double)DecaPercent/10.);
         }
         timebefore.dstflag = timenow.dstflag;
@@ -231,13 +259,24 @@ SetAnalyse(char *Analyse,   /* in: analysis type */
             strncpy(OldAn, Analyse, 127);
         }
 
+#ifdef EXT_ASC
         SetWindowText(hwAnalyse, s);
         SetWindowText(hwMain, t);
+#else
+        wchar_t sw[256];
+        wchar_t tw[256];
+        swprintf(sw, 256, L"%S", s);
+        swprintf(tw, 256, L"%S", t);
+        /* Analysis window */
+        SetWindowTextW(hwAnalyse, sw);
+        /* ngspice task bar */
+        SetWindowTextW(hwMain, tw);
+#endif
         InvalidateRgn(hwAnalyse, NULL, TRUE);
+        UpdateWindow(hwAnalyse);
         InvalidateRgn(hwMain, NULL, TRUE);
+        UpdateWindow(hwMain);
     }
-    UpdateWindow(hwAnalyse);
-    UpdateWindow(hwMain);
 }
 
 
@@ -359,8 +398,17 @@ AppendString(const char *Line)
 static void
 DisplayText(void)
 {
-    // Darstellen
+    // Show text
+#ifdef EXT_ASC
     Edit_SetText(twText, TBuffer);
+#else
+    wchar_t *TWBuffer;
+    TWBuffer = TMALLOC(wchar_t, 2 * strlen(TBuffer) + 1);
+    if (MultiByteToWideChar(CP_UTF8, 0, TBuffer, -1, TWBuffer, 2 * (int)strlen(TBuffer) + 1) == 0)
+        swprintf(TWBuffer, 2 * strlen(TBuffer), L"UTF-8 to UTF-16 conversion failed with 0x%x\n%hs could not be converted\n", GetLastError(), TBuffer);
+    SetWindowTextW(twText, TWBuffer);
+    tfree(TWBuffer);
+#endif
     // Scroller updaten, neuen Text darstellen
     AdjustScroller();
 }
@@ -454,14 +502,12 @@ Main_OnSize(HWND hwnd, UINT state, int cx, int cy)
     MoveWindow(swString, 0, h, cx, LineHeight, TRUE);
 
     /* Expand Status Elements */
-    h = cy - LineHeight + StatusFrame - 1;
-    MoveWindow(hwSource, StatusFrame, h, SourceLength, StatusElHeight, TRUE);
-    MoveWindow(hwAnalyse,
-               cx - 3 * StatusFrame - QuitButtonLength - AnalyseLength - 20,
-               h, AnalyseLength, StatusElHeight, TRUE);
-    MoveWindow(hwQuitButton,
-               cx - StatusFrame - QuitButtonLength - 20,
-               h, QuitButtonLength, StatusElHeight, TRUE);
+    h = cy - LineHeight + StatusFrame - 2;
+    int statbegin = 3 * StatusFrame + QuitButtonLength + AnalyseLength + 4;
+    MoveWindow(hwSource, StatusFrame, h, cx - statbegin - BorderSize, StatusElHeight, TRUE);
+    MoveWindow( hwAnalyse, cx - statbegin, h, AnalyseLength, StatusElHeight, TRUE);
+    MoveWindow( hwQuitButton, cx - StatusFrame - QuitButtonLength - 1,
+       h + 1, QuitButtonLength, StatusElHeight, TRUE);
 }
 
 
@@ -504,7 +550,11 @@ MainWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
     default:
     DEFAULT_AFTER:
+#ifdef EXT_ASC
         return DefWindowProc(hwnd, uMsg, wParam, lParam);
+#else
+        return DefWindowProcW(hwnd, uMsg, wParam, lParam);
+#endif
     }
 }
 
@@ -518,18 +568,37 @@ StringWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     switch (uMsg) {
     case WM_CREATE:
         /* Get access to history information */
+#ifdef EXT_ASC
         pp_hi = (struct History_info **)
                 ((LPCREATESTRUCT) lParam)->lpCreateParams;
+#else
+        pp_hi = (struct History_info **)
+                ((LPCREATESTRUCTW) lParam)->lpCreateParams;
+#endif
         break;
     case WM_KEYDOWN: {
         const UINT i = (UINT) wParam;
         if ((i == VK_UP) || (i == VK_DOWN)) {
             /* Set old text to new */
+#ifdef EXT_ASC
             SetWindowText(hwnd, (i == VK_UP) ?
                     history_get_prev(*pp_hi, NULL) :
                     history_get_next(*pp_hi, NULL));
             /* Put cursor to end of line */
             CallWindowProc(swProc, hwnd, uMsg, (WPARAM) VK_END, lParam);
+#else
+            const char *newtext = (i == VK_UP) ?
+                    history_get_prev(*pp_hi, NULL) :
+                    history_get_next(*pp_hi, NULL);
+            wchar_t *newtextW;
+            newtextW = TMALLOC(wchar_t, 2 * strlen(newtext) + 1);
+            MultiByteToWideChar(
+                    CP_UTF8, 0, newtext, -1, newtextW, 2 * (int) strlen(newtext) + 1);
+            SetWindowTextW(swString, newtextW);
+            tfree(newtextW);
+            /* Put cursor to end of line */
+            CallWindowProcW(swProc, hwnd, uMsg, (WPARAM) VK_END, lParam);
+#endif
             return 0;
         }
         if (i == VK_ESCAPE) {
@@ -547,8 +616,19 @@ StringWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
              * buffer for writing the string + NULL. The NULL will be
              * overwritten by the strcpy below, so it should not be
              * counted in the size needed for the CRLF string. */
+#ifdef EXT_ASC
             const int n_char_returned = GetWindowText(
                     hwnd, SBuffer, sizeof SBuffer - (sizeof CRLF - 1));
+#else
+            wchar_t *WBuffer = TMALLOC(wchar_t, sizeof(SBuffer));
+            /* for utf-8 the number of characters is not the number of bytes returned */
+            GetWindowTextW(hwnd, WBuffer, sizeof SBuffer - (sizeof CRLF - 1));
+            WideCharToMultiByte(CP_UTF8, 0, WBuffer,
+                     -1, SBuffer, sizeof SBuffer - 1, NULL, NULL);
+            /* retrive here the number of bytes returned */
+            const int n_char_returned = (int)strlen(SBuffer);
+            tfree(WBuffer);
+#endif
             unsigned int n_char_prev_cmd;
 
             /* Add the command to the history if it is different from the
@@ -566,8 +646,7 @@ StringWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             }
             else {
                 history_reset_pos(*pp_hi);
-            } 
-
+            }
 
             strcpy(SBuffer + n_char_returned, CRLF);
             ClearInput();
@@ -592,7 +671,11 @@ StringWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     } /* end of switch over handled messages */
 
     /* Fowrard to be processed further by swProc */
-    return CallWindowProc(swProc, hwnd, uMsg, wParam, lParam);
+#ifdef EXT_ASC
+        return CallWindowProc(swProc, hwnd, uMsg, wParam, lParam);
+#else
+        return CallWindowProcW( swProc, hwnd, uMsg, wParam, lParam);
+#endif
 }
 
 
@@ -628,7 +711,11 @@ TextWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         }
     default:
     DEFAULT_TEXT:
+#ifdef EXT_ASC
         return CallWindowProc(twProc, hwnd, uMsg, wParam, lParam);
+#else
+        return CallWindowProcW( twProc, hwnd, uMsg, wParam, lParam);
+#endif
     }
 }
 
@@ -640,7 +727,11 @@ Element_OnPaint(HWND hwnd)
     RECT r;
     RECT s;
     HGDIOBJ o;
+#ifdef EXT_ASC
     char buffer[128];
+#else
+    wchar_t bufferW[256];
+#endif
     int i;
 
     /* Prepare */
@@ -669,6 +760,7 @@ Element_OnPaint(HWND hwnd)
     FillRect(hdc, &s, o);
 
     /* Draw contents */
+#ifdef EXT_ASC
     buffer[0] = '\0';
     i = GetWindowText(hwnd, buffer, 127);
     s.left      = r.left + 1;
@@ -679,7 +771,19 @@ Element_OnPaint(HWND hwnd)
     FillRect(hdc, &s, o);
     SetBkMode(hdc, TRANSPARENT);
     ExtTextOut(hdc, s.left + 1, s.top + 1, ETO_CLIPPED, &s, buffer, (unsigned)i, NULL);
-
+#else
+    bufferW[0] = '\0';
+    i = GetWindowTextW(hwnd, bufferW, 255);
+    s.left = r.left + 1;
+    s.right = r.right - 1;
+    s.top = r.top + 1;
+    s.bottom = r.bottom - 1;
+    o = GetSysColorBrush(COLOR_BTNFACE);
+    FillRect(hdc, &s, o);
+    SetBkMode(hdc, TRANSPARENT);
+    SelectObject(hdc, efont);
+    ExtTextOutW(hdc, s.left + 1, s.top + 1, ETO_CLIPPED, &s, bufferW, (unsigned)i, NULL);
+#endif
     /* End */
     EndPaint(hwnd, &ps);
 }
@@ -696,7 +800,11 @@ ElementWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         return 0;
 
     default:
+#ifdef EXT_ASC
         return DefWindowProc(hwnd, uMsg, wParam, lParam);
+#else
+        return DefWindowProcW( hwnd, uMsg, wParam, lParam);
+#endif
     }
 }
 
@@ -850,9 +958,16 @@ MakeArgcArgv(char *cmdline, int *argc, char ***argv)
 
 
 /* Main entry point for our Windows application */
+#ifdef EXT_ASC
 int WINAPI
-WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
-        _In_ LPSTR lpszCmdLine, _In_ int nCmdShow)
+WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpszCmdLine, _In_ int nCmdShow)
+#elif __MINGW32__ /* MINGW bug not knowing wWinMain */
+int WINAPI
+WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR nolpszCmdLine, _In_ int nCmdShow)
+#else
+int WINAPI
+wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR wlpszCmdLine, _In_ int nCmdShow)
+#endif
 {
     int ix, iy; /* width and height of screen */
     int status;
@@ -871,6 +986,38 @@ WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 
     NG_IGNORE(hPrevInstance);
 
+#ifndef EXT_ASC
+    /* convert wchar to utf-8 */
+
+    /* MINGW not knowing wWinMain
+    https://github.com/coderforlife/mingw-unicode-main/blob/master/mingw-unicode-gui.c
+    */
+#ifdef __MINGW32__
+    NG_IGNORE(nolpszCmdLine);
+    char lpszCmdLine[1024];
+    wchar_t *lpCmdLine = GetCommandLineW();
+    if (__argc == 1) { // avoids GetCommandLineW bug that does not always quote the program name if no arguments
+        do { ++lpCmdLine; } while (*lpCmdLine);
+    }
+    else {
+        BOOL quoted = lpCmdLine[0] == L'"';
+        ++lpCmdLine; // skips the " or the first letter (all paths are at least 1 letter)
+        while (*lpCmdLine) {
+            if (quoted && lpCmdLine[0] == L'"') { quoted = FALSE; } // found end quote
+            else if (!quoted && lpCmdLine[0] == L' ') {
+                // found an unquoted space, now skip all spaces
+                do { ++lpCmdLine; } while (lpCmdLine[0] == L' ');
+                break;
+            }
+            ++lpCmdLine;
+        }
+    }
+    WideCharToMultiByte(CP_UTF8, 0, lpCmdLine, -1, lpszCmdLine, 1023, NULL, NULL);
+#else
+    char lpszCmdLine[1024];
+    WideCharToMultiByte(CP_UTF8, 0, wlpszCmdLine, -1, lpszCmdLine, 1023, NULL, NULL);
+#endif
+#endif
     /* fill global variables */
     hInst = hInstance;
     nShowState = nCmdShow;
@@ -881,6 +1028,7 @@ WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
     SBuffer[0] = SE;
 
     /* Define main window class */
+#ifdef EXT_ASC
     hwMainClass.style           = CS_HREDRAW | CS_VREDRAW;
     hwMainClass.lpfnWndProc     = MainWindowProc;
     hwMainClass.cbClsExtra      = 0;
@@ -894,8 +1042,23 @@ WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 
     if (!RegisterClass(&hwMainClass))
         goto THE_END;
+#else
+    hwMainClassW.style = CS_HREDRAW | CS_VREDRAW;
+    hwMainClassW.lpfnWndProc = MainWindowProc;
+    hwMainClassW.cbClsExtra = 0;
+    hwMainClassW.cbWndExtra = 0;
+    hwMainClassW.hInstance = hInst;
+    hwMainClassW.hIcon = LoadIconW(hInst, MAKEINTRESOURCEW(1));
+    hwMainClassW.hCursor = LoadCursorW(NULL, MAKEINTRESOURCEW(32512));
+    hwMainClassW.hbrBackground = GetStockObject(LTGRAY_BRUSH);
+    hwMainClassW.lpszMenuName = NULL;
+    hwMainClassW.lpszClassName = hwClassNameW;
+    if (!RegisterClassW(&hwMainClassW))
+        goto THE_END;
+#endif
 
     /* Define text window class */
+#ifdef EXT_ASC
     if (!GetClassInfo(NULL, "EDIT", &twTextClass))
         goto THE_END;
 
@@ -907,8 +1070,19 @@ WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 
     if (!RegisterClass(&twTextClass))
         goto THE_END;
+#else
+    if (!GetClassInfoW(NULL, L"EDIT", &twTextClassW)) goto THE_END;
+    twProc = twTextClassW.lpfnWndProc;
+    twTextClassW.lpfnWndProc = TextWindowProc;
+    twTextClassW.hInstance = hInst;
+    twTextClassW.lpszMenuName = NULL;
+    twTextClassW.lpszClassName = twClassNameW;
+    if (!RegisterClassW(&twTextClassW))
+        goto THE_END;
+#endif
 
     /* Define string window class */
+#ifdef EXT_ASC
     if (!GetClassInfo(NULL, "EDIT", &swStringClass))
         goto THE_END;
 
@@ -920,8 +1094,19 @@ WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 
     if (!RegisterClass(&swStringClass))
         goto THE_END;
+#else
+    if (!GetClassInfoW(NULL, L"EDIT", &swStringClassW)) goto THE_END;
+    swProc = swStringClassW.lpfnWndProc;
+    swStringClassW.lpfnWndProc = StringWindowProc;
+    swStringClassW.hInstance = hInst;
+    swStringClassW.lpszMenuName = NULL;
+    swStringClassW.lpszClassName = swClassNameW;
+    if (!RegisterClassW(&swStringClassW))
+        goto THE_END;
+#endif
 
     /* Define status element class */
+#ifdef EXT_ASC
     hwElementClass.style            = CS_HREDRAW | CS_VREDRAW;
     hwElementClass.lpfnWndProc      = ElementWindowProc;
     hwElementClass.cbClsExtra       = 0;
@@ -935,43 +1120,85 @@ WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 
     if (!RegisterClass(&hwElementClass))
         goto THE_END;
+#else
+    hwElementClassW.style = CS_HREDRAW | CS_VREDRAW;
+    hwElementClassW.lpfnWndProc = ElementWindowProc;
+    hwElementClassW.cbClsExtra = 0;
+    hwElementClassW.cbWndExtra = 0;
+    hwElementClassW.hInstance = hInst;
+    hwElementClassW.hIcon = NULL;
+    hwElementClassW.hCursor = LoadCursorW(NULL, MAKEINTRESOURCEW(32512));
+    hwElementClassW.hbrBackground = GetStockObject(LTGRAY_BRUSH);
+    hwElementClassW.lpszMenuName = NULL;
+    hwElementClassW.lpszClassName = hwElementClassNameW;
+    if (!RegisterClassW(&hwElementClassW))
+        goto THE_END;
+#endif
 
-    /*Create main window */
-//    iy = GetSystemMetrics(SM_CYSCREEN);
-//    iyt = GetSystemMetrics(SM_CYSCREEN) / 3;
-//    ix = GetSystemMetrics(SM_CXSCREEN);
+    /* Font for element status windows (source, analysis, Quit button) */
+    efont = CreateFontW(16, 6, 0, 0, FW_SEMIBOLD, FALSE, FALSE, FALSE,
+        ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
+        ANTIALIASED_QUALITY, VARIABLE_PITCH, L"");
+/*    efont = CreateFontW(16, 0, 0, 0, FW_SEMIBOLD, FALSE, FALSE, FALSE,
+            DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
+            NONANTIALIASED_QUALITY, VARIABLE_PITCH, L"Segoe UI");*/
+/*    efont = CreateFontW(15, 0, 0, 0, FW_MEDIUM, FALSE, FALSE, FALSE,
+            ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
+            NONANTIALIASED_QUALITY, FIXED_PITCH | FF_MODERN, L"Courier");*/
+    if (!efont)
+        efont = GetStockFont(ANSI_FIXED_FONT);
+
+#ifdef EXT_ASC
     SystemParametersInfo(SPI_GETWORKAREA, 0, &wsize, 0);
+#else
+    SystemParametersInfoW(SPI_GETWORKAREA, 0, &wsize, 0);
+#endif
     iy = wsize.bottom;
     ix = wsize.right;
 #ifndef BIG_WINDOW_FOR_DEBUGGING
     const int iyt = iy / 3; /* height of screen divided by 3 */
+#ifdef EXT_ASC
     hwMain = CreateWindow(hwClassName, hwWindowName, WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
-                          0, iyt * 2, ix, iyt, NULL, NULL, hInst, NULL);
+                           0, iyt * 2, ix, iyt, NULL, NULL, hInst, NULL);
 #else
+    hwMain = CreateWindowW(hwClassNameW, hwWindowNameW, WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
+                           0, iyt * 2, ix, iyt, NULL, NULL, hInst, NULL);
+#endif
+#else
+#ifdef EXT_ASC
     hwMain = CreateWindow(hwClassName, hwWindowName, WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
                           0, 0, ix, iy, NULL, NULL, hInst, NULL);
+#else
+    hwMain = CreateWindowW(hwClassName, hwWindowName, WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
+                          0, 0, ix, iy, NULL, NULL, hInst, NULL);
+#endif
 #endif
 
     if (!hwMain)
         goto THE_END;
 
     /* Create text window */
+#ifdef EXT_ASC
     twText = CreateWindowEx(WS_EX_NOPARENTNOTIFY, twClassName, twWindowName,
                             ES_LEFT | ES_MULTILINE | ES_READONLY | WS_CHILD | WS_BORDER | WS_VSCROLL,
                             20, 20, 300, 100, hwMain, NULL, hInst, NULL);
+#else
+    twText = CreateWindowExW(WS_EX_NOPARENTNOTIFY, twClassNameW, twWindowNameW,
+        ES_LEFT | ES_MULTILINE | ES_READONLY | WS_CHILD | WS_BORDER | WS_VSCROLL,
+        20,20,300,100, hwMain, NULL, hInst, NULL);
+#endif
     if (!twText)
         goto THE_END;
 
-    /* Ansii fixed font */
+#ifdef EXT_ASC
     {
         HDC textDC;
-        HFONT font;
         TEXTMETRIC tm;
-        font = GetStockFont(ANSI_FIXED_FONT);
-        SetWindowFont(twText, font, FALSE);
+        tfont = GetStockFont(ANSI_FIXED_FONT);
+        SetWindowFont(twText, tfont, FALSE);
         textDC = GetDC(twText);
         if (textDC) {
-            SelectObject(textDC, font);
+            SelectObject(textDC, tfont);
             if (GetTextMetrics(textDC, &tm)) {
                 RowHeight = tm.tmHeight;
                 WinLineWidth = 90 * tm.tmAveCharWidth;
@@ -979,9 +1206,39 @@ WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
             ReleaseDC(twText, textDC);
         }
     }
+#else
+    {
+	    HDC textDC;
+        TEXTMETRICW tm;
+        tfont = CreateFontW(15, 0, 0, 0, FW_MEDIUM, FALSE, FALSE,
+            FALSE, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
+            NONANTIALIASED_QUALITY, FIXED_PITCH | FF_MODERN, L"Courier");
+        /* Ansi fixed font */
+        if(!tfont)
+            tfont = GetStockFont(ANSI_FIXED_FONT);
+        SetWindowFont( twText, tfont, FALSE);
+        textDC = GetDC( twText);
+        if (textDC) {
+            SelectObject( textDC, tfont);
+            if (GetTextMetricsW( textDC, &tm)) {
+                RowHeight = tm.tmHeight;
+                WinLineWidth = 90 * tm.tmAveCharWidth;
+            }
+            ReleaseDC( twText, textDC);
+        }
+    }
+#endif
 
     /* Create string window for input. Give a handle to history info to
      * the window for saving and retrieving commands */
+    /* Font for element status windows (source, analysis) */
+    sfont = CreateFontW(16, 0, 0, 0, FW_SEMIBOLD, FALSE, FALSE, FALSE,
+        DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
+        ANTIALIASED_QUALITY, VARIABLE_PITCH, L"");
+    /* Ansi fixed font */
+    if(!sfont)
+        sfont = GetStockFont(ANSI_FIXED_FONT);
+#ifdef EXT_ASC
     swString = CreateWindowEx(WS_EX_NOPARENTNOTIFY, swClassName, swWindowName,
             ES_LEFT | WS_CHILD | WS_BORDER |
                     ES_AUTOHSCROLL, /* Allow text to scroll */
@@ -999,29 +1256,76 @@ WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
                 LineHeight = tm.tmHeight + tm.tmExternalLeading + BorderSize;
             ReleaseDC(swString, stringDC);
         }
-    }
+	}
+#else
+    swString = CreateWindowExW(WS_EX_NOPARENTNOTIFY, swClassNameW, swWindowNameW,
+        ES_LEFT | WS_CHILD | WS_BORDER |
+                ES_AUTOHSCROLL, /* Allow text to scroll */
+        20, 20, 300, 100, hwMain, NULL, hInst, &p_hi);
+    if (!swString)
+        goto THE_END;
+    {
+        HDC stringDC;
+        TEXTMETRICW tm;
+        stringDC = GetDC(swString);
+        if (stringDC) {
+            SelectObject(stringDC, sfont);
+            if (GetTextMetricsW(stringDC, &tm))
+                LineHeight = tm.tmHeight + tm.tmExternalLeading + BorderSize;
+            ReleaseDC(swString, stringDC);
+        }
+	}
+#endif
 
+    /* Element windows */
     /* Create source window */
+#ifdef EXT_ASC
     hwSource = CreateWindowEx(WS_EX_NOPARENTNOTIFY, hwElementClassName, hwSourceWindowName,
                               WS_CHILD,
                               0, 0, SourceLength, StatusElHeight, hwMain, NULL, hInst, NULL);
+#else
+    hwSource = CreateWindowExW(WS_EX_NOPARENTNOTIFY, hwElementClassNameW, hwSourceWindowNameW,
+                               WS_CHILD,
+                               0, 0, SourceLength, StatusElHeight, hwMain, NULL, hInst, NULL);
+#endif
     if (!hwSource)
         goto THE_END;
 
+    SetWindowFont(hwSource, efont, FALSE);
 
     /* Create analysis window */
+#ifdef EXT_ASC
     hwAnalyse = CreateWindowEx(WS_EX_NOPARENTNOTIFY, hwElementClassName, hwAnalyseWindowName,
                                WS_CHILD,
                                0, 0, AnalyseLength, StatusElHeight, hwMain, NULL, hInst, NULL);
+#else
+    hwAnalyse = CreateWindowExW(WS_EX_NOPARENTNOTIFY, hwElementClassNameW, hwAnalyseWindowNameW,
+                                WS_CHILD,
+                                0,0, AnalyseLength, StatusElHeight, hwMain, NULL, hInst, NULL);
+#endif
     if (!hwAnalyse)
         goto THE_END;
 
+    SetWindowFont(hwAnalyse, efont, FALSE);
+
     /* Create "Quit" button */
+#ifdef EXT_ASC
     hwQuitButton = CreateWindow("BUTTON", "Quit", WS_CHILD | BS_PUSHBUTTON, 0, 0, QuitButtonLength,
                                 StatusElHeight, hwMain, (HMENU)(UINT_PTR)QUIT_BUTTON_ID, hInst, NULL);
+#else
+    hwQuitButton = CreateWindowW(L"BUTTON", L"Quit", WS_CHILD | BS_PUSHBUTTON, 0, 0, QuitButtonLength,
+                                 StatusElHeight, hwMain, (HMENU)(UINT_PTR)QUIT_BUTTON_ID, hInst, NULL);
+#endif
 
     if (!hwQuitButton)
         goto THE_END;
+
+    SetWindowFont(hwQuitButton, efont, FALSE);
+
+    /* Define a minimum width */
+    int MinWidth = AnalyseLength + SourceLength + QuitButtonLength + 48;
+    if (WinLineWidth < MinWidth)
+        WinLineWidth = MinWidth;
 
     /* Make main window and subwindows visible.
        Size of windows allows display of 80 character line.

@@ -130,7 +130,7 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
      * interpolation.
      */
     if ((degree == 1) && (gridsize == 0)) {
-        bool mono = (currentgraph->plottype == PLOT_MONOLIN);
+        bool mono = (currentgraph->plottype != PLOT_RETLIN);
         dir = 0;
         for (i = 0, j = v->v_length; i < j; i++) {
             dx = isreal(xs) ? xs->v_realdata[i] :

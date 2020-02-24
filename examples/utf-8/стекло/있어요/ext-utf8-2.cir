@@ -1,0 +1,73 @@
+* test de titré
+* utf-8 UNICODE tests
+* text snippets are from http://kermitproject.org/utf8.html
+* English translation: I can eat glass and it doesn't hurt me. 
+
+.control
+set hcopydevtype = postscript
+set hcopypscolor=0
+set hcopypstxcolor=1
+set hcopyscale=1
+* 16 bit color for Linux
+set color2=rgb:F/0/0
+* 256 bit color for Windows or Linux
+set color2=rgb:FF/0/0
+*setcs hcopyfont=Arial
+*
+*setcs hcopyfont='Nimbus Mono-Regular'
+* for CYGWIN
+setcs hcopyfont='NimbusMonL-Bold'
+set hcopyfontsize=14
+
+* the data to be plotted
+let x = vector(5)
+let y = exp(x)
+
+* MS Windows
+setcs wfont='Arial'
+set wfont_size=18
+plot y vs x xlabel 'Labellisé X' ylabel 'Labellisé Y: ÜüÖöÄäÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ' title 'Titré 21'
+
+* Linux, CYGWIN
+* Use font (*.ttc) from Cygwin distribution
+setcs xfont='Noto Sans CJK JP Light'
+set xfont_size=16
+set color2=rgb:0/FF/0
+set xbrushwidth=2
+plot y vs x xlabel '我能吞下玻璃而不伤身体' ylabel 'Я могу есть стекло, оно мне не вредит' title 'Titré 22 أنا قادر على أكل الزجاج و هذا لا يؤلمني.'
+set color2=rgb:0/FF/FF
+set xbrushwidth=4
+plot y vs x+0.001 xlabel 'Labellisé X' ylabel 'Labellisé Y' title 'Titré 23 私はガラスを食べられます。それは私を傷つけません' loglog
+set color2=rgbd:255/0/255
+set xbrushwidth=8
+plot y vs x+0.001 xlabel 'Titré 私はガラスを食べられます。それは私を傷つけません' ylabel '나는 유리를 먹을 수 있어요. 그래도 아프지 않아요' title 'Titré 24 我能吞下玻璃而不伤身体。' loglog
+unset color2
+set color0=white
+* https://www.fontsc.com/font/tag/arabic
+setcs xfont='Lateef'
+set xfont_size=22
+plot y vs x+0.001 xlabel 'Labellisé X' ylabel ' أنا قادر على أكل الزجاج و هذا لا يؤلمني ' title 'Titré French Arabic 25' loglog
+plot y vs x+0.001 xlabel ' أنا قادر على أكل الزجاج و هذا لا يؤلمني ' ylabel 'Jeg kan spise glas, det gør ikke ondt på mig. 26 ' title 'Titré Arabic 26' loglog
+
+* https://www.fontsc.com/font/tag/hebrew
+setcs xfont='Alef'
+set xfont_size=18
+plot y vs x+0.001 xlabel 'Labellisé X' ylabel ' אני יכול לאכול זכוכית וזה לא מזיק לי. ' title 'Titré French Arabic 27' loglog
+plot y vs x+0.001 xlabel ' אני יכול לאכול זכוכית וזה לא מזיק לי. '  ylabel 'Labellisé Y: ÜüÖöÄäÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ' title 'Titré Arabic 28' loglog
+
+hardcopy plot_6.ps y vs x xlabel 'Labellisé X' ylabel 'Jeg kan spise glas, det gør ikke ondt på mig.' title 'Titré Äü @µ€~'
+
+* for MS Windows only
+*shell Start /B plot_5.ps
+* for CYGWIN
+*shell xterm -e gs  plot_5.ps &
+shell gv  plot_6.ps &
+
+echo  些 𣎏 世 咹 水 晶 𦓡 空 𣎏 害 咦 
+echo אני יכול לאכול זכוכית וזה לא מזיק לי.
+echo ' أنا قادر على أكل الزجاج و هذا لا يؤلمني '
+
+gnuplot test.gn y vs x xlabel 'Labellisé X' ylabel 'tüTÄtö Äü @µ€~' title 'ฉันกินกระจกได้ แต่มันไม่ทำให้ฉันเจ็บ '
+
+*quit
+.endc

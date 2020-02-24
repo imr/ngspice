@@ -1,5 +1,4 @@
 /**********
- * From xgraph.c:
  * Copyright 1992 Regents of the University of California.  All rights reserved.
  * Author: 1992 David A. Gates, U. C. Berkeley CAD Group
  *
@@ -56,7 +55,7 @@ void ft_gnuplot(double *xlims, double *ylims,
     FILE *file, *file_data;
     struct dvec *v, *scale = NULL;
     double xval, yval, prev_xval, extrange;
-    int i, dir, numVecs, linewidth, err, terminal_type;
+    int i, dir, numVecs, linewidth, gridlinewidth, err, terminal_type;
     bool xlog, ylog, nogrid, markers;
     char buf[BSIZE_SP], pointstyle[BSIZE_SP], *text, plotstyle[BSIZE_SP], terminal[BSIZE_SP];
 
@@ -108,9 +107,17 @@ void ft_gnuplot(double *xlims, double *ylims,
         }
     }
 
+    /* get linewidth for plotting the graph from .spiceinit */
     if (!cp_getvar("xbrushwidth", CP_NUM, &linewidth, 0))
         linewidth = 1;
-    if (linewidth < 1) linewidth = 1;
+    if (linewidth < 1)
+        linewidth = 1;
+    /* get linewidth for grid from .spiceinit */
+    if (!cp_getvar("xgridwidth", CP_NUM, &gridlinewidth, 0))
+        gridlinewidth = 1;
+    if (gridlinewidth < 1)
+        gridlinewidth = 1;
+
 
     if (!cp_getvar("pointstyle", CP_STRING, pointstyle, sizeof(pointstyle))) {
         markers = FALSE;
@@ -154,9 +161,16 @@ void ft_gnuplot(double *xlims, double *ylims,
     }
 
     /* Set up the file header. */
-#if !defined(__MINGW32__) && !defined(_MSC_VER)
+#if !defined(__MINGW__) && !defined(_MSC_VER) && !defined(__CYGWIN__)
     fprintf(file, "set terminal X11 noenhanced\n");
+#elif defined(__CYGWIN__)
+#ifndef EXT_ASC
+        fprintf(file, "set encoding utf8\n");
+#endif
 #else
+#ifndef EXT_ASC
+        fprintf(file, "set encoding utf8\n");
+#endif
     fprintf(file, "set termoption noenhanced\n");
 #endif
     if (title) {
@@ -181,8 +195,8 @@ void ft_gnuplot(double *xlims, double *ylims,
         tfree(text);
     }
     if (!nogrid) {
-        if (linewidth > 1)
-            fprintf(file, "set grid lw %d \n" , linewidth);
+        if (gridlinewidth > 1)
+            fprintf(file, "set grid lw %d \n" , gridlinewidth);
         else
             fprintf(file, "set grid\n");
     }
@@ -216,8 +230,8 @@ void ft_gnuplot(double *xlims, double *ylims,
     fprintf(file, "#set ytics 1\n");
     fprintf(file, "#set y2tics 1\n");
 
-    if (linewidth > 1)
-        fprintf(file, "set border lw %d\n", linewidth);
+    if (gridlinewidth > 1)
+        fprintf(file, "set border lw %d\n", gridlinewidth);
 
     if (plottype == PLOT_COMB) {
         strcpy(plotstyle, "boxes");
@@ -305,7 +319,7 @@ void ft_gnuplot(double *xlims, double *ylims,
     (void) fclose(file);
 
     /* Write out the data and setup arrays */
-    bool mono = (plottype == PLOT_MONOLIN);
+    bool mono = (plottype != PLOT_RETLIN);
     dir = 0;
     prev_xval = NAN;
     for (i = 0; i < scale->v_length; i++) {

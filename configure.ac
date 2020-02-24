@@ -91,6 +91,10 @@ AC_ARG_WITH([tcl],
 AC_ARG_WITH([ngshared],
     [AS_HELP_STRING([--with-ngshared], [Compiles ngspice as shared library (dll)])])
 
+# --disable-utf8: don't use utf-8 and tchar for string representation, UNICODE support disabled
+AC_ARG_ENABLE([utf8],
+    [AS_HELP_STRING([--disable-utf8], [Don't use utf-8 or tchar (default is UNICODE support with utf-8)])])
+
 # old options, not maintained, may even not work at all
 
 # --enable-ansi: try to force --ansi option to the compiler
@@ -295,6 +299,35 @@ if test "x$prefix" = xNONE ; then
 else
     dprefix=$prefix
 fi
+
+####
+### check for operating system at compile time
+case $host_os in
+	*mingw* | *msys* )
+		AC_DEFINE([OS_COMPILED], [1], [MINGW for MS Windows])
+		;;
+	*cygwin* )
+		AC_DEFINE([OS_COMPILED], [2], [Cygwin for MS Windows])
+		;;
+	*freebsd* )
+		AC_DEFINE([OS_COMPILED], [3], [FreeBSD])
+		;;
+	*openbsd* )
+		AC_DEFINE([OS_COMPILED], [4], [OpenBSD])
+		;;
+	*solaris* )
+		AC_DEFINE([OS_COMPILED], [5], [Solaris])
+		;;
+	*linux* )
+		AC_DEFINE([OS_COMPILED], [6], [Linux])
+		;;
+	*darwin* )
+		AC_DEFINE([OS_COMPILED], [7], [macOS])
+		;;
+	* )
+		AC_DEFINE([OS_COMPILED], [0], [Other Operating System])
+		;;
+esac
 
 ##########################################################################
 #
@@ -668,18 +701,13 @@ fi
 # Checks for X libraries - if X11 wasn't found then don't make following
 # tests and compile without X11 support - otherwise, check if the following
 # libraries are present (error if they are not)
-# In CYGWIN library ordering has to be changed. Is this compatible to LINUX?
 # XShmAttach is a struct in CYGWIN, not a function
-# SJB: 13th march 2005
-# Library order is giving linker warnings on MacOSX
-# It's not clear to me which order is required for Cygwin (see comment above)
-# and neither can I find any authoritative answer for the correct link order
-# for MacOSX or Linux, but
-#            -lXaw -lXmu -lXt -lXext -lX11
-# seems to be the popular choice.
-# (The previous order was -lX11 -lXt -lXext -lXmu -lXaw)
+# Library order is
+#            -lXaw -lXmu -lXt -lXext -lX11 (-lXft -lfontconfig -lXrender -lfreetype)
+# Xft is optional, allows text rotation in plots
 
 if test "x$no_x" != xyes ; then
+    X_CFLAGS="$X_CFLAGS -I/usr/include/freetype2"
     AC_CHECK_LIB([Xaw], [main], [X_LIBS="$X_LIBS -lXaw"],
         [AC_MSG_ERROR([Couldn't find Xaw library])], [$X_LIBS $X_EXTRA_LIBS])
     AC_CHECK_LIB([Xmu], [main], [X_LIBS="$X_LIBS -lXmu"],
@@ -688,6 +716,21 @@ if test "x$no_x" != xyes ; then
     AC_CHECK_LIB([Xext], [XShmAttach], [X_LIBS="$X_LIBS -lXext"],
         [AC_MSG_ERROR([Couldn't find Xext library])], [$X_LIBS $X_EXTRA_LIBS])
     X_LIBS="$X_LIBS -lX11"
+	AC_CHECK_LIB([Xft], [main],
+        [AC_DEFINE([HAVE_LIBXFT], [1], [Have xft routines in libxft])]
+        X_LIBS="$X_LIBS -lXft -lfontconfig -lXrender -lfreetype"
+        has_xft=yes,
+        [has_xft=no], [$X_LIBS $X_EXTRA_LIBS])
+
+    if test "x$has_xft" = xyes ; then
+        AC_CHECK_LIB([fontconfig], [main], [],
+            [AC_MSG_ERROR([Couldn't find fontconfig library])], [$X_LIBS $X_EXTRA_LIBS])
+#        AC_CHECK_LIB([Xrender], [main], [],
+#            [AC_MSG_ERROR([Couldn't find Xrender library])], [$X_LIBS $X_EXTRA_LIBS])
+        AC_CHECK_LIB([freetype], [main], [],
+            [AC_MSG_ERROR([Couldn't find freetype library])], [$X_LIBS $X_EXTRA_LIBS])
+    fi
+
     has_no_x=false
 else
     AC_DEFINE([X_DISPLAY_MISSING])
@@ -714,7 +757,7 @@ if test "x$enable_oldapps" = xyes ; then
     AC_MSG_RESULT([ngnutmeg ngsconvert ngproc2mod ngmultidec ngmakeidx nghelp are made.])
 else
     AC_MSG_RESULT([ngnutmeg ngsconvert ngproc2mod ngmultidec ngmakeidx nghelp are not made.])
-    AC_MSG_RESULT([No internal help available.])    
+    AC_MSG_RESULT([No internal help available.])
     AC_DEFINE([NOINTHELP], [1], [Internal (old) help not available])
 fi
 AM_CONDITIONAL([OLDAPPS], [test "x$enable_oldapps" = xyes])
@@ -931,6 +974,10 @@ fi
 if test "x$enable_smltmsdebug" = xyes; then
     AC_DEFINE([D_DBG_SMALLTIMES], [], [Define if we want debug distortion analysis (SMALLTIMES)])
     AC_MSG_RESULT([WARNING: Distortion analysis debug *D_DBG_SMALLTIMES* is enabled])
+fi
+if test "x$enable_utf8" = xno; then
+    AC_DEFINE([EXT_ASC], [], [Define if you want to disable UNICODE support])
+    AC_MSG_RESULT([WARNING: UNICOPDE support is disabled, extended ascii is enabled instead])
 fi
 
 AC_PROG_YACC

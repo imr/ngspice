@@ -906,7 +906,6 @@
     <ClInclude Include="..\src\frontend\points.h" />
     <ClInclude Include="..\src\frontend\postcoms.h" />
     <ClInclude Include="..\src\frontend\postsc.h" />
-    <ClInclude Include="..\src\frontend\quote.h" />
     <ClInclude Include="..\src\frontend\rawfile.h" />
     <ClInclude Include="..\src\frontend\resource.h" />
     <ClInclude Include="..\src\frontend\runcoms.h" />
@@ -922,6 +921,7 @@
     <ClInclude Include="..\src\frontend\variable.h" />
     <ClInclude Include="..\src\frontend\vectors.h" />
     <ClInclude Include="..\src\frontend\wdisp\ftegraf.h" />
+    <ClInclude Include="..\src\frontend\wdisp\wincolor.h" />
     <ClInclude Include="..\src\frontend\wdisp\windisp.h" />
     <ClInclude Include="..\src\frontend\wdisp\winprint.h" />
     <ClInclude Include="..\src\frontend\where.h" />
@@ -940,6 +940,7 @@
     <ClInclude Include="..\src\include\ngspice\cmconstants.h" />
     <ClInclude Include="..\src\include\ngspice\cmproto.h" />
     <ClInclude Include="..\src\include\ngspice\cmtypes.h" />
+    <ClInclude Include="..\src\include\ngspice\wincolornames.h" />
     <ClInclude Include="..\src\include\ngspice\compatmode.h" />
     <ClInclude Include="..\src\include\ngspice\complex.h" />
     <ClInclude Include="..\src\include\ngspice\const.h" />
@@ -1509,7 +1510,6 @@
     <ClCompile Include="..\src\frontend\plotting\plotting.c" />
     <ClCompile Include="..\src\frontend\plotting\pvec.c" />
     <ClCompile Include="..\src\frontend\plotting\x11.c" />
-    <ClCompile Include="..\src\frontend\plotting\xgraph.c" />
     <ClCompile Include="..\src\frontend\points.c" />
     <ClCompile Include="..\src\frontend\postcoms.c" />
     <ClCompile Include="..\src\frontend\postsc.c" />
@@ -1531,6 +1531,7 @@
     <ClCompile Include="..\src\frontend\typesdef.c" />
     <ClCompile Include="..\src\frontend\variable.c" />
     <ClCompile Include="..\src\frontend\vectors.c" />
+    <ClCompile Include="..\src\frontend\wdisp\wincolor.c" />
     <ClCompile Include="..\src\frontend\wdisp\windisp.c" />
     <ClCompile Include="..\src\frontend\wdisp\winprint.c" />
     <ClCompile Include="..\src\frontend\where.c" />

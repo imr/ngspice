@@ -4,6 +4,7 @@
  * Holger Vogt  07.12.01
  * Holger Vogt  05.12.07
  * Holger Vogt  01.11.18
+ * Holger Vogt  09.02.20
  */
 
 #include "ngspice/ngspice.h"
@@ -64,6 +65,7 @@ extern HWND        swString;      /* string input window of main window */
 extern int         DevSwitch(char *devname);
 extern int         NewViewport(GRAPH *pgraph);
 extern void        com_hardcopy(wordlist *wl);
+extern void        wincolor_graph(COLORREF* ColorTable, int noc, GRAPH* graph);
 
 /* defines */
 #define RAD_TO_DEG   (180.0 / M_PI)
@@ -73,6 +75,7 @@ extern void        com_hardcopy(wordlist *wl);
 #endif
 
 #define DEF_FONTW "Arial"
+#define DEFW_FONTW L"Arial"
 
 /* local variables */
 static int           IsRegistered = 0;             /* 1 if window class is registered */
@@ -80,6 +83,8 @@ static int           IsRegistered = 0;             /* 1 if window class is regis
 static COLORREF      ColorTable[NumWinColors];     /* color memory */
 static char         *WindowName = "Spice Plot";    /* window name */
 static WNDCLASS      TheWndClass;                  /* Plot-window class */
+static wchar_t *     WindowNameW = L"Spice Plot";    /* window name */
+static WNDCLASSW     TheWndClassW;                  /* Plot-window class */
 static HFONT         PlotFont;                     /* which font */
 #define              ID_DRUCKEN      0xEFF0        /* System Menue: print */
 #define              ID_DRUCKEINR    0xEFE0        /* System Menue: printer setup */
@@ -91,9 +96,17 @@ static char         *STR_DRUCKEN   = "Printer..."; /* System menue strings */
 static char         *STR_DRUCKEINR = "Printer setup...";
 static char         *STR_HARDCOPY = "Postscript file, color";
 static char         *STR_HARDCOPY_BW = "Postscript file, b&w";
+static wchar_t *     STRW_DRUCKEN   = L"Printer..."; /* System menue strings */
+static wchar_t *     STRW_DRUCKEINR = L"Printer setup...";
+static wchar_t *     STRW_HARDCOPY  = L"Postscript file, color";
+static wchar_t *     STRW_HARDCOPY_BW = L"Postscript file, b&w";
 static bool          isblack = TRUE;               /* background color of plot is black */
 static bool          isblackold = TRUE;
 static int           linewidth = 0;                /* linewidth of grid and plot */
+static int           gridlinewidth = 0;            /* linewidth of grid */
+
+extern void wincolor_init(COLORREF *ColorTable, int noc);
+extern void wincolor_redo(COLORREF *ColorTable, int noc);
 
 /******************************************************************************
 WIN_Init() makes connection to graphics. We have to determine
@@ -109,7 +122,13 @@ WIN_Init() does not yet open a window, this happens only in WIN_NewViewport()
 ******************************************************************************/
 int WIN_Init(void)
 {
-    char colorstring[BSIZE_SP];
+    char facename[32];
+
+#ifdef EXT_ASC
+    LOGFONT lf;
+#else
+    LOGFONTW lfw;
+#endif
 
     /* Initialization of display descriptor */
     dispdev->width         = GetSystemMetrics(SM_CXSCREEN);
@@ -117,75 +136,12 @@ int WIN_Init(void)
     dispdev->numlinestyles = 5;   /* see implications in WinPrint! */
     dispdev->numcolors     = NumWinColors;
 
-    /* always, user may have set color0 to white */
-    /* get background color information from spinit, only "white"
-       is recognized as a suitable option! */
-    if (cp_getvar("color0", CP_STRING, colorstring, sizeof(colorstring)))
-        isblack = !cieq(colorstring, "white");
-
-    /* get linewidth information from spinit */
-    if (!cp_getvar("xbrushwidth", CP_NUM, &linewidth, 0)) {
-        linewidth = 0;
-    }
-    if (linewidth < 0) {
-        linewidth = 0;
-    }
-
     /* only for the first time: */
     if (!IsRegistered) {
 
-        isblackold = isblack;
+        wincolor_init(ColorTable, NumWinColors);
 
-        /* get linewidth information from spinit
-         * if (!cp_getvar("xbrushwidth", CP_NUM, &linewidth, 0))
-         *     linewidth = 0;
-         * if (linewidth < 0)
-         *     linewidth = 0;
-         */
-
-        /* Initialize colors */
-        if (isblack) {
-            ColorTable[0] = RGB(  0,   0,   0);   /* black   = background */
-            ColorTable[1] = RGB(255, 255, 255);   /* white   = text and grid */
-        }
-        else {
-            ColorTable[0] = RGB(255, 255, 255);   /* white   = background */
-            ColorTable[1] = RGB(  0,   0,   0);   /* black   = text and grid */
-        }
-
-        ColorTable[2]  = RGB(  0, 255,   0);   /* green   = first line */
-        ColorTable[3]  = RGB(255,   0,   0);   /* red */
-        ColorTable[4]  = RGB(  0,   0, 255);   /* blue */
-        ColorTable[5]  = RGB(255, 255,   0);   /* yellow */
-        ColorTable[6]  = RGB(255,   0, 255);   /* violett */
-        ColorTable[7]  = RGB(  0, 255, 255);   /* azur */
-        ColorTable[8]  = RGB(255, 128,   0);   /* orange */
-        ColorTable[9]  = RGB(128,  64,   0);   /* brown */
-        ColorTable[10] = RGB(128,   0, 255);   /* light violett */
-        ColorTable[11] = RGB(255, 128, 128);   /* pink */
-
-        /* 2. color bank (with different line style */
-        if (isblack) {
-            ColorTable[12] = RGB(255, 255, 255);   /* white */
-        }
-        else {
-            ColorTable[12] = RGB(  0,   0,   0);   /* black */
-        }
-
-        ColorTable[13] = RGB(  0, 255,   0);   /* green */
-        ColorTable[14] = RGB(255,   0,   0);   /* red */
-        ColorTable[15] = RGB(  0,   0, 255);   /* blue */
-        ColorTable[16] = RGB(255, 255,   0);   /* yellow */
-        ColorTable[17] = RGB(255,   0, 255);   /* violett */
-        ColorTable[18] = RGB(  0, 255, 255);   /* azur */
-        ColorTable[19] = RGB(255, 128,   0);   /* orange */
-        ColorTable[20] = RGB(128,  64,   0);   /* brown */
-        ColorTable[21] = RGB(128,   0, 255);   /* light violett */
-        ColorTable[22] = RGB(255, 128, 128);   /* pink */
-
-        /* Ansii fixed font */
-        PlotFont = GetStockFont(ANSI_FIXED_FONT);
-
+#ifdef EXT_ASC
         /* register window class */
         TheWndClass.lpszClassName  = WindowName;
         TheWndClass.hInstance      = hInst;
@@ -207,28 +163,78 @@ int WIN_Init(void)
 
         if (!RegisterClass(&TheWndClass)) {
             return 1;
-        }
-    }
-    /* not first time */
-    else if (isblackold != isblack) {
-        if (isblack) {
-            ColorTable[0]  = RGB(  0,   0,   0);   /* black   = background */
-            ColorTable[1]  = RGB(255, 255, 255);   /* white    = text and grid */
-        }
-        else {
-            ColorTable[0]  = RGB(255, 255, 255);   /* white   = background */
-            ColorTable[1]  = RGB(  0,   0,   0);   /* black   = text and grid */
-        }
-        if (isblack) {
-            ColorTable[12] = RGB(255, 255, 255);   /* white */
-        }
-        else {
-            ColorTable[12] = RGB(  0,   0,   0);   /* black */
-        }
 
-        isblackold = isblack;
+#else
+        /* register window class */
+        TheWndClassW.lpszClassName = WindowNameW;
+        TheWndClassW.hInstance = hInst;
+        TheWndClassW.lpfnWndProc = PlotWindowProc;
+        TheWndClassW.style = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
+        TheWndClassW.lpszMenuName = NULL;
+        TheWndClassW.hCursor = LoadCursorW(NULL, MAKEINTRESOURCEW(32512) /*IDC_ARROW*/);
+        if (isblack)
+            TheWndClassW.hbrBackground = GetStockObject(BLACK_BRUSH);
+        else
+            TheWndClassW.hbrBackground = GetStockObject(WHITE_BRUSH);
+        TheWndClassW.hIcon = LoadIconW(hInst, MAKEINTRESOURCEW(2));
+        TheWndClassW.cbClsExtra = 0;
+        TheWndClassW.cbWndExtra = sizeof(GRAPH *);
+        if (!RegisterClassW(&TheWndClassW)) return 1;
+#endif
+        IsRegistered = 1;
     }
-    IsRegistered = 1;
+    else
+        wincolor_redo(ColorTable, NumWinColors);
+
+#ifdef EXT_ASC
+    //          lf.lfHeight = 18;
+    lf.lfWidth = 0;
+    lf.lfEscapement = 0;
+    lf.lfOrientation = 0;
+    lf.lfWeight = 500;
+    lf.lfItalic = 0;
+    lf.lfUnderline = 0;
+    lf.lfStrikeOut = 0;
+    lf.lfCharSet = 0;
+    lf.lfOutPrecision = 0;
+    lf.lfClipPrecision = 0;
+    lf.lfQuality = 0;
+    lf.lfPitchAndFamily = 0;
+    /* set up fonts */
+    if (!cp_getvar("wfont", CP_STRING, lf.lfFaceName, strlen(lf.lfFaceName))) {
+        (void)lstrcpy(lf.lfFaceName, DEF_FONTW);
+    }
+    if (!cp_getvar("wfont_size", CP_NUM, &(lf.lfHeight), 0)) {
+        lf.lfHeight = 18;
+    }
+    PlotFont = CreateFontIndirect(&lf);
+#else
+    //          lfw.lfHeight = 18;
+    lfw.lfWidth = 0;
+    lfw.lfEscapement = 0;
+    lfw.lfOrientation = 0;
+    lfw.lfWeight = 500;
+    lfw.lfItalic = 0;
+    lfw.lfUnderline = 0;
+    lfw.lfStrikeOut = 0;
+    lfw.lfCharSet = 0;
+    lfw.lfOutPrecision = 0;
+    lfw.lfClipPrecision = 0;
+    lfw.lfQuality = 0;
+    lfw.lfPitchAndFamily = 0;
+    if (!cp_getvar("wfont", CP_STRING, facename, sizeof(facename))) {
+        (void)lstrcpyW(lfw.lfFaceName, DEFW_FONTW);
+    }
+    else {
+        wchar_t wface[32];
+        swprintf(wface, 32, L"%S", facename);
+        (void)lstrcpyW(lfw.lfFaceName, wface);
+    }
+    if (!cp_getvar("wfont_size", CP_NUM, &(lfw.lfHeight), 0)) {
+        lfw.lfHeight = 18;
+    }
+    PlotFont = CreateFontIndirectW(&lfw);
+#endif
 
     /* ready */
     return 0;
@@ -239,7 +245,11 @@ int WIN_Init(void)
 /* (attach to window) */
 static GRAPH *pGraph(HWND hwnd)
 {
+#ifdef EXT_ASC
     return (GRAPH *) GetWindowLongPtr(hwnd, 0);
+#else
+    return (GRAPH *) GetWindowLongPtrW( hwnd, 0);
+#endif
 }
 
 
@@ -341,6 +351,19 @@ static LRESULT PrintInit(HWND hwnd)
     return 0;
 }
 
+/* check if background color is dark enough.
+   Threshold is empirical by looking at color tables */
+static bool get_black(GRAPH* graph)
+{
+    int tcolor = GetRValue(graph->colorarray[0]) +
+        (int)(1.5 * GetGValue(graph->colorarray[0])) + 
+        GetBValue(graph->colorarray[0]);
+    if (tcolor > 360) {
+        return FALSE;
+    }
+    else
+        return TRUE;
+}
 
 /* window procedure */
 LRESULT CALLBACK PlotWindowProc(HWND hwnd, UINT uMsg,
@@ -387,6 +410,8 @@ LRESULT CALLBACK PlotWindowProc(HWND hwnd, UINT uMsg,
         /* left mouse button: connect coordinate pair by dashed pair of x, y lines */
         if (wParam & MK_LBUTTON) {
             hdc = GetDC(hwnd);
+            GRAPH* gr = pGraph(hwnd);
+            isblack = get_black(gr);
             if (isblack) {
                 prevmix = SetROP2(hdc, R2_XORPEN);
             }
@@ -394,7 +419,7 @@ LRESULT CALLBACK PlotWindowProc(HWND hwnd, UINT uMsg,
                 prevmix = SetROP2(hdc, R2_NOTXORPEN);
             }
             /* Create white dashed pen */
-            NewPen = CreatePen(LType(12), 0, ColorTable[1]);
+            NewPen = CreatePen(LType(12), 0, gr->colorarray[1]);
             OldPen = SelectObject(hdc, NewPen);
             /* draw lines with previous coodinates -> delete old line because of XOR */
             MoveToEx (hdc, x0, y0, NULL);
@@ -419,12 +444,14 @@ LRESULT CALLBACK PlotWindowProc(HWND hwnd, UINT uMsg,
         /* right mouse button: create white (black) dashed box */
         else if (wParam & MK_RBUTTON) {
             hdc = GetDC (hwnd);
+            GRAPH* gr = pGraph(hwnd);
+            isblack = get_black(gr);
             if (isblack)
                 prevmix = SetROP2(hdc, R2_XORPEN);
             else
                 prevmix = SetROP2(hdc, R2_NOTXORPEN);
             /* Create white (black) dashed pen */
-            NewPen = CreatePen(LType(12), 0, ColorTable[1]);
+            NewPen = CreatePen(LType(12), 0, gr->colorarray[1]);
             OldPen = SelectObject(hdc, NewPen);
             /* draw box with previous coodinates -> delete old lines because of XOR */
             MoveToEx (hdc, x0, y0, NULL);
@@ -527,11 +554,11 @@ LRESULT CALLBACK PlotWindowProc(HWND hwnd, UINT uMsg,
         if (!eq(plot_cur->pl_typename, buf2)) {
             (void) sprintf(buf,
 //       "setplot %s; %s xlimit %e %e ylimit %e %e; setplot $curplot\n",
-                           "setplot %s; %s xlimit %e %e ylimit %e %e\n",
-                           buf2, gr->commandline, fx0, fxe, fy0, fye);
+                           "setplot %s; %s xlimit %e %e ylimit %e %e sgraphid %d\n",
+                           buf2, gr->commandline, fx0, fxe, fy0, fye, gr->graphid);
         } else {
-            (void) sprintf(buf, "%s xlimit %e %e ylimit %e %e\n",
-                           gr->commandline, fx0, fxe, fy0, fye);
+            (void) sprintf(buf, "%s xlimit %e %e ylimit %e %e sgraphid %d\n",
+                           gr->commandline, fx0, fxe, fy0, fye, gr->graphid);
         }
 
         (void) cp_evloop(buf);
@@ -599,7 +626,11 @@ LRESULT CALLBACK PlotWindowProc(HWND hwnd, UINT uMsg,
 
     default:
     WIN_DEFAULT:
+#ifdef EXT_ASC
         return DefWindowProc(hwnd, uMsg, wParam, lParam);
+#else
+       return DefWindowProcW( hwnd, uMsg, wParam, lParam);
+#endif
     }
 }
 
@@ -616,9 +647,14 @@ int WIN_NewViewport(GRAPH *graph)
     int      i;
     HWND     window;
     HDC      dc;
+#ifdef EXT_ASC
     TEXTMETRIC  tm;
+#else
+   TEXTMETRICW  tmw;
+#endif
     tpWindowData   wd;
     HMENU    sysmenu;
+    GRAPH* pgraph = NULL;
 
     /* test the parameters */
     if (!graph) {
@@ -629,6 +665,16 @@ int WIN_NewViewport(GRAPH *graph)
     if (WIN_Init() != 0) {
         externalerror("Can't initialize GDI.");
         return 1;
+    }
+
+    /* get the colors into graph struct */
+    wincolor_graph(ColorTable, NumWinColors, graph);
+    /* If we had a previous graph, e.g. after zooming, we
+    have to set the background color already here, because
+    background is set below */
+    if (graph->mgraphid > 0) {
+        pgraph = FindGraph(graph->mgraphid);
+        graph->colorarray[0] = pgraph->colorarray[0];
     }
 
     /* allocate device dependency info */
@@ -642,22 +688,34 @@ int WIN_NewViewport(GRAPH *graph)
 
     /* Create the window */
     i = GetSystemMetrics(SM_CYSCREEN) / 3;
+#ifdef EXT_ASC
     window = CreateWindow(WindowName, graph->plotname, WS_OVERLAPPEDWINDOW,
                           0, 0, WinLineWidth, i * 2 - 22, NULL, NULL, hInst, NULL);
-    if (!window) {
+#else
+   /* UTF-8 support */
+    wchar_t *wtext, *wtext2;
+    wtext = TMALLOC(wchar_t, 2 * strlen(graph->plotname) + 1);
+    wtext2 = TMALLOC(wchar_t, 2 * strlen(WindowName) + 1);
+    /* translate UTF-8 to UTF-16 */
+    MultiByteToWideChar(CP_UTF8, 0, graph->plotname, -1, wtext, 2 * strlen(graph->plotname) + 1);
+    MultiByteToWideChar(CP_UTF8, 0, WindowName, -1, wtext2, 2 * strlen(WindowName) + 1);
+    window = CreateWindowW(wtext2, wtext, WS_OVERLAPPEDWINDOW,
+        0, 0, WinLineWidth, i * 2 - 22, NULL, NULL, hInst, NULL);
+    tfree(wtext);
+    tfree(wtext2);
+#endif
+    if (!window)
         return 1;
-    }
 
+    SetClassLongPtr(window, GCLP_HBRBACKGROUND, (LONG_PTR)GetStockObject(DC_BRUSH));
+    
+    /* get the DC */  
+    dc = GetDC(window);
+    wd->hDC = dc;
 
-    /* change the background color of all windows (both new and already plotted)
-       by assessing the registered window class */
-    if (isblack) {
-        SetClassLongPtr(window, GCLP_HBRBACKGROUND, (LONG_PTR)GetStockObject(BLACK_BRUSH));
-    }
-    else {
-        SetClassLongPtr(window, GCLP_HBRBACKGROUND, (LONG_PTR)GetStockObject(WHITE_BRUSH));
-    }
-
+   /* set the background color */
+    SelectObject(dc, GetStockObject(DC_BRUSH));
+    SetDCBrushColor(dc, graph->colorarray[0]);
 
     wd->wnd = window;
     SetWindowLongPtr(window, 0, (LONG_PTR)graph);
@@ -667,10 +725,6 @@ int WIN_NewViewport(GRAPH *graph)
 
     /* get the mask */
     GetClientRect(window, &(wd->Area));
-
-    /* get the DC */
-    dc = GetDC(window);
-    wd->hDC = dc;
 
     /* set the Color Index */
     wd->ColorIndex = 0;
@@ -688,18 +742,24 @@ int WIN_NewViewport(GRAPH *graph)
     AppendMenu(sysmenu, MF_STRING, ID_HARDCOPY_BW, STR_HARDCOPY_BW);
 
     /* set default parameters of DC */
-    SetBkColor(dc, ColorTable[0]);
+    SetBkColor(dc, graph->colorarray[0]);
     SetBkMode(dc, TRANSPARENT );
 
     /* set font */
     SelectObject(dc, PlotFont);
 
     /* query the font parameters */
+#ifdef EXT_ASC
     if (GetTextMetrics(dc, &tm)) {
         graph->fontheight = tm.tmHeight;
         graph->fontwidth  = tm.tmAveCharWidth;
     }
-
+#else
+       if (GetTextMetricsW(dc, &tmw)) {
+           graph->fontheight = tmw.tmHeight;
+           graph->fontwidth = tmw.tmAveCharWidth + 1; /*FIXME relationship between height and width for various fonts*/
+       }
+#endif
     /* set viewport parameters */
     graph->viewport.height = wd->Area.bottom;
     graph->viewport.width  = wd->Area.right;
@@ -709,6 +769,27 @@ int WIN_NewViewport(GRAPH *graph)
     graph->absolute.ypos   = 0;
     graph->absolute.width  = wd->Area.right;
     graph->absolute.height = wd->Area.bottom;
+
+    /* get linewidth information from .spiceinit or .control section */
+    if (!cp_getvar("xbrushwidth", CP_NUM, &linewidth, 0))
+        linewidth = 0;
+    if (linewidth < 0)
+        linewidth = 0;
+    if (pgraph)
+        graph->graphwidth = pgraph->graphwidth;
+    else
+        graph->graphwidth = linewidth;
+
+    /* get linewidth information from .spiceinit or .control section */
+    if (!cp_getvar("xgridwidth", CP_NUM, &gridlinewidth, 0))
+        gridlinewidth = 0;
+    if (gridlinewidth < 0)
+        gridlinewidth = 0;
+
+    if (pgraph)
+        graph->gridwidth = pgraph->gridwidth;
+    else
+        graph->gridwidth = gridlinewidth;
 
     /* wait until the window is really there */
     WaitForIdle();
@@ -767,7 +848,8 @@ int WIN_Clear(void)
 }
 
 
-int WIN_DrawLine(int x1, int y1, int x2, int y2)
+int
+WIN_DrawLine(int x1, int y1, int x2, int y2, bool isgrid)
 {
     tpWindowData wd;
     HPEN      OldPen;
@@ -781,7 +863,10 @@ int WIN_DrawLine(int x1, int y1, int x2, int y2)
         return 0;
 
     MoveToEx(wd->hDC, x1, wd->Area.bottom - y1, NULL);
-    NewPen = CreatePen(LType(wd->ColorIndex), linewidth, ColorTable[wd->ColorIndex]);
+    if (isgrid)
+        NewPen = CreatePen(LType(wd->ColorIndex), currentgraph->gridwidth, currentgraph->colorarray[wd->ColorIndex]);
+    else
+        NewPen = CreatePen(LType(wd->ColorIndex), currentgraph->graphwidth, currentgraph->colorarray[wd->ColorIndex]);
     OldPen = SelectObject(wd->hDC, NewPen);
     LineTo(wd->hDC, x2, wd->Area.bottom - y2);
     OldPen = SelectObject(wd->hDC, OldPen);
@@ -840,7 +925,7 @@ int WIN_Arc(int x0, int y0, int radius, double theta, double delta_theta)
     ye = (int)(dy0 + (r * sin(theta + delta_theta)));
 
     /* plot */
-    NewPen = CreatePen(LType(wd->ColorIndex), linewidth, ColorTable[wd->ColorIndex]);
+    NewPen = CreatePen(LType(wd->ColorIndex), linewidth, currentgraph->colorarray[wd->ColorIndex]);
     OldPen = SelectObject(wd->hDC, NewPen);
     Arc(wd->hDC, left, yb-top, right, yb-bottom, xs, yb-ys, xe, yb-ye);
     OldPen = SelectObject(wd->hDC, OldPen);
@@ -875,7 +960,13 @@ int WIN_Text(char *text, int x, int y, int angle)
 {
     tpWindowData wd;
     HFONT hfont;
+#ifdef EXT_ASC
     LOGFONT lf;
+#else
+    LOGFONTW lfw;
+#endif
+
+
 
     if (!currentgraph)
         return 0;
@@ -884,6 +975,7 @@ int WIN_Text(char *text, int x, int y, int angle)
     if (!wd)
         return 0;
 
+#ifdef EXT_ASC
     lf.lfHeight         = (int) (1.1 * currentgraph->fontheight);
     lf.lfWidth          = 0;
     lf.lfEscapement     = angle * 10;
@@ -903,15 +995,60 @@ int WIN_Text(char *text, int x, int y, int angle)
         (void) lstrcpy(lf.lfFaceName, DEF_FONTW);
 
     if (!cp_getvar("wfont_size", CP_NUM, &(lf.lfHeight), 0))
-        lf.lfHeight = (int) (1.3 * currentgraph->fontheight);
+        lf.lfHeight = 18;
+	    //lf.lfHeight = (int) (1.3 * currentgraph->fontheight);
+
+
 
     hfont = CreateFontIndirect (&lf);
+#else
+    char facename[32];
+    lfw.lfHeight = (int)(1.1 * currentgraph->fontheight);
+    lfw.lfWidth = 0;
+    lfw.lfEscapement = angle * 10;
+    lfw.lfOrientation = angle * 10;
+    lfw.lfWeight = 500;
+    lfw.lfItalic = 0;
+    lfw.lfUnderline = 0;
+    lfw.lfStrikeOut = 0;
+    lfw.lfCharSet = 0;
+    lfw.lfOutPrecision = 0;
+    lfw.lfClipPrecision = 0;
+    lfw.lfQuality = 0;
+    lfw.lfPitchAndFamily = 0;
+
+    /* set up fonts */
+    if (!cp_getvar("wfont", CP_STRING, facename, sizeof(facename))) {
+        (void)lstrcpyW(lfw.lfFaceName, DEFW_FONTW);
+    }
+    else {
+        wchar_t wface[32];
+        swprintf(wface, 32, L"%S", facename);
+        (void)lstrcpyW(lfw.lfFaceName, wface);
+    }
+    if (!cp_getvar("wfont_size", CP_NUM, &(lfw.lfHeight), 0)) {
+        lfw.lfHeight = 18;
+    }
+    else {
+        currentgraph->fontheight = lfw.lfHeight;
+        currentgraph->fontwidth = (int)(lfw.lfHeight*0.52);
+    }
+
+    hfont = CreateFontIndirectW(&lfw);
+#endif
     SelectObject(wd->hDC, hfont);
 
-    SetTextColor(wd->hDC, ColorTable[wd->ColorIndex]);
+    SetTextColor(wd->hDC, currentgraph->colorarray[wd->ColorIndex]);
+#ifdef EXT_ASC
     TextOut(wd->hDC, x, wd->Area.bottom - y - currentgraph->fontheight, text, (int)strlen(text));
-
-    DeleteObject(SelectObject(wd->hDC, GetStockObject(SYSTEM_FONT)));
+#else
+    wchar_t *wtext;
+    wtext = TMALLOC(wchar_t, 2 * strlen(text) + 1);
+    MultiByteToWideChar(CP_UTF8, 0, text, -1, wtext, 2 * strlen(text) + 1);
+    TextOutW(wd->hDC, x, wd->Area.bottom - y - currentgraph->fontheight, wtext, 2 * (int)strlen(text) + 1);
+    tfree(wtext);
+#endif
+    DeleteObject(SelectObject(wd->hDC, hfont));
 
     return 0;
 }
@@ -942,8 +1079,9 @@ int WIN_SetLinestyle(int style)
 }
 
 
-int WIN_SetColor(int color)
+int WIN_SetColor(int color, GRAPH *graph)
 {
+    NG_IGNORE(graph);
     tpWindowData wd;
 
     if (!currentgraph)
@@ -1018,8 +1156,8 @@ static void WIN_ScreentoData(GRAPH *graph, int x, int y, double *fx, double *fy)
     {
         lmin = log10(graph->datawindow.ymin);
         lmax = log10(graph->datawindow.ymax);
-        *fy = exp(((graph->absolute.height - y - graph->viewportyoff) *
-                (lmax - lmin) / graph->viewport.height + lmin) * M_LN10);
+        *fy = exp(((graph->absolute.height - y - graph->viewportxoff) *
+               (lmax - lmin) / graph->viewport.height + lmin) * M_LN10);
     } else {
         *fy = ((graph->absolute.height - y) - graph->viewportyoff) *
                 graph->aspectratioy + graph->datawindow.ymin;
