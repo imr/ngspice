@@ -344,7 +344,7 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
     }
     if (nylabel) {
         rc_ds |= ds_cat_printf(&ds_cline, " ylabel '%s'", nylabel);
-        tfree(nxlabel);
+        tfree(nylabel);
     }
     if (ntitle) {
         rc_ds |= ds_cat_printf(&ds_cline, " title '%s'", ntitle);
@@ -1136,6 +1136,8 @@ quit:
     ds_free(&ds_cline); /* free dstring resources, if any */
     free_pnode(names);
     FREE(title);
+    FREE(xlabel);
+    FREE(ylabel);
 
 quit1:
     /* Free any vectors left behing while parsing the plot arguments. These
