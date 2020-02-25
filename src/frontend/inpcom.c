@@ -6966,7 +6966,7 @@ static int inp_vdmos_model(struct card *deck)
         }
         /* we have a VDMOS instance line with 'thermal' flag and thus need exactly 5 nodes
          */
-        else if (strstr(curr_line, "thermal")) {
+        else if (curr_line[0] == 'm' && strstr(curr_line, "thermal")) {
             for (i = 0; i < 7; i++)
                 curr_line = nexttok(curr_line);
             if (!ciprefix("thermal", curr_line)) {
