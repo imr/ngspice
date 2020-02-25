@@ -1,14 +1,11 @@
-/xtraevt.cm
+/table.cm
 
 /cmextrn.h
 /cminfo.h
 /cminfo2.h
-/dlmain.c
 /objects.inc
 /udnextrn.h
 /udninfo.h
 /udninfo2.h
 
 /*/*.c
-
-!/*/udnfunc.c

@@ -37,6 +37,10 @@ Makefile.in
 /missing
 /ylwrap
 /ar-lib
+/ngspice.pc
+
+/src/frontend/parse-bison.*
+/src/spicelib/parser/inpptree-parser.*
 
 /src/include/ngspice/config.h.in
 /src/include/ngspice/config.h
