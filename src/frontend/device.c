@@ -1095,6 +1095,7 @@ if_set_binned_model(CKTcircuit *ckt, char *devname, char *param, struct dvec *va
         return;
     }
     w = v->va_V.vV_real;
+    free_struct_variable(v);
 
     v = if_getparam(ckt, &devname, "l", 0, 0);
     if (!v) {
@@ -1102,6 +1103,7 @@ if_set_binned_model(CKTcircuit *ckt, char *devname, char *param, struct dvec *va
         return;
     }
     l = v->va_V.vV_real;
+    free_struct_variable(v);
 
     if (param[0] == 'w')
         w = *val->v_realdata; /* overwrite the width with the alter param */
