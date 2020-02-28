@@ -275,7 +275,10 @@ DCtran(CKTcircuit *ckt,
             fflush(stdout);
         }
 
-        if(converged != 0) return(converged);
+        if (converged != 0) {
+            SPfrontEnd->OUTendPlot(job->TRANplot);
+            return(converged);
+        }
 #ifdef XSPICE
 /* gtri - add - wbk - 12/19/90 - Add IPC stuff */
 
