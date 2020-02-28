@@ -124,16 +124,17 @@ if $?batchmode
   rusage
   quit
 else
+  set nolegend
   if $?sharedmode or $?win_console
-    gnuplot xnp_pl1 {$plot_out}.vout0   $ just plot the tran output with nominal parameters
+    gnuplot xnp_pl1 {$plot_out}.vout0 ylabel vout0   $ just plot the tran output with nominal parameters
   else
-    plot {$plot_out}.vout0          $ just plot the tran output with nominal parameters
+    plot {$plot_out}.vout0  ylabel vout0    $ just plot the tran output with nominal parameters
   end
   setplot $plot_fft
   if $?sharedmode or $?win_console
-    gnuplot xnp_pl2 db(mag(ally)) xlimit 0 1G ylimit -80 10
+    gnuplot xnp_pl2 db(mag(ally)) ylabel 'output voltage versus frequency' xlimit 0 1G ylimit -80 10
   else
-    plot db(mag(ally)) xlimit 0 1G ylimit -80 10
+    plot db(mag(ally)) xlimit 0 1G ylimit -80 10 ylabel 'output voltage versus frequency'
   end
 *
 * create a histogram from vector maxffts
@@ -166,9 +167,10 @@ else
   * plot the histogram
   let count = yvec - 1             $ subtract 1 because we started with unitvec containing ones
   if $?sharedmode or $?win_console
-    gnuplot np_pl3 count vs osc_frequ combplot
+    gnuplot np_pl3 count vs osc_frequ combplot ylabel 'counts per bin'
   else
-    plot count vs osc_frequ combplot
+    set xbrushwidth=5
+    plot count vs osc_frequ combplot ylabel 'counts per bin'
   end
 * calculate jitter
   let diff40 = (vecmax(halfffts) - vecmin(halfffts))*1e-6
