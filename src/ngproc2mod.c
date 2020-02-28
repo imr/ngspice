@@ -329,3 +329,6 @@ retry:
         }
     }
 }
+
+void
+controlled_exit(int status) { exit(status); }

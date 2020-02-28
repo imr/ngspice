@@ -445,6 +445,7 @@ void cp_ccom(wordlist *w, char *b, bool e) {
 int cp_usrset(struct variable *v, bool i) {
     NG_IGNORE(i);
     NG_IGNORE(v); return(US_OK); }
+wordlist * cp_doalias(wordlist *wlist) {NG_IGNORE(wlist); return NULL;}
 
 int disptype;
 
