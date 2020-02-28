@@ -26,6 +26,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "numparam/numpaif.h"
 
 #include "ngspice/inpdefs.h"
+#include "ngspice/evtproto.h"
 
 extern void line_free_x(struct card *deck, bool recurse);
 extern INPmodel *modtab;
@@ -236,6 +237,9 @@ com_remcirc(wordlist *wl)
 
     /* The next lines stem from com_rset */
     INPkillMods();
+
+    /* remove event queues */
+    EVTunsetup(ft_curckt->ci_ckt);
 
     if_cktfree(ft_curckt->ci_ckt, ft_curckt->ci_symtab);
     for (v = ft_curckt->ci_vars; v; v = next) {
