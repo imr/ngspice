@@ -386,6 +386,14 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
                 TSTALLOC(VDMOSTcasetcasePtr, VDMOStcaseNode, VDMOStcaseNode); /* Rthjc between tj and tcase*/
                 TSTALLOC(VDMOSTcasetempPtr, VDMOStcaseNode, VDMOStempNode);
                 TSTALLOC(VDMOSTemptcasePtr, VDMOStempNode, VDMOStcaseNode);
+
+                TSTALLOC(VDMOSTempdPtr, VDMOStempNode, VDMOSdNode);  /* Rdrain thermal contribution */
+                TSTALLOC(VDMOSDtempPtr, VDMOSdNode, VDMOStempNode);
+                TSTALLOC(VDMOSTempsPtr, VDMOStempNode, VDMOSsNode);  /* Diode resistance thermal contribution */
+                TSTALLOC(VDMOSStempPtr, VDMOSsNode, VDMOStempNode);
+                TSTALLOC(VDMOSTempRpPtr, VDMOStempNode, VDIOposPrimeNode); /* Diode thermal contribution */
+                TSTALLOC(VDMOSRPtempPtr, VDIOposPrimeNode, VDMOStempNode);
+
                 TSTALLOC(VDMOSTptpPtr, VDMOStNodePrime, VDMOStNodePrime); /* Rthca between tcase and Vsrc */
                 TSTALLOC(VDMOSTptcasePtr, VDMOStNodePrime, VDMOStempNode);
                 TSTALLOC(VDMOSTcasetpPtr, VDMOStempNode, VDMOStNodePrime);

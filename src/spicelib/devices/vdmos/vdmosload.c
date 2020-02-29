@@ -91,6 +91,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
     double deldelTemp, delTemp, delTemp1, Temp, Vds, Vgs;
     double ceqqth=0.0;
     double GmT, gTtg, gTtdp, gTtt, gTtsp, gcTt=0.0;
+    double Vrd=0.0, dIrd_dT=0.0, dIth_dVrd=0.0, dIth_dT=0.0;
 
     /*  loop through all the VDMOS device models */
     for (; model != NULL; model = VDMOSnextModel(model)) {
@@ -134,6 +135,8 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                 vds = model->VDMOStype * here->VDMOSicVDS;
                 vgs = model->VDMOStype * here->VDMOSicVGS;
                 delTemp = 0.0;
+                Vrd = model->VDMOStype *
+                     (*(ckt->CKTrhsOld+here->VDMOSdNode) - *(ckt->CKTrhsOld+here->VDMOSdNodePrime));
                 if ((vds == 0.0) && (vgs == 0.0) &&
                         ((ckt->CKTmode & (MODETRAN | MODEAC|MODEDCOP |
                                           MODEDCTRANCURVE)) || (!(ckt->CKTmode & MODEUIC))))
@@ -142,7 +145,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                     vds = 0.0;
                 }
             } else if ((ckt->CKTmode & (MODEINITJCT | MODEINITFIX)) && (here->VDMOSoff)) {
-                delTemp = vgs = vds = 0.0;
+                delTemp = vgs = vds = Vrd = 0.0;
 
             /*
              * ok - now to do the start-up operations
@@ -191,6 +194,9 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                         delTemp = *(ckt->CKTrhsOld + here->VDMOStempNode);
                     else
                         delTemp = 0.0;
+                    Vrd = model->VDMOStype *
+                              *(ckt->CKTrhsOld+here->VDMOSdNode) - 
+                              *(ckt->CKTrhsOld+here->VDMOSdNodePrime);
 #ifndef PREDICTOR
                 }
 #endif /* PREDICTOR */
@@ -255,6 +261,8 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                                             vds = *(ckt->CKTstate0 + here->VDMOSvds);
                                             vgd = vgs - vds;
                                             delTemp = *(ckt->CKTstate0 + here->VDMOSdeltemp);
+                                            Vrd = model->VDMOStype * 
+                                                 (*(ckt->CKTrhsOld+here->VDMOSdNode) - *(ckt->CKTrhsOld+here->VDMOSdNodePrime));
                                             /*  calculate Vds for temperature conductance calculation
                                                 in bypass (used later when filling Temp node matrix)  */
                                             Vds = here->VDMOSmode > 0 ? vds : -vds;
@@ -312,11 +320,19 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
 
             /*  Calculate temperature dependent values for self-heating effect  */
             if (selfheat) {
+                double dIrd_dVrd, dIrd_drd0T, dIth_dIrd;
                 double TempRatio = Temp / here->VDMOStemp;
                 Beta = here->VDMOStTransconductance * pow(TempRatio,model->VDMOSmu);
                 dBeta_dT = Beta * model->VDMOSmu / Temp;
                 rd0T =  here->VDMOSdrainResistance * pow(TempRatio, model->VDMOStexp0);
                 drd0T_dT = rd0T * model->VDMOStexp0 / Temp;
+                dIrd_dVrd = 1.0 / rd0T;
+                dIrd_drd0T = -Vrd / (rd0T*rd0T);
+                dIrd_dT = dIrd_drd0T * drd0T_dT;
+                dIth_dIrd = -Vrd;
+                dIth_dVrd = -Vrd/rd0T;
+                dIth_dVrd = dIth_dVrd + dIth_dIrd*dIrd_dVrd;
+                dIth_dT = dIth_dIrd*dIrd_dT;
                 rd1T = 0.0;
                 drd1T_dT = 0.0;
                 if (model->VDMOSqsGiven) {
@@ -654,7 +670,7 @@ bypass:
                 (*(here->VDMOSDPtempPtr)     += GmT);
                 (*(here->VDMOSSPtempPtr)     += -GmT);
                 (*(here->VDMOSGPtempPtr)     += 0.0);
-                (*(here->VDMOSTemptempPtr)   += gTtt + 1/model->VDMOSrthjc + gcTt);
+                (*(here->VDMOSTemptempPtr)   += gTtt + 1/model->VDMOSrthjc + gcTt + dIth_dT);
                 (*(here->VDMOSTempgpPtr)     += gTtg);
                 (*(here->VDMOSTempdpPtr)     += gTtdp);
                 (*(here->VDMOSTempspPtr)     += gTtsp);
@@ -666,6 +682,9 @@ bypass:
                 (*(here->VDMOSTcasetpPtr)    += -1/model->VDMOSrthca);
                 (*(here->VDMOSCktTtpPtr)     +=  1.0);
                 (*(here->VDMOSTpcktTPtr)     +=  1.0);
+
+                (*(here->VDMOSDtempPtr)      +=  dIrd_dT);
+                (*(here->VDMOSTempdPtr)      += -dIth_dVrd);
             }
 
             /* body diode model

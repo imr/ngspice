@@ -163,66 +163,66 @@ typedef struct sVDMOSinstance {
     unsigned VDMOSmodeGiven :1;
 
     double *VDMOSDdPtr;      /* pointer to sparse matrix element at
-                                     * (Drain node,drain node) */
+                                       (Drain node,drain node) */
     double *VDMOSGgPtr;      /* pointer to sparse matrix element at
-                                     * (gate node,gate node) */
+                                       (gate node,gate node) */
     double *VDMOSSsPtr;      /* pointer to sparse matrix element at
-                                     * (source node,source node) */
+                                       (source node,source node) */
     double *VDMOSDPdpPtr;    /* pointer to sparse matrix element at
-                                     * (drain prime node,drain prime node) */
+                                       (drain prime node,drain prime node) */
     double *VDMOSSPspPtr;    /* pointer to sparse matrix element at
-                                     * (source prime node,source prime node) */
+                                       (source prime node,source prime node) */
     double *VDMOSDdpPtr;     /* pointer to sparse matrix element at
-                                     * (drain node,drain prime node) */
+                                       (drain node,drain prime node) */
     double *VDMOSGdpPtr;     /* pointer to sparse matrix element at
-                                     * (gate node,drain prime node) */
+                                       (gate node,drain prime node) */
     double *VDMOSGspPtr;     /* pointer to sparse matrix element at
-                                     * (gate node,source prime node) */
+                                       (gate node,source prime node) */
     double *VDMOSSspPtr;     /* pointer to sparse matrix element at
-                                     * (source node,source prime node) */
+                                       (source node,source prime node) */
     double *VDMOSDPspPtr;    /* pointer to sparse matrix element at
-                                     * (drain prime node,source prime node) */
+                                       (drain prime node,source prime node) */
     double *VDMOSDPdPtr;     /* pointer to sparse matrix element at
-                                     * (drain prime node,drain node) */
+                                       (drain prime node,drain node) */
     double *VDMOSDPgPtr;     /* pointer to sparse matrix element at
-                                     * (drain prime node,gate node) */
+                                       (drain prime node,gate node) */
 
     double *VDMOSSPgPtr;     /* pointer to sparse matrix element at
-                                     * (source prime node,gate node) */
+                                       (source prime node,gate node) */
     double *VDMOSSPsPtr;     /* pointer to sparse matrix element at
-                                     * (source prime node,source node) */
+                                       (source prime node,source node) */
     double *VDMOSSPdpPtr;    /* pointer to sparse matrix element at
-                                     * (source prime node,drain prime node) */
+                                       (source prime node,drain prime node) */
     /* added for VDMOS */
     double *VDMOSGPgpPtr;    /* pointer to sparse matrix element at
-                             * (gate prime node, gate prime node) */
+                               (gate prime node, gate prime node) */
     double *VDMOSGPdpPtr;    /* pointer to sparse matrix element at
-                             * (gate prime node, drain prime node) */
+                               (gate prime node, drain prime node) */
     double *VDMOSGPspPtr;    /* pointer to sparse matrix element at
-                             * (gate prime node, source prime node) */
+                               (gate prime node, source prime node) */
     double *VDMOSDPgpPtr;    /* pointer to sparse matrix element at
-                             * (drain prime node, gate prime node) */
+                               (drain prime node, gate prime node) */
     double *VDMOSSPgpPtr;    /* pointer to sparse matrix element at
-                             * (source prime node, gate prime node) */
+                               (source prime node, gate prime node) */
     double *VDMOSGgpPtr;    /* pointer to sparse matrix element at
-                             * (gate node, gate prime node) */
+                               (gate node, gate prime node) */
     double *VDMOSGPgPtr;    /* pointer to sparse matrix element at
-                             * (gate prime node, gate node) */
+                               (gate prime node, gate node) */
     double *VDMOSDsPtr;    /* pointer to sparse matrix element at
-                             * (source node, drain node) */
+                               (source node, drain node) */
     double *VDMOSSdPtr;    /* pointer to sparse matrix element at
-                             * (drain node, source node) */
+                               (drain node, source node) */
     /* body diode */
     double *VDIORPdPtr;    /* pointer to sparse matrix element at
-                             * (diode prime node, drain node) */
+                               (diode prime node, drain node) */
     double *VDIODrpPtr;    /* pointer to sparse matrix element at
-                             * (drain node, diode prime node) */
+                               (drain node, diode prime node) */
     double *VDIORPrpPtr;    /* pointer to sparse matrix element at
-                             * (diode prime node, diode prime node) */
+                               (diode prime node, diode prime node) */
     double *VDIOSrpPtr;    /* pointer to sparse matrix element at
-                            * (source node, diode prime node) */
+                              (source node, diode prime node) */
     double *VDIORPsPtr;    /* pointer to sparse matrix element at
-                            * (diode prime node, source node) */
+                              (diode prime node, source node) */
     /* self heating */
     double *VDMOSTemptempPtr;
     double *VDMOSTempdpPtr;
@@ -231,6 +231,13 @@ typedef struct sVDMOSinstance {
     double *VDMOSGPtempPtr;
     double *VDMOSDPtempPtr;
     double *VDMOSSPtempPtr;
+
+    double *VDMOSTempdPtr;      /* Rdrain thermal contribution */
+    double *VDMOSDtempPtr;
+    double *VDMOSTempsPtr;      /* Diode resistance thermal contribution */
+    double *VDMOSStempPtr;
+    double *VDMOSTempRpPtr;     /* Diode thermal contribution */
+    double *VDMOSRPtempPtr;
 
     double *VDMOSTcasetcasePtr; /* for Rthjc */
     double *VDMOSTcasetempPtr;
