@@ -19,6 +19,8 @@
 # Add (optionally) --enable-relpath to avoid absolute paths when searching for code models.
 # It might be necessary to uncomment and run ./autogen.sh .
 
+SECONDS=0
+
 if test "$1" = "32"; then
    if [ ! -d "release32" ]; then
       mkdir release32
@@ -75,5 +77,8 @@ make install 2>&1 | tee make_install.log
 exitcode=${PIPESTATUS[0]}
 if [ $exitcode -ne 0 ]; then  echo "make install failed"; exit 1 ; fi
 
+ELAPSED="Elapsed compile time: $(($SECONDS / 3600))hrs $((($SECONDS / 60) % 60))min $(($SECONDS % 60))sec"
+echo
+echo $ELAPSED
 echo "success"
 exit 0
