@@ -66,7 +66,7 @@ static wordlist_l *brac1(size_t offset_ocurl1, const char *p_str_cur);
 static wordlist_l *brac2(const char *string,
         size_t *p_n_char_processed);
 static wordlist *bracexpand(const wordlist *w_exp);
-static void merge_home_with_rest(wordlist *wl_node,
+static inline void merge_home_with_rest(wordlist *wl_node,
         size_t n_char_home, const char *sz_home, size_t n_char_skip);
 static inline void strip_1st_char(wordlist *wl_node);
 static void tilde_expand_word(wordlist *wl_node);
