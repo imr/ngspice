@@ -224,7 +224,7 @@ typedef struct sVDMOSinstance {
     double *VDIORPsPtr;    /* pointer to sparse matrix element at
                               (diode prime node, source node) */
     /* self heating */
-    double *VDMOSTemptempPtr;
+    double *VDMOSTemptempPtr;   /* Transistor thermal contribution */
     double *VDMOSTempdpPtr;
     double *VDMOSTempspPtr;
     double *VDMOSTempgpPtr;
@@ -242,11 +242,9 @@ typedef struct sVDMOSinstance {
     double *VDMOSTcasetcasePtr; /* for Rthjc */
     double *VDMOSTcasetempPtr;
     double *VDMOSTemptcasePtr;
-
     double *VDMOSTptpPtr;       /* for Rthca */
     double *VDMOSTptcasePtr;
     double *VDMOSTcasetpPtr;
-
     double *VDMOSCktTcktTPtr;   /* for VcktTemp */
     double *VDMOSCktTtpPtr;
     double *VDMOSTpcktTPtr;
