@@ -456,7 +456,6 @@
     <ClInclude Include="..\src\frontend\plotting\plotting.h" />
     <ClInclude Include="..\src\frontend\plotting\pvec.h" />
     <ClInclude Include="..\src\frontend\plotting\x11.h" />
-    <ClInclude Include="..\src\frontend\plotting\xgraph.h" />
     <ClInclude Include="..\src\frontend\points.h" />
     <ClInclude Include="..\src\frontend\postcoms.h" />
     <ClInclude Include="..\src\frontend\postsc.h" />
@@ -1062,7 +1061,6 @@
     <ClCompile Include="..\src\frontend\plotting\plotting.c" />
     <ClCompile Include="..\src\frontend\plotting\pvec.c" />
     <ClCompile Include="..\src\frontend\plotting\x11.c" />
-    <ClCompile Include="..\src\frontend\plotting\xgraph.c" />
     <ClCompile Include="..\src\frontend\points.c" />
     <ClCompile Include="..\src\frontend\postcoms.c" />
     <ClCompile Include="..\src\frontend\postsc.c" />

@@ -61,9 +61,9 @@ VDMOSparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->VDMOSicVGS = value->rValue;
             here->VDMOSicVGSGiven = TRUE;
             break;
-        case VDMOS_TNODEOUT:
-            here->VDMOStnodeout = (value->iValue != 0);
-            here->VDMOStnodeoutGiven = TRUE;
+        case VDMOS_THERMAL:
+            here->VDMOSthermal = (value->iValue != 0);
+            here->VDMOSthermalGiven = TRUE;
             break;
         case VDMOS_IC:
             switch(value->v.numValue){

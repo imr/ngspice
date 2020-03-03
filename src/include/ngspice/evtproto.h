@@ -65,6 +65,7 @@ void EVTtermInsert(
     char            **err_msg);
 
 int EVTsetup(CKTcircuit *ckt);
+int EVTunsetup(CKTcircuit* ckt);
 
 int EVTdest(Evt_Ckt_Data_t *evt);
 

@@ -4088,7 +4088,7 @@ static int get_number_terminals(char *c)
                 char *inst = gettok_instance(&c);
                 strncpy(nam_buf, inst, sizeof(nam_buf) - 1);
                 txfree(inst);
-                if (strstr(nam_buf, "off") || strchr(nam_buf, '=') || strstr(nam_buf, "tnodeout"))
+                if (strstr(nam_buf, "off") || strchr(nam_buf, '=') || strstr(nam_buf, "tnodeout") || strstr(nam_buf, "thermal"))
                     break;
                 i++;
             }
@@ -6964,16 +6964,16 @@ static int inp_vdmos_model(struct card *deck)
             card->line = new_line;
             wl_free(wlb);
         }
-        /* we have a VDMOS instance line with 'tnodeout' and thus need exactly 5 nodes
+        /* we have a VDMOS instance line with 'thermal' flag and thus need exactly 5 nodes
          */
-        else if (strstr(curr_line, "tnodeout")) {
+        else if (curr_line[0] == 'm' && strstr(curr_line, "thermal")) {
             for (i = 0; i < 7; i++)
                 curr_line = nexttok(curr_line);
-            if (!ciprefix("tnodeout", curr_line)) {
+            if (!ciprefix("thermal", curr_line)) {
                 fprintf(cp_err,
                         "Error: We need exactly 5 nodes\n"
                         "    drain, gate, source, tjunction, tcase\n"
-                        "    in VDMOS instance line\n"
+                        "    in VDMOS instance line with thermal model\n"
                         "    %s\n", card->line);
                 return 1;
             }

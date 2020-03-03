@@ -436,7 +436,7 @@ void cp_ccon(bool o) { NG_IGNORE(o); }
 char*if_errstring(int c) { NG_IGNORE(c); return copy("error"); }
 void out_printf(char *fmt, ...) { NG_IGNORE(fmt); }
 void out_send(char *string) { NG_IGNORE(string); }
-struct variable * cp_enqvar(char *word, int *tbfreed) { NG_IGNORE(word); NG_IGNORE(*tbfreed); return (NULL); }
+struct variable * cp_enqvar(const char *word, int *tbfreed) { NG_IGNORE(word); NG_IGNORE(*tbfreed); return (NULL); }
 struct dvec *vec_get(const char *word) { NG_IGNORE(word); return (NULL); }
 void cp_ccom(wordlist *w, char *b, bool e) {
   NG_IGNORE(e);
@@ -445,6 +445,7 @@ void cp_ccom(wordlist *w, char *b, bool e) {
 int cp_usrset(struct variable *v, bool i) {
     NG_IGNORE(i);
     NG_IGNORE(v); return(US_OK); }
+wordlist * cp_doalias(wordlist *wlist) {NG_IGNORE(wlist); return NULL;}
 
 int disptype;
 

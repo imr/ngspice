@@ -135,6 +135,29 @@ int EVTsetup(
 }
 
 
+int EVTunsetup(
+    CKTcircuit* ckt)   /* The circuit structure */
+{
+    int err;
+
+    /* Exit immediately if no event-driven instances in circuit */
+    if (ckt->evt->counts.num_insts == 0)
+        return(OK);
+
+    /* Clear the inst, node, and output queues, and initialize the to_call */
+    /* elements in the instance queue to call all event-driven instances */
+    err = EVTsetup_queues(ckt);
+    if (err)
+        return(err);
+
+    /* Initialize additional event data */
+    g_mif_info.circuit.evt_step = 0.0;
+
+    /* Return OK */
+    return(OK);
+}
+
+
 
 
 /*

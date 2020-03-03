@@ -93,8 +93,10 @@ cm-deps := \
 cm-descr := \
 	$(cm)/cmextrn.h \
 	$(cm)/cminfo.h \
+	$(cm)/cminfo2.h \
 	$(cm)/udnextrn.h \
 	$(cm)/udninfo.h \
+	$(cm)/udninfo2.h \
 	$(cm)/objects.inc
 
 
