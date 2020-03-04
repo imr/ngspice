@@ -243,7 +243,8 @@ com_remcirc(wordlist *wl)
 
 #if defined(XSPICE) && defined(SIMULATOR)
     /* remove event queues, if XSPICE and not nutmeg */
-    EVTunsetup(ft_curckt->ci_ckt);
+    if (ft_curckt->ci_ckt)
+        EVTunsetup(ft_curckt->ci_ckt);
 #endif
 
     if_cktfree(ft_curckt->ci_ckt, ft_curckt->ci_symtab);
