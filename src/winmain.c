@@ -12,6 +12,10 @@
 
 #ifdef HAS_WINGUI
 
+#ifndef  _WIN32
+#define _WIN32
+#endif
+
 #define STRICT              // strict type checking
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>        // standard Windows calls
@@ -27,7 +31,10 @@
 #include <ctype.h>
 #include <sys/types.h>
 #include <sys/timeb.h>
-
+#ifndef _MSC_VER
+#include <wchar.h>
+#include <stdio.h>
+#endif
 
 #include "hist_info.h" /* history management */
 #include "ngspice/bool.h"   /* bool defined as unsigned char */
@@ -107,6 +114,7 @@ static LPCWSTR hwElementClassNameW = L"ElementClass";
 static LPCWSTR hwSourceWindowNameW = L"SourceDisplay";
 static LPCWSTR hwAnalyseWindowNameW = L"AnalyseDisplay";
 #endif
+
 static size_t   TBufEnd = 0;                    /* Pointer to \0 */
 static char TBuffer[TBufSize + 1];              /* Text buffer */
 static SBufLine SBuffer;                        /* Input buffer */
@@ -624,7 +632,7 @@ StringWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             /* for utf-8 the number of characters is not the number of bytes returned */
             GetWindowTextW(hwnd, WBuffer, sizeof SBuffer - (sizeof CRLF - 1));
             WideCharToMultiByte(CP_UTF8, 0, WBuffer,
-                     -1, SBuffer, sizeof SBuffer - 1, NULL, NULL);
+                     -1, SBuffer, sizeof SBuffer - 1, NULL, FALSE);
             /* retrive here the number of bytes returned */
             const int n_char_returned = (int)strlen(SBuffer);
             tfree(WBuffer);
@@ -961,12 +969,14 @@ MakeArgcArgv(char *cmdline, int *argc, char ***argv)
 #ifdef EXT_ASC
 int WINAPI
 WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpszCmdLine, _In_ int nCmdShow)
-#elif __MINGW32__ /* MINGW bug not knowing wWinMain */
-int WINAPI
-WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR nolpszCmdLine, _In_ int nCmdShow)
 #else
+#ifdef _MSC_VER
 int WINAPI
 wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR wlpszCmdLine, _In_ int nCmdShow)
+#else
+int WINAPI // MINGW bug not knowing wWinMain
+WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR nolpszCmdLine, _In_ int nCmdShow)
+#endif
 #endif
 {
     int ix, iy; /* width and height of screen */
@@ -988,11 +998,13 @@ wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR
 
 #ifndef EXT_ASC
     /* convert wchar to utf-8 */
-
+#ifdef _MSC_VER
+    char lpszCmdLine[1024];
+    WideCharToMultiByte(CP_UTF8, 0, wlpszCmdLine, -1, lpszCmdLine, 1023, NULL, FALSE);
+#else
     /* MINGW not knowing wWinMain
     https://github.com/coderforlife/mingw-unicode-main/blob/master/mingw-unicode-gui.c
     */
-#ifdef __MINGW32__
     NG_IGNORE(nolpszCmdLine);
     char lpszCmdLine[1024];
     wchar_t *lpCmdLine = GetCommandLineW();
@@ -1013,9 +1025,6 @@ wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR
         }
     }
     WideCharToMultiByte(CP_UTF8, 0, lpCmdLine, -1, lpszCmdLine, 1023, NULL, NULL);
-#else
-    char lpszCmdLine[1024];
-    WideCharToMultiByte(CP_UTF8, 0, wlpszCmdLine, -1, lpszCmdLine, 1023, NULL, NULL);
 #endif
 #endif
     /* fill global variables */
