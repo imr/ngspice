@@ -106,6 +106,23 @@ char *tvprintf(const char *fmt, va_list args)
          * usage, but both return negative values (possibly -1) on an
          * encoding error, which would lead to an infinte loop (until
          * memory was exhausted) with the old behavior */
+
+#ifdef __MINGW32__
+         /* mingw still shows the 'old behavior' */
+        if (nchars == -1) {     // compatibility to old implementations
+            size *= 2;
+        }
+        else if (size < nchars + 1) {
+            size = nchars + 1;
+        }
+        else {
+            break;
+        }
+        /* limit memory usage */
+        if (size > 100000) {
+            controlled_exit(-1);
+        }
+#else
         if (nchars < 0) {
             controlled_exit(-1);
         }
@@ -118,7 +135,7 @@ char *tvprintf(const char *fmt, va_list args)
          * that would have been written if the buffer were large enough
          * excluding the terminiating null. */
         size = nchars + 1; /* min required allocation size */
-
+#endif
         /* Allocate a larger buffer */
         if (p == buf) {
             p = TMALLOC(char, size);
