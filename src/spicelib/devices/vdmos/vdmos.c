@@ -32,6 +32,7 @@ IFparm VDMOSpTable[] = { /* parameters */
  OP( "cgs",         VDMOS_CAPGS,      IF_REAL,    "Gate-Source capacitance"),
  OP( "cgd",         VDMOS_CAPGD,      IF_REAL,    "Gate-Drain capacitance"),
  OP( "cds",         VDMOS_CAPDS,      IF_REAL,    "Drain-Source capacitance"),
+ OP( "idio",        VDMOS_CDIO,       IF_REAL,    "Body diode current"),
 
  OPU( "dnode",      VDMOS_DNODE,      IF_INTEGER, "Number of the drain node "),
  OPU( "gnode",      VDMOS_GNODE,      IF_INTEGER, "Number of the gate node "),

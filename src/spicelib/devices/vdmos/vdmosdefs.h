@@ -78,6 +78,7 @@ typedef struct sVDMOSinstance {
     double VDMOScd;
     double VDMOSgm;
     double VDMOSgds;
+    double VDMOScdio;
 
     double VDIOcap;
     double VDIOtSatCur;     /* temperature corrected saturation Cur. density*/
@@ -536,6 +537,7 @@ enum {
     VDMOS_CQGS,
     VDMOS_QGD,
     VDMOS_CQGD,
+    VDMOS_CDIO,
     VDMOS_SOURCERESIST,
     VDMOS_DRAINRESIST,
 };

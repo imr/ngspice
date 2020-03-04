@@ -190,13 +190,13 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                     vds = model->VDMOStype * (
                               *(ckt->CKTrhsOld + here->VDMOSdNodePrime) -
                               *(ckt->CKTrhsOld + here->VDMOSsNodePrime));
+                    Vrd = model->VDMOStype * (
+                              *(ckt->CKTrhsOld + here->VDMOSdNode) - 
+                              *(ckt->CKTrhsOld + here->VDMOSdNodePrime));
                     if (selfheat)
                         delTemp = *(ckt->CKTrhsOld + here->VDMOStempNode);
                     else
                         delTemp = 0.0;
-                    Vrd = model->VDMOStype *
-                              *(ckt->CKTrhsOld+here->VDMOSdNode) - 
-                              *(ckt->CKTrhsOld+here->VDMOSdNodePrime);
 #ifndef PREDICTOR
                 }
 #endif /* PREDICTOR */
@@ -631,6 +631,7 @@ bypass:
             if (selfheat) {
                 *(ckt->CKTrhs + here->VDMOStempNode) -= here->VDMOScth + ceqqth; /* dissipated power + Cthj current */
                 *(ckt->CKTrhs + here->VDMOSvcktTbranch) = ckt->CKTtemp-CONSTCtoK; /* ckt temperature */
+printf("pmos: %g rhs: %g delTemp: %g\n",here->VDMOScth, *(ckt->CKTrhs + here->VDMOStempNode), delTemp);
             }
 
             /*
@@ -901,6 +902,8 @@ bypass:
             *(ckt->CKTstate0 + here->VDIOcurrent) = cd;
             *(ckt->CKTstate0 + here->VDIOconduct) = gd;
 
+            here->VDMOScdio = here->VDMOSmode * cd;
+
 #ifndef NOBYPASS
 load:
 #endif
@@ -917,8 +920,10 @@ load:
             }
             if (selfheat) {
                 *(ckt->CKTrhs + here->VDMOStempNode) -= cdb * vd; /* Diode dissipated power */
+//printf("cdrain: %g vds: %g cdio: %g vdio: %g\n", cdrain, vds, cd, vd);
+//printf("pdio: %g rhs: %g delTemp: %g\n", here->VDMOSmode*cd*vd, *(ckt->CKTrhs + here->VDMOStempNode), delTemp);
+printf("pdio: %g rhs: %g delTemp: %g\n", cd*vd, *(ckt->CKTrhs + here->VDMOStempNode), delTemp);
             }
-
             /*
             *   load matrix
             */

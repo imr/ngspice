@@ -122,6 +122,9 @@ VDMOSask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
         case VDMOS_CQGD:
             value->rValue = *(ckt->CKTstate0 + here->VDMOScqgd);
             return(OK);
+        case VDMOS_CDIO:
+            value->rValue = here->VDMOScdio;
+            return(OK);
         case VDMOS_CG :
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
                 errMsg = TMALLOC(char, strlen(msg) + 1);
