@@ -13,8 +13,6 @@
 #include "com_commands.h"
 
 #ifdef _WIN32
-//#define WIN32_LEAN_AND_MEAN
-
 #undef BOOLEAN
 #include <windows.h>
 #include <psapi.h>
@@ -403,7 +401,6 @@ static void set_static_system_info(void)
 /* Get memory information */
 static int get_sysmem(struct sys_memory *memall)
 {
-#if (_WIN32_WINNT >= 0x0500) /* Windows 2000+ */
     MEMORYSTATUSEX ms;
     ms.dwLength = sizeof(MEMORYSTATUSEX);
     if (GlobalMemoryStatusEx(&ms) == FALSE) {
@@ -413,17 +410,6 @@ static int get_sysmem(struct sys_memory *memall)
     memall->free_m = ms.ullAvailPhys;
     memall->swap_t = ms.ullTotalPageFile;
     memall->swap_f = ms.ullAvailPageFile;
-#else
-    MEMORYSTATUS ms;
-    ms.dwLength = sizeof(MEMORYSTATUS);
-    if (GlobalMemoryStatus(&ms) == FALSE) {
-        return -1;
-    }
-    memall->size_m = ms.dwTotalPhys;
-    memall->free_m = ms.dwAvailPhys;
-    memall->swap_t = ms.dwTotalPageFile;
-    memall->swap_f = ms.dwAvailPageFile;
-#endif
     return 0;
 } /* end of function get_sysmem */
 
