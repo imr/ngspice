@@ -85,6 +85,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
     double capth = 0.0;   /* total thermal capacitance */
     int Check_mos, Check_diode;
     int error;
+    double cdio, vdio;      /* diode current and voltage */
 
     register int selfheat;
     double rd0T, rd1T, dBeta_dT, drd0T_dT, drd1T_dT, dIds_dT;
@@ -628,10 +629,12 @@ bypass:
             *(ckt->CKTrhs + here->VDMOSgNodePrime) -= (model->VDMOStype * (ceqgs + ceqgd));
             *(ckt->CKTrhs + here->VDMOSdNodePrime) += (-cdreq + model->VDMOStype * ceqgd);
             *(ckt->CKTrhs + here->VDMOSsNodePrime) +=   cdreq + model->VDMOStype * ceqgs;
+            cdio = here->VDMOScdio;
+            vdio = *(ckt->CKTstate0 + here->VDIOvoltage);
             if (selfheat) {
                 *(ckt->CKTrhs + here->VDMOStempNode) -= here->VDMOScth + ceqqth; /* dissipated power + Cthj current */
                 *(ckt->CKTrhs + here->VDMOSvcktTbranch) = ckt->CKTtemp-CONSTCtoK; /* ckt temperature */
-printf("pmos: %g rhs: %g delTemp: %g\n",here->VDMOScth, *(ckt->CKTrhs + here->VDMOStempNode), delTemp);
+printf("pmos: %g rhs: %g delTemp: %g\n",-cdrain * Vds,*(ckt->CKTrhs + here->VDMOStempNode), delTemp);
             }
 
             /*
@@ -693,10 +696,10 @@ printf("pmos: %g rhs: %g delTemp: %g\n",here->VDMOScth, *(ckt->CKTrhs + here->VD
              * of VDMOS transistor
              */
 
-            double vd;      /* current diode voltage */
+            double cd, vd;      /* diode current and voltage */
             double vte;
             double vtebrk, vbrknp;
-            double cd, cdb, csat, cdeq;
+            double cdb, csat, cdeq;
             double capd;
             double gd, gdb, gspr;
             double delvd;   /* change in diode voltage temporary */
@@ -832,6 +835,11 @@ printf("pmos: %g rhs: %g delTemp: %g\n",here->VDMOScth, *(ckt->CKTrhs + here->VD
             cd = cd + ckt->CKTgmin*vd;
             gd = gd + ckt->CKTgmin;
 
+            if (selfheat) {
+                dIth_dVdio = cd + vd*gd;
+                here->VDMOSdIth_dVdio = dIth_dVdio;
+            }
+
             if ((ckt->CKTmode & (MODEDCTRANCURVE | MODETRAN | MODEAC | MODEINITSMSIG)) ||
                     ((ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC))) {
                 /*
@@ -919,10 +927,8 @@ load:
                 *(ckt->CKTrhs + here->VDIOposPrimeNode) += cdeq;
             }
             if (selfheat) {
-                *(ckt->CKTrhs + here->VDMOStempNode) -= cdb * vd; /* Diode dissipated power */
-//printf("cdrain: %g vds: %g cdio: %g vdio: %g\n", cdrain, vds, cd, vd);
-//printf("pdio: %g rhs: %g delTemp: %g\n", here->VDMOSmode*cd*vd, *(ckt->CKTrhs + here->VDMOStempNode), delTemp);
-printf("pdio: %g rhs: %g delTemp: %g\n", cd*vd, *(ckt->CKTrhs + here->VDMOStempNode), delTemp);
+                *(ckt->CKTrhs + here->VDMOStempNode) -= here->VDMOSmode*cdio*vdio + dIth_dVdio*vdio*delTemp; /* Diode dissipated power */
+printf("pdio: %g rhs: %g delTemp: %g\n", here->VDMOSmode*cd*vd, *(ckt->CKTrhs + here->VDMOStempNode), delTemp);
             }
             /*
             *   load matrix
@@ -934,16 +940,15 @@ printf("pdio: %g rhs: %g delTemp: %g\n", cd*vd, *(ckt->CKTrhs + here->VDMOStempN
             *(here->VDIODrpPtr) -= gd;
             *(here->VDIORPsPtr) -= gspr;
             *(here->VDIORPdPtr) -= gd;
-            if (selfheat)
-            {
+            if (selfheat) {
                 (*(here->VDMOSTemptempPtr)   +=  dIdio_dT*vd);
 
-                (*(here->VDMOSTempdPtr)      += -dIth_dVdio);
-                (*(here->VDMOSDtempPtr)      +=  dIdio_dT);
+                (*(here->VDMOSTempdPtr)      +=  dIth_dVdio);
+                (*(here->VDMOSTempRpPtr)     += -dIth_dVdio + dIth_dVrdio);
                 (*(here->VDMOSTempsPtr)      += -dIth_dVrdio);
-                (*(here->VDMOSStempPtr)      +=  dIrdio_dT);
-                (*(here->VDMOSTempRpPtr)     +=  dIth_dVdio + dIth_dVrdio);
+                (*(here->VDMOSDtempPtr)      +=  dIdio_dT);
                 (*(here->VDMOSRPtempPtr)     += -dIdio_dT - dIrdio_dT);
+                (*(here->VDMOSStempPtr)      +=  dIrdio_dT);
             }
         }
     }
