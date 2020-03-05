@@ -78,7 +78,6 @@ typedef struct sVDMOSinstance {
     double VDMOScd;
     double VDMOSgm;
     double VDMOSgds;
-    double VDMOScdio;
 
     double VDIOcap;
     double VDIOtSatCur;     /* temperature corrected saturation Cur. density*/
@@ -108,6 +107,8 @@ typedef struct sVDMOSinstance {
     double VDMOScdT;
     double VDMOScth;         /* current alias power */
 
+    double VDMOScdio;
+    double VDMOSvdio;
     double VDMOSdIth_dVdio;
 /*
  * naming convention:
