@@ -14,11 +14,11 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 #include "ngspice/dstring.h"
 
 
-/* Instantiations of string functions in case inlining is not performed */
-char *copy(const char *str);
-char *copy_substring(const char *str, const char *end);
-int scannum(const char *str);
-int substring(const char *sub, const char *str);
+/* Instantiations of string functions */
+extern inline char *copy(const char *str);
+extern inline char *copy_substring(const char *str, const char *end);
+extern inline int scannum(const char *str);
+extern inline int substring(const char *sub, const char *str);
 
 
 

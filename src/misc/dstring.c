@@ -15,17 +15,17 @@ DESCRIPTION:This file contains the routines for manipulating dynamic strings.
 static int ds_reserve_internal(DSTRING *p_ds,
         size_t n_byte_alloc_opt, size_t n_byte_alloc_min);
 
-/* Instantiations of dstring functions in case inlining is not performed */
-int ds_cat_str(DSTRING *p_ds, const char *sz);
-int ds_cat_char(DSTRING *p_ds, char c);
-int ds_cat_ds(DSTRING *p_ds_dst, const DSTRING *p_ds_src);
-int ds_cat_mem(DSTRING *p_ds, const char *p_src, size_t n_char);
-int ds_set_length(DSTRING *p_ds, size_t length);
-void ds_clear(DSTRING *p_ds);
-char *ds_free_move(DSTRING *p_ds, unsigned int opt);
-char *ds_get_buf(DSTRING *p_ds);
-size_t ds_get_length(const DSTRING *p_ds);
-size_t ds_get_buf_size(const DSTRING *p_ds);
+/* Instantiations of dstring functions */
+extern inline int ds_cat_str(DSTRING *p_ds, const char *sz);
+extern inline int ds_cat_char(DSTRING *p_ds, char c);
+extern inline int ds_cat_ds(DSTRING *p_ds_dst, const DSTRING *p_ds_src);
+extern inline int ds_cat_mem(DSTRING *p_ds, const char *p_src, size_t n_char);
+extern inline int ds_set_length(DSTRING *p_ds, size_t length);
+extern inline void ds_clear(DSTRING *p_ds);
+extern inline char *ds_free_move(DSTRING *p_ds, unsigned int opt);
+extern inline char *ds_get_buf(DSTRING *p_ds);
+extern inline size_t ds_get_length(const DSTRING *p_ds);
+extern inline size_t ds_get_buf_size(const DSTRING *p_ds);
 
 
 /* This function initalizes a dstring using *p_buf as the initial backing
@@ -85,7 +85,7 @@ int ds_init(DSTRING *p_ds, char *p_buf, size_t length_string,
 void ds_free(DSTRING *p_ds)
 {
     if (p_ds->p_buf != p_ds->p_stack_buf) {
-        free((void *) p_ds->p_buf);
+        txfree((void *) p_ds->p_buf);
     }
 } /* end of function ds_free */
 
@@ -229,7 +229,7 @@ static int ds_reserve_internal(DSTRING *p_ds,
 
     /* If there already was a dynamic allocation, free it */
     if (p_ds->p_buf != p_ds->p_stack_buf) {
-        free((void *) p_ds->p_buf);
+        txfree((void *) p_ds->p_buf);
     }
 
     /* Assign new active buffer and its size */
@@ -333,7 +333,7 @@ int ds_compact(DSTRING *p_ds)
      * free the allocation. */
     if (p_ds->n_byte_stack_buf >= n_byte_alloc_min) {
         (void) memcpy(p_ds->p_stack_buf, p_ds->p_buf, n_byte_alloc_min);
-        free((void *) p_ds->p_buf);
+        txfree((void *) p_ds->p_buf);
         p_ds->p_buf = p_ds->p_stack_buf;
         p_ds->n_byte_alloc = p_ds->n_byte_stack_buf;
         return DS_E_OK;
