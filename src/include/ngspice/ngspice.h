@@ -219,7 +219,7 @@ extern double x_atanh(double);
 #endif
 
 #ifndef EXT_ASC
-#if defined(__MINGW__) || defined(_MSC_VER)
+#if defined(__MINGW32__) || defined(_MSC_VER)
 #define fopen newfopen
 extern FILE *newfopen(const char *fn, const char* md);
 #endif

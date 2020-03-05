@@ -161,7 +161,7 @@ void ft_gnuplot(double *xlims, double *ylims,
     }
 
     /* Set up the file header. */
-#if !defined(__MINGW__) && !defined(_MSC_VER) && !defined(__CYGWIN__)
+#if !defined(__MINGW32__) && !defined(_MSC_VER) && !defined(__CYGWIN__)
     fprintf(file, "set terminal X11 noenhanced\n");
 #elif defined(__CYGWIN__)
 #ifndef EXT_ASC

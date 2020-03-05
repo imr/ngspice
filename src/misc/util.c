@@ -260,7 +260,7 @@ ngdirname(const char *name)
 
 /* Replacement for fopen, when using wide chars (utf-16) */
 #ifndef EXT_ASC
-#if defined(__MINGW__) || defined(_MSC_VER)
+#if defined(__MINGW32__) || defined(_MSC_VER)
 #undef BOOLEAN
 #include <windows.h>
 FILE *
