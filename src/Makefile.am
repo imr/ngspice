@@ -111,6 +111,7 @@ ngspice_SOURCES = \
 ngspice_CPPFLAGS = $(AM_CPPFLAGS) -DSIMULATOR
 
 if WINGUI
+ngspice_LDFLAGS = -municode $(AM_LDFLAGS)
 ngspice_SOURCES += winmain.c hist_info.c
 endif
 
