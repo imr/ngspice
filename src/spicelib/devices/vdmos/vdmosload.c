@@ -343,6 +343,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                 dBeta_dT = 0.0;
                 rd0T = here->VDMOSdrainResistance;
                 drd0T_dT = 0.0;
+                dIrd_dT = 0.0;
                 rd1T = 0.0;
                 if (model->VDMOSqsGiven)
                     rd1T = here->VDMOSqsResistance;
@@ -829,8 +830,8 @@ bypass:
 
             }
 
-            cd = cd + ckt->CKTgmin*vd;
-            gd = gd + ckt->CKTgmin;
+            cd = cdb + ckt->CKTgmin*vd;
+            gd = gdb + ckt->CKTgmin;
 
             if (selfheat) {
                 dIth_dVdio = cd + vd*gd;
