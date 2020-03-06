@@ -92,7 +92,9 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
     double ceqqth=0.0;
     double GmT, gTtg, gTtdp, gTtt, gTtsp, gcTt=0.0;
     double Vrd=0.0, dIth_dT=0.0;
-    double dIrd_dT=0.0, dIdio_dT=0.0, dIrdio_dT=0.0, dIth_dVrd=0.0, dIth_dVdio=0.0, dIth_dVrdio=0.0;
+    double dIdio_dT=0.0, dIth_dVdio=0.0;
+    double dIrd_dT=0.0, dIth_dVrd=0.0;
+    double dIrdio_dT=0.0, dIth_dVrdio=0.0;
     double arg1, darg1_dT, arg2, darg2_dT, csat_dT; 
 
     /*  loop through all the VDMOS device models */
@@ -321,7 +323,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
 
             /*  Calculate temperature dependent values for self-heating effect  */
             if (selfheat) {
-                double dIrd_dVrd, dIrd_drd0T, dIth_dIrd;
+                double dIrd_dVrd, dIrd_drd0T;
                 double TempRatio = Temp / here->VDMOStemp;
                 Beta = here->VDMOStTransconductance * pow(TempRatio,model->VDMOSmu);
                 dBeta_dT = Beta * model->VDMOSmu / Temp;
@@ -330,10 +332,6 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                 dIrd_dVrd = 1.0 / rd0T;
                 dIrd_drd0T = -Vrd / (rd0T*rd0T);
                 dIrd_dT = dIrd_drd0T * drd0T_dT;
-                dIth_dIrd = -Vrd;
-                dIth_dVrd = -Vrd/rd0T;
-                dIth_dVrd = dIth_dVrd + dIth_dIrd*dIrd_dVrd;
-                dIth_dT = dIth_dIrd*dIrd_dT;
                 rd1T = 0.0;
                 drd1T_dT = 0.0;
                 if (model->VDMOSqsGiven) {
@@ -464,10 +462,11 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
             if (selfheat) {
                 GmT = dIds_dT;
                 here->VDMOSgmT = GmT;
-//                dIth_dVrd = cd + vdsn*here->VDMOSdrainConductance;
+                dIth_dVrd = cdrain + Vrd*here->VDMOSdrainConductance;
             } else {
                 GmT = 0.0;
                 here->VDMOSgmT = 0.0;
+                dIth_dVrd = 0.0;
             }
 
             if (selfheat) {
@@ -629,15 +628,11 @@ bypass:
             *(ckt->CKTrhs + here->VDMOSdNodePrime) += (-cdreq + model->VDMOStype * ceqgd);
             *(ckt->CKTrhs + here->VDMOSsNodePrime) +=   cdreq + model->VDMOStype * ceqgs;
             if (selfheat) {
-//                double cdio = here->VDMOScdio;
-//                double vdio = here->VDMOSvdio;
-//                double dterm = here->VDMOSmode*cdio*vdio - here->VDMOSdIth_dVdio*vdio*delTemp; /* Diode dissipated power */
-//                *(ckt->CKTrhs + here->VDMOStempNode) -= here->VDMOScth + dterm + ceqqth; /* dissipated power + Cthj current */
                 *(ckt->CKTrhs + here->VDMOSdNodePrime) +=  GmT * delTemp;
                 *(ckt->CKTrhs + here->VDMOSsNodePrime) += -GmT * delTemp;
-                *(ckt->CKTrhs + here->VDMOStempNode) -= here->VDMOScth + ceqqth; /* dissipated power + Cthj current */
+                *(ckt->CKTrhs + here->VDMOStempNode)   -= here->VDMOScth + ceqqth; /* MOS dissipated power + Cthj current */
 //printf("pmos: %g rhs: %g delTemp: %g\n",cdrain * Vds,*(ckt->CKTrhs + here->VDMOStempNode), delTemp);
-                *(ckt->CKTrhs + here->VDMOSvcktTbranch) = ckt->CKTtemp-CONSTCtoK; /* ckt temperature */
+                *(ckt->CKTrhs + here->VDMOSvcktTbranch) = ckt->CKTtemp-CONSTCtoK;  /* ckt temperature */
             }
 
             /*
@@ -790,6 +785,9 @@ bypass:
                 }
             }
 
+            /*
+            *   temperature dependent diode saturation current and derivative
+            */
             arg1 = ((Temp / model->VDMOStnom) - 1) * model->VDMOSeg / (model->VDMOSn*vt);
             darg1_dT = model->VDMOSeg / (vte*model->VDMOStnom)
                       - model->VDMOSeg*(Temp/model->VDMOStnom -1)/(vte*Temp);
@@ -830,9 +828,6 @@ bypass:
                 gdb = csat*evrev / vtebrk;
 
             }
-
-            cd = cdb;
-            gd = gdb;
 
             cd = cd + ckt->CKTgmin*vd;
             gd = gd + ckt->CKTgmin;
