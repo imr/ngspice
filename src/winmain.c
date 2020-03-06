@@ -273,8 +273,8 @@ SetAnalyse(char *Analyse,   /* in: analysis type */
 #else
         wchar_t sw[256];
         wchar_t tw[256];
-        swprintf(sw, 256, L"%S", s);
-        swprintf(tw, 256, L"%S", t);
+        MultiByteToWideChar(CP_UTF8, 0, s, -1, sw, 256);
+        MultiByteToWideChar(CP_UTF8, 0, t, -1, tw, 256);
         /* Analysis window */
         SetWindowTextW(hwAnalyse, sw);
         /* ngspice task bar */
