@@ -33,6 +33,8 @@ struct graph {
     int currentcolor;
     int linestyle;
 
+    bool nolegend;
+
     struct {
         int height, width;
     } viewport;
