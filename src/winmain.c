@@ -31,8 +31,8 @@
 #include <ctype.h>
 #include <sys/types.h>
 #include <sys/timeb.h>
-#ifndef _MSC_VER
-#include <wchar.h>
+#ifdef __MINGW32__
+#include <tchar.h>
 #include <stdio.h>
 #endif
 
@@ -970,7 +970,7 @@ MakeArgcArgv(char *cmdline, int *argc, char ***argv)
 int WINAPI
 WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpszCmdLine, _In_ int nCmdShow)
 #else
-#ifdef _MSC_VER
+#if defined(_MSC_VER) || defined(__MINGW32__)
 int WINAPI
 wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR wlpszCmdLine, _In_ int nCmdShow)
 #else
@@ -998,7 +998,7 @@ WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR n
 
 #ifndef EXT_ASC
     /* convert wchar to utf-8 */
-#ifdef _MSC_VER
+#if defined(_MSC_VER) || defined(__MINGW32__)
     char lpszCmdLine[1024];
     WideCharToMultiByte(CP_UTF8, 0, wlpszCmdLine, -1, lpszCmdLine, 1023, NULL, FALSE);
 #else
