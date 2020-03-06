@@ -970,13 +970,8 @@ MakeArgcArgv(char *cmdline, int *argc, char ***argv)
 int WINAPI
 WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpszCmdLine, _In_ int nCmdShow)
 #else
-#if defined(_MSC_VER) || defined(__MINGW32__)
 int WINAPI
 wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR wlpszCmdLine, _In_ int nCmdShow)
-#else
-int WINAPI // MINGW bug not knowing wWinMain
-WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR nolpszCmdLine, _In_ int nCmdShow)
-#endif
 #endif
 {
     int ix, iy; /* width and height of screen */
@@ -998,34 +993,8 @@ WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR n
 
 #ifndef EXT_ASC
     /* convert wchar to utf-8 */
-#if defined(_MSC_VER) || defined(__MINGW32__)
     char lpszCmdLine[1024];
     WideCharToMultiByte(CP_UTF8, 0, wlpszCmdLine, -1, lpszCmdLine, 1023, NULL, FALSE);
-#else
-    /* MINGW not knowing wWinMain
-    https://github.com/coderforlife/mingw-unicode-main/blob/master/mingw-unicode-gui.c
-    */
-    NG_IGNORE(nolpszCmdLine);
-    char lpszCmdLine[1024];
-    wchar_t *lpCmdLine = GetCommandLineW();
-    if (__argc == 1) { // avoids GetCommandLineW bug that does not always quote the program name if no arguments
-        do { ++lpCmdLine; } while (*lpCmdLine);
-    }
-    else {
-        BOOL quoted = lpCmdLine[0] == L'"';
-        ++lpCmdLine; // skips the " or the first letter (all paths are at least 1 letter)
-        while (*lpCmdLine) {
-            if (quoted && lpCmdLine[0] == L'"') { quoted = FALSE; } // found end quote
-            else if (!quoted && lpCmdLine[0] == L' ') {
-                // found an unquoted space, now skip all spaces
-                do { ++lpCmdLine; } while (lpCmdLine[0] == L' ');
-                break;
-            }
-            ++lpCmdLine;
-        }
-    }
-    WideCharToMultiByte(CP_UTF8, 0, lpCmdLine, -1, lpszCmdLine, 1023, NULL, NULL);
-#endif
 #endif
     /* fill global variables */
     hInst = hInstance;
