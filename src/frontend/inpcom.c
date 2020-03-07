@@ -180,6 +180,7 @@ static struct card *pspice_compat(struct card *newcard);
 static void pspice_compat_a(struct card *oldcard);
 static struct card *ltspice_compat(struct card *oldcard);
 static void ltspice_compat_a(struct card *oldcard);
+static void inp_rep_ixx(struct card *deck);
 
 #if defined(__MINGW32__) || defined(_MSC_VER)
 #ifndef EXT_ASC
@@ -705,6 +706,8 @@ struct card *inp_readall(FILE *fp, const char *dir_name,
             inp_bsource_compat(working);
             inp_dot_if(working);
             expr_w_temper = inp_temper_compat(working);
+            /* i(vxx) to vxx#branch within .control section */
+            inp_rep_ixx(working);
         }
         if (expr_w_temper_p)
             *expr_w_temper_p = expr_w_temper;
@@ -1735,6 +1738,61 @@ static void inp_chk_for_multi_in_vcvs(struct card *c, int *line_number)
     }
 }
 
+/* replace i(vxx) by vxx#branch */
+static void inp_rep_ixx(struct card* deck) {
+    struct card* c;
+    int only_control = 0;
+
+    for (c = deck; c; c = c->nextcard) {
+
+        char* line, * beg;
+        line = beg = c->line;
+
+        /* there is no e source inside .control ... .endc */
+        if (ciprefix(".control", line)) {
+            only_control++;
+            continue;
+        }
+        else if (ciprefix(".endc", line)) {
+            only_control--;
+            continue;
+        }
+        else if (only_control <= 0) {
+            continue;
+        }
+
+        char* new_str = NULL;
+        while (line) {
+            char* s = strstr(line, " i(v");
+            if (s) {
+                char* beg_str, *end_str, *t;
+                /* replace i(vxx) by vxx#branch */
+                if (get_r_paren(&line) == 1) {
+                    fprintf(stderr, "Error: missing ')' in line\n    %s\n", c->line);
+                    break;
+                }
+                /* token containing name of voltage source to be measured */
+                t = copy_substring(s + 3, line - 1);
+                /* change line, convert i(XXX) to XXX#branch */
+                beg_str = copy_substring(beg, s);
+                end_str = copy(line);
+                tfree(new_str);
+                new_str = tprintf("%s %s%s %s", beg_str, t, "#branch", end_str);
+                beg = line = new_str;
+                tfree(beg_str);
+                tfree(end_str);
+                tfree(t);
+            }
+            else {
+                break;
+            }
+        }
+        if (new_str) {
+            tfree(c->line);
+            c->line = new_str;
+        }
+    }
+}
 
 /* If ngspice is started with option -a, then variable 'autorun'
  *   will be set and the following function scans the deck.
