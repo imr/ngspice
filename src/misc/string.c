@@ -755,8 +755,8 @@ gettok_node(char **s)
 /*-------------------------------------------------------------------------*
  * get_l_paren iterates the pointer forward in a string until it hits
  * the position after the next left paren "(".  It returns 0 if it found a left
- * paren, and 1 if no left paren is found.  It is called from 'translate'
- * (subckt.c).
+ * paren, 1 if no left paren is found, -1 if left paren is the last character.
+ * It is called from 'translate' (subckt.c).
  *-------------------------------------------------------------------------*/
 
 int
@@ -770,15 +770,18 @@ get_l_paren(char **s)
 
     (*s)++;
 
-    return **s == '\0';
+    if (**s == '\0')
+        return -1;
+
+    return 0;
 }
 
 
 /*-------------------------------------------------------------------------*
  * get_r_paren iterates the pointer forward in a string until it hits
  * the position after the next right paren ")".  It returns 0 if it found a right
- * paren, and 1 if no right paren is found.  It is called from 'translate'
- * (subckt.c).
+ * paren, 1 if no right paren is found, and -1 if right paren is te last
+ * character.  It is called from 'translate' (subckt.c).
  *-------------------------------------------------------------------------*/
 
 int
@@ -792,7 +795,10 @@ get_r_paren(char **s)
 
     (*s)++;
 
-    return **s == '\0';
+    if (**s == '\0')
+        return -1;
+
+    return 0;
 }
 
 /*-------------------------------------------------------------------------*
