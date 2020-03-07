@@ -68,7 +68,12 @@ INPdevParse(char **line, CKTcircuit *ckt, int dev, GENinstance *fast,
         IFparm *p = find_instance_parameter(parameter, device);
 
         if (!p) {
-            errbuf = tprintf(" unknown parameter (%s) \n", parameter);
+            if (cieq(parameter, "$")) {
+                errbuf = copy("  unknown parameter ($). Check the compatibility flag!\n");
+            }
+            else {
+                errbuf = tprintf("  unknown parameter (%s) \n", parameter);
+            }
             rtn = errbuf;
             goto quit;
         }
@@ -112,7 +117,12 @@ INPdevParse(char **line, CKTcircuit *ckt, int dev, GENinstance *fast,
         IFparm *p = find_instance_parameter(parm, device);
 
         if (!p) {
-            errbuf = tprintf(" unknown parameter (%s) \n", parm);
+            if (eq(parm, "$")) {
+                errbuf = copy("  unknown parameter ($). Check the compatibility flag!\n");
+            }
+            else {
+                errbuf = tprintf("  unknown parameter (%s) \n", parm);
+            }
             rtn = errbuf;
             goto quit;
         }
