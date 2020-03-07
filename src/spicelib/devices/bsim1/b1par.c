@@ -78,9 +78,11 @@ B1param(int param, IFvalue *value, GENinstance *inst,
                 case 3:
                     here->B1icVBS = *(value->v.vec.rVec+2);
                     here->B1icVBSGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 2:
                     here->B1icVGS = *(value->v.vec.rVec+1);
                     here->B1icVGSGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 1:
                     here->B1icVDS = *(value->v.vec.rVec);
                     here->B1icVDSGiven = TRUE;

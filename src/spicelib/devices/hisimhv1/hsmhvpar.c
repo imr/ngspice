@@ -102,9 +102,11 @@ int HSMHVparam(
     case 3:
       here->HSMHV_icVBS = *(value->v.vec.rVec + 2);
       here->HSMHV_icVBS_Given = TRUE;
+      /* FALLTHROUGH */
     case 2:
       here->HSMHV_icVGS = *(value->v.vec.rVec + 1);
       here->HSMHV_icVGS_Given = TRUE;
+      /* FALLTHROUGH */
     case 1:
       here->HSMHV_icVDS = *(value->v.vec.rVec);
       here->HSMHV_icVDS_Given = TRUE;

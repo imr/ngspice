@@ -59,6 +59,7 @@ VBICparam(int param, IFvalue *value, GENinstance *instPtr, IFvalue *select)
                 case 2:
                     here->VBICicVCE = *(value->v.vec.rVec+1);
                     here->VBICicVCEGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 1:
                     here->VBICicVBE = *(value->v.vec.rVec);
                     here->VBICicVBEGiven = TRUE;
