@@ -235,10 +235,10 @@ typedef struct sVDMOSinstance {
     double *VDMOSDPtempPtr;
     double *VDMOSSPtempPtr;
 
-    double *VDMOSTempdPtr;      /* Rdrain thermal contribution */
+    double *VDMOSTempdPtr;      /* Diode and Rdrain thermal contribution */
     double *VDMOSDtempPtr;
-    double *VDMOSTempsPtr;      /* Diode resistance thermal contribution */
-    double *VDMOSStempPtr;
+//    double *VDMOSTempsPtr;      /* Diode resistance thermal contribution */
+//    double *VDMOSStempPtr;
     double *VDMOSTempRpPtr;     /* Diode thermal contribution */
     double *VDMOSRPtempPtr;
 

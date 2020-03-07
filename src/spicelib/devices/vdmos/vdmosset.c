@@ -383,10 +383,10 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
                 TSTALLOC(VDMOSDPtempPtr, VDMOSdNodePrime, VDMOStempNode);
                 TSTALLOC(VDMOSSPtempPtr, VDMOSsNodePrime, VDMOStempNode);
 
-                TSTALLOC(VDMOSTempdPtr, VDMOStempNode, VDMOSdNode);        /* Rdrain thermal contribution */
+                TSTALLOC(VDMOSTempdPtr, VDMOStempNode, VDMOSdNode);        /* Diode and Rdrain thermal contribution */
                 TSTALLOC(VDMOSDtempPtr, VDMOSdNode, VDMOStempNode);
-                TSTALLOC(VDMOSTempsPtr, VDMOStempNode, VDMOSsNode);        /* Diode resistance thermal contribution */
-                TSTALLOC(VDMOSStempPtr, VDMOSsNode, VDMOStempNode);
+//                TSTALLOC(VDMOSTempsPtr, VDMOStempNode, VDMOSsNode);        /* Diode resistance thermal contribution */
+//                TSTALLOC(VDMOSStempPtr, VDMOSsNode, VDMOStempNode);
                 TSTALLOC(VDMOSTempRpPtr, VDMOStempNode, VDIOposPrimeNode); /* Diode thermal contribution */
                 TSTALLOC(VDMOSRPtempPtr, VDIOposPrimeNode, VDMOStempNode);
 
