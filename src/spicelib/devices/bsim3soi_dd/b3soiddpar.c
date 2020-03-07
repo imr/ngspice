@@ -108,15 +108,19 @@ B3SOIDDparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
                 case 5:
                     here->B3SOIDDicVPS = *(value->v.vec.rVec+4);
                     here->B3SOIDDicVPSGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 4:
                     here->B3SOIDDicVES = *(value->v.vec.rVec+3);
                     here->B3SOIDDicVESGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 3:
                     here->B3SOIDDicVBS = *(value->v.vec.rVec+2);
                     here->B3SOIDDicVBSGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 2:
                     here->B3SOIDDicVGS = *(value->v.vec.rVec+1);
                     here->B3SOIDDicVGSGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 1:
                     here->B3SOIDDicVDS = *(value->v.vec.rVec);
                     here->B3SOIDDicVDSGiven = TRUE;

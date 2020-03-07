@@ -94,9 +94,11 @@ MOS2param(int param, IFvalue *value, GENinstance *inst,
                 case 3:
                     here->MOS2icVBS = *(value->v.vec.rVec+2);
                     here->MOS2icVBSGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 2:
                     here->MOS2icVGS = *(value->v.vec.rVec+1);
                     here->MOS2icVGSGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 1:
                     here->MOS2icVDS = *(value->v.vec.rVec);
                     here->MOS2icVDSGiven = TRUE;

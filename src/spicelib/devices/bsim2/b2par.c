@@ -77,9 +77,11 @@ B2param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
                 case 3:
                     here->B2icVBS = *(value->v.vec.rVec+2);
                     here->B2icVBSGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 2:
                     here->B2icVGS = *(value->v.vec.rVec+1);
                     here->B2icVGSGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 1:
                     here->B2icVDS = *(value->v.vec.rVec);
                     here->B2icVDSGiven = TRUE;

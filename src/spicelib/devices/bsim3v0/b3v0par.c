@@ -84,9 +84,11 @@ BSIM3v0param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
                 case 3:
                     here->BSIM3v0icVBS = *(value->v.vec.rVec+2);
                     here->BSIM3v0icVBSGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 2:
                     here->BSIM3v0icVGS = *(value->v.vec.rVec+1);
                     here->BSIM3v0icVGSGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 1:
                     here->BSIM3v0icVDS = *(value->v.vec.rVec);
                     here->BSIM3v0icVDSGiven = TRUE;

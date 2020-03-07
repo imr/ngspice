@@ -109,15 +109,19 @@ B3SOIFDparam(int param, IFvalue *value, GENinstance *inst,
                 case 5:
                     here->B3SOIFDicVPS = *(value->v.vec.rVec+4);
                     here->B3SOIFDicVPSGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 4:
                     here->B3SOIFDicVES = *(value->v.vec.rVec+3);
                     here->B3SOIFDicVESGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 3:
                     here->B3SOIFDicVBS = *(value->v.vec.rVec+2);
                     here->B3SOIFDicVBSGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 2:
                     here->B3SOIFDicVGS = *(value->v.vec.rVec+1);
                     here->B3SOIFDicVGSGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 1:
                     here->B3SOIFDicVDS = *(value->v.vec.rVec);
                     here->B3SOIFDicVDSGiven = TRUE;

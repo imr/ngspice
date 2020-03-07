@@ -47,6 +47,7 @@ HFETAparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
                 case 2:
                     here->HFETAicVGS = *(value->v.vec.rVec+1);
                     here->HFETAicVGSGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 1:
                     here->HFETAicVDS = *(value->v.vec.rVec);
                     here->HFETAicVDSGiven = TRUE;

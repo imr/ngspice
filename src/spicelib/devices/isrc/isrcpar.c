@@ -67,9 +67,11 @@ ISRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
                 case 2:
                     here->ISRCacPhase = *(value->v.vec.rVec+1);
                     here->ISRCacPGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 1:
                     here->ISRCacMag = *(value->v.vec.rVec);
                     here->ISRCacMGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 0:
                     here->ISRCacGiven = TRUE;
                     break;

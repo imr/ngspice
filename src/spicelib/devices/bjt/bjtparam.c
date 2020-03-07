@@ -70,6 +70,7 @@ BJTparam(int param, IFvalue *value, GENinstance *instPtr, IFvalue *select)
                 case 2:
                     here->BJTicVCE = *(value->v.vec.rVec+1);
                     here->BJTicVCEGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 1:
                     here->BJTicVBE = *(value->v.vec.rVec);
                     here->BJTicVBEGiven = TRUE;

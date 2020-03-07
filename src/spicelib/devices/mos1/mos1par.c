@@ -93,9 +93,11 @@ MOS1param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
                 case 3:
                     here->MOS1icVBS = *(value->v.vec.rVec+2);
                     here->MOS1icVBSGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 2:
                     here->MOS1icVGS = *(value->v.vec.rVec+1);
                     here->MOS1icVGSGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 1:
                     here->MOS1icVDS = *(value->v.vec.rVec);
                     here->MOS1icVDSGiven = TRUE;

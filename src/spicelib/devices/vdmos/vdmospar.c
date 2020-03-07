@@ -70,6 +70,7 @@ VDMOSparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
                 case 2:
                     here->VDMOSicVGS = *(value->v.vec.rVec+1);
                     here->VDMOSicVGSGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 1:
                     here->VDMOSicVDS = *(value->v.vec.rVec);
                     here->VDMOSicVDSGiven = TRUE;
