@@ -1762,22 +1762,26 @@ static void inp_rep_ixx(struct card* deck) {
         }
 
         char* new_str = NULL;
+        bool strsave = FALSE;
         while (line) {
-            char* s = strstr(line, " i(v");
-            if (s) {
+            char* s = strstr(line, "i(v");
+            if (s && (s > line) && (isspace_c(s[-1]) || is_arith_char(s[-1])
+                    || isquote(s[-1]) || (s[-1] == '=') || (s[-1] == '.'))) {
                 char* beg_str, *end_str, *t;
+                line = s;
                 /* replace i(vxx) by vxx#branch */
                 if (get_r_paren(&line) == 1) {
                     fprintf(stderr, "Error: missing ')' in line\n    %s\n", c->line);
                     break;
                 }
                 /* token containing name of voltage source to be measured */
-                t = copy_substring(s + 3, line - 1);
+                t = copy_substring(s + 2, line - 1);
                 /* change line, convert i(XXX) to XXX#branch */
                 beg_str = copy_substring(beg, s);
                 end_str = copy(line);
                 tfree(new_str);
-                new_str = tprintf("%s %s%s %s", beg_str, t, "#branch", end_str);
+                new_str = tprintf("%s%s%s%s", beg_str, t, "#branch", end_str);
+                strsave = TRUE;
                 beg = line = new_str;
                 tfree(beg_str);
                 tfree(end_str);
@@ -1787,9 +1791,10 @@ static void inp_rep_ixx(struct card* deck) {
                 break;
             }
         }
-        if (new_str) {
+        if (strsave) {
             tfree(c->line);
             c->line = new_str;
+            strsave = FALSE;
         }
     }
 }
