@@ -187,7 +187,7 @@ static Digital_State_t cm_eval_jk_result(Digital_State_t j_input,
                                          Digital_State_t k_input,
                                          Digital_State_t old_output)
 {                                                          
-    Digital_State_t     output; /* returned output value */
+    Digital_State_t output = UNKNOWN; /* returned output value */
 
 
     switch (j_input) {
@@ -228,7 +228,6 @@ static Digital_State_t cm_eval_jk_result(Digital_State_t j_input,
     }
     
     return output;
-
 }
 
 /*==============================================================================

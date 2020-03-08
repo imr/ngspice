@@ -37,8 +37,8 @@ IFvalue *select)
     if (!cp_getvar("scale", CP_REAL, &scale, 0))
         scale = 1;
 
-    switch(param) 
-    {   case BSIM4v6_W:
+    switch (param) {
+        case BSIM4v6_W:
             here->BSIM4v6w = value->rValue*scale;
             here->BSIM4v6wGiven = TRUE;
             break;
@@ -182,8 +182,10 @@ IFvalue *select)
             here->BSIM4v6icVBSGiven = TRUE;
             break;
         case BSIM4v6_IC:
-            switch(value->v.numValue)
-            {   case 3:
+    /* FALLTHROUGH added to suppress GCC warning due to
+     * -Wimplicit-fallthrough flag */
+            switch (value->v.numValue) {
+                case 3:
                     here->BSIM4v6icVBS = *(value->v.vec.rVec+2);
                     here->BSIM4v6icVBSGiven = TRUE;
                     /* FALLTHROUGH */

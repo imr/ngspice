@@ -16,8 +16,8 @@ int HFET2param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
   HFET2instance *here = (HFET2instance*)inst;
 
   NG_IGNORE(select);
-  
-  switch(param) {
+
+  switch (param) {
     case HFET2_LENGTH:
       L = value->rValue;
       here->HFET2lengthGiven = TRUE;
@@ -34,7 +34,9 @@ int HFET2param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
       here->HFET2off = value->iValue;
       break;
     case HFET2_IC:
-      switch(value->v.numValue) {
+        /* FALLTHROUGH added to suppress GCC warning due to
+         * -Wimplicit-fallthrough flag */
+      switch (value->v.numValue) {
         case 2:
           here->HFET2icVGS = *(value->v.vec.rVec+1);
           here->HFET2icVGSGiven = TRUE;

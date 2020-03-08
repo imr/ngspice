@@ -580,6 +580,7 @@ void cm_d_tff(ARGS)
                             temp = *out_old;
                             break;
                         case UNKNOWN:
+                        default:
                             temp = UNKNOWN;
                             break;
                         }

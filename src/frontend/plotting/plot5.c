@@ -170,7 +170,7 @@ int Plt5_Arc(int xc, int yc, int radius, double theta, double delta_theta)
 }
 
 
-int Plt5_Text(char *text, int x, int y, int angle)
+int Plt5_Text(const char *text, int x, int y, int angle)
 {
     int savedlstyle;
     NG_IGNORE(angle);
@@ -211,10 +211,9 @@ int Plt5_SetLinestyle(int linestyleid)
 
 /* ARGSUSED */
 
-int Plt5_SetColor(int colorid, GRAPH *graph)
+int Plt5_SetColor(int colorid)
 {
     NG_IGNORE(colorid);
-    NG_IGNORE(graph);
 
     /* do nothing */
     return 0;

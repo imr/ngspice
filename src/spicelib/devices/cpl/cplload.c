@@ -789,45 +789,44 @@ errordetect:
 }
 
 
-static int
-update_delayed_cnv(CPLine *cp, double h)
+static int update_delayed_cnv(CPLine *cp, double h)
 {
    int i, j, k;
-   double *ratio;
+   double *ratio1;
    double f;
    VI_list *vi;
    TMS *tms;
    int noL;
 
    h *=	0.5e-12;
-   ratio = cp->ratio;
+   ratio1 = cp->ratio;
    vi =	cp->vi_tail;
    noL = cp->noL;
 
    for (k = 0; k < noL;	k++)	 /*  mode  */
-      if (ratio[k] > 0.0)
+      if (ratio1[k] > 0.0)
      for (i = 0; i < noL; i++)	/*  current eqn	 */
 	for (j = 0; j <	noL; j++) {
 	   tms = cp->h3t[i][j][k];
 	   if (tms == NULL)
 	  continue;
-	   f = h * ratio[k] * vi->v_i[j];
+	   f = h * ratio1[k] * vi->v_i[j];
 	   tms->tm[0].cnv_i += f *  tms->tm[0].c;
 	   tms->tm[1].cnv_i += f *  tms->tm[1].c;
 	   tms->tm[2].cnv_i += f *  tms->tm[2].c;
 
-	   f = h * ratio[k] * vi->v_o[j];
+	   f = h * ratio1[k] * vi->v_o[j];
 	   tms->tm[0].cnv_o += f *  tms->tm[0].c;
 	   tms->tm[1].cnv_o += f *  tms->tm[1].c;
 	   tms->tm[2].cnv_o += f *  tms->tm[2].c;
 
 	   tms = cp->h2t[i][j][k];
-	   f = h * ratio[k] * vi->i_i[j];
+	   f = h * ratio1[k] * vi->i_i[j];
 	   tms->tm[0].cnv_i += f *  tms->tm[0].c;
 	   tms->tm[1].cnv_i += f *  tms->tm[1].c;
 	   tms->tm[2].cnv_i += f *  tms->tm[2].c;
 
-	   f = h * ratio[k] * vi->i_o[j];
+	   f = h * ratio1[k] * vi->i_o[j];
 	   tms->tm[0].cnv_o += f *  tms->tm[0].c;
 	   tms->tm[1].cnv_o += f *  tms->tm[1].c;
 	   tms->tm[2].cnv_o += f *  tms->tm[2].c;

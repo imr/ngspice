@@ -114,8 +114,6 @@ int cm_message_printf(const char *fmt, ...)
 int cm_message_printf(const char *fmt, ...);
 #endif
 
-#ifndef CM_IGNORE
-#define CM_IGNORE(x) (x)
-#endif
+#define CM_IGNORE(x) (void) (x)
 
-#endif
+#endif /* include guard */

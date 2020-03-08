@@ -18,7 +18,7 @@ HFETAparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 
     NG_IGNORE(select);
 
-    switch(param) {
+    switch (param) {
         case HFETA_LENGTH:
             here->HFETAlength = value->rValue;
             here->HFETAlengthGiven = TRUE;
@@ -43,7 +43,9 @@ HFETAparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->HFETAoff = value->iValue;
             break;
         case HFETA_IC:
-            switch(value->v.numValue) {
+            /* FALLTHROUGH added to suppress GCC warning due to
+             * -Wimplicit-fallthrough flag */
+            switch (value->v.numValue) {
                 case 2:
                     here->HFETAicVGS = *(value->v.vec.rVec+1);
                     here->HFETAicVGSGiven = TRUE;

@@ -22,6 +22,7 @@ static toplink *getsubtoplink(char **ss);
 static topic *alltopics = NULL;
 
 static fplace *copy_fplace(fplace *place);
+static void hlp_topic_free(topic *p_topic);
 
 
 static int
@@ -37,28 +38,34 @@ sortcmp(const void *a, const void *b)
 static void
 sortlist(toplink **tlp)
 {
-    toplink **vec, *tl;
+    toplink *tl;
     size_t num = 0, i;
 
-    for (tl = *tlp; tl; tl = tl->next)
+    for (tl = *tlp; tl; tl = tl->next) {
         num++;
-    if (!num)
+    }
+    if (!num) { /* nothing to sort */
         return;
-    vec = TMALLOC(toplink *, num);
-    for (tl = *tlp, i = 0; tl; tl = tl->next, i++)
+    }
+
+    toplink ** const vec = TMALLOC(toplink *, num);
+    for (tl = *tlp, i = 0; tl; tl = tl->next, i++) {
         vec[i] = tl;
+    }
     (void) qsort(vec, num, sizeof (toplink *), sortcmp);
     *tlp = vec[0];
-    for (i = 0; i < num - 1; i++)
+    for (i = 0; i < num - 1; i++) {
         vec[i]->next = vec[i + 1];
+    }
     vec[i]->next = NULL;
-    tfree(vec);
+    txfree(vec);
 }
 
 
 topic *
 hlp_read(fplace *place)
 {
+    int xrc = 0;
     char buf[BSIZE_SP];
     topic *top = TMALLOC(topic, 1);
     toplink *topiclink;
@@ -68,22 +75,44 @@ hlp_read(fplace *place)
     char *s;
     bool mof = FALSE;
 
-    if (!place)
-        return NULL;
+    if (!place) {
+        xrc = -1;
+        goto EXITPOINT;
+    }
 
     top->place = copy_fplace(place);
 
     /* get the title */
-    if (!place->fp)
+    if (!place->fp) {
         place->fp = hlp_fopen(place->filename);
-    if (!place->fp)
-        return (NULL);
+    }
+    if (!place->fp) {
+        xrc = -1;
+        goto EXITPOINT;
+    }
     fseek(place->fp, place->fpos, SEEK_SET);
-    (void) fgets(buf, BSIZE_SP, place->fp);    /* skip subject */
-    (void) fgets(buf, BSIZE_SP, place->fp);
-    for (s = buf; *s && (*s != '\n'); s++)
+
+    /* skip subject */
+    if (fgets(buf, BSIZE_SP, place->fp) == (char *) NULL) {
+        fprintf(stderr, "missing subject\n");
+        xrc = -1;
+        goto EXITPOINT;
+    }
+    if (fgets(buf, BSIZE_SP, place->fp) == (char *) NULL) {
+        fprintf(stderr, "missing title\n");
+        xrc = -1;
+        goto EXITPOINT;
+    }
+
+    for (s = buf; *s && (*s != '\n'); s++) {
         ;
+    }
     *s = '\0';
+    if ((int) (s - buf) < 7) {
+        fprintf(stderr, "invalid title\n");
+        xrc = -1;
+        goto EXITPOINT;
+    }
     top->title = copy(&buf[7]);     /* don't copy "TITLE: " */
 
     /* get the text */
@@ -93,8 +122,7 @@ hlp_read(fplace *place)
             break;
         if ((*buf == '\0') ||             /* SJB - bug fix */
             !strncmp("SEEALSO: ", buf, 9) ||
-            !strncmp("SUBTOPIC: ", buf, 10))
-        {
+            !strncmp("SUBTOPIC: ", buf, 10)) {
             /* no text */
             top->text = NULL;
             goto endtext;
@@ -163,8 +191,15 @@ endtext:
     top->readlink = alltopics;
     alltopics = top;
 
-    return (top);
-}
+EXITPOINT:
+    if (xrc != 0) { /* free resources if error */
+        hlp_topic_free(top);
+        top = (topic *) NULL;
+    }
+
+    return top;
+} /* end of function hlp_read */
+
 
 
 /* *ss is of the form filename:subject */
@@ -310,11 +345,18 @@ getsubject(fplace *place)
         return(NULL);
 
     fseek(place->fp, place->fpos, SEEK_SET);
-    (void) fgets(buf, BSIZE_SP, place->fp);
+    if (fgets(buf, BSIZE_SP, place->fp) == (char *) NULL) {
+        (void) fprintf(stderr, "Missing subject");
+        return (char *) NULL;
+    }
     for (s = buf; *s && (*s != '\n'); s++)
         ;
     *s = '\0';
-    return (copy(&buf[9]));     /* don't copy "SUBJECT: " */
+    if ((int) (s - buf) < 9) {
+        (void) fprintf(stderr, "Invalid subject");
+        return (char *) NULL;
+    }
+    return copy(buf + 9);     /* don't copy "SUBJECT: " */
 }
 
 
@@ -324,33 +366,41 @@ void tlfree(toplink *tl)
     toplink *nt = NULL;
 
     while (tl) {
-        tfree(tl->description);
-        tfree(tl->place->filename);
-        tfree(tl->place);
+        txfree(tl->description);
+        txfree(tl->place->filename);
+        txfree(tl->place);
         /* Don't free the button stuff... */
         nt = tl->next;
-        tfree(tl);
+        txfree(tl);
         tl = nt;
     }
 }
 
 
+
 void
 hlp_free(void)
 {
-    topic *top, *nt = NULL;
+    topic *top, *nt;
 
     for (top = alltopics; top; top = nt) {
         nt = top->readlink;
-        tfree(top->title);
-        tfree(top->place);
-        wl_free(top->text);
-        tlfree(top->subtopics);
-        tlfree(top->seealso);
-        tfree(top);
+        hlp_topic_free(top);
     }
     alltopics = NULL;
-}
+} /* end of function hlp_free */
+
+
+static void hlp_topic_free(topic *p_topic)
+{
+    txfree(p_topic->title);
+    txfree(p_topic->place);
+    wl_free(p_topic->text);
+    tlfree(p_topic->subtopics);
+    tlfree(p_topic->seealso);
+    txfree(p_topic);
+} /* end of function hlp_topic_free */
+
 
 
 static fplace *

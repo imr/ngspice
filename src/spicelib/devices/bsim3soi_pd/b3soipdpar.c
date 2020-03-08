@@ -25,8 +25,10 @@ B3SOIPDparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 
     NG_IGNORE(select);
 
-    switch(param) 
-    {   case B3SOIPD_W:
+    /* FALLTHROUGH added to suppress GCC warning due to
+     * -Wimplicit-fallthrough flag */
+    switch(param) {
+        case B3SOIPD_W:
             here->B3SOIPDw = value->rValue;
             here->B3SOIPDwGiven = TRUE;
             break;
@@ -148,7 +150,7 @@ B3SOIPDparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 
 
         case B3SOIPD_IC:
-            switch(value->v.numValue){
+            switch (value->v.numValue) {
                 case 5:
                     here->B3SOIPDicVPS = *(value->v.vec.rVec+4);
                     here->B3SOIPDicVPSGiven = TRUE;

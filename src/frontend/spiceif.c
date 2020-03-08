@@ -1386,7 +1386,11 @@ void com_snload(wordlist *wl)
         return;
     }
 
-    fread(&tmpI, sizeof(int), 1, file);
+    if (fread(&tmpI, sizeof(int), 1, file) != 1) {
+        (void) fprintf(cp_err, "Unable to read spice version from snapshot.\n");
+        fclose(file);
+        return;
+    }
     if (tmpI != sizeof(CKTcircuit)) {
         fprintf(cp_err, "loaded num: %d, expected num: %ld\n", tmpI, (long)sizeof(CKTcircuit));
         fprintf(cp_err, "Error: snapshot saved with different version of spice\n");
@@ -1396,7 +1400,11 @@ void com_snload(wordlist *wl)
 
     my_ckt = TMALLOC(CKTcircuit, 1);
 
-    fread(my_ckt, sizeof(CKTcircuit), 1, file);
+    if (fread(my_ckt, sizeof(CKTcircuit), 1, file) != 1) {
+        (void) fprintf(cp_err, "Unable to read spice circuit from snapshot.\n");
+        fclose(file);
+        return;
+    }
 
 #define _t(name) ckt->name = my_ckt->name
 #define _ta(name, size)                                                 \
@@ -1484,17 +1492,24 @@ void com_snload(wordlist *wl)
 #define _foo(name, type, _size)                                         \
     do {                                                                \
         int __i;                                                        \
-        fread(&__i, sizeof(int), 1, file);                              \
-        if (__i) {                                                      \
-            if (name)                                                   \
-                tfree(name);                                            \
-            name = (type *)tmalloc((size_t) __i);                       \
-            fread(name, 1, (size_t) __i, file);                         \
-        } else {                                                        \
+        if (fread(&__i, sizeof(int), 1, file) == 1 && __i > 0) {        \
+            if (name) {                                                 \
+                txfree(name);                                           \
+            }                                                           \
+            name = (type *) tmalloc((size_t) __i);                      \
+            if (fread(name, 1, (size_t) __i, file) != (size_t) __i) {   \
+                (void) fprintf(cp_err,                                  \
+                        "Unable to read vector " #name "\n");           \
+                break;                                                  \
+            }                                                           \
+        }                                                               \
+        else {                                                          \
             fprintf(cp_err, "size for vector " #name " is 0\n");        \
         }                                                               \
-        if ((_size) != -1 && __i != (_size) * (int)sizeof(type)) {      \
-            fprintf(cp_err, "expected %ld, but got %d for "#name"\n", (_size)*(long)sizeof(type), __i); \
+        if ((_size) != -1 && __i !=                                     \
+                (int) (_size) * (int) sizeof(type)) {                   \
+            fprintf(cp_err, "expected %ld, but got %d for "#name"\n",   \
+                    (_size)*(long)sizeof(type), __i);                   \
         }                                                               \
     } while(0)
 

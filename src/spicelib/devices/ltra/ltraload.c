@@ -90,6 +90,8 @@ LTRAload(GENmodel *inModel, CKTcircuit *ckt)
 	  break;
 	}
 
+    /* FALLTHROUGH added to suppress GCC warning due to
+     * -Wimplicit-fallthrough flag */
 	switch (model->LTRAspecialCase) {
 	case LTRA_MOD_RLC:
 	  /*
@@ -122,6 +124,7 @@ LTRAload(GENmodel *inModel, CKTcircuit *ckt)
 	      model->LTRAtd, model->LTRAalpha, model->LTRAbeta,
 	      ckt->CKTtime, ckt->CKTtimePoints, ckt->CKTtimeIndex,
 	      model->LTRAchopReltol, &(model->LTRAauxIndex));
+          /* FALLTHROUGH */
 
 
 	case LTRA_MOD_LC:
@@ -308,6 +311,7 @@ LTRAload(GENmodel *inModel, CKTcircuit *ckt)
 	  *(here->LTRAibr2Pos2Ptr) += dummy1;
 	  *(here->LTRAibr2Neg2Ptr) -= dummy1;
 	  /* end loading for convolution parts' first terms */
+      /* FALLTHROUGH */
 
 	case LTRA_MOD_LC:
 	  /*
@@ -591,6 +595,8 @@ LTRAload(GENmodel *inModel, CKTcircuit *ckt)
 	    return (E_BADPARM);
 	  }
 
+    /* FALLTHROUGH added to suppress GCC warning due to
+     * -Wimplicit-fallthrough flag */
 	  switch (model->LTRAspecialCase) {
 	  case LTRA_MOD_RLC:
 
@@ -701,6 +707,7 @@ LTRAload(GENmodel *inModel, CKTcircuit *ckt)
 
 	    /* end convolution of h3dash with v2 and v1 */
 
+        /* FALLTHROUGH */
 	  case LTRA_MOD_LC:
 	    /* begin lossless-like parts */
 

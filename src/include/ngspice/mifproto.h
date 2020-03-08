@@ -156,7 +156,7 @@ extern char *MIFcopy(const char *);
 
 
 #ifndef CM_IGNORE
-#define CM_IGNORE(x) (x)
+#define CM_IGNORE(x) (void) (x)
 #endif
 
-#endif
+#endif /* include guard */

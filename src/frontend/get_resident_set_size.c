@@ -7,6 +7,7 @@
  */
 
 #include "ngspice/ngspice.h"
+#include "resource.h"
 
 #if defined(_WIN32)
 #undef BOOLEAN
@@ -39,7 +40,7 @@
  * memory use) measured in bytes, or zero if the value cannot be
  * determined on this OS.
  */
-unsigned long long getPeakRSS()
+unsigned long long getPeakRSS(void)
 {
 #if defined(HAVE__PROC_MEMINFO)
     /* Linux ---------------------------------------------------- */
@@ -100,7 +101,7 @@ unsigned long long getPeakRSS()
  * Returns the current resident set size (physical memory use) measured
  * in bytes, or zero if the value cannot be determined on this OS.
  */
-unsigned long long getCurrentRSS( )
+unsigned long long getCurrentRSS(void)
 {
 #if defined(_WIN32)
     /* Windows -------------------------------------------------- */

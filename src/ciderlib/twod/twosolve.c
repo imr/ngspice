@@ -4,21 +4,20 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 Author:	1991 David A. Gates, U. C. Berkeley CAD Group
 **********/
 
+#include "../../maths/misc/norm.h"
+#include "ngspice/bool.h"
+#include "ngspice/cidersupt.h"
+#include "ngspice/cpextern.h"
+#include "ngspice/ifsim.h"
+#include "ngspice/macros.h"
 #include "ngspice/ngspice.h"
-#include "ngspice/numglobs.h"
 #include "ngspice/numenum.h"
+#include "ngspice/numglobs.h"
+#include "ngspice/spmatrix.h"
 #include "ngspice/twodev.h"
 #include "ngspice/twomesh.h"
-#include "ngspice/spmatrix.h"
-#include "ngspice/bool.h"
-#include "ngspice/macros.h"
 #include "twoddefs.h"
 #include "twodext.h"
-#include "ngspice/cidersupt.h"
-#include "../../maths/misc/norm.h"
-
-
-#include "ngspice/ifsim.h"
 extern IFfrontEnd *SPfrontEnd;
 
 
@@ -96,19 +95,24 @@ TWOdcSolve(TWOdevice *pDevice, int iterationLimit, BOOLEAN newSolver,
     error = spFactor(pDevice->matrix);
     factorTime += SPfrontEnd->IFseconds() - startTime;
     if (newSolver) {
-      if (pDevice->iterationNumber == 1) {
-	orderTime = factorTime;
-      } else if (pDevice->iterationNumber == 2) {
-	orderTime -= factorTime - orderTime;
-	factorTime -= orderTime;
-	if (pDevice->poissonOnly) {
-	  pDevice->pStats->orderTime[STAT_SETUP] += orderTime;
-	} else {
-	  pDevice->pStats->orderTime[STAT_DC] += orderTime;
-	}
-	newSolver = FALSE;
-      }
-    }
+        if (pDevice->iterationNumber == 1) {
+            orderTime = factorTime;
+        }
+        else if (pDevice->iterationNumber == 2) {
+            orderTime -= factorTime - orderTime;
+            factorTime -= orderTime;
+            if (pDevice->poissonOnly) {
+                pDevice->pStats->orderTime[STAT_SETUP] += orderTime;
+            }
+            else {
+                pDevice->pStats->orderTime[STAT_DC] += orderTime;
+            }
+            /* After first two iterations, no special handling for a
+             * new solver */
+            newSolver = FALSE;
+        } /* end of case of iteratin 2 */
+    } /* end of special processing for a new solver */
+
     if (foundError(error)) {
       if (error == spSINGULAR) {
 	int badRow, badCol;
@@ -430,58 +434,69 @@ TWOstoreNeutralGuess(TWOdevice *pDevice)
 
 /* computing the equilibrium solution; solution of Poisson's eqn */
 /* the solution is used as an initial starting point for bias conditions */
-
-void
-TWOequilSolve(TWOdevice *pDevice)
+int TWOequilSolve(TWOdevice *pDevice)
 {
-  BOOLEAN newSolver = FALSE;
-  int error;
-  int nIndex, eIndex;
-  TWOelem *pElem;
-  TWOnode *pNode;
-  double startTime, setupTime, miscTime;
+    BOOLEAN newSolver = FALSE;
+    int error;
+    int nIndex, eIndex;
+    TWOelem *pElem;
+    TWOnode *pNode;
+    double startTime, setupTime, miscTime;
 
-  setupTime = miscTime = 0.0;
+    setupTime = miscTime = 0.0;
 
-  /* SETUP */
-  startTime = SPfrontEnd->IFseconds();
-  switch (pDevice->solverType) {
-  case SLV_SMSIG:
-  case SLV_BIAS:
-    /* free up memory allocated for the bias solution */
-    FREE(pDevice->dcSolution);
-    FREE(pDevice->dcDeltaSolution);
-    FREE(pDevice->copiedSolution);
-    FREE(pDevice->rhs);
-    FREE(pDevice->rhsImag);
-    spDestroy(pDevice->matrix);
-  case SLV_NONE:
-    pDevice->poissonOnly = TRUE;
-    pDevice->numEqns = pDevice->dimEquil - 1;
-    XCALLOC(pDevice->dcSolution, double, pDevice->dimEquil);
-    XCALLOC(pDevice->dcDeltaSolution, double, pDevice->dimEquil);
-    XCALLOC(pDevice->copiedSolution, double, pDevice->dimEquil);
-    XCALLOC(pDevice->rhs, double, pDevice->dimEquil);
-    pDevice->matrix = spCreate(pDevice->numEqns, 0, &error);
-    if (error == spNO_MEMORY) {
-      printf("TWOequilSolve: Out of Memory\n");
-      exit(-1);
-    }
-    newSolver = TRUE;
-    spSetReal(pDevice->matrix);
-    TWOQjacBuild(pDevice);
-    pDevice->numOrigEquil = spElementCount(pDevice->matrix);
-    pDevice->numFillEquil = 0;
-  case SLV_EQUIL:
-    pDevice->solverType = SLV_EQUIL;
-    break;
-  default:
-    fprintf(stderr, "Panic: Unknown solver type in equil solution.\n");
-    exit(-1);
-    break;
-  }
-  TWOstoreNeutralGuess(pDevice);
-  setupTime += SPfrontEnd->IFseconds() - startTime;
+    /* SETUP */
+    startTime = SPfrontEnd->IFseconds();
+
+    /* Set up pDevice to compute the equilibrium solution. If the solver
+     * is for bias, the arrays must be freed and allocated to the correct
+     * sizes for an equilibrium solution; if it is a new solver, they are
+     * only allocated; and if already an equilibrium solve, nothing
+     * needs to be done */
+    /* FALLTHROUGH added to suppress GCC warning due to
+     * -Wimplicit-fallthrough flag */
+    switch (pDevice->solverType) {
+        case SLV_SMSIG:
+        case SLV_BIAS:
+            /* Free memory allocated for the bias solution */
+            FREE(pDevice->dcSolution);
+            FREE(pDevice->dcDeltaSolution);
+            FREE(pDevice->copiedSolution);
+            FREE(pDevice->rhs);
+            FREE(pDevice->rhsImag);
+            spDestroy(pDevice->matrix);
+            /* FALLTHROUGH */
+        case SLV_NONE: {
+            /* Allocate memory needed for an equilibrium solution */
+            const int n_dim = pDevice->dimEquil;
+            const int n_eqn = n_dim - 1;
+            pDevice->poissonOnly = TRUE;
+            pDevice->numEqns = n_eqn;
+            XCALLOC(pDevice->dcSolution, double, n_dim);
+            XCALLOC(pDevice->dcDeltaSolution, double, n_dim);
+            XCALLOC(pDevice->copiedSolution, double, n_dim);
+            XCALLOC(pDevice->rhs, double, n_dim);
+            pDevice->matrix = spCreate(n_eqn, 0, &error);
+            if (error == spNO_MEMORY) {
+                (void) fprintf(cp_err, "TWOequilSolve: Out of Memory\n");
+                return E_NOMEM;
+            }
+            newSolver = TRUE;
+            spSetReal(pDevice->matrix); /* set to a real matrix */
+            TWOQjacBuild(pDevice);
+            pDevice->numOrigEquil = spElementCount(pDevice->matrix);
+            pDevice->numFillEquil = 0;
+            pDevice->solverType = SLV_EQUIL;
+            break;
+        }
+        case SLV_EQUIL: /* Nothing to do if already equilibrium solver */
+            break;
+        default: /* Invalid data */
+            fprintf(stderr, "Panic: Unknown solver type in equil solution.\n");
+            return E_PANIC;
+    } /* end of switch over solve type */
+    TWOstoreNeutralGuess(pDevice);
+    setupTime += SPfrontEnd->IFseconds() - startTime;
 
   /* SOLVE */
   TWOdcSolve(pDevice, MaxIterations, newSolver, FALSE, NULL);
@@ -510,6 +525,8 @@ TWOequilSolve(TWOdevice *pDevice)
   miscTime += SPfrontEnd->IFseconds() - startTime;
   pDevice->pStats->setupTime[STAT_SETUP] += setupTime;
   pDevice->pStats->miscTime[STAT_SETUP] += miscTime;
+
+  return 0;
 }
 
 /* compute the solution under an applied bias */
@@ -530,15 +547,20 @@ TWObiasSolve(TWOdevice *pDevice, int iterationLimit, BOOLEAN tranAnalysis,
 
   /* SETUP */
   startTime = SPfrontEnd->IFseconds();
-  switch (pDevice->solverType) {
-  case SLV_EQUIL:
-    /* free up the vectors allocated in the equilibrium solution */
-    FREE(pDevice->dcSolution);
-    FREE(pDevice->dcDeltaSolution);
-    FREE(pDevice->copiedSolution);
-    FREE(pDevice->rhs);
-    spDestroy(pDevice->matrix);
+    /* Set up for solving for bias */
+    /* FALLTHROUGH added to suppress GCC warning due to
+     * -Wimplicit-fallthrough flag */
+    switch (pDevice->solverType) {
+    case SLV_EQUIL:
+        /* free up the vectors allocated in the equilibrium solution */
+        FREE(pDevice->dcSolution);
+        FREE(pDevice->dcDeltaSolution);
+        FREE(pDevice->copiedSolution);
+        FREE(pDevice->rhs);
+        spDestroy(pDevice->matrix);
+        /* FALLTHROUGH */
   case SLV_NONE:
+    /* Set up for bias */
     pDevice->poissonOnly = FALSE;
     pDevice->numEqns = pDevice->dimBias - 1;
     XCALLOC(pDevice->dcSolution, double, pDevice->dimBias);
@@ -562,10 +584,12 @@ TWObiasSolve(TWOdevice *pDevice, int iterationLimit, BOOLEAN tranAnalysis,
     pDevice->numOrigBias = spElementCount(pDevice->matrix);
     pDevice->numFillBias = 0;
     TWOstoreInitialGuess(pDevice);
+        /* FALLTHROUGH */
   case SLV_SMSIG:
     spSetReal(pDevice->matrix);
-  case SLV_BIAS:
     pDevice->solverType = SLV_BIAS;
+    break;
+  case SLV_BIAS:
     break;
   default:
     fprintf(stderr, "Panic: Unknown solver type in bias solution.\n");

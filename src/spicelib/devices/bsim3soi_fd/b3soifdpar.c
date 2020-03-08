@@ -24,8 +24,8 @@ B3SOIFDparam(int param, IFvalue *value, GENinstance *inst,
 
     NG_IGNORE(select);
 
-    switch(param) 
-    {   case B3SOIFD_W:
+    switch (param) {
+        case B3SOIFD_W:
             here->B3SOIFDw = value->rValue;
             here->B3SOIFDwGiven = TRUE;
             break;
@@ -105,7 +105,9 @@ B3SOIFDparam(int param, IFvalue *value, GENinstance *inst,
             here->B3SOIFDbodySquaresGiven = TRUE;
             break;
         case B3SOIFD_IC:
-            switch(value->v.numValue){
+            /* FALLTHROUGH added to suppress GCC warning due to
+             * -Wimplicit-fallthrough flag */
+            switch (value->v.numValue) {
                 case 5:
                     here->B3SOIFDicVPS = *(value->v.vec.rVec+4);
                     here->B3SOIFDicVPSGiven = TRUE;

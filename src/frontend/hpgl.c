@@ -250,7 +250,7 @@ int GL_Arc(int x0, int y0, int r, double theta, double delta_theta)
 }
 
 
-int GL_Text(char *text, int x, int y, int angle)
+int GL_Text(const char *text, int x, int y, int angle)
 {
     NG_IGNORE(angle);
 
@@ -291,9 +291,8 @@ int GL_SetLinestyle(int linestyleid)
 }
 
 
-int GL_SetColor(int colorid, GRAPH* graph)
+int GL_SetColor(int colorid)
 {
-    NG_IGNORE(graph);
     fprintf(plotfile, "SP %d;", colorid);
 
     return 0;

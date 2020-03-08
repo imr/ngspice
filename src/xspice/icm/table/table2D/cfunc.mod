@@ -72,8 +72,9 @@ NON-STANDARD FEATURES
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#include "support/gettokens.h"
 #include "mada/eno2.h"
+#include "support/gettokens.h"
+#include "support/interp.h"
 
 typedef struct {
     int   ix;   /* size of array in x */
@@ -105,10 +106,7 @@ typedef struct {
 
 /*=== FUNCTION PROTOTYPE DEFINITIONS ===*/
 
-double BilinearInterpolation(double x, double y,
-        int xind, int yind, double **td);
 static void cm_table2D_callback(ARGS, Mif_Callback_Reason_t reason);
-extern int findCrossOver(double arr[], int n, double x);
 static void free_local_data(Table2_Data_t *loc);
 static inline double get_local_diff(int n, double *col, int ind);
 static Table2_Data_t *init_local_data(const char *filename, int interporder);

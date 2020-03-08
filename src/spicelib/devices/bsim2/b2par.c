@@ -20,7 +20,7 @@ B2param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 
     NG_IGNORE(select);
 
-    switch(param) {
+    switch (param) {
         case BSIM2_W:
             here->B2w = value->rValue;
             here->B2wGiven = TRUE;
@@ -73,6 +73,8 @@ B2param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->B2icVGSGiven = TRUE;
             break;
         case BSIM2_IC:
+            /* FALLTHROUGH added to suppress GCC warning due to
+             * -Wimplicit-fallthrough flag */
             switch(value->v.numValue){
                 case 3:
                     here->B2icVBS = *(value->v.vec.rVec+2);

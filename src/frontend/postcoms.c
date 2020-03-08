@@ -803,13 +803,9 @@ com_cross(wordlist *wl)
 
     vec_remove(newvec);
     v = dvec_alloc(copy(newvec),
-                   vecs
-                   ? vecs->v_type
-                   : SV_NOTYPE,
-                   comp
-                   ? (VF_COMPLEX | VF_PERMANENT)
-                   : (VF_REAL | VF_PERMANENT),
-                   i, NULL);
+            (int) (vecs ? vecs->v_type : SV_NOTYPE),
+            comp ? (VF_COMPLEX | VF_PERMANENT) : (VF_REAL | VF_PERMANENT),
+            i, NULL);
 
     /* Now copy the ind'ths elements into this one. */
     for (n = vecs, i = 0; n; n = n->v_link2, i++)

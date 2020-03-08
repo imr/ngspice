@@ -193,7 +193,7 @@ findsubname(dico_t *dico, DSTRINGPTR dstr_p)
             pscopy(&name, p, t);
             entry = entrynb(dico, ds_get_buf(&name));
             if (entry && (entry->tp == NUPA_SUBCKT)) {
-                (void) ds_set_length(dstr_p, p_end - s);
+                (void) ds_set_length(dstr_p, (size_t) (p_end - s));
                 ds_free(&name);
                 return;
             }
@@ -247,7 +247,7 @@ transform(dico_t *dico, DSTRINGPTR dstr_p, bool incontrol)
             /* split off any "params" tail */
             params = strstr(s, "params:");
             if (params) {
-                ds_set_length(dstr_p, params - s);
+                ds_set_length(dstr_p, (size_t) (params - s));
             }
             category = 'S';
         } else if (prefix(".control", s)) {

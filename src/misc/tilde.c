@@ -70,7 +70,7 @@ char *tildexpand(const char *string)
             string++;
         }
         const char * const usr_end = string;
-        const size_t n_char_usr = usr_end - usr_start;
+        const size_t n_char_usr = (size_t) (usr_end - usr_start);
         const size_t n_byte_usr = n_char_usr + 1;
         if (n_byte_usr > sizeof buf_fixed) {
             buf = TMALLOC(char, n_byte_usr);

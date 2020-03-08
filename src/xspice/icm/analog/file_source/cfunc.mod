@@ -81,7 +81,7 @@ struct filesource_state {
 
 struct infiledata {
     double *datavec;
-    int vecallocated;
+    size_t vecallocated;
     int maxoccupied;
     int actpointer;
     int size;
@@ -189,7 +189,7 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
         loc->indata = (struct infiledata *) malloc(
                 sizeof(struct infiledata));
         loc->indata->datavec = (double *) malloc(sizeof(double) *
-                stepsize * 1000);
+                (size_t) (stepsize * 1000));
 
         /* Check allocations */
         if (loc->timeinterval == (double *) NULL ||
@@ -205,7 +205,7 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
 
         CALLBACK = cm_filesource_callback;
 
-        loc->indata->vecallocated = stepsize * 1000;
+        loc->indata->vecallocated = (size_t) (stepsize * 1000);
         loc->indata->maxoccupied = 0;
         loc->indata->actpointer = 0;
         loc->indata->size = stepsize;
@@ -280,8 +280,8 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
 
             /* before storing, check if vector size is large enough.
                If not, add another 1000*size doubles */
-            if (count > loc->indata->vecallocated - size) {
-                loc->indata->vecallocated += size * 1000;
+            if (count > (int) loc->indata->vecallocated - size) {
+                loc->indata->vecallocated += (size_t) (size * 1000);
                 void * const p = realloc(loc->indata->datavec,
                         sizeof(double) * loc->indata->vecallocated);
                 if (p == NULL) {

@@ -8,25 +8,31 @@ Author:	1991 David A. Gates, U. C. Berkeley CAD Group
  *   the data is read and stored in two arrays x and conc
  */
 
+#include <errno.h>
+#include <string.h>
 
-#include "ngspice/ngspice.h"
 #include "ngspice/cidersupt.h"
+#include "ngspice/cpextern.h"
+#include "ngspice/ngspice.h"
 
 #define MAXMAT 10
 #define MAXIMP 4
 #define MAXLAYER 10
 #define MAXGRID 500
 
-#define GFREAD( fp, ptr, type, num ) if (num && (fread( ptr,\
-		sizeof(type), (unsigned)num, fp ) != (unsigned)num)) {\
-		return;\
-		}
+#define GFREAD( fp, ptr, type, num )\
+    if (num && (fread( ptr, sizeof(type), (size_t) num,\
+            fp ) != (size_t) num)) {\
+        xrc = -1;\
+        goto EXITPOINT;\
+    }
 
 #define DEBUG	if (0)
 
-void
-SUPbinRead(char *inFile, float *x, float *conc, int *impId, int *numNod)
+int SUPbinRead(const char *inFile, float *x, float *conc, int *impId,
+        int *numNod)
 {
+    int xrc = 0;
   int idata, recordMark;
   int ldata;
   int i, j;
@@ -37,18 +43,20 @@ SUPbinRead(char *inFile, float *x, float *conc, int *impId, int *numNod)
   float xStart;
   float layerTh[10];
   float con[500];
-  FILE *fpSuprem;
+  FILE *fpSuprem = (FILE *) NULL;
 
   /* Clear Concentration Array */
   for ( i=0; i < MAXGRID; i++ ) {
     conc[i] = 0.0;
   }
 
-  /* Open Input File */
-  if ((fpSuprem = fopen( inFile, "r" )) == NULL) {
-    perror(inFile);
-    return;
-  }
+    /* Open Input File */
+    if ((fpSuprem = fopen( inFile, "r" )) == NULL) {
+        (void) fprintf(cp_err, "Unable to read file \"%s\": %s.\n",
+                inFile, strerror(errno));
+        xrc = -1;
+        goto EXITPOINT;
+    }
 
 /*
  * The first record contains the number of layers (I4), the number of 
@@ -199,17 +207,27 @@ SUPbinRead(char *inFile, float *x, float *conc, int *impId, int *numNod)
   DEBUG fprintf(stderr," %d\n", ldata );
   GFREAD( fpSuprem, &recordMark, int, 1 );
 
-  fclose( fpSuprem );
+    if (fclose(fpSuprem) != 0) {
+        (void) fprintf(cp_err, "Unable to close file \"%s\": %s.\n",
+                inFile, strerror(errno));
+        xrc = -1;
+        goto EXITPOINT;
+    }
+    fpSuprem = (FILE *) NULL;
 
-/* shift silicon layer to beginning of array */
-  for ( j=numLay; --j >= 0; )
-    if (matTyp[ j ] == 1)
-        break;
+     /* shift silicon layer to beginning of array */
+    for (j = numLay; --j >= 0; ) {
+        if (matTyp[j] == 1) {
+            break;
+        }
+    }
 
-  if(j < 0) {
-      fprintf(stderr, "internal error in %s, bye !\n", __FUNCTION__);
-      controlled_exit(1);
-  }
+    if (j < 0) {
+        (void) fprintf(cp_err, "internal error in %s!\n", __FUNCTION__);
+        xrc = -1;
+        goto EXITPOINT;
+    }
+
 
   siIndex = j;
 
@@ -223,15 +241,26 @@ SUPbinRead(char *inFile, float *x, float *conc, int *impId, int *numNod)
 
 /* Store number of valid nodes using pointer */
   *numNod = numGrid;
-  return;
-}
 
-void
-SUPascRead(char *inFile, float *x, float *conc, int *impId, int *numNod)
+EXITPOINT:
+    if (fpSuprem != (FILE *) NULL) {
+        if (fclose(fpSuprem) != 0) {
+            (void) fprintf(cp_err, "Unable to close \"%s\" at exit: %s\n",
+                    inFile, strerror(errno));
+            xrc = -1;
+        }
+    }
+
+    return xrc;
+} /* end of function SUPbinRead */
+
+
+
+int SUPascRead(const char *inFile, float *x, float *conc, int *impId,
+        int *numNod)
 {
-  int idata;
+    int xrc = 0;
   int i, j;
-  float rdata;
   char cdata[21];
   int numLay, numImp, numGrid;
   int impTyp[4], matTyp[10], topNod[10], siIndex, offset;
@@ -245,119 +274,196 @@ SUPascRead(char *inFile, float *x, float *conc, int *impId, int *numNod)
     conc[i] = 0.0;
   }
 
-  /* Open Input File */
-  if ((fpSuprem = fopen( inFile, "r" )) == NULL) {
-    perror(inFile);
-    return;
-  }
+    /* Open Input File */
+    if ((fpSuprem = fopen( inFile, "r" )) == NULL) {
+        (void) fprintf(cp_err, "Unable to open file \"%s\": %s.\n",
+                inFile, strerror(errno));
+        xrc = -1;
+        goto EXITPOINT;
+    }
 
 /*
  * The first line contains the number of layers (I4), the number of 
  * impurities (I4), and the number of nodes (I4) present in the structure.
  */
-  fscanf( fpSuprem, "%d %d %d\n", &numLay, &numImp, &numGrid );
+    if (fscanf( fpSuprem, "%d %d %d\n", &numLay, &numImp, &numGrid) != 3) {
+        (void) fprintf(cp_err, "Unable to read file first line of \"%s\"\n",
+                inFile);
+        xrc = -1;
+        goto EXITPOINT;
+    }
+
   DEBUG fprintf( stderr, "set 1: %d %d %d\n", numLay, numImp, numGrid);
 
-/*
- * The second set of lines contains, for each layer, the material name (A20),
- * the material type (I4), the layer thickness (R4), and the pointer to
- * the top node of the layer (I4), and an unknown int and unknown float.
- * The material type code:
- *   1 - Si
- *   2 - SiO2
- *   3 - Poly
- *   4 - Si3N4
- *   5 - Alum
- */
-  for ( i=0; i < numLay; i++ ) {
-    fscanf( fpSuprem, "%s\n %d %e %d %d %e\n",
-	cdata, &matTyp[i], &layerTh[i], &topNod[i], &idata, &rdata );
-    DEBUG fprintf(stderr,"set 2: %s: %d %f %d\n",
-	cdata, matTyp[i], layerTh[i], topNod[i] );
-  }
+    /*
+     * The second set of lines contains, for each layer, the material name
+     * (A20), the material type (I4), the layer thickness (R4), and the
+     * pointer to the top node of the layer (I4), and an unknown int and
+     * unknown float.
+     *
+     * The material type code:
+     *   1 - Si
+     *   2 - SiO2
+     *   3 - Poly
+     *   4 - Si3N4
+     *   5 - Alum
+     */
+    for (i = 0; i < numLay; ++i) {
+        int idata;
+        float rdata;
+        if (fscanf(fpSuprem, "%s\n %d %e %d %d %e\n",
+                cdata, &matTyp[i], &layerTh[i], &topNod[i],
+                &idata, &rdata) != 6) {
+            (void) fprintf(cp_err, "Unable to read layer %d "
+                    "from file \"%s\".\n",
+                    i + 1, inFile);
+            xrc = -1;
+            goto EXITPOINT;
+        }
 
-/*
- * The third set of lines contains, for each impurity, the name of the
- * impurity (A20) and the type of impurity (I4).
- */
-  for ( i=0; i < numImp; i++ ) {
-    fscanf( fpSuprem, "%s\n %d\n", cdata, &impTyp[i] );
-    DEBUG fprintf(stderr,"set 3: %s: %d\n", cdata, impTyp[i] );
-  }
+        DEBUG fprintf(stderr,"set 2: %s: %d %f %d\n",
+                cdata, matTyp[i], layerTh[i], topNod[i]);
+    } /* end of loop over layers */
 
-/*
- * The fourth set of lines contains, for each layer by each impurity, the
- * integrated dopant (R4), and the interior concentration of the
- * polysilicon grains (R4).
- */
-  for ( j=0; j < numLay; j++ ) {
-    for ( i=0; i < numImp; i++ ) {
-      fscanf( fpSuprem, "%e", &rdata );
-      fscanf( fpSuprem, "%e", &rdata );
+    /*
+     * The third set of lines contains, for each impurity, the name of the
+     * impurity (A20) and the type of impurity (I4).
+     */
+    for (i = 0; i < numImp; ++i) {
+        if (fscanf( fpSuprem, "%s\n %d\n", cdata, &impTyp[i]) != 2) {
+            (void) fprintf(cp_err, "Unable to read impurity %d "
+                    "from file \"%s\".\n",
+                    i + 1, inFile);
+            xrc = -1;
+            goto EXITPOINT;
+        }
+        DEBUG fprintf(stderr,"set 3: %s: %d\n", cdata, impTyp[i]);
+    } /* end of loop over impurities */
+
+    /*
+     * The fourth set of lines contains, for each layer by each impurity,
+     * the integrated dopant (R4), and the interior concentration of the
+     * polysilicon grains (R4).
+     */
+    for (j = 0; j < numLay; ++j) {
+        for (i = 0; i < numImp; ++i) {
+            float rdata;
+            if (fscanf(fpSuprem, "%e%e", &rdata, &rdata) != 2) {
+                (void) fprintf(cp_err, "Unable to read integrated dopant "
+                        "and interior concentration of layer %d and "
+                        "impurity %d from file \"%s\".\n",
+                        j + 1, i + 1, inFile);
+                xrc = -1;
+                goto EXITPOINT;
+            }
+        }
     }
-  }
-  DEBUG fprintf(stderr,"set 4:\n" );
+    DEBUG fprintf(stderr,"set 4:\n" );
 
-/*
- * The fifth set of lines contains, for each node in the structure,
- * the distance to the next deepest node (R4), the distance from the
- * surface (R4), and, for each impurity type, the impurity's
- * chemical concentration (R4) and the impurity's active concentration (R4).
- */
-  for ( i=1; i <= numGrid; i++ ) {
-    fscanf( fpSuprem, "%e %e", &rdata, &x[i] );
+    /*
+     * The fifth set of lines contains, for each node in the structure,
+     * the distance to the next deepest node (R4), the distance from the
+     * surface (R4), and, for each impurity type, the impurity's
+     * chemical concentration (R4) and the impurity's active concentration (R4).
+     */
+    for (i = 1; i <= numGrid; ++i) {
+        float rdata;
+        if (fscanf(fpSuprem, "%e %e", &rdata, &x[i]) != 2) {
+            (void) fprintf(cp_err, "Unable to read grid %d "
+                    "from file \"%s\".\n",
+                    i + 1, inFile);
+            xrc = -1;
+            goto EXITPOINT;
+        }
 
-    for ( j=0; j < numImp; j++ ) {
-/* chemical concentration - not required */
-      fscanf( fpSuprem, "%e", &con[i] );
-        
-/* store active concentration */
-      fscanf( fpSuprem, "%e", &con[i] );
+        for (j = 0; j < numImp; j++) {
+            float junk;
+            /* chemical concentration - not required */
+            if (fscanf(fpSuprem, "%e", &junk) != 1) {
+                (void) fprintf(cp_err, "Unable to chemical concentration "
+                        "%d of layer %d "
+                        "from file \"%s\".\n",
+                        j + 1, i + 1, inFile);
+                xrc = -1;
+                goto EXITPOINT;
+            }
 
-/* orient sign properly */
-      if (impTyp[j] == *impId) {
-/*...Boron...*/
-	if (impTyp[j] == 1) {
-	  conc[i] = - con[i];
-	} else {
-/*...All Other Impurities: P, As, Sb ...*/
-	  conc[i] = con[i];
-	}
-      }
+            /* store active concentration */
+            if (fscanf(fpSuprem, "%e", &con[i]) != 1) {
+                (void) fprintf(cp_err, "Unable to active concentration "
+                        "%d of layer %d "
+                        "from file \"%s\".\n",
+                        j + 1, i + 1, inFile);
+                xrc = -1;
+                goto EXITPOINT;
+            }
+
+            /* orient sign properly */
+            if (impTyp[j] == *impId) {
+                /*...Boron...*/
+                if (impTyp[j] == 1) {
+                    conc[i] = - con[i];
+                }
+                else {
+                    /*...All Other Impurities: P, As, Sb ...*/
+                    conc[i] = con[i];
+                }
+            }
+        }
+    } /* end of loop over num grid */
+    DEBUG fprintf( stderr, "set 5: %e %e\n", x[1], conc[1] );
+
+    /*
+     * The last line in the file contains some random stuff that might be
+     * useful to some people, the temperature in degrees Kelvin of the last
+     * diffusion step (R4), the phosphorus implant dose (R4), the arsenic
+     * implant flag (L4).  However, we can just ignore that stuff.
+     */
+    if (fclose(fpSuprem) != 0) {
+        (void) fprintf(cp_err, "Unable to close file \"%s\": %s.\n",
+                inFile, strerror(errno));
+        xrc = -1;
+        goto EXITPOINT;
     }
-  }
-  DEBUG fprintf( stderr, "set 5: %e %e\n", x[1], conc[1] );
+    fpSuprem = (FILE *) NULL;
 
-/*
- * The last line in the file contains some random stuff that might be
- * useful to some people, the temperature in degrees Kelvin of the last
- * diffusion step (R4), the phosphorus implant dose (R4), the arsenic
- * implant flag (L4).  However, we can just ignore that stuff.
- */
-  fclose( fpSuprem );
+    /* shift silicon layer to beginning of array */
+    for (j = numLay; --j >= 0; ) {
+        if (matTyp[j] == 1) {
+            break;
+        }
+    }
+
+    if (j < 0) {
+        (void) fprintf(cp_err, "internal error in %s!\n", __FUNCTION__);
+        xrc = -1;
+        goto EXITPOINT;
+    }
+
+    siIndex = j;
+
+    offset = topNod[siIndex] - 1;
+    numGrid -= offset;
+    xStart = x[1 + offset];
+    for (i = 1; i <= numGrid; i++) {
+        x[i] = x[i + offset] - xStart;
+        conc[i] = conc[i + offset];
+    }
+
+    /* Store number of valid nodes using pointer */
+    *numNod = numGrid;
+
+EXITPOINT:
+    if (fpSuprem != (FILE *) NULL) {
+        if (fclose(fpSuprem) != 0) {
+            (void) fprintf(cp_err, "Unable to close \"%s\" at exit: %s\n",
+                    inFile, strerror(errno));
+            xrc = -1;
+        }
+    }
+
+    return xrc;
+} /* end of function SUPascRead */
 
 
-/* shift silicon layer to beginning of array */
-  for ( j=numLay; --j >= 0; )
-    if (matTyp[ j ] == 1)
-        break;
 
-  if(j < 0) {
-      fprintf(stderr, "internal error in %s, bye !\n", __FUNCTION__);
-      controlled_exit(1);
-  }
-
-  siIndex = j;
-
-  offset = topNod[ siIndex ] - 1;
-  numGrid -= offset;
-  xStart = x[1 + offset];
-  for ( i=1; i <= numGrid; i++ ) {
-    x[i] = x[i + offset] - xStart;
-    conc[i] = conc[i + offset];
-  }
-
-/* Store number of valid nodes using pointer */
-  *numNod = numGrid;
-  return;
-}

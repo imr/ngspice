@@ -69,13 +69,17 @@ typedef struct {
 #endif
 
 /* Some defines used mainly in cmath.c. */
-#define cph(c)    (atan2(imagpart(c), (realpart(c))))
-#define cmag(c)  (hypot(realpart(c), imagpart(c)))
+#define cph(c)      (atan2(imagpart(c), (realpart(c))))
+#define cmag(c)     (hypot(realpart(c), imagpart(c)))
 #define radtodeg(c) (cx_degrees ? ((c) * (180 / M_PI)) : (c))
 #define degtorad(c) (cx_degrees ? ((c) * (M_PI / 180)) : (c))
-#define rcheck(cond, name)      if (!(cond)) { \
-    fprintf(cp_err, "Error: argument out of range for %s\n", name); \
-    return (NULL); }
+#define rcheck(cond, name)\
+    if (!(cond)) {\
+        (void) fprintf(cp_err, "Error: argument out of range for %s\n",\
+                 name);\
+        xrc = -1;\
+        goto EXITPOINT;\
+    }
 
 
 #define cdiv(r1, i1, r2, i2, r3, i3)            \

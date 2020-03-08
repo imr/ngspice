@@ -40,13 +40,12 @@ NON-STANDARD FEATURES
 ============================================================================*/
 
 #include <stdio.h>
+
+
 #include "ngspice/cm.h"
-
 #include "ngspice/evtudn.h"
+#include "ngspice/memory.h"
 
-void *tmalloc(size_t);
-
-#define TMALLOC(t,n)      (t*) tmalloc(sizeof(t) * (size_t)(n))
 
 /* macro to ignore unused variables and parameters */
 #define NG_IGNORE(x)  (void)x

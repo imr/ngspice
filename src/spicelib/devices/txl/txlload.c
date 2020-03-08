@@ -609,21 +609,20 @@ right_consts_txl(TXLine	*tx, int t, int	time, double h,	double h1, int l1, int l
 }
 
 
-static int 
-update_delayed_cnv_txl(TXLine *tx, double h)
+static int update_delayed_cnv_txl(TXLine *tx, double h)
 {
-   double ratio;
+   double ratio1;
    double f;
    VI_list_txl *vi;
    TERM	*tms;
 
    h *=	0.5e-12;
-   ratio = tx->ratio;
+   ratio1 = tx->ratio;
    vi =	tx->vi_tail;
 
-   if (ratio > 0.0) {
+   if (ratio1 > 0.0) {
       tms = tx->h3_term;
-      f	= h * ratio * vi->v_i;
+      f	= h * ratio1 * vi->v_i;
       tms[0].cnv_i += f	*  tms[0].c;
       tms[1].cnv_i += f	*  tms[1].c;
       tms[2].cnv_i += f	*  tms[2].c;
@@ -631,7 +630,7 @@ update_delayed_cnv_txl(TXLine *tx, double h)
       tms[4].cnv_i += f	*  tms[4].c;
       tms[5].cnv_i += f	*  tms[5].c;
 
-      f	= h * ratio * vi->v_o;
+      f	= h * ratio1 * vi->v_o;
       tms[0].cnv_o += f	*  tms[0].c;
       tms[1].cnv_o += f	*  tms[1].c;
       tms[2].cnv_o += f	*  tms[2].c;
@@ -640,12 +639,12 @@ update_delayed_cnv_txl(TXLine *tx, double h)
       tms[5].cnv_o += f	*  tms[5].c;
 
       tms = tx->h2_term;
-      f	= h * ratio * vi->i_i;
+      f	= h * ratio1 * vi->i_i;
       tms[0].cnv_i += f	*  tms[0].c;
       tms[1].cnv_i += f	*  tms[1].c;
       tms[2].cnv_i += f	*  tms[2].c;
 
-      f	= h * ratio * vi->i_o;
+      f	= h * ratio1 * vi->i_o;
       tms[0].cnv_o += f	*  tms[0].c;
       tms[1].cnv_o += f	*  tms[1].c;
       tms[2].cnv_o += f	*  tms[2].c;

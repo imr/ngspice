@@ -21,7 +21,7 @@ MOS6param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 
     NG_IGNORE(select);
 
-    switch(param) {
+    switch (param) {
         case MOS6_TEMP:
             here->MOS6temp = value->rValue+CONSTCtoK;
             here->MOS6tempGiven = TRUE;
@@ -82,7 +82,9 @@ MOS6param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->MOS6icVGSGiven = TRUE;
             break;
         case MOS6_IC:
-            switch(value->v.numValue){
+            /* FALLTHROUGH added to suppress GCC warning due to
+             * -Wimplicit-fallthrough flag */
+            switch (value->v.numValue) {
                 case 3:
                     here->MOS6icVBS = *(value->v.vec.rVec+2);
                     here->MOS6icVBSGiven = TRUE;

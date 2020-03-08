@@ -456,6 +456,8 @@ prompt(void)
         s = "-> ";
 
     while (*s) {
+        /* NOTE: The FALLTHROUGH comment is used to suppress a GCC warning
+         * when flag -Wimplicit-fallthrough is present */
         switch (*s) {
         case '!':
             fprintf(cp_out, "%d", cp_event);
@@ -463,6 +465,7 @@ prompt(void)
         case '\\':
             if (s[1])
                 (void) putc((*++s), cp_out);
+            /* FALLTHROUGH */
         default:
             (void) putc((*s), cp_out);
         }

@@ -7,9 +7,12 @@
 #ifndef ngspice_CIDERSUPT_H
 #define ngspice_CIDERSUPT_H
 
-#include "ngspice/numglobs.h"
-#include "ngspice/material.h"
+#include <stdio.h>
+
+#include "ngspice/bool.h"
 #include "ngspice/gendev.h"
+#include "ngspice/material.h"
+#include "ngspice/numglobs.h"
 #include "ngspice/profile.h"
 
 /* externals for database.c */
@@ -60,21 +63,21 @@ extern void  printMaterialInfo(MaterialInfo * );
 
 /* externals for mobil.c */
 extern void MOBdefaults(MaterialInfo *, int, int, int, int );
-extern void MOBtempDep (MaterialInfo *, double );
-extern void MOBconcDep (MaterialInfo *, double, double *, double *);
-extern void MOBfieldDep (MaterialInfo *, int, double, double *, double * );
+extern void MOBtempDep(MaterialInfo *, double );
+extern void MOBconcDep(MaterialInfo *, double, double *, double *);
+extern void MOBfieldDep(MaterialInfo *, int, double, double *, double * );
 
 /* externals for recomb.c */
-extern void recomb (double, double, double, double, double, double, 
+extern void recomb(double, double, double, double, double, double, 
                     double, double *, double *, double * );
 
 /* externals for suprem.c */
-extern void readAsciiData( char *, int, DOPtable ** );
-extern void readSupremData( char *, int, int, DOPtable ** );
+extern int readAsciiData(const char *, int, DOPtable **);
+extern int readSupremData(const char *, int, int, DOPtable ** );
 
 /* externals for suprmitf.c */
-extern void SUPbinRead( char *, float *, float *, int *, int * );
-extern void SUPascRead( char *, float *, float *, int *, int * );
+extern int SUPbinRead(const char *, float *, float *, int *, int *);
+extern int SUPascRead(const char *, float *, float *, int *, int *);
 
 
 

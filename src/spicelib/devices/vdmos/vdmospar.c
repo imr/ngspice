@@ -29,7 +29,7 @@ VDMOSparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
     if (!cp_getvar("scale", CP_REAL, &scale, 0))
         scale = 1;
 
-    switch(param) {
+    switch (param) {
         case VDMOS_TEMP:
             here->VDMOStemp = value->rValue+CONSTCtoK;
             here->VDMOStempGiven = TRUE;
@@ -66,7 +66,9 @@ VDMOSparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->VDMOSthermalGiven = TRUE;
             break;
         case VDMOS_IC:
-            switch(value->v.numValue){
+            /* FALLTHROUGH added to suppress GCC warning due to
+             * -Wimplicit-fallthrough flag */
+            switch (value->v.numValue) {
                 case 2:
                     here->VDMOSicVGS = *(value->v.vec.rVec+1);
                     here->VDMOSicVGSGiven = TRUE;

@@ -140,6 +140,8 @@ int HSMHV2param(
     here->HSMHV2_icVGS_Given = TRUE;
     break;
   case HSMHV2_IC:
+    /* FALLTHROUGH added to suppress GCC warning due to
+     * -Wimplicit-fallthrough flag */
     switch (value->v.numValue) {
     case 3:
       here->HSMHV2_icVBS = *(value->v.vec.rVec + 2);
