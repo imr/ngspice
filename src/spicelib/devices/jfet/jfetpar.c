@@ -54,6 +54,7 @@ JFETparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
                 case 2:
                     here->JFETicVGS = *(value->v.vec.rVec+1);
                     here->JFETicVGSGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 1:
                     here->JFETicVDS = *(value->v.vec.rVec);
                     here->JFETicVDSGiven = TRUE;

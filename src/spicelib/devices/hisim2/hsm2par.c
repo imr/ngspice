@@ -137,9 +137,11 @@ int HSM2param(
     case 3:
       here->HSM2_icVBS = *(value->v.vec.rVec + 2);
       here->HSM2_icVBS_Given = TRUE;
+      /* FALLTHROUGH */
     case 2:
       here->HSM2_icVGS = *(value->v.vec.rVec + 1);
       here->HSM2_icVGS_Given = TRUE;
+      /* FALLTHROUGH */
     case 1:
       here->HSM2_icVDS = *(value->v.vec.rVec);
       here->HSM2_icVDS_Given = TRUE;

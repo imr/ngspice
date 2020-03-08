@@ -234,9 +234,11 @@ IFvalue *select)
             {   case 3:
                     here->BSIM4icVBS = *(value->v.vec.rVec+2);
                     here->BSIM4icVBSGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 2:
                     here->BSIM4icVGS = *(value->v.vec.rVec+1);
                     here->BSIM4icVGSGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 1:
                     here->BSIM4icVDS = *(value->v.vec.rVec);
                     here->BSIM4icVDSGiven = TRUE;

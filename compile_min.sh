@@ -25,6 +25,8 @@
 # Add (optionally) --enable-relpath to avoid absolute paths when searching for code models.
 # It might be necessary to uncomment and run ./autogen.sh .
 
+SECONDS=0
+
 if test "$1" = "32"; then
    if [ ! -d "release32" ]; then
       mkdir release32
@@ -38,8 +40,8 @@ else
 fi
 
 # If compiling sources from git, you may need to uncomment the following two lines:
-#./autogen.sh
-#if [ $? -ne 0 ]; then  echo "./autogen.sh failed"; exit 1 ; fi
+./autogen.sh
+if [ $? -ne 0 ]; then  echo "./autogen.sh failed"; exit 1 ; fi
 
 # Alternatively, if compiling sources from git, and want to add adms created devices,
 # you may need to uncomment the following two lines (and don't forget to add adms option
@@ -54,14 +56,14 @@ if test "$1" = "32"; then
   echo "configuring for 32 bit"
   echo
 # You may add  --enable-adms to the following command for adding adms generated devices 
-  ../configure --with-wingui --enable-xspice --enable-cider --enable-openmp --disable-debug prefix="C:/Spice" CFLAGS="-m32 -O2" LDFLAGS="-m32 -s"
+  ../configure --with-wingui --enable-xspice --enable-cider --enable-openmp --disable-debug prefix="C:/Spice" CFLAGS="-D__USE_MINGW_ANSI_STDIO=1 -m32 -O2" LDFLAGS="-m32 -s"
 else
    cd release
    if [ $? -ne 0 ]; then  echo "cd release failed"; exit 1 ; fi
   echo "configuring for 64 bit"
   echo
 # You may add  --enable-adms to the following command for adding adms generated devices 
-  ../configure --with-wingui --enable-xspice --enable-cider --enable-openmp --disable-debug prefix="C:/Spice64" CFLAGS="-m64 -O2" LDFLAGS="-m64 -s"
+  ../configure --with-wingui --enable-xspice --enable-cider --enable-openmp --disable-debug prefix="C:/Spice64" CFLAGS="-D__USE_MINGW_ANSI_STDIO=1 -m64 -O2" LDFLAGS="-m64 -s"
 fi
 if [ $? -ne 0 ]; then  echo "../configure failed"; exit 1 ; fi
 
@@ -82,5 +84,8 @@ make install 2>&1 | tee make_install.log
 exitcode=${PIPESTATUS[0]}
 if [ $exitcode -ne 0 ]; then  echo "make install failed"; exit 1 ; fi
 
+ELAPSED="Elapsed compile time: $(($SECONDS / 3600))hrs $((($SECONDS / 60) % 60))min $(($SECONDS % 60))sec"
+echo
+echo $ELAPSED
 echo "success"
 exit 0

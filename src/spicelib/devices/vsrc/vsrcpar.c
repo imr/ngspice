@@ -62,9 +62,11 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
                 case 2:
                     here->VSRCacPhase = *(value->v.vec.rVec+1);
                     here->VSRCacPGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 1:
                     here->VSRCacMag = *(value->v.vec.rVec);
                     here->VSRCacMGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 0:
                     here->VSRCacGiven = TRUE;
                     break;

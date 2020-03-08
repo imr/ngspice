@@ -134,6 +134,8 @@ int gr_init(double *xlims, double *ylims, /* The size of the screen. */
         graph->ticdata = NULL;
     }
 
+    cp_getvar("nolegend", CP_BOOL, &(graph->nolegend), 0);
+
     if (!xlims || !ylims) {
         internalerror("gr_init:  no range specified");
         return FALSE;
@@ -184,6 +186,7 @@ int gr_init(double *xlims, double *ylims, /* The size of the screen. */
         strcpy(graph->ticchar, pgraph->ticchar);
         graph->ticdata = pgraph->ticdata;
         graph->ticmarks = pgraph->ticmarks;
+        graph->nolegend = pgraph->nolegend;
     }
 
     /* layout decisions */
@@ -434,7 +437,7 @@ static void gr_start_internal(struct dvec *dv, bool copyvec)
     }
 
     /* Put the legend entry on the screen. */
-    if (!cp_getvar("nolegend", CP_BOOL, NULL, 0))
+    if (!currentgraph->nolegend)
         drawlegend(currentgraph, cur.plotno++, dv);
 }
 
@@ -610,7 +613,7 @@ void gr_redraw(GRAPH *graph)
     cur.plotno = 0;
     for (link = graph->plotdata; link; link = link->next) {
         /* redraw legend */
-        if (!cp_getvar("nolegend", CP_BOOL, NULL, 0))
+        if (!graph->nolegend)
             drawlegend(graph, cur.plotno++, link->vector);
 
         /* replot data

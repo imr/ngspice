@@ -108,9 +108,11 @@ IFvalue *select)
                 case 3:
                     here->BSIM3icVBS = *(value->v.vec.rVec+2);
                     here->BSIM3icVBSGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 2:
                     here->BSIM3icVGS = *(value->v.vec.rVec+1);
                     here->BSIM3icVGSGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 1:
                     here->BSIM3icVDS = *(value->v.vec.rVec);
                     here->BSIM3icVDSGiven = TRUE;

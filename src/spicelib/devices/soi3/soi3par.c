@@ -137,12 +137,15 @@ SOI3param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
                 case 4:
                     here->SOI3icVBS = *(value->v.vec.rVec+3);
                     here->SOI3icVBSGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 3:
                     here->SOI3icVGBS = *(value->v.vec.rVec+2);
                     here->SOI3icVGBSGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 2:
                     here->SOI3icVGFS = *(value->v.vec.rVec+1);
                     here->SOI3icVGFSGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 1:
                     here->SOI3icVDS = *(value->v.vec.rVec);
                     here->SOI3icVDSGiven = TRUE;

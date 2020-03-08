@@ -49,6 +49,7 @@ MESAparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
                 case 2:
                     here->MESAicVGS = *(value->v.vec.rVec+1);
                     here->MESAicVGSGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 1:
                     here->MESAicVDS = *(value->v.vec.rVec);
                     here->MESAicVDSGiven = TRUE;
