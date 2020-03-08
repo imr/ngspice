@@ -223,6 +223,8 @@
   <ItemGroup>
     <ClInclude Include="..\..\src\include\ngspice\dstring.h" />
     <ClInclude Include="..\..\src\xspice\icm\dlmain.h" />
+    <ClInclude Include="..\..\src\xspice\icm\table\support\interp.h" />
+    <ClInclude Include="..\..\src\xspice\icm\table\support\table_util.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

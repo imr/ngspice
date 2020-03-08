@@ -314,7 +314,7 @@ void gr_point(struct dvec *dv,
             return;
         }
     }
-    SetColor(dv->v_color, currentgraph);
+    SetColor(dv->v_color);
 
     switch (currentgraph->plottype) {
         double    *tics;
@@ -474,7 +474,7 @@ void drawlegend(GRAPH *graph, int plotno, struct dvec *dv)
     const int y = graph->absolute.height - graph->fontheight
         - ((plotno + 2) / 2) * (graph->fontheight);
     const int i = y + graph->fontheight / 2 + 1;
-    SetColor(dv->v_color, graph);
+    SetColor(dv->v_color);
     if (graph->plottype == PLOT_POINT) {
         char buf[16];
         (void) sprintf(buf, "%c : ", dv->v_linestyle);
@@ -484,7 +484,7 @@ void drawlegend(GRAPH *graph, int plotno, struct dvec *dv)
         SetLinestyle(dv->v_linestyle);
         DevDrawLine(x, i, x + graph->viewport.width / 20, i, FALSE);
     }
-    SetColor(1, graph);
+    SetColor(1);
     DevDrawText(dv->v_name, x + graph->viewport.width / 20
                 + graph->fontwidth, y, 0);
 }
@@ -638,7 +638,7 @@ void gr_restoretext(GRAPH *graph)
 
     /* restore text */
     for (k = graph->keyed; k; k = k->next) {
-        SetColor(k->colorindex, graph);
+        SetColor(k->colorindex);
         DevDrawText(k->text, k->x, k->y, 0);
     }
 }
@@ -735,7 +735,7 @@ static int iplot(struct plot *pl, int id)
 
         for (yt = pl->pl_dvecs->v_type, v = pl->pl_dvecs->v_next; v;
                 v = v->v_next) {
-            if ((v->v_flags & VF_PLOT) && (v->v_type != yt)) {
+            if ((v->v_flags & VF_PLOT) && ((int) v->v_type != yt)) {
                 yt = SV_NOTYPE;
                 break;
             }

@@ -153,7 +153,7 @@ extern BOOLEAN TWOdeltaConverged(TWOdevice *);
 extern BOOLEAN TWOdeviceConverged(TWOdevice *);
 extern void TWOresetJacobian(TWOdevice *);
 extern void TWOstoreNeutralGuess(TWOdevice *);
-extern void TWOequilSolve(TWOdevice *);
+extern int TWOequilSolve(TWOdevice *);
 extern void TWObiasSolve(TWOdevice *, int, BOOLEAN, TWOtranInfo *);
 extern void TWOstoreEquilibGuess(TWOdevice *);
 extern void TWOstoreInitialGuess(TWOdevice *);

@@ -6,6 +6,8 @@
 #ifndef ngspice_RESOURCE_H
 #define ngspice_RESOURCE_H
 
+#include "ngspice/wordlist.h"
+
 extern unsigned long long getMemorySize(void);
 extern unsigned long long getPeakRSS(void);
 extern unsigned long long getCurrentRSS(void);

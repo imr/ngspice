@@ -73,6 +73,7 @@ NON-STANDARD FEATURES
 #include <sys/stat.h>
 
 #include "support/gettokens.h"
+#include "support/interp.h"
 #include "mada/eno2.h"
 #include "mada/eno3.h"
 
@@ -108,10 +109,7 @@ typedef struct {
 
 /*=== FUNCTION PROTOTYPE DEFINITIONS ===*/
 
-extern double TrilinearInterpolation(double x, double y, double z,
-        int xind, int yind, int zind, double ***td);
 static void cm_table3D_callback(ARGS, Mif_Callback_Reason_t reason);
-extern int findCrossOver(double arr[], int n, double x);
 
 static void free_local_data(Table3_Data_t *loc);
 static inline double get_local_diff(int n, double *col, int ind);

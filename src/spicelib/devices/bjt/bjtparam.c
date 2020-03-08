@@ -26,7 +26,7 @@ BJTparam(int param, IFvalue *value, GENinstance *instPtr, IFvalue *select)
 
     NG_IGNORE(select);
 
-    switch(param) {
+    switch (param) {
         case BJT_AREA:
             here->BJTarea = value->rValue;
             here->BJTareaGiven = TRUE;
@@ -66,10 +66,13 @@ BJTparam(int param, IFvalue *value, GENinstance *instPtr, IFvalue *select)
             here->BJTsenParmNo = value->iValue;
             break;
         case BJT_IC :
-            switch(value->v.numValue) {
+            /* FALLTHROUGH added to suppress GCC warning due to
+             * -Wimplicit-fallthrough flag */
+            switch (value->v.numValue) {
                 case 2:
                     here->BJTicVCE = *(value->v.vec.rVec+1);
                     here->BJTicVCEGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 1:
                     here->BJTicVBE = *(value->v.vec.rVec);
                     here->BJTicVBEGiven = TRUE;

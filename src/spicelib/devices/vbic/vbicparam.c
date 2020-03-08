@@ -26,7 +26,7 @@ VBICparam(int param, IFvalue *value, GENinstance *instPtr, IFvalue *select)
 
     NG_IGNORE(select);
 
-    switch(param) {
+    switch (param) {
         case VBIC_AREA:
             here->VBICarea = value->rValue;
             here->VBICareaGiven = TRUE;
@@ -55,10 +55,13 @@ VBICparam(int param, IFvalue *value, GENinstance *instPtr, IFvalue *select)
             here->VBICmGiven = TRUE;
             break;
         case VBIC_IC :
-            switch(value->v.numValue) {
+            /* FALLTHROUGH added to suppress GCC warning due to
+             * -Wimplicit-fallthrough flag */
+            switch (value->v.numValue) {
                 case 2:
                     here->VBICicVCE = *(value->v.vec.rVec+1);
                     here->VBICicVCEGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 1:
                     here->VBICicVBE = *(value->v.vec.rVec);
                     here->VBICicVBEGiven = TRUE;

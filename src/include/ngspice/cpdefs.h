@@ -41,7 +41,7 @@ struct comm {
     int co_maxargs;
 
     /* The fn that prompts the user. */
-    void (*co_argfn) (wordlist *wl, struct comm *command);
+    void (*co_argfn)(const wordlist *wl, const struct comm *command);
 
     /* When these are printed, printf(string, av[0]) .. */
     char *co_help;

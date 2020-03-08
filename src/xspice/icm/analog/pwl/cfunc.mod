@@ -270,8 +270,10 @@ void cm_pwl(ARGS)  /* structure holding parms,
     double lower_slope;     /* slope of the lower segment */
     double upper_slope;     /* slope of the upper segment */
     double x_input;         /* input */
-    double out;             /* output */
-    double dout_din;        /* partial derivative of the output wrt input */
+    double out = 0.0;       /* output
+                             * Init to 0 to suppress compiler warning */
+    double dout_din = 0.0;  /* partial derivative of the output wrt input.
+                             * Init to 0 to suppress compiler warning */
     double threshold_lower; /* value below which the output begins smoothing */
     double threshold_upper; /* value above which the output begins smoothing */
     double test1;           /* debug testing value */

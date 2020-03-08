@@ -23,8 +23,10 @@ B3SOIDDparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 
     NG_IGNORE(select);
 
-    switch(param) 
-    {   case B3SOIDD_W:
+    /* FALLTHROUGH added to suppress GCC warning due to
+     * -Wimplicit-fallthrough flag */
+    switch(param) {
+        case B3SOIDD_W:
             here->B3SOIDDw = value->rValue;
             here->B3SOIDDwGiven = TRUE;
             break;
@@ -104,19 +106,23 @@ B3SOIDDparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->B3SOIDDbodySquaresGiven = TRUE;
             break;
         case B3SOIDD_IC:
-            switch(value->v.numValue){
+            switch (value->v.numValue) {
                 case 5:
                     here->B3SOIDDicVPS = *(value->v.vec.rVec+4);
                     here->B3SOIDDicVPSGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 4:
                     here->B3SOIDDicVES = *(value->v.vec.rVec+3);
                     here->B3SOIDDicVESGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 3:
                     here->B3SOIDDicVBS = *(value->v.vec.rVec+2);
                     here->B3SOIDDicVBSGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 2:
                     here->B3SOIDDicVGS = *(value->v.vec.rVec+1);
                     here->B3SOIDDicVGSGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 1:
                     here->B3SOIDDicVDS = *(value->v.vec.rVec);
                     here->B3SOIDDicVDSGiven = TRUE;

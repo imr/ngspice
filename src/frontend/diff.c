@@ -40,8 +40,7 @@ canonical_name(const char *name, DSTRINGPTR dbuf_p,
         size_t n = strlen(p_start) - 1; /* copy all but final ')' */
         ds_case_t case_type = make_i_name_lower ?
                 ds_case_lower : ds_case_as_is;
-        bool f_ok = ds_cat_mem_case(dbuf_p, p_start, (int) n,
-                case_type) == DS_E_OK;
+        bool f_ok = ds_cat_mem_case(dbuf_p, p_start, n, case_type) == DS_E_OK;
         f_ok &= ds_cat_mem(dbuf_p, sz_branch,
                 sizeof sz_branch / sizeof *sz_branch - 1) == DS_E_OK;
         if (!f_ok) {

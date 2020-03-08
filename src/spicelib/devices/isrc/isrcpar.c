@@ -38,7 +38,7 @@ ISRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 
     NG_IGNORE(select);
 
-    switch(param) {
+    switch (param) {
 
         case ISRC_DC:
             here->ISRCdcValue = value->rValue;
@@ -63,13 +63,17 @@ ISRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             break;
 
         case ISRC_AC:
-            switch(value->v.numValue) {
+            /* FALLTHROUGH added to suppress GCC warning due to
+             * -Wimplicit-fallthrough flag */
+            switch (value->v.numValue) {
                 case 2:
                     here->ISRCacPhase = *(value->v.vec.rVec+1);
                     here->ISRCacPGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 1:
                     here->ISRCacMag = *(value->v.vec.rVec);
                     here->ISRCacMGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 0:
                     here->ISRCacGiven = TRUE;
                     break;

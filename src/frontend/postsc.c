@@ -108,7 +108,8 @@ static int maxcolor = 2;
 void PS_LinestyleColor(int linestyleid, int colorid);
 void PS_SelectColor(int colorid);
 void PS_Stroke(void);
-size_t utf8_to_latin9(char *const output, const char *const input, const size_t length);
+static size_t utf8_to_latin9(char * const output, const char *const input,
+        const size_t length);
 
 
 /* Set scale, color and size of the plot */
@@ -120,10 +121,15 @@ int PS_Init(void)
 
     if (!cp_getvar("hcopyscale", CP_STRING, psscale, sizeof(psscale))) {
         scale = 1.0;
-    } else {
-        sscanf(psscale, "%lf", &scale);
-        if ((scale <= 0) || (scale > 10))
-            scale = 1.0;
+    }
+    else if (sscanf(psscale, "%lf", &scale) != 1) {
+        (void) fprintf(cp_err, "Error getting scale value\n");
+        scale = 1.0;
+    }
+    else if ((scale <= 0.0) || (scale > 10.0)) {
+        (void) fprintf(cp_err, "Scale value %lf is out of range\n",
+                scale);
+        scale = 1.0;
     }
     dispdev->numlinestyles = NUMELEMS(linestyle);
     /* plot color */
@@ -395,12 +401,18 @@ int PS_Arc(int x0, int y0, int r, double theta, double delta_theta)
 }
 
 
-int PS_Text(char *text, int x, int y, int angle)
+int PS_Text(const char *text_in, int x, int y, int angle)
 {
     int savedlstyle, savedcolor;
-
-#ifndef EXT_ASC
-       utf8_to_latin9(text, text, strlen(text));
+    char *text;
+#ifdef EXT_ASC
+    text = text_in;
+#else
+    {
+        const size_t n_char_text = strlen(text_in);
+        text = TMALLOC(char, n_char_text);
+       utf8_to_latin9(text, text_in, n_char_text);
+    }
 #endif
     /* set linestyle to solid
        or may get funny color text on some plotters */
@@ -410,12 +422,12 @@ int PS_Text(char *text, int x, int y, int angle)
     PS_SetLinestyle(SOLID);
     /* set text color to black if background is not white */
     if (setbgcolor > 0)
-        PS_SetColor(0, currentgraph);
+        PS_SetColor(0);
     else
-        PS_SetColor(1, currentgraph);
+        PS_SetColor(1);
     /* if color is given by set hcopytxpscolor=settxcolor, give it a try */
     if (settxcolor >= 0)
-        PS_SetColor(settxcolor, currentgraph);
+        PS_SetColor(settxcolor);
     /* stroke the path if there's an open one */
     PS_Stroke();
     /* move to (x, y) */
@@ -431,8 +443,13 @@ int PS_Text(char *text, int x, int y, int angle)
 
     /* restore old linestyle */
 
-    PS_SetColor(savedcolor, currentgraph);
+    PS_SetColor(savedcolor);
     PS_SetLinestyle(savedlstyle);
+
+#ifndef EXT_ASC
+    txfree(text);
+#endif
+
     return 0;
 }
 
@@ -458,9 +475,8 @@ int PS_SetLinestyle(int linestyleid)
 }
 
 
-int PS_SetColor(int colorid, GRAPH *graph)
+int PS_SetColor(int colorid)
 {
-    NG_IGNORE(graph);
     PS_LinestyleColor(currentgraph->linestyle, colorid);
     return 0;
 }
@@ -600,7 +616,8 @@ static inline unsigned int to_latin9(const unsigned int code)
 * Output has to have room for (length+1) chars, including the trailing NUL byte.
 from http://stackoverflow.com/questions/11156473/is-there-a-way-to-convert-from-utf8-to-iso-8859-1#11173493 
 */
-size_t utf8_to_latin9(char *const output, const char *const input, const size_t length)
+size_t utf8_to_latin9(char * const output, const char *const input,
+        const size_t length)
 {
     unsigned char             *out = (unsigned char *)output;
     const unsigned char       *in = (const unsigned char *)input;

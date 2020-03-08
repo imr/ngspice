@@ -1333,4 +1333,9 @@ else
    AC_SUBST([CMPP], ['$(top_builddir)/src/xspice/cmpp/cmpp$(EXEEXT)'])
 fi
 
+# See https://github.com/kimwalisch/primesieve/issues/16
+# Silence warning: ar: 'u' modifier ignored since 'D' is the default
+AC_SUBST(AR_FLAGS, [cr])
+
+
 AC_OUTPUT

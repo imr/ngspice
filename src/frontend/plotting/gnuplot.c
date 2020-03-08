@@ -31,6 +31,8 @@ quote_gnuplot_string(FILE *stream, char *s)
     fputc('"', stream);
 
     for (; *s; s++)
+        /* NOTE: The FALLTHROUGH comment is used to suppress a GCC warning
+         * when flag -Wimplicit-fallthrough is present */
         switch (*s) {
         case '\n':
             fputs("\\n", stream);
@@ -38,6 +40,7 @@ quote_gnuplot_string(FILE *stream, char *s)
         case '"':
         case '\\':
             fputc('\\', stream);
+            /* FALLTHROUGH */
         default:
             fputc(*s, stream);
         }

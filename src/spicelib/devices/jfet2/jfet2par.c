@@ -25,7 +25,7 @@ JFET2param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 
     NG_IGNORE(select);
 
-    switch(param) {
+    switch (param) {
         case JFET2_TEMP:
             here->JFET2temp = value->rValue+CONSTCtoK;
             here->JFET2tempGiven = TRUE;
@@ -54,10 +54,13 @@ JFET2param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->JFET2off = (value->iValue != 0);
             break;
         case JFET2_IC:
-            switch(value->v.numValue) {
+            /* FALLTHROUGH added to suppress GCC warning due to
+             * -Wimplicit-fallthrough flag */
+            switch (value->v.numValue) {
                 case 2:
                     here->JFET2icVGS = *(value->v.vec.rVec+1);
                     here->JFET2icVGSGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 1:
                     here->JFET2icVDS = *(value->v.vec.rVec);
                     here->JFET2icVDSGiven = TRUE;

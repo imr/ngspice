@@ -43,22 +43,12 @@ clean:
 
 
 #-----------------------------------------------------------------------------
-NGSRCDIR = $(srcdir)/../../
+NGSRCDIR = $(srcdir)/../..
 
-dstring.o : $(NGSRCDIR)/misc/dstring.c $(NGSRCDIR)/include/ngspice/dstring.h
-	$(COMPILE) -I $(NGSRCDIR)/include -o $@ -c $<
+dstring.o: $(NGSRCDIR)/misc/dstring.c $(NGSRCDIR)/include/ngspice/dstring.h
+	$(CC) $(CFLAGS) -I$(NGSRCDIR)/include -fPIC -o $@ -c $<
 
 ifdef cm
-
-# These will work for a simpler format of the .lst files with # comments and
-# version information on the same line.
-# sed removes comment lines of form [space]#[text]
-# awk keeps the name of the path only, removing version number if present
-# $$ and \# are escapes for Makefile
-#modlst := $(shell cat $(srcdir)/$(cm)/modpath.lst | sed -e '/^[ \t]*\#/d' |\
-#		awk '{ print $$1 }')
-#udnlst := $(shell cat $(srcdir)/$(cm)/udnpath.lst | sed -e '/^[ \t]*\#/d' |\
-#    		awk '{ print $$1 }')
 
 ifeq ($(OS),Windows_NT)
     cmpp = ../cmpp/cmpp.exe

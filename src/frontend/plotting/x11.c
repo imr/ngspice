@@ -237,7 +237,11 @@ initcolors(GRAPH *graph)
                                     "yellow", ""
     };
 
-    XColor visualcolor, exactcolor, bgcolor;
+    XColor visualcolor, exactcolor;
+
+    /* Silence incorrect compiler warning about possibly not being init */
+    XColor bgcolor = {0};
+
     char buf[BSIZE_SP], colorstring[BSIZE_SP];
     int xmaxcolors = NUMCOLORS; /* note: can we get rid of this? */
 
@@ -273,9 +277,9 @@ initcolors(GRAPH *graph)
                     t3 = copy(tmpstr);
                     if (t1 && t2 && t3) {
                         double c1, c2, c3;
-                        c1 = strtol(t1, NULL, 10) / 255.;
-                        c2 = strtol(t2, NULL, 10) / 255.;
-                        c3 = strtol(t3, NULL, 10) / 255.;
+                        c1 = (double) strtol(t1, NULL, 10) / 255.;
+                        c2 = (double) strtol(t2, NULL, 10) / 255.;
+                        c3 = (double) strtol(t3, NULL, 10) / 255.;
                         c1 = fmax(0., fmin(c1, 1.));
                         c2 = fmax(0., fmin(c2, 1.));
                         c3 = fmax(0., fmin(c3, 1.));
@@ -310,7 +314,8 @@ initcolors(GRAPH *graph)
                 /* select grid color according to background color.
                    Empirical selection using the color depth of the background */
                 /* switch the grid and text color depending on background */
-                int tcolor = (int)bgcolor.red + (int)(1.5 * bgcolor.green) + (int)bgcolor.blue;
+                int tcolor = (int) bgcolor.red +
+                        (int) (1.5 * bgcolor.green) + (int) bgcolor.blue;
                 if (tcolor > 92160) {
                     graph->colorarray[1] = BlackPixel(display, DefaultScreen(display));
                     strncpy(DEVDEP(graph).txtcolor, "black", 15);
@@ -351,7 +356,7 @@ handlekeypressed(Widget w, XtPointer client_data, XEvent *ev, Boolean *continue_
     /* write it */
     PushGraphContext(graph);
     text[nbytes] = '\0';
-    SetColor(1, graph);
+    SetColor(1);
     DevDrawText(text, keyev->x, graph->absolute.height - keyev->y, 0);
     /* save it */
     SaveText(graph, text, keyev->x, graph->absolute.height - keyev->y);
@@ -652,7 +657,7 @@ X11_Close(void)
 int
 X11_DrawLine(int x1, int y1, int x2, int y2, bool isgrid)
 {
-    if (DEVDEP(currentgraph).isopen)
+    if (DEVDEP(currentgraph).isopen) {
         if (isgrid) {
             XDrawLine(display, DEVDEP(currentgraph).window,
                   DEVDEP(currentgraph).gridgc,
@@ -665,6 +670,7 @@ X11_DrawLine(int x1, int y1, int x2, int y2, bool isgrid)
                   x1, currentgraph->absolute.height - y1,
                   x2, currentgraph->absolute.height - y2);
         }
+    }
     return 0;
 }
 
@@ -694,25 +700,26 @@ X11_Arc(int x0, int y0, int radius, double theta, double delta_theta)
 
 /* note: x and y are the LOWER left corner of text */
 int
-X11_Text(char *text, int x, int y, int angle)
+X11_Text(const char *text, int x, int y, int angle)
 {
     /* We specify text position by lower left corner, so have to adjust for
        X11's font nonsense. */
-
-    int wlen = 0, wheight = 0;
-
 #ifndef HAVE_LIBXFT
-        if (DEVDEP(currentgraph).isopen)
-            XDrawString(display, DEVDEP(currentgraph).window,
-                        DEVDEP(currentgraph).gc, x,
-                        currentgraph->absolute.height
-                        - (y + DEVDEP(currentgraph).font->max_bounds.descent),
-                        text, (int) strlen(text));
+    if (DEVDEP(currentgraph).isopen) {
+        if (angle != 0) {
+            fprintf(stderr, " Xft: angles other than 0 are not supported\n");
+        }
+        XDrawString(display, DEVDEP(currentgraph).window,
+                    DEVDEP(currentgraph).gc, x,
+                    currentgraph->absolute.height
+                    - (y + DEVDEP(currentgraph).font->max_bounds.descent),
+                    text, (int) strlen(text));
+    }
 
-        /* note: unlike before, we do not save any text here */
+    /* note: unlike before, we do not save any text here */
 #else
     /* Draw text */
-    if(angle == 0) {
+    if (angle == 0) {
          XftDrawStringUtf8(
             DEVDEP(currentgraph).draw, &DEVDEP(currentgraph).color, DEVDEP(currentgraph).font0,
                 x, currentgraph->absolute.height - y, (FcChar8*)text, strlen(text));
@@ -838,7 +845,7 @@ X11_SetLinestyle(int linestyleid)
 
 
 int
-X11_SetColor(int colorid, GRAPH *graph)
+X11_SetColor(int colorid)
 {
     currentgraph->currentcolor = colorid;
     XSetForeground(display, DEVDEP(currentgraph).gc,

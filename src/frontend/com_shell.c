@@ -1,6 +1,7 @@
 /*************
 * com_shell.c
 ************/
+#include <stdio.h>
 
 #include "ngspice/ngspice.h"
 #include "ngspice/wordlist.h"
@@ -20,7 +21,7 @@
 void
 com_shell(wordlist *wl)
 {
-    char *com, *shell = NULL;
+    char *shell = NULL;
 
     shell = getenv("SHELL");
     if (shell == NULL) {
@@ -39,8 +40,9 @@ com_shell(wordlist *wl)
             execl(shell, shell, 0);
             _exit(99);
         } else {
-            com = wl_flatten(wl);
+            char * const com = wl_flatten(wl);
             execl("/bin/sh", "sh", "-c", com, 0);
+            txfree(com);
         }
     } else {
         /* XXX Better have all these signals */
@@ -58,12 +60,20 @@ com_shell(wordlist *wl)
 #else
     /* Easier to forget about changing the io descriptors. */
     if (wl) {
-        com = wl_flatten(wl);
-        system(com);
-        tfree(com);
-    } else {
-        system(shell);
+        char * const com = wl_flatten(wl);
+        if (system(com) == -1) {
+            (void) fprintf(cp_err, "Unable to execute \"%s\".\n", com);
+        }
+        txfree(com);
+    }
+    else {
+        if (system(shell) == -1) {
+            (void) fprintf(cp_err, "Unable to execute \"%s\".\n", shell);
+        }
     }
 #endif
 
-}
+} /* end of function com_shell */
+
+
+

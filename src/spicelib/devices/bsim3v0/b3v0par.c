@@ -23,8 +23,8 @@ BSIM3v0param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
     if (!cp_getvar("scale", CP_REAL, &scale, 0))
         scale = 1;
 
-    switch(param) 
-    {   case BSIM3v0_W:
+    switch (param) {
+        case BSIM3v0_W:
             here->BSIM3v0w = value->rValue*scale;
             here->BSIM3v0wGiven = TRUE;
             break;
@@ -80,13 +80,17 @@ BSIM3v0param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->BSIM3v0nqsModGiven = TRUE;
             break;
         case BSIM3v0_IC:
-            switch(value->v.numValue){
+            /* FALLTHROUGH added to suppress GCC warning due to
+             * -Wimplicit-fallthrough flag */
+            switch (value->v.numValue) {
                 case 3:
                     here->BSIM3v0icVBS = *(value->v.vec.rVec+2);
                     here->BSIM3v0icVBSGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 2:
                     here->BSIM3v0icVGS = *(value->v.vec.rVec+1);
                     here->BSIM3v0icVGSGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 1:
                     here->BSIM3v0icVDS = *(value->v.vec.rVec);
                     here->BSIM3v0icVDSGiven = TRUE;

@@ -4,18 +4,19 @@ Author:	1991 David A. Gates, U. C. Berkeley CAD Group
 Modifed: 2001 Paolo Nenzi
 **********/
 
-#include "ngspice/ngspice.h"
+#include "ngspice/carddefs.h"
+#include "ngspice/cidersupt.h"
 #include "ngspice/cktdefs.h"
-#include "ngspice/numenum.h"
+#include "ngspice/ciderinp.h"
+#include "ngspice/cpextern.h"
 #include "ngspice/dopdefs.h"
 #include "ngspice/meshext.h"
+#include "ngspice/ngspice.h"
+#include "ngspice/numenum.h"
 #include "ngspice/profile.h"
 #include "ngspice/gendev.h"
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
-#include "ngspice/cidersupt.h"
-#include "ngspice/carddefs.h"
-#include "ngspice/ciderinp.h"
 
 
 /*
@@ -234,17 +235,29 @@ DOPsetup(DOPcard *cardList, DOPprofile **profileList, DOPtable **tableList,
 	break;
       case DOP_SUPREM3:
 	newProfile->type = LOOKUP;
-	readSupremData( card->DOPinFile, 0, card->DOPimpurityType, tableList );
+	if (readSupremData( card->DOPinFile, 0, card->DOPimpurityType,
+            tableList) != 0) {
+        (void) fprintf(cp_err, "Doping setup failed.\n");
+        return -1;
+    }
 	newProfile->IMPID = ++impurityId;
 	break;
       case DOP_SUPASCII:
 	newProfile->type = LOOKUP;
-	readSupremData( card->DOPinFile, 1, card->DOPimpurityType, tableList );
+    if (readSupremData( card->DOPinFile, 1, card->DOPimpurityType,
+            tableList) != 0) {
+        (void) fprintf(cp_err, "Doping setup failed.\n");
+        return -1;
+    }
 	newProfile->IMPID = ++impurityId;
 	break;
       case DOP_ASCII:
 	newProfile->type = LOOKUP;
-	readAsciiData( card->DOPinFile, card->DOPimpurityType, tableList );
+    if (readAsciiData(card->DOPinFile, card->DOPimpurityType,
+            tableList) != 0) {
+        (void) fprintf(cp_err, "Doping setup failed.\n");
+        return -1;
+    }
 	newProfile->IMPID = ++impurityId;
 	break;
       default:

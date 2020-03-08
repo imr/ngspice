@@ -38,8 +38,7 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 
     NG_IGNORE(select);
 
-    switch(param) {
-
+    switch (param) {
         case VSRC_DC:
             here->VSRCdcValue = value->rValue;
             here->VSRCdcGiven = TRUE;
@@ -58,13 +57,17 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             break;
 
         case VSRC_AC:
-            switch(value->v.numValue) {
+            /* FALLTHROUGH added to suppress GCC warning due to
+             * -Wimplicit-fallthrough flag */
+            switch (value->v.numValue) {
                 case 2:
                     here->VSRCacPhase = *(value->v.vec.rVec+1);
                     here->VSRCacPGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 1:
                     here->VSRCacMag = *(value->v.vec.rVec);
                     here->VSRCacMGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 0:
                     here->VSRCacGiven = TRUE;
                     break;
@@ -161,7 +164,7 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
         case VSRC_D_F1:
             here->VSRCdF1given = TRUE;
             here->VSRCdGiven = TRUE;
-            switch(value->v.numValue) {
+            switch (value->v.numValue) {
             case 2:
                 here->VSRCdF1phase = *(value->v.vec.rVec+1);
                 here->VSRCdF1mag = *(value->v.vec.rVec);
@@ -182,7 +185,7 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
         case VSRC_D_F2:
             here->VSRCdF2given = TRUE;
             here->VSRCdGiven = TRUE;
-            switch(value->v.numValue) {
+            switch (value->v.numValue) {
             case 2:
                 here->VSRCdF2phase = *(value->v.vec.rVec+1);
                 here->VSRCdF2mag = *(value->v.vec.rVec);

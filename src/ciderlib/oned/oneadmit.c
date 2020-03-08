@@ -40,7 +40,7 @@ NUMDadmittance(ONEdevice *pDevice, double omega, SPcomplex *yd)
   int index, i;
   double yReal, yImag;
   double *solutionReal, *solutionImag;
-  SPcomplex yAc, cOmega;
+  SPcomplex yAc_adm, cOmega;
   SPcomplex *y;
   BOOLEAN SORFailed;
   double startTime;
@@ -146,13 +146,13 @@ NUMDadmittance(ONEdevice *pDevice, double omega, SPcomplex *yd)
   startTime = SPfrontEnd->IFseconds();
   pNode = pDevice->elemArray[1]->pLeftNode;
   y = computeAdmittance(pNode, FALSE, solutionReal, solutionImag, &cOmega);
-  CMPLX_ASSIGN_VALUE(yAc, -y->real, -y->imag);
-  CMPLX_ASSIGN(*yd, yAc);
+  CMPLX_ASSIGN_VALUE(yAc_adm, -y->real, -y->imag);
+  CMPLX_ASSIGN(*yd, yAc_adm);
   CMPLX_MULT_SELF_SCALAR(*yd, GNorm * pDevice->area);
   pDevice->pStats->miscTime[STAT_AC] += SPfrontEnd->IFseconds() - startTime;
 
   return (AcAnalysisMethod);
-}
+} /* end of function NUMDadmittance */
 
 
 int

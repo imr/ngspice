@@ -41,8 +41,9 @@ const Evt_Udn_Info_t * const cmEVTudns[] = {
 
 const int cmEVTudnCNT = sizeof(cmEVTudns) / sizeof(Evt_Udn_Info_t *) - 1;
 
-// Pointer to core info structure containing pointers to core functions.
-struct coreInfo_t *coreitf;
+/* Instantiation of pointer to core info structure containing pointers
+ * to core functions. */
+struct coreInfo_t *coreitf = (struct coreInfo_t *) NULL;
 
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////

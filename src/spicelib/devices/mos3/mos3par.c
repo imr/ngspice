@@ -28,8 +28,7 @@ MOS3param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
     if (!cp_getvar("scale", CP_REAL, &scale, 0))
         scale = 1;
 
-    switch(param) {
-    	
+    switch (param) {
         case MOS3_M:
             here->MOS3m = value->rValue;
             here->MOS3mGiven = TRUE;
@@ -90,13 +89,17 @@ MOS3param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->MOS3dtempGiven = TRUE;
             break;
         case MOS3_IC:
-            switch(value->v.numValue){
+            /* FALLTHROUGH added to suppress GCC warning due to
+             * -Wimplicit-fallthrough flag */
+            switch (value->v.numValue) {
                 case 3:
                     here->MOS3icVBS = *(value->v.vec.rVec+2);
                     here->MOS3icVBSGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 2:
                     here->MOS3icVGS = *(value->v.vec.rVec+1);
                     here->MOS3icVGSGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 1:
                     here->MOS3icVDS = *(value->v.vec.rVec);
                     here->MOS3icVDSGiven = TRUE;

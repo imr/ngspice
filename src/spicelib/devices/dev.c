@@ -479,15 +479,11 @@ int load_opus(const char *name)
 #endif
 
 
-    /* Give the code model access to facilities provided by ngspice. Note
-     * that older versions of code models will not access the functions
-     * added by newer versions of ngspice since it is unaware of them and
-     * newer versions of code models will not use newer (undefined)
-     * functions from ngspice because any of its models that use them
-     * will not be recognized and used by ngspice. */
+    /* Give the code model access to facilities provided by ngspice. */
     if ((fetch = dlsym(lib,"CMgetCoreItfPtr")) != (funptr_t) NULL) {
         const struct coreInfo_t ** const core =
-                (*(const struct coreInfo_t ** const (*)(void)) fetch)();
+                (const struct coreInfo_t **const)
+                (*(struct coreInfo_t ** (*)(void)) fetch)();
         *core = &coreInfo;
     }
     else {

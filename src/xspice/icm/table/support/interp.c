@@ -4,6 +4,8 @@
 #include <string.h>
 #include <math.h>
 
+#include "interp.h"
+
 /*********************/
 /* 3d geometry types */
 /*********************/

@@ -23,8 +23,7 @@ MOS9param(int param, IFvalue *value, GENinstance *inst,
 
     NG_IGNORE(select);
 
-    switch(param) {
-
+    switch (param) {
         case MOS9_M:
             here->MOS9m = value->rValue;
             here->MOS9mGiven = TRUE;
@@ -85,13 +84,17 @@ MOS9param(int param, IFvalue *value, GENinstance *inst,
             here->MOS9dtempGiven = TRUE;
             break;
         case MOS9_IC:
-            switch(value->v.numValue){
+            /* FALLTHROUGH added to suppress GCC warning due to
+             * -Wimplicit-fallthrough flag */
+            switch (value->v.numValue) {
                 case 3:
                     here->MOS9icVBS = *(value->v.vec.rVec+2);
                     here->MOS9icVBSGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 2:
                     here->MOS9icVGS = *(value->v.vec.rVec+1);
                     here->MOS9icVGSGiven = TRUE;
+                    /* FALLTHROUGH */
                 case 1:
                     here->MOS9icVDS = *(value->v.vec.rVec);
                     here->MOS9icVDSGiven = TRUE;

@@ -1220,7 +1220,7 @@ static char  *value_to_str(Data_Type_t type, Value_t value)
             /* be careful, the string could conceivably be very long... */
             str_len = (int) strlen(value.svalue);
             if ((str_len + BASE_STR_LEN) > max_len) {
-                size_t n_byte_alloc = max_len + str_len + 1;
+                size_t n_byte_alloc = (size_t) (max_len + str_len + 1);
                 void * const p = realloc(str, n_byte_alloc);
                 if (p == NULL) {
                     (void) fprintf(stderr, "Unable to resize string "

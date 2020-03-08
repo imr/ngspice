@@ -257,7 +257,7 @@ static inline int product_overflow(size_t a, size_t b, size_t *p_n)
      * a * b < a
      * a * b < b
      */
-    if (a == SIZE_MAX && b > 1 || a > 1 && b == SIZE_MAX) {
+    if ((a == SIZE_MAX && b > 1) || (a > 1 && b == SIZE_MAX)) {
         return +1;
     }
 
@@ -281,34 +281,6 @@ static void overflow_error(size_t num, size_t size)
             num, size, SIZE_MAX);
     EXIT(EXIT_FAILURE);
 } /* end of function overflow_error */
-
-
-/* strdup must also be serialized since it performs an allocation. Note that
- * Microsoft has not had a single-threaded CRT since VS 2005 (Windows XP),
- * so, their _strdup can be safely used if desired. */
-/* Declared in cmproto.h */
-char *tstrdup(const char *str_in)
-{
-    const size_t n_byte_alloc = strlen(str_in); + 1;
-    char * const str_out = (char *) tmalloc(n_byte_alloc);
-    /* Program execution would end in tmalloc() if the allocation fails */
-    return memcpy(str_out, str_in, n_byte_alloc);
-} /* end of function tstrdup */
-
-
-
-/* Declared in cmproto.h */
-char *tstrdup_raw(const char *str_in)
-{
-    const size_t n_byte_alloc = strlen(str_in); + 1;
-    char * const str_out = (char *) tmalloc_raw(n_byte_alloc);
-    if (str_out == (char *) NULL) {
-        return (char *) NULL;
-    }
-
-    return memcpy(str_out, str_in, n_byte_alloc);
-} /* end of function tstrdup_raw */
-
 
 
 #endif /* #ifndef HAVE_LIBGC */

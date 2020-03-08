@@ -3,23 +3,24 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 **********/
 
+#include "../misc/ivars.h"
+#include "circuits.h"
+#include "com_alias.h"
+#include "define.h"
+#include "display.h"
+#include "ftehelp.h"
+#include "misccoms.h"
 #include "ngspice/ngspice.h"
 #include "ngspice/cpdefs.h"
 #include "ngspice/ftedefs.h"
 #include "ngspice/dvec.h"
 #include "ngspice/iferrmsg.h"
-#include "ftehelp.h"
 #include "ngspice/hlpdefs.h"
-#include "misccoms.h"
-#include "postcoms.h"
-#include "circuits.h"
-#include "variable.h"
 #include "plotting/graf.h"
-#include "display.h"
-#include "../misc/ivars.h"
-#include "com_alias.h"
-#include "define.h"
+#include "plotting/plotit.h"
+#include "postcoms.h"
 #include "runcoms2.h"
+#include "variable.h"
 
 #ifdef HAVE_GNUREADLINE
 #include <readline/readline.h>
@@ -38,7 +39,6 @@ extern void rem_controls(void);
 
 extern IFsimulator SIMinfo;
 extern void spice_destroy_devices(void); /* FIXME need a better place */
-extern void pl_rempar(void); /* plotit.c */
 static void byemesg(void);
 static int  confirm_quit(void);
 
@@ -136,7 +136,10 @@ com_bug(wordlist *wl)
             Bug_Addr);
 
     (void) sprintf(buf, SYSTEM_MAIL, ft_sim->simulator, ft_sim->version, Bug_Addr);
-    (void) system(buf);
+    if (system(buf) == -1) {
+        fprintf(cp_err, "Bug report could not be sent: \"%s\" failed.\n",
+                buf);
+    }
 
     fprintf(cp_out, "Bug report sent.  Thank you.\n");
 }

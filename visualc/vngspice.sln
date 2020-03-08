@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 14
-VisualStudioVersion = 14.0.23107.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29806.167
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vngspice", "vngspice.vcxproj", "{83E315C7-EDD3-4F6B-AF28-87A92A4FA49A}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -86,24 +86,24 @@ Global
 		{83E315C7-EDD3-4F6B-AF28-87A92A4FA49A}.ReleaseOMP|x64.Build.0 = ReleaseOMP|x64
 		{83E315C7-EDD3-4F6B-AF28-87A92A4FA49A}.ReleaseOMP|x86.ActiveCfg = ReleaseOMP|Win32
 		{83E315C7-EDD3-4F6B-AF28-87A92A4FA49A}.ReleaseOMP|x86.Build.0 = ReleaseOMP|Win32
-		{7C865696-FA10-43AE-A20B-22AE72A165E2}.console_debug|x64.ActiveCfg = Debug|Win32
-		{7C865696-FA10-43AE-A20B-22AE72A165E2}.console_debug|x64.Build.0 = Debug|Win32
+		{7C865696-FA10-43AE-A20B-22AE72A165E2}.console_debug|x64.ActiveCfg = Debug|x64
+		{7C865696-FA10-43AE-A20B-22AE72A165E2}.console_debug|x64.Build.0 = Debug|x64
 		{7C865696-FA10-43AE-A20B-22AE72A165E2}.console_debug|x86.ActiveCfg = Debug|Win32
 		{7C865696-FA10-43AE-A20B-22AE72A165E2}.console_debug|x86.Build.0 = Debug|Win32
-		{7C865696-FA10-43AE-A20B-22AE72A165E2}.console_release_omp|x64.ActiveCfg = Release|Win32
-		{7C865696-FA10-43AE-A20B-22AE72A165E2}.console_release_omp|x64.Build.0 = Release|Win32
+		{7C865696-FA10-43AE-A20B-22AE72A165E2}.console_release_omp|x64.ActiveCfg = Release|x64
+		{7C865696-FA10-43AE-A20B-22AE72A165E2}.console_release_omp|x64.Build.0 = Release|x64
 		{7C865696-FA10-43AE-A20B-22AE72A165E2}.console_release_omp|x86.ActiveCfg = Release|Win32
 		{7C865696-FA10-43AE-A20B-22AE72A165E2}.console_release_omp|x86.Build.0 = Release|Win32
-		{7C865696-FA10-43AE-A20B-22AE72A165E2}.console_release|x64.ActiveCfg = Release|Win32
-		{7C865696-FA10-43AE-A20B-22AE72A165E2}.console_release|x64.Build.0 = Release|Win32
+		{7C865696-FA10-43AE-A20B-22AE72A165E2}.console_release|x64.ActiveCfg = Release|x64
+		{7C865696-FA10-43AE-A20B-22AE72A165E2}.console_release|x64.Build.0 = Release|x64
 		{7C865696-FA10-43AE-A20B-22AE72A165E2}.console_release|x86.ActiveCfg = Release|Win32
 		{7C865696-FA10-43AE-A20B-22AE72A165E2}.console_release|x86.Build.0 = Release|Win32
 		{7C865696-FA10-43AE-A20B-22AE72A165E2}.Debug|x64.ActiveCfg = Debug|x64
 		{7C865696-FA10-43AE-A20B-22AE72A165E2}.Debug|x64.Build.0 = Debug|x64
 		{7C865696-FA10-43AE-A20B-22AE72A165E2}.Debug|x86.ActiveCfg = Debug|Win32
 		{7C865696-FA10-43AE-A20B-22AE72A165E2}.Debug|x86.Build.0 = Debug|Win32
-		{7C865696-FA10-43AE-A20B-22AE72A165E2}.Release|x64.ActiveCfg = Release|Win32
-		{7C865696-FA10-43AE-A20B-22AE72A165E2}.Release|x64.Build.0 = Release|Win32
+		{7C865696-FA10-43AE-A20B-22AE72A165E2}.Release|x64.ActiveCfg = Release|x64
+		{7C865696-FA10-43AE-A20B-22AE72A165E2}.Release|x64.Build.0 = Release|x64
 		{7C865696-FA10-43AE-A20B-22AE72A165E2}.Release|x86.ActiveCfg = Release|Win32
 		{7C865696-FA10-43AE-A20B-22AE72A165E2}.Release|x86.Build.0 = Release|Win32
 		{7C865696-FA10-43AE-A20B-22AE72A165E2}.ReleaseOMP|x64.ActiveCfg = Release|x64
