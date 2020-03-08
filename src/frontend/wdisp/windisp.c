@@ -161,8 +161,9 @@ int WIN_Init(void)
         TheWndClass.cbClsExtra     = 0;
         TheWndClass.cbWndExtra     = sizeof(GRAPH *);
 
-        if (!RegisterClass(&TheWndClass))
+        if (!RegisterClass(&TheWndClass)) {
             return 1;
+        }
 
 #else
         /* register window class */
@@ -179,8 +180,9 @@ int WIN_Init(void)
         TheWndClassW.hIcon = LoadIconW(hInst, MAKEINTRESOURCEW(2));
         TheWndClassW.cbClsExtra = 0;
         TheWndClassW.cbWndExtra = sizeof(GRAPH *);
-        if (!RegisterClassW(&TheWndClassW))
-            return 1;
+        if (!RegisterClassW(&TheWndClassW)) {
+           return 1;
+        }
 #endif
         IsRegistered = 1;
     }
