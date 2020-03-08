@@ -709,10 +709,8 @@ int PPlex(YYSTYPE *lvalp, struct PPltype *llocp, char **line)
              *
              * what is valid here ?
              *   foo  dc1.foo  dc1.@m1[vth]
-             * this too ?
              *   vthing#branch
-             * should we convert the pseudo identifier ?
-             *   i(v5) --> v5#branch
+             *   i(vthing)
              */
             for (; *sbuf && !strchr(specials, *sbuf); sbuf++)
                 if (*sbuf == '@') {
@@ -726,6 +724,14 @@ int PPlex(YYSTYPE *lvalp, struct PPltype *llocp, char **line)
                         sbuf++;
                     }
                     break;
+                }
+            /* keep the identifier i(vss) as a single token, even as dc1.i(vss) */
+                else if (prefix("i(v", sbuf)) {
+                    if (get_r_paren(&sbuf) == 1) {
+                        fprintf(stderr, "Error: missing ')' in token\n    %s\n", start);
+                        break;
+                    }
+                    sbuf--;
                 }
 
             lvalp->str = copy_substring(start, sbuf);
