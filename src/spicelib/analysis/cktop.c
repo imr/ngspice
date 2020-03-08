@@ -430,69 +430,6 @@ new_gmin(CKTcircuit* ckt, long int firstmode,
 }
 
 
-
-
-
-static int
-no_new_gmin(CKTcircuit* ckt, long int firstmode,
-    long int continuemode, int iterlim)
-{
-    int converged, i;
-
-    ckt->CKTmode = firstmode;
-    SPfrontEnd->IFerrorf(ERR_INFO, "Starting new gmin stepping");
-
-    ckt->CKTgmin = 0.01;
-//        (ckt->CKTgshunt == 0) ? ckt->CKTgmin : ckt->CKTgshunt;
-
-    for (i = 0; i < ckt->CKTnumGminSteps; i++)
-        ckt->CKTgmin *= ckt->CKTgminFactor;
-
-    for (i = 0; i <= ckt->CKTnumGminSteps; i++) {
-        fprintf(stderr, "Trying gmin = %12.4E ", ckt->CKTgmin);
-
-        ckt->CKTnoncon = 1;
-        converged = NIiter(ckt, ckt->CKTdcTrcvMaxIter);
-
-        if (converged != 0) {
-            ckt->CKTgmin = ckt->CKTgshunt;
-            SPfrontEnd->IFerrorf(ERR_WARNING, "gmin step failed");
-            break;
-        }
-
-        ckt->CKTgmin /= ckt->CKTgminFactor;
-        ckt->CKTmode = continuemode;
-
-        SPfrontEnd->IFerrorf(ERR_INFO, "One successful gmin step");
-    }
-
-    ckt->CKTgmin = ckt->CKTgshunt;
-
-#ifdef XSPICE
-    /* gtri - wbk - add convergence problem reporting flags */
-    ckt->enh->conv_debug.last_NIiter_call = (ckt->CKTnumSrcSteps <= 0);
-#endif
-
-    converged = NIiter(ckt, iterlim);
-
-    if (converged == 0) {
-        SPfrontEnd->IFerrorf(ERR_INFO, "gmin stepping completed");
-
-#ifdef XSPICE
-        /* gtri - wbk - add convergence problem reporting flags */
-        ckt->enh->conv_debug.last_NIiter_call = MIF_FALSE;
-#endif
-
-    }
-    else {
-        SPfrontEnd->IFerrorf(ERR_WARNING, "gmin stepping failed");
-    }
-
-    return converged;
-}
-
-
-
 /* Gillespie's Source stepping
  * Modified 2005 - Paolo Nenzi (extracted from CKTop.c code)
  *
