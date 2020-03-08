@@ -29,13 +29,62 @@ extern int PPparse(char **, struct pnode **);
 void db_print_pnode_tree(struct pnode *p, char *print);
 
 
+/* Replace i(vxx) by vxx#branch.
+   Otherwise it will be done in vec_fromplot().
+   Doing it here prevents PPparse from creating a
+   spurious vector named vxx that will leak memory. */
+static char* inp_rep_ixx(const char *cline) {
+
+    char* line, * beg;
+    line = beg = (char*)cline;
+
+    char* new_str = NULL;
+    while (line) {
+        char* s = strstr(line, "i(v");
+        if (s &&
+                ((s == cline) ||
+                (s > line) && (isspace_c(s[-1]) || is_arith_char(s[-1]) ||
+                 isquote(s[-1]) || (s[-1] == '=') || (s[-1] == '.')))) {
+            char* beg_str, * end_str, * t;
+            line = s;
+            /* replace i(vxx) by vxx#branch */
+            if (get_r_paren(&line) == 1) {
+                fprintf(stderr, "Error: missing ')' in line\n    %s\n", cline);
+                break;
+            }
+            /* token containing name of voltage source to be measured */
+            t = copy_substring(s + 2, line - 1);
+            /* change line, convert i(XXX) to XXX#branch */
+            beg_str = copy_substring(beg, s);
+            end_str = copy(line);
+            tfree(new_str);
+            new_str = tprintf("%s%s%s%s", beg_str, t, "#branch", end_str);
+            beg = line = new_str;
+            tfree(beg_str);
+            tfree(end_str);
+            tfree(t);
+        }
+        else {
+            break;
+        }
+    }
+    if (new_str) {
+        return new_str;;
+    }
+    return copy(cline);
+}
+
+
 struct pnode *ft_getpnames_from_string(const char *sz, bool check)
 {
     struct pnode *pn;
 
-    /* The first argument to PPparse is not const char **, but it does not
-     * appear to modify the string that is being parsed */
-    if (PPparse((char **) &sz, &pn) != 0) {
+    /* translate i(vss) to vss.branch */
+    char* delstr;
+    char* restr = delstr = inp_rep_ixx(sz);
+    /* PPparse modifies the string that is being parsed */
+    if (PPparse(&restr, &pn) != 0) {
+        tfree(delstr);
         return (struct pnode *) NULL;
     }
 
@@ -44,9 +93,11 @@ struct pnode *ft_getpnames_from_string(const char *sz, bool check)
      * being returned. */
     if (check && !checkvalid(pn)) {
         free_pnode(pn);
+        tfree(delstr);
         return (struct pnode *) NULL;
     }
 
+    tfree(delstr);
     return pn;
 } /* end of function ft_getpnames_from_string */
 
