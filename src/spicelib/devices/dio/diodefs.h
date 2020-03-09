@@ -40,6 +40,8 @@ typedef struct sDIOinstance {
     const int DIOnegNode;     /* number of negative node of diode */
     int DIOposPrimeNode;    /* number of positive prime node of diode */
 
+    int DIOtempNode;  /* number of the temperature node of the mosfet */
+
     double *DIOposPosPrimePtr;      /* pointer to sparse matrix at 
                                      * (positive,positive prime) */
     double *DIOnegPosPrimePtr;      /* pointer to sparse matrix at 
@@ -148,6 +150,14 @@ typedef struct sDIOinstance {
 #else /* NONOISE */
         double **DIOnVar;
 #endif /* NONOISE */
+
+    double *DIOTempdPtr;      /* Diode thermal contribution */
+    double *DIODtempPtr;
+    double *DIOTempRpPtr;
+    double *DIORPtempPtr;
+
+    double *DIOTcasetcasePtr; /* for Rthjc */
+    double *DIOTcasetempPtr;
 
 } DIOinstance ;
 

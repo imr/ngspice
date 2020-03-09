@@ -229,6 +229,12 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 }
             }
 
+               if (here->DIOtempNode == -1) {
+                  error = CKTmkVolt(ckt,&tmp,here->DIOname,"Tj");
+                  if (error) return(error);
+                     here->DIOtempNode = tmp->number;
+               }
+
 /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
 do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
@@ -242,6 +248,17 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
             TSTALLOC(DIOposPosPtr,DIOposNode,DIOposNode);
             TSTALLOC(DIOnegNegPtr,DIOnegNode,DIOnegNode);
             TSTALLOC(DIOposPrimePosPrimePtr,DIOposPrimeNode,DIOposPrimeNode);
+
+                TSTALLOC(DIOTemptempPtr, DIOtempNode, DIOtempNode);       /* Transistor thermal contribution */
+ 
+                TSTALLOC(DIOTempdPtr, DIOtempNode, DIOnegNode);           /* Diode thermal contribution */
+                TSTALLOC(DIODtempPtr, DIOnegNode, DIOtempNode);
+                TSTALLOC(DIOTempRpPtr, DIOtempNode, DIOposPrimeNode);
+                TSTALLOC(DIORPtempPtr, DIOposPrimeNode, DIOtempNode);
+
+                TSTALLOC(DIOTcasetcasePtr, DIOtcaseNode, DIOtcaseNode);   /* Rthjc between tj and tcase*/
+                TSTALLOC(DIOTcasetempPtr, DIOtcaseNode, DIOtempNode);
+
         }
     }
     return(OK);
