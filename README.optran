@@ -12,7 +12,7 @@ If this fails:
 
 If this again fails, bail out.
 
-In tghis branch a fourth method is added:
+In this branch a fourth method is added:
 4) Start a transient simulation for a specific amount of time.
    Keep all data local. Keep the matrix values as an
    operating point for the simualtion following.
@@ -34,3 +34,10 @@ option gminsteps=0
 
 Step 3 may be skipped by 
 option srcsteps=0
+
+optran is started automatically when all other op calculation steps
+have failed or been switched off by the above options (cktop.c,
+line 77). The transient simulation time is determined by either
+100*TSTEP (tran command) or 0.1/'start frequency' if ac simulation.
+Then tstep is set equal to 'simulation time'/1000. This happens in
+optran.c, lines 177 - 185.
