@@ -221,6 +221,18 @@ DIOmParam(int param, IFvalue *value, GENmodel *inModel)
             /* no action - we already know we are a diode, but this */
             /* makes life easier for spice-2 like parsers */
             break;
+        case  DIO_MOD_SHMOD:
+            model->DIOshMod = value->iValue;
+            model->DIOshModGiven = TRUE;
+            break;
+        case  DIO_MOD_RTH0:
+            model->DIOrth0 = value->rValue;
+            model->DIOrth0Given = TRUE;
+            break;
+        case  DIO_MOD_CTH0:
+            model->DIOcth0 = value->rValue;
+            model->DIOcth0Given = TRUE;
+            break;
         default:
             return(E_BADPARM);
     }

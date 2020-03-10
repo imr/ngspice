@@ -57,6 +57,13 @@ typedef struct sDIOinstance {
     double *DIOposPrimePosPrimePtr; /* pointer to sparse matrix at 
                                      * (positive prime,positive prime) */
 
+    /* self heating */
+    double *DIOtempTempPtr;
+    double *DIOtempPosPrimePtr;
+    double *DIOtempNegPtr;
+    double *DIOposPrimeTempPtr;
+    double *DIOnegTempPtr;
+
     double DIOcap;   /* stores the diode capacitance */
 
     double *DIOsens; /* stores the perturbed values of geq and ceq in ac
@@ -119,6 +126,10 @@ typedef struct sDIOinstance {
     double DIOjunctionSWCap;     /* geometry adjusted junction sidewall capacitance */
     double DIOtRecSatCur; /* temperature adjusted recombination saturation current */
 
+    double DIOdIth_dVdio;
+    double DIOdIdio_dT;
+    double DIOdeltemp;
+
 /*
  * naming convention:
  * x = vdiode
@@ -151,14 +162,6 @@ typedef struct sDIOinstance {
         double **DIOnVar;
 #endif /* NONOISE */
 
-    double *DIOTempdPtr;      /* Diode thermal contribution */
-    double *DIODtempPtr;
-    double *DIOTempRpPtr;
-    double *DIORPtempPtr;
-
-    double *DIOTcasetcasePtr; /* for Rthjc */
-    double *DIOTcasetempPtr;
-
 } DIOinstance ;
 
 #define DIOsenGeq DIOsens /* stores the perturbed values of geq */
@@ -172,9 +175,15 @@ typedef struct sDIOinstance {
 #define DIOcapCharge DIOstate+3
 #define DIOcapCurrent DIOstate+4
 
-#define DIOnumStates 5
+#define DIOcapth DIOstate+ 5  /* thermal capacitor value */
+#define DIOqth DIOstate+ 6  /* thermal capacitor charge */
+#define DIOcqth DIOstate+ 7 /* thermal capacitor current */
 
-#define DIOsensxp DIOstate+5    /* charge sensitivities and their derivatives.
+#define DIOdeltemp DIOstate+ 8 /*  */
+
+#define DIOnumStates 9
+
+#define DIOsensxp DIOstate +14    /* charge sensitivities and their derivatives.
                                  * +6 for the derivatives - pointer to the
                                  * beginning of the array */
 
@@ -245,6 +254,10 @@ typedef struct sDIOmodel {       /* model structure for a diode */
     unsigned DIOrecSatCurGiven : 1;
     unsigned DIOrecEmissionCoeffGiven : 1;
 
+    unsigned DIOshModGiven :1;
+    unsigned DIOrth0Given :1;
+    unsigned DIOcth0Given :1;
+
     int    DIOlevel;   /* level selector */
     double DIOsatCur;   /* saturation current */
     double DIOsatSWCur;   /* Sidewall saturation current */
@@ -300,6 +313,9 @@ typedef struct sDIOmodel {       /* model structure for a diode */
     double DIOrecSatCur; /* Recombination saturation current */
     double DIOrecEmissionCoeff; /* Recombination emission coefficient */
 
+    int DIOshMod;
+    double DIOrth0;
+    double DIOcth0;
 } DIOmodel;
 
 /* device parameters */
@@ -327,6 +343,9 @@ enum {
     DIO_L,
     DIO_M,
     DIO_DTEMP,
+    DIO_RTH0,
+    DIO_CTH0,
+    DIO_TNODE,
 };
 
 /* model parameters */
@@ -382,6 +401,9 @@ enum {
     DIO_MOD_BV_MAX,
     DIO_MOD_ISR,
     DIO_MOD_NR,
+    DIO_MOD_SHMOD,
+    DIO_MOD_RTH0,
+    DIO_MOD_CTH0,
 };
 
 #include "dioext.h"
