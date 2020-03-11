@@ -88,17 +88,17 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
     double vt;      /* K t / Q */
     double vte, vtesw, vtetun;
     double vtebrk;
-    int Check_diode = 0, Check_th;
+    int Check_dio, Check_th;
     int error;
     int SenCond=0;    /* sensitivity condition */
     double diffcharge, diffchargeSW, deplcharge, deplchargeSW, diffcap, diffcapSW, deplcap, deplcapSW;
 
     register int selfheat;
     double deldelTemp, delTemp, Temp;
-    double ceqqth=0.0, Ith, dIth_dT=0.0;
-    double dIdio_dT=0.0, dIth_dVdio=0.0;
+    double ceqqth, Ith=0.0;
+    double dIdio_dT, dIth_dVdio=0.0, dIth_dT=0.0;
     double arg1, darg1_dT, arg2, darg2_dT, csat_dT;
-    double xfact, vbrknp, gcTt=0.0;
+    double vbrknp, gcTt;
 
     /*  loop through all the diode models */
     for( ; model != NULL; model = DIOnextModel(model)) {
@@ -111,8 +111,6 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
              *     this routine loads diodes for dc and transient analyses.
              */
 
-
-            Temp = here->DIOtemp;
             selfheat = ((model->DIOshMod == 1) && (model->DIOrth0Given));
             if (selfheat)
                 Check_th = 1;
@@ -167,7 +165,7 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
                 goto next1;
             }
 
-            Check_diode=1;
+            Check_dio=1;
             if(ckt->CKTmode & MODEINITSMSIG) {
                 vd= *(ckt->CKTstate0 + here->DIOvoltage);
                 delTemp = *(ckt->CKTstate0 + here->DIOdeltemp);
@@ -189,7 +187,6 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
             } else {
 #ifndef PREDICTOR
                 if (ckt->CKTmode & MODEINITPRED) {
-                    xfact = ckt->CKTdelta / ckt->CKTdeltaOld[1];
                     *(ckt->CKTstate0 + here->DIOvoltage) =
                             *(ckt->CKTstate1 + here->DIOvoltage);
                     vd = DEVpred(ckt,here->DIOvoltage);
@@ -197,8 +194,11 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
                             *(ckt->CKTstate1 + here->DIOcurrent);
                     *(ckt->CKTstate0 + here->DIOconduct) =
                             *(ckt->CKTstate1 + here->DIOconduct);
-                    delTemp = (1 + xfact)* (*(ckt->CKTstate1 + here->DIOdeltemp))
-                          - (xfact * (*(ckt->CKTstate2 + here->DIOdeltemp)));
+                    *(ckt->CKTstate0 + here->DIOdeltemp) =
+                            *(ckt->CKTstate1 + here->DIOdeltemp);
+                    delTemp = DEVpred(ckt,here->DIOdeltemp);
+                    *(ckt->CKTstate0 + here->DIOdIdio_dT) =
+                            *(ckt->CKTstate1 + here->DIOdIdio_dT);
                 } else {
 #endif /* PREDICTOR */
                     vd = *(ckt->CKTrhsOld+here->DIOposPrimeNode)-
@@ -212,9 +212,10 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
 #endif /* PREDICTOR */
                 delvd=vd- *(ckt->CKTstate0 + here->DIOvoltage);
                 deldelTemp = delTemp - *(ckt->CKTstate0 + here->DIOdeltemp);
+
                 cdhat= *(ckt->CKTstate0 + here->DIOcurrent) +
-                        *(ckt->CKTstate0 + here->DIOconduct) * delvd
-                        + here->DIOdIdio_dT * deldelTemp;
+                        *(ckt->CKTstate0 + here->DIOconduct) * delvd +
+                        *(ckt->CKTstate0 + here->DIOdIdio_dT) * deldelTemp;
 
                 /*
                  *   bypass if solution has not changed
@@ -229,11 +230,17 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
                                 ckt->CKTabstol;
                         if (fabs(cdhat- *(ckt->CKTstate0 + here->DIOcurrent))
                                 < tol) {
-                            vd= *(ckt->CKTstate0 + here->DIOvoltage);
-                            delTemp = *(ckt->CKTstate0 + here->DIOdeltemp);
-                            cd= *(ckt->CKTstate0 + here->DIOcurrent);
-                            gd= *(ckt->CKTstate0 + here->DIOconduct);
-                            goto load;
+                            if ((here->DIOtempNode == 0) ||
+                                (fabs(deldelTemp) < (ckt->CKTreltol * MAX(fabs(delTemp),
+                                      fabs(*(ckt->CKTstate0+here->DIOdeltemp)))+
+                                      ckt->CKTvoltTol*1e4))) {
+                                vd= *(ckt->CKTstate0 + here->DIOvoltage);
+                                delTemp = *(ckt->CKTstate0 + here->DIOdeltemp);
+                                cd= *(ckt->CKTstate0 + here->DIOcurrent);
+                                gd= *(ckt->CKTstate0 + here->DIOconduct);
+                                dIdio_dT= *(ckt->CKTstate0 + here->DIOdIdio_dT);
+                                goto load;
+                            }
                         }
                     }
                 }
@@ -247,15 +254,15 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
                     vdtemp = DEVpnjlim(vdtemp,
                             -(*(ckt->CKTstate0 + here->DIOvoltage) +
                             here->DIOtBrkdwnV),vtebrk,
-                            here->DIOtVcrit,&Check_diode);
+                            here->DIOtVcrit,&Check_dio);
                     vd = -(vdtemp+here->DIOtBrkdwnV);
                 } else {
                     vd = DEVpnjlim(vd,*(ckt->CKTstate0 + here->DIOvoltage),
-                            vte,here->DIOtVcrit,&Check_diode);
+                            vte,here->DIOtVcrit,&Check_dio);
                 }
                 if (selfheat)
                     delTemp = DIOlimitlog(delTemp,
-                          *(ckt->CKTstate0 + here->DIOdeltemp),100,&Check_th);
+                        *(ckt->CKTstate0 + here->DIOdeltemp), 100, &Check_th);
                 else
                     delTemp = 0.0;
             }
@@ -298,6 +305,7 @@ next1:      if (model->DIOsatSWCurGiven) {              /* sidewall current */
 
             }
 
+            Temp = here->DIOtemp + delTemp;
             /*
             *   temperature dependent diode saturation current and derivative
             */
@@ -373,11 +381,6 @@ next1:      if (model->DIOsatSWCurGiven) {              /* sidewall current */
 
             cd = cdb + cdsw;
             gd = gdb + gdsw;
-
-            if (selfheat) {
-                dIth_dVdio = cd + vd*gd;
-                here->DIOdIth_dVdio = dIth_dVdio;
-            }
 
             if (vd >= -3*vte) { /* limit forward */
 
@@ -457,6 +460,7 @@ next1:      if (model->DIOsatSWCurGiven) {              /* sidewall current */
                         if(SenCond){
                             *(ckt->CKTstate0 + here->DIOcurrent) = cd;
                             *(ckt->CKTstate0 + here->DIOconduct) = gd;
+                            *(ckt->CKTstate0 + here->DIOdIdio_dT) = dIdio_dT;
 #ifdef SENSDEBUG
                             printf("storing small signal parameters\n");
                             printf("cd = %.7e,vd = %.7e\n",cd,vd);
@@ -507,7 +511,7 @@ next1:      if (model->DIOsatSWCurGiven) {              /* sidewall current */
              *   check convergence
              */
             if ( (!(ckt->CKTmode & MODEINITFIX)) || (!(here->DIOoff))  ) {
-                if ((Check_th == 1) || (Check_diode == 1)) {
+                if ((Check_th == 1) || (Check_dio == 1)) {
                     ckt->CKTnoncon++;
                     ckt->CKTtroubleElt = (GENinstance *) here;
                 }
@@ -515,26 +519,31 @@ next1:      if (model->DIOsatSWCurGiven) {              /* sidewall current */
 next2:      *(ckt->CKTstate0 + here->DIOvoltage) = vd;
             *(ckt->CKTstate0 + here->DIOcurrent) = cd;
             *(ckt->CKTstate0 + here->DIOconduct) = gd;
+            *(ckt->CKTstate0 + here->DIOdIdio_dT) = dIdio_dT;
+            *(ckt->CKTstate0 + here->DIOdeltemp) = delTemp;
 
             if(SenCond)  continue;
 
 #ifndef NOBYPASS
             load:
 #endif
+            if (selfheat) {
+                dIth_dVdio = cd + vd*gd;
+                here->DIOdIth_dVdio = dIth_dVdio;
+                Ith = vd*cd;
+                dIth_dT = dIdio_dT*vd;
+            }
             /*
              *   load current vector
              */
-            Ith = vd*cd;
-            dIth_dT = vd*dIdio_dT;
-
             cdeq=cd-gd*vd;
             *(ckt->CKTrhs + here->DIOnegNode) += cdeq;
             *(ckt->CKTrhs + here->DIOposPrimeNode) -= cdeq;
             if (selfheat) {
                 *(ckt->CKTrhs + here->DIOnegNode)      += dIdio_dT*delTemp;
                 *(ckt->CKTrhs + here->DIOposPrimeNode) -= dIdio_dT*delTemp;
-                *(ckt->CKTrhs + here->DIOtempNode)     += Ith + dIth_dVdio*vd + dIdio_dT*vd*delTemp; /* Diode dissipated power */
-//printf("pdio: %g rhs: %g delTemp: %g\n", cd*vd, *(ckt->CKTrhs + here->DIOtempNode), delTemp);
+                *(ckt->CKTrhs + here->DIOtempNode)     += Ith - dIth_dVdio*vd - dIth_dT*delTemp; /* Diode dissipated power */
+//printf("pdio: %g rhs: %g delTemp: %g\n", Ith, *(ckt->CKTrhs + here->DIOtempNode), delTemp);
             }
             /*
              *   load matrix
@@ -547,8 +556,7 @@ next2:      *(ckt->CKTstate0 + here->DIOvoltage) = vd;
             *(here->DIOposPrimePosPtr) -= gspr;
             *(here->DIOposPrimeNegPtr) -= gd;
             if (selfheat) {
-//                (*(here->DIOtempTempPtr)     += -dIth_dT + dIdio_dT*vd + 1/model->DIOrth0 + gcTt);
-                (*(here->DIOtempTempPtr)     +=  dIdio_dT*vd + 1/model->DIOrth0);
+                (*(here->DIOtempTempPtr)     += -dIth_dT + 1/model->DIOrth0);
                 (*(here->DIOtempPosPrimePtr) += -dIth_dVdio);
                 (*(here->DIOtempNegPtr)      +=  dIth_dVdio);
                 (*(here->DIOposPrimeTempPtr) += -dIdio_dT);

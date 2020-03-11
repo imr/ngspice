@@ -127,8 +127,6 @@ typedef struct sDIOinstance {
     double DIOtRecSatCur; /* temperature adjusted recombination saturation current */
 
     double DIOdIth_dVdio;
-    double DIOdIdio_dT;
-    double DIOdeltemp;
 
 /*
  * naming convention:
@@ -175,15 +173,14 @@ typedef struct sDIOinstance {
 #define DIOcapCharge DIOstate+3
 #define DIOcapCurrent DIOstate+4
 
-#define DIOcapth DIOstate+ 5  /* thermal capacitor value */
-#define DIOqth DIOstate+ 6  /* thermal capacitor charge */
-#define DIOcqth DIOstate+ 7 /* thermal capacitor current */
-
-#define DIOdeltemp DIOstate+ 8 /*  */
+#define DIOdeltemp DIOstate+ 5 /* thermal voltage over rth0 */
+#define DIOqth DIOstate+ 6     /* thermal capacitor charge */
+#define DIOcqth DIOstate+ 7    /* thermal capacitor current */
+#define DIOdIdio_dT DIOstate+ 8
 
 #define DIOnumStates 9
 
-#define DIOsensxp DIOstate +14    /* charge sensitivities and their derivatives.
+#define DIOsensxp DIOstate +5    /* charge sensitivities and their derivatives.
                                  * +6 for the derivatives - pointer to the
                                  * beginning of the array */
 
