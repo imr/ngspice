@@ -235,9 +235,9 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
                                       fabs(*(ckt->CKTstate0+here->DIOdeltemp)))+
                                       ckt->CKTvoltTol*1e4))) {
                                 vd= *(ckt->CKTstate0 + here->DIOvoltage);
-                                delTemp = *(ckt->CKTstate0 + here->DIOdeltemp);
                                 cd= *(ckt->CKTstate0 + here->DIOcurrent);
                                 gd= *(ckt->CKTstate0 + here->DIOconduct);
+                                delTemp = *(ckt->CKTstate0 + here->DIOdeltemp);
                                 dIdio_dT= *(ckt->CKTstate0 + here->DIOdIdio_dT);
                                 goto load;
                             }
@@ -556,7 +556,7 @@ next2:      *(ckt->CKTstate0 + here->DIOvoltage) = vd;
             *(here->DIOposPrimePosPtr) -= gspr;
             *(here->DIOposPrimeNegPtr) -= gd;
             if (selfheat) {
-                (*(here->DIOtempTempPtr)     += -dIth_dT + 1/model->DIOrth0);
+                (*(here->DIOtempTempPtr)     +=  dIth_dT + 1/model->DIOrth0);
                 (*(here->DIOtempPosPrimePtr) += -dIth_dVdio);
                 (*(here->DIOtempNegPtr)      +=  dIth_dVdio);
                 (*(here->DIOposPrimeTempPtr) += -dIdio_dT);

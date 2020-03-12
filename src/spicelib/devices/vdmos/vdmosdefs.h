@@ -107,9 +107,7 @@ typedef struct sVDMOSinstance {
     double VDMOScdT;
     double VDMOScth;         /* current alias power */
 
-    double VDMOScdio;
-    double VDMOSvdio;
-    double VDMOSdIth_dVdio;
+//    double VDIOdIth_dVdio;
 /*
  * naming convention:
  * x = vgs
@@ -235,12 +233,10 @@ typedef struct sVDMOSinstance {
     double *VDMOSDPtempPtr;
     double *VDMOSSPtempPtr;
 
-    double *VDMOSTempdPtr;      /* Diode and Rdrain thermal contribution */
-    double *VDMOSDtempPtr;
-//    double *VDMOSTempsPtr;      /* Diode resistance thermal contribution */
-//    double *VDMOSStempPtr;
-    double *VDMOSTempRpPtr;     /* Diode thermal contribution */
-    double *VDMOSRPtempPtr;
+    double *VDIOTempposPrimePtr; /* Diode thermal contribution */
+    double *VDIOTempnegPtr;
+    double *VDIOPosPrimetempPtr;
+    double *VDIONegtempPtr;
 
     double *VDMOSTcasetcasePtr; /* for Rthjc */
     double *VDMOSTcasetempPtr;
@@ -256,7 +252,7 @@ typedef struct sVDMOSinstance {
 
 #define VDMOSvgs VDMOSstates+ 0   /* gate-source voltage */
 #define VDMOSvds VDMOSstates+ 1   /* drain-source voltage */
-#define VDMOSdeltemp VDMOSstates+ 2
+#define VDMOSdelTemp VDMOSstates+ 2 /* thermal voltage over rth0 */
 
 #define VDMOScapgs VDMOSstates+3  /* gate-source capacitor value */
 #define VDMOSqgs VDMOSstates+ 4   /* gate-source capacitor charge */
@@ -269,14 +265,17 @@ typedef struct sVDMOSinstance {
 #define VDIOvoltage VDMOSstates+ 9
 #define VDIOcurrent VDMOSstates+ 10
 #define VDIOconduct VDMOSstates+ 11
+
 #define VDIOcapCharge VDMOSstates+ 12
 #define VDIOcapCurrent VDMOSstates+ 13
 
-#define VDMOScapth VDMOSstates+ 14  /* thermal capacitor value */
-#define VDMOSqth VDMOSstates+ 15  /* thermal capacitor charge */
-#define VDMOScqth VDMOSstates+ 16 /* thermal capacitor current */
+#define VDMOScapth VDMOSstates+ 14 /* thermal capacitor value */
+#define VDMOSqth VDMOSstates+ 15   /* thermal capacitor charge */
+#define VDMOScqth VDMOSstates+ 16  /* thermal capacitor current */
 
-#define VDMOSnumStates 17
+#define VDIOdIdio_dT VDMOSstates+ 17
+
+#define VDMOSnumStates 18
 
 
 /* per model data */

@@ -123,7 +123,7 @@ VDMOSask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
             value->rValue = *(ckt->CKTstate0 + here->VDMOScqgd);
             return(OK);
         case VDMOS_CDIO:
-            value->rValue = here->VDMOScdio;
+            value->rValue = *(ckt->CKTstate0 + here->VDIOcurrent);
             return(OK);
         case VDMOS_CG :
             if (ckt->CKTcurrentAnalysis & DOING_AC) {

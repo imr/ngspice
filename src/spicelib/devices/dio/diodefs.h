@@ -173,9 +173,10 @@ typedef struct sDIOinstance {
 #define DIOcapCharge DIOstate+3
 #define DIOcapCurrent DIOstate+4
 
-#define DIOdeltemp DIOstate+ 5 /* thermal voltage over rth0 */
-#define DIOqth DIOstate+ 6     /* thermal capacitor charge */
-#define DIOcqth DIOstate+ 7    /* thermal capacitor current */
+#define DIOqth DIOstate+ 5     /* thermal capacitor charge */
+#define DIOcqth DIOstate+ 6    /* thermal capacitor current */
+
+#define DIOdeltemp DIOstate+ 7 /* thermal voltage over rth0 */
 #define DIOdIdio_dT DIOstate+ 8
 
 #define DIOnumStates 9
