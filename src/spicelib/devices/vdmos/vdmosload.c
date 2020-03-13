@@ -87,7 +87,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
     int error;
 
     register int selfheat;
-    double rd0T, rd1T, dBeta_dT, drd0T_dT, drd1T_dT, dIds_dT;
+    double rd0T, rd1T, dBeta_dT, dIds_dT;
     double deldelTemp, delTemp, delTemp1, Temp, Vds, Vgs;
     double ceqqth=0.0;
     double GmT, gTtg, gTtdp, gTtt, gTtsp, gcTt=0.0;
@@ -316,22 +316,17 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                 Beta = here->VDMOStTransconductance * pow(TempRatio,model->VDMOSmu);
                 dBeta_dT = Beta * model->VDMOSmu / Temp;
                 rd0T =  here->VDMOSdrainResistance * pow(TempRatio, model->VDMOStexp0);
-                drd0T_dT = rd0T * model->VDMOStexp0 / Temp;
                 rd1T = 0.0;
-                drd1T_dT = 0.0;
                 if (model->VDMOSqsGiven) {
                     rd1T = here->VDMOSqsResistance * pow(TempRatio, model->VDMOStexp1);
-                    drd1T_dT = rd1T * model->VDMOStexp1 / Temp;
                 }
             } else {
                 Beta = here->VDMOStTransconductance;
                 dBeta_dT = 0.0;
                 rd0T = here->VDMOSdrainResistance;
-                drd0T_dT = 0.0;
                 rd1T = 0.0;
                 if (model->VDMOSqsGiven)
                     rd1T = here->VDMOSqsResistance;
-                drd1T_dT = 0.0;
             }
 
             /*
