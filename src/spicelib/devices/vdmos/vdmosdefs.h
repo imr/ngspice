@@ -248,7 +248,7 @@ typedef struct sVDMOSinstance {
 
 #define VDMOSvgs VDMOSstates+ 0   /* gate-source voltage */
 #define VDMOSvds VDMOSstates+ 1   /* drain-source voltage */
-#define VDMOSdeltemp VDMOSstates+ 2
+#define VDMOSdelTemp VDMOSstates+ 2
 
 #define VDMOScapgs VDMOSstates+3  /* gate-source capacitor value */
 #define VDMOSqgs VDMOSstates+ 4   /* gate-source capacitor charge */
