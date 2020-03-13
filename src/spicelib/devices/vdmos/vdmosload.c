@@ -83,7 +83,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
     double capgs = 0.0;   /* total gate-source capacitance */
     double capgd = 0.0;   /* total gate-drain capacitance */
     double capth = 0.0;   /* total thermal capacitance */
-    int Check_mos, Check_diode;
+    int Check_th, Check_diode;
     int error;
 
     register int selfheat;
@@ -106,9 +106,9 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
 
             selfheat = (here->VDMOSthermalGiven) && (model->VDMOSrthjcGiven);
             if (selfheat)
-                Check_mos = 1;
+                Check_th = 1;
             else
-                Check_mos = 0;
+                Check_th = 0;
 
             vt = CONSTKoverQ * here->VDMOStemp;
 
@@ -121,11 +121,11 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
             if ((ckt->CKTmode & MODEINITSMSIG)) {
                 vgs = *(ckt->CKTstate0 + here->VDMOSvgs);
                 vds = *(ckt->CKTstate0 + here->VDMOSvds);
-                delTemp = *(ckt->CKTstate0 + here->VDMOSdeltemp);
+                delTemp = *(ckt->CKTstate0 + here->VDMOSdelTemp);
             } else if ((ckt->CKTmode & MODEINITTRAN)) {
                 vgs = *(ckt->CKTstate1 + here->VDMOSvgs);
                 vds = *(ckt->CKTstate1 + here->VDMOSvds);
-                delTemp = *(ckt->CKTstate1 + here->VDMOSdeltemp);
+                delTemp = *(ckt->CKTstate1 + here->VDMOSdelTemp);
             } else if ((ckt->CKTmode & MODEINITJCT) && !here->VDMOSoff) {
                 /* ok - not one of the simple cases, so we have to
                  * look at all of the possibilities for why we were
@@ -170,10 +170,10 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                         *(ckt->CKTstate1 + here->VDMOSvds);
                     vds = (1 + xfact)* (*(ckt->CKTstate1 + here->VDMOSvds))
                           - (xfact * (*(ckt->CKTstate2 + here->VDMOSvds)));
-                    *(ckt->CKTstate0 + here->VDMOSdeltemp) =
-                        *(ckt->CKTstate1 + here->VDMOSdeltemp);
-                    delTemp = (1 + xfact)* (*(ckt->CKTstate1 + here->VDMOSdeltemp))
-                          - (xfact * (*(ckt->CKTstate2 + here->VDMOSdeltemp)));
+                    *(ckt->CKTstate0 + here->VDMOSdelTemp) =
+                        *(ckt->CKTstate1 + here->VDMOSdelTemp);
+                    delTemp = (1 + xfact)* (*(ckt->CKTstate1 + here->VDMOSdelTemp))
+                          - (xfact * (*(ckt->CKTstate2 + here->VDMOSdelTemp)));
                 }
                 else
                 {
@@ -204,7 +204,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                 delvds = vds - *(ckt->CKTstate0 + here->VDMOSvds);
                 delvgd = vgd - vgdo;
 
-                deldelTemp = delTemp - *(ckt->CKTstate0 + here->VDMOSdeltemp);
+                deldelTemp = delTemp - *(ckt->CKTstate0 + here->VDMOSdelTemp);
 
                 /* these are needed for convergence testing */
 
@@ -242,7 +242,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                                                                 ckt->CKTabstol)) &&
                                     ((here->VDMOStempNode == 0) ||
                                             (fabs(deldelTemp) < (ckt->CKTreltol * MAX(fabs(delTemp),
-                                                                                      fabs(*(ckt->CKTstate0+here->VDMOSdeltemp)))
+                                                                                      fabs(*(ckt->CKTstate0+here->VDMOSdelTemp)))
                                                                  + ckt->CKTvoltTol*1e4))))
                                         {
                                             /* bypass code */
@@ -254,7 +254,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                                             vgs = *(ckt->CKTstate0 + here->VDMOSvgs);
                                             vds = *(ckt->CKTstate0 + here->VDMOSvds);
                                             vgd = vgs - vds;
-                                            delTemp = *(ckt->CKTstate0 + here->VDMOSdeltemp);
+                                            delTemp = *(ckt->CKTstate0 + here->VDMOSdelTemp);
                                             /*  calculate Vds for temperature conductance calculation
                                                 in bypass (used later when filling Temp node matrix)  */
                                             Vds = here->VDMOSmode > 0 ? vds : -vds;
@@ -300,7 +300,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                 }
                 if (selfheat)
                     delTemp = VDMOSlimitlog(delTemp,
-                          *(ckt->CKTstate0 + here->VDMOSdeltemp),100,&Check_mos);
+                          *(ckt->CKTstate0 + here->VDMOSdelTemp),100,&Check_th);
                 else
                     delTemp = 0.0;
 #endif /*NODELIMITING*/
@@ -422,7 +422,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
 
             *(ckt->CKTstate0 + here->VDMOSvgs) = vgs;
             *(ckt->CKTstate0 + here->VDMOSvds) = vds;
-            *(ckt->CKTstate0 + here->VDMOSdeltemp) = delTemp;
+            *(ckt->CKTstate0 + here->VDMOSdelTemp) = delTemp;
 
             /* quasi saturation
              * according to Vincenzo d'Alessandro's Quasi-Saturation Model, simplified:
@@ -486,7 +486,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
 
                 vgs1 = *(ckt->CKTstate1 + here->VDMOSvgs);
                 vgd1 = vgs1 - *(ckt->CKTstate1 + here->VDMOSvds);
-                delTemp1 = *(ckt->CKTstate1 + here->VDMOSdeltemp);
+                delTemp1 = *(ckt->CKTstate1 + here->VDMOSdelTemp);
                 if (ckt->CKTmode & (MODETRANOP | MODEINITSMSIG)) {
                     capgs = 2 * *(ckt->CKTstate0 + here->VDMOScapgs);
                     capgd = 2 * *(ckt->CKTstate0 + here->VDMOScapgd);
@@ -857,7 +857,7 @@ bypass:
             *   check convergence
             */
 
-            if ((Check_mos == 1) || (Check_diode == 1)) {
+            if ((Check_th == 1) || (Check_diode == 1)) {
                 ckt->CKTnoncon++;
                 ckt->CKTtroubleElt = (GENinstance *)here;
             }
