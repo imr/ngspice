@@ -83,7 +83,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
     double capgs = 0.0;   /* total gate-source capacitance */
     double capgd = 0.0;   /* total gate-drain capacitance */
     double capth = 0.0;   /* total thermal capacitance */
-    int Check_th, Check_diode;
+    int Check_th, Check_dio;
     int error;
 
     register int selfheat;
@@ -690,7 +690,7 @@ bypass:
             vtebrk = model->VDIObrkdEmissionCoeff * vt;
             vbrknp = here->VDIOtBrkdwnV;
 
-            Check_diode = 1;
+            Check_dio = 1;
             if (ckt->CKTmode & MODEINITSMSIG) {
                 vd = *(ckt->CKTstate0 + here->VDIOvoltage);
             } else if (ckt->CKTmode & MODEINITTRAN) {
@@ -751,11 +751,11 @@ bypass:
                     vdtemp = DEVpnjlim(vdtemp,
                                        -(*(ckt->CKTstate0 + here->VDIOvoltage) +
                                          vbrknp), vtebrk,
-                                       here->VDIOtVcrit, &Check_diode);
+                                       here->VDIOtVcrit, &Check_dio);
                     vd = -(vdtemp + vbrknp);
                 } else {
                     vd = DEVpnjlim(vd, *(ckt->CKTstate0 + here->VDIOvoltage),
-                                   vte, here->VDIOtVcrit, &Check_diode);
+                                   vte, here->VDIOtVcrit, &Check_dio);
                 }
             }
             /*
@@ -852,7 +852,7 @@ bypass:
             *   check convergence
             */
 
-            if ((Check_th == 1) || (Check_diode == 1)) {
+            if ((Check_th == 1) || (Check_dio == 1)) {
                 ckt->CKTnoncon++;
                 ckt->CKTtroubleElt = (GENinstance *)here;
             }
