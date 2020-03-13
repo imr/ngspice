@@ -110,8 +110,6 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
             else
                 Check_th = 0;
 
-            vt = CONSTKoverQ * here->VDMOStemp;
-
             /* first, we compute a few useful values - these could be
              * pre-computed, but for historical reasons are still done
              * here.  They may be moved at the expense of instance size
@@ -142,7 +140,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                     vds = 0.0;
                 }
             } else if ((ckt->CKTmode & (MODEINITJCT | MODEINITFIX)) && (here->VDMOSoff)) {
-                delTemp = vgs = vds = 0.0;
+                vgs = vds = delTemp = 0.0;
 
             /*
              * ok - now to do the start-up operations
@@ -307,7 +305,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
 
             }
 
-            Temp = delTemp + here->VDMOStemp;
+            Temp = here->VDMOStemp + delTemp;
             here->VDMOSTempSH = Temp; /* added for portability of SH Temp for noise analysis */
 
             /*  Calculate temperature dependent values for self-heating effect  */
@@ -594,21 +592,21 @@ bypass:
                 xnrm = 1;
                 xrev = 0;
                 cdreq = model->VDMOStype*(cdrain - here->VDMOSgds*vds
-                                                 - here->VDMOSgm*vgs)
-                        - GmT * delTemp;
+                                                 - here->VDMOSgm*vgs);
             } else {
                 xnrm = 0;
                 xrev = 1;
                 cdreq = -(model->VDMOStype)*(cdrain - here->VDMOSgds*(-vds)
-                                                    - here->VDMOSgm*vgd)
-                        - GmT * delTemp;
+                                                    - here->VDMOSgm*vgd);
             }
 
             *(ckt->CKTrhs + here->VDMOSgNodePrime) -= (model->VDMOStype * (ceqgs + ceqgd));
             *(ckt->CKTrhs + here->VDMOSdNodePrime) += (-cdreq + model->VDMOStype * ceqgd);
             *(ckt->CKTrhs + here->VDMOSsNodePrime) +=   cdreq + model->VDMOStype * ceqgs;
             if (selfheat) {
-                *(ckt->CKTrhs + here->VDMOStempNode) -= here->VDMOScth + ceqqth; /* dissipated power + Cthj current */
+                *(ckt->CKTrhs + here->VDMOSdNodePrime) +=  GmT * delTemp;
+                *(ckt->CKTrhs + here->VDMOSsNodePrime) += -GmT * delTemp;
+                *(ckt->CKTrhs + here->VDMOStempNode)   -= here->VDMOScth + ceqqth; /* MOS dissipated power + Cthj current */
                 *(ckt->CKTrhs + here->VDMOSvcktTbranch) = ckt->CKTtemp-CONSTCtoK; /* ckt temperature */
             }
 
@@ -686,6 +684,7 @@ bypass:
             gdb = 0.0;
             csat = here->VDIOtSatCur;
             gspr = here->VDIOtConductance;
+            vt = CONSTKoverQ * Temp;
             vte = model->VDMOSn * vt;
             vtebrk = model->VDIObrkdEmissionCoeff * vt;
             vbrknp = here->VDIOtBrkdwnV;
