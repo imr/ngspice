@@ -104,6 +104,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
         for (here = VDMOSinstances(model); here != NULL;
                 here = VDMOSnextInstance(here)) {
 
+            Temp = here->VDMOStemp;
             selfheat = (here->VDMOSthermalGiven) && (model->VDMOSrthjcGiven);
             if (selfheat)
                 Check_th = 1;
