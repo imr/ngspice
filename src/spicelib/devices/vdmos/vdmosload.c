@@ -160,6 +160,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
 
                     /* predictor step */
 
+                    xfact = ckt->CKTdelta / ckt->CKTdeltaOld[1];
                     *(ckt->CKTstate0 + here->VDMOSvgs) =
                         *(ckt->CKTstate1 + here->VDMOSvgs);
                     vgs = (1 + xfact)* (*(ckt->CKTstate1 + here->VDMOSvgs))
