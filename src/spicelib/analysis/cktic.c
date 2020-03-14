@@ -25,15 +25,30 @@ CKTic(CKTcircuit *ckt)
 
     for(node = ckt->CKTnodes;node != NULL; node = node->next) {
         if(node->nsGiven) {
-            node->ptr = SMPmakeElt(ckt->CKTmatrix,node->number,node->number);
+            if (ckt->CKTkluMODE) {
+                node->ptr = (double *) SMPfindElt (ckt->CKTmatrix, node->number, node->number, 0) ;
+                if (node->ptr == NULL) {
+                    printf ("Warning: The needed element doesn't exist in the matrix, but KLU mode cannot create a new element. ") ;
+                    printf ("Please specify an existing element for .nodeset\n") ;
+                }
+            } else {
+                node->ptr = SMPmakeElt(ckt->CKTmatrix,node->number,node->number);
+            }
             if(node->ptr == NULL) return(E_NOMEM);
             ckt->CKThadNodeset = 1;
             ckt->CKTrhs[node->number] = node->nodeset;
         }
         if(node->icGiven) {
             if(! ( node->ptr)) {
-                node->ptr = SMPmakeElt(ckt->CKTmatrix,node->number,
-                        node->number);
+                if (ckt->CKTkluMODE) {
+                    node->ptr = (double *) SMPfindElt (ckt->CKTmatrix, node->number, node->number, 0) ;
+                    if (node->ptr == NULL) {
+                        printf ("Warning: The needed element doesn't exist in the matrix, but KLU mode cannot create a new element. ") ;
+                        printf ("Please specify an existing element for .ic\n") ;
+                    }
+                } else {
+                    node->ptr = SMPmakeElt(ckt->CKTmatrix,node->number, node->number);
+                }
                 if(node->ptr == NULL) return(E_NOMEM);
             }
             ckt->CKTrhs[node->number] = node->ic;
