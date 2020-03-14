@@ -607,7 +607,10 @@ bypass:
                 *(ckt->CKTrhs + here->VDMOSdNodePrime) +=  GmT * delTemp;
                 *(ckt->CKTrhs + here->VDMOSsNodePrime) += -GmT * delTemp;
                 *(ckt->CKTrhs + here->VDMOStempNode)   -= here->VDMOScth + ceqqth; /* MOS dissipated power + Cthj current */
-                *(ckt->CKTrhs + here->VDMOSvcktTbranch) = ckt->CKTtemp-CONSTCtoK;  /* ckt temperature */
+                double vCktTemp = (ckt->CKTtemp-CONSTCtoK); /* ckt temperature */
+                if (ckt->CKTmode & MODETRANOP)
+                    vCktTemp *= ckt->CKTsrcFact;
+                *(ckt->CKTrhs + here->VDMOSvcktTbranch)+= vCktTemp;
             }
 
             /*
