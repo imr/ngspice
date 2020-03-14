@@ -25,6 +25,8 @@ CKTic(CKTcircuit *ckt)
 
     for(node = ckt->CKTnodes;node != NULL; node = node->next) {
         if(node->nsGiven) {
+
+#ifdef KLU
             if (ckt->CKTkluMODE) {
                 node->ptr = (double *) SMPfindElt (ckt->CKTmatrix, node->number, node->number, 0) ;
                 if (node->ptr == NULL) {
@@ -32,14 +34,22 @@ CKTic(CKTcircuit *ckt)
                     printf ("Please specify an existing element for .nodeset\n") ;
                 }
             } else {
+#endif
+
                 node->ptr = SMPmakeElt(ckt->CKTmatrix,node->number,node->number);
+
+#ifdef KLU
             }
+#endif
+
             if(node->ptr == NULL) return(E_NOMEM);
             ckt->CKThadNodeset = 1;
             ckt->CKTrhs[node->number] = node->nodeset;
         }
         if(node->icGiven) {
             if(! ( node->ptr)) {
+
+#ifdef KLU
                 if (ckt->CKTkluMODE) {
                     node->ptr = (double *) SMPfindElt (ckt->CKTmatrix, node->number, node->number, 0) ;
                     if (node->ptr == NULL) {
@@ -47,8 +57,14 @@ CKTic(CKTcircuit *ckt)
                         printf ("Please specify an existing element for .ic\n") ;
                     }
                 } else {
+#endif
+
                     node->ptr = SMPmakeElt(ckt->CKTmatrix,node->number, node->number);
+
+#ifdef KLU
                 }
+#endif
+
                 if(node->ptr == NULL) return(E_NOMEM);
             }
             ckt->CKTrhs[node->number] = node->ic;
