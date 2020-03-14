@@ -1811,7 +1811,7 @@ devmodtranslate(struct card *s, char *subname, wordlist * const orig_modnames)
             tfree(name);
             break;
 
-            /* 4-7 terminal mos devices */
+            /* 3-7 terminal mos devices */
         case 'm':
             name = gettok(&t);  /* get refdes */
             bxx_printf(&buffer, "%s ", name);
@@ -1825,10 +1825,11 @@ devmodtranslate(struct card *s, char *subname, wordlist * const orig_modnames)
             name = gettok_node(&t);  /* get third attached netname */
             bxx_printf(&buffer, "%s ", name);
             tfree(name);
-            name = gettok_node(&t);  /* get fourth attached netname */
-            bxx_printf(&buffer, "%s ", name);
-            tfree(name);
-            name = gettok(&t);
+            name = gettok_node(&t);
+
+            if (!name) {
+                break;
+            }
 
             found = 0;
             while (!found) {
@@ -1841,7 +1842,7 @@ devmodtranslate(struct card *s, char *subname, wordlist * const orig_modnames)
                 if (!found) { /* name was not a model - was a netname */
                     bxx_printf(&buffer, "%s ", name);
                     tfree(name);
-                    name = gettok(&t);
+                    name = gettok_node(&t);
                     if (name == NULL) {
                         name = copy(""); /* allow 'tfree' */
                         break;
