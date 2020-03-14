@@ -997,15 +997,36 @@ SMPelement *
 SMPfindElt (SMPmatrix *eMatrix, int Row, int Col, int CreateIfMissing)
 {
     MatrixPtr Matrix = eMatrix->SPmatrix ;
-    ElementPtr Element ;
 
-    /* Begin `SMPfindElt'. */
-    assert (IS_SPARSE (Matrix)) ;
-    Row = Matrix->ExtToIntRowMap [Row] ;
-    Col = Matrix->ExtToIntColMap [Col] ;
-    Element = Matrix->FirstInCol [Col] ;
-    Element = spcFindElementInCol (Matrix, &Element, Row, Col, CreateIfMissing) ;
-    return (SMPelement *)Element ;
+    if (eMatrix->CKTkluMODE)
+    {
+        int i ;
+
+        Row = Matrix->ExtToIntRowMap [Row] ;
+        Col = Matrix->ExtToIntColMap [Col] ;
+        for (i = eMatrix->CKTkluAp [Col - 1] ; i < eMatrix->CKTkluAp [Col] ; i++) {
+            if (eMatrix->CKTkluAi [i] == Row - 1) {
+                if (eMatrix->CKTkluMatrixIsComplex == CKTkluMatrixReal) {
+                    return (SMPelement *) &(eMatrix->CKTkluAx [i]) ;
+                } else if (eMatrix->CKTkluMatrixIsComplex == CKTkluMatrixComplex) {
+                    return (SMPelement *) &(eMatrix->CKTkluAx_Complex [2 * i]) ;
+                } else {
+                    return NULL ;
+                }
+            }
+        }
+        return NULL ;
+    } else {
+        ElementPtr Element ;
+
+        /* Begin `SMPfindElt'. */
+        assert (IS_SPARSE (Matrix)) ;
+        Row = Matrix->ExtToIntRowMap [Row] ;
+        Col = Matrix->ExtToIntColMap [Col] ;
+        Element = Matrix->FirstInCol [Col] ;
+        Element = spcFindElementInCol (Matrix, &Element, Row, Col, CreateIfMissing) ;
+        return (SMPelement *)Element ;
+    }
 }
 
 /* XXX The following should probably be implemented in spUtils */
