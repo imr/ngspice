@@ -91,4 +91,10 @@ struct coreInfo_t  coreInfo =
   GC_realloc,
   no_free
 #endif
+#ifdef KLU
+  ,
+  MIFbindCSC,
+  MIFbindCSCComplex,
+  MIFbindCSCComplexToReal
+#endif
 };
