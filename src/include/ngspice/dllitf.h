@@ -6,6 +6,7 @@
 #ifndef ngspice_DLLITF_H
 #define ngspice_DLLITF_H
 
+#include "ngspice/config.h"
 #include "ngspice/mifproto.h"
 #include "ngspice/cmproto.h"
 
@@ -75,6 +76,12 @@ struct coreInfo_t {
 	void *    ((*dllitf_tmalloc)(size_t));
 	void *    ((*dllitf_trealloc)(const void *, size_t));
 	void      ((*dllitf_txfree)(const void *));
+
+#ifdef KLU
+        int ((*dllitf_MIFbindCSC) (GENmodel *, CKTcircuit *)) ;
+        int ((*dllitf_MIFbindCSCComplex) (GENmodel *, CKTcircuit *)) ;
+        int ((*dllitf_MIFbindCSCComplexToReal) (GENmodel *, CKTcircuit *)) ;
+#endif
 };
 
 #endif

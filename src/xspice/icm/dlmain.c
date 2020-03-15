@@ -7,6 +7,7 @@
 // Author: Arpad Buermen
 ////////////////////////////////////////////////////////////////////////////// 
 
+#include "ngspice/config.h"
 #include "ngspice/inpdefs.h"
 #include "ngspice/devdefs.h"
 #include "ngspice/evtudn.h"
@@ -402,6 +403,19 @@ void txfree(const void *ptr) {
 	(coreitf->dllitf_txfree)(ptr);
 }
 
+#ifdef KLU
+int MIFbindCSC (GENmodel *inModel, CKTcircuit *ckt) {
+    return (coreitf->dllitf_MIFbindCSC) (inModel, ckt) ;
+}
+
+int MIFbindCSCComplex (GENmodel *inModel, CKTcircuit *ckt) {
+    return (coreitf->dllitf_MIFbindCSCComplex) (inModel, ckt) ;
+}
+
+int MIFbindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt) {
+    return (coreitf->dllitf_MIFbindCSCComplexToReal) (inModel, ckt) ;
+}
+#endif
 
 /*
 fopen_with_path()

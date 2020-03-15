@@ -951,6 +951,12 @@ static void  write_SPICEdev(
     fprintf(fp, "    .DEVdump = NULL,\n");
     fprintf(fp, "    .DEVacct = NULL,\n");
     fprintf(fp, "#endif\n");
+    fprintf(fp, "\n");
+    fprintf(fp, "#ifdef KLU\n");
+    fprintf(fp, "    .DEVbindCSC = MIFbindCSC,\n");
+    fprintf(fp, "    .DEVbindCSCComplex = MIFbindCSCComplex,\n");
+    fprintf(fp, "    .DEVbindCSCComplexToReal = MIFbindCSCComplexToReal,\n");
+    fprintf(fp, "#endif\n");
     fprintf(fp, "};\n");
     fprintf(fp, "\n");
 }
