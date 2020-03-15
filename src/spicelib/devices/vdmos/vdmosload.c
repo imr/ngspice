@@ -557,6 +557,7 @@ bypass:
                 if (selfheat)
                 {
                     error = NIintegrate(ckt, &gcTt, &ceqqth, 0.0, here->VDMOSqth);
+                    if (error) return(error);
                     gcTt = model->VDMOScthj * ckt->CKTag[0];
                     ceqqth = *(ckt->CKTstate0 + here->VDMOScqth) - gcTt * delTemp;
                 }
@@ -606,7 +607,7 @@ bypass:
             if (selfheat) {
                 *(ckt->CKTrhs + here->VDMOSdNodePrime) +=  GmT * delTemp;
                 *(ckt->CKTrhs + here->VDMOSsNodePrime) += -GmT * delTemp;
-                *(ckt->CKTrhs + here->VDMOStempNode)   -= here->VDMOScth + ceqqth; /* MOS dissipated power + Cthj current */
+                *(ckt->CKTrhs + here->VDMOStempNode) -= here->VDMOScth + ceqqth; /* MOS dissipated power + Cthj current */
                 double vCktTemp = (ckt->CKTtemp-CONSTCtoK); /* ckt temperature */
                 if (ckt->CKTmode & MODETRANOP)
                     vCktTemp *= ckt->CKTsrcFact;
