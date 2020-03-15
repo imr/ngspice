@@ -119,8 +119,10 @@ struct CKTcircuit {
     double **CKTdiag ;
 
 #ifdef KIRCHHOFF
-    double *CKTfvk ;            /* KCL Verification array */
-    int *CKTnodeIsLinear ;      /* Flag to indicate if a node is linear or non-linear */
+    double *CKTfvk ;                     /* KCL Verification array */
+    unsigned int *CKTnodeIsLinear ;      /* Flag to indicate if a node is linear or non-linear */
+    #define CKTnodeIsLinearNode 1        /* Macro to help define the Linear Nodes */
+    #define CKTnodeIsNonLinearNode 0     /* Macro to help define the Non Linear Nodes */
     CKTmkCurKCLnode **CKTmkCurKCLarray ; /* Array of KCL Currents */
 #endif
 
