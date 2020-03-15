@@ -23,6 +23,8 @@ VDMOSconvTest(GENmodel *inModel, CKTcircuit *ckt)
     double vgd;
     double vgdo;
     double tol;
+    int selfheat;
+    double delTemp, deldelTemp;
 
     for( ; model != NULL; model = VDMOSnextModel(model)) {
         for(here = VDMOSinstances(model); here!= NULL;
@@ -41,18 +43,29 @@ VDMOSconvTest(GENmodel *inModel, CKTcircuit *ckt)
             delvds = vds - *(ckt->CKTstate0 + here->VDMOSvds);
             delvgd = vgd-vgdo;
 
+            selfheat = (here->VDMOSthermalGiven) && (model->VDMOSrthjcGiven);
+            if (selfheat) {
+                delTemp = *(ckt->CKTrhs + here->VDMOStempNode);
+                deldelTemp = delTemp - *(ckt->CKTstate0 + here->VDMOSdelTemp);
+            } else {
+                delTemp = 0.0;
+                deldelTemp = 0.0;
+            }
+
             /* these are needed for convergence testing */
 
             if (here->VDMOSmode >= 0) {
                 cdhat=
                     here->VDMOScd -
                     here->VDMOSgm * delvgs + 
-                    here->VDMOSgds * delvds ;
+                    here->VDMOSgds * delvds +
+                    here->VDMOSgmT * deldelTemp;
             } else {
                 cdhat=
                     here->VDMOScd -
                     here->VDMOSgm * delvgd + 
-                    here->VDMOSgds * delvds ;
+                    here->VDMOSgds * delvds +
+                    here->VDMOSgmT * deldelTemp;
             }
             /*
              *  check convergence
