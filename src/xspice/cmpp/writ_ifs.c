@@ -1040,6 +1040,12 @@ static int write_SPICEdev(
             "    .DEVdump = NULL,\n"
             "    .DEVacct = NULL,\n"
             "#endif\n"
+            "\n"
+            "#ifdef KLU\n"
+            "    .DEVbindCSC = MIFbindCSC,\n"
+            "    .DEVbindCSCComplex = MIFbindCSCComplex,\n"
+            "    .DEVbindCSCComplexToReal = MIFbindCSCComplexToReal,\n"
+            "#endif\n"
             "};\n\n"
             );
 
