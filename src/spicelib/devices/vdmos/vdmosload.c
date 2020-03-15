@@ -171,7 +171,8 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                           - (xfact * (*(ckt->CKTstate2 + here->VDMOSvds)));
                     *(ckt->CKTstate0 + here->VDMOSdelTemp) =
                         *(ckt->CKTstate1 + here->VDMOSdelTemp);
-                    delTemp = DEVpred(ckt,here->VDMOSdelTemp);
+                    delTemp = (1 + xfact)* (*(ckt->CKTstate1 + here->VDMOSdelTemp))
+                              - (xfact * (*(ckt->CKTstate2 + here->VDMOSdelTemp)));
                 }
                 else
                 {
