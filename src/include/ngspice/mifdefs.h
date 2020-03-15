@@ -43,10 +43,13 @@ NON-STANDARD FEATURES
 =========================================================================== */
 
 
-#include  "ngspice/mifcmdat.h"
-#include  "ngspice/gendefs.h"
+#include "ngspice/mifcmdat.h"
+#include "ngspice/gendefs.h"
 #include "ngspice/ifsim.h"
 
+#ifdef KLU
+#include "ngspice/smpdefs.h"
+#endif
 
 /* The per-instance data structure */
 
@@ -84,6 +87,26 @@ struct MIFinstance {
 
     int                 inst_index;       /* Index into inst_table in evt struct in ckt */
     Mif_Callback_t      callback;         /* instance callback function */
+
+#ifdef KLU
+    BindElement *pos_branchBinding ;
+    BindElement *neg_branchBinding ;
+    BindElement *branch_posBinding ;
+    BindElement *branch_negBinding ;
+    BindElement *pos_ibranchBinding ;
+    BindElement *neg_ibranchBinding ;
+    BindElement *ibranch_posBinding ;
+    BindElement *ibranch_negBinding ;
+    BindElement *branch_poscntlBinding ;
+    BindElement *branch_negcntlBinding ;
+    BindElement *pos_ibranchcntlBinding ;
+    BindElement *neg_ibranchcntlBinding ;
+    BindElement *pos_poscntlBinding ;
+    BindElement *pos_negcntlBinding ;
+    BindElement *neg_poscntlBinding ;
+    BindElement *neg_negcntlBinding ;
+    BindElement *branch_ibranchcntlBinding ;
+#endif
 
 };
 
