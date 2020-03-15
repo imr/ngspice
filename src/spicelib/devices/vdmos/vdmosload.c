@@ -556,10 +556,10 @@ bypass:
                         *(ckt->CKTstate0 + here->VDMOSqgd);
                 if (selfheat)
                 {
-                    error = NIintegrate(ckt, &gcTt, &ceqqth, 0.0, here->VDMOSqth);
+                    error = NIintegrate(ckt, &gcTt, &ceqqth, capth, here->VDMOSqth);
                     if (error) return(error);
-                    gcTt = model->VDMOScthj * ckt->CKTag[0];
-                    ceqqth = *(ckt->CKTstate0 + here->VDMOScqth) - gcTt * delTemp;
+                    ceqqth = ceqqth - gcTt*delTemp + ckt->CKTag[0] *
+                             *(ckt->CKTstate0 + here->VDMOSqth);
                 }
             }
 
