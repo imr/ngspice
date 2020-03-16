@@ -6969,12 +6969,19 @@ static int inp_vdmos_model(struct card *deck)
         else if (curr_line[0] == 'm' && strstr(curr_line, "thermal")) {
             for (i = 0; i < 7; i++)
                 curr_line = nexttok(curr_line);
-            if (!ciprefix("thermal", curr_line)) {
+            if ((curr_line == 0) || (strlen(curr_line) < 1)) {
                 fprintf(cp_err,
-                        "Error: We need exactly 5 nodes\n"
-                        "    drain, gate, source, tjunction, tcase\n"
-                        "    in VDMOS instance line with thermal model\n"
-                        "    %s\n", card->line);
+                    "Error: We need exactly 5 nodes\n"
+                    "    drain, gate, source, tjunction, tcase\n"
+                    "    in VDMOS instance line with thermal model\n"
+                    "    %s\n", card->line);
+                return 1;
+            }
+            if (!cieq("thermal", curr_line)) {
+                fprintf(cp_err,
+                    "Error: Correct flag to activate \n"
+                    "    VDMOS thermal model is \"thermal\"\n"
+                    "    %s\n", card->line);
                 return 1;
             }
         }
