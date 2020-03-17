@@ -159,21 +159,21 @@ MIFbindCSC (GENmodel *inModel, CKTcircuit *ckt)
 
                             switch(cntl_src_type) {
                             case MIF_VCVS:
-                                CREATE_KLU_BINDING_TABLE_XSPICE_INPUTS(e.branch_poscntl, branch_poscntlBinding, branch, pos_node);
-                                CREATE_KLU_BINDING_TABLE_XSPICE_INPUTS(e.branch_negcntl, branch_negcntlBinding, branch, neg_node);
+                                CREATE_KLU_BINDING_TABLE_XSPICE_INPUTS_E(e.branch_poscntl, branch_poscntlBinding, branch, pos_node);
+                                CREATE_KLU_BINDING_TABLE_XSPICE_INPUTS_E(e.branch_negcntl, branch_negcntlBinding, branch, neg_node);
                                 break;
                             case MIF_ICIS:
-                                CREATE_KLU_BINDING_TABLE_XSPICE_INPUTS(f.pos_ibranchcntl, pos_ibranchcntlBinding, pos_node, ibranch);
-                                CREATE_KLU_BINDING_TABLE_XSPICE_INPUTS(f.neg_ibranchcntl, neg_ibranchcntlBinding, neg_node, ibranch);
+                                CREATE_KLU_BINDING_TABLE_XSPICE_INPUTS_F(f.pos_ibranchcntl, pos_ibranchcntlBinding, pos_node, ibranch);
+                                CREATE_KLU_BINDING_TABLE_XSPICE_INPUTS_F(f.neg_ibranchcntl, neg_ibranchcntlBinding, neg_node, ibranch);
                                 break;
                             case MIF_VCIS:
-                                CREATE_KLU_BINDING_TABLE_XSPICE_INPUTS(g.pos_poscntl, pos_poscntlBinding, pos_node, pos_node);
-                                CREATE_KLU_BINDING_TABLE_XSPICE_INPUTS(g.pos_negcntl, pos_negcntlBinding, pos_node, neg_node);
-                                CREATE_KLU_BINDING_TABLE_XSPICE_INPUTS(g.neg_poscntl, neg_poscntlBinding, neg_node, pos_node);
-                                CREATE_KLU_BINDING_TABLE_XSPICE_INPUTS(g.neg_negcntl, neg_negcntlBinding, neg_node, neg_node);
+                                CREATE_KLU_BINDING_TABLE_XSPICE_INPUTS_G(g.pos_poscntl, pos_poscntlBinding, pos_node, pos_node);
+                                CREATE_KLU_BINDING_TABLE_XSPICE_INPUTS_G(g.pos_negcntl, pos_negcntlBinding, pos_node, neg_node);
+                                CREATE_KLU_BINDING_TABLE_XSPICE_INPUTS_G(g.neg_poscntl, neg_poscntlBinding, neg_node, pos_node);
+                                CREATE_KLU_BINDING_TABLE_XSPICE_INPUTS_G(g.neg_negcntl, neg_negcntlBinding, neg_node, neg_node);
                                 break;
                             case MIF_ICVS:
-                                CREATE_KLU_BINDING_TABLE_XSPICE_INPUTS(h.branch_ibranchcntl, branch_ibranchcntlBinding, branch, ibranch);
+                                CREATE_KLU_BINDING_TABLE_XSPICE_INPUTS_H(h.branch_ibranchcntl, branch_ibranchcntlBinding, branch, ibranch);
                                 break;
                             case MIF_minus_one:
                                 break;
@@ -318,21 +318,21 @@ MIFbindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
 
                             switch(cntl_src_type) {
                             case MIF_VCVS:
-                                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX_XSPICE_INPUTS(e.branch_poscntl, branch_poscntlBinding, branch, pos_node);
-                                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX_XSPICE_INPUTS(e.branch_negcntl, branch_negcntlBinding, branch, neg_node);
+                                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX_XSPICE_INPUTS_E(e.branch_poscntl, branch_poscntlBinding, branch, pos_node);
+                                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX_XSPICE_INPUTS_E(e.branch_negcntl, branch_negcntlBinding, branch, neg_node);
                                 break;
                             case MIF_ICIS:
-                                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX_XSPICE_INPUTS(f.pos_ibranchcntl, pos_ibranchcntlBinding, pos_node, ibranch);
-                                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX_XSPICE_INPUTS(f.neg_ibranchcntl, neg_ibranchcntlBinding, neg_node, ibranch);
+                                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX_XSPICE_INPUTS_F(f.pos_ibranchcntl, pos_ibranchcntlBinding, pos_node, ibranch);
+                                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX_XSPICE_INPUTS_F(f.neg_ibranchcntl, neg_ibranchcntlBinding, neg_node, ibranch);
                                 break;
                             case MIF_VCIS:
-                                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX_XSPICE_INPUTS(g.pos_poscntl, pos_poscntlBinding, pos_node, pos_node);
-                                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX_XSPICE_INPUTS(g.pos_negcntl, pos_negcntlBinding, pos_node, neg_node);
-                                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX_XSPICE_INPUTS(g.neg_poscntl, neg_poscntlBinding, neg_node, pos_node);
-                                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX_XSPICE_INPUTS(g.neg_negcntl, neg_negcntlBinding, neg_node, neg_node);
+                                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX_XSPICE_INPUTS_G(g.pos_poscntl, pos_poscntlBinding, pos_node, pos_node);
+                                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX_XSPICE_INPUTS_G(g.pos_negcntl, pos_negcntlBinding, pos_node, neg_node);
+                                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX_XSPICE_INPUTS_G(g.neg_poscntl, neg_poscntlBinding, neg_node, pos_node);
+                                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX_XSPICE_INPUTS_G(g.neg_negcntl, neg_negcntlBinding, neg_node, neg_node);
                                 break;
                             case MIF_ICVS:
-                                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX_XSPICE_INPUTS(h.branch_ibranchcntl, branch_ibranchcntlBinding, branch, ibranch);
+                                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX_XSPICE_INPUTS_H(h.branch_ibranchcntl, branch_ibranchcntlBinding, branch, ibranch);
                                 break;
                             case MIF_minus_one:
                                 break;
@@ -477,21 +477,21 @@ MIFbindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
 
                             switch(cntl_src_type) {
                             case MIF_VCVS:
-                                CONVERT_KLU_BINDING_TABLE_TO_REAL_XSPICE_INPUTS(e.branch_poscntl, branch_poscntlBinding, branch, pos_node);
-                                CONVERT_KLU_BINDING_TABLE_TO_REAL_XSPICE_INPUTS(e.branch_negcntl, branch_negcntlBinding, branch, neg_node);
+                                CONVERT_KLU_BINDING_TABLE_TO_REAL_XSPICE_INPUTS_E(e.branch_poscntl, branch_poscntlBinding, branch, pos_node);
+                                CONVERT_KLU_BINDING_TABLE_TO_REAL_XSPICE_INPUTS_E(e.branch_negcntl, branch_negcntlBinding, branch, neg_node);
                                 break;
                             case MIF_ICIS:
-                                CONVERT_KLU_BINDING_TABLE_TO_REAL_XSPICE_INPUTS(f.pos_ibranchcntl, pos_ibranchcntlBinding, pos_node, ibranch);
-                                CONVERT_KLU_BINDING_TABLE_TO_REAL_XSPICE_INPUTS(f.neg_ibranchcntl, neg_ibranchcntlBinding, neg_node, ibranch);
+                                CONVERT_KLU_BINDING_TABLE_TO_REAL_XSPICE_INPUTS_F(f.pos_ibranchcntl, pos_ibranchcntlBinding, pos_node, ibranch);
+                                CONVERT_KLU_BINDING_TABLE_TO_REAL_XSPICE_INPUTS_F(f.neg_ibranchcntl, neg_ibranchcntlBinding, neg_node, ibranch);
                                 break;
                             case MIF_VCIS:
-                                CONVERT_KLU_BINDING_TABLE_TO_REAL_XSPICE_INPUTS(g.pos_poscntl, pos_poscntlBinding, pos_node, pos_node);
-                                CONVERT_KLU_BINDING_TABLE_TO_REAL_XSPICE_INPUTS(g.pos_negcntl, pos_negcntlBinding, pos_node, neg_node);
-                                CONVERT_KLU_BINDING_TABLE_TO_REAL_XSPICE_INPUTS(g.neg_poscntl, neg_poscntlBinding, neg_node, pos_node);
-                                CONVERT_KLU_BINDING_TABLE_TO_REAL_XSPICE_INPUTS(g.neg_negcntl, neg_negcntlBinding, neg_node, neg_node);
+                                CONVERT_KLU_BINDING_TABLE_TO_REAL_XSPICE_INPUTS_G(g.pos_poscntl, pos_poscntlBinding, pos_node, pos_node);
+                                CONVERT_KLU_BINDING_TABLE_TO_REAL_XSPICE_INPUTS_G(g.pos_negcntl, pos_negcntlBinding, pos_node, neg_node);
+                                CONVERT_KLU_BINDING_TABLE_TO_REAL_XSPICE_INPUTS_G(g.neg_poscntl, neg_poscntlBinding, neg_node, pos_node);
+                                CONVERT_KLU_BINDING_TABLE_TO_REAL_XSPICE_INPUTS_G(g.neg_negcntl, neg_negcntlBinding, neg_node, neg_node);
                                 break;
                             case MIF_ICVS:
-                                CONVERT_KLU_BINDING_TABLE_TO_REAL_XSPICE_INPUTS(h.branch_ibranchcntl, branch_ibranchcntlBinding, branch, ibranch);
+                                CONVERT_KLU_BINDING_TABLE_TO_REAL_XSPICE_INPUTS_H(h.branch_ibranchcntl, branch_ibranchcntlBinding, branch, ibranch);
                                 break;
                             case MIF_minus_one:
                                 break;
