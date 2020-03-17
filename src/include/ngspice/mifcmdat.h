@@ -46,7 +46,11 @@ NON-STANDARD FEATURES
 
 
 #include "ngspice/typedefs.h"
-#include  "ngspice/miftypes.h"
+#include "ngspice/miftypes.h"
+
+#ifdef KLU
+#include "ngspice/smpdefs.h"
+#endif
 
 
 /* ************************************************************************** */
@@ -61,6 +65,11 @@ typedef struct Mif_E_Ptr_s {
     double      *branch_poscntl;   /* Branch row, positive controlling column */
     double      *branch_negcntl;   /* Branch row, negative controlling column */
 
+#ifdef KLU
+    BindElement *branch_poscntlBinding ;
+    BindElement *branch_negcntlBinding ;
+#endif
+
 } Mif_E_Ptr_t;
 
 
@@ -73,6 +82,11 @@ typedef struct Mif_F_Ptr_s {
 
     double      *pos_ibranchcntl;    /* Positive row, controlling branch column */
     double      *neg_ibranchcntl;    /* Negative row, controlling branch column */
+
+#ifdef KLU
+    BindElement *pos_ibranchcntlBinding ;
+    BindElement *neg_ibranchcntlBinding ;
+#endif
 
 } Mif_F_Ptr_t;
 
@@ -89,6 +103,13 @@ typedef struct Mif_G_Ptr_s {
     double      *neg_poscntl;       /* Negative row, positive controlling column */
     double      *neg_negcntl;       /* Negative row, negative controlling column */
 
+#ifdef KLU
+    BindElement *pos_poscntlBinding ;
+    BindElement *pos_negcntlBinding ;
+    BindElement *neg_poscntlBinding ;
+    BindElement *neg_negcntlBinding ;
+#endif
+
 } Mif_G_Ptr_t;
 
 
@@ -99,6 +120,10 @@ typedef struct Mif_G_Ptr_s {
 typedef struct Mif_H_Ptr_s {
 
     double      *branch_ibranchcntl;  /* Branch row, controlling branch column */
+
+#ifdef KLU
+    BindElement *branch_ibranchcntlBinding ;
+#endif
 
 } Mif_H_Ptr_t;
 
@@ -167,6 +192,17 @@ typedef struct Mif_Smp_Ptr_s {
 
     /* array of pointer info required for putting partials into the matrix */
     Mif_Conn_Ptr_t  *input;    /* Matrix pointers associated with inputs */
+
+#ifdef KLU
+    BindElement *pos_branchBinding ;
+    BindElement *neg_branchBinding ;
+    BindElement *branch_posBinding ;
+    BindElement *branch_negBinding ;
+    BindElement *pos_ibranchBinding ;
+    BindElement *neg_ibranchBinding ;
+    BindElement *ibranch_posBinding ;
+    BindElement *ibranch_negBinding ;
+#endif
 
 } Mif_Smp_Ptr_t;
 
