@@ -54,8 +54,6 @@ typedef struct sVDMOSinstance {
 
     double VDMOSm;   /* parallel device multiplier */
 
-    double VDMOSl;   /* the length of the channel region */
-    double VDMOSw;   /* the width of the channel region */
     double VDMOSsourceConductance;   /*conductance of source(or 0):set in setup*/
     double VDMOSdrainConductance;    /*conductance of drain(or 0):set in setup*/
     double VDMOSdrainResistance;    /*resistance of drain(or 0): set in temp*/
@@ -152,8 +150,6 @@ typedef struct sVDMOSinstance {
     unsigned VDMOStempGiven :1;  /* instance temperature specified */
     unsigned VDMOSdtempGiven :1;  /* instance delta temperature specified */
     unsigned VDMOSmGiven :1;
-    unsigned VDMOSlGiven :1;
-    unsigned VDMOSwGiven :1;
     unsigned VDMOSdNodePrimeSet :1;
     unsigned VDMOSsNodePrimeSet :1;
     unsigned VDMOSicVDSGiven :1;
@@ -435,9 +431,7 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
 
 /* device parameters */
 enum {
-    VDMOS_W = 1,
-    VDMOS_L,
-    VDMOS_OFF,
+    VDMOS_OFF = 1,
     VDMOS_IC,
     VDMOS_IC_VDS,
     VDMOS_IC_VGS,
