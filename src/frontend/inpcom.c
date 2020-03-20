@@ -652,7 +652,7 @@ struct card *inp_readall(FILE *fp, const char *dir_name,
         inp_remove_excess_ws(working);
 
         if(inp_vdmos_model(working))
-            return NULL;;
+            return NULL;
 
         /* don't remove unused model if we have an .if clause, because we
            cannot yet decide here which model we finally will need */
@@ -3505,6 +3505,14 @@ static char *inp_expand_macro_in_str(struct function_env *env, char *str)
     char *orig_ptr = str, *search_ptr = str, *orig_str = copy(str);
     char keep;
 
+    /* If we have '.model mymod mdname(params)', don't treat this as a function,
+    but skip '.model mymod mdname' and only then start searching for functions. */
+    if (ciprefix(".model", search_ptr)){
+        search_ptr = nexttok(search_ptr);
+        search_ptr = nexttok(search_ptr);
+        char *end;
+        findtok_noparen(&search_ptr, &search_ptr, &end);
+    }
     // printf("%s: enter(\"%s\")\n", __FUNCTION__, str);
     while ((open_paren_ptr = strchr(search_ptr, '(')) != NULL) {
 
