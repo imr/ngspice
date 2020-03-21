@@ -76,7 +76,10 @@ typedef struct {
 #define rcheck(cond, name)      if (!(cond)) { \
     fprintf(cp_err, "Error: argument out of range for %s\n", name); \
     return (NULL); }
-
+#define rcheckn(cond, name, clean)      if (!(cond)) { \
+    fprintf(cp_err, "Error: argument out of range for %s\n", name); \
+    tfree(clean); \
+    return (NULL); }
 
 #define cdiv(r1, i1, r2, i2, r3, i3)            \
 {                           \

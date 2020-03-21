@@ -41,7 +41,7 @@ cx_divide(void *data1, void *data2, short int datatype1, short int datatype2, in
     if ((datatype1 == VF_REAL) && (datatype2 == VF_REAL)) {
         d = alloc_d(length);
         for (i = 0; i < length; i++) {
-            rcheck(dd2[i] != 0, "divide");
+            rcheckn(dd2[i] != 0, "divide", d);
             d[i] = dd1[i] / dd2[i];
         }
         return ((void *) d);
@@ -60,7 +60,7 @@ cx_divide(void *data1, void *data2, short int datatype1, short int datatype2, in
             } else {
                 c2 = cc2[i];
             }
-        rcheck((realpart(c2) != 0) || (imagpart(c2) != 0), "divide");
+        rcheckn((realpart(c2) != 0) || (imagpart(c2) != 0), "divide", c);
 #define xx5 realpart(c1)
 #define xx6 imagpart(c1)
 cdiv(xx5, xx6, realpart(c2), imagpart(c2), realpart(c[i]), imagpart(c[i]));
