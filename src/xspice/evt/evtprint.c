@@ -54,6 +54,7 @@ NON-STANDARD FEATURES
 #include "ngspice/evtproto.h"
 
 #include <time.h>
+#include <locale.h>
 
 
 static int get_index(char *node_name);
@@ -573,6 +574,10 @@ EVTprintvcd(wordlist *wl)
 
     out_init();
 
+
+    /* for gtkwave, avoid e.g. German Umlaute */
+    setlocale(LC_TIME, "en_US");
+
     /* get actual time */
     time_t ltime;
     char datebuff[80];
@@ -584,6 +589,9 @@ EVTprintvcd(wordlist *wl)
     /* time output format according to vcd spec */
     strftime(datebuff, sizeof(datebuff), "%B %d, %Y %H:%M:%S", my_time);
     out_printf("$date %s $end\n", datebuff);
+
+    /* return to what it was before */
+    setlocale(LC_TIME, "");    
 
     out_printf("$version %s %s $end\n", ft_sim->simulator, ft_sim->version);
 
