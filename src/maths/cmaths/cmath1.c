@@ -255,7 +255,7 @@ cx_db(void *data, short int type, int length, int *newlength, short int *newtype
     if (type == VF_COMPLEX)
         for (i = 0; i < length; i++) {
             tt = cmag(cc[i]);
-            rcheck(tt > 0, "db");
+            rcheckn(tt > 0, "db", d);
             /*
                 if (tt == 0.0)
                     d[i] = 20.0 * - log(HUGE);
@@ -265,7 +265,7 @@ cx_db(void *data, short int type, int length, int *newlength, short int *newtype
         }
     else
         for (i = 0; i < length; i++) {
-            rcheck(dd[i] > 0, "db");
+            rcheckn(dd[i] > 0, "db", d);
             /*
                 if (dd[i] == 0.0)
                     d[i] = 20.0 * - log(HUGE);
@@ -294,7 +294,7 @@ cx_log10(void *data, short int type, int length, int *newlength, short int *newt
             /* Perhaps we should trap when td = 0.0, but Ken wants
              * this to be possible...
              */
-            rcheck(td >= 0, "log10");
+            rcheckn(td >= 0, "log10", c);
             if (td == 0.0) {
                 realpart(c[i]) = - log10(HUGE);
                 imagpart(c[i]) = 0.0;
@@ -313,7 +313,7 @@ cx_log10(void *data, short int type, int length, int *newlength, short int *newt
         d = alloc_d(length);
         *newtype = VF_REAL;
         for (i = 0; i < length; i++) {
-            rcheck(dd[i] >= 0, "log10");
+            rcheckn(dd[i] >= 0, "log10", d);
             if (dd[i] == 0.0)
                 d[i] = - log10(HUGE);
             else
@@ -338,7 +338,7 @@ cx_log(void *data, short int type, int length, int *newlength, short int *newtyp
             double td;
 
             td = cmag(cc[i]);
-            rcheck(td >= 0, "log");
+            rcheckn(td >= 0, "log", c);
             if (td == 0.0) {
                 realpart(c[i]) = - log(HUGE);
                 imagpart(c[i]) = 0.0;
@@ -357,7 +357,7 @@ cx_log(void *data, short int type, int length, int *newlength, short int *newtyp
         d = alloc_d(length);
         *newtype = VF_REAL;
         for (i = 0; i < length; i++) {
-            rcheck(dd[i] >= 0, "log");
+            rcheckn(dd[i] >= 0, "log", d);
             if (dd[i] == 0.0)
                 d[i] = - log(HUGE);
             else
@@ -622,7 +622,7 @@ d_tan(double *dd, int length)
 
     d = alloc_d(length);
     for (i = 0; i < length; i++) {
-        rcheck(tan(degtorad(dd[i])) != 0, "tan");
+        rcheckn(tan(degtorad(dd[i])) != 0, "tan", d);
         d[i] = tan(degtorad(dd[i]));
     }
     return d;
@@ -651,10 +651,10 @@ c_tan(ngcomplex_t *cc, int length)
     for (i = 0; i < length; i++) {
         double u, v;
 
-        rcheck(cos(degtorad(realpart(cc[i]))) *
-               cosh(degtorad(imagpart(cc[i]))), "tan");
-        rcheck(sin(degtorad(realpart(cc[i]))) *
-               sinh(degtorad(imagpart(cc[i]))), "tan");
+        rcheckn(cos(degtorad(realpart(cc[i]))) *
+               cosh(degtorad(imagpart(cc[i]))), "tan", c);
+        rcheckn(sin(degtorad(realpart(cc[i]))) *
+               sinh(degtorad(imagpart(cc[i]))), "tan", c);
         u = degtorad(realpart(cc[i]));
         v = degtorad(imagpart(cc[i]));
         /* The Lattice C compiler won't take multi-line macros, and
