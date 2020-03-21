@@ -6929,12 +6929,17 @@ static void inp_quote_params(struct card *c, struct card *end_c,
 */
 static int inp_vdmos_model(struct card *deck)
 {
+#define MODNUMBERS 256
+
     struct card *card;
+    struct card *vmodels[MODNUMBERS]; /* list of pointers to vdmos model cards */
+    int j = 0;
+    vmodels[0] = NULL;
+
     for (card = deck; card; card = card->nextcard) {
 
-        char *curr_line, *cut_line, *token, *new_line;
-        wordlist *wl = NULL, *wlb;
-        int i;
+        char* curr_line, * cut_line, * token, * new_line;
+        wordlist* wl = NULL, * wlb;
 
         curr_line = cut_line = card->line;
 
@@ -6971,13 +6976,34 @@ static int inp_vdmos_model(struct card *deck)
             tfree(card->line);
             card->line = new_line;
             wl_free(wlb);
+
+            /* add model card pointer to list */
+            vmodels[j] = card;
+            j++;
+            if (j == MODNUMBERS) {
+                vmodels[j - 1] = NULL;
+                continue;
+            }
+            vmodels[j] = NULL;
         }
+    }
+
+    /* we don't have vdmos models, so return */
+    if (vmodels[0] == NULL)
+        return 0;
+    if (j == MODNUMBERS)
+        fprintf(cp_err, "Warning: Syntax check for VDMOS instances is limited to %d .model cards\n", MODNUMBERS);
+
+    for (card = deck; card; card = card->nextcard) {
         /* we have a VDMOS instance line with 'thermal' flag and thus need exactly 5 nodes
          */
-        else if (curr_line[0] == 'm' && strstr(curr_line, "thermal")) {
-            for (i = 0; i < 7; i++)
+        int i;
+        char *curr_line = card->line;
+        if (curr_line[0] == 'm' && strstr(curr_line, "thermal")) {
+            /* move to model name */
+            for (i = 0; i < 6; i++)
                 curr_line = nexttok(curr_line);
-            if ((curr_line == 0) || (strlen(curr_line) < 1)) {
+            if (!curr_line || !*curr_line) {
                 fprintf(cp_err,
                     "Error: We need exactly 5 nodes\n"
                     "    drain, gate, source, tjunction, tcase\n"
@@ -6985,13 +7011,25 @@ static int inp_vdmos_model(struct card *deck)
                     "    %s\n", card->line);
                 return 1;
             }
-            if (!cieq("thermal", curr_line)) {
-                fprintf(cp_err,
-                    "Error: Correct flag to activate \n"
-                    "    VDMOS thermal model is \"thermal\"\n"
-                    "    %s\n", card->line);
-                return 1;
+            /* next token is the model name of instance */
+            char* instmodname = gettok(&curr_line);
+            i = 0;
+            while (vmodels[i]) {
+                char* mod = vmodels[i]->line;
+                mod = nexttok(mod); /* skip .model */
+                if (ciprefix(instmodname, mod)) {
+                    tfree(instmodname);
+                    return 0;
+                }
+                i++;
             }
+            fprintf(cp_err,
+                "Error: We need exactly 5 nodes\n"
+                "    drain, gate, source, tjunction, tcase\n"
+                "    in VDMOS instance line with thermal model\n"
+                "    %s\n", card->line);
+            tfree(instmodname);
+            return 1;
         }
     }
     return 0;
