@@ -307,7 +307,10 @@ struct pnode *PP_mkfnode(const char *func, struct pnode *arg)
         /* Give the user-defined functions a try. */
         q = ft_substdef(func, arg);
         if (q) { /* found */
-            free_pnode(arg);
+            /* remove only the old comma operator pnode, no longer used */
+            if (arg->pn_op && arg->pn_op->op_num == PT_OP_COMMA) {
+                free_pnode(arg);
+            }
             return q;
         }
     }
