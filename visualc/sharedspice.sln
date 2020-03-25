@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29709.97
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sharedspice", "sharedspice.vcxproj", "{83E315C7-EDD3-4F6B-AF28-87A92A4FA49A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+		ReleaseOMP|x64 = ReleaseOMP|x64
+		ReleaseOMP|x86 = ReleaseOMP|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{83E315C7-EDD3-4F6B-AF28-87A92A4FA49A}.Debug|x64.ActiveCfg = Debug|x64
+		{83E315C7-EDD3-4F6B-AF28-87A92A4FA49A}.Debug|x64.Build.0 = Debug|x64
+		{83E315C7-EDD3-4F6B-AF28-87A92A4FA49A}.Debug|x86.ActiveCfg = Debug|Win32
+		{83E315C7-EDD3-4F6B-AF28-87A92A4FA49A}.Debug|x86.Build.0 = Debug|Win32
+		{83E315C7-EDD3-4F6B-AF28-87A92A4FA49A}.Release|x64.ActiveCfg = Release|x64
+		{83E315C7-EDD3-4F6B-AF28-87A92A4FA49A}.Release|x64.Build.0 = Release|x64
+		{83E315C7-EDD3-4F6B-AF28-87A92A4FA49A}.Release|x86.ActiveCfg = Release|Win32
+		{83E315C7-EDD3-4F6B-AF28-87A92A4FA49A}.Release|x86.Build.0 = Release|Win32
+		{83E315C7-EDD3-4F6B-AF28-87A92A4FA49A}.ReleaseOMP|x64.ActiveCfg = ReleaseOMP|x64
+		{83E315C7-EDD3-4F6B-AF28-87A92A4FA49A}.ReleaseOMP|x64.Build.0 = ReleaseOMP|x64
+		{83E315C7-EDD3-4F6B-AF28-87A92A4FA49A}.ReleaseOMP|x86.ActiveCfg = ReleaseOMP|Win32
+		{83E315C7-EDD3-4F6B-AF28-87A92A4FA49A}.ReleaseOMP|x86.Build.0 = ReleaseOMP|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2D8CB246-0813-410A-8D90-704298668B05}
+	EndGlobalSection
+EndGlobal
