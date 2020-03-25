@@ -56,14 +56,14 @@ if test "$1" = "32"; then
   echo "configuring for 32 bit"
   echo
 # You may add  --enable-adms to the following command for adding adms generated devices 
-  ../configure --with-wingui --enable-xspice --enable-cider --enable-openmp --disable-debug prefix="C:/Spice" CFLAGS="-D__USE_MINGW_ANSI_STDIO=1 -m32 -O2" LDFLAGS="-m32 -s"
+  ../configure --with-wingui --enable-xspice --enable-cider --enable-openmp --disable-debug prefix="C:/Spice" CFLAGS="-D__USE_MINGW_ANSI_STDIO=1 -m32 -O2" LDFLAGS="-m32 -s -lshlwapi -lpsapi"
 else
    cd release
    if [ $? -ne 0 ]; then  echo "cd release failed"; exit 1 ; fi
   echo "configuring for 64 bit"
   echo
 # You may add  --enable-adms to the following command for adding adms generated devices 
-  ../configure --with-wingui --enable-xspice --enable-cider --enable-openmp --disable-debug prefix="C:/Spice64" CFLAGS="-D__USE_MINGW_ANSI_STDIO=1 -m64 -O2" LDFLAGS="-m64 -s"
+  ../configure --with-wingui --enable-xspice --enable-cider --enable-openmp --disable-debug prefix="C:/Spice64" CFLAGS="-D__USE_MINGW_ANSI_STDIO=1 -m64 -O2" LDFLAGS="-m64 -s -lshlwapi -lpsapi"
 fi
 if [ $? -ne 0 ]; then  echo "../configure failed"; exit 1 ; fi
 
