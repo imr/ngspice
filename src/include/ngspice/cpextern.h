@@ -72,7 +72,7 @@ extern bool cp_dounixcom;
 extern char *cp_csep;
 extern char * get_alt_prompt(void);
 extern int cp_evloop(char *string);
-extern void cp_resetcontrol(void);
+extern void cp_resetcontrol(bool warn);
 extern void cp_toplevel(void);
 extern void cp_popcontrol(void);
 extern void cp_pushcontrol(void);
