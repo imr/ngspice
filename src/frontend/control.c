@@ -647,7 +647,7 @@ cp_evloop(char *string)
         freewl = wlist = getcommand(string);
         if (wlist == NULL) { /* End of file or end of user input. */
             if (cend[stackp] && cend[stackp]->co_parent && !string) {
-                cp_resetcontrol();
+                cp_resetcontrol(TRUE);
                 continue;
             }
             else {
@@ -889,13 +889,15 @@ cp_evloop(char *string)
 
 
 /* This blows away the control structures... */
-void cp_resetcontrol(void)
+void cp_resetcontrol(bool warn)
 {
-    fprintf(cp_err, "Warning: clearing control structures\n");
-    if (cend[stackp] && cend[stackp]->co_parent)
-        fprintf(cp_err, "Warning: EOF before block terminated\n");
-    /* We probably should free the control structures... */
-    cp_free_control(); /* va: free it */
+    if (warn) {
+        fprintf(cp_err, "Warning: clearing control structures\n");
+        if (cend[stackp] && cend[stackp]->co_parent)
+            fprintf(cp_err, "Warning: EOF before block terminated\n");
+    }
+    /* free the control structures */
+    cp_free_control();
     control[0] = cend[0] = NULL;
     stackp = 0;
     cp_kwswitch(CT_LABEL, NULL);

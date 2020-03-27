@@ -905,15 +905,17 @@ sh_delete_myvec(void)
 }
 
 /* retrieve a ngspice command from caller and run it
-immediately */
+   immediately.
+   If NULL is sent, we clear the command memory */
 IMPEXP
 int  ngSpice_Command(char* comexec)
 {
-    /* Check if command is reasonable */
+    /* delete existing command memory */
     if (comexec == NULL) {
-        fprintf(stderr, "Warning: Received command NULL, ignored");
-        return 1;
+        cp_resetcontrol(FALSE);
+        return 0;
     }
+    /* Check if command is reasonable */
     if (*comexec == '\0') {
         fprintf(stderr, "Warning: Received empty string as command, ignored");
         return 1;

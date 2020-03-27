@@ -757,7 +757,7 @@ plot_docoms(wordlist *wl)
         (void) cp_evloop(wl->wl_word);
         wl = wl->wl_next;
     }
-    cp_resetcontrol();
+    cp_resetcontrol(TRUE);
     cp_interactive = inter;
 }
 

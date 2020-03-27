@@ -65,7 +65,7 @@ ft_sigintr_cleanup(void)
 
     /* To restore screen after an interrupt to a plot for instance */
     cp_interactive = TRUE;
-    cp_resetcontrol();
+    cp_resetcontrol(TRUE);
 }
 
 
