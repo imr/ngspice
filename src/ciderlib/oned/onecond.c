@@ -42,7 +42,12 @@ NUMDconductance(ONEdevice *pDevice, BOOLEAN tranAnalysis,
     pDevice->rhs[pNode->pEqn] = -pEdge->dJpDpsiP1;
   }
   incVpn = pDevice->dcDeltaSolution;
-  spSolve(pDevice->matrix, pDevice->rhs, incVpn, NULL, NULL);
+
+#ifdef KLU
+  SMPsolveKLUforCIDER (pDevice->matrix, pDevice->rhs, incVpn, NULL, NULL) ;
+#else
+  SMPsolveForCIDER (pDevice->matrix, pDevice->rhs, incVpn) ;
+#endif
 
   pElem = pDevice->elemArray[1];
   pNode = pElem->pRightNode;
@@ -95,7 +100,12 @@ NBJTconductance(ONEdevice *pDevice, BOOLEAN tranAnalysis, double *intCoeff,
     pDevice->rhs[pNode->pEqn] = -pEdge->dJpDpsiP1;
   }
   incVce = pDevice->dcDeltaSolution;
-  spSolve(pDevice->matrix, pDevice->rhs, incVce, NULL, NULL);
+
+#ifdef KLU
+  SMPsolveKLUforCIDER (pDevice->matrix, pDevice->rhs, incVce, NULL, NULL) ;
+#else
+  SMPsolveForCIDER (pDevice->matrix, pDevice->rhs, incVce) ;
+#endif
 
   /* zero the rhs before loading in the new rhs base contribution */
   for (index = 1; index <= pDevice->numEqns; index++) {
@@ -114,7 +124,12 @@ NBJTconductance(ONEdevice *pDevice, BOOLEAN tranAnalysis, double *intCoeff,
   }
 
   incVbe = pDevice->copiedSolution;
-  spSolve(pDevice->matrix, pDevice->rhs, incVbe, NULL, NULL);
+
+#ifdef KLU
+  SMPsolveKLUforCIDER (pDevice->matrix, pDevice->rhs, incVbe, NULL, NULL) ;
+#else
+  SMPsolveForCIDER (pDevice->matrix, pDevice->rhs, incVbe) ;
+#endif
 
   pElem = pDevice->elemArray[1];/* first element */
   pEdge = pElem->pEdge;

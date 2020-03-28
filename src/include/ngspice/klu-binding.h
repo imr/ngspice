@@ -99,4 +99,39 @@
         smp_data_out->input[k].port[l].ptr = smp_data_out->input[k].port[l].h.binding->CSC ;
 #endif
 
+#ifdef CIDER
+#define CREATE_KLU_BINDING_TABLE_CIDER(ptr, binding, a, b)                                \
+    if ((a > 0) && (b > 0)) {                                                             \
+        if (pNode->binding != NULL) {                                                     \
+            if (pNode->binding->CSC_Complex != NULL) {                                    \
+                qsort (BindStructCSC, nz, sizeof(BindKluElementCOO), BindKluCompareCSC) ; \
+                i.COO = NULL ; \
+                i.CSC_Complex = pNode->binding->CSC_Complex ; \
+                matched = (BindKluElementCOO *) bsearch (&i, BindStructCSC, nz, sizeof(BindKluElementCOO), BindKluCompareCSC) ; \
+                if (matched == NULL) { \
+                    i.COO = pNode->ptr ;                                                          \
+                    i.CSC_Complex = NULL ; \
+                    matched = (BindKluElementCOO *) bsearch (&i, BindStruct, nz, sizeof(BindKluElementCOO), BindKluCompareCOO) ; \
+                    if (matched != NULL) { \
+                        pNode->binding = matched ;                                                \
+                        pNode->ptr = matched->CSC_Complex ;                                               \
+                    } \
+                } \
+            } else { \
+                i.COO = pNode->ptr ;                                                          \
+                i.CSC_Complex = NULL ; \
+                matched = (BindKluElementCOO *) bsearch (&i, BindStruct, nz, sizeof(BindKluElementCOO), BindKluCompareCOO) ; \
+                pNode->binding = matched ;                                                \
+                pNode->ptr = matched->CSC_Complex ;                                               \
+            } \
+        } else { \
+            i.COO = pNode->ptr ;                                                          \
+            i.CSC_Complex = NULL ; \
+            matched = (BindKluElementCOO *) bsearch (&i, BindStruct, nz, sizeof(BindKluElementCOO), BindKluCompareCOO) ; \
+            pNode->binding = matched ;                                                \
+            pNode->ptr = matched->CSC_Complex ;                                               \
+        } \
+    }
+#endif
+
 #endif
