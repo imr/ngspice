@@ -935,6 +935,33 @@ int klu_z_convert_matrix_in_CSR
     klu_common *Common
 ) ;
 
+#ifdef CIDER
+typedef struct sBindKluElementCOO {
+    double *COO ;
+    double *CSC_Complex ;
+} BindKluElementCOO ;
+
+int BindKluCompareCOO (const void *a, const void *b) ;
+int BindKluCompareCSC (const void *a, const void *b) ;
+
+typedef struct sKLUmatrix {
+    klu_common *KLUmatrixCommon ;               /* KLU common object */
+    klu_symbolic *KLUmatrixSymbolic ;           /* KLU symbolic object */
+    klu_numeric *KLUmatrixNumeric ;             /* KLU numeric object */
+    int *KLUmatrixAp ;                          /* KLU column pointer */
+    int *KLUmatrixAi ;                          /* KLU row pointer */
+    double *KLUmatrixAxComplex ;                /* KLU Complex Elements */
+    unsigned int KLUmatrixIsComplex:1 ;         /* KLU Matrix Is Complex Flag */
+    double *KLUmatrixIntermediateComplex ;      /* KLU iRHS Intermediate for Solve Complex Step */
+    unsigned int KLUmatrixN ;                   /* KLU N, copied */
+    unsigned int KLUmatrixNZ ;                  /* KLU nz, copied for AC Analysis */
+    int *KLUmatrixColCOO ;                      /* KLU Col Index for COO storage */
+    int *KLUmatrixRowCOO ;                      /* KLU Row Index for COO storage */
+    double *KLUmatrixValueComplexCOO ;          /* KLU Complex Elements for COO storage */
+    BindKluElementCOO *KLUmatrixBindStructCOO ; /* KLU COO Binding Structure */
+    double *KLUmatrixTrashCOO ;                 /* KLU COO Trash Pointer for Ground Node not Stored in the Matrix */
+} KLUmatrix ;
+#endif
 
 /* ========================================================================== */
 /* === KLU version ========================================================== */
