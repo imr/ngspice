@@ -16,6 +16,10 @@ Authors: 1987 Karti Mayaram, 1991 David Gates
 
 #include "ngspice/material.h"
 
+#ifdef KLU
+#include "ngspice/klu.h"
+#endif
+
 typedef struct sONEelem {
     struct sONEelem *pElems[2];     /* array to store neighbor elements */
     struct sONEnode *pNodes[2];     /* array to store the element nodes */
@@ -27,6 +31,20 @@ typedef struct sONEelem {
     ONEmaterial *matlInfo;          /* material information */
     double epsRel;                  /* epsilon of material rel to Semicon */
     int evalNodes[2];               /* nodes to be evaluated in elem */
+
+#ifdef KLU
+    double *KLUleftLeftNode ;
+    double *KLUleftRightNode ;
+    double *KLUrightLeftNode ;
+    double *KLUrightRightNode ;
+
+    BindKluElementCOO *KLUleftLeftNodeBinding ;
+    BindKluElementCOO *KLUleftRightNodeBinding ;
+    BindKluElementCOO *KLUrightLeftNodeBinding ;
+    BindKluElementCOO *KLUrightRightNodeBinding ;
+
+#endif
+
 } ONEelem;
 
 #define pLeftElem pElems[0]
@@ -112,6 +130,33 @@ typedef struct sONEnode {
     double *fPNiM1;
     double *fPN;
     double *fPNiP1;
+
+#ifdef KLU
+    BindKluElementCOO *fPsiPsiiM1Binding ;
+    BindKluElementCOO *fPsiPsiBinding ;
+    BindKluElementCOO *fPsiPsiiP1Binding ;
+    BindKluElementCOO *fPsiNBinding ;
+    BindKluElementCOO *fPsiPBinding ;
+    BindKluElementCOO *fNPsiiM1Binding ;
+    BindKluElementCOO *fNPsiBinding ;
+    BindKluElementCOO *fNPsiiP1Binding ;
+    BindKluElementCOO *fNNiM1Binding ;
+    BindKluElementCOO *fNNBinding ;
+    BindKluElementCOO *fNNiP1Binding ;
+    BindKluElementCOO *fNPiM1Binding ;
+    BindKluElementCOO *fNPBinding ;
+    BindKluElementCOO *fNPiP1Binding ;
+    BindKluElementCOO *fPPsiiM1Binding ;
+    BindKluElementCOO *fPPsiBinding ;
+    BindKluElementCOO *fPPsiiP1Binding ;
+    BindKluElementCOO *fPPiM1Binding ;
+    BindKluElementCOO *fPPBinding ;
+    BindKluElementCOO *fPPiP1Binding ;
+    BindKluElementCOO *fPNiM1Binding ;
+    BindKluElementCOO *fPNBinding ;
+    BindKluElementCOO *fPNiP1Binding ;
+#endif
+
 } ONEnode;
 
 

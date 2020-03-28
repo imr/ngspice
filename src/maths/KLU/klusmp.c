@@ -130,6 +130,170 @@ SMPnnz (SMPmatrix *Matrix)
     return ;
 }
 
+#ifdef CIDER
+typedef struct sElement {
+  unsigned int row ;
+  unsigned int col ;
+  double *pointer ;
+} Element ;
+
+static int
+CompareRow (const void *a, const void *b)
+{
+    Element *A = (Element *) a ;
+    Element *B = (Element *) b ;
+
+    return
+        (A->row > B->row) ?  1 :
+        (A->row < B->row) ? -1 :
+        0 ;
+}
+
+static int
+CompareColumn (const void *a, const void *b)
+{
+    Element *A = (Element *) a ;
+    Element *B = (Element *) b ;
+
+    return
+        (A->col > B->col) ?  1 :
+        (A->col < B->col) ? -1 :
+        0 ;
+}
+
+static void
+Compress (unsigned int *Ai, unsigned int *Bp, unsigned int n, unsigned int nz)
+{
+    unsigned int i, j ;
+
+    for (i = 0 ; i <= Ai [0] ; i++)
+        Bp [i] = 0 ;
+
+    j = Ai [0] + 1 ;
+    for (i = 1 ; i < nz ; i++)
+    {
+        if (Ai [i] == Ai [i - 1] + 1)
+        {
+            Bp [j] = i ;
+            j++ ;
+        }
+        else if (Ai [i] > Ai [i - 1] + 1)
+        {
+            for ( ; j <= Ai [i] ; j++)
+                Bp [j] = i ;
+        }
+    }
+
+    for ( ; j <= n ; j++)
+        Bp [j] = i ;
+}
+
+int
+BindKluCompareCOO (const void *a, const void *b)
+{
+    BindKluElementCOO *A = (BindKluElementCOO *) a ;
+    BindKluElementCOO *B = (BindKluElementCOO *) b ;
+
+    return
+        (A->COO > B->COO) ?  1 :
+        (A->COO < B->COO) ? -1 :
+        0 ;
+}
+
+int
+BindKluCompareCSC (const void *a, const void *b)
+{
+    BindKluElementCOO *A = (BindKluElementCOO *) a ;
+    BindKluElementCOO *B = (BindKluElementCOO *) b ;
+
+    return
+        (A->CSC_Complex > B->CSC_Complex) ?  1 :
+        (A->CSC_Complex < B->CSC_Complex) ? -1 :
+        0 ;
+}
+
+void SMPconvertCOOtoCSCKLUforCIDER (SMPmatrix *Matrix)
+{
+    Element *MatrixCOO ;
+    unsigned int *Ap_COO, i, j, nz ;
+
+    /* Count the non-zero elements and store it */
+    nz = 0 ;
+    for (i = 0 ; i < Matrix->SMPkluMatrix->KLUmatrixN * Matrix->SMPkluMatrix->KLUmatrixN ; i++) {
+        if ((Matrix->SMPkluMatrix->KLUmatrixRowCOO [i] != -1) && (Matrix->SMPkluMatrix->KLUmatrixColCOO [i] != -1)) {
+            nz++ ;
+        }
+    }
+    Matrix->SMPkluMatrix->KLUmatrixNZ = nz ;
+
+    /* Allocate the compressed COO elements */
+    MatrixCOO = (Element *) malloc (nz * sizeof(Element)) ;
+
+    /* Allocate the temporary COO Column Index */
+    Ap_COO = (unsigned int *) malloc (nz * sizeof(unsigned int)) ;
+
+    /* Allocate the needed KLU data structures */
+    Matrix->SMPkluMatrix->KLUmatrixAp = (int *) malloc ((Matrix->SMPkluMatrix->KLUmatrixN + 1) * sizeof(int)) ;
+    Matrix->SMPkluMatrix->KLUmatrixAi = (int *) malloc (nz * sizeof(int)) ;
+    Matrix->SMPkluMatrix->KLUmatrixBindStructCOO = (BindKluElementCOO *) malloc (nz * sizeof(BindKluElementCOO)) ;
+    Matrix->SMPkluMatrix->KLUmatrixAxComplex = (double *) malloc (2 * nz * sizeof(double)) ;
+    Matrix->SMPkluMatrix->KLUmatrixIntermediateComplex = (double *) malloc (2 * Matrix->SMPkluMatrix->KLUmatrixN * sizeof(double)) ;
+
+    /* Populate the compressed COO elements and COO value of Binding Table */
+    j = 0 ;
+    for (i = 0 ; i < Matrix->SMPkluMatrix->KLUmatrixN * Matrix->SMPkluMatrix->KLUmatrixN ; i++) {
+        if ((Matrix->SMPkluMatrix->KLUmatrixRowCOO [i] != -1) && (Matrix->SMPkluMatrix->KLUmatrixColCOO [i] != -1)) {
+            MatrixCOO [j].row = (unsigned int)Matrix->SMPkluMatrix->KLUmatrixRowCOO [i] ;
+            MatrixCOO [j].col = (unsigned int)Matrix->SMPkluMatrix->KLUmatrixColCOO [i] ;
+            MatrixCOO [j].pointer = &(Matrix->SMPkluMatrix->KLUmatrixValueComplexCOO [2 * i]) ;
+            j++ ;
+        }
+    }
+
+    /* Order the MatrixCOO along the columns */
+    qsort (MatrixCOO, nz, sizeof(Element), CompareColumn) ;
+
+    /* Order the MatrixCOO along the rows */
+    i = 0 ;
+    while (i < nz)
+    {
+        /* Look for the next column */
+        for (j = i + 1 ; j < nz ; j++)
+        {
+            if (MatrixCOO [j].col != MatrixCOO [i].col)
+            {
+                break ;
+            }
+        }
+
+        qsort (MatrixCOO + i, j - i, sizeof(Element), CompareRow) ;
+
+        i = j ;
+    }
+
+    /* Copy back the Matrix in partial CSC */
+    for (i = 0 ; i < nz ; i++)
+    {
+        Ap_COO [i] = MatrixCOO [i].col ;
+        Matrix->SMPkluMatrix->KLUmatrixAi [i] = (int)MatrixCOO [i].row ;
+        Matrix->SMPkluMatrix->KLUmatrixBindStructCOO [i].COO = MatrixCOO [i].pointer ;
+        Matrix->SMPkluMatrix->KLUmatrixBindStructCOO [i].CSC_Complex = &(Matrix->SMPkluMatrix->KLUmatrixAxComplex [2 * i]) ;
+    }
+
+    /* Compress the COO Column Index to CSC Column Index */
+    Compress (Ap_COO, (unsigned int *)Matrix->SMPkluMatrix->KLUmatrixAp, Matrix->SMPkluMatrix->KLUmatrixN, nz) ;
+
+    /* Free the temporary stuff */
+    free (Ap_COO) ;
+    free (MatrixCOO) ;
+
+    /* Sort the Binding Table */
+    qsort (Matrix->SMPkluMatrix->KLUmatrixBindStructCOO, nz, sizeof(BindKluElementCOO), BindKluCompareCOO) ;
+
+    return ;
+}
+#endif
+
 /*
  * SMPaddElt()
  */
@@ -148,6 +312,26 @@ SMPmakeElt (SMPmatrix *Matrix, int Row, int Col)
 {
     return spGetElement (Matrix->SPmatrix, Row, Col) ;
 }
+
+#ifdef CIDER
+double *
+SMPmakeEltKLUforCIDER (SMPmatrix *Matrix, int Row, int Col)
+{
+    if (Matrix->CKTkluMODE) {
+        if ((Row > 0) && (Col > 0)) {
+            Row = Row - 1 ;
+            Col = Col - 1 ;
+            Matrix->SMPkluMatrix->KLUmatrixRowCOO [Row * (int)Matrix->SMPkluMatrix->KLUmatrixN + Col] = Row ;
+            Matrix->SMPkluMatrix->KLUmatrixColCOO [Row * (int)Matrix->SMPkluMatrix->KLUmatrixN + Col] = Col ;
+            return &(Matrix->SMPkluMatrix->KLUmatrixValueComplexCOO [2 * (Row * (int)Matrix->SMPkluMatrix->KLUmatrixN + Col)]) ;
+        } else {
+            return Matrix->SMPkluMatrix->KLUmatrixTrashCOO ;
+        }
+    } else {
+        return spGetElement (Matrix->SPmatrix, Row, Col) ;
+    }
+}
+#endif
 
 /*
  * SMPcClear()
@@ -190,6 +374,18 @@ SMPclear (SMPmatrix *Matrix)
         spClear (Matrix->SPmatrix) ;
     }
 }
+
+#ifdef CIDER
+void
+SMPclearKLUforCIDER (SMPmatrix *Matrix)
+{
+    unsigned int i ;
+
+    for (i = 0 ; i < 2 * Matrix->SMPkluMatrix->KLUmatrixNZ ; i++) {
+        Matrix->SMPkluMatrix->KLUmatrixAxComplex [i] = 0 ;
+    }
+}
+#endif
 
 #define NG_IGNORE(x)  (void)x
 
@@ -261,6 +457,46 @@ SMPluFac (SMPmatrix *Matrix, double PivTol, double Gmin)
         return spFactor (Matrix->SPmatrix) ;
     }
 }
+
+#ifdef CIDER
+int
+SMPluFacKLUforCIDER (SMPmatrix *Matrix)
+{
+    unsigned int i ;
+    double *KLUmatrixAx ;
+    int ret ;
+
+    if (Matrix->CKTkluMODE)
+    {
+        if (Matrix->SMPkluMatrix->KLUmatrixIsComplex) {
+            ret = klu_z_refactor (Matrix->SMPkluMatrix->KLUmatrixAp, Matrix->SMPkluMatrix->KLUmatrixAi, Matrix->SMPkluMatrix->KLUmatrixAxComplex,
+                                  Matrix->SMPkluMatrix->KLUmatrixSymbolic, Matrix->SMPkluMatrix->KLUmatrixNumeric, Matrix->SMPkluMatrix->KLUmatrixCommon) ;
+        } else {
+            /* Allocate the Real Matrix */
+            KLUmatrixAx = (double *) malloc (Matrix->SMPkluMatrix->KLUmatrixNZ * sizeof(double)) ;
+
+            /* Copy the Complex Matrix into the Real Matrix */
+            for (i = 0 ; i < Matrix->SMPkluMatrix->KLUmatrixNZ ; i++) {
+                KLUmatrixAx [i] = Matrix->SMPkluMatrix->KLUmatrixAxComplex [2 * i] ;
+            }
+
+            /* Re-Factor the Real Matrix */
+            ret = klu_refactor (Matrix->SMPkluMatrix->KLUmatrixAp, Matrix->SMPkluMatrix->KLUmatrixAi, KLUmatrixAx,
+                                Matrix->SMPkluMatrix->KLUmatrixSymbolic, Matrix->SMPkluMatrix->KLUmatrixNumeric, Matrix->SMPkluMatrix->KLUmatrixCommon) ;
+
+            /* Free the Real Matrix Storage */
+            free (KLUmatrixAx) ;
+        }
+        if (Matrix->SMPkluMatrix->KLUmatrixCommon->status == KLU_EMPTY_MATRIX) {
+            printf ("CIDER: KLU Empty Matrix\n") ;
+            return 0 ;
+        }
+        return (!ret) ;
+    } else {
+        return spFactor (Matrix->SPmatrix) ;
+    }
+}
+#endif
 
 /*
  * SMPcReorder()
@@ -336,6 +572,58 @@ SMPreorder (SMPmatrix *Matrix, double PivTol, double PivRel, double Gmin)
     }
 }
 
+#ifdef CIDER
+int
+SMPreorderKLUforCIDER (SMPmatrix *Matrix)
+{
+    unsigned int i ;
+    double *KLUmatrixAx ;
+
+    if (Matrix->CKTkluMODE)
+    {
+//        Matrix->CKTkluCommon->tol = PivTol ;
+
+        if (Matrix->SMPkluMatrix->KLUmatrixNumeric != NULL) {
+            klu_free_numeric (&(Matrix->SMPkluMatrix->KLUmatrixNumeric), Matrix->SMPkluMatrix->KLUmatrixCommon) ;
+        }
+        if (Matrix->SMPkluMatrix->KLUmatrixIsComplex) {
+            Matrix->SMPkluMatrix->KLUmatrixNumeric = klu_z_factor (Matrix->SMPkluMatrix->KLUmatrixAp, Matrix->SMPkluMatrix->KLUmatrixAi,
+                                                                   Matrix->SMPkluMatrix->KLUmatrixAxComplex, Matrix->SMPkluMatrix->KLUmatrixSymbolic,
+                                                                   Matrix->SMPkluMatrix->KLUmatrixCommon) ;
+        } else {
+            /* Allocate the Real Matrix */
+            KLUmatrixAx = (double *) malloc (Matrix->SMPkluMatrix->KLUmatrixNZ * sizeof(double)) ;
+
+            /* Copy the Complex Matrix into the Real Matrix */
+            for (i = 0 ; i < Matrix->SMPkluMatrix->KLUmatrixNZ ; i++) {
+                KLUmatrixAx [i] = Matrix->SMPkluMatrix->KLUmatrixAxComplex [2 * i] ;
+            }
+
+            /* Factor the Real Matrix */
+            Matrix->SMPkluMatrix->KLUmatrixNumeric = klu_factor (Matrix->SMPkluMatrix->KLUmatrixAp, Matrix->SMPkluMatrix->KLUmatrixAi,
+                                                                 KLUmatrixAx, Matrix->SMPkluMatrix->KLUmatrixSymbolic,
+                                                                 Matrix->SMPkluMatrix->KLUmatrixCommon) ;
+
+            /* Free the Real Matrix Storage */
+            free (KLUmatrixAx) ;
+        }
+        if (Matrix->SMPkluMatrix->KLUmatrixNumeric == NULL)
+        {
+            printf ("CIDER: KLU Factorization Error\n") ;
+            if (Matrix->SMPkluMatrix->KLUmatrixCommon->status == KLU_EMPTY_MATRIX)
+            {
+                return 0 ;
+            }
+            return 1 ;
+        }
+        else
+            return 0 ;
+    } else {
+        return spFactor (Matrix->SPmatrix) ;
+    }
+}
+#endif
+
 /*
  * SMPcaSolve()
  */
@@ -405,6 +693,57 @@ SMPcSolve (SMPmatrix *Matrix, double RHS[], double iRHS[], double Spare[], doubl
     }
 }
 
+#ifdef CIDER
+void
+SMPsolveKLUforCIDER (SMPmatrix *Matrix, double RHS[], double RHSsolution[], double iRHS[], double iRHSsolution[])
+{
+    int ret ;
+    unsigned int i ;
+    double *KLUmatrixIntermediate ;
+
+    if (Matrix->CKTkluMODE)
+    {
+        if (Matrix->SMPkluMatrix->KLUmatrixIsComplex) {
+            for (i = 0 ; i < Matrix->SMPkluMatrix->KLUmatrixN ; i++)
+            {
+                Matrix->SMPkluMatrix->KLUmatrixIntermediateComplex [2 * i] = RHS [i + 1] ;
+                Matrix->SMPkluMatrix->KLUmatrixIntermediateComplex [2 * i + 1] = iRHS [i + 1] ;
+            }
+
+            ret = klu_z_solve (Matrix->SMPkluMatrix->KLUmatrixSymbolic, Matrix->SMPkluMatrix->KLUmatrixNumeric, (int)Matrix->SMPkluMatrix->KLUmatrixN, 1,
+                               Matrix->SMPkluMatrix->KLUmatrixIntermediateComplex, Matrix->SMPkluMatrix->KLUmatrixCommon) ;
+
+            for (i = 0 ; i < Matrix->SMPkluMatrix->KLUmatrixN ; i++)
+            {
+                RHSsolution [i + 1] = Matrix->SMPkluMatrix->KLUmatrixIntermediateComplex [2 * i] ;
+                iRHSsolution [i + 1] = Matrix->SMPkluMatrix->KLUmatrixIntermediateComplex [2 * i + 1] ;
+            }
+        } else {
+            /* Allocate the Intermediate Vector */
+            KLUmatrixIntermediate = (double *) malloc (Matrix->SMPkluMatrix->KLUmatrixN * sizeof(double)) ;
+
+            for (i = 0 ; i < Matrix->SMPkluMatrix->KLUmatrixN ; i++) {
+                KLUmatrixIntermediate [i] = RHS [i + 1] ;
+            }
+
+            ret = klu_solve (Matrix->SMPkluMatrix->KLUmatrixSymbolic, Matrix->SMPkluMatrix->KLUmatrixNumeric, (int)Matrix->SMPkluMatrix->KLUmatrixN, 1,
+                             KLUmatrixIntermediate, Matrix->SMPkluMatrix->KLUmatrixCommon) ;
+
+            for (i = 0 ; i < Matrix->SMPkluMatrix->KLUmatrixN ; i++) {
+                RHSsolution [i + 1] = KLUmatrixIntermediate [i] ;
+            }
+
+            /* Free the Intermediate Vector */
+            free (KLUmatrixIntermediate) ;
+        }
+
+    } else {
+
+        spSolve (Matrix->SPmatrix, RHS, RHSsolution, iRHS, iRHSsolution) ;
+    }
+}
+#endif
+
 /*
  * SMPsolve()
  */
@@ -452,6 +791,58 @@ SMPnewMatrix (SMPmatrix *Matrix, int size)
     return Error ;
 }
 
+#ifdef CIDER
+int
+SMPnewMatrixKLUforCIDER (SMPmatrix *Matrix, int size, unsigned int KLUmatrixIsComplex)
+{
+    int Error ;
+    unsigned int i ;
+
+    if (Matrix->CKTkluMODE) {
+        /* Allocate the KLU Matrix Data Structure */
+        Matrix->SMPkluMatrix = (KLUmatrix *) malloc (sizeof (KLUmatrix)) ;
+
+        /* Initialize the KLU Matrix Internal Pointers */
+        Matrix->SMPkluMatrix->KLUmatrixCommon = (klu_common *) malloc (sizeof (klu_common)) ; ;
+        Matrix->SMPkluMatrix->KLUmatrixSymbolic = NULL ;
+        Matrix->SMPkluMatrix->KLUmatrixNumeric = NULL ;
+        Matrix->SMPkluMatrix->KLUmatrixAp = NULL ;
+        Matrix->SMPkluMatrix->KLUmatrixAi = NULL ;
+        Matrix->SMPkluMatrix->KLUmatrixAxComplex = NULL ;
+        if (KLUmatrixIsComplex) {
+            Matrix->SMPkluMatrix->KLUmatrixIsComplex = CKTkluMatrixComplex ;
+        } else {
+            Matrix->SMPkluMatrix->KLUmatrixIsComplex = CKTkluMatrixReal ;
+        }
+        Matrix->SMPkluMatrix->KLUmatrixIntermediateComplex = NULL ;
+        Matrix->SMPkluMatrix->KLUmatrixNZ = 0 ;
+        Matrix->SMPkluMatrix->KLUmatrixBindStructCOO = NULL ;
+        Matrix->SMPkluMatrix->KLUmatrixValueComplexCOO = NULL ;
+
+        /* Initialize the KLU Common Data Structure */
+        klu_defaults (Matrix->SMPkluMatrix->KLUmatrixCommon) ;
+
+        /* Allocate KLU data structures */
+        Matrix->SMPkluMatrix->KLUmatrixN = (unsigned int)size ;
+        Matrix->SMPkluMatrix->KLUmatrixColCOO = (int *) malloc (Matrix->SMPkluMatrix->KLUmatrixN * Matrix->SMPkluMatrix->KLUmatrixN * sizeof(int)) ;
+        Matrix->SMPkluMatrix->KLUmatrixRowCOO = (int *) malloc (Matrix->SMPkluMatrix->KLUmatrixN * Matrix->SMPkluMatrix->KLUmatrixN * sizeof(int)) ;
+        Matrix->SMPkluMatrix->KLUmatrixTrashCOO = (double *) malloc (sizeof(double)) ;
+        Matrix->SMPkluMatrix->KLUmatrixValueComplexCOO = (double *) malloc (2 * Matrix->SMPkluMatrix->KLUmatrixN * Matrix->SMPkluMatrix->KLUmatrixN * sizeof(double)) ;
+
+        /* Pre-set the values of Row and Col */
+        for (i = 0 ; i < Matrix->SMPkluMatrix->KLUmatrixN * Matrix->SMPkluMatrix->KLUmatrixN ; i++) {
+            Matrix->SMPkluMatrix->KLUmatrixRowCOO [i] = -1 ;
+            Matrix->SMPkluMatrix->KLUmatrixColCOO [i] = -1 ;
+        }
+
+        return spOKAY ;
+    } else {
+        Matrix->SPmatrix = spCreate (size, (int)KLUmatrixIsComplex, &Error) ;
+        return Error ;
+    }
+}
+#endif
+
 /*
  * SMPdestroy()
  */
@@ -485,6 +876,38 @@ SMPdestroy (SMPmatrix *Matrix)
         Matrix->CKTkluIntermediate_Complex = NULL ;
     }
 }
+
+#ifdef CIDER
+void
+SMPdestroyKLUforCIDER (SMPmatrix *Matrix)
+{
+    if (Matrix->CKTkluMODE)
+    {
+        klu_free_numeric (&(Matrix->SMPkluMatrix->KLUmatrixNumeric), Matrix->SMPkluMatrix->KLUmatrixCommon) ;
+        klu_free_symbolic (&(Matrix->SMPkluMatrix->KLUmatrixSymbolic), Matrix->SMPkluMatrix->KLUmatrixCommon) ;
+        free (Matrix->SMPkluMatrix->KLUmatrixAp) ;
+        free (Matrix->SMPkluMatrix->KLUmatrixAi) ;
+        free (Matrix->SMPkluMatrix->KLUmatrixAxComplex) ;
+        free (Matrix->SMPkluMatrix->KLUmatrixIntermediateComplex) ;
+        free (Matrix->SMPkluMatrix->KLUmatrixBindStructCOO) ;
+        free (Matrix->SMPkluMatrix->KLUmatrixColCOO) ;
+        free (Matrix->SMPkluMatrix->KLUmatrixRowCOO) ;
+        free (Matrix->SMPkluMatrix->KLUmatrixValueComplexCOO) ;
+        free (Matrix->SMPkluMatrix->KLUmatrixTrashCOO) ;
+        Matrix->SMPkluMatrix->KLUmatrixAp = NULL ;
+        Matrix->SMPkluMatrix->KLUmatrixAi = NULL ;
+        Matrix->SMPkluMatrix->KLUmatrixAxComplex = NULL ;
+        Matrix->SMPkluMatrix->KLUmatrixIntermediateComplex = NULL ;
+        Matrix->SMPkluMatrix->KLUmatrixBindStructCOO = NULL ;
+        Matrix->SMPkluMatrix->KLUmatrixColCOO = NULL ;
+        Matrix->SMPkluMatrix->KLUmatrixRowCOO = NULL ;
+        Matrix->SMPkluMatrix->KLUmatrixValueComplexCOO = NULL ;
+        Matrix->SMPkluMatrix->KLUmatrixTrashCOO = NULL ;
+    } else {
+        spDestroy (Matrix->SPmatrix) ;
+    }
+}
+#endif
 
 /*
  * SMPpreOrder()
@@ -547,6 +970,43 @@ SMPprint (SMPmatrix *Matrix, char *Filename)
     }
 }
 
+#ifdef CIDER
+void
+SMPprintKLUforCIDER (SMPmatrix *Matrix, char *Filename)
+{
+    unsigned int i ;
+    double *KLUmatrixAx ;
+
+    if (Matrix->CKTkluMODE)
+    {
+        if (Matrix->SMPkluMatrix->KLUmatrixIsComplex)
+        {
+            klu_z_print (Matrix->SMPkluMatrix->KLUmatrixAp, Matrix->SMPkluMatrix->KLUmatrixAi, Matrix->SMPkluMatrix->KLUmatrixAxComplex,
+                         (int)Matrix->SMPkluMatrix->KLUmatrixN, NULL, NULL) ;
+        } else {
+            /* Allocate the Real Matrix */
+            KLUmatrixAx = (double *) malloc (Matrix->SMPkluMatrix->KLUmatrixNZ * sizeof(double)) ;
+
+            /* Copy the Complex Matrix into the Real Matrix */
+            for (i = 0 ; i < Matrix->SMPkluMatrix->KLUmatrixNZ ; i++) {
+                KLUmatrixAx [i] = Matrix->SMPkluMatrix->KLUmatrixAxComplex [2 * i] ;
+            }
+
+            /* Print the Real Matrix */
+            klu_print (Matrix->SMPkluMatrix->KLUmatrixAp, Matrix->SMPkluMatrix->KLUmatrixAi, KLUmatrixAx, (int)Matrix->SMPkluMatrix->KLUmatrixN, NULL, NULL) ;
+
+            /* Free the Real Matrix Storage */
+            free (KLUmatrixAx) ;
+        }
+    } else {
+        if (Filename)
+            spFileMatrix (Matrix->SPmatrix, Filename, "Circuit Matrix", 0, 1, 1) ;
+        else
+            spPrint (Matrix->SPmatrix, 0, 1, 1) ;
+    }
+}
+#endif
+
 /*
  * SMPgetError()
  */
@@ -562,7 +1022,6 @@ SMPgetError (SMPmatrix *Matrix, int *Col, int *Row)
     }
 }
 
-#ifdef KLU
 void
 spDeterminant_KLU (SMPmatrix *Matrix, int *pExponent, RealNumber *pDeterminant, RealNumber *piDeterminant)
 {
@@ -819,7 +1278,6 @@ spDeterminant_KLU (SMPmatrix *Matrix, int *pExponent, RealNumber *pDeterminant, 
     free (Ux) ;
     free (Rs) ;
 }
-#endif
 
 /*
  * SMPcProdDiag()

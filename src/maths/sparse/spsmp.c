@@ -174,6 +174,14 @@ SMPluFac(SMPmatrix *Matrix, double PivTol, double Gmin)
     return spFactor( Matrix->SPmatrix );
 }
 
+#ifdef CIDER
+int
+SMPluFacForCIDER (SMPmatrix *Matrix)
+{
+    return spFactor (Matrix->SPmatrix) ;
+}
+#endif
+
 /*
  * SMPcReorder()
  */
@@ -225,6 +233,14 @@ SMPcSolve(SMPmatrix *Matrix, double RHS[], double iRHS[],
     spSolve( Matrix->SPmatrix, RHS, RHS, iRHS, iRHS );
 }
 
+#ifdef CIDER
+void
+SMPcSolveForCIDER (SMPmatrix *Matrix, double RHS[], double RHSsolution[], double iRHS[], double iRHSsolution[])
+{
+    spSolve (Matrix->SPmatrix, RHS, RHSsolution, iRHS, iRHSsolution) ;
+}
+#endif
+
 /*
  * SMPsolve()
  */
@@ -235,6 +251,14 @@ SMPsolve(SMPmatrix *Matrix, double RHS[], double Spare[])
 
     spSolve( Matrix->SPmatrix, RHS, RHS, NULL, NULL );
 }
+
+#ifdef CIDER
+void
+SMPsolveForCIDER (SMPmatrix *Matrix, double RHS[], double RHSsolution[])
+{
+    spSolve (Matrix->SPmatrix, RHS, RHSsolution, NULL, NULL) ;
+}
+#endif
 
 /*
  * SMPmatSize()
@@ -255,6 +279,19 @@ SMPnewMatrix(SMPmatrix *Matrix, int size)
     Matrix->SPmatrix = spCreate( size, 1, &Error );
     return Error;
 }
+
+#ifdef CIDER
+int
+SMPnewMatrixForCIDER (SMPmatrix *Matrix, int size, int complex)
+{
+    int error ;
+
+    Matrix->SPmatrix = spCreate (size, complex, &error) ;
+
+    return error ;
+}
+
+#endif
 
 /*
  * SMPdestroy()
