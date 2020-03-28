@@ -12,6 +12,10 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 #include "oneddefs.h"
 #include "ngspice/spmatrix.h"
 
+#ifdef KLU
+#include "ngspice/klu-binding.h"
+#endif
+
 /* Functions to setup and solve the 1D poisson equation. */
 
 
@@ -27,16 +31,129 @@ ONEQjacBuild(ONEdevice *pDevice)
   for (index = 1; index < pDevice->numNodes; index++) {
     pElem = pDevice->elemArray[index];
     pNode = pElem->pLeftNode;
-    pNode->fPsiPsi = spGetElement(matrix, pNode->poiEqn, pNode->poiEqn);
+
+#ifdef KLU
+    pNode->fPsiPsi = SMPmakeEltKLUforCIDER (matrix, pNode->poiEqn, pNode->poiEqn) ;
+    pNode->fPsiPsiBinding = NULL ;
+#else
+    pNode->fPsiPsi = SMPmakeElt(matrix, pNode->poiEqn, pNode->poiEqn);
+#endif
+
     pNode1 = pElem->pRightNode;
-    pNode->fPsiPsiiP1 = spGetElement(matrix, pNode->poiEqn, pNode1->poiEqn);
+
+#ifdef KLU
+    pNode->fPsiPsiiP1 = SMPmakeEltKLUforCIDER (matrix, pNode->poiEqn, pNode1->poiEqn) ;
+    pNode->fPsiPsiiP1Binding = NULL ;
+#else
+    pNode->fPsiPsiiP1 = SMPmakeElt(matrix, pNode->poiEqn, pNode1->poiEqn);
+#endif
+
     pNode = pElem->pRightNode;
-    pNode->fPsiPsi = spGetElement(matrix, pNode->poiEqn, pNode->poiEqn);
+
+#ifdef KLU
+    pNode->fPsiPsi = SMPmakeEltKLUforCIDER (matrix, pNode->poiEqn, pNode->poiEqn) ;
+    pNode->fPsiPsiBinding = NULL ;
+#else
+    pNode->fPsiPsi = SMPmakeElt(matrix, pNode->poiEqn, pNode->poiEqn);
+#endif
+
     pNode1 = pElem->pLeftNode;
-    pNode->fPsiPsiiM1 = spGetElement(matrix, pNode->poiEqn, pNode1->poiEqn);
+
+#ifdef KLU
+    pNode->fPsiPsiiM1 = SMPmakeEltKLUforCIDER (matrix, pNode->poiEqn, pNode1->poiEqn) ;
+    pNode->fPsiPsiiM1Binding = NULL ;
+#else
+    pNode->fPsiPsiiM1 = SMPmakeElt(matrix, pNode->poiEqn, pNode1->poiEqn);
+#endif
+
   }
 }
 
+#ifdef KLU
+/*
+#define CREATE_KLU_BINDING_TABLE_CIDER(ptr, binding, a, b)                             \
+    printf ("Swapping Pointer %s: (%d,%d)\n", #ptr, a, b) ; \
+    if ((a > 0) && (b > 0)) {                                      \
+        if (pNode->binding != NULL) { \
+            if (pNode->binding->CSC_Complex != NULL) { \
+                printf ("  Looking for the Pointer: %p\n", pNode->binding->CSC_Complex) ; \
+                qsort (BindStructCSC, nz, sizeof(BindKluElementCOO), BindKluCompareCSC) ; \
+                i.COO = NULL ; \
+                i.CSC_Complex = pNode->binding->CSC_Complex ; \
+                matched = (BindKluElementCOO *) bsearch (&i, BindStructCSC, nz, sizeof(BindKluElementCOO), BindKluCompareCSC) ; \
+                if (matched != NULL) { \
+                    printf ("  Found the Old Pointer\n") ; \
+                    pNode->ptr = pNode->binding->CSC_Complex ; \
+                } else { \
+                    i.COO = pNode->ptr ;                                                          \
+                    i.CSC_Complex = NULL ; \
+                    matched = (BindKluElementCOO *) bsearch (&i, BindStruct, nz, sizeof(BindKluElementCOO), BindKluCompareCOO) ; \
+                    if (matched != NULL) { \
+                        printf ("  Looking for the Pointer 1\n") ; \
+                        pNode->binding = matched ;                                                \
+                        pNode->ptr = matched->CSC_Complex ;                                               \
+                    } else { \
+                        printf ("  Leaving the Pointer as is\n") ; \
+                    } \
+                } \
+            } else { \
+                printf ("  Looking for the Pointer 2\n") ; \
+                i.COO = pNode->ptr ;                                                          \
+                i.CSC_Complex = NULL ; \
+                matched = (BindKluElementCOO *) bsearch (&i, BindStruct, nz, sizeof(BindKluElementCOO), BindKluCompareCOO) ; \
+                pNode->binding = matched ;                                                \
+                pNode->ptr = matched->CSC_Complex ;                                               \
+            } \
+        } else { \
+            printf ("  Looking for the Pointer 3\n") ; \
+            i.COO = pNode->ptr ;                                                          \
+            i.CSC_Complex = NULL ; \
+            matched = (BindKluElementCOO *) bsearch (&i, BindStruct, nz, sizeof(BindKluElementCOO), BindKluCompareCOO) ; \
+            pNode->binding = matched ;                                                \
+            pNode->ptr = matched->CSC_Complex ;                                               \
+        } \
+    }
+*/
+
+void
+ONEQbindCSC (ONEdevice *pDevice)
+{
+  ONEelem *pElem ;
+  ONEnode *pNode, *pNode1 ;
+  int index ;
+  BindKluElementCOO i, *matched, *BindStruct, *BindStructCSC ;
+  size_t nz ;
+
+  BindStruct = pDevice->matrix->SMPkluMatrix->KLUmatrixBindStructCOO ;
+  nz = pDevice->matrix->SMPkluMatrix->KLUmatrixNZ ;
+
+  BindStructCSC = (BindKluElementCOO *) malloc (nz * sizeof(BindKluElementCOO)) ;
+  for (index = 0 ; index < (int)nz ; index++) {
+    BindStructCSC [index] = BindStruct [index] ;
+  }
+
+  for (index = 1 ; index < pDevice->numNodes ; index++) {
+    pElem = pDevice->elemArray [index] ;
+    pNode = pElem->pLeftNode ;
+
+    CREATE_KLU_BINDING_TABLE_CIDER(fPsiPsi, fPsiPsiBinding, pNode->poiEqn, pNode->poiEqn) ;
+
+    pNode1 = pElem->pRightNode ;
+
+    CREATE_KLU_BINDING_TABLE_CIDER(fPsiPsiiP1, fPsiPsiiP1Binding, pNode->poiEqn, pNode1->poiEqn) ;
+
+    pNode = pElem->pRightNode ;
+
+    CREATE_KLU_BINDING_TABLE_CIDER(fPsiPsi, fPsiPsiBinding, pNode->poiEqn, pNode->poiEqn) ;
+
+    pNode1 = pElem->pLeftNode ;
+
+    CREATE_KLU_BINDING_TABLE_CIDER(fPsiPsiiM1, fPsiPsiiM1Binding, pNode->poiEqn, pNode1->poiEqn) ;
+  }
+
+  free (BindStructCSC) ;
+}
+#endif
 
 void
 ONEQsysLoad(ONEdevice *pDevice)
@@ -58,7 +175,17 @@ ONEQsysLoad(ONEdevice *pDevice)
   }
 
   /* zero the matrix */
-  spClear(pDevice->matrix);
+#ifdef KLU
+  if (pDevice->matrix->CKTkluMODE) {
+    SMPclearKLUforCIDER (pDevice->matrix) ;
+  } else {
+#endif
+
+    SMPclear(pDevice->matrix);
+
+#ifdef KLU
+  }
+#endif
 
   for (index = 1; index < pDevice->numNodes; index++) {
     pElem = pDevice->elemArray[index];
