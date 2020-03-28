@@ -88,7 +88,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
 
     register int selfheat;
     double rd0T, rd1T, dBeta_dT, dIds_dT;
-    double deldelTemp, delTemp, delTemp1, Temp, Vds, Vgs;
+    double deldelTemp=0.0, delTemp, delTemp1, Temp, Vds, Vgs;
     double ceqqth=0.0;
     double GmT, gTtg, gTtdp, gTtt, gTtsp, gcTt=0.0;
 
@@ -172,7 +172,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                     *(ckt->CKTstate0 + here->VDMOSdelTemp) =
                         *(ckt->CKTstate1 + here->VDMOSdelTemp);
                     delTemp = (1 + xfact)* (*(ckt->CKTstate1 + here->VDMOSdelTemp))
-                          - (xfact * (*(ckt->CKTstate2 + here->VDMOSdelTemp)));
+                              - (xfact * (*(ckt->CKTstate2 + here->VDMOSdelTemp)));
                 }
                 else
                 {
@@ -557,10 +557,10 @@ bypass:
                         *(ckt->CKTstate0 + here->VDMOSqgd);
                 if (selfheat)
                 {
-                    error = NIintegrate(ckt, &gcTt, &ceqqth, 0.0, here->VDMOSqth);
+                    error = NIintegrate(ckt, &gcTt, &ceqqth, capth, here->VDMOSqth);
                     if (error) return(error);
-                    gcTt = model->VDMOScthj * ckt->CKTag[0];
-                    ceqqth = *(ckt->CKTstate0 + here->VDMOScqth) - gcTt * delTemp;
+                    ceqqth = ceqqth - gcTt*delTemp + ckt->CKTag[0] *
+                             *(ckt->CKTstate0 + here->VDMOSqth);
                 }
             }
 
@@ -608,8 +608,11 @@ bypass:
             if (selfheat) {
                 *(ckt->CKTrhs + here->VDMOSdNodePrime) +=  GmT * delTemp;
                 *(ckt->CKTrhs + here->VDMOSsNodePrime) += -GmT * delTemp;
-                *(ckt->CKTrhs + here->VDMOStempNode)   -= here->VDMOScth + ceqqth; /* MOS dissipated power + Cthj current */
-                *(ckt->CKTrhs + here->VDMOSvcktTbranch) = ckt->CKTtemp-CONSTCtoK; /* ckt temperature */
+                *(ckt->CKTrhs + here->VDMOStempNode) -= here->VDMOScth + ceqqth; /* MOS dissipated power + Cthj current */
+                double vCktTemp = (ckt->CKTtemp-CONSTCtoK); /* ckt temperature */
+                if (ckt->CKTmode & MODETRANOP)
+                    vCktTemp *= ckt->CKTsrcFact;
+                *(ckt->CKTrhs + here->VDMOSvcktTbranch)+= vCktTemp;
             }
 
             /*
@@ -646,7 +649,7 @@ bypass:
 
             if (selfheat)
             {
-                (*(here->VDMOSDPtempPtr)     += GmT);
+                (*(here->VDMOSDPtempPtr)     +=  GmT);
                 (*(here->VDMOSSPtempPtr)     += -GmT);
                 (*(here->VDMOSGPtempPtr)     += 0.0);
                 (*(here->VDMOSTemptempPtr)   += gTtt + 1/model->VDMOSrthjc + gcTt);
@@ -667,15 +670,17 @@ bypass:
              * Delivers reverse conduction and forward breakdown
              * of VDMOS transistor
              */
-
-            double vd;      /* current diode voltage */
+            double vd, cd;
             double vte;
             double vtebrk, vbrknp;
-            double cd, cdb, csat, cdeq;
+            double cdb, csat, cdeq;
             double capd;
             double gd, gdb, gspr;
             double delvd;   /* change in diode voltage temporary */
             double evrev;
+            double Ith=0.0, dIth_dT=0.0;
+            double dIdio_dT=0.0, dIth_dVdio=0.0;
+            double arg1, darg1_dT, arg2, darg2_dT, csat_dT; 
 #ifndef NOBYPASS
             double tol;     /* temporary for tolerance calculations */
 #endif
@@ -684,8 +689,8 @@ bypass:
             cdb = 0.0;
             gd = 0.0;
             gdb = 0.0;
-            csat = here->VDIOtSatCur;
             gspr = here->VDIOtConductance;
+
             vt = CONSTKoverQ * Temp;
             vte = model->VDMOSn * vt;
             vtebrk = model->VDIObrkdEmissionCoeff * vt;
@@ -711,6 +716,8 @@ bypass:
                         *(ckt->CKTstate1 + here->VDIOcurrent);
                     *(ckt->CKTstate0 + here->VDIOconduct) =
                         *(ckt->CKTstate1 + here->VDIOconduct);
+                    *(ckt->CKTstate0 + here->VDIOdIdio_dT) =
+                            *(ckt->CKTstate1 + here->VDIOdIdio_dT);
                 } else {
 #endif /* PREDICTOR */
                     vd = model->VDMOStype * (*(ckt->CKTrhsOld + here->VDIOposPrimeNode) -
@@ -720,7 +727,8 @@ bypass:
 #endif /* PREDICTOR */
                 delvd = vd - *(ckt->CKTstate0 + here->VDIOvoltage);
                 cdhat = *(ckt->CKTstate0 + here->VDIOcurrent) +
-                        *(ckt->CKTstate0 + here->VDIOconduct) * delvd;
+                        *(ckt->CKTstate0 + here->VDIOconduct) * delvd +
+                        *(ckt->CKTstate0 + here->VDIOdIdio_dT) * deldelTemp;
                 /*
                 *   bypass if solution has not changed
                 */
@@ -734,10 +742,16 @@ bypass:
                               ckt->CKTabstol;
                         if (fabs(cdhat - *(ckt->CKTstate0 + here->VDIOcurrent))
                                 < tol) {
-                            vd = *(ckt->CKTstate0 + here->VDIOvoltage);
-                            cd = *(ckt->CKTstate0 + here->VDIOcurrent);
-                            gd = *(ckt->CKTstate0 + here->VDIOconduct);
-                            goto load;
+                            if ((here->VDMOStempNode == 0) ||
+                                (fabs(deldelTemp) < (ckt->CKTreltol * MAX(fabs(delTemp),
+                                      fabs(*(ckt->CKTstate0+here->VDMOSdelTemp)))+
+                                      ckt->CKTvoltTol*1e4))) {
+                                vd = *(ckt->CKTstate0 + here->VDIOvoltage);
+                                cd = *(ckt->CKTstate0 + here->VDIOcurrent);
+                                gd = *(ckt->CKTstate0 + here->VDIOconduct);
+                                dIdio_dT= *(ckt->CKTstate0 + here->VDIOdIdio_dT);
+                                goto load;
+                            }
                         }
                     }
                 }
@@ -759,38 +773,53 @@ bypass:
                                    vte, here->VDIOtVcrit, &Check_dio);
                 }
             }
+
+            /*
+            *   temperature dependent diode saturation current and derivative
+            */
+            arg1 = ((Temp / model->VDMOStnom) - 1) * model->VDMOSeg / (model->VDMOSn*vt);
+            darg1_dT = model->VDMOSeg / (vte*model->VDMOStnom)
+                      - model->VDMOSeg*(Temp/model->VDMOStnom -1)/(vte*Temp);
+
+            arg2 = model->VDMOSxti / model->VDMOSn * log(Temp / model->VDMOStnom);
+            darg2_dT = model->VDMOSxti / model->VDMOSn / Temp;
+
+            csat = here->VDMOSm * model->VDIOjctSatCur * exp(arg1 + arg2);
+            csat_dT = here->VDMOSm * model->VDIOjctSatCur * exp(arg1 + arg2) * (darg1_dT + darg2_dT);
+
             /*
             *   compute dc current and derivatives
             */
-            if (vd >= -3 * vte) {                 /* bottom current forward */
+            if (vd >= -3 * vte) {                 /* forward current */
                 double evd;
 
                 evd = exp(vd / vte);
                 cdb = csat*(evd - 1);
+                dIdio_dT = csat_dT * (evd - 1) - csat * vd * evd / (vte * Temp);
                 gdb = csat*evd / vte;
 
             } else if ((!(model->VDMOSbvGiven)) ||
-                       vd >= -vbrknp) { /* reverse */
+                       vd >= -vbrknp) {           /* reverse */
+                double arg3, darg3_dT;
 
                 arg = 3 * vte / (vd*CONSTe);
-                arg = arg * arg * arg;
-                cdb = -csat*(1 + arg);
+                arg3 = arg * arg * arg;
+                darg3_dT = 3 * arg3 / Temp; 
+                cdb = -csat*(1 + arg3);
+                dIdio_dT = -csat_dT * (arg3 + 1) - csat * darg3_dT;
                 gdb = csat * 3 * arg / vd;
 
-            } else {                          /* breakdown */
+            } else {                              /* breakdown */
 
                 evrev = exp(-(vbrknp + vd) / vtebrk);
                 cdb = -csat*evrev;
+                dIdio_dT = csat * (-vbrknp-vd) * evrev / vtebrk / Temp - csat_dT * evrev;
                 gdb = csat*evrev / vtebrk;
 
             }
 
-
-            cd = cdb;
-            gd = gdb;
-
-            gd = gd + ckt->CKTgmin;
-            cd = cd + ckt->CKTgmin*vd;
+            cd = cdb + ckt->CKTgmin*vd;
+            gd = gdb + ckt->CKTgmin;
 
             if ((ckt->CKTmode & (MODEDCTRANCURVE | MODETRAN | MODEAC | MODEINITSMSIG)) ||
                     ((ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC))) {
@@ -812,7 +841,7 @@ bypass:
                 }
                 diffcharge = here->VDIOtTransitTime*cdb;
                 *(ckt->CKTstate0 + here->VDIOcapCharge) =
-                    diffcharge +  deplcharge;
+                    diffcharge + deplcharge;
 
                 diffcap = here->VDIOtTransitTime*gdb;
                 capd = diffcap + deplcap;
@@ -855,16 +884,22 @@ bypass:
 
             if ((Check_th == 1) || (Check_dio == 1)) {
                 ckt->CKTnoncon++;
-                ckt->CKTtroubleElt = (GENinstance *)here;
+                ckt->CKTtroubleElt = (GENinstance *) here;
             }
 
             *(ckt->CKTstate0 + here->VDIOvoltage) = vd;
             *(ckt->CKTstate0 + here->VDIOcurrent) = cd;
             *(ckt->CKTstate0 + here->VDIOconduct) = gd;
+            *(ckt->CKTstate0 + here->VDIOdIdio_dT) = dIdio_dT;
 
 #ifndef NOBYPASS
 load:
 #endif
+            if (selfheat) {
+                Ith = vd*cd;
+                dIth_dVdio = cd + vd*gd;
+                dIth_dT = dIdio_dT*vd;
+            }
             /*
             *   load current vector
             */
@@ -876,7 +911,11 @@ load:
                 *(ckt->CKTrhs + here->VDMOSdNode) -= cdeq;
                 *(ckt->CKTrhs + here->VDIOposPrimeNode) += cdeq;
             }
-
+            if (selfheat) {
+                *(ckt->CKTrhs + here->VDMOSdNode)       += dIdio_dT*delTemp;
+                *(ckt->CKTrhs + here->VDIOposPrimeNode) -= dIdio_dT*delTemp;
+                *(ckt->CKTrhs + here->VDMOStempNode)    += Ith - dIth_dVdio*vd - dIth_dT*delTemp; /* Diode dissipated power */
+            }
             /*
             *   load matrix
             */
@@ -887,6 +926,13 @@ load:
             *(here->VDIODrpPtr) -= gd;
             *(here->VDIORPsPtr) -= gspr;
             *(here->VDIORPdPtr) -= gd;
+            if (selfheat) {
+                (*(here->VDMOSTemptempPtr)    +=  dIth_dT);
+                (*(here->VDIOTempposPrimePtr) += -dIth_dVdio);
+                (*(here->VDIOTempnegPtr)      +=  dIth_dVdio);
+                (*(here->VDIOPosPrimetempPtr) += -dIdio_dT);
+                (*(here->VDIONegtempPtr)      +=  dIdio_dT);
+            }
         }
     }
     return(OK);

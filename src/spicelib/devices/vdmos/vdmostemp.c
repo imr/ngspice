@@ -93,8 +93,7 @@ VDMOStemp(GENmodel *inModel, CKTcircuit *ckt)
             /* vdmos temperature model */
             ratio = here->VDMOStemp/model->VDMOStnom;
             here->VDMOStTransconductance = model->VDMOStransconductance 
-                                           * here->VDMOSm * here->VDMOSw / here->VDMOSl 
-                                           * pow(ratio, model->VDMOSmu);
+                                           * here->VDMOSm * pow(ratio, model->VDMOSmu);
 
             here->VDMOStVth = model->VDMOSvth0 - model->VDMOStype * model->VDMOStcvth * dt;
 

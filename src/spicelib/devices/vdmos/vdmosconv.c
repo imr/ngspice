@@ -23,6 +23,7 @@ VDMOSconvTest(GENmodel *inModel, CKTcircuit *ckt)
     double vgd;
     double vgdo;
     double tol;
+    double delvd,vd,cd;
     int selfheat;
     double delTemp, deldelTemp;
 
@@ -77,6 +78,34 @@ VDMOSconvTest(GENmodel *inModel, CKTcircuit *ckt)
                 ckt->CKTtroubleElt = (GENinstance *) here;
                 return(OK); /* no reason to continue, we haven't converged */
             }
+
+            /*  
+             *   initialization 
+             */
+
+            vd = *(ckt->CKTrhsOld+here->VDIOposPrimeNode)-
+                    *(ckt->CKTrhsOld + here->VDMOSdNode);
+
+            delvd=vd- *(ckt->CKTstate0 + here->VDIOvoltage);
+
+            cdhat= *(ckt->CKTstate0 + here->VDIOcurrent) +
+                    *(ckt->CKTstate0 + here->VDIOconduct) * delvd +
+                    *(ckt->CKTstate0 + here->VDIOdIdio_dT) * deldelTemp;
+
+            cd= *(ckt->CKTstate0 + here->VDIOcurrent);
+
+            /*
+             *   check convergence
+             */
+            tol=ckt->CKTreltol*
+                    MAX(fabs(cdhat),fabs(cd))+ckt->CKTabstol;
+            if (fabs(cdhat-cd) > tol) {
+                ckt->CKTnoncon++;
+                ckt->CKTtroubleElt = (GENinstance *) here;
+                return(OK); /* don't need to check any more device */
+            }
+
+
         }
     }
     return(OK);
