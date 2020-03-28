@@ -3,8 +3,8 @@
 vdd 1 0 5.0
 
 .subckt inv out in vdd vss
-mp1 out in vdd p1 l=2u w=20u
-mn1 out in vss n1 l=2u w=10u
+mp1 out in vdd p1 m=2
+mn1 out in vss n1
 c1 out vss 0.2p
 .ends
 
@@ -18,10 +18,10 @@ xinv7 9 8 1 0 inv
 xinv8 10 9 1 0 inv
 xinv9 2 10 1 0 inv
 
-.model  N1  vdmos cgdmin=0.05p cgdmax=0.2p a=1.2 cgs=0.15p rg=10 kp=2e-5 rb=1e7 cjo=1n ksubthres=0.2
-.model  P1  vdmos cgdmin=0.05p cgdmax=0.2p a=1.2 cgs=0.15p rg=10 kp=2e-5 rb=1e7 cjo=1n pchan ksubthres=0.2
+.model  N1  vdmos cgdmin=0.05p cgdmax=0.2p a=1.2 cgs=0.15p rg=10 kp=1e-5 rb=1e7 cjo=1n ksubthres=0.2
+.model  P1  vdmos cgdmin=0.05p cgdmax=0.2p a=1.2 cgs=0.15p rg=10 kp=1e-5 rb=1e7 cjo=1n pchan ksubthres=0.2
 
-.tran 0.1n 1u
+.tran 0.1n 5u
 
 .control
 

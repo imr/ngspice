@@ -53,8 +53,7 @@ VDMOSdSetup(GENmodel *inModel, CKTcircuit *ckt)
 
             Beta = here->VDMOStTransconductance;
 
-            OxideCap = model->VDMOSoxideCapFactor * here->VDMOSl * 
-                    here->VDMOSm * here->VDMOSw;
+            OxideCap = model->VDMOSoxideCapFactor * here->VDMOSm;
 
             vgs = model->VDMOStype * ( 
                 *(ckt->CKTrhsOld+here->VDMOSgNode) -

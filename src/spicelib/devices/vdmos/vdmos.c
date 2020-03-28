@@ -13,8 +13,6 @@ VDMOS: 2018 Holger Vogt, 2020 Dietmar Warning
 
 IFparm VDMOSpTable[] = { /* parameters */ 
  IOPU("m",          VDMOS_M,          IF_REAL,    "Multiplier"),
- IOPU("l",          VDMOS_L,          IF_REAL,    "Length"),
- IOPU("w",          VDMOS_W,          IF_REAL,    "Width"),
  IP("off",          VDMOS_OFF,        IF_FLAG,    "Device initially off"),
  IOPU("icvds",      VDMOS_IC_VDS,     IF_REAL,    "Initial D-S voltage"),
  IOPU("icvgs",      VDMOS_IC_VGS,     IF_REAL,    "Initial G-S voltage"),

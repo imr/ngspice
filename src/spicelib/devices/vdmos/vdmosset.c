@@ -212,12 +212,6 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
             if(!here->VDMOSmGiven) {
                 here->VDMOSm = 1;
             }
-            if(!here->VDMOSlGiven) {
-                here->VDMOSl = 1;
-            }
-            if(!here->VDMOSwGiven) {
-                here->VDMOSw = 1;
-            }
             if (model->VDMOSdrainResistance != 0) {
                 here->VDMOSdrainConductance = here->VDMOSm / model->VDMOSdrainResistance;
             } else {
@@ -242,7 +236,7 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
             } else {
                 here->VDMOSdsConductance = 1e-15;
             }
-            if (model->VDIOresistance > 10e-03) {
+            if (model->VDIOresistance > 10e-3) {
                 here->VDIOconductance = here->VDMOSm / model->VDIOresistance;
             } else {
                 here->VDIOconductance = here->VDMOSm / 10e-03;
@@ -375,7 +369,7 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
 } } while(0)
 
             if ((here->VDMOSthermalGiven) && (model->VDMOSrthjcGiven)) {
-                TSTALLOC(VDMOSTemptempPtr, VDMOStempNode, VDMOStempNode);
+                TSTALLOC(VDMOSTemptempPtr, VDMOStempNode, VDMOStempNode);  /* Transistor thermal contribution */
                 TSTALLOC(VDMOSTempdpPtr, VDMOStempNode, VDMOSdNodePrime);
                 TSTALLOC(VDMOSTempspPtr, VDMOStempNode, VDMOSsNodePrime);
                 TSTALLOC(VDMOSTempgpPtr, VDMOStempNode, VDMOSgNodePrime);
@@ -383,10 +377,15 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
                 TSTALLOC(VDMOSDPtempPtr, VDMOSdNodePrime, VDMOStempNode);
                 TSTALLOC(VDMOSSPtempPtr, VDMOSsNodePrime, VDMOStempNode);
 
-                TSTALLOC(VDMOSTcasetcasePtr, VDMOStcaseNode, VDMOStcaseNode); /* Rthjc between tj and tcase*/
+                TSTALLOC(VDIOTempposPrimePtr, VDMOStempNode, VDIOposPrimeNode);/* Diode thermal contribution */
+                TSTALLOC(VDIOTempnegPtr, VDMOStempNode, VDMOSdNode);
+                TSTALLOC(VDIOPosPrimetempPtr, VDIOposPrimeNode, VDMOStempNode);
+                TSTALLOC(VDIONegtempPtr, VDMOSdNode, VDMOStempNode);
+
+                TSTALLOC(VDMOSTcasetcasePtr, VDMOStcaseNode, VDMOStcaseNode);   /* Rthjc between tj and tcase*/
                 TSTALLOC(VDMOSTcasetempPtr, VDMOStcaseNode, VDMOStempNode);
                 TSTALLOC(VDMOSTemptcasePtr, VDMOStempNode, VDMOStcaseNode);
-                TSTALLOC(VDMOSTptpPtr, VDMOStNodePrime, VDMOStNodePrime); /* Rthca between tcase and Vsrc */
+                TSTALLOC(VDMOSTptpPtr, VDMOStNodePrime, VDMOStNodePrime);       /* Rthca between tcase and Vsrc */
                 TSTALLOC(VDMOSTptcasePtr, VDMOStNodePrime, VDMOStempNode);
                 TSTALLOC(VDMOSTcasetpPtr, VDMOStempNode, VDMOStNodePrime);
                 TSTALLOC(VDMOSCktTcktTPtr, VDMOSvcktTbranch, VDMOSvcktTbranch); /* Vsrc=cktTemp to gnd */
