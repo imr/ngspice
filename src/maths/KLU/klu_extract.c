@@ -448,9 +448,17 @@ Int KLU_print
         {
 
 #ifdef COMPLEX
-            fprintf (stderr, "Row: %d\tCol: %d\tValue: %-.9g j%-.9g\n", IntToExtRowMap [Ai [j] + 1], IntToExtColMap [i + 1], Az [j].Real, Az [j].Imag) ;
+            if (IntToExtRowMap && IntToExtColMap) {
+                fprintf (stderr, "Row: %d\tCol: %d\tValue: %-.9g j%-.9g\n", IntToExtRowMap [Ai [j] + 1], IntToExtColMap [i + 1], Az [j].Real, Az [j].Imag) ;
+            } else {
+                fprintf (stderr, "Row: %d\tCol: %d\tValue: %-.9g j%-.9g\n", Ai [j] + 1, i + 1, Az [j].Real, Az [j].Imag) ;
+            }
 #else
-            fprintf (stderr, "Row: %d\tCol: %d\tValue: %-.9g\n", IntToExtRowMap [Ai [j] + 1], IntToExtColMap [i + 1], Az [j]) ;
+            if (IntToExtRowMap && IntToExtColMap) {
+                fprintf (stderr, "Row: %d\tCol: %d\tValue: %-.9g\n", IntToExtRowMap [Ai [j] + 1], IntToExtColMap [i + 1], Az [j]) ;
+            } else {
+                fprintf (stderr, "Row: %d\tCol: %d\tValue: %-.9g\n", Ai [j] + 1, i + 1, Az [j]) ;
+            }
 #endif
 
         }

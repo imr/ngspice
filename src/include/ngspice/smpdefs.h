@@ -47,6 +47,11 @@ typedef struct sSMPmatrix {
     unsigned int CKTkluMODE:1 ;            /* KLU MODE parameter to enable KLU or not from the heuristic */
     #define CKTkluON 1                     /* KLU MODE ON definition */
     #define CKTkluOFF 0                    /* KLU MODE OFF definition */
+
+#ifdef CIDER
+    KLUmatrix *SMPkluMatrix ;              /* KLU Pointer to the KLU Matrix Data Structure (only for CIDER, for the moment) */
+#endif
+
 #endif
 
 } SMPmatrix ;
@@ -56,7 +61,21 @@ typedef struct sSMPmatrix {
 void SMPmatrix_CSC (SMPmatrix *) ;
 void SMPnnz (SMPmatrix *) ;
 void spDeterminant_KLU (SMPmatrix *, int *, double *, double *) ;
+
+#ifdef CIDER
+void SMPsolveKLUforCIDER (SMPmatrix *, double [], double [], double [], double []) ;
+int SMPreorderKLUforCIDER (SMPmatrix *) ;
+double *SMPmakeEltKLUforCIDER (SMPmatrix *, int, int) ;
+void SMPclearKLUforCIDER (SMPmatrix *) ;
+void SMPconvertCOOtoCSCKLUforCIDER (SMPmatrix *) ;
+void SMPdestroyKLUforCIDER (SMPmatrix *) ;
+int SMPnewMatrixKLUforCIDER (SMPmatrix *, int, unsigned int) ;
+int SMPluFacKLUforCIDER (SMPmatrix *) ;
+void SMPprintKLUforCIDER (SMPmatrix *, char *) ;
 #endif
+
+#endif
+
 int SMPaddElt( SMPmatrix *, int , int , double );
 double * SMPmakeElt( SMPmatrix * , int , int );
 void SMPcClear( SMPmatrix *);
@@ -84,5 +103,12 @@ int SMPcAddCol(SMPmatrix *Matrix, int Accum_Col, int Addend_Col);
 int SMPzeroRow(SMPmatrix *Matrix, int Row);
 void SMPconstMult(SMPmatrix *, double);
 void SMPmultiply(SMPmatrix *, double *, double *, double *, double *);
+
+#ifdef CIDER
+void SMPcSolveForCIDER (SMPmatrix *, double [], double [], double [], double []) ;
+int SMPluFacForCIDER (SMPmatrix *) ;
+int SMPnewMatrixForCIDER (SMPmatrix *, int, int) ;
+void SMPsolveForCIDER (SMPmatrix *, double [], double []) ;
+#endif
 
 #endif
