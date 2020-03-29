@@ -349,10 +349,9 @@ if WINCONSOLE
 LIBS += -lpsapi -lShlwapi
 endif
 
-## FIXME: Should be allwed, but fails within MSYS2
-#if SHWIN
-#LIBS += -lpsapi -lShlwapi
-#endif
+if SHWIN
+LIBS += -lpsapi -lShlwapi
+endif
 
 CLEANFILES = ngspice.idx spinit tclspinit pkgIndex.tcl
 
