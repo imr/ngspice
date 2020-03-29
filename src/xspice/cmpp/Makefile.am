@@ -24,6 +24,10 @@ if WINCONSOLE
 cmpp_LDADD = -lShlwapi
 endif
 
+if SHWIN
+cmpp_LDADD = -lShlwapi
+endif
+
 mod_lex.c : mod_lex.l
 	$(am__skiplex) $(LEXCOMPILE) -o $@ $<
 
