@@ -342,15 +342,15 @@ AM_CFLAGS = -static
 LIBS = @LIBS@ @X_LIBS@ @X_PRE_LIBS@ @X_EXTRA_LIBS@
 
 if WINGUI
-LIBS += -lpsapi -lShlwapi
+LIBS += -lpsapi -lshlwapi
 endif
 
 if WINCONSOLE
-LIBS += -lpsapi -lShlwapi
+LIBS += -lpsapi -lshlwapi
 endif
 
 if SHWIN
-LIBS += -lpsapi -lShlwapi
+LIBS += -lpsapi -lshlwapi
 endif
 
 CLEANFILES = ngspice.idx spinit tclspinit pkgIndex.tcl
@@ -366,7 +366,7 @@ pkgIndex_DATA = pkgIndex.tcl
 pkgIndexdir = $(pkglibdir)
 
 if TCLWIN
-LIBS += -lpsapi -lShlwapi  -ltcl84 -lBLT24
+LIBS += -lpsapi -lshlwapi  -ltcl84 -lBLT24
 endif
 
 libspice_la_SOURCES = \
