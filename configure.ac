@@ -342,12 +342,6 @@ if test "x$with_ngshared" != x  &&  test "x$with_ngshared" != xno ; then
         *mingw* | *msys* )
             has_shwin=true
             has_no_help=true
-            AC_CHECK_FUNCS([PathIsRelativeA], [],
-                [AC_CHECK_LIB([shlwapi], [PathIsRelativeA],
-                    [LIBS="$LIBS -lshlwapi"])])
-            AC_CHECK_FUNCS([GetProcessMemoryInfo], [],
-                [AC_CHECK_LIB([psapi], [GetProcessMemoryInfo],
-                    [LIBS="$LIBS -lpsapi"])])
             ;;
         *cygwin* )
             has_shcyg=true
