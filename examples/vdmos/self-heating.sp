@@ -11,7 +11,7 @@ VD D 0 2V
 + Is=60p N=1.1 Rb=14m XTI=3
 + Cjo=1.5n Vj=0.8 m=0.5
 + tcvth=0.0065 MU=-1.27 texp0=1.5
-+ Rthjc=0.02 Cthj=1e-3 Rthca=100
++ Rthjc=0.02 Cthj=1e-3 Rthca=1000
 + mtriode=0.8
 .control
 dc vd 0.1 50 .1 vg 5 13 2
