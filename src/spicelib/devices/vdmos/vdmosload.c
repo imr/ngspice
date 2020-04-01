@@ -334,7 +334,6 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
              */
             vgd = vgs - vds;
 
-
             /* now to determine whether the user was able to correctly
              * identify the source and drain of his device
              */
@@ -856,7 +855,7 @@ bypass:
                     if (ckt->CKTmode & MODEINITSMSIG) {
                         *(ckt->CKTstate0 + here->VDIOcapCurrent) = capd;
 
-                        continue;
+                        goto load;
                     }
 
                     /*
@@ -914,7 +913,7 @@ load:
             if (selfheat) {
                 *(ckt->CKTrhs + here->VDMOSdNode)       += dIdio_dT*delTemp;
                 *(ckt->CKTrhs + here->VDIOposPrimeNode) -= dIdio_dT*delTemp;
-                *(ckt->CKTrhs + here->VDMOStempNode)    += Ith - dIth_dVdio*vd - dIth_dT*delTemp; /* Diode dissipated power */
+                *(ckt->CKTrhs + here->VDMOStempNode)    += Ith - model->VDMOStype*dIth_dVdio*vd + dIth_dT*delTemp; /* Diode dissipated power */
             }
             /*
             *   load matrix
