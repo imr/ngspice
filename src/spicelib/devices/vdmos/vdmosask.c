@@ -157,23 +157,26 @@ VDMOSask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
                 strcpy(errMsg,msg);
                 return(E_ASKPOWER);
             } else {
-                double temp;
+                value->rValue = fabs(here->VDMOScd * 
+                                     (*(ckt->CKTrhsOld + here->VDMOSdNode) - 
+                                      *(ckt->CKTrhsOld + here->VDMOSsNode)));
 
-                value->rValue = here->VDMOScd * 
-                        *(ckt->CKTrhsOld + here->VDMOSdNode);
                 if ((ckt->CKTcurrentAnalysis & DOING_TRAN) && 
                         !(ckt->CKTmode & MODETRANOP)) {
-                    value->rValue += (*(ckt->CKTstate0 + here->VDMOScqgd) +
-                            *(ckt->CKTstate0 + here->VDMOScqgs)) *
-                            *(ckt->CKTrhsOld + here->VDMOSgNode);
+                    value->rValue += fabs(*(ckt->CKTstate0 + here->VDMOScqgd) *
+                                          (*(ckt->CKTrhsOld + here->VDMOSgNode) -
+                                           *(ckt->CKTrhsOld + here->VDMOSdNode)));
                 }
-                temp = -here->VDMOScd;
                 if ((ckt->CKTcurrentAnalysis & DOING_TRAN) && 
                         !(ckt->CKTmode & MODETRANOP)) {
-                    temp -= *(ckt->CKTstate0 + here->VDMOScqgd) + 
-                            *(ckt->CKTstate0 + here->VDMOScqgs);
+                    value->rValue += fabs(*(ckt->CKTstate0 + here->VDMOScqgs) *
+                                          (*(ckt->CKTrhsOld + here->VDMOSgNode) -
+                                           *(ckt->CKTrhsOld + here->VDMOSsNode)));
                 }
-                value->rValue += temp * *(ckt->CKTrhsOld + here->VDMOSsNode);
+
+                value->rValue += fabs(*(ckt->CKTstate0 + here->VDIOcurrent) * 
+                                      (*(ckt->CKTrhsOld + here->VDMOSdNode) -
+                                       *(ckt->CKTrhsOld + here->VDMOSsNode)));
             }
             return(OK);
         default:
