@@ -173,32 +173,12 @@ com_rset(wordlist *wl)
 {
     NG_IGNORE(wl);
 
-#if (1)
     if (ft_curckt == NULL) {
         fprintf(cp_err, "Error: there is no circuit loaded.\n");
         return;
     }
     com_remcirc(NULL);
     inp_source_recent();
-#else
-    struct variable *v, *next;
-
-    if (ft_curckt == NULL) {
-        fprintf(cp_err, "Error: there is no circuit loaded.\n");
-        return;
-    }
-    INPkillMods();
-
-    if_cktfree(ft_curckt->ci_ckt, ft_curckt->ci_symtab);
-    for (v = ft_curckt->ci_vars; v; v = next) {
-        next = v->va_next;
-        tfree(v);
-    }
-    ft_curckt->ci_vars = NULL;
-
-    inp_dodeck(ft_curckt->ci_deck, ft_curckt->ci_name, NULL,
-               TRUE, ft_curckt->ci_options, ft_curckt->ci_filename);
-#endif
 }
 
 
@@ -220,7 +200,7 @@ com_remcirc(wordlist *wl)
         return;
     }
 
-#ifdef SHARED_MODULE
+#ifdef SHARED_MODULE // leads to crashes
     /* This may happen only with shared ngspice during transient analysis,
        if simulation is stopped with 'bg_halt'
        and then circuit shall be removed prematurely. */
