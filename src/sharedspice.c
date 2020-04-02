@@ -678,7 +678,7 @@ int
 ngSpice_Init(SendChar* printfcn, SendStat* statusfcn, ControlledExit* ngspiceexit,
              SendData* sdata, SendInitData* sinitdata, BGThreadRunning* bgtrun, void* userData)
 {
-    sighandler old_sigsegv;
+    sighandler old_sigsegv = NULL;
 
     pfcn = printfcn;
     /* if caller sends NULL, don't send printf strings */
