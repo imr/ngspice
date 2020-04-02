@@ -169,6 +169,13 @@ sigsegv(void)
     fatal();
 }
 
+RETSIGTYPE
+sigsegvsh(void)
+{
+    fprintf(cp_err, "\ninternal error -- segmentation violation\n");
+    controlled_exit(EXIT_SEGV);
+}
+
 
 RETSIGTYPE
 sig_sys(void)

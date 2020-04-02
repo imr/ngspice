@@ -481,7 +481,6 @@ static int
 runc(char* command)
 {
     char buf[1024] = "";
-    sighandler oldHandler;
 #ifdef THREADS
 #ifndef low_latency
     int timeout = 0;
@@ -525,20 +524,6 @@ runc(char* command)
     strncpy(buf, command, 1024);
 #endif
 
-    /* Catch Ctrl-C to break simulations */
-#if 1 //!defined(_MSC_VER) /*&& !defined(__MINGW32__) */
-    oldHandler = signal(SIGINT, (SIGNAL_FUNCTION) ft_sigintr);
-    if (SETJMP(jbuf, 1) != 0) {
-        ft_sigintr_cleanup();
-        signal(SIGINT, oldHandler);
-        return 0;
-    }
-#else
-    oldHandler = SIG_IGN;
-#endif
-
-
-
 #ifdef THREADS
     /* run in the background */
     if (fl_bg && fl_exited) {
@@ -559,7 +544,6 @@ runc(char* command)
     } else
         /* bg_halt (pause) a bg run */
         if (!strcmp(buf, "bg_halt")) {
-            signal(SIGINT, oldHandler);
             return _thread_stop();
         /* bg_ctrl prepare running the controls after bg_run */
         } else if (!strcmp(buf, "bg_ctrl")) {
@@ -584,7 +568,6 @@ runc(char* command)
 #else
     cp_evloop(buf);
 #endif /*THREADS*/
-    signal(SIGINT, oldHandler);
     return 0;
 }
 
@@ -695,7 +678,7 @@ int
 ngSpice_Init(SendChar* printfcn, SendStat* statusfcn, ControlledExit* ngspiceexit,
              SendData* sdata, SendInitData* sinitdata, BGThreadRunning* bgtrun, void* userData)
 {
-    sighandler old_sigint;
+    sighandler old_sigsegv;
 
     pfcn = printfcn;
     /* if caller sends NULL, don't send printf strings */
@@ -740,8 +723,10 @@ ngSpice_Init(SendChar* printfcn, SendStat* statusfcn, ControlledExit* ngspiceexi
 #endif
     // Id of primary thread
     main_id =  threadid_self();
-    signal(SIGINT, sighandler_sharedspice);
 #endif
+
+    if (!cp_getvar("nosighandling", CP_BOOL, NULL, 0))
+        old_sigsegv = signal(SIGSEGV, (SIGNAL_FUNCTION) sigsegvsh);
 
     ft_rawfile = NULL;
     ivars(NULL);
@@ -778,14 +763,6 @@ ngSpice_Init(SendChar* printfcn, SendStat* statusfcn, ControlledExit* ngspiceexi
     ft_cpinit();
 
     /* Read the user config files */
-    /* To catch interrupts during .spiceinit... */
-    old_sigint = signal(SIGINT, (SIGNAL_FUNCTION) ft_sigintr);
-    if (SETJMP(jbuf, 1) == 1) {
-        ft_sigintr_cleanup();
-        fprintf(cp_err, "Warning: error executing .spiceinit.\n");
-        goto bot;
-    }
-
 #ifdef HAVE_PWD_H
     /* Try to source either .spiceinit or ~/.spiceinit. */
     if (access(".spiceinit", 0) == 0) {
@@ -836,9 +813,10 @@ ngSpice_Init(SendChar* printfcn, SendStat* statusfcn, ControlledExit* ngspiceexi
 #endif /* ~ HAVE_PWD_H */
 
 bot:
-    signal(SIGINT, old_sigint);
+    if (!cp_getvar("nosighandling", CP_BOOL, NULL, 0))
+        signal(SIGSEGV, old_sigsegv);
 
-    /* initilise display to 'no display at all'*/
+    /* initialize display to 'no display at all'*/
     DevInit();
 
 #ifdef FastRand
@@ -857,7 +835,6 @@ bot:
         initw();
 #endif
 
-//  com_version(NULL);
     fprintf(cp_out,
             "******\n"
             "** %s-%s shared library\n",

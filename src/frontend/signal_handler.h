@@ -13,6 +13,7 @@ RETSIGTYPE sigcont(void);
 RETSIGTYPE sigill(void);
 RETSIGTYPE sigbus(void);
 RETSIGTYPE sigsegv(void);
+RETSIGTYPE sigsegvsh(void);
 RETSIGTYPE sig_sys(void);
 
 extern JMP_BUF jbuf;

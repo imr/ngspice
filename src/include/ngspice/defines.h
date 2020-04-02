@@ -119,6 +119,7 @@
 #define EXIT_NORMAL 0
 #define EXIT_BAD    1
 #define EXIT_INFO   2
+#define EXIT_SEGV   3
 
 #define TRUE 1
 #define FALSE 0
