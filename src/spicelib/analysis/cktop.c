@@ -61,9 +61,9 @@ CKTop (CKTcircuit *ckt, long int firstmode, long int continuemode,
             /* first the new gmin, then the old gmin */
             else {
                 converged = new_gmin(ckt, firstmode, continuemode, iterlim);
-/*                if(converged != 0) {
+                if(converged != 0) {
                     converged = dynamic_gmin(ckt, firstmode, continuemode, iterlim);
-                }*/
+                }
 
             }
         }
