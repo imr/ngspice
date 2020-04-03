@@ -34,6 +34,7 @@ extern char history_file[];
 
 #ifdef SHARED_MODULE
 extern void rem_controls(void);
+extern void destroy_wallace(void);
 #endif
 
 extern IFsimulator SIMinfo;
@@ -80,6 +81,8 @@ com_quit(wordlist *wl)
         cp_remvar("sourcepath");
         cp_remvar("program");
         cp_remvar("prompt");
+
+        destroy_wallace();
     }
 
     rem_controls();
