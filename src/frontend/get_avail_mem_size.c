@@ -61,7 +61,7 @@ unsigned long long getAvailableMemorySize( )
     MEMORYSTATUSEX status;
     status.dwLength = sizeof(status);
     GlobalMemoryStatusEx( &status );
-    return (size_t)status.ullAvailPhys;
+    return status.ullAvailPhys;
 
 #elif defined(__APPLE__) && defined(__MACH__)
 
