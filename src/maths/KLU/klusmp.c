@@ -1462,8 +1462,14 @@ SMPfindElt (SMPmatrix *eMatrix, int Row, int Col, int CreateIfMissing)
 
         Row = Matrix->ExtToIntRowMap [Row] ;
         Col = Matrix->ExtToIntColMap [Col] ;
-        for (i = eMatrix->CKTkluAp [Col - 1] ; i < eMatrix->CKTkluAp [Col] ; i++) {
-            if (eMatrix->CKTkluAi [i] == Row - 1) {
+        Row = Row - 1 ;
+        Col = Col - 1 ;
+        if ((Row < 0) || (Col < 0)) {
+            printf ("Error: Cannot find an element with row '%d' and column '%d' in the KLU matrix\n", Row, Col) ;
+            return NULL ;
+        }
+        for (i = eMatrix->CKTkluAp [Col] ; i < eMatrix->CKTkluAp [Col + 1] ; i++) {
+            if (eMatrix->CKTkluAi [i] == Row) {
                 if (eMatrix->CKTkluMatrixIsComplex == CKTkluMatrixReal) {
                     return (SMPelement *) &(eMatrix->CKTkluAx [i]) ;
                 } else if (eMatrix->CKTkluMatrixIsComplex == CKTkluMatrixComplex) {
