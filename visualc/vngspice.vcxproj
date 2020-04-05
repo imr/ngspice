@@ -2808,6 +2808,7 @@
     <ClCompile Include="..\src\xspice\ipc\ipctiein.c" />
     <ClCompile Include="..\src\xspice\mif\mif.c" />
     <ClCompile Include="..\src\xspice\mif\mifask.c" />
+    <ClCompile Include="..\src\xspice\mif\mifbindCSC.c" />
     <ClCompile Include="..\src\xspice\mif\mifconvt.c" />
     <ClCompile Include="..\src\xspice\mif\mifdelete.c" />
     <ClCompile Include="..\src\xspice\mif\mifdestr.c" />
