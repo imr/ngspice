@@ -28,7 +28,7 @@ CKTic(CKTcircuit *ckt)
             node->ptr = SMPmakeElt(ckt->CKTmatrix,node->number,node->number);
             if(node->ptr == NULL) return(E_NOMEM);
             ckt->CKThadNodeset = 1;
-            ckt->CKTrhs[node->number] = node->nodeset;
+            ckt->CKTrhsOld[node->number] = ckt->CKTrhs[node->number] = node->nodeset;
         }
         if(node->icGiven) {
             if(! ( node->ptr)) {
@@ -36,7 +36,7 @@ CKTic(CKTcircuit *ckt)
                         node->number);
                 if(node->ptr == NULL) return(E_NOMEM);
             }
-            ckt->CKTrhs[node->number] = node->ic;
+            ckt->CKTrhsOld[node->number] = ckt->CKTrhs[node->number] = node->ic;
         }
     }
 
