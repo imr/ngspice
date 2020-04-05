@@ -1026,7 +1026,7 @@ wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR
     hwMainClassW.cbClsExtra = 0;
     hwMainClassW.cbWndExtra = 0;
     hwMainClassW.hInstance = hInst;
-    hwMainClassW.hIcon = LoadIconW(hInst, MAKEINTRESOURCEW(1));
+    hwMainClassW.hIcon = LoadIconW(hInst, MAKEINTRESOURCEW(101));
     hwMainClassW.hCursor = LoadCursorW(NULL, MAKEINTRESOURCEW(32512));
     hwMainClassW.hbrBackground = GetStockObject(LTGRAY_BRUSH);
     hwMainClassW.lpszMenuName = NULL;
