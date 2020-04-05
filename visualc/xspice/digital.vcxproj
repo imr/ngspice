@@ -22,30 +22,30 @@
     <ProjectName>digital</ProjectName>
     <ProjectGuid>{9ABEC5F2-F6C6-41DE-88AB-02460A07F46E}</ProjectGuid>
     <RootNamespace>icmanalog</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>NotSet</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>NotSet</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>NotSet</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -242,7 +242,7 @@
     <ClCompile Include="icm\digital\d_lut\d_lut-cfunc.c" />
     <ClCompile Include="icm\digital\d_lut\d_lut-ifspec.c" />
     <ClCompile Include="icm\digital\d_genlut\d_genlut-cfunc.c" />
-    <ClCompile Include="icm\digital\d_genlut\d_genlut-ifspec.c" />    
+    <ClCompile Include="icm\digital\d_genlut\d_genlut-ifspec.c" />
     <ClCompile Include="icm\digital\d_nand\d_nand-cfunc.c">
       <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -329,7 +329,7 @@
     <None Include="..\..\src\xspice\icm\digital\d_fdiv\cfunc.mod" />
     <None Include="..\..\src\xspice\icm\digital\d_fdiv\ifspec.ifs" />
     <None Include="..\..\src\xspice\icm\digital\d_genlut\cfunc.mod" />
-    <None Include="..\..\src\xspice\icm\digital\d_genlut\ifspec.ifs" />    
+    <None Include="..\..\src\xspice\icm\digital\d_genlut\ifspec.ifs" />
     <None Include="..\..\src\xspice\icm\digital\d_inverter\cfunc.mod" />
     <None Include="..\..\src\xspice\icm\digital\d_inverter\ifspec.ifs" />
     <None Include="..\..\src\xspice\icm\digital\d_jkff\cfunc.mod" />
