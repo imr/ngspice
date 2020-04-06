@@ -54,7 +54,7 @@ char *tildexpand(const char *string)
             return copy(string); /* Strip the ~ and return the rest */
         }
         const size_t n_char_rest = strlen(string);
-        TREALLOC(char, sz_home, (size_t) n_char_home + n_char_rest + 1);
+        sz_home = TREALLOC(char, sz_home, (size_t) n_char_home + n_char_rest + 1);
         strcpy(sz_home + n_char_home, string);
         return sz_home;
     }
@@ -88,7 +88,7 @@ char *tildexpand(const char *string)
             return copy(usr_start); /* Strip the ~ and return the rest */
         }
         const size_t n_char_rest = strlen(string);
-        TREALLOC(char, sz_home, (size_t) n_char_home + n_char_rest + 1);
+        sz_home = TREALLOC(char, sz_home, (size_t) n_char_home + n_char_rest + 1);
         strcpy(sz_home + n_char_home, string);
         return sz_home;
     }
