@@ -30,7 +30,7 @@ com_inventory(wordlist *wl)
 
     NG_IGNORE(wl);
 
-    if (!ft_curckt) {
+    if (!ft_curckt || !ft_curckt->ci_ckt) {
         fprintf(cp_err, "There is no current circuit\n");
         return;
     }

@@ -430,7 +430,7 @@ cp_usrset(struct variable *var, bool isset)
         return (0);
     }
 
-    if (ft_curckt) {
+    if (ft_curckt && ft_curckt->ci_ckt) {
         if (if_option(ft_curckt->ci_ckt, var->va_name, var->va_type, vv))
             return US_SIMVAR;
     } else {
