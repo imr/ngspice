@@ -1472,8 +1472,9 @@ com_alter_mod(wordlist *wl)
         inptoken = gettok(&modelline); /* skip model type */
         tfree(inptoken);
         while ((inptoken = gettok(&modelline)) != NULL) {
-            /* exclude level and version */
-            if (ciprefix("version", inptoken) || ciprefix("level", inptoken)) {
+            /* exclude level, version and mfg */
+            if (ciprefix("version", inptoken) || ciprefix("level", inptoken) ||
+                ciprefix("mfg", inptoken)) {
                 tfree(inptoken);
                 continue;
             }
