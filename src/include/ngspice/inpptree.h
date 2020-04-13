@@ -166,6 +166,10 @@ typedef struct PTelement {
 
 #define PT_STACKSIZE 200
 
+/* limits for exp function */
+#define EXPARGMAX 14.
+#define EXPMAX 1202604.284
+
 /* And in IFeval.c */
 
 extern int IFeval(IFparseTree *tree, double gmin, double *result, double *vals, double *derivs);

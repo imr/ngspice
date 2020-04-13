@@ -434,8 +434,18 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
             arg1 = mkf(PTF_SINH, p->left);
             break;
 
-        case PTF_EXP:                /* exp(u) */
-            arg1 = mkf(PTF_EXP, p->left);
+        case PTF_EXP:                /* u > EXPARGMAX -> EXPMAX, that is exp(EXPARGMAX), else exp(u) */
+            arg1 = mkb(PT_TERN,
+                mkf(PTF_GT0, mkb(PT_MINUS, p->left, mkcon(EXPARGMAX))),
+                mkb(PT_COMMA,
+                    mkcon(EXPMAX),
+                    mkf(PTF_EXP, p->left)));
+
+#ifdef TRACE
+            printf("debug, %s, returns; ", __func__);
+            printTree(arg1);
+            printf("\n");
+#endif
             break;
 
         case PTF_LOG:               /* 1 / u */

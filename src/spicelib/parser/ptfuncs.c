@@ -217,10 +217,14 @@ PTcosh(double arg)
     return (cosh(arg));
 }
 
+/* Limit the exp: If arg > EXPARGMAX (arbitrarily selected to 14), continue with linear output */
 double
 PTexp(double arg)
 {
-    return (exp(arg));
+    if (arg > EXPARGMAX)
+        return EXPMAX * (arg - EXPARGMAX + 1.);
+    else
+        return (exp(arg));
 }
 
 double
