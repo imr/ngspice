@@ -1403,7 +1403,15 @@ com_alter_mod(wordlist *wl)
         }
         filename = copy(eqword);
     }
+
     modfile = inp_pathopen(filename, readmode);
+
+    if (modfile == NULL) {
+        fprintf(cp_err, "Warning: Could not open file %s, altermod ignored\n", filename);
+        tfree(input);
+        tfree(filename);
+        return;
+    }
     {
         char *dir_name = ngdirname(filename);
         modeldeck = inp_readall(modfile, dir_name, 0, 0, NULL);
