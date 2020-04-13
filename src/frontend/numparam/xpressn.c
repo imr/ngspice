@@ -920,17 +920,17 @@ formula(dico_t *dico, const char *s, const char *s_end, bool *perror)
                 u = formula(dico, s, kptr, &error);
                 state = S_atom;
                 if (fu > 0) {
-                    if ((fu == XFU_TERNARY_FCN))
+                    if (fu == XFU_TERNARY_FCN)
                         u = ternary_fcn(v, w, u);
-                    else if ((fu == XFU_AGAUSS))
+                    else if (fu == XFU_AGAUSS)
                         u = agauss(v, w, u);
-                    else if ((fu == XFU_GAUSS))
+                    else if (fu == XFU_GAUSS)
                         u = gauss(v, w, u);
-                    else if ((fu == XFU_UNIF))
+                    else if (fu == XFU_UNIF)
                         u = unif(v, u);
-                    else if ((fu == XFU_AUNIF))
+                    else if (fu == XFU_AUNIF)
                         u = aunif(v, u);
-                    else if ((fu == XFU_LIMIT))
+                    else if (fu == XFU_LIMIT)
                         u = limit(v, u);
                     else
                         u = mathfunction(fu, v, u);
