@@ -1134,8 +1134,8 @@ struct inp_read_t inp_read( FILE *fp, int call_depth, const char *dir_name,
                     ;
             }
 
-            /* add Inp_Path to sourcepath variable */
-            if (cieq(buffer, "set") || cieq(buffer, "setcs")) {
+            /* add Inp_Path to buffer while keeping the sourcepath variable contents */
+            if (ciprefix("set", buffer)) {
                 char *p = strstr(buffer, "sourcepath");
                 if (p) {
                     p = strchr(buffer, ')');
@@ -1148,6 +1148,9 @@ struct inp_read_t inp_read( FILE *fp, int call_depth, const char *dir_name,
                         /* s points to end of buffer */
                         for (s = buffer; *s && (*s != '\n'); s++)
                             ;
+                    }
+                    else {
+                        fprintf(stderr, "Warning: no closing parens found in 'set sourcepath' statement\n");
                     }
                 }
             }
