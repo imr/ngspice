@@ -5,7 +5,7 @@ Model Author: 1990 Michael Schröter TU Dresden
 Spice3 Implementation: 2019 Dietmar Warning
 **********/
 
-/* 
+/*
  * This routine should only be called when circuit topology
  * changes, since its computations do not depend on most
  * device or model parameters, only on topology (as
@@ -15,7 +15,7 @@ Spice3 Implementation: 2019 Dietmar Warning
 #include "ngspice/ngspice.h"
 #include "ngspice/cktdefs.h"
 #include "ngspice/smpdefs.h"
-#include "hicumdefs.h"
+#include "hicum2defs.h"
 #include "ngspice/const.h"
 #include "ngspice/sperror.h"
 #include "ngspice/ifsim.h"
@@ -25,8 +25,8 @@ Spice3 Implementation: 2019 Dietmar Warning
 
 int
 HICUMsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
-        /* load the HICUM structure with those pointers needed later 
-         * for fast matrix loading 
+        /* load the HICUM structure with those pointers needed later
+         * for fast matrix loading
          */
 {
     HICUMmodel *model = (HICUMmodel*)inModel;
@@ -502,8 +502,8 @@ HICUMsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 if (ckt->CKTcopyNodesets) {
                   if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
                      if (tmpNode->nsGiven) {
-                       tmp->nodeset=tmpNode->nodeset; 
-                       tmp->nsGiven=tmpNode->nsGiven; 
+                       tmp->nodeset=tmpNode->nodeset;
+                       tmp->nsGiven=tmpNode->nsGiven;
                     }
                   }
                 }
@@ -517,8 +517,8 @@ HICUMsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 if (ckt->CKTcopyNodesets) {
                   if (CKTinst2Node(ckt,here,2,&tmpNode,&tmpName)==OK) {
                      if (tmpNode->nsGiven) {
-                       tmp->nodeset=tmpNode->nodeset; 
-                       tmp->nsGiven=tmpNode->nsGiven; 
+                       tmp->nodeset=tmpNode->nodeset;
+                       tmp->nsGiven=tmpNode->nsGiven;
                      }
                   }
                 }
@@ -532,8 +532,8 @@ HICUMsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 if (ckt->CKTcopyNodesets) {
                   if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
                      if (tmpNode->nsGiven) {
-                       tmp->nodeset=tmpNode->nodeset; 
-                       tmp->nsGiven=tmpNode->nsGiven; 
+                       tmp->nodeset=tmpNode->nodeset;
+                       tmp->nsGiven=tmpNode->nsGiven;
                      }
                   }
                 }
@@ -547,8 +547,8 @@ HICUMsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 if (ckt->CKTcopyNodesets) {
                   if (CKTinst2Node(ckt,here,4,&tmpNode,&tmpName)==OK) {
                      if (tmpNode->nsGiven) {
-                       tmp->nodeset=tmpNode->nodeset; 
-                       tmp->nsGiven=tmpNode->nsGiven; 
+                       tmp->nodeset=tmpNode->nodeset;
+                       tmp->nsGiven=tmpNode->nsGiven;
                      }
                   }
                 }
@@ -557,25 +557,25 @@ HICUMsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             if(here->HICUMbaseBINode == 0) {
                 error = CKTmkVolt(ckt, &tmp, here->HICUMname, "baseBI");
                 if(error) return(error);
-                here->HICUMbaseBINode = tmp->number;  
+                here->HICUMbaseBINode = tmp->number;
             }
 
             if(here->HICUMxfNode == 0) {
                 error = CKTmkVolt(ckt, &tmp, here->HICUMname, "xf");
                 if(error) return(error);
-                here->HICUMxfNode = tmp->number;  
+                here->HICUMxfNode = tmp->number;
             }
 
             if(here->HICUMxf1Node == 0) {
                 error = CKTmkVolt(ckt, &tmp, here->HICUMname, "xf1");
                 if(error) return(error);
-                here->HICUMxf1Node = tmp->number;  
+                here->HICUMxf1Node = tmp->number;
             }
 
             if(here->HICUMxf2Node == 0) {
                 error = CKTmkVolt(ckt, &tmp, here->HICUMname, "xf2");
                 if(error) return(error);
-                here->HICUMxf2Node = tmp->number;  
+                here->HICUMxf2Node = tmp->number;
             }
 
 /* macro to make elements with built in test for out of memory */

@@ -15,7 +15,7 @@
  * uninterrupted or error-free. The end-user understands that the
  * program was developed for research purposes and is advised not to
  * rely exclusively on the program for any reason.
- * 
+ *
  * IN NO EVENT SHALL THE AUTHORS BE LIABLE TO ANY PARTY FOR DIRECT,
  * INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING
  * LOST PROFITS, ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS
@@ -93,7 +93,7 @@ int add_udn(int,Evt_Udn_Info_t **);
 #include "dio/dioitf.h"
 #include "hfet1/hfetitf.h"
 #include "hfet2/hfet2itf.h"
-#include "hicum2/hicumitf.h"
+#include "hicum2/hicum2itf.h"
 #include "hisim2/hsm2itf.h"
 #include "hisimhv1/hsmhvitf.h"
 #include "hisimhv2/hsmhv2itf.h"
@@ -260,7 +260,7 @@ spice_init_devices(void)
     g_evt_udn_info = TMALLOC(Evt_Udn_Info_t  *, 1);
     g_evt_num_udn_types = 1;
     g_evt_udn_info[0] =  &idn_digital_info;
-    
+
     DEVicesfl = TMALLOC(int, DEVNUM);
     /* tmalloc should automatically zero the array! */
 #endif
@@ -417,7 +417,7 @@ int load_opus(char *name){
     printf("%s\n", msg);
     return 1;
   }
-  
+
   fetch = dlsym(lib,"CMdevNum");
   if(fetch){
     num = ((int * (*)(void)) fetch) ();

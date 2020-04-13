@@ -10,7 +10,7 @@ Spice3 Implementation: 2019 Dietmar Warning
 #include "ngspice/ifsim.h"
 #include "ngspice/cktdefs.h"
 #include "ngspice/devdefs.h"
-#include "hicumdefs.h"
+#include "hicum2defs.h"
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
@@ -356,7 +356,7 @@ HICUMmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
         case HICUM_MOD_FLNQS:
             value->iValue = here->HICUMflnqs;
             return(OK);
-  
+
 //Noise
         case HICUM_MOD_KF:
             value->rValue = here->HICUMkf;

@@ -6,14 +6,14 @@ Spice3 Implementation: 2019 Dietmar Warning
 **********/
 
 /*
- * This routine gives access to the internal device 
+ * This routine gives access to the internal device
  * parameters for HICUMs
  */
 
 #include "ngspice/ngspice.h"
 #include "ngspice/const.h"
 #include "ngspice/cktdefs.h"
-#include "hicumdefs.h"
+#include "hicum2defs.h"
 #include "ngspice/ifsim.h"
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"

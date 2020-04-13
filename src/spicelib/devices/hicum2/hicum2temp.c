@@ -8,7 +8,7 @@ Spice3 Implementation: 2019 Dietmar Warning
 #include "ngspice/ngspice.h"
 #include "ngspice/cktdefs.h"
 #include "ngspice/smpdefs.h"
-#include "hicumdefs.h"
+#include "hicum2defs.h"
 #include "ngspice/const.h"
 #include "ngspice/sperror.h"
 #include "ngspice/ifsim.h"
@@ -18,8 +18,8 @@ Spice3 Implementation: 2019 Dietmar Warning
 #define TMIN -100.0
 #define LN_EXP_LIMIT 11.0
 
-void TMPHICJ(double , double , double , double , double , 
-             double , double , double , double , double , double , 
+void TMPHICJ(double , double , double , double , double ,
+             double , double , double , double , double , double ,
              double *, double *, double *);
 
 // TEMPERATURE UPDATE OF JUNCTION CAPACITANCE RELATED PARAMETERS
@@ -38,8 +38,8 @@ void TMPHICJ(double , double , double , double , double ,
 //  c_j_t               : temperature update of "c_j"
 //  vd_t                : temperature update of "vd0"
 //  w_t                 : temperature update of "w"
-void TMPHICJ(double vt, double vt0, double qtt0, double ln_qtt0, double mg, 
-             double c_j, double vd0, double z, double w, double is_al, double vgeff, 
+void TMPHICJ(double vt, double vt0, double qtt0, double ln_qtt0, double mg,
+             double c_j, double vd0, double z, double w, double is_al, double vgeff,
              double *c_j_t, double *vd_t, double *w_t)
 {
 double vdj0,vdjt,vdt;

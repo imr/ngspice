@@ -13,7 +13,7 @@ Spice3 Implementation: 2019 Dietmar Warning
 #include "ngspice/ngspice.h"
 #include "ngspice/const.h"
 #include "ngspice/ifsim.h"
-#include "hicumdefs.h"
+#include "hicum2defs.h"
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
@@ -37,7 +37,7 @@ HICUMmParam(int param, IFvalue *value, GENmodel *inModel)
             if(value->iValue) {
                 model->HICUMtype = PNP;
             }
-            break; 
+            break;
 
         case HICUM_MOD_TNOM:
             model->HICUMtnom = value->rValue+CONSTCtoK;
@@ -459,7 +459,7 @@ HICUMmParam(int param, IFvalue *value, GENmodel *inModel)
             model->HICUMflnqs = value->iValue;
             model->HICUMflnqsGiven = TRUE;
             break;
-  
+
 //Noise
         case HICUM_MOD_KF:
             model->HICUMkf = value->rValue;

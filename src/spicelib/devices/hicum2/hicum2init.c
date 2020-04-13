@@ -7,9 +7,9 @@
 
 #include "ngspice/devdefs.h"
 
-#include "hicumitf.h"
-#include "hicumext.h"
-#include "hicuminit.h"
+#include "hicum2itf.h"
+#include "hicum2ext.h"
+#include "hicum2init.h"
 
 
 SPICEdev HICUMinfo = {

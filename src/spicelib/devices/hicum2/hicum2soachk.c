@@ -5,7 +5,7 @@ Author:   2013 Dietmar Warning
 
 #include "ngspice/ngspice.h"
 #include "ngspice/cktdefs.h"
-#include "hicumdefs.h"
+#include "hicum2defs.h"
 #include "ngspice/trandefs.h"
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"

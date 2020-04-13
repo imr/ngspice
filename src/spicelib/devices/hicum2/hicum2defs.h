@@ -769,7 +769,7 @@ enum {
 enum {
 //Circuit simulator specific parameters
     HICUM_MOD_NPN = 101,
-    HICUM_MOD_PNP, 
+    HICUM_MOD_PNP,
     HICUM_MOD_TNOM,
 
 //Transfer current
@@ -1008,5 +1008,5 @@ enum {
     HICUM_MOD_TYPE,
 };
 
-#include "hicumext.h"
+#include "hicum2ext.h"
 #endif /*HICUM*/

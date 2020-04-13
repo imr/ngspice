@@ -12,7 +12,7 @@ Spice3 Implementation: 2019 Dietmar Warning
 
 #include "ngspice/ngspice.h"
 #include "ngspice/devdefs.h"
-#include "hicumdefs.h"
+#include "hicum2defs.h"
 #include "ngspice/suffix.h"
 
 IFparm HICUMpTable[] = { /* parameters */

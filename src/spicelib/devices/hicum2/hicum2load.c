@@ -12,7 +12,7 @@ Spice3 Implementation: 2019 Dietmar Warning
 
 #include "ngspice/ngspice.h"
 #include "ngspice/cktdefs.h"
-#include "hicumdefs.h"
+#include "hicum2defs.h"
 #include "ngspice/const.h"
 #include "ngspice/trandefs.h"
 #include "ngspice/sperror.h"
@@ -978,15 +978,15 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 ibpcihat = *(ckt->CKTstate0 + here->HICUMibpci) +
                          *(ckt->CKTstate0 + here->HICUMibpci_Vbpci)*delvbpci;
                 icieihat = *(ckt->CKTstate0 + here->HICUMiciei) +
-                         *(ckt->CKTstate0 + here->HICUMiciei_Vbiei)*delvbiei + 
+                         *(ckt->CKTstate0 + here->HICUMiciei_Vbiei)*delvbiei +
                          *(ckt->CKTstate0 + here->HICUMiciei_Vbici)*delvbici;
-                ibpbihat = *(ckt->CKTstate0 + here->HICUMibpbi) + 
+                ibpbihat = *(ckt->CKTstate0 + here->HICUMibpbi) +
                          *(ckt->CKTstate0 + here->HICUMibpbi_Vbpbi)*delvbpbi +
-                         *(ckt->CKTstate0 + here->HICUMibpbi_Vbiei)*delvbiei + 
+                         *(ckt->CKTstate0 + here->HICUMibpbi_Vbiei)*delvbiei +
                          *(ckt->CKTstate0 + here->HICUMibpbi_Vbici)*delvbici;
                 isicihat = *(ckt->CKTstate0 + here->HICUMisici) +
                          *(ckt->CKTstate0 + here->HICUMisici_Vsici)*delvsici;
-                ibpsihat = *(ckt->CKTstate0 + here->HICUMibpsi) + 
+                ibpsihat = *(ckt->CKTstate0 + here->HICUMibpsi) +
                          *(ckt->CKTstate0 + here->HICUMibpsi_Vbpci)*delvbpci +
                          *(ckt->CKTstate0 + here->HICUMibpsi_Vsici)*delvsici;
                 /*

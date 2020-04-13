@@ -6,7 +6,7 @@ Spice3 Implementation: 2019 Dietmar Warning
 **********/
 
 #include "ngspice/ngspice.h"
-#include "hicumdefs.h"
+#include "hicum2defs.h"
 #include "ngspice/cktdefs.h"
 #include "ngspice/iferrmsg.h"
 #include "ngspice/noisedef.h"
@@ -145,21 +145,21 @@ HICUMnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata 
                     NevalSrc(&noizDens[HICUMFLBENOIZ], NULL, ckt,
                                  N_GAIN,inst->HICUMbaseBINode, inst->HICUMemitEINode,
                                  (double)0.0);
-                    noizDens[HICUMFLBENOIZ] *= inst->HICUMm * model->HICUMkf * 
+                    noizDens[HICUMFLBENOIZ] *= inst->HICUMm * model->HICUMkf *
                                  exp(model->HICUMaf *
                                  log(MAX(fabs((*(ckt->CKTstate0 + inst->HICUMibiei)+*(ckt->CKTstate0 + inst->HICUMibpei))/inst->HICUMm),N_MINLOG))) /
                                  data->freq;
-                    lnNdens[HICUMFLBENOIZ] = 
+                    lnNdens[HICUMFLBENOIZ] =
                                  log(MAX(noizDens[HICUMFLBENOIZ],N_MINLOG));
 
                     NevalSrc(&noizDens[HICUMFLRENOIZ], NULL, ckt,
                                  N_GAIN,inst->HICUMemitNode, inst->HICUMemitEINode,
                                  (double)0.0);
-                    noizDens[HICUMFLRENOIZ] *= inst->HICUMm * model->HICUMkfre * 
+                    noizDens[HICUMFLRENOIZ] *= inst->HICUMm * model->HICUMkfre *
                                  exp(model->HICUMafre *
                                  log(MAX(fabs(*(ckt->CKTstate0 + inst->HICUMieie)/inst->HICUMm),N_MINLOG))) /
                                  data->freq;
-                    lnNdens[HICUMFLRENOIZ] = 
+                    lnNdens[HICUMFLRENOIZ] =
                                  log(MAX(noizDens[HICUMFLRENOIZ],N_MINLOG));
 
 
@@ -177,12 +177,12 @@ HICUMnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata 
                                              noizDens[HICUMFLRENOIZ];
 
 
-                    lnNdens[HICUMTOTNOIZ] = 
+                    lnNdens[HICUMTOTNOIZ] =
                                  log(noizDens[HICUMTOTNOIZ]);
 
                     *OnDens += noizDens[HICUMTOTNOIZ];
 
-                    if (data->delFreq == 0.0) { 
+                    if (data->delFreq == 0.0) {
 
                         /* if we haven't done any previous integration, we need to */
                         /* initialize our "history" variables                      */

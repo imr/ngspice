@@ -12,7 +12,7 @@ Spice3 Implementation: 2019 Dietmar Warning
 
 #include "ngspice/ngspice.h"
 #include "ngspice/cktdefs.h"
-#include "hicumdefs.h"
+#include "hicum2defs.h"
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
@@ -29,7 +29,7 @@ HICUMconvTest(GENmodel *inModel, CKTcircuit *ckt)
     double delvbpci;
     double delvsici;
 
-    double ibieihat;        
+    double ibieihat;
     double ibicihat;
     double icieihat;
     double ibpeihat;
@@ -74,24 +74,24 @@ HICUMconvTest(GENmodel *inModel, CKTcircuit *ckt)
             delvbpci = Vbpci - *(ckt->CKTstate0 + here->HICUMvbpci);
             delvsici = Vsici - *(ckt->CKTstate0 + here->HICUMvsici);
 
-            ibieihat = *(ckt->CKTstate0 + here->HICUMibiei) + 
+            ibieihat = *(ckt->CKTstate0 + here->HICUMibiei) +
                        *(ckt->CKTstate0 + here->HICUMibiei_Vbiei)*delvbiei;
-            ibicihat = *(ckt->CKTstate0 + here->HICUMibici) + 
+            ibicihat = *(ckt->CKTstate0 + here->HICUMibici) +
                        *(ckt->CKTstate0 + here->HICUMibici_Vbici)*delvbici;
-            icieihat = *(ckt->CKTstate0 + here->HICUMiciei) + 
+            icieihat = *(ckt->CKTstate0 + here->HICUMiciei) +
                        *(ckt->CKTstate0 + here->HICUMiciei_Vbiei)*delvbiei +
                        *(ckt->CKTstate0 + here->HICUMiciei_Vbici)*delvbici;
-            ibpeihat = *(ckt->CKTstate0 + here->HICUMibpei) + 
+            ibpeihat = *(ckt->CKTstate0 + here->HICUMibpei) +
                        *(ckt->CKTstate0 + here->HICUMibpei_Vbpei)*delvbpei;
-            ibpbihat = *(ckt->CKTstate0 + here->HICUMibpbi) + 
-                       *(ckt->CKTstate0 + here->HICUMibpbi_Vbiei)*delvbiei + 
+            ibpbihat = *(ckt->CKTstate0 + here->HICUMibpbi) +
+                       *(ckt->CKTstate0 + here->HICUMibpbi_Vbiei)*delvbiei +
                        *(ckt->CKTstate0 + here->HICUMibpbi_Vbici)*delvbici;
-            ibpcihat = *(ckt->CKTstate0 + here->HICUMibpci) + 
+            ibpcihat = *(ckt->CKTstate0 + here->HICUMibpci) +
                        *(ckt->CKTstate0 + here->HICUMibpci_Vbpci)*delvbici;
-            ibpsihat = *(ckt->CKTstate0 + here->HICUMibpsi) + 
+            ibpsihat = *(ckt->CKTstate0 + here->HICUMibpsi) +
                        *(ckt->CKTstate0 + here->HICUMibpsi_Vbpci)*delvbpci +
                        *(ckt->CKTstate0 + here->HICUMibpsi_Vsici)*delvsici;
-            isicihat = *(ckt->CKTstate0 + here->HICUMisici) + 
+            isicihat = *(ckt->CKTstate0 + here->HICUMisici) +
                        *(ckt->CKTstate0 + here->HICUMisici_Vsici)*delvsici;
 
             Ibiei       = *(ckt->CKTstate0 + here->HICUMibiei);

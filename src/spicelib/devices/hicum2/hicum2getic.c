@@ -12,7 +12,7 @@ Spice3 Implementation: 2019 Dietmar Warning
 
 #include "ngspice/ngspice.h"
 #include "ngspice/cktdefs.h"
-#include "hicumdefs.h"
+#include "hicum2defs.h"
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
@@ -32,13 +32,13 @@ HICUMgetic(GENmodel *inModel, CKTcircuit *ckt)
         for(here = HICUMinstances(model); here ; here = HICUMnextInstance(here)) {
 
             if(!here->HICUMicVBEGiven) {
-                here->HICUMicVBE = 
-                        *(ckt->CKTrhs + here->HICUMbaseNode) - 
+                here->HICUMicVBE =
+                        *(ckt->CKTrhs + here->HICUMbaseNode) -
                         *(ckt->CKTrhs + here->HICUMemitNode);
             }
             if(!here->HICUMicVCEGiven) {
-                here->HICUMicVCE = 
-                        *(ckt->CKTrhs + here->HICUMcollNode) - 
+                here->HICUMicVCE =
+                        *(ckt->CKTrhs + here->HICUMcollNode) -
                         *(ckt->CKTrhs + here->HICUMemitNode);
             }
         }
