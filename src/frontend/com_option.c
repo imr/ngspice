@@ -18,7 +18,7 @@ com_option(wordlist *wl)
 
     CKTcircuit *circuit = NULL;
 
-    if (!ft_curckt) {
+    if (!ft_curckt || !ft_curckt->ci_ckt) {
         fprintf(cp_err, "Error: no circuit loaded\n");
         return;
     }
