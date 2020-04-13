@@ -263,7 +263,7 @@ all_show(wordlist *wl, int mode)
     int         i, j, n;
     int         param_flag, dev_flag;
 
-    if (!ft_curckt) {
+    if (!ft_curckt || !ft_curckt->ci_ckt) {
         fprintf(cp_err, "Error: no circuit loaded\n");
         return;
     }
@@ -425,7 +425,7 @@ all_show_old(wordlist *wl, int mode)
     int         i, j, n;
     int         param_flag, dev_flag;
 
-    if (!ft_curckt) {
+    if (!ft_curckt || !ft_curckt->ci_ckt) {
         fprintf(cp_err, "Error: no circuit loaded\n");
         return;
     }
