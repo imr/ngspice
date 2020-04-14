@@ -714,7 +714,7 @@ if test "x$enable_oldapps" = xyes ; then
     AC_MSG_RESULT([ngnutmeg ngsconvert ngproc2mod ngmultidec ngmakeidx nghelp are made.])
 else
     AC_MSG_RESULT([ngnutmeg ngsconvert ngproc2mod ngmultidec ngmakeidx nghelp are not made.])
-    AC_MSG_RESULT([No internal help available.])    
+    AC_MSG_RESULT([No internal help available.])
     AC_DEFINE([NOINTHELP], [1], [Internal (old) help not available])
 fi
 AM_CONDITIONAL([OLDAPPS], [test "x$enable_oldapps" = xyes])
@@ -1250,6 +1250,7 @@ AC_CONFIG_FILES([Makefile
                  tests/filters/Makefile
                  tests/general/Makefile
                  tests/hfet/Makefile
+                 tests/hicum2/Makefile
                  tests/hisim/Makefile
                  tests/hisimhv1/Makefile
                  tests/hisimhv2/Makefile
