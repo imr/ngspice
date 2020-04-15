@@ -23,12 +23,12 @@ Q1 Q1_C Q1_B Q1_E Q1_S Q1_T P1
 + fbcpar=0.3 fbepar=1 cjs0=2.6e-014 vds=0.9997 zs=0.4295 vpts=100
 + t0=2.089e-013 dt0h=8e-014 tbvl=8.25e-014 tef0=3.271e-013 gtfe=3.548 thcs=5.001e-012
 + ahc=0.05 fthc=0.7 rci0=9.523 vlim=0.6999 vces=0.01 vpt=2 tr=0
-+ cbepar=2.609e-014 cbcpar=1.64512e-014 alqf=0.166667 alit=0.333333 flnqs=1 kf=0
++ cbepar=2.609e-014 cbcpar=1.64512e-014 alqf=0.166667 alit=0.333333 flnqs=0 kf=0
 + af=2 cfbe=-1 latb=0 latl=0 vgb=0.91 alt0=0.004 kt0=6.588e-005
 + zetaci=0.58 alvs=0.001 alces=-0.2286 zetarbi=0.3002 zetarbx=0.06011 zetarcx=-0.02768
 + zetare=-0.9605 zetacx=0 vge=1.17 vgc=1.17 vgs=1.17 f1vg=-0.000102377 f2vg=0.00043215
-+ zetact=5 zetabet=4.892 flsh=1 rth=1113.4 cth=6.841e-012 zetarth=0
-+ alrth=0.002 flcomp=0.0 tnom=26.85 acbar=1.5 flcono=0 icbar=0.01
++ zetact=5 zetabet=4.892 flsh=0 rth=1113.4 cth=6.841e-012 zetarth=0
++ alrth=0.002 flcomp=2.4 tnom=26.85 acbar=1.5 flcono=0 icbar=0.01
 + vcbar=0.04 zetavgbe=0.7 hf0=40 ahjei=3 rhjei=2 delck=2 zetahjei=-0.5
 
 

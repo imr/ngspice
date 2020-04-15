@@ -379,8 +379,22 @@ typedef struct sHICUMinstance {
 #define HICUMixf_Vbici   HICUMstate+74
 
 #define HICUMvxf1        HICUMstate+75
-#define HICUMvxf2        HICUMstate+76
-#define HICUMnumStates 77
+#define HICUMqxf1        HICUMstate+76
+#define HICUMcqxf1       HICUMstate+77
+#define HICUMgqxf1       HICUMstate+78
+#define HICUMixf1_Vbiei  HICUMstate+79
+#define HICUMixf1_Vbici  HICUMstate+80
+#define HICUMixf1_Vfx2   HICUMstate+81
+
+#define HICUMvxf2        HICUMstate+82
+#define HICUMqxf2        HICUMstate+83
+#define HICUMcqxf2       HICUMstate+84
+#define HICUMgqxf2       HICUMstate+85
+#define HICUMixf2_Vbiei  HICUMstate+86
+#define HICUMixf2_Vbici  HICUMstate+87
+#define HICUMixf2_Vfx1   HICUMstate+88
+
+#define HICUMnumStates 89
 
 /* per model data */
 typedef struct sHICUMmodel {           /* model structure for a hicum */
