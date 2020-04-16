@@ -722,9 +722,9 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 Vsis = model->HICUMtype*(
                     *(ckt->CKTrhsOld+here->HICUMsubsSINode)-
                     *(ckt->CKTrhsOld+here->HICUMsubsNode));
-                Vbxf  = *(ckt->CKTstate0 + here->HICUMvxf);
-                Vbxf1 = *(ckt->CKTstate0 + here->HICUMvxf1);
-                Vbxf2 = *(ckt->CKTstate0 + here->HICUMvxf2);
+                Vbxf  = *(ckt->CKTrhsOld + here->HICUMxfNode);
+                Vbxf1 = *(ckt->CKTrhsOld + here->HICUMxf1Node);
+                Vbxf2 = *(ckt->CKTrhsOld + here->HICUMxf2Node);
                 if (model->HICUMflsh)
                     Vrth = *(ckt->CKTstate0 + here->HICUMvrth);
             } else if(ckt->CKTmode & MODEINITTRAN) {
@@ -760,9 +760,9 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 Vsis = model->HICUMtype*(
                     *(ckt->CKTrhsOld+here->HICUMsubsSINode)-
                     *(ckt->CKTrhsOld+here->HICUMsubsNode));
-                Vbxf  = *(ckt->CKTstate1 + here->HICUMvxf);
-                Vbxf1 = *(ckt->CKTstate1 + here->HICUMvxf1);
-                Vbxf2 = *(ckt->CKTstate1 + here->HICUMvxf2);
+                Vbxf  = *(ckt->CKTrhsOld + here->HICUMxfNode);
+                Vbxf1 = *(ckt->CKTrhsOld + here->HICUMxf1Node);
+                Vbxf2 = *(ckt->CKTrhsOld + here->HICUMxf2Node);
                 if (model->HICUMflsh)
                     Vrth = *(ckt->CKTstate1 + here->HICUMvrth);
             } else if((ckt->CKTmode & MODEINITJCT) &&
@@ -1230,10 +1230,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 a       = vc/here->HICUMvt;
                 d1      = a-1;
                 vceff   = (1.0+((d1+sqrt(d1*d1+1.921812))/2))*here->HICUMvt;
-                // a       = vceff/vlim_t;
-                // ick     = vceff*Orci0_t/sqrt(1.0+a*a);
-                // ICKa    = (vceff-vlim_t)*Ovpt;
-                // ick     = ick*(1.0+0.5*(ICKa+sqrt(ICKa*ICKa+1.0e-3)));
 
                 a1       = vceff/here->HICUMvlim_t;
                 a11      = vceff*Orci0_t;
@@ -1287,7 +1283,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             Tf      = T_f0;
             Qf      = T_f0*itf;
             HICQFF(here, model, itf,ick,&Tf,&Qf,&T_fT,&Q_fT,&Q_bf);
-//todo: itf=f(Vbiei,Vbici) -> Qf, Q_bf Ableitungen nach Vbiei, Vbici
+//TODO: itf=f(Vbiei,Vbici) -> Qf, Q_bf Ableitungen nach Vbiei, Vbici
             //Initial formulation of reverse diffusion charge
             Qr      = Tr*itr;
 
@@ -1297,7 +1293,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 //Iteration for Q_pT is required for improved initial solution
                 Qf      = sqrt(T_f0*itf*Q_fT);
                 Q_pT    = Q_0+Qf+Qr;
-//todo: Q_pT_Vbiei, Vbici
+//TODO: Q_pT_Vbiei, Vbici
                 d_Q     = Q_pT;
                 while (fabs(d_Q) >= RTOLC*fabs(Q_pT) && l_it <= l_itmax) {
                     double a;
@@ -1340,6 +1336,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 Qr      = Tr*itr;
 
             } //if
+            // TODO calculate here the derivatives once! They are not needed inside the newton...
             itf_Vbiei = itf/VT_f; // TODO: missing the derivatives of Qf
             itr_Vbici = itr/here->HICUMvt; // TODO: missing the derivatives of Qpt
 
@@ -1577,16 +1574,22 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             // Excess Phase calculation
 
             if ((model->HICUMflnqs != 0 || model->HICUMflcomp == 0.0 || model->HICUMflcomp == 2.1) && Tf != 0 && (model->HICUMalit > 0 || model->HICUMalqf > 0)) {
-                Vxf1  = Vbxf1;
-                Vxf2  = Vbxf2;
+                // Vxf1  = Vbxf1;
+                // Vxf2  = Vbxf2;
 
-                Ixf1  = (Vxf2-itf)/Tf*model->HICUMt0;
-                Ixf2  = (Vxf2-Vxf1)/Tf*model->HICUMt0;
-                Qxf1      = model->HICUMalit*model->HICUMt0*Vxf1;
-                Qxf1_Vxf1 = model->HICUMalit*model->HICUMt0;
-                Qxf2      = model->HICUMalit*model->HICUMt0*Vxf2/3;
-                Qxf2_Vxf2 = model->HICUMalit*model->HICUMt0/3;
-                Itxf  = Vxf2;
+                // Ixf1  = (Vxf2-itf)/Tf*model->HICUMt0;
+                // Ixf2  = (Vxf2-Vxf1)/Tf*model->HICUMt0;
+                // Qxf1      = model->HICUMalit*model->HICUMt0*Vxf1;
+                // Qxf1_Vxf1 = model->HICUMalit*model->HICUMt0;
+                // Qxf2      = model->HICUMalit*model->HICUMt0*Vxf2/3;
+                // Qxf2_Vxf2 = model->HICUMalit*model->HICUMt0/3;
+                // Itxf  = Vxf2;
+                Ixf1  =  Vbxf1;
+                Ixf2  =  Vbxf2;
+                Qxf1  =  0;
+                Qxf2  =  0;
+                Qxf1_Vxf1 = 0;
+                Qxf2_Vxf2 = 0;
 
                 // TODO derivatives of Ixf1 and Ixf2
 
@@ -2331,7 +2334,7 @@ c           Branch: xf1-ground, Stamp element: Qxf1
 /*
 c           Branch: xf1-ground, Stamp element: Rxf1
 */
-            *(here->HICUMxf1Xf1Ptr) +=  Tf; // current Ixf1 is normalized to Tf
+            *(here->HICUMxf1Xf1Ptr) +=  1; // current Ixf1 is normalized to Tf
 /*
 c           Branch: xf2-ground,  Stamp element: Ixf2
 */
@@ -2351,7 +2354,7 @@ c           Branch: xf2-ground, Stamp element: Qxf2
 /*
 c           Branch: xf2-ground, Stamp element: Rxf2
 */
-            *(here->HICUMxf2Xf2Ptr) +=  Tf; // current Ixf2 is normalized to Tf
+            *(here->HICUMxf2Xf2Ptr) +=  1; // current Ixf2 is normalized to Tf
 /*
 c           Branch: xf-ground,  Stamp element: Ixf
 */
@@ -2366,13 +2369,13 @@ c           Branch: xf-ground,  Stamp element: Ixf
 /*
 c           Branch: xf-ground, Stamp element: Qxf
 */
-            rhs_current = model->HICUMtype * (Iqxf - Iqxf_Vxf*Vxf);
-            *(ckt->CKTrhs + here->HICUMxfNode)   += rhs_current; // into ground
-            *(here->HICUMxfXfPtr)                += Iqxf_Vxf;
+            // rhs_current = model->HICUMtype * (Iqxf - Iqxf_Vxf*Vxf);
+            // *(ckt->CKTrhs + here->HICUMxfNode)   += rhs_current; // into ground
+            // *(here->HICUMxfXfPtr)                += Iqxf_Vxf;
 /*
 c           Branch: xf-ground, Stamp element: Rxf
 */
-            *(here->HICUMxfXfPtr) +=  Tf; // current Ixf is normalized to Tf
+            *(here->HICUMxfXfPtr) +=  1; // current Ixf is normalized to Tf
 
             if (model->HICUMflsh) {
 /*
