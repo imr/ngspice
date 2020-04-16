@@ -7592,9 +7592,9 @@ static struct card *pspice_compat(struct card *oldcard)
     /* add funcs limit, pwr, pwrs, stp, if, int */
     new_str = copy(".func limit(x, a, b) { min(max(x, a), b) }");
     nextcard = insert_new_line(nextcard, new_str, 4, 0);
-    new_str = copy(".func pwr(x, a) { abs(x) ** a }");
+    new_str = copy(".func pwr(x, a) { pow(x, a) }");
     nextcard = insert_new_line(nextcard, new_str, 5, 0);
-    new_str = copy(".func pwrs(x, a) { sgn(x) * pwr(x, a) }");
+    new_str = copy(".func pwrs(x, a) { sgn(x) * pow(x, a) }");
     nextcard = insert_new_line(nextcard, new_str, 6, 0);
     new_str = copy(".func stp(x) { u(x) }");
     nextcard = insert_new_line(nextcard, new_str, 7, 0);
