@@ -531,6 +531,9 @@ static int EVTsetup_load_ptrs(
         /* Get the MIFinstance pointer */
         fast = ckt->evt->info.inst_table[i]->inst_ptr;
 
+        /* Reset init flag, required when any run is called a second time */
+        fast->initialized = FALSE;
+
         /* Loop through all connections */
         num_conn = fast->num_conn;
         for(j = 0; j < num_conn; j++) {
