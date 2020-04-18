@@ -61,7 +61,7 @@ static int EVTsetup_data(CKTcircuit *ckt);
 static int EVTsetup_jobs(CKTcircuit *ckt);
 static int EVTsetup_load_ptrs(CKTcircuit *ckt);
 
-int EVTsetup_plot(CKTcircuit* ckt, char* plotname);
+int EVTsetup_plot(CKTcircuit* ckt, char* plottypename);
 
 
 /* Allocation macros with built-in check for out-of-memory */
@@ -610,7 +610,43 @@ int EVTsetup_plot(CKTcircuit* ckt, char *plotname) {
     Evt_Job_t* jobs = &(ckt->evt->jobs);
     if (jobs) {
         jobs->job_plot[jobs->num_jobs - 1] = copy(plotname);
+        jobs->cur_job = jobs->num_jobs - 1;
         return OK;
+    }
+    return 1;
+}
+
+/* If command 'setplot' is called, we switch to the corresponding event data.
+   Their pointers have been stored in the jobs structure.*/
+int EVTswitch_plot(CKTcircuit* ckt, const char* plottypename) {
+    int i;
+    bool found = FALSE;
+
+    Evt_Job_t* jobs;
+    Evt_Data_t* data;
+
+    if (ckt->evt->counts.num_insts == 0)
+        return(OK);
+
+    jobs = &(ckt->evt->jobs);
+    data = &(ckt->evt->data);
+
+    if (jobs) {
+        /* check for the job with current plot type name , e.g. tran2 */
+        for (i = 0; i < jobs->num_jobs; i++) {
+            if (jobs->job_plot[i] && eq(jobs->job_plot[i], plottypename)) {
+                found = TRUE;
+                jobs->cur_job = i;
+                break;
+            }
+        }
+        if (found) {
+            data->node = jobs->node_data[i];
+            data->state = jobs->state_data[i];
+            data->msg = jobs->msg_data[i];
+            data->statistics = jobs->statistics[i];
+            return OK;
+        }
     }
     return 1;
 }
