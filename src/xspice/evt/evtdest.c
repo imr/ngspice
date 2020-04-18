@@ -268,6 +268,7 @@ Evt_Job_destroy(Evt_Ckt_Data_t* evt, Evt_Job_t *job)
         tfree(job->state_data[i]);
         tfree(job->node_data[i]);
         tfree(job->msg_data[i]);
+        tfree(job->statistics[i]);
     }
 
     tfree(job->job_name);
