@@ -11,7 +11,7 @@ static void Evt_Msg_Data_destroy(Evt_Ckt_Data_t *evt, Evt_Msg_Data_t *msg_data);
 static void Evt_Queue_destroy(Evt_Ckt_Data_t *evt, Evt_Queue_t *queue);
 static void Evt_State_Data_destroy(Evt_Ckt_Data_t *evt, Evt_State_Data_t *state_data);
 static void Evt_Data_destroy(Evt_Ckt_Data_t *evt, Evt_Data_t *data);
-static void Evt_Job_destroy(Evt_Job_t *job);
+static void Evt_Job_destroy(Evt_Ckt_Data_t* evt, Evt_Job_t *job);
 static void Evt_Info_destroy(Evt_Info_t *info);
 
 
@@ -23,8 +23,8 @@ EVTdest(Evt_Ckt_Data_t *evt)
         return OK;
 
     Evt_Queue_destroy(evt, & evt->queue);
-    Evt_Data_destroy(evt, & evt->data);
-    Evt_Job_destroy(& evt->jobs);
+    /* evt->data is removed during Evt_Job_destroy() */
+    Evt_Job_destroy(evt, & evt->jobs);
     Evt_Info_destroy(& evt->info);
 
     return OK;
@@ -254,16 +254,21 @@ Evt_Msg_Data_destroy(Evt_Ckt_Data_t *evt, Evt_Msg_Data_t *msg_data)
 
 
 static void
-Evt_Job_destroy(Evt_Job_t *job)
+Evt_Job_destroy(Evt_Ckt_Data_t* evt, Evt_Job_t *job)
 {
     int i;
 
-    for (i = 0; i < job->num_jobs; i++)
+    for (i = 0; i < job->num_jobs; i++) {
         tfree(job->job_name[i]);
-    for (i = 0; i < job->num_jobs; i++)
         tfree(job->job_plot[i]);
 
+        Evt_State_Data_destroy(evt, job->state_data[i]);
+        Evt_Node_Data_destroy(evt, job->node_data[i]);
+        Evt_Msg_Data_destroy(evt, job->msg_data[i]);
+    }
+
     tfree(job->job_name);
+    tfree(job->job_plot);
     tfree(job->node_data);
     tfree(job->state_data);
     tfree(job->msg_data);
