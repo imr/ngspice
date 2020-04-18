@@ -61,7 +61,7 @@ static int EVTsetup_data(CKTcircuit *ckt);
 static int EVTsetup_jobs(CKTcircuit *ckt);
 static int EVTsetup_load_ptrs(CKTcircuit *ckt);
 
-
+int EVTsetup_plot(CKTcircuit* ckt, char* plotname);
 
 
 /* Allocation macros with built-in check for out-of-memory */
@@ -469,6 +469,7 @@ static int EVTsetup_jobs(
 
     /* Allocate/reallocate necessary pointers */
     CKREALLOC(jobs->job_name, num_jobs, char *)
+    CKREALLOC(jobs->job_plot, num_jobs, char *)
     CKREALLOC(jobs->node_data, num_jobs, Evt_Node_Data_t *)
     CKREALLOC(jobs->state_data, num_jobs, Evt_State_Data_t *)
     CKREALLOC(jobs->msg_data, num_jobs, Evt_Msg_Data_t *)
@@ -477,6 +478,7 @@ static int EVTsetup_jobs(
     /* Fill in the pointers, etc. for this new job */
     i = num_jobs - 1;
     jobs->job_name[i] = MIFcopy(ckt->CKTcurJob->JOBname);
+    jobs->job_plot[i] = NULL; /* fill in later */
     jobs->node_data[i] = data->node;
     jobs->state_data[i] = data->state;
     jobs->msg_data[i] = data->msg;
@@ -598,4 +600,17 @@ static int EVTsetup_load_ptrs(
     } /* end for number of insts */
 
     return(OK);
+}
+
+/* get the analog plot name and store it into the current event job */
+int EVTsetup_plot(CKTcircuit* ckt, char *plotname) {
+    if (ckt->evt->counts.num_insts == 0)
+        return(OK);
+    
+    Evt_Job_t* jobs = &(ckt->evt->jobs);
+    if (jobs) {
+        jobs->job_plot[jobs->num_jobs - 1] = copy(plotname);
+        return OK;
+    }
+    return 1;
 }

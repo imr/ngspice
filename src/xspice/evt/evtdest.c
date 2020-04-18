@@ -260,6 +260,8 @@ Evt_Job_destroy(Evt_Job_t *job)
 
     for (i = 0; i < job->num_jobs; i++)
         tfree(job->job_name[i]);
+    for (i = 0; i < job->num_jobs; i++)
+        tfree(job->job_plot[i]);
 
     tfree(job->job_name);
     tfree(job->node_data);

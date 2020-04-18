@@ -34,6 +34,7 @@ Modified: 2000 AlansFixes, 2013/2015 patch by Krzysztof Blaszkowski
 
 extern char *spice_analysis_get_name(int index);
 extern char *spice_analysis_get_description(int index);
+extern int EVTsetup_plot(CKTcircuit* ckt, char* plotname);
 
 
 static int beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analName,
@@ -398,6 +399,11 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
             plotInit(run);
             if (refName)
                 run->runPlot->pl_ndims = 1;
+#ifdef XSPICE
+            /* set the current plot name into the event job */
+            if (run->runPlot->pl_typename)
+                EVTsetup_plot(run->circuit, run->runPlot->pl_typename);
+#endif
         }
     }
 
