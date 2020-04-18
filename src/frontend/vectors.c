@@ -33,11 +33,9 @@ static struct dvec *find_permanent_vector_by_name(
 static enum ALL_TYPE_ENUM get_all_type(const char *word);
 static bool plot_prefix(const char *pre, const char *str);
 
-
 #ifdef XSPICE
-/* gtri - begin - add function prototype for EVTfindvec */
+extern int EVTswitch_plot(CKTcircuit* ckt, const char* plottypename);
 struct dvec *EVTfindvec(char *node);
-/* gtri - end   - add function prototype for EVTfindvec */
 #endif
 
 
@@ -1133,6 +1131,7 @@ void plot_setcur(const char *name)
         }
         if (prev_pl) { /* found */
             plot_cur = prev_pl;
+            EVTswitch_plot(ft_curckt->ci_ckt, plot_cur->pl_typename);
         }
         else { /* no next plot */
             fprintf(cp_err,
@@ -1157,6 +1156,7 @@ void plot_setcur(const char *name)
      plot_cur->pl_ccom = cp_kwswitch(CT_VECTOR, pl->pl_ccom);
      }
     */
+    EVTswitch_plot(ft_curckt->ci_ckt, name);
     plot_cur = pl;
 } /* end of function plot_setcur */
 

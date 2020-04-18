@@ -334,6 +334,7 @@ struct Evt_Limit {
 
 struct Evt_Job {
     int                num_jobs;           /* Number of jobs run */
+    int                cur_job;            /* job selected for plotting etc */
     char               **job_name;         /* Names of different jobs */
     char               **job_plot;         /* Names of different plots created by the job */
     Evt_Node_Data_t    **node_data;        /* node_data for different jobs */
