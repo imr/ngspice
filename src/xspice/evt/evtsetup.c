@@ -617,7 +617,9 @@ int EVTsetup_plot(CKTcircuit* ckt, char *plotname) {
 }
 
 /* If command 'setplot' is called, we switch to the corresponding event data.
-   Their pointers have been stored in the jobs structure.*/
+   Their pointers have been stored in the jobs structure. The circuit must
+   be still available!
+*/
 int EVTswitch_plot(CKTcircuit* ckt, const char* plottypename) {
     int i;
     bool found = FALSE;
