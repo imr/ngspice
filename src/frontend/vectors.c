@@ -1111,6 +1111,11 @@ void plot_setcur(const char *name)
     else if (cieq(name, "previous")) {
         if (plot_cur->pl_next) {
             plot_cur = plot_cur->pl_next;
+#ifdef XSPICE
+            if (ft_curckt) {
+                EVTswitch_plot(ft_curckt->ci_ckt, plot_cur->pl_typename);
+            }
+#endif
         }
         else {
             fprintf(cp_err,
@@ -1131,7 +1136,11 @@ void plot_setcur(const char *name)
         }
         if (prev_pl) { /* found */
             plot_cur = prev_pl;
-            EVTswitch_plot(ft_curckt->ci_ckt, plot_cur->pl_typename);
+#ifdef XSPICE
+            if (ft_curckt) {
+                EVTswitch_plot(ft_curckt->ci_ckt, plot_cur->pl_typename);
+            }
+#endif
         }
         else { /* no next plot */
             fprintf(cp_err,
@@ -1156,7 +1165,14 @@ void plot_setcur(const char *name)
      plot_cur->pl_ccom = cp_kwswitch(CT_VECTOR, pl->pl_ccom);
      }
     */
-    EVTswitch_plot(ft_curckt->ci_ckt, name);
+#ifdef XSPICE
+    /* XSPICE event data are linked to the current circuit. It must not be removed
+       when manipulating the data by any command.
+    */
+    if (ft_curckt) {
+        EVTswitch_plot(ft_curckt->ci_ckt, name);
+    }
+#endif
     plot_cur = pl;
 } /* end of function plot_setcur */
 
