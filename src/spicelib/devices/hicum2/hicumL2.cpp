@@ -591,7 +591,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double itf,itr,Tf,Tr,VT_f,i_0f,i_0r,a_bpt,Q_0,Q_p,Q_bpt;
     double Orci0_t,b_q,I_Tf1,T_f0,Q_fT,T_fT,Q_bf;
     double a_h,Q_pT,d_Q;
-    double Qf,Cdei,Qr,Cdci;
+    double Qf,Qf_Vbiei,Qf_Vbici,Qf_dT,Cdei,Qr,Cdci;
     double ick, ick_Vciei, ick_dT,vc,cjcx01,cjcx02;
     int l_it;
 
@@ -648,7 +648,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Ibci,  Ibci_Vbci, Ibci_dT;
     double hjei_vbe_Vbiei, hjei_vbe_dT, ibet_Vbpei=0.0, ibet_dT=0, ibet_Vbiei=0.0, ibh_rec_Vbiei;
     double irei_Vbiei, irei_dT;
-    double irep_Vbpei, iavl_Vbici, rbi_Vbiei, rbi_Vbici;
+    double irep_Vbpei, iavl_Vbici, rbi_dT, rbi_dQjei, rbi_dCjci, rbi_dQf, rbi_Vbiei, rbi_Vbici;
     double ibei_Vbiei, ibei_dT;
     double Q_0_Vbiei, Q_0_Vbici, Q_0_hjei_vbe, Q_0_Qjci, Q_0_Qjei, Q_0_dT;
 
@@ -845,6 +845,38 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
         }
         // Note that iavl = 0.0 is already set in the initialization block for use_aval == 0 (Markus: not for this lambda!)
         return iavl;
+    };
+
+    std::function<duals::duald (duals::duald, duals::duald, duals::duald, duals::duald)> calc_rbi = [&](duals::duald T, duals::duald Qjei, duals::duald Cjci, duals::duald Qf){
+        //Internal base resistance
+        duals::duald vt,rbi;
+        vt      = CONSTboltz * T / CHARGE;
+        if(here->HICUMrbi0_t > 0.0){ //: HICRBI
+            duals::duald Qz_nom,f_QR,ETA,Qz0,fQz;
+            // Consideration of conductivity modulation
+            // To avoid convergence problem hyperbolic smoothing used
+            f_QR    = (1+model->HICUMfdqr0)*here->HICUMqp0_t;
+            Qz0     = Qjei+Qjci+Qf;
+            Qz_nom  = 1+Qz0/f_QR;
+            fQz     = 0.5*(Qz_nom+sqrt(Qz_nom*Qz_nom+0.01));
+            rbi     = here->HICUMrbi0_t/fQz;
+            // Consideration of emitter current crowding
+            if( ibei > 0.0) {
+                ETA     = rbi*ibei*model->HICUMfgeo/vt;
+                if(ETA < 1.0e-6) {
+                    rbi     = rbi*(1.0-0.5*ETA);
+                } else {
+                    rbi     = rbi*log(1.0+ETA)/ETA;
+                }
+            }
+            // Consideration of peripheral charge
+            if(Qf > 0.0) {
+                rbi     = rbi*(Qjei+Qf*model->HICUMfqi)/(Qjei+Qf);
+            }
+         } else {
+            rbi     = 0.0;
+        }
+        return rbi;
     };
 
     /*  loop through all the models */
@@ -1573,50 +1605,20 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 //todo: Q_bf derivatives to Vbiei
             ibh_rec_Vbiei = 0.0;
 
-//todo: Qf derivatives to Vbiei, Vbici
-            //Internal base resistance = f(Vbiei, Vbici)
-            if(here->HICUMrbi0_t > 0.0) { // HICRBI
-                double Qz_nom,f_QR,ETA,Qz0,fQz,ETA_Vbiei,ETA_Vbici,fQz_Vbiei,fQz_Vbici,Qz_nom_Vbiei,Qz_nom_Vbici,d1;
-                // Consideration of conductivity modulation
-                // To avoid convergence problem hyperbolic smoothing used
-                f_QR    = (1+model->HICUMfdqr0)*here->HICUMqp0_t;
-                Qz0     = Qjei+Qjci+Qf;
-                Qz_nom  = 1+Qz0/f_QR;
-                Qz_nom_Vbiei=Cjei/f_QR;
-                Qz_nom_Vbici=Cjci/f_QR;
-                d1      = sqrt(Qz_nom*Qz_nom+0.01);
-                fQz     = 0.5*(Qz_nom+d1);
-                fQz_Vbiei=0.5*(Qz_nom*Qz_nom_Vbiei/d1+Qz_nom_Vbiei);
-                fQz_Vbici=0.5*(Qz_nom*Qz_nom_Vbici/d1+Qz_nom_Vbici);
-                rbi     = here->HICUMrbi0_t/fQz;
-                rbi_Vbiei=-here->HICUMrbi0_t*fQz_Vbiei/(fQz*fQz);
-                rbi_Vbici=-here->HICUMrbi0_t*fQz_Vbici/(fQz*fQz);
-                // Consideration of emitter current crowding
-                if( ibei > 0.0) {
-                    ETA     = rbi*ibei*model->HICUMfgeo/here->HICUMvt;
-                    ETA_Vbiei = (rbi*Ibiei_Vbiei+rbi_Vbiei*ibei)*model->HICUMfgeo/here->HICUMvt;
-                    ETA_Vbici = rbi_Vbici*ibei*model->HICUMfgeo/here->HICUMvt;
-                    if(ETA < 1.0e-6) {
-                        rbi     = rbi*(1.0-0.5*ETA);
-                        rbi_Vbiei = rbi_Vbiei-0.5*(rbi*ETA_Vbiei+rbi_Vbiei*ETA);
-                        rbi_Vbici = rbi_Vbici-0.5*(rbi*ETA_Vbici+rbi_Vbici*ETA);
-                    } else {
-                        rbi     = rbi*log(1.0+ETA)/ETA;
-                        rbi_Vbiei=log(ETA+1)*rbi_Vbiei/ETA - rbi*ETA_Vbiei*log(ETA+1)/ETA/ETA + rbi*ETA_Vbiei/(ETA*(ETA+1));
-                        rbi_Vbici=log(ETA+1)*rbi_Vbici/ETA - rbi*ETA_Vbici*log(ETA+1)/ETA/ETA + rbi*ETA_Vbici/(ETA*(ETA+1));
-                    }
-                }
-                // Consideration of peripheral charge
-                if(Qf > 0.0) {
-                    rbi     = rbi*(Qjei+Qf*model->HICUMfqi)/(Qjei+Qf);
-                    rbi_Vbiei = (Qjei+Qf*model->HICUMfqi)*rbi_Vbiei/(Qjei+Qf) + rbi*Cjei/(Qjei+Qf) - (Qjei+Qf*model->HICUMfqi)*rbi*Cjei/(Qjei+Qf)/(Qjei+Qf);
-                    rbi_Vbici = rbi_Vbici*(Qjei+Qf*model->HICUMfqi)/(Qjei+Qf);
-                }
-            } else {
-                rbi     = 0.0;
-                rbi_Vbiei = 0.0;
-                rbi_Vbici = 0.0;
-            }
+            //internal base resistance
+            result    = calc_rbi(here->HICUMtemp+1_e, Qjei    , Cjci    , Qf    );
+            rbi       = result.rpart();
+            rbi_dT    = result.dpart();
+            result    = calc_rbi(here->HICUMtemp    , Qjei+1_e, Cjci    , Qf    );
+            rbi_dQjei = result.dpart();
+            result    = calc_rbi(here->HICUMtemp    , Qjei    , Cjci+1_e, Qf    );
+            rbi_dCjci = result.dpart();
+            result    = calc_rbi(here->HICUMtemp    , Qjei    , Cjci    , Qf+1_e);
+            rbi_dQf   = result.dpart();
+
+            rbi_Vbiei = rbi_dQjei* Qjei_Vbiei  + rbi_dQf  * Qf_Vbiei ;
+            rbi_Vbici = rbi_dQf  * Qf_Vbici    + rbi_dCjci*Cjci_Vbici;
+            rbi_dT   += rbi_dQjei*Qjei_dT      + rbi_dCjci*Cjci_dT   + rbi_dQf*Qf_dT;
 
             //Base currents across peripheral b-e junction
             //TODO
