@@ -645,7 +645,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double irei_Vbiei, irei_dT;
     double irep_Vbpei, iavl_Vbici, rbi_Vbiei, rbi_Vbici;
     double ibei_Vbiei, ibei_dT;
-    double Q_0_Vbiei, Q_0_Vbici, b_q_Vbiei, b_q_Vbici;
+    double Q_0_Vbiei, Q_0_Vbici, Q_0_hjei_vbe, Q_0_Qjci, Q_0_Qjei, Q_0_dT;
 
     double Cjei_Vbiei,Cjci_Vbici,Cjep_Vbpei,CjCx_i_Vbci,CjCx_ii_Vbpci,Cjs_Vsici,Cscp_Vsc,Cjcit_Vbici,i_0f_Vbiei,i_0r_Vbici;
     double Cjei_dT, Cjci_dT;
@@ -719,16 +719,16 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     };
 
     //Hole charge at low bias
-    // std::function<duals::duald (duals::duald, duals::duald, duals::duald)> calc_Q_0 = [&](duals::duald Qjei, duals::duald Qjci, duals::duald hjei_vbe){
-    //     //Hole charge at low bias
-    //     duals::duald Q_0, b_q, Q_bpt ;
-    //     a_bpt   = 0.05;
-    //     Q_0     = here->HICUMqp0_t + hjei_vbe*Qjei + model->HICUMhjci*Qjci;
-    //     Q_bpt   = a_bpt*here->HICUMqp0_t;
-    //     b_q     = Q_0/Q_bpt-1;
-    //     Q_0     = Q_bpt*(1+(b_q +sqrt(b_q*b_q+1.921812))/2);
-    //     return Q_0;
-    // };
+    std::function<duals::duald (duals::duald, duals::duald, duals::duald)> calc_Q_0 = [&](duals::duald Qjei, duals::duald Qjci, duals::duald hjei_vbe){
+        //Hole charge at low bias
+        duals::duald Q_0, b_q, Q_bpt ;
+        a_bpt   = 0.05;
+        Q_0     = here->HICUMqp0_t + hjei_vbe*Qjei + model->HICUMhjci*Qjci;
+        Q_bpt   = a_bpt*here->HICUMqp0_t;
+        b_q     = Q_0/Q_bpt-1;
+        Q_0     = Q_bpt*(1+(b_q +sqrt(b_q*b_q+1.921812))/2);
+        return Q_0;
+    };
 
     /*  loop through all the models */
     for (; model != NULL; model = HICUMnextModel(model)) {
@@ -1277,18 +1277,22 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             //TODO: derivatives after cjci0_t, vdci_t, vptci_t
             hicum_HICJQ(here->HICUMtemp, here->HICUMcjci0_t,here->HICUMvdci_t,model->HICUMzci,here->HICUMvptci_t, Vbici, &Cjci, &Cjci_Vbici, &Cjci_dT, &Qjci, &Qjci_Vbici, &Qjci_dT);
 
-
-
             //Hole charge at low bias 
-            // double calc_Q0 = [&Q_0](){
-            //     // a_bpt   = 0.05;
-            //     // Q_0     = here->HICUMqp0_t + hjei_vbe*Qjei + model->HICUMhjci*Qjci;
-            //     // Q_bpt   = a_bpt*here->HICUMqp0_t;
-            //     // b_q     = Q_0/Q_bpt-1;
-            //     // Q_0     = Q_bpt*(1+(b_q +sqrt(b_q*b_q+1.921812))/2);
-            //     return double(1);
-            // };
-        
+            result    = calc_Q_0(Qjei+1_e, Qjci, hjei_vbe);
+            Q_0       = result.rpart();
+            Q_0_Qjei  = result.dpart();
+
+            result    = calc_Q_0(Qjei, Qjci+1_e, hjei_vbe);
+            Q_0_Qjci  = result.dpart();
+
+            result       = calc_Q_0(Qjei, Qjci+1_e, hjei_vbe);
+            Q_0_hjei_vbe = result.dpart();
+
+            Q_0_Vbiei    = Q_0_Qjei*Qjei_Vbiei + Q_0_hjei_vbe*hjei_vbe_Vbiei;
+            Q_0_Vbici    = Q_0_Qjci*Qjci_Vbici ;
+            Q_0_dT       = Q_0_Qjei*Qjei_dT + Q_0_Qjci*Qjci_dT * Q_0_hjei_vbe*hjei_vbe_dT;
+
+
             //Transit time calculation at low current density
             if(here->HICUMcjci0_t > 0.0) { // CJMODF
                 double cV_f,cv_e,cs_q,cs_q2,cv_j,cdvj_dv;
@@ -1319,7 +1323,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 cc       = 1.0;
                 cc_Vbici = 0.0;
             }
-            T_f0    = here->HICUMt0_t+model->HICUMdt0h*(cc-1.0)+model->HICUMtbvl*(1/cc-1.0);
+            T_f0       = here->HICUMt0_t+model->HICUMdt0h*(cc-1.0)+model->HICUMtbvl*(1/cc-1.0);
             T_f0_Vbici = model->HICUMdt0h*cc_Vbici+model->HICUMtbvl*(-cc_Vbici*cc/(cc*cc));
 
             //Effective collector voltage
