@@ -5,15 +5,16 @@ noinst_LTLIBRARIES = libhicum2.la
 libhicum2_la_SOURCES =	\
 	hicum2.c		\
 	hicum2acld.c	\
-	hicum2ask.c	\
+	hicum2ask.c	    \
 	hicum2conv.c	\
 	hicum2defs.h	\
-	hicum2ext.h	\
+	hicum2ext.h   	\
 	hicum2getic.c	\
 	hicum2init.c	\
 	hicum2init.h	\
-	hicum2itf.h	\
-	hicum2load.c	\
+	hicum2itf.h	    \
+	hicumL2.hpp     \
+	hicumL2.cpp     \
 	hicum2mask.c	\
 	hicum2mpar.c	\
 	hicum2noise.c	\
@@ -25,8 +26,8 @@ libhicum2_la_SOURCES =	\
 	hicum2trunc.c
 
 
-
-AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
-AM_CFLAGS = $(STATIC)
+AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include -lstdc++
+AM_CFLAGS = -I/home/markus/Documents/Gitprojects/cppduals -lstdc++ -I$(top_srcdir)/src/include
+AM_CXXFLAGS = -I/home/markus/Documents/Gitprojects/cppduals -I$(top_srcdir)/src/include -lstdc++
 
 MAINTAINERCLEANFILES = Makefile.in

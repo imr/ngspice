@@ -428,6 +428,10 @@ extern int DCpss(CKTcircuit *, int);
 /* SP */
 #endif
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 extern int NaskQuest(CKTcircuit *, JOB *, int, IFvalue *);
 extern int NsetParm(CKTcircuit *, JOB *, int, IFvalue *);
 extern int NIacIter(CKTcircuit *);
@@ -436,6 +440,7 @@ extern int NIconvTest(CKTcircuit *);
 extern void NIdestroy(CKTcircuit *);
 extern int NIinit(CKTcircuit  *);
 extern int NIintegrate(CKTcircuit *, double *, double *, double , int);
+extern void dummdumm(int dumm);
 extern int NIiter(CKTcircuit * , int);
 extern int NIpzMuller(PZtrial **, PZtrial *);
 extern int NIpzComplex(PZtrial **, PZtrial *);
@@ -445,6 +450,9 @@ extern int NIreinit(CKTcircuit *);
 extern int NIsenReinit(CKTcircuit *);
 extern int NIdIter (CKTcircuit *);
 extern void NInzIter(CKTcircuit *, int, int);
+#ifdef __cplusplus
+}
+#endif
 
 #ifdef PREDICTOR
 extern int NIpred(CKTcircuit *ckt);

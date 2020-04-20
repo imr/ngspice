@@ -14,6 +14,12 @@ Author: 1985 Thomas L. Quarles
 
 #define ccap qcap+1
 
+void dummdumm(int dumm)
+{
+    double dummy;
+    dummy=1;
+}
+
 int
 NIintegrate(CKTcircuit *ckt, double *geq, double *ceq, double cap, int qcap)
 {

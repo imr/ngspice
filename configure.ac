@@ -35,13 +35,16 @@ m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 ext_CFLAGS="${CFLAGS+yes}"
 
 AC_PROG_CC
+AC_PROG_CXX
 AX_PROG_CC_FOR_BUILD
 
 m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
 
-AC_SUBST([AM_CPPFLAGS], ['-I. -I$(srcdir) -I$(top_builddir)/src/include'])
+AC_SUBST([AM_CPPFLAGS], ['-I. -I$(srcdir) -I$(top_builddir)/src/include -I/home/markus/Documents/Gitprojects/cppduals'])
 
 AC_CONFIG_MACRO_DIR([m4])
+
+
 
 # Package Options
 # ---------------
@@ -220,7 +223,7 @@ if test "x$ext_CFLAGS" != xyes; then
     else
         AC_DEFINE([NGDEBUG], [1], [Compile with debug info])
         if test "x$GCC" = xyes; then
-            CFLAGS="-g -O1"
+            CFLAGS="-g " #why -O1 here
         else
             CFLAGS="-g"
         fi
@@ -633,6 +636,7 @@ AC_ARG_ENABLE([rpath],
     ]
 )
 
+
 if test "x$_use_rpath" = xyes ; then
     # Try to figure out if we need -Rpath for finding X11 libs
     # at runtime.  Why autoconf doesn't already do this, I don't
@@ -694,6 +698,8 @@ else
     AC_MSG_RESULT([No X display!])
     has_no_x=true
 fi
+# Additional libs of hicum group
+X_LIBS = "$X_LIBS -lstdc++"
 
 if test "x$enable_help" = xyes  &&  test "x$no_x" != xyes ; then
     has_no_help=false

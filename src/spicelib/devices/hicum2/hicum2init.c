@@ -10,6 +10,7 @@
 #include "hicum2itf.h"
 #include "hicum2ext.h"
 #include "hicum2init.h"
+#include "hicumL2.hpp"
 
 
 SPICEdev HICUMinfo = {
