@@ -11,6 +11,28 @@ Spice3 Implementation: 2019 Dietmar Warning, Markus Müller, Mario Krattenmacher
  * - We use dual numbers to calculate derivatives, this is readble and error proof.
  * - The code is targeted to be readbale and maintainable, speed is sacrificied for this purpose.
  * - The verilog a code is available at the website of TU Dresden, Michael Schroeter#s chair.
+ * 
+ * Checklist of what needs to be done: (@Mario: also look at this, did I get everything?)
+ * - ijBEp
+ * - ijBCx
+ * - QjEp
+ * - QBCx'
+ * - QBCx''
+ * - QdS
+ * - QjS
+ * - iTS
+ * - ijSC
+ * - rbi
+ * - crbi,qrbi
+ * - Qjci
+ * - Qjei
+ * - ijBCi
+ * - ijBEi
+ * - Qf
+ * - Qr
+ * - iavl
+ * - iBEti (?)
+ * - itf, itr
  */
 
 #include "cmath"
@@ -648,11 +670,12 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Ibci,  Ibci_Vbci, Ibci_dT;
     double hjei_vbe_Vbiei, hjei_vbe_dT, ibet_Vbpei=0.0, ibet_dT=0, ibet_Vbiei=0.0, ibh_rec_Vbiei;
     double irei_Vbiei, irei_dT;
-    double irep_Vbpei, iavl_Vbici, rbi_dT, rbi_dQjei, rbi_dCjci, rbi_dQf, rbi_Vbiei, rbi_Vbici;
+    double ibep_Vbpei, ibep_dT;
+    double irep_Vbpei, irep_dT, iavl_Vbici, rbi_dT, rbi_dQjei, rbi_dCjci, rbi_dQf, rbi_Vbiei, rbi_Vbici;
     double ibei_Vbiei, ibei_dT;
     double Q_0_Vbiei, Q_0_Vbici, Q_0_hjei_vbe, Q_0_Qjci, Q_0_Qjei, Q_0_dT;
 
-    double Cjei_Vbiei,Cjci_Vbici,Cjep_Vbpei,Cjs_Vsici,Cscp_Vsc,Cjcit_Vbici,i_0f_Vbiei,i_0r_Vbici;
+    double Cjei_Vbiei,Cjci_Vbici,Cjep_Vbpei,Cjep_dT,Cjs_Vsici,Cscp_Vsc,Cjcit_Vbici,i_0f_Vbiei,i_0r_Vbici;
     double Cjei_dT, Cjci_dT;
     double Qjei_Vbiei, Qjei_dT, Qjci_Vbici, Qjci_dT;
     double cc_Vbici,T_f0_Vbici,T_f0_Qjci, T_f0_dT,Q_p_Vbiei,Q_p_Vbici,I_Tf1_Vbiei,I_Tf1_Vbici,itf_Vbiei,itf_Vbici,itf_dT,itr_Vbiei,itr_Vbici;
@@ -668,7 +691,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Qrbi_Vbici;
     double Qdeix_Vbiei;
     double Qdci_Vbici;
-    double Qjep_Vbpei;
+    double Qjep_Vbpei,Qjep_dT;
     double qjcx0_t_i_Vbci;
     double qjcx0_t_ii_Vbpci;
     double Qdsu_Vbpci;
@@ -1616,22 +1639,22 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             result    = calc_rbi(here->HICUMtemp    , Qjei    , Cjci    , Qf+1_e);
             rbi_dQf   = result.dpart();
 
-            rbi_Vbiei = rbi_dQjei* Qjei_Vbiei  + rbi_dQf  * Qf_Vbiei ;
-            rbi_Vbici = rbi_dQf  * Qf_Vbici    + rbi_dCjci*Cjci_Vbici;
-            rbi_dT   += rbi_dQjei*Qjei_dT      + rbi_dCjci*Cjci_dT   + rbi_dQf*Qf_dT;
+            rbi_Vbiei = rbi_dQjei* Qjei_Vbiei  + rbi_dQf  *Qf_Vbiei                  ;
+            rbi_Vbici = rbi_dQf  * Qf_Vbici    + rbi_dCjci*Cjci_Vbici                ;
+            rbi_dT   += rbi_dQjei*Qjei_dT      + rbi_dCjci*Cjci_dT    + rbi_dQf*Qf_dT;
 
             //Base currents across peripheral b-e junction
-            //TODO
-            //HICDIO(here->HICUMvt,model->HICUMibeps,here->HICUMibeps_t,model->HICUMmbep,Vbpei,&ibep,&Ibpei_Vbpei);
-            //TODO
-            //HICDIO(here->HICUMvt,model->HICUMireps,here->HICUMireps_t,model->HICUMmrep,Vbpei,&irep,&irep_Vbpei);
+            //TODO: temperature derivative with ibeps_t ireps_t
+            hicum_diode(here->HICUMtemp,here->HICUMibeps_t,model->HICUMmbep, Vbpei, &ibep, &ibep_Vbpei, &ibep_dT);
+            hicum_diode(here->HICUMtemp,here->HICUMireps_t,model->HICUMmrep, Vbpei, &irep, &irep_Vbpei, &irep_dT);
 
             //Peripheral b-e junction capacitance and charge
-            //TODO
-            //QJMODF(here->HICUMvt,here->HICUMcjep0_t,here->HICUMvdep_t,model->HICUMzep,here->HICUMajep_t,Vbpei,&Cjep,&Cjep_Vbpei,&Qjep);
+            //TODO: derivatives with cjep0_t vdep_t
+            hicum_qjmodf(here->HICUMtemp,here->HICUMcjep0_t,here->HICUMvdep_t,model->HICUMzep,here->HICUMajep_t,Vbpei,&Cjep,&Cjep_Vbpei, &Cjep_dT,&Qjep, &Qjep_Vbpei, &Qjep_dT);
 
             //Tunneling current
             //TODO: missing temperature derivatives abet_t vdei_t ibets_t cjei0_t vdep_t ibets_t cjep0_t
+            //@Mario: is there really no direct T dependence here?
             result      = calc_ibet(Vbiei, Vbpei+1_e);
             ibet        = result.rpart();
             ibet_Vbpei  = result.dpart();
@@ -1645,12 +1668,10 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             hicum_diode(here->HICUMtemp,here->HICUMibcxs_t,model->HICUMmbcx, Vbpci, &ijbcx, &ijbcx_Vbpci, &ijbcx_dT);
 
             //Depletion capacitance and charge at external b-c junction (b,ci)
-            //HICJQ(here->HICUMvt,here->HICUMcjcx01_t,here->HICUMvdcx_t,model->HICUMzcx,here->HICUMvptcx_t,Vbci,&CjCx_i,&CjCx_i_Vbci,&qjcx0_t_i);
             //TODO: derivatives after cjcx01_t, vdcx_t, vptcx_t
             hicum_HICJQ(here->HICUMtemp, here->HICUMcjcx01_t,here->HICUMvdcx_t,model->HICUMzcx,here->HICUMvptcx_t, Vbci, &Cjcx_i, &Cjcx_i_Vbci, &Cjcx_i_dT, &Qjcx_i, &Qjcx_i_Vbci, &Qjcx_i_dT);
 
             //Depletion capacitance and charge at peripheral b-c junction (bp,ci)
-            //HICJQ(here->HICUMvt,here->HICUMcjcx02_t,here->HICUMvdcx_t,model->HICUMzcx,here->HICUMvptcx_t,Vbpci,&CjCx_ii,&CjCx_ii_Vbpci,&qjcx0_t_ii);
             //TODO: derivatives after cjcx02_t, vdcx_t, vptcx_t
             hicum_HICJQ(here->HICUMtemp, here->HICUMcjcx02_t,here->HICUMvdcx_t,model->HICUMzcx,here->HICUMvptcx_t, Vbpci, &Cjcx_ii, &Cjcx_ii_Vbpci, &Cjcx_ii_dT, &Qjcx_ii, &Qjcx_ii_Vbpci, &Qjcx_ii_dT);
 
