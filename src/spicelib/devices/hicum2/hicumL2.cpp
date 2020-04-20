@@ -573,7 +573,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Qdei,Qdci,Qrbi;
     double it,ibei,irei,ibci,ibep,irep,ibh_rec;
     double ibet,iavl;
-    double ijbcx,ijsc,Qjs,Qscp,HSUM,HSI_Tsu,Qdsu;
+    double ijbcx,ijbcx_dT,ijbcx_Vbpci,ijsc,Qjs,Qscp,HSUM,HSI_Tsu,Qdsu;
 
     //Base resistance and self-heating power
     double rbi,pterm;
@@ -582,7 +582,12 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double C_1;
 
     //Model evaluation
-    double Crbi,Cjci,Cjcit,cc,Cjei,Cjep,CjCx_i,CjCx_ii,Cjs,Cscp;
+    double Crbi,Cjci,Cjcit,cc,Cjei,Cjep,Cjs,Cscp;
+    double Cjcx_i , Cjcx_i_Vbci  , Cjcx_i_dT ;
+    double Cjcx_ii, Cjcx_ii_Vbpci, Cjcx_ii_dT;
+    double Qjcx_i , Qjcx_i_Vbci  , Qjcx_i_dT ;
+    double Qjcx_ii, Qjcx_ii_Vbpci, Qjcx_ii_dT;
+ 
     double itf,itr,Tf,Tr,VT_f,i_0f,i_0r,a_bpt,Q_0,Q_p,Q_bpt;
     double Orci0_t,b_q,I_Tf1,T_f0,Q_fT,T_fT,Q_bf;
     double a_h,Q_pT,d_Q;
@@ -647,7 +652,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double ibei_Vbiei, ibei_dT;
     double Q_0_Vbiei, Q_0_Vbici, Q_0_hjei_vbe, Q_0_Qjci, Q_0_Qjei, Q_0_dT;
 
-    double Cjei_Vbiei,Cjci_Vbici,Cjep_Vbpei,CjCx_i_Vbci,CjCx_ii_Vbpci,Cjs_Vsici,Cscp_Vsc,Cjcit_Vbici,i_0f_Vbiei,i_0r_Vbici;
+    double Cjei_Vbiei,Cjci_Vbici,Cjep_Vbpei,Cjs_Vsici,Cscp_Vsc,Cjcit_Vbici,i_0f_Vbiei,i_0r_Vbici;
     double Cjei_dT, Cjci_dT;
     double Qjei_Vbiei, Qjei_dT, Qjci_Vbici, Qjci_dT;
     double cc_Vbici,T_f0_Vbici,T_f0_Qjci, T_f0_dT,Q_p_Vbiei,Q_p_Vbici,I_Tf1_Vbiei,I_Tf1_Vbici,itf_Vbiei,itf_Vbici,itr_Vbiei,itr_Vbici;
@@ -1626,18 +1631,18 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             ibet_dT     = 0;
 
 
-
             //Base currents across peripheral b-c junction (bp,ci)
-            //TODO
-            //HICDIO(here->HICUMvt,model->HICUMibcxs,here->HICUMibcxs_t,model->HICUMmbcx,Vbpci,&ijbcx,&Ibpci_Vbpci);
+            hicum_diode(here->HICUMtemp,here->HICUMibcxs_t,model->HICUMmbcx, Vbpci, &ijbcx, &ijbcx_Vbpci, &ijbcx_dT);
 
             //Depletion capacitance and charge at external b-c junction (b,ci)
-            //TODO
             //HICJQ(here->HICUMvt,here->HICUMcjcx01_t,here->HICUMvdcx_t,model->HICUMzcx,here->HICUMvptcx_t,Vbci,&CjCx_i,&CjCx_i_Vbci,&qjcx0_t_i);
+            //TODO: derivatives after cjcx01_t, vdcx_t, vptcx_t
+            hicum_HICJQ(here->HICUMtemp, here->HICUMcjcx01_t,here->HICUMvdcx_t,model->HICUMzcx,here->HICUMvptcx_t, Vbci, &Cjcx_i, &Cjcx_i_Vbci, &Cjcx_i_dT, &Qjcx_i, &Qjcx_i_Vbci, &Qjcx_i_dT);
 
             //Depletion capacitance and charge at peripheral b-c junction (bp,ci)
-            //TODO
             //HICJQ(here->HICUMvt,here->HICUMcjcx02_t,here->HICUMvdcx_t,model->HICUMzcx,here->HICUMvptcx_t,Vbpci,&CjCx_ii,&CjCx_ii_Vbpci,&qjcx0_t_ii);
+            //TODO: derivatives after cjcx02_t, vdcx_t, vptcx_t
+            hicum_HICJQ(here->HICUMtemp, here->HICUMcjcx02_t,here->HICUMvdcx_t,model->HICUMzcx,here->HICUMvptcx_t, Vbpci, &Cjcx_ii, &Cjcx_ii_Vbpci, &Cjcx_ii_dT, &Qjcx_ii, &Qjcx_ii_Vbpci, &Qjcx_ii_dT);
 
             //Depletion substrate capacitance and charge at inner s-c junction (si,ci)
             //TODO
@@ -1860,8 +1865,8 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             Ieie_Veie    = 1/here->HICUMre_t;
             Isis_Vsis    = 1/model->HICUMrsu;
 
-            qjcx0_t_i_Vbci   = CjCx_i;
-            qjcx0_t_ii_Vbpci = CjCx_ii;
+            qjcx0_t_i_Vbci   = Cjcx_i;
+            qjcx0_t_ii_Vbpci = Cjcx_ii;
             Qjep_Vbpei       = Cjep;
             Qdeix_Vbiei      = Cdei;
             Qdci_Vbici       = Cdci;
@@ -1944,8 +1949,8 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 here->HICUMcapdci      = Cdci;
                 here->HICUMcapjci      = Cjci;
                 here->HICUMcapjep      = Cjep;
-                here->HICUMcapjcx_t_i  = CjCx_i;
-                here->HICUMcapjcx_t_ii = CjCx_ii;
+                here->HICUMcapjcx_t_i  = Cjcx_i;
+                here->HICUMcapjcx_t_ii = Cjcx_ii;
                 here->HICUMcapdsu      = Qdsu_Vbpci;
                 here->HICUMcapjs       = Cjs;
                 here->HICUMcapscp      = Cscp;
@@ -2067,13 +2072,13 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                     Isici += *(ckt->CKTstate0 + here->HICUMcqjs);
 
 //            Ibci       += ddt(model->HICUMtype*qjcx0_t_i);
-                    error = NIintegrate(ckt,&geq,&ceq,CjCx_i,here->HICUMqjcx0_i);
+                    error = NIintegrate(ckt,&geq,&ceq,Cjcx_i,here->HICUMqjcx0_i);
                     if(error) return(error);
                     Ibci_Vbci = geq;
                     Ibci = *(ckt->CKTstate0 + here->HICUMcqcx0_t_i);
 
 //            Ibpci      += ddt(model->HICUMtype*(qjcx0_t_ii+Qdsu));
-                    error = NIintegrate(ckt,&geq,&ceq,CjCx_ii,here->HICUMqjcx0_ii);
+                    error = NIintegrate(ckt,&geq,&ceq,Cjcx_ii,here->HICUMqjcx0_ii);
                     if(error) return(error);
                     Ibpci_Vbpci += geq;
                     Ibpci += *(ckt->CKTstate0 + here->HICUMcqcx0_t_ii);
