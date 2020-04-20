@@ -502,6 +502,9 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double a_h,Q_pT,d_Q;
     double Qf,Cdei,Qr,Cdci;
     double ick,vc,cjcx01,cjcx02;
+    double ick_Vciei;
+    double Qf_Vbiei, Qf_Vbici, Q_bf_Vbiei, Q_bf_Vbici, Qr_Vbiei, Qr_Vbici, Q_pT_Vbiei, Q_pT_Vbici;
+
     int l_it;
 
     //NQS
@@ -1226,6 +1229,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             //Critical current for onset of high-current effects
             { // HICICK
                 double Ovpt,a,d1,vceff,a1,a11,Odelck,ick1,ick2,ICKa;
+                double d1_Vciei, vceff_Vciei, a1_Vciei, ick1_Vciei, ick2_Vciei, ICKa_Vciei;
                 Ovpt    = 1.0/model->HICUMvpt;
                 a       = vc/here->HICUMvt;
                 d1      = a-1;
@@ -1239,6 +1243,18 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 ICKa     = (vceff-here->HICUMvlim_t)*Ovpt;
                 ick      = ick2*(1.0+0.5*(ICKa+sqrt(ICKa*ICKa+model->HICUMaick)));
 
+                // derivative: maxima
+                d1_Vciei = 1/here->HICUMvt;
+                // vceff_Vciei = (((d_1*d1_Vciei/sqrt(d_1^2+1.921812)+d1_Vciei)*v_t)/2
+                vceff_Vciei = (d1*d1_Vciei/sqrt(d1*d1+1.921812)+d1_Vciei)*here->HICUMvt/2;
+                a1_Vciei = vceff_Vciei/here->HICUMvlim_t;
+                // ick1_Vciei = (exp(log(exp(d_elck*log(a1))+1)/d_elck+d_elck*log(a1))*a1_Vciei)/(a1*(exp(d_elck*log(a1))+1))
+                ick1_Vciei = (exp(Odelck*log(1+exp(model->HICUMdelck*log(a1))) + model->HICUMdelck*log(a1))*a1_Vciei)/(a1*(exp(model->HICUMdelck*log(a1))+1));
+                ick2_Vciei = -1.0*a11*ick1_Vciei/ick1/ick1;
+                ICKa_Vciei = vceff_Vciei*Ovpt;
+
+                // ick_Vciei = (0.5*(sqrt(I_CKa(x)^2+a_ick)+I_CKa(x))+1.0)*('diff(i_ck2(x),x,1))+0.5*i_ck2(x)*((I_CKa(x)*('diff(I_CKa(x),x,1)))/sqrt(I_CKa(x)^2+a_ick)+'diff(I_CKa(x),x,1))
+                ick_Vciei = (0.5*(sqrt(ICKa*ICKa+model->HICUMaick)+ICKa)+1.0)*ick2_Vciei+0.5*ick2*((ICKa*(ICKa_Vciei))/sqrt(ICKa*ICKa+model->HICUMaick)+ICKa_Vciei);
             }
 
             //Initialization
@@ -1283,7 +1299,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             Tf      = T_f0;
             Qf      = T_f0*itf;
             HICQFF(here, model, itf,ick,&Tf,&Qf,&T_fT,&Q_fT,&Q_bf);
-//TODO: itf=f(Vbiei,Vbici) -> Qf, Q_bf Ableitungen nach Vbiei, Vbici
             //Initial formulation of reverse diffusion charge
             Qr      = Tr*itr;
 
@@ -1293,7 +1308,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 //Iteration for Q_pT is required for improved initial solution
                 Qf      = sqrt(T_f0*itf*Q_fT);
                 Q_pT    = Q_0+Qf+Qr;
-//TODO: Q_pT_Vbiei, Vbici
                 d_Q     = Q_pT;
                 while (fabs(d_Q) >= RTOLC*fabs(Q_pT) && l_it <= l_itmax) {
                     double a;
@@ -1337,6 +1351,21 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
             } //if
             // TODO calculate here the derivatives once! They are not needed inside the newton...
+            // Qf = Tf*itf;
+            Qf_Vbiei = 0;
+            Qf_Vbici = 0;
+            // Qr = Tr*itr;
+            Qr_Vbiei = 0;
+            Qr_Vbici = 0;
+            // Q_pT = Q_0+Qf+Qr;
+            Q_pT_Vbiei = Q_0_Vbiei + Qf_Vbiei + Qr_Vbiei;
+            Q_pT_Vbici = Q_0_Vbici + Qf_Vbici + Qr_Vbici;
+            // Q_bf = Q_0+Qf+Qr;
+            Q_bf_Vbiei = 0;
+            Q_bf_Vbici = 0;
+
+            // itf, itr
+//TODO: itf=f(Vbiei,Vbici) -> Qf, Q_bf Ableitungen nach Vbiei, Vbici
             itf_Vbiei = itf/VT_f; // TODO: missing the derivatives of Qf
             itr_Vbici = itr/here->HICUMvt; // TODO: missing the derivatives of Qpt
 
@@ -1395,10 +1424,10 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                         sq_smooth = sqrt(denom*denom+0.01);
                         hl = 0.5*(denom+sq_smooth);
                         iavl    = itf*avl/hl;
-                        iavl_Vbici = itf*avl_Vbici/hl;
+                        iavl_Vbici = itf*avl_Vbici/hl; // TODO itf_Vbici
                     } else {
                         iavl       = itf*avl;
-                        iavl_Vbici = itf*avl_Vbici;
+                        iavl_Vbici = itf*avl_Vbici; // TODO itf_Vbici
                     }
                 }
             } else {
@@ -1447,6 +1476,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 // Consideration of peripheral charge
                 if(Qf > 0.0) {
                     rbi     = rbi*(Qjei+Qf*model->HICUMfqi)/(Qjei+Qf);
+                    // Qf_Viei and Qf_Vbici
                     rbi_Vbiei = (Qjei+Qf*model->HICUMfqi)*rbi_Vbiei/(Qjei+Qf) + rbi*Cjei/(Qjei+Qf) - (Qjei+Qf*model->HICUMfqi)*rbi*Cjei/(Qjei+Qf)/(Qjei+Qf);
                     rbi_Vbici = rbi_Vbici*(Qjei+Qf*model->HICUMfqi)/(Qjei+Qf);
                 }
@@ -1574,22 +1604,16 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             // Excess Phase calculation
 
             if ((model->HICUMflnqs != 0 || model->HICUMflcomp == 0.0 || model->HICUMflcomp == 2.1) && Tf != 0 && (model->HICUMalit > 0 || model->HICUMalqf > 0)) {
-                // Vxf1  = Vbxf1;
-                // Vxf2  = Vbxf2;
+                Vxf1  = Vbxf1;
+                Vxf2  = Vbxf2;
 
-                // Ixf1  = (Vxf2-itf)/Tf*model->HICUMt0;
-                // Ixf2  = (Vxf2-Vxf1)/Tf*model->HICUMt0;
-                // Qxf1      = model->HICUMalit*model->HICUMt0*Vxf1;
-                // Qxf1_Vxf1 = model->HICUMalit*model->HICUMt0;
-                // Qxf2      = model->HICUMalit*model->HICUMt0*Vxf2/3;
-                // Qxf2_Vxf2 = model->HICUMalit*model->HICUMt0/3;
-                // Itxf  = Vxf2;
-                Ixf1  =  Vbxf1;
-                Ixf2  =  Vbxf2;
-                Qxf1  =  0;
-                Qxf2  =  0;
-                Qxf1_Vxf1 = 0;
-                Qxf2_Vxf2 = 0;
+                Ixf1  = (Vxf2-itf)/Tf*model->HICUMt0;
+                Ixf2  = (Vxf2-Vxf1)/Tf*model->HICUMt0;
+                Qxf1      = model->HICUMalit*model->HICUMt0*Vxf1;
+                Qxf1_Vxf1 = model->HICUMalit*model->HICUMt0;
+                Qxf2      = model->HICUMalit*model->HICUMt0*Vxf2/3;
+                Qxf2_Vxf2 = model->HICUMalit*model->HICUMt0/3;
+                Itxf  = Vxf2;
 
                 // TODO derivatives of Ixf1 and Ixf2
 
@@ -2316,7 +2340,7 @@ c           Branch: sis, Stamp element: Rsu
 /*
 c           Branch: xf1-ground,  Stamp element: Ixf1
 */
-//            rhs_current = (Ixf1 - Ixf1_Vrth*Vrth - Ixf1_Vbiei*Vbiei - Ixf1_Vbici*Vbici - Ixf2_Vxf2*Vxf2);
+//            rhs_current = (Ixf1 - Ixf1_Vxf1*Vxf1 - Ixf1_Vrth*Vrth - Ixf1_Vbiei*Vbiei - Ixf1_Vbici*Vbici - Ixf1_Vxf2*Vxf2); // TODO
             rhs_current = Ixf1;
             *(ckt->CKTrhs + here->HICUMxf1Node) += rhs_current; // into xf1 node
 //            *(here->HICUMxf1TempPtr)   += -Ixf1_Vrth;
@@ -2324,33 +2348,30 @@ c           Branch: xf1-ground,  Stamp element: Ixf1
 //            *(here->HICUMxf1EmitEIPtr) += +Ixf1_Vbiei;
 //            *(here->HICUMxf1BaseBIPtr) += -Ixf1_Vbici;
 //            *(here->HICUMxf1CollCIPtr) += +Ixf1_Vbici;
-//            *(here->HICUMxf1Xf2Ptr)    += +Ixf1_Vxf2; // TODO
+//            *(here->HICUMxf1Xf2Ptr)    += +Ixf1_Vxf2;
 /*
-c           Branch: xf1-ground, Stamp element: Qxf1
+c           Branch: xf1-ground, Stamp element: Qxf1 // TODO Test in AC simulation!
 */
-            rhs_current = Iqxf1 - Iqxf1_Vxf1*Vxf1;
-            *(ckt->CKTrhs + here->HICUMxf1Node) += rhs_current; // into ground
-            *(here->HICUMxf1Xf1Ptr)             += Iqxf1_Vxf1;
-/*
-c           Branch: xf1-ground, Stamp element: Rxf1
-*/
-            *(here->HICUMxf1Xf1Ptr) +=  1; // current Ixf1 is normalized to Tf
+            // rhs_current = Iqxf1 - Iqxf1_Vxf1*Vxf1;
+            // *(ckt->CKTrhs + here->HICUMxf1Node) += rhs_current; // into ground
+            // *(here->HICUMxf1Xf1Ptr)             += Iqxf1_Vxf1;
 /*
 c           Branch: xf2-ground,  Stamp element: Ixf2
 */
+//            rhs_current = (Ixf2 - Ixf2_Vxf1*Vxf1 - Ixf2_Vrth*Vrth - Ixf2_Vbiei*Vbiei - Ixf2_Vbici*Vbici - Ixf2_Vxf2*Vxf2); // TODO
             rhs_current = Ixf2;
-            *(ckt->CKTrhs + here->HICUMxf2Node) += rhs_current; // into xf node
+            *(ckt->CKTrhs + here->HICUMxf2Node) += rhs_current; // into xf2 node
 //            *(here->HICUMxf2TempPtr)   += -Ixf2_Vrth;
 //            *(here->HICUMxf2BaseBIPtr) += -Ixf2_Vbiei;
 //            *(here->HICUMxf2EmitEIPtr) += +Ixf2_Vbiei;
 //            *(here->HICUMxf2BaseBIPtr) += -Ixf2_Vbici;
 //            *(here->HICUMxf2CollCIPtr) += +Ixf2_Vbici;
 /*
-c           Branch: xf2-ground, Stamp element: Qxf2
+c           Branch: xf2-ground, Stamp element: Qxf2 // TODO Test in AC simulation!
 */
-            rhs_current = Iqxf2 - Iqxf2_Vxf2*Vxf2;
-            *(ckt->CKTrhs + here->HICUMxf2Node)  += rhs_current; // into ground
-            *(here->HICUMxf2Xf2Ptr)              += Iqxf2_Vxf2;
+            // rhs_current = Iqxf2 - Iqxf2_Vxf2*Vxf2;
+            // *(ckt->CKTrhs + here->HICUMxf2Node)  += rhs_current; // into ground
+            // *(here->HICUMxf2Xf2Ptr)              += Iqxf2_Vxf2;
 /*
 c           Branch: xf2-ground, Stamp element: Rxf2
 */
@@ -2367,7 +2388,7 @@ c           Branch: xf-ground,  Stamp element: Ixf
 //            *(here->HICUMxfBaseBIPtr) += -Ixf_Vbici;
 //            *(here->HICUMxfCollCIPtr) += +Ixf_Vbici;
 /*
-c           Branch: xf-ground, Stamp element: Qxf
+c           Branch: xf-ground, Stamp element: Qxf // TODO Test in AC simulation!
 */
             // rhs_current = model->HICUMtype * (Iqxf - Iqxf_Vxf*Vxf);
             // *(ckt->CKTrhs + here->HICUMxfNode)   += rhs_current; // into ground
