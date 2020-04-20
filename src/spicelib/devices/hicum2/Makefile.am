@@ -27,7 +27,7 @@ libhicum2_la_SOURCES =	\
 
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include -lstdc++
-AM_CFLAGS = -I/home/markus/Documents/Gitprojects/cppduals -lstdc++ -I$(top_srcdir)/src/include
-AM_CXXFLAGS = -I/home/markus/Documents/Gitprojects/cppduals -I$(top_srcdir)/src/include -lstdc++
+AM_CFLAGS = -lstdc++ -I$(top_srcdir)/src/include
+AM_CXXFLAGS = -I$(top_srcdir)/src/include -lstdc++
 
 MAINTAINERCLEANFILES = Makefile.in

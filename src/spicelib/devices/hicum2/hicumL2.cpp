@@ -1,5 +1,5 @@
 #include "cmath"
-#include "duals/dual"
+#include <duals/dual>
 #include "hicumL2.hpp"
 
 //ngspice header files written in C
@@ -41,8 +41,8 @@ extern "C"
 
 
 //HICUM DEFINITIONS
-#define CHARGE          1.6021766208e-19 
-#define CONSTboltz      1.38064852e-23 
+#define CHARGE          1.6021766208e-19
+#define CONSTboltz      1.38064852e-23
 #define VPT_thresh      1.0e2
 #define Dexp_lim        80.0
 #define Cexp_lim        80.0
@@ -146,7 +146,7 @@ void QJMODF(duals::duald T, double c_0, double u_d, double z, double a_j, duals:
 //  C		: depletion capacitance
 void QJMOD(duals::duald T, duals::duald c_0, double u_d, double z, double a_j, double v_pt, duals::duald U_cap, duals::duald * C, duals::duald * Qz)
 {
-    duals::duald dummy, DQ_j1, DQ_j2, DQ_j3, DC_j1, DC_j2, DC_j3, De_1, De_2, Dzr1, DCln1, DCln2, Dz1, Dv_j1, Dv_j2, Dv_j3, De, Da, Dv_r, Dv_j4, Dv_e, DC_c, DC_max, DV_f, Dv_p, Dz_r, vt; 
+    duals::duald dummy, DQ_j1, DQ_j2, DQ_j3, DC_j1, DC_j2, DC_j3, De_1, De_2, Dzr1, DCln1, DCln2, Dz1, Dv_j1, Dv_j2, Dv_j3, De, Da, Dv_r, Dv_j4, Dv_e, DC_c, DC_max, DV_f, Dv_p, Dz_r, vt;
     vt = CONSTboltz * T / CHARGE;
     if (c_0 > 0.0){
         Dz_r	= z/4.0;
@@ -199,7 +199,7 @@ void QJMOD(duals::duald T, duals::duald c_0, double u_d, double z, double a_j, d
 // OUTPUT:
 // hicfcio      : function of equation (2.1.17-10)
 void HICFCI(double zb, double zl, double w, double hicfcio, double dhicfcio_dw)
-{   
+{
     double a, a2, a3, r, lnzb, x, z;
     z       = zb*w;
     lnzb    = log(1+zb*w);
@@ -1920,7 +1920,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                     }
 
 //            Ibpbi      += ddt(Qrbi);
-                    dummdumm(int(0));
                     error = NIintegrate(ckt,&geq,&ceq,Qrbi_Vbpbi,here->HICUMqrbi);
                     if(error) return(error);
                     Ibpbi_Vbpbi += geq;
