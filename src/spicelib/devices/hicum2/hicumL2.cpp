@@ -1,6 +1,22 @@
+/**********
+Copyright 1990 Regents of the University of California.  All rights reserved.
+Author: 1985 Thomas L. Quarles
+Model Author: 1990 Michael Schröter TU Dresden
+Spice3 Implementation: 2019 Dietmar Warning, Markus Müller, Mario Krattenmacher
+**********/
+
+/*
+ * This file defines the HICUM L2.4.3 model load function
+ * Comments on the Code:
+ * - We use dual numbers to calculate derivatives, this is readble and error proof.
+ * - The code is targeted to be readbale and maintainable, speed is sacrificied for this purpose.
+ * - The verilog a code is available at the website of TU Dresden, Michael Schroeter#s chair.
+ */
+
 #include "cmath"
 #include "duals/dual"
 #include "hicumL2.hpp"
+#include <functional>
 
 //ngspice header files written in C
 #ifdef __cplusplus
@@ -198,7 +214,7 @@ void QJMOD(duals::duald T, duals::duald c_0, double u_d, double z, double a_j, d
 //  w           : normalized injection width
 // OUTPUT:
 // hicfcio      : function of equation (2.1.17-10)
-void HICFCI(double zb, double zl, double w, double hicfcio, double dhicfcio_dw)
+void HICFCI(double zb, double zl, double w, double * hicfcio, double * dhicfcio_dw)
 {   
     double a, a2, a3, r, lnzb, x, z;
     z       = zb*w;
@@ -209,14 +225,14 @@ void HICFCI(double zb, double zl, double w, double hicfcio, double dhicfcio_dw)
         a2              = 0.250*(a*(2.0*lnzb-1.0)+1.0);
         a3              = (a*x*(3.0*lnzb-1.0)+1.0)/9.0;
         r               = zl/zb;
-        hicfcio         = ((1.0-r)*a2+r*a3)/zb;
-        dhicfcio_dw     = ((1.0-r)*x+r*a)*lnzb;
+        *hicfcio        = ((1.0-r)*a2+r*a3)/zb;
+        *dhicfcio_dw    = ((1.0-r)*x+r*a)*lnzb;
      } else {
         a               = z*z;
         a2              = 3.0+z-0.25*a+0.10*z*a;
         a3              = 2.0*z+0.75*a-0.20*a*z;
-        hicfcio         = (zb*a2+zl*a3)*w*w/6.0;
-        dhicfcio_dw     = (1+zl*w)*(1+z)*lnzb;
+        *hicfcio         = (zb*a2+zl*a3)*w*w/6.0;
+        *dhicfcio_dw     = (1+zl*w)*(1+z)*lnzb;
      }
 }
 
@@ -227,17 +243,17 @@ void HICFCI(double zb, double zl, double w, double hicfcio, double dhicfcio_dw)
 // OUTPUT:
 //  hicfcto     : output
 //  dhicfcto_dw : derivative of output wrt w
-void HICFCT(double z, double w, double hicfcto, double dhicfcto_dw)
+void HICFCT(double z, double w, double * hicfcto, double *dhicfcto_dw)
 {
     double a, lnz;
     a = z*w;
     lnz = log(1+z*w);
     if (a > 1.0e-6){
-        hicfcto     = (a - lnz)/z;
-        dhicfcto_dw = a / (1.0 + a);
+        *hicfcto     = (a - lnz)/z;
+        *dhicfcto_dw = a / (1.0 + a);
     } else {
-        hicfcto     = 0.5 * a * w;
-        dhicfcto_dw = a;
+        *hicfcto     = 0.5 * a * w;
+        *dhicfcto_dw = a;
     }
 }
 
@@ -254,15 +270,18 @@ void HICFCT(double z, double w, double hicfcto, double dhicfcto_dw)
 //  Q_fC, Q_CT: actual and ICCR (weighted) hole charge
 //  T_fC, T_cT: actual and ICCR (weighted) transit time
 //  Derivative dfCT_ditf not properly implemented yet
-void HICQFC(double T, double Ix, double I_CK, double FFT_pcS, double Q_fC, double Q_CT, double T_fC, double T_cT)
+void HICQFC(duals::duald T, double Ix, double I_CK, double FFT_pcS, duals::duald * Q_fC, duals::duald * Q_CT, duals::duald * T_fC, duals::duald * T_cT)
 {
-    double FCln, FCa, FCa1, FCd_a, FCw, FCdw_daick, FCda1_dw, FCf_ci, FCdfCT_ditf, FCw2, FCz, FCdfc_dw, vt, FFdVc_ditf, FCf_CT, FCf1, FCf2, FCrt;
+    double FCln, FCa, FCa1, FCd_a, FCw, FCdw_daick, FCda1_dw, FCf_ci, FCdfCT_ditf, FCw2, FCz, FCdfc_dw, FFdVc_ditf, FCf_CT, FCf1, FCf2, FCrt;
     double FCa_cl, FCa_ck, FCdaick_ditf, FCxl, FCxb, FCdf1_dw, FCz_1, FCf3, FCdf2_dw, FCdf3_dw, FCdw_ditf, FCdfc_ditf;
     double FCdfCT_dw, FCd_f, FFdVc;
     double vcbar, latl, latb, ahc, flcomp;
+
+    duals::duald vt;
+
     vt = CONSTboltz * T / CHARGE;
 
-    Q_fC            = FFT_pcS*Ix;
+    *Q_fC           = FFT_pcS*Ix;
     FCa             = 1.0-I_CK/Ix;
     FCrt            = sqrt(FCa*FCa+ahc);
     FCa_ck          = 1.0-(FCa+FCrt)/(1.0+sqrt(1.0+ahc));
@@ -291,17 +310,15 @@ void HICQFC(double T, double Ix, double I_CK, double FFT_pcS, double Q_fC, doubl
         FCw2            = FCw*FCw;
         FCf1            = latb*latl*FCw*FCw2/3.0+(latb+latl)*FCw2/2.0+FCw;
         FCdf1_dw        = latb*latl*FCw2 + (latb+latl)*FCw + 1.0;
-        //TODO:
-        // HICFCI(latb,latl,FCw,FCf2,FCdf2_dw)
-        // HICFCI(latl,latb,FCw,FCf3,FCdf3_dw)
+        HICFCI(latb,latl,FCw,&FCf2,&FCdf2_dw);
+        HICFCI(latl,latb,FCw,&FCf3,&FCdf3_dw);
         FCf_ci          = FCf_CT*(FCa1*FCf1-FCf2+FCf3);
         FCdfc_dw        = FCf_CT*(FCa1*FCdf1_dw+FCda1_dw*FCf1-FCdf2_dw+FCdf3_dw);
         FCdw_ditf       = FCdw_daick*FCdaick_ditf;
         FCdfc_ditf      = FCdfc_dw*FCdw_ditf;
         if(flcomp == 0.0 || flcomp == 2.1) {
-            //TODO:
-            // HICFCT(latb,FCw,FCf2,FCdf2_dw)
-            // HICFCT(latl,FCw,FCf3,FCdf3_dw)
+            HICFCT(latb,FCw,&FCf2,&FCdf2_dw);
+            HICFCT(latl,FCw,&FCf3,&FCdf3_dw);
             FCf_CT          = FCf_CT*(FCf2-FCf3);
             FCdfCT_dw       = FCf_CT*(FCdf2_dw-FCdf3_dw);
             FCdfCT_ditf     = FCdfCT_dw*FCdw_ditf;
@@ -340,10 +357,22 @@ void HICQFC(double T, double Ix, double I_CK, double FFT_pcS, double Q_fC, doubl
             FCdfCT_ditf     = FCdfc_ditf;
         }
     }
-    Q_CT    = Q_fC*FCf_CT*exp((FFdVc-vcbar)/vt);
-    Q_fC    = Q_fC*FCf_ci*exp((FFdVc-vcbar)/vt);
-    T_fC    = FFT_pcS*exp((FFdVc-vcbar)/vt)*(FCf_ci+Ix*FCdfc_ditf)+Q_fC/vt*FFdVc_ditf;
-    T_cT    = FFT_pcS*exp((FFdVc-vcbar)/vt)*(FCf_CT+Ix*FCdfCT_ditf)+Q_CT/vt*FFdVc_ditf;
+    *Q_CT    = *Q_fC*FCf_CT*exp((FFdVc-vcbar)/vt);
+    *Q_fC    = *Q_fC*FCf_ci*exp((FFdVc-vcbar)/vt);
+    *T_fC    = FFT_pcS*exp((FFdVc-vcbar)/vt)*(FCf_ci+Ix*FCdfc_ditf) +*Q_fC/vt*FFdVc_ditf;
+    *T_cT    = FFT_pcS*exp((FFdVc-vcbar)/vt)*(FCf_CT+Ix*FCdfCT_ditf)+*Q_CT/vt*FFdVc_ditf;
+}
+
+// DEPLETION CHARGE & CAPACITANCE CALCULATION SELECTOR
+// Dependent on junction punch-through voltage
+// Important for collector related junctions
+void HICJQ(duals::duald T, double c_0, double u_d, double z,double v_pt, duals::duald U_cap, duals::duald * C,duals::duald * Qz)
+{
+    if(v_pt < VPT_thresh){
+        QJMOD(T,c_0,u_d,z,2.4,v_pt,U_cap,C,Qz);
+    } else {
+        QJMODF(T,c_0,u_d,z,2.4,U_cap,C,Qz);
+    }
 }
 
 // TRANSIT-TIME AND STORED MINORITY CHARGE
@@ -360,12 +389,13 @@ void HICQFC(double T, double Ix, double I_CK, double FFT_pcS, double Q_fC, doubl
 //  T_fT        : transit time    \
 //  Q_fT        : minority charge / ICCR (transfer current)
 //  Q_bf        : excess base charge
-void HICQFF(double T, double itf, double I_CK, double T_f, double Q_f, double T_fT, double Q_fT, double Q_bf)
+void HICQFF(duals::duald T, double itf, double I_CK, duals::duald T_f, duals::duald Q_f, duals::duald T_fT, duals::duald Q_fT, duals::duald Q_bf)
 {
     double FFitf_ick, FFdTef, FFdQef, FFdVc, FFdVc_ditf, FFib, FFfcbar, FFdib_ditf;
-    double FFdTcfc, FFdQcfc, FFdTcfcT, FFdQcfcT, FFdQbfc, FFic, FFdQbfb, FFdTfhc, FFdQfhc, FFw, FFdTbfb;
-    double icbar, hfc_t, hfe_t, hf0_t, FFdTbfc, vlim, rci0, gtfe, latl, latb, vcbar, fthc, acbar, tef0_t, ahc, thcs_t;
-    double vt;
+    double icbar, hfc_t, hfe_t, hf0_t, vlim, rci0, gtfe, latl, latb, vcbar, fthc, acbar, tef0_t, ahc, thcs_t;
+    duals::duald vt;
+    duals::duald FFdQbfb, FFdTbfb, FFdQfhc, FFdTfhc, FFdQcfc,FFdTcfc, FFdQbfc,FFdTbfc;
+    duals::duald FFdQcfcT, FFic, FFw, FFdTcfcT;
     vt = CONSTboltz * T / CHARGE;
     if(itf < 1.0e-6*I_CK){
         Q_fT            = Q_f;
@@ -395,13 +425,12 @@ void HICQFF(double T, double itf, double I_CK, double T_f, double Q_f, double T_
         FFdQfhc = thcs_t*itf*FFw*FFw*exp((FFdVc-vcbar)/vt);
         FFdTfhc = FFdQfhc*(1.0/itf*(1.0+2.0/(FFitf_ick*sqrt(FFic*FFic+ahc)))+1.0/vt*FFdVc_ditf);
         if(latb <= 0.0 && latl <= 0.0){
-             FFdQcfc = fthc*FFdQfhc;
-             FFdTcfc = fthc*FFdTfhc;
-             FFdQcfcT = FFdQcfc;
-             FFdTcfcT = FFdTcfc;
+            FFdQcfc = fthc*FFdQfhc;
+            FFdTcfc = fthc*FFdTfhc;
+            FFdQcfcT = FFdQcfc;
+            FFdTcfcT = FFdTcfc;
         } else {
-            //TODO
-            //  `HICQFC(itf,I_CK,fthc*thcs_t,FFdQcfc,FFdQcfcT,FFdTcfc,FFdTcfcT)
+            HICQFC(T, itf,I_CK,fthc*thcs_t,&FFdQcfc,&FFdQcfcT,&FFdTcfc,&FFdTcfcT);
         }
         FFdQbfc = (1-fthc)*FFdQfhc;
         FFdTbfc = (1-fthc)*FFdTfhc;
@@ -429,35 +458,60 @@ void HICQFF(double T, double itf, double I_CK, double T_f, double Q_f, double T_
 //  c_j_t               : temperature update of "c_j"
 //  vd_t                : temperature update of "vd0"
 //  w_t                 : temperature update of "w"
-void TMPHICJ(double T, double c_j, double vd0, double z, double w, double is_al, double vgeff, double c_j_t, double vd_t, double w_t)
+void TMPHICJ(duals::duald T, double c_j, double vd0, double z, double w, double is_al, double vgeff, duals::duald * c_j_t, duals::duald * vd_t, duals::duald * w_t)
 {
-    double vdj0, vdjt;
-    double vdt, vt0;
-    double qtt0, ln_qtt0, mg, vt;
-    vt = CONSTboltz * T / CHARGE;
+    double vdj0, vt0;
+    double mg, tnom;
+    duals::duald vt, qtt0, ln_qtt0, vdt, vdjt;
+
+    tnom    = tnom+300; //TODO: check this
+    vt0     = CONSTboltz * tnom/ CHARGE;
+    vt      = CONSTboltz * T   / CHARGE;
+    qtt0    = T/tnom;
+    ln_qtt0 = log(qtt0);
+
     //TODO
     //vt0,qtt0,lnqtt0,mg =
     if (c_j > 0.0) {
         vdj0    = 2*vt0*log(exp(vd0*0.5/vt0)-exp(-0.5*vd0/vt0));
         vdjt    = vdj0*qtt0+vgeff*(1-qtt0)-mg*vt*ln_qtt0;
         vdt     = vdjt+2*vt*log(0.5*(1+sqrt(1+4*exp(-vdjt/vt))));
-        vd_t    = vdt;
-        c_j_t   = c_j*exp(z*log(vd0/vd_t));
+        *vd_t    = vdt;
+        *c_j_t   = c_j*exp(z*log(vd0/(*vd_t)));
         if (is_al == 1) {
-            w_t = w*vd_t/vd0;
+            *w_t = w*(*vd_t)/vd0;
         } else {
-            w_t = w;
+            *w_t = w;
         }
     } else {
-        c_j_t   = c_j;
-        vd_t    = vd0;
-        w_t     = w;
+        *c_j_t   = c_j;
+        *vd_t    = vd0;
+        *w_t     = w;
+    }
+}
+
+duals::duald calc_hjei_vbe(duals::duald Vbiei, duals::duald T, HICUMinstance * here, HICUMmodel * model){
+    //calculates hje_vbe
+    //warpping in a routine allows easy calculation of derivatives with dual numbers
+    duals::duald vj, vj_z, vt;
+    vt  = CONSTboltz * T   / CHARGE;
+    if (model->HICUMahjei == 0.0){
+        return model->HICUMhjei;
+    }else{
+        //vendhjei = vdei_t*(1.0-exp(-ln(ajei_t)/z_h));
+        vj = (here->HICUMvdei_t-Vbiei)/(model->HICUMrhjei*vt);
+        vj = here->HICUMvdei_t-model->HICUMrhjei*vt*(vj+sqrt(vj*vj+DFa_fj))*0.5;
+        vj = (vj-vt)/vt;
+        vj = vt*(1.0+(vj+sqrt(vj*vj+DFa_fj))*0.5);
+        vj_z = (1.0-exp(model->HICUMzei*log(1.0-vj/here->HICUMvdei_t)))*here->HICUMahjei_t;
+        return here->HICUMhjei0_t*(exp(vj_z)-1.0)/vj_z;
     }
 }
 
 
 void hicum_diode(double T, double IS, double UM1, double U, double *Iz, double *Gz, double *Tz)
 {
+    //wrapper for hicum diode equation that also generates derivatives
     duals::duald result = 0;
 
     printf("executed diode");
@@ -471,6 +525,7 @@ void hicum_diode(double T, double IS, double UM1, double U, double *Iz, double *
 
 void hicum_qjmodf(double T, double c_0, double u_d, double z, double a_j, double U_cap, double *C, double *C_dU, double *C_dT, double *Qz, double *Qz_dU, double *Qz_dT)
 {
+    //wrapper for QJMODF that also generates derivatives
     duals::duald Cresult = 0;
     duals::duald Qresult = 0;
     QJMODF(T, c_0, u_d, z, a_j, U_cap+1_e, &Cresult, &Qresult);
@@ -480,6 +535,22 @@ void hicum_qjmodf(double T, double c_0, double u_d, double z, double a_j, double
     *Qz_dU = Qresult.dpart();
 
     QJMODF(T+1_e, c_0, u_d, z, a_j, U_cap, &Cresult, &Qresult);
+    *Qz_dT = Qresult.dpart();
+    *C_dT  = Cresult.dpart();
+}
+
+void hicum_HICJQ(double T, double c_0, double u_d, double z,double v_pt, double U_cap, double * C, double * C_dU, double * C_dT, double * Qz, double * Qz_dU, double * Qz_dT)
+{
+    //wrapper for HICJQ that also generates derivatives
+    duals::duald Cresult = 0;
+    duals::duald Qresult = 0;
+    HICJQ(T, c_0, u_d, z, v_pt, U_cap+1_e, &Cresult, &Qresult);
+    *C     = Cresult.rpart();
+    *C_dU  = Cresult.dpart();
+    *Qz    = Qresult.rpart();
+    *Qz_dU = Qresult.dpart();
+
+    HICJQ(T+1_e, c_0, u_d, z, v_pt, U_cap+1_e, &Cresult, &Qresult);
     *Qz_dT = Qresult.dpart();
     *C_dT  = Cresult.dpart();
 }
@@ -531,6 +602,9 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     // Model flags
     int use_aval;
 
+    //helpers for ngspice implementation
+    duals::duald result;
+
     //end of variables
 
     int iret;
@@ -567,11 +641,15 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Ibpsi, Ibpsi_Vbpci, Ibpsi_Vsici;
     double Icic_Vcic;
     double Ibci,  Ibci_Vbci;
-    double hjei_vbe_Vbiei, ibet_Vbpei=0.0, ibet_Vbiei=0.0, ibh_rec_Vbiei;
-    double irei_Vbiei, irep_Vbpei, iavl_Vbici, rbi_Vbiei, rbi_Vbici;
+    double hjei_vbe_Vbiei, hjei_vbe_dT, ibet_Vbpei=0.0, ibet_Vbiei=0.0, ibh_rec_Vbiei;
+    double irei_Vbiei, irei_dT;
+    double irep_Vbpei, iavl_Vbici, rbi_Vbiei, rbi_Vbici;
+    double ibei_Vbiei, ibei_dT;
     double Q_0_Vbiei, Q_0_Vbici, b_q_Vbiei, b_q_Vbici;
 
     double Cjei_Vbiei,Cjci_Vbici,Cjep_Vbpei,CjCx_i_Vbci,CjCx_ii_Vbpci,Cjs_Vsici,Cscp_Vsc,Cjcit_Vbici,i_0f_Vbiei,i_0r_Vbici;
+    double Cjei_dT, Cjci_dT;
+    double Qjei_Vbiei, Qjei_dT, Qjci_Vbici, Qjci_dT;
     double cc_Vbici,T_f0_Vbici,Q_p_Vbiei,Q_p_Vbici,I_Tf1_Vbiei,I_Tf1_Vbici,itf_Vbiei,itf_Vbici,itr_Vbiei,itr_Vbici;
     double Qbepar1;
     double Qbepar2;
@@ -612,7 +690,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
     double Irth_Vrth;
     double Iciei_Vrth;
-    double Ibiei_Vrth;
+    double Ibiei_dT;
     double Ibici_Vrth;
     double Ibpei_Vrth;
     double Ibpci_Vrth;
@@ -633,6 +711,24 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Ith_Veie;
     double Ith_Vcic;
     double Ith_Vbbp;
+
+    //declaration of lambda functions
+    auto print_message = [](std::string message) 
+    { 
+        std::cout << message << "\n"; 
+    };
+
+    //Hole charge at low bias
+    std::function<duals::duald (duals::duald, duals::duald, duals::duald)> calc_Q_0 = [&](duals::duald Qjei, duals::duald Qjci, duals::duald hjei_vbe){
+        //Hole charge at low bias
+        duals::duald Q_0, b_q, Q_bpt ;
+        a_bpt   = 0.05;
+        Q_0     = here->HICUMqp0_t + hjei_vbe*Qjei + model->HICUMhjci*Qjci;
+        Q_bpt   = a_bpt*here->HICUMqp0_t;
+        b_q     = Q_0/Q_bpt-1;
+        Q_0     = Q_bpt*(1+(b_q +sqrt(b_q*b_q+1.921812))/2);
+        return Q_0;
+    };
 
     /*  loop through all the models */
     for (; model != NULL; model = HICUMnextModel(model)) {
@@ -1155,9 +1251,9 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             // HICDIO(here->HICUMvt,model->HICUMireis,here->HICUMireis_t,model->HICUMmrei,Vbiei,&irei,&irei_Vbiei);
             // HICDIO(here->HICUMvt,model->HICUMireis,here->HICUMireis_t,model->HICUMmrei,Vbiei,&irei,&irei_Vbiei);
 
-            //is HICUMtemp the device temperature?
-            hicum_diode(here->HICUMtemp,here->HICUMibeis_t,model->HICUMmbei, Vbiei, &ibei, &Ibiei_Vbiei, &Ibiei_Vbiei);
-            hicum_diode(here->HICUMtemp,here->HICUMireis_t,model->HICUMmrei, Vbiei, &irei, &irei_Vbiei , &irei_Vbiei);
+            //TODO:derivative of ibeis_t and ireis_t missing here
+            hicum_diode(here->HICUMtemp,here->HICUMibeis_t,model->HICUMmbei, Vbiei, &ibei, &ibei_Vbiei, &ibei_dT);
+            hicum_diode(here->HICUMtemp,here->HICUMireis_t,model->HICUMmrei, Vbiei, &irei, &irei_Vbiei, &irei_dT);
 
             //Inverse of low-field internal collector resistance: needed in HICICK
             Orci0_t = 1.0/here->HICUMrci0_t;
@@ -1165,46 +1261,540 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             //Internal b-e and b-c junction capacitances and charges
             //QJMODF(here->HICUMvt,cjei0_t,vdei_t,model->HICUMzei,ajei_t,V(br_biei),Qjei)
             //Cjei    = ddx(Qjei,V(bi));
-            //todo
-            //QJMODF(here->HICUMvt,here->HICUMcjei0_t,here->HICUMvdei_t,model->HICUMzei,here->HICUMajei_t,Vbiei,&Cjei,&Cjei_Vbiei,&Qjei);
+            //TODO: derivatives after cjei0_t, vdei_t ajei_t missing here
+            hicum_qjmodf(here->HICUMtemp,here->HICUMcjei0_t,here->HICUMvdei_t,model->HICUMzei,here->HICUMajei_t,Vbiei,&Cjei,&Cjei_Vbiei, &Cjei_dT,&Qjei, &Qjei_Vbiei, &Qjei_dT);
 
-            if (model->HICUMahjei == 0.0) {
-                hjei_vbe = model->HICUMhjei;
-                hjei_vbe_Vbiei = 0.0;
-            } else {
-                double vj, vj_z, vj1, vj1_Vbiei, vj2, vj2_Vbiei, vj3, vj3_Vbiei, vj_z_Vbiei;
-                //vendhjei = vdei_t*(1.0-exp(-log(ajei_t)/z_h));
-                vj             = (here->HICUMvdei_t-Vbiei)/(model->HICUMrhjei*here->HICUMvt);
-                vj1            = here->HICUMvdei_t-model->HICUMrhjei*here->HICUMvt*(vj+sqrt(vj*vj+DFa_fj))*0.5;
-                vj1_Vbiei      = vj/2/(sqrt(vj*vj+DFa_fj));
-                vj2            = (vj1-here->HICUMvt)/here->HICUMvt;
-                vj2_Vbiei      = vj1_Vbiei/here->HICUMvt;
-                vj3            = here->HICUMvt*(1.0+(vj2+sqrt(vj2*vj2+DFa_fj))*0.5);
-                vj3_Vbiei      = 0.5*(vj2*vj2_Vbiei/sqrt(vj2*vj2+DFa_fj)+vj2_Vbiei)*here->HICUMvt;
-                vj_z           = (1.0-exp(model->HICUMzei*log(1.0-vj3/here->HICUMvdei_t)))*here->HICUMahjei_t;
-                vj_z_Vbiei     = vj3_Vbiei*(here->HICUMahjei_t-vj_z)/(here->HICUMvdei_t-vj3);
-                hjei_vbe       = here->HICUMhjei0_t*(exp(vj_z)-1.0)/vj_z;
-                hjei_vbe_Vbiei = here->HICUMhjei0_t*exp(vj_z)*vj_z_Vbiei/vj_z-hjei_vbe*vj_z_Vbiei/(vj_z*vj_z);
-            }
+            //TODO:missing temperature derivatives of vdei_t, hjei0_t vdei_t, ahjei_t
+            result         = calc_hjei_vbe(Vbiei+1_e, here->HICUMtemp, here, model);
+            hjei_vbe       = result.rpart();
+            hjei_vbe_Vbiei = result.dpart();
+            result         = calc_hjei_vbe(Vbiei, here->HICUMtemp+1_e, here, model);
+            hjei_vbe_dT    = result.dpart();
 
 
             //HICJQ(here->HICUMvt,cjci0_t,vdci_t,model->HICUMzci,vptci_t,V(br_bici),Qjci);
             //Cjci    = ddx(Qjci,V(bi));
-            //TODO
-            //HICJQ(here->HICUMvt,here->HICUMcjci0_t,here->HICUMvdci_t,model->HICUMzci,here->HICUMvptci_t,Vbici,&Cjci,&Cjci_Vbici,&Qjci);
+            //TODO: derivatives after cjci0_t, vdci_t, vptci_t
+            hicum_HICJQ(here->HICUMtemp, here->HICUMcjci0_t,here->HICUMvdci_t,model->HICUMzci,here->HICUMvptci_t, Vbici, &Cjci, &Cjci_Vbici, &Cjci_dT, &Qjci, &Qjci_Vbici, &Qjci_dT);
 
-            //Hole charge at low bias
+
+
+            //Hole charge at low bias 
+            // double calc_Q0 = [&Q_0](){
+            //     // a_bpt   = 0.05;
+            //     // Q_0     = here->HICUMqp0_t + hjei_vbe*Qjei + model->HICUMhjci*Qjci;
+            //     // Q_bpt   = a_bpt*here->HICUMqp0_t;
+            //     // b_q     = Q_0/Q_bpt-1;
+            //     // Q_0     = Q_bpt*(1+(b_q +sqrt(b_q*b_q+1.921812))/2);
+            //     return double(1);
+            // };
+        
+        /* loop through all the instances of the model */
+        for (here = HICUMinstances(model); here != NULL ;
+                here=HICUMnextInstance(here)) {
+
+            gqbepar1 = 0.0;
+            gqbepar2 = 0.0;
+            gqbcpar1 = 0.0;
+            gqbcpar2 = 0.0;
+            gqsu = 0.0;
+            Icth = 0.0, Icth_Vrth = 0.0;
+
+//            SCALE = here->HICUMarea * here->HICUMm;
+
+            /*
+             *   initialization
+             */
+            icheck=1;
+            if(ckt->CKTmode & MODEINITSMSIG) {
+                Vbiei = *(ckt->CKTstate0 + here->HICUMvbiei);
+                Vbici = *(ckt->CKTstate0 + here->HICUMvbici);
+                Vciei = Vbiei - Vbici;
+                Vbpei = *(ckt->CKTstate0 + here->HICUMvbpei);
+                Vbpci = *(ckt->CKTstate0 + here->HICUMvbpci);
+                Vbci = model->HICUMtype*(
+                    *(ckt->CKTrhsOld+here->HICUMbaseNode)-
+                    *(ckt->CKTrhsOld+here->HICUMcollCINode));
+                Vsici = *(ckt->CKTstate0 + here->HICUMvsici);
+                Vsc = model->HICUMtype*(
+                    *(ckt->CKTrhsOld+here->HICUMsubsNode)-
+                    *(ckt->CKTrhsOld+here->HICUMcollNode));
+
+                Vbpbi = *(ckt->CKTstate0 + here->HICUMvbpbi);
+                Vbe = model->HICUMtype*(
+                    *(ckt->CKTrhsOld+here->HICUMbaseNode)-
+                    *(ckt->CKTrhsOld+here->HICUMemitNode));
+                Vcic = model->HICUMtype*(
+                    *(ckt->CKTrhsOld+here->HICUMcollCINode)-
+                    *(ckt->CKTrhsOld+here->HICUMcollNode));
+                Vbbp = model->HICUMtype*(
+                    *(ckt->CKTrhsOld+here->HICUMbaseNode)-
+                    *(ckt->CKTrhsOld+here->HICUMbaseBPNode));
+                Vbpe = model->HICUMtype*(
+                    *(ckt->CKTrhsOld+here->HICUMbaseBPNode)-
+                    *(ckt->CKTrhsOld+here->HICUMemitNode));
+                Veie = model->HICUMtype*(
+                    *(ckt->CKTrhsOld+here->HICUMemitEINode)-
+                    *(ckt->CKTrhsOld+here->HICUMemitNode));
+                Vsis = model->HICUMtype*(
+                    *(ckt->CKTrhsOld+here->HICUMsubsSINode)-
+                    *(ckt->CKTrhsOld+here->HICUMsubsNode));
+                Vbxf  = *(ckt->CKTstate0 + here->HICUMvxf);
+                Vbxf1 = *(ckt->CKTstate0 + here->HICUMvxf1);
+                Vbxf2 = *(ckt->CKTstate0 + here->HICUMvxf2);
+                if (model->HICUMflsh)
+                    Vrth = *(ckt->CKTstate0 + here->HICUMvrth);
+            } else if(ckt->CKTmode & MODEINITTRAN) {
+                Vbiei = *(ckt->CKTstate1 + here->HICUMvbiei);
+                Vbici = *(ckt->CKTstate1 + here->HICUMvbici);
+                Vciei = Vbiei - Vbici;
+                Vbpei = *(ckt->CKTstate1 + here->HICUMvbpei);
+                Vbpci = *(ckt->CKTstate1 + here->HICUMvbpci);
+                Vbci = model->HICUMtype*(
+                    *(ckt->CKTrhsOld+here->HICUMbaseNode)-
+                    *(ckt->CKTrhsOld+here->HICUMcollCINode));
+                Vsici = *(ckt->CKTstate1 + here->HICUMvsici);
+                Vsc = model->HICUMtype*(
+                    *(ckt->CKTrhsOld+here->HICUMsubsNode)-
+                    *(ckt->CKTrhsOld+here->HICUMcollNode));
+
+                Vbpbi = *(ckt->CKTstate1 + here->HICUMvbpbi);
+                Vbe = model->HICUMtype*(
+                    *(ckt->CKTrhsOld+here->HICUMbaseNode)-
+                    *(ckt->CKTrhsOld+here->HICUMemitNode));
+                Vcic = model->HICUMtype*(
+                    *(ckt->CKTrhsOld+here->HICUMcollCINode)-
+                    *(ckt->CKTrhsOld+here->HICUMcollNode));
+                Vbbp = model->HICUMtype*(
+                    *(ckt->CKTrhsOld+here->HICUMbaseNode)-
+                    *(ckt->CKTrhsOld+here->HICUMbaseBPNode));
+                Vbpe = model->HICUMtype*(
+                    *(ckt->CKTrhsOld+here->HICUMbaseBPNode)-
+                    *(ckt->CKTrhsOld+here->HICUMemitNode));
+                Veie = model->HICUMtype*(
+                    *(ckt->CKTrhsOld+here->HICUMemitEINode)-
+                    *(ckt->CKTrhsOld+here->HICUMemitNode));
+                Vsis = model->HICUMtype*(
+                    *(ckt->CKTrhsOld+here->HICUMsubsSINode)-
+                    *(ckt->CKTrhsOld+here->HICUMsubsNode));
+                Vbxf  = *(ckt->CKTstate1 + here->HICUMvxf);
+                Vbxf1 = *(ckt->CKTstate1 + here->HICUMvxf1);
+                Vbxf2 = *(ckt->CKTstate1 + here->HICUMvxf2);
+                if (model->HICUMflsh)
+                    Vrth = *(ckt->CKTstate1 + here->HICUMvrth);
+            } else if((ckt->CKTmode & MODEINITJCT) &&
+                    (ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC)){
+                Vbe=Vbiei=model->HICUMtype*here->HICUMicVBE;
+                Vciei=model->HICUMtype*here->HICUMicVCE;
+                Vbci=Vbici=Vbpci=Vbiei-Vciei;
+                Vbpei=0.0;
+                Vsc=Vsici=0.0;
+                Vbpbi=Vbbp=Vbpe=0.0;
+                Vcic=Veie=Vsis=0.0;
+                Vrth=0.0,Icth=0.0,Icth_Vrth=0.0;
+                Vbxf=Vbxf1=Vbxf2=0.0;
+            } else if((ckt->CKTmode & MODEINITJCT) && (here->HICUMoff==0)) {
+                Vbe=Vbiei=model->HICUMtype*here->HICUMtVcrit;
+                Vciei=0.0;
+                Vbci=Vbici=Vbpci=0.0;
+                Vbpei=0.0;
+                Vsc=Vsici=0.0;
+                Vbpbi=Vbbp=Vbpe=0.0;
+                Vcic=Veie=Vsis=0.0;
+                Vrth=0.0,Icth=0.0,Icth_Vrth=0.0;
+                Vbxf=Vbxf1=Vbxf2=0.0;
+            } else if((ckt->CKTmode & MODEINITJCT) ||
+                    ( (ckt->CKTmode & MODEINITFIX) && (here->HICUMoff!=0))) {
+                Vbe=0.0;
+                Vbiei=Vbe;
+                Vciei=0.0;
+                Vbci=Vbici=Vbpci=0.0;
+                Vbpei=0.0;
+                Vsc=Vsici=0.0;
+                Vbpbi=Vbbp=Vbpe=0.0;
+                Vcic=Veie=Vsis=0.0;
+                Vrth=0.0,Icth=0.0,Icth_Vrth=0.0;
+                Vbxf=Vbxf1=Vbxf2=0.0;
+            } else {
+#ifndef PREDICTOR
+                if(ckt->CKTmode & MODEINITPRED) {
+                    xfact = ckt->CKTdelta/ckt->CKTdeltaOld[1];
+                    Vbiei = (1+xfact) * *(ckt->CKTstate1 + here->HICUMvbiei)-
+                            xfact * *(ckt->CKTstate2 + here->HICUMvbiei);
+                    Vbici = (1+xfact) * *(ckt->CKTstate1 + here->HICUMvbici)-
+                            xfact * *(ckt->CKTstate2 + here->HICUMvbici);
+                    Vciei = Vbiei - Vbici;
+                    Vbpei = (1+xfact) * *(ckt->CKTstate1 + here->HICUMvbpei)-
+                            xfact * *(ckt->CKTstate2 + here->HICUMvbpei);
+                    Vbpci = (1+xfact) * *(ckt->CKTstate1 + here->HICUMvbpci)-
+                            xfact * *(ckt->CKTstate2 + here->HICUMvbpci);
+                    Vsici = (1+xfact) * *(ckt->CKTstate1 + here->HICUMvsici)-
+                            xfact * *(ckt->CKTstate2 + here->HICUMvsici);
+                    Vbpbi = (1+xfact) * *(ckt->CKTstate1 + here->HICUMvbpbi)-
+                            xfact * *(ckt->CKTstate2 + here->HICUMvbpbi);
+                    Vbxf  = (1+xfact) * *(ckt->CKTstate1 + here->HICUMvxf)-
+                            xfact * *(ckt->CKTstate2 + here->HICUMvxf);
+                    Vbxf1 = (1+xfact) * *(ckt->CKTstate1 + here->HICUMvxf1)-
+                            xfact * *(ckt->CKTstate2 + here->HICUMvxf1);
+                    Vbxf2 = (1+xfact) * *(ckt->CKTstate1 + here->HICUMvxf2)-
+                            xfact * *(ckt->CKTstate2 + here->HICUMvxf2);
+                    *(ckt->CKTstate0 + here->HICUMvbiei) =
+                            *(ckt->CKTstate1 + here->HICUMvbiei);
+                    *(ckt->CKTstate0 + here->HICUMvbpei) =
+                            *(ckt->CKTstate1 + here->HICUMvbpei);
+                    *(ckt->CKTstate0 + here->HICUMvbici) =
+                            *(ckt->CKTstate1 + here->HICUMvbici);
+                    *(ckt->CKTstate0 + here->HICUMvbpei) =
+                            *(ckt->CKTstate1 + here->HICUMvbpei);
+                    *(ckt->CKTstate0 + here->HICUMvbpbi) =
+                            *(ckt->CKTstate1 + here->HICUMvbpbi);
+                    *(ckt->CKTstate0 + here->HICUMvsici) =
+                            *(ckt->CKTstate1 + here->HICUMvsici);
+                    *(ckt->CKTstate0 + here->HICUMvxf) =
+                            *(ckt->CKTstate1 + here->HICUMvxf);
+                    *(ckt->CKTstate0 + here->HICUMvxf1) =
+                            *(ckt->CKTstate1 + here->HICUMvxf1);
+                    *(ckt->CKTstate0 + here->HICUMvxf2) =
+                            *(ckt->CKTstate1 + here->HICUMvxf2);
+                    *(ckt->CKTstate0 + here->HICUMibiei) =
+                            *(ckt->CKTstate1 + here->HICUMibiei);
+                    *(ckt->CKTstate0 + here->HICUMibiei_Vbiei) =
+                            *(ckt->CKTstate1 + here->HICUMibiei_Vbiei);
+                    *(ckt->CKTstate0 + here->HICUMibpei) =
+                            *(ckt->CKTstate1 + here->HICUMibpei);
+                    *(ckt->CKTstate0 + here->HICUMibpei_Vbpei) =
+                            *(ckt->CKTstate1 + here->HICUMibpei_Vbpei);
+                    *(ckt->CKTstate0 + here->HICUMiciei) =
+                            *(ckt->CKTstate1 + here->HICUMiciei);
+                    *(ckt->CKTstate0 + here->HICUMiciei_Vbiei) =
+                            *(ckt->CKTstate1 + here->HICUMiciei_Vbiei);
+                    *(ckt->CKTstate0 + here->HICUMiciei_Vbici) =
+                            *(ckt->CKTstate1 + here->HICUMiciei_Vbici);
+                    *(ckt->CKTstate0 + here->HICUMibici) =
+                            *(ckt->CKTstate1 + here->HICUMibici);
+                    *(ckt->CKTstate0 + here->HICUMibici_Vbici) =
+                            *(ckt->CKTstate1 + here->HICUMibici_Vbici);
+                    *(ckt->CKTstate0 + here->HICUMibpei) =
+                            *(ckt->CKTstate1 + here->HICUMibpei);
+                    *(ckt->CKTstate0 + here->HICUMibpbi) =
+                            *(ckt->CKTstate1 + here->HICUMibpbi);
+                    *(ckt->CKTstate0 + here->HICUMibpbi_Vbpbi) =
+                            *(ckt->CKTstate1 + here->HICUMibpbi_Vbpbi);
+                    *(ckt->CKTstate0 + here->HICUMibpbi_Vbiei) =
+                            *(ckt->CKTstate1 + here->HICUMibpbi_Vbiei);
+                    *(ckt->CKTstate0 + here->HICUMibpbi_Vbici) =
+                            *(ckt->CKTstate1 + here->HICUMibpbi_Vbici);
+                    *(ckt->CKTstate0 + here->HICUMisici) =
+                            *(ckt->CKTstate1 + here->HICUMisici);
+                    *(ckt->CKTstate0 + here->HICUMisici_Vsici) =
+                            *(ckt->CKTstate1 + here->HICUMisici_Vsici);
+                    *(ckt->CKTstate0 + here->HICUMibpsi) =
+                            *(ckt->CKTstate1 + here->HICUMibpsi);
+                    *(ckt->CKTstate0 + here->HICUMibpsi_Vbpci) =
+                            *(ckt->CKTstate1 + here->HICUMibpsi_Vbpci);
+                    *(ckt->CKTstate0 + here->HICUMibpsi_Vsici) =
+                            *(ckt->CKTstate1 + here->HICUMibpsi_Vsici);
+                    *(ckt->CKTstate0 + here->HICUMgqbepar1) =
+                            *(ckt->CKTstate1 + here->HICUMgqbepar1);
+                    *(ckt->CKTstate0 + here->HICUMgqbepar2) =
+                            *(ckt->CKTstate1 + here->HICUMgqbepar2);
+                    *(ckt->CKTstate0 + here->HICUMieie) =
+                            *(ckt->CKTstate1 + here->HICUMieie);
+                    *(ckt->CKTstate0 + here->HICUMisis_Vsis) =
+                            *(ckt->CKTstate1 + here->HICUMisis_Vsis);
+//NQS
+                    *(ckt->CKTstate0 + here->HICUMgqxf) =
+                            *(ckt->CKTstate1 + here->HICUMgqxf);
+                    *(ckt->CKTstate0 + here->HICUMixf_Vbiei) =
+                            *(ckt->CKTstate1 + here->HICUMixf_Vbiei);
+                    *(ckt->CKTstate0 + here->HICUMixf_Vbici) =
+                            *(ckt->CKTstate1 + here->HICUMixf_Vbici);
+
+                    if (model->HICUMflsh) {
+                        Vrth = (1.0 + xfact)* (*(ckt->CKTstate1 + here->HICUMvrth))
+                          - ( xfact * (*(ckt->CKTstate2 + here->HICUMvrth)));
+                        *(ckt->CKTstate0 + here->HICUMvrth) =
+                                *(ckt->CKTstate1 + here->HICUMvrth);
+                        *(ckt->CKTstate0 + here->HICUMqcth) =
+                                *(ckt->CKTstate1 + here->HICUMqcth);
+                    }
+                } else {
+#endif /* PREDICTOR */
+                    /*
+                     *   compute new nonlinear branch voltages
+                     */
+                    Vbiei = model->HICUMtype*(
+                        *(ckt->CKTrhsOld+here->HICUMbaseBINode)-
+                        *(ckt->CKTrhsOld+here->HICUMemitEINode));
+                    Vbici = model->HICUMtype*(
+                        *(ckt->CKTrhsOld+here->HICUMbaseBINode)-
+                        *(ckt->CKTrhsOld+here->HICUMcollCINode));
+                    Vbpei = model->HICUMtype*(
+                        *(ckt->CKTrhsOld+here->HICUMbaseBPNode)-
+                        *(ckt->CKTrhsOld+here->HICUMemitEINode));
+                    Vbpbi = model->HICUMtype*(
+                        *(ckt->CKTrhsOld+here->HICUMbaseBPNode)-
+                        *(ckt->CKTrhsOld+here->HICUMbaseBINode));
+                    Vbpci = model->HICUMtype*(
+                        *(ckt->CKTrhsOld+here->HICUMbaseBPNode)-
+                        *(ckt->CKTrhsOld+here->HICUMcollCINode));
+                    Vsici = model->HICUMtype*(
+                        *(ckt->CKTrhsOld+here->HICUMsubsSINode)-
+                        *(ckt->CKTrhsOld+here->HICUMcollCINode));
+                    Vbxf  = *(ckt->CKTrhsOld + here->HICUMxfNode);
+                    Vbxf1 = *(ckt->CKTrhsOld + here->HICUMxf1Node);
+                    Vbxf2 = *(ckt->CKTrhsOld + here->HICUMxf2Node);
+                    Vciei = Vbiei - Vbici;
+                    if (model->HICUMflsh)
+                        Vrth = *(ckt->CKTrhsOld + here->HICUMtempNode);
+#ifndef PREDICTOR
+                }
+#endif /* PREDICTOR */
+                delvbiei = Vbiei - *(ckt->CKTstate0 + here->HICUMvbiei);
+                delvbici = Vbici - *(ckt->CKTstate0 + here->HICUMvbici);
+                delvbpei = Vbpei - *(ckt->CKTstate0 + here->HICUMvbpei);
+                delvbpbi = Vbpbi - *(ckt->CKTstate0 + here->HICUMvbpbi);
+                delvbpci = Vbpci - *(ckt->CKTstate0 + here->HICUMvbpci);
+                delvsici = Vsici - *(ckt->CKTstate0 + here->HICUMvsici);
+                if (model->HICUMflsh)
+                    delvrth = Vrth - *(ckt->CKTstate0 + here->HICUMvrth);
+                Vbe = model->HICUMtype*(
+                    *(ckt->CKTrhsOld+here->HICUMbaseNode)-
+                    *(ckt->CKTrhsOld+here->HICUMemitNode));
+                Vsc = model->HICUMtype*(
+                    *(ckt->CKTrhsOld+here->HICUMsubsNode)-
+                    *(ckt->CKTrhsOld+here->HICUMcollNode));
+                Vcic = model->HICUMtype*(
+                    *(ckt->CKTrhsOld+here->HICUMcollCINode)-
+                    *(ckt->CKTrhsOld+here->HICUMcollNode));
+                Vbci = model->HICUMtype*(
+                    *(ckt->CKTrhsOld+here->HICUMbaseNode)-
+                    *(ckt->CKTrhsOld+here->HICUMcollCINode));
+                Vbbp = model->HICUMtype*(
+                    *(ckt->CKTrhsOld+here->HICUMbaseNode)-
+                    *(ckt->CKTrhsOld+here->HICUMbaseBPNode));
+                Vbpe = model->HICUMtype*(
+                    *(ckt->CKTrhsOld+here->HICUMbaseBPNode)-
+                    *(ckt->CKTrhsOld+here->HICUMemitNode));
+                Veie = model->HICUMtype*(
+                    *(ckt->CKTrhsOld+here->HICUMemitEINode)-
+                    *(ckt->CKTrhsOld+here->HICUMemitNode));
+                Vsis = model->HICUMtype*(
+                    *(ckt->CKTrhsOld+here->HICUMsubsSINode)-
+                    *(ckt->CKTrhsOld+here->HICUMsubsNode));
+                Vbxf = *(ckt->CKTrhsOld + here->HICUMxfNode);
+                Vbxf1 = *(ckt->CKTrhsOld + here->HICUMxf1Node);
+                Vbxf2 = *(ckt->CKTrhsOld + here->HICUMxf2Node);
+                if (model->HICUMflsh)
+                    Vrth = *(ckt->CKTrhsOld + here->HICUMtempNode);
+                ibieihat = *(ckt->CKTstate0 + here->HICUMibiei) +
+                         *(ckt->CKTstate0 + here->HICUMibiei_Vbiei)*delvbiei;
+                ibicihat = *(ckt->CKTstate0 + here->HICUMibici) +
+                         *(ckt->CKTstate0 + here->HICUMibici_Vbici)*delvbici;
+                ibpeihat = *(ckt->CKTstate0 + here->HICUMibpei) +
+                         *(ckt->CKTstate0 + here->HICUMibpei_Vbpei)*delvbpei;
+                ibpcihat = *(ckt->CKTstate0 + here->HICUMibpci) +
+                         *(ckt->CKTstate0 + here->HICUMibpci_Vbpci)*delvbpci;
+                icieihat = *(ckt->CKTstate0 + here->HICUMiciei) +
+                         *(ckt->CKTstate0 + here->HICUMiciei_Vbiei)*delvbiei +
+                         *(ckt->CKTstate0 + here->HICUMiciei_Vbici)*delvbici;
+                ibpbihat = *(ckt->CKTstate0 + here->HICUMibpbi) +
+                         *(ckt->CKTstate0 + here->HICUMibpbi_Vbpbi)*delvbpbi +
+                         *(ckt->CKTstate0 + here->HICUMibpbi_Vbiei)*delvbiei +
+                         *(ckt->CKTstate0 + here->HICUMibpbi_Vbici)*delvbici;
+                isicihat = *(ckt->CKTstate0 + here->HICUMisici) +
+                         *(ckt->CKTstate0 + here->HICUMisici_Vsici)*delvsici;
+                ibpsihat = *(ckt->CKTstate0 + here->HICUMibpsi) +
+                         *(ckt->CKTstate0 + here->HICUMibpsi_Vbpci)*delvbpci +
+                         *(ckt->CKTstate0 + here->HICUMibpsi_Vsici)*delvsici;
+                /*
+                 *    bypass if solution has not changed
+                 */
+                /* the following collections of if's would be just one
+                 * if the average compiler could handle it, but many
+                 * find the expression too complicated, thus the split.
+                 * ... no bypass in case of selfheating
+                 */
+                if( (ckt->CKTbypass) && (!(ckt->CKTmode & MODEINITPRED)) && !model->HICUMflsh &&
+                        (fabs(delvbiei) < (ckt->CKTreltol*MAX(fabs(Vbiei),
+                            fabs(*(ckt->CKTstate0 + here->HICUMvbiei)))+
+                            ckt->CKTvoltTol)) )
+                    if( (fabs(delvbici) < ckt->CKTreltol*MAX(fabs(Vbici),
+                            fabs(*(ckt->CKTstate0 + here->HICUMvbici)))+
+                            ckt->CKTvoltTol) )
+                    if( (fabs(delvbpei) < ckt->CKTreltol*MAX(fabs(Vbpei),
+                            fabs(*(ckt->CKTstate0 + here->HICUMvbpei)))+
+                            ckt->CKTvoltTol) )
+                    if( (fabs(delvbpbi) < ckt->CKTreltol*MAX(fabs(Vbpbi),
+                            fabs(*(ckt->CKTstate0 + here->HICUMvbpbi)))+
+                            ckt->CKTvoltTol) )
+                    if( (fabs(delvsici) < ckt->CKTreltol*MAX(fabs(Vsici),
+                            fabs(*(ckt->CKTstate0 + here->HICUMvsici)))+
+                            ckt->CKTvoltTol) )
+                    if( (fabs(ibieihat-*(ckt->CKTstate0 + here->HICUMibiei)) <
+                            ckt->CKTreltol* MAX(fabs(ibieihat),
+                            fabs(*(ckt->CKTstate0 + here->HICUMibiei)))+
+                            ckt->CKTabstol) )
+                    if( (fabs(ibpeihat-*(ckt->CKTstate0 + here->HICUMibpei)) <
+                            ckt->CKTreltol* MAX(fabs(ibpeihat),
+                            fabs(*(ckt->CKTstate0 + here->HICUMibpei)))+
+                            ckt->CKTabstol) )
+                    if( (fabs(icieihat-*(ckt->CKTstate0 + here->HICUMiciei)) <
+                            ckt->CKTreltol* MAX(fabs(icieihat),
+                            fabs(*(ckt->CKTstate0 + here->HICUMiciei)))+
+                            ckt->CKTabstol) )
+                    if( (fabs(ibicihat-*(ckt->CKTstate0 + here->HICUMibici)) <
+                            ckt->CKTreltol* MAX(fabs(ibicihat),
+                            fabs(*(ckt->CKTstate0 + here->HICUMibici)))+
+                            ckt->CKTabstol) )
+                    if( (fabs(ibpcihat-*(ckt->CKTstate0 + here->HICUMibpei)) <
+                            ckt->CKTreltol* MAX(fabs(ibpcihat),
+                            fabs(*(ckt->CKTstate0 + here->HICUMibpei)))+
+                            ckt->CKTabstol) )
+                    if( (fabs(ibpbihat-*(ckt->CKTstate0 + here->HICUMibpbi)) <
+                            ckt->CKTreltol* MAX(fabs(ibpbihat),
+                            fabs(*(ckt->CKTstate0 + here->HICUMibpbi)))+
+                            ckt->CKTabstol) )
+                    if( (fabs(isicihat-*(ckt->CKTstate0 + here->HICUMisici)) <
+                            ckt->CKTreltol* MAX(fabs(isicihat),
+                            fabs(*(ckt->CKTstate0 + here->HICUMisici)))+
+                            ckt->CKTabstol) )
+                    if( (fabs(ibpsihat-*(ckt->CKTstate0 + here->HICUMibpsi)) <
+                            ckt->CKTreltol* MAX(fabs(ibpsihat),
+                            fabs(*(ckt->CKTstate0 + here->HICUMibpsi)))+
+                            ckt->CKTabstol) ) {
+                    /*
+                     * bypassing....
+                     */
+                    Vbiei = *(ckt->CKTstate0 + here->HICUMvbiei);
+                    Vbici = *(ckt->CKTstate0 + here->HICUMvbici);
+                    Vbpei = *(ckt->CKTstate0 + here->HICUMvbpei);
+                    Vbpbi = *(ckt->CKTstate0 + here->HICUMvbpbi);
+                    Vbpci = *(ckt->CKTstate0 + here->HICUMvbpci);
+                    Vsici = *(ckt->CKTstate0 + here->HICUMvsici);
+
+                    Ibiei       = *(ckt->CKTstate0 + here->HICUMibiei);
+                    Ibiei_Vbiei = *(ckt->CKTstate0 + here->HICUMibiei_Vbiei);
+
+                    Ibpei       = *(ckt->CKTstate0 + here->HICUMibpei);
+                    Ibpei_Vbpei = *(ckt->CKTstate0 + here->HICUMibpei_Vbpei);
+
+                    Iciei       = *(ckt->CKTstate0 + here->HICUMiciei);
+                    Iciei_Vbiei = *(ckt->CKTstate0 + here->HICUMiciei_Vbiei);
+                    Iciei_Vbici = *(ckt->CKTstate0 + here->HICUMiciei_Vbici);
+
+                    Ibici       = *(ckt->CKTstate0 + here->HICUMibici);
+                    Ibici_Vbici = *(ckt->CKTstate0 + here->HICUMibici_Vbici);
+
+                    Ibpbi       = *(ckt->CKTstate0 + here->HICUMibpbi);
+                    Ibpbi_Vbpbi = *(ckt->CKTstate0 + here->HICUMibpbi_Vbpbi);
+                    Ibpbi_Vbiei = *(ckt->CKTstate0 + here->HICUMibpbi_Vbiei);
+                    Ibpbi_Vbici = *(ckt->CKTstate0 + here->HICUMibpbi_Vbici);
+
+                    Isici       = *(ckt->CKTstate0 + here->HICUMisici);
+                    Isici_Vsici = *(ckt->CKTstate0 + here->HICUMisici_Vsici);
+
+                    Ibpsi       = *(ckt->CKTstate0 + here->HICUMibpsi);
+                    Ibpsi_Vbpci = *(ckt->CKTstate0 + here->HICUMibpsi_Vbpci);
+                    Ibpsi_Vsici = *(ckt->CKTstate0 + here->HICUMibpsi_Vsici);
+
+                    Ibpci       = *(ckt->CKTstate0 + here->HICUMibpci);
+                    Ibpci_Vbpci = *(ckt->CKTstate0 + here->HICUMibpci_Vbpci);
+
+                    Ieie        = *(ckt->CKTstate0 + here->HICUMieie);
+
+                    Isis_Vsis   = *(ckt->CKTstate0 + here->HICUMisis_Vsis);
+
+                    gqbepar1    = *(ckt->CKTstate0 + here->HICUMgqbepar1);
+                    gqbepar2    = *(ckt->CKTstate0 + here->HICUMgqbepar2);
+                    gqbcpar1    = *(ckt->CKTstate0 + here->HICUMgqbcpar1);
+                    gqbcpar2    = *(ckt->CKTstate0 + here->HICUMgqbcpar2);
+                    goto load;
+                }
+                /*
+                 *   limit nonlinear branch voltages
+                 */
+                ichk1 = 1, ichk2 = 1, ichk3 = 1, ichk4 = 1, ichk5 = 0;
+                Vbiei = DEVpnjlim(Vbiei,*(ckt->CKTstate0 + here->HICUMvbiei),here->HICUMvt,
+                        here->HICUMtVcrit,&icheck);
+                Vbici = DEVpnjlim(Vbici,*(ckt->CKTstate0 + here->HICUMvbici),here->HICUMvt,
+                        here->HICUMtVcrit,&ichk1);
+                Vbpei = DEVpnjlim(Vbpei,*(ckt->CKTstate0 + here->HICUMvbpei),here->HICUMvt,
+                        here->HICUMtVcrit,&ichk2);
+                Vbpci = DEVpnjlim(Vbpci,*(ckt->CKTstate0 + here->HICUMvbpci),here->HICUMvt,
+                        here->HICUMtVcrit,&ichk3);
+                Vsici = DEVpnjlim(Vsici,*(ckt->CKTstate0 + here->HICUMvsici),here->HICUMvt,
+                        here->HICUMtVcrit,&ichk4);
+                if (model->HICUMflsh) {
+                    ichk5 = 1;
+                    Vrth = HICUMlimitlog(Vrth,
+                        *(ckt->CKTstate0 + here->HICUMvrth),100,&ichk4);
+                }
+                if ((ichk1 == 1) || (ichk2 == 1) || (ichk3 == 1) || (ichk4 == 1) || (ichk5 == 1)) icheck=1;
+            }
+            /*
+             *   determine dc current and derivatives
+             */
+//todo: check for double multiplication on pnp's
+            Vbiei = model->HICUMtype*Vbiei;
+            Vbici = model->HICUMtype*Vbici;
+            Vciei = Vbiei-Vbici;
+            Vbpei = model->HICUMtype*Vbpei;
+            Vbpci = model->HICUMtype*Vbpci;
+            Vbci  = model->HICUMtype*Vbci;
+            Vsici = model->HICUMtype*Vsici;
+            Vsc   = model->HICUMtype*Vsc;
+
+            if (model->HICUMflsh!=0 && model->HICUMrth >= MIN_R) { // Thermal_update_with_self_heating
+                here->HICUMtemp = here->HICUMtemp+Vrth;
+                iret = hicum_thermal_update(model, here);
+            }
+
+            // Model_evaluation
+
+            //Intrinsic transistor
+            //Internal base currents across b-e junction
+            // HICDIO(here->HICUMvt,model->HICUMibeis,here->HICUMibeis_t,model->HICUMmbei,Vbiei,&ibei,&Ibiei_Vbiei);
+            // HICDIO(here->HICUMvt,model->HICUMireis,here->HICUMireis_t,model->HICUMmrei,Vbiei,&irei,&irei_Vbiei);
+            // HICDIO(here->HICUMvt,model->HICUMireis,here->HICUMireis_t,model->HICUMmrei,Vbiei,&irei,&irei_Vbiei);
+
+            //TODO:derivative of ibeis_t and ireis_t missing here
+            hicum_diode(here->HICUMtemp,here->HICUMibeis_t,model->HICUMmbei, Vbiei, &ibei, &ibei_Vbiei, &ibei_dT);
+            hicum_diode(here->HICUMtemp,here->HICUMireis_t,model->HICUMmrei, Vbiei, &irei, &irei_Vbiei, &irei_dT);
+
+            //Inverse of low-field internal collector resistance: needed in HICICK
+            Orci0_t = 1.0/here->HICUMrci0_t;
+
+            //Internal b-e and b-c junction capacitances and charges
+            //QJMODF(here->HICUMvt,cjei0_t,vdei_t,model->HICUMzei,ajei_t,V(br_biei),Qjei)
+            //Cjei    = ddx(Qjei,V(bi));
+            //TODO: derivatives after cjei0_t, vdei_t ajei_t missing here
+            hicum_qjmodf(here->HICUMtemp,here->HICUMcjei0_t,here->HICUMvdei_t,model->HICUMzei,here->HICUMajei_t,Vbiei,&Cjei,&Cjei_Vbiei, &Cjei_dT,&Qjei, &Qjei_Vbiei, &Qjei_dT);
+
+            //TODO:missing temperature derivatives of vdei_t, hjei0_t vdei_t, ahjei_t
+            result         = calc_hjei_vbe(Vbiei+1_e, here->HICUMtemp, here, model);
+            hjei_vbe       = result.rpart();
+            hjei_vbe_Vbiei = result.dpart();
+            result         = calc_hjei_vbe(Vbiei, here->HICUMtemp+1_e, here, model);
+            hjei_vbe_dT    = result.dpart();
+
+
+            //HICJQ(here->HICUMvt,cjci0_t,vdci_t,model->HICUMzci,vptci_t,V(br_bici),Qjci);
+            //Cjci    = ddx(Qjci,V(bi));
+            //TODO: derivatives after cjci0_t, vdci_t, vptci_t
+            hicum_HICJQ(here->HICUMtemp, here->HICUMcjci0_t,here->HICUMvdci_t,model->HICUMzci,here->HICUMvptci_t, Vbici, &Cjci, &Cjci_Vbici, &Cjci_dT, &Qjci, &Qjci_Vbici, &Qjci_dT);
+
+
+
+            //Hole charge at low bias 
+            // double calc_Q0 = [&
             a_bpt   = 0.05;
-            Q_0     = here->HICUMqp0_t + hjei_vbe*Qjei + model->HICUMhjci*Qjci;
-            Q_0_Vbiei = hjei_vbe_Vbiei*Qjei+hjei_vbe*Cjei;
-            Q_0_Vbici = model->HICUMhjci*Cjci;
-            Q_bpt   = a_bpt*here->HICUMqp0_t;
+            Q_0     = qp0_t + hjei_vbe*Qjei + hjci*Qjci;
+            Q_bpt   = a_bpt*qp0_t;
             b_q     = Q_0/Q_bpt-1;
-            b_q_Vbiei = Q_0_Vbiei/Q_bpt;
-            b_q_Vbici = Q_0_Vbici/Q_bpt;
             Q_0     = Q_bpt*(1+(b_q +sqrt(b_q*b_q+1.921812))/2);
-            Q_0_Vbiei = Q_bpt*(b_q*b_q_Vbiei/sqrt(b_q*b_q+1.921812)+b_q_Vbiei)/2;
-            Q_0_Vbici = Q_bpt*(b_q*b_q_Vbici/sqrt(b_q*b_q+1.921812)+b_q_Vbici)/2;
+
+
 
             //Transit time calculation at low current density
             if(here->HICUMcjci0_t > 0.0) { // CJMODF
@@ -1773,7 +2363,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             Irth_Vrth = 0.0;
             Ibici_Vrth = 0.0;
             Ibpei_Vrth = 0.0;
-            Ibiei_Vrth = 0.0;
+            Ibiei_dT   = 0.0;
             Ibpci_Vrth = 0.0;
             Ibpbi_Vrth = 0.0;
             Iciei_Vrth = 0.0;
@@ -2351,11 +2941,11 @@ c           Branch: xf-ground, Stamp element: Rxf
 /*
 c               Stamp element: Ibiei
 */
-                rhs_current = -Ibiei_Vrth*Vrth;
+                rhs_current = -Ibiei_dT*Vrth;
                 *(ckt->CKTrhs + here->HICUMbaseBINode) += -rhs_current;
-                *(here->HICUMbaseBItempPtr)            +=  Ibiei_Vrth;
+                *(here->HICUMbaseBItempPtr)            +=  Ibiei_dT;
                 *(ckt->CKTrhs + here->HICUMemitEINode) +=  rhs_current;
-                *(here->HICUMemitEItempPtr)            += -Ibiei_Vrth;
+                *(here->HICUMemitEItempPtr)            += -Ibiei_dT;
 /*
 c               Stamp element: Ibici
 */
