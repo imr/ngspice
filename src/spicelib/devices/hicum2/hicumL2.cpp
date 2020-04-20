@@ -587,7 +587,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Orci0_t,b_q,I_Tf1,T_f0,Q_fT,T_fT,Q_bf;
     double a_h,Q_pT,d_Q;
     double Qf,Cdei,Qr,Cdci;
-    double ick,vc,cjcx01,cjcx02;
+    double ick, ick_Vciei, ick_dT,vc,cjcx01,cjcx02;
     int l_it;
 
     //NQS
@@ -641,7 +641,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Ibpsi, Ibpsi_Vbpci, Ibpsi_Vsici;
     double Icic_Vcic;
     double Ibci,  Ibci_Vbci;
-    double hjei_vbe_Vbiei, hjei_vbe_dT, ibet_Vbpei=0.0, ibet_Vbiei=0.0, ibh_rec_Vbiei;
+    double hjei_vbe_Vbiei, hjei_vbe_dT, ibet_Vbpei=0.0, ibet_dT=0, ibet_Vbiei=0.0, ibh_rec_Vbiei;
     double irei_Vbiei, irei_dT;
     double irep_Vbpei, iavl_Vbici, rbi_Vbiei, rbi_Vbici;
     double ibei_Vbiei, ibei_dT;
@@ -777,6 +777,28 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             return ick;
 
         //end
+    };
+
+    std::function<duals::duald (duals::duald, duals::duald)> calc_ibet = [&](duals::duald Vbiei, duals::duald Vbpei){
+        //Tunneling current
+        duals::duald ibet;
+        if (model->HICUMibets > 0 && (Vbpei <0.0 || Vbiei < 0.0)){ //begin : HICTUN
+            duals::duald pocce,czz;
+            if(model->HICUMtunode==1 && here->HICUMcjep0_t > 0.0 && here->HICUMvdep_t >0.0){
+                pocce   = exp((1-1/model->HICUMzep)*log(Cjep/here->HICUMcjep0_t));
+                czz     = -(Vbpei/here->HICUMvdep_t)*here->HICUMibets_t*pocce;
+                ibet    = czz*exp(-here->HICUMabet_t/pocce);
+            } else if (model->HICUMtunode==0 && here->HICUMcjei0_t > 0.0 && here->HICUMvdei_t >0.0){
+                pocce   = exp((1-1/model->HICUMzei)*log(Cjei/here->HICUMcjei0_t));
+                czz     = -(Vbiei/here->HICUMvdei_t)*here->HICUMibets_t*pocce;
+                ibet    = czz*exp(-here->HICUMabet_t/pocce);
+            } else {
+                ibet    = 0.0;
+            }
+        } else {
+            ibet    = 0.0;
+        }
+        return ibet;
     };
 
     /*  loop through all the models */
@@ -1594,32 +1616,15 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             //QJMODF(here->HICUMvt,here->HICUMcjep0_t,here->HICUMvdep_t,model->HICUMzep,here->HICUMajep_t,Vbpei,&Cjep,&Cjep_Vbpei,&Qjep);
 
             //Tunneling current
-            if (model->HICUMibets > 0 && (Vbpei <0.0 || Vbiei < 0.0)) { // HICTUN
-                double pocce,czz,pocce_Vbpei,czz_Vbpei,pocce_Vbiei,czz_Vbiei;
-                if(model->HICUMtunode==1 && here->HICUMcjep0_t > 0.0 && here->HICUMvdep_t >0.0) {
-                    pocce   = exp((1-1/model->HICUMzep)*log(Cjep/here->HICUMcjep0_t));
-                    pocce_Vbpei = Cjep_Vbpei*(1-1/model->HICUMzep)*pocce/Cjep;
-                    czz     = -(Vbpei/here->HICUMvdep_t)*here->HICUMibets_t*pocce;
-                    czz_Vbpei = -here->HICUMibets_t/here->HICUMvdep_t*(pocce+Vbpei*pocce_Vbpei);
-                    ibet    = czz*exp(-here->HICUMabet_t/pocce);
-                    ibet_Vbpei = ibet*(here->HICUMabet_t*pocce_Vbpei/(pocce*pocce)+czz_Vbpei/czz);
-                } else if (model->HICUMtunode==0 && here->HICUMcjei0_t > 0.0 && here->HICUMvdei_t >0.0) {
-                    pocce   = exp((1-1/model->HICUMzei)*log(Cjei/here->HICUMcjei0_t));
-                    pocce_Vbiei = Cjei_Vbiei*(1-1/model->HICUMzei)*pocce/Cjei;
-                    czz     = -(Vbiei/here->HICUMvdei_t)*here->HICUMibets_t*pocce;
-                    czz_Vbiei = -here->HICUMibets_t/here->HICUMvdei_t*(pocce+Vbiei*pocce_Vbiei);
-                    ibet    = czz*exp(-here->HICUMabet_t/pocce);
-                    ibet_Vbiei = ibet*(here->HICUMabet_t*pocce_Vbiei/(pocce*pocce)+czz_Vbiei/czz);
-                } else {
-                    ibet    = 0.0;
-                    ibet_Vbpei = 0.0;
-                    ibet_Vbiei = 0.0;
-                }
-            } else {
-                ibet    = 0.0;
-                ibet_Vbpei = 0.0;
-                ibet_Vbiei = 0.0;
-            }
+            //TODO: missing temperature derivatives abet_t vdei_t ibets_t cjei0_t vdep_t ibets_t cjep0_t
+            result      = calc_ibet(Vbiei, Vbpei+1_e);
+            ibet        = result.rpart();
+            ibet_Vbpei  = result.dpart();
+
+            result      = calc_ibet(Vbiei+1_e, Vbpei);
+            ibet_Vbiei  = result.dpart();
+            ibet_dT     = 0;
+
 
 
             //Base currents across peripheral b-c junction (bp,ci)
