@@ -650,7 +650,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Cjei_Vbiei,Cjci_Vbici,Cjep_Vbpei,CjCx_i_Vbci,CjCx_ii_Vbpci,Cjs_Vsici,Cscp_Vsc,Cjcit_Vbici,i_0f_Vbiei,i_0r_Vbici;
     double Cjei_dT, Cjci_dT;
     double Qjei_Vbiei, Qjei_dT, Qjci_Vbici, Qjci_dT;
-    double cc_Vbici,T_f0_Vbici,Q_p_Vbiei,Q_p_Vbici,I_Tf1_Vbiei,I_Tf1_Vbici,itf_Vbiei,itf_Vbici,itr_Vbiei,itr_Vbici;
+    double cc_Vbici,T_f0_Vbici,T_f0_Qjci, T_f0_dT,Q_p_Vbiei,Q_p_Vbici,I_Tf1_Vbiei,I_Tf1_Vbici,itf_Vbiei,itf_Vbici,itr_Vbiei,itr_Vbici;
     double Qbepar1;
     double Qbepar2;
     double Qbcpar1;
@@ -720,7 +720,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
     //Hole charge at low bias
     std::function<duals::duald (duals::duald, duals::duald, duals::duald)> calc_Q_0 = [&](duals::duald Qjei, duals::duald Qjci, duals::duald hjei_vbe){
-        //Hole charge at low bias
         duals::duald Q_0, b_q, Q_bpt ;
         a_bpt   = 0.05;
         Q_0     = here->HICUMqp0_t + hjei_vbe*Qjei + model->HICUMhjci*Qjci;
@@ -728,6 +727,31 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
         b_q     = Q_0/Q_bpt-1;
         Q_0     = Q_bpt*(1+(b_q +sqrt(b_q*b_q+1.921812))/2);
         return Q_0;
+    };
+
+    std::function<duals::duald (duals::duald, duals::duald, duals::duald)> calc_T_f0 = [&](duals::duald T, duals::duald Vbici, duals::duald Qjci){
+        //Transit time calculation at low current density
+        duals::duald vt;
+        duals::duald cV_f,cv_e,cs_q,cs_q2,cv_j,cdvj_dv,Cjcit,cc;
+
+        vt = CONSTboltz * T / CHARGE;
+        if(here->HICUMcjci0_t > 0.0){ // CJMODF
+            cV_f    = here->HICUMvdci_t*(1.0-exp(-log(2.4)/model->HICUMzci));
+            cv_e    = (cV_f-Vbici)/vt;
+            cs_q    = sqrt(cv_e*cv_e+1.921812);
+            cs_q2   = (cv_e+cs_q)*0.5;
+            cv_j    = cV_f-vt*cs_q2;
+            cdvj_dv = cs_q2/cs_q;
+            Cjcit   = here->HICUMcjci0_t*exp(-model->HICUMzci*log(1.0-cv_j/here->HICUMvdci_t))*cdvj_dv+2.4*here->HICUMcjci0_t*(1.0-cdvj_dv);
+        } else {
+            Cjcit   = 0.0;
+        }
+        if(Cjcit > 0.0) {
+            cc      = here->HICUMcjci0_t/Cjcit;
+        } else {
+            cc      = 1.0;
+        }
+        return here->HICUMt0_t+model->HICUMdt0h*(cc-1.0)+model->HICUMtbvl*(1/cc-1.0);
     };
 
     /*  loop through all the models */
@@ -1290,8 +1314,21 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
             Q_0_Vbiei    = Q_0_Qjei*Qjei_Vbiei + Q_0_hjei_vbe*hjei_vbe_Vbiei;
             Q_0_Vbici    = Q_0_Qjci*Qjci_Vbici ;
+            //TODO: derivative qp0_t 
             Q_0_dT       = Q_0_Qjei*Qjei_dT + Q_0_Qjci*Qjci_dT * Q_0_hjei_vbe*hjei_vbe_dT;
 
+            //Transit time calculation at low current density
+            result     = calc_T_f0(here->HICUMtemp, Vbici+1_e, Qjci);
+            T_f0       = result.rpart();
+            T_f0_Vbici = result.dpart();
+
+            result     = calc_T_f0(here->HICUMtemp, Vbici, Qjci+1_e);
+            T_f0_Qjci  = result.dpart();
+            T_f0_Vbici += T_f0_Qjci*Qjci_Vbici;
+
+            result     = calc_T_f0(here->HICUMtemp+1_e, Vbici, Qjci);
+            T_f0_dT    = result.dpart() ;
+            T_f0_dT   += T_f0_Qjci*Qjci_dT;
 
             //Transit time calculation at low current density
             if(here->HICUMcjci0_t > 0.0) { // CJMODF
