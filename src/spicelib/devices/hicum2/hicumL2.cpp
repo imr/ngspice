@@ -572,7 +572,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Qjci,Qjei,Qjep;
     double Qdei,Qdci,Qrbi;
     double it,ibei,irei,ibci,ibep,irep,ibh_rec;
-    double ibet,iavl;
+    double ibet,iavl,iavl_ditf,iavl_dT,iavl_Vbiei,iavl_dCjci;
     double ijbcx,ijbcx_dT,ijbcx_Vbpci,ijsc,Qjs,Qscp,HSUM,HSI_Tsu,Qdsu;
 
     //Base resistance and self-heating power
@@ -645,7 +645,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Ibpbi, Ibpbi_Vbpbi, Ibpbi_Vbici, Ibpbi_Vbiei;
     double Ibpsi, Ibpsi_Vbpci, Ibpsi_Vsici;
     double Icic_Vcic;
-    double Ibci,  Ibci_Vbci;
+    double Ibci,  Ibci_Vbci, Ibci_dT;
     double hjei_vbe_Vbiei, hjei_vbe_dT, ibet_Vbpei=0.0, ibet_dT=0, ibet_Vbiei=0.0, ibh_rec_Vbiei;
     double irei_Vbiei, irei_dT;
     double irep_Vbpei, iavl_Vbici, rbi_Vbiei, rbi_Vbici;
@@ -655,7 +655,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Cjei_Vbiei,Cjci_Vbici,Cjep_Vbpei,Cjs_Vsici,Cscp_Vsc,Cjcit_Vbici,i_0f_Vbiei,i_0r_Vbici;
     double Cjei_dT, Cjci_dT;
     double Qjei_Vbiei, Qjei_dT, Qjci_Vbici, Qjci_dT;
-    double cc_Vbici,T_f0_Vbici,T_f0_Qjci, T_f0_dT,Q_p_Vbiei,Q_p_Vbici,I_Tf1_Vbiei,I_Tf1_Vbici,itf_Vbiei,itf_Vbici,itr_Vbiei,itr_Vbici;
+    double cc_Vbici,T_f0_Vbici,T_f0_Qjci, T_f0_dT,Q_p_Vbiei,Q_p_Vbici,I_Tf1_Vbiei,I_Tf1_Vbici,itf_Vbiei,itf_Vbici,itf_dT,itr_Vbiei,itr_Vbici;
     double Qbepar1;
     double Qbepar2;
     double Qbcpar1;
@@ -761,6 +761,9 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
         vc      = Vciei-here->HICUMvces_t;
         vt      = CONSTboltz * T / CHARGE;
 
+        //Inverse of low-field internal collector resistance: needed in HICICK
+        Orci0_t = 1.0/here->HICUMrci0_t;
+
         //Critical current for onset of high-current effects
         //begin : HICICK
             Ovpt    = 1.0/model->HICUMvpt;
@@ -804,6 +807,44 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             ibet    = 0.0;
         }
         return ibet;
+    };
+
+    std::function<duals::duald (duals::duald, duals::duald, duals::duald)> calc_iavl = [&](duals::duald Vbici, duals::duald Cjci, duals::duald itf){
+        //Avalanche current
+        iavl = 0;
+        if (use_aval == 1) {//begin : HICAVL
+            duals::duald v_bord,v_q,U0,av,avl,iavl;
+            v_bord  = here->HICUMvdci_t-Vbici;
+            if (v_bord > 0) {
+                v_q     = here->HICUMqavl_t/Cjci;
+                U0      = here->HICUMqavl_t/here->HICUMcjci0_t;
+                if(v_bord > U0){
+                    av      = here->HICUMfavl_t*exp(-v_q/U0);
+                    avl     = av*(U0+(1.0+v_q/U0)*(v_bord-U0));
+                } else {
+                    avl     = here->HICUMfavl_t*v_bord*exp(-v_q/v_bord);
+                }
+                /* This model turns strong avalanche on. The parameter kavl can turn this
+                * model extension off (kavl = 0). Although this is numerically stable, a
+                * conditional statement is applied in order to reduce the numerical over-
+                * head for simulations without the new model.
+                */
+                if (model->HICUMkavl > 0) { //: HICAVLHIGH
+                    duals::duald denom,sq_smooth,hl;
+                    denom = 1-here->HICUMkavl_t*avl;
+                    // Avoid denom < 0 using a smoothing function
+                    sq_smooth = sqrt(denom*denom+0.01);
+                    hl        = 0.5*(denom+sq_smooth);
+                    iavl      = itf*avl/hl;
+                } else {
+                    iavl    = itf*avl;
+                }
+            } else {
+                iavl = 0.0;
+            }
+        }
+        // Note that iavl = 0.0 is already set in the initialization block for use_aval == 0 (Markus: not for this lambda!)
+        return iavl;
     };
 
     /*  loop through all the models */
@@ -1323,16 +1364,11 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
             //Intrinsic transistor
             //Internal base currents across b-e junction
-            // HICDIO(here->HICUMvt,model->HICUMibeis,here->HICUMibeis_t,model->HICUMmbei,Vbiei,&ibei,&Ibiei_Vbiei);
-            // HICDIO(here->HICUMvt,model->HICUMireis,here->HICUMireis_t,model->HICUMmrei,Vbiei,&irei,&irei_Vbiei);
-            // HICDIO(here->HICUMvt,model->HICUMireis,here->HICUMireis_t,model->HICUMmrei,Vbiei,&irei,&irei_Vbiei);
-
             //TODO:derivative of ibeis_t and ireis_t missing here
             hicum_diode(here->HICUMtemp,here->HICUMibeis_t,model->HICUMmbei, Vbiei, &ibei, &ibei_Vbiei, &ibei_dT);
             hicum_diode(here->HICUMtemp,here->HICUMireis_t,model->HICUMmrei, Vbiei, &irei, &irei_Vbiei, &irei_dT);
 
-            //Inverse of low-field internal collector resistance: needed in HICICK
-            Orci0_t = 1.0/here->HICUMrci0_t;
+
 
             //Internal b-e and b-c junction capacitances and charges
             //QJMODF(here->HICUMvt,cjei0_t,vdei_t,model->HICUMzei,ajei_t,V(br_biei),Qjei)
@@ -1370,27 +1406,27 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             Q_0_dT       = Q_0_Qjei*Qjei_dT + Q_0_Qjci*Qjci_dT * Q_0_hjei_vbe*hjei_vbe_dT;
 
             //Transit time calculation at low current density
-            result     = calc_T_f0(here->HICUMtemp, Vbici+1_e, Qjci);
-            T_f0       = result.rpart();
-            T_f0_Vbici = result.dpart();
+            result      = calc_T_f0(here->HICUMtemp, Vbici+1_e, Qjci);
+            T_f0        = result.rpart();
+            T_f0_Vbici  = result.dpart();
 
-            result     = calc_T_f0(here->HICUMtemp, Vbici, Qjci+1_e);
-            T_f0_Qjci  = result.dpart();
+            result      = calc_T_f0(here->HICUMtemp, Vbici, Qjci+1_e);
+            T_f0_Qjci   = result.dpart();
             T_f0_Vbici += T_f0_Qjci*Qjci_Vbici;
 
-            result     = calc_T_f0(here->HICUMtemp+1_e, Vbici, Qjci);
-            T_f0_dT    = result.dpart() ;
-            T_f0_dT   += T_f0_Qjci*Qjci_dT;
+            result      = calc_T_f0(here->HICUMtemp+1_e, Vbici, Qjci);
+            T_f0_dT     = result.dpart() ;
+            T_f0_dT    += T_f0_Qjci*Qjci_dT;
 
 
             //Critical current
-            result    = calc_ick(here->HICUMtemp, Vciei+1_e);
-            ick       = result.rpart();
-            ick_Vciei = result.dpart();
+            result      = calc_ick(here->HICUMtemp, Vciei+1_e);
+            ick         = result.rpart();
+            ick_Vciei   = result.dpart();
 
-            //todo: derivatives 0rci0_t, vlim_t, vces_t missing
-            result    = calc_ick(here->HICUMtemp+1_e, Vciei);
-            ick_dT    = result.dpart();
+            //todo: derivatives rci0_t, vlim_t, vces_t missing
+            result      = calc_ick(here->HICUMtemp+1_e, Vciei);
+            ick_dT      = result.dpart();
 
             //Initialization
             //Transfer current, minority charges and transit times
@@ -1518,47 +1554,19 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
             //Internal base current across b-c junction
             //TODO
-            //HICDIO(here->HICUMvt,model->HICUMibcis,here->HICUMibcis_t,model->HICUMmbci,Vbici,&ibci,&Ibici_Vbici);
+            hicum_diode(here->HICUMtemp,here->HICUMibcis_t,model->HICUMmbci, Vbici, &Ibci, &Ibci_Vbci, &Ibci_dT);
 
             //Avalanche current
-            if (use_aval == 1) { // HICAVL
-                double v_bord,v_q,U0,av,avl,avl_Vbici,v_q_Vbici,av_Vbici;
-                v_bord  = here->HICUMvdci_t-Vbici;
-                if (v_bord > 0) {
-                    v_q     = here->HICUMqavl_t/Cjci;
-                    v_q_Vbici = -here->HICUMqavl_t*Cjci_Vbici/(Cjci*Cjci);
-                    U0      = here->HICUMqavl_t/here->HICUMcjci0_t;
-                    if(v_bord > U0) {
-                        av        = here->HICUMfavl_t*exp(-v_q/U0);
-                        av_Vbici  = -av*v_q_Vbici/U0;
-                        avl       = av*(U0+(1.0+v_q/U0)*(v_bord-U0));
-                        avl_Vbici = av*((-v_q/U0-1)+(v_bord-U0)*v_q_Vbici/U0)+((v_q/U0+1)*(v_bord-U0)+U0)*av_Vbici;
-                    } else {
-                        avl       = here->HICUMfavl_t*v_bord*exp(-v_q/v_bord);
-                        avl_Vbici = avl*(-v_q/(v_bord*v_bord)-v_q_Vbici/v_bord)-avl/v_bord;
-                    }
-                    /* This model turns strong avalanche on. The parameter kavl can turn this
-                    * model extension off (kavl = 0). Although this is numerically stable, a
-                    * conditional statement is applied in order to reduce the numerical over-
-                    * head for simulations without the new model.
-                    */
-                    if (model->HICUMkavl > 0) { // HICAVLHIGH
-                        double denom,sq_smooth,hl;
-                        denom = 1-here->HICUMkavl_t*avl;
-                        // Avoid denom < 0 using a smoothing function
-                        sq_smooth = sqrt(denom*denom+0.01);
-                        hl = 0.5*(denom+sq_smooth);
-                        iavl    = itf*avl/hl;
-                        iavl_Vbici = itf*avl_Vbici/hl;
-                    } else {
-                        iavl       = itf*avl;
-                        iavl_Vbici = itf*avl_Vbici;
-                    }
-                }
-            } else {
-                iavl       = 0.0;
-                iavl_Vbici = 0.0;
-            }
+            result      = calc_iavl(Vbici+1_e, Cjci    , itf);
+            iavl        = result.rpart();
+            iavl_Vbici  = result.dpart();
+            result      = calc_iavl(Vbici    , Cjci+1_e, itf);
+            iavl_dCjci  = result.dpart();
+            result      = calc_iavl(Vbici    , Cjci    , itf+1_e);
+            iavl_ditf   = result.dpart();
+            iavl_Vbici += iavl_ditf*itf_Vbici;
+            iavl_Vbiei += iavl_ditf*itf_Vbiei;
+            iavl_dT     = iavl_ditf*itf_dT    + iavl_dCjci*Cjci_dT; //TODO: derivatives kavl_t favl_t qavl_t cjci0_t vdci_t
 
             //Excess base current from recombination at the b-c barrier
             ibh_rec = Q_bf*Otbhrec;
