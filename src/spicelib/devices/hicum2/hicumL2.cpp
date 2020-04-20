@@ -712,11 +712,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Ith_Vcic;
     double Ith_Vbbp;
 
-    //declaration of lambda functions
-    auto print_message = [](std::string message) 
-    { 
-        std::cout << message << "\n"; 
-    };
+    //declaration of lambda functions -----------------------------------
 
     //Hole charge at low bias
     std::function<duals::duald (duals::duald, duals::duald, duals::duald)> calc_Q_0 = [&](duals::duald Qjei, duals::duald Qjci, duals::duald hjei_vbe){
@@ -752,6 +748,35 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             cc      = 1.0;
         }
         return here->HICUMt0_t+model->HICUMdt0h*(cc-1.0)+model->HICUMtbvl*(1/cc-1.0);
+    };
+    std::function<duals::duald (duals::duald, duals::duald)> calc_ick = [&](duals::duald T, duals::duald Vciei){
+        duals::duald ick;
+        duals::duald Ovpt,a,d1,vceff,a1,a11,Odelck,ick1,ick2,ICKa, vc, vt;
+        //Effective collector voltage
+        vc      = Vciei-here->HICUMvces_t;
+        vt      = CONSTboltz * T / CHARGE;
+
+        //Critical current for onset of high-current effects
+        //begin : HICICK
+            Ovpt    = 1.0/model->HICUMvpt;
+            a       = vc/vt;
+            d1      = a-1;
+            vceff   = (1.0+((d1+sqrt(d1*d1+1.921812))/2))*vt;
+            // a       = vceff/vlim_t;
+            // ick     = vceff*Orci0_t/sqrt(1.0+a*a);
+            // ICKa    = (vceff-vlim_t)*Ovpt;
+            // ick     = ick*(1.0+0.5*(ICKa+sqrt(ICKa*ICKa+1.0e-3)));
+
+            a1       = vceff/here->HICUMvlim_t;
+            a11      = vceff*Orci0_t;
+            Odelck   = 1/model->HICUMdelck;
+            ick1     = exp(Odelck*log(1+exp(model->HICUMdelck*log(a1))));
+            ick2     = a11/ick1;
+            ICKa     = (vceff-here->HICUMvlim_t)*Ovpt;
+            ick      = ick2*(1.0+0.5*(ICKa+sqrt(ICKa*ICKa+model->HICUMaick)));
+            return ick;
+
+        //end
     };
 
     /*  loop through all the models */
@@ -1330,63 +1355,15 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             T_f0_dT    = result.dpart() ;
             T_f0_dT   += T_f0_Qjci*Qjci_dT;
 
-            //Transit time calculation at low current density
-            if(here->HICUMcjci0_t > 0.0) { // CJMODF
-                double cV_f,cv_e,cs_q,cs_q2,cv_j,cdvj_dv;
-                double cv_e_Vbici,cs_q_Vbici,cs_q2_Vbici,cv_j_Vbici,cdvj_dv_Vbici,dpart,dpart_Vbici;
-                cV_f          = here->HICUMvdci_t*(1.0-exp(-log(2.4)/model->HICUMzci));
-                cv_e          = (cV_f-Vbici)/here->HICUMvt;
-                cv_e_Vbici    =-1/here->HICUMvt;
-                cs_q          = sqrt(cv_e*cv_e+1.921812);
-                cs_q_Vbici    = cv_e*cv_e_Vbici/cs_q;
-                cs_q2         = (cv_e+cs_q)*0.5;
-                cs_q2_Vbici   = (cv_e_Vbici+cs_q_Vbici)*0.5;
-                cv_j          = cV_f-here->HICUMvt*cs_q2;
-                cv_j_Vbici    =-here->HICUMvt*cs_q2_Vbici;
-                cdvj_dv       = cs_q2/cs_q;
-                cdvj_dv_Vbici = (cs_q2_Vbici*cs_q-cs_q_Vbici*cs_q2)/(cs_q*cs_q);
-                dpart         = here->HICUMcjci0_t*exp(-model->HICUMzci*log(1.0-cv_j/here->HICUMvdci_t));
-                dpart_Vbici   = cv_j_Vbici*model->HICUMzci*dpart/((1.0-cv_j/here->HICUMvdci_t)*here->HICUMvdci_t);
-                Cjcit         = dpart*cdvj_dv+2.4*here->HICUMcjci0_t*(1.0-cdvj_dv);
-                Cjcit_Vbici   = dpart_Vbici*cdvj_dv+dpart*cdvj_dv_Vbici-2.4*here->HICUMcjci0_t*cdvj_dv_Vbici;
-            } else {
-                Cjcit   = 0.0;
-                Cjcit_Vbici   = 0.0;
-            }
-            if(Cjcit > 0.0) {
-                cc       = here->HICUMcjci0_t/Cjcit;
-                cc_Vbici = -here->HICUMcjci0_t*Cjcit_Vbici/(Cjcit*Cjcit);
-            } else {
-                cc       = 1.0;
-                cc_Vbici = 0.0;
-            }
-            T_f0       = here->HICUMt0_t+model->HICUMdt0h*(cc-1.0)+model->HICUMtbvl*(1/cc-1.0);
-            T_f0_Vbici = model->HICUMdt0h*cc_Vbici+model->HICUMtbvl*(-cc_Vbici*cc/(cc*cc));
 
-            //Effective collector voltage
-            vc      = Vciei-here->HICUMvces_t;
+            //Critical current
+            result    = calc_ick(here->HICUMtemp, Vciei+1_e);
+            ick       = result.rpart();
+            ick_Vciei = result.dpart();
 
-            //Critical current for onset of high-current effects
-            { // HICICK
-                double Ovpt,a,d1,vceff,a1,a11,Odelck,ick1,ick2,ICKa;
-                Ovpt    = 1.0/model->HICUMvpt;
-                a       = vc/here->HICUMvt;
-                d1      = a-1;
-                vceff   = (1.0+((d1+sqrt(d1*d1+1.921812))/2))*here->HICUMvt;
-                // a       = vceff/vlim_t;
-                // ick     = vceff*Orci0_t/sqrt(1.0+a*a);
-                // ICKa    = (vceff-vlim_t)*Ovpt;
-                // ick     = ick*(1.0+0.5*(ICKa+sqrt(ICKa*ICKa+1.0e-3)));
-
-                a1       = vceff/here->HICUMvlim_t;
-                a11      = vceff*Orci0_t;
-                Odelck   = 1/model->HICUMdelck;
-                ick1     = exp(Odelck*log(1+exp(model->HICUMdelck*log(a1))));
-                ick2     = a11/ick1;
-                ICKa     = (vceff-here->HICUMvlim_t)*Ovpt;
-                ick      = ick2*(1.0+0.5*(ICKa+sqrt(ICKa*ICKa+model->HICUMaick)));
-
-            }
+            //todo: derivatives 0rci0_t, vlim_t, vces_t missing
+            result    = calc_ick(here->HICUMtemp+1_e, Vciei);
+            ick_dT    = result.dpart();
 
             //Initialization
             //Transfer current, minority charges and transit times
