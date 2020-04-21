@@ -221,7 +221,7 @@ printres(char *name)
             }
             /* do not print it the first time, doubling totalcputime */
             if (called)
-                fprintf(cp_out, "%s time since last call seconds) = %lu.%03lu \n",
+                fprintf(cp_out, "%s time since last call (seconds) = %lu.%03lu \n",
                         cpu_elapsed, last_sec, last_msec);
 
             last_sec = total_sec;
