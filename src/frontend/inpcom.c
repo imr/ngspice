@@ -8071,6 +8071,7 @@ static void pspice_compat_a(struct card *oldcard)
  * ad1 a k asdmod
  * .model asdmod sidiode(Roff=1000 Ron=0.7  Rrev=0.2  Vfwd=1  Vrev=10
  *         Revepsilon=0.2 Epsilon=0.2 Ilimit=7 Revilimit=7)
+ * Remove '.backanno'
  */
 struct card *ltspice_compat(struct card *oldcard)
 {
@@ -8093,6 +8094,14 @@ struct card *ltspice_compat(struct card *oldcard)
                    "tanh(max(0, neg + z - x) / z)*z }");
     nextcard = insert_new_line(nextcard, new_str, 4, 0);
     nextcard->nextcard = oldcard;
+
+    /* remove .backanno */
+    for (card = nextcard; card; card = card->nextcard) {
+        char* cut_line = card->line;
+        if (ciprefix(".backanno", cut_line)) {
+            *cut_line = '*';
+        }
+    }
 
     /* replace
    * D1 A K SDMOD
