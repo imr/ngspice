@@ -1664,6 +1664,7 @@ static void cktislinear(CKTcircuit *ckt, struct card *deck)
                 case 'g':
                 case 'f':
                 case 'h':
+                case 'k':
                     continue;
                     break;
                 default:
