@@ -33,6 +33,7 @@ Spice3 Implementation: 2019 Dietmar Warning, Markus Müller, Mario Krattenmacher
  * - iavl
  * - iBEti
  * - itf, itr
+ * - NQS derivatives, sources and elements
  */
 
 #include "cmath"
