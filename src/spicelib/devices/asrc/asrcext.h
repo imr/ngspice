@@ -12,6 +12,6 @@ extern int ASRCload(GENmodel *, CKTcircuit *);
 extern int ASRCparam(int, IFvalue *, GENinstance *, IFvalue *);
 extern int ASRCpzLoad(GENmodel *, CKTcircuit *, SPcomplex *);
 extern int ASRCacLoad(GENmodel *, CKTcircuit *);
-extern int ASRCsetup(SMPmatrix *, GENmodel *, CKTcircuit *, const int *);
+extern int ASRCsetup(SMPmatrix *, GENmodel *, CKTcircuit *, int *);
 extern int ASRCunsetup(GENmodel *, CKTcircuit *);
 extern int ASRCtemp(GENmodel *, CKTcircuit *);

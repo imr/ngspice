@@ -22,7 +22,7 @@ Author: 1987 Kanwar Jit Singh
  */
 
 int ASRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
-        const int *states)
+        int *states)
 {
     ASRCinstance *here;
     ASRCmodel *model = (ASRCmodel*) inModel;
