@@ -10,7 +10,7 @@ char *prompt(FILE *fp);
 wordlist *process(wordlist *wlist);
 void arg_print(const wordlist *wl, const struct comm *command);
 void arg_plot(const wordlist *wl, const struct comm *command);
-void arg_load(wordlist *wl, const struct comm *command);
+void arg_load(const wordlist *wl, const struct comm *command);
 void arg_let(const wordlist *wl, const struct comm *command);
 void arg_set(const wordlist *wl, const struct comm *command);
 void arg_display(const wordlist *wl, const struct comm *command);
