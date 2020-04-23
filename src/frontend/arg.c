@@ -78,10 +78,12 @@ arg_plot(const wordlist *wl, const struct comm *command)
 
 
 void
-arg_load(wordlist *wl, const struct comm *command)
+arg_load(const wordlist *wl_in, const struct comm *command)
 {
     /* just call com_load */
+    wordlist* const wl = wl_copy(wl_in);
     command->co_func(wl);
+    wl_free(wl);
 }
 
 
