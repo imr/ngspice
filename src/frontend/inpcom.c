@@ -8095,11 +8095,17 @@ struct card *ltspice_compat(struct card *oldcard)
     nextcard = insert_new_line(nextcard, new_str, 4, 0);
     nextcard->nextcard = oldcard;
 
-    /* remove .backanno */
+    /* remove .backanno, replace 'noiseless' by 'moisy=0' */
     for (card = nextcard; card; card = card->nextcard) {
         char* cut_line = card->line;
         if (ciprefix(".backanno", cut_line)) {
             *cut_line = '*';
+        }
+        else if (*cut_line == 'r') {
+            char* noi = strstr(cut_line, "noiseless");
+            if (noi) {
+                memcpy(noi, "noisy=0  ", 9);
+            }
         }
     }
 
