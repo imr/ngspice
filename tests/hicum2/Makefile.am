@@ -2,7 +2,8 @@
 
 
 
-TESTS = FG.cir
+TESTS = FG.cir			\
+	FG_sh.cir
 
 TESTS_ENVIRONMENT = $(SHELL) $(top_srcdir)/tests/bin/check.sh $(top_builddir)/src/ngspice
 

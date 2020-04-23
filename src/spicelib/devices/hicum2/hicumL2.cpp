@@ -621,6 +621,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Ixf1,Ixf2,Qxf1,Qxf2;
     double Itxf, Qdeix;
     double Vxf, Ixf, Qxf;
+    double Vxf1, Vxf2;
 
     double hjei_vbe;
 
@@ -711,8 +712,8 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
 //NQS
     double Vbxf, Vbxf1, Vbxf2;
-    double Qxf_Vxf;
-    double Iqxf, Iqxf_Vxf, Iqxf1, Iqxf2;
+    double Qxf_Vxf, Qxf1_Vxf1, Qxf2_Vxf2;
+    double Iqxf, Iqxf_Vxf, Iqxf1, Iqxf1_Vxf1, Iqxf2, Iqxf2_Vxf2;
 
     double Ith, Vrth, Icth, Icth_Vrth, delvrth;
 
@@ -1004,9 +1005,9 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 Vsis = model->HICUMtype*(
                     *(ckt->CKTrhsOld+here->HICUMsubsSINode)-
                     *(ckt->CKTrhsOld+here->HICUMsubsNode));
-                Vbxf  = *(ckt->CKTstate0 + here->HICUMvxf);
-                Vbxf1 = *(ckt->CKTstate0 + here->HICUMvxf1);
-                Vbxf2 = *(ckt->CKTstate0 + here->HICUMvxf2);
+                Vbxf  = *(ckt->CKTrhsOld + here->HICUMxfNode);
+                Vbxf1 = *(ckt->CKTrhsOld + here->HICUMxf1Node);
+                Vbxf2 = *(ckt->CKTrhsOld + here->HICUMxf2Node);
                 if (model->HICUMflsh)
                     Vrth = *(ckt->CKTstate0 + here->HICUMvrth);
             } else if(ckt->CKTmode & MODEINITTRAN) {
@@ -1042,9 +1043,9 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 Vsis = model->HICUMtype*(
                     *(ckt->CKTrhsOld+here->HICUMsubsSINode)-
                     *(ckt->CKTrhsOld+here->HICUMsubsNode));
-                Vbxf  = *(ckt->CKTstate1 + here->HICUMvxf);
-                Vbxf1 = *(ckt->CKTstate1 + here->HICUMvxf1);
-                Vbxf2 = *(ckt->CKTstate1 + here->HICUMvxf2);
+                Vbxf  = *(ckt->CKTrhsOld + here->HICUMxfNode);
+                Vbxf1 = *(ckt->CKTrhsOld + here->HICUMxf1Node);
+                Vbxf2 = *(ckt->CKTrhsOld + here->HICUMxf2Node);
                 if (model->HICUMflsh)
                     Vrth = *(ckt->CKTstate1 + here->HICUMvrth);
             } else if((ckt->CKTmode & MODEINITJCT) &&
@@ -1750,20 +1751,22 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             // Excess Phase calculation
 
             if ((model->HICUMflnqs != 0 || model->HICUMflcomp == 0.0 || model->HICUMflcomp == 2.1) && Tf != 0 && (model->HICUMalit > 0 || model->HICUMalqf > 0)) {
-                double Vxf1, Vxf2, fact;
                 Vxf1  = Vbxf1;
                 Vxf2  = Vbxf2;
 
                 Ixf1  = (Vxf2-itf)/Tf*model->HICUMt0;
                 Ixf2  = (Vxf2-Vxf1)/Tf*model->HICUMt0;
-                Qxf1  = model->HICUMalit*Vxf1*model->HICUMt0;
-                Qxf2  = model->HICUMalit*Vxf2/3*model->HICUMt0;
+                Qxf1      = model->HICUMalit*model->HICUMt0*Vxf1;
+                Qxf1_Vxf1 = model->HICUMalit*model->HICUMt0;
+                Qxf2      = model->HICUMalit*model->HICUMt0*Vxf2/3;
+                Qxf2_Vxf2 = model->HICUMalit*model->HICUMt0/3;
                 Itxf  = Vxf2;
 
+                // TODO derivatives of Ixf1 and Ixf2
+
                 Vxf   = Vbxf;                                //for RC nw
-                fact  = model->HICUMt0/Tf;                   //for RC nw
-                Ixf   = (Vxf - Qdei)*fact;                   //for RC nw
-                Qxf   = model->HICUMalqf*Vxf*model->HICUMt0; //for RC nw
+                Ixf   = (Vxf - Qdei)*model->HICUMt0/Tf;      //for RC nw
+                Qxf     = model->HICUMalqf*model->HICUMt0*Vxf; //for RC nw
                 Qxf_Vxf = model->HICUMalqf*model->HICUMt0;   //for RC nw
                 Qdeix = Vxf;                                 //for RC nw
             } else {
@@ -1771,6 +1774,8 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 Ixf2  =  Vbxf2;
                 Qxf1  =  0;
                 Qxf2  =  0;
+                Qxf1_Vxf1 = 0;
+                Qxf2_Vxf2 = 0;
 
                 Ixf   = Vbxf;
                 Qxf   = 0;
@@ -1873,9 +1878,9 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             // ********************************************
 
             // NQS effect
-//            Ibxf1 = Ixf1;
+        //    Ibxf1 = Ixf1;
 //            Icxf1 += ddt(Qxf1);
-//            Ibxf2 = Ixf2;
+        //    Ibxf2 = Ixf2;
 //            Icxf2 += ddt(Qxf2);
 
             // end of Load_sources
@@ -1969,6 +1974,8 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 *(ckt->CKTstate0 + here->HICUMqbcpar2)  = Qbcpar2;
                 *(ckt->CKTstate0 + here->HICUMqsu)      = Qsu;
 //NQS
+                *(ckt->CKTstate0 + here->HICUMqxf1)     = Qxf1;
+                *(ckt->CKTstate0 + here->HICUMqxf2)     = Qxf2;
                 *(ckt->CKTstate0 + here->HICUMqxf)      = Qxf;
                 if (model->HICUMflsh)
                     *(ckt->CKTstate0 + here->HICUMqcth) = Qcth;
@@ -2011,6 +2018,8 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                         *(ckt->CKTstate0 + here->HICUMcqbcpar2)   = Qbcpar2_Vbpci;
                         *(ckt->CKTstate0 + here->HICUMcqsu)       = Qsu_Vsis;
 //NQS
+                        *(ckt->CKTstate0 + here->HICUMcqxf1)      = Qxf1_Vxf1;
+                        *(ckt->CKTstate0 + here->HICUMcqxf2)      = Qxf2_Vxf2;
                         *(ckt->CKTstate0 + here->HICUMcqxf)       = Qxf_Vxf;
                         if (model->HICUMflsh)
                             *(ckt->CKTstate0 + here->HICUMcqcth)  = model->HICUMcth;
@@ -2123,7 +2132,17 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                     Isc_Vsc = geq;
                     Isc = *(ckt->CKTstate0 + here->HICUMcqscp);
 //NQS
-//            Icxf +=  ddt(Qxf);    //for RC nw
+//            Iqxf1 <+ ddt(Qxf1);
+                    error = NIintegrate(ckt,&geq,&ceq,Qxf1_Vxf1,here->HICUMqxf);
+                    if(error) return(error);
+                    Iqxf1_Vxf1 = geq;
+                    Iqxf1 = *(ckt->CKTstate0 + here->HICUMcqxf1);
+//            Iqxf2 <+ ddt(Qxf2);
+                    error = NIintegrate(ckt,&geq,&ceq,Qxf2_Vxf2,here->HICUMqxf);
+                    if(error) return(error);
+                    Iqxf2_Vxf2 = geq;
+                    Iqxf2 = *(ckt->CKTstate0 + here->HICUMcqxf2);
+//            Iqxf +=  ddt(Qxf);    //for RC nw
                     error = NIintegrate(ckt,&geq,&ceq,Qxf_Vxf,here->HICUMqxf);
                     if(error) return(error);
                     Iqxf_Vxf = geq;
@@ -2466,6 +2485,49 @@ c           Branch: sis, Stamp element: Rsu
             *(here->HICUMsubsSubsSIPtr)   += -Isis_Vsis;
 //NQS
 /*
+c           Branch: xf1-ground,  Stamp element: Ixf1
+*/
+//            rhs_current = (Ixf1 - Ixf1_Vxf1*Vxf1 - Ixf1_Vrth*Vrth - Ixf1_Vbiei*Vbiei - Ixf1_Vbici*Vbici - Ixf1_Vxf2*Vxf2); // TODO
+            rhs_current = Ixf1;
+            *(ckt->CKTrhs + here->HICUMxf1Node) += 0; // rhs_current; // into xf1 node
+//            *(here->HICUMxf1TempPtr)   += -Ixf1_Vrth;
+//            *(here->HICUMxf1BaseBIPtr) += -Ixf1_Vbiei;
+//            *(here->HICUMxf1EmitEIPtr) += +Ixf1_Vbiei;
+//            *(here->HICUMxf1BaseBIPtr) += -Ixf1_Vbici;
+//            *(here->HICUMxf1CollCIPtr) += +Ixf1_Vbici;
+//            *(here->HICUMxf1Xf2Ptr)    += +Ixf1_Vxf2;
+/*
+c           Branch: xf1-ground, Stamp element: Qxf1 // TODO Test in AC simulation!
+*/
+            // rhs_current = Iqxf1 - Iqxf1_Vxf1*Vxf1;
+            // *(ckt->CKTrhs + here->HICUMxf1Node) += rhs_current; // into ground
+            // *(here->HICUMxf1Xf1Ptr)             += Iqxf1_Vxf1;
+/*
+c           Branch: xf1-ground, Stamp element: Rxf1 TODO: This is wrong, but needed at the moment for convergence
+*/
+            *(here->HICUMxf1Xf1Ptr) +=  1; // current Ixf1 is normalized to Tf
+/*
+c           Branch: xf2-ground,  Stamp element: Ixf2
+*/
+//            rhs_current = (Ixf2 - Ixf2_Vxf1*Vxf1 - Ixf2_Vrth*Vrth - Ixf2_Vbiei*Vbiei - Ixf2_Vbici*Vbici - Ixf2_Vxf2*Vxf2); // TODO
+            rhs_current = Ixf2;
+            *(ckt->CKTrhs + here->HICUMxf2Node) += rhs_current; // into xf2 node
+//            *(here->HICUMxf2TempPtr)   += -Ixf2_Vrth;
+//            *(here->HICUMxf2BaseBIPtr) += -Ixf2_Vbiei;
+//            *(here->HICUMxf2EmitEIPtr) += +Ixf2_Vbiei;
+//            *(here->HICUMxf2BaseBIPtr) += -Ixf2_Vbici;
+//            *(here->HICUMxf2CollCIPtr) += +Ixf2_Vbici;
+/*
+c           Branch: xf2-ground, Stamp element: Qxf2 // TODO Test in AC simulation!
+*/
+            // rhs_current = Iqxf2 - Iqxf2_Vxf2*Vxf2;
+            // *(ckt->CKTrhs + here->HICUMxf2Node)  += rhs_current; // into ground
+            // *(here->HICUMxf2Xf2Ptr)              += Iqxf2_Vxf2;
+/*
+c           Branch: xf2-ground, Stamp element: Rxf2
+*/
+            *(here->HICUMxf2Xf2Ptr) +=  1; // current Ixf2 is normalized to Tf
+/*
 c           Branch: xf-ground,  Stamp element: Ixf
 */
 //            rhs_current = model->HICUMtype * (Ixf - Ixf_Vrth*Vrth - Ixf_Vbiei*Vbiei - Ixf_Vbici*Vbici);
@@ -2477,15 +2539,15 @@ c           Branch: xf-ground,  Stamp element: Ixf
 //            *(here->HICUMxfBaseBIPtr) += -Ixf_Vbici;
 //            *(here->HICUMxfCollCIPtr) += +Ixf_Vbici;
 /*
-c           Branch: xf-ground, Stamp element: Qxf
+c           Branch: xf-ground, Stamp element: Qxf // TODO Test in AC simulation!
 */
-            rhs_current = model->HICUMtype * (Iqxf - Iqxf_Vxf*Vxf);
-            *(ckt->CKTrhs + here->HICUMxfNode)   += rhs_current; // into ground
-            *(here->HICUMxfXfPtr)                += Iqxf_Vxf;
+            // rhs_current = model->HICUMtype * (Iqxf - Iqxf_Vxf*Vxf);
+            // *(ckt->CKTrhs + here->HICUMxfNode)   += rhs_current; // into ground
+            // *(here->HICUMxfXfPtr)                += Iqxf_Vxf;
 /*
 c           Branch: xf-ground, Stamp element: Rxf
 */
-            *(here->HICUMxfXfPtr) +=  Tf; // current Ixf is normalized to Tf
+            *(here->HICUMxfXfPtr) +=  1; // current Ixf is normalized to Tf
 
             if (model->HICUMflsh) {
 /*
