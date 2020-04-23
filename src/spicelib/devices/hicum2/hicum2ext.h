@@ -13,7 +13,7 @@ extern int HICUMask(CKTcircuit *,GENinstance*,int,IFvalue*,IFvalue*);
 extern int HICUMconvTest(GENmodel*,CKTcircuit*);
 extern int HICUMdelete(GENinstance*);
 extern int HICUMgetic(GENmodel*,CKTcircuit*);
-extern int HICUMload(GENmodel*,CKTcircuit*);
+//extern int HICUMload(GENmodel*,CKTcircuit*);//moved to hicumL2.hpp
 extern int HICUMmAsk(CKTcircuit*,GENmodel*,int,IFvalue*);
 extern int HICUMmParam(int,IFvalue*,GENmodel*);
 extern int HICUMparam(int,IFvalue*,GENinstance*,IFvalue*);
