@@ -698,8 +698,8 @@ int WIN_NewViewport(GRAPH *graph)
     wtext = TMALLOC(wchar_t, 2 * strlen(graph->plotname) + 1);
     wtext2 = TMALLOC(wchar_t, 2 * strlen(WindowName) + 1);
     /* translate UTF-8 to UTF-16 */
-    MultiByteToWideChar(CP_UTF8, 0, graph->plotname, -1, wtext, 2 * strlen(graph->plotname) + 1);
-    MultiByteToWideChar(CP_UTF8, 0, WindowName, -1, wtext2, 2 * strlen(WindowName) + 1);
+    MultiByteToWideChar(CP_UTF8, 0, graph->plotname, -1, wtext, 2 * (int)strlen(graph->plotname) + 1);
+    MultiByteToWideChar(CP_UTF8, 0, WindowName, -1, wtext2, 2 * (int)strlen(WindowName) + 1);
     window = CreateWindowW(wtext2, wtext, WS_OVERLAPPEDWINDOW,
         0, 0, WinLineWidth, i * 2 - 22, NULL, NULL, hInst, NULL);
     tfree(wtext);
@@ -1045,7 +1045,7 @@ int WIN_Text(char *text, int x, int y, int angle)
 #else
     wchar_t *wtext;
     wtext = TMALLOC(wchar_t, 2 * strlen(text) + 1);
-    MultiByteToWideChar(CP_UTF8, 0, text, -1, wtext, 2 * strlen(text) + 1);
+    MultiByteToWideChar(CP_UTF8, 0, text, -1, wtext, 2 * (int)strlen(text) + 1);
     TextOutW(wd->hDC, x, wd->Area.bottom - y - currentgraph->fontheight, wtext, 2 * (int)strlen(text) + 1);
     tfree(wtext);
 #endif
