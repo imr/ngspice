@@ -294,13 +294,15 @@ int WPRINT_NewViewport(GRAPH * graph)
         TextOut(PrinterDC, PrinterWidth - graph->fontwidth, 1, graph->plotname,
             (int)strlen(graph->plotname));
 #else
-        wchar_t* wtext;
-        wtext = TMALLOC(wchar_t, 2 * strlen(graph->plotname) + 1);
-        MultiByteToWideChar(CP_UTF8, 0, graph->plotname, -1, wtext, 2 * (int)strlen(graph->plotname) + 1);
-        TextOutW(PrinterDC, PrinterWidth - graph->fontwidth, 1, wtext, 2 * (int)strlen(graph->plotname) + 1);
-        tfree(wtext);
+        const int n_byte_wide = 2 * (int)strlen(graph->plotname) + 1;
+        wchar_t* const wtext = TMALLOC(wchar_t, n_byte_wide);
+        MultiByteToWideChar(CP_UTF8, 0, graph->plotname, -1, wtext,
+            n_byte_wide);
+        TextOutW(PrinterDC, PrinterWidth - graph->fontwidth, 1, wtext,
+            n_byte_wide);
+        txfree(wtext);
 #endif
-        SetTextAlign( PrinterDC, align);
+        SetTextAlign(PrinterDC, align);
     }
 
     /* fertig */
@@ -431,11 +433,12 @@ int WPRINT_Text(char * text, int x, int y, int degrees)
 #ifdef EXT_ASC
     TextOut(PrinterDC, x, PrinterHeight - y - currentgraph->fontheight, text, (int)strlen(text));
 #else
-    wchar_t* wtext;
-    wtext = TMALLOC(wchar_t, 2 * strlen(text) + 1);
-    MultiByteToWideChar(CP_UTF8, 0, text, -1, wtext, 2 * (int)strlen(text) + 1);
-    TextOutW(PrinterDC, x, PrinterHeight - y - currentgraph->fontheight, wtext, 2 * (int)strlen(text) + 1);
-    tfree(wtext);
+    const int n_byte_wide = 2 * (int)strlen(text) + 1;
+    wchar_t* const wtext = TMALLOC(wchar_t, n_byte_wide);
+    MultiByteToWideChar(CP_UTF8, 0, text, -1, wtext, n_byte_wide);
+    TextOutW(PrinterDC, x, PrinterHeight - y - currentgraph->fontheight,
+        wtext, n_byte_wide);
+    txfree(wtext);
 #endif
     return (0);
 }

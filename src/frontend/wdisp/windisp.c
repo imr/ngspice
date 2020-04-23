@@ -694,16 +694,17 @@ int WIN_NewViewport(GRAPH *graph)
                           0, 0, WinLineWidth, i * 2 - 22, NULL, NULL, hInst, NULL);
 #else
    /* UTF-8 support */
-    wchar_t *wtext, *wtext2;
-    wtext = TMALLOC(wchar_t, 2 * strlen(graph->plotname) + 1);
-    wtext2 = TMALLOC(wchar_t, 2 * strlen(WindowName) + 1);
+    const int n_byte_wide = 2 * (int)strlen(graph->plotname) + 1;
+    wchar_t* const wtext = TMALLOC(wchar_t, n_byte_wide);
+    const int n_byte_wide2 = 2 * (int)strlen(WindowName) + 1;
+    wchar_t* const wtext2 = TMALLOC(wchar_t, n_byte_wide2);
     /* translate UTF-8 to UTF-16 */
-    MultiByteToWideChar(CP_UTF8, 0, graph->plotname, -1, wtext, 2 * (int)strlen(graph->plotname) + 1);
-    MultiByteToWideChar(CP_UTF8, 0, WindowName, -1, wtext2, 2 * (int)strlen(WindowName) + 1);
+    MultiByteToWideChar(CP_UTF8, 0, graph->plotname, -1, wtext, n_byte_wide);
+    MultiByteToWideChar(CP_UTF8, 0, WindowName, -1, wtext2, n_byte_wide2);
     window = CreateWindowW(wtext2, wtext, WS_OVERLAPPEDWINDOW,
         0, 0, WinLineWidth, i * 2 - 22, NULL, NULL, hInst, NULL);
-    tfree(wtext);
-    tfree(wtext2);
+    txfree(wtext);
+    txfree(wtext2);
 #endif
     if (!window)
         return 1;
@@ -734,7 +735,7 @@ int WIN_NewViewport(GRAPH *graph)
     wd->PaintFlag = 0;
     wd->FirstFlag = 1;
 
-    /* modify system menue */
+    /* modify system menu */
     sysmenu = GetSystemMenu(window, FALSE);
     AppendMenu(sysmenu, MF_SEPARATOR, 0, NULL);
     AppendMenu(sysmenu, MF_STRING, ID_DRUCKEN,   STR_DRUCKEN);
@@ -1043,11 +1044,12 @@ int WIN_Text(char *text, int x, int y, int angle)
 #ifdef EXT_ASC
     TextOut(wd->hDC, x, wd->Area.bottom - y - currentgraph->fontheight, text, (int)strlen(text));
 #else
-    wchar_t *wtext;
-    wtext = TMALLOC(wchar_t, 2 * strlen(text) + 1);
-    MultiByteToWideChar(CP_UTF8, 0, text, -1, wtext, 2 * (int)strlen(text) + 1);
-    TextOutW(wd->hDC, x, wd->Area.bottom - y - currentgraph->fontheight, wtext, 2 * (int)strlen(text) + 1);
-    tfree(wtext);
+    const int n_byte_wide = 2 * (int)strlen(text) + 1;
+    wchar_t* const wtext = TMALLOC(wchar_t, n_byte_wide);
+    MultiByteToWideChar(CP_UTF8, 0, text, -1, wtext, n_byte_wide);
+    TextOutW(wd->hDC, x, wd->Area.bottom - y - currentgraph->fontheight,
+        wtext, n_byte_wide);
+    txfree(wtext);
 #endif
     DeleteObject(SelectObject(wd->hDC, hfont));
 
