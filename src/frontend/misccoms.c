@@ -180,7 +180,7 @@ com_version(wordlist *wl)
                 ft_sim->simulator, ft_sim->version, ft_sim->description, Spice_Manual);
         if (Spice_Notice != NULL && *Spice_Notice != '\0')
             fprintf(cp_out, "** %s\n", Spice_Notice);
-        if (Spice_Build_Date != NULL && *Spice_Build_Date != '\0')
+        if (*Spice_Build_Date != '\0')
             fprintf(cp_out, "** Creation Date: %s\n", Spice_Build_Date);
         fprintf(cp_out, "******\n");
 
@@ -197,14 +197,13 @@ com_version(wordlist *wl)
                     ft_sim->simulator, ft_sim->version, Spice_Manual);
             if (Spice_Notice != NULL && *Spice_Notice != '\0')
                 fprintf(cp_out, "** %s\n", Spice_Notice);
-            if (Spice_Build_Date != NULL && *Spice_Build_Date != '\0')
+            if (*Spice_Build_Date != '\0')
                 fprintf(cp_out, "** Creation Date: %s\n", Spice_Build_Date);
             fprintf(cp_out, "******\n");
 
         } else if (!strncasecmp(s, "-v", 2)) {
             fprintf(cp_out, "%s-%s\n",ft_sim->simulator, ft_sim->version);
-        } else if (!strncasecmp(s, "-d", 2) && Spice_Build_Date != NULL &&
-                         *Spice_Build_Date != '\0'){
+        } else if (!strncasecmp(s, "-d", 2) && *Spice_Build_Date != '\0'){
             fprintf(cp_out, "%s\n", Spice_Build_Date);
 
         } else if (!strncasecmp(s, "-f", 2)) {
@@ -217,7 +216,7 @@ com_version(wordlist *wl)
                     ft_sim->simulator, ft_sim->version, ft_sim->description, Spice_Manual);
             if (Spice_Notice != NULL && *Spice_Notice != '\0')
                 fprintf(cp_out, "** %s\n", Spice_Notice);
-            if (Spice_Build_Date != NULL && *Spice_Build_Date != '\0')
+            if (*Spice_Build_Date != '\0')
                 fprintf(cp_out, "** Creation Date: %s\n", Spice_Build_Date);
             fprintf(cp_out, "**\n");
 #ifdef CIDER

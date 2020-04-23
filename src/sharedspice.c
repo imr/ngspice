@@ -839,7 +839,7 @@ bot:
             "******\n"
             "** %s-%s shared library\n",
             ft_sim->simulator, ft_sim->version);
-    if (Spice_Build_Date != NULL && *Spice_Build_Date != 0)
+    if (*Spice_Build_Date != 0)
         fprintf(cp_out, "** Creation Date: %s\n", Spice_Build_Date);
     fprintf(cp_out, "******\n");
 
