@@ -295,6 +295,6 @@ char** EVTallnodes(void)
         allnodes[i] = node->name;
         node = node->next;
     }
-    allnodes[len] = '\0';
+    allnodes[len] = NULL;
     return allnodes;
 }
