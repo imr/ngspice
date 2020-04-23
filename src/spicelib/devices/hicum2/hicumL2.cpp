@@ -6,7 +6,7 @@ Spice3 Implementation: 2019 Dietmar Warning, Markus Müller, Mario Krattenmacher
 **********/
 
 /*
- * This file defines the HICUM L2.4.3 model load function
+ * This file defines the HICUM L2.4.0 model load function
  * Comments on the Code:
  * - We use dual numbers to calculate derivatives, this is readble and error proof.
  * - The code is targeted to be readbale and maintainable, speed is sacrificied for this purpose.
@@ -31,7 +31,7 @@ Spice3 Implementation: 2019 Dietmar Warning, Markus Müller, Mario Krattenmacher
  * - Qf
  * - Qr
  * - iavl
- * - iBEti (?)
+ * - iBEti
  * - itf, itr
  */
 
@@ -110,7 +110,7 @@ duals::duald HICDIO(duals::duald T, double IST, double UM1, duals::duald U)
 {
 duals::duald DIOY, le, vt;
 
-    printf("2");
+    // printf("2");
     vt = UM1 * CONSTboltz * T / CHARGE;
     DIOY = U/vt;
     if (IST > 0.0) {
@@ -536,7 +536,7 @@ void hicum_diode(double T, double IS, double UM1, double U, double *Iz, double *
     //wrapper for hicum diode equation that also generates derivatives
     duals::duald result = 0;
 
-    printf("executed diode");
+    // printf("executed diode");
 
     result = HICDIO(T, IS, UM1, U+1_e);
     *Iz    = result.rpart();
@@ -1654,7 +1654,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
             //Tunneling current
             //TODO: missing temperature derivatives abet_t vdei_t ibets_t cjei0_t vdep_t ibets_t cjep0_t
-            //@Mario: is there really no direct T dependence here?
             result      = calc_ibet(Vbiei, Vbpei+1_e);
             ibet        = result.rpart();
             ibet_Vbpei  = result.dpart();
