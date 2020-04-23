@@ -46,7 +46,7 @@ clean:
 NGSRCDIR = $(srcdir)/../../
 
 dstring.o : $(NGSRCDIR)/misc/dstring.c $(NGSRCDIR)/include/ngspice/dstring.h
-	$(COMPILE) -I $(NGSRCDIR)/include/ngspice -o $@ -c $<
+	$(COMPILE) -I$(NGSRCDIR)/include/ngspice -o $@ -c $<
 
 ifdef cm
 
