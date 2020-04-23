@@ -182,9 +182,10 @@ gr_redrawgrid(GRAPH *graph)
 #ifdef HAS_WINGUI
             /* x axis centered to graphics on Windows */
             /* utf-8: figure out the real length of the x label */
-            wchar_t *wtext;
-            wtext = TMALLOC(wchar_t, 2 * strlen(graph->grid.xlabel) + 1);
-            int wlen = MultiByteToWideChar(CP_UTF8, 0, graph->grid.xlabel, -1, wtext, 2 * strlen(graph->grid.xlabel) + 1);
+            const int n_byte_wide = 2 * (int)strlen(graph->grid.xlabel) + 1;
+            wchar_t* const wtext = TMALLOC(wchar_t, n_byte_wide);
+            int wlen = MultiByteToWideChar(CP_UTF8, 0, graph->grid.xlabel, -1,
+                wtext, n_byte_wide);
             if (wlen == 0) {
                 fprintf(stderr, "UTF-8 to wide char conversion failed with 0x%x\n", GetLastError());
                 fprintf(stderr, "%s could not be converted\n", graph->grid.xlabel);
@@ -206,6 +207,7 @@ gr_redrawgrid(GRAPH *graph)
                 else
                     unitshift = 0; /* reset for next plot window */
             }
+            txfree(wtext);
         }
 #endif
 #endif // EXT_ASC
@@ -225,22 +227,23 @@ gr_redrawgrid(GRAPH *graph)
             DevDrawText(graph->grid.ylabel,
                         graph->fontwidth,
                         /*vertical text, midpoint in y is aligned midpoint of text string */
-                        (graph->absolute.height - strlen(graph->grid.ylabel) * graph->fontwidth) / 2, 90);
+                        (graph->absolute.height - (int)strlen(graph->grid.ylabel) * graph->fontwidth) / 2, 90);
 #ifdef EXT_ASC
             else if (eq(dispdev->name, "Windows"))
                 DevDrawText(graph->grid.ylabel,
                         graph->fontwidth,
                         /*vertical text, midpoint in y is aligned midpoint of text string */
-                        (graph->absolute.height - strlen(graph->grid.ylabel) * graph->fontwidth) / 2, 90);
+                        (graph->absolute.height - (int)strlen(graph->grid.ylabel) * graph->fontwidth) / 2, 90);
 #else
 #ifdef HAS_WINGUI
             /* Windows and UTF-8: check for string length (in pixels),
                place vertical text centered in y with respect to grid */
             else if (eq(dispdev->name, "Windows")) {
                 /* utf-8: figure out the real length of the y label */
-                wchar_t *wtext;
-                wtext = TMALLOC(wchar_t, 2 * strlen(graph->grid.ylabel) + 1);
-                int wlen = MultiByteToWideChar(CP_UTF8, 0, graph->grid.ylabel, -1, wtext, 2 * strlen(graph->grid.ylabel) + 1);
+                const int n_byte_wide = 2 * (int)strlen(graph->grid.ylabel) + 1;
+                wchar_t* const wtext = TMALLOC(wchar_t, n_byte_wide);
+                int wlen = MultiByteToWideChar(CP_UTF8, 0, graph->grid.ylabel, -1,
+                    wtext, n_byte_wide);
                 if (wlen == 0) {
                     fprintf(stderr, "UTF-8 to wide char conversion failed with 0x%x\n", GetLastError());
                     fprintf(stderr, "%s could not be converted\n", graph->grid.ylabel);
@@ -257,6 +260,7 @@ gr_redrawgrid(GRAPH *graph)
                         /*vertical text, midpoint in y is aligned midpoint of text string */
                         (graph->absolute.height - (int)(1.2*sz.cx + tmw.tmOverhang)) / 2, 90);
                 }
+                txfree(wtext);
             }
 #endif
 #endif
