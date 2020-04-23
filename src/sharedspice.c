@@ -1018,7 +1018,7 @@ char** ngSpice_AllPlots(void)
         allplots[i] = pl->pl_typename;
         pl = pl->pl_next;
     }
-    allplots[len] = '\0';
+    allplots[len] = NULL;
     return allplots;
 }
 
