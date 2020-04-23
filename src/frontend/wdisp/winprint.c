@@ -296,7 +296,7 @@ int WPRINT_NewViewport(GRAPH * graph)
 #else
         wchar_t* wtext;
         wtext = TMALLOC(wchar_t, 2 * strlen(graph->plotname) + 1);
-        MultiByteToWideChar(CP_UTF8, 0, graph->plotname, -1, wtext, 2 * strlen(graph->plotname) + 1);
+        MultiByteToWideChar(CP_UTF8, 0, graph->plotname, -1, wtext, 2 * (int)strlen(graph->plotname) + 1);
         TextOutW(PrinterDC, PrinterWidth - graph->fontwidth, 1, wtext, 2 * (int)strlen(graph->plotname) + 1);
         tfree(wtext);
 #endif
@@ -433,7 +433,7 @@ int WPRINT_Text(char * text, int x, int y, int degrees)
 #else
     wchar_t* wtext;
     wtext = TMALLOC(wchar_t, 2 * strlen(text) + 1);
-    MultiByteToWideChar(CP_UTF8, 0, text, -1, wtext, 2 * strlen(text) + 1);
+    MultiByteToWideChar(CP_UTF8, 0, text, -1, wtext, 2 * (int)strlen(text) + 1);
     TextOutW(PrinterDC, x, PrinterHeight - y - currentgraph->fontheight, wtext, 2 * (int)strlen(text) + 1);
     tfree(wtext);
 #endif
