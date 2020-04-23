@@ -2,11 +2,13 @@
 .control
 set hcopydevtype = postscript
 set hcopypscolor=1
-set hcopyscale=0.5
-set color2=rgb:F/0/0
+*set hcopyscale=0.5
+set color2=rgb:FF/0/0
 *setcs hcopyfont=Arial
 * for CYGWIN
-setcs hcopyfont='NimbusMono-Regular'
+if $oscompiled = 2
+  setcs hcopyfont='NimbusMono-Regular'
+end
 set hcopyfontsize=14
 
 * for CYGWIN
@@ -22,14 +24,19 @@ plot y vs x xlabel '我能吞下玻璃而不伤身体' ylabel 'Я могу ес�
 plot y vs x+0.001 xlabel 'Labellisé X' ylabel 'Labellisé Y' title 'Titré 23 私はガラスを食べられます。それは私を傷つけません' loglog
 plot y vs x+0.001 xlabel 'Titré 私はガラスを食べられます。それは私を傷つけません' ylabel 'Titré 24 나는 유리를 먹을 수 있어요. 그래도 아프지 않아요' title 'Titré 我能吞下玻璃而不伤身体。' loglog
 * for CYGWIN
-setcs xfont='Times New Roman'
+if $oscompiled = 2
+  setcs xfont='Times New Roman'
+end
 plot y vs x+0.001 xlabel 'Labellisé X' ylabel ' أنا قادر على أكل الزجاج و هذا لا يؤلمني.' title 'Titré 25' loglog
 
 hardcopy plot_5.ps y vs x xlabel 'Labellisé X' ylabel 'Labellisé Y' title 'Titré Äü @µ€~'
 * for MS Windows only
-*shell Start /B plot_5.ps
+if $oscompiled = 1 | $oscompiled = 8
+  shell Start /B plot_5.ps
 * for CYGWIN
-shell xterm -e gs  plot_5.ps &
+else
+  shell xterm -e gs  plot_5.ps &
+end
 
 echo 3 ' 些 𣎏 世 咹 水 晶 𦓡 空 𣎏 害 咦 '
 echo 4 אני יכול לאכול זכוכית וזה לא מזיק לי.
