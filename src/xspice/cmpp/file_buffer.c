@@ -14,12 +14,21 @@
 
 
 static int fb_fill(FILEBUF *p_fb);
-static int fbget_quoted_unescaped_string(FILEBUF *p_fb, FBSTRING *p_fbstr);
+static int fbget_quoted_unescaped_string(FILEBUF *p_fb,
+        FBTYPE *p_type_found, FBOBJ *p_fbobj);
 static size_t fb_make_space_at_end(FILEBUF *p_fb);
-static int fbget_quoted_string(FILEBUF *p_fb, FBSTRING *p_fbstr);
-static int fbget_quoted_escaped_string(FILEBUF *p_fb, FBSTRING *p_fbstr);
-static int fbget_unquoted_string(FILEBUF *p_fb, FBSTRING *p_fbstr);
-static int fb_return_string(FILEBUF *p_fb, FBSTRING *p_fbstr);
+static int fbget_quoted_string(FILEBUF *p_fb,
+        FBTYPE *p_type_found, FBOBJ *p_fbobj);
+static int fbget_quoted_escaped_string(FILEBUF *p_fb,
+        FBTYPE *p_type_found, FBOBJ *p_fbobj);
+static int fbget_unquoted_string(FILEBUF *p_fb,
+        unsigned int n_type_wanted, FBTYPE *p_type_wanted,
+        FBTYPE *p_type_found, FBOBJ *p_fbobj);
+static int fb_return_obj(FILEBUF *p_fb,
+        unsigned int n_type_wanted, FBTYPE *p_type_wanted,
+        FBTYPE *p_type_found, FBOBJ *p_fbobj);
+static int fb_return_string(FILEBUF *p_fb,
+        FBTYPE *p_type_found, FBOBJ *p_fbobj);
 static int fb_skip_to_eol(FILEBUF *p_fb);
 static int fb_skip_whitespace(FILEBUF *p_fb);
 
@@ -138,7 +147,12 @@ int fbclose(FILEBUF *p_fb)
  *
  * Parameters
  * p_fb: FILEBUF pointer initialized using fbopen()
- * p_fbstr: Address of an FBSTRING structure to receive the data
+ * n_type_wanted: number of desired type conversions for data from highest
+ *      priority to lowest.
+ * p_type_wanted: Desired type conversions for data from highest priority
+ *      to lowest.
+ * p_type_found: Address to receive the type of the data obtained
+ * p_fbobj: Address of an FBOBJ structure to receive the data
  *
  * Return codes
  * +1: EOF reached
@@ -166,7 +180,9 @@ int fbclose(FILEBUF *p_fb)
  * 0: Normal
  * -1: Error
  */
-int fbget(FILEBUF *p_fb, FBSTRING *p_fbstr)
+int fbget(FILEBUF *p_fb,
+        unsigned int n_type_wanted, FBTYPE *p_type_wanted,
+        FBTYPE *p_type_found, FBOBJ *p_fbobj)
 {
     /* Test for existing EOF */
     if (p_fb->is_eof && p_fb->p_data_cur == p_fb->p_data_end) { /* no data */
@@ -194,11 +210,12 @@ int fbget(FILEBUF *p_fb, FBSTRING *p_fbstr)
 
     /* Current char exists and starts the item */
     if (*p_fb->p_data_cur == '"') { /* quoted string */
-        return fbget_quoted_string(p_fb, p_fbstr);
+        return fbget_quoted_string(p_fb, p_type_found, p_fbobj);
     }
 
     /* Else unquoted string */
-    return fbget_unquoted_string(p_fb, p_fbstr);
+    return fbget_unquoted_string(p_fb, n_type_wanted, p_type_wanted,
+            p_type_found, p_fbobj);
 } /* end of function fbget */
 
 
@@ -207,7 +224,8 @@ int fbget(FILEBUF *p_fb, FBSTRING *p_fbstr)
  * to the quote starting the quoted string. On return it points to the first
  * character after the current item or equals p_fb->p_data_end if the
  * current item extens to the end of the current data string. */
-static int fbget_quoted_string(FILEBUF *p_fb, FBSTRING *p_fbstr)
+static int fbget_quoted_string(FILEBUF *p_fb,
+        FBTYPE *p_type_found, FBOBJ *p_fbobj)
 {
     /* Advance past the opening quote to the true start of the string */
     if (++p_fb->p_data_cur == p_fb->p_data_end) {
@@ -225,7 +243,7 @@ static int fbget_quoted_string(FILEBUF *p_fb, FBSTRING *p_fbstr)
              * and the buffer has at leat 1 byte a NULL to create the
              * string "" can be written here */
             *(p_fb->p_obj_end = p_fb->p_obj_start = p_fb->p_buf) = '\0';
-            return fb_return_string(p_fb, p_fbstr);
+            return fb_return_string(p_fb, p_type_found, p_fbobj);
         }
         /* Else data is now available at p_fb->p_data_cur */
     } /* end of case that at end of data from file */
@@ -235,14 +253,15 @@ static int fbget_quoted_string(FILEBUF *p_fb, FBSTRING *p_fbstr)
 
     /* Continue processing as an unescaped string, unless the contrary
      * is found to be true */
-    return fbget_quoted_unescaped_string(p_fb, p_fbstr);
+    return fbget_quoted_unescaped_string(p_fb, p_type_found, p_fbobj);
 } /* end of function fbget_quoted_string */
 
 
 
 /* Get a quoted string with no escape. The start has already been set on
  * entry. If an escape is found, processing continues as an escaped string */
-int fbget_quoted_unescaped_string(FILEBUF *p_fb, FBSTRING *p_fbstr)
+int fbget_quoted_unescaped_string(FILEBUF *p_fb,
+        FBTYPE *p_type_found, FBOBJ *p_fbobj)
 {
     /* Step through characters until end or escape */
     char *p_data_cur = p_fb->p_data_cur;
@@ -253,13 +272,14 @@ int fbget_quoted_unescaped_string(FILEBUF *p_fb, FBSTRING *p_fbstr)
             if (ch_cur == '"') { /* Closing quote, so done */
                 *(p_fb->p_obj_end = p_data_cur) = '\0';
                 p_fb->p_data_cur = p_data_cur + 1;
-                return fb_return_string(p_fb, p_fbstr);
+                return fb_return_string(p_fb, p_type_found, p_fbobj);
             }
             if (ch_cur == '\\') { /* Escape */
                 /* After an escape, data must be moved to fill in the gap
                  * left by the escape character */
                 p_fb->p_data_cur = p_data_cur; /* Reprocess the escape */
-                return fbget_quoted_escaped_string(p_fb, p_fbstr);
+                return fbget_quoted_escaped_string(p_fb,
+                        p_type_found, p_fbobj);
             }
             /* Else the character is part of the quoted string */
         } /* end of loop over current text */
@@ -275,7 +295,7 @@ int fbget_quoted_unescaped_string(FILEBUF *p_fb, FBSTRING *p_fbstr)
              * did not return -1, there is at least 1 byte at the end of
              * the buffer where the read would have gone. */
             *(p_fb->p_obj_end = p_fb->p_data_cur) = '\0';
-            return fb_return_string(p_fb, p_fbstr);
+            return fb_return_string(p_fb, p_type_found, p_fbobj);
         }
         p_data_cur = p_fb->p_data_cur; /* Update after fill */
         p_data_end = p_fb->p_data_end;
@@ -286,7 +306,8 @@ int fbget_quoted_unescaped_string(FILEBUF *p_fb, FBSTRING *p_fbstr)
 
 /* Get a quoted string with an escape. The start has already been set on
  * entry */
-static int fbget_quoted_escaped_string(FILEBUF *p_fb, FBSTRING *p_fbstr)
+static int fbget_quoted_escaped_string(FILEBUF *p_fb,
+        FBTYPE *p_type_found, FBOBJ *p_fbobj)
 {
     /* Step through characters until end */
     char *p_data_src = p_fb->p_data_cur; /* at current char */
@@ -304,7 +325,7 @@ static int fbget_quoted_escaped_string(FILEBUF *p_fb, FBSTRING *p_fbstr)
                 if (ch_cur == '"') { /* Closing quote, so done */
                     p_fb->p_data_cur = p_data_src + 1;
                     *(p_fb->p_obj_end = p_data_dst) = '\0';
-                    return fb_return_string(p_fb, p_fbstr);
+                    return fb_return_string(p_fb, p_type_found, p_fbobj);
                 }
                 if (ch_cur == '\\') { /* Escape */
                     f_escape_in_progress = true;
@@ -323,7 +344,8 @@ static int fbget_quoted_escaped_string(FILEBUF *p_fb, FBSTRING *p_fbstr)
         /* If no pending escape, can switch back to unescaped version and
          * avoid the moves */
         if (!f_escape_in_progress) {
-            return fbget_quoted_unescaped_string(p_fb, p_fbstr);
+            return fbget_quoted_unescaped_string(p_fb, p_type_found,
+                    p_fbobj);
         }
 
         /* Else escape must be processed, so continue with escaped version */
@@ -337,7 +359,7 @@ static int fbget_quoted_escaped_string(FILEBUF *p_fb, FBSTRING *p_fbstr)
              * did not return -1, there is at least 1 byte at the end of
              * the buffer where the read would have gone. */
             *(p_fb->p_obj_end = p_fb->p_data_cur) = '\0';
-            return fb_return_string(p_fb, p_fbstr);
+            return fb_return_string(p_fb, p_type_found, p_fbobj);
         }
         p_data_dst = p_data_src = p_fb->p_data_cur; /* Update after fill */
         p_data_end = p_fb->p_data_end;
@@ -347,7 +369,9 @@ static int fbget_quoted_escaped_string(FILEBUF *p_fb, FBSTRING *p_fbstr)
 
 
 /* Get an  unquoted string starting at the current position */
-static int fbget_unquoted_string(FILEBUF *p_fb, FBSTRING *p_fbstr)
+static int fbget_unquoted_string(FILEBUF *p_fb,
+        unsigned int n_type_wanted, FBTYPE *p_type_wanted,
+        FBTYPE *p_type_found, FBOBJ *p_fbobj)
 {
     /* Save the start of the string as the current position */
     p_fb->p_obj_start = p_fb->p_data_cur;
@@ -373,7 +397,8 @@ static int fbget_unquoted_string(FILEBUF *p_fb, FBSTRING *p_fbstr)
                 *(p_fb->p_obj_end = p_data_cur) = '\0';
                 p_fb->p_data_cur = p_data_cur + 1; /* 1st char past string */
                 p_fb->f_skip_to_eol = map_cur < 0;
-                return fb_return_string(p_fb, p_fbstr);
+                return fb_return_obj(p_fb, n_type_wanted, p_type_wanted,
+                        p_type_found, p_fbobj);
             }
             /* Else more of the string */
         } /* end of loop over current text */
@@ -389,7 +414,8 @@ static int fbget_unquoted_string(FILEBUF *p_fb, FBSTRING *p_fbstr)
              * did not return -1, there is at least 1 byte at the end of
              * the buffer where the read would have gone. */
             *(p_fb->p_obj_end = p_fb->p_data_cur) = '\0';
-            return fb_return_string(p_fb, p_fbstr);
+            return fb_return_obj(p_fb, n_type_wanted, p_type_wanted,
+                    p_type_found, p_fbobj);
         }
         p_data_cur = p_fb->p_data_cur; /* Update after fill */
         p_data_end = p_fb->p_data_end;
@@ -456,7 +482,7 @@ static size_t fb_make_space_at_end(FILEBUF *p_fb)
 
     /* Shift data in use to the front of the buffer if not already */
     if (p_dst != p_src) { /* object is not at start of buffer */
-        const size_t n = (size_t) (p_fb->p_data_end - p_src);
+        const size_t n = p_fb->p_data_end - p_src;
         if (n > 0) { /* Will be 0 if skipping whitespace and comments */
             (void) memmove(p_dst, p_src, n);
         }
@@ -502,7 +528,7 @@ static size_t fb_make_space_at_end(FILEBUF *p_fb)
         }
     }
 
-    return (size_t) (p_fb->p_buf_end - p_fb->p_data_end);
+    return p_fb->p_buf_end - p_fb->p_data_end;
 } /* end of function fb_make_space_at_end */
 
 
@@ -593,11 +619,78 @@ static int fb_skip_to_eol(FILEBUF *p_fb)
 
 
 
-/* Return string */
-static int fb_return_string(FILEBUF *p_fb, FBSTRING *p_fbstr)
+/* Return the data found in the most preferred format possible */
+static int fb_return_obj(FILEBUF *p_fb,
+        unsigned int n_type_wanted, FBTYPE *p_type_wanted,
+        FBTYPE *p_type_found, FBOBJ *p_fbobj)
 {
-    const char *p_data_start = p_fbstr->sz = p_fb->p_obj_start;
-    p_fbstr->n_char = (size_t) (p_fb->p_obj_end - p_data_start);
+    const char * const p_obj_start = p_fb->p_obj_start; /* data to convert */
+    const char * const p_obj_end = p_fb->p_obj_end;
+
+    /* Must test for null string separately since strto* does not set
+     * errno in this case. Aside from that, it can only be returned
+     * as a string anyhow. */
+    if (p_obj_start != p_obj_end) { /* have a string besides "" */
+        unsigned int i;
+        for (i = 0; i < n_type_wanted; ++i) {
+            FBTYPE type_cur = p_type_wanted[i];
+            errno = 0;
+            if (type_cur == BUF_TYPE_ULONG) {
+                char *p_end;
+                unsigned long val = strtoul(p_obj_start, &p_end, 10);
+                /* Test for processing of full string. Note that checking
+                 * for the end of the string rather than a NULL handles the
+                 * case of an embedded NULL which the latter test would
+                 * not */
+                if (errno == 0 && p_end == p_obj_end) {
+                    *p_type_found = BUF_TYPE_ULONG;
+                    p_fbobj->ulong_value = val;
+                    return 0;
+                }
+            }
+            else if (type_cur == BUF_TYPE_LONG) {
+                char *p_end;
+                long val = strtol(p_obj_start, &p_end, 10);
+                if (errno == 0 && p_end == p_obj_end) {
+                    *p_type_found = BUF_TYPE_LONG;
+                    p_fbobj->long_value = val;
+                    return 0;
+                }
+            }
+            else if (type_cur == BUF_TYPE_DOUBLE) {
+                char *p_end;
+                double val = strtod(p_obj_start, &p_end);
+                if (errno == 0 && p_end == p_obj_end) {
+                    *p_type_found = BUF_TYPE_DOUBLE;
+                    p_fbobj->dbl_value = val;
+                    return 0;
+                }
+            }
+            else if (type_cur == BUF_TYPE_STRING) {
+                break; /* exit loop and use default return of string */
+            }
+            else { /* unknown type */
+                print_error("Unknown output data type %d is ignored.",
+                        (int) type_cur);
+            }
+        } /* end of loop trying types */
+    } /* end of case that string is not "" */
+
+    /* If no rquested type was converted OK or string requested, return as
+     * a string */
+    return fb_return_string(p_fb, p_type_found, p_fbobj);
+} /* end of function fb_return_obj */
+
+
+
+/* Return string */
+static int fb_return_string(FILEBUF *p_fb,
+        FBTYPE *p_type_found, FBOBJ *p_fbobj)
+{
+    const char *p_data_start =
+            p_fbobj->str_value.sz = p_fb->p_obj_start;
+    p_fbobj->str_value.n_char = p_fb->p_obj_end - p_data_start;
+    *p_type_found = BUF_TYPE_STRING;
     return 0;
 } /* end of function fb_return_string */
 

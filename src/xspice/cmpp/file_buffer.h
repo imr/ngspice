@@ -10,6 +10,14 @@ typedef struct Filebuf_len_str {
     char *sz; /* Start of string */
 } FBSTRING;
 
+/* Union for returned value */
+typedef union Filebuf_obj {
+    FBSTRING str_value;
+    unsigned long ulong_value;
+    long long_value;
+    double dbl_value;
+} FBOBJ;
+
 /* Structure for getting file data */
 typedef struct Filebuf {
     FILE *fp; /* handle to file */
@@ -42,7 +50,8 @@ typedef enum FBtype {
 
 
 FILEBUF *fbopen(const char *filename, size_t n_byte_buf_init);
-int fbget(FILEBUF *p_fb, FBSTRING *p_fbstr);
+int fbget(FILEBUF *p_fb, unsigned int n_type_wanted, FBTYPE *p_type_wanted,
+        FBTYPE *p_type_found, FBOBJ *p_fbobj);
 int fbclose(FILEBUF *fbp);
 
 
