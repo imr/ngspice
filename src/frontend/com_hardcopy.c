@@ -188,9 +188,15 @@ void com_hardcopy(wordlist *wl)
             if (!cp_getvar("lprplot5", CP_STRING, format, sizeof(format)))
                 strcpy(format, SYSTEM_PLOT5LPR);
             (void) sprintf(buf, format, device, fname);
-            fprintf(cp_out, "Printing %s on the %s printer.\n", fname, device);
-            (void) system(buf);
-            printed = 1;
+            if (system(buf) == -1) {
+                fprintf(cp_out, "Printing %s on the %s printer failed.\n",
+                        fname, device);
+            }
+            else {
+                fprintf(cp_out, "Printing %s on the %s printer OK.\n",
+                        fname, device);
+                printed = 1;
+            }
         }
 #endif
 #ifdef SYSTEM_PSLPR
@@ -199,9 +205,15 @@ void com_hardcopy(wordlist *wl)
             if (!cp_getvar("lprps", CP_STRING, format, sizeof(format)))
                 strcpy(format, SYSTEM_PSLPR);
             (void) sprintf(buf, format, device, fname);
-            fprintf(cp_out, "Printing %s on the %s printer.\n", fname, device);
-            (void) system(buf);
-            printed = 1;
+            if (system(buf) == -1) {
+                fprintf(cp_out, "Printing %s on the %s printer failed.\n",
+                        fname, device);
+            }
+            else {
+                fprintf(cp_out, "Printing %s on the %s printer OK.\n",
+                        fname, device);
+                printed = 1;
+            }
         }
 #endif
     }
