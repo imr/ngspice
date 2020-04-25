@@ -21,7 +21,7 @@ B1param(int param, IFvalue *value, GENinstance *inst,
     
     NG_IGNORE(select);
 
-    switch(param) {
+    switch (param) {
         case BSIM1_W:
             here->B1w = value->rValue;
             here->B1wGiven = TRUE;
@@ -74,7 +74,9 @@ B1param(int param, IFvalue *value, GENinstance *inst,
             here->B1icVGSGiven = TRUE;
             break;
         case BSIM1_IC:
-            switch(value->v.numValue){
+            /* FALLTHROUGH added to suppress GCC warning due to
+             * -Wimplicit-fallthrough flag */
+            switch (value->v.numValue){
                 case 3:
                     here->B1icVBS = *(value->v.vec.rVec+2);
                     here->B1icVBSGiven = TRUE;
