@@ -43,15 +43,20 @@ clean:
 
 
 #-----------------------------------------------------------------------------
-NGSRCDIR = $(srcdir)/../../
+NGSRCDIR = $(srcdir)/../..
 
-dstring.o : $(NGSRCDIR)/misc/dstring.c $(NGSRCDIR)/include/ngspice/dstring.h
-	$(COMPILE) -I$(NGSRCDIR)/include/ngspice -o $@ -c $<
+dstring.o: $(NGSRCDIR)/misc/dstring.c $(NGSRCDIR)/include/ngspice/dstring.h
+	$(CC) $(CFLAGS) -I$(NGSRCDIR)/include -fPIC -o $@ -c $<
 
 ifdef cm
 
-modlst := $(shell cat $(srcdir)/$(cm)/modpath.lst)
-udnlst := $(shell cat $(srcdir)/$(cm)/udnpath.lst)
+ifeq ($(OS),Windows_NT)
+    cmpp = ../cmpp/cmpp.exe
+else
+    cmpp = ../cmpp/cmpp
+endif
+modlst := $(shell $(cmpp) -p $(srcdir)/$(cm)/modpath.lst)
+udnlst := $(shell $(cmpp) -p $(srcdir)/$(cm)/udnpath.lst)
 
 cm-dirs := $(cm) $(udnlst:%=$(cm)/%) $(modlst:%=$(cm)/%)
 cm-dep-dirs := $(cm-dirs:%=%/.deps)
