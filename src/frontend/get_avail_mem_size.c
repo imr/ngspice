@@ -5,6 +5,7 @@
  */
 
 #include "ngspice/ngspice.h"
+#include "resource.h"
 
 #if defined(_WIN32)
 #undef BOOLEAN
@@ -29,7 +30,7 @@
 /**
  * Returns the size of available memory (RAM) in bytes.
  */
-unsigned long long getAvailableMemorySize( )
+unsigned long long getAvailableMemorySize(void)
 {
 #if defined(HAVE__PROC_MEMINFO)
     /* Cygwin , Linux--------------------------------- */
