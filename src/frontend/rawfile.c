@@ -464,7 +464,11 @@ raw_read(char *name) {
             }
             s = SKIP(buf);
             if (!*s) {
-                (void) fgets(buf, BSIZE_SP, fp);
+                if (fgets(buf, BSIZE_SP, fp) == (char *) NULL) {
+                    fprintf(cp_err, "Error: unable to read line\n");
+                    plots = NULL;
+                    break;
+                }
                 s = buf;
             }
             if (numdims == 0) {
@@ -490,7 +494,10 @@ raw_read(char *name) {
                 if (!i) {
                     curpl->pl_scale = v;
                 } else {
-                    (void) fgets(buf, BSIZE_SP, fp);
+                    if (fgets(buf, BSIZE_SP, fp) == (char *) NULL) {
+                        fprintf(cp_err, "Error: unable to read variable line\n");
+                        break;
+                    }
                     s = buf;
                 }
                 s = nexttok(s);  /* The strchr field. */
@@ -591,7 +598,10 @@ raw_read(char *name) {
             for (i = 0; i < npoints; i++) {
                 if (is_ascii) {
                     /* It's an ASCII file. */
-                    (void) fscanf(fp, " %d", &j);
+                    if (fscanf(fp, " %d", &j) != 1) {
+                        fprintf(cp_err, "Error: unable to read point count\n");
+                        break;
+                    }
                     for (v = curpl->pl_dvecs; v; v = v->v_next) {
                         if (i < v->v_length) {
                             if (flags & VF_REAL) {
@@ -657,7 +667,7 @@ raw_read(char *name) {
                 return (NULL);
             }
         }
-    }
+    } /* end of loop */
 
     if (curpl) {    /* reverse commands list */
         for (wl = curpl->pl_commands, curpl->pl_commands = NULL;
