@@ -75,7 +75,7 @@ static struct plotab plotabs[NUMPLOTTYPES] = {
     { "ac", "ac", FALSE, FALSE },
     { "pz", "pz", FALSE, FALSE },
     { "pz", "p.z.", FALSE, FALSE },
-    { "pz", "pole-zero", FALSE},
+    { "pz", "pole-zero", FALSE, FALSE},
     { "disto", "disto", FALSE, FALSE },
     { "dist", "dist", FALSE, FALSE },
     { "noise", "noise", FALSE, FALSE },
