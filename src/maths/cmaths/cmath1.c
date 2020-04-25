@@ -16,6 +16,8 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
  *
  */
 
+#include <errno.h>
+
 #include "ngspice/ngspice.h"
 #include "ngspice/memory.h"
 #include "ngspice/cpdefs.h"
@@ -206,7 +208,7 @@ void *cx_conj(void *data, short int type, int length,
         ngcomplex_t * const c_dst = alloc_c(length);
         ngcomplex_t *c_dst_cur = c_dst;
         ngcomplex_t *c_src_cur = (ngcomplex_t *) data;
-        ngcomplex_t * const c_src_end = c_src_cur + length; 
+        ngcomplex_t * const c_src_end = c_src_cur + length;
         for ( ; c_src_cur < c_src_end;  c_src_cur++, c_dst_cur++) {
             c_dst_cur->cx_real = c_src_cur->cx_real;
             c_dst_cur->cx_imag = -c_src_cur->cx_imag;
@@ -215,7 +217,7 @@ void *cx_conj(void *data, short int type, int length,
     }
 
     /* Else real, so just copy */
-    return memcpy(alloc_d(length), data, length * sizeof(double));
+    return memcpy(alloc_d(length), data, (unsigned int) length * sizeof(double));
 } /* end of function cx_conj */
 
 
@@ -241,21 +243,20 @@ cx_pos(void *data, short int type, int length, int *newlength, short int *newtyp
     return ((void *) d);
 }
 
-void *
-cx_db(void *data, short int type, int length, int *newlength, short int *newtype)
+void *cx_db(void *data, short int type, int length,
+        int *newlength, short int *newtype)
 {
+    int xrc = 0;
     double *d = alloc_d(length);
-    double *dd = (double *) data;
-    ngcomplex_t *cc = (ngcomplex_t *) data;
-    double tt;
-    int i;
 
     *newlength = length;
     *newtype = VF_REAL;
-    if (type == VF_COMPLEX)
+    if (type == VF_COMPLEX) {
+        ngcomplex_t *cc = (ngcomplex_t *) data;
+        int i;
         for (i = 0; i < length; i++) {
-            tt = cmag(cc[i]);
-            rcheckn(tt > 0, "db", d);
+            const double tt = cmag(cc[i]);
+            rcheck(tt > 0, "db");
             /*
                 if (tt == 0.0)
                     d[i] = 20.0 * - log(HUGE);
@@ -263,29 +264,44 @@ cx_db(void *data, short int type, int length, int *newlength, short int *newtype
             */
             d[i] = 20.0 * log10(tt);
         }
-    else
+    }
+    else {
+        double *dd = (double *) data;
+        int i;
         for (i = 0; i < length; i++) {
-            rcheckn(dd[i] > 0, "db", d);
+            const double tt = dd[i];
+            rcheck(tt > 0, "db");
             /*
                 if (dd[i] == 0.0)
                     d[i] = 20.0 * - log(HUGE);
                 else
             */
-            d[i] = 20.0 * log10(dd[i]);
+            d[i] = 20.0 * log10(tt);
         }
-    return ((void *) d);
-}
+    }
 
-void *
-cx_log10(void *data, short int type, int length, int *newlength, short int *newtype)
+EXITPOINT:
+    if (xrc != 0) {
+        txfree(d);
+        d = (double *) NULL;
+    }
+    return ((void *) d);
+} /* end of function cx_db */
+
+
+
+void *cx_log10(void *data, short int type, int length,
+        int *newlength, short int *newtype)
 {
-    *newlength = length;
+    int xrc = 0;
+    void *rv;
+
     if (type == VF_COMPLEX) {
         ngcomplex_t *c;
         ngcomplex_t *cc = (ngcomplex_t *) data;
         int i;
 
-        c = alloc_c(length);
+        rv = c = alloc_c(length);
         *newtype = VF_COMPLEX;
         for (i = 0; i < length; i++) {
             double td;
@@ -294,78 +310,106 @@ cx_log10(void *data, short int type, int length, int *newlength, short int *newt
             /* Perhaps we should trap when td = 0.0, but Ken wants
              * this to be possible...
              */
-            rcheckn(td >= 0, "log10", c);
+            rcheck(td >= 0, "log10");
             if (td == 0.0) {
                 realpart(c[i]) = - log10(HUGE);
                 imagpart(c[i]) = 0.0;
-            } else {
+            }
+            else {
                 realpart(c[i]) = log10(td);
-                imagpart(c[i]) = atan2(imagpart(cc[i]),
-                                        realpart(cc[i]));
+                imagpart(c[i]) = atan2(imagpart(cc[i]), realpart(cc[i]));
             }
         }
-        return ((void *) c);
-    } else {
+    }
+    else {
         double *d;
         double *dd = (double *) data;
         int i;
 
-        d = alloc_d(length);
+        rv = d = alloc_d(length);
         *newtype = VF_REAL;
         for (i = 0; i < length; i++) {
-            rcheckn(dd[i] >= 0, "log10", d);
-            if (dd[i] == 0.0)
+            rcheck(dd[i] >= 0, "log10");
+            if (dd[i] == 0.0) {
                 d[i] = - log10(HUGE);
-            else
+            }
+            else {
                 d[i] = log10(dd[i]);
+            }
         }
-        return ((void *) d);
     }
-}
 
-void *
-cx_log(void *data, short int type, int length, int *newlength, short int *newtype)
-{
     *newlength = length;
+
+EXITPOINT:
+    if (xrc != 0) { /* Free resources on error */
+        txfree(rv);
+        rv = NULL;
+    }
+
+    return rv;
+} /* end of function cx_log10 */
+
+
+
+void *cx_log(void *data, short int type, int length,
+        int *newlength, short int *newtype)
+{
+    int xrc = 0;
+    void *rv;
+
     if (type == VF_COMPLEX) {
         ngcomplex_t *c;
         ngcomplex_t *cc = (ngcomplex_t *) data;
-        int i;
 
-        c = alloc_c(length);
+        rv = c = alloc_c(length);
         *newtype = VF_COMPLEX;
+
+        int i;
         for (i = 0; i < length; i++) {
             double td;
 
             td = cmag(cc[i]);
-            rcheckn(td >= 0, "log", c);
+            rcheck(td >= 0, "log");
             if (td == 0.0) {
                 realpart(c[i]) = - log(HUGE);
                 imagpart(c[i]) = 0.0;
-            } else {
+            }
+            else {
                 realpart(c[i]) = log(td);
-                imagpart(c[i]) = atan2(imagpart(cc[i]),
-                                        realpart(cc[i]));
+                imagpart(c[i]) = atan2(imagpart(cc[i]), realpart(cc[i]));
             }
         }
-        return ((void *) c);
-    } else {
+    }
+    else {
         double *d;
         double *dd = (double *) data;
-        int i;
 
-        d = alloc_d(length);
+        rv = d = alloc_d(length);
         *newtype = VF_REAL;
+
+        int i;
         for (i = 0; i < length; i++) {
-            rcheckn(dd[i] >= 0, "log", d);
+            rcheck(dd[i] >= 0, "log");
             if (dd[i] == 0.0)
                 d[i] = - log(HUGE);
             else
                 d[i] = log(dd[i]);
         }
-        return ((void *) d);
     }
-}
+
+    *newlength = length;
+
+EXITPOINT:
+    if (xrc != 0) { /* Free resources on error */
+        txfree(rv);
+        rv = NULL;
+    }
+
+    return rv;
+} /* end of function cx_log */
+
+
 
 void *
 cx_exp(void *data, short int type, int length, int *newlength, short int *newtype)
@@ -614,19 +658,29 @@ cx_cosh(void *data, short int type, int length, int *newlength, short int *newty
     }
 }
 
-static double *
-d_tan(double *dd, int length)
-{
-    double *d;
-    int i;
 
-    d = alloc_d(length);
+
+static double *d_tan(double *dd, int length)
+{
+    int xrc = 0;
+    double *d = alloc_d(length);
+
+    int i;
     for (i = 0; i < length; i++) {
-        rcheckn(tan(degtorad(dd[i])) != 0, "tan", d);
+        rcheck(tan(degtorad(dd[i])) != 0, "tan");
         d[i] = tan(degtorad(dd[i]));
     }
+
+EXITPOINT:
+    if (xrc != 0) { /* Free resources on error */
+        txfree(d);
+        d = (double *) NULL;
+    }
+
     return d;
-}
+} /* end of function d_tan */
+
+
 
 static double *
 d_tanh(double *dd, int length)
@@ -641,64 +695,93 @@ d_tanh(double *dd, int length)
     return d;
 }
 
-static ngcomplex_t *
-c_tan(ngcomplex_t *cc, int length)
+/* See https://proofwiki.org/wiki/Tangent_of_Complex_Number (formulation 4) among
+ * others for the tangent formula:
+
+ * sin z = sin(x + iy) = sin x cos(iy) + cos x sin(iy) = sin x cosh y + i cos x sinh y
+ * cos z = cos(x + iy) = cos x cos(iy) + sin x sin(iy) = cos x cosh y - i sin x sinh y
+ * tan z = ((sin x cosh y + i cos x sinh y) / (cos x cosh y - i sin x sinh y)) *
+            (cos x cosh y + isin x sinh y) / (cos x cosh y + i sin x sinh y)
+      = ...
+ *
+ *
+ * tan(a + bi) = (sin(2a) + i * sinh(2b)) / (cos(2a) + cosh(2b))
+ */
+static ngcomplex_t *c_tan(ngcomplex_t *cc, int length)
 {
-    ngcomplex_t *c;
+    ngcomplex_t * const c = alloc_c(length);
+
     int i;
-
-    c = alloc_c(length);
     for (i = 0; i < length; i++) {
-        double u, v;
-
-        rcheckn(cos(degtorad(realpart(cc[i]))) *
-               cosh(degtorad(imagpart(cc[i]))), "tan", c);
-        rcheckn(sin(degtorad(realpart(cc[i]))) *
-               sinh(degtorad(imagpart(cc[i]))), "tan", c);
-        u = degtorad(realpart(cc[i]));
-        v = degtorad(imagpart(cc[i]));
-        /* The Lattice C compiler won't take multi-line macros, and
-         * CMS won't take >80 column lines....
-         */
-#define xx1 sin(u) * cosh(v)
-#define xx2 cos(u) * sinh(v)
-#define xx3 cos(u) * cosh(v)
-#define xx4 -sin(u) * sinh(v)
-        cdiv(xx1, xx2, xx3, xx4, realpart(c[i]), imagpart(c[i]));
-    }
-    return c;
-}
-
-/* complex tanh function, uses tanh(z) = -i * tan (i * z) */
-static ngcomplex_t *
-c_tanh(ngcomplex_t *cc, int length)
-{
-    ngcomplex_t *c, *s, *t;
-    int i;
-
-    c = alloc_c(length);
-    s = alloc_c(1);
-    t = alloc_c(1);
-
-    for (i = 0; i < length; i++) {
-        /* multiply by i */
-        t[0].cx_real = -1. * imagpart(cc[i]);
-        t[0].cx_imag = realpart(cc[i]);
-        /* get complex tangent */
-        s = c_tan(t, 1);
-        /* if check in c_tan fails */
-        if (s == NULL) {
-            tfree(t);
-            return (NULL);
+        errno = 0;
+        ngcomplex_t *p_dst = c + i;
+        ngcomplex_t *p_src = cc + i;
+        const double a = p_src->cx_real;
+        const double b = p_src->cx_imag;
+        const double u = 2 * degtorad(a);
+        const double v = 2 * degtorad(b);
+        const double n_r = sin(u);
+        const double n_i = sinh(v);
+        const double d1 = cos(u);
+        const double d2 = cosh(v);
+        const double d = d1 + d2;
+        if (errno != 0 || d == 0.0) {
+            (void) fprintf(cp_err,
+                    "Invalid argument %lf + %lf i for compex tangent", a, b);
+            txfree(c);
+            return (ngcomplex_t *) NULL;
         }
-        /* multiply by -i */
-        realpart(c[i]) = imagpart(s[0]);
-        imagpart(c[i]) = -1. * realpart(s[0]);
-    }
-    tfree(s);
-    tfree(t);
+        p_dst->cx_real = n_r / d;
+        p_dst->cx_imag = n_i / d;
+    } /* end of loop over elements in array */
     return c;
-}
+} /* end of function c_tan */
+
+
+
+/* complex tanh function, uses tanh(z) = -i * tan(i * z).
+ * Unfortunately, it did so very inefficiently (a memory allocations per
+ * value calculated!) and leaked memory badly (all of the aforementioned
+ * allocations.) These issues were fixed 2020-03-04 */
+static ngcomplex_t *c_tanh(ngcomplex_t *cc, int length)
+{
+    ngcomplex_t * const tmp = alloc_c(length); /* i * z */
+
+    /* Build the i * z array to allow tan() to be called */
+    {
+        int i;
+        for (i = 0; i < length; ++i) {
+            ngcomplex_t *p_dst = tmp + i;
+            ngcomplex_t *p_src = cc + i;
+
+            /* multiply by i */
+            p_dst->cx_real = -p_src->cx_imag;
+            p_dst->cx_imag = p_src->cx_real;
+        }
+    }
+
+   /* Calculat tan(i * z), exiting on failure */
+    ngcomplex_t *const c = c_tan(tmp, length);
+    if (c == (ngcomplex_t *) NULL) {
+        txfree(tmp);
+        return (ngcomplex_t *) NULL;
+    }
+
+    /* Multiply by -i to find final result */
+    {
+        int i;
+        for (i = 0; i < length; ++i) {
+            ngcomplex_t *p_cur = c + i;
+            const double cx_real = p_cur->cx_real;
+            p_cur->cx_real = p_cur->cx_imag;
+            p_cur->cx_imag = -cx_real;
+        }
+    }
+
+    return c;
+} /* end of function c_tanh */
+
+
 
 void *
 cx_tan(void *data, short int type, int length, int *newlength, short int *newtype)
@@ -770,8 +853,8 @@ cx_sortorder(void *data, short int type, int length, int *newlength, short int *
     double *dd = (double *) data;
     int i;
 
-    amplitude_index_t *array_amplitudes;
-    array_amplitudes = (amplitude_index_t *) tmalloc(sizeof(amplitude_index_t) * (size_t) length);
+    amplitude_index_t * const array_amplitudes = (amplitude_index_t *)
+            tmalloc(sizeof(amplitude_index_t) * (size_t) length);
 
     *newlength = length;
     *newtype = VF_REAL;
@@ -788,7 +871,7 @@ cx_sortorder(void *data, short int type, int length, int *newlength, short int *
             d[i] = array_amplitudes[i].index;
     }
 
-    tfree(array_amplitudes);
+    txfree(array_amplitudes);
 
     /* Otherwise it is 0, but tmalloc zeros the stuff already. */
     return ((void *) d);

@@ -361,11 +361,17 @@ cx_avg(void *data, short int type, int length, int *newlength, short int *newtyp
 
 /* Compute the mean of a vector. */
 
-void *
-cx_mean(void *data, short int type, int length, int *newlength, short int *newtype)
+void *cx_mean(void *data, short int type, int length,
+        int *newlength, short int *newtype)
 {
+    if (length == 0) {
+        (void) fprintf(cp_err, "mean calculation requires "
+                "at least one element.\n");
+        return NULL;
+    }
+
     *newlength = 1;
-    rcheck(length > 0, "mean");
+
     if (type == VF_REAL) {
         double *d;
         double *dd = (double *) data;
@@ -377,7 +383,8 @@ cx_mean(void *data, short int type, int length, int *newlength, short int *newty
             *d += dd[i];
         *d /= length;
         return ((void *) d);
-    } else {
+    }
+    else {
         ngcomplex_t *c;
         ngcomplex_t *cc = (ngcomplex_t *) data;
         int i;
@@ -397,43 +404,59 @@ cx_mean(void *data, short int type, int length, int *newlength, short int *newty
 
 /* Compute the standard deviation of all elements of a vector. */
 
-void *
-cx_stddev(void *data, short int type, int length, int *newlength, short int *newtype)
+void *cx_stddev(void *data, short int type, int length,
+        int *newlength, short int *newtype)
 {
+    if (length == 0) {
+        (void) fprintf(cp_err, "standard deviation calculation requires "
+                "at least one element.\n");
+        return NULL;
+    }
+
     *newlength = 1;
-    rcheck(length > 1, "stddev");
+
     if (type == VF_REAL) {
-        double *mean = (double *)cx_mean(data, type, length, newlength, newtype);
-        double *d, sum = 0.;
-        double *dd = (double *)data;
-        int i;
+        double *p_mean = (double *) cx_mean(data, type, length,
+                newlength, newtype);
+        double mean = *p_mean;
+        double *d, sum = 0.0;
+        double *dd = (double *) data;
 
         d = alloc_d(1);
         *newtype = VF_REAL;
-        for (i = 0; i < length; i++)
-            sum += (dd[i] - *mean) * (dd[i] - *mean);
+        int i;
+        for (i = 0; i < length; i++) {
+            const double tmp = dd[i] - mean;
+            sum += tmp * tmp;
+        }
+
         *d = sqrt(sum / ((double) length - 1.0));
-        tfree(mean);
-        return ((void *)d);
+        txfree(p_mean);
+        return (void *) d;
     }
     else {
-        ngcomplex_t *cmean = (ngcomplex_t *)cx_mean(data, type, length, newlength, newtype);
-        double *d, sum = 0., a, b;
-        ngcomplex_t *cc = (ngcomplex_t *)data;
-        int i;
+        ngcomplex_t * const p_cmean = (ngcomplex_t *) cx_mean(data, type, length,
+                newlength, newtype);
+        const ngcomplex_t cmean = *p_cmean;
+        const double rmean = realpart(cmean);
+        const double imean = imagpart(cmean);
+        double *d, sum = 0.0;
+        ngcomplex_t *cc = (ngcomplex_t *) data;
 
         d = alloc_d(1);
         *newtype = VF_REAL;
+        int i;
         for (i = 0; i < length; i++) {
-            a = realpart(cc[i]) - realpart(*cmean);
-            b = imagpart(cc[i]) - imagpart(*cmean);
+            const double a = realpart(cc[i]) - rmean;
+            const double b = imagpart(cc[i]) - imean;
             sum += a * a + b * b;
         }
         *d = sqrt(sum / ((double) length - 1.0));
-        tfree(cmean);
-        return ((void *)d);
+        txfree(p_cmean);
+        return (void *) d;
     }
-}
+} /* end of function cx_stddev */
+
 
 
 void *
@@ -635,35 +658,41 @@ cx_times(void *data1, void *data2, short int datatype1, short int datatype2, int
 }
 
 
-void *
-cx_mod(void *data1, void *data2, short int datatype1, short int datatype2, int length)
+void *cx_mod(void *data1, void *data2, short int datatype1, short int datatype2,
+        int length)
 {
+    int xrc = 0;
+    void *rv;
     double *dd1 = (double *) data1;
     double *dd2 = (double *) data2;
-    double *d;
-    ngcomplex_t *cc1 = (ngcomplex_t *) data1;
-    ngcomplex_t *cc2 = (ngcomplex_t *) data2;
-    ngcomplex_t *c, c1, c2;
-    int i, r1, r2, i1, i2, r3, i3;
 
     if ((datatype1 == VF_REAL) && (datatype2 == VF_REAL)) {
-        d = alloc_d(length);
+        double *d;
+        rv = d = alloc_d(length);
+
+        int i;
         for (i = 0; i < length; i++) {
-            r1 = (int)floor(fabs(dd1[i]));
+            const int r1 = (int) floor(fabs(dd1[i]));
             rcheck(r1 > 0, "mod");
-            r2 = (int)floor(fabs(dd2[i]));
+            const int r2 = (int)floor(fabs(dd2[i]));
             rcheck(r2 > 0, "mod");
-            r3 = r1 % r2;
+            const int r3 = r1 % r2;
             d[i] = (double) r3;
         }
-        return ((void *) d);
-    } else {
-        c = alloc_c(length);
+    }
+    else {
+        ngcomplex_t *c, c1, c2;
+        ngcomplex_t *cc1 = (ngcomplex_t *) data1;
+        ngcomplex_t *cc2 = (ngcomplex_t *) data2;
+        rv = c = alloc_c(length);
+
+        int i;
         for (i = 0; i < length; i++) {
             if (datatype1 == VF_REAL) {
                 realpart(c1) = dd1[i];
                 imagpart(c1) = 0.0;
-            } else {
+            }
+            else {
                 c1 = cc1[i];
             }
             if (datatype2 == VF_REAL) {
@@ -672,34 +701,47 @@ cx_mod(void *data1, void *data2, short int datatype1, short int datatype2, int l
             } else {
                 c2 = cc2[i];
             }
-            r1 = (int)floor(fabs(realpart(c1)));
+            const int r1 = (int) floor(fabs(realpart(c1)));
             rcheck(r1 > 0, "mod");
-            r2 = (int)floor(fabs(realpart(c2)));
+            const int r2 = (int) floor(fabs(realpart(c2)));
             rcheck(r2 > 0, "mod");
-            i1 = (int)floor(fabs(imagpart(c1)));
+            const int i1 = (int) floor(fabs(imagpart(c1)));
             rcheck(i1 > 0, "mod");
-            i2 = (int)floor(fabs(imagpart(c2)));
+            const int i2 = (int) floor(fabs(imagpart(c2)));
             rcheck(i2 > 0, "mod");
-            r3 = r1 % r2;
-            i3 = i1 % i2;
+            const int r3 = r1 % r2;
+            const int i3 = i1 % i2;
             realpart(c[i]) = (double) r3;
             imagpart(c[i]) = (double) i3;
         }
-        return ((void *) c);
     }
-}
+
+EXITPOINT:
+    if (xrc != 0) { /* Free resources on error */
+        txfree(rv);
+        rv = NULL;
+    }
+
+    return rv;
+} /* end of function cx_mod */
+
 
 
 /* Routoure JM : Compute the max of a vector. */
 
-void *
-cx_max(void *data, short int type, int length, int *newlength, short int *newtype)
+void *cx_max(void *data, short int type, int length,
+        int *newlength, short int *newtype)
 {
+    if (length == 0) {
+        (void) fprintf(cp_err, "maximum calculation requires "
+                "at least one element.\n");
+        return NULL;
+    }
+
     *newlength = 1;
-    /* test if length >0 et affiche un message d'erreur */
-    rcheck(length > 0, "mean");
+
     if (type == VF_REAL) {
-        double largest=0.0;
+        double largest = 0.0;
         double *d;
         double *dd = (double *) data;
         int i;
@@ -707,14 +749,18 @@ cx_max(void *data, short int type, int length, int *newlength, short int *newtyp
         d = alloc_d(1);
         *newtype = VF_REAL;
         largest = dd[0];
-        for (i = 1; i < length; i++)
-            if (largest < dd[i])
-                largest = dd[i];
+        for (i = 1; i < length; i++) {
+            const double tmp = dd[i];
+            if (largest < tmp) {
+                largest = tmp;
+            }
+        }
         *d = largest;
-        return ((void *) d);
-    } else {
-        double largest_real=0.0;
-        double largest_complex=0.0;
+        return (void *) d;
+    }
+    else {
+        double largest_real = 0.0;
+        double largest_complex = 0.0;
         ngcomplex_t *c;
         ngcomplex_t *cc = (ngcomplex_t *) data;
         int i;
@@ -723,27 +769,37 @@ cx_max(void *data, short int type, int length, int *newlength, short int *newtyp
         *newtype = VF_COMPLEX;
         largest_real = realpart(*cc);
         largest_complex = imagpart(*cc);
-        for (i = 0; i < length; i++) {
-            if (largest_real < realpart(cc[i]))
-                largest_real = realpart(cc[i]);
-            if (largest_complex < imagpart(cc[i]))
-                largest_complex = imagpart(cc[i]);
+        for (i = 1; i < length; i++) {
+            const double tmpr = realpart(cc[i]);
+            if (largest_real < tmpr) {
+                largest_real = tmpr;
+            }
+            const double tmpi = imagpart(cc[i]);
+            if (largest_complex < tmpi) {
+                largest_complex = tmpi;
+            }
         }
         realpart(*c) = largest_real;
         imagpart(*c) = largest_complex;
-        return ((void *) c);
+        return (void *) c;
     }
-}
+} /* end of function cx_max */
+
 
 
 /* Routoure JM : Compute the min of a vector. */
 
-void *
-cx_min(void *data, short int type, int length, int *newlength, short int *newtype)
+void *cx_min(void *data, short int type, int length,
+        int *newlength, short int *newtype)
 {
+    if (length == 0) {
+        (void) fprintf(cp_err, "minimum calculation requires "
+                "at least one element.\n");
+        return NULL;
+    }
+
     *newlength = 1;
-    /* test if length >0 et affiche un message d'erreur */
-    rcheck(length > 0, "mean");
+
     if (type == VF_REAL) {
         double smallest;
         double *d;
@@ -753,12 +809,16 @@ cx_min(void *data, short int type, int length, int *newlength, short int *newtyp
         d = alloc_d(1);
         *newtype = VF_REAL;
         smallest = dd[0];
-        for (i = 1; i < length; i++)
-            if (smallest > dd[i])
-                smallest = dd[i];
+        for (i = 1; i < length; i++) {
+            const double tmp = dd[i];
+            if (smallest > tmp) {
+                smallest = tmp;
+            }
+        }
         *d = smallest;
-        return ((void *) d);
-    } else {
+        return (void *) d;
+    }
+    else {
         double smallest_real;
         double smallest_complex;
         ngcomplex_t *c;
@@ -770,26 +830,35 @@ cx_min(void *data, short int type, int length, int *newlength, short int *newtyp
         smallest_real = realpart(*cc);
         smallest_complex = imagpart(*cc);
         for (i = 1; i < length; i++) {
-            if (smallest_real > realpart(cc[i]))
-                smallest_real = realpart(cc[i]);
-            if (smallest_complex > imagpart(cc[i]))
-                smallest_complex = imagpart(cc[i]);
+            const double tmpr = realpart(cc[i]);
+            if (smallest_real > tmpr) {
+                smallest_real = tmpr;
+            }
+            const double tmpi = imagpart(cc[i]);
+            if (smallest_complex > tmpi) {
+                smallest_complex = tmpi;
+            }
         }
         realpart(*c) = smallest_real;
         imagpart(*c) = smallest_complex;
-        return ((void *) c);
+        return (void *) c;
     }
-}
+} /* end of function cx_min */
 
 
 /* Routoure JM : Compute the differential  of a vector. */
 
-void *
-cx_d(void *data, short int type, int length, int *newlength, short int *newtype)
+void *cx_d(void *data, short int type, int length,
+        int *newlength, short int *newtype)
 {
+    if (length == 0) {
+        (void) fprintf(cp_err, "differential calculation requires "
+                "at least one element.\n");
+        return NULL;
+    }
+
     *newlength = length;
-    /* test if length >0 et affiche un message d'erreur */
-    rcheck(length > 0, "deriv");
+
     if (type == VF_REAL) {
         double *d;
         double *dd = (double *) data;
@@ -799,12 +868,13 @@ cx_d(void *data, short int type, int length, int *newlength, short int *newtype)
         *newtype = VF_REAL;
         d[0] = dd[1] - dd[0];
         d[length-1] = dd[length-1] - dd[length-2];
-        for (i = 1; i < length - 1; i++)
+        for (i = 1; i < length - 1; i++) {
             d[i] = dd[i+1] - dd[i-1];
+        }
 
-        return ((void *) d);
-    } else {
-
+        return (void *) d;
+    }
+    else {
         ngcomplex_t *c;
         ngcomplex_t *cc = (ngcomplex_t *) data;
         int i;
@@ -820,11 +890,11 @@ cx_d(void *data, short int type, int length, int *newlength, short int *newtype)
         for (i = 1; i < length - 1; i++) {
             realpart(c[i]) = realpart(cc[i+1]) - realpart(cc[i-1]);
             imagpart(c[i]) = imagpart(cc[i+1]) - imagpart(cc[i-1]);
-
         }
-        return ((void *) c);
+
+        return (void *) c;
     }
-}
+} /* end of function cx_d */
 
 
 void *
