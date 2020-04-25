@@ -29,7 +29,7 @@ MOS2param(int param, IFvalue *value, GENinstance *inst,
     if (!cp_getvar("scale", CP_REAL, &scale, 0))
         scale = 1;
 
-    switch(param) {
+    switch (param) {
         case MOS2_TEMP:
             here->MOS2temp = value->rValue+CONSTCtoK;
             here->MOS2tempGiven = TRUE;
@@ -90,7 +90,9 @@ MOS2param(int param, IFvalue *value, GENinstance *inst,
             here->MOS2icVGSGiven = TRUE;
             break;
         case MOS2_IC:
-            switch(value->v.numValue){
+            /* FALLTHROUGH added to suppress GCC warning due to
+             * -Wimplicit-fallthrough flag */
+            switch (value->v.numValue) {
                 case 3:
                     here->MOS2icVBS = *(value->v.vec.rVec+2);
                     here->MOS2icVBSGiven = TRUE;

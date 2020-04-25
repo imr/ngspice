@@ -28,7 +28,7 @@ MOS1param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
     if (!cp_getvar("scale", CP_REAL, &scale, 0))
         scale = 1;
 
-    switch(param) {
+    switch (param) {
         case MOS1_TEMP:
             here->MOS1temp = value->rValue+CONSTCtoK;
             here->MOS1tempGiven = TRUE;
@@ -89,7 +89,9 @@ MOS1param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->MOS1icVGSGiven = TRUE;
             break;
         case MOS1_IC:
-            switch(value->v.numValue){
+            /* FALLTHROUGH added to suppress GCC warning due to
+             * -Wimplicit-fallthrough flag */
+            switch (value->v.numValue) {
                 case 3:
                     here->MOS1icVBS = *(value->v.vec.rVec+2);
                     here->MOS1icVBSGiven = TRUE;

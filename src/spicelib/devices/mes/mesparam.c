@@ -20,7 +20,7 @@ MESparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 
     NG_IGNORE(select);
 
-    switch(param) {
+    switch (param) {
         case MES_AREA:
             here->MESarea = value->rValue;
             here->MESareaGiven = TRUE;
@@ -41,7 +41,9 @@ MESparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->MESoff = value->iValue;
             break;
         case MES_IC:
-            switch(value->v.numValue) {
+            /* FALLTHROUGH added to suppress GCC warning due to
+             * -Wimplicit-fallthrough flag */
+            switch (value->v.numValue) {
                 case 2:
                     here->MESicVGS = *(value->v.vec.rVec+1);
                     here->MESicVGSGiven = TRUE;
