@@ -544,14 +544,18 @@ prompt(void)
         s = "->";
 
     while (*s) {
-        char c = (char) (*s++);
+        char c = (*s++);
+
+        /* FALLTHROUGH added to suppress GCC warning due to
+         * -Wimplicit-fallthrough flag */
         switch (c) {
         case '!':
             p += sprintf(p, "%d", where_history() + 1);
             break;
-        case '\\':
+        case '\\': /* skip an escape char */
             if (*s)
                 c = (char) (*s++);
+            /* FALLTHROUGH */
         default:
             *p++ = c;
             break;
@@ -798,8 +802,11 @@ int main(int argc, char **argv)
 {
     char log_file[BSIZE_SP];
     char soa_log_file[BSIZE_SP];
-    bool readinit = TRUE; /* read initialization file */
-    bool istty = TRUE;
+
+    /* volatile added to resolve GCC -Wclobbered */
+    volatile bool readinit = TRUE; /* read initialization file */
+    volatile bool istty = TRUE;
+
     bool iflag = FALSE; /* flag for interactive mode */
     bool qflag = FALSE; /* flag for command completion */
 
@@ -909,7 +916,7 @@ int main(int argc, char **argv)
                 }
                 else {
                     DS_CREATE(ds, 100);
-                    if (ds_cat_mem(&ds, optarg, eq - optarg) == 0) {
+                    if (ds_cat_mem(&ds, optarg, (size_t) (eq - optarg)) == 0) {
                         cp_vset(ds_get_buf(&ds), CP_STRING, eq + 1);
                     }
                     ds_free(&ds);
