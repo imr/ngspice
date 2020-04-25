@@ -2,6 +2,9 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 **********/
 
+/* for SIZE_MAX */
+#include <stdint.h>
+
 /* for thread handling */
 #if defined __MINGW32__ || defined _MSC_VER
 #include <windows.h>
