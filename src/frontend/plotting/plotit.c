@@ -27,18 +27,6 @@ static char *xlabel = NULL, *ylabel = NULL, *title = NULL;
 #include "ngspice/tclspice.h"
 #endif
 
-/* remove the malloced parameters upon ngspice quit */
-void pl_rempar(void)
-{
-    txfree(xcompress);
-    txfree(xindices);
-    txfree(xlim);
-    txfree(ylim);
-    txfree(xdelta);
-    txfree(ydelta);
-    txfree(xlabel);
-    txfree(ylabel);
-}
 
 static struct dvec *vec_self(struct dvec *v);
 static struct dvec *vec_scale(struct dvec *v);
@@ -47,6 +35,21 @@ static void find_axis_limits(double *lim, bool oneval, bool f_real,
         struct dvec *(*p_get_axis_dvec)(struct dvec *dvec),
         double *lims);
 
+
+/* Remove the malloced parameters upon ngspice quit. These are set to NULL
+ * to allow the function to be used at any time and safely called more than
+ * one time. */
+void pl_rempar(void)
+{
+    tfree(xcompress);
+    tfree(xindices);
+    tfree(xlim);
+    tfree(ylim);
+    tfree(xdelta);
+    tfree(ydelta);
+    tfree(xlabel);
+    tfree(ylabel);
+}
 
 /* This routine gets parameters from the command line, which are of
  * the form "name number ..." It returns a pointer to the parameter
@@ -286,7 +289,7 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
     struct pnode *pn, *names;
     struct dvec *d = NULL, *vecs = NULL, *lv, *lastvs = NULL;
     char *xn;
-    int i, y_type, xt;
+    int i, xt;
     wordlist *wwl;
     char *nxlabel = NULL, *nylabel = NULL, *ntitle = NULL;
     double tstep, tstart, tstop, ttime;
@@ -1070,7 +1073,7 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
         }
     }
 
-    y_type = d ? SV_NOTYPE : vecs->v_type;
+    const int y_type = (int) (d ? SV_NOTYPE : vecs->v_type);
 
     if (devname && eq(devname, "gnuplot")) {
         /* Interface to Gnuplot Plot Program */

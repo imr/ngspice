@@ -74,7 +74,7 @@ gr_fixgrid(GRAPH *graph, double xdelta, double ydelta, int xtype, int ytype)
     if (graph->grid.gridtype == GRID_NONE)
         graph->grid.gridtype = GRID_LIN;
 
-    SetColor(1, graph);
+    SetColor(1);
     SetLinestyle(1);
 
     if ((graph->data.xmin > graph->data.xmax) ||
@@ -132,7 +132,7 @@ void
 gr_redrawgrid(GRAPH *graph)
 {
 
-    SetColor(1, graph);
+    SetColor(1);
     SetLinestyle(1);
     /* draw labels */
     if (graph->grid.xlabel) {
@@ -182,10 +182,10 @@ gr_redrawgrid(GRAPH *graph)
 #ifdef HAS_WINGUI
             /* x axis centered to graphics on Windows */
             /* utf-8: figure out the real length of the x label */
-            const int n_byte_wide = 2 * (int)strlen(graph->grid.xlabel) + 1;
-            wchar_t* const wtext = TMALLOC(wchar_t, n_byte_wide);
+            const int n_byte_wide = 2 * (int) strlen(graph->grid.xlabel) + 1;
+            wchar_t * const wtext  = TMALLOC(wchar_t, n_byte_wide);
             int wlen = MultiByteToWideChar(CP_UTF8, 0, graph->grid.xlabel, -1,
-                wtext, n_byte_wide);
+                    wtext, n_byte_wide);
             if (wlen == 0) {
                 fprintf(stderr, "UTF-8 to wide char conversion failed with 0x%x\n", GetLastError());
                 fprintf(stderr, "%s could not be converted\n", graph->grid.xlabel);
@@ -223,27 +223,34 @@ gr_redrawgrid(GRAPH *graph)
                         (graph->absolute.height * 3) / 4, 0);
         } else {
 
-            if (eq(dispdev->name, "postscript"))
-            DevDrawText(graph->grid.ylabel,
+            if (eq(dispdev->name, "postscript")) {
+                DevDrawText(graph->grid.ylabel,
                         graph->fontwidth,
-                        /*vertical text, midpoint in y is aligned midpoint of text string */
-                        (graph->absolute.height - (int)strlen(graph->grid.ylabel) * graph->fontwidth) / 2, 90);
+                        /* vertical text, midpoint in y is aligned midpoint
+                         * of text string */
+                        (graph->absolute.height - (int) strlen(
+                                graph->grid.ylabel) * graph->fontwidth) / 2,
+                        90);
+            }
 #ifdef EXT_ASC
             else if (eq(dispdev->name, "Windows"))
                 DevDrawText(graph->grid.ylabel,
                         graph->fontwidth,
-                        /*vertical text, midpoint in y is aligned midpoint of text string */
-                        (graph->absolute.height - (int)strlen(graph->grid.ylabel) * graph->fontwidth) / 2, 90);
+                        /* vertical text, midpoint in y is aligned midpoint
+                         * of text string */
+                        (graph->absolute.height - (int) strlen(
+                                graph->grid.ylabel) * graph->fontwidth) / 2,
+                        90);
 #else
 #ifdef HAS_WINGUI
             /* Windows and UTF-8: check for string length (in pixels),
                place vertical text centered in y with respect to grid */
             else if (eq(dispdev->name, "Windows")) {
                 /* utf-8: figure out the real length of the y label */
-                const int n_byte_wide = 2 * (int)strlen(graph->grid.ylabel) + 1;
-                wchar_t* const wtext = TMALLOC(wchar_t, n_byte_wide);
+                const int n_byte_wide = 2 * (int) strlen(graph->grid.ylabel) + 1;
+                wchar_t * const wtext = TMALLOC(wchar_t, n_byte_wide);
                 int wlen = MultiByteToWideChar(CP_UTF8, 0, graph->grid.ylabel, -1,
-                    wtext, n_byte_wide);
+                        wtext, n_byte_wide);
                 if (wlen == 0) {
                     fprintf(stderr, "UTF-8 to wide char conversion failed with 0x%x\n", GetLastError());
                     fprintf(stderr, "%s could not be converted\n", graph->grid.ylabel);
@@ -1481,7 +1488,7 @@ arcset(GRAPH *graph, double rad, double prevrad, double irad, double iprevrad, d
     /* Let's be lazy and just draw everything -- we won't get called too
      * much and the circles get clipped anyway...
      */
-    SetColor(18, graph);
+    SetColor(18);
 
     cliparc((double) (centx + xoffset + radoff - rad),
             (double) (centy + yoffset), rad, 2*angle,
@@ -1495,7 +1502,7 @@ arcset(GRAPH *graph, double rad, double prevrad, double irad, double iprevrad, d
             M_PI - 2 * angle, centx, centy, maxrad, 0);
 
     /* Draw the upper and lower circles.  */
-    SetColor(19, graph);
+    SetColor(19);
     aclip = cliparc((double) (centx + xoffset + radoff),
                     (double) (centy + yoffset + irad), irad,
                     (double) (M_PI * 1.5 + 2 * iangle),
@@ -1504,7 +1511,7 @@ arcset(GRAPH *graph, double rad, double prevrad, double irad, double iprevrad, d
         xlab = (int)(centx + xoffset + radoff + irad * cos(aclip));
         ylab = (int)(centy + yoffset + irad * (1 + sin(aclip)));
         if ((ylab - gr_ycenter) > graph->fontheight) {
-            SetColor(1, graph);
+            SetColor(1);
             adddeglabel(graph, pdeg, xlab, ylab,
                         gr_xcenter, gr_ycenter, gr_xcenter, gr_ycenter);
             /*
@@ -1512,7 +1519,7 @@ arcset(GRAPH *graph, double rad, double prevrad, double irad, double iprevrad, d
               adddeglabel(graph, ndeg, xlab, ylab,
               gr_xcenter, gr_ycenter, gr_xcenter, gr_ycenter);
             */
-            SetColor(19, graph);
+            SetColor(19);
         }
     }
     aclip = cliparc((double) (centx + xoffset + radoff),
@@ -1523,14 +1530,14 @@ arcset(GRAPH *graph, double rad, double prevrad, double irad, double iprevrad, d
     if ((aclip >= 0 && aclip < 2*M_PI - M_PI/180) && (pdeg < 359)) {
         xlab = (int)(centx + xoffset + radoff + irad * cos(aclip));
         ylab = (int)(centy + yoffset + irad * (sin(aclip) - 1));
-        SetColor(1, graph);
+        SetColor(1);
         adddeglabel(graph, ndeg, xlab, ylab,
                     gr_xcenter, gr_ycenter, gr_xcenter, gr_ycenter);
-        SetColor(19, graph);
+        SetColor(19);
     }
 
     /* Now toss the labels on... */
-    SetColor(1, graph);
+    SetColor(1);
 
     x = centx + xoffset + (int)radoff - 2 * (int)rad -
         gi_fntwidth * (int) strlen(plab) - 2;
