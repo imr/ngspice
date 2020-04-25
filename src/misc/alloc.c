@@ -185,7 +185,11 @@ static void overflow_error(size_t num, size_t size)
     (void) fprintf(stderr, "Cannot allocate %zu X %zu bytes: "
             "Product exceeds largest size_t = %zu.\n",
             num, size, SIZE_MAX);
+#if defined HAS_WINGUI || defined SHARED_MODULE
     controlled_exit(EXIT_FAILURE);
+#else
+    exit(EXIT_FAILURE);
+#endif
 } /* end of function overflow_error */
 
 #endif /* #ifndef HAVE_LIBGC */
