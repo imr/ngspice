@@ -1,4 +1,4 @@
-  4 BIT ALL-NAND-GATE BINARY ADDER with node names 能 and せん
+  4 BIT ALL-NAND-GATE BINARY ADDER with node names 能 and せん, not yet supported
 
 *** SUBCIRCUIT DEFINITIONS
 .SUBCKT NAND in1 in2 out VDD
