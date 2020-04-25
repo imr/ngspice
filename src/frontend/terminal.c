@@ -21,14 +21,12 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include <sys/ioctl.h>
 #endif
 
-#if 0
-/* Bad interaction with bool type in bool.h because curses also
-   defines this symbol. */
+
 #ifdef HAVE_TERMCAP
 #include <curses.h>
 #include <term.h>
 #endif
-#endif
+
 
 #ifdef HAVE_TERMCAP_H
 #include <termcap.h>
@@ -129,7 +127,7 @@ outbufputc(void)
 {
     if (ourbuf.count != BUFSIZ) {
         fputs(staticbuf, cp_out);
-        memset(staticbuf, 0, (size_t) BUFSIZ - ourbuf.count);
+        memset(staticbuf, 0, (size_t) (BUFSIZ - ourbuf.count));
         ourbuf.count = BUFSIZ;
         ourbuf.ptr = staticbuf;
     }
