@@ -12,7 +12,7 @@
 # ---------------
 
 # Initialisation of configure
-AC_INIT([ngspice], [31+], [http://ngspice.sourceforge.net/bugrep.html])
+AC_INIT([ngspice], [32], [http://ngspice.sourceforge.net/bugrep.html])
 
 # Unique file in the source directory
 AC_CONFIG_SRCDIR([src/ngspice.c])

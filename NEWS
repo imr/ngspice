@@ -1,3 +1,10 @@
+Ngspice-32, Apr 25th, 2020
+============
+
+- New features:
+    + if a subcircuit is defined more than once, only read the first one and discard the others
+    + vbic model implementation including self-heating effect
+
 Ngspice-31, Sep 22nd, 2019
 ============
 
