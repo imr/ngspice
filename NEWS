@@ -2,8 +2,39 @@ Ngspice-32, Apr 25th, 2020
 ============
 
 - New features:
-    + if a subcircuit is defined more than once, only read the first one and discard the others
-    + vbic model implementation including self-heating effect
+    + Add resource info on memory used and available for macOS
+    + redesign of memory monitoring
+    + Replace B source pwl by XSPICE PWL Controlled Source that has smooth rounded and 
+      stepless differentiable corners.
+    + Get a variable directly from an input file with i/o redirection
+    + Make 64 bit compilation the standard
+    + On Windows VisualStudio compilation we support only VS2019
+    + Add function 'conj'
+    + Improved error messages for 'meas' command
+    + Improved PSPICE compatibility
+    + VDMOS model now allows electro-thermal simulation
+      Optionally (instance flag 'thermal') 2 thermal nodes tj and tcase are added
+      to the device instance
+    + Enable utf-8 and UNICODE for string handling (maybe switch off by --disable-utf8)
+    + Vastly redisigned plotting capability: vertical text for labeling y axis,
+      independent color selection for background, grid/text and graphs,
+      independent width selection for grid and graph, access to UNICODE fonts,
+      characters may become ticmarks (variable 'ticchar'), RGB color tables included,
+      variable 'nolegend' switches off the legend
+    + Add variables 'oscompiled'
+    + Command 'let' to allow default low and high indices
+    + Upon calculating the operating point, true gmin stepping added
+    + Free the internal control structure memory by sending ngSpice_Command(NULL)
+    + No interrupt handling (SIGINT) in shared ngspice
+    + Limit the exp function to exp(14)
+    + Event simulation output data may be selected by command 'setplot'
+    + Many conde updates not visible to the user, but enhancing stability
+      and efficiency
+
+- Bug fixes:
+    + many bugs fixed and code improvements (see bugs 427 and up)
+    + memory leaks removed
+
 
 Ngspice-31, Sep 22nd, 2019
 ============
