@@ -449,7 +449,7 @@
 #define PACKAGE "ngspice"
 
 /* Version number of package */
-#define VERSION "31+" //" Built on " __DATE__ " at " __TIME__
+#define VERSION "32" //" Built on " __DATE__ " at " __TIME__
 
 /* Define to the address where bug reports for this package should be sent. */
 #define PACKAGE_BUGREPORT "http://ngspice.sourceforge.net/bugrep.html"
