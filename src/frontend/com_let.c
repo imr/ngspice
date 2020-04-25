@@ -192,11 +192,11 @@ void com_let(wordlist *wl)
                     vec_dst->v_compdata = TMALLOC(ngcomplex_t, n_elem_alloc);
                 }
 
-                /* Make the destination vector the right data  type. A few
+                /* Make the destination vector the right data type. A few
                  * extra () added to keep some compilers from warning. */
-                vec_dst->v_flags =
-                        (vec_dst->v_flags & ~(VF_REAL | VF_COMPLEX)) |
-                        (vec_src->v_flags & (VF_REAL | VF_COMPLEX));
+                vec_dst->v_flags = (short int) (
+                        ((int) vec_dst->v_flags & ~(VF_REAL | VF_COMPLEX)) |
+                        ((int) vec_src->v_flags & (VF_REAL | VF_COMPLEX)));
                 vec_dst->v_alloc_length = vec_src->v_alloc_length;
                 vec_dst->v_length = vec_src->v_length;
                 copy_vector_data(vec_dst, vec_src);
@@ -514,7 +514,7 @@ static void copy_vector_data(struct dvec *vec_dst,
     const size_t length = (size_t) vec_src->v_length;
     int n_dim = vec_dst->v_numdims = vec_src->v_numdims;
     (void) memcpy(vec_dst->v_dims, vec_src->v_dims,
-            n_dim * sizeof(int));
+            (size_t) n_dim * sizeof(int));
     if (isreal(vec_src)) {
         (void) memcpy(vec_dst->v_realdata, vec_src->v_realdata,
               length * sizeof(double));
@@ -686,13 +686,13 @@ static void copy_vector_data_with_stride(struct dvec *vec_dst,
 
         if (isreal(vec_src)) { /* Both real */
             n_byte_elem = (int) sizeof(double);
-            n_byte_topdim = (int) n_elem_topdim * sizeof(double);
+            n_byte_topdim = n_elem_topdim * (int) sizeof(double);
             p_vec_data_dst = vec_dst->v_realdata;
             p_vec_data_src = vec_src->v_realdata;
         }
         else {
             n_byte_elem = (int) sizeof(ngcomplex_t);
-            n_byte_topdim = (int) n_elem_topdim * sizeof(ngcomplex_t);
+            n_byte_topdim = n_elem_topdim * (int) sizeof(ngcomplex_t);
             p_vec_data_dst = vec_dst->v_compdata;
             p_vec_data_src = vec_src->v_compdata;
         }
@@ -733,15 +733,15 @@ static void copy_vector_data_with_stride(struct dvec *vec_dst,
         {
             const int n_cpy = n_dim - 2; /* index where copying done */
             const void *p_vec_data_src_end = (char *) p_vec_data_src +
-                    (size_t) vec_src->v_length *
-                    n_byte_elem; /* end of copying */
+                    (size_t) (vec_src->v_length * n_byte_elem);
+                                                        /* end of copying */
             for ( ; ; ) {
                 /* Copy the data currently being located by the cumulative
                  * offset and the source location */
                 (void) memcpy(
                         (char *) p_vec_data_dst + p_offset_level_cum[n_cpy],
                         p_vec_data_src,
-                        n_byte_topdim);
+                        (size_t) n_byte_topdim);
 
                 /* Move to the next source data and exit the loop if
                  * the end is reached.
