@@ -65,10 +65,12 @@ NON-STANDARD FEATURES
 #define DIR_PATHSEP    "/"
 #endif
 
-#if defined(_MSC_VER)
+/* For WIN32, make  strdup become _strdup unless it is defined already,
+ * as it would be if CRT debugging is being used */
+#if defined(_WIN32) && !defined(strdup)
 #define strdup _strdup
 #endif
-  
+
 /*=== LOCAL VARIABLES & TYPEDEFS =======*/                         
 
 struct filesource_state {
@@ -79,7 +81,7 @@ struct filesource_state {
 
 struct infiledata {
     double *datavec;
-    int vecallocated;
+    size_t vecallocated;
     int maxoccupied;
     int actpointer;
     int size;
@@ -149,27 +151,8 @@ NON-STANDARD FEATURES
 
 
 /*=== CM_FILESOURCE ROUTINE ===*/
-                                                   
 
-static void
-cm_filesource_callback(ARGS, Mif_Callback_Reason_t reason)
-{
-    switch (reason) {
-        case MIF_CB_DESTROY: {
-            Local_Data_t *loc = STATIC_VAR (locdata);
-            if (loc->state->fp)
-                fclose(loc->state->fp);
-            free(loc->state);
-            free(loc->amplinterval);
-            free(loc->timeinterval);
-            free(loc->indata->datavec);
-            free(loc->indata);
-            free(loc);
-            break;
-        }
-    }
-}
-
+static void cm_filesource_callback(ARGS, Mif_Callback_Reason_t reason);
 
 void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.     */
 {
@@ -189,19 +172,40 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
 
         int count;
 
-        CALLBACK = cm_filesource_callback;
-
         /*** allocate static storage for *loc ***/
-        STATIC_VAR (locdata) = calloc (1 , sizeof ( Local_Data_t ));
-        loc = STATIC_VAR (locdata);
+        if ((loc = (Local_Data_t *) (STATIC_VAR(locdata) = calloc(1,
+                sizeof(Local_Data_t)))) == (Local_Data_t *) NULL) {
+            cm_message_send("Unable to allocate Local_Data_t "
+                    "in cm_filesource()");
+            return;
+        }
 
         /* Allocate storage for internal state */
-        loc->timeinterval = (double*)calloc(2, sizeof(double));
-        loc->amplinterval = (double*)calloc(2 * (size_t) size, sizeof(double));
-        loc->state = (struct filesource_state*)malloc(sizeof(struct filesource_state));
-        loc->indata = (struct infiledata*)malloc(sizeof(struct infiledata));
-        loc->indata->datavec = (double*)malloc(sizeof(double) * stepsize * 1000);
-        loc->indata->vecallocated = stepsize * 1000;
+        loc->timeinterval = (double *) calloc(2, sizeof(double));
+        loc->amplinterval = (double *) calloc(2 * (size_t) size,
+                sizeof(double));
+        loc->state = (struct filesource_state *) calloc(1,
+                sizeof(struct filesource_state)); /* calloc to null fp */
+        loc->indata = (struct infiledata *) malloc(
+                sizeof(struct infiledata));
+        loc->indata->datavec = (double *) malloc(sizeof(double) *
+                (size_t) (stepsize * 1000));
+
+        /* Check allocations */
+        if (loc->timeinterval == (double *) NULL ||
+                loc->amplinterval == (double *) NULL ||
+                loc->state == (struct filesource_state *) NULL ||
+                loc->indata == (struct infiledata *) NULL ||
+                loc->indata->datavec == (double *) NULL) {
+            cm_message_send("Unable to allocate Local_Data_t  fields "
+                    "in cm_filesource()");
+            cm_filesource_callback(mif_private, MIF_CB_DESTROY);
+            return;
+        }
+
+        CALLBACK = cm_filesource_callback;
+
+        loc->indata->vecallocated = (size_t) (stepsize * 1000);
         loc->indata->maxoccupied = 0;
         loc->indata->actpointer = 0;
         loc->indata->size = stepsize;
@@ -210,13 +214,21 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
         loc->state->fp = fopen_with_path(PARAM(file), "r");
         loc->state->atend = 0;
         if (!loc->state->fp) {
-            char *lbuffer, *p;
+            char *lbuffer;
             lbuffer = getenv("NGSPICE_INPUT_DIR");
             if (lbuffer && *lbuffer) {
-                p = (char*) malloc(strlen(lbuffer) + strlen(DIR_PATHSEP) + strlen(PARAM(file)) + 1);
-                sprintf(p, "%s%s%s", lbuffer, DIR_PATHSEP, PARAM(file));
-                loc->state->fp = fopen(p, "r");
-                free(p);
+                char *p;
+                if ((p = (char *) malloc(strlen(lbuffer) +
+                        strlen(DIR_PATHSEP) + strlen(PARAM(file)) + 1)) ==
+                        (char *) NULL) {
+                    cm_message_send("Unable to allocate buffer "
+                            "for building file name in cm_filesource()");
+                }
+                else {
+                    sprintf(p, "%s%s%s", lbuffer, DIR_PATHSEP, PARAM(file));
+                    loc->state->fp = fopen(p, "r");
+                    free(p);
+                }
             }
             if (!loc->state->fp) {
                 cm_message_printf("cannot open file %s", PARAM(file));
@@ -237,7 +249,12 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
                 loc->state->atend = 1;
                 break;
             }
-            cpdel = cp = strdup(line);
+            if ((cpdel = cp = strdup(line)) == (char *) NULL) {
+                cm_message_send("Unable to duplicate string "
+                        "cm_filesource()");
+                loc->state->atend = 1;
+                break;
+            }
 
             /* read the time channel; update the time difference */
             while (*cp && isspace_c(*cp))
@@ -263,13 +280,15 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
 
             /* before storing, check if vector size is large enough.
                If not, add another 1000*size doubles */
-            if (count > loc->indata->vecallocated - size) {
-                loc->indata->vecallocated += size * 1000;
-                loc->indata->datavec = (double*)realloc(loc->indata->datavec, sizeof(double) * loc->indata->vecallocated);
-            }
-            if(loc->indata->datavec == NULL){
-                cm_message_printf("cannot allocate enough memory");
-                break; // loc->state->atend = 1;
+            if (count > (int) loc->indata->vecallocated - size) {
+                loc->indata->vecallocated += (size_t) (size * 1000);
+                void * const p = realloc(loc->indata->datavec,
+                        sizeof(double) * loc->indata->vecallocated);
+                if (p == NULL) {
+                    cm_message_printf("cannot allocate enough memory");
+                    break; // loc->state->atend = 1;
+                }
+                loc->indata->datavec = (double *) p;
             }
             loc->indata->datavec[count++] = t;
 
@@ -345,4 +364,48 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
         for (i = 0; i < size; ++i)
             OUTPUT(out[i]) = loc->amplinterval[2 * i + 1];
     }
-}
+} /* end of function cm_filesource */
+
+
+
+static void cm_filesource_callback(ARGS, Mif_Callback_Reason_t reason)
+{
+    switch (reason) {
+        case MIF_CB_DESTROY: {
+            Local_Data_t *loc = (Local_Data_t *) STATIC_VAR(locdata);
+            if (loc == (Local_Data_t *) NULL) {
+                break;
+            }
+
+            if (loc->state != (struct filesource_state *) NULL) {
+                if (loc->state->fp != (FILE *) NULL) {
+                    fclose(loc->state->fp);
+                }
+                free(loc->state);
+            }
+
+            if (loc->amplinterval != (double *) NULL) {
+                free(loc->amplinterval);
+            }
+
+            if (loc->timeinterval != (double *) NULL) {
+                free(loc->timeinterval);
+            }
+
+            if (loc->indata) {
+                if (loc->indata->datavec) {
+                    free(loc->indata->datavec);
+                }
+                free(loc->indata);
+            }
+
+            free(loc);
+
+            STATIC_VAR(locdata) = NULL;
+            break;
+        }
+    }
+} /* end of function cm_filesource_callback */
+
+
+
