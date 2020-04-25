@@ -116,4 +116,13 @@ void  free_pj(const void *ptr);
 
 FILE *fopen_with_path(const char *path, const char *mode);
 
+#ifdef __GNUC__
+int cm_message_printf(const char *fmt, ...)
+        __attribute__ ((format (__printf__, 1, 2)));
+#else
+int cm_message_printf(const char *fmt, ...);
 #endif
+
+#define CM_IGNORE(x) (void) (x)
+
+#endif /* include guard */

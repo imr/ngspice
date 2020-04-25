@@ -155,4 +155,8 @@ extern Mif_Cntl_Src_Type_t MIFget_cntl_src_type(
 extern char *MIFcopy(char *);
 
 
+#ifndef CM_IGNORE
+#define CM_IGNORE(x) (void) (x)
 #endif
+
+#endif /* include guard */
