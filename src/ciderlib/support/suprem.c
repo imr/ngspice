@@ -5,26 +5,36 @@ Author:	1991 David A. Gates, U. C. Berkeley CAD Group
 **********/
 
 /* Functions to read SUPREM (Binary or Ascii) & ASCII input files */
+#include <errno.h>
+#include <string.h>
 
+#include "ngspice/cidersupt.h"
+#include "ngspice/cpextern.h"
 #include "ngspice/ngspice.h"
 #include "ngspice/profile.h"
-#include "ngspice/cidersupt.h"
 
-void
-readAsciiData( char *fileName, int impType, DOPtable **ppTable )
+
+static void free_profile_data(double **p);
+static double **alloc_profile_data(size_t n);
+
+
+int readAsciiData(const char *fileName, int impType, DOPtable **ppTable)
 {
-    FILE *fpAscii;
+    int xrc = 0;
+    FILE *fpAscii = (FILE *) NULL;
     int index;
     double x, y;
     int numPoints;
-    DOPtable *tmpTable;
-    double **profileData;
+    DOPtable *tmpTable = (DOPtable *) NULL;
+    double **profileData = (double **) NULL;
     double sign;
 
     /* Open Input File */
     if ((fpAscii = fopen( fileName, "r" )) == NULL) {
-      perror( fileName );
-      exit(-1);
+        (void) fprintf(cp_err, "unable to open SUPREM file \"%s\": %s\n",
+                fileName, strerror(errno));
+        xrc = -1;
+        goto EXITPOINT;
     }
 
     /* Get sign of concentrations */
@@ -35,31 +45,43 @@ readAsciiData( char *fileName, int impType, DOPtable **ppTable )
     }
 
     /* read the number of points */
-    fscanf( fpAscii, "%d", &numPoints );
+    if (fscanf(fpAscii, "%d", &numPoints) != 1) {
+        (void) fprintf(cp_err, "unable to read point count "
+                "from SUPREM file \"%s\"\n",
+                fileName);
+      xrc = -1;
+      goto EXITPOINT;
+    }
+
 
     /* allocate 2-D array to read in data of x-coordinate and N(x) */
-    XCALLOC( profileData, double *, 2 );
-    for( index = 0; index <= 1; index++ ) {
-	XCALLOC( profileData[ index ], double, 1 + numPoints );
-    }
+    profileData = alloc_profile_data((size_t) numPoints + 1);
+
     /* the number of points is stored as profileData[0][0] */
     profileData[0][0] = numPoints;
 
-    for( index = 1; index <= numPoints; index++ ) {
-	fscanf( fpAscii, "%lf   %lf ", &x, &y ); 
-	profileData[ 0 ][ index ] = x;
-	profileData[ 1 ][ index ] = sign * ABS(y);
-    }
+    for (index = 1; index <= numPoints; index++ ) {
+        if (fscanf(fpAscii, "%lf   %lf ", &x, &y) != 2) { 
+            (void) fprintf(cp_err, "unable to read point %d"
+                    "from SUPREM file \"%s\"\n",
+                    index + 1, fileName);
+          xrc = -1;
+          goto EXITPOINT;
+        }
+        profileData[0][index] = x;
+        profileData[1][index] = sign * ABS(y);
+    } /* end of loop over points */
 
     /* Now create a new lookup table */
-    XCALLOC( tmpTable, DOPtable, 1 );
-    if ( *ppTable == NULL ) {
+    XCALLOC(tmpTable, DOPtable, 1);
+    if (*ppTable == NULL) {
       /* First Entry */
       tmpTable->impId = 1;
       tmpTable->dopData = profileData;
       tmpTable->next = NULL;
       *ppTable = tmpTable;
-    } else {
+    }
+    else {
       tmpTable->impId = (*ppTable)->impId + 1;
       tmpTable->dopData = profileData;
       tmpTable->next = *ppTable;
@@ -72,9 +94,21 @@ readAsciiData( char *fileName, int impType, DOPtable **ppTable )
 	printf("\n %e     %e", profileData[ 0 ][ index ], profileData[ 1 ][ index ]);
     }
     */
-    fclose(fpAscii);
-    return;
-}
+EXITPOINT:
+    if (fpAscii != (FILE *) NULL) { /* close data file if open */
+        fclose(fpAscii);
+    }
+
+    /* Free resources on error */
+    if (xrc != 0) {
+        free_profile_data(profileData);
+        free(tmpTable);
+    }
+
+    return xrc;
+} /* end of function readAsciiData  */
+
+
 
 /* interface routine based on notes provided by Steve Hansen of Stanford  */
 
@@ -108,40 +142,45 @@ readAsciiData( char *fileName, int impType, DOPtable **ppTable )
  */
 
 
-void
-readSupremData(char *fileName, int fileType, int impType, DOPtable **ppTable)
+int readSupremData(const char *fileName, int fileType, int impType,
+        DOPtable **ppTable)
 {
+    int xrc = 0;
 #define MAX_GRID 500
     float x[ MAX_GRID ], conc[ MAX_GRID ];
 
     int index;
-    DOPtable *tmpTable;
-    double **profileData;
+    DOPtable *tmpTable = (DOPtable *) NULL;
+    double **profileData = (double **) NULL;
     int numNodes;
 
     /* read the Suprem data file */
     if ( fileType == 0 ) { /* BINARY FILE */
-      SUPbinRead( fileName, x, conc, &impType, &numNodes );
+        const int  rc = SUPbinRead(fileName, x, conc, &impType,
+            &numNodes);
+        if (rc != 0) {
+            (void) fprintf(cp_err, "Data input failed.\n");
+            xrc = -1;
+            goto EXITPOINT;
+        }
     }
     else {
       SUPascRead( fileName, x, conc, &impType, &numNodes );
     }
 
     /* allocate 2-D array to read in data of x-coordinate and N(x) */
-    XCALLOC( profileData, double *, 2 );
-    for( index = 0; index <= 1; index++ ) {
-	XCALLOC( profileData[ index ], double, 1 + numNodes );
-    }
+    profileData = alloc_profile_data((size_t) numNodes + 1);
+
     /* the number of points is stored as profileData[0][0] */
     profileData[0][0] = numNodes;
 
     for( index = 1; index <= numNodes; index++ ) {
-	profileData[ 0 ][ index ] = x[ index ];
-	profileData[ 1 ][ index ] = conc[ index ];
+        profileData[ 0 ][ index ] = x[ index ];
+        profileData[ 1 ][ index ] = conc[ index ];
     }
 
     /* Now create a new lookup table */
-    XCALLOC( tmpTable, DOPtable, 1 );
+    XCALLOC(tmpTable, DOPtable, 1);
     if ( *ppTable == NULL ) {
       /* First Entry */
       tmpTable->impId = 1;
@@ -161,8 +200,46 @@ readSupremData(char *fileName, int fileType, int impType, DOPtable **ppTable)
 	printf("%e     %e\n", profileData[ 0 ][ index ], profileData[ 1 ][ index ]);
     }
     */
-    return;
-}
+EXITPOINT:
+    if (xrc != 0) {
+        free_profile_data(profileData);
+        free(tmpTable);
+    }
+    return xrc;
+} /* end of function readSupremData */
+
+
+
+/* Allocate a profile data */
+static double **alloc_profile_data(size_t n)
+{
+    double **p;
+    XCALLOC(p, double *, 2);
+    XCALLOC(p[0], double, n);
+    XCALLOC(p[1], double, n);
+    return p;
+} /* end of function alloc_profile_data */
+
+
+
+/* Free a profile data */
+static void free_profile_data(double **p)
+{
+    /* Immediate exit if no allocation */
+    if (p == (double **) NULL) {
+        return;
+    }
+
+    free(p[0]);
+    free(p[1]);
+    free(p);
+} /* end of function alloc_profile_data */
+
+
+
+
+
+
 
 
 /* main program to debug readSupremData */

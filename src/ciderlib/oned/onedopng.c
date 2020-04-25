@@ -77,6 +77,7 @@ ONEdopingValue(DOPprofile *pProfile, DOPtable *pTable, double x)
     } else {
       value = pProfile->PEAK_CONC * exp(-argP);
     }
+    break;
   case EXP:
     argP = ABS(argP);
     if (argP > 80.0) {
