@@ -27,6 +27,8 @@ CKTdisto (CKTcircuit *ckt, int mode)
     int error=0;
     int size;
 
+    /* FALLTHROUGH added to suppress GCC warning due to
+     * -Wimplicit-fallthrough flag */
     switch(mode) {
 
     case D_SETUP:
@@ -63,7 +65,7 @@ CKTdisto (CKTcircuit *ckt, int mode)
     case D_RHSF1:
 
  	   job->Df2given = 0; /* will change if any F2 source is found */
-
+        /* FALLTHROUGH */
     case D_RHSF2:
 
 
