@@ -246,10 +246,9 @@ DevDrawArc(int x0, int y0, int radius, double theta, double delta_theta)
 }
 
 
-void
-DevDrawText(char *text, int x, int y, int angle)
+void DevDrawText(const char *text, int x, int y, int angle)
 {
-    dispdev->DrawText (text, x, y, angle);
+    dispdev->DrawText(text, x, y, angle);
 }
 
 
@@ -275,9 +274,9 @@ SetLinestyle(int linestyleid)
 
 
 void
-SetColor(int colorid, GRAPH *graph)
+SetColor(int colorid)
 {
-    dispdev->SetColor (colorid, graph);
+    dispdev->SetColor(colorid);
 }
 
 
