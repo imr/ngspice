@@ -146,7 +146,7 @@ static wordlist *bracexpand(const wordlist *w_exp)
         char ch_cur;
         for ( ; (ch_cur = *p_cur) != '\0'; p_cur++) {
             if (ch_cur == cp_ocurl) {
-                offset_ocurl = p_cur - wl_word;
+                offset_ocurl = (size_t) (p_cur - wl_word);
                 break;
             }
         }
@@ -246,7 +246,7 @@ static wordlist_l *brac1(size_t offset_ocurl1, const char *p_str)
                 }
             }
 
-            const size_t n_char_append = s - p_start;
+            const size_t n_char_append = (size_t) (s - p_start);
 
             if (n_char_append > 0) {
                 wordlist_l *wl;
@@ -330,7 +330,7 @@ static wordlist_l *brac2(const char *string,
             }
             else if (ch_cur == cp_ocurl) { /* another brace level started */
                 if (nb++ == 0) { /* Inc count. If 1st '{', save offset */
-                    offset_ocurl1 = s - buf_cur;
+                    offset_ocurl1 = (size_t) (s - buf_cur);
                 }
             }
             else if ((ch_cur == cp_comma) && (nb == 0)) {
@@ -366,7 +366,8 @@ static wordlist_l *brac2(const char *string,
          * wordlist being built */
         {
             wordlist_l *nwl = brac1(
-                    offset_ocurl1 == SIZE_MAX ? s - buf_cur : offset_ocurl1,
+                    offset_ocurl1 == SIZE_MAX ?
+                            (size_t) (s - buf_cur) : offset_ocurl1,
                     buf_cur);
             wlist = wll_append(wlist, nwl);
         }
@@ -379,7 +380,7 @@ static wordlist_l *brac2(const char *string,
 
             /* When the loop is exited, s is at a brace or comma, which
              * is also considered to be processed. Hence +2 not +1. */
-            *p_n_char_processed = s - buf + 2;
+            *p_n_char_processed = (size_t) (s - buf + 2);
             return wlist;
         }
 
@@ -434,7 +435,7 @@ static void tilde_expand_word(wordlist *wl_node)
         while ((c = *usr_end) != '\0'  && c != DIR_TERM) {
             ++usr_end;
         }
-        const size_t n_char_usr = usr_end - usr_start;
+        const size_t n_char_usr = (size_t) (usr_end - usr_start);
         const size_t n_byte_usr = n_char_usr + 1;
         const char c_orig = c; /* save char to be overwritten by '\0' */
         *usr_end = '\0';
@@ -447,7 +448,7 @@ static void tilde_expand_word(wordlist *wl_node)
             return; /* Strip the ~ and return the rest */
         }
         merge_home_with_rest(wl_node, (size_t) n_char_home, sz_home,
-                n_char_usr + 1);
+                n_byte_usr);
         return;
     }
 

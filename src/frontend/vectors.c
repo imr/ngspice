@@ -461,7 +461,8 @@ struct dvec *vec_fromplot(char *word, struct plot *plot) {
                 DS_CREATE(ds, 100);
                 const char * const node_start = word + 2;
                 bool ds_ok = ds_cat_mem(&ds, node_start,
-                        p_last_close_paren - node_start) == DS_E_OK;
+                        (size_t) (p_last_close_paren - node_start)) ==
+                        DS_E_OK;
                 /* If i(node) or I(node), append #branch */
                 if (tolower(word[0]) == (int) 'i') {
                     /* i(node) or I(node) */
@@ -807,7 +808,8 @@ struct dvec *vec_copy(struct dvec *v) {
     nv->v_numdims = v->v_numdims;
 
     /* Copy defined dimensions */
-    (void) memcpy(nv->v_dims, v->v_dims, v->v_numdims * sizeof *v->v_dims);
+    (void) memcpy(nv->v_dims, v->v_dims,
+            (size_t) v->v_numdims * sizeof *v->v_dims);
 
     nv->v_plot = v->v_plot;
     nv->v_next = NULL;
@@ -1302,10 +1304,10 @@ vec_mkfamily(struct dvec *v) {
         d->v_dims[0] = size;
 
         if (isreal(v)) {
-            memcpy(d->v_realdata, v->v_realdata + (size_t) size * i,
+            memcpy(d->v_realdata, v->v_realdata + (size_t) (size * i),
                     (size_t) size * sizeof(double));
         } else {
-            memcpy(d->v_compdata, v->v_compdata + (size_t) size * i,
+            memcpy(d->v_compdata, v->v_compdata + (size_t) (size * i),
                     (size_t) size * sizeof(ngcomplex_t));
         }
         /* Add one to the counter. */

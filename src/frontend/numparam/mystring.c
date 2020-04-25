@@ -128,7 +128,7 @@ pscopy(DSTRINGPTR dstr_p, const char *t, const char *stop)
     }
 
     ds_clear(dstr_p);
-    if (ds_cat_mem(dstr_p, t, stop - t) != DS_E_OK) {
+    if (ds_cat_mem(dstr_p, t, (size_t) (stop - t)) != DS_E_OK) {
         controlled_exit(-1);
     }
 

@@ -277,7 +277,7 @@ int ds_cat_vprintf(DSTRING *p_ds, const char *sz_fmt, va_list p_arg)
 
     /* Else check for buffer large enough and set length if it is */
     if ((size_t) rc < n_byte_free) {
-        p_ds->length += rc;
+        p_ds->length += (size_t) rc;
         return DS_E_OK;
     }
 
@@ -285,7 +285,8 @@ int ds_cat_vprintf(DSTRING *p_ds, const char *sz_fmt, va_list p_arg)
     {
         /* Double required size to avoid excessive allocations +1 for
          * null, which is not included in the count returned by snprintf */
-        const size_t n_byte_alloc_min = p_ds->length + rc + 1;
+        const size_t n_byte_alloc_min =
+                p_ds->length + (size_t) rc + (size_t) 1;
         if (ds_reserve_internal(p_ds,
                 2 * n_byte_alloc_min, n_byte_alloc_min) == DS_E_NO_MEMORY) {
             /* vsnprintf may have written bytes to the buffer.
@@ -307,7 +308,7 @@ int ds_cat_vprintf(DSTRING *p_ds, const char *sz_fmt, va_list p_arg)
 
         /* Else update length. No need to check buffer size since it was
          * sized to fit the string. */
-        p_ds->length += rc2;
+        p_ds->length += (size_t) rc2;
         return DS_E_OK;
     }
 } /* end of function ds_cat_vprintf */
