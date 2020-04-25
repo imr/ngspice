@@ -464,8 +464,8 @@ next1:      if(vbs <= -3*vt) {
             /* the following 14 variables are local to this code block until 
              * it is obvious that they can be made global 
              */
-            double arg;
-            double sarg;
+            double arg1;
+            double sarg1;
             double vgon;
             double vdshere, vbsvbd;
 	    double idsat, lambda, vonbm = 0.0;
@@ -473,14 +473,14 @@ next1:      if(vbs <= -3*vt) {
 
 		vbsvbd = (here->MOS6mode==1?vbs:vbd);
                 if (vbsvbd <= 0 ) {
-                    sarg = sqrt(here->MOS6tPhi - vbsvbd);
+                    sarg1 = sqrt(here->MOS6tPhi - vbsvbd);
                 } else {
-                    sarg = sqrt(here->MOS6tPhi);
-                    sarg = sarg - vbsvbd / (sarg+sarg);
-                    sarg = MAX(0,sarg);
+                    sarg1 = sqrt(here->MOS6tPhi);
+                    sarg1 = sarg1 - vbsvbd / (sarg1+sarg1);
+                    sarg1 = MAX(0,sarg1);
                 }
 		vdshere = vds * here->MOS6mode;
-                von=(here->MOS6tVbi*model->MOS6type)+model->MOS6gamma*sarg
+                von=(here->MOS6tVbi*model->MOS6type)+model->MOS6gamma*sarg1
 		    - model->MOS6gamma1 * vbsvbd
 		    - model->MOS6sigma  * vdshere;
                 vgon = (here->MOS6mode==1?vgs:vgd) - von;
@@ -496,20 +496,20 @@ next1:      if(vbs <= -3*vt) {
                     here->MOS6gmbs=0;
 
                 } else {
-                    if (sarg <= 0) {
-                        arg=0;
+                    if (sarg1 <= 0) {
+                        arg1=0;
                     } else {
                 	if ((here->MOS6mode==1?vbs:vbd) <= 0 ) {
                             vonbm = model->MOS6gamma1
-			          + model->MOS6gamma / (sarg + sarg);
+			          + model->MOS6gamma / (sarg1 + sarg1);
 			} else {
                             vonbm = model->MOS6gamma1
 			          + model->MOS6gamma / 2 / sqrt(here->MOS6tPhi);
 			}
                     }
-		    sarg = log(vgon);
-		    vdsat = model->MOS6kv * exp(sarg * model->MOS6nv);
-		    idsat = betac * exp(sarg * model->MOS6nc);
+		    sarg1 = log(vgon);
+		    vdsat = model->MOS6kv * exp(sarg1 * model->MOS6nv);
+		    idsat = betac * exp(sarg1 * model->MOS6nc);
 		    lambda = model->MOS6lamda0 - model->MOS6lamda1 * vbsvbd;
                     /*
                      *     saturation region
