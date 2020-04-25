@@ -431,8 +431,8 @@ next1:      if(vbs <= -3*vt) {
              *
              */
 
-            double arg;
-            double sarg;
+            double arg1;
+            double sarg1;
             double a4[4],b4[4],x4[8],poly4[8];
             double beta1;
             double dsrgdb;
@@ -569,15 +569,15 @@ next1:      if(vbs <= -3*vt) {
              */
 
             if (lvbs <= 0.0) {
-                sarg = sqrt(phiMinVbs);
-                dsrgdb = -0.5/sarg;
+                sarg1 = sqrt(phiMinVbs);
+                dsrgdb = -0.5/sarg1;
                 d2sdb2 = 0.5*dsrgdb/phiMinVbs;
             } else {
                 sphi = sqrt(here->MOS2tPhi);
                 sphi3 = here->MOS2tPhi*sphi;
-                sarg = sphi/(1.0+0.5*lvbs/here->MOS2tPhi);
-                tmp = sarg/sphi3;
-                dsrgdb = -0.5*sarg*tmp;
+                sarg1 = sphi/(1.0+0.5*lvbs/here->MOS2tPhi);
+                tmp = sarg1/sphi3;
+                dsrgdb = -0.5*sarg1*tmp;
                 d2sdb2 = -dsrgdb*tmp;
             }
             if ((lvbs-lvds) <= 0) {
@@ -606,7 +606,7 @@ next1:      if(vbs <= -3*vt) {
             if ((model->MOS2gamma > 0.0) || 
                     (model->MOS2substrateDoping > 0.0)) {
                 xwd = model->MOS2xd*barg;
-                xws = model->MOS2xd*sarg;
+                xws = model->MOS2xd*sarg1;
 
                 /*
                  *     short-channel effect with vds .ne. 0.0
@@ -655,14 +655,14 @@ next1:      if(vbs <= -3*vt) {
                 dgdvds = 0.0;
                 dgddb2 = 0.0;
             }
-            von = vbin+gamasd*sarg;
+            von = vbin+gamasd*sarg1;
             vth = von;
             vdsat = 0.0;
             if (model->MOS2fastSurfaceStateDensity != 0.0 && OxideCap != 0.0) {
                 /* XXX constant per model */
                 cfs = CHARGE*model->MOS2fastSurfaceStateDensity*
                     1e4 /*(cm**2/m**2)*/;
-                cdonco = -(gamasd*dsrgdb+dgddvb*sarg)+factor;
+                cdonco = -(gamasd*dsrgdb+dgddvb*sarg1)+factor;
                 
                 xn = 1.0+cfs/OxideCap*here->MOS2m*
                       here->MOS2w*EffectiveLength+cdonco;
@@ -686,20 +686,20 @@ next1:      if(vbs <= -3*vt) {
              *  compute some more useful quantities
              */
 
-            sarg3 = sarg*sarg*sarg;
+            sarg3 = sarg1*sarg1*sarg1;
             /* XXX constant per model */
             sbiarg = sqrt(here->MOS2tBulkPot);
             gammad = gamasd;
             dgdvbs = dgddvb;
             body = barg*barg*barg-sarg3;
-            gdbdv = 2.0*gammad*(barg*barg*dbrgdb-sarg*sarg*dsrgdb);
-            dodvbs = -factor+dgdvbs*sarg+gammad*dsrgdb;
+            gdbdv = 2.0*gammad*(barg*barg*dbrgdb-sarg1*sarg1*dsrgdb);
+            dodvbs = -factor+dgdvbs*sarg1+gammad*dsrgdb;
             if (model->MOS2fastSurfaceStateDensity == 0.0) goto line400;
             if (OxideCap == 0.0) goto line410;
-            dxndvb = 2.0*dgdvbs*dsrgdb+gammad*d2sdb2+dgddb2*sarg;
+            dxndvb = 2.0*dgdvbs*dsrgdb+gammad*d2sdb2+dgddb2*sarg1;
             dodvbs = dodvbs+vt*dxndvb;
             dxndvd = dgdvds*dsrgdb;
-            dodvds = dgdvds*sarg+vt*dxndvd;
+            dodvds = dgdvds*sarg1+vt*dxndvd;
             /*
              *  evaluate effective mobility and its derivatives
              */
@@ -740,12 +740,12 @@ line500:
                     dsdvgs = 0.0;
                     dsdvbs = 0.0;
                 } else {
-                    arg = sqrt(1.0+4.0*argv/gammd2);
-                    vdsat = (vgsx-vbin)/eta+gammd2*(1.0-arg)/2.0;
+                    arg1 = sqrt(1.0+4.0*argv/gammd2);
+                    vdsat = (vgsx-vbin)/eta+gammd2*(1.0-arg1)/2.0;
                     vdsat = MAX(vdsat,0.0);
-                    dsdvgs = (1.0-1.0/arg)/eta;
-                    dsdvbs = (gammad*(1.0-arg)+2.0*argv/(gammad*arg))/
-                        eta*dgdvbs+1.0/arg+factor*dsdvgs;
+                    dsdvgs = (1.0-1.0/arg1)/eta;
+                    dsdvbs = (gammad*(1.0-arg1)+2.0*argv/(gammad*arg1))/
+                        eta*dgdvbs+1.0/arg1+factor*dsdvgs;
                 }
             } else {
                 vdsat = (vgsx-vbin)/eta;
@@ -838,15 +838,15 @@ line500:
                     dbsrdb = -0.5*bsarg*bsarg/sphi3;
                 }
                 bodys = bsarg*bsarg*bsarg-sarg3;
-                gdbdvs = 2.0*gammad*(bsarg*bsarg*dbsrdb-sarg*sarg*dsrgdb);
+                gdbdvs = 2.0*gammad*(bsarg*bsarg*dbsrdb-sarg1*sarg1*dsrgdb);
                 if (model->MOS2maxDriftVel <= 0) {
                     if (model->MOS2substrateDoping == 0.0) goto line610;
                     if (xlamda > 0.0) goto line610;
                     argv = (lvds-vdsat)/4.0;
                     sargv = sqrt(1.0+argv*argv);
-                    arg = sqrt(argv+sargv);
+                    arg1 = sqrt(argv+sargv);
                     xlfact = model->MOS2xd/(EffectiveLength*lvds);
-                    xlamda = xlfact*arg;
+                    xlamda = xlfact*arg1;
                     dldsat = lvds*xlamda/(8.0*sargv);
                 } else {
                     argv = (vgsx-vbin)/eta-vdsat;
@@ -915,13 +915,13 @@ line610:
                         goto line1050;
                     }
 
-                    here->MOS2gds = beta1*(von-vbin-gammad*sarg)*exp(argg*
+                    here->MOS2gds = beta1*(von-vbin-gammad*sarg1)*exp(argg*
                         (lvgs-von));
                     goto line1050;
                 }
 
 
-                here->MOS2gds = beta1*(lvgs-vbin-gammad*sarg);
+                here->MOS2gds = beta1*(lvgs-vbin-gammad*sarg1);
                 goto line1050;
             }
 
@@ -971,25 +971,25 @@ line900:
                  *  linear region
                  */
                 cdrain = beta1*((lvgs-vbin-eta*lvds/2.0)*lvds-gammad*body/1.5);
-                arg = cdrain*(dudvgs/ufact-dldvgs/clfact);
-                here->MOS2gm = arg+beta1*lvds;
-                arg = cdrain*(dudvds/ufact-dldvds/clfact);
-                here->MOS2gds = arg+beta1*(lvgs-vbin-eta*
+                arg1 = cdrain*(dudvgs/ufact-dldvgs/clfact);
+                here->MOS2gm = arg1+beta1*lvds;
+                arg1 = cdrain*(dudvds/ufact-dldvds/clfact);
+                here->MOS2gds = arg1+beta1*(lvgs-vbin-eta*
                     lvds-gammad*barg-dgdvds*body/1.5);
-                arg = cdrain*(dudvbs/ufact-dldvbs/clfact);
-                here->MOS2gmbs = arg-beta1*(gdbdv+dgdvbs*body/1.5-factor*lvds);
+                arg1 = cdrain*(dudvbs/ufact-dldvbs/clfact);
+                here->MOS2gmbs = arg1-beta1*(gdbdv+dgdvbs*body/1.5-factor*lvds);
             } else {
                 /* 
                  *  saturation region
                  */
                 cdrain = beta1*((lvgs-vbin-eta*
                     vdsat/2.0)*vdsat-gammad*bodys/1.5);
-                arg = cdrain*(dudvgs/ufact-dldvgs/clfact);
-                here->MOS2gm = arg+beta1*vdsat+beta1*(lvgs-
+                arg1 = cdrain*(dudvgs/ufact-dldvgs/clfact);
+                here->MOS2gm = arg1+beta1*vdsat+beta1*(lvgs-
                     vbin-eta*vdsat-gammad*bsarg)*dsdvgs;
                 here->MOS2gds = -cdrain*dldvds/clfact-beta1*dgdvds*bodys/1.5;
-                arg = cdrain*(dudvbs/ufact-dldvbs/clfact);
-                here->MOS2gmbs = arg-beta1*(gdbdvs+dgdvbs*bodys/1.5-factor*
+                arg1 = cdrain*(dudvbs/ufact-dldvbs/clfact);
+                here->MOS2gmbs = arg1-beta1*(gdbdvs+dgdvbs*bodys/1.5-factor*
                         vdsat)+beta1* (lvgs-vbin-eta*vdsat-gammad*bsarg)*dsdvbs;
             }
             /*
