@@ -213,7 +213,7 @@ static int atodims_bracketed(const char *p, int *data, int *p_n_dim)
 
         int rc = get_bracketed_dim(p, data + n_dim);
         if (rc <= 0) { /* error or normal exit */
-            *p_n_dim = n_dim;
+            *p_n_dim = (int) n_dim;
             return !!rc;
         }
         p += rc; /* step after the dimension that was processed */
@@ -283,10 +283,10 @@ static int atodims_csv(const char *p, int *data, int *p_n_dim)
             ++p;
             break;
         case ']': /* ] ended scan */
-            *p_n_dim = n_dim;
+            *p_n_dim = (int) n_dim;
             return (int) (p - p0) + 1;
         case '\0': /* end of string ended scan */
-            *p_n_dim = n_dim;
+            *p_n_dim = (int) n_dim;
             return 0;
         default: /* invalid char */
             return -1;
@@ -347,7 +347,7 @@ static int get_dim(const char *p, int *p_val)
     const char *p0 = p;
     for ( ; ; ++p) {
         const char c_cur = *p;
-        unsigned int digit_cur = c_cur - '0';
+        unsigned int digit_cur = (unsigned int) (c_cur - '0');
         unsigned int val_new;
         if (digit_cur > 9) { /* not a digit */
             if ((*p_val = (int) val) < 0) { /* overflow */
