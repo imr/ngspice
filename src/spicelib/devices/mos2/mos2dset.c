@@ -193,8 +193,8 @@ MOS2dSetup(GENmodel *inModel, CKTcircuit *ckt)
              *     this routine evaluates the drain current, its derivatives and             *     the charges associated with the gate, channel and bulk             *     for mosfets             *
              */
 
-            double arg;
-            double sarg;
+            double arg1;
+            double sarg1;
             double a4[4],b4[4],x4[8],poly4[8];
             double beta1;
             double sphi = 0.0;    /* square root of phi */
@@ -358,22 +358,22 @@ d_p.d3_pqr = 0.0;
 	d_phiMinVbs.d1_q = -  d_phiMinVbs.d1_q;
 
 	if (lvbs <= 0.0) {
-	    sarg = sqrt(phiMinVbs);
+	    sarg1 = sqrt(phiMinVbs);
 	    SqrtDeriv(&d_sarg, &d_phiMinVbs);
-	    dsrgdb = -0.5/sarg;
+	    dsrgdb = -0.5/sarg1;
 	    InvDeriv(&d_dsrgdb,&d_sarg);
 	    TimesDeriv(&d_dsrgdb,&d_dsrgdb,-0.5);
 
 	} else {
 	    sphi = sqrt(here->MOS2tPhi); /*const*/
 	    sphi3 = here->MOS2tPhi*sphi; /*const*/
-	    sarg = sphi/(1.0+0.5*lvbs/here->MOS2tPhi);
+	    sarg1 = sphi/(1.0+0.5*lvbs/here->MOS2tPhi);
 	    EqualDeriv(&d_sarg,&d_q); d_sarg.value = lvbs;
 	    TimesDeriv(&d_sarg,&d_sarg,0.5/here->MOS2tPhi);
 	    d_sarg.value += 1.0;
 	    InvDeriv(&d_sarg,&d_sarg);
 	    TimesDeriv(&d_sarg,&d_sarg,sphi);
-	    dsrgdb = -0.5*sarg*sarg/sphi3;
+	    dsrgdb = -0.5*sarg1*sarg1/sphi3;
 	    MultDeriv(&d_dsrgdb,&d_sarg,&d_sarg);
 	    TimesDeriv(&d_dsrgdb,&d_dsrgdb,-0.5/sphi3);
 	    /* tmp = sarg/sphi3; */
@@ -422,7 +422,7 @@ d_p.d3_pqr = 0.0;
 	if ((model->MOS2gamma > 0.0) || 
 		(model->MOS2substrateDoping > 0.0)) {
 	    xwd = model->MOS2xd*barg;
-	    xws = model->MOS2xd*sarg;
+	    xws = model->MOS2xd*sarg1;
 	    TimesDeriv(&d_xwd,&d_barg,model->MOS2xd);
 	    TimesDeriv(&d_xws,&d_sarg,model->MOS2xd);
 
@@ -484,7 +484,7 @@ d_p.d3_pqr = 0.0;
 	    dgddvb = 0.0;
 	    EqualDeriv(&d_dgddvb,&d_zero);
 	}
-	von = vbin+gamasd*sarg;
+	von = vbin+gamasd*sarg1;
 	MultDeriv(&d_von,&d_gamasd,&d_sarg);
 	PlusDeriv(&d_von,&d_von,&d_vbin);
 	/*
@@ -497,7 +497,7 @@ d_p.d3_pqr = 0.0;
 	    /* XXX constant per model */
 	    cfs = CHARGE*model->MOS2fastSurfaceStateDensity*
 		1e4 /*(cm**2/m**2)*/;
-	    cdonco = -(gamasd*dsrgdb + dgddvb*sarg) + factor;
+	    cdonco = -(gamasd*dsrgdb + dgddvb*sarg1) + factor;
 	    MultDeriv(&d_dummy,&d_dgddvb,&d_sarg);
 	    MultDeriv(&d_cdonco,&d_gamasd,&d_dsrgdb);
 	    PlusDeriv(&d_cdonco,&d_cdonco,&d_dummy);
@@ -533,7 +533,7 @@ d_p.d3_pqr = 0.0;
 	/*
 	 *  compute some more useful quantities             */
 
-	sarg3 = sarg*sarg*sarg;
+	sarg3 = sarg1*sarg1*sarg1;
 	CubeDeriv(&d_sarg3,&d_sarg);
 	/* XXX constant per model */
 	sbiarg = sqrt(here->MOS2tBulkPot); /*const*/
@@ -599,7 +599,7 @@ line500:
 		vdsat = 0.0;
 		EqualDeriv(&d_vdsat,&d_zero);
 	    } else {
-		arg = sqrt(1.0+4.0*argv/gammd2);
+		arg1 = sqrt(1.0+4.0*argv/gammd2);
 		DivDeriv(&d_arg,&d_argv,&d_gammd2);
 		TimesDeriv(&d_arg,&d_arg,4.0);d_arg.value += 1.0;
 		SqrtDeriv(&d_arg,&d_arg);
@@ -883,14 +883,14 @@ line500:
 		    MultDeriv(&d_sargv,&d_argv,&d_argv);
 		    d_sargv.value += 1.0;
 		    SqrtDeriv(&d_sargv,&d_sargv);
-                    arg = sqrt(argv+sargv);
+                    arg1 = sqrt(argv+sargv);
 		    PlusDeriv(&d_arg,&d_sargv,&d_argv);
 		    SqrtDeriv(&d_arg,&d_arg);
                     xlfact = model->MOS2xd/(EffectiveLength*lvds);
 		    EqualDeriv(&d_xlfact,&d_r); d_xlfact.value = lvds;
 		    InvDeriv(&d_xlfact,&d_xlfact);
 		    TimesDeriv(&d_xlfact,&d_xlfact,model->MOS2xd/EffectiveLength);
-                    xlamda = xlfact*arg;
+                    xlamda = xlfact*arg1;
 		    MultDeriv(&d_xlamda,&d_xlfact,&d_arg);
                 } else {
                     argv = (vgsx-vbin)/eta-vdsat;
@@ -990,7 +990,7 @@ line610:
                         goto line1050;
                     }
 
-                    here->MOS2gds = beta1*(von-vbin-gammad*sarg)*exp(argg*
+                    here->MOS2gds = beta1*(von-vbin-gammad*sarg1)*exp(argg*
                         (lvgs-von));
 		    MultDeriv(&d_dummy,&d_gammad,&d_sarg);
 		    PlusDeriv(&d_dummy,&d_dummy,&d_vbin);
@@ -1011,7 +1011,7 @@ line610:
                 }
 
 
-                here->MOS2gds = beta1*(lvgs-vbin-gammad*sarg);
+                here->MOS2gds = beta1*(lvgs-vbin-gammad*sarg1);
 		MultDeriv(&d_mos2gds,&d_gammad,&d_sarg);
 		PlusDeriv(&d_mos2gds,&d_mos2gds,&d_vbin);
 		TimesDeriv(&d_mos2gds,&d_mos2gds,-1.0);

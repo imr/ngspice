@@ -36,7 +36,7 @@ SOI3param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 
     NG_IGNORE(select);
 
-    switch(param) {
+    switch (param) {
         case SOI3_L:
             here->SOI3l = value->rValue;
             here->SOI3lGiven = TRUE;
@@ -133,7 +133,9 @@ SOI3param(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->SOI3ct4Given = TRUE;
             break;
         case SOI3_IC:
-            switch(value->v.numValue){
+            /* FALLTHROUGH added to suppress GCC warning due to
+             * -Wimplicit-fallthrough flag */
+            switch (value->v.numValue) {
                 case 4:
                     here->SOI3icVBS = *(value->v.vec.rVec+3);
                     here->SOI3icVBSGiven = TRUE;

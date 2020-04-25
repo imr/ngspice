@@ -20,7 +20,7 @@ TRAparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 
     NG_IGNORE(select);
 
-    switch(param) {
+    switch (param) {
         case TRA_RELTOL:
             here->TRAreltol = value->rValue;
             here->TRAreltolGiven = TRUE;
@@ -62,7 +62,9 @@ TRAparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->TRAicC2Given = TRUE;
             break;
         case TRA_IC:
-            switch(value->v.numValue){
+            /* FALLTHROUGH ded to suppress GCC warning due to
+             * -Wimplicit-fallthrough flag */
+            switch (value->v.numValue) {
                 case 4:
                     here->TRAinitCur2 = *(value->v.vec.rVec+3);
                     /* FALLTHROUGH */
