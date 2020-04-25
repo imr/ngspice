@@ -61,13 +61,15 @@ static void fprintmem(FILE *stream, unsigned long long memory);
 
 #if defined(HAVE_WIN32) || defined(HAVE__PROC_MEMINFO)
 static int get_procm(struct proc_mem *memall);
-static int get_sysmem(struct sys_mem *memall);
 
 struct sys_mem mem_t, mem_t_act;
 struct proc_mem mem_ng, mem_ng_act;
 
 #endif
 
+#if defined(HAVE_WIN32) &&  defined(SHARED_MODULE) && defined(__MINGW32__)
+static int get_sysmem(struct sys_mem *memall);
+#endif
 
 void
 init_rlimits(void)
@@ -431,10 +433,13 @@ static int get_procm(struct proc_mem *memall) {
     } else
         return 0;
 #else
-/* Use Windows GlobalMemoryStatus or /proc/memory to obtain size of memory - not accurate */
-    get_sysmem(&mem_t_act); /* size is the difference between free memory at start time and now */
+   /* Use Windows GlobalMemoryStatus or /proc/memory to obtain size of memory -
+    * not accurate */
+    get_sysmem(&mem_t_act); /* size is the difference between free memory at
+                             * start time and now */
     if (mem_t.free > mem_t_act.free) /* it can happen that that ngspice is */
-        memall->size = (mem_t.free - mem_t_act.free); /* to small compared to os memory usage */
+        memall->size = (mem_t.free - mem_t_act.free); /* too small compared to
+                                                       * os memory usage */
     else
         memall->size = 0;       /* sure, it is more */
     memall->resident = 0;
@@ -476,8 +481,8 @@ static int get_procm(struct proc_mem *memall) {
 }
 
 
-static int
-get_sysmem(struct sys_mem *memall)
+#if defined(HAVE_WIN32) &&  defined(SHARED_MODULE) && defined(__MINGW32__)
+static int get_sysmem(struct sys_mem *memall)
 {
 #ifdef HAVE_WIN32
 #if (_WIN32_WINNT >= 0x0500)
@@ -542,6 +547,7 @@ get_sysmem(struct sys_mem *memall)
 #endif
     return 1;
 }
+#endif
 
 
 #else
