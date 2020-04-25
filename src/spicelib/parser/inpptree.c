@@ -1477,6 +1477,8 @@ void free_tree(INPparseNode *pt)
         controlled_exit(1);
     }
 
+    /* FALLTHROUGH added to suppress GCC warning due to
+     * -Wimplicit-fallthrough flag */
     switch (pt->type) {
     case PT_TIME:
     case PT_TEMPERATURE:
@@ -1493,6 +1495,7 @@ void free_tree(INPparseNode *pt)
     case PT_COMMA:
     case PT_TERN:
         dec_usage(pt->right);
+        /* FALLTHROUGH */
     case PT_FUNCTION:
         dec_usage(pt->left);
         break;
