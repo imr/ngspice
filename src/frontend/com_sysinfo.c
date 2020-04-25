@@ -265,7 +265,14 @@ static void set_static_system_info(void)
 
         system_info.osName = TMALLOC(char, size + 1);
         rewind(file);
-        fread(system_info.osName, sizeof(char), size, file);
+        if (fread(system_info.osName, sizeof(char), size, file) != size) {
+            (void) fprintf(cp_err, "Unable to read \"/proc/version\".\n");
+            fclose(file);
+            tfree(system_info.osName);
+            return;
+        }
+
+
         fclose(file);
 
         system_info.osName[size] = '\0';
@@ -287,7 +294,12 @@ static void set_static_system_info(void)
         /* get complete string */
         inStr = TMALLOC(char, size+1);
         rewind(file);
-        fread(inStr, sizeof(char), size, file);
+        if (fread(inStr, sizeof(char), size, file) != size) {
+            (void) fprintf(cp_err, "Unable to read \"/proc/cpuinfo\".\n");
+            fclose(file);
+            txfree(inStr);
+            return;
+        }
         inStr[size] = '\0';
 
         {
@@ -377,7 +389,7 @@ static void set_static_system_info(void)
          * }
          */
 
-        tfree(inStr);
+        txfree(inStr);
         fclose(file);
     } /* end of case that file was opened OK */
 
