@@ -221,9 +221,10 @@ int get_int_n(const char *str, size_t n, int *p_value)
         if (!isdigit(ch_cur)) { /* Test for exit due to non-numeric char */
             break;
         }
-        
+
         /* Compute new value and check for overflow. */
-        const unsigned int value_new = 10 * value + (ch_cur - '0');
+        const unsigned int value_new =
+                10 * value + (unsigned int) (ch_cur - '0');
         if (value_new < value) {
             return -2;
         }
@@ -237,7 +238,7 @@ int get_int_n(const char *str, size_t n, int *p_value)
 
     /* Test for overflow.
      * If negative, can be 1 greater (-2**n vs 2**n -1) */
-    if (value - f_neg > (unsigned int) INT_MAX) {
+    if (value - (unsigned int) f_neg > (unsigned int) INT_MAX) {
         return -2;
     }
 
@@ -1253,7 +1254,7 @@ static inline const char *next_substr(
     for ( ; ; ) {
         /* Update hash for next starting point at p_string + 1 */
         if ((h_string = (((h_string - (unsigned char) p_string[0] *
-                msb_factor) << 8) + p_string[n_char_pattern]) %
+                msb_factor) << 8) + (size_t) p_string[n_char_pattern]) %
                 KR_MODULUS) > KR_MODULUS) { /* negative value when signed */
             h_string += KR_MODULUS;
         }
