@@ -81,7 +81,7 @@ void
 arg_load(const wordlist *wl_in, const struct comm *command)
 {
     /* just call com_load */
-    wordlist* const wl = wl_copy(wl_in);
+    wordlist * const wl = wl_copy(wl_in);
     command->co_func(wl);
     wl_free(wl);
 }
@@ -93,15 +93,13 @@ void arg_let(const wordlist *wl, const struct comm *command)
 }
 
 
-void
-arg_set(const wordlist *wl, const struct comm *command)
+void arg_set(const wordlist *wl, const struct comm *command)
 {
     common("which variable", wl, command);
 }
 
 
-void
-arg_display(const wordlist *wl, const struct comm *command)
+void arg_display(const wordlist *wl, const struct comm *command)
 {
     NG_IGNORE(wl);
     NG_IGNORE(command);
