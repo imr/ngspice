@@ -17,15 +17,11 @@ cmpp_SOURCES = main.c cmpp.h file_buffer.c file_buffer.h\
 	mod_lex.l mod_yacc.y mod_yacc_y.h
 
 if WINGUI
-cmpp_LDADD = -lshlwapi
+cmpp_LDADD = -lShlwapi
 endif
 
 if WINCONSOLE
-cmpp_LDADD = -lshlwapi
-endif
-
-if SHWIN
-cmpp_LDADD = -lshlwapi
+cmpp_LDADD = -lShlwapi
 endif
 
 mod_lex.c : mod_lex.l
