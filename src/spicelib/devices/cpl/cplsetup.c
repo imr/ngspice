@@ -1061,14 +1061,14 @@ loop_ZY(int dim, double y)
 
 static void
 poly_matrix(
-    double *A[MAX_DIM][MAX_DIM],
+    double *A_in[MAX_DIM][MAX_DIM],
     int dim, int deg)
 {
     int i, j;
 
     for (i = 0; i < dim; i++)
         for (j = 0; j < dim; j++)
-            match(deg, A[i][j], frequency, A[i][j]);
+            match(deg, A_in[i][j], frequency, A_in[i][j]);
 }
 
 /***
@@ -1464,10 +1464,9 @@ mult_p(double *p1, double *p2, double *p3, int d1, int d2, int d3)
 }
 
 
-static void
-matrix_p_mult(
-    double  *A[MAX_DIM][MAX_DIM],
-    double  *D[MAX_DIM],
+static void matrix_p_mult(
+    double  *A_in[MAX_DIM][MAX_DIM],
+    double  *D1[MAX_DIM],
     double  *B[MAX_DIM][MAX_DIM],
     int dim, int deg, int deg_o,
     Mult_Out  X[MAX_DIM][MAX_DIM])
@@ -1480,14 +1479,14 @@ matrix_p_mult(
     for (i  = 0; i < dim; i++)
         for (j = 0; j < dim; j++) {
             p = T[i][j] = (double *) calloc((size_t) (deg_o+1), sizeof(double));
-            mult_p(B[i][j], D[i], p, deg, deg_o, deg_o);
+            mult_p(B[i][j], D1[i], p, deg, deg_o, deg_o);
         }
     for (i  = 0; i < dim; i++)
         for (j = 0; j < dim; j++)
             for (k = 0; k < dim; k++) {
                 p = X[i][j].Poly[k] =
                         (double *) calloc((size_t) (deg_o+1), sizeof(double));
-                mult_p(A[i][k], T[k][j], p, deg, deg_o, deg_o);
+                mult_p(A_in[i][k], T[k][j], p, deg, deg_o, deg_o);
                 t1 = X[i][j].C_0[k] = p[0];
                 if (t1 != 0.0) {
                     p[0] = 1.0;
@@ -1523,7 +1522,7 @@ matrix_p_mult(
  ***/
 
 static double
-approx_mode(double *X, double *b, double length)
+approx_mode(double *X, double *b, double length_in)
 {
     double w0, w1, w2, w3, w4, w5;
     double a[8];
@@ -1545,7 +1544,7 @@ approx_mode(double *X, double *b, double length)
     y5 = 60.0 * w5 - 5.0 * y1 * y4 -10.0 * y2 * y3;
     y6 = -10.0 * y3 * y3 - 15.0 * y2 * y4 - 6.0 * y1 * y5;
 
-    delay = sqrt(w0) * length / Scaling_F;
+    delay = sqrt(w0) * length_in / Scaling_F;
     atten = exp(- delay * y1);
 
     a[1] = y2 / 2.0;
@@ -2080,8 +2079,7 @@ diag(int dims)
      rotate()      rotation of the Jacobi's method
  ****************************************************************/
 
-static int
-rotate(int dim, int p, int q)
+static int rotate(int dim_in, int p, int q)
 {
     int j;
     double co, si;
@@ -2095,12 +2093,12 @@ rotate(int dim, int p, int q)
     co = sqrt((ve + ABS(mu)) / (2.0 * ve));
     si = SGN(mu) * ld / (2.0 * ve * co);
 
-    for (j = p+1; j < dim; j++)
+    for (j = p+1; j < dim_in; j++)
         T[j] = ZY[p][j];
     for (j = 0; j < p; j++)
         T[j] = ZY[j][p];
 
-    for (j = p+1; j < dim; j++) {
+    for (j = p+1; j < dim_in; j++) {
         if (j == q)
             continue;
         if (j > q)
@@ -2108,7 +2106,7 @@ rotate(int dim, int p, int q)
         else
             ZY[p][j] = T[j] * co - ZY[j][q] * si;
     }
-    for (j = q+1; j < dim; j++) {
+    for (j = q+1; j < dim_in; j++) {
         if (j == p)
             continue;
         ZY[q][j] = T[j] * si + ZY[q][j] * co;
@@ -2133,12 +2131,12 @@ rotate(int dim, int p, int q)
     {
         double R[MAX_DIM];
 
-        for (j = 0; j < dim; j++) {
+        for (j = 0; j < dim_in; j++) {
             T[j] = Sv[j][p];
             R[j] = Sv[j][q];
         }
 
-        for (j = 0; j < dim; j++) {
+        for (j = 0; j < dim_in; j++) {
             Sv[j][p] = T[j] * co - R[j] * si;
             Sv[j][q] = T[j] * si + R[j] * co;
         }
