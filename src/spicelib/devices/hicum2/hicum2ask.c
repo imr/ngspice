@@ -26,9 +26,9 @@ HICUMask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFval
 
     NG_IGNORE(select);
     double g_be;
-    IFvalue *IC, *IB, *RPIi, *RPIx, *GMi;
-    IFvalue *CPIi, *CPIx, *CMUi, *CMUx;
-    IFvalue *rcx_t, *re_t, *rb, *BETAAC;
+    IFvalue IC, IB, RPIi, RPIx, GMi;
+    IFvalue CPIi, CPIx, CMUi, CMUx;
+    IFvalue rcx_t, re_t, rb, BETAAC;
 
     switch(which) {
         case HICUM_AREA:
@@ -91,25 +91,29 @@ HICUMask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFval
             return(OK);
 /* currents */
         case HICUM_QUEST_CC:
-            value->rValue = *(ckt->CKTstate0 + here->HICUMiciei) -
-                            *(ckt->CKTstate0 + here->HICUMibici) -
-                            *(ckt->CKTstate0 + here->HICUMibpci) -
-                            *(ckt->CKTstate0 + here->HICUMisici);
+            value->rValue = 0.0;
+            // value->rValue = *(ckt->CKTstate0 + here->HICUMiciei) - // TODO: why does this not work ???
+            //                 *(ckt->CKTstate0 + here->HICUMibici) - // these counter shoud be defined and expand to a integer
+            //                 *(ckt->CKTstate0 + here->HICUMibpci) -
+            //                 *(ckt->CKTstate0 + here->HICUMisici);
             return(OK);
         case HICUM_QUEST_CB:
-            value->rValue = *(ckt->CKTstate0 + here->HICUMibiei) +
-                            *(ckt->CKTstate0 + here->HICUMibici) +
-                            *(ckt->CKTstate0 + here->HICUMibpci) +
-                            *(ckt->CKTstate0 + here->HICUMibpsi);
+            value->rValue = 0.0;
+            // value->rValue = *(ckt->CKTstate0 + here->HICUMibiei) +
+            //                 *(ckt->CKTstate0 + here->HICUMibici) +
+            //                 *(ckt->CKTstate0 + here->HICUMibpci) +
+            //                 *(ckt->CKTstate0 + here->HICUMibpsi);
             return(OK);
         case HICUM_QUEST_CE:
-            value->rValue = - *(ckt->CKTstate0 + here->HICUMibiei) -
-                            *(ckt->CKTstate0 + here->HICUMibpei) -
-                            *(ckt->CKTstate0 + here->HICUMiciei);
+            value->rValue = 0.0;
+            // value->rValue = - *(ckt->CKTstate0 + here->HICUMibiei) -
+            //                 *(ckt->CKTstate0 + here->HICUMibpei) -
+            //                 *(ckt->CKTstate0 + here->HICUMiciei);
             return(OK);
         case HICUM_QUEST_CS:
-            value->rValue = *(ckt->CKTstate0 + here->HICUMisici) -
-                            *(ckt->CKTstate0 + here->HICUMibpsi);
+            value->rValue = 0.0;
+            // value->rValue = *(ckt->CKTstate0 + here->HICUMisici) -
+            //                 *(ckt->CKTstate0 + here->HICUMibpsi);
             return(OK);
         case HICUM_QUEST_CAVL:
             value->rValue = here->HICUMiavl;
@@ -130,34 +134,41 @@ HICUMask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFval
 /* transconductances and capacitances */
         case HICUM_QUEST_BETADC:
             // HICUMask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFvalue *select)
-            HICUMask(ckt, instPtr, HICUM_QUEST_CC, IC, select);
-            HICUMask(ckt, instPtr, HICUM_QUEST_CB, IB, select);
-            if (IB->rValue != 0.0) {
-                value->rValue = IC->rValue/IB->rValue;
+            HICUMask(ckt, instPtr, HICUM_QUEST_CC, &IC, select);
+            HICUMask(ckt, instPtr, HICUM_QUEST_CB, &IB, select);
+            if (IB.rValue != 0.0) {
+                value->rValue = IC.rValue/IB.rValue;
             } else {
                 value->rValue = 0.0;
             }
             return(OK);
         case HICUM_QUEST_GMI:
-            value->rValue = *(ckt->CKTstate0 + here->HICUMiciei_Vbiei); // TODO: Check sign vs VA-Code in ADS
+            value->rValue = 0.0;
+            // value->rValue = *(ckt->CKTstate0 + here->HICUMiciei_Vbiei); // TODO: Check sign vs VA-Code in ADS
             return(OK);
         case HICUM_QUEST_GMS:
-            value->rValue = *(ckt->CKTstate0 + here->HICUMibpsi_Vbpci); // TODO: Check sign vs VA-Code in ADS
+            value->rValue = 0.0;
+            // value->rValue = *(ckt->CKTstate0 + here->HICUMibpsi_Vbpci); // TODO: Check sign vs VA-Code in ADS
             return(OK);
         case HICUM_QUEST_RPII:
-            value->rValue = 1/( *(ckt->CKTstate0 + here->HICUMibiei_Vbiei) + ckt->CKTgmin); // TODO: Check sign vs VA-Code in ADS
+            value->rValue = 0.0;
+            // value->rValue = 1/( *(ckt->CKTstate0 + here->HICUMibiei_Vbiei) + ckt->CKTgmin); // TODO: Check sign vs VA-Code in ADS
             return(OK);
         case HICUM_QUEST_RPIX:
-            value->rValue = 1/( *(ckt->CKTstate0 + here->HICUMibpei_Vbpei) + ckt->CKTgmin); // TODO: Check sign vs VA-Code in ADS
+            value->rValue = 0.0;
+            // value->rValue = 1/( *(ckt->CKTstate0 + here->HICUMibpei_Vbpei) + ckt->CKTgmin); // TODO: Check sign vs VA-Code in ADS
             return(OK);
         case HICUM_QUEST_RMUI:
-            value->rValue = 1/( *(ckt->CKTstate0 + here->HICUMibici_Vbici) + ckt->CKTgmin); // TODO: Check sign vs VA-Code in ADS
+            value->rValue = 0.0;
+            // value->rValue = 1/( *(ckt->CKTstate0 + here->HICUMibici_Vbici) + ckt->CKTgmin); // TODO: Check sign vs VA-Code in ADS
             return(OK);
         case HICUM_QUEST_RMUX:
-            value->rValue = 1/( *(ckt->CKTstate0 + here->HICUMibpci_Vbpci) + ckt->CKTgmin); // TODO: Check sign vs VA-Code in ADS
+            value->rValue = 0.0;
+            // value->rValue = 1/( *(ckt->CKTstate0 + here->HICUMibpci_Vbpci) + ckt->CKTgmin); // TODO: Check sign vs VA-Code in ADS
             return(OK);
         case HICUM_QUEST_ROI:
-            value->rValue = 1/( *(ckt->CKTstate0 + here->HICUMiciei_Vbiei) + ckt->CKTgmin); // TODO: Check sign vs VA-Code in ADS
+            value->rValue = 0.0;
+            // value->rValue = 1/( *(ckt->CKTstate0 + here->HICUMiciei_Vbiei) + ckt->CKTgmin); // TODO: Check sign vs VA-Code in ADS
             return(OK);
         case HICUM_QUEST_CPII:
             value->rValue = here->HICUMcapjei + here->HICUMcapdeix;
@@ -179,12 +190,12 @@ HICUMask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFval
             return(OK);
         case HICUM_QUEST_BETAAC:
             // HICUMask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFvalue *select)
-            HICUMask(ckt, instPtr, HICUM_QUEST_RPII, RPIi, select);
-            HICUMask(ckt, instPtr, HICUM_QUEST_RPIX, RPIx, select);
-            HICUMask(ckt, instPtr, HICUM_QUEST_GMI, GMi, select);
-            g_be = 1/(RPIi->rValue + RPIx->rValue);
+            HICUMask(ckt, instPtr, HICUM_QUEST_RPII, &RPIi, select);
+            HICUMask(ckt, instPtr, HICUM_QUEST_RPIX, &RPIx, select);
+            HICUMask(ckt, instPtr, HICUM_QUEST_GMI, &GMi, select);
+            g_be = 1/(RPIi.rValue + RPIx.rValue);
             if (g_be > 0.0) {
-                value->rValue = GMi->rValue/g_be;
+                value->rValue = GMi.rValue/g_be;
             } else {
                 value->rValue = 0.0;
             }
@@ -195,23 +206,23 @@ HICUMask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFval
             return(OK);
         case HICUM_QUEST_FT:
             // FT = GMi/(2*`M_PI*(CPIi+CPIx+CMUi+CMUx+(rcx_t+re_t+(re_t+rb)/BETAAC)*GMi*(CMUi+CMUx)));
-            HICUMask(ckt, instPtr, HICUM_QUEST_GMI, GMi, select);
-            HICUMask(ckt, instPtr, HICUM_QUEST_CPII, CPIi, select);
-            HICUMask(ckt, instPtr, HICUM_QUEST_CPIX, CPIx, select);
-            HICUMask(ckt, instPtr, HICUM_QUEST_CMUI, CMUi, select);
-            HICUMask(ckt, instPtr, HICUM_QUEST_CMUX, CMUx, select);
-            HICUMask(ckt, instPtr, HICUM_QUEST_RCX_T, rcx_t, select);
-            HICUMask(ckt, instPtr, HICUM_QUEST_RE_T, re_t, select);
-            HICUMask(ckt, instPtr, HICUM_QUEST_RB, rb, select);
-            HICUMask(ckt, instPtr, HICUM_QUEST_BETAAC, BETAAC, select);
+            HICUMask(ckt, instPtr, HICUM_QUEST_GMI, &GMi, select);
+            HICUMask(ckt, instPtr, HICUM_QUEST_CPII, &CPIi, select);
+            HICUMask(ckt, instPtr, HICUM_QUEST_CPIX, &CPIx, select);
+            HICUMask(ckt, instPtr, HICUM_QUEST_CMUI, &CMUi, select);
+            HICUMask(ckt, instPtr, HICUM_QUEST_CMUX, &CMUx, select);
+            HICUMask(ckt, instPtr, HICUM_QUEST_RCX_T, &rcx_t, select);
+            HICUMask(ckt, instPtr, HICUM_QUEST_RE_T, &re_t, select);
+            HICUMask(ckt, instPtr, HICUM_QUEST_RB, &rb, select);
+            HICUMask(ckt, instPtr, HICUM_QUEST_BETAAC, &BETAAC, select);
 
-            value->rValue = GMi->rValue/(
+            value->rValue = GMi.rValue/(
                 2 * M_PI * (
-                    CPIi->rValue + CPIx->rValue +
-                    CMUi->rValue + CMUx->rValue +
-                    (rcx_t->rValue + re_t->rValue + (re_t->rValue + rb->rValue)/BETAAC->rValue)
-                ) * GMi->rValue * (
-                    CMUi->rValue + CMUx->rValue
+                    CPIi.rValue + CPIx.rValue +
+                    CMUi.rValue + CMUx.rValue +
+                    (rcx_t.rValue + re_t.rValue + (re_t.rValue + rb.rValue)/BETAAC.rValue)
+                ) * GMi.rValue * (
+                    CMUi.rValue + CMUx.rValue
                 )
             );
             return(OK);
