@@ -95,7 +95,7 @@ B1noise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt,
 				 (double)0.0);
 		    noizDens[B1FLNOIZ] *= model->B1fNcoef * inst->B1m *
 				 exp(model->B1fNexp *
-				 log(MAX(fabs(inst->B1cd),N_MINLOG))) /
+				 log(MAX(fabs((double)inst->B1cd),N_MINLOG))) /
 				 (data->freq *
 				 (inst->B1w - model->B1deltaW * 1e-6) *
 				 (inst->B1l - model->B1deltaL * 1e-6) *
