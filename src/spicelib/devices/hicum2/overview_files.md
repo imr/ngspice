@@ -23,4 +23,8 @@ This file gives an overview of the files needed for the ngspice HiCUM version, e
 # hicum2setup.c
 # hicum2soachk.c
 # hicum2temp.c
+    * Temperature scaling of all parameters
+    * Models are implemented, missing are the derivatives
+    * As most models are easy and just temperature dependent -> no dual numbers
+    * Assignee: Mario
 # hicum2trunc.c

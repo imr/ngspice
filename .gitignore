@@ -74,3 +74,5 @@ Makefile.in
 **/*.vcxproj.user
 .vscode/
 
+# Visual Studio Code user options files
+.vscode/

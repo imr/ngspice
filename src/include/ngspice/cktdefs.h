@@ -440,7 +440,6 @@ extern int NIconvTest(CKTcircuit *);
 extern void NIdestroy(CKTcircuit *);
 extern int NIinit(CKTcircuit  *);
 extern int NIintegrate(CKTcircuit *, double *, double *, double , int);
-extern void dummdumm(int dumm);
 extern int NIiter(CKTcircuit * , int);
 extern int NIpzMuller(PZtrial **, PZtrial *);
 extern int NIpzComplex(PZtrial **, PZtrial *);

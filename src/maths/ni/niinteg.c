@@ -14,12 +14,6 @@ Author: 1985 Thomas L. Quarles
 
 #define ccap qcap+1
 
-void dummdumm(int dumm)
-{
-    double dummy;
-    dummy=1;
-}
-
 int
 NIintegrate(CKTcircuit *ckt, double *geq, double *ceq, double cap, int qcap)
 {
@@ -31,12 +25,12 @@ NIintegrate(CKTcircuit *ckt, double *geq, double *ceq, double cap, int qcap)
     case TRAPEZOIDAL:
         switch(ckt->CKTorder) {
         case 1:
-            ckt->CKTstate0[ccap] = ckt->CKTag[0] * ckt->CKTstate0[qcap] 
+            ckt->CKTstate0[ccap] = ckt->CKTag[0] * ckt->CKTstate0[qcap]
                     + ckt->CKTag[1] * ckt->CKTstate1[qcap];
             break;
         case 2:
-            ckt->CKTstate0[ccap] = - ckt->CKTstate1[ccap] * ckt->CKTag[1] + 
-                    ckt->CKTag[0] * 
+            ckt->CKTstate0[ccap] = - ckt->CKTstate1[ccap] * ckt->CKTag[1] +
+                    ckt->CKTag[0] *
                     ( ckt->CKTstate0[qcap] - ckt->CKTstate1[qcap] );
             break;
         default:
