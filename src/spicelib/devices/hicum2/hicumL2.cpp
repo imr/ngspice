@@ -111,21 +111,20 @@ duals::duald HICDIO(duals::duald T, double IST, double UM1, duals::duald U)
 {
 duals::duald DIOY, le, vt;
 
-    // printf("2");
-    vt = UM1 * CONSTboltz * T / CHARGE;
-    DIOY = U/vt;
+    vt = CONSTboltz * T / CHARGE;
+    DIOY = U/(UM1*vt);
+    // le = exp(DIOY); // would be the best way... But stay close to HICUML2.va
+    // return IST*(le-1.0);
     if (IST > 0.0) {
         if (DIOY > Dexp_lim) {
             le      = (1 + (DIOY - Dexp_lim));
             DIOY    = Dexp_lim;
-            le      = le*exp(DIOY);
-            return IST*(le-1.0);
+            return IST*(le*exp(DIOY)-1.0);
+        } else if (DIOY <= -14.0) {
+            return -IST;
         } else {
             le      = exp(DIOY);
             return IST*(le-1.0);
-        }
-        if(DIOY <= -14.0) {
-            return -IST;
         }
     } else {
         return 0.0;
@@ -541,9 +540,9 @@ void hicum_diode(double T, double IS, double UM1, double U, double *Iz, double *
 
     result = HICDIO(T, IS, UM1, U+1_e);
     *Iz    = result.rpart();
-    *Gz    = result.dpart(); //derivative after U
+    *Gz    = result.dpart(); //derivative for U
     result = HICDIO(T+1_e, IS, UM1, U);
-    *Tz    = result.dpart(); //derivative after T
+    *Tz    = result.dpart(); //derivative for T
 }
 
 void hicum_qjmodf(double T, double c_0, double u_d, double z, double a_j, double U_cap, double *C, double *C_dU, double *C_dT, double *Qz, double *Qz_dU, double *Qz_dT)
@@ -614,7 +613,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double itf,itr,Tf,Tr,VT_f,i_0f,i_0r,a_bpt,Q_0,Q_p,Q_bpt;
     double Orci0_t,b_q,I_Tf1,T_f0,Q_fT,T_fT,Q_bf;
     double a_h,Q_pT,d_Q;
-    double Qf,Qf_Vbiei,Qf_Vbici,Qf_dT,Cdei,Qr,Cdci;
+    double Qf, Qf_Vbiei, Qf_Vbici, Qf_dT, Cdei, Qr, Cdci;
     double ick, ick_Vciei, ick_dT,vc,cjcx01,cjcx02;
     int l_it;
 
@@ -930,6 +929,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
         cbepar2 = model->HICUMfbepar * model->HICUMcbepar;
         cbepar1 = model->HICUMcbepar - cbepar2;
 
+
         // Avoid divide-by-zero and define infinity other way
         // High current correction for 2D and 3D effects
         if (model->HICUMich != 0.0) {
@@ -968,6 +968,8 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             Icth = 0.0, Icth_Vrth = 0.0;
 
 //            SCALE = here->HICUMarea * here->HICUMm;
+            here->HICUMcbepar = model->HICUMcbepar;
+            here->HICUMcbcpar = model->HICUMcbcpar;
 
             /*
              *   initialization
@@ -1414,7 +1416,10 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
             if (model->HICUMflsh!=0 && model->HICUMrth >= MIN_R) { // Thermal_update_with_self_heating
                 here->HICUMtemp = here->HICUMtemp+Vrth;
+                here->HICUMdtemp_sh = here->HICUMtemp - ckt->CKTtemp;
                 iret = hicum_thermal_update(model, here);
+            } else {
+                here->HICUMdtemp_sh = 0;
             }
 
             // Model_evaluation
@@ -1432,6 +1437,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             //Cjei    = ddx(Qjei,V(bi));
             //TODO: derivatives after cjei0_t, vdei_t ajei_t missing here
             hicum_qjmodf(here->HICUMtemp,here->HICUMcjei0_t,here->HICUMvdei_t,model->HICUMzei,here->HICUMajei_t,Vbiei,&Cjei,&Cjei_Vbiei, &Cjei_dT,&Qjei, &Qjei_Vbiei, &Qjei_dT);
+
 
             //TODO:missing temperature derivatives of vdei_t, hjei0_t vdei_t, ahjei_t
             result         = calc_hjei_vbe(Vbiei+1_e, here->HICUMtemp, here, model);
@@ -1586,6 +1592,8 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             itf_Vbiei = itf/VT_f;
             itr_Vbici = itr/here->HICUMvt;
 
+            here->HICUMtf = Tf;
+
             //NQS effect implemented with LCR networks
             //Once the delay in ITF is considered, IT_NQS is calculated afterwards
 
@@ -1625,6 +1633,8 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             iavl_Vbiei += iavl_ditf*itf_Vbiei;
             iavl_dT     = iavl_ditf*itf_dT    + iavl_dCjci*Cjci_dT; //TODO: derivatives kavl_t favl_t qavl_t cjci0_t vdci_t
 
+            here->HICUMiavl = iavl;
+
             //Excess base current from recombination at the b-c barrier
             ibh_rec = Q_bf*Otbhrec;
 //todo: Q_bf derivatives to Vbiei
@@ -1640,6 +1650,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             rbi_dCjci = result.dpart();
             result    = calc_rbi(here->HICUMtemp    , Qjei    , Cjci    , Qf+1_e);
             rbi_dQf   = result.dpart();
+            here->HICUMrbi = rbi;
 
             rbi_Vbiei = rbi_dQjei* Qjei_Vbiei  + rbi_dQf  *Qf_Vbiei                  ;
             rbi_Vbici = rbi_dQf  * Qf_Vbici    + rbi_dCjci*Cjci_Vbici                ;
@@ -1744,7 +1755,10 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 if (here->HICUMrbx_t >= MIN_R) {
                     pterm   = pterm + Vbbp*Vbbp/here->HICUMrbx_t;
                 }
+            } else {
+                pterm = 0; // default value...
             }
+            here->HICUMpterm = pterm;
 
             Itxf    = itf;
             Qdeix   = Qdei;

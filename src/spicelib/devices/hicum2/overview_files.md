@@ -6,17 +6,23 @@ This file gives an overview of the files needed for the ngspice HiCUM version, e
 - assignee (Mario or Markus)
 
 # hicum2.c
-# hicum2acld..c
+    * Definition of the external instance and model structure.
+    * Including the variables which can be accessed from the outside.
+# hicum2acld.c
 # hicum2ask.c
+    * Define how the instance output data is saved.
 # hicum2conv.c
 # hicum2defs.h
+    * Define the internal data structure
 # hicum2ext.h
 # hicum2getic.h
 # hicum2init.h
 # hicum2itf.h
 # hicum2load.c
 # hicum2mask.c
+    * Define how the model output data is saved.
 # hicum2mpar.c
+    * Check which parameters for the model were given in the netlist. If a parameter is given, save it and set the XXXGiven flag.
 # hicum2noise.c
 # hicum2param.c
 # hicum2pzld.c

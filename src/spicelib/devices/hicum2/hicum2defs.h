@@ -66,6 +66,7 @@ typedef struct sHICUMinstance {
     double HICUMicVCE;    /* initial condition voltage C-E */
     double HICUMtemp;     /* instance temperature */
     double HICUMdtemp;    /* instance delta temperature */
+    double HICUMdtemp_sh; /* instance delta temperature because of self-heating */
     double HICUMm;        /* multiply factor for the hicum */
 
     double HICUMmg;
@@ -101,6 +102,7 @@ typedef struct sHICUMinstance {
     double HICUMrcx_t;
     double HICUMrbx_t;
     double HICUMre_t;
+    double HICUMrbi;
     double HICUMtsf_t;
     double HICUMcscp0_t;
     double HICUMvdsp_t;
@@ -126,6 +128,14 @@ typedef struct sHICUMinstance {
     double HICUMcjs0_t;
     double HICUMvds_t;
     double HICUMvpts_t;
+
+    double HICUMiavl;
+    double HICUMpterm;
+
+    double HICUMtf;
+
+    double HICUMcbepar;
+    double HICUMcbcpar;
 
     double *HICUMcollCollPtr;  /* pointer to sparse matrix at
                              * (collector,collector) */
@@ -964,8 +974,7 @@ enum {
 
 /* device questions */
 enum {
-    HICUM_QUEST_FT = 251,
-    HICUM_QUEST_COLLNODE,
+    HICUM_QUEST_COLLNODE = 251,
     HICUM_QUEST_BASENODE,
     HICUM_QUEST_EMITNODE,
     HICUM_QUEST_SUBSNODE,
@@ -977,39 +986,45 @@ enum {
     HICUM_QUEST_XFNODE,
     HICUM_QUEST_XF1NODE,
     HICUM_QUEST_XF2NODE,
+/* temperature */
+    HICUM_QUEST_TK,
+    HICUM_QUEST_DTSH,
+/* voltages */
     HICUM_QUEST_VBE,
     HICUM_QUEST_VBC,
+    HICUM_QUEST_VCE,
+    HICUM_QUEST_VSC,
+/* currents */
     HICUM_QUEST_CC,
+    HICUM_QUEST_CAVL,
     HICUM_QUEST_CB,
     HICUM_QUEST_CE,
     HICUM_QUEST_CS,
-    HICUM_QUEST_GM,
-    HICUM_QUEST_GPI,
-    HICUM_QUEST_GPX,
-    HICUM_QUEST_GMU,
-    HICUM_QUEST_GX,
-    HICUM_QUEST_GO,
-    HICUM_QUEST_QBE,
-    HICUM_QUEST_CQBE,
-    HICUM_QUEST_QBC,
-    HICUM_QUEST_CQBC,
-    HICUM_QUEST_QBX,
-    HICUM_QUEST_CQBX,
-    HICUM_QUEST_QBCP,
-    HICUM_QUEST_CQBCP,
-    HICUM_QUEST_CEXBC,
-    HICUM_QUEST_GEQCB,
-    HICUM_QUEST_GCSUB,
-    HICUM_QUEST_GDSUB,
-    HICUM_QUEST_GEQBX,
-    HICUM_QUEST_CJBE,
-    HICUM_QUEST_CBEX,
-    HICUM_QUEST_CDBE,
-    HICUM_QUEST_CBEP,
-    HICUM_QUEST_CJBC,
-    HICUM_QUEST_CBCXI,
-    HICUM_QUEST_CBCXII,
-    HICUM_QUEST_CSCP,
+/* resistances */
+    HICUM_QUEST_RCX_T,
+    HICUM_QUEST_RE_T,
+    HICUM_QUEST_RBI,
+    HICUM_QUEST_RB,
+/* transconductances and capacitances */
+    HICUM_QUEST_BETADC,
+    HICUM_QUEST_GMI,
+    HICUM_QUEST_GMS,
+    HICUM_QUEST_RPII,
+    HICUM_QUEST_RPIX,
+    HICUM_QUEST_RMUI,
+    HICUM_QUEST_RMUX,
+    HICUM_QUEST_ROI,
+    HICUM_QUEST_CPII,
+    HICUM_QUEST_CPIX,
+    HICUM_QUEST_CMUI,
+    HICUM_QUEST_CMUX,
+    HICUM_QUEST_CCS,
+    HICUM_QUEST_BETAAC,
+    HICUM_QUEST_CRBI,
+/* transit time */
+    HICUM_QUEST_TF,
+    HICUM_QUEST_FT,
+/* power */
     HICUM_QUEST_POWER,
 };
 

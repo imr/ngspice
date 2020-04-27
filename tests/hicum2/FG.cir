@@ -7,7 +7,8 @@ Q1 Q1_C Q1_B Q1_E Q1_E Q1_T P1
 .DC VE -0.2 -1.2 -10m
 .OPTIONS GMIN=1e-13 NOACCT
 
-.print dc abs(i(vc)) abs(i(vb))
+.print dc abs(i(vc)) abs(i(vb)) @Q1[area] @Q1[icvbe] @Q1[icvce] @Q1[temp] @Q1[m] @Q1[vbe] @Q1[vbc] @Q1[vce] @Q1[vsc] @Q1[ic] @Q1[ib] @Q1[ie] @Q1[iavl] @Q1[is] @Q1[rcx_t] @Q1[re_t] @Q1[rbi] @Q1[rb] @Q1[betadc] @Q1[gmi] @Q1[gms]  @Q1[rpii] @Q1[rpix] @Q1[rmui] @Q1[rmux] @Q1[roi] @Q1[cpii] @Q1[cpix] @Q1[cmui] @Q1[cmux] @Q1[ccs] @Q1[betaac] @Q1[crbi] @Q1[tf] @Q1[ft] @Q1[p] @Q1[tk] @Q1[dtsh]
+
 
 .MODEL P1 NPN LEVEL=8
 + c10=9.074e-030 qp0=1.008e-013 hfe=10.01 hfc=20.04 hjei=3.382 hjci=0.2
