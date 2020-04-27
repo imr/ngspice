@@ -929,8 +929,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
         cbepar2 = model->HICUMfbepar * model->HICUMcbepar;
         cbepar1 = model->HICUMcbepar - cbepar2;
 
-        here->HICUMcbepar = model->HICUMcbepar;
-        here->HICUMcbcpar = model->HICUMcbcpar;
 
         // Avoid divide-by-zero and define infinity other way
         // High current correction for 2D and 3D effects
@@ -970,6 +968,8 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             Icth = 0.0, Icth_Vrth = 0.0;
 
 //            SCALE = here->HICUMarea * here->HICUMm;
+            here->HICUMcbepar = model->HICUMcbepar;
+            here->HICUMcbcpar = model->HICUMcbcpar;
 
             /*
              *   initialization

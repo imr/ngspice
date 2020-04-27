@@ -25,6 +25,10 @@ HICUMask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFval
     HICUMinstance *here = (HICUMinstance*)instPtr;
 
     NG_IGNORE(select);
+    double g_be;
+    IFvalue *IC, *IB, *RPIi, *RPIx, *GMi;
+    IFvalue *CPIi, *CPIx, *CMUi, *CMUx;
+    IFvalue *rcx_t, *re_t, *rb, *BETAAC;
 
     switch(which) {
         case HICUM_AREA:
@@ -126,8 +130,6 @@ HICUMask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFval
 /* transconductances and capacitances */
         case HICUM_QUEST_BETADC:
             // HICUMask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFvalue *select)
-            IFvalue* IC;
-            IFvalue* IB;
             HICUMask(ckt, instPtr, HICUM_QUEST_CC, IC, select);
             HICUMask(ckt, instPtr, HICUM_QUEST_CB, IB, select);
             if (IB->rValue != 0.0) {
@@ -177,10 +179,6 @@ HICUMask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFval
             return(OK);
         case HICUM_QUEST_BETAAC:
             // HICUMask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFvalue *select)
-            double g_be;
-            IFvalue* RPIi;
-            IFvalue* RPIx;
-            IFvalue* GMi;
             HICUMask(ckt, instPtr, HICUM_QUEST_RPII, RPIi, select);
             HICUMask(ckt, instPtr, HICUM_QUEST_RPIX, RPIx, select);
             HICUMask(ckt, instPtr, HICUM_QUEST_GMI, GMi, select);
@@ -197,23 +195,14 @@ HICUMask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFval
             return(OK);
         case HICUM_QUEST_FT:
             // FT = GMi/(2*`M_PI*(CPIi+CPIx+CMUi+CMUx+(rcx_t+re_t+(re_t+rb)/BETAAC)*GMi*(CMUi+CMUx)));
-            IFvalue* GMi;
             HICUMask(ckt, instPtr, HICUM_QUEST_GMI, GMi, select);
-            IFvalue* CPIi;
             HICUMask(ckt, instPtr, HICUM_QUEST_CPII, CPIi, select);
-            IFvalue* CPIx;
             HICUMask(ckt, instPtr, HICUM_QUEST_CPIX, CPIx, select);
-            IFvalue* CMUi;
             HICUMask(ckt, instPtr, HICUM_QUEST_CMUI, CMUi, select);
-            IFvalue* CMUx;
             HICUMask(ckt, instPtr, HICUM_QUEST_CMUX, CMUx, select);
-            IFvalue* rcx_t;
             HICUMask(ckt, instPtr, HICUM_QUEST_RCX_T, rcx_t, select);
-            IFvalue* re_t;
             HICUMask(ckt, instPtr, HICUM_QUEST_RE_T, re_t, select);
-            IFvalue* rb;
             HICUMask(ckt, instPtr, HICUM_QUEST_RB, rb, select);
-            IFvalue* BETAAC;
             HICUMask(ckt, instPtr, HICUM_QUEST_BETAAC, BETAAC, select);
 
             value->rValue = GMi->rValue/(
