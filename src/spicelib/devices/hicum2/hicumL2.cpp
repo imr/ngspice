@@ -10,7 +10,8 @@ Spice3 Implementation: 2019 Dietmar Warning, Markus Müller, Mario Krattenmacher
  * Comments on the Code:
  * - We use dual numbers to calculate derivatives, this is readble and error proof.
  * - The code is targeted to be readbale and maintainable, speed is sacrificied for this purpose.
- * - The verilog a code is available at the website of TU Dresden, Michael Schroeter#s chair.
+ * - The verilog a code is available at the website of TU Dresden, Michael Schroeter's chair.
+ * - Nobody likes Verilog.
  * 
  * Checklist of what needs to be done: (@Mario: also look at this, did I get everything?)
  * - ijBEp
