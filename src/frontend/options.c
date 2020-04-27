@@ -25,6 +25,7 @@ bool ft_acctprint = FALSE, ft_noacctprint = FALSE, ft_listprint = FALSE;
 bool ft_nodesprint = FALSE, ft_optsprint = FALSE, ft_noinitprint = FALSE;
 bool ft_norefprint = FALSE;
 bool ft_ngdebug = FALSE, ft_stricterror = FALSE;
+bool ft_usedefmodel = FALSE;
 
 static void setdb(char *str);
 static struct variable *cp_enqvec_as_var(const char *vec_name,
@@ -254,6 +255,7 @@ inp_getoptsc(char *line, struct card *options)
     next->line    = tprintf(".options %s", line);
     next->linenum = 0;
     next->error   = NULL;
+    next->warning   = NULL;
     next->actualLine  = NULL;
 
     /* put new line in front */
@@ -322,6 +324,8 @@ cp_usrset(struct variable *var, bool isset)
         ft_strictnumparse = isset;
     } else if (eq(var->va_name, "strict_errorhandling")) {
         ft_stricterror = isset;
+    } else if (eq(var->va_name, "use_default_models")) {
+        ft_usedefmodel = isset;
     } else if (eq(var->va_name, "rawfileprec")) {
         if ((var->va_type == CP_BOOL) && (isset == FALSE))
             raw_prec = -1;

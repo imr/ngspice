@@ -714,6 +714,8 @@ struct card * inp_deckcopy(struct card *deck) {
         d->line = copy(deck->line);
         if (deck->error)
             d->error = copy(deck->error);
+        if (deck->warning)
+            d->warning = copy(deck->warning);
         d->actualLine = inp_deckcopy(deck->actualLine);
         deck = deck->nextcard;
     }

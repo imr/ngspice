@@ -334,7 +334,10 @@ INPgetMod(CKTcircuit *ckt, char *name, INPmodel **model, INPtables *tab)
 #endif
 
     *model = NULL;
-    return tprintf("Unable to find definition of model %s - default assumed\n", name);
+    if (ft_usedefmodel)
+        return tprintf("Unable to find definition of model %s - default assumed\n", name);
+    else
+        return tprintf("Unable to find definition of model %s\n", name);
 }
 
 

@@ -78,7 +78,8 @@ struct card {
     int linenum;
     int linenum_orig;
     char *line;
-    char *error;
+    char *error; /* entry causes ngspice to stop */
+    char *warning;
     struct card *nextcard;
     struct card *actualLine;
     struct nscope *level;

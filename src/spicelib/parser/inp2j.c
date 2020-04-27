@@ -34,6 +34,7 @@ void INP2J(CKTcircuit *ckt, INPtables * tab, struct card *current)
     INPmodel *thismodel;	/* pointer to model description for user's model */
     GENmodel *mdfast;		/* pointer to the actual model */
     IFuid uid;			/* uid of default model */
+    char* errormsg;
 
     line = current->line;
     INPgetNetTok(&line, &name, 1);
@@ -46,7 +47,11 @@ void INP2J(CKTcircuit *ckt, INPtables * tab, struct card *current)
     INPtermInsert(ckt, &nname3, tab, &node3);
     INPgetNetTok(&line, &model, 1);
     INPinsert(&model, tab);
-    current->error = INPgetMod(ckt, model, &thismodel, tab);
+    errormsg = INPgetMod(ckt, model, &thismodel, tab);
+    if (ft_usedefmodel)
+        current->warning = errormsg;
+    else
+        current->error = errormsg;
     if (thismodel != NULL) {
 	if (thismodel->INPmodType != INPtypelook("JFET")
 	    && thismodel->INPmodType != INPtypelook("JFET2")

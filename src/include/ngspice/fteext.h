@@ -264,6 +264,7 @@ extern struct card *inp_getopts(struct card *deck);
 extern struct card *inp_getoptsc(char *line, struct card *options);
 extern bool ft_ngdebug;
 extern bool ft_stricterror;
+extern bool ft_usedefmodel;
 
 /* parse.c */
 

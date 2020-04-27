@@ -212,6 +212,7 @@ static struct card *insert_new_line(
 
     x->nextcard = card ? card->nextcard : NULL;
     x->error = NULL;
+    x->warning = NULL;
     x->actualLine = NULL;
     x->line = line;
     x->linenum = linenum;

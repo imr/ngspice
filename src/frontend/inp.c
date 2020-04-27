@@ -309,6 +309,7 @@ line_free_x(struct card *deck, bool recurse)
         line_free_x(deck->actualLine, TRUE);
         tfree(deck->line);
         tfree(deck->error);
+        tfree(deck->warning);
         tfree(deck);
         if (!recurse)
             return;
@@ -1032,11 +1033,16 @@ inp_dodeck(
 
     /* First throw away any old error messages there might be and fix
        the case of the lines.  */
-    for (dd = deck; dd; dd = dd->nextcard)
+    for (dd = deck; dd; dd = dd->nextcard) {
         if (dd->error) {
             tfree(dd->error);
             dd->error = NULL;
         }
+        if (dd->warning) {
+            tfree(dd->warning);
+            dd->warning = NULL;
+        }
+    }
 
     if (reuse) {
         /* re-use existing circuit structure */
@@ -1150,6 +1156,11 @@ inp_dodeck(
         /* SDB debug statement */
         printf("In inp_dodeck, looking for errors and examining line %s . . . \n", dd->line);
 #endif
+
+        if (dd->warning) {
+            out_printf("Caution for line %d :\n  %s\n%s\n",
+                dd->linenum_orig, dd->line, dd->warning);
+        }
 
         if (dd->error) {
             char *p, *q;
