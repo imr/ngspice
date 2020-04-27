@@ -1,7 +1,7 @@
-  Ngspice F.A.Q.Version 2.3 (ngspice-32 release)
+  Ngspice F.A.Q.Version 2.4 (ngspice-32 release)
 
   Maintained by Holger Vogt
-  Last update: 09-14-2018
+  Last update: 04-27-2020
 
   This document contains the Frequently Asked Questions (and Answers)
   for ngspice project.
@@ -24,6 +24,7 @@
      1.11 Where can I get a copy of ngspice?
      1.12 Where should I look on the World Wide Web for ngspice stuff?
      1.13 Where should I look on the World Wide Web for Spice documentation?
+     1.14  Are there some (official) tutorials available?
 
   2. DEVELOPMENT
      2.1 What is the current version?
@@ -83,7 +84,7 @@
 
   Sharedspice is an interface option to ngspice. It compiles the simulator
   into a shared object (or dynamic link library), providing full control
-  of ngspice to any suitable controlling program (GUI, optimizer,
+  over ngspice to any suitable controlling program (GUI, optimizer,
   development system, etc., to be provided by the user).
 
 
@@ -233,6 +234,13 @@
   http://ngspice.sourceforge.net/literature.html
 
 
+ 1.14  Are there some (official) tutorials available?
+ 
+  Yes, they are, for ngspice, ngspice within KiCAD and on eletro-thermal
+  simulation. You may find them at:
+  http://ngspice.sourceforge.net/tutorials.html
+
+
 
   2.  DEVELOPMENT
 
@@ -241,30 +249,44 @@
 
   The latest version released is:
 
-  * ngspice-31 (released on 22/09/2019)
+  * ngspice-32 (released on 01/05/2020)
 
 
  2.2.  What are the latest features in the current release?
 
 - New features:
-    + configure flag --with-fftw3 If set to 'no', internal fast fourier is used
-      instead of fftw
-    + command setseed to set the seed value for the random number generator
-    + option seed=[val|random]
-    + variable inputdir to remeber and retrieve the last input file directory
-    + example directory 'digital' with analog, behavioral and digital example input files
-    + new XSPICE filesource, d_source, and state-machine examples
-    + +, - maybe part of instance name
-    + Quasi-saturation VDMOS example
-    + add environmental variable SOURCE_DATE_EPOCH to allow reproducible executables
-    + new parameters to command setplot: setplot next, setplot previous
-    + updates to commands cd, rusage, print
-    + update to bipolar and diode temperature equations
+    + Add resource info on memory used and available for macOS
+    + redesign of memory monitoring
+    + Replace B source pwl by XSPICE PWL Controlled Source that has smooth rounded and 
+      stepless differentiable corners.
+    + Get a variable directly from an input file with i/o redirection
+    + Make 64 bit compilation the standard
+    + On Windows VisualStudio compilation we support only VS2019
+    + Add function 'conj'
+    + Improved error messages for 'meas' command
+    + Improved PSPICE compatibility
+    + VDMOS model now allows electro-thermal simulation
+      Optionally (instance flag 'thermal') 2 thermal nodes tj and tcase are added
+      to the device instance
+    + Enable utf-8 and UNICODE for string handling (maybe switch off by --disable-utf8)
+    + Vastly redisigned plotting capability: vertical text for labeling y axis,
+      independent color selection for background, grid/text and graphs,
+      independent width selection for grid and graph, access to UNICODE fonts,
+      characters may become ticmarks (variable 'ticchar'), RGB color tables included,
+      variable 'nolegend' switches off the legend
+    + Add variables 'oscompiled'
+    + Command 'let' to allow default low and high indices
+    + Upon calculating the operating point, true gmin stepping added
+    + Free the internal control structure memory by sending ngSpice_Command(NULL)
+    + No interrupt handling (SIGINT) in shared ngspice
+    + Limit the exp function to exp(14)
+    + Event simulation output data may be selected by command 'setplot'
+    + Many conde updates not visible to the user, but enhancing stability
+      and efficiency
 
 - Bug fixes:
-    + several bug fixes
-    + lots of memory leaks removed, especially when XSPICE circuits are called several
-      times in a loop.
+    + many bugs fixed and code improvements (see bugs 427 and up)
+    + memory leaks removed
 
 
  2.3.  What does it look like?
@@ -307,10 +329,11 @@
 
  3.1.  What systems are supported?
 
-  Ngspice is written in C, and uses some GNU extensions, then you need
-  a GNU C compiler and a UNIX environment to compile it. Ngspice can
+  Ngspice is written in C, and uses some GNU extensions. You may use
+  a GNU C compiler and a LINUX environment to compile it. Ngspice can
   be compiled under Windows using the mingw or cygwin environment as
-  well as MS Visual Studio.
+  well as MS Visual Studio. It will readily compile on macOS.
+  FreeBSD or Solaris will do, but are not officially supported.
 
 
  3.2.  I get errors when I try to compile the source code, why?
@@ -354,7 +377,7 @@
 
  4.4.  Disclaimer and Copyright
 
-  Copyright: Holger Vogt, 2018
+  Copyright: Holger Vogt, 2020
   License: Creative Commons Attribution Share-Alike (CC-BY-SA) v4.0.
   This document is provided as is. The information in it is not
   warranted to be correct: you use it at your own risk.
