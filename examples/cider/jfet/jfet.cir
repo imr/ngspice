@@ -31,6 +31,6 @@ QJ1 1 2 3 M_NJF AREA=1
 *.op
 .dc vgg 0.0 -2.0001 -0.1
 *.ac dec 10 1k 100g
-.print i(vnn)
+.print dc i(vss)
 
 .end

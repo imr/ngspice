@@ -110,6 +110,7 @@ Vbn 2 26 0.0v
 *.tran 0.1ns 5ns
 *.op
 .dc Vin 0.0v 5.001v 0.05v
-.print v(4)
-.options acct bypass=1 method=gear
+.print dc v(4)
+.plot dc v(4)
+.options acct bypass=1 method=gear nopage
 .end

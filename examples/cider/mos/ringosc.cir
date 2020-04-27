@@ -116,7 +116,8 @@ Vbn 2 26 0.0v
 + models concmob fieldmob bgn srh conctau
 + method ac=direct onec
 
-.tran 0.1ns 5ns
-.print v(4)
-.options acct bypass=1 method=gear
+.tran 0.1ns 20ns
+.print tran v(4)
+.plot tran v(4)
+.options acct bypass=1 method=gear nopage
 .end
