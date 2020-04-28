@@ -904,6 +904,104 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
         return rbi;
     };
 
+    std::function<duals::duald (duals::duald, duals::duald, duals::duald, duals::duald)> calc_it = [&](duals::duald T, duals::duald Vbiei, duals::duald Vbici, duals::duald Q_0, duals::duald T_f0){
+        // This function calculates Q_pT in a dual way
+        // Tr also as argument here?
+        duals::duald VT, VT_f,i_0f,i_0r, Q_p, A, I_Tf1,itf, itr, a_h, Qf, Qr, d_Q0, Q_pT, a, d_Q;
+
+        VT      = CONSTboltz * T / CHARGE;
+        VT_f    = model->HICUMmcf*VT;
+        i_0f    = here->HICUMc10_t * exp(Vbiei/VT_f);
+        i_0r    = here->HICUMc10_t * exp(Vbici/VT);
+
+        //Initial formulation of forward and reverse component of transfer current
+        Q_p     = Q_0;
+        if (T_f0 > 0.0 || Tr > 0.0) {
+            A       = 0.5*Q_0;
+            Q_p     = A+sqrt(A*A+T_f0*i_0f+Tr*i_0r);
+        }
+        I_Tf1   =i_0f/Q_p;
+        a_h     = Oich*I_Tf1;
+        itf     = I_Tf1*(1.0+a_h);
+        itr     = i_0r/Q_p;
+
+        //Initial formulation of forward transit time, diffusion, GICCR and excess b-c charge
+        Q_bf    = 0.0;
+        Tf      = T_f0;
+        Qf      = T_f0*itf;
+        // `HICQFF(itf,ick,Tf,Qf,T_fT,Q_fT,Q_bf)
+
+        //Initial formulation of reverse diffusion charge
+        Qr      = Tr*itr;
+
+        //Preparation for iteration to get total hole charge and related variables
+        l_it    = 0;
+        if(Qf > RTOLC*Q_p || a_h > RTOLC) {
+            //Iteration for Q_pT is required for improved initial solution
+            Qf      = sqrt(T_f0*itf*Q_fT);
+            Q_pT    = Q_0+Qf+Qr;
+            d_Q     = Q_pT;
+            while (abs(d_Q) >= RTOLC*abs(Q_pT) && l_it <= l_itmax) {
+                d_Q0    = d_Q;
+                I_Tf1   = i_0f/Q_pT;
+                a_h     = Oich*I_Tf1;
+                itf     = I_Tf1*(1.0+a_h);
+                itr     = i_0r/Q_pT;
+                Tf      = T_f0;
+                Qf      = T_f0*itf;
+                // `HICQFF(itf,ick,Tf,Qf,T_fT,Q_fT,Q_bf)
+                Qr      = Tr*itr;
+                if(Oich == 0.0) {
+                    a       = 1.0+(T_fT*itf+Qr)/Q_pT;
+                } else {
+                    a       = 1.0+(T_fT*I_Tf1*(1.0+2.0*a_h)+Qr)/Q_pT;
+                }
+                d_Q     = -(Q_pT-(Q_0+Q_fT+Qr))/a;
+                //Limit maximum change of Q_pT
+                a       = abs(0.3*Q_pT);
+                if(abs(d_Q) > a) {
+                    if (d_Q>=0) {
+                        d_Q     = a;
+                    } else {
+                        d_Q     = -a;
+                    }
+                }
+                Q_pT    = Q_pT+d_Q;
+                l_it    = l_it+1;
+            }
+
+            return Q_pT;
+
+            // I_Tf1   = i_0f/Q_pT;
+            // a_h     = Oich*I_Tf1;
+            // itf     = I_Tf1*(1.0+a_h);
+            // itr     = i_0r/Q_pT;
+
+            // //Final transit times, charges and transport current components
+            // Tf      = T_f0;
+            // Qf      = T_f0*itf;
+            // // `HICQFF(itf,ick,Tf,Qf,T_fT,Q_fT,Q_bf)
+            // Qr      = Tr*itr;
+
+        } //if
+
+        // //NQS effect implemented with LCR networks
+        // //Once the delay in ITF is considered, IT_NQS is calculated afterwards
+
+        // it      = itf-itr;
+
+        // //Diffusion charges for further use
+        // Qdei    = Qf;
+        // Qdci    = Qr;
+
+
+        // //High-frequency emitter current crowding (lateral NQS)
+        // Cdei    = T_f0*itf/VT;
+        // Cdci    = tr*itr/VT;
+        // Crbi    = fcrbi*(Cjei+Cjci+Cdei+Cdci);
+        // qrbi    = Crbi*V(br_bpbi_v);
+    };
+
     /*  loop through all the models */
     for (; model != NULL; model = HICUMnextModel(model)) {
 
@@ -1489,6 +1587,10 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             //todo: derivatives rci0_t, vlim_t, vces_t missing
             result      = calc_ick(here->HICUMtemp+1_e, Vciei);
             ick_dT      = result.dpart();
+
+            //Q_pT calculation (dual numbers to calculate derivative of loop?)
+            result = calc_it(here->HICUMtemp, Vbiei, Vbici, Q_0, T_f0);
+            Q_pT   = result.rpart()
 
             //Initialization
             //Transfer current, minority charges and transit times
