@@ -1578,16 +1578,29 @@ com_source(wordlist *wl)
         tempfile = smktemp("sp");
         if ((fp = inp_pathopen(tempfile, "w+")) == NULL) {
             perror(tempfile);
+            fprintf(cp_err, "    Simulation interrupted due to error!\n\n");
             cp_interactive = TRUE;
-            return;
+            /* If we cannot open the temporary file, stop all further command execution */
+#ifdef SHARED_MODULE
+            controlled_exit(1);
+#else
+            cp_evloop(NULL);
+#endif
         }
         while (wl) {
             if ((tp = inp_pathopen(wl->wl_word, "r")) == NULL) {
+                fprintf(cp_err, "Command 'source' failed:\n");
                 perror(wl->wl_word);
+                fprintf(cp_err, "    Simulation interrupted due to error!\n\n");
                 fclose(fp);
                 cp_interactive = TRUE;
                 unlink(tempfile);
-                return;
+                /* If we cannot source the file, stop all further command execution */
+#ifdef SHARED_MODULE
+                controlled_exit(1);
+#else
+                cp_evloop(NULL);
+#endif
             }
             while ((n = fread(buf, 1, BSIZE_SP, tp)) > 0)
                 fwrite(buf, 1, n, fp);
@@ -1600,8 +1613,16 @@ com_source(wordlist *wl)
     }
 
     if (fp == NULL) {
+        fprintf(cp_err, "Command 'source' failed:\n");
         perror(wl->wl_word);
+        fprintf(cp_err, "    Simulation interrupted due to error!\n\n");
         cp_interactive = TRUE;
+        /* If we cannot source the file, stop all further command execution */
+#ifdef SHARED_MODULE
+        controlled_exit(1);
+#else
+        cp_evloop(NULL);
+#endif
         return;
     }
 
