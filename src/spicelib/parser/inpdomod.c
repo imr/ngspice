@@ -659,7 +659,7 @@ char *INPdomodel(CKTcircuit *ckt, struct card *image, INPtables * tab)
       /* look for this model type and put it in the table of models */
       type = INPtypelook(type_name);
       if(type < 0) {
-	err = tprintf("Unknown model type %s - ignored\n", type_name);
+	err = tprintf("Unknown model type %s - ignored\n\n", type_name);
 
 #ifdef TRACE
 	printf("In INPdomodel, ignoring unknown model typ typename = %s . . .\n", type_name);
