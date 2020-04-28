@@ -602,7 +602,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Ibpci, Ibpci_Vbpci;
     double Isici, Isici_Vsici;
     double Isc,   Isc_Vsc;
-    double Iciei, Iciei_Vbiei, Iciei_Vbici;
+    double Iciei, Iciei_Vbiei, Iciei_Vbici, Iciei_Vciei, Iciei_dT;
     double Ibbp_Vbbp;
     double Isis_Vsis;
     double Ieie, Ieie_Veie;
@@ -706,9 +706,9 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
         duals::duald FFdQcfcT, FFic, FFw, FFdTcfcT;
         vt = CONSTboltz * T / CHARGE;
         if(itf < 1.0e-6*I_CK){
-            Q_fT            = Q_f;
-            T_fT            = T_f;
-            Q_bf            = 0;
+            *Q_fT            = *Q_f;
+            *T_fT            = *T_f;
+            *Q_bf            = 0;
         } else {
             FFitf_ick = itf/I_CK;
             FFdTef  = here->HICUMtef0_t*exp(model->HICUMgtfe*log(FFitf_ick));
@@ -1635,7 +1635,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             //begin final transfer current calculations -> itf, itr, Qf, Qr------------
             calc_it_final(here->HICUMtemp+1_e, Vbiei    , Vbici    , Q_pT    , T_f0    , ick    , &result_itf, &result_itr, &result_Qf, &result_Qr);
             itf    = result_itf.rpart();
-            itr    = result_itf.rpart();
+            itr    = result_itr.rpart();
             Qf     = result_Qf.rpart();
             Qr     = result_Qr.rpart();
             itf_dT = result_itf.dpart();
@@ -1693,7 +1693,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             Qf_Vciei  += Qf_dQ_pT*Q_pT_dVciei;
             Qr_Vciei  += Qr_dQ_pT*Q_pT_dVciei;
  
- 
             // add derivatives of T_f0 = f(Vbici, T)
             itf_Vbici += itf_dick*T_f0_Vbici;
             itr_Vbici += itr_dick*T_f0_Vbici;
@@ -1716,6 +1715,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             Qf_dT     += Qf_dick*ick_dT;
             Qr_dT     += Qr_dick*ick_dT;
 
+            // finally the transfer current
             it       = itf-itr;
             it_ditf  = 1;
             it_ditr  = -1;
@@ -1751,7 +1751,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             //HICCR: }
 
             //Internal base current across b-c junction
-            //TODO
+            //TODO ibcis_t
             hicum_diode(here->HICUMtemp,here->HICUMibcis_t,model->HICUMmbci, Vbici, &ibci, &ibci_Vbci, &ibci_dT);
 
             //Avalanche current
@@ -1962,9 +1962,11 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
             Isici       = model->HICUMtype*ijsc;
 
-            Iciei       =  model->HICUMtype*(Itxf - itr);
-            Iciei_Vbiei =  model->HICUMtype*itf_Vbiei;
-            Iciei_Vbici = -model->HICUMtype*itr_Vbici;
+            Iciei       =  model->HICUMtype*it;
+            Iciei_Vbiei =  model->HICUMtype*it_Vbiei;
+            Iciei_Vbici =  model->HICUMtype*it_Vbici;
+            Iciei_Vciei =  model->HICUMtype*it_Vciei;
+            Iciei_dT    =  model->HICUMtype*it_Vciei;
 
 //printf("Vbiei: %f Vbici: %f Vciei: %f Vbpei: %f Vbpci: %f Vbci: %f Vsici: %f\n", Vbiei, Vbici, Vciei, Vbpei, Vbpci, Vbci, Vsici);
 //printf("Ibiei: %g Ibici: %g Ibpei: %g Iciei: %g\n",Ibiei,Ibici,Ibpei,Iciei);
@@ -2400,6 +2402,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             *(ckt->CKTstate0 + here->HICUMiciei)       = Iciei;
             *(ckt->CKTstate0 + here->HICUMiciei_Vbiei) = Iciei_Vbiei;
             *(ckt->CKTstate0 + here->HICUMiciei_Vbici) = Iciei_Vbici;
+            //todo: Iciei_Vciei and Iciei_dT put here
 
             *(ckt->CKTstate0 + here->HICUMibici)       = Ibici;
             *(ckt->CKTstate0 + here->HICUMibici_Vbici) = Ibici_Vbici;
