@@ -668,7 +668,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Ibpbi, Ibpbi_Vbpbi, Ibpbi_Vbici, Ibpbi_Vbiei;
     double Ibpsi, Ibpsi_Vbpci, Ibpsi_Vsici;
     double Icic_Vcic;
-    double Ibci,  Ibci_Vbci, Ibci_dT;
+    double ibci_Vbci, ibci_dT;
     double hjei_vbe_Vbiei, hjei_vbe_dT, ibet_Vbpei=0.0, ibet_dT=0, ibet_Vbiei=0.0, ibh_rec_Vbiei;
     double irei_Vbiei, irei_dT;
     double ibep_Vbpei, ibep_dT;
@@ -740,6 +740,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Ith_Veie;
     double Ith_Vcic;
     double Ith_Vbbp;
+    double dummy_1, dummy_2; //for debugging
 
     //declaration of lambda functions -----------------------------------
 
@@ -1430,8 +1431,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             hicum_diode(here->HICUMtemp,here->HICUMibeis_t,model->HICUMmbei, Vbiei, &ibei, &ibei_Vbiei, &ibei_dT);
             hicum_diode(here->HICUMtemp,here->HICUMireis_t,model->HICUMmrei, Vbiei, &irei, &irei_Vbiei, &irei_dT);
 
-
-
             //Internal b-e and b-c junction capacitances and charges
             //QJMODF(here->HICUMvt,cjei0_t,vdei_t,model->HICUMzei,ajei_t,V(br_biei),Qjei)
             //Cjei    = ddx(Qjei,V(bi));
@@ -1619,7 +1618,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
             //Internal base current across b-c junction
             //TODO
-            hicum_diode(here->HICUMtemp,here->HICUMibcis_t,model->HICUMmbci, Vbici, &Ibci, &Ibci_Vbci, &Ibci_dT);
+            hicum_diode(here->HICUMtemp,here->HICUMibcis_t,model->HICUMmbci, Vbici, &ibci, &ibci_Vbci, &ibci_dT);
 
             //Avalanche current
             result      = calc_iavl(Vbici+1_e, Cjci    , itf);
@@ -1806,6 +1805,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             Ibpei_Vbpei += model->HICUMtype*irep_Vbpei;
 
             Ibiei        = model->HICUMtype*ibei;
+            Ibiei_Vbiei  = model->HICUMtype*ibei_Vbiei;
             Ibiei       += model->HICUMtype*irei;
             Ibiei_Vbiei += model->HICUMtype*irei_Vbiei;
             Ibiei       += model->HICUMtype*ibh_rec;
@@ -1904,8 +1904,12 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 Ibpbi_Vbpbi = 1 / rbi;
                 Ibpbi = Vbpbi / rbi;
             } else {
+                // Makrus: why this???
                 Ibpbi_Vbpbi = 1 / MIN_R;
                 Ibpbi = Vbpbi / MIN_R;
+
+                // Ibpbi = 0;
+                // Ibpbi_Vbpbi = 0;
             }
             Ibpbi_Vbiei = -Vbpbi * rbi_Vbiei / (rbi*rbi);
             Ibpbi_Vbici = -Vbpbi * rbi_Vbici / (rbi*rbi);
@@ -2125,10 +2129,10 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                     Isici += *(ckt->CKTstate0 + here->HICUMcqjs);
 
 //            Ibci       += ddt(model->HICUMtype*qjcx0_t_i);
-                    error = NIintegrate(ckt,&geq,&ceq,Cjcx_i,here->HICUMqjcx0_i);
-                    if(error) return(error);
-                    Ibci_Vbci = geq;
-                    Ibci = *(ckt->CKTstate0 + here->HICUMcqcx0_t_i);
+                    // error = NIintegrate(ckt,&geq,&ceq,Cjcx_i,here->HICUMqjcx0_i);
+                    // if(error) return(error);
+                    // Ibci_Vbci = geq;
+                    // Ibci = *(ckt->CKTstate0 + here->HICUMcqcx0_t_i);
 
 //            Ibpci      += ddt(model->HICUMtype*(qjcx0_t_ii+Qdsu));
                     error = NIintegrate(ckt,&geq,&ceq,Cjcx_ii,here->HICUMqjcx0_ii);
@@ -2398,13 +2402,13 @@ c           Branch: ciei, Stamp element: It
 /*
 c           Branch: bci, Stamp element: Qbcx
 */
-            rhs_current = model->HICUMtype * (Ibci - Ibci_Vbci*Vbci);
+            rhs_current = model->HICUMtype * (ibci - ibci_Vbci*Vbci);
             *(ckt->CKTrhs + here->HICUMbaseNode)   += -rhs_current;
-            *(here->HICUMbaseBasePtr)              +=  Ibci_Vbci;
-            *(here->HICUMbaseCollCIPtr)            += -Ibci_Vbci;
+            *(here->HICUMbaseBasePtr)              +=  ibci_Vbci;
+            *(here->HICUMbaseCollCIPtr)            += -ibci_Vbci;
             *(ckt->CKTrhs + here->HICUMcollCINode) +=  rhs_current;
-            *(here->HICUMcollCIBasePtr)            += -Ibci_Vbci;
-            *(here->HICUMcollCICollCIPtr)          +=  Ibci_Vbci;
+            *(here->HICUMcollCIBasePtr)            += -ibci_Vbci;
+            *(here->HICUMcollCICollCIPtr)          +=  ibci_Vbci;
 /*
 c           Branch: bpci, Stamp element: Ijbcx
 */

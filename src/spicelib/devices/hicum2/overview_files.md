@@ -31,6 +31,12 @@ This file gives an overview of the files needed for the ngspice HiCUM version, e
 # hicum2temp.c
     * Temperature scaling of all parameters
     * Models are implemented, missing are the derivatives
-    * As most models are easy and just temperature dependent -> no dual numbers
+    * As most models are easy and just temperature dependent -> no dual numbers -> Markus: I disagree
     * Assignee: Mario
 # hicum2trunc.c
+
+# Working in the DC case without self heating:
+See test case in DMT where this is compared against ADS.
+- re
+- Ibiei
+- Ibici

@@ -25,6 +25,7 @@ IFparm HICUMpTable[] = { /* parameters */
  IOPU("temp",    HICUM_TEMP,   IF_REAL,    "Instance temperature"),
  IOPUR("tk",     HICUM_QUEST_TK,     IF_REAL,    "Actual device temperature"),
  IOPU("dtsh",    HICUM_QUEST_DTSH,   IF_REAL,    "Temperature increase due to self-heating"),
+ IOPU("it",    HICUM_QUEST_IT,   IF_REAL,    "transfer current"),
 
  OPU("collnode", HICUM_QUEST_COLLNODE, IF_INTEGER, "Number of collector node"),
  OPU("basenode", HICUM_QUEST_BASENODE, IF_INTEGER, "Number of base node"),
@@ -47,6 +48,8 @@ IFparm HICUMpTable[] = { /* parameters */
  OP("ic",     HICUM_QUEST_CC,    IF_REAL, "Collector current"),
  OP("iavl",   HICUM_QUEST_CAVL,  IF_REAL, "Avalanche current"),
  OP("ib",     HICUM_QUEST_CB,    IF_REAL, "Base current"),
+ OP("ibei",   HICUM_QUEST_CBEI,    IF_REAL, "Intenral Base Emitter current"),
+ OP("ibci",   HICUM_QUEST_CBCI,    IF_REAL, "Internal Base Collector current"),
  OP("ie",     HICUM_QUEST_CE,    IF_REAL, "Emitter current"),
  OP("is",     HICUM_QUEST_CS,    IF_REAL, "Substrate current"),
 /* resistances */

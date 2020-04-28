@@ -125,6 +125,9 @@ HICUMask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFval
         case HICUM_QUEST_RE_T:
             value->rValue = here->HICUMre_t;
             return(OK);
+        case HICUM_QUEST_IT:
+            value->rValue = *(ckt->CKTstate0 + here->HICUMiciei);
+            return(OK);
         case HICUM_QUEST_RBI:
             value->rValue = here->HICUMrbi;
             return(OK);
@@ -203,6 +206,12 @@ HICUMask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFval
 /* transit time */
         case HICUM_QUEST_TF:
             value->rValue = here->HICUMtf;
+            return(OK);
+        case HICUM_QUEST_CBEI:
+            value->rValue = *(ckt->CKTstate0 + here->HICUMibiei);
+            return(OK);
+        case HICUM_QUEST_CBCI:
+            value->rValue = *(ckt->CKTstate0 + here->HICUMibici);
             return(OK);
         case HICUM_QUEST_FT:
             // FT = GMi/(2*`M_PI*(CPIi+CPIx+CMUi+CMUx+(rcx_t+re_t+(re_t+rb)/BETAAC)*GMi*(CMUi+CMUx)));

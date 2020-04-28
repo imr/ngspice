@@ -1003,6 +1003,7 @@ enum {
 /* resistances */
     HICUM_QUEST_RCX_T,
     HICUM_QUEST_RE_T,
+    HICUM_QUEST_IT,
     HICUM_QUEST_RBI,
     HICUM_QUEST_RB,
 /* transconductances and capacitances */
@@ -1024,6 +1025,8 @@ enum {
 /* transit time */
     HICUM_QUEST_TF,
     HICUM_QUEST_FT,
+    HICUM_QUEST_CBEI,
+    HICUM_QUEST_CBCI,
 /* power */
     HICUM_QUEST_POWER,
 };
