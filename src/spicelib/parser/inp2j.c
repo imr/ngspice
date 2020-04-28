@@ -34,7 +34,6 @@ void INP2J(CKTcircuit *ckt, INPtables * tab, struct card *current)
     INPmodel *thismodel;	/* pointer to model description for user's model */
     GENmodel *mdfast;		/* pointer to the actual model */
     IFuid uid;			/* uid of default model */
-    char* errormsg;
 
     line = current->line;
     INPgetNetTok(&line, &name, 1);
@@ -47,9 +46,12 @@ void INP2J(CKTcircuit *ckt, INPtables * tab, struct card *current)
     INPtermInsert(ckt, &nname3, tab, &node3);
     INPgetNetTok(&line, &model, 1);
     INPinsert(&model, tab);
-    errormsg = INPgetMod(ckt, model, &thismodel, tab);
+    char *errormsg = INPgetMod(ckt, model, &thismodel, tab);
+    /* If ft_usedefmodel, just issue a warning and continue 
+       with default model parameters */
     if (ft_usedefmodel)
         current->warning = errormsg;
+    /* If current->error is set, ngspice will stop */
     else
         current->error = errormsg;
     if (thismodel != NULL) {

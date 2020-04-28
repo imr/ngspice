@@ -49,7 +49,14 @@ void INP2D(CKTcircuit *ckt, INPtables * tab, struct card *current)
     INPtermInsert(ckt, &nname2, tab, &node2);
     INPgetNetTok(&line, &model, 1);
     INPinsert(&model, tab);
-    current->error = INPgetMod(ckt, model, &thismodel, tab);
+    char* errormsg = INPgetMod(ckt, model, &thismodel, tab);
+    /* If ft_usedefmodel, just issue a warning and continue
+       with default model parameters */
+    if (ft_usedefmodel)
+        current->warning = errormsg;
+    /* If current->error is set, ngspice will stop */
+    else
+        current->error = errormsg;
     if (thismodel != NULL) {
 	if ((mytype != thismodel->INPmodType)
 

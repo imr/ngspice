@@ -1158,7 +1158,7 @@ inp_dodeck(
 #endif
 
         if (dd->warning) {
-            out_printf("Caution for line %d :\n  %s\n%s\n",
+            out_printf("Warning for line %d:\n  %s\n%s\n",
                 dd->linenum_orig, dd->line, dd->warning);
         }
 
