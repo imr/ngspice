@@ -75,6 +75,7 @@ INP2M(CKTcircuit *ckt, INPtables *tab, struct card *current)
     for (i = 0; ; i++) {
         char *token;
         INPgetNetTok(&line, &token, 1);
+
         if (i >= 3) {
             txfree(INPgetMod(ckt, token, &thismodel, tab));
 
@@ -92,6 +93,12 @@ INP2M(CKTcircuit *ckt, INPtables *tab, struct card *current)
             return;
         }
         INPtermInsert(ckt, &token, tab, &node[i]);
+    }
+
+    /* We have at least 4 nodes, except for VDMOS */
+    if (i == 3 && thismodel->INPmodType != INPtypelook("VDMOS")) {
+        LITERR("not enough nodes");
+        return;
     }
 
     int model_numnodes_ = model_numnodes(thismodel->INPmodType);
