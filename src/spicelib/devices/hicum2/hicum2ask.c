@@ -89,6 +89,18 @@ HICUMask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFval
         case HICUM_QUEST_VSC:
             value->rValue = *(ckt->CKTstate0 + here->HICUMcollNode)-*(ckt->CKTstate0 + here->HICUMsubsNode);
             return(OK);
+        case HICUM_QUEST_VBIEI:
+            value->rValue = *(ckt->CKTstate0 + here->HICUMvbiei);
+            return(OK);
+        case HICUM_QUEST_VBPBI:
+            value->rValue = *(ckt->CKTstate0 + here->HICUMvbpbi);
+            return(OK);
+        case HICUM_QUEST_VBICI:
+            value->rValue = *(ckt->CKTstate0 + here->HICUMvbici);
+            return(OK);
+        case HICUM_QUEST_VCIEI:
+            value->rValue = *(ckt->CKTstate0 + here->HICUMvbiei) - *(ckt->CKTstate0 + here->HICUMvbici);
+            return(OK);
 /* currents */
         case HICUM_QUEST_CC:
             value->rValue = 0.0;

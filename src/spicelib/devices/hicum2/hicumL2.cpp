@@ -554,6 +554,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Orci0_t,b_q,I_Tf1,T_f0,Q_fT,T_fT,Q_bf;
     double a_h,d_Q;
     double volatile Q_pT, Q_pT_dVbiei, Q_pT_dVbici, Q_pT_dT, Q_pT_dick, Q_pT_dT_f0, Q_pT_dQ_0, Q_pT_dVciei;
+    double volatile Q_pT_dT_numerical, Q_pT_dVbiei_numerical, Q_pT_dVbici_numerical, Q_pT_dQ_0_numerical, Q_pT_dT_f0_numerical, Q_pT_dick_numerical;
     double Qf, Cdei, Qr, Cdci;
     double ick, ick_Vciei, ick_dT,vc,cjcx01,cjcx02;
     int l_it;
@@ -1617,6 +1618,20 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             result      = calc_it(here->HICUMtemp    , Vbiei    , Vbici    , Q_0    , T_f0    , ick+1_e);
             Q_pT_dick   = result.dpart();
 
+            //check derivatives numerically (delete ones everything works....)
+            result                = calc_it(here->HICUMtemp+1e-3, Vbiei    , Vbici    , Q_0    , T_f0    , ick    );
+            Q_pT_dT_numerical     = (result.rpart() - Q_pT)/1e-3;
+            result                = calc_it(here->HICUMtemp, Vbiei +1e-3   , Vbici    , Q_0    , T_f0    , ick    );
+            Q_pT_dVbiei_numerical = (result.rpart() - Q_pT)/1e-3;
+            result                = calc_it(here->HICUMtemp, Vbiei   , Vbici  +1e-3   , Q_0    , T_f0    , ick    );
+            Q_pT_dVbici_numerical = (result.rpart() - Q_pT)/1e-3;
+            result                = calc_it(here->HICUMtemp, Vbiei   , Vbici   , Q_0  +Q_0*1e-3    , T_f0    , ick    );
+            Q_pT_dQ_0_numerical = (result.rpart() - Q_pT)/(Q_0*1e-3);
+            result                = calc_it(here->HICUMtemp, Vbiei   , Vbici   , Q_0  , T_f0  +T_f0*1e-3      , ick    );
+            Q_pT_dT_f0_numerical = (result.rpart() - Q_pT)/(T_f0*1e-3) ;
+            result                = calc_it(here->HICUMtemp, Vbiei   , Vbici   , Q_0  , T_f0      , ick   +ick*1e-3   );
+            Q_pT_dick_numerical = (result.rpart() - Q_pT)/(ick*1e-3);
+
             //add derivatives of ick 
             Q_pT_dVciei = Q_pT_dick*ick_Vciei; //additional component not seen in equivalent circuit of HiCUM...jesus
             Q_pT_dT    += Q_pT_dick*ick_dT;
@@ -1965,7 +1980,12 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             Iciei       =  model->HICUMtype*it;
             Iciei_Vbiei =  model->HICUMtype*it_Vbiei;
             Iciei_Vbici =  model->HICUMtype*it_Vbici;
-            Iciei_Vciei =  model->HICUMtype*it_Vciei;
+            Iciei_Vciei =  model->HICUMtype*it_Vciei; 
+            //remap Iciei_Vciei to Vbiei Vbici Vce = Vbe-Vbc 
+            //dVce/dVbe=1 dVce/dVbc=-1
+            //=> dx/dVceÜ
+            Iciei_Vbiei += Iciei_Vciei*double(1);
+            Iciei_Vbici += Iciei_Vciei*double(-1); //like that Dietmar?
             Iciei_dT    =  model->HICUMtype*it_Vciei;
 
 //printf("Vbiei: %f Vbici: %f Vciei: %f Vbpei: %f Vbpci: %f Vbci: %f Vsici: %f\n", Vbiei, Vbici, Vciei, Vbpei, Vbpci, Vbci, Vsici);
