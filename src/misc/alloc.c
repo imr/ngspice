@@ -180,7 +180,7 @@ static inline int product_overflow(size_t a, size_t b, size_t *p_n)
     return 0;
 } /* end of function product_overflow */
 
-
+#if 0
 /* Print error related to allocating a product that cannot fit in a
  * size_t and exit. This function does not return. */
 static void overflow_error(size_t num, size_t size)
@@ -194,5 +194,6 @@ static void overflow_error(size_t num, size_t size)
     exit(EXIT_FAILURE);
 #endif
 } /* end of function overflow_error */
+#endif
 
 #endif /* #ifndef HAVE_LIBGC */
