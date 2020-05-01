@@ -44,9 +44,10 @@ clean:
 
 #-----------------------------------------------------------------------------
 NGSRCDIR = $(srcdir)/../..
+NGSRCBUILDDIR = $(CURDIR)/../..
 
 dstring.o: $(NGSRCDIR)/misc/dstring.c $(NGSRCDIR)/include/ngspice/dstring.h
-	$(CC) $(CFLAGS) -I$(NGSRCDIR)/include -fPIC -o $@ -c $<
+	$(CC) $(CFLAGS) -I$(NGSRCDIR)/include -I$(NGSRCBUILDDIR)/include -fPIC -o $@ -c $<
 
 ifdef cm
 
