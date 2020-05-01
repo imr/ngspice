@@ -206,7 +206,7 @@ NIpzMuller(PZtrial **set, PZtrial *newtry)
 int
 NIpzSym2(PZtrial **set, PZtrial *new)
 {
-    double	a, b, c, x0, x1;
+    double	a, b, c, x0;
     double	dx0, dx1, d2x, diff;
     double	disc;
     int		a_mag, b_mag, c_mag;
@@ -227,8 +227,8 @@ NIpzSym2(PZtrial **set, PZtrial *new)
     dx1 = set[2]->s.real - set[1]->s.real;
 
     x0 = (set[0]->s.real + set[1]->s.real) / 2.0;
-    x1 = (set[1]->s.real + set[2]->s.real) / 2.0;
-    /* d2x = x1 - x0; */
+  /*  x1 = (set[1]->s.real + set[2]->s.real) / 2.0;
+      d2x = x1 - x0; */
     d2x = (set[2]->s.real - set[0]->s.real) / 2.0;
 
     zaddeq(&a, &a_mag, set[1]->f_def.real, set[1]->mag_def,
