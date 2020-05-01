@@ -72,12 +72,12 @@
 
     R3 2 3 1k
     R4 3 4 5k
-    C3 4 0 0.5u $ 0.15u
+    C3 4 0 0.5u ; 0.15u
     X2 4  1  res  6  4  3  2 ua555
 *      TR O  R    F  TH D  V
-    RA 2 17 1k $ 5k
-    RB 17 16 5k $ 3k
-    C 16 0 0.5u $ 0.15u
+    RA 2 17 1k ; 5k
+    RB 17 16 5k ; 3k
+    C 16 0 0.5u ; 0.15u
     RL 2 13 1k
     X1 16    15   16   res   13  17   2   0   TLC555
 *      THRES CONT TRIG RESET OUT DISC VCC GND
