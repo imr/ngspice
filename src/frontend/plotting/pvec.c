@@ -83,7 +83,7 @@ pvec(struct dvec *d)
 
     if (d->v_numdims > 1) {
         dimstring(d->v_dims, d->v_numdims, buf3);
-        sprintf(buf2, ", dims = [%s]", buf3);
+        snprintf(buf2, BSIZE_SP, ", dims = [%s]", buf3);
         strcat(buf, buf2);
     }
 
