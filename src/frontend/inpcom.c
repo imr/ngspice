@@ -181,11 +181,6 @@ static void pspice_compat_a(struct card *oldcard);
 static struct card *ltspice_compat(struct card *oldcard);
 static void ltspice_compat_a(struct card *oldcard);
 
-#if defined(__MINGW32__) || defined(_MSC_VER)
-#ifndef EXT_ASC
-static int newstat(const char *name, struct _stat *st);
-#endif
-#endif
 #ifndef EXT_ASC
 static void utf8_syntax_check(struct card *deck);
 #endif
@@ -1025,7 +1020,7 @@ struct inp_read_t inp_read( FILE *fp, int call_depth, const char *dir_name,
             }
 
             /* Fix the buffer up a bit. */
-            (void) strncpy(buffer + 1, "end of: ", 8);
+            (void) memcpy(buffer + 1, "end of: ", 8);
         } /*  end of .include handling  */
 
         /* loop through 'buffer' until end is reached. Make all letters lower
@@ -4743,7 +4738,7 @@ static void inp_compat(struct card *card)
                     NULL) {
                 if (str_ptr[5] == '=')
                     *str_ptr++ = ' ';
-                strncpy(str_ptr, " vol=", 5);
+                memcpy(str_ptr, " vol=", 5);
             }
             /* Exxx n1 n2 TABLE {expression} = (x0, y0) (x1, y1) (x2, y2)
                -->
@@ -4901,7 +4896,7 @@ static void inp_compat(struct card *card)
                     NULL) {
                 if (str_ptr[5] == '=')
                     *str_ptr++ = ' ';
-                strncpy(str_ptr, " cur=", 5);
+                memcpy(str_ptr, " cur=", 5);
             }
 
             /* Gxxx n1 n2 TABLE {expression} = (x0, y0) (x1, y1) (x2, y2)
