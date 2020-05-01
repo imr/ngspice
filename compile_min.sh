@@ -1,16 +1,13 @@
 #!/bin/bash
-# ngspice build script for MINGW-w64, release version, 32 or 64 bit
+# ngspice build script for MINGW-w64, release or debug version, 64 bit
 # compile_min.sh
 
 #Procedure:
-# Install MSYS, plus bison, flex, auto tools, perl, libiconv, libintl
-# Install MINGW-w64, activate OpenMP support
-#     See either http://mingw-w64.sourceforge.net/ or http://tdm-gcc.tdragon.net/
+# Install MSYS2, plus gcc 64 bit, libtool, autoconf, automake, bison, git, and make
+#     See either https://github.com/orlp/dev-on-windows/wiki/Installing-GCC--&-MSYS2
 #     (allows to generate either 32 or 64 bit executables by setting flag -m32 or -m64)
-# set path to compiler in msys/xx/etc/fstab (e.g. c:/MinGW64 /mingw)
 # start compiling with
-# './compile_min.sh 32' or './compile_min.sh'
-# As an (more recent) alternative install MSYS2 and the tools cited above.
+# './compile_min.sh' for release or './compile_min.sh d' for debug version.
 
 # Options:
 # --adms and --enable-adms will install extra HICUM, EKV and MEXTRAM models via the 
@@ -27,10 +24,10 @@
 
 SECONDS=0
 
-if test "$1" = "32"; then
-   if [ ! -d "release32" ]; then
-      mkdir release32
-      if [ $? -ne 0 ]; then  echo "mkdir release32 failed"; exit 1 ; fi
+if test "$1" = "d"; then
+   if [ ! -d "debug" ]; then
+      mkdir debug
+      if [ $? -ne 0 ]; then  echo "mkdir debug failed"; exit 1 ; fi
    fi   
 else
    if [ ! -d "release" ]; then
@@ -50,20 +47,20 @@ if [ $? -ne 0 ]; then  echo "./autogen.sh failed"; exit 1 ; fi
 #if [ $? -ne 0 ]; then  echo "./autogen.sh failed"; exit 1 ; fi
 
 echo
-if test "$1" = "32"; then
-   cd release32
-   if [ $? -ne 0 ]; then  echo "cd release32 failed"; exit 1 ; fi
-  echo "configuring for 32 bit"
+if test "$1" = "d"; then
+   cd debug
+   if [ $? -ne 0 ]; then  echo "cd debug failed"; exit 1 ; fi
+  echo "configuring for 64 bit debug"
   echo
 # You may add  --enable-adms to the following command for adding adms generated devices 
-  ../configure --with-wingui --enable-xspice --enable-cider --enable-openmp --disable-debug prefix="C:/Spice" CFLAGS="-D__USE_MINGW_ANSI_STDIO=1 -m32 -O2" LDFLAGS="-m32 -s"
+  ../configure --with-wingui --enable-xspice --enable-cider --enable-openmp prefix="C:/Spice64d" CFLAGS="-g -m64 -O0 -Wall -Wno-unused-but-set-variable" LDFLAGS="-g -m64"
 else
    cd release
    if [ $? -ne 0 ]; then  echo "cd release failed"; exit 1 ; fi
-  echo "configuring for 64 bit"
+  echo "configuring for 64 bit release"
   echo
 # You may add  --enable-adms to the following command for adding adms generated devices 
-  ../configure --with-wingui --enable-xspice --enable-cider --enable-openmp --disable-debug prefix="C:/Spice64" CFLAGS="-D__USE_MINGW_ANSI_STDIO=1 -m64 -O2" LDFLAGS="-m64 -s"
+  ../configure --with-wingui --enable-xspice --enable-cider --enable-openmp --disable-debug prefix="C:/Spice64" CFLAGS="-m64 -O2" LDFLAGS="-m64 -s"
 fi
 if [ $? -ne 0 ]; then  echo "../configure failed"; exit 1 ; fi
 
