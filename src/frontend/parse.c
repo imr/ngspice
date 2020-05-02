@@ -88,7 +88,7 @@ checkvalid(struct pnode *pn)
                             pn->pn_value->v_name);
                 else
                     fprintf(cp_err,
-                            "Error(parse.c--checkvalid): %s: no such vector.\n",
+                            "Error(parse.c--checkvalid): %s: zero length vector.\n",
                             pn->pn_value->v_name);
                 return (FALSE);
             }
