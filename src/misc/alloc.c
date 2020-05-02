@@ -152,7 +152,7 @@ txfree(const void *ptr)
 #endif
 } /* end of function txfree */
 
-
+#if 0
 /* This function returns the product of a and b if it does not overflow.
  *
  * Return codes
@@ -180,7 +180,7 @@ static inline int product_overflow(size_t a, size_t b, size_t *p_n)
     return 0;
 } /* end of function product_overflow */
 
-#if 0
+
 /* Print error related to allocating a product that cannot fit in a
  * size_t and exit. This function does not return. */
 static void overflow_error(size_t num, size_t size)
