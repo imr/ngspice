@@ -1,15 +1,15 @@
 #!/bin/bash
-# ngspice build script for Linux, release or debug version, 64 bit
-# compile_linux.sh <d>
+# ngspice build script for macOS, release or debug version, 64 bit
+# compile_macos.sh <d>
 
 # Procedure:
-# Install gcc, bison, flex, libtool, autoconf, automake, 
+# Install gcc, bison, flex, libtool, autoconf, automake,
 # libx11 and libx11-dev (headers), libXaw and libXaw-dev, libreadline and dev
 # Declare 'compile_linux.sh' executable and start compiling with
-# './compile_linux.sh' or './compile_linux.sh d' from the ngspice directory.
+# './compile_macos.sh' or './compile_macos.sh d' from the ngspice directory.
 # Options:
-# --adms and --enable-adms will install extra HICUM, EKV and MEXTRAM models via the 
-# adms interface. You need to download and install the *.va files via ng-adms-va.tgz 
+# --adms and --enable-adms will install extra HICUM, EKV and MEXTRAM models via the
+# adms interface. You need to download and install the *.va files via ng-adms-va.tgz
 # Please see the ngspice manual, chapt. 13, for more info on adms.
 # CIDER, XSPICE, and OpenMP may be selected at will.
 # --disable-debug will give O2 optimization (versus O0 for debug) and removes all debugging info.
@@ -25,7 +25,7 @@ if test "$1" = "d"; then
    if [ ! -d "debug" ]; then
       mkdir debug
       if [ $? -ne 0 ]; then  echo "mkdir debug failed"; exit 1 ; fi
-   fi   
+   fi
 else
    if [ ! -d "release" ]; then
       mkdir release
@@ -49,15 +49,15 @@ if test "$1" = "d"; then
    if [ $? -ne 0 ]; then  echo "cd debug failed"; exit 1 ; fi
   echo "configuring for 64 bit debug"
   echo
-# You may add  --enable-adms to the following command for adding adms generated devices 
-  ../configure --with-x --enable-xspice --enable-cider --with-readline=yes --enable-openmp CFLAGS="-g -m64 -O0 -Wall -Wno-unused-but-set-variable" LDFLAGS="-m64 -g"
+# You may add  --enable-adms to the following command for adding adms generated devices
+  ../configure --with-x --enable-xspice --enable-cider --with-readline=yes --enable-openmp CFLAGS="-m64 -O0 -g -Wall -I/opt/X11/include/freetype2" LDFLAGS="-m64 -lomp -g"
 else
    cd release
    if [ $? -ne 0 ]; then  echo "cd release failed"; exit 1 ; fi
   echo "configuring for 64 bit release"
   echo
-# You may add  --enable-adms to the following command for adding adms generated devices 
-  ../configure --with-x --enable-xspice --enable-cider --with-readline=yes --enable-openmp --disable-debug CFLAGS="-m64 -O2" LDFLAGS="-m64 -s"
+# You may add  --enable-adms to the following command for adding adms generated devices
+  ../configure --with-x --enable-xspice --enable-cider --with-readline=yes --enable-openmp --disable-debug CFLAGS="-m64 -O2 -I/opt/X11/include/freetype2" LDFLAGS="-m64 -lomp"
 fi
 if [ $? -ne 0 ]; then  echo "../configure failed"; exit 1 ; fi
 
@@ -73,7 +73,7 @@ exitcode=${PIPESTATUS[0]}
 if [ $exitcode -ne 0 ]; then  echo "make failed"; exit 1 ; fi
 # Install to /usr/local
 echo "installing (see make_install.log)"
-make install 2>&1 | tee make_install.log 
+make install 2>&1 | tee make_install.log
 exitcode=${PIPESTATUS[0]}
 if [ $exitcode -ne 0 ]; then  echo "make install failed"; exit 1 ; fi
 
