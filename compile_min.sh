@@ -74,7 +74,7 @@ echo "compiling (see make.log)"
 make 2>&1 -j8 | tee make.log
 exitcode=${PIPESTATUS[0]}
 if [ $exitcode -ne 0 ]; then  echo "make failed"; exit 1 ; fi
-# 32 bit: Install to C:\Spice
+# 64 bit debug: Install to C:\Spice64d
 # 64 bit: Install to C:\Spice64
 echo "installing (see make_install.log)"
 make install 2>&1 | tee make_install.log 
