@@ -71,7 +71,7 @@ com_unlet(wordlist *wl)
 } /* end of function com_unlet */
 
 
-/* Remove zero length vectors in the wordlist from the current plot */
+/* Remove zero length vectors from the current plot */
 void
 com_remzerovec(wordlist* wl)
 {
