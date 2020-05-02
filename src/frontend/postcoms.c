@@ -71,6 +71,23 @@ com_unlet(wordlist *wl)
 } /* end of function com_unlet */
 
 
+/* Remove zero length vectors in the wordlist from the current plot */
+void
+com_remzerovec(wordlist* wl)
+{
+    NG_IGNORE(wl);
+    
+    struct dvec* ov;
+
+    for (ov = plot_cur->pl_dvecs; ov; ov = ov->v_next) {
+        if (ov->v_length == 0) {
+            ov->v_flags &= ~VF_PERMANENT;
+            /* Remove from the keyword list. */
+            cp_remkword(CT_VECTOR, ov->v_name);
+        }
+    } /* end of loop over vectors to delete */
+} /* end of function com_remzerovec */
+
 
 /* Load in a file. */
 void
