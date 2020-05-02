@@ -418,8 +418,10 @@ handle_wm_messages(Widget w, XtPointer client_data, XEvent *ev, Boolean *cont)
 int
 X11_NewViewport(GRAPH *graph)
 {
-//    char fontname[513]; /* who knows . . . */
+#ifndef HAVE_LIBXFT
     char *p, *q;
+    int trys;
+#endif
     Cursor cursor;
     XSetWindowAttributes w_attrs;
     XGCValues gcvalues;
@@ -452,7 +454,6 @@ X11_NewViewport(GRAPH *graph)
         { XtNheight, (XtArgVal) 500 },
         { XtNright, (XtArgVal) XtChainRight }
     };
-    int trys;
 
     graph->devdep = TMALLOC(X11devdep, 1);
     graph->n_byte_devdep = sizeof(X11devdep);
