@@ -28,7 +28,7 @@ Ngspice-32, Apr 25th, 2020
     + No interrupt handling (SIGINT) in shared ngspice
     + Limit the exp function to exp(14)
     + Event simulation output data may be selected by command 'setplot'
-    + Many conde updates not visible to the user, but enhancing stability
+    + Many code updates not directly visible to the user, enhancing stability
       and efficiency
 
 - Bug fixes:
