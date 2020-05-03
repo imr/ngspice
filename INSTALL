@@ -217,7 +217,8 @@ This file describes the procedures to install ngspice from sources.
 
 1.4.3 Options Specific to Using Ngspice
 
-Most of the options now following are not well maintained, are not tested or even maybe obsolete.
+Most of the options now following are not well maintained, are not tested or even maybe
+ obsolete and dangerous.
 
  --enable-capbypass
         Bypass calculation of cbd/cbs in the mosfets if the vbs/vbd
@@ -262,10 +263,6 @@ Most of the options now following are not well maintained, are not tested or eve
 
  --enable-sense2
         Use spice2 sensitivity analysis
-
- --enable-xgraph
-        Compile the Xgraph plotting program.
-        Xgraph is a plotting package for X11 and was once very popular.
 
  --with-editline=yes
         Enables the use of the BSD editline library (libedit).
@@ -453,15 +450,19 @@ Most of the options now following are not well maintained, are not tested or eve
 9 NGSPICE COMPILATION UNDER WINDOWS OS
   ====================================
 
-9.1 How to make ngspice with MINGW and MSYS
+9.1 How to make ngspice with MINGW and MSYS2
 
      Creating ngspice with MINGW is a straight forward procedure,
- if you have MSYS/MINGW installed properly. You will need some enhancements
- to the standard install (FLEX and BISON have to be made available in MSYS).
+ if you have MSYS2/MINGW installed properly.  A modern environment is
+ offered by MSYS2 (https://www.msys2.org/). An installation procedure for
+ gcc in MSYS2 is decribed in
+ https://github.com/orlp/dev-on-windows/wiki/Installing-GCC--&-MSYS2
+ You will need some enhancements to the standard install (git, autoconf,
+ automake, libtool, FLEX and BISON, all available with pacman in MSYSS2).
  Some links are given below which describe the procedures.
 
-     Installing from the tarball, e.g. ngspice-31.tar.gz, is now simple: After
- expanding, you may just run ./compile_min.sh from the ngspice-31 directory.
+     Installing from the tarball, e.g. ngspice-32.tar.gz, is now simple: After
+ expanding, you may just run ./compile_min.sh from the ngspice-32 directory.
 
      The default installation location of ngspice is the Windows path
  C:\spice. The install path can be altered by passing --prefix=NEWPATH
@@ -473,9 +474,10 @@ Most of the options now following are not well maintained, are not tested or eve
  ./configure in the normal way.
 
  The procedure of compiling a distribution (for example, a tarball from
- the ngspice website), is as follows:
+ the ngspice website), if you don't want to use the script named above
+ is as follows:
 
- $ cd ngspice-31
+ $ cd ngspice-32
  $ mkdir release
  $ cd release
  $ ../configure --with-wingui ...and other options
@@ -528,42 +530,11 @@ Most of the options now following are not well maintained, are not tested or eve
  $ make
  $ make install
 
- MINGW and MSYS can be downloaded from http://www.mingw.org/. The making of
- ngspice and the code models *.cm for XSpice requires installation of BISON
- and FLEX to MSYS. A typical installation was tested with:
-
- bison-2.0-MSYS.tar.gz
- flex-2.5.4a-1-bin.zip
- libiconv-1.9.2-1-bin.zip
- libintl-0.14.4-bin.zip
-
- Bison 2.0 is now superseeded by newer releases (Bison 2.3, see
- http://sourceforge.net/project/showfiles.php?group_id=2435&package_id=67879)
-
- The last three are from
- http://sourceforge.net/project/showfiles.php?group_id=23617.
-
- Installing from git needs more packages to MSYS in advance:
- git, automake, autoconf, libtool
-
- You may also look at
- http://www.mingw.org/wiki/HOWTO_Install_the_MinGW_GCC_Compiler_Suite
- http://www.mingw.org/wiki/MSYS
- http://www.mingw.org/wiki/HOWTO_Create_an_MSYS_Build_Environment.
-
- An alternative compiler setup is available at
- http://tdm-gcc.tdragon.net/
-
- A modern environment is offered by MSYS2 (https://www.msys2.org/).
-
  The install tree generated during 'make install' is:
 
-  C:\Spice\
+  C:\Spice64\
     bin\
         ngspice.exe
-        nghelp.exe
-        ngmakeidx.exe
-        ngnutmeg.exe
         cmpp.exe
     lib\
         spice\
@@ -573,25 +544,11 @@ Most of the options now following are not well maintained, are not tested or eve
             extradev.cm
             extravt.cm
     share\
-        info\
-            dir
-            ngspice.info
-            ngspice.info-1
-            ..
-            ngspice.info-10
         man\
             man1\
                 cmpp.1
-                ngmakeidx.1
-                ngmultidec.1
-                ngnutmeg.1
-                ngproc2mod.1
-                ngsconvert.1
                 ngspice.1
         ngspice\
-            helpdir\
-                ngspice.idx
-                ngspice.txt
             scripts\
                 ciderinit
                 devaxis
@@ -600,12 +557,14 @@ Most of the options now following are not well maintained, are not tested or eve
                 spectrum
                 spinit
 
+The scripts in directory ngspice/scripts are outdated
+(except for spinit, the basic ngspice initialization script),
+but may give some hints how to use the ngspice control language.
 
 
+9.2 make ngspice with MS Visual Studio 2019
 
-9.2 make ngspice with MS Visual Studio 2015/17/19
-
- ngspice may be compiled with MS Visual Studio 2015 or newer.
+ ngspice may be compiled with MS Visual Studio 2019 or newer.
 
  CIDER and XSPICE are included, the code models for XSPICE
  (*.cm) are made as well.
@@ -614,14 +573,10 @@ Most of the options now following are not well maintained, are not tested or eve
  however install the executable manually as described in the
  installation tree below.
 
-     The directory (visualc) with its files
+ The directory (visualc) with its files
  vngspice.sln (project starter) and
  vngspice.vcproj (project contents)
- allows to compile and link ngspice with MS Visual Studio 2015.
- Newer Visual Studio versions will translate the project files
- into their compatible format (tested with MS Visual Studio 2017).
- You may however deny the translation and compile in a VS 2015
- compatibility mode.
+ allows to compile and link ngspice with MS Visual Studio 2019.
 
  /visualc/include contains a dedicated config.h file. It contains the
  preprocessor definitions required to properly compile the code.
@@ -636,10 +591,10 @@ Most of the options now following are not well maintained, are not tested or eve
  Start MS Visual Studio 2019 by double click onto vngspice.sln.
 
  After MS Visual Studio has opened up, select debug or release version
- by checking 'Erstellen' , 'Konfigurations-Manager' 'Debug' or 'Release'.
+ by checking 'Build' , 'Configuration Manager', 'Debug' or 'ReleaseOmp'.
 
- Start making ngspice (called vngspice.exe) by selecting 'Erstellen' and
- 'vngspice neu erstellen'.
+ Start making ngspice (called vngspice.exe) by selecting 'Build' and
+ 'Rebuild vngspice'.
 
  Object files will be created and stored in visualc/debug or visualc/release.
  The executable will be stored to visualc/debug/bin or visualc/release/bin.
@@ -695,8 +650,7 @@ Most of the options now following are not well maintained, are not tested or eve
  for the X11 graphics (not available in mingw). A typical configure command
  may look like
  ./configure --enable-adms --enable-xspice --enable-cider --enable-openmp
- --disable-debug CFLAGS=-m32 LDFLAGS=-m32 prefix=C:/Spice
- tested with TDM mingw.
+ --disable-debug CFLAGS=-m64 LDFLAGS=-m64 prefix=C:/Spice64
 
 
 9.5 cross compiling ngspice for Windows from LINUX
@@ -719,21 +673,26 @@ cross-compile-shared.sh.
  1. Install an X11 interface (like Xquartz)
  2. Install MacPorts from http://www.macports.org
  3. Execute this command:
-      sudo port install bison flex ncurses xorg-libXaw
- 4. Configure NGSPICE invoking "./configure". A complete set of feature is:
+      sudo port install autoconf automake libtool bison flex ncurses
+           readline fontconfig freetype libomp xorg-libXaw
+ 4. Use one of the scripts provided: compile_macos.sh or build-for-mac-os.sh
+ 5. Or run the commands manually:  Configure NGSPICE invoking "./configure".
+    A complete set of features is:
       ./configure --enable-cider --enable-xspice --enable-openmp --enable-pss --enable-debug=no
- 5. Compile NGSPICE invoking "make"
- 6. Install NGSPICE invoking "make install" or "sudo make install"
+ 6. Compile NGSPICE invoking "make -j4"
+ 7. Install NGSPICE invoking "make install" or "sudo make install"
 
 10.3 Compile NGSPICE manually from git
  1. Install an X11 interface (like Xquartz)
  2. Install MacPorts from http://www.macports.org
  3. Execute this command:
       sudo port install automake autoconf libtool bison flex ncurses xorg-libXaw
+          readline fontconfig freetype libomp
  4. Execute this command:
       ./autogen.sh or ./autogen.sh --adms (if you want to enable ADMS)
  5. Configure NGSPICE invoking "./configure". A complete set of feature is:
-      ./configure --enable-cider --enable-xspice --enable-openmp --enable-pss --enable-debug=no
-      ./configure --enable-adms --enable-cider --enable-xspice --enable-openmp --enable-pss --enable-debug=no (if you want to enable ADMS)
- 6. Compile NGSPICE invoking "make"
+      ./configure --enable-cider --enable-xspice --enable-openmp --enable-pss --with-readline=yes --enable-debug=no
+      or (if you want to enable ADMS)
+      ./configure --enable-adms --enable-cider --enable-xspice --enable-openmp --enable-pss --with-readline=yes --enable-debug=no
+ 6. Compile NGSPICE invoking "make -j4"
  7. Install NGSPICE invoking "make install" or "sudo make install"
