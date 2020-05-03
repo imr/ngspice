@@ -126,6 +126,7 @@ pkginclude_HEADERS = \
 	FastNorm3.h	\
 	fftext.h	\
 	wallace.h	\
+	wincolornames.h	\
 	wstdio.h
 
 MAINTAINERCLEANFILES = Makefile.in
