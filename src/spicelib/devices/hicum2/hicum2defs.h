@@ -379,7 +379,7 @@ typedef struct sHICUMinstance {
 #define HICUMcqcth       HICUMstate+66 /* thermal capacitor current */
 
 #define HICUMvrth        HICUMstate+67
-#define HICUMicth_Vrth   HICUMstate+68
+#define HICUMicth_dT     HICUMstate+68
 
 #define HICUMvxf         HICUMstate+69
 #define HICUMqxf         HICUMstate+70
