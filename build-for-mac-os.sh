@@ -16,13 +16,16 @@
 ./autogen.sh
 
 ./configure \
+  --with-x \
   --enable-xspice \
   --enable-cider \
   --enable-pss \
+  --with-readline=yes \
+  --enable-openmp \
   --disable-debug \
   --prefix=/Applications/ngspice
 
-make
+make -j4
 make DESTDIR="$(pwd)/root-tree" install
 
 # Package
