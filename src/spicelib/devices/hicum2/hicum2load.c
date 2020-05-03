@@ -38,8 +38,34 @@ void HICDIO(double, double, double, double, double, double *, double *);
 
 double FFdVc, FFdVc_ditf;
 
-
-
+/* HICUMlimitlog(deltemp, deltemp_old, LIM_TOL, check)
+ * Logarithmic damping the per-iteration change of deltemp beyond LIM_TOL.
+ */
+static double HICUMlimitlog(
+        double deltemp, double deltemp_old, double LIM_TOL, int *check)
+{
+    *check = 0;
+    if (isnan(deltemp) || isnan(deltemp_old)) {
+        fprintf(stderr,
+                "Alberto says:  YOU TURKEY!  The limiting function received "
+                "NaN.\n");
+        fprintf(stderr, "New prediction returns to 0.0!\n");
+        deltemp = 0.0;
+        *check = 1;
+    }
+    /* Logarithmic damping of deltemp beyond LIM_TOL */
+    if (deltemp > deltemp_old + LIM_TOL) {
+        deltemp = deltemp_old + LIM_TOL +
+                log10((deltemp - deltemp_old) / LIM_TOL);
+        *check = 1;
+    }
+    else if (deltemp < deltemp_old - LIM_TOL) {
+        deltemp = deltemp_old - LIM_TOL -
+                log10((deltemp_old - deltemp) / LIM_TOL);
+        *check = 1;
+    }
+    return deltemp;
+}
 
 //////////////Explicit Capacitance and Charge Expression///////////////
 
@@ -2314,8 +2340,8 @@ c           Branch: sis, Stamp element: Rsu
 c           Branch: xf1-ground,  Stamp element: Ixf1
 */
 //            rhs_current = (Ixf1 - Ixf1_Vxf1*Vxf1 - Ixf1_Vrth*Vrth - Ixf1_Vbiei*Vbiei - Ixf1_Vbici*Vbici - Ixf1_Vxf2*Vxf2); // TODO
-            rhs_current = Ixf1;
-            *(ckt->CKTrhs + here->HICUMxf1Node) += rhs_current; // into xf1 node
+//            rhs_current = Ixf1;
+//            *(ckt->CKTrhs + here->HICUMxf1Node) += rhs_current; // into xf1 node
 //            *(here->HICUMxf1TempPtr)   += -Ixf1_Vrth;
 //            *(here->HICUMxf1BaseBIPtr) += -Ixf1_Vbiei;
 //            *(here->HICUMxf1EmitEIPtr) += +Ixf1_Vbiei;
@@ -2325,15 +2351,15 @@ c           Branch: xf1-ground,  Stamp element: Ixf1
 /*
 c           Branch: xf1-ground, Stamp element: Qxf1 // TODO Test in AC simulation!
 */
-            // rhs_current = Iqxf1 - Iqxf1_Vxf1*Vxf1;
-            // *(ckt->CKTrhs + here->HICUMxf1Node) += rhs_current; // into ground
-            // *(here->HICUMxf1Xf1Ptr)             += Iqxf1_Vxf1;
+//            // rhs_current = Iqxf1 - Iqxf1_Vxf1*Vxf1;
+//            // *(ckt->CKTrhs + here->HICUMxf1Node) += rhs_current; // into ground
+//            // *(here->HICUMxf1Xf1Ptr)             += Iqxf1_Vxf1;
 /*
 c           Branch: xf2-ground,  Stamp element: Ixf2
 */
 //            rhs_current = (Ixf2 - Ixf2_Vxf1*Vxf1 - Ixf2_Vrth*Vrth - Ixf2_Vbiei*Vbiei - Ixf2_Vbici*Vbici - Ixf2_Vxf2*Vxf2); // TODO
-            rhs_current = Ixf2;
-            *(ckt->CKTrhs + here->HICUMxf2Node) += rhs_current; // into xf2 node
+//            rhs_current = Ixf2;
+//            *(ckt->CKTrhs + here->HICUMxf2Node) += rhs_current; // into xf2 node
 //            *(here->HICUMxf2TempPtr)   += -Ixf2_Vrth;
 //            *(here->HICUMxf2BaseBIPtr) += -Ixf2_Vbiei;
 //            *(here->HICUMxf2EmitEIPtr) += +Ixf2_Vbiei;
@@ -2342,19 +2368,19 @@ c           Branch: xf2-ground,  Stamp element: Ixf2
 /*
 c           Branch: xf2-ground, Stamp element: Qxf2 // TODO Test in AC simulation!
 */
-            // rhs_current = Iqxf2 - Iqxf2_Vxf2*Vxf2;
-            // *(ckt->CKTrhs + here->HICUMxf2Node)  += rhs_current; // into ground
-            // *(here->HICUMxf2Xf2Ptr)              += Iqxf2_Vxf2;
+//            // rhs_current = Iqxf2 - Iqxf2_Vxf2*Vxf2;
+//            // *(ckt->CKTrhs + here->HICUMxf2Node)  += rhs_current; // into ground
+//            // *(here->HICUMxf2Xf2Ptr)              += Iqxf2_Vxf2;
 /*
 c           Branch: xf2-ground, Stamp element: Rxf2
 */
-            *(here->HICUMxf2Xf2Ptr) +=  1; // current Ixf2 is normalized to Tf
+//            *(here->HICUMxf2Xf2Ptr) +=  1; // current Ixf2 is normalized to Tf
 /*
 c           Branch: xf-ground,  Stamp element: Ixf
 */
 //            rhs_current = model->HICUMtype * (Ixf - Ixf_Vrth*Vrth - Ixf_Vbiei*Vbiei - Ixf_Vbici*Vbici);
-            rhs_current = model->HICUMtype * Ixf;
-            *(ckt->CKTrhs + here->HICUMxfNode) += rhs_current; // into xf node
+//            rhs_current = model->HICUMtype * Ixf;
+//            *(ckt->CKTrhs + here->HICUMxfNode) += rhs_current; // into xf node
 //            *(here->HICUMxfTempPtr)   += -Ixf_Vrth;
 //            *(here->HICUMxfBaseBIPtr) += -Ixf_Vbiei;
 //            *(here->HICUMxfEmitEIPtr) += +Ixf_Vbiei;
@@ -2369,7 +2395,7 @@ c           Branch: xf-ground, Stamp element: Qxf // TODO Test in AC simulation!
 /*
 c           Branch: xf-ground, Stamp element: Rxf
 */
-            *(here->HICUMxfXfPtr) +=  1; // current Ixf is normalized to Tf
+//            *(here->HICUMxfXfPtr) +=  1; // current Ixf is normalized to Tf
 
             if (model->HICUMflsh) {
 /*

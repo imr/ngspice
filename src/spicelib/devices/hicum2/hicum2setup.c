@@ -560,23 +560,23 @@ HICUMsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 here->HICUMbaseBINode = tmp->number;
             }
 
-            if(here->HICUMxfNode == 0) {
-                error = CKTmkVolt(ckt, &tmp, here->HICUMname, "xf");
-                if(error) return(error);
-                here->HICUMxfNode = tmp->number;
-            }
-
-            if(here->HICUMxf1Node == 0) {
-                error = CKTmkVolt(ckt, &tmp, here->HICUMname, "xf1");
-                if(error) return(error);
-                here->HICUMxf1Node = tmp->number;
-            }
-
-            if(here->HICUMxf2Node == 0) {
-                error = CKTmkVolt(ckt, &tmp, here->HICUMname, "xf2");
-                if(error) return(error);
-                here->HICUMxf2Node = tmp->number;
-            }
+//            if(here->HICUMxfNode == 0) {
+//                error = CKTmkVolt(ckt, &tmp, here->HICUMname, "xf");
+//                if(error) return(error);
+//                here->HICUMxfNode = tmp->number;
+//            }
+//
+//            if(here->HICUMxf1Node == 0) {
+//                error = CKTmkVolt(ckt, &tmp, here->HICUMname, "xf1");
+//                if(error) return(error);
+//                here->HICUMxf1Node = tmp->number;
+//            }
+//
+//            if(here->HICUMxf2Node == 0) {
+//                error = CKTmkVolt(ckt, &tmp, here->HICUMname, "xf2");
+//                if(error) return(error);
+//                here->HICUMxf2Node = tmp->number;
+//            }
 
 /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
@@ -641,9 +641,9 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
             TSTALLOC(HICUMsubsCollPtr,HICUMsubsNode,HICUMcollNode); //s-c
             TSTALLOC(HICUMcollSubsPtr,HICUMcollNode,HICUMsubsNode); //c-s
 
-            TSTALLOC(HICUMxfXfPtr,HICUMxfNode,HICUMxfNode);
-            TSTALLOC(HICUMxf1Xf1Ptr,HICUMxf1Node,HICUMxf1Node);
-            TSTALLOC(HICUMxf2Xf2Ptr,HICUMxf2Node,HICUMxf2Node);
+//            TSTALLOC(HICUMxfXfPtr,HICUMxfNode,HICUMxfNode);
+//            TSTALLOC(HICUMxf1Xf1Ptr,HICUMxf1Node,HICUMxf1Node);
+//            TSTALLOC(HICUMxf2Xf2Ptr,HICUMxf2Node,HICUMxf2Node);
 
             if (model->HICUMflsh) {
                 TSTALLOC(HICUMcollTempPtr,HICUMcollNode,HICUMtempNode);
@@ -708,17 +708,17 @@ HICUMunsetup(
                 CKTdltNNum(ckt, here->HICUMcollCINode);
             here->HICUMcollCINode = 0;
 
-            if(here->HICUMxfNode > 0)
-                CKTdltNNum(ckt, here->HICUMxfNode);
-            here->HICUMxfNode = 0;
-
-            if(here->HICUMxf1Node > 0)
-                CKTdltNNum(ckt, here->HICUMxf1Node);
-            here->HICUMxf1Node = 0;
-
-            if(here->HICUMxf2Node > 0)
-                CKTdltNNum(ckt, here->HICUMxf2Node);
-            here->HICUMxf2Node = 0;
+//            if(here->HICUMxfNode > 0)
+//                CKTdltNNum(ckt, here->HICUMxfNode);
+//            here->HICUMxfNode = 0;
+//
+//            if(here->HICUMxf1Node > 0)
+//                CKTdltNNum(ckt, here->HICUMxf1Node);
+//            here->HICUMxf1Node = 0;
+//
+//            if(here->HICUMxf2Node > 0)
+//                CKTdltNNum(ckt, here->HICUMxf2Node);
+//            here->HICUMxf2Node = 0;
 
         }
     }
