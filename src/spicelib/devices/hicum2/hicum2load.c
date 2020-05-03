@@ -596,7 +596,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Qxf_Vxf, Qxf1_Vxf1, Qxf2_Vxf2;
     double Iqxf, Iqxf_Vxf, Iqxf1, Iqxf1_Vxf1, Iqxf2, Iqxf2_Vxf2;
 
-    double Ith, Vrth, Icth, Icth_Vrth, delvrth;
+    double Ith, Vrth, Icth, Icth_Vrth;
 
     double Irth_Vrth;
     double Iciei_Vrth;
@@ -941,8 +941,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 delvbpbi = Vbpbi - *(ckt->CKTstate0 + here->HICUMvbpbi);
                 delvbpci = Vbpci - *(ckt->CKTstate0 + here->HICUMvbpci);
                 delvsici = Vsici - *(ckt->CKTstate0 + here->HICUMvsici);
-                if (model->HICUMflsh)
-                    delvrth = Vrth - *(ckt->CKTstate0 + here->HICUMvrth);
                 Vbe = model->HICUMtype*(
                     *(ckt->CKTrhsOld+here->HICUMbaseNode)-
                     *(ckt->CKTrhsOld+here->HICUMemitNode));
