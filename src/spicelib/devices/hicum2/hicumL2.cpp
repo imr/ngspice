@@ -952,7 +952,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             A       = 0.5*Q_0;
             Q_p     = A+sqrt(A*A+T_f0*i_0f+Tr*i_0r);
         }
-        I_Tf1   =i_0f/Q_p;
+        I_Tf1   = i_0f/Q_p;
         a_h     = Oich*I_Tf1;
         itf     = I_Tf1*(1.0+a_h);
         itr     = i_0r/Q_p;
@@ -1573,7 +1573,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             result    = calc_Q_0(Qjei, Qjci+1_e, hjei_vbe);
             Q_0_Qjci  = result.dpart();
 
-            result       = calc_Q_0(Qjei, Qjci+1_e, hjei_vbe);
+            result       = calc_Q_0(Qjei, Qjci,  hjei_vbe+1_e);
             Q_0_hjei_vbe = result.dpart();
 
             Q_0_Vbiei    = Q_0_Qjei*Qjei_Vbiei + Q_0_hjei_vbe*hjei_vbe_Vbiei;
@@ -1625,18 +1625,18 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             Q_pT_dick   = result.dpart();
 
             //check derivatives numerically (delete ones everything works....)
-//            result                = calc_it(here->HICUMtemp+1e-3, Vbiei    , Vbici    , Q_0    , T_f0    , ick    );
-//            Q_pT_dT_numerical     = (result.rpart() - Q_pT)/1e-3;
-//            result                = calc_it(here->HICUMtemp, Vbiei +1e-3   , Vbici    , Q_0    , T_f0    , ick    );
-//            Q_pT_dVbiei_numerical = (result.rpart() - Q_pT)/1e-3;
-//            result                = calc_it(here->HICUMtemp, Vbiei   , Vbici  +1e-3   , Q_0    , T_f0    , ick    );
-//            Q_pT_dVbici_numerical = (result.rpart() - Q_pT)/1e-3;
-//            result                = calc_it(here->HICUMtemp, Vbiei   , Vbici   , Q_0  +Q_0*1e-3    , T_f0    , ick    );
-//            Q_pT_dQ_0_numerical = (result.rpart() - Q_pT)/(Q_0*1e-3);
-//            result                = calc_it(here->HICUMtemp, Vbiei   , Vbici   , Q_0  , T_f0  +T_f0*1e-3      , ick    );
-//            Q_pT_dT_f0_numerical = (result.rpart() - Q_pT)/(T_f0*1e-3) ;
-//            result                = calc_it(here->HICUMtemp, Vbiei   , Vbici   , Q_0  , T_f0      , ick   +ick*1e-3   );
-//            Q_pT_dick_numerical = (result.rpart() - Q_pT)/(ick*1e-3);
+        //    result                = calc_it(here->HICUMtemp+1e-3, Vbiei    , Vbici    , Q_0    , T_f0    , ick    );
+        //    Q_pT_dT_numerical     = (result.rpart() - Q_pT)/1e-3;
+        //    result                = calc_it(here->HICUMtemp, Vbiei +1e-3   , Vbici    , Q_0    , T_f0    , ick    );
+        //    Q_pT_dVbiei_numerical = (result.rpart() - Q_pT)/1e-3;
+        //    result                = calc_it(here->HICUMtemp, Vbiei   , Vbici  +1e-3   , Q_0    , T_f0    , ick    );
+        //    Q_pT_dVbici_numerical = (result.rpart() - Q_pT)/1e-3;
+        //    result                = calc_it(here->HICUMtemp, Vbiei   , Vbici   , Q_0  +Q_0*1e-3    , T_f0    , ick    );
+        //    Q_pT_dQ_0_numerical = (result.rpart() - Q_pT)/(Q_0*1e-3);
+        //    result                = calc_it(here->HICUMtemp, Vbiei   , Vbici   , Q_0  , T_f0  +T_f0*1e-3      , ick    );
+        //    Q_pT_dT_f0_numerical = (result.rpart() - Q_pT)/(T_f0*1e-3) ;
+        //    result                = calc_it(here->HICUMtemp, Vbiei   , Vbici   , Q_0  , T_f0      , ick   +ick*1e-3   );
+        //    Q_pT_dick_numerical = (result.rpart() - Q_pT)/(ick*1e-3);
 
             //add derivatives of ick
             Q_pT_dVciei = Q_pT_dick*ick_Vciei; //additional component not seen in equivalent circuit of HiCUM...jesus
