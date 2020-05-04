@@ -1,16 +1,13 @@
 #!/bin/bash
-# ngspice build script for MINGW-w64, release version, 32 or 64 bit
-# compile_min.sh
+# ngspice build script for MINGW in MSYS2, release or debug version, 64 bit
+# compile_min_shared.sh
 
 #Procedure:
-# Install MSYS, plus bison, flex, auto tools, perl, libiconv, libintl
-# Install MINGW-w64, activate OpenMP support
-#     See either http://mingw-w64.sourceforge.net/ or http://tdm-gcc.tdragon.net/
-#     (allows to generate either 32 or 64 bit executables by setting flag -m32 or -m64)
-# set path to compiler in msys/xx/etc/fstab (e.g. c:/MinGW64 /mingw)
+# Install MSYS2, plus gcc 64 bit, bison, flex, autoconf, automake, libtool 
+#     See https://github.com/orlp/dev-on-windows/wiki/Installing-GCC--&-MSYS2
 # start compiling with
-# './compile_min.sh' or './compile_min.sh 64'
-# As an (more recent) alternative install MSYS2 and the tools cited above.
+# './compile_min_shared.sh' for release or './compile_min_shared.sh d'
+# for debug version of shared ngspice
 
 # Options:
 # --adms and --enable-adms will install extra HICUM, EKV and MEXTRAM models via the 
@@ -18,17 +15,17 @@
 # Please see http://ngspice.sourceforge.net/admshowto.html for more info on adms.
 # CIDER, XSPICE, and OpenMP may be selected at will.
 # --disable-debug will give O2 optimization (versus O0 for debug) and removes all debugging info.
-# To obtain debug executable, replace both -O2 and -s by -g in ./configure lines.
+# To obtain a 32 bit executable, replace -m64 by -m32 ./configure lines.
 
-# ngspice as shared library:
-# Replace --with-wingui by --with-ngshared in line ../configure ... .
 # Add (optionally) --enable-relpath to avoid absolute paths when searching for code models.
 # It might be necessary to uncomment and run ./autogen.sh .
 
-if test "$1" = "64"; then
-   if [ ! -d "release64-sh" ]; then
-      mkdir release64-sh
-      if [ $? -ne 0 ]; then  echo "mkdir release64-sh failed"; exit 1 ; fi
+SECONDS=0
+
+if test "$1" = "d"; then
+   if [ ! -d "debug-sh" ]; then
+      mkdir debug-sh
+      if [ $? -ne 0 ]; then  echo "mkdir debug-sh failed"; exit 1 ; fi
    fi   
 else
    if [ ! -d "release-sh" ]; then
@@ -48,20 +45,20 @@ if [ $? -ne 0 ]; then  echo "./autogen.sh failed"; exit 1 ; fi
 #if [ $? -ne 0 ]; then  echo "./autogen.sh failed"; exit 1 ; fi
 
 echo
-if test "$1" = "64"; then
-   cd release64-sh
-   if [ $? -ne 0 ]; then  echo "cd release64-sh failed"; exit 1 ; fi
-  echo "configuring for 64 bit"
+if test "$1" = "d"; then
+   cd debug-sh
+   if [ $? -ne 0 ]; then  echo "cd debug-sh failed"; exit 1 ; fi
+  echo "configuring for 64 bit debug"
   echo
 # You may add  --enable-adms to the following command for adding adms generated devices 
-  ../configure --with-ngshared --enable-xspice --enable-cider --enable-openmp --enable-relpath --disable-debug prefix="C:/Spice64" CFLAGS="-m64 -O2" LDFLAGS="-m64 -s"
+  ../configure --with-ngshared --enable-xspice --enable-cider --enable-openmp --enable-relpath --disable-debug prefix="C:/Spice64d" CFLAGS="-m64 -g -O0 -Wall" LDFLAGS="-m64"
 else
    cd release-sh
    if [ $? -ne 0 ]; then  echo "cd release-sh failed"; exit 1 ; fi
-  echo "configuring for 32 bit"
+  echo "configuring for 64 bit release"
   echo
 # You may add  --enable-adms to the following command for adding adms generated devices 
-  ../configure --with-ngshared --enable-xspice --enable-cider --enable-openmp --enable-relpath --disable-debug prefix="C:/Spice" CFLAGS="-m32 -O2" LDFLAGS="-m32 -s"
+  ../configure --with-ngshared --enable-xspice --enable-cider --enable-openmp --enable-relpath --disable-debug prefix="C:/Spice64" CFLAGS="-m64 -O2" LDFLAGS="-m64 -s"
 fi
 if [ $? -ne 0 ]; then  echo "../configure failed"; exit 1 ; fi
 
@@ -82,5 +79,8 @@ make install 2>&1 | tee make_install.log
 exitcode=${PIPESTATUS[0]}
 if [ $exitcode -ne 0 ]; then  echo "make install failed"; exit 1 ; fi
 
+ELAPSED="Elapsed compile time: $(($SECONDS / 3600))hrs $((($SECONDS / 60) % 60))min $(($SECONDS % 60))sec"
+echo
+echo $ELAPSED
 echo "success"
 exit 0
