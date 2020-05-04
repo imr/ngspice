@@ -1178,9 +1178,12 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 Vrth=0.0,Icth=0.0,Icth_dT=0.0;
                 Vbxf=Vbxf1=Vbxf2=0.0;
             } else if((ckt->CKTmode & MODEINITJCT) && (here->HICUMoff==0)) {
-                Vbe=Vbiei=model->HICUMtype*here->HICUMtVcrit;
-                Vciei=0.0;
-                Vbci=Vbici=Vbpci=0.0;
+                Vbe=Vbiei=model->HICUMtype*here->HICUMicVBE;
+                Vciei=model->HICUMtype*here->HICUMicVCE;
+                Vbci=Vbici=Vbpci=Vbiei-Vciei;
+                // Vbe=Vbiei=model->HICUMtype*here->HICUMtVcrit;
+                // Vciei=0.0;
+                // Vbci=Vbici=Vbpci=0.0;
                 Vbpei=0.0;
                 Vsc=Vsici=0.0;
                 Vbpbi=Vbbp=Vbpe=0.0;
