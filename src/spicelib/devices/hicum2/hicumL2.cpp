@@ -39,7 +39,7 @@ Spice3 Implementation: 2019 Dietmar Warning, Markus Müller, Mario Krattenmacher
 #include "cmath"
 #ifndef M_PI
 #define M_PI 3.1415926535897932384626433832795
-#endif 
+#endif
 #include <duals/dual>
 #include "hicumL2.hpp"
 #include <functional>
@@ -1604,6 +1604,8 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             result      = calc_ick(here->HICUMtemp+1_e, Vciei);
             ick_dT      = result.dpart();
 
+            here->HICUMick = ick;
+
             //begin Q_pT calculation (dual numbers to calculate derivative of loop? Yes my boy, yes)
 
             //todo: derivatives of temperature dependent hicum parameters
@@ -1636,7 +1638,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 //            result                = calc_it(here->HICUMtemp, Vbiei   , Vbici   , Q_0  , T_f0      , ick   +ick*1e-3   );
 //            Q_pT_dick_numerical = (result.rpart() - Q_pT)/(ick*1e-3);
 
-            //add derivatives of ick 
+            //add derivatives of ick
             Q_pT_dVciei = Q_pT_dick*ick_Vciei; //additional component not seen in equivalent circuit of HiCUM...jesus
             Q_pT_dT    += Q_pT_dick*ick_dT;
 
@@ -1666,25 +1668,25 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             itr_Vbiei = result_itr.dpart();
             Qf_Vbiei  = result_Qf.dpart();
             Qr_Vbiei  = result_Qr.dpart();
- 
+
             calc_it_final(here->HICUMtemp    , Vbiei    , Vbici+1_e, Q_pT    , T_f0    , ick    , &result_itf, &result_itr, &result_Qf, &result_Qr);
             itf_Vbici = result_itf.dpart();
             itr_Vbici = result_itr.dpart();
             Qf_Vbici  = result_Qf.dpart();
             Qr_Vbici  = result_Qr.dpart();
- 
+
             calc_it_final(here->HICUMtemp    , Vbiei    , Vbici    , Q_pT+1_e, T_f0    , ick    , &result_itf, &result_itr, &result_Qf, &result_Qr);
             itf_dQ_pT = result_itf.dpart();
             itr_dQ_pT = result_itr.dpart();
             Qf_dQ_pT  = result_Qf.dpart();
             Qr_dQ_pT  = result_Qr.dpart();
- 
+
             calc_it_final(here->HICUMtemp    , Vbiei    , Vbici    , Q_pT    , T_f0+1_e, ick    , &result_itf, &result_itr, &result_Qf, &result_Qr);
             itf_dT_f0 = result_itf.dpart();
             itr_dT_f0 = result_itr.dpart();
             Qf_dT_f0  = result_Qf.dpart();
             Qr_dT_f0  = result_Qr.dpart();
- 
+
             calc_it_final(here->HICUMtemp    , Vbiei    , Vbici    , Q_pT    , T_f0    , ick+1_e, &result_itf, &result_itr, &result_Qf, &result_Qr);
             itf_dick = result_itf.dpart();
             itr_dick = result_itr.dpart();
@@ -1711,7 +1713,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             itr_Vciei += itr_dQ_pT*Q_pT_dVciei;
             Qf_Vciei  += Qf_dQ_pT*Q_pT_dVciei;
             Qr_Vciei  += Qr_dQ_pT*Q_pT_dVciei;
- 
+
             // add derivatives of T_f0 = f(Vbici, T)
             itf_Vbici += itf_dick*T_f0_Vbici;
             itr_Vbici += itr_dick*T_f0_Vbici;
@@ -1727,7 +1729,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             itf_Vciei += itf_dick*ick_Vciei;
             itr_Vciei += itr_dick*ick_Vciei;
             Qf_Vciei  += Qf_dick*ick_Vciei;
-            Qr_Vciei  += Qr_dick*ick_Vciei; 
+            Qr_Vciei  += Qr_dick*ick_Vciei;
 
             itf_dT    += itf_dick*ick_dT;
             itr_dT    += itr_dick*ick_dT;
@@ -1741,7 +1743,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             it_Vbiei = it_ditf*itf_Vbiei + it_ditr*itr_Vbiei;
             it_Vbici = it_ditf*itf_Vbici + it_ditr*itr_Vbici;
             it_dT    = it_ditf*itf_dT    + it_ditr*itr_dT;
- 
+
             //end final calculations --------------------------------------------------
 
             here->HICUMtf = Tf;

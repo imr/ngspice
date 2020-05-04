@@ -130,6 +130,12 @@ HICUMask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFval
         case HICUM_QUEST_CAVL:
             value->rValue = here->HICUMiavl;
             return(OK);
+        case HICUM_QUEST_CBEI:
+            value->rValue = *(ckt->CKTstate0 + here->HICUMibiei);
+            return(OK);
+        case HICUM_QUEST_CBCI:
+            value->rValue = *(ckt->CKTstate0 + here->HICUMibici);
+            return(OK);
 /* resistances */
         case HICUM_QUEST_RCX_T:
             value->rValue = here->HICUMrcx_t;
@@ -219,12 +225,6 @@ HICUMask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFval
         case HICUM_QUEST_TF:
             value->rValue = here->HICUMtf;
             return(OK);
-        case HICUM_QUEST_CBEI:
-            value->rValue = *(ckt->CKTstate0 + here->HICUMibiei);
-            return(OK);
-        case HICUM_QUEST_CBCI:
-            value->rValue = *(ckt->CKTstate0 + here->HICUMibici);
-            return(OK);
         case HICUM_QUEST_FT:
             // FT = GMi/(2*`M_PI*(CPIi+CPIx+CMUi+CMUx+(rcx_t+re_t+(re_t+rb)/BETAAC)*GMi*(CMUi+CMUx)));
             HICUMask(ckt, instPtr, HICUM_QUEST_GMI, &GMi, select);
@@ -247,7 +247,9 @@ HICUMask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFval
                 )
             );
             return(OK);
-
+        case HICUM_QUEST_ICK:
+            value->rValue = here->HICUMick;
+            return(OK);
 /* power */
         case HICUM_QUEST_POWER:
             value->rValue = here->HICUMpterm;

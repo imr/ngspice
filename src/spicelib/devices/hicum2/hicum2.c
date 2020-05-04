@@ -23,6 +23,7 @@ IFparm HICUMpTable[] = { /* parameters */
  IOPAU("icvce",  HICUM_IC_VCE, IF_REAL,    "Initial C-E voltage"),
  IOPU("m",       HICUM_M,      IF_REAL,    "Multiplier"),
  IOPU("temp",    HICUM_TEMP,   IF_REAL,    "Instance temperature"),
+ IP("dt",        HICUM_DTEMP,  IF_REAL,    "Instance delta temperature"),
  IOPUR("tk",     HICUM_QUEST_TK,     IF_REAL,    "Actual device temperature"),
  IOPU("dtsh",    HICUM_QUEST_DTSH,   IF_REAL,    "Temperature increase due to self-heating"),
  IOPU("it",    HICUM_QUEST_IT,   IF_REAL,    "transfer current"),
@@ -81,7 +82,7 @@ IFparm HICUMpTable[] = { /* parameters */
 /* transit time */
  OP("tf",     HICUM_QUEST_TF,    IF_REAL, "Forward transit time"),
  OP("ft",     HICUM_QUEST_FT,    IF_REAL, "Transit frequency"),
-
+ OP("ick",    HICUM_QUEST_ICK,   IF_REAL, "Transit frequency"),
 /* power */
  OP("p",      HICUM_QUEST_POWER, IF_REAL, "Power dissipation")
 };

@@ -3,33 +3,37 @@ VE Q1_E 0 1.0
 VC Q1_C 0 0.0
 VB Q1_B 0 0.0
 RT Q1_T 0 1M
-Q1 Q1_C Q1_B Q1_E Q1_E Q1_T P1
+Q1 Q1_C Q1_B Q1_E Q1_E Q1_T P1 dt=0.0
 .DC VE -0.2 -1.2 -10m
 .OPTIONS GMIN=1e-13 NOACCT
 
-.print dc abs(i(vc)) abs(i(vb)) @Q1[area] @Q1[icvbe] @Q1[icvce] @Q1[temp] @Q1[m] @Q1[vbe] @Q1[vbc] @Q1[vce] @Q1[vsc] @Q1[ic] @Q1[ib] @Q1[ie] @Q1[iavl] @Q1[is] @Q1[rcx_t] @Q1[re_t] @Q1[rbi] @Q1[rb] @Q1[betadc] @Q1[gmi] @Q1[gms]  @Q1[rpii] @Q1[rpix] @Q1[rmui] @Q1[rmux] @Q1[roi] @Q1[cpii] @Q1[cpix] @Q1[cmui] @Q1[cmux] @Q1[ccs] @Q1[betaac] @Q1[crbi] @Q1[tf] @Q1[ft] @Q1[p] @Q1[tk] @Q1[dtsh]
+.print dc abs(i(vc)) abs(i(vb))
+
+* @Q1[area] @Q1[icvbe] @Q1[icvce] @Q1[temp] @Q1[m] @Q1[vbe] @Q1[vbc] @Q1[vce] @Q1[vsc] @Q1[ic] @Q1[ib] @Q1[ie] @Q1[iavl] @Q1[is] @Q1[rcx_t] @Q1[re_t] @Q1[rbi] @Q1[rb] @Q1[betadc] @Q1[gmi] @Q1[gms]  @Q1[rpii] @Q1[rpix] @Q1[rmui] @Q1[rmux] @Q1[roi] @Q1[cpii] @Q1[cpix] @Q1[cmui] @Q1[cmux] @Q1[ccs] @Q1[betaac] @Q1[crbi] @Q1[tf] @Q1[ft] @Q1[p] @Q1[tk] @Q1[dtsh]
 
 
 .MODEL P1 NPN LEVEL=8
-+ c10=9.074e-030 qp0=1.008e-013 hfe=10.01 hfc=20.04 hjei=3.382 hjci=0.2
-+ ibeis=1.328e-019 mbei=1.027 ireis=1.5e-014 mrei=2 ibeps=1.26e-019 mbep=1.042
-+ ireps=1.8e-014 mrep=1.8 mcf=1 tbhrec=1e-010 ibcis=4.603e-017 mbci=1.15
-+ ibcxs=0 mbcx=1 ibets=0.02035 abet=24 tunode=1 favl=18.96 qavl=5.092e-014
-+ alfav=-0.0024 alqav=-0.0006284 rbi0=4.444 rbx=2.568 fgeo=0.7409 fdqr0=0
-+ fcrbi=0 fqi=1 re=1.511 rcx=2.483 itss=0 msf=1 iscs=0 msc=1
-+ tsf=0 rsu=0 csu=0 cjei0=8.869e-015 vdei=0.714 zei=0.2489 ajei=1.65
-+ cjep0=2.178e-015 vdep=0.8501 zep=0.2632 ajep=1.6 cjci0=3.58e-015 vdci=0.8201
-+ zci=0.2857 vptci=1.79 cjcx0=6.299e-015 vdcx=0.8201 zcx=0.2863 vptcx=1.977
-+ fbcpar=0.3 fbepar=1 cjs0=2.6e-014 vds=0.9997 zs=0.4295 vpts=100
-+ t0=2.089e-013 dt0h=8e-014 tbvl=8.25e-014 tef0=3.271e-013 gtfe=3.548 thcs=5.001e-012
-+ ahc=0.05 fthc=0.7 rci0=9.523 vlim=0.6999 vces=0.01 vpt=2 tr=0
-+ cbepar=2.609e-014 cbcpar=1.64512e-014 alqf=0.166667 alit=0.333333 flnqs=0 kf=0
-+ af=2 cfbe=-1 latb=0 latl=0 vgb=0.91 alt0=0.004 kt0=6.588e-005
-+ zetaci=0.58 alvs=0.001 alces=-0.2286 zetarbi=0.3002 zetarbx=0.06011 zetarcx=-0.02768
-+ zetare=-0.9605 zetacx=0 vge=1.17 vgc=1.17 vgs=1.17 f1vg=-0.000102377 f2vg=0.00043215
-+ zetact=5 zetabet=4.892 flsh=0 rth=1113.4 cth=6.841e-012 zetarth=0
-+ alrth=0.002 flcomp=2.4 tnom=26.85 acbar=1.5 flcono=0 icbar=0.01
-+ vcbar=0.04 zetavgbe=0.7 hf0=40 ahjei=3 rhjei=2 delck=2 zetahjei=-0.5
++  tr=0.0000000000e+00 acbar=1.5000000000e+00 ahc=5.0000000000e-02 aick=1.0000000000e-03 delck=2.0000000000e+00 dt0h=0.0000000000e+00 fthc=7.0000000000e-01 gtfe=3.5480000000e+00 icbar=1.0000000000e-02 rci0=1.0000000000e-09 t0=1.0000000000e-15 tbvl=0.0000000000e+00 tef0=3.2710000000e-13 thcs=5.0010000000e-12 vcbar=4.0000000000e-02 vces=1.0000000000e-02 vlim=6.9990000000e-01 vpt=2.0000000000e+00 ajei=1.6500000000e+00 ajep=1.6000000000e+00 cjci0=3.5800000000e-15 cjcx0=0.0000000000e+00 cjei0=8.8690000000e-15 cjep0=0.0000000000e+00 cjs0=0.0000000000e+00 cscp0=0.0000000000e+00 fbcpar=3.0000000000e-01 fbepar=1.0000000000e+00 vdci=8.2010000000e-01 vdcx=8.2010000000e-01 vdei=7.1400000000e-01 vdep=8.5010000000e-01 vds=9.9970000000e-01 vdsp=6.0000000000e-01 vptci=1.7900000000e+00 vptcx=1.9770000000e+00 vpts=1.0000000000e+02 vptsp=1.0000000000e+02 zci=2.8570000000e-01 zcx=2.8630000000e-01 zei=2.4890000000e-01 zep=2.6320000000e-01 zs=4.2950000000e-01 zsp=5.0000000000e-01 cbcpar=0.0000000000e+00 cbepar=2.6090000000e-14 alfav=-2.4000000000e-03 alkav=0.0000000000e+00 alqav=-6.2840000000e-04 favl=1.8960000000e+01 kavl=0.0000000000e+00 qavl=5.0920000000e-14 ibcis=4.6030000000e-17 ibcxs=0.0000000000e+00 mbci=1.1500000000e+00 mbcx=1.0000000000e+00 ibeis=1.3280000000e-19 ibeps=0.0000000000e+00 ireis=0.0000000000e+00 ireps=0.0000000000e+00 mbei=1.0270000000e+00 mbep=1.0420000000e+00 mrei=2.0000000000e+00 mrep=1.8000000000e+00 tbhrec=0.0000000000e+00 abet=2.4000000000e+01 ibets=0.0000000000e+00 tunode=1.0000000000e+00 iscs=0.0000000000e+00 itss=0.0000000000e+00 msc=1.0000000000e+00 msf=1.0000000000e+00 tsf=0.0000000000e+00 ahjei=3.0000000000e+00 c10=1.0000000000e-15 hf0=4.0000000000e+01 hfc=2.0040000000e+01 hfe=1.0010000000e+01 hjci=2.0000000000e-01 hjei=3.3820000000e+00 ich=0.0000000000e+00 mcf=1.0000000000e+00 qp0=1.0080000000e-13 rhjei=2.0000000000e+00 latb=0.0000000000e+00 latl=0.0000000000e+00 alit=3.3333300000e-01 alqf=1.6666700000e-01 flnqs=0.0000000000e+00 af=2.0000000000e+00 afre=2.0000000000e+00 cfbe=-1.0000000000e+00 flcono=0.0000000000e+00 kf=0.0000000000e+00 kfre=0.0000000000e+00 fcrbi=0.0000000000e+00 fdqr0=0.0000000000e+00 fgeo=7.4090000000e-01 fqi=1.0000000000e+00 rbi0=0.0000000000e+00 rbx=0.0000000000e+00 rcx=0.0000000000e+00 re=1.0000000000e+00 csu=0.0000000000e+00 rsu=0.0000000000e+00 alrth=2.0000000000e-03 cth=6.8410000000e-12 flsh=0.0000000000e+00 rth=1.1134000000e+03 zetarth=0.0000000000e+00 flcomp=2.4000000000e+00 tnom=2.6850000000e+01 alb=0.0000000000e+00 alces=-2.2860000000e-01 alt0=4.0000000000e-03 alvs=1.0000000000e-03 dvgbe=0.0000000000e+00 f1vg=-1.0237700000e-04 f2vg=4.3215000000e-04 kt0=6.5880000000e-05 vgb=9.1000000000e-01 vgc=1.1700000000e+00 vge=1.1700000000e+00 vgs=1.1700000000e+00 zetabet=4.8920000000e+00 zetaci=5.8000000000e-01 zetact=5.0000000000e+00 zetacx=0.0000000000e+00 zetahjei=-5.0000000000e-01 zetarbi=3.0020000000e-01 zetarbx=6.0110000000e-02 zetarcx=-2.7680000000e-02 zetare=-9.6050000000e-01 zetavgbe=7.0000000000e-01
+
+* + c10=9.074e-030 qp0=1.008e-013 hfe=10.01 hfc=20.04 hjei=3.382 hjci=0.2
+* + ibeis=1.328e-019 mbei=1.027 ireis=1.5e-014 mrei=2 ibeps=1.26e-019 mbep=1.042
+* + ireps=1.8e-014 mrep=1.8 mcf=1 tbhrec=1e-010 ibcis=4.603e-017 mbci=1.15
+* + ibcxs=0 mbcx=1 ibets=0.02035 abet=24 tunode=1 favl=18.96 qavl=5.092e-014
+* + alfav=-0.0024 alqav=-0.0006284 rbi0=4.444 rbx=2.568 fgeo=0.7409 fdqr0=0
+* + fcrbi=0 fqi=1 re=1.511 rcx=2.483 itss=0 msf=1 iscs=0 msc=1
+* + tsf=0 rsu=0 csu=0 cjei0=8.869e-015 vdei=0.714 zei=0.2489 ajei=1.65
+* + cjep0=2.178e-015 vdep=0.8501 zep=0.2632 ajep=1.6 cjci0=3.58e-015 vdci=0.8201
+* + zci=0.2857 vptci=1.79 cjcx0=6.299e-015 vdcx=0.8201 zcx=0.2863 vptcx=1.977
+* + fbcpar=0.3 fbepar=1 cjs0=2.6e-014 vds=0.9997 zs=0.4295 vpts=100
+* + t0=2.089e-013 dt0h=8e-014 tbvl=8.25e-014 tef0=3.271e-013 gtfe=3.548 thcs=5.001e-012
+* + ahc=0.05 fthc=0.7 rci0=9.523 vlim=0.6999 vces=0.01 vpt=2 tr=0
+* + cbepar=2.609e-014 cbcpar=1.64512e-014 alqf=0.166667 alit=0.333333 flnqs=0 kf=0
+* + af=2 cfbe=-1 latb=0 latl=0 vgb=0.91 alt0=0.004 kt0=6.588e-005
+* + zetaci=0.58 alvs=0.001 alces=-0.2286 zetarbi=0.3002 zetarbx=0.06011 zetarcx=-0.02768
+* + zetare=-0.9605 zetacx=0 vge=1.17 vgc=1.17 vgs=1.17 f1vg=-0.000102377 f2vg=0.00043215
+* + zetact=5 zetabet=4.892 flsh=0 rth=1113.4 cth=6.841e-012 zetarth=0
+* + alrth=0.002 flcomp=2.4 tnom=26.85 acbar=1.5 flcono=0 icbar=0.01
+* + vcbar=0.04 zetavgbe=0.7 hf0=40 ahjei=3 rhjei=2 delck=2 zetahjei=-0.5
 
 
 .END

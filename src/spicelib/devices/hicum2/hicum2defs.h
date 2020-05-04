@@ -133,6 +133,7 @@ typedef struct sHICUMinstance {
     double HICUMpterm;
 
     double HICUMtf;
+    double HICUMick;
 
     double HICUMcbepar;
     double HICUMcbcpar;
@@ -1004,6 +1005,8 @@ enum {
     HICUM_QUEST_CB,
     HICUM_QUEST_CE,
     HICUM_QUEST_CS,
+    HICUM_QUEST_CBEI,
+    HICUM_QUEST_CBCI,
 /* resistances */
     HICUM_QUEST_RCX_T,
     HICUM_QUEST_RE_T,
@@ -1029,8 +1032,7 @@ enum {
 /* transit time */
     HICUM_QUEST_TF,
     HICUM_QUEST_FT,
-    HICUM_QUEST_CBEI,
-    HICUM_QUEST_CBCI,
+    HICUM_QUEST_ICK,
 /* power */
     HICUM_QUEST_POWER,
 };
