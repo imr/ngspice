@@ -4,7 +4,8 @@ VC Q1_C 0 0.0
 VB Q1_B 0 0.0
 RT Q1_T 0 1M
 Q1 Q1_C Q1_B Q1_E Q1_E Q1_T P1 icVBE=0.2 icVCE=0.2 dt=0.0
-.DC VE -0.2 -1.2 -10m
+* .DC VE -0.2 -1.2 -10m
+.DC VE -0.2 -0.21 -10m
 .OPTIONS GMIN=1e-13 NOACCT
 
 .print dc abs(i(vc)) abs(i(vb))
