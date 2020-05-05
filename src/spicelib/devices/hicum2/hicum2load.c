@@ -485,7 +485,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Qjci,Qjei,Qjep;
     double Qdei,Qdci,Qrbi;
     double it,ibei,irei,ibci,ibep,irep,ibh_rec;
-    double ibet,iavl;
+    double ibet,iavl=0.0;
     double ijbcx,ijsc,Qjs,Qscp,HSUM,HSI_Tsu,Qdsu;
 
     //Base resistance and self-heating power
@@ -546,7 +546,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Ibpei, Ibpei_Vbpei;
     double Ibpci, Ibpci_Vbpci;
     double Isici, Isici_Vsici;
-    double Isc,   Isc_Vsc;
+    double Isc=0.0, Isc_Vsc=0.0;
     double Iciei, Iciei_Vbiei, Iciei_Vbici;
     double Ibbp_Vbbp;
     double Isis_Vsis;
@@ -554,9 +554,9 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Ibpbi, Ibpbi_Vbpbi, Ibpbi_Vbici, Ibpbi_Vbiei;
     double Ibpsi, Ibpsi_Vbpci, Ibpsi_Vsici;
     double Icic_Vcic;
-    double Ibci,  Ibci_Vbci;
+    double Ibci=0.0, Ibci_Vbci=0.0;
     double hjei_vbe_Vbiei, ibet_Vbpei=0.0, ibet_Vbiei=0.0, ibh_rec_Vbiei;
-    double irei_Vbiei, irep_Vbpei, iavl_Vbici, rbi_Vbiei, rbi_Vbici;
+    double irei_Vbiei, irep_Vbpei, iavl_Vbici=0.0, rbi_Vbiei, rbi_Vbici;
     double Q_0_Vbiei, Q_0_Vbici, b_q_Vbiei, b_q_Vbici;
 
     double Cjei_Vbiei,Cjci_Vbici,Cjep_Vbpei,CjCx_i_Vbci,CjCx_ii_Vbpci,Cjs_Vsici,Cscp_Vsc,Cjcit_Vbici,i_0f_Vbiei,i_0r_Vbici;
