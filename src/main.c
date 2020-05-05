@@ -421,7 +421,15 @@ ENHtranslate_poly(struct card *deck)
 }
 
 int
-load_opus(char *name)
+EVTswitch_plot(CKTcircuit* ckt, const char* plottypename)
+{
+    NG_IGNORE(ckt);
+    NG_IGNORE(plottypename);
+    return 1;
+};
+
+int
+load_opus(const char *name)
 {
     NG_IGNORE(name);
     return 1;
