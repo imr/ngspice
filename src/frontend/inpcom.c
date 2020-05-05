@@ -7691,6 +7691,10 @@ static struct card *pspice_compat(struct card *oldcard)
 
         if (*cut_line == '*')
             continue;
+
+        if (*cut_line == '\0')
+            continue;
+
         /* exclude any command inside .control ... .endc */
         if (ciprefix(".control", cut_line)) {
             skip_control++;
