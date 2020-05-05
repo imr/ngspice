@@ -24,7 +24,6 @@ FILE *cp_err = NULL;
 FILE *cp_curin = NULL;
 FILE *cp_curout = NULL;
 FILE *cp_curerr = NULL;
-int cp_maxhistlength;
 bool cp_debug = FALSE;
 char cp_chars[128];
 bool cp_nocc = TRUE;

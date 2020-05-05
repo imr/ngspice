@@ -5,6 +5,6 @@
 #include "ngspice/mifproto.h"
 #include "ngspice/dllitf.h"
 
-struct coreInfo_t *coreitf;
+extern struct coreInfo_t *coreitf;
 
 #endif /* dlmain.h */
