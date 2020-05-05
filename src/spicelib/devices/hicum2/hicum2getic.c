@@ -31,15 +31,33 @@ HICUMgetic(GENmodel *inModel, CKTcircuit *ckt)
     for( ; model ; model = HICUMnextModel(model)) {
         for(here = HICUMinstances(model); here ; here = HICUMnextInstance(here)) {
 
-            if(!here->HICUMicVBEGiven) {
-                here->HICUMicVBE =
-                        *(ckt->CKTrhs + here->HICUMbaseNode) -
+            if(!here->HICUMicVBGiven) {
+                here->HICUMicVB =
+                        *(ckt->CKTrhs + here->HICUMbaseNode);
+            }
+            if(!here->HICUMicVCGiven) {
+                here->HICUMicVC =
+                        *(ckt->CKTrhs + here->HICUMcollNode);
+            }
+            if(!here->HICUMicVEGiven) {
+                here->HICUMicVE =
                         *(ckt->CKTrhs + here->HICUMemitNode);
             }
-            if(!here->HICUMicVCEGiven) {
-                here->HICUMicVCE =
-                        *(ckt->CKTrhs + here->HICUMcollNode) -
-                        *(ckt->CKTrhs + here->HICUMemitNode);
+            if(!here->HICUMicVBiGiven) {
+                here->HICUMicVBi =
+                        *(ckt->CKTrhs + here->HICUMbaseBINode);
+            }
+            if(!here->HICUMicVBpGiven) {
+                here->HICUMicVBp =
+                        *(ckt->CKTrhs + here->HICUMbaseBPNode);
+            }
+            if(!here->HICUMicVCiGiven) {
+                here->HICUMicVCi =
+                        *(ckt->CKTrhs + here->HICUMcollCINode);
+            }
+            if(!here->HICUMicVEiGiven) {
+                here->HICUMicVEi =
+                        *(ckt->CKTrhs + here->HICUMemitEINode);
             }
         }
     }

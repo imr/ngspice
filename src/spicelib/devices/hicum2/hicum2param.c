@@ -34,13 +34,33 @@ HICUMparam(int param, IFvalue *value, GENinstance *instPtr, IFvalue *select)
         case HICUM_OFF:
             here->HICUMoff = (value->iValue != 0);
             break;
-        case HICUM_IC_VBE:
-            here->HICUMicVBE = value->rValue;
-            here->HICUMicVBEGiven = TRUE;
+        case HICUM_IC_VB:
+            here->HICUMicVB      = value->rValue;
+            here->HICUMicVBGiven = TRUE;
             break;
-        case HICUM_IC_VCE:
-            here->HICUMicVCE = value->rValue;
-            here->HICUMicVCEGiven = TRUE;
+        case HICUM_IC_VE:
+            here->HICUMicVE      = value->rValue;
+            here->HICUMicVEGiven = TRUE;
+            break;
+        case HICUM_IC_VC:
+            here->HICUMicVC      = value->rValue;
+            here->HICUMicVCGiven = TRUE;
+            break;
+        case HICUM_IC_VBi:
+            here->HICUMicVBi      = value->rValue;
+            here->HICUMicVBiGiven = TRUE;
+            break;
+        case HICUM_IC_VBp:
+            here->HICUMicVBp      = value->rValue;
+            here->HICUMicVBpGiven = TRUE;
+            break;
+        case HICUM_IC_VEi:
+            here->HICUMicVEi      = value->rValue;
+            here->HICUMicVEiGiven = TRUE;
+            break;
+        case HICUM_IC_VCi:
+            here->HICUMicVCi      = value->rValue;
+            here->HICUMicVCiGiven = TRUE;
             break;
         case HICUM_TEMP:
             here->HICUMtemp = value->rValue+CONSTCtoK;
@@ -56,12 +76,12 @@ HICUMparam(int param, IFvalue *value, GENinstance *instPtr, IFvalue *select)
             break;
         case HICUM_IC :
             switch(value->v.numValue) {
-                case 2:
-                    here->HICUMicVCE = *(value->v.vec.rVec+1);
-                    here->HICUMicVCEGiven = TRUE;
+                case 2: //todo
+                    here->HICUMicVC = *(value->v.vec.rVec+1);
+                    here->HICUMicVCGiven = TRUE;
                 case 1:
-                    here->HICUMicVBE = *(value->v.vec.rVec);
-                    here->HICUMicVBEGiven = TRUE;
+                    here->HICUMicVB = *(value->v.vec.rVec);
+                    here->HICUMicVBGiven = TRUE;
                     break;
                 default:
                     return(E_BADPARM);
