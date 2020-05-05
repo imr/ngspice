@@ -548,15 +548,16 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Qjcx_ii, Qjcx_ii_Vbpci, Qjcx_ii_dT;
     double Qjs_Vsici, Qjs_dT;
 
-    double itf,itr,Tf,Tr,VT_f,i_0f,i_0r,a_bpt,Q_0,Q_p,Q_bpt;
-    double itf_Vbiei, itf_Vbici, itf_Vciei, itf_dT, itf_dQ_pT, itf_dick, itf_dT_f0;
-    double itr_Vbiei, itr_Vbici, itr_Vciei, itr_dT, itr_dQ_pT, itr_dick, itr_dT_f0;
+    double volatile itf,itr,Tf,Tr,VT_f,i_0f,i_0r,a_bpt,Q_0,Q_p,Q_bpt;
+    double volatile itf_Vbiei, itf_Vbici, itf_Vciei, itf_dT, itf_dQ_pT, itf_dick, itf_dT_f0;
+    double volatile itr_Vbiei, itr_Vbici, itr_Vciei, itr_dT, itr_dQ_pT, itr_dick, itr_dT_f0;
     double it_Vbiei, it_Vbici, it_dT, it_dQ_pT;
     double Qf_Vbiei, Qf_Vbici, Qf_Vciei, Qf_dT, Qf_dQ_pT, Qf_dick, Qf_dT_f0;
     double Qr_Vbiei, Qr_Vbici, Qr_Vciei, Qr_dT, Qr_dQ_pT, Qr_dick, Qr_dT_f0;
     double it_ditf, it_ditr;
-    duals::duald result_itf, result_itr, result_Qf, result_Qr; //intermediate variables when calling void dual functions
-    double Orci0_t,b_q,I_Tf1,T_f0,Q_fT,T_fT,Q_bf;
+    duals::duald result_itf, result_itr, result_Qf, result_Qr, result_Q_bf; //intermediate variables when calling void dual functions
+    double Orci0_t,b_q,I_Tf1,T_f0,Q_fT,T_fT;
+    double volatile Q_bf, Q_bf_Vbiei, Q_bf_Vbici, Q_bf_Vciei, Q_bf_dT, Q_bf_dick, Q_bf_dT_f0, Q_bf_dQ_pT;
     double a_h,d_Q;
    double volatile Q_pT, Q_pT_dVbiei, Q_pT_dVbici, Q_pT_dT, Q_pT_dick, Q_pT_dT_f0, Q_pT_dQ_0, Q_pT_dVciei;
    double volatile Q_pT_dT_numerical, Q_pT_dVbiei_numerical, Q_pT_dVbici_numerical, Q_pT_dQ_0_numerical, Q_pT_dT_f0_numerical, Q_pT_dick_numerical;
@@ -616,7 +617,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Ibpsi, Ibpsi_Vbpci, Ibpsi_Vsici;
     double Icic_Vcic;
     double Ibci, Ibci_Vbci, Ibci_dT;
-    double hjei_vbe_Vbiei, hjei_vbe_dT, ibet_Vbpei=0.0, ibet_dT=0, ibet_Vbiei=0.0, ibh_rec_Vbiei;
+    double volatile hjei_vbe_Vbiei, hjei_vbe_dT, ibet_Vbpei=0.0, ibet_dT=0, ibet_Vbiei=0.0, ibh_rec_Vbiei, ibh_rec_dT, ibh_rec_Vbici;
     double irei_Vbiei, irei_dT;
     double ibep_Vbpei, ibep_dT;
     double irep_Vbpei, irep_dT, iavl_Vbici, rbi_dT, rbi_dQjei, rbi_dCjci, rbi_dQf, rbi_Vbiei, rbi_Vbici;
@@ -888,8 +889,9 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
         duals::duald vt,rbi;
         vt      = CONSTboltz * T / CHARGE;
         //dirty
-        rbi = here->HICUMrbi0_t;
-        return rbi;
+        // rbi = here->HICUMrbi0_t;
+        // return rbi;
+        //end dirty
         if(here->HICUMrbi0_t > 0.0){ //: HICRBI
             duals::duald Qz_nom,f_QR,ETA,Qz0,fQz;
             // Consideration of conductivity modulation
@@ -918,9 +920,9 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
         return rbi;
     };
 
-    std::function<void (duals::duald, duals::duald, duals::duald, duals::duald, duals::duald, duals::duald, duals::duald*, duals::duald*, duals::duald*, duals::duald*)> calc_it_final = [&](duals::duald T, duals::duald Vbiei, duals::duald Vbici, duals::duald Q_pT, duals::duald T_f0, duals::duald ick, duals::duald *itf, duals::duald *itr, duals::duald *Qf, duals::duald *Qr){
+    std::function<void (duals::duald, duals::duald, duals::duald, duals::duald, duals::duald, duals::duald, duals::duald*, duals::duald*, duals::duald*, duals::duald*, duals::duald*)> calc_it_final = [&](duals::duald T, duals::duald Vbiei, duals::duald Vbici, duals::duald Q_pT, duals::duald T_f0, duals::duald ick, duals::duald *itf, duals::duald *itr, duals::duald *Qf, duals::duald *Qr, duals::duald *Q_bf){
         // given T,Q_pT, ick, T_f0, Tr, Vbiei, Vbici -> calculate itf, itr, Qf, Qr
-        duals::duald VT, VT_f, i_0f, i_0r, I_Tf1, a_h, Tf,Q_bf,Q_fT,T_fT;
+        duals::duald VT, VT_f, i_0f, i_0r, I_Tf1, a_h, Tf,Q_fT,T_fT;
         VT      = CONSTboltz * T / CHARGE;
         VT_f    = model->HICUMmcf*VT;
 
@@ -945,7 +947,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
         //Final transit times, charges and transport current components
         Tf      = T_f0;
         *Qf      = T_f0*(*itf);
-        HICQFF(T,*itf,ick,&Tf,Qf,&T_fT,&Q_fT,&Q_bf);
+        HICQFF(T,*itf,ick,&Tf,Qf,&T_fT,&Q_fT,Q_bf);
     //HICQFF = [&](duals::duald T, duals::duald itf, duals::duald I_CK, duals::duald * T_f, duals::duald * Q_f, duals::duald * T_fT, duals::duald * Q_fT, duals::duald * Q_bf)
         *Qr      = Tr*(*itr);
     };
@@ -1680,93 +1682,103 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             //end Q_pT -------------------------------------------------------------------------------
 
             //begin final transfer current calculations -> itf, itr, Qf, Qr------------
-            calc_it_final(here->HICUMtemp+1_e, Vbiei    , Vbici    , Q_0    , T_f0    , ick    , &result_itf, &result_itr, &result_Qf, &result_Qr);
+            calc_it_final(here->HICUMtemp+1_e, Vbiei    , Vbici    , Q_pT    , T_f0    , ick    , &result_itf, &result_itr, &result_Qf, &result_Qr, &result_Q_bf);
             // calc_it_final(here->HICUMtemp+1_e, Vbiei    , Vbici    , Q_pT    , T_f0    , ick    , &result_itf, &result_itr, &result_Qf, &result_Qr);
             itf    = result_itf.rpart();
             itr    = result_itr.rpart();
             Qf     = result_Qf.rpart();
             Qr     = result_Qr.rpart();
+            Q_bf   = result_Q_bf.rpart();
             itf_dT = result_itf.dpart();
             itr_dT = result_itr.dpart();
             Qf_dT  = result_Qf.dpart();
             Qr_dT  = result_Qr.dpart();
-            // calc_it_final(here->HICUMtemp    , Vbiei+1_e, Vbici    , Q_pT    , T_f0    , ick    , &result_itf, &result_itr, &result_Qf, &result_Qr);
-            calc_it_final(here->HICUMtemp    , Vbiei+1_e, Vbici    , Q_0    , T_f0    , ick    , &result_itf, &result_itr, &result_Qf, &result_Qr);
-            itf_Vbiei = result_itf.dpart();
-            itr_Vbiei = result_itr.dpart();
-            Qf_Vbiei  = result_Qf.dpart();
-            Qr_Vbiei  = result_Qr.dpart();
+            Q_bf_dT= result_Q_bf.dpart();
+            calc_it_final(here->HICUMtemp    , Vbiei+1_e, Vbici    , Q_pT    , T_f0    , ick    , &result_itf, &result_itr, &result_Qf, &result_Qr, &result_Q_bf);
+            itf_Vbiei  = result_itf.dpart();
+            itr_Vbiei  = result_itr.dpart();
+            Qf_Vbiei   = result_Qf.dpart();
+            Qr_Vbiei   = result_Qr.dpart();
+            Q_bf_Vbiei = result_Q_bf.dpart();
 
-            calc_it_final(here->HICUMtemp    , Vbiei    , Vbici+1_e, Q_0    , T_f0    , ick    , &result_itf, &result_itr, &result_Qf, &result_Qr);
-            // calc_it_final(here->HICUMtemp    , Vbiei    , Vbici+1_e, Q_pT    , T_f0    , ick    , &result_itf, &result_itr, &result_Qf, &result_Qr);
+            calc_it_final(here->HICUMtemp    , Vbiei    , Vbici+1_e, Q_pT    , T_f0    , ick    , &result_itf, &result_itr, &result_Qf, &result_Qr, &result_Q_bf);
             itf_Vbici = result_itf.dpart();
             itr_Vbici = result_itr.dpart();
             Qf_Vbici  = result_Qf.dpart();
             Qr_Vbici  = result_Qr.dpart();
+            Q_bf_Vbici= result_Q_bf.dpart();
 
-            calc_it_final(here->HICUMtemp    , Vbiei    , Vbici    , Q_0+1_e, T_f0    , ick    , &result_itf, &result_itr, &result_Qf, &result_Qr);
-            // calc_it_final(here->HICUMtemp    , Vbiei    , Vbici    , Q_pT+1_e, T_f0    , ick    , &result_itf, &result_itr, &result_Qf, &result_Qr);
+            calc_it_final(here->HICUMtemp    , Vbiei    , Vbici    , Q_pT+1_e, T_f0    , ick    , &result_itf, &result_itr, &result_Qf, &result_Qr, &result_Q_bf);
             itf_dQ_pT = result_itf.dpart();
             itr_dQ_pT = result_itr.dpart();
             Qf_dQ_pT  = result_Qf.dpart();
             Qr_dQ_pT  = result_Qr.dpart();
+            Q_bf_dQ_pT= result_Q_bf.dpart();
 
-            calc_it_final(here->HICUMtemp    , Vbiei    , Vbici    , Q_0    , T_f0+1_e, ick    , &result_itf, &result_itr, &result_Qf, &result_Qr);
-            // calc_it_final(here->HICUMtemp    , Vbiei    , Vbici    , Q_pT    , T_f0+1_e, ick    , &result_itf, &result_itr, &result_Qf, &result_Qr);
+            calc_it_final(here->HICUMtemp    , Vbiei    , Vbici    , Q_pT    , T_f0+1_e, ick    , &result_itf, &result_itr, &result_Qf, &result_Qr, &result_Q_bf);
             itf_dT_f0 = result_itf.dpart();
             itr_dT_f0 = result_itr.dpart();
             Qf_dT_f0  = result_Qf.dpart();
             Qr_dT_f0  = result_Qr.dpart();
+            Q_bf_dT_f0= result_Q_bf.dpart();
 
-            calc_it_final(here->HICUMtemp    , Vbiei    , Vbici    , Q_0    , T_f0    , ick+1_e, &result_itf, &result_itr, &result_Qf, &result_Qr);
-            // calc_it_final(here->HICUMtemp    , Vbiei    , Vbici    , Q_pT    , T_f0    , ick+1_e, &result_itf, &result_itr, &result_Qf, &result_Qr);
+            calc_it_final(here->HICUMtemp    , Vbiei    , Vbici    , Q_pT    , T_f0    , ick+1_e, &result_itf, &result_itr, &result_Qf, &result_Qr, &result_Q_bf);
             itf_dick = result_itf.dpart();
             itr_dick = result_itr.dpart();
             Qf_dick  = result_Qf.dpart();
             Qr_dick  = result_Qr.dpart();
+            Q_bf_dick= result_Q_bf.dpart();
 
             // add derivatives of Q_pT = f(Vbici,Vbiei,Vciei,T)
             itf_dT    += itf_dQ_pT*Q_pT_dT;
             itr_dT    += itr_dQ_pT*Q_pT_dT;
             Qf_dT     += Qf_dQ_pT*Q_pT_dT;
             Qr_dT     += Qr_dQ_pT*Q_pT_dT;
+            Q_bf_dT   += Q_bf_dQ_pT*Q_bf_dT;
 
             itf_Vbiei += itf_dQ_pT*Q_pT_dVbiei;
             itr_Vbiei += itr_dQ_pT*Q_pT_dVbiei;
             Qf_Vbiei  += Qf_dQ_pT*Q_pT_dVbiei;
             Qr_Vbiei  += Qr_dQ_pT*Q_pT_dVbiei;
+            Q_bf_Vbiei+= Q_bf_dQ_pT*Q_pT_dVbiei;
 
             itf_Vbici += itf_dQ_pT*Q_pT_dVbici;
             itr_Vbici += itr_dQ_pT*Q_pT_dVbici;
             Qf_Vbici  += Qf_dQ_pT*Q_pT_dVbici;
             Qr_Vbici  += Qr_dQ_pT*Q_pT_dVbici;
+            Q_bf_Vbici+= Q_bf_dQ_pT*Q_pT_dVbici;
 
             itf_Vciei += itf_dQ_pT*Q_pT_dVciei;
             itr_Vciei += itr_dQ_pT*Q_pT_dVciei;
             Qf_Vciei  += Qf_dQ_pT*Q_pT_dVciei;
             Qr_Vciei  += Qr_dQ_pT*Q_pT_dVciei;
+            Q_bf_Vciei+= Q_bf_dQ_pT*Q_pT_dVciei;
 
             // add derivatives of T_f0 = f(Vbici, T)
             itf_Vbici += itf_dick*T_f0_Vbici;
             itr_Vbici += itr_dick*T_f0_Vbici;
             Qf_Vbici  += Qf_dick*T_f0_Vbici;
             Qr_Vbici  += Qr_dick*T_f0_Vbici;
+            Q_bf_Vbici+= Q_bf_dick*T_f0_Vbici;
 
             itf_Vbici += itf_dT_f0*T_f0_Vbici;
             itr_Vbici += itr_dT_f0*T_f0_Vbici;
             Qf_Vbici  += Qf_dT_f0*T_f0_Vbici;
             Qr_Vbici  += Qr_dT_f0*T_f0_Vbici;
+            Q_bf_Vbici+= Q_bf_dT_f0*T_f0_Vbici;
 
             // add derivatives of ick=f(Vciei, T)
             itf_Vciei += itf_dick*ick_Vciei;
             itr_Vciei += itr_dick*ick_Vciei;
             Qf_Vciei  += Qf_dick*ick_Vciei;
             Qr_Vciei  += Qr_dick*ick_Vciei;
+            Q_bf_Vciei+= Q_bf_dick*ick_Vciei;
 
             itf_dT    += itf_dick*ick_dT;
             itr_dT    += itr_dick*ick_dT;
             Qf_dT     += Qf_dick*ick_dT;
             Qr_dT     += Qr_dick*ick_dT;
+            Q_bf_dT   += Q_bf_dick*ick_dT;
 
             // finally the transfer current
             it       = itf-itr;
@@ -1775,6 +1787,13 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             it_Vbiei = it_ditf*itf_Vbiei + it_ditr*itr_Vbiei;
             it_Vbici = it_ditf*itf_Vbici + it_ditr*itr_Vbici;
             it_dT    = it_ditf*itf_dT    + it_ditr*itr_dT;
+
+            //recast the derivative after Vciei to a derivative to Vbiei and Vciei
+            // Vciei = Vbiei - Vbici 
+            // dVciei/dVbiei = 1
+            // dVciei/dVbici = -1
+            it_Vbiei +=  (itf_Vciei - itr_Vciei);
+            it_Vbici += -(itf_Vciei - itr_Vciei);
 
             //end final calculations --------------------------------------------------
 
@@ -1820,10 +1839,17 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
             here->HICUMiavl = iavl;
 
-//             //Excess base current from recombination at the b-c barrier
-//             ibh_rec = Q_bf*Otbhrec;
-// //todo: Q_bf derivatives to Vbiei
-//             ibh_rec_Vbiei = 0.0;
+            //Excess base current from recombination at the b-c barrier
+            ibh_rec       = Q_bf*Otbhrec;
+            ibh_rec_Vbiei = Otbhrec*Q_bf_Vbiei ;
+            ibh_rec_Vbici = Otbhrec*Q_bf_Vbici ;
+            ibh_rec_dT    = Otbhrec*Q_bf_dT ;
+            //recast the derivative after Vciei to a derivative to Vbiei and Vciei
+            // Vciei = Vbiei - Vbici 
+            // dVciei/dVbiei = 1
+            // dVciei/dVbici = -1
+            ibh_rec_Vbiei +=  Q_bf_Vciei;
+            ibh_rec_Vbici += -Q_bf_Vciei;
 
             //internal base resistance
             result    = calc_rbi(here->HICUMtemp+1_e, Qjei    , Cjci    , Qf    );
@@ -1988,16 +2014,23 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
             // Load_sources
 
-            Ibpei       = model->HICUMtype*ibep;
-            Ibpei      += model->HICUMtype*irep;
+            Ibpei        = model->HICUMtype*ibep;
+            Ibpei       += model->HICUMtype*irep;
+            Ibpei_Vbpei  = model->HICUMtype*ibep_Vbpei;
             Ibpei_Vbpei += model->HICUMtype*irep_Vbpei;
+            Ibpei_dT     = model->HICUMtype*ibep_dT;
+            Ibpei_dT    += model->HICUMtype*irep_dT;
 
             Ibiei        = model->HICUMtype*ibei;
             Ibiei_Vbiei  = model->HICUMtype*ibei_Vbiei;
+            Ibiei_dT     = model->HICUMtype*ibei_dT;
             Ibiei       += model->HICUMtype*irei;
             Ibiei_Vbiei += model->HICUMtype*irei_Vbiei;
-//            Ibiei       += model->HICUMtype*ibh_rec;
-//            Ibiei_Vbiei += model->HICUMtype*ibh_rec_Vbiei;
+            Ibiei_dT    += model->HICUMtype*irei_dT;
+            Ibiei       += model->HICUMtype*ibh_rec;
+            Ibiei_Vbiei += model->HICUMtype*ibh_rec_Vbiei;
+            Ibiei_dT    += model->HICUMtype*ibh_rec_dT;
+            //derivative of Ibiei to Vbici missing via ibh_rec!
 
             if (model->HICUMtunode==1.0) {
                 Ibpei  += -model->HICUMtype*ibet;

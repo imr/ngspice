@@ -255,6 +255,7 @@ HICUMmParam(int param, IFvalue *value, GENmodel *inModel)
             model->HICUMrsuGiven = TRUE;
             break;
         case HICUM_MOD_CSU:
+            break; //todo
 
 //Depletion Capacitances
         case HICUM_MOD_CJEI0:
