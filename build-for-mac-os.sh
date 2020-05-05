@@ -29,6 +29,7 @@
 # The last two lines may depend on the lib installations
 # please check if there are any problems
 
+make clean
 make -j4
 make DESTDIR="$(pwd)/root-tree" install
 
