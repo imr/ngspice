@@ -404,10 +404,10 @@ int PS_Arc(int x0, int y0, int r, double theta, double delta_theta)
 int PS_Text(const char *text_in, int x, int y, int angle)
 {
     int savedlstyle, savedcolor;
-    char *text;
 #ifdef EXT_ASC
-    text = text_in;
+    const char *text = text_in;
 #else
+    char *text;
     {
         const size_t n_char_text = strlen(text_in);
         text = TMALLOC(char, n_char_text);
