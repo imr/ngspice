@@ -8128,14 +8128,16 @@ struct card *ltspice_compat(struct card *oldcard)
         static struct card *subcktline = NULL;
         static int nesting = 0;
         char *cut_line = card->line;
-        if (ciprefix(".subckt", cut_line)) {
+        if (*cut_line == '*' || *cut_line == '\0')
+            continue;
+        else if (ciprefix(".subckt", cut_line)) {
             subcktline = card;
             nesting++;
         }
-        if (ciprefix(".ends", cut_line))
+        else if (ciprefix(".ends", cut_line))
             nesting--;
 
-        if (ciprefix(".model", card->line) &&
+        else if (ciprefix(".model", card->line) &&
                 search_plain_identifier(card->line, "d")) {
             if (search_plain_identifier(card->line, "roff") ||
                     search_plain_identifier(card->line, "ron") ||
@@ -8186,6 +8188,8 @@ struct card *ltspice_compat(struct card *oldcard)
         static int nesting = 0;
         char *cut_line = card->line;
         if (*cut_line == '*')
+            continue;
+        if (*cut_line == '\0')
             continue;
         // exclude any command inside .control ... .endc
         if (ciprefix(".control", cut_line)) {
@@ -8256,7 +8260,7 @@ static void inp_check_syntax(struct card *deck)
 
     for (card = deck; card; card = card->nextcard) {
         char *cut_line = card->line;
-        if (*cut_line == '*')
+        if (*cut_line == '*' || *cut_line == '\0')
             continue;
         // check for .control ... .endc
         if (ciprefix(".control", cut_line)) {
@@ -8328,6 +8332,8 @@ static void rem_mfg_from_models(struct card *deck)
         char *curr_line, *end, *start;
 
         curr_line = start = card->line;
+        if (*curr_line == '*' || *curr_line == '\0')
+            continue;
         /* remove mfg=name */
         if (ciprefix(".model", curr_line)) {
             start = strstr(curr_line, "mfg=");
