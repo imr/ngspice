@@ -53,7 +53,7 @@ BUILD_CMPP_FILES = main.c file_buffer.c \
 
 build/cmpp$(BUILD_EXEEXT) : $(BUILD_CMPP_FILES)
 	$(CC_FOR_BUILD) $(CFLAGS_FOR_BUILD) \
-		$(AM_CPPFLAGS) $(LDFLAGS_FOR_BUILD) -o $@ $^
+		$(AM_CPPFLAGS) $(LDFLAGS_FOR_BUILD) -o $@ $^ -lshlwapi
 
 distclean-local:
 	-rm -rf build
