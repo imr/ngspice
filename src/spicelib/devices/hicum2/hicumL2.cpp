@@ -378,6 +378,11 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double it,ibei,irei,ibci,ibep,irep,ibh_rec;
     double ibet,iavl,iavl_ditf,iavl_dT,iavl_Vbiei,iavl_dCjci;
     double ijbcx,ijbcx_dT,ijbcx_Vbpci,ijsc,ijsc_Vsici,ijsc_dT,Qjs,Qscp,HSUM,HSI_Tsu,Qdsu;
+    double HSI_Tsu_Vbpci, HSI_Tsu_Vsici, HSI_Tsu_dT;
+    double Qdsu_Vbpci, Qdsu_Vsici, Qdsu_dT;
+    duals::duald result_Qdsu, result_HSI_TSU;
+    double Qscp_Vsc, Qscp_dT;
+    double Cscp_Vsc, Cscp_dT;
 
     //Base resistance and self-heating power
     double rbi,pterm;
@@ -406,7 +411,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double volatile Q_bf, Q_bf_Vbiei, Q_bf_Vbici, Q_bf_Vciei, Q_bf_dT, Q_bf_dick, Q_bf_dT_f0, Q_bf_dQ_pT;
     double volatile Q_pT, Q_pT_dVbiei, Q_pT_dVbici, Q_pT_dT, Q_pT_dick, Q_pT_dT_f0, Q_pT_dQ_0, Q_pT_dVciei;
     double Qf, Cdei, Qr, Cdci;
-    double ick, ick_Vciei, ick_dT,vc,cjcx01,cjcx02;
+    double ick, ick_Vciei, ick_dT,cjcx01,cjcx02;
     int l_it;
 
     //NQS
@@ -469,7 +474,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double ibci_Vbici, ibci_dT;
     double Q_0_Vbiei, Q_0_Vbici, Q_0_hjei_vbe, Q_0_Qjci, Q_0_Qjei, Q_0_dT;
 
-    double Cjei_Vbiei,Cjci_Vbici,Cjep_Vbpei,Cjep_dT,Cjs_Vsici,Cscp_Vsc,Cjcit_Vbici,i_0f_Vbiei,i_0r_Vbici;
+    double Cjei_Vbiei,Cjci_Vbici,Cjep_Vbpei,Cjep_dT,Cjs_Vsici,Cjcit_Vbici,i_0f_Vbiei,i_0r_Vbici;
     double Cjei_dT, Cjci_dT;
     double Qjei_Vbiei, Qjei_dT, Qjci_Vbici, Qjci_dT;
     double cc_Vbici,T_f0_Vbici,T_f0_Qjci, T_f0_dT;
@@ -488,7 +493,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Qjep_Vbpei,Qjep_dT;
     double qjcx0_t_i_Vbci;
     double qjcx0_t_ii_Vbpci;
-    double Qdsu_Vbpci;
     double Qbepar1_Vbe;
     double Qbepar2_Vbpe;
     double Qbcpar1_Vbci;
@@ -772,6 +776,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
         //end
     };
 
+
     std::function<duals::duald (duals::duald, duals::duald)> calc_ibet = [&](duals::duald Vbiei, duals::duald Vbpei){
         //Tunneling current
         duals::duald ibet;
@@ -982,6 +987,26 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
     };
 
+    std::function<void (duals::duald, duals::duald, duals::duald, duals::duald*, duals::duald*)> calc_itss = [&](duals::duald T, duals::duald Vbpci, duals::duald Vsici, duals::duald * HSI_Tsu, duals::duald * Qdsu){
+        duals::duald HSUM, vt, HSa, HSb;
+        vt      = CONSTboltz * T / CHARGE;
+        if(model->HICUMitss > 0.0) { // : Sub_Transfer
+            HSUM    = model->HICUMmsf*vt;
+            HSa     = exp(Vbpci/HSUM);
+            HSb     = exp(Vsici/HSUM);
+            *HSI_Tsu = here->HICUMitss_t*(HSa-HSb);
+            if(model->HICUMtsf > 0.0) {
+                *Qdsu    = here->HICUMtsf_t*here->HICUMitss_t*HSa;
+            } else {
+                *Qdsu    = 0.0;
+            }
+        } else {
+            *HSI_Tsu = 0.0;
+            *Qdsu    = 0.0;
+        };
+    };
+
+
     /*  loop through all the models */
     for (; model != NULL; model = HICUMnextModel(model)) {
 
@@ -1046,7 +1071,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             gqsu = 0.0;
             Icth = 0.0, Icth_dT = 0.0;
 
-//            SCALE = here->HICUMarea * here->HICUMm;
+            // Markus: What is this ?
             here->HICUMcbepar = model->HICUMcbepar;
             here->HICUMcbcpar = model->HICUMcbcpar;
 
@@ -1856,35 +1881,55 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             if (model->HICUMvdsp > 0) {
                 //TODO
                 //HICJQ(here->HICUMvt,here->HICUMcscp0_t,here->HICUMvdsp_t,model->HICUMzsp,here->HICUMvptsp_t,Vsc,&Cscp,&Cscp_Vsc,&Qscp);
+                hicum_HICJQ(here->HICUMtemp, here->HICUMcscp0_t,here->HICUMvdsp_t,model->HICUMzsp,here->HICUMvptsp_t, Vsc, &Cscp, &Cscp_Vsc, &Cscp_dT, &Qscp, &Qscp_Vsc, &Qscp_dT);
             } else {
                 // Constant, temperature independent capacitance
-                Cscp = model->HICUMcscp0;
+                Cscp     = model->HICUMcscp0;
+                Cscp_Vsc = 0;
+                Cscp_dT  = 0;
                 Qscp = model->HICUMcscp0*Vsc;
+                Qscp_Vsc = 0;
+                Qscp_dT  = 0;
             }
 
             //Parasitic substrate transistor transfer current and diffusion charge
-            if(model->HICUMitss > 0.0) { // Sub_Transfer
-                double HSa,HSb;
-                HSUM    = model->HICUMmsf*here->HICUMvt;
-                HSa     = exp(Vbpci/HSUM);
-                HSb     = exp(Vsici/HSUM);
-                HSI_Tsu = here->HICUMitss_t*(HSa-HSb);
-                Ibpsi_Vbpci =  here->HICUMitss_t*HSa/HSUM;
-                Ibpsi_Vsici = -here->HICUMitss_t*HSb/HSUM;
-                if(model->HICUMtsf > 0.0) {
-                    Qdsu = here->HICUMtsf_t*here->HICUMitss_t*HSa;
-                    Qdsu_Vbpci = here->HICUMtsf_t*here->HICUMitss_t*HSa/HSUM;
-                } else {
-                    Qdsu = 0.0;
-                    Qdsu_Vbpci = 0.0;
-                }
-            } else {
-                HSI_Tsu = 0.0;
-                Ibpsi_Vbpci = 0.0;
-                Ibpsi_Vsici = 0.0;
-                Qdsu = 0.0;
-                Qdsu_Vbpci = 0.0;
-            }
+            //calc_itss = [&](duals::duald T, duals::duald Vbpci, duals::duald Vsici, duals::duald * HSI_Tsu, duals::duald * Qdsu){
+            calc_itss(here->HICUMtemp+1_e, Vbpci    , Vsici    , &result_HSI_TSU, &result_Qdsu);
+            HSI_Tsu          = result_HSI_TSU.rpart();
+            Qdsu             = result_Qdsu.rpart();
+            HSI_Tsu_dT       = result_HSI_TSU.dpart();
+            Qdsu_dT          = result_Qdsu.dpart();
+  
+            calc_itss(here->HICUMtemp    , Vbpci+1_e, Vsici    , &result_HSI_TSU, &result_Qdsu);
+            HSI_Tsu_Vbpci    = result_HSI_TSU.dpart();
+            Qdsu_Vbpci       = result_Qdsu.dpart();
+            calc_itss(here->HICUMtemp    , Vbpci    , Vsici+1_e, &result_HSI_TSU, &result_Qdsu);
+            HSI_Tsu_Vsici    = result_HSI_TSU.dpart();
+            Qdsu_Vsici       = result_Qdsu.dpart(); //@Dietmar. Where is this one written to the matrix?
+ 
+ 
+            // if(model->HICUMitss > 0.0) { // Sub_Transfer
+            //     double HSa,HSb;
+            //     HSUM    = model->HICUMmsf*here->HICUMvt;
+            //     HSa     = exp(Vbpci/HSUM);
+            //     HSb     = exp(Vsici/HSUM);
+            //     HSI_Tsu = here->HICUMitss_t*(HSa-HSb);
+            //     Ibpsi_Vbpci =  here->HICUMitss_t*HSa/HSUM;
+            //     Ibpsi_Vsici = -here->HICUMitss_t*HSb/HSUM;
+            //     if(model->HICUMtsf > 0.0) {
+            //         Qdsu = here->HICUMtsf_t*here->HICUMitss_t*HSa;
+            //         Qdsu_Vbpci = here->HICUMtsf_t*here->HICUMitss_t*HSa/HSUM;
+            //     } else {
+            //         Qdsu = 0.0;
+            //         Qdsu_Vbpci = 0.0;
+            //     }
+            // } else {
+            //     HSI_Tsu = 0.0;
+            //     Ibpsi_Vbpci = 0.0;
+            //     Ibpsi_Vsici = 0.0;
+            //     Qdsu = 0.0;
+            //     Qdsu_Vbpci = 0.0;
+            // }
 
             // Current gain computation for correlated noise implementation
             if (ibei > 0.0) {
@@ -1895,11 +1940,10 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             Ieie = Veie/here->HICUMre_t; // only needed for re flicker noise
 
             //Diode current for s-c junction (si,ci)
-            //TODO
             //HICDIO(here->HICUMvt,model->HICUMiscs,here->HICUMiscs_t,model->HICUMmsc,Vsici,&ijsc,&Isici_Vsici);
             hicum_diode(here->HICUMtemp,here->HICUMiscs_t,model->HICUMmsc, Vsici, &ijsc, &ijsc_Vsici, &ijsc_dT);
 
-            //Self-heating calculation
+            //Self-heating calculation (BIG TODO)
             if (model->HICUMflsh == 1 && model->HICUMrth >= MIN_R) {
                 pterm   =  Vciei*it + (here->HICUMvdci_t-Vbici)*iavl;
             } else if (model->HICUMflsh == 2 && model->HICUMrth >= MIN_R) {
@@ -1989,6 +2033,8 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             }
 //printf("Vbiei: %f ibei: %g irei: %g ibh_rec: %g ibet: %g\n",Vbiei,ibei,irei,ibh_rec,ibet);
             Ibpsi       = model->HICUMtype*HSI_Tsu;
+            Ibpsi_Vbpci = model->HICUMtype*HSI_Tsu_Vbpci;
+            Ibpsi_Vsici = model->HICUMtype*HSI_Tsu_Vsici;
 
             Ibpci       = model->HICUMtype*ijbcx;
             Ibpci_Vbpci = model->HICUMtype*ijbcx_Vbpci;

@@ -35,6 +35,28 @@ This file gives an overview of the files needed for the ngspice HiCUM version, e
     * Assignee: Mario
 # hicum2trunc.c
 
+# hicumL2.cpp
+Implemented equivalent circuit elements:
+- Ijbei
+- Ijbci
+- Cjei
+- Cjci
+- It
+- Crbi (Mario check this)
+- Iavl 
+- Ibhrec 
+- rbi 
+- Ijbep 
+- Ijbep 
+- Ijbcx 
+- Cjcx 
+- Cjs 
+- Cjep 
+- Ibet 
+- Ijsc
+Missing:
+- Ibpsi
+
 # Working in the DC case without self heating:
 See test case in DMT where this is compared against ADS.
 - re
