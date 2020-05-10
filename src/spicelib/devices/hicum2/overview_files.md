@@ -62,3 +62,7 @@ See test case in DMT where this is compared against ADS.
 - re
 - Ibiei
 - Ibici
+
+# useful stuff
+- non-ancient explanation how equation system of spice looks:
+https://spicesharp.github.io/SpiceSharp/articles/custom_components/modified_nodal_analysis.html#nonlinear-components

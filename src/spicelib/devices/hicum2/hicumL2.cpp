@@ -2466,6 +2466,8 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 }
             }
 
+            // Write DC Currents and thei derivatives on the correct variables of the HiCUM equivalent circuit
+
             *(ckt->CKTstate0 + here->HICUMvbiei)       = Vbiei;
             *(ckt->CKTstate0 + here->HICUMvbici)       = Vbici;
             *(ckt->CKTstate0 + here->HICUMvbpei)       = Vbpei;
@@ -2520,6 +2522,7 @@ load:
             /*
              *  load current excitation vector and matrix
              */
+            // Markus: As far as I understand this: Derivative of Kirchhoff Current law for every node
 /*
 c           Branch: be, Stamp element: Cbepar1
 */
