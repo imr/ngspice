@@ -377,7 +377,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Qdei,Qdci,Qrbi;
     double it,ibei,irei,ibci,ibep,irep,ibh_rec;
     double ibet,iavl,iavl_ditf,iavl_dT,iavl_Vbiei,iavl_dCjci;
-    double ijbcx,ijbcx_dT,ijbcx_Vbpci,ijsc,ijsc_Vsici,ijsc_dT,Qjs,Qscp,HSUM,HSI_Tsu,Qdsu;
+    double ijbcx,ijbcx_dT,ijbcx_Vbpci,ijsc,ijsc_Vsici,ijsc_dT,Qjs,Qscp,HSI_Tsu,Qdsu;
     double HSI_Tsu_Vbpci, HSI_Tsu_Vsici, HSI_Tsu_dT;
     double Qdsu_Vbpci, Qdsu_Vsici, Qdsu_dT;
     duals::duald result_Qdsu, result_HSI_TSU;
@@ -491,8 +491,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Qdeix_Vbiei;
     double Qdci_Vbici;
     double Qjep_Vbpei,Qjep_dT;
-    double qjcx0_t_i_Vbci;
-    double qjcx0_t_ii_Vbpci;
     double Qbepar1_Vbe;
     double Qbepar2_Vbpe;
     double Qbcpar1_Vbci;
@@ -1667,6 +1665,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             Qf_dT  = result_Qf.dpart();
             Qr_dT  = result_Qr.dpart();
             Q_bf_dT= result_Q_bf.dpart();
+
             calc_it_final(here->HICUMtemp    , Vbiei+1_e, Vbici    , Q_pT    , T_f0    , ick    , &result_itf, &result_itr, &result_Qf, &result_Qr, &result_Q_bf);
             itf_Vbiei  = result_itf.dpart();
             itr_Vbiei  = result_itr.dpart();
@@ -1721,11 +1720,11 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             Qr_Vbici  += Qr_dQ_pT*Q_pT_dVbici;
             Q_bf_Vbici+= Q_bf_dQ_pT*Q_pT_dVbici;
 
-            itf_Vciei += itf_dQ_pT*Q_pT_dVciei;
-            itr_Vciei += itr_dQ_pT*Q_pT_dVciei;
-            Qf_Vciei  += Qf_dQ_pT*Q_pT_dVciei;
-            Qr_Vciei  += Qr_dQ_pT*Q_pT_dVciei;
-            Q_bf_Vciei+= Q_bf_dQ_pT*Q_pT_dVciei;
+            itf_Vciei  = itf_dQ_pT*Q_pT_dVciei;
+            itr_Vciei  = itr_dQ_pT*Q_pT_dVciei;
+            Qf_Vciei   = Qf_dQ_pT*Q_pT_dVciei;
+            Qr_Vciei   = Qr_dQ_pT*Q_pT_dVciei;
+            Q_bf_Vciei = Q_bf_dQ_pT*Q_pT_dVciei;
 
             // add derivatives of T_f0 = f(Vbici, T)
             itf_Vbici += itf_dick*T_f0_Vbici;
@@ -1770,7 +1769,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
             //end final calculations --------------------------------------------------
 
-            here->HICUMtf = Tf;
+            here->HICUMtf = 0;//tf ...not calculated currently, since it is not needed
 
             //NQS effect implemented with LCR networks
             //Once the delay in ITF is considered, IT_NQS is calculated afterwards
@@ -2135,6 +2134,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             Ieie_Veie    = 1/here->HICUMre_t;
             Isis_Vsis    = 1/model->HICUMrsu;
 
+            //@Dietmar: why is charge equal to capacitance, where is the j*omega or derivative operator?
             Qjcx_i_Vbci      = Cjcx_i;
             Qjcx_ii_Vbpci    = Cjcx_ii;
             Qjep_Vbpei       = Cjep;
@@ -2148,6 +2148,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             Qjs_Vsici        = Cjs;
 
 //todo: all the derivatives have to be known dI/dT
+//todo: @Dietmar: what about dQ/dT ?
             Ibbp_dT = 0.0;
             Ieie_dT = 0.0;
             Icic_dT = 0.0;
@@ -2160,7 +2161,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             Iciei_dT = 0.0;
             Isici_dT = 0.0;
 
-//todo: what about dQ/dT ?
 
             Ibiei += ckt->CKTgmin*Vbiei;
             Ibiei_Vbiei += ckt->CKTgmin;
@@ -2242,8 +2242,8 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                         *(ckt->CKTstate0 + here->HICUMcqdci)      = Qdci_Vbici;
                         *(ckt->CKTstate0 + here->HICUMcqjci)      = Cjci;
                         *(ckt->CKTstate0 + here->HICUMcqjep)      = Qjep_Vbpei;
-                        *(ckt->CKTstate0 + here->HICUMcqcx0_t_i)  = qjcx0_t_i_Vbci;
-                        *(ckt->CKTstate0 + here->HICUMcqcx0_t_ii) = qjcx0_t_ii_Vbpci;
+                        *(ckt->CKTstate0 + here->HICUMcqcx0_t_i)  = Qjcx_i_Vbci;
+                        *(ckt->CKTstate0 + here->HICUMcqcx0_t_ii) = Qjcx_ii_Vbpci;
                         *(ckt->CKTstate0 + here->HICUMcqdsu)      = Qdsu_Vbpci;
                         *(ckt->CKTstate0 + here->HICUMcqjs)       = Qjs_Vsici;
                         *(ckt->CKTstate0 + here->HICUMcqscp)      = Cscp;
