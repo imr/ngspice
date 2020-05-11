@@ -547,7 +547,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     //  Q_fC, Q_CT: actual and ICCR (weighted) hole charge
     //  T_fC, T_cT: actual and ICCR (weighted) transit time
     //  Derivative dfCT_ditf not properly implemented yet
-    feenableexcept(FE_INVALID | FE_OVERFLOW); //debuger catches NANS
+    // feenableexcept(FE_INVALID | FE_OVERFLOW); //debuger catches NANS
 
     std::function<void (duals::duald, duals::duald, duals::duald, double, duals::duald*, duals::duald*, duals::duald*, duals::duald*)> HICQFC = [&](duals::duald T, duals::duald Ix, duals::duald I_CK, double FFT_pcS, duals::duald * Q_fC, duals::duald * Q_CT, duals::duald * T_fC, duals::duald * T_cT)
     {
