@@ -63,9 +63,9 @@ HICUMpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
         for( here = HICUMinstances(model); here!= NULL;
                 here = HICUMnextInstance(here)) {
 
-            Ibbp_Vbbp    = 1/here->HICUMrbx_t;
-            Icic_Vcic    = 1/here->HICUMrcx_t;
-            Ieie_Veie    = 1/here->HICUMre_t;
+            Ibbp_Vbbp    = 1/here->HICUMrbx_t.rpart;
+            Icic_Vcic    = 1/here->HICUMrcx_t.rpart;
+            Ieie_Veie    = 1/here->HICUMre_t.rpart;
             Isis_Vsis    = 1/model->HICUMrsu;
 
             Ibiei_Vbiei = *(ckt->CKTstate0 + here->HICUMibiei_Vbiei);
