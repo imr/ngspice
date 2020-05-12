@@ -15,6 +15,8 @@ libhicum2_la_SOURCES =	\
 	hicum2itf.h	    \
 	hicumL2.hpp     \
 	hicumL2.cpp     \
+	hicumL2temp.hpp	\
+	hicumL2temp.cpp	\
 	hicum2mask.c	\
 	hicum2mpar.c	\
 	hicum2noise.c	\
@@ -22,8 +24,6 @@ libhicum2_la_SOURCES =	\
 	hicum2pzld.c	\
 	hicum2setup.c	\
 	hicum2soachk.c	\
-	hicum2temp.hpp	\
-	hicum2temp.cpp	\
 	hicum2trunc.c
 
 

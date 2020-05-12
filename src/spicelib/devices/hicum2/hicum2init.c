@@ -11,7 +11,7 @@
 #include "hicum2ext.h"
 #include "hicum2init.h"
 #include "hicumL2.hpp"
-#include "hicum2temp.hpp"
+#include "hicumL2temp.hpp"
 
 
 SPICEdev HICUMinfo = {

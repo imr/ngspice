@@ -11,7 +11,7 @@ Spice3 Implementation: 2019 Dietmar Warning
 #define M_PI 3.1415926535897932384626433832795
 #endif
 #include <duals/dual>
-#include "hicum2temp.hpp"
+#include "hicumL2temp.hpp"
 #include <functional>
 #include <fenv.h> //trap NAN
 

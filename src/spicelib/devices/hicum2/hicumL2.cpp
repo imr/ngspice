@@ -109,7 +109,7 @@ using namespace duals::literals;
 //  T           : Temperature
 // OUTPUT:
 //  Iz          : diode current
-duals::duald HICDIO(duals::duald T, double IST, double UM1, duals::duald U)
+duals::duald HICDIO(duals::duald T, duals::duald IST, double UM1, duals::duald U)
 {
 duals::duald DIOY, le, vt;
 
@@ -314,17 +314,19 @@ duals::duald calc_hjei_vbe(duals::duald Vbiei, duals::duald T, HICUMinstance * h
 }
 
 
-void hicum_diode(double T, double IS, double UM1, double U, double *Iz, double *Gz, double *Tz)
+void hicum_diode(double T, dual_double IS, double UM1, double U, double *Iz, double *Gz, double *Tz)
 {
     //wrapper for hicum diode equation that also generates derivatives
     duals::duald result = 0;
 
     // printf("executed diode");
 
-    result = HICDIO(T, IS, UM1, U+1_e);
+    duals::duald is_t = IS.rpart;
+    result = HICDIO(T, is_t, UM1, U+1_e);
     *Iz    = result.rpart();
     *Gz    = result.dpart(); //derivative for U
-    result = HICDIO(T+1_e, IS, UM1, U);
+    is_t.dpart(IS.dpart);
+    result = HICDIO(T+1_e, is_t, UM1, U);
     *Tz    = result.dpart(); //derivative for T
 }
 
@@ -648,14 +650,14 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     // INPUT:
     //  itf         : forward transport current
     //  I_CK        : critical current
-    //  T_f         : transit time    
+    //  T_f         : transit time
     //  Q_f         : minority charge / for low current
     // IMPLICIT INPUT:
     //  tef0, gtfe, fthc, thcs, ahc, latl, latb     : model parameters
     // OUTPUT:
-    //  T_f         : transit time    
+    //  T_f         : transit time
     //  Q_f         : minority charge  transient analysis
-    //  T_fT        : transit time    
+    //  T_fT        : transit time
     //  Q_fT        : minority charge  ICCR (transfer current)
     //  Q_bf        : excess base charge
     std::function<void (duals::duald, duals::duald, duals::duald, duals::duald*, duals::duald*, duals::duald*, duals::duald*, duals::duald*)> HICQFF = [&](duals::duald T, duals::duald itf, duals::duald I_CK, duals::duald * T_f, duals::duald * Q_f, duals::duald * T_fT, duals::duald * Q_fT, duals::duald * Q_bf)
@@ -1890,7 +1892,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             it_dT    = it_ditf*itf_dT    + it_ditr*itr_dT;
 
             //recast the derivative after Vciei to a derivative to Vbiei and Vciei
-            // Vciei = Vbiei - Vbici 
+            // Vciei = Vbiei - Vbici
             // dVciei/dVbiei = 1
             // dVciei/dVbici = -1
             it_Vbiei +=  (itf_Vciei - itr_Vciei);
@@ -1946,7 +1948,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             ibh_rec_Vbici = Otbhrec*Q_bf_Vbici ;
             ibh_rec_dT    = Otbhrec*Q_bf_dT ;
             //recast the derivative after Vciei to a derivative to Vbiei and Vciei
-            // Vciei = Vbiei - Vbici 
+            // Vciei = Vbiei - Vbici
             // dVciei/dVbiei = 1
             // dVciei/dVbici = -1
             ibh_rec_Vbiei +=  Q_bf_Vciei;
@@ -2027,15 +2029,15 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             Qdsu             = result_Qdsu.rpart();
             HSI_Tsu_dT       = result_HSI_TSU.dpart();
             Qdsu_dT          = result_Qdsu.dpart();
-  
+
             calc_itss(here->HICUMtemp    , Vbpci+1_e, Vsici    , &result_HSI_TSU, &result_Qdsu);
             HSI_Tsu_Vbpci    = result_HSI_TSU.dpart();
             Qdsu_Vbpci       = result_Qdsu.dpart();
             calc_itss(here->HICUMtemp    , Vbpci    , Vsici+1_e, &result_HSI_TSU, &result_Qdsu);
             HSI_Tsu_Vsici    = result_HSI_TSU.dpart();
             Qdsu_Vsici       = result_Qdsu.dpart(); //@Dietmar. Where is this one written to the matrix?
- 
- 
+
+
             // if(model->HICUMitss > 0.0) { // Sub_Transfer
             //     double HSa,HSb;
             //     HSUM    = model->HICUMmsf*here->HICUMvt;
