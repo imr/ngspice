@@ -136,8 +136,10 @@ int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance)
     double zetabci,zetabcxt,zetasct;
     duals::duald temp, dT, vt, qtt0, ln_qtt0;
     duals::duald k1,k2,dvg0,vge_t,vgb_t,vgbe_t,cratio_t,a;
+    double cratio_t_real, cratio_t_dual;
     double Tnom, zetatef, cjcx01, cjcx02, C_1;
-    double cjci0_t, vdci_t, vptci_t, cjep0_t, vdep_t, ajep_t, vdcx_t, vptcx_t, cscp0_t, vdsp_t, vptsp_t, cjs0_t, vds_t, vpts_t;
+    duals::duald cjei0_t, vdei_t, cjep0_t, vdep_t;
+    // double cjci0_t, vdci_t, vptci_t, cjep0_t, vdep_t, ajep_t, vdcx_t, vptcx_t, cscp0_t, vdsp_t, vptsp_t, cjs0_t, vds_t, vpts_t;
 
     Tnom    = model->HICUMtnom;
     k10     = model->HICUMf1vg*Tnom*log(Tnom);
@@ -189,211 +191,315 @@ int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance)
                   model->HICUMcjei0, model->HICUMvdei, model->HICUMzei, model->HICUMajei, 1, vgbe0,
                   &here->HICUMcjei0_t.rpart, &here->HICUMvdei_t.rpart, &here->HICUMajei_t.rpart,
                   &here->HICUMcjei0_t.dpart, &here->HICUMvdei_t.dpart, &here->HICUMajei_t.dpart);
+    cjei0_t.rpart(here->HICUMcjei0_t.rpart);
+    cjei0_t.dpart(here->HICUMcjei0_t.dpart);
+    vdei_t.rpart(here->HICUMvdei_t.rpart);
+    vdei_t.dpart(here->HICUMvdei_t.dpart);
 
-    // if (model->HICUMflcomp == 0.0 || model->HICUMflcomp == 2.1) {
-    //     double V_gT, r_VgVT, k;
-    //     V_gT     = 3.0*here->HICUMvt*here->HICUMln_qtt0 + model->HICUMvgb*(here->HICUMqtt0-1.0);
-    //     r_VgVT   = V_gT/here->HICUMvt;
-    //     //Internal b-e diode saturation currents
-    //     a        = model->HICUMmcf*r_VgVT/model->HICUMmbei - model->HICUMalb*dT;
-    //     here->HICUMibeis_t  = model->HICUMibeis*exp(a);
-    //     a        = model->HICUMmcf*r_VgVT/model->HICUMmrei - model->HICUMalb*dT;
-    //     here->HICUMireis_t  = model->HICUMireis*exp(a);
-    //     a        = model->HICUMmcf*r_VgVT/model->HICUMmbep - model->HICUMalb*dT;
-    //     //Peripheral b-e diode saturation currents
-    //     here->HICUMibeps_t  = model->HICUMibeps*exp(a);
-    //     a        = model->HICUMmcf*r_VgVT/model->HICUMmrep - model->HICUMalb*dT;
-    //     here->HICUMireps_t  = model->HICUMireps*exp(a);
-    //     //Internal b-c diode saturation current
-    //     a       = r_VgVT/model->HICUMmbci;
-    //     here->HICUMibcis_t = model->HICUMibcis*exp(a);
-    //     //External b-c diode saturation currents
-    //     a       = r_VgVT/model->HICUMmbcx;
-    //     here->HICUMibcxs_t = model->HICUMibcxs*exp(a);
-    //     //Saturation transfer current for substrate transistor
-    //     a       = r_VgVT/model->HICUMmsf;
-    //     here->HICUMitss_t  = model->HICUMitss*exp(a);
-    //     //Saturation current for c-s diode
-    //     a       = r_VgVT/model->HICUMmsc;
-    //     here->HICUMiscs_t  = model->HICUMiscs*exp(a);
-    //     //Zero bias hole charge
-    //     a        = here->HICUMvdei_t/model->HICUMvdei;
-    //     here->HICUMqp0_t    = model->HICUMqp0*(1.0+0.5*model->HICUMzei*(1.0-a));
-    //     //Voltage separating ohmic and saturation velocity regime
-    //     a = model->HICUMvlim*(1.0-model->HICUMalvs*dT)*exp(model->HICUMzetaci*here->HICUMln_qtt0);
-    //     k = (a-here->HICUMvt)/here->HICUMvt;
-    //     if (k < LN_EXP_LIMIT) {
-    //         here->HICUMvlim_t = here->HICUMvt + here->HICUMvt*log(1.0+exp(k));
-    //     } else {
-    //         here->HICUMvlim_t = a;
-    //     }
-    //     //Neutral emitter storage time
-    //     a        = 1.0+model->HICUMalb*dT;
-    //     k        = 0.5*(a+sqrt(a*a+0.01));
-    //     here->HICUMtef0_t   = model->HICUMtef0*here->HICUMqtt0/k;
-    // } else {
-    //     //Internal b-e diode saturation currents
-    //     here->HICUMibeis_t  = model->HICUMibeis*exp(model->HICUMzetabet*here->HICUMln_qtt0+model->HICUMvge/here->HICUMvt*(here->HICUMqtt0-1));
-    //     if (model->HICUMflcomp>=2.3) {
-    //         here->HICUMireis_t  = model->HICUMireis*exp(here->HICUMmg/model->HICUMmrei*here->HICUMln_qtt0+vgbe0/(model->HICUMmrei*here->HICUMvt)*(here->HICUMqtt0-1));
-    //     } else {
-    //         here->HICUMireis_t  = model->HICUMireis*exp(0.5*here->HICUMmg*here->HICUMln_qtt0+0.5*vgbe0/here->HICUMvt*(here->HICUMqtt0-1));
-    //     }
-    //     //Peripheral b-e diode saturation currents
-    //     here->HICUMibeps_t  = model->HICUMibeps*exp(model->HICUMzetabet*here->HICUMln_qtt0+model->HICUMvge/here->HICUMvt*(here->HICUMqtt0-1));
-    //     if (model->HICUMflcomp>=2.3) {
-    //         here->HICUMireps_t  = model->HICUMireps*exp(here->HICUMmg/model->HICUMmrep*here->HICUMln_qtt0+vgbe0/(model->HICUMmrep*here->HICUMvt)*(here->HICUMqtt0-1));
-    //     } else {
-    //         here->HICUMireps_t  = model->HICUMireps*exp(0.5*here->HICUMmg*here->HICUMln_qtt0+0.5*vgbe0/here->HICUMvt*(here->HICUMqtt0-1));
-    //     }
-    //     //Internal b-c diode saturation currents
-    //     here->HICUMibcis_t = model->HICUMibcis*exp(zetabci*here->HICUMln_qtt0+model->HICUMvgc/here->HICUMvt*(here->HICUMqtt0-1));
-    //     //External b-c diode saturation currents
-    //     here->HICUMibcxs_t = model->HICUMibcxs*exp(zetabcxt*here->HICUMln_qtt0+model->HICUMvgc/here->HICUMvt*(here->HICUMqtt0-1));
-    //     //Saturation transfer current for substrate transistor
-    //     here->HICUMitss_t  = model->HICUMitss*exp(zetasct*here->HICUMln_qtt0+model->HICUMvgc/here->HICUMvt*(here->HICUMqtt0-1));
-    //     //Saturation current for c-s diode
-    //     here->HICUMiscs_t  = model->HICUMiscs*exp(zetasct*here->HICUMln_qtt0+model->HICUMvgs/here->HICUMvt*(here->HICUMqtt0-1));
-    //     //Zero bias hole charge
-    //     a       = exp(model->HICUMzei*log(here->HICUMvdei_t/model->HICUMvdei));
-    //     here->HICUMqp0_t   = model->HICUMqp0*(2.0-a);
-    //     //Voltage separating ohmic and saturation velocity regime
-    //     here->HICUMvlim_t  = model->HICUMvlim*exp((model->HICUMzetaci-avs)*here->HICUMln_qtt0);
-    //     //Neutral emitter storage time
-    //     if (model->HICUMflcomp >= 2.3) {
-    //         here->HICUMtef0_t  = model->HICUMtef0;
-    //     } else {
-    //         zetatef = model->HICUMzetabet-model->HICUMzetact-0.5;
-    //         dvg0    = model->HICUMvgb-model->HICUMvge;
-    //         here->HICUMtef0_t  = model->HICUMtef0*exp(zetatef*here->HICUMln_qtt0-dvg0/here->HICUMvt*(here->HICUMqtt0-1));
-    //     }
-    // }
+    if (model->HICUMflcomp == 0.0 || model->HICUMflcomp == 2.1) {
+        duals::duald V_gT, r_VgVT, k;
+        V_gT     = 3.0*vt*ln_qtt0 + model->HICUMvgb*(qtt0-1.0);
+        r_VgVT   = V_gT/vt;
+        //Internal b-e diode saturation currents
+        a = model->HICUMmcf*r_VgVT/model->HICUMmbei - model->HICUMalb*dT;
+        a = model->HICUMibeis*exp(a);
+        here->HICUMibeis_t.rpart = a.rpart();
+        here->HICUMibeis_t.dpart = a.dpart();
 
-    // //GICCR prefactor
-    // here->HICUMc10_t   = model->HICUMc10*exp(model->HICUMzetact*here->HICUMln_qtt0+model->HICUMvgb/here->HICUMvt*(here->HICUMqtt0-1));
+        a = model->HICUMmcf*r_VgVT/model->HICUMmrei - model->HICUMalb*dT;
+        a = model->HICUMireis*exp(a);
+        here->HICUMireis_t.rpart = a.rpart();
+        here->HICUMireis_t.dpart = a.dpart();
 
-    // // Low-field internal collector resistance
-    // here->HICUMrci0_t  = model->HICUMrci0*exp(model->HICUMzetaci*here->HICUMln_qtt0);
+        //Peripheral b-e diode saturation currents
+        a = model->HICUMmcf*r_VgVT/model->HICUMmbep - model->HICUMalb*dT;
+        a = model->HICUMibeps*exp(a);
+        here->HICUMibeps_t.rpart = a.rpart();
+        here->HICUMibeps_t.dpart = a.dpart();
 
-    // //Voltage separating ohmic and saturation velocity regime
-    // //vlim_t  = model->HICUMvlim*exp((model->HICUMzetaci-avs)*here->HICUMln_qtt0);
+        a = model->HICUMmcf*r_VgVT/model->HICUMmrep - model->HICUMalb*dT;
+        a = model->HICUMireps*exp(a);
+        here->HICUMireps_t.rpart = a.rpart();
+        here->HICUMireps_t.dpart = a.dpart();
+        //Internal b-c diode saturation current
+        a = r_VgVT/model->HICUMmbci;
+        a = model->HICUMibcis*exp(a);
+        here->HICUMibcis_t.rpart = a.rpart();
+        here->HICUMibcis_t.dpart = a.dpart();
+        //External b-c diode saturation currents
+        a = r_VgVT/model->HICUMmbcx;
+        a = model->HICUMibcxs*exp(a);
+        here->HICUMibcxs_t.rpart = a.rpart();
+        here->HICUMibcxs_t.dpart = a.dpart();
+        //Saturation transfer current for substrate transistor
+        a = r_VgVT/model->HICUMmsf;
+        a = model->HICUMitss*exp(a);
+        here->HICUMitss_t.rpart = a.rpart();
+        here->HICUMitss_t.rpart = a.dpart();
+        //Saturation current for c-s diode
+        a = r_VgVT/model->HICUMmsc;
+        a = model->HICUMiscs*exp(a);
+        here->HICUMiscs_t.rpart = a.rpart();
+        here->HICUMiscs_t.dpart = a.dpart();
+        //Zero bias hole charge
+        a = vdei_t/model->HICUMvdei;
+        a = model->HICUMqp0*(1.0+0.5*model->HICUMzei*(1.0-a));
+        here->HICUMqp0_t.rpart = a.rpart();
+        here->HICUMqp0_t.dpart = a.dpart();
+        //Voltage separating ohmic and saturation velocity regime
+        a = model->HICUMvlim*(1.0-model->HICUMalvs*dT)*exp(model->HICUMzetaci*ln_qtt0);
+        k = (a-vt)/vt;
+        if (k.rpart() < LN_EXP_LIMIT) {
+            a = vt + vt*log(1.0+exp(k));
+        }
+        here->HICUMvlim_t.rpart = a.rpart();
+        here->HICUMvlim_t.dpart = a.dpart();
 
-    // //Internal c-e saturation voltage
-    // here->HICUMvces_t  = model->HICUMvces*(1+model->HICUMalces*dT);
+        //Neutral emitter storage time
+        a = 1.0+model->HICUMalb*dT;
+        k = 0.5*(a+sqrt(a*a+0.01));
+        a = model->HICUMtef0*qtt0/k;
+        here->HICUMtef0_t.rpart = a.rpart();
+        here->HICUMtef0_t.dpart = a.dpart();
+    } else {
+        //Internal b-e diode saturation currents
+        a = model->HICUMibeis*exp(model->HICUMzetabet*ln_qtt0+model->HICUMvge/vt*(qtt0-1));
+        here->HICUMibeis_t.rpart = a.rpart();
+        here->HICUMibeis_t.dpart = a.dpart();
+        if (model->HICUMflcomp>=2.3) {
+            a = model->HICUMireis*exp(mg/model->HICUMmrei*ln_qtt0+vgbe0/(model->HICUMmrei*vt)*(qtt0-1));
+        } else {
+            a = model->HICUMireis*exp(0.5*mg*ln_qtt0+0.5*vgbe0/vt*(qtt0-1));
+        }
+        here->HICUMireis_t.rpart = a.rpart();
+        here->HICUMireis_t.dpart = a.dpart();
+        //Peripheral b-e diode saturation currents
+        a = model->HICUMibeps*exp(model->HICUMzetabet*ln_qtt0+model->HICUMvge/vt*(qtt0-1));
+        here->HICUMibeps_t.rpart = a.rpart();
+        here->HICUMibeps_t.dpart = a.dpart();
+        if (model->HICUMflcomp>=2.3) {
+            a = model->HICUMireps*exp(mg/model->HICUMmrep*ln_qtt0+vgbe0/(model->HICUMmrep*vt)*(qtt0-1));
+        } else {
+            a = model->HICUMireps*exp(0.5*mg*qtt0+0.5*vgbe0/vt*(qtt0-1));
+        }
+        here->HICUMireps_t.rpart = a.rpart();
+        here->HICUMireps_t.dpart = a.dpart();
+        //Internal b-c diode saturation currents
+        a = model->HICUMibcis*exp(zetabci*ln_qtt0+model->HICUMvgc/vt*(qtt0-1));
+        here->HICUMibcis_t.rpart = a.rpart();
+        here->HICUMibcis_t.dpart = a.dpart();
+        //External b-c diode saturation currents
+        a = model->HICUMibcxs*exp(zetabcxt*ln_qtt0+model->HICUMvgc/vt*(qtt0-1));
+        here->HICUMibcxs_t.rpart = a.rpart();
+        here->HICUMibcxs_t.dpart = a.dpart();
+        //Saturation transfer current for substrate transistor
+        a = model->HICUMitss*exp(zetasct*ln_qtt0+model->HICUMvgc/vt*(qtt0-1));
+        here->HICUMitss_t.rpart = a.rpart();
+        here->HICUMitss_t.dpart = a.dpart();
+        //Saturation current for c-s diode
+        a = model->HICUMiscs*exp(zetasct*ln_qtt0+model->HICUMvgs/vt*(qtt0-1));
+        here->HICUMiscs_t.rpart = a.rpart();
+        here->HICUMiscs_t.dpart = a.dpart();
+        //Zero bias hole charge
+        a = exp(model->HICUMzei*log(vdei_t/model->HICUMvdei));
+        a = model->HICUMqp0*(2.0-a);
+        here->HICUMqp0_t.rpart = a.rpart();
+        here->HICUMqp0_t.dpart = a.dpart();
+        //Voltage separating ohmic and saturation velocity regime
+        a = model->HICUMvlim*exp((model->HICUMzetaci-avs)*ln_qtt0);
+        here->HICUMvlim_t.rpart = a.rpart();
+        here->HICUMvlim_t.dpart = a.dpart();
+        //Neutral emitter storage time
+        if (model->HICUMflcomp >= 2.3) {
+            a = model->HICUMtef0;
+        } else {
+            zetatef = model->HICUMzetabet-model->HICUMzetact-0.5;
+            dvg0    = model->HICUMvgb-model->HICUMvge;
+            a       = model->HICUMtef0*exp(zetatef*ln_qtt0-dvg0/vt*(qtt0-1));
+        }
+        here->HICUMtef0_t.rpart = a.rpart();
+        here->HICUMtef0_t.dpart = a.dpart();
+    }
 
+    //GICCR prefactor
+    a = model->HICUMc10*exp(model->HICUMzetact*ln_qtt0+model->HICUMvgb/vt*(qtt0-1));
+    here->HICUMc10_t.rpart = a.rpart();
+    here->HICUMc10_t.dpart = a.dpart();
 
-    // //Internal b-c diode saturation current
-    // //ibcis_t = model->HICUMibcis*exp(zetabci*here->HICUMln_qtt0+model->HICUMvgc/here->HICUMvt*(here->HICUMqtt0-1));
+    // Low-field internal collector resistance
+    a = model->HICUMrci0*exp(model->HICUMzetaci*ln_qtt0);
+    here->HICUMrci0_t.rpart = a.rpart();
+    here->HICUMrci0_t.dpart = a.dpart();
 
-    // //Internal b-c junction capacitance
+    //Internal c-e saturation voltage
+    a = model->HICUMvces*(1+model->HICUMalces*dT);
+    here->HICUMvces_t.rpart = a.rpart();
+    here->HICUMvces_t.dpart = a.dpart();
+
+    //Internal b-c junction capacitance
     // TMPHICJ(here->HICUMvt0,here->HICUMvt,here->HICUMqtt0,here->HICUMln_qtt0,here->HICUMmg,model->HICUMcjci0,model->HICUMvdci,model->HICUMzci,model->HICUMvptci,0,vgbc0,&cjci0_t,&vdci_t,&vptci_t);
-    // here->HICUMcjci0_t = cjci0_t;
-    // here->HICUMvdci_t = vdci_t;
-    // here->HICUMvptci_t = vptci_t;
+    hicum_TMPHICJ(vt, here->HICUMvt0, qtt0, ln_qtt0, mg,
+                  model->HICUMcjci0, model->HICUMvdci, model->HICUMzci, model->HICUMvptci, 0, vgbc0,
+                  &here->HICUMcjci0_t.rpart, &here->HICUMvdci_t.rpart, &here->HICUMvptci_t.rpart,
+                  &here->HICUMcjci0_t.dpart, &here->HICUMvdci_t.dpart, &here->HICUMvptci_t.dpart);
 
-    // //Low-current forward transit time
-    // here->HICUMt0_t    = model->HICUMt0*(1+model->HICUMalt0*dT+model->HICUMkt0*dT*dT);
+    //Low-current forward transit time
+    a = model->HICUMt0*(1+model->HICUMalt0*dT+model->HICUMkt0*dT*dT);
+    here->HICUMt0_t.rpart = a.rpart();
+    here->HICUMt0_t.dpart = a.dpart();
 
-    // //Saturation time constant at high current densities
-    // here->HICUMthcs_t  = model->HICUMthcs*exp((model->HICUMzetaci-1)*here->HICUMln_qtt0);
+    //Saturation time constant at high current densities
+    a = model->HICUMthcs*exp((model->HICUMzetaci-1)*ln_qtt0);
+    here->HICUMthcs_t.rpart = a.rpart();
+    here->HICUMthcs_t.dpart = a.dpart();
 
-    // //Avalanche current factors
-    // here->HICUMfavl_t  = model->HICUMfavl*exp(model->HICUMalfav*dT);
-    // here->HICUMqavl_t  = model->HICUMqavl*exp(model->HICUMalqav*dT);
-    // here->HICUMkavl_t  = model->HICUMkavl*exp(model->HICUMalkav*dT);
+    //Avalanche current factors
+    a = model->HICUMfavl*exp(model->HICUMalfav*dT);
+    here->HICUMfavl_t.rpart = a.rpart();
+    here->HICUMfavl_t.dpart = a.dpart();
+    a = model->HICUMqavl*exp(model->HICUMalqav*dT);
+    here->HICUMqavl_t.rpart = a.rpart();
+    here->HICUMqavl_t.dpart = a.dpart();
+    a = model->HICUMkavl*exp(model->HICUMalkav*dT);
+    here->HICUMkavl_t.rpart = a.rpart();
+    here->HICUMkavl_t.dpart = a.dpart();
 
-    // //Zero bias internal base resistance
-    // here->HICUMrbi0_t  = model->HICUMrbi0*exp(model->HICUMzetarbi*here->HICUMln_qtt0);
+    //Zero bias internal base resistance
+    a = model->HICUMrbi0*exp(model->HICUMzetarbi*ln_qtt0);
+    here->HICUMrbi0_t.rpart = a.rpart();
+    here->HICUMrbi0_t.dpart = a.dpart();
 
-    // //Peripheral b-e junction capacitance
+    //Peripheral b-e junction capacitance
     // TMPHICJ(here->HICUMvt0,here->HICUMvt,here->HICUMqtt0,here->HICUMln_qtt0,here->HICUMmg,model->HICUMcjep0,model->HICUMvdep,model->HICUMzep,model->HICUMajep,1,vgbe0,&cjep0_t,&vdep_t,&ajep_t);
-    // here->HICUMcjep0_t = cjep0_t;
-    // here->HICUMvdep_t = vdep_t;
-    // here->HICUMajep_t = ajep_t;
+    hicum_TMPHICJ(vt, here->HICUMvt0, qtt0, ln_qtt0, mg,
+                  model->HICUMcjep0, model->HICUMvdep, model->HICUMzep, model->HICUMajep, 1, vgbe0,
+                  &here->HICUMcjep0_t.rpart, &here->HICUMvdep_t.rpart, &here->HICUMajep_t.rpart,
+                  &here->HICUMcjep0_t.dpart, &here->HICUMvdep_t.dpart, &here->HICUMajep_t.dpart);
+    cjep0_t.rpart(here->HICUMcjep0_t.rpart);
+    cjep0_t.dpart(here->HICUMcjep0_t.dpart);
+    vdep_t.rpart(here->HICUMvdep_t.rpart);
+    vdep_t.dpart(here->HICUMvdep_t.dpart);
 
-    // //Tunneling current factors
-    // if (model->HICUMibets > 0) { // HICTUN_T
-    //     double a_eg,ab,aa;
-    //     ab      = 1.0;
-    //     aa      = 1.0;
-    //     a_eg=vgbe_t0/vgbe_t;
-    //     if(model->HICUMtunode==1 && model->HICUMcjep0 > 0.0 && model->HICUMvdep >0.0) {
-    //         ab      = (here->HICUMcjep0_t/model->HICUMcjep0)*sqrt(a_eg)*vdep_t*vdep_t/(model->HICUMvdep*model->HICUMvdep);
-    //         aa      = (model->HICUMvdep/vdep_t)*(model->HICUMcjep0/here->HICUMcjep0_t)*pow(a_eg,-1.5);
-    //     } else if (model->HICUMtunode==0 && model->HICUMcjei0 > 0.0 && model->HICUMvdei >0.0) {
-    //         ab      = (here->HICUMcjei0_t/model->HICUMcjei0)*sqrt(a_eg)*here->HICUMvdei_t*here->HICUMvdei_t/(model->HICUMvdei*model->HICUMvdei);
-    //         aa      = (model->HICUMvdei/here->HICUMvdei_t)*(model->HICUMcjei0/here->HICUMcjei0_t)*pow(a_eg,-1.5);
-    //     }
-    //     here->HICUMibets_t = model->HICUMibets*ab;
-    //     here->HICUMabet_t  = model->HICUMabet*aa;
-    // } else {
-    //     here->HICUMibets_t = 0;
-    //     here->HICUMabet_t = 1;
-    // }
+    //Tunneling current factors
+    if (model->HICUMibets > 0) { // HICTUN_T
+        duals::duald a_eg,ab,aa;
+        ab = 1.0;
+        aa = 1.0;
+        a_eg = vgbe_t0/vgbe_t;
+        if(model->HICUMtunode==1 && model->HICUMcjep0 > 0.0 && model->HICUMvdep >0.0) {
+            ab = (cjep0_t/model->HICUMcjep0)*sqrt(a_eg)*vdep_t*vdep_t/(model->HICUMvdep*model->HICUMvdep);
+            aa = (model->HICUMvdep/vdep_t)*(model->HICUMcjep0/cjep0_t)*pow(a_eg,-1.5);
+        } else if (model->HICUMtunode==0 && model->HICUMcjei0 > 0.0 && model->HICUMvdei >0.0) {
+            ab = (cjei0_t/model->HICUMcjei0)*sqrt(a_eg)*vdei_t*vdei_t/(model->HICUMvdei*model->HICUMvdei);
+            aa = (model->HICUMvdei/vdei_t)*(model->HICUMcjei0/cjei0_t)*pow(a_eg,-1.5);
+        }
+        a = model->HICUMibets*ab;
+        here->HICUMibets_t.rpart = a.rpart();
+        here->HICUMibets_t.dpart = a.dpart();
+        a = model->HICUMabet*aa;
+        here->HICUMabet_t.rpart = a.rpart();
+        here->HICUMabet_t.dpart = a.dpart();
+     } else {
+        here->HICUMibets_t.rpart = 0;
+        here->HICUMibets_t.dpart = 0;
+        here->HICUMabet_t.rpart = 1;
+        here->HICUMabet_t.dpart = 0;
+    }
 
-    // //Depletion capacitance splitting at b-c junction
-    // //Capacitances at peripheral and external base node
-    // C_1    = (1.0-model->HICUMfbcpar)*(model->HICUMcjcx0+model->HICUMcbcpar);
-    // if (C_1 >= model->HICUMcbcpar) {
-    //     cjcx01  = C_1-model->HICUMcbcpar;
-    //     cjcx02  = model->HICUMcjcx0-cjcx01;
-    // } else {
-    //     cjcx01  = 0.0;
-    //     cjcx02  = model->HICUMcjcx0;
-    // }
+    //Depletion capacitance splitting at b-c junction
+    //Capacitances at peripheral and external base node
+    C_1    = (1.0-model->HICUMfbcpar)*(model->HICUMcjcx0+model->HICUMcbcpar);
+    if (C_1 >= model->HICUMcbcpar) {
+        cjcx01  = C_1-model->HICUMcbcpar;
+        cjcx02  = model->HICUMcjcx0-cjcx01;
+    } else {
+        cjcx01  = 0.0;
+        cjcx02  = model->HICUMcjcx0;
+    }
 
-    // //Temperature mapping for tunneling current is done inside HICTUN
-
+    //Temperature mapping for tunneling current is done inside HICTUN
     // TMPHICJ(here->HICUMvt0,here->HICUMvt,here->HICUMqtt0,here->HICUMln_qtt0,here->HICUMmg,1.0,model->HICUMvdcx,model->HICUMzcx,model->HICUMvptcx,0,vgbc0,&cratio_t,&vdcx_t,&vptcx_t);
-    // here->HICUMcjcx01_t=cratio_t*cjcx01;
-    // here->HICUMcjcx02_t=cratio_t*cjcx02;
-    // here->HICUMvdcx_t = vdcx_t;
-    // here->HICUMvptcx_t = vptcx_t;
+    hicum_TMPHICJ(vt, here->HICUMvt0, qtt0, ln_qtt0, mg,
+                  1.0, model->HICUMvdcx, model->HICUMzcx, model->HICUMvptcx, 0, vgbc0,
+                  &cratio_t_real, &here->HICUMvdcx_t.rpart, &here->HICUMvptcx_t.rpart,
+                  &cratio_t_dual, &here->HICUMvdcx_t.dpart, &here->HICUMvptcx_t.dpart);
+    cratio_t.rpart(cratio_t_real);
+    cratio_t.dpart(cratio_t_dual);
+    a = cratio_t*cjcx01;
+    here->HICUMcjcx01_t.rpart = a.rpart();
+    here->HICUMcjcx01_t.dpart = a.dpart();
+    a = cratio_t*cjcx02;
+    here->HICUMcjcx02_t.rpart = a.rpart();
+    here->HICUMcjcx02_t.dpart = a.dpart();
 
-    // //External b-c diode saturation currents
-    // //ibcxs_t       = model->HICUMibcxs*exp(zetabcxt*here->HICUMln_qtt0+model->HICUMvgc/here->HICUMvt*(qtt0-1));
+    //Constant external series resistances
+    a = model->HICUMrcx*exp(model->HICUMzetarcx*ln_qtt0);
+    here->HICUMrcx_t.rpart = a.rpart();
+    here->HICUMrcx_t.dpart = a.dpart();
+    a = model->HICUMrbx*exp(model->HICUMzetarbx*ln_qtt0);
+    here->HICUMrbx_t.rpart = a.rpart();
+    here->HICUMrbx_t.dpart = a.dpart();
+    a = model->HICUMre*exp(model->HICUMzetare*ln_qtt0);
+    here->HICUMre_t.rpart = a.rpart();
+    here->HICUMre_t.dpart = a.dpart();
 
-    // //Constant external series resistances
-    // here->HICUMrcx_t   = model->HICUMrcx*exp(model->HICUMzetarcx*here->HICUMln_qtt0);
-    // here->HICUMrbx_t   = model->HICUMrbx*exp(model->HICUMzetarbx*here->HICUMln_qtt0);
-    // here->HICUMre_t    = model->HICUMre*exp(model->HICUMzetare*here->HICUMln_qtt0);
+    //Forward transit time in substrate transistor
+    a = model->HICUMtsf*exp((model->HICUMzetacx-1.0)*ln_qtt0);
+    here->HICUMtsf_t.rpart = a.rpart();
+    here->HICUMtsf_t.dpart = a.dpart();
 
-    // //Forward transit time in substrate transistor
-    // here->HICUMtsf_t   = model->HICUMtsf*exp((model->HICUMzetacx-1.0)*here->HICUMln_qtt0);
-
-    // //Capacitance for c-s junction
+    //Capacitance for c-s junction
     // TMPHICJ(here->HICUMvt0,here->HICUMvt,here->HICUMqtt0,here->HICUMln_qtt0,here->HICUMmg,model->HICUMcjs0,model->HICUMvds,model->HICUMzs,model->HICUMvpts,0,vgsc0,&cjs0_t,&vds_t,&vpts_t);
-    // here->HICUMcjs0_t = cjs0_t;
-    // here->HICUMvds_t = vds_t;
-    // here->HICUMvpts_t = vpts_t;
-    // /*Peripheral s-c capacitance
-    //  * Note, thermal update only required for model->HICUMvds > 0
-    //  * Save computional effort otherwise
-    //  */
-    // if (model->HICUMvdsp > 0) {
-    //     TMPHICJ(here->HICUMvt0,here->HICUMvt,here->HICUMqtt0,here->HICUMln_qtt0,here->HICUMmg,model->HICUMcscp0,model->HICUMvdsp,model->HICUMzsp,model->HICUMvptsp,0,vgsc0,&cscp0_t,&vdsp_t,&vptsp_t);
-    //     here->HICUMcscp0_t = cscp0_t;
-    //     here->HICUMvdsp_t = vdsp_t;
-    //     here->HICUMvptsp_t = vptsp_t;
-    // } else {
-    //     // Avoid uninitialized variables
-    //     here->HICUMcscp0_t = model->HICUMcscp0;
-    //     here->HICUMvdsp_t = model->HICUMvdsp;
-    //     here->HICUMvptsp_t = model->HICUMvptsp;
-    // }
+    hicum_TMPHICJ(vt, here->HICUMvt0, qtt0, ln_qtt0, mg,
+                  model->HICUMcjs0, model->HICUMvds, model->HICUMzs, model->HICUMvpts, 0, vgsc0,
+                  &here->HICUMcjs0_t.rpart, &here->HICUMvds_t.rpart, &here->HICUMvpts_t.rpart,
+                  &here->HICUMcjs0_t.dpart, &here->HICUMvds_t.dpart, &here->HICUMvpts_t.dpart);
+    /*Peripheral s-c capacitance
+     * Note, thermal update only required for model->HICUMvds > 0
+     * Save computional effort otherwise
+     */
+    if (model->HICUMvdsp > 0) {
+        // TMPHICJ(here->HICUMvt0,here->HICUMvt,here->HICUMqtt0,here->HICUMln_qtt0,here->HICUMmg,model->HICUMcscp0,model->HICUMvdsp,model->HICUMzsp,model->HICUMvptsp,0,vgsc0,&cscp0_t,&vdsp_t,&vptsp_t);
+        hicum_TMPHICJ(vt, here->HICUMvt0, qtt0, ln_qtt0, mg,
+                     model->HICUMcscp0, model->HICUMvdsp, model->HICUMzsp, model->HICUMvptsp, 0, vgsc0,
+                     &here->HICUMcscp0_t.rpart, &here->HICUMvdsp_t.rpart, &here->HICUMvptsp_t.rpart,
+                     &here->HICUMcscp0_t.dpart, &here->HICUMvdsp_t.dpart, &here->HICUMvptsp_t.dpart);
+    } else {
+        // Avoid uninitialized variables
+        here->HICUMcscp0_t.rpart = model->HICUMcscp0;
+        here->HICUMcscp0_t.dpart = 0;
+        here->HICUMvdsp_t.rpart = model->HICUMvdsp;
+        here->HICUMvdsp_t.dpart = 0;
+        here->HICUMvptsp_t.rpart = model->HICUMvptsp;
+        here->HICUMvptsp_t.dpart = 0;
+    }
 
-    // here->HICUMahjei_t = model->HICUMahjei*exp(model->HICUMzetahjei*here->HICUMln_qtt0);
-    // here->HICUMhjei0_t = model->HICUMhjei*exp(model->HICUMdvgbe/here->HICUMvt*(exp(model->HICUMzetavgbe*log(here->HICUMqtt0))-1));
-    // here->HICUMhf0_t   = model->HICUMhf0*exp(model->HICUMdvgbe/here->HICUMvt*(here->HICUMqtt0-1));
-    // if (model->HICUMflcomp >= 2.3) {
-    //     here->HICUMhfe_t   = model->HICUMhfe*exp((model->HICUMvgb-model->HICUMvge)/here->HICUMvt*(here->HICUMqtt0-1));
-    //     here->HICUMhfc_t   = model->HICUMhfc*exp((model->HICUMvgb-model->HICUMvgc)/here->HICUMvt*(here->HICUMqtt0-1));
-    // } else {
-    //     here->HICUMhfe_t    = model->HICUMhfe;
-    //     here->HICUMhfc_t    = model->HICUMhfc;
-    // }
+    a = model->HICUMahjei*exp(model->HICUMzetahjei*ln_qtt0);
+    here->HICUMahjei_t.rpart = a.rpart();
+    here->HICUMahjei_t.dpart = a.dpart();
+    a = model->HICUMhjei*exp(model->HICUMdvgbe/vt*(exp(model->HICUMzetavgbe*log(qtt0))-1));
+    here->HICUMhjei0_t.rpart = a.rpart();
+    here->HICUMhjei0_t.dpart = a.dpart();
+    a = model->HICUMhf0*exp(model->HICUMdvgbe/vt*(qtt0-1));
+    here->HICUMhf0_t.rpart = a.rpart();
+    here->HICUMhf0_t.dpart = a.dpart();
+    if (model->HICUMflcomp >= 2.3) {
+        a = model->HICUMhfe*exp((model->HICUMvgb-model->HICUMvge)/vt*(qtt0-1));
+        here->HICUMhfe_t.rpart = a.rpart();
+        here->HICUMhfe_t.dpart = a.dpart();
+        a = model->HICUMhfc*exp((model->HICUMvgb-model->HICUMvgc)/vt*(qtt0-1));
+        here->HICUMhfc_t.rpart = a.rpart();
+        here->HICUMhfc_t.dpart = a.dpart();
+    } else {
+        here->HICUMhfe_t.rpart = model->HICUMhfe;
+        here->HICUMhfe_t.dpart = 0;
+        here->HICUMhfc_t.rpart = model->HICUMhfc;
+        here->HICUMhfc_t.dpart = 0;
+    }
 
-    // here->HICUMrth_t    = model->HICUMrth*exp(model->HICUMzetarth*here->HICUMln_qtt0)*(1+model->HICUMalrth*dT);
+    a = model->HICUMrth*exp(model->HICUMzetarth*ln_qtt0)*(1+model->HICUMalrth*dT);
+    here->HICUMrth_t.rpart = a.rpart();
+    here->HICUMrth_t.dpart = a.dpart();
 
     return(0);
 }
