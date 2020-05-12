@@ -411,7 +411,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     duals::duald result_itf, result_itr, result_Qp, result_Qf, result_Qr, result_Q_bf, result_a_h, result_Q_p, result_Tf; //intermediate variables when calling void dual functions
     double Orci0_t,T_f0, Q_p, a_h;
     double volatile Q_bf, Q_bf_Vbiei=0, Q_bf_Vbici=0, Q_bf_Vciei=0, Q_bf_dT=0, Q_bf_dick=0, Q_bf_dT_f0=0, Q_bf_dQ_pT=0;
-    double volatile Q_pT, Q_pT_dVbiei=0, Q_pT_dVbici=0, Q_pT_dT=0, Q_pT_dick=0, Q_pT_dT_f0=0, Q_pT_dQ_0=0, Q_pT_dVciei=0;
+    double volatile Q_pT=0, Q_pT_dVbiei=0, Q_pT_dVbici=0, Q_pT_dT=0, Q_pT_dick=0, Q_pT_dT_f0=0, Q_pT_dQ_0=0, Q_pT_dVciei=0;
     double Qf, Cdei, Qr, Cdci;
     double ick, ick_Vciei, ick_dT,cjcx01,cjcx02;
 
@@ -1179,6 +1179,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                     Vrth = *(ckt->CKTstate1 + here->HICUMvrth);
             } else if((ckt->CKTmode & MODEINITJCT) &&
                     (ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC)){
+                Vbe   = here->HICUMicVB-here->HICUMicVE; //here was a hicumtype before, why?
                 Vbiei = here->HICUMicVBi-here->HICUMicVEi; //here was a hicumtype before, why?
                 Vciei = here->HICUMicVCi-here->HICUMicVEi; //here was a hicumtype before, why?
                 Vbci  = here->HICUMicVB-here->HICUMicVCi;
@@ -1195,6 +1196,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 Vrth=0.0,Icth=0.0,Icth_dT=0.0;
                 Vbxf=Vbxf1=Vbxf2=0.0;
             } else if((ckt->CKTmode & MODEINITJCT) && (here->HICUMoff==0)) {
+                Vbe   = here->HICUMicVB-here->HICUMicVE;
                 Vbiei = here->HICUMicVBi-here->HICUMicVEi; //here was a hicumtype before, why?
                 Vciei = here->HICUMicVCi-here->HICUMicVEi; //here was a hicumtype before, why?
                 Vbci  = here->HICUMicVB-here->HICUMicVCi;
