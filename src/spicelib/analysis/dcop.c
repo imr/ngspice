@@ -82,7 +82,7 @@ DCop(CKTcircuit *ckt, int notused)
             (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITJCT,
             (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITFLOAT,
             ckt->CKTdcMaxIter);
-	    
+
     if(converged != 0) {
         fprintf(stdout,"\nDC solution failed -\n");
         CKTncDump(ckt);
