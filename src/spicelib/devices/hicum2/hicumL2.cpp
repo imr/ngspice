@@ -802,6 +802,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
     std::function<duals::duald (duals::duald, duals::duald, duals::duald)> calc_iavl = [&](duals::duald Vbici, duals::duald Cjci, duals::duald itf){
         //Avalanche current
+        duals::duald iavl;
         iavl = 0;
         if (use_aval == 1) {//begin : HICAVL
             duals::duald v_bord,v_q,U0,av,avl,iavl;
@@ -1632,6 +1633,8 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             // initial formulation for itf and so on
             //Initial formulation of forward and reverse component of transfer current
 
+            Tr = model->HICUMtr;
+
             //begin initial transfer current calculations -> itf, itr, Qf, Qr------------
             calc_it_initial(here->HICUMtemp+1_e, Vbiei    , Vbici    , Q_0    , T_f0    , ick    , &result_itf, &result_itr, &result_Qf, &result_Qr, &result_Q_bf, &result_a_h, &result_Q_p);
             itf    = result_itf.rpart();
@@ -2134,6 +2137,12 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
             // Load_sources
 
+            //resistors
+            Ibbp_Vbbp    = 1/here->HICUMrbx_t;
+            Icic_Vcic    = 1/here->HICUMrcx_t;
+            Ieie_Veie    = 1/here->HICUMre_t;
+            Isis_Vsis    = 1/model->HICUMrsu;
+
             Ibpei        = model->HICUMtype*ibep;
             Ibpei       += model->HICUMtype*irep;
             Ibpei_Vbpei  = model->HICUMtype*ibep_Vbpei;
@@ -2258,10 +2267,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             Ibpbi_Vbiei = -Vbpbi * rbi_Vbiei / (rbi*rbi);
             Ibpbi_Vbici = -Vbpbi * rbi_Vbici / (rbi*rbi);
 
-            Ibbp_Vbbp    = 1/here->HICUMrbx_t;
-            Icic_Vcic    = 1/here->HICUMrcx_t;
-            Ieie_Veie    = 1/here->HICUMre_t;
-            Isis_Vsis    = 1/model->HICUMrsu;
+
 
             //@Dietmar: why is charge equal to capacitance, where is the j*omega or derivative operator?
             Qjcx_i_Vbci      = Cjcx_i;

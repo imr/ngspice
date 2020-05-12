@@ -528,7 +528,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Ibpbi, Ibpbi_Vbpbi, Ibpbi_Vbici, Ibpbi_Vbiei;
     double Ibpsi, Ibpsi_Vbpci, Ibpsi_Vsici;
     double Icic_Vcic;
-    double Ibci,  Ibci_Vbci;
+    // double Ibci,  Ibci_Vbci;
     double hjei_vbe_Vbiei, ibet_Vbpei=0.0, ibet_Vbiei=0.0, ibh_rec_Vbiei;
     double irei_Vbiei, irep_Vbpei, iavl_Vbici, rbi_Vbiei, rbi_Vbici;
     double Q_0_Vbiei, Q_0_Vbici, b_q_Vbiei, b_q_Vbici;
@@ -2209,13 +2209,13 @@ c           Branch: ciei, Stamp element: It
 /*
 c           Branch: bci, Stamp element: Qbcx
 */
-            rhs_current = model->HICUMtype * (Ibci - Ibci_Vbci*Vbci);
-            *(ckt->CKTrhs + here->HICUMbaseNode)   += -rhs_current;
-            *(here->HICUMbaseBasePtr)              +=  Ibci_Vbci;
-            *(here->HICUMbaseCollCIPtr)            += -Ibci_Vbci;
-            *(ckt->CKTrhs + here->HICUMcollCINode) +=  rhs_current;
-            *(here->HICUMcollCIBasePtr)            += -Ibci_Vbci;
-            *(here->HICUMcollCICollCIPtr)          +=  Ibci_Vbci;
+            // rhs_current = model->HICUMtype * (Ibci - Ibci_Vbci*Vbci);
+            // *(ckt->CKTrhs + here->HICUMbaseNode)   += -rhs_current;
+            // *(here->HICUMbaseBasePtr)              +=  Ibci_Vbci;
+            // *(here->HICUMbaseCollCIPtr)            += -Ibci_Vbci;
+            // *(ckt->CKTrhs + here->HICUMcollCINode) +=  rhs_current;
+            // *(here->HICUMcollCIBasePtr)            += -Ibci_Vbci;
+            // *(here->HICUMcollCICollCIPtr)          +=  Ibci_Vbci;
 /*
 c           Branch: bpci, Stamp element: Ijbcx
 */
