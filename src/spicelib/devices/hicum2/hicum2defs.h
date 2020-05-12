@@ -36,6 +36,11 @@ enum {
     HICUMNSRCS
 };
 
+typedef struct sDualDouble {
+    double rpart;
+    double dpart;
+} dual_double;
+
 /* data needed to describe a single instance */
 
 typedef struct sHICUMinstance {
@@ -76,65 +81,62 @@ typedef struct sHICUMinstance {
     double HICUMdtemp_sh; /* instance delta temperature because of self-heating */
     double HICUMm;        /* multiply factor for the hicum */
 
-    double HICUMmg;
     double HICUMvt0;
-    double HICUMvt;
-    double HICUMdT;
-    double HICUMqtt0;
-    double HICUMln_qtt0;
-    double HICUMibeis_t;
-    double HICUMireis_t;
-    double HICUMibeps_t;
-    double HICUMireps_t;
-    double HICUMibcis_t;
-    double HICUMibcxs_t;
-    double HICUMitss_t;
-    double HICUMiscs_t;
-    double HICUMqp0_t;
-    double HICUMvlim_t;
-    double HICUMtef0_t;
-    double HICUMc10_t;
-    double HICUMrci0_t;
-    double HICUMvces_t;
-    double HICUMt0_t;
-    double HICUMthcs_t;
-    double HICUMfavl_t;
-    double HICUMqavl_t;
-    double HICUMkavl_t;
-    double HICUMrbi0_t;
-    double HICUMibets_t;
-    double HICUMabet_t;
-    double HICUMcjcx01_t;
-    double HICUMcjcx02_t;
-    double HICUMrcx_t;
-    double HICUMrbx_t;
-    double HICUMre_t;
-    double HICUMrbi;
-    double HICUMtsf_t;
-    double HICUMcscp0_t;
-    double HICUMvdsp_t;
-    double HICUMvptsp_t;
-    double HICUMahjei_t;
-    double HICUMhjei0_t;
-    double HICUMhf0_t;
-    double HICUMhfc_t;
-    double HICUMhfe_t;
-    double HICUMrth_t;
+    dual_double HICUMvt;
+    dual_double HICUMdT;
+    dual_double HICUMibeis_t;
+    dual_double HICUMireis_t;
+    dual_double HICUMibeps_t;
+    dual_double HICUMireps_t;
+    dual_double HICUMibcis_t;
+    dual_double HICUMibcxs_t;
+    dual_double HICUMitss_t;
+    dual_double HICUMiscs_t;
+    dual_double HICUMqp0_t;
+    dual_double HICUMvlim_t;
+    dual_double HICUMtef0_t;
+    dual_double HICUMc10_t;
+    dual_double HICUMrci0_t;
+    dual_double HICUMvces_t;
+    dual_double HICUMt0_t;
+    dual_double HICUMthcs_t;
+    dual_double HICUMfavl_t;
+    dual_double HICUMqavl_t;
+    dual_double HICUMkavl_t;
+    dual_double HICUMrbi0_t;
+    dual_double HICUMibets_t;
+    dual_double HICUMabet_t;
+    dual_double HICUMcjcx01_t;
+    dual_double HICUMcjcx02_t;
+    dual_double HICUMrcx_t;
+    dual_double HICUMrbx_t;
+    dual_double HICUMre_t;
+    dual_double HICUMrbi;
+    dual_double HICUMtsf_t;
+    dual_double HICUMcscp0_t;
+    dual_double HICUMvdsp_t;
+    dual_double HICUMvptsp_t;
+    dual_double HICUMahjei_t;
+    dual_double HICUMhjei0_t;
+    dual_double HICUMhf0_t;
+    dual_double HICUMhfc_t;
+    dual_double HICUMhfe_t;
+    dual_double HICUMrth_t;
 
-    double HICUMvdei_t;
-    double HICUMajei_t;
-    double HICUMcjci0_t;
-    double HICUMvdci_t;
-    double HICUMvptci_t;
-    double HICUMvdep_t;
-    double HICUMajep_t;
-    double HICUMcjep0_t;
-    double HICUMcjei0_t;
-    double HICUMvdcx_t;
-    double HICUMvptcx_t;
-    double HICUMcjs0_t;
-    double HICUMvds_t;
-    double HICUMvpts_t;
+    dual_double HICUMvdei_t;
+    dual_double HICUMajei_t;
+    dual_double HICUMcjci0_t;
+    dual_double HICUMvdci_t;
+    dual_double HICUMvptci_t;
+    dual_double HICUMvdep_t;
+    dual_double HICUMajep_t;
+    dual_double HICUMcjep0_t;
+    dual_double HICUMcjei0_t;
+    dual_double HICUMvdcx_t;
+    dual_double HICUMvptcx_t;
+    dual_double HICUMcjs0_t;
+    dual_double HICUMvds_t;
+    dual_double HICUMvpts_t;
 
     double HICUMiavl;
     double HICUMpterm;

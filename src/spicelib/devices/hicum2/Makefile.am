@@ -22,12 +22,13 @@ libhicum2_la_SOURCES =	\
 	hicum2pzld.c	\
 	hicum2setup.c	\
 	hicum2soachk.c	\
-	hicum2temp.c	\
+	hicum2temp.hpp	\
+	hicum2temp.cpp	\
 	hicum2trunc.c
 
 
-AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include -lstdc++ -std=c++11 -Og -Wall 
-AM_CFLAGS = -lstdc++ -I$(top_srcdir)/src/include -Og -Wall 
-AM_CXXFLAGS = -I$(top_srcdir)/src/include -lstdc++ -std=c++11 -Og -Wall 
+AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include -lstdc++ -std=c++11 -Og -Wall
+AM_CFLAGS = -lstdc++ -I$(top_srcdir)/src/include -Og -Wall
+AM_CXXFLAGS = -I$(top_srcdir)/src/include -lstdc++ -std=c++11 -Og -Wall
 
 MAINTAINERCLEANFILES = Makefile.in

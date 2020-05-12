@@ -20,7 +20,7 @@ extern int HICUMparam(int,IFvalue*,GENinstance*,IFvalue*);
 extern int HICUMpzLoad(GENmodel*, CKTcircuit*, SPcomplex*);
 extern int HICUMsetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 extern int HICUMunsetup(GENmodel*,CKTcircuit*);
-extern int HICUMtemp(GENmodel*,CKTcircuit*);
+// extern int HICUMtemp(GENmodel*,CKTcircuit*); // moved to hicum2temp.hpp
 extern int HICUMtrunc(GENmodel*,CKTcircuit*,double*);
 extern int HICUMnoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int HICUMsoaCheck(CKTcircuit *, GENmodel *);

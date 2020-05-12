@@ -98,6 +98,7 @@ int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance)
     double k10,k20,avs,vgb_t0,vge_t0,vgbe_t0,vgbe0,vgbc0,vgsc0;
     double zetabci,zetabcxt,zetasct;
     double k1,k2,dvg0,vge_t,vgb_t,vgbe_t,cratio_t,a;
+    double k1_dT,k2_dT,dvg0_dT,vge_t_dT,vgb_t_dT,vgbe_t_dT,cratio_t_dT,a_dT;
     double Tnom, dT, zetatef, cjcx01, cjcx02, C_1;
     double cjci0_t, vdci_t, vptci_t, cjep0_t, vdep_t, ajep_t, vdcx_t, vptcx_t, cscp0_t, vdsp_t, vptsp_t, cjs0_t, vds_t, vpts_t;
 
@@ -128,14 +129,22 @@ int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance)
     }
     here->HICUMvt0     = Tnom * CONSTKoverQ;
     here->HICUMvt      = here->HICUMtemp * CONSTKoverQ;
+    here->HICUMvt_dT   = CONSTKoverQ;
     dT      = here->HICUMtemp-Tnom;
     here->HICUMqtt0    = here->HICUMtemp/Tnom;
+    here->HICUMqtt0_dT = 1/Tnom;
     here->HICUMln_qtt0 = log(here->HICUMqtt0);
+    here->HICUMln_qtt0_dT = 1/here->HICUMtemp; // d(log(x/a))/dx = 1/x
     k1      = model->HICUMf1vg*here->HICUMtemp*log(here->HICUMtemp);
+    k1_dT   = model->HICUMf1vg*(log(here->HICUMtemp) + 1);
     k2      = model->HICUMf2vg*here->HICUMtemp;
+    k2_dT   = model->HICUMf2vg;
     vgb_t   = model->HICUMvgb+k1+k2;
+    vgb_t_dT = k1_dT+k2_dT;
     vge_t   = model->HICUMvge+k1+k2;
+    vge_t_dT = k1_dT+k2_dT;
     vgbe_t  = (vgb_t+vge_t)/2;
+    vgbe_t_dT = (vgb_t_dT+vge_t_dT)/2;
 
     here->HICUMtVcrit = here->HICUMvt *
              log(here->HICUMvt / (CONSTroot2*model->HICUMibeis*here->HICUMarea*here->HICUMm));
@@ -350,4 +359,3 @@ int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance)
 
     return(0);
 }
-
