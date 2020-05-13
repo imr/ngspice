@@ -460,6 +460,11 @@ SMPfindElt(SMPmatrix *Matrix, int Row, int Col, int CreateIfMissing)
     assert( IS_SPARSE( Matrix ) );
     Row = Matrix->ExtToIntRowMap[Row];
     Col = Matrix->ExtToIntColMap[Col];
+
+    if (Col == -1)
+    /* No element available */
+        return NULL;
+
     Element = Matrix->FirstInCol[Col];
     Element = spcFindElementInCol(Matrix, &Element, Row, Col, CreateIfMissing);
     return Element;
