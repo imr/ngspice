@@ -303,11 +303,12 @@ duals::duald calc_hjei_vbe(duals::duald Vbiei, duals::duald T, HICUMinstance * h
     if (model->HICUMahjei == 0.0){
         return model->HICUMhjei;
     }else{
+        double T_dpart = T.dpart();
         vt  = CONSTboltz * T   / CHARGE;
         vdei_t = here->HICUMvdei_t.rpart;
         hjei0_t = here->HICUMhjei0_t.rpart;
         ahjei_t = here->HICUMahjei_t.rpart;
-        if (T.dpart()!=0.0){
+        if (T_dpart!=0.0){
             vdei_t.dpart(here->HICUMvdei_t.dpart);
             hjei0_t.dpart(here->HICUMhjei0_t.dpart);
             ahjei_t.dpart(here->HICUMahjei_t.dpart);
@@ -687,13 +688,14 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
         duals::duald vt,tef0_t,thcs_t,hf0_t,hfe_t,hfc_t;
         duals::duald FFdQbfb, FFdTbfb, FFdQfhc, FFdTfhc, FFdQcfc,FFdTcfc, FFdQbfc,FFdTbfc;
         duals::duald FFdQcfcT, FFic, FFw, FFdTcfcT;
+        double T_dpart = T.dpart();
         vt = CONSTboltz * T / CHARGE;
         tef0_t = here->HICUMtef0_t.rpart;
         thcs_t = here->HICUMthcs_t.rpart;
         hf0_t = here->HICUMhf0_t.rpart;
         hfe_t = here->HICUMhfe_t.rpart;
         hfc_t = here->HICUMhfc_t.rpart;
-        if (T.dpart()!=0.0){
+        if (T_dpart!=0.0){
             tef0_t.dpart(here->HICUMtef0_t.dpart);
             thcs_t.dpart(here->HICUMthcs_t.dpart);
             hf0_t.dpart(here->HICUMhf0_t.dpart);
@@ -760,12 +762,13 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
         //Transit time calculation at low current density
         duals::duald vt, vdci_t, cjci0_t, t0_t;
         duals::duald cV_f,cv_e,cs_q,cs_q2,cv_j,cdvj_dv,Cjcit,cc;
+        double T_dpart = T.dpart();
 
         vt = CONSTboltz * T / CHARGE;
         vdci_t = here->HICUMvdci_t.rpart;
         cjci0_t = here->HICUMcjci0_t.rpart;
         t0_t = here->HICUMt0_t.rpart;
-        if (T.dpart()!=0.0){
+        if (T_dpart!=0.0){
             vdci_t.dpart(here->HICUMvdci_t.dpart);
             cjci0_t.dpart(here->HICUMcjci0_t.dpart);
             t0_t.dpart(here->HICUMt0_t.dpart);
@@ -791,11 +794,12 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     std::function<duals::duald (duals::duald, duals::duald)> calc_ick = [&](duals::duald T, duals::duald Vciei){
         duals::duald ick, vces_t, rci0_t, vlim_t, Orci0_t;
         duals::duald Ovpt,a,d1,vceff,a1,a11,Odelck,ick1,ick2,ICKa, vc, vt;
+        double T_dpart = T.dpart();
 
         vces_t = here->HICUMvces_t.rpart;
         rci0_t = here->HICUMrci0_t.rpart;
         vlim_t = here->HICUMvlim_t.rpart;
-        if (T.dpart()!=0.0){
+        if (T_dpart!=0.0){
             vces_t.dpart(here->HICUMvces_t.dpart);
             rci0_t.dpart(here->HICUMrci0_t.dpart);
             vlim_t.dpart(here->HICUMvlim_t.dpart);
@@ -836,16 +840,17 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
         duals::duald ibet;
         if (model->HICUMibets > 0 && (Vbpei <0.0 || Vbiei < 0.0)){ //begin : HICTUN
             duals::duald pocce,czz, cje0_t, vde_t, ibets_t, abet_t;
+            double T_dpart = T.dpart();
             ibets_t = here->HICUMibets_t.rpart;
             abet_t = here->HICUMabet_t.rpart;
-            if (T.dpart()!=0.0){
+            if (T_dpart!=0.0){
                 abet_t.dpart(here->HICUMabet_t.dpart);
                 ibets_t.dpart(here->HICUMibets_t.dpart);
             }
             if(model->HICUMtunode==1 && here->HICUMcjep0_t.rpart > 0.0 && here->HICUMvdep_t.rpart >0.0){
                 cje0_t = here->HICUMcjep0_t.rpart;
                 vde_t = here->HICUMvdep_t.rpart;
-                if (T.dpart()!=0.0){
+                if (T_dpart!=0.0){
                     cje0_t.dpart(here->HICUMcjep0_t.dpart);
                     vde_t.dpart(here->HICUMvdep_t.dpart);
                 }
@@ -855,7 +860,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             } else if (model->HICUMtunode==0 && here->HICUMcjei0_t.rpart > 0.0 && here->HICUMvdei_t.rpart >0.0){
                 cje0_t = here->HICUMcjei0_t.rpart;
                 vde_t = here->HICUMvdei_t.rpart;
-                if (T.dpart()!=0.0){
+                if (T_dpart!=0.0){
                     cje0_t.dpart(here->HICUMcjei0_t.dpart);
                     vde_t.dpart(here->HICUMvdei_t.dpart);
                 }
@@ -877,12 +882,13 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
         iavl = 0;
         if (use_aval == 1) {//begin : HICAVL
             duals::duald v_bord,v_q,U0,av,avl,iavl, cjci0_t, vdci_t, qavl_t,favl_t, kavl_t;
+            double T_dpart = T.dpart();
             cjci0_t = here->HICUMcjci0_t.rpart;
             vdci_t = here->HICUMvdci_t.rpart;
             qavl_t = here->HICUMqavl_t.rpart;
             favl_t = here->HICUMfavl_t.rpart;
             kavl_t = here->HICUMkavl_t.rpart;
-            if (T.dpart()!=0.0){
+            if (T_dpart!=0.0){
                 cjci0_t.dpart(here->HICUMcjci0_t.dpart);
                 vdci_t.dpart(here->HICUMvdci_t.dpart);
                 qavl_t.dpart(here->HICUMqavl_t.dpart);
@@ -935,7 +941,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             double T_dpart = T.dpart();
             rbi = here->HICUMrbi0_t.rpart;
             qp0_t = here->HICUMqp0_t.rpart;
-            if (T_dpart>0.0) {
+            if (T_dpart!=0.0) {
                 rbi.dpart(here->HICUMrbi0_t.dpart);
                 qp0_t.dpart(here->HICUMqp0_t.dpart);
             }
@@ -969,10 +975,11 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
         // given T,Q_pT, ick, T_f0, Tr, Vbiei, Vbici -> calculate itf, itr, Qf, Qr
         duals::duald VT, VT_f, i_0f, i_0r, I_Tf1, a_h, Q_fT,T_fT;
         duals::duald c10_t;
+        double T_dpart = T.dpart();
 
         VT      = CONSTboltz * T / CHARGE;
         c10_t   = here->HICUMc10_t.rpart;
-        if (T.dpart()!=0.0) {
+        if (T_dpart!=0.0) {
             c10_t.dpart(here->HICUMc10_t.dpart);
         }
         VT_f    = model->HICUMmcf*VT;
@@ -996,10 +1003,11 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
         // given T,Q_pT, ick, T_f0, Tr, Vbiei, Vbici -> calculate itf, itr, Qf, Qr
         duals::duald VT, VT_f, i_0f, i_0r, I_Tf1, Q_fT, T_fT, A;
         duals::duald c10_t;
+        double T_dpart = T.dpart();
 
         VT      = CONSTboltz * T / CHARGE;
         c10_t   = here->HICUMc10_t.rpart;
-        if (T.dpart()!=0.0) {
+        if (T_dpart!=0.0) {
             c10_t.dpart(here->HICUMc10_t.dpart);
         }
         VT_f    = model->HICUMmcf*VT;
@@ -1031,11 +1039,12 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
         // Tr also as argument here?
         duals::duald VT, VT_f,i_0f,i_0r, Q_p, A, I_Tf1,itf, itr, a_h, Qf, Qr, d_Q0, Q_pT, a, d_Q, Tf, T_fT, Q_bf, Q_fT;
         duals::duald c10_t;
+        double T_dpart = T.dpart();
         int l_it;
 
         VT      = CONSTboltz * T / CHARGE;
         c10_t   = here->HICUMc10_t.rpart;
-        if (T.dpart()!=0.0) {
+        if (T_dpart!=0.0) {
             c10_t.dpart(here->HICUMc10_t.dpart);
         }
         VT_f    = model->HICUMmcf*VT;
@@ -1116,10 +1125,11 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
     std::function<void (duals::duald, duals::duald, duals::duald, duals::duald*, duals::duald*)> calc_itss = [&](duals::duald T, duals::duald Vbpci, duals::duald Vsici, duals::duald * HSI_Tsu, duals::duald * Qdsu){
         duals::duald HSUM, vt, HSa, HSb, itss_t, tsf_t;
+        double T_dpart = T.dpart();
         vt      = CONSTboltz * T / CHARGE;
         itss_t = here->HICUMitss_t.rpart;
         tsf_t = here->HICUMtsf_t.rpart;
-        if (T.dpart()!=0.0){
+        if (T_dpart!=0.0){
             itss_t.dpart(here->HICUMitss_t.dpart);
             tsf_t.dpart(here->HICUMtsf_t.dpart);
         }
