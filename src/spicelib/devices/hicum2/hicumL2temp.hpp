@@ -5,6 +5,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+    int hicum_thermal_update(HICUMmodel *, HICUMinstance *);
     int HICUMtemp(GENmodel *inModel, CKTcircuit *ckt);
 #ifdef __cplusplus
 }

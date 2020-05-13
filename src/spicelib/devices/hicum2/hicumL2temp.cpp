@@ -99,7 +99,7 @@ void hicum_TMPHICJ(duals::duald vt, double vt0, duals::duald qtt0, duals::duald 
     *w_t_dT   = w_t_result.dpart();
 }
 
-int iret, hicum_thermal_update(HICUMmodel *, HICUMinstance *);
+int iret;
 
 int
 HICUMtemp(GENmodel *inModel, CKTcircuit *ckt)

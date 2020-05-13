@@ -65,9 +65,9 @@ HICUMnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata 
         for (inst=HICUMinstances(model); inst != NULL;
                 inst=HICUMnextInstance(inst)) {
 
-            Ibbp_Vbbp    = 1/inst->HICUMrbx_t;
-            Icic_Vcic    = 1/inst->HICUMrcx_t;
-            Ieie_Veie    = 1/inst->HICUMre_t;
+            Ibbp_Vbbp    = 1/inst->HICUMrbx_t.rpart;
+            Icic_Vcic    = 1/inst->HICUMrcx_t.rpart;
+            Ieie_Veie    = 1/inst->HICUMre_t.rpart;
             Isis_Vsis    = 1/model->HICUMrsu;
 
             switch (operation) {

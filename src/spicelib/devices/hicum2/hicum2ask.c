@@ -162,10 +162,10 @@ HICUMask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFval
             value->rValue = *(ckt->CKTstate0 + here->HICUMiciei);
             return(OK);
         case HICUM_QUEST_RBI:
-            value->rValue = here->HICUMrbi.rpart;
+            value->rValue = here->HICUMrbi;
             return(OK);
         case HICUM_QUEST_RB:
-            value->rValue = here->HICUMrbi.rpart + here->HICUMrbx_t.rpart;
+            value->rValue = here->HICUMrbi + here->HICUMrbx_t.rpart;
             return(OK);
 /* transconductances and capacitances */
         case HICUM_QUEST_BETADC:

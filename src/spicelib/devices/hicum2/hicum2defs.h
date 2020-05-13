@@ -111,7 +111,6 @@ typedef struct sHICUMinstance {
     dual_double HICUMrcx_t;
     dual_double HICUMrbx_t;
     dual_double HICUMre_t;
-    dual_double HICUMrbi;
     dual_double HICUMtsf_t;
     dual_double HICUMcscp0_t;
     dual_double HICUMvdsp_t;
@@ -138,6 +137,7 @@ typedef struct sHICUMinstance {
     dual_double HICUMvds_t;
     dual_double HICUMvpts_t;
 
+    double HICUMrbi;
     double HICUMiavl;
     double HICUMpterm;
 
