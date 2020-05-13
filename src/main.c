@@ -833,6 +833,13 @@ int main(int argc, char **argv)
     /* added by SDB during debug . . . . */
     /* mwDoFlush(1); */
 #endif
+#ifdef TRACE1
+    int jj;
+    for (jj = 0; jj < argc; jj++)
+    {
+        fprintf(stdout, "%s\n", argv[jj]);
+    }
+#endif
 
     /* MFB tends to jump to 0 on errors.  This tends to catch it. */
     {
@@ -1147,6 +1154,9 @@ int main(int argc, char **argv)
     signal(SIGSYS, (SIGNAL_FUNCTION) sig_sys);
 #endif
 
+#ifdef TRACE1
+    fprintf(stdout, "We are ready to read initialization files.\n");
+#endif
 
     /* To catch interrupts during .spiceinit... */
     if (SETJMP(jbuf, 1)) {
@@ -1252,14 +1262,14 @@ int main(int argc, char **argv)
 
             /* tmpfile() returns NULL, if in MS Windows as non admin user
                in directory C:\something (no write permission to root C:).
-               Then we add a tempfile in the local directory.
+               Then we add a tempfile in the user's home directory.
                File will be removed automatically due to TD option in fopen */
             if (tempfile == NULL) {
                 tpf = smktemp("sp");
                 tempfile = fopen(tpf, "w+bTD");
                 if (tempfile == NULL) {
                     fprintf(stderr, "Could not open a temporary file "
-                            "to save and use optional arguments.");
+                            "to save and use optional arguments.\n");
                     sp_shutdown(EXIT_BAD);
                 }
             }
