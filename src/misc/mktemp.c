@@ -25,6 +25,13 @@ smktemp(char *id)
 {
     if (!id)
         id = "sp";
-
+    const char* const home = getenv("HOME");
+    if (home) {
+        return tprintf("%s/"TEMPFORMAT, home, id, getpid());
+    }
+    const char* const usr = getenv("USERPROFILE");
+    if (usr) {
+        return tprintf("%s\\"TEMPFORMAT, usr, id, getpid());
+    }
     return tprintf(TEMPFORMAT, id, getpid());
 }
