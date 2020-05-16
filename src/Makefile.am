@@ -192,6 +192,10 @@ ngspice_LDADD += frontend/help/libhlp.la
 endif
 endif
 
+if WINGUI
+ngspice_LDADD += ngicon.o
+endif
+
 if OLDAPPS
 ## nutmeg:
 
