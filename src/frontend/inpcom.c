@@ -4915,6 +4915,15 @@ static void inp_compat(struct card *card)
                 cut_line = curr_line;
                 /* title and nodes */
                 title_tok = gettok(&cut_line);
+                /* the title in the a instance should not contain %, [, nor ]
+                   replace it by '_' */
+                char* stok = copy(title_tok);
+                char* ntok = stok;
+                while (*ntok != '\0') {
+                    if (*ntok == '[' || *ntok == ']' || *ntok == '%')
+                        *ntok = '_';
+                    ntok++;
+                }
                 node1 = gettok(&cut_line);
                 node2 = gettok(&cut_line);
                 // Gxxx  n1 n2 int1 0 1
@@ -4929,7 +4938,7 @@ static void inp_compat(struct card *card)
                 else
                     m_token = copy("1");
                 ckt_array[0] = tprintf("%s %s %s %s_int1 0 %s",
-                        title_tok, node1, node2, title_tok, m_token);
+                        title_tok, node1, node2, stok, m_token);
                 // skip "table"
                 cut_line = skip_ws(cut_line);
                 if (!ciprefix("table", cut_line)) {
@@ -4972,9 +4981,9 @@ static void inp_compat(struct card *card)
                    + input_domain=0.1 fraction=TRUE)
                  */
                 ckt_array[1] = tprintf("b%s %s_int2 0 v = %s", title_tok,
-                        title_tok, expression);
+                        stok, expression);
                 ckt_array[2] = tprintf("a%s %%v(%s_int2) %%v(%s_int1) xfer_%s",
-                        title_tok, title_tok, title_tok, title_tok);
+                        stok, stok, stok, stok);
                 /* (x0, y0) (x1, y1) (x2, y2) to x0 x1 x2, y0 y1 y2 */
                 xar[0] = '\0';
                 yar[0] = '\0';
@@ -4995,7 +5004,7 @@ static void inp_compat(struct card *card)
                     tfree(firstno);
                     tfree(secondno);
                 }
-                ckt_array[3] = tprintf(".model xfer_%s pwl(x_array=[%s] y_array=[%s] input_domain=0.1 fraction=TRUE)", title_tok, xar, yar);
+                ckt_array[3] = tprintf(".model xfer_%s pwl(x_array=[%s] y_array=[%s] input_domain=0.1 fraction=TRUE)", stok, xar, yar);
                 // comment out current variable g line
                 *(card->line) = '*';
                 // insert new lines immediately after current line
@@ -5004,6 +5013,7 @@ static void inp_compat(struct card *card)
 
                 tfree(expression);
                 tfree(title_tok);
+                tfree(stok);
                 tfree(node1);
                 tfree(node2);
                 tfree(m_token);
