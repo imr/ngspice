@@ -66,3 +66,14 @@ See test case in DMT where this is compared against ADS.
 # useful stuff
 - non-ancient explanation how equation system of spice looks:
 https://spicesharp.github.io/SpiceSharp/articles/custom_components/modified_nodal_analysis.html#nonlinear-components
+
+# Checking Stamps of Elements without Self-Heating
+- General quesiton: rhs has opposite sign than expected?
+- ijbei -> ok
+- ijbep -> ok
+- ijbci -> ok
+- it -> ok
+- rcx -> ok
+- rbx -> ok
+- re -> ok
+- rbi -> ok (Great work diemtar!)

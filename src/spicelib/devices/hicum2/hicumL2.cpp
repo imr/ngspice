@@ -2398,8 +2398,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             Ibpbi_Vbiei = -Vbpbi * rbi_Vbiei / (rbi*rbi);
             Ibpbi_Vbici = -Vbpbi * rbi_Vbici / (rbi*rbi);
 
-
-
             Qjcx_i_Vbci      = Cjcx_i;
             Qjcx_ii_Vbpci    = Cjcx_ii;
             Qjep_Vbpei       = Cjep;
@@ -2728,7 +2726,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 }
             }
 
-            // Write DC Currents and thei derivatives on the correct variables of the HiCUM equivalent circuit
+            // Write DC Currents and their derivatives on the correct variables of the HiCUM equivalent circuit
 
             *(ckt->CKTstate0 + here->HICUMvbiei)       = Vbiei;
             *(ckt->CKTstate0 + here->HICUMvbici)       = Vbici;
