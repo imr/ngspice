@@ -852,13 +852,12 @@ bypass:
                 */
                 if ((!(ckt->CKTmode & MODETRANOP)) ||
                         (!(ckt->CKTmode & MODEUIC))) {
-#ifndef NOBYPASS
                     if (ckt->CKTmode & MODEINITSMSIG) {
                         *(ckt->CKTstate0 + here->VDIOcapCurrent) = capd;
 
                         goto load;
                     }
-#endif /* NOBYPASS */
+
                     /*
                     *   transient analysis
                     */
