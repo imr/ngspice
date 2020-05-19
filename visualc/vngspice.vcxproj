@@ -2143,9 +2143,9 @@
     <ClCompile Include="..\src\spicelib\devices\hicum2\hicum2pzld.c" />
     <ClCompile Include="..\src\spicelib\devices\hicum2\hicum2setup.c" />
     <ClCompile Include="..\src\spicelib\devices\hicum2\hicum2soachk.c" />
-    <ClCompile Include="..\src\spicelib\devices\hicum2\hicum2temp.c" />
     <ClCompile Include="..\src\spicelib\devices\hicum2\hicum2trunc.c" />
     <ClCompile Include="..\src\spicelib\devices\hicum2\hicumL2.cpp" />
+    <ClCompile Include="..\src\spicelib\devices\hicum2\hicumL2temp.cpp" />
     <ClCompile Include="..\src\spicelib\devices\hisim2\hsm2.c" />
     <ClCompile Include="..\src\spicelib\devices\hisim2\hsm2acld.c" />
     <ClCompile Include="..\src\spicelib\devices\hisim2\hsm2ask.c" />
