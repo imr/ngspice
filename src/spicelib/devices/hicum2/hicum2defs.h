@@ -248,6 +248,10 @@ typedef struct sHICUMinstance {
     double *HICUMemitEItempPtr;
     double *HICUMsubsSItempPtr;
 
+    double *HICUMtempCollPtr;
+    double *HICUMtempBasePtr;
+    double *HICUMtempEmitPtr;
+
     double *HICUMtempCollCIPtr;
     double *HICUMtempBaseBIPtr;
     double *HICUMtempBaseBPPtr;

@@ -2197,25 +2197,32 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             //HICDIO(here->HICUMvt,model->HICUMiscs,here->HICUMiscs_t,model->HICUMmsc,Vsici,&ijsc,&Isici_Vsici);
             hicum_diode(here->HICUMtemp,here->HICUMiscs_t,model->HICUMmsc, Vsici, &ijsc, &ijsc_Vsici, &ijsc_dT);
 
-            // TODO Big Self-heating calculation (BIG TODO)
+            // Self-heating calculation
             if (model->HICUMflsh == 1 && model->HICUMrth >= MIN_R) {
                 pterm   =  Vciei*it + (here->HICUMvdci_t.rpart-Vbici)*iavl;
                 // assuming Vciei_dT and Vbici_dT are 0
                 pterm_dT = Vciei*it_dT + (here->HICUMvdci_t.rpart-Vbici)*iavl_dT + here->HICUMvdci_t.dpart*iavl;
             } else if (model->HICUMflsh == 2 && model->HICUMrth >= MIN_R) {
-                pterm_dT = 0; // TODO
                 pterm   =  Vciei*it + (here->HICUMvdci_t.rpart-Vbici)*iavl + ibei*Vbiei + ibci*Vbici + ibep*Vbpei + ijbcx*Vbpci + ijsc*Vsici;
+                // assuming Vciei_dT, Vbiei_dT, Vbpei_dT, Vbpci_dT, Vsici and Vbici_dT are 0
+                pterm_dT = Vciei*it_dT + (here->HICUMvdci_t.rpart-Vbici)*iavl_dT + here->HICUMvdci_t.dpart*iavl +
+                    ibei_dT*Vbiei + ibci_dT*Vbici + ibep_dT*Vbpei + ijbcx_dT*Vbpci + ijsc_dT*Vsici;
+
                 if (rbi >= MIN_R) {
-                    pterm   = pterm + Vbpbi*Vbpbi/rbi;
+                    pterm    += Vbpbi*Vbpbi/rbi;
+                    pterm_dT += -Vbpbi*Vbpbi*rbi_dT/rbi/rbi;
                 }
                 if (here->HICUMre_t.rpart >= MIN_R) {
-                    pterm   = pterm + Veie*Veie/here->HICUMre_t.rpart;
+                    pterm    += Veie*Veie/here->HICUMre_t.rpart;
+                    pterm_dT += -Veie*Veie*here->HICUMre_t.dpart/here->HICUMre_t.rpart/here->HICUMre_t.rpart;
                 }
                 if (here->HICUMrcx_t.rpart >= MIN_R) {
-                    pterm   = pterm + Vcic*Vcic/here->HICUMrcx_t.rpart;
+                    pterm    += Vcic*Vcic/here->HICUMrcx_t.rpart;
+                    pterm_dT += -Vcic*Vcic*here->HICUMrcx_t.dpart/here->HICUMrcx_t.rpart/here->HICUMrcx_t.rpart;
                 }
                 if (here->HICUMrbx_t.rpart >= MIN_R) {
-                    pterm   = pterm + Vbbp*Vbbp/here->HICUMrbx_t.rpart;
+                    pterm    += Vbbp*Vbbp/here->HICUMrbx_t.rpart;
+                    pterm_dT += -Vbbp*Vbbp*here->HICUMrbx_t.dpart/here->HICUMrbx_t.rpart/here->HICUMrbx_t.rpart;
                 }
             } else {
                 pterm = 0; // default value...
@@ -2834,7 +2841,7 @@ c           Branch: ssi, Stamp element: Csu
             *(here->HICUMsubsSubsSIPtr)            += -gqsu;
             *(here->HICUMsubsSISubsPtr)            += -gqsu;
 /*
-c           Branch: biei, Stamp element: Ijbei
+c           Branch: biei, Stamp element: Ibiei = Ibei + Irei ( was Ijbei )
 */
             rhs_current = model->HICUMtype * (Ibiei - Ibiei_Vbiei*Vbiei);
             *(ckt->CKTrhs + here->HICUMbaseBINode) += -rhs_current;
@@ -2843,8 +2850,9 @@ c           Branch: biei, Stamp element: Ijbei
             *(ckt->CKTrhs + here->HICUMemitEINode) +=  rhs_current;
             *(here->HICUMemitEIBaseBIPtr)          += -Ibiei_Vbiei;
             *(here->HICUMemitEIEmitEIPtr)          +=  Ibiei_Vbiei;
+
 /*
-c           Branch: bpei, Stamp element: Ijbep
+c           Branch: bpei, Stamp element: Ibpei = Ibep + Irep ( was Ijbep )
 */
             rhs_current = model->HICUMtype * (Ibpei - Ibpei_Vbpei*Vbpei);
             *(ckt->CKTrhs + here->HICUMbaseBPNode) += -rhs_current;
@@ -2855,7 +2863,7 @@ c           Branch: bpei, Stamp element: Ijbep
             *(here->HICUMemitEIEmitEIPtr)          +=  Ibpei_Vbpei;
 
 /*
-c           Branch: bici, Stamp element: Ijbci
+c           Branch: bici, Stamp element: Ibici ( was Ijbci )
 */
             rhs_current = model->HICUMtype * (Ibici - Ibici_Vbici*Vbici);
             *(ckt->CKTrhs + here->HICUMbaseBINode) += -rhs_current;
@@ -2889,7 +2897,7 @@ c           Branch: bci, Stamp element: Qbcx
 //            *(here->HICUMcollCIBasePtr)            += -Ibci_Vbci;
 //            *(here->HICUMcollCICollCIPtr)          +=  Ibci_Vbci;
 /*
-c           Branch: bpci, Stamp element: Ijbcx
+c           Branch: bpci, Stamp element: Ibpci ( was Ijbcx )
 */
             rhs_current = model->HICUMtype * (Ibpci - Ibpci_Vbpci*Vbpci);
             *(ckt->CKTrhs + here->HICUMbaseBPNode) += -rhs_current;
@@ -3057,7 +3065,7 @@ c               Stamp element: Ibiei
                 *(ckt->CKTrhs + here->HICUMemitEINode) +=  rhs_current;
                 *(here->HICUMemitEItempPtr)            += -Ibiei_dT;
 /*
-c               Stamp element: ibici
+c               Stamp element: Ibici
 */
                 rhs_current = -Ibici_dT*Vrth;
                 *(ckt->CKTrhs + here->HICUMbaseBINode) += -rhs_current;
@@ -3115,15 +3123,18 @@ c               Stamp element: Isici
 /*
 c               Stamp element: Rcx
 */
-                *(here->HICUMcollTempPtr) +=  Icic_dT;
+                *(here->HICUMcollTempPtr)   +=  Icic_dT;
+                *(here->HICUMcollCItempPtr) += -Icic_dT;
 /*
 c               Stamp element: Rbx
 */
-                *(here->HICUMbaseTempPtr) +=  Ibbp_dT;
+                *(here->HICUMbaseTempPtr)   +=  Ibbp_dT;
+                *(here->HICUMbaseBPtempPtr) += -Ibbp_dT;
 /*
 c               Stamp element: Re
 */
-                *(here->HICUMemitTempPtr) +=  Ieie_dT;
+                *(here->HICUMemitTempPtr)   +=  Ieie_dT;
+                *(here->HICUMemitEItempPtr) += -Ieie_dT;
 /*
 c               Stamp element: Rth
 */
@@ -3167,8 +3178,11 @@ c               Stamp element: Ith
                 *(here->HICUMtempBaseBIPtr) += +Ith_Vbpbi;
 
                 *(here->HICUMtempCollCIPtr) += +Ith_Vcic;
+                *(here->HICUMtempCollPtr)   += -Ith_Vcic;
                 *(here->HICUMtempBaseBPPtr) += +Ith_Vbbp;
+                *(here->HICUMtempBasePtr)   += -Ith_Vbbp;
                 *(here->HICUMtempEmitEIPtr) += +Ith_Veie;
+                *(here->HICUMtempEmitPtr)   += -Ith_Veie;
             }
         }
 

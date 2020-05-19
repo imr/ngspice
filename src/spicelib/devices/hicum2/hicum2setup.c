@@ -656,6 +656,10 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
                 TSTALLOC(HICUMemitEItempPtr,HICUMemitEINode,HICUMtempNode);
                 TSTALLOC(HICUMsubsSItempPtr,HICUMsubsSINode,HICUMtempNode);
 
+                TSTALLOC(HICUMtempCollPtr,HICUMtempNode,HICUMcollNode);
+                TSTALLOC(HICUMtempBasePtr,HICUMtempNode,HICUMbaseNode);
+                TSTALLOC(HICUMtempEmitPtr,HICUMtempNode,HICUMemitNode);
+
                 TSTALLOC(HICUMtempCollCIPtr,HICUMtempNode,HICUMcollCINode);
                 TSTALLOC(HICUMtempBaseBIPtr,HICUMtempNode,HICUMbaseBINode);
                 TSTALLOC(HICUMtempBaseBPPtr,HICUMtempNode,HICUMbaseBPNode);

@@ -30,8 +30,7 @@ This file gives an overview of the files needed for the ngspice HiCUM version, e
 # hicum2soachk.c
 # hicum2temp.c
     * Temperature scaling of all parameters
-    * Models are implemented, missing are the derivatives
-    * As most models are easy and just temperature dependent -> no dual numbers -> Markus: I disagree
+    * Models are implemented and all derivatives are implemented using dual numbers
     * Assignee: Mario
 # hicum2trunc.c
 
@@ -43,16 +42,16 @@ Implemented equivalent circuit elements:
 - Cjci
 - It
 - Crbi (Mario check this)
-- Iavl 
-- Ibhrec 
-- rbi 
-- Ijbep 
-- Ijbep 
-- Ijbcx 
-- Cjcx 
-- Cjs 
-- Cjep 
-- Ibet 
+- Iavl
+- Ibhrec
+- rbi
+- Ijbep
+- Ijbep
+- Ijbcx
+- Cjcx
+- Cjs
+- Cjep
+- Ibet
 - Ijsc
 Missing:
 - Ibpsi
