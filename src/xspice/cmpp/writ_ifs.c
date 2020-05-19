@@ -1017,7 +1017,7 @@ static int write_SPICEdev(
             "    .DEVfindBranch = NULL,\n"
             "    .DEVacLoad = MIFload,\n"
             "    .DEVaccept = NULL,\n"
-            "    .DEVdestroy = MIFdestroy,\n"
+            "    .DEVdestroy = NULL,\n"
             "    .DEVmodDelete = MIFmDelete,\n"
             "    .DEVdelete = MIFdelete,\n"
             "    .DEVsetic = NULL,\n"
