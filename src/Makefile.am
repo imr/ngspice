@@ -196,6 +196,10 @@ if WINGUI
 ngspice_LDADD += ngicon.o
 endif
 
+if WINCONSOLE
+ngspice_LDADD += ngicon.o
+endif
+
 if OLDAPPS
 ## nutmeg:
 
