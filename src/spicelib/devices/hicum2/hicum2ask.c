@@ -118,29 +118,26 @@ HICUMask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFval
             return(OK);
 /* currents */
         case HICUM_QUEST_CC:
-            value->rValue = 0.0;
-            // value->rValue = *(ckt->CKTstate0 + here->HICUMiciei) - // TODO: why does this not work ???
-            //                 *(ckt->CKTstate0 + here->HICUMibici) - // these counter shoud be defined and expand to a integer
-            //                 *(ckt->CKTstate0 + here->HICUMibpci) -
-            //                 *(ckt->CKTstate0 + here->HICUMisici);
+            // value->rValue = 0.0;
+            value->rValue = *(ckt->CKTstate0 + here->HICUMiciei) -
+                            *(ckt->CKTstate0 + here->HICUMibici) -
+                            *(ckt->CKTstate0 + here->HICUMibpci) -
+                            *(ckt->CKTstate0 + here->HICUMisici);
             return(OK);
         case HICUM_QUEST_CB:
-            value->rValue = 0.0;
-            // value->rValue = *(ckt->CKTstate0 + here->HICUMibiei) +
-            //                 *(ckt->CKTstate0 + here->HICUMibici) +
-            //                 *(ckt->CKTstate0 + here->HICUMibpci) +
-            //                 *(ckt->CKTstate0 + here->HICUMibpsi);
+            value->rValue = *(ckt->CKTstate0 + here->HICUMibiei) +
+                            *(ckt->CKTstate0 + here->HICUMibici) +
+                            *(ckt->CKTstate0 + here->HICUMibpci) +
+                            *(ckt->CKTstate0 + here->HICUMibpsi);
             return(OK);
         case HICUM_QUEST_CE:
-            value->rValue = 0.0;
-            // value->rValue = - *(ckt->CKTstate0 + here->HICUMibiei) -
-            //                 *(ckt->CKTstate0 + here->HICUMibpei) -
-            //                 *(ckt->CKTstate0 + here->HICUMiciei);
+            value->rValue = - *(ckt->CKTstate0 + here->HICUMibiei) -
+                             *(ckt->CKTstate0 + here->HICUMibpei) -
+                             *(ckt->CKTstate0 + here->HICUMiciei);
             return(OK);
         case HICUM_QUEST_CS:
-            value->rValue = 0.0;
-            // value->rValue = *(ckt->CKTstate0 + here->HICUMisici) -
-            //                 *(ckt->CKTstate0 + here->HICUMibpsi);
+            value->rValue = *(ckt->CKTstate0 + here->HICUMisici) -
+                            *(ckt->CKTstate0 + here->HICUMibpsi);
             return(OK);
         case HICUM_QUEST_CAVL:
             value->rValue = here->HICUMiavl;
@@ -179,32 +176,32 @@ HICUMask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFval
             }
             return(OK);
         case HICUM_QUEST_GMI:
-            value->rValue = 0.0;
-            // value->rValue = *(ckt->CKTstate0 + here->HICUMiciei_Vbiei); // TODO: Check sign vs VA-Code in ADS
+            // value->rValue = 0.0;
+            value->rValue = *(ckt->CKTstate0 + here->HICUMiciei_Vbiei); // TODO: Check sign vs VA-Code in ADS
             return(OK);
         case HICUM_QUEST_GMS:
-            value->rValue = 0.0;
-            // value->rValue = *(ckt->CKTstate0 + here->HICUMibpsi_Vbpci); // TODO: Check sign vs VA-Code in ADS
+            // value->rValue = 0.0;
+            value->rValue = *(ckt->CKTstate0 + here->HICUMibpsi_Vbpci); // TODO: Check sign vs VA-Code in ADS
             return(OK);
         case HICUM_QUEST_RPII:
-            value->rValue = 0.0;
-            // value->rValue = 1/( *(ckt->CKTstate0 + here->HICUMibiei_Vbiei) + ckt->CKTgmin); // TODO: Check sign vs VA-Code in ADS
+            // value->rValue = 0.0;
+            value->rValue = 1/( *(ckt->CKTstate0 + here->HICUMibiei_Vbiei) + ckt->CKTgmin); // TODO: Check sign vs VA-Code in ADS
             return(OK);
         case HICUM_QUEST_RPIX:
-            value->rValue = 0.0;
-            // value->rValue = 1/( *(ckt->CKTstate0 + here->HICUMibpei_Vbpei) + ckt->CKTgmin); // TODO: Check sign vs VA-Code in ADS
+            // value->rValue = 0.0;
+            value->rValue = 1/( *(ckt->CKTstate0 + here->HICUMibpei_Vbpei) + ckt->CKTgmin); // TODO: Check sign vs VA-Code in ADS
             return(OK);
         case HICUM_QUEST_RMUI:
-            value->rValue = 0.0;
-            // value->rValue = 1/( *(ckt->CKTstate0 + here->HICUMibici_Vbici) + ckt->CKTgmin); // TODO: Check sign vs VA-Code in ADS
+            // value->rValue = 0.0;
+            value->rValue = 1/( *(ckt->CKTstate0 + here->HICUMibici_Vbici) + ckt->CKTgmin); // TODO: Check sign vs VA-Code in ADS
             return(OK);
         case HICUM_QUEST_RMUX:
-            value->rValue = 0.0;
-            // value->rValue = 1/( *(ckt->CKTstate0 + here->HICUMibpci_Vbpci) + ckt->CKTgmin); // TODO: Check sign vs VA-Code in ADS
+            // value->rValue = 0.0;
+            value->rValue = 1/( *(ckt->CKTstate0 + here->HICUMibpci_Vbpci) + ckt->CKTgmin); // TODO: Check sign vs VA-Code in ADS
             return(OK);
         case HICUM_QUEST_ROI:
-            value->rValue = 0.0;
-            // value->rValue = 1/( *(ckt->CKTstate0 + here->HICUMiciei_Vbiei) + ckt->CKTgmin); // TODO: Check sign vs VA-Code in ADS
+            // value->rValue = 0.0;
+            value->rValue = 1/( *(ckt->CKTstate0 + here->HICUMiciei_Vbiei) + ckt->CKTgmin); // TODO: Check sign vs VA-Code in ADS
             return(OK);
         case HICUM_QUEST_CPII:
             value->rValue = here->HICUMcapjei + here->HICUMcapdeix;

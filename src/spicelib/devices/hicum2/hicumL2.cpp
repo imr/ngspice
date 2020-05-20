@@ -1690,7 +1690,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
             //Intrinsic transistor
             //Internal base currents across b-e junction
-            //TODO:derivative of ibeis_t and ireis_t missing here
             hicum_diode(here->HICUMtemp,here->HICUMibeis_t,model->HICUMmbei, Vbiei, &ibei, &ibei_Vbiei, &ibei_dT);
             hicum_diode(here->HICUMtemp,here->HICUMireis_t,model->HICUMmrei, Vbiei, &irei, &irei_Vbiei, &irei_dT);
 
@@ -2073,7 +2072,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             //HICCR: }
 
             //Internal base current across b-c junction
-            //TODO ibcis_t
             hicum_diode(here->HICUMtemp,here->HICUMibcis_t,model->HICUMmbci, Vbici, &ibci, &ibci_Vbici, &ibci_dT);
 
             //Avalanche current
@@ -2082,14 +2080,14 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             iavl_Vbici  = result.dpart();
             result      = calc_iavl(Vbici    , Cjci+1_e, itf    , here->HICUMtemp);
             iavl_dCjci  = result.dpart();
+            iavl_Vbici += iavl_dCjci*Cjci_Vbici;
             result      = calc_iavl(Vbici    , Cjci    , itf+1_e, here->HICUMtemp);
             iavl_ditf   = result.dpart();
             iavl_Vbici += iavl_ditf*itf_Vbici;
             iavl_Vbiei  = iavl_ditf*itf_Vbiei;
-            iavl_dT     = iavl_ditf*itf_dT    + iavl_dCjci*Cjci_dT; //TODO: derivatives kavl_t favl_t qavl_t cjci0_t vdci_t
-            // or like this (TEST):
-            // result      = calc_iavl(Vbici    , Cjci+1_e*Cjci_dT, itf+1_e*itf_dT, here->HICUMtemp+1_e);
-            // iavl_ditf   = result.dpart();
+            result      = calc_iavl(Vbici    , Cjci    , itf    , here->HICUMtemp+1_e);
+            iavl_dT     = result.dpart(); //TODO done: derivatives kavl_t favl_t qavl_t cjci0_t vdci_t
+            iavl_dT    += iavl_ditf*itf_dT    + iavl_dCjci*Cjci_dT;
 
             here->HICUMiavl = iavl;
 
@@ -2120,12 +2118,10 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             rbi_dT   += rbi_dQjei*Qjei_dT      + rbi_dQf*Qf_dT;
 
             //Base currents across peripheral b-e junction
-            //TODO: temperature derivative with ibeps_t ireps_t
             hicum_diode(here->HICUMtemp,here->HICUMibeps_t,model->HICUMmbep, Vbpei, &ibep, &ibep_Vbpei, &ibep_dT);
             hicum_diode(here->HICUMtemp,here->HICUMireps_t,model->HICUMmrep, Vbpei, &irep, &irep_Vbpei, &irep_dT);
 
             //Peripheral b-e junction capacitance and charge
-            //TODO: derivatives with cjep0_t vdep_t
             hicum_qjmodf(here->HICUMtemp,here->HICUMcjep0_t,here->HICUMvdep_t,model->HICUMzep,here->HICUMajep_t,Vbpei,&Cjep,&Cjep_Vbpei, &Cjep_dT,&Qjep, &Qjep_Vbpei, &Qjep_dT);
 
             //Tunneling current
@@ -2191,7 +2187,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 here->HICUMbetadc=0.0;
             }
             Ieie = Veie/here->HICUMre_t.rpart; // only needed for re flicker noise
-            // TODO Ieie_dT ???
 
             //Diode current for s-c junction (si,ci)
             //HICDIO(here->HICUMvt,model->HICUMiscs,here->HICUMiscs_t,model->HICUMmsc,Vsici,&ijsc,&Isici_Vsici);
@@ -2312,6 +2307,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
             Ibpci       = model->HICUMtype*ijbcx;
             Ibpci_Vbpci = model->HICUMtype*ijbcx_Vbpci;
+            Ibpci_dT    = model->HICUMtype*ijbcx_dT;
 
             Ibici       = model->HICUMtype*(ibci - iavl);
             Ibici_Vbici = model->HICUMtype*(ibci_Vbici - iavl_Vbici); //@Dietmar: What about Ibici_Vbiei from Iavl?
@@ -2356,8 +2352,10 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             Ith_Veie   = 0.0;
             Ith_dT   = 0.0;
             if(model->HICUMflsh == 0 || model->HICUMrth < MIN_R) {
-                Ith       = 0.0;
+                Ith      = 0.0;
             } else {
+                Irth_dT  = -Vrth*here->HICUMrth_t.dpart/(here->HICUMrth_t.rpart*here->HICUMrth_t.rpart);
+
                 Ith      = Vrth/here->HICUMrth_t.rpart-pterm;
                 Ith_dT   = (here->HICUMrth_t.rpart - Vrth*here->HICUMrth_t.dpart)/(here->HICUMrth_t.rpart*here->HICUMrth_t.rpart)-pterm_dT; // TODO Ith derivative for temp
                 if (model->HICUMflsh == 1 && model->HICUMrth >= MIN_R) {
@@ -2404,6 +2402,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             }
             Ibpbi_Vbiei = -Vbpbi * rbi_Vbiei / (rbi*rbi);
             Ibpbi_Vbici = -Vbpbi * rbi_Vbici / (rbi*rbi);
+            Ibpbi_dT    = -Vbpbi * rbi_dT    / (rbi*rbi);
 
             Qjcx_i_Vbci      = Cjcx_i;
             Qjcx_ii_Vbpci    = Cjcx_ii;
@@ -2419,11 +2418,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
 //TODO: all the derivatives have to be known dI/dT
 //TODO: @Dietmar: what about dQ/dT ?
-            Irth_dT = 0.0;
-            Ibici_dT = 0.0;
-            Ibpei_dT = 0.0;
-            Ibiei_dT   = 0.0;
-            Ibpci_dT = 0.0;
             Ibpbi_dT = 0.0;
             Iciei_dT = 0.0;
             Isici_dT = 0.0;
@@ -2901,8 +2895,8 @@ c           Branch: bpci, Stamp element: Ibpci ( was Ijbcx )
 */
             rhs_current = model->HICUMtype * (Ibpci - Ibpci_Vbpci*Vbpci);
             *(ckt->CKTrhs + here->HICUMbaseBPNode) += -rhs_current;
-            *(here->HICUMbaseBPCollCIPtr)          +=  Ibpci_Vbpci;
-            *(here->HICUMbaseBPBaseBPPtr)          += -Ibpci_Vbpci;
+            *(here->HICUMbaseBPBaseBPPtr)          +=  Ibpci_Vbpci;
+            *(here->HICUMbaseBPCollCIPtr)          += -Ibpci_Vbpci;
             *(ckt->CKTrhs + here->HICUMcollCINode) +=  rhs_current;
             *(here->HICUMcollCIBaseBPPtr)          += -Ibpci_Vbpci;
             *(here->HICUMcollCICollCIPtr)          +=  Ibpci_Vbpci;
@@ -3123,21 +3117,32 @@ c               Stamp element: Isici
 /*
 c               Stamp element: Rcx
 */
-                *(here->HICUMcollTempPtr)   +=  Icic_dT;
-                *(here->HICUMcollCItempPtr) += -Icic_dT;
+                rhs_current = -Icic_dT*Vrth;
+                *(ckt->CKTrhs + here->HICUMcollCINode) += -rhs_current;
+                *(here->HICUMcollCItempPtr) +=  Icic_dT;
+                *(ckt->CKTrhs + here->HICUMcollNode)   +=  rhs_current;
+                *(here->HICUMcollTempPtr)   += -Icic_dT;
 /*
 c               Stamp element: Rbx
 */
+                rhs_current = -Ibbp_dT*Vrth;
+                *(ckt->CKTrhs + here->HICUMbaseNode)   += -rhs_current;
                 *(here->HICUMbaseTempPtr)   +=  Ibbp_dT;
+                *(ckt->CKTrhs + here->HICUMbaseBPNode) +=  rhs_current;
                 *(here->HICUMbaseBPtempPtr) += -Ibbp_dT;
 /*
 c               Stamp element: Re
 */
-                *(here->HICUMemitTempPtr)   +=  Ieie_dT;
-                *(here->HICUMemitEItempPtr) += -Ieie_dT;
+                rhs_current = -Ieie_dT*Vrth;
+                *(ckt->CKTrhs + here->HICUMemitEINode) += -rhs_current;
+                *(here->HICUMemitEItempPtr) +=  Ieie_dT;
+                *(ckt->CKTrhs + here->HICUMemitNode)   +=  rhs_current;
+                *(here->HICUMemitTempPtr)   += -Ieie_dT;
 /*
-c               Stamp element: Rth
+c               Stamp element: Rth -> Non-linear component here as Rth=f(T)
 */
+                rhs_current = -Irth_dT*Vrth;
+                *(ckt->CKTrhs + here->HICUMtempNode) += -rhs_current;
                 *(here->HICUMtempTempPtr) +=  Irth_dT;
 /*
 c               Stamp element: Cth
