@@ -1240,7 +1240,11 @@ c               Stamp element: Ibep
 /*
 c               Stamp element: Rcx
 */
-                *(here->VBICcollTempPtr) +=  Ircx_Vrth;
+                rhs_current = -Ircx_Vrth * Vrth;
+                *(ckt->CKTrhs + here->VBICcollNode)   += -rhs_current;
+                *(here->VBICcollTempPtr)   +=  Ircx_Vrth;
+                *(ckt->CKTrhs + here->VBICcollCXNode) +=  rhs_current;
+                *(here->VBICcollCXtempPtr) += -Ircx_Vrth;
 /*
 c               Stamp element: Irci
 */
@@ -1252,7 +1256,11 @@ c               Stamp element: Irci
 /*
 c               Stamp element: Rbx
 */
-                *(here->VBICbaseTempPtr) +=  Irbx_Vrth;
+                rhs_current = -Irbx_Vrth * Vrth;
+                *(ckt->CKTrhs + here->VBICbaseNode)   += -rhs_current;
+                *(here->VBICbaseTempPtr)   +=  Irbx_Vrth;
+                *(ckt->CKTrhs + here->VBICbaseBXNode) +=  rhs_current;
+                *(here->VBICbaseBXtempPtr) += -Irbx_Vrth;
 /*
 c               Stamp element: Irbi
 */
@@ -1264,7 +1272,11 @@ c               Stamp element: Irbi
 /*
 c               Stamp element: Re
 */
-                *(here->VBICemitTempPtr) +=  Ire_Vrth;
+                rhs_current = -Ire_Vrth * Vrth;
+                *(ckt->CKTrhs + here->VBICemitNode)   += -rhs_current;
+                *(here->VBICemitTempPtr)   +=  Ire_Vrth;
+                *(ckt->CKTrhs + here->VBICemitEINode) +=  rhs_current;
+                *(here->VBICemitEItempPtr) += -Ire_Vrth;
 /*
 c               Stamp element: Irbp
 */
@@ -1292,7 +1304,11 @@ c               Stamp element: Iccp
 /*
 c               Stamp element: Rs
 */
-                *(here->VBICsubsTempPtr) +=  Irs_Vrth;
+                rhs_current = -Irs_Vrth * Vrth;
+                *(ckt->CKTrhs + here->VBICsubsNode)   += -rhs_current;
+                *(here->VBICsubsTempPtr)   +=  Irs_Vrth;
+                *(ckt->CKTrhs + here->VBICsubsSINode) +=  rhs_current;
+                *(here->VBICsubsSItempPtr) += -Irs_Vrth;
 /*
 c               Stamp element: Rth
 */
@@ -1302,16 +1318,16 @@ c               Stamp element: Cth
 */
                 *(here->VBICtempTempPtr) +=  Icth_Vrth;
 /*
-c               Stamp element: Ith
+c               Stamp element: Ith (all values are delivered with (-) sign)
 */
-                rhs_current = - Ith + Ith_Vrth*Vrth + Icth - Icth_Vrth*Vrth
-                              + Ith_Vbei*Vbei + Ith_Vbci*Vbci + Ith_Vcei*Vcei
-                              + Ith_Vbex*Vbex + Ith_Vbep*Vbep + Ith_Vbcp*Vbcp
-                              + Ith_Vcep*Vcep + Ith_Vrci*Vrci + Ith_Vbcx*Vbcx
-                              + Ith_Vrbi*Vrbi + Ith_Vrbp*Vrbp
-                              + Ith_Vrcx*Vrcx + Ith_Vrbx*Vrbx + Ith_Vre*Vre + Ith_Vrs*Vrs;
+                rhs_current = -Ith - Ith_Vrth*Vrth + Icth - Icth_Vrth*Vrth
+                                   - Ith_Vbei*Vbei - Ith_Vbci*Vbci - Ith_Vcei*Vcei
+                                   - Ith_Vbex*Vbex - Ith_Vbep*Vbep - Ith_Vbcp*Vbcp
+                                   - Ith_Vcep*Vcep - Ith_Vrci*Vrci - Ith_Vbcx*Vbcx
+                                   - Ith_Vrbi*Vrbi - Ith_Vrbp*Vrbp
+                                   - Ith_Vrcx*Vrcx - Ith_Vrbx*Vrbx - Ith_Vre*Vre - Ith_Vrs*Vrs;
 
-                *(ckt->CKTrhs + here->VBICtempNode) -= rhs_current;
+                *(ckt->CKTrhs + here->VBICtempNode) += rhs_current;
 
                 *(here->VBICtempTempPtr)   += -Ith_Vrth;
 
@@ -1337,11 +1353,14 @@ c               Stamp element: Ith
                 *(here->VBICtempBaseBIPtr) += +Ith_Vrbi;
                 *(here->VBICtempBaseBPPtr) += -Ith_Vrbp;
                 *(here->VBICtempCollCXPtr) += +Ith_Vrbp;
-
+                *(here->VBICtempCollPtr)   += -Ith_Vrcx;
                 *(here->VBICtempCollCXPtr) += +Ith_Vrcx;
+                *(here->VBICtempBasePtr)   += -Ith_Vrbx;
                 *(here->VBICtempBaseBXPtr) += +Ith_Vrbx;
+                *(here->VBICtempEmitPtr)   += -Ith_Vre;
                 *(here->VBICtempEmitEIPtr) += +Ith_Vre;
-                *(here->VBICtempSubsPtr)   += +Ith_Vrs;
+                *(here->VBICtempSubsPtr)   += -Ith_Vrs;
+                *(here->VBICtempSubsSIPtr) += +Ith_Vrs;
             }
         }
 

@@ -570,13 +570,17 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
                 TSTALLOC(VBICbaseBPtempPtr,VBICbaseBPNode,VBICtempNode);
                 TSTALLOC(VBICemitEItempPtr,VBICemitEINode,VBICtempNode);
                 TSTALLOC(VBICsubsSItempPtr,VBICsubsSINode,VBICtempNode);
+                TSTALLOC(VBICtempCollPtr,VBICtempNode,VBICcollNode);
                 TSTALLOC(VBICtempCollCIPtr,VBICtempNode,VBICcollCINode);
                 TSTALLOC(VBICtempCollCXPtr,VBICtempNode,VBICcollCXNode);
                 TSTALLOC(VBICtempBaseBIPtr,VBICtempNode,VBICbaseBINode);
+                TSTALLOC(VBICtempBasePtr,VBICtempNode,VBICbaseNode);
                 TSTALLOC(VBICtempBaseBXPtr,VBICtempNode,VBICbaseBXNode);
                 TSTALLOC(VBICtempBaseBPPtr,VBICtempNode,VBICbaseBPNode);
+                TSTALLOC(VBICtempEmitPtr,VBICtempNode,VBICemitNode);
                 TSTALLOC(VBICtempEmitEIPtr,VBICtempNode,VBICemitEINode);
                 TSTALLOC(VBICtempSubsPtr,VBICtempNode,VBICsubsNode);
+                TSTALLOC(VBICtempSubsSIPtr,VBICtempNode,VBICsubsSINode);
                 TSTALLOC(VBICtempTempPtr,VBICtempNode,VBICtempNode);
             }
 
