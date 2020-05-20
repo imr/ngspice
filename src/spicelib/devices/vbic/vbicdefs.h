@@ -220,13 +220,17 @@ typedef struct sVBICinstance {
     double *VBICbaseBPtempPtr;
     double *VBICemitEItempPtr;
     double *VBICsubsSItempPtr;
+    double *VBICtempCollPtr;
     double *VBICtempCollCIPtr;
     double *VBICtempCollCXPtr;
+    double *VBICtempBasePtr;
     double *VBICtempBaseBIPtr;
     double *VBICtempBaseBXPtr;
     double *VBICtempBaseBPPtr;
+    double *VBICtempEmitPtr;
     double *VBICtempEmitEIPtr;
     double *VBICtempSubsPtr;
+    double *VBICtempSubsSIPtr;
     double *VBICtempTempPtr;
 
     unsigned VBICareaGiven   :1; /* flag to indicate area was specified */
