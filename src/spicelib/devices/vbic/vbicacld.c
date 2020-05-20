@@ -97,14 +97,14 @@ c           Stamp element: Itzf
 /*
 c           Stamp element: Itzr
 */
-            *(here->VBICemitEIBaseBIPtr) +=  Itzr_Vbci;
-            *(here->VBICemitEICollCIPtr) += -Itzr_Vbci;
             *(here->VBICemitEIBaseBIPtr) +=  Itzr_Vbei;
             *(here->VBICemitEIEmitEIPtr) += -Itzr_Vbei;
-            *(here->VBICcollCIBaseBIPtr) += -Itzr_Vbci;
-            *(here->VBICcollCICollCIPtr) +=  Itzr_Vbci;
+            *(here->VBICemitEIBaseBIPtr) +=  Itzr_Vbci;
+            *(here->VBICemitEICollCIPtr) += -Itzr_Vbci;
             *(here->VBICcollCIBaseBIPtr) += -Itzr_Vbei;
             *(here->VBICcollCIEmitEIPtr) +=  Itzr_Vbei;
+            *(here->VBICcollCIBaseBIPtr) += -Itzr_Vbci;
+            *(here->VBICcollCICollCIPtr) +=  Itzr_Vbci;
 /*
 c           Stamp element: Ibc
 */
@@ -124,12 +124,12 @@ c           Stamp element: Ibep
             *(here->VBICbaseBPBaseBXPtr) += -Ibep_Vbep;
             *(here->VBICbaseBPBaseBPPtr) +=  Ibep_Vbep;
 /*
-c           Stamp element: Ircx
+c           Stamp element: Rcx
 */
-            *(here->VBICcollCollPtr) +=  Ircx_Vrcx;
+            *(here->VBICcollCollPtr)     +=  Ircx_Vrcx;
             *(here->VBICcollCXCollCXPtr) +=  Ircx_Vrcx;
-            *(here->VBICcollCXCollPtr) +=  -Ircx_Vrcx;
-            *(here->VBICcollCollCXPtr) +=  -Ircx_Vrcx;
+            *(here->VBICcollCXCollPtr)   += -Ircx_Vrcx;
+            *(here->VBICcollCollCXPtr)   += -Ircx_Vrcx;
 /*
 c           Stamp element: Irci
 */
@@ -146,12 +146,12 @@ c           Stamp element: Irci
             *(here->VBICcollCIBaseBIPtr) += -Irci_Vbcx;
             *(here->VBICcollCICollCXPtr) +=  Irci_Vbcx;
 /*
-c           Stamp element: Irbx
+c           Stamp element: Rbx
 */
-            *(here->VBICbaseBasePtr) +=  Irbx_Vrbx;
+            *(here->VBICbaseBasePtr)     +=  Irbx_Vrbx;
             *(here->VBICbaseBXBaseBXPtr) +=  Irbx_Vrbx;
-            *(here->VBICbaseBXBasePtr) += -Irbx_Vrbx;
-            *(here->VBICbaseBaseBXPtr) += -Irbx_Vrbx;
+            *(here->VBICbaseBXBasePtr)   += -Irbx_Vrbx;
+            *(here->VBICbaseBaseBXPtr)   += -Irbx_Vrbx;
 /*
 c           Stamp element: Irbi
 */
@@ -168,12 +168,12 @@ c           Stamp element: Irbi
             *(here->VBICbaseBIBaseBIPtr) += -Irbi_Vbci;
             *(here->VBICbaseBICollCIPtr) +=  Irbi_Vbci;
 /*
-c           Stamp element: Ire
+c           Stamp element: Re
 */
-            *(here->VBICemitEmitPtr) +=  Ire_Vre;
+            *(here->VBICemitEmitPtr)     +=  Ire_Vre;
             *(here->VBICemitEIEmitEIPtr) +=  Ire_Vre;
-            *(here->VBICemitEIEmitPtr) += -Ire_Vre;
-            *(here->VBICemitEmitEIPtr) += -Ire_Vre;
+            *(here->VBICemitEIEmitPtr)   += -Ire_Vre;
+            *(here->VBICemitEmitEIPtr)   += -Ire_Vre;
 /*
 c           Stamp element: Irbp
 */
@@ -212,12 +212,12 @@ c           Stamp element: Iccp
             *(here->VBICsubsSISubsSIPtr) += -Iccp_Vbcp;
             *(here->VBICsubsSIBaseBPPtr) +=  Iccp_Vbcp;
 /*
-c           Stamp element: Irs
+c           Stamp element: Rs
 */
-            *(here->VBICsubsSubsPtr) +=  Irs_Vrs;
+            *(here->VBICsubsSubsPtr)     +=  Irs_Vrs;
             *(here->VBICsubsSISubsSIPtr) +=  Irs_Vrs;
-            *(here->VBICsubsSISubsPtr) += -Irs_Vrs;
-            *(here->VBICsubsSubsSIPtr) += -Irs_Vrs;
+            *(here->VBICsubsSISubsPtr)   += -Irs_Vrs;
+            *(here->VBICsubsSubsSIPtr)   += -Irs_Vrs;
 /*
 c           The complex part
 */
@@ -230,50 +230,50 @@ c           The complex part
             XQbep_Vbci = *(ckt->CKTstate0 + here->VBICcqbepci) * ckt->CKTomega;
             XQbcp_Vbcp = *(ckt->CKTstate0 + here->VBICcqbcp) * ckt->CKTomega;
 /*
-c	Stamp element: Qbe
+c   Stamp element: Qbe
 */
-	    *(here->VBICbaseBIBaseBIPtr + 1) +=  XQbe_Vbei;
-	    *(here->VBICbaseBIEmitEIPtr + 1) += -XQbe_Vbei;
-	    *(here->VBICbaseBIBaseBIPtr + 1) +=  XQbe_Vbci;
-	    *(here->VBICbaseBICollCIPtr + 1) += -XQbe_Vbci;
-	    *(here->VBICemitEIBaseBIPtr + 1) += -XQbe_Vbei;
-	    *(here->VBICemitEIEmitEIPtr + 1) +=  XQbe_Vbei;
-	    *(here->VBICemitEIBaseBIPtr + 1) += -XQbe_Vbci;
-	    *(here->VBICemitEICollCIPtr + 1) +=  XQbe_Vbci;
+            *(here->VBICbaseBIBaseBIPtr + 1) +=  XQbe_Vbei;
+            *(here->VBICbaseBIEmitEIPtr + 1) += -XQbe_Vbei;
+            *(here->VBICbaseBIBaseBIPtr + 1) +=  XQbe_Vbci;
+            *(here->VBICbaseBICollCIPtr + 1) += -XQbe_Vbci;
+            *(here->VBICemitEIBaseBIPtr + 1) += -XQbe_Vbei;
+            *(here->VBICemitEIEmitEIPtr + 1) +=  XQbe_Vbei;
+            *(here->VBICemitEIBaseBIPtr + 1) += -XQbe_Vbci;
+            *(here->VBICemitEICollCIPtr + 1) +=  XQbe_Vbci;
 /*
-c	Stamp element: Qbex
+c   Stamp element: Qbex
 */
-	    *(here->VBICbaseBXBaseBXPtr + 1) +=  XQbex_Vbex;
-	    *(here->VBICbaseBXEmitEIPtr + 1) += -XQbex_Vbex;
-	    *(here->VBICemitEIBaseBXPtr + 1) += -XQbex_Vbex;
-	    *(here->VBICemitEIEmitEIPtr + 1) +=  XQbex_Vbex;
+            *(here->VBICbaseBXBaseBXPtr + 1) +=  XQbex_Vbex;
+            *(here->VBICbaseBXEmitEIPtr + 1) += -XQbex_Vbex;
+            *(here->VBICemitEIBaseBXPtr + 1) += -XQbex_Vbex;
+            *(here->VBICemitEIEmitEIPtr + 1) +=  XQbex_Vbex;
 /*
-c	Stamp element: Qbc
+c   Stamp element: Qbc
 */
-	    *(here->VBICbaseBIBaseBIPtr + 1) +=  XQbc_Vbci;
-	    *(here->VBICbaseBICollCIPtr + 1) += -XQbc_Vbci;
-	    *(here->VBICcollCIBaseBIPtr + 1) += -XQbc_Vbci;
-	    *(here->VBICcollCICollCIPtr + 1) +=  XQbc_Vbci;
+            *(here->VBICbaseBIBaseBIPtr + 1) +=  XQbc_Vbci;
+            *(here->VBICbaseBICollCIPtr + 1) += -XQbc_Vbci;
+            *(here->VBICcollCIBaseBIPtr + 1) += -XQbc_Vbci;
+            *(here->VBICcollCICollCIPtr + 1) +=  XQbc_Vbci;
 /*
-c	Stamp element: Qbcx
+c   Stamp element: Qbcx
 */
-	    *(here->VBICbaseBIBaseBIPtr + 1) +=  XQbcx_Vbcx;
-	    *(here->VBICbaseBICollCXPtr + 1) += -XQbcx_Vbcx;
-	    *(here->VBICcollCXBaseBIPtr + 1) += -XQbcx_Vbcx;
-	    *(here->VBICcollCXCollCXPtr + 1) +=  XQbcx_Vbcx;
+            *(here->VBICbaseBIBaseBIPtr + 1) +=  XQbcx_Vbcx;
+            *(here->VBICbaseBICollCXPtr + 1) += -XQbcx_Vbcx;
+            *(here->VBICcollCXBaseBIPtr + 1) += -XQbcx_Vbcx;
+            *(here->VBICcollCXCollCXPtr + 1) +=  XQbcx_Vbcx;
 /*
-c	Stamp element: Qbep
+c   Stamp element: Qbep
 */
-	    *(here->VBICbaseBXBaseBXPtr + 1) +=  XQbep_Vbep;
-	    *(here->VBICbaseBXBaseBPPtr + 1) += -XQbep_Vbep;
-	    *(here->VBICbaseBXBaseBIPtr + 1) +=  XQbep_Vbci;
-	    *(here->VBICbaseBXCollCIPtr + 1) += -XQbep_Vbci;
-	    *(here->VBICbaseBPBaseBXPtr + 1) += -XQbep_Vbep;
-	    *(here->VBICbaseBPBaseBPPtr + 1) +=  XQbep_Vbep;
-	    *(here->VBICbaseBPBaseBIPtr + 1) += -XQbep_Vbci;
-	    *(here->VBICbaseBPCollCIPtr + 1) +=  XQbep_Vbci;
+            *(here->VBICbaseBXBaseBXPtr + 1) +=  XQbep_Vbep;
+            *(here->VBICbaseBXBaseBPPtr + 1) += -XQbep_Vbep;
+            *(here->VBICbaseBXBaseBIPtr + 1) +=  XQbep_Vbci;
+            *(here->VBICbaseBXCollCIPtr + 1) += -XQbep_Vbci;
+            *(here->VBICbaseBPBaseBXPtr + 1) += -XQbep_Vbep;
+            *(here->VBICbaseBPBaseBPPtr + 1) +=  XQbep_Vbep;
+            *(here->VBICbaseBPBaseBIPtr + 1) += -XQbep_Vbci;
+            *(here->VBICbaseBPCollCIPtr + 1) +=  XQbep_Vbci;
 /*
-c	Stamp element: Qbcp
+c   Stamp element: Qbcp
 */
             *(here->VBICsubsSISubsSIPtr + 1) +=  XQbcp_Vbcp;
             *(here->VBICsubsSIBaseBPPtr + 1) += -XQbcp_Vbcp;
