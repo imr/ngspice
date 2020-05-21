@@ -108,6 +108,7 @@ com_quit(wordlist *wl)
 #ifdef SHARED_MODULE
     destroy_const_plot();
     spice_destroy_devices();
+    unset_all();
     cp_resetcontrol(FALSE);
     /* add 1000 to notify that we exit from 'quit' */
     controlled_exit(1000 + exitcode);
