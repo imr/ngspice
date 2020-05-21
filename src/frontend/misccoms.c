@@ -21,6 +21,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "postcoms.h"
 #include "runcoms2.h"
 #include "variable.h"
+#include "com_unset.h"
 
 #ifdef HAVE_GNUREADLINE
 #include <readline/readline.h>
@@ -36,6 +37,7 @@ extern char history_file[];
 #ifdef SHARED_MODULE
 extern void rem_controls(void);
 extern void destroy_wallace(void);
+extern void sh_delete_myvec(void);
 #endif
 
 extern IFsimulator SIMinfo;
@@ -110,6 +112,7 @@ com_quit(wordlist *wl)
     spice_destroy_devices();
     unset_all();
     cp_resetcontrol(FALSE);
+    sh_delete_myvec();
     /* add 1000 to notify that we exit from 'quit' */
     controlled_exit(1000 + exitcode);
 #else
