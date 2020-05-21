@@ -8,5 +8,6 @@
 #include "ngspice/wordlist.h"
 
 void com_unset(wordlist *wl);
+void unset_all(void);
 
 #endif
