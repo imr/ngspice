@@ -954,7 +954,7 @@ static void killplot(struct plot *pl)
     txfree(pl); /* va: also tfree pl itself (memory leak) */
 }
 
-
+/* delete the const plot (called from com_quit) */
 void
 destroy_const_plot(void)
 {
@@ -965,6 +965,10 @@ destroy_const_plot(void)
     for (v = pl->pl_dvecs; v; v = nv) {
         nv = v->v_next;
         vec_free(v);
+    }
+    /* delete the hash table entry for the const plot */
+    if (pl->pl_lookup_table) {
+        nghash_free(pl->pl_lookup_table, NULL, NULL);
     }
     wl_free(pl->pl_commands);
     if (pl->pl_ccom)    /* va: also tfree (memory leak) */
