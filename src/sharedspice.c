@@ -703,6 +703,8 @@ ngSpice_Init(SendChar* printfcn, SendStat* statusfcn, ControlledExit* ngspiceexi
         nobgtrwanted = TRUE;
     immediate = FALSE;
 
+    cp_nocc = TRUE;
+
 #ifdef THREADS
     /* init the mutexes */
 #ifdef HAVE_LIBPTHREAD
