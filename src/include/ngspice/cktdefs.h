@@ -88,11 +88,11 @@ struct CKTcircuit {
 #define CKTstate5 CKTstates[5]
 #define CKTstate6 CKTstates[6]
 #define CKTstate7 CKTstates[7]
-    double CKTtime;             /* ??? */
-    double CKTdelta;            /* ??? */
-    double CKTdeltaOld[7];      /* Memory for ??? */
-    double CKTtemp;             /* Actual temperature of CKT */
-    double CKTnomTemp;          /* Reference temperature 27 C ? */
+    double CKTtime;             /* Current transient simulation time */
+    double CKTdelta;            /* next time step in transient simulation */
+    double CKTdeltaOld[7];      /* Memory for the 7 most recent CKTdelta */
+    double CKTtemp;             /* Actual temperature of CKT, initialzed to 300.15 K in cktinit.c*/
+    double CKTnomTemp;          /* Reference temperature 300.15 K set in cktinit.c */
     double CKTvt;               /* Thernmal voltage at CKTtemp */
     double CKTag[7];            /* the gear variable coefficient matrix */
 #ifdef PREDICTOR
