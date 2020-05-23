@@ -461,6 +461,9 @@ cp_addcomm(char *word, long int bits0, long int bits1, long int bits2, long int 
 {
     struct ccom *cc;
 
+    if(cp_nocc)
+        return;
+
     cc = clookup(word, &commands, FALSE, TRUE);
     cc->cc_invalid = 0;
     cc->cc_kwords[0] = bits0;
@@ -489,6 +492,9 @@ void
 cp_addkword(int kw_class, char *word)
 {
     struct ccom *cc;
+
+    if(cp_nocc)
+        return;
 
     if ((kw_class < 1) || (kw_class >= NCLASSES)) {
         fprintf(cp_err, "cp_addkword: Internal Error: bad class %d\n",
