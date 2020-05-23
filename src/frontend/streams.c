@@ -226,7 +226,7 @@ void fixdescriptors(void)
     /* Warn if there was some failure */
     if (dup2_fail) {
         (void) fprintf(cp_err,
-                "I/O descriptior failure: %s.\n", strerror(errno));
+                "I/O descriptor failure: %s.\n", strerror(errno));
     }
 } /* end of function fixdescriptors */
 

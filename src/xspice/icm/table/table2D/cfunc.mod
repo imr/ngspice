@@ -508,7 +508,7 @@ static Table2_Data_t *init_local_data(const char *filename, int order)
             /* generate  column data structure (y) */
             if ((loc->ycol = (double *) calloc((size_t) iy,
                     sizeof(double))) == (double *) NULL) {
-                cm_message_printf("Unable to allocate colum structure.");
+                cm_message_printf("Unable to allocate column structure.");
                 xrc = -1;
                 goto EXITPOINT;
             }

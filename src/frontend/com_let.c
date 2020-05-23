@@ -300,7 +300,7 @@ static int find_indices(char *s, const struct dvec *vec_dst,
         *p_end = '\0';
         if (dim_cur == v_numdims_dst) {
             (void) fprintf(cp_err,
-                    "Final dimension exceded maximum number.\n");
+                    "Final dimension exceeded maximum number.\n");
             return -1;
         }
         if (get_index_values(s, v_dims_dst[dim_cur],
@@ -375,7 +375,7 @@ static int find_indices(char *s, const struct dvec *vec_dst,
         else {
             (void) fprintf(cp_err, "Error: Only %d dimensions "
                     "were supplied, but %d are needed. The last dimension "
-                    "may be omitted, in which case it will defalt to the "
+                    "may be omitted, in which case it will default to the "
                     "full range of that dimension.\n",
                     dim_cur, v_numdims_dst);
         }
@@ -400,7 +400,7 @@ static int get_index_values(char *s, int n_elem_this_dim,
     char *p_colon;
     if ((p_colon = strchr(s, ':')) == (char *) NULL) { /* One expression */
         if (get_one_index_value(s, &p_range->low) != 0) {
-            (void) fprintf(cp_err, "Error geting index.\n");
+            (void) fprintf(cp_err, "Error getting index.\n");
             return -1;
         }
         p_range->high = p_range->low;
@@ -411,10 +411,10 @@ static int get_index_values(char *s, int n_elem_this_dim,
             const int rc = get_one_index_value(s, &p_range->low);
             if (rc != 0) {
                 if (rc < 0) { /* error */
-                    (void) fprintf(cp_err, "Error geting low range.\n");
+                    (void) fprintf(cp_err, "Error getting low range.\n");
                     return -1;
                 }
-                /* +1 -> Else use defalt */
+                /* +1 -> Else use default */
                 p_range->low = 0;
             }
         }
@@ -423,10 +423,10 @@ static int get_index_values(char *s, int n_elem_this_dim,
             const int rc = get_one_index_value(s, &p_range->high);
             if (rc != 0) {
                 if (rc < 0) { /* error */
-                    (void) fprintf(cp_err, "Error geting high range.\n");
+                    (void) fprintf(cp_err, "Error getting high range.\n");
                     return -1;
                 }
-                /* +1 -> Else use defalt */
+                /* +1 -> Else use default */
                 p_range->high = n_elem_this_dim - 1;
             }
         }
