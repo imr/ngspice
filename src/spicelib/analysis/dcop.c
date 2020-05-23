@@ -83,49 +83,13 @@ DCop(CKTcircuit *ckt, int notused)
             (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITFLOAT,
             ckt->CKTdcMaxIter);
 	    
-     if(converged != 0) {
-     	fprintf(stdout,"\nDC solution failed -\n");
-     	CKTncDump(ckt);
-/*
-           CKTnode *node;
-           double new, old, tol;
-           int i=1;
-
-           fprintf(stdout,"\nDC solution failed -\n\n");
-           fprintf(stdout,"Last Node Voltages\n");
-           fprintf(stdout,"------------------\n\n");
-           fprintf(stdout,"%-30s %20s %20s\n", "Node", "Last Voltage",
-                                                              "Previous Iter");
-           fprintf(stdout,"%-30s %20s %20s\n", "----", "------------",
-                                                              "-------------");
-           for(node=ckt->CKTnodes->next;node;node=node->next) {
-             if (strstr(node->name, "#branch") || !strchr(node->name, '#')) {
-               new =  ckt->CKTrhsOld [i] ;
-               old =  ckt->CKTrhs [i] ;
-               fprintf(stdout,"%-30s %20g %20g", node->name, new, old);
-               if(node->type == SP_VOLTAGE) {
-                   tol =  ckt->CKTreltol * (MAX(fabs(old),fabs(new))) +
-                           ckt->CKTvoltTol;
-               } else {
-                   tol =  ckt->CKTreltol * (MAX(fabs(old),fabs(new))) +
-                           ckt->CKTabstol;
-               }
-               if (fabs(new-old) >tol ) {
-                    fprintf(stdout," *");
-               }
-               fprintf(stdout,"\n");
-             }
-             i++;
-           }
-           fprintf(stdout,"\n");
-	   SPfrontEnd->OUTendPlot (plot); */
-	   
-	   return(converged);
-	 }
-
+    if(converged != 0) {
+        fprintf(stdout,"\nDC solution failed -\n");
+        CKTncDump(ckt);
+        return(converged);
+    }
 
     ckt->CKTmode = (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITSMSIG;
-
 
 #ifdef WANT_SENSE2
     if(ckt->CKTsenInfo && ((ckt->CKTsenInfo->SENmode&DCSEN) || 
