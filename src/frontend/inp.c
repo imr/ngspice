@@ -459,7 +459,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
     double temperature_value;
     bool expr_w_temper = FALSE;
 
-    double startTime, endTime;
+    double startTime, loadTime = 0., endTime;
 
 #ifdef HAS_PROGREP
     if (!comfile)
@@ -735,6 +735,9 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
 #ifdef HAS_PROGREP
             SetAnalyse("Prepare Deck", 0);
 #endif
+            endTime = seconds();
+            loadTime = endTime - startTime;
+            startTime = endTime;
             /*This is for the globel param setting only */
             /* replace agauss(x,y,z) in each b-line by suitable value, one for all */
             bool statlocal = cp_getvar("statlocal", CP_BOOL, NULL, 0);
@@ -856,8 +859,6 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
         if (ft_curckt) {
             ft_curckt->ci_param = NULL;
             ft_curckt->ci_meas  = NULL;
-            /* PN add here stats*/
-            ft_curckt->FTEstats->FTESTATnetLoadTime = endTime - startTime;
         }
 
         for (dd = deck; dd; dd = dd->nextcard) {
@@ -963,6 +964,13 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
 
         /* Now that the deck is loaded, do the commands, if there are any */
         controls = wl_reverse(controls);
+
+        /* statistics for preparing the deck */
+        endTime = seconds();
+        if (ft_curckt) {
+            ft_curckt->FTEstats->FTESTATnetLoadTime = loadTime;
+            ft_curckt->FTEstats->FTESTATnetPrepTime = seconds() - startTime;
+        }
 
         /* in shared ngspice controls a execute in the primary thread, typically
            before the background thread has finished. This leads to premature execution
