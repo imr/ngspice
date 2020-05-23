@@ -20,9 +20,10 @@ struct FTEparm {
 
 
 static struct FTEparm FTEOPTtbl[] = {
-    { "decklineno",   FTEOPT_NLDECK, "Number of lines in the deck" },
-    { "netloadtime",  FTEOPT_NLT,    "Netlist loading time"        },
-    { "netparsetime", FTEOPT_NPT,    "Netlist parsing time"        }
+    { "decklineno",   FTEOPT_NLDECK, "Number of lines in the deck"    },
+    { "netloadtime",  FTEOPT_NLT,    "Netlist loading time"           },
+    { "netpreptime",  FTEOPT_PRT,    "Subckt and Param expansion time"},
+    { "netparsetime", FTEOPT_NPT,    "Netlist parsing time"           }
 };
 
 static const int FTEOPTcount = sizeof(FTEOPTtbl)/sizeof(*FTEOPTtbl);
@@ -57,6 +58,8 @@ getFTEstat(struct FTEparm *p, FTESTATistics *stat, struct variable *next)
         return var_alloc_num(copy(p->description), stat->FTESTATdeckNumLines, next);
     case FTEOPT_NLT:
         return var_alloc_real(copy(p->description), stat->FTESTATnetLoadTime, next);
+    case FTEOPT_PRT:
+        return var_alloc_real(copy(p->description), stat->FTESTATnetPrepTime, next);
     case FTEOPT_NPT:
         return var_alloc_real(copy(p->description), stat->FTESTATnetParseTime, next);
     default:
