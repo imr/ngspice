@@ -51,15 +51,18 @@ void com_optran(wordlist* wl) {
     /* current circuit */
     CKTcircuit* cckt = ft_curckt->ci_ckt;
     /* wordlist with 6 parameters */
-    cckt->CKTnoOpIter = strtol(wltmp->wl_word, &stpstr, 10);
+    ft_curckt->ci_defTask->TSKnoOpIter = strtol(wltmp->wl_word, &stpstr, 10);
+//    cckt->CKTnoOpIter = strtol(wltmp->wl_word, &stpstr, 10);
     if ((errno == ERANGE) || (*stpstr != '\0'))
         goto bugquit;
     wltmp = wltmp->wl_next;
-    cckt->CKTnumGminSteps = strtol(wltmp->wl_word, &stpstr, 10);
+    ft_curckt->ci_defTask->TSKnumGminSteps = strtol(wltmp->wl_word, &stpstr, 10);
+//    cckt->CKTnumGminSteps = strtol(wltmp->wl_word, &stpstr, 10);
     if ((errno == ERANGE) || (*stpstr != '\0'))
         goto bugquit;
     wltmp = wltmp->wl_next;
-    cckt->CKTnumSrcSteps = strtol(wltmp->wl_word, &stpstr, 10);
+    ft_curckt->ci_defTask->TSKnumSrcSteps = strtol(wltmp->wl_word, &stpstr, 10);
+//    cckt->CKTnumSrcSteps = strtol(wltmp->wl_word, &stpstr, 10);
     if ((errno == ERANGE) || (*stpstr != '\0'))
         goto bugquit;
     wltmp = wltmp->wl_next;
@@ -78,7 +81,7 @@ void com_optran(wordlist* wl) {
         fprintf(stderr, "Error: Step size larger than final time.\n");
         goto bugquit;
     }
-    if (opstepsize < opfinaltime/50.) {
+    if (opstepsize > opfinaltime/50.) {
         fprintf(stderr, "Warning: Step size potentially too small.\n");
     }
     if (opramptime > opfinaltime) {
