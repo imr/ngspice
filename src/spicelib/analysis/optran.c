@@ -13,6 +13,8 @@ Modified BSD license
 #include "ngspice/sperror.h"
 #include "ngspice/fteext.h"
 #include "ngspice/missing_math.h"
+#include "com_optran.h"
+
 
 /* for setting breakpoints required by dbs data base */
 extern struct dbcomm *dbs;
@@ -39,6 +41,54 @@ extern int ng_ident;      /* for debugging */
 static double *opbreaks;
 static int OPbreakSize;
 static double opfinaltime = 1e-6;
+static double opstepsize = 1e-8;
+static double opramptime = 0.;
+
+/* command to set the 6 optran flags */
+void com_optran(wordlist* wl) {
+    wordlist* wltmp = wl;
+    char* stpstr;
+    /* current circuit */
+    CKTcircuit* cckt = ft_curckt->ci_ckt;
+    /* wordlist with 6 parameters */
+    cckt->CKTnoOpIter = strtol(wltmp->wl_word, &stpstr, 10);
+    if ((errno == ERANGE) || (*stpstr != '\0'))
+        goto bugquit;
+    wltmp = wltmp->wl_next;
+    cckt->CKTnumGminSteps = strtol(wltmp->wl_word, &stpstr, 10);
+    if ((errno == ERANGE) || (*stpstr != '\0'))
+        goto bugquit;
+    wltmp = wltmp->wl_next;
+    cckt->CKTnumSrcSteps = strtol(wltmp->wl_word, &stpstr, 10);
+    if ((errno == ERANGE) || (*stpstr != '\0'))
+        goto bugquit;
+    wltmp = wltmp->wl_next;
+    opfinaltime = strtod(wltmp->wl_word, &stpstr);
+    if ((errno == ERANGE) || (*stpstr != '\0'))
+        goto bugquit;
+    wltmp = wltmp->wl_next;
+    opstepsize = strtod(wltmp->wl_word, &stpstr);
+    if ((errno == ERANGE) || (*stpstr != '\0'))
+        goto bugquit;
+    wltmp = wltmp->wl_next;
+    opramptime = strtod(wltmp->wl_word, &stpstr);
+    if ((errno == ERANGE) || (*stpstr != '\0'))
+        goto bugquit;
+    if (opstepsize > opfinaltime) {
+        fprintf(stderr, "Error: Step size larger than final time.\n");
+        goto bugquit;
+    }
+    if (opstepsize < opfinaltime/50.) {
+        fprintf(stderr, "Warning: Step size potentially too small.\n");
+    }
+    if (opramptime > opfinaltime) {
+        fprintf(stderr, "Error: Ramp time larger than final time.\n");
+        goto bugquit;
+    }
+    return;
+bugquit:
+    fprintf(stderr, "Error in command 'optran'\n");
+}
 
 int OPclrBreak(CKTcircuit *ckt)
 {
@@ -598,8 +648,8 @@ resume:
             newdelta = ckt->CKTdelta;
             error = CKTtrunc(ckt,&newdelta);
             if(error) {
-                return(error);
                 tfree(opbreaks);
+                return(error);
             }
             if (newdelta > .9 * ckt->CKTdelta) {
                 if ((ckt->CKTorder == 1) && (ckt->CKTmaxOrder > 1)) { /* don't rise the order for backward Euler */
