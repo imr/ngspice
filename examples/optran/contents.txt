@@ -1,0 +1,4 @@
+Pass Labs F5 turbo
+thermal simulation
+use optran for 4s and coarse steps to obtain stable temparature
+then simulate transient with high resolution
