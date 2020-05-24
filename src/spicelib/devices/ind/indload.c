@@ -59,15 +59,24 @@ INDload(GENmodel *inModel, CKTcircuit *ckt)
                 muthere=MUTnextInstance(muthere)) {
 
             if(!(ckt->CKTmode& (MODEDC|MODEINITPRED))) {
-                *(ckt->CKTstate0 + muthere->MUTind1->INDflux)  +=
-                    muthere->MUTfactor * *(ckt->CKTrhsOld +
-                                           muthere->MUTind2->INDbrEq);
+                /* set initial conditions for mutual inductance here, if uic is set */
+                if (ckt->CKTmode & MODEUIC && ckt->CKTmode & MODEINITTRAN) {
+                   *(ckt->CKTstate0 + muthere->MUTind1->INDflux) +=
+                        muthere->MUTfactor * muthere->MUTind2->INDinitCond;
 
-                *(ckt->CKTstate0 + muthere->MUTind2->INDflux)  +=
-                    muthere->MUTfactor * *(ckt->CKTrhsOld +
-                                           muthere->MUTind1->INDbrEq);
+                   *(ckt->CKTstate0 + muthere->MUTind2->INDflux) +=
+                        muthere->MUTfactor * muthere->MUTind1->INDinitCond;
+                }
+                else {
+                    *(ckt->CKTstate0 + muthere->MUTind1->INDflux) +=
+                        muthere->MUTfactor * *(ckt->CKTrhsOld +
+                            muthere->MUTind2->INDbrEq);
+
+                    *(ckt->CKTstate0 + muthere->MUTind2->INDflux) +=
+                        muthere->MUTfactor * *(ckt->CKTrhsOld +
+                            muthere->MUTind1->INDbrEq);
+                }
             }
-
             *(muthere->MUTbr1br2Ptr) -= muthere->MUTfactor*ckt->CKTag[0];
             *(muthere->MUTbr2br1Ptr) -= muthere->MUTfactor*ckt->CKTag[0];
         }
