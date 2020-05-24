@@ -1,0 +1,78 @@
+* from https://www.diyaudio.com/forums/solid-state/252973-2sk170-2sj74-spice-model-pass-0-4ma.html
+*2SJ74
+*Toshiba Dep-Mode 20mA 400mW LowNoise pkg:TO-92B 2,1,3
+.MODEL 2SJ74 PJF(Beta=92.12m Rs=7.748 Rd=7.748 Lambda=4.464m
++Vto=-.5428 Cgd=85.67p Pb=.3905 Fc=.5
++Cgs=78.27p Is=12.98p
++Kf=26.64E-18 Af=1)
+
+*2SK170
+* 20mA 400mW LowNoise Dep-Mode pkg:TO-92B 3,1,2
+.MODEL 2SK170 NJF(Beta=59.86m Rs=4.151 Rd=4.151 Lambda=1.923m
++Vto=-.5024 Cgd=20p Pb=.4746 Fc=.5
++Cgs=25.48p Is=8.477p
++Kf=111.3E-18 Af=1)
+
+.subckt RPOT 1 2 3
+R1 1 2 {value*ratio + 1m}
+R2 2 3 {value*(1-ratio)+ 1m}
+* below are default parameters, which are required by some simulators
+.param value=1k
+.param ratio=1
+.ends
+
+.model IRFP240 VDMOS nchan
++ Vto=4 Kp=5.9 Lambda=.001 Theta=0.015 ksubthres=.27
++ Rd=61m Rs=18m Rg=3 Rds=1e7
++ Cgdmax=2.45n Cgdmin=10p a=0.3 Cgs=1.2n
++ Is=60p N=1.1 Rb=14m XTI=3
++ Cjo=1.5n Vj=0.8 m=0.5
++ tcvth=0.0065 MU=-1.27 texp0=1.5
++ Rthjc=0.4 Cthj=0.1
++ mtriode=0.8
+
+.model IRFP9240 VDMOS pchan
++ Vto=-4 Kp=8.8 Lambda=.003 Theta=0.08 ksubthres=.35
++ Rd=180m Rs=50m Rg=3 Rds=1e7
++ Cgdmax=1.25n Cgdmin=50p a=0.23 Cgs=1.15n
++ Is=150p N=1.3 Rb=16m XTI=2
++ Cjo=1.3n Vj=0.8 m=0.5
++ tcvth=0.004 MU=-1.27 texp0=1.5
++ Rthjc=0.4 Cthj=0.1
++ mtriode=0.6
+
+.model DMOD D
+
+* Thermistor model
+.subckt th n1 nt n2 
+.param B=3977
+.param R25=4700
+*control node
+Ctherm1 n1 0 100p
+Ctherm2 n2 0 100p
+Rtherm n1 n2 R = {R25*exp(B*(1/(v(nt)+273.15)-1/(25+273.15)))}
+.ends
+
+* generic relay model
+.subckt genrelay out1 out2 in1 in2
+.param ron = 10m
+S1 out1 out2 in1 in2 SW
+.MODEL SW VSWITCH(VON=4V VOFF=1V RON={ron} ROFF=100K)
+.ends
+
+.MODEL IXTH16N10 VDMOS Nchan Vds=100
++ VTO=-3.2 KP=9
++ Lambda=2m
++ Mtriode=1.8
++ Ksubthres=120m
++ subshift=160m
++ Rs=4m Rd=5m Rds=200e6
++ Cgdmax=9000p Cgdmin=300p A=0.25
++ Cgs=5500p Cjo=11000p
++ Is=10e-6 Rb=8m   
++ BV=200 IBV=250e-6
++ NBV=4
++ TT=250e-9
++ vq=100
++ rq=0.1
++ Rthjc=0.2 Cthj=0.1
