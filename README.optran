@@ -12,25 +12,38 @@ If this fails:
 
 If this again fails, bail out.
 
-In tghis branch a fourth method is added:
+In this branch a fourth method is added:
 4) Start a transient simulation for a specific amount of time.
    Keep all data local. Keep the matrix values as an
-   operating point for the simualtion following.
+   operating point for the simulation that is following.
 If this fails, finally stop.
 
-The time for transient is determined a priori. If a transient
-simulation follows, choose 100 time the TSTEP value. If an ac
-or noise simulation follows, take the inverted starting
-frequency divided by 10 as the optran simulation time.
+A new command sets the flags for transient op calculation
+optran n1 n2 n3 n4 n5 n6
+This command has to be given before the simulation commands
+run, ac, tran, pz, or noise. Only the simulation commands will
+start the (modified) op calculation. Another 'optran' will
+override the previous flags.
 
-A method to stop the op transient simulation, when all nodes
-have become stable, might be desirable, but has not yet been implemented.
-
-Step 1 may be skipped by
+Step 1 (from above) may be skipped by
 option noopiter
+command optran n1 overrides noopiter
 
 Step 2 may be skipped by
 option gminsteps=0
+command optran n2 overrides gminsteps
 
 Step 3 may be skipped by 
 option srcsteps=0
+command optran n3 overrides srcsteps
+
+n4 sets the time for transient simulation.
+
+n5 sets the step size for transient simulation.
+
+n6 set a ramp time to ramp all indpendent voltage or
+current sources until 100% is reached at opramptime.
+(not yet implemented)
+
+A method to stop the op transient simulation, when all nodes
+have become stable, might be desirable, but has not yet been implemented.
