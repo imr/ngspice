@@ -223,7 +223,7 @@ OPtran(CKTcircuit *ckt)
         int type = ckt->CKTcurJob->JOBtype;
 
         SPfrontEnd->IFerrorf(ERR_INFO, "Transient op started");
-
+#if 0
         /* Set the final time */
         /* If we are in transient simulation */
         if (type == 4 && ckt->CKTstep > 0.)
@@ -238,7 +238,9 @@ OPtran(CKTcircuit *ckt)
             opfinaltime = 0.1 / nojob->NstartFreq;
             ckt->CKTstep = opfinaltime / 1000.;
         }
-
+#else
+        ckt->CKTstep = opstepsize;
+#endif
         delta=MIN(opfinaltime/100,ckt->CKTstep)/10;
 
         /* begin LTRA code addition */
