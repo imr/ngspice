@@ -1,0 +1,69 @@
+.title KiCad schematic
+.include "F5models.lib"
+.include "script-optran.txt"
+R2 in 0 47.5k
+R1 Net-_Q1-Pad2_ in 1k
+R5 +32 Net-_P1-Pad1_ 1k
+R3 Net-_P3-Pad1_ 0 10
+R4 0 Net-_P3-Pad1_ 10
+R6 Net-_P2-Pad1_ -32 1k
+R7 out Net-_P3-Pad1_ 220
+R8 out Net-_P3-Pad1_ 220
+R9 out Net-_P3-Pad1_ 220
+R10 out Net-_P3-Pad1_ 220
+R11 Net-_R11-Pad1_ Net-_P1-Pad1_ 2.2k
+R13 Net-_Q3-Pad2_ Net-_P1-Pad1_ 47.5
+R15 Net-_Q5-Pad2_ Net-_P2-Pad1_ 47.5
+R12 Net-_R12-Pad1_ Net-_P2-Pad1_ 2.2k
+R17 +32 Net-_D3a1-Pad1_ 1
+R21 Net-_D1a1-Pad2_ -32 1
+R18 +32 Net-_D3a1-Pad1_ 1
+R22 Net-_D1a1-Pad2_ -32 1
+R16 Net-_Q6-Pad2_ Net-_P2-Pad1_ 47.5
+R14 Net-_Q4-Pad2_ Net-_P1-Pad1_ 47.5
+R19 +32 Net-_D4a1-Pad1_ 1
+R23 Net-_D2a1-Pad2_ -32 1
+R20 +32 Net-_D4a1-Pad1_ 1
+R24 Net-_D2a1-Pad2_ -32 1
+Rl1 out 0 4
+D3a1 +32 Net-_D3a1-Pad1_ DMOD
+D1a1 Net-_D1a1-Pad2_ -32 DMOD
+D3b1 +32 Net-_D3a1-Pad1_ DMOD
+D1b1 Net-_D1a1-Pad2_ -32 DMOD
+D4a1 +32 Net-_D4a1-Pad1_ DMOD
+D2a1 Net-_D2a1-Pad2_ -32 DMOD
+D4b1 +32 Net-_D4a1-Pad1_ DMOD
+D2b1 Net-_D2a1-Pad2_ -32 DMOD
+XP3 Net-_P3-Pad1_ 0 Net-_P3-Pad1_ RPOT value=200 ratio=0.85
+XP1 Net-_P1-Pad1_ +32 +32 RPOT value=5k ratio=0.18
+XP2 Net-_P2-Pad1_ -32 -32 RPOT value=5k ratio=0.18
+V3 in 0 sin(0 2 1k)
+JQ1 Net-_P1-Pad1_ Net-_Q1-Pad2_ Net-_P3-Pad1_ 2SK170
+JQ2 Net-_P2-Pad1_ Net-_Q1-Pad2_ Net-_P3-Pad1_ 2SJ74
+MQ5 out Net-_Q5-Pad2_ Net-_D1a1-Pad2_ Q5tj Q5tc IRFP240 thermal
+MQ4 out Net-_Q4-Pad2_ Net-_D4a1-Pad1_ Q4tj Q4tc IRFP9240 thermal
+MQ6 out Net-_Q6-Pad2_ Net-_D2a1-Pad2_ Q6tj Q6tc IRFP240 thermal
+Rj1 Q3tj 0 1G
+Rj2 Q4tj 0 1G
+Rj3 Q5tj 0 1G
+Rj4 Q6tj 0 1G
+Rc2 Q3hs Net-_Rc2-Pad2_ 0.7
+Rc4 Q4hs Net-_Rc2-Pad2_ 0.7
+Rc6 Q5hs Net-_Rc2-Pad2_ 0.7
+Rc8 Q6hs Net-_Rc2-Pad2_ 0.7
+Rc1 Q3tc Q3hs 0.1
+Rc3 Q4tc Q4hs 0.1
+Rc5 Q5tc Q5hs 0.1
+Rc7 Q6tc Q6hs 0.1
+Vt1 Net-_Rc2-Pad2_ 0 40
+Cc1 Q3hs 0 1
+Cc2 Q4hs 0 1
+Cc3 Q5hs 0 1
+Cc4 Q6hs 0 1
+V1 +32 0 32 ; pulse(0 32 1m 1m 1m 100 200)
+V2 -32 0 -32 ; pulse(0 -32 1m 1m 1m 100 200)
+XTH2 Net-_D1a1-Pad2_ Q5hs Net-_R12-Pad1_ th R25=4.7k
+XTH1 Net-_D3a1-Pad1_ Q3hs Net-_R11-Pad1_ th R25=4.7k
+MQ3 out Net-_Q3-Pad2_ Net-_D3a1-Pad1_ Q3tj Q3tc IRFP9240 thermal
+*.tran 20u 5 
+.end
