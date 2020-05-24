@@ -209,7 +209,7 @@ OPtran(CKTcircuit *ckt)
     int error;
     int save_order;
     long save_mode;
-    double maxstepsize = 0.0;
+    double maxstepsize = 0.0, prevmaxstepsize = 0.0;
 
     int ltra_num;
 
@@ -242,6 +242,7 @@ OPtran(CKTcircuit *ckt)
             ckt->CKTstep = opfinaltime / 1000.;
         }
 #else
+        prevmaxstepsize = ckt->CKTmaxStep;
         ckt->CKTmaxStep = ckt->CKTstep = opstepsize;
 #endif
         delta=MIN(opfinaltime/100,ckt->CKTstep)/10;
@@ -367,6 +368,7 @@ OPtran(CKTcircuit *ckt)
     if(AlmostEqualUlps( optime, opfinaltime, 100 ) ) {
         tfree(opbreaks);
         SPfrontEnd->IFerrorf(ERR_INFO, "Transient op finished successfully");
+        ckt->CKTmaxStep = prevmaxstepsize;
         return(OK);
     }
 
