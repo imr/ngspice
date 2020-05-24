@@ -83,6 +83,7 @@
 #include "diff.h"
 #include "com_strcmp.h"
 #include "ngspice/randnumb.h"
+#include "../spicelib/analysis/com_optran.h"
 
 #include "arg.h"
 
@@ -609,6 +610,10 @@ struct comm spcp_coms[] = {
       { 0, 0, 0, 0 }, E_DEFHMASK, 0, 0,
       NULL,
       ": Print circuit inventory" },
+    { "optran", com_optran, TRUE, FALSE,
+      { 0, 0, 0, 0 }, E_DEFHMASK, 6, 6,
+      NULL,
+      ": Prepare optran by setting 6 flags " },
 #ifdef HAVE_TSEARCH
     { "check_ifparm", com_check_ifparm, TRUE, FALSE,
       { 0, 0, 0, 0 }, E_DEFHMASK, 0, 0,
