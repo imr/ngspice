@@ -231,6 +231,9 @@ DCtran(CKTcircuit *ckt,
             CKTncDump(ckt);
             fprintf(stdout,"\n");
             fflush(stdout);
+        } else if (ckt->CKTmode & MODEUIC) {
+            fprintf(stdout,"Using transient initial conditions\n");
+            fflush(stdout);
         } else if (!ft_noacctprint && !ft_noinitprint) {
             fprintf(stdout,"\nInitial Transient Solution\n");
             fprintf(stdout,"--------------------------\n\n");
@@ -451,7 +454,7 @@ DCtran(CKTcircuit *ckt,
 #ifdef CLUSTER
         CLUoutput(ckt);
 #endif
-        if(ckt->CKTtime >= ckt->CKTinitTime)
+        if((ckt->CKTmode&MODEUIC && ckt->CKTtime > 0) || (!(ckt->CKTmode&MODEUIC) && ckt->CKTtime >= ckt->CKTinitTime))
             CKTdump(ckt, ckt->CKTtime, job->TRANplot);
 #ifdef XSPICE
 /* gtri - begin - wbk - Update event queues/data for accepted timepoint */
