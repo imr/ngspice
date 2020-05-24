@@ -242,7 +242,7 @@ OPtran(CKTcircuit *ckt)
             ckt->CKTstep = opfinaltime / 1000.;
         }
 #else
-        ckt->CKTstep = opstepsize;
+        ckt->CKTmaxStep = ckt->CKTstep = opstepsize;
 #endif
         delta=MIN(opfinaltime/100,ckt->CKTstep)/10;
 
