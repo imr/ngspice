@@ -20,6 +20,9 @@ IFparm DIOpTable[] = { /* parameters */
  IOPU("l",     DIO_L,     IF_REAL, "Diode length"),
  IOPU("m",     DIO_M,     IF_REAL, "Multiplier"),
 
+ IOP( "rth0",  DIO_RTH0,       IF_REAL,    "Instance Thermal Resistance"),
+ IOP( "cth0",  DIO_CTH0,       IF_REAL,    "Instance Thermal Capacitance"),
+
  IP("sens_area",DIO_AREA_SENS,IF_FLAG,"flag to request sensitivity WRT area"),
  OP("vd",      DIO_VOLTAGE,IF_REAL, "Diode voltage"),
  OP("id",      DIO_CURRENT,IF_REAL, "Diode current"),
@@ -36,7 +39,9 @@ IFparm DIOpTable[] = { /* parameters */
  OPU("sens_imag", DIO_QUEST_SENS_IMAG,IF_REAL, "imag part of ac sensitivity "),
  OPU("sens_mag",  DIO_QUEST_SENS_MAG, IF_REAL, "sensitivity of ac magnitude"),
  OPU("sens_ph",   DIO_QUEST_SENS_PH,  IF_REAL, "sensitivity of ac phase"),
- OPU("sens_cplx", DIO_QUEST_SENS_CPLX,IF_COMPLEX,"ac sensitivity")
+ OPU("sens_cplx", DIO_QUEST_SENS_CPLX,IF_COMPLEX,"ac sensitivity"),
+
+ OPU("tempnode",  DIO_TNODE,      IF_INTEGER, "Number of temperature node")
 };
 
 IFparm DIOmPTable[] = { /* model parameters */
@@ -109,7 +114,13 @@ IFparm DIOmPTable[] = { /* model parameters */
  IOP( "isr",  DIO_MOD_ISR,  IF_REAL, "Recombination saturation current"),
  IOP( "nr",   DIO_MOD_NR,   IF_REAL, "Recombination current emission coefficient"),
 
- IP( "d",    DIO_MOD_D,   IF_FLAG, "Diode model")
+ IP( "d",    DIO_MOD_D,   IF_FLAG, "Diode model"),
+
+/* self heating */
+ IOP("shmod", DIO_MOD_SHMOD, IF_INTEGER, "Self heating mode selector"),
+ IOP("rth0",  DIO_MOD_RTH0,  IF_REAL, "Self-heating thermal resistance"),
+ IOP("cth0",  DIO_MOD_CTH0,  IF_REAL, "Self-heating thermal capacitance")
+ 
 };
 
 char *DIOnames[] = {

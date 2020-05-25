@@ -166,6 +166,15 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             model->DIOrecSatCur = 1e-14;
         }
 
+        if (!model->DIOshModGiven)
+            model->DIOshMod = 0;
+
+        if (!model->DIOrth0Given)
+            model->DIOrth0 = 0;
+
+        if (!model->DIOcth0Given)
+            model->DIOcth0 = 1e-5;
+
         /* loop through all the instances of the model */
         for (here = DIOinstances(model); here != NULL ;
                 here=DIOnextInstance(here)) {
@@ -229,6 +238,14 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 }
             }
 
+            if ((model->DIOshMod == 1) && (model->DIOrth0 != 0.0)) {
+                if (here->DIOtempNode == 0) {
+                   error = CKTmkVolt(ckt,&tmp,here->DIOname,"Tj");
+                   if (error) return(error);
+                      here->DIOtempNode = tmp->number;
+                }
+            }
+
 /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
 do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
@@ -242,6 +259,15 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
             TSTALLOC(DIOposPosPtr,DIOposNode,DIOposNode);
             TSTALLOC(DIOnegNegPtr,DIOnegNode,DIOnegNode);
             TSTALLOC(DIOposPrimePosPrimePtr,DIOposPrimeNode,DIOposPrimeNode);
+
+            if ((model->DIOshMod == 1) && (model->DIOrth0 != 0.0)) {
+                TSTALLOC(DIOtempTempPtr, DIOtempNode, DIOtempNode);
+                TSTALLOC(DIOtempPosPrimePtr, DIOtempNode, DIOposPrimeNode);
+                TSTALLOC(DIOtempNegPtr, DIOtempNode, DIOnegNode);
+                TSTALLOC(DIOposPrimeTempPtr, DIOposPrimeNode, DIOtempNode);
+                TSTALLOC(DIOnegTempPtr, DIOnegNode, DIOtempNode);
+            }
+
         }
     }
     return(OK);
@@ -266,6 +292,10 @@ DIOunsetup(
               && here->DIOposPrimeNode != here->DIOposNode)
                 CKTdltNNum(ckt, here->DIOposPrimeNode);
             here->DIOposPrimeNode = 0;
+            if ((model->DIOshMod == 1) && (model->DIOrth0 != 0.0)) {
+                CKTdltNNum(ckt, here->DIOtempNode);
+                here->DIOtempNode = 0;
+            }
         }
     }
     return OK;
