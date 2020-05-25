@@ -46,12 +46,19 @@ static double opfinaltime = 1e-6;
 static double opstepsize = 1e-8;
 static double opramptime = 0.;
 
-/* command to set the 6 optran flags */
+/* command to set the 6 optran flags
+   CKTnoOpIter (default 0, set by option noopiter
+
+*/
+
 void com_optran(wordlist* wl) {
     wordlist* wltmp = wl;
     char* stpstr;
     /* current circuit */
-    CKTcircuit* cckt = ft_curckt->ci_ckt;
+    if (!ft_curckt) {
+        fprintf(cp_err, "Error: no circuit loaded\n");
+        return;
+    }
     /* wordlist with 6 parameters */
     ft_curckt->ci_defTask->TSKnoOpIter = strtol(wltmp->wl_word, &stpstr, 10);
 //    cckt->CKTnoOpIter = strtol(wltmp->wl_word, &stpstr, 10);
