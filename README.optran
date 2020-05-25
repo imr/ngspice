@@ -45,5 +45,12 @@ n6 set a ramp time to ramp all indpendent voltage or
 current sources until 100% is reached at opramptime.
 (not yet implemented)
 
-A method to stop the op transient simulation, when all nodes
-have become stable, might be desirable, but has not yet been implemented.
+The transient op calculation uses the 'UIC' flag for its startup.
+Basically two applications come to mind: You may use this with
+constant voltage and current sources and simulate until the 
+output is stable. A method to automatically stop the op transient
+simulation when all nodes have become stable, might be desirable,
+but has not yet been implemented.
+One also may use the optran for a first transient simulation, maybe
+with different step sizes, before the next (tran, ac, pz, noise)
+simulation is commencing.
