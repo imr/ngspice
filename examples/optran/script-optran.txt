@@ -8,8 +8,10 @@ if $?sharedmode
 version
 rusage
 else
-* script for standard ngspice
-*option noinit
+*** script for standard ngspice
+* Start optran without first iteration, 
+* without gmin stepping and without src stepping
+* optran duration 4s, step size 10 ms
 optran 1 0 0 4 1e-2 0
 tran 1u 10m
 echo
@@ -26,15 +28,18 @@ set xbrushwidth=1
 * input and output voltages
 plot in out
 * power supply currents
-plot V1#branch V2#branch ylimit -50 50
-plot V1#branch V2#branch ylimit -10 10
+*plot V1#branch V2#branch ylimit -50 50
+plot V1#branch V2#branch ylimit -15 15
 * output current
 plot @rl1[i] 
-plot @rl1[i] xlimit 0 5m ylimit -0.3 0.3 
+*plot @rl1[i] xlimit 0 5m ylimit -0.3 0.3 
 * resistance of thermistor2 TH1, TH2
 let rth1 = (v("net-_d3a1-pad1_") - v("net-_r11-pad1_")) / (@b.xth1.brtherm[i] + 1n)
 let rth2 = (v("net-_d1a1-pad2_") - v("net-_r12-pad1_")) / (@b.xth2.brtherm[i] + 1n)
 settype impedance rth1 rth2
 plot rth1 rth2 ylimit 0 5k
+ac dec 10 1 1Meg
+plot db(out)
+plot cph(out)
 end
 .endc
