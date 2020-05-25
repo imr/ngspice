@@ -6,6 +6,8 @@ Modified BSD license
 
 /* subroutine to generate OP by TRANSIENT analysis */
 
+#include <errno.h>
+
 #include "ngspice/ngspice.h"
 #include "ngspice/cktdefs.h"
 #include "cktaccept.h"
