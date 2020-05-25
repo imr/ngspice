@@ -12,10 +12,10 @@ If this fails:
 
 If this again fails, bail out.
 
-In tghis branch a fourth method is added:
+In this branch a fourth method is added:
 4) Start a transient simulation for a specific amount of time.
    Keep all data local. Keep the matrix values as an
-   operating point for the simualtion following.
+   operating point for the simulation following.
 If this fails, finally stop.
 
 The time for transient is determined a priori. If a transient
@@ -34,3 +34,13 @@ option gminsteps=0
 
 Step 3 may be skipped by 
 option srcsteps=0
+
+The transient op calculation uses the 'UIC' flag for its startup.
+Basically two applications come to mind: You may use this with
+constant voltage and current sources and simulate until the 
+output is stable. A method to automatically stop the op transient
+simulation when all nodes have become stable, might be desirable,
+but has not yet been implemented.
+One also may use the optran for a first transient simulation, maybe
+with different step sizes, before the next (tran, ac, pz, noise)
+simulation is commencing.
