@@ -88,17 +88,17 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
     double vt;      /* K t / Q */
     double vte, vtesw, vtetun;
     double vtebrk;
-    int Check_dio, Check_th;
+    int Check_dio=0, Check_th;
     int error;
     int SenCond=0;    /* sensitivity condition */
     double diffcharge, diffchargeSW, deplcharge, deplchargeSW, diffcap, diffcapSW, deplcap, deplcapSW;
 
     register int selfheat;
     double deldelTemp, delTemp, Temp;
-    double ceqqth, Ith=0.0;
+    double ceqqth=0.0, Ith=0.0, gcTt=0.0;
     double dIdio_dT, dIth_dVdio=0.0, dIth_dT=0.0;
     double arg1, darg1_dT, arg2, darg2_dT, csat_dT;
-    double vbrknp, gcTt;
+    double vbrknp;
 
     /*  loop through all the diode models */
     for( ; model != NULL; model = DIOnextModel(model)) {
@@ -493,6 +493,7 @@ next1:      if (model->DIOsatSWCurGiven) {              /* sidewall current */
                     if (selfheat)
                     {
                         error = NIintegrate(ckt, &gcTt, &ceqqth, 0.0, here->DIOqth);
+                        if (error) return(error);
                         gcTt = model->DIOcth0 * ckt->CKTag[0];
                         ceqqth = *(ckt->CKTstate0 + here->DIOcqth) - gcTt * delTemp;
                     }
@@ -542,7 +543,7 @@ next2:      *(ckt->CKTstate0 + here->DIOvoltage) = vd;
             if (selfheat) {
                 *(ckt->CKTrhs + here->DIOnegNode)      -= dIdio_dT*delTemp;
                 *(ckt->CKTrhs + here->DIOposPrimeNode) += dIdio_dT*delTemp;
-                *(ckt->CKTrhs + here->DIOtempNode)     += Ith + dIth_dVdio*vd + dIdio_dT*vd*delTemp; /* Diode dissipated power */
+                *(ckt->CKTrhs + here->DIOtempNode)     += Ith + dIth_dVdio*vd + dIth_dT*delTemp + ceqqth; /* Diode dissipated power */
 //printf("pdio: %g rhs: %g delTemp: %g\n", Ith, *(ckt->CKTrhs + here->DIOtempNode), delTemp);
             }
             /*
@@ -556,7 +557,7 @@ next2:      *(ckt->CKTstate0 + here->DIOvoltage) = vd;
             *(here->DIOposPrimePosPtr) -= gspr;
             *(here->DIOposPrimeNegPtr) -= gd;
             if (selfheat) {
-                (*(here->DIOtempTempPtr)     += dIdio_dT*vd + 1/model->DIOrth0);
+                (*(here->DIOtempTempPtr)     += dIth_dT + 1/model->DIOrth0 + gcTt);
                 (*(here->DIOtempPosPrimePtr) += dIth_dVdio);
                 (*(here->DIOtempNegPtr)      -= dIth_dVdio);
                 (*(here->DIOnegTempPtr)      += dIdio_dT);
