@@ -47,8 +47,12 @@ static double opstepsize = 1e-8;
 static double opramptime = 0.;
 
 /* command to set the 6 optran flags
-   CKTnoOpIter (default 0, set by option noopiter
-
+    CKTnoOpIter (default 0, set by 'option noopiter')
+    CKTnumGminSteps
+    CKTnumSrcSteps
+    opfinaltime
+    opstepsize
+    opramptime
 */
 
 void com_optran(wordlist* wl) {
@@ -61,17 +65,14 @@ void com_optran(wordlist* wl) {
     }
     /* wordlist with 6 parameters */
     ft_curckt->ci_defTask->TSKnoOpIter = strtol(wltmp->wl_word, &stpstr, 10);
-//    cckt->CKTnoOpIter = strtol(wltmp->wl_word, &stpstr, 10);
     if ((errno == ERANGE) || (*stpstr != '\0'))
         goto bugquit;
     wltmp = wltmp->wl_next;
     ft_curckt->ci_defTask->TSKnumGminSteps = strtol(wltmp->wl_word, &stpstr, 10);
-//    cckt->CKTnumGminSteps = strtol(wltmp->wl_word, &stpstr, 10);
     if ((errno == ERANGE) || (*stpstr != '\0'))
         goto bugquit;
     wltmp = wltmp->wl_next;
     ft_curckt->ci_defTask->TSKnumSrcSteps = strtol(wltmp->wl_word, &stpstr, 10);
-//    cckt->CKTnumSrcSteps = strtol(wltmp->wl_word, &stpstr, 10);
     if ((errno == ERANGE) || (*stpstr != '\0'))
         goto bugquit;
     wltmp = wltmp->wl_next;
@@ -218,21 +219,21 @@ OPtran(CKTcircuit *ckt)
     int error;
     int save_order;
     long save_mode;
-    double maxstepsize = 0.0, prevmaxstepsize = 0.0;
+    double maxstepsize = 0.0, prevmaxstepsize = 0.0, prevstepsize=0.;
 
     int ltra_num;
 
 #if defined SHARED_MODULE
     int redostep;
 #endif
-
+/*
     ACAN *acjob = (ACAN *) ckt->CKTcurJob;
     TRANan *trjob = (TRANan *) ckt->CKTcurJob;
     NOISEAN *nojob = (NOISEAN *) ckt->CKTcurJob;
-
+*/
     if(optime == 0) {
 
-        int type = ckt->CKTcurJob->JOBtype;
+//        int type = ckt->CKTcurJob->JOBtype;
 
         SPfrontEnd->IFerrorf(ERR_INFO, "Transient op started");
 #if 0
@@ -252,6 +253,7 @@ OPtran(CKTcircuit *ckt)
         }
 #else
         prevmaxstepsize = ckt->CKTmaxStep;
+        prevstepsize = ckt->CKTstep;
         ckt->CKTmaxStep = ckt->CKTstep = opstepsize;
 #endif
         delta=MIN(opfinaltime/100,ckt->CKTstep)/10;
@@ -378,6 +380,7 @@ OPtran(CKTcircuit *ckt)
         tfree(opbreaks);
         SPfrontEnd->IFerrorf(ERR_INFO, "Transient op finished successfully");
         ckt->CKTmaxStep = prevmaxstepsize;
+        ckt->CKTstep = prevstepsize;
         return(OK);
     }
 
