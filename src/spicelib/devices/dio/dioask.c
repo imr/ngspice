@@ -81,7 +81,9 @@ DIOask (CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
                 return(E_ASKPOWER);
             } else {
                 value->rValue = *(ckt->CKTstate0 + here->DIOcurrent) *
-                        *(ckt->CKTstate0 + here->DIOvoltage);
+                        *(ckt->CKTstate0 + here->DIOvoltage) +
+                        *(ckt->CKTstate0 + here->DIOcurrent) *
+                        *(ckt->CKTstate0 + here->DIOcurrent) / here->DIOtConductance;
             }
             return(OK);
         case DIO_QUEST_SENS_DC:
