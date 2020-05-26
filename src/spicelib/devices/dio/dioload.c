@@ -14,36 +14,6 @@ Modified by Paolo Nenzi 2003 and Dietmar Warning 2012
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
-/* DIOlimitlog(deltemp, deltemp_old, LIM_TOL, check)
- * Logarithmic damping the per-iteration change of deltemp beyond LIM_TOL.
- */
-static double
-DIOlimitlog(
-    double deltemp,
-    double deltemp_old,
-    double LIM_TOL,
-    int *check)
-{
-    *check = 0;
-    if (isnan (deltemp) || isnan (deltemp_old))
-    {
-        fprintf(stderr, "Alberto says:  YOU TURKEY!  The limiting function received NaN.\n");
-        fprintf(stderr, "New prediction returns to 0.0!\n");
-        deltemp = 0.0;
-        *check = 1;
-    }
-    /* Logarithmic damping of deltemp beyond LIM_TOL */
-    if (deltemp > deltemp_old + LIM_TOL) {
-        deltemp = deltemp_old + LIM_TOL + log10((deltemp-deltemp_old)/LIM_TOL);
-        *check = 1;
-    }
-    else if (deltemp < deltemp_old - LIM_TOL) {
-        deltemp = deltemp_old - LIM_TOL - log10((deltemp_old-deltemp)/LIM_TOL);
-        *check = 1;
-    }
-    return deltemp;
-}
-
 int
 DIOload(GENmodel *inModel, CKTcircuit *ckt)
         /* actually load the current resistance value into the
@@ -261,7 +231,7 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
                             vte,here->DIOtVcrit,&Check_dio);
                 }
                 if (selfheat)
-                    delTemp = DIOlimitlog(delTemp,
+                    delTemp = DEVlimitlog(delTemp,
                         *(ckt->CKTstate0 + here->DIOdeltemp), 100, &Check_th);
                 else
                     delTemp = 0.0;
@@ -544,7 +514,7 @@ next2:      *(ckt->CKTstate0 + here->DIOvoltage) = vd;
                 *(ckt->CKTrhs + here->DIOnegNode)      -= dIdio_dT*delTemp;
                 *(ckt->CKTrhs + here->DIOposPrimeNode) += dIdio_dT*delTemp;
                 *(ckt->CKTrhs + here->DIOtempNode)     += Ith + dIth_dVdio*vd + dIth_dT*delTemp + ceqqth; /* Diode dissipated power */
-//printf("pdio: %g rhs: %g delTemp: %g\n", Ith, *(ckt->CKTrhs + here->DIOtempNode), delTemp);
+//printf("power: %g rhs: %g delTemp: %g\n", Ith, *(ckt->CKTrhs + here->DIOtempNode), delTemp);
             }
             /*
              *   load matrix

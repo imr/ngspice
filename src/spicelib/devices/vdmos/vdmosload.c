@@ -14,36 +14,6 @@ VDMOS: 2018 Holger Vogt, 2020 Dietmar Warning
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
-/* VDMOSlimitlog(deltemp, deltemp_old, LIM_TOL, check)
- * Logarithmic damping the per-iteration change of deltemp beyond LIM_TOL.
- */
-static double
-VDMOSlimitlog(
-    double deltemp,
-    double deltemp_old,
-    double LIM_TOL,
-    int *check)
-{
-    *check = 0;
-    if (isnan (deltemp) || isnan (deltemp_old))
-    {
-        fprintf(stderr, "Alberto says:  YOU TURKEY!  The limiting function received NaN.\n");
-        fprintf(stderr, "New prediction returns to 0.0!\n");
-        deltemp = 0.0;
-        *check = 1;
-    }
-    /* Logarithmic damping of deltemp beyond LIM_TOL */
-    if (deltemp > deltemp_old + LIM_TOL) {
-        deltemp = deltemp_old + LIM_TOL + log10((deltemp-deltemp_old)/LIM_TOL);
-        *check = 1;
-    }
-    else if (deltemp < deltemp_old - LIM_TOL) {
-        deltemp = deltemp_old - LIM_TOL - log10((deltemp_old-deltemp)/LIM_TOL);
-        *check = 1;
-    }
-    return deltemp;
-}
-
 int
 VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
 /* actually load the current value into the
@@ -298,7 +268,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                     vgs = vgd + vds;
                 }
                 if (selfheat)
-                    delTemp = VDMOSlimitlog(delTemp,
+                    delTemp = DEVlimitlog(delTemp,
                           *(ckt->CKTstate0 + here->VDMOSdelTemp),100,&Check_th);
                 else
                     delTemp = 0.0;
