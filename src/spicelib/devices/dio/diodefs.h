@@ -58,9 +58,11 @@ typedef struct sDIOinstance {
                                      * (positive prime,positive prime) */
 
     /* self heating */
-    double *DIOtempTempPtr;
+    double *DIOtempPosPtr;
     double *DIOtempPosPrimePtr;
     double *DIOtempNegPtr;
+    double *DIOtempTempPtr;
+    double *DIOposTempPtr;
     double *DIOposPrimeTempPtr;
     double *DIOnegTempPtr;
 

@@ -261,9 +261,11 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
             TSTALLOC(DIOposPrimePosPrimePtr,DIOposPrimeNode,DIOposPrimeNode);
 
             if ((model->DIOshMod == 1) && (model->DIOrth0 != 0.0)) {
-                TSTALLOC(DIOtempTempPtr, DIOtempNode, DIOtempNode);
+                TSTALLOC(DIOtempPosPtr, DIOtempNode, DIOposNode);
                 TSTALLOC(DIOtempPosPrimePtr, DIOtempNode, DIOposPrimeNode);
                 TSTALLOC(DIOtempNegPtr, DIOtempNode, DIOnegNode);
+                TSTALLOC(DIOtempTempPtr, DIOtempNode, DIOtempNode);
+                TSTALLOC(DIOposTempPtr, DIOposNode, DIOtempNode);
                 TSTALLOC(DIOposPrimeTempPtr, DIOposPrimeNode, DIOtempNode);
                 TSTALLOC(DIOnegTempPtr, DIOnegNode, DIOtempNode);
             }

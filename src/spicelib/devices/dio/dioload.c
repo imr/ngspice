@@ -66,7 +66,7 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
     register int selfheat;
     double deldelTemp, delTemp, Temp;
     double ceqqth=0.0, Ith=0.0, gcTt=0.0;
-    double dIdio_dT, dIth_dVdio=0.0, dIth_dT=0.0;
+    double dIdio_dT, dIth_dVdio=0.0, dIrs_dT=0.0, dIth_dVrs=0.0, dIth_dT=0.0;
     double arg1, darg1_dT, arg2, darg2_dT, csat_dT;
     double vbrknp;
 
@@ -279,6 +279,7 @@ next1:      if (model->DIOsatSWCurGiven) {              /* sidewall current */
             /*
             *   temperature dependent diode saturation current and derivative
             */
+
             arg1 = ((Temp / model->DIOnomTemp) - 1) * model->DIOactivationEnergy / (model->DIOemissionCoeff*vt);
             darg1_dT = model->DIOactivationEnergy / (vte*model->DIOnomTemp)
                       - model->DIOactivationEnergy*(Temp/model->DIOnomTemp -1)/(vte*Temp);
@@ -499,10 +500,25 @@ next2:      *(ckt->CKTstate0 + here->DIOvoltage) = vd;
             load:
 #endif
             if (selfheat) {
+                double vrs, dIrs_dVrs, dIrs_dRs, factor, dRs_dT, dIth_dIrs;
+                Ith = vd * cd + cd*cd/gspr;
+                dIrs_dVrs = gspr;
+                vrs = cd/gspr;
+                dIrs_dRs = -vrs*gspr*gspr;
+                if(model->DIOresistGiven && model->DIOresist!=0.0) {
+                    factor = model->DIOresistTemp1 + model->DIOresistTemp2 * delTemp;
+                    dRs_dT = 1/here->DIOtConductance * factor;
+                } else {
+                    dRs_dT = 0.0;
+                }
+                dIrs_dT = dIrs_dRs * dRs_dT;
+                dIth_dVrs = cd;
+                dIth_dIrs = vrs;
+                dIth_dVrs = dIth_dVrs + dIth_dIrs*dIrs_dVrs;
+                dIth_dT = dIth_dIrs*dIrs_dT;
+                dIth_dT = dIth_dT + dIdio_dT*vd;
                 dIth_dVdio = cd + vd*gd;
                 here->DIOdIth_dVdio = dIth_dVdio;
-                Ith = vd*cd;
-                dIth_dT = dIdio_dT*vd;
             }
             /*
              *   load current vector
@@ -511,10 +527,13 @@ next2:      *(ckt->CKTstate0 + here->DIOvoltage) = vd;
             *(ckt->CKTrhs + here->DIOnegNode) += cdeq;
             *(ckt->CKTrhs + here->DIOposPrimeNode) -= cdeq;
             if (selfheat) {
-                *(ckt->CKTrhs + here->DIOnegNode)      -= dIdio_dT*delTemp;
-                *(ckt->CKTrhs + here->DIOposPrimeNode) += dIdio_dT*delTemp;
-                *(ckt->CKTrhs + here->DIOtempNode)     += Ith + dIth_dVdio*vd + dIth_dT*delTemp + ceqqth; /* Diode dissipated power */
+                *(ckt->CKTrhs + here->DIOposNode)      +=  dIrs_dT*delTemp;
+                *(ckt->CKTrhs + here->DIOposPrimeNode) +=  dIdio_dT*delTemp -dIrs_dT*delTemp;
+                *(ckt->CKTrhs + here->DIOnegNode)      += -dIdio_dT*delTemp;
+                *(ckt->CKTrhs + here->DIOtempNode)     += Ith - dIth_dVdio*vd + dIth_dT*delTemp + ceqqth; /* Diode dissipated power */
 //printf("power: %g rhs: %g delTemp: %g\n", Ith, *(ckt->CKTrhs + here->DIOtempNode), delTemp);
+//printf("dIdio_dT: %g dIth_dVdio: %g dIth_dT: %g\n", dIdio_dT, dIth_dVdio, dIth_dT);
+//printf("dIrs_dT: %g dIth_dVrs: %g dIth_dT: %g\n", dIrs_dT, dIth_dVrs, dIth_dT);
             }
             /*
              *   load matrix
@@ -527,11 +546,13 @@ next2:      *(ckt->CKTstate0 + here->DIOvoltage) = vd;
             *(here->DIOposPrimePosPtr) -= gspr;
             *(here->DIOposPrimeNegPtr) -= gd;
             if (selfheat) {
-                (*(here->DIOtempTempPtr)     += dIth_dT + 1/model->DIOrth0 + gcTt);
-                (*(here->DIOtempPosPrimePtr) += dIth_dVdio);
-                (*(here->DIOtempNegPtr)      -= dIth_dVdio);
-                (*(here->DIOnegTempPtr)      += dIdio_dT);
-                (*(here->DIOposPrimeTempPtr) -= dIdio_dT);
+                (*(here->DIOtempPosPtr)      += -dIth_dVrs);
+                (*(here->DIOtempPosPrimePtr) += -dIth_dVdio + dIth_dVrs);
+                (*(here->DIOtempNegPtr)      +=  dIth_dVdio);
+                (*(here->DIOtempTempPtr)     += -dIth_dT + 1/model->DIOrth0 + gcTt);
+                (*(here->DIOposTempPtr)      +=  dIrs_dT);
+                (*(here->DIOposPrimeTempPtr) +=  dIdio_dT - dIrs_dT);
+                (*(here->DIOnegTempPtr)      += -dIdio_dT);
             }
         }
     }
