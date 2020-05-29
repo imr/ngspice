@@ -65,7 +65,7 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
 
     register int selfheat;
     double deldelTemp, delTemp, Temp;
-    double ceqqth=0.0, Ith=0.0, gcTt=0.0;
+    double ceqqth=0.0, Ith=0.0, gcTt=0.0, vrs=0.0;
     double dIdio_dT, dIth_dVdio=0.0, dIrs_dT=0.0, dIth_dVrs=0.0, dIth_dT=0.0;
     double arg1, darg1_dT, arg2, darg2_dT, csat_dT;
     double vbrknp;
@@ -500,17 +500,18 @@ next2:      *(ckt->CKTstate0 + here->DIOvoltage) = vd;
             load:
 #endif
             if (selfheat) {
-                double vrs, dIrs_dVrs, dIrs_dRs, factor, dRs_dT, dIth_dIrs;
-                Ith = vd * cd + cd*cd/gspr;
-                dIrs_dVrs = gspr;
-                vrs = cd/gspr;
-                dIrs_dRs = -vrs*gspr*gspr;
-                if(model->DIOresistGiven && model->DIOresist!=0.0) {
+                double dIrs_dVrs, dIrs_dRs, factor, dRs_dT, dIth_dIrs;
+                if (model->DIOresistGiven && model->DIOresist != 0.0) {
                     factor = model->DIOresistTemp1 + model->DIOresistTemp2 * delTemp;
-                    dRs_dT = 1/here->DIOtConductance * factor;
+                    gspr = model->DIOconductance / (1.0 + factor*delTemp);
+                    dRs_dT = 1 / here->DIOtConductance * factor;
                 } else {
                     dRs_dT = 0.0;
                 }
+                Ith = vd*cd + cd*cd/gspr;
+                dIrs_dVrs = gspr;
+                vrs = cd/gspr;
+                dIrs_dRs = -vrs*gspr*gspr;
                 dIrs_dT = dIrs_dRs * dRs_dT;
                 dIth_dVrs = cd;
                 dIth_dIrs = vrs;
@@ -527,10 +528,10 @@ next2:      *(ckt->CKTstate0 + here->DIOvoltage) = vd;
             *(ckt->CKTrhs + here->DIOnegNode) += cdeq;
             *(ckt->CKTrhs + here->DIOposPrimeNode) -= cdeq;
             if (selfheat) {
-                *(ckt->CKTrhs + here->DIOposNode)      +=  dIrs_dT*delTemp;
-                *(ckt->CKTrhs + here->DIOposPrimeNode) +=  dIdio_dT*delTemp -dIrs_dT*delTemp;
-                *(ckt->CKTrhs + here->DIOnegNode)      += -dIdio_dT*delTemp;
-                *(ckt->CKTrhs + here->DIOtempNode)     += Ith - dIth_dVdio*vd + dIth_dT*delTemp + ceqqth; /* Diode dissipated power */
+                *(ckt->CKTrhs + here->DIOposNode)      += -dIrs_dT*delTemp;
+                *(ckt->CKTrhs + here->DIOposPrimeNode) += -dIdio_dT*delTemp + dIrs_dT*delTemp;
+                *(ckt->CKTrhs + here->DIOnegNode)      +=  dIdio_dT*delTemp;
+                *(ckt->CKTrhs + here->DIOtempNode)     +=  Ith - dIth_dVdio*vd - dIth_dVrs*vrs - dIth_dT*delTemp + ceqqth; /* Diode dissipated power */
 //printf("power: %g rhs: %g delTemp: %g\n", Ith, *(ckt->CKTrhs + here->DIOtempNode), delTemp);
 //printf("dIdio_dT: %g dIth_dVdio: %g dIth_dT: %g\n", dIdio_dT, dIth_dVdio, dIth_dT);
 //printf("dIrs_dT: %g dIth_dVrs: %g dIth_dT: %g\n", dIrs_dT, dIth_dVrs, dIth_dT);
