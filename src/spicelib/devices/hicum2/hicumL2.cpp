@@ -2795,7 +2795,7 @@ c           Branch: be, Stamp element: Cbepar1
             *(here->HICUMbaseEmitPtr)              += -gqbepar1;
             *(here->HICUMemitBasePtr)              += -gqbepar1;
 /*
-c           Branch: bpe, Stamp element: Cbepar2
+c           Branch: bpe, Stamp element: Cbepar2 
 */
             rhs_current = model->HICUMtype * (*(ckt->CKTstate0 + here->HICUMcqbepar2) - Vbpe * gqbepar2);
             *(ckt->CKTrhs + here->HICUMbaseBPNode) += -rhs_current;
@@ -2840,10 +2840,10 @@ c           Branch: biei, Stamp element: Ibiei = Ibei + Irei ( was Ijbei )
             rhs_current = model->HICUMtype * (Ibiei - Ibiei_Vbiei*Vbiei);
             *(ckt->CKTrhs + here->HICUMbaseBINode) += -rhs_current;
             *(here->HICUMbaseBIBaseBIPtr)          +=  Ibiei_Vbiei;
-            *(here->HICUMbaseBIEmitEIPtr)          += -Ibiei_Vbiei;
-            *(ckt->CKTrhs + here->HICUMemitEINode) +=  rhs_current;
-            *(here->HICUMemitEIBaseBIPtr)          += -Ibiei_Vbiei;
             *(here->HICUMemitEIEmitEIPtr)          +=  Ibiei_Vbiei;
+            *(ckt->CKTrhs + here->HICUMemitEINode) +=  rhs_current;
+            *(here->HICUMbaseBIEmitEIPtr)          += -Ibiei_Vbiei;
+            *(here->HICUMemitEIBaseBIPtr)          += -Ibiei_Vbiei;
 
 /*
 c           Branch: bpei, Stamp element: Ibpei = Ibep + Irep ( was Ijbep )
@@ -2851,10 +2851,10 @@ c           Branch: bpei, Stamp element: Ibpei = Ibep + Irep ( was Ijbep )
             rhs_current = model->HICUMtype * (Ibpei - Ibpei_Vbpei*Vbpei);
             *(ckt->CKTrhs + here->HICUMbaseBPNode) += -rhs_current;
             *(here->HICUMbaseBPBaseBPPtr)          +=  Ibpei_Vbpei;
-            *(here->HICUMbaseBPEmitEIPtr)          += -Ibpei_Vbpei;
-            *(ckt->CKTrhs + here->HICUMemitEINode) +=  rhs_current;
-            *(here->HICUMemitEIBaseBPPtr)          += -Ibpei_Vbpei;
             *(here->HICUMemitEIEmitEIPtr)          +=  Ibpei_Vbpei;
+            *(ckt->CKTrhs + here->HICUMemitEINode) +=  rhs_current;
+            *(here->HICUMbaseBPEmitEIPtr)          += -Ibpei_Vbpei;
+            *(here->HICUMemitEIBaseBPPtr)          += -Ibpei_Vbpei;
 
 /*
 c           Branch: bici, Stamp element: Ibici ( was Ijbci )
@@ -2862,44 +2862,46 @@ c           Branch: bici, Stamp element: Ibici ( was Ijbci )
             rhs_current = model->HICUMtype * (Ibici - Ibici_Vbici*Vbici);
             *(ckt->CKTrhs + here->HICUMbaseBINode) += -rhs_current;
             *(here->HICUMbaseBIBaseBIPtr)          +=  Ibici_Vbici;
-            *(here->HICUMbaseBICollCIPtr)          += -Ibici_Vbici;
+            *(here->HICUMcollCICollCIPtr)          +=  Ibici_Vbici;
             *(ckt->CKTrhs + here->HICUMcollCINode) +=  rhs_current;
             *(here->HICUMcollCIBaseBIPtr)          += -Ibici_Vbici;
-            *(here->HICUMcollCICollCIPtr)          +=  Ibici_Vbici;
+            *(here->HICUMbaseBICollCIPtr)          += -Ibici_Vbici;
 /*
 c           Branch: ciei, Stamp element: It
 */
             rhs_current = model->HICUMtype * (Iciei - Iciei_Vbiei*Vbiei - Iciei_Vbici*Vbici);
             *(ckt->CKTrhs + here->HICUMcollCINode) += -rhs_current;
-            *(here->HICUMcollCIBaseBIPtr)          +=  Iciei_Vbiei;
-            *(here->HICUMcollCIEmitEIPtr)          += -Iciei_Vbiei;
-            *(here->HICUMcollCIBaseBIPtr)          +=  Iciei_Vbici;
-            *(here->HICUMcollCICollCIPtr)          += -Iciei_Vbici;
             *(ckt->CKTrhs + here->HICUMemitEINode) +=  rhs_current;
-            *(here->HICUMemitEIBaseBIPtr)          += -Iciei_Vbiei;
+
+            *(here->HICUMcollCIBaseBIPtr)          +=  Iciei_Vbiei;
             *(here->HICUMemitEIEmitEIPtr)          +=  Iciei_Vbiei;
-            *(here->HICUMemitEIBaseBIPtr)          += -Iciei_Vbici;
+            *(here->HICUMcollCIEmitEIPtr)          += -Iciei_Vbiei;
+            *(here->HICUMemitEIBaseBIPtr)          += -Iciei_Vbiei;
+
+            *(here->HICUMcollCIBaseBIPtr)          +=  Iciei_Vbici; 
             *(here->HICUMemitEICollCIPtr)          +=  Iciei_Vbici;
+            *(here->HICUMcollCICollCIPtr)          += -Iciei_Vbici;
+            *(here->HICUMemitEIBaseBIPtr)          += -Iciei_Vbici;
 /*
 c           Branch: bci, Stamp element: Qbcx
 */
 //            rhs_current = model->HICUMtype * (Ibci - Ibci_Vbci*Vbci);
 //            *(ckt->CKTrhs + here->HICUMbaseNode)   += -rhs_current;
-//            *(here->HICUMbaseBasePtr)              +=  Ibci_Vbci;
-//            *(here->HICUMbaseCollCIPtr)            += -Ibci_Vbci;
 //            *(ckt->CKTrhs + here->HICUMcollCINode) +=  rhs_current;
-//            *(here->HICUMcollCIBasePtr)            += -Ibci_Vbci;
+//            *(here->HICUMbaseBasePtr)              +=  Ibci_Vbci;
 //            *(here->HICUMcollCICollCIPtr)          +=  Ibci_Vbci;
+//            *(here->HICUMbaseCollCIPtr)            += -Ibci_Vbci;
+//            *(here->HICUMcollCIBasePtr)            += -Ibci_Vbci;
 /*
 c           Branch: bpci, Stamp element: Ibpci ( was Ijbcx )
 */
             rhs_current = model->HICUMtype * (Ibpci - Ibpci_Vbpci*Vbpci);
             *(ckt->CKTrhs + here->HICUMbaseBPNode) += -rhs_current;
-            *(here->HICUMbaseBPBaseBPPtr)          +=  Ibpci_Vbpci;
-            *(here->HICUMbaseBPCollCIPtr)          += -Ibpci_Vbpci;
             *(ckt->CKTrhs + here->HICUMcollCINode) +=  rhs_current;
-            *(here->HICUMcollCIBaseBPPtr)          += -Ibpci_Vbpci;
+            *(here->HICUMbaseBPBaseBPPtr)          +=  Ibpci_Vbpci;
             *(here->HICUMcollCICollCIPtr)          +=  Ibpci_Vbpci;
+            *(here->HICUMbaseBPCollCIPtr)          += -Ibpci_Vbpci;
+            *(here->HICUMcollCIBaseBPPtr)          += -Ibpci_Vbpci;
 /*
 c           Branch: cic, Stamp element: Rcx
 */
@@ -2929,27 +2931,30 @@ c           Branch: bpbi, Stamp element: Rbi, Crbi
 //printf("Ibpbi_Vbpbi: %g Vbpbi: %f Ibpbi_Vbiei: %g Vbiei: %f Ibpbi_Vbici: %g Vbici: %f\n", Ibpbi_Vbpbi, Vbpbi, Ibpbi_Vbiei, Vbiei, Ibpbi_Vbici, Vbici);
 //printf("Ibpbi: %g RHS: %g\n", Ibpbi, rhs_current);
             *(ckt->CKTrhs + here->HICUMbaseBPNode) += -rhs_current;
-            *(here->HICUMbaseBPBaseBPPtr)          +=  Ibpbi_Vbpbi;
-            *(here->HICUMbaseBPBaseBIPtr)          += -Ibpbi_Vbpbi;
-            *(here->HICUMbaseBPBaseBIPtr)          +=  Ibpbi_Vbiei;
-            *(here->HICUMbaseBPEmitEIPtr)          += -Ibpbi_Vbiei;
-            *(here->HICUMbaseBPCollCIPtr)          +=  Ibpbi_Vbici;
-            *(here->HICUMbaseBPEmitEIPtr)          += -Ibpbi_Vbici;
             *(ckt->CKTrhs + here->HICUMbaseBINode) +=  rhs_current;
-            *(here->HICUMbaseBIBaseBPPtr)          += -Ibpbi_Vbpbi;
+
+            *(here->HICUMbaseBPBaseBPPtr)          +=  Ibpbi_Vbpbi;
             *(here->HICUMbaseBIBaseBIPtr)          +=  Ibpbi_Vbpbi;
-            *(here->HICUMbaseBIBaseBIPtr)          += -Ibpbi_Vbiei;
+            *(here->HICUMbaseBPBaseBIPtr)          += -Ibpbi_Vbpbi;
+            *(here->HICUMbaseBIBaseBPPtr)          += -Ibpbi_Vbpbi;
+
+            *(here->HICUMbaseBPBaseBIPtr)          +=  Ibpbi_Vbiei; //f_Bp = +Ibpbi
+            *(here->HICUMbaseBPEmitEIPtr)          += -Ibpbi_Vbiei;
+            *(here->HICUMbaseBIBaseBIPtr)          += -Ibpbi_Vbiei; //f_Bi = - Ibpi
             *(here->HICUMbaseBIEmitEIPtr)          +=  Ibpbi_Vbiei;
-            *(here->HICUMbaseBICollCIPtr)          += -Ibpbi_Vbici;
+ 
+            *(here->HICUMbaseBPBaseBIPtr)          +=  Ibpbi_Vbici; 
+            *(here->HICUMbaseBPCollCIPtr)          += -Ibpbi_Vbici;
+            *(here->HICUMbaseBIBaseBIPtr)          += -Ibpbi_Vbici;
             *(here->HICUMbaseBIEmitEIPtr)          +=  Ibpbi_Vbici;
 /*
-c           Branch: sc, Stamp element: Cscp
+c           Branch: sc, Stamp element: Cscp //@NOCHMAL CHECKEN
 */
             rhs_current = model->HICUMtype * (Isc - Isc_Vsc*Vsc);
             *(ckt->CKTrhs + here->HICUMsubsNode) += -rhs_current;
+            *(ckt->CKTrhs + here->HICUMcollNode) +=  rhs_current;
             *(here->HICUMsubsSubsPtr)            +=  Isc_Vsc;
             *(here->HICUMsubsCollPtr)            +=  Isc_Vsc;
-            *(ckt->CKTrhs + here->HICUMcollNode) +=  rhs_current;
             *(here->HICUMcollSubsPtr)            += -Isc_Vsc;
             *(here->HICUMcollCollPtr)            += -Isc_Vsc;
 /*
@@ -2957,25 +2962,29 @@ c           Branch: sici, Stamp element: Ijsc
 */
             rhs_current = model->HICUMtype * (Isici - Isici_Vsici*Vsici);
             *(ckt->CKTrhs + here->HICUMsubsSINode) += -rhs_current;
-            *(here->HICUMsubsSISubsSIPtr)          +=  Isici_Vsici;
-            *(here->HICUMsubsSICollCIPtr)          += -Isici_Vsici;
             *(ckt->CKTrhs + here->HICUMcollCINode) +=  rhs_current;
-            *(here->HICUMcollCISubsSIPtr)          += -Isici_Vsici;
+            *(here->HICUMsubsSISubsSIPtr)          +=  Isici_Vsici;
             *(here->HICUMcollCICollCIPtr)          +=  Isici_Vsici;
+            *(here->HICUMsubsSICollCIPtr)          += -Isici_Vsici;
+            *(here->HICUMcollCISubsSIPtr)          += -Isici_Vsici;
 /*
 c           Branch: bpsi, Stamp element: Its
 */
             rhs_current = model->HICUMtype * (Ibpsi - Ibpsi_Vbpci*Vbpci - Ibpsi_Vsici*Vsici);
             *(ckt->CKTrhs + here->HICUMbaseBPNode) += -rhs_current;
-            *(here->HICUMbaseBPBaseBPPtr)          +=  Ibpsi_Vbpci;
-            *(here->HICUMbaseBPCollCIPtr)          += -Ibpsi_Vbpci;
+            *(ckt->CKTrhs + here->HICUMsubsSINode) +=  rhs_current;
+        // Its flow from Bp to Si f_Bp = +Ibpsi f_Si = -Ibpsi
+
             *(here->HICUMbaseBPSubsSIPtr)          +=  Ibpsi_Vsici;
             *(here->HICUMbaseBPCollCIPtr)          += -Ibpsi_Vsici;
-            *(ckt->CKTrhs + here->HICUMsubsSINode) +=  rhs_current;
-            *(here->HICUMsubsSIBaseBPPtr)          += -Ibpsi_Vbpci;
-            *(here->HICUMsubsSICollCIPtr)          +=  Ibpsi_Vbpci;
             *(here->HICUMsubsSISubsSIPtr)          += -Ibpsi_Vsici;
             *(here->HICUMsubsSICollCIPtr)          +=  Ibpsi_Vsici;
+
+            *(here->HICUMbaseBPBaseBPPtr)          +=  Ibpsi_Vbpci;
+            *(here->HICUMbaseBPCollCIPtr)          += -Ibpsi_Vbpci;
+            *(here->HICUMsubsSIBaseBPPtr)          += -Ibpsi_Vbpci;
+            *(here->HICUMsubsSICollCIPtr)          +=  Ibpsi_Vbpci;
+ 
 /*
 c           Branch: sis, Stamp element: Rsu
 */
