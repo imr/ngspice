@@ -2356,29 +2356,46 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             } else {
                 Irth_dT  = -Vrth*here->HICUMrth_t.dpart/(here->HICUMrth_t.rpart*here->HICUMrth_t.rpart);
 
-                Ith      = Vrth/here->HICUMrth_t.rpart-pterm;
+                Ith      = -Vrth/here->HICUMrth_t.rpart+pterm; //Current from gnd to T
                 Ith_dT   = (here->HICUMrth_t.rpart - Vrth*here->HICUMrth_t.dpart)/(here->HICUMrth_t.rpart*here->HICUMrth_t.rpart)-pterm_dT; // TODO Ith derivative for temp
                 if (model->HICUMflsh == 1 && model->HICUMrth >= MIN_R) {
-                    Ith_Vciei  = -it;
-                    Ith_Vbici  =  iavl;
+                    //Branch Iciei
+                    //Iciei(Vbiei,Vbici)*Vciei
+                    Ith_Vciei  += Iciei;
+                    Ith_Vbiei  += Iciei_Vbiei*Vciei;
+                    Ith_Vbici  += Iciei_Vbici*Vciei;
+                    Ith_Vbici  += -iavl_Vbici*Vbici;//(here->HICUMvdci_t.rpart-Vbici)*iavl
                 } else if (model->HICUMflsh == 2 && model->HICUMrth >= MIN_R) {
-                    Ith_Vciei  = -it;
-                    Ith_Vbiei  = -ibei;
-                    Ith_Vbici  = -ibci+iavl;
-                    Ith_Vbpei  = -ibep;
-                    Ith_Vbpci  = -ijbcx;
-                    Ith_Vsici  = -ijsc;
+                    //Branch Iciei
+                    //Iciei(Vbiei,Vbici)*Vciei
+                    Ith_Vciei  += Iciei;
+                    Ith_Vbiei  += Iciei_Vbiei*Vciei;
+                    Ith_Vbici  += Iciei_Vbici*Vciei;
+ 
+                    //Branch biei
+                    Ith_Vbiei  += Ibiei + Ibiei_Vbiei*Vbiei;
+                    //Branch bici
+                    Ith_Vbici  += Ibici+Ibici_Vbici+Vbici;
+                    //Branch bpei
+                    Ith_Vbpei  += Ibpei + Ibpei_Vbpei*Vbpei;
+                    //Branch bpci
+                    Ith_Vbpci  += Ibpci + Ibpci_Vbpci*Vbpci;
+                    //Branch sici
+                    Ith_Vsici  += Isici + Isici_Vsici*Vsici;
                     if (rbi >= MIN_R) {
-                        Ith_Vbpbi  = -Vbpbi*Vbpbi/rbi;
+                        //Branch bpbi
+                        Ith_Vbpbi  += Ibpbi + Ibpbi_Vbpbi;
+                        Ith_Vbiei  += Ibpbi_Vbiei*Vbiei;
+                        Ith_Vbici  += Ibpbi_Vbici*Vbiei;
                     }
                     if (here->HICUMre_t.rpart >= MIN_R) {
-                        Ith_Veie   = -Veie*Veie/here->HICUMre_t.rpart;
+                        Ith_Veie   = Veie*Veie/here->HICUMre_t.rpart + 2*Veie/here->HICUMre_t.rpart;
                     }
                     if (here->HICUMrcx_t.rpart >= MIN_R) {
-                        Ith_Vcic   = -Vcic*Vcic/here->HICUMrcx_t.rpart;
+                        Ith_Vcic   = Vcic*Vcic/here->HICUMrcx_t.rpart + 2*Vcic/here->HICUMrcx_t.rpart;
                     }
                     if (here->HICUMrbx_t.rpart >= MIN_R) {
-                        Ith_Vbbp   = -Vbbp*Vbbp/here->HICUMrbx_t.rpart;
+                        Ith_Vbbp   = Vbbp*Vbbp/here->HICUMrbx_t.rpart + 2*Vbbp/here->HICUMrbx_t.rpart;
                     }
                 }
             }
@@ -3060,7 +3077,7 @@ c           Branch: xf-ground, Stamp element: Rxf
 
             if (model->HICUMflsh) {
 /*
-c               Stamp element: Ibiei
+c               Stamp element: Ibiei  f_Bi = +   f_Ei = -
 */
                 rhs_current = -Ibiei_dT*Vrth;
                 *(ckt->CKTrhs + here->HICUMbaseBINode) += -rhs_current;
@@ -3160,13 +3177,21 @@ c               Stamp element: Cth
 /*
 c               Stamp element: Ith
 */
+                //before
+                // rhs_current = Ith + Icth - Icth_dT*Vrth
+                //               + Ith_Vbiei*Vbiei + Ith_Vbici*Vbici + Ith_Vciei*Vciei
+                //               + Ith_Vbpei*Vbpei + Ith_Vbpci*Vbpci + Ith_Vsici*Vsici
+                //               + Ith_Vbpbi*Vbpbi
+                //               + Ith_Vcic*Vcic + Ith_Vbbp*Vbbp + Ith_Veie*Veie;
+                //Markus suggestion, f_T = - Ith
                 rhs_current = Ith + Icth - Icth_dT*Vrth
-                              + Ith_Vbiei*Vbiei + Ith_Vbici*Vbici + Ith_Vciei*Vciei
-                              + Ith_Vbpei*Vbpei + Ith_Vbpci*Vbpci + Ith_Vsici*Vsici
-                              + Ith_Vbpbi*Vbpbi
-                              + Ith_Vcic*Vcic + Ith_Vbbp*Vbbp + Ith_Veie*Veie;
+                              - Ith_Vbiei*Vbiei - Ith_Vbici*Vbici - Ith_Vciei*Vciei
+                              - Ith_Vbpei*Vbpei - Ith_Vbpci*Vbpci - Ith_Vsici*Vsici
+                              - Ith_Vbpbi*Vbpbi
+                              - Ith_Vcic*Vcic - Ith_Vbbp*Vbbp - Ith_Veie*Veie
+                              - Ith_dT*Vrth;
 
-                *(ckt->CKTrhs + here->HICUMtempNode) -= rhs_current;
+                *(ckt->CKTrhs + here->HICUMtempNode) += rhs_current;
 
                 *(here->HICUMtempTempPtr)   += -Ith_dT;
 
@@ -3193,8 +3218,10 @@ c               Stamp element: Ith
 
                 *(here->HICUMtempCollCIPtr) += +Ith_Vcic;
                 *(here->HICUMtempCollPtr)   += -Ith_Vcic;
+
                 *(here->HICUMtempBaseBPPtr) += +Ith_Vbbp;
                 *(here->HICUMtempBasePtr)   += -Ith_Vbbp;
+
                 *(here->HICUMtempEmitEIPtr) += +Ith_Veie;
                 *(here->HICUMtempEmitPtr)   += -Ith_Veie;
             }
