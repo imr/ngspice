@@ -2410,17 +2410,20 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             // end of Load_sources
 
             if (rbi >= MIN_R) {
+                Ibpbi       = Vbpbi / rbi;
                 Ibpbi_Vbpbi = 1 / rbi;
-                Ibpbi = Vbpbi / rbi;
+                Ibpbi_Vbiei = -Vbpbi * rbi_Vbiei / (rbi*rbi); 
+                Ibpbi_Vbici = -Vbpbi * rbi_Vbici / (rbi*rbi);
+                Ibpbi_dT    = -Vbpbi * rbi_dT    / (rbi*rbi);
             } else {
                 // fallback in case rbi is low
+                Ibpbi       = Vbpbi / MIN_R;
                 Ibpbi_Vbpbi = 1 / MIN_R;
-                Ibpbi = Vbpbi / MIN_R;
+                Ibpbi_Vbiei = 0;
+                Ibpbi_Vbici = 0;
+                Ibpbi_dT    = 0;
+ 
             }
-            Ibpbi_Vbiei = -Vbpbi * rbi_Vbiei / (rbi*rbi);
-            Ibpbi_Vbici = -Vbpbi * rbi_Vbici / (rbi*rbi);
-            Ibpbi_dT    = -Vbpbi * rbi_dT    / (rbi*rbi);
-
             Qjcx_i_Vbci      = Cjcx_i;
             Qjcx_ii_Vbpci    = Cjcx_ii;
             Qjep_Vbpei       = Cjep;
@@ -2950,7 +2953,7 @@ c           Branch: bpbi, Stamp element: Rbi, Crbi
             *(ckt->CKTrhs + here->HICUMbaseBPNode) += -rhs_current;
             *(ckt->CKTrhs + here->HICUMbaseBINode) +=  rhs_current;
 
-            *(here->HICUMbaseBPBaseBPPtr)          +=  Ibpbi_Vbpbi;
+            *(here->HICUMbaseBPBaseBPPtr)          +=  Ibpbi_Vbpbi; 
             *(here->HICUMbaseBIBaseBIPtr)          +=  Ibpbi_Vbpbi;
             *(here->HICUMbaseBPBaseBIPtr)          += -Ibpbi_Vbpbi;
             *(here->HICUMbaseBIBaseBPPtr)          += -Ibpbi_Vbpbi;
@@ -2963,7 +2966,7 @@ c           Branch: bpbi, Stamp element: Rbi, Crbi
             *(here->HICUMbaseBPBaseBIPtr)          +=  Ibpbi_Vbici; 
             *(here->HICUMbaseBPCollCIPtr)          += -Ibpbi_Vbici;
             *(here->HICUMbaseBIBaseBIPtr)          += -Ibpbi_Vbici;
-            *(here->HICUMbaseBIEmitEIPtr)          +=  Ibpbi_Vbici;
+            *(here->HICUMbaseBICollCIPtr)          +=  Ibpbi_Vbici;
 /*
 c           Branch: sc, Stamp element: Cscp //@NOCHMAL CHECKEN
 */

@@ -99,13 +99,13 @@ void hicum_TMPHICJ(duals::duald vt, double vt0, duals::duald qtt0, duals::duald 
     *w_t_dT   = w_t_result.dpart();
 }
 
-int iret;
 
 int
 HICUMtemp(GENmodel *inModel, CKTcircuit *ckt)
         /* Pre-compute many useful parameters
          */
 {
+    int iret;
     HICUMmodel *model = (HICUMmodel *)inModel;
     HICUMinstance *here;
 
