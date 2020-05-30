@@ -238,14 +238,6 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 }
             }
 
-            if ((model->DIOshMod == 1) && (model->DIOrth0 != 0.0)) {
-                if (here->DIOtempNode == 0) {
-                   error = CKTmkVolt(ckt,&tmp,here->DIOname,"Tj");
-                   if (error) return(error);
-                      here->DIOtempNode = tmp->number;
-                }
-            }
-
 /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
 do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
@@ -294,10 +286,7 @@ DIOunsetup(
               && here->DIOposPrimeNode != here->DIOposNode)
                 CKTdltNNum(ckt, here->DIOposPrimeNode);
             here->DIOposPrimeNode = 0;
-            if ((model->DIOshMod == 1) && (model->DIOrth0 != 0.0)) {
-                CKTdltNNum(ckt, here->DIOtempNode);
-                here->DIOtempNode = 0;
-            }
+
         }
     }
     return OK;

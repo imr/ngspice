@@ -532,9 +532,9 @@ next2:      *(ckt->CKTstate0 + here->DIOvoltage) = vd;
                 *(ckt->CKTrhs + here->DIOposPrimeNode) +=  dIdio_dT*delTemp - dIrs_dT*delTemp;
                 *(ckt->CKTrhs + here->DIOnegNode)      += -dIdio_dT*delTemp;
                 *(ckt->CKTrhs + here->DIOtempNode)     +=  Ith - dIth_dVdio*vd - dIth_dVrs*vrs - dIth_dT*delTemp + ceqqth; /* Diode dissipated power */
-printf("dIdio_dT: %g dIth_dVdio: %g dIth_dT: %g\n", dIdio_dT, dIth_dVdio, dIth_dT);
-printf("dIrs_dT: %g dIth_dVrs: %g dIth_dT: %g\n", dIrs_dT, dIth_dVrs, dIth_dT);
-printf("power: %g rhs: %g delTemp: %g\n", Ith, *(ckt->CKTrhs + here->DIOtempNode), delTemp);
+//printf("dIdio_dT: %g dIth_dVdio: %g dIth_dT: %g\n", dIdio_dT, dIth_dVdio, dIth_dT);
+//printf("dIrs_dT: %g dIth_dVrs: %g dIth_dT: %g\n", dIrs_dT, dIth_dVrs, dIth_dT);
+//printf("power: %g rhs: %g delTemp: %g\n", Ith, *(ckt->CKTrhs + here->DIOtempNode), delTemp);
             }
             /*
              *   load matrix

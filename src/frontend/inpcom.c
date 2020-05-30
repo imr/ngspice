@@ -4070,7 +4070,17 @@ static int get_number_terminals(char *c)
         case 'v':
         case 'i':
         case 'd':
-            return 2;
+            i = 0;
+            /* find the first token with "off" or "=" in the line*/
+            while ((i < 10) && (*c != '\0')) {
+                char *inst = gettok_instance(&c);
+                strncpy(nam_buf, inst, sizeof(nam_buf) - 1);
+                txfree(inst);
+                if (strstr(nam_buf, "off") || strchr(nam_buf, '='))
+                    break;
+                i++;
+            }
+            return i - 2;
             break;
         case 'u':
         case 'j':
