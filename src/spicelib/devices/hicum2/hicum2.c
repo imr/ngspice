@@ -48,6 +48,7 @@ IFparm HICUMpTable[] = { /* parameters */
  OPU("xf2node", HICUM_QUEST_XF2NODE, IF_INTEGER, "Internal phase node xf2"),
 /* voltages */
  OP("vbe",    HICUM_QUEST_VBE,   IF_REAL, "External BE voltage"),
+ OP("vbbp",   HICUM_QUEST_VBBP,  IF_REAL, "BBP voltage"),
  OP("vbc",    HICUM_QUEST_VBC,   IF_REAL, "External BC voltage"),
  OP("vce",    HICUM_QUEST_VCE,   IF_REAL, "External CE voltage"),
  OP("vsc",    HICUM_QUEST_VSC,   IF_REAL, "External SC voltage"),

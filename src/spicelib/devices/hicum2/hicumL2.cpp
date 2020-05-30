@@ -3148,9 +3148,9 @@ c               Stamp element: Rcx
 */
                 rhs_current = -Icic_dT*Vrth;
                 *(ckt->CKTrhs + here->HICUMcollCINode) += -rhs_current;
-                *(here->HICUMcollCItempPtr) +=  Icic_dT;
+                *(here->HICUMcollCItempPtr)            +=  Icic_dT;
                 *(ckt->CKTrhs + here->HICUMcollNode)   +=  rhs_current;
-                *(here->HICUMcollTempPtr)   += -Icic_dT;
+                *(here->HICUMcollTempPtr)              += -Icic_dT;
 /*
 c               Stamp element: Rbx
 */

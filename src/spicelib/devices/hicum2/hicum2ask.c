@@ -95,6 +95,9 @@ HICUMask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFval
         case HICUM_QUEST_VBE:
             value->rValue = *(ckt->CKTstate0 + here->HICUMbaseNode)-*(ckt->CKTstate0 + here->HICUMemitNode);
             return(OK);
+        case HICUM_QUEST_VBBP:
+            value->rValue = *(ckt->CKTstate0 + here->HICUMbaseNode)-*(ckt->CKTstate0 + here->HICUMbaseBPNode);
+            return(OK);
         case HICUM_QUEST_VBC:
             value->rValue = *(ckt->CKTstate0 + here->HICUMbaseNode)-*(ckt->CKTstate0 + here->HICUMcollNode);
             return(OK);
@@ -148,6 +151,7 @@ HICUMask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFval
         case HICUM_QUEST_CBCI:
             value->rValue = *(ckt->CKTstate0 + here->HICUMibici);
             return(OK);
+
 /* resistances */
         case HICUM_QUEST_RCX_T:
             value->rValue = here->HICUMrcx_t.rpart;
