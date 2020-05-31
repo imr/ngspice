@@ -2748,8 +2748,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 }
             }
 
-            // Write DC Currents and their derivatives on the correct variables of the HiCUM equivalent circuit
-
+            // Write to state vector
             *(ckt->CKTstate0 + here->HICUMvbiei)       = Vbiei;
             *(ckt->CKTstate0 + here->HICUMvbici)       = Vbici;
             *(ckt->CKTstate0 + here->HICUMvbpei)       = Vbpei;
@@ -3095,11 +3094,11 @@ c           Branch: xf-ground, Stamp element: Rxf
 //          ############### FINISH STAMPS NO SH #########################
 //          ############################################################# 
 
-            if (model->HICUMflsh) {
+            if (model->HICUMflsh && model->HICUMrth >= MIN_R) {
 //              #############################################################
 //              ############### STAMP WITH SH ADDITIONS #####################
 //              #############################################################
-
+                
 //              Stamp element: Ibiei  f_Bi = +   f_Ei = -
                 rhs_current = -Ibiei_dT*Vrth;
                 *(ckt->CKTrhs + here->HICUMbaseBINode) += -rhs_current;
@@ -3210,14 +3209,7 @@ c           Branch: xf-ground, Stamp element: Rxf
                 *(here->HICUMtempTempPtr) +=  Icth_dT;
 //              finish
 
-//               Stamp element: Ith
-                //before
-                // rhs_current = Ith + Icth - Icth_dT*Vrth
-                //               + Ith_Vbiei*Vbiei + Ith_Vbici*Vbici + Ith_Vciei*Vciei
-                //               + Ith_Vbpei*Vbpei + Ith_Vbpci*Vbpci + Ith_Vsici*Vsici
-                //               + Ith_Vbpbi*Vbpbi
-                //               + Ith_Vcic*Vcic + Ith_Vbbp*Vbbp + Ith_Veie*Veie;
-                //Markus suggestion, f_T = - Ith
+//              Stamp element:    Ith f_T = - Ith
                 rhs_current = Ith + Icth - Icth_dT*Vrth
                               - Ith_Vbiei*Vbiei - Ith_Vbici*Vbici - Ith_Vciei*Vciei
                               - Ith_Vbpei*Vbpei - Ith_Vbpci*Vbpci - Ith_Vsici*Vsici
