@@ -82,7 +82,8 @@ HICUMconvTest(GENmodel *inModel, CKTcircuit *ckt)
                        *(ckt->CKTstate0 + here->HICUMibiei_Vbiei)*delvbiei + 
                        *(ckt->CKTstate0 + here->HICUMibiei_Vbici)*delvbici;
             ibicihat = *(ckt->CKTstate0 + here->HICUMibici) +
-                       *(ckt->CKTstate0 + here->HICUMibici_Vbici)*delvbici;
+                       *(ckt->CKTstate0 + here->HICUMibici_Vbici)*delvbici+
+                       *(ckt->CKTstate0 + here->HICUMibici_Vbiei)*delvbiei;
             icieihat = *(ckt->CKTstate0 + here->HICUMiciei) +
                        *(ckt->CKTstate0 + here->HICUMiciei_Vbiei)*delvbiei +
                        *(ckt->CKTstate0 + here->HICUMiciei_Vbici)*delvbici;

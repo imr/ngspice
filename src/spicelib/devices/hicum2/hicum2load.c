@@ -835,6 +835,8 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                             *(ckt->CKTstate1 + here->HICUMibici);
                     *(ckt->CKTstate0 + here->HICUMibici_Vbici) =
                             *(ckt->CKTstate1 + here->HICUMibici_Vbici);
+                    *(ckt->CKTstate0 + here->HICUMibici_Vbiei) =
+                            *(ckt->CKTstate1 + here->HICUMibici_Vbiei);
                     *(ckt->CKTstate0 + here->HICUMibpei) =
                             *(ckt->CKTstate1 + here->HICUMibpei);
                     *(ckt->CKTstate0 + here->HICUMibpbi) =
@@ -956,7 +958,8 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                          *(ckt->CKTstate0 + here->HICUMibiei_Vbiei)*delvbiei + 
                          *(ckt->CKTstate0 + here->HICUMibiei_Vbici)*delvbici;
                 ibicihat = *(ckt->CKTstate0 + here->HICUMibici) +
-                         *(ckt->CKTstate0 + here->HICUMibici_Vbici)*delvbici;
+                         *(ckt->CKTstate0 + here->HICUMibici_Vbici)*delvbici+
+                         *(ckt->CKTstate0 + here->HICUMibici_Vbiei)*delvbiei;
                 ibpeihat = *(ckt->CKTstate0 + here->HICUMibpei) +
                          *(ckt->CKTstate0 + here->HICUMibpei_Vbpei)*delvbpei;
                 ibpcihat = *(ckt->CKTstate0 + here->HICUMibpci) +
@@ -1058,6 +1061,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
                     Ibici       = *(ckt->CKTstate0 + here->HICUMibici);
                     Ibici_Vbici = *(ckt->CKTstate0 + here->HICUMibici_Vbici);
+                    Ibici_Vbiei = *(ckt->CKTstate0 + here->HICUMibici_Vbiei);
 
                     Ibpbi       = *(ckt->CKTstate0 + here->HICUMibpbi);
                     Ibpbi_Vbpbi = *(ckt->CKTstate0 + here->HICUMibpbi_Vbpbi);
@@ -2091,6 +2095,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
             *(ckt->CKTstate0 + here->HICUMibici)       = Ibici;
             *(ckt->CKTstate0 + here->HICUMibici_Vbici) = Ibici_Vbici;
+            *(ckt->CKTstate0 + here->HICUMibici_Vbiei) = Ibici_Vbiei;
 
             *(ckt->CKTstate0 + here->HICUMibpbi)       = Ibpbi;
             *(ckt->CKTstate0 + here->HICUMibpbi_Vbpbi) = Ibpbi_Vbpbi;

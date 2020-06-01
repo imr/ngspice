@@ -26,6 +26,7 @@ HICUMpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
     double Ibiei_Vbiei;
     double Ibiei_Vbici;
     double Ibici_Vbici;
+    double Ibici_Vbiei;
     double Ibpci_Vbpci;
     double Isici_Vsici;
     double Iciei_Vbiei;
@@ -75,6 +76,7 @@ HICUMpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
             Iciei_Vbiei = *(ckt->CKTstate0 + here->HICUMiciei_Vbiei);
             Iciei_Vbici = *(ckt->CKTstate0 + here->HICUMiciei_Vbici);
             Ibici_Vbici = *(ckt->CKTstate0 + here->HICUMibici_Vbici);
+            Ibici_Vbiei = *(ckt->CKTstate0 + here->HICUMibici_Vbiei);
             Ibpbi_Vbpbi = *(ckt->CKTstate0 + here->HICUMibpbi_Vbpbi);
             Ibpbi_Vbiei = *(ckt->CKTstate0 + here->HICUMibpbi_Vbiei);
             Ibpbi_Vciei = *(ckt->CKTstate0 + here->HICUMibpbi_Vbici);

@@ -26,6 +26,7 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
     double Ibiei_Vbiei;
     double Ibiei_Vbici;
     double Ibici_Vbici;
+    double Ibici_Vbiei;
     double Ibpci_Vbpci;
     double Isici_Vsici;
     double Iciei_Vbiei;
@@ -75,6 +76,7 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
             Iciei_Vbiei = *(ckt->CKTstate0 + here->HICUMiciei_Vbiei);
             Iciei_Vbici = *(ckt->CKTstate0 + here->HICUMiciei_Vbici);
             Ibici_Vbici = *(ckt->CKTstate0 + here->HICUMibici_Vbici);
+            Ibici_Vbiei = *(ckt->CKTstate0 + here->HICUMibici_Vbiei);
             Ibpbi_Vbpbi = *(ckt->CKTstate0 + here->HICUMibpbi_Vbpbi);
             Ibpbi_Vbiei = *(ckt->CKTstate0 + here->HICUMibpbi_Vbiei);
             Ibpbi_Vciei = *(ckt->CKTstate0 + here->HICUMibpbi_Vbici);
@@ -113,7 +115,7 @@ c           Stamp element: Iciei
             *(here->HICUMemitEIBaseBIPtr) += -Iciei_Vbici;
             *(here->HICUMemitEICollCIPtr) +=  Iciei_Vbici;
 /*
-c           Stamp element: Ibici
+c           Stamp element: Ibici (missing Ibici_Vbiei)
 */
             *(here->HICUMbaseBIBaseBIPtr) +=  Ibici_Vbici;
             *(here->HICUMbaseBICollCIPtr) += -Ibici_Vbici;
