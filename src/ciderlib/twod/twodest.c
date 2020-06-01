@@ -31,7 +31,13 @@ TWOdestroy(TWOdevice *pDevice)
     FREE( pDevice->copiedSolution );
     FREE( pDevice->rhs );
     FREE( pDevice->rhsImag );
-    spDestroy( pDevice->matrix );
+
+#ifdef KLU
+    SMPdestroyKLUforCIDER (pDevice->matrix) ;
+#else
+    SMPdestroy (pDevice->matrix) ;
+#endif
+
     break;
   case SLV_EQUIL:
     /* free up the vectors allocated in the equilibrium solution */
@@ -39,7 +45,13 @@ TWOdestroy(TWOdevice *pDevice)
     FREE( pDevice->dcDeltaSolution );
     FREE( pDevice->copiedSolution );
     FREE( pDevice->rhs );
-    spDestroy( pDevice->matrix );
+
+#ifdef KLU
+    SMPdestroyKLUforCIDER (pDevice->matrix) ;
+#else
+    SMPdestroy (pDevice->matrix) ;
+#endif
+
     break;
   case SLV_NONE:
     break;
