@@ -236,6 +236,19 @@ OPtran(CKTcircuit *ckt)
 //        int type = ckt->CKTcurJob->JOBtype;
 
         SPfrontEnd->IFerrorf(ERR_INFO, "Transient op started");
+        if (opramptime > 0) {
+            CKTnode* n;
+            ckt->CKTsrcFact = 0.;
+            SPfrontEnd->IFerrorf(ERR_INFO, "Ramptime enabled");
+            for (n = ckt->CKTnodes; n; n = n->next)
+                ckt->CKTrhsOld[n->number] = 0;
+
+            for (i = 0; i < ckt->CKTnumStates; i++)
+                ckt->CKTstate0[i] = 0;
+
+            /*  First, try a straight solution with all sources at zero */
+            converged = NIiter(ckt, ckt->CKTdcTrcvMaxIter);
+        }
 #if 0
         /* Set the final time */
         /* If we are in transient simulation */
@@ -554,7 +567,6 @@ resume:
     }
     ckt->CKTstates[0] = temp;
 
-/* 600 */
     for (;;) {
 #if defined SHARED_MODULE
         redostep = 1;
@@ -563,6 +575,10 @@ resume:
         olddelta=ckt->CKTdelta;
         /* time abort? */
         optime += ckt->CKTdelta;
+
+        /* supply ramping, when opramptime > 0 */
+        if (opramptime > 0)
+            ckt->CKTsrcFact = MIN(1., optime / opramptime);
 
         ckt->CKTdeltaOld[0]=ckt->CKTdelta;
         NIcomCof(ckt);
