@@ -14,6 +14,8 @@ Modified by Paolo Nenzi 2003 and Dietmar Warning 2012
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
+void DIOtempUpdate(DIOmodel *inModel, DIOinstance *here, double Temp, CKTcircuit *ckt);
+
 int
 DIOload(GENmodel *inModel, CKTcircuit *ckt)
         /* actually load the current resistance value into the
@@ -25,7 +27,7 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
     double arg;
     double argsw;
     double capd;
-    double cd, cdb, cdsw;
+    double cd, cdb, cdsw, cdb_dT, cdsw_dT;
     double cdeq;
     double cdhat;
     double ceq;
@@ -33,7 +35,6 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
     double csatsw;  /* perimeter-scaled saturation current */
     double czero;
     double czof2;
-    double argSW;
     double czeroSW;
     double czof2SW;
     double sargSW;
@@ -67,7 +68,7 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
     double deldelTemp, delTemp, Temp;
     double ceqqth=0.0, Ith=0.0, gcTt=0.0, vrs=0.0;
     double dIdio_dT, dIth_dVdio=0.0, dIrs_dT=0.0, dIth_dVrs=0.0, dIth_dT=0.0;
-    double arg1, darg1_dT, arg2, darg2_dT, csat_dT;
+    double argsw_dT, csat_dT, csatsw_dT;
     double vbrknp;
 
     /*  loop through all the diode models */
@@ -99,17 +100,15 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
             cd = 0.0;
             cdb = 0.0;
             cdsw = 0.0;
+            cdsw_dT = 0.0;
             gd = 0.0;
             gdb = 0.0;
             gdsw = 0.0;
             delTemp = 0.0;
-            csat = here->DIOtSatCur;
-            csatsw = here->DIOtSatSWCur;
-            gspr = here->DIOtConductance * here->DIOarea;
             vt = CONSTKoverQ * here->DIOtemp;
             vte = model->DIOemissionCoeff * vt;
             vtebrk = model->DIObrkdEmissionCoeff * vt;
-            vbrknp = here->DIOtBrkdwnV;
+            gspr = here->DIOtConductance * here->DIOarea;
             /*
              *   initialization
              */
@@ -239,7 +238,25 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
             /*
              *   compute dc current and derivitives
              */
-next1:      if (model->DIOsatSWCurGiven) {              /* sidewall current */
+next1:      
+            if (selfheat) {
+                Temp = here->DIOtemp + delTemp;
+                DIOtempUpdate(model, here, Temp, ckt);
+            } else {
+                Temp = here->DIOtemp;
+            }
+
+            csat = here->DIOtSatCur;
+            csat_dT = here->DIOtSatCur_dT;
+            csatsw = here->DIOtSatSWCur;
+            csatsw_dT = here->DIOtSatSWCur_dT;
+            gspr = here->DIOtConductance * here->DIOarea;
+            vt = CONSTKoverQ * here->DIOtemp;
+            vte = model->DIOemissionCoeff * vt;
+            vtebrk = model->DIObrkdEmissionCoeff * vt;
+            vbrknp = here->DIOtBrkdwnV;
+
+            if (model->DIOsatSWCurGiven) {              /* sidewall current */
 
                 if (model->DIOswEmissionCoeffGiven) {   /* current with own characteristic */
 
@@ -250,52 +267,48 @@ next1:      if (model->DIOsatSWCurGiven) {              /* sidewall current */
                         evd = exp(vd/vtesw);
                         cdsw = csatsw*(evd-1);
                         gdsw = csatsw*evd/vtesw;
+                        cdsw_dT = csatsw_dT * (evd - 1) - csatsw * vd * evd / (vtesw * Temp);
 
                     } else if((!(model->DIObreakdownVoltageGiven)) ||
                             vd >= -here->DIOtBrkdwnV) { /* reverse */
 
                         argsw = 3*vtesw/(vd*CONSTe);
+                        argsw_dT = 3*CONSTKoverQ/(vd*CONSTe);
                         argsw = argsw * argsw * argsw;
+                        argsw_dT = 3 * argsw * argsw * argsw_dT;
                         cdsw = -csatsw*(1+argsw);
                         gdsw = csatsw*3*argsw/vd;
+                        cdsw_dT = -csatsw_dT - (csatsw*argsw_dT + csatsw_dT*argsw);
 
                     } else {                            /* breakdown */
 
                         evrev = exp(-(here->DIOtBrkdwnV+vd)/vtebrk);
                         cdsw = -csatsw*evrev;
                         gdsw = csatsw*evrev/vtebrk;
+                        cdsw_dT = csatsw_dT * (evrev - 1) - csatsw * vd * evrev / (vtebrk * Temp);
 
                     }
 
                 } else { /* merge saturation currents and use same characteristic as bottom diode */
 
                     csat = csat + csatsw;
+                    csat_dT = csat_dT + csatsw_dT;
+                    cdsw_dT = 0.0;
 
                 }
 
             }
 
-            Temp = here->DIOtemp + delTemp;
             /*
             *   temperature dependent diode saturation current and derivative
             */
-
-            arg1 = ((Temp / model->DIOnomTemp) - 1) * model->DIOactivationEnergy / (model->DIOemissionCoeff*vt);
-            darg1_dT = model->DIOactivationEnergy / (vte*model->DIOnomTemp)
-                      - model->DIOactivationEnergy*(Temp/model->DIOnomTemp -1)/(vte*Temp);
-
-            arg2 = model->DIOsaturationCurrentExp / model->DIOemissionCoeff * log(Temp / model->DIOnomTemp);
-            darg2_dT = model->DIOsaturationCurrentExp / model->DIOemissionCoeff / Temp;
-
-            csat = here->DIOm * model->DIOsatCur * exp(arg1 + arg2);
-            csat_dT = here->DIOm * model->DIOsatCur * exp(arg1 + arg2) * (darg1_dT + darg2_dT);
 
             if (vd >= -3*vte) {                 /* bottom current forward */
 
                 evd = exp(vd/vte);
                 cdb = csat*(evd-1);
-                dIdio_dT = csat_dT * (evd - 1) - csat * vd * evd / (vte * Temp);
                 gdb = csat*evd/vte;
+                cdb_dT = csat_dT * (evd - 1) - csat * vd * evd / (vte * Temp);
                 if (model->DIOrecSatCurGiven) { /* recombination current */
                     evd_rec = exp(vd/(model->DIOrecEmissionCoeff*vt));
                     cdb_rec = here->DIOtRecSatCur*(evd_rec-1);
@@ -318,15 +331,15 @@ next1:      if (model->DIOsatSWCurGiven) {              /* sidewall current */
                 arg3 = arg * arg * arg;
                 darg3_dT = 3 * arg3 / Temp; 
                 cdb = -csat*(1+arg);
-                dIdio_dT = -csat_dT * (arg3 + 1) - csat * darg3_dT;
                 gdb = csat*3*arg/vd;
+                cdb_dT = -csat_dT * (arg3 + 1) - csat * darg3_dT;
 
             } else {                            /* breakdown */
 
                 evrev = exp(-(here->DIOtBrkdwnV+vd)/vtebrk);
                 cdb = -csat*evrev;
-                dIdio_dT = csat * (-vbrknp-vd) * evrev / vtebrk / Temp - csat_dT * evrev;
                 gdb = csat*evrev/vtebrk;
+                cdb_dT = csat * (-vbrknp-vd) * evrev / vtebrk / Temp - csat_dT * evrev;
 
             }
 
@@ -352,6 +365,7 @@ next1:      if (model->DIOsatSWCurGiven) {              /* sidewall current */
 
             cd = cdb + cdsw;
             gd = gdb + gdsw;
+            dIdio_dT = cdb_dT + cdsw_dT;
 
             if (vd >= -3*vte) { /* limit forward */
 
@@ -398,6 +412,7 @@ next1:      if (model->DIOsatSWCurGiven) {              /* sidewall current */
                 }
                 czeroSW=here->DIOtJctSWCap;
                 if (vd < here->DIOtDepSWCap){
+                    double argSW;
                     argSW=1-vd/here->DIOtJctSWPot;
                     sargSW=exp(-model->DIOgradingSWCoeff*log(argSW));
                     deplchargeSW = here->DIOtJctSWPot*czeroSW*(1-argSW*sargSW)/(1-model->DIOgradingSWCoeff);
@@ -503,7 +518,6 @@ next2:      *(ckt->CKTstate0 + here->DIOvoltage) = vd;
                 double dIrs_dVrs, dIrs_dRs, factor, dRs_dT, dIth_dIrs;
                 if (model->DIOresistGiven && model->DIOresist != 0.0) {
                     factor = model->DIOresistTemp1 + model->DIOresistTemp2 * delTemp;
-                    gspr = model->DIOconductance / (1.0 + factor*delTemp);
                     dRs_dT = 1 / here->DIOtConductance * factor;
                 } else {
                     dRs_dT = 0.0;

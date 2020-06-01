@@ -12,11 +12,16 @@ Modified by Paolo Nenzi 2003 and Dietmar Warning 2012
 #include "diodefs.h"
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
-
+#include "ngspice/cpdefs.h"
 
 int
 DIOmParam(int param, IFvalue *value, GENmodel *inModel)
 {
+    double gclimit;
+
+    if (!cp_getvar("DIOgradingCoeffMax", CP_REAL, &gclimit, 0))
+        gclimit = 0.9;
+
     DIOmodel *model = (DIOmodel*)inModel;
     switch(param) {
         case DIO_MOD_LEVEL:
@@ -78,6 +83,13 @@ DIOmParam(int param, IFvalue *value, GENmodel *inModel)
             break;
         case DIO_MOD_M:
             model->DIOgradingCoeff = value->rValue;
+            /* limit grading coeff to max of .9, set new limit with variable DIOgradingCoeffMax */
+            if(model->DIOgradingCoeff>gclimit) {
+                SPfrontEnd->IFerrorf (ERR_WARNING,
+                        "%s: grading coefficient too large, limited to %g",
+                        model->DIOmodName, gclimit);
+                model->DIOgradingCoeff = gclimit;
+            }
             model->DIOgradingCoeffGiven = TRUE;
             break;
         case DIO_MOD_TM1:
@@ -131,6 +143,13 @@ DIOmParam(int param, IFvalue *value, GENmodel *inModel)
             break;
         case DIO_MOD_EG:
             model->DIOactivationEnergy = value->rValue;
+            /* limit activation energy to min of .1 */
+            if(model->DIOactivationEnergy<.1) {
+                SPfrontEnd->IFerrorf (ERR_WARNING,
+                        "%s: activation energy too small, limited to 0.1",
+                        model->DIOmodName);
+                model->DIOactivationEnergy = .1;
+            }
             model->DIOactivationEnergyGiven = TRUE;
             break;
         case DIO_MOD_XTI:
@@ -155,10 +174,24 @@ DIOmParam(int param, IFvalue *value, GENmodel *inModel)
             break;
         case DIO_MOD_FC:
             model->DIOdepletionCapCoeff = value->rValue;
+            /* limit depletion cap coeff to max of .95 */
+            if(model->DIOdepletionCapCoeff>.95) {
+                SPfrontEnd->IFerrorf (ERR_WARNING,
+                        "%s: coefficient Fc too large, limited to 0.95",
+                        model->DIOmodName);
+                model->DIOdepletionCapCoeff = .95;
+            }
             model->DIOdepletionCapCoeffGiven = TRUE;
             break;
         case DIO_MOD_FCS:
             model->DIOdepletionSWcapCoeff = value->rValue;
+            /* limit sidewall depletion cap coeff to max of .95 */
+            if(model->DIOdepletionSWcapCoeff>.95) {
+                SPfrontEnd->IFerrorf (ERR_WARNING,
+                        "%s: coefficient Fcs too large, limited to 0.95",
+                        model->DIOmodName);
+                model->DIOdepletionSWcapCoeff = .95;
+            }
             model->DIOdepletionSWcapCoeffGiven = TRUE;
             break;
         case DIO_MOD_BV:

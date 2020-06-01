@@ -92,25 +92,30 @@ typedef struct sDIOinstance {
     double DIOl;        /* length for the diode */
     double DIOm;        /* multiplier for the diode */
 
-    double DIOinitCond;      /* initial condition */
-    double DIOtemp;          /* temperature of the instance */
-    double DIOdtemp;         /* delta temperature of instance */
-    double DIOtJctPot;       /* temperature adjusted junction potential */
-    double DIOtJctCap;       /* temperature adjusted junction capacitance */
-    double DIOtJctSWPot;     /* temperature adjusted sidewall junction potential */
-    double DIOtJctSWCap;     /* temperature adjusted sidewall junction capacitance */
-    double DIOtTransitTime;  /* temperature adjusted transit time */
-    double DIOtGradingCoeff; /* temperature adjusted grading coefficient (MJ) */
-    double DIOtConductance;  /* temperature adjusted series conductance */
+    double DIOinitCond;        /* initial condition */
+    double DIOtemp;            /* temperature of the instance */
+    double DIOdtemp;           /* delta temperature of instance */
+    double DIOtJctPot;         /* temperature adjusted junction potential */
+    double DIOtJctCap;         /* temperature adjusted junction capacitance */
+    double DIOtJctSWPot;       /* temperature adjusted sidewall junction potential */
+    double DIOtJctSWCap;       /* temperature adjusted sidewall junction capacitance */
+    double DIOtTransitTime;    /* temperature adjusted transit time */
+    double DIOtGradingCoeff;   /* temperature adjusted grading coefficient (MJ) */
+    double DIOtConductance;    /* temperature adjusted series conductance */
+    double DIOtConductance_dT; /* temperature adjusted series conductance temperature derivative */
 
-    double DIOtDepCap;  /* temperature adjusted transition point in */
-                        /* the curve matching (Fc * Vj ) */
-    double DIOtDepSWCap;  /* temperature adjusted transition point in */
-                          /* the curve matching (Fcs * Vjs ) */
-    double DIOtSatCur;  /* temperature adjusted saturation current */
-    double DIOtSatSWCur;  /* temperature adjusted side wall saturation current */
-    double DIOtTunSatCur;        /* tunneling saturation current */
-    double DIOtTunSatSWCur;      /* sidewall tunneling saturation current */
+    double DIOtDepCap;       /* temperature adjusted transition point in */
+                             /* the curve matching (Fc * Vj ) */
+    double DIOtDepSWCap;     /* temperature adjusted transition point in */
+                             /* the curve matching (Fcs * Vjs ) */
+    double DIOtSatCur;         /* temperature adjusted saturation current */
+    double DIOtSatCur_dT;      /* temperature adjusted saturation current temperature derivative */
+    double DIOtSatSWCur;       /* temperature adjusted side wall saturation current */
+    double DIOtSatSWCur_dT;    /* temperature adjusted side wall saturation current temperature derivative */
+    double DIOtTunSatCur;      /* tunneling saturation current */
+    double DIOtTunSatCur_dT;   /* tunneling saturation current temperature derivative */
+    double DIOtTunSatSWCur;    /* sidewall tunneling saturation current */
+    double DIOtTunSatSWCur_dT; /* sidewall tunneling saturation current temperature derivative */
 
     double DIOtVcrit;   /* temperature adjusted V crit */
     double DIOtF1;      /* temperature adjusted f1 */
@@ -123,9 +128,10 @@ typedef struct sDIOinstance {
 
     double DIOforwardKneeCurrent; /* Forward Knee current */
     double DIOreverseKneeCurrent; /* Reverse Knee current */
-    double DIOjunctionCap;     /* geometry adjusted junction capacitance */
-    double DIOjunctionSWCap;     /* geometry adjusted junction sidewall capacitance */
-    double DIOtRecSatCur; /* temperature adjusted recombination saturation current */
+    double DIOjunctionCap;        /* geometry adjusted junction capacitance */
+    double DIOjunctionSWCap;      /* geometry adjusted junction sidewall capacitance */
+    double DIOtRecSatCur;         /* temperature adjusted recombination saturation current */
+    double DIOtRecSatCur_dT;      /* temperature adjusted recombination saturation current */
 
     double DIOdIth_dVdio;
 
