@@ -166,4 +166,11 @@ extern BOOLEAN TWOpsiDeltaConverged(TWOdevice *);
 extern double TWOnuNorm(TWOdevice *);
 extern void TWOjacCheck(TWOdevice *, BOOLEAN, TWOtranInfo *);
 
+#ifdef KLU
+void TWObindCSC (TWOdevice *) ;
+void TWONbindCSC (TWOdevice *) ;
+void TWOPbindCSC (TWOdevice *) ;
+void TWOQbindCSC (TWOdevice *) ;
+#endif
+
 #endif

@@ -30,8 +30,13 @@ void
    */
   incVpn = pDevice->dcDeltaSolution;
   storeNewRhs( pDevice, pDevice->pLastContact );
-  spSolve( pDevice->matrix, pDevice->rhs, incVpn, NULL, NULL);
-  
+
+#ifdef KLU
+  SMPsolveKLUforCIDER (pDevice->matrix, pDevice->rhs, incVpn, NULL, NULL) ;
+#else
+  SMPsolveForCIDER (pDevice->matrix, pDevice->rhs, incVpn) ;
+#endif
+
   incVpn = pDevice->dcDeltaSolution;
   *gd = contactConductance( pDevice, pContact, deltaVContact, incVpn,
 			  tranAnalysis, intCoeff );
@@ -58,9 +63,20 @@ void
   incVce = pDevice->dcDeltaSolution;
   incVbe = pDevice->copiedSolution;
   storeNewRhs( pDevice, pColContact );
-  spSolve( pDevice->matrix, pDevice->rhs, incVce, NULL, NULL);
+
+#ifdef KLU
+  SMPsolveKLUforCIDER (pDevice->matrix, pDevice->rhs, incVce, NULL, NULL) ;
+#else
+  SMPsolveForCIDER (pDevice->matrix, pDevice->rhs, incVce) ;
+#endif
+
   storeNewRhs( pDevice, pBaseContact );
-  spSolve( pDevice->matrix, pDevice->rhs, incVbe, NULL, NULL);
+
+#ifdef KLU
+  SMPsolveKLUforCIDER (pDevice->matrix, pDevice->rhs, incVbe, NULL, NULL) ;
+#else
+  SMPsolveForCIDER (pDevice->matrix, pDevice->rhs, incVbe) ;
+#endif
   
   *dIeDVce = contactConductance( pDevice, pEmitContact, FALSE, incVce,
 				tranAnalysis, intCoeff );
@@ -96,11 +112,28 @@ void
   incVsb = pDevice->copiedSolution;
   incVgb = pDevice->rhsImag;
   storeNewRhs( pDevice, pDContact );
-  spSolve( pDevice->matrix, pDevice->rhs, incVdb, NULL, NULL);
+
+#ifdef KLU
+  SMPsolveKLUforCIDER (pDevice->matrix, pDevice->rhs, incVdb, NULL, NULL) ;
+#else
+  SMPsolveForCIDER (pDevice->matrix, pDevice->rhs, incVdb) ;
+#endif
+
   storeNewRhs( pDevice, pSContact );
-  spSolve( pDevice->matrix, pDevice->rhs, incVsb, NULL, NULL);
+
+#ifdef KLU
+  SMPsolveKLUforCIDER (pDevice->matrix, pDevice->rhs, incVsb, NULL, NULL) ;
+#else
+  SMPsolveForCIDER (pDevice->matrix, pDevice->rhs, incVsb) ;
+#endif
+
   storeNewRhs( pDevice, pGContact );
-  spSolve( pDevice->matrix, pDevice->rhs, incVgb, NULL, NULL);
+
+#ifdef KLU
+  SMPsolveKLUforCIDER (pDevice->matrix, pDevice->rhs, incVgb, NULL, NULL) ;
+#else
+  SMPsolveForCIDER (pDevice->matrix, pDevice->rhs, incVgb) ;
+#endif
   
   dIdV->dIdDVdb = contactConductance( pDevice, pDContact, TRUE,
 				     incVdb, tranAnalysis, intCoeff );
