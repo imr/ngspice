@@ -16,6 +16,10 @@ Author:	1991 David A. Gates, U. C. Berkeley CAD Group
 #include "ngspice/cidersupt.h"
 #include "../../maths/misc/bernoull.h"
 
+#ifdef KLU
+#include "ngspice/klu-binding.h"
+#endif
+
 /*
  * Functions to setup and solve the continuity equations.
  * Both continuity equations are solved.
@@ -53,21 +57,76 @@ void
       pNode = pElem->pNodes[ nIndex ];
       /* get poisson-only pointer */
       psiEqn = pNode->psiEqn;
-      pNode->fPsiPsi = spGetElement( matrix, psiEqn, psiEqn );
-      
+
+#ifdef KLU
+      pNode->fPsiPsi = SMPmakeEltKLUforCIDER (matrix, psiEqn, psiEqn) ;
+      pNode->fPsiPsiBinding = NULL ;
+#else
+      pNode->fPsiPsi = SMPmakeElt(matrix, psiEqn, psiEqn);
+#endif
+
       if ( pElem->elemType == SEMICON ) {
 	/* get continuity-coupling terms */
 	nEqn = pNode->nEqn;
 	pEqn = pNode->pEqn;
 	/* pointers for additional terms */
-	pNode->fPsiN = spGetElement( matrix, psiEqn, nEqn );
-	pNode->fPsiP = spGetElement( matrix, psiEqn, pEqn );
-	pNode->fNPsi = spGetElement( matrix, nEqn, psiEqn );
-	pNode->fNN = spGetElement( matrix, nEqn, nEqn );
-	pNode->fNP = spGetElement( matrix, nEqn, pEqn );
-	pNode->fPPsi = spGetElement( matrix, pEqn, psiEqn );
-	pNode->fPN = spGetElement( matrix, pEqn, nEqn );
-	pNode->fPP = spGetElement( matrix, pEqn, pEqn );
+
+#ifdef KLU
+        pNode->fPsiN = SMPmakeEltKLUforCIDER (matrix, psiEqn, nEqn) ;
+        pNode->fPsiNBinding = NULL ;
+#else
+	pNode->fPsiN = SMPmakeElt(matrix, psiEqn, nEqn);
+#endif
+
+#ifdef KLU
+        pNode->fPsiP = SMPmakeEltKLUforCIDER (matrix, psiEqn, pEqn) ;
+        pNode->fPsiPBinding = NULL ;
+#else
+	pNode->fPsiP = SMPmakeElt(matrix, psiEqn, pEqn);
+#endif
+
+#ifdef KLU
+        pNode->fNPsi = SMPmakeEltKLUforCIDER (matrix, nEqn, psiEqn) ;
+        pNode->fNPsiBinding = NULL ;
+#else
+	pNode->fNPsi = SMPmakeElt(matrix, nEqn, psiEqn);
+#endif
+
+#ifdef KLU
+        pNode->fNN = SMPmakeEltKLUforCIDER (matrix, nEqn, nEqn) ;
+        pNode->fNNBinding = NULL ;
+#else
+	pNode->fNN = SMPmakeElt(matrix, nEqn, nEqn);
+#endif
+
+#ifdef KLU
+        pNode->fNP = SMPmakeEltKLUforCIDER (matrix, nEqn, pEqn) ;
+        pNode->fNPBinding = NULL ;
+#else
+	pNode->fNP = SMPmakeElt(matrix, nEqn, pEqn);
+#endif
+
+#ifdef KLU
+        pNode->fPPsi = SMPmakeEltKLUforCIDER (matrix, pEqn, psiEqn) ;
+        pNode->fPPsiBinding = NULL ;
+#else
+	pNode->fPPsi = SMPmakeElt(matrix, pEqn, psiEqn);
+#endif
+
+#ifdef KLU
+        pNode->fPN = SMPmakeEltKLUforCIDER (matrix, pEqn, nEqn) ;
+        pNode->fPNBinding = NULL ;
+#else
+	pNode->fPN = SMPmakeElt(matrix, pEqn, nEqn);
+#endif
+
+#ifdef KLU
+        pNode->fPP = SMPmakeEltKLUforCIDER (matrix, pEqn, pEqn) ;
+        pNode->fPPBinding = NULL ;
+#else
+	pNode->fPP = SMPmakeElt(matrix, pEqn, pEqn);
+#endif
+
       } else {
 	nEqn = 0;
 	pEqn = 0;
@@ -101,90 +160,438 @@ void
     
     /* now terms to couple to adjacent nodes */
     pNode = pElem->pTLNode;
-    pNode->fPsiPsiiP1 = spGetElement(matrix, psiEqnTL, psiEqnTR );
-    pNode->fPsiPsijP1 = spGetElement(matrix, psiEqnTL, psiEqnBL );
+
+#ifdef KLU
+    pNode->fPsiPsiiP1 = SMPmakeEltKLUforCIDER (matrix, psiEqnTL, psiEqnTR) ;
+    pNode->fPsiPsiiP1Binding = NULL ;
+#else
+    pNode->fPsiPsiiP1 = SMPmakeElt(matrix, psiEqnTL, psiEqnTR);
+#endif
+
+#ifdef KLU
+    pNode->fPsiPsijP1 = SMPmakeEltKLUforCIDER (matrix, psiEqnTL, psiEqnBL) ;
+    pNode->fPsiPsijP1Binding = NULL ;
+#else
+    pNode->fPsiPsijP1 = SMPmakeElt(matrix, psiEqnTL, psiEqnBL);
+#endif
+
     if ( pElem->elemType == SEMICON ) {
       /* continuity equation pointers */
-      pNode->fNPsiiP1    = spGetElement( matrix, nEqnTL, psiEqnTR );
-      pNode->fNNiP1      = spGetElement( matrix, nEqnTL, nEqnTR );
-      pNode->fNPsijP1    = spGetElement( matrix, nEqnTL, psiEqnBL );
-      pNode->fNNjP1      = spGetElement( matrix, nEqnTL, nEqnBL );
-      pNode->fPPsiiP1    = spGetElement( matrix, pEqnTL, psiEqnTR );
-      pNode->fPPiP1      = spGetElement( matrix, pEqnTL, pEqnTR );
-      pNode->fPPsijP1    = spGetElement( matrix, pEqnTL, psiEqnBL );
-      pNode->fPPjP1      = spGetElement( matrix, pEqnTL, pEqnBL );
+
+#ifdef KLU
+      pNode->fNPsiiP1 = SMPmakeEltKLUforCIDER (matrix, nEqnTL, psiEqnTR) ;
+      pNode->fNPsiiP1Binding = NULL ;
+#else
+      pNode->fNPsiiP1 = SMPmakeElt(matrix, nEqnTL, psiEqnTR);
+#endif
+
+#ifdef KLU
+      pNode->fNNiP1 = SMPmakeEltKLUforCIDER (matrix, nEqnTL, nEqnTR) ;
+      pNode->fNNiP1Binding = NULL ;
+#else
+      pNode->fNNiP1 = SMPmakeElt(matrix, nEqnTL, nEqnTR);
+#endif
+
+#ifdef KLU
+      pNode->fNPsijP1 = SMPmakeEltKLUforCIDER (matrix, nEqnTL, psiEqnBL) ;
+      pNode->fNPsijP1Binding = NULL ;
+#else
+      pNode->fNPsijP1 = SMPmakeElt(matrix, nEqnTL, psiEqnBL);
+#endif
+
+#ifdef KLU
+      pNode->fNNjP1 = SMPmakeEltKLUforCIDER (matrix, nEqnTL, nEqnBL) ;
+      pNode->fNNjP1Binding = NULL ;
+#else
+      pNode->fNNjP1 = SMPmakeElt(matrix, nEqnTL, nEqnBL);
+#endif
+
+#ifdef KLU
+      pNode->fPPsiiP1 = SMPmakeEltKLUforCIDER (matrix, pEqnTL, psiEqnTR) ;
+      pNode->fPPsiiP1Binding = NULL ;
+#else
+      pNode->fPPsiiP1 = SMPmakeElt(matrix, pEqnTL, psiEqnTR);
+#endif
+
+#ifdef KLU
+      pNode->fPPiP1 = SMPmakeEltKLUforCIDER (matrix, pEqnTL, pEqnTR) ;
+      pNode->fPPiP1Binding = NULL ;
+#else
+      pNode->fPPiP1 = SMPmakeElt(matrix, pEqnTL, pEqnTR);
+#endif
+
+#ifdef KLU
+      pNode->fPPsijP1 = SMPmakeEltKLUforCIDER (matrix, pEqnTL, psiEqnBL) ;
+      pNode->fPPsijP1Binding = NULL ;
+#else
+      pNode->fPPsijP1 = SMPmakeElt(matrix, pEqnTL, psiEqnBL);
+#endif
+
+#ifdef KLU
+      pNode->fPPjP1 = SMPmakeEltKLUforCIDER (matrix, pEqnTL, pEqnBL) ;
+      pNode->fPPjP1Binding = NULL ;
+#else
+      pNode->fPPjP1 = SMPmakeElt(matrix, pEqnTL, pEqnBL);
+#endif
+
       /* Surface Mobility Model depends on diagonal node values */
       if ( MobDeriv && SurfaceMobility && pElem->channel ) {
-	pNode->fNPsiiP1jP1 = spGetElement( matrix, nEqnTL, psiEqnBR );
-	pNode->fNNiP1jP1   = spGetElement( matrix, nEqnTL, nEqnBR );
-	pNode->fPPsiiP1jP1 = spGetElement( matrix, pEqnTL, psiEqnBR );
-	pNode->fPPiP1jP1   = spGetElement( matrix, pEqnTL, pEqnBR );
+
+#ifdef KLU
+        pNode->fNPsiiP1jP1 = SMPmakeEltKLUforCIDER (matrix, nEqnTL, psiEqnBR) ;
+        pNode->fNPsiiP1jP1Binding = NULL ;
+#else
+        pNode->fNPsiiP1jP1 = SMPmakeElt(matrix, nEqnTL, psiEqnBR);
+#endif
+
+#ifdef KLU
+        pNode->fNNiP1jP1 = SMPmakeEltKLUforCIDER (matrix, nEqnTL, nEqnBR) ;
+        pNode->fNNiP1jP1Binding = NULL ;
+#else
+        pNode->fNNiP1jP1 = SMPmakeElt(matrix, nEqnTL, nEqnBR);
+#endif
+
+#ifdef KLU
+        pNode->fPPsiiP1jP1 = SMPmakeEltKLUforCIDER (matrix, pEqnTL, psiEqnBR) ;
+        pNode->fPPsiiP1jP1Binding = NULL ;
+#else
+        pNode->fPPsiiP1jP1 = SMPmakeElt(matrix, pEqnTL, psiEqnBR);
+#endif
+
+#ifdef KLU
+        pNode->fPPiP1jP1 = SMPmakeEltKLUforCIDER (matrix, pEqnTL, pEqnBR) ;
+        pNode->fPPiP1jP1Binding = NULL ;
+#else
+        pNode->fPPiP1jP1 = SMPmakeElt(matrix, pEqnTL, pEqnBR);
+#endif
+
       }
     }
     
     pNode = pElem->pTRNode;
-    pNode->fPsiPsiiM1 = spGetElement(matrix, psiEqnTR, psiEqnTL );
-    pNode->fPsiPsijP1 = spGetElement(matrix, psiEqnTR, psiEqnBR );
+
+#ifdef KLU
+    pNode->fPsiPsiiM1 = SMPmakeEltKLUforCIDER (matrix, psiEqnTR, psiEqnTL) ;
+    pNode->fPsiPsiiM1Binding = NULL ;
+#else
+    pNode->fPsiPsiiM1 = SMPmakeElt(matrix, psiEqnTR, psiEqnTL);
+#endif
+
+#ifdef KLU
+    pNode->fPsiPsijP1 = SMPmakeEltKLUforCIDER (matrix, psiEqnTR, psiEqnBR) ;
+    pNode->fPsiPsijP1Binding = NULL ;
+#else
+    pNode->fPsiPsijP1 = SMPmakeElt(matrix, psiEqnTR, psiEqnBR);
+#endif
+
     if ( pElem->elemType == SEMICON ) {
       /* continuity equation pointers */
-      pNode->fNPsiiM1    = spGetElement( matrix, nEqnTR, psiEqnTL );
-      pNode->fNNiM1      = spGetElement( matrix, nEqnTR, nEqnTL );
-      pNode->fNPsijP1    = spGetElement( matrix, nEqnTR, psiEqnBR );
-      pNode->fNNjP1      = spGetElement( matrix, nEqnTR, nEqnBR );
-      pNode->fPPsiiM1    = spGetElement( matrix, pEqnTR, psiEqnTL );
-      pNode->fPPiM1      = spGetElement( matrix, pEqnTR, pEqnTL );
-      pNode->fPPsijP1    = spGetElement( matrix, pEqnTR, psiEqnBR );
-      pNode->fPPjP1      = spGetElement( matrix, pEqnTR, pEqnBR );
+
+#ifdef KLU
+      pNode->fNPsiiM1 = SMPmakeEltKLUforCIDER (matrix, nEqnTR, psiEqnTL) ;
+      pNode->fNPsiiM1Binding = NULL ;
+#else
+      pNode->fNPsiiM1 = SMPmakeElt(matrix, nEqnTR, psiEqnTL);
+#endif
+
+#ifdef KLU
+      pNode->fNNiM1 = SMPmakeEltKLUforCIDER (matrix, nEqnTR, nEqnTL) ;
+      pNode->fNNiM1Binding = NULL ;
+#else
+      pNode->fNNiM1 = SMPmakeElt(matrix, nEqnTR, nEqnTL);
+#endif
+
+#ifdef KLU
+      pNode->fNPsijP1 = SMPmakeEltKLUforCIDER (matrix, nEqnTR, psiEqnBR) ;
+      pNode->fNPsijP1Binding = NULL ;
+#else
+      pNode->fNPsijP1 = SMPmakeElt(matrix, nEqnTR, psiEqnBR);
+#endif
+
+#ifdef KLU
+      pNode->fNNjP1 = SMPmakeEltKLUforCIDER (matrix, nEqnTR, nEqnBR) ;
+      pNode->fNNjP1Binding = NULL ;
+#else
+      pNode->fNNjP1 = SMPmakeElt(matrix, nEqnTR, nEqnBR);
+#endif
+
+#ifdef KLU
+      pNode->fPPsiiM1 = SMPmakeEltKLUforCIDER (matrix, pEqnTR, psiEqnTL) ;
+      pNode->fPPsiiM1Binding = NULL ;
+#else
+      pNode->fPPsiiM1 = SMPmakeElt(matrix, pEqnTR, psiEqnTL);
+#endif
+
+#ifdef KLU
+      pNode->fPPiM1 = SMPmakeEltKLUforCIDER (matrix, pEqnTR, pEqnTL) ;
+      pNode->fPPiM1Binding = NULL ;
+#else
+      pNode->fPPiM1 = SMPmakeElt(matrix, pEqnTR, pEqnTL);
+#endif
+
+#ifdef KLU
+      pNode->fPPsijP1 = SMPmakeEltKLUforCIDER (matrix, pEqnTR, psiEqnBR) ;
+      pNode->fPPsijP1Binding = NULL ;
+#else
+      pNode->fPPsijP1 = SMPmakeElt(matrix, pEqnTR, psiEqnBR);
+#endif
+
+#ifdef KLU
+      pNode->fPPjP1 = SMPmakeEltKLUforCIDER (matrix, pEqnTR, pEqnBR) ;
+      pNode->fPPjP1Binding = NULL ;
+#else
+      pNode->fPPjP1 = SMPmakeElt(matrix, pEqnTR, pEqnBR);
+#endif
+
       /* Surface Mobility Model depends on diagonal node values */
       if ( MobDeriv && SurfaceMobility && pElem->channel ) {
-	pNode->fNPsiiM1jP1 = spGetElement( matrix, nEqnTR, psiEqnBL );
-	pNode->fNNiM1jP1   = spGetElement( matrix, nEqnTR, nEqnBL );
-	pNode->fPPsiiM1jP1 = spGetElement( matrix, pEqnTR, psiEqnBL );
-	pNode->fPPiM1jP1   = spGetElement( matrix, pEqnTR, pEqnBL );
+
+#ifdef KLU
+        pNode->fNPsiiM1jP1 = SMPmakeEltKLUforCIDER (matrix, nEqnTR, psiEqnBL) ;
+        pNode->fNPsiiM1jP1Binding = NULL ;
+#else
+        pNode->fNPsiiM1jP1 = SMPmakeElt(matrix, nEqnTR, psiEqnBL);
+#endif
+
+#ifdef KLU
+        pNode->fNNiM1jP1 = SMPmakeEltKLUforCIDER (matrix, nEqnTR, nEqnBL) ;
+        pNode->fNNiM1jP1Binding = NULL ;
+#else
+        pNode->fNNiM1jP1 = SMPmakeElt(matrix, nEqnTR, nEqnBL);
+#endif
+
+#ifdef KLU
+        pNode->fPPsiiM1jP1 = SMPmakeEltKLUforCIDER (matrix, pEqnTR, psiEqnBL) ;
+        pNode->fPPsiiM1jP1Binding = NULL ;
+#else
+        pNode->fPPsiiM1jP1 = SMPmakeElt(matrix, pEqnTR, psiEqnBL);
+#endif
+
+#ifdef KLU
+        pNode->fPPiM1jP1 = SMPmakeEltKLUforCIDER (matrix, pEqnTR, pEqnBL) ;
+        pNode->fPPiM1jP1Binding = NULL ;
+#else
+        pNode->fPPiM1jP1 = SMPmakeElt(matrix, pEqnTR, pEqnBL);
+#endif
+
       }
     }
     
     pNode = pElem->pBRNode;
-    pNode->fPsiPsiiM1 = spGetElement(matrix, psiEqnBR, psiEqnBL );
-    pNode->fPsiPsijM1 = spGetElement(matrix, psiEqnBR, psiEqnTR );
+
+#ifdef KLU
+    pNode->fPsiPsiiM1 = SMPmakeEltKLUforCIDER (matrix, psiEqnBR, psiEqnBL) ;
+    pNode->fPsiPsiiM1Binding = NULL ;
+#else
+    pNode->fPsiPsiiM1 = SMPmakeElt(matrix, psiEqnBR, psiEqnBL);
+#endif
+
+#ifdef KLU
+    pNode->fPsiPsijM1 = SMPmakeEltKLUforCIDER (matrix, psiEqnBR, psiEqnTR) ;
+    pNode->fPsiPsijM1Binding = NULL ;
+#else
+    pNode->fPsiPsijM1 = SMPmakeElt(matrix, psiEqnBR, psiEqnTR);
+#endif
+
     if ( pElem->elemType == SEMICON ) {
       /* continuity equation pointers */
-      pNode->fNPsiiM1    = spGetElement( matrix, nEqnBR, psiEqnBL );
-      pNode->fNNiM1      = spGetElement( matrix, nEqnBR, nEqnBL );
-      pNode->fNPsijM1    = spGetElement( matrix, nEqnBR, psiEqnTR );
-      pNode->fNNjM1      = spGetElement( matrix, nEqnBR, nEqnTR );
-      pNode->fPPsiiM1    = spGetElement( matrix, pEqnBR, psiEqnBL );
-      pNode->fPPiM1      = spGetElement( matrix, pEqnBR, pEqnBL );
-      pNode->fPPsijM1    = spGetElement( matrix, pEqnBR, psiEqnTR );
-      pNode->fPPjM1      = spGetElement( matrix, pEqnBR, pEqnTR );
+
+#ifdef KLU
+      pNode->fNPsiiM1 = SMPmakeEltKLUforCIDER (matrix, nEqnBR, psiEqnBL) ;
+      pNode->fNPsiiM1Binding = NULL ;
+#else
+      pNode->fNPsiiM1 = SMPmakeElt(matrix, nEqnBR, psiEqnBL);
+#endif
+
+#ifdef KLU
+      pNode->fNNiM1 = SMPmakeEltKLUforCIDER (matrix, nEqnBR, nEqnBL) ;
+      pNode->fNNiM1Binding = NULL ;
+#else
+      pNode->fNNiM1 = SMPmakeElt(matrix, nEqnBR, nEqnBL);
+#endif
+
+#ifdef KLU
+      pNode->fNPsijM1 = SMPmakeEltKLUforCIDER (matrix, nEqnBR, psiEqnTR) ;
+      pNode->fNPsijM1Binding = NULL ;
+#else
+      pNode->fNPsijM1 = SMPmakeElt(matrix, nEqnBR, psiEqnTR);
+#endif
+
+#ifdef KLU
+      pNode->fNNjM1 = SMPmakeEltKLUforCIDER (matrix, nEqnBR, nEqnTR) ;
+      pNode->fNNjM1Binding = NULL ;
+#else
+      pNode->fNNjM1 = SMPmakeElt(matrix, nEqnBR, nEqnTR);
+#endif
+
+#ifdef KLU
+      pNode->fPPsiiM1 = SMPmakeEltKLUforCIDER (matrix, pEqnBR, psiEqnBL) ;
+      pNode->fPPsiiM1Binding = NULL ;
+#else
+      pNode->fPPsiiM1 = SMPmakeElt(matrix, pEqnBR, psiEqnBL);
+#endif
+
+#ifdef KLU
+      pNode->fPPiM1 = SMPmakeEltKLUforCIDER (matrix, pEqnBR, pEqnBL) ;
+      pNode->fPPiM1Binding = NULL ;
+#else
+      pNode->fPPiM1 = SMPmakeElt(matrix, pEqnBR, pEqnBL);
+#endif
+
+#ifdef KLU
+      pNode->fPPsijM1 = SMPmakeEltKLUforCIDER (matrix, pEqnBR, psiEqnTR) ;
+      pNode->fPPsijM1Binding = NULL ;
+#else
+      pNode->fPPsijM1 = SMPmakeElt(matrix, pEqnBR, psiEqnTR);
+#endif
+
+#ifdef KLU
+      pNode->fPPjM1 = SMPmakeEltKLUforCIDER (matrix, pEqnBR, pEqnTR) ;
+      pNode->fPPjM1Binding = NULL ;
+#else
+      pNode->fPPjM1 = SMPmakeElt(matrix, pEqnBR, pEqnTR);
+#endif
+
       /* Surface Mobility Model depends on diagonal node values */
       if ( MobDeriv && SurfaceMobility && pElem->channel ) {
-	pNode->fNPsiiM1jM1 = spGetElement( matrix, nEqnBR, psiEqnTL );
-	pNode->fNNiM1jM1   = spGetElement( matrix, nEqnBR, nEqnTL );
-	pNode->fPPsiiM1jM1 = spGetElement( matrix, pEqnBR, psiEqnTL );
-	pNode->fPPiM1jM1   = spGetElement( matrix, pEqnBR, pEqnTL );
+
+#ifdef KLU
+        pNode->fNPsiiM1jM1 = SMPmakeEltKLUforCIDER (matrix, nEqnBR, psiEqnTL) ;
+        pNode->fNPsiiM1jM1Binding = NULL ;
+#else
+        pNode->fNPsiiM1jM1 = SMPmakeElt(matrix, nEqnBR, psiEqnTL);
+#endif
+
+#ifdef KLU
+        pNode->fNNiM1jM1 = SMPmakeEltKLUforCIDER (matrix, nEqnBR, nEqnTL) ;
+        pNode->fNNiM1jM1Binding = NULL ;
+#else
+        pNode->fNNiM1jM1 = SMPmakeElt(matrix, nEqnBR, nEqnTL);
+#endif
+
+#ifdef KLU
+        pNode->fPPsiiM1jM1 = SMPmakeEltKLUforCIDER (matrix, pEqnBR, psiEqnTL) ;
+        pNode->fPPsiiM1jM1Binding = NULL ;
+#else
+        pNode->fPPsiiM1jM1 = SMPmakeElt(matrix, pEqnBR, psiEqnTL);
+#endif
+
+#ifdef KLU
+        pNode->fPPiM1jM1 = SMPmakeEltKLUforCIDER (matrix, pEqnBR, pEqnTL) ;
+        pNode->fPPiM1jM1Binding = NULL ;
+#else
+        pNode->fPPiM1jM1 = SMPmakeElt(matrix, pEqnBR, pEqnTL);
+#endif
+
       }
     }
     
     pNode = pElem->pBLNode;
-    pNode->fPsiPsiiP1 = spGetElement(matrix, psiEqnBL, psiEqnBR );
-    pNode->fPsiPsijM1 = spGetElement(matrix, psiEqnBL, psiEqnTL );
+
+#ifdef KLU
+    pNode->fPsiPsiiP1 = SMPmakeEltKLUforCIDER (matrix, psiEqnBL, psiEqnBR) ;
+    pNode->fPsiPsiiP1Binding = NULL ;
+#else
+    pNode->fPsiPsiiP1 = SMPmakeElt(matrix, psiEqnBL, psiEqnBR);
+#endif
+
+#ifdef KLU
+    pNode->fPsiPsijM1 = SMPmakeEltKLUforCIDER (matrix, psiEqnBL, psiEqnTL) ;
+    pNode->fPsiPsijM1Binding = NULL ;
+#else
+    pNode->fPsiPsijM1 = SMPmakeElt(matrix, psiEqnBL, psiEqnTL);
+#endif
+
     if ( pElem->elemType == SEMICON ) {
       /* continuity equation pointers */
-      pNode->fNPsiiP1    = spGetElement( matrix, nEqnBL, psiEqnBR );
-      pNode->fNNiP1      = spGetElement( matrix, nEqnBL, nEqnBR );
-      pNode->fNPsijM1    = spGetElement( matrix, nEqnBL, psiEqnTL );
-      pNode->fNNjM1      = spGetElement( matrix, nEqnBL, nEqnTL );
-      pNode->fPPsiiP1    = spGetElement( matrix, pEqnBL, psiEqnBR );
-      pNode->fPPiP1      = spGetElement( matrix, pEqnBL, pEqnBR );
-      pNode->fPPsijM1    = spGetElement( matrix, pEqnBL, psiEqnTL );
-      pNode->fPPjM1      = spGetElement( matrix, pEqnBL, pEqnTL );
+
+#ifdef KLU
+      pNode->fNPsiiP1 = SMPmakeEltKLUforCIDER (matrix, nEqnBL, psiEqnBR) ;
+      pNode->fNPsiiP1Binding = NULL ;
+#else
+      pNode->fNPsiiP1 = SMPmakeElt(matrix, nEqnBL, psiEqnBR);
+#endif
+
+#ifdef KLU
+      pNode->fNNiP1 = SMPmakeEltKLUforCIDER (matrix, nEqnBL, nEqnBR) ;
+      pNode->fNNiP1Binding = NULL ;
+#else
+      pNode->fNNiP1 = SMPmakeElt(matrix, nEqnBL, nEqnBR);
+#endif
+
+#ifdef KLU
+      pNode->fNPsijM1 = SMPmakeEltKLUforCIDER (matrix, nEqnBL, psiEqnTL) ;
+      pNode->fNPsijM1Binding = NULL ;
+#else
+      pNode->fNPsijM1 = SMPmakeElt(matrix, nEqnBL, psiEqnTL);
+#endif
+
+#ifdef KLU
+      pNode->fNNjM1 = SMPmakeEltKLUforCIDER (matrix, nEqnBL, nEqnTL) ;
+      pNode->fNNjM1Binding = NULL ;
+#else
+      pNode->fNNjM1 = SMPmakeElt(matrix, nEqnBL, nEqnTL);
+#endif
+
+#ifdef KLU
+      pNode->fPPsiiP1 = SMPmakeEltKLUforCIDER (matrix, pEqnBL, psiEqnBR) ;
+      pNode->fPPsiiP1Binding = NULL ;
+#else
+      pNode->fPPsiiP1 = SMPmakeElt(matrix, pEqnBL, psiEqnBR);
+#endif
+
+#ifdef KLU
+      pNode->fPPiP1 = SMPmakeEltKLUforCIDER (matrix, pEqnBL, pEqnBR) ;
+      pNode->fPPiP1Binding = NULL ;
+#else
+      pNode->fPPiP1 = SMPmakeElt(matrix, pEqnBL, pEqnBR);
+#endif
+
+#ifdef KLU
+      pNode->fPPsijM1 = SMPmakeEltKLUforCIDER (matrix, pEqnBL, psiEqnTL) ;
+      pNode->fPPsijM1Binding = NULL ;
+#else
+      pNode->fPPsijM1 = SMPmakeElt(matrix, pEqnBL, psiEqnTL);
+#endif
+
+#ifdef KLU
+      pNode->fPPjM1 = SMPmakeEltKLUforCIDER (matrix, pEqnBL, pEqnTL) ;
+      pNode->fPPjM1Binding = NULL ;
+#else
+      pNode->fPPjM1 = SMPmakeElt(matrix, pEqnBL, pEqnTL);
+#endif
+
       /* Surface Mobility Model depends on diagonal node values */
       if ( MobDeriv && SurfaceMobility && pElem->channel ) {
-	pNode->fNPsiiP1jM1 = spGetElement( matrix, nEqnBL, psiEqnTR );
-	pNode->fNNiP1jM1   = spGetElement( matrix, nEqnBL, nEqnTR );
-	pNode->fPPsiiP1jM1 = spGetElement( matrix, pEqnBL, psiEqnTR );
-	pNode->fPPiP1jM1   = spGetElement( matrix, pEqnBL, pEqnTR );
+
+#ifdef KLU
+        pNode->fNPsiiP1jM1 = SMPmakeEltKLUforCIDER (matrix, nEqnBL, psiEqnTR) ;
+        pNode->fNPsiiP1jM1Binding = NULL ;
+#else
+        pNode->fNPsiiP1jM1 = SMPmakeElt(matrix, nEqnBL, psiEqnTR);
+#endif
+
+#ifdef KLU
+        pNode->fNNiP1jM1 = SMPmakeEltKLUforCIDER (matrix, nEqnBL, nEqnTR) ;
+        pNode->fNNiP1jM1Binding = NULL ;
+#else
+        pNode->fNNiP1jM1 = SMPmakeElt(matrix, nEqnBL, nEqnTR);
+#endif
+
+#ifdef KLU
+        pNode->fPPsiiP1jM1 = SMPmakeEltKLUforCIDER (matrix, pEqnBL, psiEqnTR) ;
+        pNode->fPPsiiP1jM1Binding = NULL ;
+#else
+        pNode->fPPsiiP1jM1 = SMPmakeElt(matrix, pEqnBL, psiEqnTR);
+#endif
+
+#ifdef KLU
+        pNode->fPPiP1jM1 = SMPmakeEltKLUforCIDER (matrix, pEqnBL, pEqnTR) ;
+        pNode->fPPiP1jM1Binding = NULL ;
+#else
+        pNode->fPPiP1jM1 = SMPmakeElt(matrix, pEqnBL, pEqnTR);
+#endif
+
       }
     }
   }
@@ -234,43 +641,239 @@ void
 	  pEqn = pNode->pEqn;
 	  if ( pCh->type % 2 == 0 ) { /* Vertical Slice */
 	    if ( nIndex == 0 || nIndex == 3 ) { /* Left Side */
-	      pNode->fNPsiIn   = spGetElement( matrix, nEqn, psiEqnInM );
-	      pNode->fNPsiInP1 = spGetElement( matrix, nEqn, psiEqnInP );
-	      pNode->fNPsiOx   = spGetElement( matrix, nEqn, psiEqnOxM );
-	      pNode->fNPsiOxP1 = spGetElement( matrix, nEqn, psiEqnOxP );
-	      pNode->fPPsiIn   = spGetElement( matrix, pEqn, psiEqnInM );
-	      pNode->fPPsiInP1 = spGetElement( matrix, pEqn, psiEqnInP );
-	      pNode->fPPsiOx   = spGetElement( matrix, pEqn, psiEqnOxM );
-	      pNode->fPPsiOxP1 = spGetElement( matrix, pEqn, psiEqnOxP );
+
+#ifdef KLU
+              pNode->fNPsiIn = SMPmakeEltKLUforCIDER (matrix, nEqn, psiEqnInM) ;
+              pNode->fNPsiInBinding = NULL ;
+#else
+              pNode->fNPsiIn = SMPmakeElt(matrix, nEqn, psiEqnInM);
+#endif
+
+#ifdef KLU
+              pNode->fNPsiInP1 = SMPmakeEltKLUforCIDER (matrix, nEqn, psiEqnInP) ;
+              pNode->fNPsiInP1Binding = NULL ;
+#else
+              pNode->fNPsiInP1 = SMPmakeElt(matrix, nEqn, psiEqnInP);
+#endif
+
+#ifdef KLU
+              pNode->fNPsiOx = SMPmakeEltKLUforCIDER (matrix, nEqn, psiEqnOxM) ;
+              pNode->fNPsiOxBinding = NULL ;
+#else
+              pNode->fNPsiOx = SMPmakeElt(matrix, nEqn, psiEqnOxM);
+#endif
+
+#ifdef KLU
+              pNode->fNPsiOxP1 = SMPmakeEltKLUforCIDER (matrix, nEqn, psiEqnOxP) ;
+              pNode->fNPsiOxP1Binding = NULL ;
+#else
+              pNode->fNPsiOxP1 = SMPmakeElt(matrix, nEqn, psiEqnOxP);
+#endif
+
+#ifdef KLU
+              pNode->fPPsiIn = SMPmakeEltKLUforCIDER (matrix, pEqn, psiEqnInM) ;
+              pNode->fPPsiInBinding = NULL ;
+#else
+              pNode->fPPsiIn = SMPmakeElt(matrix, pEqn, psiEqnInM);
+#endif
+
+#ifdef KLU
+              pNode->fPPsiInP1 = SMPmakeEltKLUforCIDER (matrix, pEqn, psiEqnInP) ;
+              pNode->fPPsiInP1Binding = NULL ;
+#else
+              pNode->fPPsiInP1 = SMPmakeElt(matrix, pEqn, psiEqnInP);
+#endif
+
+#ifdef KLU
+              pNode->fPPsiOx = SMPmakeEltKLUforCIDER (matrix, pEqn, psiEqnOxM) ;
+              pNode->fPPsiOxBinding = NULL ;
+#else
+              pNode->fPPsiOx = SMPmakeElt(matrix, pEqn, psiEqnOxM);
+#endif
+
+#ifdef KLU
+              pNode->fPPsiOxP1 = SMPmakeEltKLUforCIDER (matrix, pEqn, psiEqnOxP) ;
+              pNode->fPPsiOxP1Binding = NULL ;
+#else
+              pNode->fPPsiOxP1 = SMPmakeElt(matrix, pEqn, psiEqnOxP);
+#endif
+
 	    } else { /* Right Side */
-	      pNode->fNPsiInM1 = spGetElement( matrix, nEqn, psiEqnInM );
-	      pNode->fNPsiIn   = spGetElement( matrix, nEqn, psiEqnInP );
-	      pNode->fNPsiOxM1 = spGetElement( matrix, nEqn, psiEqnOxM );
-	      pNode->fNPsiOx   = spGetElement( matrix, nEqn, psiEqnOxP );
-	      pNode->fPPsiInM1 = spGetElement( matrix, pEqn, psiEqnInM );
-	      pNode->fPPsiIn   = spGetElement( matrix, pEqn, psiEqnInP );
-	      pNode->fPPsiOxM1 = spGetElement( matrix, pEqn, psiEqnOxM );
-	      pNode->fPPsiOx   = spGetElement( matrix, pEqn, psiEqnOxP );
+
+#ifdef KLU
+              pNode->fNPsiInM1 = SMPmakeEltKLUforCIDER (matrix, nEqn, psiEqnInM) ;
+              pNode->fNPsiInM1Binding = NULL ;
+#else
+              pNode->fNPsiInM1 = SMPmakeElt(matrix, nEqn, psiEqnInM);
+#endif
+
+#ifdef KLU
+              pNode->fNPsiIn = SMPmakeEltKLUforCIDER (matrix, nEqn, psiEqnInP) ;
+              pNode->fNPsiInBinding = NULL ;
+#else
+              pNode->fNPsiIn = SMPmakeElt(matrix, nEqn, psiEqnInP);
+#endif
+
+#ifdef KLU
+              pNode->fNPsiOxM1 = SMPmakeEltKLUforCIDER (matrix, nEqn, psiEqnOxM) ;
+              pNode->fNPsiOxM1Binding = NULL ;
+#else
+              pNode->fNPsiOxM1 = SMPmakeElt(matrix, nEqn, psiEqnOxM);
+#endif
+
+#ifdef KLU
+              pNode->fNPsiOx = SMPmakeEltKLUforCIDER (matrix, nEqn, psiEqnOxP) ;
+              pNode->fNPsiOxBinding = NULL ;
+#else
+              pNode->fNPsiOx = SMPmakeElt(matrix, nEqn, psiEqnOxP);
+#endif
+
+#ifdef KLU
+              pNode->fPPsiInM1 = SMPmakeEltKLUforCIDER (matrix, pEqn, psiEqnInM) ;
+              pNode->fPPsiInM1Binding = NULL ;
+#else
+              pNode->fPPsiInM1 = SMPmakeElt(matrix, pEqn, psiEqnInM);
+#endif
+
+#ifdef KLU
+              pNode->fPPsiIn = SMPmakeEltKLUforCIDER (matrix, pEqn, psiEqnInP) ;
+              pNode->fPPsiInBinding = NULL ;
+#else
+              pNode->fPPsiIn = SMPmakeElt(matrix, pEqn, psiEqnInP);
+#endif
+
+#ifdef KLU
+              pNode->fPPsiOxM1 = SMPmakeEltKLUforCIDER (matrix, pEqn, psiEqnOxM) ;
+              pNode->fPPsiOxM1Binding = NULL ;
+#else
+              pNode->fPPsiOxM1 = SMPmakeElt(matrix, pEqn, psiEqnOxM);
+#endif
+
+#ifdef KLU
+              pNode->fPPsiOx = SMPmakeEltKLUforCIDER (matrix, pEqn, psiEqnOxP) ;
+              pNode->fPPsiOxBinding = NULL ;
+#else
+              pNode->fPPsiOx = SMPmakeElt(matrix, pEqn, psiEqnOxP);
+#endif
+
 	    }
 	  } else { /* Horizontal Slice */
 	    if ( nIndex <= 1 ) { /* Top Side */
-	      pNode->fNPsiIn   = spGetElement( matrix, nEqn, psiEqnInM );
-	      pNode->fNPsiInP1 = spGetElement( matrix, nEqn, psiEqnInP );
-	      pNode->fNPsiOx   = spGetElement( matrix, nEqn, psiEqnOxM );
-	      pNode->fNPsiOxP1 = spGetElement( matrix, nEqn, psiEqnOxP );
-	      pNode->fPPsiIn   = spGetElement( matrix, pEqn, psiEqnInM );
-	      pNode->fPPsiInP1 = spGetElement( matrix, pEqn, psiEqnInP );
-	      pNode->fPPsiOx   = spGetElement( matrix, pEqn, psiEqnOxM );
-	      pNode->fPPsiOxP1 = spGetElement( matrix, pEqn, psiEqnOxP );
+
+#ifdef KLU
+              pNode->fNPsiIn = SMPmakeEltKLUforCIDER (matrix, nEqn, psiEqnInM) ;
+              pNode->fNPsiInBinding = NULL ;
+#else
+              pNode->fNPsiIn = SMPmakeElt(matrix, nEqn, psiEqnInM);
+#endif
+
+#ifdef KLU
+              pNode->fNPsiInP1 = SMPmakeEltKLUforCIDER (matrix, nEqn, psiEqnInP) ;
+              pNode->fNPsiInP1Binding = NULL ;
+#else
+              pNode->fNPsiInP1 = SMPmakeElt(matrix, nEqn, psiEqnInP);
+#endif
+
+#ifdef KLU
+              pNode->fNPsiOx = SMPmakeEltKLUforCIDER (matrix, nEqn, psiEqnOxM) ;
+              pNode->fNPsiOxBinding = NULL ;
+#else
+              pNode->fNPsiOx = SMPmakeElt(matrix, nEqn, psiEqnOxM);
+#endif
+
+#ifdef KLU
+              pNode->fNPsiOxP1 = SMPmakeEltKLUforCIDER (matrix, nEqn, psiEqnOxP) ;
+              pNode->fNPsiOxP1Binding = NULL ;
+#else
+              pNode->fNPsiOxP1 = SMPmakeElt(matrix, nEqn, psiEqnOxP);
+#endif
+
+#ifdef KLU
+              pNode->fPPsiIn = SMPmakeEltKLUforCIDER (matrix, pEqn, psiEqnInM) ;
+              pNode->fPPsiInBinding = NULL ;
+#else
+              pNode->fPPsiIn = SMPmakeElt(matrix, pEqn, psiEqnInM);
+#endif
+
+#ifdef KLU
+              pNode->fPPsiInP1 = SMPmakeEltKLUforCIDER (matrix, pEqn, psiEqnInP) ;
+              pNode->fPPsiInP1Binding = NULL ;
+#else
+              pNode->fPPsiInP1 = SMPmakeElt(matrix, pEqn, psiEqnInP);
+#endif
+
+#ifdef KLU
+              pNode->fPPsiOx = SMPmakeEltKLUforCIDER (matrix, pEqn, psiEqnOxM) ;
+              pNode->fPPsiOxBinding = NULL ;
+#else
+              pNode->fPPsiOx = SMPmakeElt(matrix, pEqn, psiEqnOxM);
+#endif
+
+#ifdef KLU
+              pNode->fPPsiOxP1 = SMPmakeEltKLUforCIDER (matrix, pEqn, psiEqnOxP) ;
+              pNode->fPPsiOxP1Binding = NULL ;
+#else
+              pNode->fPPsiOxP1 = SMPmakeElt(matrix, pEqn, psiEqnOxP);
+#endif
+
 	    } else { /* Bottom Side */
-	      pNode->fNPsiInM1 = spGetElement( matrix, nEqn, psiEqnInM );
-	      pNode->fNPsiIn   = spGetElement( matrix, nEqn, psiEqnInP );
-	      pNode->fNPsiOxM1 = spGetElement( matrix, nEqn, psiEqnOxM );
-	      pNode->fNPsiOx   = spGetElement( matrix, nEqn, psiEqnOxP );
-	      pNode->fPPsiInM1 = spGetElement( matrix, pEqn, psiEqnInM );
-	      pNode->fPPsiIn   = spGetElement( matrix, pEqn, psiEqnInP );
-	      pNode->fPPsiOxM1 = spGetElement( matrix, pEqn, psiEqnOxM );
-	      pNode->fPPsiOx   = spGetElement( matrix, pEqn, psiEqnOxP );
+
+#ifdef KLU
+              pNode->fNPsiInM1 = SMPmakeEltKLUforCIDER (matrix, nEqn, psiEqnInM) ;
+              pNode->fNPsiInM1Binding = NULL ;
+#else
+              pNode->fNPsiInM1 = SMPmakeElt(matrix, nEqn, psiEqnInM);
+#endif
+
+#ifdef KLU
+              pNode->fNPsiIn = SMPmakeEltKLUforCIDER (matrix, nEqn, psiEqnInP) ;
+              pNode->fNPsiInBinding = NULL ;
+#else
+              pNode->fNPsiIn = SMPmakeElt(matrix, nEqn, psiEqnInP);
+#endif
+
+#ifdef KLU
+              pNode->fNPsiOxM1 = SMPmakeEltKLUforCIDER (matrix, nEqn, psiEqnOxM) ;
+              pNode->fNPsiOxM1Binding = NULL ;
+#else
+              pNode->fNPsiOxM1 = SMPmakeElt(matrix, nEqn, psiEqnOxM);
+#endif
+
+#ifdef KLU
+              pNode->fNPsiOx = SMPmakeEltKLUforCIDER (matrix, nEqn, psiEqnOxP) ;
+              pNode->fNPsiOxBinding = NULL ;
+#else
+              pNode->fNPsiOx = SMPmakeElt(matrix, nEqn, psiEqnOxP);
+#endif
+
+#ifdef KLU
+              pNode->fPPsiInM1 = SMPmakeEltKLUforCIDER (matrix, pEqn, psiEqnInM) ;
+              pNode->fPPsiInM1Binding = NULL ;
+#else
+              pNode->fPPsiInM1 = SMPmakeElt(matrix, pEqn, psiEqnInM);
+#endif
+
+#ifdef KLU
+              pNode->fPPsiIn = SMPmakeEltKLUforCIDER (matrix, pEqn, psiEqnInP) ;
+              pNode->fPPsiInBinding = NULL ;
+#else
+              pNode->fPPsiIn = SMPmakeElt(matrix, pEqn, psiEqnInP);
+#endif
+
+#ifdef KLU
+              pNode->fPPsiOxM1 = SMPmakeEltKLUforCIDER (matrix, pEqn, psiEqnOxM) ;
+              pNode->fPPsiOxM1Binding = NULL ;
+#else
+              pNode->fPPsiOxM1 = SMPmakeElt(matrix, pEqn, psiEqnOxM);
+#endif
+
+#ifdef KLU
+              pNode->fPPsiOx = SMPmakeEltKLUforCIDER (matrix, pEqn, psiEqnOxP) ;
+              pNode->fPPsiOxBinding = NULL ;
+#else
+              pNode->fPPsiOx = SMPmakeElt(matrix, pEqn, psiEqnOxP);
+#endif
+
 	    }
 	  }
 	} /* endfor nIndex */
@@ -280,6 +883,307 @@ void
   } /* endif SurfaceMobility */
 }
 
+#ifdef KLU
+void
+TWObindCSC (TWOdevice *pDevice)
+{
+  TWOelem *pElem;
+  TWOnode *pNode;
+  TWOchannel *pCh;
+  BindKluElementCOO i, *matched, *BindStruct, *BindStructCSC ;
+  int index ;
+  size_t nz ;
+
+  int eIndex, nIndex;
+  int nextIndex;			/* index of node to find next element */
+  int psiEqn, nEqn, pEqn;		/* scratch for deref'd eqn numbers */
+  int psiEqnTL = 0, nEqnTL = 0, pEqnTL = 0;
+  int psiEqnTR = 0, nEqnTR = 0, pEqnTR = 0;
+  int psiEqnBR = 0, nEqnBR = 0, pEqnBR = 0;
+  int psiEqnBL = 0, nEqnBL = 0, pEqnBL = 0;
+  int psiEqnInM = 0, psiEqnInP = 0;	/* scratch for deref'd surface eqns */
+  int psiEqnOxM = 0, psiEqnOxP = 0;	/* M= more negative, P= more positive */
+
+  BindStruct = pDevice->matrix->SMPkluMatrix->KLUmatrixBindStructCOO ;
+  nz = pDevice->matrix->SMPkluMatrix->KLUmatrixNZ ;
+
+  BindStructCSC = (BindKluElementCOO *) malloc (nz * sizeof(BindKluElementCOO)) ;
+  for (index = 0 ; index < (int)nz ; index++) {
+    BindStructCSC [index] = BindStruct [index] ;
+  }
+
+  for ( eIndex = 1; eIndex <= pDevice->numElems; eIndex++ ) {
+    pElem = pDevice->elements[ eIndex ];
+    
+    /* first the self terms */
+    for ( nIndex = 0; nIndex <= 3; nIndex++ ) {
+      pNode = pElem->pNodes[ nIndex ];
+      /* get poisson-only pointer */
+      psiEqn = pNode->psiEqn;
+
+      CREATE_KLU_BINDING_TABLE_CIDER(fPsiPsi, fPsiPsiBinding, psiEqn, psiEqn) ;
+
+      if ( pElem->elemType == SEMICON ) {
+	/* get continuity-coupling terms */
+	nEqn = pNode->nEqn;
+	pEqn = pNode->pEqn;
+	/* pointers for additional terms */
+
+        CREATE_KLU_BINDING_TABLE_CIDER(fPsiN, fPsiNBinding, psiEqn, nEqn) ;
+        CREATE_KLU_BINDING_TABLE_CIDER(fPsiP, fPsiPBinding, psiEqn, pEqn) ;
+        CREATE_KLU_BINDING_TABLE_CIDER(fNPsi, fNPsiBinding, nEqn, psiEqn) ;
+        CREATE_KLU_BINDING_TABLE_CIDER(fNN, fNNBinding, nEqn, nEqn) ;
+        CREATE_KLU_BINDING_TABLE_CIDER(fNP, fNPBinding, nEqn, pEqn) ;
+        CREATE_KLU_BINDING_TABLE_CIDER(fPPsi, fPPsiBinding, pEqn, psiEqn) ;
+        CREATE_KLU_BINDING_TABLE_CIDER(fPN, fPNBinding, pEqn, nEqn) ;
+        CREATE_KLU_BINDING_TABLE_CIDER(fPP, fPPBinding, pEqn, pEqn) ;
+
+      } else {
+	nEqn = 0;
+	pEqn = 0;
+      }
+      /* save equation indices */
+      switch ( nIndex ) {
+      case 0: /* TL Node */
+	psiEqnTL = psiEqn;
+	nEqnTL = nEqn;
+	pEqnTL = pEqn;
+	break;
+      case 1: /* TR Node */
+	psiEqnTR = psiEqn;
+	nEqnTR = nEqn;
+	pEqnTR = pEqn;
+	break;
+      case 2: /* BR Node */
+	psiEqnBR = psiEqn;
+	nEqnBR = nEqn;
+	pEqnBR = pEqn;
+	break;
+      case 3: /* BL Node */
+	psiEqnBL = psiEqn;
+	nEqnBL = nEqn;
+	pEqnBL = pEqn;
+	break;
+      default:
+	break;
+      }
+    }
+    
+    /* now terms to couple to adjacent nodes */
+    pNode = pElem->pTLNode;
+
+    CREATE_KLU_BINDING_TABLE_CIDER(fPsiPsiiP1, fPsiPsiiP1Binding, psiEqnTL, psiEqnTR) ;
+    CREATE_KLU_BINDING_TABLE_CIDER(fPsiPsijP1, fPsiPsijP1Binding, psiEqnTL, psiEqnBL) ;
+
+    if ( pElem->elemType == SEMICON ) {
+      /* continuity equation pointers */
+
+      CREATE_KLU_BINDING_TABLE_CIDER(fNPsiiP1, fNPsiiP1Binding, nEqnTL, psiEqnTR) ;
+      CREATE_KLU_BINDING_TABLE_CIDER(fNNiP1, fNNiP1Binding, nEqnTL, nEqnTR) ;
+      CREATE_KLU_BINDING_TABLE_CIDER(fNPsijP1, fNPsijP1Binding, nEqnTL, psiEqnBL) ;
+      CREATE_KLU_BINDING_TABLE_CIDER(fNNjP1, fNNjP1Binding, nEqnTL, nEqnBL) ;
+      CREATE_KLU_BINDING_TABLE_CIDER(fPPsiiP1, fPPsiiP1Binding, pEqnTL, psiEqnTR) ;
+      CREATE_KLU_BINDING_TABLE_CIDER(fPPiP1, fPPiP1Binding, pEqnTL, pEqnTR) ;
+      CREATE_KLU_BINDING_TABLE_CIDER(fPPsijP1, fPPsijP1Binding, pEqnTL, psiEqnBL) ;
+      CREATE_KLU_BINDING_TABLE_CIDER(fPPjP1, fPPjP1Binding, pEqnTL, pEqnBL) ;
+
+      /* Surface Mobility Model depends on diagonal node values */
+      if ( MobDeriv && SurfaceMobility && pElem->channel ) {
+
+        CREATE_KLU_BINDING_TABLE_CIDER(fNPsiiP1jP1, fNPsiiP1jP1Binding, nEqnTL, psiEqnBR) ;
+        CREATE_KLU_BINDING_TABLE_CIDER(fNNiP1jP1, fNNiP1jP1Binding, nEqnTL, nEqnBR) ;
+        CREATE_KLU_BINDING_TABLE_CIDER(fPPsiiP1jP1, fPPsiiP1jP1Binding, pEqnTL, psiEqnBR) ;
+        CREATE_KLU_BINDING_TABLE_CIDER(fPPiP1jP1, fPPiP1jP1Binding, pEqnTL, pEqnBR) ;
+
+      }
+    }
+    
+    pNode = pElem->pTRNode;
+
+    CREATE_KLU_BINDING_TABLE_CIDER(fPsiPsiiM1, fPsiPsiiM1Binding, psiEqnTR, psiEqnTL) ;
+    CREATE_KLU_BINDING_TABLE_CIDER(fPsiPsijP1, fPsiPsijP1Binding, psiEqnTR, psiEqnBR) ;
+
+    if ( pElem->elemType == SEMICON ) {
+      /* continuity equation pointers */
+
+      CREATE_KLU_BINDING_TABLE_CIDER(fNPsiiM1, fNPsiiM1Binding, nEqnTR, psiEqnTL) ;
+      CREATE_KLU_BINDING_TABLE_CIDER(fNNiM1, fNNiM1Binding, nEqnTR, nEqnTL) ;
+      CREATE_KLU_BINDING_TABLE_CIDER(fNPsijP1, fNPsijP1Binding, nEqnTR, psiEqnBR) ;
+      CREATE_KLU_BINDING_TABLE_CIDER(fNNjP1, fNNjP1Binding, nEqnTR, nEqnBR) ;
+      CREATE_KLU_BINDING_TABLE_CIDER(fPPsiiM1, fPPsiiM1Binding, pEqnTR, psiEqnTL) ;
+      CREATE_KLU_BINDING_TABLE_CIDER(fPPiM1, fPPiM1Binding, pEqnTR, pEqnTL) ;
+      CREATE_KLU_BINDING_TABLE_CIDER(fPPsijP1, fPPsijP1Binding, pEqnTR, psiEqnBR) ;
+      CREATE_KLU_BINDING_TABLE_CIDER(fPPjP1, fPPjP1Binding, pEqnTR, pEqnBR) ;
+
+      /* Surface Mobility Model depends on diagonal node values */
+      if ( MobDeriv && SurfaceMobility && pElem->channel ) {
+
+        CREATE_KLU_BINDING_TABLE_CIDER(fNPsiiM1jP1, fNPsiiM1jP1Binding, nEqnTR, psiEqnBL) ;
+        CREATE_KLU_BINDING_TABLE_CIDER(fNNiM1jP1, fNNiM1jP1Binding, nEqnTR, nEqnBL) ;
+        CREATE_KLU_BINDING_TABLE_CIDER(fPPsiiM1jP1, fPPsiiM1jP1Binding, pEqnTR, psiEqnBL) ;
+        CREATE_KLU_BINDING_TABLE_CIDER(fPPiM1jP1, fPPiM1jP1Binding, pEqnTR, pEqnBL) ;
+
+      }
+    }
+    
+    pNode = pElem->pBRNode;
+
+    CREATE_KLU_BINDING_TABLE_CIDER(fPsiPsiiM1, fPsiPsiiM1Binding, psiEqnBR, psiEqnBL) ;
+    CREATE_KLU_BINDING_TABLE_CIDER(fPsiPsijM1, fPsiPsijM1Binding, psiEqnBR, psiEqnTR) ;
+
+    if ( pElem->elemType == SEMICON ) {
+      /* continuity equation pointers */
+
+      CREATE_KLU_BINDING_TABLE_CIDER(fNPsiiM1, fNPsiiM1Binding, nEqnBR, psiEqnBL) ;
+      CREATE_KLU_BINDING_TABLE_CIDER(fNNiM1, fNNiM1Binding, nEqnBR, nEqnBL) ;
+      CREATE_KLU_BINDING_TABLE_CIDER(fNPsijM1, fNPsijM1Binding, nEqnBR, psiEqnTR) ;
+      CREATE_KLU_BINDING_TABLE_CIDER(fNNjM1, fNNjM1Binding, nEqnBR, nEqnTR) ;
+      CREATE_KLU_BINDING_TABLE_CIDER(fPPsiiM1, fPPsiiM1Binding, pEqnBR, psiEqnBL) ;
+      CREATE_KLU_BINDING_TABLE_CIDER(fPPiM1, fPPiM1Binding, pEqnBR, pEqnBL) ;
+      CREATE_KLU_BINDING_TABLE_CIDER(fPPsijM1, fPPsijM1Binding, pEqnBR, psiEqnTR) ;
+      CREATE_KLU_BINDING_TABLE_CIDER(fPPjM1, fPPjM1Binding, pEqnBR, pEqnTR) ;
+
+      /* Surface Mobility Model depends on diagonal node values */
+      if ( MobDeriv && SurfaceMobility && pElem->channel ) {
+
+        CREATE_KLU_BINDING_TABLE_CIDER(fNPsiiM1jM1, fNPsiiM1jM1Binding, nEqnBR, psiEqnTL) ;
+        CREATE_KLU_BINDING_TABLE_CIDER(fNNiM1jM1, fNNiM1jM1Binding, nEqnBR, nEqnTL) ;
+        CREATE_KLU_BINDING_TABLE_CIDER(fPPsiiM1jM1, fPPsiiM1jM1Binding, pEqnBR, psiEqnTL) ;
+        CREATE_KLU_BINDING_TABLE_CIDER(fPPiM1jM1, fPPiM1jM1Binding, pEqnBR, pEqnTL) ;
+
+      }
+    }
+    
+    pNode = pElem->pBLNode;
+
+    CREATE_KLU_BINDING_TABLE_CIDER(fPsiPsiiP1, fPsiPsiiP1Binding, psiEqnBL, psiEqnBR) ;
+    CREATE_KLU_BINDING_TABLE_CIDER(fPsiPsijM1, fPsiPsijM1Binding, psiEqnBL, psiEqnTL) ;
+
+    if ( pElem->elemType == SEMICON ) {
+      /* continuity equation pointers */
+
+      CREATE_KLU_BINDING_TABLE_CIDER(fNPsiiP1, fNPsiiP1Binding, nEqnBL, psiEqnBR) ;
+      CREATE_KLU_BINDING_TABLE_CIDER(fNNiP1, fNNiP1Binding, nEqnBL, nEqnBR) ;
+      CREATE_KLU_BINDING_TABLE_CIDER(fNPsijM1, fNPsijM1Binding, nEqnBL, psiEqnTL) ;
+      CREATE_KLU_BINDING_TABLE_CIDER(fNNjM1, fNNjM1Binding, nEqnBL, nEqnTL) ;
+      CREATE_KLU_BINDING_TABLE_CIDER(fPPsiiP1, fPPsiiP1Binding, pEqnBL, psiEqnBR) ;
+      CREATE_KLU_BINDING_TABLE_CIDER(fPPiP1, fPPiP1Binding, pEqnBL, pEqnBR) ;
+      CREATE_KLU_BINDING_TABLE_CIDER(fPPsijM1, fPPsijM1Binding, pEqnBL, psiEqnTL) ;
+      CREATE_KLU_BINDING_TABLE_CIDER(fPPjM1, fPPjM1Binding, pEqnBL, pEqnTL) ;
+
+      /* Surface Mobility Model depends on diagonal node values */
+      if ( MobDeriv && SurfaceMobility && pElem->channel ) {
+
+        CREATE_KLU_BINDING_TABLE_CIDER(fNPsiiP1jM1, fNPsiiP1jM1Binding, nEqnBL, psiEqnTR) ;
+        CREATE_KLU_BINDING_TABLE_CIDER(fNNiP1jM1, fNNiP1jM1Binding, nEqnBL, nEqnTR) ;
+        CREATE_KLU_BINDING_TABLE_CIDER(fPPsiiP1jM1, fPPsiiP1jM1Binding, pEqnBL, psiEqnTR) ;
+        CREATE_KLU_BINDING_TABLE_CIDER(fPPiP1jM1, fPPiP1jM1Binding, pEqnBL, pEqnTR) ;
+
+      }
+    }
+  }
+  /* 
+   * Add terms for surface-field of inversion-layer mobility model.
+   * Elements MUST be made from silicon for this to work.
+   * No empty elements are allowed.
+   * Don't need these pointers if SurfaceMobility isn't set.
+   */
+  if ( MobDeriv && SurfaceMobility ) {
+    for ( pCh = pDevice->pChannel; pCh != NULL;
+	 pCh = pCh->next ) {
+      pElem = pCh->pNElem;
+      switch (pCh->type) {
+      case 0:
+	psiEqnInM = pElem->pBLNode->psiEqn;
+	psiEqnInP = pElem->pBRNode->psiEqn;
+	psiEqnOxM = pElem->pTLNode->psiEqn;
+	psiEqnOxP = pElem->pTRNode->psiEqn;
+	break;
+      case 1:
+	psiEqnInM = pElem->pTLNode->psiEqn;
+	psiEqnInP = pElem->pBLNode->psiEqn;
+	psiEqnOxM = pElem->pTRNode->psiEqn;
+	psiEqnOxP = pElem->pBRNode->psiEqn;
+	break;
+      case 2:
+	psiEqnInM = pElem->pTLNode->psiEqn;
+	psiEqnInP = pElem->pTRNode->psiEqn;
+	psiEqnOxM = pElem->pBLNode->psiEqn;
+	psiEqnOxP = pElem->pBRNode->psiEqn;
+	break;
+      case 3:
+	psiEqnInM = pElem->pTRNode->psiEqn;
+	psiEqnInP = pElem->pBRNode->psiEqn;
+	psiEqnOxM = pElem->pTLNode->psiEqn;
+	psiEqnOxP = pElem->pBLNode->psiEqn;
+	break;
+      }
+      pElem = pCh->pSeed;
+      nextIndex = (pCh->type + 2)%4;
+      while (pElem && pElem->channel == pCh->id) {
+	for ( nIndex = 0; nIndex <= 3; nIndex++ ) {
+	  pNode = pElem->pNodes[ nIndex ];
+	  psiEqn = pNode->psiEqn;
+	  nEqn = pNode->nEqn;
+	  pEqn = pNode->pEqn;
+	  if ( pCh->type % 2 == 0 ) { /* Vertical Slice */
+	    if ( nIndex == 0 || nIndex == 3 ) { /* Left Side */
+
+              CREATE_KLU_BINDING_TABLE_CIDER(fNPsiIn, fNPsiInBinding, nEqn, psiEqnInM) ;
+              CREATE_KLU_BINDING_TABLE_CIDER(fNPsiInP1, fNPsiInP1Binding, nEqn, psiEqnInP) ;
+              CREATE_KLU_BINDING_TABLE_CIDER(fNPsiOx, fNPsiOxBinding, nEqn, psiEqnOxM) ;
+              CREATE_KLU_BINDING_TABLE_CIDER(fNPsiOxP1, fNPsiOxP1Binding, nEqn, psiEqnOxP) ;
+              CREATE_KLU_BINDING_TABLE_CIDER(fPPsiIn, fPPsiInBinding, pEqn, psiEqnInM) ;
+              CREATE_KLU_BINDING_TABLE_CIDER(fPPsiInP1, fPPsiInP1Binding, pEqn, psiEqnInP) ;
+              CREATE_KLU_BINDING_TABLE_CIDER(fPPsiOx, fPPsiOxBinding, pEqn, psiEqnOxM) ;
+              CREATE_KLU_BINDING_TABLE_CIDER(fPPsiOxP1, fPPsiOxP1Binding, pEqn, psiEqnOxP) ;
+
+	    } else { /* Right Side */
+
+              CREATE_KLU_BINDING_TABLE_CIDER(fNPsiInM1, fNPsiInM1Binding, nEqn, psiEqnInM) ;
+              CREATE_KLU_BINDING_TABLE_CIDER(fNPsiIn, fNPsiInBinding, nEqn, psiEqnInP) ;
+              CREATE_KLU_BINDING_TABLE_CIDER(fNPsiOxM1, fNPsiOxM1Binding, nEqn, psiEqnOxM) ;
+              CREATE_KLU_BINDING_TABLE_CIDER(fNPsiOx, fNPsiOxBinding, nEqn, psiEqnOxP) ;
+              CREATE_KLU_BINDING_TABLE_CIDER(fPPsiInM1, fPPsiInM1Binding, pEqn, psiEqnInM) ;
+              CREATE_KLU_BINDING_TABLE_CIDER(fPPsiIn, fPPsiInBinding, pEqn, psiEqnInP) ;
+              CREATE_KLU_BINDING_TABLE_CIDER(fPPsiOxM1, fPPsiOxM1Binding, pEqn, psiEqnOxM) ;
+              CREATE_KLU_BINDING_TABLE_CIDER(fPPsiOx, fPPsiOxBinding, pEqn, psiEqnOxP) ;
+
+	    }
+	  } else { /* Horizontal Slice */
+	    if ( nIndex <= 1 ) { /* Top Side */
+
+              CREATE_KLU_BINDING_TABLE_CIDER(fNPsiIn, fNPsiInBinding, nEqn, psiEqnInM) ;
+              CREATE_KLU_BINDING_TABLE_CIDER(fNPsiInP1, fNPsiInP1Binding, nEqn, psiEqnInP) ;
+              CREATE_KLU_BINDING_TABLE_CIDER(fNPsiOx, fNPsiOxBinding, nEqn, psiEqnOxM) ;
+              CREATE_KLU_BINDING_TABLE_CIDER(fNPsiOxP1, fNPsiOxP1Binding, nEqn, psiEqnOxP) ;
+              CREATE_KLU_BINDING_TABLE_CIDER(fPPsiIn, fPPsiInBinding, pEqn, psiEqnInM) ;
+              CREATE_KLU_BINDING_TABLE_CIDER(fPPsiInP1, fPPsiInP1Binding, pEqn, psiEqnInP) ;
+              CREATE_KLU_BINDING_TABLE_CIDER(fPPsiOx, fPPsiOxBinding, pEqn, psiEqnOxM) ;
+              CREATE_KLU_BINDING_TABLE_CIDER(fPPsiOxP1, fPPsiOxP1Binding, pEqn, psiEqnOxP) ;
+
+	    } else { /* Bottom Side */
+
+              CREATE_KLU_BINDING_TABLE_CIDER(fNPsiInM1, fNPsiInM1Binding, nEqn, psiEqnInM) ;
+              CREATE_KLU_BINDING_TABLE_CIDER(fNPsiIn, fNPsiInBinding, nEqn, psiEqnInP) ;
+              CREATE_KLU_BINDING_TABLE_CIDER(fNPsiOxM1, fNPsiOxM1Binding, nEqn, psiEqnOxM) ;
+              CREATE_KLU_BINDING_TABLE_CIDER(fNPsiOx, fNPsiOxBinding, nEqn, psiEqnOxP) ;
+              CREATE_KLU_BINDING_TABLE_CIDER(fPPsiInM1, fPPsiInM1Binding, pEqn, psiEqnInM) ;
+              CREATE_KLU_BINDING_TABLE_CIDER(fPPsiIn, fPPsiInBinding, pEqn, psiEqnInP) ;
+              CREATE_KLU_BINDING_TABLE_CIDER(fPPsiOxM1, fPPsiOxM1Binding, pEqn, psiEqnOxM) ;
+              CREATE_KLU_BINDING_TABLE_CIDER(fPPsiOx, fPPsiOxBinding, pEqn, psiEqnOxP) ;
+
+	    }
+	  }
+	} /* endfor nIndex */
+	pElem = pElem->pElems[ nextIndex ];
+      } /* endwhile pElem */
+    } /* endfor pCh */
+  } /* endif SurfaceMobility */
+
+  free (BindStructCSC) ;
+}
+#endif
 
 /*
  *  The Jacobian and Rhs are loaded by the following function.
@@ -320,7 +1224,17 @@ void
   }
   
   /* zero the matrix */
-  spClear( pDevice->matrix );
+#ifdef KLU
+  if (pDevice->matrix->CKTkluMODE) {
+    SMPclearKLUforCIDER (pDevice->matrix) ;
+  } else {
+#endif
+
+    SMPclear(pDevice->matrix);
+
+#ifdef KLU
+  }
+#endif
   
   for ( eIndex = 1; eIndex <= pDevice->numElems; eIndex++ ) {
     pElem = pDevice->elements[ eIndex ];
@@ -521,7 +1435,17 @@ void
   TWO_commonTerms( pDevice, FALSE, FALSE, NULL );
   
   /* zero the matrix */
-  spClear( pDevice->matrix );
+#ifdef KLU
+  if (pDevice->matrix->CKTkluMODE) {
+    SMPclearKLUforCIDER (pDevice->matrix) ;
+  } else {
+#endif
+
+    SMPclear(pDevice->matrix);
+
+#ifdef KLU
+  }
+#endif
   
   for ( eIndex = 1; eIndex <= pDevice->numElems; eIndex++ ) {
     pElem = pDevice->elements[ eIndex ];
