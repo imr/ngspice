@@ -62,6 +62,10 @@ HICUMparam(int param, IFvalue *value, GENinstance *instPtr, IFvalue *select)
             here->HICUMicVCi      = value->rValue;
             here->HICUMicVCiGiven = TRUE;
             break;
+        case HICUM_IC_Vt:
+            here->HICUMicVt      = value->rValue;
+            here->HICUMicVtGiven = TRUE;
+            break;
         case HICUM_TEMP:
             here->HICUMtemp = value->rValue+CONSTCtoK;
             here->HICUMtempGiven = TRUE;

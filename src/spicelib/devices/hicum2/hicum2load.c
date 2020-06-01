@@ -876,6 +876,10 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                                 *(ckt->CKTstate1 + here->HICUMvrth);
                         *(ckt->CKTstate0 + here->HICUMqcth) =
                                 *(ckt->CKTstate1 + here->HICUMqcth);
+                        *(ckt->CKTstate0 + here->HICUMith) =
+                                *(ckt->CKTstate1 + here->HICUMith);
+                        *(ckt->CKTstate0 + here->HICUMith_Vrth) =
+                                *(ckt->CKTstate1 + here->HICUMith_Vrth);
                     }
                 } else {
 #endif /* PREDICTOR */
@@ -966,6 +970,8 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 ibpsihat = *(ckt->CKTstate0 + here->HICUMibpsi) +
                          *(ckt->CKTstate0 + here->HICUMibpsi_Vbpci)*delvbpci +
                          *(ckt->CKTstate0 + here->HICUMibpsi_Vsici)*delvsici;
+                ithhat    = *(ckt->CKTstate0 + here->HICUMith) +
+                         *(ckt->CKTstate0 + here->HICUMith_Vrth)*delvrth;
                 /*
                  *    bypass if solution has not changed
                  */
@@ -1017,6 +1023,10 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                     if( (fabs(isicihat-*(ckt->CKTstate0 + here->HICUMisici)) <
                             ckt->CKTreltol* MAX(fabs(isicihat),
                             fabs(*(ckt->CKTstate0 + here->HICUMisici)))+
+                            ckt->CKTabstol) )
+                    if( (fabs(ithhat-*(ckt->CKTstate0 + here->HICUMith)) <
+                            ckt->CKTreltol* MAX(fabs(ithhat),
+                            fabs(*(ckt->CKTstate0 + here->HICUMith)))+
                             ckt->CKTabstol) )
                     if( (fabs(ibpsihat-*(ckt->CKTstate0 + here->HICUMibpsi)) <
                             ckt->CKTreltol* MAX(fabs(ibpsihat),
@@ -2106,6 +2116,9 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             *(ckt->CKTstate0 + here->HICUMgqbcpar2)    = gqbcpar2;
 
             *(ckt->CKTstate0 + here->HICUMgqsu)        = gqsu;
+
+            *(ckt->CKTstate0 + here->HICUMith)         = Ith;
+            *(ckt->CKTstate0 + here->HICUMith_Vrth)    = Ith_Vrth;
 
 load:
             /*

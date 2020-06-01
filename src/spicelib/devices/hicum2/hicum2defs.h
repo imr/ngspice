@@ -72,6 +72,7 @@ typedef struct sHICUMinstance {
     double HICUMicVBp;    /* initial condition potential Bp */
     double HICUMicVB;     /* initial condition potential B  */
     double HICUMicVCi;    /* initial condition potential Ci */
+    double HICUMicVt;     /* initial condition potential T */
     double HICUMicVEi;    /* initial condition potential Ei */
     double HICUMicVC;     /* initial condition potential C  */
     double HICUMicVE;     /* initial condition potential E  */
@@ -268,6 +269,7 @@ typedef struct sHICUMinstance {
     unsigned HICUMicVBpGiven  :1;  /* flag to indicate VBp init. cond. given */
     unsigned HICUMicVEiGiven  :1;  /* flag to indicate VEi init. cond. given */
     unsigned HICUMicVCiGiven  :1;  /* flag to indicate VCi init. cond. given */
+    unsigned HICUMicVtGiven   :1;  /* flag to indicate VCi init. cond. given */
     unsigned HICUMtempGiven   :1;  /* temperature given for hicum instance*/
     unsigned HICUMdtempGiven  :1;  /* delta temperature given for hicum instance*/
     unsigned HICUMmGiven      :1;  /* flag to indicate multiplier was specified */
@@ -423,7 +425,10 @@ typedef struct sHICUMinstance {
 #define HICUMixf2_Vbici  HICUMstate+87
 #define HICUMixf2_Vfx1   HICUMstate+88
 
-#define HICUMnumStates 89
+#define HICUMith         HICUMstate+89
+#define HICUMith_Vrth    HICUMstate+90
+
+#define HICUMnumStates 91
 
 /* per model data */
 typedef struct sHICUMmodel {           /* model structure for a hicum */
@@ -808,6 +813,7 @@ enum {
     HICUM_IC_VBp,
     HICUM_IC_VEi,
     HICUM_IC_VCi,
+    HICUM_IC_Vt,
     HICUM_TEMP,
     HICUM_DTEMP,
     HICUM_M,

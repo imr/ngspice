@@ -58,6 +58,9 @@ HICUMask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFval
         case HICUM_IC_VCi:
             value->rValue = here->HICUMicVCi;
             return(OK);
+        case HICUM_IC_Vt:
+            value->rValue = here->HICUMicVt;
+            return(OK);
         case HICUM_TEMP:
             value->rValue = here->HICUMtemp - CONSTCtoK;
             return(OK);

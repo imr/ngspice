@@ -55,6 +55,10 @@ HICUMgetic(GENmodel *inModel, CKTcircuit *ckt)
                 here->HICUMicVCi =
                         *(ckt->CKTrhs + here->HICUMcollCINode);
             }
+            if(!here->HICUMicVtGiven) {
+                here->HICUMicVt =
+                        *(ckt->CKTrhs + here->HICUMtempNode);
+            }
             if(!here->HICUMicVEiGiven) {
                 here->HICUMicVEi =
                         *(ckt->CKTrhs + here->HICUMemitEINode);

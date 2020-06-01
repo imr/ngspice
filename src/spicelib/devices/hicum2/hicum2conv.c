@@ -28,6 +28,7 @@ HICUMconvTest(GENmodel *inModel, CKTcircuit *ckt)
     double delvbpbi;
     double delvbpci;
     double delvsici;
+    double delvrth;
 
     double ibieihat;
     double ibicihat;
@@ -37,9 +38,10 @@ HICUMconvTest(GENmodel *inModel, CKTcircuit *ckt)
     double ibpcihat;
     double ibpsihat;
     double isicihat;
+    double ithhat;
 
-    double Vbiei, Vbici, Vciei, Vbpei, Vbpbi, Vbpci, Vbci, Vsici;
-    double Ibiei, Ibici, Iciei, Ibpei, Ibpbi, Ibpci, Ibpsi, Isici;
+    double Vbiei, Vbici, Vciei, Vbpei, Vbpbi, Vbpci, Vbci, Vsici, Vrth;
+    double Ibiei, Ibici, Iciei, Ibpei, Ibpbi, Ibpci, Ibpsi, Isici, Ith;
 
     for( ; model != NULL; model = HICUMnextModel(model)) {
         for(here=HICUMinstances(model);here!=NULL;here = HICUMnextInstance(here)) {
@@ -66,6 +68,7 @@ HICUMconvTest(GENmodel *inModel, CKTcircuit *ckt)
                    *(ckt->CKTrhsOld+here->HICUMsubsSINode)-
                    *(ckt->CKTrhsOld+here->HICUMcollCINode));
             Vciei = Vbiei - Vbici;
+            Vrth  = model->HICUMtype*(*(ckt->CKTrhsOld+here->HICUMtempNode));
 
             delvbiei = Vbiei - *(ckt->CKTstate0 + here->HICUMvbiei);
             delvbici = Vbici - *(ckt->CKTstate0 + here->HICUMvbici);
@@ -73,6 +76,7 @@ HICUMconvTest(GENmodel *inModel, CKTcircuit *ckt)
             delvbpbi = Vbpbi - *(ckt->CKTstate0 + here->HICUMvbpbi);
             delvbpci = Vbpci - *(ckt->CKTstate0 + here->HICUMvbpci);
             delvsici = Vsici - *(ckt->CKTstate0 + here->HICUMvsici);
+            delvrth  = Vrth  - *(ckt->CKTstate0 + here->HICUMvrth);
 
             ibieihat = *(ckt->CKTstate0 + here->HICUMibiei) +
                        *(ckt->CKTstate0 + here->HICUMibiei_Vbiei)*delvbiei;
@@ -93,6 +97,8 @@ HICUMconvTest(GENmodel *inModel, CKTcircuit *ckt)
                        *(ckt->CKTstate0 + here->HICUMibpsi_Vsici)*delvsici;
             isicihat = *(ckt->CKTstate0 + here->HICUMisici) +
                        *(ckt->CKTstate0 + here->HICUMisici_Vsici)*delvsici;
+            ithhat   = *(ckt->CKTstate0 + here->HICUMith) +
+                       *(ckt->CKTstate0 + here->HICUMith_Vrth)*delvrth;
 
             Ibiei       = *(ckt->CKTstate0 + here->HICUMibiei);
             Ibici       = *(ckt->CKTstate0 + here->HICUMibici);
@@ -102,6 +108,8 @@ HICUMconvTest(GENmodel *inModel, CKTcircuit *ckt)
             Ibpci       = *(ckt->CKTstate0 + here->HICUMibpci);
             Ibpsi       = *(ckt->CKTstate0 + here->HICUMibpsi);
             Isici       = *(ckt->CKTstate0 + here->HICUMisici);
+            Ith         = *(ckt->CKTstate0 + here->HICUMith);
+
             /*
              *   check convergence
              */
@@ -152,7 +160,15 @@ HICUMconvTest(GENmodel *inModel, CKTcircuit *ckt)
                                             ckt->CKTnoncon++;
                                             ckt->CKTtroubleElt = (GENinstance *) here;
                                             return(OK); /* no reason to continue - we've failed... */
+                                        } else {
+                                            tol=ckt->CKTreltol*MAX(fabs(ithhat),fabs(Ith))+ckt->CKTabstol;
+                                            if (fabs(ithhat-Ith) > tol) {
+                                                ckt->CKTnoncon++;
+                                                ckt->CKTtroubleElt = (GENinstance *) here;
+                                                return(OK); /* no reason to continue - we've failed... */
+                                            } 
                                         }
+
                                     }
                                 }
                             }

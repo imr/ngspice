@@ -25,6 +25,7 @@ IFparm HICUMpTable[] = { /* parameters */
  IOPAU("icvbi", HICUM_IC_VBi, IF_REAL,    "Initial Bi potential"),
  IOPAU("icvbp", HICUM_IC_VBp, IF_REAL,    "Initial Bp potential"),
  IOPAU("icvci", HICUM_IC_VCi, IF_REAL,    "Initial Ci potential"),
+ IOPAU("icvt", HICUM_IC_Vt, IF_REAL,    "Initial T potential"),
  IOPAU("icvei", HICUM_IC_VEi, IF_REAL,    "Initial Ei potential"),
  
  IOPU("m",       HICUM_M,      IF_REAL,    "Multiplier"),
