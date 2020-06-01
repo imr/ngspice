@@ -52,8 +52,13 @@ void NUMD2project(TWOdevice *pDevice, double delV)
   }
   incVpn = pDevice->dcDeltaSolution;
   storeNewRhs( pDevice, pContact );
-  spSolve( pDevice->matrix, pDevice->rhs, incVpn, NULL, NULL );
-  
+
+#ifdef KLU
+  SMPsolveKLUforCIDER (pDevice->matrix, pDevice->rhs, incVpn, NULL, NULL) ;
+#else
+  SMPsolveForCIDER (pDevice->matrix, pDevice->rhs, incVpn) ;
+#endif
+
   for ( eIndex = 1; eIndex <= pDevice->numElems; eIndex++ ) {
     pElem = pDevice->elements[ eIndex ];
     for ( index = 0; index <= 3; index++ ) {
@@ -131,8 +136,13 @@ void NBJT2project(TWOdevice *pDevice, double delVce, double delVbe)
   if ( ABS( delVce ) > MIN_DELV ) {
     incVce = pDevice->dcDeltaSolution;
     storeNewRhs( pDevice, pColContact );
-    spSolve( pDevice->matrix, pDevice->rhs, incVce, NULL, NULL);
-    
+
+#ifdef KLU
+    SMPsolveKLUforCIDER (pDevice->matrix, pDevice->rhs, incVce, NULL, NULL) ;
+#else
+    SMPsolveForCIDER (pDevice->matrix, pDevice->rhs, incVce) ;
+#endif
+
     for ( eIndex = 1; eIndex <= pDevice->numElems; eIndex++ ) {
       pElem = pDevice->elements[ eIndex ];
       for ( index = 0; index <= 3; index++ ) {
@@ -175,8 +185,13 @@ void NBJT2project(TWOdevice *pDevice, double delVce, double delVbe)
   if ( ABS( delVbe ) > MIN_DELV ) {
     incVbe = pDevice->copiedSolution;
     storeNewRhs( pDevice, pBaseContact );
-    spSolve( pDevice->matrix, pDevice->rhs, incVbe, NULL, NULL);
-    
+
+#ifdef KLU
+    SMPsolveKLUforCIDER (pDevice->matrix, pDevice->rhs, incVbe, NULL, NULL) ;
+#else
+    SMPsolveForCIDER (pDevice->matrix, pDevice->rhs, incVbe) ;
+#endif
+
     for ( eIndex = 1; eIndex <= pDevice->numElems; eIndex++ ) {
       pElem = pDevice->elements[ eIndex ];
       for ( index = 0; index <= 3; index++ ) {
@@ -265,8 +280,13 @@ void NUMOSproject(TWOdevice *pDevice, double delVdb, double delVsb,
     
     incVdb = pDevice->dcDeltaSolution;
     storeNewRhs( pDevice, pDContact );
-    spSolve( pDevice->matrix, pDevice->rhs, incVdb, NULL, NULL);
-    
+
+#ifdef KLU
+    SMPsolveKLUforCIDER (pDevice->matrix, pDevice->rhs, incVdb, NULL, NULL) ;
+#else
+    SMPsolveForCIDER (pDevice->matrix, pDevice->rhs, incVdb) ;
+#endif
+
     for ( eIndex = 1; eIndex <= pDevice->numElems; eIndex++ ) {
       pElem = pDevice->elements[ eIndex ];
       for ( index = 0; index <= 3; index++ ) {
@@ -310,8 +330,13 @@ void NUMOSproject(TWOdevice *pDevice, double delVdb, double delVsb,
     
     incVsb = pDevice->dcDeltaSolution;
     storeNewRhs( pDevice, pSContact );
-    spSolve( pDevice->matrix, pDevice->rhs, incVsb, NULL, NULL);
-    
+
+#ifdef KLU
+    SMPsolveKLUforCIDER (pDevice->matrix, pDevice->rhs, incVsb, NULL, NULL) ;
+#else
+    SMPsolveForCIDER (pDevice->matrix, pDevice->rhs, incVsb) ;
+#endif
+
     for ( eIndex = 1; eIndex <= pDevice->numElems; eIndex++ ) {
       pElem = pDevice->elements[ eIndex ];
       for ( index = 0; index <= 3; index++ ) {
@@ -354,8 +379,13 @@ void NUMOSproject(TWOdevice *pDevice, double delVdb, double delVsb,
     
     incVgb = pDevice->dcDeltaSolution;
     storeNewRhs( pDevice, pGContact );
-    spSolve( pDevice->matrix, pDevice->rhs, incVgb, NULL, NULL);
-    
+
+#ifdef KLU
+    SMPsolveKLUforCIDER (pDevice->matrix, pDevice->rhs, incVgb, NULL, NULL) ;
+#else
+    SMPsolveForCIDER (pDevice->matrix, pDevice->rhs, incVgb) ;
+#endif
+
     for ( eIndex = 1; eIndex <= pDevice->numElems; eIndex++ ) {
       pElem = pDevice->elements[ eIndex ];
       for ( index = 0; index <= 3; index++ ) {
