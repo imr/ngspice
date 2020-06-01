@@ -38,8 +38,16 @@ let rth1 = (v("net-_d3a1-pad1_") - v("net-_r11-pad1_")) / (@b.xth1.brtherm[i] + 
 let rth2 = (v("net-_d1a1-pad2_") - v("net-_r12-pad1_")) / (@b.xth2.brtherm[i] + 1n)
 settype impedance rth1 rth2
 plot rth1 rth2 ylimit 0 5k
+
 ac dec 10 1 1Meg
 plot db(out)
 plot cph(out)
+
+tran 1u 100m
+fft out
+set xbrushwidth=4
+set color0=white
+plot mag(out) xlimit 0 10k ylimit 0 30m
+
 end
 .endc
