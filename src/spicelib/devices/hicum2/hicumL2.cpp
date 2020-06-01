@@ -478,7 +478,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     int error;
     double Vbe, Vcic, Vbbp, Veie, Vsis, Vbpe;
 
-    double Ibiei, Ibiei_Vbiei;
+    double Ibiei, Ibiei_Vbiei, Ibiei_Vbici;
     double Ibici, Ibici_Vbici;
     double Ibpei, Ibpei_Vbpei;
     double Ibpci, Ibpci_Vbpci;
@@ -1398,6 +1398,8 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                             *(ckt->CKTstate1 + here->HICUMibiei);
                     *(ckt->CKTstate0 + here->HICUMibiei_Vbiei) =
                             *(ckt->CKTstate1 + here->HICUMibiei_Vbiei);
+                    *(ckt->CKTstate0 + here->HICUMibiei_Vbici) =
+                            *(ckt->CKTstate1 + here->HICUMibiei_Vbici);
                     *(ckt->CKTstate0 + here->HICUMibpei) =
                             *(ckt->CKTstate1 + here->HICUMibpei);
                     *(ckt->CKTstate0 + here->HICUMibpei_Vbpei) =
@@ -1533,7 +1535,8 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 if (model->HICUMflsh)
                     Vrth = *(ckt->CKTrhsOld + here->HICUMtempNode);
                 ibieihat = *(ckt->CKTstate0 + here->HICUMibiei) +
-                         *(ckt->CKTstate0 + here->HICUMibiei_Vbiei)*delvbiei;
+                         *(ckt->CKTstate0 + here->HICUMibiei_Vbiei)*delvbiei+
+                         *(ckt->CKTstate0 + here->HICUMibiei_Vbici)*delvbici,
                 ibicihat = *(ckt->CKTstate0 + here->HICUMibici) +
                          *(ckt->CKTstate0 + here->HICUMibici_Vbici)*delvbici;
                 ibpeihat = *(ckt->CKTstate0 + here->HICUMibpei) +
@@ -1620,6 +1623,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
                     Ibiei       = *(ckt->CKTstate0 + here->HICUMibiei);
                     Ibiei_Vbiei = *(ckt->CKTstate0 + here->HICUMibiei_Vbiei);
+                    Ibiei_Vbici = *(ckt->CKTstate0 + here->HICUMibiei_Vbici);
 
                     Ibpei       = *(ckt->CKTstate0 + here->HICUMibpei);
                     Ibpei_Vbpei = *(ckt->CKTstate0 + here->HICUMibpei_Vbpei);
@@ -2311,7 +2315,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             Ibiei       += model->HICUMtype*ibh_rec;
             Ibiei_Vbiei += model->HICUMtype*ibh_rec_Vbiei;
             Ibiei_dT    += model->HICUMtype*ibh_rec_dT;
-            //derivative of Ibiei to Vbici missing via ibh_rec!
+            Ibiei_Vbici += model->HICUMtype*ibh_rec_Vbici;
 
             if (model->HICUMtunode==1.0) {
                 Ibpei  += -model->HICUMtype*ibet;
@@ -2420,13 +2424,15 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                     Ith_Vbici  += (here->HICUMvdci_t.rpart-Vbici)*iavl_Vbici - iavl;
                 } else if (model->HICUMflsh == 2) {
                     //Iciei(Vbiei,Vbici)*Vciei
-                    Ith_Vciei  += Iciei;
-                    Ith_Vbiei  += Iciei_Vbiei*Vciei;
-                    Ith_Vbici  += Iciei_Vbici*Vciei;
+                    Ith_Vciei  += it;
+                    Ith_Vbiei  += it_Vbiei*Vciei;
+                    Ith_Vbici  += it_Vbici*Vciei;
                     //Vbiei*Ibiei(Vbiei)
                     Ith_Vbiei  += Ibiei + Ibiei_Vbiei*Vbiei;
+                    Ith_Vbici  +=         Ibiei_Vbici*Vbiei;
                     //Vbici*Ibici(Vbici)
-                    Ith_Vbici  += Ibici + Ibici_Vbici+Vbici;
+                    Ith_Vbici  += Ibici + Ibici_Vbici*Vbici;
+                    Ith_Vbici  += (here->HICUMvdci_t.rpart-Vbici)*iavl_Vbici - iavl;
                     //Vbpei*Ibpei(Vbpei)
                     Ith_Vbpei  += Ibpei + Ibpei_Vbpei*Vbpei;
                     //Vpbci*Ibpci(Vbpci)
@@ -2440,7 +2446,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                         Ith_Vbici  += Ibpbi_Vbici*Vbpbi;
                     }
                     if (here->HICUMre_t.rpart >= MIN_R) {
-                        //Veie*Ieie(Veiei) = Veie**2 /re_t
                         Ith_Veie   = 2*Veie/here->HICUMre_t.rpart;
                     }
                     if (here->HICUMrcx_t.rpart >= MIN_R) {
@@ -2775,6 +2780,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
             *(ckt->CKTstate0 + here->HICUMibiei)       = Ibiei;
             *(ckt->CKTstate0 + here->HICUMibiei_Vbiei) = Ibiei_Vbiei;
+            *(ckt->CKTstate0 + here->HICUMibiei_Vbici) = Ibiei_Vbici;
 
             *(ckt->CKTstate0 + here->HICUMibpei)       = Ibpei;
             *(ckt->CKTstate0 + here->HICUMibpei_Vbpei) = Ibpei_Vbpei;
@@ -2881,7 +2887,7 @@ load:
 //          finish
 
 //          Branch: biei, Stamp element: Ibiei = Ibei + Irei ( was Ijbei )
-            rhs_current = model->HICUMtype * (Ibiei - Ibiei_Vbiei*Vbiei);
+            rhs_current = model->HICUMtype * (Ibiei - Ibiei_Vbiei*Vbiei - Ibiei_Vbici*Vbici);
             *(ckt->CKTrhs + here->HICUMbaseBINode) += -rhs_current;
             *(ckt->CKTrhs + here->HICUMemitEINode) +=  rhs_current;
             // with respect to Vbiei
@@ -2889,6 +2895,11 @@ load:
             *(here->HICUMemitEIEmitEIPtr)          +=  Ibiei_Vbiei;
             *(here->HICUMbaseBIEmitEIPtr)          += -Ibiei_Vbiei;
             *(here->HICUMemitEIBaseBIPtr)          += -Ibiei_Vbiei;
+            // with respect to Vbici
+            *(here->HICUMbaseBIBaseBIPtr)          +=  Ibiei_Vbici;
+            *(here->HICUMemitEICollCIPtr)          +=  Ibiei_Vbici;
+            *(here->HICUMbaseBICollCIPtr)          += -Ibiei_Vbici;
+            *(here->HICUMemitEIBaseBIPtr)          += -Ibiei_Vbici;
 //          finish
 
 //          Branch: bpei, Stamp element: Ibpei = Ibep + Irep ( was Ijbep )
