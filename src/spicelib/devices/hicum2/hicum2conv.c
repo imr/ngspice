@@ -38,7 +38,7 @@ HICUMconvTest(GENmodel *inModel, CKTcircuit *ckt)
     double ibpcihat;
     double ibpsihat;
     double isicihat;
-    double ithhat;
+    double volatile ithhat;
 
     double Vbiei, Vbici, Vciei, Vbpei, Vbpbi, Vbpci, Vbci, Vsici, Vrth;
     double Ibiei, Ibici, Iciei, Ibpei, Ibpbi, Ibpci, Ibpsi, Isici, Ith;
