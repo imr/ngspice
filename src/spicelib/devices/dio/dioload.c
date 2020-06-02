@@ -73,6 +73,8 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
     /*  loop through all the diode models */
     for( ; model != NULL; model = DIOnextModel(model)) {
 
+        selfheat = ((model->DIOshMod == 1) && (model->DIOrth0Given));
+
         /* loop through all the instances of the model */
         for (here = DIOinstances(model); here != NULL ;
                 here=DIOnextInstance(here)) {
@@ -81,7 +83,6 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
              *     this routine loads diodes for dc and transient analyses.
              */
 
-            selfheat = ((model->DIOshMod == 1) && (model->DIOrth0Given));
             if (selfheat)
                 Check_th = 1;
             else
@@ -515,8 +516,8 @@ next1:
 next2:      *(ckt->CKTstate0 + here->DIOvoltage) = vd;
             *(ckt->CKTstate0 + here->DIOcurrent) = cd;
             *(ckt->CKTstate0 + here->DIOconduct) = gd;
-            *(ckt->CKTstate0 + here->DIOdIdio_dT) = dIdio_dT;
             *(ckt->CKTstate0 + here->DIOdeltemp) = delTemp;
+            *(ckt->CKTstate0 + here->DIOdIdio_dT) = dIdio_dT;
 
             if(SenCond)  continue;
 
@@ -535,8 +536,13 @@ next2:      *(ckt->CKTstate0 + here->DIOvoltage) = vd;
                 dIth_dVrs = dIth_dVrs + dIth_dIrs*dIrs_dVrs;
                 dIth_dT = dIth_dIrs*dIrs_dT + dIdio_dT*vd;
                 dIth_dVdio = cd + vd*gd;
+                here->DIOdIth_dVrs = dIth_dVrs;
                 here->DIOdIth_dVdio = dIth_dVdio;
+                here->DIOdIth_dT = dIth_dT;
+                here->DIOgcTt = gcTt;
+                here->DIOdIrs_dT = dIrs_dT;
             }
+
             /*
              *   load current vector
              */
