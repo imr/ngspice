@@ -1055,6 +1055,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
         // Tr also as argument here?
         duals::duald VT, VT_f,i_0f,i_0r, Q_p, A, I_Tf1,itf, itr, a_h, Qf, Qr, d_Q0, Q_pT, a, d_Q, Tf, T_fT, Q_bf, Q_fT;
         duals::duald c10_t;
+        int extra_round=0;
         double T_dpart = T.dpart();
         int l_it;
 
@@ -1089,12 +1090,13 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
         //Preparation for iteration to get total hole charge and related variables
         l_it    = 0;
+        extra_round = 1;
         if(Qf > RTOLC*Q_p || a_h > RTOLC) {
             //Iteration for Q_pT is required for improved initial solution
             Qf      = sqrt(T_f0*itf*Q_fT);
             Q_pT    = Q_0+Qf+Qr;
             d_Q     = Q_pT;
-            while (abs(d_Q) >= RTOLC*abs(Q_pT) && l_it <= l_itmax) {
+            while (abs(d_Q) >= RTOLC*abs(Q_pT) && l_it <= l_itmax && extra_round < 5) {
                 d_Q0    = d_Q;
                 I_Tf1   = i_0f/Q_pT;
                 a_h     = Oich*I_Tf1;
@@ -1121,6 +1123,9 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 }
                 Q_pT    = Q_pT+d_Q;
                 l_it    = l_it+1;
+                if (!(abs(d_Q) >= RTOLC*abs(Q_pT))) { //extra_rounds to get rid of derivative noise
+                    extra_round += 1;
+                }
             }
 
             // I_Tf1   = i_0f/Q_pT;
