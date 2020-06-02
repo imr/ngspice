@@ -265,9 +265,9 @@ void DIOtempUpdate(DIOmodel *inModel, DIOinstance *here, double Temp, CKTcircuit
     if(model->DIOresistGiven && model->DIOresist!=0.0) {
         factor = 1.0 + (model->DIOresistTemp1) * dt
                  + (model->DIOresistTemp2 * dt * dt);
-        here->DIOtConductance = model->DIOconductance  / factor;
-        here->DIOtConductance_dT = -model->DIOconductance * (model->DIOresistTemp1
-                 + model->DIOresistTemp2 * dt) / (factor*factor);
+        here->DIOtConductance = model->DIOconductance * here->DIOarea / factor;
+        here->DIOtConductance_dT = -model->DIOconductance * here->DIOarea *
+            (model->DIOresistTemp1 + model->DIOresistTemp2 * dt) / (factor*factor);
     }
 
     here->DIOtF2=exp((1+here->DIOtGradingCoeff)*xfc);

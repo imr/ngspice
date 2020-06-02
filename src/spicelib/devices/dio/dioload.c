@@ -69,7 +69,6 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
     double ceqqth=0.0, Ith=0.0, gcTt=0.0, vrs=0.0;
     double dIdio_dT, dIth_dVdio=0.0, dIrs_dT=0.0, dIth_dVrs=0.0, dIth_dT=0.0;
     double argsw_dT, csat_dT, csatsw_dT;
-    double vbrknp;
 
     /*  loop through all the diode models */
     for( ; model != NULL; model = DIOnextModel(model)) {
@@ -108,7 +107,7 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
             vt = CONSTKoverQ * here->DIOtemp;
             vte = model->DIOemissionCoeff * vt;
             vtebrk = model->DIObrkdEmissionCoeff * vt;
-            gspr = here->DIOtConductance * here->DIOarea;
+            gspr = here->DIOtConductance;
             /*
              *   initialization
              */
@@ -250,11 +249,10 @@ next1:
             csat_dT = here->DIOtSatCur_dT;
             csatsw = here->DIOtSatSWCur;
             csatsw_dT = here->DIOtSatSWCur_dT;
-            gspr = here->DIOtConductance * here->DIOarea;
-            vt = CONSTKoverQ * here->DIOtemp;
+            gspr = here->DIOtConductance;
+            vt = CONSTKoverQ * Temp;
             vte = model->DIOemissionCoeff * vt;
             vtebrk = model->DIObrkdEmissionCoeff * vt;
-            vbrknp = here->DIOtBrkdwnV;
 
             if (model->DIOsatSWCurGiven) {              /* sidewall current */
 
@@ -339,7 +337,7 @@ next1:
                 evrev = exp(-(here->DIOtBrkdwnV+vd)/vtebrk);
                 cdb = -csat*evrev;
                 gdb = csat*evrev/vtebrk;
-                cdb_dT = csat * (-vbrknp-vd) * evrev / vtebrk / Temp - csat_dT * evrev;
+                cdb_dT = csat * (-here->DIOtBrkdwnV-vd) * evrev / vtebrk / Temp - csat_dT * evrev;
 
             }
 
@@ -515,23 +513,16 @@ next2:      *(ckt->CKTstate0 + here->DIOvoltage) = vd;
             load:
 #endif
             if (selfheat) {
-                double dIrs_dVrs, dIrs_dRs, factor, dRs_dT, dIth_dIrs;
-                if (model->DIOresistGiven && model->DIOresist != 0.0) {
-                    factor = model->DIOresistTemp1 + model->DIOresistTemp2 * delTemp;
-                    dRs_dT = 1 / here->DIOtConductance * factor;
-                } else {
-                    dRs_dT = 0.0;
-                }
+                double dIrs_dVrs, dIrs_dgspr, dIth_dIrs;
                 vrs = *(ckt->CKTrhsOld + here->DIOposNode) - *(ckt->CKTrhsOld + here->DIOposPrimeNode);
                 Ith = vd*cd + vrs*vrs*gspr;
                 dIrs_dVrs = gspr;
-                dIrs_dRs = -vrs*gspr*gspr;
-                dIrs_dT = dIrs_dRs * dRs_dT;
-                dIth_dVrs = cd;
+                dIrs_dgspr = vrs;
+                dIrs_dT = dIrs_dgspr * here->DIOtConductance_dT;
+                dIth_dVrs = vrs*gspr;
                 dIth_dIrs = vrs;
                 dIth_dVrs = dIth_dVrs + dIth_dIrs*dIrs_dVrs;
-                dIth_dT = dIth_dIrs*dIrs_dT;
-                dIth_dT = dIth_dT + dIdio_dT*vd;
+                dIth_dT = dIth_dIrs*dIrs_dT + dIdio_dT*vd;
                 dIth_dVdio = cd + vd*gd;
                 here->DIOdIth_dVdio = dIth_dVdio;
             }
