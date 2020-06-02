@@ -2356,10 +2356,10 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             Ibpci_Vbpci = model->HICUMtype*ijbcx_Vbpci;
             Ibpci_dT    = model->HICUMtype*ijbcx_dT;
 
-            Ibici       = model->HICUMtype*(ibci - iavl);
+            Ibici       = model->HICUMtype*(ibci       - iavl);
             Ibici_Vbici = model->HICUMtype*(ibci_Vbici - iavl_Vbici); 
-            Ibici_Vbiei = model->HICUMtype*(iavl_Vbiei); 
-            Ibici_dT    = model->HICUMtype*(ibci_dT - iavl_dT);
+            Ibici_Vbiei = model->HICUMtype*(           - iavl_Vbiei); 
+            Ibici_dT    = model->HICUMtype*(ibci_dT    - iavl_dT);
 
             Isici       = model->HICUMtype*ijsc;
             Isici_Vsici = model->HICUMtype*ijsc_Vsici;
@@ -2752,12 +2752,12 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             /*
              *   check convergence
              */
-            if ( (!(ckt->CKTmode & MODEINITFIX))||(!(here->HICUMoff))) {
-                if (icheck == 1) {
-                    ckt->CKTnoncon++;
-                    ckt->CKTtroubleElt = (GENinstance *) here;
-                }
-            }
+            // if ( (!(ckt->CKTmode & MODEINITFIX))||(!(here->HICUMoff))) {
+            //     if (icheck == 1) {
+            //         ckt->CKTnoncon++;
+            //         ckt->CKTtroubleElt = (GENinstance *) here;
+            //     }
+            // }
 
             /*
              *      charge storage for outer junctions
@@ -2937,7 +2937,7 @@ load:
 //          finish
 
 //          Branch: bici, Stamp element: Ibici ( was Ijbci )
-            rhs_current = model->HICUMtype * (Ibici - Ibici_Vbici*Vbici);
+            rhs_current = model->HICUMtype * (Ibici - Ibici_Vbici*Vbici - Ibici_Vbiei*Vbiei);
             *(ckt->CKTrhs + here->HICUMbaseBINode) += -rhs_current;
             *(ckt->CKTrhs + here->HICUMcollCINode) +=  rhs_current;
             // with respect to Vbici
@@ -2945,6 +2945,11 @@ load:
             *(here->HICUMcollCICollCIPtr)          +=  Ibici_Vbici;
             *(here->HICUMcollCIBaseBIPtr)          += -Ibici_Vbici;
             *(here->HICUMbaseBICollCIPtr)          += -Ibici_Vbici;
+            // with respect to Vbiei
+            *(here->HICUMbaseBIBaseBIPtr)          +=  Ibici_Vbiei;
+            *(here->HICUMcollCIEmitEIPtr)          +=  Ibici_Vbiei;
+            *(here->HICUMcollCIBaseBIPtr)          += -Ibici_Vbiei;
+            *(here->HICUMbaseBIEmitEIPtr)          += -Ibici_Vbiei;
 //          finish
 
 //          Branch: ciei, Stamp element: It
@@ -3172,7 +3177,7 @@ c           Branch: xf-ground, Stamp element: Rxf
 //              finish
 
 //              Branch: bpsi, Stamp element: Its
-                rhs_current = - Ibpsi_dT*Vsici;
+                rhs_current = - Ibpsi_dT*Vrth;
                 *(ckt->CKTrhs + here->HICUMbaseBPNode) += -rhs_current;
                 *(ckt->CKTrhs + here->HICUMsubsSINode) +=  rhs_current;
                 // f_Bp = +    f_Si = -
