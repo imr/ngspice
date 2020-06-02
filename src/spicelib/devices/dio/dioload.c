@@ -167,6 +167,8 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
                     delTemp = DEVpred(ckt,here->DIOdeltemp);
                     *(ckt->CKTstate0 + here->DIOdIdio_dT) =
                             *(ckt->CKTstate1 + here->DIOdIdio_dT);
+                    *(ckt->CKTstate0+here->DIOqth) =
+                            *(ckt->CKTstate1+here->DIOqth);
                 } else {
 #endif /* PREDICTOR */
                     vd = *(ckt->CKTrhsOld+here->DIOposPrimeNode)-
@@ -175,6 +177,11 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
                         delTemp = *(ckt->CKTrhsOld + here->DIOtempNode);
                     else
                         delTemp = 0.0;
+                    *(ckt->CKTstate0+here->DIOqth) = model->DIOcth0 * delTemp;
+                    if((ckt->CKTmode & MODEINITTRAN)) {
+                        *(ckt->CKTstate1+here->DIOqth) =
+                            *(ckt->CKTstate0+here->DIOqth);
+                    }
 #ifndef PREDICTOR
                 }
 #endif /* PREDICTOR */
@@ -271,19 +278,20 @@ next1:
                             vd >= -here->DIOtBrkdwnV) { /* reverse */
 
                         argsw = 3*vtesw/(vd*CONSTe);
-                        argsw_dT = 3*CONSTKoverQ/(vd*CONSTe);
                         argsw = argsw * argsw * argsw;
-                        argsw_dT = 3 * argsw * argsw * argsw_dT;
+                        argsw_dT = 3 * argsw / Temp;
                         cdsw = -csatsw*(1+argsw);
                         gdsw = csatsw*3*argsw/vd;
-                        cdsw_dT = -csatsw_dT - (csatsw*argsw_dT + csatsw_dT*argsw);
+                        cdsw_dT = -csatsw_dT - (csatsw_dT*argsw + csatsw*argsw_dT);
 
                     } else {                            /* breakdown */
+                        double evrev_dT;
 
                         evrev = exp(-(here->DIOtBrkdwnV+vd)/vtebrk);
+                        evrev_dT = (here->DIOtBrkdwnV+vd)*evrev/(vtebrk*Temp);
                         cdsw = -csatsw*evrev;
                         gdsw = csatsw*evrev/vtebrk;
-                        cdsw_dT = csatsw_dT * (evrev - 1) - csatsw * vd * evrev / (vtebrk * Temp);
+                        cdsw_dT = -(csatsw_dT*evrev + csatsw*evrev_dT);
 
                     }
 
@@ -322,22 +330,23 @@ next1:
 
             } else if((!(model->DIObreakdownVoltageGiven)) ||
                     vd >= -here->DIOtBrkdwnV) { /* reverse */
-                double arg3, darg3_dT;
+                double darg_dT;
 
                 arg = 3*vte/(vd*CONSTe);
                 arg = arg * arg * arg;
-                arg3 = arg * arg * arg;
-                darg3_dT = 3 * arg3 / Temp; 
+                darg_dT = 3 * arg / Temp; 
                 cdb = -csat*(1+arg);
                 gdb = csat*3*arg/vd;
-                cdb_dT = -csat_dT * (arg3 + 1) - csat * darg3_dT;
+                cdb_dT = -csat_dT - (csat_dT*arg + csat*darg_dT);
 
             } else {                            /* breakdown */
+                double evrev_dT;
 
                 evrev = exp(-(here->DIOtBrkdwnV+vd)/vtebrk);
+                evrev_dT = (here->DIOtBrkdwnV+vd)*evrev/(vtebrk*Temp);
                 cdb = -csat*evrev;
                 gdb = csat*evrev/vtebrk;
-                cdb_dT = csat * (-here->DIOtBrkdwnV-vd) * evrev / vtebrk / Temp - csat_dT * evrev;
+                cdb_dT = -(csat_dT*evrev + csat*evrev_dT);
 
             }
 
@@ -474,18 +483,20 @@ next1:
                     }
                     error = NIintegrate(ckt,&geq,&ceq,capd,here->DIOcapCharge);
                     if(error) return(error);
-                    if (selfheat)
-                    {
-                        error = NIintegrate(ckt, &gcTt, &ceqqth, 0.0, here->DIOqth);
-                        if (error) return(error);
-                        gcTt = model->DIOcth0 * ckt->CKTag[0];
-                        ceqqth = *(ckt->CKTstate0 + here->DIOcqth) - gcTt * delTemp;
-                    }
                     gd=gd+geq;
                     cd=cd+*(ckt->CKTstate0 + here->DIOcapCurrent);
                     if (ckt->CKTmode & MODEINITTRAN) {
                         *(ckt->CKTstate1 + here->DIOcapCurrent) =
                                 *(ckt->CKTstate0 + here->DIOcapCurrent);
+                    }
+                    if (selfheat)
+                    {
+                        error = NIintegrate(ckt, &gcTt, &ceqqth, model->DIOcth0, here->DIOqth);
+                        if (error) return(error);
+                        if (ckt->CKTmode & MODEINITTRAN) {
+                            *(ckt->CKTstate1 + here->DIOcqth) =
+                                    *(ckt->CKTstate0 + here->DIOcqth);
+                        }
                     }
                 }
             }
@@ -515,7 +526,7 @@ next2:      *(ckt->CKTstate0 + here->DIOvoltage) = vd;
             if (selfheat) {
                 double dIrs_dVrs, dIrs_dgspr, dIth_dIrs;
                 vrs = *(ckt->CKTrhsOld + here->DIOposNode) - *(ckt->CKTrhsOld + here->DIOposPrimeNode);
-                Ith = vd*cd + vrs*vrs*gspr;
+                Ith = vd*cd + vrs*vrs*gspr; /* Diode dissipated power */
                 dIrs_dVrs = gspr;
                 dIrs_dgspr = vrs;
                 dIrs_dT = dIrs_dgspr * here->DIOtConductance_dT;
@@ -536,10 +547,7 @@ next2:      *(ckt->CKTstate0 + here->DIOvoltage) = vd;
                 *(ckt->CKTrhs + here->DIOposNode)      +=  dIrs_dT*delTemp;
                 *(ckt->CKTrhs + here->DIOposPrimeNode) +=  dIdio_dT*delTemp - dIrs_dT*delTemp;
                 *(ckt->CKTrhs + here->DIOnegNode)      += -dIdio_dT*delTemp;
-                *(ckt->CKTrhs + here->DIOtempNode)     +=  Ith - dIth_dVdio*vd - dIth_dVrs*vrs - dIth_dT*delTemp + ceqqth; /* Diode dissipated power */
-//printf("dIdio_dT: %g dIth_dVdio: %g dIth_dT: %g\n", dIdio_dT, dIth_dVdio, dIth_dT);
-//printf("dIrs_dT: %g dIth_dVrs: %g dIth_dT: %g\n", dIrs_dT, dIth_dVrs, dIth_dT);
-//printf("power: %g rhs: %g delTemp: %g\n", Ith, *(ckt->CKTrhs + here->DIOtempNode), delTemp);
+                *(ckt->CKTrhs + here->DIOtempNode)     +=  Ith - dIth_dVdio*vd - dIth_dVrs*vrs - dIth_dT*delTemp - ceqqth;
             }
             /*
              *   load matrix
