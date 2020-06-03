@@ -29,6 +29,10 @@ HICUMconvTest(GENmodel *inModel, CKTcircuit *ckt)
     double delvbpci;
     double delvsici;
     double delvrth;
+    double delvciei;
+    double delvcic;
+    double delvbbp;
+    double delveie;
 
     double ibieihat;
     double ibicihat;
@@ -40,7 +44,7 @@ HICUMconvTest(GENmodel *inModel, CKTcircuit *ckt)
     double isicihat;
     double volatile ithhat;
 
-    double Vbiei, Vbici, Vciei, Vbpei, Vbpbi, Vbpci, Vbci, Vsici, Vrth;
+    double Vbiei, Vbici, Vciei, Vbpei, Vbpbi, Vbpci, Vbci, Vsici, Vrth, Vcic, Vbbp, Veie;
     double Ibiei, Ibici, Iciei, Ibpei, Ibpbi, Ibpci, Ibpsi, Isici, Ith;
 
     for( ; model != NULL; model = HICUMnextModel(model)) {
@@ -67,6 +71,16 @@ HICUMconvTest(GENmodel *inModel, CKTcircuit *ckt)
             Vsici = model->HICUMtype*(
                    *(ckt->CKTrhsOld+here->HICUMsubsSINode)-
                    *(ckt->CKTrhsOld+here->HICUMcollCINode));
+            Vcic  = model->HICUMtype*(
+                   *(ckt->CKTrhsOld+here->HICUMcollCINode)-
+                   *(ckt->CKTrhsOld+here->HICUMcollNode));
+            Vbbp  = model->HICUMtype*(
+                   *(ckt->CKTrhsOld+here->HICUMbaseNode)-
+                   *(ckt->CKTrhsOld+here->HICUMbaseBPNode));
+            Veie  = model->HICUMtype*(
+                   *(ckt->CKTrhsOld+here->HICUMemitNode)-
+                   *(ckt->CKTrhsOld+here->HICUMemitEINode));
+ 
             Vciei = Vbiei - Vbici;
             Vrth  = model->HICUMtype*(*(ckt->CKTrhsOld+here->HICUMtempNode));
 
@@ -77,6 +91,10 @@ HICUMconvTest(GENmodel *inModel, CKTcircuit *ckt)
             delvbpci = Vbpci - *(ckt->CKTstate0 + here->HICUMvbpci);
             delvsici = Vsici - *(ckt->CKTstate0 + here->HICUMvsici);
             delvrth  = Vrth  - *(ckt->CKTstate0 + here->HICUMvrth);
+            delvciei = delvbiei-delvbici;
+            delvcic  = Vcic  - *(ckt->CKTstate0 + here->HICUMvcic);
+            delvbbp  = Vbbp  - *(ckt->CKTstate0 + here->HICUMvbbp);
+            delveie  = Veie  - *(ckt->CKTstate0 + here->HICUMveie);
 
             ibieihat = *(ckt->CKTstate0 + here->HICUMibiei) +
                        *(ckt->CKTstate0 + here->HICUMibiei_Vbiei)*delvbiei + 
@@ -108,7 +126,17 @@ HICUMconvTest(GENmodel *inModel, CKTcircuit *ckt)
                        *(ckt->CKTstate0 + here->HICUMisici_Vrth)*delvrth+
                        *(ckt->CKTstate0 + here->HICUMisici_Vsici)*delvsici;
             ithhat   = *(ckt->CKTstate0 + here->HICUMith) +
-                       *(ckt->CKTstate0 + here->HICUMith_Vrth)*delvrth;
+                       *(ckt->CKTstate0 + here->HICUMith_Vrth)*delvrth+
+                       *(ckt->CKTstate0 + here->HICUMith_Vbiei)*delvbiei+
+                       *(ckt->CKTstate0 + here->HICUMith_Vbici)*delvbici+
+                       *(ckt->CKTstate0 + here->HICUMith_Vbpbi)*delvbpbi+
+                       *(ckt->CKTstate0 + here->HICUMith_Vbpci)*delvbpci+
+                       *(ckt->CKTstate0 + here->HICUMith_Vbpei)*delvbpei+
+                       *(ckt->CKTstate0 + here->HICUMith_Vciei)*delvciei+
+                       *(ckt->CKTstate0 + here->HICUMith_Vsici)*delvsici+
+                       *(ckt->CKTstate0 + here->HICUMith_Vcic)*delvcic+
+                       *(ckt->CKTstate0 + here->HICUMith_Vbbp)*delvbbp+
+                       *(ckt->CKTstate0 + here->HICUMith_Veie)*delveie;
 
             Ibiei       = *(ckt->CKTstate0 + here->HICUMibiei);
             Ibici       = *(ckt->CKTstate0 + here->HICUMibici);

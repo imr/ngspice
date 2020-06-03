@@ -166,8 +166,8 @@ int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double 
             HICUMTemp = TMAX + CONSTCtoK;
         }
     }
-    temp = HICUMTemp+1_e; //dual number valued temperature
-    vt   = temp*CONSTKoverQ; // dual temperature
+    temp = HICUMTemp+1_e;    //dual number valued temperature
+    vt   = temp*CONSTKoverQ; // dual valued temperature voltage
 
     here->HICUMvt0     = Tnom * CONSTKoverQ;
     here->HICUMvt.rpart = vt.rpart();
