@@ -120,14 +120,14 @@ HICUMtemp(GENmodel *inModel, CKTcircuit *ckt)
 
             if(here->HICUMdtempGiven) here->HICUMtemp = here->HICUMtemp + here->HICUMdtemp;
 
-            iret = hicum_thermal_update(model, here);
+            iret = hicum_thermal_update(model, here, here -> HICUMtemp);
 
         }
     }
     return(OK);
 }
 
-int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance)
+int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double HICUMTemp)
 {
     HICUMmodel *model = (HICUMmodel *)inModel;
     HICUMinstance *here = (HICUMinstance *)inInstance;
@@ -159,14 +159,14 @@ int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance)
     zetasct = mg-1.5;
 
     // Limit temperature to avoid FPEs in equations
-    if(here->HICUMtemp < TMIN + CONSTCtoK) {
-        here->HICUMtemp = TMIN + CONSTCtoK;
+    if(HICUMTemp < TMIN + CONSTCtoK) {
+        HICUMTemp = TMIN + CONSTCtoK;
     } else {
-        if (here->HICUMtemp > TMAX + CONSTCtoK) {
-            here->HICUMtemp = TMAX + CONSTCtoK;
+        if (HICUMTemp > TMAX + CONSTCtoK) {
+            HICUMTemp = TMAX + CONSTCtoK;
         }
     }
-    temp = here->HICUMtemp+1_e;
+    temp = HICUMTemp+1_e; //dual number valued temperature
     vt   = temp*CONSTKoverQ; // dual temperature
 
     here->HICUMvt0     = Tnom * CONSTKoverQ;
