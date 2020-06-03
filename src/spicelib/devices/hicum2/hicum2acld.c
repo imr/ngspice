@@ -23,20 +23,41 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
     HICUMinstance *here;
     HICUMmodel *model = (HICUMmodel*)inModel;
     double Ibpei_Vbpei;
+    double Ibpei_Vrth;
+
     double Ibiei_Vbiei;
     double Ibiei_Vbici;
+    double Ibiei_Vrth;
+
     double Ibici_Vbici;
     double Ibici_Vbiei;
+    double Ibici_Vrth;
+
     double Ibpci_Vbpci;
+    double Ibpci_Vrth;
+
     double Isici_Vsici;
+    double Isici_Vrth;
+
     double Iciei_Vbiei;
     double Iciei_Vbici;
-    double Ibbp_Vbbp;
+    double Iciei_Vrth;
+
+
+    double Ibpbi_Vbpbi; 
+    double Ibpbi_Vciei;
+    double Ibpbi_Vbiei;
+    double Ibpbi_Vrth;
+
     double Isis_Vsis;
-    double Ieie_Veie;
-    double Ibpbi_Vbpbi, Ibpbi_Vciei, Ibpbi_Vbiei;
-    double Ibpsi_Vbpci, Ibpsi_Vsici;
+
     double Icic_Vcic;
+    double Ieie_Veie;
+    double Ibbp_Vbbp;
+
+    double Ibpsi_Vbpci; 
+    double Ibpsi_Vsici;
+    double Ibpsi_Vrth;
 
     double XQrbi_Vbpbi;
 //    double XQrbi_Vbiei;
@@ -65,6 +86,7 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
         for( here = HICUMinstances(model); here!= NULL;
                 here = HICUMnextInstance(here)) {
 
+            //todo: temperature derivatives
             Ibbp_Vbbp    = 1/here->HICUMrbx_t.rpart;
             Icic_Vcic    = 1/here->HICUMrcx_t.rpart;
             Ieie_Veie    = 1/here->HICUMre_t.rpart;
@@ -72,18 +94,33 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
 
             Ibiei_Vbiei = *(ckt->CKTstate0 + here->HICUMibiei_Vbiei);
             Ibiei_Vbici = *(ckt->CKTstate0 + here->HICUMibiei_Vbici);
+            Ibiei_Vrth  = *(ckt->CKTstate0 + here->HICUMibiei_Vrth);
+
             Ibpei_Vbpei = *(ckt->CKTstate0 + here->HICUMibpei_Vbpei);
+            Ibpei_Vrth  = *(ckt->CKTstate0 + here->HICUMibpei_Vrth);
+
             Iciei_Vbiei = *(ckt->CKTstate0 + here->HICUMiciei_Vbiei);
             Iciei_Vbici = *(ckt->CKTstate0 + here->HICUMiciei_Vbici);
+            Iciei_Vrth  = *(ckt->CKTstate0 + here->HICUMiciei_Vrth);
+
             Ibici_Vbici = *(ckt->CKTstate0 + here->HICUMibici_Vbici);
             Ibici_Vbiei = *(ckt->CKTstate0 + here->HICUMibici_Vbiei);
+            Ibici_Vrth  = *(ckt->CKTstate0 + here->HICUMibici_Vrth);
+
             Ibpbi_Vbpbi = *(ckt->CKTstate0 + here->HICUMibpbi_Vbpbi);
             Ibpbi_Vbiei = *(ckt->CKTstate0 + here->HICUMibpbi_Vbiei);
             Ibpbi_Vciei = *(ckt->CKTstate0 + here->HICUMibpbi_Vbici);
+            Ibpbi_Vrth  = *(ckt->CKTstate0 + here->HICUMibpbi_Vrth);
+
             Isici_Vsici = *(ckt->CKTstate0 + here->HICUMisici_Vsici);
+            Isici_Vrth  = *(ckt->CKTstate0 + here->HICUMisici_Vrth);
+
             Ibpsi_Vbpci = *(ckt->CKTstate0 + here->HICUMibpsi_Vbpci);
             Ibpsi_Vsici = *(ckt->CKTstate0 + here->HICUMibpsi_Vsici);
+            Ibpsi_Vrth  = *(ckt->CKTstate0 + here->HICUMibpsi_Vrth);
+
             Ibpci_Vbpci = *(ckt->CKTstate0 + here->HICUMibpci_Vbpci);
+            Ibpci_Vrth  = *(ckt->CKTstate0 + here->HICUMibpci_Vrth);
 
 /*
 c           The real part

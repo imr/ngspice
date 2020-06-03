@@ -80,24 +80,32 @@ HICUMconvTest(GENmodel *inModel, CKTcircuit *ckt)
 
             ibieihat = *(ckt->CKTstate0 + here->HICUMibiei) +
                        *(ckt->CKTstate0 + here->HICUMibiei_Vbiei)*delvbiei + 
+                       *(ckt->CKTstate0 + here->HICUMibiei_Vrth)*delvrth + 
                        *(ckt->CKTstate0 + here->HICUMibiei_Vbici)*delvbici;
             ibicihat = *(ckt->CKTstate0 + here->HICUMibici) +
                        *(ckt->CKTstate0 + here->HICUMibici_Vbici)*delvbici+
+                       *(ckt->CKTstate0 + here->HICUMibici_Vrth)*delvrth+
                        *(ckt->CKTstate0 + here->HICUMibici_Vbiei)*delvbiei;
             icieihat = *(ckt->CKTstate0 + here->HICUMiciei) +
                        *(ckt->CKTstate0 + here->HICUMiciei_Vbiei)*delvbiei +
+                       *(ckt->CKTstate0 + here->HICUMiciei_Vrth)*delvrth +
                        *(ckt->CKTstate0 + here->HICUMiciei_Vbici)*delvbici;
             ibpeihat = *(ckt->CKTstate0 + here->HICUMibpei) +
+                       *(ckt->CKTstate0 + here->HICUMibpei_Vrth)*delvrth+
                        *(ckt->CKTstate0 + here->HICUMibpei_Vbpei)*delvbpei;
             ibpbihat = *(ckt->CKTstate0 + here->HICUMibpbi) +
                        *(ckt->CKTstate0 + here->HICUMibpbi_Vbiei)*delvbiei +
+                       *(ckt->CKTstate0 + here->HICUMibpbi_Vrth)*delvrth +
                        *(ckt->CKTstate0 + here->HICUMibpbi_Vbici)*delvbici;
             ibpcihat = *(ckt->CKTstate0 + here->HICUMibpci) +
+                       *(ckt->CKTstate0 + here->HICUMibpci_Vrth)*delvrth+
                        *(ckt->CKTstate0 + here->HICUMibpci_Vbpci)*delvbici;
             ibpsihat = *(ckt->CKTstate0 + here->HICUMibpsi) +
                        *(ckt->CKTstate0 + here->HICUMibpsi_Vbpci)*delvbpci +
+                       *(ckt->CKTstate0 + here->HICUMibpsi_Vrth)*delvrth +
                        *(ckt->CKTstate0 + here->HICUMibpsi_Vsici)*delvsici;
             isicihat = *(ckt->CKTstate0 + here->HICUMisici) +
+                       *(ckt->CKTstate0 + here->HICUMisici_Vrth)*delvrth+
                        *(ckt->CKTstate0 + here->HICUMisici_Vsici)*delvsici;
             ithhat   = *(ckt->CKTstate0 + here->HICUMith) +
                        *(ckt->CKTstate0 + here->HICUMith_Vrth)*delvrth;

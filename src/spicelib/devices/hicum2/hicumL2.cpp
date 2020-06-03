@@ -1391,94 +1391,205 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                             xfact * *(ckt->CKTstate2 + here->HICUMvxf1);
                     Vbxf2 = (1+xfact) * *(ckt->CKTstate1 + here->HICUMvxf2)-
                             xfact * *(ckt->CKTstate2 + here->HICUMvxf2);
-                    *(ckt->CKTstate0 + here->HICUMvbiei) =
-                            *(ckt->CKTstate1 + here->HICUMvbiei);
-                    *(ckt->CKTstate0 + here->HICUMvbpei) =
-                            *(ckt->CKTstate1 + here->HICUMvbpei);
-                    *(ckt->CKTstate0 + here->HICUMvbici) =
-                            *(ckt->CKTstate1 + here->HICUMvbici);
-                    *(ckt->CKTstate0 + here->HICUMvbpei) =
-                            *(ckt->CKTstate1 + here->HICUMvbpei);
-                    *(ckt->CKTstate0 + here->HICUMvbpbi) =
-                            *(ckt->CKTstate1 + here->HICUMvbpbi);
-                    *(ckt->CKTstate0 + here->HICUMvsici) =
-                            *(ckt->CKTstate1 + here->HICUMvsici);
-                    *(ckt->CKTstate0 + here->HICUMvxf) =
-                            *(ckt->CKTstate1 + here->HICUMvxf);
-                    *(ckt->CKTstate0 + here->HICUMvxf1) =
-                            *(ckt->CKTstate1 + here->HICUMvxf1);
-                    *(ckt->CKTstate0 + here->HICUMvxf2) =
-                            *(ckt->CKTstate1 + here->HICUMvxf2);
-                    *(ckt->CKTstate0 + here->HICUMibiei) =
-                            *(ckt->CKTstate1 + here->HICUMibiei);
-                    *(ckt->CKTstate0 + here->HICUMibiei_Vbiei) =
-                            *(ckt->CKTstate1 + here->HICUMibiei_Vbiei);
-                    *(ckt->CKTstate0 + here->HICUMibiei_Vbici) =
-                            *(ckt->CKTstate1 + here->HICUMibiei_Vbici);
-                    *(ckt->CKTstate0 + here->HICUMibpei) =
-                            *(ckt->CKTstate1 + here->HICUMibpei);
-                    *(ckt->CKTstate0 + here->HICUMibpei_Vbpei) =
-                            *(ckt->CKTstate1 + here->HICUMibpei_Vbpei);
-                    *(ckt->CKTstate0 + here->HICUMiciei) =
-                            *(ckt->CKTstate1 + here->HICUMiciei);
-                    *(ckt->CKTstate0 + here->HICUMiciei_Vbiei) =
-                            *(ckt->CKTstate1 + here->HICUMiciei_Vbiei);
-                    *(ckt->CKTstate0 + here->HICUMiciei_Vbici) =
-                            *(ckt->CKTstate1 + here->HICUMiciei_Vbici);
-                    *(ckt->CKTstate0 + here->HICUMibici) =
-                            *(ckt->CKTstate1 + here->HICUMibici);
-                    *(ckt->CKTstate0 + here->HICUMibici_Vbici) =
-                            *(ckt->CKTstate1 + here->HICUMibici_Vbici);
-                    *(ckt->CKTstate0 + here->HICUMibici_Vbiei) =
-                            *(ckt->CKTstate1 + here->HICUMibici_Vbiei);
-                    *(ckt->CKTstate0 + here->HICUMibpei) =
-                            *(ckt->CKTstate1 + here->HICUMibpei);
-                    *(ckt->CKTstate0 + here->HICUMibpbi) =
-                            *(ckt->CKTstate1 + here->HICUMibpbi);
-                    *(ckt->CKTstate0 + here->HICUMibpbi_Vbpbi) =
-                            *(ckt->CKTstate1 + here->HICUMibpbi_Vbpbi);
-                    *(ckt->CKTstate0 + here->HICUMibpbi_Vbiei) =
-                            *(ckt->CKTstate1 + here->HICUMibpbi_Vbiei);
-                    *(ckt->CKTstate0 + here->HICUMibpbi_Vbici) =
-                            *(ckt->CKTstate1 + here->HICUMibpbi_Vbici);
-                    *(ckt->CKTstate0 + here->HICUMisici) =
-                            *(ckt->CKTstate1 + here->HICUMisici);
-                    *(ckt->CKTstate0 + here->HICUMisici_Vsici) =
-                            *(ckt->CKTstate1 + here->HICUMisici_Vsici);
-                    *(ckt->CKTstate0 + here->HICUMibpsi) =
-                            *(ckt->CKTstate1 + here->HICUMibpsi);
-                    *(ckt->CKTstate0 + here->HICUMibpsi_Vbpci) =
-                            *(ckt->CKTstate1 + here->HICUMibpsi_Vbpci);
-                    *(ckt->CKTstate0 + here->HICUMibpsi_Vsici) =
-                            *(ckt->CKTstate1 + here->HICUMibpsi_Vsici);
-                    *(ckt->CKTstate0 + here->HICUMgqbepar1) =
-                            *(ckt->CKTstate1 + here->HICUMgqbepar1);
-                    *(ckt->CKTstate0 + here->HICUMgqbepar2) =
-                            *(ckt->CKTstate1 + here->HICUMgqbepar2);
-                    *(ckt->CKTstate0 + here->HICUMieie) =
-                            *(ckt->CKTstate1 + here->HICUMieie);
-                    *(ckt->CKTstate0 + here->HICUMisis_Vsis) =
-                            *(ckt->CKTstate1 + here->HICUMisis_Vsis);
-//NQS
-                    *(ckt->CKTstate0 + here->HICUMgqxf) =
-                            *(ckt->CKTstate1 + here->HICUMgqxf);
-                    *(ckt->CKTstate0 + here->HICUMixf_Vbiei) =
-                            *(ckt->CKTstate1 + here->HICUMixf_Vbiei);
-                    *(ckt->CKTstate0 + here->HICUMixf_Vbici) =
-                            *(ckt->CKTstate1 + here->HICUMixf_Vbici);
+                    /////////////////////////
+                    // begin copy state vector
+                    /////////////////////////
+                    //below is obsolete, I leave it here to remember old code since I am no ngspice expert
+//                     *(ckt->CKTstate0 + here->HICUMvbiei) =
+//                             *(ckt->CKTstate1 + here->HICUMvbiei);
+//                     *(ckt->CKTstate0 + here->HICUMvbpei) =
+//                             *(ckt->CKTstate1 + here->HICUMvbpei);
+//                     *(ckt->CKTstate0 + here->HICUMvbici) =
+//                             *(ckt->CKTstate1 + here->HICUMvbici);
+//                     *(ckt->CKTstate0 + here->HICUMvbpei) =
+//                             *(ckt->CKTstate1 + here->HICUMvbpei);
+//                     *(ckt->CKTstate0 + here->HICUMvbpbi) =
+//                             *(ckt->CKTstate1 + here->HICUMvbpbi);
+//                     *(ckt->CKTstate0 + here->HICUMvsici) =
+//                             *(ckt->CKTstate1 + here->HICUMvsici);
+//                     *(ckt->CKTstate0 + here->HICUMvxf) =
+//                             *(ckt->CKTstate1 + here->HICUMvxf);
+//                     *(ckt->CKTstate0 + here->HICUMvxf1) =
+//                             *(ckt->CKTstate1 + here->HICUMvxf1);
+//                     *(ckt->CKTstate0 + here->HICUMvxf2) =
+//                             *(ckt->CKTstate1 + here->HICUMvxf2);
+//                     *(ckt->CKTstate0 + here->HICUMibiei) =
+//                             *(ckt->CKTstate1 + here->HICUMibiei);
+//                     *(ckt->CKTstate0 + here->HICUMibiei_Vbiei) =
+//                             *(ckt->CKTstate1 + here->HICUMibiei_Vbiei);
+//                     *(ckt->CKTstate0 + here->HICUMibiei_Vbici) =
+//                             *(ckt->CKTstate1 + here->HICUMibiei_Vbici);
+//                     *(ckt->CKTstate0 + here->HICUMibpei) =
+//                             *(ckt->CKTstate1 + here->HICUMibpei);
+//                     *(ckt->CKTstate0 + here->HICUMibpei_Vbpei) =
+//                             *(ckt->CKTstate1 + here->HICUMibpei_Vbpei);
+//                     *(ckt->CKTstate0 + here->HICUMiciei) =
+//                             *(ckt->CKTstate1 + here->HICUMiciei);
+//                     *(ckt->CKTstate0 + here->HICUMiciei_Vbiei) =
+//                             *(ckt->CKTstate1 + here->HICUMiciei_Vbiei);
+//                     *(ckt->CKTstate0 + here->HICUMiciei_Vbici) =
+//                             *(ckt->CKTstate1 + here->HICUMiciei_Vbici);
+//                     *(ckt->CKTstate0 + here->HICUMibici) =
+//                             *(ckt->CKTstate1 + here->HICUMibici);
+//                     *(ckt->CKTstate0 + here->HICUMibici_Vbici) =
+//                             *(ckt->CKTstate1 + here->HICUMibici_Vbici);
+//                     *(ckt->CKTstate0 + here->HICUMibici_Vbiei) =
+//                             *(ckt->CKTstate1 + here->HICUMibici_Vbiei);
+//                     *(ckt->CKTstate0 + here->HICUMibpei) =
+//                             *(ckt->CKTstate1 + here->HICUMibpei);
+//                     *(ckt->CKTstate0 + here->HICUMibpbi) =
+//                             *(ckt->CKTstate1 + here->HICUMibpbi);
+//                     *(ckt->CKTstate0 + here->HICUMibpbi_Vbpbi) =
+//                             *(ckt->CKTstate1 + here->HICUMibpbi_Vbpbi);
+//                     *(ckt->CKTstate0 + here->HICUMibpbi_Vbiei) =
+//                             *(ckt->CKTstate1 + here->HICUMibpbi_Vbiei);
+//                     *(ckt->CKTstate0 + here->HICUMibpbi_Vbici) =
+//                             *(ckt->CKTstate1 + here->HICUMibpbi_Vbici);
+//                     *(ckt->CKTstate0 + here->HICUMisici) =
+//                             *(ckt->CKTstate1 + here->HICUMisici);
+//                     *(ckt->CKTstate0 + here->HICUMisici_Vsici) =
+//                             *(ckt->CKTstate1 + here->HICUMisici_Vsici);
+//                     *(ckt->CKTstate0 + here->HICUMibpsi) =
+//                             *(ckt->CKTstate1 + here->HICUMibpsi);
+//                     *(ckt->CKTstate0 + here->HICUMibpsi_Vbpci) =
+//                             *(ckt->CKTstate1 + here->HICUMibpsi_Vbpci);
+//                     *(ckt->CKTstate0 + here->HICUMibpsi_Vsici) =
+//                             *(ckt->CKTstate1 + here->HICUMibpsi_Vsici);
+//                     *(ckt->CKTstate0 + here->HICUMgqbepar1) =
+//                             *(ckt->CKTstate1 + here->HICUMgqbepar1);
+//                     *(ckt->CKTstate0 + here->HICUMgqbepar2) =
+//                             *(ckt->CKTstate1 + here->HICUMgqbepar2);
+//                     *(ckt->CKTstate0 + here->HICUMieie) =
+//                             *(ckt->CKTstate1 + here->HICUMieie);
+//                     *(ckt->CKTstate0 + here->HICUMisis_Vsis) =
+//                             *(ckt->CKTstate1 + here->HICUMisis_Vsis);
+// //NQS
+//                     *(ckt->CKTstate0 + here->HICUMgqxf) =
+//                             *(ckt->CKTstate1 + here->HICUMgqxf);
+//                     *(ckt->CKTstate0 + here->HICUMixf_Vbiei) =
+//                             *(ckt->CKTstate1 + here->HICUMixf_Vbiei);
+//                     *(ckt->CKTstate0 + here->HICUMixf_Vbici) =
+//                             *(ckt->CKTstate1 + here->HICUMixf_Vbici);
 
-                    if (model->HICUMflsh) {
-                        Vrth = (1.0 + xfact)* (*(ckt->CKTstate1 + here->HICUMvrth))
-                          - ( xfact * (*(ckt->CKTstate2 + here->HICUMvrth)));
-                        *(ckt->CKTstate0 + here->HICUMvrth) =
-                                *(ckt->CKTstate1 + here->HICUMvrth);
-                        *(ckt->CKTstate0 + here->HICUMith) =
-                                *(ckt->CKTstate1 + here->HICUMith);
-                        *(ckt->CKTstate0 + here->HICUMith_Vrth) =
-                                *(ckt->CKTstate1 + here->HICUMith_Vrth);
-                        *(ckt->CKTstate0 + here->HICUMqcth) =
-                                *(ckt->CKTstate1 + here->HICUMqcth);
-                    }
+//                     if (model->HICUMflsh) {
+//                         Vrth = (1.0 + xfact)* (*(ckt->CKTstate1 + here->HICUMvrth))
+//                           - ( xfact * (*(ckt->CKTstate2 + here->HICUMvrth)));
+//                         *(ckt->CKTstate0 + here->HICUMvrth) =
+//                                 *(ckt->CKTstate1 + here->HICUMvrth);
+//                         *(ckt->CKTstate0 + here->HICUMith) =
+//                                 *(ckt->CKTstate1 + here->HICUMith);
+//                         *(ckt->CKTstate0 + here->HICUMith_Vrth) =
+//                                 *(ckt->CKTstate1 + here->HICUMith_Vrth);
+//                         *(ckt->CKTstate0 + here->HICUMqcth) =
+//                                 *(ckt->CKTstate1 + here->HICUMqcth);
+//                     }
+
+                    *(ckt->CKTstate0+here->HICUMvbiei)=*(ckt->CKTstate1+here->HICUMvbiei);
+                    *(ckt->CKTstate0+here->HICUMvbici)=*(ckt->CKTstate1+here->HICUMvbici);
+                    *(ckt->CKTstate0+here->HICUMvbpei)=*(ckt->CKTstate1+here->HICUMvbpei);
+                    *(ckt->CKTstate0+here->HICUMvbpbi)=*(ckt->CKTstate1+here->HICUMvbpbi);
+                    *(ckt->CKTstate0+here->HICUMvbpci)=*(ckt->CKTstate1+here->HICUMvbpci);
+                    *(ckt->CKTstate0+here->HICUMvsici)=*(ckt->CKTstate1+here->HICUMvsici);
+                    *(ckt->CKTstate0+here->HICUMibiei)=*(ckt->CKTstate1+here->HICUMibiei);
+                    *(ckt->CKTstate0+here->HICUMibiei_Vbiei)=*(ckt->CKTstate1+here->HICUMibiei_Vbiei);
+                    *(ckt->CKTstate0+here->HICUMibiei_Vbici)=*(ckt->CKTstate1+here->HICUMibiei_Vbici);
+                    *(ckt->CKTstate0+here->HICUMibiei_Vrth)=*(ckt->CKTstate1+here->HICUMibiei_Vrth);
+                    *(ckt->CKTstate0+here->HICUMibpei)=*(ckt->CKTstate1+here->HICUMibpei);
+                    *(ckt->CKTstate0+here->HICUMibpei_Vbpei)=*(ckt->CKTstate1+here->HICUMibpei_Vbpei);
+                    *(ckt->CKTstate0+here->HICUMibpei_Vrth)=*(ckt->CKTstate1+here->HICUMibpei_Vrth);
+                    *(ckt->CKTstate0+here->HICUMiciei)=*(ckt->CKTstate1+here->HICUMiciei);
+                    *(ckt->CKTstate0+here->HICUMiciei_Vbiei)=*(ckt->CKTstate1+here->HICUMiciei_Vbiei);
+                    *(ckt->CKTstate0+here->HICUMiciei_Vbici)=*(ckt->CKTstate1+here->HICUMiciei_Vbici);
+                    *(ckt->CKTstate0+here->HICUMiciei_Vrth)=*(ckt->CKTstate1+here->HICUMiciei_Vrth);
+                    *(ckt->CKTstate0+here->HICUMibici)=*(ckt->CKTstate1+here->HICUMibici);
+                    *(ckt->CKTstate0+here->HICUMibici_Vbici)=*(ckt->CKTstate1+here->HICUMibici_Vbici);
+                    *(ckt->CKTstate0+here->HICUMibici_Vbiei)=*(ckt->CKTstate1+here->HICUMibici_Vbiei);
+                    *(ckt->CKTstate0+here->HICUMibici_Vrth)=*(ckt->CKTstate1+here->HICUMibici_Vrth);
+                    *(ckt->CKTstate0+here->HICUMibpbi)=*(ckt->CKTstate1+here->HICUMibpbi);
+                    *(ckt->CKTstate0+here->HICUMibpbi_Vbpbi)=*(ckt->CKTstate1+here->HICUMibpbi_Vbpbi);
+                    *(ckt->CKTstate0+here->HICUMibpbi_Vbiei)=*(ckt->CKTstate1+here->HICUMibpbi_Vbiei);
+                    *(ckt->CKTstate0+here->HICUMibpbi_Vbici)=*(ckt->CKTstate1+here->HICUMibpbi_Vbici);
+                    *(ckt->CKTstate0+here->HICUMibpbi_Vrth)=*(ckt->CKTstate1+here->HICUMibpbi_Vrth);
+                    *(ckt->CKTstate0+here->HICUMibpci)=*(ckt->CKTstate1+here->HICUMibpci);
+                    *(ckt->CKTstate0+here->HICUMibpci_Vbpci)=*(ckt->CKTstate1+here->HICUMibpci_Vbpci);
+                    *(ckt->CKTstate0+here->HICUMibpci_Vrth)=*(ckt->CKTstate1+here->HICUMibpci_Vrth);
+                    *(ckt->CKTstate0+here->HICUMisici)=*(ckt->CKTstate1+here->HICUMisici);
+                    *(ckt->CKTstate0+here->HICUMisici_Vsici)=*(ckt->CKTstate1+here->HICUMisici_Vsici);
+                    *(ckt->CKTstate0+here->HICUMisici_Vrth)=*(ckt->CKTstate1+here->HICUMisici_Vrth);
+                    *(ckt->CKTstate0+here->HICUMibpsi)=*(ckt->CKTstate1+here->HICUMibpsi);
+                    *(ckt->CKTstate0+here->HICUMibpsi_Vbpci)=*(ckt->CKTstate1+here->HICUMibpsi_Vbpci);
+                    *(ckt->CKTstate0+here->HICUMibpsi_Vsici)=*(ckt->CKTstate1+here->HICUMibpsi_Vsici);
+                    *(ckt->CKTstate0+here->HICUMibpsi_Vrth)=*(ckt->CKTstate1+here->HICUMibpsi_Vrth);
+                    *(ckt->CKTstate0+here->HICUMisis_Vsis)=*(ckt->CKTstate1+here->HICUMisis_Vsis);
+                    *(ckt->CKTstate0+here->HICUMieie)=*(ckt->CKTstate1+here->HICUMieie);
+                    *(ckt->CKTstate0+here->HICUMieie_Vrth)=*(ckt->CKTstate1+here->HICUMieie_Vrth);
+                    *(ckt->CKTstate0+here->HICUMqrbi)=*(ckt->CKTstate1+here->HICUMqrbi);
+                    *(ckt->CKTstate0+here->HICUMcqrbi)=*(ckt->CKTstate1+here->HICUMcqrbi);
+                    *(ckt->CKTstate0+here->HICUMqjei)=*(ckt->CKTstate1+here->HICUMqjei);
+                    *(ckt->CKTstate0+here->HICUMcqjei)=*(ckt->CKTstate1+here->HICUMcqjei);
+                    *(ckt->CKTstate0+here->HICUMqdeix)=*(ckt->CKTstate1+here->HICUMqdeix);
+                    *(ckt->CKTstate0+here->HICUMcqdeix)=*(ckt->CKTstate1+here->HICUMcqdeix);
+                    *(ckt->CKTstate0+here->HICUMqjci)=*(ckt->CKTstate1+here->HICUMqjci);
+                    *(ckt->CKTstate0+here->HICUMcqjci)=*(ckt->CKTstate1+here->HICUMcqjci);
+                    *(ckt->CKTstate0+here->HICUMqdci)=*(ckt->CKTstate1+here->HICUMqdci);
+                    *(ckt->CKTstate0+here->HICUMcqdci)=*(ckt->CKTstate1+here->HICUMcqdci);
+                    *(ckt->CKTstate0+here->HICUMqjep)=*(ckt->CKTstate1+here->HICUMqjep);
+                    *(ckt->CKTstate0+here->HICUMcqjep)=*(ckt->CKTstate1+here->HICUMcqjep);
+                    *(ckt->CKTstate0+here->HICUMqjcx0_i)=*(ckt->CKTstate1+here->HICUMqjcx0_i);
+                    *(ckt->CKTstate0+here->HICUMcqcx0_t_i)=*(ckt->CKTstate1+here->HICUMcqcx0_t_i);
+                    *(ckt->CKTstate0+here->HICUMqjcx0_ii)=*(ckt->CKTstate1+here->HICUMqjcx0_ii);
+                    *(ckt->CKTstate0+here->HICUMcqcx0_t_ii)=*(ckt->CKTstate1+here->HICUMcqcx0_t_ii);
+                    *(ckt->CKTstate0+here->HICUMqdsu)=*(ckt->CKTstate1+here->HICUMqdsu);
+                    *(ckt->CKTstate0+here->HICUMcqdsu)=*(ckt->CKTstate1+here->HICUMcqdsu);
+                    *(ckt->CKTstate0+here->HICUMqjs)=*(ckt->CKTstate1+here->HICUMqjs);
+                    *(ckt->CKTstate0+here->HICUMcqjs)=*(ckt->CKTstate1+here->HICUMcqjs);
+                    *(ckt->CKTstate0+here->HICUMqscp)=*(ckt->CKTstate1+here->HICUMqscp);
+                    *(ckt->CKTstate0+here->HICUMcqscp)=*(ckt->CKTstate1+here->HICUMcqscp);
+                    *(ckt->CKTstate0+here->HICUMqbepar1)=*(ckt->CKTstate1+here->HICUMqbepar1);
+                    *(ckt->CKTstate0+here->HICUMcqbepar1)=*(ckt->CKTstate1+here->HICUMcqbepar1);
+                    *(ckt->CKTstate0+here->HICUMgqbepar1)=*(ckt->CKTstate1+here->HICUMgqbepar1);
+                    *(ckt->CKTstate0+here->HICUMqbepar2)=*(ckt->CKTstate1+here->HICUMqbepar2);
+                    *(ckt->CKTstate0+here->HICUMcqbepar2)=*(ckt->CKTstate1+here->HICUMcqbepar2);
+                    *(ckt->CKTstate0+here->HICUMgqbepar2)=*(ckt->CKTstate1+here->HICUMgqbepar2);
+                    *(ckt->CKTstate0+here->HICUMqbcpar1)=*(ckt->CKTstate1+here->HICUMqbcpar1);
+                    *(ckt->CKTstate0+here->HICUMcqbcpar1)=*(ckt->CKTstate1+here->HICUMcqbcpar1);
+                    *(ckt->CKTstate0+here->HICUMgqbcpar1)=*(ckt->CKTstate1+here->HICUMgqbcpar1);
+                    *(ckt->CKTstate0+here->HICUMqbcpar2)=*(ckt->CKTstate1+here->HICUMqbcpar2);
+                    *(ckt->CKTstate0+here->HICUMcqbcpar2)=*(ckt->CKTstate1+here->HICUMcqbcpar2);
+                    *(ckt->CKTstate0+here->HICUMgqbcpar2)=*(ckt->CKTstate1+here->HICUMgqbcpar2);
+                    *(ckt->CKTstate0+here->HICUMqsu)=*(ckt->CKTstate1+here->HICUMqsu);
+                    *(ckt->CKTstate0+here->HICUMcqsu)=*(ckt->CKTstate1+here->HICUMcqsu);
+                    *(ckt->CKTstate0+here->HICUMgqsu)=*(ckt->CKTstate1+here->HICUMgqsu);
+                    *(ckt->CKTstate0+here->HICUMqcth)=*(ckt->CKTstate1+here->HICUMqcth);
+                    *(ckt->CKTstate0+here->HICUMcqcth)=*(ckt->CKTstate1+here->HICUMcqcth);
+                    *(ckt->CKTstate0+here->HICUMvrth)=*(ckt->CKTstate1+here->HICUMvrth);
+                    *(ckt->CKTstate0+here->HICUMicth_dT)=*(ckt->CKTstate1+here->HICUMicth_dT);
+                    *(ckt->CKTstate0+here->HICUMvxf)=*(ckt->CKTstate1+here->HICUMvxf);
+                    *(ckt->CKTstate0+here->HICUMqxf)=*(ckt->CKTstate1+here->HICUMqxf);
+                    *(ckt->CKTstate0+here->HICUMcqxf)=*(ckt->CKTstate1+here->HICUMcqxf);
+                    *(ckt->CKTstate0+here->HICUMgqxf)=*(ckt->CKTstate1+here->HICUMgqxf);
+                    *(ckt->CKTstate0+here->HICUMixf_Vbiei)=*(ckt->CKTstate1+here->HICUMixf_Vbiei);
+                    *(ckt->CKTstate0+here->HICUMixf_Vbici)=*(ckt->CKTstate1+here->HICUMixf_Vbici);
+                    *(ckt->CKTstate0+here->HICUMvxf1)=*(ckt->CKTstate1+here->HICUMvxf1);
+                    *(ckt->CKTstate0+here->HICUMqxf1)=*(ckt->CKTstate1+here->HICUMqxf1);
+                    *(ckt->CKTstate0+here->HICUMcqxf1)=*(ckt->CKTstate1+here->HICUMcqxf1);
+                    *(ckt->CKTstate0+here->HICUMgqxf1)=*(ckt->CKTstate1+here->HICUMgqxf1);
+                    *(ckt->CKTstate0+here->HICUMixf1_Vbiei)=*(ckt->CKTstate1+here->HICUMixf1_Vbiei);
+                    *(ckt->CKTstate0+here->HICUMixf1_Vbici)=*(ckt->CKTstate1+here->HICUMixf1_Vbici);
+                    *(ckt->CKTstate0+here->HICUMixf1_Vfx2)=*(ckt->CKTstate1+here->HICUMixf1_Vfx2);
+                    *(ckt->CKTstate0+here->HICUMvxf2)=*(ckt->CKTstate1+here->HICUMvxf2);
+                    *(ckt->CKTstate0+here->HICUMqxf2)=*(ckt->CKTstate1+here->HICUMqxf2);
+                    *(ckt->CKTstate0+here->HICUMcqxf2)=*(ckt->CKTstate1+here->HICUMcqxf2);
+                    *(ckt->CKTstate0+here->HICUMgqxf2)=*(ckt->CKTstate1+here->HICUMgqxf2);
+                    *(ckt->CKTstate0+here->HICUMixf2_Vbiei)=*(ckt->CKTstate1+here->HICUMixf2_Vbiei);
+                    *(ckt->CKTstate0+here->HICUMixf2_Vbici)=*(ckt->CKTstate1+here->HICUMixf2_Vbici);
+                    *(ckt->CKTstate0+here->HICUMixf2_Vfx1)=*(ckt->CKTstate1+here->HICUMixf2_Vfx1);
+                    *(ckt->CKTstate0+here->HICUMith)=*(ckt->CKTstate1+here->HICUMith);
+                    *(ckt->CKTstate0+here->HICUMith_Vrth)=*(ckt->CKTstate1+here->HICUMith_Vrth);
+
+                    /////////////////////////
+                    // end copy state vector
+                    /////////////////////////
                 } else {
 #endif /* PREDICTOR */
                     /*
@@ -1520,8 +1631,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 delvbpbi = Vbpbi - *(ckt->CKTstate0 + here->HICUMvbpbi);
                 delvbpci = Vbpci - *(ckt->CKTstate0 + here->HICUMvbpci);
                 delvsici = Vsici - *(ckt->CKTstate0 + here->HICUMvsici);
-                if (model->HICUMflsh)
-                    delvrth = Vrth - *(ckt->CKTstate0 + here->HICUMvrth);
+                delvrth  = Vrth  - *(ckt->CKTstate0 + here->HICUMvrth);
                 Vbe = model->HICUMtype*(
                     *(ckt->CKTrhsOld+here->HICUMbaseNode)-
                     *(ckt->CKTrhsOld+here->HICUMemitNode));
@@ -1553,28 +1663,36 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                     Vrth = *(ckt->CKTrhsOld + here->HICUMtempNode);
                 ibieihat = *(ckt->CKTstate0 + here->HICUMibiei) +
                          *(ckt->CKTstate0 + here->HICUMibiei_Vbiei)*delvbiei+
+                         *(ckt->CKTstate0 + here->HICUMibiei_Vrth)*delvrth+
                          *(ckt->CKTstate0 + here->HICUMibiei_Vbici)*delvbici,
                 ibicihat = *(ckt->CKTstate0 + here->HICUMibici) +
                          *(ckt->CKTstate0 + here->HICUMibici_Vbici)*delvbici+
+                         *(ckt->CKTstate0 + here->HICUMibici_Vrth)*delvrth+
                          *(ckt->CKTstate0 + here->HICUMibici_Vbiei)*delvbiei;
                 ibpeihat = *(ckt->CKTstate0 + here->HICUMibpei) +
-                         *(ckt->CKTstate0 + here->HICUMibpei_Vbpei)*delvbpei;
+                         *(ckt->CKTstate0 + here->HICUMibpei_Vbpei)*delvbpei+
+                         *(ckt->CKTstate0 + here->HICUMibpei_Vrth)*delvrth;
                 ibpcihat = *(ckt->CKTstate0 + here->HICUMibpci) +
-                         *(ckt->CKTstate0 + here->HICUMibpci_Vbpci)*delvbpci;
+                         *(ckt->CKTstate0 + here->HICUMibpci_Vbpci)*delvbpci+
+                         *(ckt->CKTstate0 + here->HICUMibpci_Vrth)*delvrth;
                 icieihat = *(ckt->CKTstate0 + here->HICUMiciei) +
                          *(ckt->CKTstate0 + here->HICUMiciei_Vbiei)*delvbiei +
+                         *(ckt->CKTstate0 + here->HICUMiciei_Vrth)*delvrth +
                          *(ckt->CKTstate0 + here->HICUMiciei_Vbici)*delvbici;
                 ibpbihat = *(ckt->CKTstate0 + here->HICUMibpbi) +
                          *(ckt->CKTstate0 + here->HICUMibpbi_Vbpbi)*delvbpbi +
+                         *(ckt->CKTstate0 + here->HICUMibpbi_Vrth)*delvrth +
                          *(ckt->CKTstate0 + here->HICUMibpbi_Vbiei)*delvbiei +
                          *(ckt->CKTstate0 + here->HICUMibpbi_Vbici)*delvbici;
                 isicihat = *(ckt->CKTstate0 + here->HICUMisici) +
-                         *(ckt->CKTstate0 + here->HICUMisici_Vsici)*delvsici;
+                         *(ckt->CKTstate0 + here->HICUMisici_Vsici)*delvsici+
+                         *(ckt->CKTstate0 + here->HICUMisici_Vrth)*delvrth;
                 ibpsihat = *(ckt->CKTstate0 + here->HICUMibpsi) +
                          *(ckt->CKTstate0 + here->HICUMibpsi_Vbpci)*delvbpci +
+                         *(ckt->CKTstate0 + here->HICUMibpsi_Vrth)*delvrth +
                          *(ckt->CKTstate0 + here->HICUMibpsi_Vsici)*delvsici;
                 ithhat   = *(ckt->CKTstate0 + here->HICUMith) +
-                         *(ckt->CKTstate0 + here->HICUMith_Vrth)*delvrth;
+                         *(ckt->CKTstate0 + here->HICUMith_Vrth)*delvrth; //other dels are missing here... great :/
                 /*
                  *    bypass if solution has not changed
                  */
@@ -1648,34 +1766,43 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                     Ibiei       = *(ckt->CKTstate0 + here->HICUMibiei);
                     Ibiei_Vbiei = *(ckt->CKTstate0 + here->HICUMibiei_Vbiei);
                     Ibiei_Vbici = *(ckt->CKTstate0 + here->HICUMibiei_Vbici);
+                    Ibiei_dT    = *(ckt->CKTstate0 + here->HICUMibiei_Vrth);
 
                     Ibpei       = *(ckt->CKTstate0 + here->HICUMibpei);
                     Ibpei_Vbpei = *(ckt->CKTstate0 + here->HICUMibpei_Vbpei);
+                    Ibpei_dT    = *(ckt->CKTstate0 + here->HICUMibpei_Vrth);
 
                     Iciei       = *(ckt->CKTstate0 + here->HICUMiciei);
                     Iciei_Vbiei = *(ckt->CKTstate0 + here->HICUMiciei_Vbiei);
                     Iciei_Vbici = *(ckt->CKTstate0 + here->HICUMiciei_Vbici);
+                    Iciei_dT    = *(ckt->CKTstate0 + here->HICUMiciei_Vrth);
 
                     Ibici       = *(ckt->CKTstate0 + here->HICUMibici);
                     Ibici_Vbici = *(ckt->CKTstate0 + here->HICUMibici_Vbici);
                     Ibici_Vbiei = *(ckt->CKTstate0 + here->HICUMibici_Vbiei);
+                    Ibici_dT    = *(ckt->CKTstate0 + here->HICUMibici_Vrth);
 
                     Ibpbi       = *(ckt->CKTstate0 + here->HICUMibpbi);
                     Ibpbi_Vbpbi = *(ckt->CKTstate0 + here->HICUMibpbi_Vbpbi);
                     Ibpbi_Vbiei = *(ckt->CKTstate0 + here->HICUMibpbi_Vbiei);
                     Ibpbi_Vbici = *(ckt->CKTstate0 + here->HICUMibpbi_Vbici);
+                    Ibpbi_dT    = *(ckt->CKTstate0 + here->HICUMibpbi_Vrth);
 
                     Isici       = *(ckt->CKTstate0 + here->HICUMisici);
                     Isici_Vsici = *(ckt->CKTstate0 + here->HICUMisici_Vsici);
+                    Isici_dT    = *(ckt->CKTstate0 + here->HICUMisici_Vrth);
 
                     Ibpsi       = *(ckt->CKTstate0 + here->HICUMibpsi);
                     Ibpsi_Vbpci = *(ckt->CKTstate0 + here->HICUMibpsi_Vbpci);
                     Ibpsi_Vsici = *(ckt->CKTstate0 + here->HICUMibpsi_Vsici);
+                    Ibpsi_dT    = *(ckt->CKTstate0 + here->HICUMibpsi_Vrth);
 
                     Ibpci       = *(ckt->CKTstate0 + here->HICUMibpci);
                     Ibpci_Vbpci = *(ckt->CKTstate0 + here->HICUMibpci_Vbpci);
+                    Ibpci_dT    = *(ckt->CKTstate0 + here->HICUMibpci_Vrth);
 
                     Ieie        = *(ckt->CKTstate0 + here->HICUMieie);
+                    Ieie_dT     = *(ckt->CKTstate0 + here->HICUMieie_Vrth);
 
                     Isis_Vsis   = *(ckt->CKTstate0 + here->HICUMisis_Vsis);
 
@@ -1712,7 +1839,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 //todo: check for double multiplication on pnp's
             Vbiei = model->HICUMtype*Vbiei;
             Vbici = model->HICUMtype*Vbici;
-            Vciei = Vbiei-Vbici;
+            Vciei = model->HICUMtype*(Vbiei-Vbici);
             Vbpei = model->HICUMtype*Vbpei;
             Vbpci = model->HICUMtype*Vbpci;
             Vbci  = model->HICUMtype*Vbci;
@@ -1727,6 +1854,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
                 here->HICUMdtemp_sh = Temp - ckt->CKTtemp;
             } else {
+                Temp =  here->HICUMtemp;
                 here->HICUMdtemp_sh = 0;
             }
 
@@ -2809,36 +2937,45 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             *(ckt->CKTstate0 + here->HICUMibiei)       = Ibiei;
             *(ckt->CKTstate0 + here->HICUMibiei_Vbiei) = Ibiei_Vbiei;
             *(ckt->CKTstate0 + here->HICUMibiei_Vbici) = Ibiei_Vbici;
+            *(ckt->CKTstate0 + here->HICUMibiei_Vrth)  = Ibiei_dT;
 
             *(ckt->CKTstate0 + here->HICUMibpei)       = Ibpei;
             *(ckt->CKTstate0 + here->HICUMibpei_Vbpei) = Ibpei_Vbpei;
+            *(ckt->CKTstate0 + here->HICUMibpei_Vrth)  = Ibpei_dT;
 
             *(ckt->CKTstate0 + here->HICUMiciei)       = Iciei;
             *(ckt->CKTstate0 + here->HICUMiciei_Vbiei) = Iciei_Vbiei;
             *(ckt->CKTstate0 + here->HICUMiciei_Vbici) = Iciei_Vbici;
+            *(ckt->CKTstate0 + here->HICUMiciei_Vrth)  = Iciei_dT;
 
             *(ckt->CKTstate0 + here->HICUMibici)       = Ibici;
             *(ckt->CKTstate0 + here->HICUMibici_Vbici) = Ibici_Vbici;
             *(ckt->CKTstate0 + here->HICUMibici_Vbiei) = Ibici_Vbiei;
+            *(ckt->CKTstate0 + here->HICUMibici_Vrth)  = Ibici_dT;
 
             *(ckt->CKTstate0 + here->HICUMibpbi)       = Ibpbi;
             *(ckt->CKTstate0 + here->HICUMibpbi_Vbpbi) = Ibpbi_Vbpbi;
             *(ckt->CKTstate0 + here->HICUMibpbi_Vbiei) = Ibpbi_Vbiei;
             *(ckt->CKTstate0 + here->HICUMibpbi_Vbici) = Ibpbi_Vbici;
+            *(ckt->CKTstate0 + here->HICUMibpbi_Vrth)  = Ibpbi_dT;
 
             *(ckt->CKTstate0 + here->HICUMibpci)       = Ibpci;
             *(ckt->CKTstate0 + here->HICUMibpci_Vbpci) = Ibpci_Vbpci;
+            *(ckt->CKTstate0 + here->HICUMibpci_Vrth)  = Ibpci_dT;
 
             *(ckt->CKTstate0 + here->HICUMisici)       = Isici;
             *(ckt->CKTstate0 + here->HICUMisici_Vsici) = Isici_Vsici;
+            *(ckt->CKTstate0 + here->HICUMisici_Vrth)  = Isici_dT;
 
             *(ckt->CKTstate0 + here->HICUMibpsi)       = Ibpsi;
             *(ckt->CKTstate0 + here->HICUMibpsi_Vbpci) = Ibpsi_Vbpci;
             *(ckt->CKTstate0 + here->HICUMibpsi_Vsici) = Ibpsi_Vsici;
+            *(ckt->CKTstate0 + here->HICUMibpsi_Vrth)  = Ibpsi_dT;
 
             *(ckt->CKTstate0 + here->HICUMisis_Vsis)   = Isis_Vsis;
 
             *(ckt->CKTstate0 + here->HICUMieie)        = Ieie;
+            *(ckt->CKTstate0 + here->HICUMieie_Vrth)   = Ieie_dT;
 
             *(ckt->CKTstate0 + here->HICUMcqcth)       = Icth;
             *(ckt->CKTstate0 + here->HICUMicth_dT)     = Icth_dT;
