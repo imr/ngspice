@@ -166,6 +166,20 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             model->DIOrecSatCur = 1e-14;
         }
 
+        /* set lower limit of saturation current */
+        if (model->DIOsatCur < ckt->CKTepsmin)
+            model->DIOsatCur = ckt->CKTepsmin;
+
+        if(!model->DIOnomTempGiven) {
+            model->DIOnomTemp = ckt->CKTnomTemp;
+        }
+
+        if((!model->DIOresistGiven) || (model->DIOresist==0)) {
+            model->DIOconductance = 0.0;
+        } else {
+            model->DIOconductance = 1/model->DIOresist;
+        }
+
         if (!model->DIOshModGiven)
             model->DIOshMod = 0;
 
@@ -197,18 +211,16 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 here->DIOm = 1;
             }
 
-            here->DIOarea = here->DIOarea * here->DIOm;
-            here->DIOpj = here->DIOpj * here->DIOm;
             if (model->DIOlevel == 3) {
                 if((here->DIOwGiven) && (here->DIOlGiven))  {
-                    here->DIOarea = here->DIOw * here->DIOl * here->DIOm;
-                    here->DIOpj = (2 * here->DIOw + 2 * here->DIOl) * here->DIOm;
+                    here->DIOarea = here->DIOw * here->DIOl;
+                    here->DIOpj = (2 * here->DIOw + 2 * here->DIOl);
                 }
             }
-            here->DIOforwardKneeCurrent = model->DIOforwardKneeCurrent * here->DIOarea;
-            here->DIOreverseKneeCurrent = model->DIOreverseKneeCurrent * here->DIOarea;
-            here->DIOjunctionCap = model->DIOjunctionCap * here->DIOarea;
-            here->DIOjunctionSWCap = model->DIOjunctionSWCap * here->DIOpj;
+            here->DIOforwardKneeCurrent = here->DIOm * model->DIOforwardKneeCurrent * here->DIOarea;
+            here->DIOreverseKneeCurrent = here->DIOm * model->DIOreverseKneeCurrent * here->DIOarea;
+            here->DIOjunctionCap = here->DIOm * model->DIOjunctionCap * here->DIOarea;
+            here->DIOjunctionSWCap = here->DIOm * model->DIOjunctionSWCap * here->DIOpj;
 
             here->DIOstate = *states;
             *states += DIOnumStates;
