@@ -19,12 +19,11 @@ void DIOtempUpdate(DIOmodel *inModel, DIOinstance *here, double Temp, CKTcircuit
 
     DIOmodel *model = (DIOmodel*)inModel;
     double xfc, xfcs;
-    double vte;
+    double vt, vte, vts, vtt, vtr;
     double cbv;
     double xbv;
     double xcbv;
     double tol;
-    double vt;
     double vtnom;
     int iter;
     double dt;
@@ -41,6 +40,9 @@ void DIOtempUpdate(DIOmodel *inModel, DIOinstance *here, double Temp, CKTcircuit
 
     vt = CONSTKoverQ * Temp;
     vte = model->DIOemissionCoeff * vt;
+    vts = model->DIOswEmissionCoeff * vt;
+    vtt = model->DIOtunEmissionCoeff * vt;
+    vtr = model->DIOrecEmissionCoeff * vt;
     vtnom = CONSTKoverQ * model->DIOnomTemp;
     dt = Temp - model->DIOnomTemp;
 
@@ -106,76 +108,43 @@ void DIOtempUpdate(DIOmodel *inModel, DIOinstance *here, double Temp, CKTcircuit
                     (1+model->DIOctp*(Temp-REFTEMP));
     }
 
-//    here->DIOtSatCur = model->DIOsatCur * here->DIOarea * exp(
-//            ((here->DIOtemp/model->DIOnomTemp)-1) *
-//            model->DIOactivationEnergy/(model->DIOemissionCoeff*vt) +
-//            model->DIOsaturationCurrentExp/model->DIOemissionCoeff *
-//            log(here->DIOtemp/model->DIOnomTemp) );     
-    arg1 = ((Temp / model->DIOnomTemp) - 1) * model->DIOactivationEnergy / (model->DIOemissionCoeff*vt);
+    arg1 = ((Temp / model->DIOnomTemp) - 1) * model->DIOactivationEnergy / vte;
     arg1_dT = model->DIOactivationEnergy / (vte*model->DIOnomTemp)
               - model->DIOactivationEnergy*(Temp/model->DIOnomTemp -1)/(vte*Temp);
-
     arg2 = model->DIOsaturationCurrentExp / model->DIOemissionCoeff * log(Temp / model->DIOnomTemp);
     arg2_dT = model->DIOsaturationCurrentExp / model->DIOemissionCoeff / Temp;
-
     here->DIOtSatCur = here->DIOm * model->DIOsatCur * here->DIOarea * exp(arg1 + arg2);
     here->DIOtSatCur_dT = here->DIOm * model->DIOsatCur * here->DIOarea * exp(arg1 + arg2) * (arg1_dT + arg2_dT);
 
-//here->DIOtSatSWCur = model->DIOsatSWCur * here->DIOpj * exp(
-//        ((here->DIOtemp/model->DIOnomTemp)-1) *
-//        model->DIOactivationEnergy/(model->DIOswEmissionCoeff*vt) +
-//        model->DIOsaturationCurrentExp/model->DIOswEmissionCoeff *
-//        log(here->DIOtemp/model->DIOnomTemp) );
-    arg1 = ((Temp / model->DIOnomTemp) - 1) * model->DIOactivationEnergy / (model->DIOswEmissionCoeff*vt);
-    arg1_dT = model->DIOactivationEnergy / (vte*model->DIOnomTemp)
-              - model->DIOactivationEnergy*(Temp/model->DIOnomTemp -1)/(vte*Temp);
-
+    arg1 = ((Temp / model->DIOnomTemp) - 1) * model->DIOactivationEnergy / vts;
+    arg1_dT = model->DIOactivationEnergy / (vts*model->DIOnomTemp)
+              - model->DIOactivationEnergy*(Temp/model->DIOnomTemp -1)/(vts*Temp);
     arg2 = model->DIOsaturationCurrentExp / model->DIOswEmissionCoeff * log(Temp / model->DIOnomTemp);
-    arg2_dT = model->DIOsaturationCurrentExp / model->DIOemissionCoeff / Temp;
-
+    arg2_dT = model->DIOsaturationCurrentExp / model->DIOswEmissionCoeff / Temp;
     here->DIOtSatSWCur = here->DIOm * model->DIOsatSWCur * here->DIOpj * exp(arg1 + arg2);
     here->DIOtSatSWCur_dT = here->DIOm * model->DIOsatSWCur * here->DIOpj * exp(arg1 + arg2) * (arg1_dT + arg2_dT);
 
-//here->DIOtTunSatCur = model->DIOtunSatCur * here->DIOarea * exp(
-//        ((here->DIOtemp/model->DIOnomTemp)-1) *
-//        model->DIOtunEGcorrectionFactor*model->DIOactivationEnergy/vt +
-//        model->DIOtunSaturationCurrentExp *
-//        log(here->DIOtemp/model->DIOnomTemp) );     here->DIOtTunSatCur = here->DIOm * model->DIOtunSatCur * here->DIOarea * exp(arg1 + arg2);
-    arg1 = ((Temp / model->DIOnomTemp) - 1) * model->DIOtunEGcorrectionFactor*model->DIOactivationEnergy / (model->DIOemissionCoeff*vt);
-    arg1_dT = model->DIOtunEGcorrectionFactor*model->DIOactivationEnergy / (vte*model->DIOnomTemp)
-              - model->DIOactivationEnergy*(Temp/model->DIOnomTemp -1)/(vte*Temp);
-
-    arg2 = model->DIOtunSaturationCurrentExp / model->DIOemissionCoeff * log(Temp / model->DIOnomTemp);
-    arg2_dT = model->DIOtunSaturationCurrentExp / model->DIOemissionCoeff / Temp;
-
+    arg1 = ((Temp / model->DIOnomTemp) - 1) * model->DIOtunEGcorrectionFactor*model->DIOactivationEnergy / vtt;
+    arg1_dT = model->DIOtunEGcorrectionFactor*model->DIOactivationEnergy / (vtt*model->DIOnomTemp)
+              - model->DIOactivationEnergy*(Temp/model->DIOnomTemp -1)/(vtt*Temp);
+    arg2 = model->DIOtunSaturationCurrentExp / model->DIOtunEmissionCoeff * log(Temp / model->DIOnomTemp);
+    arg2_dT = model->DIOtunSaturationCurrentExp / model->DIOtunEmissionCoeff / Temp;
+    here->DIOtTunSatCur = here->DIOm * model->DIOtunSatCur * here->DIOarea * exp(arg1 + arg2);
     here->DIOtTunSatCur_dT = here->DIOm * model->DIOtunSatCur * here->DIOarea * exp(arg1 + arg2) * (arg1_dT + arg2_dT);
 
-//here->DIOtTunSatSWCur = model->DIOtunSatSWCur * here->DIOpj * exp(
-//        ((here->DIOtemp/model->DIOnomTemp)-1) *
-//        model->DIOtunEGcorrectionFactor*model->DIOactivationEnergy/vt +
-//        model->DIOtunSaturationCurrentExp *
-//        log(here->DIOtemp/model->DIOnomTemp) );     arg1 = ((Temp / model->DIOnomTemp) - 1) * model->DIOtunEGcorrectionFactor*model->DIOactivationEnergy / (model->DIOemissionCoeff*vt);
-    arg1_dT = model->DIOtunEGcorrectionFactor*model->DIOactivationEnergy / (vte*model->DIOnomTemp)
-              - model->DIOactivationEnergy*(Temp/model->DIOnomTemp -1)/(vte*Temp);
-
-    arg2 = model->DIOtunSaturationCurrentExp / model->DIOemissionCoeff * log(Temp / model->DIOnomTemp);
-    arg2_dT = model->DIOtunSaturationCurrentExp / model->DIOemissionCoeff / Temp;
-
+    arg1 = ((Temp / model->DIOnomTemp) - 1) * model->DIOtunEGcorrectionFactor*model->DIOactivationEnergy / vtt;
+    arg1_dT = model->DIOtunEGcorrectionFactor*model->DIOactivationEnergy / (vtt*model->DIOnomTemp)
+              - model->DIOactivationEnergy*(Temp/model->DIOnomTemp -1)/(vtt*Temp);
+    arg2 = model->DIOtunSaturationCurrentExp / model->DIOtunEmissionCoeff * log(Temp / model->DIOnomTemp);
+    arg2_dT = model->DIOtunSaturationCurrentExp / model->DIOtunEmissionCoeff / Temp;
     here->DIOtTunSatSWCur = here->DIOm * model->DIOtunSatSWCur * here->DIOpj * exp(arg1 + arg2);
     here->DIOtTunSatSWCur_dT = here->DIOm * model->DIOtunSatSWCur * here->DIOpj * exp(arg1 + arg2) * (arg1_dT + arg2_dT);
 
-//    here->DIOtRecSatCur = model->DIOrecSatCur * here->DIOarea * exp(
-//            ((Temp/model->DIOnomTemp)-1) *
-//            model->DIOactivationEnergy/(model->DIOrecEmissionCoeff*vt) +
-//            model->DIOsaturationCurrentExp/model->DIOrecEmissionCoeff *
-//            log(Temp/model->DIOnomTemp) );
-    arg1 = ((Temp / model->DIOnomTemp) - 1) * model->DIOtunEGcorrectionFactor*model->DIOactivationEnergy / (model->DIOemissionCoeff*vt);
-    arg1_dT = model->DIOtunEGcorrectionFactor*model->DIOactivationEnergy / (vte*model->DIOnomTemp)
-              - model->DIOactivationEnergy*(Temp/model->DIOnomTemp -1)/(vte*Temp);
-
-    arg2 = model->DIOtunSaturationCurrentExp / model->DIOrecEmissionCoeff * log(Temp / model->DIOnomTemp);
-    arg2_dT = model->DIOtunSaturationCurrentExp / model->DIOrecEmissionCoeff / Temp;
-
+    arg1 = ((Temp / model->DIOnomTemp) - 1) * model->DIOactivationEnergy / vtr;
+    arg1_dT = model->DIOactivationEnergy / (vtr*model->DIOnomTemp)
+              - model->DIOactivationEnergy*(Temp/model->DIOnomTemp -1)/(vtr*Temp);
+    arg2 = model->DIOsaturationCurrentExp / model->DIOrecEmissionCoeff * log(Temp / model->DIOnomTemp);
+    arg2_dT = model->DIOsaturationCurrentExp / model->DIOrecEmissionCoeff / Temp;
     here->DIOtRecSatCur = here->DIOm * model->DIOrecSatCur * here->DIOarea * exp(arg1 + arg2);
     here->DIOtRecSatCur_dT = here->DIOm * model->DIOrecSatCur * here->DIOarea * exp(arg1 + arg2) * (arg1_dT + arg2_dT);
 
@@ -223,9 +192,9 @@ void DIOtempUpdate(DIOmodel *inModel, DIOinstance *here, double Temp, CKTcircuit
             tBreakdownVoltage = model->DIObreakdownVoltage * (1 - model->DIOtcv * dt);
         }
         if (model->DIOlevel == 1) {
-            cbv = model->DIObreakdownCurrent;
+            cbv = here->DIOm * model->DIObreakdownCurrent;
         } else { /* level=3 */
-            cbv = model->DIObreakdownCurrent * here->DIOarea;
+            cbv = here->DIOm * model->DIObreakdownCurrent * here->DIOarea;
         }
         if (cbv < here->DIOtSatCur * tBreakdownVoltage/vt) {
             cbv=here->DIOtSatCur * tBreakdownVoltage/vt;
@@ -261,12 +230,12 @@ void DIOtempUpdate(DIOmodel *inModel, DIOinstance *here, double Temp, CKTcircuit
     here->DIOtTransitTime = model->DIOtransitTime * factor;
 
     /* Series resistance temperature adjust */
-    here->DIOtConductance = model->DIOconductance;
+    here->DIOtConductance = here->DIOm * model->DIOconductance * here->DIOarea;
     if(model->DIOresistGiven && model->DIOresist!=0.0) {
         factor = 1.0 + (model->DIOresistTemp1) * dt
                  + (model->DIOresistTemp2 * dt * dt);
-        here->DIOtConductance = model->DIOconductance * here->DIOarea / factor;
-        here->DIOtConductance_dT = -model->DIOconductance * here->DIOarea *
+        here->DIOtConductance = here->DIOm * model->DIOconductance * here->DIOarea / factor;
+        here->DIOtConductance_dT = here->DIOm * -model->DIOconductance * here->DIOarea *
             (model->DIOresistTemp1 + model->DIOresistTemp2 * dt) / (factor*factor);
     }
 
@@ -286,19 +255,6 @@ DIOtemp(GENmodel *inModel, CKTcircuit *ckt)
 
     /*  loop through all the diode models */
     for( ; model != NULL; model = DIOnextModel(model)) {
-        /* set lower limit of saturation current */
-        if (model->DIOsatCur < ckt->CKTepsmin)
-            model->DIOsatCur = ckt->CKTepsmin;
-
-        if(!model->DIOnomTempGiven) {
-            model->DIOnomTemp = ckt->CKTnomTemp;
-        }
-
-        if((!model->DIOresistGiven) || (model->DIOresist==0)) {
-            model->DIOconductance = 0.0;
-        } else {
-            model->DIOconductance = 1/model->DIOresist;
-        }
 
         /* loop through all the instances */
         for(here=DIOinstances(model);here;here=DIOnextInstance(here)) {
