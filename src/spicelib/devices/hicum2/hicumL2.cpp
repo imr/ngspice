@@ -402,7 +402,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Qdei,Qdci,Qrbi;
     double it,ibei,irei,ibci,ibep,irep,ibh_rec;
     double ibet,iavl,iavl_ditf,iavl_dT,iavl_Vbiei,iavl_dCjci;
-    double ijbcx,ijbcx_dT,ijbcx_Vbpci,ijsc,ijsc_Vsici,ijsc_dT,Qjs,Qscp,HSI_Tsu,Qdsu;
+    double ijbcx,ijbcx_dT,ijbcx_Vbpci,ijsc,ijsc_Vsici,ijsc_Vrth,Qjs,Qscp,HSI_Tsu,Qdsu;
     double HSI_Tsu_Vbpci, HSI_Tsu_Vsici, HSI_Tsu_dT;
     double Qdsu_Vbpci, Qdsu_Vsici, Qdsu_dT;
     duals::duald result_Qdsu, result_HSI_TSU;
@@ -546,8 +546,8 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Isici_Vrth=0;
     double Ibpbi_Vrth=0;
     double Ieie_Vrth=0;
-    double Icic_dT=0;
-    double Ibbp_dT=0;
+    double Icic_Vrth=0;
+    double Ibbp_Vrth=0;
 
     double Ith_Vrth   =0;
     double Ith_Vciei=0;
@@ -2035,7 +2035,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 Tf_dick  = result_Tf.dpart();
 
                 // add derivatives of Q_0 = f(Vbici,Vbiei,T)
-                itf_dT    += itf_dQ_pT*Q_0_dT; //WHY NOT QPT -> since we used Q_pT variable here instead of Q_0 to save space, see above
+                itf_dT    += itf_dQ_pT*Q_0_dT; //WHY NOT Q_0 -> since we used Q_pT variable here instead of Q_0 to save space, see above
                 itr_dT    += itr_dQ_pT*Q_0_dT;
                 Qf_dT     += Qf_dQ_pT*Q_0_dT;
                 Qr_dT     += Qr_dQ_pT*Q_0_dT;
@@ -2123,8 +2123,8 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 // Q_pT_dick_numerical = (result.rpart() - Q_pT)/(ick*1e-3);
 
                 //add derivatives of ick
-                Q_pT_dVciei = Q_pT_dick*ick_Vciei; //additional component not seen in equivalent circuit of HiCUM...jesus
-                Q_pT_dT    += Q_pT_dick*ick_dT;
+                Q_pT_dVciei  = Q_pT_dick*ick_Vciei; //additional component not seen in equivalent circuit of HiCUM...jesus
+                Q_pT_dT     += Q_pT_dick*ick_dT;
 
                 // //add derivatives of Q_0
                 Q_pT_dVbiei += Q_pT_dQ_0*Q_0_Vbiei;
@@ -2280,7 +2280,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             Qdci    = Qr;
 
             //High-frequency emitter current crowding (lateral NQS)
-            //TODO : no derivatives for temp ??
+            //TODO : derivatives missing here???
             Cdei       = T_f0*itf/here->HICUMvt.rpart;
             Cdci       = model->HICUMtr*itr/here->HICUMvt.rpart;
             Crbi       = model->HICUMfcrbi*(Cjei+Cjci+Cdei+Cdci);
@@ -2307,8 +2307,8 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
             result      = calc_iavl(Vbici    , Cjci    , itf+1_e, Temp);
             iavl_ditf   = result.dpart();
-            iavl_Vbici += iavl_ditf*itf_Vbici;
-            iavl_Vbiei  = iavl_ditf*itf_Vbiei;
+            iavl_Vbici += iavl_ditf*(itf_Vbici-itf_Vciei);
+            iavl_Vbiei  = iavl_ditf*(itf_Vbiei+itf_Vciei);
 
             result      = calc_iavl(Vbici    , Cjci    , itf    , Temp+1_e);
             iavl_dT     = result.dpart(); 
@@ -2338,9 +2338,9 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             rbi_dQf   = result.dpart();
             here->HICUMrbi = rbi;
 
-            rbi_Vbiei = rbi_dQjei* Qjei_Vbiei  + rbi_dQf  *Qf_Vbiei                  ;
-            rbi_Vbici = rbi_dQf  * Qf_Vbici;
-            rbi_dT   += rbi_dQjei*Qjei_dT      + rbi_dQf*Qf_dT;
+            rbi_Vbiei = rbi_dQjei* Qjei_Vbiei           + rbi_dQf  *(Qf_Vbiei+Qf_Vciei)                  ;
+            rbi_Vbici = rbi_dQf  * (Qf_Vbici-Qf_Vciei);
+            rbi_dT   += rbi_dQjei*Qjei_dT               + rbi_dQf*Qf_dT;
 
             //Base currents across peripheral b-e junction
             hicum_diode(Temp,here->HICUMibeps_t,model->HICUMmbep, Vbpei, &ibep, &ibep_Vbpei, &ibep_dT);
@@ -2412,7 +2412,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             Ieie = Veie/here->HICUMre_t.rpart; // only needed for re flicker noise
 
             //Diode current for s-c junction (si,ci)
-            hicum_diode(Temp,here->HICUMiscs_t,model->HICUMmsc, Vsici, &ijsc, &ijsc_Vsici, &ijsc_dT);
+            hicum_diode(Temp,here->HICUMiscs_t,model->HICUMmsc, Vsici, &ijsc, &ijsc_Vsici, &ijsc_Vrth);
 
             // Self-heating calculation
             if (model->HICUMflsh == 1 && model->HICUMrth >= MIN_R) {
@@ -2423,7 +2423,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 pterm   =  (Vbiei-Vbici)*it + (here->HICUMvdci_t.rpart-Vbici)*iavl + ibei*Vbiei + ibci*Vbici + ibep*Vbpei + ijbcx*Vbpci + ijsc*Vsici;
                 // assuming Vciei_dT, Vbiei_dT, Vbpei_dT, Vbpci_dT, Vsici and Vbici_dT are 0
                 pterm_dT = (Vbiei-Vbici)*it_dT + (here->HICUMvdci_t.rpart-Vbici)*iavl_dT + here->HICUMvdci_t.dpart*iavl +
-                    ibei_dT*Vbiei + ibci_dT*Vbici + ibep_dT*Vbpei + ijbcx_dT*Vbpci + ijsc_dT*Vsici;
+                    ibei_dT*Vbiei + ibci_dT*Vbici + ibep_dT*Vbpei + ijbcx_dT*Vbpci + ijsc_Vrth*Vsici;
 
                 if (rbi >= MIN_R) {
                     pterm    += Vbpbi*Vbpbi/rbi;
@@ -2490,9 +2490,9 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
             //resistors
             Ibbp_Vbbp    = 1/here->HICUMrbx_t.rpart;
-            Ibbp_dT      = -here->HICUMrbx_t.dpart*Vbbp/here->HICUMrbx_t.rpart/here->HICUMrbx_t.rpart;
+            Ibbp_Vrth    = -here->HICUMrbx_t.dpart*Vbbp/here->HICUMrbx_t.rpart/here->HICUMrbx_t.rpart;
             Icic_Vcic    = 1/here->HICUMrcx_t.rpart;
-            Icic_dT      = -here->HICUMrcx_t.dpart*Vcic/here->HICUMrcx_t.rpart/here->HICUMrcx_t.rpart;
+            Icic_Vrth    = -here->HICUMrcx_t.dpart*Vcic/here->HICUMrcx_t.rpart/here->HICUMrcx_t.rpart;
             Ieie_Veie    = 1/here->HICUMre_t.rpart;
             Ieie_Vrth    = -here->HICUMre_t.dpart*Veie/here->HICUMre_t.rpart/here->HICUMre_t.rpart;
             Isis_Vsis    = 1/model->HICUMrsu;
@@ -2541,6 +2541,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
             Isici       = model->HICUMtype*ijsc;
             Isici_Vsici = model->HICUMtype*ijsc_Vsici;
+            Isici_Vrth  = model->HICUMtype*ijsc_Vrth;
 
             Iciei       =  model->HICUMtype*it;
             Iciei_Vbiei =  model->HICUMtype*it_Vbiei;
@@ -2559,7 +2560,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 Ibpbi_Vbpbi = 1 / MIN_R;
                 Ibpbi_Vbiei = 0;
                 Ibpbi_Vbici = 0;
-                Ibpbi_Vrth    = 0;
+                Ibpbi_Vrth  = 0;
             }
 
             Ibiei += ckt->CKTgmin*Vbiei;
@@ -3434,21 +3435,21 @@ c           Branch: xf-ground, Stamp element: Rxf
 //              finish
 
 //              Stamp element: Rcx  f_Ci = +   f_C = -
-                rhs_current = -Icic_dT*Vrth;
+                rhs_current = -Icic_Vrth*Vrth;
                 *(ckt->CKTrhs + here->HICUMcollCINode) += -rhs_current;
                 *(ckt->CKTrhs + here->HICUMcollNode)   +=  rhs_current;
                 // with respect to Potential Vrth
-                *(here->HICUMcollCItempPtr)            +=  Icic_dT;
-                *(here->HICUMcollTempPtr)              += -Icic_dT;
+                *(here->HICUMcollCItempPtr)            +=  Icic_Vrth;
+                *(here->HICUMcollTempPtr)              += -Icic_Vrth;
 //              finish
 
 //              Stamp element: Rbx  f_B = +   f_Bp = -
-                rhs_current = -Ibbp_dT*Vrth;
+                rhs_current = -Ibbp_Vrth*Vrth;
                 *(ckt->CKTrhs + here->HICUMbaseNode)   += -rhs_current;
                 *(ckt->CKTrhs + here->HICUMbaseBPNode) +=  rhs_current;
                 // with respect to Potential Vrth
-                *(here->HICUMbaseTempPtr)   +=  Ibbp_dT;
-                *(here->HICUMbaseBPtempPtr) += -Ibbp_dT;
+                *(here->HICUMbaseTempPtr)   +=  Ibbp_Vrth;
+                *(here->HICUMbaseBPtempPtr) += -Ibbp_Vrth;
 //              finish
 
 //              Stamp element: Re   f_Ei = +   f_E = -
