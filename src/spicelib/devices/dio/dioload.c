@@ -47,7 +47,7 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
     double delvd;   /* change in diode voltage temporary */
     double evrev;
     double gd, gdb, gdsw, gen_fac, gen_fac_vd;
-    double t1, evd_rec, cdb_rec, gdb_rec;
+    double t1, evd_rec, cdb_rec, gdb_rec, cdb_rec_dT;
     double geq;
     double gspr;    /* area-scaled conductance */
     double sarg;
@@ -57,8 +57,7 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
     double vd;      /* current diode voltage */
     double vdtemp;
     double vt;      /* K t / Q */
-    double vte, vtesw, vtetun;
-    double vtebrk;
+    double vte, vtesw, vtetun, vtebrk;
     int Check_dio=0, Check_th;
     int error;
     int SenCond=0;    /* sensitivity condition */
@@ -317,16 +316,21 @@ next1:
                 gdb = csat*evd/vte;
                 cdb_dT = csat_dT * (evd - 1) - csat * vd * evd / (vte * Temp);
                 if (model->DIOrecSatCurGiven) { /* recombination current */
-                    evd_rec = exp(vd/(model->DIOrecEmissionCoeff*vt));
+                    double vterec = model->DIOrecEmissionCoeff*vt;
+                    evd_rec = exp(vd/(vterec));
                     cdb_rec = here->DIOtRecSatCur*(evd_rec-1);
-                    gdb_rec = here->DIOtRecSatCur*evd_rec/vt;
+                    gdb_rec = here->DIOtRecSatCur*evd_rec/vterec;
+                    cdb_rec_dT = here->DIOtRecSatCur_dT * (evd_rec - 1) 
+                                -here->DIOtRecSatCur * vd * evd_rec / (vterec*Temp);
                     t1 = pow((1-vd/here->DIOtJctPot), 2) + 0.005;
                     gen_fac = pow(t1, here->DIOtGradingCoeff/2);
-                    gen_fac_vd = here->DIOtGradingCoeff * (1-vd/here->DIOtJctPot) * pow(t1, (here->DIOtGradingCoeff/2-1));
+                    gen_fac_vd = -here->DIOtGradingCoeff * (1-vd/here->DIOtJctPot) 
+                                                         * pow(t1, (here->DIOtGradingCoeff/2-1));
                     cdb_rec = cdb_rec * gen_fac;
                     gdb_rec = gdb_rec * gen_fac + cdb_rec * gen_fac_vd;
                     cdb = cdb + cdb_rec;
                     gdb = gdb + gdb_rec;
+                    cdb_dT = cdb_dT + cdb_rec_dT*gen_fac;
                 }
 
             } else if((!(model->DIObreakdownVoltageGiven)) ||
@@ -356,8 +360,10 @@ next1:
                 vtetun = model->DIOtunEmissionCoeff * vt;
                 evd = exp(-vd/vtetun);
 
-                cdsw = cdsw - here->DIOtTunSatSWCur * (evd - 1);
-                gdsw = gdsw + here->DIOtTunSatSWCur * evd / vtetun;
+                cdsw = cdsw + here->DIOtTunSatSWCur * (evd - 1);
+                gdsw = gdsw - here->DIOtTunSatSWCur * evd / vtetun;
+                cdsw_dT = cdsw_dT + here->DIOtTunSatSWCur_dT * (evd - 1) 
+                                  + here->DIOtTunSatSWCur * vd * evd / (vtetun * Temp);
 
             }
 
@@ -366,8 +372,10 @@ next1:
                 vtetun = model->DIOtunEmissionCoeff * vt;
                 evd = exp(-vd/vtetun);
 
-                cdb = cdb - here->DIOtTunSatCur * (evd - 1);
-                gdb = gdb + here->DIOtTunSatCur * evd / vtetun;
+                cdb = cdb + here->DIOtTunSatCur * (evd - 1);
+                gdb = gdb - here->DIOtTunSatCur * evd / vtetun;
+                cdb_dT = cdb_dT + here->DIOtTunSatCur_dT * (evd - 1)
+                                + here->DIOtTunSatCur * vd * evd / (vtetun * Temp);
 
             }
 
