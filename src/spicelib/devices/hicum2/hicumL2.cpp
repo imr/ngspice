@@ -1646,8 +1646,8 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 delvbpci = Vbpci - *(ckt->CKTstate0 + here->HICUMvbpci);
                 delvsici = Vsici - *(ckt->CKTstate0 + here->HICUMvsici);
                 delvcic  = Vcic  - *(ckt->CKTstate0 + here->HICUMvcic);
-                delvbbp  = Vcic  - *(ckt->CKTstate0 + here->HICUMvbbp);
-                delveie  = Vcic  - *(ckt->CKTstate0 + here->HICUMveie);
+                delvbbp  = Vbbp  - *(ckt->CKTstate0 + here->HICUMvbbp);
+                delveie  = Veie  - *(ckt->CKTstate0 + here->HICUMveie);
                 delvciei = delvbiei-delvbici;
                 if (model->HICUMflsh) {
                     delvrth  = Vrth  - *(ckt->CKTstate0 + here->HICUMvrth);
