@@ -629,6 +629,7 @@ typedef struct sHICUMmodel {           /* model structure for a hicum */
 
 //Self-Heating
     int HICUMflsh;
+    int HICUMrth_de;
     double HICUMrth;
     double HICUMzetarth;
     double HICUMalrth;
@@ -807,6 +808,7 @@ typedef struct sHICUMmodel {           /* model structure for a hicum */
 
 //Self-Heating
     unsigned HICUMflshGiven : 1;
+    unsigned HICUMrth_deGiven : 1;
     unsigned HICUMrthGiven : 1;
     unsigned HICUMzetarthGiven : 1;
     unsigned HICUMalrthGiven : 1;
@@ -1012,6 +1014,7 @@ enum {
 
 //Self-Heating
     HICUM_MOD_FLSH,
+    HICUM_MOD_RTH_DE,
     HICUM_MOD_RTH,
     HICUM_MOD_ZETARTH,
     HICUM_MOD_ALRTH,

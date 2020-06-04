@@ -701,8 +701,12 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 Vbxf  = *(ckt->CKTrhsOld + here->HICUMxfNode);
                 Vbxf1 = *(ckt->CKTrhsOld + here->HICUMxf1Node);
                 Vbxf2 = *(ckt->CKTrhsOld + here->HICUMxf2Node);
-                if (model->HICUMflsh)
+                if (model->HICUMflsh){
+                    if vrth_de
                     Vrth = *(ckt->CKTstate0 + here->HICUMvrth);
+
+                }
+
             } else if(ckt->CKTmode & MODEINITTRAN) {
                 Vbiei = *(ckt->CKTstate1 + here->HICUMvbiei);
                 Vbici = *(ckt->CKTstate1 + here->HICUMvbici);

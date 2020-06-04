@@ -270,6 +270,7 @@ IFparm HICUMmPTable[] = { /* model parameters */
 
 //Self-Heating
   IOP("flsh",    HICUM_MOD_FLSH   , IF_INTEGER, "Flag for turning on and off self-heating effect"),
+  IOP("rth_de",    HICUM_MOD_RTH_DE , IF_INTEGER, "Experimental flag for turning on and off self-heating using direct evaluation"),
   IOP("rth",     HICUM_MOD_RTH    , IF_REAL, "Thermal resistance"),
   IOP("zetarth", HICUM_MOD_ZETARTH, IF_REAL, "Temperature coefficient for Rth"),
   IOP("alrth",   HICUM_MOD_ALRTH  , IF_REAL, "First order relative TC of parameter Rth"),

@@ -444,6 +444,8 @@ HICUMsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 //Self-Heating
         if(!model->HICUMflshGiven)
             model->HICUMflsh = 0;
+        if(!model->HICUMrth_deGiven)
+            model->HICUMrth_de = 0;
 
         if(!model->HICUMrthGiven)
             model->HICUMrth = 0.0;

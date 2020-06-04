@@ -555,6 +555,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Ith_Vbici=0;
     double Ith_Vbpei=0;
     double Ith_Vbpci=0;
+
     double Ith_Vsici=0;
     double Ith_Vbpbi=0;
     double Ith_Veie =0;
@@ -1280,7 +1281,11 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 Vbxf1 = *(ckt->CKTrhsOld + here->HICUMxf1Node);
                 Vbxf2 = *(ckt->CKTrhsOld + here->HICUMxf2Node);
                 if (model->HICUMflsh)
-                    Vrth = *(ckt->CKTstate0 + here->HICUMvrth);
+                    if (model->HICUMrth_de == 1) {
+                        Vrth = *(ckt->CKTstate0 + here->HICUMith)*here->HICUMrth_t.rpart;
+                    } else {
+                        Vrth = *(ckt->CKTstate0 + here->HICUMvrth);
+                    }
             } else if(ckt->CKTmode & MODEINITTRAN) {
                 Vbiei = *(ckt->CKTstate1 + here->HICUMvbiei);
                 Vbici = *(ckt->CKTstate1 + here->HICUMvbici);
@@ -1317,8 +1322,13 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 Vbxf  = *(ckt->CKTrhsOld + here->HICUMxfNode);
                 Vbxf1 = *(ckt->CKTrhsOld + here->HICUMxf1Node);
                 Vbxf2 = *(ckt->CKTrhsOld + here->HICUMxf2Node);
-                if (model->HICUMflsh)
-                    Vrth = *(ckt->CKTstate1 + here->HICUMvrth);
+                if (model->HICUMflsh) {
+                    if (model->HICUMrth_de == 1) {
+                        Vrth = *(ckt->CKTstate1 + here->HICUMith)*here->HICUMrth_t.rpart;
+                    } else {
+                        Vrth = *(ckt->CKTstate1 + here->HICUMvrth);
+                    }
+                }
             } else if((ckt->CKTmode & MODEINITJCT) &&
                     (ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC)){
                 Vbe   = here->HICUMicVB-here->HICUMicVE; //here was a hicumtype before, why?
@@ -1634,8 +1644,14 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                     Vbxf1 = *(ckt->CKTrhsOld + here->HICUMxf1Node);
                     Vbxf2 = *(ckt->CKTrhsOld + here->HICUMxf2Node);
                     Vciei = Vbiei - Vbici;
-                    if (model->HICUMflsh)
-                        Vrth = *(ckt->CKTrhsOld + here->HICUMtempNode);
+                    if (model->HICUMflsh) {
+                        if (model->HICUMrth_de==1) {
+                            Vrth = *(ckt->CKTstate0 + here->HICUMith)*here->HICUMrth_t.rpart;
+                        } else {
+                            Vrth = *(ckt->CKTrhsOld + here->HICUMtempNode);
+                        }
+                    }
+
 #ifndef PREDICTOR
                 }
 #endif /* PREDICTOR */
@@ -1681,8 +1697,13 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 Vbxf = *(ckt->CKTrhsOld + here->HICUMxfNode);
                 Vbxf1 = *(ckt->CKTrhsOld + here->HICUMxf1Node);
                 Vbxf2 = *(ckt->CKTrhsOld + here->HICUMxf2Node);
-                if (model->HICUMflsh)
-                    Vrth = *(ckt->CKTrhsOld + here->HICUMtempNode);
+                if (model->HICUMflsh) {
+                    if (model->HICUMrth_de==1) {
+                        Vrth = *(ckt->CKTstate0 + here->HICUMith)*here->HICUMrth_t.rpart;
+                    } else {
+                        Vrth = *(ckt->CKTrhsOld + here->HICUMtempNode);
+                    }
+                }
                 ibieihat = *(ckt->CKTstate0 + here->HICUMibiei) +
                          *(ckt->CKTstate0 + here->HICUMibiei_Vbiei)*delvbiei+
                          *(ckt->CKTstate0 + here->HICUMibiei_Vrth)*delvrth+
@@ -2610,8 +2631,10 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             Ith_Vbbp   = 0.0;
             Ith_Veie   = 0.0;
             Ith_Vrth   = 0.0;
-            if(model->HICUMflsh == 0 || model->HICUMrth < MIN_R) {
+            if(model->HICUMflsh == 0 || model->HICUMrth < MIN_R ) {
                 Ith      = 0.0;
+            } else if (model->HICUMrth_de==1) {
+                Ith      = -Vrth/here->HICUMrth_t.rpart+pterm; //Current from gnd to T
             } else {
                 Ith      = -Vrth/here->HICUMrth_t.rpart+pterm; //Current from gnd to T
 
@@ -3026,6 +3049,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             *(ckt->CKTstate0 + here->HICUMieie_Vrth)   = Ieie_Vrth;
 
             *(ckt->CKTstate0 + here->HICUMcqcth)       = Icth;
+            *(ckt->CKTstate0 + here->HICUMvrth)        = Vrth;
             *(ckt->CKTstate0 + here->HICUMicth_dT)     = Icth_Vrth;
 
             *(ckt->CKTstate0 + here->HICUMgqbepar1)    = gqbepar1;
@@ -3356,7 +3380,11 @@ c           Branch: xf-ground, Stamp element: Rxf
 //          ############### FINISH STAMPS NO SH #########################
 //          ############################################################# 
 
-            if (model->HICUMflsh && (model->HICUMrth >= MIN_R)) {
+            if (model->HICUMflsh && model->HICUMrth >= MIN_R) {
+                if (model->HICUMrth_de == 1) {
+                    *(here->HICUMtempTempPtr)            += 1;
+                    *(ckt->CKTrhs + here->HICUMtempNode) += Vrth;
+                } else {
 //              #############################################################
 //              ############### STAMP WITH SH ADDITIONS #####################
 //              #############################################################
@@ -3507,6 +3535,7 @@ c           Branch: xf-ground, Stamp element: Rxf
                 *(here->HICUMtempEmitEIPtr) += -Ith_Veie;
                 *(here->HICUMtempEmitPtr)   += +Ith_Veie;
 //              finish
+                }
             }
         }
 

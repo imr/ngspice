@@ -82,7 +82,14 @@ HICUMconvTest(GENmodel *inModel, CKTcircuit *ckt)
                    *(ckt->CKTrhsOld+here->HICUMemitEINode));
  
             Vciei = Vbiei - Vbici;
-            Vrth  = model->HICUMtype*(*(ckt->CKTrhsOld+here->HICUMtempNode));
+            //model->HICUMrth_de
+            if (model->HICUMrth_de==1) {
+                Vrth    = *(ckt->CKTstate0 + here->HICUMith)*here->HICUMrth_t.rpart;
+                delvrth = 0;
+            } else {
+                Vrth  = model->HICUMtype*(*(ckt->CKTrhsOld+here->HICUMtempNode));
+                delvrth  = Vrth  - *(ckt->CKTstate0 + here->HICUMvrth);
+            }
 
             delvbiei = Vbiei - *(ckt->CKTstate0 + here->HICUMvbiei);
             delvbici = Vbici - *(ckt->CKTstate0 + here->HICUMvbici);
@@ -90,7 +97,6 @@ HICUMconvTest(GENmodel *inModel, CKTcircuit *ckt)
             delvbpbi = Vbpbi - *(ckt->CKTstate0 + here->HICUMvbpbi);
             delvbpci = Vbpci - *(ckt->CKTstate0 + here->HICUMvbpci);
             delvsici = Vsici - *(ckt->CKTstate0 + here->HICUMvsici);
-            delvrth  = Vrth  - *(ckt->CKTstate0 + here->HICUMvrth);
             delvciei = delvbiei-delvbici;
             delvcic  = Vcic  - *(ckt->CKTstate0 + here->HICUMvcic);
             delvbbp  = Vbbp  - *(ckt->CKTstate0 + here->HICUMvbbp);
