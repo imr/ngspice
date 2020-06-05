@@ -54,13 +54,13 @@ int num, i;
 
     /* first pass to determine the dimension */
     while (*line != '\0') {
-            INPgetTok(&line, &tempname,1);
+            INPgetNetTok(&line, &tempname,1);
             if ((strcmp(tempname, "length") == 0) || (strcmp(tempname, "len") == 0)) break;
             num ++;
     }
     num = (num - 2) / 2;
     line = current->line;
-    INPgetTok(&line,&name,1);
+    INPgetNetTok(&line,&name,1);
 
     nname1 = TMALLOC(char *, num);
     nname2 = TMALLOC(char *, num);
@@ -77,7 +77,7 @@ int num, i;
             INPgetNetTok(&line,&(nname2[i]),1);
             INPtermInsert(ckt,&(nname2[i]),tab,&(node2[i]));
     }
-    INPgetTok(&line,&ground,1);
+    INPgetNetTok(&line,&ground,1);
     INPtermInsert(ckt,&ground,tab,&groundnode);
 
     INPgetNetTok(&line, &model, 1);
