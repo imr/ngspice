@@ -416,13 +416,11 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
             }
 
             if (selfheat) {
-                /*  note that sign is switched because power flows out
-                    of device into the temperature node. */
-                here->VDMOSgtempg = -model->VDMOStype*here->VDMOSgm * Vds;
-                here->VDMOSgtempT = -GmT * Vds;
-                here->VDMOSgtempd = -model->VDMOStype* (here->VDMOSgds * Vds + cdrain);
-                here->VDMOScth = - cdrain * Vds
-                                 - 1/here->VDMOSdrainConductance * cdrain*cdrain
+                /*  power flows from ground into the temperature node. */
+                here->VDMOSgtempg = model->VDMOStype*here->VDMOSgm * Vds;
+                here->VDMOSgtempT = GmT * Vds;
+                here->VDMOSgtempd = model->VDMOStype* (here->VDMOSgds * Vds + cdrain);
+                here->VDMOScth =  cdrain * Vds 
                                  - model->VDMOStype * (here->VDMOSgtempg * Vgs + here->VDMOSgtempd * Vds)
                                  - here->VDMOSgtempT * delTemp;
             }
@@ -577,7 +575,7 @@ bypass:
             if (selfheat) {
                 *(ckt->CKTrhs + here->VDMOSdNodePrime) +=  GmT * delTemp;
                 *(ckt->CKTrhs + here->VDMOSsNodePrime) += -GmT * delTemp;
-                *(ckt->CKTrhs + here->VDMOStempNode) -= here->VDMOScth + ceqqth; /* MOS dissipated power + Cthj current */
+                *(ckt->CKTrhs + here->VDMOStempNode) += here->VDMOScth - ceqqth; /* MOS dissipated power + Cthj current */
                 double vCktTemp = (ckt->CKTtemp-CONSTCtoK); /* ckt temperature */
                 if (ckt->CKTmode & MODETRANOP)
                     vCktTemp *= ckt->CKTsrcFact;
@@ -621,10 +619,10 @@ bypass:
                 (*(here->VDMOSDPtempPtr)     +=  GmT);
                 (*(here->VDMOSSPtempPtr)     += -GmT);
                 (*(here->VDMOSGPtempPtr)     += 0.0);
-                (*(here->VDMOSTemptempPtr)   += gTtt + 1/model->VDMOSrthjc + gcTt);
-                (*(here->VDMOSTempgpPtr)     += gTtg);
-                (*(here->VDMOSTempdpPtr)     += gTtdp);
-                (*(here->VDMOSTempspPtr)     += gTtsp);
+                (*(here->VDMOSTemptempPtr)   += -gTtt + 1/model->VDMOSrthjc + gcTt);
+                (*(here->VDMOSTempgpPtr)     += -gTtg);
+                (*(here->VDMOSTempdpPtr)     += -gTtdp);
+                (*(here->VDMOSTempspPtr)     += -gTtsp);
                 (*(here->VDMOSTemptcasePtr)  += -1/model->VDMOSrthjc);
                 (*(here->VDMOSTcasetempPtr)  += -1/model->VDMOSrthjc);
                 (*(here->VDMOSTcasetcasePtr) +=  1/model->VDMOSrthjc + 1/model->VDMOSrthca);
@@ -881,9 +879,9 @@ load:
                 *(ckt->CKTrhs + here->VDIOposPrimeNode) += cdeq;
             }
             if (selfheat) {
-                *(ckt->CKTrhs + here->VDMOSdNode)       += dIdio_dT*delTemp;
-                *(ckt->CKTrhs + here->VDIOposPrimeNode) -= dIdio_dT*delTemp;
-                *(ckt->CKTrhs + here->VDMOStempNode)    += Ith - model->VDMOStype*dIth_dVdio*vd + dIth_dT*delTemp; /* Diode dissipated power */
+                *(ckt->CKTrhs + here->VDIOposPrimeNode) +=  dIdio_dT*delTemp;
+                *(ckt->CKTrhs + here->VDMOSdNode)       += -dIdio_dT*delTemp;
+                *(ckt->CKTrhs + here->VDMOStempNode)    +=  Ith - model->VDMOStype*dIth_dVdio*vd - dIth_dT*delTemp; /* Diode dissipated power */
             }
             /*
             *   load matrix
@@ -896,11 +894,11 @@ load:
             *(here->VDIORPsPtr) -= gspr;
             *(here->VDIORPdPtr) -= gd;
             if (selfheat) {
-                (*(here->VDMOSTemptempPtr)    +=  dIth_dT);
                 (*(here->VDIOTempposPrimePtr) += -dIth_dVdio);
                 (*(here->VDIOTempnegPtr)      +=  dIth_dVdio);
-                (*(here->VDIOPosPrimetempPtr) += -dIdio_dT);
-                (*(here->VDIONegtempPtr)      +=  dIdio_dT);
+                (*(here->VDMOSTemptempPtr)    += -dIth_dT);
+                (*(here->VDIOPosPrimetempPtr) +=  dIdio_dT);
+                (*(here->VDIONegtempPtr)      += -dIdio_dT);
             }
         }
     }
