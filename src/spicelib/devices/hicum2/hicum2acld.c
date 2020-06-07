@@ -93,6 +93,8 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
     double XQr_Vbiei;
     double XQr_Vbici;
 
+    double Ith_Vrth, Ith_Vbiei, Ith_Vbici, Ith_Vbpbi, Ith_Vbpci, Ith_Vbpei, Ith_Vciei, Ith_Vsici, Ith_Vcic, Ith_Vbbp, Ith_Veie;
+
     /*  loop through all the models */
     for( ; model != NULL; model = HICUMnextModel(model)) {
 
@@ -140,6 +142,18 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
             Ibpsi_Vbpci = *(ckt->CKTstate0 + here->HICUMibpsi_Vbpci);
             Ibpsi_Vsici = *(ckt->CKTstate0 + here->HICUMibpsi_Vsici);
             Ibpsi_Vrth  = *(ckt->CKTstate0 + here->HICUMibpsi_Vrth);
+
+            Ith_Vrth    = *(ckt->CKTstate0 + here->HICUMith_Vrth);
+            Ith_Vbiei   = *(ckt->CKTstate0 + here->HICUMith_Vbiei);
+            Ith_Vbici   = *(ckt->CKTstate0 + here->HICUMith_Vbici);
+            Ith_Vbpbi   = *(ckt->CKTstate0 + here->HICUMith_Vbpbi);
+            Ith_Vbpci   = *(ckt->CKTstate0 + here->HICUMith_Vbpci);
+            Ith_Vbpei   = *(ckt->CKTstate0 + here->HICUMith_Vbpei);
+            Ith_Vciei   = *(ckt->CKTstate0 + here->HICUMith_Vciei);
+            Ith_Vsici   = *(ckt->CKTstate0 + here->HICUMith_Vsici);
+            Ith_Vcic    = *(ckt->CKTstate0 + here->HICUMith_Vcic);
+            Ith_Vbbp    = *(ckt->CKTstate0 + here->HICUMith_Vbbp);
+            Ith_Veie    = *(ckt->CKTstate0 + here->HICUMith_Veie);
 
 ////////////////////////////////////
 //////////  The real part  /////////
@@ -386,6 +400,82 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
             *(here->HICUMsubsSISubsPtr + 1)           += -XQsu_Vsis;
             *(here->HICUMsubsSubsSIPtr + 1)           += -XQsu_Vsis;
             *(here->HICUMsubsSISubsSIPtr + 1)         +=  XQsu_Vsis;
+
+            // Stamps with SH
+            if (model->HICUMflsh && model->HICUMrth >= 0.001) { //dirty: hardcoded MIN_R
+//              Stamp element: Ibiei  f_Bi = +   f_Ei = -
+                *(here->HICUMbaseBItempPtr)            +=  Ibiei_Vrth;
+                *(here->HICUMemitEItempPtr)            += -Ibiei_Vrth;
+//              Stamp element: Ibpei  f_Bp = +   f_Ei = -
+                // with respect to Potential Vrth
+                *(here->HICUMbaseBPtempPtr)            +=  Ibpei_Vrth;
+                *(here->HICUMemitEItempPtr)            += -Ibpei_Vrth;
+//              Stamp element: Ibici  f_Bi = +   f_Ci = -
+                *(here->HICUMbaseBItempPtr)            +=  Ibici_Vrth;
+                *(here->HICUMcollCItempPtr)            += -Ibici_Vrth;
+//              Stamp element: Iciei  f_Ci = +   f_Ei = -
+                *(here->HICUMcollCItempPtr)            +=  Iciei_Vrth;
+                *(here->HICUMemitEItempPtr)            += -Iciei_Vrth;
+//              Stamp element: Ibpci  f_Bp = +   f_Ci = -
+                *(here->HICUMbaseBPtempPtr)            +=  Ibpci_Vrth;
+                *(here->HICUMcollCItempPtr)            += -Ibpci_Vrth;
+//              Stamp element: Rcx  f_Ci = +   f_C = -
+                *(here->HICUMcollCItempPtr)            +=  Icic_Vrth;
+                *(here->HICUMcollTempPtr)              += -Icic_Vrth;
+//              Stamp element: Rbx  f_B = +   f_Bp = -
+                *(here->HICUMbaseTempPtr)              +=  Ibbp_Vrth;
+                *(here->HICUMbaseBPtempPtr)            += -Ibbp_Vrth;
+//              Stamp element: Re   f_Ei = +   f_E = -
+                *(here->HICUMemitTempPtr)              += -Ieie_Vrth;
+                *(here->HICUMemitEItempPtr)            +=  Ieie_Vrth;
+//              Stamp element: Rbi    f_Bp = +   f_Bi = -
+                *(here->HICUMbaseBPtempPtr)            +=  Ibpbi_Vrth;
+                *(here->HICUMbaseBItempPtr)            += -Ibpbi_Vrth;
+//              Stamp element: Isici   f_Si = +   f_Ci = -
+                *(here->HICUMsubsSItempPtr)            +=  Isici_Vrth;
+                *(here->HICUMcollCItempPtr)            += -Isici_Vrth;
+//              Branch: bpsi, Stamp element: Its
+                *(here->HICUMbaseBPtempPtr)            +=  Ibpsi_Vrth;
+                *(here->HICUMsubsSItempPtr)            += -Ibpsi_Vrth;
+
+//              Stamp element:    Ith f_T = - Ith 
+                // with respect to Potential Vrth
+                *(here->HICUMtempTempPtr)   += -Ith_Vrth;
+                // with respect to Potential Vbiei
+                *(here->HICUMtempBaseBIPtr) += -Ith_Vbiei;
+                *(here->HICUMtempEmitEIPtr) += +Ith_Vbiei;
+                // with respect to Potential Vbici
+                *(here->HICUMtempBaseBIPtr) += -Ith_Vbici;
+                *(here->HICUMtempCollCIPtr) += +Ith_Vbici;
+                // with respect to Potential Vciei
+                *(here->HICUMtempCollCIPtr) += -Ith_Vciei;
+                *(here->HICUMtempEmitEIPtr) += +Ith_Vciei;
+                // with respect to Potential Vbpei
+                *(here->HICUMtempBaseBPPtr) += -Ith_Vbpei;
+                *(here->HICUMtempEmitEIPtr) += +Ith_Vbpei;
+                // with respect to Potential Vbpci
+                *(here->HICUMtempBaseBPPtr) += -Ith_Vbpci;
+                *(here->HICUMtempCollCIPtr) += +Ith_Vbpci;
+                // with respect to Potential Vsici
+                *(here->HICUMtempSubsSIPtr) += -Ith_Vsici;
+                *(here->HICUMtempCollCIPtr) += +Ith_Vsici;
+                // with respect to Potential Vbpbi
+                *(here->HICUMtempBaseBPPtr) += -Ith_Vbpbi;
+                *(here->HICUMtempBaseBIPtr) += +Ith_Vbpbi;
+                // with respect to Potential Vcic
+                *(here->HICUMtempCollCIPtr) += -Ith_Vcic;
+                *(here->HICUMtempCollPtr)   += +Ith_Vcic;
+                // with respect to Potential Vbbp
+                *(here->HICUMtempBasePtr)   += -Ith_Vbbp;
+                *(here->HICUMtempBaseBPPtr) += +Ith_Vbbp;
+                // with respect to Potential Veie
+                *(here->HICUMtempEmitEIPtr) += -Ith_Veie;
+                *(here->HICUMtempEmitPtr)   += +Ith_Veie;
+//              finish
+
+                //TODO derivatives of charges with temp here 
+
+            }
 
         }
     }
