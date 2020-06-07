@@ -893,10 +893,10 @@ load:
             *(here->VDIORPdPtr) -= gd;
             if (selfheat) {
                 (*(here->VDIOTempposPrimePtr) += -dIth_dVdio);
-                (*(here->VDIOTempnegPtr)      +=  dIth_dVdio);
+                (*(here->VDMOSTempdPtr)       +=  dIth_dVdio);
                 (*(here->VDMOSTemptempPtr)    += -dIth_dT);
                 (*(here->VDIOPosPrimetempPtr) +=  dIdio_dT);
-                (*(here->VDIONegtempPtr)      += -dIdio_dT);
+                (*(here->VDMOSDtempPtr)       += -dIdio_dT);
             }
         }
     }

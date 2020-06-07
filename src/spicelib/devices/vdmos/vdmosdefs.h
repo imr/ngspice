@@ -230,9 +230,9 @@ typedef struct sVDMOSinstance {
     double *VDMOSSPtempPtr;
 
     double *VDIOTempposPrimePtr; /* Diode thermal contribution */
-    double *VDIOTempnegPtr;
+    double *VDMOSTempdPtr;
     double *VDIOPosPrimetempPtr;
-    double *VDIONegtempPtr;
+    double *VDMOSDtempPtr;
 
     double *VDMOSTcasetcasePtr; /* for Rthjc */
     double *VDMOSTcasetempPtr;
