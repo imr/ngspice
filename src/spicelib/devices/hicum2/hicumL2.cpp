@@ -886,14 +886,14 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
         //Avalanche current
         duals::duald iavl;
         duals::duald v_bord,v_q,U0,av,avl,cjci0_t, vdci_t, qavl_t,favl_t, kavl_t;
-        double v_bord_r;
-        double volatile v_bord_r1;
-        int use_aval;
-        if ((model->HICUMfavl > 0.0) && (model->HICUMcjci0 > 0.0)) {
-            use_aval = 1;
-        } else {
-            use_aval = 0;
-        }
+        // double v_bord_r;
+        // double volatile v_bord_r1;
+        // int use_aval;
+        // if ((model->HICUMfavl > 0.0) && (model->HICUMcjci0 > 0.0)) {
+        //     use_aval = 1;
+        // } else {
+        //     use_aval = 0;
+        // }
         if (use_aval == 1) {//begin : HICAVL
             double T_dpart = T.dpart();
             cjci0_t = here->HICUMcjci0_t.rpart;
@@ -909,9 +909,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 kavl_t.dpart(here->HICUMkavl_t.dpart);
             }
             v_bord   = vdci_t-Vbici;
-            v_bord_r = v_bord.rpart();
-            v_bord_r1 = v_bord_r;
-            if (v_bord_r1 > 0) {
+            if (v_bord > 0) {
                 v_q     = qavl_t/Cjci;
                 U0      = qavl_t/cjci0_t;
                 if(v_bord > U0){
@@ -2373,7 +2371,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             iavl_Vbici += iavl_dCjci*Cjci_Vbici;
             iavl_Vbici += iavl_ditf *itf_Vbici;
             iavl_Vbiei  = iavl_ditf *itf_Vbiei;
-            iavl_dT    += iavl_ditf *itf_dT    + iavl_dCjci*Cjci_dT;
+            iavl_dT    += iavl_ditf *itf_dT    ;//+ iavl_dCjci*Cjci_dT;
 
             here->HICUMiavl = iavl;
 

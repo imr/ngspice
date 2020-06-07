@@ -31,14 +31,13 @@ pins                        coll base emit subs therm
 float                       therm
 checkPolarity               n
 
-//error
-test fout_npn_full_sh
+test noise_npn_cornoise_ac
 temperature 27 
-biases V(emit)=0 V(subs)=0
-biasSweep V(coll)=0.000000,2.000000,0.050000
-biasList V(base)=0.600000,0.650000,0.700000,0.750000,0.800000,0.850000,0.900000
-outputs I(coll) I(base)
-modelParameters parameters/npn_full_sh
+biases V(emit)=0 V(subs)=0 V(coll)=1.000000
+biasSweep V(base)=0.700000,1.100000,0.100000
+freq dec 2 1000 1e+011
+outputs N(coll)
+modelParameters parameters/npn_cornoise
 
 
 `ifdef NOT_USED
