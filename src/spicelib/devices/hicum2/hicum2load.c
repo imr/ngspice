@@ -1390,8 +1390,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             Qrbi_Vbiei = Vbpbi*model->HICUMfcrbi*(T_f0*itf_Vbiei+Cjei_Vbiei);
             Qrbi_Vbici = Vbpbi*model->HICUMfcrbi*(model->HICUMtr*itr_Vbici+Cjci_Vbici);
 
-            // Qrbi = model->HICUMfcrbi*(Qjei+Qjci+Qdei+Qdci);
-
             //HICCR: }
 
             //Internal base current across b-c junction
@@ -1813,7 +1811,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 Qcth=model->HICUMcth*Vrth;
 
                 *(ckt->CKTstate0 + here->HICUMqrbi)     = Qrbi;
-                *(ckt->CKTstate0 + here->HICUMqdeix)    = Qdeix;
+                *(ckt->CKTstate0 + here->HICUMqf)    = Qdeix;
                 *(ckt->CKTstate0 + here->HICUMqjei)     = Qjei;
                 *(ckt->CKTstate0 + here->HICUMqdci)     = Qdci;
                 *(ckt->CKTstate0 + here->HICUMqjci)     = Qjci;
@@ -1857,7 +1855,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                         (!(ckt->CKTmode & MODEUIC)) ) {
                     if(ckt->CKTmode & MODEINITSMSIG) {
                         *(ckt->CKTstate0 + here->HICUMcqrbi)      = Qrbi_Vbpbi;
-                        *(ckt->CKTstate0 + here->HICUMcqdeix)     = Qdeix_Vbiei;
+                        *(ckt->CKTstate0 + here->HICUMcqf)     = Qdeix_Vbiei;
                         *(ckt->CKTstate0 + here->HICUMcqjei)      = Cjei;
                         *(ckt->CKTstate0 + here->HICUMcqdci)      = Qdci_Vbici;
                         *(ckt->CKTstate0 + here->HICUMcqjci)      = Cjci;
@@ -1888,8 +1886,8 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                                 *(ckt->CKTstate0 + here->HICUMqrbi) ;
                         *(ckt->CKTstate1 + here->HICUMqjei) =
                                 *(ckt->CKTstate0 + here->HICUMqjei) ;
-                        *(ckt->CKTstate1 + here->HICUMqdeix) =
-                                *(ckt->CKTstate0 + here->HICUMqdeix) ;
+                        *(ckt->CKTstate1 + here->HICUMqf) =
+                                *(ckt->CKTstate0 + here->HICUMqf) ;
                         *(ckt->CKTstate1 + here->HICUMqjci) =
                                 *(ckt->CKTstate0 + here->HICUMqjci) ;
                         *(ckt->CKTstate1 + here->HICUMqdci) =
@@ -1931,10 +1929,10 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                     Ibpbi += *(ckt->CKTstate0 + here->HICUMcqrbi);
 
 //            Ibiei      += ddt(model->HICUMtype*(Qdeix+Qjei));
-                    error = NIintegrate(ckt,&geq,&ceq,Cdei,here->HICUMqdeix);
+                    error = NIintegrate(ckt,&geq,&ceq,Cdei,here->HICUMqf);
                     if(error) return(error);
                     Ibiei_Vbiei += geq;
-                    Ibiei += *(ckt->CKTstate0 + here->HICUMcqdeix);
+                    Ibiei += *(ckt->CKTstate0 + here->HICUMcqf);
 
                     error = NIintegrate(ckt,&geq,&ceq,Cjei,here->HICUMqjei);
                     if(error) return(error);
@@ -2017,8 +2015,8 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                                 *(ckt->CKTstate0 + here->HICUMcqrbi);
                         *(ckt->CKTstate1 + here->HICUMcqjei) =
                                 *(ckt->CKTstate0 + here->HICUMcqjei);
-                        *(ckt->CKTstate1 + here->HICUMcqdeix) =
-                                *(ckt->CKTstate0 + here->HICUMcqdeix);
+                        *(ckt->CKTstate1 + here->HICUMcqf) =
+                                *(ckt->CKTstate0 + here->HICUMcqf);
                         *(ckt->CKTstate1 + here->HICUMcqjci) =
                                 *(ckt->CKTstate0 + here->HICUMcqjci);
                         *(ckt->CKTstate1 + here->HICUMcqdci) =

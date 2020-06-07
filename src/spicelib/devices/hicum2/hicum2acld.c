@@ -59,24 +59,39 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
     double Ibpsi_Vrth;
 
     double XQrbi_Vbpbi;
-//    double XQrbi_Vbiei;
-//    double XQrbi_Vbici;
+    double XQrbi_Vbiei;
+    double XQrbi_Vbici;
+    double XQrbi_Vrth;
     double XQdeix_Vbiei;
     double XQjei_Vbiei;
+    double XQjei_Vrth;
     double XQdci_Vbici;
     double XQjci_Vbici;
+    double XQjci_Vrth;
     double XQjep_Vbpei;
+    double XQjep_Vrth;
     double Xqjcx0_t_i_Vbci;
+    double Xqjcx0_t_i_Vrth;
     double Xqjcx0_t_ii_Vbpci;
+    double Xqjcx0_t_ii_Vrth;
     double XQdsu_Vbpci;
-//    double XQdsu_Vsici;
+    double XQdsu_Vsici;
+    double XQdsu_Vrth;
     double XQjs_Vsici;
+    double XQjs_Vrth;
     double XQscp_Vsc;
+    double XQscp_Vrth;
     double XQbepar1_Vbe;
     double XQbepar2_Vbpe;
     double XQbcpar1_Vbci;
     double XQbcpar2_Vbpci;
     double XQsu_Vsis;
+    double XQf_Vbiei;
+    double XQf_Vbici;
+    double XQf_Vrth;
+    double XQr_Vrth;
+    double XQr_Vbiei;
+    double XQr_Vbici;
 
     /*  loop through all the models */
     for( ; model != NULL; model = HICUMnextModel(model)) {
@@ -196,7 +211,7 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
             *(here->HICUMbaseBPBaseBIPtr)          +=  Ibpbi_Vbici; 
             *(here->HICUMbaseBICollCIPtr)          +=  Ibpbi_Vbici;
             *(here->HICUMbaseBPCollCIPtr)          += -Ibpbi_Vbici;
-            *(here->HICUMbaseBIBaseBIPtr)          += -Ibpbi_Vbici
+            *(here->HICUMbaseBIBaseBIPtr)          += -Ibpbi_Vbici;
 
 //          Stamp element: Re
             *(here->HICUMemitEmitPtr)              +=  Ieie_Veie;
@@ -229,131 +244,148 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
 ////////////////////////////////////
 //////////  The complex part  //////
 ////////////////////////////////////
-//todo: Complete with partial dervatives e.g. Qjs_Vsici, Qrbi_Vbici
 
+            //Qrbi
             XQrbi_Vbpbi       = *(ckt->CKTstate0 + here->HICUMcqrbi)      * ckt->CKTomega;
-            XQdeix_Vbiei      = *(ckt->CKTstate0 + here->HICUMcqdeix)     * ckt->CKTomega;
+            XQrbi_Vbiei       = *(ckt->CKTstate0 + here->HICUMqrbi_Vbiei) * ckt->CKTomega;
+            XQrbi_Vbici       = *(ckt->CKTstate0 + here->HICUMqrbi_Vbici) * ckt->CKTomega;
+            XQrbi_Vrth        = *(ckt->CKTstate0 + here->HICUMqrbi_Vrth)  * ckt->CKTomega;
+            //Qjei
             XQjei_Vbiei       = *(ckt->CKTstate0 + here->HICUMcqjei)      * ckt->CKTomega;
-            XQdci_Vbici       = *(ckt->CKTstate0 + here->HICUMcqdci)      * ckt->CKTomega;
+            XQjei_Vrth        = *(ckt->CKTstate0 + here->HICUMqjei_Vrth)  * ckt->CKTomega;
+            //Qf
+            XQf_Vbiei         = *(ckt->CKTstate0 + here->HICUMcqf)        * ckt->CKTomega;
+            XQf_Vbici         = *(ckt->CKTstate0 + here->HICUMqf_Vbici)   * ckt->CKTomega;
+            XQf_Vrth          = *(ckt->CKTstate0 + here->HICUMqf_Vrth)    * ckt->CKTomega;
+            //Qr
+            XQr_Vbici         = *(ckt->CKTstate0 + here->HICUMcqr)        * ckt->CKTomega;
+            XQr_Vbiei         = *(ckt->CKTstate0 + here->HICUMqr_Vbiei)   * ckt->CKTomega;
+            XQr_Vrth          = *(ckt->CKTstate0 + here->HICUMqr_Vrth)    * ckt->CKTomega;
+            //Qjci
             XQjci_Vbici       = *(ckt->CKTstate0 + here->HICUMcqjci)      * ckt->CKTomega;
+            XQjci_Vrth        = *(ckt->CKTstate0 + here->HICUMqjci_Vrth)  * ckt->CKTomega;
+            //Qjep
             XQjep_Vbpei       = *(ckt->CKTstate0 + here->HICUMcqjep)      * ckt->CKTomega;
+            XQjep_Vrth        = *(ckt->CKTstate0 + here->HICUMqjep_Vrth)  * ckt->CKTomega;
+            //Qjcx_i
             Xqjcx0_t_i_Vbci   = *(ckt->CKTstate0 + here->HICUMcqcx0_t_i)  * ckt->CKTomega;
+            Xqjcx0_t_i_Vrth   = *(ckt->CKTstate0 + here->HICUMqjcx0_i_Vrth)  * ckt->CKTomega;
+            //Qjcx_ii
             Xqjcx0_t_ii_Vbpci = *(ckt->CKTstate0 + here->HICUMcqcx0_t_ii) * ckt->CKTomega;
+            Xqjcx0_t_ii_Vrth  = *(ckt->CKTstate0 + here->HICUMqjcx0_ii_Vrth) * ckt->CKTomega;
+            //Qdsu
             XQdsu_Vbpci       = *(ckt->CKTstate0 + here->HICUMcqdsu)      * ckt->CKTomega;
+            XQdsu_Vsici       = *(ckt->CKTstate0 + here->HICUMqdsu_Vsici) * ckt->CKTomega;
+            XQdsu_Vrth        = *(ckt->CKTstate0 + here->HICUMqdsu_Vrth)  * ckt->CKTomega;
+            //Qjs
             XQjs_Vsici        = *(ckt->CKTstate0 + here->HICUMcqjs)       * ckt->CKTomega;
+            XQjs_Vrth         = *(ckt->CKTstate0 + here->HICUMqjs_Vrth)   * ckt->CKTomega;
+            //Qscp
             XQscp_Vsc         = *(ckt->CKTstate0 + here->HICUMcqscp)      * ckt->CKTomega;
+            XQscp_Vrth        = *(ckt->CKTstate0 + here->HICUMqscp_Vrth)  * ckt->CKTomega;
+            //Qbepar1
             XQbepar1_Vbe      = *(ckt->CKTstate0 + here->HICUMcqbepar1)   * ckt->CKTomega;
+            //Qbepar2
             XQbepar2_Vbpe     = *(ckt->CKTstate0 + here->HICUMcqbepar2)   * ckt->CKTomega;
+            //Qbcpar1
             XQbcpar1_Vbci     = *(ckt->CKTstate0 + here->HICUMcqbcpar1)   * ckt->CKTomega;
+            //Qbcpar2
             XQbcpar2_Vbpci    = *(ckt->CKTstate0 + here->HICUMcqbcpar2)   * ckt->CKTomega;
+            //Qsu
             XQsu_Vsis         = *(ckt->CKTstate0 + here->HICUMcqsu)       * ckt->CKTomega;
-/*
-c           Stamp element: Qbepar1
-*/
-            *(here->HICUMbaseBasePtr + 1)     +=  XQbepar1_Vbe;
-            *(here->HICUMbaseEmitPtr + 1)     += -XQbepar1_Vbe;
-            *(here->HICUMemitBasePtr + 1)     += -XQbepar1_Vbe;
-            *(here->HICUMemitEmitPtr + 1)     +=  XQbepar1_Vbe;
-/*
-c           Stamp element: Qbepar2
-*/
-            *(here->HICUMbaseBPBaseBPPtr + 1) +=  XQbepar2_Vbpe;
-            *(here->HICUMemitBaseBPPtr + 1)   += -XQbepar2_Vbpe;
-            *(here->HICUMemitEmitPtr + 1)     += -XQbepar2_Vbpe;
-            *(here->HICUMbaseBPEmitPtr + 1)   +=  XQbepar2_Vbpe;
-/*
-c           Stamp element: Qdeix, Qjei
-*/
-            *(here->HICUMbaseBIBaseBIPtr + 1) +=  XQdeix_Vbiei;
-            *(here->HICUMbaseBIEmitEIPtr + 1) += -XQdeix_Vbiei;
-            *(here->HICUMemitEIBaseBIPtr + 1) += -XQdeix_Vbiei;
-            *(here->HICUMemitEIEmitEIPtr + 1) +=  XQdeix_Vbiei;
-            *(here->HICUMbaseBIBaseBIPtr + 1) +=  XQjei_Vbiei;
-            *(here->HICUMbaseBIEmitEIPtr + 1) += -XQjei_Vbiei;
-            *(here->HICUMemitEIBaseBIPtr + 1) += -XQjei_Vbiei;
-            *(here->HICUMemitEIEmitEIPtr + 1) +=  XQjei_Vbiei;
-/*
-c           Stamp element: Qjep
-*/
-            *(here->HICUMbaseBPBaseBPPtr + 1) +=  XQjep_Vbpei;
-            *(here->HICUMbaseBPEmitEIPtr + 1) += -XQjep_Vbpei;
-            *(here->HICUMemitEIBaseBPPtr + 1) += -XQjep_Vbpei;
-            *(here->HICUMemitEIEmitEIPtr + 1) +=  XQjep_Vbpei;
 
-/*
-c           Stamp element: Qdci, Qjci
-*/
-            *(here->HICUMbaseBIBaseBIPtr + 1) +=  XQdci_Vbici;
-            *(here->HICUMbaseBICollCIPtr + 1) += -XQdci_Vbici;
-            *(here->HICUMcollCIBaseBIPtr + 1) += -XQdci_Vbici;
-            *(here->HICUMcollCICollCIPtr + 1) +=  XQdci_Vbici;
-            *(here->HICUMbaseBIBaseBIPtr + 1) +=  XQjci_Vbici;
-            *(here->HICUMbaseBICollCIPtr + 1) += -XQjci_Vbici;
-            *(here->HICUMcollCIBaseBIPtr + 1) += -XQjci_Vbici;
-            *(here->HICUMcollCICollCIPtr + 1) +=  XQjci_Vbici;
-/*
-c           Stamp element: Qbcpar1, qjcx0_i
-*/
-            *(here->HICUMbaseBasePtr + 1)     +=  XQbcpar1_Vbci;
-            *(here->HICUMbaseCollCIPtr + 1)   += -XQbcpar1_Vbci;
-            *(here->HICUMcollCIBasePtr + 1)   += -XQbcpar1_Vbci;
-            *(here->HICUMcollCICollCIPtr + 1) +=  XQbcpar1_Vbci;
-            *(here->HICUMbaseBasePtr + 1)     +=  Xqjcx0_t_i_Vbci;
-            *(here->HICUMbaseCollCIPtr + 1)   += -Xqjcx0_t_i_Vbci;
-            *(here->HICUMcollCIBasePtr + 1)   += -Xqjcx0_t_i_Vbci;
-            *(here->HICUMcollCICollCIPtr + 1) +=  Xqjcx0_t_i_Vbci;
-/*
-c           Stamp element: Qbcpar2, qjcx0_ii, Qdsu
-*/
-            *(here->HICUMbaseBPBaseBPPtr + 1) +=  XQbcpar2_Vbpci;
-            *(here->HICUMcollCICollCIPtr + 1) +=  XQbcpar2_Vbpci;
-            *(here->HICUMbaseBPCollCIPtr + 1) += -XQbcpar2_Vbpci;
-            *(here->HICUMcollCIBaseBPPtr + 1) += -XQbcpar2_Vbpci;
-            *(here->HICUMbaseBPCollCIPtr + 1) +=  Xqjcx0_t_ii_Vbpci;
-            *(here->HICUMbaseBPBaseBPPtr + 1) += -Xqjcx0_t_ii_Vbpci;
-            *(here->HICUMcollCIBaseBPPtr + 1) += -Xqjcx0_t_ii_Vbpci;
-            *(here->HICUMcollCICollCIPtr + 1) +=  Xqjcx0_t_ii_Vbpci;
-            *(here->HICUMbaseBPCollCIPtr + 1) +=  XQdsu_Vbpci;
-            *(here->HICUMbaseBPBaseBPPtr + 1) += -XQdsu_Vbpci;
-            *(here->HICUMcollCIBaseBPPtr + 1) += -XQdsu_Vbpci;
-            *(here->HICUMcollCICollCIPtr + 1) +=  XQdsu_Vbpci;
-/*
-c           Stamp element: Qrbi
-*/
-            *(here->HICUMbaseBPBaseBPPtr + 1) +=  XQrbi_Vbpbi;
-            *(here->HICUMbaseBPBaseBIPtr + 1) += -XQrbi_Vbpbi;
-            *(here->HICUMbaseBIBaseBPPtr + 1) += -XQrbi_Vbpbi;
-            *(here->HICUMbaseBIBaseBIPtr + 1) +=  XQrbi_Vbpbi;
-//todo:
-//            *(here->HICUMbaseBPBaseBIPtr + 1) +=  XQrbi_Vbiei;
-//            *(here->HICUMbaseBPEmitEIPtr + 1) += -XQrbi_Vbiei;
-//            *(here->HICUMbaseBIBaseBIPtr + 1) += -XQrbi_Vbiei;
-//            *(here->HICUMbaseBIEmitEIPtr + 1) +=  XQrbi_Vbiei;
-//            *(here->HICUMbaseBPCollCIPtr + 1) +=  XQrbi_Vbici;
-//            *(here->HICUMbaseBPEmitEIPtr + 1) += -XQrbi_Vbici;
-//            *(here->HICUMbaseBICollCIPtr + 1) += -XQrbi_Vbici;
-//            *(here->HICUMbaseBIEmitEIPtr + 1) +=  XQrbi_Vbici;
-/*
-c           Stamp element: Cscp
-*/
-            *(here->HICUMsubsSubsPtr + 1)     +=  XQscp_Vsc;
-            *(here->HICUMcollSubsPtr + 1)     += -XQscp_Vsc;
-            *(here->HICUMcollCollPtr + 1)     += -XQscp_Vsc;
-            *(here->HICUMsubsCollPtr + 1)     +=  XQscp_Vsc;
-/*
-c           Stamp element: Cjs
-*/
-            *(here->HICUMsubsSISubsSIPtr + 1) +=  XQjs_Vsici;
-            *(here->HICUMsubsSICollCIPtr + 1) += -XQjs_Vsici;
-            *(here->HICUMcollCISubsSIPtr + 1) += -XQjs_Vsici;
-            *(here->HICUMcollCICollCIPtr + 1) +=  XQjs_Vsici;
-/*
-c           Stamp element: Csu
-*/
-            *(here->HICUMsubsSubsPtr + 1)     +=  XQsu_Vsis;
-            *(here->HICUMsubsSISubsPtr + 1)   += -XQsu_Vsis;
-            *(here->HICUMsubsSubsSIPtr + 1)   += -XQsu_Vsis;
-            *(here->HICUMsubsSISubsSIPtr + 1) +=  XQsu_Vsis;
+            //Qrbi
+            *(here->HICUMbaseBPBaseBPPtr + 1)          +=  XQrbi_Vbpbi; 
+            *(here->HICUMbaseBIBaseBIPtr + 1)          +=  XQrbi_Vbpbi;
+            *(here->HICUMbaseBPBaseBIPtr + 1)          += -XQrbi_Vbpbi;
+            *(here->HICUMbaseBIBaseBPPtr + 1)          += -XQrbi_Vbpbi;
+            *(here->HICUMbaseBPBaseBIPtr + 1)          +=  XQrbi_Vbiei; 
+            *(here->HICUMbaseBIEmitEIPtr + 1)          +=  XQrbi_Vbiei;
+            *(here->HICUMbaseBPEmitEIPtr + 1)          += -XQrbi_Vbiei;
+            *(here->HICUMbaseBIBaseBIPtr + 1)          += -XQrbi_Vbiei;
+            *(here->HICUMbaseBPBaseBIPtr + 1)          +=  XQrbi_Vbici; 
+            *(here->HICUMbaseBICollCIPtr + 1)          +=  XQrbi_Vbici;
+            *(here->HICUMbaseBPCollCIPtr + 1)          += -XQrbi_Vbici;
+            *(here->HICUMbaseBIBaseBIPtr + 1)          += -XQrbi_Vbici;
+            //Qjei
+            *(here->HICUMbaseBIBaseBIPtr + 1)          +=  XQjei_Vbiei;
+            *(here->HICUMemitEIEmitEIPtr + 1)          +=  XQjei_Vbiei;
+            *(here->HICUMbaseBIEmitEIPtr + 1)          += -XQjei_Vbiei;
+            *(here->HICUMemitEIBaseBIPtr + 1)          += -XQjei_Vbiei;
+            //Qf
+            *(here->HICUMbaseBIBaseBIPtr +1)           +=  XQf_Vbiei;
+            *(here->HICUMemitEIEmitEIPtr +1)           +=  XQf_Vbiei;
+            *(here->HICUMbaseBIEmitEIPtr +1)           += -XQf_Vbiei;
+            *(here->HICUMemitEIBaseBIPtr +1)           += -XQf_Vbiei;
+            *(here->HICUMbaseBIBaseBIPtr +1)           +=  XQf_Vbici;
+            *(here->HICUMemitEICollCIPtr +1)           +=  XQf_Vbici;
+            *(here->HICUMbaseBICollCIPtr +1)           += -XQf_Vbici;
+            *(here->HICUMemitEIBaseBIPtr +1)           += -XQf_Vbici;
+            //Qjci
+            *(here->HICUMbaseBIBaseBIPtr +1)           +=  XQjci_Vbici;
+            *(here->HICUMcollCICollCIPtr +1)           +=  XQjci_Vbici;
+            *(here->HICUMcollCIBaseBIPtr +1)           += -XQjci_Vbici;
+            *(here->HICUMbaseBICollCIPtr +1)           += -XQjci_Vbici;
+            //Qjep
+            *(here->HICUMbaseBPBaseBPPtr +1)           +=  XQjep_Vbpei;
+            *(here->HICUMemitEIEmitEIPtr +1)           +=  XQjep_Vbpei;
+            *(here->HICUMbaseBPEmitEIPtr +1)           += -XQjep_Vbpei;
+            *(here->HICUMemitEIBaseBPPtr +1)           += -XQjep_Vbpei;
+            //Qjcx_i
+            *(here->HICUMbaseBasePtr +1)               +=  Xqjcx0_t_i_Vbci;
+            *(here->HICUMcollCICollCIPtr +1)           +=  Xqjcx0_t_i_Vbci;
+            *(here->HICUMbaseCollCIPtr +1)             += -Xqjcx0_t_i_Vbci;
+            *(here->HICUMcollCIBasePtr +1)             += -Xqjcx0_t_i_Vbci;
+            //Qjcx_ii
+            *(here->HICUMbaseBPBaseBPPtr +1)           +=  Xqjcx0_t_ii_Vbpci;
+            *(here->HICUMcollCICollCIPtr +1)           +=  Xqjcx0_t_ii_Vbpci;
+            *(here->HICUMbaseBPCollCIPtr +1)           += -Xqjcx0_t_ii_Vbpci;
+            *(here->HICUMcollCIBaseBPPtr +1)           += -Xqjcx0_t_ii_Vbpci;
+            //Qdsu
+            *(here->HICUMbaseBPBaseBPPtr +1)           +=  XQdsu_Vbpci;
+            *(here->HICUMcollCICollCIPtr +1)           +=  XQdsu_Vbpci;
+            *(here->HICUMbaseBPCollCIPtr +1)           += -XQdsu_Vbpci;
+            *(here->HICUMcollCIBaseBPPtr +1)           += -XQdsu_Vbpci;
+            // these matrix entries are not implemented
+            // *(here->HICUMbaseBPsubsSIPtr +1)           +=  XQdsu_Vsici;
+            // *(here->HICUMcollCIcollCIPtr +1)           +=  XQdsu_Vsici;
+            // *(here->HICUMcollCIsubsSIPtr +1)           +=  -XQdsu_Vsici;
+            // *(here->HICUMsubsSIbaseBPPtr +1)           +=  -XQdsu_Vsici;
+            //Qjs
+            *(here->HICUMsubsSISubsSIPtr +1)          +=  XQjs_Vsici;
+            *(here->HICUMcollCICollCIPtr +1)          +=  XQjs_Vsici;
+            *(here->HICUMsubsSICollCIPtr +1)          += -XQjs_Vsici;
+            *(here->HICUMcollCISubsSIPtr +1)          += -XQjs_Vsici;
+            //Qscp
+            *(here->HICUMsubsSubsPtr + 1)             +=  XQscp_Vsc;
+            *(here->HICUMsubsCollPtr + 1)             +=  XQscp_Vsc;
+            *(here->HICUMcollSubsPtr + 1)             += -XQscp_Vsc;
+            *(here->HICUMcollCollPtr + 1)             += -XQscp_Vsc;
+            //Qbepar1
+            *(here->HICUMbaseBasePtr + 1)             +=  XQbepar1_Vbe;
+            *(here->HICUMbaseEmitPtr + 1)             += -XQbepar1_Vbe;
+            *(here->HICUMemitBasePtr + 1)             += -XQbepar1_Vbe;
+            *(here->HICUMemitEmitPtr + 1)             +=  XQbepar1_Vbe;
+            //Qbepar2
+            *(here->HICUMbaseBPBaseBPPtr + 1)         +=  XQbepar2_Vbpe;
+            *(here->HICUMemitBaseBPPtr + 1)           += -XQbepar2_Vbpe;
+            *(here->HICUMemitEmitPtr + 1)             += -XQbepar2_Vbpe;
+            *(here->HICUMbaseBPEmitPtr + 1)           +=  XQbepar2_Vbpe;
+            //Qbcpar1
+            *(here->HICUMbaseBasePtr + 1)             +=  XQbcpar1_Vbci;
+            *(here->HICUMbaseCollCIPtr + 1)           += -XQbcpar1_Vbci;
+            *(here->HICUMcollCIBasePtr + 1)           += -XQbcpar1_Vbci;
+            *(here->HICUMcollCICollCIPtr + 1)         +=  XQbcpar1_Vbci;
+            //Qbcpar2
+            *(here->HICUMbaseBPBaseBPPtr +1)          +=  XQbepar2_Vbpe;
+            *(here->HICUMcollCICollCIPtr +1)          +=  XQbepar2_Vbpe;
+            *(here->HICUMbaseBPCollCIPtr +1)          += -XQbepar2_Vbpe;
+            *(here->HICUMcollCIBaseBPPtr +1)          += -XQbepar2_Vbpe;
+            //Qsu
+            *(here->HICUMsubsSubsPtr + 1)             +=  XQsu_Vsis;
+            *(here->HICUMsubsSISubsPtr + 1)           += -XQsu_Vsis;
+            *(here->HICUMsubsSubsSIPtr + 1)           += -XQsu_Vsis;
+            *(here->HICUMsubsSISubsSIPtr + 1)         +=  XQsu_Vsis;
 
         }
     }

@@ -29,9 +29,9 @@ HICUMtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
 
             CKTterr(here->HICUMqrbi,     ckt, timeStep);
             CKTterr(here->HICUMqjei,     ckt, timeStep);
-            CKTterr(here->HICUMqdeix,    ckt, timeStep);
+            CKTterr(here->HICUMqf,    ckt, timeStep);
             CKTterr(here->HICUMqjci,     ckt, timeStep);
-            CKTterr(here->HICUMqdci,     ckt, timeStep);
+            CKTterr(here->HICUMqr,     ckt, timeStep);
             CKTterr(here->HICUMqjep,     ckt, timeStep);
             CKTterr(here->HICUMqjcx0_i,  ckt, timeStep);
             CKTterr(here->HICUMqjcx0_ii, ckt, timeStep);

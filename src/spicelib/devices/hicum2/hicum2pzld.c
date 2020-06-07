@@ -196,9 +196,9 @@ c           The complex part
 //todo: Complete with partial dervatives e.g. Qjs_Vsici, Qrbi_Vbici
 
             XQrbi_Vbpbi       = *(ckt->CKTstate0 + here->HICUMcqrbi)      * ckt->CKTomega;
-            XQdeix_Vbiei      = *(ckt->CKTstate0 + here->HICUMcqdeix)     * ckt->CKTomega;
+            XQdeix_Vbiei      = *(ckt->CKTstate0 + here->HICUMcqf)     * ckt->CKTomega;
             XQjei_Vbiei       = *(ckt->CKTstate0 + here->HICUMcqjei)      * ckt->CKTomega;
-            XQdci_Vbici       = *(ckt->CKTstate0 + here->HICUMcqdci)      * ckt->CKTomega;
+            XQdci_Vbici       = *(ckt->CKTstate0 + here->HICUMcqr)      * ckt->CKTomega;
             XQjci_Vbici       = *(ckt->CKTstate0 + here->HICUMcqjci)      * ckt->CKTomega;
             XQjep_Vbpei       = *(ckt->CKTstate0 + here->HICUMcqjep)      * ckt->CKTomega;
             Xqjcx0_t_i_Vbci   = *(ckt->CKTstate0 + here->HICUMcqcx0_t_i)  * ckt->CKTomega;
