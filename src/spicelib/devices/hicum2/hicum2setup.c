@@ -669,6 +669,8 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
                 TSTALLOC(HICUMtempSubsSIPtr,HICUMtempNode,HICUMsubsSINode);
 
                 TSTALLOC(HICUMtempTempPtr,HICUMtempNode,HICUMtempNode);
+            } else { //need this element so that one can still use the node, even though it is not connected
+                TSTALLOC(HICUMtempTempPtr,HICUMtempNode,HICUMtempNode);
             }
 
         }
