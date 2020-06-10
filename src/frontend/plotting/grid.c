@@ -520,7 +520,7 @@ lingrid(GRAPH *graph, double lo, double hi, double delta, int type, Axis axis)
     if ((s = ft_typabbrev(type)) != NULL)
         (void) strncat(buf, s, sizeof(buf) - strlen(buf) - 1);
     else
-        (void) strncat(buf, "Units", sizeof(buf) - strlen(buf) - 1);
+        (void) strncat(buf, "     ", sizeof(buf) - strlen(buf) - 1);
     if (delta == 0.0) {
         int     i;
         double  step;
@@ -783,7 +783,7 @@ loggrid(GRAPH *graph, double lo, double hi, int type, Axis axis)
 
     s = ft_typabbrev(type);
     if (!s)
-        s = "Units";
+        s = "     ";
     strncat(buf, s, sizeof(buf) - strlen(buf) - 1);
 
     if (axis == x_axis) {
