@@ -31,14 +31,21 @@ pins                        coll base emit subs therm
 float                       therm
 checkPolarity               n
 
-test noise_npn_cornoise_ac
+test ypara_npn_full_sh_ac
 temperature 27 
 biases V(emit)=0 V(subs)=0 V(coll)=1.000000
-biasSweep V(base)=0.700000,1.100000,0.100000
-freq dec 2 1000 1e+011
-outputs N(coll)
-modelParameters parameters/npn_cornoise
+biasSweep V(base)=0.800000,0.950000,0.050000
+freq dec 5 1e+008 1e+011
+outputs G(base,base) G(base,coll) G(coll,base) G(coll,coll) C(base,base) C(base,coll) C(coll,base) C(coll,coll)
+modelParameters parameters/npn_full_sh
 
+test ypara_npn_full_ac
+temperature 27 
+biases V(emit)=0 V(subs)=0 V(coll)=1.000000
+biasSweep V(base)=0.800000,0.950000,0.050000
+freq dec 5 1e+008 1e+011
+outputs G(base,base) G(base,coll) G(coll,base) G(coll,coll) C(base,base) C(base,coll) C(coll,base) C(coll,coll)
+modelParameters parameters/npn_full
 
 `ifdef NOT_USED
 `endif

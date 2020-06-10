@@ -647,7 +647,7 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
 //            TSTALLOC(HICUMxf1Xf1Ptr,HICUMxf1Node,HICUMxf1Node);
 //            TSTALLOC(HICUMxf2Xf2Ptr,HICUMxf2Node,HICUMxf2Node);
 
-            if (model->HICUMflsh) {
+            if (model->HICUMflsh && model->HICUMrth>0.001) {
                 TSTALLOC(HICUMcollTempPtr,HICUMcollNode,HICUMtempNode);
                 TSTALLOC(HICUMbaseTempPtr,HICUMbaseNode,HICUMtempNode);
                 TSTALLOC(HICUMemitTempPtr,HICUMemitNode,HICUMtempNode);

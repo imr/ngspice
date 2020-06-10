@@ -2624,6 +2624,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             Ibiei_Vbiei += ckt->CKTgmin;
             Ibici += ckt->CKTgmin*Vbici;
             Ibici_Vbici += ckt->CKTgmin;
+            Ibici_Vbiei += ckt->CKTgmin;
             Iciei += ckt->CKTgmin*Vciei;
             Iciei_Vbiei += ckt->CKTgmin;
             Iciei_Vbici += ckt->CKTgmin;
