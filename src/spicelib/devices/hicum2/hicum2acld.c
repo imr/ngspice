@@ -62,10 +62,8 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
     double XQrbi_Vbiei;
     double XQrbi_Vbici;
     double XQrbi_Vrth;
-    double XQdeix_Vbiei;
     double XQjei_Vbiei;
     double XQjei_Vrth;
-    double XQdci_Vbici;
     double XQjci_Vbici;
     double XQjci_Vrth;
     double XQjep_Vbpei;
@@ -86,6 +84,7 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
     double XQbcpar1_Vbci;
     double XQbcpar2_Vbpci;
     double XQsu_Vsis;
+    double XQcth_Vrth;
     double XQf_Vbiei;
     double XQf_Vbici;
     double XQf_Vrth;
@@ -110,7 +109,7 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
 
             Ibbp_Vrth    = -*(ckt->CKTstate0 + here->HICUMvbbp)/here->HICUMrbx_t.rpart/here->HICUMrbx_t.rpart*here->HICUMrbx_t.dpart;
             Icic_Vrth    = -*(ckt->CKTstate0 + here->HICUMvcic)/here->HICUMrcx_t.rpart/here->HICUMrcx_t.rpart*here->HICUMrcx_t.dpart;
-            Icic_Vrth    = -*(ckt->CKTstate0 + here->HICUMveie)/here->HICUMre_t.rpart/here->HICUMre_t.rpart*here->HICUMre_t.dpart;
+            Ieie_Vrth    = -*(ckt->CKTstate0 + here->HICUMveie)/here->HICUMre_t.rpart/here->HICUMre_t.rpart*here->HICUMre_t.dpart;
             Isis_Vrth    = 0.0;
 
             Ibiei_Vbiei = *(ckt->CKTstate0 + here->HICUMibiei_Vbiei);
@@ -307,6 +306,8 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
             XQbcpar2_Vbpci    = *(ckt->CKTstate0 + here->HICUMcqbcpar2)   * ckt->CKTomega;
             //Qsu
             XQsu_Vsis         = *(ckt->CKTstate0 + here->HICUMcqsu)       * ckt->CKTomega;
+            //Qcth
+            XQcth_Vrth        = *(ckt->CKTstate0 + here->HICUMcqcth)      * ckt->CKTomega;
 
             //Qrbi
             *(here->HICUMbaseBPBaseBPPtr + 1)          +=  XQrbi_Vbpbi; 
@@ -473,7 +474,45 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
                 *(here->HICUMtempEmitPtr)   += +Ith_Veie;
 //              finish
 
-                //TODO derivatives of charges with temp here 
+                //the charges
+                //Qrbi    from Bp to Bi f_Bi=- f_Bp=+
+                *(here->HICUMbaseBItempPtr + 1) += -XQrbi_Vrth;
+                *(here->HICUMbaseBPtempPtr + 1) += +XQrbi_Vrth;
+                //Qjei    from Bi to Ei f_Bi=- f_Ei=+
+                *(here->HICUMbaseBItempPtr + 1) += -XQjei_Vrth;
+                *(here->HICUMemitEItempPtr + 1) += +XQjei_Vrth;
+                //Qf      from Bi to Ei f_Bi=- f_Ei=+
+                *(here->HICUMbaseBItempPtr + 1) += -XQf_Vrth;
+                *(here->HICUMemitEItempPtr + 1) += +XQf_Vrth;
+                //Qr      from Bi to Ci f_Bi=- f_Ci=+
+                *(here->HICUMbaseBItempPtr + 1) += -XQr_Vrth;
+                *(here->HICUMcollCItempPtr + 1) += +XQr_Vrth;
+                //Qjci    from Bi to Ci f_Bi=- f_Ci=+
+                *(here->HICUMbaseBItempPtr + 1) += -XQjci_Vrth;
+                *(here->HICUMcollCItempPtr + 1) += +XQjci_Vrth;
+                //Qjep    from Bp to Ei f_Bp=- f_Ei=+
+                *(here->HICUMbaseBPtempPtr + 1) += -XQjep_Vrth;
+                *(here->HICUMemitEItempPtr + 1) += +XQjep_Vrth;
+                //Qjcx_i  from B  to Ci f_B =- f_Ci=+
+                *(here->HICUMbaseTempPtr   + 1) += -Xqjcx0_t_i_Vrth;
+                *(here->HICUMcollCItempPtr + 1) += +Xqjcx0_t_i_Vrth;
+                //Qjcx_ii from Bp to Ci f_Bp=- f_Ci=+
+                *(here->HICUMbaseBPtempPtr + 1) += -Xqjcx0_t_ii_Vrth;
+                *(here->HICUMcollCItempPtr + 1) += +Xqjcx0_t_ii_Vrth;
+                //Qdsu    from Bp to Ci f_Bp=- f_Ci=+
+                *(here->HICUMbaseBPtempPtr + 1) += -XQdsu_Vrth;
+                *(here->HICUMcollCItempPtr + 1) += +XQdsu_Vrth;
+                //Qjs     from Si to Ci f_Si=- f_Ci=+
+                *(here->HICUMsubsSItempPtr + 1) += -XQjs_Vrth;
+                *(here->HICUMcollCItempPtr + 1) += +XQjs_Vrth;
+                //Qscp    from S  to C  f_S =- f_C =+
+                // Jacobian entry not implemented
+                // *(here->HICUMsubsTempPtr)   += -XQscp_Vrth;
+                // *(here->HICUMcollTempPtr)   += +XQscp_Vrth;
+                //Qcth    from 0  to T  f_0=- f_T=+
+                *(here->HICUMtempTempPtr + 1) += -XQcth_Vrth;
+
+
 
             }
 

@@ -494,7 +494,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Ibpbi, Ibpbi_Vbpbi, Ibpbi_Vbici, Ibpbi_Vbiei;
     double Ibpsi, Ibpsi_Vbpci, Ibpsi_Vsici, Ibpsi_Vrth=0;
     double Icic_Vcic=0;
-    double Ibci=0, Ibci_Vbci=0, Ibci_dT;
+    double Ibci=0, Ibci_Vbci=0; 
     double volatile hjei_vbe_Vbiei, hjei_vbe_dT, ibet_Vbpei=0.0, ibet_dT=0, ibet_Vbiei=0.0, ibh_rec_Vbiei, ibh_rec_dT, ibh_rec_Vbici;
     double irei_Vbiei, irei_dT;
     double ibep_Vbpei, ibep_dT;
@@ -521,8 +521,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Qrbi_Vrth;
     double Qrbi_Vbiei;
     double Qrbi_Vbici;
-    double Qdeix_Vbiei;
-    double Qdci_Vbici;
     double Qjep_Vbpei,Qjep_dT;
     double Qbepar1_Vbe;
     double Qbepar2_Vbpe;
@@ -1071,7 +1069,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
         int extra_round=0;
         double T_dpart = T.dpart();
         int l_it;
-        bool condition_;
 
         VT      = CONSTboltz * T / CHARGE;
         c10_t   = here->HICUMc10_t.rpart;
@@ -2733,14 +2730,13 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
             // end of Load_sources
 
-            // calculate charge derivatives over electrostatic caps
+            // calculate charge derivatives for electrostatic caps
             Qbepar1_Vbe      = cbepar1;
             Qbepar2_Vbpe     = cbepar2;
             Qbcpar1_Vbci     = cbcpar1;
             Qbcpar2_Vbpci    = cbcpar2;
             Qsu_Vsis         = model->HICUMcsu;
             Qcth_Vrth        = model->HICUMcth;
-
             if( (ckt->CKTmode & (MODEDCTRANCURVE | MODETRAN | MODEAC)) ||
                     ((ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC)) ||
                     (ckt->CKTmode & MODEINITSMSIG)) {
@@ -2853,13 +2849,12 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                         (!(ckt->CKTmode & MODEUIC)) ) {
                     if(ckt->CKTmode & MODEINITSMSIG) {
 
-                        //TODO
+                        //TODO (transient not yet implented)
                         *(ckt->CKTstate0 + here->HICUMcqf)        = Qf_Vbiei;
                         *(ckt->CKTstate0 + here->HICUMqf_Vbici)   = Qf_Vbici;
                         *(ckt->CKTstate0 + here->HICUMqf_Vrth)    = Qf_dT;
 
                         *(ckt->CKTstate0 + here->HICUMcqjei)      = Cjei;
-                        *(ckt->CKTstate0 + here->HICUMcqr)        = Qdci_Vbici;
                         *(ckt->CKTstate0 + here->HICUMcqjci)      = Cjci;
                         *(ckt->CKTstate0 + here->HICUMcqjep)      = Qjep_Vbpei;
                         *(ckt->CKTstate0 + here->HICUMcqcx0_t_i)  = Qjcx_i_Vbci;
