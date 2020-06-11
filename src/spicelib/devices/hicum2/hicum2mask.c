@@ -20,7 +20,7 @@ Spice3 Implementation: 2019 Dietmar Warning
 int
 HICUMmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
 {
-    HICUMmodel *here = (HICUMmodel*)instPtr;
+    HICUMmodel *model = (HICUMmodel*)instPtr;
 
     NG_IGNORE(ckt);
 
@@ -28,469 +28,469 @@ HICUMmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
 
 //Circuit simulator specific parameters
         case HICUM_MOD_TYPE:
-            if (here->HICUMtype == NPN)
+            if (model->HICUMtype == NPN)
                 value->sValue = "npn";
             else
                 value->sValue = "pnp";
             return(OK);
         case HICUM_MOD_TNOM:
-            value->rValue = here->HICUMtnom;
+            value->rValue = model->HICUMtnom;
             return(OK);
 
         case HICUM_MOD_VERSION :
-            value->sValue = here->HICUMversion;
+            value->sValue = model->HICUMversion;
             return(OK);
 
 //Transfer current
         case HICUM_MOD_C10:
-            value->rValue = here->HICUMc10;
+            value->rValue = model->HICUMc10;
             return(OK);
         case HICUM_MOD_QP0:
-            value->rValue = here->HICUMqp0;
+            value->rValue = model->HICUMqp0;
             return(OK);
         case HICUM_MOD_ICH:
-            value->rValue = here->HICUMich;
+            value->rValue = model->HICUMich;
             return(OK);
         case HICUM_MOD_HF0:
-            value->rValue = here->HICUMhf0;
+            value->rValue = model->HICUMhf0;
             return(OK);
         case HICUM_MOD_HFE:
-            value->rValue = here->HICUMhfe;
+            value->rValue = model->HICUMhfe;
             return(OK);
         case HICUM_MOD_HFC:
-            value->rValue = here->HICUMhfc;
+            value->rValue = model->HICUMhfc;
             return(OK);
         case HICUM_MOD_HJEI:
-            value->rValue = here->HICUMhjei;
+            value->rValue = model->HICUMhjei;
             return(OK);
         case HICUM_MOD_AHJEI:
-            value->rValue = here->HICUMahjei;
+            value->rValue = model->HICUMahjei;
             return(OK);
         case HICUM_MOD_RHJEI:
-            value->rValue = here->HICUMrhjei;
+            value->rValue = model->HICUMrhjei;
             return(OK);
         case HICUM_MOD_HJCI:
-            value->rValue = here->HICUMhjci;
+            value->rValue = model->HICUMhjci;
             return(OK);
 
 //Base-Emitter diode:
         case HICUM_MOD_IBEIS:
-            value->rValue = here->HICUMibeis;
+            value->rValue = model->HICUMibeis;
             return(OK);
         case HICUM_MOD_MBEI:
-            value->rValue = here->HICUMmbei;
+            value->rValue = model->HICUMmbei;
             return(OK);
         case HICUM_MOD_IREIS:
-            value->rValue = here->HICUMireis;
+            value->rValue = model->HICUMireis;
             return(OK);
         case HICUM_MOD_MREI:
-            value->rValue = here->HICUMmrei;
+            value->rValue = model->HICUMmrei;
             return(OK);
         case HICUM_MOD_IBEPS:
-            value->rValue = here->HICUMibeps;
+            value->rValue = model->HICUMibeps;
             return(OK);
         case HICUM_MOD_MBEP:
-            value->rValue = here->HICUMmbep;
+            value->rValue = model->HICUMmbep;
             return(OK);
         case HICUM_MOD_IREPS:
-            value->rValue = here->HICUMireps;
+            value->rValue = model->HICUMireps;
             return(OK);
         case HICUM_MOD_MREP:
-            value->rValue = here->HICUMmrep;
+            value->rValue = model->HICUMmrep;
             return(OK);
         case HICUM_MOD_MCF:
-            value->rValue = here->HICUMmcf;
+            value->rValue = model->HICUMmcf;
             return(OK);
 
 //Transit time for excess recombination current at b-c barrier
         case HICUM_MOD_TBHREC:
-            value->rValue = here->HICUMtbhrec;
+            value->rValue = model->HICUMtbhrec;
             return(OK);
 
 //Base-Collector diode currents
         case HICUM_MOD_IBCIS:
-            value->rValue = here->HICUMibcis;
+            value->rValue = model->HICUMibcis;
             return(OK);
         case HICUM_MOD_MBCI:
-            value->rValue = here->HICUMmbci;
+            value->rValue = model->HICUMmbci;
             return(OK);
         case HICUM_MOD_IBCXS:
-            value->rValue = here->HICUMibcxs;
+            value->rValue = model->HICUMibcxs;
             return(OK);
         case HICUM_MOD_MBCX:
-            value->rValue = here->HICUMmbcx;
+            value->rValue = model->HICUMmbcx;
             return(OK);
 
 //Base-Emitter tunneling current
         case HICUM_MOD_IBETS:
-            value->rValue = here->HICUMibets;
+            value->rValue = model->HICUMibets;
             return(OK);
         case HICUM_MOD_ABET:
-            value->rValue = here->HICUMabet;
+            value->rValue = model->HICUMabet;
             return(OK);
         case HICUM_MOD_TUNODE:
-            value->rValue = here->HICUMtunode = value->iValue;
+            value->rValue = model->HICUMtunode = value->iValue;
             return(OK);
 
 //Base-Collector avalanche current
         case HICUM_MOD_FAVL:
-            value->rValue = here->HICUMfavl;
+            value->rValue = model->HICUMfavl;
             return(OK);
         case HICUM_MOD_QAVL:
-            value->rValue = here->HICUMqavl;
+            value->rValue = model->HICUMqavl;
             return(OK);
         case HICUM_MOD_KAVL:
-            value->rValue = here->HICUMkavl;
+            value->rValue = model->HICUMkavl;
             return(OK);
         case HICUM_MOD_ALFAV:
-            value->rValue = here->HICUMalfav;
+            value->rValue = model->HICUMalfav;
             return(OK);
         case HICUM_MOD_ALQAV:
-            value->rValue = here->HICUMalqav;
+            value->rValue = model->HICUMalqav;
             return(OK);
         case HICUM_MOD_ALKAV:
-            value->rValue = here->HICUMalkav;
+            value->rValue = model->HICUMalkav;
             return(OK);
 
 //Series resistances
         case HICUM_MOD_RBI0:
-            value->rValue = here->HICUMrbi0;
-            if (here->HICUMrbi0 < MIN_R) here->HICUMrbi0 = MIN_R;
+            value->rValue = model->HICUMrbi0;
+            if (model->HICUMrbi0 < MIN_R) model->HICUMrbi0 = MIN_R;
             return(OK);
         case HICUM_MOD_RBX:
-            value->rValue = here->HICUMrbx;
-            if (here->HICUMrbx < MIN_R) here->HICUMrbx = MIN_R;
+            value->rValue = model->HICUMrbx;
+            if (model->HICUMrbx < MIN_R) model->HICUMrbx = MIN_R;
             return(OK);
         case HICUM_MOD_FGEO:
-            value->rValue = here->HICUMfgeo;
+            value->rValue = model->HICUMfgeo;
             return(OK);
         case HICUM_MOD_FDQR0:
-            value->rValue = here->HICUMfdqr0;
+            value->rValue = model->HICUMfdqr0;
             return(OK);
         case HICUM_MOD_FCRBI:
-            value->rValue = here->HICUMfcrbi;
+            value->rValue = model->HICUMfcrbi;
             return(OK);
         case HICUM_MOD_FQI:
-            value->rValue = here->HICUMfqi;
+            value->rValue = model->HICUMfqi;
             return(OK);
         case HICUM_MOD_RE:
-            value->rValue = here->HICUMre;
-            if (here->HICUMre < MIN_R) here->HICUMre = MIN_R;
+            value->rValue = model->HICUMre;
+            if (model->HICUMre < MIN_R) model->HICUMre = MIN_R;
             return(OK);
         case HICUM_MOD_RCX:
-            value->rValue = here->HICUMrcx;
-            if (here->HICUMrcx < MIN_R) here->HICUMrcx = MIN_R;
+            value->rValue = model->HICUMrcx;
+            if (model->HICUMrcx < MIN_R) model->HICUMrcx = MIN_R;
             return(OK);
 
 //Substrate transistor
         case HICUM_MOD_ITSS:
-            value->rValue = here->HICUMitss;
+            value->rValue = model->HICUMitss;
             return(OK);
         case HICUM_MOD_MSF:
-            value->rValue = here->HICUMmsf;
+            value->rValue = model->HICUMmsf;
             return(OK);
         case HICUM_MOD_ISCS:
-            value->rValue = here->HICUMiscs;
+            value->rValue = model->HICUMiscs;
             return(OK);
         case HICUM_MOD_MSC:
-            value->rValue = here->HICUMmsc;
+            value->rValue = model->HICUMmsc;
             return(OK);
         case HICUM_MOD_TSF:
-            value->rValue = here->HICUMtsf;
+            value->rValue = model->HICUMtsf;
             return(OK);
 
 //Intra-device substrate coupling
         case HICUM_MOD_RSU:
-            value->rValue = here->HICUMrsu;
-            if (here->HICUMrsu < MIN_R) here->HICUMrsu = MIN_R;
+            value->rValue = model->HICUMrsu;
+            if (model->HICUMrsu < MIN_R) model->HICUMrsu = MIN_R;
             return(OK);
         case HICUM_MOD_CSU:
 
 //Depletion Capacitances
         case HICUM_MOD_CJEI0:
-            value->rValue = here->HICUMcjei0;
+            value->rValue = model->HICUMcjei0;
             return(OK);
         case HICUM_MOD_VDEI:
-            value->rValue = here->HICUMvdei;
+            value->rValue = model->HICUMvdei;
             return(OK);
         case HICUM_MOD_ZEI:
-            value->rValue = here->HICUMzei;
+            value->rValue = model->HICUMzei;
             return(OK);
         case HICUM_MOD_AJEI:
-            value->rValue = here->HICUMajei;
+            value->rValue = model->HICUMajei;
             return(OK);
         case HICUM_MOD_CJEP0:
-            value->rValue = here->HICUMcjep0;
+            value->rValue = model->HICUMcjep0;
             return(OK);
         case HICUM_MOD_VDEP:
-            value->rValue = here->HICUMvdep;
+            value->rValue = model->HICUMvdep;
             return(OK);
         case HICUM_MOD_ZEP:
-            value->rValue = here->HICUMzep;
+            value->rValue = model->HICUMzep;
             return(OK);
         case HICUM_MOD_AJEP:
-            value->rValue = here->HICUMajep;
+            value->rValue = model->HICUMajep;
             return(OK);
         case HICUM_MOD_CJCI0:
-            value->rValue = here->HICUMcjci0;
+            value->rValue = model->HICUMcjci0;
             return(OK);
         case HICUM_MOD_VDCI:
-            value->rValue = here->HICUMvdci;
+            value->rValue = model->HICUMvdci;
             return(OK);
         case HICUM_MOD_ZCI:
-            value->rValue = here->HICUMzci;
+            value->rValue = model->HICUMzci;
             return(OK);
         case HICUM_MOD_VPTCI:
-            value->rValue = here->HICUMvptci;
+            value->rValue = model->HICUMvptci;
             return(OK);
         case HICUM_MOD_CJCX0:
-            value->rValue = here->HICUMcjcx0;
+            value->rValue = model->HICUMcjcx0;
             return(OK);
         case HICUM_MOD_VDCX:
-            value->rValue = here->HICUMvdcx;
+            value->rValue = model->HICUMvdcx;
             return(OK);
         case HICUM_MOD_ZCX:
-            value->rValue = here->HICUMzcx;
+            value->rValue = model->HICUMzcx;
             return(OK);
         case HICUM_MOD_VPTCX:
-            value->rValue = here->HICUMvptcx;
+            value->rValue = model->HICUMvptcx;
             return(OK);
         case HICUM_MOD_FBCPAR:
-            value->rValue = here->HICUMfbcpar;
+            value->rValue = model->HICUMfbcpar;
             return(OK);
         case HICUM_MOD_FBEPAR:
-            value->rValue = here->HICUMfbepar;
+            value->rValue = model->HICUMfbepar;
             return(OK);
         case HICUM_MOD_CJS0:
-            value->rValue = here->HICUMcjs0;
+            value->rValue = model->HICUMcjs0;
             return(OK);
         case HICUM_MOD_VDS:
-            value->rValue = here->HICUMvds;
+            value->rValue = model->HICUMvds;
             return(OK);
         case HICUM_MOD_ZS:
-            value->rValue = here->HICUMzs;
+            value->rValue = model->HICUMzs;
             return(OK);
         case HICUM_MOD_VPTS:
-            value->rValue = here->HICUMvpts;
+            value->rValue = model->HICUMvpts;
             return(OK);
         case HICUM_MOD_CSCP0:
-            value->rValue = here->HICUMcscp0;
+            value->rValue = model->HICUMcscp0;
             return(OK);
         case HICUM_MOD_VDSP:
-            value->rValue = here->HICUMvdsp;
+            value->rValue = model->HICUMvdsp;
             return(OK);
         case HICUM_MOD_ZSP:
-            value->rValue = here->HICUMzsp;
+            value->rValue = model->HICUMzsp;
             return(OK);
         case HICUM_MOD_VPTSP:
-            value->rValue = here->HICUMvptsp;
+            value->rValue = model->HICUMvptsp;
             return(OK);
 
 //Diffusion Capacitances
         case HICUM_MOD_T0:
-            value->rValue = here->HICUMt0;
+            value->rValue = model->HICUMt0;
             return(OK);
         case HICUM_MOD_DT0H:
-            value->rValue = here->HICUMdt0h;
+            value->rValue = model->HICUMdt0h;
             return(OK);
         case HICUM_MOD_TBVL:
-            value->rValue = here->HICUMtbvl;
+            value->rValue = model->HICUMtbvl;
             return(OK);
         case HICUM_MOD_TEF0:
-            value->rValue = here->HICUMtef0;
+            value->rValue = model->HICUMtef0;
             return(OK);
         case HICUM_MOD_GTFE:
-            value->rValue = here->HICUMgtfe;
+            value->rValue = model->HICUMgtfe;
             return(OK);
         case HICUM_MOD_THCS:
-            value->rValue = here->HICUMthcs;
+            value->rValue = model->HICUMthcs;
             return(OK);
         case HICUM_MOD_AHC:
-            value->rValue = here->HICUMahc;
+            value->rValue = model->HICUMahc;
             return(OK);
         case HICUM_MOD_FTHC:
-            value->rValue = here->HICUMfthc;
+            value->rValue = model->HICUMfthc;
             return(OK);
         case HICUM_MOD_RCI0:
-            value->rValue = here->HICUMrci0;
+            value->rValue = model->HICUMrci0;
             return(OK);
         case HICUM_MOD_VLIM:
-            value->rValue = here->HICUMvlim;
+            value->rValue = model->HICUMvlim;
             return(OK);
         case HICUM_MOD_VCES:
-            value->rValue = here->HICUMvces;
+            value->rValue = model->HICUMvces;
             return(OK);
         case HICUM_MOD_VPT:
-            value->rValue = here->HICUMvpt;
+            value->rValue = model->HICUMvpt;
             return(OK);
         case HICUM_MOD_AICK:
-            value->rValue = here->HICUMaick;
+            value->rValue = model->HICUMaick;
             return(OK);
         case HICUM_MOD_DELCK:
-            value->rValue = here->HICUMdelck;
+            value->rValue = model->HICUMdelck;
             return(OK);
         case HICUM_MOD_TR:
-            value->rValue = here->HICUMtr;
+            value->rValue = model->HICUMtr;
             return(OK);
         case HICUM_MOD_VCBAR:
-            value->rValue = here->HICUMvcbar;
+            value->rValue = model->HICUMvcbar;
             return(OK);
         case HICUM_MOD_ICBAR:
-            value->rValue = here->HICUMicbar;
+            value->rValue = model->HICUMicbar;
             return(OK);
         case HICUM_MOD_ACBAR:
-            value->rValue = here->HICUMacbar;
+            value->rValue = model->HICUMacbar;
             return(OK);
 
 //Isolation Capacitances
         case HICUM_MOD_CBEPAR:
-            value->rValue = here->HICUMcbepar;
+            value->rValue = model->HICUMcbepar;
             return(OK);
         case HICUM_MOD_CBCPAR:
-            value->rValue = here->HICUMcbcpar;
+            value->rValue = model->HICUMcbcpar;
             return(OK);
 
 //Non-quasi-static Effect
         case HICUM_MOD_ALQF:
-            value->rValue = here->HICUMalqf;
+            value->rValue = model->HICUMalqf;
             return(OK);
         case HICUM_MOD_ALIT:
-            value->rValue = here->HICUMalit;
+            value->rValue = model->HICUMalit;
             return(OK);
         case HICUM_MOD_FLNQS:
-            value->iValue = here->HICUMflnqs;
+            value->iValue = model->HICUMflnqs;
             return(OK);
 
 //Noise
         case HICUM_MOD_KF:
-            value->rValue = here->HICUMkf;
+            value->rValue = model->HICUMkf;
             return(OK);
         case HICUM_MOD_AF:
-            value->rValue = here->HICUMaf;
+            value->rValue = model->HICUMaf;
             return(OK);
         case HICUM_MOD_CFBE:
-            value->rValue = here->HICUMcfbe;
+            value->rValue = model->HICUMcfbe;
             return(OK);
         case HICUM_MOD_FLCONO:
-            value->iValue = here->HICUMflcono;
+            value->iValue = model->HICUMflcono;
             return(OK);
         case HICUM_MOD_KFRE:
-            value->rValue = here->HICUMkfre;
+            value->rValue = model->HICUMkfre;
             return(OK);
         case HICUM_MOD_AFRE:
-            value->rValue = here->HICUMafre;
+            value->rValue = model->HICUMafre;
             return(OK);
 
 //Lateral Geometry Scaling (at high current densities)
         case HICUM_MOD_LATB:
-            value->rValue = here->HICUMlatb;
+            value->rValue = model->HICUMlatb;
             return(OK);
         case HICUM_MOD_LATL:
-            value->rValue = here->HICUMlatl;
+            value->rValue = model->HICUMlatl;
             return(OK);
 
 //Temperature dependence
         case HICUM_MOD_VGB:
-            value->rValue = here->HICUMvgb;
+            value->rValue = model->HICUMvgb;
             return(OK);
         case HICUM_MOD_ALT0:
-            value->rValue = here->HICUMalt0;
+            value->rValue = model->HICUMalt0;
             return(OK);
         case HICUM_MOD_KT0:
-            value->rValue = here->HICUMkt0;
+            value->rValue = model->HICUMkt0;
             return(OK);
         case HICUM_MOD_ZETACI:
-            value->rValue = here->HICUMzetaci;
+            value->rValue = model->HICUMzetaci;
             return(OK);
         case HICUM_MOD_ALVS:
-            value->rValue = here->HICUMalvs;
+            value->rValue = model->HICUMalvs;
             return(OK);
         case HICUM_MOD_ALCES:
-            value->rValue = here->HICUMalces;
+            value->rValue = model->HICUMalces;
             return(OK);
         case HICUM_MOD_ZETARBI:
-            value->rValue = here->HICUMzetarbi;
+            value->rValue = model->HICUMzetarbi;
             return(OK);
         case HICUM_MOD_ZETARBX:
-            value->rValue = here->HICUMzetarbx;
+            value->rValue = model->HICUMzetarbx;
             return(OK);
         case HICUM_MOD_ZETARCX:
-            value->rValue = here->HICUMzetarcx;
+            value->rValue = model->HICUMzetarcx;
             return(OK);
         case HICUM_MOD_ZETARE:
-            value->rValue = here->HICUMzetare;
+            value->rValue = model->HICUMzetare;
             return(OK);
         case HICUM_MOD_ZETACX:
-            value->rValue = here->HICUMzetacx;
+            value->rValue = model->HICUMzetacx;
             return(OK);
         case HICUM_MOD_VGE:
-            value->rValue = here->HICUMvge;
+            value->rValue = model->HICUMvge;
             return(OK);
         case HICUM_MOD_VGC:
-            value->rValue = here->HICUMvgc;
+            value->rValue = model->HICUMvgc;
             return(OK);
         case HICUM_MOD_VGS:
-            value->rValue = here->HICUMvgs;
+            value->rValue = model->HICUMvgs;
             return(OK);
         case HICUM_MOD_F1VG:
-            value->rValue = here->HICUMf1vg;
+            value->rValue = model->HICUMf1vg;
             return(OK);
         case HICUM_MOD_F2VG:
-            value->rValue = here->HICUMf2vg;
+            value->rValue = model->HICUMf2vg;
             return(OK);
         case HICUM_MOD_ZETACT:
-            value->rValue = here->HICUMzetact;
+            value->rValue = model->HICUMzetact;
             return(OK);
         case HICUM_MOD_ZETABET:
-            value->rValue = here->HICUMzetabet;
+            value->rValue = model->HICUMzetabet;
             return(OK);
         case HICUM_MOD_ALB:
-            value->rValue = here->HICUMalb;
+            value->rValue = model->HICUMalb;
             return(OK);
         case HICUM_MOD_DVGBE:
-            value->rValue = here->HICUMdvgbe;
+            value->rValue = model->HICUMdvgbe;
             return(OK);
         case HICUM_MOD_ZETAHJEI:
-            value->rValue = here->HICUMzetahjei;
+            value->rValue = model->HICUMzetahjei;
             return(OK);
         case HICUM_MOD_ZETAVGBE:
-            value->rValue = here->HICUMzetavgbe;
+            value->rValue = model->HICUMzetavgbe;
             return(OK);
 
 //Self-Heating
         case HICUM_MOD_FLSH:
-            value->iValue = here->HICUMflsh;
+            value->iValue = model->HICUMflsh;
             return(OK);
         case HICUM_MOD_RTH_DE:
-            value->iValue = here->HICUMrth_de;
+            value->iValue = model->HICUMrth_de;
             return(OK);
         case HICUM_MOD_RTH:
-            value->rValue = here->HICUMrth;
+            value->rValue = model->HICUMrth;
             return(OK);
         case HICUM_MOD_ZETARTH:
-            value->rValue = here->HICUMzetarth;
+            value->rValue = model->HICUMzetarth;
             return(OK);
         case HICUM_MOD_ALRTH:
-            value->rValue = here->HICUMalrth;
+            value->rValue = model->HICUMalrth;
             return(OK);
         case HICUM_MOD_CTH:
-            value->rValue = here->HICUMcth;
+            value->rValue = model->HICUMcth;
             return(OK);
 
 //Compatibility with V2.1
         case HICUM_MOD_FLCOMP:
-            value->rValue = here->HICUMflcomp;
+            value->rValue = model->HICUMflcomp;
             return(OK);
 
 //SOA-check
         case HICUM_MOD_VBE_MAX:
-            value->rValue = here->HICUMvbeMax;
+            value->rValue = model->HICUMvbeMax;
             return(OK);
         case HICUM_MOD_VBC_MAX:
-            value->rValue = here->HICUMvbcMax;
+            value->rValue = model->HICUMvbcMax;
             return(OK);
         case HICUM_MOD_VCE_MAX:
-            value->rValue = here->HICUMvceMax;
+            value->rValue = model->HICUMvceMax;
             return(OK);
 
         default:
