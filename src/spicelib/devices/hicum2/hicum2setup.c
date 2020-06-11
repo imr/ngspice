@@ -44,6 +44,9 @@ HICUMsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if(!model->HICUMtnomGiven)
             model->HICUMtnom = ckt->CKTnomTemp;
 
+        if (!model->HICUMversionGiven)
+            model->HICUMversion = copy("2.3.4");
+
 //Transfer current
         if(!model->HICUMc10Given)
             model->HICUMc10 = 2e-30;

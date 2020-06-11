@@ -484,6 +484,8 @@ typedef struct sHICUMmodel {           /* model structure for a hicum */
     int HICUMtype;
     double HICUMtnom;
 
+    char  *HICUMversion;
+
 //Transfer current
     double HICUMc10;
     double HICUMqp0;
@@ -662,6 +664,8 @@ typedef struct sHICUMmodel {           /* model structure for a hicum */
 //Circuit simulator specific parameters
     unsigned HICUMtypeGiven : 1;
     unsigned HICUMtnomGiven : 1;
+
+    unsigned HICUMversionGiven   :1;
 
 //Transfer current
     unsigned HICUMc10Given : 1;
@@ -867,6 +871,8 @@ enum {
     HICUM_MOD_NPN = 101,
     HICUM_MOD_PNP,
     HICUM_MOD_TNOM,
+
+    HICUM_MOD_VERSION,
 
 //Transfer current
     HICUM_MOD_C10,

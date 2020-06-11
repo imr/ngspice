@@ -44,6 +44,11 @@ HICUMmParam(int param, IFvalue *value, GENmodel *inModel)
             model->HICUMtnomGiven = TRUE;
             break;
 
+        case HICUM_MOD_VERSION :
+            model->HICUMversion = value->sValue;
+            model->HICUMversionGiven = TRUE;
+            break;
+
 //Transfer current
         case HICUM_MOD_C10:
             model->HICUMc10 = value->rValue;

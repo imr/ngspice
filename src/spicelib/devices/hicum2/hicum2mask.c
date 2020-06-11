@@ -37,6 +37,10 @@ HICUMmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
             value->rValue = here->HICUMtnom;
             return(OK);
 
+        case HICUM_MOD_VERSION :
+            value->sValue = here->HICUMversion;
+            return(OK);
+
 //Transfer current
         case HICUM_MOD_C10:
             value->rValue = here->HICUMc10;
