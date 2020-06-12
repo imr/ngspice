@@ -40,7 +40,7 @@ AX_PROG_CC_FOR_BUILD
 
 m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
 
-AC_SUBST([AM_CPPFLAGS], ['-I. -I$(srcdir) -I$(top_builddir)/src/include -I/home/markus/Documents/Gitprojects/cppduals'])
+AC_SUBST([AM_CPPFLAGS], ['-I. -I$(srcdir) -I$(top_builddir)/src/include'])
 
 AC_CONFIG_MACRO_DIR([m4])
 
@@ -698,8 +698,6 @@ else
     AC_MSG_RESULT([No X display!])
     has_no_x=true
 fi
-# Additional libs of hicum group
-X_LIBS = "$X_LIBS -lstdc++"
 
 if test "x$enable_help" = xyes  &&  test "x$no_x" != xyes ; then
     has_no_help=false
@@ -713,6 +711,11 @@ esac
 AM_CONDITIONAL([NO_X], [test "x$has_no_x" = xtrue])
 AM_CONDITIONAL([NO_HELP], [test "x$has_no_help" = xtrue])
 
+# Additional libs of hicum group
+AC_CHECK_LIB(stdc++, main, XTRALIBS="$XTRALIBS -lstdc++",,)
+AC_SUBST(XTRALIBS, $XTRALIBS)
+
+LIBS="$LIBS $XTRALIBS"
 
 # enabling making of the old and outdated applications
 # ngsconvert ngproc2mod ngmultidec ngmakeidx nghelp
