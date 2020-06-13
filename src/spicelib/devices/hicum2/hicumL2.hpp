@@ -10,6 +10,7 @@ extern "C" {
     static double HICUMlimitlog( double deltemp, double deltemp_old, double LIM_TOL, int *check);
     int hicum_thermal_update(HICUMmodel *, HICUMinstance *, double Temp);
     int HICUMload(GENmodel *inModel, CKTcircuit *ckt);
+    int HICUMtemp(GENmodel *inModel, CKTcircuit *ckt);
 #ifdef __cplusplus
 }
 #endif

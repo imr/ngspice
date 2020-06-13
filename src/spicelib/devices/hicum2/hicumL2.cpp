@@ -399,7 +399,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
     //Charges, capacitances and currents
     double Qjci,Qjei,Qjep;
-    double Qdei,Qdci,Qrbi;
+    double Qdei,Qrbi;
     double it,ibei,irei,ibci,ibep,irep,ibh_rec;
     double volatile ibet,iavl,iavl_ditf,iavl_dT,iavl_Vbiei,iavl_dCjci;
     double ijbcx,ijbcx_dT,ijbcx_Vbpci,ijsc,ijsc_Vsici,ijsc_Vrth,Qjs,Qscp,HSI_Tsu,Qdsu;
@@ -439,12 +439,12 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Cdei_Vbiei, Cdei_Vbici, Cdei_Vrth;
     double Cdci_Vbiei, Cdci_Vbici, Cdci_Vrth;
     double Crbi_Vbiei, Crbi_Vbici, Crbi_Vrth;
-    double ick, ick_Vciei, ick_dT,cjcx01,cjcx02;
+    double ick, ick_Vciei, ick_dT;//,cjcx01;//,cjcx02;
 
     //NQS
     double Ixf1,Ixf2,Qxf1,Qxf2;
     double Itxf, Qdeix;
-    double Vxf, Ixf, Qxf;
+    double Qxf, Ixf, Vxf;
     double Vxf1, Vxf2;
 
     double hjei_vbe;
@@ -459,7 +459,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
     //end of variables
 
-    int iret;
+    int _iret;
 
 #ifndef PREDICTOR
     double xfact;
@@ -537,7 +537,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 //NQS
     double Vbxf, Vbxf1, Vbxf2;
     double Qxf_Vxf, Qxf1_Vxf1, Qxf2_Vxf2;
-    double Iqxf, Iqxf_Vxf, Iqxf1, Iqxf1_Vxf1, Iqxf2, Iqxf2_Vxf2;
+    // double Iqxf, Iqxf_Vxf, Iqxf1, Iqxf1_Vxf1, Iqxf2, Iqxf2_Vxf2; //not needed withouth NQS
 
     double volatile Ith=0, Vrth=0, Icth, Icth_Vrth, delvrth;
 
@@ -1107,7 +1107,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             Qf      = sqrt(T_f0*itf*Q_fT);
             Q_pT    = Q_0+Qf+Qr;
             d_Q     = Q_pT;
-            while ( (abs(d_Q) >= RTOLC*abs(Q_pT)) && (l_it <= l_itmax) || (extra_round < 5)) {
+            while ( ((abs(d_Q) >= RTOLC*abs(Q_pT)) && (l_it <= l_itmax)) || (extra_round < 5)) {
                 d_Q0    = d_Q;
                 I_Tf1   = i_0f/Q_pT;
                 a_h     = Oich*I_Tf1;
@@ -1199,14 +1199,14 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
         if (C_1 >= model->HICUMcbcpar) {
             cbcpar1 = model->HICUMcbcpar;
             cbcpar2 = 0.0;
-            cjcx01 = C_1 - model->HICUMcbcpar;
-            cjcx02 = model->HICUMcjcx0 - cjcx01;
+            //cjcx01 = C_1 - model->HICUMcbcpar;
+            //cjcx02 = model->HICUMcjcx0 - cjcx01; //not needed herein
         }
         else {
             cbcpar1 = C_1;
             cbcpar2 = model->HICUMcbcpar - cbcpar1;
-            cjcx01 = 0.0;
-            cjcx02 = model->HICUMcjcx0;
+            //cjcx01 = 0.0;
+            //cjcx02 = model->HICUMcjcx0; //not needed herein
         }
 
         // Parasitic b-e capacitance partitioning: No temperature dependence
@@ -1876,7 +1876,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             if (model->HICUMflsh!=0 && model->HICUMrth >= MIN_R) { // Thermal_update_with_self_heating
                 //here->HICUMtemp =  ckt->CKTtemp+Vrth;
                 Temp =  here->HICUMtemp+Vrth;
-                iret = hicum_thermal_update(model, here, Temp);
+                _iret = hicum_thermal_update(model, here, Temp);
 
                 here->HICUMdtemp_sh = Temp - here->HICUMtemp;
             } else {
@@ -2262,7 +2262,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
             //Diffusion charges for further use (remember derivatives if this will be used somebday)
             Qdei    = Qf;
-            Qdci    = Qr;
+            //Qdci    = Qr; //we just use Qr herein
 
             //High-frequency emitter current crowding (lateral NQS)
             Cdei       = T_f0*itf/here->HICUMvt.rpart;
