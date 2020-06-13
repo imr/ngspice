@@ -33,8 +33,9 @@ int raw_prec = -1;        /* How many sigfigs to use, default 15 (max).  */
 #endif
 
 
-/* Write a raw file.  We write everything in the plot pointed to. */
-
+/* Write a raw file with the 'write' command.  We write everything in the plot pointed to.
+   Writing a raw file in batch mode is handled by fileInit_pass1() and fileInit_pass2()
+   in outitf.c */
 void raw_write(char *name, struct plot *pl, bool app, bool binary)
 {
     FILE *fp;
@@ -153,17 +154,26 @@ void raw_write(char *name, struct plot *pl, bool app, bool binary)
 
     fprintf(fp, "Variables:\n");
     for (i = 0, v = pl->pl_dvecs; v; v = v->v_next) {
+        /* write i(name) instaed of name#branch */
         if (v->v_type == SV_CURRENT) {
             branch = NULL;
+            /* get name only*/
             if ((branch = strstr(v->v_name, "#branch")) != NULL) {
                 *branch = '\0';
             }
             fprintf(fp, "\t%d\ti(%s)\t%s", i++, v->v_name, ft_typenames(v->v_type));
+            /* restore name#branch */
             if (branch != NULL) *branch = '#';
         }
+        /* write v(name)*/
         else if (v->v_type == SV_VOLTAGE) {
-            fprintf(fp, "\t%d\t%s\t%s", i++, v->v_name, ft_typenames(v->v_type));
+            /* If the node name is a number, the vector is already called v(name) */
+            if (ciprefix("v(", v->v_name))
+               fprintf(fp, "\t%d\t%s\t%s", i++, v->v_name, ft_typenames(v->v_type));
+            else
+               fprintf(fp, "\t%d\tv(%s)\t%s", i++, v->v_name, ft_typenames(v->v_type));
         }
+        /* write 'name' only for all other vector types */
         else {
             fprintf(fp, "\t%d\t%s\t%s", i++, v->v_name, ft_typenames(v->v_type));
         }
