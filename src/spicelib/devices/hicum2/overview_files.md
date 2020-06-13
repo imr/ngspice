@@ -93,7 +93,11 @@ Die Regeln für die AC load Aufstellung sind:
 6. dafür sorgen daß diese mit 2*Pi*f CKTomega) malgenommen werden.
 Es ist reine cut&paste Arbeit mit einem guten Editor.
 
-# todo
-version parameter
+# Kommentar von DWarn, mal ansehen
+Im Init part, line 1142:
+        if (ibets > 0) begin : HICTUN_T
+
+Im Update part, line 1361:
+    if (ibets > 0 && (Vbpei < 0.0 || Vbiei < 0.0)) begin : HICTUN_T
 
 

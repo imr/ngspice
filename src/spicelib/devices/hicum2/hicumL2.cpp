@@ -40,7 +40,7 @@ Spice3 Implementation: 2019 Dietmar Warning, Markus Müller, Mario Krattenmacher
 #ifndef M_PI
 #define M_PI 3.1415926535897932384626433832795
 #endif
-#include <duals/dual>
+#include <ngspice/dual>
 #include "hicumL2.hpp"
 #include "hicumL2temp.hpp"
 #include <functional>

@@ -512,8 +512,6 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
                 //Qcth    from 0  to T  f_0=- f_T=+
                 *(here->HICUMtempTempPtr + 1) += -XQcth_Vrth;
 
-
-
             }
 
         }
