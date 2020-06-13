@@ -1780,6 +1780,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
 //todo: what about dQ/dT ?
 
+            //every branch connected with gmin
             Ibiei += ckt->CKTgmin*Vbiei;
             Ibiei_Vbiei += ckt->CKTgmin;
             Ibici += ckt->CKTgmin*Vbici;

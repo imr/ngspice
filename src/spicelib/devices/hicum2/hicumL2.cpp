@@ -2617,23 +2617,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 Ibpbi_Vrth  = 0;
             }
 
-            Ibiei += ckt->CKTgmin*Vbiei;
-            Ibiei_Vbiei += ckt->CKTgmin;
-            Ibici += ckt->CKTgmin*Vbici;
-            Ibici_Vbici += ckt->CKTgmin;
-            Ibici_Vbiei += ckt->CKTgmin;
-            Iciei += ckt->CKTgmin*Vciei;
-            Iciei_Vbiei += ckt->CKTgmin;
-            Iciei_Vbici += ckt->CKTgmin;
-            Ibpei += ckt->CKTgmin*Vbpei;
-            Ibpei_Vbpei += ckt->CKTgmin;
-            Ibpbi += ckt->CKTgmin*Vbpbi;
-            Ibpbi_Vbiei += ckt->CKTgmin;
-            Ibpbi_Vbici += ckt->CKTgmin;
-            Ibpci += ckt->CKTgmin*Vbpci;
-            Ibpci_Vbpci += ckt->CKTgmin;
-            Isici += ckt->CKTgmin*Vsici;
-            Isici_Vsici += ckt->CKTgmin;
+
 
 //printf("Vbiei: %f Vbici: %f Vciei: %f Vbpei: %f Vbpci: %f Vbci: %f Vsici: %f\n", Vbiei, Vbici, Vciei, Vbpei, Vbpci, Vbci, Vsici);
 //printf("Ibiei: %g ibici: %g Ibpei: %g Iciei: %g\n",Ibiei,ibici,Ibpei,Iciei);
@@ -2721,6 +2705,82 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 Ith_Vrth += ckt->CKTgmin;
             }
             // ********************************************
+
+            // all nodes (B BP BI C CI E EI S SI) connected to gmin
+            // T node not neede since if rth to small, non existent
+            Ibiei += ckt->CKTgmin*Vbiei; //BI EI -> BI EI
+            Ibici += ckt->CKTgmin*Vbici; //BI CI -> CI
+            Ibpei += ckt->CKTgmin*Vbpei; //BP EI -> BP
+            // Iciei += ckt->CKTgmin*Vciei; //CI EI -> not needed
+            // Ibpbi += ckt->CKTgmin*Vbpbi; //BP BI -> not needed
+            // Ibpci += ckt->CKTgmin*Vbpci; //BP CI -> not needed
+            Isici += ckt->CKTgmin*Vsici; //SI CI -> SI
+            //C from Icic
+            //E from Ieie
+            //S from Isis
+
+            //all derivatives with gmin
+            //Ibiei
+            Ibiei_Vbiei += ckt->CKTgmin;
+            Ibiei_Vbici += ckt->CKTgmin;
+
+            //Ibici
+            Ibici_Vbici += ckt->CKTgmin;
+            Ibici_Vbiei += ckt->CKTgmin;
+
+            //Iciei
+            Iciei_Vbiei += ckt->CKTgmin;
+            Iciei_Vbici += ckt->CKTgmin;
+
+            //Ibpei
+            Ibpei_Vbpei += ckt->CKTgmin;
+
+            // Ibpbi
+            Ibpbi_Vbiei += ckt->CKTgmin;
+            Ibpbi_Vbici += ckt->CKTgmin;
+            //Ibpbi_Vbpbi += ckt->CKTgmin; //not needed since rbi is set to gmin if too small
+
+            //Ibpci
+            Ibpci_Vbpci += ckt->CKTgmin;
+
+            //Isici
+            Isici_Vsici += ckt->CKTgmin;
+
+            //Ibpsi
+            Ibpsi_Vbpci += ckt->CKTgmin;
+            Ibpsi_Vsici += ckt->CKTgmin;
+
+            //SHE derivatives
+            if (!(model->HICUMflsh == 0 || model->HICUMrth < MIN_R )) {
+                //Ibiei
+                Ibiei_Vrth  += ckt->CKTgmin;
+                //Ibici
+                Ibici_Vrth  += ckt->CKTgmin;
+                //Iciei
+                Iciei_Vrth  += ckt->CKTgmin;
+                //Ibpei
+                Ibpei_Vrth  += ckt->CKTgmin;
+                // Ibpbi
+                Ibpbi_Vrth  += ckt->CKTgmin;
+                //Ibpci
+                Ibpci_Vrth  += ckt->CKTgmin;
+                //Isici
+                Isici_Vrth  += ckt->CKTgmin;
+                //Ibpsi
+                Ibpsi_Vrth  += ckt->CKTgmin;
+                //Ith
+                Ith_Vbiei  += ckt->CKTgmin;
+                Ith_Vbici  += ckt->CKTgmin;
+                Ith_Vbpbi  += ckt->CKTgmin;
+                Ith_Vbpci  += ckt->CKTgmin;
+                Ith_Vbpei  += ckt->CKTgmin;
+                Ith_Vciei  += ckt->CKTgmin;
+                Ith_Vsici  += ckt->CKTgmin;
+                Ith_Vcic   += ckt->CKTgmin;
+                Ith_Vbbp   += ckt->CKTgmin;
+                Ith_Veie   += ckt->CKTgmin;
+                Ith_Vrth   += ckt->CKTgmin;
+            }
 
             // NQS effect
         //    Ibxf1 = Ixf1;

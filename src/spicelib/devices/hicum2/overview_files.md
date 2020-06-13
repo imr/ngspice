@@ -101,3 +101,13 @@ Im Update part, line 1361:
     if (ibets > 0 && (Vbpei < 0.0 || Vbiei < 0.0)) begin : HICTUN_T
 
 
+# gmin
+
+Die Knoten eines nichlinearen Zweiges müssen einmal (!) mit gmin verbunden werden. 
+Daraus folgt, wie schon gemacht, für den Strom gmin*Vxy als Zusatz und für alle (!) 
+Ableitungen des Stromes gmin als Zusatz.
+
+Praktisch heißt das, daß die Beaufschlagung von Iciei überflüssig ist, 
+da schon mit den Zweigen biei und bici erfolgt ist. 
+Es fehlen aber noch Beaufschlagungen, 
+z.B. Ibiei_Vbici, weil die Ableitung später hinzugekommen ist. 
