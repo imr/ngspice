@@ -39,13 +39,5 @@ freq dec 5 1e+008 1e+011
 outputs G(base,base) G(base,coll) G(coll,base) G(coll,coll) C(base,base) C(base,coll) C(coll,base) C(coll,coll)
 modelParameters parameters/npn_full_sh
 
-test ypara_npn_full_ac
-temperature 27 
-biases V(emit)=0 V(subs)=0 V(coll)=1.000000
-biasSweep V(base)=0.800000,0.950000,0.050000
-freq dec 5 1e+008 1e+011
-outputs G(base,base) G(base,coll) G(coll,base) G(coll,coll) C(base,base) C(base,coll) C(coll,base) C(coll,coll)
-modelParameters parameters/npn_full
-
 `ifdef NOT_USED
 `endif

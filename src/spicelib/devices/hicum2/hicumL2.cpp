@@ -2701,8 +2701,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                         Ith_Vbbp   = 2*Vbbp/here->HICUMrbx_t.rpart;
                     }
                 }
-                Ith      += ckt->CKTgmin*Vrth;
-                Ith_Vrth += ckt->CKTgmin;
+
             }
             // ********************************************
 
@@ -2720,6 +2719,10 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             //S from Isis
 
             //all derivatives with gmin
+            Ibbp_Vbbp   += ckt->CKTgmin;
+            Icic_Vcic   += ckt->CKTgmin;
+            Ieie_Veie   += ckt->CKTgmin;
+            Isis_Vsis   += ckt->CKTgmin;
             //Ibiei
             Ibiei_Vbiei += ckt->CKTgmin;
             Ibiei_Vbici += ckt->CKTgmin;
@@ -2752,6 +2755,11 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
             //SHE derivatives
             if (!(model->HICUMflsh == 0 || model->HICUMrth < MIN_R )) {
+                // T node
+                Ith         += ckt->CKTgmin*Vrth;
+                Ibbp_Vrth   += ckt->CKTgmin;
+                Icic_Vrth   += ckt->CKTgmin;
+                Ieie_Vrth   += ckt->CKTgmin;
                 //Ibiei
                 Ibiei_Vrth  += ckt->CKTgmin;
                 //Ibici

@@ -111,3 +111,92 @@ Praktisch heißt das, daß die Beaufschlagung von Iciei überflüssig ist,
 da schon mit den Zweigen biei und bici erfolgt ist. 
 Es fehlen aber noch Beaufschlagungen, 
 z.B. Ibiei_Vbici, weil die Ableitung später hinzugekommen ist. 
+
+# CMC Failing Tests
+****** Checking test (ngspice): fgum_ac_npn_1D_ac
+     variant: standard            (compared to: reference) FAIL        (probably from some simulation failure)
+
+****** Checking test (ngspice): fgum_ac_npn_internal_ac
+     variant: standard            (compared to: reference) FAIL        (probably from some simulation failure)
+
+****** Checking test (ngspice): fgum_ac_npn_full_ac
+     variant: standard            (compared to: reference) FAIL        (probably from some simulation failure)
+
+****** Checking test (ngspice): fgum_ac_npn_full_subcoupl_peri_bias_ac
+     variant: standard            (compared to: reference) DIFFER      (max rel error is 100%)
+     variant: standard            (compared to: reference) DIFFER      (max rel error is 100%)
+
+****** Checking test (ngspice): fgum_ac_npn_full_subcoupl_peri_con_ac
+     variant: standard            (compared to: reference) DIFFER      (max rel error is 100%)
+
+****** Checking test (ngspice): fgum_ac_npn_full_subcoupl_peri_bias_ac
+     variant: standard            (compared to: reference) DIFFER      (max rel error is 100%)
+     variant: standard            (compared to: reference) DIFFER      (max rel error is 100%)
+
+****** Checking test (ngspice): fgum_ac_npn_full_subcoupl_peri_cond_ac
+     variant: standard            (compared to: reference) DIFFER      (max rel error is 100%)
+
+****** Checking test (ngspice): fgum_ac_npn_vert_nqs_ac
+     variant: standard            (compared to: reference) FAIL        (probably from some simulation failure)
+
+***** Checking test (ngspice): fgum_ac_npn_lat_nqs_ac
+     variant: standard            (compared to: reference) FAIL        (probably from some simulation failure)
+
+****** Checking test (ngspice): fgum_ac_npn_cornoise_ac
+     variant: standard            (compared to: reference) DIFFER      (max rel error is 100%)
+
+***** Checking test (ngspice): CBE_npn_1D_dc
+     variant: standard            (compared to: reference) FAIL        (probably from some simulation failure)
+
+****** Checking test (ngspice): CBE_npn_1D_ac
+     variant: standard            (compared to: reference) FAIL        (probably from some simulation failure)
+
+****** Checking test (ngspice): CBE_npn_internal_ac
+     variant: standard            (compared to: reference) FAIL        (probably from some simulation failure)
+
+***** Checking test (ngspice): CBE_npn_full_ac
+     variant: standard            (compared to: reference) FAIL        (probably from some simulation failure)
+
+***** Checking test (ngspice): ypara_npn_1D_ac
+     variant: standard            (compared to: reference) FAIL        (probably from some simulation failure)
+
+***** Checking test (ngspice): ypara_npn_internal_ac
+     variant: standard            (compared to: reference) FAIL        (probably from some simulation failure)
+
+***** Checking test (ngspice): ypara_npn_full_ac
+     variant: standard            (compared to: reference) FAIL        (probably from some simulation failure)
+
+***** Checking test (ngspice): ypara_npn_full_sh_ac
+     variant: standard            (compared to: reference) DIFFER      (max rel error is 100%)
+
+****** Checking test (ngspice): ypara_npn_full_subtran_ac
+     variant: standard            (compared to: reference) DIFFER      (max rel error is 100%)
+
+****** Checking test (ngspice): ypara_npn_full_subcoupl_ac
+     variant: standard            (compared to: reference) DIFFER      (max rel error is 100%)
+
+****** Checking test (ngspice): ypara_npn_full_subcoupl_peri_bias_ac
+     variant: standard            (compared to: reference) DIFFER      (max rel error is 100%)
+     variant: standard            (compared to: reference) DIFFER      (max rel error is 100%)
+
+****** Checking test (ngspice): ypara_npn_full_subcoupl_peri_con_ac
+     variant: standard            (compared to: reference) DIFFER      (max rel error is 100%)
+     variant: standard            (compared to: reference) DIFFER      (max rel error is 100%)
+
+***** Checking test (ngspice): ypara_npn_full_subcoupl_peri_bias_ac
+     variant: standard            (compared to: reference) DIFFER      (max rel error is 100%)
+     variant: standard            (compared to: reference) DIFFER      (max rel error is 100%)
+
+****** Checking test (ngspice): ypara_npn_full_subcoupl_peri_con_ac
+     variant: standard            (compared to: reference) DIFFER      (max rel error is 100%)
+     variant: standard            (compared to: reference) DIFFER      (max rel error is 100%)
+
+***** Checking test (ngspice): ypara_npn_vert_nqs_ac
+     variant: standard            (compared to: reference) FAIL        (probably from some simulation failure)
+
+****** Checking test (ngspice): ypara_npn_lat_nqs_ac
+     variant: standard            (compared to: reference) FAIL        (probably from some simulation failure)
+
+****** Checking test (ngspice): ypara_npn_cornoise_ac
+     variant: standard            (compared to: reference) DIFFER      (max rel error is 100%)
+
