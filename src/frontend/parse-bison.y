@@ -176,5 +176,5 @@ PPerror (YYLTYPE *locp, char **line, struct pnode **retval, char const *s)
   char *tmpstr = strstr(keepline, *line);
   size_t len = strlen(keepline);
   fprintf (stderr, "%s: %s in line segment\n   %s\nnear\n   %*s\n",
-      __func__, s, keepline, len, strstr(keepline, *line));
+      __func__, s, keepline, len, tmpstr);
 }
