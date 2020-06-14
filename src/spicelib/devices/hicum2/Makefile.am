@@ -26,8 +26,8 @@ libhicum2_la_SOURCES =	\
 	hicum2soachk.c	\
 	hicum2trunc.c
 
-AM_CFLAGS = -O -g -Wall -Wextra -I$(top_srcdir)/src/include
-AM_CPPFLAGS = @AM_CPPFLAGS@ -O -g -Wall -Wextra -I$(top_srcdir)/src/include
-AM_CXXFLAGS = -std=c++11 -O -g -Wall -Wextra
+AM_CFLAGS   = -O -g -Wall -Wextra -I$(top_srcdir)/src/include
+AM_CPPFLAGS = @AM_CPPFLAGS@ -O -g -Wall -Wextra 
+AM_CXXFLAGS = -I$(top_srcdir)/../cppduals -I$(top_srcdir)/src/include -std=c++11 -O -g -Wall -Wextra
 
 MAINTAINERCLEANFILES = Makefile.in

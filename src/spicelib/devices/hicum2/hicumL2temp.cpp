@@ -10,7 +10,7 @@ Spice3 Implementation: 2019 Dietmar Warning
 #ifndef M_PI
 #define M_PI 3.1415926535897932384626433832795
 #endif
-#include <ngspice/dual>
+#include <duals/dual>
 #include "hicumL2.hpp"
 #include <functional>
 #include <fenv.h> //trap NAN

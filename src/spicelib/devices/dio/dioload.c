@@ -223,7 +223,6 @@ next1:      if (model->DIOsatSWCurGiven) {              /* sidewall current */
                     }
 
                 } else { /* merge saturation currents and use same characteristic as bottom diode */
-
                     csat = csat + csatsw;
 
                 }
