@@ -39,6 +39,7 @@ IFparm HICUMpTable[] = { /* parameters */
  OPU("basenode", HICUM_QUEST_BASENODE, IF_INTEGER, "Number of base node"),
  OPU("emitnode", HICUM_QUEST_EMITNODE, IF_INTEGER, "Number of emitter node"),
  OPU("subsnode", HICUM_QUEST_SUBSNODE, IF_INTEGER, "Number of substrate node"),
+ OPU("tempnode", HICUM_QUEST_TEMPNODE, IF_INTEGER, "Number of temperature node"),
  OPU("collCInode", HICUM_QUEST_COLLCINODE, IF_INTEGER, "Internal collector node"),
  OPU("baseBPnode", HICUM_QUEST_BASEBPNODE, IF_INTEGER, "External base node"),
  OPU("baseBInode", HICUM_QUEST_BASEBINODE, IF_INTEGER, "Internal base node"),
