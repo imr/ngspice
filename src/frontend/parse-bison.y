@@ -27,8 +27,6 @@
      while (0)
 
   static void PPerror (YYLTYPE *locp, char **line, struct pnode **retval, char const *);
-
-  static char keepline[256];
 %}
 
 %name-prefix "PP"
@@ -98,7 +96,6 @@
 {
     $$.num = 0.0;
     yylloc.start = yylloc.stop = NULL;
-    strncpy(keepline, *line, 255);
 };
 
 %%
@@ -174,5 +171,5 @@ PPerror (YYLTYPE *locp, char **line, struct pnode **retval, char const *s)
   NG_IGNORE(line);
   NG_IGNORE(retval);
 
-  fprintf (stderr, "%s: %s\n  in line segment  %s\n", __func__, s, keepline);
+  fprintf (stderr, "%s: %s\n", __func__, s);
 }
