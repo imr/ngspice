@@ -2719,10 +2719,11 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             //S from Isis
 
             //all derivatives with gmin
-            Ibbp_Vbbp   += ckt->CKTgmin;
-            Icic_Vcic   += ckt->CKTgmin;
-            Ieie_Veie   += ckt->CKTgmin;
-            Isis_Vsis   += ckt->CKTgmin;
+            // linear branches not needed since resistances set to gmin if smaller MIN_R
+            // Ibbp_Vbbp   += ckt->CKTgmin;
+            // Icic_Vcic   += ckt->CKTgmin;
+            // Ieie_Veie   += ckt->CKTgmin;
+            // Isis_Vsis   += ckt->CKTgmin;
             //Ibiei
             Ibiei_Vbiei += ckt->CKTgmin;
             Ibiei_Vbici += ckt->CKTgmin;
@@ -2731,20 +2732,20 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             Ibici_Vbici += ckt->CKTgmin;
             Ibici_Vbiei += ckt->CKTgmin;
 
-            //Iciei
-            Iciei_Vbiei += ckt->CKTgmin;
-            Iciei_Vbici += ckt->CKTgmin;
+            //Iciei -> not needed
+            // Iciei_Vbiei += ckt->CKTgmin;
+            // Iciei_Vbici += ckt->CKTgmin;
 
             //Ibpei
             Ibpei_Vbpei += ckt->CKTgmin;
 
-            // Ibpbi
-            Ibpbi_Vbiei += ckt->CKTgmin;
-            Ibpbi_Vbici += ckt->CKTgmin;
+            // Ibpbi -> not needed
+            // Ibpbi_Vbiei += ckt->CKTgmin;
+            // Ibpbi_Vbici += ckt->CKTgmin;
             //Ibpbi_Vbpbi += ckt->CKTgmin; //not needed since rbi is set to gmin if too small
 
-            //Ibpci
-            Ibpci_Vbpci += ckt->CKTgmin;
+            //Ibpci -> not needed
+            // Ibpci_Vbpci += ckt->CKTgmin;
 
             //Isici
             Isici_Vsici += ckt->CKTgmin;
@@ -2758,7 +2759,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 // T node
                 Ith         += ckt->CKTgmin*Vrth;
                 Ibbp_Vrth   += ckt->CKTgmin;
-                Icic_Vrth   += ckt->CKTgmin;
+                // Icic_Vrth   += ckt->CKTgmin;
                 Ieie_Vrth   += ckt->CKTgmin;
                 //Ibiei
                 Ibiei_Vrth  += ckt->CKTgmin;
@@ -2769,13 +2770,13 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 //Ibpei
                 Ibpei_Vrth  += ckt->CKTgmin;
                 // Ibpbi
-                Ibpbi_Vrth  += ckt->CKTgmin;
+                // Ibpbi_Vrth  += ckt->CKTgmin;
                 //Ibpci
                 Ibpci_Vrth  += ckt->CKTgmin;
                 //Isici
                 Isici_Vrth  += ckt->CKTgmin;
                 //Ibpsi
-                Ibpsi_Vrth  += ckt->CKTgmin;
+                // Ibpsi_Vrth  += ckt->CKTgmin;
                 //Ith
                 Ith_Vbiei  += ckt->CKTgmin;
                 Ith_Vbici  += ckt->CKTgmin;
