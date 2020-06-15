@@ -407,11 +407,25 @@ SMPcLUfac (SMPmatrix *Matrix, double PivTol)
         ret = klu_z_refactor (Matrix->CKTkluAp, Matrix->CKTkluAi, Matrix->CKTkluAx_Complex,
                               Matrix->CKTkluSymbolic, Matrix->CKTkluNumeric, Matrix->CKTkluCommon) ;
 
-        if (Matrix->CKTkluCommon->status == KLU_EMPTY_MATRIX)
+        if (ret == 0)
         {
+            if (Matrix->CKTkluCommon == NULL) {
+                fprintf (stderr, "Error: KLUcommon object is NULL. A problem occurred\n") ;
+            }
+            if (Matrix->CKTkluCommon->status == KLU_EMPTY_MATRIX)
+            {
+                fprintf (stderr, "Error: KLU Matrix is empty\n") ;
+            }
+            if (Matrix->CKTkluNumeric == NULL) {
+                fprintf (stderr, "Error: KLUnumeric object is NULL. A problem occurred\n") ;
+            }
+            return 1 ;
+        } else {
+            if (Matrix->CKTkluCommon->status == KLU_SINGULAR) {
+                fprintf (stderr, "Warning: KLU Matrix is SINGULAR\n") ;
+            }
             return 0 ;
         }
-        return (!ret) ;
     } else {
         spSetComplex (Matrix->SPmatrix) ;
         return spFactor (Matrix->SPmatrix) ;
@@ -437,20 +451,25 @@ SMPluFac (SMPmatrix *Matrix, double PivTol, double Gmin)
         ret = klu_refactor (Matrix->CKTkluAp, Matrix->CKTkluAi, Matrix->CKTkluAx,
                             Matrix->CKTkluSymbolic, Matrix->CKTkluNumeric, Matrix->CKTkluCommon) ;
 
-        if (Matrix->CKTkluCommon->status == KLU_EMPTY_MATRIX)
+        if (ret == 0)
         {
+            if (Matrix->CKTkluCommon == NULL) {
+                fprintf (stderr, "Error: KLUcommon object is NULL. A problem occurred\n") ;
+            }
+            if (Matrix->CKTkluCommon->status == KLU_EMPTY_MATRIX)
+            {
+                fprintf (stderr, "Error: KLU Matrix is empty\n") ;
+            }
+            if (Matrix->CKTkluNumeric == NULL) {
+                fprintf (stderr, "Error: KLUnumeric object is NULL. A problem occurred\n") ;
+            }
+            return 1 ;
+        } else {
+            if (Matrix->CKTkluCommon->status == KLU_SINGULAR) {
+                fprintf (stderr, "Warning: KLU Matrix is SINGULAR\n") ;
+            }
             return 0 ;
         }
-        return (!ret) ;
-
-//        if (ret == 1)
-//            return 0 ;
-//        else if (ret == 0)
-//            return (E_SINGULAR) ;
-//        else {
-//            fprintf (stderr, "KLU Error in re-factor!") ;
-//            return 1 ;
-//        }
     } else {
         spSetReal (Matrix->SPmatrix) ;
         LoadGmin (Matrix, Gmin) ;
@@ -487,11 +506,26 @@ SMPluFacKLUforCIDER (SMPmatrix *Matrix)
             /* Free the Real Matrix Storage */
             free (KLUmatrixAx) ;
         }
-        if (Matrix->SMPkluMatrix->KLUmatrixCommon->status == KLU_EMPTY_MATRIX) {
-            printf ("CIDER: KLU Empty Matrix\n") ;
+
+        if (ret == 0)
+        {
+            if (Matrix->CKTkluCommon == NULL) {
+                fprintf (stderr, "Error (CIDER): KLUcommon object is NULL. A problem occurred\n") ;
+            }
+            if (Matrix->CKTkluCommon->status == KLU_EMPTY_MATRIX)
+            {
+                fprintf (stderr, "Error (CIDER): KLU Matrix is empty\n") ;
+            }
+            if (Matrix->CKTkluNumeric == NULL) {
+                fprintf (stderr, "Error (CIDER): KLUnumeric object is NULL. A problem occurred\n") ;
+            }
+            return 1 ;
+        } else {
+            if (Matrix->CKTkluCommon->status == KLU_SINGULAR) {
+                fprintf (stderr, "Warning (CIDER): KLU Matrix is SINGULAR\n") ;
+            }
             return 0 ;
         }
-        return (!ret) ;
     } else {
         return spFactor (Matrix->SPmatrix) ;
     }
@@ -509,7 +543,7 @@ SMPcReorder (SMPmatrix *Matrix, double PivTol, double PivRel, int *NumSwaps)
     {
         *NumSwaps = 1 ;
         spSetComplex (Matrix->SPmatrix) ;
-//        Matrix->CKTkluCommon->tol = PivTol ;
+        Matrix->CKTkluCommon->tol = PivTol ;
 
         if (Matrix->CKTkluNumeric != NULL)
         {
@@ -520,14 +554,23 @@ SMPcReorder (SMPmatrix *Matrix, double PivTol, double PivRel, int *NumSwaps)
 
         if (Matrix->CKTkluNumeric == NULL)
         {
-            if (Matrix->CKTkluCommon->status == KLU_EMPTY_MATRIX)
-            {
-                return 0 ;
+            fprintf (stderr, "Error: KLUnumeric object is NULL. A problem occurred\n") ;
+            if (Matrix->CKTkluCommon == NULL) {
+                fprintf (stderr, "Error: KLUcommon object is NULL. A problem occurred\n") ;
+            }
+            if (Matrix->CKTkluCommon->status == KLU_EMPTY_MATRIX) {
+                fprintf (stderr, "Error: KLU Matrix is empty\n") ;
+            }
+            if (Matrix->CKTkluSymbolic == NULL) {
+                fprintf (stderr, "Error: KLUsymbolic object is NULL. A problem occurred\n") ;
             }
             return 1 ;
-        }
-        else
+        } else {
+            if (Matrix->CKTkluCommon->status == KLU_SINGULAR) {
+                fprintf (stderr, "Warning: KLU Matrix is SINGULAR\n") ;
+            }
             return 0 ;
+        }
     } else {
         *NumSwaps = 1 ;
         spSetComplex (Matrix->SPmatrix) ;
@@ -546,7 +589,7 @@ SMPreorder (SMPmatrix *Matrix, double PivTol, double PivRel, double Gmin)
     {
         spSetReal (Matrix->SPmatrix) ;
         LoadGmin_CSC (Matrix->CKTdiag_CSC, Matrix->CKTkluN, Gmin) ;
-//        Matrix->CKTkluCommon->tol = PivTol ;
+        Matrix->CKTkluCommon->tol = PivTol ;
 
         if (Matrix->CKTkluNumeric != NULL)
         {
@@ -557,14 +600,23 @@ SMPreorder (SMPmatrix *Matrix, double PivTol, double PivRel, double Gmin)
 
         if (Matrix->CKTkluNumeric == NULL)
         {
-            if (Matrix->CKTkluCommon->status == KLU_EMPTY_MATRIX)
-            {
-                return 0 ;
+            fprintf (stderr, "Error: KLUnumeric object is NULL. A problem occurred\n") ;
+            if (Matrix->CKTkluCommon == NULL) {
+                fprintf (stderr, "Error: KLUcommon object is NULL. A problem occurred\n") ;
+            }
+            if (Matrix->CKTkluCommon->status == KLU_EMPTY_MATRIX) {
+                fprintf (stderr, "Error: KLU Matrix is empty\n") ;
+            }
+            if (Matrix->CKTkluSymbolic == NULL) {
+                fprintf (stderr, "Error: KLUsymbolic object is NULL. A problem occurred\n") ;
             }
             return 1 ;
-        }
-        else
+        } else {
+            if (Matrix->CKTkluCommon->status == KLU_SINGULAR) {
+                fprintf (stderr, "Warning: KLU Matrix is SINGULAR\n") ;
+            }
             return 0 ;
+        }
     } else {
         spSetReal (Matrix->SPmatrix) ;
         LoadGmin (Matrix, Gmin) ;
@@ -581,8 +633,6 @@ SMPreorderKLUforCIDER (SMPmatrix *Matrix)
 
     if (Matrix->CKTkluMODE)
     {
-//        Matrix->CKTkluCommon->tol = PivTol ;
-
         if (Matrix->SMPkluMatrix->KLUmatrixNumeric != NULL) {
             klu_free_numeric (&(Matrix->SMPkluMatrix->KLUmatrixNumeric), Matrix->SMPkluMatrix->KLUmatrixCommon) ;
         }
@@ -609,15 +659,23 @@ SMPreorderKLUforCIDER (SMPmatrix *Matrix)
         }
         if (Matrix->SMPkluMatrix->KLUmatrixNumeric == NULL)
         {
-            printf ("CIDER: KLU Factorization Error\n") ;
-            if (Matrix->SMPkluMatrix->KLUmatrixCommon->status == KLU_EMPTY_MATRIX)
-            {
-                return 0 ;
+            fprintf (stderr, "Error (CIDER): KLUnumeric object is NULL. A problem occurred\n") ;
+            if (Matrix->CKTkluCommon == NULL) {
+                fprintf (stderr, "Error (CIDER): KLUcommon object is NULL. A problem occurred\n") ;
+            }
+            if (Matrix->CKTkluCommon->status == KLU_EMPTY_MATRIX) {
+                fprintf (stderr, "Error (CIDER): KLU Matrix is empty\n") ;
+            }
+            if (Matrix->CKTkluSymbolic == NULL) {
+                fprintf (stderr, "Error (CIDER): KLUsymbolic object is NULL. A problem occurred\n") ;
             }
             return 1 ;
-        }
-        else
+        } else {
+            if (Matrix->CKTkluCommon->status == KLU_SINGULAR) {
+                fprintf (stderr, "Warning (CIDER): KLU Matrix is SINGULAR\n") ;
+            }
             return 0 ;
+        }
     } else {
         return spFactor (Matrix->SPmatrix) ;
     }

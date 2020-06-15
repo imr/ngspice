@@ -48,6 +48,7 @@ NIinit(CKTcircuit *ckt)
     ckt->CKTmatrix->CKTkluMODE = ckt->CKTkluMODE ; /* TO BE SUBSTITUTED WITH THE HEURISTICS */
 
     klu_defaults (ckt->CKTmatrix->CKTkluCommon) ;
+    ckt->CKTmatrix->CKTkluCommon->halt_if_singular = 0 ;
 #endif
 
     ckt->CKTniState = NIUNINITIALIZED;
