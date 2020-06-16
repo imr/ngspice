@@ -43,4 +43,9 @@ simulation when all nodes have become stable, might be desirable,
 but has not yet been implemented.
 One also may use the optran for a first transient simulation, maybe
 with different step sizes, before the next (tran, ac, pz, noise)
-simulation is commencing.
+simulation is commencing. So you may reach a certain bias point
+quickly and with coarse time steps, and then continue with fine
+steps to see details. For example a power amp in electro-thermal
+simulation may run for some seconds (minutes?) until the final
+temperature is reached, and then the detailed transient or
+an ac simulation starts.
