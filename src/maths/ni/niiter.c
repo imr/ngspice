@@ -135,9 +135,20 @@ NIiter(CKTcircuit *ckt, int maxIter)
                     SPfrontEnd->IFseconds() - startTime;
                 if (error) {
                     if (error == E_SINGULAR) {
+
+#ifdef KLU
+                        error = SMPreorder(ckt->CKTmatrix, ckt->CKTpivotAbsTol, ckt->CKTpivotRelTol, ckt->CKTdiagGmin);
+                        ckt->CKTstat->STATreorderTime += SPfrontEnd->IFseconds() - startTime;
+                        if (error) {
+                            SMPgetError(ckt->CKTmatrix, &i, &j);
+                            SPfrontEnd->IFerrorf (ERR_WARNING, "singular matrix:  check nodes %s and %s\n", NODENAME(ckt, i), NODENAME(ckt, j));
+                        }
+#else
                         ckt->CKTniState |= NISHOULDREORDER;
                         DEBUGMSG(" forced reordering....\n");
                         continue;
+#endif
+
                     }
                     /* CKTload(ckt); */
                     /* SMPprint(ckt->CKTmatrix, stdout); */
