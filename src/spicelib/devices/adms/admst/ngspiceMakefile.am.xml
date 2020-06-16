@@ -56,6 +56,10 @@ BUILT_SOURCES = \\
 	$(module)temp.c	\\
 	$(module)trunc.c
 
+if KLU_WANTED
+BUILT_SOURCES += $(module)bindCSC.c
+endif
+
 lib$(module)_la_SOURCES = 	\\
 	\$(BUILT_SOURCES)
 
@@ -81,6 +85,62 @@ MAINTAINERCLEANFILES = Makefile.in \\
 DISTCLEANFILES = Makefile.am \\
 	Makefile.in
 
+if KLU_WANTED
+\%.c \%.hxx \\
+	\%acld.c \%ask.c \%bindCSC.c \%defs.h \%del.c \%dest.c \%ext.h \%guesstopology.c \\
+	\%init.c \%init.h \%itf.h \%load.c \%mask.c \%mdel.c \%mpar.c \%par.c \\
+	\%pzld.c \%setup.c \%temp.c \%trunc.c \\
+ : \$(srcdir)/admsva/\%.va \\
+	\$(ADMSXMLINTERFACE)/ngspiceVersion.xml \\
+	\$(ADMSXMLINTERFACE)/ngspiceMODULEbindCSC.c.xml \\
+	\$(ADMSXMLINTERFACE)/ngspiceMODULEitf.h.xml \\
+	\$(ADMSXMLINTERFACE)/ngspiceMODULEinit.c.xml \\
+	\$(ADMSXMLINTERFACE)/ngspiceMODULEinit.h.xml \\
+	\$(ADMSXMLINTERFACE)/ngspiceMODULEext.h.xml \\
+	\$(ADMSXMLINTERFACE)/ngspiceMODULEdefs.h.xml \\
+	\$(ADMSXMLINTERFACE)/ngspiceMODULEask.c.xml \\
+	\$(ADMSXMLINTERFACE)/ngspiceMODULEmask.c.xml \\
+	\$(ADMSXMLINTERFACE)/ngspiceMODULEpar.c.xml \\
+	\$(ADMSXMLINTERFACE)/ngspiceMODULEmpar.c.xml \\
+	\$(ADMSXMLINTERFACE)/ngspiceMODULEload.c.xml \\
+	\$(ADMSXMLINTERFACE)/ngspiceMODULEacld.c.xml \\
+	\$(ADMSXMLINTERFACE)/ngspiceMODULEpzld.c.xml \\
+	\$(ADMSXMLINTERFACE)/ngspiceMODULEtemp.c.xml \\
+	\$(ADMSXMLINTERFACE)/ngspiceMODULEtrunc.c.xml \\
+	\$(ADMSXMLINTERFACE)/ngspiceMODULEsetup.c.xml \\
+	\$(ADMSXMLINTERFACE)/ngspiceMODULEdel.c.xml \\
+	\$(ADMSXMLINTERFACE)/ngspiceMODULEmdel.c.xml \\
+	\$(ADMSXMLINTERFACE)/ngspiceMODULEdest.c.xml \\
+	\$(ADMSXMLINTERFACE)/ngspiceMODULEnoise.c.xml \\
+	\$(ADMSXMLINTERFACE)/ngspiceMODULEguesstopology.c.xml \\
+	\$(ADMSXMLINTERFACE)/ngspiceMODULE.hxx.xml \\
+	\$(ADMSXMLINTERFACE)/ngspiceMODULE.c.xml
+	\$(ADMSXML) -I\$(srcdir) -I\$(srcdir)/admsva \$&lt; \\
+	-e \$(ADMSXMLINTERFACE)/ngspiceVersion.xml \\
+	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEbindCSC.c.xml \\
+	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEitf.h.xml \\
+	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEinit.c.xml \\
+	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEinit.h.xml \\
+	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEext.h.xml \\
+	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEdefs.h.xml \\
+	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEask.c.xml \\
+	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEmask.c.xml \\
+	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEpar.c.xml \\
+	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEmpar.c.xml \\
+	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEload.c.xml \\
+	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEacld.c.xml \\
+	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEpzld.c.xml \\
+	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEtemp.c.xml \\
+	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEtrunc.c.xml \\
+	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEsetup.c.xml \\
+	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEdel.c.xml \\
+	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEmdel.c.xml \\
+	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEdest.c.xml \\
+	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEnoise.c.xml \\
+	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEguesstopology.c.xml \\
+	-e \$(ADMSXMLINTERFACE)/ngspiceMODULE.hxx.xml \\
+	-e \$(ADMSXMLINTERFACE)/ngspiceMODULE.c.xml
+else
 \%.c \%.hxx \\
 	\%acld.c \%ask.c \%defs.h \%del.c \%dest.c \%ext.h \%guesstopology.c \\
 	\%init.c \%init.h \%itf.h \%load.c \%mask.c \%mdel.c \%mpar.c \%par.c \\
@@ -133,6 +193,7 @@ DISTCLEANFILES = Makefile.am \\
 	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEguesstopology.c.xml \\
 	-e \$(ADMSXMLINTERFACE)/ngspiceMODULE.hxx.xml \\
 	-e \$(ADMSXMLINTERFACE)/ngspiceMODULE.c.xml
+endif
 
 </admst:template>
 
