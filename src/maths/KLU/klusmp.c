@@ -568,6 +568,7 @@ SMPcReorder (SMPmatrix *Matrix, double PivTol, double PivRel, int *NumSwaps)
         } else {
             if (Matrix->CKTkluCommon->status == KLU_SINGULAR) {
                 fprintf (stderr, "Warning: KLU Matrix is SINGULAR\n") ;
+                return E_SINGULAR ;
             }
             return 0 ;
         }
@@ -614,6 +615,7 @@ SMPreorder (SMPmatrix *Matrix, double PivTol, double PivRel, double Gmin)
         } else {
             if (Matrix->CKTkluCommon->status == KLU_SINGULAR) {
                 fprintf (stderr, "Warning: KLU Matrix is SINGULAR\n") ;
+                return E_SINGULAR ;
             }
             return 0 ;
         }
@@ -673,6 +675,7 @@ SMPreorderKLUforCIDER (SMPmatrix *Matrix)
         } else {
             if (Matrix->CKTkluCommon->status == KLU_SINGULAR) {
                 fprintf (stderr, "Warning (CIDER): KLU Matrix is SINGULAR\n") ;
+                return E_SINGULAR ;
             }
             return 0 ;
         }
