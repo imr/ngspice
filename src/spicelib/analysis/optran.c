@@ -62,6 +62,7 @@ static double opramptime = 0.;
 void com_optran(wordlist* wl) {
     wordlist* wltmp = wl;
     char* stpstr;
+    int err;
     /* current circuit */
     if (!ft_curckt) {
         fprintf(cp_err, "Error: no circuit loaded\n");
@@ -80,16 +81,19 @@ void com_optran(wordlist* wl) {
     if ((errno == ERANGE) || (*stpstr != '\0'))
         goto bugquit;
     wltmp = wltmp->wl_next;
-    opstepsize = strtod(wltmp->wl_word, &stpstr);
-    if ((errno == ERANGE) || (*stpstr != '\0'))
+    stpstr = wltmp->wl_word;
+    opstepsize = INPevaluate(&stpstr, &err, 1);
+    if (err || (*stpstr != '\0'))
         goto bugquit;
     wltmp = wltmp->wl_next;
-    opfinaltime = strtod(wltmp->wl_word, &stpstr);
-    if ((errno == ERANGE) || (*stpstr != '\0'))
+    stpstr = wltmp->wl_word;
+    opfinaltime = INPevaluate(&stpstr, &err, 1);
+    if (err || (*stpstr != '\0'))
         goto bugquit;
     wltmp = wltmp->wl_next;
-    opramptime = strtod(wltmp->wl_word, &stpstr);
-    if ((errno == ERANGE) || (*stpstr != '\0'))
+    stpstr = wltmp->wl_word;
+    opramptime = INPevaluate(&stpstr, &err, 1);
+    if (err || (*stpstr != '\0'))
         goto bugquit;
     if (opstepsize > opfinaltime) {
         fprintf(stderr, "Error: Step size larger than final time.\n");
