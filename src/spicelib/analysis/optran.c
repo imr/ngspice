@@ -50,11 +50,15 @@ static double opramptime = 0.;
     CKTnoOpIter (default 0, set by 'option noopiter')
     CKTnumGminSteps
     CKTnumSrcSteps
-    opfinaltime
     opstepsize
+    opfinaltime
     opramptime
-*/
 
+    A typical command may be
+    optran 1 0 0 50u 10m 0
+    (no initial iteration, no gmin stepping, no source stepping,
+    stepsize for optran 50 us, optran run until 10 ms, no supply ramping
+    */
 void com_optran(wordlist* wl) {
     wordlist* wltmp = wl;
     char* stpstr;
@@ -76,11 +80,11 @@ void com_optran(wordlist* wl) {
     if ((errno == ERANGE) || (*stpstr != '\0'))
         goto bugquit;
     wltmp = wltmp->wl_next;
-    opfinaltime = strtod(wltmp->wl_word, &stpstr);
+    opstepsize = strtod(wltmp->wl_word, &stpstr);
     if ((errno == ERANGE) || (*stpstr != '\0'))
         goto bugquit;
     wltmp = wltmp->wl_next;
-    opstepsize = strtod(wltmp->wl_word, &stpstr);
+    opfinaltime = strtod(wltmp->wl_word, &stpstr);
     if ((errno == ERANGE) || (*stpstr != '\0'))
         goto bugquit;
     wltmp = wltmp->wl_next;

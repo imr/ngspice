@@ -37,13 +37,12 @@ Step 3 may be skipped by
 option srcsteps=0
 command optran n3 overrides srcsteps
 
-n4 sets the time for transient simulation.
+n4 sets the step size for transient simulation towards the operating point.
 
-n5 sets the step size for transient simulation.
+n5 sets the time for transient simulation towards the operating point.
 
-n6 set a ramp time to ramp all indpendent voltage or
+n6 set a ramp time to ramp all independent voltage or
 current sources until 100% is reached at opramptime.
-(not yet implemented)
 
 The transient op calculation uses the 'UIC' flag for its startup.
 Basically two applications come to mind: You may use this with
@@ -53,4 +52,9 @@ simulation when all nodes have become stable, might be desirable,
 but has not yet been implemented.
 One also may use the optran for a first transient simulation, maybe
 with different step sizes, before the next (tran, ac, pz, noise)
-simulation is commencing.
+simulation is commencing. So you may reach a certain bias point
+quickly and with coarse time steps, and then continue with fine
+steps to see details. For example a power amp in electro-thermal
+simulation may run for some seconds (minutes?) until the final
+temperature is reached, and then the detailed transient or
+an ac simulation starts.
