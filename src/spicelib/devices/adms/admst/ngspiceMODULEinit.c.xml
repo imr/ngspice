@@ -93,6 +93,12 @@ SPICEdev $(module)info = {
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
+
+#ifdef KLU
+    .DEVbindCSC = $(module)bindCSC,
+    .DEVbindCSCComplex = $(module)bindCSCComplex,
+    .DEVbindCSCComplexToReal = $(module)bindCSCComplexToReal,
+#endif
 };
 
 
