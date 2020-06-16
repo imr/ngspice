@@ -53,6 +53,12 @@ extern int $(module)trunc(GENmodel*,CKTcircuit*,double*);
 extern int $(module)unsetup(GENmodel*,CKTcircuit*);
 extern void $(module)destroy(void);
 
+#ifdef KLU
+extern int $(module)bindCSC (GENmodel*, CKTcircuit*) ;
+extern int $(module)bindCSCComplex (GENmodel*, CKTcircuit*) ;
+extern int $(module)bindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
+#endif
+
 #endif
 
 </admst:template>

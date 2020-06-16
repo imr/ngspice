@@ -262,6 +262,14 @@ typedef struct s$(module)instance {
 
 #define $(module)numStates 0
 
+#ifdef KLU
+<admst:for-each select="jacobian">
+<admst:value-of select="column/name"/>
+<admst:value-of select="row/name"/>
+    BindElement *$(module)%s%sBinding ;
+</admst:for-each>
+#endif
+
 } $(module)instance ;
 
 
