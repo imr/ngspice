@@ -565,6 +565,19 @@ HICUMsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 here->HICUMbaseBINode = tmp->number;
             }
 
+//VDMOS COPY
+            if (!(model->HICUMflsh == 0 || model->HICUMrth < MIN_R )) {
+               if (here->HICUMtempNode == -1) {
+                  error = CKTmkVolt(ckt,&tmp,here->HICUMname,"dT");
+                  if (error) return(error);
+                     here->HICUMtempNode = tmp->number;
+               }
+            } else {
+                here->HICUMtempNode = 0;
+            }
+//END VDMOS COPY
+
+
 //            if(here->HICUMxfNode == 0) {
 //                error = CKTmkVolt(ckt, &tmp, here->HICUMname, "xf");
 //                if(error) return(error);
@@ -672,10 +685,7 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
                 TSTALLOC(HICUMtempSubsSIPtr,HICUMtempNode,HICUMsubsSINode);
 
                 TSTALLOC(HICUMtempTempPtr,HICUMtempNode,HICUMtempNode);
-            } else { //need this element so that one can still use the node, even though it is not connected
-                TSTALLOC(HICUMtempTempPtr,HICUMtempNode,HICUMtempNode);
-            }
-
+            } 
         }
     }
     return(OK);

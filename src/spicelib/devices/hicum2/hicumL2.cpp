@@ -3699,11 +3699,6 @@ c           Branch: xf-ground, Stamp element: Rxf
 //              finish
                 }
             }
-            else {
-                // force node to 0 volt
-                *(ckt->CKTrhs + here->HICUMtempNode) += 0;
-                *(here->HICUMtempTempPtr)            += 1;
-            }
         }
 
     }
