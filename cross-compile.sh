@@ -18,6 +18,10 @@
 
 set -e
 
+export LD_LIBRARY_PATH=/usr/include:$LD_LIBRARY_PATH
+export PATH=/usr/include:$PATH
+echo "$LD_LIBRARY_PATH"
+
 if test "$1" = "64"; then
     release="release-mingw-64"
     dstzip="ngspice-mingw-64.zip"
@@ -38,15 +42,23 @@ mkdir -p "./$release"
 (
     cd "./$release" && \
         ../configure \
-            --build=$(../config.guess) \
+            --build="$(../config.guess)" \
             --host="$host" \
             --prefix="$dst" \
             --exec-prefix="$dst" \
+            LDFLAGS=-lstdc++ \
             --with-wingui --enable-xspice --enable-cider --disable-debug
 )
+# my config:
+# "LDFLAGS=\"-lstdc++\"",
+# "--with-x",
+# "--enable-xspice",
+# "--enable-cider",
+# "--with-readline=yes",
+# "--enable-openmp"
 
-make -C "./$release" -k -j6
-make -C "./$release" -k -j6 DESTDIR="$(pwd)/$release/" install
+make -C "./$release" -k -j12
+make -C "./$release" -k -j12 DESTDIR="$(pwd)/$release/" install
 
 ( cd "./$release/C:/" && zip -r - . ) > "./$release/$dstzip"
 

@@ -24,7 +24,7 @@
 #undef BOOLEAN
 #include "windows.h"
 #include <psapi.h>
-#include <VersionHelpers.h>
+#include <versionhelpers.h>
 #include <ntverp.h>
 #endif
 

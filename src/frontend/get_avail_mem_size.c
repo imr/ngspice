@@ -1,14 +1,14 @@
 /*
  * Author:  Holger Vogt
  * License: 3-clause BSD License
- * 
+ *
  */
 
 #include "ngspice/ngspice.h"
 
 #if defined(_WIN32)
 #undef BOOLEAN
-#include <Windows.h>
+#include <windows.h>
 
 #elif defined(__unix__) || defined(__unix) || defined(unix) || (defined(__APPLE__) && defined(__MACH__))
 #include <unistd.h>
