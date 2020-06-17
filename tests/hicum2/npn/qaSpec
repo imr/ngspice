@@ -21,7 +21,8 @@ nTypeSelectionArguments     npn level=8 version=2.34
 //pTypeSelectionArguments     pnp level=8 version=2.34
 `endif
 `ifdef ads
-nTypeSelectionArguments     npn HICUM2_34
+nTypeSelectionArguments   HICUM2_22 
+//nTypeSelectionArguments     npn HICUM2_34
 `endif
 
 //
