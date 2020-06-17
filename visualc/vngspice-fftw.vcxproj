@@ -1694,6 +1694,7 @@ lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3
     <ClCompile Include="..\src\spicelib\analysis\ninteg.c" />
     <ClCompile Include="..\src\spicelib\analysis\noisean.c" />
     <ClCompile Include="..\src\spicelib\analysis\nsetparm.c" />
+    <ClCompile Include="..\src\spicelib\analysis\optran.c" />
     <ClCompile Include="..\src\spicelib\analysis\pssaskq.c" />
     <ClCompile Include="..\src\spicelib\analysis\pssinit.c" />
     <ClCompile Include="..\src\spicelib\analysis\psssetp.c" />
