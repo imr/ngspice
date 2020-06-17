@@ -97,6 +97,8 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
     /*  loop through all the models */
     for( ; model != NULL; model = HICUMnextModel(model)) {
 
+        int selfheat = ((model->HICUMflsh > 0) && (model->HICUMrthGiven) && (model->HICUMrth > 0.0));
+
         /* loop through all the instances of the model */
         for( here = HICUMinstances(model); here!= NULL;
                 here = HICUMnextInstance(here)) {
@@ -403,7 +405,7 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
             *(here->HICUMsubsSubsSIPtr + 1)           += -XQsu_Vsis;
 
             // Stamps with SH
-            if (model->HICUMflsh && model->HICUMrth >= 0.001) { //dirty: hardcoded MIN_R
+            if (selfheat) { 
 //              Stamp element: Ibiei  f_Bi = +   f_Ei = -
                 *(here->HICUMbaseBItempPtr)            +=  Ibiei_Vrth;
                 *(here->HICUMemitEItempPtr)            += -Ibiei_Vrth;
