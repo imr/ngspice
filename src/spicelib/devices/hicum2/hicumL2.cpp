@@ -443,6 +443,10 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
     //NQS
     double Ixf1,Ixf2,Qxf1,Qxf2;
+    double Ixf1_Vxf2, Ixf1_ditf, Ixf1_dTf, Ixf1_Vbiei, Ixf1_Vbici, Ixf1_dT;
+    double Ixf2_Vxf1, Ixf2_Vbiei, Ixf2_Vbici, Ixf2_dT;
+    double Ixf_Vxf, Ixf_Tf,Ixf_Qdei,Ixf_Vbiei, Ixf_Vbici, Ixf_dT;
+    double Ixf2_Vxf2, Ixf2_dTf;
     double Itxf, Qdeix;
     double Qxf, Ixf, Vxf;
     double Vxf1, Vxf2;
@@ -2506,24 +2510,43 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             // Excess Phase calculation
 
             if ((model->HICUMflnqs != 0 || model->HICUMflcomp == 0.0 || model->HICUMflcomp == 2.1) && Tf != 0 && (model->HICUMalit > 0 || model->HICUMalqf > 0)) {
-                Vxf1  = Vbxf1;
-                Vxf2  = Vbxf2;
+                Vxf1       = Vbxf1;
+                Vxf2       = Vbxf2;
 
-                Ixf1  = (Vxf2-itf)/Tf*model->HICUMt0;
-                Ixf2  = (Vxf2-Vxf1)/Tf*model->HICUMt0;
+                Ixf1       =  (Vxf2-itf)/Tf*model->HICUMt0;
+                Ixf1_Vxf2  =  1.0/Tf*model->HICUMt0;
+                Ixf1_ditf  = -1.0/Tf*model->HICUMt0;
+                Ixf1_dTf   = -Ixf1/Tf; //Tf(Vbiei,Vciei=Vbiei-Vbici)
+                Ixf1_Vbiei = Ixf1_ditf*itf_Vbiei + Ixf1_dTf*Tf_Vbiei + Ixf1_dTf*Tf_Vciei;
+                Ixf1_Vbici = Ixf1_ditf*itf_Vbici + Ixf1_dTf*Tf_Vbici - Ixf1_dTf*Tf_Vciei;
+                Ixf1_dT    = Ixf1_ditf*itf_dT    + Ixf1_dTf*Tf_dT;
+
+                Ixf2       = (Vxf2-Vxf1)/Tf*model->HICUMt0;
+                Ixf2_Vxf2  = 1.0/Tf*model->HICUMt0;
+                Ixf2_Vxf1  = -Ixf2_Vxf2;
+                Ixf2_dTf   = -Ixf2/Tf;
+                Ixf2_Vbiei = Ixf2_dTf*(Tf_Vbiei+Tf_Vciei);
+                Ixf2_Vbici = Ixf2_dTf*(Tf_Vbici-Tf_Vciei);
+                Ixf2_dT    = Ixf2_dTf*Tf_dT;
+
                 Qxf1      = model->HICUMalit*model->HICUMt0*Vxf1;
                 Qxf1_Vxf1 = model->HICUMalit*model->HICUMt0;
                 Qxf2      = model->HICUMalit*model->HICUMt0*Vxf2/3;
                 Qxf2_Vxf2 = model->HICUMalit*model->HICUMt0/3;
-                Itxf  = Vxf2;
+                Itxf      = Vxf2;
 
-                // TODO derivatives of Ixf1 and Ixf2
+                Vxf       = Vbxf;                                //for RC nw
+                Ixf       = (Vxf - Qdei)*model->HICUMt0/Tf;      //for RC nw
+                Ixf_Vxf   = Vxf*model->HICUMt0/Tf;
+                Ixf_Tf    = -Ixf/Tf;
+                Ixf_Qdei  = -1.0/model->HICUMt0/Tf;
+                Ixf_Vbiei = Ixf_Tf*(Tf_Vbiei+Tf_Vciei) + Ixf_Vbiei*(Qf_Vbiei+Qf_Vciei);
+                Ixf_Vbici = Ixf_Tf*(Tf_Vbici-Tf_Vciei) + Ixf_Qdei*(Qf_Vbici-Qf_Vciei);
+                Ixf_dT    = Ixf_Tf*Tf_dT + Ixf_Qdei*Qf_dT;
 
-                Vxf     = Vbxf;                                //for RC nw
-                Ixf     = (Vxf - Qdei)*model->HICUMt0/Tf;      //for RC nw
                 Qxf     = model->HICUMalqf*model->HICUMt0*Vxf; //for RC nw
-                Qxf_Vxf = model->HICUMalqf*model->HICUMt0;   //for RC nw
-                Qdeix = Vxf;                                 //for RC nw
+                Qxf_Vxf = model->HICUMalqf*model->HICUMt0;     //for RC nw
+                Qdeix   = Vxf;                                 //for RC nw
             } else {
                 Ixf1  =  Vbxf1;
                 Ixf2  =  Vbxf2;
