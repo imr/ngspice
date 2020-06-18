@@ -269,7 +269,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                 }
                 if (selfheat)
                     delTemp = DEVlimitlog(delTemp,
-                          *(ckt->CKTstate0 + here->VDMOSdelTemp),100,&Check_th);
+                          *(ckt->CKTstate0 + here->VDMOSdelTemp),20,&Check_th);
                 else
                     delTemp = 0.0;
 #endif /*NODELIMITING*/
