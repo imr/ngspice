@@ -58,6 +58,9 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
 
     register int selfheat;
     double rd0T, rd1T, dBeta_dT, dIds_dT;
+    double Vrd=0.0, dIth_dVrd=0.0, dIrd_dT=0.0;
+    double drd0T_dT, drd1T_dT, drd_dT, dgdrain_dT=0.0;
+    double dIrd_dVrd, dIrd_dgdrain;
     double deldelTemp=0.0, delTemp, delTemp1, Temp, Vds, Vgs;
     double ceqqth=0.0;
     double GmT, gTtg, gTtdp, gTtt, gTtsp, gcTt=0.0;
@@ -269,7 +272,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                 }
                 if (selfheat)
                     delTemp = DEVlimitlog(delTemp,
-                          *(ckt->CKTstate0 + here->VDMOSdelTemp),20,&Check_th);
+                          *(ckt->CKTstate0 + here->VDMOSdelTemp),30,&Check_th);
                 else
                     delTemp = 0.0;
 #endif /*NODELIMITING*/
@@ -285,17 +288,23 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                 Beta = here->VDMOStTransconductance * pow(TempRatio,model->VDMOSmu);
                 dBeta_dT = Beta * model->VDMOSmu / Temp;
                 rd0T =  here->VDMOSdrainResistance * pow(TempRatio, model->VDMOStexp0);
+                drd0T_dT = rd0T * model->VDMOStexp0 / Temp;
                 rd1T = 0.0;
+                drd1T_dT = 0.0;
                 if (model->VDMOSqsGiven) {
                     rd1T = here->VDMOSqsResistance * pow(TempRatio, model->VDMOStexp1);
+                    drd1T_dT = rd1T * model->VDMOStexp1 / Temp;
                 }
             } else {
                 Beta = here->VDMOStTransconductance;
                 dBeta_dT = 0.0;
                 rd0T = here->VDMOSdrainResistance;
+                drd0T_dT = 0.0;
                 rd1T = 0.0;
+                drd1T_dT = 0.0;
                 if (model->VDMOSqsGiven)
                     rd1T = here->VDMOSqsResistance;
+                    drd1T_dT = 0.0;
             }
 
             /*
@@ -398,13 +407,19 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                     *(ckt->CKTrhsOld + here->VDMOSdNode) -
                     *(ckt->CKTrhsOld + here->VDMOSsNode));
                 double rd = rd0T + rd1T * (vdsn / (vdsn + fabs(model->VDMOSqsVoltage)));
-                if (rd > 0)
+                drd_dT = drd0T_dT + drd1T_dT * (vdsn / (vdsn + fabs(model->VDMOSqsVoltage)));
+                if (rd > 0) {
                     here->VDMOSdrainConductance = 1 / rd + ckt->CKTgmin;
-                else
+                    dgdrain_dT = -drd_dT / (rd*rd);
+                } else {
                     here->VDMOSdrainConductance = 1 / rd0T;
+                    dgdrain_dT = -drd0T_dT / (rd0T*rd0T);
+                }
             } else {
-                if (rd0T > 0)
+                if (rd0T > 0) {
                     here->VDMOSdrainConductance = 1 / rd0T;
+                    dgdrain_dT = -drd0T_dT / (rd0T*rd0T);
+                }
             }
 
             if (selfheat) {
@@ -423,6 +438,13 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                 here->VDMOScth =  cdrain * Vds 
                                  - model->VDMOStype * (here->VDMOSgtempg * Vgs + here->VDMOSgtempd * Vds)
                                  - here->VDMOSgtempT * delTemp;
+
+                Vrd = *(ckt->CKTrhsOld + here->VDMOSdNode) - *(ckt->CKTrhsOld + here->VDMOSdNodePrime);
+                dIth_dVrd = here->VDMOSdrainConductance * Vrd;
+                dIrd_dVrd = here->VDMOSdrainConductance;
+                dIrd_dgdrain = Vrd;
+                dIrd_dT = dIrd_dgdrain * dgdrain_dT;
+                here->VDMOScth += here->VDMOSdrainConductance * Vrd*Vrd - dIth_dVrd*Vrd - dIrd_dT*Vrd*delTemp;
             }
 
             /*
@@ -573,9 +595,10 @@ bypass:
             *(ckt->CKTrhs + here->VDMOSdNodePrime) += (-cdreq + model->VDMOStype * ceqgd);
             *(ckt->CKTrhs + here->VDMOSsNodePrime) +=   cdreq + model->VDMOStype * ceqgs;
             if (selfheat) {
-                *(ckt->CKTrhs + here->VDMOSdNodePrime) +=  GmT * delTemp;
+                *(ckt->CKTrhs + here->VDMOSdNode)      +=  dIrd_dT * delTemp;
+                *(ckt->CKTrhs + here->VDMOSdNodePrime) +=  GmT * delTemp - dIrd_dT * delTemp;
                 *(ckt->CKTrhs + here->VDMOSsNodePrime) += -GmT * delTemp;
-                *(ckt->CKTrhs + here->VDMOStempNode) += here->VDMOScth - ceqqth; /* MOS dissipated power + Cthj current */
+                *(ckt->CKTrhs + here->VDMOStempNode)   +=  here->VDMOScth - ceqqth;
                 double vCktTemp = (ckt->CKTtemp-CONSTCtoK); /* ckt temperature */
                 if (ckt->CKTmode & MODETRANOP)
                     vCktTemp *= ckt->CKTsrcFact;
@@ -616,12 +639,15 @@ bypass:
 
             if (selfheat)
             {
-                (*(here->VDMOSDPtempPtr)     +=  GmT);
+
+                (*(here->VDMOSDtempPtr)      +=  dIrd_dT);
+                (*(here->VDMOSDPtempPtr)     +=  GmT - dIrd_dT);
                 (*(here->VDMOSSPtempPtr)     += -GmT);
                 (*(here->VDMOSGPtempPtr)     += 0.0);
-                (*(here->VDMOSTemptempPtr)   += -gTtt + 1/model->VDMOSrthjc + gcTt);
+                (*(here->VDMOSTemptempPtr)   += -gTtt - dIrd_dT*Vrd + 1/model->VDMOSrthjc + gcTt);
                 (*(here->VDMOSTempgpPtr)     += -gTtg);
-                (*(here->VDMOSTempdpPtr)     += -gTtdp);
+                (*(here->VDMOSTempdPtr)      += -dIth_dVrd);
+                (*(here->VDMOSTempdpPtr)     += -gTtdp + dIth_dVrd);
                 (*(here->VDMOSTempspPtr)     += -gTtsp);
                 (*(here->VDMOSTemptcasePtr)  += -1/model->VDMOSrthjc);
                 (*(here->VDMOSTcasetempPtr)  += -1/model->VDMOSrthjc);
@@ -881,7 +907,7 @@ load:
             if (selfheat) {
                 *(ckt->CKTrhs + here->VDIOposPrimeNode) +=  dIdio_dT*delTemp;
                 *(ckt->CKTrhs + here->VDMOSdNode)       += -dIdio_dT*delTemp;
-                *(ckt->CKTrhs + here->VDMOStempNode)    +=  Ith - model->VDMOStype*dIth_dVdio*vd - dIth_dT*delTemp; /* Diode dissipated power */
+                *(ckt->CKTrhs + here->VDMOStempNode)    +=  Ith - model->VDMOStype*dIth_dVdio*vd - dIth_dT*delTemp;
             }
             /*
             *   load matrix
