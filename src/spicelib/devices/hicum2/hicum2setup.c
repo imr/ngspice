@@ -729,9 +729,9 @@ HICUMunsetup(
             here->HICUMcollCINode = 0;
 
             if (selfheat) {
-                // if (here->HICUMtempNode > 4) // it is an internal node
-                //     CKTdltNNum(ckt, here->HICUMtempNode);
-                // here->HICUMtempNode = 0;
+                if (here->HICUMtempNode > 5) // it is an internal node
+                    CKTdltNNum(ckt, here->HICUMtempNode);
+                here->HICUMtempNode = 0;
             }
 
 //            if(here->HICUMxfNode > 0)
