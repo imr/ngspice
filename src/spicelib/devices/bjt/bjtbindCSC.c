@@ -60,8 +60,10 @@ BJTbindCSC (GENmodel *inModel, CKTcircuit *ckt)
             CREATE_KLU_BINDING_TABLE(BJTsubstSubstPtr, BJTsubstSubstBinding, BJTsubstNode, BJTsubstNode);
             if (model->BJTsubs == LATERAL)
             {
+              here->BJTsubstConNode = here->BJTbasePrimeNode ;
               here->BJTsubstConSubstConPtr = here->BJTbasePrimeBasePrimePtr ;
             } else {
+              here->BJTsubstConNode = here->BJTcolPrimeNode ;
               here->BJTsubstConSubstConPtr = here->BJTcolPrimeColPrimePtr ;
             }
             CREATE_KLU_BINDING_TABLE(BJTsubstConSubstPtr, BJTsubstConSubstBinding, BJTsubstConNode, BJTsubstNode);
@@ -109,8 +111,10 @@ BJTbindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
             CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(BJTsubstSubstPtr, BJTsubstSubstBinding, BJTsubstNode, BJTsubstNode);
             if (model->BJTsubs == LATERAL)
             {
+              here->BJTsubstConNode = here->BJTbasePrimeNode ;
               here->BJTsubstConSubstConPtr = here->BJTbasePrimeBasePrimePtr ;
             } else {
+              here->BJTsubstConNode = here->BJTcolPrimeNode ;
               here->BJTsubstConSubstConPtr = here->BJTcolPrimeColPrimePtr ;
             }
             CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(BJTsubstConSubstPtr, BJTsubstConSubstBinding, BJTsubstConNode, BJTsubstNode);
@@ -158,8 +162,10 @@ BJTbindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
             CONVERT_KLU_BINDING_TABLE_TO_REAL(BJTsubstSubstPtr, BJTsubstSubstBinding, BJTsubstNode, BJTsubstNode);
             if (model->BJTsubs == LATERAL)
             {
+              here->BJTsubstConNode = here->BJTbasePrimeNode ;
               here->BJTsubstConSubstConPtr = here->BJTbasePrimeBasePrimePtr ;
             } else {
+              here->BJTsubstConNode = here->BJTcolPrimeNode ;
               here->BJTsubstConSubstConPtr = here->BJTcolPrimeColPrimePtr ;
             }
             CONVERT_KLU_BINDING_TABLE_TO_REAL(BJTsubstConSubstPtr, BJTsubstConSubstBinding, BJTsubstConNode, BJTsubstNode);
