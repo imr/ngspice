@@ -37,7 +37,7 @@ HICUMsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     /*  loop through all the transistor models */
     for( ; model != NULL; model = HICUMnextModel(model)) {
 
-        int selfheat = ((model->HICUMflsh == 1) && (model->HICUMrthGiven) && (model->HICUMrth > 0.0));
+        int selfheat = (((model->HICUMflsh == 1) || (model->HICUMflsh == 2)) && (model->HICUMrthGiven) && (model->HICUMrth > 0.0));
 
 //Circuit simulator specific parameters
         if(model->HICUMtype != NPN && model->HICUMtype != PNP)
@@ -699,7 +699,7 @@ HICUMunsetup(
     for (model = (HICUMmodel *)inModel; model != NULL;
         model = HICUMnextModel(model))
     {
-        int selfheat = ((model->HICUMflsh == 1) && (model->HICUMrthGiven) && (model->HICUMrth > 0.0));
+        int selfheat = (((model->HICUMflsh == 1) || (model->HICUMflsh == 2)) && (model->HICUMrthGiven) && (model->HICUMrth > 0.0));
 
         for (here = HICUMinstances(model); here != NULL;
                 here=HICUMnextInstance(here))
@@ -729,9 +729,9 @@ HICUMunsetup(
             here->HICUMcollCINode = 0;
 
             if (selfheat) {
-                if (here->HICUMtempNode > 4) // it is an internal node
-                    CKTdltNNum(ckt, here->HICUMtempNode);
-                here->HICUMtempNode = 0;
+                // if (here->HICUMtempNode > 4) // it is an internal node
+                //     CKTdltNNum(ckt, here->HICUMtempNode);
+                // here->HICUMtempNode = 0;
             }
 
 //            if(here->HICUMxfNode > 0)
