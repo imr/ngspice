@@ -1,0 +1,357 @@
+* Spice description of an2v0x1
+* Spice driver version 134999461
+* Date  1/01/2008 at 16:33:58
+* wsclib 0.13um values
+.subckt an2v0x1 a b vdd vss z
+M01 06    a     vdd   vdd pmos  L=0.12U  W=0.715U AS=0.189475P AD=0.189475P PS=1.96U   PD=1.96U
+M02 n1    a     vss   vss nmos  L=0.12U  W=0.605U AS=0.160325P AD=0.160325P PS=1.74U   PD=1.74U
+M03 vdd   b     06    vdd pmos  L=0.12U  W=0.715U AS=0.189475P AD=0.189475P PS=1.96U   PD=1.96U
+M04 06    b     n1    vss nmos  L=0.12U  W=0.605U AS=0.160325P AD=0.160325P PS=1.74U   PD=1.74U
+M05 vdd   06    z     vdd pmos  L=0.12U  W=0.99U  AS=0.26235P  AD=0.26235P  PS=2.51U   PD=2.51U
+M06 vss   06    z     vss nmos  L=0.12U  W=0.495U AS=0.131175P AD=0.131175P PS=1.52U   PD=1.52U
+C4  06    vss   0.724f
+C5  a     vss   0.663f
+C6  b     vss   0.538f
+C3  z     vss   0.595f
+.ends
+* Spice description of an3v0x1
+* Spice driver version 134999461
+* Date  1/01/2008 at 16:35:14
+* wsclib 0.13um values
+.subckt an3v0x1 a b c vdd vss z
+M01 08    a     vdd   vdd pmos  L=0.12U  W=0.715U AS=0.189475P AD=0.189475P PS=1.96U   PD=1.96U
+M02 n1    a     vss   vss nmos  L=0.12U  W=0.715U AS=0.189475P AD=0.189475P PS=1.96U   PD=1.96U
+M03 vdd   b     08    vdd pmos  L=0.12U  W=0.715U AS=0.189475P AD=0.189475P PS=1.96U   PD=1.96U
+M04 sig6  b     n1    vss nmos  L=0.12U  W=0.715U AS=0.189475P AD=0.189475P PS=1.96U   PD=1.96U
+M05 08    c     vdd   vdd pmos  L=0.12U  W=0.715U AS=0.189475P AD=0.189475P PS=1.96U   PD=1.96U
+M06 08    c     sig6  vss nmos  L=0.12U  W=0.715U AS=0.189475P AD=0.189475P PS=1.96U   PD=1.96U
+M07 vdd   08    z     vdd pmos  L=0.12U  W=0.99U  AS=0.26235P  AD=0.26235P  PS=2.51U   PD=2.51U
+M08 vss   08    z     vss nmos  L=0.12U  W=0.495U AS=0.131175P AD=0.131175P PS=1.52U   PD=1.52U
+C4  08    vss   1.142f
+C5  a     vss   0.539f
+C7  b     vss   0.609f
+C8  c     vss   0.651f
+C3  z     vss   0.745f
+.ends
+* Spice description of an4v0x1
+* Spice driver version 134999461
+* Date  1/01/2008 at 16:35:56
+* wsclib 0.13um values
+.subckt an4v0x1 a b c d vdd vss z
+M01 10    a     vdd   vdd pmos  L=0.12U  W=0.715U AS=0.189475P AD=0.189475P PS=1.96U   PD=1.96U
+M02 n1    a     vss   vss nmos  L=0.12U  W=0.88U  AS=0.2332P   AD=0.2332P   PS=2.29U   PD=2.29U
+M03 vdd   b     10    vdd pmos  L=0.12U  W=0.715U AS=0.189475P AD=0.189475P PS=1.96U   PD=1.96U
+M04 sig7  b     n1    vss nmos  L=0.12U  W=0.88U  AS=0.2332P   AD=0.2332P   PS=2.29U   PD=2.29U
+M05 10    c     vdd   vdd pmos  L=0.12U  W=0.715U AS=0.189475P AD=0.189475P PS=1.96U   PD=1.96U
+M06 n3    c     sig7  vss nmos  L=0.12U  W=0.88U  AS=0.2332P   AD=0.2332P   PS=2.29U   PD=2.29U
+M07 vdd   d     10    vdd pmos  L=0.12U  W=0.715U AS=0.189475P AD=0.189475P PS=1.96U   PD=1.96U
+M08 10    d     n3    vss nmos  L=0.12U  W=0.88U  AS=0.2332P   AD=0.2332P   PS=2.29U   PD=2.29U
+M09 vdd   10    z     vdd pmos  L=0.12U  W=0.99U  AS=0.26235P  AD=0.26235P  PS=2.51U   PD=2.51U
+M10 vss   10    z     vss nmos  L=0.12U  W=0.495U AS=0.131175P AD=0.131175P PS=1.52U   PD=1.52U
+C4  10    vss   0.940f
+C5  a     vss   0.674f
+C8  b     vss   0.541f
+C9  c     vss   0.622f
+C10 d     vss   0.791f
+C3  z     vss   0.765f
+.ends
+* Spice description of bf1v0x1
+* Spice driver version 134999461
+* Date  1/01/2008 at 16:39:34
+* wsclib 0.13um values
+.subckt bf1v0x1 a vdd vss z
+M01 an    a     vdd   vdd pmos  L=0.12U  W=0.715U AS=0.189475P AD=0.189475P PS=1.96U   PD=1.96U
+M02 an    a     vss   vss nmos  L=0.12U  W=0.44U  AS=0.1166P   AD=0.1166P   PS=1.41U   PD=1.41U
+M03 vdd   an    z     vdd pmos  L=0.12U  W=0.99U  AS=0.26235P  AD=0.26235P  PS=2.51U   PD=2.51U
+M04 vss   an    z     vss nmos  L=0.12U  W=0.495U AS=0.131175P AD=0.131175P PS=1.52U   PD=1.52U
+C2  an    vss   0.554f
+C4  a     vss   0.449f
+C3  z     vss   0.506f
+.ends
+.subckt dff cp d vdd vss z
+*01-JAN-08 SPICE3       file   created      from dfnt1v0x2.ext -        technology: scmos
+m00 vdd zn z   vdd pmos w=1.54u  l=0.13u ad=0.409794p  pd=3.3124u   as=0.4928p    ps=3.83u   
+m01 zn  n4 vdd vdd pmos w=0.77u  l=0.13u ad=0.24035p   pd=2.29u     as=0.204897p  ps=1.6562u 
+m02 w1  zn vdd vdd pmos w=0.33u  l=0.13u ad=0.042075p  pd=0.585u    as=0.087813p  ps=0.7098u 
+m03 n4  ci w1  vdd pmos w=0.33u  l=0.13u ad=0.07535p   pd=0.72u     as=0.042075p  ps=0.585u  
+m04 n2  cn n4  vdd pmos w=0.66u  l=0.13u ad=0.1386p    pd=1.08u     as=0.1507p    ps=1.44u   
+m05 vdd n1 n2  vdd pmos w=0.66u  l=0.13u ad=0.175626p  pd=1.4196u   as=0.1386p    ps=1.08u   
+m06 w2  n2 vdd vdd pmos w=0.33u  l=0.13u ad=0.042075p  pd=0.585u    as=0.087813p  ps=0.7098u 
+m07 n1  cn w2  vdd pmos w=0.33u  l=0.13u ad=0.0759868p pd=0.716842u as=0.042075p  ps=0.585u  
+m08 vss zn z   vss nmos w=0.77u  l=0.13u ad=0.223765p  pd=2.21828u  as=0.24035p   ps=2.29u   
+m09 vss n4 zn  vss nmos w=0.385u l=0.13u ad=0.111882p  pd=1.10914u  as=0.138325p  ps=1.52u   
+m10 w3  ci n1  vdd pmos w=0.715u l=0.13u ad=0.0911625p pd=0.97u     as=0.164638p  ps=1.55316u
+m11 vdd d  w3  vdd pmos w=0.715u l=0.13u ad=0.190262p  pd=1.5379u   as=0.0911625p ps=0.97u   
+m12 ci  cn vdd vdd pmos w=0.605u l=0.13u ad=0.196625p  pd=1.96u     as=0.160991p  ps=1.3013u 
+m13 cn  cp vdd vdd pmos w=0.55u  l=0.13u ad=0.18205p   pd=1.85u     as=0.146355p  ps=1.183u  
+m14 vss cn ci  vss nmos w=0.33u  l=0.13u ad=0.0958992p pd=0.95069u  as=0.12375p   ps=1.41u   
+m15 w4  zn vss vss nmos w=0.33u  l=0.13u ad=0.042075p  pd=0.585u    as=0.0958992p ps=0.95069u
+m16 n4  cn w4  vss nmos w=0.33u  l=0.13u ad=0.0693p    pd=0.75u     as=0.042075p  ps=0.585u  
+m17 n2  ci n4  vss nmos w=0.33u  l=0.13u ad=0.0693p    pd=0.75u     as=0.0693p    ps=0.75u   
+m18 vss n1 n2  vss nmos w=0.33u  l=0.13u ad=0.0958992p pd=0.95069u  as=0.0693p    ps=0.75u   
+m19 w5  n2 vss vss nmos w=0.33u  l=0.13u ad=0.042075p  pd=0.585u    as=0.0958992p ps=0.95069u
+m20 n1  ci w5  vss nmos w=0.33u  l=0.13u ad=0.0693p    pd=0.75u     as=0.042075p  ps=0.585u  
+m21 w6  cn n1  vss nmos w=0.33u  l=0.13u ad=0.042075p  pd=0.585u    as=0.0693p    ps=0.75u   
+m22 vss d  w6  vss nmos w=0.33u  l=0.13u ad=0.0958992p pd=0.95069u  as=0.042075p  ps=0.585u  
+m23 cn  cp vss vss nmos w=0.385u l=0.13u ad=0.144375p  pd=1.52u     as=0.111882p  ps=1.10914u
+C0  ci  cn  0.246f
+C1  vdd cn  0.074f
+C2  vdd z   0.030f
+C3  ci  n4  0.090f
+C4  ci  n1  0.179f
+C5  n4  w4  0.010f
+C6  n4  vdd 0.041f
+C7  vdd n1  0.043f
+C8  zn  cn  0.055f
+C9  d   cp  0.006f
+C10 ci  n2  0.120f
+C11 w5  n1  0.008f
+C12 ci  d   0.190f
+C13 zn  z   0.050f
+C14 vdd n2  0.012f
+C15 d   vdd 0.003f
+C16 n4  zn  0.116f
+C17 ci  w3  0.005f
+C18 n4  cn  0.011f
+C19 cn  n1  0.076f
+C20 ci  cp  0.027f
+C21 cp  vdd 0.023f
+C22 cn  n2  0.073f
+C23 d   cn  0.105f
+C24 ci  vdd 0.039f
+C25 n4  w1  0.008f
+C26 n4  n2  0.019f
+C27 n1  n2  0.167f
+C28 ci  zn  0.050f
+C29 w2  n1  0.003f
+C30 cp  cn  0.128f
+C31 vdd zn  0.007f
+C32 w6  vss 0.004f
+C33 w5  vss 0.002f
+C34 w4  vss 0.002f
+C35 cp  vss 0.114f
+C36 w3  vss 0.004f
+C37 w2  vss 0.001f
+C38 n4  vss 0.213f
+C39 d   vss 0.119f
+C40 ci  vss 0.377f
+C41 n2  vss 0.184f
+C42 n1  vss 0.247f
+C43 z   vss 0.142f
+C44 cn  vss 0.439f
+C45 zn  vss 0.251f
+.ends
+* Spice description of iv1v0x1
+* Spice driver version 134999461
+* Date  1/01/2008 at 16:44:01
+* wsclib 0.13um values
+.subckt iv1v0x1 a vdd vss z
+M01 vdd   a     z     vdd pmos  L=0.12U  W=0.99U  AS=0.26235P  AD=0.26235P  PS=2.51U   PD=2.51U
+M02 vss   a     z     vss nmos  L=0.12U  W=0.495U AS=0.131175P AD=0.131175P PS=1.52U   PD=1.52U
+C3  a     vss   0.384f
+C2  z     vss   0.576f
+.ends
+* Spice description of nd2v0x1
+* Spice driver version 134999461
+* Date  1/01/2008 at 16:49:53
+* wsclib 0.13um values
+.subckt nd2v0x1 a b vdd vss z
+M01 vdd   a     z     vdd pmos  L=0.12U  W=0.77U  AS=0.20405P  AD=0.20405P  PS=2.07U   PD=2.07U
+M02 vss   a     sig3  vss nmos  L=0.12U  W=0.66U  AS=0.1749P   AD=0.1749P   PS=1.85U   PD=1.85U
+M03 z     b     vdd   vdd pmos  L=0.12U  W=0.77U  AS=0.20405P  AD=0.20405P  PS=2.07U   PD=2.07U
+M04 sig3  b     z     vss nmos  L=0.12U  W=0.66U  AS=0.1749P   AD=0.1749P   PS=1.85U   PD=1.85U
+C4  a     vss   0.549f
+C5  b     vss   0.578f
+C1  z     vss   0.609f
+.ends
+* Spice description of nd3v0x1
+* Spice driver version 134999461
+* Date  1/01/2008 at 16:52:51
+* wsclib 0.13um values
+.subckt nd3v0x1 a b c vdd vss z
+M01 vdd   a     z     vdd pmos  L=0.12U  W=1.1U   AS=0.2915P   AD=0.2915P   PS=2.73U   PD=2.73U
+M02 vss   a     sig2  vss nmos  L=0.12U  W=1.1U   AS=0.2915P   AD=0.2915P   PS=2.73U   PD=2.73U
+M03 z     b     vdd   vdd pmos  L=0.12U  W=1.1U   AS=0.2915P   AD=0.2915P   PS=2.73U   PD=2.73U
+M04 sig2  b     sig3  vss nmos  L=0.12U  W=1.1U   AS=0.2915P   AD=0.2915P   PS=2.73U   PD=2.73U
+M05 vdd   c     z     vdd pmos  L=0.12U  W=1.1U   AS=0.2915P   AD=0.2915P   PS=2.73U   PD=2.73U
+M06 sig3  c     z     vss nmos  L=0.12U  W=1.1U   AS=0.2915P   AD=0.2915P   PS=2.73U   PD=2.73U
+C5  a     vss   0.491f
+C6  b     vss   0.400f
+C7  c     vss   0.478f
+C1  z     vss   0.850f
+.ends
+* Spice description of nd4v0x1
+* Spice driver version 134999461
+* Date  1/01/2008 at 16:54:03
+* wsclib 0.13um values
+.subckt nd4v0x1 a b c d vdd vss z
+M01 vdd   a     z     vdd pmos  L=0.12U  W=0.935U AS=0.247775P AD=0.247775P PS=2.4U    PD=2.4U
+M02 vss   a     sig7  vss nmos  L=0.12U  W=1.1U   AS=0.2915P   AD=0.2915P   PS=2.73U   PD=2.73U
+M03 z     b     vdd   vdd pmos  L=0.12U  W=0.935U AS=0.247775P AD=0.247775P PS=2.4U    PD=2.4U
+M04 sig7  b     sig3  vss nmos  L=0.12U  W=1.1U   AS=0.2915P   AD=0.2915P   PS=2.73U   PD=2.73U
+M05 vdd   c     z     vdd pmos  L=0.12U  W=0.935U AS=0.247775P AD=0.247775P PS=2.4U    PD=2.4U
+M06 sig3  c     sig2  vss nmos  L=0.12U  W=1.1U   AS=0.2915P   AD=0.2915P   PS=2.73U   PD=2.73U
+M07 z     d     vdd   vdd pmos  L=0.12U  W=0.935U AS=0.247775P AD=0.247775P PS=2.4U    PD=2.4U
+M08 sig2  d     z     vss nmos  L=0.12U  W=1.1U   AS=0.2915P   AD=0.2915P   PS=2.73U   PD=2.73U
+C9  a     vss   0.610f
+C8  b     vss   0.677f
+C6  c     vss   0.603f
+C5  d     vss   0.638f
+C1  z     vss   0.948f
+.ends
+* Spice description of nr2v0x1
+* Spice driver version 134999461
+* Date  1/01/2008 at 16:55:05
+* wsclib 0.13um values
+.subckt nr2v0x1 a b vdd vss z
+M01 vdd   a     01    vdd pmos  L=0.12U  W=1.54U  AS=0.4081P   AD=0.4081P   PS=3.61U   PD=3.61U
+M02 vss   a     z     vss nmos  L=0.12U  W=0.44U  AS=0.1166P   AD=0.1166P   PS=1.41U   PD=1.41U
+M03 01    b     z     vdd pmos  L=0.12U  W=1.54U  AS=0.4081P   AD=0.4081P   PS=3.61U   PD=3.61U
+M04 z     b     vss   vss nmos  L=0.12U  W=0.44U  AS=0.1166P   AD=0.1166P   PS=1.41U   PD=1.41U
+C4  a     vss   0.341f
+C3  b     vss   0.433f
+C2  z     vss   0.677f
+.ends
+* Spice description of nr3v0x1
+* Spice driver version 134999461
+* Date  1/01/2008 at 16:56:49
+* wsclib 0.13um values
+.subckt nr3v0x1 a b c vdd vss z
+M01 sig6  a     vdd   vdd pmos  L=0.12U  W=1.54U  AS=0.4081P   AD=0.4081P   PS=3.61U   PD=3.61U
+M02 vdd   a     02    vdd pmos  L=0.12U  W=1.54U  AS=0.4081P   AD=0.4081P   PS=3.61U   PD=3.61U
+M03 vss   a     z     vss nmos  L=0.12U  W=0.55U  AS=0.14575P  AD=0.14575P  PS=1.63U   PD=1.63U
+M04 04    b     sig6  vdd pmos  L=0.12U  W=1.54U  AS=0.4081P   AD=0.4081P   PS=3.61U   PD=3.61U
+M05 02    b     08    vdd pmos  L=0.12U  W=1.54U  AS=0.4081P   AD=0.4081P   PS=3.61U   PD=3.61U
+M06 z     b     vss   vss nmos  L=0.12U  W=0.55U  AS=0.14575P  AD=0.14575P  PS=1.63U   PD=1.63U
+M07 z     c     04    vdd pmos  L=0.12U  W=1.54U  AS=0.4081P   AD=0.4081P   PS=3.61U   PD=3.61U
+M08 08    c     z     vdd pmos  L=0.12U  W=1.54U  AS=0.4081P   AD=0.4081P   PS=3.61U   PD=3.61U
+M09 vss   c     z     vss nmos  L=0.12U  W=0.55U  AS=0.14575P  AD=0.14575P  PS=1.63U   PD=1.63U
+C3  a     vss   0.957f
+C4  b     vss   0.895f
+C5  c     vss   0.693f
+C2  z     vss   0.834f
+.ends
+* Spice description of nr4v0x1
+* Spice driver version 134999461
+* Date  1/01/2008 at 16:57:25
+* wsclib 0.13um values
+.subckt nr4v0x1 a b c d vdd vss z
+M1a 1b    a     vdd   vdd pmos  L=0.12U  W=1.375U AS=0.364375P AD=0.364375P PS=3.28U   PD=3.28U
+M1b sig8  b     1b    vdd pmos  L=0.12U  W=1.375U AS=0.364375P AD=0.364375P PS=3.28U   PD=3.28U
+M1c 1d    c     sig8  vdd pmos  L=0.12U  W=1.375U AS=0.364375P AD=0.364375P PS=3.28U   PD=3.28U
+M1d z     d     1d    vdd pmos  L=0.12U  W=1.375U AS=0.364375P AD=0.364375P PS=3.28U   PD=3.28U
+M2a vdd   a     2a    vdd pmos  L=0.12U  W=0.99U  AS=0.26235P  AD=0.26235P  PS=2.51U   PD=2.51U
+M2b 2a    b     sig11 vdd pmos  L=0.12U  W=0.99U  AS=0.26235P  AD=0.26235P  PS=2.51U   PD=2.51U
+M2c sig11 c     2c    vdd pmos  L=0.12U  W=0.99U  AS=0.26235P  AD=0.26235P  PS=2.51U   PD=2.51U
+M2d 2c    d     z     vdd pmos  L=0.12U  W=0.99U  AS=0.26235P  AD=0.26235P  PS=2.51U   PD=2.51U
+M3a z     a     vss   vss nmos  L=0.12U  W=0.33U  AS=0.08745P  AD=0.08745P  PS=1.19U   PD=1.19U
+M3b vss   b     z     vss nmos  L=0.12U  W=0.33U  AS=0.08745P  AD=0.08745P  PS=1.19U   PD=1.19U
+M3c z     c     vss   vss nmos  L=0.12U  W=0.33U  AS=0.08745P  AD=0.08745P  PS=1.19U   PD=1.19U
+M3d vss   d     z     vss nmos  L=0.12U  W=0.33U  AS=0.08745P  AD=0.08745P  PS=1.19U   PD=1.19U
+C4  a     vss   1.510f
+C3  b     vss   1.102f
+C6  c     vss   0.817f
+C5  d     vss   0.806f
+C2  z     vss   0.935f
+.ends
+* Spice description of or2v0x1
+* Spice driver version 134999461
+* Date  1/01/2008 at 17:00:11
+* wsclib 0.13um values
+.subckt or2v0x1 a b vdd vss z
+M01 03    a     vdd   vdd pmos  L=0.12U  W=1.155U AS=0.306075P AD=0.306075P PS=2.84U   PD=2.84U
+M02 sig1  a     vss   vss nmos  L=0.12U  W=0.33U  AS=0.08745P  AD=0.08745P  PS=1.19U   PD=1.19U
+M03 sig1  b     03    vdd pmos  L=0.12U  W=1.155U AS=0.306075P AD=0.306075P PS=2.84U   PD=2.84U
+M04 vss   b     sig1  vss nmos  L=0.12U  W=0.33U  AS=0.08745P  AD=0.08745P  PS=1.19U   PD=1.19U
+M5  vdd   sig1  z     vdd pmos  L=0.12U  W=0.99U  AS=0.26235P  AD=0.26235P  PS=2.51U   PD=2.51U
+M6  vss   sig1  z     vss nmos  L=0.12U  W=0.495U AS=0.131175P AD=0.131175P PS=1.52U   PD=1.52U
+C4  a     vss   0.464f
+C5  b     vss   0.507f
+C1  sig1  vss   0.619f
+C3  z     vss   0.593f
+.ends
+* Spice description of or3v0x1
+* Spice driver version 134999461
+* Date  1/01/2008 at 17:00:59
+* wsclib 0.13um values
+.subckt or3v0x1 a b c vdd vss z
+M01 01    a     vdd   vdd pmos  L=0.12U  W=1.54U  AS=0.4081P   AD=0.4081P   PS=3.61U   PD=3.61U
+M02 sig1  a     vss   vss nmos  L=0.12U  W=0.33U  AS=0.08745P  AD=0.08745P  PS=1.19U   PD=1.19U
+M03 03    b     01    vdd pmos  L=0.12U  W=1.54U  AS=0.4081P   AD=0.4081P   PS=3.61U   PD=3.61U
+M04 vss   b     sig1  vss nmos  L=0.12U  W=0.33U  AS=0.08745P  AD=0.08745P  PS=1.19U   PD=1.19U
+M05 sig1  c     03    vdd pmos  L=0.12U  W=1.54U  AS=0.4081P   AD=0.4081P   PS=3.61U   PD=3.61U
+M06 sig1  c     vss   vss nmos  L=0.12U  W=0.33U  AS=0.08745P  AD=0.08745P  PS=1.19U   PD=1.19U
+M07 vdd   sig1  z     vdd pmos  L=0.12U  W=1.045U AS=0.276925P AD=0.276925P PS=2.62U   PD=2.62U
+M08 vss   sig1  z     vss nmos  L=0.12U  W=0.495U AS=0.131175P AD=0.131175P PS=1.52U   PD=1.52U
+C4  a     vss   0.544f
+C5  b     vss   0.535f
+C6  c     vss   0.625f
+C1  sig1  vss   0.995f
+C3  z     vss   0.544f
+.ends
+* Spice description of or4v0x1
+* Spice driver version 134999461
+* Date  1/01/2008 at 17:01:43
+* wsclib 0.13um values
+.subckt or4v0x1 a b c d vdd vss z
+M01 sig8  a     vdd   vdd pmos  L=0.12U  W=0.99U  AS=0.26235P  AD=0.26235P  PS=2.51U   PD=2.51U
+M02 vdd   a     05    vdd pmos  L=0.12U  W=0.99U  AS=0.26235P  AD=0.26235P  PS=2.51U   PD=2.51U
+M03 sig1  a     vss   vss nmos  L=0.12U  W=0.33U  AS=0.08745P  AD=0.08745P  PS=1.19U   PD=1.19U
+M04 n2    b     sig8  vdd pmos  L=0.12U  W=0.99U  AS=0.26235P  AD=0.26235P  PS=2.51U   PD=2.51U
+M05 05    b     08    vdd pmos  L=0.12U  W=0.99U  AS=0.26235P  AD=0.26235P  PS=2.51U   PD=2.51U
+M06 vss   b     sig1  vss nmos  L=0.12U  W=0.33U  AS=0.08745P  AD=0.08745P  PS=1.19U   PD=1.19U
+M07 10    c     n2    vdd pmos  L=0.12U  W=0.99U  AS=0.26235P  AD=0.26235P  PS=2.51U   PD=2.51U
+M08 08    c     11    vdd pmos  L=0.12U  W=0.99U  AS=0.26235P  AD=0.26235P  PS=2.51U   PD=2.51U
+M09 sig1  c     vss   vss nmos  L=0.12U  W=0.33U  AS=0.08745P  AD=0.08745P  PS=1.19U   PD=1.19U
+M10 sig1  d     10    vdd pmos  L=0.12U  W=0.99U  AS=0.26235P  AD=0.26235P  PS=2.51U   PD=2.51U
+M11 11    d     sig1  vdd pmos  L=0.12U  W=0.99U  AS=0.26235P  AD=0.26235P  PS=2.51U   PD=2.51U
+M12 vss   d     sig1  vss nmos  L=0.12U  W=0.33U  AS=0.08745P  AD=0.08745P  PS=1.19U   PD=1.19U
+M13 vdd   sig1  z     vdd pmos  L=0.12U  W=0.99U  AS=0.26235P  AD=0.26235P  PS=2.51U   PD=2.51U
+M14 vss   sig1  z     vss nmos  L=0.12U  W=0.495U AS=0.131175P AD=0.131175P PS=1.52U   PD=1.52U
+C4  a     vss   1.356f
+C5  b     vss   1.229f
+C6  c     vss   1.043f
+C7  d     vss   0.797f
+C1  sig1  vss   1.003f
+C3  z     vss   0.701f
+.ends
+* Spice description of xnr2v0x1
+* Spice driver version 134999461
+* Date  1/01/2008 at 17:04:32
+* wsclib 0.13um values
+.subckt xnr2v0x1 a b vdd vss z
+M01 z     b     sig3  vdd pmos  L=0.12U  W=0.99U  AS=0.26235P  AD=0.26235P  PS=2.51U   PD=2.51U
+M02 bn    sig3  z     vss nmos  L=0.12U  W=0.495U AS=0.131175P AD=0.131175P PS=1.52U   PD=1.52U
+M03 sig3  a     vdd   vdd pmos  L=0.12U  W=0.99U  AS=0.26235P  AD=0.26235P  PS=2.51U   PD=2.51U
+M04 vdd   b     bn    vdd pmos  L=0.12U  W=0.99U  AS=0.26235P  AD=0.26235P  PS=2.51U   PD=2.51U
+M05 z     bn    sig3  vss nmos  L=0.12U  W=0.495U AS=0.131175P AD=0.131175P PS=1.52U   PD=1.52U
+M06 vdd   sig3  n1    vdd pmos  L=0.12U  W=1.54U  AS=0.4081P   AD=0.4081P   PS=3.61U   PD=3.61U
+M07 sig3  a     vss   vss nmos  L=0.12U  W=0.495U AS=0.131175P AD=0.131175P PS=1.52U   PD=1.52U
+M08 n1    bn    z     vdd pmos  L=0.12U  W=1.54U  AS=0.4081P   AD=0.4081P   PS=3.61U   PD=3.61U
+M09 vss   b     bn    vss nmos  L=0.12U  W=0.495U AS=0.131175P AD=0.131175P PS=1.52U   PD=1.52U
+C4  a     vss   0.389f
+C2  bn    vss   1.593f
+C5  b     vss   0.840f
+C3  sig3  vss   0.618f
+C6  z     vss   0.627f
+.ends
+* Spice description of xor2v0x1
+* Spice driver version 134999461
+* Date  1/01/2008 at 17:06:20
+* wsclib 0.13um values
+.subckt xor2v0x1 a b vdd vss z
+M01 04    a     vdd   vdd pmos  L=0.12U  W=0.99U  AS=0.26235P  AD=0.26235P  PS=2.51U   PD=2.51U
+M02 04    a     vss   vss nmos  L=0.12U  W=0.495U AS=0.131175P AD=0.131175P PS=1.52U   PD=1.52U
+M03 vdd   b     bn    vdd pmos  L=0.12U  W=1.485U AS=0.393525P AD=0.393525P PS=3.5U    PD=3.5U
+M04 z     b     04    vss nmos  L=0.12U  W=0.495U AS=0.131175P AD=0.131175P PS=1.52U   PD=1.52U
+M05 vss   b     bn    vss nmos  L=0.12U  W=0.495U AS=0.131175P AD=0.131175P PS=1.52U   PD=1.52U
+M06 bn    04    z     vdd pmos  L=0.12U  W=1.485U AS=0.393525P AD=0.393525P PS=3.5U    PD=3.5U
+M07 vss   04    09    vss nmos  L=0.12U  W=0.66U  AS=0.1749P   AD=0.1749P   PS=1.85U   PD=1.85U
+M08 z     bn    04    vdd pmos  L=0.12U  W=0.99U  AS=0.26235P  AD=0.26235P  PS=2.51U   PD=2.51U
+M09 09    bn    z     vss nmos  L=0.12U  W=0.66U  AS=0.1749P   AD=0.1749P   PS=1.85U   PD=1.85U
+C6  04    vss   0.683f
+C4  a     vss   0.590f
+C1  bn    vss   0.910f
+C3  b     vss   1.149f
+C5  z     vss   0.680f
+.ends
