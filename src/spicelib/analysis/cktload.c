@@ -32,10 +32,9 @@ static int ZeroNoncurRow(SMPmatrix *matrix, CKTnode *nodes, int rownum);
 int
 CKTloadLinearStatic (CKTcircuit *ckt)
 {
-    int error, i, size ;
+    int error, i ;
 
-    size = SMPmatSize (ckt->CKTmatrix) ;
-    for (i = 0 ; i <= size ; i++)
+    for (i = 0 ; i < ckt->CKTmatrix->CKTklunz ; i++)
         ckt->CKTmatrix->CKTkluAx_LinearStatic [i] = 0 ;
 
     for (i = 0; i < DEVmaxnum; i++)
@@ -57,10 +56,9 @@ CKTloadLinearStatic (CKTcircuit *ckt)
 int
 CKTloadLinearDynamic (CKTcircuit *ckt)
 {
-    int error, i, size ;
+    int error, i ;
 
-    size = SMPmatSize (ckt->CKTmatrix) ;
-    for (i = 0 ; i <= size ; i++)
+    for (i = 0 ; i < ckt->CKTmatrix->CKTklunz ; i++)
         ckt->CKTmatrix->CKTkluAx_LinearDynamic [i] = 0 ;
 
     for (i = 0; i < DEVmaxnum; i++)
