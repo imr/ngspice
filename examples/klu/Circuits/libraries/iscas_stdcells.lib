@@ -1,0 +1,101 @@
+
+.subckt not1 a vdd vss z
+Mn z a vss vss nmos W={Wmin} L={Lmin} AS={Ldiff*Wmin} AD={Ldiff*Wmin} PS={2*(Ldiff+Wmin)} PD={2*(Ldiff+Wmin)}
+Mp z a vdd vdd pmos W={2*Wmin} L={Lmin} AS={Ldiff*2*Wmin} AD={Ldiff*2*Wmin} PS={2*(Ldiff+2*Wmin)} PD={2*(Ldiff+2*Wmin)}
+.ends
+
+.subckt buf1 a vdd vss z
+Xnot1 a vdd vss out not1
+Xnot2 out vdd vss z not1
+.ends
+
+.subckt nand2 a b vdd vss z
+Mn1 z a SD vss nmos W={2*Wmin} L={Lmin} AS={2*Wmin*Ldiff} AD={2*Wmin*Ldiff} PS={2*(Ldiff+2*Wmin)} PD={2*(Ldiff+2*Wmin)}
+Mn2 SD b vss vss nmos W={2*Wmin} L={Lmin} AS={2*Wmin*Ldiff} AD={2*Wmin*Ldiff} PS={2*(Ldiff+2*Wmin)} PD={2*(Ldiff+2*Wmin)}
+Mp1 z a vdd vdd pmos W={2*Wmin} L={Lmin} AS={2*Wmin*Ldiff} AD={2*Wmin*Ldiff} PS={2*(Ldiff+2*Wmin)} PD={2*(Ldiff+2*Wmin)}
+Mp2 z b vdd vdd pmos W={2*Wmin} L={Lmin} AS={2*Wmin*Ldiff} AD={2*Wmin*Ldiff} PS={2*(Ldiff+2*Wmin)} PD={2*(Ldiff+2*Wmin)}
+.ends
+
+.subckt nand3 a b c vdd vss z
+Mn1 z a SD1 	vss nmos W={3*Wmin} L={Lmin} AS={3*Wmin*Ldiff} AD={3*Wmin*Ldiff} PS={2*(Ldiff+3*Wmin)} PD={2*(Ldiff+3*Wmin)}
+Mn2 SD1 b SD2 	vss nmos W={3*Wmin} L={Lmin} AS={3*Wmin*Ldiff} AD={3*Wmin*Ldiff} PS={2*(Ldiff+3*Wmin)} PD={2*(Ldiff+3*Wmin)}
+Mn3 SD2 c vss  	vss	nmos W={3*Wmin} L={Lmin} AS={3*Wmin*Ldiff} AD={3*Wmin*Ldiff} PS={2*(Ldiff+3*Wmin)} PD={2*(Ldiff+3*Wmin)}
+Mp1 z a vdd 	vdd	pmos W={2*Wmin} L={Lmin} AS={2*Wmin*Ldiff} AD={2*Wmin*Ldiff} PS={2*(Ldiff+2*Wmin)} PD={2*(Ldiff+2*Wmin)}
+Mp2 z b vdd 	vdd	pmos W={2*Wmin} L={Lmin} AS={2*Wmin*Ldiff} AD={2*Wmin*Ldiff} PS={2*(Ldiff+2*Wmin)} PD={2*(Ldiff+2*Wmin)}
+Mp3 z c vdd 	vdd	pmos W={2*Wmin} L={Lmin} AS={2*Wmin*Ldiff} AD={2*Wmin*Ldiff} PS={2*(Ldiff+2*Wmin)} PD={2*(Ldiff+2*Wmin)}
+.ends
+
+.subckt nand4 a b c d vdd vss z
+Mn1 z a SD1 	vss nmos W={4*Wmin} L={Lmin} AS={4*Wmin*Ldiff} AD={4*Wmin*Ldiff} PS={2*(Ldiff+4*Wmin)} PD={2*(Ldiff+4*Wmin)}
+Mn2 SD1 b SD2 	vss nmos W={4*Wmin} L={Lmin} AS={4*Wmin*Ldiff} AD={4*Wmin*Ldiff} PS={2*(Ldiff+4*Wmin)} PD={2*(Ldiff+4*Wmin)}
+Mn3 SD2 c SD3  	vss	nmos W={4*Wmin} L={Lmin} AS={4*Wmin*Ldiff} AD={4*Wmin*Ldiff} PS={2*(Ldiff+4*Wmin)} PD={2*(Ldiff+4*Wmin)}
+Mn4 SD3 d vss  	vss	nmos W={4*Wmin} L={Lmin} AS={4*Wmin*Ldiff} AD={4*Wmin*Ldiff} PS={2*(Ldiff+4*Wmin)} PD={2*(Ldiff+4*Wmin)}
+Mp1 z a vdd 	vdd	pmos W={2*Wmin} L={Lmin} AS={2*Wmin*Ldiff} AD={2*Wmin*Ldiff} PS={2*(Ldiff+2*Wmin)} PD={2*(Ldiff+2*Wmin)}
+Mp2 z b vdd 	vdd	pmos W={2*Wmin} L={Lmin} AS={2*Wmin*Ldiff} AD={2*Wmin*Ldiff} PS={2*(Ldiff+2*Wmin)} PD={2*(Ldiff+2*Wmin)}
+Mp3 z c vdd 	vdd	pmos W={2*Wmin} L={Lmin} AS={2*Wmin*Ldiff} AD={2*Wmin*Ldiff} PS={2*(Ldiff+2*Wmin)} PD={2*(Ldiff+2*Wmin)}
+Mp4 z d vdd 	vdd	pmos W={2*Wmin} L={Lmin} AS={2*Wmin*Ldiff} AD={2*Wmin*Ldiff} PS={2*(Ldiff+2*Wmin)} PD={2*(Ldiff+2*Wmin)}
+.ends
+
+.subckt and2 a b vdd vss z
+Xnand a b vdd vss out nand2
+Xnot out vdd vss z not1
+.ends
+
+.subckt and3 a b c vdd vss z
+Xnand a b c vdd vss out nand3
+Xnot out vdd vss z not1
+.ends
+
+.subckt and4 a b c d vdd vss z
+Xnand a b c d vdd vss out nand4
+Xnot out vdd vss z not1
+.ends
+
+
+.subckt nor2 a b vdd vss z
+Mn1 z a vss vss nmos W={1*Wmin} L={Lmin} AS={1*Wmin*Ldiff} AD={1*Wmin*Ldiff} PS={2*(Ldiff+1*Wmin)} PD={2*(Ldiff+1*Wmin)}
+Mn2 z b vss vss nmos W={1*Wmin} L={Lmin} AS={1*Wmin*Ldiff} AD={1*Wmin*Ldiff} PS={2*(Ldiff+1*Wmin)} PD={2*(Ldiff+1*Wmin)}
+Mp1 SD 	a vdd vdd pmos W={4*Wmin} L={Lmin} AS={4*Wmin*Ldiff} AD={4*Wmin*Ldiff} PS={2*(Ldiff+4*Wmin)} PD={2*(Ldiff+4*Wmin)}
+Mp2 z b SD vdd pmos W={4*Wmin} L={Lmin} AS={4*Wmin*Ldiff} AD={4*Wmin*Ldiff} PS={2*(Ldiff+4*Wmin)} PD={2*(Ldiff+4*Wmin)}
+.ends
+
+.subckt nor3 a b c vdd vss z
+Mn1 out a vss 	vss nmos W={1*Wmin} L={Lmin} AS={1*Wmin*Ldiff} AD={1*Wmin*Ldiff} PS={2*(Ldiff+1*Wmin)} PD={2*(Ldiff+1*Wmin)}
+Mn2 out b vss 	vss nmos W={1*Wmin} L={Lmin} AS={1*Wmin*Ldiff} AD={1*Wmin*Ldiff} PS={2*(Ldiff+1*Wmin)} PD={2*(Ldiff+1*Wmin)}
+Mn3 out c vss 	vss nmos W={1*Wmin} L={Lmin} AS={1*Wmin*Ldiff} AD={1*Wmin*Ldiff} PS={2*(Ldiff+1*Wmin)} PD={2*(Ldiff+1*Wmin)}
+Mp1 SD1 a vdd 	vdd pmos W={6*Wmin} L={Lmin} AS={6*Wmin*Ldiff} AD={6*Wmin*Ldiff} PS={2*(Ldiff+6*Wmin)} PD={2*(Ldiff+6*Wmin)}
+Mp2 SD2 b SD1 	vdd pmos W={6*Wmin} L={Lmin} AS={6*Wmin*Ldiff} AD={6*Wmin*Ldiff} PS={2*(Ldiff+6*Wmin)} PD={2*(Ldiff+6*Wmin)}
+Mp3 out c SD2 	vdd pmos W={6*Wmin} L={Lmin} AS={6*Wmin*Ldiff} AD={6*Wmin*Ldiff} PS={2*(Ldiff+6*Wmin)} PD={2*(Ldiff+6*Wmin)}
+.ends
+
+.subckt nor4 a b c d vdd vss z
+Mn1 z A vss 	vss nmos W={1*Wmin} L={Lmin} AS={1*Wmin*Ldiff} AD={1*Wmin*Ldiff} PS={2*(Ldiff+1*Wmin)} PD={2*(Ldiff+1*Wmin)}
+Mn2 z B vss 	vss nmos W={1*Wmin} L={Lmin} AS={1*Wmin*Ldiff} AD={1*Wmin*Ldiff} PS={2*(Ldiff+1*Wmin)} PD={2*(Ldiff+1*Wmin)}
+Mn3 z C vss 	vss nmos W={1*Wmin} L={Lmin} AS={1*Wmin*Ldiff} AD={1*Wmin*Ldiff} PS={2*(Ldiff+1*Wmin)} PD={2*(Ldiff+1*Wmin)}
+Mn4 z D vss		vss nmos W={1*Wmin} L={Lmin} AS={1*Wmin*Ldiff} AD={1*Wmin*Ldiff} PS={2*(Ldiff+1*Wmin)} PD={2*(Ldiff+1*Wmin)}
+Mp1 SD1 A vdd 	vdd pmos W={8*Wmin} L={Lmin} AS={8*Wmin*Ldiff} AD={8*Wmin*Ldiff} PS={2*(Ldiff+8*Wmin)} PD={2*(Ldiff+8*Wmin)}
+Mp2 SD2 B SD1 	vdd pmos W={8*Wmin} L={Lmin} AS={8*Wmin*Ldiff} AD={8*Wmin*Ldiff} PS={2*(Ldiff+8*Wmin)} PD={2*(Ldiff+8*Wmin)}
+Mp3 SD3 C SD2	vdd pmos W={8*Wmin} L={Lmin} AS={8*Wmin*Ldiff} AD={8*Wmin*Ldiff} PS={2*(Ldiff+8*Wmin)} PD={2*(Ldiff+8*Wmin)}
+Mp4 z D SD3 	vdd pmos W={8*Wmin} L={Lmin} AS={8*Wmin*Ldiff} AD={8*Wmin*Ldiff} PS={2*(Ldiff+8*Wmin)} PD={2*(Ldiff+8*Wmin)}
+.ends
+
+.subckt or2 a b vdd vss z
+Xnor a b vdd vss out nor2
+Xnot out vdd vss z not1
+.ends
+
+.subckt or3 a b c vdd vss z
+Xnor a b c vdd vss out nor3
+Xnot out vdd vss z not1
+.ends
+
+.subckt or4 a b c d vdd vss z
+Xnor a b c d vdd vss out nor4
+Xnot out vdd vss z not1
+.ends
+
+.subckt xor2 a b  vdd vss z
+Xor   a b vdd vss out1 or2
+Xnand a b vdd vss out2 nand2
+Xand  out1 out2 vdd vss z and2
+.ends
