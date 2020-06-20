@@ -235,8 +235,27 @@ typedef struct sHICUMinstance {
 
     /* excess phase */
     double *HICUMxfXfPtr;
+    double *HICUMxfBaseBIPtr;
+    double *HICUMxfEmitEIPtr;
+    double *HICUMxfCollCIPtr;
+    double *HICUMxfTempPtr;
+
     double *HICUMxf1Xf1Ptr;
+    double *HICUMxf1TempPtr;
+    double *HICUMxf1BaseBIPtr;
+    double *HICUMxf1EmitEIPtr;
+    double *HICUMxf1CollCIPtr;
+    double *HICUMxf1Xf2Ptr;
+
+    double *HICUMxf2Xf1Ptr;
+    double *HICUMxf2TempPtr;
+    double *HICUMxf2BaseBIPtr;
+    double *HICUMxf2EmitEIPtr;
+    double *HICUMxf2CollCIPtr;
     double *HICUMxf2Xf2Ptr;
+    double *HICUMemitXf2Ptr;
+    double *HICUMemitEIXf2Ptr;
+    double *HICUMcollCIXf2Ptr;
 
     /* self heating */
     double *HICUMcollTempPtr;
