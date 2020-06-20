@@ -43,8 +43,9 @@ VSRCbindCSC (GENmodel *inModel, CKTcircuit *ckt)
             CREATE_KLU_BINDING_TABLE(VSRCnegIbrPtr, VSRCnegIbrBinding, VSRCnegNode, VSRCbranch);
             CREATE_KLU_BINDING_TABLE(VSRCibrNegPtr, VSRCibrNegBinding, VSRCbranch, VSRCnegNode);
             CREATE_KLU_BINDING_TABLE(VSRCibrPosPtr, VSRCibrPosBinding, VSRCbranch, VSRCposNode);
+
             /* Pole-Zero Analysis */
-            if ((here-> VSRCbranch != 0) && (here-> VSRCbranch != 0))
+            if (here->VSRCibrIbrPtr)
             {
                 i = here->VSRCibrIbrPtr ;
                 matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
@@ -81,7 +82,7 @@ VSRCbindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
             /* Pole-Zero Analysis */
             if ((here-> VSRCbranch != 0) && (here-> VSRCbranch != 0))
             {
-                if (here->VSRCibrIbrBinding != NULL)
+                if (here->VSRCibrIbrBinding)
                 {
                     here->VSRCibrIbrPtr = here->VSRCibrIbrBinding->CSC_Complex ;
                 }
@@ -113,7 +114,7 @@ VSRCbindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
             /* Pole-Zero Analysis */
             if ((here-> VSRCbranch != 0) && (here-> VSRCbranch != 0))
             {
-                if (here->VSRCibrIbrBinding != NULL)
+                if (here->VSRCibrIbrBinding)
                 {
                     here->VSRCibrIbrPtr = here->VSRCibrIbrBinding->CSC ;
                 }
