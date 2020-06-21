@@ -2604,8 +2604,11 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 Qxf       = model->HICUMalqf*model->HICUMt0*Vxf; //for RC nw
                 Qxf_Vxf   = model->HICUMalqf*model->HICUMt0;     //for RC nw
 
-                Qdeix     = Vxf;                                 //for RC nw
-                Qdeix_Vxf = 1.0;
+                Qdeix       = Vxf;                                 //for RC nw
+                Qdeix_Vxf   = 1.0;
+                Qdeix_Vbiei = 0;
+                Qdeix_Vbici = 0;
+                Qdeix_dT    = 0;
             } else {
                 Ixf1       = Vxf1;
                 Ixf1_Vxf1  = 1.0;
@@ -2617,7 +2620,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 Ixf1_dT    = 0;
 
                 Ixf2       = Vxf2;
-                Ixf2_Vxf2  = 0;
+                Ixf2_Vxf2  = 1.0;
                 Ixf2_Vxf1  = 0;
                 Ixf2_dTf   = 0;
                 Ixf2_Vbiei = 0;
@@ -2821,9 +2824,9 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             // Ibpbi += ckt->CKTgmin*Vbpbi; //BP BI -> not needed
             // Ibpci += ckt->CKTgmin*Vbpci; //BP CI -> not needed
             Isici += ckt->CKTgmin*Vsici; //SI CI -> SI
-            Ixf1  += ckt->CKTgmin*Vxf1; //SI CI -> SI
-            Ixf2  += ckt->CKTgmin*Vxf2; //SI CI -> SI
-            Ixf   += ckt->CKTgmin*Vxf; //SI CI -> SI
+            Ixf1  += ckt->CKTgmin*Vxf1; 
+            Ixf2  += ckt->CKTgmin*Vxf2; 
+            Ixf   += ckt->CKTgmin*Vxf; 
             //C from Icic
             //E from Ieie
             //S from Isis
@@ -2872,6 +2875,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             Ixf1_Vbiei  += ckt->CKTgmin;
             Ixf1_Vbici  += ckt->CKTgmin;
             Ixf1_Vxf2   += ckt->CKTgmin;
+            Ixf1_Vxf1   += ckt->CKTgmin;
             //Ixf2
             Ixf2_Vbiei  += ckt->CKTgmin;
             Ixf2_Vbici  += ckt->CKTgmin;
@@ -2891,7 +2895,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 Ibici_Vrth  += ckt->CKTgmin;
                 //Iciei
                 Iciei_Vrth  += ckt->CKTgmin;
-                Iciei_Vxf2  += ckt->CKTgmin;
                 //Ibpei
                 Ibpei_Vrth  += ckt->CKTgmin;
                 // Ibpbi
@@ -2915,7 +2918,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 Ith_Veie   += ckt->CKTgmin;
                 Ith_Vrth   += ckt->CKTgmin;
 
-                //NQS
+                // //NQS
                 Ixf_dT  += ckt->CKTgmin;
                 Ixf1_dT += ckt->CKTgmin;
                 Ixf2_dT += ckt->CKTgmin;
@@ -3637,9 +3640,8 @@ load:
             // I(br_cxf) <+  ddt(Qxf);    //for RC nw
 
 //          Branch: xf1-ground, Stamp element: Ixf1   f_xf1=+  //Markus has opposite sign than Dietmar. This current flows from xf1 to ground?
-            rhs_current = Ixf1 - Ixf1_Vbici*Vbici - Ixf1_Vbiei*Vbiei -Ixf1_dT*Vrth -Ixf1_Vxf1*Vxf1 - Ixf1_Vxf2*Vxf2;
+            rhs_current                          = Ixf1 - Ixf1_Vbici*Vbici - Ixf1_Vbiei*Vbiei -Ixf1_Vxf1*Vxf1 - Ixf1_Vxf2*Vxf2;
             *(ckt->CKTrhs + here->HICUMxf1Node) += -rhs_current; // rhs_current; // into xf1 node
-            *(here->HICUMxf1TempPtr)            += Ixf1_dT;
             *(here->HICUMxf1BaseBIPtr)          += +Ixf1_Vbiei;
             *(here->HICUMxf1EmitEIPtr)          += -Ixf1_Vbiei;
             *(here->HICUMxf1BaseBIPtr)          += +Ixf1_Vbici;
@@ -3648,9 +3650,8 @@ load:
             *(here->HICUMxf1Xf1Ptr)             += +Ixf1_Vxf1;
 
 //          Branch: xf2-ground, Stamp element: Ixf2   f_xf2=+  //Markus has opposite sign than Dietmar. This current flows from xf1 to ground?
-            rhs_current = Ixf2 - Ixf2_dT*Vrth - Ixf2_Vbici*Vbici - Ixf2_Vbiei*Vbiei - Ixf2_Vxf1*Vxf1 - Ixf2_Vxf2*Vxf2;
+            rhs_current                          = Ixf2 - Ixf2_Vbici*Vbici - Ixf2_Vbiei*Vbiei - Ixf2_Vxf1*Vxf1 - Ixf2_Vxf2*Vxf2;
             *(ckt->CKTrhs + here->HICUMxf2Node) += -rhs_current; // rhs_current; // into xf2 node
-            *(here->HICUMxf2TempPtr)            += Ixf2_dT;
             *(here->HICUMxf2BaseBIPtr)          += +Ixf2_Vbiei;
             *(here->HICUMxf2EmitEIPtr)          += -Ixf2_Vbiei;
             *(here->HICUMxf2BaseBIPtr)          += +Ixf2_Vbici;
@@ -3659,9 +3660,8 @@ load:
             *(here->HICUMxf2Xf1Ptr)             += +Ixf2_Vxf1;
 
 //          Branch: xf-ground, Stamp element: Ixf   f_xf=+  //Markus has opposite sign than Dietmar. This current flows from xf1 to ground?
-            rhs_current = Ixf - Ixf_Vbici*Vbici - Ixf_Vbiei*Vbiei - Ixf_Vxf*Vxf- Ixf_dT;
+            rhs_current = Ixf - Ixf_Vbici*Vbici - Ixf_Vbiei*Vbiei - Ixf_Vxf*Vxf;
             *(ckt->CKTrhs + here->HICUMxfNode) += -rhs_current; // rhs_current; // into xf2 node
-            *(here->HICUMxfTempPtr)            += Ixf_dT;
             *(here->HICUMxfBaseBIPtr)          += +Ixf_Vbiei;
             *(here->HICUMxfEmitEIPtr)          += -Ixf_Vbiei;
             *(here->HICUMxfBaseBIPtr)          += +Ixf_Vbici;
@@ -3671,18 +3671,18 @@ load:
 /*
 c           Branch: xf1-ground, Stamp element: Rxf1 TODO: This is wrong, but needed at the moment for convergence
 */
-//            *(here->HICUMxf1Xf1Ptr) +=  1; // current Ixf1 is normalized to Tf
+        //    *(here->HICUMxf1Xf1Ptr) +=  1; // current Ixf1 is normalized to Tf
 /*
 c           Branch: xf2-ground, Stamp element: Rxf2
 */
-//            *(here->HICUMxf2Xf2Ptr) +=  1; // current Ixf2 is normalized to Tf
+        //    *(here->HICUMxf2Xf2Ptr) +=  1; // current Ixf2 is normalized to Tf
 /*
 c           Branch: xf-ground,  Stamp element: Ixf
 */
 /*
 c           Branch: xf-ground, Stamp element: Rxf
 */
-//            *(here->HICUMxfXfPtr) +=  1; // current Ixf is normalized to Tf
+        //    *(here->HICUMxfXfPtr) +=  1; // current Ixf is normalized to Tf
 
 //          #############################################################
 //          ############### FINISH STAMPS NO SH #########################
