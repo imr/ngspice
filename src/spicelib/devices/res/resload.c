@@ -19,6 +19,11 @@ RESload(GENmodel *inModel, CKTcircuit *ckt)
 
     /*  loop through all the resistor models */
     for( ; model != NULL; model = RESnextModel(model)) {
+
+#ifdef KLU
+        if ((model->RESisLinear == ckt->CKTlinearModelsRequested) && (model->RESisLinearStatic == ckt->CKTlinearStaticModelsRequested)) {
+#endif
+
         RESinstance *here;
 
         /* loop through all the instances of the model */
@@ -33,6 +38,11 @@ RESload(GENmodel *inModel, CKTcircuit *ckt)
             *(here->RESposNegPtr) -= here->RESconduct;
             *(here->RESnegPosPtr) -= here->RESconduct;
         }
+
+#ifdef KLU
+        }
+#endif
+
     }
     return(OK);
 }

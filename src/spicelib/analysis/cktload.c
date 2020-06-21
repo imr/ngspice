@@ -40,11 +40,11 @@ CKTloadLinearStatic (CKTcircuit *ckt)
     for (i = 0 ; i <= ckt->CKTmatrix->CKTkluN ; i++)
         ckt->CKTrhs_LinearStatic [i] = 0 ;
 
+    ckt->CKTlinearModelsRequested = 1 ;
+    ckt->CKTlinearStaticModelsRequested = 1 ;
     for (i = 0; i < DEVmaxnum; i++)
     {
-        if (DEVices[i] && DEVices[i]->DEVload && ckt->CKThead [i] &&
-            DEVices[i]->DEVisLinear && (*DEVices[i]->DEVisLinear) &&
-            DEVices[i]->DEVisLinearStatic && (*DEVices[i]->DEVisLinearStatic))
+        if (DEVices[i] && DEVices[i]->DEVload && ckt->CKThead [i])
         {
             error = DEVices[i]->DEVload (ckt->CKThead [i], ckt) ;
 
@@ -67,11 +67,11 @@ CKTloadLinearDynamic (CKTcircuit *ckt)
     for (i = 0 ; i <= ckt->CKTmatrix->CKTkluN ; i++)
         ckt->CKTrhs_LinearDynamic [i] = 0 ;
 
+    ckt->CKTlinearModelsRequested = 1 ;
+    ckt->CKTlinearStaticModelsRequested = 0 ;
     for (i = 0; i < DEVmaxnum; i++)
     {
-        if (DEVices[i] && DEVices[i]->DEVload && ckt->CKThead [i] &&
-            DEVices[i]->DEVisLinear && (*DEVices[i]->DEVisLinear) &&
-            DEVices[i]->DEVisLinearStatic && !(*DEVices[i]->DEVisLinearStatic))
+        if (DEVices[i] && DEVices[i]->DEVload && ckt->CKThead [i])
         {
             error = DEVices[i]->DEVload (ckt->CKThead [i], ckt) ;
 
@@ -130,15 +130,14 @@ CKTload(CKTcircuit *ckt)
     noncon = ckt->CKTnoncon;
 #endif /* STEPDEBUG */
 
-    for (i = 0; i < DEVmaxnum; i++) {
-
-        /* Francesco Lannutti */
 #ifdef KLU
-        if (DEVices[i] && DEVices[i]->DEVload && ckt->CKThead[i] &&
-            ((DEVices[i]->DEVisLinear && !(*DEVices[i]->DEVisLinear)) || !(DEVices[i]->DEVisLinear))) {
-#else
-        if (DEVices[i] && DEVices[i]->DEVload && ckt->CKThead[i]) {
+    /* Francesco Lannutti */
+    ckt->CKTlinearModelsRequested = 0 ;
+    ckt->CKTlinearStaticModelsRequested = 0 ;
 #endif
+
+    for (i = 0; i < DEVmaxnum; i++) {
+        if (DEVices[i] && DEVices[i]->DEVload && ckt->CKThead[i]) {
 
             error = DEVices[i]->DEVload (ckt->CKThead[i], ckt);
             if (ckt->CKTnoncon)

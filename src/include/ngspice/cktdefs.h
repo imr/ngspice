@@ -308,6 +308,8 @@ struct CKTcircuit {
 
 #ifdef KLU
     unsigned int CKTkluMODE:1;
+    unsigned int CKTlinearModelsRequested : 1 ;
+    unsigned int CKTlinearStaticModelsRequested : 1 ;
 #endif
 };
 

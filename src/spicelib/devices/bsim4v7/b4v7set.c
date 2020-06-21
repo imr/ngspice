@@ -73,7 +73,14 @@ BSIM4v7instance **InstArray;
 
     /*  loop through all the BSIM4v7 device models */
     for( ; model != NULL; model = BSIM4v7nextModel(model))
-    {   /* process defaults of model parameters */
+    {
+
+#ifdef KLU
+        model->BSIM4v7isLinear = 0 ;
+        model->BSIM4v7isLinearStatic = 0 ;
+#endif
+
+        /* process defaults of model parameters */
         if (!model->BSIM4v7typeGiven)
             model->BSIM4v7type = NMOS;     
 

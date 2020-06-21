@@ -141,6 +141,12 @@ typedef struct sRESmodel {       /* model structure for a resistor */
     unsigned RESlfGiven         :1; /* flags indicates lf is given */
     unsigned RESwfGiven         :1; /* flags indicates wf is given */
     unsigned RESefGiven         :1; /* flags indicates ef is given */
+
+#ifdef KLU
+    unsigned int RESisLinear : 1 ;
+    unsigned int RESisLinearStatic : 1 ;
+#endif
+
 } RESmodel;
 
 /* device parameters */

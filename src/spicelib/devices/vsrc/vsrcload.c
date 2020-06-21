@@ -40,6 +40,10 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
         for (here = VSRCinstances(model); here != NULL ;
                 here=VSRCnextInstance(here)) {
 
+#ifdef KLU
+            if ((here->VSRCisLinear == ckt->CKTlinearModelsRequested) && (here->VSRCisLinearStatic == ckt->CKTlinearStaticModelsRequested)) {
+#endif
+
             *(here->VSRCposIbrPtr) += 1.0 ;
             *(here->VSRCnegIbrPtr) -= 1.0 ;
             *(here->VSRCibrPosPtr) += 1.0 ;
@@ -414,7 +418,12 @@ loadDone:
 
             /* load the new voltage value into the matrix */
 #ifdef KLU
-            *(ckt->CKTrhs_LinearDynamic + (here->VSRCbranch)) += value;
+            if ((here->VSRCisLinear == 1) && (here->VSRCisLinearStatic == 1)) {
+                *(ckt->CKTrhs_LinearStatic + (here->VSRCbranch)) += value;
+            } else if ((here->VSRCisLinear == 1) && (here->VSRCisLinearStatic == 0)) {
+                *(ckt->CKTrhs_LinearDynamic + (here->VSRCbranch)) += value;
+            }
+            }
 #else
             *(ckt->CKTrhs + (here->VSRCbranch)) += value;
 #endif

@@ -249,7 +249,13 @@ ChargeComputationNeeded =
 
 #ifndef USE_OMP
 for (; model != NULL; model = BSIM4v7nextModel(model))
-{    for (here = BSIM4v7instances(model); here != NULL; 
+{
+
+#ifdef KLU
+    if ((model->BSIM4v7isLinear == ckt->CKTlinearModelsRequested) && (model->BSIM4v7isLinearStatic == ckt->CKTlinearStaticModelsRequested)) {
+#endif
+
+     for (here = BSIM4v7instances(model); here != NULL; 
           here = BSIM4v7nextInstance(here))
      {
 #endif
@@ -5312,6 +5318,11 @@ line1000:  ;
 
 #ifndef USE_OMP
      }  /* End of MOSFET Instance */
+
+#ifdef KLU
+    }
+#endif
+
 }   /* End of Model Instance */
 #endif
 

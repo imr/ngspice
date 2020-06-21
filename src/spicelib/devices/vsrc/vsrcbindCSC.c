@@ -39,20 +39,39 @@ VSRCbindCSC (GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = VSRCinstances(model); here != NULL ; here = VSRCnextInstance(here))
         {
-            CREATE_KLU_BINDING_TABLE_DYNAMIC(VSRCposIbrPtr, VSRCposIbrBinding, VSRCposNode, VSRCbranch);
-            CREATE_KLU_BINDING_TABLE_DYNAMIC(VSRCnegIbrPtr, VSRCnegIbrBinding, VSRCnegNode, VSRCbranch);
-            CREATE_KLU_BINDING_TABLE_DYNAMIC(VSRCibrNegPtr, VSRCibrNegBinding, VSRCbranch, VSRCnegNode);
-            CREATE_KLU_BINDING_TABLE_DYNAMIC(VSRCibrPosPtr, VSRCibrPosBinding, VSRCbranch, VSRCposNode);
+            if ((here->VSRCisLinear == 1) && (here->VSRCisLinearStatic == 1)) {
+                CREATE_KLU_BINDING_TABLE_STATIC(VSRCposIbrPtr, VSRCposIbrBinding, VSRCposNode, VSRCbranch);
+                CREATE_KLU_BINDING_TABLE_STATIC(VSRCnegIbrPtr, VSRCnegIbrBinding, VSRCnegNode, VSRCbranch);
+                CREATE_KLU_BINDING_TABLE_STATIC(VSRCibrNegPtr, VSRCibrNegBinding, VSRCbranch, VSRCnegNode);
+                CREATE_KLU_BINDING_TABLE_STATIC(VSRCibrPosPtr, VSRCibrPosBinding, VSRCbranch, VSRCposNode);
 
-            /* Pole-Zero Analysis */
-            if (here->VSRCibrIbrPtr)
-            {
-                i = here->VSRCibrIbrPtr ;
-                matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
-                here->VSRCibrIbrBinding = matched ;
-                if (matched != NULL)
+                /* Pole-Zero Analysis */
+                if (here->VSRCibrIbrPtr)
                 {
-                    here->VSRCibrIbrPtr = matched->CSC_LinearDynamic ;
+                    i = here->VSRCibrIbrPtr ;
+                    matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                    here->VSRCibrIbrBinding = matched ;
+                    if (matched != NULL)
+                    {
+                        here->VSRCibrIbrPtr = matched->CSC_LinearStatic ;
+                    }
+                }
+            } else if ((here->VSRCisLinear == 1) && (here->VSRCisLinearStatic == 0)) {
+                CREATE_KLU_BINDING_TABLE_DYNAMIC(VSRCposIbrPtr, VSRCposIbrBinding, VSRCposNode, VSRCbranch);
+                CREATE_KLU_BINDING_TABLE_DYNAMIC(VSRCnegIbrPtr, VSRCnegIbrBinding, VSRCnegNode, VSRCbranch);
+                CREATE_KLU_BINDING_TABLE_DYNAMIC(VSRCibrNegPtr, VSRCibrNegBinding, VSRCbranch, VSRCnegNode);
+                CREATE_KLU_BINDING_TABLE_DYNAMIC(VSRCibrPosPtr, VSRCibrPosBinding, VSRCbranch, VSRCposNode);
+
+                /* Pole-Zero Analysis */
+                if (here->VSRCibrIbrPtr)
+                {
+                    i = here->VSRCibrIbrPtr ;
+                    matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
+                    here->VSRCibrIbrBinding = matched ;
+                    if (matched != NULL)
+                    {
+                        here->VSRCibrIbrPtr = matched->CSC_LinearDynamic ;
+                    }
                 }
             }
         }
@@ -75,16 +94,31 @@ VSRCbindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = VSRCinstances(model); here != NULL ; here = VSRCnextInstance(here))
         {
-            CONVERT_KLU_BINDING_TABLE_TO_COMPLEX_DYNAMIC(VSRCposIbrPtr, VSRCposIbrBinding, VSRCposNode, VSRCbranch);
-            CONVERT_KLU_BINDING_TABLE_TO_COMPLEX_DYNAMIC(VSRCnegIbrPtr, VSRCnegIbrBinding, VSRCnegNode, VSRCbranch);
-            CONVERT_KLU_BINDING_TABLE_TO_COMPLEX_DYNAMIC(VSRCibrNegPtr, VSRCibrNegBinding, VSRCbranch, VSRCnegNode);
-            CONVERT_KLU_BINDING_TABLE_TO_COMPLEX_DYNAMIC(VSRCibrPosPtr, VSRCibrPosBinding, VSRCbranch, VSRCposNode);
-            /* Pole-Zero Analysis */
-            if ((here-> VSRCbranch != 0) && (here-> VSRCbranch != 0))
-            {
-                if (here->VSRCibrIbrBinding)
+            if ((here->VSRCisLinear == 1) && (here->VSRCisLinearStatic == 1)) {
+                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX_STATIC(VSRCposIbrPtr, VSRCposIbrBinding, VSRCposNode, VSRCbranch);
+                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX_STATIC(VSRCnegIbrPtr, VSRCnegIbrBinding, VSRCnegNode, VSRCbranch);
+                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX_STATIC(VSRCibrNegPtr, VSRCibrNegBinding, VSRCbranch, VSRCnegNode);
+                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX_STATIC(VSRCibrPosPtr, VSRCibrPosBinding, VSRCbranch, VSRCposNode);
+                /* Pole-Zero Analysis */
+                if ((here-> VSRCbranch != 0) && (here-> VSRCbranch != 0))
                 {
-                    here->VSRCibrIbrPtr = here->VSRCibrIbrBinding->CSC_Complex_LinearDynamic ;
+                    if (here->VSRCibrIbrBinding)
+                    {
+                        here->VSRCibrIbrPtr = here->VSRCibrIbrBinding->CSC_Complex_LinearStatic ;
+                    }
+                }
+            } else if ((here->VSRCisLinear == 1) && (here->VSRCisLinearStatic == 0)) {
+                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX_DYNAMIC(VSRCposIbrPtr, VSRCposIbrBinding, VSRCposNode, VSRCbranch);
+                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX_DYNAMIC(VSRCnegIbrPtr, VSRCnegIbrBinding, VSRCnegNode, VSRCbranch);
+                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX_DYNAMIC(VSRCibrNegPtr, VSRCibrNegBinding, VSRCbranch, VSRCnegNode);
+                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX_DYNAMIC(VSRCibrPosPtr, VSRCibrPosBinding, VSRCbranch, VSRCposNode);
+                /* Pole-Zero Analysis */
+                if ((here-> VSRCbranch != 0) && (here-> VSRCbranch != 0))
+                {
+                    if (here->VSRCibrIbrBinding)
+                    {
+                        here->VSRCibrIbrPtr = here->VSRCibrIbrBinding->CSC_Complex_LinearDynamic ;
+                    }
                 }
             }
         }
@@ -107,16 +141,31 @@ VSRCbindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = VSRCinstances(model); here != NULL ; here = VSRCnextInstance(here))
         {
-            CONVERT_KLU_BINDING_TABLE_TO_REAL_DYNAMIC(VSRCposIbrPtr, VSRCposIbrBinding, VSRCposNode, VSRCbranch);
-            CONVERT_KLU_BINDING_TABLE_TO_REAL_DYNAMIC(VSRCnegIbrPtr, VSRCnegIbrBinding, VSRCnegNode, VSRCbranch);
-            CONVERT_KLU_BINDING_TABLE_TO_REAL_DYNAMIC(VSRCibrNegPtr, VSRCibrNegBinding, VSRCbranch, VSRCnegNode);
-            CONVERT_KLU_BINDING_TABLE_TO_REAL_DYNAMIC(VSRCibrPosPtr, VSRCibrPosBinding, VSRCbranch, VSRCposNode);
-            /* Pole-Zero Analysis */
-            if ((here-> VSRCbranch != 0) && (here-> VSRCbranch != 0))
-            {
-                if (here->VSRCibrIbrBinding)
+            if ((here->VSRCisLinear == 1) && (here->VSRCisLinearStatic == 1)) {
+                CONVERT_KLU_BINDING_TABLE_TO_REAL_STATIC(VSRCposIbrPtr, VSRCposIbrBinding, VSRCposNode, VSRCbranch);
+                CONVERT_KLU_BINDING_TABLE_TO_REAL_STATIC(VSRCnegIbrPtr, VSRCnegIbrBinding, VSRCnegNode, VSRCbranch);
+                CONVERT_KLU_BINDING_TABLE_TO_REAL_STATIC(VSRCibrNegPtr, VSRCibrNegBinding, VSRCbranch, VSRCnegNode);
+                CONVERT_KLU_BINDING_TABLE_TO_REAL_STATIC(VSRCibrPosPtr, VSRCibrPosBinding, VSRCbranch, VSRCposNode);
+                /* Pole-Zero Analysis */
+                if ((here-> VSRCbranch != 0) && (here-> VSRCbranch != 0))
                 {
-                    here->VSRCibrIbrPtr = here->VSRCibrIbrBinding->CSC_LinearDynamic ;
+                    if (here->VSRCibrIbrBinding)
+                    {
+                        here->VSRCibrIbrPtr = here->VSRCibrIbrBinding->CSC_LinearStatic ;
+                    }
+                }
+            } else if ((here->VSRCisLinear == 1) && (here->VSRCisLinearStatic == 0)) {
+                CONVERT_KLU_BINDING_TABLE_TO_REAL_DYNAMIC(VSRCposIbrPtr, VSRCposIbrBinding, VSRCposNode, VSRCbranch);
+                CONVERT_KLU_BINDING_TABLE_TO_REAL_DYNAMIC(VSRCnegIbrPtr, VSRCnegIbrBinding, VSRCnegNode, VSRCbranch);
+                CONVERT_KLU_BINDING_TABLE_TO_REAL_DYNAMIC(VSRCibrNegPtr, VSRCibrNegBinding, VSRCbranch, VSRCnegNode);
+                CONVERT_KLU_BINDING_TABLE_TO_REAL_DYNAMIC(VSRCibrPosPtr, VSRCibrPosBinding, VSRCbranch, VSRCposNode);
+                /* Pole-Zero Analysis */
+                if ((here-> VSRCbranch != 0) && (here-> VSRCbranch != 0))
+                {
+                    if (here->VSRCibrIbrBinding)
+                    {
+                        here->VSRCibrIbrPtr = here->VSRCibrIbrBinding->CSC_LinearDynamic ;
+                    }
                 }
             }
         }

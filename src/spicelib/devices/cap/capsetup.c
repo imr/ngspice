@@ -27,6 +27,11 @@ CAPsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     /*  loop through all the capacitor models */
     for( ; model != NULL; model = CAPnextModel(model)) {
 
+#ifdef KLU
+        model->CAPisLinear = 1 ;
+        model->CAPisLinearStatic = 0 ;
+#endif
+
         /*Default Value Processing for Model Parameters */
         if (!model->CAPmCapGiven) {
             model->CAPmCap = 0.0;

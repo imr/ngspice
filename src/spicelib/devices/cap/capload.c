@@ -37,6 +37,10 @@ CAPload(GENmodel *inModel, CKTcircuit *ckt)
         /*  loop through all the capacitor models */
         for( ; model != NULL; model = CAPnextModel(model)) {
 
+#ifdef KLU
+            if ((model->CAPisLinear == ckt->CKTlinearModelsRequested) && (model->CAPisLinearStatic == ckt->CKTlinearStaticModelsRequested)) {
+#endif
+
             /* loop through all the instances of the model */
             for (here = CAPinstances(model); here != NULL ;
                     here=CAPnextInstance(here)) {
@@ -80,6 +84,11 @@ CAPload(GENmodel *inModel, CKTcircuit *ckt)
                 } else
                     *(ckt->CKTstate0+here->CAPqcap) = here->CAPcapac * vcap;
             }
+
+#ifdef KLU
+            }
+#endif
+
         }
     }
     return(OK);

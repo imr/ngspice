@@ -43,18 +43,36 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
         case VSRC_DC:
             here->VSRCdcValue = value->rValue;
             here->VSRCdcGiven = TRUE;
+
+#ifdef KLU
+            here->VSRCisLinear = 1 ;
+            here->VSRCisLinearStatic = 1 ;
+#endif
+
             break;
 
         case VSRC_AC_MAG:
             here->VSRCacMag = value->rValue;
             here->VSRCacMGiven = TRUE;
             here->VSRCacGiven = TRUE;
+
+#ifdef KLU
+            here->VSRCisLinear = 1 ;
+            here->VSRCisLinearStatic = 1 ;
+#endif
+
             break;
 
         case VSRC_AC_PHASE:
             here->VSRCacPhase = value->rValue;
             here->VSRCacPGiven = TRUE;
             here->VSRCacGiven = TRUE;
+
+#ifdef KLU
+            here->VSRCisLinear = 1 ;
+            here->VSRCisLinearStatic = 1 ;
+#endif
+
             break;
 
         case VSRC_AC:
@@ -71,6 +89,12 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
                 default:
                     return(E_BADPARM);
             }
+
+#ifdef KLU
+            here->VSRCisLinear = 1 ;
+            here->VSRCisLinearStatic = 1 ;
+#endif
+
             break;
 
         case VSRC_PULSE:
@@ -79,6 +103,12 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->VSRCfunctionType = PULSE;
             here->VSRCfuncTGiven = TRUE;
             copy_coeffs(here, value);
+
+#ifdef KLU
+            here->VSRCisLinear = 1 ;
+            here->VSRCisLinearStatic = 0 ;
+#endif
+
             break;
 
         case VSRC_SINE:
@@ -87,6 +117,12 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->VSRCfunctionType = SINE;
             here->VSRCfuncTGiven = TRUE;
             copy_coeffs(here, value);
+
+#ifdef KLU
+            here->VSRCisLinear = 1 ;
+            here->VSRCisLinearStatic = 0 ;
+#endif
+
             break;
 
         case VSRC_EXP:
@@ -95,6 +131,12 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->VSRCfunctionType = EXP;
             here->VSRCfuncTGiven = TRUE;
             copy_coeffs(here, value);
+
+#ifdef KLU
+            here->VSRCisLinear = 1 ;
+            here->VSRCisLinearStatic = 0 ;
+#endif
+
             break;
 
         case VSRC_PWL:
@@ -111,6 +153,11 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
                      fprintf(stderr, " has non-increasing PWL time points.\n");
                   }
             }
+
+#ifdef KLU
+            here->VSRCisLinear = 1 ;
+            here->VSRCisLinearStatic = 0 ;
+#endif
 
             break;
 
@@ -148,6 +195,12 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->VSRCfunctionType = SFFM;
             here->VSRCfuncTGiven = TRUE;
             copy_coeffs(here, value);
+
+#ifdef KLU
+            here->VSRCisLinear = 1 ;
+            here->VSRCisLinearStatic = 0 ;
+#endif
+
             break;
 
         case VSRC_AM:
@@ -156,6 +209,12 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->VSRCfunctionType = AM;
             here->VSRCfuncTGiven = TRUE;
             copy_coeffs(here, value);
+
+#ifdef KLU
+            here->VSRCisLinear = 1 ;
+            here->VSRCisLinearStatic = 0 ;
+#endif
+
             break;
 
         case VSRC_D_F1:
@@ -233,6 +292,12 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->VSRCtrnoise_state =
                 trnoise_state_init(NA, TS, NALPHA, NAMP, RTSAM, RTSCAPT, RTSEMT);
         }
+
+#ifdef KLU
+            here->VSRCisLinear = 1 ;
+            here->VSRCisLinearStatic = 0 ;
+#endif
+
         break;
 
         case VSRC_TRRANDOM: {
@@ -259,6 +324,12 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->VSRCtrrandom_state =
                 trrandom_state_init(rndtype, TS, TD, PARAM1, PARAM2);
         }
+
+#ifdef KLU
+            here->VSRCisLinear = 1 ;
+            here->VSRCisLinearStatic = 0 ;
+#endif
+
         break;
 
 #ifdef SHARED_MODULE
@@ -269,6 +340,12 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             copy_coeffs(here, value);
             */
         }
+
+#ifdef KLU
+            here->VSRCisLinear = 1 ;
+            here->VSRCisLinearStatic = 0 ;
+#endif
+
         break;
 #endif
 

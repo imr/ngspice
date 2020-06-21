@@ -84,6 +84,8 @@ typedef struct sVSRCinstance {
     BindElement *VSRCibrNegBinding ;
     BindElement *VSRCibrPosBinding ;
     BindElement *VSRCibrIbrBinding ;
+    unsigned int VSRCisLinear : 1 ;
+    unsigned int VSRCisLinearStatic : 1 ;
 #endif
 
 } VSRCinstance ;

@@ -120,6 +120,11 @@ typedef struct sCAPmodel {      /* model structure for a capacitor */
     unsigned CAPthickGiven     : 1;    /* flags indicates insulator thickness given */
     unsigned CAPbv_maxGiven    : 1;    /* flags indicates maximum voltage is given */
 
+#ifdef KLU
+    unsigned int CAPisLinear : 1 ;
+    unsigned int CAPisLinearStatic : 1 ;
+#endif
+
 } CAPmodel;
 
 /* device parameters */

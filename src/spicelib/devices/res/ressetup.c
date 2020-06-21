@@ -25,6 +25,11 @@ RESsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit*ckt, int *state)
     /*  loop through all the resistor models */
     for( ; model != NULL; model = RESnextModel(model)) {
 
+#ifdef KLU
+        model->RESisLinear = 1 ;
+        model->RESisLinearStatic = 1 ;
+#endif
+
         /* Default Value Processing for Resistor Models */
         if(!model->REStnomGiven) model->REStnom         = ckt->CKTnomTemp;
         if(!model->RESsheetResGiven) model->RESsheetRes = 0.0;
