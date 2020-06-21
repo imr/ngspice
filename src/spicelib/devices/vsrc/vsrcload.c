@@ -413,7 +413,11 @@ loadDone:
 /* gtri - end - wbk - modify to process srcFact, etc. for all sources */
 
             /* load the new voltage value into the matrix */
+#ifdef KLU
+            *(ckt->CKTrhs_LinearDynamic + (here->VSRCbranch)) += value;
+#else
             *(ckt->CKTrhs + (here->VSRCbranch)) += value;
+#endif
 
         } // for loop instances
     } // for loop models

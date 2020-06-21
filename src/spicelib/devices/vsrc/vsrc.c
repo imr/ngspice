@@ -54,6 +54,6 @@ int     VSRCiSize = sizeof(VSRCinstance);
 int     VSRCmSize = sizeof(VSRCmodel);
 
 #ifdef KLU
-int VSRCisLinear = 0 ;
+int VSRCisLinear = 1 ;
 int VSRCisLinearStatic = 0 ;
 #endif

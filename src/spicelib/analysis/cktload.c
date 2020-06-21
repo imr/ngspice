@@ -37,6 +37,9 @@ CKTloadLinearStatic (CKTcircuit *ckt)
     for (i = 0 ; i < ckt->CKTmatrix->CKTklunz ; i++)
         ckt->CKTmatrix->CKTkluAx_LinearStatic [i] = 0 ;
 
+    for (i = 0 ; i <= ckt->CKTmatrix->CKTkluN ; i++)
+        ckt->CKTrhs_LinearStatic [i] = 0 ;
+
     for (i = 0; i < DEVmaxnum; i++)
     {
         if (DEVices[i] && DEVices[i]->DEVload && ckt->CKThead [i] &&
@@ -61,6 +64,9 @@ CKTloadLinearDynamic (CKTcircuit *ckt)
     for (i = 0 ; i < ckt->CKTmatrix->CKTklunz ; i++)
         ckt->CKTmatrix->CKTkluAx_LinearDynamic [i] = 0 ;
 
+    for (i = 0 ; i <= ckt->CKTmatrix->CKTkluN ; i++)
+        ckt->CKTrhs_LinearDynamic [i] = 0 ;
+
     for (i = 0; i < DEVmaxnum; i++)
     {
         if (DEVices[i] && DEVices[i]->DEVload && ckt->CKThead [i] &&
@@ -84,6 +90,9 @@ CKTloadAssemble (CKTcircuit *ckt)
 
     for (i = 0 ; i < ckt->CKTmatrix->CKTklunz ; i++)
         ckt->CKTmatrix->CKTkluAx [i] += (ckt->CKTmatrix->CKTkluAx_LinearStatic [i] + ckt->CKTmatrix->CKTkluAx_LinearDynamic [i]) ;
+
+    for (i = 0 ; i <= ckt->CKTmatrix->CKTkluN ; i++)
+        ckt->CKTrhs [i] += (ckt->CKTrhs_LinearStatic [i] + ckt->CKTrhs_LinearDynamic [i]) ;
 
     return 0 ;
 }

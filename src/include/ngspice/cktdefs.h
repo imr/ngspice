@@ -111,6 +111,12 @@ struct CKTcircuit {
     SMPmatrix *CKTmatrix;       /* pointer to sparse matrix */
     int CKTniState;             /* internal state */
     double *CKTrhs;             /* current rhs value - being loaded */
+
+#ifdef KLU
+    double *CKTrhs_LinearStatic;  /* current rhs value (Linear Static) - being loaded */
+    double *CKTrhs_LinearDynamic; /* current rhs value (Linear Dynamic) - being loaded */
+#endif
+
     double *CKTrhsOld;          /* previous rhs value for convergence
                                    testing */
     double *CKTrhsSpare;        /* spare rhs value for reordering */
@@ -308,10 +314,12 @@ struct CKTcircuit {
 
 /* Now function prototypes */
 
+#ifdef KLU
 /* Francesco Lannutti */
 extern int CKTloadLinearStatic (CKTcircuit *) ;
 extern int CKTloadLinearDynamic (CKTcircuit *) ;
 extern int CKTloadAssemble (CKTcircuit *) ;
+#endif
 
 extern int ACan(CKTcircuit *, int);
 extern int ACaskQuest(CKTcircuit *, JOB *, int , IFvalue *);
