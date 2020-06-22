@@ -20,6 +20,10 @@
 nTypeSelectionArguments     npn level=8 version=2.34
 //pTypeSelectionArguments     pnp level=8 version=2.34
 `endif
+`ifdef ads
+nTypeSelectionArguments   HICUM2_22 
+//nTypeSelectionArguments     npn HICUM2_34
+`endif
 
 //
 // General test-independent information
@@ -31,13 +35,18 @@ pins                        coll base emit subs therm
 float                       therm
 checkPolarity               n
 
-test ypara_npn_full_sh_ac
+test fgum_ac_npn_vert_nqs_dc
 temperature 27 
-biases V(emit)=0 V(subs)=0 V(coll)=1.000000
-biasSweep V(base)=0.800000,0.950000,0.050000
-freq dec 5 1e+008 1e+011
-outputs G(base,base) G(base,coll) G(coll,base) G(coll,coll) C(base,base) C(base,coll) C(coll,base) C(coll,coll)
-modelParameters parameters/npn_full_sh
+biases V(emit)=0 V(subs)=0
+biasSweep V(base)=0.750000,1.050000,0.010000
+biasList V(coll)=0.500000,1.000000,1.500000
+outputs I(coll) I(base)
+modelParameters parameters/npn_vert_nqs
+
+//
+// Specific tests
+//
+
 
 `ifdef NOT_USED
 `endif

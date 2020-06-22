@@ -14,7 +14,7 @@
 #
 
 package simulate;
-$simulatorCommand="adssim";
+$simulatorCommand="hpeesofsim_local";
 $netlistFile="adsCkt";
  $mFactorVerilogaName="m";  # for LRM2.1
 #$mFactorVerilogaName="_M"; # for LRM2.2

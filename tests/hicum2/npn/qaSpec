@@ -20,9 +20,6 @@
 nTypeSelectionArguments     npn level=8 version=2.34
 //pTypeSelectionArguments     pnp level=8 version=2.34
 `endif
-`ifdef ads
-nTypeSelectionArguments     npn HICUM2_34
-`endif
 
 //
 // General test-independent information
@@ -838,7 +835,7 @@ modelParameters parameters/npn_full_subtran
 //outputs I(coll) I(base)
 //modelParameters parameters/npn_cornoise
 //
-test vbe_0_npn_1D
+test vbe_0_npn_1
 temperature 27 
 biases V(emit)=0 V(subs)=0 V(base)=0.000000
 biasSweep V(coll)=-1.000000,1.000000,0.050000
