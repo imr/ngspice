@@ -102,6 +102,7 @@ IFparm HICUMmPTable[] = { /* model parameters */
   IOPU("npn",  HICUM_MOD_NPN,  IF_FLAG, "NPN type device"),
   IOPU("pnp",  HICUM_MOD_PNP,  IF_FLAG, "PNP type device"),
   IOP("tnom",  HICUM_MOD_TNOM, IF_REAL, "Temperature at which parameters are specified"),
+  IOPR("tref", HICUM_MOD_TNOM, IF_REAL, "Temperature at which parameters are specified"),
   IOP("version", HICUM_MOD_VERSION, IF_STRING, " parameter for model version"),
 
 //Transfer current
