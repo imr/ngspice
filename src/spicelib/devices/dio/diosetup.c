@@ -256,22 +256,22 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     return(E_NOMEM);\
 } } while(0)
 
-            TSTALLOC(DIOposPosPrimePtr,DIOposNode,DIOposPrimeNode);
-            TSTALLOC(DIOnegPosPrimePtr,DIOnegNode,DIOposPrimeNode);
-            TSTALLOC(DIOposPrimePosPtr,DIOposPrimeNode,DIOposNode);
-            TSTALLOC(DIOposPrimeNegPtr,DIOposPrimeNode,DIOnegNode);
-            TSTALLOC(DIOposPosPtr,DIOposNode,DIOposNode);
-            TSTALLOC(DIOnegNegPtr,DIOnegNode,DIOnegNode);
-            TSTALLOC(DIOposPrimePosPrimePtr,DIOposPrimeNode,DIOposPrimeNode);
+            TSTALLOC(DIOposPosPrimePtr,      DIOposNode,      DIOposPrimeNode);
+            TSTALLOC(DIOnegPosPrimePtr,      DIOnegNode,      DIOposPrimeNode);
+            TSTALLOC(DIOposPrimePosPtr,      DIOposPrimeNode, DIOposNode);
+            TSTALLOC(DIOposPrimeNegPtr,      DIOposPrimeNode, DIOnegNode);
+            TSTALLOC(DIOposPosPtr,           DIOposNode,      DIOposNode);
+            TSTALLOC(DIOnegNegPtr,           DIOnegNode,      DIOnegNode);
+            TSTALLOC(DIOposPrimePosPrimePtr, DIOposPrimeNode, DIOposPrimeNode);
 
             if ((model->DIOshMod == 1) && (model->DIOrth0 != 0.0)) {
-                TSTALLOC(DIOtempPosPtr, DIOtempNode, DIOposNode);
-                TSTALLOC(DIOtempPosPrimePtr, DIOtempNode, DIOposPrimeNode);
-                TSTALLOC(DIOtempNegPtr, DIOtempNode, DIOnegNode);
-                TSTALLOC(DIOtempTempPtr, DIOtempNode, DIOtempNode);
-                TSTALLOC(DIOposTempPtr, DIOposNode, DIOtempNode);
+                TSTALLOC(DIOtempPosPtr,      DIOtempNode,     DIOposNode);
+                TSTALLOC(DIOtempPosPrimePtr, DIOtempNode,     DIOposPrimeNode);
+                TSTALLOC(DIOtempNegPtr,      DIOtempNode,     DIOnegNode);
+                TSTALLOC(DIOtempTempPtr,     DIOtempNode,     DIOtempNode);
+                TSTALLOC(DIOposTempPtr,      DIOposNode,      DIOtempNode);
                 TSTALLOC(DIOposPrimeTempPtr, DIOposPrimeNode, DIOtempNode);
-                TSTALLOC(DIOnegTempPtr, DIOnegNode, DIOtempNode);
+                TSTALLOC(DIOnegTempPtr,      DIOnegNode,      DIOtempNode);
             }
 
         }
