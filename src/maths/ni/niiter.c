@@ -136,6 +136,7 @@ NIiter(CKTcircuit *ckt, int maxIter)
 
 #ifdef KLU
                 if (error == E_SINGULAR) {
+                    fprintf (stderr, "Warning: KLU ReFactor failed. Factoring again...\n") ;
                     ckt->CKTniState |= NISHOULDREORDER;
                     error = SMPreorder(ckt->CKTmatrix, ckt->CKTpivotAbsTol, ckt->CKTpivotRelTol, ckt->CKTdiagGmin);
                     ckt->CKTstat->STATreorderTime += SPfrontEnd->IFseconds() - startTime;
