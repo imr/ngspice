@@ -573,6 +573,10 @@ HICUMsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                   if (error) return(error);
                      here->HICUMtempNode = tmp->number;
                }
+            } else {
+                if (here->HICUMtempNode > 0) { // external temp node is given, but no she parameter
+                    here->HICUMtempNode = 0;
+                }
             }
 
            if(here->HICUMxfNode == 0) {
