@@ -31,7 +31,7 @@ IFparm HICUMpTable[] = { /* parameters */
  IOPU("m",       HICUM_M,      IF_REAL,    "Multiplier"),
  IOPU("temp",    HICUM_TEMP,   IF_REAL,    "Instance temperature"),
  IP("dt",        HICUM_DTEMP,  IF_REAL,    "Instance delta temperature"),
- IOPUR("tk",     HICUM_QUEST_TK,     IF_REAL,    "Actual device temperature"),
+ IOPU("tk",     HICUM_QUEST_TK,     IF_REAL,    "Actual device temperature"),
  IOPU("dtsh",    HICUM_QUEST_DTSH,   IF_REAL,    "Temperature increase due to self-heating"),
  IOPU("it",    HICUM_QUEST_IT,   IF_REAL,    "transfer current"),
 
