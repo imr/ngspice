@@ -101,13 +101,19 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
     double Ixf1_Vbiei;
     double Ixf1_Vbici;
     double Ixf1_Vxf2 ;
+    double Ixf1_Vxf1 ;
+    double Ixf1_Vrth ;
 
     double Ixf2_Vbiei;
     double Ixf2_Vbici;
     double Ixf2_Vxf2 ;
+    double Ixf2_Vxf1 ;
+    double Ixf2_Vrth ;
 
     double Ixf_Vbiei ;
     double Ixf_Vbici ;
+    double Ixf_Vxf ;
+    double Ixf_Vrth ;
 
     double Ith_Vrth, Ith_Vbiei, Ith_Vbici, Ith_Vbpbi, Ith_Vbpci, Ith_Vbpei, Ith_Vciei, Ith_Vsici, Ith_Vcic, Ith_Vbbp, Ith_Veie;
 
@@ -177,13 +183,19 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
             Ixf1_Vbiei  = *(ckt->CKTstate0 + here->HICUMixf1_Vbiei);
             Ixf1_Vbici  = *(ckt->CKTstate0 + here->HICUMixf1_Vbici);
             Ixf1_Vxf2   = *(ckt->CKTstate0 + here->HICUMixf1_Vxf2);
+            Ixf1_Vxf1   = *(ckt->CKTstate0 + here->HICUMixf1_Vxf1);
+            Ixf1_Vrth   = *(ckt->CKTstate0 + here->HICUMixf1_Vrth);
 
             Ixf2_Vbiei  = *(ckt->CKTstate0 + here->HICUMixf1_Vbiei);
             Ixf2_Vbici  = *(ckt->CKTstate0 + here->HICUMixf1_Vbici);
             Ixf2_Vxf2   = *(ckt->CKTstate0 + here->HICUMixf1_Vxf2);
+            Ixf2_Vxf1   = *(ckt->CKTstate0 + here->HICUMixf1_Vxf1);
+            Ixf2_Vrth   = *(ckt->CKTstate0 + here->HICUMixf1_Vrth);
 
-            Ixf_Vbiei   = *(ckt->CKTstate0 + here->HICUMixf1_Vbiei);
-            Ixf_Vbici   = *(ckt->CKTstate0 + here->HICUMixf1_Vbici);
+            Ixf_Vbiei   = *(ckt->CKTstate0 + here->HICUMixf_Vbiei);
+            Ixf_Vbici   = *(ckt->CKTstate0 + here->HICUMixf_Vbici);
+            Ixf_Vxf     = *(ckt->CKTstate0 + here->HICUMixf_Vxf);
+            Ixf_Vrth    = *(ckt->CKTstate0 + here->HICUMixf_Vrth);
 
 ////////////////////////////////////
 //////////  The real part  /////////
@@ -293,6 +305,7 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
             *(here->HICUMxf1BaseBIPtr)             += +Ixf1_Vbici;
             *(here->HICUMxf1CollCIPtr)             += -Ixf1_Vbici;
             *(here->HICUMxf1Xf2Ptr)                += +Ixf1_Vxf2;
+            *(here->HICUMxf1Xf1Ptr)                += +Ixf1_Vxf1;
 
             //Ixf2
             *(here->HICUMxf2BaseBIPtr)             += +Ixf2_Vbiei;
@@ -300,12 +313,14 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
             *(here->HICUMxf2BaseBIPtr)             += +Ixf2_Vbici;
             *(here->HICUMxf2CollCIPtr)             += -Ixf2_Vbici;
             *(here->HICUMxf2Xf2Ptr)                += +Ixf2_Vxf2;
+            *(here->HICUMxf2Xf1Ptr)                += +Ixf2_Vxf1;
 
             //Ixf
             *(here->HICUMxfBaseBIPtr)              += +Ixf_Vbiei;
             *(here->HICUMxfEmitEIPtr)              += -Ixf_Vbiei;
             *(here->HICUMxfBaseBIPtr)              += +Ixf_Vbici;
             *(here->HICUMxfCollCIPtr)              += -Ixf_Vbici;
+            *(here->HICUMxfXfPtr)                  += +Ixf_Vxf;
 
 ////////////////////////////////////
 //////////  The complex part  //////
@@ -421,11 +436,10 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
             *(here->HICUMcollCICollCIPtr +1)           +=  XQdsu_Vbpci;
             *(here->HICUMbaseBPCollCIPtr +1)           += -XQdsu_Vbpci;
             *(here->HICUMcollCIBaseBPPtr +1)           += -XQdsu_Vbpci;
-            // these matrix entries are not implemented
-            // *(here->HICUMbaseBPsubsSIPtr +1)           +=  XQdsu_Vsici;
-            // *(here->HICUMcollCIcollCIPtr +1)           +=  XQdsu_Vsici;
-            // *(here->HICUMcollCIsubsSIPtr +1)           +=  -XQdsu_Vsici;
-            // *(here->HICUMsubsSIbaseBPPtr +1)           +=  -XQdsu_Vsici;
+            *(here->HICUMbaseBPBaseBPPtr +1)           +=  XQdsu_Vsici;
+            *(here->HICUMsubsSISubsSIPtr +1)           +=  XQdsu_Vsici;
+            *(here->HICUMbaseBPSubsSIPtr +1)           +=  -XQdsu_Vsici;
+            *(here->HICUMsubsSIBaseBPPtr +1)           +=  -XQdsu_Vsici;
             //Qjs
             *(here->HICUMsubsSISubsSIPtr +1)          +=  XQjs_Vsici;
             *(here->HICUMcollCICollCIPtr +1)          +=  XQjs_Vsici;
@@ -504,6 +518,12 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
 //              Branch: bpsi, Stamp element: Its
                 *(here->HICUMbaseBPtempPtr)            +=  Ibpsi_Vrth;
                 *(here->HICUMsubsSItempPtr)            += -Ibpsi_Vrth;
+//              Stamp element: Ixf    f_xf = +   
+                *(here->HICUMxfTempPtr)                +=  Ixf_Vrth;
+//              Stamp element: Ixf1    f_xf1 = +   
+                *(here->HICUMxf1TempPtr)               +=  Ixf1_Vrth;
+//              Stamp element: Ixf2    f_xf2 = +   
+                *(here->HICUMxf2TempPtr)               +=  Ixf2_Vrth;
 
 //              Stamp element:    Ith f_T = - Ith 
                 // with respect to Potential Vrth
@@ -572,9 +592,8 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
                 *(here->HICUMsubsSItempPtr + 1) += -XQjs_Vrth;
                 *(here->HICUMcollCItempPtr + 1) += +XQjs_Vrth;
                 //Qscp    from S  to C  f_S =- f_C =+
-                // Jacobian entry not implemented
-                // *(here->HICUMsubsTempPtr + 1)   += -XQscp_Vrth;
-                // *(here->HICUMcollTempPtr + 1)   += +XQscp_Vrth;
+                *(here->HICUMsubsTempPtr + 1)   += -XQscp_Vrth;
+                *(here->HICUMcollTempPtr + 1)   += +XQscp_Vrth;
                 //Qcth    from 0  to T  f_0=- f_T=+
                 *(here->HICUMtempTempPtr + 1) += -XQcth_Vrth;
 

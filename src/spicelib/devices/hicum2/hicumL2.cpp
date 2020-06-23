@@ -1532,6 +1532,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                     *(ckt->CKTstate0+here->HICUMixf1_Vbiei)=*(ckt->CKTstate1+here->HICUMixf1_Vbiei);
                     *(ckt->CKTstate0+here->HICUMixf1_Vbici)=*(ckt->CKTstate1+here->HICUMixf1_Vbici);
                     *(ckt->CKTstate0+here->HICUMixf1_Vxf2)=*(ckt->CKTstate1+here->HICUMixf1_Vxf2);
+                    *(ckt->CKTstate0+here->HICUMixf1_Vxf1)=*(ckt->CKTstate1+here->HICUMixf1_Vxf1);
                     *(ckt->CKTstate0+here->HICUMixf1_Vrth)=*(ckt->CKTstate1+here->HICUMixf1_Vrth);
                     *(ckt->CKTstate0+here->HICUMvxf2)=*(ckt->CKTstate1+here->HICUMvxf2);
                     *(ckt->CKTstate0+here->HICUMqxf2)=*(ckt->CKTstate1+here->HICUMqxf2);
@@ -1847,6 +1848,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                     Ixf1_Vbiei = *(ckt->CKTstate0 + here->HICUMixf1_Vbiei)  ;
                     Ixf1_Vbici = *(ckt->CKTstate0 + here->HICUMixf1_Vbici)  ;
                     Ixf1_Vxf2  = *(ckt->CKTstate0 + here->HICUMixf1_Vxf2)   ;
+                    Ixf1_Vxf1  = *(ckt->CKTstate0 + here->HICUMixf1_Vxf1)   ;
                     Ixf1_dT    = *(ckt->CKTstate0 + here->HICUMixf1_Vrth)   ;
                     Ixf2       = *(ckt->CKTstate0 + here->HICUMixf2)        ;
                     Ixf2_Vbiei = *(ckt->CKTstate0 + here->HICUMixf2_Vbiei)  ;
@@ -3361,6 +3363,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             *(ckt->CKTstate0 + here->HICUMixf1_Vbiei)  = Ixf1_Vbiei;
             *(ckt->CKTstate0 + here->HICUMixf1_Vbici)  = Ixf1_Vbici;
             *(ckt->CKTstate0 + here->HICUMixf1_Vxf2)   = Ixf1_Vxf2;
+            *(ckt->CKTstate0 + here->HICUMixf1_Vxf1)   = Ixf1_Vxf1;
             *(ckt->CKTstate0 + here->HICUMixf1_Vrth)   = Ixf1_dT;
 
             *(ckt->CKTstate0 + here->HICUMixf2)        = Ixf2;

@@ -684,6 +684,9 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
             TSTALLOC(HICUMxfCollCIPtr ,HICUMxfNode,HICUMcollCINode);
             TSTALLOC(HICUMxfBaseBIPtr ,HICUMxfNode,HICUMbaseBINode);
 
+            TSTALLOC(HICUMbaseBPSubsSIPtr ,HICUMbaseBPNode,HICUMsubsSINode);
+            TSTALLOC(HICUMsubsSIBaseBPPtr ,HICUMsubsSINode,HICUMbaseBPNode);
+
             if (selfheat) {
                 TSTALLOC(HICUMcollTempPtr, HICUMcollNode, HICUMtempNode);
                 TSTALLOC(HICUMbaseTempPtr,HICUMbaseNode,HICUMtempNode);
@@ -694,6 +697,8 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
                 TSTALLOC(HICUMbaseBPtempPtr,HICUMbaseBPNode,HICUMtempNode);
                 TSTALLOC(HICUMemitEItempPtr,HICUMemitEINode,HICUMtempNode);
                 TSTALLOC(HICUMsubsSItempPtr,HICUMsubsSINode,HICUMtempNode);
+                TSTALLOC(HICUMsubsTempPtr  ,HICUMsubsNode  ,HICUMtempNode);
+                TSTALLOC(HICUMcollTempPtr  ,HICUMcollNode  ,HICUMtempNode);
 
                 TSTALLOC(HICUMtempCollPtr,HICUMtempNode,HICUMcollNode);
                 TSTALLOC(HICUMtempBasePtr,HICUMtempNode,HICUMbaseNode);
