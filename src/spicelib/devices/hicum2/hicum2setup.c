@@ -38,6 +38,7 @@ HICUMsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     for( ; model != NULL; model = HICUMnextModel(model)) {
 
         int selfheat = (((model->HICUMflsh == 1) || (model->HICUMflsh == 2)) && (model->HICUMrthGiven) && (model->HICUMrth > 0.0));
+        int nqs      = ( (model->HICUMflnqs != 0 || model->HICUMflcomp == 0.0 || model->HICUMflcomp == 2.1) && (model->HICUMalit > 0 || model->HICUMalqf > 0));
 
 //Circuit simulator specific parameters
         if(model->HICUMtype != NPN && model->HICUMtype != PNP)
@@ -579,22 +580,26 @@ HICUMsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 }
             }
 
-           if(here->HICUMxfNode == 0) {
-               error = CKTmkVolt(ckt, &tmp, here->HICUMname, "xf");
-               if(error) return(error);
-               here->HICUMxfNode = tmp->number;
-           }
-
-           if(here->HICUMxf1Node == 0) {
-               error = CKTmkVolt(ckt, &tmp, here->HICUMname, "xf1");
-               if(error) return(error);
-               here->HICUMxf1Node = tmp->number;
-           }
-
-           if(here->HICUMxf2Node == 0) {
-               error = CKTmkVolt(ckt, &tmp, here->HICUMname, "xf2");
-               if(error) return(error);
-               here->HICUMxf2Node = tmp->number;
+           if (nqs) {
+            if(here->HICUMxfNode == 0) {
+                error = CKTmkVolt(ckt, &tmp, here->HICUMname, "xf");
+                if(error) return(error);
+                here->HICUMxfNode = tmp->number;
+            }
+            if(here->HICUMxf1Node == 0) {
+                error = CKTmkVolt(ckt, &tmp, here->HICUMname, "xf1");
+                if(error) return(error);
+                here->HICUMxf1Node = tmp->number;
+            }
+            if(here->HICUMxf2Node == 0) {
+                error = CKTmkVolt(ckt, &tmp, here->HICUMname, "xf2");
+                if(error) return(error);
+                here->HICUMxf2Node = tmp->number;
+            }
+           } else {
+             here->HICUMxfNode  = 0;
+             here->HICUMxf1Node = 0;
+             here->HICUMxf2Node = 0;
            }
 
 /* macro to make elements with built in test for out of memory */
@@ -644,8 +649,10 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
 
             TSTALLOC(HICUMbaseBIEmitEIPtr,HICUMbaseBINode,HICUMemitEINode); //ei-bi
             TSTALLOC(HICUMemitEIBaseBIPtr,HICUMemitEINode,HICUMbaseBINode); //bi-ei
-            TSTALLOC(HICUMbaseBIXfPtr    ,HICUMbaseBINode,HICUMxfNode); //ei-bi
-            TSTALLOC(HICUMemitEIXfPtr    ,HICUMemitEINode,HICUMxfNode); //ei-bi
+            if (nqs) {
+                TSTALLOC(HICUMbaseBIXfPtr    ,HICUMbaseBINode,HICUMxfNode); //ei-bi
+                TSTALLOC(HICUMemitEIXfPtr    ,HICUMemitEINode,HICUMxfNode); //ei-bi
+            }
 
             TSTALLOC(HICUMbaseBICollCIPtr,HICUMbaseBINode,HICUMcollCINode); //ci-bi
             TSTALLOC(HICUMcollCIBaseBIPtr,HICUMcollCINode,HICUMbaseBINode); //bi-ci
@@ -662,27 +669,28 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
             TSTALLOC(HICUMsubsCollPtr,HICUMsubsNode,HICUMcollNode); //s-c
             TSTALLOC(HICUMcollSubsPtr,HICUMcollNode,HICUMsubsNode); //c-s
 
-            TSTALLOC(HICUMxf1Xf1Ptr   ,HICUMxf1Node   ,HICUMxf1Node);
-            TSTALLOC(HICUMxf1TempPtr  ,HICUMxf1Node   ,HICUMtempNode);
-            TSTALLOC(HICUMxf1BaseBIPtr,HICUMxf1Node   ,HICUMbaseBINode);
-            TSTALLOC(HICUMxf1EmitEIPtr,HICUMxf1Node   ,HICUMemitEINode);
-            TSTALLOC(HICUMxf1CollCIPtr,HICUMxf1Node   ,HICUMcollCINode);
-            TSTALLOC(HICUMxf1Xf2Ptr   ,HICUMxf1Node   ,HICUMxf2Node);
+            if (nqs) {
+                TSTALLOC(HICUMxf1Xf1Ptr   ,HICUMxf1Node   ,HICUMxf1Node);
+                TSTALLOC(HICUMxf1BaseBIPtr,HICUMxf1Node   ,HICUMbaseBINode);
+                TSTALLOC(HICUMxf1EmitEIPtr,HICUMxf1Node   ,HICUMemitEINode);
+                TSTALLOC(HICUMxf1CollCIPtr,HICUMxf1Node   ,HICUMcollCINode);
+                TSTALLOC(HICUMxf1Xf2Ptr   ,HICUMxf1Node   ,HICUMxf2Node);
 
-            TSTALLOC(HICUMxf2Xf1Ptr   ,HICUMxf2Node   ,HICUMxf1Node);
-            TSTALLOC(HICUMxf2TempPtr  ,HICUMxf2Node   ,HICUMtempNode);
-            TSTALLOC(HICUMxf2BaseBIPtr,HICUMxf2Node   ,HICUMbaseBINode);
-            TSTALLOC(HICUMxf2EmitEIPtr,HICUMxf2Node   ,HICUMemitEINode);
-            TSTALLOC(HICUMxf2CollCIPtr,HICUMxf2Node   ,HICUMcollCINode);
-            TSTALLOC(HICUMxf2Xf2Ptr   ,HICUMxf2Node   ,HICUMxf2Node);
-            TSTALLOC(HICUMemitEIXf2Ptr,HICUMemitEINode,HICUMxf2Node);
-            TSTALLOC(HICUMcollCIXf2Ptr,HICUMcollCINode,HICUMxf2Node);
+                TSTALLOC(HICUMxf2Xf1Ptr   ,HICUMxf2Node   ,HICUMxf1Node);
+                TSTALLOC(HICUMxf2BaseBIPtr,HICUMxf2Node   ,HICUMbaseBINode);
+                TSTALLOC(HICUMxf2EmitEIPtr,HICUMxf2Node   ,HICUMemitEINode);
+                TSTALLOC(HICUMxf2CollCIPtr,HICUMxf2Node   ,HICUMcollCINode);
+                TSTALLOC(HICUMxf2Xf2Ptr   ,HICUMxf2Node   ,HICUMxf2Node);
+                TSTALLOC(HICUMemitEIXf2Ptr,HICUMemitEINode,HICUMxf2Node);
+                TSTALLOC(HICUMcollCIXf2Ptr,HICUMcollCINode,HICUMxf2Node);
 
-            TSTALLOC(HICUMxfXfPtr     ,HICUMxfNode,HICUMxfNode);
-            TSTALLOC(HICUMxfTempPtr   ,HICUMxfNode,HICUMtempNode);
-            TSTALLOC(HICUMxfEmitEIPtr ,HICUMxfNode,HICUMemitEINode);
-            TSTALLOC(HICUMxfCollCIPtr ,HICUMxfNode,HICUMcollCINode);
-            TSTALLOC(HICUMxfBaseBIPtr ,HICUMxfNode,HICUMbaseBINode);
+                TSTALLOC(HICUMxfXfPtr     ,HICUMxfNode,HICUMxfNode);
+                TSTALLOC(HICUMxfEmitEIPtr ,HICUMxfNode,HICUMemitEINode);
+                TSTALLOC(HICUMxfCollCIPtr ,HICUMxfNode,HICUMcollCINode);
+                TSTALLOC(HICUMxfBaseBIPtr ,HICUMxfNode,HICUMbaseBINode);
+
+
+            }
 
             TSTALLOC(HICUMbaseBPSubsSIPtr ,HICUMbaseBPNode,HICUMsubsSINode);
             TSTALLOC(HICUMsubsSIBaseBPPtr ,HICUMsubsSINode,HICUMbaseBPNode);
@@ -711,7 +719,13 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
                 TSTALLOC(HICUMtempSubsSIPtr,HICUMtempNode,HICUMsubsSINode);
 
                 TSTALLOC(HICUMtempTempPtr,HICUMtempNode,HICUMtempNode);
-            } 
+
+                if (nqs) {
+                    TSTALLOC(HICUMxfTempPtr   ,HICUMxfNode,HICUMtempNode);
+                    TSTALLOC(HICUMxf2TempPtr  ,HICUMxf2Node   ,HICUMtempNode);
+                    TSTALLOC(HICUMxf1TempPtr  ,HICUMxf1Node   ,HICUMtempNode);
+                }
+           } 
         }
     }
     return(OK);
@@ -729,6 +743,7 @@ HICUMunsetup(
         model = HICUMnextModel(model))
     {
         int selfheat = (((model->HICUMflsh == 1) || (model->HICUMflsh == 2)) && (model->HICUMrthGiven) && (model->HICUMrth > 0.0));
+        int nqs      = ( (model->HICUMflnqs != 0 || model->HICUMflcomp == 0.0 || model->HICUMflcomp == 2.1) && (model->HICUMalit > 0 || model->HICUMalqf > 0));
 
         for (here = HICUMinstances(model); here != NULL;
                 here=HICUMnextInstance(here))
@@ -764,17 +779,20 @@ HICUMunsetup(
                 }
             }
 
+           if (nqs) {
+
            if(here->HICUMxfNode > 0)
-               CKTdltNNum(ckt, here->HICUMxfNode);
-           here->HICUMxfNode = 0;
+                CKTdltNNum(ckt, here->HICUMxfNode);
+            here->HICUMxfNode = 0;
 
-           if(here->HICUMxf1Node > 0)
-               CKTdltNNum(ckt, here->HICUMxf1Node);
-           here->HICUMxf1Node = 0;
+            if(here->HICUMxf1Node > 0)
+                CKTdltNNum(ckt, here->HICUMxf1Node);
+            here->HICUMxf1Node = 0;
 
-           if(here->HICUMxf2Node > 0)
-               CKTdltNNum(ckt, here->HICUMxf2Node);
-           here->HICUMxf2Node = 0;
+            if(here->HICUMxf2Node > 0)
+                CKTdltNNum(ckt, here->HICUMxf2Node);
+            here->HICUMxf2Node = 0;
+           }
 
         }
     }

@@ -35,15 +35,15 @@ pins                        coll base emit subs therm
 float                       therm
 checkPolarity               n
 
-test fgum_ac_npn_vert_nqs_dc
+test fgum_ac_npn_full_ac
 temperature 27 
 biases V(emit)=0 V(subs)=0
 biasSweep V(base)=0.750000,1.050000,0.010000
 biasList V(coll)=0.500000,1.000000,1.500000
-outputs I(coll) I(base)
-modelParameters parameters/npn_vert_nqs
+freq dec 10 1e+010 2e+010
+outputs G(base,base) G(base,coll) G(coll,base) G(coll,coll) C(base,base) C(base,coll) C(coll,base) C(coll,coll)
+modelParameters parameters/npn_full
 
-//
 // Specific tests
 //
 
