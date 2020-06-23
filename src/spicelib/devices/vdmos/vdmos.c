@@ -94,8 +94,8 @@ IFparm VDMOSmPTable[] = { /* model parameters */
  IOP( "trg2",  VDMOS_MOD_TRG2,  IF_REAL,  "Gate resistance quadratic temperature coefficient"),
  IOP( "trs1",  VDMOS_MOD_TRS1,  IF_REAL,  "Source resistance linear temperature coefficient"),
  IOP( "trs2",  VDMOS_MOD_TRS2,  IF_REAL,  "Source resistance quadratic temperature coefficient"),
- IOP( "trb1",  VDMOS_MOD_TRB1,  IF_REAL,  "Body resistance linear temperature coefficient"),
- IOP( "trb2",  VDMOS_MOD_TRB2,  IF_REAL,  "Body resistance quadratic temperature coefficient"),
+ IOP( "trb1",  VDIO_MOD_TRB1,  IF_REAL,  "Body resistance linear temperature coefficient"),
+ IOP( "trb2",  VDIO_MOD_TRB2,  IF_REAL,  "Body resistance quadratic temperature coefficient"),
 
  /* weak inversion */
  IOP("subshift",  VDMOS_MOD_SUBSHIFT,   IF_REAL, "Shift of weak inversion plot on the vgs axis"),
@@ -104,22 +104,22 @@ IFparm VDMOSmPTable[] = { /* model parameters */
  IOP("tksubthres2", VDMOS_MOD_TKSUBTHRES2, IF_REAL,  "Quadratic temperature coefficient of ksubthres"),
 
 /* body diode */
- IOP("bv",    VDMOS_MOD_BV,    IF_REAL,   "Vds breakdown voltage"),
- IOP("ibv",   VDMOS_MOD_IBV,   IF_REAL,   "Current at Vds=bv"),
- IOP("nbv",   VDMOS_MOD_NBV,   IF_REAL,   "Vds breakdown emission coefficient"),
+ IOP("bv",    VDIO_MOD_BV,    IF_REAL,   "Vds breakdown voltage"),
+ IOP("ibv",   VDIO_MOD_IBV,   IF_REAL,   "Current at Vds=bv"),
+ IOP("nbv",   VDIO_MOD_NBV,   IF_REAL,   "Vds breakdown emission coefficient"),
  IOP("rds",   VDMOS_MOD_RDS,   IF_REAL,   "Drain-source shunt resistance"),
- IOP("rb",    VDMOS_MOD_RB,    IF_REAL,   "Body diode ohmic resistance"),
- IOP("n",     VDMOS_MOD_N,     IF_REAL,   "Body diode emission coefficient"),
- IOP("tt",    VDMOS_MOD_TT,    IF_REAL,   "Body diode transit time"),
- IOP("eg",    VDMOS_MOD_EG,    IF_REAL,   "Body diode activation energy for temperature effect on Is"),
- IOP("xti",   VDMOS_MOD_XTI,   IF_REAL,   "Body diode saturation current temperature exponent"),
- IOP("is",    VDMOS_MOD_IS,    IF_REAL,   "Body diode saturation current"),
- IOP("vj",    VDMOS_MOD_VJ,    IF_REAL,   "Body diode junction potential"),
+ IOP("rb",    VDIO_MOD_RB,    IF_REAL,   "Body diode ohmic resistance"),
+ IOP("n",     VDIO_MOD_N,     IF_REAL,   "Body diode emission coefficient"),
+ IOP("tt",    VDIO_MOD_TT,    IF_REAL,   "Body diode transit time"),
+ IOP("eg",    VDIO_MOD_EG,    IF_REAL,   "Body diode activation energy for temperature effect on Is"),
+ IOP("xti",   VDIO_MOD_XTI,   IF_REAL,   "Body diode saturation current temperature exponent"),
+ IOP("is",    VDIO_MOD_IS,    IF_REAL,   "Body diode saturation current"),
+ IOP("vj",    VDIO_MOD_VJ,    IF_REAL,   "Body diode junction potential"),
 
  /* body diode capacitance (e.g. source-drain capacitance) */
- IOP("fc",    VDMOS_MOD_FC,    IF_REAL,   "Body diode coefficient for forward-bias depletion capacitance formula"),
- IOPA("cjo",  VDMOS_MOD_CJ,    IF_REAL,   "Zero-bias body diode junction capacitance"),
- IOP("m",     VDMOS_MOD_MJ,    IF_REAL,   "Body diode grading coefficient"),
+ IOP("fc",    VDIO_MOD_FC,    IF_REAL,   "Body diode coefficient for forward-bias depletion capacitance formula"),
+ IOPA("cjo",  VDIO_MOD_CJ,    IF_REAL,   "Zero-bias body diode junction capacitance"),
+ IOP("m",     VDIO_MOD_MJ,    IF_REAL,   "Body diode grading coefficient"),
 
  /* gate-source and gate-drain capacitances */
  IOPA("cgdmin", VDMOS_MOD_CGDMIN, IF_REAL, "Minimum non-linear G-D capacitance"),

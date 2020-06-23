@@ -83,47 +83,47 @@ VDMOSmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
             return(OK);
 
         /* body diode */
-        case VDMOS_MOD_RB:
+        case VDIO_MOD_RB:
             value->rValue = model->VDIOresistance;
             return(OK);
-        case VDMOS_MOD_IS:
+        case VDIO_MOD_IS:
             value->rValue = model->VDIOjctSatCur;
             return(OK);
-        case VDMOS_MOD_N:
-            value->rValue = model->VDMOSn;
+        case VDIO_MOD_N:
+            value->rValue = model->VDIOn;
             return(OK);
-        case VDMOS_MOD_VJ:
+        case VDIO_MOD_VJ:
             value->rValue = model->VDIOjunctionPot;
             return(OK);
-        case VDMOS_MOD_CJ:
+        case VDIO_MOD_CJ:
             value->rValue = model->VDIOjunctionCap;
             return(OK);
-        case VDMOS_MOD_MJ:
+        case VDIO_MOD_MJ:
             value->rValue = model->VDIOgradCoeff;
             return(OK);
-        case VDMOS_MOD_BV:
-            value->rValue = model->VDMOSbv;
+        case VDIO_MOD_BV:
+            value->rValue = model->VDIObv;
             return(OK);
-        case VDMOS_MOD_IBV:
-            value->rValue = model->VDMOSibv;
+        case VDIO_MOD_IBV:
+            value->rValue = model->VDIOibv;
             return(OK);
-        case VDMOS_MOD_NBV:
+        case VDIO_MOD_NBV:
             value->rValue = model->VDIObrkdEmissionCoeff;
             return(OK);
         case VDMOS_MOD_RDS:
             value->rValue = model->VDMOSrds;
             return(OK);
-        case VDMOS_MOD_FC:
+        case VDIO_MOD_FC:
             value->rValue = model->VDIOdepletionCapCoeff;
             return(OK);
-        case VDMOS_MOD_TT:
+        case VDIO_MOD_TT:
             value->rValue = model->VDIOtransitTime;
             return(OK);
-        case VDMOS_MOD_EG:
-            value->rValue = model->VDMOSeg;
+        case VDIO_MOD_EG:
+            value->rValue = model->VDIOeg;
             return(OK);
-        case VDMOS_MOD_XTI:
-            value->rValue = model->VDMOSxti;
+        case VDIO_MOD_XTI:
+            value->rValue = model->VDIOxti;
             return(OK);
         case VDMOS_MOD_TCVTH:
             value->rValue = model->VDMOStcvth;
@@ -164,11 +164,11 @@ VDMOSmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case VDMOS_MOD_TRS2:
             value->rValue = model->VDMOStrs2; 
             return(OK);
-        case VDMOS_MOD_TRB1:
-            value->rValue = model->VDMOStrb1; 
+        case VDIO_MOD_TRB1:
+            value->rValue = model->VDIOtrb1; 
             return(OK);
-        case VDMOS_MOD_TRB2:
-            value->rValue = model->VDMOStrb2; 
+        case VDIO_MOD_TRB2:
+            value->rValue = model->VDIOtrb2; 
             return(OK);
         case VDMOS_MOD_TKSUBTHRES1:
             value->rValue = model->VDMOStksubthres1; 
