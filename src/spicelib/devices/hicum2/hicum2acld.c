@@ -262,42 +262,42 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
 
             //Qrbi
             XQrbi_Vbpbi       = *(ckt->CKTstate0 + here->HICUMcqrbi)      * ckt->CKTomega;
-            XQrbi_Vbiei       = *(ckt->CKTstate0 + here->HICUMqrbi_Vbiei) * ckt->CKTomega;
-            XQrbi_Vbici       = *(ckt->CKTstate0 + here->HICUMqrbi_Vbici) * ckt->CKTomega;
-            XQrbi_Vrth        = *(ckt->CKTstate0 + here->HICUMqrbi_Vrth)  * ckt->CKTomega;
+            XQrbi_Vbiei       = here->HICUMqrbi_Vbiei * ckt->CKTomega;
+            XQrbi_Vbici       = here->HICUMqrbi_Vbici * ckt->CKTomega;
+            XQrbi_Vrth        = here->HICUMqrbi_Vrth  * ckt->CKTomega;
             //Qjei
             XQjei_Vbiei       = *(ckt->CKTstate0 + here->HICUMcqjei)      * ckt->CKTomega;
-            XQjei_Vrth        = *(ckt->CKTstate0 + here->HICUMqjei_Vrth)  * ckt->CKTomega;
+            XQjei_Vrth        = here->HICUMqjei_Vrth  * ckt->CKTomega;
             //Qf
             XQf_Vbiei         = *(ckt->CKTstate0 + here->HICUMcqf)        * ckt->CKTomega;
-            XQf_Vbici         = *(ckt->CKTstate0 + here->HICUMqf_Vbici)   * ckt->CKTomega;
-            XQf_Vrth          = *(ckt->CKTstate0 + here->HICUMqf_Vrth)    * ckt->CKTomega;
+            XQf_Vbici         = here->HICUMqf_Vbici   * ckt->CKTomega;
+            XQf_Vrth          = here->HICUMqf_Vrth    * ckt->CKTomega;
             //Qr
             XQr_Vbici         = *(ckt->CKTstate0 + here->HICUMcqr)        * ckt->CKTomega;
-            XQr_Vbiei         = *(ckt->CKTstate0 + here->HICUMqr_Vbiei)   * ckt->CKTomega;
-            XQr_Vrth          = *(ckt->CKTstate0 + here->HICUMqr_Vrth)    * ckt->CKTomega;
+            XQr_Vbiei         = here->HICUMqr_Vbiei   * ckt->CKTomega;
+            XQr_Vrth          = here->HICUMqr_Vrth    * ckt->CKTomega;
             //Qjci
             XQjci_Vbici       = *(ckt->CKTstate0 + here->HICUMcqjci)      * ckt->CKTomega;
-            XQjci_Vrth        = *(ckt->CKTstate0 + here->HICUMqjci_Vrth)  * ckt->CKTomega;
+            XQjci_Vrth        = here->HICUMqjci_Vrth  * ckt->CKTomega;
             //Qjep
             XQjep_Vbpei       = *(ckt->CKTstate0 + here->HICUMcqjep)      * ckt->CKTomega;
-            XQjep_Vrth        = *(ckt->CKTstate0 + here->HICUMqjep_Vrth)  * ckt->CKTomega;
+            XQjep_Vrth        = here->HICUMqjep_Vrth  * ckt->CKTomega;
             //Qjcx_i
             Xqjcx0_t_i_Vbci   = *(ckt->CKTstate0 + here->HICUMcqcx0_t_i)  * ckt->CKTomega;
-            Xqjcx0_t_i_Vrth   = *(ckt->CKTstate0 + here->HICUMqjcx0_i_Vrth)  * ckt->CKTomega;
+            Xqjcx0_t_i_Vrth   = here->HICUMqjcx0_i_Vrth  * ckt->CKTomega;
             //Qjcx_ii
             Xqjcx0_t_ii_Vbpci = *(ckt->CKTstate0 + here->HICUMcqcx0_t_ii) * ckt->CKTomega;
-            Xqjcx0_t_ii_Vrth  = *(ckt->CKTstate0 + here->HICUMqjcx0_ii_Vrth) * ckt->CKTomega;
+            Xqjcx0_t_ii_Vrth  = here->HICUMqjcx0_ii_Vrth * ckt->CKTomega;
             //Qdsu
             XQdsu_Vbpci       = *(ckt->CKTstate0 + here->HICUMcqdsu)      * ckt->CKTomega;
-            XQdsu_Vsici       = *(ckt->CKTstate0 + here->HICUMqdsu_Vsici) * ckt->CKTomega;
-            XQdsu_Vrth        = *(ckt->CKTstate0 + here->HICUMqdsu_Vrth)  * ckt->CKTomega;
+            XQdsu_Vsici       = here->HICUMqdsu_Vsici * ckt->CKTomega;
+            XQdsu_Vrth        = here->HICUMqdsu_Vrth  * ckt->CKTomega;
             //Qjs
             XQjs_Vsici        = *(ckt->CKTstate0 + here->HICUMcqjs)       * ckt->CKTomega;
-            XQjs_Vrth         = *(ckt->CKTstate0 + here->HICUMqjs_Vrth)   * ckt->CKTomega;
+            XQjs_Vrth         = here->HICUMqjs_Vrth   * ckt->CKTomega;
             //Qscp
             XQscp_Vsc         = *(ckt->CKTstate0 + here->HICUMcqscp)      * ckt->CKTomega;
-            XQscp_Vrth        = *(ckt->CKTstate0 + here->HICUMqscp_Vrth)  * ckt->CKTomega;
+            XQscp_Vrth        = here->HICUMqscp_Vrth  * ckt->CKTomega;
             //Qbepar1
             XQbepar1_Vbe      = *(ckt->CKTstate0 + here->HICUMcqbepar1)   * ckt->CKTomega;
             //Qbepar2
