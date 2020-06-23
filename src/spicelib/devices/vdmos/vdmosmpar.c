@@ -60,29 +60,29 @@ VDMOSmParam(int param, IFvalue *value, GENmodel *inModel)
             model->VDMOSqsVoltage = value->rValue;
             model->VDMOSqsVoltageGiven = TRUE;
             break;
-        case VDMOS_MOD_RB:
+        case VDIO_MOD_RB:
             model->VDIOresistance = value->rValue;
             model->VDIOresistanceGiven = TRUE;
             break;
-        case VDMOS_MOD_IS:
+        case VDIO_MOD_IS:
             model->VDIOjctSatCur = value->rValue;
             model->VDIOjctSatCurGiven = TRUE;
             break;
-        case VDMOS_MOD_VJ:
+        case VDIO_MOD_VJ:
             model->VDIOjunctionPot = value->rValue;
             model->VDIOjunctionPotGiven = TRUE;
             break;
-        case VDMOS_MOD_CJ:
+        case VDIO_MOD_CJ:
             model->VDIOjunctionCap = value->rValue;
             model->VDIOjunctionCapGiven = TRUE;
             break;
-        case VDMOS_MOD_MJ:
+        case VDIO_MOD_MJ:
             model->VDIOgradCoeff = value->rValue;
             model->VDIOgradCoeffGiven = TRUE;
             model->VDIOgradCoeffTemp1 = 0;
             model->VDIOgradCoeffTemp2 = 0;
             break;
-        case VDMOS_MOD_FC:
+        case VDIO_MOD_FC:
             model->VDIOdepletionCapCoeff = value->rValue;
             model->VDIOdepletionCapCoeffGiven = TRUE;
             break;
@@ -140,15 +140,15 @@ VDMOSmParam(int param, IFvalue *value, GENmodel *inModel)
             model->VDMOSksubthres = value->rValue;
             model->VDMOSksubthresGiven = TRUE;
             break;
-        case VDMOS_MOD_BV:
-            model->VDMOSbv = value->rValue;
-            model->VDMOSbvGiven = TRUE;
+        case VDIO_MOD_BV:
+            model->VDIObv = value->rValue;
+            model->VDIObvGiven = TRUE;
             break;
-        case VDMOS_MOD_IBV:
-            model->VDMOSibv = value->rValue;
-            model->VDMOSibvGiven = TRUE;
+        case VDIO_MOD_IBV:
+            model->VDIOibv = value->rValue;
+            model->VDIOibvGiven = TRUE;
             break;
-        case VDMOS_MOD_NBV:
+        case VDIO_MOD_NBV:
             model->VDIObrkdEmissionCoeff = value->rValue;
             model->VDIObrkdEmissionCoeffGiven = TRUE;
             break;
@@ -156,23 +156,23 @@ VDMOSmParam(int param, IFvalue *value, GENmodel *inModel)
             model->VDMOSrds = value->rValue;
             model->VDMOSrdsGiven = TRUE;
             break;
-        case VDMOS_MOD_N:
-            model->VDMOSn = value->rValue;
-            model->VDMOSnGiven = TRUE;
+        case VDIO_MOD_N:
+            model->VDIOn = value->rValue;
+            model->VDIOnGiven = TRUE;
             break;
-        case VDMOS_MOD_TT:
+        case VDIO_MOD_TT:
             model->VDIOtransitTime = value->rValue;
             model->VDIOtransitTimeGiven = TRUE;
             model->VDIOtranTimeTemp1 = 0;
             model->VDIOtranTimeTemp2 = 0;
             break;
-        case VDMOS_MOD_EG:
-            model->VDMOSeg = value->rValue;
-            model->VDMOSegGiven = TRUE;
+        case VDIO_MOD_EG:
+            model->VDIOeg = value->rValue;
+            model->VDIOegGiven = TRUE;
             break;
-        case VDMOS_MOD_XTI:
-            model->VDMOSxti = value->rValue;
-            model->VDMOSxtiGiven = TRUE;
+        case VDIO_MOD_XTI:
+            model->VDIOxti = value->rValue;
+            model->VDIOxtiGiven = TRUE;
             break;
         case VDMOS_MOD_TCVTH:
             model->VDMOStcvth = value->rValue;
@@ -226,13 +226,13 @@ VDMOSmParam(int param, IFvalue *value, GENmodel *inModel)
             model->VDMOStrs2 = value->rValue;
             model->VDMOStrs2Given = TRUE;
             break;
-        case  VDMOS_MOD_TRB1:
-            model->VDMOStrb1 = value->rValue;
-            model->VDMOStrb1Given = TRUE;
+        case  VDIO_MOD_TRB1:
+            model->VDIOtrb1 = value->rValue;
+            model->VDIOtrb1Given = TRUE;
             break;
-        case  VDMOS_MOD_TRB2:
-            model->VDMOStrb2 = value->rValue;
-            model->VDMOStrb2Given = TRUE;
+        case  VDIO_MOD_TRB2:
+            model->VDIOtrb2 = value->rValue;
+            model->VDIOtrb2Given = TRUE;
             break;
         case  VDMOS_MOD_TKSUBTHRES1:
             model->VDMOStksubthres1 = value->rValue;
