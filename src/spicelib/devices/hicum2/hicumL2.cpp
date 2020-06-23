@@ -3026,9 +3026,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 here->HICUMqjs_Vrth      = Qjs_dT;
                 here->HICUMqscp_Vrth     = Qscp_dT;
                 here->HICUMicth_dT       = Icth_Vrth;
-                here->HICUMqxf2_Vxf2     = Qxf2_Vxf2;
-                here->HICUMqxf_Vxf       = Qxf_Vxf;
-                here->HICUMqxf1_Vxf1     = Qxf1_Vxf1;
 
                 // store all derivatives of charges
                 if ( (!(ckt->CKTmode & MODETRANOP))||

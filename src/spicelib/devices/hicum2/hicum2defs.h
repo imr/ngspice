@@ -164,6 +164,12 @@ typedef struct sHICUMinstance {
                              * (collector prime,collector prime) */
     double *HICUMemitEIEmitEIPtr;   /* pointer to sparse matrix at
                              * (emitter prime,emitter prime) */
+    double *HICUMemitEIXfPtr;   /* pointer to sparse matrix at
+                             * (emitter prime,xf) */
+    double *HICUMbaseBIXfPtr;   /* pointer to sparse matrix at
+                             * (base prime,xf) */
+ 
+ 
     double *HICUMsubsSISubsSIPtr;    /* pointer to sparse matrix at
                              * (substrate prime, substrate prime) */
 
@@ -326,9 +332,6 @@ typedef struct sHICUMinstance {
     double HICUMqjs_Vrth;
     double HICUMqscp_Vrth;
     double HICUMicth_dT;
-    double HICUMqxf2_Vxf2;
-    double HICUMqxf_Vxf;
-    double HICUMqxf1_Vxf1;
 
     double HICUMcapxf;
 

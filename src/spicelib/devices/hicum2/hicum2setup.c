@@ -644,6 +644,8 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
 
             TSTALLOC(HICUMbaseBIEmitEIPtr,HICUMbaseBINode,HICUMemitEINode); //ei-bi
             TSTALLOC(HICUMemitEIBaseBIPtr,HICUMemitEINode,HICUMbaseBINode); //bi-ei
+            TSTALLOC(HICUMbaseBIXfPtr    ,HICUMbaseBINode,HICUMxfNode); //ei-bi
+            TSTALLOC(HICUMemitEIXfPtr    ,HICUMemitEINode,HICUMxfNode); //ei-bi
 
             TSTALLOC(HICUMbaseBICollCIPtr,HICUMbaseBINode,HICUMcollCINode); //ci-bi
             TSTALLOC(HICUMcollCIBaseBIPtr,HICUMcollCINode,HICUMbaseBINode); //bi-ci
