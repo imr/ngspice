@@ -1874,14 +1874,14 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                         here->HICUMtVcrit,&ichk3);
                 Vsici = DEVpnjlim(Vsici,*(ckt->CKTstate0 + here->HICUMvsici),here->HICUMvt.rpart,
                         here->HICUMtVcrit,&ichk4);
-                if (nqs) {
-                    Vxf   = DEVpnjlim(Vxf,*(ckt->CKTstate0 + here->HICUMvxf),here->HICUMvt.rpart,
-                            here->HICUMtVcrit,&ichk5);
-                    Vxf1  = DEVpnjlim(Vxf1,*(ckt->CKTstate0 + here->HICUMvxf1),here->HICUMvt.rpart,
-                            here->HICUMtVcrit,&ichk6);
-                    Vxf2  = DEVpnjlim(Vxf2,*(ckt->CKTstate0 + here->HICUMvxf2),here->HICUMvt.rpart,
-                            here->HICUMtVcrit,&ichk7);
-                }
+                // if (nqs) {
+                //     Vxf   = DEVpnjlim(Vxf,*(ckt->CKTstate0 + here->HICUMvxf),here->HICUMvt.rpart,
+                //             here->HICUMtVcrit,&ichk5);
+                //     Vxf1  = DEVpnjlim(Vxf1,*(ckt->CKTstate0 + here->HICUMvxf1),here->HICUMvt.rpart,
+                //             here->HICUMtVcrit,&ichk6);
+                //     Vxf2  = DEVpnjlim(Vxf2,*(ckt->CKTstate0 + here->HICUMvxf2),here->HICUMvt.rpart,
+                //             here->HICUMtVcrit,&ichk7);
+                // }
                 if (selfheat) {
                     ichk8 = 1;
                     Vrth = HICUMlimitlog(Vrth,
@@ -2809,9 +2809,9 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             // Ibpbi += ckt->CKTgmin*Vbpbi; //BP BI -> not needed
             // Ibpci += ckt->CKTgmin*Vbpci; //BP CI -> not needed
             Isici += ckt->CKTgmin*Vsici; //SI CI -> SI
-            Ixf1  += ckt->CKTgmin*Vxf1; 
-            Ixf2  += ckt->CKTgmin*Vxf2; 
-            Ixf   += ckt->CKTgmin*Vxf; 
+            // Ixf1  += ckt->CKTgmin*Vxf1; 
+            // Ixf2  += ckt->CKTgmin*Vxf2; 
+            // Ixf   += ckt->CKTgmin*Vxf; 
             //C from Icic
             //E from Ieie
             //S from Isis
@@ -2852,22 +2852,22 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             Ibpsi_Vbpci += ckt->CKTgmin;
             Ibpsi_Vsici += ckt->CKTgmin;
 
-            if (nqs) {
-                //Ixf
-                Ixf_Vbiei   += ckt->CKTgmin;
-                Ixf_Vbici   += ckt->CKTgmin;
-                Ixf_Vxf     += ckt->CKTgmin;
-                //Ixf1
-                Ixf1_Vbiei  += ckt->CKTgmin;
-                Ixf1_Vbici  += ckt->CKTgmin;
-                Ixf1_Vxf2   += ckt->CKTgmin;
-                Ixf1_Vxf1   += ckt->CKTgmin;
-                //Ixf2
-                Ixf2_Vbiei  += ckt->CKTgmin;
-                Ixf2_Vbici  += ckt->CKTgmin;
-                Ixf2_Vxf2   += ckt->CKTgmin;
-                Ixf2_Vxf1   += ckt->CKTgmin;
-            }
+            // if (nqs) {
+            //     //Ixf
+            //     Ixf_Vbiei   += ckt->CKTgmin;
+            //     Ixf_Vbici   += ckt->CKTgmin;
+            //     Ixf_Vxf     += ckt->CKTgmin;
+            //     //Ixf1
+            //     Ixf1_Vbiei  += ckt->CKTgmin;
+            //     Ixf1_Vbici  += ckt->CKTgmin;
+            //     Ixf1_Vxf2   += ckt->CKTgmin;
+            //     Ixf1_Vxf1   += ckt->CKTgmin;
+            //     //Ixf2
+            //     Ixf2_Vbiei  += ckt->CKTgmin;
+            //     Ixf2_Vbici  += ckt->CKTgmin;
+            //     Ixf2_Vxf2   += ckt->CKTgmin;
+            //     Ixf2_Vxf1   += ckt->CKTgmin;
+            // }
 
             //SHE derivatives
             if (selfheat) {
