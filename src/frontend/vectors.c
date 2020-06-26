@@ -709,9 +709,12 @@ vec_get(const char *vec_name) {
                     case  CP_NUM:
                         fprintf(stdout, "%s=%d\n", nv->va_name, nv->va_num);
                         break;
+                    case  CP_BOOL:
+                        fprintf(stdout, "%s=%d\n", nv->va_name, nv->va_bool);
+                        break;
                     default: {
-                        fprintf(stderr, "ERROR: enumeration value `CP_BOOL' or `CP_LIST' not handled in vec_get\nAborting...\n");
-                        controlled_exit(EXIT_FAILURE);
+                        fprintf(stderr, "ERROR: enumeration value `CP_LIST' not handled in vec_get\nIgnoring...\n");
+                        break;
                     }
                     }
                     nv = nv->va_next;
