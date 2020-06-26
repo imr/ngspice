@@ -123,6 +123,14 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 
         case VSRC_R: {
             double end_time;
+            /* Parameter r of pwl may now be parameterized:
+               if r == -1, no repetition done.
+               if r == 0, repeat forever.
+               if r == xx, repeat from time xx to last time point given. */
+            if (value->rValue < -0.5) {
+                here->VSRCrGiven = FALSE;
+                break;
+            }
             here->VSRCr = value->rValue;
             here->VSRCrGiven = TRUE;
 
