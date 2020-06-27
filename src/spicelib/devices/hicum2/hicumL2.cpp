@@ -2582,9 +2582,9 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 Ixf_Vxf   = 1.0*model->HICUMt0/Tf;
                 Ixf_Qdei  = -Ixf_Vxf;
                 Ixf_Tf    = -Ixf/Tf;
-                Ixf_Vbiei = Ixf_Tf*(Tf_Vbiei+Tf_Vciei) + Ixf_Vbiei*Qf_Vbiei;
-                Ixf_Vbici = Ixf_Tf*(Tf_Vbici-Tf_Vciei) + Ixf_Qdei *Qf_Vbici;
-                Ixf_dT    = Ixf_Tf*Tf_dT + Ixf_Qdei*Qdei_dT;
+                Ixf_Vbiei = Ixf_Tf*(Tf_Vbiei+Tf_Vciei) + Ixf_Qdei * Qdei_Vbiei;
+                Ixf_Vbici = Ixf_Tf*(Tf_Vbici-Tf_Vciei) + Ixf_Qdei * Qdei_Vbici;
+                Ixf_dT    = Ixf_Tf*Tf_dT               + Ixf_Qdei * Qdei_dT;
 
                 Qxf       = model->HICUMalqf*model->HICUMt0*Vxf; //for RC nw
                 Qxf_Vxf   = model->HICUMalqf*model->HICUMt0;     //for RC nw
