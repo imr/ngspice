@@ -1197,7 +1197,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
         // Model_initialization
         int selfheat = ((model->HICUMflsh > 0) && (model->HICUMrthGiven) && (model->HICUMrth > 0.0));
-        int nqs      = ( (model->HICUMflnqs != 0 || model->HICUMflcomp == 0.0 || model->HICUMflcomp == 2.1) && (model->HICUMalit > 0 || model->HICUMalqf > 0));
+        int nqs      = ((model->HICUMflnqs != 0 || model->HICUMflcomp == 0.0 || model->HICUMflcomp == 2.1) && (model->HICUMalit > 0 || model->HICUMalqf > 0));
 
         // Depletion capacitance splitting at b-c junction
         // Capacitances at peripheral and external base node
@@ -2550,7 +2550,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
             // Excess Phase calculation
 
-            if ( (model->HICUMflnqs != 0 || model->HICUMflcomp == 0.0 || model->HICUMflcomp == 2.1) && Tf != 0 && (model->HICUMalit > 0 || model->HICUMalqf > 0)) {
+            if ( nqs && (ckt->CKTmode & (MODETRAN | MODEAC) ) ) { //evaluate nqs network only in TRANSIENT and AC modes.
                 Ixf1       = (Vxf2-itf)/Tf*model->HICUMt0;
                 Ixf1_Vxf2  =  1.0/Tf*model->HICUMt0;
                 Ixf1_ditf  = -Ixf1_Vxf2;
@@ -2961,8 +2961,8 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 *(ckt->CKTstate0 + here->HICUMqjcx0_i)      = Qjcx_i;
                 *(ckt->CKTstate0 + here->HICUMcqcx0_t_i)    = Qjcx_i_Vbci;
                 //Qjcx_ii
-                *(ckt->CKTstate0 + here->HICUMqjcx0_ii)      = Qjcx_ii;
-                *(ckt->CKTstate0 + here->HICUMcqcx0_t_ii)    = Qjcx_ii_Vbpci;
+                *(ckt->CKTstate0 + here->HICUMqjcx0_ii)     = Qjcx_ii;
+                *(ckt->CKTstate0 + here->HICUMcqcx0_t_ii)   = Qjcx_ii_Vbpci;
                 //Qdsu
                 *(ckt->CKTstate0 + here->HICUMqdsu)         = Qdsu;
                 *(ckt->CKTstate0 + here->HICUMcqdsu)        = Qdsu_Vbpci;
@@ -2983,7 +2983,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 *(ckt->CKTstate0 + here->HICUMcqbcpar1)     = Qbcpar1_Vbci;
                 //Qbcpar2
                 *(ckt->CKTstate0 + here->HICUMqbcpar2)      = Qbcpar2;
-                *(ckt->CKTstate0 + here->HICUMcqbcpar2)     = Qbcpar1_Vbci;
+                *(ckt->CKTstate0 + here->HICUMcqbcpar2)     = Qbcpar2_Vbpci;
                 //Qsu
                 *(ckt->CKTstate0 + here->HICUMqsu)          = Qsu;
                 *(ckt->CKTstate0 + here->HICUMcqsu)         = Qsu_Vsis;
@@ -3622,15 +3622,6 @@ load:
             *(here->HICUMsubsSISubsPtr)            += -Isis_Vsis;
             *(here->HICUMsubsSubsSIPtr)            += -Isis_Vsis;
 //          finish
-
-            // NQS effect
-            // I(br_bxf1) <+ Ixf1;
-            // I(br_cxf1) <+ ddt(Qxf1);
-            // I(br_bxf2) <+ Ixf2;
-            // I(br_cxf2) <+ ddt(Qxf2);
-
-            // I(br_bxf) <+  Ixf;         //for RC nw
-            // I(br_cxf) <+  ddt(Qxf);    //for RC nw
 
             if (nqs) {
     //          Branch: xf1-ground, Stamp element: Ixf1   f_xf1=+  //Markus has opposite sign than Dietmar. This current flows from xf1 to ground?

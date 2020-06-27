@@ -441,11 +441,10 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
             *(here->HICUMcollCICollCIPtr +1)           +=  XQdsu_Vbpci;
             *(here->HICUMbaseBPCollCIPtr +1)           += -XQdsu_Vbpci;
             *(here->HICUMcollCIBaseBPPtr +1)           += -XQdsu_Vbpci;
-            //not implemented
-            // *(here->HICUMbaseBPBaseBPPtr +1)           +=  XQdsu_Vsici;
-            // *(here->HICUMsubsSISubsSIPtr +1)           +=  XQdsu_Vsici;
-            // *(here->HICUMbaseBPSubsSIPtr +1)           +=  -XQdsu_Vsici;
-            // *(here->HICUMsubsSIBaseBPPtr +1)           +=  -XQdsu_Vsici;
+            *(here->HICUMbaseBPBaseBPPtr +1)           +=  XQdsu_Vsici;
+            *(here->HICUMsubsSISubsSIPtr +1)           +=  XQdsu_Vsici;
+            *(here->HICUMbaseBPSubsSIPtr +1)           +=  -XQdsu_Vsici;
+            *(here->HICUMsubsSIBaseBPPtr +1)           +=  -XQdsu_Vsici;
             //Qjs
             *(here->HICUMsubsSISubsSIPtr +1)          +=  XQjs_Vsici;
             *(here->HICUMcollCICollCIPtr +1)          +=  XQjs_Vsici;
@@ -472,10 +471,10 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
             *(here->HICUMbaseCollCIPtr + 1)           += -XQbcpar1_Vbci;
             *(here->HICUMcollCIBasePtr + 1)           += -XQbcpar1_Vbci;
             //Qbcpar2
-            *(here->HICUMbaseBPBaseBPPtr +1)          +=  XQbepar2_Vbpe;
-            *(here->HICUMcollCICollCIPtr +1)          +=  XQbepar2_Vbpe;
-            *(here->HICUMbaseBPCollCIPtr +1)          += -XQbepar2_Vbpe;
-            *(here->HICUMcollCIBaseBPPtr +1)          += -XQbepar2_Vbpe;
+            *(here->HICUMbaseBPBaseBPPtr +1)          +=  XQbcpar2_Vbpci;
+            *(here->HICUMcollCICollCIPtr +1)          +=  XQbcpar2_Vbpci;
+            *(here->HICUMbaseBPCollCIPtr +1)          += -XQbcpar2_Vbpci;
+            *(here->HICUMcollCIBaseBPPtr +1)          += -XQbcpar2_Vbpci;
             //Qsu
             *(here->HICUMsubsSubsPtr + 1)             +=  XQsu_Vsis;
             *(here->HICUMsubsSISubsSIPtr + 1)         +=  XQsu_Vsis;
