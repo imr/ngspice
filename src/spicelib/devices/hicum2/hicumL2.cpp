@@ -2318,10 +2318,10 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             Crbi_Vbiei = model->HICUMfcrbi*(Cjei_Vbiei+Cdei_Vbiei+Cdci_Vbiei);
             Crbi_Vbici = model->HICUMfcrbi*(Cjci_Vbici+Cdei_Vbici+Cdci_Vbici);
 
-            Qrbi       = Crbi*Vbpbi;
+            Qrbi       = Crbi*Vbpbi; //Vbpbi=(Vbpei-Vbiei)=(Vbpci-Vbici)
             Qrbi_Vbpbi = Crbi;
-            Qrbi_Vbiei = Vbpbi*Crbi_Vbiei;
-            Qrbi_Vbici = Vbpbi*Crbi_Vbici;
+            Qrbi_Vbiei = Vbpbi*Crbi_Vbiei - Crbi; //What do you think Dietmar?
+            Qrbi_Vbici = Vbpbi*Crbi_Vbici - Crbi;
             Qrbi_Vrth  = Vbpbi*Crbi_Vrth;
 
             // Qrbi = model->HICUMfcrbi*(Qjei+Qjci+Qdei+Qdci);
@@ -2475,8 +2475,8 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 Cscp     = model->HICUMcscp0;
                 Cscp_Vsc = 0;
                 Cscp_dT  = 0;
-                Qscp = model->HICUMcscp0*Vsc;
-                Qscp_Vsc = 0;
+                Qscp     = model->HICUMcscp0*Vsc;
+                Qscp_Vsc = model->HICUMcscp0;
                 Qscp_dT  = 0;
             }
 
@@ -2550,7 +2550,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
             // Excess Phase calculation
 
-            if ( nqs && (ckt->CKTmode & (MODETRAN | MODEAC) ) ) { //evaluate nqs network only in TRANSIENT and AC modes.
+            if ( nqs){ // && (ckt->CKTmode & (MODETRAN | MODEAC) ) ) { //evaluate nqs network only in TRANSIENT and AC modes.
                 Ixf1       = (Vxf2-itf)/Tf*model->HICUMt0;
                 Ixf1_Vxf2  =  1.0/Tf*model->HICUMt0;
                 Ixf1_ditf  = -Ixf1_Vxf2;
@@ -3051,7 +3051,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                         *(ckt->CKTstate0 + here->HICUMcqcx0_t_ii) = Qjcx_ii_Vbpci;
                         *(ckt->CKTstate0 + here->HICUMcqdsu)      = Qdsu_Vbpci;
                         *(ckt->CKTstate0 + here->HICUMcqjs)       = Qjs_Vsici;
-                        *(ckt->CKTstate0 + here->HICUMcqscp)      = Cscp;
+                        *(ckt->CKTstate0 + here->HICUMcqscp)      = Qscp_Vsc;
                         *(ckt->CKTstate0 + here->HICUMcqbepar1)   = Qbepar1_Vbe;
                         *(ckt->CKTstate0 + here->HICUMcqbepar2)   = Qbepar2_Vbpe;
                         *(ckt->CKTstate0 + here->HICUMcqbcpar1)   = Qbcpar1_Vbci;

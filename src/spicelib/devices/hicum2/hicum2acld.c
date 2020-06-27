@@ -296,7 +296,7 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
             *(here->HICUMbaseBPCollCIPtr)          += -Ibpsi_Vbpci;
             *(here->HICUMsubsSIBaseBPPtr)          += -Ibpsi_Vbpci;;
 
-//          Stamp element: Rs
+//          Stamp element: Rsu
             *(here->HICUMsubsSubsPtr)              +=  Isis_Vsis;
             *(here->HICUMsubsSISubsSIPtr)          +=  Isis_Vsis;
             *(here->HICUMsubsSISubsPtr)            += -Isis_Vsis;
@@ -385,7 +385,7 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
             XQxf1_Vxf1        = *(ckt->CKTstate0 + here->HICUMcqxf1)       * ckt->CKTomega;
             XQxf2_Vxf2        = *(ckt->CKTstate0 + here->HICUMcqxf2)       * ckt->CKTomega;
 
-            //Qrbi
+            //Qrbi f_bp=+ f_bi=-
             *(here->HICUMbaseBPBaseBPPtr + 1)          +=  XQrbi_Vbpbi; 
             *(here->HICUMbaseBIBaseBIPtr + 1)          +=  XQrbi_Vbpbi;
             *(here->HICUMbaseBPBaseBIPtr + 1)          += -XQrbi_Vbpbi;
@@ -421,6 +421,15 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
             *(here->HICUMcollCICollCIPtr +1)           +=  XQjci_Vbici;
             *(here->HICUMcollCIBaseBIPtr +1)           += -XQjci_Vbici;
             *(here->HICUMbaseBICollCIPtr +1)           += -XQjci_Vbici;
+            //Qr f_bi = + f_ci=-
+            *(here->HICUMbaseBIBaseBIPtr +1)           +=  XQr_Vbici;
+            *(here->HICUMcollCICollCIPtr +1)           +=  XQr_Vbici;
+            *(here->HICUMcollCIBaseBIPtr +1)           += -XQr_Vbici;
+            *(here->HICUMbaseBICollCIPtr +1)           += -XQr_Vbici;
+            *(here->HICUMbaseBIBaseBIPtr +1)           +=  XQr_Vbiei;
+            *(here->HICUMcollCIEmitEIPtr +1)           +=  XQr_Vbiei;
+            *(here->HICUMcollCIBaseBIPtr +1)           += -XQr_Vbiei;
+            *(here->HICUMbaseBIEmitEIPtr +1)           += -XQr_Vbiei;
             //Qjep
             *(here->HICUMbaseBPBaseBPPtr +1)           +=  XQjep_Vbpei;
             *(here->HICUMemitEIEmitEIPtr +1)           +=  XQjep_Vbpei;
@@ -436,15 +445,15 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
             *(here->HICUMcollCICollCIPtr +1)           +=  Xqjcx0_t_ii_Vbpci;
             *(here->HICUMbaseBPCollCIPtr +1)           += -Xqjcx0_t_ii_Vbpci;
             *(here->HICUMcollCIBaseBPPtr +1)           += -Xqjcx0_t_ii_Vbpci;
-            //Qdsu
+            //Qdsu f_bp=+ f_ci=-
             *(here->HICUMbaseBPBaseBPPtr +1)           +=  XQdsu_Vbpci;
             *(here->HICUMcollCICollCIPtr +1)           +=  XQdsu_Vbpci;
             *(here->HICUMbaseBPCollCIPtr +1)           += -XQdsu_Vbpci;
             *(here->HICUMcollCIBaseBPPtr +1)           += -XQdsu_Vbpci;
-            *(here->HICUMbaseBPBaseBPPtr +1)           +=  XQdsu_Vsici;
-            *(here->HICUMsubsSISubsSIPtr +1)           +=  XQdsu_Vsici;
-            *(here->HICUMbaseBPSubsSIPtr +1)           +=  -XQdsu_Vsici;
-            *(here->HICUMsubsSIBaseBPPtr +1)           +=  -XQdsu_Vsici;
+            *(here->HICUMbaseBPSubsSIPtr +1)           +=  XQdsu_Vsici;
+            *(here->HICUMcollCICollCIPtr +1)           +=  XQdsu_Vsici;
+            *(here->HICUMbaseBPCollCIPtr +1)           +=  -XQdsu_Vsici;
+            *(here->HICUMcollCISubsSIPtr +1)           +=  -XQdsu_Vsici;
             //Qjs
             *(here->HICUMsubsSISubsSIPtr +1)          +=  XQjs_Vsici;
             *(here->HICUMcollCICollCIPtr +1)          +=  XQjs_Vsici;
@@ -452,9 +461,9 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
             *(here->HICUMcollCISubsSIPtr +1)          += -XQjs_Vsici;
             //Qscp
             *(here->HICUMsubsSubsPtr + 1)             +=  XQscp_Vsc;
-            *(here->HICUMsubsCollPtr + 1)             +=  XQscp_Vsc;
+            *(here->HICUMcollCollPtr + 1)             +=  XQscp_Vsc;
             *(here->HICUMcollSubsPtr + 1)             += -XQscp_Vsc;
-            *(here->HICUMcollCollPtr + 1)             += -XQscp_Vsc;
+            *(here->HICUMsubsCollPtr + 1)             += -XQscp_Vsc;
             //Qbepar1
             *(here->HICUMbaseBasePtr + 1)             +=  XQbepar1_Vbe;
             *(here->HICUMemitEmitPtr + 1)             +=  XQbepar1_Vbe;
@@ -601,8 +610,8 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
                 *(here->HICUMsubsSItempPtr + 1) += -XQjs_Vrth;
                 *(here->HICUMcollCItempPtr + 1) += +XQjs_Vrth;
                 //Qscp    from S  to C  f_S =- f_C =+
-                // *(here->HICUMsubsTempPtr + 1)   += -XQscp_Vrth;
-                // *(here->HICUMcollTempPtr + 1)   += +XQscp_Vrth;
+                *(here->HICUMsubsTempPtr + 1)   += -XQscp_Vrth;
+                *(here->HICUMcollTempPtr + 1)   += +XQscp_Vrth;
                 //Qcth    from 0  to T  f_0=- f_T=+
                 *(here->HICUMtempTempPtr + 1) += -XQcth_Vrth;
 
