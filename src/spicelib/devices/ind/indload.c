@@ -34,6 +34,10 @@ INDload(GENmodel *inModel, CKTcircuit *ckt)
     /*  loop through all the inductor models */
     for( ; model != NULL; model = INDnextModel(model)) {
 
+#ifdef KLU
+        if (!ckt->CKTkluMODE || (ckt->CKTkluMODE && (model->INDisLinear == ckt->CKTlinearModelsRequested) && (model->INDisLinearStatic == ckt->CKTlinearStaticModelsRequested))) {
+#endif
+
         /* loop through all the instances of the model */
         for (here = INDinstances(model); here != NULL ;
                 here=INDnextInstance(here)) {
@@ -57,6 +61,10 @@ INDload(GENmodel *inModel, CKTcircuit *ckt)
     /*  loop through all the mutual inductor models */
     for( ; mutmodel != NULL; mutmodel = MUTnextModel(mutmodel)) {
 
+#ifdef KLU
+        if (!ckt->CKTkluMODE || (ckt->CKTkluMODE && (mutmodel->MUTisLinear == ckt->CKTlinearModelsRequested) && (mutmodel->MUTisLinearStatic == ckt->CKTlinearStaticModelsRequested))) {
+#endif
+
         /* loop through all the instances of the model */
         for (muthere = MUTinstances(mutmodel); muthere != NULL ;
                 muthere=MUTnextInstance(muthere)) {
@@ -74,6 +82,11 @@ INDload(GENmodel *inModel, CKTcircuit *ckt)
             *(muthere->MUTbr1br2Ptr) -= muthere->MUTfactor*ckt->CKTag[0];
             *(muthere->MUTbr2br1Ptr) -= muthere->MUTfactor*ckt->CKTag[0];
         }
+
+#ifdef KLU
+        }
+#endif
+
     }
     itype = CKTtypelook("Inductor");
     model = (INDmodel *)(ckt->CKThead[itype]);
@@ -122,6 +135,11 @@ INDload(GENmodel *inModel, CKTcircuit *ckt)
             *(here->INDibrNegPtr) -=  1;
             *(here->INDibrIbrPtr) -=  req;
         }
+
+#ifdef KLU
+        }
+#endif
+
     }
     return(OK);
 }

@@ -34,7 +34,13 @@ MUTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
     NG_IGNORE(states);
 
-    for (; model; model = MUTnextModel(model))
+    for (; model; model = MUTnextModel(model)) {
+
+#ifdef KLU
+        model->MUTisLinear = 1 ;
+        model->MUTisLinearStatic = 0 ;
+#endif
+
         for (here = MUTinstances(model); here; here = MUTnextInstance(here)) {
 
             int ktype = CKTtypelook("Inductor");
@@ -63,6 +69,7 @@ MUTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             TSTALLOC(MUTbr1br2Ptr, MUTind1->INDbrEq, MUTind2->INDbrEq);
             TSTALLOC(MUTbr2br1Ptr, MUTind2->INDbrEq, MUTind1->INDbrEq);
         }
+    }
 
     return(OK);
 }

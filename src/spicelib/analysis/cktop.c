@@ -43,8 +43,10 @@ CKTop (CKTcircuit *ckt, long int firstmode, long int continuemode,
 #ifdef KLU
         /* Francesco Lannutti */
         /* Loading the Linear Static Part */
-        int error ;
-        error = CKTloadLinearStatic (ckt) ;
+        if (ckt->CKTkluMODE) {
+            int error ;
+            error = CKTloadLinearStatic (ckt) ;
+        }
 #endif
 
         converged = NIiter (ckt, iterlim);
@@ -55,8 +57,10 @@ CKTop (CKTcircuit *ckt, long int firstmode, long int continuemode,
 #ifdef KLU
         /* Francesco Lannutti */
         /* Loading the Linear Static Part */
-        int error ;
-        error = CKTloadLinearStatic (ckt) ;
+        if (ckt->CKTkluMODE) {
+            int error ;
+            error = CKTloadLinearStatic (ckt) ;
+        }
 #endif
 
         converged = 1;          /* the 'go directly to gmin stepping' option */

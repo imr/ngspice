@@ -21,7 +21,7 @@ RESload(GENmodel *inModel, CKTcircuit *ckt)
     for( ; model != NULL; model = RESnextModel(model)) {
 
 #ifdef KLU
-        if ((model->RESisLinear == ckt->CKTlinearModelsRequested) && (model->RESisLinearStatic == ckt->CKTlinearStaticModelsRequested)) {
+        if (!ckt->CKTkluMODE || (ckt->CKTkluMODE && (model->RESisLinear == ckt->CKTlinearModelsRequested) && (model->RESisLinearStatic == ckt->CKTlinearStaticModelsRequested))) {
 #endif
 
         RESinstance *here;

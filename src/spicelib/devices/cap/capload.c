@@ -38,7 +38,7 @@ CAPload(GENmodel *inModel, CKTcircuit *ckt)
         for( ; model != NULL; model = CAPnextModel(model)) {
 
 #ifdef KLU
-            if ((model->CAPisLinear == ckt->CKTlinearModelsRequested) && (model->CAPisLinearStatic == ckt->CKTlinearStaticModelsRequested)) {
+            if (!ckt->CKTkluMODE || (ckt->CKTkluMODE && (model->CAPisLinear == ckt->CKTlinearModelsRequested) && (model->CAPisLinearStatic == ckt->CKTlinearStaticModelsRequested))) {
 #endif
 
             /* loop through all the instances of the model */

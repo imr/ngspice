@@ -252,7 +252,7 @@ for (; model != NULL; model = BSIM4v7nextModel(model))
 {
 
 #ifdef KLU
-    if ((model->BSIM4v7isLinear == ckt->CKTlinearModelsRequested) && (model->BSIM4v7isLinearStatic == ckt->CKTlinearStaticModelsRequested)) {
+    if (!ckt->CKTkluMODE || (ckt->CKTkluMODE && (model->BSIM4v7isLinear == ckt->CKTlinearModelsRequested) && (model->BSIM4v7isLinearStatic == ckt->CKTlinearStaticModelsRequested))) {
 #endif
 
      for (here = BSIM4v7instances(model); here != NULL; 

@@ -122,6 +122,12 @@ struct sINDmodel {             /* model structure for an inductor */
     unsigned INDmIndGiven  : 1; /* flag to indicate model inductance given */
 
     double INDspecInd;     /* Specific (one turn) inductance */
+
+#ifdef KLU
+    unsigned int INDisLinear : 1 ;
+    unsigned int INDisLinearStatic : 1 ;
+#endif
+
 };
 
 
@@ -173,6 +179,11 @@ struct sMUTmodel {             /* model structure for a mutual inductor */
 #define MUTnextModel(inst) ((MUTmodel *)((inst)->gen.GENnextModel))
 #define MUTinstances(inst) ((MUTinstance *)((inst)->gen.GENinstances))
 #define MUTmodName gen.GENmodName
+
+#ifdef KLU
+    unsigned int MUTisLinear : 1 ;
+    unsigned int MUTisLinearStatic : 1 ;
+#endif
 
 };
 

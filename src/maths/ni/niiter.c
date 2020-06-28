@@ -66,7 +66,9 @@ NIiter(CKTcircuit *ckt, int maxIter)
 #ifdef KLU
     /* Francesco Lannutti */
     /* Loading the Linear Dynamic Part */
-    error = CKTloadLinearDynamic (ckt) ;
+    if (ckt->CKTkluMODE) {
+        error = CKTloadLinearDynamic (ckt) ;
+    }
 #endif
 
     for (;;) {
@@ -94,7 +96,9 @@ NIiter(CKTcircuit *ckt, int maxIter)
 #ifdef KLU
             /* Francesco Lannutti */
             /* Assembling the Linear and Non-Linear Part */
-            error = CKTloadAssemble (ckt) ;
+            if (ckt->CKTkluMODE) {
+                error = CKTloadAssemble (ckt) ;
+            }
 #endif
 
             /* printf("after loading, before solving\n"); */

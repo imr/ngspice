@@ -41,7 +41,7 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
                 here=VSRCnextInstance(here)) {
 
 #ifdef KLU
-            if ((here->VSRCisLinear == ckt->CKTlinearModelsRequested) && (here->VSRCisLinearStatic == ckt->CKTlinearStaticModelsRequested)) {
+            if (!ckt->CKTkluMODE || (ckt->CKTkluMODE && (here->VSRCisLinear == ckt->CKTlinearModelsRequested) && (here->VSRCisLinearStatic == ckt->CKTlinearStaticModelsRequested))) {
 #endif
 
             *(here->VSRCposIbrPtr) += 1.0 ;

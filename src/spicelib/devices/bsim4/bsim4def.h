@@ -2835,6 +2835,10 @@ typedef struct sBSIM4model
     unsigned  BSIM4pk2weGiven   :1;
     unsigned  BSIM4pku0weGiven   :1;
 
+#ifdef KLU
+    unsigned int BSIM4isLinear : 1 ;
+    unsigned int BSIM4isLinearStatic : 1 ;
+#endif
 
 } BSIM4model;
 
