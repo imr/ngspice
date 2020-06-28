@@ -2320,8 +2320,8 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
             Qrbi       = Crbi*Vbpbi; //Vbpbi=(Vbpei-Vbiei)=(Vbpci-Vbici)
             Qrbi_Vbpbi = Crbi;
-            Qrbi_Vbiei = Vbpbi*Crbi_Vbiei - Crbi; //What do you think Dietmar?
-            Qrbi_Vbici = Vbpbi*Crbi_Vbici - Crbi;
+            Qrbi_Vbiei = Vbpbi*Crbi_Vbiei;// - Crbi; //What do you think Dietmar?
+            Qrbi_Vbici = Vbpbi*Crbi_Vbici;//- Crbi;
             Qrbi_Vrth  = Vbpbi*Crbi_Vrth;
 
             // Qrbi = model->HICUMfcrbi*(Qjei+Qjci+Qdei+Qdci);
@@ -2430,8 +2430,8 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             rbi_dQf   = result.dpart();
             here->HICUMrbi = rbi;
 
-            rbi_Vbiei = rbi_dQjei* Qjei_Vbiei           + rbi_dQf  *(Qf_Vbiei)                  ;
-            rbi_Vbici = rbi_dQf  * (Qf_Vbici);
+            rbi_Vbiei = rbi_dQjei* Qjei_Vbiei           + rbi_dQf*Qf_Vbiei;
+            rbi_Vbici =                                   rbi_dQf*Qf_Vbici
             rbi_dT   += rbi_dQjei*Qjei_dT               + rbi_dQf*Qf_dT;
 
             //Base currents across peripheral b-e junction
