@@ -187,11 +187,11 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
             Ixf1_Vxf1   = *(ckt->CKTstate0 + here->HICUMixf1_Vxf1);
             Ixf1_Vrth   = *(ckt->CKTstate0 + here->HICUMixf1_Vrth);
 
-            Ixf2_Vbiei  = *(ckt->CKTstate0 + here->HICUMixf1_Vbiei);
-            Ixf2_Vbici  = *(ckt->CKTstate0 + here->HICUMixf1_Vbici);
-            Ixf2_Vxf2   = *(ckt->CKTstate0 + here->HICUMixf1_Vxf2);
-            Ixf2_Vxf1   = *(ckt->CKTstate0 + here->HICUMixf1_Vxf1);
-            Ixf2_Vrth   = *(ckt->CKTstate0 + here->HICUMixf1_Vrth);
+            Ixf2_Vbiei  = *(ckt->CKTstate0 + here->HICUMixf2_Vbiei);
+            Ixf2_Vbici  = *(ckt->CKTstate0 + here->HICUMixf2_Vbici);
+            Ixf2_Vxf2   = *(ckt->CKTstate0 + here->HICUMixf2_Vxf2);
+            Ixf2_Vxf1   = *(ckt->CKTstate0 + here->HICUMixf2_Vxf1);
+            Ixf2_Vrth   = *(ckt->CKTstate0 + here->HICUMixf2_Vrth);
 
             Ixf_Vbiei   = *(ckt->CKTstate0 + here->HICUMixf_Vbiei);
             Ixf_Vbici   = *(ckt->CKTstate0 + here->HICUMixf_Vbici);
