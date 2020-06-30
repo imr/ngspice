@@ -125,6 +125,7 @@ typedef struct {
 
 #ifdef KLU
 #define OPT_SPARSE       72
+#define OPT_KLU_MEMGROW_FACTOR 73
 #endif
 
 #ifdef XSPICE
