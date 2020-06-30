@@ -73,6 +73,7 @@ struct TSKtask {
 
 #ifdef KLU
     unsigned int TSKkluMODE:1;
+    unsigned int TSKkluMemGrowFactor : 1 ;
 #endif
 
 };
