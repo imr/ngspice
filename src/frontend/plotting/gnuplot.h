@@ -7,6 +7,7 @@
 #define ngspice_GNUPLOT_H
 
 void ft_gnuplot(double *xlims, double *ylims,
+        double xdel, double del,
         const char *filename, const char *title,
         const char *xlabel, const char *ylabel,
         GRIDTYPE gridtype, PLOTTYPE plottype,

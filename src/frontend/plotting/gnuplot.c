@@ -50,6 +50,7 @@ quote_gnuplot_string(FILE *stream, char *s)
 
 
 void ft_gnuplot(double *xlims, double *ylims,
+        double xdel, double ydel,
         const char *filename, const char *title,
         const char *xlabel, const char *ylabel,
         GRIDTYPE gridtype, PLOTTYPE plottype,
@@ -228,9 +229,15 @@ void ft_gnuplot(double *xlims, double *ylims,
             fprintf(file, "set yrange [%e:%e]\n", ylims[0] - extrange, ylims[1] + extrange);
     }
 
-    fprintf(file, "#set xtics 1\n");
+    if (xdel > 0.)
+        fprintf(file, "set xtics %e\n", xdel);
+    else
+        fprintf(file, "#set xtics 1\n");
     fprintf(file, "#set x2tics 1\n");
-    fprintf(file, "#set ytics 1\n");
+    if (ydel > 0.)
+        fprintf(file, "set ytics %e\n", ydel);
+    else
+        fprintf(file, "#set ytics 1\n");
     fprintf(file, "#set y2tics 1\n");
 
     if (gridlinewidth > 1)
