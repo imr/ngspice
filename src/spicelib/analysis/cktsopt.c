@@ -177,6 +177,10 @@ CKTsetOpt(CKTcircuit *ckt, JOB *anal, int opt, IFvalue *val)
     case OPT_SPARSE:
         task->TSKkluMODE = (val->iValue == 0);
         break;
+
+    case OPT_KLU_MEMGROW_FACTOR:
+        task->TSKkluMemGrowFactor = (val->rValue == 1.2);
+        break;
 #endif
 
 /* gtri - begin - wbk - add new options */
@@ -339,7 +343,9 @@ static IFparm OPTtbl[] = {
 
 #ifdef KLU
  { "sparse", OPT_SPARSE, IF_SET|IF_FLAG,
-        "Set SPARSE 1.3 as Direct Linear Solver" }
+        "Set SPARSE 1.3 as Direct Linear Solver" },
+ { "klu_memgrow_factor", OPT_KLU_MEMGROW_FACTOR, IF_SET|IF_FLAG,
+        "KLU Memory Grow Factor (default is 1.2)" }
 #endif
 
 };

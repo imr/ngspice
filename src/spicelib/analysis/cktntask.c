@@ -78,6 +78,7 @@ CKTnewTask(CKTcircuit *ckt, TSKtask **taskPtr, IFuid taskName, TSKtask **defPtr)
 
 #ifdef KLU
         tsk->TSKkluMODE         = def->TSKkluMODE;
+        tsk->TSKkluMemGrowFactor = def->TSKkluMemGrowFactor ;
 #endif
 
 #ifdef NEWTRUNC
@@ -139,6 +140,7 @@ CKTnewTask(CKTcircuit *ckt, TSKtask **taskPtr, IFuid taskName, TSKtask **defPtr)
 
 #ifdef KLU
         tsk->TSKkluMODE         = CKTkluON;
+        tsk->TSKkluMemGrowFactor = 1.2 ;
 #endif
 
 #if (1) /*CDHW*/

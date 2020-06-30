@@ -120,6 +120,8 @@ enum {
     OPT_XMU,
     OPT_INDVERBOSITY,
     OPT_EPSMIN,
+    OPT_SPARSE,
+    OPT_KLU_MEMGROW_FACTOR,
 };
 
 #ifdef XSPICE
