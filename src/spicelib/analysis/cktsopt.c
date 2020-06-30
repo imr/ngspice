@@ -344,7 +344,7 @@ static IFparm OPTtbl[] = {
 #ifdef KLU
  { "sparse", OPT_SPARSE, IF_SET|IF_FLAG,
         "Set SPARSE 1.3 as Direct Linear Solver" },
- { "klu_memgrow_factor", OPT_KLU_MEMGROW_FACTOR, IF_SET|IF_FLAG,
+ { "klu_memgrow_factor", OPT_KLU_MEMGROW_FACTOR, IF_SET|IF_REAL,
         "KLU Memory Grow Factor (default is 1.2)" }
 #endif
 
