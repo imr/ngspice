@@ -1077,7 +1077,10 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
 
     if (devname && eq(devname, "gnuplot")) {
         /* Interface to Gnuplot Plot Program */
-        ft_gnuplot(xlims, ylims, hcopy,
+        ft_gnuplot(xlims, ylims,
+                   xdelta ? *xdelta : 0.0,
+                   ydelta ? *ydelta : 0.0,
+                   hcopy,
                    title ? title : vecs->v_plot->pl_title,
                    xlabel ? xlabel : ft_typabbrev(vecs->v_scale->v_type),
                    ylabel ? ylabel : ft_typabbrev(y_type),
