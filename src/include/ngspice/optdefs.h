@@ -121,6 +121,12 @@ enum {
     OPT_INDVERBOSITY,
     OPT_EPSMIN,
     OPT_CSHUNT,
+
+#ifdef KLU
+    OPT_SPARSE,
+    OPT_KLU_MEMGROW_FACTOR,
+#endif
+
 };
 
 #ifdef XSPICE
