@@ -382,8 +382,8 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
             XQcth_Vrth        = *(ckt->CKTstate0 + here->HICUMcqcth)      * ckt->CKTomega;
             //Qxf
             XQxf_Vxf          = *(ckt->CKTstate0 + here->HICUMcqxf)       * ckt->CKTomega;
-            XQxf1_Vxf1        = *(ckt->CKTstate0 + here->HICUMcqxf1)       * ckt->CKTomega;
-            XQxf2_Vxf2        = *(ckt->CKTstate0 + here->HICUMcqxf2)       * ckt->CKTomega;
+            XQxf1_Vxf1        = *(ckt->CKTstate0 + here->HICUMcqxf1)      * ckt->CKTomega;
+            XQxf2_Vxf2        = *(ckt->CKTstate0 + here->HICUMcqxf2)      * ckt->CKTomega;
 
             //Qrbi f_bp=+ f_bi=-
             *(here->HICUMbaseBPBaseBPPtr + 1)          +=  XQrbi_Vbpbi; 
@@ -523,8 +523,8 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
                 *(here->HICUMbaseTempPtr)              +=  Ibbp_Vrth;
                 *(here->HICUMbaseBPtempPtr)            += -Ibbp_Vrth;
 //              Stamp element: Re   f_Ei = +   f_E = -
-                *(here->HICUMemitTempPtr)              += -Ieie_Vrth;
                 *(here->HICUMemitEItempPtr)            +=  Ieie_Vrth;
+                *(here->HICUMemitTempPtr)              += -Ieie_Vrth;
 //              Stamp element: Rbi    f_Bp = +   f_Bi = -
                 *(here->HICUMbaseBPtempPtr)            +=  Ibpbi_Vrth;
                 *(here->HICUMbaseBItempPtr)            += -Ibpbi_Vrth;
@@ -579,41 +579,29 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
 //              finish
 
                 //the charges
-                //Qrbi    from Bp to Bi f_Bi=- f_Bp=+
-                *(here->HICUMbaseBItempPtr + 1) += -XQrbi_Vrth;
-                *(here->HICUMbaseBPtempPtr + 1) += +XQrbi_Vrth;
-                //Qjei    from Bi to Ei f_Bi=- f_Ei=+
-                *(here->HICUMbaseBItempPtr + 1) += -XQjei_Vrth;
-                *(here->HICUMemitEItempPtr + 1) += +XQjei_Vrth;
-                //Qf      from Bi to Ei f_Bi=- f_Ei=+
-                *(here->HICUMbaseBItempPtr + 1) += -XQf_Vrth;
-                *(here->HICUMemitEItempPtr + 1) += +XQf_Vrth;
-                //Qr      from Bi to Ci f_Bi=- f_Ci=+
-                *(here->HICUMbaseBItempPtr + 1) += -XQr_Vrth;
-                *(here->HICUMcollCItempPtr + 1) += +XQr_Vrth;
-                //Qjci    from Bi to Ci f_Bi=- f_Ci=+
-                *(here->HICUMbaseBItempPtr + 1) += -XQjci_Vrth;
-                *(here->HICUMcollCItempPtr + 1) += +XQjci_Vrth;
-                //Qjep    from Bp to Ei f_Bp=- f_Ei=+
-                *(here->HICUMbaseBPtempPtr + 1) += -XQjep_Vrth;
-                *(here->HICUMemitEItempPtr + 1) += +XQjep_Vrth;
-                //Qjcx_i  from B  to Ci f_B =- f_Ci=+
-                *(here->HICUMbaseTempPtr   + 1) += -Xqjcx0_t_i_Vrth;
-                *(here->HICUMcollCItempPtr + 1) += +Xqjcx0_t_i_Vrth;
-                //Qjcx_ii from Bp to Ci f_Bp=- f_Ci=+
-                *(here->HICUMbaseBPtempPtr + 1) += -Xqjcx0_t_ii_Vrth;
-                *(here->HICUMcollCItempPtr + 1) += +Xqjcx0_t_ii_Vrth;
-                //Qdsu    from Bp to Ci f_Bp=- f_Ci=+
-                *(here->HICUMbaseBPtempPtr + 1) += -XQdsu_Vrth;
-                *(here->HICUMcollCItempPtr + 1) += +XQdsu_Vrth;
-                //Qjs     from Si to Ci f_Si=- f_Ci=+
-                *(here->HICUMsubsSItempPtr + 1) += -XQjs_Vrth;
-                *(here->HICUMcollCItempPtr + 1) += +XQjs_Vrth;
-                //Qscp    from S  to C  f_S =- f_C =+
-                *(here->HICUMsubsTempPtr + 1)   += -XQscp_Vrth;
-                *(here->HICUMcollTempPtr + 1)   += +XQscp_Vrth;
-                //Qcth    from 0  to T  f_0=- f_T=+
-                *(here->HICUMtempTempPtr + 1) += -XQcth_Vrth;
+                *(here->HICUMbaseBItempPtr + 1) += +XQrbi_Vrth;
+                *(here->HICUMbaseBPtempPtr + 1) += -XQrbi_Vrth;
+                *(here->HICUMbaseBItempPtr + 1) += +XQjei_Vrth;
+                *(here->HICUMemitEItempPtr + 1) += -XQjei_Vrth;
+                *(here->HICUMbaseBItempPtr + 1) += +XQf_Vrth;
+                *(here->HICUMemitEItempPtr + 1) += -XQf_Vrth;
+                *(here->HICUMbaseBItempPtr + 1) += +XQr_Vrth;
+                *(here->HICUMcollCItempPtr + 1) += -XQr_Vrth;
+                *(here->HICUMbaseBItempPtr + 1) += +XQjci_Vrth;
+                *(here->HICUMcollCItempPtr + 1) += -XQjci_Vrth;
+                *(here->HICUMbaseBPtempPtr + 1) += +XQjep_Vrth;
+                *(here->HICUMemitEItempPtr + 1) += -XQjep_Vrth;
+                *(here->HICUMbaseTempPtr   + 1) += +Xqjcx0_t_i_Vrth;
+                *(here->HICUMcollCItempPtr + 1) += -Xqjcx0_t_i_Vrth;
+                *(here->HICUMbaseBPtempPtr + 1) += +Xqjcx0_t_ii_Vrth;
+                *(here->HICUMcollCItempPtr + 1) += -Xqjcx0_t_ii_Vrth;
+                *(here->HICUMbaseBPtempPtr + 1) += +XQdsu_Vrth;
+                *(here->HICUMcollCItempPtr + 1) += -XQdsu_Vrth;
+                *(here->HICUMsubsSItempPtr + 1) += +XQjs_Vrth;
+                *(here->HICUMcollCItempPtr + 1) += -XQjs_Vrth;
+                *(here->HICUMsubsTempPtr   + 1) += +XQscp_Vrth;
+                *(here->HICUMcollTempPtr   + 1) += -XQscp_Vrth;
+                *(here->HICUMtempTempPtr   + 1) += +XQcth_Vrth;
 
             } 
 

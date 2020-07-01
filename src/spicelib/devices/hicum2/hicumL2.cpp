@@ -1927,7 +1927,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             //Cjei    = ddx(Qjei,V(bi));
             hicum_qjmodf(Temp,here->HICUMcjei0_t,here->HICUMvdei_t,model->HICUMzei,here->HICUMajei_t,Vbiei,&Cjei,&Cjei_Vbiei, &Cjei_dT,&Qjei, &Qjei_Vbiei, &Qjei_dT);
 
-
             result         = calc_hjei_vbe(Vbiei+1_e, Temp, here, model);
             hjei_vbe       = result.rpart();
             hjei_vbe_Vbiei = result.dpart();
@@ -1955,7 +1954,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
             Q_0_Vbiei    = Q_0_Qjei*Qjei_Vbiei + Q_0_hjei_vbe*hjei_vbe_Vbiei;
             Q_0_Vbici    = Q_0_Qjci*Qjci_Vbici ;
-            Q_0_dT      += Q_0_Qjei*Qjei_dT + Q_0_Qjci*Qjci_dT * Q_0_hjei_vbe*hjei_vbe_dT;
+            Q_0_dT      += Q_0_Qjei*Qjei_dT + Q_0_Qjci*Qjci_dT + Q_0_hjei_vbe*hjei_vbe_dT;
 
             //Transit time calculation at low current density
             result      = calc_T_f0(Temp, Vbici+1_e);
@@ -2049,7 +2048,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 Tf_dick  = result_Tf.dpart();
 
                 // add derivatives of Q_0 = f(Vbici,Vbiei,T)
-                itf_dT    += itf_dQ_pT*Q_0_dT; //WHY NOT Q_0 -> since we used Q_pT variable here instead of Q_0 to save space, see above
+                itf_dT    += itf_dQ_pT*Q_0_dT;
                 itr_dT    += itr_dQ_pT*Q_0_dT;
                 Qf_dT     += Qf_dQ_pT*Q_0_dT;
                 Qr_dT     += Qr_dQ_pT*Q_0_dT;
@@ -3488,8 +3487,8 @@ load:
             *(here->HICUMemitEIBaseBIPtr)          += -Iciei_Vbici;
             if (nqs) {
                 // with respect to Vxf2
-                *(here->HICUMcollCIXf2Ptr)             +=  Iciei_Vxf2;
-                *(here->HICUMemitEIXf2Ptr)             += -Iciei_Vxf2;
+                *(here->HICUMcollCIXf2Ptr)         +=  Iciei_Vxf2;
+                *(here->HICUMemitEIXf2Ptr)         += -Iciei_Vxf2;
             }
 //          finish
 
@@ -3722,8 +3721,8 @@ load:
                 *(ckt->CKTrhs + here->HICUMemitEINode) += -rhs_current;
                 *(ckt->CKTrhs + here->HICUMemitNode)   +=  rhs_current;
                 // with respect to Potential Vrth
-                *(here->HICUMemitTempPtr)   += -Ieie_Vrth;
                 *(here->HICUMemitEItempPtr) +=  Ieie_Vrth;
+                *(here->HICUMemitTempPtr)   += -Ieie_Vrth;
 //              finish
 
 //              Stamp element: Rbi    f_Bp = +   f_Bi = -
