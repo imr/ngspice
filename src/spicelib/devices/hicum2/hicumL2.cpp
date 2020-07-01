@@ -3372,6 +3372,30 @@ load:
 //          ############### STAMPS NO SH   ##############################
 //          ############################################################# 
 
+// first branches that are not relevant in DC HICUM, e.g. only in the transient case
+
+//          Branch: sc, Stamp element: Cscp 
+            rhs_current = model->HICUMtype * (Isc - Isc_Vsc*Vsc);
+            *(ckt->CKTrhs + here->HICUMsubsNode) += -rhs_current;
+            *(ckt->CKTrhs + here->HICUMcollNode) +=  rhs_current;
+            // with respect to Vsc
+            *(here->HICUMsubsSubsPtr)            +=  Isc_Vsc;
+            *(here->HICUMsubsCollPtr)            +=  Isc_Vsc;
+            *(here->HICUMcollSubsPtr)            += -Isc_Vsc;
+            *(here->HICUMcollCollPtr)            += -Isc_Vsc;
+//          finish
+
+//          Branch: bci, Stamp element: Qbcx
+            rhs_current = model->HICUMtype * (Ibci - Ibci_Vbci*Vbci);
+            *(ckt->CKTrhs + here->HICUMbaseNode)   += -rhs_current;
+            *(ckt->CKTrhs + here->HICUMcollCINode) +=  rhs_current;
+            //with respect to Vbci
+            *(here->HICUMbaseBasePtr)              +=  Ibci_Vbci;
+            *(here->HICUMcollCICollCIPtr)          +=  Ibci_Vbci;
+            *(here->HICUMbaseCollCIPtr)            += -Ibci_Vbci;
+            *(here->HICUMcollCIBasePtr)            += -Ibci_Vbci;
+//          finish
+
 //          Branch: be, Stamp element: Cbepar1 
             rhs_current = model->HICUMtype * (*(ckt->CKTstate0 + here->HICUMcqbepar1) - Vbe * gqbepar1);
             *(ckt->CKTrhs + here->HICUMbaseNode)   += -rhs_current;
@@ -3492,17 +3516,6 @@ load:
             }
 //          finish
 
-//          Branch: bci, Stamp element: Qbcx
-            rhs_current = model->HICUMtype * (Ibci - Ibci_Vbci*Vbci);
-            *(ckt->CKTrhs + here->HICUMbaseNode)   += -rhs_current;
-            *(ckt->CKTrhs + here->HICUMcollCINode) +=  rhs_current;
-            //with respect to Vbci
-            *(here->HICUMbaseBasePtr)              +=  Ibci_Vbci;
-            *(here->HICUMcollCICollCIPtr)          +=  Ibci_Vbci;
-            *(here->HICUMbaseCollCIPtr)            += -Ibci_Vbci;
-            *(here->HICUMcollCIBasePtr)            += -Ibci_Vbci;
-//          finish
-
 //          Branch: bpci, Stamp element: Ibpci ( was Ijbcx )
             rhs_current = model->HICUMtype * (Ibpci - Ibpci_Vbpci*Vbpci);
             *(ckt->CKTrhs + here->HICUMbaseBPNode) += -rhs_current;
@@ -3558,17 +3571,6 @@ load:
             *(here->HICUMbaseBICollCIPtr)          +=  Ibpbi_Vbici;
             *(here->HICUMbaseBPCollCIPtr)          += -Ibpbi_Vbici;
             *(here->HICUMbaseBIBaseBIPtr)          += -Ibpbi_Vbici;
-//          finish
-
-//          Branch: sc, Stamp element: Cscp 
-            rhs_current = model->HICUMtype * (Isc - Isc_Vsc*Vsc);
-            *(ckt->CKTrhs + here->HICUMsubsNode) += -rhs_current;
-            *(ckt->CKTrhs + here->HICUMcollNode) +=  rhs_current;
-            // with respect to Vsc
-            *(here->HICUMsubsSubsPtr)            +=  Isc_Vsc;
-            *(here->HICUMsubsCollPtr)            +=  Isc_Vsc;
-            *(here->HICUMcollSubsPtr)            += -Isc_Vsc;
-            *(here->HICUMcollCollPtr)            += -Isc_Vsc;
 //          finish
 
 //          Branch: sici, Stamp element: Ijsc

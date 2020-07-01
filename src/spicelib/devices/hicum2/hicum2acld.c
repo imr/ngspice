@@ -2,7 +2,7 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 Model Author: 1990 Michael Schröter TU Dresden
-Spice3 Implementation: 2019 Dietmar Warning
+Spice3 Implementation: 2019 Dietmar Warning and Markus Müller
 **********/
 
 /*
@@ -218,6 +218,16 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
             *(here->HICUMbaseBPEmitEIPtr)          += -Ibpei_Vbpei;
             *(here->HICUMemitEIBaseBPPtr)          += -Ibpei_Vbpei;;
 
+//          Stamp element: Ibici 
+            *(here->HICUMbaseBIBaseBIPtr)          +=  Ibici_Vbici;
+            *(here->HICUMcollCICollCIPtr)          +=  Ibici_Vbici;
+            *(here->HICUMcollCIBaseBIPtr)          += -Ibici_Vbici;
+            *(here->HICUMbaseBICollCIPtr)          += -Ibici_Vbici;
+            *(here->HICUMbaseBIBaseBIPtr)          +=  Ibici_Vbiei;
+            *(here->HICUMcollCIEmitEIPtr)          +=  Ibici_Vbiei;
+            *(here->HICUMcollCIBaseBIPtr)          += -Ibici_Vbiei;
+            *(here->HICUMbaseBIEmitEIPtr)          += -Ibici_Vbiei;
+
 //          Stamp element: Iciei
             *(here->HICUMcollCIBaseBIPtr)          +=  Iciei_Vbiei;
             *(here->HICUMemitEIEmitEIPtr)          +=  Iciei_Vbiei;
@@ -232,15 +242,6 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
                 *(here->HICUMemitEIXf2Ptr)             += -Iciei_Vxf2;
             }
 
-//          Stamp element: Ibici 
-            *(here->HICUMbaseBIBaseBIPtr)          +=  Ibici_Vbici;
-            *(here->HICUMcollCICollCIPtr)          +=  Ibici_Vbici;
-            *(here->HICUMcollCIBaseBIPtr)          += -Ibici_Vbici;
-            *(here->HICUMbaseBICollCIPtr)          += -Ibici_Vbici;
-            *(here->HICUMbaseBIBaseBIPtr)          +=  Ibici_Vbiei;
-            *(here->HICUMcollCIEmitEIPtr)          +=  Ibici_Vbiei;
-            *(here->HICUMcollCIBaseBIPtr)          += -Ibici_Vbiei;
-            *(here->HICUMbaseBIEmitEIPtr)          += -Ibici_Vbiei;
 
 //          Stamp element: Ibpci
             *(here->HICUMbaseBPBaseBPPtr)          +=  Ibpci_Vbpci;
@@ -260,6 +261,12 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
             *(here->HICUMbaseBPBasePtr)            += -Ibbp_Vbbp;
             *(here->HICUMbaseBaseBPPtr)            += -Ibbp_Vbbp;
 
+//          Stamp element: Re
+            *(here->HICUMemitEmitPtr)              +=  Ieie_Veie;
+            *(here->HICUMemitEIEmitEIPtr)          +=  Ieie_Veie;
+            *(here->HICUMemitEIEmitPtr)            += -Ieie_Veie;
+            *(here->HICUMemitEmitEIPtr)            += -Ieie_Veie;
+
 //          Stamp element: Ibpbi
             *(here->HICUMbaseBPBaseBPPtr)          +=  Ibpbi_Vbpbi; 
             *(here->HICUMbaseBIBaseBIPtr)          +=  Ibpbi_Vbpbi;
@@ -273,12 +280,6 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
             *(here->HICUMbaseBICollCIPtr)          +=  Ibpbi_Vbici;
             *(here->HICUMbaseBPCollCIPtr)          += -Ibpbi_Vbici;
             *(here->HICUMbaseBIBaseBIPtr)          += -Ibpbi_Vbici;
-
-//          Stamp element: Re
-            *(here->HICUMemitEmitPtr)              +=  Ieie_Veie;
-            *(here->HICUMemitEIEmitEIPtr)          +=  Ieie_Veie;
-            *(here->HICUMemitEIEmitPtr)            += -Ieie_Veie;
-            *(here->HICUMemitEmitEIPtr)            += -Ieie_Veie;
 
 //          Stamp element: Isici
             *(here->HICUMsubsSISubsSIPtr)          +=  Isici_Vsici;
