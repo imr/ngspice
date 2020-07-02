@@ -71,7 +71,7 @@ int num, i;
             INPgetNetTok(&line,&(nname1[i]),1);
             INPtermInsert(ckt,&(nname1[i]),tab,&(node1[i]));
     }
-    INPgetTok(&line,&ground,1);
+    INPgetNetTok(&line,&ground,1);
     INPtermInsert(ckt,&ground,tab,&groundnode);
     for (i = 0; i < num; i++) {
             INPgetNetTok(&line,&(nname2[i]),1);
@@ -101,7 +101,7 @@ int num, i;
                     mdfast = tab->defPmod;
             }
             IFC(newInstance,(ckt,mdfast,&fast,name));
-            INPgetTok(&line,&model,1);
+            INPgetNetTok(&line,&model,1);
             if ((strcmp(model, "length") == 0) || (strcmp(model, "len") == 0)) {
                 lenval = INPevaluate(&line,&error1,1);
                 lenvalgiven = 1;
