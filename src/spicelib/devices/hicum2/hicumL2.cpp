@@ -1665,7 +1665,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 ibieihat = *(ckt->CKTstate0 + here->HICUMibiei) +
                          *(ckt->CKTstate0 + here->HICUMibiei_Vbiei)*delvbiei+
                          *(ckt->CKTstate0 + here->HICUMibiei_Vrth)*delvrth+
-                         *(ckt->CKTstate0 + here->HICUMibiei_Vbici)*delvbici,
+                         *(ckt->CKTstate0 + here->HICUMibiei_Vbici)*delvbici;
                 ibicihat = *(ckt->CKTstate0 + here->HICUMibici) +
                          *(ckt->CKTstate0 + here->HICUMibici_Vbici)*delvbici+
                          *(ckt->CKTstate0 + here->HICUMibici_Vrth)*delvrth+
