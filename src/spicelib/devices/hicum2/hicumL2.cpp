@@ -1754,9 +1754,9 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                             ckt->CKTreltol* MAX(fabs(ibicihat),
                             fabs(*(ckt->CKTstate0 + here->HICUMibici)))+
                             ckt->CKTabstol) )
-                    if( (fabs(ibpcihat-*(ckt->CKTstate0 + here->HICUMibpei)) <
+                    if( (fabs(ibpcihat-*(ckt->CKTstate0 + here->HICUMibpci)) <
                             ckt->CKTreltol* MAX(fabs(ibpcihat),
-                            fabs(*(ckt->CKTstate0 + here->HICUMibpei)))+
+                            fabs(*(ckt->CKTstate0 + here->HICUMibpci)))+
                             ckt->CKTabstol) )
                     if( (fabs(ibpbihat-*(ckt->CKTstate0 + here->HICUMibpbi)) <
                             ckt->CKTreltol* MAX(fabs(ibpbihat),
