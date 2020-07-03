@@ -492,25 +492,25 @@ typedef struct sHICUMinstance {
 #define HICUMgqxf2       HICUMstate+105
 #define HICUMixf2        HICUMstate+106
 #define HICUMixf2_Vbiei  HICUMstate+108
-#define HICUMixf2_Vbici  HICUMstate+108
-#define HICUMixf2_Vxf1   HICUMstate+109
-#define HICUMixf2_Vxf2   HICUMstate+110
-#define HICUMixf2_Vrth   HICUMstate+111
+#define HICUMixf2_Vbici  HICUMstate+109
+#define HICUMixf2_Vxf1   HICUMstate+110
+#define HICUMixf2_Vxf2   HICUMstate+111
+#define HICUMixf2_Vrth   HICUMstate+112
 
-#define HICUMith         HICUMstate+112
-#define HICUMith_Vrth    HICUMstate+113
-#define HICUMith_Vbiei   HICUMstate+114
-#define HICUMith_Vbici   HICUMstate+115
-#define HICUMith_Vbpbi   HICUMstate+116
-#define HICUMith_Vbpci   HICUMstate+117
-#define HICUMith_Vbpei   HICUMstate+118
-#define HICUMith_Vciei   HICUMstate+119
-#define HICUMith_Vsici   HICUMstate+120
-#define HICUMith_Vcic    HICUMstate+121
-#define HICUMith_Vbbp    HICUMstate+122
-#define HICUMith_Veie    HICUMstate+123
+#define HICUMith         HICUMstate+113
+#define HICUMith_Vrth    HICUMstate+114
+#define HICUMith_Vbiei   HICUMstate+115
+#define HICUMith_Vbici   HICUMstate+116
+#define HICUMith_Vbpbi   HICUMstate+117
+#define HICUMith_Vbpci   HICUMstate+118
+#define HICUMith_Vbpei   HICUMstate+119
+#define HICUMith_Vciei   HICUMstate+120
+#define HICUMith_Vsici   HICUMstate+121
+#define HICUMith_Vcic    HICUMstate+122
+#define HICUMith_Vbbp    HICUMstate+123
+#define HICUMith_Veie    HICUMstate+124
 
-#define HICUMnumStates 124
+#define HICUMnumStates 125
 
 /* per model data */
 typedef struct sHICUMmodel {           /* model structure for a hicum */

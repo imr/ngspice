@@ -58,8 +58,8 @@ HICUMnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata 
         "_ibep",            /* shot noise due to ibep */
         "_ijbcx",           /* shot noise due to ijbcx */
         "_ijsc",            /* shot noise due to ijsc */
-        "_it",              /* shot noise due to ijbcx */
-        "_ibei",            /* shot noise due to ijsc */
+        "_it",              /* shot noise due to iciei */
+        "_ibei",            /* shot noise due to ibiei */
         "_1overfbe",        /* flicker (1/f) noise ibe */
         "_1overfre",        /* flicker (1/f) noise re */
         ""                  /* total transistor noise */
