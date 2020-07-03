@@ -58,6 +58,8 @@ HICUMnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata 
         "_ibep",            /* shot noise due to ibep */
         "_ijbcx",           /* shot noise due to ijbcx */
         "_ijsc",            /* shot noise due to ijsc */
+        "_it",              /* shot noise due to ijbcx */
+        "_ibei",            /* shot noise due to ijsc */
         "_1overfbe",        /* flicker (1/f) noise ibe */
         "_1overfre",        /* flicker (1/f) noise re */
         ""                  /* total transistor noise */
@@ -144,6 +146,15 @@ HICUMnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata 
                                  ckt,SHOTNOISE,inst->HICUMsubsSINode,inst->HICUMcollCINode,
                                  *(ckt->CKTstate0 + inst->HICUMisici) * inst->HICUMm);
 
+                    NevalSrc(&noizDens[HICUMITNOIZ],&lnNdens[HICUMITNOIZ],
+                                 ckt,SHOTNOISE,inst->HICUMcollCINode,inst->HICUMemitEINode,
+                                 *(ckt->CKTstate0 + inst->HICUMiciei) * inst->HICUMm);
+
+                    NevalSrc(&noizDens[HICUMIBEINOIZ],&lnNdens[HICUMIBEINOIZ],
+                                 ckt,SHOTNOISE,inst->HICUMbaseBINode,inst->HICUMemitEINode,
+                                 *(ckt->CKTstate0 + inst->HICUMibiei) * inst->HICUMm);
+
+
                     if (model->HICUMcfbe == -1) {
                         NevalSrc(&noizDens[HICUMFLBENOIZ], NULL, ckt,
                                      N_GAIN,inst->HICUMbaseBINode, inst->HICUMemitEINode,
@@ -181,6 +192,8 @@ HICUMnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata 
                                              noizDens[HICUMIBEPNOIZ] +
                                              noizDens[HICUMIBCXNOIZ] +
                                              noizDens[HICUMIJSCNOIZ] +
+                                             noizDens[HICUMITNOIZ]   +
+                                             noizDens[HICUMIBEINOIZ] +
                                              noizDens[HICUMFLBENOIZ] +
                                              noizDens[HICUMFLRENOIZ];
 
