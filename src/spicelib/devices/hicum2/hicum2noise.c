@@ -105,23 +105,23 @@ HICUMnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata 
                 case N_DENS:
                     NevalSrc(&noizDens[HICUMRCNOIZ],&lnNdens[HICUMRCNOIZ],
                                  ckt,THERMNOISE,inst->HICUMcollCINode,inst->HICUMcollNode,
-                                 Icic_Vcic);
+                                 Icic_Vcic * inst->HICUMm);
 
                     NevalSrc(&noizDens[HICUMRBNOIZ],&lnNdens[HICUMRBNOIZ],
                                  ckt,THERMNOISE,inst->HICUMbaseNode,inst->HICUMbaseBPNode,
-                                 Ibbp_Vbbp);
+                                 Ibbp_Vbbp * inst->HICUMm);
 
                     NevalSrc(&noizDens[HICUMRBINOIZ],&lnNdens[HICUMRBINOIZ],
                                  ckt,THERMNOISE,inst->HICUMbaseBPNode,inst->HICUMbaseBINode,
-                                 *(ckt->CKTstate0 + inst->HICUMibpbi_Vbpbi));
+                                 *(ckt->CKTstate0 + inst->HICUMibpbi_Vbpbi) * inst->HICUMm);
 
                     NevalSrc(&noizDens[HICUMRENOIZ],&lnNdens[HICUMRENOIZ],
                                  ckt,THERMNOISE,inst->HICUMemitEINode,inst->HICUMemitNode,
-                                 Ieie_Veie);
+                                 Ieie_Veie * inst->HICUMm);
 
                     NevalSrc(&noizDens[HICUMRSNOIZ],&lnNdens[HICUMRSNOIZ],
                                  ckt,THERMNOISE,inst->HICUMsubsSINode,inst->HICUMsubsNode,
-                                 Isis_Vsis);
+                                 Isis_Vsis * inst->HICUMm);
 
 
                     NevalSrc(&noizDens[HICUMIAVLNOIZ],&lnNdens[HICUMIAVLNOIZ],
@@ -130,27 +130,32 @@ HICUMnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata 
 
                     NevalSrc(&noizDens[HICUMIBCINOIZ],&lnNdens[HICUMIBCINOIZ],
                                  ckt,SHOTNOISE,inst->HICUMbaseBINode,inst->HICUMcollCINode,
-                                 *(ckt->CKTstate0 + inst->HICUMibici));
+                                 *(ckt->CKTstate0 + inst->HICUMibici) * inst->HICUMm);
 
                     NevalSrc(&noizDens[HICUMIBEPNOIZ],&lnNdens[HICUMIBEPNOIZ],
                                  ckt,SHOTNOISE,inst->HICUMbaseBPNode,inst->HICUMemitEINode,
-                                 *(ckt->CKTstate0 + inst->HICUMibpei));
+                                 *(ckt->CKTstate0 + inst->HICUMibpei) * inst->HICUMm);
 
                     NevalSrc(&noizDens[HICUMIBCXNOIZ],&lnNdens[HICUMIBCXNOIZ],
                                  ckt,SHOTNOISE,inst->HICUMbaseBPNode,inst->HICUMcollCINode,
-                                 *(ckt->CKTstate0 + inst->HICUMibpci));
+                                 *(ckt->CKTstate0 + inst->HICUMibpci) * inst->HICUMm);
 
                     NevalSrc(&noizDens[HICUMIJSCNOIZ],&lnNdens[HICUMIJSCNOIZ],
                                  ckt,SHOTNOISE,inst->HICUMsubsSINode,inst->HICUMcollCINode,
-                                 *(ckt->CKTstate0 + inst->HICUMisici));
+                                 *(ckt->CKTstate0 + inst->HICUMisici) * inst->HICUMm);
 
-
-                    NevalSrc(&noizDens[HICUMFLBENOIZ], NULL, ckt,
-                                 N_GAIN,inst->HICUMbaseBINode, inst->HICUMemitEINode,
-                                 (double)0.0);
+                    if (model->HICUMcfbe == -1) {
+                        NevalSrc(&noizDens[HICUMFLBENOIZ], NULL, ckt,
+                                     N_GAIN,inst->HICUMbaseBINode, inst->HICUMemitEINode,
+                                     (double)0.0);
+                    } else {
+                        NevalSrc(&noizDens[HICUMFLBENOIZ], NULL, ckt,
+                                     N_GAIN,inst->HICUMbaseBPNode, inst->HICUMemitEINode,
+                                     (double)0.0);
+                    }
                     noizDens[HICUMFLBENOIZ] *= inst->HICUMm * model->HICUMkf *
                                  exp(model->HICUMaf *
-                                 log(MAX(fabs((*(ckt->CKTstate0 + inst->HICUMibiei)+*(ckt->CKTstate0 + inst->HICUMibpei))/inst->HICUMm),N_MINLOG))) /
+                                 log(MAX(fabs((*(ckt->CKTstate0 + inst->HICUMibiei)+*(ckt->CKTstate0 + inst->HICUMibpei))),N_MINLOG))) /
                                  data->freq;
                     lnNdens[HICUMFLBENOIZ] =
                                  log(MAX(noizDens[HICUMFLBENOIZ],N_MINLOG));
@@ -160,7 +165,7 @@ HICUMnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata 
                                  (double)0.0);
                     noizDens[HICUMFLRENOIZ] *= inst->HICUMm * model->HICUMkfre *
                                  exp(model->HICUMafre *
-                                 log(MAX(fabs(*(ckt->CKTstate0 + inst->HICUMieie)/inst->HICUMm),N_MINLOG))) /
+                                 log(MAX(fabs(*(ckt->CKTstate0 + inst->HICUMieie)),N_MINLOG))) /
                                  data->freq;
                     lnNdens[HICUMFLRENOIZ] =
                                  log(MAX(noizDens[HICUMFLRENOIZ],N_MINLOG));
