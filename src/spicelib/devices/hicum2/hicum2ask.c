@@ -37,30 +37,30 @@ HICUMask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFval
         case HICUM_OFF:
             value->iValue = here->HICUMoff;
             return(OK);
-        case HICUM_IC_VB:
-            value->rValue = here->HICUMicVB;
-            return(OK);
-        case HICUM_IC_VE:
-            value->rValue = here->HICUMicVE;
-            return(OK);
-        case HICUM_IC_VC:
-            value->rValue = here->HICUMicVC;
-            return(OK);
-        case HICUM_IC_VBi:
-            value->rValue = here->HICUMicVBi;
-            return(OK);
-        case HICUM_IC_VBp:
-            value->rValue = here->HICUMicVBp;
-            return(OK);
-        case HICUM_IC_VEi:
-            value->rValue = here->HICUMicVEi;
-            return(OK);
-        case HICUM_IC_VCi:
-            value->rValue = here->HICUMicVCi;
-            return(OK);
-        case HICUM_IC_Vt:
-            value->rValue = here->HICUMicVt;
-            return(OK);
+        // case HICUM_IC_VB:
+        //     value->rValue = here->HICUMicVB;
+        //     return(OK);
+        // case HICUM_IC_VE:
+        //     value->rValue = here->HICUMicVE;
+        //     return(OK);
+        // case HICUM_IC_VC:
+        //     value->rValue = here->HICUMicVC;
+        //     return(OK);
+        // case HICUM_IC_VBi:
+        //     value->rValue = here->HICUMicVBi;
+        //     return(OK);
+        // case HICUM_IC_VBp:
+        //     value->rValue = here->HICUMicVBp;
+        //     return(OK);
+        // case HICUM_IC_VEi:
+        //     value->rValue = here->HICUMicVEi;
+        //     return(OK);
+        // case HICUM_IC_VCi:
+        //     value->rValue = here->HICUMicVCi;
+        //     return(OK);
+        // case HICUM_IC_Vt:
+        //     value->rValue = here->HICUMicVt;
+        //     return(OK);
         case HICUM_TEMP:
             value->rValue = here->HICUMtemp - CONSTCtoK;
             return(OK);
