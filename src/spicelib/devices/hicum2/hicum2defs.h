@@ -894,7 +894,7 @@ enum {
     HICUM_AREA = 1,
     HICUM_OFF,
     HICUM_IC,
-    // HICUM_IC_VB,
+    // HICUM_IC_VB, //removed for the time beeing, they are not spice-like
     // HICUM_IC_VE,
     // HICUM_IC_VC,
     // HICUM_IC_VBi,
