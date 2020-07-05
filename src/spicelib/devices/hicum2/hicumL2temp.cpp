@@ -164,6 +164,8 @@ int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double 
     double rcx_scaled  ;
     double rbi0_scaled ;
     double rth_scaled ;
+    double cth_scaled ;
+    double ibets_scaled ;
 
     // double cjci0_t, vdci_t, vptci_t, cjep0_t, vdep_t, ajep_t, vdcx_t, vptcx_t, cscp0_t, vdsp_t, vptsp_t, cjs0_t, vds_t, vpts_t;
 
@@ -209,6 +211,7 @@ int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double 
     ireps_scaled  = model->HICUMireps  * here->HICUMm;
     cjep0_scaled  = model->HICUMcjep0  * here->HICUMm;
     cbepar_scaled = model->HICUMcbepar * here->HICUMm;
+    ibets_scaled  = model->HICUMibets  * area_times_m;
     //BC junction
     ibcis_scaled  = model->HICUMibcis  * area_times_m;
     cjci0_scaled  = model->HICUMcjci0  * area_times_m;
@@ -223,12 +226,17 @@ int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double 
     rcx_scaled    = model->HICUMrcx  / area_times_m;
     rbi0_scaled   = model->HICUMrbi0 / area_times_m;
 
-    //these variables depend only on scale, but not on temperature. 
+    // These model variables depend on on scale.
     // They are put into the here struct for usage in load routine.
     here->HICUMicbar_scaled  = icbar_scaled;
     here->HICUMcbepar_scaled = cbepar_scaled;
     here->HICUMcbcpar_scaled = cbcpar_scaled;
     here->HICUMcth_scaled    = cth_scaled;
+    here->HICUMibets_scaled  = ibets_scaled;
+    here->HICUMrci0_scaled   = rci0_scaled;
+    here->HICUMrth_scaled    = rth_scaled;
+    here->HICUMcjcx0_scaled  = cjcx0_scaled;
+    here->HICUMcjci0_scaled  = cjci0_scaled;
 
     Tnom    = model->HICUMtnom;
     k10     = model->HICUMf1vg*Tnom*log(Tnom);
@@ -470,7 +478,7 @@ int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double 
     vdep_t.dpart(here->HICUMvdep_t.dpart);
 
     //Tunneling current factors
-    if (model->HICUMibets > 0) { // HICTUN_T
+    if (ibets_scaled > 0) { // HICTUN_T
         duals::duald a_eg,ab,aa;
         ab = 1.0;
         aa = 1.0;
@@ -482,7 +490,7 @@ int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double 
             ab = (cjei0_t/cjei0_scaled)*sqrt(a_eg)*vdei_t*vdei_t/(model->HICUMvdei*model->HICUMvdei);
             aa = (model->HICUMvdei/vdei_t)*(cjei0_scaled/cjei0_t)*pow(a_eg,-1.5);
         }
-        a = model->HICUMibets*ab;
+        a = ibets_scaled*ab;
         here->HICUMibets_t.rpart = a.rpart();
         here->HICUMibets_t.dpart = a.dpart();
         a = model->HICUMabet*aa;

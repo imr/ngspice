@@ -720,7 +720,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             FFitf_ick = itf/I_CK;
             FFdTef  = tef0_t*exp(model->HICUMgtfe*log(FFitf_ick));
             FFdQef  = FFdTef*itf/(1+model->HICUMgtfe);
-            if (here->HICUMicbar_scaled<0.05*(model->HICUMvlim/model->HICUMrci0)) {
+            if (here->HICUMicbar_scaled<0.05*(model->HICUMvlim/here->HICUMrci0_scaled)) {
                 FFdVc = 0;
                 FFdVc_ditf = 0;
             } else {
@@ -852,7 +852,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     std::function<duals::duald (duals::duald, duals::duald, duals::duald)> calc_ibet = [&](duals::duald Vbiei, duals::duald Vbpei, duals::duald T){
         //Tunneling current
         duals::duald ibet;
-        if (model->HICUMibets > 0 && (Vbpei <0.0 || Vbiei < 0.0)){ //begin : HICTUN
+        if (here->HICUMibets_scaled > 0 && (Vbpei <0.0 || Vbiei < 0.0)){ //begin : HICTUN
             duals::duald pocce,czz, cje0_t, vde_t, ibets_t, abet_t;
             double T_dpart = T.dpart();
             ibets_t = here->HICUMibets_t.rpart;
@@ -897,7 +897,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
         // double v_bord_r;
         // double volatile v_bord_r1;
         // int use_aval;
-        // if ((model->HICUMfavl > 0.0) && (model->HICUMcjci0 > 0.0)) {
+        // if ((model->HICUMfavl > 0.0) && (model->HICUMcjci0_scaled > 0.0)) {
         //     use_aval = 1;
         // } else {
         //     use_aval = 0;
@@ -1196,24 +1196,24 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     for (; model != NULL; model = HICUMnextModel(model)) {
 
         // Model_initialization
-        int selfheat = ((model->HICUMflsh > 0) && (model->HICUMrthGiven) && (model->HICUMrth > 0.0));
+        int selfheat = ((model->HICUMflsh > 0) && (model->HICUMrthGiven) && (here->HICUMrth_scaled > 0.0));
         int nqs      = ((model->HICUMflnqs != 0 || model->HICUMflcomp == 0.0 || model->HICUMflcomp == 2.1) && (model->HICUMalit > 0 || model->HICUMalqf > 0));
 
         // Depletion capacitance splitting at b-c junction
         // Capacitances at peripheral and external base node
         C_1 = (1.0 - model->HICUMfbcpar) *
-                (model->HICUMcjcx0 + here->HICUMcbcpar_scaled);
+                (here->HICUMcjcx0_scaled + here->HICUMcbcpar_scaled);
         if (C_1 >= here->HICUMcbcpar_scaled) {
             cbcpar1 = here->HICUMcbcpar_scaled;
             cbcpar2 = 0.0;
             //cjcx01 = C_1 - here->HICUMcbcpar_scaled;
-            //cjcx02 = model->HICUMcjcx0 - cjcx01; //not needed herein
+            //cjcx02 = model->HICUMcjcx0_scaled - cjcx01; //not needed herein
         }
         else {
             cbcpar1 = C_1;
             cbcpar2 = here->HICUMcbcpar_scaled - cbcpar1;
             //cjcx01 = 0.0;
-            //cjcx02 = model->HICUMcjcx0; //not needed herein
+            //cjcx02 = model->HICUMcjcx0_scaled; //not needed herein
         }
 
         // Parasitic b-e capacitance partitioning: No temperature dependence
@@ -1239,7 +1239,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
         }
 
         // Turn avalanche calculation on depending of parameters
-        if ((model->HICUMfavl > 0.0) && (model->HICUMcjci0 > 0.0)) {
+        if ((model->HICUMfavl > 0.0) && (here->HICUMcjci0_scaled > 0.0)) {
             use_aval = 1;
         } else {
             use_aval = 0;
@@ -2491,10 +2491,10 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             hicum_diode(Temp,here->HICUMiscs_t,model->HICUMmsc, Vsici, &ijsc, &ijsc_Vsici, &ijsc_Vrth);
 
             // Self-heating calculation
-            if (model->HICUMflsh == 1 && model->HICUMrth >= MIN_R) {
+            if (model->HICUMflsh == 1 && here->HICUMrth_scaled >= MIN_R) {
                 pterm   =  (Vbiei-Vbici)*it    + (here->HICUMvdci_t.rpart-Vbici)*iavl;
                 pterm_dT = (Vbiei-Vbici)*it_dT + (here->HICUMvdci_t.rpart-Vbici)*iavl_dT + here->HICUMvdci_t.dpart*iavl;
-            } else if (model->HICUMflsh == 2 && model->HICUMrth >= MIN_R) {
+            } else if (model->HICUMflsh == 2 && here->HICUMrth_scaled >= MIN_R) {
                 pterm   =  (Vbiei-Vbici)*it    + (here->HICUMvdci_t.rpart-Vbici)*iavl + ibei*Vbiei + ibci*Vbici + ibep*Vbpei + ijbcx*Vbpci + ijsc*Vsici;
                 pterm_dT = (Vbiei-Vbici)*it_dT + (here->HICUMvdci_t.rpart-Vbici)*iavl_dT + here->HICUMvdci_t.dpart*iavl +
                     ibei_dT*Vbiei + ibci_dT*Vbici + ibep_dT*Vbpei + ijbcx_dT*Vbpci + ijsc_Vrth*Vsici;
@@ -2703,7 +2703,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
             // Following code is an intermediate solution (if branch contribution is not supported):
             // ******************************************
-            //if(model->HICUMflsh == 0 || model->HICUMrth < MIN_R) {
+            //if(model->HICUMflsh == 0 || model->HICUMrth_scaled < MIN_R) {
             //      I[br_sht]       <+ Vrth/MIN_R;
             //} else {
             //      I[br_sht]       <+ Vrth/rth_t-pterm;

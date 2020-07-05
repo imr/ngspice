@@ -140,11 +140,16 @@ typedef struct sHICUMinstance {
     dual_double HICUMvds_t;
     dual_double HICUMvpts_t;
 
-    //variables that depend on "area" and "m" but not on temperature
+    //model variables that depend on "area" and "m" and are needed in load
+    double HICUMcjci0_scaled;
+    double HICUMcjcx0_scaled;
     double HICUMicbar_scaled;
     double HICUMcbepar_scaled;
     double HICUMcbcpar_scaled;
     double HICUMcth_scaled;
+    double HICUMrth_scaled;
+    double HICUMrci0_scaled;
+    double HICUMibets_scaled;
 
     double HICUMrbi;
     double HICUMiavl;
