@@ -580,28 +580,29 @@ HICUMsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 }
             }
 
-           if (nqs) {
-            if(here->HICUMxfNode == 0) {
-                error = CKTmkVolt(ckt, &tmp, here->HICUMname, "xf");
-                if(error) return(error);
-                here->HICUMxfNode = tmp->number;
+            if (nqs) {
+                if(here->HICUMxfNode == 0) {
+                    error = CKTmkVolt(ckt, &tmp, here->HICUMname, "xf");
+                    if(error) return(error);
+                    here->HICUMxfNode = tmp->number;
+                }
+                if(here->HICUMxf1Node == 0) {
+                    error = CKTmkVolt(ckt, &tmp, here->HICUMname, "xf1");
+                    if(error) return(error);
+                    here->HICUMxf1Node = tmp->number;
+                }
+                if(here->HICUMxf2Node == 0) {
+                    error = CKTmkVolt(ckt, &tmp, here->HICUMname, "xf2");
+                    if(error) return(error);
+                    here->HICUMxf2Node = tmp->number;
+                }
+            } else {
+                here->HICUMxfNode  = 0;
+                here->HICUMxf1Node = 0;
+                here->HICUMxf2Node = 0;
             }
-            if(here->HICUMxf1Node == 0) {
-                error = CKTmkVolt(ckt, &tmp, here->HICUMname, "xf1");
-                if(error) return(error);
-                here->HICUMxf1Node = tmp->number;
-            }
-            if(here->HICUMxf2Node == 0) {
-                error = CKTmkVolt(ckt, &tmp, here->HICUMname, "xf2");
-                if(error) return(error);
-                here->HICUMxf2Node = tmp->number;
-            }
-           } else {
-             here->HICUMxfNode  = 0;
-             here->HICUMxf1Node = 0;
-             here->HICUMxf2Node = 0;
-           }
 
+           
 /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
 do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\

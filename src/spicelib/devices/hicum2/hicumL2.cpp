@@ -720,16 +720,16 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             FFitf_ick = itf/I_CK;
             FFdTef  = tef0_t*exp(model->HICUMgtfe*log(FFitf_ick));
             FFdQef  = FFdTef*itf/(1+model->HICUMgtfe);
-            if (model->HICUMicbar<0.05*(model->HICUMvlim/model->HICUMrci0)) {
+            if (here->HICUMicbar_scaled<0.05*(model->HICUMvlim/model->HICUMrci0)) {
                 FFdVc = 0;
                 FFdVc_ditf = 0;
             } else {
-                FFib    = (itf-I_CK)/model->HICUMicbar;
+                FFib    = (itf-I_CK)/here->HICUMicbar_scaled;
                 if (FFib < -1.0e10) {
                     FFib = -1.0e10;
                 }
                 FFfcbar    = (FFib+sqrt(FFib*FFib+model->HICUMacbar))/2.0;
-                FFdib_ditf = FFfcbar/sqrt(FFib*FFib+model->HICUMacbar)/model->HICUMicbar;
+                FFdib_ditf = FFfcbar/sqrt(FFib*FFib+model->HICUMacbar)/here->HICUMicbar_scaled;
                 FFdVc      = model->HICUMvcbar*exp(-1.0/FFfcbar);
                 FFdVc_ditf = FFdVc/(FFfcbar*FFfcbar)*FFdib_ditf;
             }
@@ -1202,23 +1202,23 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
         // Depletion capacitance splitting at b-c junction
         // Capacitances at peripheral and external base node
         C_1 = (1.0 - model->HICUMfbcpar) *
-                (model->HICUMcjcx0 + model->HICUMcbcpar);
-        if (C_1 >= model->HICUMcbcpar) {
-            cbcpar1 = model->HICUMcbcpar;
+                (model->HICUMcjcx0 + here->HICUMcbcpar_scaled);
+        if (C_1 >= here->HICUMcbcpar_scaled) {
+            cbcpar1 = here->HICUMcbcpar_scaled;
             cbcpar2 = 0.0;
-            //cjcx01 = C_1 - model->HICUMcbcpar;
+            //cjcx01 = C_1 - here->HICUMcbcpar_scaled;
             //cjcx02 = model->HICUMcjcx0 - cjcx01; //not needed herein
         }
         else {
             cbcpar1 = C_1;
-            cbcpar2 = model->HICUMcbcpar - cbcpar1;
+            cbcpar2 = here->HICUMcbcpar_scaled - cbcpar1;
             //cjcx01 = 0.0;
             //cjcx02 = model->HICUMcjcx0; //not needed herein
         }
 
         // Parasitic b-e capacitance partitioning: No temperature dependence
-        cbepar2 = model->HICUMfbepar * model->HICUMcbepar;
-        cbepar1 = model->HICUMcbepar - cbepar2;
+        cbepar2 = model->HICUMfbepar * here->HICUMcbepar_scaled;
+        cbepar1 = here->HICUMcbepar_scaled - cbepar2;
 
 
         // Avoid divide-by-zero and define infinity other way
@@ -1259,8 +1259,8 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             Icth = 0.0, Icth_Vrth = 0.0;
 
             // Markus: What is this ?
-            here->HICUMcbepar = model->HICUMcbepar;
-            here->HICUMcbcpar = model->HICUMcbcpar;
+            here->HICUMcbepar = here->HICUMcbepar_scaled;
+            here->HICUMcbcpar = here->HICUMcbcpar_scaled;
 
             /*
              *   initialization
@@ -2707,7 +2707,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             //      I[br_sht]       <+ Vrth/MIN_R;
             //} else {
             //      I[br_sht]       <+ Vrth/rth_t-pterm;
-            //      I[br_sht]       <+ ddt(model->HICUMcth*Vrth]);
+            //      I[br_sht]       <+ ddt(here->HICUMcth_scaled*Vrth]);
             //}
 
             // ******************************************
@@ -2905,7 +2905,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             Qbcpar1_Vbci     = cbcpar1;
             Qbcpar2_Vbpci    = cbcpar2;
             Qsu_Vsis         = model->HICUMcsu;
-            Qcth_Vrth        = model->HICUMcth;
+            Qcth_Vrth        = here->HICUMcth_scaled;
             if( (ckt->CKTmode & (MODEDCTRANCURVE | MODETRAN | MODEAC)) ||
                     ((ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC)) ||
                     (ckt->CKTmode & MODEINITSMSIG)) {
@@ -2917,7 +2917,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 Qbcpar2 = cbcpar2*Vbpci;
                 Qsu     = model->HICUMcsu*Vsis;
                 if (selfheat) {
-                    Qcth    = model->HICUMcth*Vrth;
+                    Qcth    = here->HICUMcth_scaled*Vrth;
                 } else {
                     Qcth    = 0;
                 }
@@ -2998,7 +2998,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 here->HICUMcapjs       = Cjs;
                 here->HICUMcapscp      = Cscp;
                 here->HICUMcapsu       = model->HICUMcsu;
-                here->HICUMcapcth      = model->HICUMcth;
+                here->HICUMcapcth      = here->HICUMcth_scaled;
                 here->HICUMcapscp      = Cscp;
 
                 //derivatives of charges due to cross coupling
@@ -3046,7 +3046,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                         *(ckt->CKTstate0 + here->HICUMcqxf2)      = Qxf2_Vxf2;
                         *(ckt->CKTstate0 + here->HICUMcqxf)       = Qxf_Vxf;
                         if (selfheat)
-                            *(ckt->CKTstate0 + here->HICUMcqcth)  = model->HICUMcth;
+                            *(ckt->CKTstate0 + here->HICUMcqcth)  = here->HICUMcth_scaled;
                         continue; /* go to 1000 */
                     }
                     //transient analysis
@@ -3177,7 +3177,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                     if (selfheat)
                     {
                         //Qth
-                        error = NIintegrate(ckt,&geq,&ceq,model->HICUMcth,here->HICUMqcth);
+                        error = NIintegrate(ckt,&geq,&ceq,here->HICUMcth_scaled,here->HICUMqcth);
                         if(error) return(error);
                         Icth_Vrth = geq;
                         Icth = *(ckt->CKTstate0 + here->HICUMcqcth);
