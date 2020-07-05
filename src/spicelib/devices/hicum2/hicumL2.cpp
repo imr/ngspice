@@ -1196,30 +1196,8 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     for (; model != NULL; model = HICUMnextModel(model)) {
 
         // Model_initialization
-        int selfheat = ((model->HICUMflsh > 0) && (model->HICUMrthGiven) && (here->HICUMrth_scaled > 0.0));
+        int selfheat = ((model->HICUMflsh > 0) && (model->HICUMrthGiven) && (model->HICUMrth > 0.0));
         int nqs      = ((model->HICUMflnqs != 0 || model->HICUMflcomp == 0.0 || model->HICUMflcomp == 2.1) && (model->HICUMalit > 0 || model->HICUMalqf > 0));
-
-        // Depletion capacitance splitting at b-c junction
-        // Capacitances at peripheral and external base node
-        C_1 = (1.0 - model->HICUMfbcpar) *
-                (here->HICUMcjcx0_scaled + here->HICUMcbcpar_scaled);
-        if (C_1 >= here->HICUMcbcpar_scaled) {
-            cbcpar1 = here->HICUMcbcpar_scaled;
-            cbcpar2 = 0.0;
-            //cjcx01 = C_1 - here->HICUMcbcpar_scaled;
-            //cjcx02 = model->HICUMcjcx0_scaled - cjcx01; //not needed herein
-        }
-        else {
-            cbcpar1 = C_1;
-            cbcpar2 = here->HICUMcbcpar_scaled - cbcpar1;
-            //cjcx01 = 0.0;
-            //cjcx02 = model->HICUMcjcx0_scaled; //not needed herein
-        }
-
-        // Parasitic b-e capacitance partitioning: No temperature dependence
-        cbepar2 = model->HICUMfbepar * here->HICUMcbepar_scaled;
-        cbepar1 = here->HICUMcbepar_scaled - cbepar2;
-
 
         // Avoid divide-by-zero and define infinity other way
         // High current correction for 2D and 3D effects
@@ -1239,7 +1217,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
         }
 
         // Turn avalanche calculation on depending of parameters
-        if ((model->HICUMfavl > 0.0) && (here->HICUMcjci0_scaled > 0.0)) {
+        if ((model->HICUMfavl > 0.0) && (model->HICUMcjci0 > 0.0)) {
             use_aval = 1;
         } else {
             use_aval = 0;
@@ -1251,16 +1229,33 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
         for (here = HICUMinstances(model); here != NULL ;
                 here=HICUMnextInstance(here)) {
 
+            // Depletion capacitance splitting at b-c junction
+            // Capacitances at peripheral and external base node
+            C_1 = (1.0 - model->HICUMfbcpar) *
+                    (here->HICUMcjcx0_scaled + here->HICUMcbcpar_scaled);
+            if (C_1 >= here->HICUMcbcpar_scaled) {
+                cbcpar1 = here->HICUMcbcpar_scaled;
+                cbcpar2 = 0.0;
+                //cjcx01 = C_1 - here->HICUMcbcpar_scaled;
+                //cjcx02 = model->HICUMcjcx0_scaled - cjcx01; //not needed herein
+            }
+            else {
+                cbcpar1 = C_1;
+                cbcpar2 = here->HICUMcbcpar_scaled - cbcpar1;
+                //cjcx01 = 0.0;
+                //cjcx02 = model->HICUMcjcx0_scaled; //not needed herein
+            }
+
+            // Parasitic b-e capacitance partitioning: No temperature dependence
+            cbepar2 = model->HICUMfbepar * here->HICUMcbepar_scaled;
+            cbepar1 = here->HICUMcbepar_scaled - cbepar2;
+
             gqbepar1 = 0.0;
             gqbepar2 = 0.0;
             gqbcpar1 = 0.0;
             gqbcpar2 = 0.0;
             gqsu = 0.0;
             Icth = 0.0, Icth_Vrth = 0.0;
-
-            // Markus: What is this ?
-            here->HICUMcbepar = here->HICUMcbepar_scaled;
-            here->HICUMcbcpar = here->HICUMcbcpar_scaled;
 
             /*
              *   initialization

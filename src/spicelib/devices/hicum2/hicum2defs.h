@@ -140,16 +140,31 @@ typedef struct sHICUMinstance {
     dual_double HICUMvds_t;
     dual_double HICUMvpts_t;
 
-    //model variables that depend on "area" and "m" and are needed in load
+    //model variables that depend on "area" and "m" and are needed in temp
+    double HICUMqp0_scaled;
+    double HICUMc10_scaled;
+    double HICUMicbar_scaled;
+    double HICUMrth_scaled;
+    double HICUMcth_scaled;
+    double HICUMcjei0_scaled;
+    double HICUMibeis_scaled;
+    double HICUMireis_scaled;
+    double HICUMibeps_scaled;
+    double HICUMireps_scaled;
+    double HICUMcjep0_scaled;
+    double HICUMcbepar_scaled;
+    double HICUMibets_scaled;
+    double HICUMibcis_scaled;
     double HICUMcjci0_scaled;
     double HICUMcjcx0_scaled;
-    double HICUMicbar_scaled;
-    double HICUMcbepar_scaled;
     double HICUMcbcpar_scaled;
-    double HICUMcth_scaled;
-    double HICUMrth_scaled;
+    double HICUMibcxs_scaled;
+    double HICUMqavl_scaled;
+    double HICUMre_scaled;
     double HICUMrci0_scaled;
-    double HICUMibets_scaled;
+    double HICUMrbx_scaled;
+    double HICUMrcx_scaled;
+    double HICUMrbi0_scaled;
 
     double HICUMrbi;
     double HICUMiavl;
@@ -157,9 +172,6 @@ typedef struct sHICUMinstance {
 
     double HICUMtf;
     double HICUMick;
-
-    double HICUMcbepar;
-    double HICUMcbcpar;
 
     double *HICUMcollCollPtr;  /* pointer to sparse matrix at
                              * (collector,collector) */

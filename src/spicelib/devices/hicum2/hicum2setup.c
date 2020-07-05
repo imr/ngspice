@@ -498,6 +498,63 @@ HICUMsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 here->HICUMdtemp = 0.0;
             }
 
+            // Warning:
+            // The scaling with HICUMm and HICUMarea is done here from model to here variables in order to save memory.
+            // Classical spice scaling with "area" is implemented, but it is not recommended to be used. If you want 
+            // scaling, more sophisticated expressions should be used. Those can be found in modern PDKs or should be 
+            // provided by modeling engineers. 
+            // For discrete devices, the multiplication factor "m" should give reasonable results.
+            //
+            // The HICUMm device multiplicaton factor can be exected to give good results.
+            // The following variables need scaling in HICUM:
+            // IT         : qp0 ~ (area m)**2   qp0 ~ area m  icbar ~ area m 
+            // BE junction: cjei0  ~ area m      cjep0 ~ m
+            //              ibeis  ~ area m      ibeps ~ m
+            //              cbepar ~ m -> area scaling not reasonable
+            // BC junction: cjci0 ~ area m      cjcx0 ~ m
+            //              ibcis ~ area m      ibcxs ~ m 
+            //              ireis ~ area m      ireps ~ m 
+            //              cbcpar ~ m -> area scaling not reasonable
+            //              qavl   ~ area m 
+            // re   ~1/(area*m) 
+            // rci0 ~1/(area*m) 
+            // rbx  ~1/(area*m)  -> assume that scaling with "area" is due to lE0 increase
+            // rcx  ~1/(area*m)  -> assume that scaling with "area" is due to lE0 increase
+            // rbi0 ~1/(area*m)  -> assume that scaling with "area" is due to lE0 increase
+            // rth  ~1/(area*m)  -> bad assumption, but more transistor geometry needs to be known for accurate scaling
+            // cth  ~ area*m     -> bad assumption, but more transistor geometry needs to be known for accurate scaling
+            // Substrate related parameters not scaled on purpose. This is very geometry dependent?
+
+            double area_times_m  = here->HICUMm*here->HICUMarea;
+            //IT
+            here->HICUMqp0_scaled    = model->HICUMqp0   * area_times_m;
+            here->HICUMc10_scaled    = model->HICUMc10   * area_times_m*area_times_m;
+            here->HICUMicbar_scaled  = model->HICUMicbar * area_times_m;
+            here->HICUMrth_scaled    = model->HICUMrth   / area_times_m; //very poor assumption
+            here->HICUMcth_scaled    = model->HICUMcth   * area_times_m; //very poor assumption
+            //BE junction
+            here->HICUMcjei0_scaled  = model->HICUMcjei0  * area_times_m;
+            here->HICUMibeis_scaled  = model->HICUMibeis  * area_times_m;
+            here->HICUMireis_scaled  = model->HICUMireis  * area_times_m;
+            here->HICUMibeps_scaled  = model->HICUMibeps  * here->HICUMm;
+            here->HICUMireps_scaled  = model->HICUMireps  * here->HICUMm;
+            here->HICUMcjep0_scaled  = model->HICUMcjep0  * here->HICUMm;
+            here->HICUMcbepar_scaled = model->HICUMcbepar * here->HICUMm;
+            here->HICUMibets_scaled  = model->HICUMibets  * area_times_m;
+            //BC junction
+            here->HICUMibcis_scaled  = model->HICUMibcis  * area_times_m;
+            here->HICUMcjci0_scaled  = model->HICUMcjci0  * area_times_m;
+            here->HICUMcjcx0_scaled  = model->HICUMcjcx0  * here->HICUMm;
+            here->HICUMcbcpar_scaled = model->HICUMcbcpar * here->HICUMm;
+            here->HICUMibcxs_scaled  = model->HICUMibcxs  * here->HICUMm;
+            here->HICUMqavl_scaled   = model->HICUMqavl   * area_times_m;
+            //resistances
+            here->HICUMre_scaled     = model->HICUMre   / area_times_m;
+            here->HICUMrci0_scaled   = model->HICUMrci0 / area_times_m;
+            here->HICUMrbx_scaled    = model->HICUMrbx  / area_times_m;
+            here->HICUMrcx_scaled    = model->HICUMrcx  / area_times_m;
+            here->HICUMrbi0_scaled   = model->HICUMrbi0 / area_times_m;
+
             here->HICUMstate = *states;
             *states += HICUMnumStates;
 
