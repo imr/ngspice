@@ -174,7 +174,7 @@ int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double 
     // Classical spice scaling with "area" is implemented, but it is not recommended to be used. If you want 
     // scaling, more sophisticated expressions should be used. Those can be found in modern PDKs or should be 
     // provided by modeling engineers. 
-    // For discrete devices, the multiplication facotor "m" should give reasonable results.
+    // For discrete devices, the multiplication factor "m" should give reasonable results.
     //
     // The HICUMm device multiplicaton factor can be exected to give good results.
     // The following variables need scaling in HICUM:
@@ -193,7 +193,7 @@ int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double 
     // rcx  ~1/(area*m)  -> assume that scaling with "area" is due to lE0 increase
     // rbi0 ~1/(area*m)  -> assume that scaling with "area" is due to lE0 increase
     // rth  ~1/(area*m)  -> bad assumption, but more transistor geometry needs to be known for accurate scaling
-    // crth ~ area*m     -> bad assumption, but more transistor geometry needs to be known for accurate scaling
+    // cth  ~ area*m     -> bad assumption, but more transistor geometry needs to be known for accurate scaling
     // Substrate related parameters not scaled on purpose. This is very geometry dependent?
 
     area_times_m  = here->HICUMm*here->HICUMarea;
@@ -219,7 +219,7 @@ int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double 
     cbcpar_scaled = model->HICUMcbcpar * here->HICUMm;
     ibcxs_scaled  = model->HICUMibcxs  * here->HICUMm;
     qavl_scaled   = model->HICUMqavl   * area_times_m;
-    //resistances //crth todo
+    //resistances
     re_scaled     = model->HICUMre   / area_times_m;
     rci0_scaled   = model->HICUMrci0 / area_times_m;
     rbx_scaled    = model->HICUMrbx  / area_times_m;
