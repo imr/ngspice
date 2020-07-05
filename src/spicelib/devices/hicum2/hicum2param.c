@@ -83,7 +83,7 @@ HICUMparam(int param, IFvalue *value, GENinstance *instPtr, IFvalue *select)
                 case 2: //todo
                     here->HICUMicVC = *(value->v.vec.rVec+1);
                     here->HICUMicVCGiven = TRUE;
-                    break;
+                    /* fallthrough */
                 case 1:
                     here->HICUMicVB = *(value->v.vec.rVec);
                     here->HICUMicVBGiven = TRUE;
