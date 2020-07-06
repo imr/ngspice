@@ -197,7 +197,7 @@ int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double 
     vdei_t.rpart(here->HICUMvdei_t.rpart);
     vdei_t.dpart(here->HICUMvdei_t.dpart);
 
-    if (model->HICUMflcomp == 0.0 || model->HICUMflcomp == 2.1) {
+    if (model->HICUMflcomp < 2.3) {
         duals::duald V_gT, r_VgVT, k;
         V_gT     = 3.0*vt*ln_qtt0 + model->HICUMvgb*(qtt0-1.0);
         r_VgVT   = V_gT/vt;

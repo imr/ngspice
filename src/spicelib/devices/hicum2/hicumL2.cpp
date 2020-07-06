@@ -629,7 +629,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             FCdfc_dw        = FCf_CT*(FCa1*FCdf1_dw+FCda1_dw*FCf1-FCdf2_dw+FCdf3_dw);
             FCdw_ditf       = FCdw_daick*FCdaick_ditf;
             FCdfc_ditf      = FCdfc_dw*FCdw_ditf;
-            if(model->HICUMflcomp == 0.0 || model->HICUMflcomp == 2.1) {
+            if(model->HICUMflcomp < 2.3) {
                 HICFCT(model->HICUMlatb,FCw,&FCf2,&FCdf2_dw);
                 HICFCT(model->HICUMlatl,FCw,&FCf3,&FCdf3_dw);
                 FCf_CT          = FCf_CT*(FCf2-FCf3);
@@ -656,7 +656,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             FCdfc_dw        = 2.0*FCw*(FCz_1+FCz*FCz/3.0)*FCd_f*FCd_f;
             FCdw_ditf       = FCdw_daick*FCdaick_ditf;
             FCdfc_ditf      = FCdfc_dw*FCdw_ditf;
-            if(model->HICUMflcomp == 0.0 || model->HICUMflcomp == 2.1){
+            if(model->HICUMflcomp < 2.3){
                 if (FCz > 0.001){
                     FCf_CT          = 2.0*(FCz_1*log(FCz_1)-FCz)/(model->HICUMlatb*model->HICUMlatb*FCz_1);
                     FCdfCT_dw       = 2.0*FCw*FCd_f*FCd_f;
@@ -1197,7 +1197,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
         // Model_initialization
         int selfheat = ((model->HICUMflsh > 0) && (model->HICUMrthGiven) && (model->HICUMrth > 0.0));
-        int nqs      = ((model->HICUMflnqs != 0 || model->HICUMflcomp == 0.0 || model->HICUMflcomp == 2.1) && (model->HICUMalit > 0 || model->HICUMalqf > 0));
+        int nqs      = ((model->HICUMflnqs != 0 || model->HICUMflcomp < 2.3) && (model->HICUMalit > 0 || model->HICUMalqf > 0));
 
         // Avoid divide-by-zero and define infinity other way
         // High current correction for 2D and 3D effects
