@@ -37,9 +37,6 @@ HICUMsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     /*  loop through all the transistor models */
     for( ; model != NULL; model = HICUMnextModel(model)) {
 
-        int selfheat = (((model->HICUMflsh == 1) || (model->HICUMflsh == 2)) && (model->HICUMrthGiven) && (model->HICUMrth > 0.0));
-        int nqs      = ( (model->HICUMflnqs != 0 || model->HICUMflcomp < 2.3) && (model->HICUMalit > 0 || model->HICUMalqf > 0));
-
 //Circuit simulator specific parameters
         if(model->HICUMtype != NPN && model->HICUMtype != PNP)
             model->HICUMtype = NPN;
@@ -472,7 +469,6 @@ HICUMsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if(!model->HICUMflcompGiven)
             model->HICUMflcomp = 0.0;
 
-
         if(!model->HICUMvbeMaxGiven)
             model->HICUMvbeMax = 1e99;
 
@@ -481,6 +477,9 @@ HICUMsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
         if(!model->HICUMvceMaxGiven)
             model->HICUMvceMax = 1e99;
+
+        int selfheat = (((model->HICUMflsh == 1) || (model->HICUMflsh == 2)) && (model->HICUMrthGiven) && (model->HICUMrth > 0.0));
+        int nqs      = ( (model->HICUMflnqs != 0 || model->HICUMflcomp < 2.3) && (model->HICUMalit > 0 || model->HICUMalqf > 0));
 
         /* loop through all the instances of the model */
         for (here = HICUMinstances(model); here != NULL ;
