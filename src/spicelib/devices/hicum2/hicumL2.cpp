@@ -456,7 +456,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double ceq, geq=0.0;
     double volatile rhs_current;
     int icheck=1;
-    int ichk1, ichk2, ichk3, ichk4, ichk5, ichk6, ichk7, ichk8;
+    int ichk1, ichk2, ichk3, ichk4, ichk5;
     int error;
     double Vbe, Vcic, Vbbp, Veie, Vsis, Vbpe;
 
@@ -1830,7 +1830,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 /*
                  *   limit nonlinear branch voltages
                  */
-                ichk1 = 1, ichk2 = 1, ichk3 = 1, ichk4 = 1, ichk5 = 1, ichk6=1, ichk7=1, ichk8=0;
+                ichk1 = 1, ichk2 = 1, ichk3 = 1, ichk4 = 1, ichk5 = 0;
                 Vbiei = DEVpnjlim(Vbiei,*(ckt->CKTstate0 + here->HICUMvbiei),here->HICUMvt.rpart,
                         here->HICUMtVcrit,&icheck);
                 Vbici = DEVpnjlim(Vbici,*(ckt->CKTstate0 + here->HICUMvbici),here->HICUMvt.rpart,
@@ -1842,11 +1842,11 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 Vsici = DEVpnjlim(Vsici,*(ckt->CKTstate0 + here->HICUMvsici),here->HICUMvt.rpart,
                         here->HICUMtVcrit,&ichk4);
                 if (selfheat) {
-                    ichk8 = 1;
+                    ichk5 = 1;
                     Vrth = HICUMlimitlog(Vrth,
-                        *(ckt->CKTstate0 + here->HICUMvrth),100,&ichk8);
+                        *(ckt->CKTstate0 + here->HICUMvrth),100,&ichk5);
                 }
-                if ((ichk1 == 1) || (ichk2 == 1) || (ichk3 == 1) || (ichk4 == 1) || (ichk5 == 1)|| (ichk6 == 1)|| (ichk7 == 1)|| (ichk8 == 1)) icheck=1;
+                if ((ichk1 == 1) || (ichk2 == 1) || (ichk3 == 1) || (ichk4 == 1) || (ichk5 == 1)) icheck=1;
             }
             /*
              *   determine dc current and derivatives
@@ -3153,12 +3153,12 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             /*
              *   check convergence
              */
-            // if ( (!(ckt->CKTmode & MODEINITFIX))||(!(here->HICUMoff))) {
-            //     if (icheck == 1) {
-            //         ckt->CKTnoncon++;
-            //         ckt->CKTtroubleElt = (GENinstance *) here;
-            //     }
-            // }
+            if ( (!(ckt->CKTmode & MODEINITFIX))||(!(here->HICUMoff))) {
+                if (icheck == 1) {
+                    ckt->CKTnoncon++;
+                    ckt->CKTtroubleElt = (GENinstance *) here;
+                }
+            }
 
             /*
              *      charge storage for electrostatic caps 
