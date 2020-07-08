@@ -407,6 +407,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double HSI_Tsu_Vbpci, HSI_Tsu_Vsici, HSI_Tsu_dT;
     double Qdsu_Vbpci, Qdsu_Vsici, Qdsu_dT;
     duals::duald result_Qdsu, result_HSI_TSU;
+    duals::duald test;
     double Qscp_Vsc, Qscp_dT;
     double Cscp_Vsc, Cscp_dT;
 
@@ -2652,6 +2653,8 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 Ibiei_Vrth  += -model->HICUMtype*ibet_dT;
             }
 //printf("Vbiei: %f ibei: %g irei: %g ibh_rec: %g ibet: %g\n",Vbiei,ibei,irei,ibh_rec,ibet);
+            test = 1 + 2*1_e;
+            printf("real part of test: %f dual part of test: %f\n",test.rpart(),test.dpart());
             Ibpsi       = model->HICUMtype*HSI_Tsu;
             Ibpsi_Vbpci = model->HICUMtype*HSI_Tsu_Vbpci;
             Ibpsi_Vsici = model->HICUMtype*HSI_Tsu_Vsici;
@@ -3714,11 +3717,11 @@ load:
 //              finish
 
 //              Stamp element: Re   f_Ei = +   f_E = -
-                rhs_current = -Ieie_Vrth*Vrth;
+                rhs_current = - Ieie_Vrth*Vrth;
                 *(ckt->CKTrhs + here->HICUMemitEINode) += -rhs_current;
-                *(ckt->CKTrhs + here->HICUMemitNode)   +=  rhs_current;
+                *(ckt->CKTrhs + here->HICUMemitNode)   += +rhs_current;
                 // with respect to Potential Vrth
-                *(here->HICUMemitEItempPtr) +=  Ieie_Vrth;
+                *(here->HICUMemitEItempPtr) += +Ieie_Vrth;
                 *(here->HICUMemitTempPtr)   += -Ieie_Vrth;
 //              finish
 
