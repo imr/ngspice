@@ -1,10 +1,10 @@
-HICUM2v2.34 Gummel Test invers Ie,b,s=f(Ve,Ib) Vec=1V
+HICUM2v2.40 Gummel Test invers Ie,b,s=f(Ve,Ib) Vec=1V
 
 VB B 0 1.2
 VE E 0 1.0
 VS S 0 0.0
 
-Q1 0 B E S hicumL2V2p3x
+Q1 0 B E S hicumL2V2p40
 
 .control
 dc vb 0.2 1.2 0.01

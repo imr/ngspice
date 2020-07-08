@@ -1,10 +1,10 @@
-HICUM2v2.34 Gummel Test Ic,b,s=f(Vc,Ib) Vce=1V
+HICUM2v2.40 Gummel Test Ic,b,s=f(Vc,Ib) Vce=1V
 
 VB B 0 1.2
 VC C 0 1.0
 VS S 0 0.0
 
-Q1 C B 0 S hicumL2V2p3x
+Q1 C B 0 S hicumL2V2p40
 
 .control
 option gmin=1e-14

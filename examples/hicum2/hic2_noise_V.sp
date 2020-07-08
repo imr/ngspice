@@ -1,4 +1,4 @@
-HICUM2v2.34 Noise Voltage Test
+HICUM2v2.40 Noise Voltage Test
 
 *      _______
 *    _|_     _|_
@@ -20,7 +20,7 @@ HICUM2v2.34 Noise Voltage Test
 
 vin                 E  0  DC    0.0 ac 1.0u
 I1                  0   B 1uA
-q1                  B  B E    hicumL2V2p3x
+q1                  B  B E    hicumL2V2p40
 
 
 .include model-card-examples.lib

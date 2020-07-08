@@ -1,5 +1,5 @@
 * Example parameter test set
-.model hicumL2V2p3x npn level=8
+.model hicumL2V2p40 npn level=8
 *
 *Transfer current
 + c10 = 9.074e-030
@@ -45,6 +45,8 @@
 + qavl = 5.092e-014
 + alfav = -0.0024
 + alqav = -0.0006284
++ kavl = 0.0
++ alkav = 0.0
 *
 *Series resistances
 + rbi0 = 4.444

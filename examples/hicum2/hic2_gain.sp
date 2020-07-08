@@ -1,4 +1,4 @@
-HICUM2v2.34 AC gain Test h21 = f(Ic) Vce=1V
+HICUM2v2.40 AC gain Test h21 = f(Ic) Vce=1V
 
 vce 1 0 dc 1.0
 vgain 1 c dc 0.0
@@ -7,7 +7,7 @@ l 2 b 1g
 c 2 0 1g
 ib 0 b dc 0.0 ac 1.0
 ic 0 c 0.001
-Q1 C B 0 hicumL2V2p3x
+Q1 C B 0 hicumL2V2p40
 
 .control
 foreach myic 2e-03 4e-03 7e-03 9e-03 18e-03 33e-3
