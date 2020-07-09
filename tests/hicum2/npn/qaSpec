@@ -16,6 +16,8 @@
 `ifdef spice
 `endif
 `ifdef hspice
+  nTypeSelectionArguments     npn level=8 version=2.40
+  pTypeSelectionArguments     pnp level=8 version=2.40
 `endif
 `ifdef spectre
   nTypeSelectionArguments     hic2_full type=1
