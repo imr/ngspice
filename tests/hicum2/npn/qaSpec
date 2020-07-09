@@ -43,15 +43,15 @@
 //
 
 keyLetter                   q
-pins                        coll base emit subs therm
+pins                        coll base emit subs
 //verilogaFile                vacode/hicumL2V2p4p0.va
-float                       therm
+//float                       therm
 checkPolarity               n
 
 test fgum_dc_npn_1D
 temperature -50 0 27 50 100 150
 biases V(emit)=0 V(subs)=0
-biasSweep V(base)=0.300000,1.050000,0.020000
+biasSweep V(base)=0.300000,1.040000,0.020000
 biasList V(coll)=0.500000,1.000000,1.500000
 outputs I(coll) I(base)
 modelParameters parameters/npn_1D
@@ -59,7 +59,7 @@ modelParameters parameters/npn_1D
 test fgum_dc_npn_1D_no_aval
 temperature -50 0 27 50 100 150
 biases V(emit)=0 V(subs)=0
-biasSweep V(base)=0.300000,1.050000,0.020000
+biasSweep V(base)=0.300000,1.040000,0.020000
 biasList V(coll)=0.500000,1.000000,1.500000
 outputs I(coll) I(base)
 modelParameters parameters/npn_1D_no_aval
@@ -67,7 +67,7 @@ modelParameters parameters/npn_1D_no_aval
 test fgum_dc_npn_1D_breakdown
 temperature -50 0 27 50 100 150
 biases V(emit)=0 V(subs)=0
-biasSweep V(base)=0.300000,1.050000,0.020000
+biasSweep V(base)=0.300000,1.040000,0.020000
 biasList V(coll)=0.500000,1.000000,1.500000
 outputs I(coll) I(base)
 modelParameters parameters/npn_1D_breakdown
@@ -75,7 +75,7 @@ modelParameters parameters/npn_1D_breakdown
 test fgum_dc_npn_internal
 temperature -50 0 27 50 100 150
 biases V(emit)=0 V(subs)=0
-biasSweep V(base)=0.300000,1.050000,0.020000
+biasSweep V(base)=0.300000,1.040000,0.020000
 biasList V(coll)=0.500000,1.000000,1.500000
 outputs I(coll) I(base)
 modelParameters parameters/npn_internal
@@ -83,7 +83,7 @@ modelParameters parameters/npn_internal
 test fgum_dc_npn_full
 temperature -50 0 27 50 100 150
 biases V(emit)=0 V(subs)=0
-biasSweep V(base)=0.300000,1.050000,0.020000
+biasSweep V(base)=0.300000,1.040000,0.020000
 biasList V(coll)=0.500000,1.000000,1.500000
 outputs I(coll) I(base)
 modelParameters parameters/npn_full
@@ -91,7 +91,7 @@ modelParameters parameters/npn_full
 test fgum_dc_npn_full_sh
 temperature -50 0 27 50 100 150
 biases V(emit)=0 V(subs)=0
-biasSweep V(base)=0.300000,1.050000,0.020000
+biasSweep V(base)=0.300000,1.040000,0.020000
 biasList V(coll)=0.500000,1.000000,1.500000
 outputs I(coll) I(base)
 modelParameters parameters/npn_full_sh
@@ -99,7 +99,7 @@ modelParameters parameters/npn_full_sh
 test fgum_dc_npn_full_subtran
 temperature -50 0 27 50 100 150
 biases V(emit)=0 V(subs)=0
-biasSweep V(base)=0.300000,1.050000,0.020000
+biasSweep V(base)=0.300000,1.040000,0.020000
 biasList V(coll)=0.500000,1.000000,1.500000
 outputs I(coll) I(base)
 modelParameters parameters/npn_full_subtran
@@ -107,7 +107,7 @@ modelParameters parameters/npn_full_subtran
 test fgum_dc_npn_full_subcoupl
 temperature -50 0 27 50 100 150
 biases V(emit)=0 V(subs)=0
-biasSweep V(base)=0.300000,1.050000,0.020000
+biasSweep V(base)=0.300000,1.040000,0.020000
 biasList V(coll)=0.500000,1.000000,1.500000
 outputs I(coll) I(base)
 modelParameters parameters/npn_full_subcoupl
@@ -115,7 +115,7 @@ modelParameters parameters/npn_full_subcoupl
 test fgum_dc_npn_full_subcoupl_peri_con
 temperature -50 0 27 50 100 150
 biases V(emit)=0 V(subs)=0
-biasSweep V(base)=0.300000,1.050000,0.020000
+biasSweep V(base)=0.300000,1.040000,0.020000
 biasList V(coll)=0.500000,1.000000,1.500000
 outputs I(coll) I(base)
 modelParameters parameters/npn_full_subcoupl_peri_con
@@ -123,7 +123,7 @@ modelParameters parameters/npn_full_subcoupl_peri_con
 test fgum_dc_npn_full_subcoupl_peri_bias
 temperature -50 0 27 50 100 150
 biases V(emit)=0 V(subs)=0
-biasSweep V(base)=0.300000,1.050000,0.020000
+biasSweep V(base)=0.300000,1.040000,0.020000
 biasList V(coll)=0.500000,1.000000,1.500000
 outputs I(coll) I(base)
 modelParameters parameters/npn_full_subcoupl_peri_bias
@@ -131,7 +131,7 @@ modelParameters parameters/npn_full_subcoupl_peri_bias
 test fgum_dc_npn_vert_nqs
 temperature -50 0 27 50 100 150
 biases V(emit)=0 V(subs)=0
-biasSweep V(base)=0.300000,1.050000,0.020000
+biasSweep V(base)=0.300000,1.040000,0.020000
 biasList V(coll)=0.500000,1.000000,1.500000
 outputs I(coll) I(base)
 modelParameters parameters/npn_vert_nqs
@@ -139,7 +139,7 @@ modelParameters parameters/npn_vert_nqs
 test fgum_dc_npn_lat_nqs
 temperature -50 0 27 50 100 150
 biases V(emit)=0 V(subs)=0
-biasSweep V(base)=0.300000,1.050000,0.020000
+biasSweep V(base)=0.300000,1.040000,0.020000
 biasList V(coll)=0.500000,1.000000,1.500000
 outputs I(coll) I(base)
 modelParameters parameters/npn_lat_nqs
@@ -147,7 +147,7 @@ modelParameters parameters/npn_lat_nqs
 test fgum_dc_npn_cornoise
 temperature -50 0 27 50 100 150
 biases V(emit)=0 V(subs)=0
-biasSweep V(base)=0.300000,1.050000,0.020000
+biasSweep V(base)=0.300000,1.040000,0.020000
 biasList V(coll)=0.500000,1.000000,1.500000
 outputs I(coll) I(base)
 modelParameters parameters/npn_cornoise
