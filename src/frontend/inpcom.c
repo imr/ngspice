@@ -8112,7 +8112,8 @@ struct card *ltspice_compat(struct card *oldcard)
         }
         else if (*cut_line == 'r') {
             char* noi = strstr(cut_line, "noiseless");
-            if (noi) {
+            /* only if 'noiseless' is an unconnected token */
+            if (noi && isspace_c(noi[-1]) && (isspace_c(noi[9]) || !isprint_c(noi[9]))) {
                 memcpy(noi, "noisy=0  ", 9);
             }
         }
