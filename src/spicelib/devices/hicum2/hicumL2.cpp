@@ -2443,7 +2443,11 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             } else {
                 here->HICUMbetadc=0.0;
             }
-            Ieie = Veie/here->HICUMre_t.rpart; // only needed for re flicker noise
+            if (here->HICUMre_t.rpart >= MIN_R) {
+                Ieie = Veie/here->HICUMre_t.rpart; // only needed for re flicker noise
+            } else {
+                Ieie = 0.0;
+            }
 
             //Diode current for s-c junction (si,ci)
             hicum_diode(Temp,here->HICUMiscs_t,model->HICUMmsc, Vsici, &ijsc, &ijsc_Vsici, &ijsc_Vrth);
@@ -2578,14 +2582,33 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             // Load_sources
 
             //resistors
-            Ibbp_Vbbp    = 1/here->HICUMrbx_t.rpart;
-            Icic_Vcic    = 1/here->HICUMrcx_t.rpart;
-            Ieie_Veie    = 1/here->HICUMre_t.rpart;
-            Isis_Vsis    = 1/model->HICUMrsu;
+            if(model->HICUMrcxGiven && model->HICUMrcx != 0) {
+                Icic_Vcic    = 1/here->HICUMrcx_t.rpart;
+                Icic_Vrth    = -Vcic*here->HICUMrcx_t.dpart/here->HICUMrcx_t.rpart/here->HICUMrcx_t.rpart;
+            } else {
+                Icic_Vcic    = 0.0;
+                Icic_Vrth    = 0.0;
+            }
+            if(model->HICUMrbxGiven && model->HICUMrbx != 0) {
+                Ibbp_Vbbp    = 1/here->HICUMrbx_t.rpart;
+                Ibbp_Vrth    = -Vbbp*here->HICUMrbx_t.dpart/here->HICUMrbx_t.rpart/here->HICUMrbx_t.rpart;
+            } else {
+                Ibbp_Vbbp    = 0.0;
+                Ibbp_Vrth    = 0.0;
+            }
+            if(model->HICUMreGiven && model->HICUMre != 0) {
+                Ieie_Veie    = 1/here->HICUMre_t.rpart;
+                Ieie_Vrth    = -Veie*here->HICUMre_t.dpart /here->HICUMre_t.rpart/here->HICUMre_t.rpart;
+            } else {
+                Ieie_Veie    = 0.0;
+                Ieie_Vrth    = 0.0;
+            }
+            if(model->HICUMrsuGiven && model->HICUMrsu != 0) {
+                Isis_Vsis    = 1/model->HICUMrsu;
+            } else {
+                Isis_Vsis    = 0.0;
+            }
 
-            Ibbp_Vrth    = -Vbbp*here->HICUMrbx_t.dpart/here->HICUMrbx_t.rpart/here->HICUMrbx_t.rpart;
-            Ieie_Vrth    = -Veie*here->HICUMre_t.dpart /here->HICUMre_t.rpart/here->HICUMre_t.rpart;
-            Icic_Vrth    = -Vcic*here->HICUMrcx_t.dpart/here->HICUMrcx_t.rpart/here->HICUMrcx_t.rpart;
 
             Ibpei        = model->HICUMtype*ibep;
             Ibpei       += model->HICUMtype*irep;

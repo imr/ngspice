@@ -201,7 +201,6 @@ HICUMmParam(int param, IFvalue *value, GENmodel *inModel)
             break;
         case HICUM_MOD_RBX:
             model->HICUMrbx = value->rValue;
-            if (model->HICUMrbx < MIN_R) model->HICUMrbx = MIN_R;
             model->HICUMrbxGiven = TRUE;
             break;
         case HICUM_MOD_FGEO:
@@ -222,12 +221,10 @@ HICUMmParam(int param, IFvalue *value, GENmodel *inModel)
             break;
         case HICUM_MOD_RE:
             model->HICUMre = value->rValue;
-            if (model->HICUMre < MIN_R) model->HICUMre = MIN_R;
             model->HICUMreGiven = TRUE;
             break;
         case HICUM_MOD_RCX:
             model->HICUMrcx = value->rValue;
-            if (model->HICUMrcx < MIN_R) model->HICUMrcx = MIN_R;
             model->HICUMrcxGiven = TRUE;
             break;
 
@@ -256,7 +253,6 @@ HICUMmParam(int param, IFvalue *value, GENmodel *inModel)
 //Intra-device substrate coupling
         case HICUM_MOD_RSU:
             model->HICUMrsu = value->rValue;
-            if (model->HICUMrsu < MIN_R) model->HICUMrsu = MIN_R;
             model->HICUMrsuGiven = TRUE;
             break;
         case HICUM_MOD_CSU:
