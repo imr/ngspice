@@ -1,4 +1,4 @@
-HICUM2v2.34 Noise Current Test
+HICUM2v2.40 Noise Current Test
 
 *      _______
 *    _|_     _|_
@@ -21,7 +21,7 @@ HICUM2v2.34 Noise Current Test
 vin                 E  0  DC    0.0 ac 1.0u
 I1                  0   C 1uA
 R1                  C  B 1000k noisy=0
-q1                  C  B E    hicumL2V2p3x
+q1                  C  B E    hicumL2V2p40
 
 .include model-card-examples.lib
 

@@ -63,27 +63,6 @@ extern "C"
 }
 #endif
 
-// extern "C"
-// {
-// #include "ngspice/devdefs.h"
-// #include "ngspice/const.h"
-// #include "ngspice/trandefs.h"
-// #include "ngspice/sperror.h"
-// #include "hicum2defs.h"
-// #include "ngspice/ngspice.h"
-// #include "ngspice/cktdefs.h"
-// }
-
-
-// #include "ngspice/devdefs.h"
-// #include "ngspice/const.h"
-// #include "ngspice/trandefs.h"
-// #include "ngspice/sperror.h"
-// #include "hicum2defs.h"
-// #include "ngspice/ngspice.h"
-// #include "ngspice/cktdefs.h"
-
-
 //HICUM DEFINITIONS
 #define VPT_thresh      1.0e2
 #define Dexp_lim        80.0
@@ -91,12 +70,7 @@ extern "C"
 #define DFa_fj          1.921812
 #define RTOLC           1.0e-5
 #define l_itmax         100
-#define TMAX            326.85
-#define TMIN            -100.0
-#define LN_EXP_LIMIT    11.0
 #define MIN_R           0.001
-#define Gmin            1.0e-12
-
 
 using namespace duals::literals;
 
@@ -282,8 +256,6 @@ void HICFCT(double z, duals::duald w, duals::duald * hicfcto, duals::duald *dhic
     }
 }
 
-
-
 // DEPLETION CHARGE & CAPACITANCE CALCULATION SELECTOR
 // Dependent on junction punch-through voltage
 // Important for collector related junctions
@@ -407,7 +379,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double HSI_Tsu_Vbpci, HSI_Tsu_Vsici, HSI_Tsu_dT;
     double Qdsu_Vbpci, Qdsu_Vsici, Qdsu_dT;
     duals::duald result_Qdsu, result_HSI_TSU;
-    duals::duald test;
     double Qscp_Vsc, Qscp_dT;
     double Cscp_Vsc, Cscp_dT;
 
@@ -485,7 +456,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double ceq, geq=0.0;
     double volatile rhs_current;
     int icheck=1;
-    int ichk1, ichk2, ichk3, ichk4, ichk5, ichk6, ichk7, ichk8;
+    int ichk1, ichk2, ichk3, ichk4, ichk5;
     int error;
     double Vbe, Vcic, Vbbp, Veie, Vsis, Vbpe;
 
@@ -1859,7 +1830,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 /*
                  *   limit nonlinear branch voltages
                  */
-                ichk1 = 1, ichk2 = 1, ichk3 = 1, ichk4 = 1, ichk5 = 1, ichk6=1, ichk7=1, ichk8=0;
+                ichk1 = 1, ichk2 = 1, ichk3 = 1, ichk4 = 1, ichk5 = 0;
                 Vbiei = DEVpnjlim(Vbiei,*(ckt->CKTstate0 + here->HICUMvbiei),here->HICUMvt.rpart,
                         here->HICUMtVcrit,&icheck);
                 Vbici = DEVpnjlim(Vbici,*(ckt->CKTstate0 + here->HICUMvbici),here->HICUMvt.rpart,
@@ -1870,20 +1841,12 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                         here->HICUMtVcrit,&ichk3);
                 Vsici = DEVpnjlim(Vsici,*(ckt->CKTstate0 + here->HICUMvsici),here->HICUMvt.rpart,
                         here->HICUMtVcrit,&ichk4);
-                // if (nqs) {
-                //     Vxf   = DEVpnjlim(Vxf,*(ckt->CKTstate0 + here->HICUMvxf),here->HICUMvt.rpart,
-                //             here->HICUMtVcrit,&ichk5);
-                //     Vxf1  = DEVpnjlim(Vxf1,*(ckt->CKTstate0 + here->HICUMvxf1),here->HICUMvt.rpart,
-                //             here->HICUMtVcrit,&ichk6);
-                //     Vxf2  = DEVpnjlim(Vxf2,*(ckt->CKTstate0 + here->HICUMvxf2),here->HICUMvt.rpart,
-                //             here->HICUMtVcrit,&ichk7);
-                // }
                 if (selfheat) {
-                    ichk8 = 1;
+                    ichk5 = 1;
                     Vrth = HICUMlimitlog(Vrth,
-                        *(ckt->CKTstate0 + here->HICUMvrth),100,&ichk8);
+                        *(ckt->CKTstate0 + here->HICUMvrth),100,&ichk5);
                 }
-                if ((ichk1 == 1) || (ichk2 == 1) || (ichk3 == 1) || (ichk4 == 1) || (ichk5 == 1)|| (ichk6 == 1)|| (ichk7 == 1)|| (ichk8 == 1)) icheck=1;
+                if ((ichk1 == 1) || (ichk2 == 1) || (ichk3 == 1) || (ichk4 == 1) || (ichk5 == 1)) icheck=1;
             }
             /*
              *   determine dc current and derivatives
@@ -1900,7 +1863,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             // Vxf   = model->HICUMtype*Vxf;
             // Vxf1  = model->HICUMtype*Vxf1;
             // Vxf2  = model->HICUMtype*Vxf2;
-            //Vrth not needed
 
             if (selfheat) { // Thermal_update_with_self_heating
                 Temp =  here->HICUMtemp+Vrth;
@@ -2481,7 +2443,11 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             } else {
                 here->HICUMbetadc=0.0;
             }
-            Ieie = Veie/here->HICUMre_t.rpart; // only needed for re flicker noise
+            if (here->HICUMre_t.rpart >= MIN_R) {
+                Ieie = Veie/here->HICUMre_t.rpart; // only needed for re flicker noise
+            } else {
+                Ieie = 0.0;
+            }
 
             //Diode current for s-c junction (si,ci)
             hicum_diode(Temp,here->HICUMiscs_t,model->HICUMmsc, Vsici, &ijsc, &ijsc_Vsici, &ijsc_Vrth);
@@ -2616,14 +2582,33 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             // Load_sources
 
             //resistors
-            Ibbp_Vbbp    = 1/here->HICUMrbx_t.rpart;
-            Icic_Vcic    = 1/here->HICUMrcx_t.rpart;
-            Ieie_Veie    = 1/here->HICUMre_t.rpart;
-            Isis_Vsis    = 1/model->HICUMrsu;
+            if(model->HICUMrcxGiven && model->HICUMrcx != 0) {
+                Icic_Vcic    = 1/here->HICUMrcx_t.rpart;
+                Icic_Vrth    = -Vcic*here->HICUMrcx_t.dpart/here->HICUMrcx_t.rpart/here->HICUMrcx_t.rpart;
+            } else {
+                Icic_Vcic    = 0.0;
+                Icic_Vrth    = 0.0;
+            }
+            if(model->HICUMrbxGiven && model->HICUMrbx != 0) {
+                Ibbp_Vbbp    = 1/here->HICUMrbx_t.rpart;
+                Ibbp_Vrth    = -Vbbp*here->HICUMrbx_t.dpart/here->HICUMrbx_t.rpart/here->HICUMrbx_t.rpart;
+            } else {
+                Ibbp_Vbbp    = 0.0;
+                Ibbp_Vrth    = 0.0;
+            }
+            if(model->HICUMreGiven && model->HICUMre != 0) {
+                Ieie_Veie    = 1/here->HICUMre_t.rpart;
+                Ieie_Vrth    = -Veie*here->HICUMre_t.dpart /here->HICUMre_t.rpart/here->HICUMre_t.rpart;
+            } else {
+                Ieie_Veie    = 0.0;
+                Ieie_Vrth    = 0.0;
+            }
+            if(model->HICUMrsuGiven && model->HICUMrsu != 0) {
+                Isis_Vsis    = 1/model->HICUMrsu;
+            } else {
+                Isis_Vsis    = 0.0;
+            }
 
-            Ibbp_Vrth    = -Vbbp*here->HICUMrbx_t.dpart/here->HICUMrbx_t.rpart/here->HICUMrbx_t.rpart;
-            Ieie_Vrth    = -Veie*here->HICUMre_t.dpart /here->HICUMre_t.rpart/here->HICUMre_t.rpart;
-            Icic_Vrth    = -Vcic*here->HICUMrcx_t.dpart/here->HICUMrcx_t.rpart/here->HICUMrcx_t.rpart;
 
             Ibpei        = model->HICUMtype*ibep;
             Ibpei       += model->HICUMtype*irep;
@@ -2652,9 +2637,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 Ibiei_Vbiei += -model->HICUMtype*ibet_Vbiei;
                 Ibiei_Vrth  += -model->HICUMtype*ibet_dT;
             }
-//printf("Vbiei: %f ibei: %g irei: %g ibh_rec: %g ibet: %g\n",Vbiei,ibei,irei,ibh_rec,ibet);
-            test = 1 + 2*1_e;
-            printf("real part of test: %f dual part of test: %f\n",test.rpart(),test.dpart());
+
             Ibpsi       = model->HICUMtype*HSI_Tsu;
             Ibpsi_Vbpci = model->HICUMtype*HSI_Tsu_Vbpci;
             Ibpsi_Vsici = model->HICUMtype*HSI_Tsu_Vsici;
@@ -2693,11 +2676,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 Ibpbi_Vbici = 0;
                 Ibpbi_Vrth  = 0;
             }
-
-
-
-//printf("Vbiei: %f Vbici: %f Vciei: %f Vbpei: %f Vbpci: %f Vbci: %f Vsici: %f\n", Vbiei, Vbici, Vciei, Vbpei, Vbpci, Vbci, Vsici);
-//printf("Ibiei: %g ibici: %g Ibpei: %g Iciei: %g\n",Ibiei,ibici,Ibpei,Iciei);
 
             // Following code is an intermediate solution (if branch contribution is not supported):
             // ******************************************
@@ -3118,12 +3096,12 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             /*
              *   check convergence
              */
-            // if ( (!(ckt->CKTmode & MODEINITFIX))||(!(here->HICUMoff))) {
-            //     if (icheck == 1) {
-            //         ckt->CKTnoncon++;
-            //         ckt->CKTtroubleElt = (GENinstance *) here;
-            //     }
-            // }
+            if ( (!(ckt->CKTmode & MODEINITFIX))||(!(here->HICUMoff))) {
+                if (icheck == 1) {
+                    ckt->CKTnoncon++;
+                    ckt->CKTtroubleElt = (GENinstance *) here;
+                }
+            }
 
             /*
              *      charge storage for electrostatic caps 

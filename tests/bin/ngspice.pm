@@ -435,7 +435,7 @@ sub generateCommonNetlistInfo {
     my($variant,$temperature)=@_;
     my(@Pin_x,$arg,$name,$value,$eFactor,$fFactor,$pin);
     foreach $pin (@main::Pin) {push(@Pin_x,"${pin}_x")}
-    print OF ".options temp=$temperature gmin=1e-15 abstol=1e-14 reltol=1e-8";
+    print OF ".options temp=$temperature gmin=1e-13 abstol=1e-13 reltol=1e-3";
     if ($variant=~/^scale$/) {
         die("ERROR: there is no scale or shrink option for ngspice, stopped");
     }

@@ -69,11 +69,28 @@ HICUMnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata 
         for (inst=HICUMinstances(model); inst != NULL;
                 inst=HICUMnextInstance(inst)) {
 
-            Icic_Vcic    = 1/inst->HICUMrcx_t.rpart;
-            Ibbp_Vbbp    = 1/inst->HICUMrbx_t.rpart;
+            // get all derivatives of branch DC currents
+            if(model->HICUMrcxGiven && model->HICUMrcx != 0) {
+                Icic_Vcic    = 1/inst->HICUMrcx_t.rpart;
+            } else {
+                Icic_Vcic    = 0.0;
+            }
+            if(model->HICUMrbxGiven && model->HICUMrbx != 0) {
+                Ibbp_Vbbp    = 1/inst->HICUMrbx_t.rpart;
+            } else {
+                Ibbp_Vbbp    = 0.0;
+            }
+            if(model->HICUMreGiven && model->HICUMre != 0) {
+                Ieie_Veie    = 1/inst->HICUMre_t.rpart;
+            } else {
+                Ieie_Veie    = 0.0;
+            }
+            if(model->HICUMrsuGiven && model->HICUMrsu != 0) {
+                Isis_Vsis    = 1/model->HICUMrsu;
+            } else {
+                Isis_Vsis    = 0.0;
+            }
             Ibpbi_Vbpbi  = 1/inst->HICUMrbi;
-            Ieie_Veie    = 1/inst->HICUMre_t.rpart;
-            Isis_Vsis    = 1/model->HICUMrsu;
 
             switch (operation) {
 

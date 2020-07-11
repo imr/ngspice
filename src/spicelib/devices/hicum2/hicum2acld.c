@@ -50,7 +50,7 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
     double Ibpbi_Vbiei;
     double Ibpbi_Vrth;
 
-    double Isis_Vsis, Isis_Vrth;
+    double Isis_Vsis;
     double Icic_Vcic, Icic_Vrth;
     double Ieie_Veie, Ieie_Vrth;
     double Ibbp_Vbbp, Ibbp_Vrth;
@@ -128,15 +128,32 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
                 here = HICUMnextInstance(here)) {
 
             // get all derivatives of branch DC currents
-            Ibbp_Vbbp    = 1/here->HICUMrbx_t.rpart;
-            Icic_Vcic    = 1/here->HICUMrcx_t.rpart;
-            Ieie_Veie    = 1/here->HICUMre_t.rpart;
-            Isis_Vsis    = 1/model->HICUMrsu;
-
-            Ibbp_Vrth    = -*(ckt->CKTstate0 + here->HICUMvbbp)/here->HICUMrbx_t.rpart/here->HICUMrbx_t.rpart*here->HICUMrbx_t.dpart;
-            Icic_Vrth    = -*(ckt->CKTstate0 + here->HICUMvcic)/here->HICUMrcx_t.rpart/here->HICUMrcx_t.rpart*here->HICUMrcx_t.dpart;
-            Ieie_Vrth    = -*(ckt->CKTstate0 + here->HICUMveie)/here->HICUMre_t.rpart/here->HICUMre_t.rpart*here->HICUMre_t.dpart;
-            Isis_Vrth    = 0.0;
+            if(model->HICUMrcxGiven && model->HICUMrcx != 0) {
+                Icic_Vcic    = 1/here->HICUMrcx_t.rpart;
+                Icic_Vrth    = -*(ckt->CKTstate0 + here->HICUMvcic)/here->HICUMrcx_t.rpart/here->HICUMrcx_t.rpart*here->HICUMrcx_t.dpart;
+            } else {
+                Icic_Vcic    = 0.0;
+                Icic_Vrth    = 0.0;
+            }
+            if(model->HICUMrbxGiven && model->HICUMrbx != 0) {
+                Ibbp_Vbbp    = 1/here->HICUMrbx_t.rpart;
+                Ibbp_Vrth    = -*(ckt->CKTstate0 + here->HICUMvbbp)/here->HICUMrbx_t.rpart/here->HICUMrbx_t.rpart*here->HICUMrbx_t.dpart;
+            } else {
+                Ibbp_Vbbp    = 0.0;
+                Ibbp_Vrth    = 0.0;
+            }
+            if(model->HICUMreGiven && model->HICUMre != 0) {
+                Ieie_Veie    = 1/here->HICUMre_t.rpart;
+                Ieie_Vrth    = -*(ckt->CKTstate0 + here->HICUMveie)/here->HICUMre_t.rpart/here->HICUMre_t.rpart*here->HICUMre_t.dpart;
+            } else {
+                Ieie_Veie    = 0.0;
+                Ieie_Vrth    = 0.0;
+            }
+            if(model->HICUMrsuGiven && model->HICUMrsu != 0) {
+                Isis_Vsis    = 1/model->HICUMrsu;
+            } else {
+                Isis_Vsis    = 0.0;
+            }
 
             Ibiei_Vbiei = *(ckt->CKTstate0 + here->HICUMibiei_Vbiei);
             Ibiei_Vbici = *(ckt->CKTstate0 + here->HICUMibiei_Vbici);

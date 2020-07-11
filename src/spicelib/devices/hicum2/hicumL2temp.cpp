@@ -140,8 +140,6 @@ int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double 
     double Tnom, zetatef, cjcx01, cjcx02, C_1;
     duals::duald cjei0_t, vdei_t, cjep0_t, vdep_t;
 
-    // double cjci0_t, vdci_t, vptci_t, cjep0_t, vdep_t, ajep_t, vdcx_t, vptcx_t, cscp0_t, vdsp_t, vptsp_t, cjs0_t, vds_t, vpts_t;
-
     Tnom    = model->HICUMtnom;
     k10     = model->HICUMf1vg*Tnom*log(Tnom);
     k20     = model->HICUMf2vg*Tnom;
@@ -167,7 +165,7 @@ int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double 
             HICUMTemp = TMAX + CONSTCtoK;
         }
     }
-    temp = HICUMTemp+1_e;    //dual number valued temperature
+    temp = HICUMTemp+1_e;    // dual number valued temperature
     vt   = temp*CONSTKoverQ; // dual valued temperature voltage
 
     here->HICUMvt0     = Tnom * CONSTKoverQ;

@@ -1,4 +1,4 @@
-HICUM2v2.34 Test ft=f(Ic) Vce=1V
+HICUM2v2.40 Test ft=f(Ic) Vce=1V
 
 vce 1 0 dc 1.0
 vgain 1 c dc 0.0
@@ -7,14 +7,14 @@ l 2 b 1g
 c 2 0 1g
 ib 0 b dc 0.0 ac 1.0
 ic 0 c 0.001
-Q1 C B 0 hicumL2V2p3x
+Q1 C B 0 hicumL2V2p40
 
 .control
 let run = 0
 let ft_runs = 9
 set curplot=new          $ create a new plot
 set curplotname=ft_plot
-set curplottitle="HICUM2v2.34 ft = f(Ic)"
+set curplottitle="HICUM2v2.40 ft = f(Ic)"
 set scratch=$curplot     $ store its name to 'scratch'
 setplot $scratch         $ make 'scratch' the active plot 
 let ft=unitvec(ft_runs)  $ create a vector in plot 'scratch' to store ft data 
