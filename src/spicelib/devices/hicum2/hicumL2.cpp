@@ -2782,120 +2782,15 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             }
             // ********************************************
 
-            // all nodes (B BP BI C CI E EI S SI,XF1,XF2,XF3) connected to gmin
-            // T node not neede since if rth to small, non existent
-            Ibiei += ckt->CKTgmin*Vbiei; //BI EI -> BI EI
-            Ibici += ckt->CKTgmin*Vbici; //BI CI -> CI
-            Ibpei += ckt->CKTgmin*Vbpei; //BP EI -> BP
-            // Iciei += ckt->CKTgmin*Vciei; //CI EI -> not needed
-            // Ibpbi += ckt->CKTgmin*Vbpbi; //BP BI -> not needed
-            // Ibpci += ckt->CKTgmin*Vbpci; //BP CI -> not needed
-            Isici += ckt->CKTgmin*Vsici; //SI CI -> SI
-            // Ixf1  += ckt->CKTgmin*Vxf1; 
-            // Ixf2  += ckt->CKTgmin*Vxf2; 
-            // Ixf   += ckt->CKTgmin*Vxf; 
-            //C from Icic
-            //E from Ieie
-            //S from Isis
-
-            //all derivatives with gmin
-            // linear branches not needed since resistances set to gmin if smaller MIN_R
-            // Ibbp_Vbbp   += ckt->CKTgmin;
-            // Icic_Vcic   += ckt->CKTgmin;
-            // Ieie_Veie   += ckt->CKTgmin;
-            // Isis_Vsis   += ckt->CKTgmin;
-            //Ibiei
+            // add gmin over parallel to all non-linear branches
+            Ibiei += ckt->CKTgmin*Vbiei;
             Ibiei_Vbiei += ckt->CKTgmin;
-            Ibiei_Vbici += ckt->CKTgmin;
-
-            //Ibici
+            Ibici += ckt->CKTgmin*Vbici;
             Ibici_Vbici += ckt->CKTgmin;
-            Ibici_Vbiei += ckt->CKTgmin;
-
-            //Iciei -> not needed
-            // Iciei_Vbiei += ckt->CKTgmin;
-            // Iciei_Vbici += ckt->CKTgmin;
-
-            //Ibpei
+            Ibpei += ckt->CKTgmin*Vbpei;
             Ibpei_Vbpei += ckt->CKTgmin;
-
-            // Ibpbi -> not needed
-            // Ibpbi_Vbiei += ckt->CKTgmin;
-            // Ibpbi_Vbici += ckt->CKTgmin;
-            //Ibpbi_Vbpbi += ckt->CKTgmin; //not needed since rbi is set to gmin if too small
-
-            //Ibpci -> not needed
-            // Ibpci_Vbpci += ckt->CKTgmin;
-
-            //Isici
+            Isici += ckt->CKTgmin*Vsici;
             Isici_Vsici += ckt->CKTgmin;
-
-            //Ibpsi
-            Ibpsi_Vbpci += ckt->CKTgmin;
-            Ibpsi_Vsici += ckt->CKTgmin;
-
-            // if (nqs) {
-            //     //Ixf
-            //     Ixf_Vbiei   += ckt->CKTgmin;
-            //     Ixf_Vbici   += ckt->CKTgmin;
-            //     Ixf_Vxf     += ckt->CKTgmin;
-            //     //Ixf1
-            //     Ixf1_Vbiei  += ckt->CKTgmin;
-            //     Ixf1_Vbici  += ckt->CKTgmin;
-            //     Ixf1_Vxf2   += ckt->CKTgmin;
-            //     Ixf1_Vxf1   += ckt->CKTgmin;
-            //     //Ixf2
-            //     Ixf2_Vbiei  += ckt->CKTgmin;
-            //     Ixf2_Vbici  += ckt->CKTgmin;
-            //     Ixf2_Vxf2   += ckt->CKTgmin;
-            //     Ixf2_Vxf1   += ckt->CKTgmin;
-            // }
-
-            //SHE derivatives
-            if (selfheat) {
-                // T node
-                Ith         += ckt->CKTgmin*Vrth;
-                Ibbp_Vrth   += ckt->CKTgmin;
-                // Icic_Vrth   += ckt->CKTgmin;
-                Ieie_Vrth   += ckt->CKTgmin;
-                //Ibiei
-                Ibiei_Vrth  += ckt->CKTgmin;
-                //Ibici
-                Ibici_Vrth  += ckt->CKTgmin;
-                //Iciei
-                Iciei_Vrth  += ckt->CKTgmin;
-                //Ibpei
-                Ibpei_Vrth  += ckt->CKTgmin;
-                // Ibpbi
-                // Ibpbi_Vrth  += ckt->CKTgmin;
-                //Ibpci
-                Ibpci_Vrth  += ckt->CKTgmin;
-                //Isici
-                Isici_Vrth  += ckt->CKTgmin;
-                //Ibpsi
-                // Ibpsi_Vrth  += ckt->CKTgmin;
-                //Ith
-                Ith_Vbiei  += ckt->CKTgmin;
-                Ith_Vbici  += ckt->CKTgmin;
-                Ith_Vbpbi  += ckt->CKTgmin;
-                Ith_Vbpci  += ckt->CKTgmin;
-                Ith_Vbpei  += ckt->CKTgmin;
-                Ith_Vciei  += ckt->CKTgmin;
-                Ith_Vsici  += ckt->CKTgmin;
-                Ith_Vcic   += ckt->CKTgmin;
-                Ith_Vbbp   += ckt->CKTgmin;
-                Ith_Veie   += ckt->CKTgmin;
-                Ith_Vrth   += ckt->CKTgmin;
-
-                if (nqs) {
-                    // //NQS
-                    Ixf_dT  += ckt->CKTgmin;
-                    Ixf1_dT += ckt->CKTgmin;
-                    Ixf2_dT += ckt->CKTgmin;
-                }
-            }
-
-            // end of Load_sources
 
             // calculate charge derivatives for electrostatic caps
             Qbepar1_Vbe      = cbepar1;
