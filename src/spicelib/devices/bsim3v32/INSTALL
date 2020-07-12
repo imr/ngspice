@@ -1,0 +1,34 @@
+BSIM3V32SIMD is to be used with ngspice version 32, or the current development branch as for July 2020.
+It might work with other versions as well.
+For installing BSIM3V3SIMD, the ngspice source code is required.
+
+Extraction:
+- go to ngspice source code tree at <ngspice>/src/spicelib/devices
+- extract BSIM3V32SIMD.tar.gz
+- this will replace and add files in the directory bsim3v32
+
+Compilation on a target computer supporting AVX2:
+- go to the base of ngspice source tree
+- run automake (or ./autogen.sh)
+- mkdir buildsimd
+- cd buildsimd
+- ../configure CFLAGS="-O3 -march=native" (add your configure flags as required)
+- make (the compiler must be a recent gcc or clang, other compilers not tested).
+- make install (or use directly the <ngspice>/buildsimd/src/ngspice binary)
+
+Usage:
+The new optimized model will be used automatically if you have any BSIM3V32 devices in your simulated circuit.
+For other devices models, there will be no speed-up at all.
+
+Notes:
+Compiling for architectures other than x86_64 with AVX2 was not tested.
+It should be possible if the target architecture supports vector processing for double precision floating point numbers with vector length of 4 or more.
+In file b3v32ldsimd.c, set USEX86INTRINSICS to 0 and modify definition of functions vec4_MAX, vec4_exp, vec4_log, vec4_sqrt, vec4_blend, vec4_fabs with an adequate implementation for your achitecture.
+
+Compiling for vector length of 8 was not tested.
+It should be possible if the target architecture supports it.
+Change NSIMD value from 4 to 8 in bsim3v32def.h.
+In file b3v32ldsimd.c, provides new functions vec8_* for all functions vec4_*. 
+
+Anamosic Ballenegger Design, July 2020
+www.anamosic.com

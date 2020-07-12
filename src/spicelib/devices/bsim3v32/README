@@ -1,0 +1,43 @@
+/**********
+ * BSIM3V32 MOSFET device model form the UC Berkeley BSIM Research Group
+ * Copyright 2001 Regents of the University of California. All rights reserved.
+ **********/
+ 
+/**********
+ * Modified 2020 by Florian Ballenegger, Anamosic Ballenegger Design
+ * Copyright 2020 Florian Ballenegger, Anamosic Ballenegger Design, Switzerland
+ * Modified code is distributed under the same license terms as the original,
+ * see file "B3TERMS_OF_USE".
+ **********/
+
+BSIM3V32SIMD is a modified version of the widely used BSIM3V32 model, using SIMD instructions to evaluate several devices in parallel and to speed-up the simulation, with almost the same accuracy (the only loss of accuracy comes from the use of slightly less accurate exp and log functions).
+
+Contrary to parallel device evaluation available with OpenMP multiprocessing, BSIM3V32SIMD does load only 1 CPU core per simulation while achieving about 2x speed-up.
+This means that this optimization is also usefull when a batch of multiple simulations is desired for statistical analysis.
+
+BSIM3V32SIMD can be combined with OpenMP multiprocessing to achieve about 3x speed-up for an single simulation run.
+
+The actual acceleration will depend on the simulated circuit and will the most for medium-sized circuit consisting of mainly MOS transistors in the number of one hundred to ten thousands, as it is usual in the design of integrated circuit blocks. If simulating greater circuit, the matrix solving time will start to dominates and overall the optimization will have less effect.
+
+
+New Files:
+README
+INSTALL
+b3v32ldsel.c
+b3v32ldseq.c
+b3v32ldsimd.c
+b3v32ldseq_simd4.c
+b3v32ldseq_simd4_omp.c
+vec4_exp.c
+vec4_log.c
+
+Modified Files:
+Makefile.am
+bsim3v32def.h
+bsim3v32ext.h
+bsim3v32init.c
+b3v32set.c
+b3v32ld.c (minor modifications, can use original as well)
+
+Anamosic Ballenegger Design, July 2020
+www.anamosic.com
