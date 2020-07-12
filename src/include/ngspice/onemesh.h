@@ -38,10 +38,10 @@ typedef struct sONEelem {
     double *KLUrightLeftNode ;
     double *KLUrightRightNode ;
 
-    BindKluElementCOO *KLUleftLeftNodeBinding ;
-    BindKluElementCOO *KLUleftRightNodeBinding ;
-    BindKluElementCOO *KLUrightLeftNodeBinding ;
-    BindKluElementCOO *KLUrightRightNodeBinding ;
+    BindElementKLUforCIDER *KLUleftLeftNodeBinding ;
+    BindElementKLUforCIDER *KLUleftRightNodeBinding ;
+    BindElementKLUforCIDER *KLUrightLeftNodeBinding ;
+    BindElementKLUforCIDER *KLUrightRightNodeBinding ;
 
 #endif
 
@@ -132,29 +132,29 @@ typedef struct sONEnode {
     double *fPNiP1;
 
 #ifdef KLU
-    BindKluElementCOO *fPsiPsiiM1Binding ;
-    BindKluElementCOO *fPsiPsiBinding ;
-    BindKluElementCOO *fPsiPsiiP1Binding ;
-    BindKluElementCOO *fPsiNBinding ;
-    BindKluElementCOO *fPsiPBinding ;
-    BindKluElementCOO *fNPsiiM1Binding ;
-    BindKluElementCOO *fNPsiBinding ;
-    BindKluElementCOO *fNPsiiP1Binding ;
-    BindKluElementCOO *fNNiM1Binding ;
-    BindKluElementCOO *fNNBinding ;
-    BindKluElementCOO *fNNiP1Binding ;
-    BindKluElementCOO *fNPiM1Binding ;
-    BindKluElementCOO *fNPBinding ;
-    BindKluElementCOO *fNPiP1Binding ;
-    BindKluElementCOO *fPPsiiM1Binding ;
-    BindKluElementCOO *fPPsiBinding ;
-    BindKluElementCOO *fPPsiiP1Binding ;
-    BindKluElementCOO *fPPiM1Binding ;
-    BindKluElementCOO *fPPBinding ;
-    BindKluElementCOO *fPPiP1Binding ;
-    BindKluElementCOO *fPNiM1Binding ;
-    BindKluElementCOO *fPNBinding ;
-    BindKluElementCOO *fPNiP1Binding ;
+    BindElementKLUforCIDER *fPsiPsiiM1Binding ;
+    BindElementKLUforCIDER *fPsiPsiBinding ;
+    BindElementKLUforCIDER *fPsiPsiiP1Binding ;
+    BindElementKLUforCIDER *fPsiNBinding ;
+    BindElementKLUforCIDER *fPsiPBinding ;
+    BindElementKLUforCIDER *fNPsiiM1Binding ;
+    BindElementKLUforCIDER *fNPsiBinding ;
+    BindElementKLUforCIDER *fNPsiiP1Binding ;
+    BindElementKLUforCIDER *fNNiM1Binding ;
+    BindElementKLUforCIDER *fNNBinding ;
+    BindElementKLUforCIDER *fNNiP1Binding ;
+    BindElementKLUforCIDER *fNPiM1Binding ;
+    BindElementKLUforCIDER *fNPBinding ;
+    BindElementKLUforCIDER *fNPiP1Binding ;
+    BindElementKLUforCIDER *fPPsiiM1Binding ;
+    BindElementKLUforCIDER *fPPsiBinding ;
+    BindElementKLUforCIDER *fPPsiiP1Binding ;
+    BindElementKLUforCIDER *fPPiM1Binding ;
+    BindElementKLUforCIDER *fPPBinding ;
+    BindElementKLUforCIDER *fPPiP1Binding ;
+    BindElementKLUforCIDER *fPNiM1Binding ;
+    BindElementKLUforCIDER *fPNBinding ;
+    BindElementKLUforCIDER *fPNiP1Binding ;
 #endif
 
 } ONEnode;

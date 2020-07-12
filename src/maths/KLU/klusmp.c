@@ -1,98 +1,7 @@
-/*
- *  Spice3 COMPATIBILITY MODULE
- *
- *  Author:                     Advising professor:
- *     Kenneth S. Kundert           Alberto Sangiovanni-Vincentelli
- *     UC Berkeley
- *
- *  This module contains routines that make Sparse1.3 a direct
- *  replacement for the SMP sparse matrix package in Spice3c1 or Spice3d1.
- *  Sparse1.3 is in general a faster and more robust package than SMP.
- *  These advantages become significant on large circuits.
- *
- *  >>> User accessible functions contained in this file:
- *  SMPaddElt
- *  SMPmakeElt
- *  SMPcClear
- *  SMPclear
- *  SMPcLUfac
- *  SMPluFac
- *  SMPcReorder
- *  SMPreorder
- *  SMPcaSolve
- *  SMPcSolve
- *  SMPsolve
- *  SMPmatSize
- *  SMPnewMatrix
- *  SMPdestroy
- *  SMPpreOrder
- *  SMPprint
- *  SMPgetError
- *  SMPcProdDiag
- *  LoadGmin
- *  SMPfindElt
- *  SMPcombine
- *  SMPcCombine
- */
-
-/*
- *  To replace SMP with Sparse, rename the file spSpice3.h to
- *  spMatrix.h and place Sparse in a subdirectory of SPICE called
- *  `sparse'.  Then on UNIX compile Sparse by executing `make spice'.
- *  If not on UNIX, after compiling Sparse and creating the sparse.a
- *  archive, compile this file (spSMP.c) and spSMP.o to the archive,
- *  then copy sparse.a into the SPICE main directory and rename it
- *  SMP.a.  Finally link SPICE.
- *
- *  To be compatible with SPICE, the following Sparse compiler options
- *  (in spConfig.h) should be set as shown below:
- *
- *      EXPANDABLE                      YES
- *      TRANSLATE                       NO
- *      INITIALIZE                      NO or YES, YES for use with test prog.
- *      DIAGONAL_PIVOTING               YES
- *      MODIFIED_MARKOWITZ              NO
- *      DELETE                          NO
- *      STRIP                           NO
- *      MODIFIED_NODAL                  YES
- *      QUAD_ELEMENT                    NO
- *      TRANSPOSE                       YES
- *      SCALING                         NO
- *      DOCUMENTATION                   YES
- *      MULTIPLICATION                  NO
- *      DETERMINANT                     YES
- *      STABILITY                       NO
- *      CONDITION                       NO
- *      PSEUDOCONDITION                 NO
- *      DEBUG                           YES
- *
- *      spREAL  double
- */
-
-/*
- *  Revision and copyright information.
- *
- *  Copyright (c) 1985,86,87,88,89,90
- *  by Kenneth S. Kundert and the University of California.
- *
- *  Permission to use, copy, modify, and distribute this software and its
- *  documentation for any purpose and without fee is hereby granted, provided
- *  that the above copyright notice appear in all copies and supporting
- *  documentation and that the authors and the University of California
- *  are properly credited.  The authors and the University of California
- *  make no representations as to the suitability of this software for
- *  any purpose.  It is provided `as is', without express or implied warranty.
- */
-
-/*
- *  IMPORTS
- *
- *  >>> Import descriptions:
- *  spMatrix.h
- *     Sparse macros and declarations.
- *  SMPdefs.h
- *     Spice3's matrix macro definitions.
- */
+/* KLU to SMP Interface
+ * Francesco Lannutti
+ * July 2020
+*/
 
 #include "ngspice/config.h"
 #include <assert.h>
@@ -108,33 +17,14 @@ extern double scalbn(double, int);
 extern double logb(double);
 #endif
 
-static void LoadGmin_CSC (double **diag, int n, double Gmin) ;
+static void LoadGmin_CSC (double **diag, unsigned int n, double Gmin) ;
 static void LoadGmin (SMPmatrix *eMatrix, double Gmin) ;
 
-void
-SMPmatrix_CSC (SMPmatrix *Matrix)
-{
-    spMatrix_CSC (Matrix->SPmatrix, Matrix->CKTkluAp, Matrix->CKTkluAi, Matrix->CKTkluAx,
-                  Matrix->CKTkluAx_Complex, Matrix->CKTkluN, Matrix->CKTbindStruct, Matrix->CKTdiag_CSC) ;
-
-//    spMatrix_CSC_dump (Matrix->SPmatrix, 1, NULL) ;
-
-    return ;
-}
-
-void
-SMPnnz (SMPmatrix *Matrix)
-{
-    Matrix->CKTklunz = Matrix->SPmatrix->Elements ;
-
-    return ;
-}
-
-#ifdef CIDER
 typedef struct sElement {
-  unsigned int row ;
-  unsigned int col ;
-  double *pointer ;
+    unsigned int row ;
+    unsigned int col ;
+    double *pointer ;
+    unsigned int group ;
 } Element ;
 
 static int
@@ -189,10 +79,23 @@ Compress (unsigned int *Ai, unsigned int *Bp, unsigned int n, unsigned int nz)
 }
 
 int
-BindKluCompareCOO (const void *a, const void *b)
+BindCompare (const void *a, const void *b)
 {
-    BindKluElementCOO *A = (BindKluElementCOO *) a ;
-    BindKluElementCOO *B = (BindKluElementCOO *) b ;
+    BindElement *A = (BindElement *) a ;
+    BindElement *B = (BindElement *) b ;
+
+    return
+        (A->COO > B->COO) ?  1 :
+        (A->COO < B->COO) ? -1 :
+        0 ;
+}
+
+#ifdef CIDER
+int
+BindCompareKLUforCIDER (const void *a, const void *b)
+{
+    BindElementKLUforCIDER *A = (BindElementKLUforCIDER *) a ;
+    BindElementKLUforCIDER *B = (BindElementKLUforCIDER *) b ;
 
     return
         (A->COO > B->COO) ?  1 :
@@ -201,57 +104,179 @@ BindKluCompareCOO (const void *a, const void *b)
 }
 
 int
-BindKluCompareCSC (const void *a, const void *b)
+BindKluCompareCSCKLUforCIDER (const void *a, const void *b)
 {
-    BindKluElementCOO *A = (BindKluElementCOO *) a ;
-    BindKluElementCOO *B = (BindKluElementCOO *) b ;
+    BindElementKLUforCIDER *A = (BindElementKLUforCIDER *) a ;
+    BindElementKLUforCIDER *B = (BindElementKLUforCIDER *) b ;
 
     return
         (A->CSC_Complex > B->CSC_Complex) ?  1 :
         (A->CSC_Complex < B->CSC_Complex) ? -1 :
         0 ;
 }
+#endif
+
+void SMPconvertCOOtoCSC (SMPmatrix *Matrix)
+{
+    Element *MatrixCOO ;
+    KluLinkedListCOO *current, *temp ;
+    unsigned int *Ap_COO, current_group, i, j ;
+
+    /* Allocate the compressed COO elements */
+    MatrixCOO = (Element *) malloc (Matrix->SMPkluMatrix->KLUmatrixLinkedListNZ * sizeof (Element)) ;
+
+    /* Populate the compressed COO elements and COO value of Binding Table */
+    /* Delete the Linked List in the meantime */
+    i = 0 ;
+    temp = Matrix->SMPkluMatrix->KLUmatrixLinkedListCOO ;
+    while (temp != NULL) {
+        MatrixCOO [i].row = temp->row ;
+        MatrixCOO [i].col = temp->col ;
+        MatrixCOO [i].pointer = temp->pointer ;
+        MatrixCOO [i].group = 0 ;
+        current = temp ;
+        temp = temp->next ;
+        free (current) ;
+        current = NULL ;
+        i++ ;
+    }
+
+    /* Order the MatrixCOO along the columns */
+    qsort (MatrixCOO, Matrix->SMPkluMatrix->KLUmatrixLinkedListNZ, sizeof (Element), CompareColumn) ;
+
+    /* Order the MatrixCOO along the rows */
+    i = 0 ;
+    while (i < Matrix->SMPkluMatrix->KLUmatrixLinkedListNZ)
+    {
+        /* Look for the next column */
+        for (j = i + 1 ; j < Matrix->SMPkluMatrix->KLUmatrixLinkedListNZ ; j++)
+        {
+            if (MatrixCOO [j].col != MatrixCOO [i].col)
+            {
+                break ;
+            }
+        }
+
+        qsort (MatrixCOO + i, j - i, sizeof (Element), CompareRow) ;
+
+        i = j ;
+    }
+
+    /* Assign labels to avoid duplicates */
+    for (i = 0, j = 1 ; i < Matrix->SMPkluMatrix->KLUmatrixLinkedListNZ - 1 ; i++, j++) {
+        if ((MatrixCOO [i].col == MatrixCOO [j].col) && (MatrixCOO [i].row == MatrixCOO [j].row)) {
+            // If col and row are the same
+            MatrixCOO [j].group = MatrixCOO [i].group ;
+        } else if ((MatrixCOO [i].col != MatrixCOO [j].col) || (MatrixCOO [i].row != MatrixCOO [j].row)) {
+            // If or col either row are different, it isn't a duplicate, so assign the next label and store it in 'nz'
+            MatrixCOO [j].group = MatrixCOO [i].group + 1 ;
+        } else {
+            printf ("Error: Strange behavior during label assignment\n") ;
+        }
+    }
+
+    /* Assign N and NZ */
+    Matrix->SMPkluMatrix->KLUmatrixN = (unsigned int)MatrixCOO [Matrix->SMPkluMatrix->KLUmatrixLinkedListNZ - 1].col + 1 ;
+    Matrix->SMPkluMatrix->KLUmatrixNZ = MatrixCOO [Matrix->SMPkluMatrix->KLUmatrixLinkedListNZ - 1].group + 1 ;
+
+    /* Allocate Diag Gmin CSC Vector */
+    Matrix->SMPkluMatrix->KLUmatrixDiag = (double **) malloc (Matrix->SMPkluMatrix->KLUmatrixN * sizeof (double *)) ;
+    for (i = 0 ; i < Matrix->SMPkluMatrix->KLUmatrixN ; i++) {
+        Matrix->SMPkluMatrix->KLUmatrixDiag [i] = NULL ;
+    }
+
+    /* Allocate the temporary COO Column Index */
+    Ap_COO = (unsigned int *) malloc (Matrix->SMPkluMatrix->KLUmatrixNZ * sizeof (unsigned int)) ;
+
+    /* Allocate the needed KLU data structures */
+    Matrix->SMPkluMatrix->KLUmatrixAp = (int *) malloc ((Matrix->SMPkluMatrix->KLUmatrixN + 1) * sizeof (int)) ;
+    Matrix->SMPkluMatrix->KLUmatrixAi = (int *) malloc (Matrix->SMPkluMatrix->KLUmatrixNZ * sizeof (int)) ;
+    Matrix->SMPkluMatrix->KLUmatrixBindStructCOO = (BindElement *) malloc (Matrix->SMPkluMatrix->KLUmatrixLinkedListNZ * sizeof (BindElement)) ;
+    Matrix->SMPkluMatrix->KLUmatrixAx = (double *) malloc (Matrix->SMPkluMatrix->KLUmatrixNZ * sizeof (double)) ;
+    Matrix->SMPkluMatrix->KLUmatrixAxComplex = (double *) malloc (2 * Matrix->SMPkluMatrix->KLUmatrixNZ * sizeof (double)) ;
+    Matrix->SMPkluMatrix->KLUmatrixIntermediate = (double *) malloc (Matrix->SMPkluMatrix->KLUmatrixN * sizeof (double)) ;
+    Matrix->SMPkluMatrix->KLUmatrixIntermediateComplex = (double *) malloc (2 * Matrix->SMPkluMatrix->KLUmatrixN * sizeof (double)) ;
+
+    /* Copy back the Matrix in partial CSC */
+    for (i = 0, current_group = 0 ; i < Matrix->SMPkluMatrix->KLUmatrixLinkedListNZ ; i++)
+    {
+        if (MatrixCOO [i].group > current_group) {
+            current_group = MatrixCOO [i].group ;
+        }
+
+        Ap_COO [current_group] = MatrixCOO [i].col ;
+        Matrix->SMPkluMatrix->KLUmatrixAi [current_group] = (int)MatrixCOO [i].row ;
+        Matrix->SMPkluMatrix->KLUmatrixBindStructCOO [i].COO = MatrixCOO [i].pointer ;
+        Matrix->SMPkluMatrix->KLUmatrixBindStructCOO [i].CSC = &(Matrix->SMPkluMatrix->KLUmatrixAx [current_group]) ;
+        Matrix->SMPkluMatrix->KLUmatrixBindStructCOO [i].CSC_Complex = &(Matrix->SMPkluMatrix->KLUmatrixAxComplex [2 * current_group]) ;
+        if (MatrixCOO [i].col == MatrixCOO [i].row) {
+            Matrix->SMPkluMatrix->KLUmatrixDiag [MatrixCOO [i].col] = Matrix->SMPkluMatrix->KLUmatrixBindStructCOO [i].CSC ;
+        }
+    }
+
+    /* Compress the COO Column Index to CSC Column Index */
+    Compress (Ap_COO, (unsigned int *)Matrix->SMPkluMatrix->KLUmatrixAp, Matrix->SMPkluMatrix->KLUmatrixN, Matrix->SMPkluMatrix->KLUmatrixNZ) ;
+
+    /* Free the temporary stuff */
+    free (Ap_COO) ;
+    free (MatrixCOO) ;
+
+    /* Sort the Binding Table */
+    qsort (Matrix->SMPkluMatrix->KLUmatrixBindStructCOO, Matrix->SMPkluMatrix->KLUmatrixLinkedListNZ, sizeof (BindElement), BindCompare) ;
+
+    /* Set the Matrix as Real */
+    Matrix->SMPkluMatrix->KLUmatrixIsComplex = KLUmatrixReal ;
+
+    return ;
+}
+
+#ifdef CIDER
+typedef struct sElementKLUforCIDER {
+    unsigned int row ;
+    unsigned int col ;
+    double *pointer ;
+} ElementKLUforCIDER ;
 
 void SMPconvertCOOtoCSCKLUforCIDER (SMPmatrix *Matrix)
 {
-    Element *MatrixCOO ;
+    ElementKLUforCIDER *MatrixCOO ;
     unsigned int *Ap_COO, i, j, nz ;
 
     /* Count the non-zero elements and store it */
     nz = 0 ;
     for (i = 0 ; i < Matrix->SMPkluMatrix->KLUmatrixN * Matrix->SMPkluMatrix->KLUmatrixN ; i++) {
-        if ((Matrix->SMPkluMatrix->KLUmatrixRowCOO [i] != -1) && (Matrix->SMPkluMatrix->KLUmatrixColCOO [i] != -1)) {
+        if ((Matrix->SMPkluMatrix->KLUmatrixRowCOOforCIDER [i] != -1) && (Matrix->SMPkluMatrix->KLUmatrixColCOOforCIDER [i] != -1)) {
             nz++ ;
         }
     }
     Matrix->SMPkluMatrix->KLUmatrixNZ = nz ;
 
     /* Allocate the compressed COO elements */
-    MatrixCOO = (Element *) malloc (nz * sizeof(Element)) ;
+    MatrixCOO = (ElementKLUforCIDER *) malloc (nz * sizeof (ElementKLUforCIDER)) ;
 
     /* Allocate the temporary COO Column Index */
-    Ap_COO = (unsigned int *) malloc (nz * sizeof(unsigned int)) ;
+    Ap_COO = (unsigned int *) malloc (nz * sizeof (unsigned int)) ;
 
     /* Allocate the needed KLU data structures */
-    Matrix->SMPkluMatrix->KLUmatrixAp = (int *) malloc ((Matrix->SMPkluMatrix->KLUmatrixN + 1) * sizeof(int)) ;
-    Matrix->SMPkluMatrix->KLUmatrixAi = (int *) malloc (nz * sizeof(int)) ;
-    Matrix->SMPkluMatrix->KLUmatrixBindStructCOO = (BindKluElementCOO *) malloc (nz * sizeof(BindKluElementCOO)) ;
-    Matrix->SMPkluMatrix->KLUmatrixAxComplex = (double *) malloc (2 * nz * sizeof(double)) ;
-    Matrix->SMPkluMatrix->KLUmatrixIntermediateComplex = (double *) malloc (2 * Matrix->SMPkluMatrix->KLUmatrixN * sizeof(double)) ;
+    Matrix->SMPkluMatrix->KLUmatrixAp = (int *) malloc ((Matrix->SMPkluMatrix->KLUmatrixN + 1) * sizeof (int)) ;
+    Matrix->SMPkluMatrix->KLUmatrixAi = (int *) malloc (nz * sizeof (int)) ;
+    Matrix->SMPkluMatrix->KLUmatrixBindStructForCIDER = (BindElementKLUforCIDER *) malloc (nz * sizeof (BindElementKLUforCIDER)) ;
+    Matrix->SMPkluMatrix->KLUmatrixAxComplex = (double *) malloc (2 * nz * sizeof (double)) ;
+    Matrix->SMPkluMatrix->KLUmatrixIntermediateComplex = (double *) malloc (2 * Matrix->SMPkluMatrix->KLUmatrixN * sizeof (double)) ;
 
     /* Populate the compressed COO elements and COO value of Binding Table */
     j = 0 ;
     for (i = 0 ; i < Matrix->SMPkluMatrix->KLUmatrixN * Matrix->SMPkluMatrix->KLUmatrixN ; i++) {
-        if ((Matrix->SMPkluMatrix->KLUmatrixRowCOO [i] != -1) && (Matrix->SMPkluMatrix->KLUmatrixColCOO [i] != -1)) {
-            MatrixCOO [j].row = (unsigned int)Matrix->SMPkluMatrix->KLUmatrixRowCOO [i] ;
-            MatrixCOO [j].col = (unsigned int)Matrix->SMPkluMatrix->KLUmatrixColCOO [i] ;
-            MatrixCOO [j].pointer = &(Matrix->SMPkluMatrix->KLUmatrixValueComplexCOO [2 * i]) ;
+        if ((Matrix->SMPkluMatrix->KLUmatrixRowCOOforCIDER [i] != -1) && (Matrix->SMPkluMatrix->KLUmatrixColCOOforCIDER [i] != -1)) {
+            MatrixCOO [j].row = (unsigned int)Matrix->SMPkluMatrix->KLUmatrixRowCOOforCIDER [i] ;
+            MatrixCOO [j].col = (unsigned int)Matrix->SMPkluMatrix->KLUmatrixColCOOforCIDER [i] ;
+            MatrixCOO [j].pointer = &(Matrix->SMPkluMatrix->KLUmatrixValueComplexCOOforCIDER [2 * i]) ;
             j++ ;
         }
     }
 
     /* Order the MatrixCOO along the columns */
-    qsort (MatrixCOO, nz, sizeof(Element), CompareColumn) ;
+    qsort (MatrixCOO, nz, sizeof (ElementKLUforCIDER), CompareColumn) ;
 
     /* Order the MatrixCOO along the rows */
     i = 0 ;
@@ -266,7 +291,7 @@ void SMPconvertCOOtoCSCKLUforCIDER (SMPmatrix *Matrix)
             }
         }
 
-        qsort (MatrixCOO + i, j - i, sizeof(Element), CompareRow) ;
+        qsort (MatrixCOO + i, j - i, sizeof (ElementKLUforCIDER), CompareRow) ;
 
         i = j ;
     }
@@ -276,8 +301,8 @@ void SMPconvertCOOtoCSCKLUforCIDER (SMPmatrix *Matrix)
     {
         Ap_COO [i] = MatrixCOO [i].col ;
         Matrix->SMPkluMatrix->KLUmatrixAi [i] = (int)MatrixCOO [i].row ;
-        Matrix->SMPkluMatrix->KLUmatrixBindStructCOO [i].COO = MatrixCOO [i].pointer ;
-        Matrix->SMPkluMatrix->KLUmatrixBindStructCOO [i].CSC_Complex = &(Matrix->SMPkluMatrix->KLUmatrixAxComplex [2 * i]) ;
+        Matrix->SMPkluMatrix->KLUmatrixBindStructForCIDER [i].COO = MatrixCOO [i].pointer ;
+        Matrix->SMPkluMatrix->KLUmatrixBindStructForCIDER [i].CSC_Complex = &(Matrix->SMPkluMatrix->KLUmatrixAxComplex [2 * i]) ;
     }
 
     /* Compress the COO Column Index to CSC Column Index */
@@ -288,21 +313,11 @@ void SMPconvertCOOtoCSCKLUforCIDER (SMPmatrix *Matrix)
     free (MatrixCOO) ;
 
     /* Sort the Binding Table */
-    qsort (Matrix->SMPkluMatrix->KLUmatrixBindStructCOO, nz, sizeof(BindKluElementCOO), BindKluCompareCOO) ;
+    qsort (Matrix->SMPkluMatrix->KLUmatrixBindStructForCIDER, nz, sizeof (BindElementKLUforCIDER), BindCompareKLUforCIDER) ;
 
     return ;
 }
 #endif
-
-/*
- * SMPaddElt()
- */
-int
-SMPaddElt (SMPmatrix *Matrix, int Row, int Col, double Value)
-{
-    *spGetElement (Matrix->SPmatrix, Row, Col) = Value ;
-    return spError (Matrix->SPmatrix) ;
-}
 
 /*
  * SMPmakeElt()
@@ -310,7 +325,26 @@ SMPaddElt (SMPmatrix *Matrix, int Row, int Col, double Value)
 double *
 SMPmakeElt (SMPmatrix *Matrix, int Row, int Col)
 {
-    return spGetElement (Matrix->SPmatrix, Row, Col) ;
+    KluLinkedListCOO *temp ;
+
+    if (Matrix->CKTkluMODE) {
+        if ((Row > 0) && (Col > 0)) {
+            Row = Row - 1 ;
+            Col = Col - 1 ;
+            temp = (KluLinkedListCOO *) malloc (sizeof (KluLinkedListCOO)) ;
+            temp->row = (unsigned int)Row ;
+            temp->col = (unsigned int)Col ;
+            temp->pointer = (double *) malloc (sizeof (double)) ;
+            temp->next = Matrix->SMPkluMatrix->KLUmatrixLinkedListCOO ;
+            Matrix->SMPkluMatrix->KLUmatrixLinkedListCOO = temp ;
+            Matrix->SMPkluMatrix->KLUmatrixLinkedListNZ++ ;
+            return temp->pointer ;
+        } else {
+            return Matrix->SMPkluMatrix->KLUmatrixTrashCOO ;
+        }
+    } else {
+        return spGetElement (Matrix->SPmatrix, Row, Col) ;
+    }
 }
 
 #ifdef CIDER
@@ -321,9 +355,9 @@ SMPmakeEltKLUforCIDER (SMPmatrix *Matrix, int Row, int Col)
         if ((Row > 0) && (Col > 0)) {
             Row = Row - 1 ;
             Col = Col - 1 ;
-            Matrix->SMPkluMatrix->KLUmatrixRowCOO [Row * (int)Matrix->SMPkluMatrix->KLUmatrixN + Col] = Row ;
-            Matrix->SMPkluMatrix->KLUmatrixColCOO [Row * (int)Matrix->SMPkluMatrix->KLUmatrixN + Col] = Col ;
-            return &(Matrix->SMPkluMatrix->KLUmatrixValueComplexCOO [2 * (Row * (int)Matrix->SMPkluMatrix->KLUmatrixN + Col)]) ;
+            Matrix->SMPkluMatrix->KLUmatrixRowCOOforCIDER [Row * (int)Matrix->SMPkluMatrix->KLUmatrixN + Col] = Row ;
+            Matrix->SMPkluMatrix->KLUmatrixColCOOforCIDER [Row * (int)Matrix->SMPkluMatrix->KLUmatrixN + Col] = Col ;
+            return &(Matrix->SMPkluMatrix->KLUmatrixValueComplexCOOforCIDER [2 * (Row * (int)Matrix->SMPkluMatrix->KLUmatrixN + Col)]) ;
         } else {
             return Matrix->SMPkluMatrix->KLUmatrixTrashCOO ;
         }
@@ -340,14 +374,12 @@ SMPmakeEltKLUforCIDER (SMPmatrix *Matrix, int Row, int Col)
 void
 SMPcClear (SMPmatrix *Matrix)
 {
-    int i ;
+    unsigned int i ;
+
     if (Matrix->CKTkluMODE)
     {
-        spClear (Matrix->SPmatrix) ;
-        if (Matrix->CKTkluAx_Complex != NULL)
-        {
-            for (i = 0 ; i < 2 * Matrix->CKTklunz ; i++)
-                Matrix->CKTkluAx_Complex [i] = 0 ;
+        for (i = 0 ; i < 2 * Matrix->SMPkluMatrix->KLUmatrixNZ ; i++) {
+            Matrix->SMPkluMatrix->KLUmatrixAxComplex [i] = 0 ;
         }
     } else {
         spClear (Matrix->SPmatrix) ;
@@ -361,14 +393,12 @@ SMPcClear (SMPmatrix *Matrix)
 void
 SMPclear (SMPmatrix *Matrix)
 {
-    int i ;
+    unsigned int i ;
+
     if (Matrix->CKTkluMODE)
     {
-        spClear (Matrix->SPmatrix) ;
-        if (Matrix->CKTkluAx != NULL)
-        {
-            for (i = 0 ; i < Matrix->CKTklunz ; i++)
-                Matrix->CKTkluAx [i] = 0 ;
+        for (i = 0 ; i < Matrix->SMPkluMatrix->KLUmatrixNZ ; i++) {
+            Matrix->SMPkluMatrix->KLUmatrixAx [i] = 0 ;
         }
     } else {
         spClear (Matrix->SPmatrix) ;
@@ -403,24 +433,23 @@ SMPcLUfac (SMPmatrix *Matrix, double PivTol)
 
     if (Matrix->CKTkluMODE)
     {
-        spSetComplex (Matrix->SPmatrix) ;
-        ret = klu_z_refactor (Matrix->CKTkluAp, Matrix->CKTkluAi, Matrix->CKTkluAx_Complex,
-                              Matrix->CKTkluSymbolic, Matrix->CKTkluNumeric, Matrix->CKTkluCommon) ;
+        ret = klu_z_refactor (Matrix->SMPkluMatrix->KLUmatrixAp, Matrix->SMPkluMatrix->KLUmatrixAi, Matrix->SMPkluMatrix->KLUmatrixAxComplex,
+                              Matrix->SMPkluMatrix->KLUmatrixSymbolic, Matrix->SMPkluMatrix->KLUmatrixNumeric, Matrix->SMPkluMatrix->KLUmatrixCommon) ;
 
         if (ret == 0)
         {
-            if (Matrix->CKTkluCommon->status == KLU_SINGULAR) {
+            if (Matrix->SMPkluMatrix->KLUmatrixCommon->status == KLU_SINGULAR) {
                 fprintf (stderr, "Warning (ReFactor): KLU Matrix is SINGULAR\n") ;
                 return E_SINGULAR ;
             }
-            if (Matrix->CKTkluCommon == NULL) {
+            if (Matrix->SMPkluMatrix->KLUmatrixCommon == NULL) {
                 fprintf (stderr, "Error (ReFactor): KLUcommon object is NULL. A problem occurred\n") ;
             }
-            if (Matrix->CKTkluCommon->status == KLU_EMPTY_MATRIX)
+            if (Matrix->SMPkluMatrix->KLUmatrixCommon->status == KLU_EMPTY_MATRIX)
             {
                 fprintf (stderr, "Error (ReFactor): KLU Matrix is empty\n") ;
             }
-            if (Matrix->CKTkluNumeric == NULL) {
+            if (Matrix->SMPkluMatrix->KLUmatrixNumeric == NULL) {
                 fprintf (stderr, "Error (ReFactor): KLUnumeric object is NULL. A problem occurred\n") ;
             }
             return 1 ;
@@ -447,25 +476,25 @@ SMPluFac (SMPmatrix *Matrix, double PivTol, double Gmin)
 
     if (Matrix->CKTkluMODE)
     {
-        spSetReal (Matrix->SPmatrix) ;
-        LoadGmin_CSC (Matrix->CKTdiag_CSC, Matrix->CKTkluN, Gmin) ;
-        ret = klu_refactor (Matrix->CKTkluAp, Matrix->CKTkluAi, Matrix->CKTkluAx,
-                            Matrix->CKTkluSymbolic, Matrix->CKTkluNumeric, Matrix->CKTkluCommon) ;
+        LoadGmin_CSC (Matrix->SMPkluMatrix->KLUmatrixDiag, Matrix->SMPkluMatrix->KLUmatrixN, Gmin) ;
+
+        ret = klu_refactor (Matrix->SMPkluMatrix->KLUmatrixAp, Matrix->SMPkluMatrix->KLUmatrixAi, Matrix->SMPkluMatrix->KLUmatrixAx,
+                            Matrix->SMPkluMatrix->KLUmatrixSymbolic, Matrix->SMPkluMatrix->KLUmatrixNumeric, Matrix->SMPkluMatrix->KLUmatrixCommon) ;
 
         if (ret == 0)
         {
-            if (Matrix->CKTkluCommon->status == KLU_SINGULAR) {
+            if (Matrix->SMPkluMatrix->KLUmatrixCommon->status == KLU_SINGULAR) {
                 fprintf (stderr, "Warning (ReFactor): KLU Matrix is SINGULAR\n") ;
                 return E_SINGULAR ;
             }
-            if (Matrix->CKTkluCommon == NULL) {
+            if (Matrix->SMPkluMatrix->KLUmatrixCommon == NULL) {
                 fprintf (stderr, "Error (ReFactor): KLUcommon object is NULL. A problem occurred\n") ;
             }
-            if (Matrix->CKTkluCommon->status == KLU_EMPTY_MATRIX)
+            if (Matrix->SMPkluMatrix->KLUmatrixCommon->status == KLU_EMPTY_MATRIX)
             {
                 fprintf (stderr, "Error (ReFactor): KLU Matrix is empty\n") ;
             }
-            if (Matrix->CKTkluNumeric == NULL) {
+            if (Matrix->SMPkluMatrix->KLUmatrixNumeric == NULL) {
                 fprintf (stderr, "Error (ReFactor): KLUnumeric object is NULL. A problem occurred\n") ;
             }
             return 1 ;
@@ -511,19 +540,19 @@ SMPluFacKLUforCIDER (SMPmatrix *Matrix)
 
         if (ret == 0)
         {
-            if (Matrix->CKTkluCommon->status == KLU_SINGULAR) {
-                fprintf (stderr, "Warning (ReFactor) (CIDER): KLU Matrix is SINGULAR\n") ;
+            if (Matrix->SMPkluMatrix->KLUmatrixCommon->status == KLU_SINGULAR) {
+                fprintf (stderr, "Warning (ReFactor): KLU Matrix is SINGULAR\n") ;
                 return E_SINGULAR ;
             }
-            if (Matrix->CKTkluCommon == NULL) {
-                fprintf (stderr, "Error (ReFactor) (CIDER): KLUcommon object is NULL. A problem occurred\n") ;
+            if (Matrix->SMPkluMatrix->KLUmatrixCommon == NULL) {
+                fprintf (stderr, "Error (ReFactor): KLUcommon object is NULL. A problem occurred\n") ;
             }
-            if (Matrix->CKTkluCommon->status == KLU_EMPTY_MATRIX)
+            if (Matrix->SMPkluMatrix->KLUmatrixCommon->status == KLU_EMPTY_MATRIX)
             {
-                fprintf (stderr, "Error (ReFactor) (CIDER): KLU Matrix is empty\n") ;
+                fprintf (stderr, "Error (ReFactor): KLU Matrix is empty\n") ;
             }
-            if (Matrix->CKTkluNumeric == NULL) {
-                fprintf (stderr, "Error (ReFactor) (CIDER): KLUnumeric object is NULL. A problem occurred\n") ;
+            if (Matrix->SMPkluMatrix->KLUmatrixNumeric == NULL) {
+                fprintf (stderr, "Error (ReFactor): KLUnumeric object is NULL. A problem occurred\n") ;
             }
             return 1 ;
         } else {
@@ -544,30 +573,29 @@ SMPcReorder (SMPmatrix *Matrix, double PivTol, double PivRel, int *NumSwaps)
 {
     if (Matrix->CKTkluMODE)
     {
-        *NumSwaps = 1 ;
-        spSetComplex (Matrix->SPmatrix) ;
-        Matrix->CKTkluCommon->tol = PivTol ;
+        Matrix->SMPkluMatrix->KLUmatrixCommon->tol = PivTol ;
 
-        if (Matrix->CKTkluNumeric != NULL)
-        {
-            klu_z_free_numeric (&(Matrix->CKTkluNumeric), Matrix->CKTkluCommon) ;
+        if (Matrix->SMPkluMatrix->KLUmatrixNumeric != NULL) {
+            klu_free_numeric (&(Matrix->SMPkluMatrix->KLUmatrixNumeric), Matrix->SMPkluMatrix->KLUmatrixCommon) ;
         }
-        Matrix->CKTkluNumeric = klu_z_factor (Matrix->CKTkluAp, Matrix->CKTkluAi, Matrix->CKTkluAx_Complex, Matrix->CKTkluSymbolic, Matrix->CKTkluCommon) ;
+        Matrix->SMPkluMatrix->KLUmatrixNumeric = klu_z_factor (Matrix->SMPkluMatrix->KLUmatrixAp, Matrix->SMPkluMatrix->KLUmatrixAi,
+                                                               Matrix->SMPkluMatrix->KLUmatrixAxComplex, Matrix->SMPkluMatrix->KLUmatrixSymbolic,
+                                                               Matrix->SMPkluMatrix->KLUmatrixCommon) ;
 
-        if (Matrix->CKTkluNumeric == NULL)
+        if (Matrix->SMPkluMatrix->KLUmatrixNumeric == NULL)
         {
             fprintf (stderr, "Error (Factor): KLUnumeric object is NULL. A problem occurred\n") ;
-            if (Matrix->CKTkluCommon->status == KLU_SINGULAR) {
+            if (Matrix->SMPkluMatrix->KLUmatrixCommon->status == KLU_SINGULAR) {
                 fprintf (stderr, "Warning (Factor): KLU Matrix is SINGULAR\n") ;
                 return 0 ;
             }
-            if (Matrix->CKTkluCommon == NULL) {
+            if (Matrix->SMPkluMatrix->KLUmatrixCommon == NULL) {
                 fprintf (stderr, "Error (Factor): KLUcommon object is NULL. A problem occurred\n") ;
             }
-            if (Matrix->CKTkluCommon->status == KLU_EMPTY_MATRIX) {
+            if (Matrix->SMPkluMatrix->KLUmatrixCommon->status == KLU_EMPTY_MATRIX) {
                 fprintf (stderr, "Error (Factor): KLU Matrix is empty\n") ;
             }
-            if (Matrix->CKTkluSymbolic == NULL) {
+            if (Matrix->SMPkluMatrix->KLUmatrixSymbolic == NULL) {
                 fprintf (stderr, "Error (Factor): KLUsymbolic object is NULL. A problem occurred\n") ;
             }
             return 1 ;
@@ -590,30 +618,31 @@ SMPreorder (SMPmatrix *Matrix, double PivTol, double PivRel, double Gmin)
 {
     if (Matrix->CKTkluMODE)
     {
-        spSetReal (Matrix->SPmatrix) ;
-        LoadGmin_CSC (Matrix->CKTdiag_CSC, Matrix->CKTkluN, Gmin) ;
-        Matrix->CKTkluCommon->tol = PivTol ;
+        LoadGmin_CSC (Matrix->SMPkluMatrix->KLUmatrixDiag, Matrix->SMPkluMatrix->KLUmatrixN, Gmin) ;
+        Matrix->SMPkluMatrix->KLUmatrixCommon->tol = PivTol ;
 
-        if (Matrix->CKTkluNumeric != NULL)
-        {
-            klu_free_numeric (&(Matrix->CKTkluNumeric), Matrix->CKTkluCommon) ;
+        if (Matrix->SMPkluMatrix->KLUmatrixNumeric != NULL) {
+            klu_free_numeric (&(Matrix->SMPkluMatrix->KLUmatrixNumeric), Matrix->SMPkluMatrix->KLUmatrixCommon) ;
         }
-        Matrix->CKTkluNumeric = klu_factor (Matrix->CKTkluAp, Matrix->CKTkluAi, Matrix->CKTkluAx, Matrix->CKTkluSymbolic, Matrix->CKTkluCommon) ;
 
-        if (Matrix->CKTkluNumeric == NULL)
+        Matrix->SMPkluMatrix->KLUmatrixNumeric = klu_factor (Matrix->SMPkluMatrix->KLUmatrixAp, Matrix->SMPkluMatrix->KLUmatrixAi,
+                                                             Matrix->SMPkluMatrix->KLUmatrixAx, Matrix->SMPkluMatrix->KLUmatrixSymbolic,
+                                                             Matrix->SMPkluMatrix->KLUmatrixCommon) ;
+
+        if (Matrix->SMPkluMatrix->KLUmatrixNumeric == NULL)
         {
             fprintf (stderr, "Error (Factor): KLUnumeric object is NULL. A problem occurred\n") ;
-            if (Matrix->CKTkluCommon->status == KLU_SINGULAR) {
+            if (Matrix->SMPkluMatrix->KLUmatrixCommon->status == KLU_SINGULAR) {
                 fprintf (stderr, "Warning (Factor): KLU Matrix is SINGULAR\n") ;
                 return 0 ;
             }
-            if (Matrix->CKTkluCommon == NULL) {
+            if (Matrix->SMPkluMatrix->KLUmatrixCommon == NULL) {
                 fprintf (stderr, "Error (Factor): KLUcommon object is NULL. A problem occurred\n") ;
             }
-            if (Matrix->CKTkluCommon->status == KLU_EMPTY_MATRIX) {
+            if (Matrix->SMPkluMatrix->KLUmatrixCommon->status == KLU_EMPTY_MATRIX) {
                 fprintf (stderr, "Error (Factor): KLU Matrix is empty\n") ;
             }
-            if (Matrix->CKTkluSymbolic == NULL) {
+            if (Matrix->SMPkluMatrix->KLUmatrixSymbolic == NULL) {
                 fprintf (stderr, "Error (Factor): KLUsymbolic object is NULL. A problem occurred\n") ;
             }
             return 1 ;
@@ -660,21 +689,22 @@ SMPreorderKLUforCIDER (SMPmatrix *Matrix)
             /* Free the Real Matrix Storage */
             free (KLUmatrixAx) ;
         }
+
         if (Matrix->SMPkluMatrix->KLUmatrixNumeric == NULL)
         {
-            fprintf (stderr, "Error (Factor) (CIDER): KLUnumeric object is NULL. A problem occurred\n") ;
-            if (Matrix->CKTkluCommon->status == KLU_SINGULAR) {
+            fprintf (stderr, "Error (Factor): KLUnumeric object is NULL. A problem occurred\n") ;
+            if (Matrix->SMPkluMatrix->KLUmatrixCommon->status == KLU_SINGULAR) {
                 fprintf (stderr, "Warning (Factor): KLU Matrix is SINGULAR\n") ;
                 return 0 ;
             }
-            if (Matrix->CKTkluCommon == NULL) {
-                fprintf (stderr, "Error (Factor) (CIDER): KLUcommon object is NULL. A problem occurred\n") ;
+            if (Matrix->SMPkluMatrix->KLUmatrixCommon == NULL) {
+                fprintf (stderr, "Error (Factor): KLUcommon object is NULL. A problem occurred\n") ;
             }
-            if (Matrix->CKTkluCommon->status == KLU_EMPTY_MATRIX) {
-                fprintf (stderr, "Error (Factor) (CIDER): KLU Matrix is empty\n") ;
+            if (Matrix->SMPkluMatrix->KLUmatrixCommon->status == KLU_EMPTY_MATRIX) {
+                fprintf (stderr, "Error (Factor): KLU Matrix is empty\n") ;
             }
-            if (Matrix->CKTkluSymbolic == NULL) {
-                fprintf (stderr, "Error (Factor) (CIDER): KLUsymbolic object is NULL. A problem occurred\n") ;
+            if (Matrix->SMPkluMatrix->KLUmatrixSymbolic == NULL) {
+                fprintf (stderr, "Error (Factor): KLUsymbolic object is NULL. A problem occurred\n") ;
             }
             return 1 ;
         } else {
@@ -692,27 +722,27 @@ SMPreorderKLUforCIDER (SMPmatrix *Matrix)
 void
 SMPcaSolve (SMPmatrix *Matrix, double RHS[], double iRHS[], double Spare[], double iSpare[])
 {
-    int ret, i, *pExtOrder ;
+    int ret ;
+    unsigned int i ;
 
     NG_IGNORE (iSpare) ;
     NG_IGNORE (Spare) ;
 
     if (Matrix->CKTkluMODE)
     {
-        pExtOrder = &Matrix->SPmatrix->IntToExtRowMap [Matrix->CKTkluN] ;
-        for (i = 2 * Matrix->CKTkluN - 1 ; i > 0 ; i -= 2)
+        for (i = 0 ; i < Matrix->SMPkluMatrix->KLUmatrixN ; i++)
         {
-            Matrix->CKTkluIntermediate_Complex [i] = iRHS [*(pExtOrder)] ;
-            Matrix->CKTkluIntermediate_Complex [i - 1] = RHS [*(pExtOrder--)] ;
+            Matrix->SMPkluMatrix->KLUmatrixIntermediateComplex [2 * i] = RHS [i + 1] ;
+            Matrix->SMPkluMatrix->KLUmatrixIntermediateComplex [2 * i + 1] = iRHS [i + 1] ;
         }
 
-        ret = klu_z_tsolve (Matrix->CKTkluSymbolic, Matrix->CKTkluNumeric, Matrix->CKTkluN, 1, Matrix->CKTkluIntermediate_Complex, 0, Matrix->CKTkluCommon) ;
+        ret = klu_z_solve (Matrix->SMPkluMatrix->KLUmatrixSymbolic, Matrix->SMPkluMatrix->KLUmatrixNumeric, (int)Matrix->SMPkluMatrix->KLUmatrixN, 1,
+                           Matrix->SMPkluMatrix->KLUmatrixIntermediateComplex, Matrix->SMPkluMatrix->KLUmatrixCommon) ;
 
-        pExtOrder = &Matrix->SPmatrix->IntToExtColMap [Matrix->CKTkluN] ;
-        for (i = 2 * Matrix->CKTkluN - 1 ; i > 0 ; i -= 2)
+        for (i = 0 ; i < Matrix->SMPkluMatrix->KLUmatrixN ; i++)
         {
-            iRHS [*(pExtOrder)] = Matrix->CKTkluIntermediate_Complex [i] ;
-            RHS [*(pExtOrder--)] = Matrix->CKTkluIntermediate_Complex [i - 1] ;
+            RHS [i + 1] = Matrix->SMPkluMatrix->KLUmatrixIntermediateComplex [2 * i] ;
+            iRHS [i + 1] = Matrix->SMPkluMatrix->KLUmatrixIntermediateComplex [2 * i + 1] ;
         }
     } else {
         spSolveTransposed (Matrix->SPmatrix, RHS, RHS, iRHS, iRHS) ;
@@ -726,32 +756,79 @@ SMPcaSolve (SMPmatrix *Matrix, double RHS[], double iRHS[], double Spare[], doub
 void
 SMPcSolve (SMPmatrix *Matrix, double RHS[], double iRHS[], double Spare[], double iSpare[])
 {
-    int ret, i, *pExtOrder ;
+    int ret ;
+    unsigned int i ;
 
     NG_IGNORE (iSpare) ;
     NG_IGNORE (Spare) ;
 
     if (Matrix->CKTkluMODE)
     {
-        pExtOrder = &Matrix->SPmatrix->IntToExtRowMap [Matrix->CKTkluN] ;
-        for (i = 2 * Matrix->CKTkluN - 1 ; i > 0 ; i -= 2)
+        for (i = 0 ; i < Matrix->SMPkluMatrix->KLUmatrixN ; i++)
         {
-            Matrix->CKTkluIntermediate_Complex [i] = iRHS [*(pExtOrder)] ;
-            Matrix->CKTkluIntermediate_Complex [i - 1] = RHS [*(pExtOrder--)] ;
+            Matrix->SMPkluMatrix->KLUmatrixIntermediateComplex [2 * i] = RHS [i + 1] ;
+            Matrix->SMPkluMatrix->KLUmatrixIntermediateComplex [2 * i + 1] = iRHS [i + 1] ;
         }
 
-        ret = klu_z_solve (Matrix->CKTkluSymbolic, Matrix->CKTkluNumeric, Matrix->CKTkluN, 1, Matrix->CKTkluIntermediate_Complex, Matrix->CKTkluCommon) ;
+        ret = klu_z_solve (Matrix->SMPkluMatrix->KLUmatrixSymbolic, Matrix->SMPkluMatrix->KLUmatrixNumeric, (int)Matrix->SMPkluMatrix->KLUmatrixN, 1,
+                           Matrix->SMPkluMatrix->KLUmatrixIntermediateComplex, Matrix->SMPkluMatrix->KLUmatrixCommon) ;
 
-        pExtOrder = &Matrix->SPmatrix->IntToExtColMap [Matrix->CKTkluN] ;
-        for (i = 2 * Matrix->CKTkluN - 1 ; i > 0 ; i -= 2)
+        for (i = 0 ; i < Matrix->SMPkluMatrix->KLUmatrixN ; i++)
         {
-            iRHS [*(pExtOrder)] = Matrix->CKTkluIntermediate_Complex [i] ;
-            RHS [*(pExtOrder--)] = Matrix->CKTkluIntermediate_Complex [i - 1] ;
+            RHS [i + 1] = Matrix->SMPkluMatrix->KLUmatrixIntermediateComplex [2 * i] ;
+            iRHS [i + 1] = Matrix->SMPkluMatrix->KLUmatrixIntermediateComplex [2 * i + 1] ;
         }
-
     } else {
-
         spSolve (Matrix->SPmatrix, RHS, RHS, iRHS, iRHS) ;
+    }
+}
+
+/*
+ * SMPsolve()
+ */
+
+void
+SMPsolve (SMPmatrix *Matrix, double RHS[], double Spare[])
+{
+    int ret ;
+    unsigned int i ;
+
+    NG_IGNORE (Spare) ;
+
+    if (Matrix->CKTkluMODE)
+    {
+        for (i = 0 ; i < Matrix->SMPkluMatrix->KLUmatrixN ; i++) {
+            Matrix->SMPkluMatrix->KLUmatrixIntermediate [i] = RHS [i + 1] ;
+        }
+
+        ret = klu_solve (Matrix->SMPkluMatrix->KLUmatrixSymbolic, Matrix->SMPkluMatrix->KLUmatrixNumeric, (int)Matrix->SMPkluMatrix->KLUmatrixN, 1,
+                         Matrix->SMPkluMatrix->KLUmatrixIntermediate, Matrix->SMPkluMatrix->KLUmatrixCommon) ;
+
+        if (ret == 0)
+        {
+            if (Matrix->SMPkluMatrix->KLUmatrixCommon->status == KLU_SINGULAR) {
+                fprintf (stderr, "Warning (Solve): KLU Matrix is SINGULAR\n") ;
+            }
+            if (Matrix->SMPkluMatrix->KLUmatrixCommon == NULL) {
+                fprintf (stderr, "Error (Solve): KLUcommon object is NULL. A problem occurred\n") ;
+            }
+            if (Matrix->SMPkluMatrix->KLUmatrixCommon->status == KLU_EMPTY_MATRIX)
+            {
+                fprintf (stderr, "Error (Solve): KLU Matrix is empty\n") ;
+            }
+            if (Matrix->SMPkluMatrix->KLUmatrixNumeric == NULL) {
+                fprintf (stderr, "Error (Solve): KLUnumeric object is NULL. A problem occurred\n") ;
+            }
+            if (Matrix->SMPkluMatrix->KLUmatrixSymbolic == NULL) {
+                fprintf (stderr, "Error (Solve): KLUsymbolic object is NULL. A problem occurred\n") ;
+            }
+        }
+
+        for (i = 0 ; i < Matrix->SMPkluMatrix->KLUmatrixN ; i++) {
+            RHS [i + 1] = Matrix->SMPkluMatrix->KLUmatrixIntermediate [i] ;
+        }
+    } else {
+        spSolve (Matrix->SPmatrix, RHS, RHS, NULL, NULL) ;
     }
 }
 
@@ -807,39 +884,16 @@ SMPsolveKLUforCIDER (SMPmatrix *Matrix, double RHS[], double RHSsolution[], doub
 #endif
 
 /*
- * SMPsolve()
- */
-
-void
-SMPsolve (SMPmatrix *Matrix, double RHS[], double Spare[])
-{
-    int ret, i, *pExtOrder ;
-
-    NG_IGNORE (Spare) ;
-
-    if (Matrix->CKTkluMODE) {
-
-        pExtOrder = &Matrix->SPmatrix->IntToExtRowMap [Matrix->CKTkluN] ;
-        for (i = Matrix->CKTkluN - 1 ; i >= 0 ; i--)
-            Matrix->CKTkluIntermediate [i] = RHS [*(pExtOrder--)] ;
-
-        ret = klu_solve (Matrix->CKTkluSymbolic, Matrix->CKTkluNumeric, Matrix->CKTkluN, 1, Matrix->CKTkluIntermediate, Matrix->CKTkluCommon) ;
-
-        pExtOrder = &Matrix->SPmatrix->IntToExtColMap [Matrix->CKTkluN] ;
-        for (i = Matrix->CKTkluN - 1 ; i >= 0 ; i--)
-            RHS [*(pExtOrder--)] = Matrix->CKTkluIntermediate [i] ;
-    } else {
-        spSolve (Matrix->SPmatrix, RHS, RHS, NULL, NULL) ;
-    }
-}
-
-/*
  * SMPmatSize()
  */
 int
 SMPmatSize (SMPmatrix *Matrix)
 {
-    return spGetSize (Matrix->SPmatrix, 1) ;
+    if (Matrix->CKTkluMODE) {
+        return (int)Matrix->SMPkluMatrix->KLUmatrixN ;
+    } else {
+        return spGetSize (Matrix->SPmatrix, 1) ;
+    }
 }
 
 /*
@@ -849,8 +903,41 @@ int
 SMPnewMatrix (SMPmatrix *Matrix, int size)
 {
     int Error ;
-    Matrix->SPmatrix = spCreate (size, 1, &Error) ;
-    return Error ;
+
+    if (Matrix->CKTkluMODE) {
+        /* Allocate the KLU Matrix Data Structure */
+        Matrix->SMPkluMatrix = (KLUmatrix *) malloc (sizeof (KLUmatrix)) ;
+        Matrix->SMPkluMatrix->KLUmatrixLinkedListNZ = 0 ;
+        Matrix->SMPkluMatrix->KLUmatrixLinkedListCOO = NULL ;
+
+        /* Initialize the KLU Matrix Internal Pointers */
+        Matrix->SMPkluMatrix->KLUmatrixCommon = (klu_common *) malloc (sizeof (klu_common)) ; ;
+        Matrix->SMPkluMatrix->KLUmatrixSymbolic = NULL ;
+        Matrix->SMPkluMatrix->KLUmatrixNumeric = NULL ;
+        Matrix->SMPkluMatrix->KLUmatrixAp = NULL ;
+        Matrix->SMPkluMatrix->KLUmatrixAi = NULL ;
+        Matrix->SMPkluMatrix->KLUmatrixAx = NULL ;
+        Matrix->SMPkluMatrix->KLUmatrixAxComplex = NULL ;
+        Matrix->SMPkluMatrix->KLUmatrixIsComplex = KLUmatrixReal ;
+        Matrix->SMPkluMatrix->KLUmatrixIntermediate = NULL ;
+        Matrix->SMPkluMatrix->KLUmatrixIntermediateComplex = NULL ;
+        Matrix->SMPkluMatrix->KLUmatrixNZ = 0 ;
+        Matrix->SMPkluMatrix->KLUmatrixBindStructCOO = NULL ;
+        Matrix->SMPkluMatrix->KLUmatrixDiag = NULL ;
+
+        /* Initialize the KLU Common Data Structure */
+        klu_defaults (Matrix->SMPkluMatrix->KLUmatrixCommon) ;
+        Matrix->SMPkluMatrix->KLUmatrixCommon->memgrow = Matrix->CKTkluMemGrowFactor ;
+
+        /* Allocate KLU data structures */
+        Matrix->SMPkluMatrix->KLUmatrixN = (unsigned int)size ;
+        Matrix->SMPkluMatrix->KLUmatrixTrashCOO = (double *) malloc (sizeof (double)) ;
+
+        return spOKAY ;
+    } else {
+        Matrix->SPmatrix = spCreate (size, 1, &Error) ;
+        return Error ;
+    }
 }
 
 #ifdef CIDER
@@ -872,29 +959,29 @@ SMPnewMatrixKLUforCIDER (SMPmatrix *Matrix, int size, unsigned int KLUmatrixIsCo
         Matrix->SMPkluMatrix->KLUmatrixAi = NULL ;
         Matrix->SMPkluMatrix->KLUmatrixAxComplex = NULL ;
         if (KLUmatrixIsComplex) {
-            Matrix->SMPkluMatrix->KLUmatrixIsComplex = CKTkluMatrixComplex ;
+            Matrix->SMPkluMatrix->KLUmatrixIsComplex = KLUMatrixComplex ;
         } else {
-            Matrix->SMPkluMatrix->KLUmatrixIsComplex = CKTkluMatrixReal ;
+            Matrix->SMPkluMatrix->KLUmatrixIsComplex = KLUmatrixReal ;
         }
         Matrix->SMPkluMatrix->KLUmatrixIntermediateComplex = NULL ;
         Matrix->SMPkluMatrix->KLUmatrixNZ = 0 ;
-        Matrix->SMPkluMatrix->KLUmatrixBindStructCOO = NULL ;
-        Matrix->SMPkluMatrix->KLUmatrixValueComplexCOO = NULL ;
+        Matrix->SMPkluMatrix->KLUmatrixBindStructForCIDER = NULL ;
+        Matrix->SMPkluMatrix->KLUmatrixValueComplexCOOforCIDER = NULL ;
 
         /* Initialize the KLU Common Data Structure */
         klu_defaults (Matrix->SMPkluMatrix->KLUmatrixCommon) ;
 
         /* Allocate KLU data structures */
         Matrix->SMPkluMatrix->KLUmatrixN = (unsigned int)size ;
-        Matrix->SMPkluMatrix->KLUmatrixColCOO = (int *) malloc (Matrix->SMPkluMatrix->KLUmatrixN * Matrix->SMPkluMatrix->KLUmatrixN * sizeof(int)) ;
-        Matrix->SMPkluMatrix->KLUmatrixRowCOO = (int *) malloc (Matrix->SMPkluMatrix->KLUmatrixN * Matrix->SMPkluMatrix->KLUmatrixN * sizeof(int)) ;
+        Matrix->SMPkluMatrix->KLUmatrixColCOOforCIDER = (int *) malloc (Matrix->SMPkluMatrix->KLUmatrixN * Matrix->SMPkluMatrix->KLUmatrixN * sizeof(int)) ;
+        Matrix->SMPkluMatrix->KLUmatrixRowCOOforCIDER = (int *) malloc (Matrix->SMPkluMatrix->KLUmatrixN * Matrix->SMPkluMatrix->KLUmatrixN * sizeof(int)) ;
         Matrix->SMPkluMatrix->KLUmatrixTrashCOO = (double *) malloc (sizeof(double)) ;
-        Matrix->SMPkluMatrix->KLUmatrixValueComplexCOO = (double *) malloc (2 * Matrix->SMPkluMatrix->KLUmatrixN * Matrix->SMPkluMatrix->KLUmatrixN * sizeof(double)) ;
+        Matrix->SMPkluMatrix->KLUmatrixValueComplexCOOforCIDER = (double *) malloc (2 * Matrix->SMPkluMatrix->KLUmatrixN * Matrix->SMPkluMatrix->KLUmatrixN * sizeof(double)) ;
 
         /* Pre-set the values of Row and Col */
         for (i = 0 ; i < Matrix->SMPkluMatrix->KLUmatrixN * Matrix->SMPkluMatrix->KLUmatrixN ; i++) {
-            Matrix->SMPkluMatrix->KLUmatrixRowCOO [i] = -1 ;
-            Matrix->SMPkluMatrix->KLUmatrixColCOO [i] = -1 ;
+            Matrix->SMPkluMatrix->KLUmatrixRowCOOforCIDER [i] = -1 ;
+            Matrix->SMPkluMatrix->KLUmatrixColCOOforCIDER [i] = -1 ;
         }
 
         return spOKAY ;
@@ -912,30 +999,28 @@ SMPnewMatrixKLUforCIDER (SMPmatrix *Matrix, int size, unsigned int KLUmatrixIsCo
 void
 SMPdestroy (SMPmatrix *Matrix)
 {
-    spDestroy (Matrix->SPmatrix) ;
-
     if (Matrix->CKTkluMODE)
     {
-        klu_free_numeric (&(Matrix->CKTkluNumeric), Matrix->CKTkluCommon) ;
-        klu_free_symbolic (&(Matrix->CKTkluSymbolic), Matrix->CKTkluCommon) ;
-        free (Matrix->CKTkluAp) ;
-        free (Matrix->CKTkluAi) ;
-        free (Matrix->CKTkluAx) ;
-        free (Matrix->CKTkluIntermediate) ;
-        free (Matrix->CKTbindStruct) ;
-        free (Matrix->CKTdiag_CSC) ;
-        free (Matrix->CKTkluAx_Complex) ;
-        free (Matrix->CKTkluIntermediate_Complex) ;
-        Matrix->CKTkluNumeric = NULL ;
-        Matrix->CKTkluSymbolic = NULL ;
-        Matrix->CKTkluAp = NULL ;
-        Matrix->CKTkluAi = NULL ;
-        Matrix->CKTkluAx = NULL ;
-        Matrix->CKTkluIntermediate = NULL ;
-        Matrix->CKTbindStruct = NULL ;
-        Matrix->CKTdiag_CSC = NULL ;
-        Matrix->CKTkluAx_Complex = NULL ;
-        Matrix->CKTkluIntermediate_Complex = NULL ;
+        klu_free_numeric (&(Matrix->SMPkluMatrix->KLUmatrixNumeric), Matrix->SMPkluMatrix->KLUmatrixCommon) ;
+        klu_free_symbolic (&(Matrix->SMPkluMatrix->KLUmatrixSymbolic), Matrix->SMPkluMatrix->KLUmatrixCommon) ;
+        free (Matrix->SMPkluMatrix->KLUmatrixAp) ;
+        free (Matrix->SMPkluMatrix->KLUmatrixAi) ;
+        free (Matrix->SMPkluMatrix->KLUmatrixAx) ;
+        free (Matrix->SMPkluMatrix->KLUmatrixAxComplex) ;
+        free (Matrix->SMPkluMatrix->KLUmatrixIntermediate) ;
+        free (Matrix->SMPkluMatrix->KLUmatrixIntermediateComplex) ;
+        free (Matrix->SMPkluMatrix->KLUmatrixBindStructCOO) ;
+        free (Matrix->SMPkluMatrix->KLUmatrixTrashCOO) ;
+        Matrix->SMPkluMatrix->KLUmatrixAp = NULL ;
+        Matrix->SMPkluMatrix->KLUmatrixAi = NULL ;
+        Matrix->SMPkluMatrix->KLUmatrixAx = NULL ;
+        Matrix->SMPkluMatrix->KLUmatrixAxComplex = NULL ;
+        Matrix->SMPkluMatrix->KLUmatrixIntermediate = NULL ;
+        Matrix->SMPkluMatrix->KLUmatrixIntermediateComplex = NULL ;
+        Matrix->SMPkluMatrix->KLUmatrixBindStructCOO = NULL ;
+        Matrix->SMPkluMatrix->KLUmatrixTrashCOO = NULL ;
+    } else {
+        spDestroy (Matrix->SPmatrix) ;
     }
 }
 
@@ -951,19 +1036,19 @@ SMPdestroyKLUforCIDER (SMPmatrix *Matrix)
         free (Matrix->SMPkluMatrix->KLUmatrixAi) ;
         free (Matrix->SMPkluMatrix->KLUmatrixAxComplex) ;
         free (Matrix->SMPkluMatrix->KLUmatrixIntermediateComplex) ;
-        free (Matrix->SMPkluMatrix->KLUmatrixBindStructCOO) ;
-        free (Matrix->SMPkluMatrix->KLUmatrixColCOO) ;
-        free (Matrix->SMPkluMatrix->KLUmatrixRowCOO) ;
-        free (Matrix->SMPkluMatrix->KLUmatrixValueComplexCOO) ;
+        free (Matrix->SMPkluMatrix->KLUmatrixBindStructForCIDER) ;
+        free (Matrix->SMPkluMatrix->KLUmatrixColCOOforCIDER) ;
+        free (Matrix->SMPkluMatrix->KLUmatrixRowCOOforCIDER) ;
+        free (Matrix->SMPkluMatrix->KLUmatrixValueComplexCOOforCIDER) ;
         free (Matrix->SMPkluMatrix->KLUmatrixTrashCOO) ;
         Matrix->SMPkluMatrix->KLUmatrixAp = NULL ;
         Matrix->SMPkluMatrix->KLUmatrixAi = NULL ;
         Matrix->SMPkluMatrix->KLUmatrixAxComplex = NULL ;
         Matrix->SMPkluMatrix->KLUmatrixIntermediateComplex = NULL ;
-        Matrix->SMPkluMatrix->KLUmatrixBindStructCOO = NULL ;
-        Matrix->SMPkluMatrix->KLUmatrixColCOO = NULL ;
-        Matrix->SMPkluMatrix->KLUmatrixRowCOO = NULL ;
-        Matrix->SMPkluMatrix->KLUmatrixValueComplexCOO = NULL ;
+        Matrix->SMPkluMatrix->KLUmatrixBindStructForCIDER = NULL ;
+        Matrix->SMPkluMatrix->KLUmatrixColCOOforCIDER = NULL ;
+        Matrix->SMPkluMatrix->KLUmatrixRowCOOforCIDER = NULL ;
+        Matrix->SMPkluMatrix->KLUmatrixValueComplexCOOforCIDER = NULL ;
         Matrix->SMPkluMatrix->KLUmatrixTrashCOO = NULL ;
     } else {
         spDestroy (Matrix->SPmatrix) ;
@@ -980,11 +1065,13 @@ SMPpreOrder (SMPmatrix *Matrix)
 {
     if (Matrix->CKTkluMODE)
     {
-        Matrix->CKTkluSymbolic = klu_analyze (Matrix->CKTkluN, Matrix->CKTkluAp, Matrix->CKTkluAi, Matrix->CKTkluCommon) ;
+        Matrix->SMPkluMatrix->KLUmatrixSymbolic = klu_analyze ((int)Matrix->SMPkluMatrix->KLUmatrixN, Matrix->SMPkluMatrix->KLUmatrixAp,
+                                                               Matrix->SMPkluMatrix->KLUmatrixAi, Matrix->SMPkluMatrix->KLUmatrixCommon) ;
 
-        if (Matrix->CKTkluSymbolic == NULL)
+        if (Matrix->SMPkluMatrix->KLUmatrixSymbolic == NULL)
         {
-            if (Matrix->CKTkluCommon->status == KLU_EMPTY_MATRIX)
+            fprintf (stderr, "Error (PreOrder): KLUsymbolic object is NULL. A problem occurred\n") ;
+            if (Matrix->SMPkluMatrix->KLUmatrixCommon->status == KLU_EMPTY_MATRIX)
             {
                 return 0 ;
             }
@@ -1018,11 +1105,13 @@ SMPprint (SMPmatrix *Matrix, char *Filename)
 {
     if (Matrix->CKTkluMODE)
     {
-        if (Matrix->CKTkluMatrixIsComplex)
+        if (Matrix->SMPkluMatrix->KLUmatrixIsComplex)
         {
-            klu_z_print (Matrix->CKTkluAp, Matrix->CKTkluAi, Matrix->CKTkluAx_Complex, Matrix->CKTkluN, Matrix->SPmatrix->IntToExtRowMap, Matrix->SPmatrix->IntToExtColMap) ;
+            klu_z_print (Matrix->SMPkluMatrix->KLUmatrixAp, Matrix->SMPkluMatrix->KLUmatrixAi, Matrix->SMPkluMatrix->KLUmatrixAxComplex,
+                         (int)Matrix->SMPkluMatrix->KLUmatrixN, NULL, NULL) ;
         } else {
-            klu_print (Matrix->CKTkluAp, Matrix->CKTkluAi, Matrix->CKTkluAx, Matrix->CKTkluN, Matrix->SPmatrix->IntToExtRowMap, Matrix->SPmatrix->IntToExtColMap) ;
+            klu_print (Matrix->SMPkluMatrix->KLUmatrixAp, Matrix->SMPkluMatrix->KLUmatrixAi, Matrix->SMPkluMatrix->KLUmatrixAx,
+                       (int)Matrix->SMPkluMatrix->KLUmatrixN, NULL, NULL) ;
         }
     } else {
         if (Filename)
@@ -1077,8 +1166,8 @@ SMPgetError (SMPmatrix *Matrix, int *Col, int *Row)
 {
     if (Matrix->CKTkluMODE)
     {
-        *Row = Matrix->SPmatrix->IntToExtRowMap [Matrix->CKTkluCommon->singular_col + 1] ;
-        *Col = Matrix->SPmatrix->IntToExtColMap [Matrix->CKTkluCommon->singular_col + 1] ;
+        *Row = Matrix->SMPkluMatrix->KLUmatrixCommon->singular_col + 1 ;
+        *Col = Matrix->SMPkluMatrix->KLUmatrixCommon->singular_col + 1 ;
     } else {
         spWhereSingular (Matrix->SPmatrix, Row, Col) ;
     }
@@ -1099,32 +1188,32 @@ spDeterminant_KLU (SMPmatrix *Matrix, int *pExponent, RealNumber *pDeterminant, 
 
     *pExponent = 0 ;
 
-    if (Matrix->CKTkluCommon->status == KLU_SINGULAR)
+    if (Matrix->SMPkluMatrix->KLUmatrixCommon->status == KLU_SINGULAR)
     {
 	*pDeterminant = 0.0 ;
-        if (Matrix->CKTkluMatrixIsComplex == CKTkluMatrixComplex)
+        if (Matrix->SMPkluMatrix->KLUmatrixIsComplex == KLUMatrixComplex)
         {
             *piDeterminant = 0.0 ;
         }
         return ;
     }
 
-    Size = Matrix->CKTkluN ;
+    Size = (int)Matrix->SMPkluMatrix->KLUmatrixN ;
     I = 0 ;
 
-    P = (int *) malloc ((size_t)Matrix->CKTkluN * sizeof (int)) ;
-    Q = (int *) malloc ((size_t)Matrix->CKTkluN * sizeof (int)) ;
+    P = (int *) malloc ((size_t)Matrix->SMPkluMatrix->KLUmatrixN * sizeof (int)) ;
+    Q = (int *) malloc ((size_t)Matrix->SMPkluMatrix->KLUmatrixN * sizeof (int)) ;
 
-    Ux = (double *) malloc ((size_t)Matrix->CKTkluN * sizeof (double)) ;
+    Ux = (double *) malloc ((size_t)Matrix->SMPkluMatrix->KLUmatrixN * sizeof (double)) ;
 
-    Rs = (double *) malloc ((size_t)Matrix->CKTkluN * sizeof (double)) ;
+    Rs = (double *) malloc ((size_t)Matrix->SMPkluMatrix->KLUmatrixN * sizeof (double)) ;
 
-    if (Matrix->CKTkluMatrixIsComplex == CKTkluMatrixComplex)        /* Complex Case. */
+    if (Matrix->SMPkluMatrix->KLUmatrixIsComplex == KLUMatrixComplex)        /* Complex Case. */
     {
 	cDeterminant.Real = 1.0 ;
         cDeterminant.Imag = 0.0 ;
 
-        Uz = (double *) malloc ((size_t)Matrix->CKTkluN * sizeof (double)) ;
+        Uz = (double *) malloc ((size_t)Matrix->SMPkluMatrix->KLUmatrixN * sizeof (double)) ;
 /*
         int *Lp, *Li, *Up, *Ui, *Fp, *Fi, *P, *Q ;
         double *Lx, *Lz, *Ux, *Uz, *Fx, *Fz, *Rs ;
@@ -1147,7 +1236,7 @@ spDeterminant_KLU (SMPmatrix *Matrix, int *pExponent, RealNumber *pDeterminant, 
                        P, Q, Rs, NULL,
                        Matrix->CKTkluCommon) ;
 */
-        klu_z_extract_Udiag (Matrix->CKTkluNumeric, Matrix->CKTkluSymbolic, Ux, Uz, P, Q, Rs, Matrix->CKTkluCommon) ;
+        klu_z_extract_Udiag (Matrix->SMPkluMatrix->KLUmatrixNumeric, Matrix->SMPkluMatrix->KLUmatrixSymbolic, Ux, Uz, P, Q, Rs, Matrix->SMPkluMatrix->KLUmatrixCommon) ;
 /*
         for (I = 0 ; I < Matrix->CKTkluNumeric->lnz ; I++)
         {
@@ -1168,7 +1257,7 @@ spDeterminant_KLU (SMPmatrix *Matrix, int *pExponent, RealNumber *pDeterminant, 
         }
 */
         nSwapP = 0 ;
-        for (I = 0 ; I < Matrix->CKTkluN ; I++)
+        for (I = 0 ; I < (int)Matrix->SMPkluMatrix->KLUmatrixN ; I++)
         {
             if (P [I] != I)
             {
@@ -1178,7 +1267,7 @@ spDeterminant_KLU (SMPmatrix *Matrix, int *pExponent, RealNumber *pDeterminant, 
         nSwapP /= 2 ;
 
         nSwapQ = 0 ;
-        for (I = 0 ; I < Matrix->CKTkluN ; I++)
+        for (I = 0 ; I < (int)Matrix->SMPkluMatrix->KLUmatrixN ; I++)
         {
             if (Q [I] != I)
             {
@@ -1269,10 +1358,10 @@ spDeterminant_KLU (SMPmatrix *Matrix, int *pExponent, RealNumber *pDeterminant, 
 	/* Real Case. */
         *pDeterminant = 1.0 ;
 
-        klu_extract_Udiag (Matrix->CKTkluNumeric, Matrix->CKTkluSymbolic, Ux, P, Q, Rs, Matrix->CKTkluCommon) ;
+        klu_extract_Udiag (Matrix->SMPkluMatrix->KLUmatrixNumeric, Matrix->SMPkluMatrix->KLUmatrixSymbolic, Ux, P, Q, Rs, Matrix->SMPkluMatrix->KLUmatrixCommon) ;
 
         nSwapP = 0 ;
-        for (I = 0 ; I < Matrix->CKTkluN ; I++)
+        for (I = 0 ; I < (int)Matrix->SMPkluMatrix->KLUmatrixN ; I++)
         {
             if (P [I] != I)
             {
@@ -1282,7 +1371,7 @@ spDeterminant_KLU (SMPmatrix *Matrix, int *pExponent, RealNumber *pDeterminant, 
         nSwapP /= 2 ;
 
         nSwapQ = 0 ;
-        for (I = 0 ; I < Matrix->CKTkluN ; I++)
+        for (I = 0 ; I < (int)Matrix->SMPkluMatrix->KLUmatrixN ; I++)
         {
             if (Q [I] != I)
             {
@@ -1469,14 +1558,18 @@ SMPcDProd (SMPmatrix *Matrix, SPcomplex *pMantissa, int *pExponent)
 
 
 static void
-LoadGmin_CSC (double **diag, int n, double Gmin)
+LoadGmin_CSC (double **diag, unsigned int n, double Gmin)
 {
-    int i ;
+    unsigned int i ;
 
-    if (Gmin != 0.0)
-        for (i = 0 ; i < n ; i++)
-            if (diag [i] != NULL)
+    if (Gmin != 0.0) {
+        for (i = 0 ; i < n ; i++) {
+            if (diag [i] != NULL) {
+                // Not all the elements on the diagonal are present, when the circuit is parsed
                 *(diag [i]) += Gmin ;
+            }
+        }
+    }
 }
 
 static void
@@ -1522,20 +1615,18 @@ SMPfindElt (SMPmatrix *eMatrix, int Row, int Col, int CreateIfMissing)
     {
         int i ;
 
-        Row = Matrix->ExtToIntRowMap [Row] ;
-        Col = Matrix->ExtToIntColMap [Col] ;
         Row = Row - 1 ;
         Col = Col - 1 ;
         if ((Row < 0) || (Col < 0)) {
             printf ("Error: Cannot find an element with row '%d' and column '%d' in the KLU matrix\n", Row, Col) ;
             return NULL ;
         }
-        for (i = eMatrix->CKTkluAp [Col] ; i < eMatrix->CKTkluAp [Col + 1] ; i++) {
-            if (eMatrix->CKTkluAi [i] == Row) {
-                if (eMatrix->CKTkluMatrixIsComplex == CKTkluMatrixReal) {
-                    return (SMPelement *) &(eMatrix->CKTkluAx [i]) ;
-                } else if (eMatrix->CKTkluMatrixIsComplex == CKTkluMatrixComplex) {
-                    return (SMPelement *) &(eMatrix->CKTkluAx_Complex [2 * i]) ;
+        for (i = eMatrix->SMPkluMatrix->KLUmatrixAp [Col] ; i < eMatrix->SMPkluMatrix->KLUmatrixAp [Col + 1] ; i++) {
+            if (eMatrix->SMPkluMatrix->KLUmatrixAi [i] == Row) {
+                if (eMatrix->SMPkluMatrix->KLUmatrixIsComplex == KLUmatrixReal) {
+                    return (SMPelement *) &(eMatrix->SMPkluMatrix->KLUmatrixAx [i]) ;
+                } else if (eMatrix->SMPkluMatrix->KLUmatrixIsComplex == KLUMatrixComplex) {
+                    return (SMPelement *) &(eMatrix->SMPkluMatrix->KLUmatrixAxComplex [2 * i]) ;
                 } else {
                     return NULL ;
                 }
@@ -1566,18 +1657,17 @@ SMPcZeroCol (SMPmatrix *eMatrix, int Col)
     MatrixPtr Matrix = eMatrix->SPmatrix ;
     ElementPtr	Element ;
 
-    Col = Matrix->ExtToIntColMap [Col] ;
-
     if (eMatrix->CKTkluMODE)
     {
         int i ;
-        for (i = eMatrix->CKTkluAp [Col - 1] ; i < eMatrix->CKTkluAp [Col] ; i++)
+        for (i = eMatrix->SMPkluMatrix->KLUmatrixAp [Col - 1] ; i < eMatrix->SMPkluMatrix->KLUmatrixAp [Col] ; i++)
         {
-            eMatrix->CKTkluAx_Complex [2 * i] = 0 ;
-            eMatrix->CKTkluAx_Complex [2 * i + 1] = 0 ;
+            eMatrix->SMPkluMatrix->KLUmatrixAxComplex [2 * i] = 0 ;
+            eMatrix->SMPkluMatrix->KLUmatrixAxComplex [2 * i + 1] = 0 ;
         }
         return 0 ;
     } else {
+        Col = Matrix->ExtToIntColMap [Col] ;
         for (Element = Matrix->FirstInCol [Col] ; Element != NULL ; Element = Element->NextInCol)
         {
             Element->Real = 0.0 ;
@@ -1661,11 +1751,13 @@ SMPconstMult (SMPmatrix *Matrix, double constant)
 {
     if (Matrix->CKTkluMODE)
     {
-        if (Matrix->CKTkluMatrixIsComplex)
+        if (Matrix->SMPkluMatrix->KLUmatrixIsComplex)
         {
-            klu_z_constant_multiply (Matrix->CKTkluAp, Matrix->CKTkluAx_Complex, Matrix->CKTkluN, Matrix->CKTkluCommon, constant) ;
+            klu_z_constant_multiply (Matrix->SMPkluMatrix->KLUmatrixAp, Matrix->SMPkluMatrix->KLUmatrixAxComplex,
+                                     (int)Matrix->SMPkluMatrix->KLUmatrixN, Matrix->SMPkluMatrix->KLUmatrixCommon, constant) ;
         } else {
-            klu_constant_multiply (Matrix->CKTkluAp, Matrix->CKTkluAx, Matrix->CKTkluN, Matrix->CKTkluCommon, constant) ;
+            klu_constant_multiply (Matrix->SMPkluMatrix->KLUmatrixAp, Matrix->SMPkluMatrix->KLUmatrixAx,
+                                   (int)Matrix->SMPkluMatrix->KLUmatrixN, Matrix->SMPkluMatrix->KLUmatrixCommon, constant) ;
         }
     } else {
         spConstMult (Matrix->SPmatrix, constant) ;
@@ -1683,20 +1775,22 @@ SMPmultiply (SMPmatrix *Matrix, double *RHS, double *Solution, double *iRHS, dou
         int *Ap_CSR, *Ai_CSR ;
         double *Ax_CSR ;
 
-        Ap_CSR = (int *) malloc ((size_t)(Matrix->CKTkluN + 1) * sizeof (int)) ;
-        Ai_CSR = (int *) malloc ((size_t)Matrix->CKTklunz * sizeof (int)) ;
+        Ap_CSR = (int *) malloc ((size_t)(Matrix->SMPkluMatrix->KLUmatrixN + 1) * sizeof (int)) ;
+        Ai_CSR = (int *) malloc ((size_t)Matrix->SMPkluMatrix->KLUmatrixNZ * sizeof (int)) ;
 
-        if (Matrix->CKTkluMatrixIsComplex)
+        if (Matrix->SMPkluMatrix->KLUmatrixIsComplex)
         {
-            Ax_CSR = (double *) malloc ((size_t)(2 * Matrix->CKTklunz) * sizeof (double)) ;
-            klu_z_convert_matrix_in_CSR (Matrix->CKTkluAp, Matrix->CKTkluAi, Matrix->CKTkluAx_Complex, Ap_CSR, Ai_CSR, Ax_CSR, Matrix->CKTkluN, Matrix->CKTklunz, Matrix->CKTkluCommon) ;
-            klu_z_matrix_vector_multiply (Ap_CSR, Ai_CSR, Ax_CSR, RHS, Solution, iRHS, iSolution, Matrix->SPmatrix->IntToExtRowMap,
-                                          Matrix->SPmatrix->IntToExtColMap, Matrix->CKTkluN, Matrix->CKTkluCommon) ;
+            Ax_CSR = (double *) malloc ((size_t)(2 * Matrix->SMPkluMatrix->KLUmatrixNZ) * sizeof (double)) ;
+            klu_z_convert_matrix_in_CSR (Matrix->SMPkluMatrix->KLUmatrixAp, Matrix->SMPkluMatrix->KLUmatrixAi, Matrix->SMPkluMatrix->KLUmatrixAxComplex, Ap_CSR,
+                                         Ai_CSR, Ax_CSR, (int)Matrix->SMPkluMatrix->KLUmatrixN, (int)Matrix->SMPkluMatrix->KLUmatrixNZ, Matrix->SMPkluMatrix->KLUmatrixCommon) ;
+            klu_z_matrix_vector_multiply (Ap_CSR, Ai_CSR, Ax_CSR, RHS, Solution, iRHS, iSolution, NULL, NULL,
+                                          (int)Matrix->SMPkluMatrix->KLUmatrixN, Matrix->SMPkluMatrix->KLUmatrixCommon) ;
         } else {
-            Ax_CSR = (double *) malloc ((size_t)Matrix->CKTklunz * sizeof (double)) ;
-            klu_convert_matrix_in_CSR (Matrix->CKTkluAp, Matrix->CKTkluAi, Matrix->CKTkluAx, Ap_CSR, Ai_CSR, Ax_CSR, Matrix->CKTkluN, Matrix->CKTklunz, Matrix->CKTkluCommon) ;
-            klu_matrix_vector_multiply (Ap_CSR, Ai_CSR, Ax_CSR, RHS, Solution, Matrix->SPmatrix->IntToExtRowMap,
-                                        Matrix->SPmatrix->IntToExtColMap, Matrix->CKTkluN, Matrix->CKTkluCommon) ;
+            Ax_CSR = (double *) malloc ((size_t)Matrix->SMPkluMatrix->KLUmatrixNZ * sizeof (double)) ;
+            klu_convert_matrix_in_CSR (Matrix->SMPkluMatrix->KLUmatrixAp, Matrix->SMPkluMatrix->KLUmatrixAi, Matrix->SMPkluMatrix->KLUmatrixAx, Ap_CSR, Ai_CSR,
+                                       Ax_CSR, (int)Matrix->SMPkluMatrix->KLUmatrixN, (int)Matrix->SMPkluMatrix->KLUmatrixNZ, Matrix->SMPkluMatrix->KLUmatrixCommon) ;
+            klu_matrix_vector_multiply (Ap_CSR, Ai_CSR, Ax_CSR, RHS, Solution, NULL, NULL,
+                                        (int)Matrix->SMPkluMatrix->KLUmatrixN, Matrix->SMPkluMatrix->KLUmatrixCommon) ;
             iSolution = iRHS ;
         }
 
@@ -1707,3 +1801,4 @@ SMPmultiply (SMPmatrix *Matrix, double *RHS, double *Solution, double *iRHS, dou
         spMultiply (Matrix->SPmatrix, RHS, Solution, iRHS, iSolution) ;
     }
 }
+

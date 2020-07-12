@@ -12,26 +12,12 @@
 #include "ngspice/mifproto.h"
 #include "ngspice/mifdefs.h"
 
-#include <stdlib.h>
-
-static
-int
-BindCompare (const void *a, const void *b)
-{
-    BindElement *A, *B ;
-    A = (BindElement *)a ;
-    B = (BindElement *)b ;
-
-    return ((int)(A->Sparse - B->Sparse)) ;
-}
-
 int
 MIFbindCSC (GENmodel *inModel, CKTcircuit *ckt)
 {
     MIFmodel *model = (MIFmodel *)inModel ;
     MIFinstance *here ;
-    double *i ;
-    BindElement *matched, *BindStruct ;
+    BindElement i, *matched, *BindStruct ;
     int ii, j, k, l, num_conn, num_port, num_port_k ;
     Mif_Boolean_t is_input, is_output ;
     Mif_Cntl_Src_Type_t cntl_src_type ;
@@ -39,8 +25,8 @@ MIFbindCSC (GENmodel *inModel, CKTcircuit *ckt)
     Mif_Smp_Ptr_t *smp_data_cntl, *smp_data_out ;
     size_t nz ;
 
-    BindStruct = ckt->CKTmatrix->CKTbindStruct ;
-    nz = (size_t)ckt->CKTmatrix->CKTklunz ;
+    BindStruct = ckt->CKTmatrix->SMPkluMatrix->KLUmatrixBindStructCOO ;
+    nz = (size_t)ckt->CKTmatrix->SMPkluMatrix->KLUmatrixLinkedListNZ ;
 
     /* loop through all the MIF models */
     for ( ; model != NULL ; model = MIFnextModel(model))
