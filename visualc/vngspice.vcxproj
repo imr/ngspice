@@ -667,13 +667,15 @@
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <OpenMPSupport>true</OpenMPSupport>
+      <OpenMPSupport>
+      </OpenMPSupport>
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <CompileAs>CompileAsC</CompileAs>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalOptions>/openmp:experimental %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -1111,6 +1113,7 @@
     <ClInclude Include="..\src\spicelib\devices\bsim3v1\bsim3v1ext.h" />
     <ClInclude Include="..\src\spicelib\devices\bsim3v1\bsim3v1init.h" />
     <ClInclude Include="..\src\spicelib\devices\bsim3v1\bsim3v1itf.h" />
+    <ClInclude Include="..\src\spicelib\devices\bsim3v32\b3v32acm.h" />
     <ClInclude Include="..\src\spicelib\devices\bsim3v32\bsim3v32def.h" />
     <ClInclude Include="..\src\spicelib\devices\bsim3v32\bsim3v32ext.h" />
     <ClInclude Include="..\src\spicelib\devices\bsim3v32\bsim3v32init.h" />
@@ -1846,11 +1849,19 @@
     <ClCompile Include="..\src\spicelib\devices\bsim3v1\bsim3v1init.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3v32\b3v32.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3v32\b3v32acld.c" />
+    <ClCompile Include="..\src\spicelib\devices\bsim3v32\b3v32acm.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3v32\b3v32ask.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3v32\b3v32check.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3v32\b3v32cvtest.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3v32\b3v32getic.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3v32\b3v32ld.c" />
+    <ClCompile Include="..\src\spicelib\devices\bsim3v32\b3v32ldsel.c" />
+    <ClCompile Include="..\src\spicelib\devices\bsim3v32\b3v32ldseq.c" />
+    <ClCompile Include="..\src\spicelib\devices\bsim3v32\b3v32ldseq_simd4.c" />
+    <ClCompile Include="..\src\spicelib\devices\bsim3v32\b3v32ldseq_simd4_omp.c" />
+    <ClCompile Include="..\src\spicelib\devices\bsim3v32\b3v32ldseq_simd8.c" />
+    <ClCompile Include="..\src\spicelib\devices\bsim3v32\b3v32ldsimd.c" />
+    <ClCompile Include="..\src\spicelib\devices\bsim3v32\b3v32ldsimd8.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3v32\b3v32mask.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3v32\b3v32mdel.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3v32\b3v32mpar.c" />
@@ -1862,6 +1873,8 @@
     <ClCompile Include="..\src\spicelib\devices\bsim3v32\b3v32temp.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3v32\b3v32trunc.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3v32\bsim3v32init.c" />
+    <ClCompile Include="..\src\spicelib\devices\bsim3v32\vec4_exp.c" />
+    <ClCompile Include="..\src\spicelib\devices\bsim3v32\vec4_log.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3\b3.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3\b3acld.c" />
     <ClCompile Include="..\src\spicelib\devices\bsim3\b3ask.c" />
