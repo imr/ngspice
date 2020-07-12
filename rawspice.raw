@@ -1,0 +1,745 @@
+Title: dmt generated netlist
+Date: Sat Jul 11 15:14:06  2020
+Plotname: Operating Point
+Flags: real
+No. Variables: 70
+No. Points: 1
+Variables:
+	0	n_c	voltage
+	1	@q_q_h[betaac]	voltage
+	2	@q_q_h[betadc]	voltage
+	3	@q_q_h[ccs]	capacitance
+	4	@q_q_h[cmui]	capacitance
+	5	@q_q_h[cmux]	capacitance
+	6	@q_q_h[cpii]	capacitance
+	7	@q_q_h[cpix]	capacitance
+	8	@q_q_h[crbi]	capacitance
+	9	@q_q_h[dtsh]	voltage
+	10	@q_q_h[ft]	voltage
+	11	@q_q_h[gmi]	admittance
+	12	@q_q_h[gms]	admittance
+	13	i(@q_q_h[iavl])	current
+	14	i(@q_q_h[ib])	current
+	15	i(@q_q_h[ibci])	current
+	16	i(@q_q_h[ibei])	current
+	17	i(@q_q_h[ic])	current
+	18	i(@q_q_h[ick])	current
+	19	i(@q_q_h[ie])	current
+	20	i(@q_q_h[is])	current
+	21	i(@q_q_h[it])	current
+	22	@q_q_h[m]	voltage
+	23	@q_q_h[p]	power
+	24	@q_q_h[rb]	voltage
+	25	@q_q_h[rbi]	voltage
+	26	@q_q_h[rcx_t]	voltage
+	27	@q_q_h[re_t]	voltage
+	28	@q_q_h[rmui]	voltage
+	29	@q_q_h[rmux]	voltage
+	30	@q_q_h[roi]	voltage
+	31	@q_q_h[rpii]	voltage
+	32	@q_q_h[rpix]	voltage
+	33	@q_q_h[temp]	voltage
+	34	@q_q_h[tf]	voltage
+	35	@q_q_h[tk]	voltage
+	36	@q_q_h[vbbp]	voltage
+	37	@q_q_h[vbc]	voltage
+	38	@q_q_h[vbe]	voltage
+	39	@q_q_h[vbici]	voltage
+	40	@q_q_h[vbiei]	voltage
+	41	@q_q_h[vbpbi]	voltage
+	42	@q_q_h[vce]	voltage
+	43	@q_q_h[vciei]	voltage
+	44	@q_q_h[vsc]	voltage
+	45	n_b	voltage
+	46	n_b_forced	voltage
+	47	n_bx	voltage
+	48	n_c_forced	voltage
+	49	n_cx	voltage
+	50	n_e	voltage
+	51	n_e_forced	voltage
+	52	n_ex	voltage
+	53	n_s	voltage
+	54	n_sx	voltage
+	55	n_t	voltage
+	56	q_q_h#collci	voltage
+	57	q_q_h#emitei	voltage
+	58	q_q_h#subssi	voltage
+	59	q_q_h#xf	voltage
+	60	q_q_h#xf1	voltage
+	61	q_q_h#xf2	voltage
+	62	i(v_v_b)	current
+	63	i(v_v_c)	current
+	64	i(v_v_e)	current
+	65	i(v_v_s)	current
+	66	i(v_v_v_b)	current
+	67	i(v_v_v_c)	current
+	68	i(v_v_v_e)	current
+	69	i(v_v_v_s)	current
+Values:
+ 0	1.999999999999999e+00
+	2.015820960757590e-34
+	-1.284349804129181e+02
+	1.973886148229769e-15
+	1.747681823948260e-16
+	1.551402081692822e-15
+	6.344691137456945e-16
+	1.783589713534423e-15
+	8.092372961405205e-16
+	1.090683099391754e-08
+	1.348648355838772e-22
+	2.205013024816219e-47
+	1.179834970232417e-46
+	1.630495164519588e-14
+	-3.785223511284394e-15
+	-1.630669801643895e-14
+	1.252360523290239e-14
+	4.861551075303282e-13
+	7.135973196891111e-03
+	-4.909281342628674e-13
+	-8.644788778686730e-16
+	4.689817999082727e-13
+	1.000000000000000e+00
+	9.790813523192944e-13
+	1.134770039598727e+02
+	7.240352190377749e+01
+	3.972735488616852e+01
+	2.433585113114196e+01
+	2.013221934661670e+13
+	9.999999999999999e+17
+	9.999999999999999e+17
+	3.928496858701236e+12
+	5.213494313553190e+12
+	2.485000000000002e+01
+	2.350813231799441e-13
+	2.980000000000000e+02
+	-1.194715399151042e-11
+	0.000000000000000e+00
+	0.000000000000000e+00
+	-1.699999999980643e+00
+	2.999999999880947e-01
+	-2.739475313262574e-13
+	0.000000000000000e+00
+	1.999999999968738e+00
+	0.000000000000000e+00
+	2.999999999999999e-01
+	3.000000000000000e-01
+	3.000000000000000e-01
+	2.000000000000000e+00
+	2.000000000000000e+00
+	4.909281342628685e-16
+	0.000000000000000e+00
+	0.000000000000000e+00
+	0.000000000000000e+00
+	0.000000000000000e+00
+	1.090684476258629e-08
+	1.999999999980686e+00
+	1.194764491964468e-11
+	6.915831022949383e-12
+	1.102488620697488e-25
+	4.689817999082728e-13
+	4.689817999082727e-13
+	-5.684341886080801e-14
+	-6.821210263296962e-13
+	4.909281342628685e-13
+	8.644788778686729e-16
+	-5.684341886080801e-14
+	-6.821210263296962e-13
+	4.909281342628685e-13
+	8.644788778686729e-16
+
+Title: dmt generated netlist
+Date: Sat Jul 11 15:15:22  2020
+Plotname: Operating Point
+Flags: real
+No. Variables: 70
+No. Points: 1
+Variables:
+	0	n_c	voltage
+	1	@q_q_h[betaac]	voltage
+	2	@q_q_h[betadc]	voltage
+	3	@q_q_h[ccs]	capacitance
+	4	@q_q_h[cmui]	capacitance
+	5	@q_q_h[cmux]	capacitance
+	6	@q_q_h[cpii]	capacitance
+	7	@q_q_h[cpix]	capacitance
+	8	@q_q_h[crbi]	capacitance
+	9	@q_q_h[dtsh]	voltage
+	10	@q_q_h[ft]	voltage
+	11	@q_q_h[gmi]	admittance
+	12	@q_q_h[gms]	admittance
+	13	i(@q_q_h[iavl])	current
+	14	i(@q_q_h[ib])	current
+	15	i(@q_q_h[ibci])	current
+	16	i(@q_q_h[ibei])	current
+	17	i(@q_q_h[ic])	current
+	18	i(@q_q_h[ick])	current
+	19	i(@q_q_h[ie])	current
+	20	i(@q_q_h[is])	current
+	21	i(@q_q_h[it])	current
+	22	@q_q_h[m]	voltage
+	23	@q_q_h[p]	power
+	24	@q_q_h[rb]	voltage
+	25	@q_q_h[rbi]	voltage
+	26	@q_q_h[rcx_t]	voltage
+	27	@q_q_h[re_t]	voltage
+	28	@q_q_h[rmui]	voltage
+	29	@q_q_h[rmux]	voltage
+	30	@q_q_h[roi]	voltage
+	31	@q_q_h[rpii]	voltage
+	32	@q_q_h[rpix]	voltage
+	33	@q_q_h[temp]	voltage
+	34	@q_q_h[tf]	voltage
+	35	@q_q_h[tk]	voltage
+	36	@q_q_h[vbbp]	voltage
+	37	@q_q_h[vbc]	voltage
+	38	@q_q_h[vbe]	voltage
+	39	@q_q_h[vbici]	voltage
+	40	@q_q_h[vbiei]	voltage
+	41	@q_q_h[vbpbi]	voltage
+	42	@q_q_h[vce]	voltage
+	43	@q_q_h[vciei]	voltage
+	44	@q_q_h[vsc]	voltage
+	45	n_b	voltage
+	46	n_b_forced	voltage
+	47	n_bx	voltage
+	48	n_c_forced	voltage
+	49	n_cx	voltage
+	50	n_e	voltage
+	51	n_e_forced	voltage
+	52	n_ex	voltage
+	53	n_s	voltage
+	54	n_sx	voltage
+	55	n_t	voltage
+	56	q_q_h#collci	voltage
+	57	q_q_h#emitei	voltage
+	58	q_q_h#subssi	voltage
+	59	q_q_h#xf	voltage
+	60	q_q_h#xf1	voltage
+	61	q_q_h#xf2	voltage
+	62	i(v_v_b)	current
+	63	i(v_v_c)	current
+	64	i(v_v_e)	current
+	65	i(v_v_s)	current
+	66	i(v_v_v_b)	current
+	67	i(v_v_v_c)	current
+	68	i(v_v_v_e)	current
+	69	i(v_v_v_s)	current
+Values:
+ 0	1.999999999999999e+00
+	2.015820960757590e-34
+	-1.284349804129181e+02
+	1.973886148229769e-15
+	1.747681823948260e-16
+	1.551402081692822e-15
+	6.344691137456945e-16
+	1.783589713534423e-15
+	8.092372961405205e-16
+	1.090683099391754e-08
+	1.348648355838772e-22
+	2.205013024816219e-47
+	1.179834970232417e-46
+	1.630495164519588e-14
+	-3.785223511284394e-15
+	-1.630669801643895e-14
+	1.252360523290239e-14
+	4.861551075303282e-13
+	7.135973196891111e-03
+	-4.909281342628674e-13
+	-8.644788778686730e-16
+	4.689817999082727e-13
+	1.000000000000000e+00
+	9.790813523192944e-13
+	1.134770039598727e+02
+	7.240352190377749e+01
+	3.972735488616852e+01
+	2.433585113114196e+01
+	2.013221934661670e+13
+	9.999999999999999e+17
+	9.999999999999999e+17
+	3.928496858701236e+12
+	5.213494313553190e+12
+	2.485000000000002e+01
+	2.350813231799441e-13
+	2.980000000000000e+02
+	-1.194715399151042e-11
+	0.000000000000000e+00
+	0.000000000000000e+00
+	-1.699999999980643e+00
+	2.999999999880947e-01
+	-2.739475313262574e-13
+	0.000000000000000e+00
+	1.999999999968738e+00
+	0.000000000000000e+00
+	2.999999999999999e-01
+	3.000000000000000e-01
+	3.000000000000000e-01
+	2.000000000000000e+00
+	2.000000000000000e+00
+	4.909281342628685e-16
+	0.000000000000000e+00
+	0.000000000000000e+00
+	0.000000000000000e+00
+	0.000000000000000e+00
+	1.090684476258629e-08
+	1.999999999980686e+00
+	1.194764491964468e-11
+	6.915831022949383e-12
+	1.102488620697488e-25
+	4.689817999082728e-13
+	4.689817999082727e-13
+	-5.684341886080801e-14
+	-6.821210263296962e-13
+	4.909281342628685e-13
+	8.644788778686729e-16
+	-5.684341886080801e-14
+	-6.821210263296962e-13
+	4.909281342628685e-13
+	8.644788778686729e-16
+
+Title: dmt generated netlist
+Date: Sat Jul 11 15:20:53  2020
+Plotname: Operating Point
+Flags: real
+No. Variables: 70
+No. Points: 1
+Variables:
+	0	n_c	voltage
+	1	@q_q_h[betaac]	voltage
+	2	@q_q_h[betadc]	voltage
+	3	@q_q_h[ccs]	capacitance
+	4	@q_q_h[cmui]	capacitance
+	5	@q_q_h[cmux]	capacitance
+	6	@q_q_h[cpii]	capacitance
+	7	@q_q_h[cpix]	capacitance
+	8	@q_q_h[crbi]	capacitance
+	9	@q_q_h[dtsh]	voltage
+	10	@q_q_h[ft]	voltage
+	11	@q_q_h[gmi]	admittance
+	12	@q_q_h[gms]	admittance
+	13	i(@q_q_h[iavl])	current
+	14	i(@q_q_h[ib])	current
+	15	i(@q_q_h[ibci])	current
+	16	i(@q_q_h[ibei])	current
+	17	i(@q_q_h[ic])	current
+	18	i(@q_q_h[ick])	current
+	19	i(@q_q_h[ie])	current
+	20	i(@q_q_h[is])	current
+	21	i(@q_q_h[it])	current
+	22	@q_q_h[m]	voltage
+	23	@q_q_h[p]	power
+	24	@q_q_h[rb]	voltage
+	25	@q_q_h[rbi]	voltage
+	26	@q_q_h[rcx_t]	voltage
+	27	@q_q_h[re_t]	voltage
+	28	@q_q_h[rmui]	voltage
+	29	@q_q_h[rmux]	voltage
+	30	@q_q_h[roi]	voltage
+	31	@q_q_h[rpii]	voltage
+	32	@q_q_h[rpix]	voltage
+	33	@q_q_h[temp]	voltage
+	34	@q_q_h[tf]	voltage
+	35	@q_q_h[tk]	voltage
+	36	@q_q_h[vbbp]	voltage
+	37	@q_q_h[vbc]	voltage
+	38	@q_q_h[vbe]	voltage
+	39	@q_q_h[vbici]	voltage
+	40	@q_q_h[vbiei]	voltage
+	41	@q_q_h[vbpbi]	voltage
+	42	@q_q_h[vce]	voltage
+	43	@q_q_h[vciei]	voltage
+	44	@q_q_h[vsc]	voltage
+	45	n_b	voltage
+	46	n_b_forced	voltage
+	47	n_bx	voltage
+	48	n_c_forced	voltage
+	49	n_cx	voltage
+	50	n_e	voltage
+	51	n_e_forced	voltage
+	52	n_ex	voltage
+	53	n_s	voltage
+	54	n_sx	voltage
+	55	n_t	voltage
+	56	q_q_h#collci	voltage
+	57	q_q_h#emitei	voltage
+	58	q_q_h#subssi	voltage
+	59	q_q_h#xf	voltage
+	60	q_q_h#xf1	voltage
+	61	q_q_h#xf2	voltage
+	62	i(v_v_b)	current
+	63	i(v_v_c)	current
+	64	i(v_v_e)	current
+	65	i(v_v_s)	current
+	66	i(v_v_v_b)	current
+	67	i(v_v_v_c)	current
+	68	i(v_v_v_e)	current
+	69	i(v_v_v_s)	current
+Values:
+ 0	1.999999999999999e+00
+	2.015820960757590e-34
+	-1.284349804129181e+02
+	1.973886148229769e-15
+	1.747681823948260e-16
+	1.551402081692822e-15
+	6.344691137456945e-16
+	1.783589713534423e-15
+	8.092372961405205e-16
+	1.090683099391754e-08
+	1.348648355838772e-22
+	2.205013024816219e-47
+	1.179834970232417e-46
+	1.630495164519588e-14
+	-3.785223511284394e-15
+	-1.630669801643895e-14
+	1.252360523290239e-14
+	4.861551075303282e-13
+	7.135973196891111e-03
+	-4.909281342628674e-13
+	-8.644788778686730e-16
+	4.689817999082727e-13
+	1.000000000000000e+00
+	9.790813523192944e-13
+	1.134770039598727e+02
+	7.240352190377749e+01
+	3.972735488616852e+01
+	2.433585113114196e+01
+	2.013221934661670e+13
+	9.999999999999999e+17
+	9.999999999999999e+17
+	3.928496858701236e+12
+	5.213494313553190e+12
+	2.485000000000002e+01
+	2.350813231799441e-13
+	2.980000000000000e+02
+	-1.194715399151042e-11
+	0.000000000000000e+00
+	0.000000000000000e+00
+	-1.699999999980643e+00
+	2.999999999880947e-01
+	-2.739475313262574e-13
+	0.000000000000000e+00
+	1.999999999968738e+00
+	0.000000000000000e+00
+	2.999999999999999e-01
+	3.000000000000000e-01
+	3.000000000000000e-01
+	2.000000000000000e+00
+	2.000000000000000e+00
+	4.909281342628685e-16
+	0.000000000000000e+00
+	0.000000000000000e+00
+	0.000000000000000e+00
+	0.000000000000000e+00
+	1.090684476258629e-08
+	1.999999999980686e+00
+	1.194764491964468e-11
+	6.915831022949383e-12
+	1.102488620697488e-25
+	4.689817999082728e-13
+	4.689817999082727e-13
+	-5.684341886080801e-14
+	-6.821210263296962e-13
+	4.909281342628685e-13
+	8.644788778686729e-16
+	-5.684341886080801e-14
+	-6.821210263296962e-13
+	4.909281342628685e-13
+	8.644788778686729e-16
+
+Title: dmt generated netlist
+Date: Sat Jul 11 15:50:28  2020
+Plotname: Operating Point
+Flags: real
+No. Variables: 70
+No. Points: 1
+Variables:
+	0	n_c	voltage
+	1	@q_q_h[betaac]	voltage
+	2	@q_q_h[betadc]	voltage
+	3	@q_q_h[ccs]	capacitance
+	4	@q_q_h[cmui]	capacitance
+	5	@q_q_h[cmux]	capacitance
+	6	@q_q_h[cpii]	capacitance
+	7	@q_q_h[cpix]	capacitance
+	8	@q_q_h[crbi]	capacitance
+	9	@q_q_h[dtsh]	voltage
+	10	@q_q_h[ft]	voltage
+	11	@q_q_h[gmi]	admittance
+	12	@q_q_h[gms]	admittance
+	13	i(@q_q_h[iavl])	current
+	14	i(@q_q_h[ib])	current
+	15	i(@q_q_h[ibci])	current
+	16	i(@q_q_h[ibei])	current
+	17	i(@q_q_h[ic])	current
+	18	i(@q_q_h[ick])	current
+	19	i(@q_q_h[ie])	current
+	20	i(@q_q_h[is])	current
+	21	i(@q_q_h[it])	current
+	22	@q_q_h[m]	voltage
+	23	@q_q_h[p]	power
+	24	@q_q_h[rb]	voltage
+	25	@q_q_h[rbi]	voltage
+	26	@q_q_h[rcx_t]	voltage
+	27	@q_q_h[re_t]	voltage
+	28	@q_q_h[rmui]	voltage
+	29	@q_q_h[rmux]	voltage
+	30	@q_q_h[roi]	voltage
+	31	@q_q_h[rpii]	voltage
+	32	@q_q_h[rpix]	voltage
+	33	@q_q_h[temp]	voltage
+	34	@q_q_h[tf]	voltage
+	35	@q_q_h[tk]	voltage
+	36	@q_q_h[vbbp]	voltage
+	37	@q_q_h[vbc]	voltage
+	38	@q_q_h[vbe]	voltage
+	39	@q_q_h[vbici]	voltage
+	40	@q_q_h[vbiei]	voltage
+	41	@q_q_h[vbpbi]	voltage
+	42	@q_q_h[vce]	voltage
+	43	@q_q_h[vciei]	voltage
+	44	@q_q_h[vsc]	voltage
+	45	n_b	voltage
+	46	n_b_forced	voltage
+	47	n_bx	voltage
+	48	n_c_forced	voltage
+	49	n_cx	voltage
+	50	n_e	voltage
+	51	n_e_forced	voltage
+	52	n_ex	voltage
+	53	n_s	voltage
+	54	n_sx	voltage
+	55	n_t	voltage
+	56	q_q_h#collci	voltage
+	57	q_q_h#emitei	voltage
+	58	q_q_h#subssi	voltage
+	59	q_q_h#xf	voltage
+	60	q_q_h#xf1	voltage
+	61	q_q_h#xf2	voltage
+	62	i(v_v_b)	current
+	63	i(v_v_c)	current
+	64	i(v_v_e)	current
+	65	i(v_v_s)	current
+	66	i(v_v_v_b)	current
+	67	i(v_v_v_c)	current
+	68	i(v_v_v_e)	current
+	69	i(v_v_v_s)	current
+Values:
+ 0	1.999999999999999e+00
+	2.015820960757590e-34
+	-1.284349804129181e+02
+	1.973886148229769e-15
+	1.747681823948260e-16
+	1.551402081692822e-15
+	6.344691137456945e-16
+	1.783589713534423e-15
+	8.092372961405205e-16
+	1.090683099391754e-08
+	1.348648355838772e-22
+	2.205013024816219e-47
+	1.179834970232417e-46
+	1.630495164519588e-14
+	-3.785223511284394e-15
+	-1.630669801643895e-14
+	1.252360523290239e-14
+	4.861551075303282e-13
+	7.135973196891111e-03
+	-4.909281342628674e-13
+	-8.644788778686730e-16
+	4.689817999082727e-13
+	1.000000000000000e+00
+	9.790813523192944e-13
+	1.134770039598727e+02
+	7.240352190377749e+01
+	3.972735488616852e+01
+	2.433585113114196e+01
+	2.013221934661670e+13
+	9.999999999999999e+17
+	9.999999999999999e+17
+	3.928496858701236e+12
+	5.213494313553190e+12
+	2.485000000000002e+01
+	2.350813231799441e-13
+	2.980000000000000e+02
+	-1.194715399151042e-11
+	0.000000000000000e+00
+	0.000000000000000e+00
+	-1.699999999980643e+00
+	2.999999999880947e-01
+	-2.739475313262574e-13
+	0.000000000000000e+00
+	1.999999999968738e+00
+	0.000000000000000e+00
+	2.999999999999999e-01
+	3.000000000000000e-01
+	3.000000000000000e-01
+	2.000000000000000e+00
+	2.000000000000000e+00
+	4.909281342628685e-16
+	0.000000000000000e+00
+	0.000000000000000e+00
+	0.000000000000000e+00
+	0.000000000000000e+00
+	1.090684476258629e-08
+	1.999999999980686e+00
+	1.194764491964468e-11
+	6.915831022949383e-12
+	1.102488620697488e-25
+	4.689817999082728e-13
+	4.689817999082727e-13
+	-5.684341886080801e-14
+	-6.821210263296962e-13
+	4.909281342628685e-13
+	8.644788778686729e-16
+	-5.684341886080801e-14
+	-6.821210263296962e-13
+	4.909281342628685e-13
+	8.644788778686729e-16
+
+Title: dmt generated netlist
+Date: Sat Jul 11 15:50:47  2020
+Plotname: Operating Point
+Flags: real
+No. Variables: 70
+No. Points: 1
+Variables:
+	0	n_c	voltage
+	1	@q_q_h[betaac]	voltage
+	2	@q_q_h[betadc]	voltage
+	3	@q_q_h[ccs]	capacitance
+	4	@q_q_h[cmui]	capacitance
+	5	@q_q_h[cmux]	capacitance
+	6	@q_q_h[cpii]	capacitance
+	7	@q_q_h[cpix]	capacitance
+	8	@q_q_h[crbi]	capacitance
+	9	@q_q_h[dtsh]	voltage
+	10	@q_q_h[ft]	voltage
+	11	@q_q_h[gmi]	admittance
+	12	@q_q_h[gms]	admittance
+	13	i(@q_q_h[iavl])	current
+	14	i(@q_q_h[ib])	current
+	15	i(@q_q_h[ibci])	current
+	16	i(@q_q_h[ibei])	current
+	17	i(@q_q_h[ic])	current
+	18	i(@q_q_h[ick])	current
+	19	i(@q_q_h[ie])	current
+	20	i(@q_q_h[is])	current
+	21	i(@q_q_h[it])	current
+	22	@q_q_h[m]	voltage
+	23	@q_q_h[p]	power
+	24	@q_q_h[rb]	voltage
+	25	@q_q_h[rbi]	voltage
+	26	@q_q_h[rcx_t]	voltage
+	27	@q_q_h[re_t]	voltage
+	28	@q_q_h[rmui]	voltage
+	29	@q_q_h[rmux]	voltage
+	30	@q_q_h[roi]	voltage
+	31	@q_q_h[rpii]	voltage
+	32	@q_q_h[rpix]	voltage
+	33	@q_q_h[temp]	voltage
+	34	@q_q_h[tf]	voltage
+	35	@q_q_h[tk]	voltage
+	36	@q_q_h[vbbp]	voltage
+	37	@q_q_h[vbc]	voltage
+	38	@q_q_h[vbe]	voltage
+	39	@q_q_h[vbici]	voltage
+	40	@q_q_h[vbiei]	voltage
+	41	@q_q_h[vbpbi]	voltage
+	42	@q_q_h[vce]	voltage
+	43	@q_q_h[vciei]	voltage
+	44	@q_q_h[vsc]	voltage
+	45	n_b	voltage
+	46	n_b_forced	voltage
+	47	n_bx	voltage
+	48	n_c_forced	voltage
+	49	n_cx	voltage
+	50	n_e	voltage
+	51	n_e_forced	voltage
+	52	n_ex	voltage
+	53	n_s	voltage
+	54	n_sx	voltage
+	55	n_t	voltage
+	56	q_q_h#collci	voltage
+	57	q_q_h#emitei	voltage
+	58	q_q_h#subssi	voltage
+	59	q_q_h#xf	voltage
+	60	q_q_h#xf1	voltage
+	61	q_q_h#xf2	voltage
+	62	i(v_v_b)	current
+	63	i(v_v_c)	current
+	64	i(v_v_e)	current
+	65	i(v_v_s)	current
+	66	i(v_v_v_b)	current
+	67	i(v_v_v_c)	current
+	68	i(v_v_v_e)	current
+	69	i(v_v_v_s)	current
+Values:
+ 0	1.999999999999999e+00
+	2.015820960757590e-34
+	-1.284349804129181e+02
+	1.973886148229769e-15
+	1.747681823948260e-16
+	1.551402081692822e-15
+	6.344691137456945e-16
+	1.783589713534423e-15
+	8.092372961405205e-16
+	1.090683099391754e-08
+	1.348648355838772e-22
+	2.205013024816219e-47
+	1.179834970232417e-46
+	1.630495164519588e-14
+	-3.785223511284394e-15
+	-1.630669801643895e-14
+	1.252360523290239e-14
+	4.861551075303282e-13
+	7.135973196891111e-03
+	-4.909281342628674e-13
+	-8.644788778686730e-16
+	4.689817999082727e-13
+	1.000000000000000e+00
+	9.790813523192944e-13
+	1.134770039598727e+02
+	7.240352190377749e+01
+	3.972735488616852e+01
+	2.433585113114196e+01
+	2.013221934661670e+13
+	9.999999999999999e+17
+	9.999999999999999e+17
+	3.928496858701236e+12
+	5.213494313553190e+12
+	2.485000000000002e+01
+	2.350813231799441e-13
+	2.980000000000000e+02
+	-1.194715399151042e-11
+	0.000000000000000e+00
+	0.000000000000000e+00
+	-1.699999999980643e+00
+	2.999999999880947e-01
+	-2.739475313262574e-13
+	0.000000000000000e+00
+	1.999999999968738e+00
+	0.000000000000000e+00
+	2.999999999999999e-01
+	3.000000000000000e-01
+	3.000000000000000e-01
+	2.000000000000000e+00
+	2.000000000000000e+00
+	4.909281342628685e-16
+	0.000000000000000e+00
+	0.000000000000000e+00
+	0.000000000000000e+00
+	0.000000000000000e+00
+	1.090684476258629e-08
+	1.999999999980686e+00
+	1.194764491964468e-11
+	6.915831022949383e-12
+	1.102488620697488e-25
+	4.689817999082728e-13
+	4.689817999082727e-13
+	-5.684341886080801e-14
+	-6.821210263296962e-13
+	4.909281342628685e-13
+	8.644788778686729e-16
+	-5.684341886080801e-14
+	-6.821210263296962e-13
+	4.909281342628685e-13
+	8.644788778686729e-16
+
