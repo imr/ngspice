@@ -13,10 +13,7 @@ libsparse_la_SOURCES =	\
 	spsolve.c	\
 	sputils.c
 
-
-if KLU_WANTED
-libsparse_la_SOURCES += spCSC.c
-else
+if !KLU_WANTED
 libsparse_la_SOURCES += spsmp.c
 endif
 
@@ -24,3 +21,4 @@ AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)
 
 MAINTAINERCLEANFILES = Makefile.in
+

@@ -505,7 +505,7 @@ int TWOequilSolve(TWOdevice *pDevice)
 
 #ifdef KLU
             pDevice->matrix->CKTkluMODE = CKTkluON ; /* Francesco Lannutti - To be sustitued with a value coming from the uplevel */
-            error = SMPnewMatrixKLUforCIDER (pDevice->matrix, pDevice->numEqns, CKTkluMatrixReal) ;
+            error = SMPnewMatrixKLUforCIDER (pDevice->matrix, pDevice->numEqns, KLUmatrixReal) ;
 #else
             error = SMPnewMatrixForCIDER (pDevice->matrix, pDevice->numEqns, 0) ;
 #endif
@@ -519,7 +519,7 @@ int TWOequilSolve(TWOdevice *pDevice)
 
 #ifdef KLU
             if (pDevice->matrix->CKTkluMODE) {
-                pDevice->matrix->SMPkluMatrix->KLUmatrixIsComplex = CKTkluMatrixReal ;
+                pDevice->matrix->SMPkluMatrix->KLUmatrixIsComplex = KLUmatrixReal ;
             } else {
 #endif
 
@@ -550,7 +550,8 @@ int TWOequilSolve(TWOdevice *pDevice)
                     }
                 }
                 printf ("CIDER: KLU to be fixed: spElementCount\n") ;
-                pDevice->numOrigEquil = 0 ; // Francesco Lannutti - Fix for KLU
+                pDevice->numOrigEquil = 0 ; //pDevice->matrix->SMPkluMatrix->KLUmatrixNumeric->lnz + pDevice->matrix->SMPkluMatrix->KLUmatrixNumeric->unz
+                                            //+ pDevice->matrix->SMPkluMatrix->KLUmatrixNumeric->nzoff ;
             } else {
                 pDevice->numOrigEquil = spElementCount (pDevice->matrix->SPmatrix) ;
             }
@@ -580,9 +581,8 @@ int TWOequilSolve(TWOdevice *pDevice)
 
 #ifdef KLU
     if (pDevice->matrix->CKTkluMODE) {
-      // Francesco Lannutti - Fix for KLU
-      printf ("CIDER: KLU to be fixed: spFillinCount\n") ;
-      pDevice->numFillEquil = 0 ;
+      pDevice->numFillEquil = pDevice->matrix->SMPkluMatrix->KLUmatrixNumeric->lnz + pDevice->matrix->SMPkluMatrix->KLUmatrixNumeric->unz
+                            + pDevice->matrix->SMPkluMatrix->KLUmatrixNumeric->nzoff - (int)pDevice->matrix->SMPkluMatrix->KLUmatrixNZ ;
     } else {
 #endif
 
@@ -666,7 +666,7 @@ TWObiasSolve(TWOdevice *pDevice, int iterationLimit, BOOLEAN tranAnalysis,
 
 #ifdef KLU
     pDevice->matrix->CKTkluMODE = CKTkluON ; /* Francesco Lannutti - To be sustitued with a value coming from the uplevel */
-    error = SMPnewMatrixKLUforCIDER (pDevice->matrix, pDevice->numEqns, CKTkluMatrixComplex) ;
+    error = SMPnewMatrixKLUforCIDER (pDevice->matrix, pDevice->numEqns, KLUMatrixComplex) ;
 #else
     error = SMPnewMatrixForCIDER (pDevice->matrix, pDevice->numEqns, 1) ;
 #endif
@@ -708,7 +708,9 @@ TWObiasSolve(TWOdevice *pDevice, int iterationLimit, BOOLEAN tranAnalysis,
           return ; // Francesco Lannutti - Fix KLU return values
         }
       }
-      pDevice->numOrigBias = 0 ; // Francesco Lannutti - Fix for KLU
+      printf ("CIDER: KLU to be fixed: spElementCount\n") ;
+      pDevice->numOrigBias = 0 ; //pDevice->matrix->SMPkluMatrix->KLUmatrixNumeric->lnz + pDevice->matrix->SMPkluMatrix->KLUmatrixNumeric->unz
+                           //+ pDevice->matrix->SMPkluMatrix->KLUmatrixNumeric->nzoff ;
     } else {
       pDevice->numOrigBias = spElementCount(pDevice->matrix->SPmatrix);
     }
@@ -723,7 +725,7 @@ TWObiasSolve(TWOdevice *pDevice, int iterationLimit, BOOLEAN tranAnalysis,
 
 #ifdef KLU
     if (pDevice->matrix->CKTkluMODE) {
-        pDevice->matrix->SMPkluMatrix->KLUmatrixIsComplex = CKTkluMatrixReal ;
+        pDevice->matrix->SMPkluMatrix->KLUmatrixIsComplex = KLUmatrixReal ;
     } else {
 #endif
 
@@ -753,13 +755,12 @@ TWObiasSolve(TWOdevice *pDevice, int iterationLimit, BOOLEAN tranAnalysis,
 
 #ifdef KLU
     if (pDevice->matrix->CKTkluMODE) {
-      // Francesco Lannutti - Fix for KLU
-      printf ("CIDER: KLU to be fixed: spFillinCount\n") ;
-      pDevice->numFillBias = 0 ;
+      pDevice->numFillBias = pDevice->matrix->SMPkluMatrix->KLUmatrixNumeric->lnz + pDevice->matrix->SMPkluMatrix->KLUmatrixNumeric->unz
+                           + pDevice->matrix->SMPkluMatrix->KLUmatrixNumeric->nzoff - (int)pDevice->matrix->SMPkluMatrix->KLUmatrixNZ ;
     } else {
 #endif
 
-      pDevice->numFillBias = spFillinCount (pDevice->matrix->SPmatrix) ; // Francesco Lannutti - Fix for KLU
+      pDevice->numFillBias = spFillinCount (pDevice->matrix->SPmatrix) ;
 
 #ifdef KLU
     }

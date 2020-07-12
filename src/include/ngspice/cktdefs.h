@@ -304,7 +304,7 @@ struct CKTcircuit {
 
 #ifdef KLU
     unsigned int CKTkluMODE:1;
-    unsigned int CKTkluMemGrowFactor : 1 ;
+    double CKTkluMemGrowFactor ;
 #endif
 };
 
