@@ -8,30 +8,16 @@ Author: 2013 Francesco Lannutti
 #include "ngspice/sperror.h"
 #include "ngspice/klu-binding.h"
 
-#include <stdlib.h>
-
-static
-int
-BindCompare (const void *a, const void *b)
-{
-    BindElement *A, *B ;
-    A = (BindElement *)a ;
-    B = (BindElement *)b ;
-
-    return ((int)(A->Sparse - B->Sparse)) ;
-}
-
 int
 VSRCbindCSC (GENmodel *inModel, CKTcircuit *ckt)
 {
     VSRCmodel *model = (VSRCmodel *)inModel ;
     VSRCinstance *here ;
-    double *i ;
-    BindElement *matched, *BindStruct ;
+    BindElement i, *matched, *BindStruct ;
     size_t nz ;
 
-    BindStruct = ckt->CKTmatrix->CKTbindStruct ;
-    nz = (size_t)ckt->CKTmatrix->CKTklunz ;
+    BindStruct = ckt->CKTmatrix->SMPkluMatrix->KLUmatrixBindStructCOO ;
+    nz = (size_t)ckt->CKTmatrix->SMPkluMatrix->KLUmatrixLinkedListNZ ;
 
     /* loop through all the VSRC models */
     for ( ; model != NULL ; model = VSRCnextModel(model))
@@ -47,7 +33,9 @@ VSRCbindCSC (GENmodel *inModel, CKTcircuit *ckt)
             /* Pole-Zero Analysis */
             if (here->VSRCibrIbrPtr)
             {
-                i = here->VSRCibrIbrPtr ;
+                i.COO = here->VSRCibrIbrPtr ;
+                i.CSC = NULL ;
+                i.CSC_Complex = NULL ;
                 matched = (BindElement *) bsearch (&i, BindStruct, nz, sizeof(BindElement), BindCompare) ;
                 here->VSRCibrIbrBinding = matched ;
                 if (matched != NULL)

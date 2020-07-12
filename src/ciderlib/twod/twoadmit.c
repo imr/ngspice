@@ -105,7 +105,7 @@ NUMD2admittance(TWOdevice *pDevice, double omega, SPcomplex *yd)
 #ifdef KLU
     if (pDevice->matrix->CKTkluMODE) {
       // Francesco Lannutti - To be completed
-      pDevice->matrix->SMPkluMatrix->KLUmatrixIsComplex = CKTkluMatrixComplex ;
+      pDevice->matrix->SMPkluMatrix->KLUmatrixIsComplex = KLUMatrixComplex ;
     } else {
 #endif
 
@@ -292,7 +292,7 @@ NBJT2admittance(TWOdevice *pDevice, double omega, SPcomplex *yIeVce,
 #ifdef KLU
     if (pDevice->matrix->CKTkluMODE) {
       // Francesco Lannutti - To be completed
-      pDevice->matrix->SMPkluMatrix->KLUmatrixIsComplex = CKTkluMatrixComplex ;
+      pDevice->matrix->SMPkluMatrix->KLUmatrixIsComplex = KLUMatrixComplex ;
     } else {
 #endif
 
@@ -577,7 +577,7 @@ NUMOSadmittance(TWOdevice *pDevice, double omega, struct mosAdmittances *yAc)
 #ifdef KLU
     if (pDevice->matrix->CKTkluMODE) {
       // Francesco Lannutti - To be completed
-      pDevice->matrix->SMPkluMatrix->KLUmatrixIsComplex = CKTkluMatrixComplex ;
+      pDevice->matrix->SMPkluMatrix->KLUmatrixIsComplex = KLUMatrixComplex ;
     } else {
 #endif
 
@@ -1180,7 +1180,7 @@ NUMD2ys(TWOdevice *pDevice, SPcomplex *s, SPcomplex *yIn)
 #ifdef KLU
   if (pDevice->matrix->CKTkluMODE) {
     // Francesco Lannutti - To be completed
-    pDevice->matrix->SMPkluMatrix->KLUmatrixIsComplex = CKTkluMatrixComplex ;
+    pDevice->matrix->SMPkluMatrix->KLUmatrixIsComplex = KLUMatrixComplex ;
   } else {
 #endif
 
@@ -1277,7 +1277,7 @@ NBJT2ys(TWOdevice *pDevice, SPcomplex *s, SPcomplex *yIeVce, SPcomplex *yIcVce,
 #ifdef KLU
   if (pDevice->matrix->CKTkluMODE) {
     // Francesco Lannutti - To be completed
-    pDevice->matrix->SMPkluMatrix->KLUmatrixIsComplex = CKTkluMatrixComplex ;
+    pDevice->matrix->SMPkluMatrix->KLUmatrixIsComplex = KLUMatrixComplex ;
   } else {
 #endif
 
@@ -1399,7 +1399,7 @@ NUMOSys(TWOdevice *pDevice, SPcomplex *s, struct mosAdmittances *yAc)
 #ifdef KLU
   if (pDevice->matrix->CKTkluMODE) {
     // Francesco Lannutti - To be completed
-    pDevice->matrix->SMPkluMatrix->KLUmatrixIsComplex = CKTkluMatrixComplex ;
+    pDevice->matrix->SMPkluMatrix->KLUmatrixIsComplex = KLUMatrixComplex ;
   } else {
 #endif
 

@@ -165,13 +165,13 @@ TWOQbindCSC (TWOdevice *pDevice)
   TWOnode *pNode, *pNode1;
   int eIndex, nIndex;
   int index ;
-  BindKluElementCOO i, *matched, *BindStruct, *BindStructCSC ;
+  BindElementKLUforCIDER i, *matched, *BindStruct, *BindStructCSC ;
   size_t nz ;
 
-  BindStruct = pDevice->matrix->SMPkluMatrix->KLUmatrixBindStructCOO ;
+  BindStruct = pDevice->matrix->SMPkluMatrix->KLUmatrixBindStructForCIDER ;
   nz = pDevice->matrix->SMPkluMatrix->KLUmatrixNZ ;
 
-  BindStructCSC = (BindKluElementCOO *) malloc (nz * sizeof(BindKluElementCOO)) ;
+  BindStructCSC = (BindElementKLUforCIDER *) malloc (nz * sizeof (BindElementKLUforCIDER)) ;
   for (index = 0 ; index < (int)nz ; index++) {
     BindStructCSC [index] = BindStruct [index] ;
   }

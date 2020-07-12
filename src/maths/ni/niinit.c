@@ -32,25 +32,11 @@ NIinit(CKTcircuit *ckt)
     ckt->CKTmatrix = TMALLOC (SMPmatrix, 1) ;
 
 #ifdef KLU
-    ckt->CKTmatrix->CKTkluCommon = TMALLOC (klu_common, 1) ;
-    ckt->CKTmatrix->CKTkluSymbolic = NULL ;
-    ckt->CKTmatrix->CKTkluNumeric = NULL ;
-    ckt->CKTmatrix->CKTkluAp = NULL ;
-    ckt->CKTmatrix->CKTkluAi = NULL ;
-    ckt->CKTmatrix->CKTkluAx = NULL ;
-    ckt->CKTmatrix->CKTkluMatrixIsComplex = CKTkluMatrixReal ;
-    ckt->CKTmatrix->CKTkluIntermediate = NULL ;
-    ckt->CKTmatrix->CKTkluIntermediate_Complex = NULL ;
-    ckt->CKTmatrix->CKTbindStruct = NULL ;
-    ckt->CKTmatrix->CKTdiag_CSC = NULL ;
-    ckt->CKTmatrix->CKTkluN = 0 ;
-    ckt->CKTmatrix->CKTklunz = 0 ;
     ckt->CKTmatrix->CKTkluMODE = ckt->CKTkluMODE ; /* TO BE SUBSTITUTED WITH THE HEURISTICS */
-
-    klu_defaults (ckt->CKTmatrix->CKTkluCommon) ;
-    ckt->CKTmatrix->CKTkluCommon->memgrow = ckt->CKTkluMemGrowFactor ;
+    ckt->CKTmatrix->CKTkluMemGrowFactor = ckt->CKTkluMemGrowFactor ;
 #endif
 
     ckt->CKTniState = NIUNINITIALIZED;
     return SMPnewMatrix(ckt->CKTmatrix, 0);
 }
+
