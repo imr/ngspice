@@ -10,7 +10,6 @@
  * Modified by Xuemei Xi, 10/05, 12/21, 2001.
  * Modified by Paolo Nenzi 2002 and Dietmar Warning 2003
  **********/
-
 #include "ngspice/ngspice.h"
 #include "ngspice/cktdefs.h"
 #include "bsim3v32def.h"
@@ -70,17 +69,14 @@ double SourceSatCurrent, DrainSatCurrent;
 double ag0, qgd, qgs, qgb, von, cbhat, VgstNVt, ExpVgst;
 double cdrain, cdhat, cdreq, ceqbd, ceqbs, ceqqb, ceqqd, ceqqg, ceq, geq;
 double czbd, czbdsw, czbdswg, czbs, czbssw, czbsswg, evbd, evbs, arg, sarg;
-double delvbd, delvbs, delvds, delvgd, delvgs;
+/* double delvbd, delvbs, delvds, delvgd, delvgs; FB: moved decl into sub block */
 double Vfbeff, dVfbeff_dVg, dVfbeff_dVd = 0.0, dVfbeff_dVb, V3, V4;
 double gcbdb, gcbgb, gcbsb, gcddb, gcdgb, gcdsb, gcgdb, gcggb, gcgsb, gcsdb;
-#ifndef NEWCONV
-double tol;
-#endif
+/* FB: moved double to decl into NEWCONV block */
+
 double gcsgb, gcssb, MJ, MJSW, MJSWG;
 double vbd, vbs, vds, vgb, vgd, vgs, vgdo;
-#ifndef PREDICTOR
-double xfact;
-#endif
+/* FB: xfact decl moved inside PREDICTOR block */
 double qgate = 0.0, qbulk = 0.0, qdrn = 0.0, qsrc;
 double qinoi, cqgate, cqbulk, cqdrn;
 double Vds, Vgs, Vbs, Gmbs, FwdSum, RevSum;
@@ -120,7 +116,7 @@ double Xdep, dXdep_dVb, lt1, dlt1_dVb, ltw, dltw_dVb, Delt_vth, dDelt_vth_dVb;
 double Theta0, dTheta0_dVb;
 double TempRatio, tmp1, tmp2, tmp3, tmp4;
 double DIBL_Sft, dDIBL_Sft_dVd, Lambda, dLambda_dVg;
-double Idtot, Ibtot;
+/* double Idtot, Ibtot; FB: moved Idtot and Ibtot decl into sub blocks */
 #ifndef NOBYPASS
 double tempv;
 #endif
@@ -211,9 +207,12 @@ for (; model != NULL; model = BSIM3v32nextModel(model))
           }
           else
           {
+	       double Idtot, Ibtot;
+	       double delvbd, delvbs, delvds, delvgd, delvgs;
 #ifndef PREDICTOR
                if ((ckt->CKTmode & MODEINITPRED))
-               {   xfact = ckt->CKTdelta / ckt->CKTdeltaOld[1];
+               {   double xfact;
+	           xfact = ckt->CKTdelta / ckt->CKTdeltaOld[1];
                    *(ckt->CKTstate0 + here->BSIM3v32vbs) =
                          *(ckt->CKTstate1 + here->BSIM3v32vbs);
                    vbs = (1.0 + xfact)* (*(ckt->CKTstate1 + here->BSIM3v32vbs))
@@ -2747,13 +2746,24 @@ finished:
           /*
            *  check convergence
            */
+	  #ifdef USE_OMP
+	  here->BSIM3v32noncon=0;
+	  #endif
           if ((here->BSIM3v32off == 0) || (!(ckt->CKTmode & MODEINITFIX)))
           {   if (Check == 1)
-              {   ckt->CKTnoncon++;
+              {   
+	          #ifdef USE_OMP
+	          here->BSIM3v32noncon++;
+		  #else
+	          ckt->CKTnoncon++;
+		  #endif
 #ifndef NEWCONV
               }
               else
-              {   if (here->BSIM3v32mode >= 0)
+              {   
+	          double tol;
+		  double Idtot, Ibtot;
+	      	  if (here->BSIM3v32mode >= 0)
                   {   Idtot = here->BSIM3v32cd + here->BSIM3v32csub - here->BSIM3v32cbd;
                   }
                   else
@@ -2769,7 +2779,12 @@ finished:
                       tol = ckt->CKTreltol * MAX(fabs(cbhat), fabs(Ibtot))
                           + ckt->CKTabstol;
                       if (fabs(cbhat - Ibtot) > tol)
-                      {   ckt->CKTnoncon++;
+                      {   
+		          #ifdef USE_OMP
+	                  here->BSIM3v32noncon++;
+		          #else
+	                  ckt->CKTnoncon++;
+		          #endif
                       }
                   }
 #endif /* NEWCONV */
@@ -3172,7 +3187,9 @@ line850:
 
           gqdef = gcqgb = gcqdb = gcqsb = gcqbb = 0.0;
           ggtg = ggtd = ggtb = ggts = 0.0;
-          sxpart = (1.0 - (dxpart = (here->BSIM3v32mode > 0) ? 0.4 : 0.6));
+	  /* F.B: moved dxpart assignment outside the following expression */
+	  dxpart = (here->BSIM3v32mode > 0) ? 0.4 : 0.6;
+          sxpart = (1.0 - dxpart);
           ddxpart_dVd = ddxpart_dVg = ddxpart_dVb = ddxpart_dVs = 0.0;
           dsxpart_dVd = dsxpart_dVg = dsxpart_dVb = dsxpart_dVs = 0.0;
 
@@ -3310,8 +3327,13 @@ line900:
           here->BSIM3v32rhsD = m * (ceqbd - cdreq - ceqqd);
           here->BSIM3v32rhsS = m * (cdreq + ceqbs + ceqqg
               + ceqqb + ceqqd);
+	  #ifndef OMP_EFFMEM
           if (here->BSIM3v32nqsMod)
               here->BSIM3v32rhsQ = m * (cqcheq - cqdef);
+	  #else
+          if (here->BSIM3v32nqsMod)
+            *(ckt->CKTrhs + here->BSIM3v32qNode) += m * (cqcheq - cqdef);
+	  #endif
 #else
           (*(ckt->CKTrhs + here->BSIM3v32gNode) -= m * ceqqg);
           (*(ckt->CKTrhs + here->BSIM3v32bNode) -= m * (ceqbs + ceqbd + ceqqb));
@@ -3329,27 +3351,17 @@ line900:
           T1 = qdef * here->BSIM3v32gtau;
 #ifdef USE_OMP
           here->BSIM3v32DdPt = m * here->BSIM3v32drainConductance;
+	  here->BSIM3v32SsPt = m * here->BSIM3v32sourceConductance;
           here->BSIM3v32GgPt = m * (gcggb - ggtg);
-          here->BSIM3v32SsPt = m * here->BSIM3v32sourceConductance;
-          here->BSIM3v32BbPt = m * (here->BSIM3v32gbd + here->BSIM3v32gbs
+	  here->BSIM3v32BbPt = m * (here->BSIM3v32gbd + here->BSIM3v32gbs
               - gcbgb - gcbdb - gcbsb - here->BSIM3v32gbbs);
-          here->BSIM3v32DPdpPt = m * (here->BSIM3v32drainConductance
-              + here->BSIM3v32gds + here->BSIM3v32gbd
-              + RevSum + gcddb + dxpart * ggtd
-              + T1 * ddxpart_dVd + gbdpdp);
-          here->BSIM3v32SPspPt = m * (here->BSIM3v32sourceConductance
-              + here->BSIM3v32gds + here->BSIM3v32gbs
-              + FwdSum + gcssb + sxpart * ggts
-              + T1 * dsxpart_dVs + gbspsp);
-          here->BSIM3v32DdpPt = m * here->BSIM3v32drainConductance;
+	      
           here->BSIM3v32GbPt = m * (gcggb + gcgdb + gcgsb + ggtb);
           here->BSIM3v32GdpPt = m * (gcgdb - ggtd);
           here->BSIM3v32GspPt = m * (gcgsb - ggts);
-          here->BSIM3v32SspPt = m * here->BSIM3v32sourceConductance;
           here->BSIM3v32BgPt = m * (gcbgb - here->BSIM3v32gbgs);
           here->BSIM3v32BdpPt = m * (gcbdb - here->BSIM3v32gbd + gbbdp);
           here->BSIM3v32BspPt = m * (gcbsb - here->BSIM3v32gbs + gbbsp);
-          here->BSIM3v32DPdPt = m * here->BSIM3v32drainConductance;
           here->BSIM3v32DPgPt = m * (Gm + gcdgb + dxpart * ggtg
               + T1 * ddxpart_dVg + gbdpg);
           here->BSIM3v32DPbPt = m * (here->BSIM3v32gbd - Gmbs + gcdgb + gcddb
@@ -3359,14 +3371,25 @@ line900:
               - dxpart * ggts - T1 * ddxpart_dVs - gbdpsp);
           here->BSIM3v32SPgPt = m * (gcsgb - Gm + sxpart * ggtg
               + T1 * dsxpart_dVg + gbspg);
-          here->BSIM3v32SPsPt = m * here->BSIM3v32sourceConductance;
           here->BSIM3v32SPbPt = m * (here->BSIM3v32gbs + Gmbs + gcsgb + gcsdb
               + gcssb - sxpart * ggtb
               - T1 * dsxpart_dVb - gbspb);
           here->BSIM3v32SPdpPt = m * (here->BSIM3v32gds + RevSum - gcsdb
               - sxpart * ggtd - T1 * dsxpart_dVd - gbspdp);
-
-          if (here->BSIM3v32nqsMod)
+	  here->BSIM3v32DPdpPt = m * (here->BSIM3v32drainConductance
+              + here->BSIM3v32gds + here->BSIM3v32gbd
+              + RevSum + gcddb + dxpart * ggtd
+              + T1 * ddxpart_dVd + gbdpdp);
+          here->BSIM3v32SPspPt = m * (here->BSIM3v32sourceConductance
+              + here->BSIM3v32gds + here->BSIM3v32gbs
+              + FwdSum + gcssb + sxpart * ggts
+              + T1 * dsxpart_dVs + gbspsp);
+	  here->BSIM3v32DdpPt = m * here->BSIM3v32drainConductance;
+	  here->BSIM3v32SspPt = m * here->BSIM3v32sourceConductance;
+	  here->BSIM3v32DPdPt = m * here->BSIM3v32drainConductance;
+	  here->BSIM3v32SPsPt = m * here->BSIM3v32sourceConductance;
+	  #ifndef OMP_EFFMEM
+	  if (here->BSIM3v32nqsMod)
           {
               here->BSIM3v32QqPt = m * (gqdef + here->BSIM3v32gtau);
 
@@ -3379,7 +3402,24 @@ line900:
               here->BSIM3v32QspPt = m * (ggts - gcqsb);
               here->BSIM3v32QbPt = m * (ggtb - gcqbb);
           }
-#else
+	  #else
+	  if (here->BSIM3v32nqsMod)
+            {
+              *(here->BSIM3v32QqPtr) += m * (gqdef + here->BSIM3v32gtau);
+
+              *(here->BSIM3v32DPqPtr) += m * (dxpart * here->BSIM3v32gtau);
+              *(here->BSIM3v32SPqPtr) += m * (sxpart * here->BSIM3v32gtau);
+              *(here->BSIM3v32GqPtr) -= m * here->BSIM3v32gtau;
+
+              *(here->BSIM3v32QgPtr) += m * (ggtg - gcqgb);
+              *(here->BSIM3v32QdpPtr) += m * (ggtd - gcqdb);
+              *(here->BSIM3v32QspPtr) += m * (ggts - gcqsb);
+              *(here->BSIM3v32QbPtr) += m * (ggtb - gcqbb);
+            }
+	  #endif      
+#endif /* ifdef USE_OMP */
+	  
+#ifndef USE_OMP
           (*(here->BSIM3v32DdPtr) += m * here->BSIM3v32drainConductance);
           (*(here->BSIM3v32GgPtr) += m * (gcggb - ggtg));
           (*(here->BSIM3v32SsPtr) += m * here->BSIM3v32sourceConductance);
@@ -3457,14 +3497,18 @@ void BSIM3v32LoadRhsMat(GENmodel *inModel, CKTcircuit *ckt)
     for (idx = 0; idx < InstCount; idx++) {
         here = InstArray[idx];
         model = BSIM3v32modPtr(here);
+	/* F.B. Update non convergence count */
+	ckt->CKTnoncon += here->BSIM3v32noncon;
         /* Update b for Ax = b */
         (*(ckt->CKTrhs + here->BSIM3v32gNode) -= here->BSIM3v32rhsG);
         (*(ckt->CKTrhs + here->BSIM3v32bNode) -= here->BSIM3v32rhsB);
         (*(ckt->CKTrhs + here->BSIM3v32dNodePrime) += here->BSIM3v32rhsD);
         (*(ckt->CKTrhs + here->BSIM3v32sNodePrime) += here->BSIM3v32rhsS);
+	#ifndef OMP_EFFMEM
         if (here->BSIM3v32nqsMod)
             (*(ckt->CKTrhs + here->BSIM3v32qNode) += here->BSIM3v32rhsQ);
-
+	#endif
+	
         /* Update A for Ax = b */
         (*(here->BSIM3v32DdPtr) += here->BSIM3v32DdPt);
         (*(here->BSIM3v32GgPtr) += here->BSIM3v32GgPt);
@@ -3488,7 +3532,8 @@ void BSIM3v32LoadRhsMat(GENmodel *inModel, CKTcircuit *ckt)
         (*(here->BSIM3v32SPsPtr) -= here->BSIM3v32SPsPt);
         (*(here->BSIM3v32SPbPtr) -= here->BSIM3v32SPbPt);
         (*(here->BSIM3v32SPdpPtr) -= here->BSIM3v32SPdpPt);
-
+	
+        #ifndef OMP_EFFMEM
         if (here->BSIM3v32nqsMod)
         {
             *(here->BSIM3v32QqPtr) += here->BSIM3v32QqPt;
@@ -3502,6 +3547,7 @@ void BSIM3v32LoadRhsMat(GENmodel *inModel, CKTcircuit *ckt)
             *(here->BSIM3v32QspPtr) += here->BSIM3v32QspPt;
             *(here->BSIM3v32QbPtr) += here->BSIM3v32QbPt;
         }
+	#endif
 
     }
 }

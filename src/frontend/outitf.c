@@ -1402,9 +1402,14 @@ InterpFileAdd(runDesc *run, IFvalue *refValue, IFvalue *valuePtr)
     static double timeold = 0.0, timenew = 0.0, timestep = 0.0;
     bool nodata = FALSE;
     bool interpolatenow = FALSE;
+    static bool pass2done = FALSE;
 
+    /* If tran with uic and interp, run fileInit_pass2 only once */
     if (run->pointCount == 1) {
-        fileInit_pass2(run);
+        if (!pass2done) {
+            fileInit_pass2(run);
+            pass2done = TRUE;
+        }
         timestep = run->circuit->CKTinitTime + run->circuit->CKTstep;
     }
 

@@ -24,12 +24,17 @@ libbsim3v32_la_SOURCES = \
 	bsim3v32ext.h	\
 	bsim3v32init.c	\
 	bsim3v32init.h	\
-	bsim3v32itf.h
+	bsim3v32itf.h \
+	b3v32ldseq.c \
+	b3v32ldsel.c \
+	b3v32ldsimd.c \
+	vec4_exp.c \
+	vec4_log.c
 
 
 
-AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
-AM_CFLAGS = $(STATIC)
+AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include -DBSIM3v32SIMD
+AM_CFLAGS = $(STATIC) -Wall -fno-math-errno -ffast-math
 
 MAINTAINERCLEANFILES = Makefile.in
 

@@ -33,7 +33,11 @@ SPICEdev BSIM3v32info = {
 
     .DEVparam = BSIM3v32param,
     .DEVmodParam = BSIM3v32mParam,
+#ifdef BSIM3v32SIMD
+    .DEVload = BSIM3v32loadSel, /*F.B: point to load function wrapper */
+#else
     .DEVload = BSIM3v32load,
+#endif
     .DEVsetup = BSIM3v32setup,
     .DEVunsetup = BSIM3v32unsetup,
     .DEVpzSetup = BSIM3v32setup,
