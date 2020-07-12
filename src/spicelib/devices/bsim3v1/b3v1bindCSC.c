@@ -8,30 +8,16 @@ Author: 2013 Francesco Lannutti
 #include "ngspice/sperror.h"
 #include "ngspice/klu-binding.h"
 
-#include <stdlib.h>
-
-static
-int
-BindCompare (const void *a, const void *b)
-{
-    BindElement *A, *B ;
-    A = (BindElement *)a ;
-    B = (BindElement *)b ;
-
-    return ((int)(A->Sparse - B->Sparse)) ;
-}
-
 int
 BSIM3v1bindCSC (GENmodel *inModel, CKTcircuit *ckt)
 {
     BSIM3v1model *model = (BSIM3v1model *)inModel ;
     BSIM3v1instance *here ;
-    double *i ;
-    BindElement *matched, *BindStruct ;
+    BindElement i, *matched, *BindStruct ;
     size_t nz ;
 
-    BindStruct = ckt->CKTmatrix->CKTbindStruct ;
-    nz = (size_t)ckt->CKTmatrix->CKTklunz ;
+    BindStruct = ckt->CKTmatrix->SMPkluMatrix->KLUmatrixBindStructCOO ;
+    nz = (size_t)ckt->CKTmatrix->SMPkluMatrix->KLUmatrixLinkedListNZ ;
 
     /* loop through all the BSIM3v1 models */
     for ( ; model != NULL ; model = BSIM3v1nextModel(model))

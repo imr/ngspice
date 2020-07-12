@@ -8,31 +8,17 @@ Author: 2015 Francesco Lannutti
 #include "ngspice/sperror.h"
 #include "ngspice/klu-binding.h"
 
-#include <stdlib.h>
-
-static
-int
-BindCompare (const void *a, const void *b)
-{
-    BindElement *A, *B ;
-    A = (BindElement *)a ;
-    B = (BindElement *)b ;
-
-    return ((int)(A->Sparse - B->Sparse)) ;
-}
-
 int
 ASRCbindCSC (GENmodel *inModel, CKTcircuit *ckt)
 {
     ASRCmodel *model = (ASRCmodel *)inModel ;
     ASRCinstance *here ;
-    double *i ;
-    BindElement *matched, *BindStruct ;
+    BindElement i, *matched, *BindStruct ;
     size_t nz ;
     int j, k ;
 
-    BindStruct = ckt->CKTmatrix->CKTbindStruct ;
-    nz = (size_t)ckt->CKTmatrix->CKTklunz ;
+    BindStruct = ckt->CKTmatrix->SMPkluMatrix->KLUmatrixBindStructCOO ;
+    nz = (size_t)ckt->CKTmatrix->SMPkluMatrix->KLUmatrixLinkedListNZ ;
 
     /* loop through all the ASRC models */
     for ( ; model != NULL ; model = ASRCnextModel(model))

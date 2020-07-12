@@ -45,22 +45,6 @@ static double inc_freq(double freq, int type, double step_size);
     }
 
 
-#ifdef KLU
-#include <stdlib.h>
-
-static
-int
-BindCompare (const void *a, const void *b)
-{
-    BindElement *A, *B ;
-    A = (BindElement *)a ;
-    B = (BindElement *)b ;
-
-    return ((int)(A->Sparse - B->Sparse)) ;
-}
-#endif
-
-
 /*
  *	Procedure:
  *
@@ -117,7 +101,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 	SMPmatrix	*saved_matrix = NULL;
 
 #ifdef KLU
-	int nz, size_CSC;
+	int size_CSC ;
 #endif
 
 #ifndef notdef
@@ -173,32 +157,13 @@ int sens_sens(CKTcircuit *ckt, int restart)
 		/* Create the perturbation matrix */
 		delta_Y = TMALLOC(SMPmatrix, 1);
 
-#ifdef KLU
-		delta_Y->CKTkluSymbolic = NULL;
-		delta_Y->CKTkluNumeric = NULL;
-		delta_Y->CKTkluAp = NULL;
-		delta_Y->CKTkluAi = NULL;
-		delta_Y->CKTkluAx = NULL;
-		delta_Y->CKTkluMatrixIsComplex = CKTkluMatrixReal;
-		delta_Y->CKTkluIntermediate = NULL;
-		delta_Y->CKTkluIntermediate_Complex = NULL;
-		delta_Y->CKTbindStruct = NULL;
-		delta_Y->CKTdiag_CSC = NULL;
-		delta_Y->CKTkluN = 0;
-		delta_Y->CKTklunz = 0;
-		delta_Y->CKTkluMODE = ckt->CKTkluMODE;
-
-		if (ckt->CKTkluMODE) {
-		    delta_Y->CKTkluCommon = TMALLOC(klu_common, 1);
-		    klu_defaults(delta_Y->CKTkluCommon);
-		} else {
-		    delta_Y->CKTkluCommon = NULL;
-		}
-#endif
-
 		error = SMPnewMatrix(delta_Y, size);
 		if (error)
 			return error;
+
+#ifdef KLU
+		delta_Y->SMPkluMatrix->KLUmatrixDiag = NULL ;
+#endif
 
 //		SMPprint(delta_Y, NULL);
 		size += 1;
@@ -300,15 +265,15 @@ int sens_sens(CKTcircuit *ckt, int restart)
 #ifdef KLU
 	if (ckt->CKTkluMODE) {
 
-	    /* Convert the KLU matrix to complex */
-	    for (i = 0 ; i < Y->CKTklunz ; i++) {
-		Y->CKTkluAx_Complex [2 * i] = Y->CKTkluAx [i];
-		Y->CKTkluAx_Complex [2 * i + 1] = 0.0;
+	    /* Convert the KLU Circuit Matrix to Complex */
+	    for (i = 0 ; i < (int)Y->SMPkluMatrix->KLUmatrixNZ ; i++) {
+		Y->SMPkluMatrix->KLUmatrixAxComplex [2 * i] = Y->SMPkluMatrix->KLUmatrixAx [i] ;
+		Y->SMPkluMatrix->KLUmatrixAxComplex [2 * i + 1] = 0.0 ;
 	    }
 
-	    Y->CKTkluMatrixIsComplex = CKTkluMatrixComplex;
+	    Y->SMPkluMatrix->KLUmatrixIsComplex = KLUMatrixComplex ;
 
-	    SMPcReorder(Y, ckt->CKTpivotAbsTol, ckt->CKTpivotRelTol, &size_CSC); // size_CSC is just a placeholder here
+	    SMPcReorder (Y, ckt->CKTpivotAbsTol, ckt->CKTpivotRelTol, &size_CSC) ; // size_CSC is just a placeholder here
 	}
 #endif
 
@@ -378,14 +343,14 @@ int sens_sens(CKTcircuit *ckt, int restart)
                             /* ReOrder */
                             error = SMPpreOrder (ckt->CKTmatrix) ;
 
-                            /* Conversion from Real Matrix to Complex Matrix */
-                            if (!ckt->CKTmatrix->CKTkluMatrixIsComplex)
+                            /* Conversion from Real Circuit Matrix to Complex Circuit Matrix */
+                            if (!ckt->CKTmatrix->SMPkluMatrix->KLUmatrixIsComplex)
                             {
                                 for (i = 0 ; i < DEVmaxnum ; i++)
                                     if (DEVices [i] && DEVices [i]->DEVbindCSCComplex && ckt->CKThead [i])
                                         DEVices [i]->DEVbindCSCComplex (ckt->CKThead [i], ckt) ;
 
-                                ckt->CKTmatrix->CKTkluMatrixIsComplex = CKTkluMatrixComplex ;
+                                ckt->CKTmatrix->SMPkluMatrix->KLUmatrixIsComplex = KLUMatrixComplex ;
                             }
                         }
 #endif
@@ -470,43 +435,23 @@ int sens_sens(CKTcircuit *ckt, int restart)
 #ifdef KLU
 			if (ckt->CKTmatrix->CKTkluMODE)
 			{
-			    size_CSC = SMPmatSize (ckt->CKTmatrix) ;
-			    ckt->CKTmatrix->CKTkluN = size_CSC ;
+                            /* Populate the delta_Y KLU Matrix */
 
-			    SMPnnz (ckt->CKTmatrix) ;
-			    nz = ckt->CKTmatrix->CKTklunz ;
-
-			    ckt->CKTmatrix->CKTkluAp	       = TMALLOC (int, size_CSC + 1) ;
-			    ckt->CKTmatrix->CKTkluAi	       = TMALLOC (int, nz) ;
-			    ckt->CKTmatrix->CKTkluAx	       = TMALLOC (double, nz) ;
-			    ckt->CKTmatrix->CKTkluIntermediate = TMALLOC (double, size_CSC) ;
-
-			    ckt->CKTmatrix->CKTbindStruct      = TMALLOC (BindElement, nz) ;
-
-			    ckt->CKTmatrix->CKTdiag_CSC	       = TMALLOC (double *, size_CSC) ;
-
-			    /* Complex Stuff needed for AC Analysis */
-			    ckt->CKTmatrix->CKTkluAx_Complex = TMALLOC (double, 2 * nz) ;
-			    ckt->CKTmatrix->CKTkluIntermediate_Complex = TMALLOC (double, 2 * size_CSC) ;
-
-			    /* Binding Table from Sparse to CSC Format Creation */
-			    SMPmatrix_CSC (ckt->CKTmatrix) ;
-
-			    /* Binding Table Sorting */
-			    qsort (ckt->CKTmatrix->CKTbindStruct, (size_t)nz, sizeof(BindElement), BindCompare) ;
+                            /* Convert the COO Storage to CSC for KLU and Fill the Binding Table */
+                            SMPconvertCOOtoCSC (delta_Y) ;
 
 			    /* KLU Pointers Assignment */
 			    if (DEVices [sg->dev]->DEVbindCSC)
 				DEVices [sg->dev]->DEVbindCSC (sg->model, ckt) ;
 
-			    ckt->CKTmatrix->CKTkluMatrixIsComplex = CKTkluMatrixReal ;
+			    delta_Y->SMPkluMatrix->KLUmatrixIsComplex = KLUmatrixReal ;
 
 			    /* Clear KLU Vectors */
-			    for (i = 0 ; i < nz ; i++)
+			    for (i = 0 ; i < (int)delta_Y->SMPkluMatrix->KLUmatrixNZ ; i++)
 			    {
-				ckt->CKTmatrix->CKTkluAx [i] = 0 ;
-				ckt->CKTmatrix->CKTkluAx_Complex [2 * i] = 0 ;
-				ckt->CKTmatrix->CKTkluAx_Complex [2 * i + 1] = 0 ;
+				delta_Y->SMPkluMatrix->KLUmatrixAx [i] = 0 ;
+				delta_Y->SMPkluMatrix->KLUmatrixAxComplex [2 * i] = 0 ;
+				delta_Y->SMPkluMatrix->KLUmatrixAxComplex [2 * i + 1] = 0 ;
 			    }
 			}
 #endif
@@ -529,7 +474,7 @@ int sens_sens(CKTcircuit *ckt, int restart)
 				if (DEVices [sg->dev]->DEVbindCSCComplex)
 				    DEVices [sg->dev]->DEVbindCSCComplex (sg->model, ckt) ;
 
-				ckt->CKTmatrix->CKTkluMatrixIsComplex = CKTkluMatrixComplex ;
+				delta_Y->SMPkluMatrix->KLUmatrixIsComplex = KLUMatrixComplex ;
 			    }
 			}
 #endif

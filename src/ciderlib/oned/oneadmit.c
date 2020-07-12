@@ -119,7 +119,7 @@ NUMDadmittance(ONEdevice *pDevice, double omega, SPcomplex *yd)
 
 #ifdef KLU
     if (pDevice->matrix->CKTkluMODE) {
-      pDevice->matrix->SMPkluMatrix->KLUmatrixIsComplex = CKTkluMatrixComplex ;
+      pDevice->matrix->SMPkluMatrix->KLUmatrixIsComplex = KLUMatrixComplex ;
     } else {
 #endif
 
@@ -315,7 +315,7 @@ NBJTadmittance(ONEdevice *pDevice, double omega, SPcomplex *yIeVce,
 
 #ifdef KLU
     if (pDevice->matrix->CKTkluMODE) {
-      pDevice->matrix->SMPkluMatrix->KLUmatrixIsComplex = CKTkluMatrixComplex ;
+      pDevice->matrix->SMPkluMatrix->KLUmatrixIsComplex = KLUMatrixComplex ;
     } else {
 #endif
 
@@ -580,7 +580,7 @@ NUMDys(ONEdevice *pDevice, SPcomplex *s, SPcomplex *yd)
 
 #ifdef KLU
   if (pDevice->matrix->CKTkluMODE) {
-    pDevice->matrix->SMPkluMatrix->KLUmatrixIsComplex = CKTkluMatrixComplex ;
+    pDevice->matrix->SMPkluMatrix->KLUmatrixIsComplex = KLUMatrixComplex ;
   } else {
 #endif
 
@@ -667,7 +667,7 @@ NBJTys(ONEdevice *pDevice, SPcomplex *s, SPcomplex *yIeVce,
 
 #ifdef KLU
   if (pDevice->matrix->CKTkluMODE) {
-    pDevice->matrix->SMPkluMatrix->KLUmatrixIsComplex = CKTkluMatrixComplex ;
+    pDevice->matrix->SMPkluMatrix->KLUmatrixIsComplex = KLUMatrixComplex ;
   } else {
 #endif
 
