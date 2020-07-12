@@ -569,7 +569,7 @@ TWOPbindCSC (TWOdevice *pDevice)
   TWOelem *pElem;
   TWOnode *pNode;
   TWOchannel *pCh;
-  BindKluElementCOO i, *matched, *BindStruct, *BindStructCSC ;
+  BindElementKLUforCIDER i, *matched, *BindStruct, *BindStructCSC ;
   int index ;
   size_t nz ;
 
@@ -583,10 +583,10 @@ TWOPbindCSC (TWOdevice *pDevice)
   int psiEqnInM = 0, psiEqnInP = 0;		/* scratch for deref'd surface eqns */
   int psiEqnOxM = 0, psiEqnOxP = 0;		/* M= more negative, P= more positive */
 
-  BindStruct = pDevice->matrix->SMPkluMatrix->KLUmatrixBindStructCOO ;
+  BindStruct = pDevice->matrix->SMPkluMatrix->KLUmatrixBindStructForCIDER ;
   nz = pDevice->matrix->SMPkluMatrix->KLUmatrixNZ ;
 
-  BindStructCSC = (BindKluElementCOO *) malloc (nz * sizeof(BindKluElementCOO)) ;
+  BindStructCSC = (BindElementKLUforCIDER *) malloc (nz * sizeof (BindElementKLUforCIDER)) ;
   for (index = 0 ; index < (int)nz ; index++) {
     BindStructCSC [index] = BindStruct [index] ;
   }

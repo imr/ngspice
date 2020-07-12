@@ -296,20 +296,7 @@ extern  void     spMultTransposed(MatrixPtr,spREAL*,spREAL*,spREAL*,spREAL*);
 extern  void     spSolve( MatrixPtr, spREAL*, spREAL*, spREAL*, spREAL* );
 extern  void     spSolveTransposed(MatrixPtr,spREAL*,spREAL*,spREAL*,spREAL*);
 
-/* Francesco Lannutti - CSC Data Structure Conversion */
-#ifdef KLU
-typedef struct sBindElement {
-    double *Sparse ;
-    double *CSC ;
-    double *CSC_Complex ;
-} BindElement ;
-
-extern int WriteCol_original (MatrixPtr, int, spREAL *, spREAL *, int *, BindElement *, spREAL **) ;
-extern int WriteCol_original_dump (MatrixPtr, int, spREAL *, int *, unsigned int) ;
-extern void spMatrix_CSC (MatrixPtr, int *, int *, double *, double *, int, BindElement *, double **) ;
-extern void spMatrix_CSC_dump (MatrixPtr, unsigned int, char *) ;
-extern void spRHS_CSC_dump (spREAL *, char *, MatrixPtr) ;
-#endif
 /* ------------------------------------------------------ */
 
 #endif  /* spOKAY */
+
