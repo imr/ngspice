@@ -259,13 +259,13 @@ ACan(CKTcircuit* ckt, int restart)
     if (ckt->CKTmatrix->CKTkluMODE)
     {
         /* Conversion from Real Matrix to Complex Matrix */
-        if (!ckt->CKTmatrix->CKTkluMatrixIsComplex)
+        if (!ckt->CKTmatrix->SMPkluMatrix->KLUmatrixIsComplex)
         {
             for (i = 0 ; i < DEVmaxnum ; i++)
                 if (DEVices [i] && DEVices [i]->DEVbindCSCComplex && ckt->CKThead [i])
                     DEVices [i]->DEVbindCSCComplex (ckt->CKThead [i], ckt) ;
 
-            ckt->CKTmatrix->CKTkluMatrixIsComplex = CKTkluMatrixComplex ;
+            ckt->CKTmatrix->SMPkluMatrix->KLUmatrixIsComplex = KLUMatrixComplex ;
         }
     }
 #endif
@@ -290,7 +290,7 @@ ACan(CKTcircuit* ckt, int restart)
                     if (DEVices [i] && DEVices [i]->DEVbindCSCComplexToReal && ckt->CKThead [i])
                         DEVices [i]->DEVbindCSCComplexToReal (ckt->CKThead [i], ckt) ;
 
-                ckt->CKTmatrix->CKTkluMatrixIsComplex = CKTkluMatrixReal ;
+                ckt->CKTmatrix->SMPkluMatrix->KLUmatrixIsComplex = KLUmatrixReal ;
             }
 #endif
 
@@ -331,7 +331,7 @@ ACan(CKTcircuit* ckt, int restart)
                     if (DEVices [i] && DEVices [i]->DEVbindCSCComplex && ckt->CKThead [i])
                         DEVices [i]->DEVbindCSCComplex (ckt->CKThead [i], ckt) ;
 
-                ckt->CKTmatrix->CKTkluMatrixIsComplex = CKTkluMatrixComplex ;
+                ckt->CKTmatrix->SMPkluMatrix->KLUmatrixIsComplex = KLUMatrixComplex ;
             }
 #endif
 
@@ -443,7 +443,7 @@ endsweep:
             if (DEVices [i] && DEVices [i]->DEVbindCSCComplexToReal && ckt->CKThead [i])
                 DEVices [i]->DEVbindCSCComplexToReal (ckt->CKThead [i], ckt) ;
 
-        ckt->CKTmatrix->CKTkluMatrixIsComplex = CKTkluMatrixReal ;
+        ckt->CKTmatrix->SMPkluMatrix->KLUmatrixIsComplex = KLUmatrixReal ;
     }
 #endif
 

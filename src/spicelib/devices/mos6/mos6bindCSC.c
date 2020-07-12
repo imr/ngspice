@@ -8,30 +8,16 @@ Author: 2012 Francesco Lannutti
 #include "ngspice/sperror.h"
 #include "ngspice/klu-binding.h"
 
-#include <stdlib.h>
-
-static
-int
-BindCompare (const void *a, const void *b)
-{
-    BindElement *A, *B ;
-    A = (BindElement *)a ;
-    B = (BindElement *)b ;
-
-    return ((int)(A->Sparse - B->Sparse)) ;
-}
-
 int
 MOS6bindCSC (GENmodel *inModel, CKTcircuit *ckt)
 {
     MOS6model *model = (MOS6model *)inModel ;
     MOS6instance *here ;
-    double *i ;
-    BindElement *matched, *BindStruct ;
+    BindElement i, *matched, *BindStruct ;
     size_t nz ;
 
-    BindStruct = ckt->CKTmatrix->CKTbindStruct ;
-    nz = (size_t)ckt->CKTmatrix->CKTklunz ;
+    BindStruct = ckt->CKTmatrix->SMPkluMatrix->KLUmatrixBindStructCOO ;
+    nz = (size_t)ckt->CKTmatrix->SMPkluMatrix->KLUmatrixLinkedListNZ ;
 
     /* loop through all the MOS6 models */
     for ( ; model != NULL ; model = MOS6nextModel(model))

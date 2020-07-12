@@ -28,39 +28,19 @@ typedef struct sSMPmatrix {
     MatrixFrame *SPmatrix ;                /* pointer to sparse matrix */
 
 #ifdef KLU
-    klu_common *CKTkluCommon ;             /* KLU common object */
-    klu_symbolic *CKTkluSymbolic ;         /* KLU symbolic object */
-    klu_numeric *CKTkluNumeric ;           /* KLU numeric object */
-    int *CKTkluAp ;                        /* KLU column pointer */
-    int *CKTkluAi ;                        /* KLU row pointer */
-    double *CKTkluAx ;                     /* KLU Real Elements */
-    double *CKTkluAx_Complex ;             /* KLU Complex Elements */
-    unsigned int CKTkluMatrixIsComplex:1 ; /* KLU Matrix Is Complex Flag */
-    #define CKTkluMatrixReal 0             /* KLU Matrix Real definition */
-    #define CKTkluMatrixComplex 1          /* KLU Matrix Complex definition */
-    double *CKTkluIntermediate ;           /* KLU RHS Intermediate for Solve Real Step */
-    double *CKTkluIntermediate_Complex ;   /* KLU iRHS Intermediate for Solve Complex Step */
-    BindElement *CKTbindStruct ;           /* KLU - Sparse Binding Structure */
-    double **CKTdiag_CSC ;                 /* KLU pointer to diagonal element to perform Gmin */
-    int CKTkluN ;                          /* KLU N, copied */
-    int CKTklunz ;                         /* KLU nz, copied for AC Analysis */
+    KLUmatrix *SMPkluMatrix ;              /* KLU Pointer to the KLU Matrix Data Structure (only for CIDER, for the moment) */
     unsigned int CKTkluMODE:1 ;            /* KLU MODE parameter to enable KLU or not from the heuristic */
     #define CKTkluON 1                     /* KLU MODE ON definition */
     #define CKTkluOFF 0                    /* KLU MODE OFF definition */
-
-#ifdef CIDER
-    KLUmatrix *SMPkluMatrix ;              /* KLU Pointer to the KLU Matrix Data Structure (only for CIDER, for the moment) */
-#endif
-
+    double CKTkluMemGrowFactor ;           /* KLU Memory Grow Factor - default = 1.2 */
 #endif
 
 } SMPmatrix ;
 
 
 #ifdef KLU
-void SMPmatrix_CSC (SMPmatrix *) ;
-void SMPnnz (SMPmatrix *) ;
 void spDeterminant_KLU (SMPmatrix *, int *, double *, double *) ;
+void SMPconvertCOOtoCSC (SMPmatrix *) ;
 
 #ifdef CIDER
 void SMPsolveKLUforCIDER (SMPmatrix *, double [], double [], double [], double []) ;
@@ -74,9 +54,10 @@ int SMPluFacKLUforCIDER (SMPmatrix *) ;
 void SMPprintKLUforCIDER (SMPmatrix *, char *) ;
 #endif
 
+#else
+int SMPaddElt (SMPmatrix *, int, int, double) ;
 #endif
 
-int SMPaddElt( SMPmatrix *, int , int , double );
 double * SMPmakeElt( SMPmatrix * , int , int );
 void SMPcClear( SMPmatrix *);
 void SMPclear( SMPmatrix *);
@@ -112,3 +93,4 @@ void SMPsolveForCIDER (SMPmatrix *, double [], double []) ;
 #endif
 
 #endif
+

@@ -251,77 +251,6 @@ ONE_jacBuild(ONEdevice *pDevice)
 }
 
 #ifdef KLU
-/*
-#define CREATE_KLU_BINDING_TABLE_CIDER(ptr, binding, a, b)                             \
-    printf ("Swapping Pointer %s: (%d,%d)\n", #ptr, a, b) ; \
-    if ((a > 0) && (b > 0)) {                                      \
-        if (pNode->binding != NULL) { \
-            if (pNode->binding->CSC_Complex != NULL) { \
-                printf ("  Looking for the Pointer: %p\n", pNode->binding->CSC_Complex) ; \
-                qsort (BindStructCSC, nz, sizeof(BindKluElementCOO), BindKluCompareCSC) ; \
-                i.COO = NULL ; \
-                i.CSC_Complex = pNode->binding->CSC_Complex ; \
-                matched = (BindKluElementCOO *) bsearch (&i, BindStructCSC, nz, sizeof(BindKluElementCOO), BindKluCompareCSC) ; \
-                if (matched != NULL) { \
-                    printf ("  Found the Old Pointer\n") ; \
-                    pNode->ptr = pNode->binding->CSC_Complex ; \
-                } else { \
-                    i.COO = pNode->ptr ;                                                          \
-                    i.CSC_Complex = NULL ; \
-                    matched = (BindKluElementCOO *) bsearch (&i, BindStruct, nz, sizeof(BindKluElementCOO), BindKluCompareCOO) ; \
-                    if (matched != NULL) { \
-                        printf ("  Looking for the Pointer 1\n") ; \
-                        pNode->binding = matched ;                                                \
-                        pNode->ptr = matched->CSC_Complex ;                                               \
-                    } else { \
-                        printf ("  Leaving the Pointer as is\n") ; \
-                    } \
-                } \
-            } else { \
-                printf ("  Looking for the Pointer 2\n") ; \
-                i.COO = pNode->ptr ;                                                          \
-                i.CSC_Complex = NULL ; \
-                matched = (BindKluElementCOO *) bsearch (&i, BindStruct, nz, sizeof(BindKluElementCOO), BindKluCompareCOO) ; \
-                pNode->binding = matched ;                                                \
-                pNode->ptr = matched->CSC_Complex ;                                               \
-            } \
-        } else { \
-            printf ("  Looking for the Pointer 3\n") ; \
-            i.COO = pNode->ptr ;                                                          \
-            i.CSC_Complex = NULL ; \
-            matched = (BindKluElementCOO *) bsearch (&i, BindStruct, nz, sizeof(BindKluElementCOO), BindKluCompareCOO) ; \
-            pNode->binding = matched ;                                                \
-            pNode->ptr = matched->CSC_Complex ;                                               \
-        } \
-    }
-*/
-
-/*
-#define CREATE_KLU_BINDING_TABLE_CIDER_TO_REAL(ptr, binding, a, b)                             \
-    if ((a > 0) && (b > 0)) {                                      \
-        printf ("Macro\n") ; \
-        if (pNode->binding) { \
-            printf ("IF: %p\n", pNode->binding) ; \
-            printf ("COO: %p\n", pNode->binding->COO) ; \
-            printf ("CSC: %p\n", pNode->binding->CSC) ; \
-            if (pNode->binding->CSC_Complex) { \
-                printf ("CSC_Complex: %p\n", pNode->binding->CSC_Complex) ; \
-                pNode->ptr = pNode->binding->CSC_Complex ; \
-            } else { \
-                i = pNode->ptr ;                                                          \
-                matched = (BindKluElementCOO *) bsearch (&i, BindStruct, nz, sizeof(BindKluElementCOO), BindKluCompareCOO) ; \
-                pNode->binding = matched ;                                                \
-                pNode->ptr = matched->CSC_Complex ;                                               \
-            } \
-        } else { \
-            i = pNode->ptr ;                                                          \
-            matched = (BindKluElementCOO *) bsearch (&i, BindStruct, nz, sizeof(BindKluElementCOO), BindKluCompareCOO) ; \
-            pNode->binding = matched ;                                                \
-            pNode->ptr = matched->CSC_Complex ;                                               \
-        } \
-    }
-*/
-
 void
 ONEbindCSC (ONEdevice *pDevice)
 {
@@ -331,13 +260,13 @@ ONEbindCSC (ONEdevice *pDevice)
   int psiEqn, nEqn, pEqn;	/* scratch for deref'd eqn numbers */
   int psiEqnL=0, nEqnL=0, pEqnL=0;
   int psiEqnR=0, nEqnR=0, pEqnR=0;
-  BindKluElementCOO i, *matched, *BindStruct, *BindStructCSC ;
+  BindElementKLUforCIDER i, *matched, *BindStruct, *BindStructCSC ;
   size_t nz ;
 
-  BindStruct = pDevice->matrix->SMPkluMatrix->KLUmatrixBindStructCOO ;
+  BindStruct = pDevice->matrix->SMPkluMatrix->KLUmatrixBindStructForCIDER ;
   nz = pDevice->matrix->SMPkluMatrix->KLUmatrixNZ ;
 
-  BindStructCSC = (BindKluElementCOO *) malloc (nz * sizeof(BindKluElementCOO)) ;
+  BindStructCSC = (BindElementKLUforCIDER *) malloc (nz * sizeof (BindElementKLUforCIDER)) ;
   for (index = 0 ; index < (int)nz ; index++) {
     BindStructCSC [index] = BindStruct [index] ;
   }

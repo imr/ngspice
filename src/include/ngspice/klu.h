@@ -935,33 +935,62 @@ int klu_z_convert_matrix_in_CSR
     klu_common *Common
 ) ;
 
+typedef struct sBindElement {
+    double *COO ;
+    double *CSC ;
+    double *CSC_Complex ;
+} BindElement ;
+
 #ifdef CIDER
-typedef struct sBindKluElementCOO {
+typedef struct sBindElementKLUforCIDER {
     double *COO ;
     double *CSC_Complex ;
-} BindKluElementCOO ;
+} BindElementKLUforCIDER ;
+#endif
 
-int BindKluCompareCOO (const void *a, const void *b) ;
-int BindKluCompareCSC (const void *a, const void *b) ;
+typedef struct sKluLinkedListCOO {
+    unsigned int row ;
+    unsigned int col ;
+    double *pointer ;
+    struct sKluLinkedListCOO *next ;
+} KluLinkedListCOO ;
+
+int BindCompare (const void *a, const void *b) ;
+
+#ifdef CIDER
+int BindCompareKLUforCIDER (const void *a, const void *b) ;
+int BindKluCompareCSCKLUforCIDER (const void *a, const void *b) ;
+#endif
 
 typedef struct sKLUmatrix {
-    klu_common *KLUmatrixCommon ;               /* KLU common object */
-    klu_symbolic *KLUmatrixSymbolic ;           /* KLU symbolic object */
-    klu_numeric *KLUmatrixNumeric ;             /* KLU numeric object */
-    int *KLUmatrixAp ;                          /* KLU column pointer */
-    int *KLUmatrixAi ;                          /* KLU row pointer */
-    double *KLUmatrixAxComplex ;                /* KLU Complex Elements */
-    unsigned int KLUmatrixIsComplex:1 ;         /* KLU Matrix Is Complex Flag */
-    double *KLUmatrixIntermediateComplex ;      /* KLU iRHS Intermediate for Solve Complex Step */
-    unsigned int KLUmatrixN ;                   /* KLU N, copied */
-    unsigned int KLUmatrixNZ ;                  /* KLU nz, copied for AC Analysis */
-    int *KLUmatrixColCOO ;                      /* KLU Col Index for COO storage */
-    int *KLUmatrixRowCOO ;                      /* KLU Row Index for COO storage */
-    double *KLUmatrixValueComplexCOO ;          /* KLU Complex Elements for COO storage */
-    BindKluElementCOO *KLUmatrixBindStructCOO ; /* KLU COO Binding Structure */
-    double *KLUmatrixTrashCOO ;                 /* KLU COO Trash Pointer for Ground Node not Stored in the Matrix */
-} KLUmatrix ;
+    klu_common *KLUmatrixCommon ;              /* KLU common object */
+    klu_symbolic *KLUmatrixSymbolic ;          /* KLU symbolic object */
+    klu_numeric *KLUmatrixNumeric ;            /* KLU numeric object */
+    int *KLUmatrixAp ;                         /* KLU column pointer */
+    int *KLUmatrixAi ;                         /* KLU row pointer */
+    double *KLUmatrixAx ;                      /* KLU Real Elements */
+    double *KLUmatrixAxComplex ;               /* KLU Complex Elements */
+    unsigned int KLUmatrixIsComplex:1 ;        /* KLU Matrix Is Complex Flag */
+    #define KLUmatrixReal 0                    /* KLU Matrix Real definition */
+    #define KLUMatrixComplex 1                 /* KLU Matrix Complex definition */
+    double *KLUmatrixIntermediate ;            /* KLU RHS Intermediate for Solve Real Step */
+    double *KLUmatrixIntermediateComplex ;     /* KLU iRHS Intermediate for Solve Complex Step */
+    unsigned int KLUmatrixN ;                  /* KLU N */
+    unsigned int KLUmatrixNZ ;                 /* KLU nz */
+    BindElement *KLUmatrixBindStructCOO ;      /* KLU COO Binding Structure */
+    KluLinkedListCOO *KLUmatrixLinkedListCOO ; /* KLU COO in Linked List Format for Initial Parsing */
+    unsigned int KLUmatrixLinkedListNZ ;       /* KLU nz for the Initial Parsing */
+    double *KLUmatrixTrashCOO ;                /* KLU COO Trash Pointer for Ground Node not Stored in the Matrix */
+    double **KLUmatrixDiag ;                   /* KLU pointer to diagonal element to perform Gmin */
+
+#ifdef CIDER
+    int *KLUmatrixColCOOforCIDER ;             /* KLU Col Index for COO storage (for CIDER) */
+    int *KLUmatrixRowCOOforCIDER ;             /* KLU Row Index for COO storage (for CIDER) */
+    double *KLUmatrixValueComplexCOOforCIDER ; /* KLU Complex Elements for COO storage (for CIDER) */
+    BindElementKLUforCIDER *KLUmatrixBindStructForCIDER ; /* KLU COO Binding Structure (for CIDER) */
 #endif
+
+} KLUmatrix ;
 
 /* ========================================================================== */
 /* === KLU version ========================================================== */
