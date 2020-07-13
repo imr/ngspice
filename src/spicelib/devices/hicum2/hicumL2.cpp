@@ -1830,7 +1830,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 /*
                  *   limit nonlinear branch voltages
                  */
-                ichk1 = 1, ichk2 = 1, ichk3 = 1, ichk4 = 1, ichk5=0, ichk6 = 0;
+                ichk1 = 1, ichk2 = 1, ichk3 = 1, ichk4 = 1, ichk5=1, ichk6 = 0;
                 Vbiei = DEVpnjlim(Vbiei,*(ckt->CKTstate0 + here->HICUMvbiei),here->HICUMvt.rpart,
                         here->HICUMtVcrit,&icheck);
                 Vbici = DEVpnjlim(Vbici,*(ckt->CKTstate0 + here->HICUMvbici),here->HICUMvt.rpart,
@@ -1844,11 +1844,10 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 Vbpbi = DEVpnjlim(Vbpbi,*(ckt->CKTstate0 + here->HICUMvbpbi),here->HICUMvt.rpart,
                         here->HICUMtVcrit,&ichk5);
                 if (selfheat) {
-                    ichk5 = 6;
                     Vrth = HICUMlimitlog(Vrth,
                         *(ckt->CKTstate0 + here->HICUMvrth),10,&ichk6);
                 }
-                if ((ichk1 == 1) || (ichk2 == 1) || (ichk3 == 1) || (ichk4 == 1) || (ichk5 == 1)|| (ichk6 == 1)) icheck=1;
+                if ((ichk1 == 1) || (ichk2 == 1) || (ichk3 == 1) || (ichk4 == 1) || (ichk5 == 1) || (ichk6 == 1)) icheck=1;
             }
             /*
              *   determine dc current and derivatives
