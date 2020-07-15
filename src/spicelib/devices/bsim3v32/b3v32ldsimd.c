@@ -55,136 +55,123 @@
 
 #define USEX86INTRINSICS 1
 
-typedef double Vec4d __attribute__ ((vector_size (sizeof(double)*NSIMD), aligned (sizeof(double)*NSIMD)));
-typedef long int Vec4m __attribute__ ((vector_size (sizeof(double)*NSIMD), aligned (sizeof(double)*NSIMD)));
+typedef double Vec4d __attribute__ ((vector_size (sizeof(double)*4), aligned (sizeof(double)*4)));
+typedef int64_t Vec4m __attribute__ ((vector_size (sizeof(double)*4), aligned (sizeof(double)*4)));
 
 
 #define SIMDANY(err) (err!=0)
 #define SIMDIFYCMD(cmd) /* empty */
 #define SIMDifySaveScope(sc) /* empty */
 
-#define vec4_pow0p7(x,p) vec4_mypow(x,p)
-#define vec4_powMJ(x,p) vec4_mypow(x,p)
-#define vec4_powMJSW(x,p) vec4_mypow(x,p)
-#define vec4_powMJSWG(x,p) vec4_mypow(x,p)
-
 #if USEX86INTRINSICS==1
-/* libmvec prototypes */
-/* Caution: those libmvec functions are not as precise as std libm */
-__m256d _ZGVdN4v_exp(__m256d x);
-__m256d _ZGVdN4v_log(__m256d x);
-
-#define vec4_MAX(a,b) _mm256_max_pd(a,b)
-#define vec4_exp(a) _ZGVdN4v_exp(a) 
-#define vec4_log(a) _ZGVdN4v_log(a)
-#define vec4_sqrt(a) _mm256_sqrt_pd(a)
-
-
 static inline Vec4d vec4_blend(Vec4d fa, Vec4d tr, Vec4m mask)
 {
 	return _mm256_blendv_pd(fa,tr, (Vec4d) mask);
 }
-
-static inline Vec4d vec4_fabs(Vec4d x)
-{
-	return vec4_blend(x,-x,x<0);
-}
-
 #else
-/* vector-libm prototypes */
-Vec4d vec4_exp_vectorlibm(Vec4d x); /* defined in vec4_exp.c */
-Vec4d vec4_log_vectorlibm(Vec4d x); /* defined in vec4_log.c */
-#define vec4_exp(a) vec4_exp_vectorlibm(a)
-#define vec4_log(a) vec4_log_vectorlibm(a)
-static inline Vec4d vec4_MAX(Vec4d a, Vec4d b)
-{
-	return vec4_blend(a,b,a<b);
-}
 static inline Vec4d vec4_blend(Vec4d fa, Vec4d tr, Vec4m mask)
 {
-	/* hope for good vectorization by the compiler ! */
-	Vec4d res;
+	Vec4d r;
 	#pragma omp simd
 	for(int i=0;i<4;i++)
-	{
-		res[i] = mask[i] ? tr[i] : fa[i];
-	}
-	return res;
-}
-static inline Vec4d vec4_fabs(Vec4d x)
-{
-	/* hope for good vectorization by the compiler ! */
-	Vec4d res;
-	#pragma omp simd
-	for(int i=0;i<4;i++)
-	{
-		res[i] = (x[i] < 0) ? -x[i] : x[i];
-	}
-	return res;
-}
-static inline Vec4d vec4_sqrt(Vec4d x)
-{
-	/* hope for good vectorization by the compiler ! */
-	Vec4d res;
-	#pragma omp simd
-	for(int i=0;i<4;i++)
-	{
-		res[i] = sqrt(x[i]);
-	}
-	return res;
+		r[i] = (mask[i]==0 ? fa[i] : tr[i]);
+	return r;
 }
 #endif
 
-static inline Vec4d vec4_mypow(Vec4d x, double p)
+static inline Vec4d vec4_exp(Vec4d x)
+{
+	Vec4d r;
+	#pragma omp simd
+	for(int i=0;i<4;i++)
+		r[i] = exp(x[i]);
+	return r;
+}
+
+static inline Vec4d vec4_log(Vec4d x)
+{
+	Vec4d r;
+	#pragma omp simd
+	for(int i=0;i<4;i++)
+		r[i] = log(x[i]);
+	return r;
+}
+
+static inline Vec4d vec4_max(Vec4d x, Vec4d y)
+{
+	Vec4d r;
+	#pragma omp simd
+	for(int i=0;i<4;i++)
+		r[i] = MAX(x[i],y[i]);
+	return r;
+}
+
+static inline Vec4d vec4_sqrt(Vec4d x)
+{
+	Vec4d r;
+	#pragma omp simd
+	for(int i=0;i<4;i++)
+		r[i] = sqrt(x[i]);
+	return r;
+}
+
+static inline Vec4d vec4_fabs(Vec4d x)
+{
+	Vec4d r;
+	#pragma omp simd
+	for(int i=0;i<4;i++)
+		r[i] = fabs(x[i]);
+	return r;
+}
+
+#define vec4_pow0p7(x,p) vec4_pow(x,p)
+#define vec4_powMJ(x,p) vec4_pow(x,p)
+#define vec4_powMJSW(x,p) vec4_pow(x,p)
+#define vec4_powMJSWG(x,p) vec4_pow(x,p)
+
+static inline Vec4d vec4_pow(Vec4d x, double p)
 {
 	return vec4_exp(vec4_log(x)*p);
 }
 
-
-/* some debug utils functions */
-void vec4_printd(const char* msg, const char* name, Vec4d vecd)
-{
-	printf("%s %s %g %g %g %g\n",msg,name,vecd[0],vecd[1],vecd[2],vecd[3]);	
-}
-
-void vec4_printm(const char* msg, const char* name, Vec4m vecm)
-{
-	printf("%s %s %ld %ld %ld %ld\n",msg,name,vecm[0],vecm[1],vecm[2],vecm[3]);	
-}
-
-void vec4_CheckCollisions(Vec4m stateindexes, const char* msg)
-{
-	for(int i=0;i<NSIMD;i++)
-	for(int j=0;j<NSIMD;j++)
-	if(i!=j)
-	if(stateindexes[i]==stateindexes[j])
-	{
-		printf("%s, collisions %ld %ld %ld %ld!\n",msg,stateindexes[0],stateindexes[1],stateindexes[2],stateindexes[3]);
-		raise(SIGINT);
-	}
-}
-
 /* useful vectorized functions */
-static inline Vec4d SIMDLOADDATA(int idx, double data[7][NSIMD])
+static inline Vec4d vec4_SIMDTOVECTOR(double val)
+{
+	return (Vec4d) {val,val,val,val};
+}
+
+static inline Vec4m vec4_SIMDTOVECTORMASK(int val)
+{
+	return (Vec4m) {val,val,val,val};
+}
+/* TODO: prefix with vec4_ */
+static inline Vec4d SIMDLOADDATA(int idx, double data[7][4])
 {
 	return (Vec4d) {data[idx][0],data[idx][1],data[idx][2],data[idx][3]};
 }
 
 static inline Vec4d vec4_BSIM3v32_StateAccess(double* cktstate, Vec4m stateindexes)
 {
-	return (Vec4d) {
+	Vec4d r;
+	#pragma omp simd
+	for(int i=0;i<4;i++)
+		r[i] =  cktstate[stateindexes[i]];
+	return r;
+	
+	/*return (Vec4d) {
 	 cktstate[stateindexes[0]],
 	 cktstate[stateindexes[1]],
 	 cktstate[stateindexes[2]],
 	 cktstate[stateindexes[3]]
-	};
+	};"*/
 }
 
 
 static inline void vec4_BSIM3v32_StateStore(double* cktstate, Vec4m stateindexes, Vec4d values)
 {
-	if(0) vec4_CheckCollisions(stateindexes,"SateStore");
-	for(int idx=0;idx<NSIMD;idx++)
+	/*if(0) vec4_CheckCollisions(stateindexes,"SateStore");*/
+	#pragma omp simd
+	for(int idx=0;idx<4;idx++)
 	{
 		cktstate[stateindexes[idx]] = values[idx];
 	}
@@ -192,8 +179,9 @@ static inline void vec4_BSIM3v32_StateStore(double* cktstate, Vec4m stateindexes
 
 static inline void vec4_BSIM3v32_StateAdd(double* cktstate, Vec4m stateindexes, Vec4d values)
 {
-	if(0) vec4_CheckCollisions(stateindexes,"StateAdd");
-	for(int idx=0;idx<NSIMD;idx++)
+	/*if(0) vec4_CheckCollisions(stateindexes,"StateAdd");*/
+	#pragma omp simd
+	for(int idx=0;idx<4;idx++)
 	{
 		cktstate[stateindexes[idx]] += values[idx];
 	}
@@ -201,28 +189,12 @@ static inline void vec4_BSIM3v32_StateAdd(double* cktstate, Vec4m stateindexes, 
 
 static inline void vec4_BSIM3v32_StateSub(double* cktstate, Vec4m stateindexes, Vec4d values)
 {
-	if(0) vec4_CheckCollisions(stateindexes,"StateSub");
-	for(int idx=0;idx<NSIMD;idx++)
+	/*if(0) vec4_CheckCollisions(stateindexes,"StateSub");*/
+	#pragma omp simd
+	for(int idx=0;idx<4;idx++)
 	{
 		cktstate[stateindexes[idx]] -= values[idx];
 	}
-}
-
-static inline Vec4d vec4_exp_seq(Vec4d val)
-{
-	return (Vec4d) {exp(val[0]),exp(val[1]),exp(val[2]),exp(val[3])};
-}
-static inline Vec4d vec4_log_seq(Vec4d val)
-{
-	return (Vec4d) {log(val[0]),log(val[1]),log(val[2]),log(val[3])};
-}
-static inline Vec4d vec4_sqrt_seq(Vec4d val)
-{
-	return (Vec4d) {sqrt(val[0]),sqrt(val[1]),sqrt(val[2]),sqrt(val[3])};
-}
-static inline Vec4d vec4_MAX_seq(Vec4d a, Vec4d b)
-{
-	return (Vec4d) {MAX(a[0],b[0]),MAX(a[1],b[1]),MAX(a[2],b[2]),MAX(a[3],b[3])};
 }
 
 static inline int vec4_BSIM3v32_ACM_saturationCurrents
@@ -235,7 +207,7 @@ static inline int vec4_BSIM3v32_ACM_saturationCurrents
 {
 	int	error;
 	double dsat,ssat;
-	for(int idx=0;idx<NSIMD;idx++)
+	for(int idx=0;idx<4;idx++)
 	{
 		error = BSIM3v32_ACM_saturationCurrents(
 		      model, heres[idx],
@@ -264,7 +236,7 @@ static inline int vec4_BSIM3v32_ACM_junctionCapacitances(
 	int	error;
 	double areaDB,periDB,gateDB,areaSB,periSB,gateSB;
 	
-	for(int idx=0;idx<NSIMD;idx++)
+	for(int idx=0;idx<4;idx++)
 	{
 		error = BSIM3v32_ACM_junctionCapacitances(
 		      model, heres[idx],
@@ -290,8 +262,8 @@ static inline int vec4_BSIM3v32_ACM_junctionCapacitances(
 static inline int vec4_NIintegrate(CKTcircuit* ckt, double* geq, double *ceq, double zero, Vec4m chargestate)
 {
 	int	error;
-	if (0) vec4_CheckCollisions(chargestate, "NIIntegrate");
-	for(int idx=0;idx<NSIMD;idx++)
+	/*if (0) vec4_CheckCollisions(chargestate, "NIIntegrate");*/
+	for(int idx=0;idx<4;idx++)
 	{
 		error = NIintegrate(ckt,geq,ceq,zero,chargestate[idx]);
 		if(error) return error;
@@ -303,15 +275,35 @@ static inline int vec4_SIMDCOUNT(Vec4m mask) {
 	return (mask[0] ? 1 : 0) + (mask[1] ? 1 : 0) + (mask[2] ? 1 : 0) + (mask[3] ? 1 : 0);
 }
 
-static inline Vec4d vec4_SIMDTOVECTOR(double val)
+
+
+/* some debug utils functions */
+void vec4_printd(const char* msg, const char* name, Vec4d vecd)
 {
-	return (Vec4d) {val,val,val,val};
-}
-static inline Vec4m vec4_SIMDTOVECTORMASK(int val)
-{
-	return (Vec4m) {val,val,val,val};
+	printf("%s %s %g %g %g %g\n",msg,name,vecd[0],vecd[1],vecd[2],vecd[3]);	
 }
 
+void vec4_printm(const char* msg, const char* name, Vec4m vecm)
+{
+	printf("%s %s %ld %ld %ld %ld\n",msg,name,vecm[0],vecm[1],vecm[2],vecm[3]);	
+}
+
+void vec4_CheckCollisions(Vec4m stateindexes, const char* msg)
+{
+	for(int i=0;i<4;i++)
+	for(int j=0;j<4;j++)
+	if(i!=j)
+	if(stateindexes[i]==stateindexes[j])
+	{
+		printf("%s, collisions %ld %ld %ld %ld!\n",msg,stateindexes[0],stateindexes[1],stateindexes[2],stateindexes[3]);
+		raise(SIGINT);
+	}
+}
+
+
+#include "b3v32ldsimd8d.c"
+
+typedef float vecelem_t;
 
 int BSIM3v32LoadSIMD(BSIM3v32instance **heres, CKTcircuit *ckt
 #ifndef USE_OMP
@@ -335,7 +327,7 @@ int BSIM3v32LoadSIMD(BSIM3v32instance **heres, CKTcircuit *ckt
     #pragma message "Use OMP SIMD8 version"
     #include "b3v32ldseq_simd8_omp.c"
 #else
-    #include "b3v32ldseq_simd8.c"
+    #include "b3v32ldseq_simd8d.c"
 #endif
 #else
 #error Unsupported value for NSIMD
