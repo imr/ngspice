@@ -1321,40 +1321,36 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 }
             } else if((ckt->CKTmode & MODEINITJCT) &&
                     (ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC)){
-                Vbe   = here->HICUMicVB-here->HICUMicVE; //here was a hicumtype before, why?
-                Vbiei = here->HICUMicVBi-here->HICUMicVEi; //here was a hicumtype before, why?
-                Vciei = here->HICUMicVCi-here->HICUMicVEi; //here was a hicumtype before, why?
-                Vbci  = here->HICUMicVB-here->HICUMicVCi;
-                Vbici = here->HICUMicVBi-here->HICUMicVCi;
-                Vbpci = here->HICUMicVBp-here->HICUMicVCi;
-                Vbpei = here->HICUMicVBp-here->HICUMicVEi;
-                Vbpbi = here->HICUMicVBp-here->HICUMicVBi;
-                Vbbp  = here->HICUMicVB-here->HICUMicVBp;
-                Vbpe  = here->HICUMicVBp-here->HICUMicVE;
-                Vcic  = here->HICUMicVCi-here->HICUMicVC;
-                Veie  = here->HICUMicVEi-here->HICUMicVE;
-                Vrth  = here->HICUMicVt;
-                Vsc=Vsici=0.0;
-                Vsis=0.0;
-                Icth=0.0,Icth_Vrth=0.0;
+                Vbiei = model->HICUMtype * here->HICUMicVBE; // multiplication by type has historical reasons
+                Vciei = model->HICUMtype * here->HICUMicVCE; // the user sets anytime positive numbers independent from type
+                Vbici = Vbiei - Vciei;
+                Vsc = Vsici = model->HICUMtype * here->HICUMicVCS;
+                Vbe = Vbpei = Vbiei;
+                Vbci = Vbpci = Vbici;
+                Vbpbi = 0.0;
+                Vbbp  = 0.0;
+                Vbpe  = 0.0;
+                Vcic  = 0.0;
+                Veie  = 0.0;
+                Vrth  = 0.0;
+                Vsis  = 0.0;
+                Icth  = 0.0, Icth_Vrth=0.0;
                 Vxf=Vxf1=Vxf2=0.0;
             } else if((ckt->CKTmode & MODEINITJCT) && (here->HICUMoff==0)) {
-                Vbe   = here->HICUMicVB-here->HICUMicVE;
-                Vbiei = here->HICUMicVBi-here->HICUMicVEi; //here was a hicumtype before, why?
-                Vciei = here->HICUMicVCi-here->HICUMicVEi; //here was a hicumtype before, why?
-                Vbci  = here->HICUMicVB-here->HICUMicVCi;
-                Vbici = here->HICUMicVBi-here->HICUMicVCi;
-                Vbpci = here->HICUMicVBp-here->HICUMicVCi;
-                Vbpei = here->HICUMicVBp-here->HICUMicVEi;
-                Vbpbi = here->HICUMicVBp-here->HICUMicVBi;
-                Vbbp  = here->HICUMicVB-here->HICUMicVBp;
-                Vbpe  = here->HICUMicVBp-here->HICUMicVE;
-                Vcic  = here->HICUMicVCi-here->HICUMicVC;
-                Veie  = here->HICUMicVEi-here->HICUMicVE;
-                Vrth  = here->HICUMicVt;
-                Vsc=Vsici=0.0;
-                Vsis=0.0;
-                Icth=0.0,Icth_Vrth=0.0;
+                Vbiei = here->HICUMtVcrit;
+                Vbici = 0.0;
+                Vciei = Vbiei - Vbici;
+                Vsc = Vsici = 0.0;
+                Vbe = Vbpei = Vbiei;
+                Vbci = Vbpci = Vbici;
+                Vbpbi = 0.0;
+                Vbbp  = 0.0;
+                Vbpe  = 0.0;
+                Vcic  = 0.0;
+                Veie  = 0.0;
+                Vrth  = 0.0;
+                Vsis  = 0.0;
+                Icth  = 0.0, Icth_Vrth=0.0;
                 Vxf=Vxf1=Vxf2=0.0;
             } else if((ckt->CKTmode & MODEINITJCT) ||
                     ( (ckt->CKTmode & MODEINITFIX) && (here->HICUMoff!=0))) {

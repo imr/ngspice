@@ -24,44 +24,27 @@ HICUMgetic(GENmodel *inModel, CKTcircuit *ckt)
     HICUMmodel *model = (HICUMmodel*)inModel;
     HICUMinstance *here;
     /*
-     * grab initial conditions out of rhs array.   User specified, so use
+     * grab initial conditions out of rhs array.  User specified, so use
      * external nodes to get values
      */
 
     for( ; model ; model = HICUMnextModel(model)) {
         for(here = HICUMinstances(model); here ; here = HICUMnextInstance(here)) {
 
-            if(!here->HICUMicVBGiven) {
-                here->HICUMicVB =
-                        *(ckt->CKTrhs + here->HICUMbaseNode);
-            }
-            if(!here->HICUMicVCGiven) {
-                here->HICUMicVC =
-                        *(ckt->CKTrhs + here->HICUMcollNode);
-            }
-            if(!here->HICUMicVEGiven) {
-                here->HICUMicVE =
+            if(!here->HICUMicVBEGiven) {
+                here->HICUMicVBE =
+                        *(ckt->CKTrhs + here->HICUMbaseNode) - 
                         *(ckt->CKTrhs + here->HICUMemitNode);
             }
-            if(!here->HICUMicVBiGiven) {
-                here->HICUMicVBi =
-                        *(ckt->CKTrhs + here->HICUMbaseBINode);
+            if(!here->HICUMicVCEGiven) {
+                here->HICUMicVCE =
+                        *(ckt->CKTrhs + here->HICUMcollNode) - 
+                        *(ckt->CKTrhs + here->HICUMemitNode);
             }
-            if(!here->HICUMicVBpGiven) {
-                here->HICUMicVBp =
-                        *(ckt->CKTrhs + here->HICUMbaseBPNode);
-            }
-            if(!here->HICUMicVCiGiven) {
-                here->HICUMicVCi =
-                        *(ckt->CKTrhs + here->HICUMcollCINode);
-            }
-            if(!here->HICUMicVtGiven) {
-                here->HICUMicVt =
-                        *(ckt->CKTrhs + here->HICUMtempNode);
-            }
-            if(!here->HICUMicVEiGiven) {
-                here->HICUMicVEi =
-                        *(ckt->CKTrhs + here->HICUMemitEINode);
+            if(!here->HICUMicVCSGiven) {
+                here->HICUMicVCS =
+                        *(ckt->CKTrhs + here->HICUMcollNode) - 
+                        *(ckt->CKTrhs + here->HICUMsubsNode);
             }
         }
     }

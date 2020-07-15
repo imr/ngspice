@@ -70,14 +70,9 @@ typedef struct sHICUMinstance {
 
     double HICUMarea;     /* area factor for the hicum */
     //initial conditions
-    double HICUMicVBi;    /* initial condition potential Bi */
-    double HICUMicVBp;    /* initial condition potential Bp */
-    double HICUMicVB;     /* initial condition potential B  */
-    double HICUMicVCi;    /* initial condition potential Ci */
-    double HICUMicVt;     /* initial condition potential T */
-    double HICUMicVEi;    /* initial condition potential Ei */
-    double HICUMicVC;     /* initial condition potential C  */
-    double HICUMicVE;     /* initial condition potential E  */
+    double HICUMicVBE;     /* initial condition inner B-E branch */
+    double HICUMicVCE;     /* initial condition inner C-E branch  */
+    double HICUMicVCS;     /* initial condition inner C-S branch  */
 
     double HICUMtemp;     /* instance temperature */
     double HICUMdtemp;    /* instance delta temperature */
@@ -315,14 +310,9 @@ typedef struct sHICUMinstance {
 
     unsigned HICUMareaGiven   :1;  /* flag to indicate area was specified */
     unsigned HICUMoff         :1;  /* 'off' flag for hicum */
-    unsigned HICUMicVBGiven   :1;  /* flag to indicate VB init. cond. given */
-    unsigned HICUMicVEGiven   :1;  /* flag to indicate VE init. cond. given */
-    unsigned HICUMicVCGiven   :1;  /* flag to indicate VC init. cond. given */
-    unsigned HICUMicVBiGiven  :1;  /* flag to indicate VBi init. cond. given */
-    unsigned HICUMicVBpGiven  :1;  /* flag to indicate VBp init. cond. given */
-    unsigned HICUMicVEiGiven  :1;  /* flag to indicate VEi init. cond. given */
-    unsigned HICUMicVCiGiven  :1;  /* flag to indicate VCi init. cond. given */
-    unsigned HICUMicVtGiven   :1;  /* flag to indicate VCi init. cond. given */
+    unsigned HICUMicVBEGiven  :1;  /* flag to indicate VBE init. cond. given */
+    unsigned HICUMicVCEGiven  :1;  /* flag to indicate VCE init. cond. given */
+    unsigned HICUMicVCSGiven  :1;  /* flag to indicate VCS init. cond. given */
     unsigned HICUMtempGiven   :1;  /* temperature given for hicum instance*/
     unsigned HICUMdtempGiven  :1;  /* delta temperature given for hicum instance*/
     unsigned HICUMmGiven      :1;  /* flag to indicate multiplier was specified */
@@ -917,14 +907,6 @@ enum {
     HICUM_AREA = 1,
     HICUM_OFF,
     HICUM_IC,
-    // HICUM_IC_VB, //removed for the time beeing, they are not spice-like
-    // HICUM_IC_VE,
-    // HICUM_IC_VC,
-    // HICUM_IC_VBi,
-    // HICUM_IC_VBp,
-    // HICUM_IC_VEi,
-    // HICUM_IC_VCi,
-    // HICUM_IC_Vt,
     HICUM_TEMP,
     HICUM_DTEMP,
     HICUM_M,
