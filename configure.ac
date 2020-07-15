@@ -69,7 +69,7 @@ AC_ARG_ENABLE([adms],
 # --enable-pss: enable PSS Analysis
 AC_ARG_ENABLE([pss],
     [AS_HELP_STRING([--enable-pss], [Enable PSS Analysis, (experimental)])])
-
+    
 # --enable-relpath: Relative path for binary and data. Default is "no".
 # ngspice shared may want relative paths for spinit etc.
 AC_ARG_ENABLE([relpath],
@@ -1182,6 +1182,65 @@ if test "x$enable_openmp" = xyes; then
     CFLAGS="$CFLAGS $OPENMP_CFLAGS"
     AC_MSG_RESULT([OpenMP feature enabled])
 fi
+
+#################  MODSIMD ##################################################
+# --enable-modsimd: define MODSIMD in the code. This use simd acceleration in devices code
+AC_ARG_ENABLE([modsimd],
+    [AS_HELP_STRING([--enable-modsimd], [Enable simd acceleration in some device models])])
+
+if test "x$enable_modsimd" = xyes; then
+    OPENMPSIMD_CFLAGS = "-fopenmp-simd"
+    
+    AC_MSG_CHECKING([for vector extension])
+    AC_TRY_COMPILE([
+    	typedef double Vec4d __attribute__ ((vector_size (4*sizeof(double)), aligned (4*sizeof(double))));
+    ],[
+    	Vec4d v1,v2;
+	double s2;
+	v1 = (Vec4d) {1.0,2.0,3.141592,4.0};
+	s2 = 2.18;
+	v2 = v1 * s2;
+    ],[
+      AC_MSG_RESULT([yes])
+    ], [
+      AC_MSG_RESULT([no])
+      enable_modsimd=no
+    ])
+fi
+
+# now check if intrinsics can be used
+if test "x$enable_modsimd" = xyes; then
+    AC_MSG_CHECKING([x86 blend intrinsics])
+    AC_TRY_COMPILE([
+    	#include <x86intrin.h>
+    	typedef double Vec4d __attribute__ ((vector_size (4*sizeof(double)), aligned (4*sizeof(double))));
+    ],[
+    	Vec4d v1,v2;
+	v1 = (Vec4d) {1.0,2.0,3.141592,4.0};
+	v2 = v1 + 10.1;
+	v2 = _mm256_blendv_pd(v1,v2,(Vec4d) (v1>3.0));
+    ],[
+      AC_MSG_RESULT([yes])
+      have_intrinsics=yes
+    ], [
+      AC_MSG_RESULT([no])
+      have_intrinsics=no
+    ])
+fi
+
+if test "x$enable_modsimd" = xyes; then
+    AC_DEFINE([BSIM3v32SIMD], [1], [simd acceleration for BSIM3V32 device])
+    
+    if test "x$have_intrinsics" = xyes; then
+        AC_DEFINE([USEX86INTRINSICS], [1], [can use x86 simd intrinsics])
+	AC_MSG_RESULT([Use x86 simd intrinsics])
+    fi
+    
+    AC_MSG_RESULT([MODSIMD feature enabled])
+fi
+
+AM_CONDITIONAL([WANT_MODSIMD], [test "x$enable_modsimd" = xyes])
+
 
 # Output Files
 # ------------
