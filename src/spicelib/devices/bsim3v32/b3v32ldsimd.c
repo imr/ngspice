@@ -53,8 +53,6 @@
 #define DELTA_3 0.02
 #define DELTA_4 0.02
 
-#define USEX86INTRINSICS 1
-
 typedef double Vec4d __attribute__ ((vector_size (sizeof(double)*4), aligned (sizeof(double)*4)));
 typedef int64_t Vec4m __attribute__ ((vector_size (sizeof(double)*4), aligned (sizeof(double)*4)));
 
@@ -300,8 +298,9 @@ void vec4_CheckCollisions(Vec4m stateindexes, const char* msg)
 	}
 }
 
-
+#if NSIMD==8
 #include "b3v32ldsimd8d.c"
+#endif
 
 typedef float vecelem_t;
 

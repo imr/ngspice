@@ -1189,7 +1189,7 @@ AC_ARG_ENABLE([modsimd],
     [AS_HELP_STRING([--enable-modsimd], [Enable simd acceleration in some device models])])
 
 if test "x$enable_modsimd" = xyes; then
-    OPENMPSIMD_CFLAGS = "-fopenmp-simd"
+    OPENMPSIMD_CFLAGS="-fopenmp-simd"
     
     AC_MSG_CHECKING([for vector extension])
     AC_TRY_COMPILE([
