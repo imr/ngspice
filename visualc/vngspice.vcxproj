@@ -1635,7 +1635,6 @@
     <ClCompile Include="..\src\maths\poly\polyfit.c" />
     <ClCompile Include="..\src\maths\sparse\spalloc.c" />
     <ClCompile Include="..\src\maths\sparse\spbuild.c" />
-    <ClCompile Include="..\src\maths\sparse\spCSC.c" />
     <ClCompile Include="..\src\maths\sparse\spextra.c" />
     <ClCompile Include="..\src\maths\sparse\spfactor.c" />
     <ClCompile Include="..\src\maths\sparse\spoutput.c" />
