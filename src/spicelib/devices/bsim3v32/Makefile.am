@@ -2,6 +2,7 @@
 
 noinst_LTLIBRARIES = libbsim3v32.la
 
+
 libbsim3v32_la_SOURCES = \
 	b3v32.c		\
 	b3v32acld.c	\
@@ -24,17 +25,21 @@ libbsim3v32_la_SOURCES = \
 	bsim3v32ext.h	\
 	bsim3v32init.c	\
 	bsim3v32init.h	\
-	bsim3v32itf.h \
+	bsim3v32itf.h
+
+if WANT_MODSIMD
+libbsim3v32_la_SOURCES += \
 	b3v32ldseq.c \
 	b3v32ldsel.c \
-	b3v32ldsimd.c \
-	vec4_exp.c \
-	vec4_log.c
+	b3v32ldsimd.c
+endif
 
 
-
-AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include -DBSIM3v32SIMD
-AM_CFLAGS = $(STATIC) -Wall -fno-math-errno -ffast-math
+AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
+AM_CFLAGS = $(STATIC)
+if WANT_MODSIMD
+AM_CFLAGS += -fno-math-errno -ffast-math -fopenmp-simd
+endif
 
 MAINTAINERCLEANFILES = Makefile.in
 

@@ -28,9 +28,6 @@ extern int BSIM3v32trunc(GENmodel*,CKTcircuit*,double*);
 extern int BSIM3v32noise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int BSIM3v32unsetup(GENmodel*,CKTcircuit*);
 extern int BSIM3v32soaCheck(CKTcircuit *, GENmodel *);
-#ifndef BSIM3v32SIMD
-#define BSIM3v32SIMD
-#endif
 #ifdef BSIM3v32SIMD
 extern int BSIM3v32loadSel(GENmodel*,CKTcircuit*);
 #endif
