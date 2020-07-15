@@ -25,14 +25,14 @@
 SECONDS=0
 
 if test "$1" = "d"; then
-   if [ ! -d "debug" ]; then
-      mkdir debug
-      if [ $? -ne 0 ]; then  echo "mkdir debug failed"; exit 1 ; fi
+   if [ ! -d "debug_simd" ]; then
+      mkdir debug_simd
+      if [ $? -ne 0 ]; then  echo "mkdir debug_simd failed"; exit 1 ; fi
    fi   
 else
-   if [ ! -d "release" ]; then
-      mkdir release
-      if [ $? -ne 0 ]; then  echo "mkdir release failed"; exit 1 ; fi
+   if [ ! -d "release_simd" ]; then
+      mkdir release_simd
+      if [ $? -ne 0 ]; then  echo "mkdir release_simd failed"; exit 1 ; fi
    fi
 fi
 
@@ -48,19 +48,19 @@ if [ $? -ne 0 ]; then  echo "./autogen.sh failed"; exit 1 ; fi
 
 echo
 if test "$1" = "d"; then
-   cd debug
-   if [ $? -ne 0 ]; then  echo "cd debug failed"; exit 1 ; fi
+   cd debug_simd
+   if [ $? -ne 0 ]; then  echo "cd debug_simd failed"; exit 1 ; fi
   echo "configuring for 64 bit debug"
   echo
 # You may add  --enable-adms to the following command for adding adms generated devices 
-  ../configure --with-wingui --enable-xspice --enable-cider --enable-openmp prefix="C:/Spice64d" CFLAGS="-g -m64 -O0 -Wall -Wno-unused-but-set-variable -march=native" LDFLAGS="-g -m64"
+  ../configure --with-wingui --enable-xspice --enable-cider --enable-openmp --enable-modsimd prefix="C:/Spice64d" CFLAGS="-g -m64 -O0 -Wall -Wno-unused-but-set-variable -march=native" LDFLAGS="-g -m64"
 else
-   cd release
-   if [ $? -ne 0 ]; then  echo "cd release failed"; exit 1 ; fi
+   cd release_simd
+   if [ $? -ne 0 ]; then  echo "cd release_simd failed"; exit 1 ; fi
   echo "configuring for 64 bit release"
   echo
 # You may add  --enable-adms to the following command for adding adms generated devices 
-  ../configure --with-wingui --enable-xspice --enable-cider --enable-openmp --disable-debug prefix="C:/Spice64" CFLAGS="-m64 -O3 -mtune=native " LDFLAGS="-m64 -s"
+  ../configure --with-wingui --enable-xspice --enable-cider --enable-openmp --disable-debug --enable-modsimd prefix="C:/Spice64" CFLAGS="-m64 -O3 -mtune=native " LDFLAGS="-m64 -s"
 fi
 if [ $? -ne 0 ]; then  echo "../configure failed"; exit 1 ; fi
 
