@@ -17,6 +17,9 @@
 #include "ngspice/sperror.h"
 #include "ngspice/devdefs.h"
 #include "ngspice/suffix.h"
+#include "ngspice/cpextern.h"
+
+extern SPICEdev BSIM3v32info;
 
 #define MAX_EXP 5.834617425e14
 #define MIN_EXP 1.713908431e-15
@@ -1208,6 +1211,11 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     	}
     }
     printf("BSIM3v32 has %d groups\n",ngroups);
+    if (cp_getvar("no_modsimd", CP_BOOL, NULL, 0))
+    {
+    	printf("BSIM3v32 simd disabled at runtime\n");
+	BSIM3v32info.DEVload = BSIM3v32load; /* use original load function */
+    }
 #endif
 #endif
     return(OK);
