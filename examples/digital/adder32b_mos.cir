@@ -1,0 +1,93 @@
+  ADDER - 32 BIT ALL-NAND-GATE BINARY ADDER
+
+*** SUBCIRCUIT DEFINITIONS
+.SUBCKT NAND in1 in2 out VDD
+*   NODES:  INPUT(2), OUTPUT, VCC
+M1 out in2 Vdd Vdd p1 W=7.5u L=0.35u pd=13.5u ad=22.5p ps=13.5u as=22.5p
+M2 net.1 in2 0 0 n1   W=3u   L=0.35u pd=9u    ad=9p    ps=9u    as=9p
+M3 out in1 Vdd Vdd p1 W=7.5u L=0.35u pd=13.5u ad=22.5p ps=13.5u as=22.5p
+M4 out in1 net.1 0 n1 W=3u   L=0.35u pd=9u    ad=9p    ps=9u    as=9p
+.ENDS NAND
+
+.SUBCKT ONEBIT 1 2 3 4 5 6
+*   NODES:  INPUT(2), CARRY-IN, OUTPUT, CARRY-OUT, VCC
+X1   1  2  7  6   NAND
+X2   1  7  8  6   NAND
+X3   2  7  9  6   NAND
+X4   8  9 10  6   NAND
+X5   3 10 11  6   NAND
+X6   3 11 12  6   NAND
+X7  10 11 13  6   NAND
+X8  12 13  4  6   NAND
+X9  11  7  5  6   NAND
+.ENDS ONEBIT
+
+.SUBCKT TWOBIT 1 2 3 4 5 6 7 8 9
+*   NODES:  INPUT - BIT0(2) / BIT1(2), OUTPUT - BIT0 / BIT1,
+*           CARRY-IN, CARRY-OUT, VCC
+X1   1  2  7  5 10  9   ONEBIT
+X2   3  4 10  6  8  9   ONEBIT
+.ENDS TWOBIT
+
+.SUBCKT FOURBIT 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+*   NODES:  INPUT - BIT0(2) / BIT1(2) / BIT2(2) / BIT3(2),
+*           OUTPUT - BIT0 / BIT1 / BIT2 / BIT3, CARRY-IN, CARRY-OUT, VCC
+X1   1  2  3  4  9 10 13 16 15   TWOBIT
+X2   5  6  7  8 11 12 16 14 15   TWOBIT
+.ENDS FOURBIT
+
+.SUBCKT WIDEBIT a1 a2 a3 a4 a5 a6 a7 a8 a9 a10 a11 a12 a13 a14 a15 a16 a17 a18 a19 a20 a21 a22 a23 a24 a25 a26 a27 a28 a29 a30 a31 a32 b1 b2 b3 b4 b5 b6 b7 b8 b9 b10 b11 b12 b13 b14 b15 b16 b17 b18 b19 b20 b21 b22 b23 b24 b25 b26 b27 b28 b29 b30 b31 b32 o1 o2 o3 o4 o5 o6 o7 o8 o9 o10 o11 o12 o13 o14 o15 o16 o17 o18 o19 o20 o21 o22 o23 o24 o25 o26 o27 o28 o29 o30 o31 o32 cin cout vcc
+
+X1 a1 b1 a2 b2 a1 b3 a4 b4 o1 o2 o3 o4 cin c4 vcc FOURBIT
+X2 a5 b5 a6 b6 a7 b7 a8 b8 o5 o6 o7 o8 c4 c8 vcc FOURBIT
+X3 a9 b9 a10 b10 a11 b11 a12 b12 o9 o10 o11 o12 c8 c12 vcc FOURBIT
+X4 a13 b13 a14 b14 a15 b15 a16 b16 o13 o14 o15 o16 c12 c16 vcc FOURBIT
+X5 a17 b17 a18 b18 a19 b19 a20 b20 o17 o18 o19 o20 c16 c20 vcc FOURBIT
+X6 a21 b21 a22 b22 a23 b23 a24 b24 o21 o22 o23 o24 c20 c24 vcc FOURBIT
+X7 a25 b25 a26 b26 a27 b27 a28 b28 o25 o26 o27 o28 c24 c28 vcc FOURBIT
+X8 a29 b29 a30 b30 a31 b31 a32 b32 o29 o30 o31 o32 c28 cout vcc FOURBIT
+.ENDS WIDEBIT
+
+*** POWER
+VCC   vcc  0   DC 3.3V
+
+*** ALL INPUTS
+VIN1A  a1  0   DC 0 PULSE(0 3 0 5NS 5NS   20NS   50NS)
+VIN1B  b1  0   DC 0 PULSE(0 3 0 5NS 5NS   30NS  100NS)
+VIN2A  a2  0   DC 0 PULSE(0 3 0 5NS 5NS   50NS  200NS)
+VIN2B  b2  0   DC 0 PULSE(0 3 0 5NS 5NS   90NS  400NS)
+VIN3A  a3  0   DC 0 PULSE(0 3 0 5NS 5NS  170NS  800NS)
+VIN3B  b3  0   DC 0 PULSE(0 3 0 5NS 5NS  330NS 1600NS)
+VIN4A  a4  0   DC 0 PULSE(0 3 0 5NS 5NS  650NS 3200NS)
+VIN4B  b4  0   DC 0 PULSE(0 3 0 5NS 5NS 1290NS 6400NS)
+
+
+*** DEFINE NOMINAL CIRCUIT
+Xadd a1 a2 a3 a4 a1 a2 a3 a4 a1 a2 a3 a4 a1 a2 a3 a4 a1 a2 a3 a4 a1 a2 a3 a4 a1 a2 a3 a4 a1 a2 a3 a4 b1 b2 b3 b4 b1 b2 b3 b4 b1 b2 b3 b4 b1 b2 b3 b4 b1 b2 b3 b4 b1 b2 b3 b4 b1 b2 b3 b4 b1 b2 b3 b4 o1 o2 o3 o4 o5 o6 o7 o8 o9 o10 o11 o12 o13 o14 o15 o16 o17 o18 o19 o20 o21 o22 o23 o24 o25 o26 o27 o28 o29 o30 o31 o32 0 cout vcc WIDEBIT
+
+.option noinit acct
+.TRAN 500p 6400NS
+* save inputs
+.save V(a1) V(a2) V(a3) V(a4) V(b1) V(b2) V(b3) V(b4) 
+
+* use BSIM3 model with default parameters
+.model n1 nmos level=49 version=3.2.4
+.model p1 pmos level=49 version=3.2.4
+*.include ./Modelcards/modelcard32.nmos
+*.include ./Modelcards/modelcard32.pmos
+
+.control
+pre_set strict_errorhandling
+unset ngdebug
+unset no_modsimd
+*save outputs and specials
+save xadd.x1.x1.x1.7 V(o1) V(o2) V(o3) V(o4) V(o5) V(o6) V(o7) V(o8) V(cout) 
+run
+rusage
+* plot the inputs, use offset to plot on top of each other
+plot  v(a1) v(b1)+4 v(a2)+8 v(b2)+12 v(a3)+16 v(b3)+20 v(a4)+24 v(b4)+28 
+* plot the outputs, use offset to plot on top of each other
+plot  v(o1) v(o2)+4 v(o3)+8 v(o4)+12 v(o5)+16 v(o6)+20 v(o7)+24 v(o8)+28 v(cout)+32
+.endc
+
+.END
