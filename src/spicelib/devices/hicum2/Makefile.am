@@ -3,6 +3,7 @@
 noinst_LTLIBRARIES = libhicum2.la
 
 libhicum2_la_SOURCES =	\
+	model_class.cpp		\
 	hicum2.c		\
 	hicum2acld.c	\
 	hicum2ask.c	    \
