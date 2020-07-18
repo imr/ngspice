@@ -14,8 +14,10 @@ Spice3 Implementation: 2019 Dietmar Warning
 #include "ngspice/const.h"
 #include "ngspice/ifsim.h"
 #include "hicum2defs.h"
+#include "hicum2init.h"
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
+#include "model_class.hpp"
 
 #define MIN_R 0.001
 
@@ -23,6 +25,35 @@ int
 HICUMmParam(int param, IFvalue *value, GENmodel *inModel)
 {
     HICUMmodel *model = (HICUMmodel*)inModel;
+
+    //find name of the model parameter
+    volatile IFparm *p     = &(HICUMinfo.DEVpublic.modelParms);
+    IFparm *p_end          = p + *(HICUMinfo.DEVpublic.numModelParms);
+    volatile IFparm *para;
+    volatile int para_found;
+    para_found=0;
+    for (int i=0; i < *(HICUMinfo.DEVpublic.numModelParms); i++) {
+        if (HICUMinfo.DEVpublic.modelParms[i].id == param){
+            para_found=i;
+            break;
+        };
+    };
+
+    setModelcardPara(HICUMinfo.DEVpublic.modelParms[para_found].keyword, value->rValue);
+    //printf("%s",HICUMinfo.DEVpublic.modelParms[para_found].keyword);
+
+// static IFparm *
+// find_model_parameter(const char *name, IFdevice *device)
+// {
+//     IFparm *p = device->modelParms;
+//     IFparm *p_end = p + *(device->numModelParms);
+
+//     for (; p < p_end; p++)
+//         if (strcmp(name, p->keyword) == 0)
+//             return p;
+
+//     return NULL;
+// }
 
     switch(param) {
 
