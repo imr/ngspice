@@ -374,7 +374,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Qdei,Qrbi;
     double Qdei_Vbiei, Qdei_Vbici, Qdei_dT;
     double it,ibei,irei,ibci,ibep,irep,ibh_rec;
-    double ibet,iavl,iavl_dT,iavl_Vbiei;
+    double volatile ibet,iavl,iavl_dT,iavl_Vbiei,iavl_Vbici;
     double ijbcx,ijbcx_dT,ijbcx_Vbpci,ijsc,ijsc_Vsici,ijsc_Vrth,Qjs,Qscp,HSI_Tsu,Qdsu;
     double HSI_Tsu_Vbpci, HSI_Tsu_Vsici, HSI_Tsu_dT;
     double Qdsu_Vbpci, Qdsu_Vsici, Qdsu_dT;
@@ -429,6 +429,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double hjei_vbe;
 
     double Vbiei, Vbici, Vciei, Vbpei, Vbpbi, Vbpci, Vsici, Vbci, Vsc;
+    double Vbici_temp;
 
     // Model flags
     int use_aval;
@@ -477,7 +478,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double hjei_vbe_Vbiei, hjei_vbe_dT, ibet_Vbpei=0.0, ibet_dT=0, ibet_Vbiei=0.0, ibh_rec_Vbiei, ibh_rec_dT, ibh_rec_Vbici;
     double irei_Vbiei, irei_dT;
     double ibep_Vbpei, ibep_dT;
-    double irep_Vbpei, irep_dT, iavl_Vbici, rbi_dT, rbi_Vbiei, rbi_Vbici;
+    double irep_Vbpei, irep_dT, rbi_dT, rbi_Vbiei, rbi_Vbici;
     double ibei_Vbiei, ibei_dT;
     double ibci_Vbici, ibci_dT;
     double Q_0_Vbiei, Q_0_Vbici, Q_0_dT;
@@ -1829,8 +1830,22 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 ichk1 = 1, ichk2 = 1, ichk3 = 1, ichk4 = 1, ichk5=1, ichk6 = 0;
                 Vbiei = DEVpnjlim(Vbiei,*(ckt->CKTstate0 + here->HICUMvbiei),here->HICUMvt.rpart,
                         here->HICUMtVcrit,&icheck);
-                Vbici = DEVpnjlim(Vbici,*(ckt->CKTstate0 + here->HICUMvbici),here->HICUMvt.rpart,
-                        here->HICUMtVcrit,&ichk1);
+                if ( 1 || (iavl==0.0) || (-Vbici<here->HICUMvdci_t.rpart) ) {
+                    Vbici = DEVpnjlim(Vbici,*(ckt->CKTstate0 + here->HICUMvbici),here->HICUMvt.rpart,
+                            here->HICUMtVcrit,&ichk1);
+
+                } else { //limit change around 3*vdci_t, also iavl_Vbiei sign inverted -> somehow this brings convergence
+                    Vbici_temp = - (Vbici + here->HICUMvdci_t.rpart*3),
+                    Vbici_temp = DEVpnjlim(
+                            Vbici_temp,
+                            -(*(ckt->CKTstate0 + here->HICUMvbici) + here->HICUMvdci_t.rpart*3),
+                            here->HICUMvt.rpart/10,
+                            here->HICUMtVcrit,
+                            &ichk1
+                    );
+                    Vbici      = - (Vbici_temp+here->HICUMvdci_t.rpart*3);
+
+                }
                 Vbpei = DEVpnjlim(Vbpei,*(ckt->CKTstate0 + here->HICUMvbpei),here->HICUMvt.rpart,
                         here->HICUMtVcrit,&ichk2);
                 Vbpci = DEVpnjlim(Vbpci,*(ckt->CKTstate0 + here->HICUMvbpci),here->HICUMvt.rpart,
@@ -2076,7 +2091,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             iavl_Vbici  = result.dpart();
 
             result      = calc_iavl(Vbici, Cjci, itf+1_e*itf_Vbiei    , Temp);
-            iavl_Vbiei  = result.dpart();
+            iavl_Vbiei  = -result.dpart();
 
             result      = calc_iavl(Vbici    , Cjci+1_e*Cjci_dT    , itf+1_e*itf_dT    , Temp+1_e);
             iavl_dT     = result.dpart(); 
