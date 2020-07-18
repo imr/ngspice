@@ -1347,3 +1347,66 @@ static bool plot_prefix(const char *pre, const char *str)
     else
         return (TRUE);
 }
+
+struct dvec*
+copycut(struct dvec* v, struct dvec* newscalevec, int istart, int istop)
+{
+    struct dvec* nv;
+    int i;
+    int len = istop - istart;
+
+    if (!v) {
+        return (struct dvec*)NULL;
+    }
+
+    /* Make a copy with the VF_PERMANENT bit cleared in v_flags */
+    nv = dvec_alloc(copy(v->v_name),
+        v->v_type,
+        v->v_flags,// & ~VF_PERMANENT,
+        len, NULL);
+
+    /* Copy the data to the new vector */
+    if (isreal(v)) {
+        for (i = 0; i < len; i++) {
+            nv->v_realdata[i] = v->v_realdata[istart + i];
+        }
+    }
+    else {
+        for (i = 0; i < len; i++) {
+            nv->v_compdata[i] = v->v_compdata[istart + i];
+        }
+    }
+
+    nv->v_minsignal = v->v_minsignal;
+    nv->v_maxsignal = v->v_maxsignal;
+    nv->v_gridtype = v->v_gridtype;
+    nv->v_plottype = v->v_plottype;
+
+    /* Modified to copy the rlength of origin to destination vecor
+        * instead of always putting it to 0.
+        * As when it comes to make a print does not leave M1 @ @ M1 = 0.0,
+        * to do so in the event that rlength = 0 not print anything on screen
+        * nv-> v_rlength = 0;
+        * Default -> v_rlength = 0 and only if you come from a print or M1 @
+        * @ M1 [all] rlength = 1, after control is one of
+        * if (v-> v_rlength == 0) com_print (wordlist * wl)
+        */
+    nv->v_rlength = v->v_rlength;
+
+    nv->v_outindex = 0; /*XXX???*/
+    nv->v_linestyle = 0; /*XXX???*/
+    nv->v_color = 0; /*XXX???*/
+    nv->v_defcolor = v->v_defcolor;
+    nv->v_numdims = v->v_numdims;
+
+    /* Copy defined dimensions */
+    (void)memcpy(nv->v_dims, v->v_dims,
+        (size_t)v->v_numdims * sizeof * v->v_dims);
+
+    nv->v_plot = newscalevec->v_plot;
+    nv->v_next = NULL;
+    nv->v_link2 = NULL;
+    nv->v_scale = newscalevec;
+
+    return nv;
+} /* end of function copycut */
