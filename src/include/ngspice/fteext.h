@@ -366,6 +366,7 @@ extern struct plot *get_plot(const char *name);
 extern void plot_new(struct plot *pl);
 extern char *vec_basename(struct dvec *v);
 extern void vec_transpose(struct dvec *v);
+extern struct dvec* copycut(struct dvec* ov, struct dvec* newscalevec, int istart, int istop);
 
 /* main.c */
 extern bool ft_intrpt;
