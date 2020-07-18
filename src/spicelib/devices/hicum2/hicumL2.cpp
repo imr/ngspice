@@ -2091,7 +2091,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             iavl_Vbici  = result.dpart();
 
             result      = calc_iavl(Vbici, Cjci, itf+1_e*itf_Vbiei    , Temp);
-            iavl_Vbiei  = -result.dpart();
+            iavl_Vbiei  = result.dpart();
 
             result      = calc_iavl(Vbici    , Cjci+1_e*Cjci_dT    , itf+1_e*itf_dT    , Temp+1_e);
             iavl_dT     = result.dpart(); 
