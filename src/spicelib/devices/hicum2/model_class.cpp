@@ -5,17 +5,96 @@
 #include <limits>
 #include <model_class.hpp>
 #include <stdexcept>
+extern "C" {
+#include "ngspice/cktdefs.h"
+#include "ngspice/ngspice.h"
+#include "ngspice/smpdefs.h"
+#include "ngspice/const.h"
+#include "ngspice/sperror.h"
+#include "ngspice/ifsim.h"
+#include "ngspice/suffix.h"
+}
 
 Parameter::Parameter(double value_default, double min_value, double max_value) {
+    /* Modelcard parameter constructor.
+    Input
+    -----
+    value_default : double
+        Default value of the parameter.
+    min_value     : double
+        Minimum value of the parameter.
+    max_value     : double
+        Maximum value of the parameter.
+    */
     value_default = value_default;
     value_min     = min_value;
     value_max     = max_value;
 };
+
 void Parameter::setValue(double new_value){
+    /* Set the value of the parameter. TODO: check limits value_min/max
+    Input
+    -----
+    new_value : double
+        The new value to be set.
+    */
     value = new_value;
 };
+
 double Parameter::getValue(){
+    /* Return the value of the parameter.
+    Output
+    -----
+    value : double
+        The value of the parameter.
+    */
     return value;
+};
+
+
+Node::Node(CKTcircuit * ckt, NGSpiceModel * model , char * name){
+    /* Node constructor.
+    Output
+    -----
+    ckt : CKTcircuit *
+        The circuit in which the node shall be allocated.
+    model : NGSpiceModel *
+        The model that contains the node.
+    name : char *
+        The name of the node.
+    */
+    int      error = 0;
+
+    CKTnode *tmp;
+    ckt  = ckt;
+    name = name;
+
+    //allocate the node
+    error = CKTmkVolt(ckt,&tmp, (char*)model->name, name);
+    //if(error) return(error); //why should there be an error?
+    id = tmp->number;
+    // what is the purpose of this?
+    // if (ckt->CKTcopyNodesets) {
+    //     if (CKTinst2Node(ckt,here,2,&tmpNode,&tmpName)==OK) {
+    //         if (tmpNode->nsGiven) {
+    //         tmp->nodeset=tmpNode->nodeset;
+    //         tmp->nsGiven=tmpNode->nsGiven;
+    //         }
+    //     }
+    // }
+};
+
+double Node::getPotential(){
+    /* Return the potential of the node from the RHSold.
+    */
+    return *(ckt->CKTrhsOld+id);
+};
+
+
+Branch::Branch(Node * node_from,Node * node_to,std::vector<Node*> depends){
+    node_from             = node_from;
+    node_to               = node_to;
+    branch_dependencies   = depends;
 };
 
 double inf = std::numeric_limits<double>::infinity();

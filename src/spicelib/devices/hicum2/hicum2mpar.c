@@ -40,20 +40,6 @@ HICUMmParam(int param, IFvalue *value, GENmodel *inModel)
     };
 
     setModelcardPara(HICUMinfo.DEVpublic.modelParms[para_found].keyword, value->rValue);
-    //printf("%s",HICUMinfo.DEVpublic.modelParms[para_found].keyword);
-
-// static IFparm *
-// find_model_parameter(const char *name, IFdevice *device)
-// {
-//     IFparm *p = device->modelParms;
-//     IFparm *p_end = p + *(device->numModelParms);
-
-//     for (; p < p_end; p++)
-//         if (strcmp(name, p->keyword) == 0)
-//             return p;
-
-//     return NULL;
-// }
 
     switch(param) {
 
