@@ -1707,7 +1707,7 @@ static void cktislinear(CKTcircuit *ckt, struct card *deck)
 
 /* global array for assembling circuit lines entered by fcn circbyline
  * or receiving array from external caller. Array is created whenever
- * a new deck is started. Last line of the array has to get the value NULL */
+ * a new deck is started. Last line of the array has to get the string ".end" */
 char **circarray;
 
 
@@ -1732,7 +1732,11 @@ void create_circbyline(char *line)
         }
         while (ch_cur != '\0');
     }
-
+    if (ft_ngdebug) {
+        if (linec == 0)
+            fprintf(stdout, "**** circbyline: circuit netlist sent to shared ngspice ****\n");
+        fprintf(stdout, "%d   %s\n", linec, line);
+    }
     circarray[linec++] = line; /* add card to deck */
 
     /* If the card added ended the deck, send it for processing and
