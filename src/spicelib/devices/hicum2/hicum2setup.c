@@ -800,7 +800,7 @@ HICUMunsetup(
         model = HICUMnextModel(model))
     {
         int selfheat = (((model->HICUMflsh == 1) || (model->HICUMflsh == 2)) && (model->HICUMrthGiven) && (model->HICUMrth > 0.0));
-        int nqs      = ( (model->HICUMflnqs != 0 || model->HICUMflcomp == 0.0 || model->HICUMflcomp == 2.1) && (model->HICUMalit > 0 || model->HICUMalqf > 0));
+        int nqs      = ( (model->HICUMflnqs != 0 || model->HICUMflcomp < 2.3) && (model->HICUMalit > 0 || model->HICUMalqf > 0));
 
         for (here = HICUMinstances(model); here != NULL;
                 here=HICUMnextInstance(here))
