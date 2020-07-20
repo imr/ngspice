@@ -8261,7 +8261,7 @@ static void ltspice_compat_a(struct card *oldcard)
 static void inp_check_syntax(struct card *deck)
 {
     struct card *card;
-    int check_control = 0, check_subs = 0, check_if = 0;
+    int check_control = 0, check_subs = 0, check_if = 0, check_ch = 0;
 
     /* will lead to crash in inp.c, fcn inp_spsource */
     if (ciprefix(".param", deck->line) || ciprefix(".meas", deck->line)) {
@@ -8273,6 +8273,21 @@ static void inp_check_syntax(struct card *deck)
         char *cut_line = card->line;
         if (*cut_line == '*' || *cut_line == '\0')
             continue;
+        // check for unusable leading characters and change them to '*'
+        if (strchr("=[]?()&%$§\"!:,", *cut_line)) {
+            if (ft_stricterror) {
+                fprintf(stderr, "Error: '%c' is not allowed as first character in line %s.\n", *cut_line, cut_line);
+                controlled_exit(EXIT_BAD);
+            }
+            else {
+                if (!check_ch) {
+                    fprintf(stderr, "Warning: Unusal leading characters like '%c' or others out of '= [] ? () & %$§\"!:,'\n", *cut_line);
+                    fprintf(stderr, "    in netlist or included files, will be replaced with '*'\n");
+                    check_ch = 1; /* just one warning */
+                }
+                *cut_line = '*';
+            }
+        }
         // check for .control ... .endc
         if (ciprefix(".control", cut_line)) {
             if (check_control > 0) {
