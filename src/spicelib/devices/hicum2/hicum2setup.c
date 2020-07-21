@@ -617,11 +617,20 @@ HICUMsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                   }
                 }
             }
-
-            if(here->HICUMbaseBINode == 0) {
+            if(model->HICUMrbi0 == 0) {
+                here->HICUMbaseBINode = here->HICUMbaseBPNode;
+            } else if(here->HICUMemitEINode == 0) {
                 error = CKTmkVolt(ckt, &tmp, here->HICUMname, "baseBI");
                 if(error) return(error);
                 here->HICUMbaseBINode = tmp->number;
+                if (ckt->CKTcopyNodesets) {
+                  if (CKTinst2Node(ckt,here,5,&tmpNode,&tmpName)==OK) {
+                     if (tmpNode->nsGiven) {
+                       tmp->nodeset=tmpNode->nodeset;
+                       tmp->nsGiven=tmpNode->nsGiven;
+                     }
+                  }
+                }
             }
 
             if (selfheat) {
