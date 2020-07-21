@@ -980,6 +980,9 @@ int ngSpice_Circ(char** circa){
         while (circa[entries]) {
             entries++;
         }
+        entries--; /* don't send the empty line */
+        if (ft_ngdebug)
+            fprintf(stdout, "\nngspiceCirc: received netlist array with %d entries\n", entries);
         /* create a local copy (to be freed in inpcom.c) */
         for (i = 0; i < entries; i++) {
             newline = copy(circa[i]);
