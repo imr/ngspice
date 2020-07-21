@@ -1845,8 +1845,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                     Vbici = DEVpnjlim(Vbici,*(ckt->CKTstate0 + here->HICUMvbici),here->HICUMvt.rpart,
                             here->HICUMtVcrit,&ichk1);
                 }
-//                ichk1 = 0;
-//                Vbici = HICUMlimitlog(Vbici,*(ckt->CKTstate0 + here->HICUMvbici),0.4,&ichk1);
                 Vbpei = DEVpnjlim(Vbpei,*(ckt->CKTstate0 + here->HICUMvbpei),here->HICUMvt.rpart,
                         here->HICUMtVcrit,&ichk2);
                 Vbpci = DEVpnjlim(Vbpci,*(ckt->CKTstate0 + here->HICUMvbpci),here->HICUMvt.rpart,
