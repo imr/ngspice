@@ -619,7 +619,7 @@ HICUMsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             }
             if(model->HICUMrbi0 == 0) {
                 here->HICUMbaseBINode = here->HICUMbaseBPNode;
-            } else if(here->HICUMemitEINode == 0) {
+            } else if(here->HICUMbaseBINode == 0) {
                 error = CKTmkVolt(ckt, &tmp, here->HICUMname, "baseBI");
                 if(error) return(error);
                 here->HICUMbaseBINode = tmp->number;
