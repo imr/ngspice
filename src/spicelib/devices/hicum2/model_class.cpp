@@ -66,14 +66,18 @@ Node::Node(CKTcircuit * ckt, NGSpiceModel * model , char * name){
     int      error = 0;
 
     CKTnode *tmp;
+    CKTnode *tmpNode;
+    IFuid tmpName;
+
     ckt  = ckt;
     name = name;
+
+    //todo node collapsing?
 
     //allocate the node
     error = CKTmkVolt(ckt,&tmp, (char*)model->name, name);
     //if(error) return(error); //why should there be an error?
     id = tmp->number;
-    // what is the purpose of this?
     // if (ckt->CKTcopyNodesets) {
     //     if (CKTinst2Node(ckt,here,2,&tmpNode,&tmpName)==OK) {
     //         if (tmpNode->nsGiven) {
