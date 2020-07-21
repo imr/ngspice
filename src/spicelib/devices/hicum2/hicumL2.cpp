@@ -429,7 +429,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double hjei_vbe;
 
     double Vbiei, Vbici, Vciei, Vbpei, Vbpbi, Vbpci, Vsici, Vbci, Vsc;
-    double Vbici_temp;
+    double Vbici_temp, Vaval;
 
     // Model flags
     int use_aval;
@@ -1830,22 +1830,23 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 ichk1 = 1, ichk2 = 1, ichk3 = 1, ichk4 = 1, ichk5=1, ichk6 = 0;
                 Vbiei = DEVpnjlim(Vbiei,*(ckt->CKTstate0 + here->HICUMvbiei),here->HICUMvt.rpart,
                         here->HICUMtVcrit,&icheck);
-                if ( 1 || (iavl==0.0) || (-Vbici<here->HICUMvdci_t.rpart) ) {
-                    Vbici = DEVpnjlim(Vbici,*(ckt->CKTstate0 + here->HICUMvbici),here->HICUMvt.rpart,
-                            here->HICUMtVcrit,&ichk1);
-
-                } else { //limit change around 3*vdci_t, also iavl_Vbiei sign inverted -> somehow this brings convergence
-                    Vbici_temp = - (Vbici + here->HICUMvdci_t.rpart*3),
+                Vaval = 3 * here->HICUMvdci_t.rpart;//limit step around 3*vdci_t -> somehow this brings convergence
+                if ((model->HICUMkavlGiven) && (Vbici < MIN(0, -Vaval))) {
+                    Vbici_temp = -(Vbici + Vaval);
                     Vbici_temp = DEVpnjlim(
                             Vbici_temp,
-                            -(*(ckt->CKTstate0 + here->HICUMvbici) + here->HICUMvdci_t.rpart*3),
-                            here->HICUMvt.rpart/10,
+                            -(*(ckt->CKTstate0 + here->HICUMvbici) + Vaval),
+                            here->HICUMvt.rpart,
                             here->HICUMtVcrit,
                             &ichk1
                     );
-                    Vbici      = - (Vbici_temp+here->HICUMvdci_t.rpart*3);
-
+                    Vbici      = -(Vbici_temp + Vaval);
+                } else {
+                    Vbici = DEVpnjlim(Vbici,*(ckt->CKTstate0 + here->HICUMvbici),here->HICUMvt.rpart,
+                            here->HICUMtVcrit,&ichk1);
                 }
+//                ichk1 = 0;
+//                Vbici = HICUMlimitlog(Vbici,*(ckt->CKTstate0 + here->HICUMvbici),0.4,&ichk1);
                 Vbpei = DEVpnjlim(Vbpei,*(ckt->CKTstate0 + here->HICUMvbpei),here->HICUMvt.rpart,
                         here->HICUMtVcrit,&ichk2);
                 Vbpci = DEVpnjlim(Vbpci,*(ckt->CKTstate0 + here->HICUMvbpci),here->HICUMvt.rpart,
