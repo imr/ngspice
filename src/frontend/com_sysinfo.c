@@ -975,6 +975,11 @@ static void get_physical_processor_count(void)
 
 
 #else /* no Windows OS, no proc info file system */
+static int get_sysmem(struct sys_memory *memall)
+{
+    return -1; // Return N/A
+}
+
 void set_static_system_info(void)
 {
     /* Set to no data available */
