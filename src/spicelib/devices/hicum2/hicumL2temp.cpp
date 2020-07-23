@@ -120,14 +120,14 @@ HICUMtemp(GENmodel *inModel, CKTcircuit *ckt)
 
             if(here->HICUMdtempGiven) here->HICUMtemp = here->HICUMtemp + here->HICUMdtemp;
 
-            iret = hicum_thermal_update(model, here, here -> HICUMtemp);
+            iret = hicum_thermal_update(model, here, &here -> HICUMtemp, &here->HICUMtemp_Vrth);
 
         }
     }
     return(OK);
 }
 
-int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double HICUMTemp)
+int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double * HICUMTemp, double * Tdev_Vrth)
 {
     HICUMmodel *model = (HICUMmodel *)inModel;
     HICUMinstance *here = (HICUMinstance *)inInstance;
@@ -158,14 +158,17 @@ int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double 
     zetasct = mg-1.5;
 
     // Limit temperature to avoid FPEs in equations
-    if(HICUMTemp < TMIN + CONSTCtoK) {
-        HICUMTemp = TMIN + CONSTCtoK;
+    *(Tdev_Vrth) = 1;
+    if(*(HICUMTemp) < TMIN + CONSTCtoK) {
+        *(HICUMTemp) = TMIN + CONSTCtoK;
+        *(Tdev_Vrth) = 0;
     } else {
-        if (HICUMTemp > TMAX + CONSTCtoK) {
-            HICUMTemp = TMAX + CONSTCtoK;
+        if (*(HICUMTemp) > TMAX + CONSTCtoK) {
+            *(HICUMTemp) = TMAX + CONSTCtoK;
+            *(Tdev_Vrth) = 0;
         }
     }
-    temp = HICUMTemp+1_e;    // dual number valued temperature
+    temp = *(HICUMTemp)+1_e* *(Tdev_Vrth);    // dual number device temperature
     vt   = temp*CONSTKoverQ; // dual valued temperature voltage
 
     here->HICUMvt0     = Tnom * CONSTKoverQ;

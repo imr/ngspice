@@ -484,6 +484,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Q_0_Vbiei, Q_0_Vbici, Q_0_dT;
 
     double Temp;
+    double Tdev_Vrth; //derivative device temperature to Vrth
 
     double Cjei_Vbiei,Cjci_Vbici,Cjep_Vbpei,Cjep_dT,Cjs_Vsici;
     double Cjei_dT, Cjci_dT;
@@ -1877,7 +1878,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
             if (selfheat) { // Thermal_update_with_self_heating
                 Temp =  here->HICUMtemp+Vrth;
-                _iret = hicum_thermal_update(model, here, Temp);
+                _iret = hicum_thermal_update(model, here, &Temp, &Tdev_Vrth);
 
                 here->HICUMdtemp_sh = Temp - here->HICUMtemp;
             } else {
@@ -2502,7 +2503,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             if(!selfheat) {
                 Ith      = 0;
             } else if (model->HICUMrth_de==1) {
-                Ith      = -dT/here->HICUMrth_t.rpart+pterm; //Current from gnd to T
+                Ith      = -Vrth/here->HICUMrth_t.rpart+pterm; //Current from gnd to T
             } else {
                 Ith      = -Vrth/here->HICUMrth_t.rpart+pterm; //Current from gnd to T
 
@@ -3324,125 +3325,125 @@ load:
 //              #############################################################
                 
 //              Stamp element: Ibiei  f_Bi = +   f_Ei = -
-                rhs_current = -Ibiei_Vrth*Vrth;
+                rhs_current = -Ibiei_Vrth*Tdev_Vrth*Vrth;
                 *(ckt->CKTrhs + here->HICUMbaseBINode) += -rhs_current;
                 *(ckt->CKTrhs + here->HICUMemitEINode) +=  rhs_current;
                 // with respect to Potential Vrth
-                *(here->HICUMbaseBItempPtr)            +=  Ibiei_Vrth;
-                *(here->HICUMemitEItempPtr)            += -Ibiei_Vrth;
+                *(here->HICUMbaseBItempPtr)            +=  Ibiei_Vrth*Tdev_Vrth;
+                *(here->HICUMemitEItempPtr)            += -Ibiei_Vrth*Tdev_Vrth;
 //              finish
 
 //              Stamp element: Ibpei  f_Bp = +   f_Ei = -
-                rhs_current = -Ibpei_Vrth*Vrth;
+                rhs_current = -Ibpei_Vrth*Tdev_Vrth*Vrth;
                 *(ckt->CKTrhs + here->HICUMbaseBPNode) += -rhs_current;
                 *(ckt->CKTrhs + here->HICUMemitEINode) +=  rhs_current;
                 // with respect to Potential Vrth
-                *(here->HICUMbaseBPtempPtr)            +=  Ibpei_Vrth;
-                *(here->HICUMemitEItempPtr)            += -Ibpei_Vrth;
+                *(here->HICUMbaseBPtempPtr)            +=  Ibpei_Vrth*Tdev_Vrth;
+                *(here->HICUMemitEItempPtr)            += -Ibpei_Vrth*Tdev_Vrth;
 //              finish
 
 //              Stamp element: Ibici  f_Bi = +   f_Ci = -
-                rhs_current = -Ibici_Vrth*Vrth;
+                rhs_current = -Ibici_Vrth*Vrth*Tdev_Vrth;
                 *(ckt->CKTrhs + here->HICUMbaseBINode) += -rhs_current;
                 *(ckt->CKTrhs + here->HICUMcollCINode) +=  rhs_current;
                 // with respect to Potential Vrth
-                *(here->HICUMbaseBItempPtr)            +=  Ibici_Vrth;
-                *(here->HICUMcollCItempPtr)            += -Ibici_Vrth;
+                *(here->HICUMbaseBItempPtr)            +=  Ibici_Vrth*Tdev_Vrth;
+                *(here->HICUMcollCItempPtr)            += -Ibici_Vrth*Tdev_Vrth;
 //              finish
 
 //              Stamp element: Iciei  f_Ci = +   f_Ei = -
-                rhs_current = -Iciei_Vrth*Vrth;
+                rhs_current = -Iciei_Vrth*Vrth*Tdev_Vrth;
                 *(ckt->CKTrhs + here->HICUMcollCINode) += -rhs_current;
                 *(ckt->CKTrhs + here->HICUMemitEINode) +=  rhs_current;
                 // with respect to Potential Vrth
-                *(here->HICUMcollCItempPtr)            +=  Iciei_Vrth;
-                *(here->HICUMemitEItempPtr)            += -Iciei_Vrth;
+                *(here->HICUMcollCItempPtr)            +=  Iciei_Vrth*Tdev_Vrth;
+                *(here->HICUMemitEItempPtr)            += -Iciei_Vrth*Tdev_Vrth;
 //              finish
 
 //              Stamp element: Ibpci  f_Bp = +   f_Ci = -
-                rhs_current = -Ibpci_Vrth*Vrth;
+                rhs_current = -Ibpci_Vrth*Vrth*Tdev_Vrth;
                 *(ckt->CKTrhs + here->HICUMbaseBPNode) += -rhs_current;
                 *(ckt->CKTrhs + here->HICUMcollCINode) +=  rhs_current;
                 // with respect to Potential Vrth
-                *(here->HICUMbaseBPtempPtr)            +=  Ibpci_Vrth;
-                *(here->HICUMcollCItempPtr)            += -Ibpci_Vrth;
+                *(here->HICUMbaseBPtempPtr)            +=  Ibpci_Vrth*Tdev_Vrth;
+                *(here->HICUMcollCItempPtr)            += -Ibpci_Vrth*Tdev_Vrth;
 //              finish
 
 //              Stamp element: Rcx  f_Ci = +   f_C = -
-                rhs_current = -Icic_Vrth*Vrth;
+                rhs_current = -Icic_Vrth*Vrth*Tdev_Vrth;
                 *(ckt->CKTrhs + here->HICUMcollCINode) += -rhs_current;
                 *(ckt->CKTrhs + here->HICUMcollNode)   +=  rhs_current;
                 // with respect to Potential Vrth
-                *(here->HICUMcollCItempPtr)            +=  Icic_Vrth;
-                *(here->HICUMcollTempPtr)              += -Icic_Vrth;
+                *(here->HICUMcollCItempPtr)            +=  Icic_Vrth*Tdev_Vrth;
+                *(here->HICUMcollTempPtr)              += -Icic_Vrth*Tdev_Vrth;
 //              finish
 
 //              Stamp element: Rbx  f_B = +   f_Bp = -
-                rhs_current = -Ibbp_Vrth*Vrth;
+                rhs_current = -Ibbp_Vrth*Vrth*Tdev_Vrth;
                 *(ckt->CKTrhs + here->HICUMbaseNode)   += -rhs_current;
                 *(ckt->CKTrhs + here->HICUMbaseBPNode) +=  rhs_current;
                 // with respect to Potential Vrth
-                *(here->HICUMbaseTempPtr)   +=  Ibbp_Vrth;
-                *(here->HICUMbaseBPtempPtr) += -Ibbp_Vrth;
+                *(here->HICUMbaseTempPtr)   +=  Ibbp_Vrth*Tdev_Vrth;
+                *(here->HICUMbaseBPtempPtr) += -Ibbp_Vrth*Tdev_Vrth;
 //              finish
 
 //              Stamp element: Re   f_Ei = +   f_E = -
-                rhs_current = - Ieie_Vrth*Vrth;
+                rhs_current = - Ieie_Vrth*Vrth*Tdev_Vrth;
                 *(ckt->CKTrhs + here->HICUMemitEINode) += -rhs_current;
                 *(ckt->CKTrhs + here->HICUMemitNode)   += +rhs_current;
                 // with respect to Potential Vrth
-                *(here->HICUMemitEItempPtr) += +Ieie_Vrth;
-                *(here->HICUMemitTempPtr)   += -Ieie_Vrth;
+                *(here->HICUMemitEItempPtr) += +Ieie_Vrth*Tdev_Vrth;
+                *(here->HICUMemitTempPtr)   += -Ieie_Vrth*Tdev_Vrth;
 //              finish
 
 //              Stamp element: Rbi    f_Bp = +   f_Bi = -
-                rhs_current = -Ibpbi_Vrth*Vrth;
+                rhs_current = -Ibpbi_Vrth*Vrth*Tdev_Vrth;
                 *(ckt->CKTrhs + here->HICUMbaseBPNode) += -rhs_current;
                 *(ckt->CKTrhs + here->HICUMbaseBINode) +=  rhs_current;
                 // with respect to Potential Vrth
-                *(here->HICUMbaseBPtempPtr)            +=  Ibpbi_Vrth;
-                *(here->HICUMbaseBItempPtr)            += -Ibpbi_Vrth;
+                *(here->HICUMbaseBPtempPtr)            +=  Ibpbi_Vrth*Tdev_Vrth;
+                *(here->HICUMbaseBItempPtr)            += -Ibpbi_Vrth*Tdev_Vrth;
 //              finish
 
 //              Stamp element: Isici   f_Si = +   f_Ci = -
-                rhs_current = -Isici_Vrth*Vrth;
+                rhs_current = -Isici_Vrth*Vrth*Tdev_Vrth;
                 *(ckt->CKTrhs + here->HICUMsubsSINode) += -rhs_current;
                 *(ckt->CKTrhs + here->HICUMcollCINode) +=  rhs_current;
                 // with respect to Potential Vrth
-                *(here->HICUMsubsSItempPtr)            +=  Isici_Vrth;
-                *(here->HICUMcollCItempPtr)            += -Isici_Vrth;
+                *(here->HICUMsubsSItempPtr)            +=  Isici_Vrth*Tdev_Vrth;
+                *(here->HICUMcollCItempPtr)            += -Isici_Vrth*Tdev_Vrth;
 //              finish
 
 //              Branch: bpsi, Stamp element: Its
-                rhs_current = - Ibpsi_Vrth*Vrth;
+                rhs_current = - Ibpsi_Vrth*Vrth*Tdev_Vrth;
                 *(ckt->CKTrhs + here->HICUMbaseBPNode) += -rhs_current;
                 *(ckt->CKTrhs + here->HICUMsubsSINode) +=  rhs_current;
                 // f_Bp = +    f_Si = -
                 // with respect to Vrth
-                *(here->HICUMbaseBPtempPtr)          +=  Ibpsi_Vrth;
-                *(here->HICUMsubsSItempPtr)          += -Ibpsi_Vrth;
+                *(here->HICUMbaseBPtempPtr)          +=  Ibpsi_Vrth*Tdev_Vrth;
+                *(here->HICUMsubsSItempPtr)          += -Ibpsi_Vrth*Tdev_Vrth;
 //              finish
 
                 if (nqs) {
     //              Stamp element: Ixf    f_xf = +   
-                    rhs_current = -Ixf_dT*Vrth;
+                    rhs_current = -Ixf_dT*Vrth*Tdev_Vrth;
                     *(ckt->CKTrhs + here->HICUMxfNode) += -rhs_current;
                     // with respect to Potential Vxf
-                    *(here->HICUMxfTempPtr)             +=  Ixf_dT;
+                    *(here->HICUMxfTempPtr)             +=  Ixf_dT*Tdev_Vrth;
     //              finish
 
     //              Stamp element: Ixf1    f_xf1 = +   
                     rhs_current = -Ixf1_dT*Vrth;
                     *(ckt->CKTrhs + here->HICUMxf1Node) += -rhs_current;
                     // with respect to Potential Vxf1
-                    *(here->HICUMxf1TempPtr)             +=  Ixf1_dT;
+                    *(here->HICUMxf1TempPtr)             +=  Ixf1_dT*Tdev_Vrth;
     //              finish
 
     //              Stamp element: Ixf2    f_xf2 = +   
-                    rhs_current = -Ixf2_dT*Vrth;
+                    rhs_current = -Ixf2_dT*Vrth*Tdev_Vrth;
                     *(ckt->CKTrhs + here->HICUMxf2Node) += -rhs_current;
                     // with respect to Potential Vxf2
-                    *(here->HICUMxf2TempPtr)             +=  Ixf2_dT;
+                    *(here->HICUMxf2TempPtr)             +=  Ixf2_dT*Tdev_Vrth;
     //              finish
                 }
 

@@ -75,6 +75,7 @@ typedef struct sHICUMinstance {
     double HICUMicVCS;     /* initial condition inner C-S branch  */
 
     double HICUMtemp;     /* instance temperature */
+    double HICUMtemp_Vrth;/* derivative device temperature to temperature at thermal node */
     double HICUMdtemp;    /* instance delta temperature */
     double HICUMdtemp_sh; /* instance delta temperature because of self-heating */
     double HICUMm;        /* multiply factor for the hicum */
