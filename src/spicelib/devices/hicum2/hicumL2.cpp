@@ -2504,7 +2504,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             if(!selfheat) {
                 Ith      = 0;
             } else if (model->HICUMrth_de==1) {
-                Ith      = -Vrth/here->HICUMrth_t.rpart+pterm; //Current from gnd to T
+                Ith      = -dT/here->HICUMrth_t.rpart+pterm; //Current from gnd to T
             } else {
                 Ith      = -Vrth/here->HICUMrth_t.rpart+pterm; //Current from gnd to T
 
