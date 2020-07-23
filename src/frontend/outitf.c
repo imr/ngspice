@@ -65,7 +65,7 @@ static int InterpPlotAdd(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
 #include "ngspice/tclspice.h"
 #elif defined SHARED_MODULE
 extern int sh_ExecutePerLoop(void);
-extern void sh_vecinit(runDesc *run);
+extern int sh_vecinit(runDesc *run);
 #endif
 
 /*Suppressing progress info in -o option */
