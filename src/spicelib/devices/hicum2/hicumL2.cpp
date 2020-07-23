@@ -2,38 +2,15 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 Model Author: 1990 Michael Schröter TU Dresden
-Spice3 Implementation: 2019 Dietmar Warning, Markus Müller, Mario Krattenmacher
+Spice3 Implementation: 2020 Dietmar Warning, Markus Müller, Mario Krattenmacher
 **********/
 
 /*
  * This file defines the HICUM L2.4.0 model load function
  * Comments on the Code:
- * - We use dual numbers to calculate derivatives, this is readble and error proof.
- * - The code is targeted to be readbale and maintainable, speed is sacrificied for this purpose.
- * - The verilog a code is available at the website of TU Dresden, Michael Schroeter#s chair.
- *
- * Checklist of what needs to be done: (@Mario: also look at this, did I get everything?)
- * - ijBEp
- * - ijBCx
- * - QjEp
- * - QBCx'
- * - QBCx''
- * - QdS
- * - QjS
- * - iTS
- * - ijSC
- * - rbi
- * - crbi,qrbi
- * - Qjci
- * - Qjei
- * - ijBCi
- * - ijBEi
- * - Qf
- * - Qr
- * - iavl
- * - iBEti
- * - itf, itr
- * - NQS derivatives, sources and elements
+ * - We use dual numbers to calculate derivatives, this is readble and error proof. => you need to understand that to understand this code
+ * - The code is targeted to be readbale and maintainable, speed is sacrificed for this purpose.
+ * - The verilog a code is available at the website of TU Dresden, Michael Schroeter's chair.
  */
 
 #include "cmath"
@@ -374,7 +351,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Qdei,Qrbi;
     double Qdei_Vbiei, Qdei_Vbici, Qdei_dT;
     double it,ibei,irei,ibci,ibep,irep,ibh_rec;
-    double volatile ibet,iavl,iavl_dT,iavl_Vbiei,iavl_Vbici;
+    double ibet,iavl,iavl_dT,iavl_Vbiei,iavl_Vbici;
     double ijbcx,ijbcx_dT,ijbcx_Vbpci,ijsc,ijsc_Vsici,ijsc_Vrth,Qjs,Qscp,HSI_Tsu,Qdsu;
     double HSI_Tsu_Vbpci, HSI_Tsu_Vsici, HSI_Tsu_dT;
     double Qdsu_Vbpci, Qdsu_Vsici, Qdsu_dT;
@@ -383,7 +360,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Cscp_Vsc, Cscp_dT;
 
     //Base resistance and self-heating power
-    double volatile rbi,pterm,pterm_dT;
+    double rbi,pterm,pterm_dT;
 
     //Model initialization
     double C_1;
@@ -455,7 +432,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double ibpsihat;
     double ithhat;
     double ceq, geq=0.0;
-    double volatile rhs_current;
+    double rhs_current;
     int icheck=1;
     int ichk1, ichk2, ichk3, ichk4, ichk5, ichk6;
     int error;
@@ -467,7 +444,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Ibpci=0, Ibpci_Vbpci;
     double Isici, Isici_Vsici;//
     double Isc=0, Isc_Vsc=0;
-    double volatile Iciei, Iciei_Vbiei, Iciei_Vbici, Iciei_Vrth, Iciei_Vxf2;
+    double Iciei, Iciei_Vbiei, Iciei_Vbici, Iciei_Vrth, Iciei_Vxf2;
     double Ibbp_Vbbp=0;
     double Isis_Vsis;
     double Ieie, Ieie_Veie=0;
@@ -518,7 +495,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 //NQS
     double Qxf_Vxf, Qxf1_Vxf1, Qxf2_Vxf2;
 
-    double volatile Ith=0, Vrth=0, Icth, Icth_Vrth, delvrth;
+    double Ith=0, Vrth=0, Icth, Icth_Vrth, delvrth;
 
     double Ibiei_Vrth=0;
     double Ibici_Vrth=0;
@@ -868,14 +845,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
         //Avalanche current
         duals::duald iavl;
         duals::duald v_bord,v_q,U0,av,avl,cjci0_t, vdci_t, qavl_t,favl_t, kavl_t;
-        // double v_bord_r;
-        // double volatile v_bord_r1;
-        // int use_aval;
-        // if ((model->HICUMfavl > 0.0) && (model->HICUMcjci0_scaled > 0.0)) {
-        //     use_aval = 1;
-        // } else {
-        //     use_aval = 0;
-        // }
         if (use_aval == 1) {//begin : HICAVL
             double T_dpart = T.dpart();
             cjci0_t = here->HICUMcjci0_t.rpart;
@@ -915,19 +884,11 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 } else {
                     iavl    = itf*avl;
                 }
-                // if (avl > 0 && iavl==0){
-                //     printf("error");
-                //     fflush(stdout);
-                // }
             } else {
                 iavl = 0.0;
-                // printf("error");
-                // fflush(stdout);
             }
         } else{
             iavl = 0;
-            // printf("error");
-            // fflush(stdout);
         }
         // Note that iavl = 0.0 is already set in the initialization block for use_aval == 0 (Markus: not for this lambda!)
         return iavl;
@@ -1115,24 +1076,10 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 l_it    = l_it+1;
                 if (!(abs(d_Q) >= RTOLC*abs(Q_pT))) { //extra_rounds to get rid of derivative noise
                     extra_round = extra_round + 1;
-
-                    // printf("extra round\n");
-                    // condition_ =  (extra_round < 5);
-                    // std::cout << std::noboolalpha << condition_ << " == " << std::boolalpha << condition_ << std::endl;        
-                    // condition_ =  (abs(d_Q) >= RTOLC*abs(Q_pT)) && (l_it <= l_itmax) && (extra_round < 5);
-                    // std::cout << std::noboolalpha << condition_ << " == " << std::boolalpha << condition_ << std::endl;        
                 }
             }
-            // I_Tf1   = i_0f/Q_pT;
-            // a_h     = Oich*I_Tf1;
-            // itf     = I_Tf1*(1.0+a_h);
-            // itr     = i_0r/Q_pT;
 
-            // //Final transit times, charges and transport current components
-            // Tf      = T_f0;
-            // Qf      = T_f0*itf;
-            // // `HICQFF(itf,ick,Tf,Qf,T_fT,Q_fT,Q_bf)
-            // Qr      = Tr*itr;
+            //final calculations afterwards, see later in load where this is called
 
         } //if
         return Q_pT;
@@ -1399,7 +1346,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                     /////////////////////////
                     // begin copy state vector
                     /////////////////////////
-                    //done with copy&paste plus VIM macro ... thank god for VIM.
                     *(ckt->CKTstate0+here->HICUMvbiei)=*(ckt->CKTstate1+here->HICUMvbiei);
                     *(ckt->CKTstate0+here->HICUMvbici)=*(ckt->CKTstate1+here->HICUMvbici);
                     *(ckt->CKTstate0+here->HICUMvbpei)=*(ckt->CKTstate1+here->HICUMvbpei);
@@ -1532,7 +1478,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                     Vbiei = model->HICUMtype*(
                         *(ckt->CKTrhsOld+here->HICUMbaseBINode)-
                         *(ckt->CKTrhsOld+here->HICUMemitEINode));
-                    Vbe   = model->HICUMtype*( //@Dietmar: correct?
+                    Vbe   = model->HICUMtype*(
                         *(ckt->CKTrhsOld+here->HICUMbaseNode)-
                         *(ckt->CKTrhsOld+here->HICUMemitNode));
                     Vbici = model->HICUMtype*(
@@ -1863,7 +1809,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             /*
              *   determine dc current and derivatives
              */
-//todo: check for double multiplication on pnp's
             Vbiei = model->HICUMtype*Vbiei;
             Vbici = model->HICUMtype*Vbici;
             Vciei = (Vbiei-Vbici);
@@ -1872,6 +1817,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             Vbci  = model->HICUMtype*Vbci;
             Vsici = model->HICUMtype*Vsici;
             Vsc   = model->HICUMtype*Vsc;
+            //Dietmar, what about this
             // Vxf   = model->HICUMtype*Vxf;
             // Vxf1  = model->HICUMtype*Vxf1;
             // Vxf2  = model->HICUMtype*Vxf2;
@@ -1880,10 +1826,12 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 Temp =  here->HICUMtemp+Vrth;
                 _iret = hicum_thermal_update(model, here, &Temp, &Tdev_Vrth);
 
-                here->HICUMdtemp_sh = Temp - here->HICUMtemp;
+                here->HICUMdtemp_sh  = Temp - here->HICUMtemp;
+                here->HICUMtemp_Vrth = Tdev_Vrth;
             } else {
                 Temp =  here->HICUMtemp;
-                here->HICUMdtemp_sh = 0;
+                here->HICUMdtemp_sh  = 0;
+                here->HICUMtemp_Vrth = 0;
             }
 
             // Model_evaluation
@@ -1999,7 +1947,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
                 //begin final transfer current calculations -> itf, itr, Qf, Qr------------
                 calc_it_final(Temp+1_e, Vbiei    , Vbici     , Q_pT+1_e*Q_pT_dT    , T_f0+1_e*T_f0_dT    , ick+1_e*ick_dT    , &result_itf, &result_itr, &result_Qf, &result_Qr, &result_Q_bf, &result_Tf);
-                // calc_it_final(Temp+1_e, Vbiei    , Vbici    , Q_pT    , T_f0    , ick    , &result_itf, &result_itr, &result_Qf, &result_Qr);
                 itf    = result_itf.rpart();
                 itr    = result_itr.rpart();
                 Qf     = result_Qf.rpart();
@@ -2074,7 +2021,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
             Qrbi       = Crbi*Vbpbi; //Vbpbi=(Vbpei-Vbiei)=(Vbpci-Vbici)
             Qrbi_Vbpbi = Crbi;
-            Qrbi_Vbiei = Vbpbi*Crbi_Vbiei;// - Crbi; //What do you think Dietmar?
+            Qrbi_Vbiei = Vbpbi*Crbi_Vbiei;// - Crbi; //not sure about this derivative
             Qrbi_Vbici = Vbpbi*Crbi_Vbici;//- Crbi;
             Qrbi_Vrth  = Vbpbi*Crbi_Vrth;
 
@@ -2097,61 +2044,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             iavl_dT     = result.dpart(); 
 
             here->HICUMiavl = iavl;
-
-            // double v_bord, v_bord_Vbici, v_bord_dT;
-            // double v_q, v_q_dT, v_q_Vbici;
-            // double U0,U0_dT;
-            // double av,av_dT, av_Vbici;
-            // double avl,avl_av, avl_U0, avl_v_q, avl_v_bord, avl_Vbici, avl_dT;
-
-            //Avalanche current hand implementation
-            // iavl       = 0;
-            // iavl_Vbici = 0;
-            // iavl_Vbiei = 0;
-            // iavl_dT    = 0;
-            // if (use_aval == 1) {//begin : HICAVL
-            //     v_bord       = here->HICUMvdci_t.rpart-Vbici;
-            //     v_bord_Vbici = -1;
-            //     v_bord_dT    = here->HICUMvdci_t.dpart;
-            //     if (v_bord > 0) {
-            //         v_q       = here->HICUMqavl_t.rpart/Cjci;
-            //         v_q_dT    = here->HICUMqavl_t.dpart/Cjci - v_q/Cjci*Cjci_dT ;
-            //         v_q_Vbici = -v_q*Cjci_Vbici/Cjci;
-            //         U0        = here->HICUMqavl_t.rpart/here->HICUMcjci0_t.rpart;
-            //         U0_dT     = here->HICUMqavl_t.dpart/here->HICUMcjci0_t.rpart - U0/here->HICUMcjci0_t.rpart*here->HICUMcjci0_t.dpart;
-            //         if(v_bord > U0){
-            //             av         = here->HICUMfavl_t.rpart*exp(-v_q/U0);
-            //             av_dT      = here->HICUMfavl_t.dpart*exp(-v_q/U0) - av*(v_q_dT/U0-v_q/U0*U0_dT);
-            //             av_Vbici   = -av*v_q_Vbici/U0;
-            //             avl        = av*(U0+(1.0+v_q/U0)*(v_bord-U0));
-            //             avl_av     = (U0+(1.0+v_q/U0)*(v_bord-U0));
-            //             avl_U0     = av*(1.0 - v_q/U0/U0*(v_bord-U0) - (1.0+v_q/U0) );
-            //             avl_v_bord = av*(1.0+v_q/U0);
-            //             avl_v_q    = av*(v_bord-U0)/U0;
-            //             avl_Vbici  = avl_av*av_Vbici + avl_v_q*v_q_Vbici + avl_v_bord*v_bord_Vbici;
-            //             avl_dT     = avl_av*av_dT    + avl_U0*U0_dT + avl_v_bord*v_bord_dT + avl_v_q*v_q_dT;
-            //         } else {
-            //             avl        = here->HICUMfavl_t.rpart*v_bord*exp(-v_q/v_bord);
-            //             avl_v_q    = -avl/v_bord;
-            //             avl_v_bord = avl*v_q/v_bord/v_bord;
-            //             avl_dT     = here->HICUMfavl_t.dpart*v_bord*exp(-v_q/v_bord) + avl_v_bord*v_bord_dT + avl_v_q*v_q_dT;
-            //             avl_Vbici  = avl_v_q*v_q_Vbici + avl_v_bord*v_bord_Vbici;
-            //         }
-            //         if (model->HICUMkavl > 0) { //: HICAVLHIGH
-            //             // duals::duald denom,sq_smooth,hl;
-            //             // denom = 1-kavl_t*avl;
-            //             // // Avoid denom < 0 using a smoothing function
-            //             // sq_smooth = sqrt(denom*denom+0.01);
-            //             // hl        = 0.5*(denom+sq_smooth);
-            //             // iavl      = itf*avl/hl;
-            //         } else {
-            //             iavl       = itf*avl;
-            //             iavl_Vbici = avl*itf_Vbici + avl_Vbici*itf;
-            //             iavl_Vbiei = avl*itf_Vbiei;
-            //             iavl_dT    = avl*itf_dT + itf*avl_dT;
-            //         }
-            //     } 
-            // }
 
             //Excess base current from recombination at the b-c barrier
             ibh_rec       = Q_bf*Otbhrec;
@@ -3279,7 +3171,7 @@ load:
 //          finish
 
             if (nqs) {
-    //          Branch: xf1-ground, Stamp element: Ixf1   f_xf1=+  //Markus has opposite sign than Dietmar. This current flows from xf1 to ground?
+    //          Branch: xf1-ground, Stamp element: Ixf1   f_xf1=+ 
                 rhs_current                          = Ixf1 - Ixf1_Vbici*Vbici - Ixf1_Vbiei*Vbiei -Ixf1_Vxf1*Vxf1 - Ixf1_Vxf2*Vxf2;
                 *(ckt->CKTrhs + here->HICUMxf1Node) += -rhs_current; // rhs_current; // into xf1 node
                 *(here->HICUMxf1BaseBIPtr)          += +Ixf1_Vbiei;
@@ -3289,7 +3181,7 @@ load:
                 *(here->HICUMxf1Xf2Ptr)             += +Ixf1_Vxf2;
                 *(here->HICUMxf1Xf1Ptr)             += +Ixf1_Vxf1;
 
-    //          Branch: xf2-ground, Stamp element: Ixf2   f_xf2=+  //Markus has opposite sign than Dietmar. This current flows from xf1 to ground?
+    //          Branch: xf2-ground, Stamp element: Ixf2   f_xf2=+  
                 rhs_current                          = Ixf2 - Ixf2_Vbici*Vbici - Ixf2_Vbiei*Vbiei - Ixf2_Vxf1*Vxf1 - Ixf2_Vxf2*Vxf2;
                 *(ckt->CKTrhs + here->HICUMxf2Node) += -rhs_current; // rhs_current; // into xf2 node
                 *(here->HICUMxf2BaseBIPtr)          += +Ixf2_Vbiei;
@@ -3299,7 +3191,7 @@ load:
                 *(here->HICUMxf2Xf2Ptr)             += +Ixf2_Vxf2;
                 *(here->HICUMxf2Xf1Ptr)             += +Ixf2_Vxf1;
 
-    //          Branch: xf-ground, Stamp element: Ixf   f_xf=+  //Markus has opposite sign than Dietmar. This current flows from xf1 to ground?
+    //          Branch: xf-ground, Stamp element: Ixf   f_xf=+  
                 rhs_current = Ixf - Ixf_Vbici*Vbici - Ixf_Vbiei*Vbiei - Ixf_Vxf*Vxf;
                 *(ckt->CKTrhs + here->HICUMxfNode) += -rhs_current; // rhs_current; // into xf2 node
                 *(here->HICUMxfBaseBIPtr)          += +Ixf_Vbiei;

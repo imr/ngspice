@@ -168,8 +168,10 @@ int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double 
             *(Tdev_Vrth) = 0;
         }
     }
+    //This routine calculate the derivative with respect to Vrth. Since at some point
+    // Tdev becomes constant (see above), we need to account for this like below.
     temp = *(HICUMTemp)+1_e* *(Tdev_Vrth);    // dual number device temperature
-    vt   = temp*CONSTKoverQ; // dual valued temperature voltage
+    vt   = temp*CONSTKoverQ;                  // dual valued temperature voltage
 
     here->HICUMvt0     = Tnom * CONSTKoverQ;
     here->HICUMvt.rpart = vt.rpart();

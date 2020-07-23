@@ -65,8 +65,8 @@ typedef struct sHICUMinstance {
     int HICUMbaseBPNode; /* number of internal base node of hicum */
     int HICUMsubsSINode; /* number of internal substrate node */
     int HICUMxfNode;     /* number of internal excess phase node qdei */
-    int HICUMxf1Node;    /* number of internal excess phase node itf */
-    int HICUMxf2Node;    /* number of internal excess phase node itf */
+    int HICUMxf1Node;    /* number of internal excess phase 1 node itf */
+    int HICUMxf2Node;    /* number of internal excess phase 2 node itf */
 
     double HICUMarea;     /* area factor for the hicum */
     //initial conditions
