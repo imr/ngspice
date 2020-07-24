@@ -273,23 +273,24 @@ duals::duald calc_hjei_vbe(duals::duald Vbiei, duals::duald T, HICUMinstance * h
 }
 
 
-void hicum_diode(double T, dual_double IS, double UM1, double U, double *Iz, double *Gz, double *Tz)
+void hicum_diode(duals::duald T, dual_double IS, double UM1, double U, double *Iz, double *Gz, double *Tz)
 {
+    // T is T_dev + 1_e*T_dev_Vrth
     //wrapper for hicum diode equation that also generates derivatives
     duals::duald result = 0;
 
     // printf("executed diode");
 
     duals::duald is_t = IS.rpart;
-    result = HICDIO(T, is_t, UM1, U+1_e);
+    result = HICDIO(T.rpart(), is_t, UM1, U+1_e);
     *Iz    = result.rpart();
     *Gz    = result.dpart(); //derivative for U
     is_t   = IS.rpart + 1_e*IS.dpart;
-    result = HICDIO(T+1_e, is_t, UM1, U);
+    result = HICDIO(T, is_t, UM1, U);
     *Tz    = result.dpart(); //derivative for T
 }
 
-void hicum_qjmodf(double T, dual_double c_0, dual_double u_d, double z, dual_double a_j, double U_cap, double *C, double *C_dU, double *C_dT, double *Qz, double *Qz_dU, double *Qz_dT)
+void hicum_qjmodf(duals::duald T, dual_double c_0, dual_double u_d, double z, dual_double a_j, double U_cap, double *C, double *C_dU, double *C_dT, double *Qz, double *Qz_dU, double *Qz_dT)
 {
     //wrapper for QJMODF that also generates derivatives
     duals::duald Cresult = 0;
@@ -297,7 +298,7 @@ void hicum_qjmodf(double T, dual_double c_0, dual_double u_d, double z, dual_dou
     duals::duald c_0_t = c_0.rpart;
     duals::duald u_d_t = u_d.rpart;
     duals::duald a_j_t = a_j.rpart;
-    QJMODF(T, c_0_t, u_d_t, z, a_j_t, U_cap+1_e, &Cresult, &Qresult);
+    QJMODF(T.rpart(), c_0_t, u_d_t, z, a_j_t, U_cap+1_e, &Cresult, &Qresult);
     *C     = Cresult.rpart();
     *C_dU  = Cresult.dpart();
     *Qz    = Qresult.rpart();
@@ -306,7 +307,7 @@ void hicum_qjmodf(double T, dual_double c_0, dual_double u_d, double z, dual_dou
     c_0_t.dpart(c_0.dpart);
     u_d_t.dpart(u_d.dpart);
     a_j_t.dpart(a_j.dpart);
-    QJMODF(T+1_e, c_0_t, u_d_t, z, a_j_t, U_cap, &Cresult, &Qresult);
+    QJMODF(T, c_0_t, u_d_t, z, a_j_t, U_cap, &Cresult, &Qresult);
     *Qz_dT = Qresult.dpart();
     *C_dT  = Cresult.dpart();
 }
@@ -1838,12 +1839,12 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
             //Intrinsic transistor
             //Internal base currents across b-e junction
-            hicum_diode(Temp,here->HICUMibeis_t,model->HICUMmbei, Vbiei, &ibei, &ibei_Vbiei, &ibei_dT);
-            hicum_diode(Temp,here->HICUMireis_t,model->HICUMmrei, Vbiei, &irei, &irei_Vbiei, &irei_dT);
+            hicum_diode(Temp+1_e*Tdev_Vrth,here->HICUMibeis_t,model->HICUMmbei, Vbiei, &ibei, &ibei_Vbiei, &ibei_dT);
+            hicum_diode(Temp+1_e*Tdev_Vrth,here->HICUMireis_t,model->HICUMmrei, Vbiei, &irei, &irei_Vbiei, &irei_dT);
 
             //Internal b-e and b-c junction capacitances and charges
             //Cjei    = ddx(Qjei,V(bi));
-            hicum_qjmodf(Temp,here->HICUMcjei0_t,here->HICUMvdei_t,model->HICUMzei,here->HICUMajei_t,Vbiei,&Cjei,&Cjei_Vbiei, &Cjei_dT,&Qjei, &Qjei_Vbiei, &Qjei_dT);
+            hicum_qjmodf(Temp+1_e*Tdev_Vrth,here->HICUMcjei0_t,here->HICUMvdei_t,model->HICUMzei,here->HICUMajei_t,Vbiei,&Cjei,&Cjei_Vbiei, &Cjei_dT,&Qjei, &Qjei_Vbiei, &Qjei_dT);
 
             result         = calc_hjei_vbe(Vbiei+1_e, Temp, here, model);
             hjei_vbe       = result.rpart();
@@ -2030,7 +2031,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             //HICCR: }
 
             //Internal base current across b-c junction
-            hicum_diode(Temp,here->HICUMibcis_t,model->HICUMmbci, Vbici, &ibci, &ibci_Vbici, &ibci_dT);
+            hicum_diode(Temp+1_e*Tdev_Vrth,here->HICUMibcis_t,model->HICUMmbci, Vbici, &ibci, &ibci_Vbici, &ibci_dT);
 
             //Avalanche current
             result      = calc_iavl(Vbici+1_e, Cjci+1_e*Cjci_Vbici, itf+1_e*itf_Vbici    , Temp);
@@ -2065,11 +2066,11 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             here->HICUMrbi = rbi;
 
             //Base currents across peripheral b-e junction
-            hicum_diode(Temp,here->HICUMibeps_t,model->HICUMmbep, Vbpei, &ibep, &ibep_Vbpei, &ibep_dT);
-            hicum_diode(Temp,here->HICUMireps_t,model->HICUMmrep, Vbpei, &irep, &irep_Vbpei, &irep_dT);
+            hicum_diode(Temp+1_e*Tdev_Vrth,here->HICUMibeps_t,model->HICUMmbep, Vbpei, &ibep, &ibep_Vbpei, &ibep_dT);
+            hicum_diode(Temp+1_e*Tdev_Vrth,here->HICUMireps_t,model->HICUMmrep, Vbpei, &irep, &irep_Vbpei, &irep_dT);
 
             //Peripheral b-e junction capacitance and charge
-            hicum_qjmodf(Temp,here->HICUMcjep0_t,here->HICUMvdep_t,model->HICUMzep,here->HICUMajep_t,Vbpei,&Cjep,&Cjep_Vbpei, &Cjep_dT,&Qjep, &Qjep_Vbpei, &Qjep_dT);
+            hicum_qjmodf(Temp+1_e*Tdev_Vrth,here->HICUMcjep0_t,here->HICUMvdep_t,model->HICUMzep,here->HICUMajep_t,Vbpei,&Cjep,&Cjep_Vbpei, &Cjep_dT,&Qjep, &Qjep_Vbpei, &Qjep_dT);
 
             //Tunneling current
             result      = calc_ibet(Vbiei    , Vbpei+1_e, Temp);
@@ -2083,7 +2084,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             ibet_dT     = result.dpart();
 
             //Base currents across peripheral b-c junction (bp,ci)
-            hicum_diode(Temp,here->HICUMibcxs_t,model->HICUMmbcx, Vbpci, &ijbcx, &ijbcx_Vbpci, &ijbcx_dT);
+            hicum_diode(Temp+1_e*Tdev_Vrth,here->HICUMibcxs_t,model->HICUMmbcx, Vbpci, &ijbcx, &ijbcx_Vbpci, &ijbcx_dT);
 
             //Depletion capacitance and charge at external b-c junction (b,ci)
             hicum_HICJQ(Temp, here->HICUMcjcx01_t,here->HICUMvdcx_t,model->HICUMzcx,here->HICUMvptcx_t, Vbci, &Cjcx_i, &Cjcx_i_Vbci, &Cjcx_i_dT, &Qjcx_i, &Qjcx_i_Vbci, &Qjcx_i_dT);
@@ -2138,7 +2139,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             }
 
             //Diode current for s-c junction (si,ci)
-            hicum_diode(Temp,here->HICUMiscs_t,model->HICUMmsc, Vsici, &ijsc, &ijsc_Vsici, &ijsc_Vrth);
+            hicum_diode(Temp+1_e*Tdev_Vrth,here->HICUMiscs_t,model->HICUMmsc, Vsici, &ijsc, &ijsc_Vsici, &ijsc_Vrth);
 
             // Self-heating calculation
             if (model->HICUMflsh == 1 && here->HICUMrth_scaled >= MIN_R) {
