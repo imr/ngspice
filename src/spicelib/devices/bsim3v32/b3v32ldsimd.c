@@ -80,14 +80,14 @@ int BSIM3v32LoadSIMD(BSIM3v32instance **heres, CKTcircuit *ckt
 #if NSIMD==4
 #ifdef USE_OMP
     #pragma message "Use OMP SIMD4 version"
-    #include "b3v32ldseq_simd4_omp.c"
+    #include "b3v32ldseq_simd4d_omp.c"
 #else
-    #include "b3v32ldseq_simd4.c"
+    #include "b3v32ldseq_simd4d.c"
 #endif
 #elif NSIMD==8
 #ifdef USE_OMP
     #pragma message "Use OMP SIMD8 version"
-    #include "b3v32ldseq_simd8_omp.c"
+    #include "b3v32ldseq_simd8d_omp.c"
 #else
     #include "b3v32ldseq_simd8d.c"
 #endif

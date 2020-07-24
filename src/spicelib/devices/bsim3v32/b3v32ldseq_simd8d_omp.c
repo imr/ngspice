@@ -16,20 +16,20 @@
  * Distributed under the same license terms as the original code,
  * see file "B3TERMS_OF_USE"
  **********/
+#ifndef NEWCONV
+#pragma message "Warning: simd configured for NEWCONV but compiled without - use anyway"
+#endif
+#ifdef NOBYPASS
+#pragma message "Warning: simd configured without NOBYPASS but compiled with - ignored"
+#endif
 #ifndef OMP_EFFMEM
 #pragma message "Warning: simd configured for OMP_EFFMEM but compiled without - use anyway"
 #endif
 #ifdef PREDICTOR
 #pragma message "Warning: simd configured without PREDICTOR but compiled with - ignored"
 #endif
-#ifndef NEWCONV
-#pragma message "Warning: simd configured for NEWCONV but compiled without - use anyway"
-#endif
-#ifdef USE_OMP
-#pragma message "Warning: simd configured without USE_OMP but compiled with - ignored"
-#endif
-#ifdef NOBYPASS
-#pragma message "Warning: simd configured without NOBYPASS but compiled with - ignored"
+#ifndef USE_OMP
+#pragma message "Warning: simd configured for USE_OMP but compiled without - use anyway"
 #endif
 
 {
@@ -382,13 +382,13 @@
   int error;
   ScalingFactor = 1.0e-9;
   ChargeComputationNeeded = ((ckt->CKTmode & (((MODEDCTRANCURVE | MODEAC) | MODETRAN) | MODEINITSMSIG)) || ((ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC))) ? (1) : (0);
-  vbs = vec8_SIMDLOADDATA(0, data);
-  vgs = vec8_SIMDLOADDATA(1, data);
-  vds = vec8_SIMDLOADDATA(2, data);
-  qdef = vec8_SIMDLOADDATA(3, data);
-  cdhat = vec8_SIMDLOADDATA(4, data);
-  cbhat = vec8_SIMDLOADDATA(5, data);
-  Check = vec8_SIMDLOADDATA(6, data) > 0.5;
+  vbs = (Vec8d ){heres[0]->BSIM3v32SIMDvbs, heres[1]->BSIM3v32SIMDvbs, heres[2]->BSIM3v32SIMDvbs, heres[3]->BSIM3v32SIMDvbs, heres[4]->BSIM3v32SIMDvbs, heres[5]->BSIM3v32SIMDvbs, heres[6]->BSIM3v32SIMDvbs, heres[7]->BSIM3v32SIMDvbs};
+  vgs = (Vec8d ){heres[0]->BSIM3v32SIMDvgs, heres[1]->BSIM3v32SIMDvgs, heres[2]->BSIM3v32SIMDvgs, heres[3]->BSIM3v32SIMDvgs, heres[4]->BSIM3v32SIMDvgs, heres[5]->BSIM3v32SIMDvgs, heres[6]->BSIM3v32SIMDvgs, heres[7]->BSIM3v32SIMDvgs};
+  vds = (Vec8d ){heres[0]->BSIM3v32SIMDvds, heres[1]->BSIM3v32SIMDvds, heres[2]->BSIM3v32SIMDvds, heres[3]->BSIM3v32SIMDvds, heres[4]->BSIM3v32SIMDvds, heres[5]->BSIM3v32SIMDvds, heres[6]->BSIM3v32SIMDvds, heres[7]->BSIM3v32SIMDvds};
+  qdef = (Vec8d ){heres[0]->BSIM3v32SIMDqdef, heres[1]->BSIM3v32SIMDqdef, heres[2]->BSIM3v32SIMDqdef, heres[3]->BSIM3v32SIMDqdef, heres[4]->BSIM3v32SIMDqdef, heres[5]->BSIM3v32SIMDqdef, heres[6]->BSIM3v32SIMDqdef, heres[7]->BSIM3v32SIMDqdef};
+  cdhat = (Vec8d ){heres[0]->BSIM3v32SIMDcdhat, heres[1]->BSIM3v32SIMDcdhat, heres[2]->BSIM3v32SIMDcdhat, heres[3]->BSIM3v32SIMDcdhat, heres[4]->BSIM3v32SIMDcdhat, heres[5]->BSIM3v32SIMDcdhat, heres[6]->BSIM3v32SIMDcdhat, heres[7]->BSIM3v32SIMDcdhat};
+  cbhat = (Vec8d ){heres[0]->BSIM3v32SIMDcbhat, heres[1]->BSIM3v32SIMDcbhat, heres[2]->BSIM3v32SIMDcbhat, heres[3]->BSIM3v32SIMDcbhat, heres[4]->BSIM3v32SIMDcbhat, heres[5]->BSIM3v32SIMDcbhat, heres[6]->BSIM3v32SIMDcbhat, heres[7]->BSIM3v32SIMDcbhat};
+  Check = (Vec8m ){heres[0]->BSIM3v32SIMDCheck, heres[1]->BSIM3v32SIMDCheck, heres[2]->BSIM3v32SIMDCheck, heres[3]->BSIM3v32SIMDCheck, heres[4]->BSIM3v32SIMDCheck, heres[5]->BSIM3v32SIMDCheck, heres[6]->BSIM3v32SIMDCheck, heres[7]->BSIM3v32SIMDCheck};
   SIMDIFYCMD(start);
   vbd = vbs - vds;
   vgd = vgs - vds;
@@ -6412,7 +6412,28 @@
   {
     Vec8m nonconcount;
     nonconcount = Check;
-    ckt->CKTnoncon += vec8_SIMDCOUNT(nonconcount);
+    nonconcount = nonconcount & 1;
+    {
+      heres[0]->BSIM3v32noncon = nonconcount[0];
+      heres[1]->BSIM3v32noncon = nonconcount[1];
+      heres[2]->BSIM3v32noncon = nonconcount[2];
+      heres[3]->BSIM3v32noncon = nonconcount[3];
+      heres[4]->BSIM3v32noncon = nonconcount[4];
+      heres[5]->BSIM3v32noncon = nonconcount[5];
+      heres[6]->BSIM3v32noncon = nonconcount[6];
+      heres[7]->BSIM3v32noncon = nonconcount[7];
+    }
+  }
+  else
+  {
+    heres[0]->BSIM3v32noncon = 0;
+    heres[1]->BSIM3v32noncon = 0;
+    heres[2]->BSIM3v32noncon = 0;
+    heres[3]->BSIM3v32noncon = 0;
+    heres[4]->BSIM3v32noncon = 0;
+    heres[5]->BSIM3v32noncon = 0;
+    heres[6]->BSIM3v32noncon = 0;
+    heres[7]->BSIM3v32noncon = 0;
   }
 
   vec8_BSIM3v32_StateStore(ckt->CKTstate0, (Vec8m ){heres[0]->BSIM3v32vbs, heres[1]->BSIM3v32vbs, heres[2]->BSIM3v32vbs, heres[3]->BSIM3v32vbs, heres[4]->BSIM3v32vbs, heres[5]->BSIM3v32vbs, heres[6]->BSIM3v32vbs, heres[7]->BSIM3v32vbs}, vbs);
@@ -7205,255 +7226,295 @@
   }
 
   m = (Vec8d ){heres[0]->BSIM3v32m, heres[1]->BSIM3v32m, heres[2]->BSIM3v32m, heres[3]->BSIM3v32m, heres[4]->BSIM3v32m, heres[5]->BSIM3v32m, heres[6]->BSIM3v32m, heres[7]->BSIM3v32m};
-  vec8_BSIM3v32_StateSub(ckt->CKTrhs, (Vec8m ){heres[0]->BSIM3v32gNode, heres[1]->BSIM3v32gNode, heres[2]->BSIM3v32gNode, heres[3]->BSIM3v32gNode, heres[4]->BSIM3v32gNode, heres[5]->BSIM3v32gNode, heres[6]->BSIM3v32gNode, heres[7]->BSIM3v32gNode}, m * ceqqg);
-  vec8_BSIM3v32_StateSub(ckt->CKTrhs, (Vec8m ){heres[0]->BSIM3v32bNode, heres[1]->BSIM3v32bNode, heres[2]->BSIM3v32bNode, heres[3]->BSIM3v32bNode, heres[4]->BSIM3v32bNode, heres[5]->BSIM3v32bNode, heres[6]->BSIM3v32bNode, heres[7]->BSIM3v32bNode}, m * ((ceqbs + ceqbd) + ceqqb));
-  vec8_BSIM3v32_StateAdd(ckt->CKTrhs, (Vec8m ){heres[0]->BSIM3v32dNodePrime, heres[1]->BSIM3v32dNodePrime, heres[2]->BSIM3v32dNodePrime, heres[3]->BSIM3v32dNodePrime, heres[4]->BSIM3v32dNodePrime, heres[5]->BSIM3v32dNodePrime, heres[6]->BSIM3v32dNodePrime, heres[7]->BSIM3v32dNodePrime}, m * ((ceqbd - cdreq) - ceqqd));
-  vec8_BSIM3v32_StateAdd(ckt->CKTrhs, (Vec8m ){heres[0]->BSIM3v32sNodePrime, heres[1]->BSIM3v32sNodePrime, heres[2]->BSIM3v32sNodePrime, heres[3]->BSIM3v32sNodePrime, heres[4]->BSIM3v32sNodePrime, heres[5]->BSIM3v32sNodePrime, heres[6]->BSIM3v32sNodePrime, heres[7]->BSIM3v32sNodePrime}, m * ((((cdreq + ceqbs) + ceqqg) + ceqqb) + ceqqd));
+  {
+    Vec8d val = m * ceqqg;
+    heres[0]->BSIM3v32rhsG = val[0];
+    heres[1]->BSIM3v32rhsG = val[1];
+    heres[2]->BSIM3v32rhsG = val[2];
+    heres[3]->BSIM3v32rhsG = val[3];
+    heres[4]->BSIM3v32rhsG = val[4];
+    heres[5]->BSIM3v32rhsG = val[5];
+    heres[6]->BSIM3v32rhsG = val[6];
+    heres[7]->BSIM3v32rhsG = val[7];
+  }
+  {
+    Vec8d val = m * ((ceqbs + ceqbd) + ceqqb);
+    heres[0]->BSIM3v32rhsB = val[0];
+    heres[1]->BSIM3v32rhsB = val[1];
+    heres[2]->BSIM3v32rhsB = val[2];
+    heres[3]->BSIM3v32rhsB = val[3];
+    heres[4]->BSIM3v32rhsB = val[4];
+    heres[5]->BSIM3v32rhsB = val[5];
+    heres[6]->BSIM3v32rhsB = val[6];
+    heres[7]->BSIM3v32rhsB = val[7];
+  }
+  {
+    Vec8d val = m * ((ceqbd - cdreq) - ceqqd);
+    heres[0]->BSIM3v32rhsD = val[0];
+    heres[1]->BSIM3v32rhsD = val[1];
+    heres[2]->BSIM3v32rhsD = val[2];
+    heres[3]->BSIM3v32rhsD = val[3];
+    heres[4]->BSIM3v32rhsD = val[4];
+    heres[5]->BSIM3v32rhsD = val[5];
+    heres[6]->BSIM3v32rhsD = val[6];
+    heres[7]->BSIM3v32rhsD = val[7];
+  }
+  {
+    Vec8d val = m * ((((cdreq + ceqbs) + ceqqg) + ceqqb) + ceqqd);
+    heres[0]->BSIM3v32rhsS = val[0];
+    heres[1]->BSIM3v32rhsS = val[1];
+    heres[2]->BSIM3v32rhsS = val[2];
+    heres[3]->BSIM3v32rhsS = val[3];
+    heres[4]->BSIM3v32rhsS = val[4];
+    heres[5]->BSIM3v32rhsS = val[5];
+    heres[6]->BSIM3v32rhsS = val[6];
+    heres[7]->BSIM3v32rhsS = val[7];
+  }
   if (heres[0]->BSIM3v32nqsMod)
     vec8_BSIM3v32_StateAdd(ckt->CKTrhs, (Vec8m ){heres[0]->BSIM3v32qNode, heres[1]->BSIM3v32qNode, heres[2]->BSIM3v32qNode, heres[3]->BSIM3v32qNode, heres[4]->BSIM3v32qNode, heres[5]->BSIM3v32qNode, heres[6]->BSIM3v32qNode, heres[7]->BSIM3v32qNode}, m * (cqcheq - cqdef));
 
   T1 = qdef * ((Vec8d ){heres[0]->BSIM3v32gtau, heres[1]->BSIM3v32gtau, heres[2]->BSIM3v32gtau, heres[3]->BSIM3v32gtau, heres[4]->BSIM3v32gtau, heres[5]->BSIM3v32gtau, heres[6]->BSIM3v32gtau, heres[7]->BSIM3v32gtau});
   {
     Vec8d val = m * ((Vec8d ){heres[0]->BSIM3v32drainConductance, heres[1]->BSIM3v32drainConductance, heres[2]->BSIM3v32drainConductance, heres[3]->BSIM3v32drainConductance, heres[4]->BSIM3v32drainConductance, heres[5]->BSIM3v32drainConductance, heres[6]->BSIM3v32drainConductance, heres[7]->BSIM3v32drainConductance});
-    *heres[0]->BSIM3v32DdPtr += val[0];
-    *heres[1]->BSIM3v32DdPtr += val[1];
-    *heres[2]->BSIM3v32DdPtr += val[2];
-    *heres[3]->BSIM3v32DdPtr += val[3];
-    *heres[4]->BSIM3v32DdPtr += val[4];
-    *heres[5]->BSIM3v32DdPtr += val[5];
-    *heres[6]->BSIM3v32DdPtr += val[6];
-    *heres[7]->BSIM3v32DdPtr += val[7];
+    heres[0]->BSIM3v32DdPt = val[0];
+    heres[1]->BSIM3v32DdPt = val[1];
+    heres[2]->BSIM3v32DdPt = val[2];
+    heres[3]->BSIM3v32DdPt = val[3];
+    heres[4]->BSIM3v32DdPt = val[4];
+    heres[5]->BSIM3v32DdPt = val[5];
+    heres[6]->BSIM3v32DdPt = val[6];
+    heres[7]->BSIM3v32DdPt = val[7];
+  }
+  {
+    Vec8d val = m * ((Vec8d ){heres[0]->BSIM3v32sourceConductance, heres[1]->BSIM3v32sourceConductance, heres[2]->BSIM3v32sourceConductance, heres[3]->BSIM3v32sourceConductance, heres[4]->BSIM3v32sourceConductance, heres[5]->BSIM3v32sourceConductance, heres[6]->BSIM3v32sourceConductance, heres[7]->BSIM3v32sourceConductance});
+    heres[0]->BSIM3v32SsPt = val[0];
+    heres[1]->BSIM3v32SsPt = val[1];
+    heres[2]->BSIM3v32SsPt = val[2];
+    heres[3]->BSIM3v32SsPt = val[3];
+    heres[4]->BSIM3v32SsPt = val[4];
+    heres[5]->BSIM3v32SsPt = val[5];
+    heres[6]->BSIM3v32SsPt = val[6];
+    heres[7]->BSIM3v32SsPt = val[7];
   }
   {
     Vec8d val = m * (gcggb - ggtg);
-    *heres[0]->BSIM3v32GgPtr += val[0];
-    *heres[1]->BSIM3v32GgPtr += val[1];
-    *heres[2]->BSIM3v32GgPtr += val[2];
-    *heres[3]->BSIM3v32GgPtr += val[3];
-    *heres[4]->BSIM3v32GgPtr += val[4];
-    *heres[5]->BSIM3v32GgPtr += val[5];
-    *heres[6]->BSIM3v32GgPtr += val[6];
-    *heres[7]->BSIM3v32GgPtr += val[7];
-  }
-  {
-    Vec8d val = m * ((Vec8d ){heres[0]->BSIM3v32sourceConductance, heres[1]->BSIM3v32sourceConductance, heres[2]->BSIM3v32sourceConductance, heres[3]->BSIM3v32sourceConductance, heres[4]->BSIM3v32sourceConductance, heres[5]->BSIM3v32sourceConductance, heres[6]->BSIM3v32sourceConductance, heres[7]->BSIM3v32sourceConductance});
-    *heres[0]->BSIM3v32SsPtr += val[0];
-    *heres[1]->BSIM3v32SsPtr += val[1];
-    *heres[2]->BSIM3v32SsPtr += val[2];
-    *heres[3]->BSIM3v32SsPtr += val[3];
-    *heres[4]->BSIM3v32SsPtr += val[4];
-    *heres[5]->BSIM3v32SsPtr += val[5];
-    *heres[6]->BSIM3v32SsPtr += val[6];
-    *heres[7]->BSIM3v32SsPtr += val[7];
+    heres[0]->BSIM3v32GgPt = val[0];
+    heres[1]->BSIM3v32GgPt = val[1];
+    heres[2]->BSIM3v32GgPt = val[2];
+    heres[3]->BSIM3v32GgPt = val[3];
+    heres[4]->BSIM3v32GgPt = val[4];
+    heres[5]->BSIM3v32GgPt = val[5];
+    heres[6]->BSIM3v32GgPt = val[6];
+    heres[7]->BSIM3v32GgPt = val[7];
   }
   {
     Vec8d val = m * (((((((Vec8d ){heres[0]->BSIM3v32gbd, heres[1]->BSIM3v32gbd, heres[2]->BSIM3v32gbd, heres[3]->BSIM3v32gbd, heres[4]->BSIM3v32gbd, heres[5]->BSIM3v32gbd, heres[6]->BSIM3v32gbd, heres[7]->BSIM3v32gbd}) + ((Vec8d ){heres[0]->BSIM3v32gbs, heres[1]->BSIM3v32gbs, heres[2]->BSIM3v32gbs, heres[3]->BSIM3v32gbs, heres[4]->BSIM3v32gbs, heres[5]->BSIM3v32gbs, heres[6]->BSIM3v32gbs, heres[7]->BSIM3v32gbs})) - gcbgb) - gcbdb) - gcbsb) - ((Vec8d ){heres[0]->BSIM3v32gbbs, heres[1]->BSIM3v32gbbs, heres[2]->BSIM3v32gbbs, heres[3]->BSIM3v32gbbs, heres[4]->BSIM3v32gbbs, heres[5]->BSIM3v32gbbs, heres[6]->BSIM3v32gbbs, heres[7]->BSIM3v32gbbs}));
-    *heres[0]->BSIM3v32BbPtr += val[0];
-    *heres[1]->BSIM3v32BbPtr += val[1];
-    *heres[2]->BSIM3v32BbPtr += val[2];
-    *heres[3]->BSIM3v32BbPtr += val[3];
-    *heres[4]->BSIM3v32BbPtr += val[4];
-    *heres[5]->BSIM3v32BbPtr += val[5];
-    *heres[6]->BSIM3v32BbPtr += val[6];
-    *heres[7]->BSIM3v32BbPtr += val[7];
-  }
-  {
-    Vec8d val = m * (((((((((Vec8d ){heres[0]->BSIM3v32drainConductance, heres[1]->BSIM3v32drainConductance, heres[2]->BSIM3v32drainConductance, heres[3]->BSIM3v32drainConductance, heres[4]->BSIM3v32drainConductance, heres[5]->BSIM3v32drainConductance, heres[6]->BSIM3v32drainConductance, heres[7]->BSIM3v32drainConductance}) + ((Vec8d ){heres[0]->BSIM3v32gds, heres[1]->BSIM3v32gds, heres[2]->BSIM3v32gds, heres[3]->BSIM3v32gds, heres[4]->BSIM3v32gds, heres[5]->BSIM3v32gds, heres[6]->BSIM3v32gds, heres[7]->BSIM3v32gds})) + ((Vec8d ){heres[0]->BSIM3v32gbd, heres[1]->BSIM3v32gbd, heres[2]->BSIM3v32gbd, heres[3]->BSIM3v32gbd, heres[4]->BSIM3v32gbd, heres[5]->BSIM3v32gbd, heres[6]->BSIM3v32gbd, heres[7]->BSIM3v32gbd})) + RevSum) + gcddb) + (dxpart * ggtd)) + (T1 * ddxpart_dVd)) + gbdpdp);
-    *heres[0]->BSIM3v32DPdpPtr += val[0];
-    *heres[1]->BSIM3v32DPdpPtr += val[1];
-    *heres[2]->BSIM3v32DPdpPtr += val[2];
-    *heres[3]->BSIM3v32DPdpPtr += val[3];
-    *heres[4]->BSIM3v32DPdpPtr += val[4];
-    *heres[5]->BSIM3v32DPdpPtr += val[5];
-    *heres[6]->BSIM3v32DPdpPtr += val[6];
-    *heres[7]->BSIM3v32DPdpPtr += val[7];
-  }
-  {
-    Vec8d val = m * (((((((((Vec8d ){heres[0]->BSIM3v32sourceConductance, heres[1]->BSIM3v32sourceConductance, heres[2]->BSIM3v32sourceConductance, heres[3]->BSIM3v32sourceConductance, heres[4]->BSIM3v32sourceConductance, heres[5]->BSIM3v32sourceConductance, heres[6]->BSIM3v32sourceConductance, heres[7]->BSIM3v32sourceConductance}) + ((Vec8d ){heres[0]->BSIM3v32gds, heres[1]->BSIM3v32gds, heres[2]->BSIM3v32gds, heres[3]->BSIM3v32gds, heres[4]->BSIM3v32gds, heres[5]->BSIM3v32gds, heres[6]->BSIM3v32gds, heres[7]->BSIM3v32gds})) + ((Vec8d ){heres[0]->BSIM3v32gbs, heres[1]->BSIM3v32gbs, heres[2]->BSIM3v32gbs, heres[3]->BSIM3v32gbs, heres[4]->BSIM3v32gbs, heres[5]->BSIM3v32gbs, heres[6]->BSIM3v32gbs, heres[7]->BSIM3v32gbs})) + FwdSum) + gcssb) + (sxpart * ggts)) + (T1 * dsxpart_dVs)) + gbspsp);
-    *heres[0]->BSIM3v32SPspPtr += val[0];
-    *heres[1]->BSIM3v32SPspPtr += val[1];
-    *heres[2]->BSIM3v32SPspPtr += val[2];
-    *heres[3]->BSIM3v32SPspPtr += val[3];
-    *heres[4]->BSIM3v32SPspPtr += val[4];
-    *heres[5]->BSIM3v32SPspPtr += val[5];
-    *heres[6]->BSIM3v32SPspPtr += val[6];
-    *heres[7]->BSIM3v32SPspPtr += val[7];
-  }
-  {
-    Vec8d val = m * ((Vec8d ){heres[0]->BSIM3v32drainConductance, heres[1]->BSIM3v32drainConductance, heres[2]->BSIM3v32drainConductance, heres[3]->BSIM3v32drainConductance, heres[4]->BSIM3v32drainConductance, heres[5]->BSIM3v32drainConductance, heres[6]->BSIM3v32drainConductance, heres[7]->BSIM3v32drainConductance});
-    *heres[0]->BSIM3v32DdpPtr -= val[0];
-    *heres[1]->BSIM3v32DdpPtr -= val[1];
-    *heres[2]->BSIM3v32DdpPtr -= val[2];
-    *heres[3]->BSIM3v32DdpPtr -= val[3];
-    *heres[4]->BSIM3v32DdpPtr -= val[4];
-    *heres[5]->BSIM3v32DdpPtr -= val[5];
-    *heres[6]->BSIM3v32DdpPtr -= val[6];
-    *heres[7]->BSIM3v32DdpPtr -= val[7];
+    heres[0]->BSIM3v32BbPt = val[0];
+    heres[1]->BSIM3v32BbPt = val[1];
+    heres[2]->BSIM3v32BbPt = val[2];
+    heres[3]->BSIM3v32BbPt = val[3];
+    heres[4]->BSIM3v32BbPt = val[4];
+    heres[5]->BSIM3v32BbPt = val[5];
+    heres[6]->BSIM3v32BbPt = val[6];
+    heres[7]->BSIM3v32BbPt = val[7];
   }
   {
     Vec8d val = m * (((gcggb + gcgdb) + gcgsb) + ggtb);
-    *heres[0]->BSIM3v32GbPtr -= val[0];
-    *heres[1]->BSIM3v32GbPtr -= val[1];
-    *heres[2]->BSIM3v32GbPtr -= val[2];
-    *heres[3]->BSIM3v32GbPtr -= val[3];
-    *heres[4]->BSIM3v32GbPtr -= val[4];
-    *heres[5]->BSIM3v32GbPtr -= val[5];
-    *heres[6]->BSIM3v32GbPtr -= val[6];
-    *heres[7]->BSIM3v32GbPtr -= val[7];
+    heres[0]->BSIM3v32GbPt = val[0];
+    heres[1]->BSIM3v32GbPt = val[1];
+    heres[2]->BSIM3v32GbPt = val[2];
+    heres[3]->BSIM3v32GbPt = val[3];
+    heres[4]->BSIM3v32GbPt = val[4];
+    heres[5]->BSIM3v32GbPt = val[5];
+    heres[6]->BSIM3v32GbPt = val[6];
+    heres[7]->BSIM3v32GbPt = val[7];
   }
   {
     Vec8d val = m * (gcgdb - ggtd);
-    *heres[0]->BSIM3v32GdpPtr += val[0];
-    *heres[1]->BSIM3v32GdpPtr += val[1];
-    *heres[2]->BSIM3v32GdpPtr += val[2];
-    *heres[3]->BSIM3v32GdpPtr += val[3];
-    *heres[4]->BSIM3v32GdpPtr += val[4];
-    *heres[5]->BSIM3v32GdpPtr += val[5];
-    *heres[6]->BSIM3v32GdpPtr += val[6];
-    *heres[7]->BSIM3v32GdpPtr += val[7];
+    heres[0]->BSIM3v32GdpPt = val[0];
+    heres[1]->BSIM3v32GdpPt = val[1];
+    heres[2]->BSIM3v32GdpPt = val[2];
+    heres[3]->BSIM3v32GdpPt = val[3];
+    heres[4]->BSIM3v32GdpPt = val[4];
+    heres[5]->BSIM3v32GdpPt = val[5];
+    heres[6]->BSIM3v32GdpPt = val[6];
+    heres[7]->BSIM3v32GdpPt = val[7];
   }
   {
     Vec8d val = m * (gcgsb - ggts);
-    *heres[0]->BSIM3v32GspPtr += val[0];
-    *heres[1]->BSIM3v32GspPtr += val[1];
-    *heres[2]->BSIM3v32GspPtr += val[2];
-    *heres[3]->BSIM3v32GspPtr += val[3];
-    *heres[4]->BSIM3v32GspPtr += val[4];
-    *heres[5]->BSIM3v32GspPtr += val[5];
-    *heres[6]->BSIM3v32GspPtr += val[6];
-    *heres[7]->BSIM3v32GspPtr += val[7];
-  }
-  {
-    Vec8d val = m * ((Vec8d ){heres[0]->BSIM3v32sourceConductance, heres[1]->BSIM3v32sourceConductance, heres[2]->BSIM3v32sourceConductance, heres[3]->BSIM3v32sourceConductance, heres[4]->BSIM3v32sourceConductance, heres[5]->BSIM3v32sourceConductance, heres[6]->BSIM3v32sourceConductance, heres[7]->BSIM3v32sourceConductance});
-    *heres[0]->BSIM3v32SspPtr -= val[0];
-    *heres[1]->BSIM3v32SspPtr -= val[1];
-    *heres[2]->BSIM3v32SspPtr -= val[2];
-    *heres[3]->BSIM3v32SspPtr -= val[3];
-    *heres[4]->BSIM3v32SspPtr -= val[4];
-    *heres[5]->BSIM3v32SspPtr -= val[5];
-    *heres[6]->BSIM3v32SspPtr -= val[6];
-    *heres[7]->BSIM3v32SspPtr -= val[7];
+    heres[0]->BSIM3v32GspPt = val[0];
+    heres[1]->BSIM3v32GspPt = val[1];
+    heres[2]->BSIM3v32GspPt = val[2];
+    heres[3]->BSIM3v32GspPt = val[3];
+    heres[4]->BSIM3v32GspPt = val[4];
+    heres[5]->BSIM3v32GspPt = val[5];
+    heres[6]->BSIM3v32GspPt = val[6];
+    heres[7]->BSIM3v32GspPt = val[7];
   }
   {
     Vec8d val = m * (gcbgb - ((Vec8d ){heres[0]->BSIM3v32gbgs, heres[1]->BSIM3v32gbgs, heres[2]->BSIM3v32gbgs, heres[3]->BSIM3v32gbgs, heres[4]->BSIM3v32gbgs, heres[5]->BSIM3v32gbgs, heres[6]->BSIM3v32gbgs, heres[7]->BSIM3v32gbgs}));
-    *heres[0]->BSIM3v32BgPtr += val[0];
-    *heres[1]->BSIM3v32BgPtr += val[1];
-    *heres[2]->BSIM3v32BgPtr += val[2];
-    *heres[3]->BSIM3v32BgPtr += val[3];
-    *heres[4]->BSIM3v32BgPtr += val[4];
-    *heres[5]->BSIM3v32BgPtr += val[5];
-    *heres[6]->BSIM3v32BgPtr += val[6];
-    *heres[7]->BSIM3v32BgPtr += val[7];
+    heres[0]->BSIM3v32BgPt = val[0];
+    heres[1]->BSIM3v32BgPt = val[1];
+    heres[2]->BSIM3v32BgPt = val[2];
+    heres[3]->BSIM3v32BgPt = val[3];
+    heres[4]->BSIM3v32BgPt = val[4];
+    heres[5]->BSIM3v32BgPt = val[5];
+    heres[6]->BSIM3v32BgPt = val[6];
+    heres[7]->BSIM3v32BgPt = val[7];
   }
   {
     Vec8d val = m * ((gcbdb - ((Vec8d ){heres[0]->BSIM3v32gbd, heres[1]->BSIM3v32gbd, heres[2]->BSIM3v32gbd, heres[3]->BSIM3v32gbd, heres[4]->BSIM3v32gbd, heres[5]->BSIM3v32gbd, heres[6]->BSIM3v32gbd, heres[7]->BSIM3v32gbd})) + gbbdp);
-    *heres[0]->BSIM3v32BdpPtr += val[0];
-    *heres[1]->BSIM3v32BdpPtr += val[1];
-    *heres[2]->BSIM3v32BdpPtr += val[2];
-    *heres[3]->BSIM3v32BdpPtr += val[3];
-    *heres[4]->BSIM3v32BdpPtr += val[4];
-    *heres[5]->BSIM3v32BdpPtr += val[5];
-    *heres[6]->BSIM3v32BdpPtr += val[6];
-    *heres[7]->BSIM3v32BdpPtr += val[7];
+    heres[0]->BSIM3v32BdpPt = val[0];
+    heres[1]->BSIM3v32BdpPt = val[1];
+    heres[2]->BSIM3v32BdpPt = val[2];
+    heres[3]->BSIM3v32BdpPt = val[3];
+    heres[4]->BSIM3v32BdpPt = val[4];
+    heres[5]->BSIM3v32BdpPt = val[5];
+    heres[6]->BSIM3v32BdpPt = val[6];
+    heres[7]->BSIM3v32BdpPt = val[7];
   }
   {
     Vec8d val = m * ((gcbsb - ((Vec8d ){heres[0]->BSIM3v32gbs, heres[1]->BSIM3v32gbs, heres[2]->BSIM3v32gbs, heres[3]->BSIM3v32gbs, heres[4]->BSIM3v32gbs, heres[5]->BSIM3v32gbs, heres[6]->BSIM3v32gbs, heres[7]->BSIM3v32gbs})) + gbbsp);
-    *heres[0]->BSIM3v32BspPtr += val[0];
-    *heres[1]->BSIM3v32BspPtr += val[1];
-    *heres[2]->BSIM3v32BspPtr += val[2];
-    *heres[3]->BSIM3v32BspPtr += val[3];
-    *heres[4]->BSIM3v32BspPtr += val[4];
-    *heres[5]->BSIM3v32BspPtr += val[5];
-    *heres[6]->BSIM3v32BspPtr += val[6];
-    *heres[7]->BSIM3v32BspPtr += val[7];
-  }
-  {
-    Vec8d val = m * ((Vec8d ){heres[0]->BSIM3v32drainConductance, heres[1]->BSIM3v32drainConductance, heres[2]->BSIM3v32drainConductance, heres[3]->BSIM3v32drainConductance, heres[4]->BSIM3v32drainConductance, heres[5]->BSIM3v32drainConductance, heres[6]->BSIM3v32drainConductance, heres[7]->BSIM3v32drainConductance});
-    *heres[0]->BSIM3v32DPdPtr -= val[0];
-    *heres[1]->BSIM3v32DPdPtr -= val[1];
-    *heres[2]->BSIM3v32DPdPtr -= val[2];
-    *heres[3]->BSIM3v32DPdPtr -= val[3];
-    *heres[4]->BSIM3v32DPdPtr -= val[4];
-    *heres[5]->BSIM3v32DPdPtr -= val[5];
-    *heres[6]->BSIM3v32DPdPtr -= val[6];
-    *heres[7]->BSIM3v32DPdPtr -= val[7];
+    heres[0]->BSIM3v32BspPt = val[0];
+    heres[1]->BSIM3v32BspPt = val[1];
+    heres[2]->BSIM3v32BspPt = val[2];
+    heres[3]->BSIM3v32BspPt = val[3];
+    heres[4]->BSIM3v32BspPt = val[4];
+    heres[5]->BSIM3v32BspPt = val[5];
+    heres[6]->BSIM3v32BspPt = val[6];
+    heres[7]->BSIM3v32BspPt = val[7];
   }
   {
     Vec8d val = m * ((((Gm + gcdgb) + (dxpart * ggtg)) + (T1 * ddxpart_dVg)) + gbdpg);
-    *heres[0]->BSIM3v32DPgPtr += val[0];
-    *heres[1]->BSIM3v32DPgPtr += val[1];
-    *heres[2]->BSIM3v32DPgPtr += val[2];
-    *heres[3]->BSIM3v32DPgPtr += val[3];
-    *heres[4]->BSIM3v32DPgPtr += val[4];
-    *heres[5]->BSIM3v32DPgPtr += val[5];
-    *heres[6]->BSIM3v32DPgPtr += val[6];
-    *heres[7]->BSIM3v32DPgPtr += val[7];
+    heres[0]->BSIM3v32DPgPt = val[0];
+    heres[1]->BSIM3v32DPgPt = val[1];
+    heres[2]->BSIM3v32DPgPt = val[2];
+    heres[3]->BSIM3v32DPgPt = val[3];
+    heres[4]->BSIM3v32DPgPt = val[4];
+    heres[5]->BSIM3v32DPgPt = val[5];
+    heres[6]->BSIM3v32DPgPt = val[6];
+    heres[7]->BSIM3v32DPgPt = val[7];
   }
   {
     Vec8d val = m * (((((((((Vec8d ){heres[0]->BSIM3v32gbd, heres[1]->BSIM3v32gbd, heres[2]->BSIM3v32gbd, heres[3]->BSIM3v32gbd, heres[4]->BSIM3v32gbd, heres[5]->BSIM3v32gbd, heres[6]->BSIM3v32gbd, heres[7]->BSIM3v32gbd}) - Gmbs) + gcdgb) + gcddb) + gcdsb) - (dxpart * ggtb)) - (T1 * ddxpart_dVb)) - gbdpb);
-    *heres[0]->BSIM3v32DPbPtr -= val[0];
-    *heres[1]->BSIM3v32DPbPtr -= val[1];
-    *heres[2]->BSIM3v32DPbPtr -= val[2];
-    *heres[3]->BSIM3v32DPbPtr -= val[3];
-    *heres[4]->BSIM3v32DPbPtr -= val[4];
-    *heres[5]->BSIM3v32DPbPtr -= val[5];
-    *heres[6]->BSIM3v32DPbPtr -= val[6];
-    *heres[7]->BSIM3v32DPbPtr -= val[7];
+    heres[0]->BSIM3v32DPbPt = val[0];
+    heres[1]->BSIM3v32DPbPt = val[1];
+    heres[2]->BSIM3v32DPbPt = val[2];
+    heres[3]->BSIM3v32DPbPt = val[3];
+    heres[4]->BSIM3v32DPbPt = val[4];
+    heres[5]->BSIM3v32DPbPt = val[5];
+    heres[6]->BSIM3v32DPbPt = val[6];
+    heres[7]->BSIM3v32DPbPt = val[7];
   }
   {
     Vec8d val = m * (((((((Vec8d ){heres[0]->BSIM3v32gds, heres[1]->BSIM3v32gds, heres[2]->BSIM3v32gds, heres[3]->BSIM3v32gds, heres[4]->BSIM3v32gds, heres[5]->BSIM3v32gds, heres[6]->BSIM3v32gds, heres[7]->BSIM3v32gds}) + FwdSum) - gcdsb) - (dxpart * ggts)) - (T1 * ddxpart_dVs)) - gbdpsp);
-    *heres[0]->BSIM3v32DPspPtr -= val[0];
-    *heres[1]->BSIM3v32DPspPtr -= val[1];
-    *heres[2]->BSIM3v32DPspPtr -= val[2];
-    *heres[3]->BSIM3v32DPspPtr -= val[3];
-    *heres[4]->BSIM3v32DPspPtr -= val[4];
-    *heres[5]->BSIM3v32DPspPtr -= val[5];
-    *heres[6]->BSIM3v32DPspPtr -= val[6];
-    *heres[7]->BSIM3v32DPspPtr -= val[7];
+    heres[0]->BSIM3v32DPspPt = val[0];
+    heres[1]->BSIM3v32DPspPt = val[1];
+    heres[2]->BSIM3v32DPspPt = val[2];
+    heres[3]->BSIM3v32DPspPt = val[3];
+    heres[4]->BSIM3v32DPspPt = val[4];
+    heres[5]->BSIM3v32DPspPt = val[5];
+    heres[6]->BSIM3v32DPspPt = val[6];
+    heres[7]->BSIM3v32DPspPt = val[7];
   }
   {
     Vec8d val = m * ((((gcsgb - Gm) + (sxpart * ggtg)) + (T1 * dsxpart_dVg)) + gbspg);
-    *heres[0]->BSIM3v32SPgPtr += val[0];
-    *heres[1]->BSIM3v32SPgPtr += val[1];
-    *heres[2]->BSIM3v32SPgPtr += val[2];
-    *heres[3]->BSIM3v32SPgPtr += val[3];
-    *heres[4]->BSIM3v32SPgPtr += val[4];
-    *heres[5]->BSIM3v32SPgPtr += val[5];
-    *heres[6]->BSIM3v32SPgPtr += val[6];
-    *heres[7]->BSIM3v32SPgPtr += val[7];
-  }
-  {
-    Vec8d val = m * ((Vec8d ){heres[0]->BSIM3v32sourceConductance, heres[1]->BSIM3v32sourceConductance, heres[2]->BSIM3v32sourceConductance, heres[3]->BSIM3v32sourceConductance, heres[4]->BSIM3v32sourceConductance, heres[5]->BSIM3v32sourceConductance, heres[6]->BSIM3v32sourceConductance, heres[7]->BSIM3v32sourceConductance});
-    *heres[0]->BSIM3v32SPsPtr -= val[0];
-    *heres[1]->BSIM3v32SPsPtr -= val[1];
-    *heres[2]->BSIM3v32SPsPtr -= val[2];
-    *heres[3]->BSIM3v32SPsPtr -= val[3];
-    *heres[4]->BSIM3v32SPsPtr -= val[4];
-    *heres[5]->BSIM3v32SPsPtr -= val[5];
-    *heres[6]->BSIM3v32SPsPtr -= val[6];
-    *heres[7]->BSIM3v32SPsPtr -= val[7];
+    heres[0]->BSIM3v32SPgPt = val[0];
+    heres[1]->BSIM3v32SPgPt = val[1];
+    heres[2]->BSIM3v32SPgPt = val[2];
+    heres[3]->BSIM3v32SPgPt = val[3];
+    heres[4]->BSIM3v32SPgPt = val[4];
+    heres[5]->BSIM3v32SPgPt = val[5];
+    heres[6]->BSIM3v32SPgPt = val[6];
+    heres[7]->BSIM3v32SPgPt = val[7];
   }
   {
     Vec8d val = m * (((((((((Vec8d ){heres[0]->BSIM3v32gbs, heres[1]->BSIM3v32gbs, heres[2]->BSIM3v32gbs, heres[3]->BSIM3v32gbs, heres[4]->BSIM3v32gbs, heres[5]->BSIM3v32gbs, heres[6]->BSIM3v32gbs, heres[7]->BSIM3v32gbs}) + Gmbs) + gcsgb) + gcsdb) + gcssb) - (sxpart * ggtb)) - (T1 * dsxpart_dVb)) - gbspb);
-    *heres[0]->BSIM3v32SPbPtr -= val[0];
-    *heres[1]->BSIM3v32SPbPtr -= val[1];
-    *heres[2]->BSIM3v32SPbPtr -= val[2];
-    *heres[3]->BSIM3v32SPbPtr -= val[3];
-    *heres[4]->BSIM3v32SPbPtr -= val[4];
-    *heres[5]->BSIM3v32SPbPtr -= val[5];
-    *heres[6]->BSIM3v32SPbPtr -= val[6];
-    *heres[7]->BSIM3v32SPbPtr -= val[7];
+    heres[0]->BSIM3v32SPbPt = val[0];
+    heres[1]->BSIM3v32SPbPt = val[1];
+    heres[2]->BSIM3v32SPbPt = val[2];
+    heres[3]->BSIM3v32SPbPt = val[3];
+    heres[4]->BSIM3v32SPbPt = val[4];
+    heres[5]->BSIM3v32SPbPt = val[5];
+    heres[6]->BSIM3v32SPbPt = val[6];
+    heres[7]->BSIM3v32SPbPt = val[7];
   }
   {
     Vec8d val = m * (((((((Vec8d ){heres[0]->BSIM3v32gds, heres[1]->BSIM3v32gds, heres[2]->BSIM3v32gds, heres[3]->BSIM3v32gds, heres[4]->BSIM3v32gds, heres[5]->BSIM3v32gds, heres[6]->BSIM3v32gds, heres[7]->BSIM3v32gds}) + RevSum) - gcsdb) - (sxpart * ggtd)) - (T1 * dsxpart_dVd)) - gbspdp);
-    *heres[0]->BSIM3v32SPdpPtr -= val[0];
-    *heres[1]->BSIM3v32SPdpPtr -= val[1];
-    *heres[2]->BSIM3v32SPdpPtr -= val[2];
-    *heres[3]->BSIM3v32SPdpPtr -= val[3];
-    *heres[4]->BSIM3v32SPdpPtr -= val[4];
-    *heres[5]->BSIM3v32SPdpPtr -= val[5];
-    *heres[6]->BSIM3v32SPdpPtr -= val[6];
-    *heres[7]->BSIM3v32SPdpPtr -= val[7];
+    heres[0]->BSIM3v32SPdpPt = val[0];
+    heres[1]->BSIM3v32SPdpPt = val[1];
+    heres[2]->BSIM3v32SPdpPt = val[2];
+    heres[3]->BSIM3v32SPdpPt = val[3];
+    heres[4]->BSIM3v32SPdpPt = val[4];
+    heres[5]->BSIM3v32SPdpPt = val[5];
+    heres[6]->BSIM3v32SPdpPt = val[6];
+    heres[7]->BSIM3v32SPdpPt = val[7];
+  }
+  {
+    Vec8d val = m * (((((((((Vec8d ){heres[0]->BSIM3v32drainConductance, heres[1]->BSIM3v32drainConductance, heres[2]->BSIM3v32drainConductance, heres[3]->BSIM3v32drainConductance, heres[4]->BSIM3v32drainConductance, heres[5]->BSIM3v32drainConductance, heres[6]->BSIM3v32drainConductance, heres[7]->BSIM3v32drainConductance}) + ((Vec8d ){heres[0]->BSIM3v32gds, heres[1]->BSIM3v32gds, heres[2]->BSIM3v32gds, heres[3]->BSIM3v32gds, heres[4]->BSIM3v32gds, heres[5]->BSIM3v32gds, heres[6]->BSIM3v32gds, heres[7]->BSIM3v32gds})) + ((Vec8d ){heres[0]->BSIM3v32gbd, heres[1]->BSIM3v32gbd, heres[2]->BSIM3v32gbd, heres[3]->BSIM3v32gbd, heres[4]->BSIM3v32gbd, heres[5]->BSIM3v32gbd, heres[6]->BSIM3v32gbd, heres[7]->BSIM3v32gbd})) + RevSum) + gcddb) + (dxpart * ggtd)) + (T1 * ddxpart_dVd)) + gbdpdp);
+    heres[0]->BSIM3v32DPdpPt = val[0];
+    heres[1]->BSIM3v32DPdpPt = val[1];
+    heres[2]->BSIM3v32DPdpPt = val[2];
+    heres[3]->BSIM3v32DPdpPt = val[3];
+    heres[4]->BSIM3v32DPdpPt = val[4];
+    heres[5]->BSIM3v32DPdpPt = val[5];
+    heres[6]->BSIM3v32DPdpPt = val[6];
+    heres[7]->BSIM3v32DPdpPt = val[7];
+  }
+  {
+    Vec8d val = m * (((((((((Vec8d ){heres[0]->BSIM3v32sourceConductance, heres[1]->BSIM3v32sourceConductance, heres[2]->BSIM3v32sourceConductance, heres[3]->BSIM3v32sourceConductance, heres[4]->BSIM3v32sourceConductance, heres[5]->BSIM3v32sourceConductance, heres[6]->BSIM3v32sourceConductance, heres[7]->BSIM3v32sourceConductance}) + ((Vec8d ){heres[0]->BSIM3v32gds, heres[1]->BSIM3v32gds, heres[2]->BSIM3v32gds, heres[3]->BSIM3v32gds, heres[4]->BSIM3v32gds, heres[5]->BSIM3v32gds, heres[6]->BSIM3v32gds, heres[7]->BSIM3v32gds})) + ((Vec8d ){heres[0]->BSIM3v32gbs, heres[1]->BSIM3v32gbs, heres[2]->BSIM3v32gbs, heres[3]->BSIM3v32gbs, heres[4]->BSIM3v32gbs, heres[5]->BSIM3v32gbs, heres[6]->BSIM3v32gbs, heres[7]->BSIM3v32gbs})) + FwdSum) + gcssb) + (sxpart * ggts)) + (T1 * dsxpart_dVs)) + gbspsp);
+    heres[0]->BSIM3v32SPspPt = val[0];
+    heres[1]->BSIM3v32SPspPt = val[1];
+    heres[2]->BSIM3v32SPspPt = val[2];
+    heres[3]->BSIM3v32SPspPt = val[3];
+    heres[4]->BSIM3v32SPspPt = val[4];
+    heres[5]->BSIM3v32SPspPt = val[5];
+    heres[6]->BSIM3v32SPspPt = val[6];
+    heres[7]->BSIM3v32SPspPt = val[7];
+  }
+  {
+    Vec8d val = m * ((Vec8d ){heres[0]->BSIM3v32drainConductance, heres[1]->BSIM3v32drainConductance, heres[2]->BSIM3v32drainConductance, heres[3]->BSIM3v32drainConductance, heres[4]->BSIM3v32drainConductance, heres[5]->BSIM3v32drainConductance, heres[6]->BSIM3v32drainConductance, heres[7]->BSIM3v32drainConductance});
+    heres[0]->BSIM3v32DdpPt = val[0];
+    heres[1]->BSIM3v32DdpPt = val[1];
+    heres[2]->BSIM3v32DdpPt = val[2];
+    heres[3]->BSIM3v32DdpPt = val[3];
+    heres[4]->BSIM3v32DdpPt = val[4];
+    heres[5]->BSIM3v32DdpPt = val[5];
+    heres[6]->BSIM3v32DdpPt = val[6];
+    heres[7]->BSIM3v32DdpPt = val[7];
+  }
+  {
+    Vec8d val = m * ((Vec8d ){heres[0]->BSIM3v32sourceConductance, heres[1]->BSIM3v32sourceConductance, heres[2]->BSIM3v32sourceConductance, heres[3]->BSIM3v32sourceConductance, heres[4]->BSIM3v32sourceConductance, heres[5]->BSIM3v32sourceConductance, heres[6]->BSIM3v32sourceConductance, heres[7]->BSIM3v32sourceConductance});
+    heres[0]->BSIM3v32SspPt = val[0];
+    heres[1]->BSIM3v32SspPt = val[1];
+    heres[2]->BSIM3v32SspPt = val[2];
+    heres[3]->BSIM3v32SspPt = val[3];
+    heres[4]->BSIM3v32SspPt = val[4];
+    heres[5]->BSIM3v32SspPt = val[5];
+    heres[6]->BSIM3v32SspPt = val[6];
+    heres[7]->BSIM3v32SspPt = val[7];
+  }
+  {
+    Vec8d val = m * ((Vec8d ){heres[0]->BSIM3v32drainConductance, heres[1]->BSIM3v32drainConductance, heres[2]->BSIM3v32drainConductance, heres[3]->BSIM3v32drainConductance, heres[4]->BSIM3v32drainConductance, heres[5]->BSIM3v32drainConductance, heres[6]->BSIM3v32drainConductance, heres[7]->BSIM3v32drainConductance});
+    heres[0]->BSIM3v32DPdPt = val[0];
+    heres[1]->BSIM3v32DPdPt = val[1];
+    heres[2]->BSIM3v32DPdPt = val[2];
+    heres[3]->BSIM3v32DPdPt = val[3];
+    heres[4]->BSIM3v32DPdPt = val[4];
+    heres[5]->BSIM3v32DPdPt = val[5];
+    heres[6]->BSIM3v32DPdPt = val[6];
+    heres[7]->BSIM3v32DPdPt = val[7];
+  }
+  {
+    Vec8d val = m * ((Vec8d ){heres[0]->BSIM3v32sourceConductance, heres[1]->BSIM3v32sourceConductance, heres[2]->BSIM3v32sourceConductance, heres[3]->BSIM3v32sourceConductance, heres[4]->BSIM3v32sourceConductance, heres[5]->BSIM3v32sourceConductance, heres[6]->BSIM3v32sourceConductance, heres[7]->BSIM3v32sourceConductance});
+    heres[0]->BSIM3v32SPsPt = val[0];
+    heres[1]->BSIM3v32SPsPt = val[1];
+    heres[2]->BSIM3v32SPsPt = val[2];
+    heres[3]->BSIM3v32SPsPt = val[3];
+    heres[4]->BSIM3v32SPsPt = val[4];
+    heres[5]->BSIM3v32SPsPt = val[5];
+    heres[6]->BSIM3v32SPsPt = val[6];
+    heres[7]->BSIM3v32SPsPt = val[7];
   }
   if (heres[0]->BSIM3v32nqsMod)
   {

@@ -28,137 +28,174 @@
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
 
-typedef double Vec8d __attribute__ ((vector_size (sizeof(double)*8), aligned (sizeof(double)*8)));
-typedef int64_t Vec8m __attribute__ ((vector_size (sizeof(double)*8), aligned (sizeof(double)*8)));
+typedef double Vec4d __attribute__ ((vector_size (sizeof(double)*4), aligned (sizeof(double)*4)));
+typedef int64_t Vec4m __attribute__ ((vector_size (sizeof(double)*4), aligned (sizeof(double)*4)));
 
-static inline Vec8d vec8_blend(Vec8d fa, Vec8d tr, Vec8m mask)
+
+#if USEX86INTRINSICS==1
+static inline Vec4d vec4_blend(Vec4d fa, Vec4d tr, Vec4m mask)
 {
-	Vec8d r;
-	#pragma omp simd
-	for(int i=0;i<8;i++)
+	return _mm256_blendv_pd(fa,tr, (Vec4d) mask);
+}
+#else
+static inline Vec4d vec4_blend(Vec4d fa, Vec4d tr, Vec4m mask)
+{
+	Vec4d r;
+	//#pragma omp simd
+	for(int i=0;i<4;i++)
 		r[i] = (mask[i]==0 ? fa[i] : tr[i]);
 	return r;
 }
+#endif
 
-static inline Vec8d vec8_exp(Vec8d x)
+static inline Vec4d vec4_exp(Vec4d x)
 {
-	Vec8d r;
-	#pragma omp simd
-	for(int i=0;i<8;i++)
+	Vec4d r;
+	//#pragma omp simd
+	for(int i=0;i<4;i++)
 		r[i] = exp(x[i]);
 	return r;
 }
 
-static inline Vec8d vec8_log(Vec8d x)
+static inline Vec4d vec4_log(Vec4d x)
 {
-	Vec8d r;
-	#pragma omp simd
-	for(int i=0;i<8;i++)
+	Vec4d r;
+	//#pragma omp simd
+	for(int i=0;i<4;i++)
 		r[i] = log(x[i]);
 	return r;
 }
 
-static inline Vec8d vec8_max(Vec8d x, Vec8d y)
+static inline Vec4d vec4_max(Vec4d x, Vec4d y)
 {
-	Vec8d r;
-	#pragma omp simd
-	for(int i=0;i<8;i++)
+	Vec4d r;
+	//#pragma omp simd
+	for(int i=0;i<4;i++)
 		r[i] = MAX(x[i],y[i]);
 	return r;
 }
 
-static inline Vec8d vec8_sqrt(Vec8d x)
+static inline Vec4d vec4_sqrt(Vec4d x)
 {
-	Vec8d r;
-	#pragma omp simd
-	for(int i=0;i<8;i++)
+	Vec4d r;
+	//#pragma omp simd
+	for(int i=0;i<4;i++)
 		r[i] = sqrt(x[i]);
 	return r;
 }
 
-static inline Vec8d vec8_fabs(Vec8d x)
+static inline Vec4d vec4_fabs(Vec4d x)
 {
-	Vec8d r;
-	#pragma omp simd
-	for(int i=0;i<8;i++)
+	Vec4d r;
+	//#pragma omp simd
+	for(int i=0;i<4;i++)
 		r[i] = fabs(x[i]);
 	return r;
 }
 
-#define vec8_pow0p7(x,p) vec8_pow(x,p)
-#define vec8_powMJ(x,p) vec8_pow(x,p)
-#define vec8_powMJSW(x,p) vec8_pow(x,p)
-#define vec8_powMJSWG(x,p) vec8_pow(x,p)
+#define vec4_pow0p7(x,p) vec4_pow(x,p)
+#define vec4_powMJ(x,p) vec4_pow(x,p)
+#define vec4_powMJSW(x,p) vec4_pow(x,p)
+#define vec4_powMJSWG(x,p) vec4_pow(x,p)
 
-static inline Vec8d vec8_pow(Vec8d x, double p)
+static inline Vec4d vec4_pow(Vec4d x, double p)
 {
-	return vec8_exp(vec8_log(x)*p);
+	return vec4_exp(vec4_log(x)*p);
 }
 
 /* useful vectorized functions */
-static inline Vec8d vec8_SIMDTOVECTOR(double val)
+static inline Vec4d vec4_SIMDTOVECTOR(double val)
 {
-	return (Vec8d) {val,val,val,val,val,val,val,val};
-}
-
-static inline Vec8m vec8_SIMDTOVECTORMASK(int32_t val)
-{
-	return (Vec8m) {val,val,val,val,val,val,val,val};
-}
-
-static inline Vec8d vec8_SIMDLOADDATA(int idx, double data[7][8])
-{
-	return (Vec8d) {data[idx][0],data[idx][1],data[idx][2],data[idx][3],data[idx][4],data[idx][5],data[idx][6],data[idx][7]};
-}
-
-static inline Vec8d vec8_BSIM3v32_StateAccess(double* cktstate, Vec8m stateindexes)
-{
-	Vec8d r;
-	#pragma omp simd
-	for(int i=0;i<8;i++)
-		r[i] =  cktstate[stateindexes[i]];
+	Vec4d r;
+	//#pragma omp simd
+	for(int i=0;i<4;i++)
+		r[i] = val;
 	return r;
 }
 
-
-static inline void vec8_BSIM3v32_StateStore(double* cktstate, Vec8m stateindexes, Vec8d values)
+static inline Vec4m vec4_SIMDTOVECTORMASK(int val)
 {
-	#pragma omp simd
-	for(int idx=0;idx<8;idx++)
+	Vec4m r;
+	//#pragma omp simd
+	for(int i=0;i<4;i++)
+		r[i] = val;
+	return r;
+}
+#if 0
+static inline Vec4d vec4_SIMDTOVECTOR(double val)
+{
+	return (Vec4d) {val,val,val,val};
+}
+
+static inline Vec4m vec4_SIMDTOVECTORMASK(int val)
+{
+	return (Vec4m) {val,val,val,val};
+}
+#endif
+
+static inline Vec4d vec4_SIMDLOADDATA(int idx, double data[7][4])
+{
+	return (Vec4d) {data[idx][0],data[idx][1],data[idx][2],data[idx][3]};
+}
+
+static inline Vec4d vec4_BSIM3v32_StateAccess(double* cktstate, Vec4m stateindexes)
+{
+	Vec4d r;
+	//#pragma omp simd
+	for(int i=0;i<4;i++)
+		r[i] =  cktstate[stateindexes[i]];
+	return r;
+	
+	/*return (Vec4d) {
+	 cktstate[stateindexes[0]],
+	 cktstate[stateindexes[1]],
+	 cktstate[stateindexes[2]],
+	 cktstate[stateindexes[3]]
+	};"*/
+}
+
+
+static inline void vec4_BSIM3v32_StateStore(double* cktstate, Vec4m stateindexes, Vec4d values)
+{
+	/*if(0) vec4_CheckCollisions(stateindexes,"SateStore");*/
+	//#pragma omp simd
+	for(int idx=0;idx<4;idx++)
 	{
 		cktstate[stateindexes[idx]] = values[idx];
 	}
 }
 
-static inline void vec8_BSIM3v32_StateAdd(double* cktstate, Vec8m stateindexes, Vec8d values)
+static inline void vec4_BSIM3v32_StateAdd(double* cktstate, Vec4m stateindexes, Vec4d values)
 {
-	#pragma omp simd
-	for(int idx=0;idx<8;idx++)
+	/*if(0) vec4_CheckCollisions(stateindexes,"StateAdd");*/
+	//#pragma omp simd
+	for(int idx=0;idx<4;idx++)
 	{
 		cktstate[stateindexes[idx]] += values[idx];
 	}
 }
 
-static inline void vec8_BSIM3v32_StateSub(double* cktstate, Vec8m stateindexes, Vec8d values)
+static inline void vec4_BSIM3v32_StateSub(double* cktstate, Vec4m stateindexes, Vec4d values)
 {
-	#pragma omp simd
-	for(int idx=0;idx<8;idx++)
+	/*if(0) vec4_CheckCollisions(stateindexes,"StateSub");*/
+	//#pragma omp simd
+	for(int idx=0;idx<4;idx++)
 	{
 		cktstate[stateindexes[idx]] -= values[idx];
 	}
 }
 
-static inline int vec8_BSIM3v32_ACM_saturationCurrents
+static inline int vec4_BSIM3v32_ACM_saturationCurrents
 (
 	BSIM3v32model *model,
 	BSIM3v32instance **heres,
-        Vec8d *DrainSatCurrent,
-        Vec8d *SourceSatCurrent
+        Vec4d *DrainSatCurrent,
+        Vec4d *SourceSatCurrent
 )
 {
 	int	error;
 	double dsat,ssat;
-	for(int idx=0;idx<8;idx++)
+	for(int idx=0;idx<4;idx++)
 	{
 		error = BSIM3v32_ACM_saturationCurrents(
 		      model, heres[idx],
@@ -172,22 +209,22 @@ static inline int vec8_BSIM3v32_ACM_saturationCurrents
 	return error;
 }
 
-static inline int vec8_BSIM3v32_ACM_junctionCapacitances(
+static inline int vec4_BSIM3v32_ACM_junctionCapacitances(
 	BSIM3v32model *model,
 	BSIM3v32instance **heres,
-	Vec8d *areaDrainBulkCapacitance,
-	Vec8d *periDrainBulkCapacitance,
-	Vec8d *gateDrainBulkCapacitance,
-	Vec8d *areaSourceBulkCapacitance,
-	Vec8d *periSourceBulkCapacitance,
-	Vec8d *gateSourceBulkCapacitance
+	Vec4d *areaDrainBulkCapacitance,
+	Vec4d *periDrainBulkCapacitance,
+	Vec4d *gateDrainBulkCapacitance,
+	Vec4d *areaSourceBulkCapacitance,
+	Vec4d *periSourceBulkCapacitance,
+	Vec4d *gateSourceBulkCapacitance
 
 )
 {
 	int	error;
 	double areaDB,periDB,gateDB,areaSB,periSB,gateSB;
 	
-	for(int idx=0;idx<8;idx++)
+	for(int idx=0;idx<4;idx++)
 	{
 		error = BSIM3v32_ACM_junctionCapacitances(
 		      model, heres[idx],
@@ -210,10 +247,11 @@ static inline int vec8_BSIM3v32_ACM_junctionCapacitances(
 }
 
 /* geq, ceq, and zero are not translated to vectors because there are unused */
-static inline int vec8_NIintegrate(CKTcircuit* ckt, double* geq, double *ceq, double zero, Vec8m chargestate)
+static inline int vec4_NIintegrate(CKTcircuit* ckt, double* geq, double *ceq, double zero, Vec4m chargestate)
 {
 	int	error;
-	for(int idx=0;idx<8;idx++)
+	/*if (0) vec4_CheckCollisions(chargestate, "NIIntegrate");*/
+	for(int idx=0;idx<4;idx++)
 	{
 		error = NIintegrate(ckt,geq,ceq,zero,chargestate[idx]);
 		if(error) return error;
@@ -221,28 +259,27 @@ static inline int vec8_NIintegrate(CKTcircuit* ckt, double* geq, double *ceq, do
 	return error;
 }
 
-static inline int vec8_SIMDCOUNT(Vec8m mask) {
-	return (mask[0] ? 1 : 0) + (mask[1] ? 1 : 0) + (mask[2] ? 1 : 0) + (mask[3] ? 1 : 0)
-		+ (mask[4] ? 1 : 0) + (mask[5] ? 1 : 0) + (mask[6] ? 1 : 0) + (mask[7] ? 1 : 0);
+static inline int vec4_SIMDCOUNT(Vec4m mask) {
+	return (mask[0] ? 1 : 0) + (mask[1] ? 1 : 0) + (mask[2] ? 1 : 0) + (mask[3] ? 1 : 0);
 }
 
 
-#if 0
+
 /* some debug utils functions */
-void vec8_printd(const char* msg, const char* name, Vec8d vecd)
+void vec4_printd(const char* msg, const char* name, Vec4d vecd)
 {
 	printf("%s %s %g %g %g %g\n",msg,name,vecd[0],vecd[1],vecd[2],vecd[3]);	
 }
 
-void vec8_printm(const char* msg, const char* name, Vec8m vecm)
+void vec4_printm(const char* msg, const char* name, Vec4m vecm)
 {
 	printf("%s %s %ld %ld %ld %ld\n",msg,name,vecm[0],vecm[1],vecm[2],vecm[3]);	
 }
 
-void vec8_CheckCollisions(Vec8m stateindexes, const char* msg)
+void vec4_CheckCollisions(Vec4m stateindexes, const char* msg)
 {
-	for(int i=0;i<8;i++)
-	for(int j=0;j<8;j++)
+	for(int i=0;i<4;i++)
+	for(int j=0;j<4;j++)
 	if(i!=j)
 	if(stateindexes[i]==stateindexes[j])
 	{
@@ -250,4 +287,3 @@ void vec8_CheckCollisions(Vec8m stateindexes, const char* msg)
 		raise(SIGINT);
 	}
 }
-#endif
