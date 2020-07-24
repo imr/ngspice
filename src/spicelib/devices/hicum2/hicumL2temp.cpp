@@ -158,14 +158,14 @@ int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double 
     zetasct = mg-1.5;
 
     // Limit temperature to avoid FPEs in equations
-    *(Tdev_Vrth) = 1;
+    *(Tdev_Vrth) = 1.0;
     if(*(HICUMTemp) < TMIN + CONSTCtoK) {
         *(HICUMTemp) = TMIN + CONSTCtoK;
-        *(Tdev_Vrth) = 0;
+        *(Tdev_Vrth) = 0.0;
     } else {
         if (*(HICUMTemp) > TMAX + CONSTCtoK) {
             *(HICUMTemp) = TMAX + CONSTCtoK;
-            *(Tdev_Vrth) = 0;
+            *(Tdev_Vrth) = 0.0;
         }
     }
     //This routine calculate the derivative with respect to Vrth. Since at some point
