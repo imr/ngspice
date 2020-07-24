@@ -187,11 +187,6 @@ int BSIM3v32_ACM_junctionCapacitances
 
 /*F.B: if data is not NULL, return to do calc in SIMD except if bypass 
        if data is NULL, just perform the whole model without SIMD */
-#ifdef USE_OMP
-#pragma message "Use OMP"
-#else
-#pragma message "Dont use OMP"
-#endif
 
 /*
 prelim argument:

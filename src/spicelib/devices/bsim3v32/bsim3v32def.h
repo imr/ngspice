@@ -21,6 +21,8 @@ File: bsim3v32def.h
 #define NSIMD 4
 #endif
 
+#define OMP_EFFMEM
+
 typedef struct sBSIM3v32instance
 {
 

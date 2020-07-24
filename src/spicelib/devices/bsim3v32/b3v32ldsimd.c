@@ -29,10 +29,6 @@
  ******************************************************************************/
 
 #include <math.h>
-#if USEX86INTRINSICS==1
-#include <x86intrin.h>
-#endif
-#include <signal.h>
 
 #include "ngspice/ngspice.h"
 #include "ngspice/cktdefs.h"
@@ -43,6 +39,10 @@
 #include "ngspice/sperror.h"
 #include "ngspice/devdefs.h"
 #include "ngspice/suffix.h"
+
+#if USEX86INTRINSICS==1
+#include <x86intrin.h>
+#endif
 
 #define MAX_EXP 5.834617425e14
 #define MIN_EXP 1.713908431e-15
@@ -79,14 +79,12 @@ int BSIM3v32LoadSIMD(BSIM3v32instance **heres, CKTcircuit *ckt
 
 #if NSIMD==4
 #ifdef USE_OMP
-    #pragma message "Use OMP SIMD4 version"
     #include "b3v32ldseq_simd4d_omp.c"
 #else
     #include "b3v32ldseq_simd4d.c"
 #endif
 #elif NSIMD==8
 #ifdef USE_OMP
-    #pragma message "Use OMP SIMD8 version"
     #include "b3v32ldseq_simd8d_omp.c"
 #else
     #include "b3v32ldseq_simd8d.c"
