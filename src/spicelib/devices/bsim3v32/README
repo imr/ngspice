@@ -20,24 +20,5 @@ BSIM3V32SIMD can be combined with OpenMP multiprocessing to achieve about 3x spe
 The actual acceleration will depend on the simulated circuit and will the most for medium-sized circuit consisting of mainly MOS transistors in the number of one hundred to ten thousands, as it is usual in the design of integrated circuit blocks. If simulating greater circuit, the matrix solving time will start to dominates and overall the optimization will have less effect.
 
 
-New Files:
-README
-INSTALL
-b3v32ldsel.c
-b3v32ldseq.c
-b3v32ldsimd.c
-b3v32ldseq_simd4.c
-b3v32ldseq_simd4_omp.c
-vec4_exp.c
-vec4_log.c
-
-Modified Files:
-Makefile.am
-bsim3v32def.h
-bsim3v32ext.h
-bsim3v32init.c
-b3v32set.c
-b3v32ld.c (minor modifications, can use original as well)
-
 Anamosic Ballenegger Design, July 2020
 www.anamosic.com
