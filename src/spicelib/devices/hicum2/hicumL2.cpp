@@ -359,7 +359,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Cscp_Vsc, Cscp_dT;
 
     //Base resistance and self-heating power
-    double rbi=0,pterm,pterm_dT;
+    double rbi=0.0,pterm,pterm_dT;
 
     //Model initialization
     double C_1;
@@ -382,8 +382,8 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Qr_Vbiei, Qr_Vbici, Qr_dT;
     duals::duald result_itf, result_itr, result_Qp, result_Qf, result_Qr, result_Q_bf, result_a_h, result_Q_p, result_Tf; //intermediate variables when calling void dual functions
     double T_f0, Q_p, a_h;
-    double Q_bf, Q_bf_Vbiei=0, Q_bf_Vbici=0, Q_bf_dT=0;
-    double Q_pT=0, Q_pT_dVbiei=0, Q_pT_dVbici=0, Q_pT_dT=0;
+    double Q_bf, Q_bf_Vbiei, Q_bf_Vbici, Q_bf_dT;
+    double Q_pT, Q_pT_dVbiei, Q_pT_dVbici, Q_pT_dT;
     double Qf, Cdei, Qr, Cdci;
     double Cdei_Vbiei, Cdei_Vbici, Cdei_Vrth;
     double Cdci_Vbiei, Cdci_Vbici, Cdci_Vrth;
@@ -391,15 +391,15 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double ick, ick_Vciei, ick_dT;//,cjcx01;//,cjcx02;
 
     //NQS
-    double Ixf1=0,Ixf2=0,Qxf1,Qxf2;
-    double Ixf1_Vxf1=0, Ixf1_Vxf2=0, Ixf1_ditf=0, Ixf1_dTf, Ixf1_Vbiei=0, Ixf1_Vbici=0, Ixf1_dT=0;
-    double Ixf2_Vxf1=0, Ixf2_Vbiei=0, Ixf2_Vbici=0, Ixf2_dT=0;
-    double Ixf_Vxf=0, Ixf_Tf,Ixf_Qdei,Ixf_Vbiei=0, Ixf_Vbici=0, Ixf_dT=0;
-    double Ixf2_Vxf2=0, Ixf2_dTf;
+    double Ixf1,Ixf2,Qxf1,Qxf2;
+    double Ixf1_Vxf1, Ixf1_Vxf2, Ixf1_ditf, Ixf1_dTf, Ixf1_Vbiei, Ixf1_Vbici, Ixf1_dT;
+    double Ixf2_Vxf1, Ixf2_Vbiei, Ixf2_Vbici, Ixf2_dT;
+    double Ixf_Vxf, Ixf_Tf,Ixf_Qdei,Ixf_Vbiei, Ixf_Vbici, Ixf_dT;
+    double Ixf2_Vxf2, Ixf2_dTf;
     double Itxf, Qdeix;
     double Itxf_Vxf2, Itxf_Vbici, Itxf_Vbiei, Itxf_dT;
     double Qdeix_Vxf, Qdeix_dT, Qdeix_Vbici, Qdeix_Vbiei;
-    double Qxf, Ixf=0, Vxf;
+    double Qxf, Ixf, Vxf;
     double Vxf1, Vxf2;
 
     double hjei_vbe;
@@ -420,7 +420,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 #ifndef PREDICTOR
     double xfact;
 #endif
-    double delvbiei=0.0, delvbici=0.0, delvbpei=0.0, delvbpbi=0.0, delvbpci=0.0, delvsici=0.0, delvbbp=0.0, delveie=0.0, delvciei=0.0, delvcic=0.0, delvxf2=0.0;
+    double delvbiei, delvbici, delvbpei, delvbpbi, delvbpci, delvsici, delvbbp, delveie, delvciei, delvcic, delvxf2;
     double ibieihat;
     double ibpeihat;
     double icieihat;
@@ -430,7 +430,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double isicihat;
     double ibpsihat;
     double ithhat;
-    double ceq, geq=0.0;
+    double ceq, geq;
     double rhs_current;
     int icheck=1;
     int ichk1, ichk2, ichk3, ichk4, ichk5, ichk6;
@@ -440,18 +440,18 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Ibiei, Ibiei_Vbiei, Ibiei_Vbici;
     double Ibici, Ibici_Vbici, Ibici_Vbiei;
     double Ibpei, Ibpei_Vbpei;
-    double Ibpci=0, Ibpci_Vbpci;
+    double Ibpci, Ibpci_Vbpci;
     double Isici, Isici_Vsici;//
-    double Isc=0, Isc_Vsc=0;
+    double Isc=0.0, Isc_Vsc=0.0;
     double Iciei, Iciei_Vbiei, Iciei_Vbici, Iciei_Vrth, Iciei_Vxf2;
-    double Ibbp_Vbbp=0;
+    double Ibbp_Vbbp=0.0;
     double Isis_Vsis;
-    double Ieie, Ieie_Veie=0;
+    double Ieie, Ieie_Veie=0.0;
     double Ibpbi, Ibpbi_Vbpbi, Ibpbi_Vbici, Ibpbi_Vbiei;
-    double Ibpsi, Ibpsi_Vbpci, Ibpsi_Vsici, Ibpsi_Vrth=0;
-    double Icic_Vcic=0;
-    double Ibci=0, Ibci_Vbci=0; 
-    double hjei_vbe_Vbiei, hjei_vbe_dT, ibet_Vbpei=0.0, ibet_dT=0, ibet_Vbiei=0.0, ibh_rec_Vbiei, ibh_rec_dT, ibh_rec_Vbici;
+    double Ibpsi, Ibpsi_Vbpci, Ibpsi_Vsici, Ibpsi_Vrth;
+    double Icic_Vcic=0.0;
+    double Ibci=0.0, Ibci_Vbci=0.0; 
+    double hjei_vbe_Vbiei, hjei_vbe_dT, ibet_Vbpei, ibet_dT, ibet_Vbiei, ibh_rec_Vbiei, ibh_rec_dT, ibh_rec_Vbici;
     double irei_Vbiei, irei_dT;
     double ibep_Vbpei, ibep_dT;
     double irep_Vbpei, irep_dT, rbi_dT, rbi_Vbiei, rbi_Vbici;
@@ -463,7 +463,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Tdev_Vrth; //derivative device temperature to Vrth
     //below variable has a real part equal to the device temperature and a dual part equal to dTdev/dVrth
     //this is necessary, since for some Vrth, HICUM sets Tdev constant (eg very high self heating beyond 300K)
-    //then, dTdev/dVrth=0. Else it is equal to 1.
+    //then, dTdev/dVrth. Else it is equal to 1.
     duals::duald Temp_dual; 
 
     double Cjei_Vbiei,Cjci_Vbici,Cjep_Vbpei,Cjep_dT,Cjs_Vsici;
@@ -498,30 +498,30 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 //NQS
     double Qxf_Vxf, Qxf1_Vxf1, Qxf2_Vxf2;
 
-    double Ith=0, Vrth=0, Icth, Icth_Vrth, delvrth;
+    double Ith=0.0, Vrth=0.0, Icth, Icth_Vrth, delvrth;
 
-    double Ibiei_Vrth=0;
-    double Ibici_Vrth=0;
-    double Ibpei_Vrth=0;
-    double Ibpci_Vrth=0;
-    double Isici_Vrth=0;
-    double Ibpbi_Vrth=0;
-    double Ieie_Vrth=0;
-    double Icic_Vrth=0;
-    double Ibbp_Vrth=0;
+    double Ibiei_Vrth;
+    double Ibici_Vrth;
+    double Ibpei_Vrth;
+    double Ibpci_Vrth;
+    double Isici_Vrth;
+    double Ibpbi_Vrth;
+    double Ieie_Vrth;
+    double Icic_Vrth=0.0;
+    double Ibbp_Vrth=0.0;
 
-    double Ith_Vrth   =0;
-    double Ith_Vciei=0;
-    double Ith_Vbiei=0;
-    double Ith_Vbici=0;
-    double Ith_Vbpei=0;
-    double Ith_Vbpci=0;
+    double Ith_Vrth=0.0;
+    double Ith_Vciei=0.0;
+    double Ith_Vbiei=0.0;
+    double Ith_Vbici=0.0;
+    double Ith_Vbpei=0.0;
+    double Ith_Vbpci=0.0;
 
-    double Ith_Vsici=0;
-    double Ith_Vbpbi=0;
-    double Ith_Veie =0;
-    double Ith_Vcic =0;
-    double Ith_Vbbp =0;
+    double Ith_Vsici=0.0;
+    double Ith_Vbpbi=0.0;
+    double Ith_Veie=0.0;
+    double Ith_Vcic=0.0;
+    double Ith_Vbbp=0.0;
 
     // COLLECTOR CURRENT SPREADING CALCULATION
     // collector minority charge incl. 2D/3D current spreading (TED 10/96)
@@ -2184,6 +2184,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
             if (nqs) { // && (ckt->CKTmode & (MODETRAN | MODEAC) ) ) { //evaluate nqs network only in TRANSIENT and AC modes.
                 Ixf1       = (Vxf2-itf)/Tf*model->HICUMt0;
+                Ixf1_Vxf1  =  0.0;
                 Ixf1_Vxf2  =  1.0/Tf*model->HICUMt0;
                 Ixf1_ditf  = -Ixf1_Vxf2;
                 Ixf1_dTf   = -Ixf1/Tf; //Tf(Vbiei,Vciei=Vbiei-Vbici)
