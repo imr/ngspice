@@ -361,7 +361,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Cscp_Vsc, Cscp_dT;
 
     //Base resistance and self-heating power
-    double rbi,pterm,pterm_dT;
+    double rbi=0,pterm,pterm_dT;
 
     //Model initialization
     double C_1;

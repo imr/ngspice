@@ -286,18 +286,20 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
             *(here->HICUMemitEmitEIPtr)            += -Ieie_Veie;
 
 //          Stamp element: Ibpbi
-            *(here->HICUMbaseBPBaseBPPtr)          +=  Ibpbi_Vbpbi; 
-            *(here->HICUMbaseBIBaseBIPtr)          +=  Ibpbi_Vbpbi;
-            *(here->HICUMbaseBPBaseBIPtr)          += -Ibpbi_Vbpbi;
-            *(here->HICUMbaseBIBaseBPPtr)          += -Ibpbi_Vbpbi;
-            *(here->HICUMbaseBPBaseBIPtr)          +=  Ibpbi_Vbiei; 
-            *(here->HICUMbaseBIEmitEIPtr)          +=  Ibpbi_Vbiei;
-            *(here->HICUMbaseBPEmitEIPtr)          += -Ibpbi_Vbiei;
-            *(here->HICUMbaseBIBaseBIPtr)          += -Ibpbi_Vbiei;
-            *(here->HICUMbaseBPBaseBIPtr)          +=  Ibpbi_Vbici; 
-            *(here->HICUMbaseBICollCIPtr)          +=  Ibpbi_Vbici;
-            *(here->HICUMbaseBPCollCIPtr)          += -Ibpbi_Vbici;
-            *(here->HICUMbaseBIBaseBIPtr)          += -Ibpbi_Vbici;
+            if (here->HICUMrbi>0.0) {
+                *(here->HICUMbaseBPBaseBPPtr)          +=  Ibpbi_Vbpbi; 
+                *(here->HICUMbaseBIBaseBIPtr)          +=  Ibpbi_Vbpbi;
+                *(here->HICUMbaseBPBaseBIPtr)          += -Ibpbi_Vbpbi;
+                *(here->HICUMbaseBIBaseBPPtr)          += -Ibpbi_Vbpbi;
+                *(here->HICUMbaseBPBaseBIPtr)          +=  Ibpbi_Vbiei; 
+                *(here->HICUMbaseBIEmitEIPtr)          +=  Ibpbi_Vbiei;
+                *(here->HICUMbaseBPEmitEIPtr)          += -Ibpbi_Vbiei;
+                *(here->HICUMbaseBIBaseBIPtr)          += -Ibpbi_Vbiei;
+                *(here->HICUMbaseBPBaseBIPtr)          +=  Ibpbi_Vbici; 
+                *(here->HICUMbaseBICollCIPtr)          +=  Ibpbi_Vbici;
+                *(here->HICUMbaseBPCollCIPtr)          += -Ibpbi_Vbici;
+                *(here->HICUMbaseBIBaseBIPtr)          += -Ibpbi_Vbici;
+            };
 
 //          Stamp element: Isici
             *(here->HICUMsubsSISubsSIPtr)          +=  Isici_Vsici;
@@ -405,18 +407,20 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
             XQxf2_Vxf2        = *(ckt->CKTstate0 + here->HICUMcqxf2)      * ckt->CKTomega;
 
             //Qrbi f_bp=+ f_bi=-
-            *(here->HICUMbaseBPBaseBPPtr + 1)          +=  XQrbi_Vbpbi; 
-            *(here->HICUMbaseBIBaseBIPtr + 1)          +=  XQrbi_Vbpbi;
-            *(here->HICUMbaseBPBaseBIPtr + 1)          += -XQrbi_Vbpbi;
-            *(here->HICUMbaseBIBaseBPPtr + 1)          += -XQrbi_Vbpbi;
-            *(here->HICUMbaseBPBaseBIPtr + 1)          +=  XQrbi_Vbiei; 
-            *(here->HICUMbaseBIEmitEIPtr + 1)          +=  XQrbi_Vbiei;
-            *(here->HICUMbaseBPEmitEIPtr + 1)          += -XQrbi_Vbiei;
-            *(here->HICUMbaseBIBaseBIPtr + 1)          += -XQrbi_Vbiei;
-            *(here->HICUMbaseBPBaseBIPtr + 1)          +=  XQrbi_Vbici; 
-            *(here->HICUMbaseBICollCIPtr + 1)          +=  XQrbi_Vbici;
-            *(here->HICUMbaseBPCollCIPtr + 1)          += -XQrbi_Vbici;
-            *(here->HICUMbaseBIBaseBIPtr + 1)          += -XQrbi_Vbici;
+            if (here->HICUMrbi>0.0) {
+                *(here->HICUMbaseBPBaseBPPtr + 1)          +=  XQrbi_Vbpbi; 
+                *(here->HICUMbaseBIBaseBIPtr + 1)          +=  XQrbi_Vbpbi;
+                *(here->HICUMbaseBPBaseBIPtr + 1)          += -XQrbi_Vbpbi;
+                *(here->HICUMbaseBIBaseBPPtr + 1)          += -XQrbi_Vbpbi;
+                *(here->HICUMbaseBPBaseBIPtr + 1)          +=  XQrbi_Vbiei; 
+                *(here->HICUMbaseBIEmitEIPtr + 1)          +=  XQrbi_Vbiei;
+                *(here->HICUMbaseBPEmitEIPtr + 1)          += -XQrbi_Vbiei;
+                *(here->HICUMbaseBIBaseBIPtr + 1)          += -XQrbi_Vbiei;
+                *(here->HICUMbaseBPBaseBIPtr + 1)          +=  XQrbi_Vbici; 
+                *(here->HICUMbaseBICollCIPtr + 1)          +=  XQrbi_Vbici;
+                *(here->HICUMbaseBPCollCIPtr + 1)          += -XQrbi_Vbici;
+                *(here->HICUMbaseBIBaseBIPtr + 1)          += -XQrbi_Vbici;
+            }
             //Qjei
             *(here->HICUMbaseBIBaseBIPtr + 1)          +=  XQjei_Vbiei;
             *(here->HICUMemitEIEmitEIPtr + 1)          +=  XQjei_Vbiei;
