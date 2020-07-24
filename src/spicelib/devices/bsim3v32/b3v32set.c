@@ -1198,7 +1198,8 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     		for (; here != NULL; here = BSIM3v32nextInstance(here))
        		{
        			if((here->BSIM3v32nqsMod == group->InstArray[0]->BSIM3v32nqsMod)
-       			&& (here->pParam == group->InstArray[0]->pParam) /* compare if pParam point to the same */
+			&& (here->BSIM3v32w == group->InstArray[0]->BSIM3v32w)
+			&& (here->BSIM3v32l == group->InstArray[0]->BSIM3v32l)
        			&& (here->BSIM3v32geo == group->InstArray[0]->BSIM3v32geo)
        			&& (here->BSIM3v32off == group->InstArray[0]->BSIM3v32off) )
        			{ /* instance can be grouped with the current group */
