@@ -78,25 +78,6 @@ typedef int BSIM3v32model;
 #define powMJSW(x,p) mypow(x,p)
 #define powMJSWG(x,p) mypow(x,p)
 
-#if 0
-#ifdef NEWCONV
-#pragma message "NEWCONV"
-#else
-#pragma message "no NEWCONV"
-#endif
-
-#ifdef NOBYPASS
-#pragma message "NOBYPASS"
-#else
-#pragma message "no NOBYPASS"
-#endif
-#ifdef PREDICTOR
-#pragma message "PREDICTOR"
-#else
-#pragma message "no PREDICTOR"
-#endif
-#endif
-
 int BSIM3v32_ACM_saturationCurrents
 (
 	BSIM3v32model *model,
