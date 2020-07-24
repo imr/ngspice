@@ -6,6 +6,7 @@
  * Author: 1995 Min-Chie Jeng and Mansun Chan.
  * Author: 1997-1999 Weidong Liu.
  * Author: 2001  Xuemei Xi
+ * Modified by Florian Ballenegger 2020 (for SIMD evaluation)
  **********/
 
 #include "ngspice/ngspice.h"
@@ -16,6 +17,9 @@
 #include "ngspice/sperror.h"
 #include "ngspice/devdefs.h"
 #include "ngspice/suffix.h"
+#include "ngspice/cpextern.h"
+
+extern SPICEdev BSIM3v32simdinfo;
 
 #define MAX_EXP 5.834617425e14
 #define MIN_EXP 1.713908431e-15
@@ -28,7 +32,7 @@
 #define Meter2Micron 1.0e6
 
 int
-BSIM3v32setup (SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
+BSIM3v32SIMDsetup (SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
             int *states)
 {
 BSIM3v32model *model = (BSIM3v32model*)inModel;
@@ -39,7 +43,7 @@ CKTnode *tmp;
 CKTnode *tmpNode;
 IFuid tmpName;
 
-#ifdef USE_OMP
+#if defined(USE_OMP) || defined(BSIM3v32SIMD)
 int idx, InstCount;
 BSIM3v32instance **InstArray;
 #endif
@@ -1034,7 +1038,7 @@ BSIM3v32instance **InstArray;
             /* process drain series resistance */
             if (DrainResistance != 0)
             {
-               if(here->BSIM3v32dNodePrime == 0) {
+	       if(here->BSIM3v32dNodePrime == 0) {
                  error = CKTmkVolt(ckt,&tmp,here->BSIM3v32name,"drain");
                  if(error) return(error);
                  here->BSIM3v32dNodePrime = tmp->number;
@@ -1135,7 +1139,7 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
 
         }
     }
-#ifdef USE_OMP
+#if defined(USE_OMP) || defined(BSIM3v32SIMD)
     InstCount = 0;
     model = (BSIM3v32model*)inModel;
     /* loop through all the BSIM3 device models
@@ -1157,6 +1161,7 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     /* store this in the first model only */
     model->BSIM3v32InstCount = InstCount;
     model->BSIM3v32InstanceArray = InstArray;
+#ifndef BSIM3v32SIMD
     idx = 0;
     for (; model != NULL; model = BSIM3v32nextModel(model))
     {
@@ -1168,27 +1173,77 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
             idx++;
         }
     }
+#else
+	idx=0;
+	int ngroups=0;
+	for (; model != NULL; model = BSIM3v32nextModel(model))
+    {
+    	BSIM3v32group *group;
+    	BSIM3v32instance *first;
 
+		model->groupHead=NULL;
+    	first = BSIM3v32instances(model);
+    	while((idx<InstCount) && (first!=NULL))
+    	{
+    		ngroups++;
+    		group = TMALLOC(BSIM3v32group, 1);
+    		group->InstArray=&InstArray[idx];
+    		group->InstArray[0] = first;
+    		group->InstCount=0;
+    		/* build linked list of groups */
+    		group->next = model->groupHead;
+    		model->groupHead=group;
+    		/* init the for loop below */
+    		here = first; first=NULL;
+    		for (; here != NULL; here = BSIM3v32nextInstance(here))
+       		{
+       			if((here->BSIM3v32nqsMod == group->InstArray[0]->BSIM3v32nqsMod)
+			&& (here->BSIM3v32w == group->InstArray[0]->BSIM3v32w)
+			&& (here->BSIM3v32l == group->InstArray[0]->BSIM3v32l)
+       			&& (here->BSIM3v32geo == group->InstArray[0]->BSIM3v32geo)
+       			&& (here->BSIM3v32off == group->InstArray[0]->BSIM3v32off) )
+       			{ /* instance can be grouped with the current group */
+       				InstArray[idx++] = here;
+       				group->InstCount++;
+       			}
+       			else if (first!=NULL)
+       				first=here; /* first different instance, start from here at next while iteration */
+       		}
+    	}
+    }
+    printf("BSIM3v32/SIMD has %d groups\n",ngroups);
+    if (cp_getvar("no_modsimd", CP_BOOL, NULL, 0))
+    {
+    	printf("BSIM3v32 simd disabled at runtime\n");
+	BSIM3v32simdinfo.DEVload = BSIM3v32SIMDload; /* use original load function */
+    }
+#endif
 #endif
     return(OK);
 }
 
 int
-BSIM3v32unsetup(
+BSIM3v32SIMDunsetup(
     GENmodel *inModel,
     CKTcircuit *ckt)
 {
     BSIM3v32model *model;
     BSIM3v32instance *here;
 
-#ifdef USE_OMP
-    model = (BSIM3v32model*)inModel;
-    tfree(model->BSIM3v32InstanceArray);
-#endif
+
 
     for (model = (BSIM3v32model *)inModel; model != NULL;
             model = BSIM3v32nextModel(model))
     {
+#ifdef BSIM3v32SIMD
+		BSIM3v32group *group,*ngroup;
+		group=model->groupHead;
+		while(group) {
+			ngroup=group->next;
+			tfree(group);
+			group=ngroup;
+		}
+#endif
         for (here = BSIM3v32instances(model); here != NULL;
                 here=BSIM3v32nextInstance(here))
         {
@@ -1207,6 +1262,12 @@ BSIM3v32unsetup(
             here->BSIM3v32dNodePrime = 0;
         }
     }
+    
+#if defined(USE_OMP) || defined(BSIM3v32SIMD)
+    model = (BSIM3v32model*)inModel;
+    tfree(model->BSIM3v32InstanceArray);
+#endif
+
     return OK;
 }
 

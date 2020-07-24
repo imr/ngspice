@@ -245,6 +245,7 @@ INPgetModBin(CKTcircuit *ckt, char *name, INPmodel **model, INPtables *tab, char
         /* skip if not binnable */
         if (modtmp->INPmodType != INPtypelook("BSIM3") &&
             modtmp->INPmodType != INPtypelook("BSIM3v32") &&
+	    modtmp->INPmodType != INPtypelook("BSIM3v32simd") &&
             modtmp->INPmodType != INPtypelook("BSIM3v0") &&
             modtmp->INPmodType != INPtypelook("BSIM3v1") &&
             modtmp->INPmodType != INPtypelook("BSIM4") &&

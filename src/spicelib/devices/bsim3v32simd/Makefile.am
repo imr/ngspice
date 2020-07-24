@@ -1,8 +1,9 @@
 ## Process this file with automake to produce Makefile.in
 
-noinst_LTLIBRARIES = libbsim3v32.la
+noinst_LTLIBRARIES = libbsim3v32simd.la
 
-libbsim3v32_la_SOURCES = \
+
+libbsim3v32simd_la_SOURCES = \
 	b3v32.c		\
 	b3v32acld.c	\
 	b3v32ask.c	\
@@ -26,10 +27,19 @@ libbsim3v32_la_SOURCES = \
 	bsim3v32init.h	\
 	bsim3v32itf.h
 
+if WANT_MODSIMD
+libbsim3v32simd_la_SOURCES += \
+	b3v32ldseq.c \
+	b3v32ldsel.c \
+	b3v32ldsimd.c
+endif
 
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)
+if WANT_MODSIMD
+AM_CFLAGS += -fno-math-errno -ffast-math -fopenmp-simd
+endif
 
 MAINTAINERCLEANFILES = Makefile.in
 

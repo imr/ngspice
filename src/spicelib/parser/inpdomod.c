@@ -299,6 +299,11 @@ char *INPdomodel(CKTcircuit *ckt, struct card *image, INPtables * tab)
 			      type = INPtypelook("BSIM3v1");
 			    }
 			    if (prefix("3.2", ver)) { /* version string ver has to start with 3.2 */
+			      #ifdef BSIM3v32SIMD
+			      if((strlen(ver)>5) && (strcmp(&ver[5],"simd")==0))
+			        type = INPtypelook("BSIM3v32simd");
+			      else
+			      #endif
 			      type = INPtypelook("BSIM3v32");
 			    }
 			    if ( (strstr(ver, "default")) || (prefix("3.3", ver)) ) {
@@ -306,6 +311,15 @@ char *INPdomodel(CKTcircuit *ckt, struct card *image, INPtables * tab)
 			    }
 			    if (type < 0) {
 			       err = tprintf("Device type BSIM3 version %s not available in this binary\n", ver);
+			    }
+			    break;
+			case 88:
+			    err = INPfindVer(line, ver);
+			    if (prefix("3.2", ver)) { /* version string ver has to start with 3.2 */
+			      type = INPtypelook("BSIM3v32simd");
+			    }
+			    if (type < 0) {
+			       err = tprintf("Device type BSIM3(simd) version %s not available in this binary\n", ver);
 			    }
 			    break;
 			case  9:

@@ -48,7 +48,7 @@ extern int BSIM3v32LoadSIMD(BSIM3v32instance **heres, CKTcircuit *ckt);
 
 #ifndef USE_OMP
 int
-BSIM3v32loadSel (GENmodel *inModel, CKTcircuit *ckt)
+BSIM3v32SIMDloadSel (GENmodel *inModel, CKTcircuit *ckt)
 {
 	#ifndef USE_OMP
 	double data[NDATASIMD][NSIMD];
@@ -106,7 +106,7 @@ BSIM3v32loadSel (GENmodel *inModel, CKTcircuit *ckt)
 
 #ifdef USE_OMP
 int
-BSIM3v32loadSel (GENmodel *inModel, CKTcircuit *ckt)
+BSIM3v32SIMDloadSel (GENmodel *inModel, CKTcircuit *ckt)
 {
 	/*
 	This version do omp parallel only inside groups

@@ -7,9 +7,9 @@
 #include "bsim3v32init.h"
 
 
-SPICEdev BSIM3v32info = {
+SPICEdev BSIM3v32simdinfo = {
     .DEVpublic = {
-        .name = "BSIM3v32",
+        .name = "BSIM3v32simd",
         .description = "Berkeley Short Channel IGFET Model Version-3",
         .terms = &BSIM3v32nSize,
         .numNames = &BSIM3v32nSize,
@@ -31,25 +31,29 @@ SPICEdev BSIM3v32info = {
 #endif
     },
 
-    .DEVparam = BSIM3v32param,
-    .DEVmodParam = BSIM3v32mParam,
-    .DEVload = BSIM3v32load,
-    .DEVsetup = BSIM3v32setup,
-    .DEVunsetup = BSIM3v32unsetup,
-    .DEVpzSetup = BSIM3v32setup,
-    .DEVtemperature = BSIM3v32temp,
-    .DEVtrunc = BSIM3v32trunc,
+    .DEVparam = BSIM3v32SIMDparam,
+    .DEVmodParam = BSIM3v32SIMDmParam,
+#ifdef BSIM3v32SIMD
+    .DEVload = BSIM3v32SIMDloadSel, /*F.B: point to load function wrapper */
+#else
+    .DEVload = BSIM3v32SIMDload,
+#endif
+    .DEVsetup = BSIM3v32SIMDsetup,
+    .DEVunsetup = BSIM3v32SIMDunsetup,
+    .DEVpzSetup = BSIM3v32SIMDsetup,
+    .DEVtemperature = BSIM3v32SIMDtemp,
+    .DEVtrunc = BSIM3v32SIMDtrunc,
     .DEVfindBranch = NULL,
-    .DEVacLoad = BSIM3v32acLoad,
+    .DEVacLoad = BSIM3v32SIMDacLoad,
     .DEVaccept = NULL,
     .DEVdestroy = NULL,
-    .DEVmodDelete = BSIM3v32mDelete,
+    .DEVmodDelete = BSIM3v32SIMDmDelete,
     .DEVdelete = NULL,
-    .DEVsetic = BSIM3v32getic,
-    .DEVask = BSIM3v32ask,
-    .DEVmodAsk = BSIM3v32mAsk,
-    .DEVpzLoad = BSIM3v32pzLoad,
-    .DEVconvTest = BSIM3v32convTest,
+    .DEVsetic = BSIM3v32SIMDgetic,
+    .DEVask = BSIM3v32SIMDask,
+    .DEVmodAsk = BSIM3v32SIMDmAsk,
+    .DEVpzLoad = BSIM3v32SIMDpzLoad,
+    .DEVconvTest = BSIM3v32SIMDconvTest,
     .DEVsenSetup = NULL,
     .DEVsenLoad = NULL,
     .DEVsenUpdate = NULL,
@@ -57,8 +61,8 @@ SPICEdev BSIM3v32info = {
     .DEVsenPrint = NULL,
     .DEVsenTrunc = NULL,
     .DEVdisto = NULL,
-    .DEVnoise = BSIM3v32noise,
-    .DEVsoaCheck = BSIM3v32soaCheck,
+    .DEVnoise = BSIM3v32SIMDnoise,
+    .DEVsoaCheck = BSIM3v32SIMDsoaCheck,
     .DEVinstSize = &BSIM3v32iSize,
     .DEVmodSize = &BSIM3v32mSize,
 
@@ -70,7 +74,7 @@ SPICEdev BSIM3v32info = {
 
 
 SPICEdev *
-get_bsim3v32_info(void)
+get_bsim3v32simd_info(void)
 {
-    return &BSIM3v32info;
+    return &BSIM3v32simdinfo;
 }

@@ -61,6 +61,10 @@ if NUMDEV_WANTED
 SUBDIRS += nbjt nbjt2 numd  numd2 numos
 endif
 
+if WANT_MODSIMD
+SUBDIRS += bsim3v32simd
+endif
+
 DIST_SUBDIRS = \
 	asrc	\
 	bjt	\
@@ -75,6 +79,7 @@ DIST_SUBDIRS = \
 	bsim3v0		\
 	bsim3v1		\
 	bsim3v32	\
+	bsim3v32simd	\
 	bsim3soi_pd	\
 	bsim3soi_fd	\
 	bsim3soi_dd	\

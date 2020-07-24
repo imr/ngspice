@@ -4,6 +4,7 @@ Author: 1995 Min-Chie Jeng and Mansun Chan.
 Author: 1997-1999 Weidong Liu.
 Author: 2001 Xuemei Xi
 Modified by Paolo Nenzi 2002 and Dietmar Warning 2003
+Modified by Florian Ballenegger 2020 (for SIMD evaluation)
 File: bsim3v32def.h
 **********/
 
@@ -15,6 +16,12 @@ File: bsim3v32def.h
 #include "ngspice/cktdefs.h"
 #include "ngspice/complex.h"
 #include "ngspice/noisedef.h"
+
+#ifdef BSIM3v32SIMD
+#define NSIMD 4
+#endif
+
+#define OMP_EFFMEM
 
 typedef struct sBSIM3v32instance
 {
@@ -36,7 +43,7 @@ typedef struct sBSIM3v32instance
 
     /* MCJ */
     double BSIM3v32ueff;
-    double BSIM3v32thetavth;
+    double BSIM3v32thetavth; /* F.B. It is not useful to store this here, should be removed */
     double BSIM3v32von;
     double BSIM3v32vdsat;
     double BSIM3v32cgdo;
@@ -174,15 +181,29 @@ typedef struct sBSIM3v32instance
     double *BSIM3v32GqPtr;
     double *BSIM3v32SPqPtr;
     double *BSIM3v32BqPtr;
-
+#ifdef USE_OMP
+#ifdef BSIM3v32SIMD
+    /* store here values calculated before SIMD evaluation really start */
+    double BSIM3v32SIMDvbs;
+    double BSIM3v32SIMDvgs;
+    double BSIM3v32SIMDvds;
+    double BSIM3v32SIMDqdef;
+    double BSIM3v32SIMDcdhat;
+    double BSIM3v32SIMDcbhat;
+    int	BSIM3v32SIMDCheck;
+#endif
+#endif
 #ifdef USE_OMP
     /* per instance storage of results, to update matrix at a later stge */
+    int	BSIM3v32noncon; /* F.B. bug fix potential race when writing ckt->CKTnoncon */
     double BSIM3v32rhsG;
     double BSIM3v32rhsB;
     double BSIM3v32rhsD;
     double BSIM3v32rhsS;
+    #ifndef OMP_EFFMEM
     double BSIM3v32rhsQ;
-
+    #endif
+	
     double BSIM3v32DdPt;
     double BSIM3v32GgPt;
     double BSIM3v32SsPt;
@@ -205,7 +226,7 @@ typedef struct sBSIM3v32instance
     double BSIM3v32DPbPt;
     double BSIM3v32SPbPt;
     double BSIM3v32SPdpPt;
-
+    #ifndef OMP_EFFMEM
     double BSIM3v32QqPt;
     double BSIM3v32QdpPt;
     double BSIM3v32QgPt;
@@ -215,6 +236,7 @@ typedef struct sBSIM3v32instance
     double BSIM3v32GqPt;
     double BSIM3v32SPqPt;
     double BSIM3v32BqPt;
+    #endif
 #endif
 
 #define BSIM3v32vbd BSIM3v32states+ 0
@@ -397,6 +419,16 @@ struct bsim3v32SizeDependParam
     struct bsim3v32SizeDependParam  *pNext;
 };
 
+#ifdef BSIM3v32SIMD
+/* Group by same pParam, nqsMode, geo, off for more efficient SIMD processing */
+typedef struct sBSIM3v32group {
+	int		InstCount;
+	int		EvalCount;
+	int		SimdCount;
+	BSIM3v32instance** InstArray; /* actually sub-array of one allocated array globally */
+	struct sBSIM3v32group* next;
+} BSIM3v32group;
+#endif
 
 typedef struct sBSIM3v32model
 {
@@ -887,8 +919,12 @@ typedef struct sBSIM3v32model
     double BSIM3v32vbdrMax;
 
     struct bsim3v32SizeDependParam *pSizeDependParamKnot;
+    
+#ifdef BSIM3v32SIMD
+	BSIM3v32group*	groupHead;
+#endif
 
-#ifdef USE_OMP
+#if defined(USE_OMP) || defined(BSIM3v32SIMD)
     int BSIM3v32InstCount;
     struct sBSIM3v32instance **BSIM3v32InstanceArray;
 #endif
