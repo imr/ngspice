@@ -8,8 +8,8 @@ Spice3 Implementation: 2020 Dietmar Warning, Markus Müller, Mario Krattenmacher
 /*
  * This file defines the HICUM L2.4.0 model load function
  * Comments on the Code:
- * - We use dual numbers to calculate derivatives, this is readble and error proof. => you need to understand that to understand this code
- * - The code is targeted to be readbale and maintainable, speed is sacrificed for this purpose.
+ * - We use dual numbers to calculate derivatives, this is readable and error proof. => you need to understand that to understand this code
+ * - The code is targeted to be readable and maintainable, speed is sacrificed for this purpose.
  * - The verilog a code is available at the website of TU Dresden, Michael Schroeter's chair.
  */
 
@@ -247,7 +247,7 @@ void HICJQ(duals::duald T, duals::duald c_0, duals::duald u_d, double z, duals::
 
 duals::duald calc_hjei_vbe(duals::duald Vbiei, duals::duald T, HICUMinstance * here, HICUMmodel * model){
     //calculates hje_vbe
-    //warpping in a routine allows easy calculation of derivatives with dual numbers
+    //wrapping in a routine allows easy calculation of derivatives with dual numbers
     duals::duald vj, vj_z, vt, vdei_t, hjei0_t, ahjei_t;
     if (model->HICUMahjei == 0.0){
         return model->HICUMhjei;
@@ -278,8 +278,6 @@ void hicum_diode(duals::duald T, dual_double IS, double UM1, double U, double *I
     // T is T_dev + 1_e*T_dev_Vrth
     //wrapper for hicum diode equation that also generates derivatives
     duals::duald result = 0;
-
-    // printf("executed diode");
 
     duals::duald is_t = IS.rpart;
     result = HICDIO(T.rpart(), is_t, UM1, U+1_e);
@@ -409,7 +407,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Vbiei, Vbici, Vciei, Vbpei, Vbpbi, Vbpci, Vsici, Vbci, Vsc;
     double Vbici_temp, Vaval;
 
-    // Model flags
+    //Model flags
     int use_aval;
 
     //helpers for ngspice implementation
@@ -463,7 +461,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
     double Temp;
     double Tdev_Vrth; //derivative device temperature to Vrth
-    // below variable has a real part equal to the device temperature and a dual part equal to dTdev/dVrth
+    //below variable has a real part equal to the device temperature and a dual part equal to dTdev/dVrth
     //this is necessary, since for some Vrth, HICUM sets Tdev constant (eg very high self heating beyond 300K)
     //then, dTdev/dVrth=0. Else it is equal to 1.
     duals::duald Temp_dual; 
@@ -538,8 +536,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     //  Q_fC, Q_CT: actual and ICCR (weighted) hole charge
     //  T_fC, T_cT: actual and ICCR (weighted) transit time
     //  Derivative dfCT_ditf not properly implemented yet
-    // feenableexcept(FE_INVALID | FE_OVERFLOW); //debuger catches NANS
-
     std::function<void (duals::duald, duals::duald, duals::duald, duals::duald, duals::duald*, duals::duald*, duals::duald*, duals::duald*)> HICQFC = [&](duals::duald T, duals::duald Ix, duals::duald I_CK, duals::duald FFT_pcS, duals::duald * Q_fC, duals::duald * Q_CT, duals::duald * T_fC, duals::duald * T_cT)
     {
         duals::duald FCln, FCa, FCa1, FCd_a, FCw, FCdw_daick, FCda1_dw, FCf_ci, FCdfCT_ditf, FCw2, FCz, FCdfc_dw, FFdVc_ditf, FCf_CT, FCf1, FCf2, FCrt;
@@ -895,7 +891,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
         } else{
             iavl = 0;
         }
-        // Note that iavl = 0.0 is already set in the initialization block for use_aval == 0 (Markus: not for this lambda!)
         return iavl;
     };
 
@@ -1086,7 +1081,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
             //final calculations afterwards, see later in load where this is called
 
-        } //if
+        }
         return Q_pT;
 
     };
@@ -1149,7 +1144,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             use_aval = 0;
         }
 
-// end of Model_initialization
+        // end of Model_initialization
 
         /* loop through all the instances of the model */
         for (here = HICUMinstances(model); here != NULL ;
@@ -1822,10 +1817,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             Vbci  = model->HICUMtype*Vbci;
             Vsici = model->HICUMtype*Vsici;
             Vsc   = model->HICUMtype*Vsc;
-            //Dietmar, what about this
-            // Vxf   = model->HICUMtype*Vxf;
-            // Vxf1  = model->HICUMtype*Vxf1;
-            // Vxf2  = model->HICUMtype*Vxf2;
 
             if (selfheat) { // Thermal_update_with_self_heating
                 Temp =  here->HICUMtemp+Vrth;
@@ -1999,10 +1990,10 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
             here->HICUMtf = Tf;
 
-            //NQS effect implemented with LCR networks
+            //NQS effect implemented with gyrator network
             //Once the delay in ITF is considered, IT_NQS is calculated afterwards
 
-            //Diffusion charges for further use (remember derivatives if this will be used somebday)
+            //Diffusion charges for further use (remember derivatives if this will be used someday)
             Qdei       = Qf;
             Qdei_Vbici = Qf_Vbici;
             Qdei_Vbiei = Qf_Vbiei;
@@ -2191,7 +2182,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
             // Excess Phase calculation -> hand implementation
 
-            if ( nqs){ // && (ckt->CKTmode & (MODETRAN | MODEAC) ) ) { //evaluate nqs network only in TRANSIENT and AC modes.
+            if (nqs) { // && (ckt->CKTmode & (MODETRAN | MODEAC) ) ) { //evaluate nqs network only in TRANSIENT and AC modes.
                 Ixf1       = (Vxf2-itf)/Tf*model->HICUMt0;
                 Ixf1_Vxf2  =  1.0/Tf*model->HICUMt0;
                 Ixf1_ditf  = -Ixf1_Vxf2;
@@ -2230,7 +2221,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 Qxf       = model->HICUMalqf*model->HICUMt0*Vxf; //for RC nw
                 Qxf_Vxf   = model->HICUMalqf*model->HICUMt0;     //for RC nw
 
-                Qdeix       = Vxf;                                 //for RC nw
+                Qdeix       = Vxf;                               //for RC nw
                 Qdeix_Vxf   = 1.0;
                 Qdeix_Vbiei = 0;
                 Qdeix_Vbici = 0;
@@ -2381,17 +2372,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             }
 
 
-            // Following code is an intermediate solution (if branch contribution is not supported):
-            // ******************************************
-            //if(model->HICUMflsh == 0 || model->HICUMrth_scaled < MIN_R) {
-            //      I[br_sht]       <+ Vrth/MIN_R;
-            //} else {
-            //      I[br_sht]       <+ Vrth/rth_t-pterm;
-            //      I[br_sht]       <+ ddt(here->HICUMcth_scaled*Vrth]);
-            //}
-
-            // ******************************************
-
+            // ********************************************
             // For simulators having no problem with Vrth) <+ 0.0
             // with external thermal node, following code may be used.
             // Note that external thermal node should remain accessible
