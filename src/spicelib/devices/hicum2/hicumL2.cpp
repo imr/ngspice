@@ -936,7 +936,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             if(Qf > 0.0) {
                 rbi     = rbi*(Qjei+Qf*model->HICUMfqi)/(Qjei+Qf);
             }
-         } else {
+        } else {
             rbi     = 0.0;
         }
         return rbi;
@@ -2363,7 +2363,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 Ibpbi_Vbiei   = -Vbpbi * rbi_Vbiei / (rbi*rbi); 
                 Ibpbi_Vbici   = -Vbpbi * rbi_Vbici / (rbi*rbi);
                 Ibpbi_Vrth    = -Vbpbi * rbi_dT    / (rbi*rbi);
-            } else {
+            } else if(rbi >0.0 ) {
                 // fallback in case rbi is low
                 Ibpbi       = Vbpbi / MIN_R;
                 Ibpbi_Vbpbi = 1 / MIN_R;
@@ -2371,6 +2371,15 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 Ibpbi_Vbici = 0;
                 Ibpbi_Vrth  = 0;
             }
+            else {
+                // fallback in case rbi is not zero, but smaller than MIN_R
+                Ibpbi       = 0;
+                Ibpbi_Vbpbi = 0;
+                Ibpbi_Vbiei = 0;
+                Ibpbi_Vbici = 0;
+                Ibpbi_Vrth  = 0;
+            }
+
 
             // Following code is an intermediate solution (if branch contribution is not supported):
             // ******************************************
@@ -3119,27 +3128,29 @@ load:
             *(here->HICUMemitEmitEIPtr)   += -Ieie_Veie;
 //          finish
 
-//          Branch: bpbi, Stamp element: Rbi, Crbi
-            rhs_current = model->HICUMtype * (Ibpbi - Ibpbi_Vbpbi*Vbpbi - Ibpbi_Vbiei*Vbiei - Ibpbi_Vbici*Vbici);
-            *(ckt->CKTrhs + here->HICUMbaseBPNode) += -rhs_current;
-            *(ckt->CKTrhs + here->HICUMbaseBINode) +=  rhs_current;
-            //f_Bp = +    f_Bi = - 
-            // with respect to Vbpbi 
-            *(here->HICUMbaseBPBaseBPPtr)          +=  Ibpbi_Vbpbi; 
-            *(here->HICUMbaseBIBaseBIPtr)          +=  Ibpbi_Vbpbi;
-            *(here->HICUMbaseBPBaseBIPtr)          += -Ibpbi_Vbpbi;
-            *(here->HICUMbaseBIBaseBPPtr)          += -Ibpbi_Vbpbi;
-            // with respect to Vbiei
-            *(here->HICUMbaseBPBaseBIPtr)          +=  Ibpbi_Vbiei; 
-            *(here->HICUMbaseBIEmitEIPtr)          +=  Ibpbi_Vbiei;
-            *(here->HICUMbaseBPEmitEIPtr)          += -Ibpbi_Vbiei;
-            *(here->HICUMbaseBIBaseBIPtr)          += -Ibpbi_Vbiei;
-            // with respect to Vbici
-            *(here->HICUMbaseBPBaseBIPtr)          +=  Ibpbi_Vbici; 
-            *(here->HICUMbaseBICollCIPtr)          +=  Ibpbi_Vbici;
-            *(here->HICUMbaseBPCollCIPtr)          += -Ibpbi_Vbici;
-            *(here->HICUMbaseBIBaseBIPtr)          += -Ibpbi_Vbici;
-//          finish
+            if (rbi>0.0) {
+//              Branch: bpbi, Stamp element: Rbi, Crbi
+                rhs_current = model->HICUMtype * (Ibpbi - Ibpbi_Vbpbi*Vbpbi - Ibpbi_Vbiei*Vbiei - Ibpbi_Vbici*Vbici);
+                *(ckt->CKTrhs + here->HICUMbaseBPNode) += -rhs_current;
+                *(ckt->CKTrhs + here->HICUMbaseBINode) +=  rhs_current;
+                //f_Bp = +    f_Bi = - 
+                // with respect to Vbpbi 
+                *(here->HICUMbaseBPBaseBPPtr)          +=  Ibpbi_Vbpbi; 
+                *(here->HICUMbaseBIBaseBIPtr)          +=  Ibpbi_Vbpbi;
+                *(here->HICUMbaseBPBaseBIPtr)          += -Ibpbi_Vbpbi;
+                *(here->HICUMbaseBIBaseBPPtr)          += -Ibpbi_Vbpbi;
+                // with respect to Vbiei
+                *(here->HICUMbaseBPBaseBIPtr)          +=  Ibpbi_Vbiei; 
+                *(here->HICUMbaseBIEmitEIPtr)          +=  Ibpbi_Vbiei;
+                *(here->HICUMbaseBPEmitEIPtr)          += -Ibpbi_Vbiei;
+                *(here->HICUMbaseBIBaseBIPtr)          += -Ibpbi_Vbiei;
+                // with respect to Vbici
+                *(here->HICUMbaseBPBaseBIPtr)          +=  Ibpbi_Vbici; 
+                *(here->HICUMbaseBICollCIPtr)          +=  Ibpbi_Vbici;
+                *(here->HICUMbaseBPCollCIPtr)          += -Ibpbi_Vbici;
+                *(here->HICUMbaseBIBaseBIPtr)          += -Ibpbi_Vbici;
+//              finish
+            }
 
 //          Branch: sici, Stamp element: Ijsc
             rhs_current = model->HICUMtype * (Isici - Isici_Vsici*Vsici);
@@ -3295,14 +3306,16 @@ load:
                 *(here->HICUMemitTempPtr)   += -Ieie_Vrth;
 //              finish
 
-//              Stamp element: Rbi    f_Bp = +   f_Bi = -
-                rhs_current = -Ibpbi_Vrth*Vrth;
-                *(ckt->CKTrhs + here->HICUMbaseBPNode) += -rhs_current;
-                *(ckt->CKTrhs + here->HICUMbaseBINode) +=  rhs_current;
-                // with respect to Potential Vrth
-                *(here->HICUMbaseBPtempPtr)            +=  Ibpbi_Vrth;
-                *(here->HICUMbaseBItempPtr)            += -Ibpbi_Vrth;
-//              finish
+                if (rbi>0.0) {
+//                  Stamp element: Rbi    f_Bp = +   f_Bi = -
+                    rhs_current = -Ibpbi_Vrth*Vrth;
+                    *(ckt->CKTrhs + here->HICUMbaseBPNode) += -rhs_current;
+                    *(ckt->CKTrhs + here->HICUMbaseBINode) +=  rhs_current;
+                    // with respect to Potential Vrth
+                    *(here->HICUMbaseBPtempPtr)            +=  Ibpbi_Vrth;
+                    *(here->HICUMbaseBItempPtr)            += -Ibpbi_Vrth;
+//                  finish
+                };
 
 //              Stamp element: Isici   f_Si = +   f_Ci = -
                 rhs_current = -Isici_Vrth*Vrth;
