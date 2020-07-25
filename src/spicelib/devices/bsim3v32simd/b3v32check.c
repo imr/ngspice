@@ -19,6 +19,17 @@
 #include "ngspice/devdefs.h"
 #include "ngspice/suffix.h"
 
+static int vesion_check(const char* modver, const char *ver)
+{
+	int len = strlen(modver);
+	if(len>5)
+	if(strcmp(&modver[len-4],"simd")==0)
+	if(strlen(ver)<=len-4)
+	if(strncmp(modver,ver,len-4)==0)
+		return 0;
+	return strcmp(modver,ver);
+}
+
 int
 BSIM3v32checkModel (BSIM3v32model *model, BSIM3v32instance *here, CKTcircuit *ckt)
 {
@@ -38,9 +49,9 @@ FILE *fplog;
         fprintf (fplog, "W = %g, L = %g, M = %g\n", here->BSIM3v32w,
                  here->BSIM3v32l, here->BSIM3v32m);
 
-        if ((strcmp(model->BSIM3v32version, "3.2.4")) && (strncmp(model->BSIM3v32version, "3.24", 4))
-         && (strcmp(model->BSIM3v32version, "3.2.3")) && (strncmp(model->BSIM3v32version, "3.23", 4))
-         && (strcmp(model->BSIM3v32version, "3.2.2")) && (strncmp(model->BSIM3v32version, "3.22", 4))
+        if ((vesion_check(model->BSIM3v32version, "3.2.4")) && (strncmp(model->BSIM3v32version, "3.24", 4))
+         && (vesion_check(model->BSIM3v32version, "3.2.3")) && (strncmp(model->BSIM3v32version, "3.23", 4))
+         && (vesion_check(model->BSIM3v32version, "3.2.2")) && (strncmp(model->BSIM3v32version, "3.22", 4))
          && (strncmp(model->BSIM3v32version, "3.2", 3)) && (strncmp(model->BSIM3v32version, "3.20", 4)))
         {
             fprintf (fplog,

@@ -31,6 +31,17 @@ extern SPICEdev BSIM3v32simdinfo;
 #define Charge_q 1.60219e-19
 #define Meter2Micron 1.0e6
 
+static int vesion_check(const char* modver, const char *ver)
+{
+	int len = strlen(modver);
+	if(len>5)
+	if(strcmp(&modver[len-4],"simd")==0)
+	if(strlen(ver)<=len-4)
+	if(strncmp(modver,ver,len-4)==0)
+		return 0;
+	return strcmp(modver,ver);
+}
+
 int
 BSIM3v32SIMDsetup (SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
             int *states)
@@ -87,16 +98,17 @@ BSIM3v32instance **InstArray;
          * is faster than comparing strings.
          * Paolo Nenzi 2002
          */
-        if ((!strcmp(model->BSIM3v32version, "3.2.4"))||(!strncmp(model->BSIM3v32version, "3.24", 4)))
+        if ((!vesion_check(model->BSIM3v32version, "3.2.4"))||(!strncmp(model->BSIM3v32version, "3.24", 4)))
                 model->BSIM3v32intVersion = BSIM3v32V324;
-        else if ((!strcmp(model->BSIM3v32version, "3.2.3"))||(!strncmp(model->BSIM3v32version, "3.23", 4)))
+        else if ((!vesion_check(model->BSIM3v32version, "3.2.3"))||(!strncmp(model->BSIM3v32version, "3.23", 4)))
                 model->BSIM3v32intVersion = BSIM3v32V323;
-        else if ((!strcmp(model->BSIM3v32version, "3.2.2"))||(!strncmp(model->BSIM3v32version, "3.22", 4)))
+        else if ((!vesion_check(model->BSIM3v32version, "3.2.2"))||(!strncmp(model->BSIM3v32version, "3.22", 4)))
                 model->BSIM3v32intVersion = BSIM3v32V322;
         else if ((!strncmp(model->BSIM3v32version, "3.2", 3))||(!strncmp(model->BSIM3v32version, "3.20", 4)))
                 model->BSIM3v32intVersion = BSIM3v32V32;
         else
                 model->BSIM3v32intVersion = BSIM3v32V3OLD;
+	printf("bsim3v32simd version set to %d\n", model->BSIM3v32intVersion);
         /* BSIM3v32V3OLD is a placeholder for pre 3.2 revision
          * This model should not be used for pre 3.2 models.
          */
@@ -938,7 +950,6 @@ BSIM3v32instance **InstArray;
             model->BSIM3v32vbsrMax = 1e99;
         if (!model->BSIM3v32vbdrMaxGiven)
             model->BSIM3v32vbdrMax = 1e99;
-
         /* loop through all the instances of the model */
         for (here = BSIM3v32instances(model); here != NULL ;
              here=BSIM3v32nextInstance(here))

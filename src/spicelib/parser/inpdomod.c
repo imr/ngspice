@@ -299,12 +299,16 @@ char *INPdomodel(CKTcircuit *ckt, struct card *image, INPtables * tab)
 			      type = INPtypelook("BSIM3v1");
 			    }
 			    if (prefix("3.2", ver)) { /* version string ver has to start with 3.2 */
-			      #ifdef BSIM3v32SIMD
-			      if((strlen(ver)>5) && (strcmp(&ver[5],"simd")==0))
+			      #ifdef BSIM3v32SIMDxxxxx
+			      if((strlen(ver)>5) && (strcmp(&ver[strlen(ver)-4],"simd")==0))
 			        type = INPtypelook("BSIM3v32simd");
 			      else
 			      #endif
+			      #if defined(MODSIMD_ALWAYS)
+			      type = INPtypelook("BSIM3v32simd");
+			      #else
 			      type = INPtypelook("BSIM3v32");
+			      #endif
 			    }
 			    if ( (strstr(ver, "default")) || (prefix("3.3", ver)) ) {
 			      type = INPtypelook("BSIM3");
