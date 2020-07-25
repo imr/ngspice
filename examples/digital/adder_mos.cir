@@ -58,8 +58,8 @@ X1     1  2  3  4  5  6  7  8  9 10 11 12  0 13 99 FOURBIT
 .save V(1) V(2) V(3) V(4) V(5) V(6) V(7) V(8) 
 
 * use BSIM3 model with default parameters
-.model n1 nmos level=88 version=3.2.4
-.model p1 pmos level=88 version=3.2.4
+.model n1 nmos level=49 version=3.2.4simd
+.model p1 pmos level=49 version=3.2.4simd
 *.include ./Modelcards/modelcard32.nmos
 *.include ./Modelcards/modelcard32.pmos
 
