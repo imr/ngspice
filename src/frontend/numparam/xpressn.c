@@ -253,7 +253,7 @@ initdico(dico_t *dico)
 
     dico->inst_symbols = NULL;          /* instance qualified are lazily allocated */
 
-    if (inp_compat_mode == COMPATMODE_HS)
+    if (newcompat.hs)
         dico->hs_compatibility = 1;
     else
         dico->hs_compatibility = 0;

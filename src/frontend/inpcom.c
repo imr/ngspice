@@ -101,8 +101,6 @@ struct func_temper
 
 extern void line_free_x(struct card *deck, bool recurse);
 
-COMPATMODE_T inp_compat_mode;
-
 /* Collect information for dynamic allocation of numparam arrays */
 /* number of lines in input deck */
 int dynmaxline; /* inpcom.c 1529 */
@@ -523,37 +521,46 @@ char *find_back_assignment(const char *p, const char *start)
 
 /* Set a compatibility flag.
 Currently available are flags for:
-- ngspice (standard)
-- a commercial simulator
-- Spice3
-- all compatibility stuff
+- LTSPICE, HSPICE, Spice3, PSPICE, KiCad
 */
-static COMPATMODE_T ngspice_compat_mode(void)
+struct compat newcompat;
+static void new_compat_mode(void)
 {
     char behaviour[80];
-
     if (cp_getvar("ngbehavior", CP_STRING, behaviour, sizeof(behaviour))) {
-        if (strcasecmp(behaviour, "all") == 0)
-            return COMPATMODE_ALL;
-        if (strcasecmp(behaviour, "hs") == 0)
-            return COMPATMODE_HS;
-        if (strcasecmp(behaviour, "ps") == 0)
-            return COMPATMODE_PS;
-        if (strcasecmp(behaviour, "lt") == 0)
-            return COMPATMODE_LT;
-        if (strcasecmp(behaviour, "ltps") == 0)
-            return COMPATMODE_LTPS;
-        if (strcasecmp(behaviour, "psa") == 0)
-            return COMPATMODE_PSA;
-        if (strcasecmp(behaviour, "lta") == 0)
-            return COMPATMODE_LTA;
-        if (strcasecmp(behaviour, "ltpsa") == 0)
-            return COMPATMODE_LTPSA;
-        if (strcasecmp(behaviour, "spice3") == 0)
-            return COMPATMODE_SPICE3;
+        if (strstr(behaviour, "hs"))
+            newcompat.hs = TRUE;
+        else
+            newcompat.hs = FALSE;
     }
-
-    return COMPATMODE_ALL;
+    if (cp_getvar("ngbehavior", CP_STRING, behaviour, sizeof(behaviour))) {
+        if (strstr(behaviour, "ps"))
+            newcompat.ps = TRUE;
+        else
+            newcompat.ps = FALSE;
+    }
+    if (cp_getvar("ngbehavior", CP_STRING, behaviour, sizeof(behaviour))) {
+        if (strstr(behaviour, "lt"))
+            newcompat.lt = TRUE;
+        else
+            newcompat.lt = FALSE;
+    }
+    if (cp_getvar("ngbehavior", CP_STRING, behaviour, sizeof(behaviour))) {
+        if (strstr(behaviour, "ki"))
+            newcompat.ki = TRUE;
+        else
+            newcompat.ki = FALSE;
+    }
+    if (cp_getvar("ngbehavior", CP_STRING, behaviour, sizeof(behaviour))) {
+        if (strstr(behaviour, "a"))
+            newcompat.a = TRUE;
+        else
+            newcompat.a = FALSE;
+    }
+    if (newcompat.hs && newcompat.ps) {
+        fprintf(stderr, "Warning: hs and ps compatibility are mutually exclusive, switch to ps!\n");
+        newcompat.hs = FALSE;
+    }
 }
 
 /*-------------------------------------------------------------------------
@@ -600,7 +607,8 @@ struct card *inp_readall(FILE *fp, const char *dir_name,
     struct inp_read_t rv;
 
     num_libraries = 0;
-    inp_compat_mode = ngspice_compat_mode();
+    /* set the members of the compatibility structure */
+    new_compat_mode();
 
     rv = inp_read(fp, 0, dir_name, comfile, intfile);
     cc = rv.cc;
@@ -631,14 +639,10 @@ struct card *inp_readall(FILE *fp, const char *dir_name,
         /* some syntax checks, including title line */
         inp_check_syntax(cc);
 
-        if (inp_compat_mode == COMPATMODE_LTA)
+        if (newcompat.lt && newcompat.a)
             ltspice_compat_a(working);
-        else if (inp_compat_mode == COMPATMODE_PSA)
+        if (newcompat.ps && newcompat.a)
             pspice_compat_a(working);
-        else if (inp_compat_mode == COMPATMODE_LTPSA) {
-            ltspice_compat_a(working);
-            pspice_compat_a(working);
-        }
 
         struct nscope *root = inp_add_levels(working);
 
@@ -689,7 +693,7 @@ struct card *inp_readall(FILE *fp, const char *dir_name,
         inp_poly_err(working);
 #endif
         bool expr_w_temper = FALSE;
-        if (inp_compat_mode != COMPATMODE_SPICE3) {
+        if (!newcompat.s3) {
             /* Do all the compatibility stuff here */
             working = cc->nextcard;
             inp_meas_current(working);
@@ -914,10 +918,7 @@ struct inp_read_t inp_read( FILE *fp, int call_depth, const char *dir_name,
         /* new style .lib entries handling is in expand_section_references()
          */
         if (ciprefix(".lib", buffer))
-            if (inp_compat_mode == COMPATMODE_PS ||
-                    inp_compat_mode == COMPATMODE_PSA ||
-                    inp_compat_mode == COMPATMODE_LTPS ||
-                    inp_compat_mode == COMPATMODE_LTPSA) {
+            if (newcompat.lt || newcompat.ps) {
                 /* compatibility mode,
                  *   this is neither a libray section definition nor a
                  * reference interpret as old style .lib <file name> (no lib
@@ -997,14 +998,10 @@ struct inp_read_t inp_read( FILE *fp, int call_depth, const char *dir_name,
             }
 
             if (newcard) {
-                if (inp_compat_mode == COMPATMODE_LT)
+                if (newcompat.lt && !newcompat.a)
                     newcard = ltspice_compat(newcard);
-                else if (inp_compat_mode == COMPATMODE_PS)
+                if (newcompat.ps && !newcompat.a)
                     newcard = pspice_compat(newcard);
-                else if (inp_compat_mode == COMPATMODE_LTPS) {
-                    newcard = ltspice_compat(newcard);
-                    newcard = pspice_compat(newcard);
-                }
 
                 int line_number_inc = 1;
                 end->nextcard = newcard;
@@ -1209,9 +1206,7 @@ struct inp_read_t inp_read( FILE *fp, int call_depth, const char *dir_name,
             insert_new_line(
                     cc, copy("* gnd is not set to 0 automatically "), 1, 0);
 
-        if (inp_compat_mode == COMPATMODE_ALL ||
-                inp_compat_mode == COMPATMODE_HS ||
-                inp_compat_mode == COMPATMODE_NATIVE) {
+        if (!newcompat.lt && !newcompat.ps && !newcompat.s3) {
             /* process all library section references */
             expand_section_references(cc, dir_name);
         }
@@ -2506,9 +2501,7 @@ static void inp_stripcomments_line(char *s, bool cs)
             break;
         }
         /* outside of .control section, and not in PS mode */
-        else if (!cs && (c == '$') && inp_compat_mode != COMPATMODE_PS &&
-                inp_compat_mode != COMPATMODE_LTPS &&
-                inp_compat_mode != COMPATMODE_LTPSA) {
+        else if (!cs && (c == '$') && !newcompat.ps) {
             /* The character before '&' has to be ',' or ' ' or tab.
                A valid numerical expression directly before '$' is not yet
                supported. */
@@ -2779,11 +2772,7 @@ static void inp_fix_for_numparam(
 
         inp_change_quotes(c->line);
 
-        if ((inp_compat_mode == COMPATMODE_ALL) ||
-                (inp_compat_mode == COMPATMODE_PS) ||
-                (inp_compat_mode == COMPATMODE_PSA) ||
-                (inp_compat_mode == COMPATMODE_LTPS) ||
-                (inp_compat_mode == COMPATMODE_LTPSA))
+        if (!newcompat.hs && !newcompat.s3)
             if (ciprefix(".subckt", c->line) || ciprefix("x", c->line)) {
                 /* remove params: */
                 char *str_ptr = strstr(c->line, "params:");
