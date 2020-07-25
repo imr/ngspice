@@ -77,9 +77,7 @@ double
 PTpwr(double arg1, double arg2)
 {
     /* if PSPICE device is evaluated */
-    if (arg1 == 0.0 && arg2 < 0.0 &&
-        (inp_compat_mode == COMPATMODE_PS || inp_compat_mode == COMPATMODE_PSA
-        || inp_compat_mode == COMPATMODE_LTPS || inp_compat_mode == COMPATMODE_LTPSA))
+    if (arg1 == 0.0 && arg2 < 0.0 && newcompat.ps)
         arg1 += PTfudge_factor;
 
     if (arg1 < 0.0)
