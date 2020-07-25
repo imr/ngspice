@@ -806,6 +806,7 @@ static void print_news(void)
 #define main xmain
 #endif
 
+#ifndef SHARED_MODULE
 int main(int argc, char **argv)
 {
     char log_file[BSIZE_SP];
@@ -1444,5 +1445,5 @@ int main(int argc, char **argv)
     }
 } /* end of function main */
 
-
+#endif
 
