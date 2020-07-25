@@ -27,7 +27,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
-
+#undef USE_OMPSIMD
 
 #if USEX86INTRINSICS==1
 static inline Vec4d vec4_blend(Vec4d fa, Vec4d tr, Vec4m mask)
@@ -38,7 +38,9 @@ static inline Vec4d vec4_blend(Vec4d fa, Vec4d tr, Vec4m mask)
 static inline Vec4d vec4_blend(Vec4d fa, Vec4d tr, Vec4m mask)
 {
 	Vec4d r;
-	//#pragma omp simd
+	#ifdef USE_OMPSIMD
+	#pragma omp simd simdlen(4)
+	#endif
 	for(int i=0;i<4;i++)
 		r[i] = (mask[i]==0 ? fa[i] : tr[i]);
 	return r;
@@ -48,7 +50,9 @@ static inline Vec4d vec4_blend(Vec4d fa, Vec4d tr, Vec4m mask)
 static inline Vec4d vec4_exp(Vec4d x)
 {
 	Vec4d r;
-	//#pragma omp simd
+	#ifdef USE_OMPSIMD
+	#pragma omp simd simdlen(4)
+	#endif
 	for(int i=0;i<4;i++)
 		r[i] = exp(x[i]);
 	return r;
@@ -57,7 +61,9 @@ static inline Vec4d vec4_exp(Vec4d x)
 static inline Vec4d vec4_log(Vec4d x)
 {
 	Vec4d r;
-	//#pragma omp simd
+	#ifdef USE_OMPSIMD
+	#pragma omp simd simdlen(4)
+	#endif
 	for(int i=0;i<4;i++)
 		r[i] = log(x[i]);
 	return r;
@@ -66,7 +72,9 @@ static inline Vec4d vec4_log(Vec4d x)
 static inline Vec4d vec4_max(Vec4d x, Vec4d y)
 {
 	Vec4d r;
-	//#pragma omp simd
+	#ifdef USE_OMPSIMD
+	#pragma omp simd simdlen(4)
+	#endif
 	for(int i=0;i<4;i++)
 		r[i] = MAX(x[i],y[i]);
 	return r;
@@ -75,7 +83,9 @@ static inline Vec4d vec4_max(Vec4d x, Vec4d y)
 static inline Vec4d vec4_sqrt(Vec4d x)
 {
 	Vec4d r;
-	//#pragma omp simd
+	#ifdef USE_OMPSIMD
+	#pragma omp simd simdlen(4)
+	#endif
 	for(int i=0;i<4;i++)
 		r[i] = sqrt(x[i]);
 	return r;
@@ -84,7 +94,9 @@ static inline Vec4d vec4_sqrt(Vec4d x)
 static inline Vec4d vec4_fabs(Vec4d x)
 {
 	Vec4d r;
-	//#pragma omp simd
+	#ifdef USE_OMPSIMD
+	#pragma omp simd simdlen(4)
+	#endif
 	for(int i=0;i<4;i++)
 		r[i] = fabs(x[i]);
 	return r;
@@ -104,7 +116,9 @@ static inline Vec4d vec4_pow(Vec4d x, double p)
 static inline Vec4d vec4_SIMDTOVECTOR(double val)
 {
 	Vec4d r;
-	//#pragma omp simd
+	#ifdef USE_OMPSIMD
+	#pragma omp simd simdlen(4)
+	#endif
 	for(int i=0;i<4;i++)
 		r[i] = val;
 	return r;
@@ -113,7 +127,9 @@ static inline Vec4d vec4_SIMDTOVECTOR(double val)
 static inline Vec4m vec4_SIMDTOVECTORMASK(int val)
 {
 	Vec4m r;
-	//#pragma omp simd
+	#ifdef USE_OMPSIMD
+	#pragma omp simd simdlen(4)
+	#endif
 	for(int i=0;i<4;i++)
 		r[i] = val;
 	return r;
@@ -138,7 +154,9 @@ static inline Vec4d vec4_SIMDLOADDATA(int idx, double data[7][4])
 static inline Vec4d vec4_BSIM3v32_StateAccess(double* cktstate, Vec4m stateindexes)
 {
 	Vec4d r;
-	//#pragma omp simd
+	#ifdef USE_OMPSIMD
+	#pragma omp simd simdlen(4)
+	#endif
 	for(int i=0;i<4;i++)
 		r[i] =  cktstate[stateindexes[i]];
 	return r;
@@ -155,7 +173,9 @@ static inline Vec4d vec4_BSIM3v32_StateAccess(double* cktstate, Vec4m stateindex
 static inline void vec4_BSIM3v32_StateStore(double* cktstate, Vec4m stateindexes, Vec4d values)
 {
 	/*if(0) vec4_CheckCollisions(stateindexes,"SateStore");*/
-	//#pragma omp simd
+	#ifdef USE_OMPSIMD
+	#pragma omp simd simdlen(4)
+	#endif
 	for(int idx=0;idx<4;idx++)
 	{
 		cktstate[stateindexes[idx]] = values[idx];
@@ -165,7 +185,9 @@ static inline void vec4_BSIM3v32_StateStore(double* cktstate, Vec4m stateindexes
 static inline void vec4_BSIM3v32_StateAdd(double* cktstate, Vec4m stateindexes, Vec4d values)
 {
 	/*if(0) vec4_CheckCollisions(stateindexes,"StateAdd");*/
-	//#pragma omp simd
+	#ifdef USE_OMPSIMD
+	#pragma omp simd simdlen(4)
+	#endif
 	for(int idx=0;idx<4;idx++)
 	{
 		cktstate[stateindexes[idx]] += values[idx];
@@ -175,7 +197,9 @@ static inline void vec4_BSIM3v32_StateAdd(double* cktstate, Vec4m stateindexes, 
 static inline void vec4_BSIM3v32_StateSub(double* cktstate, Vec4m stateindexes, Vec4d values)
 {
 	/*if(0) vec4_CheckCollisions(stateindexes,"StateSub");*/
-	//#pragma omp simd
+	#ifdef USE_OMPSIMD
+	#pragma omp simd simdlen(4)
+	#endif
 	for(int idx=0;idx<4;idx++)
 	{
 		cktstate[stateindexes[idx]] -= values[idx];
