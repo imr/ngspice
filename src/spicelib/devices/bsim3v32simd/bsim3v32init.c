@@ -11,13 +11,13 @@ SPICEdev BSIM3v32simdinfo = {
     .DEVpublic = {
         .name = "BSIM3v32simd",
         .description = "Berkeley Short Channel IGFET Model Version-3",
-        .terms = &BSIM3v32nSize,
-        .numNames = &BSIM3v32nSize,
-        .termNames = BSIM3v32names,
-        .numInstanceParms = &BSIM3v32pTSize,
-        .instanceParms = BSIM3v32pTable,
-        .numModelParms = &BSIM3v32mPTSize,
-        .modelParms = BSIM3v32mPTable,
+        .terms = &BSIM3v32SIMDnSize,
+        .numNames = &BSIM3v32SIMDnSize,
+        .termNames = BSIM3v32SIMDnames,
+        .numInstanceParms = &BSIM3v32SIMDpTSize,
+        .instanceParms = BSIM3v32SIMDpTable,
+        .numModelParms = &BSIM3v32SIMDmPTSize,
+        .modelParms = BSIM3v32SIMDmPTable,
         .flags = DEV_DEFAULT,
 
 #ifdef XSPICE
@@ -63,8 +63,8 @@ SPICEdev BSIM3v32simdinfo = {
     .DEVdisto = NULL,
     .DEVnoise = BSIM3v32SIMDnoise,
     .DEVsoaCheck = BSIM3v32SIMDsoaCheck,
-    .DEVinstSize = &BSIM3v32iSize,
-    .DEVmodSize = &BSIM3v32mSize,
+    .DEVinstSize = &BSIM3v32SIMDiSize,
+    .DEVmodSize = &BSIM3v32SIMDmSize,
 
 #ifdef CIDER
     .DEVdump = NULL,

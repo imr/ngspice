@@ -14,7 +14,7 @@
 #include "bsim3v32def.h"
 #include "ngspice/suffix.h"
 
-IFparm BSIM3v32pTable[] = { /* parameters */
+IFparm BSIM3v32SIMDpTable[] = { /* parameters */
 IOP( "l",      BSIM3v32_L,      IF_REAL   , "Length"),
 IOP( "w",      BSIM3v32_W,      IF_REAL   , "Width"),
 IOP( "m",      BSIM3v32_M,      IF_REAL   , "Parallel multiplier"),
@@ -62,7 +62,7 @@ OP( "capbd",   BSIM3v32_CAPBD,  IF_REAL,    "Capbd"),
 OP( "capbs",   BSIM3v32_CAPBS,  IF_REAL,    "Capbs"),
 };
 
-IFparm BSIM3v32mPTable[] = { /* model parameters */
+IFparm BSIM3v32SIMDmPTable[] = { /* model parameters */
 IOP( "capmod", BSIM3v32_MOD_CAPMOD, IF_INTEGER, "Capacitance model selector"),
 IOP( "mobmod", BSIM3v32_MOD_MOBMOD, IF_INTEGER, "Mobility model selector"),
 IOP( "noimod", BSIM3v32_MOD_NOIMOD, IF_INTEGER, "Noise model selector"),
@@ -516,7 +516,7 @@ IP( "nmos", BSIM3v32_MOD_NMOS,  IF_FLAG, "Flag to indicate NMOS"),
 IP( "pmos", BSIM3v32_MOD_PMOS,  IF_FLAG, "Flag to indicate PMOS"),
 };
 
-char *BSIM3v32names[] = {
+char *BSIM3v32SIMDnames[] = {
    "Drain",
    "Gate",
    "Source",
@@ -524,11 +524,11 @@ char *BSIM3v32names[] = {
    "Charge"
 };
 
-int        BSIM3v32nSize = NUMELEMS(BSIM3v32names);
-int        BSIM3v32pTSize = NUMELEMS(BSIM3v32pTable);
-int        BSIM3v32mPTSize = NUMELEMS(BSIM3v32mPTable);
-int        BSIM3v32iSize = sizeof(BSIM3v32instance);
-int        BSIM3v32mSize = sizeof(BSIM3v32model);
+int        BSIM3v32SIMDnSize = NUMELEMS(BSIM3v32SIMDnames);
+int        BSIM3v32SIMDpTSize = NUMELEMS(BSIM3v32SIMDpTable);
+int        BSIM3v32SIMDmPTSize = NUMELEMS(BSIM3v32SIMDmPTable);
+int        BSIM3v32SIMDiSize = sizeof(BSIM3v32instance);
+int        BSIM3v32SIMDmSize = sizeof(BSIM3v32model);
 
 
 
