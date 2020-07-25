@@ -2580,12 +2580,16 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 here->HICUMqscp_Vrth     = Qscp_dT;
                 here->HICUMicth_dT       = Icth_Vrth;
 
-                // store all derivatives of charges
+                /*
+                 *   store small-signal parameters
+                 */
                 if ( (!(ckt->CKTmode & MODETRANOP))||
                         (!(ckt->CKTmode & MODEUIC)) ) {
                     if(ckt->CKTmode & MODEINITSMSIG) {
 
+                        *(ckt->CKTstate0 + here->HICUMcqrbi)      = Qrbi_Vbpbi;
                         *(ckt->CKTstate0 + here->HICUMcqf)        = Qdeix_Vbiei;
+                        *(ckt->CKTstate0 + here->HICUMcqr)        = Qr_Vbici;
 
                         *(ckt->CKTstate0 + here->HICUMcqjei)      = Cjei;
                         *(ckt->CKTstate0 + here->HICUMcqjci)      = Cjci;
