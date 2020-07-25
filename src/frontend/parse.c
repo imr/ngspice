@@ -61,7 +61,7 @@ ft_getpnames(const wordlist *wl, bool check)
         return (struct pnode *) NULL;
     }
 
-    /* Conver the list to a string then parse the string */
+    /* Convert the list to a string, then parse the string */
     const char * const sz = wl_flatten(wl);
     struct pnode * const pn = ft_getpnames_from_string(sz, check);
     txfree((void *) sz);
