@@ -527,35 +527,22 @@ struct compat newcompat;
 static void new_compat_mode(void)
 {
     char behaviour[80];
+    newcompat.hs = FALSE;
+    newcompat.ps = FALSE;
+    newcompat.lt = FALSE;
+    newcompat.ki = FALSE;
+    newcompat.a = FALSE;
     if (cp_getvar("ngbehavior", CP_STRING, behaviour, sizeof(behaviour))) {
         if (strstr(behaviour, "hs"))
             newcompat.hs = TRUE;
-        else
-            newcompat.hs = FALSE;
-    }
-    if (cp_getvar("ngbehavior", CP_STRING, behaviour, sizeof(behaviour))) {
         if (strstr(behaviour, "ps"))
             newcompat.ps = TRUE;
-        else
-            newcompat.ps = FALSE;
-    }
-    if (cp_getvar("ngbehavior", CP_STRING, behaviour, sizeof(behaviour))) {
         if (strstr(behaviour, "lt"))
             newcompat.lt = TRUE;
-        else
-            newcompat.lt = FALSE;
-    }
-    if (cp_getvar("ngbehavior", CP_STRING, behaviour, sizeof(behaviour))) {
         if (strstr(behaviour, "ki"))
             newcompat.ki = TRUE;
-        else
-            newcompat.ki = FALSE;
-    }
-    if (cp_getvar("ngbehavior", CP_STRING, behaviour, sizeof(behaviour))) {
         if (strstr(behaviour, "a"))
             newcompat.a = TRUE;
-        else
-            newcompat.a = FALSE;
     }
     if (newcompat.hs && newcompat.ps) {
         fprintf(stderr, "Warning: hs and ps compatibility are mutually exclusive, switch to ps!\n");
