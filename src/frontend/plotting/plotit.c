@@ -7,6 +7,7 @@
 #include "ngspice/pnode.h"
 #include "ngspice/sim.h"
 #include "ngspice/fteext.h"
+#include "ngspice/compatmode.h"
 
 #include <circuits.h>
 
@@ -281,6 +282,7 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
     int prevgraph = 0;
 
     static bool nointerp = FALSE;
+    static bool kicad = FALSE;
     static GRIDTYPE gtype = GRID_LIN;
     static PLOTTYPE ptype = PLOT_LIN;
 
@@ -693,10 +695,42 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
         nointerp = TRUE;
     }
 
+    if (!sameflag) {
+        kicad = getflag(wl, "kicad");
+    }
+    else if (getflag(wl, "kicad")) {
+        kicad = TRUE;
+    }
+
     if (!wl->wl_next) {
         fprintf(cp_err, "Error: no vectors given\n");
         goto quit1;
     }
+
+    /* kicad will generate vector names containing '/'. If compatibilty flag
+       'ki' is set in .spiceinit or plot line flag 'kicad' is set,
+       we will place " around this vector name. Division in the plot command
+       will then work only if spaces are around ' / '.*/
+    if (kicad || newcompat.ki) {
+        wordlist* wlk;
+        for (wlk = wl->wl_next; wlk; wlk = wlk->wl_next) {
+            char* wlkword = strchr(wlk->wl_word, '/');
+            if (wlkword) {
+                /* already " around token */
+                if (*(wlk->wl_word) == '"')
+                    continue;
+                /* just '/' */
+                if (*(wlkword + 1) == '\0')
+                    continue;
+                else {
+                    char* newword = tprintf("\"%s\"", wlk->wl_word);
+                    tfree(wlk->wl_word);
+                    wlk->wl_word = newword;
+                }
+            }
+        }
+    }
+
 
     /* Now parse the vectors.  We have a list of the form
      * "a b vs c d e vs f g h".  Since it's a bit of a hassle for
