@@ -155,7 +155,6 @@ static SPICEdev *(*static_devices[])(void) = {
     get_bsim3v0_info,
     get_bsim3v1_info,
     get_bsim3v32_info,
-    get_bsim3v32simd_info,
     get_b4soi_info,
     get_bsim4_info,
     get_bsim4v5_info,
@@ -219,6 +218,9 @@ static SPICEdev *(*static_devices[])(void) = {
     get_ndev_info,
 #endif
 
+#ifdef BSIM3v32SIMD
+    get_bsim3v32simd_info,
+#endif
 };
 
 static int DEVNUM = NUMELEMS(static_devices);
