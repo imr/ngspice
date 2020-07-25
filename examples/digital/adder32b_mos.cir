@@ -71,8 +71,8 @@ Xadd a1 a2 a3 a4 a1 a2 a3 a4 a1 a2 a3 a4 a1 a2 a3 a4 a1 a2 a3 a4 a1 a2 a3 a4 a1 
 .save V(a1) V(a2) V(a3) V(a4) V(b1) V(b2) V(b3) V(b4) 
 
 * use BSIM3 model with default parameters
-.model n1 nmos level=49 version=3.2.4
-.model p1 pmos level=49 version=3.2.4
+.model n1 nmos level=49 version=3.2.4simd
+.model p1 pmos level=49 version=3.2.4simd
 *.include ./Modelcards/modelcard32.nmos
 *.include ./Modelcards/modelcard32.pmos
 

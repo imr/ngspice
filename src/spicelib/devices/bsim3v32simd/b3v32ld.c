@@ -32,8 +32,8 @@
 #define DELTA_4 0.02
 
 #ifdef USE_OMP
-int BSIM3v32LoadOMP(BSIM3v32instance *here, CKTcircuit *ckt);
-void BSIM3v32LoadRhsMat(GENmodel *inModel, CKTcircuit *ckt);
+int BSIM3v32SIMDLoadOMP(BSIM3v32instance *here, CKTcircuit *ckt);
+void BSIM3v32SIMDLoadRhsMat(GENmodel *inModel, CKTcircuit *ckt);
 #endif
 
 int
@@ -49,18 +49,18 @@ BSIM3v32SIMDload (GENmodel *inModel, CKTcircuit *ckt)
 #pragma omp parallel for
     for (idx = 0; idx < model->BSIM3v32InstCount; idx++) {
         BSIM3v32instance *here = InstArray[idx];
-        int local_error = BSIM3v32LoadOMP(here, ckt);
+        int local_error = BSIM3v32SIMDLoadOMP(here, ckt);
         if (local_error)
             error = local_error;
     }
 
-    BSIM3v32LoadRhsMat(inModel, ckt);
+    BSIM3v32SIMDLoadRhsMat(inModel, ckt);
 
     return error;
 }
 
 
-int BSIM3v32LoadOMP(BSIM3v32instance *here, CKTcircuit *ckt) {
+int BSIM3v32SIMDLoadOMP(BSIM3v32instance *here, CKTcircuit *ckt) {
     BSIM3v32model *model = BSIM3v32modPtr(here);
 #else
 BSIM3v32model *model = (BSIM3v32model*)inModel;
@@ -3479,7 +3479,7 @@ return(OK);
 }
 
 #ifdef USE_OMP
-void BSIM3v32LoadRhsMat(GENmodel *inModel, CKTcircuit *ckt)
+void BSIM3v32SIMDLoadRhsMat(GENmodel *inModel, CKTcircuit *ckt)
 {
    int InstCount, idx;
    BSIM3v32instance **InstArray;

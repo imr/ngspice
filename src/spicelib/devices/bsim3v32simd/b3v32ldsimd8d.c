@@ -28,9 +28,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
 
-typedef double Vec8d __attribute__ ((vector_size (sizeof(double)*8), aligned (sizeof(double)*8)));
-typedef int64_t Vec8m __attribute__ ((vector_size (sizeof(double)*8), aligned (sizeof(double)*8)));
-
 static inline Vec8d vec8_blend(Vec8d fa, Vec8d tr, Vec8m mask)
 {
 	Vec8d r;

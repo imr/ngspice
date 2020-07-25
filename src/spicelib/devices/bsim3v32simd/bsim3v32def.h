@@ -18,7 +18,7 @@ File: bsim3v32def.h
 #include "ngspice/noisedef.h"
 
 #ifdef BSIM3v32SIMD
-#define NSIMD 4
+#include "ngspice/SIMD/simddef.h"
 #endif
 
 #define OMP_EFFMEM

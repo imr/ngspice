@@ -151,6 +151,11 @@ ngspice_LDADD += \
 	spicelib/analysis/libckt.la \
 	spicelib/devices/libdev.la
 
+if WANT_MODSIMD
+ngspice_LDADD += \
+	spicelib/analysis/SIMD/libcktsimd.la
+endif
+
 if SENSE2_WANTED
 ngspice_LDADD += unsupported/libunsupported.la
 endif
@@ -435,6 +440,11 @@ libspice_la_LIBADD += \
 	spicelib/analysis/libckt.la \
 	spicelib/devices/libdev.la
 
+if WANT_MODSIMD
+libspice_la_LIBADD += \
+	spicelib/analysis/SIMD/libcktsimd.la
+endif
+
 if XSPICE_WANTED
 libspice_la_LIBADD += \
 	xspice/evt/libevtxsp.la \
@@ -554,6 +564,11 @@ endif
 libngspice_la_LIBADD += \
 	spicelib/analysis/libckt.la \
 	spicelib/devices/libdev.la
+
+if WANT_MODSIMD
+libngspice_la_LIBADD += \
+	spicelib/analysis/SIMD/libcktsimd.la
+endif
 
 if XSPICE_WANTED
 libngspice_la_LIBADD += \

@@ -28,9 +28,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
 
-typedef double Vec4d __attribute__ ((vector_size (sizeof(double)*4), aligned (sizeof(double)*4)));
-typedef int64_t Vec4m __attribute__ ((vector_size (sizeof(double)*4), aligned (sizeof(double)*4)));
-
 
 #if USEX86INTRINSICS==1
 static inline Vec4d vec4_blend(Vec4d fa, Vec4d tr, Vec4m mask)

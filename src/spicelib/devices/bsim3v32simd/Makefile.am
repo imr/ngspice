@@ -38,7 +38,7 @@ endif
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)
 if WANT_MODSIMD
-AM_CFLAGS += -fno-math-errno -ffast-math -fopenmp-simd
+AM_CFLAGS += $(SIMD_CFLAGS)
 endif
 
 MAINTAINERCLEANFILES = Makefile.in

@@ -1,5 +1,10 @@
 ## Process this file with automake to produce Makefile.in
 
+DIST_SUBDIRS = SIMD
+if WANT_MODSIMD
+SUBDIRS = SIMD
+endif
+
 noinst_LTLIBRARIES = libckt.la
 
 libckt_la_SOURCES = \

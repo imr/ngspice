@@ -1228,6 +1228,32 @@ if test "x$enable_modsimd" = xyes; then
     ])
 fi
 
+# now adjust compiler flags
+if test "x$enable_modsimd" = xyes; then
+    SIMD_CPPFLAGS=""
+    SIMD_LDFLAGS=""
+    
+    AC_MSG_CHECKING(whether compiler understands -fopenmp-simd)
+    old_CFLAGS="$CFLAGS"
+    CFLAGS="$CFLAGS -fopenmp-simd -Werror"
+    AC_TRY_COMPILE([],[], [
+      AC_MSG_RESULT(yes)
+      SIMD_CFLAGS="-fopenmp-simd"
+    ],[
+      AC_MSG_RESULT(no)
+      AC_MSG_WARN([Compiler might not understand pragma omp simd])
+      SIMD_CFLAGS=""
+    ])
+    CFLAGS="$old_CFLAGS"
+    
+    #add -ffast-math, might need to be adjusted depending on your compiler
+    SIMD_CFLAGS="$SIMD_CFLAGS -ffast-math"
+    
+    AC_SUBST(SIMD_CPPFLAGS)
+    AC_SUBST(SIMD_LDFLAGS)
+    AC_SUBST(SIMD_CFLAGS)
+fi
+
 if test "x$enable_modsimd" = xyes; then
     AC_DEFINE([BSIM3v32SIMD], [1], [simd acceleration for BSIM3V32 device])
     
@@ -1252,6 +1278,7 @@ AC_CONFIG_FILES([Makefile
                  src/Makefile
                  src/spicelib/Makefile
                  src/spicelib/analysis/Makefile
+		 src/spicelib/analysis/SIMD/Makefile
                  src/spicelib/devices/Makefile
                  src/spicelib/devices/asrc/Makefile
                  src/spicelib/devices/bjt/Makefile

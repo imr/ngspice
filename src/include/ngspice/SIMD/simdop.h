@@ -28,74 +28,77 @@
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
 
-#include <math.h>
-
-#include "ngspice/ngspice.h"
-#include "ngspice/cktdefs.h"
-#include "bsim3v32def.h"
-#include "b3v32acm.h"
-#include "ngspice/trandefs.h"
-#include "ngspice/const.h"
-#include "ngspice/sperror.h"
-#include "ngspice/devdefs.h"
-#include "ngspice/suffix.h"
+#ifndef NG_SIMD_OP_H
+#define NG_SIMD_OP_H
 
 #include "ngspice/SIMD/simdvector.h"
 
-#if USEX86INTRINSICS==1
-#include <x86intrin.h>
-#endif
-
-#define MAX_EXP 5.834617425e14
-#define MIN_EXP 1.713908431e-15
-#define EXP_THRESHOLD 34.0
-#define EPSOX 3.453133e-11
-#define EPSSI 1.03594e-10
-#define Charge_q 1.60219e-19
-#define DELTA_1 0.02
-#define DELTA_2 0.02
-#define DELTA_3 0.02
-#define DELTA_4 0.02
-
-#define SIMDANY(err) (err!=0)
-#define SIMDIFYCMD(cmd) /* empty */
-#define SIMDifySaveScope(sc) /* empty */
-
-#if NSIMD==4
-#include "b3v32ldsimd4d.c"
-#endif
-
-#if NSIMD==8
-#include "b3v32ldsimd8d.c"
-#endif
-
-int BSIM3v32LoadSIMD(BSIM3v32instance **heres, CKTcircuit *ckt
-#ifndef USE_OMP
-	, double data[7][NSIMD]
-#endif
-)
+inline VecNd vecN_broadcast(double x)
 {
-    BSIM3v32model *model = BSIM3v32modPtr(heres[0]);
-    struct bsim3v32SizeDependParam *pParam;
-    pParam = heres[0]->pParam; /* same of all NSIMD instances */
-
-#if NSIMD==4
-#ifdef USE_OMP
-    #include "b3v32ldseq_simd4d_omp.c"
-#else
-    #include "b3v32ldseq_simd4d.c"
-#endif
-#elif NSIMD==8
-#ifdef USE_OMP
-    #include "b3v32ldseq_simd8d_omp.c"
-#else
-    #include "b3v32ldseq_simd8d.c"
-#endif
-#else
-#error Unsupported value for NSIMD
-#endif
-	
-    return(OK);
-	
+	VecNd res;
+	for(int i=0;i<NSIMD;i++)
+		res[i]=x;
+	return res;
 }
 
+inline VecNd vecN_lu(double* array, VecNi indexes)
+{
+	VecNd res;
+	for(int i=0;i<NSIMD;i++)
+		res[i]=array[indexes[i]];
+	return res;
+}
+
+inline VecNd vecN_MAX(VecNd a, VecNd b)
+{
+	VecNd res;
+	for(int i=0;i<NSIMD;i++)
+		res[i]=(a[i] > b[i]) ? a[i] : b[i];
+	return res;
+}
+
+inline VecNd vecN_fabs(VecNd x)
+{
+	VecNd res;
+	for(int i=0;i<NSIMD;i++)
+		res[i]=fabs(x[i]);
+	return res;
+}
+
+inline VecNd vecN_sqrt(VecNd x)
+{
+	VecNd res;
+	for(int i=0;i<NSIMD;i++)
+		res[i]=sqrt(x[i]);
+	return res;
+}
+
+inline VecNd vecN_pow(VecNd x, double p)
+{
+	VecNd res;
+	for(int i=0;i<NSIMD;i++)
+		res[i]=log(x[i]);
+	res = res*p;
+	for(int i=0;i<NSIMD;i++)
+		res[i]=exp(res[i]);
+	return res;
+}
+
+inline VecNd vecN_exp(VecNd x)
+{
+	VecNd res;
+	for(int i=0;i<NSIMD;i++)
+		res[i]=exp(x[i]);
+	return res;
+}
+
+inline VecNd vecN_log(VecNd x)
+{
+	VecNd res;
+	for(int i=0;i<NSIMD;i++)
+		res[i]=log(x[i]);
+	return res;
+}
+
+
+#endif

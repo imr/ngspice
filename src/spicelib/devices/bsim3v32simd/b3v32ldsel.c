@@ -40,7 +40,7 @@
 extern int BSIM3v32LoadSeq(BSIM3v32instance *here, CKTcircuit *ckt, double* data, int stride);
 extern int BSIM3v32LoadSIMD(BSIM3v32instance **heres, CKTcircuit *ckt, double data[7][NSIMD]);
 #else
-extern void BSIM3v32LoadRhsMat(GENmodel *inModel, CKTcircuit *ckt);
+extern void BSIM3v32SIMDLoadRhsMat(GENmodel *inModel, CKTcircuit *ckt);
 extern int BSIM3v32LoadSeq(BSIM3v32instance *here, CKTcircuit *ckt, int);
 extern int BSIM3v32LoadSIMD(BSIM3v32instance **heres, CKTcircuit *ckt);
 #endif
@@ -147,7 +147,7 @@ BSIM3v32SIMDloadSel (GENmodel *inModel, CKTcircuit *ckt)
 	}
 	}
 	
-	BSIM3v32LoadRhsMat(inModel, ckt);
+	BSIM3v32SIMDLoadRhsMat(inModel, ckt);
 	return error;
 }
 
@@ -251,7 +251,7 @@ BSIM3v32loadSelVrai (GENmodel *inModel, CKTcircuit *ckt)
 	}
 	if(DEBUG) printf("Now write the matrix\n");
 	/* Write in matrix sequentially */
-	BSIM3v32LoadRhsMat(inModel, ckt);
+	BSIM3v32SIMDLoadRhsMat(inModel, ckt);
 	
 	return error;
 }

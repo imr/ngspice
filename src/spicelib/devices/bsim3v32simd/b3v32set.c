@@ -1211,7 +1211,7 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
        		}
     	}
     }
-    printf("BSIM3v32/SIMD has %d groups\n",ngroups);
+    printf("BSIM3v32/SIMD has %d groups and %d instances total\n",ngroups, InstCount);
     if (cp_getvar("no_modsimd", CP_BOOL, NULL, 0))
     {
     	printf("BSIM3v32 simd disabled at runtime\n");
