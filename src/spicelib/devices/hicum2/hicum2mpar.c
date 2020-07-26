@@ -590,10 +590,6 @@ HICUMmParam(int param, IFvalue *value, GENmodel *inModel)
             model->HICUMflsh = value->iValue;
             model->HICUMflshGiven = TRUE;
             break;
-        case HICUM_MOD_RTH_DE:
-            model->HICUMrth_de = value->iValue;
-            model->HICUMrth_deGiven = TRUE;
-            break;
         case HICUM_MOD_RTH:
             model->HICUMrth = value->rValue;
             model->HICUMrthGiven = TRUE;
