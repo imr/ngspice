@@ -849,7 +849,7 @@ bypass:
                     if (ckt->CKTmode & MODEINITSMSIG) {
                         *(ckt->CKTstate0 + here->VDIOcapCurrent) = capd;
 
-                        goto load;
+                        continue;
                     }
 
                     /*
