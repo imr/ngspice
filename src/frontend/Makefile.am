@@ -171,6 +171,8 @@ libfte_la_SOURCES = \
     shyu.h      \
     signal_handler.c \
     signal_handler.h \
+    sndprint.c  \
+    sndprint.h  \
     spec.c      \
     spec.h      \
     spiceif.c   \

@@ -911,6 +911,7 @@
     <ClInclude Include="..\src\frontend\runcoms2.h" />
     <ClInclude Include="..\src\frontend\shyu.h" />
     <ClInclude Include="..\src\frontend\signal_handler.h" />
+    <ClInclude Include="..\src\frontend\sndprint.h" />
     <ClInclude Include="..\src\frontend\spec.h" />
     <ClInclude Include="..\src\frontend\spiceif.h" />
     <ClInclude Include="..\src\frontend\streams.h" />
@@ -1513,6 +1514,7 @@
     <ClCompile Include="..\src\frontend\runcoms2.c" />
     <ClCompile Include="..\src\frontend\shyu.c" />
     <ClCompile Include="..\src\frontend\signal_handler.c" />
+    <ClCompile Include="..\src\frontend\sndprint.c" />
     <ClCompile Include="..\src\frontend\spec.c" />
     <ClCompile Include="..\src\frontend\spiceif.c" />
     <ClCompile Include="..\src\frontend\streams.c" />

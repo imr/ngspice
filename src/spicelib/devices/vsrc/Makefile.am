@@ -19,7 +19,9 @@ libvsrc_la_SOURCES =	\
 	vsrcpzld.c	\
 	vsrcpzs.c	\
 	vsrcset.c	\
-	vsrctemp.c
+	vsrctemp.c  \
+    vsjack.c    \
+    vsjack.h
 
 
 
