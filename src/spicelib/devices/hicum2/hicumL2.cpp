@@ -2127,7 +2127,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 pterm_dT = (Vbiei-Vbici)*it_dT + (here->HICUMvdci_t.rpart-Vbici)*iavl_dT + here->HICUMvdci_t.dpart*iavl +
                     ibei_dT*Vbiei + ibci_dT*Vbici + ibep_dT*Vbpei + ijbcx_dT*Vbpci + ijsc_Vrth*Vsici;
 
-                if (rbi >= MIN_R) {
+                if (rbi > 0.0) {
                     pterm    += Vbpbi*Vbpbi/rbi;
                     pterm_dT += -Vbpbi*Vbpbi*rbi_dT/rbi/rbi;
                 }
@@ -2329,19 +2329,19 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             Iciei_Vrth  =  model->HICUMtype*(Itxf_dT    - itr_dT);
             Iciei_Vxf2  =  model->HICUMtype*Itxf_Vxf2;
 
-            if (rbi >= MIN_R) {
+            if (rbi > 0.0) {
                 Ibpbi         = Vbpbi / rbi;
                 Ibpbi_Vbpbi   = 1 / rbi;
                 Ibpbi_Vbiei   = -Vbpbi * rbi_Vbiei / (rbi*rbi); 
                 Ibpbi_Vbici   = -Vbpbi * rbi_Vbici / (rbi*rbi);
                 Ibpbi_Vrth    = -Vbpbi * rbi_dT    / (rbi*rbi);
             } else {
-                // fallback in case rbi is low
-                Ibpbi       = Vbpbi / MIN_R;
-                Ibpbi_Vbpbi = 1 / MIN_R;
-                Ibpbi_Vbiei = 0;
-                Ibpbi_Vbici = 0;
-                Ibpbi_Vrth  = 0;
+                // fallback in case bp-bi nodes are collapsed
+                Ibpbi       = 0.0;
+                Ibpbi_Vbpbi = 0.0;
+                Ibpbi_Vbiei = 0.0;
+                Ibpbi_Vbici = 0.0;
+                Ibpbi_Vrth  = 0.0;
             };
 
             // ********************************************
@@ -2395,7 +2395,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                     Ith_Vbpci  += Ibpci + Ibpci_Vbpci*Vbpci;
                     //Vsici*Isici(Vsici)
                     Ith_Vsici  += Isici + Isici_Vsici*Vsici;
-                    if (rbi >= MIN_R) {
+                    if (rbi > 0.0) {
                         //Vbpbi*Ibpbi(Vbpbi,Vbiei,Vbici)
                         Ith_Vbpbi  += Ibpbi + Ibpbi_Vbpbi*Vbpbi;
                         Ith_Vbiei  +=         Ibpbi_Vbiei*Vbpbi;
@@ -3083,7 +3083,7 @@ load:
             *(here->HICUMemitEmitEIPtr)   += -Ieie_Veie;
 //          finish
 
-            if (rbi>0.0) {
+            if (rbi > 0.0) {
 //              Branch: bpbi, Stamp element: Rbi, Crbi
                 rhs_current = model->HICUMtype * (Ibpbi - Ibpbi_Vbpbi*Vbpbi - Ibpbi_Vbiei*Vbiei - Ibpbi_Vbici*Vbici);
                 *(ckt->CKTrhs + here->HICUMbaseBPNode) += -rhs_current;
@@ -3257,7 +3257,7 @@ load:
                 *(here->HICUMemitTempPtr)   += -Ieie_Vrth;
 //              finish
 
-                if (rbi>0.0) {
+                if (rbi > 0.0) {
 //                  Stamp element: Rbi    f_Bp = +   f_Bi = -
                     rhs_current = -Ibpbi_Vrth*Vrth;
                     *(ckt->CKTrhs + here->HICUMbaseBPNode) += -rhs_current;
