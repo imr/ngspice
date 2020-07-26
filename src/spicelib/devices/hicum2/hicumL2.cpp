@@ -1762,20 +1762,20 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 Vbiei = DEVpnjlim(Vbiei,*(ckt->CKTstate0 + here->HICUMvbiei),here->HICUMvt.rpart,
                         here->HICUMtVcrit,&icheck);
                 Vaval = 3 * here->HICUMvdci_t.rpart;//limit step around 3*vdci_t -> somehow this brings convergence
-                // if ((model->HICUMkavlGiven) && (Vbici < MIN(0, -Vaval))) {
-                //     Vbici_temp = -(Vbici + Vaval);
-                //     Vbici_temp = DEVpnjlim(
-                //             Vbici_temp,
-                //             -(*(ckt->CKTstate0 + here->HICUMvbici) + Vaval),
-                //             here->HICUMvt.rpart,
-                //             here->HICUMtVcrit,
-                //             &ichk1
-                //     );
-                //     Vbici      = -(Vbici_temp + Vaval);
-                // } else {
+                if ((model->HICUMkavlGiven) && (Vbici < MIN(0, -Vaval))) {
+                    Vbici_temp = -(Vbici + Vaval);
+                    Vbici_temp = DEVpnjlim(
+                            Vbici_temp,
+                            -(*(ckt->CKTstate0 + here->HICUMvbici) + Vaval),
+                            here->HICUMvt.rpart,
+                            here->HICUMtVcrit,
+                            &ichk1
+                    );
+                    Vbici      = -(Vbici_temp + Vaval);
+                } else {
                     Vbici = DEVpnjlim(Vbici,*(ckt->CKTstate0 + here->HICUMvbici),here->HICUMvt.rpart,
                             here->HICUMtVcrit,&ichk1);
-                //}
+                }
                 Vbpei = DEVpnjlim(Vbpei,*(ckt->CKTstate0 + here->HICUMvbpei),here->HICUMvt.rpart,
                         here->HICUMtVcrit,&ichk2);
                 Vbpci = DEVpnjlim(Vbpci,*(ckt->CKTstate0 + here->HICUMvbpci),here->HICUMvt.rpart,
@@ -1786,7 +1786,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                         here->HICUMtVcrit,&ichk5);
                 if (selfheat) {
                     Vrth = HICUMlimitlog(Vrth,
-                        *(ckt->CKTstate0 + here->HICUMvrth),10,&ichk6);
+                        *(ckt->CKTstate0 + here->HICUMvrth),1,&ichk6);
                 }
                 if ((ichk1 == 1) || (ichk2 == 1) || (ichk3 == 1) || (ichk4 == 1) || (ichk5 == 1) || (ichk6 == 1)) icheck=1;
             }
