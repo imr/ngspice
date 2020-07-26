@@ -44,7 +44,7 @@ duals::duald clip_temperature(duals::duald T){
     duals::duald Tdev;
     Tdev = T;
     if (T<(TMIN+CONSTCtoK+1.0)){
-        Tdev = TMIN+CONSTCtoK+exp(T-TMIN-CONSTCtoK-1.0);
+        Tdev = TMIN+CONSTCtoK+exp(T-TMIN+CONSTCtoK-1.0);
     } else if (T>(TMAX+CONSTCtoK-1.0)) {
         Tdev = TMAX+CONSTCtoK-exp(TMAX+CONSTCtoK-T-1.0);
     };
