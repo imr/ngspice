@@ -868,7 +868,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                     av      = favl_t*exp(-v_q/U0);
                     avl     = av*(U0+(1.0+v_q/U0)*(v_bord-U0));
                 } else {
-                    avl     = favl_t*v_bord*exp(-v_q/v_bord);
+                    avl     = favl_t * v_bord * exp(-v_q / v_bord);
                 }
                 /* This model turns strong avalanche on. The parameter kavl can turn this
                 * model extension off (kavl = 0). Although this is numerically stable, a
@@ -1762,7 +1762,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 Vbiei = DEVpnjlim(Vbiei,*(ckt->CKTstate0 + here->HICUMvbiei),here->HICUMvt.rpart,
                         here->HICUMtVcrit,&icheck);
                 Vaval = 3 * here->HICUMvdci_t.rpart;//limit step around 3*vdci_t -> somehow this brings convergence
-                if ((model->HICUMkavlGiven) && (Vbici < MIN(0, -Vaval))) {
+                if ((model->HICUMfavlGiven) && (Vbici < MIN(0, -Vaval))) {
                     Vbici_temp = -(Vbici + Vaval);
                     Vbici_temp = DEVpnjlim(
                             Vbici_temp,
