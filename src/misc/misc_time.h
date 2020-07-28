@@ -8,13 +8,6 @@
 
 char * datestring(void);
 double seconds(void);
-
-#ifdef HAVE_FTIME
-
-extern struct timeb timebegin;
-
-void timediff(struct timeb *, struct timeb *, int *, int *);
-
-#endif
+void timebegin(void);
 
 #endif

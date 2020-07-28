@@ -10,32 +10,6 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 #include <string.h>
 #include "misc_time.h"
 
-#ifdef HAVE_LOCALTIME
-#include <time.h>
-#endif
-
-#ifdef HAVE_GETRUSAGE
-#  include <sys/types.h>
-#  include <sys/time.h>
-#  include <sys/resource.h>
-#else
-#  ifdef HAVE_TIMES
-#    include <sys/types.h>
-#    include <sys/times.h>
-#    include <sys/param.h>
-#  else
-#    ifdef HAVE_FTIME
-/* default to ftime if we can't get real CPU times */
-#      include <sys/types.h>
-#      include <sys/timeb.h>
-#    endif
-#  endif
-#endif
-
-#ifdef HAVE_FTIME
-#  include <sys/timeb.h>
-#endif
-
 
 /* Return the date. Return value is static data. */
 
@@ -66,53 +40,62 @@ datestring(void)
 #endif
 }
 
-/* return time interval in seconds and milliseconds */
 
-#ifdef HAVE_FTIME
+/* Initialize time */
 
-struct timeb timebegin;
-
-void timediff(struct timeb *now, struct timeb *begin, int *sec, int *msec)
-{
-
-    *msec = (int) now->millitm - (int) begin->millitm;
-    *sec = (int) now->time - (int) begin->time;
-    if (*msec < 0) {
-      *msec += 1000;
-      (*sec)--;
-    }
-    return;
-
+#ifdef HAVE_GETTIMEOFDAY
+struct timeval timezero;
+void timebegin(void) {
+    gettimeofday(&timezero, NULL);
 }
 
-#endif
+#else
+#ifdef HAVE_TIMES
+clock_t timezero;
+void timebegin(void) {
+    struct tms ruse;
+    timezero = times(&ruse);
+}
 
-/* 
- * How many seconds have elapsed in running time. 
- * This is the routine called in IFseconds 
+#else
+#ifdef HAVE_FTIME
+struct timeb timezero;
+void timebegin(void) {
+    ftime(&timezero);
+}
+#endif /* FTIME */
+#endif /* TIMES */
+#endif /* GETTIMEOFDAY */
+
+
+/*
+ * How many seconds have elapsed in running time.
+ * This is the routine called in IFseconds
  */
 
 double
 seconds(void)
 {
-#ifdef HAVE_GETRUSAGE
-    int ret;
-    struct rusage ruse;
+#ifdef HAVE_GETTIMEOFDAY
+    struct timeval timenow;
+    int sec, msec, usec;
 
-    memset(&ruse, 0, sizeof(ruse));
-    ret = getrusage(RUSAGE_SELF, &ruse);
-    if(ret == -1) {
-      perror("getrusage(): ");
-      return 1;
-    }
-    return ((double)ruse.ru_utime.tv_sec + (double) ruse.ru_utime.tv_usec / 1000000.0);
+    gettimeofday(&timenow, NULL);
+
+    sec = (int) timenow.tv_sec - (int) timezero.tv_sec;
+    usec = (int) timenow.tv_usec - (int) timezero.tv_usec;
+    msec = usec / 1000; // Get rid of extra accuracy
+    return(sec + (double) msec / 1000.0);
+
 #else
 #ifdef HAVE_TIMES
+    struct tms ruse;
+    long long msec;
 
-    struct tms tmsbuf;
-
-    times(&tmsbuf);
-    return((double) tmsbuf.tms_utime / HZ);
+    clock_t timenow = times(&ruse);
+    double hz = (double) sysconf(_SC_CLK_TCK);
+    msec = (timenow - timezero) / hz * 1000.0; // Get rid of extra accuracy
+    return((double) msec / 1000.0);
 
 #else
 #ifdef HAVE_FTIME
@@ -120,14 +103,15 @@ seconds(void)
     int sec, msec;
 
     ftime(&timenow);
-    timediff(&timenow, &timebegin, &sec, &msec);
+
+    sec = (int) timenow.time - (int) timezero.time;
+    msec = (int) timenow.millitm - (int) timezero.millitm;
     return(sec + (double) msec / 1000.0);
 
 #else /* unknown */
-    /* don't know how to do this in general. */
     return(-1.0);	/* Obvious error condition */
 
-#endif /* !FTIME */
-#endif /* !SYSV */
-#endif /* !BSD */
+#endif /* FTIME */
+#endif /* TIMES */
+#endif /* GETTIMEOFDAY */
 }

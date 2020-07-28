@@ -22,7 +22,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 #include <inttypes.h>
 
-#include "../misc/misc_time.h" /* timediff */
+#include "../misc/misc_time.h" /* timebegin */
 
 #ifdef XSPICE
 /* gtri - add - 12/12/90 - wbk - include ipc stuff */
@@ -81,15 +81,7 @@ init_rlimits(void)
 void
 init_time(void)
 {
-#ifdef HAVE_GETRUSAGE
-#else
-#  ifdef HAVE_TIMES
-#  else
-#    ifdef HAVE_FTIME
-    ftime(&timebegin);
-#    endif
-#  endif
-#endif
+    timebegin();
 }
 
 
@@ -162,12 +154,12 @@ printres(char *name)
 #endif
     bool yy = FALSE;
     static bool called = FALSE;
-    static long last_sec = 0, last_msec = 0;
+    static double last_sec = 0;
     struct variable *v, *vfree = NULL;
     char *cpu_elapsed;
 
     if (!name || eq(name, "totalcputime") || eq(name, "cputime")) {
-        int total_sec, total_msec;
+        double total_sec;
 
 #  ifdef HAVE_GETRUSAGE
         int ret;
@@ -177,76 +169,56 @@ printres(char *name)
         if (ret == -1)
             perror("getrusage(): ");
 
-        total_sec = (int) (ruse.ru_utime.tv_sec + ruse.ru_stime.tv_sec);
-        total_msec = (int) (ruse.ru_utime.tv_usec + ruse.ru_stime.tv_usec) / 1000;
+        total_sec = (double) (ruse.ru_utime.tv_sec + ruse.ru_stime.tv_sec);
+        total_sec += (double) (ruse.ru_utime.tv_usec + ruse.ru_stime.tv_usec) / 1000000;
         cpu_elapsed = "CPU";
 #  else
 #    ifdef HAVE_TIMES
         struct tms ruse;
         times(&ruse);
         clock_t x = ruse.tms_utime + ruse.tms_stime;
-        clock_t hz = (clock_t) sysconf(_SC_CLK_TCK);
+        double hz = (double) sysconf(_SC_CLK_TCK);
         total_sec = x / hz;
-        total_msec = ((x % hz) * 1000) / hz;
         cpu_elapsed = "CPU";
 #    else
-#      ifdef HAVE_FTIME
-        struct timeb timenow;
-        ftime(&timenow);
-        timediff(&timenow, &timebegin, &total_sec, &total_msec);
+        total_sec = seconds(); // Fall back to elapsed time
         cpu_elapsed = "elapsed";
-#      else
-#        define NO_RUDATA
-#      endif
 #    endif
 #  endif
 
+        if (total_sec >= 0) {
 
-#ifndef NO_RUDATA
-
-        if (total_msec >= 1000) {
-            total_msec -= 1000;
-            total_sec += 1;
-        }
-
-        if (!name || eq(name, "totalcputime")) {
-            fprintf(cp_out, "Total %s time (seconds) = %u.%03u \n",
-                    cpu_elapsed, total_sec, total_msec);
-        }
-
-        if (!name || eq(name, "cputime")) {
-            last_msec = 1000 + total_msec - last_msec;
-            last_sec = total_sec - last_sec - 1;
-            if (last_msec >= 1000) {
-                last_msec -= 1000;
-                last_sec += 1;
+            if (!name || eq(name, "totalcputime")) {
+                fprintf(cp_out, "Total %s time (seconds) = %.3f \n",
+                        cpu_elapsed, total_sec);
             }
-            /* do not print it the first time, doubling totalcputime */
-            if (called)
-                fprintf(cp_out, "%s time since last call (seconds) = %lu.%03lu \n",
-                        cpu_elapsed, last_sec, last_msec);
 
-            last_sec = total_sec;
-            last_msec = total_msec;
-            called = TRUE;
-        }
+            if (!name || eq(name, "cputime")) {
+
+                /* do not print it the first time */
+                if (called)
+                    fprintf(cp_out, "%s time since last call (seconds) = %.3f \n",
+                            cpu_elapsed, total_sec-last_sec);
+                last_sec = total_sec;
+                called = TRUE;
+            }
 
 #ifdef XSPICE
-        /* gtri - add - 12/12/90 - wbk - record cpu time used for ipc */
-        g_ipc.cpu_time = (double) last_msec;
-        g_ipc.cpu_time /= 1000.0;
-        g_ipc.cpu_time += (double) last_sec;
-        /* gtri - end - 12/12/90 */
+            /* gtri - add - 12/12/90 - wbk - record cpu time used for ipc */
+            g_ipc.cpu_time = last_sec;
+            /* gtri - end - 12/12/90 */
 #endif
 
-        yy = TRUE;
-#else
-        if (!name || eq(name, "totalcputime"))
-            fprintf(cp_out, "Total CPU time: ??.??? seconds.\n");
-        if (!name || eq(name, "cputime"))
-            fprintf(cp_out, "CPU time since last call: ??.??? seconds.\n");
-        yy = TRUE;
-#endif
+            yy = TRUE;
+
+        } else { // total_sec < 0)
+
+            if (!name || eq(name, "totalcputime"))
+                fprintf(cp_out, "Total CPU time: ??.??? seconds.\n");
+            if (!name || eq(name, "cputime"))
+                fprintf(cp_out, "CPU time since last call: ??.??? seconds.\n");
+            yy = TRUE;
+        }
 
     }
 
@@ -273,7 +245,7 @@ printres(char *name)
 //        fprintf(cp_out, "Resident set size = ");
 //        fprintmem(cp_out, mem_ng_act.resident);
 //        fprintf(cp_out, ".\n");
-        fprintf(cp_out, "\n");  
+        fprintf(cp_out, "\n");
         fprintf(cp_out, "Shared ngspice pages = ");
         fprintmem(cp_out, mem_ng_act.shared);
         fprintf(cp_out, ".\n");

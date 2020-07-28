@@ -787,14 +787,10 @@ AC_CHECK_HEADERS([arpa/inet.h netdb.h netinet/in.h stddef.h sys/file.h sys/param
 AC_HEADER_TIME
 AC_STRUCT_TM
 AC_STRUCT_TIMEZONE
-AC_CHECK_FUNCS([localtime])
+AC_CHECK_FUNCS([localtime time])
 
-AC_CHECK_FUNCS([ftime gettimeofday])
-# Do not use time or getrusage function for CPU time measurement under OpenMP
-if test "x$enable_openmp" != xyes; then
-    AC_CHECK_FUNCS([time getrusage])
-fi
-AC_CHECK_FUNCS([utimes])
+AC_CHECK_FUNCS([gettimeofday times ftime], [break])
+AC_CHECK_FUNCS([getrusage times], [break])
 AC_CHECK_FUNCS([getrlimit ulimit], [break])
 
 AC_CHECK_FUNCS([endpwent gethostbyname memset select socket strdup strerror strncasecmp strstr strtol])
