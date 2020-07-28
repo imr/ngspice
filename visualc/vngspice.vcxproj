@@ -308,7 +308,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;tmp-bison;src\include;..\src\include;..\src\spicelib\parser;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\libsndfile\include;..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;tmp-bison;src\include;..\src\include;..\src\spicelib\parser;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;_MSC_PLATFORM_TOOLSET=$(PlatformToolsetVersion);NGDEBUG;CONFIG64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
@@ -1311,6 +1311,7 @@
     <ClInclude Include="..\src\spicelib\devices\vdmos\vdmosext.h" />
     <ClInclude Include="..\src\spicelib\devices\vdmos\vdmosinit.h" />
     <ClInclude Include="..\src\spicelib\devices\vdmos\vdmositf.h" />
+    <ClInclude Include="..\src\spicelib\devices\vsrc\vsjack.h" />
     <ClInclude Include="..\src\spicelib\devices\vsrc\vsrcdefs.h" />
     <ClInclude Include="..\src\spicelib\devices\vsrc\vsrcext.h" />
     <ClInclude Include="..\src\spicelib\devices\vsrc\vsrcinit.h" />
@@ -2554,6 +2555,7 @@
     <ClCompile Include="..\src\spicelib\devices\vdmos\vdmossoachk.c" />
     <ClCompile Include="..\src\spicelib\devices\vdmos\vdmostemp.c" />
     <ClCompile Include="..\src\spicelib\devices\vdmos\vdmostrun.c" />
+    <ClCompile Include="..\src\spicelib\devices\vsrc\vsjack.c" />
     <ClCompile Include="..\src\spicelib\devices\vsrc\vsrc.c" />
     <ClCompile Include="..\src\spicelib\devices\vsrc\vsrcacct.c" />
     <ClCompile Include="..\src\spicelib\devices\vsrc\vsrcacld.c" />

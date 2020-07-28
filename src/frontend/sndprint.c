@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <getopt.h>
+#include "..\src\misc\getopt_bsd.h"
 #include <sndfile.h>
 #include <string.h>
 #include <math.h>
 #include <inttypes.h>
-#include <config.h>
+//#include <config.h>
 #include "sndprint.h"
 
 

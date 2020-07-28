@@ -175,9 +175,9 @@ double get_value(int d, double time, int channel) {
     printf ("value not in buffer:%i.\n",d);
     return (0.0); // nan ?
   }
-  return((double)(((float *)(interleaved[d]))[m_channels[d]*offset+channel]))
+  return((double)(((float*)(interleaved[d]))[m_channels[d] * offset + channel]));
 #endif
-    }
+}
 
 
 /*
