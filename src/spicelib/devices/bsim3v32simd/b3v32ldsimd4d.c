@@ -27,8 +27,17 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
-#undef USE_OMPSIMD
 
+/* disable omp simd for GCC, as it slow down a bit */
+#if !defined(__GNUC__) || defined(__clang__) || defined(__INTEL_COMPILER)
+#define USE_OMPSIMD
+#endif
+
+/* HAS_LIBMVEC defined from configure.ac */
+
+/* USE_SERIAL_FORM can be defined but has no performance influence */
+
+/******* vec4_blend *******/
 #if USEX86INTRINSICS==1
 static inline Vec4d vec4_blend(Vec4d fa, Vec4d tr, Vec4m mask)
 {
@@ -47,6 +56,17 @@ static inline Vec4d vec4_blend(Vec4d fa, Vec4d tr, Vec4m mask)
 }
 #endif
 
+/******* vec4_exp, vec4_log *******/
+#ifdef HAS_LIBMVEC
+Vec4d _ZGVdN4v_exp(Vec4d x);
+Vec4d _ZGVdN4v_log(Vec4d x);
+/*Vec4d _ZGVdN4vv_pow(Vec4d x, Vec4d y);*/
+
+#define vec4_exp(a) _ZGVdN4v_exp(a) 
+#define vec4_log(a) _ZGVdN4v_log(a)
+#endif
+
+#ifndef HAS_LIBMVEC
 static inline Vec4d vec4_exp(Vec4d x)
 {
 	Vec4d r;
@@ -68,8 +88,14 @@ static inline Vec4d vec4_log(Vec4d x)
 		r[i] = log(x[i]);
 	return r;
 }
+#endif
 
-static inline Vec4d vec4_max(Vec4d x, Vec4d y)
+/******* vec4_MAX, vec4_sqrt *******/
+#ifdef USEX86INTRINSICS
+#define vec4_MAX(a,b) _mm256_max_pd(a,b)
+#define vec4_sqrt(a) _mm256_sqrt_pd(a)
+#else
+static inline Vec4d vec4_MAX(Vec4d x, Vec4d y)
 {
 	Vec4d r;
 	#ifdef USE_OMPSIMD
@@ -90,7 +116,15 @@ static inline Vec4d vec4_sqrt(Vec4d x)
 		r[i] = sqrt(x[i]);
 	return r;
 }
+#endif
 
+/******* vec4_fabs *******/
+#ifdef USE_SERIAL_FORM
+static inline Vec4d vec4_fabs(Vec4d x)
+{
+	return vec4_blend(x,-x,x<0);
+}
+#else
 static inline Vec4d vec4_fabs(Vec4d x)
 {
 	Vec4d r;
@@ -101,6 +135,7 @@ static inline Vec4d vec4_fabs(Vec4d x)
 		r[i] = fabs(x[i]);
 	return r;
 }
+#endif
 
 #define vec4_pow0p7(x,p) vec4_pow(x,p)
 #define vec4_powMJ(x,p) vec4_pow(x,p)
@@ -109,10 +144,23 @@ static inline Vec4d vec4_fabs(Vec4d x)
 
 static inline Vec4d vec4_pow(Vec4d x, double p)
 {
+	/*return _ZGVdN4vv_pow(x,(Vec4d) {p,p,p,p});*/
 	return vec4_exp(vec4_log(x)*p);
 }
 
-/* useful vectorized functions */
+/******* vec4_SIMDTOVECTOR, vec4_SIMDTOVECTORMASK *******/
+#ifdef USE_SERIAL_FORM
+static inline Vec4d vec4_SIMDTOVECTOR(double val)
+{
+	return (Vec4d) {val,val,val,val};
+}
+
+static inline Vec4m vec4_SIMDTOVECTORMASK(int val)
+{
+	return (Vec4m) {val,val,val,val};
+}
+
+#else
 static inline Vec4d vec4_SIMDTOVECTOR(double val)
 {
 	Vec4d r;
@@ -134,23 +182,26 @@ static inline Vec4m vec4_SIMDTOVECTORMASK(int val)
 		r[i] = val;
 	return r;
 }
-#if 0
-static inline Vec4d vec4_SIMDTOVECTOR(double val)
-{
-	return (Vec4d) {val,val,val,val};
-}
-
-static inline Vec4m vec4_SIMDTOVECTORMASK(int val)
-{
-	return (Vec4m) {val,val,val,val};
-}
 #endif
+
 
 static inline Vec4d vec4_SIMDLOADDATA(int idx, double data[7][4])
 {
 	return (Vec4d) {data[idx][0],data[idx][1],data[idx][2],data[idx][3]};
 }
 
+/******* vec4_BSIM3v32_StateAccess *******/
+#ifdef USE_SERIAL_FORM
+static inline Vec4d vec4_BSIM3v32_StateAccess(double* cktstate, Vec4m stateindexes)
+{
+	return (Vec4d) {
+	 cktstate[stateindexes[0]],
+	 cktstate[stateindexes[1]],
+	 cktstate[stateindexes[2]],
+	 cktstate[stateindexes[3]]
+	};
+}
+#else
 static inline Vec4d vec4_BSIM3v32_StateAccess(double* cktstate, Vec4m stateindexes)
 {
 	Vec4d r;
@@ -160,15 +211,8 @@ static inline Vec4d vec4_BSIM3v32_StateAccess(double* cktstate, Vec4m stateindex
 	for(int i=0;i<4;i++)
 		r[i] =  cktstate[stateindexes[i]];
 	return r;
-	
-	/*return (Vec4d) {
-	 cktstate[stateindexes[0]],
-	 cktstate[stateindexes[1]],
-	 cktstate[stateindexes[2]],
-	 cktstate[stateindexes[3]]
-	};"*/
 }
-
+#endif
 
 static inline void vec4_BSIM3v32_StateStore(double* cktstate, Vec4m stateindexes, Vec4d values)
 {

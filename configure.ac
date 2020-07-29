@@ -1228,7 +1228,29 @@ if test "x$enable_modsimd" = xyes; then
     ])
 fi
 
-# now adjust compiler flags
+# test if we can use libmvec or equivalent
+if test "x$enable_modsimd" = xyes; then
+    AC_MSG_CHECKING([vector math library])
+    AC_TRY_COMPILE([
+    	#include <math.h>
+    	typedef double Vec4d __attribute__ ((vector_size (4*sizeof(double)), aligned (4*sizeof(double))));
+	Vec4d _ZGVdN4v_exp(Vec4d x);
+	Vec4d _ZGVdN4v_log(Vec4d x);
+    ],[
+    	Vec4d v1,v2;
+	v1 = (Vec4d) {1.0,2.0,3.141592,4.0};
+	v2 = _ZGVdN4v_log(v1);
+	v1 = _ZGVdN4v_exp(v2);
+    ],[
+      AC_MSG_RESULT([yes])
+      have_libmvec=yes
+    ], [
+      AC_MSG_RESULT([no])
+      have_libmvec=no
+    ])
+fi
+
+# adjust compiler flags for MODSIMD
 if test "x$enable_modsimd" = xyes; then
     SIMD_CPPFLAGS=""
     SIMD_LDFLAGS=""
@@ -1260,6 +1282,11 @@ if test "x$enable_modsimd" = xyes; then
     if test "x$have_intrinsics" = xyes; then
         AC_DEFINE([USEX86INTRINSICS], [1], [can use x86 simd intrinsics])
 	AC_MSG_RESULT([Use x86 simd intrinsics])
+    fi
+    
+    if test "x$have_libmvec" = xyes; then
+        AC_DEFINE([HAS_LIBMVEC], [1], [can call libmvec exp and log functions])
+	AC_MSG_RESULT([Use libmvec])
     fi
     
     AC_MSG_RESULT([MODSIMD feature enabled])
