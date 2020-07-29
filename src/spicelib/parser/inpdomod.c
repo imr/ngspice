@@ -7,7 +7,9 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/iferrmsg.h"
 #include "ngspice/inpdefs.h"
 #include "inpxx.h"
-
+#ifdef BSIM3v32SIMD
+#include "ngspice/cpextern.h"
+#endif
 /*--------------------------------------------------------------
  * This fcn takes the model card & examines it.  Depending upon
  * model type, it parses the model line, and then calls
@@ -300,15 +302,16 @@ char *INPdomodel(CKTcircuit *ckt, struct card *image, INPtables * tab)
 			    }
 			    if (prefix("3.2", ver)) { /* version string ver has to start with 3.2 */
 			      #ifdef BSIM3v32SIMD
-			      if((strlen(ver)>5) && (strcmp(&ver[strlen(ver)-4],"simd")==0))
+			      if(((strlen(ver)>5) && (strcmp(&ver[strlen(ver)-4],"simd")==0))
+			      || cp_getvar("modsimd", CP_BOOL, NULL, 0)
+			      #if defined(MODSIMD_ALWAYS)
+			      || 1
+			      #endif
+			      )
 			        type = INPtypelook("BSIM3v32simd");
 			      else
-			      #endif
-			      #if defined(MODSIMD_ALWAYS)
-			      type = INPtypelook("BSIM3v32simd");
-			      #else
-			      type = INPtypelook("BSIM3v32");
-			      #endif
+			      #endif /* BSIM3v32SIMD */
+			        type = INPtypelook("BSIM3v32");
 			    }
 			    if ( (strstr(ver, "default")) || (prefix("3.3", ver)) ) {
 			      type = INPtypelook("BSIM3");
