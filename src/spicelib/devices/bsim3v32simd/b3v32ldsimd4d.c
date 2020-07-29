@@ -329,7 +329,7 @@ static inline int vec4_SIMDCOUNT(Vec4m mask) {
 }
 
 
-
+#if 0
 /* some debug utils functions */
 void vec4_printd(const char* msg, const char* name, Vec4d vecd)
 {
@@ -352,3 +352,4 @@ void vec4_CheckCollisions(Vec4m stateindexes, const char* msg)
 		raise(SIGINT);
 	}
 }
+#endif

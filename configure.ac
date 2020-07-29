@@ -1226,10 +1226,11 @@ if test "x$enable_modsimd" = xyes; then
       AC_MSG_RESULT([no])
       have_intrinsics=no
     ])
+    have_libmvec=no
 fi
 
 # test if we can use libmvec or equivalent
-if test "x$enable_modsimd" = xyes; then
+if test "x$have_intrinsics" = xyes; then
     AC_MSG_CHECKING([vector math library])
     AC_TRY_COMPILE([
     	#include <math.h>

@@ -28,10 +28,18 @@
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
 
+/* disable omp simd for GCC, as it slow down a bit */
+#if !defined(__GNUC__) || defined(__clang__) || defined(__INTEL_COMPILER)
+#define USE_OMPSIMD
+#endif
+
+
 static inline Vec8d vec8_blend(Vec8d fa, Vec8d tr, Vec8m mask)
 {
 	Vec8d r;
-	#pragma omp simd
+	#ifdef USE_OMPSIMD
+	#pragma omp simd simdlen(4)
+	#endif
 	for(int i=0;i<8;i++)
 		r[i] = (mask[i]==0 ? fa[i] : tr[i]);
 	return r;
@@ -40,7 +48,9 @@ static inline Vec8d vec8_blend(Vec8d fa, Vec8d tr, Vec8m mask)
 static inline Vec8d vec8_exp(Vec8d x)
 {
 	Vec8d r;
-	#pragma omp simd
+	#ifdef USE_OMPSIMD
+	#pragma omp simd simdlen(4)
+	#endif
 	for(int i=0;i<8;i++)
 		r[i] = exp(x[i]);
 	return r;
@@ -49,7 +59,9 @@ static inline Vec8d vec8_exp(Vec8d x)
 static inline Vec8d vec8_log(Vec8d x)
 {
 	Vec8d r;
-	#pragma omp simd
+	#ifdef USE_OMPSIMD
+	#pragma omp simd simdlen(4)
+	#endif
 	for(int i=0;i<8;i++)
 		r[i] = log(x[i]);
 	return r;
@@ -58,7 +70,9 @@ static inline Vec8d vec8_log(Vec8d x)
 static inline Vec8d vec8_max(Vec8d x, Vec8d y)
 {
 	Vec8d r;
-	#pragma omp simd
+	#ifdef USE_OMPSIMD
+	#pragma omp simd simdlen(4)
+	#endif
 	for(int i=0;i<8;i++)
 		r[i] = MAX(x[i],y[i]);
 	return r;
@@ -67,7 +81,9 @@ static inline Vec8d vec8_max(Vec8d x, Vec8d y)
 static inline Vec8d vec8_sqrt(Vec8d x)
 {
 	Vec8d r;
-	#pragma omp simd
+	#ifdef USE_OMPSIMD
+	#pragma omp simd simdlen(4)
+	#endif
 	for(int i=0;i<8;i++)
 		r[i] = sqrt(x[i]);
 	return r;
@@ -76,7 +92,9 @@ static inline Vec8d vec8_sqrt(Vec8d x)
 static inline Vec8d vec8_fabs(Vec8d x)
 {
 	Vec8d r;
-	#pragma omp simd
+	#ifdef USE_OMPSIMD
+	#pragma omp simd simdlen(4)
+	#endif
 	for(int i=0;i<8;i++)
 		r[i] = fabs(x[i]);
 	return r;
@@ -111,7 +129,9 @@ static inline Vec8d vec8_SIMDLOADDATA(int idx, double data[7][8])
 static inline Vec8d vec8_BSIM3v32_StateAccess(double* cktstate, Vec8m stateindexes)
 {
 	Vec8d r;
-	#pragma omp simd
+	#ifdef USE_OMPSIMD
+	#pragma omp simd simdlen(4)
+	#endif
 	for(int i=0;i<8;i++)
 		r[i] =  cktstate[stateindexes[i]];
 	return r;
@@ -120,7 +140,9 @@ static inline Vec8d vec8_BSIM3v32_StateAccess(double* cktstate, Vec8m stateindex
 
 static inline void vec8_BSIM3v32_StateStore(double* cktstate, Vec8m stateindexes, Vec8d values)
 {
-	#pragma omp simd
+	#ifdef USE_OMPSIMD
+	#pragma omp simd simdlen(4)
+	#endif
 	for(int idx=0;idx<8;idx++)
 	{
 		cktstate[stateindexes[idx]] = values[idx];
@@ -129,7 +151,9 @@ static inline void vec8_BSIM3v32_StateStore(double* cktstate, Vec8m stateindexes
 
 static inline void vec8_BSIM3v32_StateAdd(double* cktstate, Vec8m stateindexes, Vec8d values)
 {
-	#pragma omp simd
+	#ifdef USE_OMPSIMD
+	#pragma omp simd simdlen(4)
+	#endif
 	for(int idx=0;idx<8;idx++)
 	{
 		cktstate[stateindexes[idx]] += values[idx];
@@ -138,7 +162,9 @@ static inline void vec8_BSIM3v32_StateAdd(double* cktstate, Vec8m stateindexes, 
 
 static inline void vec8_BSIM3v32_StateSub(double* cktstate, Vec8m stateindexes, Vec8d values)
 {
-	#pragma omp simd
+	#ifdef USE_OMPSIMD
+	#pragma omp simd simdlen(4)
+	#endif
 	for(int idx=0;idx<8;idx++)
 	{
 		cktstate[stateindexes[idx]] -= values[idx];
