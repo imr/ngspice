@@ -157,11 +157,7 @@ GRAPH *CopyGraph(GRAPH *graph)
                     new_plotdata = newlink; /* put in front */
                     struct dvec * const new_scale = vec_copy(old_scale);
                     new_scale->v_flags |= VF_PERMANENT;
-                    newlink = TMALLOC(struct dveclist, 1);
-                    newlink->next = new_plotdata;
-                    newlink->f_own_vector = TRUE;
-                    newlink->vector = new_scale;
-                    newlink->next = new_plotdata;
+                    newlink->vector->v_scale = new_scale;
                 }
             }
             else {
@@ -259,12 +255,13 @@ int DestroyGraph(int id)
                     nextd = d->next;
                     if (d->f_own_vector) {
                         /* list responsible for freeing this vector */
-                        if (d->vector->v_scale)
-                            dvec_free(d->vector->v_scale);
+                        if (d->vector->v_scale) {
+                            dvec_free(d->vector->v_scale);  
+                        }                          
                         dvec_free(d->vector);
                     }
-                    txfree(d);
-                    d = nextd;
+                    txfree(d);                    
+                    d = nextd;                    
                 }
             }
 
