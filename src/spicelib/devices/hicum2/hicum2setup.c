@@ -815,6 +815,11 @@ HICUMunsetup(
                 CKTdltNNum(ckt, here->HICUMcollCINode);
             here->HICUMcollCINode = 0;
 
+            if (here->HICUMbaseBINode > 0
+                && here->HICUMbaseBPNode != here->HICUMbaseBINode)
+                CKTdltNNum(ckt, here->HICUMbaseBINode);
+            here->HICUMbaseBINode = 0;
+
             if (here->HICUMbaseBPNode > 0
                 && here->HICUMbaseBPNode != here->HICUMbaseNode)
                 CKTdltNNum(ckt, here->HICUMbaseBPNode);
@@ -829,11 +834,6 @@ HICUMunsetup(
                 && here->HICUMsubsSINode != here->HICUMsubsNode)
                 CKTdltNNum(ckt, here->HICUMsubsSINode);
             here->HICUMsubsSINode = 0;
-
-            if (here->HICUMbaseBINode > 0
-                && here->HICUMbaseBPNode != here->HICUMbaseBINode)
-                CKTdltNNum(ckt, here->HICUMbaseBINode);
-            here->HICUMbaseBINode = 0;
 
             if (selfheat) {
                 if (here->HICUMtempNode > 5) { // it is an internal node
