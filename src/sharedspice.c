@@ -814,7 +814,6 @@ ngSpice_Init(SendChar* printfcn, SendStat* statusfcn, ControlledExit* ngspiceexi
         fprintf(stdout, "Warning: No user initialization file .spiceinit or spice.rc found\n");
 #endif /* ~ HAVE_PWD_H */
 
-bot:
     if (!cp_getvar("nosighandling", CP_BOOL, NULL, 0))
         signal(SIGSEGV, old_sigsegv);
 
@@ -1609,7 +1608,8 @@ char* outstorage(char* wordin, bool write)
 
 
 /* New progress report to statfcn().
-   An update occurs only every DELTATIME milliseconds. */
+   An update occurs only every DELTATIME milliseconds.
+   We may have two threads: main and bg_run */
 #define DELTATIME 150
 void SetAnalyse(
    const char * Analyse, /*in: analysis type */
@@ -1620,22 +1620,69 @@ void SetAnalyse(
     if (nostatuswanted)
         return;
 
+    /* check in which thread we are in */
+    static unsigned int ng_id1 = 0, ng_id2 = 0;
+    bool thread1;
+
 #ifdef HAVE_FTIME
-   static int OldPercent = -2;     /* Previous progress value */
-   static char OldAn[128];         /* Previous analysis type */
-   char* s;                        /* outputs to callback function */
-   static char olds[128];          /* previous output */
-   static struct timeb timebefore; /* previous time stamp */
-   struct timeb timenow;           /* actual time stamp */
-   int diffsec, diffmillisec;      /* differences actual minus prev. time stamp */
-   int result;                     /* return value from callback function */
+    struct timeb timenow;           /* actual time stamp */
+    int diffsec, diffmillisec;      /* differences actual minus prev. time stamp */
+    int result;                     /* return value from callback function */    
+    char* s;                        /* outputs to callback function */
+    int OldPercent;                 /* Previous progress value */
+    char OldAn[128];                /* Previous analysis type */
+    char olds[128];                 /* previous output */
+    static struct timeb timebefore; /* previous time stamp */
+
+    /* thread 1 */
+    static int OldPercent1 = -2;     /* Previous progress value */
+    static char OldAn1[128];         /* Previous analysis type */
+    static char olds1[128];          /* previous output */
+    static struct timeb timebefore1; /* previous time stamp */
+    /* thread2 */
+    static int OldPercent2 = -2;     /* Previous progress value */
+    static char OldAn2[128];         /* Previous analysis type */
+    static char olds2[128];          /* previous output */
+    static struct timeb timebefore2; /* previous time stamp */
+
+    /*set the two thread ids */
+    unsigned int ng_idl = threadid_self();
+    if (ng_id1 == 0) {
+        ng_id1 = ng_idl;
+        strncpy(OldAn1, Analyse, 127); //strcpy(OldAn1, "?"); /* initial value */
+    }
+    else if (ng_id2 == 0 && ng_id1 != ng_idl) {
+        ng_id2 = ng_idl;
+        strncpy(OldAn2, Analyse, 127); // strcpy(OldAn2, "?"); /* initial value */
+    }
+
+    if (ng_idl == ng_id1) {
+        thread1 = TRUE;
+        strcpy(OldAn, OldAn1);
+        strcpy(olds, olds1);
+        OldPercent = OldPercent1;
+        timebefore.dstflag = timebefore1.dstflag;
+        timebefore.millitm = timebefore1.millitm;
+        timebefore.time = timebefore1.time;
+        timebefore.timezone = timebefore1.timezone;
+    }
+    else if (ng_idl == ng_id2) {
+        thread1 = FALSE;
+        strcpy(OldAn, OldAn2);
+        strcpy(olds, olds2);
+        OldPercent = OldPercent2;
+        timebefore.dstflag = timebefore2.dstflag;
+        timebefore.millitm = timebefore2.millitm;
+        timebefore.time = timebefore2.time;
+        timebefore.timezone = timebefore2.timezone;
+    }
+    else
+        return;
 
    CKTcircuit *ckt = NULL;
 
    if (ft_curckt)
        ckt = ft_curckt->ci_ckt;
-
-   strcpy(OldAn, "?"); /* initial value */
 
    if ((DecaPercent == OldPercent) && !strcmp(OldAn, Analyse))
        return;
@@ -1672,7 +1719,10 @@ void SetAnalyse(
       if ((int)((double)DecaPercent/10.) > (int)((double)OldPercent/10.)) {
          printf("%3.1f%% percent progress after %4.2f seconds.\n", (double)DecaPercent/10., seconds());
       }
-   OldPercent = DecaPercent;
+   if(thread1)
+       OldPercent1 = DecaPercent;
+   else
+       OldPercent2 = DecaPercent;
    /* output only into hwAnalyse window and if time elapsed is larger than
       DELTATIME given value, or if analysis has changed, else return */
    if ((diffsec > 0) || (diffmillisec > DELTATIME) || strcmp(OldAn, Analyse)) {
@@ -1688,20 +1738,34 @@ void SetAnalyse(
       else {
          sprintf( s, "%s: %3.1f%%", Analyse, (double)DecaPercent/10.);
       }
-      timebefore.dstflag = timenow.dstflag;
-      timebefore.millitm = timenow.millitm;
-      timebefore.time = timenow.time;
-      timebefore.timezone = timenow.timezone;
+        if (thread1) {
+            timebefore1.dstflag = timenow.dstflag;
+            timebefore1.millitm = timenow.millitm;
+            timebefore1.time = timenow.time;
+            timebefore1.timezone = timenow.timezone;
+        }
+        else {
+            timebefore2.dstflag = timenow.dstflag;
+            timebefore2.millitm = timenow.millitm;
+            timebefore2.time = timenow.time;
+            timebefore2.timezone = timenow.timezone;
+        }
       /* info when previous analysis period has finished */
       if (strcmp(OldAn, Analyse)) {
          if (ft_ngdebug && (strcmp(OldAn, "")))
             printf("%s finished after %4.2f seconds.\n", OldAn, seconds());
-         strncpy(OldAn, Analyse, 127);
+         if(thread1)
+             strncpy(OldAn1, Analyse, 127);
+         else
+             strncpy(OldAn2, Analyse, 127);
       }
       /* ouput only after a change */
       if (strcmp(olds, s))
           result = statfcn(s, ng_ident, userptr);
-      strcpy(olds, s);
+      if(thread1)
+          strcpy(olds1, s);
+      else
+          strcpy(olds2, s);
    }
    tfree(s);
 #else
