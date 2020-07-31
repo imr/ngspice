@@ -12,6 +12,8 @@ Modified: 2000 AlansFixes
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 #include "ngspice/1-f-code.h"
+#include "vsjack.h"
+
 
 
 static void copy_coeffs(VSRCinstance *here, IFvalue *value)
@@ -34,6 +36,8 @@ int
 VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
     int i;
+    static char* jfile = NULL;
+
     VSRCinstance *here = (VSRCinstance *) inst;
 
     NG_IGNORE(select);
@@ -275,6 +279,27 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             tfree(here->VSRCtrrandom_state);
             here->VSRCtrrandom_state =
                 trrandom_state_init(rndtype, TS, TD, PARAM1, PARAM2);
+        }
+        break;
+
+        case VSRC_FILE: {
+            jfile = strdup(value->sValue);
+        }
+        break;
+
+        case VSRC_SOUND: {
+            here->VSRCfunctionType = SOUND;
+            here->VSRCfuncTGiven = TRUE;
+            here->VSRCcoeffs = value->v.vec.rVec;
+            here->VSRCcoeffsGiven = TRUE;
+            vsjack_open(-1); // initialize
+            if (jfile) {
+                vsjack_set_file((int)rint(here->VSRCcoeffs[0]), jfile);
+                tfree(jfile);
+            }
+            if (value->v.numValue != 6)
+                fprintf(stderr, "Warning! invalid jack args: %i\nFormat: jack(id v_off v_mult t_off channel oversampling)", value->v.numValue);
+            vsjack_open((int)rint(here->VSRCcoeffs[0]));
         }
         break;
 

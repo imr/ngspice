@@ -106,6 +106,7 @@ enum {
     TRNOISE,
     TRRANDOM,
     EXTERNAL,
+    SOUND,
 };
 
 #endif
@@ -139,6 +140,8 @@ enum {
     VSRC_TRNOISE,
     VSRC_TRRANDOM,
     VSRC_EXTERNAL,
+    VSRC_SOUND,
+    VSRC_FILE,
 };
 
 /* model parameters */

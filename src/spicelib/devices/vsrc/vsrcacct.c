@@ -293,6 +293,11 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                     }
                     break;
 
+                    case SOUND: {
+                        /* no  breakpoints (yet) */
+                    }
+                    break;
+
 #ifdef SHARED_MODULE
                     case EXTERNAL: {
                         /* no  breakpoints (yet) */

@@ -48,6 +48,7 @@ VSRCask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *
         case VSRC_AM:
         case VSRC_TRNOISE:
         case VSRC_TRRANDOM:
+        case VSRC_SOUND:
         case VSRC_FCN_COEFFS:
             temp = value->v.numValue = here->VSRCfunctionOrder;
             v = value->v.vec.rVec = TMALLOC(double, here->VSRCfunctionOrder);
