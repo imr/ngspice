@@ -836,7 +836,7 @@ HICUMunsetup(
             here->HICUMsubsSINode = 0;
 
             if (selfheat) {
-                if (here->HICUMtempNode > 5) { // it is an internal node
+                if (here->HICUMtempNode > 6) { // it is an internal node
                      CKTdltNNum(ckt, here->HICUMtempNode);
                      here->HICUMtempNode = 0;
                 }
