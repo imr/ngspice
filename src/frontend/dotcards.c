@@ -111,7 +111,7 @@ ft_savedotargs(void)
         else
             isaplot = 0;
 
-        if (isaplot || ciprefix(".print", s)) {
+        if (isaplot || ciprefix(".print", s) || ciprefix(".sndparam", s) || ciprefix(".sndprint", s)) {
             s = nexttok(s);
             name = gettok(&s);
 
@@ -345,6 +345,41 @@ ft_cktcoms(bool terse)
                 if (!found)
                     fprintf(cp_err, "Error: .plot: no %s analysis found.\n",
                             plottype);
+            }
+        } else if (eq(command->wl_word, ".sndparam")) {
+            if (terse) {
+                fprintf(cp_out, ".sndparam line ignored since rawfile was produced.\n");
+            }
+            else {
+                com_sndparam(command->wl_next);
+            }
+        } else if (eq(command->wl_word, ".sndprint")) {
+            if (terse) {
+                fprintf(cp_out, ".sndprint line ignored since rawfile was produced.\n");
+            }
+            else {
+                command = command->wl_next;
+                if (!command) {
+                    fprintf(cp_err, "Error: bad line %s\n", coms->wl_word);
+                    coms = coms->wl_next;
+                    continue;
+
+                }
+                plottype = command->wl_word;
+                command = command->wl_next;
+                fixdotprint(command);
+                twl.wl_next = command;
+                found = 0;
+                for (pl = plot_list; pl; pl = pl->pl_next) {
+                    if (ciprefix(plottype, pl->pl_typename)) {
+                        plot_cur = pl;
+                        com_sndprint(&twl);
+                        fprintf(cp_out, "\n");
+                        found = 1;
+                    }
+                }
+                if (!found)
+                    fprintf(cp_err, "Error: .sndprint: no %s analysis found.\n", plottype);
             }
         } else if (ciprefix(".four", command->wl_word)) {
             if (terse) {
