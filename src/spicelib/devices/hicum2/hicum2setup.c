@@ -560,12 +560,12 @@ HICUMsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 if(error) return(error);
                 here->HICUMcollCINode = tmp->number;
                 if (ckt->CKTcopyNodesets) {
-                  if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
-                     if (tmpNode->nsGiven) {
-                       tmp->nodeset=tmpNode->nodeset;
-                       tmp->nsGiven=tmpNode->nsGiven;
+                    if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
+                        if (tmpNode->nsGiven) {
+                            tmp->nodeset=tmpNode->nodeset;
+                            tmp->nsGiven=tmpNode->nsGiven;
+                        }
                     }
-                  }
                 }
             }
             if(model->HICUMrbx == 0) {
@@ -575,12 +575,12 @@ HICUMsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 if(error) return(error);
                 here->HICUMbaseBPNode = tmp->number;
                 if (ckt->CKTcopyNodesets) {
-                  if (CKTinst2Node(ckt,here,2,&tmpNode,&tmpName)==OK) {
-                     if (tmpNode->nsGiven) {
-                       tmp->nodeset=tmpNode->nodeset;
-                       tmp->nsGiven=tmpNode->nsGiven;
-                     }
-                  }
+                    if (CKTinst2Node(ckt,here,2,&tmpNode,&tmpName)==OK) {
+                        if (tmpNode->nsGiven) {
+                            tmp->nodeset=tmpNode->nodeset;
+                            tmp->nsGiven=tmpNode->nsGiven;
+                        }
+                    }
                 }
             }
             if(model->HICUMre == 0) {
@@ -590,12 +590,12 @@ HICUMsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 if(error) return(error);
                 here->HICUMemitEINode = tmp->number;
                 if (ckt->CKTcopyNodesets) {
-                  if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
-                     if (tmpNode->nsGiven) {
-                       tmp->nodeset=tmpNode->nodeset;
-                       tmp->nsGiven=tmpNode->nsGiven;
-                     }
-                  }
+                    if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
+                        if (tmpNode->nsGiven) {
+                            tmp->nodeset=tmpNode->nodeset;
+                            tmp->nsGiven=tmpNode->nsGiven;
+                        }
+                    }
                 }
             }
             if(model->HICUMrsu == 0) {
@@ -605,12 +605,12 @@ HICUMsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 if(error) return(error);
                 here->HICUMsubsSINode = tmp->number;
                 if (ckt->CKTcopyNodesets) {
-                  if (CKTinst2Node(ckt,here,4,&tmpNode,&tmpName)==OK) {
-                     if (tmpNode->nsGiven) {
-                       tmp->nodeset=tmpNode->nodeset;
-                       tmp->nsGiven=tmpNode->nsGiven;
-                     }
-                  }
+                    if (CKTinst2Node(ckt,here,4,&tmpNode,&tmpName)==OK) {
+                        if (tmpNode->nsGiven) {
+                            tmp->nodeset=tmpNode->nodeset;
+                            tmp->nsGiven=tmpNode->nsGiven;
+                        }
+                    }
                 }
             }
             if(model->HICUMrbi0 == 0) {
@@ -620,21 +620,21 @@ HICUMsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 if(error) return(error);
                 here->HICUMbaseBINode = tmp->number;
                 if (ckt->CKTcopyNodesets) {
-                  if (CKTinst2Node(ckt,here,5,&tmpNode,&tmpName)==OK) {
-                     if (tmpNode->nsGiven) {
-                       tmp->nodeset=tmpNode->nodeset;
-                       tmp->nsGiven=tmpNode->nsGiven;
-                     }
-                  }
+                    if (CKTinst2Node(ckt,here,5,&tmpNode,&tmpName)==OK) {
+                        if (tmpNode->nsGiven) {
+                            tmp->nodeset=tmpNode->nodeset;
+                            tmp->nsGiven=tmpNode->nsGiven;
+                        }
+                    }
                 }
             }
 
             if (selfheat) {
-               if (here->HICUMtempNode == 0) {                      // no external node for temperature
-                  error = CKTmkVolt(ckt,&tmp,here->HICUMname,"dT"); // create internal node
-                  if (error) return(error);
-                     here->HICUMtempNode = tmp->number;
-               }
+                if (here->HICUMtempNode == 0) {                       // no external node for temperature
+                    error = CKTmkVolt(ckt,&tmp,here->HICUMname,"dT"); // create internal node
+                    if (error) return(error);
+                        here->HICUMtempNode = tmp->number;
+                }
             } else {
                 if (here->HICUMtempNode > 0) { // external temp node is given, but no she parameter
                     here->HICUMtempNode = 0;
@@ -662,7 +662,6 @@ HICUMsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 here->HICUMxf1Node = 0;
                 here->HICUMxf2Node = 0;
             }
-
 
 /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
@@ -750,7 +749,6 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
                 TSTALLOC(HICUMxfEmitEIPtr ,HICUMxfNode,HICUMemitEINode);
                 TSTALLOC(HICUMxfCollCIPtr ,HICUMxfNode,HICUMcollCINode);
                 TSTALLOC(HICUMxfBaseBIPtr ,HICUMxfNode,HICUMbaseBINode);
-
 
             }
 
@@ -842,20 +840,20 @@ HICUMunsetup(
                 }
             }
 
-           if (nqs) {
+            if (nqs) {
 
-               if(here->HICUMxfNode > 0)
-                   CKTdltNNum(ckt, here->HICUMxfNode);
-               here->HICUMxfNode = 0;
+                if(here->HICUMxfNode > 0)
+                    CKTdltNNum(ckt, here->HICUMxfNode);
+                here->HICUMxfNode = 0;
 
-               if(here->HICUMxf1Node > 0)
-                   CKTdltNNum(ckt, here->HICUMxf1Node);
-               here->HICUMxf1Node = 0;
+                if(here->HICUMxf1Node > 0)
+                    CKTdltNNum(ckt, here->HICUMxf1Node);
+                here->HICUMxf1Node = 0;
 
-               if(here->HICUMxf2Node > 0)
-                   CKTdltNNum(ckt, here->HICUMxf2Node);
-               here->HICUMxf2Node = 0;
-           }
+                if(here->HICUMxf2Node > 0)
+                    CKTdltNNum(ckt, here->HICUMxf2Node);
+                here->HICUMxf2Node = 0;
+            }
 
         }
     }
