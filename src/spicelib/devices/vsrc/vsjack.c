@@ -9,6 +9,8 @@
 #include <inttypes.h>
 #define VS_BUFSIZ 1024
 
+#include "ngspice/ngspice.h""
+
 #define MAX_D 6 
 char *(sources[MAX_D]);
 
@@ -209,8 +211,8 @@ int vsjack_open (int d) {
   assert (d>=0 && d< MAX_D );
   assert (sources[d]!=NULL);
   if (openfile_sf(d, sources[d])) {
-    printf ("could not open '%s'\n", sources[d]);
-    exit (1);
+    fprintf (stderr, "could not open '%s'\n", sources[d]);
+    controlled_exit (1);
   }
   return (d);
 }
