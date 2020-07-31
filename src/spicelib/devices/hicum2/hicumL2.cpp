@@ -3306,7 +3306,7 @@ load:
                 }
 
 //              Stamp element:    Ith f_T = - Ith 
-                rhs_current = Ith + Icth - Icth_Vrth*Vrth
+                rhs_current = Ith 
                               - Ith_Vbiei*Vbiei - Ith_Vbici*Vbici - Ith_Vciei*Vciei
                               - Ith_Vbpei*Vbpei - Ith_Vbpci*Vbpci - Ith_Vsici*Vsici
                               - Ith_Vbpbi*Vbpbi
@@ -3346,6 +3346,13 @@ load:
                 // with respect to Potential Veie
                 *(here->HICUMtempEmitEIPtr) += -Ith_Veie;
                 *(here->HICUMtempEmitPtr)   += +Ith_Veie;
+
+//              finish
+
+//              Cth f_T = - (put this separate to Ith to get signs right)
+                rhs_current = Icth - Vrth * Icth_Vrth;
+                *(ckt->CKTrhs + here->HICUMtempNode) +=  -rhs_current;
+                *(here->HICUMtempTempPtr)            +=  +Icth_Vrth;
 //              finish
             }
         }
