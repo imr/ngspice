@@ -2605,8 +2605,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                             *(ckt->CKTstate0 + here->HICUMqjs)          ;
                         *(ckt->CKTstate1 + here->HICUMqscp)         =
                             *(ckt->CKTstate0 + here->HICUMqscp)         ;
-                        *(ckt->CKTstate1 + here->HICUMcqscp)        =
-                            *(ckt->CKTstate0 + here->HICUMcqscp)        ;
                         *(ckt->CKTstate1 + here->HICUMqbepar1)      =
                             *(ckt->CKTstate0 + here->HICUMqbepar1)      ;
                         *(ckt->CKTstate1 + here->HICUMqbepar2)      =
@@ -2736,8 +2734,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                             *(ckt->CKTstate0 + here->HICUMcqdsu)         ;
                         *(ckt->CKTstate1 + here->HICUMcqjs)          =
                             *(ckt->CKTstate0 + here->HICUMcqjs)          ;
-                        *(ckt->CKTstate1 + here->HICUMcqscp)         =
-                            *(ckt->CKTstate0 + here->HICUMcqscp)         ;
                         *(ckt->CKTstate1 + here->HICUMcqscp)        =
                             *(ckt->CKTstate0 + here->HICUMcqscp)        ;
                         *(ckt->CKTstate1 + here->HICUMcqxf1)     =
