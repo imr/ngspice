@@ -2527,7 +2527,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 here->HICUMcapscp      = Cscp;
                 here->HICUMcapsu       = model->HICUMcsu;
                 here->HICUMcapcth      = here->HICUMcth_scaled;
-                here->HICUMcapscp      = Cscp;
 
                 //derivatives of charges due to cross coupling
                 here->HICUMqrbi_Vbiei    = Qrbi_Vbiei;
