@@ -2907,9 +2907,9 @@ load:
             *(ckt->CKTrhs + here->HICUMcollNode) +=  rhs_current;
             // with respect to Vsc
             *(here->HICUMsubsSubsPtr)            +=  Isc_Vsc;
-            *(here->HICUMsubsCollPtr)            +=  Isc_Vsc;
+            *(here->HICUMcollCollPtr)            +=  Isc_Vsc;
+            *(here->HICUMsubsCollPtr)            += -Isc_Vsc;
             *(here->HICUMcollSubsPtr)            += -Isc_Vsc;
-            *(here->HICUMcollCollPtr)            += -Isc_Vsc;
 //          finish
 
 //          Branch: bci, Stamp element: Qbcx
