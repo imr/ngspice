@@ -22,7 +22,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "variable.h"
 #include "parser/complete.h" /* va: throwaway */
 #include "plotting/plotting.h"
-
+#include "sndprint.h"
 
 static void killplot(struct plot *pl);
 static void DelPlotWindows(struct plot *pl);
@@ -416,6 +416,128 @@ done:
     free_pnode(names);
     tfree(buf);
     tfree(buf2);
+}
+
+
+/* tweaked version of print - write sound-files
+*/
+void
+com_sndprint(wordlist* wl)
+{
+    struct dvec* v, * lv = NULL, * bv, * vecs = NULL;
+    int i, j, npoints;
+    struct pnode* nn;
+    int ngood;
+
+    if (wl == NULL)
+        return;
+    if (eq(wl->wl_word, "col")) {
+        wl = wl->wl_next;
+
+    }
+    else if (eq(wl->wl_word, "line")) {
+        wl = wl->wl_next;
+
+    }
+
+    ngood = 0;
+    for (nn = ft_getpnames(wl, TRUE); nn; nn = nn->pn_next) {
+        v = ft_evaluate(nn);
+        if (!v)
+            continue;
+        if (!vecs)
+            vecs = lv = v;
+        else
+            lv->v_link2 = v;
+        for (lv = v; lv->v_link2; lv = lv->v_link2)
+            ;
+        ngood += 1;
+
+    }
+
+    if (!ngood) return;
+
+    snd_init(ngood);
+    bv = vecs;
+
+    i = j = 0;
+    npoints = 0;
+    for (v = bv; v; v = v->v_link2)
+        if (v->v_length > npoints)
+            npoints = v->v_length;
+    double samplerate = snd_get_samplerate();
+    while ((j < npoints)) {
+
+        double tme = bv->v_plot->pl_scale->v_realdata[j] * samplerate;
+        int c = 0;
+        for (v = bv; v; v = v->v_link2) {
+            if (v->v_length <= j) {
+                i += snd_send(tme, c, 0.0);
+
+            }
+            else {
+                if (isreal(v))
+                    i += snd_send(tme, c, v->v_realdata[j]);
+                else
+                    i += snd_send(tme, c, realpart(v->v_compdata[j]));
+
+            }
+            c++;
+        }
+        j++;
+    }
+    snd_close();
+    printf("wrote %i audio-samples from %i data-points\n", i / ngood, j);
+    /* Get rid of the vectors. */
+    return;
+ }
+
+/* Configure sndprint. */
+void
+com_sndparam(wordlist* wl)
+{
+	char* copypath;
+	int i = 0;
+	char* file = NULL;
+	int srate = 48000;
+	int fmt = -1;
+	double mult = 1.0;
+	double off = 0.0;
+	int oversampling = 64;
+
+	while (wl) {
+		copypath = cp_unquote(wl->wl_word);
+		switch (++i) {
+		case 1:
+			file = strdup(copypath);
+			break;
+		case 2:
+			srate = atoi(copypath);
+			break;
+		case 3:
+			fmt = snd_format(copypath);
+			break;
+		case 4:
+			mult = atof(copypath);
+			break;
+		case 5:
+			off = atof(copypath);
+			break;
+		case 6:
+			oversampling = atoi(copypath);
+			break;
+		default:
+			printf("Warning: unknown argument\n");
+
+		}
+		tfree(copypath);
+		wl = wl->wl_next;
+
+	}
+
+	if (file)
+		snd_configure(file, srate, fmt, mult, off, oversampling);
+	return;
 }
 
 
