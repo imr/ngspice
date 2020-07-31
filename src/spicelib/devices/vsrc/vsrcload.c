@@ -12,6 +12,7 @@ Modified: 2000 AlansFixes
 #include "ngspice/suffix.h"
 #include "ngspice/1-f-code.h"
 #include "ngspice/compatmode.h"
+#include "vsjack.h"
 
 #ifdef XSPICE_EXP
 /* gtri - begin - wbk - modify for supply ramping option */
@@ -420,6 +421,12 @@ VNoi3 3 0  DC 0 TRNOISE(0 0 0 0 15m 22u 50u) : generate RTS noise
                         /* DC value */
                         if(here -> VSRCdcGiven)
                             value += here->VSRCdcValue;
+                    }
+                    break;
+
+                    case SOUND: {
+                        value = here->VSRCcoeffs[2] * vsjack_get_value((int)here->VSRCcoeffs[0], time, here->VSRCcoeffs[3], (int)rint(here->VSRCcoeffs[4]), rint(here->VSRCcoeffs[5]));
+                        value += here->VSRCcoeffs[1];
                     }
                     break;
 
