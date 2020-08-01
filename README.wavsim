@@ -24,7 +24,8 @@ in the Visual Studio 2019 Developer Command Prompt.
 The usage is described in
 http://gareus.org/oss/spicesound/start
 
-A complete package for Windows will be made available from the ngspice web pages.
+A complete package for Windows is available at
+http://ngspice.sourceforge.net/download.html#wav .
 Test on Linux and macOS will follow.
 
 
