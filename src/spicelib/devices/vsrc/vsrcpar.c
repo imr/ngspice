@@ -290,7 +290,7 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
         case VSRC_SOUND: {
             here->VSRCfunctionType = SOUND;
             here->VSRCfuncTGiven = TRUE;
-            here->VSRCcoeffs = value->v.vec.rVec;
+            copy_coeffs(here, value);
             here->VSRCcoeffsGiven = TRUE;
             vsjack_open(-1); // initialize
             if (jfile) {
