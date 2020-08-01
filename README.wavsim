@@ -1,0 +1,30 @@
+This branch, based on ngspice-32+ from pre-master branch on 25.07.2020,
+contains functions to read, simulate and output wav audio files.
+
+The origin of the code stems from
+http://gareus.org/oss/spicesound/start
+http://gareus.org/oss/spicesound/examples
+mady by Robin Gareus, enhanced by Hannu Vuolasaho at
+https://sourceforge.net/p/ngspice/patches/13/
+
+It uses the external libraries libsndfile and libsamplerate-0.1.9.
+
+The current setup has been tested only with MSVC 2019 on Windows 10.
+
+libsndfile has been downloaded from http://www.mega-nerd.com/libsndfile/ as
+http://www.mega-nerd.com/libsndfile/files/libsndfile-1.0.28-w64-setup.exe
+
+libsamplerate-0.1.9 has been downloaded from http://www.mega-nerd.com/SRC/download.html as
+http://www.mega-nerd.com/SRC/libsamplerate-0.1.9.tar.gz, and compiled
+with mingw gcc 10.2 for 64 bit Windows 10. libsamplerate.lib has been created 
+from libsamplerate.def by command
+lib /def:libsamplerate-0.def /out:libsamplerate-0.lib /machine:x64
+in the Visual Studio 2019 Developer Command Prompt.
+
+The usage is described in
+http://gareus.org/oss/spicesound/start
+
+A complete package for Windows will be made available from the ngspice web pages.
+Test on Linux and macOS will follow.
+
+
