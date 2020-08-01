@@ -23,8 +23,8 @@ static void* my_open_aliki(char* fn, int nchannel) {
 	char p[HDRSIZE];
 	FILE* aldfile;
 	if ((aldfile = fopen(fn, "w")) == 0) {
-		printf("Error: Not able to open output file '%s'\n", fn);
-		exit(1);
+		fprintf(stderr, "Error: Not able to open output file '%s'\n", fn);
+		controlled_exit(1);
 	}
 
 	strcpy(p, "aliki");
@@ -42,9 +42,9 @@ static void* my_open_aliki(char* fn, int nchannel) {
 
 	memset(p + 48, 0, HDRSIZE - 48);
 	if (fwrite(p, 1, HDRSIZE, aldfile) != HDRSIZE) {
-		printf("Error: Not able to write aliki header to '%s'\n", fn);
+		fprintf(stderr, "Error: Not able to write aliki header to '%s'\n", fn);
 		fclose(aldfile);
-		exit(1);
+		controlled_exit(1);
 	}
 	return ((void*)aldfile);
 }
@@ -81,8 +81,8 @@ static void* my_open_sf(char* fn, int nchannel) {
 	d->sf_buf = calloc(nchannel, sizeof(float));
 
 	if ((d->outfile = sf_open(fn, SFM_WRITE, &sfinfo)) == NULL) {
-		printf("Error: Not able to open output file '%s'\n", fn);
-		exit(1);
+		fprintf(stderr, "Error: Not able to open output file '%s'\n", fn);
+		controlled_exit(1);
 	}
 
 #if 1
