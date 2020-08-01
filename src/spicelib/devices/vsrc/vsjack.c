@@ -9,28 +9,28 @@
 #include <inttypes.h>
 #define VS_BUFSIZ 1024
 
-#include "ngspice/ngspice.h""
+#include "ngspice/ngspice.h"
 
 #define MAX_D 6 
-char* (sources[MAX_D]);
+static char* (sources[MAX_D]);
 
-SNDFILE* m_sndfile[MAX_D];
-int m_channels[MAX_D]; //< number of channles in src-file
-uint32_t m_samplerate[MAX_D]; //< samplerate of source
-uint32_t m_frames[MAX_D]; //< duration of source in frames
-float* (interleaved[MAX_D]); //< internal soundfile buffer
-uint32_t ilb_start[MAX_D]; //< first sample in buffer 
-uint32_t ilb_end[MAX_D]; //< last sample in buffer
+static SNDFILE* m_sndfile[MAX_D];
+static int m_channels[MAX_D]; //< number of channles in src-file
+static uint32_t m_samplerate[MAX_D]; //< samplerate of source
+static uint32_t m_frames[MAX_D]; //< duration of source in frames
+static float* (interleaved[MAX_D]); //< internal soundfile buffer
+static uint32_t ilb_start[MAX_D]; //< first sample in buffer 
+static uint32_t ilb_end[MAX_D]; //< last sample in buffer
 
 #define HAVE_SRC
 
 #ifdef HAVE_SRC
 #include <samplerate.h>
-double src_ratio = 64.0;
-#define SRC_RATIO src_ratio
-SRC_STATE* rabbit[MAX_D];
-int rabbit_err[MAX_D];
-float* (resampled[MAX_D]); //< internal soundfile buffer
+static double src_ratio = 64.0;
+#define SRC_RATIO 64
+static SRC_STATE* rabbit[MAX_D];
+static int rabbit_err[MAX_D];
+static float* (resampled[MAX_D]); //< internal soundfile buffer
 #endif
 
 void vsjack_initialize(void) {
@@ -102,7 +102,7 @@ void load_buffer(int d, uint32_t sample) {
 	sf_seek(m_sndfile[d], sample, SEEK_SET);
 	ilb_start[d] = sample;
 	uint32_t nframes;
-	if ((nframes = sf_readf_float(m_sndfile[d], (interleaved[d]), VS_BUFSIZ)) > 0) {
+	if ((nframes = (uint32_t)sf_readf_float(m_sndfile[d], (interleaved[d]), VS_BUFSIZ)) > 0) {
 		ilb_end[d] = ilb_start[d] + nframes;
 	}
 	else {
@@ -139,7 +139,7 @@ double get_value(int d, double time, int channel) {
 	}
 
 #ifdef HAVE_SRC
-	int offset = floor((sample - ilb_start[d]) * SRC_RATIO);
+	int offset = (int)floor((sample - ilb_start[d]) * SRC_RATIO);
 	if (offset > VS_BUFSIZ * SRC_RATIO || offset < 0) {
 		printf("value not in buffer:%i.\n", d);
 		return (0.0); // nan ?
