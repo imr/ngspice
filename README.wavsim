@@ -4,7 +4,7 @@ contains functions to read, simulate and output wav audio files.
 The origin of the code stems from
 http://gareus.org/oss/spicesound/start
 http://gareus.org/oss/spicesound/examples
-mady by Robin Gareus, enhanced by Hannu Vuolasaho at
+made by Robin Gareus, enhanced by Hannu Vuolasaho at
 https://sourceforge.net/p/ngspice/patches/13/
 
 It uses the external libraries libsndfile and libsamplerate-0.1.9.
