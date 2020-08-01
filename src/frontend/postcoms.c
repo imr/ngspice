@@ -431,13 +431,16 @@ com_sndprint(wordlist* wl)
 
     if (wl == NULL)
         return;
+
+#ifdef HAS_PROGREP
+    SetAnalyse("Wav out", 0);
+#endif
+
     if (eq(wl->wl_word, "col")) {
         wl = wl->wl_next;
-
     }
     else if (eq(wl->wl_word, "line")) {
         wl = wl->wl_next;
-
     }
 
     ngood = 0;
@@ -452,7 +455,6 @@ com_sndprint(wordlist* wl)
         for (lv = v; lv->v_link2; lv = lv->v_link2)
             ;
         ngood += 1;
-
     }
 
     if (!ngood) return;
@@ -473,14 +475,12 @@ com_sndprint(wordlist* wl)
         for (v = bv; v; v = v->v_link2) {
             if (v->v_length <= j) {
                 i += snd_send(tme, c, 0.0);
-
             }
             else {
                 if (isreal(v))
                     i += snd_send(tme, c, v->v_realdata[j]);
                 else
                     i += snd_send(tme, c, realpart(v->v_compdata[j]));
-
             }
             c++;
         }
