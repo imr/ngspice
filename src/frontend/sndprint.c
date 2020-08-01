@@ -10,16 +10,16 @@
 #include "ngspice/ngspice.h"
 
 
-int o_samplerate = 48000;
-int o_sndfmt = (SF_FORMAT_WAV | SF_FORMAT_PCM_24);
-float o_mult = 1.0;
-float o_off = 0.0;
+static int o_samplerate = 48000;
+static int o_sndfmt = (SF_FORMAT_WAV | SF_FORMAT_PCM_24);
+static float o_mult = 1.0;
+static float o_off = 0.0;
 
 //////////////////////////////////   aliki  //////////////////////////////////
 
 #define HDRSIZE 256
 
-void* my_open_aliki(char* fn, int nchannel) {
+static void* my_open_aliki(char* fn, int nchannel) {
 	char p[HDRSIZE];
 	FILE* aldfile;
 	if ((aldfile = fopen(fn, "w")) == 0) {
@@ -49,11 +49,11 @@ void* my_open_aliki(char* fn, int nchannel) {
 	return ((void*)aldfile);
 }
 
-size_t my_write_aliki(void* d, float val) {
+static size_t my_write_aliki(void* d, float val) {
 	return(fwrite(&val, sizeof(float), 1, (FILE*)d));
 }
 
-void my_close_aliki(void* d) {
+static void my_close_aliki(void* d) {
 	fclose((FILE*)d);
 }
 
@@ -67,8 +67,7 @@ typedef struct {
 	float* sf_buf;
 } SSFILE;
 
-void* my_open_sf(char* fn, int nchannel) {
-
+static void* my_open_sf(char* fn, int nchannel) {
 	SSFILE* d = calloc(1, sizeof(SSFILE));
 	SF_INFO sfinfo;
 
@@ -94,7 +93,7 @@ void* my_open_sf(char* fn, int nchannel) {
 	return ((void*)d);
 }
 
-int my_write_sf(void* d, float val) {
+static int my_write_sf(void* d, float val) {
 	SSFILE* p = (SSFILE*)d;
 	p->sf_buf[p->sf_bptr++] = val;
 	if (p->sf_bptr >= p->sf_channels) {
@@ -104,7 +103,7 @@ int my_write_sf(void* d, float val) {
 	return (1);
 }
 
-void my_close_sf(void* d) {
+static void my_close_sf(void* d) {
 	sf_close(((SSFILE*)d)->outfile);
 	free(((SSFILE*)d)->sf_buf);
 	free((SSFILE*)d);
@@ -121,15 +120,15 @@ typedef struct SP_BUF {
 	double* val;
 } SP_BUF;
 
-void (*p_close)(void*);
-void* (*p_open)(char*, int);
-int  (*p_write)(void*, float);
-void* outfile;
-uint32_t sample;
-int sp_nchannel;
+static void (*p_close)(void*);
+static void* (*p_open)(char*, int);
+static int  (*p_write)(void*, float);
+static void* outfile;
+static uint32_t sample;
+static int sp_nchannel;
 #define SP_MAX (2)
 SP_BUF* sp_buf;
-char* filename = NULL;
+static char* filename = NULL;
 
 #define HAVE_SRC
 
@@ -138,15 +137,15 @@ char* filename = NULL;
 #else
 #include <samplerate.h>
 #define OBUFSIZE 256
-int oversampling = 64;
+static int oversampling = 64;
 #define OVERSAMPLING ((double) oversampling)
-SRC_STATE* rabbit;
-int rabbit_err;
-float* interleaved;
-float* resampled;
-int iptr = 0;
+static SRC_STATE* rabbit;
+static int rabbit_err;
+static float* interleaved;
+static float* resampled;
+static int iptr = 0;
 
-int resample_wrapper(void* d, float val) {
+static int resample_wrapper(void* d, float val) {
 	interleaved[iptr++] = val;
 	size_t ibufsize = sp_nchannel * OBUFSIZE * oversampling;
 	size_t obufsize = sp_nchannel * OBUFSIZE;
