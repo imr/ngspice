@@ -90,7 +90,11 @@ HICUMnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata 
             } else {
                 Isis_Vsis    = 0.0;
             }
-            Ibpbi_Vbpbi  = 1/inst->HICUMrbi;
+            if(inst->HICUMrbi > 0) {
+                Ibpbi_Vbpbi  = 1/inst->HICUMrbi;
+            } else {
+                Ibpbi_Vbpbi  = 0.0;
+            }
 
             switch (operation) {
 
@@ -132,7 +136,7 @@ HICUMnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata 
 
                     NevalSrc(&noizDens[HICUMRBINOIZ],&lnNdens[HICUMRBINOIZ],
                                  ckt,THERMNOISE,inst->HICUMbaseBPNode,inst->HICUMbaseBINode,
-                                 *(ckt->CKTstate0 + inst->HICUMibpbi_Vbpbi));
+                                 Ibpbi_Vbpbi);
 
                     NevalSrc(&noizDens[HICUMRENOIZ],&lnNdens[HICUMRENOIZ],
                                  ckt,THERMNOISE,inst->HICUMemitEINode,inst->HICUMemitNode,
