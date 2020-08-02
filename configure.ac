@@ -822,6 +822,17 @@ if test "x$with_fftw3" != xno; then
          LIBS="$LIBS -lfftw3"])
 fi
 
+AC_CHECK_HEADERS([sndfile.h])
+AC_CHECK_LIB([sndfile], [sf_command],
+        [AC_DEFINE([HAVE_LIBSNDFILE], [], [Have libsndfile])
+         LIBS="$LIBS -lsndfile"])
+
+AC_CHECK_HEADERS([samplerate.h])
+AC_CHECK_LIB([samplerate], [src_process],
+        [AC_DEFINE([HAVE_LIBSAMPLERATE], [], [Have libsamplerate])
+         LIBS="$LIBS -lsamplerate"])
+
+
 # Check for a few mathematical functions:
 AC_CHECK_FUNCS([erfc logb scalb scalbn asinh acosh atanh finite])
 # According POSIX we should look for macros first

@@ -26,6 +26,10 @@ http://gareus.org/oss/spicesound/start
 
 A complete package for Windows is available at
 http://ngspice.sourceforge.net/download.html#wav .
-Test on Linux and macOS will follow.
+
+For Linux you have to install libsamplerate and libsndfile and their development headers.
+./compile_linux.sh will then compile and install ngspice with *.wav capability.
+
+Test on macOS will follow.
 
 

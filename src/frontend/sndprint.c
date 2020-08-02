@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "..\src\misc\getopt_bsd.h"
+#include "../misc/getopt_bsd.h"
 #include <sndfile.h>
 #include <string.h>
 #include <math.h>
