@@ -21,8 +21,6 @@ Spice3 Implementation: 2019 Dietmar Warning
 #include "ngspice/ifsim.h"
 #include "ngspice/suffix.h"
 
-#define MIN_R 0.001
-
 int
 HICUMsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         /* load the HICUM structure with those pointers needed later
@@ -37,8 +35,6 @@ HICUMsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     /*  loop through all the transistor models */
     for( ; model != NULL; model = HICUMnextModel(model)) {
 
-        int selfheat = (((model->HICUMflsh == 1) || (model->HICUMflsh == 2)) && (model->HICUMrthGiven) && (model->HICUMrth > 0.0));
-
 //Circuit simulator specific parameters
         if(model->HICUMtype != NPN && model->HICUMtype != PNP)
             model->HICUMtype = NPN;
@@ -47,7 +43,7 @@ HICUMsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             model->HICUMtnom = ckt->CKTnomTemp;
 
         if (!model->HICUMversionGiven)
-            model->HICUMversion = copy("2.3.4");
+            model->HICUMversion = copy("2.4.0");
 
 //Transfer current
         if(!model->HICUMc10Given)
@@ -156,10 +152,10 @@ HICUMsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
 //Series resistances
         if(!model->HICUMrbi0Given)
-            model->HICUMrbi0 = MIN_R;
+            model->HICUMrbi0 = 0.0;
 
         if(!model->HICUMrbxGiven)
-            model->HICUMrbx = MIN_R;
+            model->HICUMrbx = 0.0;
 
         if(!model->HICUMfgeoGiven)
             model->HICUMfgeo = 0.6557;
@@ -174,10 +170,10 @@ HICUMsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             model->HICUMfqi = 1.0;
 
         if(!model->HICUMreGiven)
-            model->HICUMre = MIN_R;
+            model->HICUMre = 0.0;
 
         if(!model->HICUMrcxGiven)
-            model->HICUMrcx = MIN_R;
+            model->HICUMrcx = 0.0;
 
 //Substrate transistor
         if(!model->HICUMitssGiven)
@@ -197,7 +193,7 @@ HICUMsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
 //Intra-device substrate coupling
         if(!model->HICUMrsuGiven)
-            model->HICUMrsu = MIN_R;
+            model->HICUMrsu = 0.0;
 
         if(!model->HICUMcsuGiven)
             model->HICUMcsu = 0.0;
@@ -449,8 +445,6 @@ HICUMsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 //Self-Heating
         if(!model->HICUMflshGiven)
             model->HICUMflsh = 0;
-        if(!model->HICUMrth_deGiven)
-            model->HICUMrth_de = 0;
 
         if(!model->HICUMrthGiven)
             model->HICUMrth = 0.0;
@@ -471,7 +465,6 @@ HICUMsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if(!model->HICUMflcompGiven)
             model->HICUMflcomp = 0.0;
 
-
         if(!model->HICUMvbeMaxGiven)
             model->HICUMvbeMax = 1e99;
 
@@ -480,6 +473,9 @@ HICUMsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
         if(!model->HICUMvceMaxGiven)
             model->HICUMvceMax = 1e99;
+
+        int selfheat = (((model->HICUMflsh == 1) || (model->HICUMflsh == 2)) && (model->HICUMrthGiven) && (model->HICUMrth > 0.0));
+        int nqs      = ( (model->HICUMflnqs != 0 || model->HICUMflcomp < 2.3) && (model->HICUMalit > 0 || model->HICUMalqf > 0));
 
         /* loop through all the instances of the model */
         for (here = HICUMinstances(model); here != NULL ;
@@ -497,6 +493,63 @@ HICUMsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 here->HICUMdtemp = 0.0;
             }
 
+            // Warning:
+            // The scaling with HICUMm and HICUMarea is done here from model to here variables in order to save memory.
+            // Classical spice scaling with "area" is implemented, but it is not recommended to be used. If you want
+            // scaling, more sophisticated expressions should be used. Those can be found in modern PDKs or should be
+            // provided by modeling engineers.
+            // For discrete devices, the multiplication factor "m" should give reasonable results.
+            //
+            // The HICUMm device multiplicaton factor can be exected to give good results.
+            // The following variables need scaling in HICUM:
+            // IT         : qp0 ~ (area m)**2   qp0 ~ area m  icbar ~ area m
+            // BE junction: cjei0  ~ area m      cjep0 ~ m
+            //              ibeis  ~ area m      ibeps ~ m
+            //              cbepar ~ m -> area scaling not reasonable
+            // BC junction: cjci0 ~ area m      cjcx0 ~ m
+            //              ibcis ~ area m      ibcxs ~ m
+            //              ireis ~ area m      ireps ~ m
+            //              cbcpar ~ m -> area scaling not reasonable
+            //              qavl   ~ area m
+            // re   ~1/(area*m)
+            // rci0 ~1/(area*m)
+            // rbx  ~1/(area*m)  -> assume that scaling with "area" is due to lE0 increase
+            // rcx  ~1/(area*m)  -> assume that scaling with "area" is due to lE0 increase
+            // rbi0 ~1/(area*m)  -> assume that scaling with "area" is due to lE0 increase
+            // rth  ~1/(area*m)  -> bad assumption, but more transistor geometry needs to be known for accurate scaling
+            // cth  ~ area*m     -> bad assumption, but more transistor geometry needs to be known for accurate scaling
+            // Substrate related parameters not scaled on purpose. This is very geometry dependent?
+
+            double area_times_m  = here->HICUMm*here->HICUMarea;
+            //IT
+            here->HICUMqp0_scaled    = model->HICUMqp0   * area_times_m;
+            here->HICUMc10_scaled    = model->HICUMc10   * area_times_m*area_times_m;
+            here->HICUMicbar_scaled  = model->HICUMicbar * area_times_m;
+            here->HICUMrth_scaled    = model->HICUMrth   / area_times_m; //very poor assumption
+            here->HICUMcth_scaled    = model->HICUMcth   * area_times_m; //very poor assumption
+            //BE junction
+            here->HICUMcjei0_scaled  = model->HICUMcjei0  * area_times_m;
+            here->HICUMibeis_scaled  = model->HICUMibeis  * area_times_m;
+            here->HICUMireis_scaled  = model->HICUMireis  * area_times_m;
+            here->HICUMibeps_scaled  = model->HICUMibeps  * here->HICUMm;
+            here->HICUMireps_scaled  = model->HICUMireps  * here->HICUMm;
+            here->HICUMcjep0_scaled  = model->HICUMcjep0  * here->HICUMm;
+            here->HICUMcbepar_scaled = model->HICUMcbepar * here->HICUMm;
+            here->HICUMibets_scaled  = model->HICUMibets  * area_times_m;
+            //BC junction
+            here->HICUMibcis_scaled  = model->HICUMibcis  * area_times_m;
+            here->HICUMcjci0_scaled  = model->HICUMcjci0  * area_times_m;
+            here->HICUMcjcx0_scaled  = model->HICUMcjcx0  * here->HICUMm;
+            here->HICUMcbcpar_scaled = model->HICUMcbcpar * here->HICUMm;
+            here->HICUMibcxs_scaled  = model->HICUMibcxs  * here->HICUMm;
+            here->HICUMqavl_scaled   = model->HICUMqavl   * area_times_m;
+            //resistances
+            here->HICUMre_scaled     = model->HICUMre   / area_times_m;
+            here->HICUMrci0_scaled   = model->HICUMrci0 / area_times_m;
+            here->HICUMrbx_scaled    = model->HICUMrbx  / area_times_m;
+            here->HICUMrcx_scaled    = model->HICUMrcx  / area_times_m;
+            here->HICUMrbi0_scaled   = model->HICUMrbi0 / area_times_m;
+
             here->HICUMstate = *states;
             *states += HICUMnumStates;
 
@@ -507,12 +560,12 @@ HICUMsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 if(error) return(error);
                 here->HICUMcollCINode = tmp->number;
                 if (ckt->CKTcopyNodesets) {
-                  if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
-                     if (tmpNode->nsGiven) {
-                       tmp->nodeset=tmpNode->nodeset;
-                       tmp->nsGiven=tmpNode->nsGiven;
+                    if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
+                        if (tmpNode->nsGiven) {
+                            tmp->nodeset=tmpNode->nodeset;
+                            tmp->nsGiven=tmpNode->nsGiven;
+                        }
                     }
-                  }
                 }
             }
             if(model->HICUMrbx == 0) {
@@ -522,12 +575,12 @@ HICUMsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 if(error) return(error);
                 here->HICUMbaseBPNode = tmp->number;
                 if (ckt->CKTcopyNodesets) {
-                  if (CKTinst2Node(ckt,here,2,&tmpNode,&tmpName)==OK) {
-                     if (tmpNode->nsGiven) {
-                       tmp->nodeset=tmpNode->nodeset;
-                       tmp->nsGiven=tmpNode->nsGiven;
-                     }
-                  }
+                    if (CKTinst2Node(ckt,here,2,&tmpNode,&tmpName)==OK) {
+                        if (tmpNode->nsGiven) {
+                            tmp->nodeset=tmpNode->nodeset;
+                            tmp->nsGiven=tmpNode->nsGiven;
+                        }
+                    }
                 }
             }
             if(model->HICUMre == 0) {
@@ -537,12 +590,12 @@ HICUMsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 if(error) return(error);
                 here->HICUMemitEINode = tmp->number;
                 if (ckt->CKTcopyNodesets) {
-                  if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
-                     if (tmpNode->nsGiven) {
-                       tmp->nodeset=tmpNode->nodeset;
-                       tmp->nsGiven=tmpNode->nsGiven;
-                     }
-                  }
+                    if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
+                        if (tmpNode->nsGiven) {
+                            tmp->nodeset=tmpNode->nodeset;
+                            tmp->nsGiven=tmpNode->nsGiven;
+                        }
+                    }
                 }
             }
             if(model->HICUMrsu == 0) {
@@ -552,46 +605,63 @@ HICUMsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 if(error) return(error);
                 here->HICUMsubsSINode = tmp->number;
                 if (ckt->CKTcopyNodesets) {
-                  if (CKTinst2Node(ckt,here,4,&tmpNode,&tmpName)==OK) {
-                     if (tmpNode->nsGiven) {
-                       tmp->nodeset=tmpNode->nodeset;
-                       tmp->nsGiven=tmpNode->nsGiven;
-                     }
-                  }
+                    if (CKTinst2Node(ckt,here,4,&tmpNode,&tmpName)==OK) {
+                        if (tmpNode->nsGiven) {
+                            tmp->nodeset=tmpNode->nodeset;
+                            tmp->nsGiven=tmpNode->nsGiven;
+                        }
+                    }
                 }
             }
-
-            if(here->HICUMbaseBINode == 0) {
+            if(model->HICUMrbi0 == 0) {
+                here->HICUMbaseBINode = here->HICUMbaseBPNode;
+            } else if(here->HICUMbaseBINode == 0) {
                 error = CKTmkVolt(ckt, &tmp, here->HICUMname, "baseBI");
                 if(error) return(error);
                 here->HICUMbaseBINode = tmp->number;
+                if (ckt->CKTcopyNodesets) {
+                    if (CKTinst2Node(ckt,here,5,&tmpNode,&tmpName)==OK) {
+                        if (tmpNode->nsGiven) {
+                            tmp->nodeset=tmpNode->nodeset;
+                            tmp->nsGiven=tmpNode->nsGiven;
+                        }
+                    }
+                }
             }
 
             if (selfheat) {
-               if (here->HICUMtempNode == 0) {                      // no external node for temperature
-                  error = CKTmkVolt(ckt,&tmp,here->HICUMname,"dT"); // create internal node
-                  if (error) return(error);
-                     here->HICUMtempNode = tmp->number;
-               }
+                if (here->HICUMtempNode == 0) {                       // no external node for temperature
+                    error = CKTmkVolt(ckt,&tmp,here->HICUMname,"dT"); // create internal node
+                    if (error) return(error);
+                        here->HICUMtempNode = tmp->number;
+                }
+            } else {
+                if (here->HICUMtempNode > 0) { // external temp node is given, but no she parameter
+                    here->HICUMtempNode = 0;
+                }
             }
 
-           if(here->HICUMxfNode == 0) {
-               error = CKTmkVolt(ckt, &tmp, here->HICUMname, "xf");
-               if(error) return(error);
-               here->HICUMxfNode = tmp->number;
-           }
-
-           if(here->HICUMxf1Node == 0) {
-               error = CKTmkVolt(ckt, &tmp, here->HICUMname, "xf1");
-               if(error) return(error);
-               here->HICUMxf1Node = tmp->number;
-           }
-
-           if(here->HICUMxf2Node == 0) {
-               error = CKTmkVolt(ckt, &tmp, here->HICUMname, "xf2");
-               if(error) return(error);
-               here->HICUMxf2Node = tmp->number;
-           }
+            if (nqs) {
+                if(here->HICUMxfNode == 0) {
+                    error = CKTmkVolt(ckt, &tmp, here->HICUMname, "xf");
+                    if(error) return(error);
+                    here->HICUMxfNode = tmp->number;
+                }
+                if(here->HICUMxf1Node == 0) {
+                    error = CKTmkVolt(ckt, &tmp, here->HICUMname, "xf1");
+                    if(error) return(error);
+                    here->HICUMxf1Node = tmp->number;
+                }
+                if(here->HICUMxf2Node == 0) {
+                    error = CKTmkVolt(ckt, &tmp, here->HICUMname, "xf2");
+                    if(error) return(error);
+                    here->HICUMxf2Node = tmp->number;
+                }
+            } else {
+                here->HICUMxfNode  = 0;
+                here->HICUMxf1Node = 0;
+                here->HICUMxf2Node = 0;
+            }
 
 /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
@@ -640,6 +710,10 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
 
             TSTALLOC(HICUMbaseBIEmitEIPtr,HICUMbaseBINode,HICUMemitEINode); //ei-bi
             TSTALLOC(HICUMemitEIBaseBIPtr,HICUMemitEINode,HICUMbaseBINode); //bi-ei
+            if (nqs) {
+                TSTALLOC(HICUMbaseBIXfPtr    ,HICUMbaseBINode,HICUMxfNode); //bi - xf
+                TSTALLOC(HICUMemitEIXfPtr    ,HICUMemitEINode,HICUMxfNode); //ei - xf
+            }
 
             TSTALLOC(HICUMbaseBICollCIPtr,HICUMbaseBINode,HICUMcollCINode); //ci-bi
             TSTALLOC(HICUMcollCIBaseBIPtr,HICUMcollCINode,HICUMbaseBINode); //bi-ci
@@ -656,27 +730,30 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
             TSTALLOC(HICUMsubsCollPtr,HICUMsubsNode,HICUMcollNode); //s-c
             TSTALLOC(HICUMcollSubsPtr,HICUMcollNode,HICUMsubsNode); //c-s
 
-            TSTALLOC(HICUMxf1Xf1Ptr   ,HICUMxf1Node   ,HICUMxf1Node);
-            TSTALLOC(HICUMxf1TempPtr  ,HICUMxf1Node   ,HICUMtempNode);
-            TSTALLOC(HICUMxf1BaseBIPtr,HICUMxf1Node   ,HICUMbaseBINode);
-            TSTALLOC(HICUMxf1EmitEIPtr,HICUMxf1Node   ,HICUMemitEINode);
-            TSTALLOC(HICUMxf1CollCIPtr,HICUMxf1Node   ,HICUMcollCINode);
-            TSTALLOC(HICUMxf1Xf2Ptr   ,HICUMxf1Node   ,HICUMxf2Node);
+            if (nqs) {
+                TSTALLOC(HICUMxf1Xf1Ptr   ,HICUMxf1Node   ,HICUMxf1Node);
+                TSTALLOC(HICUMxf1BaseBIPtr,HICUMxf1Node   ,HICUMbaseBINode);
+                TSTALLOC(HICUMxf1EmitEIPtr,HICUMxf1Node   ,HICUMemitEINode);
+                TSTALLOC(HICUMxf1CollCIPtr,HICUMxf1Node   ,HICUMcollCINode);
+                TSTALLOC(HICUMxf1Xf2Ptr   ,HICUMxf1Node   ,HICUMxf2Node);
 
-            TSTALLOC(HICUMxf2Xf1Ptr   ,HICUMxf2Node   ,HICUMxf1Node);
-            TSTALLOC(HICUMxf2TempPtr  ,HICUMxf2Node   ,HICUMtempNode);
-            TSTALLOC(HICUMxf2BaseBIPtr,HICUMxf2Node   ,HICUMbaseBINode);
-            TSTALLOC(HICUMxf2EmitEIPtr,HICUMxf2Node   ,HICUMemitEINode);
-            TSTALLOC(HICUMxf2CollCIPtr,HICUMxf2Node   ,HICUMcollCINode);
-            TSTALLOC(HICUMxf2Xf2Ptr   ,HICUMxf2Node   ,HICUMxf2Node);
-            TSTALLOC(HICUMemitEIXf2Ptr,HICUMemitEINode,HICUMxf2Node);
-            TSTALLOC(HICUMcollCIXf2Ptr,HICUMcollCINode,HICUMxf2Node);
+                TSTALLOC(HICUMxf2Xf1Ptr   ,HICUMxf2Node   ,HICUMxf1Node);
+                TSTALLOC(HICUMxf2BaseBIPtr,HICUMxf2Node   ,HICUMbaseBINode);
+                TSTALLOC(HICUMxf2EmitEIPtr,HICUMxf2Node   ,HICUMemitEINode);
+                TSTALLOC(HICUMxf2CollCIPtr,HICUMxf2Node   ,HICUMcollCINode);
+                TSTALLOC(HICUMxf2Xf2Ptr   ,HICUMxf2Node   ,HICUMxf2Node);
+                TSTALLOC(HICUMemitEIXf2Ptr,HICUMemitEINode,HICUMxf2Node);
+                TSTALLOC(HICUMcollCIXf2Ptr,HICUMcollCINode,HICUMxf2Node);
 
-            TSTALLOC(HICUMxfXfPtr     ,HICUMxfNode,HICUMxfNode);
-            TSTALLOC(HICUMxfTempPtr   ,HICUMxfNode,HICUMtempNode);
-            TSTALLOC(HICUMxfEmitEIPtr ,HICUMxfNode,HICUMemitEINode);
-            TSTALLOC(HICUMxfCollCIPtr ,HICUMxfNode,HICUMcollCINode);
-            TSTALLOC(HICUMxfBaseBIPtr ,HICUMxfNode,HICUMbaseBINode);
+                TSTALLOC(HICUMxfXfPtr     ,HICUMxfNode,HICUMxfNode);
+                TSTALLOC(HICUMxfEmitEIPtr ,HICUMxfNode,HICUMemitEINode);
+                TSTALLOC(HICUMxfCollCIPtr ,HICUMxfNode,HICUMcollCINode);
+                TSTALLOC(HICUMxfBaseBIPtr ,HICUMxfNode,HICUMbaseBINode);
+
+            }
+
+            TSTALLOC(HICUMbaseBPSubsSIPtr ,HICUMbaseBPNode,HICUMsubsSINode);
+            TSTALLOC(HICUMsubsSIBaseBPPtr ,HICUMsubsSINode,HICUMbaseBPNode);
 
             if (selfheat) {
                 TSTALLOC(HICUMcollTempPtr, HICUMcollNode, HICUMtempNode);
@@ -688,6 +765,8 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
                 TSTALLOC(HICUMbaseBPtempPtr,HICUMbaseBPNode,HICUMtempNode);
                 TSTALLOC(HICUMemitEItempPtr,HICUMemitEINode,HICUMtempNode);
                 TSTALLOC(HICUMsubsSItempPtr,HICUMsubsSINode,HICUMtempNode);
+                TSTALLOC(HICUMsubsTempPtr  ,HICUMsubsNode  ,HICUMtempNode);
+                TSTALLOC(HICUMcollTempPtr  ,HICUMcollNode  ,HICUMtempNode);
 
                 TSTALLOC(HICUMtempCollPtr,HICUMtempNode,HICUMcollNode);
                 TSTALLOC(HICUMtempBasePtr,HICUMtempNode,HICUMbaseNode);
@@ -700,7 +779,13 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
                 TSTALLOC(HICUMtempSubsSIPtr,HICUMtempNode,HICUMsubsSINode);
 
                 TSTALLOC(HICUMtempTempPtr,HICUMtempNode,HICUMtempNode);
-            } 
+
+                if (nqs) {
+                    TSTALLOC(HICUMxfTempPtr   ,HICUMxfNode,HICUMtempNode);
+                    TSTALLOC(HICUMxf2TempPtr  ,HICUMxf2Node   ,HICUMtempNode);
+                    TSTALLOC(HICUMxf1TempPtr  ,HICUMxf1Node   ,HICUMtempNode);
+                }
+           }
         }
     }
     return(OK);
@@ -718,52 +803,57 @@ HICUMunsetup(
         model = HICUMnextModel(model))
     {
         int selfheat = (((model->HICUMflsh == 1) || (model->HICUMflsh == 2)) && (model->HICUMrthGiven) && (model->HICUMrth > 0.0));
+        int nqs      = ( (model->HICUMflnqs != 0 || model->HICUMflcomp < 2.3) && (model->HICUMalit > 0 || model->HICUMalqf > 0));
 
         for (here = HICUMinstances(model); here != NULL;
                 here=HICUMnextInstance(here))
         {
-            if (here->HICUMbaseBINode > 0)
+            if (here->HICUMcollCINode > 0
+                && here->HICUMcollCINode != here->HICUMcollNode)
+                CKTdltNNum(ckt, here->HICUMcollCINode);
+            here->HICUMcollCINode = 0;
+
+            if (here->HICUMbaseBINode > 0
+                && here->HICUMbaseBPNode != here->HICUMbaseBINode)
                 CKTdltNNum(ckt, here->HICUMbaseBINode);
             here->HICUMbaseBINode = 0;
-
-            if (here->HICUMsubsSINode > 0
-                && here->HICUMsubsSINode != here->HICUMsubsNode)
-                CKTdltNNum(ckt, here->HICUMsubsSINode);
-            here->HICUMsubsSINode = 0;
-
-            if (here->HICUMemitEINode > 0
-                && here->HICUMemitEINode != here->HICUMemitNode)
-                CKTdltNNum(ckt, here->HICUMemitEINode);
-            here->HICUMemitEINode = 0;
 
             if (here->HICUMbaseBPNode > 0
                 && here->HICUMbaseBPNode != here->HICUMbaseNode)
                 CKTdltNNum(ckt, here->HICUMbaseBPNode);
             here->HICUMbaseBPNode = 0;
 
-            if (here->HICUMcollCINode > 0
-                && here->HICUMcollCINode != here->HICUMcollNode)
-                CKTdltNNum(ckt, here->HICUMcollCINode);
-            here->HICUMcollCINode = 0;
+            if (here->HICUMemitEINode > 0
+                && here->HICUMemitEINode != here->HICUMemitNode)
+                CKTdltNNum(ckt, here->HICUMemitEINode);
+            here->HICUMemitEINode = 0;
+
+            if (here->HICUMsubsSINode > 0
+                && here->HICUMsubsSINode != here->HICUMsubsNode)
+                CKTdltNNum(ckt, here->HICUMsubsSINode);
+            here->HICUMsubsSINode = 0;
 
             if (selfheat) {
-                if (here->HICUMtempNode > 5) { // it is an internal node
+                if (here->HICUMtempNode > 6) { // it is an internal node
                      CKTdltNNum(ckt, here->HICUMtempNode);
                      here->HICUMtempNode = 0;
                 }
             }
 
-           if(here->HICUMxfNode > 0)
-               CKTdltNNum(ckt, here->HICUMxfNode);
-           here->HICUMxfNode = 0;
+            if (nqs) {
 
-           if(here->HICUMxf1Node > 0)
-               CKTdltNNum(ckt, here->HICUMxf1Node);
-           here->HICUMxf1Node = 0;
+                if(here->HICUMxfNode > 0)
+                    CKTdltNNum(ckt, here->HICUMxfNode);
+                here->HICUMxfNode = 0;
 
-           if(here->HICUMxf2Node > 0)
-               CKTdltNNum(ckt, here->HICUMxf2Node);
-           here->HICUMxf2Node = 0;
+                if(here->HICUMxf1Node > 0)
+                    CKTdltNNum(ckt, here->HICUMxf1Node);
+                here->HICUMxf1Node = 0;
+
+                if(here->HICUMxf2Node > 0)
+                    CKTdltNNum(ckt, here->HICUMxf2Node);
+                here->HICUMxf2Node = 0;
+            }
 
         }
     }

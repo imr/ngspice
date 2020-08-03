@@ -461,9 +461,6 @@ HICUMmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
         case HICUM_MOD_FLSH:
             value->iValue = model->HICUMflsh;
             return(OK);
-        case HICUM_MOD_RTH_DE:
-            value->iValue = model->HICUMrth_de;
-            return(OK);
         case HICUM_MOD_RTH:
             value->rValue = model->HICUMrth;
             return(OK);

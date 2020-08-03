@@ -38,6 +38,19 @@ using namespace duals::literals;
 #define TMIN -100.0
 #define LN_EXP_LIMIT 11.0
 
+duals::duald clip_temperature(duals::duald T){
+    // smooth clipping function for device temperature, if self heating increases temperature beyond
+    // T0+TMAX or below T0-TMIN
+    duals::duald Tdev;
+    Tdev = T;
+    if (T<(TMIN+CONSTCtoK+1.0)){
+        Tdev = TMIN+CONSTCtoK+exp(T-TMIN+CONSTCtoK-1.0);
+    } else if (T>(TMAX+CONSTCtoK-1.0)) {
+        Tdev = TMAX+CONSTCtoK-exp(TMAX+CONSTCtoK-T-1.0);
+    };
+    return Tdev;
+};
+
 void TMPHICJ(double , double , double , double , double ,
              double , double , double , double , double , double ,
              double *, double *, double *);
@@ -120,14 +133,14 @@ HICUMtemp(GENmodel *inModel, CKTcircuit *ckt)
 
             if(here->HICUMdtempGiven) here->HICUMtemp = here->HICUMtemp + here->HICUMdtemp;
 
-            iret = hicum_thermal_update(model, here, here -> HICUMtemp);
+            iret = hicum_thermal_update(model, here, &here -> HICUMtemp, &here->HICUMtemp_Vrth);
 
         }
     }
     return(OK);
 }
 
-int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double HICUMTemp)
+int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double * HICUMTemp, double * Tdev_Vrth)
 {
     HICUMmodel *model = (HICUMmodel *)inModel;
     HICUMinstance *here = (HICUMinstance *)inInstance;
@@ -139,7 +152,6 @@ int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double 
     double cratio_t_real, cratio_t_dual;
     double Tnom, zetatef, cjcx01, cjcx02, C_1;
     duals::duald cjei0_t, vdei_t, cjep0_t, vdep_t;
-    // double cjci0_t, vdci_t, vptci_t, cjep0_t, vdep_t, ajep_t, vdcx_t, vptcx_t, cscp0_t, vdsp_t, vptsp_t, cjs0_t, vds_t, vpts_t;
 
     Tnom    = model->HICUMtnom;
     k10     = model->HICUMf1vg*Tnom*log(Tnom);
@@ -158,16 +170,30 @@ int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double 
     zetabcxt= mg+1-model->HICUMzetacx;
     zetasct = mg-1.5;
 
-    // Limit temperature to avoid FPEs in equations
-    if(HICUMTemp < TMIN + CONSTCtoK) {
-        HICUMTemp = TMIN + CONSTCtoK;
-    } else {
-        if (HICUMTemp > TMAX + CONSTCtoK) {
-            HICUMTemp = TMAX + CONSTCtoK;
-        }
-    }
-    temp = HICUMTemp+1_e;    //dual number valued temperature
-    vt   = temp*CONSTKoverQ; // dual valued temperature voltage
+
+
+    // Smooth ngspice T clipping
+    temp = clip_temperature( *(HICUMTemp)+1_e );
+    *(HICUMTemp) = temp.rpart();
+    *(Tdev_Vrth) = temp.dpart();
+
+    // original HICUM clipping for Tdev => left here for reference
+    // *(Tdev_Vrth) = 1.0;
+    // if(*(HICUMTemp) < TMIN + CONSTCtoK) {
+    //     *(HICUMTemp) = TMIN + CONSTCtoK;
+    //     *(Tdev_Vrth) = 0.0;
+    // } else {
+    //     if (*(HICUMTemp) > TMAX + CONSTCtoK) {
+    //         *(HICUMTemp) = TMAX + CONSTCtoK;
+    //         *(Tdev_Vrth) = 0.0;
+    //     }
+    //}
+
+    //This routine calculate the derivative with respect to Vrth. Since at some point
+    // Tdev becomes constant (see above), we need to account for this like below.
+    //temp = *(HICUMTemp)+1_e* *(Tdev_Vrth);    // dual number device temperature
+
+    vt   = temp*CONSTKoverQ;                  // dual valued temperature voltage
 
     here->HICUMvt0     = Tnom * CONSTKoverQ;
     here->HICUMvt.rpart = vt.rpart();
@@ -183,12 +209,12 @@ int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double 
     vgbe_t  = (vgb_t+vge_t)/2;
 
     here->HICUMtVcrit = here->HICUMvt.rpart *
-             log(here->HICUMvt.rpart / (CONSTroot2*model->HICUMibeis*here->HICUMarea*here->HICUMm));
+             log(here->HICUMvt.rpart / (CONSTroot2*here->HICUMibeis_scaled));
 
     //Internal b-e junction capacitance
-    // TMPHICJ(here->HICUMvt0,here->HICUMvt,here->HICUMqtt0,here->HICUMln_qtt0,here->HICUMmg,model->HICUMcjei0,model->HICUMvdei,model->HICUMzei,model->HICUMajei,1,vgbe0,&here->HICUMcjei0_t,&here->HICUMvdei_t,&here->HICUMajei_t);
+    // TMPHICJ(here->HICUMvt0,here->HICUMvt,here->HICUMqtt0,here->HICUMln_qtt0,here->HICUMmg,cjei0_scaled,model->HICUMvdei,model->HICUMzei,model->HICUMajei,1,vgbe0,&here->HICUMcjei0_t,&here->HICUMvdei_t,&here->HICUMajei_t);
     hicum_TMPHICJ(vt, here->HICUMvt0, qtt0, ln_qtt0, mg,
-                  model->HICUMcjei0, model->HICUMvdei, model->HICUMzei, model->HICUMajei, 1, vgbe0,
+                  here->HICUMcjei0_scaled, model->HICUMvdei, model->HICUMzei, model->HICUMajei, 1, vgbe0,
                   &here->HICUMcjei0_t.rpart, &here->HICUMvdei_t.rpart, &here->HICUMajei_t.rpart,
                   &here->HICUMcjei0_t.dpart, &here->HICUMvdei_t.dpart, &here->HICUMajei_t.dpart);
     cjei0_t.rpart(here->HICUMcjei0_t.rpart);
@@ -196,39 +222,39 @@ int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double 
     vdei_t.rpart(here->HICUMvdei_t.rpart);
     vdei_t.dpart(here->HICUMvdei_t.dpart);
 
-    if (model->HICUMflcomp == 0.0 || model->HICUMflcomp == 2.1) {
+    if (model->HICUMflcomp < 2.3) {
         duals::duald V_gT, r_VgVT, k;
         V_gT     = 3.0*vt*ln_qtt0 + model->HICUMvgb*(qtt0-1.0);
         r_VgVT   = V_gT/vt;
         //Internal b-e diode saturation currents
         a = model->HICUMmcf*r_VgVT/model->HICUMmbei - model->HICUMalb*dT;
-        a = model->HICUMibeis*exp(a);
+        a = here->HICUMibeis_scaled*exp(a);
         here->HICUMibeis_t.rpart = a.rpart();
         here->HICUMibeis_t.dpart = a.dpart();
 
         a = model->HICUMmcf*r_VgVT/model->HICUMmrei - model->HICUMalb*dT;
-        a = model->HICUMireis*exp(a);
+        a = here->HICUMireis_scaled*exp(a);
         here->HICUMireis_t.rpart = a.rpart();
         here->HICUMireis_t.dpart = a.dpart();
 
         //Peripheral b-e diode saturation currents
         a = model->HICUMmcf*r_VgVT/model->HICUMmbep - model->HICUMalb*dT;
-        a = model->HICUMibeps*exp(a);
+        a = here->HICUMibeps_scaled*exp(a);
         here->HICUMibeps_t.rpart = a.rpart();
         here->HICUMibeps_t.dpart = a.dpart();
 
         a = model->HICUMmcf*r_VgVT/model->HICUMmrep - model->HICUMalb*dT;
-        a = model->HICUMireps*exp(a);
+        a = here->HICUMireps_scaled*exp(a);
         here->HICUMireps_t.rpart = a.rpart();
         here->HICUMireps_t.dpart = a.dpart();
         //Internal b-c diode saturation current
         a = r_VgVT/model->HICUMmbci;
-        a = model->HICUMibcis*exp(a);
+        a = here->HICUMibcis_scaled*exp(a);
         here->HICUMibcis_t.rpart = a.rpart();
         here->HICUMibcis_t.dpart = a.dpart();
         //External b-c diode saturation currents
         a = r_VgVT/model->HICUMmbcx;
-        a = model->HICUMibcxs*exp(a);
+        a = here->HICUMibcxs_scaled*exp(a);
         here->HICUMibcxs_t.rpart = a.rpart();
         here->HICUMibcxs_t.dpart = a.dpart();
         //Saturation transfer current for substrate transistor
@@ -243,7 +269,7 @@ int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double 
         here->HICUMiscs_t.dpart = a.dpart();
         //Zero bias hole charge
         a = vdei_t/model->HICUMvdei;
-        a = model->HICUMqp0*(1.0+0.5*model->HICUMzei*(1.0-a));
+        a = here->HICUMqp0_scaled*(1.0+0.5*model->HICUMzei*(1.0-a));
         here->HICUMqp0_t.rpart = a.rpart();
         here->HICUMqp0_t.dpart = a.dpart();
         //Voltage separating ohmic and saturation velocity regime
@@ -263,33 +289,33 @@ int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double 
         here->HICUMtef0_t.dpart = a.dpart();
     } else {
         //Internal b-e diode saturation currents
-        a = model->HICUMibeis*exp(model->HICUMzetabet*ln_qtt0+model->HICUMvge/vt*(qtt0-1));
+        a = here->HICUMibeis_scaled*exp(model->HICUMzetabet*ln_qtt0+model->HICUMvge/vt*(qtt0-1));
         here->HICUMibeis_t.rpart = a.rpart();
         here->HICUMibeis_t.dpart = a.dpart();
         if (model->HICUMflcomp>=2.3) {
-            a = model->HICUMireis*exp(mg/model->HICUMmrei*ln_qtt0+vgbe0/(model->HICUMmrei*vt)*(qtt0-1));
+            a = here->HICUMireis_scaled*exp(mg/model->HICUMmrei*ln_qtt0+vgbe0/(model->HICUMmrei*vt)*(qtt0-1));
         } else {
-            a = model->HICUMireis*exp(0.5*mg*ln_qtt0+0.5*vgbe0/vt*(qtt0-1));
+            a = here->HICUMireis_scaled*exp(0.5*mg*ln_qtt0+0.5*vgbe0/vt*(qtt0-1));
         }
         here->HICUMireis_t.rpart = a.rpart();
         here->HICUMireis_t.dpart = a.dpart();
         //Peripheral b-e diode saturation currents
-        a = model->HICUMibeps*exp(model->HICUMzetabet*ln_qtt0+model->HICUMvge/vt*(qtt0-1));
+        a = here->HICUMibeps_scaled*exp(model->HICUMzetabet*ln_qtt0+model->HICUMvge/vt*(qtt0-1));
         here->HICUMibeps_t.rpart = a.rpart();
         here->HICUMibeps_t.dpart = a.dpart();
         if (model->HICUMflcomp>=2.3) {
-            a = model->HICUMireps*exp(mg/model->HICUMmrep*ln_qtt0+vgbe0/(model->HICUMmrep*vt)*(qtt0-1));
+            a = here->HICUMireps_scaled*exp(mg/model->HICUMmrep*ln_qtt0+vgbe0/(model->HICUMmrep*vt)*(qtt0-1));
         } else {
-            a = model->HICUMireps*exp(0.5*mg*qtt0+0.5*vgbe0/vt*(qtt0-1));
+            a = here->HICUMireps_scaled*exp(0.5*mg*qtt0+0.5*vgbe0/vt*(qtt0-1));
         }
         here->HICUMireps_t.rpart = a.rpart();
         here->HICUMireps_t.dpart = a.dpart();
         //Internal b-c diode saturation currents
-        a = model->HICUMibcis*exp(zetabci*ln_qtt0+model->HICUMvgc/vt*(qtt0-1));
+        a = here->HICUMibcis_scaled*exp(zetabci*ln_qtt0+model->HICUMvgc/vt*(qtt0-1));
         here->HICUMibcis_t.rpart = a.rpart();
         here->HICUMibcis_t.dpart = a.dpart();
         //External b-c diode saturation currents
-        a = model->HICUMibcxs*exp(zetabcxt*ln_qtt0+model->HICUMvgc/vt*(qtt0-1));
+        a = here->HICUMibcxs_scaled*exp(zetabcxt*ln_qtt0+model->HICUMvgc/vt*(qtt0-1));
         here->HICUMibcxs_t.rpart = a.rpart();
         here->HICUMibcxs_t.dpart = a.dpart();
         //Saturation transfer current for substrate transistor
@@ -302,7 +328,7 @@ int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double 
         here->HICUMiscs_t.dpart = a.dpart();
         //Zero bias hole charge
         a = exp(model->HICUMzei*log(vdei_t/model->HICUMvdei));
-        a = model->HICUMqp0*(2.0-a);
+        a = here->HICUMqp0_scaled*(2.0-a);
         here->HICUMqp0_t.rpart = a.rpart();
         here->HICUMqp0_t.dpart = a.dpart();
         //Voltage separating ohmic and saturation velocity regime
@@ -322,12 +348,12 @@ int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double 
     }
 
     //GICCR prefactor
-    a = model->HICUMc10*exp(model->HICUMzetact*ln_qtt0+model->HICUMvgb/vt*(qtt0-1));
+    a = here->HICUMc10_scaled*exp(model->HICUMzetact*ln_qtt0+model->HICUMvgb/vt*(qtt0-1));
     here->HICUMc10_t.rpart = a.rpart();
     here->HICUMc10_t.dpart = a.dpart();
 
     // Low-field internal collector resistance
-    a = model->HICUMrci0*exp(model->HICUMzetaci*ln_qtt0);
+    a = here->HICUMrci0_scaled*exp(model->HICUMzetaci*ln_qtt0);
     here->HICUMrci0_t.rpart = a.rpart();
     here->HICUMrci0_t.dpart = a.dpart();
 
@@ -337,9 +363,9 @@ int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double 
     here->HICUMvces_t.dpart = a.dpart();
 
     //Internal b-c junction capacitance
-    // TMPHICJ(here->HICUMvt0,here->HICUMvt,here->HICUMqtt0,here->HICUMln_qtt0,here->HICUMmg,model->HICUMcjci0,model->HICUMvdci,model->HICUMzci,model->HICUMvptci,0,vgbc0,&cjci0_t,&vdci_t,&vptci_t);
+    // TMPHICJ(here->HICUMvt0,here->HICUMvt,here->HICUMqtt0,here->HICUMln_qtt0,here->HICUMmg,cjci0_scaled,model->HICUMvdci,model->HICUMzci,model->HICUMvptci,0,vgbc0,&cjci0_t,&vdci_t,&vptci_t);
     hicum_TMPHICJ(vt, here->HICUMvt0, qtt0, ln_qtt0, mg,
-                  model->HICUMcjci0, model->HICUMvdci, model->HICUMzci, model->HICUMvptci, 0, vgbc0,
+                  here->HICUMcjci0_scaled, model->HICUMvdci, model->HICUMzci, model->HICUMvptci, 0, vgbc0,
                   &here->HICUMcjci0_t.rpart, &here->HICUMvdci_t.rpart, &here->HICUMvptci_t.rpart,
                   &here->HICUMcjci0_t.dpart, &here->HICUMvdci_t.dpart, &here->HICUMvptci_t.dpart);
 
@@ -357,7 +383,7 @@ int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double 
     a = model->HICUMfavl*exp(model->HICUMalfav*dT);
     here->HICUMfavl_t.rpart = a.rpart();
     here->HICUMfavl_t.dpart = a.dpart();
-    a = model->HICUMqavl*exp(model->HICUMalqav*dT);
+    a = here->HICUMqavl_scaled*exp(model->HICUMalqav*dT);
     here->HICUMqavl_t.rpart = a.rpart();
     here->HICUMqavl_t.dpart = a.dpart();
     a = model->HICUMkavl*exp(model->HICUMalkav*dT);
@@ -365,14 +391,14 @@ int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double 
     here->HICUMkavl_t.dpart = a.dpart();
 
     //Zero bias internal base resistance
-    a = model->HICUMrbi0*exp(model->HICUMzetarbi*ln_qtt0);
+    a = here->HICUMrbi0_scaled*exp(model->HICUMzetarbi*ln_qtt0);
     here->HICUMrbi0_t.rpart = a.rpart();
     here->HICUMrbi0_t.dpart = a.dpart();
 
     //Peripheral b-e junction capacitance
-    // TMPHICJ(here->HICUMvt0,here->HICUMvt,here->HICUMqtt0,here->HICUMln_qtt0,here->HICUMmg,model->HICUMcjep0,model->HICUMvdep,model->HICUMzep,model->HICUMajep,1,vgbe0,&cjep0_t,&vdep_t,&ajep_t);
+    // TMPHICJ(here->HICUMvt0,here->HICUMvt,here->HICUMqtt0,here->HICUMln_qtt0,here->HICUMmg,cjep0_scaled,model->HICUMvdep,model->HICUMzep,model->HICUMajep,1,vgbe0,&cjep0_t,&vdep_t,&ajep_t);
     hicum_TMPHICJ(vt, here->HICUMvt0, qtt0, ln_qtt0, mg,
-                  model->HICUMcjep0, model->HICUMvdep, model->HICUMzep, model->HICUMajep, 1, vgbe0,
+                  here->HICUMcjep0_scaled, model->HICUMvdep, model->HICUMzep, model->HICUMajep, 1, vgbe0,
                   &here->HICUMcjep0_t.rpart, &here->HICUMvdep_t.rpart, &here->HICUMajep_t.rpart,
                   &here->HICUMcjep0_t.dpart, &here->HICUMvdep_t.dpart, &here->HICUMajep_t.dpart);
     cjep0_t.rpart(here->HICUMcjep0_t.rpart);
@@ -381,19 +407,19 @@ int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double 
     vdep_t.dpart(here->HICUMvdep_t.dpart);
 
     //Tunneling current factors
-    if (model->HICUMibets > 0) { // HICTUN_T
+    if (here->HICUMibets_scaled > 0) { // HICTUN_T
         duals::duald a_eg,ab,aa;
         ab = 1.0;
         aa = 1.0;
         a_eg = vgbe_t0/vgbe_t;
-        if(model->HICUMtunode==1 && model->HICUMcjep0 > 0.0 && model->HICUMvdep >0.0) {
-            ab = (cjep0_t/model->HICUMcjep0)*sqrt(a_eg)*vdep_t*vdep_t/(model->HICUMvdep*model->HICUMvdep);
-            aa = (model->HICUMvdep/vdep_t)*(model->HICUMcjep0/cjep0_t)*pow(a_eg,-1.5);
-        } else if (model->HICUMtunode==0 && model->HICUMcjei0 > 0.0 && model->HICUMvdei >0.0) {
-            ab = (cjei0_t/model->HICUMcjei0)*sqrt(a_eg)*vdei_t*vdei_t/(model->HICUMvdei*model->HICUMvdei);
-            aa = (model->HICUMvdei/vdei_t)*(model->HICUMcjei0/cjei0_t)*pow(a_eg,-1.5);
+        if(model->HICUMtunode==1 && here->HICUMcjep0_scaled > 0.0 && model->HICUMvdep >0.0) {
+            ab = (cjep0_t/here->HICUMcjep0_scaled)*sqrt(a_eg)*vdep_t*vdep_t/(model->HICUMvdep*model->HICUMvdep);
+            aa = (model->HICUMvdep/vdep_t)*(here->HICUMcjep0_scaled/cjep0_t)*pow(a_eg,-1.5);
+        } else if (model->HICUMtunode==0 && here->HICUMcjei0_scaled > 0.0 && model->HICUMvdei >0.0) {
+            ab = (cjei0_t/here->HICUMcjei0_scaled)*sqrt(a_eg)*vdei_t*vdei_t/(model->HICUMvdei*model->HICUMvdei);
+            aa = (model->HICUMvdei/vdei_t)*(here->HICUMcjei0_scaled/cjei0_t)*pow(a_eg,-1.5);
         }
-        a = model->HICUMibets*ab;
+        a = here->HICUMibets_scaled*ab;
         here->HICUMibets_t.rpart = a.rpart();
         here->HICUMibets_t.dpart = a.dpart();
         a = model->HICUMabet*aa;
@@ -408,13 +434,13 @@ int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double 
 
     //Depletion capacitance splitting at b-c junction
     //Capacitances at peripheral and external base node
-    C_1    = (1.0-model->HICUMfbcpar)*(model->HICUMcjcx0+model->HICUMcbcpar);
-    if (C_1 >= model->HICUMcbcpar) {
-        cjcx01  = C_1-model->HICUMcbcpar;
-        cjcx02  = model->HICUMcjcx0-cjcx01;
+    C_1    = (1.0-model->HICUMfbcpar)*(here->HICUMcjcx0_scaled+here->HICUMcbcpar_scaled);
+    if (C_1 >= here->HICUMcbcpar_scaled) {
+        cjcx01  = C_1-here->HICUMcbcpar_scaled;
+        cjcx02  = here->HICUMcjcx0_scaled-cjcx01;
     } else {
         cjcx01  = 0.0;
-        cjcx02  = model->HICUMcjcx0;
+        cjcx02  = here->HICUMcjcx0_scaled;
     }
 
     //Temperature mapping for tunneling current is done inside HICTUN
@@ -433,13 +459,13 @@ int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double 
     here->HICUMcjcx02_t.dpart = a.dpart();
 
     //Constant external series resistances
-    a = model->HICUMrcx*exp(model->HICUMzetarcx*ln_qtt0);
+    a = here->HICUMrcx_scaled*exp(model->HICUMzetarcx*ln_qtt0);
     here->HICUMrcx_t.rpart = a.rpart();
     here->HICUMrcx_t.dpart = a.dpart();
-    a = model->HICUMrbx*exp(model->HICUMzetarbx*ln_qtt0);
+    a = here->HICUMrbx_scaled*exp(model->HICUMzetarbx*ln_qtt0);
     here->HICUMrbx_t.rpart = a.rpart();
     here->HICUMrbx_t.dpart = a.dpart();
-    a = model->HICUMre*exp(model->HICUMzetare*ln_qtt0);
+    a = here->HICUMre_scaled*exp(model->HICUMzetare*ln_qtt0);
     here->HICUMre_t.rpart = a.rpart();
     here->HICUMre_t.dpart = a.dpart();
 
@@ -497,7 +523,7 @@ int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double 
         here->HICUMhfc_t.dpart = 0;
     }
 
-    a = model->HICUMrth*exp(model->HICUMzetarth*ln_qtt0)*(1+model->HICUMalrth*dT);
+    a = here->HICUMrth_scaled*exp(model->HICUMzetarth*ln_qtt0)*(1+model->HICUMalrth*dT);
     here->HICUMrth_t.rpart = a.rpart();
     here->HICUMrth_t.dpart = a.dpart();
 

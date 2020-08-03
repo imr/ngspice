@@ -24,11 +24,13 @@ enum {
     HICUMRBINOIZ,
     HICUMRENOIZ,
     HICUMRSNOIZ,
-    HICUMICNOIZ,
-    HICUMIBCNOIZ,
+    HICUMIAVLNOIZ,
+    HICUMIBCINOIZ,
     HICUMIBEPNOIZ,
     HICUMIBCXNOIZ,
-    HICUMITSNOIZ,
+    HICUMIJSCNOIZ,
+    HICUMITNOIZ,
+    HICUMIBEINOIZ,
     HICUMFLBENOIZ,
     HICUMFLRENOIZ,
     HICUMTOTNOIZ,
@@ -63,21 +65,17 @@ typedef struct sHICUMinstance {
     int HICUMbaseBPNode; /* number of internal base node of hicum */
     int HICUMsubsSINode; /* number of internal substrate node */
     int HICUMxfNode;     /* number of internal excess phase node qdei */
-    int HICUMxf1Node;    /* number of internal excess phase node itf */
-    int HICUMxf2Node;    /* number of internal excess phase node itf */
+    int HICUMxf1Node;    /* number of internal excess phase 1 node itf */
+    int HICUMxf2Node;    /* number of internal excess phase 2 node itf */
 
     double HICUMarea;     /* area factor for the hicum */
     //initial conditions
-    double HICUMicVBi;    /* initial condition potential Bi */
-    double HICUMicVBp;    /* initial condition potential Bp */
-    double HICUMicVB;     /* initial condition potential B  */
-    double HICUMicVCi;    /* initial condition potential Ci */
-    double HICUMicVt;     /* initial condition potential T */
-    double HICUMicVEi;    /* initial condition potential Ei */
-    double HICUMicVC;     /* initial condition potential C  */
-    double HICUMicVE;     /* initial condition potential E  */
+    double HICUMicVBE;     /* initial condition inner B-E branch */
+    double HICUMicVCE;     /* initial condition inner C-E branch  */
+    double HICUMicVCS;     /* initial condition inner C-S branch  */
 
     double HICUMtemp;     /* instance temperature */
+    double HICUMtemp_Vrth;/* derivative device temperature to temperature at thermal node */
     double HICUMdtemp;    /* instance delta temperature */
     double HICUMdtemp_sh; /* instance delta temperature because of self-heating */
     double HICUMm;        /* multiply factor for the hicum */
@@ -138,15 +136,38 @@ typedef struct sHICUMinstance {
     dual_double HICUMvds_t;
     dual_double HICUMvpts_t;
 
+    //model variables that depend on "area" and "m" and are needed in temp
+    double HICUMqp0_scaled;
+    double HICUMc10_scaled;
+    double HICUMicbar_scaled;
+    double HICUMrth_scaled;
+    double HICUMcth_scaled;
+    double HICUMcjei0_scaled;
+    double HICUMibeis_scaled;
+    double HICUMireis_scaled;
+    double HICUMibeps_scaled;
+    double HICUMireps_scaled;
+    double HICUMcjep0_scaled;
+    double HICUMcbepar_scaled;
+    double HICUMibets_scaled;
+    double HICUMibcis_scaled;
+    double HICUMcjci0_scaled;
+    double HICUMcjcx0_scaled;
+    double HICUMcbcpar_scaled;
+    double HICUMibcxs_scaled;
+    double HICUMqavl_scaled;
+    double HICUMre_scaled;
+    double HICUMrci0_scaled;
+    double HICUMrbx_scaled;
+    double HICUMrcx_scaled;
+    double HICUMrbi0_scaled;
+
     double HICUMrbi;
     double HICUMiavl;
     double HICUMpterm;
 
     double HICUMtf;
     double HICUMick;
-
-    double HICUMcbepar;
-    double HICUMcbcpar;
 
     double *HICUMcollCollPtr;  /* pointer to sparse matrix at
                              * (collector,collector) */
@@ -164,6 +185,12 @@ typedef struct sHICUMinstance {
                              * (collector prime,collector prime) */
     double *HICUMemitEIEmitEIPtr;   /* pointer to sparse matrix at
                              * (emitter prime,emitter prime) */
+    double *HICUMemitEIXfPtr;   /* pointer to sparse matrix at
+                             * (emitter prime,xf) */
+    double *HICUMbaseBIXfPtr;   /* pointer to sparse matrix at
+                             * (base prime,xf) */
+ 
+ 
     double *HICUMsubsSISubsSIPtr;    /* pointer to sparse matrix at
                              * (substrate prime, substrate prime) */
 
@@ -223,6 +250,9 @@ typedef struct sHICUMinstance {
                              * (substrate,base) */
     double *HICUMemitEIBaseBIPtr;   /* pointer to sparse matrix at
                              * (emitter prime,base prime) */
+    double *HICUMsubsTempPtr;   /* pointer to sparse matrix at
+                             * (subs ,T) */
+ 
 
     double *HICUMcollCIBasePtr;
     double *HICUMbaseCollCIPtr;
@@ -281,14 +311,9 @@ typedef struct sHICUMinstance {
 
     unsigned HICUMareaGiven   :1;  /* flag to indicate area was specified */
     unsigned HICUMoff         :1;  /* 'off' flag for hicum */
-    unsigned HICUMicVBGiven   :1;  /* flag to indicate VB init. cond. given */
-    unsigned HICUMicVEGiven   :1;  /* flag to indicate VE init. cond. given */
-    unsigned HICUMicVCGiven   :1;  /* flag to indicate VC init. cond. given */
-    unsigned HICUMicVBiGiven  :1;  /* flag to indicate VBi init. cond. given */
-    unsigned HICUMicVBpGiven  :1;  /* flag to indicate VBp init. cond. given */
-    unsigned HICUMicVEiGiven  :1;  /* flag to indicate VEi init. cond. given */
-    unsigned HICUMicVCiGiven  :1;  /* flag to indicate VCi init. cond. given */
-    unsigned HICUMicVtGiven   :1;  /* flag to indicate VCi init. cond. given */
+    unsigned HICUMicVBEGiven  :1;  /* flag to indicate VBE init. cond. given */
+    unsigned HICUMicVCEGiven  :1;  /* flag to indicate VCE init. cond. given */
+    unsigned HICUMicVCSGiven  :1;  /* flag to indicate VCS init. cond. given */
     unsigned HICUMtempGiven   :1;  /* temperature given for hicum instance*/
     unsigned HICUMdtempGiven  :1;  /* delta temperature given for hicum instance*/
     unsigned HICUMmGiven      :1;  /* flag to indicate multiplier was specified */
@@ -306,6 +331,26 @@ typedef struct sHICUMinstance {
     double HICUMcapscp;
     double HICUMcapsu;
     double HICUMcapcth;
+
+    //Caps due to coupling between branches
+    double HICUMqrbi_Vbiei;
+    double HICUMqrbi_Vbici;
+    double HICUMqrbi_Vrth;
+    double HICUMqjei_Vrth;
+    double HICUMqjep_Vrth;
+    double HICUMqf_Vbici;
+    double HICUMqf_Vxf;
+    double HICUMqf_Vrth;
+    double HICUMqr_Vbiei;
+    double HICUMqr_Vrth;
+    double HICUMqjci_Vrth;
+    double HICUMqjcx0_i_Vrth;
+    double HICUMqjcx0_ii_Vrth;
+    double HICUMqdsu_Vrth;
+    double HICUMqdsu_Vsici;
+    double HICUMqjs_Vrth;
+    double HICUMqscp_Vrth;
+    double HICUMicth_dT;
 
     double HICUMcapxf;
 
@@ -332,175 +377,154 @@ typedef struct sHICUMinstance {
 #define HICUMvcic        HICUMstate+6
 #define HICUMvbbp        HICUMstate+7
 #define HICUMveie        HICUMstate+8
+#define HICUMvrth        HICUMstate+9
+#define HICUMvxf         HICUMstate+10
+#define HICUMvxf1        HICUMstate+11
+#define HICUMvxf2        HICUMstate+12
 
-#define HICUMibiei       HICUMstate+9
-#define HICUMibiei_Vbiei HICUMstate+10
-#define HICUMibiei_Vbici HICUMstate+11
-#define HICUMibiei_Vrth  HICUMstate+12
+#define HICUMibiei       HICUMstate+13
+#define HICUMibiei_Vbiei HICUMstate+14
+#define HICUMibiei_Vbici HICUMstate+15
+#define HICUMibiei_Vrth  HICUMstate+16
 
-#define HICUMibpei       HICUMstate+13
-#define HICUMibpei_Vbpei HICUMstate+14
-#define HICUMibpei_Vrth  HICUMstate+15
+#define HICUMibpei       HICUMstate+17
+#define HICUMibpei_Vbpei HICUMstate+18
+#define HICUMibpei_Vrth  HICUMstate+19
 
-#define HICUMiciei       HICUMstate+16
-#define HICUMiciei_Vbiei HICUMstate+17
-#define HICUMiciei_Vbici HICUMstate+18
-#define HICUMiciei_Vxf2  HICUMstate+19
-#define HICUMiciei_Vrth  HICUMstate+20
+#define HICUMiciei       HICUMstate+20
+#define HICUMiciei_Vbiei HICUMstate+21
+#define HICUMiciei_Vbici HICUMstate+22
+#define HICUMiciei_Vxf2  HICUMstate+23
+#define HICUMiciei_Vrth  HICUMstate+24
 
-#define HICUMibici       HICUMstate+21
-#define HICUMibici_Vbici HICUMstate+22
-#define HICUMibici_Vbiei HICUMstate+23
-#define HICUMibici_Vrth  HICUMstate+24
+#define HICUMibici       HICUMstate+25
+#define HICUMibici_Vbici HICUMstate+26
+#define HICUMibici_Vbiei HICUMstate+27
+#define HICUMibici_Vrth  HICUMstate+28
 
-#define HICUMibpbi       HICUMstate+25
-#define HICUMibpbi_Vbpbi HICUMstate+26
-#define HICUMibpbi_Vbiei HICUMstate+27
-#define HICUMibpbi_Vbici HICUMstate+28
-#define HICUMibpbi_Vrth  HICUMstate+29
+#define HICUMibpbi       HICUMstate+29
+#define HICUMibpbi_Vbpbi HICUMstate+30
+#define HICUMibpbi_Vbiei HICUMstate+31
+#define HICUMibpbi_Vbici HICUMstate+32
+#define HICUMibpbi_Vrth  HICUMstate+33
 
-#define HICUMibpci       HICUMstate+30
-#define HICUMibpci_Vbpci HICUMstate+31
-#define HICUMibpci_Vrth  HICUMstate+32
+#define HICUMibpci       HICUMstate+34
+#define HICUMibpci_Vbpci HICUMstate+35
+#define HICUMibpci_Vrth  HICUMstate+36
 
-#define HICUMisici       HICUMstate+33
-#define HICUMisici_Vsici HICUMstate+34
-#define HICUMisici_Vrth  HICUMstate+35
+#define HICUMisici       HICUMstate+37
+#define HICUMisici_Vsici HICUMstate+38
+#define HICUMisici_Vrth  HICUMstate+39
 
-#define HICUMibpsi       HICUMstate+36
-#define HICUMibpsi_Vbpci HICUMstate+37
-#define HICUMibpsi_Vsici HICUMstate+38
-#define HICUMibpsi_Vrth  HICUMstate+39
+#define HICUMibpsi       HICUMstate+40
+#define HICUMibpsi_Vbpci HICUMstate+41
+#define HICUMibpsi_Vsici HICUMstate+42
+#define HICUMibpsi_Vrth  HICUMstate+43
 
-#define HICUMisis_Vsis   HICUMstate+40
+#define HICUMisis_Vsis   HICUMstate+44
 
-#define HICUMieie        HICUMstate+41  // needed for re-flicker noise
-#define HICUMieie_Vrth   HICUMstate+42
+#define HICUMieie        HICUMstate+45  // needed for re-flicker noise
+#define HICUMieie_Vrth   HICUMstate+46
 
-#define HICUMqrbi        HICUMstate+43
-#define HICUMcqrbi       HICUMstate+44
-#define HICUMqrbi_Vbiei  HICUMstate+45
-#define HICUMqrbi_Vbici  HICUMstate+46
-#define HICUMqrbi_Vrth   HICUMstate+47
+#define HICUMqrbi        HICUMstate+47
+#define HICUMcqrbi       HICUMstate+48
 
-#define HICUMqjei        HICUMstate+48
-#define HICUMcqjei       HICUMstate+49
-#define HICUMqjei_Vrth   HICUMstate+50
+#define HICUMqjei        HICUMstate+49
+#define HICUMcqjei       HICUMstate+50
 
 #define HICUMqf          HICUMstate+51
 #define HICUMcqf         HICUMstate+52
-#define HICUMqf_Vbici    HICUMstate+53
-#define HICUMqf_Vxf      HICUMstate+54
-#define HICUMqf_Vrth     HICUMstate+55
 
-#define HICUMqr          HICUMstate+56
-#define HICUMcqr         HICUMstate+57
-#define HICUMqr_Vbiei    HICUMstate+58
-#define HICUMqr_Vrth     HICUMstate+59
+#define HICUMqr          HICUMstate+53
+#define HICUMcqr         HICUMstate+54
 
-#define HICUMqjci        HICUMstate+60
-#define HICUMcqjci       HICUMstate+61
-#define HICUMqjci_Vrth   HICUMstate+62
+#define HICUMqjci        HICUMstate+55
+#define HICUMcqjci       HICUMstate+56
 
-#define HICUMqjep        HICUMstate+63
-#define HICUMcqjep       HICUMstate+64
-#define HICUMqjep_Vrth   HICUMstate+65
+#define HICUMqjep        HICUMstate+57
+#define HICUMcqjep       HICUMstate+58
 
-#define HICUMqjcx0_i     HICUMstate+66
-#define HICUMcqcx0_t_i   HICUMstate+67
-#define HICUMqjcx0_i_Vrth HICUMstate+68
+#define HICUMqjcx0_i     HICUMstate+59
+#define HICUMcqcx0_t_i   HICUMstate+60
 
-#define HICUMqjcx0_ii    HICUMstate+69
-#define HICUMcqcx0_t_ii  HICUMstate+70
-#define HICUMqjcx0_ii_Vrth HICUMstate+71
+#define HICUMqjcx0_ii    HICUMstate+61
+#define HICUMcqcx0_t_ii  HICUMstate+62
 
-#define HICUMqdsu        HICUMstate+72
-#define HICUMcqdsu       HICUMstate+73
-#define HICUMqdsu_Vrth   HICUMstate+74
-#define HICUMqdsu_Vsici  HICUMstate+75
+#define HICUMqdsu        HICUMstate+63
+#define HICUMcqdsu       HICUMstate+64
 
-#define HICUMqjs         HICUMstate+76
-#define HICUMcqjs        HICUMstate+77
-#define HICUMqjs_Vrth    HICUMstate+78
+#define HICUMqjs         HICUMstate+65
+#define HICUMcqjs        HICUMstate+66
 
-#define HICUMqscp        HICUMstate+79
-#define HICUMcqscp       HICUMstate+80
-#define HICUMqscp_Vrth   HICUMstate+81
+#define HICUMqscp        HICUMstate+67
+#define HICUMcqscp       HICUMstate+68
 
-#define HICUMqbepar1     HICUMstate+82
-#define HICUMcqbepar1    HICUMstate+83
-#define HICUMgqbepar1    HICUMstate+84
+#define HICUMqbepar1     HICUMstate+69
+#define HICUMcqbepar1    HICUMstate+70
+#define HICUMgqbepar1    HICUMstate+71
 
-#define HICUMqbepar2     HICUMstate+85
-#define HICUMcqbepar2    HICUMstate+86
-#define HICUMgqbepar2    HICUMstate+87
+#define HICUMqbepar2     HICUMstate+72
+#define HICUMcqbepar2    HICUMstate+73
+#define HICUMgqbepar2    HICUMstate+74
 
-#define HICUMqbcpar1     HICUMstate+88
-#define HICUMcqbcpar1    HICUMstate+89
-#define HICUMgqbcpar1    HICUMstate+90
+#define HICUMqbcpar1     HICUMstate+75
+#define HICUMcqbcpar1    HICUMstate+76
+#define HICUMgqbcpar1    HICUMstate+77
 
-#define HICUMqbcpar2     HICUMstate+91
-#define HICUMcqbcpar2    HICUMstate+92
-#define HICUMgqbcpar2    HICUMstate+93
+#define HICUMqbcpar2     HICUMstate+78
+#define HICUMcqbcpar2    HICUMstate+79
+#define HICUMgqbcpar2    HICUMstate+80
 
-#define HICUMqsu         HICUMstate+94
-#define HICUMcqsu        HICUMstate+95
-#define HICUMgqsu        HICUMstate+96
+#define HICUMqsu         HICUMstate+81
+#define HICUMcqsu        HICUMstate+82
+#define HICUMgqsu        HICUMstate+83
 
-#define HICUMqcth        HICUMstate+97
-#define HICUMcqcth       HICUMstate+98
+#define HICUMqcth        HICUMstate+84
+#define HICUMcqcth       HICUMstate+85
 
-#define HICUMvrth        HICUMstate+99
-#define HICUMicth_dT     HICUMstate+100
+#define HICUMqxf         HICUMstate+86
+#define HICUMcqxf        HICUMstate+87
+#define HICUMgqxf        HICUMstate+88
+#define HICUMixf         HICUMstate+89
+#define HICUMixf_Vbiei   HICUMstate+90
+#define HICUMixf_Vbici   HICUMstate+91
+#define HICUMixf_Vxf     HICUMstate+92
+#define HICUMixf_Vrth    HICUMstate+93
 
-#define HICUMvxf         HICUMstate+101
-#define HICUMqxf         HICUMstate+102
-#define HICUMqxf_Vxf     HICUMstate+103
-#define HICUMcqxf        HICUMstate+104
-#define HICUMgqxf        HICUMstate+105
-#define HICUMixf         HICUMstate+106
-#define HICUMixf_Vbiei   HICUMstate+107
-#define HICUMixf_Vbici   HICUMstate+108
-#define HICUMixf_Vxf     HICUMstate+109
-#define HICUMixf_Vrth    HICUMstate+110
+#define HICUMqxf1        HICUMstate+94
+#define HICUMcqxf1       HICUMstate+95
+#define HICUMgqxf1       HICUMstate+96
+#define HICUMixf1        HICUMstate+97
+#define HICUMixf1_Vbiei  HICUMstate+98
+#define HICUMixf1_Vbici  HICUMstate+99
+#define HICUMixf1_Vxf2   HICUMstate+100
+#define HICUMixf1_Vxf1   HICUMstate+101
+#define HICUMixf1_Vrth   HICUMstate+102
 
-#define HICUMvxf1        HICUMstate+111
-#define HICUMqxf1        HICUMstate+112
-#define HICUMqxf1_Vxf1   HICUMstate+113
-#define HICUMcqxf1       HICUMstate+114
-#define HICUMgqxf1       HICUMstate+115
-#define HICUMixf1        HICUMstate+116
-#define HICUMixf1_Vbiei  HICUMstate+117
-#define HICUMixf1_Vbici  HICUMstate+118
-#define HICUMixf1_Vxf2   HICUMstate+119
-#define HICUMixf1_Vrth   HICUMstate+120
+#define HICUMqxf2        HICUMstate+103
+#define HICUMcqxf2       HICUMstate+104
+#define HICUMgqxf2       HICUMstate+105
+#define HICUMixf2        HICUMstate+106
+#define HICUMixf2_Vbiei  HICUMstate+108
+#define HICUMixf2_Vbici  HICUMstate+109
+#define HICUMixf2_Vxf1   HICUMstate+110
+#define HICUMixf2_Vxf2   HICUMstate+111
+#define HICUMixf2_Vrth   HICUMstate+112
 
-#define HICUMvxf2        HICUMstate+121
-#define HICUMqxf2        HICUMstate+122
-#define HICUMqxf2_Vxf2   HICUMstate+123
-#define HICUMcqxf2       HICUMstate+124
-#define HICUMgqxf2       HICUMstate+125
-#define HICUMixf2        HICUMstate+126
-#define HICUMixf2_Vbiei  HICUMstate+127
-#define HICUMixf2_Vbici  HICUMstate+128
-#define HICUMixf2_Vxf1   HICUMstate+129
-#define HICUMixf2_Vxf2   HICUMstate+130
-#define HICUMixf2_Vrth   HICUMstate+131
+#define HICUMith         HICUMstate+113
+#define HICUMith_Vrth    HICUMstate+114
+#define HICUMith_Vbiei   HICUMstate+115
+#define HICUMith_Vbici   HICUMstate+116
+#define HICUMith_Vbpbi   HICUMstate+117
+#define HICUMith_Vbpci   HICUMstate+118
+#define HICUMith_Vbpei   HICUMstate+119
+#define HICUMith_Vciei   HICUMstate+120
+#define HICUMith_Vsici   HICUMstate+121
+#define HICUMith_Vcic    HICUMstate+122
+#define HICUMith_Vbbp    HICUMstate+123
+#define HICUMith_Veie    HICUMstate+124
 
-#define HICUMith         HICUMstate+132
-#define HICUMith_Vrth    HICUMstate+133
-#define HICUMith_Vbiei   HICUMstate+134
-#define HICUMith_Vbici   HICUMstate+135
-#define HICUMith_Vbpbi   HICUMstate+136
-#define HICUMith_Vbpci   HICUMstate+137
-#define HICUMith_Vbpei   HICUMstate+138
-#define HICUMith_Vciei   HICUMstate+139
-#define HICUMith_Vsici   HICUMstate+140
-#define HICUMith_Vcic    HICUMstate+141
-#define HICUMith_Vbbp    HICUMstate+142
-#define HICUMith_Veie    HICUMstate+143
-
-#define HICUMnumStates 144
+#define HICUMnumStates 125
 
 /* per model data */
 typedef struct sHICUMmodel {           /* model structure for a hicum */
@@ -679,7 +703,6 @@ typedef struct sHICUMmodel {           /* model structure for a hicum */
 
 //Self-Heating
     int HICUMflsh;
-    int HICUMrth_de;
     double HICUMrth;
     double HICUMzetarth;
     double HICUMalrth;
@@ -884,14 +907,6 @@ enum {
     HICUM_AREA = 1,
     HICUM_OFF,
     HICUM_IC,
-    HICUM_IC_VB,
-    HICUM_IC_VE,
-    HICUM_IC_VC,
-    HICUM_IC_VBi,
-    HICUM_IC_VBp,
-    HICUM_IC_VEi,
-    HICUM_IC_VCi,
-    HICUM_IC_Vt,
     HICUM_TEMP,
     HICUM_DTEMP,
     HICUM_M,
@@ -1068,7 +1083,6 @@ enum {
 
 //Self-Heating
     HICUM_MOD_FLSH,
-    HICUM_MOD_RTH_DE,
     HICUM_MOD_RTH,
     HICUM_MOD_ZETARTH,
     HICUM_MOD_ALRTH,

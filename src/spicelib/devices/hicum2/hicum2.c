@@ -19,19 +19,19 @@ IFparm HICUMpTable[] = { /* parameters */
  IOPU("area",    HICUM_AREA,   IF_REAL,    "Area factor"),
  IOPU("off",     HICUM_OFF,    IF_FLAG,    "Device initially off"),
  IP("ic",        HICUM_IC,     IF_REALVEC, "Initial condition vector"),
- OP("icvb",  HICUM_IC_VB, IF_REAL,    "Initial B potential"),
- OP("icvc",  HICUM_IC_VC, IF_REAL,    "Initial C potential"),
- OP("icve",  HICUM_IC_VE, IF_REAL,    "Initial E potential"),
- OP("icvbi", HICUM_IC_VBi, IF_REAL,    "Initial Bi potential"),
- OP("icvbp", HICUM_IC_VBp, IF_REAL,    "Initial Bp potential"),
- OP("icvci", HICUM_IC_VCi, IF_REAL,    "Initial Ci potential"),
- OP("icvt", HICUM_IC_Vt, IF_REAL,    "Initial T potential"),
- OP("icvei", HICUM_IC_VEi, IF_REAL,    "Initial Ei potential"),
+//  OP("icvb",  HICUM_IC_VB, IF_REAL,    "Initial B potential"),
+//  OP("icvc",  HICUM_IC_VC, IF_REAL,    "Initial C potential"),
+//  OP("icve",  HICUM_IC_VE, IF_REAL,    "Initial E potential"),
+//  OP("icvbi", HICUM_IC_VBi, IF_REAL,    "Initial Bi potential"),
+//  OP("icvbp", HICUM_IC_VBp, IF_REAL,    "Initial Bp potential"),
+//  OP("icvci", HICUM_IC_VCi, IF_REAL,    "Initial Ci potential"),
+//  OP("icvt", HICUM_IC_Vt, IF_REAL,    "Initial T potential"),
+//  OP("icvei", HICUM_IC_VEi, IF_REAL,    "Initial Ei potential"),
  
  IOPU("m",       HICUM_M,      IF_REAL,    "Multiplier"),
  IOPU("temp",    HICUM_TEMP,   IF_REAL,    "Instance temperature"),
  IP("dt",        HICUM_DTEMP,  IF_REAL,    "Instance delta temperature"),
- IOPUR("tk",     HICUM_QUEST_TK,     IF_REAL,    "Actual device temperature"),
+ IOPU("tk",     HICUM_QUEST_TK,     IF_REAL,    "Actual device temperature"),
  IOPU("dtsh",    HICUM_QUEST_DTSH,   IF_REAL,    "Temperature increase due to self-heating"),
  IOPU("it",    HICUM_QUEST_IT,   IF_REAL,    "transfer current"),
 
@@ -102,6 +102,7 @@ IFparm HICUMmPTable[] = { /* model parameters */
   IOPU("npn",  HICUM_MOD_NPN,  IF_FLAG, "NPN type device"),
   IOPU("pnp",  HICUM_MOD_PNP,  IF_FLAG, "PNP type device"),
   IOP("tnom",  HICUM_MOD_TNOM, IF_REAL, "Temperature at which parameters are specified"),
+  IOPR("tref", HICUM_MOD_TNOM, IF_REAL, "Temperature at which parameters are specified"),
   IOP("version", HICUM_MOD_VERSION, IF_STRING, " parameter for model version"),
 
 //Transfer current
@@ -272,7 +273,6 @@ IFparm HICUMmPTable[] = { /* model parameters */
 
 //Self-Heating
   IOP("flsh",    HICUM_MOD_FLSH   , IF_INTEGER, "Flag for turning on and off self-heating effect"),
-  IOP("rth_de",    HICUM_MOD_RTH_DE , IF_INTEGER, "Experimental flag for turning on and off self-heating using direct evaluation"),
   IOP("rth",     HICUM_MOD_RTH    , IF_REAL, "Thermal resistance"),
   IOP("zetarth", HICUM_MOD_ZETARTH, IF_REAL, "Temperature coefficient for Rth"),
   IOP("alrth",   HICUM_MOD_ALRTH  , IF_REAL, "First order relative TC of parameter Rth"),
