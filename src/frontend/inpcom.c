@@ -8349,6 +8349,28 @@ static void rem_mfg_from_models(struct card *deck)
                         start++;
                     }
             }
+            start = strstr(curr_line, "icrating=");
+            if (start) {
+                end = nexttok(start);
+                if (*end == '\0')
+                    *start = '\0';
+                else
+                    while (start < end) {
+                        *start = ' ';
+                        start++;
+                    }
+            }
+            start = strstr(curr_line, "vceo=");
+            if (start) {
+                end = nexttok(start);
+                if (*end == '\0')
+                    *start = '\0';
+                else
+                    while (start < end) {
+                        *start = ' ';
+                        start++;
+                    }
+            }
         }
     }
 }
