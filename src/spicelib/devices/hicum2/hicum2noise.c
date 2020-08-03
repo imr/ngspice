@@ -86,7 +86,7 @@ HICUMnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata 
                 Ieie_Veie    = 0.0;
             }
             if(model->HICUMrsuGiven && model->HICUMrsu != 0) {
-                Isis_Vsis    = 1/model->HICUMrsu;
+                Isis_Vsis    = 1/model->HICUMrsu*inst->HICUMm;
             } else {
                 Isis_Vsis    = 0.0;
             }

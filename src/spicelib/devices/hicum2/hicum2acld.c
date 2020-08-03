@@ -151,7 +151,7 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
                 Ieie_Vrth    = 0.0;
             }
             if(model->HICUMrsuGiven && model->HICUMrsu != 0) {
-                Isis_Vsis    = 1/model->HICUMrsu;
+                Isis_Vsis    = 1/model->HICUMrsu*here->HICUMm;
             } else {
                 Isis_Vsis    = 0.0;
             }
