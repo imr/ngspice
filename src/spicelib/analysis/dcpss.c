@@ -1390,7 +1390,7 @@ resume:
 #endif
             ckt->CKTdelta = ckt->CKTdelta/8;
 #ifdef STEPDEBUG
-            fprintf (stderr, "delta cut to %g for non-convergance\n", ckt->CKTdelta) ;
+            fprintf (stderr, "delta cut to %g for non-convergence\n", ckt->CKTdelta) ;
             fflush(stdout);
 #endif
             if(firsttime) {
