@@ -273,7 +273,8 @@ ft_cktcoms(bool terse)
 
     /* Now all the '.' lines */
     while (coms) {
-        command = cp_lexer(coms->wl_word);
+        wordlist* freecom;
+        freecom = command = cp_lexer(coms->wl_word);
         if (!command || command->wl_word == (char *) NULL) {
             /* Line not converted to a wordlist */
             goto bad;
@@ -369,6 +370,7 @@ ft_cktcoms(bool terse)
             goto bad;
         }
         coms = coms->wl_next; /* go to next line */
+        wl_free(freecom);
     } /* end of loop over '.' lines */
 
 nocmds:
