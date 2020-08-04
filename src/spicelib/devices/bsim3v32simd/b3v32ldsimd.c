@@ -69,6 +69,10 @@
 #include "b3v32ldsimd8d.c"
 #endif
 
+#if NSIMD==2
+#include "b3v32ldsimd2d.c"
+#endif
+
 int BSIM3v32LoadSIMD(BSIM3v32instance **heres, CKTcircuit *ckt
 #ifndef USE_OMP
 	, double data[7][NSIMD]
@@ -90,6 +94,12 @@ int BSIM3v32LoadSIMD(BSIM3v32instance **heres, CKTcircuit *ckt
     #include "b3v32ldseq_simd8d_omp.c"
 #else
     #include "b3v32ldseq_simd8d.c"
+#endif
+#elif NSIMD==2
+#ifdef USE_OMP
+    #include "b3v32ldseq_simd2d_omp.c"
+#else
+    #include "b3v32ldseq_simd2d.c"
 #endif
 #else
 #error Unsupported value for NSIMD

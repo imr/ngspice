@@ -33,6 +33,23 @@
 #define USE_OMPSIMD
 #endif
 
+#define vec4_pow0p7(x,p) vec4_pow(x,p)
+#define vec4_powMJ(x,p) vec4_pow(x,p)
+#define vec4_powMJSW(x,p) vec4_pow(x,p)
+#define vec4_powMJSWG(x,p) vec4_pow(x,p)
+
+
+#ifdef USE_SLEEF
+#include <sleef.h>
+#define vec4_exp(a) Sleef_expd4_u10(a)
+#define vec4_log(a) Sleef_logd4_u35(a)
+#define vec4_MAX(a,b) Sleef_fmaxd4(a,b)
+#define vec4_sqrt(a) Sleef_sqrtd4_u35(a)
+#define vec4_fabs(a) Sleef_fabsd4(a)
+#define vec4_pow(a,b) Sleef_powd4_u10(a,vec4_SIMDTOVECTOR(b))
+#endif
+
+
 /* HAS_LIBMVEC defined from configure.ac */
 
 /* USE_SERIAL_FORM can be defined but has no performance influence */
@@ -56,6 +73,7 @@ static inline Vec4d vec4_blend(Vec4d fa, Vec4d tr, Vec4m mask)
 }
 #endif
 
+#ifndef USE_SLEEF
 /******* vec4_exp, vec4_log *******/
 #ifdef HAS_LIBMVEC
 Vec4d _ZGVdN4v_exp(Vec4d x);
@@ -137,16 +155,13 @@ static inline Vec4d vec4_fabs(Vec4d x)
 }
 #endif
 
-#define vec4_pow0p7(x,p) vec4_pow(x,p)
-#define vec4_powMJ(x,p) vec4_pow(x,p)
-#define vec4_powMJSW(x,p) vec4_pow(x,p)
-#define vec4_powMJSWG(x,p) vec4_pow(x,p)
-
 static inline Vec4d vec4_pow(Vec4d x, double p)
 {
 	/*return _ZGVdN4vv_pow(x,(Vec4d) {p,p,p,p});*/
 	return vec4_exp(vec4_log(x)*p);
 }
+
+#endif /* USE_SLEEF */
 
 /******* vec4_SIMDTOVECTOR, vec4_SIMDTOVECTORMASK *******/
 #ifdef USE_SERIAL_FORM
