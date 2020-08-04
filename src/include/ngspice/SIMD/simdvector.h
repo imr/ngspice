@@ -29,4 +29,15 @@ typedef int64_t Vec8i __attribute__ ((vector_size (sizeof(double)*8), aligned (s
 
 #endif
 
+#if NSIMD==2
+typedef double Vec2d __attribute__ ((vector_size (sizeof(double)*2), aligned (sizeof(double)*2)));
+typedef int64_t Vec2m __attribute__ ((vector_size (sizeof(double)*2), aligned (sizeof(double)*2)));
+typedef int64_t Vec2i __attribute__ ((vector_size (sizeof(double)*2), aligned (sizeof(double)*2)));
+
+#define VecNd Vec2d
+#define VecNm Vec2m
+#define VecNi Vec2i
+
+#endif
+
 #endif
