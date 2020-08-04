@@ -146,14 +146,15 @@ HICUMnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata 
                                  ckt,THERMNOISE,inst->HICUMsubsSINode,inst->HICUMsubsNode,
                                  Isis_Vsis);
 
-//todo: ibici contains iavl, has to be separated for non-correlated noise
-//                    NevalSrc(&noizDens[HICUMIAVLNOIZ],&lnNdens[HICUMIAVLNOIZ],
-//                                 ckt,SHOTNOISE,inst->HICUMcollCINode,inst->HICUMbaseBINode,
-//                                 inst->HICUMiavl);
 
+                    NevalSrc(&noizDens[HICUMIAVLNOIZ],&lnNdens[HICUMIAVLNOIZ],
+                                 ckt,SHOTNOISE,inst->HICUMcollCINode,inst->HICUMbaseBINode,
+                                 inst->HICUMiavl);
+
+//todo: ibici contains iavl, has to be separated for non-correlated noise
                     NevalSrc(&noizDens[HICUMIBCINOIZ],&lnNdens[HICUMIBCINOIZ],
                                  ckt,SHOTNOISE,inst->HICUMbaseBINode,inst->HICUMcollCINode,
-                                 *(ckt->CKTstate0 + inst->HICUMibici));
+                                 *(ckt->CKTstate0 + inst->HICUMibici)+inst->HICUMiavl);
 
                     NevalSrc(&noizDens[HICUMIBEPNOIZ],&lnNdens[HICUMIBEPNOIZ],
                                  ckt,SHOTNOISE,inst->HICUMbaseBPNode,inst->HICUMemitEINode,
