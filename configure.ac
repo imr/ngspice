@@ -1232,20 +1232,24 @@ fi
 # test if we can use libmvec or equivalent
 if test "x$have_intrinsics" = xyes; then
     AC_MSG_CHECKING([vector math library])
-    AC_TRY_COMPILE([
-    	#include <math.h>
+    AC_LINK_IFELSE(
+    [
+    AC_LANG_PROGRAM(
+    [[
+        #include <math.h>
     	typedef double Vec4d __attribute__ ((vector_size (4*sizeof(double)), aligned (4*sizeof(double))));
 	Vec4d _ZGVdN4v_exp(Vec4d x);
 	Vec4d _ZGVdN4v_log(Vec4d x);
-    ],[
-    	Vec4d v1,v2;
+    ]],[[
+        Vec4d v1,v2;
 	v1 = (Vec4d) {1.0,2.0,3.141592,4.0};
 	v2 = _ZGVdN4v_log(v1);
 	v1 = _ZGVdN4v_exp(v2);
+    ]])
     ],[
       AC_MSG_RESULT([yes])
       have_libmvec=yes
-    ], [
+    ],[
       AC_MSG_RESULT([no])
       have_libmvec=no
     ])
