@@ -161,6 +161,8 @@ typedef struct sHICUMinstance {
     double HICUMrbx_scaled;
     double HICUMrcx_scaled;
     double HICUMrbi0_scaled;
+    double HICUMkf_scaled;
+    double HICUMkfre_scaled;
 
     double HICUMrbi;
     double HICUMiavl;
