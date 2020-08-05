@@ -549,6 +549,9 @@ HICUMsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             here->HICUMrbx_scaled    = model->HICUMrbx  / area_times_m;
             here->HICUMrcx_scaled    = model->HICUMrcx  / area_times_m;
             here->HICUMrbi0_scaled   = model->HICUMrbi0 / area_times_m;
+            //noise
+            here->HICUMkf_scaled     = model->HICUMkf * pow(here->HICUMm, (1-model->HICUMaf));
+            here->HICUMkfre_scaled   = model->HICUMkfre * pow(here->HICUMm, (1-model->HICUMafre));
 
             here->HICUMstate = *states;
             *states += HICUMnumStates;

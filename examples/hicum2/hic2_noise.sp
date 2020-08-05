@@ -21,7 +21,7 @@ noise v(c) vin dec 10 10 10G 1
 setplot
 setplot noise1
 plot ally
-plot 300*inoise_spectrum onoise_spectrum
+plot inoise_spectrum onoise_spectrum loglog
 setplot noise2
 print all
 echo
