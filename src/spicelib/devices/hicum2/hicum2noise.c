@@ -169,13 +169,42 @@ HICUMnoise (int mode, int operation, GENmodel *genmodel, CKTcircuit *ckt, Ndata 
                                  *(ckt->CKTstate0 + here->HICUMisici));
 
 //todo: iciei contains it, has to be separated for non-correlated noise
-                    NevalSrc(&noizDens[HICUMITNOIZ],&lnNdens[HICUMITNOIZ],
-                                 ckt,SHOTNOISE,here->HICUMcollCINode,here->HICUMemitEINode,
-                                 *(ckt->CKTstate0 + here->HICUMiciei));
+                    if ( model->HICUMflcono == 1 && (model->HICUMalit > 0 && model->HICUMalqf > 0)) {
+                        // parameter definition
+                        int n_w = 1;
+                        float n_1 = here->HICUMtf*model->HICUMalit;
+                        IFvalue betadc;
+                        HICUMask(ckt, here, HICUM_QUEST_BETADC, &betadc, select);
+                        float sqrt_n2 = betadc.rValue * (2*model->HICUMalqf-model->HICUMalit*model->HICUMalit);
+                        float n_2 = 0;
 
-                    NevalSrc(&noizDens[HICUMIBEINOIZ],&lnNdens[HICUMIBEINOIZ],
-                                 ckt,SHOTNOISE,here->HICUMbaseBINode,here->HICUMemitEINode,
-                                 *(ckt->CKTstate0 + here->HICUMibiei));
+                        if (sqrt_n2 > 0.0) {
+                            n_2 = here->HICUMtf*sqrt(sqrt_n2);
+                        }
+
+                        // realization  of modified base shot noise source I1(bi,ei)
+                        I(b_n1)  <+ white_noise(2*`P_Q*abs(ibei),"ibei");
+                        I(b_n1)  <+ -V(b_n1);
+                        I(bi,ei) <+ V(b_n1)+n_2/n_w*ddt(n_w*V(b_n1));
+
+                        // realization of controlled base noise source I2(bi,ei)
+                        I(bi,ei) <+ n_1/n_w*ddt(n_w*V(b_n2));
+
+                        // realization of modified collector shot noise source I(ci,ei) (uncontrolled)
+                        I(b_n2)  <+ white_noise(2*`P_Q*abs(it),"it");
+                        I(b_n2)  <+ -V(b_n2);
+                        I(ci,ei) <+ V(b_n2);
+
+                        //  end  "Correlated noise in BJT"
+                    } else {
+                        NevalSrc(&noizDens[HICUMITNOIZ],&lnNdens[HICUMITNOIZ],
+                                    ckt,SHOTNOISE,here->HICUMcollCINode,here->HICUMemitEINode,
+                                    *(ckt->CKTstate0 + here->HICUMiciei));
+
+                        NevalSrc(&noizDens[HICUMIBEINOIZ],&lnNdens[HICUMIBEINOIZ],
+                                    ckt,SHOTNOISE,here->HICUMbaseBINode,here->HICUMemitEINode,
+                                    *(ckt->CKTstate0 + here->HICUMibiei));
+                    }
 
 
                     if (model->HICUMcfbe == -1) {
