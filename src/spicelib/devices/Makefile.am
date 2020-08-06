@@ -62,7 +62,8 @@ SUBDIRS += nbjt nbjt2 numd  numd2 numos
 endif
 
 if WANT_MODSIMD
-SUBDIRS += bsim3v32simd
+SUBDIRS += bsim3v32simd \
+	bsim3simd
 endif
 
 DIST_SUBDIRS = \
@@ -71,6 +72,7 @@ DIST_SUBDIRS = \
 	bsim1	\
 	bsim2	\
 	bsim3	\
+	bsim3simd	\
 	bsimsoi	\
 	bsim4		\
 	bsim4v5		\

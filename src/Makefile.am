@@ -135,7 +135,8 @@ ngspice_LDADD += spicelib/devices/ndev/libndev.la
 endif
 
 if WANT_MODSIMD
-ngspice_LDADD += spicelib/devices/bsim3v32simd/libbsim3v32simd.la
+ngspice_LDADD += spicelib/devices/bsim3v32simd/libbsim3v32simd.la \
+	spicelib/devices/bsim3simd/libbsim3simd.la
 endif
 
 if NUMDEV_WANTED
@@ -153,7 +154,8 @@ ngspice_LDADD += \
 
 if WANT_MODSIMD
 ngspice_LDADD += \
-	spicelib/analysis/SIMD/libcktsimd.la
+	spicelib/analysis/SIMD/libcktsimd.la \
+	maths/ni/SIMD/libnisimd.la
 endif
 
 if SENSE2_WANTED
@@ -424,7 +426,8 @@ endif
 
 if WANT_MODSIMD
 libspice_la_LIBADD += \
-	spicelib/devices/bsim3v32simd/libbsim3v32simd.la
+	spicelib/devices/bsim3v32simd/libbsim3v32simd.la \
+	spicelib/devices/bsim3simd/libbsim3simd.la
 endif
 
 if NUMDEV_WANTED
@@ -442,7 +445,8 @@ libspice_la_LIBADD += \
 
 if WANT_MODSIMD
 libspice_la_LIBADD += \
-	spicelib/analysis/SIMD/libcktsimd.la
+	spicelib/analysis/SIMD/libcktsimd.la \
+	maths/ni/SIMD/libnisimd.la
 endif
 
 if XSPICE_WANTED
@@ -549,7 +553,8 @@ endif
 
 if WANT_MODSIMD
 libngspice_la_LIBADD += \
-	spicelib/devices/bsim3v32simd/libbsim3v32simd.la
+	spicelib/devices/bsim3v32simd/libbsim3v32simd.la \
+	spicelib/devices/bsim3simd/libbsim3simd.la
 endif
 
 if NUMDEV_WANTED
@@ -567,7 +572,8 @@ libngspice_la_LIBADD += \
 
 if WANT_MODSIMD
 libngspice_la_LIBADD += \
-	spicelib/analysis/SIMD/libcktsimd.la
+	spicelib/analysis/SIMD/libcktsimd.la \
+	maths/ni/SIMD/libnisimd.la
 endif
 
 if XSPICE_WANTED

@@ -7,9 +7,34 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/iferrmsg.h"
 #include "ngspice/inpdefs.h"
 #include "inpxx.h"
-#ifdef BSIM3v32SIMD
+#ifdef MODSIMD
 #include "ngspice/cpextern.h"
 #endif
+
+#ifdef MODSIMD
+int SIMDselect(const char* ver)
+{
+    const char* ev;
+    ev = getenv("NGSPICE_MODSIMD");
+    if(ev && strcmp(ev,"never")==0)
+    	return 0;
+    if(ev && strcmp(ev,"always")==0)
+    	return 1;
+	
+    if(((strlen(ver)>5) && (strcmp(&ver[strlen(ver)-4],"simd")==0))
+    || cp_getvar("modsimd", CP_BOOL, NULL, 0)
+    #if defined(MODSIMD_ALWAYS)
+    || 1
+    #endif
+    )
+      return 1;
+    else
+      return 0;
+}
+#else
+#define SIMDselect 0
+#endif
+
 /*--------------------------------------------------------------
  * This fcn takes the model card & examines it.  Depending upon
  * model type, it parses the model line, and then calls
@@ -301,30 +326,28 @@ char *INPdomodel(CKTcircuit *ckt, struct card *image, INPtables * tab)
 			      type = INPtypelook("BSIM3v1");
 			    }
 			    if (prefix("3.2", ver)) { /* version string ver has to start with 3.2 */
-			      #ifdef BSIM3v32SIMD
-			      if(((strlen(ver)>5) && (strcmp(&ver[strlen(ver)-4],"simd")==0))
-			      || cp_getvar("modsimd", CP_BOOL, NULL, 0)
-			      #if defined(MODSIMD_ALWAYS)
-			      || 1
-			      #endif
-			      )
+			      if(SIMDselect(ver))
 			        type = INPtypelook("BSIM3v32simd");
 			      else
-			      #endif /* BSIM3v32SIMD */
 			        type = INPtypelook("BSIM3v32");
 			    }
 			    if ( (strstr(ver, "default")) || (prefix("3.3", ver)) ) {
-			      type = INPtypelook("BSIM3");
+			      if(SIMDselect(ver))
+			        type = INPtypelook("BSIM3simd");
+			      else
+			        type = INPtypelook("BSIM3");
 			    }
 			    if (type < 0) {
 			       err = tprintf("Device type BSIM3 version %s not available in this binary\n", ver);
 			    }
 			    break;
-			case 88:
+			case 88: /* level 88 select simd version of BSIM3 - not so useful and should be removed */
 			    err = INPfindVer(line, ver);
 			    if (prefix("3.2", ver)) { /* version string ver has to start with 3.2 */
 			      type = INPtypelook("BSIM3v32simd");
 			    }
+			    if ( (strstr(ver, "default")) || (prefix("3.3", ver)) )
+			      type = INPtypelook("BSIM3simd");
 			    if (type < 0) {
 			       err = tprintf("Device type BSIM3(simd) version %s not available in this binary\n", ver);
 			    }

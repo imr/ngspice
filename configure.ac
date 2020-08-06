@@ -1304,6 +1304,7 @@ fi
 
 if test "x$enable_modsimd" = xyes; then
     AC_DEFINE([BSIM3v32SIMD], [1], [simd acceleration for BSIM3V32 device])
+    AC_DEFINE([MODSIMD], [1], [simd acceleration for some device models])
     
     if test "x$have_intrinsics" = xyes; then
         AC_DEFINE([USEX86INTRINSICS], [1], [can use x86 simd intrinsics])
@@ -1344,6 +1345,7 @@ AC_CONFIG_FILES([Makefile
                  src/spicelib/devices/bsim1/Makefile
                  src/spicelib/devices/bsim2/Makefile
                  src/spicelib/devices/bsim3/Makefile
+		 src/spicelib/devices/bsim3simd/Makefile
                  src/spicelib/devices/bsim3v0/Makefile
                  src/spicelib/devices/bsim3v1/Makefile
                  src/spicelib/devices/bsim3v32/Makefile
@@ -1415,6 +1417,7 @@ AC_CONFIG_FILES([Makefile
                  src/maths/fft/Makefile
                  src/maths/misc/Makefile
                  src/maths/ni/Makefile
+		 src/maths/ni/SIMD/Makefile
                  src/maths/deriv/Makefile
                  src/maths/poly/Makefile
                  src/maths/sparse/Makefile

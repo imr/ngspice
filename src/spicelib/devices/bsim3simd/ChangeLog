@@ -1,0 +1,4 @@
+1999-09-06  Arno Peters <A.W.Peters@ieee.org>
+
+	* b3ld.c: Removed unused variable.
+
