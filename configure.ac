@@ -1188,6 +1188,10 @@ fi
 AC_ARG_ENABLE([modsimd],
     [AS_HELP_STRING([--enable-modsimd], [Enable simd acceleration in some device models])])
 
+# --with-sleef: Use SLEEF vector math library.  Default is "no".
+AC_ARG_WITH([sleef],
+    [AS_HELP_STRING([--with-sleef[=yes/no]], [Use SLEEF vector math library in SIMD models. Default=no.])])
+
 if test "x$enable_modsimd" = xyes; then
     OPENMPSIMD_CFLAGS="-fopenmp-simd"
     
@@ -1227,10 +1231,26 @@ if test "x$enable_modsimd" = xyes; then
       have_intrinsics=no
     ])
     have_libmvec=no
+    have_sleef=no
 fi
 
-# test if we can use libmvec or equivalent
+# do we want to use SLEEF ?
+if test "x$enable_modsimd" = xyes; then
+  if test "x$with_sleef" = xyes; then
+    AC_CHECK_HEADERS([sleef.h])
+    AC_CHECK_LIB([sleef], [Sleef_logd4_u35],
+        [AC_DEFINE([HAVE_LIBSLEEF], [], [Have SLEEF vector math library])
+         LIBS="$LIBS -lsleef"
+	 have_sleef=yes
+	 AC_MSG_RESULT([Use SLEEF])
+	 ], [have_sleef=no]
+	 )
+  fi
+fi
+
+# otherwise test if we can use libmvec or equivalent
 if test "x$have_intrinsics" = xyes; then
+if test "x$have_sleef" != xyes; then
     AC_MSG_CHECKING([vector math library])
     AC_LINK_IFELSE(
     [
@@ -1253,6 +1273,7 @@ if test "x$have_intrinsics" = xyes; then
       AC_MSG_RESULT([no])
       have_libmvec=no
     ])
+fi
 fi
 
 # adjust compiler flags for MODSIMD
@@ -1294,6 +1315,12 @@ if test "x$enable_modsimd" = xyes; then
 	AC_MSG_RESULT([Use libmvec])
     fi
     
+    if test "x$have_libmvec" = xno; then
+    if test "x$have_sleef" = xno; then
+       AC_MSG_WARN([No math vector library detected (sleef or libmvec). Rely on compiler's auto-vectorization of math functions.])
+    fi
+    fi
+        
     AC_MSG_RESULT([MODSIMD feature enabled])
 fi
 
