@@ -38,24 +38,30 @@ INDload(GENmodel *inModel, CKTcircuit *ckt)
         if (!ckt->CKTkluMODE || (ckt->CKTkluMODE && (model->INDisLinear == ckt->CKTlinearModelsRequested) && (model->INDisLinearStatic == ckt->CKTlinearStaticModelsRequested))) {
 #endif
 
-        /* loop through all the instances of the model */
-        for (here = INDinstances(model); here != NULL ;
-                here=INDnextInstance(here)) {
+            /* loop through all the instances of the model */
+            for (here = INDinstances(model); here != NULL ; here=INDnextInstance(here)) {
 
-            m = (here->INDm);
+                m = (here->INDm);
 
-            if(!(ckt->CKTmode & (MODEDC|MODEINITPRED))) {
-                if(ckt->CKTmode & MODEUIC && ckt->CKTmode & MODEINITTRAN) {
-                    *(ckt->CKTstate0 + here->INDflux) = here->INDinduct / m *
-                                                        here->INDinitCond;
-                } else {
-                    *(ckt->CKTstate0 + here->INDflux) = here->INDinduct / m *
+                if(!(ckt->CKTmode & (MODEDC|MODEINITPRED))) {
+                    if(ckt->CKTmode & MODEUIC && ckt->CKTmode & MODEINITTRAN) {
+                        *(ckt->CKTstate0 + here->INDflux) = here->INDinduct / m *
+                                                            here->INDinitCond;
+                    } else {
+                        *(ckt->CKTstate0 + here->INDflux) = here->INDinduct / m *
                                                         *(ckt->CKTrhsOld + here->INDbrEq);
+                    }
                 }
-            }
+
 #ifdef MUTUAL
+            }
+
+#ifdef KLU
         }
+#endif
+
     }
+
     ktype = CKTtypelook("mutual");
     mutmodel = (MUTmodel *)(ckt->CKThead[ktype]);
     /*  loop through all the mutual inductor models */
@@ -65,23 +71,22 @@ INDload(GENmodel *inModel, CKTcircuit *ckt)
         if (!ckt->CKTkluMODE || (ckt->CKTkluMODE && (mutmodel->MUTisLinear == ckt->CKTlinearModelsRequested) && (mutmodel->MUTisLinearStatic == ckt->CKTlinearStaticModelsRequested))) {
 #endif
 
-        /* loop through all the instances of the model */
-        for (muthere = MUTinstances(mutmodel); muthere != NULL ;
-                muthere=MUTnextInstance(muthere)) {
+            /* loop through all the instances of the model */
+            for (muthere = MUTinstances(mutmodel); muthere != NULL ; muthere=MUTnextInstance(muthere)) {
 
-            if(!(ckt->CKTmode& (MODEDC|MODEINITPRED))) {
-                *(ckt->CKTstate0 + muthere->MUTind1->INDflux)  +=
-                    muthere->MUTfactor * *(ckt->CKTrhsOld +
-                                           muthere->MUTind2->INDbrEq);
+                if(!(ckt->CKTmode& (MODEDC|MODEINITPRED))) {
+                    *(ckt->CKTstate0 + muthere->MUTind1->INDflux)  +=
+                        muthere->MUTfactor * *(ckt->CKTrhsOld +
+                                               muthere->MUTind2->INDbrEq);
 
-                *(ckt->CKTstate0 + muthere->MUTind2->INDflux)  +=
-                    muthere->MUTfactor * *(ckt->CKTrhsOld +
-                                           muthere->MUTind1->INDbrEq);
+                    *(ckt->CKTstate0 + muthere->MUTind2->INDflux)  +=
+                        muthere->MUTfactor * *(ckt->CKTrhsOld +
+                                               muthere->MUTind1->INDbrEq);
+                }
+
+                *(muthere->MUTbr1br2Ptr) -= muthere->MUTfactor*ckt->CKTag[0];
+                *(muthere->MUTbr2br1Ptr) -= muthere->MUTfactor*ckt->CKTag[0];
             }
-
-            *(muthere->MUTbr1br2Ptr) -= muthere->MUTfactor*ckt->CKTag[0];
-            *(muthere->MUTbr2br1Ptr) -= muthere->MUTfactor*ckt->CKTag[0];
-        }
 
 #ifdef KLU
         }
@@ -94,47 +99,51 @@ INDload(GENmodel *inModel, CKTcircuit *ckt)
     for( ; model != NULL; model = INDnextModel(model)) {
 
         /* loop through all the instances of the model */
-        for (here = INDinstances(model); here != NULL ;
-                here=INDnextInstance(here)) {
+        for (here = INDinstances(model); here != NULL ; here=INDnextInstance(here)) {
+
+#ifdef KLU
+            if (!ckt->CKTkluMODE || (ckt->CKTkluMODE && (model->INDisLinear == ckt->CKTlinearModelsRequested) && (model->INDisLinearStatic == ckt->CKTlinearStaticModelsRequested))) {
+#endif
 
 #endif /*MUTUAL*/
-            if(ckt->CKTmode & MODEDC) {
-                req = 0.0;
-                veq = 0.0;
-            } else {
-                double newmind;
-#ifndef PREDICTOR
-                if(ckt->CKTmode & MODEINITPRED) {
-                    *(ckt->CKTstate0 + here->INDflux) =
-                        *(ckt->CKTstate1 + here->INDflux);
+
+                if(ckt->CKTmode & MODEDC) {
+                    req = 0.0;
+                    veq = 0.0;
                 } else {
-#endif /*PREDICTOR*/
-                    if (ckt->CKTmode & MODEINITTRAN) {
-                        *(ckt->CKTstate1 + here->INDflux) =
-                            *(ckt->CKTstate0 + here->INDflux);
-                    }
+                    double newmind;
 #ifndef PREDICTOR
-                }
+                    if(ckt->CKTmode & MODEINITPRED) {
+                        *(ckt->CKTstate0 + here->INDflux) =
+                            *(ckt->CKTstate1 + here->INDflux);
+                    } else {
 #endif /*PREDICTOR*/
-                m = (here->INDm);
-                newmind = here->INDinduct/m;
-                error=NIintegrate(ckt,&req,&veq,newmind,here->INDflux);
-                if(error) return(error);
+                        if (ckt->CKTmode & MODEINITTRAN) {
+                            *(ckt->CKTstate1 + here->INDflux) =
+                                *(ckt->CKTstate0 + here->INDflux);
+                        }
+#ifndef PREDICTOR
+                    }
+#endif /*PREDICTOR*/
+                    m = (here->INDm);
+                    newmind = here->INDinduct/m;
+                    error=NIintegrate(ckt,&req,&veq,newmind,here->INDflux);
+                    if(error) return(error);
+                }
+
+                *(ckt->CKTrhs+here->INDbrEq) += veq;
+
+                if(ckt->CKTmode & MODEINITTRAN) {
+                    *(ckt->CKTstate1+here->INDvolt) =
+                        *(ckt->CKTstate0+here->INDvolt);
+                }
+
+                *(here->INDposIbrPtr) +=  1;
+                *(here->INDnegIbrPtr) -=  1;
+                *(here->INDibrPosPtr) +=  1;
+                *(here->INDibrNegPtr) -=  1;
+                *(here->INDibrIbrPtr) -=  req;
             }
-
-            *(ckt->CKTrhs+here->INDbrEq) += veq;
-
-            if(ckt->CKTmode & MODEINITTRAN) {
-                *(ckt->CKTstate1+here->INDvolt) =
-                    *(ckt->CKTstate0+here->INDvolt);
-            }
-
-            *(here->INDposIbrPtr) +=  1;
-            *(here->INDnegIbrPtr) -=  1;
-            *(here->INDibrPosPtr) +=  1;
-            *(here->INDibrNegPtr) -=  1;
-            *(here->INDibrIbrPtr) -=  req;
-        }
 
 #ifdef KLU
         }
