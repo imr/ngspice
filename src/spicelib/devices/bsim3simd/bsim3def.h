@@ -192,8 +192,9 @@ typedef struct sBSIM3instance
     double BSIM3SIMDcdhat;
     double BSIM3SIMDcbhat;
     int	BSIM3SIMDCheck;
-
+    
     /* per instance storage of results, to update matrix at a later stge */
+    int BSIM3noncon;
     double BSIM3rhsG;
     double BSIM3rhsB;
     double BSIM3rhsD;

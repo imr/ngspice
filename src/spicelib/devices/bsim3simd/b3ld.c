@@ -2996,8 +2996,12 @@ line900:
            here->BSIM3rhsD = m * (ceqbd - cdreq - ceqqd);
            here->BSIM3rhsS = m * (cdreq + ceqbs + ceqqg
                                                     + ceqqb + ceqqd);
-           if (here->BSIM3nqsMod)
+           #ifndef OMP_EFFMEM
+	   if (here->BSIM3nqsMod)
            here->BSIM3rhsQ = m * (cqcheq - cqdef);
+	   #else
+	   *(ckt->CKTrhs + here->BSIM3qNode) += m * (cqcheq - cqdef);
+	   #endif
 #else
            (*(ckt->CKTrhs + here->BSIM3gNode) -= m * ceqqg);
            (*(ckt->CKTrhs + here->BSIM3bNode) -= m * (ceqbs + ceqbd + ceqqb));
@@ -3051,7 +3055,8 @@ line900:
            here->BSIM3SPdpPt = m * (here->BSIM3gds + RevSum - gcsdb
                                   - sxpart * ggtd - T1 * dsxpart_dVd - gbspdp);
 
-           if (here->BSIM3nqsMod)
+           #ifndef OMP_EFFMEM
+	   if (here->BSIM3nqsMod)
            {   here->BSIM3QqPt = m * (gqdef + here->BSIM3gtau);
 
                here->BSIM3DPqPt = m * (dxpart * here->BSIM3gtau);
@@ -3063,6 +3068,20 @@ line900:
                here->BSIM3QspPt = m * (ggts - gcqsb);
                here->BSIM3QbPt = m * (ggtb - gcqbb);
            }
+	   #else
+	   if (here->BSIM3nqsMod)
+           {   *(here->BSIM3QqPtr) += m * (gqdef + here->BSIM3gtau);
+
+               *(here->BSIM3DPqPtr) += m * (dxpart * here->BSIM3gtau);
+               *(here->BSIM3SPqPtr) += m * (sxpart * here->BSIM3gtau);
+               *(here->BSIM3GqPtr) -= m * here->BSIM3gtau;
+
+               *(here->BSIM3QgPtr) += m * (ggtg - gcqgb);
+               *(here->BSIM3QdpPtr) += m * (ggtd - gcqdb);
+               *(here->BSIM3QspPtr) += m * (ggts - gcqsb);
+               *(here->BSIM3QbPtr) += m * (ggtb - gcqbb);
+           }
+	   #endif
 #else
            (*(here->BSIM3DdPtr) += m * here->BSIM3drainConductance);
            (*(here->BSIM3GgPtr) += m * (gcggb - ggtg));
@@ -3137,14 +3156,17 @@ void BSIM3SIMDLoadRhsMat(GENmodel *inModel, CKTcircuit *ckt)
     for(idx = 0; idx < InstCount; idx++) {
        here = InstArray[idx];
        model = BSIM3SIMDmodPtr(here);
+       ckt->CKTnoncon += here->BSIM3noncon;
         /* Update b for Ax = b */
        (*(ckt->CKTrhs + here->BSIM3gNode) -= here->BSIM3rhsG);
        (*(ckt->CKTrhs + here->BSIM3bNode) -= here->BSIM3rhsB);
        (*(ckt->CKTrhs + here->BSIM3dNodePrime) += here->BSIM3rhsD);
        (*(ckt->CKTrhs + here->BSIM3sNodePrime) += here->BSIM3rhsS);
+       #ifndef OMP_EFFMEM
        if (here->BSIM3nqsMod)
            (*(ckt->CKTrhs + here->BSIM3qNode) += here->BSIM3rhsQ);
-
+       #endif
+       
         /* Update A for Ax = b */
            (*(here->BSIM3DdPtr) += here->BSIM3DdPt);
            (*(here->BSIM3GgPtr) += here->BSIM3GgPt);
@@ -3169,7 +3191,8 @@ void BSIM3SIMDLoadRhsMat(GENmodel *inModel, CKTcircuit *ckt)
            (*(here->BSIM3SPbPtr) -= here->BSIM3SPbPt);
            (*(here->BSIM3SPdpPtr) -= here->BSIM3SPdpPt);
 
-           if (here->BSIM3nqsMod)
+           #ifndef OMP_EFFMEM
+	   if (here->BSIM3nqsMod)
            {   *(here->BSIM3QqPtr) += here->BSIM3QqPt;
 
                *(here->BSIM3DPqPtr) += here->BSIM3DPqPt;
@@ -3181,6 +3204,7 @@ void BSIM3SIMDLoadRhsMat(GENmodel *inModel, CKTcircuit *ckt)
                *(here->BSIM3QspPtr) += here->BSIM3QspPt;
                *(here->BSIM3QbPtr) += here->BSIM3QbPt;
            }
+	   #endif
 
     }
 }

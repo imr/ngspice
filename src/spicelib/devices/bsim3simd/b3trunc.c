@@ -14,6 +14,10 @@
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
+#include "ngspice/SIMD/simdvector.h"
+#include "ngspice/SIMD/simdckt.h"
+#include <float.h>
+
 
 int
 BSIM3SIMDtrunc(
@@ -23,28 +27,39 @@ double *timeStep)
 {
 BSIM3model *model = (BSIM3model*)inModel;
 BSIM3instance *here;
-
+int i;
 #ifdef STEPDEBUG
     double debugtemp;
 #endif /* STEPDEBUG */
-
-    for (; model != NULL; model = BSIM3SIMDnextModel(model))
-    {    for (here = BSIM3SIMDinstances(model); here != NULL;
-	      here = BSIM3SIMDnextInstance(here))
+    for(i=0;i<model->BSIM3InstCount;i+=NSIMD)
 	 {
+	 VecNi indexes;
 #ifdef STEPDEBUG
             debugtemp = *timeStep;
 #endif /* STEPDEBUG */
-            CKTterr(here->BSIM3qb,ckt,timeStep);
-            CKTterr(here->BSIM3qg,ckt,timeStep);
-            CKTterr(here->BSIM3qd,ckt,timeStep);
+
+	 for(int k=0;k<NSIMD;k++)
+		indexes[k] = model->BSIM3InstanceArray[i+k]->BSIM3qb;
+	 vecN_CKTterr(indexes,ckt,timeStep);
+	 for(int k=0;k<NSIMD;k++)
+		indexes[k] = model->BSIM3InstanceArray[i+k]->BSIM3qg;
+	 vecN_CKTterr(indexes,ckt,timeStep);
+	 for(int k=0;k<NSIMD;k++)
+		indexes[k] = model->BSIM3InstanceArray[i+k]->BSIM3qd;
+	 vecN_CKTterr(indexes,ckt,timeStep);
 #ifdef STEPDEBUG
             if(debugtemp != *timeStep)
 	    {  printf("device %s reduces step from %g to %g\n",
-                       here->BSIM3name,debugtemp,*timeStep);
+                       model->BSIM3v32InstanceArray[i]->BSIM3name,debugtemp,*timeStep);
             }
 #endif /* STEPDEBUG */
         }
+    
+    for(;i<model->BSIM3InstCount;i++)
+    {
+            CKTterr(model->BSIM3InstanceArray[i]->BSIM3qb,ckt,timeStep);
+            CKTterr(model->BSIM3InstanceArray[i]->BSIM3qg,ckt,timeStep);
+            CKTterr(model->BSIM3InstanceArray[i]->BSIM3qd,ckt,timeStep);
     }
     return(OK);
 }
