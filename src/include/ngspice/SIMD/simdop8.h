@@ -28,6 +28,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
 
+#define vec8_blend vecN_blend
+
 #ifdef USE_LIBSLEEF
 #include <sleef.h>
 #define vec8_exp(a) Sleef_expd8_u10(a)
