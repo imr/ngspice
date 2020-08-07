@@ -1324,7 +1324,9 @@ fi
 
 if test "x$enable_modsimd" = xyes; then
   if test "x$with_sleef" = xyes || test "x$with_sleef" = xtry; then
-    if test "x$nsimd" = x4; then
+    AC_CHECK_HEADERS([sleef.h])
+    AC_CHECK_LIB([sleef], [Sleef_logd8_u35])
+    if test "x$nsimd" = x4nono; then
       AC_CHECK_LIB([sleef], [Sleef_logd4_u35],
         [AC_DEFINE([HAVE_LIBSLEEF], [], [Have SLEEF vector math library])
          LIBS="$LIBS -lsleef"
@@ -1333,7 +1335,21 @@ if test "x$enable_modsimd" = xyes; then
 	 ], [have_sleef=no]
 	 )
     fi
-    if test "x$nsimd" = x2; then
+    if test "x$nsimd" = x4; then
+      AC_MSG_CHECKING([vector math library sleef with vector width 4])
+      AC_LINK_IFELSE([
+      AC_LANG_PROGRAM(
+        [[#include <sleef.h>]],
+        [[__m256d x; x=Sleef_logd4_u35(x);]]
+      )] ,[
+        AC_MSG_RESULT([yes])
+        have_sleef=yes
+      ],[
+        AC_MSG_RESULT([no])
+        have_sleef=no
+      ] )
+    fi
+    if test "x$nsimd" = x2nono; then
       AC_CHECK_HEADERS([sleef.h])
       AC_CHECK_LIB([sleef], [Sleef_logd2_u35],
         [AC_DEFINE([HAVE_LIBSLEEF], [], [Have SLEEF vector math library])
@@ -1343,9 +1359,21 @@ if test "x$enable_modsimd" = xyes; then
 	 ], [have_sleef=no]
 	 )
     fi
+    if test "x$nsimd" = x2; then
+      AC_MSG_CHECKING([vector math library sleef with vector width 2])
+      AC_LINK_IFELSE([
+      AC_LANG_PROGRAM(
+        [[#include <sleef.h>]],
+        [[__m128d x; x=Sleef_logd2_u35(x);]]
+      )] ,[
+        AC_MSG_RESULT([yes])
+        have_sleef=yes
+      ],[
+        AC_MSG_RESULT([no])
+        have_sleef=no
+      ] )
+    fi
     if test "x$nsimd" = x8; then
-      AC_CHECK_HEADERS([sleef.h])
-      AC_CHECK_LIB([sleef], [Sleef_logd8_u35])
       AC_MSG_CHECKING([vector math library sleef with vector width 8])
       AC_LINK_IFELSE([
       AC_LANG_PROGRAM(
