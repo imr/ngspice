@@ -1184,13 +1184,31 @@ if test "x$enable_openmp" = xyes; then
 fi
 
 #################  MODSIMD ##################################################
-# --enable-modsimd: define MODSIMD in the code. This use simd acceleration in devices code
+# --enable-modsimd=N: define MODSIMD in the code with vector length N.
+# This use simd acceleration in devices code
 AC_ARG_ENABLE([modsimd],
-    [AS_HELP_STRING([--enable-modsimd], [Enable simd acceleration in some device models])])
+    [AS_HELP_STRING([--enable-modsimd[=yes/no/2/4/8]], [Enable simd acceleration in some device models. Value specify the simd vector length ("yes" default to 4).])])
 
 # --with-sleef: Use SLEEF vector math library.  Default is "no".
 AC_ARG_WITH([sleef],
     [AS_HELP_STRING([--with-sleef[=yes/no]], [Use SLEEF vector math library in SIMD models. Default=no.])])
+
+if test "x$enable_modsimd" = xyes; then
+   enable_modsimd=yes
+   nsimd=4
+fi
+if test "x$enable_modsimd" = x4; then
+   enable_modsimd=yes
+   nsimd=4
+fi
+if test "x$enable_modsimd" = x2; then
+   enable_modsimd=yes
+   nsimd=2
+fi
+if test "x$enable_modsimd" = x8; then
+   enable_modsimd=yes
+   nsimd=8
+fi
 
 if test "x$enable_modsimd" = xyes; then
     OPENMPSIMD_CFLAGS="-fopenmp-simd"
@@ -1214,46 +1232,84 @@ fi
 
 # now check if intrinsics can be used
 if test "x$enable_modsimd" = xyes; then
-    AC_MSG_CHECKING([x86 blend intrinsics])
-    AC_TRY_COMPILE([
-    	#include <x86intrin.h>
-    	typedef double Vec4d __attribute__ ((vector_size (4*sizeof(double)), aligned (4*sizeof(double))));
-    ],[
-    	Vec4d v1,v2;
-	v1 = (Vec4d) {1.0,2.0,3.141592,4.0};
-	v2 = v1 + 10.1;
-	v2 = _mm256_blendv_pd(v1,v2,(Vec4d) (v1>3.0));
-    ],[
-      AC_MSG_RESULT([yes])
-      have_intrinsics=yes
-    ], [
-      AC_MSG_RESULT([no])
-      have_intrinsics=no
-    ])
+    have_intrinsics=no
     have_libmvec=no
     have_sleef=no
+    if test "x$nsimd" = x2; then
+        AC_MSG_CHECKING([x86 blend intrinsics NSIMD=2])
+        AC_COMPILE_IFELSE([
+	AC_LANG_PROGRAM(
+	[[#include <x86intrin.h>
+	typedef double Vec2d __attribute__ ((vector_size (2*sizeof(double))));]],
+	[[Vec2d v1 = (Vec2d) {1,2};
+	  v1 = _mm_blendv_pd(v1,v1+1,(Vec2d) (v1>3.0)); ]])],
+	[
+	AC_MSG_RESULT([yes])
+	have_intrinsics=yes
+	],[
+	AC_MSG_RESULT([no])
+	] )
+    fi
+    if test "x$nsimd" = x4; then
+        AC_MSG_CHECKING([x86 blend intrinsics NSIMD=4])
+        AC_COMPILE_IFELSE([
+	AC_LANG_PROGRAM(
+	[[#include <x86intrin.h>
+	typedef double Vec4d __attribute__ ((vector_size (4*sizeof(double))));]],
+	[[Vec4d v1 = (Vec4d) {1,2,1.2,3.3};
+	  v1 = _mm256_blendv_pd(v1,v1+1,(Vec4d) (v1>3.0)); ]])],
+	[
+	AC_MSG_RESULT([yes])
+	have_intrinsics=yes
+	],[
+	AC_MSG_RESULT([no])
+	])
+    fi
 fi
 
 # do we want to use SLEEF ?
 if test "x$enable_modsimd" = xyes; then
   if test "x$with_sleef" = xyes; then
-    AC_CHECK_HEADERS([sleef.h])
-    AC_CHECK_LIB([sleef], [Sleef_logd4_u35],
+    if test "x$nsimd" = x4; then
+      AC_CHECK_HEADERS([sleef.h])
+      AC_CHECK_LIB([sleef], [Sleef_logd4_u35],
         [AC_DEFINE([HAVE_LIBSLEEF], [], [Have SLEEF vector math library])
          LIBS="$LIBS -lsleef"
 	 have_sleef=yes
 	 AC_MSG_RESULT([Use SLEEF])
 	 ], [have_sleef=no]
 	 )
+    fi
+    if test "x$nsimd" = x2; then
+      AC_CHECK_HEADERS([sleef.h])
+      AC_CHECK_LIB([sleef], [Sleef_logd2_u35],
+        [AC_DEFINE([HAVE_LIBSLEEF], [], [Have SLEEF vector math library])
+         LIBS="$LIBS -lsleef"
+	 have_sleef=yes
+	 AC_MSG_RESULT([Use SLEEF])
+	 ], [have_sleef=no]
+	 )
+    fi
+    if test "x$nsimd" = x8; then
+      AC_CHECK_HEADERS([sleef.h])
+      AC_CHECK_LIB([sleef], [Sleef_logd8_u35],
+        [AC_DEFINE([HAVE_LIBSLEEF], [], [Have SLEEF vector math library])
+         LIBS="$LIBS -lsleef"
+	 have_sleef=yes
+	 AC_MSG_RESULT([Use SLEEF])
+	 ], [have_sleef=no]
+	 )
+    fi
   fi
 fi
 
 # otherwise test if we can use libmvec or equivalent
 if test "x$have_intrinsics" = xyes; then
 if test "x$have_sleef" != xyes; then
-    AC_MSG_CHECKING([vector math library])
-    AC_LINK_IFELSE(
-    [
+    AC_MSG_CHECKING([vector math library libmvec])
+    have_libmvec=no
+    if test "x$nsimd" = x4; then
+    AC_LINK_IFELSE([
     AC_LANG_PROGRAM(
     [[
         #include <math.h>
@@ -1265,14 +1321,36 @@ if test "x$have_sleef" != xyes; then
 	v1 = (Vec4d) {1.0,2.0,3.141592,4.0};
 	v2 = _ZGVdN4v_log(v1);
 	v1 = _ZGVdN4v_exp(v2);
-    ]])
-    ],[
+    ]]) ],[
       AC_MSG_RESULT([yes])
       have_libmvec=yes
     ],[
       AC_MSG_RESULT([no])
       have_libmvec=no
     ])
+    fi
+    if test "x$nsimd" = x2; then
+    AC_LINK_IFELSE([
+    AC_LANG_PROGRAM(
+    [[
+        #include <math.h>
+    	typedef double Vec2d __attribute__ ((vector_size (2*sizeof(double)), aligned (2*sizeof(double))));
+	Vec2d _ZGVbN2v_exp(Vec2d x);
+	Vec2d _ZGVbN2v_log(Vec2d x);
+    ]],[[
+        Vec2d v1,v2;
+	v1 = (Vec2d) {1.0,2.0};
+	v2 = _ZGVbN2v_exp(v1);
+	v1 = _ZGVbN2v_log(v2);
+    ]]) ],[
+      AC_MSG_RESULT([yes])
+      have_libmvec=yes
+    ],[
+      AC_MSG_RESULT([no])
+      have_libmvec=no
+    ])
+    fi
+    
 fi
 fi
 
@@ -1305,7 +1383,16 @@ fi
 if test "x$enable_modsimd" = xyes; then
     AC_DEFINE([BSIM3v32SIMD], [1], [simd acceleration for BSIM3V32 device])
     AC_DEFINE([MODSIMD], [1], [simd acceleration for some device models])
-    
+    if test "x$nsimd" = x4; then
+      AC_DEFINE([NSIMD], [4], [simd vector length])
+    fi
+    if test "x$nsimd" = x2; then
+      AC_DEFINE([NSIMD], [2], [simd vector length])
+    fi
+    if test "x$nsimd" = x8; then
+      AC_DEFINE([NSIMD], [8], [simd vector length])
+    fi
+
     if test "x$have_intrinsics" = xyes; then
         AC_DEFINE([USEX86INTRINSICS], [1], [can use x86 simd intrinsics])
 	AC_MSG_RESULT([Use x86 simd intrinsics])
