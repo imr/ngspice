@@ -1267,45 +1267,8 @@ if test "x$enable_modsimd" = xyes; then
     fi
 fi
 
-# do we want to use SLEEF ?
-if test "x$enable_modsimd" = xyes; then
-  if test "x$with_sleef" = xyes; then
-    if test "x$nsimd" = x4; then
-      AC_CHECK_HEADERS([sleef.h])
-      AC_CHECK_LIB([sleef], [Sleef_logd4_u35],
-        [AC_DEFINE([HAVE_LIBSLEEF], [], [Have SLEEF vector math library])
-         LIBS="$LIBS -lsleef"
-	 have_sleef=yes
-	 AC_MSG_RESULT([Use SLEEF])
-	 ], [have_sleef=no]
-	 )
-    fi
-    if test "x$nsimd" = x2; then
-      AC_CHECK_HEADERS([sleef.h])
-      AC_CHECK_LIB([sleef], [Sleef_logd2_u35],
-        [AC_DEFINE([HAVE_LIBSLEEF], [], [Have SLEEF vector math library])
-         LIBS="$LIBS -lsleef"
-	 have_sleef=yes
-	 AC_MSG_RESULT([Use SLEEF])
-	 ], [have_sleef=no]
-	 )
-    fi
-    if test "x$nsimd" = x8; then
-      AC_CHECK_HEADERS([sleef.h])
-      AC_CHECK_LIB([sleef], [Sleef_logd8_u35],
-        [AC_DEFINE([HAVE_LIBSLEEF], [], [Have SLEEF vector math library])
-         LIBS="$LIBS -lsleef"
-	 have_sleef=yes
-	 AC_MSG_RESULT([Use SLEEF])
-	 ], [have_sleef=no]
-	 )
-    fi
-  fi
-fi
-
-# otherwise test if we can use libmvec or equivalent
+# test if we can use libmvec or equivalent
 if test "x$have_intrinsics" = xyes; then
-if test "x$have_sleef" != xyes; then
     AC_MSG_CHECKING([vector math library libmvec])
     have_libmvec=no
     if test "x$nsimd" = x4; then
@@ -1350,8 +1313,64 @@ if test "x$have_sleef" != xyes; then
       have_libmvec=no
     ])
     fi
-    
 fi
+
+# do we want to use SLEEF ?
+if test "x$have_libmvec" = xno; then
+if test "x$with_sleef" != xno && test "x$with_sleef" != xyes; then
+   with_sleef=try;
+fi
+fi
+
+if test "x$enable_modsimd" = xyes; then
+  if test "x$with_sleef" = xyes || test "x$with_sleef" = xtry; then
+    if test "x$nsimd" = x4; then
+      AC_CHECK_LIB([sleef], [Sleef_logd4_u35],
+        [AC_DEFINE([HAVE_LIBSLEEF], [], [Have SLEEF vector math library])
+         LIBS="$LIBS -lsleef"
+	 have_sleef=yes
+	 AC_MSG_RESULT([Use SLEEF])
+	 ], [have_sleef=no]
+	 )
+    fi
+    if test "x$nsimd" = x2; then
+      AC_CHECK_HEADERS([sleef.h])
+      AC_CHECK_LIB([sleef], [Sleef_logd2_u35],
+        [AC_DEFINE([HAVE_LIBSLEEF], [], [Have SLEEF vector math library])
+         LIBS="$LIBS -lsleef"
+	 have_sleef=yes
+	 AC_MSG_RESULT([Use SLEEF])
+	 ], [have_sleef=no]
+	 )
+    fi
+    if test "x$nsimd" = x8; then
+      AC_CHECK_HEADERS([sleef.h])
+      AC_CHECK_LIB([sleef], [Sleef_logd8_u35])
+      AC_MSG_CHECKING([vector math library sleef with vector width 8])
+      AC_LINK_IFELSE([
+      AC_LANG_PROGRAM(
+        [[#include <sleef.h>]],
+        [[__m512d x; x=Sleef_logd8_u35(x);]]
+      )] ,[
+        AC_MSG_RESULT([yes])
+        have_sleef=yes
+      ],[
+        AC_MSG_RESULT([no])
+        have_sleef=no
+      ] )
+    fi
+  fi
+fi
+
+if test "x$have_sleef" = xno; then
+if test "x$with_sleef" = xyes; then
+  AC_MSG_ERROR([SLEEF requested but can't be used, try without-sleef])
+fi
+fi
+
+#disable libmvec if specified to use sleef
+if test "x$have_sleef" = xyes; then
+  have_libmvec=no
 fi
 
 # adjust compiler flags for MODSIMD
@@ -1403,8 +1422,13 @@ if test "x$enable_modsimd" = xyes; then
 	AC_MSG_RESULT([Use libmvec])
     fi
     
-    if test "x$have_libmvec" = xno; then
-    if test "x$have_sleef" = xno; then
+    if test "x$have_sleef" = xyes; then
+        AC_DEFINE([USE_LIBSLEEF],[1], [use SLEEF for vector math])
+	AC_MSG_RESULT([Use SLEEF])
+    fi
+    
+    if test "x$have_libmvec" != xyes; then
+    if test "x$have_sleef" != xyes; then
        AC_MSG_WARN([No math vector library detected (sleef or libmvec). Rely on compiler's auto-vectorization of math functions.])
     fi
     fi

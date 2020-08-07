@@ -39,7 +39,7 @@
 #define vec4_powMJSWG(x,p) vec4_pow(x,p)
 
 
-#ifdef HAVE_LIBSLEEF
+#ifdef USE_LIBSLEEF
 #include <sleef.h>
 #define vec4_exp(a) Sleef_expd4_u10(a)
 #define vec4_log(a) Sleef_logd4_u35(a)
@@ -50,7 +50,7 @@
 #endif
 
 
-/* HAS_LIBMVEC and/or HAVE_LIBSLEEF defined from configure.ac */
+/* HAS_LIBMVEC and/or USE_LIBSLEEF defined from configure.ac */
 
 /* USE_SERIAL_FORM can be defined but has no performance influence */
 
@@ -73,7 +73,7 @@ static inline Vec4d vec4_blend(Vec4d fa, Vec4d tr, Vec4m mask)
 }
 #endif
 
-#ifndef HAVE_LIBSLEEF
+#ifndef USE_LIBSLEEF
 /******* vec4_exp, vec4_log *******/
 #ifdef HAS_LIBMVEC
 Vec4d _ZGVdN4v_exp(Vec4d x);
@@ -161,7 +161,7 @@ static inline Vec4d vec4_pow(Vec4d x, double p)
 	return vec4_exp(vec4_log(x)*p);
 }
 
-#endif /* HAVE_LIBSLEEF */
+#endif /* USE_LIBSLEEF */
 
 /******* vec4_SIMDTOVECTOR, vec4_SIMDTOVECTORMASK *******/
 #ifdef USE_SERIAL_FORM
