@@ -546,7 +546,7 @@ int TWOequilSolve(TWOdevice *pDevice)
                 if (pDevice->matrix->SMPkluMatrix->KLUmatrixSymbolic == NULL) {
                     printf ("CIDER: KLU Failed\n") ;
                     if (pDevice->matrix->SMPkluMatrix->KLUmatrixCommon->status == KLU_EMPTY_MATRIX) {
-                        return ; // Francesco Lannutti - Fix KLU return values
+                        return E_NOMEM ; // Francesco Lannutti - Fix KLU return values
                     }
                 }
                 printf ("CIDER: KLU to be fixed: spElementCount\n") ;
