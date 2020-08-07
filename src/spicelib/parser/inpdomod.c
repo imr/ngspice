@@ -32,7 +32,7 @@ int SIMDselect(const char* ver)
       return 0;
 }
 #else
-#define SIMDselect 0
+#define SIMDselect(ver) 0
 #endif
 
 /*--------------------------------------------------------------
