@@ -212,21 +212,21 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
             MATRIX_ALLOC(double, here->CPLibr2Ibr1Ptr, noL, noL);
 
 #ifdef KLU
-            VECTOR_ALLOC(here->CPLibr1Ibr1Binding, BindElement, noL);
-            VECTOR_ALLOC(here->CPLibr2Ibr2Binding, BindElement, noL);
-            VECTOR_ALLOC(here->CPLposIbr1Binding, BindElement, noL);
-            VECTOR_ALLOC(here->CPLnegIbr2Binding, BindElement, noL);
-            VECTOR_ALLOC(here->CPLposPosBinding, BindElement, noL);
-            VECTOR_ALLOC(here->CPLnegNegBinding, BindElement, noL);
-            VECTOR_ALLOC(here->CPLnegPosBinding, BindElement, noL);
-            VECTOR_ALLOC(here->CPLposNegBinding, BindElement, noL);
+            VECTOR_ALLOC(BindElement, here->CPLibr1Ibr1Binding, noL);
+            VECTOR_ALLOC(BindElement, here->CPLibr2Ibr2Binding, noL);
+            VECTOR_ALLOC(BindElement, here->CPLposIbr1Binding, noL);
+            VECTOR_ALLOC(BindElement, here->CPLnegIbr2Binding, noL);
+            VECTOR_ALLOC(BindElement, here->CPLposPosBinding, noL);
+            VECTOR_ALLOC(BindElement, here->CPLnegNegBinding, noL);
+            VECTOR_ALLOC(BindElement, here->CPLnegPosBinding, noL);
+            VECTOR_ALLOC(BindElement, here->CPLposNegBinding, noL);
 
-            MATRIX_ALLOC(here->CPLibr1PosBinding, BindElement, noL, noL);
-            MATRIX_ALLOC(here->CPLibr2NegBinding, BindElement, noL, noL);
-            MATRIX_ALLOC(here->CPLibr1NegBinding, BindElement, noL, noL);
-            MATRIX_ALLOC(here->CPLibr2PosBinding, BindElement, noL, noL);
-            MATRIX_ALLOC(here->CPLibr1Ibr2Binding, BindElement, noL, noL);
-            MATRIX_ALLOC(here->CPLibr2Ibr1Binding, BindElement, noL, noL);
+            MATRIX_ALLOC(BindElement, here->CPLibr1PosBinding, noL, noL);
+            MATRIX_ALLOC(BindElement, here->CPLibr2NegBinding, noL, noL);
+            MATRIX_ALLOC(BindElement, here->CPLibr1NegBinding, noL, noL);
+            MATRIX_ALLOC(BindElement, here->CPLibr2PosBinding, noL, noL);
+            MATRIX_ALLOC(BindElement, here->CPLibr1Ibr2Binding, noL, noL);
+            MATRIX_ALLOC(BindElement, here->CPLibr2Ibr1Binding, noL, noL);
 #endif
 
 
