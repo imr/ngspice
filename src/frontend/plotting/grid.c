@@ -141,7 +141,7 @@ gr_redrawgrid(GRAPH *graph)
             (int)(graph->absolute.width * 0.35),
             graph->fontheight, 0);
 #else
-        if (eq(dispdev->name, "postscript"))
+        if (eq(dispdev->name, "postscript") || eq(dispdev->name, "svg"))
         {
             DevDrawText(graph->grid.xlabel,
                 (int)(graph->absolute.width * 0.35),
@@ -232,6 +232,45 @@ gr_redrawgrid(GRAPH *graph)
                                 graph->grid.ylabel) * graph->fontwidth) / 2,
                         90);
             }
+#if !defined(_MSC_VER ) && !defined(__MINGW32__)
+            /* svg for non-Windows */
+            else if (eq(dispdev->name, "svg")) {
+                DevDrawText(graph->grid.ylabel,
+                        graph->fontwidth,
+                        /* vertical text, midpoint in y is aligned midpoint
+                         * of utf-8 text string */
+                        graph->absolute.height - (int)(mbstowcs(NULL, graph->grid.ylabel, 0) * graph->fontwidth / 2),
+                        90);
+            }
+#else
+            /* Windows and UTF-8: check for string length (in pixels),
+               place vertical text centered in y with respect to grid */
+            else if (eq(dispdev->name, "svg")) {
+                /* utf-8: figure out the real length of the y label */
+                const int n_byte_wide = 2 * (int)strlen(graph->grid.ylabel) + 1;
+                wchar_t* const wtext = TMALLOC(wchar_t, n_byte_wide);
+                int wlen = MultiByteToWideChar(CP_UTF8, 0, graph->grid.ylabel, -1,
+                    wtext, n_byte_wide);
+                if (wlen == 0) {
+                    fprintf(stderr, "UTF-8 to wide char conversion failed with 0x%x\n", GetLastError());
+                    fprintf(stderr, "%s could not be converted\n", graph->grid.ylabel);
+                }
+                else {
+                    SIZE sz;
+                    TEXTMETRICW tmw;
+                    tpWindowData wd = graph->devdep;
+                    GetTextMetricsW(wd->hDC, &tmw);
+                    GetTextExtentPoint32W(wd->hDC, wtext, wlen, &sz);
+                    //                    printf("length: %d, deviation: %d\n", sz.cx, sz.cx - graph->fontwidth*wlen);
+                    DevDrawText(graph->grid.ylabel,
+                        graph->fontwidth,
+                        /*vertical text, midpoint in y is aligned midpoint of text string */
+                        (graph->absolute.height - (int)(1.2 * sz.cx + tmw.tmOverhang)) / 2, 90);
+                }
+                txfree(wtext);
+    }
+#endif
+
 #ifdef EXT_ASC
             else if (eq(dispdev->name, "Windows"))
                 DevDrawText(graph->grid.ylabel,
@@ -288,7 +327,7 @@ gr_redrawgrid(GRAPH *graph)
     }
 
     /* draw postscript title */
-    if (graph->plotname && eq(dispdev->name, "postscript"))
+    if (graph->plotname && (eq(dispdev->name, "postscript") || eq(dispdev->name, "svg")))
             DevDrawText(graph->plotname,
                         graph->fontwidth,
                         graph->absolute.height - graph->fontheight, 0);

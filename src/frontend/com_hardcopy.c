@@ -83,17 +83,34 @@ void com_hardcopy(wordlist *wl)
             return;
         }
 
-        /* change .tmp to .ps */
-        psfname = strchr(fname, '.');
-        if (psfname) {
-            psfname[1] = 'p';
-            psfname[2] = 's';
-            psfname[3] = '\0';
+        if (!strcmp(devtype, "svg")) {
+            /* change .tmp to .svg */
+            psfname = strchr(fname, '.');
+            if (psfname) {
+                psfname[1] = 's';
+                psfname[2] = 'v';
+                psfname[3] = 'g';
+                psfname[4] = '\0';
+            }
+            else {
+                fname = trealloc(fname, n_byte_fname + 4);
+                (void)memcpy(fname + n_byte_fname - 1, ".svg", 5);
+                n_byte_fname += 4;
+            }
         }
         else {
-            fname = trealloc(fname, n_byte_fname + 3);
-            (void) memcpy(fname + n_byte_fname - 1, ".ps", 4);
-            n_byte_fname += 3;
+            /* change .tmp to .ps */
+            psfname = strchr(fname, '.');
+            if (psfname) {
+                psfname[1] = 'p';
+                psfname[2] = 's';
+                psfname[3] = '\0';
+            }
+            else {
+                fname = trealloc(fname, n_byte_fname + 3);
+                (void)memcpy(fname + n_byte_fname - 1, ".ps", 4);
+                n_byte_fname += 3;
+            }
         }
         tempgraph->devdep = fname;
         tempgraph->n_byte_devdep = n_byte_fname;
@@ -230,6 +247,11 @@ void com_hardcopy(wordlist *wl)
             fprintf(cp_out,
                     "\nThe file \"%s\" may be printed on a postscript printer.\n",
                     fname);
+        }
+        else if (!strcmp(devtype, "svg")) {
+            fprintf(cp_out,
+                "\nThe file \"%s\" has the Scalable Vector Graphics format.\n",
+                fname);
         }
         else if (!strcmp(devtype, "MFB")) {
             fprintf(cp_out,
