@@ -13,6 +13,7 @@ extern "C" {
 #include "ngspice/sperror.h"
 #include "ngspice/ifsim.h"
 #include "ngspice/suffix.h"
+#include "ngspice/devdefs.h"
 }
 
 Parameter::Parameter(double value_default, double min_value, double max_value) {
@@ -52,40 +53,8 @@ double Parameter::getValue(){
 };
 
 
-Node::Node(CKTcircuit * ckt, NGSpiceModel * model , char * name){
-    /* Node constructor.
-    Output
-    -----
-    ckt : CKTcircuit *
-        The circuit in which the node shall be allocated.
-    model : NGSpiceModel *
-        The model that contains the node.
-    name : char *
-        The name of the node.
-    */
-    int      error = 0;
-
-    CKTnode *tmp;
-    CKTnode *tmpNode;
-    IFuid tmpName;
-
-    ckt  = ckt;
+Node::Node( char * name){
     name = name;
-
-    //todo node collapsing?
-
-    //allocate the node
-    error = CKTmkVolt(ckt,&tmp, (char*)model->name, name);
-    //if(error) return(error); //why should there be an error?
-    id = tmp->number;
-    // if (ckt->CKTcopyNodesets) {
-    //     if (CKTinst2Node(ckt,here,2,&tmpNode,&tmpName)==OK) {
-    //         if (tmpNode->nsGiven) {
-    //         tmp->nodeset=tmpNode->nodeset;
-    //         tmp->nsGiven=tmpNode->nsGiven;
-    //         }
-    //     }
-    // }
 };
 
 double Node::getPotential(){
@@ -96,12 +65,77 @@ double Node::getPotential(){
 
 
 Branch::Branch(Node * node_from,Node * node_to,std::vector<Node*> depends){
-    node_from             = node_from;
-    node_to               = node_to;
-    branch_dependencies   = depends;
+    node_from            = node_from;
+    node_to              = node_to;
+    branch_dependencies  = depends;
 };
 
 double inf = std::numeric_limits<double>::infinity();
+
+SPICEdev * NGSpiceModel::get_model_info()
+{
+    SPICEdev model_info = {
+        .DEVpublic = {
+            .name = this.name,
+            .description = "High Current Model for BJT",
+            .terms = &this->n_external_nodes,
+            .numNames = &HICUMnSize,
+            .termNames = HICUMnames,
+            .numInstanceParms = &HICUMpTSize,
+            .instanceParms = HICUMpTable,
+            .numModelParms = &HICUMmPTSize,
+            .modelParms = HICUMmPTable,
+            .flags = DEV_DEFAULT,
+
+    #ifdef XSPICE
+            .cm_func = NULL,
+            .num_conn = 0,
+            .conn = NULL,
+            .num_param = 0,
+            .param = NULL,
+            .num_inst_var = 0,
+            .inst_var = NULL,
+    #endif
+        },
+
+        .DEVparam = HICUMparam,
+        .DEVmodParam = HICUMmParam,
+        .DEVload = HICUMload,
+        .DEVsetup = HICUMsetup,
+        .DEVunsetup = HICUMunsetup,
+        .DEVpzSetup = HICUMsetup,
+        .DEVtemperature = HICUMtemp,
+        .DEVtrunc = HICUMtrunc,
+        .DEVfindBranch = NULL,
+        .DEVacLoad = HICUMacLoad,
+        .DEVaccept = NULL,
+        .DEVdestroy = NULL,
+        .DEVmodDelete = NULL,
+        .DEVdelete = NULL,
+        .DEVsetic = HICUMgetic,
+        .DEVask = HICUMask,
+        .DEVmodAsk = HICUMmAsk,
+        .DEVpzLoad = HICUMpzLoad,
+        .DEVconvTest = HICUMconvTest,
+        .DEVsenSetup = NULL,
+        .DEVsenLoad = NULL,
+        .DEVsenUpdate = NULL,
+        .DEVsenAcLoad = NULL,
+        .DEVsenPrint = NULL,
+        .DEVsenTrunc = NULL,
+        .DEVdisto = NULL,
+        .DEVnoise = HICUMnoise,
+        .DEVsoaCheck = HICUMsoaCheck,
+        .DEVinstSize = &HICUMiSize,
+        .DEVmodSize = &HICUMmSize,
+
+    #ifdef CIDER
+        .DEVdump = NULL,
+        .DEVacct = NULL,
+    #endif
+    };
+    return &modelinfo;
+}
 
 HICUML2::HICUML2(){
     modelcard = {
@@ -240,16 +274,36 @@ HICUML2::HICUML2(){
         {"dt",Parameter(0.0,-inf,inf)},
         {"type",Parameter(1,-1,1)},
     };
+    nodes = {
+        Node((char*)"B"),
+        Node((char*)"Bi"),
+        Node((char*)"Bp"),
+        Node((char*)"C"),
+        Node((char*)"Ci"),
+        Node((char*)"E"),
+        Node((char*)"Ei"),
+        Node((char*)"S"),
+        Node((char*)"T"),
+    };
+    external_nodes = {
+        Node((char*)"B"),
+        Node((char*)"C"),
+        Node((char*)"E"),
+        Node((char*)"S"),
+        Node((char*)"T"),
+    };
+    this->n_external_nodes = static_cast<int>(this->external_nodes.size());
+    this->description      = "High Current Model for BJT";
 };
 
-HICUML2 hicumL2_example = HICUML2();
+//HICUML2 hicumL2_example = HICUML2();
 
-void setModelcardPara(const char* para_name, double value){
-    Parameter para(0,0,0);
-    try {
-        para = hicumL2_example.modelcard.at(para_name);
-    } catch (const std::out_of_range& oor) {
-        printf("Experimental HICUM: did not find parameter with name %s.\n", para_name);
-    }
-    para.setValue(value);
-};
+// void setModelcardPara(const char* para_name, double value){
+//     Parameter para(0,0,0);
+//     try {
+//         para = hicumL2_example.modelcard.at(para_name);
+//     } catch (const std::out_of_range& oor) {
+//         printf("Experimental HICUM: did not find parameter with name %s.\n", para_name);
+//     }
+//     para.setValue(value);
+// };
