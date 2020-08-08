@@ -177,6 +177,8 @@ libfte_la_SOURCES = \
     spiceif.h   \
     subckt.c    \
     subckt.h    \
+    svg.c       \
+    svg.h       \
     typesdef.c  \
     typesdef.h  \
     vectors.c   \
