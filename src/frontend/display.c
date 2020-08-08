@@ -36,7 +36,7 @@ static int nodev(void);
 #include "plotting/plot5.h"
 #include "postsc.h"
 #include "hpgl.h"
-
+#include "svg.h"
 
 DISPDEVICE device[] = {
 
@@ -108,6 +108,15 @@ DISPDEVICE device[] = {
       (disp_fn_DefineColor_t *) nodev, (disp_fn_DefineLinestyle_t *) nodev,
       PS_SetLinestyle, PS_SetColor, PS_Update,
       (disp_fn_Track_t *) nodev, (disp_fn_MakeMenu_t *) nodev, (disp_fn_MakeDialog_t *) nodev, (disp_fn_Input_t *) nodev,
+      gen_DatatoScreen, },
+
+    { "svg", 0, 0, 1000, 1000, 0, 0,
+      SVG_Init, SVG_NewViewport,
+      SVG_Close, SVG_Clear,
+      SVG_DrawLine, SVG_Arc, SVG_Text,
+      (disp_fn_DefineColor_t*)nodev, (disp_fn_DefineLinestyle_t*)nodev,
+      SVG_SetLinestyle, SVG_SetColor, SVG_Update,
+      (disp_fn_Track_t*)nodev, (disp_fn_MakeMenu_t*)nodev, (disp_fn_MakeDialog_t*)nodev, (disp_fn_Input_t*)nodev,
       gen_DatatoScreen, },
 
     { "hpgl", 0, 0, 1000, 1000, 0, 0,
