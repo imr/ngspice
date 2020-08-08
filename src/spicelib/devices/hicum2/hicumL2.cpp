@@ -1459,6 +1459,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                     *(ckt->CKTstate0+here->HICUMith_Vcic)=*(ckt->CKTstate1+here->HICUMith_Vcic);
                     *(ckt->CKTstate0+here->HICUMith_Vbbp)=*(ckt->CKTstate1+here->HICUMith_Vbbp);
                     *(ckt->CKTstate0+here->HICUMith_Veie)=*(ckt->CKTstate1+here->HICUMith_Veie);
+                    *(ckt->CKTstate0+here->HICUMit)=*(ckt->CKTstate1+here->HICUMit);
                     /////////////////////////
                     // end copy state vector
                     /////////////////////////
@@ -2893,6 +2894,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             *(ckt->CKTstate0 + here->HICUMixf2_Vxf1)   = Ixf2_Vxf1;
             *(ckt->CKTstate0 + here->HICUMixf2_Vxf2)   = Ixf2_Vxf2;
             *(ckt->CKTstate0 + here->HICUMixf2_Vrth)   = Ixf2_dT;
+            *(ckt->CKTstate0 + here->HICUMit)          = it;
 
 load:
 //          #############################################################

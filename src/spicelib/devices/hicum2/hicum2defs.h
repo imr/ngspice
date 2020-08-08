@@ -526,7 +526,9 @@ typedef struct sHICUMinstance {
 #define HICUMith_Vbbp    HICUMstate+123
 #define HICUMith_Veie    HICUMstate+124
 
-#define HICUMnumStates 125
+#define HICUMit          HICUMstate+125 //for noise
+
+#define HICUMnumStates 126
 
 /* per model data */
 typedef struct sHICUMmodel {           /* model structure for a hicum */
