@@ -1,0 +1,49 @@
+README for MODSIMD
+==================
+Use SIMD (Single Instruction Multiple Data) acceleration for device model evaluation. Currently, only bsim3v32 and bsim3 models support SIMD.
+
+Usage
+-----
+SIMD device models are distinct form the standard models.
+See below on how to enable MODSIMD feature at compile time.
+To select SIMD model version at run-time, do one of the following:
+1) set modsimd variable in spinit
+2) append "simd" to the model version string
+   e.g.: version=3.3.0simd
+3) set NGSPICE_MODSIMD environment variable to "always"
+   e.g.: NGSPICE_MODSIMD=always ngspice test.cir
+   
+For testing purpose and for comparing performance, setting NGSPICE_MODSIMD to "never" will select non-simd models.
+Note: setting modsimd in a .control section has no effect.
+
+Compilation
+-----------
+The MODSIMD feature is disabled by default and not compiled into ngspice.
+If you computer support simd instructions (e.g. AVX2 on Intel) and you want to use the simd acceleration, you need to enable it when running the configure script with --enable-modsimd.
+For truely enabling the acceleration, it is highly recommended to compile also with optimization and for the native platform.
+The easiest way to do it is:
+
+  mkdir build-simd
+  cd build-simd
+  ../configure --enable-modsimd CFLAGS="-O3 -march=native"
+  make
+
+Options
+-------
+--enable-modsimd=N: set the simd vector length to N where N is 2, 4 or 8.
+--with-sleef: use SLEEF vector math function (assuming SLEEF is pre-installed).
+
+Note that without a suitable vector math library (libmvec or SLEEF) the performance are usually bad. However some compilers might handle the situation by automatically linking to an internal vector math library.
+
+MODSIMD works best on Intel CPU with AVX, for which the standard vector length of 4 is adequate. In case your CPU only supports SSE, it is recommended to set --enable-modsimd=2.
+AVX-512 was not tested, but theoretically it would takes advantage of --enable-modsimd=8.
+For other platforms, please do some testing and research to see what options gives the best performance.
+
+Note for Windows platform using Cygwin or minGW
+-----------------------------------------------
+At the moment of the writing(2020), there is a bug in GCC preventing it to generate correct AVX simd code on Windows. Please check if there is a new GCC version fixing this bug, or try to use the clang compiler instead.
+Last option would be to downgrade to SSE using --enable-modsimd=2.
+Otherwise consider to install a linux system on a virtual machine.
+
+Florian Ballenegger, August 2020.
+
