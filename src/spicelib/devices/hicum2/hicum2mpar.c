@@ -19,8 +19,6 @@ Spice3 Implementation: 2019 Dietmar Warning
 #include "ngspice/suffix.h"
 #include "model_class.hpp"
 
-#define MIN_R 0.001
-
 int
 HICUMmParam(int param, IFvalue *value, GENmodel *inModel)
 {
@@ -213,7 +211,6 @@ HICUMmParam(int param, IFvalue *value, GENmodel *inModel)
 //Series resistances
         case HICUM_MOD_RBI0:
             model->HICUMrbi0 = value->rValue;
-            if (model->HICUMrbi0 < MIN_R) model->HICUMrbi0 = MIN_R;
             model->HICUMrbi0Given = TRUE;
             break;
         case HICUM_MOD_RBX:
@@ -609,10 +606,6 @@ HICUMmParam(int param, IFvalue *value, GENmodel *inModel)
         case HICUM_MOD_FLSH:
             model->HICUMflsh = value->iValue;
             model->HICUMflshGiven = TRUE;
-            break;
-        case HICUM_MOD_RTH_DE:
-            model->HICUMrth_de = value->iValue;
-            model->HICUMrth_deGiven = TRUE;
             break;
         case HICUM_MOD_RTH:
             model->HICUMrth = value->rValue;

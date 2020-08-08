@@ -38,6 +38,19 @@ using namespace duals::literals;
 #define TMIN -100.0
 #define LN_EXP_LIMIT 11.0
 
+duals::duald clip_temperature(duals::duald T){
+    // smooth clipping function for device temperature, if self heating increases temperature beyond
+    // T0+TMAX or below T0-TMIN
+    duals::duald Tdev;
+    Tdev = T;
+    if (T<(TMIN+CONSTCtoK+1.0)){
+        Tdev = TMIN+CONSTCtoK+exp(T-TMIN+CONSTCtoK-1.0);
+    } else if (T>(TMAX+CONSTCtoK-1.0)) {
+        Tdev = TMAX+CONSTCtoK-exp(TMAX+CONSTCtoK-T-1.0);
+    };
+    return Tdev;
+};
+
 void TMPHICJ(double , double , double , double , double ,
              double , double , double , double , double , double ,
              double *, double *, double *);
@@ -120,14 +133,14 @@ HICUMtemp(GENmodel *inModel, CKTcircuit *ckt)
 
             if(here->HICUMdtempGiven) here->HICUMtemp = here->HICUMtemp + here->HICUMdtemp;
 
-            iret = hicum_thermal_update(model, here, here -> HICUMtemp);
+            iret = hicum_thermal_update(model, here, &here -> HICUMtemp, &here->HICUMtemp_Vrth);
 
         }
     }
     return(OK);
 }
 
-int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double HICUMTemp)
+int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double * HICUMTemp, double * Tdev_Vrth)
 {
     HICUMmodel *model = (HICUMmodel *)inModel;
     HICUMinstance *here = (HICUMinstance *)inInstance;
@@ -157,16 +170,30 @@ int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double 
     zetabcxt= mg+1-model->HICUMzetacx;
     zetasct = mg-1.5;
 
-    // Limit temperature to avoid FPEs in equations
-    if(HICUMTemp < TMIN + CONSTCtoK) {
-        HICUMTemp = TMIN + CONSTCtoK;
-    } else {
-        if (HICUMTemp > TMAX + CONSTCtoK) {
-            HICUMTemp = TMAX + CONSTCtoK;
-        }
-    }
-    temp = HICUMTemp+1_e;    // dual number valued temperature
-    vt   = temp*CONSTKoverQ; // dual valued temperature voltage
+
+
+    // Smooth ngspice T clipping
+    temp = clip_temperature( *(HICUMTemp)+1_e );
+    *(HICUMTemp) = temp.rpart();
+    *(Tdev_Vrth) = temp.dpart();
+
+    // original HICUM clipping for Tdev => left here for reference
+    // *(Tdev_Vrth) = 1.0;
+    // if(*(HICUMTemp) < TMIN + CONSTCtoK) {
+    //     *(HICUMTemp) = TMIN + CONSTCtoK;
+    //     *(Tdev_Vrth) = 0.0;
+    // } else {
+    //     if (*(HICUMTemp) > TMAX + CONSTCtoK) {
+    //         *(HICUMTemp) = TMAX + CONSTCtoK;
+    //         *(Tdev_Vrth) = 0.0;
+    //     }
+    //}
+
+    //This routine calculate the derivative with respect to Vrth. Since at some point
+    // Tdev becomes constant (see above), we need to account for this like below.
+    //temp = *(HICUMTemp)+1_e* *(Tdev_Vrth);    // dual number device temperature
+
+    vt   = temp*CONSTKoverQ;                  // dual valued temperature voltage
 
     here->HICUMvt0     = Tnom * CONSTKoverQ;
     here->HICUMvt.rpart = vt.rpart();

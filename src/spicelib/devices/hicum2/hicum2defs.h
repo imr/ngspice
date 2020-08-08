@@ -65,8 +65,8 @@ typedef struct sHICUMinstance {
     int HICUMbaseBPNode; /* number of internal base node of hicum */
     int HICUMsubsSINode; /* number of internal substrate node */
     int HICUMxfNode;     /* number of internal excess phase node qdei */
-    int HICUMxf1Node;    /* number of internal excess phase node itf */
-    int HICUMxf2Node;    /* number of internal excess phase node itf */
+    int HICUMxf1Node;    /* number of internal excess phase 1 node itf */
+    int HICUMxf2Node;    /* number of internal excess phase 2 node itf */
 
     double HICUMarea;     /* area factor for the hicum */
     //initial conditions
@@ -75,6 +75,7 @@ typedef struct sHICUMinstance {
     double HICUMicVCS;     /* initial condition inner C-S branch  */
 
     double HICUMtemp;     /* instance temperature */
+    double HICUMtemp_Vrth;/* derivative device temperature to temperature at thermal node */
     double HICUMdtemp;    /* instance delta temperature */
     double HICUMdtemp_sh; /* instance delta temperature because of self-heating */
     double HICUMm;        /* multiply factor for the hicum */
@@ -160,6 +161,8 @@ typedef struct sHICUMinstance {
     double HICUMrbx_scaled;
     double HICUMrcx_scaled;
     double HICUMrbi0_scaled;
+    double HICUMkf_scaled;
+    double HICUMkfre_scaled;
 
     double HICUMrbi;
     double HICUMiavl;
@@ -523,7 +526,9 @@ typedef struct sHICUMinstance {
 #define HICUMith_Vbbp    HICUMstate+123
 #define HICUMith_Veie    HICUMstate+124
 
-#define HICUMnumStates 125
+#define HICUMit          HICUMstate+125 //for noise
+
+#define HICUMnumStates 126
 
 /* per model data */
 typedef struct sHICUMmodel {           /* model structure for a hicum */
@@ -702,7 +707,6 @@ typedef struct sHICUMmodel {           /* model structure for a hicum */
 
 //Self-Heating
     int HICUMflsh;
-    int HICUMrth_de;
     double HICUMrth;
     double HICUMzetarth;
     double HICUMalrth;
@@ -1083,7 +1087,6 @@ enum {
 
 //Self-Heating
     HICUM_MOD_FLSH,
-    HICUM_MOD_RTH_DE,
     HICUM_MOD_RTH,
     HICUM_MOD_ZETARTH,
     HICUM_MOD_ALRTH,

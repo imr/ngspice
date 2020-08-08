@@ -9,19 +9,17 @@
 + hfe = 10.01
 + hfc = 20.04
 + hjei = 3.382
-+ hjci = 0.2
 + ahjei = 3
 + rhjei = 2
++ hjci = 0.2
 *
 *Base-Emitter diode currents
 + ibeis = 1.328e-019
 + mbei = 1.027
-*+ ireis = 1.5e-014
 + ireis = 1.5e-015
 + mrei = 2
 + ibeps = 1.26e-019
 + mbep = 1.042
-*+ ireps = 1.8e-014
 + ireps = 1.8e-015
 + mrep = 1.8
 + mcf = 1
@@ -59,7 +57,6 @@
 + rcx = 2.483
 *
 *Substrate transistor
-*+ itss = 1.143e-019
 + itss = 1.143e-017
 + msf = 1.056
 + iscs = 4.60106e-015
@@ -111,11 +108,12 @@
 + vlim = 0.6999
 + vces = 0.01
 + vpt = 2
++ aick = 1e-3
 + delck = 2
 + tr = 0
-+ acbar = 1.5
-+ icbar = 0.01
 + vcbar = 0.04
++ icbar = 0.01
++ acbar = 1.5
 *
 *Isolation Capacitances
 + cbepar = 2.609e-014
@@ -131,10 +129,12 @@
 + af = .75
 + cfbe = -1
 + flcono = 0
++ kfre = 0.0
++ afre = 2.0
 *
 *Lateral Geometry Scaling (at high current densities)
-+ latb = 0
-+ latl = 0
++ latb = 0.0
++ latl = 0.0
 *
 *Temperature dependence
 + vgb = 0.91
@@ -156,6 +156,7 @@
 + zetact = 5
 + zetabet = 4.892
 + alb = 0
++ dvgbe = 0
 + zetahjei = -0.5
 + zetavgbe = 0.7
 *
