@@ -41,10 +41,8 @@
 #include "ngspice/suffix.h"
 
 #include "ngspice/SIMD/simdvector.h"
-
-#if USEX86INTRINSICS==1
-#include <x86intrin.h>
-#endif
+#include "ngspice/SIMD/simdop.h"
+#include "ngspice/SIMD/simdniinteg.h"
 
 #define MAX_EXP 5.834617425e14
 #define MIN_EXP 1.713908431e-15
@@ -61,16 +59,121 @@
 #define SIMDIFYCMD(cmd) /* empty */
 #define SIMDifySaveScope(sc) /* empty */
 
+static inline VecNd vecN_SIMDLOADDATA(int idx, double data[7][NSIMD])
+{
+	VecNd r;
+	for(int i=0;i<NSIMD;i++)
+		r[i] =  data[idx][i];
+	return r;
+}
+
+
+static inline int vecN_BSIM3v32_ACM_saturationCurrents
+(
+	BSIM3v32model *model,
+	BSIM3v32instance **heres,
+        VecNd *DrainSatCurrent,
+        VecNd *SourceSatCurrent
+)
+{
+	int	error;
+	double dsat,ssat;
+	for(int idx=0;idx<NSIMD;idx++)
+	{
+		error = BSIM3v32_ACM_saturationCurrents(
+		      model, heres[idx],
+		      &dsat,
+		      &ssat
+		);
+		(*DrainSatCurrent)[idx] = dsat;
+		(*SourceSatCurrent)[idx] = ssat;
+		if(error) return error;
+	}
+	return error;
+}
+
+static inline int vecN_BSIM3v32_ACM_junctionCapacitances(
+	BSIM3v32model *model,
+	BSIM3v32instance **heres,
+	VecNd *areaDrainBulkCapacitance,
+	VecNd *periDrainBulkCapacitance,
+	VecNd *gateDrainBulkCapacitance,
+	VecNd *areaSourceBulkCapacitance,
+	VecNd *periSourceBulkCapacitance,
+	VecNd *gateSourceBulkCapacitance
+
+)
+{
+	int	error;
+	double areaDB,periDB,gateDB,areaSB,periSB,gateSB;
+	
+	for(int idx=0;idx<NSIMD;idx++)
+	{
+		error = BSIM3v32_ACM_junctionCapacitances(
+		      model, heres[idx],
+		      &areaDB,
+		      &periDB,
+		      &gateDB,
+		      &areaSB,
+		      &periSB,
+		      &gateSB
+		);
+		(*areaDrainBulkCapacitance)[idx]=areaDB;
+		(*periDrainBulkCapacitance)[idx]=periDB;
+		(*gateDrainBulkCapacitance)[idx]=gateDB;
+		(*areaSourceBulkCapacitance)[idx]=areaSB;
+		(*periSourceBulkCapacitance)[idx]=periSB;
+		(*gateSourceBulkCapacitance)[idx]=gateSB;
+		if(error) return error;
+	}
+	return error;
+}
+
+#define vecNu_pow(x,p) vecN_exp(vecN_log(x)*p)
+
 #if NSIMD==4
-#include "b3v32ldsimd4d.c"
+#define vec4_SIMDLOADDATA vecN_SIMDLOADDATA
+#define vec4_BSIM3v32_ACM_saturationCurrents vecN_BSIM3v32_ACM_saturationCurrents
+#define vec4_BSIM3v32_ACM_junctionCapacitances vecN_BSIM3v32_ACM_junctionCapacitances
+#define vec4_NIintegrate vecN_NIintegrate
+#define vec4_pow0p7(x,p) vecNu_pow(x,p)
+#define vec4_powMJ(x,p) vecNu_pow(x,p)
+#define vec4_powMJSW(x,p) vecNu_pow(x,p)
+#define vec4_powMJSWG(x,p) vecNu_pow(x,p)
+#define vec4_BSIM3v32_StateAccess vecN_StateAccess
+#define vec4_BSIM3v32_StateStore vecN_StateStore
+#define vec4_BSIM3v32_StateAdd vecN_StateAdd
+#define vec4_BSIM3v32_StateSub vecN_StateSub
 #endif
 
 #if NSIMD==8
-#include "b3v32ldsimd8d.c"
+#define vec8_SIMDLOADDATA vecN_SIMDLOADDATA
+#define vec8_BSIM3v32_ACM_saturationCurrents vecN_BSIM3v32_ACM_saturationCurrents
+#define vec8_BSIM3v32_ACM_junctionCapacitances vecN_BSIM3v32_ACM_junctionCapacitances
+#define vec8_NIintegrate vecNu_NIintegrate
+#define vec8_pow0p7(x,p) vecNu_pow(x,p)
+#define vec8_powMJ(x,p) vecNu_pow(x,p)
+#define vec8_powMJSW(x,p) vecNu_pow(x,p)
+#define vec8_powMJSWG(x,p) vecNu_pow(x,p)
+#define vec8_BSIM3v32_StateAccess vecN_StateAccess
+#define vec8_BSIM3v32_StateStore vecN_StateStore
+#define vec8_BSIM3v32_StateAdd vecN_StateAdd
+#define vec8_BSIM3v32_StateSub vecN_StateSub
 #endif
 
 #if NSIMD==2
-#include "b3v32ldsimd2d.c"
+#define vec2_SIMDLOADDATA vecN_SIMDLOADDATA
+#define vec2_BSIM3v32_ACM_saturationCurrents vecN_BSIM3v32_ACM_saturationCurrents
+#define vec2_BSIM3v32_ACM_junctionCapacitances vecN_BSIM3v32_ACM_junctionCapacitances
+#define vec2_NIintegrate vecN_NIintegrate
+#define vec2_pow0p7(x,p) vecNu_pow(x,p)
+#define vec2_powMJ(x,p) vecNu_pow(x,p)
+#define vec2_powMJSW(x,p) vecNu_pow(x,p)
+#define vec2_powMJSWG(x,p) vecNu_pow(x,p)
+#define vec2_BSIM3v32_StateAccess vecN_StateAccess
+#define vec2_BSIM3v32_StateStore vecN_StateStore
+#define vec2_BSIM3v32_StateAdd vecN_StateAdd
+#define vec2_BSIM3v32_StateSub vecN_StateSub
 #endif
 
 int BSIM3v32LoadSIMD(BSIM3v32instance **heres, CKTcircuit *ckt
