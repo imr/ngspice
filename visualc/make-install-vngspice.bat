@@ -1,13 +1,13 @@
 @echo off
 
-REM copy ngspice.exe, codemodels *.cm to C:\Spice or Spice64
+REM copy ngspice.exe, codemodels *.cm to d:\Spice64
 REM arguments to make-install-vngspiced:
 REM %1: path to ngspice.exe, %2, %3: fftw or 64 (64 bit)
 
 if "%2" == "64" goto b64
 if "%3" == "64" goto b64
 
-set dst=c:\Spice
+set dst=d:\Spice
 set cmsrc=.\codemodels\Win32\Release
 
 mkdir %dst%\bin
@@ -37,7 +37,7 @@ goto end
 
 :b64
 
-set dst=c:\Spice64
+set dst=d:\Spice64
 set cmsrc=.\codemodels\x64\Release
 
 mkdir %dst%\bin

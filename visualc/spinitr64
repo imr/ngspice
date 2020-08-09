@@ -19,12 +19,12 @@ strcmp __flag $program "ngspice"
 if $__flag = 0
 
 * Load the codemodels
- codemodel C:/Spice64/lib/ngspice/spice2poly.cm
- codemodel C:/Spice64/lib/ngspice/analog.cm
- codemodel C:/Spice64/lib/ngspice/digital.cm
- codemodel C:/Spice64/lib/ngspice/xtradev.cm
- codemodel C:/Spice64/lib/ngspice/xtraevt.cm
- codemodel C:/Spice64/lib/ngspice/table.cm
+ codemodel D:/Spice64/lib/ngspice/spice2poly.cm
+ codemodel D:/Spice64/lib/ngspice/analog.cm
+ codemodel D:/Spice64/lib/ngspice/digital.cm
+ codemodel D:/Spice64/lib/ngspice/xtradev.cm
+ codemodel D:/Spice64/lib/ngspice/xtraevt.cm
+ codemodel D:/Spice64/lib/ngspice/table.cm
 
 
 end
