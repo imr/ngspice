@@ -1074,6 +1074,7 @@
     <ClInclude Include="..\src\misc\tilde.h" />
     <ClInclude Include="..\src\misc\util.h" />
     <ClInclude Include="..\src\spicelib\analysis\analysis.h" />
+    <ClInclude Include="..\src\spicelib\analysis\com_optran.h" />
     <ClInclude Include="..\src\spicelib\devices\asrc\asrcdefs.h" />
     <ClInclude Include="..\src\spicelib\devices\asrc\asrcext.h" />
     <ClInclude Include="..\src\spicelib\devices\asrc\asrcinit.h" />
