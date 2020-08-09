@@ -2790,6 +2790,18 @@
   <ItemGroup>
     <Image Include="ngspice.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\src\frontend\parse-bison.y">
+      <Message>invoke win_bison.exe for %(Identity)</Message>
+      <Command>..\..\flex-bison\win_bison.exe --output=.\tmp-bison\%(Filename).c --defines=.\tmp-bison\%(Filename).h %(Identity) || exit 1</Command>
+      <Outputs>.\tmp-bison\%(Filename).c;.\tmp-bison\%(Filename).h</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\src\spicelib\parser\inpptree-parser.y">
+      <Message>invoke win_bison.exe for %(Identity)</Message>
+      <Command>..\..\flex-bison\win_bison.exe --output=.\tmp-bison\%(Filename).c --defines=.\tmp-bison\%(Filename).h %(Identity) || exit 1</Command>
+      <Outputs>.\tmp-bison\%(Filename).c;.\tmp-bison\%(Filename).h</Outputs>
+    </CustomBuild>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
