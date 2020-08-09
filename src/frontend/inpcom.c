@@ -7545,7 +7545,9 @@ static bool del_models(struct vsmodels *vsmodel)
 * replace | by ||
 * in R instance, replace TC = xx1, xx2 by TC1=xx1 TC2=xx2
 * replace T_ABS by temp and T_REL_GLOBAL by dtemp in .model cards
-* get the area factor for diodes and bipolar devices */
+* get the area factor for diodes and bipolar devices
+* in subcircuit .subckt and X lines with 'params:' statement
+  replace comma separator by space. Do nothing if comma is inside of {}. */
 static struct card *pspice_compat(struct card *oldcard)
 {
     struct card *card, *newcard, *nextcard;
@@ -7595,6 +7597,44 @@ static struct card *pspice_compat(struct card *oldcard)
             nextcard = insert_new_line(card, new_str, 0, 0);
             new_str = copy(".param vt = '(temper + 273.15) * 8.6173303e-5'");
             nextcard = insert_new_line(nextcard, new_str, 1, 0);
+            /* params: replace comma separator by space.
+               Do nothing if you are inside of { }. */
+            char* parastr = strstr(cut_line, "params:");
+            int brace = 0;
+            if (parastr) {
+                parastr += 8;
+                while (*parastr) {
+                    if (*parastr == '{')
+                        brace++;
+                    else if (*parastr == '}')
+                        brace--;
+                    if (brace == 0 && *parastr == ',')
+                        *parastr = ' ';
+                    parastr++;
+                }
+            }
+        }
+    }
+
+    /* x ... params: p1=val1, p2=val2 replace comma separator by space.
+       Do nothing if you are inside of { }. */
+    for (card = newcard; card; card = card->nextcard) {
+        char* cut_line = card->line;
+        if (ciprefix("x", cut_line)) {
+            char* parastr = strstr(cut_line, "params:");
+            int brace = 0;
+            if (parastr) {
+                parastr += 8;
+                while (*parastr) {
+                    if (*parastr == '{')
+                        brace++;
+                    else if (*parastr == '}')
+                        brace--;
+                    if (brace == 0 && *parastr == ',')
+                        *parastr = ' ';
+                    parastr++;
+                }
+            }
         }
     }
 
