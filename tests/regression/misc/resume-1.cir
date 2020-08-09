@@ -2,7 +2,7 @@ regression test for "alter" with "stop" and "resume"
 
 * (exec-spice "ngspice %s" t)
 
-* check wheter we can "stop" a transient simulation
+* check whether we can "stop" a transient simulation
 *   alter a resistance, its temperature coefficient a voltage
 *   and successfully "resume" from there
 *
