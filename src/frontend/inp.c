@@ -1234,7 +1234,7 @@ inp_dodeck(
     ct->ci_deck = deck;
     ct->ci_mcdeck = mc_deck;
     ct->ci_options = options;
-    if (deck->actualLine)
+    if (deck && deck->actualLine)
         ct->ci_origdeck = deck->actualLine;
     else
         ct->ci_origdeck = ct->ci_deck;
@@ -1575,6 +1575,9 @@ com_source(wordlist *wl)
 
     wordlist *owl = wl;
     size_t n;
+
+    if (wl == NULL)
+        return;
 
     inter = cp_interactive;
     cp_interactive = FALSE;
