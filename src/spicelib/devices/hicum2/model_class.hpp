@@ -81,6 +81,8 @@ typedef struct sGENinstance {
     const int HICUMtempNode;       /* number of the temperature node of the hicum */
 };
 
+extern "C" typedef int spice_function(int x);
+
 class NGSpiceModel
 {
     public:
@@ -90,8 +92,8 @@ class NGSpiceModel
     int n_external_nodes;                      //the name of the model
     int model_size;                            //the size of the model structure
     int instance_size;                         //the size of the instance structure
-    char *  name              ;                //the name of the model
-    const char *  description ;                //the description of the model
+    char *  name;                              //the name of the model
+    char *  description;                       //the description of the model
     char *MODELnames[];                        // array of the names of the external nodes
     //spice data structures
     sGENmodel    spice_model_struct;
@@ -99,48 +101,11 @@ class NGSpiceModel
     SPICEdev     model_info;
     //spice methods
     SPICEdev * get_model_info();
-    int MODELacLoad(GENmodel *,CKTcircuit*);
-    int MODELask(CKTcircuit *,GENinstance*,int,IFvalue*,IFvalue*);
-    int MODELconvTest(GENmodel*,CKTcircuit*);
-    int MODELdelete(GENinstance*);
-    int MODELgetic(GENmodel*,CKTcircuit*);
-    //extern int HICUMload(GENmodel*,CKTcircuit*);//moved to hicumL2.hpp
-    int MODELmAsk(CKTcircuit*,GENmodel*,int,IFvalue*);
-    int MODELmParam(int,IFvalue*,GENmodel*);
-    int MODELparam(int,IFvalue*,GENinstance*,IFvalue*);
-    int MODELpzLoad(GENmodel*, CKTcircuit*, SPcomplex*);
-    int MODELsetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
-    int MODELunsetup(GENmodel*,CKTcircuit*);
-    // extern int HICUMtemp(GENmodel*,CKTcircuit*); // moved to hicum2temp.hpp
-    int MODELtrunc(GENmodel*,CKTcircuit*,double*);
-    int MODELnoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
-    int MODELsoaCheck(CKTcircuit *, GENmodel *);
+    spice_function test;
 };
 
-class HICUML2 : public NGSpiceModel
-{
-    public:
-    const char *  name        = "hl2";
-    const char *  description = "high-speed HBT model";        //the description of the model
-    char *MODELnames[5] = {
-        "collector",
-        "base",
-        "emitter",
-        "substrate",
-        "temp"
-    };
-    HICUML2();
-};
+
 #endif
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 
-//methods that are exposed to C
-extern void setModelcardPara(const char* para_name, double value);
-
-#ifdef __cplusplus
-}
-#endif
 #endif
