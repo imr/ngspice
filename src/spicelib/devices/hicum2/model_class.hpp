@@ -56,23 +56,80 @@ class Branch
     Branch(Node * node_from, Node * node_to, std::vector<Node*> depends);
 };
 
+//SPICE model structure
+typedef struct sGENmodel {          
+    struct GENmodel gen;
+#define GENmodType gen.GENmodType
+#define GENnextModel(inst) ((struct sGENmodel *)((inst)->gen.GENnextModel))
+#define GENinstances(inst) ((GENinstance *)((inst)->gen.GENinstances))
+#define GENmodName gen.GENmodName
+    std::unordered_map<const char *, Parameter> modelcard; //the modelcard of the model
+};
+// SPICE instance structure
+typedef struct sGENinstance {
+    struct GENinstance gen;
+#define MODELmodPtr(inst) ((struct sGENmodel *)((inst)->gen.GENmodPtr))
+#define MODELnextInstance(inst) ((struct sGENinstance *)((inst)->gen.GENnextInstance))
+#define MODELname gen.GENname
+#define MODELstate gen.GENstate
+    //the external nodes in exactly the same order as they appear in the call to the model
+    //TODO -> how to generalize this
+    const int HICUMcollNode; /* number of collector node of hicum */
+    const int HICUMbaseNode; /* number of base node of hicum */
+    const int HICUMemitNode; /* number of emitter node of hicum */
+    const int HICUMsubsNode; /* number of substrate node of hicum */
+    const int HICUMtempNode;       /* number of the temperature node of the hicum */
+};
+
 class NGSpiceModel
 {
     public:
-    std::unordered_map<const char *, Parameter> modelcard; //the modelcard of the model
-    std::vector<Node>   nodes;          //all nodes of the model, including internal and externals
-    std::vector<Node>   external_nodes; //the external nodes of the model
-    std::vector<Branch> branches;       //the branches of the model
-    int n_external_nodes;        //the name of the model
-    const char *  name = "None";        //the name of the model
+    std::vector<Node>   nodes;                 //all nodes of the model, including internal and externals
+    std::vector<Node>   external_nodes;        //the external nodes of the model
+    std::vector<Branch> branches;              //the branches of the model
+    int n_external_nodes;                      //the name of the model
+    int model_size;                            //the size of the model structure
+    int instance_size;                         //the size of the instance structure
+    char *  name              ;                //the name of the model
+    const char *  description ;                //the description of the model
+    char *MODELnames[];                        // array of the names of the external nodes
+    //spice data structures
+    sGENmodel    spice_model_struct;
+    sGENinstance spice_instance_struct;
+    SPICEdev     model_info;
+    //spice methods
+    SPICEdev * get_model_info();
+    int MODELacLoad(GENmodel *,CKTcircuit*);
+    int MODELask(CKTcircuit *,GENinstance*,int,IFvalue*,IFvalue*);
+    int MODELconvTest(GENmodel*,CKTcircuit*);
+    int MODELdelete(GENinstance*);
+    int MODELgetic(GENmodel*,CKTcircuit*);
+    //extern int HICUMload(GENmodel*,CKTcircuit*);//moved to hicumL2.hpp
+    int MODELmAsk(CKTcircuit*,GENmodel*,int,IFvalue*);
+    int MODELmParam(int,IFvalue*,GENmodel*);
+    int MODELparam(int,IFvalue*,GENinstance*,IFvalue*);
+    int MODELpzLoad(GENmodel*, CKTcircuit*, SPcomplex*);
+    int MODELsetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
+    int MODELunsetup(GENmodel*,CKTcircuit*);
+    // extern int HICUMtemp(GENmodel*,CKTcircuit*); // moved to hicum2temp.hpp
+    int MODELtrunc(GENmodel*,CKTcircuit*,double*);
+    int MODELnoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
+    int MODELsoaCheck(CKTcircuit *, GENmodel *);
 };
 
 class HICUML2 : public NGSpiceModel
 {
     public:
-    const char *  name = "hl2";
+    const char *  name        = "hl2";
+    const char *  description = "high-speed HBT model";        //the description of the model
+    char *MODELnames[5] = {
+        "collector",
+        "base",
+        "emitter",
+        "substrate",
+        "temp"
+    };
     HICUML2();
-    SPICEdev * get_model_info(); // return the SPICEdev
 };
 #endif
 

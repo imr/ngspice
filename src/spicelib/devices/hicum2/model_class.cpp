@@ -74,13 +74,13 @@ double inf = std::numeric_limits<double>::infinity();
 
 SPICEdev * NGSpiceModel::get_model_info()
 {
-    SPICEdev model_info = {
+    this->model_info = {
         .DEVpublic = {
-            .name = this.name,
-            .description = "High Current Model for BJT",
-            .terms = &this->n_external_nodes,
-            .numNames = &HICUMnSize,
-            .termNames = HICUMnames,
+            .name           = this->name,
+            .description    = "High Current Model for BJT",
+            .terms          = &this->n_external_nodes,
+            .numNames       = &this->n_external_nodes,
+            .termNames      = this->MODELnames,
             .numInstanceParms = &HICUMpTSize,
             .instanceParms = HICUMpTable,
             .numModelParms = &HICUMmPTSize,
@@ -99,7 +99,7 @@ SPICEdev * NGSpiceModel::get_model_info()
         },
 
         .DEVparam = HICUMparam,
-        .DEVmodParam = HICUMmParam,
+        .DEVmodParam = this->MODELmParam,
         .DEVload = HICUMload,
         .DEVsetup = HICUMsetup,
         .DEVunsetup = HICUMunsetup,
@@ -121,24 +121,24 @@ SPICEdev * NGSpiceModel::get_model_info()
         .DEVsenLoad = NULL,
         .DEVsenUpdate = NULL,
         .DEVsenAcLoad = NULL,
-        .DEVsenPrint = NULL,
-        .DEVsenTrunc = NULL,
-        .DEVdisto = NULL,
-        .DEVnoise = HICUMnoise,
-        .DEVsoaCheck = HICUMsoaCheck,
-        .DEVinstSize = &HICUMiSize,
-        .DEVmodSize = &HICUMmSize,
+        .DEVsenPrint  = NULL,
+        .DEVsenTrunc  = NULL,
+        .DEVdisto     = NULL,
+        .DEVnoise     = HICUMnoise,
+        .DEVsoaCheck  = HICUMsoaCheck,
+        .DEVinstSize  = &this->instance_size,
+        .DEVmodSize   = &this->model_size,
 
     #ifdef CIDER
         .DEVdump = NULL,
         .DEVacct = NULL,
     #endif
     };
-    return &modelinfo;
+    return &(this->model_info);
 }
 
 HICUML2::HICUML2(){
-    modelcard = {
+    this->spice_model_struct.modelcard = {
         {"c10",Parameter(2.0E-30, 0,1)},
         {"qp0",Parameter(2.0E-14,0,1)},
         {"ich",Parameter(0.0,0,inf)},
@@ -285,15 +285,10 @@ HICUML2::HICUML2(){
         Node((char*)"S"),
         Node((char*)"T"),
     };
-    external_nodes = {
-        Node((char*)"B"),
-        Node((char*)"C"),
-        Node((char*)"E"),
-        Node((char*)"S"),
-        Node((char*)"T"),
-    };
-    this->n_external_nodes = static_cast<int>(this->external_nodes.size());
-    this->description      = "High Current Model for BJT";
+    // set model specific constants 
+    this->n_external_nodes = sizeof(this->MODELnames);
+    this->model_size       = sizeof(this->spice_model_struct);
+    this->instance_size    = sizeof(this->spice_instance_struct);
 };
 
 //HICUML2 hicumL2_example = HICUML2();
