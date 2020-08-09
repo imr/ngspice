@@ -549,9 +549,7 @@ int TWOequilSolve(TWOdevice *pDevice)
                         return E_NOMEM ; // Francesco Lannutti - Fix KLU return values
                     }
                 }
-                printf ("CIDER: KLU to be fixed: spElementCount\n") ;
-                pDevice->numOrigEquil = 0 ; //pDevice->matrix->SMPkluMatrix->KLUmatrixNumeric->lnz + pDevice->matrix->SMPkluMatrix->KLUmatrixNumeric->unz
-                                            //+ pDevice->matrix->SMPkluMatrix->KLUmatrixNumeric->nzoff ;
+                pDevice->numOrigEquil = (int)pDevice->matrix->SMPkluMatrix->KLUmatrixNZ ;
             } else {
                 pDevice->numOrigEquil = spElementCount (pDevice->matrix->SPmatrix) ;
             }
@@ -582,7 +580,7 @@ int TWOequilSolve(TWOdevice *pDevice)
 #ifdef KLU
     if (pDevice->matrix->CKTkluMODE) {
       pDevice->numFillEquil = pDevice->matrix->SMPkluMatrix->KLUmatrixNumeric->lnz + pDevice->matrix->SMPkluMatrix->KLUmatrixNumeric->unz
-                            + pDevice->matrix->SMPkluMatrix->KLUmatrixNumeric->nzoff - (int)pDevice->matrix->SMPkluMatrix->KLUmatrixNZ ;
+                            - (int)pDevice->matrix->SMPkluMatrix->KLUmatrixNZ ;
     } else {
 #endif
 
@@ -708,9 +706,7 @@ TWObiasSolve(TWOdevice *pDevice, int iterationLimit, BOOLEAN tranAnalysis,
           return ; // Francesco Lannutti - Fix KLU return values
         }
       }
-      printf ("CIDER: KLU to be fixed: spElementCount\n") ;
-      pDevice->numOrigBias = 0 ; //pDevice->matrix->SMPkluMatrix->KLUmatrixNumeric->lnz + pDevice->matrix->SMPkluMatrix->KLUmatrixNumeric->unz
-                           //+ pDevice->matrix->SMPkluMatrix->KLUmatrixNumeric->nzoff ;
+      pDevice->numOrigBias = (int)pDevice->matrix->SMPkluMatrix->KLUmatrixNZ ;
     } else {
       pDevice->numOrigBias = spElementCount(pDevice->matrix->SPmatrix);
     }
@@ -756,7 +752,7 @@ TWObiasSolve(TWOdevice *pDevice, int iterationLimit, BOOLEAN tranAnalysis,
 #ifdef KLU
     if (pDevice->matrix->CKTkluMODE) {
       pDevice->numFillBias = pDevice->matrix->SMPkluMatrix->KLUmatrixNumeric->lnz + pDevice->matrix->SMPkluMatrix->KLUmatrixNumeric->unz
-                           + pDevice->matrix->SMPkluMatrix->KLUmatrixNumeric->nzoff - (int)pDevice->matrix->SMPkluMatrix->KLUmatrixNZ ;
+                           - (int)pDevice->matrix->SMPkluMatrix->KLUmatrixNZ ;
     } else {
 #endif
 
