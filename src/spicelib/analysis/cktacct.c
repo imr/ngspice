@@ -59,7 +59,7 @@ CKTacct(CKTcircuit *ckt, JOB *anal, int which, IFvalue *val)
 #ifdef KLU
 	    if (ckt->CKTmatrix->CKTkluMODE)
 		val->iValue = ckt->CKTmatrix->SMPkluMatrix->KLUmatrixNumeric->lnz + ckt->CKTmatrix->SMPkluMatrix->KLUmatrixNumeric->unz
-                            + ckt->CKTmatrix->SMPkluMatrix->KLUmatrixNumeric->nzoff - (int)ckt->CKTmatrix->SMPkluMatrix->KLUmatrixNZ ;
+                            - (int)ckt->CKTmatrix->SMPkluMatrix->KLUmatrixNZ ;
 	    else
 		val->iValue = spFillinCount(ckt->CKTmatrix->SPmatrix);
 #else
@@ -73,8 +73,7 @@ CKTacct(CKTcircuit *ckt, JOB *anal, int which, IFvalue *val)
 	if ( ckt->CKTmatrix != NULL ) {
 #ifdef KLU
 	    if (ckt->CKTmatrix->CKTkluMODE)
-		val->iValue = ckt->CKTmatrix->SMPkluMatrix->KLUmatrixNumeric->lnz + ckt->CKTmatrix->SMPkluMatrix->KLUmatrixNumeric->unz
-                            + ckt->CKTmatrix->SMPkluMatrix->KLUmatrixNumeric->nzoff ;
+		val->iValue = ckt->CKTmatrix->SMPkluMatrix->KLUmatrixNumeric->lnz + ckt->CKTmatrix->SMPkluMatrix->KLUmatrixNumeric->unz ;
 	    else
 		val->iValue = spElementCount(ckt->CKTmatrix->SPmatrix);
 #else
