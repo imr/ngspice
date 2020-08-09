@@ -635,9 +635,7 @@ ONEequilSolve(ONEdevice *pDevice)
           return ; // Francesco Lannutti - Fix KLU return values
         }
       }
-      printf ("CIDER: KLU to be fixed: spElementCount\n") ;
-      pDevice->numOrigEquil = 0 ; //pDevice->matrix->SMPkluMatrix->KLUmatrixNumeric->lnz + pDevice->matrix->SMPkluMatrix->KLUmatrixNumeric->unz
-                            //+ pDevice->matrix->SMPkluMatrix->KLUmatrixNumeric->nzoff ;
+      pDevice->numOrigEquil = (int)pDevice->matrix->SMPkluMatrix->KLUmatrixNZ ;
     } else {
       pDevice->numOrigEquil = spElementCount (pDevice->matrix->SPmatrix) ;
     }
@@ -668,7 +666,7 @@ ONEequilSolve(ONEdevice *pDevice)
 #ifdef KLU
     if (pDevice->matrix->CKTkluMODE) {
       pDevice->numFillEquil = pDevice->matrix->SMPkluMatrix->KLUmatrixNumeric->lnz + pDevice->matrix->SMPkluMatrix->KLUmatrixNumeric->unz
-                            + pDevice->matrix->SMPkluMatrix->KLUmatrixNumeric->nzoff - (int)pDevice->matrix->SMPkluMatrix->KLUmatrixNZ ;
+                            - (int)pDevice->matrix->SMPkluMatrix->KLUmatrixNZ ;
     } else {
 #endif
 
@@ -781,7 +779,7 @@ ONEbiasSolve(ONEdevice *pDevice, int iterationLimit,
           return ; // Francesco Lannutti - Fix KLU return values
         }
       }
-      pDevice->numOrigBias = 0 ; // Francesco Lannutti - Fix for KLU
+      pDevice->numOrigBias = (int)pDevice->matrix->SMPkluMatrix->KLUmatrixNZ ;
     } else {
       pDevice->numOrigBias = spElementCount(pDevice->matrix->SPmatrix);
     }
@@ -827,7 +825,7 @@ ONEbiasSolve(ONEdevice *pDevice, int iterationLimit,
 #ifdef KLU
     if (pDevice->matrix->CKTkluMODE) {
       pDevice->numFillBias = pDevice->matrix->SMPkluMatrix->KLUmatrixNumeric->lnz + pDevice->matrix->SMPkluMatrix->KLUmatrixNumeric->unz
-                           + pDevice->matrix->SMPkluMatrix->KLUmatrixNumeric->nzoff - (int)pDevice->matrix->SMPkluMatrix->KLUmatrixNZ ;
+                           - (int)pDevice->matrix->SMPkluMatrix->KLUmatrixNZ ;
     } else {
 #endif
 
