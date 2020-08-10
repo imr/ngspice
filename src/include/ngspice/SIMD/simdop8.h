@@ -51,10 +51,12 @@
 
 #define vec8_exp vecN_exp
 #define vec8_log vecN_log
-#define vec8_MAX vecN_MAX
-#define vec8_sqrt vecN_sqrt
 #define vec8_fabs vecN_fabs
 #define vec8_pow vecN_pow
+#ifndef USEX86INTRINSICS
+#define vec8_MAX vecN_MAX
+#define vec8_sqrt vecN_sqrt
+#endif
 
 #endif /* USE_LIBSLEEF */
 

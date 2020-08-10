@@ -75,7 +75,19 @@ Vec4d _ZGVdN4vv_pow(Vec4d, Vec4d);
 #define vecN_pow vec4_pow
 #define vec4_fabs vecN_fabs
 
-#endif /* HAS_LIBMVEC */
+#else /* HAS_LIBMVEC */
+
+#define vec4_exp vecN_exp
+#define vec4_log vecN_log
+#define vec4_pow vecN_pow
+#define vec4_fabs vecN_fabs
+#ifndef USEX86INTRINSICS
+#define vec4_MAX vecN_MAX
+#define vec4_sqrt vecN_sqrt
+#endif
+
+#endif
+
 #endif /* not USE_LIBSLEEF */
 
 #ifdef USE_SERIAL_FORM

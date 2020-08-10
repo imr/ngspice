@@ -75,7 +75,18 @@ Vec2d _ZGVbN2vv_pow(Vec2d, Vec2d);
 #define vecN_pow vec2_pow
 #define vec2_fabs vecN_fabs
 
-#endif /* HAS_LIBMVEC */
+#else /* HAS_LIBMVEC */
+
+#define vec2_exp vecN_exp
+#define vec2_log vecN_log
+#define vec2_pow vecN_pow
+#define vec2_fabs vecN_fabs
+#ifndef USEX86INTRINSICS
+#define vec2_MAX vecN_MAX
+#define vec2_sqrt vecN_sqrt
+#endif
+
+#endif
 #endif /* not USE_LIBSLEEF */
 
 #ifdef USE_SERIAL_FORM
