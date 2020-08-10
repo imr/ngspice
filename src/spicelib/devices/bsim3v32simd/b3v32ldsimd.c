@@ -150,7 +150,7 @@ static inline int vecN_BSIM3v32_ACM_junctionCapacitances(
 #define vec8_SIMDLOADDATA vecN_SIMDLOADDATA
 #define vec8_BSIM3v32_ACM_saturationCurrents vecN_BSIM3v32_ACM_saturationCurrents
 #define vec8_BSIM3v32_ACM_junctionCapacitances vecN_BSIM3v32_ACM_junctionCapacitances
-#define vec8_NIintegrate vecNu_NIintegrate
+#define vec8_NIintegrate vecN_NIintegrate
 #define vec8_pow0p7(x,p) vecNu_pow(x,p)
 #define vec8_powMJ(x,p) vecNu_pow(x,p)
 #define vec8_powMJSW(x,p) vecNu_pow(x,p)
