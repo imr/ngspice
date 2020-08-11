@@ -1100,7 +1100,7 @@ struct inp_read_t inp_read( FILE *fp, int call_depth, const char *dir_name,
                     !ciprefix(".lib", buffer) && !ciprefix(".inc", buffer) &&
                     !ciprefix("codemodel", buffer) &&
                     !ciprefix("echo", buffer) && !ciprefix("shell", buffer) &&
-                    !ciprefix("source", buffer) &&
+                    !ciprefix("source", buffer) && !ciprefix("cd", buffer) &&
                     !ciprefix("load", buffer) && !ciprefix("setcs", buffer)) {
                 /* lower case for all other lines */
                 for (s = buffer; *s && (*s != '\n'); s++)
