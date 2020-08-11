@@ -450,7 +450,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Ibpbi, Ibpbi_Vbpbi, Ibpbi_Vbici, Ibpbi_Vbiei;
     double Ibpsi, Ibpsi_Vbpci, Ibpsi_Vsici, Ibpsi_Vrth;
     double Icic_Vcic=0.0;
-    double Ibci=0.0, Ibci_Vbci=0.0; 
+    double Ibci=0.0, Ibci_Vbci=0.0;
     double hjei_vbe_Vbiei, hjei_vbe_dT, ibet_Vbpei, ibet_dT, ibet_Vbiei, ibh_rec_Vbiei, ibh_rec_dT, ibh_rec_Vbici;
     double irei_Vbiei, irei_dT;
     double ibep_Vbpei, ibep_dT;
@@ -464,7 +464,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     //below variable has a real part equal to the device temperature and a dual part equal to dTdev/dVrth
     //this is necessary, since for some Vrth, HICUM sets Tdev constant (eg very high self heating beyond 300K)
     //then, dTdev/dVrth. Else it is equal to 1.
-    duals::duald Temp_dual; 
+    duals::duald Temp_dual;
 
     double Cjei_Vbiei,Cjci_Vbici,Cjep_Vbpei,Cjep_dT,Cjs_Vsici;
     double Cjei_dT, Cjci_dT;
@@ -1119,6 +1119,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
         // Model_initialization
         int selfheat = ((model->HICUMflsh > 0) && (model->HICUMrthGiven) && (model->HICUMrth > 0.0));
         int nqs      = ((model->HICUMflnqs != 0 || model->HICUMflcomp < 2.3) && (model->HICUMalit > 0 || model->HICUMalqf > 0));
+        int correlated_noise = (model->HICUMflcono == 1 && (model->HICUMalit > 0 && model->HICUMalqf > 0));
 
         // Avoid divide-by-zero and define infinity other way
         // High current correction for 2D and 3D effects
@@ -1589,17 +1590,17 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                          *(ckt->CKTstate0 + here->HICUMibpsi_Vrth)*delvrth +
                          *(ckt->CKTstate0 + here->HICUMibpsi_Vsici)*delvsici;
                 ithhat   = *(ckt->CKTstate0 + here->HICUMith) +
-                         *(ckt->CKTstate0 + here->HICUMith_Vbiei)*delvbiei+ 
-                         *(ckt->CKTstate0 + here->HICUMith_Vbici)*delvbici+ 
-                         *(ckt->CKTstate0 + here->HICUMith_Vbpbi)*delvbpbi+ 
-                         *(ckt->CKTstate0 + here->HICUMith_Vbpci)*delvbpci+ 
-                         *(ckt->CKTstate0 + here->HICUMith_Vbpei)*delvbpei+ 
-                         *(ckt->CKTstate0 + here->HICUMith_Vciei)*delvciei+ 
-                         *(ckt->CKTstate0 + here->HICUMith_Vsici)*delvsici+ 
-                         *(ckt->CKTstate0 + here->HICUMith_Vcic)*delvcic+ 
-                         *(ckt->CKTstate0 + here->HICUMith_Vbbp)*delvbbp+ 
-                         *(ckt->CKTstate0 + here->HICUMith_Veie)*delveie+ 
-                         *(ckt->CKTstate0 + here->HICUMith_Vrth)*delvrth; 
+                         *(ckt->CKTstate0 + here->HICUMith_Vbiei)*delvbiei+
+                         *(ckt->CKTstate0 + here->HICUMith_Vbici)*delvbici+
+                         *(ckt->CKTstate0 + here->HICUMith_Vbpbi)*delvbpbi+
+                         *(ckt->CKTstate0 + here->HICUMith_Vbpci)*delvbpci+
+                         *(ckt->CKTstate0 + here->HICUMith_Vbpei)*delvbpei+
+                         *(ckt->CKTstate0 + here->HICUMith_Vciei)*delvciei+
+                         *(ckt->CKTstate0 + here->HICUMith_Vsici)*delvsici+
+                         *(ckt->CKTstate0 + here->HICUMith_Vcic)*delvcic+
+                         *(ckt->CKTstate0 + here->HICUMith_Vbbp)*delvbbp+
+                         *(ckt->CKTstate0 + here->HICUMith_Veie)*delveie+
+                         *(ckt->CKTstate0 + here->HICUMith_Vrth)*delvrth;
                 /*
                  *    bypass if solution has not changed
                  */
@@ -2019,7 +2020,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             iavl_Vbiei  = result.dpart();
 
             result      = calc_iavl(Vbici    , Cjci+1_e*Cjci_dT    , itf+1_e*itf_dT    , Temp_dual);
-            iavl_dT     = result.dpart(); 
+            iavl_dT     = result.dpart();
 
             here->HICUMiavl = iavl;
 
@@ -2315,8 +2316,8 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             Ibpci_Vrth  = model->HICUMtype*ijbcx_dT;
 
             Ibici       = model->HICUMtype*(ibci       - iavl);
-            Ibici_Vbici = model->HICUMtype*(ibci_Vbici - iavl_Vbici); 
-            Ibici_Vbiei = model->HICUMtype*(           - iavl_Vbiei); 
+            Ibici_Vbici = model->HICUMtype*(ibci_Vbici - iavl_Vbici);
+            Ibici_Vbiei = model->HICUMtype*(           - iavl_Vbiei);
             Ibici_Vrth  = model->HICUMtype*(ibci_dT    - iavl_dT);
 
             Isici       = model->HICUMtype*ijsc;
@@ -2332,7 +2333,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             if (rbi > 0.0) {
                 Ibpbi         = Vbpbi / rbi;
                 Ibpbi_Vbpbi   = 1 / rbi;
-                Ibpbi_Vbiei   = -Vbpbi * rbi_Vbiei / (rbi*rbi); 
+                Ibpbi_Vbiei   = -Vbpbi * rbi_Vbiei / (rbi*rbi);
                 Ibpbi_Vbici   = -Vbpbi * rbi_Vbici / (rbi*rbi);
                 Ibpbi_Vrth    = -Vbpbi * rbi_dT    / (rbi*rbi);
             } else {
@@ -2368,19 +2369,19 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
                 Ith_Vrth   = pterm_dT;
                 Ith_Vrth  += -1/here->HICUMrth_t.rpart;
-                Ith_Vrth  += +Vrth/(here->HICUMrth_t.rpart*here->HICUMrth_t.rpart) * here->HICUMrth_t.dpart; 
+                Ith_Vrth  += +Vrth/(here->HICUMrth_t.rpart*here->HICUMrth_t.rpart) * here->HICUMrth_t.dpart;
                 if (model->HICUMflsh == 1) {
                     //it(Vbiei,Vbici)*(Vbiei-Vbici)
                     Ith_Vbiei  += it_Vbiei*(Vbiei-Vbici) + it;
                     Ith_Vbici  += it_Vbici*(Vbiei-Vbici) - it;
-                    //avalanche current 
+                    //avalanche current
                     //(here->HICUMvdci_t.rpart-Vbici)*iavl = vdci_t*iavl - Vbici*iavl
                     Ith_Vbici  += (here->HICUMvdci_t.rpart-Vbici)*iavl_Vbici - iavl;
                     Ith_Vbiei  += (here->HICUMvdci_t.rpart-Vbici)*iavl_Vbiei;
                 } else if (model->HICUMflsh == 2) {
                     //remember:
                     //pterm   =  (Vbiei-Vbici)*it + (here->HICUMvdci_t.rpart-Vbici)*iavl + ibei*Vbiei + ibci*Vbici + ibep*Vbpei + ijbcx*Vbpci + ijsc*Vsici;
-                    //it(Vbiei,Vbici)*(Vbiei-Vbici) 
+                    //it(Vbiei,Vbici)*(Vbiei-Vbici)
                     Ith_Vbiei  += it_Vbiei*(Vbiei-Vbici) + it;
                     Ith_Vbici  += it_Vbici*(Vbiei-Vbici) - it;
                     //Vbiei*Ibiei(Vbiei)
@@ -2583,10 +2584,10 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                     //transient analysis
                     if(ckt->CKTmode & MODEINITTRAN) {
                         //copy charges to CKTstate1
-                        *(ckt->CKTstate1 + here->HICUMqrbi)         = 
-                            *(ckt->CKTstate0 + here->HICUMqrbi)         ; 
-                        *(ckt->CKTstate1 + here->HICUMqjei)         = 
-                            *(ckt->CKTstate0 + here->HICUMqjei)         ; 
+                        *(ckt->CKTstate1 + here->HICUMqrbi)         =
+                            *(ckt->CKTstate0 + here->HICUMqrbi)         ;
+                        *(ckt->CKTstate1 + here->HICUMqjei)         =
+                            *(ckt->CKTstate0 + here->HICUMqjei)         ;
                         *(ckt->CKTstate1 + here->HICUMqf)           =
                             *(ckt->CKTstate0 + here->HICUMqf)           ;
                         *(ckt->CKTstate1 + here->HICUMqr)           =
@@ -2714,10 +2715,10 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
                     if(ckt->CKTmode & MODEINITTRAN) {
                         //copy from state1 to state0
-                        *(ckt->CKTstate1 + here->HICUMcqrbi)         = 
-                            *(ckt->CKTstate0 + here->HICUMcqrbi)         ; 
-                        *(ckt->CKTstate1 + here->HICUMcqjei)         = 
-                            *(ckt->CKTstate0 + here->HICUMcqjei)         ; 
+                        *(ckt->CKTstate1 + here->HICUMcqrbi)         =
+                            *(ckt->CKTstate0 + here->HICUMcqrbi)         ;
+                        *(ckt->CKTstate1 + here->HICUMcqjei)         =
+                            *(ckt->CKTstate0 + here->HICUMcqjei)         ;
                         *(ckt->CKTstate1 + here->HICUMcqf)           =
                             *(ckt->CKTstate0 + here->HICUMcqf)           ;
                         *(ckt->CKTstate1 + here->HICUMcqr)           =
@@ -2760,7 +2761,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             }
 
             /*
-             *      charge storage for electrostatic caps 
+             *      charge storage for electrostatic caps
              */
             if(ckt->CKTmode & (MODETRAN | MODEAC)) {
 //            Ibe        += ddt(cbepar1*Vbe);
@@ -2897,11 +2898,11 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 load:
 //          #############################################################
 //          ############### STAMPS NO SH   ##############################
-//          ############################################################# 
+//          #############################################################
 
 // first branches that are not relevant in DC HICUM, e.g. only in the transient case
 
-//          Branch: sc, Stamp element: Cscp 
+//          Branch: sc, Stamp element: Cscp
             rhs_current = model->HICUMtype * (Isc - Isc_Vsc*Vsc);
             *(ckt->CKTrhs + here->HICUMsubsNode) += -rhs_current;
             *(ckt->CKTrhs + here->HICUMcollNode) +=  rhs_current;
@@ -2923,7 +2924,7 @@ load:
             *(here->HICUMcollCIBasePtr)            += -Ibci_Vbci;
 //          finish
 
-//          Branch: be, Stamp element: Cbepar1 
+//          Branch: be, Stamp element: Cbepar1
             rhs_current = model->HICUMtype * (*(ckt->CKTstate0 + here->HICUMcqbepar1) - Vbe * gqbepar1);
             *(ckt->CKTrhs + here->HICUMbaseNode)   += -rhs_current;
             *(ckt->CKTrhs + here->HICUMemitNode)   +=  rhs_current;
@@ -2934,7 +2935,7 @@ load:
             *(here->HICUMemitBasePtr)              += -gqbepar1;
 //          finish
 
-//          Branch: bpe, Stamp element: Cbepar2 
+//          Branch: bpe, Stamp element: Cbepar2
             rhs_current = model->HICUMtype * (*(ckt->CKTstate0 + here->HICUMcqbepar2) - Vbpe * gqbepar2);
             *(ckt->CKTrhs + here->HICUMbaseBPNode) += -rhs_current;
             *(ckt->CKTrhs + here->HICUMemitNode)   +=  rhs_current;
@@ -3032,7 +3033,7 @@ load:
             *(here->HICUMcollCIEmitEIPtr)          += -Iciei_Vbiei;
             *(here->HICUMemitEIBaseBIPtr)          += -Iciei_Vbiei;
             // with respect to Vbici
-            *(here->HICUMcollCIBaseBIPtr)          +=  Iciei_Vbici; 
+            *(here->HICUMcollCIBaseBIPtr)          +=  Iciei_Vbici;
             *(here->HICUMemitEICollCIPtr)          +=  Iciei_Vbici;
             *(here->HICUMcollCICollCIPtr)          += -Iciei_Vbici;
             *(here->HICUMemitEIBaseBIPtr)          += -Iciei_Vbici;
@@ -3083,19 +3084,19 @@ load:
                 rhs_current = model->HICUMtype * (Ibpbi - Ibpbi_Vbpbi*Vbpbi - Ibpbi_Vbiei*Vbiei - Ibpbi_Vbici*Vbici);
                 *(ckt->CKTrhs + here->HICUMbaseBPNode) += -rhs_current;
                 *(ckt->CKTrhs + here->HICUMbaseBINode) +=  rhs_current;
-                //f_Bp = +    f_Bi = - 
-                // with respect to Vbpbi 
-                *(here->HICUMbaseBPBaseBPPtr)          +=  Ibpbi_Vbpbi; 
+                //f_Bp = +    f_Bi = -
+                // with respect to Vbpbi
+                *(here->HICUMbaseBPBaseBPPtr)          +=  Ibpbi_Vbpbi;
                 *(here->HICUMbaseBIBaseBIPtr)          +=  Ibpbi_Vbpbi;
                 *(here->HICUMbaseBPBaseBIPtr)          += -Ibpbi_Vbpbi;
                 *(here->HICUMbaseBIBaseBPPtr)          += -Ibpbi_Vbpbi;
                 // with respect to Vbiei
-                *(here->HICUMbaseBPBaseBIPtr)          +=  Ibpbi_Vbiei; 
+                *(here->HICUMbaseBPBaseBIPtr)          +=  Ibpbi_Vbiei;
                 *(here->HICUMbaseBIEmitEIPtr)          +=  Ibpbi_Vbiei;
                 *(here->HICUMbaseBPEmitEIPtr)          += -Ibpbi_Vbiei;
                 *(here->HICUMbaseBIBaseBIPtr)          += -Ibpbi_Vbiei;
                 // with respect to Vbici
-                *(here->HICUMbaseBPBaseBIPtr)          +=  Ibpbi_Vbici; 
+                *(here->HICUMbaseBPBaseBIPtr)          +=  Ibpbi_Vbici;
                 *(here->HICUMbaseBICollCIPtr)          +=  Ibpbi_Vbici;
                 *(here->HICUMbaseBPCollCIPtr)          += -Ibpbi_Vbici;
                 *(here->HICUMbaseBIBaseBIPtr)          += -Ibpbi_Vbici;
@@ -3139,7 +3140,7 @@ load:
 //          finish
 
             if (nqs) {
-    //          Branch: xf1-ground, Stamp element: Ixf1   f_xf1=+ 
+    //          Branch: xf1-ground, Stamp element: Ixf1   f_xf1=+
                 rhs_current                          = Ixf1 - Ixf1_Vbici*Vbici - Ixf1_Vbiei*Vbiei -Ixf1_Vxf1*Vxf1 - Ixf1_Vxf2*Vxf2;
                 *(ckt->CKTrhs + here->HICUMxf1Node) += -rhs_current; // rhs_current; // into xf1 node
                 *(here->HICUMxf1BaseBIPtr)          += +Ixf1_Vbiei;
@@ -3149,7 +3150,7 @@ load:
                 *(here->HICUMxf1Xf2Ptr)             += +Ixf1_Vxf2;
                 *(here->HICUMxf1Xf1Ptr)             += +Ixf1_Vxf1;
 
-    //          Branch: xf2-ground, Stamp element: Ixf2   f_xf2=+  
+    //          Branch: xf2-ground, Stamp element: Ixf2   f_xf2=+
                 rhs_current                          = Ixf2 - Ixf2_Vbici*Vbici - Ixf2_Vbiei*Vbiei - Ixf2_Vxf1*Vxf1 - Ixf2_Vxf2*Vxf2;
                 *(ckt->CKTrhs + here->HICUMxf2Node) += -rhs_current; // rhs_current; // into xf2 node
                 *(here->HICUMxf2BaseBIPtr)          += +Ixf2_Vbiei;
@@ -3159,7 +3160,7 @@ load:
                 *(here->HICUMxf2Xf2Ptr)             += +Ixf2_Vxf2;
                 *(here->HICUMxf2Xf1Ptr)             += +Ixf2_Vxf1;
 
-    //          Branch: xf-ground, Stamp element: Ixf   f_xf=+  
+    //          Branch: xf-ground, Stamp element: Ixf   f_xf=+
                 rhs_current = Ixf - Ixf_Vbici*Vbici - Ixf_Vbiei*Vbiei - Ixf_Vxf*Vxf;
                 *(ckt->CKTrhs + here->HICUMxfNode) += -rhs_current; // rhs_current; // into xf2 node
                 *(here->HICUMxfBaseBIPtr)          += +Ixf_Vbiei;
@@ -3172,14 +3173,14 @@ load:
 
 //          #############################################################
 //          ############### FINISH STAMPS NO SH #########################
-//          ############################################################# 
+//          #############################################################
 
             if (selfheat) {
 
 //              #############################################################
 //              ############### STAMP WITH SH ADDITIONS #####################
 //              #############################################################
-                
+
 //              Stamp element: Ibiei  f_Bi = +   f_Ei = -
                 rhs_current = -Ibiei_Vrth*Vrth;
                 *(ckt->CKTrhs + here->HICUMbaseBINode) += -rhs_current;
@@ -3283,21 +3284,21 @@ load:
 //              finish
 
                 if (nqs) {
-    //              Stamp element: Ixf    f_xf = +   
+    //              Stamp element: Ixf    f_xf = +
                     rhs_current = -Ixf_dT*Vrth;
                     *(ckt->CKTrhs + here->HICUMxfNode) += -rhs_current;
                     // with respect to Potential Vxf
                     *(here->HICUMxfTempPtr)             +=  Ixf_dT;
     //              finish
 
-    //              Stamp element: Ixf1    f_xf1 = +   
+    //              Stamp element: Ixf1    f_xf1 = +
                     rhs_current = -Ixf1_dT*Vrth;
                     *(ckt->CKTrhs + here->HICUMxf1Node) += -rhs_current;
                     // with respect to Potential Vxf1
                     *(here->HICUMxf1TempPtr)             +=  Ixf1_dT;
     //              finish
 
-    //              Stamp element: Ixf2    f_xf2 = +   
+    //              Stamp element: Ixf2    f_xf2 = +
                     rhs_current = -Ixf2_dT*Vrth;
                     *(ckt->CKTrhs + here->HICUMxf2Node) += -rhs_current;
                     // with respect to Potential Vxf2
@@ -3305,8 +3306,8 @@ load:
     //              finish
                 }
 
-//              Stamp element:    Ith f_T = - Ith 
-                rhs_current = Ith 
+//              Stamp element:    Ith f_T = - Ith
+                rhs_current = Ith
                               - Ith_Vbiei*Vbiei - Ith_Vbici*Vbici - Ith_Vciei*Vciei
                               - Ith_Vbpei*Vbpei - Ith_Vbpci*Vbpci - Ith_Vsici*Vsici
                               - Ith_Vbpbi*Vbpbi
@@ -3354,6 +3355,63 @@ load:
                 *(ckt->CKTrhs + here->HICUMtempNode) +=  -rhs_current;
                 *(here->HICUMtempTempPtr)            +=  +Icth_Vrth;
 //              finish
+            }
+
+
+            if (correlated_noise) {
+//              #############################################################
+//              ############# STAMP WITH CORRELATED NOISE ###################
+//              #############################################################
+                // parameter definition
+                int n_w = 1;
+                double n_1 = Tf*model->HICUMalit;
+                double betadc = it/ibei;
+                double sqrt_n2 = betadc * (2*model->HICUMalqf-model->HICUMalit*model->HICUMalit);
+                double n_2 = 0;
+
+                if (sqrt_n2 > 0.0) {
+                    n_2 = Tf*sqrt(sqrt_n2);
+                }
+
+//              Branch: n1 0, Stamp element: Rn1 = 1 Ohm
+                // with respect to Vn1
+                *(ckt->CKTrhs + here->HICUMNoise1Node) -= *(ckt->CKTstate0 + here->HICUMvn1);
+//              finish
+
+//              Branch: n2 0, Stamp element: Rn2 = 1 Ohm
+                // with respect to Vn2
+                *(ckt->CKTrhs + here->HICUMNoise2Node) -= *(ckt->CKTstate0 + here->HICUMvn2);
+//              finish
+
+//              Stamp element: Ibiei  f_Bi = +   f_Ei = -
+                // realization of modified base shot noise source I1(bi,ei)
+                rhs_current = -*(ckt->CKTstate0 + here->HICUMvn1);
+                double q_n1 = n_w* *(ckt->CKTstate0 + here->HICUMvn1);
+                double In1_Vn1 = 0;
+                // I(bi,ei) <+ n_2/n_w*ddt(n_w* *(ckt->CKTstate0 + here->HICUMvn1));
+                error = NIintegrate(ckt, &geq, &ceq, n_w, here->HICUMqn1);
+                if(error) return(error);
+                In1_Vn1 += n_2/n_w*geq;
+                rhs_current += n_2/n_w * *(ckt->CKTstate0 + here->HICUMcqn1);
+
+                *(ckt->CKTrhs + here->HICUMcollCINode) += -rhs_current;
+                *(ckt->CKTrhs + here->HICUMemitEINode) +=  rhs_current;
+                *(here->HICUMn1N1Ptr)             += +In1_Vn1;
+
+                // realization of controlled base noise source I2(bi,ei)
+                // I(bi,ei) <+ n_1/n_w*ddt(n_w* *(ckt->CKTstate0 + here->HICUMvn2));
+                error = NIintegrate(ckt, &geq, &ceq, n_w, here->HICUMqn1);
+                if(error) return(error);
+                In1_Vn1 += n_2/n_w*geq;
+                rhs_current += n_2/n_w * *(ckt->CKTstate0 + here->HICUMcqn1);
+//              finish
+
+//              Stamp element: Iciei  f_Ci = +   f_Ei = -
+                // realization of modified collector shot noise source I(ci,ei) (uncontrolled)
+                rhs_current = -*(ckt->CKTstate0 + here->HICUMvn2);
+                *(ckt->CKTrhs + here->HICUMcollCINode) += -rhs_current;
+                *(ckt->CKTrhs + here->HICUMemitEINode) +=  rhs_current;
+
             }
         }
 
