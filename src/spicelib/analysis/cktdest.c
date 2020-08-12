@@ -68,7 +68,7 @@ CKTdestroy(CKTcircuit *ckt)
     }
     if(ckt->CKTmatrix) {
         SMPdestroy(ckt->CKTmatrix);
-        ckt->CKTmatrix = NULL;
+        FREE(ckt->CKTmatrix);
     }
     FREE(ckt->CKTbreaks);
     for(node = ckt->CKTnodes; node; ) {
