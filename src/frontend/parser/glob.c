@@ -730,6 +730,7 @@ static void wl_modify_word(wordlist *wl_node, unsigned int n_input,
                 p_dst += n_char_word_cur;
             }
             *p_dst = '\0';
+            tfree(pp_word[0]);
         }
     }
 
