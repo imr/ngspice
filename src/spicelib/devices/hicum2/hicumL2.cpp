@@ -497,7 +497,11 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
 //NQS
     double Qxf_Vxf, Qxf1_Vxf1, Qxf2_Vxf2;
+// correlated noise
+    double In1=0.0, In1_Vn1=0.0, In1_Vn2=0.0;  // CORRELATED_NOISE
+    int n_w = 1;
 
+// SH
     double Ith=0.0, Vrth=0.0, Icth, Icth_Vrth, delvrth;
 
     double Ibiei_Vrth;
@@ -1119,7 +1123,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
         // Model_initialization
         int selfheat = ((model->HICUMflsh > 0) && (model->HICUMrthGiven) && (model->HICUMrth > 0.0));
         int nqs      = ((model->HICUMflnqs != 0 || model->HICUMflcomp < 2.3) && (model->HICUMalit > 0 || model->HICUMalqf > 0));
-        int correlated_noise = (model->HICUMflcono == 1 && (model->HICUMalit > 0 && model->HICUMalqf > 0));
+        int correlated_noise = (model->HICUMflcono == 1 && (model->HICUMalit > 0 && model->HICUMalqf > 0));  // CORRELATED_NOISE
 
         // Avoid divide-by-zero and define infinity other way
         // High current correction for 2D and 3D effects
@@ -2713,6 +2717,20 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                         Icth = *(ckt->CKTstate0 + here->HICUMcqcth);
                     }
 
+                    if (correlated_noise)  // CORRELATED_NOISE
+                    {
+                        // I(bi,ei) <+ ddt(n_w * Vn1);
+                        error = NIintegrate(ckt, &geq, &ceq, n_w, here->HICUMqn1);
+                        if(error) return(error);
+                        In1_Vn1 = geq;
+                        In1 = *(ckt->CKTstate0 + here->HICUMcqn1);
+                        // I(bi,ei) <+ ddt(n_w * Vn2);
+                        error = NIintegrate(ckt, &geq, &ceq, n_w, here->HICUMqn2);
+                        if(error) return(error);
+                        In1_Vn2 = geq;
+                        In1 += *(ckt->CKTstate0 + here->HICUMcqn2);
+                    }
+
                     if(ckt->CKTmode & MODEINITTRAN) {
                         //copy from state1 to state0
                         *(ckt->CKTstate1 + here->HICUMcqrbi)         =
@@ -2746,6 +2764,12 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                         if (selfheat)
                             *(ckt->CKTstate1 + here->HICUMcqcth) =
                                 *(ckt->CKTstate0 + here->HICUMcqcth) ;
+                        if (correlated_noise) { // CORRELATED_NOISE
+                            *(ckt->CKTstate1 + here->HICUMcqn1)     =
+                                *(ckt->CKTstate0 + here->HICUMcqn1)     ;
+                            *(ckt->CKTstate1 + here->HICUMcqn2)      =
+                                *(ckt->CKTstate0 + here->HICUMcqn2)      ;
+                        }
                     }
                 }
             }
@@ -2779,6 +2803,15 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 //            Isis      += ddt(model->HICUMcsu*Vsis);
                 error = NIintegrate(ckt,&gqsu,&cqsu,model->HICUMcsu,here->HICUMqsu);
                 if(error) return(error);
+// CORRELATED_NOISE
+// @Dietmar: brauchen wir das 2x ?
+//            I(bi,ei) <+ ddt(n_w * Vn1);
+                error = NIintegrate(ckt, &geq, &ceq, n_w, here->HICUMqn1);
+                if(error) return(error);
+//            I(bi,ei) <+ ddt(n_w * Vn2);
+                error = NIintegrate(ckt, &geq, &ceq, n_w, here->HICUMqn2);
+                if(error) return(error);
+
                 if(ckt->CKTmode & MODEINITTRAN) {
                     *(ckt->CKTstate1 + here->HICUMcqbepar1) =
                             *(ckt->CKTstate0 + here->HICUMcqbepar1);
@@ -2790,6 +2823,11 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                             *(ckt->CKTstate0 + here->HICUMcqbcpar2);
                     *(ckt->CKTstate1 + here->HICUMcqsu) =
                             *(ckt->CKTstate0 + here->HICUMcqsu);
+                    // CORRELATED_NOISE
+                    *(ckt->CKTstate1 + here->HICUMcqn1) =
+                            *(ckt->CKTstate0 + here->HICUMcqn1);
+                    *(ckt->CKTstate1 + here->HICUMcqn2) =
+                            *(ckt->CKTstate0 + here->HICUMcqn2);
                 }
             }
 
@@ -3362,8 +3400,7 @@ load:
 //              #############################################################
 //              ############# STAMP WITH CORRELATED NOISE ###################
 //              #############################################################
-                // parameter definition
-                int n_w = 1;
+                // parameter definitio
                 double n_1 = Tf*model->HICUMalit;
                 double betadc = it/ibei;
                 double sqrt_n2 = betadc * (2*model->HICUMalqf-model->HICUMalit*model->HICUMalit);
@@ -3385,14 +3422,9 @@ load:
 
 //              Stamp element: Ibiei  f_Bi = +   f_Ei = -
                 // realization of modified base shot noise source I1(bi,ei)
-                rhs_current = -*(ckt->CKTstate0 + here->HICUMvn1);
-                double q_n1 = n_w* *(ckt->CKTstate0 + here->HICUMvn1);
-                double In1_Vn1 = 0;
                 // I(bi,ei) <+ n_2/n_w*ddt(n_w* *(ckt->CKTstate0 + here->HICUMvn1));
-                error = NIintegrate(ckt, &geq, &ceq, n_w, here->HICUMqn1);
-                if(error) return(error);
-                In1_Vn1 += n_2/n_w*geq;
-                rhs_current += n_2/n_w * *(ckt->CKTstate0 + here->HICUMcqn1);
+                rhs_current = n_2/n_w * (*(ckt->CKTstate0 + here->HICUMcqn1) - Vn1 * gqn1);
+                In1_Vn1 += n_2/n_w*In1_Vn1;
 
                 *(ckt->CKTrhs + here->HICUMcollCINode) += -rhs_current;
                 *(ckt->CKTrhs + here->HICUMemitEINode) +=  rhs_current;
@@ -3400,10 +3432,12 @@ load:
 
                 // realization of controlled base noise source I2(bi,ei)
                 // I(bi,ei) <+ n_1/n_w*ddt(n_w* *(ckt->CKTstate0 + here->HICUMvn2));
-                error = NIintegrate(ckt, &geq, &ceq, n_w, here->HICUMqn1);
-                if(error) return(error);
-                In1_Vn1 += n_2/n_w*geq;
-                rhs_current += n_2/n_w * *(ckt->CKTstate0 + here->HICUMcqn1);
+                In1_Vn2 += n_2/n_w*In1_Vn2;
+                rhs_current = n_2/n_w * (*(ckt->CKTstate0 + here->HICUMcqn1) - Vn2 * gqn2);
+
+                *(ckt->CKTrhs + here->HICUMcollCINode) += -rhs_current;
+                *(ckt->CKTrhs + here->HICUMemitEINode) +=  rhs_current;
+                *(here->HICUMn1N2Ptr)                  += +In1_Vn2;
 //              finish
 
 //              Stamp element: Iciei  f_Ci = +   f_Ei = -
