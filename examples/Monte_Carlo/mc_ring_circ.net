@@ -41,6 +41,9 @@ xinv5 dd ss sub well out20 out inv5
 xinv11 dd 0 sub well out buf inv1
 cout  buf ss 0.2pF
 
+* for convergence with KLU
+.ic v(out20) = 0
+
  *** Model library files.
 * Add your library here
 * Chose the transistors for XMP1 and XMN1 accordingly

@@ -33,6 +33,9 @@ xinv11 dd 0 sub well out buf inv1
 cout  buf ss 0.2pF
 *
 .options noacct
+* for convergence with KLU
+.ic v(out20) = 0
+
 .control
   save buf                        $ we just need buf, save memory by more than 10x
   let mc_runs = 30             $ number of runs for monte carlo
