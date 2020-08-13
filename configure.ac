@@ -185,6 +185,10 @@ AC_ARG_ENABLE([ndev],
 AC_ARG_ENABLE([cluster],
     [AS_HELP_STRING([--enable-cluster], [Enable cluster support, (experimental)])])
 
+# --enable-cmathtests: run the ancient tests in src/math/cmaths
+AC_ARG_ENABLE([cmathtests],
+    [AS_HELP_STRING([--enable-cmathtests], [Enable ancient tests in src/math/cmaths])])
+
 # --enable-help: try to force --ansi option to the compiler
 AC_ARG_ENABLE([help],
     [AS_HELP_STRING([--enable-help], [Force building nghelp (deprecated)])])
@@ -986,6 +990,8 @@ AX_PROG_BISON_VERSION([2.7], [],
     [AC_DEFINE([OLD_BISON], [], [Bison is older than 2.7]),
      AC_MSG_WARN([Bison is older than 2.7])])
 AC_PROG_LEX
+
+AM_CONDITIONAL([CMATHTESTS], [test "x$enable_cmathtests" = xyes])
 
 #################  XSPICE ##################################################
 # Add new code models to the build by pointing to them here.
