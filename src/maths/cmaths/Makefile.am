@@ -13,6 +13,7 @@ libcmaths_la_SOURCES = \
 		cmath4.c	\
 		cmath4.h
 
+if CMATHTESTS
 if !TCL_MODULE
 if !WINGUI
 if !SHARED_MODULE
@@ -56,6 +57,7 @@ TESTS = test_cx_mag test_cx_j test_cx_ph test_cx_cph
 endif !SHARED_MODULE
 endif !WINGUI
 endif !TCL_MODULE
+endif CMATHTESTS
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include -I$(top_srcdir)/src/maths/poly
 AM_CFLAGS = $(STATIC)
