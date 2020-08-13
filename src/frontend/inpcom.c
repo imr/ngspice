@@ -179,6 +179,8 @@ static void pspice_compat_a(struct card *oldcard);
 static struct card *ltspice_compat(struct card *oldcard);
 static void ltspice_compat_a(struct card *oldcard);
 
+static void inp_repair_dc_ps(struct card* oldcard);
+
 #ifndef EXT_ASC
 static void utf8_syntax_check(struct card *deck);
 #endif
@@ -618,7 +620,7 @@ struct card *inp_readall(FILE *fp, const char *dir_name,
         struct card *working = cc->nextcard;
 
         delete_libs();
-		
+
 #ifndef EXT_ASC
         utf8_syntax_check(working);
 #endif		
@@ -666,8 +668,9 @@ struct card *inp_readall(FILE *fp, const char *dir_name,
         inp_fix_param_values(working);
 
         inp_reorder_params(subckt_w_params, cc);
-        inp_fix_inst_calls_for_numparam(subckt_w_params, working);
 
+        inp_fix_inst_calls_for_numparam(subckt_w_params, working);
+//        tprint(working);
         delete_names(subckt_w_params);
         subckt_w_params = NULL;
         if (!cp_getvar("no_auto_gnd", CP_BOOL, NULL, 0))
@@ -679,6 +682,11 @@ struct card *inp_readall(FILE *fp, const char *dir_name,
 #ifndef XSPICE
         inp_poly_err(working);
 #endif
+        /* a preliminary fix: if ps is enabled, .dc TEMP -15 75 5 will
+        have been modified to .dc (TEMPER) -15 75 5. So we repair it here. */
+        if (newcompat.ps) {
+            inp_repair_dc_ps(working);
+        }
         bool expr_w_temper = FALSE;
         if (!newcompat.s3) {
             /* Do all the compatibility stuff here */
@@ -8851,3 +8859,17 @@ utf8_syntax_check(struct card *deck)
 }
 #endif
 
+/* if .dc (TEMPER) -15 75 5 if found, replace it by .dc TEMP -15 75 5. */
+static void inp_repair_dc_ps(struct card* deck) {
+    struct card* card;
+
+    for (card = deck; card; card = card->nextcard) {
+        char* curr_line = card->line;
+        if (ciprefix(".dc", curr_line)) {
+            char* tempstr = strstr(curr_line, "(temper)");
+            if (tempstr) {
+                memcpy(tempstr, "temp    ", 8);
+            }
+        }
+    }
+}
