@@ -573,7 +573,7 @@ SMPcReorder (SMPmatrix *Matrix, double PivTol, double PivRel, int *NumSwaps)
 {
     if (Matrix->CKTkluMODE)
     {
-        Matrix->SMPkluMatrix->KLUmatrixCommon->tol = PivTol ;
+        Matrix->SMPkluMatrix->KLUmatrixCommon->tol = PivRel ;
 
         if (Matrix->SMPkluMatrix->KLUmatrixNumeric != NULL) {
             klu_free_numeric (&(Matrix->SMPkluMatrix->KLUmatrixNumeric), Matrix->SMPkluMatrix->KLUmatrixCommon) ;
@@ -619,7 +619,7 @@ SMPreorder (SMPmatrix *Matrix, double PivTol, double PivRel, double Gmin)
     if (Matrix->CKTkluMODE)
     {
         LoadGmin_CSC (Matrix->SMPkluMatrix->KLUmatrixDiag, Matrix->SMPkluMatrix->KLUmatrixN, Gmin) ;
-        Matrix->SMPkluMatrix->KLUmatrixCommon->tol = PivTol ;
+        Matrix->SMPkluMatrix->KLUmatrixCommon->tol = PivRel ;
 
         if (Matrix->SMPkluMatrix->KLUmatrixNumeric != NULL) {
             klu_free_numeric (&(Matrix->SMPkluMatrix->KLUmatrixNumeric), Matrix->SMPkluMatrix->KLUmatrixCommon) ;
