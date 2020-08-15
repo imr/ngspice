@@ -44,23 +44,34 @@ void com_hardcopy(wordlist *wl)
     if (!cp_getvar("hcopydev", CP_STRING, device, sizeof(device)))
         *device = '\0';
 
+    if (!cp_getvar("hcopydevtype", CP_STRING, buf, sizeof(buf))) {
+        devtype = "postscript";
+    }
+    else {
+        devtype = buf;
+    }
+
     if (wl) {
         hc_button = 0;
         fname = copy(wl->wl_word);
+        n_byte_fname = (strlen(fname) + 1) * sizeof *fname;
         wl = wl->wl_next;
     }
     else {
         hc_button = 1;
         fname = smktemp("hc");
         tempf = TRUE;
-    }
-    n_byte_fname = (strlen(fname) + 1) * sizeof *fname;
-
-    if (!cp_getvar("hcopydevtype", CP_STRING, buf, sizeof(buf))) {
-        devtype = "postscript";
-    }
-    else {
-        devtype = buf;
+        n_byte_fname = (strlen(fname) + 1) * sizeof *fname;
+        if (!strcmp(devtype, "svg")) {
+            fname = trealloc(fname, n_byte_fname + 4);
+            (void)memcpy(fname + n_byte_fname - 1, ".svg", 5);
+            n_byte_fname += 4;
+        }
+        else if (!strcmp(devtype, "postscript")) {
+            fname = trealloc(fname, n_byte_fname + 3);
+            (void)memcpy(fname + n_byte_fname - 1, ".ps", 4);
+            n_byte_fname += 3;
+        }
     }
 
     /* enable screen plot selection for these display types */
