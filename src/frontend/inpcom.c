@@ -194,7 +194,9 @@ struct inp_read_t inp_read( FILE *fp, int call_depth, const char *dir_name,
         bool comfile, bool intfile);
 
 
-#ifndef XSPICE
+#ifdef XSPICE
+static void inp_poly_2g6_compat(struct card* deck);
+#else
 static void inp_poly_err(struct card *deck);
 #endif
 
@@ -679,8 +681,10 @@ struct card *inp_readall(FILE *fp, const char *dir_name,
 
         if (cp_getvar("addcontrol", CP_BOOL, NULL, 0))
             inp_add_control_section(working, &rv.line_number);
-#ifndef XSPICE
-        inp_poly_err(working);
+#ifdef XSPICE
+        inp_poly_2g6_compat(working);
+#else
+        inp_poly_err();
 #endif
         /* a preliminary fix: if ps is enabled, .dc TEMP -15 75 5 will
         have been modified to .dc (TEMPER) -15 75 5. So we repair it here. */
@@ -8873,3 +8877,94 @@ static void inp_repair_dc_ps(struct card* deck) {
         }
     }
 }
+
+#ifdef XSPICE
+/* spice2g6 allows to omit the poly(n) statement, if the
+   polynomial is one-dimensional (n==1).
+   For compatibility with the XSPIXE code, we have to add poly(1) appropriately. */
+static void inp_poly_2g6_compat(struct card* deck) {
+    struct card* card;
+    int skip_control = 0;
+
+    for (card = deck; card; card = card->nextcard) {
+        char* curr_line = card->line;
+        char* thisline = curr_line;
+
+        /* exclude any command inside .control ... .endc */
+        if (ciprefix(".control", curr_line)) {
+            skip_control++;
+            continue;
+        }
+        else if (ciprefix(".endc", curr_line)) {
+            skip_control--;
+            continue;
+        }
+        else if (skip_control > 0) {
+            continue;
+        }
+
+
+        switch (*thisline) {
+        case 'h':
+        case 'g':
+        case 'e':
+        case 'f':
+            curr_line = nexttok(curr_line);
+            curr_line = nexttok(curr_line);
+            curr_line = nexttok(curr_line);
+            /* exclude all of the following fourth tokens */
+            if (ciprefix("poly", curr_line))
+                continue;
+            if (ciprefix("value", curr_line))
+                continue;
+            if (ciprefix("vol", curr_line))
+                continue;
+            if (ciprefix("table", curr_line))
+                continue;
+            if (ciprefix("laplace", curr_line))
+                continue;
+            if (ciprefix("cur", curr_line))
+                continue;
+            break;
+        default:
+            continue;
+        }
+        /* go beyond the usual nodes and sources */
+        switch (*thisline) {
+        case 'g':
+        case 'e':
+            curr_line = nexttok(curr_line);
+            curr_line = nexttok(curr_line);
+            curr_line = nexttok(curr_line);
+            if (*curr_line == '\0')
+                continue;
+            break;
+        case 'f':
+        case 'h':
+            curr_line = nexttok(curr_line);
+            curr_line = nexttok(curr_line);
+            if (*curr_line == '\0')
+                continue;
+            break;
+        }
+        /* finish if these end tokens are found */
+        if (ciprefix("ic=", curr_line)) {
+            continue;
+        }
+        if (ciprefix("m=", curr_line)) {
+            continue;
+        }
+        /* this now seems to be a spice2g6 poly one-dimensional source */
+        /* insert poly(1) as the fourth token */
+        curr_line = nexttok(thisline);
+        curr_line = nexttok(curr_line);
+        curr_line = nexttok(curr_line);
+        char *endofline = copy(curr_line);
+        *curr_line = '\0';
+        char* newline = tprintf("%s poly(1) %s", thisline, endofline);
+        tfree(card->line);
+        card->line = newline;
+        tfree(endofline);
+    }
+}
+#endif
