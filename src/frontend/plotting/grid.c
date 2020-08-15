@@ -131,7 +131,6 @@ gr_fixgrid(GRAPH *graph, double xdelta, double ydelta, int xtype, int ytype)
 void
 gr_redrawgrid(GRAPH *graph)
 {
-
     SetColor(1);
     SetLinestyle(1);
     /* draw labels */
@@ -141,7 +140,13 @@ gr_redrawgrid(GRAPH *graph)
             (int)(graph->absolute.width * 0.35),
             graph->fontheight, 0);
 #else
-        if (eq(dispdev->name, "postscript") || eq(dispdev->name, "svg"))
+        if (eq(dispdev->name, "postscript"))
+        {
+            DevDrawText(graph->grid.xlabel,
+                (int)(graph->absolute.width * 0.35),
+                graph->fontheight, 0);
+        }
+        else if (eq(dispdev->name, "svg"))
         {
             DevDrawText(graph->grid.xlabel,
                 (int)(graph->absolute.width * 0.35),
@@ -236,10 +241,10 @@ gr_redrawgrid(GRAPH *graph)
             /* svg for non-Windows */
             else if (eq(dispdev->name, "svg")) {
                 DevDrawText(graph->grid.ylabel,
-                        graph->fontwidth,
+                        2 * graph->fontwidth,
                         /* vertical text, midpoint in y is aligned midpoint
-                         * of utf-8 text string */
-                        graph->absolute.height - (int)(mbstowcs(NULL, graph->grid.ylabel, 0) * graph->fontwidth / 2),
+                         * of text string */
+                        (graph->absolute.height - (int)strlen(graph->grid.ylabel) * graph->fontwidth) / 2,
                         90);
             }
 #else
@@ -256,16 +261,12 @@ gr_redrawgrid(GRAPH *graph)
                     fprintf(stderr, "%s could not be converted\n", graph->grid.ylabel);
                 }
                 else {
-                    SIZE sz;
-                    TEXTMETRICW tmw;
-                    tpWindowData wd = graph->devdep;
-                    GetTextMetricsW(wd->hDC, &tmw);
-                    GetTextExtentPoint32W(wd->hDC, wtext, wlen, &sz);
-                    //                    printf("length: %d, deviation: %d\n", sz.cx, sz.cx - graph->fontwidth*wlen);
+                    int textlen = graph->fontwidth * wlen;
+
                     DevDrawText(graph->grid.ylabel,
-                        graph->fontwidth,
-                        /*vertical text, midpoint in y is aligned midpoint of text string */
-                        (graph->absolute.height - (int)(1.2 * sz.cx + tmw.tmOverhang)) / 2, 90);
+                        (int)(2 * graph->fontwidth),
+                        //vertical text, midpoint in y is aligned midpoint of text string
+                        (graph->absolute.height - (int)(1.2 * textlen)) / 2, 90);
                 }
                 txfree(wtext);
     }
