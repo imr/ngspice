@@ -386,6 +386,11 @@ spice_destroy_devices(void)
 {
 }
 
+
+void com_optran(wordlist* wl) {
+    NG_IGNORE(wl);
+}
+
 #endif /* SIMULATOR */
 
 #ifndef SIMULATOR
