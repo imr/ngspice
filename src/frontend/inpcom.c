@@ -684,7 +684,7 @@ struct card *inp_readall(FILE *fp, const char *dir_name,
 #ifdef XSPICE
         inp_poly_2g6_compat(working);
 #else
-        inp_poly_err();
+        inp_poly_err(working);
 #endif
         /* a preliminary fix: if ps is enabled, .dc TEMP -15 75 5 will
         have been modified to .dc (TEMPER) -15 75 5. So we repair it here. */
