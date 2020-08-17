@@ -10,7 +10,6 @@ Modified BSD license
 
 #include "ngspice/ngspice.h"
 #include "ngspice/cktdefs.h"
-#include "cktaccept.h"
 #include "ngspice/trandefs.h"
 #include "ngspice/sperror.h"
 #include "ngspice/fteext.h"
