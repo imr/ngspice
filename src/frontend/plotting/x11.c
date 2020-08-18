@@ -367,15 +367,16 @@ handlekeypressed(Widget w, XtPointer client_data, XEvent *ev, Boolean *continue_
                  keyev->y);
 #else
     int wl, wh;
-    int ret = Xget_str_length("ABCD", &wl, &wh, NULL, DEVDEP(graph).fname, DEVDEP(graph).fsize);
+    int ret = Xget_str_length(text, &wl, &wh, NULL, DEVDEP(graph).fname, DEVDEP(graph).fsize);
+/*    int ret = Xget_str_length("ABCD", &wl, &wh, NULL, DEVDEP(graph).fname, DEVDEP(graph).fsize);
     if (ret == 1)
-        ret = Xget_str_length("我能吞下", &wl, &wh, NULL, DEVDEP(graph).fname, DEVDEP(graph).fsize);
+        ret = Xget_str_length("我能吞下", &wl, &wh, NULL, DEVDEP(graph).fname, DEVDEP(graph).fsize);*/
     if (ret == 1) {
         fprintf(cp_err, "Error: Could not establish a font for %s\n", DEVDEP(graph).fname);
         goto end;
     }
     XWarpPointer(display, None, DEVDEP(graph).window, 0, 0, 0, 0,
-                 keyev->x + wl*nbytes/4,
+                 keyev->x + (int)(1.2 * wl),
                  keyev->y);
 #endif
 end:
