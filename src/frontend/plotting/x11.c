@@ -361,9 +361,24 @@ handlekeypressed(Widget w, XtPointer client_data, XEvent *ev, Boolean *continue_
     /* save it */
     SaveText(graph, text, keyev->x, graph->absolute.height - keyev->y);
     /* warp mouse so user can type in sequence */
+#ifndef HAVE_LIBXFT
     XWarpPointer(display, None, DEVDEP(graph).window, 0, 0, 0, 0,
                  keyev->x + XTextWidth(DEVDEP(graph).font, text, nbytes),
                  keyev->y);
+#else
+    int wl, wh;
+    int ret = Xget_str_length("ABCD", &wl, &wh, NULL, DEVDEP(graph).fname, DEVDEP(graph).fsize);
+    if (ret == 1)
+        ret = Xget_str_length("我能吞下", &wl, &wh, NULL, DEVDEP(graph).fname, DEVDEP(graph).fsize);
+    if (ret == 1) {
+        fprintf(cp_err, "Error: Could not establish a font for %s\n", DEVDEP(graph).fname);
+        goto end;
+    }
+    XWarpPointer(display, None, DEVDEP(graph).window, 0, 0, 0, 0,
+                 keyev->x + wl*nbytes/4,
+                 keyev->y);
+#endif
+end:
     PopGraphContext();
 }
 
