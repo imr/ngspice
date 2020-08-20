@@ -174,7 +174,7 @@ PPerror (YYLTYPE *locp, char **line, struct pnode **retval, char const *s)
   NG_IGNORE(line);
   NG_IGNORE(retval);
   char *tmpstr = strstr(keepline, *line);
-  size_t len = strlen(keepline);
+  int len = (int)strlen(keepline);
   fprintf (stderr, "%s: %s in line segment\n   %s\nnear\n   %*s\n",
       __func__, s, keepline, len, tmpstr);
 }
