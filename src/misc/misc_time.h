@@ -10,4 +10,10 @@ char * datestring(void);
 double seconds(void);
 void timebegin(void);
 
+// Needed for WIN32
+#ifdef HAVE_FTIME
+void timediff(struct timeb*, struct timeb*, int*, int*);
+#endif
+
+
 #endif
