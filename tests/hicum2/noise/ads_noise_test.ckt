@@ -1,8 +1,7 @@
 ; ADS Noise test -> SG13G2 correlated vs non-correlated noise
 
 Options ResourceUsage=yes UseNutmegFormat=no EnableOptim=no ASCII_Rawfile=yes \
-    TopDesignName="test_lib:cell_4:schematic" DcopOutputNodeVoltages=yes \
-    DcopOutputPinCurrents=yes DcopOutputAllSweepPoints=no DcopOutputDcopType=0
+    DcopOutputNodeVoltages=yes DcopOutputPinCurrents=yes DcopOutputAllSweepPoints=no DcopOutputDcopType=0
 simulator lang = spectre
 global 0
 ahdl_include "../../../src/spicelib/devices/adms/hicum2/admsva/hicum2.va"
