@@ -121,8 +121,9 @@ create_model(CKTcircuit *ckt, INPmodel *modtmp, INPtables *tab)
             error = ft_sim->setModelParm(ckt, modtmp->INPmodfast, p->id, val, NULL);
             if (error)
                 return error;
-        } else if (strcmp(parm, "level") == 0) {
-            /* just grab the level number and throw away */
+        } else if ((strcmp(parm, "level") == 0) || (strcmp(parm, "m") == 0)) {
+            /* no instance parameter default for level and multiplier */
+            /* just grab the number and throw away */
             /* since we already have that info from pass1 */
             INPgetValue(ckt, &line, IF_REAL, tab);
         } else {
@@ -139,20 +140,20 @@ create_model(CKTcircuit *ckt, INPmodel *modtmp, INPtables *tab)
                                     modtmp->INPmodfast->defaults));
             } else {
 
-            double dval;
+                double dval;
 
-            /* want only the parameter names in output - not the values */
-            errno = 0;    /* To distinguish success/failure after call */
-            dval = strtod(parm, &endptr);
-            /* Check for various possible errors */
-            if ((errno == ERANGE && dval == HUGE_VAL) || errno != 0) {
-                perror("strtod");
-                controlled_exit(EXIT_FAILURE);
-            }
-            if (endptr == parm) /* it was no number - it is really a string */
-                err = INPerrCat(err,
-                                tprintf("unrecognized parameter (%s) - ignored",
-                                        parm));
+                /* want only the parameter names in output - not the values */
+                errno = 0;    /* To distinguish success/failure after call */
+                dval = strtod(parm, &endptr);
+                /* Check for various possible errors */
+                if ((errno == ERANGE && dval == HUGE_VAL) || errno != 0) {
+                    perror("strtod");
+                    controlled_exit(EXIT_FAILURE);
+                }
+                if (endptr == parm) /* it was no number - it is really a string */
+                    err = INPerrCat(err,
+                                    tprintf("unrecognized parameter (%s) - ignored",
+                                            parm));
             }
         }
         FREE(parm);
