@@ -89,7 +89,11 @@ JFETtemp(GENmodel *inModel, CKTcircuit *ckt)
             vt = here->JFETtemp * CONSTKoverQ;
             fact2 = here->JFETtemp/REFTEMP;
             ratio1 = here->JFETtemp/model->JFETtnom -1;
-            here->JFETtSatCur = model->JFETgateSatCurrent * exp(ratio1*1.11/vt);
+            if (model->JFETxtiGiven) {
+                here->JFETtSatCur = model->JFETgateSatCurrent * exp(ratio1*model->JFETeg/vt) * pow(ratio1+1,model->JFETxti);
+            } else {
+                here->JFETtSatCur = model->JFETgateSatCurrent * exp(ratio1*model->JFETeg/vt);
+            }
             here->JFETtCGS = model->JFETcapGS * cjfact;
             here->JFETtCGD = model->JFETcapGD * cjfact;
             kt = CONSTboltz*here->JFETtemp;
@@ -108,9 +112,16 @@ JFETtemp(GENmodel *inModel, CKTcircuit *ckt)
             here->JFETf1 = here->JFETtGatePot * (1 - exp((1-.5)*xfc))/(1-.5);
             here->JFETvcrit = vt * log(vt/(CONSTroot2 * here->JFETtSatCur));
 
-            here->JFETtThreshold = model->JFETthreshold - model->JFETtcv*(here->JFETtemp-model->JFETtnom);
-            here->JFETtBeta = model->JFETbeta * pow(here->JFETtemp/model->JFETtnom,model->JFETbex);
-
+            if (model->JFETvtotcGiven) {
+                here->JFETtThreshold = model->JFETthreshold + model->JFETvtotc*(here->JFETtemp-model->JFETtnom);
+            } else {
+                here->JFETtThreshold = model->JFETthreshold - model->JFETtcv*(here->JFETtemp-model->JFETtnom);
+            }
+            if (model->JFETbetatceGiven) {
+                here->JFETtBeta = model->JFETbeta * pow(1.01,model->JFETbetatce*(here->JFETtemp-model->JFETtnom));
+            } else {
+                here->JFETtBeta = model->JFETbeta * pow(here->JFETtemp/model->JFETtnom,model->JFETbex);
+            }
         }
     }
     return(OK);
