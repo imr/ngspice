@@ -1,0 +1,65 @@
+; ADS Noise test -> SG13G2 correlated vs non-correlated noise
+
+Options ResourceUsage=yes UseNutmegFormat=no EnableOptim=no ASCII_Rawfile=yes \
+    TopDesignName="test_lib:cell_4:schematic" DcopOutputNodeVoltages=yes \
+    DcopOutputPinCurrents=yes DcopOutputAllSweepPoints=no DcopOutputDcopType=0
+simulator lang = spectre
+global 0
+ahdl_include "../../../src/spicelib/devices/adms/hicum2/admsva/hicum2.va"
+
+
+simulator lang = ads
+define SG13G2_0p13 ( C  B  E  S  th )
+;parameters
+simulator lang = spectre
+X1 (C B E S th) hic2_full c10=2.962E-30 qp0=6.336E-14 ich=0.0 hf0=40 hfe=10 hfc=20 hjei=3.367E+00 ahjei=0.0 rhjei=2.0 hjci=2.000E-01 ibeis=7.210E-20 mbei=1.027E+00 ireis=1.320E-33 mrei=1.000E+00 ibeps=5.842E-20 mbep=1.042 ireps=1.070E-33 mrep=1.000E+00 mcf=1.0 tbhrec=5.000E-11 ibcis=6.414E-19 mbci=1.044 ibcxs=2.219E-17 mbcx=1.150 ibets=1.093E-02 abet=2.400E+01 tunode=1 favl=1.895E+01 qavl=3.677E-14 kavl=0.0 alfav=-2.400E-03 alqav=-6.284E-04 alkav=0.0 rbi0=3.426E+00 rbx=4.897E+00 fgeo=6.662E-01 fdqr0=0.0 fcrbi=0.0 fqi=1.0 re=2.751E+00 rcx=2.555E+00 itss=9.691E-21 msf=1.056E+00 iscs=1.562E-15 msc=1.018E+00 tsf=3.000E-08 rsu=0.0 csu=0.0 cjei0=5.576E-15 vdei=7.138E-01 zei=2.489E-01 ajei=1.650E+00 cjep0=1.170E-15 vdep=8.500E-01 zep=2.632E-01 ajep=1.600E+00 cjci0=2.647E-15 vdci=8.200E-01 zci=2.857E-01 vptci=1.790E+00 cjcx0=4.712E-15 vdcx=8.200E-01 zcx=2.858E-01 vptcx=1.977E+00 fbcpar=9.000E-01 fbepar=1.0 cjs0=2.090E-15 vds=9.996E-01 zs=4.295E-01 vpts=100 cscp0=0.0 vdsp=0.6 zsp=0.5 vptsp=100 t0=2.490E-13 dt0h=8.000E-14 tbvl=8.250E-14 tef0=3.274E-13 gtfe=3.548E+00 thcs=5.000E-12 ahc=5.000E-02 fthc=7.000E-01 rci0=1.515E+01 vlim=7.000E-01 vces=1.000E-02 vpt=2.000E+00 aick=1e-3 delck=2.0 tr=0.0 vcbar=0.0 icbar=0.0 acbar=0.01 cbepar=1.212E-14 cbcpar=1.029E-14 alqf=0.2 alit=0.4 flnqs=1 kf=0.0 af=2.0 cfbe=(- 1) flcono=0 kfre=0.0 afre=2.0 latb=0.0 latl=0.0 vgb=9.100E-01 alt0=4.000E-03 kt0=6.588E-05 zetaci=5.800E-01 alvs=9.982E-04 alces=-2.286E-01 zetarbi=3.876E-01 zetarbx=1.423E-01 zetarcx=9.453E-02 zetare=-9.541E-01 zetacx=1.0 vge=9.730E-01 vgc=1.023E+00 vgs=1.049E+00 f1vg=(- 1.02377e-4) f2vg=4.3215e-4 zetact=5.000E+00 zetabet=4.892E+00 alb=0.0 dvgbe=-1.688E-01 zetahjei=0 zetavgbe=1.339E+00 flsh=1 rth=1.923E+03 zetarth=0.0 alrth=0.0 cth=2.476E-12 flcomp=2.3 tnom=25.0 dt=0.0 type=1
+simulator lang = ads
+end SG13G2_0p13
+
+define SG13G2_0p13_cono ( C  B  E  S  th )
+;parameters
+simulator lang = spectre
+X1 (C B E S th) hic2_full c10=2.962E-30 qp0=6.336E-14 ich=0.0 hf0=40 hfe=10 hfc=20 hjei=3.367E+00 ahjei=0.0 rhjei=2.0 hjci=2.000E-01 ibeis=7.210E-20 mbei=1.027E+00 ireis=1.320E-33 mrei=1.000E+00 ibeps=5.842E-20 mbep=1.042 ireps=1.070E-33 mrep=1.000E+00 mcf=1.0 tbhrec=5.000E-11 ibcis=6.414E-19 mbci=1.044 ibcxs=2.219E-17 mbcx=1.150 ibets=1.093E-02 abet=2.400E+01 tunode=1 favl=1.895E+01 qavl=3.677E-14 kavl=0.0 alfav=-2.400E-03 alqav=-6.284E-04 alkav=0.0 rbi0=3.426E+00 rbx=4.897E+00 fgeo=6.662E-01 fdqr0=0.0 fcrbi=0.0 fqi=1.0 re=2.751E+00 rcx=2.555E+00 itss=9.691E-21 msf=1.056E+00 iscs=1.562E-15 msc=1.018E+00 tsf=3.000E-08 rsu=0.0 csu=0.0 cjei0=5.576E-15 vdei=7.138E-01 zei=2.489E-01 ajei=1.650E+00 cjep0=1.170E-15 vdep=8.500E-01 zep=2.632E-01 ajep=1.600E+00 cjci0=2.647E-15 vdci=8.200E-01 zci=2.857E-01 vptci=1.790E+00 cjcx0=4.712E-15 vdcx=8.200E-01 zcx=2.858E-01 vptcx=1.977E+00 fbcpar=9.000E-01 fbepar=1.0 cjs0=2.090E-15 vds=9.996E-01 zs=4.295E-01 vpts=100 cscp0=0.0 vdsp=0.6 zsp=0.5 vptsp=100 t0=2.490E-13 dt0h=8.000E-14 tbvl=8.250E-14 tef0=3.274E-13 gtfe=3.548E+00 thcs=5.000E-12 ahc=5.000E-02 fthc=7.000E-01 rci0=1.515E+01 vlim=7.000E-01 vces=1.000E-02 vpt=2.000E+00 aick=1e-3 delck=2.0 tr=0.0 vcbar=0.0 icbar=0.0 acbar=0.01 cbepar=1.212E-14 cbcpar=1.029E-14 alqf=0.2 alit=0.4 flnqs=1 kf=0.0 af=2.0 cfbe=(- 1) flcono=1 kfre=0.0 afre=2.0 latb=0.0 latl=0.0 vgb=9.100E-01 alt0=4.000E-03 kt0=6.588E-05 zetaci=5.800E-01 alvs=9.982E-04 alces=-2.286E-01 zetarbi=3.876E-01 zetarbx=1.423E-01 zetarcx=9.453E-02 zetare=-9.541E-01 zetacx=1.0 vge=9.730E-01 vgc=1.023E+00 vgs=1.049E+00 f1vg=(- 1.02377e-4) f2vg=4.3215e-4 zetact=5.000E+00 zetabet=4.892E+00 alb=0.0 dvgbe=-1.688E-01 zetahjei=0 zetavgbe=1.339E+00 flsh=1 rth=1.923E+03 zetarth=0.0 alrth=0.0 cth=2.476E-12 flcomp=2.3 tnom=25.0 dt=0.0 type=1
+simulator lang = ads
+end SG13G2_0p13_cono
+
+V_Source:V_B1  N__VB1 0 Type="V_DC" Vdc=0.9 V Vac=1 V SaveCurrent=1
+V_Source:V_C1  N__VC1 0 Type="V_DC" Vdc=1.0 V SaveCurrent=1
+R:R_B1  N__VB1 N__B R=1 mOhm Temp=27
+R:R_C1  N__VC1 N__C R=1 mOhm Temp=27
+R:R_th1 N__th1 0    R=1 MOhm Temp=27
+SG13G2_0p13:X1  N__C N__B 0 0 N__th1
+
+
+V_Source:V_B2  N__VB2 0 Type="V_DC" Vdc=0.9 V Vac=1 V SaveCurrent=1
+V_Source:V_C2  N__VC2 0 Type="V_DC" Vdc=1.0 V SaveCurrent=1
+
+R:R_B2  N__VB2 N__Bcono R=1 mOhm Temp=27
+R:R_C2  N__VC2 N__Ccono R=1 mOhm Temp=27
+R:R_th2  N__th2 0 R=1 MOhm Temp=27
+SG13G2_0p13_cono:X2  N__Ccono N__Bcono 0 0 N__th2
+
+AC:AC1 \
+    CalcNoise=yes NoiseNode[1]="N__C" NoiseNode[2]="N__Ccono" NoiseNode[3]="N__B" NoiseNode[4]="N__Bcono" SortNoise=1 BandwidthForNoise=1 Hz FreqConversion=no UseFiniteDiff=no \
+    StatusLevel=2 OutputBudgetIV=no DevOpPtLevel=0 \
+    SweepVar="freq" SweepPlan="AC1_stim" OutputPlan="AC1_Output"
+
+SweepPlan: AC1_stim Start=1.0 GHz Stop=1.0 THz Dec=3
+
+OutputPlan:AC1_Output \
+      Type="Output" \
+      UseNodeNestLevel=yes \
+      NodeNestLevel=2 \
+      UseEquationNestLevel=yes \
+      EquationNestLevel=2 \
+      UseSavedEquationNestLevel=yes \
+      SavedEquationNestLevel=2 \
+      UseDeviceCurrentNestLevel=no \
+      DeviceCurrentNestLevel=0 \
+      DeviceCurrentDeviceType="All" \
+      DeviceCurrentSymSyntax=yes \
+      UseCurrentNestLevel=yes \
+      CurrentNestLevel=999 \
+      UseDeviceVoltageNestLevel=no \
+      DeviceVoltageNestLevel=0 \
+      DeviceVoltageDeviceType="All"

@@ -1,0 +1,27 @@
+
+hpeesofsim (*) 512.update2.0 Feb 29 2020, MINT version 5
+    (64-bit linux built: Sat Feb 29, 2020 15:54:36 +0000)
+
+Parsing the netlist ...
+Processing VAMS source '/home/mario/Documents/work/ngspice/src/spicelib/devices/adms/hicum2/admsva/hicum2.va'
+ compiled source cache is valid
+Flattening the netlist ...
+Analog module platform compile:
+    [1] amswork.hic2_full (valid object cache, no platform compile required)
+    Analog module design library exists, no link required.
+
+AC AC1[1] <ads_noise_test.ckt>   freq=(1 GHz->1 THz)
+
+Checking for unresolved variables ...
+Flushing data (please wait) ...
+     ... data flush done.
+
+Resource usage:
+    User time                 =     0.30 seconds.
+    System time               =     0.05 seconds.
+    Total CPU time            =     0.35 seconds.
+    Total stopwatch time      =     1.27 seconds.
+
+    Physical memory used: 116 MBytes.
+    Incremental virtual memory (data only) used:  43.3 MBytes.
+

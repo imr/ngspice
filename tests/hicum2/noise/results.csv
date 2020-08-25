@@ -1,0 +1,36 @@
+"freq
+References : ['N__B.noise','N__C.noise','N__Bcono.noise','N__Ccono.noise']
+Dependency : [?]
+Num. Points : [?]
+Matrix Size : ?
+Type : ?","N__B.noise
+References : []
+Dependency : [freq]
+Num. Points : [10]
+Matrix Size : scalar
+Type : Real","N__C.noise
+References : []
+Dependency : [freq]
+Num. Points : [10]
+Matrix Size : scalar
+Type : Real","N__Bcono.noise
+References : []
+Dependency : [freq]
+Num. Points : [10]
+Matrix Size : scalar
+Type : Real","N__Ccono.noise
+References : []
+Dependency : [freq]
+Num. Points : [10]
+Matrix Size : scalar
+Type : Real"
+1.00000000 GHz,4.07138376 pV,4.07220062 pV,4.07138376 pV,4.07220060 pV
+2.15443469 GHz,4.07138375 pV,4.07220038 pV,4.07138375 pV,4.07220036 pV
+4.64158883 GHz,4.07138368 pV,4.07220018 pV,4.07138368 pV,4.07220010 pV
+10.0000000 GHz,4.07138335 pV,4.07219944 pV,4.07138337 pV,4.07219907 pV
+21.5443469 GHz,4.07138187 pV,4.07219605 pV,4.07138193 pV,4.07219441 pV
+46.4158883 GHz,4.07137526 pV,4.07218090 pV,4.07137552 pV,4.07217358 pV
+100.000000 GHz,4.07134929 pV,4.07212135 pV,4.07135032 pV,4.07209178 pV
+215.443469 GHz,4.07128271 pV,4.07196810 pV,4.07128561 pV,4.07188276 pV
+464.158883 GHz,4.07120869 pV,4.07179303 pV,4.07121273 pV,4.07165533 pV
+1.00000000 THz,4.07116484 pV,4.07166705 pV,4.07116607 pV,4.07154342 pV

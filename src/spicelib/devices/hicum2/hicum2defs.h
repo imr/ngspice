@@ -315,6 +315,7 @@ typedef struct sHICUMinstance {
 
     /* correlated noise */
     double *HICUMn1N1Ptr;
+    double *HICUMn1N2Ptr;
     double *HICUMn2N2Ptr;
 
     unsigned HICUMareaGiven   :1;  /* flag to indicate area was specified */

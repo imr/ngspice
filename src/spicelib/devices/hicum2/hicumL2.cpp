@@ -499,6 +499,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Qxf_Vxf, Qxf1_Vxf1, Qxf2_Vxf2;
 // correlated noise
     double In1=0.0, In1_Vn1=0.0, In1_Vn2=0.0;  // CORRELATED_NOISE
+    double Vn1=0.0, Vn2=0.0;
     int n_w = 1;
 
 // SH
@@ -1223,6 +1224,8 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 Vxf  = *(ckt->CKTrhsOld + here->HICUMxfNode);
                 Vxf1 = *(ckt->CKTrhsOld + here->HICUMxf1Node);
                 Vxf2 = *(ckt->CKTrhsOld + here->HICUMxf2Node);
+                Vn1 = *(ckt->CKTrhsOld + here->HICUMNoise1Node); // Correlated_Noise
+                Vn2 = *(ckt->CKTrhsOld + here->HICUMNoise2Node);
                 if (selfheat) {
                     Vrth = *(ckt->CKTstate0 + here->HICUMvrth);
                 }
@@ -1262,6 +1265,8 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 Vxf  = *(ckt->CKTrhsOld + here->HICUMxfNode);
                 Vxf1 = *(ckt->CKTrhsOld + here->HICUMxf1Node);
                 Vxf2 = *(ckt->CKTrhsOld + here->HICUMxf2Node);
+                Vn1 = *(ckt->CKTrhsOld + here->HICUMNoise1Node); // Correlated_Noise
+                Vn2 = *(ckt->CKTrhsOld + here->HICUMNoise2Node);
                 if (selfheat) {
                     Vrth = *(ckt->CKTstate1 + here->HICUMvrth);
                 }
@@ -1282,6 +1287,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 Vsis  = 0.0;
                 Icth  = 0.0, Icth_Vrth=0.0;
                 Vxf=Vxf1=Vxf2=0.0;
+                Vn1=Vn2=0.0; // Correlated_Noise
             } else if((ckt->CKTmode & MODEINITJCT) && (here->HICUMoff==0)) {
                 Vbiei = here->HICUMtVcrit;
                 Vbici = 0.0;
@@ -1298,6 +1304,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 Vsis  = 0.0;
                 Icth  = 0.0, Icth_Vrth=0.0;
                 Vxf=Vxf1=Vxf2=0.0;
+                Vn1=Vn2=0.0; // Correlated_Noise
             } else if((ckt->CKTmode & MODEINITJCT) ||
                     ( (ckt->CKTmode & MODEINITFIX) && (here->HICUMoff!=0))) {
                 Vbe=0.0;
@@ -1310,6 +1317,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 Vcic=Veie=Vsis=0.0;
                 Vrth=0.0,Icth=0.0,Icth_Vrth=0.0;
                 Vxf=Vxf1=Vxf2=0.0;
+                Vn1=Vn2=0.0; // Correlated_Noise
             } else {
 #ifndef PREDICTOR
                 if(ckt->CKTmode & MODEINITPRED) {
@@ -1340,6 +1348,10 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                             xfact * *(ckt->CKTstate2 + here->HICUMvcic);
                     Vbbp  = (1+xfact) * *(ckt->CKTstate1 + here->HICUMvbbp)-
                             xfact * *(ckt->CKTstate2 + here->HICUMvbbp);
+                    Vn1  = (1+xfact) * *(ckt->CKTstate1 + here->HICUMvn1)-
+                            xfact * *(ckt->CKTstate2 + here->HICUMvn1);
+                    Vn2  = (1+xfact) * *(ckt->CKTstate1 + here->HICUMvn2)-
+                            xfact * *(ckt->CKTstate2 + here->HICUMvn2); // Correlated_Noise
                     /////////////////////////
                     // begin copy state vector
                     /////////////////////////
@@ -1505,6 +1517,8 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                     Vxf   = *(ckt->CKTrhsOld + here->HICUMxfNode);
                     Vxf1  = *(ckt->CKTrhsOld + here->HICUMxf1Node);
                     Vxf2  = *(ckt->CKTrhsOld + here->HICUMxf2Node);
+                    Vn1 = *(ckt->CKTrhsOld + here->HICUMNoise1Node); // Correlated_Noise
+                    Vn2 = *(ckt->CKTrhsOld + here->HICUMNoise2Node);
                     Vciei = Vbiei - Vbici;
                     if (selfheat) {
                         Vrth = *(ckt->CKTrhsOld + here->HICUMtempNode);
@@ -1559,6 +1573,8 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 Vxf = *(ckt->CKTrhsOld + here->HICUMxfNode);
                 Vxf1 = *(ckt->CKTrhsOld + here->HICUMxf1Node);
                 Vxf2 = *(ckt->CKTrhsOld + here->HICUMxf2Node);
+                Vn1 = *(ckt->CKTrhsOld + here->HICUMNoise1Node); // Correlated_Noise
+                Vn2 = *(ckt->CKTrhsOld + here->HICUMNoise2Node);
                 if (selfheat) {
                     Vrth = *(ckt->CKTrhsOld + here->HICUMtempNode);
                 }
@@ -1690,6 +1706,8 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                     Vxf   = *(ckt->CKTstate0 + here->HICUMvxf);
                     Vxf1  = *(ckt->CKTstate0 + here->HICUMvxf1);
                     Vxf2  = *(ckt->CKTstate0 + here->HICUMvxf2);
+                    Vn1   = *(ckt->CKTstate0 + here->HICUMvn1); // Correlated_Noise
+                    Vn2   = *(ckt->CKTstate0 + here->HICUMvn2);
 
                     Ibiei       = *(ckt->CKTstate0 + here->HICUMibiei);
                     Ibiei_Vbiei = *(ckt->CKTstate0 + here->HICUMibiei_Vbiei);
@@ -2717,20 +2735,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                         Icth = *(ckt->CKTstate0 + here->HICUMcqcth);
                     }
 
-                    if (correlated_noise)  // CORRELATED_NOISE
-                    {
-                        // I(bi,ei) <+ ddt(n_w * Vn1);
-                        error = NIintegrate(ckt, &geq, &ceq, n_w, here->HICUMqn1);
-                        if(error) return(error);
-                        In1_Vn1 = geq;
-                        In1 = *(ckt->CKTstate0 + here->HICUMcqn1);
-                        // I(bi,ei) <+ ddt(n_w * Vn2);
-                        error = NIintegrate(ckt, &geq, &ceq, n_w, here->HICUMqn2);
-                        if(error) return(error);
-                        In1_Vn2 = geq;
-                        In1 += *(ckt->CKTstate0 + here->HICUMcqn2);
-                    }
-
                     if(ckt->CKTmode & MODEINITTRAN) {
                         //copy from state1 to state0
                         *(ckt->CKTstate1 + here->HICUMcqrbi)         =
@@ -2803,14 +2807,20 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 //            Isis      += ddt(model->HICUMcsu*Vsis);
                 error = NIintegrate(ckt,&gqsu,&cqsu,model->HICUMcsu,here->HICUMqsu);
                 if(error) return(error);
-// CORRELATED_NOISE
-// @Dietmar: brauchen wir das 2x ?
+
+                if (correlated_noise)  // CORRELATED_NOISE
+                { // these caps are constant, so place them here...
 //            I(bi,ei) <+ ddt(n_w * Vn1);
-                error = NIintegrate(ckt, &geq, &ceq, n_w, here->HICUMqn1);
-                if(error) return(error);
+                    error = NIintegrate(ckt, &geq, &ceq, n_w, here->HICUMqn1);
+                    if(error) return(error);
+                    In1_Vn1 = geq;
+                    In1 = *(ckt->CKTstate0 + here->HICUMcqn1);
 //            I(bi,ei) <+ ddt(n_w * Vn2);
-                error = NIintegrate(ckt, &geq, &ceq, n_w, here->HICUMqn2);
-                if(error) return(error);
+                    error = NIintegrate(ckt, &geq, &ceq, n_w, here->HICUMqn2);
+                    if(error) return(error);
+                    In1_Vn2 = geq;
+                    In1 += *(ckt->CKTstate0 + here->HICUMcqn2);
+                }
 
                 if(ckt->CKTmode & MODEINITTRAN) {
                     *(ckt->CKTstate1 + here->HICUMcqbepar1) =
@@ -2844,6 +2854,8 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             *(ckt->CKTstate0 + here->HICUMvxf1)        = Vxf1;
             *(ckt->CKTstate0 + here->HICUMvxf2)        = Vxf2;
             *(ckt->CKTstate0 + here->HICUMvxf)         = Vxf;
+            *(ckt->CKTstate0 + here->HICUMvn1)         = Vn1;
+            *(ckt->CKTstate0 + here->HICUMvn2)         = Vn2;
 
             *(ckt->CKTstate0 + here->HICUMibiei)       = Ibiei;
             *(ckt->CKTstate0 + here->HICUMibiei_Vbiei) = Ibiei_Vbiei;
@@ -3423,17 +3435,17 @@ load:
 //              Stamp element: Ibiei  f_Bi = +   f_Ei = -
                 // realization of modified base shot noise source I1(bi,ei)
                 // I(bi,ei) <+ n_2/n_w*ddt(n_w* *(ckt->CKTstate0 + here->HICUMvn1));
-                rhs_current = n_2/n_w * (*(ckt->CKTstate0 + here->HICUMcqn1) - Vn1 * gqn1);
-                In1_Vn1 += n_2/n_w*In1_Vn1;
+                rhs_current = n_2/n_w * (*(ckt->CKTstate0 + here->HICUMcqn1) - Vn1 * In1_Vn1);
+                In1_Vn1    += n_2/n_w*In1_Vn1;
 
                 *(ckt->CKTrhs + here->HICUMcollCINode) += -rhs_current;
                 *(ckt->CKTrhs + here->HICUMemitEINode) +=  rhs_current;
-                *(here->HICUMn1N1Ptr)             += +In1_Vn1;
+                *(here->HICUMn1N1Ptr)                  += +In1_Vn1;
 
                 // realization of controlled base noise source I2(bi,ei)
                 // I(bi,ei) <+ n_1/n_w*ddt(n_w* *(ckt->CKTstate0 + here->HICUMvn2));
+                rhs_current = n_2/n_w * (*(ckt->CKTstate0 + here->HICUMcqn1) - Vn2 * In1_Vn2);
                 In1_Vn2 += n_2/n_w*In1_Vn2;
-                rhs_current = n_2/n_w * (*(ckt->CKTstate0 + here->HICUMcqn1) - Vn2 * gqn2);
 
                 *(ckt->CKTrhs + here->HICUMcollCINode) += -rhs_current;
                 *(ckt->CKTrhs + here->HICUMemitEINode) +=  rhs_current;
