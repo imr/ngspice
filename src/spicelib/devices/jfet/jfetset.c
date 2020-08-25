@@ -62,12 +62,6 @@ JFETsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if(!model->JFETdepletionCapCoeffGiven) {
             model->JFETdepletionCapCoeff = .5;
         }
-        if(!model->JFETfNcoefGiven) {
-            model->JFETfNcoef = 0;
-        }
-        if(!model->JFETfNexpGiven) {
-            model->JFETfNexp = 1;
-        }
 
         /* Modification for Sydney University JFET model */
         if(!model->JFETbGiven) {
@@ -78,8 +72,26 @@ JFETsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if(!model->JFETtcvGiven) {
             model->JFETtcv = 0.0;
         }
+        if(!model->JFETvtotcGiven) {
+            model->JFETvtotc = 0.0;
+        }
         if(!model->JFETbexGiven) {
             model->JFETbex = 0.0;
+        }
+        if(!model->JFETbetatceGiven) {
+            model->JFETbetatce = 0.0;
+        }
+        if(!model->JFETxtiGiven) {
+            model->JFETxti = 3.0;
+        }
+        if(!model->JFETegGiven) {
+            model->JFETeg = 1.11;
+        }
+        if(!model->JFETfNcoefGiven) {
+            model->JFETfNcoef = 0;
+        }
+        if(!model->JFETfNexpGiven) {
+            model->JFETfNexp = 1;
         }
         if(!model->JFETnlevGiven) {
             model->JFETnlev = 2;

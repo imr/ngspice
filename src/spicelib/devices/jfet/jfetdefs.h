@@ -207,9 +207,13 @@ typedef struct sJFETmodel {       /* model structure for a jfet */
     double JFETb;     /* doping profile parameter */
     double JFETbFac;  /* internal derived doping profile parameter */
     /* end Sydney University mod */
-    double JFETtnom;    /* temperature at which parameters were measured */
+    double JFETtnom;  /* temperature at which parameters were measured */
     double JFETtcv;
+    double JFETvtotc;
     double JFETbex;
+    double JFETbetatce;
+    double JFETxti;
+    double JFETeg;
 
     unsigned JFETthresholdGiven : 1;
     unsigned JFETbetaGiven : 1;
@@ -225,12 +229,16 @@ typedef struct sJFETmodel {       /* model structure for a jfet */
     unsigned JFETbGiven : 1;
     /* end Sydney University mod */
     unsigned JFETtnomGiven : 1; /* user specified Tnom for model */
+    unsigned JFETtcvGiven : 1;
+    unsigned JFETvtotcGiven : 1;
+    unsigned JFETbexGiven : 1;
+    unsigned JFETbetatceGiven : 1;
+    unsigned JFETxtiGiven : 1;
+    unsigned JFETegGiven : 1;
     unsigned JFETfNcoefGiven : 1;
     unsigned JFETfNexpGiven : 1;
     unsigned JFETnlevGiven : 1;
     unsigned JFETgdsnoiGiven : 1;
-    unsigned JFETtcvGiven : 1;
-    unsigned JFETbexGiven : 1;
 
 } JFETmodel;
 
@@ -268,11 +276,15 @@ enum {
     JFET_MOD_NJF,
     JFET_MOD_PJF,
     JFET_MOD_TNOM,
-    JFET_MOD_KF,
-    JFET_MOD_AF,
     JFET_MOD_B,  /* Modification for Sydney University JFET model */
     JFET_MOD_TCV,
+    JFET_MOD_VTOTC,
     JFET_MOD_BEX,
+    JFET_MOD_BETATCE,
+    JFET_MOD_XTI,
+    JFET_MOD_EG,
+    JFET_MOD_KF,
+    JFET_MOD_AF,
     JFET_MOD_NLEV,
     JFET_MOD_GDSNOI,
 };
