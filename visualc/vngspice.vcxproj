@@ -241,7 +241,7 @@
       </DataExecutionPrevention>
       <TargetMachine>MachineX86</TargetMachine>
       <LargeAddressAware>true</LargeAddressAware>
-      <AdditionalLibraryDirectories>C:\Program Files (x86)\Visual Leak Detector\lib\Win32;klu/Debug/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>KLU/Debug/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>make-install-vngspiced.bat $(OutDir)</Command>
@@ -293,7 +293,7 @@
       </DataExecutionPrevention>
       <TargetMachine>MachineX86</TargetMachine>
       <LargeAddressAware>true</LargeAddressAware>
-      <AdditionalLibraryDirectories>C:\Program Files (x86)\Visual Leak Detector\lib\Win32;KLU/Release/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>KLU/Release/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -343,7 +343,7 @@
       </DataExecutionPrevention>
       <TargetMachine>MachineX64</TargetMachine>
       <LargeAddressAware>true</LargeAddressAware>
-      <AdditionalLibraryDirectories>C:\Program Files (x86)\Visual Leak Detector\lib\Win64;KLU\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>KLU\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -401,7 +401,7 @@
       </DataExecutionPrevention>
       <TargetMachine>MachineX64</TargetMachine>
       <LargeAddressAware>true</LargeAddressAware>
-      <AdditionalLibraryDirectories>C:\Program Files (x86)\Visual Leak Detector\lib\Win64;KLU\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>KLU\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -449,7 +449,7 @@
       </DataExecutionPrevention>
       <TargetMachine>MachineX86</TargetMachine>
       <LargeAddressAware>true</LargeAddressAware>
-      <AdditionalLibraryDirectories>C:\Program Files (x86)\Visual Leak Detector\lib\Win32;klu/Debug/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>KLU/Debug/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>make-install-vngspiced.bat $(OutDir)</Command>
@@ -501,7 +501,7 @@
       </DataExecutionPrevention>
       <TargetMachine>MachineX86</TargetMachine>
       <LargeAddressAware>true</LargeAddressAware>
-      <AdditionalLibraryDirectories>C:\Program Files (x86)\Visual Leak Detector\lib\Win32;KLU/Release/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>KLU/Release/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>make-install-vngspice.bat $(OutDir)</Command>
@@ -549,7 +549,7 @@
       </DataExecutionPrevention>
       <TargetMachine>MachineX64</TargetMachine>
       <LargeAddressAware>true</LargeAddressAware>
-      <AdditionalLibraryDirectories>C:\Program Files (x86)\Visual Leak Detector\lib\Win64;KLU\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>KLU\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -659,7 +659,7 @@
       </DataExecutionPrevention>
       <TargetMachine>MachineX86</TargetMachine>
       <LargeAddressAware>true</LargeAddressAware>
-      <AdditionalLibraryDirectories>C:\Program Files (x86)\Visual Leak Detector\lib\Win32;KLU/Release/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>KLU/Release/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>make-install-vngspice.bat $(OutDir)</Command>
@@ -770,7 +770,7 @@
       </DataExecutionPrevention>
       <TargetMachine>MachineX86</TargetMachine>
       <LargeAddressAware>true</LargeAddressAware>
-      <AdditionalLibraryDirectories>C:\Program Files (x86)\Visual Leak Detector\lib\Win32;KLU/Release/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>KLU/Release/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>make-install-vngspice.bat $(OutDir)</Command>
@@ -2081,9 +2081,7 @@
     <ClCompile Include="..\src\spicelib\devices\cap\capacld.c" />
     <ClCompile Include="..\src\spicelib\devices\cap\capask.c" />
     <ClCompile Include="..\src\spicelib\devices\cap\capbindCSC.c" />
-    <ClCompile Include="..\src\spicelib\devices\cap\capdel.c" />
-    <ClCompile Include="..\src\spicelib\devices\cap\capdest.c" />
-    <ClCompile Include="..\src\spicelib\devices\cap\capgetic.c" />
+     <ClCompile Include="..\src\spicelib\devices\cap\capgetic.c" />
     <ClCompile Include="..\src\spicelib\devices\cap\capinit.c" />
     <ClCompile Include="..\src\spicelib\devices\cap\capload.c" />
     <ClCompile Include="..\src\spicelib\devices\cap\capmask.c" />
@@ -2102,8 +2100,6 @@
     <ClCompile Include="..\src\spicelib\devices\cccs\cccs.c" />
     <ClCompile Include="..\src\spicelib\devices\cccs\cccsask.c" />
     <ClCompile Include="..\src\spicelib\devices\cccs\cccsbindCSC.c" />
-    <ClCompile Include="..\src\spicelib\devices\cccs\cccsdel.c" />
-    <ClCompile Include="..\src\spicelib\devices\cccs\cccsdest.c" />
     <ClCompile Include="..\src\spicelib\devices\cccs\cccsinit.c" />
     <ClCompile Include="..\src\spicelib\devices\cccs\cccsload.c" />
     <ClCompile Include="..\src\spicelib\devices\cccs\cccspar.c" />
@@ -2116,8 +2112,6 @@
     <ClCompile Include="..\src\spicelib\devices\ccvs\ccvs.c" />
     <ClCompile Include="..\src\spicelib\devices\ccvs\ccvsask.c" />
     <ClCompile Include="..\src\spicelib\devices\ccvs\ccvsbindCSC.c" />
-    <ClCompile Include="..\src\spicelib\devices\ccvs\ccvsdel.c" />
-    <ClCompile Include="..\src\spicelib\devices\ccvs\ccvsdest.c" />
     <ClCompile Include="..\src\spicelib\devices\ccvs\ccvsfbr.c" />
     <ClCompile Include="..\src\spicelib\devices\ccvs\ccvsinit.c" />
     <ClCompile Include="..\src\spicelib\devices\ccvs\ccvsload.c" />
@@ -2140,8 +2134,6 @@
     <ClCompile Include="..\src\spicelib\devices\cpl\cpldelete.c" />
     <ClCompile Include="..\src\spicelib\devices\cpl\cplhash.c" />
     <ClCompile Include="..\src\spicelib\devices\cpl\cplbindCSC.c" />
-    <ClCompile Include="..\src\spicelib\devices\cpl\cpldel.c" />
-    <ClCompile Include="..\src\spicelib\devices\cpl\cpldest.c" />
     <ClCompile Include="..\src\spicelib\devices\cpl\cplinit.c" />
     <ClCompile Include="..\src\spicelib\devices\cpl\cplload.c" />
     <ClCompile Include="..\src\spicelib\devices\cpl\cplmask.c" />
@@ -2153,8 +2145,6 @@
     <ClCompile Include="..\src\spicelib\devices\csw\cswacld.c" />
     <ClCompile Include="..\src\spicelib\devices\csw\cswask.c" />
     <ClCompile Include="..\src\spicelib\devices\csw\cswbindCSC.c" />
-    <ClCompile Include="..\src\spicelib\devices\csw\cswdel.c" />
-    <ClCompile Include="..\src\spicelib\devices\csw\cswdest.c" />
     <ClCompile Include="..\src\spicelib\devices\csw\cswinit.c" />
     <ClCompile Include="..\src\spicelib\devices\csw\cswload.c" />
     <ClCompile Include="..\src\spicelib\devices\csw\cswmask.c" />
@@ -2194,8 +2184,6 @@
     <ClCompile Include="..\src\spicelib\devices\hfet1\hfetacl.c" />
     <ClCompile Include="..\src\spicelib\devices\hfet1\hfetask.c" />
     <ClCompile Include="..\src\spicelib\devices\hfet1\hfetbindCSC.c" />
-    <ClCompile Include="..\src\spicelib\devices\hfet1\hfetdel.c" />
-    <ClCompile Include="..\src\spicelib\devices\hfet1\hfetdest.c" />
     <ClCompile Include="..\src\spicelib\devices\hfet1\hfetgetic.c" />
     <ClCompile Include="..\src\spicelib\devices\hfet1\hfetinit.c" />
     <ClCompile Include="..\src\spicelib\devices\hfet1\hfetload.c" />
@@ -2210,8 +2198,6 @@
     <ClCompile Include="..\src\spicelib\devices\hfet2\hfet2acl.c" />
     <ClCompile Include="..\src\spicelib\devices\hfet2\hfet2ask.c" />
     <ClCompile Include="..\src\spicelib\devices\hfet2\hfet2bindCSC.c" />
-    <ClCompile Include="..\src\spicelib\devices\hfet2\hfet2del.c" />
-    <ClCompile Include="..\src\spicelib\devices\hfet2\hfet2dest.c" />
     <ClCompile Include="..\src\spicelib\devices\hfet2\hfet2getic.c" />
     <ClCompile Include="..\src\spicelib\devices\hfet2\hfet2init.c" />
     <ClCompile Include="..\src\spicelib\devices\hfet2\hfet2load.c" />
@@ -2299,8 +2285,6 @@
     <ClCompile Include="..\src\spicelib\devices\ind\indacld.c" />
     <ClCompile Include="..\src\spicelib\devices\ind\indask.c" />
     <ClCompile Include="..\src\spicelib\devices\ind\indbindCSC.c" />
-    <ClCompile Include="..\src\spicelib\devices\ind\inddel.c" />
-    <ClCompile Include="..\src\spicelib\devices\ind\inddest.c" />
     <ClCompile Include="..\src\spicelib\devices\ind\indinit.c" />
     <ClCompile Include="..\src\spicelib\devices\ind\indload.c" />
     <ClCompile Include="..\src\spicelib\devices\ind\indmask.c" />
@@ -2318,9 +2302,6 @@
     <ClCompile Include="..\src\spicelib\devices\ind\mutacld.c" />
     <ClCompile Include="..\src\spicelib\devices\ind\mutask.c" />
     <ClCompile Include="..\src\spicelib\devices\ind\mutbindCSC.c" />
-    <ClCompile Include="..\src\spicelib\devices\ind\mutdel.c" />
-    <ClCompile Include="..\src\spicelib\devices\ind\mutdest.c" />
-    <ClCompile Include="..\src\spicelib\devices\ind\mutmdel.c" />
     <ClCompile Include="..\src\spicelib\devices\ind\mutparam.c" />
     <ClCompile Include="..\src\spicelib\devices\ind\mutpzld.c" />
     <ClCompile Include="..\src\spicelib\devices\ind\mutsetup.c" />
@@ -2340,8 +2321,6 @@
     <ClCompile Include="..\src\spicelib\devices\jfet2\jfet2acld.c" />
     <ClCompile Include="..\src\spicelib\devices\jfet2\jfet2ask.c" />
     <ClCompile Include="..\src\spicelib\devices\jfet2\jfet2bindCSC.c" />
-    <ClCompile Include="..\src\spicelib\devices\jfet2\jfet2del.c" />
-    <ClCompile Include="..\src\spicelib\devices\jfet2\jfet2dest.c" />
     <ClCompile Include="..\src\spicelib\devices\jfet2\jfet2ic.c" />
     <ClCompile Include="..\src\spicelib\devices\jfet2\jfet2init.c" />
     <ClCompile Include="..\src\spicelib\devices\jfet2\jfet2load.c" />
@@ -2357,8 +2336,6 @@
     <ClCompile Include="..\src\spicelib\devices\jfet\jfetacld.c" />
     <ClCompile Include="..\src\spicelib\devices\jfet\jfetask.c" />
     <ClCompile Include="..\src\spicelib\devices\jfet\jfetbindCSC.c" />
-    <ClCompile Include="..\src\spicelib\devices\jfet\jfetdel.c" />
-    <ClCompile Include="..\src\spicelib\devices\jfet\jfetdest.c" />
     <ClCompile Include="..\src\spicelib\devices\jfet\jfetdist.c" />
     <ClCompile Include="..\src\spicelib\devices\jfet\jfetdset.c" />
     <ClCompile Include="..\src\spicelib\devices\jfet\jfetic.c" />
@@ -2378,8 +2355,6 @@
     <ClCompile Include="..\src\spicelib\devices\ltra\ltraacld.c" />
     <ClCompile Include="..\src\spicelib\devices\ltra\ltraask.c" />
     <ClCompile Include="..\src\spicelib\devices\ltra\ltrabindCSC.c" />
-    <ClCompile Include="..\src\spicelib\devices\ltra\ltradel.c" />
-    <ClCompile Include="..\src\spicelib\devices\ltra\ltradest.c" />
     <ClCompile Include="..\src\spicelib\devices\ltra\ltrainit.c" />
     <ClCompile Include="..\src\spicelib\devices\ltra\ltraload.c" />
     <ClCompile Include="..\src\spicelib\devices\ltra\ltramask.c" />
@@ -2393,8 +2368,6 @@
     <ClCompile Include="..\src\spicelib\devices\mesa\mesaacl.c" />
     <ClCompile Include="..\src\spicelib\devices\mesa\mesaask.c" />
     <ClCompile Include="..\src\spicelib\devices\mesa\mesabindCSC.c" />
-    <ClCompile Include="..\src\spicelib\devices\mesa\mesadel.c" />
-    <ClCompile Include="..\src\spicelib\devices\mesa\mesadest.c" />
     <ClCompile Include="..\src\spicelib\devices\mesa\mesagetic.c" />
     <ClCompile Include="..\src\spicelib\devices\mesa\mesainit.c" />
     <ClCompile Include="..\src\spicelib\devices\mesa\mesaload.c" />
@@ -2409,8 +2382,6 @@
     <ClCompile Include="..\src\spicelib\devices\mes\mesacl.c" />
     <ClCompile Include="..\src\spicelib\devices\mes\mesask.c" />
     <ClCompile Include="..\src\spicelib\devices\mes\mesbindCSC.c" />
-    <ClCompile Include="..\src\spicelib\devices\mes\mesdel.c" />
-    <ClCompile Include="..\src\spicelib\devices\mes\mesdest.c" />
     <ClCompile Include="..\src\spicelib\devices\mes\mesdisto.c" />
     <ClCompile Include="..\src\spicelib\devices\mes\mesdset.c" />
     <ClCompile Include="..\src\spicelib\devices\mes\mesgetic.c" />
@@ -2607,8 +2578,6 @@
     <ClCompile Include="..\src\spicelib\devices\res\res.c" />
     <ClCompile Include="..\src\spicelib\devices\res\resask.c" />
     <ClCompile Include="..\src\spicelib\devices\res\resbindCSC.c" />
-    <ClCompile Include="..\src\spicelib\devices\res\resdel.c" />
-    <ClCompile Include="..\src\spicelib\devices\res\resdest.c" />
     <ClCompile Include="..\src\spicelib\devices\res\resinit.c" />
     <ClCompile Include="..\src\spicelib\devices\res\resload.c" />
     <ClCompile Include="..\src\spicelib\devices\res\resmask.c" />
@@ -2643,8 +2612,6 @@
     <ClCompile Include="..\src\spicelib\devices\sw\swacload.c" />
     <ClCompile Include="..\src\spicelib\devices\sw\swask.c" />
     <ClCompile Include="..\src\spicelib\devices\sw\swbindCSC.c" />
-    <ClCompile Include="..\src\spicelib\devices\sw\swdelete.c" />
-    <ClCompile Include="..\src\spicelib\devices\sw\swdest.c" />
     <ClCompile Include="..\src\spicelib\devices\sw\swinit.c" />
     <ClCompile Include="..\src\spicelib\devices\sw\swload.c" />
     <ClCompile Include="..\src\spicelib\devices\sw\swmask.c" />
@@ -2659,8 +2626,6 @@
     <ClCompile Include="..\src\spicelib\devices\tra\traacld.c" />
     <ClCompile Include="..\src\spicelib\devices\tra\traask.c" />
     <ClCompile Include="..\src\spicelib\devices\tra\trabindCSC.c" />
-    <ClCompile Include="..\src\spicelib\devices\tra\tradel.c" />
-    <ClCompile Include="..\src\spicelib\devices\tra\tradest.c" />
     <ClCompile Include="..\src\spicelib\devices\tra\trainit.c" />
     <ClCompile Include="..\src\spicelib\devices\tra\traload.c" />
     <ClCompile Include="..\src\spicelib\devices\tra\traparam.c" />
@@ -2671,8 +2636,6 @@
     <ClCompile Include="..\src\spicelib\devices\txl\txlacct.c" />
     <ClCompile Include="..\src\spicelib\devices\txl\txlask.c" />
     <ClCompile Include="..\src\spicelib\devices\txl\txlbindCSC.c" />
-    <ClCompile Include="..\src\spicelib\devices\txl\txldel.c" />
-    <ClCompile Include="..\src\spicelib\devices\txl\txldest.c" />
     <ClCompile Include="..\src\spicelib\devices\txl\txlfbr.c" />
     <ClCompile Include="..\src\spicelib\devices\txl\txlinit.c" />
     <ClCompile Include="..\src\spicelib\devices\txl\txlload.c" />
@@ -2707,8 +2670,6 @@
     <ClCompile Include="..\src\spicelib\devices\vccs\vccs.c" />
     <ClCompile Include="..\src\spicelib\devices\vccs\vccsask.c" />
     <ClCompile Include="..\src\spicelib\devices\vccs\vccsbindCSC.c" />
-    <ClCompile Include="..\src\spicelib\devices\vccs\vccsdel.c" />
-    <ClCompile Include="..\src\spicelib\devices\vccs\vccsdest.c" />
     <ClCompile Include="..\src\spicelib\devices\vccs\vccsinit.c" />
     <ClCompile Include="..\src\spicelib\devices\vccs\vccsload.c" />
     <ClCompile Include="..\src\spicelib\devices\vccs\vccspar.c" />
@@ -2721,8 +2682,6 @@
     <ClCompile Include="..\src\spicelib\devices\vcvs\vcvs.c" />
     <ClCompile Include="..\src\spicelib\devices\vcvs\vcvsask.c" />
     <ClCompile Include="..\src\spicelib\devices\vcvs\vcvsbindCSC.c" />
-    <ClCompile Include="..\src\spicelib\devices\vcvs\vcvsdel.c" />
-    <ClCompile Include="..\src\spicelib\devices\vcvs\vcvsdest.c" />
     <ClCompile Include="..\src\spicelib\devices\vcvs\vcvsfbr.c" />
     <ClCompile Include="..\src\spicelib\devices\vcvs\vcvsinit.c" />
     <ClCompile Include="..\src\spicelib\devices\vcvs\vcvsload.c" />
