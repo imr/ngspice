@@ -136,6 +136,7 @@ void SMPconvertCOOtoCSC (SMPmatrix *Matrix)
         MatrixCOO [i].group = 0 ;
         current = temp ;
         temp = temp->next ;
+        free (current->pointer) ;
         free (current) ;
         current = NULL ;
         i++ ;
