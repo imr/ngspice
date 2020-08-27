@@ -217,11 +217,6 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
             Ixf_Vxf     = *(ckt->CKTstate0 + here->HICUMixf_Vxf);
             Ixf_Vrth    = *(ckt->CKTstate0 + here->HICUMixf_Vrth);
 
-            // correlated_noise
-            In1_Vn1   = *(ckt->CKTstate0 + here->HICUMin1_Vn1);
-            In1_Vn2   = *(ckt->CKTstate0 + here->HICUMin1_Vn2);
-            In2_Vn2   = *(ckt->CKTstate0 + here->HICUMin2_Vn2);
-
 ////////////////////////////////////
 //////////  The real part  /////////
 ////////////////////////////////////
@@ -355,9 +350,17 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
             if (correlated_noise) {
                 //In1
                 *(here->HICUMn1N1Ptr)             += +In1_Vn1;
-                *(here->HICUMn1N2Ptr)             += +In1_Vn2;
+
+                *(here->HICUMBaseBIN1Ptr)         += +Ibiei_Vn1;
+                *(here->HICUMEmitEIN1Ptr)         += -Ibiei_Vn1;
                 //In2
                 *(here->HICUMn2N2Ptr)             += +In2_Vn2;
+
+                *(here->HICUMBaseBIN2Ptr)         += +Ibiei_Vn2;
+                *(here->HICUMEmitEIN2Ptr)         += -Ibiei_Vn2;
+
+                *(here->HICUMCollCIN2Ptr)         += +Iciei_Vn2;
+                *(here->HICUMEmitEIN2Ptr)         += -Iciei_Vn2;
             }
 ////////////////////////////////////
 //////////  The complex part  //////
@@ -639,6 +642,18 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
                 *(here->HICUMcollTempPtr   + 1) += -XQscp_Vrth;
                 *(here->HICUMtempTempPtr   + 1) += +XQcth_Vrth;
 
+            }
+
+            if (correlated_noise) {
+                //In1
+                *(here->HICUMBaseBIN1Ptr)         += +XQbiei_Vn1;
+                *(here->HICUMEmitEIN1Ptr)         += -XQbiei_Vn1;
+                //In2
+                *(here->HICUMBaseBIN2Ptr)         += +XQbiei_Vn2;
+                *(here->HICUMEmitEIN2Ptr)         += -XQbiei_Vn2;
+
+                *(here->HICUMCollCIN2Ptr)         += +XQciei_Vn2;
+                *(here->HICUMEmitEIN2Ptr)         += -XQciei_Vn2;
             }
 
         }
