@@ -217,6 +217,11 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
             Ixf_Vxf     = *(ckt->CKTstate0 + here->HICUMixf_Vxf);
             Ixf_Vrth    = *(ckt->CKTstate0 + here->HICUMixf_Vrth);
 
+            // correlated_noise
+            In1_Vn1   = *(ckt->CKTstate0 + here->HICUMin1_Vn1);
+            In1_Vn2   = *(ckt->CKTstate0 + here->HICUMin1_Vn2);
+            In2_Vn2   = *(ckt->CKTstate0 + here->HICUMin2_Vn2);
+
 ////////////////////////////////////
 //////////  The real part  /////////
 ////////////////////////////////////
@@ -347,6 +352,13 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
                 *(here->HICUMxfXfPtr)                  += +Ixf_Vxf;
             }
 
+            if (correlated_noise) {
+                //In1
+                *(here->HICUMn1N1Ptr)             += +In1_Vn1;
+                *(here->HICUMn1N2Ptr)             += +In1_Vn2;
+                //In2
+                *(here->HICUMn2N2Ptr)             += +In2_Vn2;
+            }
 ////////////////////////////////////
 //////////  The complex part  //////
 ////////////////////////////////////

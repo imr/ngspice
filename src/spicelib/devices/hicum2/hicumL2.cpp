@@ -498,7 +498,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 //NQS
     double Qxf_Vxf, Qxf1_Vxf1, Qxf2_Vxf2;
 // correlated noise
-    double In1=0.0, In1_Vn1=0.0, In1_Vn2=0.0;  // CORRELATED_NOISE
+    double In1=0.0, In1_Vn1=0.0, In2_Vn2=0.0;  // CORRELATED_NOISE
     double Vn1=0.0, Vn2=0.0;
     int n_w = 1;
 
@@ -2818,7 +2818,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 //            I(bi,ei) <+ ddt(n_w * Vn2);
                     error = NIintegrate(ckt, &geq, &ceq, n_w, here->HICUMqn2);
                     if(error) return(error);
-                    In1_Vn2 = geq;
+                    In2_Vn2 = geq;
                     In1 += *(ckt->CKTstate0 + here->HICUMcqn2);
                 }
 
@@ -3412,7 +3412,7 @@ load:
 //              #############################################################
 //              ############# STAMP WITH CORRELATED NOISE ###################
 //              #############################################################
-                // parameter definitio
+                // parameter definition
                 double n_1 = Tf*model->HICUMalit;
                 double betadc = it/ibei;
                 double sqrt_n2 = betadc * (2*model->HICUMalqf-model->HICUMalit*model->HICUMalit);
@@ -3422,41 +3422,46 @@ load:
                     n_2 = Tf*sqrt(sqrt_n2);
                 }
 
-//              Branch: n1 0, Stamp element: Rn1 = 1 Ohm
+//              Branch: n1 0, Stamp element: Rn1 = -1 Ohm
                 // with respect to Vn1
-                *(ckt->CKTrhs + here->HICUMNoise1Node) -= *(ckt->CKTstate0 + here->HICUMvn1);
+                // VA: I(b_n1)  <+ -V(b_n1);
+                *(here->HICUMn1N1Ptr) -= *(ckt->CKTstate0 + here->HICUMvn1);
 //              finish
 
-//              Branch: n2 0, Stamp element: Rn2 = 1 Ohm
+//              Branch: n2 0, Stamp element: Rn2 = -1 Ohm
                 // with respect to Vn2
-                *(ckt->CKTrhs + here->HICUMNoise2Node) -= *(ckt->CKTstate0 + here->HICUMvn2);
+                // VA: I(b_n2)  <+ -V(b_n2);
+                *(here->HICUMn2N2Ptr) -= *(ckt->CKTstate0 + here->HICUMvn2);
 //              finish
 
 //              Stamp element: Ibiei  f_Bi = +   f_Ei = -
                 // realization of modified base shot noise source I1(bi,ei)
-                // I(bi,ei) <+ n_2/n_w*ddt(n_w* *(ckt->CKTstate0 + here->HICUMvn1));
-                rhs_current = n_2/n_w * (*(ckt->CKTstate0 + here->HICUMcqn1) - Vn1 * In1_Vn1);
-                In1_Vn1    += n_2/n_w*In1_Vn1;
+                // VA: I(bi,ei) <+ V(b_n1) + n_2/n_w*ddt(n_w*V(b_n1));
+                rhs_current = *(ckt->CKTstate0 + here->HICUMvn1);
+                rhs_current += n_2/n_w * (*(ckt->CKTstate0 + here->HICUMcqn1) - Vn1 * In1_Vn1);
 
-                *(ckt->CKTrhs + here->HICUMcollCINode) += -rhs_current;
-                *(ckt->CKTrhs + here->HICUMemitEINode) +=  rhs_current;
-                *(here->HICUMn1N1Ptr)                  += +In1_Vn1;
+                *(ckt->CKTrhs + here->HICUMbaseBINode) +=  rhs_current;
+                *(ckt->CKTrhs + here->HICUMemitEINode) += -rhs_current;
+/*                 *(here->HICUMn1N1Ptr)                  += +In1_Vn1; */
+//              to check
 
                 // realization of controlled base noise source I2(bi,ei)
-                // I(bi,ei) <+ n_1/n_w*ddt(n_w* *(ckt->CKTstate0 + here->HICUMvn2));
-                rhs_current = n_2/n_w * (*(ckt->CKTstate0 + here->HICUMcqn1) - Vn2 * In1_Vn2);
-                In1_Vn2 += n_2/n_w*In1_Vn2;
+                // VA: I(bi,ei) <+ n_1/n_w*ddt(n_w*V(b_n2));
+                rhs_current = n_1/n_w * (*(ckt->CKTstate0 + here->HICUMcqn2) - Vn2 * In2_Vn2);
 
-                *(ckt->CKTrhs + here->HICUMcollCINode) += -rhs_current;
-                *(ckt->CKTrhs + here->HICUMemitEINode) +=  rhs_current;
-                *(here->HICUMn1N2Ptr)                  += +In1_Vn2;
-//              finish
+                *(ckt->CKTrhs + here->HICUMbaseBINode) +=  rhs_current;
+                *(ckt->CKTrhs + here->HICUMemitEINode) += -rhs_current;
+/*                 *(here->HICUMn1N2Ptr)                  += +In1_Vn2; */
+//              to check
+
 
 //              Stamp element: Iciei  f_Ci = +   f_Ei = -
                 // realization of modified collector shot noise source I(ci,ei) (uncontrolled)
-                rhs_current = -*(ckt->CKTstate0 + here->HICUMvn2);
-                *(ckt->CKTrhs + here->HICUMcollCINode) += -rhs_current;
-                *(ckt->CKTrhs + here->HICUMemitEINode) +=  rhs_current;
+                // VA: I(ci,ei) <+ V(b_n2);
+                rhs_current = *(ckt->CKTstate0 + here->HICUMvn2);
+                *(ckt->CKTrhs + here->HICUMcollCINode) +=  rhs_current;
+                *(ckt->CKTrhs + here->HICUMemitEINode) += -rhs_current;
+//              finish
 
             }
         }
