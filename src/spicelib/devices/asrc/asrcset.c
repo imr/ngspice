@@ -143,6 +143,9 @@ ASRCunsetup(GENmodel *inModel, CKTcircuit *ckt)
             FREE(here->ASRCposPtr);
             FREE(here->ASRCvars);
             FREE(here->ASRCacValues);
+#ifdef KLU
+            FREE(here->ASRCposBinding);
+#endif            
         }
 
     return OK;
