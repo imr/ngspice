@@ -19,5 +19,8 @@ ASRCdelete(GENinstance *gen_inst)
     FREE(inst->ASRCacValues);
     FREE(inst->ASRCposPtr);
     FREE(inst->ASRCvars);
+#ifdef KLU
+    FREE(inst->ASRCposBinding);
+#endif
     return OK;
 }
