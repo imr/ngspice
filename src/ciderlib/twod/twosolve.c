@@ -18,6 +18,9 @@ Author:	1991 David A. Gates, U. C. Berkeley CAD Group
 #include "ngspice/twomesh.h"
 #include "twoddefs.h"
 #include "twodext.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/ftedefs.h"
+
 extern IFfrontEnd *SPfrontEnd;
 
 
@@ -504,7 +507,7 @@ int TWOequilSolve(TWOdevice *pDevice)
             pDevice->matrix = TMALLOC (SMPmatrix, 1) ;
 
 #ifdef KLU
-            pDevice->matrix->CKTkluMODE = CKTkluON ; /* Francesco Lannutti - To be sustitued with a value coming from the uplevel */
+            pDevice->matrix->CKTkluMODE = ft_curckt->ci_ckt->CKTkluMODE ;
             error = SMPnewMatrixKLUforCIDER (pDevice->matrix, pDevice->numEqns, KLUmatrixReal) ;
 #else
             error = SMPnewMatrixForCIDER (pDevice->matrix, pDevice->numEqns, 0) ;
@@ -663,7 +666,7 @@ TWObiasSolve(TWOdevice *pDevice, int iterationLimit, BOOLEAN tranAnalysis,
     pDevice->matrix = TMALLOC (SMPmatrix, 1) ;
 
 #ifdef KLU
-    pDevice->matrix->CKTkluMODE = CKTkluON ; /* Francesco Lannutti - To be sustitued with a value coming from the uplevel */
+    pDevice->matrix->CKTkluMODE = ft_curckt->ci_ckt->CKTkluMODE ;
     error = SMPnewMatrixKLUforCIDER (pDevice->matrix, pDevice->numEqns, KLUMatrixComplex) ;
 #else
     error = SMPnewMatrixForCIDER (pDevice->matrix, pDevice->numEqns, 1) ;
