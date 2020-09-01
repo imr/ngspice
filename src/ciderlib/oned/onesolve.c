@@ -22,6 +22,9 @@ Author:	1991 David A. Gates, U. C. Berkeley CAD Group
 #include "../../maths/misc/norm.h"
 
 #include "ngspice/ifsim.h"
+#include "ngspice/cktdefs.h"
+#include "ngspice/ftedefs.h"
+
 extern IFfrontEnd *SPfrontEnd;
 
 
@@ -591,7 +594,7 @@ ONEequilSolve(ONEdevice *pDevice)
     pDevice->matrix = TMALLOC (SMPmatrix, 1) ;
 
 #ifdef KLU
-    pDevice->matrix->CKTkluMODE = CKTkluON ; /* Francesco Lannutti - To be sustitued with a value coming from the uplevel */
+    pDevice->matrix->CKTkluMODE = ft_curckt->ci_ckt->CKTkluMODE ;
     error = SMPnewMatrixKLUforCIDER (pDevice->matrix, pDevice->numEqns, KLUmatrixReal) ;
 #else
     error = SMPnewMatrixForCIDER (pDevice->matrix, pDevice->numEqns, 0) ;
@@ -749,7 +752,7 @@ ONEbiasSolve(ONEdevice *pDevice, int iterationLimit,
     pDevice->matrix = TMALLOC (SMPmatrix, 1) ;
 
 #ifdef KLU
-    pDevice->matrix->CKTkluMODE = CKTkluON ; /* Francesco Lannutti - To be sustitued with a value coming from the uplevel */
+    pDevice->matrix->CKTkluMODE = ft_curckt->ci_ckt->CKTkluMODE ;
     error = SMPnewMatrixKLUforCIDER (pDevice->matrix, pDevice->numEqns, KLUMatrixComplex) ;
 #else
     error = SMPnewMatrixForCIDER (pDevice->matrix, pDevice->numEqns, 1) ;
