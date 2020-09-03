@@ -10,6 +10,9 @@ struct SPICEanalysis {
     int (*askQuest)(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value);
     int (*an_init)(CKTcircuit *ckt, JOB *job);
     int (*an_func)(CKTcircuit *ckt, int restart);
+    #ifdef WITH_LOOPANA
+    int (*an_preset)(CKTcircuit *ckt, JOB *job);
+    #endif
 };
 
 

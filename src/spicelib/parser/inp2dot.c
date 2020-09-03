@@ -14,6 +14,21 @@ Modified: 2000 AlansFixes
 #include "ngspice/cpdefs.h"
 #include "ngspice/tskdefs.h"
 
+/* F.B. 2020
+   parse additionnal parameters in the form key=val.
+   Use analysis INFO IFparm list to check if key is recognized and
+   the type of val.
+*/
+static int
+dot_params(char *line, CKTcircuit *ckt, int ana, JOB* job)
+{
+   char *name;			/* the resistor's name */
+   while(*line)
+   {
+       
+   }
+}
+
 static int
 dot_noise(char *line, CKTcircuit *ckt, INPtables *tab, struct card *current,
           TSKtask *task, CKTnode *gnode, JOB *foo)
@@ -553,6 +568,137 @@ dot_sens2(char *line, CKTcircuit *ckt, INPtables *tab, struct card *current,
 }
 #endif
 
+#ifdef WITH_LOOPANA
+int
+dot_loop(char *line, void *ckt, INPtables *tab, struct card *current,
+        void *task, void *gnode, JOB *foo)
+{
+int error;			/* error code temporary */
+    IFvalue ptemp;		/* a value structure to package resistance into */
+    IFvalue *parm;		/* a pointer to a value struct for function returns */
+    char *nname;		/* the oscNode name */
+    CKTnode *nnode;		/* the oscNode node */
+    int which;			/* which analysis we are performing */
+    char *word;			/* something to stick a word of input into */
+    char *steptype;		/* type of stepping function */
+    char *name;			/* a name */
+    
+    static char* probesparams[2]={"probe","probe-"};
+    static char* probenumparams[2]={"portnum","portnum-"};
+    static char* probenameparams[2]={"portname","portname-"};
+    static char* dirparams[2]={"dir","dir-"};
+    
+    NG_IGNORE(gnode);
+
+    /* .loop probe {DEC OCT LIN} NP FSTART FSTOP */
+    /* @M2(#2)  @M2:gate:into
+    
+    
+    */
+    which = ft_find_analysis("LOOP");
+    if (which == -1) {
+        LITERR("Loop analysis unsupported.\n");
+        return (0);
+    }
+    IFC(newAnalysis, (ckt, which, "Loop gain analysis", &foo, task));
+    
+    for(int diff=0;diff<2;diff++)
+    {
+    INPgetTok(&line, &name, 1);
+    INPinsert(&name, tab);
+    if(0) printf("loop probe element is %s\n", name);
+    ptemp.uValue = name;
+    GCA(INPapName, (ckt, which, foo, probesparams[diff], &ptemp));
+    
+    if(*line=='/')
+    {
+        INPgetTok(&line, &name, 1); /* eat / */
+	tfree(name);
+	INPgetTok(&line, &name, 1);
+	if(*name== '#') {
+          if(0) printf("port number %d\n",atoi(&name[1]));
+	  ptemp.iValue = atoi(&name[1]);
+	  tfree(name);
+	  GCA(INPapName, (ckt, which, foo, probenumparams[diff], &ptemp));
+        } else {
+	  if(0) printf("port name %s\n",name);
+          ptemp.uValue = name;
+	  GCA(INPapName, (ckt, which, foo, probenameparams[diff], &ptemp));
+	}
+    }
+    if(*line=='/')
+    {
+        INPgetTok(&line, &name, 1); /* eat / */
+	tfree(name);
+	INPgetTok(&line, &name, 1);
+        if(strcmp(name, "in")==0 || strcmp(name, "into")==0
+           || strcmp(name, "to")==0 ) {
+          if(0) printf("into\n");
+	  ptemp.iValue = 1;
+	  GCA(INPapName, (ckt, which, foo, dirparams[diff], &ptemp));
+        } else if(strcmp(name, "out")==0 || strcmp(name, "from")==0
+           || strcmp(name, "outfrom")==0) {
+          if(0) printf("out\n");
+	  ptemp.iValue = 2;
+	  GCA(INPapName, (ckt, which, foo, dirparams[diff], &ptemp));
+        } else
+          printf("syntax error for .loop, expect direction, got %s\n", name);
+	tfree(name);
+    }
+    if(*line != '+') break;
+    INPgetTok(&line, &name, 1);  tfree(name); /* eat the + and start again*/
+    }
+    
+    INPgetTok(&line, &steptype, 1);
+    ptemp.iValue = 1;
+    GCA(INPapName, (ckt, which, foo, steptype, &ptemp));
+    tfree(steptype);
+    parm = INPgetValue(ckt, &line, IF_INTEGER, tab); /* number of points */
+    GCA(INPapName, (ckt, which, foo, "numsteps", parm));
+    parm = INPgetValue(ckt, &line, IF_REAL, tab);	/* fstart */
+    GCA(INPapName, (ckt, which, foo, "start", parm));
+    parm = INPgetValue(ckt, &line, IF_REAL, tab);	/* fstop */
+    GCA(INPapName, (ckt, which, foo, "stop", parm));
+    
+    if(*line)
+    {
+      /* input & output follows for transfert function calculations */
+      INPgetTok(&line, &name, 1);
+      INPinsert(&name, tab);
+      ptemp.uValue = name;
+      GCA(INPapName, (ckt, which, foo, "insrc", &ptemp));
+      
+      INPgetTok(&line, &name, 1);
+      if(strcmp(name,"v")==0 && *line=='(')
+      {
+         /* v(pos,neg) format */
+	 tfree(name);
+	 INPgetNetTok(&line, &name, 0);
+         INPtermInsert(ckt, &name, tab, &ptemp.nValue);
+         GCA(INPapName, (ckt, which, foo, "outpos", &ptemp));
+	 if(*line==',') {
+	    INPgetNetTok(&line, &name, 1);
+            INPtermInsert(ckt, &name, tab, &ptemp.nValue);
+            GCA(INPapName, (ckt, which, foo, "outneg", &ptemp));
+	 } else {
+	    ptemp.nValue = gnode;
+            GCA(INPapName, (ckt, which, foo, "outneg", &ptemp));
+	 }
+      }
+      else
+      {
+        INPinsert(&name, tab);
+        ptemp.uValue = name;
+        GCA(INPapName, (ckt, which, foo, "outsrc", &ptemp));
+      }
+      
+    }
+    
+    return (0);
+
+}
+#endif
+
 #ifdef WITH_PSS
 /*SP: Steady State Analyis */
 static int
@@ -699,6 +845,11 @@ INP2dot(CKTcircuit *ckt, INPtables *tab, struct card *current, TSKtask *task, CK
         rtn = dot_pss(line, ckt, tab, current, task, gnode, foo);
         goto quit;
         /* SP */
+#endif
+#ifdef WITH_LOOPANA
+    } else if ((strcmp(token, ".loop") == 0)) {
+        rtn = dot_loop(line, ckt, tab, current, task, gnode, foo);
+        goto quit;
 #endif
     } else if ((strcmp(token, ".subckt") == 0) ||
                (strcmp(token, ".ends") == 0)) {

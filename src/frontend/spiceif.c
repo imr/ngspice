@@ -221,6 +221,9 @@ if_run(CKTcircuit *ckt, char *what, wordlist *args, INPtables *tab)
         || eq(what, "pss")
         /* SP */
 #endif
+#ifdef WITH_LOOPANA
+        || eq(what, "loop")
+#endif
         )
     {
         s = wl_flatten(args); /* va: tfree char's tmalloc'ed in wl_flatten */
@@ -335,6 +338,9 @@ if_run(CKTcircuit *ckt, char *what, wordlist *args, INPtables *tab)
         /* SP: Steady State Analysis */
         (eq(what, "pss")) ||
         /* SP */
+#endif
+#ifdef WITH_LOOPANA
+        (eq(what, "loop")) ||
 #endif
         (eq(what, "run")))
     {

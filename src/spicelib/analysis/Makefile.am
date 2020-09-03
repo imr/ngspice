@@ -106,6 +106,12 @@ libckt_la_SOURCES += \
 		psssetp.c
 endif
 
+if LOOPANA_WANTED
+libckt_la_SOURCES += \
+		loopan.c        \
+		loopsetp.c	\
+		loopaskq.c	
+endif
 
 AM_CPPFLAGS = @AM_CPPFLAGS@  -I$(top_srcdir)/src/include -I$(top_srcdir)/src/spicelib/devices
 AM_CFLAGS = $(STATIC)

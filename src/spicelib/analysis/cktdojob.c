@@ -156,6 +156,20 @@ CKTdoJob(CKTcircuit *ckt, int reset, TSKtask *task)
         /* gtri - end - 12/12/90 */
 #endif
 
+#ifdef WITH_LOOPANA
+	/* add opportunity to modify the circuit before CKTsetup */
+	/* Note that it must be done in a benign way in order not to */
+	/* affect others analysis */
+        for (i = 0; i < ANALmaxnum; i++)
+        for (job = task->jobs; job; job = job->JOBnextJob)
+	if (job->JOBtype == i)
+	if (!error)
+	{
+            if (analInfo[i]->an_preset)
+                error = analInfo[i]->an_preset (ckt, job);
+	}
+#endif
+
 	if (!error)
 	    error = CKTsetup(ckt);
 

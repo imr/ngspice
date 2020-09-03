@@ -70,6 +70,10 @@ AC_ARG_ENABLE([adms],
 AC_ARG_ENABLE([pss],
     [AS_HELP_STRING([--enable-pss], [Enable PSS Analysis, (experimental)])])
 
+# --enable-loopana: enable Loop Analysis
+AC_ARG_ENABLE([loopana],
+    [AS_HELP_STRING([--enable-loopana], [Enable Loop Analysis])])
+
 # --enable-relpath: Relative path for binary and data. Default is "no".
 # ngspice shared may want relative paths for spinit etc.
 AC_ARG_ENABLE([relpath],
@@ -967,6 +971,11 @@ if test "x$enable_pss" = xyes; then
     AC_DEFINE([WITH_PSS], [], [Define if you want PSS analysis])
     AC_MSG_RESULT([WARNING: PSS analysis enabled])
 fi
+if test "x$enable_loopana" = xyes; then
+    AC_DEFINE([WITH_LOOPANA], [], [Define if you want LOOP analysis])
+    AC_MSG_RESULT([WARNING: LOOP analysis enabled])
+fi
+
 if test "x$enable_blktmsdebug" = xyes; then
     AC_DEFINE([D_DBG_BLOCKTIMES], [], [Define if we want debug distortion analysis (BLOCKTIMES)])
     AC_MSG_RESULT([WARNING: Distortion analysis debug *D_DBG_BLOCKTIMES* is enabled])
@@ -1058,6 +1067,8 @@ AM_CONDITIONAL([NUMDEV_WANTED], [test "x$enable_cider" = xyes])
 
 
 AM_CONDITIONAL([PSS_WANTED], [test "x$enable_pss" = xyes])
+
+AM_CONDITIONAL([LOOPANA_WANTED], [test "x$enable_loopana" = xyes])
 
 AM_CONDITIONAL([SENSE2_WANTED], [test "x$enable_sense2" = xyes])
 
