@@ -354,22 +354,40 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
 #ifndef PREDICTOR
                 if(ckt->CKTmode & MODEINITPRED) {
                     xfact = ckt->CKTdelta/ckt->CKTdeltaOld[1];
+                    *(ckt->CKTstate0 + here->VBICvbei) = 
+                            *(ckt->CKTstate1 + here->VBICvbei);
                     Vbei = (1+xfact) * *(ckt->CKTstate1 + here->VBICvbei)-
                             xfact * *(ckt->CKTstate2 + here->VBICvbei);
+                    *(ckt->CKTstate0 + here->VBICvbex) = 
+                            *(ckt->CKTstate1 + here->VBICvbex);
                     Vbex = (1+xfact) * *(ckt->CKTstate1 + here->VBICvbex)-
                             xfact * *(ckt->CKTstate2 + here->VBICvbex);
+                    *(ckt->CKTstate0 + here->VBICvbci) = 
+                            *(ckt->CKTstate1 + here->VBICvbci);
                     Vbci = (1+xfact) * *(ckt->CKTstate1 + here->VBICvbci)-
                             xfact * *(ckt->CKTstate2 + here->VBICvbci);
+                    *(ckt->CKTstate0 + here->VBICvbcx) = 
+                            *(ckt->CKTstate1 + here->VBICvbcx);
                     Vbcx = (1+xfact) * *(ckt->CKTstate1 + here->VBICvbcx)-
                             xfact * *(ckt->CKTstate2 + here->VBICvbcx);
+                    *(ckt->CKTstate0 + here->VBICvbep) = 
+                            *(ckt->CKTstate1 + here->VBICvbep);
                     Vbep = (1+xfact) * *(ckt->CKTstate1 + here->VBICvbep)-
                             xfact * *(ckt->CKTstate2 + here->VBICvbep);
+                    *(ckt->CKTstate0 + here->VBICvrci) = 
+                            *(ckt->CKTstate1 + here->VBICvrci);
                     Vrci = (1+xfact) * *(ckt->CKTstate1 + here->VBICvrci)-
                             xfact * *(ckt->CKTstate2 + here->VBICvrci);
+                    *(ckt->CKTstate0 + here->VBICvrbi) = 
+                            *(ckt->CKTstate1 + here->VBICvrbi);
                     Vrbi = (1+xfact) * *(ckt->CKTstate1 + here->VBICvrbi)-
                             xfact * *(ckt->CKTstate2 + here->VBICvrbi);
+                    *(ckt->CKTstate0 + here->VBICvrbp) = 
+                            *(ckt->CKTstate1 + here->VBICvrbp);
                     Vrbp = (1+xfact) * *(ckt->CKTstate1 + here->VBICvrbp)-
                             xfact * *(ckt->CKTstate2 + here->VBICvrbp);
+                    *(ckt->CKTstate0 + here->VBICvbcp) = 
+                            *(ckt->CKTstate1 + here->VBICvbcp);
                     Vbcp = (1+xfact) * *(ckt->CKTstate1 + here->VBICvbcp)-
                             xfact * *(ckt->CKTstate2 + here->VBICvbcp);
                     if (here->VBIC_selfheat) {
@@ -378,24 +396,6 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                         *(ckt->CKTstate0 + here->VBICvrth) =
                                 *(ckt->CKTstate1 + here->VBICvrth);
                     }
-                    *(ckt->CKTstate0 + here->VBICvbei) = 
-                            *(ckt->CKTstate1 + here->VBICvbei);
-                    *(ckt->CKTstate0 + here->VBICvbex) = 
-                            *(ckt->CKTstate1 + here->VBICvbex);
-                    *(ckt->CKTstate0 + here->VBICvbci) = 
-                            *(ckt->CKTstate1 + here->VBICvbci);
-                    *(ckt->CKTstate0 + here->VBICvbcx) = 
-                            *(ckt->CKTstate1 + here->VBICvbcx);
-                    *(ckt->CKTstate0 + here->VBICvbep) = 
-                            *(ckt->CKTstate1 + here->VBICvbep);
-                    *(ckt->CKTstate0 + here->VBICvrci) = 
-                            *(ckt->CKTstate1 + here->VBICvrci);
-                    *(ckt->CKTstate0 + here->VBICvrbi) = 
-                            *(ckt->CKTstate1 + here->VBICvrbi);
-                    *(ckt->CKTstate0 + here->VBICvrbp) = 
-                            *(ckt->CKTstate1 + here->VBICvrbp);
-                    *(ckt->CKTstate0 + here->VBICvbcp) = 
-                            *(ckt->CKTstate1 + here->VBICvbcp);
                     *(ckt->CKTstate0 + here->VBICibe) = 
                             *(ckt->CKTstate1 + here->VBICibe);
                     *(ckt->CKTstate0 + here->VBICibe_Vbei) = 
