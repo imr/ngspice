@@ -16,15 +16,46 @@ Modified: 2000 AlansFixes
 
 /* F.B. 2020
    parse additionnal parameters in the form key=val.
-   Use analysis INFO IFparm list to check if key is recognized and
-   the type of val.
+   Use from analysis info IFparm list to check if key is recognized and
+   to extract the type of value.
 */
+extern IFanalysis *analInfo[]; /* SPICEanalysis and IFanalysis must be compatible */
+
 static int
-dot_params(char *line, CKTcircuit *ckt, int ana, JOB* job)
+dot_params(char *line, CKTcircuit *ckt, INPtables *tab, struct card *current, JOB* job)
 {
-   char *name;			/* the resistor's name */
+   int error;			/* error code temporary */
+   char *name;
+   int i;
+   IFvalue ptemp;		/* a value structure  */
+   IFvalue *parm;
+   IFanalysis *ana = analInfo[job->JOBtype];
+   
    while(*line)
    {
+       INPgetTok(&line, &name, 0);
+       if(*line!='=') {
+          printf("Expect param=val format for %s, got %c\n", name, *line);
+          LITERR("Expect param=val format\n");
+       	  return(0);
+       }
+       line++; /* skip '=' */
+       for(i=0;i<ana->numParms;i++)
+         if(strcmp(name, ana->analysisParms[i].keyword)==0)
+           break;
+       tfree(name); /* don't it need anymore, we still know the keyword */
+       if(i<ana->numParms)
+       {
+          int dataType = ana->analysisParms[i].dataType;
+	  if(0) printf("will set parameter %s to analysis\n", ana->analysisParms[i].keyword);
+	  parm = INPgetValue(ckt, &line, dataType, tab);
+	  GCA(INPapName, (ckt, job->JOBtype, job, ana->analysisParms[i].keyword, parm)); 
+       }
+       else
+       {
+          LITERR("Unrecognized parameter\n");
+       	  return(0);
+       }
        
    }
 }
@@ -662,6 +693,14 @@ int error;			/* error code temporary */
     
     if(*line)
     {
+      char* nline;
+      char* nname;
+      
+      nline=line;
+      INPgetTok(&nline, &nname, 0);
+      tfree(nname);
+      if(*nline=='=') goto end; /* was actually a key=value parameter */
+      
       /* input & output follows for transfert function calculations */
       INPgetTok(&line, &name, 1);
       INPinsert(&name, tab);
@@ -693,6 +732,8 @@ int error;			/* error code temporary */
       }
       
     }
+    end:
+    dot_params(line, ckt, tab, current, foo);
     
     return (0);
 

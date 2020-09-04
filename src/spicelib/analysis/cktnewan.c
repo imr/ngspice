@@ -29,6 +29,8 @@ CKTnewAnal(CKTcircuit *ckt, int type, IFuid name, JOB **analPtr, TSKtask *taskPt
     }
     *analPtr = (JOB *) tmalloc((size_t) analInfo[type]->size);
     if(*analPtr==NULL) return(E_NOMEM);
+    /* F.B.: clear data structure to all zero, required for loop analysis */
+    memset(*analPtr, 0, analInfo[type]->size);
     (*analPtr)->JOBname = name;
     (*analPtr)->JOBtype = type;
     (*analPtr)->JOBnextJob = taskPtr->jobs;
