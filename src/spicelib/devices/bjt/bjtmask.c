@@ -201,6 +201,18 @@ BJTmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
         case BJT_MOD_NS:
             value->rValue = here->BJTemissionCoeffS;
             return(OK);
+        case BJT_MOD_RCO:
+            value->rValue = here->BJTintCollResist;
+            return(OK);
+        case BJT_MOD_VO:
+            value->rValue = here->BJTepiSatVoltage;
+            return(OK);
+        case BJT_MOD_GAMMA:
+            value->rValue = here->BJTepiDoping;
+            return(OK);
+        case BJT_MOD_QCO:
+            value->rValue = here->BJTepiCharge;
+            return(OK);
         case BJT_MOD_TLEV:
             value->iValue = here->BJTtlev;
             return(OK);
@@ -377,6 +389,18 @@ BJTmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
             return(OK);
         case BJT_MOD_TISC2:
             value->rValue = here->BJTtisc2;
+            return(OK);
+        case BJT_MOD_QUASIMOD:
+            value->iValue = here->BJTquasimod;
+            return(OK);
+        case BJT_MOD_EGQS:
+            value->rValue = here->BJTenergyGapQS;
+            return(OK);
+        case BJT_MOD_XRCI:
+            value->rValue = here->BJTtempExpRCI;
+            return(OK);
+        case BJT_MOD_XD:
+            value->rValue = here->BJTtempExpVO;
             return(OK);
         case BJT_MOD_VBE_MAX:
             value->rValue = here->BJTvbeMax;

@@ -30,6 +30,9 @@ BJTtrunc(GENmodel *inModel, CKTcircuit *ckt, double *timeStep)
             CKTterr(here->BJTqbe,ckt,timeStep);
             CKTterr(here->BJTqbc,ckt,timeStep);
             CKTterr(here->BJTqsub,ckt,timeStep);
+            if (model->BJTintCollResistGiven) {
+                CKTterr(here->BJTqbcx,ckt,timeStep);
+            }
         }
     }
     return(OK);
