@@ -2962,7 +2962,6 @@ load:
             rhs_current = model->HICUMtype * (*(ckt->CKTstate0 + here->HICUMcqbcpar2) - Vbpci * gqbcpar2);
             *(ckt->CKTrhs + here->HICUMbaseBPNode) += -rhs_current;
             *(ckt->CKTrhs + here->HICUMcollCINode) +=  rhs_current;
-            //*(ckt->CKTrhs + here->HICUMsubsSINode) +=  rhs_current; //Markus:??
             // with respect to Vbpci
             *(here->HICUMbaseBPBaseBPPtr)          +=  gqbcpar2;
             *(here->HICUMcollCICollCIPtr)          +=  gqbcpar2;
