@@ -159,31 +159,24 @@ HICUMask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFval
             }
             return(OK);
         case HICUM_QUEST_GMI:
-            // value->rValue = 0.0;
-            value->rValue = *(ckt->CKTstate0 + here->HICUMiciei_Vbiei); // TODO: Check sign vs VA-Code in ADS
+            value->rValue = *(ckt->CKTstate0 + here->HICUMiciei_Vbiei);
             return(OK);
         case HICUM_QUEST_GMS:
-            // value->rValue = 0.0;
-            value->rValue = *(ckt->CKTstate0 + here->HICUMibpsi_Vbpci); // TODO: Check sign vs VA-Code in ADS
+            value->rValue = *(ckt->CKTstate0 + here->HICUMibpsi_Vbpci);
             return(OK);
         case HICUM_QUEST_RPII:
-            // value->rValue = 0.0;
-            value->rValue = 1/( *(ckt->CKTstate0 + here->HICUMibiei_Vbiei) + ckt->CKTgmin); // TODO: Check sign vs VA-Code in ADS
+            value->rValue = 1/( *(ckt->CKTstate0 + here->HICUMibiei_Vbiei) );
             return(OK);
         case HICUM_QUEST_RPIX:
-            // value->rValue = 0.0;
-            value->rValue = 1/( *(ckt->CKTstate0 + here->HICUMibpei_Vbpei) + ckt->CKTgmin); // TODO: Check sign vs VA-Code in ADS
+            value->rValue = 1/( *(ckt->CKTstate0 + here->HICUMibpei_Vbpei) );
             return(OK);
         case HICUM_QUEST_RMUI:
-            // value->rValue = 0.0;
             value->rValue = 1/( *(ckt->CKTstate0 + here->HICUMibici_Vbici) + ckt->CKTgmin); // TODO: Check sign vs VA-Code in ADS
             return(OK);
         case HICUM_QUEST_RMUX:
-            // value->rValue = 0.0;
             value->rValue = 1/( *(ckt->CKTstate0 + here->HICUMibpci_Vbpci) + ckt->CKTgmin); // TODO: Check sign vs VA-Code in ADS
             return(OK);
         case HICUM_QUEST_ROI:
-            // value->rValue = 0.0;
             value->rValue = 1/( *(ckt->CKTstate0 + here->HICUMiciei_Vbiei) + ckt->CKTgmin); // TODO: Check sign vs VA-Code in ADS
             return(OK);
         case HICUM_QUEST_CPII:
@@ -205,7 +198,6 @@ HICUMask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFval
             value->rValue = here->HICUMcaprbi;
             return(OK);
         case HICUM_QUEST_BETAAC:
-            // HICUMask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFvalue *select)
             HICUMask(ckt, instPtr, HICUM_QUEST_RPII, &RPIi, select);
             HICUMask(ckt, instPtr, HICUM_QUEST_RPIX, &RPIx, select);
             HICUMask(ckt, instPtr, HICUM_QUEST_GMI, &GMi, select);
