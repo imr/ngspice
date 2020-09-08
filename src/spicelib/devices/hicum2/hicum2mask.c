@@ -155,11 +155,9 @@ HICUMmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
 //Series resistances
         case HICUM_MOD_RBI0:
             value->rValue = model->HICUMrbi0;
-            if (model->HICUMrbi0 < MIN_R) model->HICUMrbi0 = MIN_R;
             return(OK);
         case HICUM_MOD_RBX:
             value->rValue = model->HICUMrbx;
-            if (model->HICUMrbx < MIN_R) model->HICUMrbx = MIN_R;
             return(OK);
         case HICUM_MOD_FGEO:
             value->rValue = model->HICUMfgeo;
@@ -175,11 +173,9 @@ HICUMmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
             return(OK);
         case HICUM_MOD_RE:
             value->rValue = model->HICUMre;
-            if (model->HICUMre < MIN_R) model->HICUMre = MIN_R;
             return(OK);
         case HICUM_MOD_RCX:
             value->rValue = model->HICUMrcx;
-            if (model->HICUMrcx < MIN_R) model->HICUMrcx = MIN_R;
             return(OK);
 
 //Substrate transistor
@@ -202,7 +198,6 @@ HICUMmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
 //Intra-device substrate coupling
         case HICUM_MOD_RSU:
             value->rValue = model->HICUMrsu;
-            if (model->HICUMrsu < MIN_R) model->HICUMrsu = MIN_R;
             return(OK);
         case HICUM_MOD_CSU:
 

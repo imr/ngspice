@@ -437,7 +437,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     int error;
     double Vbe, Vcic, Vbbp, Veie, Vsis, Vbpe;
 
-    double Ibiei, Ibiei_Vbiei, Ibiei_Vbici;
+    double Ibiei, Ibiei_Vbiei, Ibiei_Vxf, Ibiei_Vbici;
     double Ibici, Ibici_Vbici, Ibici_Vbiei;
     double Ibpei, Ibpei_Vbpei;
     double Ibpci, Ibpci_Vbpci;
@@ -1349,6 +1349,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                     *(ckt->CKTstate0+here->HICUMveie)=*(ckt->CKTstate1+here->HICUMveie);
                     *(ckt->CKTstate0+here->HICUMibiei)=*(ckt->CKTstate1+here->HICUMibiei);
                     *(ckt->CKTstate0+here->HICUMibiei_Vbiei)=*(ckt->CKTstate1+here->HICUMibiei_Vbiei);
+                    *(ckt->CKTstate0+here->HICUMibiei_Vxf)=*(ckt->CKTstate1+here->HICUMibiei_Vxf);
                     *(ckt->CKTstate0+here->HICUMibiei_Vbici)=*(ckt->CKTstate1+here->HICUMibiei_Vbici);
                     *(ckt->CKTstate0+here->HICUMibiei_Vrth)=*(ckt->CKTstate1+here->HICUMibiei_Vrth);
                     *(ckt->CKTstate0+here->HICUMibpei)=*(ckt->CKTstate1+here->HICUMibpei);
@@ -1558,6 +1559,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 if (selfheat) {
                     Vrth = *(ckt->CKTrhsOld + here->HICUMtempNode);
                 }
+                //todo: maybe add ibiei_Vxf
                 ibieihat = *(ckt->CKTstate0 + here->HICUMibiei) +
                          *(ckt->CKTstate0 + here->HICUMibiei_Vbiei)*delvbiei+
                          *(ckt->CKTstate0 + here->HICUMibiei_Vrth)*delvrth+
@@ -1689,6 +1691,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
                     Ibiei       = *(ckt->CKTstate0 + here->HICUMibiei);
                     Ibiei_Vbiei = *(ckt->CKTstate0 + here->HICUMibiei_Vbiei);
+                    Ibiei_Vxf   = *(ckt->CKTstate0 + here->HICUMibiei_Vxf);
                     Ibiei_Vbici = *(ckt->CKTstate0 + here->HICUMibiei_Vbici);
                     Ibiei_Vrth  = *(ckt->CKTstate0 + here->HICUMibiei_Vrth);
 
@@ -2203,6 +2206,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 Qxf       = model->HICUMalqf*model->HICUMt0*Vxf; //for RC nw
                 Qxf_Vxf   = model->HICUMalqf*model->HICUMt0;     //for RC nw
 
+                //convergency killer
                 Qdeix       = Vxf;                               //for RC nw
                 Qdeix_Vxf   = 1.0;
                 Qdeix_Vbiei = 0;
@@ -2642,10 +2646,18 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                     Ibiei_Vbiei += geq;
                     Ibiei += *(ckt->CKTstate0 + here->HICUMcqjei);
                     //Qdeix
-                    error = NIintegrate(ckt,&geq,&ceq,Qdeix_Vbiei,here->HICUMqf);
-                    if(error) return(error);
-                    Ibiei_Vbiei += geq;
-                    Ibiei += *(ckt->CKTstate0 + here->HICUMcqf);
+                    if (!nqs) {
+                        error = NIintegrate(ckt,&geq,&ceq,Qdeix_Vbiei,here->HICUMqf);
+                        if(error) return(error);
+                        Ibiei_Vbiei += geq;
+                        Ibiei_Vxf    = 0;
+                        Ibiei += *(ckt->CKTstate0 + here->HICUMcqf);
+                    } else { //Qdeix is now a function of Vxf(t)
+                        error = NIintegrate(ckt,&geq,&ceq,Qdeix_Vxf,here->HICUMqf);
+                        if(error) return(error);
+                        Ibiei_Vxf = geq;
+                        Ibiei     += *(ckt->CKTstate0 + here->HICUMcqf);
+                    }
                     //Qr
                     error = NIintegrate(ckt,&geq,&ceq,Qr_Vbici,here->HICUMqr);
                     if(error) return(error);
@@ -2687,21 +2699,21 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                     Isc_Vsc = geq;
                     Isc     = *(ckt->CKTstate0 + here->HICUMcqscp);
                     if (nqs) {
-                        //Qxf
-                        error = NIintegrate(ckt,&geq,&ceq,Qxf1_Vxf1,here->HICUMqxf);
+                        //Qxf1
+                        error = NIintegrate(ckt,&geq,&ceq,Qxf1_Vxf1,here->HICUMqxf1);
                         if(error) return(error);
                         Ixf1_Vxf1 += geq;
-                        Ixf1 += *(ckt->CKTstate0 + here->HICUMcqxf);
+                        Ixf1 += *(ckt->CKTstate0 + here->HICUMcqxf1);
                         //Qxf2
                         error = NIintegrate(ckt,&geq,&ceq,Qxf2_Vxf2,here->HICUMqxf2);
                         if(error) return(error);
                         Ixf2_Vxf2 += geq;
                         Ixf2 += *(ckt->CKTstate0 + here->HICUMcqxf2);
                         //Qxf
-                        error = NIintegrate(ckt,&geq,&ceq,Qxf_Vxf,here->HICUMqxf1);
+                        error = NIintegrate(ckt,&geq,&ceq,Qxf_Vxf,here->HICUMqxf);
                         if(error) return(error);
                         Ixf_Vxf += geq;
-                        Ixf += *(ckt->CKTstate0 + here->HICUMcqxf1);
+                        Ixf += *(ckt->CKTstate0 + here->HICUMcqxf);
                     }
 
                     if (selfheat)
@@ -2809,6 +2821,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
             *(ckt->CKTstate0 + here->HICUMibiei)       = Ibiei;
             *(ckt->CKTstate0 + here->HICUMibiei_Vbiei) = Ibiei_Vbiei;
+            *(ckt->CKTstate0 + here->HICUMibiei_Vxf)   = Ibiei_Vxf;
             *(ckt->CKTstate0 + here->HICUMibiei_Vbici) = Ibiei_Vbici;
             *(ckt->CKTstate0 + here->HICUMibiei_Vrth)  = Ibiei_Vrth;
 
@@ -2981,7 +2994,7 @@ load:
 //          finish
 
 //          Branch: biei, Stamp element: Ibiei = Ibei + Irei ( was Ijbei )
-            rhs_current = model->HICUMtype * (Ibiei - Ibiei_Vbiei*Vbiei - Ibiei_Vbici*Vbici);
+            rhs_current = model->HICUMtype * (Ibiei - Ibiei_Vbiei*Vbiei - Ibiei_Vxf*Vxf - Ibiei_Vbici*Vbici);
             *(ckt->CKTrhs + here->HICUMbaseBINode) += -rhs_current;
             *(ckt->CKTrhs + here->HICUMemitEINode) +=  rhs_current;
             // with respect to Vbiei
@@ -2994,6 +3007,10 @@ load:
             *(here->HICUMemitEICollCIPtr)          +=  Ibiei_Vbici;
             *(here->HICUMbaseBICollCIPtr)          += -Ibiei_Vbici;
             *(here->HICUMemitEIBaseBIPtr)          += -Ibiei_Vbici;
+            if (nqs) {
+                *(here->HICUMbaseBIXfPtr)          +=  Ibiei_Vxf;
+                *(here->HICUMemitEIXfPtr)          += -Ibiei_Vxf;
+            }
 //          finish
 
 //          Branch: bpei, Stamp element: Ibpei = Ibep + Irep ( was Ijbep )
@@ -3162,7 +3179,7 @@ load:
 
     //          Branch: xf-ground, Stamp element: Ixf   f_xf=+  
                 rhs_current = Ixf - Ixf_Vbici*Vbici - Ixf_Vbiei*Vbiei - Ixf_Vxf*Vxf;
-                *(ckt->CKTrhs + here->HICUMxfNode) += -rhs_current; // rhs_current; // into xf2 node
+                *(ckt->CKTrhs + here->HICUMxfNode) += -rhs_current; // rhs_current; // into xf node
                 *(here->HICUMxfBaseBIPtr)          += +Ixf_Vbiei;
                 *(here->HICUMxfEmitEIPtr)          += -Ixf_Vbiei;
                 *(here->HICUMxfBaseBIPtr)          += +Ixf_Vbici;

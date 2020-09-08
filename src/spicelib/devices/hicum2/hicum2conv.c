@@ -97,6 +97,7 @@ HICUMconvTest(GENmodel *inModel, CKTcircuit *ckt)
             delvbbp  = Vbbp  - *(ckt->CKTstate0 + here->HICUMvbbp);
             delveie  = Veie  - *(ckt->CKTstate0 + here->HICUMveie);
 
+            //todo: maybe add ibiei_Vxf
             ibieihat = *(ckt->CKTstate0 + here->HICUMibiei) +
                        *(ckt->CKTstate0 + here->HICUMibiei_Vbiei)*delvbiei + 
                        *(ckt->CKTstate0 + here->HICUMibiei_Vrth)*delvrth + 
