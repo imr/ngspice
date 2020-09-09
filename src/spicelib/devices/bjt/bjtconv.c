@@ -27,9 +27,10 @@ BJTconvTest(GENmodel *inModel, CKTcircuit *ckt)
     double cbhat;
     double vbe;
     double vbc;
+    double vbcx;
     double delvbe;
     double delvbc;
-
+    double delvbcx;
 
 
     for( ; model != NULL; model = BJTnextModel(model)) {
@@ -41,8 +42,12 @@ BJTconvTest(GENmodel *inModel, CKTcircuit *ckt)
             vbc=model->BJTtype*(
                     *(ckt->CKTrhsOld+here->BJTbasePrimeNode)-
                     *(ckt->CKTrhsOld+here->BJTcolPrimeNode));
+            vbcx=model->BJTtype*(
+                    *(ckt->CKTrhsOld+here->BJTbasePrimeNode)-
+                    *(ckt->CKTrhsOld+here->BJTcollCXNode));
             delvbe=vbe- *(ckt->CKTstate0 + here->BJTvbe);
             delvbc=vbc- *(ckt->CKTstate0 + here->BJTvbc);
+            delvbcx=vbcx- *(ckt->CKTstate0 + here->BJTvbcx);
             cchat= *(ckt->CKTstate0 + here->BJTcc)+(*(ckt->CKTstate0 + 
                     here->BJTgm)+ *(ckt->CKTstate0 + here->BJTgo))*delvbe-
                     (*(ckt->CKTstate0 + here->BJTgo)+*(ckt->CKTstate0 +
@@ -58,14 +63,14 @@ BJTconvTest(GENmodel *inModel, CKTcircuit *ckt)
             tol=ckt->CKTreltol*MAX(fabs(cchat),fabs(cc))+ckt->CKTabstol;
             if (fabs(cchat-cc) > tol) {
                 ckt->CKTnoncon++;
-		ckt->CKTtroubleElt = (GENinstance *) here;
+                ckt->CKTtroubleElt = (GENinstance *) here;
                 return(OK); /* no reason to continue - we've failed... */
             } else {
                 tol=ckt->CKTreltol*MAX(fabs(cbhat),fabs(cb))+
                     ckt->CKTabstol;
                 if (fabs(cbhat-cb) > tol) {
                     ckt->CKTnoncon++;
-		    ckt->CKTtroubleElt = (GENinstance *) here;
+                    ckt->CKTtroubleElt = (GENinstance *) here;
                     return(OK); /* no reason to continue - we've failed... */
                 }
             }
