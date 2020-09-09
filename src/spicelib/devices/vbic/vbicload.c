@@ -38,36 +38,6 @@ int vbic_4T_et_cf_fj(double *,
     double *,double *,double *,double *,double *,double *, double *,
     double *,double *);
 
-/* VBIClimitlog(deltemp, deltemp_old, LIM_TOL, check)
- * Logarithmic damping the per-iteration change of deltemp beyond LIM_TOL.
- */
-static double
-VBIClimitlog(
-    double deltemp,
-    double deltemp_old,
-    double LIM_TOL,
-    int *check)
-{
-    *check = 0;
-    if (isnan (deltemp) || isnan (deltemp_old))
-    {
-        fprintf(stderr, "Alberto says:  YOU TURKEY!  The limiting function received NaN.\n");
-        fprintf(stderr, "New prediction returns to 0.0!\n");
-        deltemp = 0.0;
-        *check = 1;
-    }
-    /* Logarithmic damping of deltemp beyond LIM_TOL */
-    if (deltemp > deltemp_old + LIM_TOL) {
-        deltemp = deltemp_old + LIM_TOL + log10((deltemp-deltemp_old)/LIM_TOL);
-        *check = 1;
-    }
-    else if (deltemp < deltemp_old - LIM_TOL) {
-        deltemp = deltemp_old - LIM_TOL - log10((deltemp_old-deltemp)/LIM_TOL);
-        *check = 1;
-    }
-    return deltemp;
-}
-
 int
 VBICload(GENmodel *inModel, CKTcircuit *ckt)
         /* actually load the current resistance value into the 
@@ -720,7 +690,7 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                         here->VBICtVcrit,&ichk5);
                 if (here->VBIC_selfheat) {
                     ichk6 = 1;
-                    Vrth = VBIClimitlog(Vrth,
+                    Vrth = DEVlimitlog(Vrth,
                         *(ckt->CKTstate0 + here->VBICvrth),100,&ichk6);
                 }
                 if ((ichk1 == 1) || (ichk2 == 1) || (ichk3 == 1) || (ichk4 == 1) || (ichk5 == 1) || (ichk6 == 1)) icheck=1;
