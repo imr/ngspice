@@ -16,6 +16,7 @@ Author: 1985 Thomas L. Quarles
 double DEVlimvds(double,double);
 double DEVpnjlim(double,double,double,double,int*);
 double DEVfetlim(double,double,double);
+double DEVlimitlog(double, double, double, int*);
 void DEVcmeyer(double,double,double,double,double,double,double,double,double,
         double,double,double*,double*,double*,double,double,double,double);
 void DEVqmeyer(double,double,double,double,double,double*,double*,double*,

@@ -177,6 +177,22 @@ BJTtemp(GENmodel *inModel, CKTcircuit *ckt)
               here->BJTtSatCur = pow(model->BJTsatCur,(1+model->BJTtis1*dt+model->BJTtis2*dt*dt));
             }
 
+            if (model->BJTintCollResistGiven) {
+                if (model->BJTquasimod == 1) {
+                    double rT=here->BJTtemp/model->BJTtnom;
+                    here->BJTtintCollResist=model->BJTintCollResist*pow(rT,model->BJTtempExpRCI);
+                    here->BJTtepiSatVoltage=model->BJTepiSatVoltage*pow(rT,model->BJTtempExpVO);
+                    double xvar1=pow(rT,model->BJTtempExpIS);
+                    double xvar2=-model->BJTenergyGapQS*(1.0-rT)/vt;
+                    double xvar3=exp(xvar2);
+                    here->BJTtepiDoping=model->BJTepiDoping*xvar1*xvar3;
+                } else {
+                    here->BJTtintCollResist=model->BJTintCollResist;
+                    here->BJTtepiSatVoltage=model->BJTepiSatVoltage;
+                    here->BJTtepiDoping=model->BJTepiDoping;
+                }
+            }
+
             if (model->BJTtlev == 0) {
                 bfactor = exp(ratlog*model->BJTbetaExp);
             } else if (model->BJTtlev == 1) {
