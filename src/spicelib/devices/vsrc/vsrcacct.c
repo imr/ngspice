@@ -269,6 +269,12 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                         double TS = state -> TS;
                         double TD = state -> TD;
 
+                        if (ckt->CKTtime == 0 && TD > 0) {
+                            error = CKTsetBreak(ckt, TD);
+                            if (error)
+                                return(error);
+                        }
+
                         double time = ckt->CKTtime - TD;
 
                         if (time < 0) break;
