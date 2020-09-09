@@ -34,8 +34,9 @@ INPgetValue(CKTcircuit *ckt, char **line, int type, INPtables *tab)
         temp.rValue = INPevaluate(line, &error, 1);
         /* printf(" returning real value %e\n",temp.rValue); */
     } else if (type == IF_REALVEC) {
-        /* read until error occurs. If first token is already
-           in error, return NULL */
+        /* read until error occurs. If error, and first
+           character of remaining line is ')', everything is o.k.
+           If first token is already in error, return NULL.*/
         temp.v.numValue = 0;
         list = TMALLOC(double, 1);
         tmp = INPevaluate(line, &error, 1);
@@ -50,13 +51,15 @@ INPgetValue(CKTcircuit *ckt, char **line, int type, INPtables *tab)
             list[temp.v.numValue - 1] = tmp;
             tmp = INPevaluate(line, &error, 1);
         }
-        if (error && ft_ngdebug && !eq(*line, "") && !eq(*line, ")"))
-            /* in rare cases false warnings may occur */
-            fprintf(stderr, "Warning: Could not read parameter from %s at %s\n", compline, *line);
+        if (error && !eq(*line, "") && !prefix(")", *line)) {
+            fprintf(stderr, "\nWarning: Could not read parameter from \n%s\nat\n", compline);
+            fprintf(stderr, "%*s%s\n", *line - compline," ", *line);
+        }
         temp.v.vec.rVec = list;
     } else if (type == IF_INTVEC) {
-        /* read until error occurs. If first token is already
-           in error, return NULL */
+        /* read until error occurs. If error, and first 
+           character of remaining line is ')', everything is o.k. 
+           If first token is already in error, return NULL.*/
         temp.v.numValue = 0;
         ilist = TMALLOC(int, 1);
         tmp = INPevaluate(line, &error, 1);
@@ -71,8 +74,10 @@ INPgetValue(CKTcircuit *ckt, char **line, int type, INPtables *tab)
             ilist[temp.v.numValue - 1] = (int) floor(0.5 + tmp);
             tmp = INPevaluate(line, &error, 1);
         }
-        if (error && ft_ngdebug && !eq(*line, "") && !eq(*line, ")"))
-            fprintf(stderr, "Warning: Could not read parameter from %s at %s\n", compline, *line);
+        if (error && !eq(*line, "") && !prefix(")", *line)) {
+            fprintf(stderr, "\nWarning: Could not read parameter from \n%s\nat\n", compline);
+            fprintf(stderr, "%*s%s\n", *line - compline, " ", *line);
+        }
         temp.v.vec.iVec = ilist;
     } else if (type == IF_FLAG) {
         temp.iValue = 1;
