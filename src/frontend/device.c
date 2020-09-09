@@ -1421,6 +1421,8 @@ com_alter_mod(wordlist *wl)
     tfree(filename);
     /* get all lines starting with *model */
     for (tmpdeck = modeldeck; tmpdeck; tmpdeck = tmpdeck->nextcard)
+        /* We are looking for *model because the input paerser has
+           invalidated all unused models by replacing '.' by '*'. */
         if (ciprefix("*model", tmpdeck->line)) {
             if (molineno == MODLIM) {
                 fprintf(cp_err, "Error: more than %d models in deck, rest ignored\n", molineno);
@@ -1471,7 +1473,7 @@ com_alter_mod(wordlist *wl)
         tfree(inptoken);
         inptoken = gettok(&modelline); /* skip model type */
         tfree(inptoken);
-        while ((inptoken = gettok(&modelline)) != NULL) {
+        while ((inptoken = gettok_node(&modelline)) != NULL) {
             /* exclude level, version and mfg */
             if (ciprefix("version", inptoken) || ciprefix("level", inptoken) ||
                 ciprefix("mfg", inptoken)) {
