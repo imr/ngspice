@@ -85,7 +85,7 @@ for (model=firstModel; model != NULL; model=BJTnextModel(model)) {
 
 		case N_DENS:
 		    NevalSrc(&noizDens[BJTRCNOIZ],&lnNdens[BJTRCNOIZ],
-				 ckt,THERMNOISE,inst->BJTcolPrimeNode,inst->BJTcolNode,
+				 ckt,THERMNOISE,inst->BJTcollCXNode,inst->BJTcolNode,
 				 inst->BJTtcollectorConduct * inst->BJTarea * inst->BJTm);
 
 		    NevalSrc(&noizDens[BJTRBNOIZ],&lnNdens[BJTRBNOIZ],

@@ -43,6 +43,7 @@ typedef struct sBJTinstance {
     const int BJTbaseNode;  /* number of base node of bjt */
     const int BJTemitNode;  /* number of emitter node of bjt */
     const int BJTsubstNode; /* number of substrate node of bjt */
+    int BJTcollCXNode;      /* number of internal collector node of bjt */
     int BJTcolPrimeNode;    /* number of internal collector node of bjt */
     int BJTbasePrimeNode;   /* number of internal base node of bjt */
     int BJTemitPrimeNode;   /* number of internal emitter node of bjt */
@@ -100,15 +101,18 @@ typedef struct sBJTinstance {
     double BJTtjunctionExpBC;   /* temperature adjusted MJC */
     double BJTtjunctionExpSub;   /* temperature adjusted MJS */
     double BJTtemissionCoeffS;   /* temperature adjusted NS */
+    double BJTtintCollResist;   /* temperature adjusted QS RO */
+    double BJTtepiSatVoltage;   /* temperature adjusted QS VO */
+    double BJTtepiDoping;   /* temperature adjusted QS GAMMA */
 
-    double *BJTcolColPrimePtr;  /* pointer to sparse matrix at
-                             * (collector,collector prime) */
+    double *BJTcollCollCXPtr;    /* pointer to sparse matrix at
+                             * (collector,collector cx) */
     double *BJTbaseBasePrimePtr;    /* pointer to sparse matrix at
                              * (base,base prime) */
     double *BJTemitEmitPrimePtr;    /* pointer to sparse matrix at
                              * (emitter,emitter prime) */
-    double *BJTcolPrimeColPtr;  /* pointer to sparse matrix at
-                             * (collector prime,collector) */
+    double *BJTcollCXCollPtr;    /* pointer to sparse matrix at
+                             * (collector cx,collector) */
     double *BJTcolPrimeBasePrimePtr;    /* pointer to sparse matrix at
                              * (collector prime,base prime) */
     double *BJTcolPrimeEmitPrimePtr;    /* pointer to sparse matrix at
@@ -153,6 +157,17 @@ typedef struct sBJTinstance {
     double *BJTcolPrimeBasePtr; /* pointer to sparse matrix at
                              * (collector prime,base) */
 
+    double *BJTcollCXcollCXPtr; /* pointer to sparse matrix at
+                             * (collector cx,collector cx) */
+    double *BJTcollCXBasePrimePtr; /* pointer to sparse matrix at
+                             * (collector cx,base prime) */
+    double *BJTbasePrimeCollCXPtr; /* pointer to sparse matrix at
+                             * (base prime,collector cx) */
+    double *BJTcolPrimeCollCXPtr;    /* pointer to sparse matrix at
+                             * (collector prime,collector cx) */
+    double *BJTcollCXColPrimePtr;    /* pointer to sparse matrix at
+                             * (collector cx,base prime) */
+
     unsigned BJToff         :1;   /* 'off' flag for bjt */
     unsigned BJTtempGiven   :1; /* temperature given  for bjt instance*/
     unsigned BJTdtempGiven  :1; /* delta temperature given  for bjt instance*/
@@ -171,6 +186,7 @@ typedef struct sBJTinstance {
     double BJTcapbc;
     double BJTcapsub;
     double BJTcapbx;
+    double BJTcapbcx;
     double *BJTsens;
 
 #define BJTsenGpi BJTsens /* stores the perturbed values of gpi */
@@ -297,29 +313,39 @@ typedef struct sBJTinstance {
 /* entries in the state vector for bjt: */
 #define BJTvbe BJTstate
 #define BJTvbc BJTstate+1
-#define BJTcc BJTstate+2
-#define BJTcb BJTstate+3
-#define BJTgpi BJTstate+4
-#define BJTgmu BJTstate+5
-#define BJTgm BJTstate+6
-#define BJTgo BJTstate+7
-#define BJTqbe BJTstate+8
-#define BJTcqbe BJTstate+9
-#define BJTqbc BJTstate+10
-#define BJTcqbc BJTstate+11
-#define BJTqsub BJTstate+12
-#define BJTcqsub BJTstate+13
-#define BJTqbx BJTstate+14
-#define BJTcqbx BJTstate+15
-#define BJTgx BJTstate+16
-#define BJTcexbc BJTstate+17
-#define BJTgeqcb BJTstate+18
-#define BJTgcsub BJTstate+19
-#define BJTgeqbx BJTstate+20
-#define BJTvsub BJTstate+21
-#define BJTcdsub BJTstate+22
-#define BJTgdsub BJTstate+23
-#define BJTnumStates 24
+#define BJTvbcx BJTstate+2
+#define BJTvrci BJTstate+3
+#define BJTcc BJTstate+4
+#define BJTcb BJTstate+5
+#define BJTgpi BJTstate+6
+#define BJTgmu BJTstate+7
+#define BJTgm BJTstate+8
+#define BJTgo BJTstate+9
+#define BJTqbe BJTstate+10
+#define BJTcqbe BJTstate+11
+#define BJTqbc BJTstate+12
+#define BJTcqbc BJTstate+13
+#define BJTqsub BJTstate+14
+#define BJTcqsub BJTstate+15
+#define BJTqbx BJTstate+16
+#define BJTcqbx BJTstate+17
+#define BJTgx BJTstate+18
+#define BJTcexbc BJTstate+19
+#define BJTgeqcb BJTstate+20
+#define BJTgcsub BJTstate+21
+#define BJTgeqbx BJTstate+22
+#define BJTvsub BJTstate+23
+#define BJTcdsub BJTstate+24
+#define BJTgdsub BJTstate+25
+#define BJTirci BJTstate+26
+#define BJTirci_Vrci BJTstate+27
+#define BJTirci_Vbci BJTstate+28
+#define BJTirci_Vbcx BJTstate+29
+#define BJTqbcx BJTstate+30
+#define BJTcqbcx BJTstate+31
+#define BJTgbcx BJTstate+32
+
+#define BJTnumStates 33
 
 #define BJTsensxpbe BJTstate+24 /* charge sensitivities and their
                    derivatives. +25 for the derivatives -
@@ -388,6 +414,10 @@ typedef struct sBJTmodel {          /* model structure for a bjt */
     double BJTfNexp;
     double BJTsubSatCur;   /* input - don't use */
     double BJTemissionCoeffS;
+    double BJTintCollResist;
+    double BJTepiSatVoltage;
+    double BJTepiDoping;
+    double BJTepiCharge;
     int    BJTtlev;
     int    BJTtlevc;
     double BJTtbf1;
@@ -459,6 +489,10 @@ typedef struct sBJTmodel {          /* model structure for a bjt */
     double BJTtise2;
     double BJTtisc1;
     double BJTtisc2;
+    int    BJTquasimod;
+    double BJTenergyGapQS;
+    double BJTtempExpRCI;
+    double BJTtempExpVO;
     double BJTvbeMax; /* maximum voltage over B-E junction */
     double BJTvbcMax; /* maximum voltage over B-C junction */
     double BJTvceMax; /* maximum voltage over C-E branch */
@@ -509,6 +543,10 @@ typedef struct sBJTmodel {          /* model structure for a bjt */
     unsigned BJTfNexpGiven :1;
     unsigned BJTsubSatCurGiven : 1;
     unsigned BJTemissionCoeffSGiven : 1;
+    unsigned BJTintCollResistGiven : 1;
+    unsigned BJTepiSatVoltageGiven : 1;
+    unsigned BJTepiDopingGiven : 1;
+    unsigned BJTepiChargeGiven : 1;
     unsigned BJTtlevGiven : 1;
     unsigned BJTtlevcGiven : 1;
     unsigned BJTtbf1Given : 1;
@@ -568,6 +606,10 @@ typedef struct sBJTmodel {          /* model structure for a bjt */
     unsigned BJTtise2Given : 1;
     unsigned BJTtisc1Given : 1;
     unsigned BJTtisc2Given : 1;
+    unsigned BJTquasimodGiven : 1;
+    unsigned BJTenergyGapQSGiven : 1;
+    unsigned BJTtempExpRCIGiven : 1;
+    unsigned BJTtempExpVOGiven : 1;
     unsigned BJTvbeMaxGiven : 1;
     unsigned BJTvbcMaxGiven : 1;
     unsigned BJTvceMaxGiven : 1;
@@ -650,6 +692,10 @@ enum {
     BJT_MOD_KF,
     BJT_MOD_ISS,
     BJT_MOD_NS,
+    BJT_MOD_RCO,
+    BJT_MOD_VO,
+    BJT_MOD_GAMMA,
+    BJT_MOD_QCO,
     BJT_MOD_TNOM,
     BJT_MOD_TLEV,
     BJT_MOD_TLEVC,
@@ -711,6 +757,10 @@ enum {
     BJT_MOD_TISE2,
     BJT_MOD_TISC1,
     BJT_MOD_TISC2,
+    BJT_MOD_QUASIMOD,
+    BJT_MOD_EGQS,
+    BJT_MOD_XRCI,
+    BJT_MOD_XD,
     BJT_MOD_VBE_MAX,
     BJT_MOD_VBC_MAX,
     BJT_MOD_VCE_MAX,
@@ -723,6 +773,7 @@ enum {
     BJT_QUEST_BASENODE,
     BJT_QUEST_EMITNODE,
     BJT_QUEST_SUBSTNODE,
+    BJT_QUEST_COLLCXNODE,
     BJT_QUEST_COLPRIMENODE,
     BJT_QUEST_BASEPRIMENODE,
     BJT_QUEST_EMITPRIMENODE,

@@ -218,6 +218,22 @@ BJTmParam(int param, IFvalue *value, GENmodel *inModel)
             mods->BJTemissionCoeffS = value->rValue;
             mods->BJTemissionCoeffSGiven = TRUE;
             break;
+        case BJT_MOD_RCO:
+            mods->BJTintCollResist = value->rValue;
+            mods->BJTintCollResistGiven = TRUE;
+            break;
+        case BJT_MOD_VO:
+            mods->BJTepiSatVoltage = value->rValue;
+            mods->BJTepiSatVoltageGiven = TRUE;
+            break;
+        case BJT_MOD_GAMMA:
+            mods->BJTepiDoping = value->rValue;
+            mods->BJTepiDopingGiven = TRUE;
+            break;
+        case BJT_MOD_QCO:
+            mods->BJTepiCharge = value->rValue;
+            mods->BJTepiChargeGiven = TRUE;
+            break;
         case BJT_MOD_TLEV:
             mods->BJTtlev = value->iValue;
             mods->BJTtlevGiven = TRUE;
@@ -453,6 +469,22 @@ BJTmParam(int param, IFvalue *value, GENmodel *inModel)
         case BJT_MOD_TISC2:
             mods->BJTtisc2 = value->rValue;
             mods->BJTtisc2Given = TRUE;
+            break;
+        case BJT_MOD_QUASIMOD:
+            mods->BJTquasimod = value->iValue;
+            mods->BJTquasimodGiven = TRUE;
+            break;
+        case BJT_MOD_EGQS:
+            mods->BJTenergyGapQS = value->rValue;
+            mods->BJTenergyGapQSGiven = TRUE;
+            break;
+        case BJT_MOD_XRCI:
+            mods->BJTtempExpRCI = value->rValue;
+            mods->BJTtempExpRCIGiven = TRUE;
+            break;
+        case BJT_MOD_XD:
+            mods->BJTtempExpVO = value->rValue;
+            mods->BJTtempExpVOGiven = TRUE;
             break;
         case BJT_MOD_VBE_MAX:
             mods->BJTvbeMax = value->rValue;

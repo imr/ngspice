@@ -78,6 +78,9 @@ BJTask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFvalue
         case BJT_QUEST_COLPRIMENODE:
             value->iValue = here->BJTcolPrimeNode;
             return(OK);
+        case BJT_QUEST_COLLCXNODE:
+            value->iValue = here->BJTcollCXNode;
+            return(OK);
         case BJT_QUEST_BASEPRIMENODE:
             value->iValue = here->BJTbasePrimeNode;
             return(OK);
