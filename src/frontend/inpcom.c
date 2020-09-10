@@ -525,7 +525,7 @@ char *find_back_assignment(const char *p, const char *start)
 
 /* Set a compatibility flag.
 Currently available are flags for:
-- LTSPICE, HSPICE, Spice3, PSPICE, KiCad
+- LTSPICE, HSPICE, Spice3, PSPICE, KiCad, Spectre
 */
 struct compat newcompat;
 static void new_compat_mode(void)
@@ -536,6 +536,7 @@ static void new_compat_mode(void)
     newcompat.lt = FALSE;
     newcompat.ki = FALSE;
     newcompat.a = FALSE;
+    newcompat.spe = FALSE;
     if (cp_getvar("ngbehavior", CP_STRING, behaviour, sizeof(behaviour))) {
         if (strstr(behaviour, "hs"))
             newcompat.hs = TRUE;
@@ -547,6 +548,10 @@ static void new_compat_mode(void)
             newcompat.ki = TRUE;
         if (strstr(behaviour, "a"))
             newcompat.a = TRUE;
+        if (strstr(behaviour, "spe")) {
+            newcompat.spe = TRUE;
+            newcompat.ps = newcompat.lt = newcompat.ki = newcompat.a = FALSE;
+        }
     }
     if (newcompat.hs && newcompat.ps) {
         fprintf(stderr, "Warning: hs and ps compatibility are mutually exclusive, switch to ps!\n");
