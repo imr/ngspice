@@ -9,6 +9,7 @@ Modified: 2001 Paolo Nenzi (Cider Integration)
 #include "ngspice/ifsim.h"
 #include "ngspice/cpstd.h"
 #include "ngspice/fteext.h"
+#include "ngspice/compatmode.h"
 #include "inpxx.h"
 #include <errno.h>
 
@@ -223,7 +224,7 @@ INPgetModBin(CKTcircuit *ckt, char *name, INPmodel **model, INPtables *tab, char
     double       l, w, lmin, lmax, wmin, wmax;
     double       parse_values[4];
     bool         parse_found[4];
-    static char *instance_tokens[] = { "l", "w" };
+    static char *instance_tokens[] = { "l", "w", "nf" };
     static char *model_tokens[]    = { "lmin", "lmax", "wmin", "wmax" };
     double       scale;
 
@@ -232,11 +233,16 @@ INPgetModBin(CKTcircuit *ckt, char *name, INPmodel **model, INPtables *tab, char
 
     *model = NULL;
 
+    /* read W and L. If not on the instance line, leave */
     if (!parse_line(line, instance_tokens, 2, parse_values, parse_found))
         return NULL;
 
+    /* This is for reading nf. If not available, set to 1. Only in Spectre compatibility mode */
+    if (!newcompat.spe || !parse_line(line, instance_tokens, 3, parse_values, parse_found))
+        parse_values[2] = 1.;
+
     l = parse_values[0] * scale;
-    w = parse_values[1] * scale;
+    w = parse_values[1] / parse_values[2] * scale;
 
     for (modtmp = modtab; modtmp; modtmp = modtmp->INPnextModel) {
 
