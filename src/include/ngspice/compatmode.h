@@ -12,6 +12,7 @@ struct compat
 	bool lt;
 	bool ki;
 	bool a;
+	bool spe;
 };
 
 extern struct compat newcompat;
