@@ -1,0 +1,76 @@
+Loop stability analysis
+=======================
+
+A loop stability analysis is introduced in ngspice.
+It use the "General Feedback Theorem" proposed by Prof. R. D. Middlebrook, in a modified formulation proposed by Frank Wiedmann.
+
+A voltage source probe is added in the circuit somewhere along the feedback loop to analyze. Note that the operating point found by the simulator is undisturbed as the added probe don't change anything in the circuit characteristics.
+The AC loading at each side of the probe is automatically taken into account for the loop analysis which give accurate results.
+
+The direction of the probe is important. If the loop is analyzed in the wrong direction, the gain will most probably be very small and no stability information can be extracted.
+
+
+Syntax
+------
+General form:
+.loop <probe> dec/oct/lin <nd> <fstart> <fstop> <param>=<value> ...
+
+<probe>: the probe device name. It could be a voltage source or any other device in the circuit. In the latter case, a terminal of the probe must be specified. Use syntax <dev>/<terminal> for <probe>, where <dev> is a device name and <terminal> is the terminal name of <dev> where the voltage source probe must be inserted. <terminal> could also be a number specifying the terminal index of the device (e.g. 2 for gate of mosfet). <dev> must be a leaf device and can't be a subcircuit.
+
+dec/oct/lin: specify the kind of sweep for frequency, similar to the AC analysis.
+
+<nd>: specify the number of points per decade or octave, or the total number of points in case of the linear sweep.
+
+<fstart>: start frequency of the sweep.
+
+<fstop>: stop frequency of the sweep.
+
+dir=<val>: used to swap the loop direction if <val> is negative or greater than 1.
+
+refnode="<net>": specify the reference node used in the analysis, corresponding the W node in Middlebrook article.
+
+insrc="<src>": optionnaly specify an input source, either voltage or current source. <src> is the name of the input source device and must be quoted inside "".
+
+outpos="<net>": optionnaly specify an output net. <net> is a net name in the circuit and must be quoted inside "".
+
+outneg="<net>": optionnaly specify an output net reference. <net> is a net name in the circuit and must be quoted inside "".
+
+outsrc="<src>": optionnaly specify an output source.
+If <src> is a voltage source, the current in the source will be considered as the circuit output.
+If <src> is a current source, the voltage accross <src> will be considered as the circuit output.
+<src> can be the same as the <src> specified for insrc=<src>, in which case the analyzed circuit transfert function will be the circuit admittance or impedance at the place <src> is located, depending on the kind of <src> (voltage source or current source).
+
+name="<val>": optionnaly specify a name for the analysis.
+
+probe="<probe>": another way to the specify the probe device.
+
+portname="<termname>": another way to specify the terminal name of the probe.
+
+portnum=<termnum>: another way to specify the terminal index of the probe.
+
+
+Examples
+--------
+.loop vprobe DEC 10 1 10e9
+.loop M2/Gate DEC 10 1 10e9 insrc="Vin" outpos="out" outneg="vcc" dir=-1
+.loop M2 DEC 10 1 10e9 portname="Gate"
+
+
+Outputs
+-------
+All outputs vectors are complex functions of frequency.
+T: the complex loop gain negated. T has a phase of zero for in-phase negative feedback.
+D: discrepency factor. D = T/(1+T)
+
+When the circuit input and output are both specified, the .loop analysis will output the additional vectors listed below. Please refer to the GFT description.
+H: the closed loop transfert function output/input
+Hinf: the transfert function as if the loop gain was infinite
+Dn: discrepency factor due to direct feedforward path. H=Hinf*D*Dn
+Tn: Tn = 1/(Dn-1)
+D0: D0 = 1-D
+H0: the additive version for the direct feedforward path. H=Hinf*D + H0*D0
+
+In addition to the above output vectors, the loop gain T is analyzed for calculating and printing the following parameters:
+phase margin: the phase margin of the loop in degrees.
+gain margin: the gain margin of the loop in dB. The gain margin is found only if the phase of T go through 180 degrees (in-phase positive feedback). The corresponding frequency is also printed.
+unity gain frequency: the frequency at which the loop gain T go below 1.
