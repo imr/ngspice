@@ -51,9 +51,13 @@ typedef struct {
     IFuid  LOOPoutSrc;
     CKTnode *LOOPoutPos;
     CKTnode *LOOPoutNeg;
+    CKTnode *LOOPrefNode;
 
     double** LoopGain;
     double** iLoopGain;
+    
+    unsigned LOOPinIV : 2;
+    unsigned LOOPoutIV : 2;
     
     unsigned LOOPnameGiven : 1;
     unsigned LOOPportnumGiven : 1;
@@ -62,6 +66,7 @@ typedef struct {
     unsigned LOOPoutSrcGiven : 1;
     unsigned LOOPoutPosGiven : 1;
     unsigned LOOPoutNegGiven : 1;
+    unsigned LOOPrefNodeGiven : 1;
 } LOOPAN;
 
 /* available step types: */
@@ -69,6 +74,11 @@ typedef struct {
 #define DECADE 1
 #define OCTAVE 2
 #define LINEAR 3
+
+/* I or V flags */
+#define LOOP_IV_UNSET 0
+#define LOOP_IV_VOLTAGE 1
+#define LOOP_IV_CURRENT 2
 
 /* defns. used in DsetParm */
 
@@ -83,6 +93,7 @@ typedef struct {
 #define LOOP_PORTNAME 11
 #define LOOP_PORTNUM 12
 #define LOOP_DIR 13
+#define LOOP_REFNODE 14
 #define LOOP_PROBESRCNEG 15
 #define LOOP_PORTNAMENEG 16
 #define LOOP_PORTNUMNEG 17

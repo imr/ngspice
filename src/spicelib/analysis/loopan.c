@@ -42,6 +42,44 @@ do { \
 
 extern SPICEdev **DEVices;
 
+static IFcomplex
+caddf(IFcomplex a, IFcomplex b)
+{
+    IFcomplex r;
+    r.real = a.real + b.real;
+    r.imag = a.imag + b.imag;
+    return r;
+}
+
+static IFcomplex
+csubf(IFcomplex a, IFcomplex b)
+{
+    IFcomplex r;
+    r.real = a.real - b.real;
+    r.imag = a.imag - b.imag;
+    return r;
+}
+
+static IFcomplex
+cmulf(IFcomplex a, IFcomplex b)
+{
+    IFcomplex r;
+    r.real = a.real*b.real - a.imag*b.imag;
+    r.imag = a.real*b.imag + a.imag*b.real;
+    return r;
+}
+
+static IFcomplex
+cdivf(IFcomplex a, IFcomplex b)
+{
+    IFcomplex r;
+    double denom;
+    denom = b.real*b.real + b.imag*b.imag;
+    r.real = (a.real*b.real + a.imag*b.imag)/denom;
+    r.imag = (a.imag*b.real - a.real*b.imag)/denom;
+    return r;
+}
+
 int
 LOOPpreset(CKTcircuit *ckt, JOB *anal)
 {
@@ -57,21 +95,22 @@ LOOPpreset(CKTcircuit *ckt, JOB *anal)
     int      termidx;
     int      error;
     int      vtype;
-    
-    printf("LOOPpreset with direction %d!\n", job->LOOPdirection);
-    
+        
+    if(!job->LOOPrefNodeGiven)
+       job->LOOPrefNode = NULL;
+       
     if(job->LOOPportnameGiven || job->LOOPportnumGiven)
     {
        inst = CKTfndDev(ckt, job->LOOPprobeSrc);
        if (!inst || inst->GENmodPtr->GENmodType < 0) {
         SPfrontEnd->IFerrorf (ERR_WARNING,
-                             "Loop probe source %s not in circuit",
+                             "Loop probe source '%s' not in circuit",
                              job->LOOPprobeSrc);
         return E_NOTFOUND;
        }
        dev = &DEVices[inst->GENmodPtr->GENmodType]->DEVpublic;
        if (inst->GENmodPtr->GENmodType == CKTtypelook("Vsource"))
-          printf("Consider to specify the whole Vsource %s as loop probe\n", job->LOOPprobeSrc);
+          printf("Consider to specify the whole Vsource '%s' as loop probe\n", job->LOOPprobeSrc);
 			     
        if(job->LOOPportnameGiven) {
 	   for(termidx=0;termidx<(*(dev->numNames));termidx++) {
@@ -86,7 +125,7 @@ LOOPpreset(CKTcircuit *ckt, JOB *anal)
            return E_NOTFOUND;
        }
        /* now break the loop at terminal termidx */
-       printf("Break the loop at device %s terminal %s\n", inst->GENname, dev->termNames[termidx]);
+       printf("Loop analysis: Break the loop at device '%s' terminal '%s'\n", inst->GENname, dev->termNames[termidx]);
        node = CKTnum2nod(ckt, GENnode(inst)[termidx]);
        error = CKTmkVolt(ckt, &nodeinj, inst->GENname, "loopinj");
        if(error) return(error);
@@ -105,17 +144,80 @@ LOOPpreset(CKTcircuit *ckt, JOB *anal)
        ptemp.rValue = 0;
        error = CKTpName("dc",&ptemp,ckt,vtype,"probe",&probesrc);
        if(error) return(error);
-       error = CKTbindNode(ckt,probesrc,job->LOOPdirection==2 ? 2 : 1,nodeinj);
+       /* LOOPdirection is set later */
+       error = CKTbindNode(ckt,probesrc,job->LOOPdirection==2 ? 1 : 1,nodeinj);
        if(error) return(error);
-       error = CKTbindNode(ckt,probesrc,job->LOOPdirection==2 ? 1 : 2 ,node);
+       error = CKTbindNode(ckt,probesrc,job->LOOPdirection==2 ? 2 : 2 ,node);
        if(error) return(error);
        error = CKTbindNode(ckt,inst,termidx+1,nodeinj); /* bindNode counts from 1 ! */
        ptemp.rValue = 0;
        job->LOOPprobeSrc = probesrc->GENname;
+       job->LOOPportnameGiven = 0; /* don't mess if LOOPpreset is called a second time */
+       job->LOOPportnumGiven = 0;  /* idem */
+       
+       job->LOOPinIV = LOOP_IV_UNSET;
+       if(job->LOOPinSrcGiven) {
+            GENinstance *insrc;
+	    insrc = CKTfndDev(ckt, job->LOOPinSrc);
+	    if (!insrc || insrc->GENmodPtr->GENmodType < 0) {
+	        SPfrontEnd->IFerrorf (ERR_WARNING,
+                             "Transfer function source %s not in circuit",
+                             job->LOOPinSrc);
+                return E_NOTFOUND;
+	    }
+	    if (insrc->GENmodPtr->GENmodType == CKTtypelook("Vsource"))
+               job->LOOPinIV = LOOP_IV_VOLTAGE;
+            else if (insrc->GENmodPtr->GENmodType == CKTtypelook("Isource")) {
+               job->LOOPinIV = LOOP_IV_CURRENT;
+            }
+       }
+       
+       job->LOOPoutIV = LOOP_IV_UNSET;
+       if(job->LOOPoutSrcGiven) {
+	    GENinstance *outsrc;
+	    outsrc = CKTfndDev(ckt, job->LOOPoutSrc);
+	    if (!outsrc || outsrc->GENmodPtr->GENmodType < 0) {
+	        SPfrontEnd->IFerrorf (ERR_WARNING,
+                             "Transfer function source %s not in circuit",
+                             job->LOOPoutSrc);
+		
+                return E_NOTFOUND;
+	    }
+	    if (outsrc->GENmodPtr->GENmodType == CKTtypelook("Vsource"))
+               job->LOOPoutIV = LOOP_IV_CURRENT;
+            else if (outsrc->GENmodPtr->GENmodType == CKTtypelook("Isource")) {
+	       /* weird user, but let's kindly reformulate for him */
+               job->LOOPinIV = LOOP_IV_VOLTAGE;
+	       job->LOOPoutPos = CKTnum2nod(ckt, GENnode(outsrc)[0]);
+	       job->LOOPoutNeg = CKTnum2nod(ckt, GENnode(outsrc)[1]);
+	       job->LOOPoutPosGiven = 1;
+	       job->LOOPoutNegGiven = 1;
+	       job->LOOPoutSrcGiven = 0;
+            }
+       } else if (job->LOOPoutPosGiven) {
+	   job->LOOPoutIV = LOOP_IV_VOLTAGE;
+       }
        
     }
     return OK;
 }
+
+enum {
+   LOOP_CURVE_T = 0,
+   LOOP_CURVE_D,
+   LOOP_CURVE_H,
+   LOOP_CURVE_HINF,
+#if 1   
+   LOOP_CURVE_TN,
+   LOOP_CURVE_DN,
+   LOOP_CURVE_H0,
+   LOOP_CURVE_D0,
+   LOOP_CURVE_DP,
+   LOOP_CURVE_TP,
+#endif
+   /* insert new curves here */
+   LOOP_NCURVES
+} eLOOPcurves;
 
 int
 LOOPan(CKTcircuit *ckt, int restart)
@@ -130,11 +232,12 @@ LOOPan(CKTcircuit *ckt, int restart)
     double startkTime;
     double startTime;
     
-    double Vy[3],Iy[3];
-    double iVy[3],iIy[3];
-    double phasemargin;
-    double gainmargin;
-    double gainsq, phase, curTr;
+    IFcomplex Vy[3],Iy[3];
+    /*double iVy[3],iIy[3];*/
+    IFcomplex Uout[3];
+    double D, iD, T, iT;
+    double phasemargin, gainmargin, maxgain, ugf, ipf;
+    double gainsq, phase, curTr, pfreq;
     
     int error;
     int numNames;
@@ -144,10 +247,47 @@ LOOPan(CKTcircuit *ckt, int restart)
     runDesc *plot = NULL;
     GENinstance *inst = NULL;
     int size, i;
-    int probe_brnum;
+    int branch_probe, branch_vin, branch_iout;
+    int inPosNode, inNegNode;
+    int dir;
+    
+    static char* plot_curves[] = {
+       "T", /* loop gain */
+       "D", /* discrepency factor D = T/(1+T) */
+       "H", /* transfert function */
+       "Hinf", /* transfert function if loop gain was infinite */
+       "Tn", /* "output-nulled" loop gain*/
+       "Dn", /* 1/(1+Tn) */
+       "H0", /* forward path transfert function with zero loop gain */
+       "D0",
+       "Dp",
+       "Tp",
+    };
 
 
-
+    if(job->LOOPinSrcGiven) {
+        if(job->LOOPinIV == LOOP_IV_CURRENT) {
+	   inst = CKTfndDev(ckt, job->LOOPinSrc);
+	   inPosNode = GENnode(inst)[0];
+	   inNegNode = GENnode(inst)[1];
+	} else if (job->LOOPinIV == LOOP_IV_VOLTAGE) {
+	   branch_vin = CKTfndBranch(ckt, job->LOOPinSrc);
+	   #if 0
+	   /* not needed but set anyway */
+	   inst = CKTfndDev(ckt, job->LOOPinSrc);
+	   inPosNode = GENnode(inst)[0];
+	   inNegNode = GENnode(inst)[1];
+	   #endif
+	}
+    }
+    if(job->LOOPoutSrcGiven) {
+        if(job->LOOPoutIV == LOOP_IV_CURRENT)
+	   branch_iout = CKTfndBranch(ckt, job->LOOPoutSrc);
+    }
+    if(job->LOOPdirection<0 || job->LOOPdirection >= 2)
+      dir=1; /* inverse direction */
+    else
+      dir=0; /* normal direction for 0 and 1 */
     inst = CKTfndDev(ckt, job->LOOPprobeSrc);
     
     if (!inst || inst->GENmodPtr->GENmodType < 0) {
@@ -163,10 +303,15 @@ LOOPan(CKTcircuit *ckt, int restart)
                              job->LOOPprobeSrc);
         return E_NOTFOUND;
     }
-    printf("LOOPan Vy at %s\n", CKTnodName(ckt,GENnode(inst)[0]));
-    probe_brnum = CKTfndBranch(ckt, job->LOOPprobeSrc);
+    if(0) printf("LOOPan Vy at %s\n", CKTnodName(ckt,GENnode(inst)[dir]));
+    branch_probe = CKTfndBranch(ckt, job->LOOPprobeSrc);
     phasemargin = 180;
     gainmargin = strtod("NaN", NULL);
+    phase = gainmargin; /* NaN */
+    pfreq = gainmargin; /* NaN */
+    ugf = gainmargin; /* NaN */
+    ipf = gainmargin; /* NaN */
+    maxgain = 0;
     
 #ifdef XSPICE
 /* gtri - add - wbk - 12/19/90 - Add IPC stuff and anal_init and anal_type */
@@ -289,7 +434,14 @@ LOOPan(CKTcircuit *ckt, int restart)
 
         error = CKTnames(ckt,&numNames,&nameList);
         if(error) return(error);
-
+	
+	#if 0
+	printf("check: branch probe is %s\n", nameList[branch_probe-1]);
+	printf("check: out pos node is %s\n", nameList[job->LOOPoutPos->number-1]);
+	printf("check: out neg node is %s\n", nameList[job->LOOPoutNeg->number-1]);
+	printf("check: in branch node is %s\n", nameList[branch_vin-1]);
+	#endif
+	
 	if (ckt->CKTkeepOpInfo) {
 	    /* Dump operating point. */
             error = SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
@@ -303,18 +455,32 @@ LOOPan(CKTcircuit *ckt, int restart)
 	    plot = NULL;
 	}
 
-        SPfrontEnd->IFnewUid (ckt, &freqUid, NULL, "frequency", UID_OTHER, NULL);
+        /* setup for the real loop output plot */
+        numNames = 2; /* T and D by default */
+	if(1) /*  yet implemented */
+	if(job->LOOPinSrcGiven)
+        if(job->LOOPoutSrcGiven || (job->LOOPoutPosGiven && job->LOOPoutNegGiven))
+            numNames = LOOP_NCURVES; /* all GFT functions */
+            
+        nameList = TMALLOC(IFuid, numNames);
+        for(int i=0;i<numNames;i++)
+        {
+            SPfrontEnd->IFnewUid (ckt, &nameList[i], job->LOOPname, plot_curves[i], UID_OTHER, NULL);
+        }
+    
+	SPfrontEnd->IFnewUid (ckt, &freqUid, NULL, "frequency", UID_OTHER, NULL);
         error = SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
                                            ckt->CKTcurJob->JOBname,
                                            freqUid, IF_REAL,
                                            numNames, nameList, IF_COMPLEX,
                                            &acPlot);
-	tfree(nameList);		
 	if(error) return(error);
-
         if (job->LOOPstepType != LINEAR) {
 	    SPfrontEnd->OUTattributes (acPlot, NULL, OUT_SCALE_LOG, NULL);
 	}
+	
+	
+	
         freq = job->LOOPstartFreq;
 
     } else {    /* continue previous analysis */
@@ -403,7 +569,7 @@ LOOPan(CKTcircuit *ckt, int restart)
 	
 	/************* Main part starts here ********************/
 	size = SMPmatSize(ckt->CKTmatrix);
-	for(int simno=0;simno<2;simno++)
+	for(int simno=0;simno<(numNames>2 ? 3 : 2);simno++)
 	{
 	  for (i=0; i<=size; i++)
 	  {
@@ -422,14 +588,27 @@ LOOPan(CKTcircuit *ckt, int restart)
 	  {
 	  case 1:
 	    /* AC current src magn=1 from ground to Vx */
-	    ckt->CKTrhs[GENnode(inst)[1]] -= 1;
-            ckt->CKTrhs[0] += 1;
+	    ckt->CKTrhs[GENnode(inst)[1-dir]] -= 1;
+	    if(job->LOOPrefNode)
+	      ckt->CKTrhs[job->LOOPrefNode->number] += 1;
+	    else
+              ckt->CKTrhs[0] += 1;
 	    break;
 	  case 0: 
 	    /* AC voltage src magn=1 accross probe */
-	    ckt->CKTrhs[probe_brnum] += 1;
+	    ckt->CKTrhs[branch_probe] += 1;
 	    break;
+	  case 2: 
+	    /* AC voltage at input source */
+	    if(job->LOOPinIV==LOOP_IV_VOLTAGE) {
+	        ckt->CKTrhs[branch_vin] += 1;
+	    } else if (job->LOOPinIV==LOOP_IV_CURRENT) {
+	        ckt->CKTrhs[inPosNode] += 1;
+                ckt->CKTrhs[inNegNode] -= 1;
+	    }
+	    break;  
 	  default:
+	    printf("Don't know what to simulate for this index %d\n",simno);
 	    return(E_BADPARM);
 	  }
 	
@@ -440,51 +619,79 @@ LOOPan(CKTcircuit *ckt, int restart)
             UPDATE_STATS(DOING_AC);
             return(error);
           }
-	  Vy[simno] = ckt->CKTrhsOld[GENnode(inst)[0]];
-	  iVy[simno] = ckt->CKTirhsOld[GENnode(inst)[0]];
-	  Iy[simno] = ckt->CKTrhsOld[probe_brnum];
-	  iIy[simno] = ckt->CKTirhsOld[probe_brnum];
-	  if(0) printf("|Vy| = %g, |Iy|=%g\n", sqrt(Vy[simno]*Vy[simno]+iVy[simno]*iVy[simno]), sqrt(Iy[simno]*Iy[simno]+iIy[simno]*iIy[simno]));
+	  if(job->LOOPrefNode) {
+	    Vy[simno].real = ckt->CKTrhsOld[GENnode(inst)[dir]] - ckt->CKTrhsOld[job->LOOPrefNode->number];
+	    Vy[simno].imag = ckt->CKTirhsOld[GENnode(inst)[dir]] - ckt->CKTirhsOld[job->LOOPrefNode->number];
+	  } else {
+	    Vy[simno].real = ckt->CKTrhsOld[GENnode(inst)[dir]];
+	    Vy[simno].imag = ckt->CKTirhsOld[GENnode(inst)[dir]];
+	  }
+	  Iy[simno].real = ckt->CKTrhsOld[branch_probe];
+	  Iy[simno].imag = ckt->CKTirhsOld[branch_probe];
+	  if(job->LOOPoutIV == LOOP_IV_CURRENT) {
+	     Uout[simno].real = ckt->CKTrhsOld[branch_iout];
+	     Uout[simno].imag = ckt->CKTirhsOld[branch_iout];
+	  } else if(job->LOOPoutIV == LOOP_IV_VOLTAGE) {
+	     Uout[simno].real = ckt->CKTrhsOld[job->LOOPoutPos->number] -
+	                          ckt->CKTrhsOld[job->LOOPoutNeg->number];
+	     Uout[simno].imag = ckt->CKTirhsOld[job->LOOPoutPos->number] -
+	                          ckt->CKTirhsOld[job->LOOPoutNeg->number];
+	  }
+	  
+	  if(0) printf("|Vy| = %g, |Iy|=%g\n", sqrt(Vy[simno].real*Vy[simno].real+Vy[simno].imag*Vy[simno].imag), sqrt(Iy[simno].real*Iy[simno].real+Iy[simno].imag*Iy[simno].imag));
 	}
 	
 	/* V(y)@1*I(Viy)@3-V(y)@3*I(Viy)@1 */
 	{
-	double D, iD, T, iT, ngainsq, nphase;
+	double ngainsq, nphase;
 	
-	D = Vy[0]*Iy[1] - iVy[0]*iIy[1] - Vy[1]*Iy[0] + iVy[1]*iIy[0];
-	iD = Vy[0]*iIy[1] + iVy[0]*Iy[1] - Vy[1]*iIy[0] - iVy[1]*Iy[0];
+	D = Vy[0].real*Iy[1].real - Vy[0].imag*Iy[1].imag - Vy[1].real*Iy[0].real + Vy[1].imag*Iy[0].imag;
+	iD = Vy[0].real*Iy[1].imag + Vy[0].imag*Iy[1].real - Vy[1].real*Iy[0].imag - Vy[1].imag*Iy[0].real;
 	/*T = (D-iD*iD/(1-D))/(1-D+iD/(1-D));*/
 	T = (D*(1-D)-iD*iD)/((1-D)*(1-D) + iD*iD);
 	iT = iD/((1-D)*(1-D) + iD*iD);
 	nphase = 180*atan2(-iD,-D)/M_PI;
 	ngainsq = T*T + iT*iT;
+	/* search for phase margin */
 	if((ngainsq-1)*(gainsq-1)<0)
 	{ /* gain cross 1 - interpolate lin/log for more accurate results */
-		double crossphase = (log(gainsq)*nphase -  
+		double crossphase, ugflog;
+		crossphase = (log(gainsq)*nphase -  
 		  log(ngainsq)*phase)/(log(gainsq)-log(ngainsq));
 		if(fabs(crossphase)<phasemargin)
 		    phasemargin = fabs(crossphase);
+		ugflog = (log(gainsq)*log(freq) -  
+		  log(ngainsq)*log(pfreq))/(log(gainsq)-log(ngainsq));
+	        if(isnan(ugf))
+		  ugf = exp(ugflog);
 		/* idea: binary search/sim + for frequency where gain=1 ? */
         }
-	
 	if(ngainsq>=1)
 	if(fabs(nphase)<phasemargin)
 		    phasemargin = fabs(nphase);
 		    
-        if(T>0 && curTr>0)
+        /* search for gain margin */
+        if(T<0 && curTr<0)
 	if(nphase * phase <= 0)
 	{
 	     /* right quandrant and cross phase=0 */
 	     double gmsqlog;
-	     gmsqlog = (nphase*log(gainsq)-phase*log(ngainsq))/(nphase-phase);
-	     gainmargin = 10*gmsqlog;
+	     gmsqlog = (phase*log(ngainsq)-nphase*log(gainsq))/(phase-nphase);
+	     if(0) printf("phase cross at %g, ngainsq=%g gainsq=%g qmsqlog=%g\n", freq, ngainsq, gainsq, exp(gmsqlog));
+	     if(isnan(gainmargin) || (10*gmsqlog*M_LOG10E > gainmargin)) {
+	       double ipflog;
+	       gainmargin = 10*gmsqlog*M_LOG10E;
+	       ipflog = (phase*log(freq)-nphase*log(pfreq))/(phase-nphase);
+	       ipf = exp(ipflog);
+	     }
 	}
 	
 	gainsq=ngainsq;
 	phase=nphase;
 	curTr = T; /* remember real part only */
-		
-	if(1) printf("f=%g |T| = %g, |D|=%g, phase=%g\n", freq, sqrt(T*T+iT*iT), sqrt(D*D+iD*iD), 180*atan2(-iD,-D)/M_PI);
+	if(gainsq > maxgain)
+	  maxgain = gainsq;
+	if(0) printf("f=%g |T| = %g, |D|=%g, phase=%g\n", freq, sqrt(T*T+iT*iT), sqrt(D*D+iD*iD), 180*atan2(-iD,-D)/M_PI);
 	}
 	
 	
@@ -513,28 +720,58 @@ LOOPan(CKTcircuit *ckt, int restart)
         }
 #endif
 
+        /* error = CKTacDump(ckt,freq,acPlot); */
+	{
+	IFvalue  freqData;
+	IFvalue  valueData;
+	IFcomplex cval, cA;
+	IFcomplex data[LOOP_NCURVES];
+	freqData.rValue = freq;
+	valueData.v.numValue = numNames;
+	valueData.v.vec.cVec = data;
+	data[LOOP_CURVE_T].real = T;
+	data[LOOP_CURVE_T].imag = iT;
+	data[LOOP_CURVE_D].real = D;
+	data[LOOP_CURVE_D].imag = iD;
+	if(numNames >= LOOP_CURVE_H) {
+	data[LOOP_CURVE_H] = Uout[2];
+	cA.real=0;
+	cA.imag=0;
+	for(int i=0;i<3;i++)
+	  cA = caddf(cA, cmulf(Uout[i],csubf(cmulf(Vy[(i+1)%3],Iy[(i+2)%3]),cmulf(Vy[(i+2)%3],Iy[(i+1)%3]))));
+	data[LOOP_CURVE_HINF] = cdivf(cA,data[LOOP_CURVE_D]);
+	data[LOOP_CURVE_DN] = cdivf(Uout[2],cA);
+	data[LOOP_CURVE_TN].real = (data[LOOP_CURVE_DN].real*(1-data[LOOP_CURVE_DN].real)-data[LOOP_CURVE_DN].imag*data[LOOP_CURVE_DN].imag)/((1-data[LOOP_CURVE_DN].real)*(1-data[LOOP_CURVE_DN].real) + data[LOOP_CURVE_DN].imag*data[LOOP_CURVE_DN].imag);
+	data[LOOP_CURVE_TN].imag = data[LOOP_CURVE_DN].imag/((1-data[LOOP_CURVE_DN].real)*(1-data[LOOP_CURVE_DN].real) + data[LOOP_CURVE_DN].imag*data[LOOP_CURVE_DN].imag);
+	data[LOOP_CURVE_D0].real = 1 - data[LOOP_CURVE_D].real;
+	data[LOOP_CURVE_D0].imag = -data[LOOP_CURVE_D].imag;
+	data[LOOP_CURVE_H0] = cdivf(csubf(data[LOOP_CURVE_H],cA),data[LOOP_CURVE_D0]);
+	data[LOOP_CURVE_DP] = cmulf(data[LOOP_CURVE_D],data[LOOP_CURVE_DN]);
+	data[LOOP_CURVE_TP] = cdivf(data[LOOP_CURVE_DP],csubf((IFcomplex) {1,0}, data[LOOP_CURVE_DP]));
+	 /* A = Vo.2*(Vy.0*IViy.1-Vy.1*IViy.0)+Vo.0*(Vy.1*IViy.2-Vy.2*IViy.1)+Vo.1*(Vy.2*IViy.0-Vy.0*IViy.2) */
+	 /* A = Vo[2]*(Vy[0]*Iy[1]-Vy[1]*Iy[0])+Vo[0]*(Vy[1]*Iy[2]-Vy[2]*Iy[1])+Vo[1]*(Vy[2]*Iy[0]-Vy[0]*Iy[2])*/
+	}
 #ifdef XSPICE
 /* gtri - modify - wbk - 12/19/90 - Send IPC stuff */
-
         if(g_ipc.enabled)
             ipc_send_data_prefix(freq);
-
-        error = CKTacDump(ckt,freq,acPlot);
-
+#endif
+	SPfrontEnd->OUTpData (acPlot, &freqData, &valueData);
+	}
+#ifdef XSPICE
         if(g_ipc.enabled)
             ipc_send_data_suffix();
 
 /* gtri - modify - wbk - 12/19/90 - Send IPC stuff */
-#else
-        error = CKTacDump(ckt,freq,acPlot);
-#endif	
-        if (error) {
+#endif
+        
+	if (error) {
 	    UPDATE_STATS(DOING_AC);
  	    return(error);
  	}
 
         /*  increment frequency */
-
+        pfreq = freq;
         switch (job->LOOPstepType) {
         case DECADE:
         case OCTAVE:
@@ -577,9 +814,31 @@ LOOPan(CKTcircuit *ckt, int restart)
 
     }
 endsweep:
-    printf("Loop analysis '%s': phase margin is %g [degrees], gain margin is %g [dB]\n", job->LOOPname ? job->LOOPname : "anon", phasemargin, gainmargin);
+    printf("Loop analysis"); if(job->LOOPname) printf(" '%s'",job->LOOPname); printf(": ");
+    if(maxgain>=1.0)
+      printf("phase margin is %g [degrees]\n", phasemargin);
+    else
+      printf("no phase margin detected as loop gain is lower than 1\n");
+    
+    printf("Loop analysis"); if(job->LOOPname) printf(" '%s'",job->LOOPname); printf(": ");
+    if(!isnan(gainmargin))
+      printf("gain margin is %g [dB] at f=%g [Hz]\n", gainmargin, ipf);
+    else
+      printf("no gain margin detected as phase do not reach 0 degrees\n");
+    
+    printf("Loop analysis"); if(job->LOOPname) printf(" '%s'",job->LOOPname); printf(": ");
+    if(!isnan(ugf))
+      printf("unit gain frequency is %g [Hz]\n", ugf);
+    else
+      printf("loop gain do not cross 1\n");
+    
+    if(maxgain<1) {
+      printf("Loop analysis"); if(job->LOOPname) printf(" '%s'",job->LOOPname); printf(": ");
+      printf("hint: try to reverce the loop direction\n");
+    }
         
     SPfrontEnd->OUTendPlot (acPlot);
+    tfree(nameList);		
     acPlot = NULL;
     UPDATE_STATS(0);
     return(0);

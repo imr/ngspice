@@ -28,6 +28,11 @@ LOOPsetParm(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
     case LOOP_PROBESRC:
         job->LOOPprobeSrc = value->uValue;
         break;
+    
+    case LOOP_REFNODE:
+        job->LOOPrefNode = value->nValue;
+	job->LOOPrefNodeGiven = 1;
+	break;
 
     case LOOP_START:
 	if (value->rValue <= 0.0) {
@@ -124,6 +129,7 @@ static IFparm LOOPparms[] = {
     { "lin",        LOOP_LIN,     IF_SET|IF_FLAG, "step linearly" },
     { "name",       LOOP_NAME,    IF_SET|IF_STRING, "analysis name" },
     { "probe",      LOOP_PROBESRC,IF_SET|IF_INSTANCE, "probe inloop" },
+    { "refnode",    LOOP_REFNODE, IF_SET|IF_NODE, "reference node" },
     { "portnum",    LOOP_PORTNUM,    IF_SET|IF_INTEGER, "terminal number for breaking the loop" },
     { "portname",       LOOP_PORTNAME,    IF_SET|IF_STRING, "terminal name for breaking the loop" },
     { "dir",       LOOP_DIR,    IF_SET|IF_INTEGER, "loop direction" },
