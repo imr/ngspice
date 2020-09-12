@@ -9,6 +9,9 @@ The AC loading at each side of the probe is automatically taken into account for
 
 The direction of the probe is important. If the loop is analyzed in the wrong direction, the gain will most probably be very small and no stability information can be extracted.
 
+Compilation
+-----------
+Please set the --enable-loopana flag when invoking the configure script.
 
 Syntax
 ------
