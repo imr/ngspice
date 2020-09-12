@@ -55,6 +55,7 @@ Examples
 .loop M2/Gate DEC 10 1 10e9 insrc="Vin" outpos="out" outneg="vcc" dir=-1
 .loop M2 DEC 10 1 10e9 portname="Gate"
 
+A complete example can be found in examples/loop/vreg.cir.
 
 Outputs
 -------
