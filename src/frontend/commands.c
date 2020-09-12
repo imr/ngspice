@@ -300,6 +300,14 @@ struct comm spcp_coms[] = {
       "[.pss line args] : Do a periodic state analysis." } ,
 /* SP */
 #endif
+#ifdef WITH_LOOPANA
+/* F.B.: Loop stability analysis */
+    { "loop", com_loop, TRUE, TRUE,
+      { 0, 0, 0, 0 }, E_DEFHMASK, 0, LOTS,
+      NULL,
+      "[.loop line args] : Do a loop stability analysis." } ,
+#endif
+
     { "ac", com_ac, TRUE, TRUE,
       { 0, 0, 0, 0 }, E_DEFHMASK, 0, LOTS,
       NULL,
@@ -758,6 +766,14 @@ struct comm nutcp_coms[] = {
       { 0, 0, 0, 0 }, E_DEFHMASK, 0, LOTS,
       NULL,
       "[.pss line args] : Do a periodic steady state analysis." } ,
+/* SP */
+#endif
+#ifdef WITH_LOOPANA
+/* F.B.: Loop stability analysis */
+    { "loop", NULL, TRUE, TRUE,
+      { 0, 0, 0, 0 }, E_DEFHMASK, 0, LOTS,
+      NULL,
+      "[.loop line args] : Do a loop stability analysis." } ,
 /* SP */
 #endif
     { "ac", NULL, TRUE, TRUE,

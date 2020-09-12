@@ -186,6 +186,14 @@ com_pss(wordlist *wl)
 /* SP */
 #endif
 
+#ifdef WITH_LOOPANA
+/* F.B. Loop stability analysis */
+void
+com_loop(wordlist *wl)
+{
+    dosim("loop", wl);
+}
+#endif
 
 static int dosim(
         char *what, /* in: command

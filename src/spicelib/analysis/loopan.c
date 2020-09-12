@@ -151,12 +151,24 @@ LOOPpreset(CKTcircuit *ckt, JOB *anal)
            return E_NOTFOUND;
        }
        /* now break the loop at terminal termidx */
+       {
+       char probename[32];
+       sprintf(probename, "probe_%d", termidx);
+       error = SPfrontEnd->IFnewUid (ckt, &eltUid, inst->GENname,
+                        probename, UID_INSTANCE, NULL);
+       }
+       if(error) return(error);
+       probesrc = CKTfndDev(ckt, eltUid);
+       if (probesrc && probesrc->GENmodPtr->GENmodType >= 0)
+       {
+         /* probe already inserted, nothing to do except to free eltUid ? */
+	 printf("Loop analysis: The probe was already in place\n");
+       }
+       else
+       {
        printf("Loop analysis: Break the loop at device '%s' terminal '%s'\n", inst->GENname, dev->termNames[termidx]);
        node = CKTnum2nod(ckt, GENnode(inst)[termidx]);
        error = CKTmkVolt(ckt, &nodeinj, inst->GENname, "loopinj");
-       if(error) return(error);
-       error = SPfrontEnd->IFnewUid (ckt, &eltUid, inst->GENname,
-                        "probe", UID_INSTANCE, NULL);
        if(error) return(error);
        error = SPfrontEnd->IFnewUid (ckt, &modUid, inst->GENname,
                         "probemod", UID_MODEL, NULL);
@@ -176,7 +188,8 @@ LOOPpreset(CKTcircuit *ckt, JOB *anal)
        error = CKTbindNode(ckt,probesrc,job->LOOPdirection==2 ? 2 : 2 ,node);
        if(error) return(error);
        error = CKTbindNode(ckt,inst,termidx+1,nodeinj); /* bindNode counts from 1 ! */
-       ptemp.rValue = 0;
+       if(error) return(error);
+       }
        job->LOOPprobeSrc = probesrc->GENname;
        job->LOOPportnameGiven = 0; /* don't mess if LOOPpreset is called a second time */
        job->LOOPportnumGiven = 0;  /* idem */
