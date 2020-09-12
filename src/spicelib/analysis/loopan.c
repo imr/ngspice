@@ -159,7 +159,7 @@ LOOPpreset(CKTcircuit *ckt, JOB *anal)
        }
        if(error) return(error);
        probesrc = CKTfndDev(ckt, eltUid);
-       if (probesrc && probesrc->GENmodPtr->GENmodType >= 0)
+       if (probesrc && (probesrc->GENmodPtr->GENmodType == CKTtypelook("Vsource")))
        {
          /* probe already inserted, nothing to do except to free eltUid ? */
 	 printf("Loop analysis: The probe was already in place\n");
@@ -226,12 +226,13 @@ LOOPpreset(CKTcircuit *ckt, JOB *anal)
                job->LOOPoutIV = LOOP_IV_CURRENT;
             else if (outsrc->GENmodPtr->GENmodType == CKTtypelook("Isource")) {
 	       /* weird user, but let's kindly reformulate for him */
-               job->LOOPinIV = LOOP_IV_VOLTAGE;
+               job->LOOPoutIV = LOOP_IV_VOLTAGE;
 	       job->LOOPoutPos = CKTnum2nod(ckt, GENnode(outsrc)[0]);
 	       job->LOOPoutNeg = CKTnum2nod(ckt, GENnode(outsrc)[1]);
 	       job->LOOPoutPosGiven = 1;
 	       job->LOOPoutNegGiven = 1;
 	       job->LOOPoutSrcGiven = 0;
+	       printf("Loop analysis: output at nodes %s and %s\n", CKTnodName(ckt, job->LOOPoutPos->number), CKTnodName(ckt, job->LOOPoutNeg->number));
             }
        } else if (job->LOOPoutPosGiven) {
 	   job->LOOPoutIV = LOOP_IV_VOLTAGE;
@@ -504,7 +505,7 @@ LOOPan(CKTcircuit *ckt, int restart)
         nameList = TMALLOC(IFuid, numNames);
         for(int i=0;i<numNames;i++)
         {
-            SPfrontEnd->IFnewUid (ckt, &nameList[i], job->LOOPname, plot_curves[i], UID_OTHER, NULL);
+            SPfrontEnd->IFnewUid (ckt, &nameList[i], NULL, plot_curves[i], UID_OTHER, NULL);
         }
     
 	SPfrontEnd->IFnewUid (ckt, &freqUid, NULL, "frequency", UID_OTHER, NULL);
@@ -689,7 +690,7 @@ LOOPan(CKTcircuit *ckt, int restart)
 	/*T = (D-iD*iD/(1-D))/(1-D+iD/(1-D));*/
 	T = (D*(1-D)-iD*iD)/((1-D)*(1-D) + iD*iD);
 	iT = iD/((1-D)*(1-D) + iD*iD);
-	nphase = 180*atan2(-iD,-D)/M_PI;
+	nphase = 180*atan2(-iT,-T)/M_PI;
 	ngainsq = T*T + iT*iT;
 	/* search for phase margin */
 	if((ngainsq-1)*(gainsq-1)<0)
@@ -703,6 +704,7 @@ LOOPan(CKTcircuit *ckt, int restart)
 		  log(ngainsq)*log(pfreq))/(log(gainsq)-log(ngainsq));
 	        if(isnan(ugf))
 		  ugf = exp(ugflog);
+		if(0) printf("ugf gain cross at %g, crossphase %g, phase %g, nphase %g\n",ugf,crossphase, phase, nphase);
 		/* idea: binary search/sim + for frequency where gain=1 ? */
         }
 	if(ngainsq>=1)
@@ -730,7 +732,7 @@ LOOPan(CKTcircuit *ckt, int restart)
 	curTr = T; /* remember real part only */
 	if(gainsq > maxgain)
 	  maxgain = gainsq;
-	if(0) printf("f=%g |T| = %g, |D|=%g, phase=%g\n", freq, sqrt(T*T+iT*iT), sqrt(D*D+iD*iD), 180*atan2(-iD,-D)/M_PI);
+	if(0) printf("f=%g |T| = %g, |D|=%g, phase=%g\n", freq, sqrt(T*T+iT*iT), sqrt(D*D+iD*iD), nphase);
 	}
 	
 	
