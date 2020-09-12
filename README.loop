@@ -59,11 +59,11 @@ Examples
 Outputs
 -------
 All outputs vectors are complex functions of frequency.
-T: the complex loop gain negated. T has a phase of zero for in-phase negative feedback.
+T: the complex loop gain (negated). T has a phase of zero for in-phase negative feedback.
 D: discrepency factor. D = T/(1+T)
 
 When the circuit input and output are both specified, the .loop analysis will output the additional vectors listed below. Please refer to the GFT description.
-H: the closed loop transfert function output/input
+H: the closed loop transfert function output/input.
 Hinf: the transfert function as if the loop gain was infinite
 Dn: discrepency factor due to direct feedforward path. H=Hinf*D*Dn
 Tn: Tn = 1/(Dn-1)
