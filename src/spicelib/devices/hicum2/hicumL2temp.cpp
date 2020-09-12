@@ -5,7 +5,6 @@ Model Author: 1990 Michael Schröter TU Dresden
 Spice3 Implementation: 2019 Dietmar Warning
 **********/
 
-
 #include "cmath"
 #ifndef M_PI
 #define M_PI 3.1415926535897932384626433832795
@@ -13,7 +12,6 @@ Spice3 Implementation: 2019 Dietmar Warning
 #include <duals/dual>
 #include "hicumL2.hpp"
 #include <functional>
-#include <fenv.h> //trap NAN
 
 //ngspice header files written in C
 #ifdef __cplusplus
@@ -115,8 +113,8 @@ void hicum_TMPHICJ(duals::duald vt, double vt0, duals::duald qtt0, duals::duald 
 
 int
 HICUMtemp(GENmodel *inModel, CKTcircuit *ckt)
-        /* Pre-compute many useful parameters
-         */
+    /* Pre-compute many useful parameters
+     */
 {
     int iret;
     HICUMmodel *model = (HICUMmodel *)inModel;
@@ -171,7 +169,6 @@ int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double 
     zetasct = mg-1.5;
 
 
-
     // Smooth ngspice T clipping
     temp = clip_temperature( *(HICUMTemp)+1_e );
     *(HICUMTemp) = temp.rpart();
@@ -191,7 +188,7 @@ int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double 
 
     //This routine calculate the derivative with respect to Vrth. Since at some point
     // Tdev becomes constant (see above), we need to account for this like below.
-    //temp = *(HICUMTemp)+1_e* *(Tdev_Vrth);    // dual number device temperature
+    //temp = *(HICUMTemp)+1_e* *(Tdev_Vrth);  // dual number device temperature
 
     vt   = temp*CONSTKoverQ;                  // dual valued temperature voltage
 

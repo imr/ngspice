@@ -692,7 +692,6 @@ HICUMpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
                 // with respect to Potential Veie
                 *(here->HICUMtempEmitEIPtr) += -Ith_Veie;
                 *(here->HICUMtempEmitPtr)   += +Ith_Veie;
-//              finish
 
                 //the charges
                 *(here->HICUMbaseBItempPtr + 1) += +XQrbi_Vrth*(s->imag);
