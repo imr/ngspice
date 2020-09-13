@@ -3,9 +3,13 @@
 
 FILE multi_input_pwl/cfunc.mod
 
-Copyright 2005
-Intrinsity, Inc. Austin, TX 78738
-All Rights Reserved
+/* ----------------------------------------------------------------------
+ Copyright 2005
+ Intrinsity, Inc. Austin, TX 78738
+ All Rights Reserved
+ 3 - Clause BSD license
+ (see COPYING or https://opensource.org/licenses/BSD-3-Clause)
+------------------------------------------------------------------------ */
 
 AUTHORS                      
 
