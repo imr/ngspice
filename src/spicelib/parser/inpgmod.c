@@ -1,5 +1,8 @@
 /**********
 Copyright 1990 Regents of the University of California.  All rights reserved.
+Copyright 2000 The ngspice team
+3-Clause BSD license
+(see COPYING or https://opensource.org/licenses/BSD-3-Clause)
 Author: 1985 Thomas L. Quarles, 1991 David A. Gates
 Modified: 2001 Paolo Nenzi (Cider Integration)
 **********/

@@ -3,11 +3,11 @@
 
 FILE hyst/cm_hyst.h
 
-Copyright 1991
-Georgia Tech Research Corporation, Atlanta, Ga. 30332
-All Rights Reserved
+Public Domain
 
-PROJECT A-8503-405
+Georgia Tech Research Corporation
+Atlanta, Georgia 30332
+PROJECT A-8503 405
                
 
 AUTHORS                      
