@@ -1,6 +1,11 @@
 /* -----------------------------------------------------------------
 FILE:    dstring.c
 DESCRIPTION:This file contains the routines for manipulating dynamic strings.
+
+Copyright 2020 The ngspice team
+3 - Clause BSD license
+(see COPYING or https://opensource.org/licenses/BSD-3-Clause)
+Author: Jim Monte
 ----------------------------------------------------------------- */
 #include <ctype.h>
 #include <stdarg.h>
