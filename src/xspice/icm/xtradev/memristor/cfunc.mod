@@ -3,13 +3,13 @@ FILE    memristor/cfunc.mod
 
 MEMBER OF process XSPICE
 
-/* ----------------------------------------------------------------------
+-------------------------------------------------------------------------
  Copyright 2012
  The ngspice team
  All Rights Reserved
  3 - Clause BSD license
  (see COPYING or https://opensource.org/licenses/BSD-3-Clause)
------------------------------------------------------------------------- */
+-------------------------------------------------------------------------
 
 
 AUTHORS
