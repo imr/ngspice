@@ -8,7 +8,7 @@ FILE table2D/cfunc.mod
  The ngspice team
  All Rights Reserved
  GPL
- (see COPYING or https://opensource.org/licenses/BSD-3-Clause)
+ (see COPYING or https://opensource.org/licenses/GPL-2.0)
 ------------------------------------------------------------------------ */
 
   This program is free software; you can redistribute it and/or modify
