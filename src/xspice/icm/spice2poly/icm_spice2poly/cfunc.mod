@@ -3,12 +3,12 @@ FILE    cfunc.mod
 
 MEMBER OF process XSPICE
 
-Copyright 1991
+Public Domain
+
 Georgia Tech Research Corporation
 Atlanta, Georgia 30332
-All Rights Reserved
-
 PROJECT A-8503
+
 
 AUTHORS
 
