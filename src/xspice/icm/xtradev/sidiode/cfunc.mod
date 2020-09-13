@@ -3,10 +3,13 @@
 
 FILE sidiode/cfunc.mod
 
-Copyright 2018
-GHolger Vogt
-All Rights Reserved
-
+-------------------------------------------------------------------------
+ Copyright 2012
+ The ngspice team
+ All Rights Reserved
+ 3 - Clause BSD license
+ (see COPYING or https://opensource.org/licenses/BSD-3-Clause)
+-------------------------------------------------------------------------
 
 AUTHORS
 

@@ -3,13 +3,13 @@
 
 FILE table2D/cfunc.mod
 
-/* ----------------------------------------------------------------------
+-------------------------------------------------------------------------
  Copyright 2015
  The ngspice team
  All Rights Reserved
  GPL
  (see COPYING or https://opensource.org/licenses/GPL-2.0)
------------------------------------------------------------------------- */
+-------------------------------------------------------------------------
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
