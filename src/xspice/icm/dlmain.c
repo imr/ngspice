@@ -1,9 +1,11 @@
 //////////////////////////////////////////////////////////////////////////////
 // Build cmextrn.h, cminfo.h, udnextrn.h and udninfo.h from udnpath.lst and
 // modpath.lst using 'cmpp -lst'. Then compile this file and link it with
-// cm and udn object files to produce a dll that can be loaded by the
-// spice opus simulator at run-time.
-//
+// cm and udn object files to produce a dll that can be loaded by ngspice
+// at run-time.
+// Copyright 2000 The ngspice team
+// 3 - Clause BSD license
+// (see COPYING or https://opensource.org/licenses/BSD-3-Clause)
 // Author: Arpad Buermen
 ////////////////////////////////////////////////////////////////////////////// 
 

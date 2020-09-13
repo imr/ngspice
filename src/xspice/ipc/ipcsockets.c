@@ -2,11 +2,11 @@
 
   FILE IPCsockets.c 
 
-  Copyright 1991
-  Georgia Tech Research Corporation, Atlanta, Georgia 30332
-  All Rights Reserved
+Public Domain
 
-  PROJECT ATESSE A-8503
+Georgia Tech Research Corporation
+Atlanta, Georgia 30332
+PROJECT A-8503
 
   AUTHOR
     Stefan Roth  July 1991

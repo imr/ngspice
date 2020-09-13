@@ -3,11 +3,10 @@ FILE    MIFtrunc.c
 
 MEMBER OF process XSPICE
 
-Copyright 1991
+Public Domain
+
 Georgia Tech Research Corporation
 Atlanta, Georgia 30332
-All Rights Reserved
-
 PROJECT A-8503
 
 AUTHORS
@@ -114,7 +113,6 @@ MIFtrunc(
 
 
 /*
- * Copyright (c) 1985 Thomas L. Quarles
  *
  * This is a modified version of the function CKTterr().  It limits
  * timeStep according to computed truncation error.
