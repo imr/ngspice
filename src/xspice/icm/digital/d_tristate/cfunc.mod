@@ -3,10 +3,10 @@
 
 FILE d_tristate/cfunc.mod
 
-Copyright 1991
-Georgia Tech Research Corporation, Atlanta, Ga. 30332
-All Rights Reserved
+Public Domain
 
+Georgia Tech Research Corporation
+Atlanta, Georgia 30332
 PROJECT A-8503-405
                
 
