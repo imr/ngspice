@@ -134,6 +134,10 @@ if NDEV_WANTED
 ngspice_LDADD += spicelib/devices/ndev/libndev.la
 endif
 
+if LOOPANA_WANTED
+ngspice_LDADD += spicelib/devices/balun/libbalun.la
+endif
+
 if NUMDEV_WANTED
 ngspice_LDADD += \
 	spicelib/devices/nbjt/libnbjt.la   \
@@ -413,6 +417,10 @@ libspice_la_LIBADD += \
 	spicelib/devices/ndev/libndev.la
 endif
 
+if LOOPANA_WANTED
+libspice_la_LIBADD += spicelib/devices/balun/libbalun.la
+endif
+
 if NUMDEV_WANTED
 libspice_la_LIBADD += \
 	spicelib/devices/nbjt/libnbjt.la   \
@@ -526,6 +534,10 @@ libngspice_la_LIBADD += \
 if NDEV_WANTED
 libngspice_la_LIBADD += \
 	spicelib/devices/ndev/libndev.la
+endif
+
+if LOOPANA_WANTED
+libngspice_la_LIBADD += spicelib/devices/balun/libbalun.la
 endif
 
 if NUMDEV_WANTED

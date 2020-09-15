@@ -142,6 +142,9 @@ extern struct coreInfo_t  coreInfo; /* cmexport.c */
 #ifdef NDEV
 #include "ndev/ndevitf.h"
 #endif
+#ifdef WITH_LOOPANA
+#include "balun/balunitf.h"
+#endif
 
 static SPICEdev *(*static_devices[])(void) = {
     /* URC device MUST precede both resistors and capacitors */
@@ -215,6 +218,10 @@ static SPICEdev *(*static_devices[])(void) = {
 
 #ifdef NDEV
     get_ndev_info,
+#endif
+
+#ifdef WITH_LOOPANA
+    get_balun_info,
 #endif
 
 };

@@ -16,6 +16,22 @@ Author: 1985 Thomas L. Quarles
 /* gtri - end - wbk - 11/9/90 */
 #endif
 
+#ifdef WITH_LOOPANA
+/* detect A<instname>#<devtype> */
+int INPlookahead(char* line)
+{
+   int i;
+   char c;
+   for(i=1;c=line[i];i++)
+   {
+      if(isblank(c))
+        return 0;
+      if(c=='#')
+        return i+1;
+   }
+   return 0;
+}
+#endif
 
 /* uncomment to trace in this file */
 /*#define TRACE*/
@@ -90,7 +106,11 @@ void INPpas2(CKTcircuit *ckt, struct card *data, INPtables * tab, TSKtask *task)
 	c = *(current->line);
 	if(islower_c(c))
 	    c = toupper_c(c);
-
+#ifdef WITH_LOOPANA	    
+	if(INP2GEN(ckt, tab, current))
+	    ; /* well done */
+	else
+#endif
 	switch (c) {
 
 	case ' ':
@@ -98,11 +118,8 @@ void INPpas2(CKTcircuit *ckt, struct card *data, INPtables * tab, TSKtask *task)
 	case '\t':
 	    /* blank line (tab leading) */
 	    break;
-
 #ifdef XSPICE
-	    /* gtri - add - wbk - 10/23/90 - add case for 'A' devices */
-
-	case 'A':   /* Aname <cm connections> <mname> */
+	case 'A':
 	    MIF_INP2A(ckt, tab, current);
 	    ckt->CKTadevFlag = 1; /* an 'A' device is requested */
 	    break;

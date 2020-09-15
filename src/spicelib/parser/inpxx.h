@@ -33,6 +33,9 @@ void INP2W(CKTcircuit *ckt, INPtables *tab, struct card *current);
 void INP2Y(CKTcircuit *ckt, INPtables *tab, struct card *current);
 void INP2Z(CKTcircuit *ckt, INPtables *tab, struct card *current);
 
+#ifdef WITH_LOOPANA
+int INP2GEN(CKTcircuit *ckt, INPtables * tab, struct card *current);
+#endif
 
 /* ptfuncs.c */
 

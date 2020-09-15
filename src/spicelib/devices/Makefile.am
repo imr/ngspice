@@ -61,6 +61,11 @@ if NUMDEV_WANTED
 SUBDIRS += nbjt nbjt2 numd  numd2 numos
 endif
 
+if LOOPANA_WANTED
+SUBDIRS += balun
+endif
+
+
 DIST_SUBDIRS = \
 	asrc	\
 	bjt	\
@@ -117,7 +122,8 @@ DIST_SUBDIRS = \
 	nbjt2	\
 	numd	\
 	numd2	\
-	numos
+	numos   \
+	balun
 
 
 noinst_LTLIBRARIES = libdev.la

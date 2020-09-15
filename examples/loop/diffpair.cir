@@ -1,0 +1,32 @@
+* simple differential pair with simple common-mode feedback
+
+.model n1 nmos level=49 version=3.3.0 tox=3.5n nch=2.4e17 nsub=5e16 vth0=0.6
+.model p1 pmos level=49 version=3.3.0 tox=3.5n nch=2.5e17 nsub=5e16 vth0=-0.7
+
+.subckt diffpair inp inn outp outn setcm vdd vss
+Mp1 outp cmfb vdd vdd p1 W=7.5u L=0.35u pd=13.5u ad=22.5p ps=13.5u as=22.5p m=4
+Mp2 outn cmfb vdd vdd p1 W=7.5u L=0.35u pd=13.5u ad=22.5p ps=13.5u as=22.5p m=4
+Mpcm cmfb cmfb vdd vdd p1 W=7.5u L=0.35u pd=13.5u ad=22.5p ps=13.5u as=22.5p m=2
+
+Mncm cmfb setcm tail vss n1 W=7.5u L=0.35u pd=13.5u ad=22.5p ps=13.5u as=22.5p m=4
+Mn1 outn inp tail vss n1 W=7.5u L=0.35u pd=13.5u ad=22.5p ps=13.5u as=22.5p m=8
+Mn2 outp inn tail vss n1 W=7.5u L=0.35u pd=13.5u ad=22.5p ps=13.5u as=22.5p m=8
+
+*bias
+Mn0 tail bn vss vss n1 W=7.5u L=0.35u pd=13.5u ad=22.5p ps=13.5u as=22.5p m=4
+Mnn bn bn vss vss n1 W=7.5u L=0.35u pd=13.5u ad=22.5p ps=13.5u as=22.5p m=4
+Ib vss bn 1u
+.ends
+
+Xdiff inp inn outp outn setcm vdd vss diffpair
+Cload outp outn 100f
+
+Balun1#balun outp outn outcm outdiff
+Balun1#balun inn inp incm indiff
+Vprobediff outdiff indiff DC 0
+Vprobecm outcm incm DC 0
+
+Vset setcm vss DC 1.1
+Vvdd vdd vss DC 3.3
+Vvss vss 0 DC 0
+

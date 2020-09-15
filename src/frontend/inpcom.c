@@ -51,6 +51,10 @@ Author: 1985 Wayne A. Christopher
 /* gtri - end - 12/12/90 */
 #endif
 
+#ifdef WITH_LOOPANA
+int INP2gentype(char* line);
+#endif
+
 /* SJB - Uncomment this line for debug tracing */
 /*#define TRACE*/
 
@@ -4701,6 +4705,11 @@ static void inp_compat(struct card *card)
 
         if (*curr_line == '*')
             continue;
+	
+#ifdef WITH_LOOPANA
+        if (INP2gentype(curr_line))
+            continue;
+#endif
 
         if (*curr_line == 'e') {
             /*    Exxx n1 n2 VCVS n3 n4 gain --> Exxx n1 n2 n3 n4 gain
@@ -5771,6 +5780,10 @@ static void inp_bsource_compat(struct card *card)
         else if (skip_control > 0) {
             continue;
         }
+#ifdef WITH_LOOPANA
+        else if (INP2gentype(curr_line))
+            continue;
+#endif
 
         if (*curr_line == 'b') {
             /* remove white spaces of everything inside {}*/
@@ -8297,7 +8310,7 @@ static void inp_check_syntax(struct card *deck)
             }
             else {
                 if (!check_ch) {
-                    fprintf(stderr, "Warning: Unusal leading characters like '%c' or others out of '= [] ? () & %$§\"!:,'\n", *cut_line);
+                    fprintf(stderr, "Warning: Unusal leading characters like '%c' or others out of '= [] ? () & %%$§\"!:,'\n", *cut_line);
                     fprintf(stderr, "    in netlist or included files, will be replaced with '*'\n");
                     check_ch = 1; /* just one warning */
                 }
