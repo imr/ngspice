@@ -14,8 +14,6 @@ VDMOS: 2018 Holger Vogt, 2020 Dietmar Warning
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
-void VDMOStempUpdate(VDMOSmodel *inModel, VDMOSinstance *here, double Temp, CKTcircuit *ckt);
-
 int
 VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
 /* actually load the current value into the
