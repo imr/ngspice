@@ -16,6 +16,8 @@ VDMOS: 2018 Holger Vogt, 2020 Dietmar Warning
 
 /* declarations for VDMOSFETs */
 
+void VDMOStempUpdate(VDMOSmodel *, VDMOSinstance *, double , CKTcircuit *);
+
 /* indices to the array of MOSFET(1) noise sources */
 
 enum {

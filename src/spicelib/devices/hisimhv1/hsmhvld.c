@@ -1042,8 +1042,9 @@ int HSMHVload(
 
       here->HSMHV_called += 1;
 
+#ifndef NOBYPASS
 line755: /* standard entry if HSMHVevaluate is bypassed */
-         /* (could be shifted a bit forward ...)       */
+#endif   /* (could be shifted a bit forward ...)       */
       if ( here->HSMHV_mode > 0 ) { /* forward mode */
         Rd         = here->HSMHV_Rd ;
         dRd_dVdse  = here->HSMHV_dRd_dVdse  ;

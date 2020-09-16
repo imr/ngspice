@@ -304,7 +304,6 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                 drd1T_dT = 0.0;
                 if (model->VDMOSqsGiven)
                     rd1T = here->VDMOSqsResistance;
-                    drd1T_dT = 0.0;
             }
 
             /*
@@ -885,7 +884,9 @@ bypass:
             *(ckt->CKTstate0 + here->VDIOconduct) = gd;
             *(ckt->CKTstate0 + here->VDIOdIdio_dT) = dIdio_dT;
 
+#ifndef NOBYPASS
 load:
+#endif
             if (selfheat) {
                 Ith = vd*cd;
                 dIth_dVdio = cd + vd*gd;

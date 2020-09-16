@@ -235,11 +235,12 @@ INPgetModBin(CKTcircuit *ckt, char *name, INPmodel **model, INPtables *tab, char
     if (!cp_getvar("scale", CP_REAL, &scale, 0))
         scale = 1;
 
-    if (!cp_getvar("wnflag", CP_NUM, &wnflag, 0))
+    if (!cp_getvar("wnflag", CP_NUM, &wnflag, 0)) {
         if (newcompat.spe || newcompat.hs)
             wnflag = 1;
         else
             wnflag = 0;
+    }
 
     *model = NULL;
 
