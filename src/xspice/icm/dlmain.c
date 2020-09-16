@@ -70,10 +70,6 @@ extern CM_EXPORT void *CMudns(void);
 extern CM_EXPORT void *CMudnNum(void);
 extern CM_EXPORT void *CMgetCoreItfPtr(void);
 
-extern void *tmalloc(size_t num);
-extern void *trealloc(const void *str, size_t num);
-extern void txfree(const void *ptr);
-
 
 // This one returns the device table
 CM_EXPORT void *CMdevs(void) {
