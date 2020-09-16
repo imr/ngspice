@@ -9393,7 +9393,9 @@ finished: /* returning Values to Calling Routine */
             if (!ChargeComputationNeeded)
                 goto line850;
 
+#ifndef NOBYPASS
 line755:
+#endif
             ag0 = ckt->CKTag[0];
 
             T0 = vgd + DELTA_1;

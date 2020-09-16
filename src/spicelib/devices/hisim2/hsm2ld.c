@@ -884,7 +884,9 @@ tm0 = gtodsecld() ;
     
     if (!ChargeComputationNeeded) goto line850; 
     
- line755:
+#ifndef NOBYPASS
+line755:
+#endif
 
     ag0 = ckt->CKTag[0];
     if (here->HSM2_mode > 0) { /* NORMAL mode */
