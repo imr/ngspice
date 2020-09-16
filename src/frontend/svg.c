@@ -140,9 +140,11 @@ SVG_Init(void)
     /* Look for colour overrides: HTML/X11 #xxxxxx style. */
 
     for (colorid = 0; colorid < NUMELEMS(colors); ++colorid) {
-        sprintf(colorN, "svgcolor%d", colorid);
+        sprintf(colorN, "color%d", colorid);
         if (cp_getvar(colorN, CP_STRING, colorstring, sizeof(colorstring))) {
             colors[colorid] = strdup(colorstring);
+            if (colorid == 0)
+                Cfg.strings[SVG_BACKGROUND] = colors[colorid];
         }
     }
 
@@ -194,14 +196,14 @@ SVG_Init(void)
     }
 
     /* override the above when intopts and stropts are set */
-    if (cp_getvar("intopts", CP_LIST, &va, 0)) {
+    if (cp_getvar("svg_intopts", CP_LIST, &va, 0)) {
         i = 0;
         while (i < NUM_INTS && va) {
             Cfg.ints[i++] = va->va_num;
             va = va->va_next;
         }
     }
-    if (cp_getvar("stropts", CP_LIST, &vb, 0)) {
+    if (cp_getvar("svg_stropts", CP_LIST, &vb, 0)) {
         i = 0;
         while (i < NUM_STRINGS && vb) {
             tfree(Cfg.strings[i]);
