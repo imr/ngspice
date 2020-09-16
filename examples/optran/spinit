@@ -1,0 +1,8 @@
+set ngbehavior=ps
+* Load the codemodels
+ codemodel ../lib/ngspice/spice2poly.cm
+ codemodel ../lib/ngspice/analog.cm
+ codemodel ../lib/ngspice/digital.cm
+ codemodel ../lib/ngspice/xtradev.cm
+ codemodel ../lib/ngspice/xtraevt.cm
+ codemodel ../lib/ngspice/table.cm
