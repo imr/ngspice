@@ -118,9 +118,8 @@ typedef Table3_Data_t Local_Data_t;
 
 /*=== FUNCTION PROTOTYPE DEFINITIONS ===*/
 
-extern char *CNVgettok(char **s);
+extern double BilinearInterpolation(double x, double y, int xind, int yind, double **td); 
 extern double TrilinearInterpolation(double x, double y, double z, int xind, int yind, int zind, double ***td);
-int cnv_get_spice_value(char *str, double *p_value);
 extern int findCrossOver(double arr[], int n, double x);
 
 static void free_local_data(Table3_Data_t *loc);
