@@ -18,7 +18,7 @@ Syntax
 General form:
 .loop <probe> dec/oct/lin <nd> <fstart> <fstop> <param>=<value> ...
 
-<probe>: the probe device name. It could be a voltage source or any other device in the circuit. In the latter case, a terminal of the probe must be specified. Use syntax <dev>/<terminal> for <probe>, where <dev> is a device name and <terminal> is the terminal name of <dev> where the voltage source probe must be inserted. <terminal> could also be a number specifying the terminal index of the device (e.g. 2 for gate of mosfet). <dev> must be a leaf device and can't be a subcircuit.
+<probe>: the probe device name. It could be a voltage source or any other device in the circuit. In the latter case, a terminal of the probe must be specified. Use syntax <dev>/<terminal> for <probe>, where <dev> is a device name and <terminal> is the terminal name of <dev> where the voltage source probe must be inserted. <terminal> could also be a number specifying the terminal index of the device (e.g. #2 for gate of mosfet). <dev> must be a leaf device and can't be a subcircuit.
 
 dec/oct/lin: specify the kind of sweep for frequency, similar to the AC analysis.
 
@@ -78,3 +78,17 @@ In addition to the above output vectors, the loop gain T is analyzed for calcula
 phase margin: the phase margin of the loop in degrees.
 gain margin: the gain margin of the loop in dB. The gain margin is found only if the phase of T go through 180 degrees (in-phase positive feedback). The corresponding frequency is also printed.
 unity gain frequency: the frequency at which the loop gain T go below 1.
+
+Differential loop
+-----------------
+Differential loops are usually split into a differential loop and a common-mode loop. Such split can be accomplished by two ideal balun devices with two voltage source probes in between (one for the differential loop and one for the common-mode loop), as set in the example found in examples/loop/diffpair.cir.
+A new ideal balun device was conviently added to ngspice as auxiliary to the loop analysis.
+An example circuit simulation with a differential loop is found in examples/loop/diffpair.cir
+
+New syntax for netlist instances
+--------------------------------
+As all the alphabet was already reserved for device prefix codes in ngspice, a special new syntax was introduced in the parser which works as:
+<instname>#<devtype> <node_1> .. <node_n> <param_1>=<val_1> .. <param_n>=<val_n>
+<instname> can be any name, its first letter has no special significance.
+<devtype> is case insensitive and corresponds to the code name of the device type as set in the SPICEdev structure in each device source code.
+Examples are: Resistor, Capacitor, Inductor, CCCS, CCVS, Diode, Vsource, etc.
