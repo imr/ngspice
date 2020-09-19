@@ -34,9 +34,10 @@ plot vss2#branch vs v(22) title 'Series resistor: Drain current versus drain vol
 
 *** postscript ***
 set hcopydevtype = postscript
-set hcopypscolor=0 ; background black
+set color0 = green
+set color1 = blue
 hardcopy plot_4.ps vss#branch title 'Drain current versus drain voltage' xlabel 'Drain voltage' ylabel 'Drain current'
-set hcopypscolor=1 ; background white
+set hcopybw ; black & white
 hardcopy plot_5.ps vss#branch title 'Drain current versus drain voltage' xlabel 'Drain voltage' ylabel 'Drain current'
 * for MS Windows only
 if $oscompiled = 1 | $oscompiled = 8
