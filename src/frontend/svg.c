@@ -162,6 +162,12 @@ SVG_Init(void)
         dispdev->height = SVGheight;
     }
 
+    /* color or bw */
+    if (cp_getvar("hcopybw", CP_BOOL, NULL, 0))
+        SVGuse_color = 0;
+    else
+        SVGuse_color = 1;
+
     /* get linewidth information from spinit */
     if (!cp_getvar("xbrushwidth", CP_NUM, &Cfg.ints[SVG_STROKE_WIDTH], 0))
         Cfg.ints[SVG_STROKE_WIDTH] = 0;
