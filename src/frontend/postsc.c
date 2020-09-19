@@ -133,16 +133,18 @@ int PS_Init(void)
     }
     dispdev->numlinestyles = NUMELEMS(linestyle);
     /* plot color */
-    if (!cp_getvar("hcopypscolor", CP_NUM, &setbgcolor, 0)) {
-        /* if not set, set plot to b&w and use line styles */
+
+    /* color or bw */
+    if (cp_getvar("hcopybw", CP_BOOL, NULL, 0)) {
+        /* if set, set plot to b&w and use line styles */
         colorflag = 0;
         dispdev->numcolors = 2;
-
-    } else {
-        /* get text color and set plot to color */
+    }
+    else {
+        setbgcolor = 1; /* color0 for background */
+        settxcolor = 0; /* color1 for text */
         colorflag = 1;
         dispdev->numcolors = maxcolor;
-        cp_getvar("hcopypstxcolor", CP_NUM, &settxcolor, 0);
     }
 
     if (settxcolor > maxcolor || settxcolor < 0) {
@@ -250,7 +252,6 @@ int PS_NewViewport(GRAPH *graph)
 
     if (graph->absolute.width) {
         /* hardcopying from the screen */
-
         screenflag = 1;
     }
 
