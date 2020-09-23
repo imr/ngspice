@@ -140,7 +140,8 @@ BJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if(!model->BJTemissionCoeffSGiven) {
             model->BJTemissionCoeffS = 1.0;
         }
-        if(!model->BJTintCollResistGiven) {
+        if((!model->BJTintCollResistGiven)
+           ||(model->BJTintCollResist<0.01)) {
             model->BJTintCollResist = 0.01;
         }
         if(!model->BJTepiSatVoltageGiven) {
