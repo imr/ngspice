@@ -98,13 +98,13 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
             model->VDIObrkdEmissionCoeff = 1.;
 
         if (!model->VDMOSdrainResistanceGiven)
-            model->VDMOSdrainResistance = 1.0e-03;
+            model->VDMOSdrainResistance = 0.0;
 
         if (!model->VDMOSsourceResistanceGiven)
-            model->VDMOSsourceResistance = 1.0e-03;
+            model->VDMOSsourceResistance = 0.0;
 
         if (!model->VDMOSgateResistanceGiven)
-            model->VDMOSgateResistance = 1.0e-03;
+            model->VDMOSgateResistance = 0.0;
 
         if (!model->VDMOSrdsGiven)
             model->VDMOSrds = 1.0e+15;
@@ -250,20 +250,20 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
             if(!here->VDMOSmGiven) {
                 here->VDMOSm = 1;
             }
-            if (model->VDMOSdrainResistance != 0) {
+            if (model->VDMOSdrainResistance > 0) {
                 here->VDMOSdrainConductance = here->VDMOSm / model->VDMOSdrainResistance;
             } else {
-                here->VDMOSdrainConductance = here->VDMOSm / 1.0e-03;
+                here->VDMOSdrainConductance = 0.0;
             }
-            if (model->VDMOSsourceResistance != 0) {
+            if (model->VDMOSsourceResistance > 0) {
                 here->VDMOSsourceConductance = here->VDMOSm / model->VDMOSsourceResistance;
             } else {
-                here->VDMOSsourceConductance = here->VDMOSm / 1.0e-03;
+                here->VDMOSsourceConductance = 0.0;
             }
-            if (model->VDMOSgateResistance != 0) {
+            if (model->VDMOSgateResistance > 0) {
                 here->VDMOSgateConductance = here->VDMOSm / model->VDMOSgateResistance;
             } else {
-                here->VDMOSgateConductance = here->VDMOSm / 1.0e-03;
+                here->VDMOSgateConductance = 0.0;
             }
             if (model->VDMOSrdsGiven) {
                 if (model->VDMOSrds != 0) {
@@ -280,7 +280,7 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
                 here->VDIOconductance = here->VDMOSm / 10e-03;
             }
 
-            if (model->VDMOSdrainResistance != 0) {
+            if (model->VDMOSdrainResistance > 0) {
                 if (here->VDMOSdNodePrime == 0) {
                     error = CKTmkVolt(ckt, &tmp, here->VDMOSname, "drain");
                     if (error) return(error);
@@ -304,7 +304,7 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
                 here->VDMOSdNodePrime = here->VDMOSdNode;
             }
 
-            if (model->VDMOSgateResistance != 0 ) {
+            if (model->VDMOSgateResistance > 0 ) {
                 if (here->VDMOSgNodePrime == 0) {
                     error = CKTmkVolt(ckt, &tmp, here->VDMOSname, "gate");
                     if (error) return(error);
@@ -327,7 +327,7 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
                 here->VDMOSgNodePrime = here->VDMOSgNode;
             }
 
-            if (model->VDMOSsourceResistance != 0) {
+            if (model->VDMOSsourceResistance > 0) {
                 if (here->VDMOSsNodePrime == 0) {
                     error = CKTmkVolt(ckt, &tmp, here->VDMOSname, "source");
                     if (error) return(error);
