@@ -152,6 +152,7 @@ typedef struct sBSIM4instance
 
     double BSIM4delvto;
     double BSIM4mulu0;
+    double BSIM4wnflag;
     double BSIM4xgw;
     double BSIM4ngcon;
 
@@ -339,6 +340,7 @@ typedef struct sBSIM4instance
     unsigned BSIM4rbpsGiven   :1;
     unsigned BSIM4delvtoGiven   :1;
     unsigned BSIM4mulu0Given   :1;
+    unsigned BSIM4wnflagGiven   :1;
     unsigned BSIM4xgwGiven   :1;
     unsigned BSIM4ngconGiven   :1;
     unsigned BSIM4icVDSGiven :1;
@@ -2811,6 +2813,7 @@ typedef struct sBSIM4model
 #define BSIM4_SC                  37
 #define BSIM4_M                   38
 #define BSIM4_MULU0               39
+#define BSIM4_WNFLAG              40
 
 /* Global parameters */
 #define BSIM4_MOD_TEMPEOT         65
