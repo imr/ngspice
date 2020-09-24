@@ -115,7 +115,7 @@ BSIM4v7instance *here = (BSIM4v7instance*)inst;
             value->rValue = here->BSIM4v7mulu0;
             return(OK);
         case BSIM4v7_WNFLAG:
-            value->rValue = here->BSIM4v7wnflag;
+            value->iValue = here->BSIM4v7wnflag;
             return(OK);
         case BSIM4v7_XGW:
             value->rValue = here->BSIM4v7xgw;

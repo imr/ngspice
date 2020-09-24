@@ -113,7 +113,7 @@ typedef struct sBSIM4v7instance
 
     double BSIM4v7delvto;
     double BSIM4v7mulu0;
-    double BSIM4v7wnflag;
+    int BSIM4v7wnflag;
     double BSIM4v7xgw;
     double BSIM4v7ngcon;
 
