@@ -56,7 +56,7 @@ IOPR( "delvt0", BSIM4v7_DELVTO,  IF_REAL   , "Zero bias threshold voltage variat
 IOP( "mulu0", BSIM4v7_MULU0, IF_REAL, "Low field mobility multiplier"),
 IOP( "xgw",  BSIM4v7_XGW, IF_REAL, "Distance from gate contact center to device edge"),
 IOP( "ngcon", BSIM4v7_NGCON, IF_REAL, "Number of gate contacts"),
-IOP( "wnflag", BSIM4v7_WNFLAG, IF_REAL, "Number of gate contacts"),
+IOP( "wnflag", BSIM4v7_WNFLAG, IF_REAL, "W/NF device flag for bin selection"),
 
 IOP( "trnqsmod", BSIM4v7_TRNQSMOD, IF_INTEGER, "Transient NQS model selector"),
 IOP( "acnqsmod", BSIM4v7_ACNQSMOD, IF_INTEGER, "AC NQS model selector"),
