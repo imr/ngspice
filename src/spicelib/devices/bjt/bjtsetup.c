@@ -363,6 +363,12 @@ BJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             model->BJTvceMax = 1e99;
         }
 
+        if (!model->BJTrth0Given)
+            model->BJTrth0 = 0;
+
+        if (!model->BJTcth0Given)
+            model->BJTcth0 = 1e-5;
+
 /*
  * COMPATABILITY WARNING!
  * special note:  for backward compatability to much older models, spice 2G
@@ -505,11 +511,21 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
 
             TSTALLOC(BJTcollCXcollCXPtr,BJTcollCXNode,BJTcollCXNode);
 
-            if(model->BJTintCollResistGiven) {
+            if (model->BJTintCollResistGiven) {
                 TSTALLOC(BJTcollCXBasePrimePtr,BJTcollCXNode,BJTbasePrimeNode);
                 TSTALLOC(BJTbasePrimeCollCXPtr,BJTbasePrimeNode,BJTcollCXNode);
                 TSTALLOC(BJTcolPrimeCollCXPtr,BJTcolPrimeNode,BJTcollCXNode);
                 TSTALLOC(BJTcollCXColPrimePtr,BJTcollCXNode,BJTcolPrimeNode);
+            }
+
+            if (model->BJTrth0Given) {
+                TSTALLOC(BJTtempCollPrimePtr, BJTtempNode,      BJTcolPrimeNode);
+                TSTALLOC(BJTtempBasePrimePtr, BJTtempNode,      BJTbasePrimeNode);
+                TSTALLOC(BJTtempEmitPrimePtr, BJTtempNode,      BJTemitPrimeNode);
+                TSTALLOC(BJTtempTempPtr,      BJTtempNode,      BJTtempNode);
+                TSTALLOC(BJTcolPrimeTempPtr,  BJTcolPrimeNode,  BJTtempNode);
+                TSTALLOC(BJTbasePrimeTempPtr, BJTbasePrimeNode, BJTtempNode);
+                TSTALLOC(BJTemitPrimeTempPtr, BJTemitPrimeNode, BJTtempNode);
             }
         }
     }

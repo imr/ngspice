@@ -226,7 +226,9 @@ IFparm BJTmPTable[] = { /* model parameters */
  IOP("d",     BJT_MOD_XD,    IF_REAL, "Temperature exponent of VO"),
  IOP("vbe_max", BJT_MOD_VBE_MAX, IF_REAL, "maximum voltage B-E junction"),
  IOP("vbc_max", BJT_MOD_VBC_MAX, IF_REAL, "maximum voltage B-C junction"),
- IOP("vce_max", BJT_MOD_VCE_MAX, IF_REAL, "maximum voltage C-E branch")
+ IOP("vce_max", BJT_MOD_VCE_MAX, IF_REAL, "maximum voltage C-E branch"),
+ IOP("rth0",  BJT_MOD_RTH0,  IF_REAL, "Self-heating thermal resistance"),
+ IOP("cth0",  BJT_MOD_CTH0,  IF_REAL, "Self-heating thermal capacitance")
 };
 
 char *BJTnames[] = {

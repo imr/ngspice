@@ -43,6 +43,7 @@ typedef struct sBJTinstance {
     const int BJTbaseNode;  /* number of base node of bjt */
     const int BJTemitNode;  /* number of emitter node of bjt */
     const int BJTsubstNode; /* number of substrate node of bjt */
+    const int BJTtempNode;  /* number of temperature node of bjt */
     int BJTcollCXNode;      /* number of internal collector node of bjt */
     int BJTcolPrimeNode;    /* number of internal collector node of bjt */
     int BJTbasePrimeNode;   /* number of internal base node of bjt */
@@ -167,6 +168,14 @@ typedef struct sBJTinstance {
                              * (collector prime,collector cx) */
     double *BJTcollCXColPrimePtr;    /* pointer to sparse matrix at
                              * (collector cx,base prime) */
+
+    double *BJTtempCollPrimePtr;
+    double *BJTtempBasePrimePtr;
+    double *BJTtempEmitPrimePtr;
+    double *BJTtempTempPtr;
+    double *BJTcolPrimeTempPtr;
+    double *BJTbasePrimeTempPtr;
+    double *BJTemitPrimeTempPtr;
 
     unsigned BJToff         :1;   /* 'off' flag for bjt */
     unsigned BJTtempGiven   :1; /* temperature given  for bjt instance*/
@@ -345,7 +354,13 @@ typedef struct sBJTinstance {
 #define BJTcqbcx BJTstate+31
 #define BJTgbcx BJTstate+32
 
-#define BJTnumStates 33
+#define BJTqth BJTstate+33     /* thermal capacitor charge */
+#define BJTcqth BJTstate+34    /* thermal capacitor current */
+
+#define BJTdeltemp BJTstate+35 /* thermal voltage over rth0 */
+#define BJTdIdio_dT BJTstate+36
+
+#define BJTnumStates 37
 
 #define BJTsensxpbe BJTstate+24 /* charge sensitivities and their
                    derivatives. +25 for the derivatives -
@@ -496,6 +511,8 @@ typedef struct sBJTmodel {          /* model structure for a bjt */
     double BJTvbeMax; /* maximum voltage over B-E junction */
     double BJTvbcMax; /* maximum voltage over B-C junction */
     double BJTvceMax; /* maximum voltage over C-E branch */
+    double BJTrth0;
+    double BJTcth0;
 
     unsigned BJTsubsGiven : 1;
     unsigned BJTtnomGiven : 1;
@@ -613,6 +630,8 @@ typedef struct sBJTmodel {          /* model structure for a bjt */
     unsigned BJTvbeMaxGiven : 1;
     unsigned BJTvbcMaxGiven : 1;
     unsigned BJTvceMaxGiven : 1;
+    unsigned BJTrth0Given :1;
+    unsigned BJTcth0Given :1;
 } BJTmodel;
 
 #ifndef NPN
@@ -764,6 +783,8 @@ enum {
     BJT_MOD_VBE_MAX,
     BJT_MOD_VBC_MAX,
     BJT_MOD_VCE_MAX,
+    BJT_MOD_RTH0,
+    BJT_MOD_CTH0,
 };
 
 /* device questions */
