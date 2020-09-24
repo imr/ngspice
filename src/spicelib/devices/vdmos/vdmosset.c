@@ -31,17 +31,20 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
         if (!model->VDMOStypeGiven)
             model->VDMOStype = NMOS;
 
-        if (!model->VDIOjctSatCurGiven)
-            model->VDIOjctSatCur = 1e-14;
-
         if (!model->VDMOStransconductanceGiven)
             model->VDMOStransconductance = 1;
 
         if (!model->VDMOSvth0Given)
             model->VDMOSvth0 = 0;
 
+        if (!model->VDIOjctSatCurGiven)
+            model->VDIOjctSatCur = 1e-14;
+
         if (!model->VDIOjunctionPotGiven)
             model->VDIOjunctionPot = .8;
+
+        if (!model->VDIOjunctionCapGiven)
+            model->VDIOjunctionCap = 0.;
 
         if (!model->VDIOgradCoeffGiven)
             model->VDIOgradCoeff = .5;
@@ -117,6 +120,9 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
 
         if (!model->VDIOegGiven)
             model->VDIOeg = 1.11;
+
+        if (!model->VDIOxtiGiven)
+            model->VDIOxti = 3.0;
 
         if (!model->VDMOSrthjcGiven)
             model->VDMOSrthjc = 1.0e-03;

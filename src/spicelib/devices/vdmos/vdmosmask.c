@@ -101,6 +101,9 @@ VDMOSmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case VDIO_MOD_MJ:
             value->rValue = model->VDIOgradCoeff;
             return(OK);
+        case VDIO_MOD_FC:
+            value->rValue = model->VDIOdepletionCapCoeff;
+            return(OK);
         case VDIO_MOD_BV:
             value->rValue = model->VDIObv;
             return(OK);
@@ -112,9 +115,6 @@ VDMOSmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
             return(OK);
         case VDMOS_MOD_RDS:
             value->rValue = model->VDMOSrds;
-            return(OK);
-        case VDIO_MOD_FC:
-            value->rValue = model->VDIOdepletionCapCoeff;
             return(OK);
         case VDIO_MOD_TT:
             value->rValue = model->VDIOtransitTime;

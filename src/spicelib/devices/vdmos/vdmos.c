@@ -117,9 +117,9 @@ IFparm VDMOSmPTable[] = { /* model parameters */
  IOP("vj",    VDIO_MOD_VJ,    IF_REAL,   "Body diode junction potential"),
 
  /* body diode capacitance (e.g. source-drain capacitance) */
- IOP("fc",    VDIO_MOD_FC,    IF_REAL,   "Body diode coefficient for forward-bias depletion capacitance formula"),
  IOPA("cjo",  VDIO_MOD_CJ,    IF_REAL,   "Zero-bias body diode junction capacitance"),
  IOP("m",     VDIO_MOD_MJ,    IF_REAL,   "Body diode grading coefficient"),
+ IOP("fc",    VDIO_MOD_FC,    IF_REAL,   "Body diode coefficient for forward-bias depletion capacitance formula"),
 
  /* gate-source and gate-drain capacitances */
  IOPA("cgdmin", VDMOS_MOD_CGDMIN, IF_REAL, "Minimum non-linear G-D capacitance"),
