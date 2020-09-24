@@ -152,7 +152,7 @@ typedef struct sBSIM4instance
 
     double BSIM4delvto;
     double BSIM4mulu0;
-    double BSIM4wnflag;
+    int BSIM4wnflag;
     double BSIM4xgw;
     double BSIM4ngcon;
 

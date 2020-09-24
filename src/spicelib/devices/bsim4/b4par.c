@@ -186,7 +186,7 @@ IFvalue *select)
             here->BSIM4mulu0Given = TRUE;
             break;
         case BSIM4_WNFLAG:
-            here->BSIM4wnflag = value->rValue;
+            here->BSIM4wnflag = value->iValue;
             here->BSIM4wnflagGiven = TRUE;
             break;
         case BSIM4_XGW:
