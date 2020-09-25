@@ -4133,7 +4133,7 @@ static int get_number_terminals(char *c)
             while ((i < 12) && (*c != '\0')) {
                 char *comma;
                 name[i] = gettok_instance(&c);
-                if (strstr(name[i], "off") || strchr(name[i], '='))
+                if (strstr(name[i], "off") || strstr(name[i], "thermal") || strchr(name[i], '='))
                     j++;
 #ifdef CIDER
                 if (strstr(name[i], "save") || strstr(name[i], "print"))

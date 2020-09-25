@@ -54,6 +54,9 @@ BJTask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFvalue
         case BJT_M:
             value->rValue = here->BJTm;
             return(OK);    
+        case BJT_THERMAL:
+            value->iValue = here->BJTthermal;
+            return(OK);
         case BJT_OFF:
             value->iValue = here->BJToff;
             return(OK);

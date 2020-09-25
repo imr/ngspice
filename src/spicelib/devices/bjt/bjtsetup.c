@@ -425,10 +425,6 @@ BJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                      if (tmpNode->nsGiven) {
                        tmp->nodeset=tmpNode->nodeset;
                        tmp->nsGiven=tmpNode->nsGiven;
-/*                     fprintf(stderr, "Nodeset copied from %s\n", tmpName);
-                       fprintf(stderr, "                 to %s\n", tmp->name);
-                       fprintf(stderr, "              value %g\n",
-                                                                tmp->nodeset);*/
                      }
                   }
                 }
@@ -444,10 +440,6 @@ BJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                      if (tmpNode->nsGiven) {
                        tmp->nodeset=tmpNode->nodeset;
                        tmp->nsGiven=tmpNode->nsGiven;
-/*                     fprintf(stderr, "Nodeset copied from %s\n", tmpName);
-                       fprintf(stderr, "                 to %s\n", tmp->name);
-                       fprintf(stderr, "              value %g\n",
-                                                                tmp->nodeset);*/
                      }
                   }
                 }
@@ -463,10 +455,6 @@ BJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                      if (tmpNode->nsGiven) {
                        tmp->nodeset=tmpNode->nodeset;
                        tmp->nsGiven=tmpNode->nsGiven;
-/*                     fprintf(stderr, "Nodeset copied from %s\n", tmpName);
-                       fprintf(stderr, "                 to %s\n", tmp->name);
-                       fprintf(stderr, "              value %g\n",
-                                                                tmp->nodeset);*/
                      }
                   }
                 }
@@ -518,7 +506,7 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
                 TSTALLOC(BJTcollCXColPrimePtr,BJTcollCXNode,BJTcolPrimeNode);
             }
 
-            if (model->BJTrth0Given) {
+            if ((here->BJTthermalGiven) && (model->BJTrth0Given)) {
                 TSTALLOC(BJTtempCollPrimePtr, BJTtempNode,      BJTcolPrimeNode);
                 TSTALLOC(BJTtempBasePrimePtr, BJTtempNode,      BJTbasePrimeNode);
                 TSTALLOC(BJTtempEmitPrimePtr, BJTtempNode,      BJTemitPrimeNode);

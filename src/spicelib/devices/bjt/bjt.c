@@ -21,12 +21,15 @@ Author: 1985 Thomas L. Quarles
 
 IFparm BJTpTable[] = { /* parameters */
  IOPU("off",     BJT_OFF,            IF_FLAG,    "Device initially off"),
- IOPAU("icvbe",  BJT_IC_VBE,         IF_REAL, "Initial B-E voltage"),
- IOPAU("icvce",  BJT_IC_VCE,         IF_REAL, "Initial C-E voltage"),
+ IOPAU("icvbe",  BJT_IC_VBE,         IF_REAL,    "Initial B-E voltage"),
+ IOPAU("icvce",  BJT_IC_VCE,         IF_REAL,    "Initial C-E voltage"),
  IOPU("area",    BJT_AREA,           IF_REAL,    "(Emitter) Area factor"),
  IOPU("areab",   BJT_AREAB,          IF_REAL,    "Base area factor"),
  IOPU("areac",   BJT_AREAC,          IF_REAL,    "Collector area factor"), 
  IOPU("m",       BJT_M,              IF_REAL,   "Parallel Multiplier"),
+ IOPU("temp",    BJT_TEMP,           IF_REAL,    "instance temperature"),
+ IOPU("dtemp",   BJT_DTEMP,          IF_REAL,    "instance temperature delta from circuit"),
+ IOP("thermal",  BJT_THERMAL,        IF_FLAG,    "Thermal model switch on/off"),
  IP("ic",        BJT_IC,             IF_REALVEC, "Initial condition vector"),
  IP("sens_area", BJT_AREA_SENS,IF_FLAG, "flag to request sensitivity WRT area"),
  OPU("colnode",  BJT_QUEST_COLNODE,  IF_INTEGER, "Number of collector node"),
@@ -75,9 +78,7 @@ IFparm BJTpTable[] = { /* parameters */
 					"dc sens. & imag part of ac sens."),
  OPU("sens_mag",  BJT_QUEST_SENS_MAG, IF_REAL,   "sensitivity of ac magnitude"),
  OPU("sens_ph",   BJT_QUEST_SENS_PH,   IF_REAL,    "sensitivity of ac phase"),
- OPU("sens_cplx", BJT_QUEST_SENS_CPLX, IF_COMPLEX, "ac sensitivity"),
- IOPU("temp",     BJT_TEMP,            IF_REAL,    "instance temperature"),
- IOPU("dtemp",    BJT_DTEMP,           IF_REAL,    "instance temperature delta from circuit")
+ OPU("sens_cplx", BJT_QUEST_SENS_CPLX, IF_COMPLEX, "ac sensitivity")
 };
 
 IFparm BJTmPTable[] = { /* model parameters */
@@ -235,7 +236,8 @@ char *BJTnames[] = {
     "collector",
     "base",
     "emitter",
-    "substrate"
+    "substrate",
+    "temp"
 };
 
 

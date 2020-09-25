@@ -31,18 +31,18 @@ BJTparam(int param, IFvalue *value, GENinstance *instPtr, IFvalue *select)
             here->BJTarea = value->rValue;
             here->BJTareaGiven = TRUE;
             break;
-	case BJT_AREAB:
+        case BJT_AREAB:
             here->BJTareab = value->rValue;
             here->BJTareabGiven = TRUE;
             break;   
-	case BJT_AREAC:
+        case BJT_AREAC:
             here->BJTareac = value->rValue;
             here->BJTareacGiven = TRUE;
             break;     
         case BJT_M:
             here->BJTm = value->rValue;
             here->BJTmGiven = TRUE;
-            break;	    
+            break;
         case BJT_TEMP:
             here->BJTtemp = value->rValue + CONSTCtoK;
             here->BJTtempGiven = TRUE;
@@ -51,6 +51,10 @@ BJTparam(int param, IFvalue *value, GENinstance *instPtr, IFvalue *select)
             here->BJTdtemp = value->rValue;
             here->BJTdtempGiven = TRUE;
             break;	    
+        case BJT_THERMAL:
+            here->BJTthermal = (value->iValue != 0);
+            here->BJTthermalGiven = TRUE;
+            break;
         case BJT_OFF:
             here->BJToff = (value->iValue != 0);
             break;

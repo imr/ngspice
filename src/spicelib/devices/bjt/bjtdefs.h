@@ -60,6 +60,7 @@ typedef struct sBJTinstance {
     double BJTicVCE;    /* initial condition voltage C-E*/
     double BJTtemp;     /* instance temperature */
     double BJTdtemp;     /* instance delta temperature from circuit */
+    int    BJTthermal;  /* flag indicate self heating on */
     double BJTtSatCur;  /* temperature adjusted saturation current */
     double BJTtBetaF;   /* temperature adjusted forward beta */
     double BJTtBetaR;   /* temperature adjusted reverse beta */
@@ -180,6 +181,7 @@ typedef struct sBJTinstance {
     unsigned BJToff         :1;   /* 'off' flag for bjt */
     unsigned BJTtempGiven   :1; /* temperature given  for bjt instance*/
     unsigned BJTdtempGiven  :1; /* delta temperature given  for bjt instance*/
+    unsigned BJTthermalGiven : 1; /* flag indicate self heating on */
     unsigned BJTareaGiven   :1; /* flag to indicate area was specified */
     unsigned BJTareabGiven   :1; /* flag to indicate base area was specified */
     unsigned BJTareacGiven   :1; /* flag to indicate collector area was specified */
@@ -661,6 +663,7 @@ enum {
     BJT_M,
     BJT_AREAB,
     BJT_AREAC,
+    BJT_THERMAL,
 };
 
 /* model parameters */

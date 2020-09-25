@@ -12,23 +12,6 @@ Modified: 2001 Paolo Nenzi (Cider Integration)
 #include "inpxx.h"
 
 
-static int
-model_numnodes(int type)
-{
-#ifdef ADMS
-    if (type == INPtypelook("hicum0") ||
-        type == INPtypelook("hicum2") ||
-        type == INPtypelook("bjt504t"))
-        return 5;
-#else
-    if (type == INPtypelook("VBIC"))
-        return 5;
-#endif
-
-    return 4;
-}
-
-
 void INP2Q(CKTcircuit *ckt, INPtables * tab, struct card *current, CKTnode *gnode)
 {
 
@@ -78,14 +61,13 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, struct card *current, CKTnode *gnod
         INPtermInsert(ckt, &token, tab, &node[i]);
     }
 
-    int model_numnodes_ = model_numnodes(thismodel->INPmodType);
-    if (i > model_numnodes_) {
+    if (i > 5) {
         LITERR("Too many nodes for this model type");
         return;
     }
 
     /* tie missing ports to ground, (substrate and thermal node) */
-    while (i < model_numnodes_)
+    while (i < 5)
         node[i++] = gnode;
 
     numnodes = i;
