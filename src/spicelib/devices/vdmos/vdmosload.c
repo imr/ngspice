@@ -80,7 +80,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                 here = VDMOSnextInstance(here)) {
 
             Temp = here->VDMOStemp;
-            selfheat = (here->VDMOSthermalGiven) && (model->VDMOSrthjcGiven);
+            selfheat = (here->VDMOSthermal) && (model->VDMOSrthjcGiven);
             if (selfheat)
                 Check_th = 1;
             else
