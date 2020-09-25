@@ -63,7 +63,6 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
     int SenCond=0;    /* sensitivity condition */
     double diffcharge, diffchargeSW, deplcharge, deplchargeSW, diffcap, diffcapSW, deplcap, deplcapSW;
 
-    register int selfheat;
     double deldelTemp, delTemp, Temp;
     double ceqqth=0.0, Ith=0.0, gcTt=0.0, vrs=0.0;
     double dIdio_dT, dIth_dVdio=0.0, dIrs_dT=0.0, dIth_dVrs=0.0, dIth_dT=0.0;
@@ -72,11 +71,11 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
     /*  loop through all the diode models */
     for( ; model != NULL; model = DIOnextModel(model)) {
 
-        selfheat = ((model->DIOshMod == 1) && (model->DIOrth0Given));
-
         /* loop through all the instances of the model */
         for (here = DIOinstances(model); here != NULL ;
                 here=DIOnextInstance(here)) {
+
+            int selfheat = ((here->DIOtempNode > 0) && (here->DIOthermal) && (model->DIOrth0Given));
 
             /*
              *     this routine loads diodes for dc and transient analyses.

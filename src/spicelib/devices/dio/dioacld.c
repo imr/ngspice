@@ -21,12 +21,9 @@ DIOacLoad(GENmodel *inModel, CKTcircuit *ckt)
     double geq;
     double xceq;
     DIOinstance *here;
-    register int selfheat;
 
     /*  loop through all the diode models */
     for( ; model != NULL; model = DIOnextModel(model)) {
-
-        selfheat = ((model->DIOshMod == 1) && (model->DIOrth0Given));
 
         /* loop through all the instances of the model */
         for (here = DIOinstances(model); here != NULL ;
@@ -45,6 +42,7 @@ DIOacLoad(GENmodel *inModel, CKTcircuit *ckt)
             *(here->DIOposPrimePosPtr ) -= gspr;
             *(here->DIOposPrimeNegPtr ) -= geq;
             *(here->DIOposPrimeNegPtr +1 ) -= xceq;
+            int selfheat = ((here->DIOtempNode > 0) && (here->DIOthermal) && (model->DIOrth0Given));
             if (selfheat) {
                 double dIth_dVrs = here->DIOdIth_dVrs;
                 double dIth_dVdio = here->DIOdIth_dVdio;

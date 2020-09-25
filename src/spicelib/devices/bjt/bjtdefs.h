@@ -181,7 +181,6 @@ typedef struct sBJTinstance {
     unsigned BJToff         :1;   /* 'off' flag for bjt */
     unsigned BJTtempGiven   :1; /* temperature given  for bjt instance*/
     unsigned BJTdtempGiven  :1; /* delta temperature given  for bjt instance*/
-    unsigned BJTthermalGiven : 1; /* flag indicate self heating on */
     unsigned BJTareaGiven   :1; /* flag to indicate area was specified */
     unsigned BJTareabGiven   :1; /* flag to indicate base area was specified */
     unsigned BJTareacGiven   :1; /* flag to indicate collector area was specified */

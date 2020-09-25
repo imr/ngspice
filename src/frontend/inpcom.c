@@ -4076,7 +4076,7 @@ static int get_number_terminals(char *c)
                 char *inst = gettok_instance(&c);
                 strncpy(nam_buf, inst, sizeof(nam_buf) - 1);
                 txfree(inst);
-                if (strstr(nam_buf, "off") || strchr(nam_buf, '='))
+                if (strstr(nam_buf, "off") || strstr(nam_buf, "thermal") || strchr(nam_buf, '='))
                     break;
                 i++;
             }

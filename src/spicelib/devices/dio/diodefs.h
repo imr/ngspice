@@ -91,6 +91,7 @@ typedef struct sDIOinstance {
     double DIOw;        /* width for the diode */
     double DIOl;        /* length for the diode */
     double DIOm;        /* multiplier for the diode */
+    int    DIOthermal;  /* flag indicate self heating on */
 
     double DIOinitCond;        /* initial condition */
     double DIOtemp;            /* temperature of the instance */
@@ -263,7 +264,6 @@ typedef struct sDIOmodel {       /* model structure for a diode */
     unsigned DIOrecSatCurGiven : 1;
     unsigned DIOrecEmissionCoeffGiven : 1;
 
-    unsigned DIOshModGiven :1;
     unsigned DIOrth0Given :1;
     unsigned DIOcth0Given :1;
 
@@ -322,7 +322,6 @@ typedef struct sDIOmodel {       /* model structure for a diode */
     double DIOrecSatCur; /* Recombination saturation current */
     double DIOrecEmissionCoeff; /* Recombination emission coefficient */
 
-    int DIOshMod;
     double DIOrth0;
     double DIOcth0;
 } DIOmodel;
@@ -352,9 +351,7 @@ enum {
     DIO_L,
     DIO_M,
     DIO_DTEMP,
-    DIO_RTH0,
-    DIO_CTH0,
-    DIO_TNODE,
+    DIO_THERMAL,
 };
 
 /* model parameters */
@@ -410,7 +407,6 @@ enum {
     DIO_MOD_BV_MAX,
     DIO_MOD_ISR,
     DIO_MOD_NR,
-    DIO_MOD_SHMOD,
     DIO_MOD_RTH0,
     DIO_MOD_CTH0,
 };

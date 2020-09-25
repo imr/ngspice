@@ -49,6 +49,9 @@ DIOparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->DIOm = value->rValue;
             here->DIOmGiven = TRUE;
             break;
+        case DIO_THERMAL:
+            here->DIOthermal = (value->iValue != 0);
+            break;
 
         case DIO_TEMP:
             here->DIOtemp = value->rValue+CONSTCtoK;

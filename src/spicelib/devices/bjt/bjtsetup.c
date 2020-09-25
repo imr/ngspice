@@ -506,7 +506,7 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
                 TSTALLOC(BJTcollCXColPrimePtr,BJTcollCXNode,BJTcolPrimeNode);
             }
 
-            if ((here->BJTthermalGiven) && (model->BJTrth0Given)) {
+            if ((here->BJTthermal) && (model->BJTrth0Given)) {
                 TSTALLOC(BJTtempCollPrimePtr, BJTtempNode,      BJTcolPrimeNode);
                 TSTALLOC(BJTtempBasePrimePtr, BJTtempNode,      BJTbasePrimeNode);
                 TSTALLOC(BJTtempEmitPrimePtr, BJTtempNode,      BJTemitPrimeNode);

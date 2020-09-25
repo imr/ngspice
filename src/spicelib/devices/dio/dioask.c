@@ -48,6 +48,9 @@ DIOask (CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
         case DIO_M:
             value->rValue = here->DIOm;
             return(OK);
+        case DIO_THERMAL:
+            value->iValue = here->DIOthermal;
+            return(OK);
 
         case DIO_TEMP:
             value->rValue = here->DIOtemp-CONSTCtoK;

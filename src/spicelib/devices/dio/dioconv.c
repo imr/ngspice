@@ -21,7 +21,6 @@ DIOconvTest(GENmodel *inModel, CKTcircuit *ckt)
     DIOinstance *here;
     double delvd,vd,cdhat,cd;
     double tol;
-    register int selfheat;
     double delTemp, deldelTemp;
     /*  loop through all the diode models */
     for( ; model != NULL; model = DIOnextModel(model)) {
@@ -39,7 +38,7 @@ DIOconvTest(GENmodel *inModel, CKTcircuit *ckt)
 
             delvd=vd- *(ckt->CKTstate0 + here->DIOvoltage);
 
-            selfheat = ((model->DIOshMod == 1) && (model->DIOrth0Given));
+            int selfheat = ((here->DIOtempNode > 0) && (here->DIOthermal) && (model->DIOrth0Given));
             if (selfheat)
                 delTemp = *(ckt->CKTrhsOld + here->DIOtempNode);
             else

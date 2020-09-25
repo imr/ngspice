@@ -180,9 +180,6 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             model->DIOconductance = 1/model->DIOresist;
         }
 
-        if (!model->DIOshModGiven)
-            model->DIOshMod = 0;
-
         if (!model->DIOrth0Given)
             model->DIOrth0 = 0;
 
@@ -250,6 +247,8 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 }
             }
 
+            int selfheat = ((here->DIOtempNode > 0) && (here->DIOthermal) && (model->DIOrth0Given));
+
 /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
 do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
@@ -264,7 +263,7 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
             TSTALLOC(DIOnegNegPtr,           DIOnegNode,      DIOnegNode);
             TSTALLOC(DIOposPrimePosPrimePtr, DIOposPrimeNode, DIOposPrimeNode);
 
-            if ((model->DIOshMod == 1) && (model->DIOrth0 != 0.0)) {
+            if (selfheat) {
                 TSTALLOC(DIOtempPosPtr,      DIOtempNode,     DIOposNode);
                 TSTALLOC(DIOtempPosPrimePtr, DIOtempNode,     DIOposPrimeNode);
                 TSTALLOC(DIOtempNegPtr,      DIOtempNode,     DIOnegNode);

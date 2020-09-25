@@ -53,7 +53,6 @@ BJTparam(int param, IFvalue *value, GENinstance *instPtr, IFvalue *select)
             break;	    
         case BJT_THERMAL:
             here->BJTthermal = (value->iValue != 0);
-            here->BJTthermalGiven = TRUE;
             break;
         case BJT_OFF:
             here->BJToff = (value->iValue != 0);
