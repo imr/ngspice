@@ -44,7 +44,7 @@ VDMOSconvTest(GENmodel *inModel, CKTcircuit *ckt)
             delvds = vds - *(ckt->CKTstate0 + here->VDMOSvds);
             delvgd = vgd-vgdo;
 
-            selfheat = (here->VDMOSthermalGiven) && (model->VDMOSrthjcGiven);
+            selfheat = (here->VDMOSthermal) && (model->VDMOSrthjcGiven);
             if (selfheat) {
                 delTemp = *(ckt->CKTrhs + here->VDMOStempNode);
                 deldelTemp = delTemp - *(ckt->CKTstate0 + here->VDMOSdelTemp);

@@ -155,7 +155,6 @@ typedef struct sVDMOSinstance {
     unsigned VDMOSsNodePrimeSet :1;
     unsigned VDMOSicVDSGiven :1;
     unsigned VDMOSicVGSGiven :1;
-    unsigned VDMOSthermalGiven : 1; /* flag indicate self heating on */
     unsigned VDMOSvonGiven : 1;
     unsigned VDMOSvdsatGiven :1;
     unsigned VDMOSmodeGiven :1;

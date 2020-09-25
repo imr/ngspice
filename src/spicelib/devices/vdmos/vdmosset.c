@@ -374,7 +374,7 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
                 here->VDIOposPrimeNode = here->VDMOSsNode;
             }
 
-            if ((here->VDMOSthermalGiven) && (model->VDMOSrthjcGiven)) {
+            if ((here->VDMOSthermal) && (model->VDMOSrthjcGiven)) {
                if (here->VDMOStempNode == -1) {
                   error = CKTmkVolt(ckt,&tmp,here->VDMOSname,"Tj");
                   if (error) return(error);
@@ -435,7 +435,7 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
             TSTALLOC(VDIORPsPtr,  VDIOposPrimeNode, VDMOSsNode);
             TSTALLOC(VDIORPrpPtr, VDIOposPrimeNode, VDIOposPrimeNode);
 
-            if ((here->VDMOSthermalGiven) && (model->VDMOSrthjcGiven)) {
+            if ((here->VDMOSthermal) && (model->VDMOSrthjcGiven)) {
                 TSTALLOC(VDMOSTemptempPtr, VDMOStempNode,   VDMOStempNode);  /* Transistor thermal contribution */
                 TSTALLOC(VDMOSTempdpPtr,   VDMOStempNode,   VDMOSdNodePrime);
                 TSTALLOC(VDMOSTempspPtr,   VDMOStempNode,   VDMOSsNodePrime);
@@ -498,7 +498,7 @@ VDMOSunsetup(GENmodel *inModel, CKTcircuit *ckt)
                 CKTdltNNum(ckt, here->VDIOposPrimeNode);
             here->VDIOposPrimeNode = 0;
 
-            if ((here->VDMOSthermalGiven) && (model->VDMOSrthjcGiven)) {
+            if ((here->VDMOSthermal) && (model->VDMOSrthjcGiven)) {
                 if (here->VDMOStNodePrime > 0)
                     CKTdltNNum(ckt, here->VDMOStNodePrime);
                 here->VDMOStNodePrime = 0;

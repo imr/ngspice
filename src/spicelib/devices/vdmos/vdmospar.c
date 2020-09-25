@@ -55,7 +55,6 @@ VDMOSparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             break;
         case VDMOS_THERMAL:
             here->VDMOSthermal = (value->iValue != 0);
-            here->VDMOSthermalGiven = TRUE;
             break;
         case VDMOS_IC:
             /* FALLTHROUGH added to suppress GCC warning due to
