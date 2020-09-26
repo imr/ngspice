@@ -58,8 +58,8 @@ C8 OUT1 N011 3p
 .control
 op
 print v(out) @r1[i] @r2[i]
-ac dec 100 10 1Meg
-plot db(V(out)/V(out1))
+ac dec 100 1 10Meg
+plot unwrap(db(V(out)/V(out1)))
 set units=degrees
 plot ph(V(out)/V(out1))
 tran 1u 1000m
