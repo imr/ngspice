@@ -992,6 +992,7 @@ translate(struct card *deck, char *formal, char *actual, char *scname, const cha
     }
 
     for (c = deck; c; c = c->nextcard) {
+        bool got_vnam = FALSE;
         char *s = c->line;
         char dev_type = tolower_c(s[0]);
 
@@ -1074,13 +1075,23 @@ translate(struct card *deck, char *formal, char *actual, char *scname, const cha
                     if (name)
                         tfree(name);
                     name = next_name;
+                    /* vname requires instance translation of token following */
+                    if (eq(name, "vnam"))
+                        got_vnam = TRUE;
                     next_name = MIFgettok(&s);
                     bxx_put_cstring(&buffer, name);
                     break;
 
                 default:
-                    /* must be a node name at this point, so translate it */
-                    translate_node_name(&buffer, scname, name, NULL);
+                    if (got_vnam) {
+                        /* after %vnam an instance name is following */
+                        translate_inst_name(&buffer, scname, name, NULL);
+                        got_vnam = FALSE;
+                    }
+                    else {
+                        /* must be a node name at this point, so translate it */
+                        translate_node_name(&buffer, scname, name, NULL);
+                    }
                     break;
 
                 }
