@@ -21,9 +21,6 @@ VDMOSmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
     NG_IGNORE(ckt);
 
     switch(which) {
-        case VDMOS_MOD_TNOM:
-            value->rValue = model->VDMOStnom-CONSTCtoK;
-            return(OK);
         case VDMOS_MOD_VTH:
             value->rValue = model->VDMOSvth0;
             return(OK);
@@ -47,6 +44,15 @@ VDMOSmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
             return(OK);
         case VDMOS_MOD_RG:
             value->rValue = model->VDMOSgateResistance;
+            return(OK);
+        case VDMOS_MOD_TNOM:
+            value->rValue = model->VDMOStnom-CONSTCtoK;
+            return(OK);
+        case VDMOS_MOD_AF:
+            value->rValue = model->VDMOSfNcoef;
+            return(OK);
+        case VDMOS_MOD_KF:
+            value->rValue = model->VDMOSfNexp;
             return(OK);
         case VDMOS_MOD_RQ:
             value->rValue = model->VDMOSqsResistance;
