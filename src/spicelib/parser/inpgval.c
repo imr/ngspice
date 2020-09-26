@@ -41,6 +41,8 @@ INPgetValue(CKTcircuit *ckt, char **line, int type, INPtables *tab)
         list = TMALLOC(double, 1);
         tmp = INPevaluate(line, &error, 1);
         if (error) {
+            if(ft_ngdebug)
+                fprintf(stderr, "\nError: Could not read parameter in front of\n    %s\n", *line);
             tfree(list);
             return NULL;
         }
