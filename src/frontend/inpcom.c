@@ -7461,6 +7461,18 @@ static int rep_spar(char *inpar[4])
             inpar[i] = tprintf("cntl_%s", strend);
             tfree(strend);
         }
+        else if ((t = strstr(tok, "ion")) != NULL) {
+            strend = copy(t + 1);
+            tfree(inpar[i]);
+            inpar[i] = tprintf("cntl_%s", strend);
+            tfree(strend);
+        }
+        else if ((t = strstr(tok, "ioff")) != NULL) {
+            strend = copy(t + 1);
+            tfree(inpar[i]);
+            inpar[i] = tprintf("cntl_%s", strend);
+            tfree(strend);
+        }
         else if ((t = strstr(tok, "ron")) != NULL) {
             strend = copy(t + 1);
             tfree(inpar[i]);
@@ -7549,13 +7561,13 @@ static bool del_models(struct vsmodels *vsmodel)
   as1 %vd(DG GND) % gd(D S) aswn
   .model aswn aswitch(cntl_off={0.49} cntl_on={0.55} r_off={1G}
   + r_on={ 1 / (2 * M*(W / LE)*(KPN / 2) * 10) } log = TRUE)
-* replace vsitch part S_ST
+* replace vswitch part S_ST
   S1 D S DG GND S_ST
- .MODEL S_ST VSWITCH(VT = { 1.5 } VH = { 0.s }
+ .MODEL S_ST VSWITCH(VT = { 1.5 } VH = { 0.3 }
      RON = { 1 / (2 * M*(W / LE)*(KPN / 2) * 10) }  ROFF = { 1G })
 * by the classical voltage controlled ngspice switch
   S1 D S DG GND SWN
- .MODEL S_ST SW(VT = { 1.5 } VH = { 0.s }
+ .MODEL S_ST SW(VT = { 1.5 } VH = { 0.3 }
      RON = { 1 / (2 * M*(W / LE)*(KPN / 2) * 10) }  ROFF = { 1G })
   switch parameter td is not yet supported
 * replace & by &&
@@ -8092,9 +8104,192 @@ static struct card *pspice_compat(struct card *oldcard)
         }
     }
     del_models(modelsfound);
+    modelsfound = NULL;
+
+    /* if iswitch part s, replace
+     * W1 D S VC SWN
+     * .MODEL SWN ISWITCH ( ION = {0.55} IOFF = {0.49}
+     *         RON={1/(2*M*(W/LE)*(KPN/2)*10)}  ROFF={1G} )
+     * by
+     * a1 %v(DG) %gd(D S) swa
+     * .MODEL SWA aswitch(cntl_off=0.49 cntl_on=0.55 r_off=1G
+     *         r_on={1/(2*M*(W/LE)*(KPN/2)*10)} log=TRUE)
+     *
+     * if iswitch part s_st (short transition), don't replace instance, but only model
+     * replace
+     * W1 D S VC S_ST
+     * .MODEL S_ST ISWITCH(IT = { 1.5 } IH = { 0.2 }
+           RON = { 1 / (2 * M*(W / LE)*(KPN / 2) * 10) }  ROFF = { 1G })
+     * by the classical current controlled ngspice switch
+     * W1 D S DG GND S_ST
+     * .MODEL S_ST CSW(IT = { 1.5 } IH = { 0.2 }
+             RON = { 1 / (2 * M*(W / LE)*(KPN / 2) * 10) }  ROFF = { 1G })
+     * iswitch delay parameter td is not yet supported
+
+     * simple hierachy, as nested subcircuits are not allowed in PSPICE */
+
+     /* first scan: find the iswitch models, transform them and put them into a
+      * list */
+    bool have_it = FALSE, have_ih = FALSE;
+    for (card = newcard; card; card = card->nextcard) {
+        char* str;
+        static struct card* subcktline = NULL;
+        static int nesting = 0;
+        char* cut_line = card->line;
+        if (ciprefix(".subckt", cut_line)) {
+            subcktline = card;
+            nesting++;
+        }
+        if (ciprefix(".ends", cut_line))
+            nesting--;
+
+        if (ciprefix(".model", card->line) && strstr(card->line, "iswitch")) {
+            char* modpar[4];
+            char* modname;
+            int i;
+
+            card->line = str = inp_remove_ws(card->line);
+            str = nexttok(str); /* throw away '.model' */
+            INPgetNetTok(&str, &modname, 0); /* model name */
+            if (!ciprefix("iswitch", str)) {
+                tfree(modname);
+                continue;
+            }
+            /* we have to find 4 parameters, identified by '=', separated by
+             * spaces */
+            char* equalptr[4];
+            equalptr[0] = strstr(str, "=");
+            if (!equalptr[0]) {
+                fprintf(stderr,
+                    "Error: not enough parameters in iswitch model\n   "
+                    "%s\n",
+                    card->line);
+                controlled_exit(1);
+            }
+            for (i = 1; i < 4; i++) {
+                equalptr[i] = strstr(equalptr[i - 1] + 1, "=");
+                if (!equalptr[i]) {
+                    fprintf(stderr,
+                        "Error: not enough parameters in iswitch model\n "
+                        "  %s\n",
+                        card->line);
+                    controlled_exit(1);
+                }
+            }
+            for (i = 0; i < 4; i++) {
+                equalptr[i] = skip_back_ws(equalptr[i], str);
+                while (*(equalptr[i]) != '(' && !isspace_c(*(equalptr[i])) &&
+                    *(equalptr[i]) != ',')
+                    (equalptr[i])--;
+                (equalptr[i])++;
+            }
+            for (i = 0; i < 3; i++)
+                modpar[i] = copy_substring(equalptr[i], equalptr[i + 1] - 1);
+            if (strrchr(equalptr[3], ')'))
+                modpar[3] = copy_substring(
+                    equalptr[3], strrchr(equalptr[3], ')'));
+            else
+                /* iswitch defined without parens */
+                modpar[3] = copy(equalptr[3]);
+
+            /* check if we have parameters IT and IH */
+            for (i = 0; i < 4; i++) {
+                if (ciprefix("ih", modpar[i]))
+                    have_ih = TRUE;
+                if (ciprefix("it", modpar[i]))
+                    have_it = TRUE;
+            }
+            if (have_ih && have_it) {
+                /* replace iswitch by csw */
+                char* vs = strstr(card->line, "iswitch");
+                memmove(vs, "    csw", 7);
+            }
+            else {
+                /* replace ION by cntl_on, IOFF by cntl_off, RON by r_on, and
+                 * ROFF by r_off */
+                tfree(card->line);
+                rep_spar(modpar);
+                card->line = tprintf(
+                    ".model a%s aswitch(%s %s %s %s  log=TRUE)", modname,
+                    modpar[0], modpar[1], modpar[2], modpar[3]);
+            }
+            for (i = 0; i < 4; i++)
+                tfree(modpar[i]);
+            if (nesting > 0)
+                modelsfound = insert_new_model(
+                    modelsfound, modname, subcktline->line);
+            else
+                modelsfound = insert_new_model(modelsfound, modname, "top");
+            tfree(modname);
+        }
+    }
+
+    /* no need to continue if no vswitch is found */
+    if (!modelsfound)
+        return newcard;
+
+    /* no need to change the switch instances if switch csw is used */
+    if (have_ih && have_it)
+        return newcard;
+
+    /* second scan: find the switch instances s calling an iswitch model and
+     * transform them */
+    for (card = newcard; card; card = card->nextcard) {
+        static struct card* subcktline = NULL;
+        static int nesting = 0;
+        char* cut_line = card->line;
+        if (*cut_line == '*')
+            continue;
+        // exclude any command inside .control ... .endc
+        if (ciprefix(".control", cut_line)) {
+            skip_control++;
+            continue;
+        }
+        else if (ciprefix(".endc", cut_line)) {
+            skip_control--;
+            continue;
+        }
+        else if (skip_control > 0) {
+            continue;
+        }
+        if (ciprefix(".subckt", cut_line)) {
+            subcktline = card;
+            nesting++;
+        }
+        if (ciprefix(".ends", cut_line))
+            nesting--;
+
+        if (ciprefix("w", cut_line)) {
+            /* check for the model name */
+            int i;
+            char* stoks[5];
+            for (i = 0; i < 5; i++)
+                stoks[i] = gettok_node(&cut_line);
+            /* rewrite w line and replace it if a model is found */
+            if ((nesting > 0) &&
+                find_a_model(modelsfound, stoks[4], subcktline->line)) {
+                tfree(card->line);
+                card->line = tprintf("a%s %%vnam(%s) %%gd(%s %s) a%s",
+                    stoks[0], stoks[3], stoks[1], stoks[2],
+                    stoks[4]);
+            }
+            /* if model is not within same subcircuit, search at top level */
+            else if (find_a_model(modelsfound, stoks[4], "top")) {
+                tfree(card->line);
+                card->line = tprintf("a%s %%vnam(%s) %%gd(%s %s) a%s",
+                    stoks[0], stoks[3], stoks[1], stoks[2],
+                    stoks[4]);
+            }
+            for (i = 0; i < 5; i++)
+                tfree(stoks[i]);
+        }
+    }
+    del_models(modelsfound);
 
     return newcard;
 }
+
+
 
 /* do not modify oldcard address, insert everything after first line only */
 static void pspice_compat_a(struct card *oldcard)
