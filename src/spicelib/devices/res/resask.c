@@ -137,9 +137,8 @@ RESask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
         return(OK);
     case RES_CURRENT:
         if (ckt->CKTcurrentAnalysis & DOING_AC) {
-            errMsg = TMALLOC(char, strlen(msg) + 1);
+            errMsg = tprintf("%s: %s", inst->GENname, msg);
             errRtn = "RESask";
-            strcpy(errMsg, msg);
             return(E_ASKCURRENT);
         } else if (ckt->CKTrhsOld) {
             value->rValue = (*(ckt->CKTrhsOld + fast->RESposNode) -
@@ -153,9 +152,8 @@ RESask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
         }
     case RES_POWER:
         if (ckt->CKTcurrentAnalysis & DOING_AC) {
-            errMsg = TMALLOC(char, strlen(msg) + 1);
+            errMsg = tprintf("%s: %s", inst->GENname, msg);
             errRtn = "RESask";
-            strcpy(errMsg, msg);
             return(E_ASKPOWER);
         } else if (ckt->CKTrhsOld) {
             value->rValue = (*(ckt->CKTrhsOld + fast->RESposNode) -
