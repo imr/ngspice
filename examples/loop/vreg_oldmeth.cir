@@ -1,4 +1,4 @@
-* simple voltage regulator example
+* simple voltage regulator, example for traditional feedback loop analysis using L and C
 
 Mout out pgate vdd vdd p1 W=7.5u L=0.35u pd=13.5u ad=22.5p ps=13.5u as=22.5p m=100
 R1 out fb 33.3K
@@ -15,9 +15,18 @@ Mb1 tail bn vss vss n1 W=7.5u L=0.35u pd=13.5u ad=22.5p ps=13.5u as=22.5p m=4
 Mb0 bn bn vss vss n1 W=7.5u L=0.35u pd=13.5u ad=22.5p ps=13.5u as=22.5p m=4
 Ib vss bn 1u
 
-Vloop fb fbinj DC 0
+* breaking the loop with huge inductor
+Lloop fb fbinj 100e6
+* injecting AC trough huge capacitor
+Cinj inj fbinj 100e6
+Vinj inj 0 DC 0 AC 1
+* load replication for node 'fb' (approximate)
+M2rep mirrep fb tailrep vss n1 W=7.5u L=0.35u pd=13.5u ad=22.5p ps=13.5u as=22.5p m=10
+Mp1rep mirrep mirrep vdd vdd p1 W=7.5u L=0.35u pd=13.5u ad=22.5p ps=13.5u as=22.5p m=2
+Mb1rep tailrep bn vss vss n1 W=7.5u L=0.35u pd=13.5u ad=22.5p ps=13.5u as=22.5p m=2
 
-Vset set vss DC 1.2 AC 1
+
+Vset set vss DC 1.2
 Vvdd vdd vss DC 3.3
 Vvss vss 0 DC 0
 
@@ -27,16 +36,10 @@ Iload out vss DC 10e-3 PWL 1n 10e-3 2n 1e-3
 .model n1 nmos level=49 version=3.3.0 tox=3.5n nch=2.4e17 nsub=5e16 vth0=0.6
 .model p1 pmos level=49 version=3.3.0 tox=3.5n nch=2.5e17 nsub=5e16 vth0=-0.7
 
-
-.loop M2/Gate DEC 10 1 10e9 insrc="Vset" outpos="out" outneg="vss" dir=-1 refnode="set"
-.loop M2/Gate DEC 10 1 10e9 insrc="Vset" outpos="out" outneg="vss" dir=1 refnode="set"
-
-.ac dec 10 1 1e9
-.tran 10n 10u
+.option gmin=1e-14 reltol=1e-5 abstol=1e-14
+.ac dec 10 1 10e9
 
 .control
-* quoting names is not necessary inside .control
-loop M2/Gate dec 10 1 10e9 insrc=Vset outsrc=Iload refnode=set dir=-1 name=control
-plot db(T)
-plot db(H) db(Hinf) db(D) db(Dn)
+ac dec 10 1 10e9
+plot db(fb)
 .endc
