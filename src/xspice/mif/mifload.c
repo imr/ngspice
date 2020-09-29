@@ -435,6 +435,7 @@ MIFload(
             cm_data.conn = here->conn;
             cm_data.num_param = here->num_param;
             cm_data.param = here->param;
+	    cm_data.iparam = here->iparam;
             cm_data.num_inst_var = here->num_inst_var;
             cm_data.inst_var = here->inst_var;
             cm_data.callback = &(here->callback);

@@ -73,7 +73,7 @@ struct coreInfo_t  coreInfo =
   txfree,
   tmalloc,
   trealloc,
-  txfree
+  txfree,
 #else
   GC_malloc,
   tcalloc,
@@ -81,6 +81,7 @@ struct coreInfo_t  coreInfo =
   no_free,
   GC_malloc,
   GC_realloc,
-  no_free
+  no_free,
 #endif
+  MIFParam,
 };

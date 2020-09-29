@@ -91,6 +91,12 @@ extern int MIFload(
     CKTcircuit    *ckt 
 );
 
+extern int MIFParam(
+    int iparam,
+    IFvalue *value,
+    GENinstance *inst,
+    IFvalue *select
+);
 
 extern int MIFmParam(
     int param_index,

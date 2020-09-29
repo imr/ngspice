@@ -86,6 +86,7 @@ MIFdelete(GENinstance *gen_inst)
         cm_data.conn = here->conn;
         cm_data.num_param = here->num_param;
         cm_data.param = here->param;
+	cm_data.iparam = here->iparam;
         cm_data.num_inst_var = here->num_inst_var;
         cm_data.inst_var = here->inst_var;
         cm_data.callback = &(here->callback);
@@ -170,7 +171,23 @@ MIFdelete(GENinstance *gen_inst)
     }
     FREE(here->inst_var);
 
+    /* Free the instance params stuff allocated in mif_inp2.c */
+    for (i = 0; i < here->num_iparam; i++) {
+        /* delete content of union 'element' if it contains a string */
+        if (here->iparam[i]->element) {
+            if (here->iparam[i]->eltype == IF_STRING)
+                FREE(here->iparam[i]->element[0].svalue);
+            else if (here->iparam[i]->eltype == IF_STRINGVEC)
+                for (int j = 0; j < here->iparam[i]->size; j++)
+                    FREE(here->iparam[i]->element[j].svalue);
+            FREE(here->iparam[i]->element);
+        }
+        FREE(here->iparam[i]);
+    }
+    FREE(here->iparam);
+    
     /* ************************************************************* */
+    /* Before instance parameters was added there was this comment:  */
     /* Dont free params here.  They are not currently implemented on */
     /* a per-instance basis, so their allocated space is owned by    */
     /* the parent model, not the instance. Param stuff will be freed */

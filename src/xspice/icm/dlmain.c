@@ -23,7 +23,7 @@
 
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-// Do not modify anything below this line
+// Do not modify anything below this line (F.B.: added MIFparam however)
 //////////////////////////////////////////////////////////////////////////////
 
 SPICEdev *cmDEVices[] = {
@@ -162,6 +162,15 @@ int MIFmParam(
     GENmodel *inModel 
 	) {
 	return (coreitf->dllitf_MIFmParam)(param_index,value,inModel);
+}
+
+int MIFParam(
+    int param_index,
+    IFvalue *value,
+    GENinstance *inst,
+    IFvalue *select
+	) {
+	return (coreitf->dllitf_MIFParam)(param_index,value,inst,select);
 }
 
 int MIFask(

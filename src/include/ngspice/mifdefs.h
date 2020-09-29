@@ -85,6 +85,9 @@ struct MIFinstance {
     int                 inst_index;       /* Index into inst_table in evt struct in ckt */
     Mif_Callback_t      callback;         /* instance callback function */
 
+    /* F.B: add instance parameters ? */
+    int                 num_iparam;       /* number of instance parameters on the code model */
+    Mif_Param_Data_t    **iparam;          /* array of structs for each instance parameter */
 };
 
 

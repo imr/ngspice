@@ -142,7 +142,7 @@ MIFsetup(
 
         for(i = 0; i < model->num_param; i++) {
 
-            if(model->param[i]->is_null) {
+            if(model->param[i]->is_null && DEVices[mod_type]->DEVpublic.param[i].has_model_scope) {
 
                 /* setup a pointer for quick access */
                 param_info = &(DEVices[mod_type]->DEVpublic.param[i]);
@@ -545,6 +545,7 @@ MIFunsetup(GENmodel *inModel,CKTcircuit *ckt)
                 cm_data.conn = here->conn;
                 cm_data.num_param = here->num_param;
                 cm_data.param = here->param;
+		cm_data.iparam = here->iparam;
                 cm_data.num_inst_var = here->num_inst_var;
                 cm_data.inst_var = here->inst_var;
                 cm_data.callback = &(here->callback);

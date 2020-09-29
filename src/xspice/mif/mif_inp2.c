@@ -682,7 +682,20 @@ static void  MIFinit_inst(
 
     fast->num_param = mdfast->num_param;
     fast->param = mdfast->param;
-
+    
+    /* allocate instance parameter data */
+    fast->num_iparam = *(DEVices[mod_type]->DEVpublic.numInstanceParms) - DEVices[mod_type]->DEVpublic.num_inst_var;
+    if(fast->num_iparam>0)
+        fast->iparam = TMALLOC(Mif_Param_Data_t* ,fast->num_iparam);
+    else
+        fast->iparam = NULL;
+    for(i = 0; i < fast->num_iparam; i++) {
+         fast->iparam[i] = TMALLOC(Mif_Param_Data_t, 1);
+         fast->iparam[i]->is_null = MIF_TRUE;
+         fast->iparam[i]->size = 0;
+         fast->iparam[i]->element = NULL;
+    }
+		
     /* initialize any additional instance data */
     fast->initialized = MIF_FALSE;
     fast->analog = MIF_FALSE;

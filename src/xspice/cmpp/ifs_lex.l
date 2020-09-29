@@ -62,7 +62,7 @@ double yydval;
 
 %}
 
-%start BOOL CTYPE DIR DTYPE
+%start BOOL CTYPE DIR DTYPE SCOPE
 
 %x comment stringl
 
@@ -120,6 +120,7 @@ null_allowed{W}*:		{BEGIN BOOL; return TOK_NULL_ALLOWED;}
 parameter_name{W}*:		{return TOK_PARAMETER_NAME;}
 parameter_table{W}*:		{return TOK_PARAMETER_TABLE;}
 spice_model_name{W}*:		{return TOK_SPICE_MODEL_NAME;}
+parameter_scope{W}*:		{BEGIN SCOPE; return TOK_PARAMETER_SCOPE;}
 
 <BOOL>yes			{return TOK_BOOL_YES;}
 <BOOL>no			{return TOK_BOOL_NO;}
@@ -147,6 +148,10 @@ false				{return TOK_BOOL_NO;}
 <DTYPE>complex			{return TOK_DTYPE_COMPLEX;}
 <DTYPE>string			{return TOK_DTYPE_STRING;}
 <DTYPE>pointer			{return TOK_DTYPE_POINTER;}
+
+<SCOPE>model			{return TOK_SCOPE_MODEL;}
+<SCOPE>instance			{return TOK_SCOPE_INSTANCE;}
+<SCOPE>both			{return TOK_SCOPE_BOTH;}
 
 "<"				{return TOK_LANGLE;}
 ">"				{return TOK_RANGLE;}

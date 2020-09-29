@@ -496,6 +496,11 @@ check_end_item_num (void)
 %token TOK_SPICE_MODEL_NAME
 %token TOK_STRING_LITERAL
 
+%token TOK_PARAMETER_SCOPE
+%token TOK_SCOPE_MODEL
+%token TOK_SCOPE_INSTANCE
+%token TOK_SCOPE_BOTH
+
 %union {
    Ctype_List_t 	*ctype_list;
    Dir_t		dir;
@@ -509,6 +514,7 @@ check_end_item_num (void)
    int			ival;
    double		rval;
    Complex_t		cval;
+   Param_Scope_t	scope;
 }
 
 %type	<ctype_list>	ctype_list delimited_ctype_list
@@ -523,6 +529,7 @@ check_end_item_num (void)
 %type	<ival>		integer
 %type	<rval>		real
 %type	<cval>		complex
+%type	<scope>		scope
 
 %start ifs_file
 
@@ -739,6 +746,13 @@ parameter_table_item	: TOK_PARAMETER_NAME list_of_ids
 			   FOR_ITEM (i) {
 			      TBL->param[i].null_allowed = ITEM_BUF(i).btype;
 			   }}
+			| TOK_PARAMETER_SCOPE list_of_scopes
+			  {int i;
+			   END;
+			   FOR_ITEM (i) {
+			      TBL->param[i].scope = ITEM_BUF(i).scope;
+			   }
+			  }
 			;
 
 static_var_table	: /* empty */
@@ -797,6 +811,14 @@ direction		: TOK_DIR_IN	{$$ = CMPP_IN;}
 			| TOK_DIR_OUT	{$$ = CMPP_OUT;}
 			| TOK_DIR_INOUT	{$$ = CMPP_INOUT;}
 			;
+
+list_of_scopes		: /* empty */
+			| list_of_scopes scope {ITEM; BUF.scope = $2;}
+			;
+			
+scope			: TOK_SCOPE_MODEL	{$$ = CMPP_MODEL;}
+			| TOK_SCOPE_INSTANCE	{$$ = CMPP_INSTANCE;}
+			| TOK_SCOPE_BOTH	{$$ = CMPP_BOTH;}
 
 list_of_bool		: /* empty */
 			| list_of_bool btype {ITEM; BUF.btype = $2;}

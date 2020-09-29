@@ -448,7 +448,11 @@ macro			: TOK_INIT
 			   {fprintf (mod_yyout, "mif_private->circuit.t[%s]", $3);}
 			| TOK_PARAM TOK_LPAREN subscriptable_id TOK_RPAREN
 			   {int i = valid_subid ($3, PARAM);
-			    fprintf (mod_yyout, "mif_private->param[%d]->element[%s]",
+			    if(mod_ifs_table->param[i].scope == CMPP_MODEL)
+			        fprintf (mod_yyout, "mif_private->param[%d]->element[%s]",
+				     i, subscript ($3));
+			    else
+			    	fprintf (mod_yyout, "mif_private->iparam[mif_private->param[%d]->inst_param_index]->element[%s]",
 				     i, subscript ($3));
 			    put_type (mod_yyout, mod_ifs_table->param[i].type);
 			   }    

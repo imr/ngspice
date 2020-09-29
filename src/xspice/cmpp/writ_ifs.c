@@ -106,7 +106,7 @@ int write_ifs_c_file(
 
     /* Open the ifspec.c file for write access */
     if ((filename = gen_filename(filename_in, "w")) == (char *) NULL) {
-        print_error("ERROR - Unable to build path to \"%s\".", filename);
+        print_error("ERROR - Unable to build path to \"%s\".", filename_in);
         xrc = -1;
         goto EXITPOINT;
     }
@@ -290,11 +290,15 @@ static int write_pTable(
     int             i;
     bool       is_array;
     Data_Type_t     type;
-
+    int iparam_index;
 
     /* Only write the pTable if there is something to put in it.         */
     /* Otherwise, we will put NULL in the SPICEdev structure in its slot */
-    if (ifs_table->num_inst_var == 0) {
+    for(i = 0; i < ifs_table->num_param; i++)
+    if(ifs_table->param[i].scope != CMPP_MODEL)
+        break; /* has at least one instance parameter */
+    if(i==ifs_table->num_param) /* has no instance parameter */
+    if (ifs_table->num_inst_var == 0) { /* has no static var */
         return 0;
     }
 
@@ -306,6 +310,68 @@ static int write_pTable(
             "static IFparm MIFpTable[] = {\n");
 
 
+    /* F.B: add instance parameters as IOP */
+    /* Use the index of the element in the parameter info array */
+    /* as the SPICE3 integer tag.                                       */
+    /* i.e for the same parameter, the same tag is used for both model and instance */
+    iparam_index=0;
+    Param_Info_t *param = ifs_table->param;
+    for(i = 0; i < ifs_table->num_param; i++) {
+        Param_Info_t *param_cur = param + i;
+        
+	/* skip if it is a model parameter */
+	if(param_cur->scope == CMPP_MODEL)
+	    continue;
+	
+        /* Use the SPICE3 IOP macro since instance parameters are input/output */
+
+        rc |= fprintf(fp, "    IOP(");
+
+        /* Put in the name of the parameter and the integer tag */
+        rc |= fprintf(fp, "\"%s\", ", param_cur->name);
+        rc |= fprintf(fp, "%d, ", i);
+
+        /* Format SPICE3 type according to parameter type field */
+
+        const bool is_array = param_cur->is_array;
+        const Data_Type_t type = param_cur->type;
+
+        if (is_array) {
+            rc |= fprintf(fp, "(");
+        }
+
+        if (type == CMPP_BOOLEAN) {
+            rc |= fprintf(fp, "IF_FLAG");   /* no BOOLEAN in SPICE3 */
+        }
+        else if (type == CMPP_INTEGER) {
+            rc |= fprintf(fp, "IF_INTEGER");
+        }
+        else if (type == CMPP_REAL) {
+            rc |= fprintf(fp, "IF_REAL");
+        }
+        else if (type == CMPP_COMPLEX) {
+            rc |= fprintf(fp, "IF_COMPLEX");
+        }
+        else if (type == CMPP_STRING) {
+            rc |= fprintf(fp, "IF_STRING");
+        }
+        else {
+            print_error("INTERNAL ERROR - write_mPTable() - Impossible data type.");
+            xrc = -1;
+        }
+
+        if (is_array) {
+            rc |= fprintf(fp, "|IF_VECTOR)");
+        }
+
+
+        /* Put in the description string and finish this line off */
+        rc |= fprintf(fp, ", \"%s\"),\n", ifs_table->param[i].description);
+    
+        iparam_index++;
+    } /* end of loop over parameters */
+    
+    
     /* Write out an entry for each instance variable in the table       */
 
     /* Use the index of the element in the instance variable info array */
@@ -363,6 +429,11 @@ static int write_pTable(
         /* Put in the description string and finish this line off */
         rc |= fprintf(fp, ", \"%s\"),\n", ifs_table->inst_var[i].description);
     } /* end of loop over instance variables */
+    
+    
+    
+    
+    
 
     /* Finish off the structure */
     rc |= fprintf(fp, "};\n\n");
@@ -422,7 +493,11 @@ static int write_mPTable(
     Param_Info_t *param = ifs_table->param;
     for(i = 0; i < ifs_table->num_param; i++) {
         Param_Info_t *param_cur = param + i;
-
+        
+	/* skip if it is an instance parameter */
+	if(param_cur->scope == CMPP_INSTANCE)
+	    continue;
+	
         /* Use the SPICE3 IOP macro since model parameters are input/output */
 
         rc |= fprintf(fp, "    IOP(");
@@ -684,6 +759,7 @@ static int write_param_info(
     int xrc = 0;
     int             i;
     const char *str;
+    int inst_param_index = 0;
 
 
     /* Only write the paramTable if there is something to put in it.      */
@@ -815,7 +891,18 @@ static int write_param_info(
     
         str = boolean_to_str(p_param_cur->null_allowed);
         rc |= fprintf(fp, "    %s,\n", str);
-
+	
+	/* F.B. info about instance parameters */
+	str = boolean_to_str(p_param_cur->scope != CMPP_INSTANCE);
+        rc |= fprintf(fp, "    %s,\n", str);
+	str = boolean_to_str(p_param_cur->scope != CMPP_MODEL);
+        rc |= fprintf(fp, "    %s,\n", str);
+	str = integer_to_str(p_param_cur->scope == CMPP_MODEL ? -1 : inst_param_index);
+        rc |= fprintf(fp, "    %s,\n", str);
+        
+	if(p_param_cur->scope != CMPP_MODEL)
+	    inst_param_index++;
+	
         rc |= fprintf(fp, "  },\n");
 
     } /* for number of parameters */
@@ -931,13 +1018,20 @@ static int write_SPICEdev(
 {
     int rc = 0; /* init print rc to nonnegative (no error) */
     int xrc = 0;
-
+    int i, ninstparams;
+    
     /* Extern the code model function name */
     rc |= fprintf(fp,
             "\n"
             "extern void %s(Mif_Private_t *);\n",
             ifs_table->name.c_fcn_name);
-
+    
+    /* count instance parameters */
+    ninstparams=0;
+    for(i = 0; i < ifs_table->num_param; i++)
+    if(ifs_table->param[i].scope != CMPP_MODEL)
+        ninstparams++;
+	
     /* SPICE now needs these static integers */
     rc |= fprintf(fp,
             "\n"
@@ -947,7 +1041,7 @@ static int write_SPICEdev(
             "static int val_numModelParms     = %d;\n"
             "static int val_sizeofMIFinstance = sizeof(MIFinstance);\n"
             "static int val_sizeofMIFmodel    = sizeof(MIFmodel);\n",
-            ifs_table->num_inst_var, ifs_table->num_param);
+            ifs_table->num_inst_var + ninstparams, ifs_table->num_param);
 
     /* Write out the structure beginning */
 
@@ -969,10 +1063,10 @@ static int write_SPICEdev(
             "        .termNames = NULL,\n"
             "        .numInstanceParms = &val_numInstanceParms,\n");
 
-    if(ifs_table->num_inst_var > 0)
-        rc |= fprintf(fp, "        .instanceParms = MIFpTable,\n");
-    else
+    if((ninstparams == 0) && (ifs_table->num_inst_var == 0))
         rc |= fprintf(fp, "        .instanceParms = NULL,\n");
+    else
+        rc |= fprintf(fp, "        .instanceParms = MIFpTable,\n");
 
     rc |= fprintf(fp, "        .numModelParms = &val_numModelParms,\n");
     if(ifs_table->num_param > 0)

@@ -19,6 +19,7 @@ libmifxsp_la_SOURCES = \
 	mifdelete.c \
 	mifmdelete.c \
 	mifdestr.c \
+	mifpara.c \
 	mif.c
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include

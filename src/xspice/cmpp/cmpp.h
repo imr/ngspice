@@ -132,6 +132,16 @@ typedef struct {
 } Complex_t;
 
 
+/*
+ * The scope of a parameter
+ */
+
+typedef enum {
+    CMPP_MODEL,
+    CMPP_INSTANCE,
+    CMPP_BOTH,
+ } Param_Scope_t;
+ 
 
 /*
  * Values of different types.
@@ -223,6 +233,7 @@ typedef struct {
     bool            has_upper_bound;  /* True if there is an array size upper bound */
     int             upper_bound;      /* Array size upper bound */
     bool            null_allowed;     /* True if null is allowed for this parameter */
+    Param_Scope_t   scope;            /* is instance or model parameter */
 
 } Param_Info_t;
 

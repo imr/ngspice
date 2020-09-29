@@ -223,6 +223,7 @@ int EVTload(
     cm_data.conn = inst->conn;
     cm_data.num_param = inst->num_param;
     cm_data.param = inst->param;
+    cm_data.iparam = inst->iparam;
     cm_data.num_inst_var = inst->num_inst_var;
     cm_data.inst_var = inst->inst_var;
     cm_data.callback = &(inst->callback);
