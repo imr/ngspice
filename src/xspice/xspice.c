@@ -84,4 +84,5 @@ struct coreInfo_t  coreInfo =
   no_free,
 #endif
   MIFParam,
+  NULL
 };

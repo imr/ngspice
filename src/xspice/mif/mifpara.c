@@ -57,7 +57,7 @@ MIFParam(int param_index, IFvalue *value, GENinstance *inst_in, IFvalue *select)
     /* Arrange for access to MIF specific data in the model */
     inst = (MIFinstance*) inst_in;
     model = MIFmodPtr(inst);
-
+printf("Mif param %d\n", param_index);
     /* Get model type */
     mod_type = model->MIFmodType;
     if((mod_type < 0) || (mod_type >= DEVmaxnum))
@@ -68,24 +68,13 @@ MIFParam(int param_index, IFvalue *value, GENinstance *inst_in, IFvalue *select)
     if((param_index < 0) || (param_index >= model->num_param))
         return(E_BADPARM);
 
-    if(!DEVices[mod_type]->DEVpublic.param[param_index].has_inst_scope)
+    /* search the instance parameter index */
+    for(iparam=0;iparam<*(DEVices[mod_type]->DEVpublic.numInstanceParms);iparam++)
+    if(DEVices[mod_type]->DEVpublic.instanceParms[iparam].id == param_index)
+        break;
+    
+    if((iparam < 0) || (iparam >= *(DEVices[mod_type]->DEVpublic.numInstanceParms)))
         return(E_BADPARM);
-
-    iparam = DEVices[mod_type]->DEVpublic.param[param_index].inst_param_index;
-    if((iparam < 0) || (iparam >= inst->num_iparam))
-        return(E_BADPARM);
-	
-    /* find param_index */
-    /*
-    param_index=-1;
-    for(i=0;i<DEVices[mod_type]->DEVpublic.num_param;i++)
-    if(DEVices[mod_type]->DEVpublic.param[i].inst_param_index == iparam)
-    {
-    	param_index=i;
-	break;
-    }
-    if(param_index<0)
-        return(E_BADPARM); */
 
     /* get value type to know which members of unions to access */
     value_type = DEVices[mod_type]->DEVpublic.modelParms[param_index].dataType;

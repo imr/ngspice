@@ -115,9 +115,11 @@ struct Mif_Param_Info {
     Mif_Boolean_t       has_upper_bound;  /* True if there is an array size upper bound */
     int                 upper_bound;      /* Array size upper bound */
     Mif_Boolean_t       null_allowed;     /* True if null is allowed for this parameter */
+#if 0    
     Mif_Boolean_t	has_model_scope;  /* True if the parameter is a model parameter */
     Mif_Boolean_t	has_inst_scope;   /* True if the parameter is an instance parameter */
     int			inst_param_index; /* Index of instance parameter */
+#endif
 };
 
 

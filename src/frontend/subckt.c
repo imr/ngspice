@@ -97,6 +97,7 @@ static int  numdevs(char *s);
 static wordlist *modtranslate(struct card *deck, char *subname, wordlist *new_modnames);
 static void devmodtranslate(struct card *deck, char *subname, wordlist * const orig_modnames);
 static int inp_numnodes(char c);
+static char *search_adevice_model_name(char *line);
 
 #define N_GLOBAL_NODES 1005
 
@@ -1041,24 +1042,19 @@ translate(struct card *deck, char *formal, char *actual, char *scname, const cha
 
             translate_inst_name(&buffer, scname, name, NULL);
             bxx_putc(&buffer, ' ');
+	    if(name)
+		tfree(name);
+		   
+	    /* search where the model name is and store in 'next_name' pointer */
+	    next_name = search_adevice_model_name(s);
+	    if(next_name==NULL)
+	       next_name=strchr(s,'\0'); /* not found, but process anyway */
 
-            /* Now translate the nodes, looking ahead one token to recognize */
-            /* when we reach the model name which should not be translated   */
-            /* here.                                                         */
-
-            next_name = MIFgettok(&s);
-
-            for (;;) {
-                /* rotate the tokens and get the the next one */
-                if (name)
-                    tfree(name);
-                name = next_name;
-                next_name = MIFgettok(&s);
-
-                /* if next token is NULL, name holds the model name, so exit */
-                if (next_name == NULL)
-                    break;
-
+            /* Now translate the nodes */
+	    
+            while(s<next_name) {
+		name = MIFgettok(&s);
+		
                 /* Process the token in name.  If it is special, then don't */
                 /* translate it.                                            */
                 switch (*name) {
@@ -1073,8 +1069,7 @@ translate(struct card *deck, char *formal, char *actual, char *scname, const cha
                     /* don't translate the port type identifier */
                     if (name)
                         tfree(name);
-                    name = next_name;
-                    next_name = MIFgettok(&s);
+                    name = MIFgettok(&s);
                     bxx_put_cstring(&buffer, name);
                     break;
 
@@ -1085,14 +1080,13 @@ translate(struct card *deck, char *formal, char *actual, char *scname, const cha
 
                 }
                 bxx_putc(&buffer, ' ');
-            }
-
-            /* copy in the last token, which is the model name */
-            if (name) {
-                bxx_put_cstring(&buffer, name);
-                tfree(name);
-            }
-
+                if (name) 
+                    tfree(name);
+	    };
+	    
+            /* copy the model name and the rest of the line */
+            bxx_put_cstring(&buffer, s);
+            
             break; /* case 'a' */
 
             /* gtri - end - wbk - 10/23/90 */
@@ -1614,6 +1608,32 @@ translate_mod_name(struct bxx_buffer *buffer, char *modname, char *subname, stru
         bxx_printf(buffer, "%s:%s", subname, modname);
 }
 
+#ifdef XSPICE
+static inline char *skip_back_non_ws_nonc(const char *s, const char *start, char c) { while (s > start && !isspace_c(s[-1]) && (s[-1]!=c)) s--; return (char *) s; }
+
+/* F.B: function to locate the model name in a A device (xspice coremodel) */
+/* a similar function is found in inpcomp.c */
+static char *search_adevice_model_name(char *line)
+{
+    char *ptr_end, *ptr_beg;
+    char *prev;
+    for(ptr_end=strchr(line, '\0'); ptr_end>line; ) {
+         ptr_end = skip_back_ws(ptr_end, line);
+         ptr_beg = skip_back_non_ws_nonc(ptr_end, line, '=');
+	 prev = skip_back_ws(ptr_beg, line);
+	 if(prev>line && prev[-1]=='=') {
+	     prev = skip_back_ws(prev-1, line); /* backskip \s*= */
+	     ptr_end=skip_back_non_ws(prev, line);  /* backskip param= */
+	 } else
+	     break; /* found model */
+    }
+    if(ptr_beg == line)
+         return NULL;
+	 
+    return ptr_beg;
+}
+#endif
+
 
 static void
 devmodtranslate(struct card *s, char *subname, wordlist * const orig_modnames)
@@ -1658,42 +1678,24 @@ devmodtranslate(struct card *s, char *subname, wordlist * const orig_modnames)
             /* SDB debug statement */
             printf("In devmodtranslate, found codemodel, line= %s\n", t);
 #endif
-
-            /* first do refdes. */
-            name = gettok(&t);  /* get refdes */
-            bxx_printf(&buffer, "%s ", name);
-            tfree(name);
-
-            /* now do remainder of line. */
-            next_name = gettok(&t);
-            for (;;) {
-                name = next_name;
-                next_name = gettok(&t);
-
-                if (next_name == NULL) {
-                    /* if next_name is NULL, we are at the line end.
-                     * name holds the model name.  Therefore, break */
-                    break;
-
-                } else {
-                    /* next_name holds something.  Write name into the buffer and continue. */
-                    bxx_printf(&buffer, "%s ", name);
-                    tfree(name);
-                }
-            }  /* while  */
-
-            translate_mod_name(&buffer, name, subname, orig_modnames);
-            tfree(name);
-            bxx_putc(&buffer, ' ');
-
-#ifdef TRACE
-            /* SDB debug statement */
-            printf("In devmodtranslate, translated codemodel line= %s\n", buffer);
-#endif
-
-            bxx_put_cstring(&buffer, t);
-            tfree(s->line);
-            s->line = copy(bxx_buffer(&buffer));
+            next_name = search_adevice_model_name(t);
+	    if(next_name && *next_name!='!') { /* if start with !, will use a default model  */
+	        bxx_put_substring(&buffer, t, next_name); /* put everything before model name */
+		t = next_name;
+		name = gettok(&t);  /* get modname */
+		if(name==NULL) break; /* for safety but should not happen */
+		translate_mod_name(&buffer, name, subname, orig_modnames);
+		tfree(name);
+		bxx_putc(&buffer, ' '); /* put a space after model name */
+		bxx_put_cstring(&buffer, t); /* put the end of the line */
+		#ifdef TRACE
+                 /* SDB debug statement */
+                 printf("In devmodtranslate, translated codemodel line= %s\n", buffer);
+                #endif
+		/* replace the line in the card */
+		tfree(s->line);
+                s->line = copy(bxx_buffer(&buffer));
+	    }
             break;
 
 #endif /* XSPICE */

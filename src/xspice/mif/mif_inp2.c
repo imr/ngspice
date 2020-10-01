@@ -110,6 +110,8 @@ static void gc_end(void);
 static char *alltokens[BSIZE_SP];
 static int curtoknr = 0;
 
+static int MIFinp2_params(char *line, CKTcircuit *ckt, INPtables *tab, struct card *current, GENinstance* inst, int type);
+
 /* ********************************************************************* */
 
 
@@ -157,7 +159,8 @@ and error checks are performed.
      At this point, nothing should be left in 'line'
 
 -------------------------------------------------------------------------*/
-
+extern INPmodel *modtab;
+#define TRACE
 void
 MIF_INP2A (
     CKTcircuit   *ckt,      /* circuit structure to put mod/inst structs in */
@@ -199,7 +202,8 @@ MIF_INP2A (
     /* SDB debug statement */
     printf("In MIF_INP2A, line to process = %s . . . \n", current->line);
 #endif
-
+    printf("->modtab %p\n", modtab);
+    
     /* get the line text from the card struct */
     line = current->line;
 
@@ -209,18 +213,33 @@ MIF_INP2A (
     /* get the name of the instance and add it to the symbol table */
     name = copy(MIFgettok(&line));
     INPinsert(&name, tab);
-
+    
+    printf("->modtab %p\n", modtab);
+    
     /* locate the last token on the line (i.e. model name) and put it into "model" */
+    /* locate the model name */
     while(*line != '\0') {
-        model = MIFgettok(&line);
+        char* linetmp;
+        tmp_token = MIFgettok(&line);
+	linetmp=line;
+	do
+	   linetmp--;
+	while(linetmp > current->line && isspace_c(*linetmp));
+	if(*linetmp == '=')
+	    break;
+	printf("model updated to %s, char %c, modtab %p\n", tmp_token, *linetmp,modtab);
+	model = tmp_token;
     }
-
+    printf("->modtab %p\n", modtab);
     /* make sure the model name was there. */
     if(model == NULL) {
         LITERR("Missing model on A type device");
         gc_end();
         return;
     }
+    
+    /* if model name starts with !, use or create a default model  */
+    /* TODO */
 
     /* Locate model from pass 1.  If it hasn't been processed yet, */
     /* allocate a structure in ckt for it, process its parameters  */
@@ -230,7 +249,7 @@ MIF_INP2A (
         gc_end();
         return;
     }
-
+    printf("Device type %d\n", thismodel->INPmodType);
     /* get the integer index into the DEVices data array for this  */
     /* model                                                       */
     type = thismodel->INPmodType;
@@ -589,6 +608,10 @@ MIF_INP2A (
             }
         }
     }
+    
+    /* parse the end of the line for reading instance parameters */
+    MIFinp2_params(line, ckt, tab, current, (GENinstance*) fast[0], type);
+    
     gc_end();
 }
 
@@ -1026,6 +1049,48 @@ MIFget_port(
     *status = MIF_OK;
     return;
 }
+
+
+static int
+MIFinp2_params(char *line, CKTcircuit *ckt, INPtables *tab, struct card *current, GENinstance* inst, int type)
+{
+   int error;			/* error code temporary */
+   char *name;
+   int i;
+   IFvalue ptemp;		/* a value structure  */
+   IFvalue *parm;
+   
+   while(*line)
+   {
+       INPgetTok(&line, &name, 0);
+       if(*line!='=') {
+          printf("Expect param=val format for %s, got %c\n", name, *line);
+          LITERR("Expect param=val format\n");
+       	  return(0);
+       }
+       line++; /* skip '=' */
+       for(i=0;i<*(DEVices[type]->DEVpublic.numInstanceParms);i++)
+         if(strcmp(name, DEVices[type]->DEVpublic.instanceParms[i].keyword)==0)
+           break;
+       if(0) tfree(name); /* don't it need anymore, we still know the keyword */
+       if(i<*(DEVices[type]->DEVpublic.numInstanceParms))
+       {
+          int dataType = DEVices[type]->DEVpublic.instanceParms[i].dataType;
+	  if(0) printf("will set parameter %s to xspice instance\n", DEVices[type]->DEVpublic.instanceParms[i].keyword);
+	  parm = INPgetValue(ckt, &line, dataType, tab);
+	  printf("MIFinp2_params set %s id=%d i#%d\n", name, DEVices[type]->DEVpublic.instanceParms[i].id,i);
+	  IFC(setInstanceParm, (ckt, (GENinstance*)inst, DEVices[type]->DEVpublic.instanceParms[i].id, parm, NULL));
+	  /*GCA(INPapName, (ckt, job->JOBtype, job, ana->analysisParms[i].keyword, parm)); */
+       }
+       else
+       {
+          LITERR("Unrecognized parameter\n");
+       	  return(0);
+       }
+       
+   }
+}
+
 
 
 #undef MIFgettok

@@ -142,7 +142,7 @@ extern struct coreInfo_t  coreInfo; /* cmexport.c */
 #ifdef NDEV
 #include "ndev/ndevitf.h"
 #endif
-
+#define TRACE
 static SPICEdev *(*static_devices[])(void) = {
     /* URC device MUST precede both resistors and capacitors */
     get_urc_info,
@@ -415,7 +415,7 @@ int load_opus(const char *name)
     SPICEdev **devs;
     Evt_Udn_Info_t **udns;
     funptr_t fetch;
-
+printf("loading code model lib %s\n", name);
     lib = dlopen(name, RTLD_NOW);
     if (!lib) {
         msg = dlerror();

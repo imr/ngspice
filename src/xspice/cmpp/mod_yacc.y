@@ -113,6 +113,18 @@ static int buf_len;
    
 typedef enum {CONN, PARAM, STATIC_VAR} Id_Kind_t;
 
+
+static int inst_param_index(int param)
+{
+   int i, iparam;
+   for (i = 0; (i < param) && (i < mod_ifs_table->num_param); i++)
+   if(mod_ifs_table->param[i].scope != CMPP_MODEL)
+      iparam++;
+   if(iparam>=mod_ifs_table->num_param)
+      yyerror ("Internal error: Instance parameter not found");
+   return iparam;
+}
+
 /*--------------------------------------------------------------------------*/
 static char *subscript (Sub_Id_t sub_id)
 {
@@ -452,8 +464,8 @@ macro			: TOK_INIT
 			        fprintf (mod_yyout, "mif_private->param[%d]->element[%s]",
 				     i, subscript ($3));
 			    else
-			    	fprintf (mod_yyout, "mif_private->iparam[mif_private->param[%d]->inst_param_index]->element[%s]",
-				     i, subscript ($3));
+			    	fprintf (mod_yyout, "mif_private->iparam[%d]->element[%s]",
+				     inst_param_index(i), subscript ($3));
 			    put_type (mod_yyout, mod_ifs_table->param[i].type);
 			   }    
 			| TOK_PARAM_SIZE TOK_LPAREN id TOK_RPAREN

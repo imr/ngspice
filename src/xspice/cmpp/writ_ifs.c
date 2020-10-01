@@ -892,6 +892,7 @@ static int write_param_info(
         str = boolean_to_str(p_param_cur->null_allowed);
         rc |= fprintf(fp, "    %s,\n", str);
 	
+	#if 0
 	/* F.B. info about instance parameters */
 	str = boolean_to_str(p_param_cur->scope != CMPP_INSTANCE);
         rc |= fprintf(fp, "    %s,\n", str);
@@ -899,7 +900,8 @@ static int write_param_info(
         rc |= fprintf(fp, "    %s,\n", str);
 	str = integer_to_str(p_param_cur->scope == CMPP_MODEL ? -1 : inst_param_index);
         rc |= fprintf(fp, "    %s,\n", str);
-        
+        #endif
+	
 	if(p_param_cur->scope != CMPP_MODEL)
 	    inst_param_index++;
 	
@@ -1100,7 +1102,7 @@ static int write_SPICEdev(
     /* Write the names of the generic code model functions */
 
     rc |= fprintf(fp,
-            "    .DEVparam = NULL,\n"
+            "    .DEVparam = MIFParam,\n"
             "    .DEVmodParam = MIFmParam,\n"
             "    .DEVload = MIFload,\n"
             "    .DEVsetup = MIFsetup,\n"

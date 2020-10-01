@@ -79,6 +79,7 @@ struct coreInfo_t {
 	
 	/* added for instance parameters */
 	int       ((*dllitf_MIFParam)(int, IFvalue *, GENinstance*, IFvalue *));
+	void*	  nulltermination; /* For binary compatibility in future extensions */
 };
 
 #endif

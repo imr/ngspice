@@ -140,9 +140,13 @@ MIFsetup(
         /* For each parameter not given explicitly on the .model */
         /* card, default it                                      */
 
-        for(i = 0; i < model->num_param; i++) {
-
-            if(model->param[i]->is_null && DEVices[mod_type]->DEVpublic.param[i].has_model_scope) {
+        for(int imp=0; imp<*(DEVices[mod_type]->DEVpublic.numModelParms);imp++)
+	{
+	    i = DEVices[mod_type]->DEVpublic.modelParms[imp].id;
+	    if(i<0 || i>= model->num_param)
+	      continue;
+	
+	    if(model->param[i]->is_null) {
 
                 /* setup a pointer for quick access */
                 param_info = &(DEVices[mod_type]->DEVpublic.param[i]);
@@ -201,7 +205,87 @@ MIFsetup(
         }  /* end for number of parameters */
 
 
-        /* For each instance, initialize stuff used by cm_... functions */
+        /* For each instance, set default value for instance parameter */
+	/* if parameter is both for instance and model, copy model value */
+	
+        for(here = MIFinstances(model); here != NULL; here = MIFnextInstance(here)) {
+	    for(int ip=0; ip<*(DEVices[mod_type]->DEVpublic.numInstanceParms);ip++)
+	    {
+	        i = DEVices[mod_type]->DEVpublic.instanceParms[ip].id;
+	        if(i<0 || i>= model->num_param)
+	           break; /* not an instance parameter from ifspec.ifs */
+		if(here->iparam[ip]->is_null) {
+        	      int alsomodidx;
+		      /* setup a pointer for quick access */
+        	      param_info = &(DEVices[mod_type]->DEVpublic.param[i]);
+		      
+		      /* look if it is also a model parameter */
+		      for(alsomodidx=0; alsomodidx<*(DEVices[mod_type]->DEVpublic.numModelParms);alsomodidx++)
+		          if(DEVices[mod_type]->DEVpublic.modelParms[alsomodidx].id == i)
+			      break;
+		      if(alsomodidx<*(DEVices[mod_type]->DEVpublic.numModelParms))
+		      {
+		          /* copy from model */
+			  size = model->param[i]->size;
+			  here->iparam[ip]->is_null = 0;
+			  here->iparam[ip]->size = size;
+			  here->iparam[ip]->element = TMALLOC(Mif_Value_t, size);
+			  for(j = 0; j < size; j++)
+			     here->iparam[ip]->element[j] =  model->param[i]->element[j];
+		      }
+		      else
+		      {
+		          /* copy default value from ifspec.ifs */
+
+        	      /* determine the size and allocate the parameter element(s) */
+        	      if(! param_info->is_array) {
+                	  here->iparam[ip]->size = 1;
+                	  here->iparam[ip]->element = TMALLOC(Mif_Value_t, 1);
+        	      } else { /* parameter is an array */
+                	  /* MIF_INP2A() parser assures that there is an associated array connection */
+                	  size = here->conn[param_info->conn_ref]->size;
+                	  here->iparam[ip]->size = size;
+                	  here->iparam[ip]->element = TMALLOC(Mif_Value_t, size);
+        	      }  /* end if parameter is an array */
+		      
+		        /* set the parameter element(s) to default value */
+                	for(j = 0; j < here->iparam[ip]->size; j++) {
+
+                	    switch(param_info->type) {
+
+                	    case MIF_BOOLEAN:
+                        	here->iparam[ip]->element[j].bvalue = param_info->default_value.bvalue;
+                        	break;
+
+                	    case MIF_INTEGER:
+                        	here->iparam[ip]->element[j].ivalue = param_info->default_value.ivalue;
+                        	break;
+
+                	    case MIF_REAL:
+                        	here->iparam[ip]->element[j].rvalue = param_info->default_value.rvalue;
+                        	break;
+
+                	    case MIF_COMPLEX:
+                        	here->iparam[ip]->element[j].cvalue = param_info->default_value.cvalue;
+                        	break;
+
+                	    case MIF_STRING:
+                        	here->iparam[ip]->element[j].svalue = param_info->default_value.svalue;
+                        	break;
+
+                	    default:
+                        	return(E_BADPARM);
+                	    }
+
+                	} /* end for number of elements in param array */
+		    } /* end copy from default */
+		      
+		} /* end param is null */
+	    } /* end for ip instance parameter */
+	} /* end for instance here */
+	
+	
+	/* For each instance, initialize stuff used by cm_... functions */
 
         for(here = MIFinstances(model); here != NULL; here = MIFnextInstance(here)) {
 

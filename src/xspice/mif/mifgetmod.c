@@ -79,6 +79,7 @@ the .model card are not filled in by this function.  They are
 defaulted later by MIFsetup().  The function returns NULL when
 successful, and an error string on failure.
 */
+#define TRACE
 
 char *MIFgetMod( 
     CKTcircuit *ckt,    /* The circuit structure */
@@ -126,7 +127,6 @@ char *MIFgetMod(
 
     /* loop through modtable looking for this model (*name) */
     for (modtmp = modtab; modtmp != NULL; modtmp = modtmp->INPnextModel) {
-
 #ifdef TRACE
       /* SDB debug statement */
       printf("In MIFgetMod, checking model against stored model = %s . . .\n", modtmp->INPmodName);

@@ -1968,14 +1968,28 @@ static char *get_model_type(char *line)
     return gettok_noparens(&beg_ptr);
 }
 
+static inline char *skip_back_non_ws_nonc(const char *s, const char *start, char c) { while (s > start && !isspace_c(s[-1]) && (s[-1]!=c)) s--; return (char *) s; }
+
 
 static char *get_adevice_model_name(char *line)
 {
     char *ptr_end, *ptr_beg;
-
-    ptr_end = skip_back_ws(strchr(line, '\0'), line);
-    ptr_beg = skip_back_non_ws(ptr_end, line);
-
+    char *prev;
+    /* F.B. added backward skipping param=val */
+    for(ptr_end=strchr(line, '\0'); ptr_end>line; ) {
+         ptr_end = skip_back_ws(ptr_end, line);
+         ptr_beg = skip_back_non_ws_nonc(ptr_end, line, '=');
+	 prev = skip_back_ws(ptr_beg, line);
+	 if(prev>line && prev[-1]=='=') {
+	     prev = skip_back_ws(prev-1, line); /* backskip \s*= */
+	     ptr_end=skip_back_non_ws(prev, line);  /* backskip param= */
+	 } else
+	     break; /* found model */
+    }
+    if(ptr_beg == line)
+         return copy_substring(ptr_beg,ptr_beg); /* did not found the model */
+	 
+    printf("adev mod name: %s\n", ptr_beg);
     return copy_substring(ptr_beg, ptr_end);
 }
 
@@ -8297,7 +8311,7 @@ static void inp_check_syntax(struct card *deck)
             }
             else {
                 if (!check_ch) {
-                    fprintf(stderr, "Warning: Unusal leading characters like '%c' or others out of '= [] ? () & %$§\"!:,'\n", *cut_line);
+                    fprintf(stderr, "Warning: Unusal leading characters like '%c' or others out of '= [] ? () & %%$§\"!:,'\n", *cut_line);
                     fprintf(stderr, "    in netlist or included files, will be replaced with '*'\n");
                     check_ch = 1; /* just one warning */
                 }

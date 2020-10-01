@@ -368,6 +368,7 @@ struct Mif_Private {
     int                    num_inst_var;  /* Number of instance variables         */
     Mif_Inst_Var_Data_t    **inst_var;    /* Information about each inst variable */
     Mif_Callback_t         *callback;     /* Callback function */
+    /* new field for instance parameters - added to the end for binary compatibility */
     Mif_Param_Data_t       **iparam;      /* Information about each inst parameter     */
 };
 

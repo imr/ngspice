@@ -291,7 +291,7 @@ int MIFaskInstParam(
     value_type &= IF_VARTYPES;
     
     /* get index into inst->iparam */
-    inst_index = DEVices[mod_type]->DEVpublic.param[param_index].inst_param_index;
+    inst_index = i;
     if(inst_index <0)
         return(E_BADPARM);
 

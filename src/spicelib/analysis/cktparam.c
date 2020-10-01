@@ -25,7 +25,7 @@ CKTparam(CKTcircuit *ckt, GENinstance *fast, int param, IFvalue *val, IFvalue *s
     type = fast->GENmodPtr->GENmodType;
     if(DEVices[type]->DEVparam) {
         return(DEVices[type]->DEVparam (param, val, fast, selector));
-    } else {
+    } else {printf("no DEVparam function for type %d %s\n",type,fast->GENmodPtr->GENmodName);
         return(E_BADPARM);
     }
 }
