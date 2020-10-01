@@ -540,15 +540,15 @@ BJTunsetup(
                 CKTdltNNum(ckt, here->BJTbasePrimeNode);
             here->BJTbasePrimeNode = 0;
 
-            if (here->BJTcollCXNode > 0
-                && here->BJTcollCXNode != here->BJTcolNode)
-                CKTdltNNum(ckt, here->BJTcollCXNode);
-            here->BJTcollCXNode = 0;
-
             if (here->BJTcolPrimeNode > 0
                 && here->BJTcolPrimeNode != here->BJTcollCXNode)
                 CKTdltNNum(ckt, here->BJTcolPrimeNode);
             here->BJTcolPrimeNode = 0;
+
+            if (here->BJTcollCXNode > 0
+                && here->BJTcollCXNode != here->BJTcolNode)
+                CKTdltNNum(ckt, here->BJTcollCXNode);
+            here->BJTcollCXNode = 0;
         }
     }
     return OK;
