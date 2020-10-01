@@ -3,12 +3,12 @@
 Copyright 1991
 Georgia Tech Research Corporation, Atlanta, Ga. 30332
 All Rights Reserved
-
+ 
 AUTHORS                      
 
      2 Oct 1991     Jeffrey P. Murray
 
-
+ 
 SUMMARY
 
     This file contains the interface specification file for the 
@@ -41,13 +41,24 @@ Null_Allowed:          no                 no
 PARAMETER_TABLE:
 
 
-Parameter_Name:     in_offset           gain        out_offset
-Description:        "input offset"      "gain"      "output offset"
-Data_Type:          real                real        real
-Default_Value:      0.0                 1.0         0.0
-Limits:             -                   -           -
-Vector:              no                  no          no
-Vector_Bounds:       -                   -           -
-Null_Allowed:       yes                 yes         yes
+Parameter_Name:     in_offset          out_offset
+Description:        "input offset"     "output offset"
+Data_Type:          real               real
+Default_Value:      0.0                0.0
+Limits:             -                  -
+Vector:              no                no
+Vector_Bounds:       -                 -
+Null_Allowed:       yes                yes
+Parameter_Scope:    both               both
 
 
+PARAMETER_TABLE:
+Parameter_Name:     gain
+Description:        "gain"
+Data_Type:          real
+Default_Value:      1.0
+Limits:             -
+Vector:             no
+Vector_Bounds:      -
+Null_Allowed:       yes
+Parameter_Scope:    both
