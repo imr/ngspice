@@ -51,9 +51,6 @@ Author: 1985 Wayne A. Christopher
 /* gtri - end - 12/12/90 */
 #endif
 
-#ifdef WITH_LOOPANA
-int INP2gentype(char* line);
-#endif
 
 /* SJB - Uncomment this line for debug tracing */
 /*#define TRACE*/
@@ -4707,7 +4704,7 @@ static void inp_compat(struct card *card)
             continue;
 	
 #ifdef WITH_LOOPANA
-        if (INP2gentype(curr_line))
+        if (*curr_line == ':')
             continue;
 #endif
 
@@ -5780,10 +5777,6 @@ static void inp_bsource_compat(struct card *card)
         else if (skip_control > 0) {
             continue;
         }
-#ifdef WITH_LOOPANA
-        else if (INP2gentype(curr_line))
-            continue;
-#endif
 
         if (*curr_line == 'b') {
             /* remove white spaces of everything inside {}*/
@@ -8303,14 +8296,14 @@ static void inp_check_syntax(struct card *deck)
         if (*cut_line == '*' || *cut_line == '\0')
             continue;
         // check for unusable leading characters and change them to '*'
-        if (strchr("=[]?()&%$§\"!:,", *cut_line)) {
+        if (strchr("=[]?()&%$§\"!,", *cut_line)) {
             if (ft_stricterror) {
                 fprintf(stderr, "Error: '%c' is not allowed as first character in line %s.\n", *cut_line, cut_line);
                 controlled_exit(EXIT_BAD);
             }
             else {
                 if (!check_ch) {
-                    fprintf(stderr, "Warning: Unusal leading characters like '%c' or others out of '= [] ? () & %%$§\"!:,'\n", *cut_line);
+                    fprintf(stderr, "Warning: Unusal leading characters like '%c' or others out of '= [] ? () & %%$§\"!,'\n", *cut_line);
                     fprintf(stderr, "    in netlist or included files, will be replaced with '*'\n");
                     check_ch = 1; /* just one warning */
                 }

@@ -956,6 +956,21 @@ translate_inst_name(struct bxx_buffer *buffer, const char *scname, const char *n
     if (!name_e)
         name_e = strchr(name, '\0');
 
+    #ifdef WITH_LOOPANA
+    if(*name==':') {
+        /* :devtype:instance -> :devtype:.x1.instname */
+	/* skip to next : */
+        while(name<name_e && *name) {
+	   bxx_putc(buffer, *(name++));
+	   if(*name==':') {
+	       name++;
+	       break;
+	   }
+	}
+	bxx_putc(buffer, ':');
+	bxx_putc(buffer, '.');
+    } else
+    #endif
     if (tolower_c(*name) != 'x') {
         bxx_putc(buffer, *name);
         bxx_putc(buffer, '.');
@@ -1451,7 +1466,26 @@ numnodes(const char *line, struct subs *subs, wordlist const *modnames)
             return (nodes);
         }
     }
-
+    #ifdef WITH_LOOPANA
+    if (c == ':') {
+        /* handle :devtype:instance syntax here */
+	int len, type;
+	for(len=1;line[len];len++)
+    	  if(line[len]==':')
+	    break;
+        /* look if find this device */
+	for (type = 0; type < ft_sim->numDevices; type++) {
+	     if(ft_sim->devices[type])
+	     if(strlen(ft_sim->devices[type]->name)==(len-1))
+	     if(strncasecmp(line+1, ft_sim->devices[type]->name, len-1)==0)
+        	break;
+	}
+	if(type<ft_sim->numDevices)
+            n = *(ft_sim->devices[type]->terms);
+	else
+	    n = 0;
+    } else
+    #endif
     n = inp_numnodes(c);
 
     /* Added this code for variable number of nodes on certain devices.  */
@@ -1948,6 +1982,8 @@ devmodtranslate(struct card *s, char *subname, wordlist * const orig_modnames)
 }
 
 
+static int inp_numnode_fromdev(const char* line);
+
 /*----------------------------------------------------------------------*
  * inp_numnodes returns the maximum number of nodes (netnames) attached
  * to the component.
@@ -1968,7 +2004,7 @@ inp_numnodes(char c)
     case '*':
     case '$':
         return (0);
-
+	
     case 'b':
         return (2);
     case 'c':
