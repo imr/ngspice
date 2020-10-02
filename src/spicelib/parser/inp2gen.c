@@ -38,7 +38,7 @@
 
 #include "ngspice/cktdefs.h"
 
-
+#if 0
 int INP2gentype(char* line)
 {
    int i;
@@ -59,8 +59,106 @@ int INP2gentype(char* line)
    }
    return 0;
 }
-
+#endif
 int INP2GEN(CKTcircuit *ckt, INPtables * tab, struct card *current)
+{
+
+/* :devtype:inst node1 node2 ... noden param=val */
+
+    int type;			/* the type the model says it is */
+    int idx, len;
+    char *line;			/* the part of the current line left to parse */
+    char *name;			/* a name */
+    CKTnode *node;		/* a node pointer */
+    int error;			/* error code temporary */
+    GENinstance *fast;		/* pointer to the actual instance */
+    IFvalue ptemp;		/* a value structure to package resistance into */
+    IFuid uid;			/* uid of default model to be created */
+    GENmodel* genmod;
+    
+    line = current->line;
+    if(*line != ':')
+       return 0; /* not a new generic instance format */
+    
+    for(len=1;line[len];len++) {
+    	if(line[len]==':')
+	    break;
+    }
+    if(line[len] != ':')
+       return 0; /* not a new generic instance format */
+              
+    /* look if find this device */
+    for (type = 0; type < ft_sim->numDevices; type++) {
+       if(ft_sim->devices[type])
+       if(strlen(ft_sim->devices[type]->name)==(len-1))
+       if(strncasecmp(line+1, ft_sim->devices[type]->name, len-1)==0)
+          break;
+    }
+    if(type==ft_sim->numDevices)  { /* not found */
+	LITERR("Device type not supported by this binary\n");
+	return 0;
+    }
+    
+    /* TODO check if legacy device a new type of device */
+    
+    if (1) {
+	/* create default model if needed */
+	name = dup_string(ft_sim->devices[type]->name,len-1);
+	IFnewUid(ckt, &uid, NULL, name, UID_MODEL, NULL);
+	genmod = ft_sim->findModel(ckt, uid);
+	if(!genmod)
+	   IFC(newModel, (ckt, type, &genmod, uid));
+    }
+    line = &line[len+1];
+    INPgetTok(&line,&name,1);
+    IFC(newInstance, (ckt, genmod, &fast, name));
+    if(0) printf("Instance name: %s\n", name);
+        
+    /* parse node connections and bind nodes */
+    for(idx=0;idx<*(ft_sim->devices[type]->terms);idx++)
+    {
+        INPgetNetTok(&line, &name, 1);
+        INPtermInsert(ckt, &name, tab, &node);
+	IFC(bindNode, (ckt, fast, idx+1, node));
+	if(0) printf("bind term %d to %s\n", idx, node->name);
+    }
+    
+    /* parse parameters and assign parameters */
+    while(*line)
+    {
+       INPgetTok(&line, &name, 0);
+       if(*line!='=') {
+          printf("Expect param=val format for %s, got %c\n", name, *line);
+          LITERR("Expect param=val format\n");
+       	  return(0);
+       }
+       line++; /* skip '=' */
+       for(idx=0;idx<*(ft_sim->devices[type]->numInstanceParms);idx++)
+         if(strcmp(name, ft_sim->devices[type]->instanceParms[idx].keyword)==0)
+           break;
+       tfree(name); /* don't need it anymore, we still know the keyword */
+       if(idx<*(ft_sim->devices[type]->numInstanceParms))
+       { /* found */
+          int dataType;
+	  IFvalue *parm;
+	  dataType = ft_sim->devices[type]->instanceParms[idx].dataType;
+	  parm = INPgetValue(ckt, &line, dataType, tab);
+	  GCA(INPpName, (ft_sim->devices[type]->instanceParms[idx].keyword, parm, ckt, type, fast)); 
+	  if(0) printf("Assign %s\n", ft_sim->devices[type]->instanceParms[idx].keyword);
+       }
+       else
+       {
+          LITERR("Unrecognized parameter\n");
+       	  return(0);
+       }
+       
+    }
+    return (int) ':';
+}
+
+
+#if 0
+int INP2GEN_old(CKTcircuit *ckt, INPtables * tab, struct card *current)
 {
 
 /* <inst>#<devtype> node1 node2 ... noden param=val */
@@ -153,3 +251,4 @@ int INP2GEN(CKTcircuit *ckt, INPtables * tab, struct card *current)
        
     }
 }
+#endif

@@ -106,11 +106,7 @@ void INPpas2(CKTcircuit *ckt, struct card *data, INPtables * tab, TSKtask *task)
 	c = *(current->line);
 	if(islower_c(c))
 	    c = toupper_c(c);
-#ifdef WITH_LOOPANA	    
-	if(INP2GEN(ckt, tab, current))
-	    ; /* well done */
-	else
-#endif
+
 	switch (c) {
 
 	case ' ':
@@ -118,6 +114,12 @@ void INPpas2(CKTcircuit *ckt, struct card *data, INPtables * tab, TSKtask *task)
 	case '\t':
 	    /* blank line (tab leading) */
 	    break;
+#ifdef WITH_LOOPANA
+        case ':':
+	    /* :devtype:instname ... */
+	    INP2GEN(ckt, tab, current);
+	    break;
+#endif	    
 #ifdef XSPICE
 	case 'A':
 	    MIF_INP2A(ckt, tab, current);
