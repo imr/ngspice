@@ -21,8 +21,8 @@ Ib vss bn 1u
 Xdiff inp inn outp outn setcm vdd vss diffpair
 Cload outp outn 100f
 
-Balun1#balun outp outn outcm outdiff
-Balun1#balun inn inp incm indiff
+:balun:Balun1 outp outn outcm outdiff
+:balun:Balun1 inn inp incm indiff
 Vprobediff outdiff indiff DC 0
 Vprobecm outcm incm DC 0
 
@@ -30,3 +30,7 @@ Vset setcm vss DC 1.1
 Vvdd vdd vss DC 3.3
 Vvss vss 0 DC 0
 
+.control
+loop vprobediff dec 10 1 10e9 name="diffloop"
+loop vprobecm dec 10 1 10e9 name="cmloop"
+.endc
