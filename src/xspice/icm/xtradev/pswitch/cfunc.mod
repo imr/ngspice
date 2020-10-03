@@ -226,7 +226,7 @@ void cm_pswitch(ARGS)  /* structure holding parms,
             }
         }
         
-        pi_pcntl = INPUT(out) / r * (loc->c2 * inmean * inmean - loc->c1 * INPUT(cntl_in));
+        pi_pcntl = INPUT(out) / r * (loc->c2 * inmean * inmean - loc->c1);
         pi_pvout = 1.0 / r;
         
     }
