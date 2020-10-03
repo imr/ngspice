@@ -1,0 +1,45 @@
+* sw ring-oscillators
+
+.control
+destroy all
+run
+plot I(vmeasure) I(vmeasure2)
+print I(vmeasure) I(vmeasure2)
+*plot V(N001)  V(N002)
+rusage 
+.endc
+
+*.ic v(N017)=0.25
+*.tran 50p 40n 50p uic
+.dc Vin 0 3 0.01
+*.option method=gear maxord=3
+
+Vin N001 0 0
+
+VDD VDD2 0 DC 3
+
+VMEASURE VDD2 N002 dc 0
+VMEASURE2 VDD2 N004 dc 0
+
+aa1 N001 %gd(N002 0) switch3
+.model switch3 aswitch(cntl_off=1.1 cntl_on=0.9 r_off=1e12
++ r_on=1k log=TRUE limit=TRUE)
+
+aa2 N001 %gd(N002 0) switch4
+.model switch4 aswitch(cntl_off=1.9 cntl_on=2.3 r_off=1e12
++ r_on=1k log=TRUE limit=TRUE)
+
+ap1 N001 %gd(N004 0) switch5
+.model switch5 pswitch(cntl_off=1.1 cntl_on=0.9 r_off=1e12
++ r_on=1k log=TRUE)
+
+ap2 N001 %gd(N004 0) switch6
+.model switch6 pswitch(cntl_off=1.9 cntl_on=2.3 r_off=1e12
++ r_on=1k log=TRUE)
+
+*sw N002 0 N001 0 swn
+*.MODEL SWN VSWITCH ( VON = 1.1 VOFF = 0.9 RON=1k  ROFF=1e12 )
+
+*.include switch-invs.lib
+
+.end
