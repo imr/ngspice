@@ -67,11 +67,11 @@ Null_Allowed:      yes                  yes
 
 PARAMETER_TABLE:
 
-Parameter_Name:    r_on	
-Description:       "on resistance"
-Data_Type:         real 
-Default_Value:     1.0	 
-Limits:            - 
-Vector:             no 
-Vector_Bounds:      - 
-Null_Allowed:      yes 
+Parameter_Name:    r_on	                limit
+Description:       "on resistance"      "set upper and lower limits to resistance"
+Data_Type:         real                 boolean
+Default_Value:     1.0	                false
+Limits:            -                    -
+Vector:             no                  no
+Vector_Bounds:      -                   -
+Null_Allowed:      yes                  yes

@@ -8029,7 +8029,7 @@ static struct card *pspice_compat(struct card *oldcard)
                 tfree(card->line);
                 rep_spar(modpar);
                 card->line = tprintf(
-                        ".model a%s aswitch(%s %s %s %s  log=TRUE)", modname,
+                        ".model a%s aswitch(%s %s %s %s  log=TRUE limit=TRUE)", modname,
                         modpar[0], modpar[1], modpar[2], modpar[3]);
             }
             for (i = 0; i < 4; i++)
@@ -8210,7 +8210,7 @@ static struct card *pspice_compat(struct card *oldcard)
                 tfree(card->line);
                 rep_spar(modpar);
                 card->line = tprintf(
-                    ".model a%s aswitch(%s %s %s %s  log=TRUE)", modname,
+                    ".model a%s aswitch(%s %s %s %s  log=TRUE limit=TRUE)", modname,
                     modpar[0], modpar[1], modpar[2], modpar[3]);
             }
             for (i = 0; i < 4; i++)
