@@ -3,14 +3,13 @@
 .control
 destroy all
 run
-plot I(vmeasure)
-plot V(Osc_out) 
-rusage 
+plot I(vmeasure) ylimit 0 5m
+plot V(Osc_out)
+rusage
 .endc
 
 .ic v(N017)=0.25
-.tran 50p 40n 50p uic
-*.option method=gear maxord=3
+.tran 50p 40n 50p
 
 VDD VDD2 0 DC 3
 
