@@ -1,0 +1,83 @@
+/*.......1.........2.........3.........4.........5.........6.........7.........8
+================================================================================
+3-Clause BSD
+
+Copyright 2020 The ngspice team
+               
+
+AUTHORS                      
+
+    27 September 2020     Holger Vogt
+
+
+SUMMARY
+
+    This file contains the interface specification file for the 
+    analog pswitch code model.
+
+===============================================================================*/
+
+NAME_TABLE:
+
+
+C_Function_Name:       cm_pswitch
+Spice_Model_Name:      pswitch 
+Description:           "analog PSPICE compatible switch"
+
+
+PORT_TABLE:
+
+
+Port_Name:             cntl_in            out            
+Description:           "input"            "resistive output"
+Direction:             in                 inout
+Default_Type:          v                  gd 
+Allowed_Types:         [v,vd,i,id,vnam]   [gd] 
+Vector:                 no                 no
+Vector_Bounds:          -                  -  
+Null_Allowed:          no                 no 
+
+
+PARAMETER_TABLE:
+
+
+Parameter_Name:     cntl_off                cntl_on 
+Description:        "control 'off' val"     "control 'on' val"
+Data_Type:          real                    real   
+Default_Value:      0.0                     1.0
+Limits:             -                       -       
+Vector:              no                      no     
+Vector_Bounds:       -                       -   
+Null_Allowed:       yes                     yes    
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:    log                  r_off	
+Description:       "Log-linear switch"	"off resistance"
+Data_Type:     	   boolean              real 
+Default_Value:     TRUE                 1.0e12	 
+Limits:            -                    - 
+Vector:             no                   no 
+Vector_Bounds:      -                    - 
+Null_Allowed:      yes                  yes 
+
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:    r_on	
+Description:       "on resistance"
+Data_Type:         real 
+Default_Value:     1.0	 
+Limits:            - 
+Vector:             no 
+Vector_Bounds:      - 
+Null_Allowed:      yes 
+
+
+STATIC_VAR_TABLE:
+
+Static_Var_Name:    locdata
+Description:        "local static data"
+Data_Type:          pointer
