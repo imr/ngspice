@@ -609,6 +609,22 @@ case $host_os in
 esac
 AM_CONDITIONAL([WINCONSOLE], [test "x$has_winconsole" = xyes])
 
+if test "x$has_winconsole" = xyes; then
+    AC_CHECK_PROGS([WINRES], [windres windres.exe], [no])
+    if test "x$WINRES" = xno; then
+        AC_MSG_WARN([If you want adding the icon you should install windres])
+    fi
+fi
+
+if test "x$with_wingui" = xyes; then
+    AC_CHECK_PROGS([WINRES], [windres windres.exe], [no])
+    if test "x$WINRES" = xno; then
+        AC_MSG_WARN([If you want adding the icon you should install windres])
+    fi
+fi
+
+AM_CONDITIONAL([WINRESOURCE], [test "x$WINRES" = xwindres])
+
 case $with_wingui in
     yes )
         AC_DEFINE([X_DISPLAY_MISSING])
