@@ -102,6 +102,16 @@ DYNAMIC_DEVICELIBS =					\
 
 ## Build ngspice first:
 
+## compile the icon:
+if WINGUI
+ngicon.o: ngicon.rc
+	windres $(srcdir)/ngicon.rc -O coff -o ngicon.o
+endif
+if WINCONSOLE
+ngicon.o: ngicon.rc
+	windres $(srcdir)/ngicon.rc -O coff -o ngicon.o
+endif
+
 ngspice_SOURCES = \
 	main.c \
 	conf.c \
