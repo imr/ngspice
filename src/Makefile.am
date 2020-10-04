@@ -103,11 +103,7 @@ DYNAMIC_DEVICELIBS =					\
 ## Build ngspice first:
 
 ## compile the icon:
-if WINGUI
-ngicon.o: ngicon.rc
-	windres $(srcdir)/ngicon.rc -O coff -o ngicon.o
-endif
-if WINCONSOLE
+if WINRESOURCE
 ngicon.o: ngicon.rc
 	windres $(srcdir)/ngicon.rc -O coff -o ngicon.o
 endif
@@ -202,11 +198,7 @@ ngspice_LDADD += frontend/help/libhlp.la
 endif
 endif
 
-if WINGUI
-ngspice_LDADD += ngicon.o
-endif
-
-if WINCONSOLE
+if WINRESOURCE
 ngspice_LDADD += ngicon.o
 endif
 
