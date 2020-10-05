@@ -62,7 +62,7 @@ SUBDIRS += nbjt nbjt2 numd  numd2 numos
 endif
 
 if LOOPANA_WANTED
-SUBDIRS += balun
+SUBDIRS += balun nullator norator
 endif
 
 
@@ -123,7 +123,9 @@ DIST_SUBDIRS = \
 	numd	\
 	numd2	\
 	numos   \
-	balun
+	balun   \
+	nullator \
+	norator
 
 
 noinst_LTLIBRARIES = libdev.la

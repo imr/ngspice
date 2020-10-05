@@ -144,6 +144,8 @@ extern struct coreInfo_t  coreInfo; /* cmexport.c */
 #endif
 #ifdef WITH_LOOPANA
 #include "balun/balunitf.h"
+#include "nullator/nulaitf.h"
+#include "norator/noraitf.h"
 #endif
 
 static SPICEdev *(*static_devices[])(void) = {
@@ -222,6 +224,8 @@ static SPICEdev *(*static_devices[])(void) = {
 
 #ifdef WITH_LOOPANA
     get_balun_info,
+    get_nula_info,
+    get_nora_info,
 #endif
 
 };

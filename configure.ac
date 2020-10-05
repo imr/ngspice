@@ -1262,6 +1262,8 @@ AC_CONFIG_FILES([Makefile
                  src/spicelib/devices/numd2/Makefile
                  src/spicelib/devices/numos/Makefile
 		 src/spicelib/devices/balun/Makefile
+		 src/spicelib/devices/nullator/Makefile
+		 src/spicelib/devices/norator/Makefile
                  src/spicelib/parser/Makefile
                  src/ciderlib/Makefile
                  src/ciderlib/input/Makefile

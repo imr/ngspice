@@ -135,7 +135,9 @@ ngspice_LDADD += spicelib/devices/ndev/libndev.la
 endif
 
 if LOOPANA_WANTED
-ngspice_LDADD += spicelib/devices/balun/libbalun.la
+ngspice_LDADD += spicelib/devices/balun/libbalun.la \
+                 spicelib/devices/nullator/libnula.la \
+                 spicelib/devices/norator/libnora.la
 endif
 
 if NUMDEV_WANTED
@@ -418,7 +420,9 @@ libspice_la_LIBADD += \
 endif
 
 if LOOPANA_WANTED
-libspice_la_LIBADD += spicelib/devices/balun/libbalun.la
+libspice_la_LIBADD += spicelib/devices/balun/libbalun.la \
+                      spicelib/devices/nullator/libnula.la \
+                      spicelib/devices/norator/libnora.la
 endif
 
 if NUMDEV_WANTED
@@ -537,7 +541,9 @@ libngspice_la_LIBADD += \
 endif
 
 if LOOPANA_WANTED
-libngspice_la_LIBADD += spicelib/devices/balun/libbalun.la
+libngspice_la_LIBADD += spicelib/devices/balun/libbalun.la \
+                        spicelib/devices/nullator/libnula.la \
+			spicelib/devices/norator/libnora.la
 endif
 
 if NUMDEV_WANTED
