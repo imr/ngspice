@@ -88,7 +88,10 @@ An example circuit simulation with a differential loop is found in examples/loop
 New syntax for netlist instances
 --------------------------------
 As all the alphabet was already reserved for device prefix codes in ngspice, a special new syntax was introduced in the parser which works as:
-<instname>#<devtype> <node_1> .. <node_n> <param_1>=<val_1> .. <param_n>=<val_n>
+:<devtype>:<instname> <node_1> .. <node_n> <param_1>=<val_1> .. <param_n>=<val_n>
 <instname> can be any name, its first letter has no special significance.
-<devtype> is case insensitive and corresponds to the code name of the device type as set in the SPICEdev structure in each device source code.
-Examples are: Resistor, Capacitor, Inductor, CCCS, CCVS, Diode, Vsource, etc.
+<devtype> is case insensitive and corresponds to the code name of the device type as set in the SPICEdev structure in each device source code
+(examples are: Resistor, Capacitor, Inductor, CCCS, CCVS, Diode, Vsource, etc.).
+The new syntax is intended to be used on new device type only, currently only
+the balun.
+    :balun:mybaluninst pos neg cm diff
