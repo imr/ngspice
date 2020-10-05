@@ -22,7 +22,7 @@ Xdiff inp inn outp outn setcm vdd vss diffpair
 Cload outp outn 100f
 
 :balun:Balun1 outp outn outcm outdiff
-:balun:Balun1 inn inp incm indiff
+:balun:Balun2 inn inp incm indiff
 Vprobediff outdiff indiff DC 0
 Vprobecm outcm incm DC 0
 
