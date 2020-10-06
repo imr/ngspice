@@ -1,0 +1,64 @@
+/*.......1.........2.........3.........4.........5.........6.........7.........8
+================================================================================
+Copyright 2019
+Anamosic Ballenegger Design
+Hameau des Indevis 7, 1613 Maracon
+All Rights Reserved
+
+AUTHORS                      
+
+    5 March 2019     Florian Ballenegger
+
+
+SUMMARY
+
+    This file contains the interface specification file for the 
+    analog switch code model with digital node control .
+
+===============================================================================*/
+
+NAME_TABLE:
+
+
+C_Function_Name:       cm_da_switch
+Spice_Model_Name:      da_switch 
+Description:           "analog switch with digital control"
+
+
+PORT_TABLE:
+
+
+Port_Name:             in                 out            
+Description:           "input"            "conductance output"
+Direction:             in                 inout
+Default_Type:          d                  gd 
+Allowed_Types:         [d]               [gd] 
+Vector:                 yes                 yes
+Vector_Bounds:          -                  -  
+Null_Allowed:          no                 no 
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:    r_on	                r_off	
+Description:       "on resistance"	"off resistance"
+Data_Type:         real                 real 
+Default_Value:     1.0	                1.0e12	 
+Limits:            -                    - 
+Vector:            no                   no 
+Vector_Bounds:     -                    - 
+Null_Allowed:      yes                  yes 
+Parameter_Scope:   both                 both
+
+PARAMETER_TABLE:
+
+
+Parameter_Name:     input_load 
+Description:        "capacitive input load (F)"
+Data_Type:          real   
+Default_Value:      1.0e-15
+Limits:             -       
+Vector:              no     
+Vector_Bounds:       -      
+Null_Allowed:       yes                      
+Parameter_Scope:    both

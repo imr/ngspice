@@ -1,0 +1,56 @@
+/*.......1.........2.........3.........4.........5.........6.........7.........8
+================================================================================
+Copyright 1991
+Georgia Tech Research Corporation, Atlanta, Ga. 30332
+All Rights Reserved
+
+AUTHORS                      
+
+    19 Nov 1991     Jeffrey P. Murray
+    18 Nov 2019     Florian Ballenegger
+
+
+SUMMARY
+
+    This file contains the interface specification file for the 
+    digital d_const code model.
+
+===============================================================================*/
+
+
+NAME_TABLE:
+
+Spice_Model_Name:      d_const
+C_Function_Name:       cm_d_const
+Description:           "digital constant source"
+
+
+PORT_TABLE:
+
+Port_Name:           out 
+Description:         "output"     
+Direction:           out
+Default_Type:        d    
+Allowed_Types:       [d]  
+Vector:               yes   
+Vector_Bounds:        -    
+Null_Allowed:        no   
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:     word                   strength
+Description:        "binary output value"  "output strength"
+Data_Type:          string                 string      
+Default_Value:      "0s"                   "s"
+Limits:             -                      -          
+Vector:              no                    no
+Vector_Bounds:       -                     -
+Null_Allowed:       no                     no
+Parameter_Scope:    both                   both
+
+STATIC_VAR_TABLE:
+
+Static_Var_Name:    locstrength           locvec
+Description:        "decoded strength"    "pre-decoded state vector"
+Data_Type:          int                   pointer
