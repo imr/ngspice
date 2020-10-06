@@ -1,0 +1,16 @@
+* simple nullator and norator example
+* find gate voltage for 100uA drain current and Vds=100mV
+
+.model nch nmos level=49 version=3.3.0 tox=3.5n nch=2.4e17 nsub=5e16 vth0=0.6
+
+Mdut d g 0 0 nch W=7.5u L=0.35u pd=13.5u ad=22.5p ps=13.5u as=22.5p
+Id 0 d DC 100u
+
+:nullator:setdrain d 0 offset=0.1
+:norator:findgate g 0
+
+.control
+dc temp -40 125 5
+plot g
+.endc
+
