@@ -79,7 +79,6 @@ the .model card are not filled in by this function.  They are
 defaulted later by MIFsetup().  The function returns NULL when
 successful, and an error string on failure.
 */
-#define TRACE
 
 char *MIFgetMod( 
     CKTcircuit *ckt,    /* The circuit structure */

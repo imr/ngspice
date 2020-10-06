@@ -47,6 +47,7 @@ Limits:             -
 Vector:              no                              
 Vector_Bounds:       -                                
 Null_Allowed:       no                          
+Parameter_Scope:    both
 
 
 PARAMETER_TABLE:
@@ -59,6 +60,7 @@ Limits:             -
 Vector:              no                              
 Vector_Bounds:       -                                
 Null_Allowed:       no
+Parameter_Scope:    both
 
 
 STATIC_VAR_TABLE:

@@ -46,6 +46,7 @@ Limits:             [1e-12 -]                   [1e-12 -]
 Vector:             yes                         yes
 Vector_Bounds:      -                           -
 Null_Allowed:       yes                         yes
+Parameter_Scope:    both                        both
 
 
 PARAMETER_TABLE:
@@ -58,6 +59,8 @@ Limits:             -                           -
 Vector:             yes                         yes
 Vector_Bounds:      -                           -
 Null_Allowed:       yes                         yes
+Parameter_Scope:    both                        both
+
 
 PARAMETER_TABLE:
 
@@ -69,6 +72,7 @@ Limits:             -
 Vector:             no
 Vector_Bounds:      -
 Null_Allowed:       no
+Parameter_Scope:    both
 
 STATIC_VAR_TABLE:
 

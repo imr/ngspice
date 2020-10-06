@@ -57,7 +57,7 @@ MIFParam(int param_index, IFvalue *value, GENinstance *inst_in, IFvalue *select)
     /* Arrange for access to MIF specific data in the model */
     inst = (MIFinstance*) inst_in;
     model = MIFmodPtr(inst);
-printf("Mif param %d\n", param_index);
+
     /* Get model type */
     mod_type = model->MIFmodType;
     if((mod_type < 0) || (mod_type >= DEVmaxnum))

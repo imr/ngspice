@@ -1987,9 +1987,11 @@ static char *get_adevice_model_name(char *line)
 	     break; /* found model */
     }
     if(ptr_beg == line)
-         return copy_substring(ptr_beg,ptr_beg); /* did not found the model */
+         return NULL; /* did not found the model */
+    if(ptr_beg[0]=='!')
+         return NULL; /* use a default model - do not translate */
 	 
-    printf("adev mod name: %s\n", ptr_beg);
+    if(0) printf("adev mod name: %s\n", ptr_beg);
     return copy_substring(ptr_beg, ptr_end);
 }
 
@@ -2186,7 +2188,7 @@ static void get_subckts_for_subckt(struct card *start_card, char *subckt_name,
             }
             else if (*line == 'a') {
                 char *model_name = get_adevice_model_name(line);
-                nlist_adjoin(used_models, model_name);
+                if(model_name) nlist_adjoin(used_models, model_name);
             }
             else if (has_models) {
                 int num_terminals = get_number_terminals(line);
@@ -2268,7 +2270,7 @@ static void comment_out_unused_subckt_models(struct card *start_card)
             }
             else if (*line == 'a') {
                 char *model_name = get_adevice_model_name(line);
-                nlist_adjoin(used_models, model_name);
+                if(model_name) nlist_adjoin(used_models, model_name);
             }
             else if (has_models) {
                 /* This is a preliminary version, until we have found a
@@ -8761,7 +8763,7 @@ static void inp_rem_unused_models(struct nscope *root, struct card *deck)
             /* ignore certain cases, for example
              *    C5 node1 node2 42.0
              */
-            if (is_a_modelname(elem_model_name)) {
+            if (elem_model_name && is_a_modelname(elem_model_name)) {
 
                 struct modellist *m =
                         inp_find_model(card->level, elem_model_name);
@@ -8778,8 +8780,8 @@ static void inp_rem_unused_models(struct nscope *root, struct card *deck)
                             elem_model_name);
                 }
             }
-
-            tfree(elem_model_name);
+            if(elem_model_name)
+               tfree(elem_model_name);
         }
     }
 

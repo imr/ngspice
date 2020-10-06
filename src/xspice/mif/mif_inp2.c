@@ -55,6 +55,8 @@ NON-STANDARD FEATURES
 #include "ngspice/evt.h"
 #include "ngspice/evtproto.h"
 
+#include "ngspice/iferrmsg.h"
+
 extern int *DEVicesfl; /*flags for the devices */
 
 static void  MIFinit_inst(MIFmodel *mdfast, MIFinstance *fast);
@@ -160,7 +162,7 @@ and error checks are performed.
 
 -------------------------------------------------------------------------*/
 extern INPmodel *modtab;
-#define TRACE
+
 void
 MIF_INP2A (
     CKTcircuit   *ckt,      /* circuit structure to put mod/inst structs in */
@@ -190,7 +192,6 @@ MIF_INP2A (
     MIFmodel     *mdfast;  /* pointer to model struct */
     MIFinstance  *fast[1];    /* pointer to instance struct */
 
-    INPmodel  *thismodel;  /* pointer to model struct */
 
     Mif_Conn_Info_t  *conn_info;  /* for faster access to conn info struct */
     Mif_Param_Info_t  *param_info;  /* for faster access to param info struct */
@@ -202,7 +203,6 @@ MIF_INP2A (
     /* SDB debug statement */
     printf("In MIF_INP2A, line to process = %s . . . \n", current->line);
 #endif
-    printf("->modtab %p\n", modtab);
     
     /* get the line text from the card struct */
     line = current->line;
@@ -214,7 +214,6 @@ MIF_INP2A (
     name = copy(MIFgettok(&line));
     INPinsert(&name, tab);
     
-    printf("->modtab %p\n", modtab);
     
     /* locate the last token on the line (i.e. model name) and put it into "model" */
     /* locate the model name */
@@ -227,32 +226,77 @@ MIF_INP2A (
 	while(linetmp > current->line && isspace_c(*linetmp));
 	if(*linetmp == '=')
 	    break;
-	printf("model updated to %s, char %c, modtab %p\n", tmp_token, *linetmp,modtab);
 	model = tmp_token;
     }
-    printf("->modtab %p\n", modtab);
     /* make sure the model name was there. */
     if(model == NULL) {
         LITERR("Missing model on A type device");
         gc_end();
         return;
     }
-    
-    /* if model name starts with !, use or create a default model  */
-    /* TODO */
-
-    /* Locate model from pass 1.  If it hasn't been processed yet, */
-    /* allocate a structure in ckt for it, process its parameters  */
-    /* and return a pointer to its structure in 'thismodel'        */
-    current->error = MIFgetMod(ckt, model, &thismodel, tab);
-    if(current->error) {
-        gc_end();
-        return;
+    mdfast = NULL;
+    if(model[0]=='!') {
+         /* if model name starts with !, use or create a default model  */
+         IFuid defmodUid;
+	 
+	 type = CKTtypelook(&model[1]);
+	 if (type<0 || type >= DEVmaxnum) {
+	    LITERR("Codemodel type not found");
+	    gc_end();
+            return;
+	 }
+	 if(0) printf("model type for %s is %d. Currently:\n", model, type);
+	 {
+	 char* key;
+	 GENmodel *entry;
+	 NGHASHITER iter;
+	 NGHASH_FIRST(&iter);
+	 if(0) while(entry=(GENmodel*) nghash_enumeratekRE(ckt->MODnameHash,(void**) &key, &iter))
+	      printf("   %s/%s\n",key,entry->GENmodName);
+	 
+	 for(entry=ckt->CKThead[type];entry;entry=entry->GENnextModel) {
+	   if(strcmp(entry->GENmodName, model)==0) {
+	     mdfast=(MIFmodel*) entry;
+	     break;
+	   }
+	 }
+	 }
+	 /* find or create a default model */
+	 error = E_EXISTS;
+	 if(mdfast==NULL) {
+	     error = IFnewUid(ckt, &defmodUid, NULL, &model[0], UID_MODEL, NULL);
+	     if(!error)
+	         error = ft_sim->newModel ( ckt, type,
+                        (GENmodel**) &mdfast, defmodUid);
+	 }
+	 if(error && error!=E_EXISTS) {
+	     LITERR("Could not create or find default model");
+	     gc_end();
+             return;
+	 }
+	 /* gtri modification: allocate and initialize MIF specific model struct items */
+         if(error != E_EXISTS) {
+	    mdfast->num_param = DEVices[type]->DEVpublic.num_param;
+            mdfast->param = TMALLOC(Mif_Param_Data_t *, mdfast->num_param);
+            for(i = 0; i < mdfast->num_param; i++) {
+		mdfast->param[i] = TMALLOC(Mif_Param_Data_t, 1);
+		mdfast->param[i]->is_null = MIF_TRUE;
+		mdfast->param[i]->size = 0;
+		mdfast->param[i]->element = NULL;
+            }
+	 }
+    } else {
+        /* Locate model from pass 1.  If it hasn't been processed yet, */
+        /* allocate a structure in ckt for it, process its parameters  */
+        /* and return a pointer to its structure in 'thismodel'        */
+        INPmodel  *thismodel;  /* pointer to model struct */
+	current->error = MIFgetMod(ckt, model, &thismodel, tab);
+	if(current->error) {gc_end(); return;}
+	type = thismodel->INPmodType;
+	mdfast = (MIFmodel*) thismodel->INPmodfast;
     }
-    printf("Device type %d\n", thismodel->INPmodType);
-    /* get the integer index into the DEVices data array for this  */
-    /* model                                                       */
-    type = thismodel->INPmodType;
+    /* type and modfast is set above */
+    if(0) printf("Device type %d\n", type);
     if((type >= DEVmaxnum) || DEVicesfl[type] == 0) {
         LITERR("Invalid model type for A type device");
         gc_end();
@@ -260,7 +304,6 @@ MIF_INP2A (
     }
 
     /* create a new structure for this instance in ckt */
-    mdfast = (MIFmodel*) thismodel->INPmodfast;
     IFC(newInstance, (ckt, (GENmodel*)mdfast, (GENinstance **)fast, name));
 
 
@@ -369,7 +412,13 @@ MIF_INP2A (
             continue;  /* iterate */
         } else {
             /* set the null flag to false */
-            fast[0]->conn[i]->is_null = MIF_FALSE;
+	    if(fast[0]->conn[i])
+                fast[0]->conn[i]->is_null = MIF_FALSE;
+            else {
+		LITERR("Expected one more connection");
+		int e = *((int*) NULL);
+		gc_end(); return;
+	    }
         }
 
 
@@ -1078,7 +1127,7 @@ MIFinp2_params(char *line, CKTcircuit *ckt, INPtables *tab, struct card *current
           int dataType = DEVices[type]->DEVpublic.instanceParms[i].dataType;
 	  if(0) printf("will set parameter %s to xspice instance\n", DEVices[type]->DEVpublic.instanceParms[i].keyword);
 	  parm = INPgetValue(ckt, &line, dataType, tab);
-	  printf("MIFinp2_params set %s id=%d i#%d\n", name, DEVices[type]->DEVpublic.instanceParms[i].id,i);
+	  if(0) printf("MIFinp2_params set %s id=%d i#%d\n", name, DEVices[type]->DEVpublic.instanceParms[i].id,i);
 	  IFC(setInstanceParm, (ckt, (GENinstance*)inst, DEVices[type]->DEVpublic.instanceParms[i].id, parm, NULL));
 	  /*GCA(INPapName, (ckt, job->JOBtype, job, ana->analysisParms[i].keyword, parm)); */
        }

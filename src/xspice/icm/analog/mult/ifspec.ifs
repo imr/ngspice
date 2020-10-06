@@ -48,7 +48,7 @@ Limits:             -                           -
 Vector:              yes                         yes     
 Vector_Bounds:       in                          in      
 Null_Allowed:       yes                         yes    
-
+Parameter_Scope:    both                        both
 
 
 PARAMETER_TABLE:
@@ -62,5 +62,6 @@ Limits:             -               -
 Vector:              no              no
 Vector_Bounds:       -               -
 Null_Allowed:       yes             yes
+Parameter_Scope:    both            both
 
 
