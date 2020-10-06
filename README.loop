@@ -92,6 +92,8 @@ As all the alphabet was already reserved for device prefix codes in ngspice, a s
 <instname> can be any name, its first letter has no special significance.
 <devtype> is case insensitive and corresponds to the code name of the device type as set in the SPICEdev structure in each device source code
 (examples are: Resistor, Capacitor, Inductor, CCCS, CCVS, Diode, Vsource, etc.).
-The new syntax is intended to be used on new device type only, currently only
-the balun.
+The new syntax is intended to be used on new device type only, currently only balun, nullator and norator.
     :balun:mybaluninst pos neg cm diff
+    :nullator:mynull vp vn offset=1m
+    :norator:mynor vp vn
+    
