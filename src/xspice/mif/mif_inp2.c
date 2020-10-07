@@ -1108,10 +1108,11 @@ MIFinp2_params(char *line, CKTcircuit *ckt, INPtables *tab, struct card *current
    int i;
    IFvalue ptemp;		/* a value structure  */
    IFvalue *parm;
-   
+
    while(*line)
    {
        INPgetTok(&line, &name, 0);
+       if(0) printf(" tok %s\n", name);
        if(*line!='=') {
           printf("Expect param=val format for %s, got %c\n", name, *line);
           LITERR("Expect param=val format\n");
@@ -1125,8 +1126,27 @@ MIFinp2_params(char *line, CKTcircuit *ckt, INPtables *tab, struct card *current
        if(i<*(DEVices[type]->DEVpublic.numInstanceParms))
        {
           int dataType = DEVices[type]->DEVpublic.instanceParms[i].dataType;
-	  if(0) printf("will set parameter %s to xspice instance\n", DEVices[type]->DEVpublic.instanceParms[i].keyword);
-	  parm = INPgetValue(ckt, &line, dataType, tab);
+	  if(0) printf("will set parameter %s type %d to xspice instance\n", DEVices[type]->DEVpublic.instanceParms[i].keyword, dataType);
+	  if((dataType & IF_VARTYPES) == IF_FLAG) {
+	      /* flag format is flag=0/1/yes/no/true/false
+	        we do not use INPgetValue here as it use a different format
+		for flags */
+	      char* valstr;
+	      INPgetTok(&line, &valstr, 1);
+	      if(strcmp(valstr,"true")==0)
+	         ptemp.iValue=1;
+	      else if(strcmp(valstr,"yes")==0)
+	         ptemp.iValue=1;
+              else if(strcmp(valstr,"false")==0)
+	         ptemp.iValue=0;
+	      else if(strcmp(valstr,"no")==0)
+	         ptemp.iValue=0;
+	      else
+	         ptemp.iValue=atoi(valstr) ? 1 : 0;
+	      parm = &ptemp;
+	      tfree(valstr);
+	  } else
+	      parm = INPgetValue(ckt, &line, dataType, tab);
 	  if(0) printf("MIFinp2_params set %s id=%d i#%d\n", name, DEVices[type]->DEVpublic.instanceParms[i].id,i);
 	  IFC(setInstanceParm, (ckt, (GENinstance*)inst, DEVices[type]->DEVpublic.instanceParms[i].id, parm, NULL));
 	  /*GCA(INPapName, (ckt, job->JOBtype, job, ana->analysisParms[i].keyword, parm)); */
