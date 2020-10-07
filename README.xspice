@@ -1,0 +1,55 @@
+Instance parameters for XSPICE code models
+==========================================
+
+Xspice codemodels can now have instance parameters.
+Codemodels instances can now also use a default model.
+Two new codemodels are added: da_switch and d_const
+
+Usage from netlist:
+-------------------
+a<instname> <connections> <model> <instparam>=<value(s)>
+If <model> starts with !, the corresponding codemodel device name will be found
+and a default model will be automatically created. Otherwise <model> must be a model name declared by a .model card.
+Example:
+asum [n1 n2 n3] vsum summermod in_gain=1,1,2 out_gain=2 
+.model summermod summer
+alut [d1 d2 d3] qlut !d_lut table_values="01101001"
+
+Writing code models with instance parameters:
+---------------------------------------------
+Parameters that can be set on instances must be declared in the ifspec.ifs file
+in the corresponding PARAMETER_TABLE under the new Parameter_Scope keyword.
+The value can be "model", "instance", or "both".
+ model    : parameter can be set only to a model
+ instance : the parameter can be set to instances, but not on models
+ both     : the parameter can be set both to instances or models.
+Default scope is "model".
+If the scope is "both" and the instance parameter is not set, the value of the
+corresponding model parameter will be used. If the parameter is not set on the model either, the default value will be used.
+
+This is nothing special to do in the cfunc.mod file, the same PARAM() access will works for all parameters. The codemodel file however need to be recompiled.
+(you need to touch cfunc.mod to trigger a re-compilation even if ifspec.ifs is modified).
+
+Binary compatibility of codemodels
+----------------------------------
+Codemodels compiled for older version of ngspice should be compatible with the
+new version.
+Codemodels compiled for the new version of ngspice and which use
+"instance" or "both" scope for any parameter will not be compatible with older version of ngspice that do not have this feature.
+
+If you have several version of ngspice installed, beware of which codemodels
+are loaded by the spinit file. It might be useful to specify explicitely a specific spinit file which points to the codemodel you want to load.
+
+The default parameter scope is "model" if not specified in ifspec.ifs, this
+ensure backward and forward compatibility for unmodified code models.
+
+The following codemodel was modified for having parameters with "both" scope:
+analog.cm: summer, slew, mult, int, gain, climit
+digital.cm: d_dff, d_dlatch, d_jkff, d_srff, d_srlatch, d_tff (ic parameter)
+digital.cm: d_genlut, d_lut, d_source
+
+New codemodels
+--------------
+da_switch: analog switch controlled by digital node
+d_const: constant digital source with vector output
+
