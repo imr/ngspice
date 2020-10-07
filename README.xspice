@@ -22,12 +22,12 @@ in the corresponding PARAMETER_TABLE under the new Parameter_Scope keyword.
 The value can be "model", "instance", or "both".
  model    : parameter can be set only to a model
  instance : the parameter can be set to instances, but not on models
- both     : the parameter can be set both to instances or models.
+ both     : the parameter can be set either to instances or models, or both.
 Default scope is "model".
 If the scope is "both" and the instance parameter is not set, the value of the
 corresponding model parameter will be used. If the parameter is not set on the model either, the default value will be used.
 
-This is nothing special to do in the cfunc.mod file, the same PARAM() access will works for all parameters. The codemodel file however need to be recompiled.
+This is nothing special to do in the cfunc.mod file, the same PARAM() access will works for all parameters. The codemodel however need to be recompiled.
 (you need to touch cfunc.mod to trigger a re-compilation even if ifspec.ifs is modified).
 
 Binary compatibility of codemodels

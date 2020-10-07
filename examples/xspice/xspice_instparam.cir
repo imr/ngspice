@@ -1,0 +1,23 @@
+*xspice codemodel with instance parameters
+
+V1 n1 0 DC 1
+V2 n2 0 DC 1.2
+V3 n3 0 DC 1.4
+
+Asum [n1 n2 n3] q !summer in_gain=1,2,3 out_gain=5
+Asum2 [n1 n2 n3] q2 !summer in_gain=3,2,1 out_gain=2
+
+Amult [n1 n2] qmult !mult in_gain=3,4 out_gain=0.1 out_offset=-1  in_offset=1,2
+Amult2 [n1 n2] qmult2 multmod out_offset=0
+.model multmod mult (in_gain=[3 4] out_gain=0.1 out_offset=-1  in_offset=[1 2])
+
+
+* digital
+alut [d1 d2 d3] qlut !d_lut table_values="01101001"
+aset [d1 d2 d3] !d_const word="011" strength="s"
+apu d1 !d_pullup
+adff dat clk null null qdff null !d_dff ic=0
+
+Vvdd vdd 0 DC 3.3
+aropd [d1 d2 d3] [%gd(v1 0) %gd(v2 0) %gd(v3 0)] !da_switch r_on=1e3 r_off=1e9
+aropu [~d1 ~d2 ~d3] [%gd(v1 vdd) %gd(v2 vdd) %gd(v3 vdd)] !da_switch r_on=3e3 r_off=1e9
