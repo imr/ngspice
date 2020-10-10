@@ -271,9 +271,17 @@ ft_cpinit(void)
         /* jump over leading spaces */
         for (copys = s = cp_tildexpand(Lib_Path); copys && *copys; ) {
             s = skip_ws(s);
-            /* copy s into buf until space is seen, r is the actual position */
-            for (r = buf; *s && !isspace_c(*s); r++, s++)
-                *r = *s;
+            if (s[0] == '\"') {
+                /* copy string between leading and trailing " */
+                s++;
+                for (r = buf; *s && (*s != '\"'); r++, s++)
+                    *r = *s;
+            }
+            else {
+                /* copy s into buf until space is seen, r is the actual position */
+                for (r = buf; *s && !isspace_c(*s); r++, s++)
+                    *r = *s;
+            }
             tfree(copys);
             /* add a path separator to buf at actual position */
             (void) strcpy(r, DIR_PATHSEP);
