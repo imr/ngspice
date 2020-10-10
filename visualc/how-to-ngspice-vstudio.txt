@@ -1,4 +1,4 @@
-ngspice may be compiled by MS Visual Studio Community 2015.
+ngspice may be compiled by MS Visual Studio Community 2019.
 
 For compilation you need the GNU bison parser generator.
 
@@ -8,8 +8,13 @@ from
   http://sourceforge.net/projects/winflexbison/files/
 
 Create the directory
-  ../../flex-bison
-relative from this directory right here, and unzip there.
+  ..\..\flex-bison
+relative to the current directory ngspice/visualc, and
+unzip win_flex_bison-latest.zip there. So for example
+if you have D:\myspice\ngspice, you will then have
+directory D:\myspice\flex-bison which contains
+win_bison.exe and others.
+
 
 We will invoke the win_bison.exe file
  in this directory during the visual studio compilation.
