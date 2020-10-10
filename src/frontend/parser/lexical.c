@@ -269,8 +269,7 @@ nloop:
             break;
 
         /* if " or `, read until next " or ` is hit, will form a new word,
-           including the quotes.
-           In case of \, the next character gets the eights bit set. */
+           including the quotes. */
         case '"':
         case '`':
             d = c;
@@ -282,6 +281,9 @@ nloop:
                 if (c == '\\') {
                     push(&linebuf, c);
                     c = cp_readchar(&string, cp_inp_cur);
+                    /* found our end char already here, so leave while loop */
+                    if (c == d)
+                        break;
                     push(&buf, c);
                     push(&linebuf, c);
                 } else {
