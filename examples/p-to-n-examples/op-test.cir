@@ -16,8 +16,8 @@ Rfb ino outo 3k
 
 *.dc vin -1 1 0.1
 
-vin in 0 DC 0 PULSE(-0.5 0.5 2uS 200NS 200NS 5uS 10uS)
-.tran 100n 10u
+vin in 0 DC 0 PULSE(-0.5 0.5 2uS 200NS 200NS 7uS 14uS)
+.tran 100n 16u
 
 .control
 run
