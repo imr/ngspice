@@ -1,0 +1,21 @@
+test for cutout
+
+v1 1 0 dc 0 sin (0 1 1k)
+R1 1 2 1
+R2 2 0 1
+
+.control
+tran 10u 10m
+plot v(1)
+let cut-tstart = 2m
+let cut-tstop = 4m
+cutout
+plot v(1) v(2)
+setplot tran1
+let cut-tstart = 6m
+let cut-tstop = 12m
+cutout
+plot v(2) tran1.v(1)
+.endc
+
+.end
