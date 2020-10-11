@@ -1,3 +1,38 @@
+Ngspice-33, Oct 18th, 2020
+============
+- New features:
+    + try first storing the temporary file in user directory,
+      only then in current directory.
+    + Add adding the ngspice icon to the MINGW executable.
+    + Do not print tansient initial conditions, if uic is selected.
+    + Enable node names with special characters like '/'.
+    + Do not print "Units" on a graph, if unknown type or settype notype is given.
+    + Unify batch mode and control mode raw file output.
+    + Make PPerror message more verbose.
+    + Make the pwl parameter r adjustable by .param.
+    + Enable flags xdelta, ydelta for 'gnuplot' command.
+    + Enable special characters for cpl model names and parameters.
+    + New command 'cutout': Cut out part of each vector of the current tran plot
+      and copy into a new plot
+    + Compatibility switches KiCad 'ki', and Spectre 'spe'
+    + Remove vceo= and icrating= from bjt model cards.
+    + The tests of cmaths function will be done only on request.
+    + Add alternative temperature model for certain jfet parameters.
+    + Add BJT Kull Quasi-Saturation model.
+    + Improve self heating tempaerature handling in VDMOS model.
+    + Use W/nf for selecting binning model.
+    + Add wnflag as an instance parameter.
+    + Add PSPICE compatible ISWITCH.
+    + Add a limit capability to the code model aswitch.
+    + Add a new code model pswitch.
+    + Many conde updates not visible to the user, but enhancing stability
+      and efficiency
+
+- Bug fixes:
+    + many bugs fixed and code improvements (see bugs 484 and up)
+    + memory leaks removed
+
+
 Ngspice-32, Apr 25th, 2020
 ============
 

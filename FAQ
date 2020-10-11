@@ -1,4 +1,4 @@
-  Ngspice F.A.Q.Version 2.4 (ngspice-32 release)
+  Ngspice F.A.Q.Version 2.5 (ngspice-33 release)
 
   Maintained by Holger Vogt
   Last update: 04-27-2020
@@ -249,43 +249,41 @@
 
   The latest version released is:
 
-  * ngspice-32 (released on 01/05/2020)
+  * ngspice-33 (released on 18/10/2020)
 
 
  2.2.  What are the latest features in the current release?
 
 - New features:
-    + Add resource info on memory used and available for macOS
-    + redesign of memory monitoring
-    + Replace B source pwl by XSPICE PWL Controlled Source that has smooth rounded and 
-      stepless differentiable corners.
-    + Get a variable directly from an input file with i/o redirection
-    + Make 64 bit compilation the standard
-    + On Windows VisualStudio compilation we support only VS2019
-    + Add function 'conj'
-    + Improved error messages for 'meas' command
-    + Improved PSPICE compatibility
-    + VDMOS model now allows electro-thermal simulation
-      Optionally (instance flag 'thermal') 2 thermal nodes tj and tcase are added
-      to the device instance
-    + Enable utf-8 and UNICODE for string handling (maybe switch off by --disable-utf8)
-    + Vastly redisigned plotting capability: vertical text for labeling y axis,
-      independent color selection for background, grid/text and graphs,
-      independent width selection for grid and graph, access to UNICODE fonts,
-      characters may become ticmarks (variable 'ticchar'), RGB color tables included,
-      variable 'nolegend' switches off the legend
-    + Add variables 'oscompiled'
-    + Command 'let' to allow default low and high indices
-    + Upon calculating the operating point, true gmin stepping added
-    + Free the internal control structure memory by sending ngSpice_Command(NULL)
-    + No interrupt handling (SIGINT) in shared ngspice
-    + Limit the exp function to exp(14)
-    + Event simulation output data may be selected by command 'setplot'
+    + try first storing the temporary file in user directory,
+      only then in current directory.
+    + Add adding the ngspice icon to the MINGW executable.
+    + Do not print tansient initial conditions, if uic is selected.
+    + Enable node names with special characters like '/'.
+    + Do not print "Units" on a graph, if unknown type or settype notype is given.
+    + Unify batch mode and control mode raw file output.
+    + Make PPerror message more verbose.
+    + Make the pwl parameter r adjustable by .param.
+    + Enable flags xdelta, ydelta for 'gnuplot' command.
+    + Enable special characters for cpl model names and parameters.
+    + New command 'cutout': Cut out part of each vector of the current tran plot
+      and copy into a new plot
+    + Compatibility switches KiCad 'ki', and Spectre 'spe'
+    + Remove vceo= and icrating= from bjt model cards.
+    + The tests of cmaths function will be done only on request.
+    + Add alternative temperature model for certain jfet parameters.
+    + Add BJT Kull Quasi-Saturation model.
+    + Improve self heating tempaerature handling in VDMOS model.
+    + Use W/nf for selecting binning model.
+    + Add wnflag as an instance parameter.
+    + Add PSPICE compatible ISWITCH.
+    + Add a limit capability to the code model aswitch.
+    + Add a new code model pswitch.
     + Many conde updates not visible to the user, but enhancing stability
       and efficiency
 
 - Bug fixes:
-    + many bugs fixed and code improvements (see bugs 427 and up)
+    + many bugs fixed and code improvements (see bugs 484 and up)
     + memory leaks removed
 
 
