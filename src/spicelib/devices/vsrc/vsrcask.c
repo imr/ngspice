@@ -107,7 +107,7 @@ VSRCask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *
             } else {
                 value->rValue = (*(ckt->CKTrhsOld+here->VSRCposNode)
                         - *(ckt->CKTrhsOld + here->VSRCnegNode)) *
-                        -*(ckt->CKTrhsOld + here->VSRCbranch);
+                         *(ckt->CKTrhsOld + here->VSRCbranch);
             }
             return(OK);
 #ifdef SHARED_MODULE
