@@ -56,6 +56,8 @@ static HDC              PrinterDC = NULL;           /* Device Context */
 static COLORREF         ColorTable[NumPrintColors]; /* color memory */
 static int              PrinterWidth  = 1000;       /* paper width */
 static int              PrinterHeight = 1000;       /* paper height */
+static int              xoffset;                    /* offset from left boundary */
+static int              yoffset;                    /* offset from top */
 
 /******************************************************************************
  printer initialization
@@ -201,6 +203,12 @@ int WPRINT_Init(void)
         /* Farben initialisieren */
          wincolor_init(ColorTable, NumPrintColors);
 
+        /* if grid/text color is white, change to black */
+        if (ColorTable[1] == RGB(255, 255, 255))
+            ColorTable[1] = 0;
+
+        ColorTable[0] = RGB(255, 255, 255);
+
         /* LineStyles initialisieren */
         LineTable[0] = PS_SOLID;
         LineTable[1] = PS_DOT;      /* Gitter */
@@ -262,7 +270,7 @@ int WPRINT_NewViewport(GRAPH * graph)
     /* Font-Parameter abfragen */
     if (GetTextMetrics( PrinterDC, &tm)) {
         graph->fontheight = tm.tmHeight;
-        graph->fontwidth  = tm.tmAveCharWidth;
+        graph->fontwidth  = (int)(tm.tmAveCharWidth * 1.2);
     }
 
     /* Setze den Linien-Index */
@@ -275,8 +283,11 @@ int WPRINT_NewViewport(GRAPH * graph)
     /* Absolut-Parameter setzen */
     graph->absolute.xpos    = 0;
     graph->absolute.ypos    = 0;
-    graph->absolute.width   = PrinterWidth;
-    graph->absolute.height  = PrinterHeight;
+    graph->absolute.width   = (int)(PrinterWidth * .9);
+    graph->absolute.height  = (int)(PrinterHeight * .9);
+
+    xoffset = (int)(PrinterWidth * .05);
+    yoffset = (int)(PrinterHeight * -.05);
 
     /* Druckauftrag anmelden */
     di.cbSize       = sizeof( DOCINFO);
@@ -291,14 +302,14 @@ int WPRINT_NewViewport(GRAPH * graph)
         align = GetTextAlign( PrinterDC);
         SetTextAlign( PrinterDC, TA_RIGHT | TA_TOP | TA_NOUPDATECP);
 #ifdef EXT_ASC
-        TextOut(PrinterDC, PrinterWidth - graph->fontwidth, 1, graph->plotname,
+        TextOut(PrinterDC, PrinterWidth - graph->fontwidth, -1*yoffset, graph->plotname,
             (int)strlen(graph->plotname));
 #else
         const int n_byte_wide = 2 * (int) strlen(graph->plotname) + 1;
         wchar_t * const wtext = TMALLOC(wchar_t, n_byte_wide);
         MultiByteToWideChar(CP_UTF8, 0, graph->plotname, -1, wtext,
                 n_byte_wide);
-        TextOutW(PrinterDC, PrinterWidth - graph->fontwidth, 1, wtext,
+        TextOutW(PrinterDC, PrinterWidth - graph->fontwidth -xoffset, -1*yoffset, wtext,
                 n_byte_wide);
         txfree(wtext);
 #endif
@@ -336,6 +347,11 @@ int WPRINT_DrawLine(int x1, int y1, int x2, int y2, bool isgrid)
 {
     NG_IGNORE(isgrid);
 
+    x1 = x1 + xoffset;
+    x2 = x2 + xoffset;
+    y1 = y1 + yoffset;
+    y2 = y2 + yoffset;
+
     tpPrintData  pd;
     HPEN         OldPen;
     HPEN         NewPen;
@@ -349,7 +365,10 @@ int WPRINT_DrawLine(int x1, int y1, int x2, int y2, bool isgrid)
     ColIndex = pd->ColorIndex;
 
     MoveToEx(PrinterDC, x1, PrinterHeight - y1, NULL);
-    NewPen = CreatePen( LineTable[pd->LineIndex], 0, ColorTable[ColIndex] );
+    if (isgrid)
+        NewPen = CreatePen( LineTable[pd->LineIndex], 0, ColorTable[ColIndex] );
+    else
+        NewPen = CreatePen( LineTable[pd->LineIndex], 10, ColorTable[ColIndex] );
     OldPen = SelectObject(PrinterDC, NewPen);
     LineTo(PrinterDC, x2, PrinterHeight - y2);
     OldPen = SelectObject(PrinterDC, OldPen);
@@ -381,6 +400,9 @@ int WPRINT_Arc(int x0, int y0, int radius, double theta, double delta_theta)
     pd = pPrintData(currentgraph);
     if (!pd) return 0;
 
+    x0 = x0 + xoffset;
+    y0 = y0 + yoffset;
+
     ColIndex = pd->ColorIndex;
 
     direction = AD_COUNTERCLOCKWISE;
@@ -407,7 +429,7 @@ int WPRINT_Arc(int x0, int y0, int radius, double theta, double delta_theta)
     ye = (int)(dy0 + (r * sin(theta + delta_theta)));
 
     /* Zeichnen */
-    NewPen = CreatePen( LineTable[pd->LineIndex], 0, ColorTable[ColIndex] );
+    NewPen = CreatePen( LineTable[pd->LineIndex], 10, ColorTable[ColIndex] );
     OldPen = SelectObject(PrinterDC, NewPen);
     Arc( PrinterDC, left, yb-top, right, yb-bottom, xs, yb-ys, xe, yb-ye);
     OldPen = SelectObject(PrinterDC, OldPen);
@@ -425,6 +447,9 @@ int WPRINT_Text(char * text, int x, int y, int degrees)
     if (!currentgraph) return 0;
     pd = pPrintData(currentgraph);
     if (!pd) return 0;
+
+    x = x + xoffset;
+    y = y + yoffset;
 
     ColIndex = pd->ColorIndex;
 
