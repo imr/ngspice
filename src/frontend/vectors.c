@@ -1406,7 +1406,6 @@ copycut(struct dvec* v, struct dvec* newscalevec, int istart, int istop)
     nv->v_plot = newscalevec->v_plot;
     nv->v_next = NULL;
     nv->v_link2 = NULL;
-    nv->v_scale = newscalevec;
 
     return nv;
 } /* end of function copycut */
