@@ -18,3 +18,5 @@ double NewWa(void); /* generate new pool, return outgauss[0] */
 #define GaussWa ((--variate_used)?(outgauss[variate_used]*ScaleGauss):NewWa())
 
 void PolarGauss(double* py1, double* py2);
+
+void destroy_wallace(void);
