@@ -178,9 +178,6 @@ com_cutout(wordlist* wl)
         istart = 0;
     }
     sto = vec_fromplot("cut-tstop", plot_cur);
-    /* return if neither start nor stop are given */
-    if (!sta && !sto)
-        return;
     if (sto) {
         tstop = sto->v_realdata[0];
         for (istop = 0; istop < length - 1; istop++) {
@@ -206,7 +203,10 @@ com_cutout(wordlist* wl)
     old = plot_cur;
     oldtime = old->pl_scale;
     new = plot_alloc("transient");
-    new->pl_name = tprintf("%s (cut out)", old->pl_name);
+    if (!sta && !sto)
+        new->pl_name = tprintf("%s (copy)", old->pl_name);
+    else
+        new->pl_name = tprintf("%s (cut out)", old->pl_name);
     new->pl_title = copy(old->pl_title);
     new->pl_date = copy(old->pl_date);
     new->pl_next = plot_list;
