@@ -55,7 +55,7 @@ INPgetValue(CKTcircuit *ckt, char **line, int type, INPtables *tab)
         }
         if (error && ft_ngdebug && !eq(*line, "") && !prefix(")", *line)) {
             fprintf(stderr, "\nWarning: Reading a vector without limiting parens may be dangerous\n%s\nat\n", compline);
-            fprintf(stderr, "%*s%s\n", *line - compline," ", *line);
+            fprintf(stderr, "%*s%s\n", (int)(*line - compline)," ", *line);
         }
         temp.v.vec.rVec = list;
     } else if (type == IF_INTVEC) {
@@ -78,7 +78,7 @@ INPgetValue(CKTcircuit *ckt, char **line, int type, INPtables *tab)
         }
         if (error && ft_ngdebug && !eq(*line, "") && !prefix(")", *line)) {
             fprintf(stderr, "\nWarning: Reading a vector without limiting parens may be dangerous\n%s\nat\n", compline);
-            fprintf(stderr, "%*s%s\n", *line - compline, " ", *line);
+            fprintf(stderr, "%*s%s\n", (int)(*line - compline), " ", *line);
         }
         temp.v.vec.iVec = ilist;
     } else if (type == IF_FLAG) {
