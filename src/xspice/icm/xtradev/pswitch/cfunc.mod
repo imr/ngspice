@@ -174,6 +174,9 @@ void cm_pswitch(ARGS)  /* structure holding parms,
     }
 
     if(INIT == 1) { /* first time through, allocate memory, set static parameters */
+
+        CALLBACK = cm_pswitch_callback;
+
         /*** allocate static storage for *loc ***/
         STATIC_VAR (locdata) = calloc (1 , sizeof ( Local_Data_t ));
         loc = STATIC_VAR (locdata);
