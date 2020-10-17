@@ -27,6 +27,9 @@ libvdmos_la_SOURCES =	\
 	vdmostrun.c
 
 
+if KLU_WANTED
+libvdmos_la_SOURCES += vdmosbindCSC.c
+endif
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include
 AM_CFLAGS = $(STATIC)
