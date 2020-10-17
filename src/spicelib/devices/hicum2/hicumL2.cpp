@@ -11,6 +11,7 @@ Spice3 Implementation: 2020 Dietmar Warning, Markus Müller, Mario Krattenmacher
  * - We use dual numbers to calculate derivatives, this is readable and error proof.
  * - The code is targeted to be readable and maintainable, speed is sacrificed for this purpose.
  * - The verilog a code is available at the website of TU Dresden, Michael Schroeter's chair.
+ * - lambda functions are used to calculate derivatives of larger Verilog Macros
  */
 
 #include "cmath"
@@ -333,9 +334,6 @@ void hicum_HICJQ(duals::duald T, dual_double c_0, dual_double u_d, double z, dua
 
 int
 HICUMload(GENmodel *inModel, CKTcircuit *ckt)
-        /* actually load the current resistance value into the
-         * sparse matrix previously provided
-         */
 {
     HICUMmodel *model = (HICUMmodel*)inModel;
     HICUMinstance *here;
@@ -387,7 +385,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Cdei_Vbiei, Cdei_Vbici, Cdei_Vrth;
     double Cdci_Vbiei, Cdci_Vbici, Cdci_Vrth;
     double Crbi_Vbiei, Crbi_Vbici, Crbi_Vrth;
-    double ick, ick_Vciei, ick_dT;//,cjcx01;//,cjcx02;
+    double ick, ick_Vciei, ick_dT;
 
     //NQS
     double Ixf1,Ixf2,Qxf1,Qxf2;
@@ -460,6 +458,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
     double Temp;
     double Tdev_Vrth; //derivative device temperature to Vrth
+
     //below variable has a real part equal to the device temperature and a dual part equal to dTdev/dVrth
     //this is necessary, since for some Vrth, HICUM sets Tdev constant (eg very high self heating beyond 300K)
     //then, dTdev/dVrth. Else it is equal to 1.
@@ -626,7 +625,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
         *T_cT    = FFT_pcS*exp((FFdVc-model->HICUMvcbar)/vt)*(FCf_CT+Ix*FCdfCT_ditf)+*Q_CT/vt*FFdVc_ditf;
     };
 
-    //declaration of lambda functions -----------------------------------
     // TRANSIT-TIME AND STORED MINORITY CHARGE
     // INPUT:
     //  itf         : forward transport current
@@ -1796,7 +1794,8 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             Vsici = model->HICUMtype*Vsici;
             Vsc   = model->HICUMtype*Vsc;
 
-            if (selfheat) { // Thermal_update_with_self_heating
+            // Thermal update
+            if (selfheat) {
                 Temp =  here->HICUMtemp+Vrth;
                 _iret = hicum_thermal_update(model, here, &Temp, &Tdev_Vrth);
 
@@ -1828,7 +1827,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             hjei_vbe_dT    = result.dpart();
 
 
-            //HICJQ(here->HICUMvt,cjci0_t,vdci_t,model->HICUMzci,vptci_t,V(br_bici),Qjci);
             //Cjci    = ddx(Qjci,V(bi));
             hicum_HICJQ(Temp_dual, here->HICUMcjci0_t,here->HICUMvdci_t,model->HICUMzci,here->HICUMvptci_t, Vbici, &Cjci, &Cjci_Vbici, &Cjci_dT, &Qjci, &Qjci_Vbici, &Qjci_dT);
 
@@ -1884,7 +1882,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             Q_bf_dT= result_Q_bf.dpart();
             Tf_dT  = result_Tf.dpart();
 
-            if (!(Qf > RTOLC*Q_p || a_h > RTOLC)) { // in this case the newon is not run and the derivatives of the initial solution are needed
+            if (!(Qf > RTOLC*Q_p || a_h > RTOLC)) { // in this case the newton is not run and the derivatives of the initial solution are needed
                 calc_it_initial(Temp_dual, Vbiei    , Vbici    , Q_0+1_e*Q_0_dT      , T_f0+1_e*T_f0_dT     , ick+1_e*ick_dT      , &result_itf, &result_itr, &result_Qf, &result_Qr, &result_Q_bf, &result_a_h, &result_Q_p, &result_Tf);
                 itf_dT  = result_itf.dpart();
                 itr_dT  = result_itr.dpart();
@@ -1992,11 +1990,9 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
             Qrbi       = Crbi*Vbpbi; //Vbpbi=(Vbpei-Vbiei)=(Vbpci-Vbici)
             Qrbi_Vbpbi = Crbi;
-            Qrbi_Vbiei = Vbpbi*Crbi_Vbiei;// - Crbi; //not sure about this derivative
-            Qrbi_Vbici = Vbpbi*Crbi_Vbici;//- Crbi;
+            Qrbi_Vbiei = Vbpbi*Crbi_Vbiei;
+            Qrbi_Vbici = Vbpbi*Crbi_Vbici;
             Qrbi_Vrth  = Vbpbi*Crbi_Vrth;
-
-            // Qrbi = model->HICUMfcrbi*(Qjei+Qjci+Qdei+Qdci);
 
             //HICCR: }
 
@@ -2063,14 +2059,12 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             hicum_HICJQ(Temp_dual, here->HICUMcjcx02_t,here->HICUMvdcx_t,model->HICUMzcx,here->HICUMvptcx_t, Vbpci, &Cjcx_ii, &Cjcx_ii_Vbpci, &Cjcx_ii_dT, &Qjcx_ii, &Qjcx_ii_Vbpci, &Qjcx_ii_dT);
 
             //Depletion substrate capacitance and charge at inner s-c junction (si,ci)
-            //HICJQ(here->HICUMvt,here->HICUMcjs0_t,here->HICUMvds_t,model->HICUMzs,here->HICUMvpts_t,Vsici,&Cjs,&Cjs_Vsici,&Qjs);
             hicum_HICJQ(Temp_dual, here->HICUMcjs0_t,here->HICUMvds_t,model->HICUMzs,here->HICUMvpts_t, Vsici, &Cjs, &Cjs_Vsici, &Cjs_dT, &Qjs, &Qjs_Vsici, &Qjs_dT);
             /* 
              * Peripheral substrate capacitance and charge at s-c junction (s,c)
              * Bias dependent only if model->HICUMvdsp > 0
              */
             if (model->HICUMvdsp > 0) {
-                //HICJQ(here->HICUMvt,here->HICUMcscp0_t,here->HICUMvdsp_t,model->HICUMzsp,here->HICUMvptsp_t,Vsc,&Cscp,&Cscp_Vsc,&Qscp);
                 hicum_HICJQ(Temp_dual, here->HICUMcscp0_t,here->HICUMvdsp_t,model->HICUMzsp,here->HICUMvptsp_t, Vsc, &Cscp, &Cscp_Vsc, &Cscp_dT, &Qscp, &Qscp_Vsc, &Qscp_dT);
             } else {
                 // Constant, temperature independent capacitance
@@ -2083,7 +2077,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             }
 
             //Parasitic substrate transistor transfer current and diffusion charge
-            //calc_itss = [&](duals::duald T, duals::duald Vbpci, duals::duald Vsici, duals::duald * HSI_Tsu, duals::duald * Qdsu){
             calc_itss(Temp_dual, Vbpci    , Vsici    , &result_HSI_TSU, &result_Qdsu);
             HSI_Tsu          = result_HSI_TSU.rpart();
             Qdsu             = result_Qdsu.rpart();
@@ -2154,8 +2147,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             Qdeix_dT    = Qdei_dT;
             Qdeix_Vxf   = 0.0;
 
-            // Excess Phase calculation -> hand implementation
-
+            // Excess Phase calculation -> hand implementation instead of dual numbers
             if (nqs) { // && (ckt->CKTmode & (MODETRAN | MODEAC) ) ) { //evaluate nqs network only in TRANSIENT and AC modes.
                 Ixf1       = (Vxf2-itf)/Tf*model->HICUMt0;
                 Ixf1_Vxf1  =  0.0;
@@ -2196,7 +2188,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 Qxf       = model->HICUMalqf*model->HICUMt0*Vxf; //for RC nw
                 Qxf_Vxf   = model->HICUMalqf*model->HICUMt0;     //for RC nw
 
-                //convergency killer
                 Qdeix       = Vxf;                               //for RC nw
                 Qdeix_Vxf   = 1.0;
                 Qdeix_Vbiei = 0;
@@ -2360,7 +2351,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                     Ith_Vbiei  += it_Vbiei*(Vbiei-Vbici) + it;
                     Ith_Vbici  += it_Vbici*(Vbiei-Vbici) - it;
                     //avalanche current 
-                    //(here->HICUMvdci_t.rpart-Vbici)*iavl = vdci_t*iavl - Vbici*iavl
                     Ith_Vbici  += (here->HICUMvdci_t.rpart-Vbici)*iavl_Vbici - iavl;
                     Ith_Vbiei  += (here->HICUMvdci_t.rpart-Vbici)*iavl_Vbiei;
                 } else if (model->HICUMflsh == 2) {

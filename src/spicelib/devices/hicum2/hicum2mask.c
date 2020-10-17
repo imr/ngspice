@@ -101,13 +101,9 @@ HICUMmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
         case HICUM_MOD_MCF:
             value->rValue = model->HICUMmcf;
             return(OK);
-
-//Transit time for excess recombination current at b-c barrier
         case HICUM_MOD_TBHREC:
             value->rValue = model->HICUMtbhrec;
             return(OK);
-
-//Base-Collector diode currents
         case HICUM_MOD_IBCIS:
             value->rValue = model->HICUMibcis;
             return(OK);
@@ -120,8 +116,6 @@ HICUMmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
         case HICUM_MOD_MBCX:
             value->rValue = model->HICUMmbcx;
             return(OK);
-
-//Base-Emitter tunneling current
         case HICUM_MOD_IBETS:
             value->rValue = model->HICUMibets;
             return(OK);
@@ -131,8 +125,6 @@ HICUMmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
         case HICUM_MOD_TUNODE:
             value->rValue = model->HICUMtunode = value->iValue;
             return(OK);
-
-//Base-Collector avalanche current
         case HICUM_MOD_FAVL:
             value->rValue = model->HICUMfavl;
             return(OK);
@@ -151,8 +143,6 @@ HICUMmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
         case HICUM_MOD_ALKAV:
             value->rValue = model->HICUMalkav;
             return(OK);
-
-//Series resistances
         case HICUM_MOD_RBI0:
             value->rValue = model->HICUMrbi0;
             return(OK);
@@ -177,8 +167,6 @@ HICUMmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
         case HICUM_MOD_RCX:
             value->rValue = model->HICUMrcx;
             return(OK);
-
-//Substrate transistor
         case HICUM_MOD_ITSS:
             value->rValue = model->HICUMitss;
             return(OK);
@@ -194,14 +182,12 @@ HICUMmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
         case HICUM_MOD_TSF:
             value->rValue = model->HICUMtsf;
             return(OK);
-
-//Intra-device substrate coupling
         case HICUM_MOD_RSU:
             value->rValue = model->HICUMrsu;
             return(OK);
         case HICUM_MOD_CSU:
-
-//Depletion Capacitances
+            value->rValue = model->HICUMcsu;
+            return(OK);
         case HICUM_MOD_CJEI0:
             value->rValue = model->HICUMcjei0;
             return(OK);
@@ -280,8 +266,6 @@ HICUMmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
         case HICUM_MOD_VPTSP:
             value->rValue = model->HICUMvptsp;
             return(OK);
-
-//Diffusion Capacitances
         case HICUM_MOD_T0:
             value->rValue = model->HICUMt0;
             return(OK);
@@ -336,16 +320,12 @@ HICUMmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
         case HICUM_MOD_ACBAR:
             value->rValue = model->HICUMacbar;
             return(OK);
-
-//Isolation Capacitances
         case HICUM_MOD_CBEPAR:
             value->rValue = model->HICUMcbepar;
             return(OK);
         case HICUM_MOD_CBCPAR:
             value->rValue = model->HICUMcbcpar;
             return(OK);
-
-//Non-quasi-static Effect
         case HICUM_MOD_ALQF:
             value->rValue = model->HICUMalqf;
             return(OK);
@@ -355,8 +335,6 @@ HICUMmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
         case HICUM_MOD_FLNQS:
             value->iValue = model->HICUMflnqs;
             return(OK);
-
-//Noise
         case HICUM_MOD_KF:
             value->rValue = model->HICUMkf;
             return(OK);
@@ -375,16 +353,12 @@ HICUMmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
         case HICUM_MOD_AFRE:
             value->rValue = model->HICUMafre;
             return(OK);
-
-//Lateral Geometry Scaling (at high current densities)
         case HICUM_MOD_LATB:
             value->rValue = model->HICUMlatb;
             return(OK);
         case HICUM_MOD_LATL:
             value->rValue = model->HICUMlatl;
             return(OK);
-
-//Temperature dependence
         case HICUM_MOD_VGB:
             value->rValue = model->HICUMvgb;
             return(OK);
@@ -451,8 +425,6 @@ HICUMmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
         case HICUM_MOD_ZETAVGBE:
             value->rValue = model->HICUMzetavgbe;
             return(OK);
-
-//Self-Heating
         case HICUM_MOD_FLSH:
             value->iValue = model->HICUMflsh;
             return(OK);
@@ -468,13 +440,9 @@ HICUMmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
         case HICUM_MOD_CTH:
             value->rValue = model->HICUMcth;
             return(OK);
-
-//Compatibility with V2.1
         case HICUM_MOD_FLCOMP:
             value->rValue = model->HICUMflcomp;
             return(OK);
-
-//SOA-check
         case HICUM_MOD_VBE_MAX:
             value->rValue = model->HICUMvbeMax;
             return(OK);

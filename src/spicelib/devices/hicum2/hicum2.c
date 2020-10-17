@@ -19,6 +19,8 @@ IFparm HICUMpTable[] = { /* parameters */
  IOPU("area",    HICUM_AREA,   IF_REAL,    "Area factor"),
  IOPU("off",     HICUM_OFF,    IF_FLAG,    "Device initially off"),
  IP("ic",        HICUM_IC,     IF_REALVEC, "Initial condition vector"),
+
+// these are left here for future. Sometimes it is advantageous for debugging if one can set the initial node voltages of all nodes.
 //  OP("icvb",  HICUM_IC_VB, IF_REAL,    "Initial B potential"),
 //  OP("icvc",  HICUM_IC_VC, IF_REAL,    "Initial C potential"),
 //  OP("icve",  HICUM_IC_VE, IF_REAL,    "Initial E potential"),

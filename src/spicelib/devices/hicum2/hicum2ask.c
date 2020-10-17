@@ -149,7 +149,6 @@ HICUMask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFval
             return(OK);
 /* transconductances and capacitances */
         case HICUM_QUEST_BETADC:
-            // HICUMask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFvalue *select)
             HICUMask(ckt, instPtr, HICUM_QUEST_CC, &IC, select);
             HICUMask(ckt, instPtr, HICUM_QUEST_CB, &IB, select);
             if (IB.rValue != 0.0) {
@@ -171,13 +170,13 @@ HICUMask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFval
             value->rValue = 1/( *(ckt->CKTstate0 + here->HICUMibpei_Vbpei) );
             return(OK);
         case HICUM_QUEST_RMUI:
-            value->rValue = 1/( *(ckt->CKTstate0 + here->HICUMibici_Vbici) + ckt->CKTgmin); // TODO: Check sign vs VA-Code in ADS
+            value->rValue = 1/( *(ckt->CKTstate0 + here->HICUMibici_Vbici) + ckt->CKTgmin);
             return(OK);
         case HICUM_QUEST_RMUX:
-            value->rValue = 1/( *(ckt->CKTstate0 + here->HICUMibpci_Vbpci) + ckt->CKTgmin); // TODO: Check sign vs VA-Code in ADS
+            value->rValue = 1/( *(ckt->CKTstate0 + here->HICUMibpci_Vbpci) + ckt->CKTgmin);
             return(OK);
         case HICUM_QUEST_ROI:
-            value->rValue = 1/( *(ckt->CKTstate0 + here->HICUMiciei_Vbiei) + ckt->CKTgmin); // TODO: Check sign vs VA-Code in ADS
+            value->rValue = 1/( *(ckt->CKTstate0 + here->HICUMiciei_Vbiei) + ckt->CKTgmin);
             return(OK);
         case HICUM_QUEST_CPII:
             value->rValue = here->HICUMcapjei + here->HICUMcapdeix;
@@ -237,11 +236,9 @@ HICUMask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFval
         case HICUM_QUEST_ICK:
             value->rValue = here->HICUMick;
             return(OK);
-/* power */
         case HICUM_QUEST_POWER:
             value->rValue = here->HICUMpterm;
             return(OK);
-/* temperature */
         case HICUM_QUEST_TK:
             value->rValue = here->HICUMtemp;
             return(OK);

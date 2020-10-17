@@ -186,7 +186,7 @@ int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double 
     //     }
     //}
 
-    //This routine calculate the derivative with respect to Vrth. Since at some point
+    //This routine calculates the derivatives with respect to Vrth. Since at some point
     // Tdev becomes constant (see above), we need to account for this like below.
     //temp = *(HICUMTemp)+1_e* *(Tdev_Vrth);  // dual number device temperature
 
@@ -209,7 +209,6 @@ int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double 
              log(here->HICUMvt.rpart / (CONSTroot2*here->HICUMibeis_scaled));
 
     //Internal b-e junction capacitance
-    // TMPHICJ(here->HICUMvt0,here->HICUMvt,here->HICUMqtt0,here->HICUMln_qtt0,here->HICUMmg,cjei0_scaled,model->HICUMvdei,model->HICUMzei,model->HICUMajei,1,vgbe0,&here->HICUMcjei0_t,&here->HICUMvdei_t,&here->HICUMajei_t);
     hicum_TMPHICJ(vt, here->HICUMvt0, qtt0, ln_qtt0, mg,
                   here->HICUMcjei0_scaled, model->HICUMvdei, model->HICUMzei, model->HICUMajei, 1, vgbe0,
                   &here->HICUMcjei0_t.rpart, &here->HICUMvdei_t.rpart, &here->HICUMajei_t.rpart,
@@ -360,7 +359,6 @@ int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double 
     here->HICUMvces_t.dpart = a.dpart();
 
     //Internal b-c junction capacitance
-    // TMPHICJ(here->HICUMvt0,here->HICUMvt,here->HICUMqtt0,here->HICUMln_qtt0,here->HICUMmg,cjci0_scaled,model->HICUMvdci,model->HICUMzci,model->HICUMvptci,0,vgbc0,&cjci0_t,&vdci_t,&vptci_t);
     hicum_TMPHICJ(vt, here->HICUMvt0, qtt0, ln_qtt0, mg,
                   here->HICUMcjci0_scaled, model->HICUMvdci, model->HICUMzci, model->HICUMvptci, 0, vgbc0,
                   &here->HICUMcjci0_t.rpart, &here->HICUMvdci_t.rpart, &here->HICUMvptci_t.rpart,
@@ -393,7 +391,6 @@ int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double 
     here->HICUMrbi0_t.dpart = a.dpart();
 
     //Peripheral b-e junction capacitance
-    // TMPHICJ(here->HICUMvt0,here->HICUMvt,here->HICUMqtt0,here->HICUMln_qtt0,here->HICUMmg,cjep0_scaled,model->HICUMvdep,model->HICUMzep,model->HICUMajep,1,vgbe0,&cjep0_t,&vdep_t,&ajep_t);
     hicum_TMPHICJ(vt, here->HICUMvt0, qtt0, ln_qtt0, mg,
                   here->HICUMcjep0_scaled, model->HICUMvdep, model->HICUMzep, model->HICUMajep, 1, vgbe0,
                   &here->HICUMcjep0_t.rpart, &here->HICUMvdep_t.rpart, &here->HICUMajep_t.rpart,
@@ -441,7 +438,6 @@ int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double 
     }
 
     //Temperature mapping for tunneling current is done inside HICTUN
-    // TMPHICJ(here->HICUMvt0,here->HICUMvt,here->HICUMqtt0,here->HICUMln_qtt0,here->HICUMmg,1.0,model->HICUMvdcx,model->HICUMzcx,model->HICUMvptcx,0,vgbc0,&cratio_t,&vdcx_t,&vptcx_t);
     hicum_TMPHICJ(vt, here->HICUMvt0, qtt0, ln_qtt0, mg,
                   1.0, model->HICUMvdcx, model->HICUMzcx, model->HICUMvptcx, 0, vgbc0,
                   &cratio_t_real, &here->HICUMvdcx_t.rpart, &here->HICUMvptcx_t.rpart,
@@ -472,7 +468,6 @@ int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double 
     here->HICUMtsf_t.dpart = a.dpart();
 
     //Capacitance for c-s junction
-    // TMPHICJ(here->HICUMvt0,here->HICUMvt,here->HICUMqtt0,here->HICUMln_qtt0,here->HICUMmg,model->HICUMcjs0,model->HICUMvds,model->HICUMzs,model->HICUMvpts,0,vgsc0,&cjs0_t,&vds_t,&vpts_t);
     hicum_TMPHICJ(vt, here->HICUMvt0, qtt0, ln_qtt0, mg,
                   model->HICUMcjs0, model->HICUMvds, model->HICUMzs, model->HICUMvpts, 0, vgsc0,
                   &here->HICUMcjs0_t.rpart, &here->HICUMvds_t.rpart, &here->HICUMvpts_t.rpart,
@@ -482,7 +477,6 @@ int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double 
      * Save computional effort otherwise
      */
     if (model->HICUMvdsp > 0) {
-        // TMPHICJ(here->HICUMvt0,here->HICUMvt,here->HICUMqtt0,here->HICUMln_qtt0,here->HICUMmg,model->HICUMcscp0,model->HICUMvdsp,model->HICUMzsp,model->HICUMvptsp,0,vgsc0,&cscp0_t,&vdsp_t,&vptsp_t);
         hicum_TMPHICJ(vt, here->HICUMvt0, qtt0, ln_qtt0, mg,
                      model->HICUMcscp0, model->HICUMvdsp, model->HICUMzsp, model->HICUMvptsp, 0, vgsc0,
                      &here->HICUMcscp0_t.rpart, &here->HICUMvdsp_t.rpart, &here->HICUMvptsp_t.rpart,
