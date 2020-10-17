@@ -21,6 +21,10 @@ Modified: 2001 AlansFixes
 #include "vsrc/vsrcdefs.h"
 #include "isrc/isrcdefs.h"
 
+#ifdef KLU
+#include "ngspice/devdefs.h"
+#endif
+
 // fixme
 //   ugly hack to work around missing api to specify the "type" of signals
 extern int fixme_onoise_type;
@@ -130,6 +134,18 @@ NOISEan (CKTcircuit *ckt, int restart)
             return(E_BADPARM);
         }
 
+#ifdef KLU
+        if (ckt->CKTmatrix->CKTkluMODE)
+        {
+            /* Conversion from Complex Matrix to Real Matrix */
+            for (i = 0 ; i < DEVmaxnum ; i++)
+                if (DEVices [i] && DEVices [i]->DEVbindCSCComplexToReal && ckt->CKThead [i])
+                    DEVices [i]->DEVbindCSCComplexToReal (ckt->CKThead [i], ckt) ;
+
+            ckt->CKTmatrix->SMPkluMatrix->KLUmatrixIsComplex = KLUmatrixReal ;
+        }
+#endif
+
         /* error = DCop(ckt); */
         error = CKTop(ckt, (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITJCT,
                       (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITFLOAT,
@@ -237,6 +253,21 @@ NOISEan (CKTcircuit *ckt, int restart)
     }
 
     data->lstFreq = data->freq;
+
+#ifdef KLU
+    if (ckt->CKTmatrix->CKTkluMODE)
+    {
+        /* Conversion from Real Matrix to Complex Matrix */
+        if (!ckt->CKTmatrix->SMPkluMatrix->KLUmatrixIsComplex)
+        {
+            for (i = 0 ; i < DEVmaxnum ; i++)
+                if (DEVices [i] && DEVices [i]->DEVbindCSCComplex && ckt->CKThead [i])
+                    DEVices [i]->DEVbindCSCComplex (ckt->CKThead [i], ckt) ;
+
+            ckt->CKTmatrix->SMPkluMatrix->KLUmatrixIsComplex = KLUMatrixComplex ;
+        }
+    }
+#endif
 
     /* do the noise analysis over all frequencies */
 
