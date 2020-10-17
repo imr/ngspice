@@ -21,3 +21,9 @@ extern int VDMOSdisto(int,GENmodel*,CKTcircuit*);
 extern int VDMOSnoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int VDMOSdSetup(GENmodel*,CKTcircuit*);
 extern int VDMOSsoaCheck(CKTcircuit *, GENmodel *);
+
+#ifdef KLU
+extern int VDMOSbindCSC (GENmodel*, CKTcircuit*) ;
+extern int VDMOSbindCSCComplex (GENmodel*, CKTcircuit*) ;
+extern int VDMOSbindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
+#endif
