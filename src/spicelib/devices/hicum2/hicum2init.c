@@ -1,5 +1,6 @@
 /*
  * hicuminit.c
+License: 3-clause BSD
  */
 
 

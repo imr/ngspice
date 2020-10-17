@@ -2,7 +2,8 @@
 Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 Model Author: 1990 Michael Schröter TU Dresden
-Spice3 Implementation: 2019 Dietmar Warning
+Spice3 Implementation: 2019 Dietmar Warning, Markus Müller, Mario Krattenmacher
+License: 3-clause BSD
 **********/
 
 #include "cmath"

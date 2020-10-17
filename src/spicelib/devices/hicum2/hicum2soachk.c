@@ -1,6 +1,7 @@
 /**********
 Copyright 2013 Dietmar Warning. All rights reserved.
 Author:   2013 Dietmar Warning
+License: 3-clause BSD
 **********/
 
 #include "ngspice/ngspice.h"
