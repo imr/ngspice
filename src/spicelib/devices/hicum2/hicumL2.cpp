@@ -3259,11 +3259,7 @@ load:
                     *(here->HICUMxf2TempPtr)             +=  Ixf2_dT;
                 }
 
-//              Stamp element:    Rth f_T = +
-                rhs_current = - Irth_Vrth*Vrth;
-                *(ckt->CKTrhs + here->HICUMtempNode) += -rhs_current;
-                // with respect to Potential Vrth
-                *(here->HICUMtempTempPtr)          += Irth_Vrth;
+
 
 //              Stamp element:    Ith f_T = - Ith 
                 // Ith        = -Vrth/here->HICUMrth_t.rpart; //Current from gnd to T
@@ -3313,6 +3309,11 @@ load:
                 rhs_current = Icth - Vrth * Icth_Vrth;
                 *(ckt->CKTrhs + here->HICUMtempNode) +=  -rhs_current;
                 *(here->HICUMtempTempPtr)            +=  +Icth_Vrth;
+
+//              Stamp element:    Rth f_T = +
+                rhs_current                           = Vrth/here->HICUMrth_t.rpart - Irth_Vrth*Vrth;
+                *(ckt->CKTrhs + here->HICUMtempNode) += -rhs_current;
+                *(here->HICUMtempTempPtr)            += Irth_Vrth;
             }
         }
 
