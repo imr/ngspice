@@ -932,7 +932,7 @@ SMPnewMatrix (SMPmatrix *Matrix, int size)
 
         /* Allocate KLU data structures */
         Matrix->SMPkluMatrix->KLUmatrixN = (unsigned int)size ;
-        Matrix->SMPkluMatrix->KLUmatrixTrashCOO = (double *) malloc (sizeof (double)) ;
+        Matrix->SMPkluMatrix->KLUmatrixTrashCOO = (double *) malloc (2 * sizeof (double)) ;
 
         return spOKAY ;
     } else {
@@ -976,7 +976,7 @@ SMPnewMatrixKLUforCIDER (SMPmatrix *Matrix, int size, unsigned int KLUmatrixIsCo
         Matrix->SMPkluMatrix->KLUmatrixN = (unsigned int)size ;
         Matrix->SMPkluMatrix->KLUmatrixColCOOforCIDER = (int *) malloc (Matrix->SMPkluMatrix->KLUmatrixN * Matrix->SMPkluMatrix->KLUmatrixN * sizeof(int)) ;
         Matrix->SMPkluMatrix->KLUmatrixRowCOOforCIDER = (int *) malloc (Matrix->SMPkluMatrix->KLUmatrixN * Matrix->SMPkluMatrix->KLUmatrixN * sizeof(int)) ;
-        Matrix->SMPkluMatrix->KLUmatrixTrashCOO = (double *) malloc (sizeof(double)) ;
+        Matrix->SMPkluMatrix->KLUmatrixTrashCOO = (double *) malloc (2 * sizeof(double)) ;
         Matrix->SMPkluMatrix->KLUmatrixValueComplexCOOforCIDER = (double *) malloc (2 * Matrix->SMPkluMatrix->KLUmatrixN * Matrix->SMPkluMatrix->KLUmatrixN * sizeof(double)) ;
 
         /* Pre-set the values of Row and Col */
