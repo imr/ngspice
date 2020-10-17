@@ -66,6 +66,12 @@ SPICEdev VDMOSinfo = {
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
+
+#ifdef KLU
+    .DEVbindCSC = VDMOSbindCSC,
+    .DEVbindCSCComplex = VDMOSbindCSCComplex,
+    .DEVbindCSCComplexToReal = VDMOSbindCSCComplexToReal,
+#endif
 };
 
 
