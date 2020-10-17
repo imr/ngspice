@@ -53,6 +53,7 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
     double Ibpbi_Vrth;
 
     double Isis_Vsis;
+    double Irth_Vrth;
     double Icic_Vcic, Icic_Vrth;
     double Ieie_Veie, Ieie_Vrth;
     double Ibbp_Vbbp, Ibbp_Vrth;
@@ -157,6 +158,13 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
             } else {
                 Isis_Vsis    = 0.0;
             }
+            if(selfheat) {
+                Irth_Vrth    = (1/here->HICUMrth_t.rpart - *(ckt->CKTstate0 + here->HICUMvrth)/(here->HICUMrth_t.rpart*here->HICUMrth_t.rpart) * here->HICUMrth_t.dpart);
+            } else {
+                Irth_Vrth    = 0.0;
+            }
+
+
 
             Ibiei_Vbiei = *(ckt->CKTstate0 + here->HICUMibiei_Vbiei);
             Ibiei_Vxf   = *(ckt->CKTstate0 + here->HICUMibiei_Vxf);
@@ -568,6 +576,9 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
     //              Stamp element: Ixf2    f_xf2 = +   
                     *(here->HICUMxf2TempPtr)               +=  Ixf2_Vrth;
                 }
+
+//              Stamp element: Rth   f_T = +
+                *(here->HICUMtempTempPtr)   +=  Irth_Vrth;
 
 //              Stamp element:    Ith f_T = - Ith 
                 // with respect to Potential Vrth

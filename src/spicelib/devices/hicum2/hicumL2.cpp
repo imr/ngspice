@@ -506,6 +506,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double Ibpbi_Vrth;
     double Ieie_Vrth;
     double Icic_Vrth=0.0;
+    double Irth_Vrth=0.0;
     double Ibbp_Vrth=0.0;
 
     double Ith_Vrth=0.0;
@@ -2260,7 +2261,12 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             } else {
                 Isis_Vsis    = 0.0;
             }
-
+            if(selfheat){
+                Irth_Vrth   = (1/here->HICUMrth_t.rpart - Vrth/(here->HICUMrth_t.rpart*here->HICUMrth_t.rpart) * here->HICUMrth_t.dpart);
+            } else {
+                Irth_Vrth   = 0.0;
+            }
+ 
             Ibpei        = model->HICUMtype*ibep;
             Ibpei       += model->HICUMtype*irep;
             Ibpei_Vbpei  = model->HICUMtype*ibep_Vbpei;
@@ -2342,11 +2348,8 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             if(!selfheat) {
                 Ith      = 0;
             } else {
-                Ith      = -Vrth/here->HICUMrth_t.rpart+pterm; //Current from gnd to T
-
-                Ith_Vrth   = pterm_dT;
-                Ith_Vrth  += -1/here->HICUMrth_t.rpart;
-                Ith_Vrth  += +Vrth/(here->HICUMrth_t.rpart*here->HICUMrth_t.rpart) * here->HICUMrth_t.dpart; 
+                Ith      = pterm; //Current from gnd to T
+                Ith_Vrth = pterm_dT;
                 if (model->HICUMflsh == 1) {
                     //it(Vbiei,Vbici)*(Vbiei-Vbici)
                     Ith_Vbiei  += it_Vbiei*(Vbiei-Vbici) + it;
@@ -3256,7 +3259,15 @@ load:
                     *(here->HICUMxf2TempPtr)             +=  Ixf2_dT;
                 }
 
+//              Stamp element:    Rth f_T = +
+                rhs_current = - Irth_Vrth*Vrth;
+                *(ckt->CKTrhs + here->HICUMtempNode) += -rhs_current;
+                // with respect to Potential Vrth
+                *(here->HICUMemitEItempPtr)          += +Irth_Vrth;
+
 //              Stamp element:    Ith f_T = - Ith 
+                // Ith        = -Vrth/here->HICUMrth_t.rpart; //Current from gnd to T
+                // Ith_Vrth   = (-1/here->HICUMrth_t.rpart + Vrth/(here->HICUMrth_t.rpart*here->HICUMrth_t.rpart) * here->HICUMrth_t.dpart); 
                 rhs_current = Ith 
                               - Ith_Vbiei*Vbiei - Ith_Vbici*Vbici - Ith_Vciei*Vciei
                               - Ith_Vbpei*Vbpei - Ith_Vbpci*Vbpci - Ith_Vsici*Vsici
