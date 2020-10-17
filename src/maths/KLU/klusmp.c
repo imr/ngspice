@@ -1020,6 +1020,9 @@ SMPdestroy (SMPmatrix *Matrix)
         Matrix->SMPkluMatrix->KLUmatrixIntermediateComplex = NULL ;
         Matrix->SMPkluMatrix->KLUmatrixBindStructCOO = NULL ;
         Matrix->SMPkluMatrix->KLUmatrixTrashCOO = NULL ;
+        free (Matrix->SMPkluMatrix->KLUmatrixDiag) ;
+        free (Matrix->SMPkluMatrix->KLUmatrixCommon) ;
+        free (Matrix->SMPkluMatrix) ;
     } else {
         spDestroy (Matrix->SPmatrix) ;
     }
@@ -1051,6 +1054,9 @@ SMPdestroyKLUforCIDER (SMPmatrix *Matrix)
         Matrix->SMPkluMatrix->KLUmatrixRowCOOforCIDER = NULL ;
         Matrix->SMPkluMatrix->KLUmatrixValueComplexCOOforCIDER = NULL ;
         Matrix->SMPkluMatrix->KLUmatrixTrashCOO = NULL ;
+        free (Matrix->SMPkluMatrix->KLUmatrixDiag) ;
+        free (Matrix->SMPkluMatrix->KLUmatrixCommon) ;
+        free (Matrix->SMPkluMatrix) ;
     } else {
         spDestroy (Matrix->SPmatrix) ;
     }
