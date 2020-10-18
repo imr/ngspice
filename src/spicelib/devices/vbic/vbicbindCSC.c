@@ -76,6 +76,28 @@ VBICbindCSC (GENmodel *inModel, CKTcircuit *ckt)
             CREATE_KLU_BINDING_TABLE(VBICsubsSICollCIPtr, VBICsubsSICollCIBinding, VBICsubsSINode, VBICcollCINode);
             CREATE_KLU_BINDING_TABLE(VBICsubsSIBaseBIPtr, VBICsubsSIBaseBIBinding, VBICsubsSINode, VBICbaseBINode);
             CREATE_KLU_BINDING_TABLE(VBICsubsSIBaseBPPtr, VBICsubsSIBaseBPBinding, VBICsubsSINode, VBICbaseBPNode);
+
+            if (here->VBIC_selfheat) {
+                CREATE_KLU_BINDING_TABLE(VBICcollTempPtr, VBICcollTempBinding, VBICcollNode, VBICtempNode);
+                CREATE_KLU_BINDING_TABLE(VBICbaseTempPtr, VBICbaseTempBinding, VBICbaseNode, VBICtempNode);
+                CREATE_KLU_BINDING_TABLE(VBICemitTempPtr, VBICemitTempBinding, VBICemitNode, VBICtempNode);
+                CREATE_KLU_BINDING_TABLE(VBICsubsTempPtr, VBICsubsTempBinding, VBICsubsNode, VBICtempNode);
+                CREATE_KLU_BINDING_TABLE(VBICcollCItempPtr, VBICcollCItempBinding, VBICcollCINode, VBICtempNode);
+                CREATE_KLU_BINDING_TABLE(VBICcollCXtempPtr, VBICcollCXtempBinding, VBICcollCXNode, VBICtempNode);
+                CREATE_KLU_BINDING_TABLE(VBICbaseBItempPtr, VBICbaseBItempBinding, VBICbaseBINode, VBICtempNode);
+                CREATE_KLU_BINDING_TABLE(VBICbaseBXtempPtr, VBICbaseBXtempBinding, VBICbaseBXNode, VBICtempNode);
+                CREATE_KLU_BINDING_TABLE(VBICbaseBPtempPtr, VBICbaseBPtempBinding, VBICbaseBPNode, VBICtempNode);
+                CREATE_KLU_BINDING_TABLE(VBICemitEItempPtr, VBICemitEItempBinding, VBICemitEINode, VBICtempNode);
+                CREATE_KLU_BINDING_TABLE(VBICsubsSItempPtr, VBICsubsSItempBinding, VBICsubsSINode, VBICtempNode);
+                CREATE_KLU_BINDING_TABLE(VBICtempCollCIPtr, VBICtempCollCIBinding, VBICtempNode, VBICcollCINode);
+                CREATE_KLU_BINDING_TABLE(VBICtempCollCXPtr, VBICtempCollCXBinding, VBICtempNode, VBICcollCXNode);
+                CREATE_KLU_BINDING_TABLE(VBICtempBaseBIPtr, VBICtempBaseBIBinding, VBICtempNode, VBICbaseBINode);
+                CREATE_KLU_BINDING_TABLE(VBICtempBaseBXPtr, VBICtempBaseBXBinding, VBICtempNode, VBICbaseBXNode);
+                CREATE_KLU_BINDING_TABLE(VBICtempBaseBPPtr, VBICtempBaseBPBinding, VBICtempNode, VBICbaseBPNode);
+                CREATE_KLU_BINDING_TABLE(VBICtempEmitEIPtr, VBICtempEmitEIBinding, VBICtempNode, VBICemitEINode);
+                CREATE_KLU_BINDING_TABLE(VBICtempSubsPtr, VBICtempSubsBinding, VBICtempNode, VBICsubsNode);
+                CREATE_KLU_BINDING_TABLE(VBICtempTempPtr, VBICtempTempBinding, VBICtempNode, VBICtempNode);
+            }
         }
     }
 
@@ -147,6 +169,28 @@ VBICbindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
             CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VBICsubsSICollCIPtr, VBICsubsSICollCIBinding, VBICsubsSINode, VBICcollCINode);
             CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VBICsubsSIBaseBIPtr, VBICsubsSIBaseBIBinding, VBICsubsSINode, VBICbaseBINode);
             CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VBICsubsSIBaseBPPtr, VBICsubsSIBaseBPBinding, VBICsubsSINode, VBICbaseBPNode);
+
+            if (here->VBIC_selfheat) {
+                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VBICcollTempPtr, VBICcollTempBinding, VBICcollNode, VBICtempNode);
+                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VBICbaseTempPtr, VBICbaseTempBinding, VBICbaseNode, VBICtempNode);
+                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VBICemitTempPtr, VBICemitTempBinding, VBICemitNode, VBICtempNode);
+                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VBICsubsTempPtr, VBICsubsTempBinding, VBICsubsNode, VBICtempNode);
+                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VBICcollCItempPtr, VBICcollCItempBinding, VBICcollCINode, VBICtempNode);
+                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VBICcollCXtempPtr, VBICcollCXtempBinding, VBICcollCXNode, VBICtempNode);
+                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VBICbaseBItempPtr, VBICbaseBItempBinding, VBICbaseBINode, VBICtempNode);
+                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VBICbaseBXtempPtr, VBICbaseBXtempBinding, VBICbaseBXNode, VBICtempNode);
+                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VBICbaseBPtempPtr, VBICbaseBPtempBinding, VBICbaseBPNode, VBICtempNode);
+                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VBICemitEItempPtr, VBICemitEItempBinding, VBICemitEINode, VBICtempNode);
+                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VBICsubsSItempPtr, VBICsubsSItempBinding, VBICsubsSINode, VBICtempNode);
+                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VBICtempCollCIPtr, VBICtempCollCIBinding, VBICtempNode, VBICcollCINode);
+                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VBICtempCollCXPtr, VBICtempCollCXBinding, VBICtempNode, VBICcollCXNode);
+                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VBICtempBaseBIPtr, VBICtempBaseBIBinding, VBICtempNode, VBICbaseBINode);
+                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VBICtempBaseBXPtr, VBICtempBaseBXBinding, VBICtempNode, VBICbaseBXNode);
+                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VBICtempBaseBPPtr, VBICtempBaseBPBinding, VBICtempNode, VBICbaseBPNode);
+                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VBICtempEmitEIPtr, VBICtempEmitEIBinding, VBICtempNode, VBICemitEINode);
+                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VBICtempSubsPtr, VBICtempSubsBinding, VBICtempNode, VBICsubsNode);
+                CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(VBICtempTempPtr, VBICtempTempBinding, VBICtempNode, VBICtempNode);
+            }
         }
     }
 
@@ -218,6 +262,28 @@ VBICbindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
             CONVERT_KLU_BINDING_TABLE_TO_REAL(VBICsubsSICollCIPtr, VBICsubsSICollCIBinding, VBICsubsSINode, VBICcollCINode);
             CONVERT_KLU_BINDING_TABLE_TO_REAL(VBICsubsSIBaseBIPtr, VBICsubsSIBaseBIBinding, VBICsubsSINode, VBICbaseBINode);
             CONVERT_KLU_BINDING_TABLE_TO_REAL(VBICsubsSIBaseBPPtr, VBICsubsSIBaseBPBinding, VBICsubsSINode, VBICbaseBPNode);
+
+            if (here->VBIC_selfheat) {
+                CONVERT_KLU_BINDING_TABLE_TO_REAL(VBICcollTempPtr, VBICcollTempBinding, VBICcollNode, VBICtempNode);
+                CONVERT_KLU_BINDING_TABLE_TO_REAL(VBICbaseTempPtr, VBICbaseTempBinding, VBICbaseNode, VBICtempNode);
+                CONVERT_KLU_BINDING_TABLE_TO_REAL(VBICemitTempPtr, VBICemitTempBinding, VBICemitNode, VBICtempNode);
+                CONVERT_KLU_BINDING_TABLE_TO_REAL(VBICsubsTempPtr, VBICsubsTempBinding, VBICsubsNode, VBICtempNode);
+                CONVERT_KLU_BINDING_TABLE_TO_REAL(VBICcollCItempPtr, VBICcollCItempBinding, VBICcollCINode, VBICtempNode);
+                CONVERT_KLU_BINDING_TABLE_TO_REAL(VBICcollCXtempPtr, VBICcollCXtempBinding, VBICcollCXNode, VBICtempNode);
+                CONVERT_KLU_BINDING_TABLE_TO_REAL(VBICbaseBItempPtr, VBICbaseBItempBinding, VBICbaseBINode, VBICtempNode);
+                CONVERT_KLU_BINDING_TABLE_TO_REAL(VBICbaseBXtempPtr, VBICbaseBXtempBinding, VBICbaseBXNode, VBICtempNode);
+                CONVERT_KLU_BINDING_TABLE_TO_REAL(VBICbaseBPtempPtr, VBICbaseBPtempBinding, VBICbaseBPNode, VBICtempNode);
+                CONVERT_KLU_BINDING_TABLE_TO_REAL(VBICemitEItempPtr, VBICemitEItempBinding, VBICemitEINode, VBICtempNode);
+                CONVERT_KLU_BINDING_TABLE_TO_REAL(VBICsubsSItempPtr, VBICsubsSItempBinding, VBICsubsSINode, VBICtempNode);
+                CONVERT_KLU_BINDING_TABLE_TO_REAL(VBICtempCollCIPtr, VBICtempCollCIBinding, VBICtempNode, VBICcollCINode);
+                CONVERT_KLU_BINDING_TABLE_TO_REAL(VBICtempCollCXPtr, VBICtempCollCXBinding, VBICtempNode, VBICcollCXNode);
+                CONVERT_KLU_BINDING_TABLE_TO_REAL(VBICtempBaseBIPtr, VBICtempBaseBIBinding, VBICtempNode, VBICbaseBINode);
+                CONVERT_KLU_BINDING_TABLE_TO_REAL(VBICtempBaseBXPtr, VBICtempBaseBXBinding, VBICtempNode, VBICbaseBXNode);
+                CONVERT_KLU_BINDING_TABLE_TO_REAL(VBICtempBaseBPPtr, VBICtempBaseBPBinding, VBICtempNode, VBICbaseBPNode);
+                CONVERT_KLU_BINDING_TABLE_TO_REAL(VBICtempEmitEIPtr, VBICtempEmitEIBinding, VBICtempNode, VBICemitEINode);
+                CONVERT_KLU_BINDING_TABLE_TO_REAL(VBICtempSubsPtr, VBICtempSubsBinding, VBICtempNode, VBICsubsNode);
+                CONVERT_KLU_BINDING_TABLE_TO_REAL(VBICtempTempPtr, VBICtempTempBinding, VBICtempNode, VBICtempNode);
+            }
         }
     }
 
