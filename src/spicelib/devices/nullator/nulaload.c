@@ -34,10 +34,19 @@ NULAload(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = NULAinstances(model); here != NULL ;
                 here=NULAnextInstance(here)) {
-            
+            double value;
             *(here->NULAibrContPosPtr) += 1.0 ;
             *(here->NULAibrContNegPtr) -= 1.0 ;
-	    *(ckt->CKTrhs + (here->NULAbranch)) += here->NULAoffset;
+	    value = here->NULAoffset;
+	    #ifdef XSPICE_EXP
+            value *= ckt->CKTsrcFact;
+            value *= cm_analog_ramp_factor();
+	    #else
+            if (ckt->CKTmode & MODETRANOP)
+                value *= ckt->CKTsrcFact;
+	    #endif
+
+	    *(ckt->CKTrhs + (here->NULAbranch)) += value;
         }
     }
     return(OK);
