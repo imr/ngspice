@@ -36,7 +36,7 @@ EXTRA_DIST = ngspice.txt setplot spectrum \
 	     devload devaxis ciderinit \
 	     hist_info.c hist_info.h winmain.c winmain.h \
 	     tclspice.c tclspice.map pkgIndex.tcl.in spinit.in tclspinit.in \
-	     main.c sharedspice.c
+	     main.c sharedspice.c ngicon.rc ngspice.ico
 
 
 initdatadir = $(pkgdatadir)/scripts
