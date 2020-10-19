@@ -1,4 +1,4 @@
-* Capa variable sur la base de la thèse de Marc KODRNJA
+* Capa variable sur la base de la thÃ¨se de Marc KODRNJA
 
 .SUBCKT capa 4 6 5 7 8 0
 Vref1	26 0	DC 3

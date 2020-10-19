@@ -51,5 +51,5 @@ proc selectionwindow::selectfromlist { window title selectionlist args } {
  }
 }
 
-# puts [selectionwindow::selectfromlist .demo "Wähle Frucht" { Apfel Birne Zitrone dsfsdfdsfdsfdsfsdfds}]
+# puts [selectionwindow::selectfromlist .demo "WÃ¤hle Frucht" { Apfel Birne Zitrone dsfsdfdsfdsfdsfsdfds}]
 
