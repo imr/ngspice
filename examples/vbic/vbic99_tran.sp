@@ -1,15 +1,16 @@
 ***** VBIC99 level 9 Transient test *****
 *
-q1 3 2 0 0 t vbic99
-v 4 0 dc 5.0
-vin 1 0 dc 2.5 pulse (0 5 0 1n 1n 10n 25n)
-r1 1 2 100
-r2 3 4 10k
+q1 c b 0 0 t vbic99
+vcc vp 0 dc 5.0
+vin in 0 dc 2.5 pulse (0 5 0 1n 1n 10n 25n)
+r1 in b 100
+r2 c vp 1k
 *
 .control
 op
-tran 50p 50n
-plot v(1) v(2) v(3) v(4)
+tran 50p 100n
+plot v(in) v(b) v(c) v(vp)
+settype temperature v(t) 
 plot v(t)
 .endc
 *
@@ -42,7 +43,7 @@ plot v(t)
 + EAIS = 1.12 EANE = 1.489271 EANC = 1.489271
 + EANS = 1.12 XIS = 3 XII = 3
 + XIN = 3 TNF = 0 TAVC = 0
-+ RTH = 159.177 CTH = 0 VRT = 0
++ RTH = 159.177 CTH = 100p VRT = 0
 + ART = 0.1 CCSO = 0 QBM = 0
 + NKF = 0.5 XIKF = 0 XRCX = 2
 + XRBX = 2 XRBP = 0 ISRR = 1
