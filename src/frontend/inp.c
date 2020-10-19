@@ -1094,7 +1094,7 @@ inp_dodeck(
             case CP_REAL:
                 if (strcmp("scale", eev->va_name) == 0) {
                     cp_vset("scale", CP_REAL, &eev->va_real);
-                    printf("Scale set\n");
+                    printf("Scale set to %g\n", eev->va_real);
                 }
                 break;
             case CP_STRING:
