@@ -477,7 +477,9 @@ SMPluFac (SMPmatrix *Matrix, double PivTol, double Gmin)
 
     if (Matrix->CKTkluMODE)
     {
-        LoadGmin_CSC (Matrix->SMPkluMatrix->KLUmatrixDiag, Matrix->SMPkluMatrix->KLUmatrixN, Gmin) ;
+        if (Matrix->SMPkluMatrix->KLUloadDiagGmin) {
+            LoadGmin_CSC (Matrix->SMPkluMatrix->KLUmatrixDiag, Matrix->SMPkluMatrix->KLUmatrixN, Gmin) ;
+        }
 
         ret = klu_refactor (Matrix->SMPkluMatrix->KLUmatrixAp, Matrix->SMPkluMatrix->KLUmatrixAi, Matrix->SMPkluMatrix->KLUmatrixAx,
                             Matrix->SMPkluMatrix->KLUmatrixSymbolic, Matrix->SMPkluMatrix->KLUmatrixNumeric, Matrix->SMPkluMatrix->KLUmatrixCommon) ;
@@ -619,7 +621,9 @@ SMPreorder (SMPmatrix *Matrix, double PivTol, double PivRel, double Gmin)
 {
     if (Matrix->CKTkluMODE)
     {
-        LoadGmin_CSC (Matrix->SMPkluMatrix->KLUmatrixDiag, Matrix->SMPkluMatrix->KLUmatrixN, Gmin) ;
+        if (Matrix->SMPkluMatrix->KLUloadDiagGmin) {
+            LoadGmin_CSC (Matrix->SMPkluMatrix->KLUmatrixDiag, Matrix->SMPkluMatrix->KLUmatrixN, Gmin) ;
+        }
         Matrix->SMPkluMatrix->KLUmatrixCommon->tol = PivRel ;
 
         if (Matrix->SMPkluMatrix->KLUmatrixNumeric != NULL) {
