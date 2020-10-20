@@ -109,6 +109,11 @@ NIiter(CKTcircuit *ckt, int maxIter)
 
             if (ckt->CKTniState & NISHOULDREORDER) {
                 startTime = SPfrontEnd->IFseconds();
+
+#ifdef KLU
+                ckt->CKTmatrix->SMPkluMatrix->KLUloadDiagGmin = 1 ;
+#endif
+
                 error = SMPreorder(ckt->CKTmatrix, ckt->CKTpivotAbsTol,
                                    ckt->CKTpivotRelTol, ckt->CKTdiagGmin);
                 ckt->CKTstat->STATreorderTime +=
@@ -129,6 +134,11 @@ NIiter(CKTcircuit *ckt, int maxIter)
                 ckt->CKTniState &= ~NISHOULDREORDER;
             } else {
                 startTime = SPfrontEnd->IFseconds();
+
+#ifdef KLU
+                ckt->CKTmatrix->SMPkluMatrix->KLUloadDiagGmin = 1 ;
+#endif
+
                 error = SMPluFac(ckt->CKTmatrix, ckt->CKTpivotAbsTol,
                                  ckt->CKTdiagGmin);
                 ckt->CKTstat->STATdecompTime +=
@@ -145,6 +155,7 @@ NIiter(CKTcircuit *ckt, int maxIter)
 
                     fprintf (stderr, "Warning: KLU ReFactor failed. Factoring again...\n") ;
                     ckt->CKTniState |= NISHOULDREORDER;
+                    ckt->CKTmatrix->SMPkluMatrix->KLUloadDiagGmin = 0 ;
                     error = SMPreorder(ckt->CKTmatrix, ckt->CKTpivotAbsTol, ckt->CKTpivotRelTol, ckt->CKTdiagGmin);
                     ckt->CKTstat->STATreorderTime += SPfrontEnd->IFseconds() - startTime;
                     if (error) {
@@ -161,6 +172,19 @@ NIiter(CKTcircuit *ckt, int maxIter)
                         FREE(OldCKTstate0);
                         return(error);
                     }
+                } else if (error) {
+                    SMPgetError(ckt->CKTmatrix, &i, &j);
+                    SPfrontEnd->IFerrorf (ERR_WARNING, "singular matrix:  check nodes %s and %s\n", NODENAME(ckt, i), NODENAME(ckt, j));
+
+                    /* CKTload(ckt); */
+                    /* SMPprint(ckt->CKTmatrix, stdout); */
+                    /* seems to be singular - pass the bad news up */
+                    ckt->CKTstat->STATnumIter += iterno;
+#ifdef STEPDEBUG
+                    printf("lufac returned error \n");
+#endif
+                    FREE(OldCKTstate0);
+                    return(error);
                 }
 #else
                 if (error) {
