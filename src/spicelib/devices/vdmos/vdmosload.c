@@ -60,7 +60,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
     double rd0T, rd1T, dBeta_dT, dIds_dT;
     double Vrd=0.0, dIth_dVrd=0.0, dIrd_dT=0.0;
     double drd0T_dT, drd1T_dT, drd_dT, dgdrain_dT=0.0;
-    double dIrd_dVrd, dIrd_dgdrain;
+    double dIrd_dgdrain;
     double deldelTemp=0.0, delTemp, delTemp1, Temp, Vds, Vgs;
     double ceqqth=0.0;
     double GmT, gTtg, gTtdp, gTtt, gTtsp, gcTt=0.0;
@@ -445,7 +445,6 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
 
                 Vrd = *(ckt->CKTrhsOld + here->VDMOSdNode) - *(ckt->CKTrhsOld + here->VDMOSdNodePrime);
                 dIth_dVrd = here->VDMOSdrainConductance * Vrd;
-                dIrd_dVrd = here->VDMOSdrainConductance;
                 dIrd_dgdrain = Vrd;
                 dIrd_dT = dIrd_dgdrain * dgdrain_dT;
                 here->VDMOScth += here->VDMOSdrainConductance * Vrd*Vrd - dIth_dVrd*Vrd - dIrd_dT*Vrd*delTemp;
