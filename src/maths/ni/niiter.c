@@ -111,7 +111,9 @@ NIiter(CKTcircuit *ckt, int maxIter)
                 startTime = SPfrontEnd->IFseconds();
 
 #ifdef KLU
-                ckt->CKTmatrix->SMPkluMatrix->KLUloadDiagGmin = 1 ;
+                if (ckt->CKTkluMODE) {
+                    ckt->CKTmatrix->SMPkluMatrix->KLUloadDiagGmin = 1 ;
+                }
 #endif
 
                 error = SMPreorder(ckt->CKTmatrix, ckt->CKTpivotAbsTol,
@@ -136,7 +138,9 @@ NIiter(CKTcircuit *ckt, int maxIter)
                 startTime = SPfrontEnd->IFseconds();
 
 #ifdef KLU
-                ckt->CKTmatrix->SMPkluMatrix->KLUloadDiagGmin = 1 ;
+                if (ckt->CKTkluMODE) {
+                    ckt->CKTmatrix->SMPkluMatrix->KLUloadDiagGmin = 1 ;
+                }
 #endif
 
                 error = SMPluFac(ckt->CKTmatrix, ckt->CKTpivotAbsTol,
@@ -145,7 +149,7 @@ NIiter(CKTcircuit *ckt, int maxIter)
                     SPfrontEnd->IFseconds() - startTime;
 
 #ifdef KLU
-                if (error == E_SINGULAR) {
+                if ((ckt->CKTkluMODE) && (error == E_SINGULAR)) {
 
                     /* Francesco Lannutti - 25 Aug 2020
                      * If the matrix is numerically singular during ReFactorization, take the same matrix and factor it from scratch in the same iteration.
@@ -173,9 +177,17 @@ NIiter(CKTcircuit *ckt, int maxIter)
                         return(error);
                     }
                 } else if (error) {
-                    SMPgetError(ckt->CKTmatrix, &i, &j);
-                    SPfrontEnd->IFerrorf (ERR_WARNING, "singular matrix:  check nodes %s and %s\n", NODENAME(ckt, i), NODENAME(ckt, j));
+                    if (!(ckt->CKTkluMODE) && (error == E_SINGULAR)) {
 
+                        /* Francesco Lannutti - 25 Aug 2020
+                         * If the matrix is numerically singular during ReFactorization, factor it from scratch at the next iteration.
+                         * This is the original SPICE3F5 code and uses SPARSE.
+                         */
+
+                        ckt->CKTniState |= NISHOULDREORDER;
+                        DEBUGMSG(" forced reordering....\n");
+                        continue;
+                    }
                     /* CKTload(ckt); */
                     /* SMPprint(ckt->CKTmatrix, stdout); */
                     /* seems to be singular - pass the bad news up */
