@@ -136,8 +136,8 @@ void VDMOStempUpdate(VDMOSmodel *inModel, VDMOSinstance *here, double Temp, CKTc
         cbv = model->VDIOibv;
 
         if (cbv < here->VDIOtSatCur * tBreakdownVoltage / vt) {
-            cbv = here->VDIOtSatCur * tBreakdownVoltage / vt;
 #ifdef TRACE
+            cbv = here->VDIOtSatCur * tBreakdownVoltage / vt;
             SPfrontEnd->IFerrorf(ERR_WARNING, "%s: breakdown current increased to %g to resolve", here->VDMOSname, cbv);
             SPfrontEnd->IFerrorf(ERR_WARNING,
                 "incompatibility with specified saturation current");
@@ -148,7 +148,6 @@ void VDMOStempUpdate(VDMOSmodel *inModel, VDMOSinstance *here, double Temp, CKTc
             tol = ckt->CKTreltol*cbv;
             xbv = tBreakdownVoltage - model->VDIObrkdEmissionCoeff*vt*log(1 + cbv /
                 (here->VDIOtSatCur));
-            iter = 0;
             for (iter = 0; iter < 25; iter++) {
                 xbv = tBreakdownVoltage - model->VDIObrkdEmissionCoeff*vt*log(cbv /
                     (here->VDIOtSatCur) + 1 - xbv / vt);

@@ -165,9 +165,7 @@ BJTload(GENmodel *inModel, CKTcircuit *ckt)
             }
 
             gcsub=0;
-            ceqsub=0;
             geqbx=0;
-            ceqbx=0;
             geqcb=0;
             gbcx=0;
             cbcx=0;

@@ -29,7 +29,6 @@ VDMOSdSetup(GENmodel *inModel, CKTcircuit *ckt)
     double vdsat;
     double vgd;
     double vgs;
-    double vt;
     double gm2;
     double gds2;
     double gmds;
@@ -48,8 +47,6 @@ VDMOSdSetup(GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = VDMOSinstances(model); here != NULL ;
                 here=VDMOSnextInstance(here)) {
-
-            vt = CONSTKoverQ * here->VDMOStemp;
 
             Beta = here->VDMOStTransconductance;
 
