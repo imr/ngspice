@@ -55,7 +55,7 @@
 
 int Printer_Width = PRINTER_WIDTH;
 
-#include "ngspice/config.h"
+#include "ngconfig/config.h"
 #ifdef HAS_WINGUI
 #include "ngspice/wstdio.h"
 #endif

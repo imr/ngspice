@@ -92,7 +92,7 @@
  *     Spice3's matrix macro definitions.
  */
 
-#include "ngspice/config.h"
+#include "ngconfig/config.h"
 #include <assert.h>
 #include <stdio.h>
 #include <math.h>

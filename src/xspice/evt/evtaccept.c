@@ -39,7 +39,7 @@ NON-STANDARD FEATURES
 
 /*=== INCLUDE FILES ===*/
 
-#include "ngspice/config.h"
+#include "ngconfig/config.h"
 #include <stdio.h>
 #include "ngspice/cktdefs.h"
 

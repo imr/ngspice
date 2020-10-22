@@ -8,7 +8,7 @@ Author: 1985 Thomas L. Quarles
  * this is a driver program to iterate through all the various accept
  * functions provided for the circuit elements in the given circuit */
 
-#include "ngspice/config.h"
+#include "ngconfig/config.h"
 #include "ngspice/devdefs.h"
 #include "ngspice/sperror.h"
 #include "ngspice/ifsim.h"

@@ -9,7 +9,7 @@
 #include <stdarg.h>
 #include <string.h>
 
-#include "ngspice/config.h"
+#include "ngconfig/config.h"
 #include "ngspice/bool.h"
 
 

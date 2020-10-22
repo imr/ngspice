@@ -1,7 +1,7 @@
 #ifndef ngspice_COMPATMODE_H
 #define ngspice_COMPATMODE_H
 
-#include "ngspice/config.h"
+#include "ngconfig/config.h"
 
 struct compat
 {

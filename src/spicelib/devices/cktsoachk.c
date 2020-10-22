@@ -7,7 +7,7 @@ Author:   2013 Dietmar Warning
  * This is a driver program to iterate through all the various SOA check
  * functions provided for the circuit elements in the given circuit */
 
-#include "ngspice/config.h"
+#include "ngconfig/config.h"
 #include "ngspice/devdefs.h"
 #include "ngspice/sperror.h"
 #include "ngspice/ifsim.h"

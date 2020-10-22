@@ -375,7 +375,7 @@ extern void * trealloc(const void *, size_t);
 #define SP_FREE(ptr) { if ((ptr) != NULL) txfree(ptr); (ptr) = NULL; }
 
 
-#include "ngspice/config.h"
+#include "ngconfig/config.h"
 
 /* A new calloc */
 #ifndef HAVE_LIBGC

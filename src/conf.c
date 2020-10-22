@@ -1,6 +1,6 @@
 /* Common configuration file for ng-spice and nutmeg */
 
-#include "ngspice/config.h"
+#include "ngconfig/config.h"
 #include "conf.h"
 
 /*  The GNU configure system should set PACKAGE_BUGREPORT

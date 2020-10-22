@@ -3,7 +3,7 @@
  */
 
 
-#include "ngspice/config.h"
+#include "ngconfig/config.h"
 
 #include "ngspice/devdefs.h"
 

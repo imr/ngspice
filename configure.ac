@@ -26,7 +26,7 @@ AC_PREREQ([2.59])
 AC_REVISION([$Revision$])
 
 # Create a configuration header
-AC_CONFIG_HEADER([src/include/ngspice/config.h])
+AC_CONFIG_HEADER([src/include/ngconfig/config.h])
 
 # Initialise automake stuff
 AM_INIT_AUTOMAKE([-Wall -Werror nostdinc serial-tests])

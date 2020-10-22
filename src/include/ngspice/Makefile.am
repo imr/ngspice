@@ -1,8 +1,5 @@
 ## Process this file with automake to produce Makefile.in
 
-nodist_pkginclude_HEADERS = \
-	config.h
-
 pkginclude_HEADERS = \
 	tclspice.h	\
 	acdefs.h	\

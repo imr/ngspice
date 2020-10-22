@@ -3,7 +3,7 @@ Copyright 1992 Regents of the University of California.  All rights
 reserved.
 Author: 1992 Charles Hough
 **********/
-#include "ngspice/config.h"
+#include "ngconfig/config.h"
 
 #include "ngspice/devdefs.h"
 

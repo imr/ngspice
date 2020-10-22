@@ -7,7 +7,7 @@ Modified 1999 Emmanuel Rouat - 2000  AlansFixes
 /*
  * Definitions for the help system.
  */
-#include "ngspice/config.h"
+#include "ngconfig/config.h"
 
 
 

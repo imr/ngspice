@@ -39,7 +39,7 @@ NON-STANDARD FEATURES
 
 =========================================================================== */
 
-#include "ngspice/config.h"
+#include "ngconfig/config.h"
 #include "ngspice/cmtypes.h"
 #include "ngspice/cmconstants.h"
 #include "ngspice/cmproto.h"

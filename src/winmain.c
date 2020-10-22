@@ -8,7 +8,7 @@
    Modified BSD license
 */
 
-#include "ngspice/config.h"
+#include "ngconfig/config.h"
 
 #ifdef HAS_WINGUI
 

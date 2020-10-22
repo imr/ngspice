@@ -8,7 +8,7 @@ Author: 1985 Thomas L. Quarles
  * Create a device of the specified type, with the given name, using
  * the specified model in the named circuit.  */
 
-#include "ngspice/config.h"
+#include "ngconfig/config.h"
 #include "ngspice/devdefs.h"
 #include "ngspice/sperror.h"
 

@@ -13,7 +13,7 @@
 #include <math.h>
 #include <stdarg.h>
 
-#include "ngspice/config.h"
+#include "ngconfig/config.h"
 #include "ngspice/memory.h"
 #ifdef HAS_WINGUI
 #include "ngspice/wstdio.h"
