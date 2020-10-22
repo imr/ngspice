@@ -742,7 +742,7 @@ X11_Text(const char *text, int x, int y, int angle)
                 x, currentgraph->absolute.height - y, (FcChar8*)text, strlen(text));
     }
     else if (angle == 90) {
-        int wlen, wheight;
+        int wlen=0, wheight;
         /* calculate and add offset, if ylabel with angle 90° */
         Xget_str_length(text, &wlen, &wheight, DEVDEP(currentgraph).font90, NULL, 0);
 
@@ -1395,7 +1395,7 @@ Xget_str_length(const char *text, int* wlen, int* wheight, XftFont* gfont, char*
 int
 X11_GetLenStr(GRAPH *gr, char* instring)
 {
-    int wl, wh;
+    int wl=0, wh;
     Xget_str_length(instring, &wl, &wh, NULL, DEVDEP(gr).fname, DEVDEP(gr).fsize);
     return wl;
 }
