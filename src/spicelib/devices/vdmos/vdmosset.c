@@ -125,7 +125,7 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
             model->VDIOxti = 3.0;
 
         if (!model->VDMOSrthjcGiven)
-            model->VDMOSrthjc = 1.0e-03;
+            model->VDMOSrthjc = 1.0;
 
         if (!model->VDMOSrthcaGiven)
             model->VDMOSrthca = 1000;
