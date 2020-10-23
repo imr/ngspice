@@ -4,15 +4,15 @@
 #
 # (Process this file with autoconf to produce a configure script.)
 #
-# This configure file has been updated to mostly follow the guidence in the
+# This configure file has been updated to mostly follow the guidance in the
 # GNU Autoconf manual for version 2.59
 
 
-# Initialisation
+# Initialization
 # ---------------
 
-# Initialisation of configure
-AC_INIT([ngspice], [33+], [http://ngspice.sourceforge.net/bugrep.html])
+# Initialization of configure
+AC_INIT([ngspice], [33], [http://ngspice.sourceforge.net/bugrep.html])
 
 # Unique file in the source directory
 AC_CONFIG_SRCDIR([src/ngspice.c])
@@ -22,13 +22,13 @@ AC_CONFIG_SRCDIR([src/ngspice.c])
 # problem to the user.  (2.52 is a guess and might need some adjustment)
 AC_PREREQ([2.59])
 
-# Revison stamp the generated ./configure script
+# Revision stamp the generated ./configure script
 AC_REVISION([$Revision$])
 
 # Create a configuration header
 AC_CONFIG_HEADER([src/include/ngspice/config.h])
 
-# Initialise automake stuff
+# Initialize automake stuff
 AM_INIT_AUTOMAKE([-Wall -Werror nostdinc serial-tests])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
@@ -667,9 +667,9 @@ AC_FUNC_VPRINTF
 #  that is how it has been historically.  Using --enable-rpath will turn this on
 
 _use_rpath=no
-AC_MSG_CHECKING([if hardcoding of the X11 runtime library path is desired])
+AC_MSG_CHECKING([if hard-coding of the X11 runtime library path is desired])
 AC_ARG_ENABLE([rpath],
-    [AS_HELP_STRING([--enable-rpath], [Enable hardcoding the X11 runtime library path])],
+    [AS_HELP_STRING([--enable-rpath], [Enable hard-coding the X11 runtime library path])],
     [   if test "x$enable_rpath" = xno ; then
             AC_MSG_RESULT([no])
             _use_rpath=no
@@ -965,7 +965,7 @@ if test "x$enable_ftedebug" = xyes; then
     AC_MSG_RESULT([WARNING: Frontend debug is enabled])
 fi
 if test "x$enable_sensdebug" = xyes; then
-    AC_DEFINE([SENSDEBUG], [], [Define if we want debug sensititvity analysis])
+    AC_DEFINE([SENSDEBUG], [], [Define if we want debug sensitivity analysis])
     AC_MSG_RESULT([WARNING: Sensitivity code debug *SENSDEBUG* is enabled])
 fi
 if test "x$enable_asdebug" = xyes; then
