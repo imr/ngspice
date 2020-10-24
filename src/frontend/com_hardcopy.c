@@ -24,7 +24,7 @@
 void com_hardcopy(wordlist *wl)
 {
     /* Check if there is a graph available */
-    if (currentgraph == (GRAPH *) NULL) {
+    if (!wl && (currentgraph == (GRAPH *) NULL)) {
         (void) fprintf(cp_err, "There is no graph to hardcopy.\n");
         return;
     }
