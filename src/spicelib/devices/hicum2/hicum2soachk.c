@@ -1,7 +1,7 @@
 /**********
-Copyright 2013 Dietmar Warning. All rights reserved.
-Author:   2013 Dietmar Warning
-License: 3-clause BSD
+License              : 3-clause BSD
+Spice3 Implementation: 2019-2020 Dietmar Warning, Markus Müller, Mario Krattenmacher
+Model Author         : 1990 Michael Schröter TU Dresden
 **********/
 
 #include "ngspice/ngspice.h"
