@@ -161,7 +161,11 @@ void raw_write(char *name, struct plot *pl, bool app, bool binary)
             if ((branch = strstr(v->v_name, "#branch")) != NULL) {
                 *branch = '\0';
             }
-            fprintf(fp, "\t%d\ti(%s)\t%s", i++, v->v_name, ft_typenames(v->v_type));
+            /* If the branch name is a number, the vector is already called i(name) */
+            if (ciprefix("i(", v->v_name))
+                fprintf(fp, "\t%d\t%s\t%s", i++, v->v_name, ft_typenames(v->v_type));
+            else
+                fprintf(fp, "\t%d\ti(%s)\t%s", i++, v->v_name, ft_typenames(v->v_type));
             /* restore name#branch */
             if (branch != NULL) *branch = '#';
         }
