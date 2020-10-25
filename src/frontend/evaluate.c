@@ -940,6 +940,8 @@ apply_func(struct func *func, struct pnode *arg)
         /* try to figure out the v_type, depending on the function */
         if (eq(func->fu_name, "cph") || eq(func->fu_name, "ph"))
             t->v_type = SV_PHASE;
+        else if (eq(func->fu_name, "db"))
+            t->v_type = SV_DB;
 
         if (end)
             end->v_link2 = t;
