@@ -271,9 +271,15 @@ ft_cpinit(void)
         /* jump over leading spaces */
         for (copys = s = cp_tildexpand(Lib_Path); copys && *copys; ) {
             s = skip_ws(s);
-            /* copy s into buf until space is seen, r is the actual position */
-            for (r = buf; *s && !isspace_c(*s); r++, s++)
+            /* copy s into buf until end of s, r is the actual position in buf */
+            int ii;
+            for (r = buf, ii = 0; *s; r++, s++, ii++) {
                 *r = *s;
+                if (ii > 500) {
+                    fprintf(stderr, "Warning: spinit path is too long.\n");
+                    break;
+                }
+            }
             tfree(copys);
             /* add a path separator to buf at actual position */
             (void) strcpy(r, DIR_PATHSEP);
@@ -284,6 +290,7 @@ ft_cpinit(void)
             /* add "spinit" to buf after actual position */
             (void) strcat(r, "spinit");
 #endif
+
             if ((fp = fopen(buf, "r")) != NULL) {
 
                 cp_interactive = FALSE;
