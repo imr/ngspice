@@ -454,7 +454,8 @@ DCtran(CKTcircuit *ckt,
 #ifdef CLUSTER
         CLUoutput(ckt);
 #endif
-        if((ckt->CKTmode&MODEUIC && ckt->CKTtime > 0) || (!(ckt->CKTmode&MODEUIC) && ckt->CKTtime >= ckt->CKTinitTime))
+        if((ckt->CKTmode&MODEUIC && ckt->CKTtime > 0 && ckt->CKTtime >= ckt->CKTinitTime) 
+                || (!(ckt->CKTmode&MODEUIC) && ckt->CKTtime >= ckt->CKTinitTime))
             CKTdump(ckt, ckt->CKTtime, job->TRANplot);
 #ifdef XSPICE
 /* gtri - begin - wbk - Update event queues/data for accepted timepoint */
