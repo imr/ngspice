@@ -163,8 +163,8 @@ DEVlimitlog(
     *check = 0;
     if (isnan (deltemp) || isnan (deltemp_old))
     {
-        fprintf(stderr, "Alberto says:  YOU TURKEY!  The limiting function received NaN.\n");
-        fprintf(stderr, "New prediction returns to 0.0!\n");
+        fprintf(stderr, "The temperature limiting function received NaN.\n");
+        fprintf(stderr, "Please check your power dissipation and improve your heat sink Rth!\n");
         deltemp = 0.0;
         *check = 1;
     }
