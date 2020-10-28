@@ -548,6 +548,10 @@ static void new_compat_mode(void)
             newcompat.ki = TRUE;
         if (strstr(behaviour, "a"))
             newcompat.a = TRUE;
+        if (strstr(behaviour, "ll"))
+            newcompat.ll = TRUE;
+        if (strstr(behaviour, "eg"))
+            newcompat.eg = TRUE;
         if (strstr(behaviour, "spe")) {
             newcompat.spe = TRUE;
             newcompat.ps = newcompat.lt = newcompat.ki = newcompat.a = FALSE;
