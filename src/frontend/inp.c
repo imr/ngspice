@@ -184,11 +184,13 @@ com_listing(wordlist *wl)
 static char *
 upper(char *string)
 {
-    static char buf[BSIZE_SP];
+    static char buf[LBSIZE_SP];
 
     if (string) {
-        strncpy(buf, string, BSIZE_SP - 1);
-        buf[BSIZE_SP - 1] = '\0';
+        if (strlen(string) > LBSIZE_SP - 1)
+            fprintf(stderr, "Warning: output of command 'listing' will be truncated\n");
+        strncpy(buf, string, LBSIZE_SP - 1);
+        buf[LBSIZE_SP - 1] = '\0';
         inp_casefix(buf);
     } else {
         strcpy(buf, "<null>");
