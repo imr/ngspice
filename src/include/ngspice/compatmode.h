@@ -13,7 +13,7 @@ struct compat
 	bool ki; /* KiCad */
 	bool a; /* whole netlist */
 	bool spe; /* spectre */
-    bool eg; /* EAGLE */
+	bool eg; /* EAGLE */
 };
 
 extern struct compat newcompat;
