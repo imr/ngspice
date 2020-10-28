@@ -114,6 +114,7 @@
 #endif
 
 #define BSIZE_SP      512
+#define LBSIZE_SP    4096
 
 
 #define EXIT_NORMAL 0
