@@ -5,14 +5,15 @@
 
 struct compat
 {
-	bool hs;
-	bool s3;
-	bool all;
-	bool ps;
-	bool lt;
-	bool ki;
-	bool a;
-	bool spe;
+	bool hs; /* HSPICE */
+	bool s3; /* spice3 */
+	bool ll; /* all */
+	bool ps; /* PSPICE */
+	bool lt; /* LTSPICE */
+	bool ki; /* KiCad */
+	bool a; /* whole netlist */
+	bool spe; /* spectre */
+    bool eg; /* EAGLE */
 };
 
 extern struct compat newcompat;
