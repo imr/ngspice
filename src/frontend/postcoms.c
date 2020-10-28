@@ -23,6 +23,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "parser/complete.h" /* va: throwaway */
 #include "plotting/plotting.h"
 
+#include "ngspice/compatmode.h"
 
 static void killplot(struct plot *pl);
 static void DelPlotWindows(struct plot *pl);
@@ -433,7 +434,7 @@ com_write(wordlist *wl)
     struct pnode *pn;
     struct dvec *d, *vecs = NULL, *lv = NULL, *end, *vv;
     static wordlist all = { "all", NULL, NULL };
-    struct pnode *names;
+    struct pnode *names = NULL;
     bool ascii = AsciiRawFile;
     bool scalefound, appendwrite;
     struct plot *tpl, newplot;
@@ -455,25 +456,43 @@ com_write(wordlist *wl)
     }
     appendwrite = cp_getvar("appendwrite", CP_BOOL, NULL, 0);
 
-    if (wl)
-        names = ft_getpnames(wl, TRUE);
-    else
-        names = ft_getpnames(&all, TRUE);
-
-    if (names == NULL) {
-        return;
-    }
-
-    for (pn = names; pn; pn = pn->pn_next) {
-        d = ft_evaluate(pn);
-        if (!d)
-            goto done;
-        if (vecs)
-            lv->v_link2 = d;
+    /* If use with EAGLE or KiCad compatibility, we do not expand equations, serve v vs vs etc.
+       We offer plain writing of the vectors. This enables node names containing +, -, / etc. */
+    if (!newcompat.eg && !newcompat.ki) {
+        if (wl)
+            names = ft_getpnames(wl, TRUE);
         else
-            vecs = d;
-        for (lv = d; lv->v_link2; lv = lv->v_link2)
-            ;
+            names = ft_getpnames(&all, TRUE);
+
+        if (names == NULL) {
+            return;
+        }
+
+        for (pn = names; pn; pn = pn->pn_next) {
+            d = ft_evaluate(pn);
+            if (!d)
+                goto done;
+            if (vecs)
+                lv->v_link2 = d;
+            else
+                vecs = d;
+            for (lv = d; lv->v_link2; lv = lv->v_link2)
+                ;
+        }
+    }
+    else {
+        wordlist* wli;
+        for (wli = wl; wli; wli = wli->wl_next) {
+            d = vec_get(wli->wl_word);
+            if (!d)
+                goto done;
+            if (vecs)
+                lv->v_link2 = d;
+            else
+                vecs = d;
+            for (lv = d; lv->v_link2; lv = lv->v_link2)
+                ;
+        }
     }
 
     /* Now we have to write them out plot by plot. */
