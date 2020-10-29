@@ -420,13 +420,12 @@ done:
 }
 
 
-/* Write out some data. write filename expr ... Some cleverness here is
- * required.  If the user mentions a few vectors from various plots,
- * probably he means for them to be written out seperate plots.  In any
- * case, we have to be sure to write out the scales for everything we
- * write...
+/* Write out some data inti a ngspice raw file with 'write filename expr'.
+ * If vectors (expr) from various plots are selected, they are written
+ * out as seperate plots.  In any case, we have to be sure to write out
+ * the scales for everything we write. If expr is omitted, all vectors
+ * of the current plot are written.
  */
-
 void
 com_write(wordlist *wl)
 {
@@ -482,6 +481,8 @@ com_write(wordlist *wl)
     }
     else {
         wordlist* wli;
+        if (!wl)
+            wl = &all;
         for (wli = wl; wli; wli = wli->wl_next) {
             d = vec_get(wli->wl_word);
             if (!d)
