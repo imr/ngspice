@@ -19,6 +19,8 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "variable.h"
 #include "../misc/misc_time.h"
 
+#include "ngspice/compatmode.h"
+
 
 static void fixdims(struct dvec *v, char *s);
 
@@ -172,7 +174,7 @@ void raw_write(char *name, struct plot *pl, bool app, bool binary)
         /* write v(name)*/
         else if (v->v_type == SV_VOLTAGE) {
             /* If the node name is a number, the vector is already called v(name) */
-            if (ciprefix("v(", v->v_name))
+            if (ciprefix("v(", v->v_name) || newcompat.eg) /* FIXME: newcompat.eg should be removed if EAGLE is updated */
                fprintf(fp, "\t%d\t%s\t%s", i++, v->v_name, ft_typenames(v->v_type));
             else
                fprintf(fp, "\t%d\tv(%s)\t%s", i++, v->v_name, ft_typenames(v->v_type));
