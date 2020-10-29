@@ -704,11 +704,13 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
     }
 
     if (!sameflag) {
-        plain = getflag(wl, "plain");
+        plain = getflag(wl, "plainplot");
     }
-    else if (getflag(wl, "plain")) {
+    else if (getflag(wl, "plainplot")) {
         plain = TRUE;
     }
+
+    plain = plain | cp_getvar("plainplot", CP_BOOL, NULL, 0);
 
     if (!wl->wl_next) {
         fprintf(cp_err, "Error: no vectors given\n");
@@ -724,8 +726,10 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
         wordlist* wli;
         for (wli = wl->wl_next; wli; wli = wli->wl_next) {
             d = vec_get(wli->wl_word);
-            if (!d)
+            if (!d) {
+                fprintf(stderr, "Error during 'plot': vector %s not found\n", wli->wl_word);
                 goto quit;
+            }
             if (vecs)
                 lv->v_link2 = d;
             else
