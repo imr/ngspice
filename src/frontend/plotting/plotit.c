@@ -283,13 +283,14 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
 
     static bool nointerp = FALSE;
     static bool kicad = FALSE;
+    static bool plain = FALSE;
     static GRIDTYPE gtype = GRID_LIN;
     static PLOTTYPE ptype = PLOT_LIN;
 
     bool gfound = FALSE, pfound = FALSE, oneval = FALSE;
     double ylims[2], xlims[2];
-    struct pnode *pn, *names;
-    struct dvec *d = NULL, *vecs = NULL, *lv, *lastvs = NULL;
+    struct pnode *pn, *names = NULL;
+    struct dvec *d = NULL, *vecs = NULL, *lv = NULL, *lastvs = NULL;
     char *xn;
     int i, xt;
     wordlist *wwl;
@@ -702,111 +703,137 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
         kicad = TRUE;
     }
 
+    if (!sameflag) {
+        plain = getflag(wl, "plain");
+    }
+    else if (getflag(wl, "plain")) {
+        plain = TRUE;
+    }
+
     if (!wl->wl_next) {
         fprintf(cp_err, "Error: no vectors given\n");
         goto quit1;
     }
 
-    /* kicad will generate vector names containing '/'. If compatibilty flag
-       'ki' is set in .spiceinit or plot line flag 'kicad' is set,
-       we will place " around this vector name. Division in the plot command
-       will then work only if spaces are around ' / '.*/
-    if (kicad || newcompat.ki) {
-        wordlist* wlk;
-        for (wlk = wl->wl_next; wlk; wlk = wlk->wl_next) {
-            char* wlkword = strchr(wlk->wl_word, '/');
-            if (wlkword) {
-                /* already " around token */
-                if (*(wlk->wl_word) == '"')
-                    continue;
-                /* just '/' */
-                if (*(wlkword + 1) == '\0')
-                    continue;
-                else {
-                    char* newword = tprintf("\"%s\"", wlk->wl_word);
-                    tfree(wlk->wl_word);
-                    wlk->wl_word = newword;
+    /* if plain is set, we skip all function parsing and just plot the
+       vectors by name. vc1 vs vc2 is also not supported.
+       Thus we may plot vecs with node names containing + - / etc.
+       Note: Evaluating the wordlist starting at wl->wl_next since the first
+       node is a dummy node.*/
+    if(plain) {
+        wordlist* wli;
+        for (wli = wl->wl_next; wli; wli = wli->wl_next) {
+            d = vec_get(wli->wl_word);
+            if (!d)
+                goto quit;
+            if (vecs)
+                lv->v_link2 = d;
+            else
+                vecs = d;
+            for (lv = d; lv->v_link2; lv = lv->v_link2)
+                ;
+        }
+    }
+    else {
+        /* kicad will generate vector names containing '/'. If compatibilty flag
+           'ki' is set in .spiceinit or plot line flag 'kicad' is set,
+           we will place " around this vector name. Division in the plot command
+           will then work only if spaces are around ' / '.*/
+        if (kicad || newcompat.ki) {
+            wordlist* wlk;
+            for (wlk = wl->wl_next; wlk; wlk = wlk->wl_next) {
+                char* wlkword = strchr(wlk->wl_word, '/');
+                if (wlkword) {
+                    /* already " around token */
+                    if (*(wlk->wl_word) == '"')
+                        continue;
+                    /* just '/' */
+                    if (*(wlkword + 1) == '\0')
+                        continue;
+                    else {
+                        char* newword = tprintf("\"%s\"", wlk->wl_word);
+                        tfree(wlk->wl_word);
+                        wlk->wl_word = newword;
+                    }
                 }
             }
         }
-    }
 
+        /* Now parse the vectors.  We have a list of the form
+         * "a b vs c d e vs f g h".  Since it's a bit of a hassle for
+         * us to parse the vector boundaries here, we do this -- call
+         * ft_getpnames() without the check flag, and then look for 0-length
+         * vectors with the name "vs"...  This is a sort of a gross hack,
+         * since we have to check for 0-length vectors ourselves after
+         * evaulating the pnodes...
+         *
+         * Note: Evaluating the wordlist starting at wl->wl_next since the first
+         * node is a dummy node.
+         */
 
-    /* Now parse the vectors.  We have a list of the form
-     * "a b vs c d e vs f g h".  Since it's a bit of a hassle for
-     * us to parse the vector boundaries here, we do this -- call
-     * ft_getpnames() without the check flag, and then look for 0-length
-     * vectors with the name "vs"...  This is a sort of a gross hack,
-     * since we have to check for 0-length vectors ourselves after
-     * evaulating the pnodes...
-     *
-     * Note: Evaluating the wordlist starting at wl->wl_next since the first
-     * node is a dummy node.
-     */
+        names = ft_getpnames(wl->wl_next, FALSE);
+        if (names == (struct pnode*)NULL) {
+            goto quit1;
+        }
 
-    names = ft_getpnames(wl->wl_next, FALSE);
-    if (names == (struct pnode *) NULL) {
-        goto quit1;
-    }
+        /* Now evaluate the names. */
+        for (pn = names, lv = NULL; pn; pn = pn->pn_next) {
+            struct dvec* pn_value = pn->pn_value;
 
-    /* Now evaluate the names. */
-    for (pn = names, lv = NULL; pn; pn = pn->pn_next) {
-        struct dvec *pn_value = pn->pn_value;
-
-        /* Test for a vs b construct */
-        if (pn_value && (pn_value->v_length == 0) &&
+            /* Test for a vs b construct */
+            if (pn_value && (pn_value->v_length == 0) &&
                 eq(pn_value->v_name, "vs")) {
-            struct dvec *dv;
+                struct dvec* dv;
 
-            if (!lv) { /* e.g. "plot vs b" */
-                fprintf(cp_err, "Error: misplaced vs arg\n");
-                goto quit;
-            }
-            if ((pn = pn->pn_next) == NULL) { /* "plot a vs" */
-                fprintf(cp_err, "Error: missing vs arg\n");
-                goto quit;
-            }
+                if (!lv) { /* e.g. "plot vs b" */
+                    fprintf(cp_err, "Error: misplaced vs arg\n");
+                    goto quit;
+                }
+                if ((pn = pn->pn_next) == NULL) { /* "plot a vs" */
+                    fprintf(cp_err, "Error: missing vs arg\n");
+                    goto quit;
+                }
 
-            dv = ft_evaluate(pn);
-            if (!dv) {
-                goto quit;
-            }
+                dv = ft_evaluate(pn);
+                if (!dv) {
+                    goto quit;
+                }
 
-            if (lastvs) {
-                lv = lastvs->v_link2;
-            }
-            else {
-                lv = vecs;
-            }
+                if (lastvs) {
+                    lv = lastvs->v_link2;
+                }
+                else {
+                    lv = vecs;
+                }
 
-            while (lv) {
-                lv->v_scale = dv;
-                lastvs = lv;
-                lv = lv->v_link2;
+                while (lv) {
+                    lv->v_scale = dv;
+                    lastvs = lv;
+                    lv = lv->v_link2;
+                }
             }
-        }
-        else { /* An explicit scale vector is not given ("plot a") */
-            struct dvec * const dv = ft_evaluate(pn);
-            if (!dv) {
-                goto quit;
-            }
+            else { /* An explicit scale vector is not given ("plot a") */
+                struct dvec* const dv = ft_evaluate(pn);
+                if (!dv) {
+                    goto quit;
+                }
 
-            if (!d) {
-                vecs = dv;
-            }
-            else {
-                d->v_link2 = dv;
-            }
+                if (!d) {
+                    vecs = dv;
+                }
+                else {
+                    d->v_link2 = dv;
+                }
 
-            for (d = dv; d->v_link2; d = d->v_link2) {
-                ;
+                for (d = dv; d->v_link2; d = d->v_link2) {
+                    ;
+                }
+
+                lv = dv;
             }
-
-            lv = dv;
-        }
-    } /* end of loop evaluating the names */
-    d->v_link2 = NULL; /* terminate list */
-
+        } /* end of loop evaluating the names */
+        d->v_link2 = NULL; /* terminate list */
+    } /* if not plain */
 
     /* Now check for 0-length vectors. */
     for (d = vecs; d; d = d->v_link2) {
