@@ -435,7 +435,7 @@ com_write(wordlist *wl)
     static wordlist all = { "all", NULL, NULL };
     struct pnode *names = NULL;
     bool ascii = AsciiRawFile;
-    bool scalefound, appendwrite;
+    bool scalefound, appendwrite, plainwrite = FALSE;
     struct plot *tpl, newplot;
 
     if (wl) {
@@ -455,9 +455,11 @@ com_write(wordlist *wl)
     }
     appendwrite = cp_getvar("appendwrite", CP_BOOL, NULL, 0);
 
-    /* If use with EAGLE or KiCad compatibility, we do not expand equations, serve v vs vs etc.
+    plainwrite = cp_getvar("plainwrite", CP_BOOL, NULL, 0);
+
+    /* If variable plainwrite is set, we do not expand equations, serve v vs vs etc.
        We offer plain writing of the vectors. This enables node names containing +, -, / etc. */
-    if (!newcompat.eg && !newcompat.ki) {
+    if (!plainwrite) {
         if (wl)
             names = ft_getpnames(wl, TRUE);
         else
@@ -485,8 +487,10 @@ com_write(wordlist *wl)
             wl = &all;
         for (wli = wl; wli; wli = wli->wl_next) {
             d = vec_get(wli->wl_word);
-            if (!d)
+            if (!d) {
+                fprintf(stderr, "Error during 'write': vector %s not found\n", wli->wl_word);
                 goto done;
+            }
             if (vecs)
                 lv->v_link2 = d;
             else
