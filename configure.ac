@@ -35,6 +35,7 @@ m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 ext_CFLAGS="${CFLAGS+yes}"
 
 AC_PROG_CC
+AC_PROG_CXX
 AX_PROG_CC_FOR_BUILD
 
 m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
@@ -42,6 +43,8 @@ m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
 AC_SUBST([AM_CPPFLAGS], ['-I. -I$(srcdir) -I$(top_builddir)/src/include'])
 
 AC_CONFIG_MACRO_DIR([m4])
+
+
 
 # Package Options
 # ---------------
@@ -683,6 +686,7 @@ AC_ARG_ENABLE([rpath],
     ]
 )
 
+
 if test "x$_use_rpath" = xyes ; then
     # Try to figure out if we need -Rpath for finding X11 libs
     # at runtime.  Why autoconf doesn't already do this, I don't
@@ -767,6 +771,11 @@ esac
 AM_CONDITIONAL([NO_X], [test "x$has_no_x" = xtrue])
 AM_CONDITIONAL([NO_HELP], [test "x$has_no_help" = xtrue])
 
+# Additional libs of hicum group
+AC_CHECK_LIB(stdc++, main, XTRALIBS="$XTRALIBS -lstdc++",,)
+AC_SUBST(XTRALIBS, $XTRALIBS)
+
+LIBS="$LIBS $XTRALIBS"
 
 # enabling making of the old and outdated applications
 # ngsconvert ngproc2mod ngmultidec ngmakeidx nghelp
@@ -1239,6 +1248,7 @@ AC_CONFIG_FILES([Makefile
                  src/spicelib/devices/isrc/Makefile
                  src/spicelib/devices/hfet1/Makefile
                  src/spicelib/devices/hfet2/Makefile
+                 src/spicelib/devices/hicum2/Makefile
                  src/spicelib/devices/hisim2/Makefile
                  src/spicelib/devices/hisimhv1/Makefile
                  src/spicelib/devices/hisimhv2/Makefile
@@ -1315,6 +1325,7 @@ AC_CONFIG_FILES([Makefile
                  tests/filters/Makefile
                  tests/general/Makefile
                  tests/hfet/Makefile
+                 tests/hicum2/Makefile
                  tests/hisim/Makefile
                  tests/hisimhv1/Makefile
                  tests/hisimhv2/Makefile

@@ -1,0 +1,472 @@
+{
+  "context": {
+    "date": "2019-04-09 23:10:32",
+    "host_name": "riick.fritz.box",
+    "executable": "./tests/bench_dual",
+    "num_cpus": 8,
+    "mhz_per_cpu": 4200,
+    "cpu_scaling_enabled": true,
+    "caches": [
+      {
+        "type": "Data",
+        "level": 1,
+        "size": 32000000,
+        "num_sharing": 2
+      },
+      {
+        "type": "Instruction",
+        "level": 1,
+        "size": 32000000,
+        "num_sharing": 2
+      },
+      {
+        "type": "Unified",
+        "level": 2,
+        "size": 256000000,
+        "num_sharing": 2
+      },
+      {
+        "type": "Unified",
+        "level": 3,
+        "size": 8192000000,
+        "num_sharing": 8
+      }
+    ],
+    "load_avg": [0.91,0.55,0.49],
+    "library_build_type": "debug"
+  },
+  "benchmarks": [
+    {
+      "name": "B_Add<duals::dualf>/2",
+      "run_name": "B_Add<duals::dualf>/2",
+      "run_type": "iteration",
+      "iterations": 824542173,
+      "real_time": 8.4453082668102275e-01,
+      "cpu_time": 8.4330497549941574e-01,
+      "time_unit": "ns"
+    },
+    {
+      "name": "B_Add<duals::dualf>/8",
+      "run_name": "B_Add<duals::dualf>/8",
+      "run_type": "iteration",
+      "iterations": 215407779,
+      "real_time": 3.3351862932159380e+00,
+      "cpu_time": 3.3321200252475562e+00,
+      "time_unit": "ns"
+    },
+    {
+      "name": "B_Add<duals::dualf>/64",
+      "run_name": "B_Add<duals::dualf>/64",
+      "run_type": "iteration",
+      "iterations": 58354344,
+      "real_time": 1.2061169807457697e+01,
+      "cpu_time": 1.2049604618980897e+01,
+      "time_unit": "ns"
+    },
+    {
+      "name": "B_Add<duals::dualf>/512",
+      "run_name": "B_Add<duals::dualf>/512",
+      "run_type": "iteration",
+      "iterations": 7147541,
+      "real_time": 9.8321614102488141e+01,
+      "cpu_time": 9.8233268476529204e+01,
+      "time_unit": "ns"
+    },
+    {
+      "name": "B_Add<duals::dualf>/4096",
+      "run_name": "B_Add<duals::dualf>/4096",
+      "run_type": "iteration",
+      "iterations": 583950,
+      "real_time": 1.1997066478428608e+03,
+      "cpu_time": 1.1986074835174250e+03,
+      "time_unit": "ns"
+    },
+    {
+      "name": "B_Add<duals::dualf>/8192",
+      "run_name": "B_Add<duals::dualf>/8192",
+      "run_type": "iteration",
+      "iterations": 280278,
+      "real_time": 2.5014722955172806e+03,
+      "cpu_time": 2.4990253212881489e+03,
+      "time_unit": "ns"
+    },
+    {
+      "name": "B_Add<std::complex<float>>/2",
+      "run_name": "B_Add<std::complex<float>>/2",
+      "run_type": "iteration",
+      "iterations": 719322979,
+      "real_time": 9.6203674730458488e-01,
+      "cpu_time": 9.6122821067280295e-01,
+      "time_unit": "ns"
+    },
+    {
+      "name": "B_Add<std::complex<float>>/8",
+      "run_name": "B_Add<std::complex<float>>/8",
+      "run_type": "iteration",
+      "iterations": 208022307,
+      "real_time": 3.3676157142748866e+00,
+      "cpu_time": 3.3648201247955565e+00,
+      "time_unit": "ns"
+    },
+    {
+      "name": "B_Add<std::complex<float>>/64",
+      "run_name": "B_Add<std::complex<float>>/64",
+      "run_type": "iteration",
+      "iterations": 41387591,
+      "real_time": 1.6822550362762875e+01,
+      "cpu_time": 1.6808160639260215e+01,
+      "time_unit": "ns"
+    },
+    {
+      "name": "B_Add<std::complex<float>>/512",
+      "run_name": "B_Add<std::complex<float>>/512",
+      "run_type": "iteration",
+      "iterations": 5437243,
+      "real_time": 1.2896090977804755e+02,
+      "cpu_time": 1.2885078338415281e+02,
+      "time_unit": "ns"
+    },
+    {
+      "name": "B_Add<std::complex<float>>/4096",
+      "run_name": "B_Add<std::complex<float>>/4096",
+      "run_type": "iteration",
+      "iterations": 583456,
+      "real_time": 1.2011305840153541e+03,
+      "cpu_time": 1.2000171855289859e+03,
+      "time_unit": "ns"
+    },
+    {
+      "name": "B_Add<std::complex<float>>/8192",
+      "run_name": "B_Add<std::complex<float>>/8192",
+      "run_type": "iteration",
+      "iterations": 281308,
+      "real_time": 2.5101460142166443e+03,
+      "cpu_time": 2.5074422056962462e+03,
+      "time_unit": "ns"
+    },
+    {
+      "name": "B_Sub<duals::dualf>/2",
+      "run_name": "B_Sub<duals::dualf>/2",
+      "run_type": "iteration",
+      "iterations": 728551981,
+      "real_time": 9.6308006466451668e-01,
+      "cpu_time": 9.6223501587047333e-01,
+      "time_unit": "ns"
+    },
+    {
+      "name": "B_Sub<duals::dualf>/8",
+      "run_name": "B_Sub<duals::dualf>/8",
+      "run_type": "iteration",
+      "iterations": 242708995,
+      "real_time": 2.8970816594436135e+00,
+      "cpu_time": 2.8945758520404290e+00,
+      "time_unit": "ns"
+    },
+    {
+      "name": "B_Sub<duals::dualf>/64",
+      "run_name": "B_Sub<duals::dualf>/64",
+      "run_type": "iteration",
+      "iterations": 42881747,
+      "real_time": 1.6390650175399376e+01,
+      "cpu_time": 1.6376361322219417e+01,
+      "time_unit": "ns"
+    },
+    {
+      "name": "B_Sub<duals::dualf>/512",
+      "run_name": "B_Sub<duals::dualf>/512",
+      "run_type": "iteration",
+      "iterations": 5463762,
+      "real_time": 1.2839805814698460e+02,
+      "cpu_time": 1.2829124383529179e+02,
+      "time_unit": "ns"
+    },
+    {
+      "name": "B_Sub<duals::dualf>/4096",
+      "run_name": "B_Sub<duals::dualf>/4096",
+      "run_type": "iteration",
+      "iterations": 579043,
+      "real_time": 1.2007505781594916e+03,
+      "cpu_time": 1.1996460815518028e+03,
+      "time_unit": "ns"
+    },
+    {
+      "name": "B_Sub<duals::dualf>/8192",
+      "run_name": "B_Sub<duals::dualf>/8192",
+      "run_type": "iteration",
+      "iterations": 283021,
+      "real_time": 2.4547645685559423e+03,
+      "cpu_time": 2.4523946138272386e+03,
+      "time_unit": "ns"
+    },
+    {
+      "name": "B_Sub<std::complex<float>>/2",
+      "run_name": "B_Sub<std::complex<float>>/2",
+      "run_type": "iteration",
+      "iterations": 828173889,
+      "real_time": 8.4244681131040999e-01,
+      "cpu_time": 8.4170307016284329e-01,
+      "time_unit": "ns"
+    },
+    {
+      "name": "B_Sub<std::complex<float>>/8",
+      "run_name": "B_Sub<std::complex<float>>/8",
+      "run_type": "iteration",
+      "iterations": 224061326,
+      "real_time": 3.1243714855868139e+00,
+      "cpu_time": 3.1216511010025840e+00,
+      "time_unit": "ns"
+    },
+    {
+      "name": "B_Sub<std::complex<float>>/64",
+      "run_name": "B_Sub<std::complex<float>>/64",
+      "run_type": "iteration",
+      "iterations": 58141628,
+      "real_time": 1.2089688595827512e+01,
+      "cpu_time": 1.2079371891684870e+01,
+      "time_unit": "ns"
+    },
+    {
+      "name": "B_Sub<std::complex<float>>/512",
+      "run_name": "B_Sub<std::complex<float>>/512",
+      "run_type": "iteration",
+      "iterations": 7040996,
+      "real_time": 9.9699899139357910e+01,
+      "cpu_time": 9.9613642160853260e+01,
+      "time_unit": "ns"
+    },
+    {
+      "name": "B_Sub<std::complex<float>>/4096",
+      "run_name": "B_Sub<std::complex<float>>/4096",
+      "run_type": "iteration",
+      "iterations": 581668,
+      "real_time": 1.2034631524593226e+03,
+      "cpu_time": 1.2022905179586996e+03,
+      "time_unit": "ns"
+    },
+    {
+      "name": "B_Sub<std::complex<float>>/8192",
+      "run_name": "B_Sub<std::complex<float>>/8192",
+      "run_type": "iteration",
+      "iterations": 282164,
+      "real_time": 2.4708674956039085e+03,
+      "cpu_time": 2.4684340667129668e+03,
+      "time_unit": "ns"
+    },
+    {
+      "name": "B_Mul<duals::dualf>/2",
+      "run_name": "B_Mul<duals::dualf>/2",
+      "run_type": "iteration",
+      "iterations": 265558620,
+      "real_time": 2.6450566357631402e+00,
+      "cpu_time": 2.6427702102082029e+00,
+      "time_unit": "ns"
+    },
+    {
+      "name": "B_Mul<duals::dualf>/8",
+      "run_name": "B_Mul<duals::dualf>/8",
+      "run_type": "iteration",
+      "iterations": 223502135,
+      "real_time": 3.1301059652276355e+00,
+      "cpu_time": 3.1273447656327855e+00,
+      "time_unit": "ns"
+    },
+    {
+      "name": "B_Mul<duals::dualf>/64",
+      "run_name": "B_Mul<duals::dualf>/64",
+      "run_type": "iteration",
+      "iterations": 30377857,
+      "real_time": 2.3107029109224477e+01,
+      "cpu_time": 2.3087210891801917e+01,
+      "time_unit": "ns"
+    },
+    {
+      "name": "B_Mul<duals::dualf>/512",
+      "run_name": "B_Mul<duals::dualf>/512",
+      "run_type": "iteration",
+      "iterations": 3753884,
+      "real_time": 1.8687841100299300e+02,
+      "cpu_time": 1.8672708799739081e+02,
+      "time_unit": "ns"
+    },
+    {
+      "name": "B_Mul<duals::dualf>/4096",
+      "run_name": "B_Mul<duals::dualf>/4096",
+      "run_type": "iteration",
+      "iterations": 461567,
+      "real_time": 1.5087395958443526e+03,
+      "cpu_time": 1.5074006547261827e+03,
+      "time_unit": "ns"
+    },
+    {
+      "name": "B_Mul<duals::dualf>/8192",
+      "run_name": "B_Mul<duals::dualf>/8192",
+      "run_type": "iteration",
+      "iterations": 229621,
+      "real_time": 3.0899390212718718e+03,
+      "cpu_time": 3.0867818709961157e+03,
+      "time_unit": "ns"
+    },
+    {
+      "name": "B_Mul<std::complex<float>>/2",
+      "run_name": "B_Mul<std::complex<float>>/2",
+      "run_type": "iteration",
+      "iterations": 46285967,
+      "real_time": 1.5099909223178337e+01,
+      "cpu_time": 1.5086400139377007e+01,
+      "time_unit": "ns"
+    },
+    {
+      "name": "B_Mul<std::complex<float>>/8",
+      "run_name": "B_Mul<std::complex<float>>/8",
+      "run_type": "iteration",
+      "iterations": 11661962,
+      "real_time": 6.0014554242011371e+01,
+      "cpu_time": 5.9962549440651621e+01,
+      "time_unit": "ns"
+    },
+    {
+      "name": "B_Mul<std::complex<float>>/64",
+      "run_name": "B_Mul<std::complex<float>>/64",
+      "run_type": "iteration",
+      "iterations": 1468536,
+      "real_time": 4.7647983704918062e+02,
+      "cpu_time": 4.7608059795605925e+02,
+      "time_unit": "ns"
+    },
+    {
+      "name": "B_Mul<std::complex<float>>/512",
+      "run_name": "B_Mul<std::complex<float>>/512",
+      "run_type": "iteration",
+      "iterations": 183082,
+      "real_time": 3.8213512741184391e+03,
+      "cpu_time": 3.8181861133262651e+03,
+      "time_unit": "ns"
+    },
+    {
+      "name": "B_Mul<std::complex<float>>/4096",
+      "run_name": "B_Mul<std::complex<float>>/4096",
+      "run_type": "iteration",
+      "iterations": 22675,
+      "real_time": 3.0901148974846190e+04,
+      "cpu_time": 3.0871022888643743e+04,
+      "time_unit": "ns"
+    },
+    {
+      "name": "B_Mul<std::complex<float>>/8192",
+      "run_name": "B_Mul<std::complex<float>>/8192",
+      "run_type": "iteration",
+      "iterations": 11344,
+      "real_time": 6.1823873857552790e+04,
+      "cpu_time": 6.1759684238363785e+04,
+      "time_unit": "ns"
+    },
+    {
+      "name": "B_Div<duals::dualf>/2",
+      "run_name": "B_Div<duals::dualf>/2",
+      "run_type": "iteration",
+      "iterations": 223074129,
+      "real_time": 3.1221121030774452e+00,
+      "cpu_time": 3.1193331432888822e+00,
+      "time_unit": "ns"
+    },
+    {
+      "name": "B_Div<duals::dualf>/8",
+      "run_name": "B_Div<duals::dualf>/8",
+      "run_type": "iteration",
+      "iterations": 206899949,
+      "real_time": 3.3619264062599843e+00,
+      "cpu_time": 3.3588176041551177e+00,
+      "time_unit": "ns"
+    },
+    {
+      "name": "B_Div<duals::dualf>/64",
+      "run_name": "B_Div<duals::dualf>/64",
+      "run_type": "iteration",
+      "iterations": 29041803,
+      "real_time": 2.3762771511892577e+01,
+      "cpu_time": 2.3742337485038277e+01,
+      "time_unit": "ns"
+    },
+    {
+      "name": "B_Div<duals::dualf>/512",
+      "run_name": "B_Div<duals::dualf>/512",
+      "run_type": "iteration",
+      "iterations": 3605971,
+      "real_time": 1.9516093806834385e+02,
+      "cpu_time": 1.9498607337663077e+02,
+      "time_unit": "ns"
+    },
+    {
+      "name": "B_Div<duals::dualf>/4096",
+      "run_name": "B_Div<duals::dualf>/4096",
+      "run_type": "iteration",
+      "iterations": 412656,
+      "real_time": 1.7029046954383241e+03,
+      "cpu_time": 1.7012804781706957e+03,
+      "time_unit": "ns"
+    },
+    {
+      "name": "B_Div<duals::dualf>/8192",
+      "run_name": "B_Div<duals::dualf>/8192",
+      "run_type": "iteration",
+      "iterations": 199214,
+      "real_time": 3.5068666004871179e+03,
+      "cpu_time": 3.5033117702571099e+03,
+      "time_unit": "ns"
+    },
+    {
+      "name": "B_Div<std::complex<float>>/2",
+      "run_name": "B_Div<std::complex<float>>/2",
+      "run_type": "iteration",
+      "iterations": 38292924,
+      "real_time": 1.8300814009951591e+01,
+      "cpu_time": 1.8285078308462527e+01,
+      "time_unit": "ns"
+    },
+    {
+      "name": "B_Div<std::complex<float>>/8",
+      "run_name": "B_Div<std::complex<float>>/8",
+      "run_type": "iteration",
+      "iterations": 9592683,
+      "real_time": 7.3376013778254773e+01,
+      "cpu_time": 7.3309770269694255e+01,
+      "time_unit": "ns"
+    },
+    {
+      "name": "B_Div<std::complex<float>>/64",
+      "run_name": "B_Div<std::complex<float>>/64",
+      "run_type": "iteration",
+      "iterations": 1196541,
+      "real_time": 5.8431534145313731e+02,
+      "cpu_time": 5.8382388986252840e+02,
+      "time_unit": "ns"
+    },
+    {
+      "name": "B_Div<std::complex<float>>/512",
+      "run_name": "B_Div<std::complex<float>>/512",
+      "run_type": "iteration",
+      "iterations": 150056,
+      "real_time": 4.6825903796710227e+03,
+      "cpu_time": 4.6785734792344165e+03,
+      "time_unit": "ns"
+    },
+    {
+      "name": "B_Div<std::complex<float>>/4096",
+      "run_name": "B_Div<std::complex<float>>/4096",
+      "run_type": "iteration",
+      "iterations": 18718,
+      "real_time": 3.7536350839790939e+04,
+      "cpu_time": 3.7500307404637017e+04,
+      "time_unit": "ns"
+    },
+    {
+      "name": "B_Div<std::complex<float>>/8192",
+      "run_name": "B_Div<std::complex<float>>/8192",
+      "run_type": "iteration",
+      "iterations": 9342,
+      "real_time": 7.4837835688738924e+04,
+      "cpu_time": 7.4762648469278734e+04,
+      "time_unit": "ns"
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+version: 0.2.{build}
+clone_folder: c:\projects\cppduals
+clone_depth: 3
+
+image:
+#- Visual Studio 2013
+#- Visual Studio 2015
+- Visual Studio 2017
+
+configuration:
+- Release
+#- Debug # someone with a debugger please investigate this :)
+
+# Do not build feature branch with open Pull Requests
+skip_branch_with_pr: true
+
+# skip unsupported combinations
+init:
+- echo %APPVEYOR_BUILD_WORKER_IMAGE%
+- if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2013" ( set generator="Visual Studio 12 2013" )
+- if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2015" ( set generator="Visual Studio 14 2015" )
+- if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2017" ( set generator="Visual Studio 15 2017" )
+- echo %generator%
+
+before_build:
+- cmd: |-
+    mkdir build
+    cd build
+    cmake --version
+    cmake .. -G %generator% -DCPPDUALS_TESTING=ON
+    pwd
+    ls
+
+build:
+  project: c:\projects\cppduals\build\cppduals.sln
+  verbosity: minimal
+#  parallel: true
+
+test_script:
+- pwd
+- ctest -C Debug -VV

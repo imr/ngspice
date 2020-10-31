@@ -15,7 +15,7 @@
  * uninterrupted or error-free. The end-user understands that the
  * program was developed for research purposes and is advised not to
  * rely exclusively on the program for any reason.
- * 
+ *
  * IN NO EVENT SHALL THE AUTHORS BE LIABLE TO ANY PARTY FOR DIRECT,
  * INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING
  * LOST PROFITS, ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS
@@ -97,6 +97,7 @@ extern struct coreInfo_t  coreInfo; /* cmexport.c */
 #include "dio/dioitf.h"
 #include "hfet1/hfetitf.h"
 #include "hfet2/hfet2itf.h"
+#include "hicum2/hicum2itf.h"
 #include "hisim2/hsm2itf.h"
 #include "hisimhv1/hsmhvitf.h"
 #include "hisimhv2/hsmhv2itf.h"
@@ -126,7 +127,6 @@ extern struct coreInfo_t  coreInfo; /* cmexport.c */
 #include "vdmos/vdmositf.h"
 #ifdef ADMS
 #include "adms/hicum0/hicum0itf.h"
-#include "adms/hicum2/hicum2itf.h"
 #include "adms/mextram/bjt504titf.h"
 #include "adms/ekv/ekvitf.h"
 #include "adms/psp102/psp102itf.h"
@@ -170,6 +170,7 @@ static SPICEdev *(*static_devices[])(void) = {
     get_dio_info,
     get_hfeta_info,
     get_hfet2_info,
+    get_hicum_info,
     get_hsm2_info,
     get_hsmhv_info,
     get_hsmhv2_info,
@@ -207,7 +208,6 @@ static SPICEdev *(*static_devices[])(void) = {
 
 #ifdef ADMS
     (SPICEdev *(*)(void)) get_hicum0_info,
-    (SPICEdev *(*)(void)) get_hicum2_info,
     (SPICEdev *(*)(void)) get_bjt504t_info,
     (SPICEdev *(*)(void)) get_ekv_info,
     (SPICEdev *(*)(void)) get_psp102_info,
@@ -264,7 +264,7 @@ spice_init_devices(void)
     g_evt_udn_info = TMALLOC(Evt_Udn_Info_t  *, 1);
     g_evt_num_udn_types = 1;
     g_evt_udn_info[0] =  &idn_digital_info;
-    
+
     DEVicesfl = TMALLOC(int, DEVNUM);
     /* tmalloc should automatically zero the array! */
 #endif
@@ -298,12 +298,12 @@ SPICEdev ** devices(void)
 #define DEVICES_USED {"asrc", "bjt", "vbic", "bsim1", "bsim2", "bsim3", "bsim3v32", "bsim3v2", "bsim3v1", "bsim4", "bsim4v5", "bsim4v6", "bsim4v7", \
                       "bsim4soi", "bsim3soipd", "bsim3soifd", "bsim3soidd", "hisim2", "hisimhv1",  "hisimhv2", \
                       "cap", "cccs", "ccvs", "csw", "dio", "hfet", "hfet2", "ind", "isrc", "jfet", "ltra", "mes", "mesa" ,"mos1", "mos2", "mos3", \
-                      "mos6", "mos9", "res", "soi3", "sw", "tra", "urc", "vccs", "vcvs", "vsrc", "hicum0", "hicum2", "bjt504t", "ekv", "psp102"}
+                      "mos6", "mos9", "res", "soi3", "sw", "tra", "urc", "vccs", "vcvs", "vsrc", "hicum0", "bjt504t", "ekv", "psp102"}
 #else
 #define DEVICES_USED {"asrc", "bjt", "vbic", "bsim1", "bsim2", "bsim3", "bsim3v32", "bsim3v2", "bsim3v1", "bsim4", "bsim4v5", "bsim4v6", "bsim4v7", \
                       "bsim4soi", "bsim3soipd", "bsim3soifd", "bsim3soidd", "hisim2", "hisimhv1", "hisimhv2", \
                       "cap", "cccs", "ccvs", "csw", "dio", "hfet", "hfet2", "ind", "isrc", "jfet", "ltra", "mes", "mesa" ,"mos1", "mos2", "mos3", \
-                      "mos6", "mos9", "res", "soi3", "sw", "tra", "urc", "vccs", "vcvs", "vsrc"}
+                      "mos6", "mos9", "res", "soi3", "sw", "tra", "urc", "vccs", "vcvs", "vsrc", "hicum2"}
 #endif
 int load_dev(char *name) {
   char *msg;

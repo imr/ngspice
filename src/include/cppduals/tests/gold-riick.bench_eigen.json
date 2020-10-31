@@ -1,0 +1,1160 @@
+{
+  "context": {
+    "date": "2019-04-09 23:08:18",
+    "host_name": "riick.fritz.box",
+    "executable": "./tests/bench_eigen",
+    "num_cpus": 8,
+    "mhz_per_cpu": 4200,
+    "cpu_scaling_enabled": true,
+    "caches": [
+      {
+        "type": "Data",
+        "level": 1,
+        "size": 32000000,
+        "num_sharing": 2
+      },
+      {
+        "type": "Instruction",
+        "level": 1,
+        "size": 32000000,
+        "num_sharing": 2
+      },
+      {
+        "type": "Unified",
+        "level": 2,
+        "size": 256000000,
+        "num_sharing": 2
+      },
+      {
+        "type": "Unified",
+        "level": 3,
+        "size": 8192000000,
+        "num_sharing": 8
+      }
+    ],
+    "load_avg": [0.22,0.3,0.4],
+    "library_build_type": "debug"
+  },
+  "benchmarks": [
+    {
+      "name": "B_VecVecAdd<dualf>/16",
+      "run_name": "B_VecVecAdd<dualf>/16",
+      "run_type": "iteration",
+      "iterations": 180924879,
+      "real_time": 3.8605093496472498e+00,
+      "cpu_time": 3.8571275319189242e+00,
+      "time_unit": "ns",
+      "type": 1.0100000000000000e+02
+    },
+    {
+      "name": "B_VecVecAdd<dualf>/64",
+      "run_name": "B_VecVecAdd<dualf>/64",
+      "run_type": "iteration",
+      "iterations": 64782693,
+      "real_time": 1.0841915385679169e+01,
+      "cpu_time": 1.0832253484738587e+01,
+      "time_unit": "ns",
+      "type": 1.0100000000000000e+02
+    },
+    {
+      "name": "B_VecVecAdd<dualf>/512",
+      "run_name": "B_VecVecAdd<dualf>/512",
+      "run_type": "iteration",
+      "iterations": 7454786,
+      "real_time": 9.4037966079633392e+01,
+      "cpu_time": 9.3956058832540620e+01,
+      "time_unit": "ns",
+      "type": 1.0100000000000000e+02
+    },
+    {
+      "name": "B_VecVecAdd<dualf>/4096",
+      "run_name": "B_VecVecAdd<dualf>/4096",
+      "run_type": "iteration",
+      "iterations": 887211,
+      "real_time": 7.8947018349280040e+02,
+      "cpu_time": 7.8873874196780673e+02,
+      "time_unit": "ns",
+      "type": 1.0100000000000000e+02
+    },
+    {
+      "name": "B_VecVecAdd<dualf>/32768",
+      "run_name": "B_VecVecAdd<dualf>/32768",
+      "run_type": "iteration",
+      "iterations": 74589,
+      "real_time": 1.0496599471337400e+04,
+      "cpu_time": 1.0484130729732267e+04,
+      "time_unit": "ns",
+      "type": 1.0100000000000000e+02
+    },
+    {
+      "name": "B_VecVecAdd<duald>/16",
+      "run_name": "B_VecVecAdd<duald>/16",
+      "run_type": "iteration",
+      "iterations": 100268427,
+      "real_time": 6.9855227114097467e+00,
+      "cpu_time": 6.9794841800001501e+00,
+      "time_unit": "ns",
+      "type": 1.0200000000000000e+02
+    },
+    {
+      "name": "B_VecVecAdd<duald>/64",
+      "run_name": "B_VecVecAdd<duald>/64",
+      "run_type": "iteration",
+      "iterations": 33908934,
+      "real_time": 2.0504943003838601e+01,
+      "cpu_time": 2.0486776729696086e+01,
+      "time_unit": "ns",
+      "type": 1.0200000000000000e+02
+    },
+    {
+      "name": "B_VecVecAdd<duald>/512",
+      "run_name": "B_VecVecAdd<duald>/512",
+      "run_type": "iteration",
+      "iterations": 3847106,
+      "real_time": 1.8061561287461691e+02,
+      "cpu_time": 1.8046621096481346e+02,
+      "time_unit": "ns",
+      "type": 1.0200000000000000e+02
+    },
+    {
+      "name": "B_VecVecAdd<duald>/4096",
+      "run_name": "B_VecVecAdd<duald>/4096",
+      "run_type": "iteration",
+      "iterations": 241792,
+      "real_time": 2.8880790968903125e+03,
+      "cpu_time": 2.8854683860508189e+03,
+      "time_unit": "ns",
+      "type": 1.0200000000000000e+02
+    },
+    {
+      "name": "B_VecVecAdd<duald>/32768",
+      "run_name": "B_VecVecAdd<duald>/32768",
+      "run_type": "iteration",
+      "iterations": 34278,
+      "real_time": 2.0482072932406583e+04,
+      "cpu_time": 2.0457970126611850e+04,
+      "time_unit": "ns",
+      "type": 1.0200000000000000e+02
+    },
+    {
+      "name": "B_VecVecAdd<complexf>/16",
+      "run_name": "B_VecVecAdd<complexf>/16",
+      "run_type": "iteration",
+      "iterations": 180774798,
+      "real_time": 3.8546289622325109e+00,
+      "cpu_time": 3.8513491742361134e+00,
+      "time_unit": "ns",
+      "type": 1.1000000000000000e+01
+    },
+    {
+      "name": "B_VecVecAdd<complexf>/64",
+      "run_name": "B_VecVecAdd<complexf>/64",
+      "run_type": "iteration",
+      "iterations": 64822505,
+      "real_time": 1.0825528649566287e+01,
+      "cpu_time": 1.0816422799458286e+01,
+      "time_unit": "ns",
+      "type": 1.1000000000000000e+01
+    },
+    {
+      "name": "B_VecVecAdd<complexf>/512",
+      "run_name": "B_VecVecAdd<complexf>/512",
+      "run_type": "iteration",
+      "iterations": 7418810,
+      "real_time": 9.4474278224507643e+01,
+      "cpu_time": 9.4393267249060116e+01,
+      "time_unit": "ns",
+      "type": 1.1000000000000000e+01
+    },
+    {
+      "name": "B_VecVecAdd<complexf>/4096",
+      "run_name": "B_VecVecAdd<complexf>/4096",
+      "run_type": "iteration",
+      "iterations": 787021,
+      "real_time": 8.8372437201364426e+02,
+      "cpu_time": 8.8291091343178766e+02,
+      "time_unit": "ns",
+      "type": 1.1000000000000000e+01
+    },
+    {
+      "name": "B_VecVecAdd<complexf>/32768",
+      "run_name": "B_VecVecAdd<complexf>/32768",
+      "run_type": "iteration",
+      "iterations": 74334,
+      "real_time": 9.4530596495291920e+03,
+      "cpu_time": 9.4405510668065763e+03,
+      "time_unit": "ns",
+      "type": 1.1000000000000000e+01
+    },
+    {
+      "name": "B_VecVecAdd<cdualf>/16",
+      "run_name": "B_VecVecAdd<cdualf>/16",
+      "run_type": "iteration",
+      "iterations": 83226526,
+      "real_time": 8.4084707317685830e+00,
+      "cpu_time": 8.4012327632178216e+00,
+      "time_unit": "ns",
+      "type": 1.1100000000000000e+02
+    },
+    {
+      "name": "B_VecVecAdd<cdualf>/64",
+      "run_name": "B_VecVecAdd<cdualf>/64",
+      "run_type": "iteration",
+      "iterations": 22089166,
+      "real_time": 3.1446520117173769e+01,
+      "cpu_time": 3.1420938889227411e+01,
+      "time_unit": "ns",
+      "type": 1.1100000000000000e+02
+    },
+    {
+      "name": "B_VecVecAdd<cdualf>/512",
+      "run_name": "B_VecVecAdd<cdualf>/512",
+      "run_type": "iteration",
+      "iterations": 2768369,
+      "real_time": 2.5131933278141992e+02,
+      "cpu_time": 2.5110695936849464e+02,
+      "time_unit": "ns",
+      "type": 1.1100000000000000e+02
+    },
+    {
+      "name": "B_VecVecAdd<cdualf>/4096",
+      "run_name": "B_VecVecAdd<cdualf>/4096",
+      "run_type": "iteration",
+      "iterations": 230944,
+      "real_time": 3.0152391054585528e+03,
+      "cpu_time": 3.0124982939586976e+03,
+      "time_unit": "ns",
+      "type": 1.1100000000000000e+02
+    },
+    {
+      "name": "B_VecVecAdd<cdualf>/32768",
+      "run_name": "B_VecVecAdd<cdualf>/32768",
+      "run_type": "iteration",
+      "iterations": 31125,
+      "real_time": 2.0452062490893655e+04,
+      "cpu_time": 2.0429064642570207e+04,
+      "time_unit": "ns",
+      "type": 1.1100000000000000e+02
+    },
+    {
+      "name": "B_VecVecSub<dualf>/16",
+      "run_name": "B_VecVecSub<dualf>/16",
+      "run_type": "iteration",
+      "iterations": 166806959,
+      "real_time": 4.1335862791472016e+00,
+      "cpu_time": 4.1301434971906712e+00,
+      "time_unit": "ns",
+      "type": 1.0100000000000000e+02
+    },
+    {
+      "name": "B_VecVecSub<dualf>/64",
+      "run_name": "B_VecVecSub<dualf>/64",
+      "run_type": "iteration",
+      "iterations": 62516488,
+      "real_time": 1.0969133855478731e+01,
+      "cpu_time": 1.0959984172495432e+01,
+      "time_unit": "ns",
+      "type": 1.0100000000000000e+02
+    },
+    {
+      "name": "B_VecVecSub<dualf>/512",
+      "run_name": "B_VecVecSub<dualf>/512",
+      "run_type": "iteration",
+      "iterations": 7352753,
+      "real_time": 9.5394953015786953e+01,
+      "cpu_time": 9.5312306832556501e+01,
+      "time_unit": "ns",
+      "type": 1.0100000000000000e+02
+    },
+    {
+      "name": "B_VecVecSub<dualf>/4096",
+      "run_name": "B_VecVecSub<dualf>/4096",
+      "run_type": "iteration",
+      "iterations": 795475,
+      "real_time": 8.8428106855173394e+02,
+      "cpu_time": 8.8340810836292746e+02,
+      "time_unit": "ns",
+      "type": 1.0100000000000000e+02
+    },
+    {
+      "name": "B_VecVecSub<dualf>/32768",
+      "run_name": "B_VecVecSub<dualf>/32768",
+      "run_type": "iteration",
+      "iterations": 78716,
+      "real_time": 8.9159691042675076e+03,
+      "cpu_time": 8.9058508308348828e+03,
+      "time_unit": "ns",
+      "type": 1.0100000000000000e+02
+    },
+    {
+      "name": "B_VecVecSub<duald>/16",
+      "run_name": "B_VecVecSub<duald>/16",
+      "run_type": "iteration",
+      "iterations": 116619636,
+      "real_time": 5.9864787261521455e+00,
+      "cpu_time": 5.9814199728766297e+00,
+      "time_unit": "ns",
+      "type": 1.0200000000000000e+02
+    },
+    {
+      "name": "B_VecVecSub<duald>/64",
+      "run_name": "B_VecVecSub<duald>/64",
+      "run_type": "iteration",
+      "iterations": 34598286,
+      "real_time": 2.0135183892963326e+01,
+      "cpu_time": 2.0117970843989234e+01,
+      "time_unit": "ns",
+      "type": 1.0200000000000000e+02
+    },
+    {
+      "name": "B_VecVecSub<duald>/512",
+      "run_name": "B_VecVecSub<duald>/512",
+      "run_type": "iteration",
+      "iterations": 3830985,
+      "real_time": 1.8078139694755305e+02,
+      "cpu_time": 1.8062805858023461e+02,
+      "time_unit": "ns",
+      "type": 1.0200000000000000e+02
+    },
+    {
+      "name": "B_VecVecSub<duald>/4096",
+      "run_name": "B_VecVecSub<duald>/4096",
+      "run_type": "iteration",
+      "iterations": 240530,
+      "real_time": 2.8930698623926046e+03,
+      "cpu_time": 2.8903870619049530e+03,
+      "time_unit": "ns",
+      "type": 1.0200000000000000e+02
+    },
+    {
+      "name": "B_VecVecSub<duald>/32768",
+      "run_name": "B_VecVecSub<duald>/32768",
+      "run_type": "iteration",
+      "iterations": 34574,
+      "real_time": 1.9197238675608125e+04,
+      "cpu_time": 1.9174525655116548e+04,
+      "time_unit": "ns",
+      "type": 1.0200000000000000e+02
+    },
+    {
+      "name": "B_VecVecSub<complexf>/16",
+      "run_name": "B_VecVecSub<complexf>/16",
+      "run_type": "iteration",
+      "iterations": 165139207,
+      "real_time": 4.2223793710677526e+00,
+      "cpu_time": 4.2182891128936966e+00,
+      "time_unit": "ns",
+      "type": 1.1000000000000000e+01
+    },
+    {
+      "name": "B_VecVecSub<complexf>/64",
+      "run_name": "B_VecVecSub<complexf>/64",
+      "run_type": "iteration",
+      "iterations": 63445364,
+      "real_time": 1.1045120018574911e+01,
+      "cpu_time": 1.1035489984737104e+01,
+      "time_unit": "ns",
+      "type": 1.1000000000000000e+01
+    },
+    {
+      "name": "B_VecVecSub<complexf>/512",
+      "run_name": "B_VecVecSub<complexf>/512",
+      "run_type": "iteration",
+      "iterations": 7345972,
+      "real_time": 9.5444725355690466e+01,
+      "cpu_time": 9.5355927847260915e+01,
+      "time_unit": "ns",
+      "type": 1.1000000000000000e+01
+    },
+    {
+      "name": "B_VecVecSub<complexf>/4096",
+      "run_name": "B_VecVecSub<complexf>/4096",
+      "run_type": "iteration",
+      "iterations": 794183,
+      "real_time": 8.8587168324587356e+02,
+      "cpu_time": 8.8506970307851054e+02,
+      "time_unit": "ns",
+      "type": 1.1000000000000000e+01
+    },
+    {
+      "name": "B_VecVecSub<complexf>/32768",
+      "run_name": "B_VecVecSub<complexf>/32768",
+      "run_type": "iteration",
+      "iterations": 78698,
+      "real_time": 8.9248058148233613e+03,
+      "cpu_time": 8.9144583216853953e+03,
+      "time_unit": "ns",
+      "type": 1.1000000000000000e+01
+    },
+    {
+      "name": "B_VecVecSub<cdualf>/16",
+      "run_name": "B_VecVecSub<cdualf>/16",
+      "run_type": "iteration",
+      "iterations": 117906660,
+      "real_time": 5.8997501922307896e+00,
+      "cpu_time": 5.8946146468740821e+00,
+      "time_unit": "ns",
+      "type": 1.1100000000000000e+02
+    },
+    {
+      "name": "B_VecVecSub<cdualf>/64",
+      "run_name": "B_VecVecSub<cdualf>/64",
+      "run_type": "iteration",
+      "iterations": 34429666,
+      "real_time": 2.0153225217076457e+01,
+      "cpu_time": 2.0136235071231887e+01,
+      "time_unit": "ns",
+      "type": 1.1100000000000000e+02
+    },
+    {
+      "name": "B_VecVecSub<cdualf>/512",
+      "run_name": "B_VecVecSub<cdualf>/512",
+      "run_type": "iteration",
+      "iterations": 3864880,
+      "real_time": 1.8136100007693943e+02,
+      "cpu_time": 1.8120591428453196e+02,
+      "time_unit": "ns",
+      "type": 1.1100000000000000e+02
+    },
+    {
+      "name": "B_VecVecSub<cdualf>/4096",
+      "run_name": "B_VecVecSub<cdualf>/4096",
+      "run_type": "iteration",
+      "iterations": 241995,
+      "real_time": 2.8953614618863439e+03,
+      "cpu_time": 2.8926006900969046e+03,
+      "time_unit": "ns",
+      "type": 1.1100000000000000e+02
+    },
+    {
+      "name": "B_VecVecSub<cdualf>/32768",
+      "run_name": "B_VecVecSub<cdualf>/32768",
+      "run_type": "iteration",
+      "iterations": 36583,
+      "real_time": 2.0212787277763855e+04,
+      "cpu_time": 2.0189552223710449e+04,
+      "time_unit": "ns",
+      "type": 1.1100000000000000e+02
+    },
+    {
+      "name": "B_VecVecMulCXX<dualf>/16",
+      "run_name": "B_VecVecMulCXX<dualf>/16",
+      "run_type": "iteration",
+      "iterations": 170435148,
+      "real_time": 4.0887311286652732e+00,
+      "cpu_time": 4.0848732152360832e+00,
+      "time_unit": "ns",
+      "type": 1.0100000000000000e+02
+    },
+    {
+      "name": "B_VecVecMulCXX<dualf>/64",
+      "run_name": "B_VecVecMulCXX<dualf>/64",
+      "run_type": "iteration",
+      "iterations": 45583414,
+      "real_time": 1.5407829237911679e+01,
+      "cpu_time": 1.5394688120551850e+01,
+      "time_unit": "ns",
+      "type": 1.0100000000000000e+02
+    },
+    {
+      "name": "B_VecVecMulCXX<dualf>/512",
+      "run_name": "B_VecVecMulCXX<dualf>/512",
+      "run_type": "iteration",
+      "iterations": 4423908,
+      "real_time": 1.5927837829862833e+02,
+      "cpu_time": 1.5911698593189436e+02,
+      "time_unit": "ns",
+      "type": 1.0100000000000000e+02
+    },
+    {
+      "name": "B_VecVecMulCXX<dualf>/4096",
+      "run_name": "B_VecVecMulCXX<dualf>/4096",
+      "run_type": "iteration",
+      "iterations": 576011,
+      "real_time": 1.2240382145864278e+03,
+      "cpu_time": 1.2227896758916040e+03,
+      "time_unit": "ns",
+      "type": 1.0100000000000000e+02
+    },
+    {
+      "name": "B_VecVecMulCXX<dualf>/32768",
+      "run_name": "B_VecVecMulCXX<dualf>/32768",
+      "run_type": "iteration",
+      "iterations": 64202,
+      "real_time": 1.0882538114490886e+04,
+      "cpu_time": 1.0868956107286340e+04,
+      "time_unit": "ns",
+      "type": 1.0100000000000000e+02
+    },
+    {
+      "name": "B_VecVecMulCXX<complexf>/16",
+      "run_name": "B_VecVecMulCXX<complexf>/16",
+      "run_type": "iteration",
+      "iterations": 5846425,
+      "real_time": 1.1976380591009804e+02,
+      "cpu_time": 1.1965603253270159e+02,
+      "time_unit": "ns",
+      "type": 1.1000000000000000e+01
+    },
+    {
+      "name": "B_VecVecMulCXX<complexf>/64",
+      "run_name": "B_VecVecMulCXX<complexf>/64",
+      "run_type": "iteration",
+      "iterations": 1466030,
+      "real_time": 4.7930638734693537e+02,
+      "cpu_time": 4.7883859197970060e+02,
+      "time_unit": "ns",
+      "type": 1.1000000000000000e+01
+    },
+    {
+      "name": "B_VecVecMulCXX<complexf>/512",
+      "run_name": "B_VecVecMulCXX<complexf>/512",
+      "run_type": "iteration",
+      "iterations": 183613,
+      "real_time": 3.8221828029001613e+03,
+      "cpu_time": 3.8184806576876072e+03,
+      "time_unit": "ns",
+      "type": 1.1000000000000000e+01
+    },
+    {
+      "name": "B_VecVecMulCXX<complexf>/4096",
+      "run_name": "B_VecVecMulCXX<complexf>/4096",
+      "run_type": "iteration",
+      "iterations": 22964,
+      "real_time": 3.0671331694348351e+04,
+      "cpu_time": 3.0638503396620952e+04,
+      "time_unit": "ns",
+      "type": 1.1000000000000000e+01
+    },
+    {
+      "name": "B_VecVecMulCXX<complexf>/32768",
+      "run_name": "B_VecVecMulCXX<complexf>/32768",
+      "run_type": "iteration",
+      "iterations": 2868,
+      "real_time": 2.4470983367725671e+05,
+      "cpu_time": 2.4440932531380758e+05,
+      "time_unit": "ns",
+      "type": 1.1000000000000000e+01
+    },
+    {
+      "name": "B_VecVecMulCXX<cdualf>/16",
+      "run_name": "B_VecVecMulCXX<cdualf>/16",
+      "run_type": "iteration",
+      "iterations": 6486504,
+      "real_time": 1.0797110292617515e+02,
+      "cpu_time": 1.0787133223073539e+02,
+      "time_unit": "ns",
+      "type": 1.1100000000000000e+02
+    },
+    {
+      "name": "B_VecVecMulCXX<cdualf>/64",
+      "run_name": "B_VecVecMulCXX<cdualf>/64",
+      "run_type": "iteration",
+      "iterations": 1621202,
+      "real_time": 4.3161563332584228e+02,
+      "cpu_time": 4.3120790006427052e+02,
+      "time_unit": "ns",
+      "type": 1.1100000000000000e+02
+    },
+    {
+      "name": "B_VecVecMulCXX<cdualf>/512",
+      "run_name": "B_VecVecMulCXX<cdualf>/512",
+      "run_type": "iteration",
+      "iterations": 203228,
+      "real_time": 3.4495250751415124e+03,
+      "cpu_time": 3.4462141880055906e+03,
+      "time_unit": "ns",
+      "type": 1.1100000000000000e+02
+    },
+    {
+      "name": "B_VecVecMulCXX<cdualf>/4096",
+      "run_name": "B_VecVecMulCXX<cdualf>/4096",
+      "run_type": "iteration",
+      "iterations": 23621,
+      "real_time": 2.9794133483296169e+04,
+      "cpu_time": 2.9762544134456657e+04,
+      "time_unit": "ns",
+      "type": 1.1100000000000000e+02
+    },
+    {
+      "name": "B_VecVecMulCXX<cdualf>/32768",
+      "run_name": "B_VecVecMulCXX<cdualf>/32768",
+      "run_type": "iteration",
+      "iterations": 3087,
+      "real_time": 2.2790885617450281e+05,
+      "cpu_time": 2.2763470229996752e+05,
+      "time_unit": "ns",
+      "type": 1.1100000000000000e+02
+    },
+    {
+      "name": "B_VecVecMul<dualf>/16",
+      "run_name": "B_VecVecMul<dualf>/16",
+      "run_type": "iteration",
+      "iterations": 125189051,
+      "real_time": 5.5811731489733525e+00,
+      "cpu_time": 5.5761090241030766e+00,
+      "time_unit": "ns",
+      "type": 1.0100000000000000e+02
+    },
+    {
+      "name": "B_VecVecMul<dualf>/64",
+      "run_name": "B_VecVecMul<dualf>/64",
+      "run_type": "iteration",
+      "iterations": 38314681,
+      "real_time": 1.8339616738004455e+01,
+      "cpu_time": 1.8323085503439177e+01,
+      "time_unit": "ns",
+      "type": 1.0100000000000000e+02
+    },
+    {
+      "name": "B_VecVecMul<dualf>/512",
+      "run_name": "B_VecVecMul<dualf>/512",
+      "run_type": "iteration",
+      "iterations": 3861034,
+      "real_time": 1.8175674262791739e+02,
+      "cpu_time": 1.8159286735107742e+02,
+      "time_unit": "ns",
+      "type": 1.0100000000000000e+02
+    },
+    {
+      "name": "B_VecVecMul<dualf>/4096",
+      "run_name": "B_VecVecMul<dualf>/4096",
+      "run_type": "iteration",
+      "iterations": 453908,
+      "real_time": 1.5423866619775124e+03,
+      "cpu_time": 1.5409249165028930e+03,
+      "time_unit": "ns",
+      "type": 1.0100000000000000e+02
+    },
+    {
+      "name": "B_VecVecMul<dualf>/32768",
+      "run_name": "B_VecVecMul<dualf>/32768",
+      "run_type": "iteration",
+      "iterations": 51267,
+      "real_time": 1.3472148184734395e+04,
+      "cpu_time": 1.3457016696900666e+04,
+      "time_unit": "ns",
+      "type": 1.0100000000000000e+02
+    },
+    {
+      "name": "B_VecVecMul<complexf>/16",
+      "run_name": "B_VecVecMul<complexf>/16",
+      "run_type": "iteration",
+      "iterations": 103767771,
+      "real_time": 6.7423243003204867e+00,
+      "cpu_time": 6.7361222686377706e+00,
+      "time_unit": "ns",
+      "type": 1.1000000000000000e+01
+    },
+    {
+      "name": "B_VecVecMul<complexf>/64",
+      "run_name": "B_VecVecMul<complexf>/64",
+      "run_type": "iteration",
+      "iterations": 28839997,
+      "real_time": 2.5733866164836186e+01,
+      "cpu_time": 2.5692276008211984e+01,
+      "time_unit": "ns",
+      "type": 1.1000000000000000e+01
+    },
+    {
+      "name": "B_VecVecMul<complexf>/512",
+      "run_name": "B_VecVecMul<complexf>/512",
+      "run_type": "iteration",
+      "iterations": 3089757,
+      "real_time": 2.3200159559330496e+02,
+      "cpu_time": 2.3163820714703445e+02,
+      "time_unit": "ns",
+      "type": 1.1000000000000000e+01
+    },
+    {
+      "name": "B_VecVecMul<complexf>/4096",
+      "run_name": "B_VecVecMul<complexf>/4096",
+      "run_type": "iteration",
+      "iterations": 401681,
+      "real_time": 1.7092732641175310e+03,
+      "cpu_time": 1.7075385218618835e+03,
+      "time_unit": "ns",
+      "type": 1.1000000000000000e+01
+    },
+    {
+      "name": "B_VecVecMul<complexf>/32768",
+      "run_name": "B_VecVecMul<complexf>/32768",
+      "run_type": "iteration",
+      "iterations": 46183,
+      "real_time": 1.5056671999980754e+04,
+      "cpu_time": 1.5038838468700540e+04,
+      "time_unit": "ns",
+      "type": 1.1000000000000000e+01
+    },
+    {
+      "name": "B_VecVecMul<cdualf>/16",
+      "run_name": "B_VecVecMul<cdualf>/16",
+      "run_type": "iteration",
+      "iterations": 6463717,
+      "real_time": 1.0847177065537703e+02,
+      "cpu_time": 1.0837419707576966e+02,
+      "time_unit": "ns",
+      "type": 1.1100000000000000e+02
+    },
+    {
+      "name": "B_VecVecMul<cdualf>/64",
+      "run_name": "B_VecVecMul<cdualf>/64",
+      "run_type": "iteration",
+      "iterations": 1617774,
+      "real_time": 4.3208375832151614e+02,
+      "cpu_time": 4.3166927395297489e+02,
+      "time_unit": "ns",
+      "type": 1.1100000000000000e+02
+    },
+    {
+      "name": "B_VecVecMul<cdualf>/512",
+      "run_name": "B_VecVecMul<cdualf>/512",
+      "run_type": "iteration",
+      "iterations": 203093,
+      "real_time": 3.4504276220745865e+03,
+      "cpu_time": 3.4473836173575692e+03,
+      "time_unit": "ns",
+      "type": 1.1100000000000000e+02
+    },
+    {
+      "name": "B_VecVecMul<cdualf>/4096",
+      "run_name": "B_VecVecMul<cdualf>/4096",
+      "run_type": "iteration",
+      "iterations": 23685,
+      "real_time": 2.9671313448051955e+04,
+      "cpu_time": 2.9641000379987374e+04,
+      "time_unit": "ns",
+      "type": 1.1100000000000000e+02
+    },
+    {
+      "name": "B_VecVecMul<cdualf>/32768",
+      "run_name": "B_VecVecMul<cdualf>/32768",
+      "run_type": "iteration",
+      "iterations": 3046,
+      "real_time": 2.2757245273251657e+05,
+      "cpu_time": 2.2729234996716972e+05,
+      "time_unit": "ns",
+      "type": 1.1100000000000000e+02
+    },
+    {
+      "name": "B_VecVecDiv<dualf>/16",
+      "run_name": "B_VecVecDiv<dualf>/16",
+      "run_type": "iteration",
+      "iterations": 68894778,
+      "real_time": 1.0236266760369533e+01,
+      "cpu_time": 1.0226780859936872e+01,
+      "time_unit": "ns",
+      "type": 1.0100000000000000e+02
+    },
+    {
+      "name": "B_VecVecDiv<dualf>/64",
+      "run_name": "B_VecVecDiv<dualf>/64",
+      "run_type": "iteration",
+      "iterations": 18649150,
+      "real_time": 3.7501655893881811e+01,
+      "cpu_time": 3.7468728011732701e+01,
+      "time_unit": "ns",
+      "type": 1.0100000000000000e+02
+    },
+    {
+      "name": "B_VecVecDiv<dualf>/512",
+      "run_name": "B_VecVecDiv<dualf>/512",
+      "run_type": "iteration",
+      "iterations": 1968779,
+      "real_time": 3.5862479486976355e+02,
+      "cpu_time": 3.5827182685308884e+02,
+      "time_unit": "ns",
+      "type": 1.0100000000000000e+02
+    },
+    {
+      "name": "B_VecVecDiv<dualf>/4096",
+      "run_name": "B_VecVecDiv<dualf>/4096",
+      "run_type": "iteration",
+      "iterations": 258267,
+      "real_time": 2.7069726794287362e+03,
+      "cpu_time": 2.7044063469200469e+03,
+      "time_unit": "ns",
+      "type": 1.0100000000000000e+02
+    },
+    {
+      "name": "B_VecVecDiv<dualf>/32768",
+      "run_name": "B_VecVecDiv<dualf>/32768",
+      "run_type": "iteration",
+      "iterations": 29800,
+      "real_time": 2.3611576510077630e+04,
+      "cpu_time": 2.3582546744966672e+04,
+      "time_unit": "ns",
+      "type": 1.0100000000000000e+02
+    },
+    {
+      "name": "B_VecVecDiv<complexf>/16",
+      "run_name": "B_VecVecDiv<complexf>/16",
+      "run_type": "iteration",
+      "iterations": 78245490,
+      "real_time": 8.9748381794155634e+00,
+      "cpu_time": 8.9668903728508376e+00,
+      "time_unit": "ns",
+      "type": 1.1000000000000000e+01
+    },
+    {
+      "name": "B_VecVecDiv<complexf>/64",
+      "run_name": "B_VecVecDiv<complexf>/64",
+      "run_type": "iteration",
+      "iterations": 20855178,
+      "real_time": 3.3688787743036087e+01,
+      "cpu_time": 3.3658853690915713e+01,
+      "time_unit": "ns",
+      "type": 1.1000000000000000e+01
+    },
+    {
+      "name": "B_VecVecDiv<complexf>/512",
+      "run_name": "B_VecVecDiv<complexf>/512",
+      "run_type": "iteration",
+      "iterations": 2021523,
+      "real_time": 3.4750070863024507e+02,
+      "cpu_time": 3.4719469033990492e+02,
+      "time_unit": "ns",
+      "type": 1.1000000000000000e+01
+    },
+    {
+      "name": "B_VecVecDiv<complexf>/4096",
+      "run_name": "B_VecVecDiv<complexf>/4096",
+      "run_type": "iteration",
+      "iterations": 266914,
+      "real_time": 2.6213387195336618e+03,
+      "cpu_time": 2.6188667735675390e+03,
+      "time_unit": "ns",
+      "type": 1.1000000000000000e+01
+    },
+    {
+      "name": "B_VecVecDiv<complexf>/32768",
+      "run_name": "B_VecVecDiv<complexf>/32768",
+      "run_type": "iteration",
+      "iterations": 30728,
+      "real_time": 2.2879389319382171e+04,
+      "cpu_time": 2.2852349420723909e+04,
+      "time_unit": "ns",
+      "type": 1.1000000000000000e+01
+    },
+    {
+      "name": "B_MatMat<std::complex<float>>/2",
+      "run_name": "B_MatMat<std::complex<float>>/2",
+      "run_type": "iteration",
+      "iterations": 19451166,
+      "real_time": 3.6094199340648096e+01,
+      "cpu_time": 3.6063892724991391e+01,
+      "time_unit": "ns",
+      "type": 1.1000000000000000e+01
+    },
+    {
+      "name": "B_MatMat<std::complex<float>>/8",
+      "run_name": "B_MatMat<std::complex<float>>/8",
+      "run_type": "iteration",
+      "iterations": 1476262,
+      "real_time": 4.7589821725885787e+02,
+      "cpu_time": 4.7545503034014263e+02,
+      "time_unit": "ns",
+      "type": 1.1000000000000000e+01
+    },
+    {
+      "name": "B_MatMat<std::complex<float>>/64",
+      "run_name": "B_MatMat<std::complex<float>>/64",
+      "run_type": "iteration",
+      "iterations": 5528,
+      "real_time": 1.2705245730795665e+05,
+      "cpu_time": 1.2691759171490670e+05,
+      "time_unit": "ns",
+      "type": 1.1000000000000000e+01
+    },
+    {
+      "name": "B_MatMat<std::complex<float>>/512",
+      "run_name": "B_MatMat<std::complex<float>>/512",
+      "run_type": "iteration",
+      "iterations": 11,
+      "real_time": 6.2057088182138443e+07,
+      "cpu_time": 6.1977055909091465e+07,
+      "time_unit": "ns",
+      "type": 1.1000000000000000e+01
+    },
+    {
+      "name": "B_MatMat<dualf>/2",
+      "run_name": "B_MatMat<dualf>/2",
+      "run_type": "iteration",
+      "iterations": 21949318,
+      "real_time": 3.2040698986063724e+01,
+      "cpu_time": 3.2012572281288897e+01,
+      "time_unit": "ns",
+      "type": 1.0100000000000000e+02
+    },
+    {
+      "name": "B_MatMat<dualf>/8",
+      "run_name": "B_MatMat<dualf>/8",
+      "run_type": "iteration",
+      "iterations": 1742273,
+      "real_time": 4.0465230935074487e+02,
+      "cpu_time": 4.0430352705918961e+02,
+      "time_unit": "ns",
+      "type": 1.0100000000000000e+02
+    },
+    {
+      "name": "B_MatMat<dualf>/64",
+      "run_name": "B_MatMat<dualf>/64",
+      "run_type": "iteration",
+      "iterations": 5632,
+      "real_time": 1.2452037021210510e+05,
+      "cpu_time": 1.2438374556107815e+05,
+      "time_unit": "ns",
+      "type": 1.0100000000000000e+02
+    },
+    {
+      "name": "B_MatMat<dualf>/512",
+      "run_name": "B_MatMat<dualf>/512",
+      "run_type": "iteration",
+      "iterations": 12,
+      "real_time": 6.0091539751738310e+07,
+      "cpu_time": 6.0017517999999844e+07,
+      "time_unit": "ns",
+      "type": 1.0100000000000000e+02
+    },
+    {
+      "name": "B_MatMat<duald>/2",
+      "run_name": "B_MatMat<duald>/2",
+      "run_type": "iteration",
+      "iterations": 20309870,
+      "real_time": 3.4533803958149321e+01,
+      "cpu_time": 3.4504405641198680e+01,
+      "time_unit": "ns",
+      "type": 1.0200000000000000e+02
+    },
+    {
+      "name": "B_MatMat<duald>/8",
+      "run_name": "B_MatMat<duald>/8",
+      "run_type": "iteration",
+      "iterations": 995549,
+      "real_time": 7.0548867709988122e+02,
+      "cpu_time": 7.0485181844388637e+02,
+      "time_unit": "ns",
+      "type": 1.0200000000000000e+02
+    },
+    {
+      "name": "B_MatMat<duald>/64",
+      "run_name": "B_MatMat<duald>/64",
+      "run_type": "iteration",
+      "iterations": 3161,
+      "real_time": 2.1945795254815428e+05,
+      "cpu_time": 2.1918954824422437e+05,
+      "time_unit": "ns",
+      "type": 1.0200000000000000e+02
+    },
+    {
+      "name": "B_MatMat<duald>/512",
+      "run_name": "B_MatMat<duald>/512",
+      "run_type": "iteration",
+      "iterations": 6,
+      "real_time": 1.0906691200216301e+08,
+      "cpu_time": 1.0892126233333243e+08,
+      "time_unit": "ns",
+      "type": 1.0200000000000000e+02
+    },
+    {
+      "name": "B_MatMat<cdualf>/2",
+      "run_name": "B_MatMat<cdualf>/2",
+      "run_type": "iteration",
+      "iterations": 9921424,
+      "real_time": 7.0047328387518874e+01,
+      "cpu_time": 6.9983574535267834e+01,
+      "time_unit": "ns",
+      "type": 1.1100000000000000e+02
+    },
+    {
+      "name": "B_MatMat<cdualf>/8",
+      "run_name": "B_MatMat<cdualf>/8",
+      "run_type": "iteration",
+      "iterations": 148687,
+      "real_time": 4.7224756233779026e+03,
+      "cpu_time": 4.7185805416747162e+03,
+      "time_unit": "ns",
+      "type": 1.1100000000000000e+02
+    },
+    {
+      "name": "B_MatMat<cdualf>/64",
+      "run_name": "B_MatMat<cdualf>/64",
+      "run_type": "iteration",
+      "iterations": 342,
+      "real_time": 2.0482986842075153e+06,
+      "cpu_time": 2.0461444239765937e+06,
+      "time_unit": "ns",
+      "type": 1.1100000000000000e+02
+    },
+    {
+      "name": "B_MatMat<cdualf>/512",
+      "run_name": "B_MatMat<cdualf>/512",
+      "run_type": "iteration",
+      "iterations": 1,
+      "real_time": 1.0340107579831965e+09,
+      "cpu_time": 1.0327275300000025e+09,
+      "time_unit": "ns",
+      "type": 1.1100000000000000e+02
+    },
+    {
+      "name": "B_MatMatCXX<std::complex<float>>/2",
+      "run_name": "B_MatMatCXX<std::complex<float>>/2",
+      "run_type": "iteration",
+      "iterations": 1787832,
+      "real_time": 3.8974881697155820e+02,
+      "cpu_time": 3.9094019963715300e+02,
+      "time_unit": "ns",
+      "type": 1.1000000000000000e+01
+    },
+    {
+      "name": "B_MatMatCXX<std::complex<float>>/8",
+      "run_name": "B_MatMatCXX<std::complex<float>>/8",
+      "run_type": "iteration",
+      "iterations": 156259,
+      "real_time": 4.4753756913094467e+03,
+      "cpu_time": 4.4732676006106130e+03,
+      "time_unit": "ns",
+      "type": 1.1000000000000000e+01
+    },
+    {
+      "name": "B_MatMatCXX<std::complex<float>>/64",
+      "run_name": "B_MatMatCXX<std::complex<float>>/64",
+      "run_type": "iteration",
+      "iterations": 336,
+      "real_time": 2.0899283644255428e+06,
+      "cpu_time": 2.0881369553573458e+06,
+      "time_unit": "ns",
+      "type": 1.1000000000000000e+01
+    },
+    {
+      "name": "B_MatMatCXX<std::complex<float>>/512",
+      "run_name": "B_MatMatCXX<std::complex<float>>/512",
+      "run_type": "iteration",
+      "iterations": 1,
+      "real_time": 1.0902496219496243e+09,
+      "cpu_time": 1.0890752440000000e+09,
+      "time_unit": "ns",
+      "type": 1.1000000000000000e+01
+    },
+    {
+      "name": "B_Expm<float>/2",
+      "run_name": "B_Expm<float>/2",
+      "run_type": "iteration",
+      "iterations": 1059890,
+      "real_time": 6.5850473824937990e+02,
+      "cpu_time": 6.5797180462122753e+02,
+      "time_unit": "ns",
+      "type": 1.0000000000000000e+00
+    },
+    {
+      "name": "B_Expm<float>/8",
+      "run_name": "B_Expm<float>/8",
+      "run_type": "iteration",
+      "iterations": 272781,
+      "real_time": 2.5473390779476085e+03,
+      "cpu_time": 2.5451668774584818e+03,
+      "time_unit": "ns",
+      "type": 1.0000000000000000e+00
+    },
+    {
+      "name": "B_Expm<float>/64",
+      "run_name": "B_Expm<float>/64",
+      "run_type": "iteration",
+      "iterations": 3030,
+      "real_time": 2.3047708846296711e+05,
+      "cpu_time": 2.3019247755775266e+05,
+      "time_unit": "ns",
+      "type": 1.0000000000000000e+00
+    },
+    {
+      "name": "B_Expm<float>/512",
+      "run_name": "B_Expm<float>/512",
+      "run_type": "iteration",
+      "iterations": 6,
+      "real_time": 1.0921186016639693e+08,
+      "cpu_time": 1.0906773133333303e+08,
+      "time_unit": "ns",
+      "type": 1.0000000000000000e+00
+    },
+    {
+      "name": "B_Expm<complexf>/2",
+      "run_name": "B_Expm<complexf>/2",
+      "run_type": "iteration",
+      "iterations": 288471,
+      "real_time": 2.4382128324851224e+03,
+      "cpu_time": 2.4356807096727298e+03,
+      "time_unit": "ns",
+      "type": 1.1000000000000000e+01
+    },
+    {
+      "name": "B_Expm<complexf>/8",
+      "run_name": "B_Expm<complexf>/8",
+      "run_type": "iteration",
+      "iterations": 8466,
+      "real_time": 8.0712747225426137e+04,
+      "cpu_time": 8.0632011575715092e+04,
+      "time_unit": "ns",
+      "type": 1.1000000000000000e+01
+    },
+    {
+      "name": "B_Expm<complexf>/64",
+      "run_name": "B_Expm<complexf>/64",
+      "run_type": "iteration",
+      "iterations": 23,
+      "real_time": 3.1281992957583100e+07,
+      "cpu_time": 3.1251026695652168e+07,
+      "time_unit": "ns",
+      "type": 1.1000000000000000e+01
+    },
+    {
+      "name": "B_Expm<complexf>/512",
+      "run_name": "B_Expm<complexf>/512",
+      "run_type": "iteration",
+      "iterations": 1,
+      "real_time": 1.3991444604005665e+10,
+      "cpu_time": 1.3975875479000010e+10,
+      "time_unit": "ns",
+      "type": 1.1000000000000000e+01
+    },
+    {
+      "name": "B_Expm<cdualf>/2",
+      "run_name": "B_Expm<cdualf>/2",
+      "run_type": "iteration",
+      "iterations": 174796,
+      "real_time": 4.0080735884692217e+03,
+      "cpu_time": 4.0040435078605583e+03,
+      "time_unit": "ns",
+      "type": 1.1100000000000000e+02
+    },
+    {
+      "name": "B_Expm<cdualf>/8",
+      "run_name": "B_Expm<cdualf>/8",
+      "run_type": "iteration",
+      "iterations": 5795,
+      "real_time": 1.2455649490727753e+05,
+      "cpu_time": 1.2441344417601440e+05,
+      "time_unit": "ns",
+      "type": 1.1100000000000000e+02
+    },
+    {
+      "name": "B_Expm<cdualf>/64",
+      "run_name": "B_Expm<cdualf>/64",
+      "run_type": "iteration",
+      "iterations": 21,
+      "real_time": 3.2950426762302715e+07,
+      "cpu_time": 3.2913187571428657e+07,
+      "time_unit": "ns",
+      "type": 1.1100000000000000e+02
+    },
+    {
+      "name": "B_Expm<cdualf>/512",
+      "run_name": "B_Expm<cdualf>/512",
+      "run_type": "iteration",
+      "iterations": 1,
+      "real_time": 1.5224556519999168e+10,
+      "cpu_time": 1.5205081530000015e+10,
+      "time_unit": "ns",
+      "type": 1.1100000000000000e+02
+    }
+  ]
+}
