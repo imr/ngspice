@@ -1,0 +1,200 @@
+#!/usr/bin/env python3
+
+# found on github, of all places, with an MIT license: 
+# MIT License
+#
+# Copyright (c) 2017 iNet Process
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+import argparse
+import os
+import sys
+from distutils.version import LooseVersion
+from urllib.parse import urljoin, quote_plus
+import requests
+
+class GitlabReleaseError(RuntimeError):
+    pass
+
+class GitlabRelease:
+    def __init__(self, debug=False):
+        self.env = {}
+        self.fetch_all_env()
+        self.api_project_url = self.get_api_project_url()
+        self.debug = debug
+
+    def fetch_env_var(self, name, msg):
+        if name not in self.env:
+            try:
+                self.env[name] = os.environ[name]
+            except KeyError:
+                raise GitlabReleaseError('Missing environment variable \'{}\': {}'.format(name, msg))
+        return self.env[name]
+
+    def is_gitlab_v9(self):
+        gl_version = self.fetch_env_var('CI_SERVER_VERSION', '')
+        return LooseVersion(gl_version) >= LooseVersion('9.0.0')
+
+    def get_tag(self):
+        tag_env = 'CI_BUILD_TAG'
+        if self.is_gitlab_v9():
+            tag_env = 'CI_COMMIT_TAG'
+        return self.fetch_env_var(tag_env, 'Releases can only be created on tag build.')
+
+    def fetch_all_env(self):
+        env = {
+            'CI_PROJECT_URL': '',
+            'CI_PROJECT_ID': '',
+            'GITLAB_ACCESS_TOKEN': "You must specifiy the private token linked to your GitLab account.\n"
+                                   'You probably need to add a GITLAB_ACCESS_TOKEN variable to your project.',
+        }
+        for var, msg in env.items():
+            self.fetch_env_var(var, msg)
+
+    def get_api_project_url(self):
+        api_version = 'v3'
+        if self.is_gitlab_v9():
+            api_version = 'v4'
+        return urljoin(self.env['CI_PROJECT_URL'],
+                       '/api/{}/projects/{}'.format(api_version, self.env['CI_PROJECT_ID']))
+
+    def post_file(self, filename):
+        url = '/'.join((self.api_project_url, 'uploads'))
+        files = {'file': open(filename, 'rb')}
+        res = self.request('post', url, files=files)
+        return res.json()['markdown']
+
+    def fetch_links(self):
+        url = '/'.join((self.api_project_url, 'releases', self.get_tag(), 'assets/links'))
+        headers = {'Content-Type': 'application/json'}
+        res = self.request('get', url, headers=headers)
+        return res.json()
+
+    def set_links(self, links, update=False):
+        url = '/'.join((self.api_project_url, 'releases', self.get_tag(), 'assets/links'))
+        headers = {'Content-Type': 'application/json'}
+        method = 'put' if update else 'post'
+        res = self.request(method, url, headers=headers, json=links)
+        return res.json()
+
+    def set_release(self, message, update=False):
+        url = '/'.join((self.api_project_url, 'repository/tags', self.get_tag(), 'release'))
+        headers = {'Content-Type': 'application/json'}
+        body = {'description': message}
+        method = 'put' if update else 'post'
+        res = self.request(method, url, headers=headers, json=body)
+        return res.json()
+
+    def fetch_release(self):
+        url = '/'.join((self.api_project_url, 'repository/tags', self.get_tag()))
+        res = self.request('get', url)
+        return res.json()['release']
+
+    def request(self, method, url, **kwargs):
+        if 'headers' not in kwargs:
+            kwargs['headers'] = {}
+        kwargs['headers']['PRIVATE-TOKEN'] = self.env['GITLAB_ACCESS_TOKEN']
+        if self.debug:
+            print(url)
+            if 'body' in kwargs['headers']:
+                print(kwargs['headers']['body'])
+        res = requests.request(method, url, **kwargs)
+        res.raise_for_status()
+        if self.debug:
+            print(res.content)
+        return res
+
+    def create_release(self, message, files):
+        links = ['* ' + self.post_file(filename) for filename in files]
+        links.insert(0, message)
+        existing_release = self.fetch_release()
+        update = False
+        if existing_release is not None:
+            links = [existing_release['description'], '---'] + links
+            update = True
+        return self.set_release("\n\n".join(links), update)
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, description='''
+This program is intended to be used in a GitLab CI job in a Runner with Docker.
+
+### 1. Configure your `.gitlab-ci.yml`
+To make an automatic release you need to add something like this to the file
+`.gitlab-ci.yml` in your project.
+
+```yaml
+stages:
+    - build
+    - publish
+build:
+    stage: build
+    script:
+        - my_build_command
+    artifacts:
+        expire_in: '1 hour'
+        paths:
+            - compiled-$CI_BUILD_TAG.exe
+            - doc-$CI_BUILD_TAG.pdf
+publish:
+    image: inetprocess/gitlab-release
+    stage: publish
+    only:
+        - tags
+    script:
+        - gitlab-release compiled-$CI_BUILD_TAG.exe doc-$CI_BUILD_TAG.pdf
+```
+
+### 2. Generate a personnal access token
+Generate a new [Personal Access Token]
+(https://docs.gitlab.com/ee/api/README.html#personal-access-tokens)
+from your user profile.
+
+### 3. Configure your project
+Set a [secret variable](https://docs.gitlab.com/ce/ci/variables/#secret-variables)
+in your project named `GITLAB_ACCESS_TOKEN` with the token you have generated in
+the previous step.
+'''
+    )
+    parser.add_argument('-m', '--message', default='',
+                        help='Markdown message before the files list in the release note')
+    parser.add_argument('files', nargs='*',
+                        help='Files to link in the release.')
+    parser.add_argument('-d', '--debug', action='store_true',
+                        help='Print debug messages')
+    parser.add_argument('-l', '--links', action='store_true',
+                        help='Print project links')
+    args = parser.parse_args()
+    #os.environ['CI_PROJECT_ID'] = 'tesch1%2Fcppduals'
+    #os.environ['CI_BUILD_TAG'] = 'v0.3.1'
+    #os.environ['CI_COMMIT_TAG'] = 'v0.3.1'
+    #os.environ['CI_PROJECT_URL'] = 'https://gitlab.com'
+    #os.environ['CI_SERVER_VERSION'] = '9.0.0'
+    #os.environ['GITLAB_ACCESS_TOKEN'] = ''
+    try:
+        release = GitlabRelease(args.debug)
+        #if args.links:
+        #    print(release.fetch_links())
+        #    sys.exit(0)
+        info = release.create_release(args.message, args.files)
+        print("Release: {tag_name} created.\n{description}".format_map(info))
+    except GitlabReleaseError as err:
+        print(err)
+        sys.exit(1)

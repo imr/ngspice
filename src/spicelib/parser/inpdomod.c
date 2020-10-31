@@ -78,6 +78,7 @@ char *INPdomodel(CKTcircuit *ckt, struct card *image, INPtables * tab)
 					    "Device type HICUM0 not available in this binary\n");
 				}
 				break;
+#endif
 				case 8:
 					 type = INPtypelook("hicum2");
 				if(type < 0) {
@@ -85,7 +86,6 @@ char *INPdomodel(CKTcircuit *ckt, struct card *image, INPtables * tab)
 					    "Device type HICUM2 not available in this binary\n");
 				}
 				break;
-#endif
 				default: /* placeholder; use level 4 for the next model */
 #ifdef ADMS
 				err = INPmkTemp(

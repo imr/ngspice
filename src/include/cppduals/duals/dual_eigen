@@ -1,0 +1,774 @@
+//===-- duals/dual_eigen - wrapp dual number type for Eigen -----*- C++ -*-===//
+//
+// Part of the cppduals project.
+// https://gitlab.com/tesch1/cppduals
+//
+// See https://gitlab.com/tesch1/cppduals/blob/master/LICENSE.txt for
+// license information.
+//
+// (c)2019 Michael Tesch. tesch1@gmail.com
+//
+// This Source Code Form is subject to the terms of the Mozilla
+// Public License v. 2.0. If a copy of the MPL was not distributed
+// with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// Some code fragments are adapted from Eigen's Complex.h files, which
+// carry the following license:
+//
+// Copyright (C) 2014 Benoit Steiner (benoit.steiner.goog@gmail.com)
+//
+// This Source Code Form is subject to the terms of the Mozilla
+// Public License v. 2.0. If a copy of the MPL was not distributed
+// with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+#ifndef CPPDUALS_DUAL_EIGEN
+#define CPPDUALS_DUAL_EIGEN
+
+#include "dual"
+
+#ifndef PARSED_BY_DOXYGEN
+#include <complex>
+#include <Eigen/Core>
+#endif
+
+#if !EIGEN_VERSION_AT_LEAST(3, 3, 0)
+#error "Eigen too old for cppduals.  Upgrade."
+#endif
+
+/** \file       dual_eigen
+    \brief      Nestable, vectorizable Dual numbers for Eigen
+
+    Include this file to enable use of the `duals::dual<>` class as a
+    scalar type in Eigen.  Some optimizations are performed using
+    Eigen's vectorization facilities, which is particularly noticeable
+    for multiplication and division.  In certain cases the
+    vectorization can be worse than the compiler's code, thus it can
+    be disabled by `#define CPPDUALS_DONT_VECTORIZE`.
+
+    There is some also vectorization for dual-ized complex's
+    (`std::complex<duals::dual<T>>`), which can be disabled by
+    `#define CPPDUALS_DONT_VECTORIZE_CDUAL`.
+
+    The same type promotion that exists for `duals::dual<T>`: an
+    operation between a 'scalar' T and dual<T> is promoted to dual<T>.
+    This is enabled for Eigen matrices by default: multiplying an
+    `Eigen::Matrix<float>` by `1_ef` results in an expression with a
+    basic POD type of `Eigen::Matrix<duals::dual<float>,..>`.  This
+    type of type promotion can be disabled (ie for correctness
+    checking or to speed compilation) by #define
+    `CPPDUALS_NO_EIGEN_PROMOTION`.
+
+ */
+
+namespace duals {
+
+/** template unary functor to get the real part of a matrix
+ * use it like this: m2 = m1.unaryExpr(CwiseRpartOp<double>());
+ * or just call m2 = rpart(m1);
+ */
+template<typename ScalarSrc>
+struct CwiseRpartOp {
+  typedef decltype(rpart(ScalarSrc())) ScalarDst;
+  typedef ScalarDst result_type;
+  EIGEN_DEVICE_FUNC
+  EIGEN_STRONG_INLINE ScalarDst operator()(const ScalarSrc & x) const { return rpart(x); }
+};
+
+/** template unary functor to get the dual part of a matrix
+ * use it like this: m2 = m1.unaryExpr(CwiseDpartOp<double>());
+ * or just call m2 = dpart(m1);
+ */
+template<typename ScalarSrc>
+struct CwiseDpartOp {
+  typedef decltype(dpart(ScalarSrc())) ScalarDst;
+  typedef ScalarDst result_type;
+  EIGEN_DEVICE_FUNC
+  EIGEN_STRONG_INLINE ScalarDst operator()(const ScalarSrc & x) const { return dpart(x); }
+};
+
+/** template unary functor to dual-conjugate a matrix of duals
+ * use it like this: m2 = m1.unaryExpr(CwiseDconjOp<double>());
+ * or just call m2 = dconj(m1);
+ */
+template<typename Scalar>
+struct CwiseDconjOp {
+  EIGEN_DEVICE_FUNC
+  EIGEN_STRONG_INLINE Scalar operator()(const Scalar & x) const { return dconj(x); }
+};
+
+/// Extract the "real part" of a dual-valued matrix.
+#ifdef PARSED_BY_DOXYGEN
+template <typename XprType> const RealType
+#else
+template <typename XprType>
+const Eigen::CwiseUnaryOp<CwiseRpartOp<typename XprType::Scalar>, const XprType >
+#endif
+rpart(const Eigen::EigenBase<XprType> & x)
+{
+  return x.derived().unaryExpr(CwiseRpartOp<typename XprType::Scalar>());
+}
+
+/// Extract the "dual part" of a dual-valued matrix.
+#ifdef PARSED_BY_DOXYGEN
+template <typename XprType> const RealType
+#else
+template <typename XprType>
+const Eigen::CwiseUnaryOp<CwiseDpartOp<typename XprType::Scalar>, const XprType >
+#endif
+dpart(const Eigen::EigenBase<XprType> & x)
+{
+  return x.derived().unaryExpr(CwiseDpartOp<typename XprType::Scalar>());
+}
+
+/// Dual-conjugate a dual-valued matrix.
+#ifdef PARSED_BY_DOXYGEN
+template <typename XprType> const XprType
+#else
+template <typename XprType>
+const Eigen::CwiseUnaryOp<CwiseDconjOp<typename XprType::Scalar>, const XprType >
+#endif
+dconj(const Eigen::EigenBase<XprType> & x)
+{
+  return x.derived().unaryExpr(CwiseDconjOp<typename XprType::Scalar>());
+}
+
+
+
+} // namespace duals
+
+namespace Eigen {
+
+template<typename T>
+struct NumTraits<duals::dual<T> > : GenericNumTraits<T>
+{
+  typedef typename NumTraits<T>::Real ReallyReal;
+  typedef duals::dual<T> Real;
+  typedef duals::dual<T> Literal;
+  typedef duals::dual<T> Nested;
+
+  enum {
+    IsInteger           =   NumTraits<T>::IsInteger,
+    IsSigned            =   NumTraits<T>::IsSigned,
+    IsComplex           =   0,
+    RequireInitialization = NumTraits<T>::RequireInitialization,
+    ReadCost            = 2 * NumTraits<T>::ReadCost,
+    AddCost             = 2 * NumTraits<T>::AddCost,
+    MulCost             = 3 * NumTraits<T>::MulCost + 1 * NumTraits<T>::AddCost
+  };
+
+  EIGEN_DEVICE_FUNC
+  static inline Real epsilon()        { return Real(NumTraits<T>::epsilon()); }
+  EIGEN_DEVICE_FUNC
+  static inline ReallyReal dummy_precision()  { return NumTraits<T>::dummy_precision(); }
+  EIGEN_DEVICE_FUNC
+  static inline ReallyReal highest()  { return NumTraits<T>::highest(); }
+  EIGEN_DEVICE_FUNC
+  static inline ReallyReal lowest()   { return NumTraits<T>::lowest(); }
+  EIGEN_DEVICE_FUNC
+  static inline ReallyReal digits10() { return NumTraits<T>::digits10(); }
+};
+
+#if !defined(CPPDUALS_NO_EIGEN_PROMOTION)
+template<typename T, typename BinaryOp>
+struct ScalarBinaryOpTraits<duals::dual<T>,duals::dual<T>,BinaryOp>
+  : public duals::can_promote<duals::dual<T>,duals::dual<T>>::wrap {};
+
+template<typename T, typename BinaryOp>
+struct ScalarBinaryOpTraits<duals::dual<T>,T,BinaryOp>
+  : public duals::can_promote<duals::dual<T>,T>::wrap {};
+template<typename T, typename BinaryOp>
+struct ScalarBinaryOpTraits<T,duals::dual<T>,BinaryOp>
+  : public duals::can_promote<duals::dual<T>,T>::wrap {};
+
+#if 0 // until Eigen doesnt make assumptions about complex return types :P
+template<typename T, typename BinaryOp>
+struct ScalarBinaryOpTraits<std::complex<T>,duals::dual<T>,BinaryOp>
+  : public duals::can_promote<std::complex<T>,duals::dual<T>>::wrap {};
+template<typename T, typename BinaryOp>
+struct ScalarBinaryOpTraits<duals::dual<T>,std::complex<T>,BinaryOp>
+  : public duals::can_promote<std::complex<T>,duals::dual<T>>::wrap {};
+#endif
+
+#ifndef PARSED_BY_DOXYGEN
+
+// Special cases for nested complex<dual<>> and reals
+#define CPPDUALS_CD_SBOTS_REALS(U)                                      \
+  template<typename T, typename BinaryOp>                               \
+  struct ScalarBinaryOpTraits<std::complex<duals::dual<T>>,U,BinaryOp>  \
+    : public duals::can_promote<std::complex<duals::dual<T>>,U>::wrap {}; \
+  template<typename T, typename BinaryOp>                               \
+  struct ScalarBinaryOpTraits<U,std::complex<duals::dual<T>>,BinaryOp>  \
+    : public duals::can_promote<std::complex<duals::dual<T>>,U>::wrap {}
+CPPDUALS_CD_SBOTS_REALS(int);
+CPPDUALS_CD_SBOTS_REALS(float);
+CPPDUALS_CD_SBOTS_REALS(double);
+CPPDUALS_CD_SBOTS_REALS(std::complex<T>);
+
+#endif // PARSED_BY_DOXYGEN
+
+#endif // CPPDUALS_NO_EIGEN_PROMOTION
+
+#ifndef PARSED_BY_DOXYGEN
+
+namespace numext {
+using duals::rpart;
+using duals::dpart;
+using duals::dconj;
+}
+
+namespace internal {
+
+template<typename T>
+struct real_impl<duals::dual<T> >
+{
+  typedef T RealScalar;
+  EIGEN_DEVICE_FUNC
+  static inline T run(const duals::dual<T>& x)
+  {
+    return x.rpart();
+  }
+};
+
+template<typename Scalar>
+struct real_ref_impl<duals::dual<Scalar>>
+{
+  typedef typename NumTraits<Scalar>::Real RealScalar;
+  EIGEN_DEVICE_FUNC
+  static inline RealScalar & run(duals::dual<Scalar> & x)
+  {
+    return reinterpret_cast<RealScalar*>(&x)[0];
+  }
+  EIGEN_DEVICE_FUNC
+  static inline const RealScalar & run(const duals::dual<Scalar> & x)
+  {
+    return reinterpret_cast<const RealScalar *>(&x)[0];
+  }
+};
+
+template<typename Scalar>
+struct real_ref_retval<duals::dual<Scalar>>
+{
+  typedef typename NumTraits<Scalar>::Real & type;
+};
+
+template<typename T> struct scalar_random_op<duals::dual<T>>
+{
+  EIGEN_EMPTY_STRUCT_CTOR(scalar_random_op)
+  inline const duals::dual<T> operator() () const { return duals::random<duals::dual<T>>(); }
+};
+
+
+// // stuff for gebp_*
+
+template<typename Packet> EIGEN_DEVICE_FUNC inline Packet
+pdconj(const Packet& a) { return numext::dconj(a); }
+
+template<bool Conjugate> struct dconj_if;
+template<> struct dconj_if<true> {
+  template<typename T> inline T operator()(const T& x) const { return numext::dconj(x); }
+  template<typename T> inline T pdconj(const T& x) const { return internal::pdconj(x); }
+};
+
+template<> struct dconj_if<false> {
+  template<typename T> inline const T& operator()(const T& x) const { return x; }
+  template<typename T> inline const T& pdconj(const T& x) const { return x; }
+};
+
+// Generic implementation for custom dual types.
+template<typename LhsScalar, typename RhsScalar, bool ConjLhs, bool ConjRhs>
+struct dconj_helper
+{
+  typedef typename ScalarBinaryOpTraits<LhsScalar,RhsScalar>::ReturnType Scalar;
+  EIGEN_STRONG_INLINE Scalar pmadd(const LhsScalar& x, const RhsScalar& y, const Scalar& c) const
+  { return padd(c, pmul(x,y)); }
+  EIGEN_STRONG_INLINE Scalar pmul(const LhsScalar& x, const RhsScalar& y) const
+  { return dconj_if<ConjLhs>()(x) * dconj_if<ConjRhs>()(y); }
+};
+
+template<typename Scalar> struct dconj_helper<Scalar,Scalar,false,false>
+{
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE Scalar pmadd(const Scalar& x, const Scalar& y, const Scalar& c) const
+  { return internal::pmadd(x,y,c); }
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE Scalar pmul(const Scalar& x, const Scalar& y) const
+  { return internal::pmul(x,y); }
+};
+
+template<typename RealScalar> struct dconj_helper<duals::dual<RealScalar>, duals::dual<RealScalar>, false,true>
+{
+  typedef duals::dual<RealScalar> Scalar;
+  EIGEN_STRONG_INLINE Scalar pmadd(const Scalar& x, const Scalar& y, const Scalar& c) const
+  { return c + pmul(x,y); }
+  EIGEN_STRONG_INLINE Scalar pmul(const Scalar& x, const Scalar& y) const
+  { return Scalar(numext::real(x)*numext::real(y) + numext::imag(x)*numext::imag(y),
+                  numext::imag(x)*numext::real(y) - numext::real(x)*numext::imag(y)); }
+};
+
+template<typename RealScalar> struct dconj_helper<duals::dual<RealScalar>, duals::dual<RealScalar>, true,false>
+{
+  typedef duals::dual<RealScalar> Scalar;
+  EIGEN_STRONG_INLINE Scalar pmadd(const Scalar& x, const Scalar& y, const Scalar& c) const
+  { return c + pmul(x,y); }
+  EIGEN_STRONG_INLINE Scalar pmul(const Scalar& x, const Scalar& y) const
+  { return Scalar(numext::real(x)*numext::real(y) + numext::imag(x)*numext::imag(y),
+                  numext::real(x)*numext::imag(y) - numext::imag(x)*numext::real(y)); }
+};
+
+template<typename RealScalar> struct dconj_helper<duals::dual<RealScalar>, duals::dual<RealScalar>, true,true>
+{
+  typedef duals::dual<RealScalar> Scalar;
+  EIGEN_STRONG_INLINE Scalar pmadd(const Scalar& x, const Scalar& y, const Scalar& c) const
+  { return c + pmul(x,y); }
+  EIGEN_STRONG_INLINE Scalar pmul(const Scalar& x, const Scalar& y) const
+  { return Scalar(numext::real(x)*numext::real(y) - numext::imag(x)*numext::imag(y),
+                  -numext::real(x)*numext::imag(y) - numext::imag(x)*numext::real(y)); }
+};
+
+template<typename RealScalar,bool Conj> struct dconj_helper<duals::dual<RealScalar>, RealScalar, Conj,false>
+{
+  typedef duals::dual<RealScalar> Scalar;
+  EIGEN_STRONG_INLINE Scalar pmadd(const Scalar& x, const RealScalar& y, const Scalar& c) const
+  { return padd(c, pmul(x,y)); }
+  EIGEN_STRONG_INLINE Scalar pmul(const Scalar& x, const RealScalar& y) const
+  { return dconj_if<Conj>()(x)*y; }
+};
+
+template<typename RealScalar,bool Conj> struct dconj_helper<RealScalar, duals::dual<RealScalar>, false,Conj>
+{
+  typedef duals::dual<RealScalar> Scalar;
+  EIGEN_STRONG_INLINE Scalar pmadd(const RealScalar& x, const Scalar& y, const Scalar& c) const
+  { return padd(c, pmul(x,y)); }
+  EIGEN_STRONG_INLINE Scalar pmul(const RealScalar& x, const Scalar& y) const
+  { return x*dconj_if<Conj>()(y); }
+};
+
+} // namespace internal
+
+#endif // PARSED_BY_DOXYGEN
+
+} // namespace Eigen
+
+#if !defined(CPPDUALS_DONT_VECTORIZE)
+#ifndef PARSED_BY_DOXYGEN
+
+// first thing Eigen does: stop the compiler from committing suicide
+#include "Eigen/src/Core/util/DisableStupidWarnings.h"
+
+#define EIGEN_MAKE_DCONJ_HELPER_DUAL_REAL(PACKET_DUAL, PACKET_REAL)     \
+  template<> struct dconj_helper<PACKET_REAL, PACKET_DUAL, false,false> { \
+    EIGEN_STRONG_INLINE PACKET_DUAL pmadd(const PACKET_REAL& x, const PACKET_DUAL& y, const PACKET_DUAL& c) const \
+    { return padd(c, pmul(x,y)); }                                                                                \
+    EIGEN_STRONG_INLINE PACKET_DUAL pmul(const PACKET_REAL& x, const PACKET_DUAL& y) const                        \
+    { return PACKET_DUAL(Eigen::internal::pmul<PACKET_REAL>(x, PACKET_REAL(y.v))); }                              \
+  };                                                                                                              \
+                                                                                                                  \
+  template<> struct dconj_helper<PACKET_DUAL, PACKET_REAL, false,false> {                                         \
+    EIGEN_STRONG_INLINE PACKET_DUAL pmadd(const PACKET_DUAL& x, const PACKET_REAL& y, const PACKET_DUAL& c) const \
+    { return padd(c, pmul(x,y)); }                                                                                \
+    EIGEN_STRONG_INLINE PACKET_DUAL pmul(const PACKET_DUAL& x, const PACKET_REAL& y) const                        \
+    { return PACKET_DUAL(Eigen::internal::pmul<PACKET_REAL>(PACKET_REAL(x.v), y)); } \
+  };
+
+#if defined EIGEN_VECTORIZE_AVX512
+  #include "duals/arch/SSE/Dual.h"
+  #include "duals/arch/AVX/Dual.h"
+  #include "duals/arch/SSE/ComplexDual.h"
+  #include "duals/arch/AVX/ComplexDual.h"
+#elif defined EIGEN_VECTORIZE_AVX
+  #include "duals/arch/SSE/Dual.h"
+  #include "duals/arch/AVX/Dual.h"
+  #include "duals/arch/SSE/ComplexDual.h"
+  #include "duals/arch/AVX/ComplexDual.h"
+#elif defined EIGEN_VECTORIZE_SSE
+  #include "duals/arch/SSE/Dual.h"
+  #include "duals/arch/SSE/ComplexDual.h"
+#elif defined(EIGEN_VECTORIZE_ALTIVEC) || defined(EIGEN_VECTORIZE_VSX)
+//  #include "duals/arch/AltiVec/Dual.h" // TODO
+#elif defined EIGEN_VECTORIZE_NEON
+//#include "duals/arch/NEON/Dual.h" // TODO
+#elif defined EIGEN_VECTORIZE_ZVECTOR
+//  #include "duals/arch/ZVector/Dual.h" // TODO
+#endif
+
+#undef EIGEN_MAKE_DCONJ_HELPER_DUAL_REAL
+
+// reallow compiler seppuku
+#include "Eigen/src/Core/util/ReenableStupidWarnings.h"
+
+#endif // PARSED_BY_DOXYGEN
+
+//////// gepb for duals::dual
+#if 0 // TODO
+
+namespace Eigen { namespace internal {
+
+template<typename RealScalar, bool _ConjLhs>
+class gebp_traits<duals::dual<RealScalar>, RealScalar, _ConjLhs, false>
+{
+public:
+  typedef duals::dual<RealScalar> LhsScalar;
+  typedef RealScalar RhsScalar;
+  typedef typename ScalarBinaryOpTraits<LhsScalar, RhsScalar>::ReturnType ResScalar;
+
+  enum {
+    ConjLhs = _ConjLhs,
+    ConjRhs = false,
+    Vectorizable = packet_traits<LhsScalar>::Vectorizable && packet_traits<RhsScalar>::Vectorizable,
+    LhsPacketSize = Vectorizable ? packet_traits<LhsScalar>::size : 1,
+    RhsPacketSize = Vectorizable ? packet_traits<RhsScalar>::size : 1,
+    ResPacketSize = Vectorizable ? packet_traits<ResScalar>::size : 1,
+
+    NumberOfRegisters = EIGEN_ARCH_DEFAULT_NUMBER_OF_REGISTERS,
+    nr = 4,
+#if defined(EIGEN_HAS_SINGLE_INSTRUCTION_MADD) && !defined(EIGEN_VECTORIZE_ALTIVEC) && !defined(EIGEN_VECTORIZE_VSX)
+    // we assume 16 registers
+    mr = 3*LhsPacketSize,
+#else
+    mr = (EIGEN_PLAIN_ENUM_MIN(16,NumberOfRegisters)/2/nr)*LhsPacketSize,
+#endif
+
+    LhsProgress = LhsPacketSize,
+    RhsProgress = 1
+  };
+
+  typedef typename packet_traits<LhsScalar>::type  _LhsPacket;
+  typedef typename packet_traits<RhsScalar>::type  _RhsPacket;
+  typedef typename packet_traits<ResScalar>::type  _ResPacket;
+
+  typedef typename conditional<Vectorizable,_LhsPacket,LhsScalar>::type LhsPacket;
+  typedef typename conditional<Vectorizable,_RhsPacket,RhsScalar>::type RhsPacket;
+  typedef typename conditional<Vectorizable,_ResPacket,ResScalar>::type ResPacket;
+
+  typedef ResPacket AccPacket;
+
+  EIGEN_STRONG_INLINE void initAcc(AccPacket& p)
+  {
+    p = pset1<ResPacket>(ResScalar(0));
+  }
+
+  EIGEN_STRONG_INLINE void loadRhs(const RhsScalar* b, RhsPacket& dest) const
+  {
+    dest = pset1<RhsPacket>(*b);
+  }
+
+  EIGEN_STRONG_INLINE void loadRhsQuad(const RhsScalar* b, RhsPacket& dest) const
+  {
+    dest = pset1<RhsPacket>(*b);
+  }
+
+  EIGEN_STRONG_INLINE void loadLhs(const LhsScalar* a, LhsPacket& dest) const
+  {
+    dest = pload<LhsPacket>(a);
+  }
+
+  EIGEN_STRONG_INLINE void loadLhsUnaligned(const LhsScalar* a, LhsPacket& dest) const
+  {
+    dest = ploadu<LhsPacket>(a);
+  }
+
+  EIGEN_STRONG_INLINE void broadcastRhs(const RhsScalar* b, RhsPacket& b0, RhsPacket& b1, RhsPacket& b2, RhsPacket& b3)
+  {
+    pbroadcast4(b, b0, b1, b2, b3);
+  }
+
+//   EIGEN_STRONG_INLINE void broadcastRhs(const RhsScalar* b, RhsPacket& b0, RhsPacket& b1)
+//   {
+//     pbroadcast2(b, b0, b1);
+//   }
+
+  EIGEN_STRONG_INLINE void madd(const LhsPacket& a, const RhsPacket& b, AccPacket& c, RhsPacket& tmp) const
+  {
+    madd_impl(a, b, c, tmp, typename conditional<Vectorizable,true_type,false_type>::type());
+  }
+
+  EIGEN_STRONG_INLINE void madd_impl(const LhsPacket& a, const RhsPacket& b, AccPacket& c, RhsPacket& tmp, const true_type&) const
+  {
+    //std::cerr << CYELLOW "%" << CRESET;
+    //duals::dual<RealScalar>, RealScalar
+    // accpacket=lhspacket
+#ifdef EIGEN_HAS_SINGLE_INSTRUCTION_MADD
+    EIGEN_UNUSED_VARIABLE(tmp);
+    c.v = pmadd(a.v,b,c.v);
+#else
+    tmp = b; tmp = pmul(RhsPacket(a.v),tmp); c = AccPacket(padd(RhsPacket(c.v),tmp));
+#endif
+  }
+
+  EIGEN_STRONG_INLINE void madd_impl(const LhsScalar& a, const RhsScalar& b, ResScalar& c, RhsScalar& /*tmp*/, const false_type&) const
+  {
+    c += a * b;
+  }
+
+  EIGEN_STRONG_INLINE void acc(const AccPacket& c, const ResPacket& alpha, ResPacket& r) const
+  {
+    r = cj.pmadd(c,alpha,r);
+  }
+
+protected:
+  dconj_helper<ResPacket,ResPacket,ConjLhs,false> cj;
+};
+
+template<typename RealScalar, bool _ConjLhs, bool _ConjRhs>
+class gebp_traits<duals::dual<RealScalar>, duals::dual<RealScalar>, _ConjLhs, _ConjRhs >
+{
+public:
+  typedef duals::dual<RealScalar>  Scalar;
+  typedef duals::dual<RealScalar>  LhsScalar;
+  typedef duals::dual<RealScalar>  RhsScalar;
+  typedef duals::dual<RealScalar>  ResScalar;
+
+  enum {
+    ConjLhs = _ConjLhs,
+    ConjRhs = _ConjRhs,
+    Vectorizable = packet_traits<RealScalar>::Vectorizable
+                && packet_traits<Scalar>::Vectorizable,
+    RealPacketSize  = Vectorizable ? packet_traits<RealScalar>::size : 1,
+    ResPacketSize   = Vectorizable ? packet_traits<ResScalar>::size : 1,
+    LhsPacketSize = Vectorizable ? packet_traits<LhsScalar>::size : 1,
+    RhsPacketSize = Vectorizable ? packet_traits<RhsScalar>::size : 1,
+
+    // FIXME: should depend on NumberOfRegisters
+    nr = 4,
+    mr = ResPacketSize,
+
+    LhsProgress = ResPacketSize,
+    RhsProgress = 1
+  };
+
+  typedef typename packet_traits<RealScalar>::type RealPacket;
+  typedef typename packet_traits<Scalar>::type     ScalarPacket;
+  typedef DoublePacket<RealPacket> DoublePacketType;
+
+  typedef typename conditional<Vectorizable,RealPacket,  Scalar>::type LhsPacket;
+  typedef typename conditional<Vectorizable,DoublePacketType,Scalar>::type RhsPacket;
+  typedef typename conditional<Vectorizable,ScalarPacket,Scalar>::type ResPacket;
+  typedef typename conditional<Vectorizable,DoublePacketType,Scalar>::type AccPacket;
+
+  EIGEN_STRONG_INLINE void initAcc(Scalar& p) { p = Scalar(0); }
+
+  EIGEN_STRONG_INLINE void initAcc(DoublePacketType& p)
+  {
+    p.first   = pset1<RealPacket>(RealScalar(0));
+    p.second  = pset1<RealPacket>(RealScalar(0));
+  }
+
+  // Scalar path
+  EIGEN_STRONG_INLINE void loadRhs(const RhsScalar* b, ResPacket& dest) const
+  {
+    dest = pset1<ResPacket>(*b);
+  }
+
+  // Vectorized path
+  EIGEN_STRONG_INLINE void loadRhs(const RhsScalar* b, DoublePacketType& dest) const
+  {
+    dest.first  = pset1<RealPacket>(rpart(*b));
+    dest.second = pset1<RealPacket>(dpart(*b));
+  }
+
+  EIGEN_STRONG_INLINE void loadRhsQuad(const RhsScalar* b, ResPacket& dest) const
+  {
+    loadRhs(b,dest);
+  }
+  EIGEN_STRONG_INLINE void loadRhsQuad(const RhsScalar* b, DoublePacketType& dest) const
+  {
+    eigen_internal_assert(unpacket_traits<ScalarPacket>::size<=4);
+    loadRhs(b,dest);
+  }
+
+  EIGEN_STRONG_INLINE void broadcastRhs(const RhsScalar* b, RhsPacket& b0, RhsPacket& b1, RhsPacket& b2, RhsPacket& b3)
+  {
+    // FIXME not sure that's the best way to implement it!
+    loadRhs(b+0, b0);
+    loadRhs(b+1, b1);
+    loadRhs(b+2, b2);
+    loadRhs(b+3, b3);
+  }
+
+  // Vectorized path
+  EIGEN_STRONG_INLINE void broadcastRhs(const RhsScalar* b, DoublePacketType& b0, DoublePacketType& b1)
+  {
+    // FIXME not sure that's the best way to implement it!
+    loadRhs(b+0, b0);
+    loadRhs(b+1, b1);
+  }
+
+  // Scalar path
+  EIGEN_STRONG_INLINE void broadcastRhs(const RhsScalar* b, RhsScalar& b0, RhsScalar& b1)
+  {
+    // FIXME not sure that's the best way to implement it!
+    loadRhs(b+0, b0);
+    loadRhs(b+1, b1);
+  }
+
+  // nothing special here
+  EIGEN_STRONG_INLINE void loadLhs(const LhsScalar* a, LhsPacket& dest) const
+  {
+    dest = pload<LhsPacket>((const typename unpacket_traits<LhsPacket>::type*)(a));
+  }
+
+  EIGEN_STRONG_INLINE void loadLhsUnaligned(const LhsScalar* a, LhsPacket& dest) const
+  {
+    dest = ploadu<LhsPacket>((const typename unpacket_traits<LhsPacket>::type*)(a));
+  }
+
+  EIGEN_STRONG_INLINE void madd(const LhsPacket& a, const RhsPacket& b, DoublePacketType& c, RhsPacket& /*tmp*/) const
+  {
+    c.first   = padd(pmul(a,b.first), c.first);
+    c.second  = padd(pmul(a,b.second),c.second);
+  }
+
+  EIGEN_STRONG_INLINE void madd(const LhsPacket& a, const RhsPacket& b, ResPacket& c, RhsPacket& /*tmp*/) const
+  {
+    c = cj.pmadd(a,b,c);
+  }
+
+  EIGEN_STRONG_INLINE void acc(const Scalar& c, const Scalar& alpha, Scalar& r) const { r += alpha * c; }
+
+  EIGEN_STRONG_INLINE void acc(const DoublePacketType& c, const ResPacket& alpha, ResPacket& r) const
+  {
+    // assemble c
+    ResPacket tmp;
+    if((!ConjLhs)&&(!ConjRhs))
+    {
+      tmp = pcplxflip(pconj(ResPacket(c.second)));
+      tmp = padd(ResPacket(c.first),tmp);
+    }
+    else if((!ConjLhs)&&(ConjRhs))
+    {
+      tmp = pconj(pcplxflip(ResPacket(c.second)));
+      tmp = padd(ResPacket(c.first),tmp);
+    }
+    else if((ConjLhs)&&(!ConjRhs))
+    {
+      tmp = pcplxflip(ResPacket(c.second));
+      tmp = padd(pconj(ResPacket(c.first)),tmp);
+    }
+    else if((ConjLhs)&&(ConjRhs))
+    {
+      tmp = pcplxflip(ResPacket(c.second));
+      tmp = psub(pconj(ResPacket(c.first)),tmp);
+    }
+
+    r = pmadd(tmp,alpha,r);
+  }
+protected:
+  dconj_helper<LhsScalar,RhsScalar,ConjLhs,ConjRhs> cj;
+
+};
+
+template<typename RealScalar, bool _ConjRhs>
+class gebp_traits<RealScalar, duals::dual<RealScalar>, false, _ConjRhs >
+{
+public:
+  typedef duals::dual<RealScalar>  Scalar;
+  typedef RealScalar  LhsScalar;
+  typedef Scalar      RhsScalar;
+  typedef Scalar      ResScalar;
+
+  enum {
+    ConjLhs = false,
+    ConjRhs = _ConjRhs,
+    Vectorizable = packet_traits<RealScalar>::Vectorizable
+                && packet_traits<Scalar>::Vectorizable,
+    LhsPacketSize = Vectorizable ? packet_traits<LhsScalar>::size : 1,
+    RhsPacketSize = Vectorizable ? packet_traits<RhsScalar>::size : 1,
+    ResPacketSize = Vectorizable ? packet_traits<ResScalar>::size : 1,
+
+    NumberOfRegisters = EIGEN_ARCH_DEFAULT_NUMBER_OF_REGISTERS,
+    // FIXME: should depend on NumberOfRegisters
+    nr = 4,
+    mr = (EIGEN_PLAIN_ENUM_MIN(16,NumberOfRegisters)/2/nr)*ResPacketSize,
+
+    LhsProgress = ResPacketSize,
+    RhsProgress = 1
+  };
+
+  typedef typename packet_traits<LhsScalar>::type  _LhsPacket;
+  typedef typename packet_traits<RhsScalar>::type  _RhsPacket;
+  typedef typename packet_traits<ResScalar>::type  _ResPacket;
+
+  typedef typename conditional<Vectorizable,_LhsPacket,LhsScalar>::type LhsPacket;
+  typedef typename conditional<Vectorizable,_RhsPacket,RhsScalar>::type RhsPacket;
+  typedef typename conditional<Vectorizable,_ResPacket,ResScalar>::type ResPacket;
+
+  typedef ResPacket AccPacket;
+
+  EIGEN_STRONG_INLINE void initAcc(AccPacket& p)
+  {
+    p = pset1<ResPacket>(ResScalar(0));
+  }
+
+  EIGEN_STRONG_INLINE void loadRhs(const RhsScalar* b, RhsPacket& dest) const
+  {
+    dest = pset1<RhsPacket>(*b);
+  }
+
+  void broadcastRhs(const RhsScalar* b, RhsPacket& b0, RhsPacket& b1, RhsPacket& b2, RhsPacket& b3)
+  {
+    pbroadcast4(b, b0, b1, b2, b3);
+  }
+
+//   EIGEN_STRONG_INLINE void broadcastRhs(const RhsScalar* b, RhsPacket& b0, RhsPacket& b1)
+//   {
+//     // FIXME not sure that's the best way to implement it!
+//     b0 = pload1<RhsPacket>(b+0);
+//     b1 = pload1<RhsPacket>(b+1);
+//   }
+
+  EIGEN_STRONG_INLINE void loadLhs(const LhsScalar* a, LhsPacket& dest) const
+  {
+    dest = ploaddup<LhsPacket>(a);
+  }
+
+  EIGEN_STRONG_INLINE void loadRhsQuad(const RhsScalar* b, RhsPacket& dest) const
+  {
+    eigen_internal_assert(unpacket_traits<RhsPacket>::size<=4);
+    loadRhs(b,dest);
+  }
+
+  EIGEN_STRONG_INLINE void loadLhsUnaligned(const LhsScalar* a, LhsPacket& dest) const
+  {
+    dest = ploaddup<LhsPacket>(a);
+  }
+
+  EIGEN_STRONG_INLINE void madd(const LhsPacket& a, const RhsPacket& b, AccPacket& c, RhsPacket& tmp) const
+  {
+    madd_impl(a, b, c, tmp, typename conditional<Vectorizable,true_type,false_type>::type());
+  }
+
+  EIGEN_STRONG_INLINE void madd_impl(const LhsPacket& a, const RhsPacket& b, AccPacket& c, RhsPacket& tmp, const true_type&) const
+  {
+    //std::cerr << CYELLOW "*" << CRESET;
+    //RealScalar, duals::dual<RealScalar>
+#ifdef EIGEN_HAS_SINGLE_INSTRUCTION_MADD
+    EIGEN_UNUSED_VARIABLE(tmp);
+    c.v = pmadd(a,b.v,c.v);
+#else
+    tmp = b; tmp = RhsPacket(pmul(a,LhsPacket(tmp.v))); c = padd(c,tmp);
+#endif
+
+  }
+
+  EIGEN_STRONG_INLINE void madd_impl(const LhsScalar& a, const RhsScalar& b, ResScalar& c, RhsScalar& /*tmp*/, const false_type&) const
+  {
+    c += a * b;
+  }
+
+  EIGEN_STRONG_INLINE void acc(const AccPacket& c, const ResPacket& alpha, ResPacket& r) const
+  {
+    r = cj.pmadd(alpha,c,r);
+  }
+
+protected:
+  dconj_helper<ResPacket,ResPacket,false,ConjRhs> cj;
+};
+
+} } // Eigen::internal
+
+#endif // gebp_traits
+////////
+
+
+
+#endif // CPPDUALS_DONT_VECTORIZE
+
+#endif // CPPDUALS_DUAL_EIGEN

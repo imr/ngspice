@@ -27,6 +27,7 @@ DIST_SUBDIRS =		\
 	filters		\
 	general		\
 	hfet		\
+	hicum2		\
 	hisim		\
 	hisimhv1	\
 	hisimhv2	\

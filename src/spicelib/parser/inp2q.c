@@ -17,11 +17,11 @@ model_numnodes(int type)
 {
 #ifdef ADMS
     if (type == INPtypelook("hicum0") ||
-        type == INPtypelook("hicum2") ||
         type == INPtypelook("bjt504t"))
         return 5;
 #else
-    if (type == INPtypelook("VBIC"))
+    if (type == INPtypelook("VBIC") ||
+        type == INPtypelook("hicum2"))
         return 5;
 #endif
 
@@ -101,9 +101,9 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, struct card *current, CKTnode *gnod
 #endif
 #ifdef ADMS
         thismodel->INPmodType != INPtypelook("hicum0") &&
-        thismodel->INPmodType != INPtypelook("hicum2") &&
         thismodel->INPmodType != INPtypelook("bjt504t") &&
 #endif
+        thismodel->INPmodType != INPtypelook("hicum2") &&
         thismodel->INPmodType != INPtypelook("VBIC"))
     {
         LITERR("incorrect model type");

@@ -73,6 +73,7 @@ DYNAMIC_DEVICELIBS =					\
 	spicelib/devices/isrc/libisrc.la		\
 	spicelib/devices/hfet1/libhfet.la		\
 	spicelib/devices/hfet2/libhfet2.la		\
+	spicelib/devices/hicum2/libhicum2.la		\
 	spicelib/devices/hisim2/libhisim2.la		\
 	spicelib/devices/hisimhv1/libhisimhv1.la	\
 	spicelib/devices/hisimhv2/libhisimhv2.la	\
@@ -581,6 +582,7 @@ libngspice_la_LIBADD += \
 libngspice_la_CFLAGS = -shared
 
 libngspice_la_LDFLAGS =  -shared
+libngspice_la_LDFLAGS +=  -lstdc++
 
 if SHWIN
 libngspice_la_LDFLAGS += -Wl,--output-def=ngspice.def  -Wl,--out-implib=ngspice.dll.a

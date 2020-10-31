@@ -1,0 +1,87 @@
+#image: ubuntu:19.04
+image: fedora:30
+
+variables:
+  GIT_DEPTH: 3
+  CTEST_OUTPUT_ON_FAILURE: y
+
+stages:
+- build
+- test
+- cover
+- publish
+
+before_script:
+#- apt-get update --yes
+#- apt-get install --yes cmake g++ git doxygen lcov graphviz
+- dnf install -y gcc-c++ make cmake git doxygen lcov graphviz
+
+build:
+  stage: build
+#  variables:
+#    CC: clang
+#    CXX: clang++
+  script:
+  - echo $CXX
+  - cmake -Bbuild -H. -DCPPDUALS_TESTING=ON
+  - cmake --build build
+  - cmake -Bbuild-latest -H. -DCPPDUALS_TESTING=ON -DCPPDUALS_EIGEN_LATEST=ON
+  - cmake --build build-latest
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - build
+    - build-latest
+
+test:
+  stage: test
+  script:
+  - cmake --build build --target test
+  - cmake --build build-latest --target test
+  dependencies:
+  - build
+
+cover:
+  script:
+  - cmake -Bbuild-cov -H. -DCODE_COVERAGE=ON -DCPPDUALS_TESTING=ON
+  - cmake --build build-cov --target cov
+  - cmake --build build-cov --target cov-html
+  coverage: '/Total:|\w*\d+\.\d+/'
+  artifacts:
+    expire_in: 1 day
+    paths:
+    - build-cov
+  only:
+  - merge_requests
+
+pages:
+  script:
+  - cmake -Bbuild -H. -DCODE_COVERAGE=ON -DCPPDUALS_TESTING=ON
+  - cmake --build build --target cppduals_docs
+  - cmake --build build --target cov-html
+  - mv build/docs public/
+  - mv build/coverage public/
+  coverage: '/Total:|\w*\d+\.\d+/'
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+
+publish:
+  stage: publish
+  dependencies:
+  - build
+  environment:
+    name: publish
+  only:
+  - /^v\d+\.\d+\.\d+$/
+  except:
+  - branches
+  before_script:
+  - dnf install -y python3-requests
+  script:
+#  - ln -s cppduals-h-${CI_BUILD_TAG#v} .
+#  - tar czvhf cppduals-h-${CI_BUILD_TAG#v}.tgz cppduals-h-${CI_BUILD_TAG#v}/duals cppduals-h-${CI_BUILD_TAG#v}/CMakeLists.txt
+  - tar czvf cppduals-h-${CI_BUILD_TAG#v}.tgz duals CMakeLists.txt
+  - ./doc/gitlab-release --message "Release ${CI_BUILD_TAG}" cppduals-h-${CI_BUILD_TAG#v}.tgz
