@@ -6,68 +6,81 @@ Georgia Tech Research Corporation
 Atlanta, Georgia 30332
 
 
-AUTHORS                      
+AUTHORS
 
     19 Apr 1991     Jeffrey P. Murray
+    01 Nov 2020     Holger Vogt
 
 
 SUMMARY
 
-    This file contains the interface specification file for the 
+    This file contains the interface specification file for the
     analog pwl code model.
 
 ===============================================================================*/
- 
+
 NAME_TABLE:
 
 
 C_Function_Name:       cm_pwl
-Spice_Model_Name:      pwl 
+Spice_Model_Name:      pwl
 Description:           "piecwise linear controlled source"
 
 
 PORT_TABLE:
 
-Port_Name:             in                   out            
+Port_Name:             in                   out
 Description:           "input"              "output"
-Direction:             in                   out 
+Direction:             in                   out
 Default_Type:          v                    v
-Allowed_Types:         [v,vd,i,id,vnam]     [v,vd,i,id] 
+Allowed_Types:         [v,vd,i,id,vnam]     [v,vd,i,id]
 Vector:                 no                   no
-Vector_Bounds:          -                    -  
-Null_Allowed:          no                   no 
+Vector_Bounds:          -                    -
+Null_Allowed:          no                   no
 
 
 PARAMETER_TABLE:
 
-Parameter_Name:     x_array                     y_array 
+Parameter_Name:     x_array                     y_array
 Description:        "x-element array"           "y-element array"
-Data_Type:          real                        real   
-Default_Value:      -                           -   
-Limits:             -                           -       
-Vector:              yes                         yes     
-Vector_Bounds:       [2 -]                       [2 -]      
-Null_Allowed:       no                          no     
+Data_Type:          real                        real
+Default_Value:      -                           -
+Limits:             -                           -
+Vector:              yes                         yes
+Vector_Bounds:       [2 -]                       [2 -]
+Null_Allowed:       no                          no
 
 
 PARAMETER_TABLE:
 
-Parameter_Name:     input_domain            fraction 
+Parameter_Name:     input_domain            fraction
 Description:        "input sm. domain"      "smoothing %/abs switch"
-Data_Type:          real                    boolean   
-Default_Value:      0.01                    TRUE   
-Limits:             [1e-12 0.5]	             -       
-Vector:              no                      no     
-Vector_Bounds:       -                       -      
-Null_Allowed:       yes                     yes    
+Data_Type:          real                    boolean
+Default_Value:      0.01                    TRUE
+Limits:             [1e-12 0.5]	             -
+Vector:              no                      no
+Vector_Bounds:       -                       -
+Null_Allowed:       yes                     yes
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:     limit
+Description:        "const or linearily extrapolated output"
+Data_Type:          boolean
+Default_Value:      FALSE
+Limits:             -
+Vector:             no
+Vector_Bounds:      -
+Null_Allowed:       yes
 
 
 STATIC_VAR_TABLE:
 
-Static_Var_Name:    last_x_value   
-Data_Type:          pointer   
-Vector:              no   
-Description:        "iteration holding variable for limiting"   
+Static_Var_Name:    last_x_value
+Data_Type:          pointer
+Vector:              no
+Description:        "iteration holding variable for limiting"
 
 
 STATIC_VAR_TABLE:
