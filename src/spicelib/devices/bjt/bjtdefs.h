@@ -309,10 +309,10 @@ typedef struct sBJTinstance {
 /* the above to avoid allocating memory when it is not needed */
 
 #ifdef KLU
-    BindElement *BJTcolColPrimeBinding ;
+    BindElement *BJTcollCollCXBinding ;
     BindElement *BJTbaseBasePrimeBinding ;
     BindElement *BJTemitEmitPrimeBinding ;
-    BindElement *BJTcolPrimeColBinding ;
+    BindElement *BJTcollCXCollBinding ;
     BindElement *BJTcolPrimeBasePrimeBinding ;
     BindElement *BJTcolPrimeEmitPrimeBinding ;
     BindElement *BJTbasePrimeBaseBinding ;
@@ -330,9 +330,13 @@ typedef struct sBJTinstance {
     BindElement *BJTsubstSubstBinding ;
     BindElement *BJTsubstConSubstBinding ;
     BindElement *BJTsubstSubstConBinding ;
-    BindElement *BJTsubstConSubstConBinding ;
     BindElement *BJTbaseColPrimeBinding ;
     BindElement *BJTcolPrimeBaseBinding ;
+    BindElement *BJTcollCXcollCXBinding ;
+    BindElement *BJTcollCXBasePrimeBinding ;
+    BindElement *BJTbasePrimeCollCXBinding ;
+    BindElement *BJTcolPrimeCollCXBinding ;
+    BindElement *BJTcollCXColPrimeBinding ;
 #endif
 
 } BJTinstance ;
