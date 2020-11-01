@@ -7607,7 +7607,7 @@ static struct card *pspice_compat(struct card *oldcard)
     new_str = copy(".param gmin = 1e-12");
     nextcard = insert_new_line(nextcard, new_str, 3, 0);
     /* add funcs limit, pwr, pwrs, stp, if, int */
-    new_str = copy(".func limit(x, a, b) { min(max(x, a), b) }");
+    new_str = copy(".func limit(x, a, b) { max(min(x, a), b) }");
     nextcard = insert_new_line(nextcard, new_str, 4, 0);
     new_str = copy(".func pwr(x, a) { pow(x, a) }");
     nextcard = insert_new_line(nextcard, new_str, 5, 0);
