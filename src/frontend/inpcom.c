@@ -4825,7 +4825,7 @@ static void inp_compat(struct card *card)
                     }
                     ckt_array[3] = tprintf(
                             ".model xfer_%s pwl(x_array=[%s] y_array=[%s] "
-                            "input_domain=0.1 fraction=TRUE)",
+                            "input_domain=0.1 fraction=TRUE limit=TRUE)",
                             title_tok, xar, yar);
                     // comment out current variable e line
                     *(card->line) = '*';
@@ -5001,7 +5001,8 @@ static void inp_compat(struct card *card)
                     tfree(firstno);
                     tfree(secondno);
                 }
-                ckt_array[3] = tprintf(".model xfer_%s pwl(x_array=[%s] y_array=[%s] input_domain=0.1 fraction=TRUE)", stok, xar, yar);
+                ckt_array[3] = tprintf(".model xfer_%s pwl(x_array=[%s] y_array=[%s] "
+                    "input_domain=0.1 fraction=TRUE limit=TRUE)", stok, xar, yar);
                 // comment out current variable g line
                 *(card->line) = '*';
                 // insert new lines immediately after current line
@@ -8033,7 +8034,7 @@ static struct card *pspice_compat(struct card *oldcard)
                 tfree(card->line);
                 rep_spar(modpar);
                 card->line = tprintf(
-                        ".model a%s aswitch(%s %s %s %s  log=TRUE limit=TRUE)", modname,
+                        ".model a%s pswitch(%s %s %s %s  log=TRUE)", modname,
                         modpar[0], modpar[1], modpar[2], modpar[3]);
             }
             for (i = 0; i < 4; i++)
@@ -8214,7 +8215,7 @@ static struct card *pspice_compat(struct card *oldcard)
                 tfree(card->line);
                 rep_spar(modpar);
                 card->line = tprintf(
-                    ".model a%s aswitch(%s %s %s %s  log=TRUE limit=TRUE)", modname,
+                    ".model a%s pswitch(%s %s %s %s  log=TRUE)", modname,
                     modpar[0], modpar[1], modpar[2], modpar[3]);
             }
             for (i = 0; i < 4; i++)
