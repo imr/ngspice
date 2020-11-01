@@ -13,11 +13,11 @@ Model Author         : 1990 Michael Schröter TU Dresden
  * - lambda functions are used to calculate derivatives of larger Verilog Macros
  */
 
-#include "cmath"
+#include <cmath>
 #ifndef M_PI
 #define M_PI 3.1415926535897932384626433832795
 #endif
-#include <duals/dual>
+#include "duals/dual"
 #include "hicumL2.hpp"
 #include "hicumL2temp.hpp"
 #include <functional>

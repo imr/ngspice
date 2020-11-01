@@ -4,11 +4,11 @@ Spice3 Implementation: 2019-2020 Dietmar Warning, Markus Müller, Mario Krattenm
 Model Author         : 1990 Michael Schröter TU Dresden
 **********/
 
-#include "cmath"
+#include <cmath>
 #ifndef M_PI
 #define M_PI 3.1415926535897932384626433832795
 #endif
-#include <duals/dual>
+#include "duals/dual"
 #include "hicumL2.hpp"
 #include <functional>
 
