@@ -4678,9 +4678,9 @@ static char *search_plain_identifier(char *str, const char *identifier)
 
    Cxxx n1 n2 C = {equation} or Cxxx n1 n2 {equation}
    -->
-   Exxx  n-aux 0  n1 n2  1
+   Exxx  n-aux 0  n2 n1  1
    Cxxx  n-aux 0         1
-   Bxxx  n2 n1  I = i(Exxx) * equation
+   Bxxx  n1 n2  I = i(Exxx) * equation
 
    Lxxx n1 n2 L = {equation} or Lxxx n1 n2 {equation}
    -->
@@ -5285,9 +5285,15 @@ static void inp_compat(struct card *card)
         }
         /* Cxxx n1 n2 C = {equation} or Cxxx n1 n2 {equation}
            -->
-           Exxx  n-aux 0  n1 n2  1
+           Exxx  n-aux 0  n2 n1  1
            Cxxx  n-aux 0         1
-           Bxxx  n2 n1  I = i(Exxx) * equation
+           Bxxx  n1 n2  I = i(Exxx) * equation
+           or
+           Cxxx n1 n2 Q = {equation}
+           -->
+           Exxx  n-aux 0  n2 n1  1
+           Cxxx  n-aux 0         1
+           Bxxx  n1 n2  I = i(Exxx) * equation / v(n1,n2)
         */
         else if (*curr_line == 'c') {
             cut_line = curr_line;
@@ -5295,14 +5301,13 @@ static void inp_compat(struct card *card)
             node1 = gettok(&cut_line);
             node2 = gettok(&cut_line);
             /* check only after skipping Cname and nodes, either may contain
-             * time (e.g. Ctime)*/
-            if (!b_transformation_wanted(cut_line)) {
+             * time (e.g. Ctime) - for charge formula transformation in any case */
+            if ((!strstr(curr_line, "q=")) && (!b_transformation_wanted(cut_line))) {
                 tfree(title_tok);
                 tfree(node1);
                 tfree(node2);
                 continue;
             }
-
             /* Find equation, starts with '{', till end of line */
             str_ptr = strchr(cut_line, '{');
             if (str_ptr == NULL) {
@@ -5343,26 +5348,44 @@ static void inp_compat(struct card *card)
                     }
                 }
             }
-            // Exxx  n-aux 0  n1 n2  1
+            // Exxx  n-aux 0  n2 n1  1
             ckt_array[0] = tprintf("e%s %s_int2 0 %s %s 1", title_tok,
-                    title_tok, node1, node2);
+                    title_tok, node2, node1);
             // Cxxx  n-aux 0  1
             ckt_array[1] = tprintf("c%s %s_int2 0 1", title_tok, title_tok);
-            // Bxxx  n2 n1  I = i(Exxx) * equation
-            if ((tc1_ptr == NULL) && (tc2_ptr == NULL)) {
-                ckt_array[2] = tprintf("b%s %s %s i = i(e%s) * (%s)",
-                        title_tok, node2, node1, title_tok, equation);
-            }
-            else if (tc2_ptr == NULL) {
-                ckt_array[2] = tprintf(
-                        "b%s %s %s i = i(e%s) * (%s) tc1=%15.8e reciproctc=1",
-                        title_tok, node2, node1, title_tok, equation, tc1);
-            }
-            else {
-                ckt_array[2] = tprintf("b%s %s %s i = i(e%s) * (%s) "
-                                       "tc1=%15.8e tc2=%15.8e reciproctc=1",
-                        title_tok, node2, node1, title_tok, equation, tc1,
-                        tc2);
+            // Bxxx  n1 n2  I = i(Exxx) * equation
+            if (strstr(curr_line, "c=")) { /* capacitance formulation */
+                if ((tc1_ptr == NULL) && (tc2_ptr == NULL)) {
+                    ckt_array[2] = tprintf("b%s %s %s i = i(e%s) * (%s)",
+                            title_tok, node1, node2, title_tok, equation);
+                }
+                else if (tc2_ptr == NULL) {
+                    ckt_array[2] = tprintf(
+                            "b%s %s %s i = i(e%s) * (%s) tc1=%15.8e reciproctc=1",
+                            title_tok, node1, node2, title_tok, equation, tc1);
+                }
+                else {
+                    ckt_array[2] = tprintf("b%s %s %s i = i(e%s) * (%s) "
+                                           "tc1=%15.8e tc2=%15.8e reciproctc=1",
+                            title_tok, node1, node2, title_tok, equation, tc1,
+                            tc2);
+                }
+            } else {                       /* charge formulation */
+                if ((tc1_ptr == NULL) && (tc2_ptr == NULL)) {
+                    ckt_array[2] = tprintf("b%s %s %s i = i(e%s) * (%s) / (v(%s)-v(%s))",
+                            title_tok, node1, node2, title_tok, equation, node1, node2);
+                }
+                else if (tc2_ptr == NULL) {
+                    ckt_array[2] = tprintf(
+                            "b%s %s %s i = i(e%s) * (%s) / (v(%s)-v(%s)) tc1=%15.8e reciproctc=1",
+                            title_tok, node1, node2, title_tok, equation, node1, node2, tc1);
+                }
+                else {
+                    ckt_array[2] = tprintf("b%s %s %s i = i(e%s) * (%s) / (v(%s)-v(%s))"
+                                           "tc1=%15.8e tc2=%15.8e reciproctc=1",
+                            title_tok, node1, node2, title_tok, equation, node1, node2, tc1,
+                            tc2);
+                }
             }
             tc1_ptr = NULL;
             tc2_ptr = NULL;
