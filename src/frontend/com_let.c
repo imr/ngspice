@@ -30,6 +30,7 @@ static int get_index_values(char *s, int n_elem_this_dim,
 int get_one_index_value(const char *s, int *p_index);
 
 /* let <vec_name> = <expr>
+ * let <vec_name> = <vec_name_old> if variable 'plainlet' is set
  * let <vec_name>[<bracket_expr>] = <expr>
  *      <bracket_expr> = <index_expr> <sep> <index_expr> <sep> ...
  *                              <index_expr>
@@ -125,16 +126,29 @@ void com_let(wordlist *wl)
         n_dst_index = vec_dst->v_numdims;
     } /* end of case that an indexing bracket '[' was found */
 
-
     /* Evaluate rhs */
-    if ((names = ft_getpnames_from_string(
-            rhs, TRUE)) == (struct pnode *) NULL) {
-        fprintf(cp_err, "Error: RHS \"%s\" invalid\n", rhs);
-        goto quit;
+    /* Just copy a vector. rhs has to be a valid existing vector name
+       May be used to copy vectors with forbidden characters in their names
+       into a vector with a valid name.*/
+    if (cp_getvar("plainlet", CP_BOOL, NULL, 0)) {
+        vec_src = vec_get(rhs);
+        if (vec_src == (struct dvec *) NULL) {
+            fprintf(cp_err, "Error: Can't evaluate \"%s\"\n", rhs);
+            goto quit;
+        }
     }
-    if ((vec_src = ft_evaluate(names)) == (struct dvec *) NULL) {
-        fprintf(cp_err, "Error: Can't evaluate \"%s\"\n", rhs);
-        goto quit;
+    /* evaluate the rhs expression as usual, math characters may not be used in vec names,
+       the expression parser then will complain about a syntax error */
+    else {
+        if ((names = ft_getpnames_from_string(
+            rhs, TRUE)) == (struct pnode*)NULL) {
+            fprintf(cp_err, "Error: RHS \"%s\" invalid\n", rhs);
+            goto quit;
+        }
+        if ((vec_src = ft_evaluate(names)) == (struct dvec*)NULL) {
+            fprintf(cp_err, "Error: Can't evaluate \"%s\"\n", rhs);
+            goto quit;
+        }
     }
 
     if (vec_src->v_link2) {
