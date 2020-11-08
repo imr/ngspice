@@ -5291,9 +5291,9 @@ static void inp_compat(struct card *card)
            or
            Cxxx n1 n2 Q = {equation}
            -->
-           Exxx  n-aux 0  n2 n1  1
-           Cxxx  n-aux 0         1
-           Bxxx  n1 n2  I = i(Exxx) * equation / v(n1,n2)
+           Gxxx  n1 n2 n-aux 0  1
+           Lxxx  n-aux 0        1
+           Bxxx  0 n-aux I = equation
         */
         else if (*curr_line == 'c') {
             cut_line = curr_line;
@@ -5348,13 +5348,13 @@ static void inp_compat(struct card *card)
                     }
                 }
             }
-            // Exxx  n-aux 0  n2 n1  1
-            ckt_array[0] = tprintf("e%s %s_int2 0 %s %s 1", title_tok,
-                    title_tok, node2, node1);
-            // Cxxx  n-aux 0  1
-            ckt_array[1] = tprintf("c%s %s_int2 0 1", title_tok, title_tok);
-            // Bxxx  n1 n2  I = i(Exxx) * equation
             if (strstr(curr_line, "c=")) { /* capacitance formulation */
+                // Exxx  n-aux 0  n2 n1  1
+                ckt_array[0] = tprintf("e%s %s_int1 0 %s %s 1", title_tok,
+                        title_tok, node2, node1);
+                // Cxxx  n-aux 0  1
+                ckt_array[1] = tprintf("c%s %s_int1 0 1", title_tok, title_tok);
+                // Bxxx  n1 n2  I = i(Exxx) * equation
                 if ((tc1_ptr == NULL) && (tc2_ptr == NULL)) {
                     ckt_array[2] = tprintf("b%s %s %s i = i(e%s) * (%s)",
                             title_tok, node1, node2, title_tok, equation);
@@ -5371,20 +5371,25 @@ static void inp_compat(struct card *card)
                             tc2);
                 }
             } else {                       /* charge formulation */
+                // Gxxx  n1 n2 n-aux 0  1
+                ckt_array[0] = tprintf("g%s %s %s %s_int1 0 1", 
+                            title_tok, node1, node2, title_tok);
+                // Lxxx  n-aux 0 1
+                ckt_array[1] = tprintf("l%s %s_int1 0 1", title_tok, title_tok);
+                // Bxxx  0 n-aux I = equation
                 if ((tc1_ptr == NULL) && (tc2_ptr == NULL)) {
-                    ckt_array[2] = tprintf("b%s %s %s i = i(e%s) * (%s) / (v(%s)-v(%s))",
-                            title_tok, node1, node2, title_tok, equation, node1, node2);
+                    ckt_array[2] = tprintf("b%s 0 %s_int1 i = (%s)",
+                            title_tok, title_tok, equation);
                 }
                 else if (tc2_ptr == NULL) {
                     ckt_array[2] = tprintf(
-                            "b%s %s %s i = i(e%s) * (%s) / (v(%s)-v(%s)) tc1=%15.8e reciproctc=1",
-                            title_tok, node1, node2, title_tok, equation, node1, node2, tc1);
+                            "b%s 0 %s_int1 i = (%s) tc1=%15.8e reciproctc=1",
+                            title_tok, title_tok, equation, tc1);
                 }
                 else {
-                    ckt_array[2] = tprintf("b%s %s %s i = i(e%s) * (%s) / (v(%s)-v(%s))"
+                    ckt_array[2] = tprintf("b%s 0 %s_int1 i = (%s) "
                                            "tc1=%15.8e tc2=%15.8e reciproctc=1",
-                            title_tok, node1, node2, title_tok, equation, node1, node2, tc1,
-                            tc2);
+                            title_tok, title_tok, equation, tc1, tc2);
                 }
             }
             tc1_ptr = NULL;
