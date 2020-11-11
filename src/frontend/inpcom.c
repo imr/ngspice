@@ -6107,10 +6107,11 @@ static char *get_quoted_token(char *string, char **token)
         return string;
 
     if (isquote(*s)) {
-
+        /* we may find single ' or double " quotes */
+        char thisquote = *s;
         char *t = ++s;
 
-        while (*t && !isquote(*t))
+        while (*t && !(*t == thisquote))
             t++;
 
         if (!*t) { /* teriminator quote not found */
