@@ -31,6 +31,7 @@ Table of contents
  7.1 BJT - Bipolar Junction Transistor
  7.2 BJT2 - Bipolar Junction Transistor
  7.3 VBIC - Bipolar Junction Transistor
+ 7.4 HICUM2 - Bipolar Model
 8. FET devices
  8.1 JFET - Junction Field Effect transistor
 9. HFET Devices
@@ -65,7 +66,6 @@ Table of contents
  13.1 EKV MOS model
  13.2 PSP MOS model
  13.3 HICUM0 Bipolar Model
- 13.4 HICUM2 Bipolar Model
  13.5 Mextram Bipolar Model
 14. XSPICE code models
 
