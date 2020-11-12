@@ -115,7 +115,6 @@ HICUMtemp(GENmodel *inModel, CKTcircuit *ckt)
     /* Pre-compute many useful parameters
      */
 {
-    int iret;
     HICUMmodel *model = (HICUMmodel *)inModel;
     HICUMinstance *here;
 
@@ -130,14 +129,14 @@ HICUMtemp(GENmodel *inModel, CKTcircuit *ckt)
 
             if(here->HICUMdtempGiven) here->HICUMtemp = here->HICUMtemp + here->HICUMdtemp;
 
-            iret = hicum_thermal_update(model, here, &here -> HICUMtemp, &here->HICUMtemp_Vrth);
+            hicum_thermal_update(model, here, &here -> HICUMtemp, &here->HICUMtemp_Vrth);
 
         }
     }
     return(OK);
 }
 
-int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double * HICUMTemp, double * Tdev_Vrth)
+void hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double * HICUMTemp, double * Tdev_Vrth)
 {
     HICUMmodel *model = (HICUMmodel *)inModel;
     HICUMinstance *here = (HICUMinstance *)inInstance;
@@ -517,5 +516,4 @@ int hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double 
     here->HICUMrth_t.rpart = a.rpart();
     here->HICUMrth_t.dpart = a.dpart();
 
-    return(0);
 }
