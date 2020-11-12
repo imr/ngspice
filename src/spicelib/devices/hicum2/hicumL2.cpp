@@ -411,8 +411,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
     //end of variables
 
-    int _iret;
-
 #ifndef PREDICTOR
     double xfact;
 #endif
@@ -1797,7 +1795,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             // Thermal update
             if (selfheat) {
                 Temp =  here->HICUMtemp+Vrth;
-                _iret = hicum_thermal_update(model, here, &Temp, &Tdev_Vrth);
+                hicum_thermal_update(model, here, &Temp, &Tdev_Vrth);
 
                 here->HICUMdtemp_sh  = Temp - here->HICUMtemp;
                 here->HICUMtemp_Vrth = Tdev_Vrth;
