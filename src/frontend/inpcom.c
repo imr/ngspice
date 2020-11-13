@@ -9172,6 +9172,10 @@ static void inp_poly_2g6_compat(struct card* deck) {
             curr_line = nexttok(curr_line);
             curr_line = nexttok(curr_line);
             curr_line = nexttok(curr_line);
+            if (!curr_line) {
+                fprintf(stderr, "Error: not enough parameters in line\n   %s\n", thisline);
+                controlled_exit(1);
+            }
             if (*curr_line == '\0')
                 continue;
             break;
@@ -9179,6 +9183,10 @@ static void inp_poly_2g6_compat(struct card* deck) {
         case 'h':
             curr_line = nexttok(curr_line);
             curr_line = nexttok(curr_line);
+            if (!curr_line) {
+                fprintf(stderr, "Error: not enough parameters in line\n   %s\n", thisline);
+                controlled_exit(1);
+            }
             if (*curr_line == '\0')
                 continue;
             break;
