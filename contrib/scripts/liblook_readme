@@ -1,9 +1,0 @@
-Liblook is a script that can show specified model or sub-circuit entry in
-spice library. Common use look like this:
-
-liblook lib_name [text_to_find] [lines_before] [lines_after]
-
-lines_before and lines_after are used when you want to specify how many lines
-you want to see before or after given text. Look to he source for more
-details.
-
