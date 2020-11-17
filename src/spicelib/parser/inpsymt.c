@@ -281,3 +281,25 @@ static int hash(char *name, int tsize)
 
     return (int) (hash % (unsigned) tsize);
 }
+
+/* Just tests for the existence of a node. If node is found, its
+   token and node adresses are fed back.
+   Return value 0 if no node is found, E_EXISTS if its already there */
+int INPtermSearch(CKTcircuit* ckt, char** token, INPtables* tab, CKTnode** node)
+{
+    int key;
+    struct INPnTab* t;
+    NG_IGNORE(ckt);
+
+    key = hash(*token, tab->INPtermsize);
+    for (t = tab->INPtermsymtab[key]; t; t = t->t_next) {
+        if (!strcmp(*token, t->t_ent)) {
+            FREE(*token);
+            *token = t->t_ent;
+            if (node)
+                *node = t->t_node;
+            return (E_EXISTS);
+        }
+    }
+    return (0);
+}

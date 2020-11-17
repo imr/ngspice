@@ -90,9 +90,17 @@ INPpas3(CKTcircuit *ckt, struct card *data, INPtables *tab, TSKtask *task,
                     /* looks like V - must be V(xx) - get xx now*/
                     char *nodename;
                     INPgetNetTok(&line,&nodename,1);
-                    if (INPtermInsert(ckt,&nodename,tab,&node1)!=E_EXISTS)
+                    /* If node is not found, issue a warning, ignore the defective token */
+                    if (INPtermSearch(ckt, &nodename, tab, &node1) != E_EXISTS) {
                         fprintf(stderr,
-                                "Warning : Nodeset on non-existant node - %s\n", nodename);
+                            "Warning : Nodeset on non-existent node - %s, ignored\n", nodename);
+                        fprintf(stderr,
+                            "   Please check line %s\n\n", current->line);
+                        FREE(name);
+                        /* Gobble the rest of the token */
+                        line = nexttok(line);
+                        continue;
+                    }
                     ptemp.rValue = INPevaluate(&line,&error,1);
                     IFC(setNodeParm, (ckt, node1, which, &ptemp, NULL));
                     FREE(name);
@@ -131,9 +139,17 @@ INPpas3(CKTcircuit *ckt, struct card *data, INPtables *tab, TSKtask *task,
                     /* looks like V - must be V(xx) - get xx now*/
                     char *nodename;
                     INPgetNetTok(&line,&nodename,1);
-                    if (INPtermInsert(ckt,&nodename,tab,&node1)!=E_EXISTS)
+                    /* If node is not found, issue a warning, ignore the defective token */
+                    if (INPtermSearch(ckt, &nodename, tab, &node1) != E_EXISTS) {
                         fprintf(stderr,
-                                "Warning : IC on non-existant node - %s\n", nodename);
+                            "Warning : IC on non-existent node - %s, ignored\n", nodename);
+                        fprintf(stderr,
+                            "   Please check line %s\n\n", current->line);
+                        FREE(name);
+                        /* Gobble the rest of the token */
+                        line = nexttok(line);
+                        continue;
+                    }
                     ptemp.rValue = INPevaluate(&line,&error,1);
                     IFC(setNodeParm, (ckt, node1, which, &ptemp, NULL));
                     FREE(name);
