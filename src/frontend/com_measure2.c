@@ -1147,9 +1147,17 @@ measure_valid_vector(
     )
 {
     struct dvec *d;             /* measurement vector */
+    char* ptr;
+    long num;
 
     if (varname == NULL)
         return TRUE;
+
+    /* If varname is a simple number, don't use this as a
+    name of a vetor, but as a number */
+    num = strtol(varname, &ptr, 10);
+    if (*ptr == '\0')
+        return FALSE;
 
     d = vec_get(varname);
     if (d == NULL)
