@@ -932,11 +932,6 @@ fi
 # Recapitulate settings:
 AC_MSG_RESULT([Settings which were chosen:])
 
-if test "x$enable_sense2" = xyes; then
-    AC_DEFINE([WANT_SENSE2], [], [Define if we want spice2 sensitivity analysis])
-    AC_MSG_RESULT([Spice2 sensitivity analysis enabled])
-    AC_MSG_WARN([This feature is UNSUPPORTED])
-fi
 if test "x$enable_nobypass" = xyes; then
     AC_DEFINE([NOBYPASS], [], [Define if we want NOBYPASS])
     AC_MSG_RESULT([NOBYPASS option enabled])
@@ -1309,7 +1304,6 @@ AC_CONFIG_FILES([Makefile
                  src/xspice/enh/Makefile
                  src/xspice/ipc/Makefile
                  src/xspice/idn/Makefile
-                 src/unsupported/Makefile
                  tests/Makefile
                  tests/bsim1/Makefile
                  tests/bsim2/Makefile
