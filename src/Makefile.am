@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
 SUBDIRS = include/ngspice misc maths frontend spicelib
-DIST_SUBDIRS = include/ngspice misc maths frontend spicelib xspice ciderlib unsupported
+DIST_SUBDIRS = include/ngspice misc maths frontend spicelib xspice ciderlib
 
 if XSPICE_WANTED
 SUBDIRS += xspice
@@ -9,10 +9,6 @@ endif
 
 if CIDER_WANTED
 SUBDIRS += ciderlib
-endif
-
-if SENSE2_WANTED
-SUBDIRS += unsupported
 endif
 
 if !TCL_MODULE
@@ -153,10 +149,6 @@ endif
 ngspice_LDADD += \
 	spicelib/analysis/libckt.la \
 	spicelib/devices/libdev.la
-
-if SENSE2_WANTED
-ngspice_LDADD += unsupported/libunsupported.la
-endif
 
 if XSPICE_WANTED
 ngspice_LDADD += \
