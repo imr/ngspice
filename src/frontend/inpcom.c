@@ -4629,6 +4629,78 @@ static char *search_plain_identifier(char *str, const char *identifier)
     return NULL;
 }
 
+/* return a string that consists of tc1 and tc2 evaluated
+   or having a rhs for numparam expansion {...}.
+   The retun string has to be freed by the caller after its usage. */
+static char* eval_tc(char* line, char *tline) {
+    double tc1, tc2;
+    char *str_ptr, *tc1_ptr, *tc2_ptr, *tc1_str = NULL, *tc2_str = NULL;
+    char* cut_line = line;
+    str_ptr = strstr(cut_line, "tc1");
+    if (str_ptr) {
+        /* We need to have 'tc1=something */
+        if (str_ptr[3] &&
+            (isspace_c(str_ptr[3]) || (str_ptr[3] == '='))) {
+            tc1_ptr = strchr(str_ptr, '=');
+            if (tc1_ptr) {
+                tc1_ptr++;
+                int error = 0;
+                tc1 = INPevaluate(&tc1_ptr, &error, 1);
+                /*We have a value and create the tc1 string */
+                if (error == 0) {
+                    tc1_str = tprintf("tc1=%15.8e", tc1);
+                }
+                else if (error == 1 && *tc1_ptr == '{') {
+                    char *bra = gettok_char(&tc1_ptr, '}', TRUE, TRUE);
+                    tc1_str = tprintf("tc1=%s", bra);
+                    tfree(bra);
+                }
+                else {
+                    fprintf(stderr, "Warning: Cannot copy tc1 in line\n   %s\n   ignored\n", tline);
+                    tc1_str = copy(" ");
+                }
+            }
+        }
+    }
+    else {
+        tc1_str = copy(" ");
+    }
+    cut_line = line;
+    str_ptr = strstr(cut_line, "tc2");
+    if (str_ptr) {
+        /* We need to have 'tc2=something */
+        if (str_ptr[3] &&
+            (isspace_c(str_ptr[3]) || (str_ptr[3] == '='))) {
+            tc2_ptr = strchr(str_ptr, '=');
+            if (tc2_ptr) {
+                tc2_ptr++;
+                int error = 0;
+                tc2 = INPevaluate(&tc2_ptr, &error, 1);
+                /*We have a value and create the tc2 string */
+                if (error == 0) {
+                    tc2_str = tprintf("tc2=%15.8e", tc2);
+                }
+                else if (error == 1 && *tc2_ptr == '{') {
+                    char* bra = gettok_char(&tc2_ptr, '}', TRUE, TRUE);
+                    tc2_str = tprintf("tc2=%s", bra);
+                    tfree(bra);
+                }
+                else {
+                    fprintf(stderr, "Warning: Cannot copy tc2 in line\n   %s\n   ignored\n", tline);
+                    tc2_str = copy(" ");
+                }
+            }
+        }
+    }
+    else {
+        tc2_str = copy(" ");
+    }
+    char* ret_str = tprintf("%s %s", tc1_str, tc2_str);
+    tfree(tc1_str);
+    tfree(tc2_str);
+
+    return ret_str;
+}
 
 /* ps compatibility:
    Exxx n1 n2 TABLE {0.45*v(1)} = (-1, -0.5) (-0.5, 0) (0, 2) (0.5, 2) (1, 1)
@@ -4700,8 +4772,7 @@ static void inp_compat(struct card *card)
 
     int skip_control = 0;
 
-    char *equation, *tc1_ptr = NULL, *tc2_ptr = NULL;
-    double tc1 = 0.0, tc2 = 0.0;
+    char *equation;
 
     for (; card; card = card->nextcard) {
 
@@ -5196,32 +5267,9 @@ static void inp_compat(struct card *card)
             }
             else
                 equation = gettok_char(&str_ptr, '}', TRUE, TRUE);
-            str_ptr = strstr(cut_line, "tc1");
-            if (str_ptr) {
-                /* We need to have 'tc1=something */
-                if (str_ptr[3] &&
-                        (isspace_c(str_ptr[3]) || (str_ptr[3] == '='))) {
-                    tc1_ptr = strchr(str_ptr, '=');
-                    if (tc1_ptr) {
-                        tc1_ptr++;
-                        int error;
-                        tc1 = INPevaluate(&tc1_ptr, &error, 1);
-                    }
-                }
-            }
-            str_ptr = strstr(cut_line, "tc2");
-            if (str_ptr) {
-                /* We need to have 'tc2=something */
-                if (str_ptr[3] &&
-                        (isspace_c(str_ptr[3]) || (str_ptr[3] == '='))) {
-                    tc2_ptr = strchr(str_ptr, '=');
-                    if (tc2_ptr) {
-                        tc2_ptr++;
-                        int error;
-                        tc2 = INPevaluate(&tc2_ptr, &error, 1);
-                    }
-                }
-            }
+
+            /* evauate tc1 and tc2 */
+            char* tcrstr = eval_tc(cut_line, card->line);
 
             /* white noise model by x2line, x3line, x4line
                if instance parameter noisy=1 (or noise=1) is set */
@@ -5229,44 +5277,17 @@ static void inp_compat(struct card *card)
             if (strstr(cut_line, "noisy=1") || strstr(cut_line, "noise=1"))
                 rnoise = TRUE;
 
-            if ((tc1_ptr == NULL) && (tc2_ptr == NULL)) {
-                xline = tprintf("b%s %s %s i = v(%s, %s)/(%s)", title_tok,
-                        node1, node2, node1, node2, equation);
-                if (rnoise) {
-                    x2line = tprintf("b%s_1 %s %s i = i(v%s_3)/sqrt(%s)",
-                            title_tok, node1, node2, title_tok, equation);
-                    x3line =
-                            tprintf("r%s_2 %s_3 0 1.0", title_tok, title_tok);
-                    x4line = tprintf("v%s_3 %s_3 0 0", title_tok, title_tok);
-                }
+            xline = tprintf("b%s %s %s i = v(%s, %s)/(%s) %s reciproctc=1",
+                    title_tok, node1, node2, node1, node2, equation, tcrstr);
+            if (rnoise) {
+                x2line = tprintf("b%s_1 %s %s i = i(v%s_3)/sqrt(%s)",
+                        title_tok, node1, node2, title_tok, equation);
+                x3line = tprintf("r%s_2 %s_3 0 1.0 %s",
+                        title_tok, title_tok, tcrstr);
+                x4line = tprintf("v%s_3 %s_3 0 0", title_tok, title_tok);
             }
-            else if (tc2_ptr == NULL) {
-                xline = tprintf("b%s %s %s i = v(%s, %s)/(%s) tc1=%15.8e "
-                                "reciproctc=1",
-                        title_tok, node1, node2, node1, node2, equation, tc1);
-                if (rnoise) {
-                    x2line = tprintf("b%s_1 %s %s i = i(v%s_3)/sqrt(%s)",
-                            title_tok, node1, node2, title_tok, equation);
-                    x3line = tprintf("r%s_2 %s_3 0 1.0 tc1=%15.8e", title_tok,
-                            title_tok, tc1);
-                    x4line = tprintf("v%s_3 %s_3 0 0", title_tok, title_tok);
-                }
-            }
-            else {
-                xline = tprintf("b%s %s %s i = v(%s, %s)/(%s) tc1=%15.8e "
-                                "tc2=%15.8e reciproctc=1",
-                        title_tok, node1, node2, node1, node2, equation, tc1,
-                        tc2);
-                if (rnoise) {
-                    x2line = tprintf("b%s_1 %s %s i = i(v%s_3)/sqrt(%s)",
-                            title_tok, node1, node2, title_tok, equation);
-                    x3line = tprintf("r%s_2 %s_3 0 1.0 tc1=%15.8e tc2=%15.8e",
-                            title_tok, title_tok, tc1, tc2);
-                    x4line = tprintf("v%s_3 %s_3 0 0", title_tok, title_tok);
-                }
-            }
-            tc1_ptr = NULL;
-            tc2_ptr = NULL;
+
+            tfree(tcrstr);
 
             // comment out current old R line
             *(card->line) = '*';
@@ -5322,32 +5343,10 @@ static void inp_compat(struct card *card)
             }
             else
                 equation = gettok_char(&str_ptr, '}', TRUE, TRUE);
-            str_ptr = strstr(cut_line, "tc1");
-            if (str_ptr) {
-                /* We need to have 'tc1=something */
-                if (str_ptr[3] &&
-                        (isspace_c(str_ptr[3]) || (str_ptr[3] == '='))) {
-                    tc1_ptr = strchr(str_ptr, '=');
-                    if (tc1_ptr) {
-                        tc1_ptr++;
-                        int error;
-                        tc1 = INPevaluate(&tc1_ptr, &error, 1);
-                    }
-                }
-            }
-            str_ptr = strstr(cut_line, "tc2");
-            if (str_ptr) {
-                /* We need to have 'tc2=something */
-                if (str_ptr[3] &&
-                        (isspace_c(str_ptr[3]) || (str_ptr[3] == '='))) {
-                    tc2_ptr = strchr(str_ptr, '=');
-                    if (tc2_ptr) {
-                        tc2_ptr++;
-                        int error;
-                        tc2 = INPevaluate(&tc2_ptr, &error, 1);
-                    }
-                }
-            }
+
+            /* evauate tc1 and tc2 */
+            char* tcrstr = eval_tc(cut_line, card->line);
+
             if (strstr(curr_line, "c=")) { /* capacitance formulation */
                 // Exxx  n-aux 0  n2 n1  1
                 ckt_array[0] = tprintf("e%s %s_int1 0 %s %s 1", title_tok,
@@ -5355,21 +5354,9 @@ static void inp_compat(struct card *card)
                 // Cxxx  n-aux 0  1
                 ckt_array[1] = tprintf("c%s %s_int1 0 1", title_tok, title_tok);
                 // Bxxx  n1 n2  I = i(Exxx) * equation
-                if ((tc1_ptr == NULL) && (tc2_ptr == NULL)) {
-                    ckt_array[2] = tprintf("b%s %s %s i = i(e%s) * (%s)",
-                            title_tok, node1, node2, title_tok, equation);
-                }
-                else if (tc2_ptr == NULL) {
-                    ckt_array[2] = tprintf(
-                            "b%s %s %s i = i(e%s) * (%s) tc1=%15.8e reciproctc=1",
-                            title_tok, node1, node2, title_tok, equation, tc1);
-                }
-                else {
-                    ckt_array[2] = tprintf("b%s %s %s i = i(e%s) * (%s) "
-                                           "tc1=%15.8e tc2=%15.8e reciproctc=1",
-                            title_tok, node1, node2, title_tok, equation, tc1,
-                            tc2);
-                }
+                ckt_array[2] = tprintf("b%s %s %s i = i(e%s) * (%s) "
+                                        "%s reciproctc=1",
+                        title_tok, node1, node2, title_tok, equation, tcrstr);
             } else {                       /* charge formulation */
                 // Gxxx  n1 n2 n-aux 0  1
                 ckt_array[0] = tprintf("g%s %s %s %s_int1 0 1", 
@@ -5377,23 +5364,11 @@ static void inp_compat(struct card *card)
                 // Lxxx  n-aux 0 1
                 ckt_array[1] = tprintf("l%s %s_int1 0 1", title_tok, title_tok);
                 // Bxxx  0 n-aux I = equation
-                if ((tc1_ptr == NULL) && (tc2_ptr == NULL)) {
-                    ckt_array[2] = tprintf("b%s 0 %s_int1 i = (%s)",
-                            title_tok, title_tok, equation);
-                }
-                else if (tc2_ptr == NULL) {
-                    ckt_array[2] = tprintf(
-                            "b%s 0 %s_int1 i = (%s) tc1=%15.8e reciproctc=1",
-                            title_tok, title_tok, equation, tc1);
-                }
-                else {
-                    ckt_array[2] = tprintf("b%s 0 %s_int1 i = (%s) "
-                                           "tc1=%15.8e tc2=%15.8e reciproctc=1",
-                            title_tok, title_tok, equation, tc1, tc2);
-                }
+                ckt_array[2] = tprintf("b%s 0 %s_int1 i = (%s) "
+                                        "%s reciproctc=1",
+                        title_tok, title_tok, equation, tcrstr);
             }
-            tc1_ptr = NULL;
-            tc2_ptr = NULL;
+            tfree(tcrstr);
             // comment out current variable capacitor line
             *(card->line) = '*';
             // insert new B source line immediately after current line
@@ -5439,55 +5414,21 @@ static void inp_compat(struct card *card)
             }
             else
                 equation = gettok_char(&str_ptr, '}', TRUE, TRUE);
-            str_ptr = strstr(cut_line, "tc1");
-            if (str_ptr) {
-                /* We need to have 'tc1=something */
-                if (str_ptr[3] &&
-                        (isspace_c(str_ptr[3]) || (str_ptr[3] == '='))) {
-                    tc1_ptr = strchr(str_ptr, '=');
-                    if (tc1_ptr) {
-                        tc1_ptr++;
-                        int error;
-                        tc1 = INPevaluate(&tc1_ptr, &error, 1);
-                    }
-                }
-            }
-            str_ptr = strstr(cut_line, "tc2");
-            if (str_ptr) {
-                /* We need to have 'tc2=something */
-                if (str_ptr[3] &&
-                        (isspace_c(str_ptr[3]) || (str_ptr[3] == '='))) {
-                    tc2_ptr = strchr(str_ptr, '=');
-                    if (tc2_ptr) {
-                        tc2_ptr++;
-                        int error;
-                        tc2 = INPevaluate(&tc2_ptr, &error, 1);
-                    }
-                }
-            }
+
+            /* evauate tc1 and tc2 */
+            char* tcrstr = eval_tc(cut_line, card->line);
+
             // Fxxx  n-aux 0  Bxxx  1
             ckt_array[0] = tprintf("f%s %s_int2 0 b%s -1",
                     title_tok, title_tok, title_tok);
             // Lxxx  n-aux 0  1
             ckt_array[1] = tprintf("l%s %s_int2 0 1", title_tok, title_tok);
             // Bxxx  n1 n2  V = v(n-aux) * equation
-            if ((tc1_ptr == NULL) && (tc2_ptr == NULL)) {
-                ckt_array[2] = tprintf("b%s %s %s v = v(%s_int2) * (%s)",
-                        title_tok, node1, node2, title_tok, equation);
-            }
-            else if (tc2_ptr == NULL) {
-                ckt_array[2] = tprintf("b%s %s %s v = v(%s_int2) * (%s) "
-                                       "tc1=%15.8e reciproctc=0",
-                        title_tok, node2, node1, title_tok, equation, tc1);
-            }
-            else {
-                ckt_array[2] = tprintf("b%s %s %s v = v(%s_int2) * (%s) "
-                                       "tc1=%15.8e tc2=%15.8e reciproctc=0",
-                        title_tok, node2, node1, title_tok, equation, tc1,
-                        tc2);
-            }
-            tc1_ptr = NULL;
-            tc2_ptr = NULL;
+            ckt_array[2] = tprintf("b%s %s %s v = v(%s_int2) * (%s) "
+                                    "%s reciproctc=0",
+                    title_tok, node2, node1, title_tok, equation, tcrstr);
+
+            tfree(tcrstr);
             // comment out current variable inductor line
             *(card->line) = '*';
             // insert new B source line immediately after current line
