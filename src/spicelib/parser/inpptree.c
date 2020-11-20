@@ -1266,6 +1266,8 @@ int PTlex (YYSTYPE *lvalp, struct PTltype *llocp, char **line)
     int token;
 
     sbuf = *line;
+
+
 #ifdef TRACE
 //    printf("entering lexer, sbuf = '%s', lastoken = %d, lasttype = %d\n",
 //        sbuf, lasttoken, lasttype);
@@ -1368,7 +1370,26 @@ int PTlex (YYSTYPE *lvalp, struct PTltype *llocp, char **line)
         token = TOK_LT;
         break;
       }
-
+    /* Don't parse the B source instance parameters, thus prevent memory leak.
+       As soon as we meet such parameter, token=0 is returned. */
+    case 't':
+        if (ciprefix("tc1=", sbuf) || ciprefix("tc2=", sbuf) || ciprefix("temp=", sbuf)) {
+            token = 0;
+            break;
+        }
+        /* FALLTHROUGH */
+    case 'd':
+        if (ciprefix("dtemp=", sbuf)) {
+            token = 0;
+            break;
+        }
+        /* FALLTHROUGH */
+    case 'r':
+        if (ciprefix("reciproctc=", sbuf)) {
+            token = 0;
+            break;
+        }
+        /* FALLTHROUGH */
     default:
         {
             int n1 = -1;
