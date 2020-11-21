@@ -371,7 +371,7 @@ int  ngSpice_Init_Evt(SendEvtData* sevtdata, SendInitEvtData* sinitevtdata, void
 /* send a circuit to ngspice.dll
    The circuit description is a dynamic array
    of char*. Each char* corresponds to a single circuit
-   line. The last entry of the array has to be a NULL */
+   line. The last entry of the array has to be a .end card. */
 IMPEXP
 int ngSpice_Circ(char** circarray);
 
