@@ -55,7 +55,7 @@ static struct card *mc_deck = NULL;
 static struct card *recent_deck = NULL;
 
 static void cktislinear(CKTcircuit *ckt, struct card *deck);
-void create_circbyline(char *line);
+void create_circbyline(char *line, bool reset, bool lastline);
 static bool doedit(char *filename);
 static void dotifeval(struct card *deck);
 static void eval_agauss(struct card *deck, char *fcn);
@@ -1716,10 +1716,16 @@ static void cktislinear(CKTcircuit *ckt, struct card *deck)
 char **circarray;
 
 
-void create_circbyline(char *line)
+void create_circbyline(char *line, bool reset, bool lastline)
 {
     static unsigned int linec = 0;
     static unsigned int n_elem_alloc = 0;
+
+    if (reset) {
+        linec = 0;
+        n_elem_alloc = 0;
+        tfree(circarray);
+    }
 
     /* Ensure up to 2 cards can be added */
     if (n_elem_alloc < linec + 2) {
@@ -1754,6 +1760,10 @@ void create_circbyline(char *line)
         linec = 0;
         n_elem_alloc = 0;
     }
+    /* If the .end statement is missing */
+    else if (lastline) {
+        fprintf(stderr, "Error: .end statement is missing in netlist!\n");
+    }
 } /* end of function create_circbyline */
 
 
@@ -1766,7 +1776,7 @@ void com_circbyline(wordlist *wl)
        This memory will be released line by line in inp_source(). */
 
     char *newline = wl_flatten(wl);
-    create_circbyline(newline);
+    create_circbyline(newline, FALSE, FALSE);
 }
 
 /* handle .if('expr') ... .elseif('expr') ... .else ... .endif statements.

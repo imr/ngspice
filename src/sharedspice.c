@@ -194,7 +194,7 @@ extern struct comm spcp_coms[ ];
 extern void DevInit(void);
 extern int SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator);
 extern wordlist *cp_varwl(struct variable *var);
-extern void create_circbyline(char *line);
+extern void create_circbyline(char *line, bool reset, bool lastline);
 
 void exec_controls(wordlist *shcontrols);
 void rem_controls(void);
@@ -971,6 +971,7 @@ IMPEXP
 int ngSpice_Circ(char** circa){
     int entries = 0, i;
     char* newline;
+    bool reset = FALSE, lastline = FALSE;
 
     if ( ! setjmp(errbufm) ) {
         intermj = 0;
@@ -978,14 +979,23 @@ int ngSpice_Circ(char** circa){
         /* count the entries */
         while (circa[entries]) {
             entries++;
+            char* line = circa[entries - 1];
+            if (ciprefix(".end", line) && (line[4] == '\0' || isspace_c(line[4])))
+                break;
         }
-        entries--; /* don't send the empty line */
+
         if (ft_ngdebug)
             fprintf(stdout, "\nngspiceCirc: received netlist array with %d entries\n", entries);
         /* create a local copy (to be freed in inpcom.c) */
         for (i = 0; i < entries; i++) {
             newline = copy(circa[i]);
-            create_circbyline(newline);
+            if (i == 0)
+                reset = TRUE;
+            else
+                reset = FALSE;
+            if (i == entries - 1)
+                lastline = TRUE;
+            create_circbyline(newline, reset, lastline);
         }
         return 0;
     }
