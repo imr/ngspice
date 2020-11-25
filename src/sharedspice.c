@@ -153,6 +153,7 @@ static bool cont_condition;
 #include "ngspice/memory.h"
 #include "frontend/com_measure2.h"
 #include "frontend/misccoms.h"
+#include "ngspice/stringskip.h"
 
 #ifdef HAVE_FTIME
 #include <sys/timeb.h>
@@ -978,8 +979,7 @@ int ngSpice_Circ(char** circa){
         immediate = FALSE;
         /* count the entries */
         while (circa[entries]) {
-            entries++;
-            char* line = circa[entries - 1];
+            char* line = skip_ws(circa[entries++]);
             if (ciprefix(".end", line) && (line[4] == '\0' || isspace_c(line[4])))
                 break;
         }
