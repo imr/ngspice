@@ -27,6 +27,8 @@ RESparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
     switch(param) {
     case RES_TEMP:
         here->REStemp = value->rValue + CONSTCtoK;
+        if (here->REStemp < 1e-6)
+            here->REStemp = 0;
         here->REStempGiven = TRUE;
         break;
     case RES_DTEMP:
