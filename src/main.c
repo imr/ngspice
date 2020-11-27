@@ -177,7 +177,6 @@ static int app_event_func(void);
 #endif
 
 static void show_help(void);
-static void show_version(void);
 static bool read_initialisation_file(const char *dir, const char *name);
 
 #ifdef SIMULATOR
@@ -700,19 +699,6 @@ show_help(void)
            "Report bugs to %s.\n", cp_program, Bug_Addr);
 }
 
-/* -------------------------------------------------------------------------- */
-static void
-show_version(void)
-{
-    printf("%s compiled from %s revision %s\n"
-           "Written originally by Berkeley University\n"
-           "Currently maintained by the NGSpice Project\n\n"
-           "Copyright (C) 1985-1996,"
-           "  The Regents of the University of California\n"
-           "Copyright (C) 1999-2011,"
-           "  The NGSpice Project\n", cp_program, PACKAGE, VERSION);
-}
-
 #ifdef SIMULATOR
 /* -------------------------------------------------------------------------- */
 static void
@@ -946,7 +932,7 @@ int main(int argc, char **argv)
             break;
 
         case 'v':       /* Version info */
-            show_version();
+            com_version(NULL);
             sp_shutdown(EXIT_INFO);
             break;
 
