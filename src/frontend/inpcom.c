@@ -4876,6 +4876,8 @@ static void inp_compat(struct card *card)
                     /* (x0, y0) (x1, y1) (x2, y2) to x0 x1 x2, y0 y1 y2 */
                     xar[0] = '\0';
                     yar[0] = '\0';
+                    int ipairs = 0;
+                    char* pair_line = cut_line;
                     while (*cut_line != '\0') {
                         firstno = gettok_node(&cut_line);
                         secondno = gettok_node(&cut_line);
@@ -4893,17 +4895,37 @@ static void inp_compat(struct card *card)
                         strcat(yar, " ");
                         tfree(firstno);
                         tfree(secondno);
+                        ipairs++;
                     }
-                    ckt_array[3] = tprintf(
+
+                    /* There is a strange usage of the TABLE function:
+                       A single pair (x0, y0) will return a constant voltage y0 */
+                    if (ipairs == 1) {
+                        tfree(ckt_array[1]);
+                        tfree(ckt_array[2]);
+                        firstno = gettok_node(&pair_line);
+                        tfree(firstno);
+                        secondno = gettok_node(&pair_line);
+                        ckt_array[1] = tprintf("v%s %s_int1 0 %s", title_tok,
+                            title_tok, secondno);
+                        tfree(secondno);
+                        // comment out current variable e line
+                        *(card->line) = '*';
+                        // insert new lines immediately after current line
+                        for (i = 0; i < 2; i++)
+                            card = insert_new_line(card, ckt_array[i], 0, 0);
+                    }
+                    else {
+                        ckt_array[3] = tprintf(
                             ".model xfer_%s pwl(x_array=[%s] y_array=[%s] "
                             "input_domain=0.1 fraction=TRUE limit=TRUE)",
                             title_tok, xar, yar);
-                    // comment out current variable e line
-                    *(card->line) = '*';
-                    // insert new lines immediately after current line
-                    for (i = 0; i < 4; i++)
-                        card = insert_new_line(card, ckt_array[i], 0, 0);
-
+                        // comment out current variable e line
+                        *(card->line) = '*';
+                        // insert new lines immediately after current line
+                        for (i = 0; i < 4; i++)
+                            card = insert_new_line(card, ckt_array[i], 0, 0);
+                    }
                     tfree(expression);
                     tfree(title_tok);
                     tfree(node1);
@@ -5055,6 +5077,8 @@ static void inp_compat(struct card *card)
                 /* (x0, y0) (x1, y1) (x2, y2) to x0 x1 x2, y0 y1 y2 */
                 xar[0] = '\0';
                 yar[0] = '\0';
+                int ipairs = 0;
+                char* pair_line = cut_line;
                 while (*cut_line != '\0') {
                     firstno = gettok_node(&cut_line);
                     secondno = gettok_node(&cut_line);
@@ -5071,14 +5095,35 @@ static void inp_compat(struct card *card)
                     strcat(yar, " ");
                     tfree(firstno);
                     tfree(secondno);
+                    ipairs++;
                 }
-                ckt_array[3] = tprintf(".model xfer_%s pwl(x_array=[%s] y_array=[%s] "
-                    "input_domain=0.1 fraction=TRUE limit=TRUE)", stok, xar, yar);
-                // comment out current variable g line
-                *(card->line) = '*';
-                // insert new lines immediately after current line
-                for (i = 0; i < 4; i++)
-                    card = insert_new_line(card, ckt_array[i], 0, 0);
+
+                /* There is a strange usage of the TABLE function:
+                   A single pair (x0, y0) will return a constant current y0 */
+                if (ipairs == 1) {
+                    tfree(ckt_array[1]);
+                    tfree(ckt_array[2]);
+                    firstno = gettok_node(&pair_line);
+                    tfree(firstno);
+                    secondno = gettok_node(&pair_line);
+                    ckt_array[1] = tprintf("v%s %s_int1 0 %s", title_tok,
+                        stok, secondno);
+                    tfree(secondno);
+                    // comment out current variable e line
+                    *(card->line) = '*';
+                    // insert new lines immediately after current line
+                    for (i = 0; i < 2; i++)
+                        card = insert_new_line(card, ckt_array[i], 0, 0);
+                }
+                else {
+                    ckt_array[3] = tprintf(".model xfer_%s pwl(x_array=[%s] y_array=[%s] "
+                        "input_domain=0.1 fraction=TRUE limit=TRUE)", stok, xar, yar);
+                    // comment out current variable g line
+                    *(card->line) = '*';
+                    // insert new lines immediately after current line
+                    for (i = 0; i < 4; i++)
+                        card = insert_new_line(card, ckt_array[i], 0, 0);
+                }
 
                 tfree(expression);
                 tfree(title_tok);
