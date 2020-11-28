@@ -97,9 +97,9 @@ void hicum_TMPHICJ(duals::duald vt, double vt0, duals::duald qtt0, duals::duald 
                    double *c_j_t, double *vd_t, double *w_t,
                    double *c_j_t_dT, double *vd_t_dT, double *w_t_dT)
 {
-    duals::duald c_j_t_result = 0;
-    duals::duald vd_t_result = 0;
-    duals::duald w_t_result = 0;
+    duals::duald c_j_t_result;
+    duals::duald vd_t_result;
+    duals::duald w_t_result;
     TMPHICJ(vt, vt0, qtt0, ln_qtt0, mg, c_j, vd0, z, w, is_al, vgeff, &c_j_t_result, &vd_t_result, &w_t_result);
     *c_j_t    = c_j_t_result.rpart();
     *c_j_t_dT = c_j_t_result.dpart();

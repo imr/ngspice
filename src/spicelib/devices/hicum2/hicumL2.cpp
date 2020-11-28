@@ -99,8 +99,8 @@ duals::duald DIOY, le, vt;
 //  C		: depletion capacitance
 void QJMODF(duals::duald T, duals::duald c_0, duals::duald u_d, double z, duals::duald a_j, duals::duald U_cap, duals::duald * C, duals::duald * Qz)
 {
-    duals::duald DFV_f, DFv_e, DFs_q, DFs_q2, DFv_j, DFdvj_dv, DFQ_j, DFQ_j1, DFC_j1, DFb, vt;
-    vt = CONSTboltz * T / CHARGE;
+    duals::duald DFV_f, DFv_e, DFs_q, DFs_q2, DFv_j, DFdvj_dv, DFQ_j, DFC_j1, DFb, vt;
+    vt = CONSTboltz * T / CHARGE; 
     if (c_0 > 0.0) {
         DFV_f	 = u_d*(1.0-exp(-log(a_j)/z));
         DFv_e	 = (DFV_f-U_cap)/vt;
@@ -137,7 +137,7 @@ void QJMODF(duals::duald T, duals::duald c_0, duals::duald u_d, double z, duals:
 //  C		: depletion capacitance
 void QJMOD(duals::duald T, duals::duald c_0, duals::duald u_d, double z, double a_j, duals::duald v_pt, duals::duald U_cap, duals::duald * C, duals::duald * Qz)
 {
-    duals::duald dummy, DQ_j1, DQ_j2, DQ_j3, DC_j1, DC_j2, DC_j3, De_1, De_2, Dzr1, DCln1, DCln2, Dz1, Dv_j1, Dv_j2, Dv_j3, De, Da, Dv_r, Dv_j4, Dv_e, DC_c, DC_max, DV_f, Dv_p, Dz_r, vt;
+    duals::duald DQ_j1, DQ_j2, DQ_j3, DC_j1, DC_j2, DC_j3, De_1, De_2, Dzr1, DCln1, DCln2, Dz1, Dv_j1, Dv_j2, De, Da, Dv_r, Dv_j4, Dv_e, DC_c, DC_max, DV_f, Dv_p, Dz_r, vt;
     vt = CONSTboltz * T / CHARGE;
     if (c_0 > 0.0){
         Dz_r	= z/4.0;
@@ -376,7 +376,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     double it_Vbiei, it_Vbici, it_dT;
     double Qf_Vbiei, Qf_Vbici, Qf_dT;
     double Qr_Vbiei, Qr_Vbici, Qr_dT;
-    duals::duald result_itf, result_itr, result_Qp, result_Qf, result_Qr, result_Q_bf, result_a_h, result_Q_p, result_Tf; //intermediate variables when calling void dual functions
+    duals::duald result_itf, result_itr, result_Qf, result_Qr, result_Q_bf, result_a_h, result_Q_p, result_Tf; //intermediate variables when calling void dual functions
     double T_f0, Q_p, a_h;
     double Q_bf, Q_bf_Vbiei, Q_bf_Vbici, Q_bf_dT;
     double Q_pT, Q_pT_dVbiei, Q_pT_dVbici, Q_pT_dT;
@@ -534,7 +534,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
     std::function<void (duals::duald, duals::duald, duals::duald, duals::duald, duals::duald*, duals::duald*, duals::duald*, duals::duald*)> HICQFC = [&](duals::duald T, duals::duald Ix, duals::duald I_CK, duals::duald FFT_pcS, duals::duald * Q_fC, duals::duald * Q_CT, duals::duald * T_fC, duals::duald * T_cT)
     {
         duals::duald FCln, FCa, FCa1, FCd_a, FCw, FCdw_daick, FCda1_dw, FCf_ci, FCdfCT_ditf, FCw2, FCz, FCdfc_dw, FFdVc_ditf, FCf_CT, FCf1, FCf2, FCrt;
-        duals::duald FCa_cl, FCa_ck, FCdaick_ditf, FCxl, FCxb, FCdf1_dw, FCz_1, FCf3, FCdf2_dw, FCdf3_dw, FCdw_ditf, FCdfc_ditf;
+        duals::duald FCa_ck, FCdaick_ditf, FCxl, FCxb, FCdf1_dw, FCz_1, FCf3, FCdf2_dw, FCdf3_dw, FCdw_ditf, FCdfc_ditf;
         duals::duald FCdfCT_dw, FCd_f, FFdVc;
 
         duals::duald vt;
