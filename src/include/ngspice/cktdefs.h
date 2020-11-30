@@ -77,7 +77,7 @@ struct CKTcircuit {
 
 
     STATistics *CKTstat;        /* The STATistics structure */
-    double *(CKTstates[8]);     /* Used as memory of past steps ??? */
+    double *CKTstates[8];       /* Used as memory of past steps ??? */
 
     /* Some shortcut for CKTstates */
 #define CKTstate0 CKTstates[0]
