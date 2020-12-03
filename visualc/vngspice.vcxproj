@@ -1345,6 +1345,9 @@
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\src\include\cppduals\duals\dual">
+      <FileType>Document</FileType>
+    </ClInclude>
     <None Include="..\src\xspice\icm\objects.inc" />
   </ItemGroup>
   <ItemGroup>
