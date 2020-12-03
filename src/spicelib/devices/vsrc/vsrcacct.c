@@ -284,7 +284,7 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                             int n = (int) floor(time / TS + 0.5);
                             volatile double nearest = n * TS;
 
-                            if(AlmostEqualUlps(nearest, time, 3)) {
+                            if(AlmostEqualUlps(nearest, time, 10)) {
                             /* carefully calculate `next'
                             *  make sure it is really identical
                             *  with the next calculated `nearest' value
