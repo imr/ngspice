@@ -639,11 +639,10 @@ gettok_instance(char **s)
 }
 
 
-/* get the next token starting at next non white spice, stopping
-   at p, if inc_p is true, then including p, else excluding p,
-   return NULL if p is not found.
-   If '}', ']'  or ')' and nested is true, find corresponding p
-
+/* get the next token starting at next non white space, stopping
+   at p. If inc_p is true, then including p, else excluding p.
+   Return NULL if p is not found.
+   If '}', ']'  or ')' and nested is true, find corresponding p.
 */
 
 char *
