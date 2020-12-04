@@ -99,6 +99,11 @@ ISRCask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *
             return (OK);
 #endif
 /* gtri - end - add current value information */
+#ifdef SHARED_MODULE
+        case ISRC_EXTERNAL:
+            /* Don't do anything */
+            return (OK);
+#endif
         default:
             return (E_BADPARM);
     }
