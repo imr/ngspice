@@ -9157,7 +9157,14 @@ static void inp_poly_2g6_compat(struct card* deck) {
         case 'e':
             curr_line = nexttok(curr_line);
             curr_line = nexttok(curr_line);
-            curr_line = nexttok(curr_line);
+            /* The next token may be a simple text token or an expression
+               enclosed in brackets */
+            if (*curr_line == '{') {
+                char* tmptok = gettok_char(&curr_line, '}', TRUE, TRUE);
+                tfree(tmptok);
+            }
+            else
+                curr_line = nexttok(curr_line);
             if (!curr_line) {
                 fprintf(stderr, "Error: not enough parameters in line\n   %s\n", thisline);
                 controlled_exit(1);
@@ -9168,7 +9175,14 @@ static void inp_poly_2g6_compat(struct card* deck) {
         case 'f':
         case 'h':
             curr_line = nexttok(curr_line);
-            curr_line = nexttok(curr_line);
+            /* The next token may be a simple text token or an expression
+               enclosed in brackets */
+            if (*curr_line == '{') {
+                char* tmptok = gettok_char(&curr_line, '}', TRUE, TRUE);
+                tfree(tmptok);
+            }
+            else
+                curr_line = nexttok(curr_line);
             if (!curr_line) {
                 fprintf(stderr, "Error: not enough parameters in line\n   %s\n", thisline);
                 controlled_exit(1);
