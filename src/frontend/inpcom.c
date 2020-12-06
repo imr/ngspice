@@ -4636,22 +4636,20 @@ static char* eval_tc(char* line, char *tline) {
     double tc1, tc2;
     char *str_ptr, *tc1_ptr, *tc2_ptr, *tc1_str = NULL, *tc2_str = NULL;
     char* cut_line = line;
-    str_ptr = strstr(cut_line, "tc1");
+    str_ptr = strstr(cut_line, "tc1=");
     if (str_ptr) {
         /* We need to have 'tc1=something */
-        if (str_ptr[3] &&
-            (isspace_c(str_ptr[3]) || (str_ptr[3] == '='))) {
-            tc1_ptr = strchr(str_ptr, '=');
-            if (tc1_ptr) {
-                tc1_ptr++;
-                int error = 0;
-                tc1 = INPevaluate(&tc1_ptr, &error, 1);
-                /*We have a value and create the tc1 string */
-                if (error == 0) {
-                    tc1_str = tprintf("tc1=%15.8e", tc1);
-                }
-                else if (error == 1 && *tc1_ptr == '{') {
-                    char *bra = gettok_char(&tc1_ptr, '}', TRUE, TRUE);
+        if (str_ptr[4]) {
+            tc1_ptr = str_ptr + 4;
+            int error = 0;
+            tc1 = INPevaluate(&tc1_ptr, &error, 1);
+            /*We have a value and create the tc1 string */
+            if (error == 0) {
+                tc1_str = tprintf("tc1=%15.8e", tc1);
+            }
+            else if (error == 1 && *tc1_ptr == '{' && tc1_ptr + 1 && *(tc1_ptr + 1) != '}') {
+                char* bra = gettok_char(&tc1_ptr, '}', TRUE, TRUE);
+                if (bra) {
                     tc1_str = tprintf("tc1=%s", bra);
                     tfree(bra);
                 }
@@ -4660,28 +4658,30 @@ static char* eval_tc(char* line, char *tline) {
                     tc1_str = copy(" ");
                 }
             }
+            else {
+                fprintf(stderr, "Warning: Cannot copy tc1 in line\n   %s\n   ignored\n", tline);
+                tc1_str = copy(" ");
+            }
         }
     }
     else {
         tc1_str = copy(" ");
     }
     cut_line = line;
-    str_ptr = strstr(cut_line, "tc2");
+    str_ptr = strstr(cut_line, "tc2=");
     if (str_ptr) {
         /* We need to have 'tc2=something */
-        if (str_ptr[3] &&
-            (isspace_c(str_ptr[3]) || (str_ptr[3] == '='))) {
-            tc2_ptr = strchr(str_ptr, '=');
-            if (tc2_ptr) {
-                tc2_ptr++;
-                int error = 0;
-                tc2 = INPevaluate(&tc2_ptr, &error, 1);
-                /*We have a value and create the tc2 string */
-                if (error == 0) {
-                    tc2_str = tprintf("tc2=%15.8e", tc2);
-                }
-                else if (error == 1 && *tc2_ptr == '{') {
-                    char* bra = gettok_char(&tc2_ptr, '}', TRUE, TRUE);
+        if (str_ptr[4]) {
+            tc2_ptr = str_ptr + 4;
+            int error = 0;
+            tc2 = INPevaluate(&tc2_ptr, &error, 1);
+            /*We have a value and create the tc1 string */
+            if (error == 0) {
+                tc2_str = tprintf("tc2=%15.8e", tc2);
+            }
+            else if (error == 1 && *tc2_ptr == '{' && tc2_ptr + 1  && *(tc2_ptr + 1) != '}') {
+                char* bra = gettok_char(&tc2_ptr, '}', TRUE, TRUE);
+                if (bra) {
                     tc2_str = tprintf("tc2=%s", bra);
                     tfree(bra);
                 }
@@ -4689,6 +4689,10 @@ static char* eval_tc(char* line, char *tline) {
                     fprintf(stderr, "Warning: Cannot copy tc2 in line\n   %s\n   ignored\n", tline);
                     tc2_str = copy(" ");
                 }
+            }
+            else {
+                fprintf(stderr, "Warning: Cannot copy tc2 in line\n   %s\n   ignored\n", tline);
+                tc2_str = copy(" ");
             }
         }
     }
