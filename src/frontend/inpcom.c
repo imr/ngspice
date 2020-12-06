@@ -4675,7 +4675,7 @@ static char* eval_tc(char* line, char *tline) {
             tc2_ptr = str_ptr + 4;
             int error = 0;
             tc2 = INPevaluate(&tc2_ptr, &error, 1);
-            /*We have a value and create the tc1 string */
+            /*We have a value and create the tc2 string */
             if (error == 0) {
                 tc2_str = tprintf("tc2=%15.8e", tc2);
             }
