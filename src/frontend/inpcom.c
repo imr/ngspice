@@ -6027,7 +6027,8 @@ static char *inp_modify_exp(/* NOT CONST */ char *expr)
                 if ((*s == '(') || cieq(buf, "hertz") ||
                         cieq(buf, "temper") || cieq(buf, "time") ||
                         cieq(buf, "pi") || cieq(buf, "e") ||
-                        cieq(buf, "pwl")) {
+                        cieq(buf, "pwl") || cieq(buf, "dtemp") ||
+                        cieq(buf, "temp")) {
                     wl->wl_word = copy(buf);
                 }
                 else if (cieq(buf, "tc1") || cieq(buf, "tc2") ||
