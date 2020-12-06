@@ -528,7 +528,9 @@ public:
     : _real(re), _dual(du) {}
 
   /// Copy construct from a dual of equal depth.
+#if defined (_MSC_VER)
 #pragma warning (disable : 4244) /* floats are not used in HICUM */
+#endif
   template<class X, CPPDUALS_ONLY_SAME_DEPTH_AS_T(T,X),
            CPPDUALS_ENABLE_IF(!is_complex<X>::value)>
   dual(const dual<X> & x)
