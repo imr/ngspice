@@ -92,13 +92,9 @@ ISRCask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *
                         *(ckt->CKTrhsOld + here->ISRCnegNode));
             }
             return(OK);
-/* gtri - begin - add current value information */
-#ifdef XSPICE
         case ISRC_CURRENT:
             value->rValue = here->ISRCcurrent;
             return (OK);
-#endif
-/* gtri - end - add current value information */
 #ifdef SHARED_MODULE
         case ISRC_EXTERNAL:
             /* Don't do anything */

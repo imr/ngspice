@@ -409,11 +409,7 @@ loadDone:
 
 /* gtri - end - wbk - modify to process srcFact, etc. for all sources */
 
-#ifdef XSPICE
-/* gtri - begin - wbk - record value so it can be output if requested */
             here->ISRCcurrent = m * value;
-/* gtri - end   - wbk - record value so it can be output if requested */
-#endif
         } // for loop instances
     } // for loop models
 
