@@ -53,13 +53,10 @@ ISRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                         double tshift;
                         double time = 0.;
                         double basetime = 0;
-
-/* gtri - begin - wbk - add PHASE parameter */
-#ifdef XSPICE
                         double PHASE;
                         double phase;
                         double deltat;
-#endif
+
                         TD = here->ISRCfunctionOrder > 2
                             ? here->ISRCcoeffs[2] : 0.0;
                         TR = here->ISRCfunctionOrder > 3
@@ -74,15 +71,13 @@ ISRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                         PER = here->ISRCfunctionOrder > 6
                             && here->ISRCcoeffs[6] != 0.0
                             ? here->ISRCcoeffs[6] : ckt->CKTfinalTime;
-#ifdef XSPICE
                         PHASE = here->ISRCfunctionOrder > 7
                             ? here->ISRCcoeffs[7] : 0.0;
-#endif
+
                         /* offset time by delay */
                         time = ckt->CKTtime - TD;
                         tshift = TD;
 
-#ifdef XSPICE
                      /* normalize phase to 0 - 360° */
                      /* normalize phase to cycles */
                         phase = PHASE / 360.0;
@@ -92,8 +87,6 @@ ISRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                             deltat -= PER;
                         time += deltat;
                         tshift = TD - deltat;
-#endif
-/* gtri - end - wbk - add PHASE parameter */
 
                         if(time >= PER) {
                             /* repeating signal - figure out where we are */
