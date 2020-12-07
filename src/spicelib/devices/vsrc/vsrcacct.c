@@ -54,12 +54,10 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                         double time = 0.;
                         double basetime = 0;
 
-/* gtri - begin - wbk - add PHASE parameter */
-#ifdef XSPICE
                         double PHASE;
                         double phase;
                         double deltat;
-#endif
+
                         TD = here->VSRCfunctionOrder > 2
                             ? here->VSRCcoeffs[2] : 0.0;
                         TR = here->VSRCfunctionOrder > 3
@@ -74,15 +72,13 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                         PER = here->VSRCfunctionOrder > 6
                             && here->VSRCcoeffs[6] != 0.0
                             ? here->VSRCcoeffs[6] : ckt->CKTfinalTime;
-#ifdef XSPICE
                         PHASE = here->VSRCfunctionOrder > 7
                             ? here->VSRCcoeffs[7] : 0.0;
-#endif
+
                         /* offset time by delay */
                         time = ckt->CKTtime - TD;
                         tshift = TD;
 
-#ifdef XSPICE
                      /* normalize phase to 0 - 360° */
                      /* normalize phase to cycles */
                         phase = PHASE / 360.0;
@@ -92,8 +88,6 @@ VSRCaccept(CKTcircuit *ckt, GENmodel *inModel)
                             deltat -= PER;
                         time += deltat;
                         tshift = TD - deltat;
-#endif
-/* gtri - end - wbk - add PHASE parameter */
 
                         if(time >= PER) {
                             /* repeating signal - figure out where we are */
