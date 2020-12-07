@@ -224,7 +224,7 @@ static int DEVNUM = NUMELEMS(static_devices);
 /*Make this dynamic for later attempt to make all devices dynamic*/
 SPICEdev **DEVices=NULL;
 
-/*Flag to indicate that device type it is,
+/*Flag to indicate what device type it is,
  *0 = normal spice device
  *1 = xspice device
  */
