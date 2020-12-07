@@ -51,12 +51,8 @@ typedef struct sISRCinstance {
     struct trnoise_state *ISRCtrnoise_state; /* transient noise */
     struct trrandom_state *ISRCtrrandom_state; /* transient random source */
 
-/* gtri - begin - add member to hold current source value */
-#ifdef XSPICE
     /* needed for outputting results */
     double ISRCcurrent; /* current value */
-#endif
-/* gtri - end - add member to hold current source value */
 
     unsigned ISRCdcGiven     :1 ;  /* flag to indicate dc value given */
     unsigned ISRCmGiven      :1 ;  /* flag to indicate multiplier given */

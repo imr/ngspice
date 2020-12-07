@@ -38,11 +38,7 @@ IFparm ISRCpTable[] = { /* parameters */
  IP  ("ac",      ISRC_AC,        IF_REALVEC,"AC magnitude, phase vector"),
  OP  ("v",       ISRC_VOLTS,     IF_REAL,   "Voltage across the supply"),
  OP  ("p",       ISRC_POWER,     IF_REAL,   "Power supplied by the source"),
-/* gtri - begin - add parameter for current source value */
-#ifdef XSPICE
  OP  ("current", ISRC_CURRENT,   IF_REAL,   "Current in DC or Transient mode"),
-#endif
-/* gtri - end - add parameter for current source value */
  IP  ("distof1", ISRC_D_F1,      IF_REALVEC,"f1 input for distortion"),
  IP  ("distof2", ISRC_D_F2,      IF_REALVEC,"f2 input for distortion")
 };
