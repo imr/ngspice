@@ -208,7 +208,7 @@ parse_line(char *line, char *tokens[], int num_tokens, double values[], bool fou
 static bool
 is_equal(double result, double expectedResult)
 {
-    return fabs(result - expectedResult) < 1e-15;
+    return fabs(result - expectedResult) < 1e-9;
 }
 
 
@@ -216,7 +216,7 @@ static bool
 in_range(double value, double min, double max)
 {
     /* the standard binning rule is: min <= value < max */
-    return is_equal(value, min) || (min < value && value < max);
+    return is_equal(value, min)  || is_equal(value, max) || (min < value && value < max);
 }
 
 

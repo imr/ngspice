@@ -180,6 +180,7 @@ static struct card *ltspice_compat(struct card *oldcard);
 static void ltspice_compat_a(struct card *oldcard);
 
 static void inp_repair_dc_ps(struct card* oldcard);
+static void inp_get_w_l_x(struct card* oldcard);
 
 #ifndef EXT_ASC
 static void utf8_syntax_check(struct card *deck);
@@ -563,6 +564,66 @@ static void new_compat_mode(void)
     }
 }
 
+/* We check x lines for w= and l= and fill in their values.
+   To be used when expanding subcircuits with binned model cards. */
+void inp_get_w_l_x(struct card* card) {
+    for (; card; card = card->nextcard) {
+        char* curr_line = card->line;
+        int skip_control = 0;
+        char* w = NULL, * l = NULL;
+
+        /* exclude any command inside .control ... .endc */
+        if (ciprefix(".control", curr_line)) {
+            skip_control++;
+            continue;
+        }
+        else if (ciprefix(".endc", curr_line)) {
+            skip_control--;
+            continue;
+        }
+        else if (skip_control > 0) {
+            continue;
+        }
+        /* only subcircuit invocations */
+        if (*curr_line != 'x' && !newcompat.hs && !newcompat.spe) {
+            card->w = card->l = 0;
+            continue;
+        }
+
+        w = strstr(curr_line, " w=");
+        if (w) {
+            int err;
+            w = w + 3;
+            card->w = (float)INPevaluate(&w, &err, 0);
+            if(err) { 
+                card->w = card->l = 0;
+                continue;
+           }
+        }
+        else {
+            card->w = card->l = 0;
+            continue;
+        }
+
+
+        l = strstr(curr_line, " l=");
+        if (l) {
+            int err;
+            l = l + 3;
+            card->l = (float)INPevaluate(&l, &err, 0);
+            if(err) { 
+                card->w = card->l = 0;
+                continue;
+           }
+        }
+        else {
+            card->w = card->l = 0;
+            continue;
+        }  
+    }
+}
+
+
 /*-------------------------------------------------------------------------
   Read the entire input file and return  a pointer to the first line of
   the linked list of 'card' records in data.  The pointer is stored in
@@ -679,6 +740,10 @@ struct card *inp_readall(FILE *fp, const char *dir_name,
         inp_fix_param_values(working);
 
         inp_reorder_params(subckt_w_params, cc);
+
+        /* Special handling for large PDKs: We need to know W and L of
+           transistor subcircuits by checking their x invokcation */
+        inp_get_w_l_x(working);
 
         inp_fix_inst_calls_for_numparam(subckt_w_params, working);
 //        tprint(working);
@@ -2107,7 +2172,6 @@ static const char *nlist_find(const struct nlist *nlist, const char *name)
     return NULL;
 }
 
-#if 0
 static const char *nlist_model_find(
         const struct nlist *nlist, const char *name)
 {
@@ -2117,7 +2181,6 @@ static const char *nlist_model_find(
             return nlist->names[i];
     return NULL;
 }
-#endif
 
 static void nlist_adjoin(struct nlist *nlist, char *name)
 {
@@ -2247,7 +2310,7 @@ static void comment_out_unused_subckt_models(struct card *start_card)
         char *line = card->line;
 
         /* no models embedded in these lines */
-        if (strchr("*vibefghkt", *line))
+        if (strchr(".*vibefghkt", *line))
             continue;
 
         /* there is no .subckt, .model or .param inside .control ... .endc */
@@ -2323,26 +2386,34 @@ static void comment_out_unused_subckt_models(struct card *start_card)
 
         if (remove_subckt)
             *line = '*'; /* make line a comment */
-#if 0
-        else if (has_models &&
-                (ciprefix(".model", line) || ciprefix(".cmodel", line))) {
-            char *model_type = get_model_type(line);
-            char *model_name = get_subckt_model_name(line);
+    }
+
+    /* comment out any unused models */
+    for (card = start_card; card; card = card->nextcard) {
+
+        char* line = card->line;
+
+        if (*line == '*')
+            continue;
+
+        if (has_models &&
+            (ciprefix(".model", line) || ciprefix(".cmodel", line))) {
+            char* model_type = get_model_type(line);
+            char* model_name = get_subckt_model_name(line);
 
             /* keep R, L, C models because in addition to no. of terminals the
                value may be given, as in RE1 1 2 800 newres dtemp=5, so model
                name may be token no. 4 or 5, and, if 5, will not be detected
                by get_subckt_model_name()*/
             if (!cieq(model_type, "c") && !cieq(model_type, "l") &&
-                    !cieq(model_type, "r") &&
-                    !nlist_model_find(used_models, model_name)) {
+                !cieq(model_type, "r") &&
+                !nlist_model_find(used_models, model_name)) {
                 *line = '*';
             }
 
             tfree(model_type);
             tfree(model_name);
         }
-#endif
     }
 
     nlist_destroy(used_subckts);
@@ -8058,6 +8129,9 @@ static struct card *pspice_compat(struct card *oldcard)
                 card->line = tprintf(
                         ".model a%s aswitch(%s %s %s %s  log=TRUE  limit=TRUE)", modname,
                         modpar[0], modpar[1], modpar[2], modpar[3]);
+//                card->line = tprintf(
+//                        ".model a%s pswitch(%s %s %s %s  log=TRUE)", modname,
+//                        modpar[0], modpar[1], modpar[2], modpar[3]);
             }
             for (i = 0; i < 4; i++)
                 tfree(modpar[i]);
