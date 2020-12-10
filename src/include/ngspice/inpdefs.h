@@ -82,6 +82,8 @@ struct card {
     struct card *nextcard;
     struct card *actualLine;
     struct nscope *level;
+    float w;
+    float l;
 };
 
 /* structure used to save models in after they are read during pass 1 */
