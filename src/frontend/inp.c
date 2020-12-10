@@ -41,7 +41,7 @@ Author: 1985 Wayne A. Christopher
 #include "numparam/numpaif.h"
 #include "ngspice/stringskip.h"
 #include "ngspice/randnumb.h"
-
+#include "ngspice/compatmode.h"
 
 #define line_free(line, flag)                   \
     do {                                        \
@@ -749,6 +749,28 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                 for (ii = 0; ii < 5; ii++)
                     eval_agauss(deck, statfcn[ii]);
             }
+
+            /* If we have large PDK deck, search for scale option and set 
+            the variable 'scale'*/
+            if (newcompat.hs || newcompat.spe) {
+                struct card* scan;
+                double dscale = 1;
+                struct card* scoptions = line_reverse(line_nconc(options, inp_deckcopy(com_options)));
+                for (scan = scoptions; scan; scan = scan->nextcard) {
+                    char* tmpscale = strstr(scan->line, "scale=");
+                    if (tmpscale) {
+                        int err;
+                        tmpscale = tmpscale + 6;
+                        dscale = INPevaluate(&tmpscale, &err, 1);
+                        if (err == 0)
+                            cp_vset("scale", CP_REAL, &dscale);
+                        else
+                            fprintf(stderr, "\nError: Could not set 'scale' variable\n");
+                        break;
+                    }
+                }
+            }
+
             /* Now expand subcircuit macros and substitute numparams.*/
             if (!cp_getvar("nosubckt", CP_BOOL, NULL, 0))
                 if ((deck->nextcard = inp_subcktexpand(deck->nextcard)) == NULL) {
