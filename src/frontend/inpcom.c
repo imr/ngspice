@@ -2310,7 +2310,7 @@ static void comment_out_unused_subckt_models(struct card *start_card)
         char *line = card->line;
 
         /* no models embedded in these lines */
-        if (strchr(".*vibefghkt", *line))
+        if (strchr("*vibefghkt", *line))
             continue;
 
         /* there is no .subckt, .model or .param inside .control ... .endc */
@@ -2330,6 +2330,10 @@ static void comment_out_unused_subckt_models(struct card *start_card)
             processing_subckt = TRUE;
         if (ciprefix(".ends", line) || ciprefix(".eom", line))
             processing_subckt = FALSE;
+
+        /* no models embedded in these lines */
+        if (*line == '.')
+            continue;
 
         if (!processing_subckt) {
             if (*line == 'x') {
