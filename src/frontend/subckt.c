@@ -887,7 +887,6 @@ struct card *inp_deckcopy_oc(struct card * deck)
 /*
  * Copy a deck, without the ->actualLine lines, without comment lines, and
  * without .control section(s).
- * First line is always copied (except being .control).
  * Keep the line numbers.
  */
 struct card* inp_deckcopy_ln(struct card* deck)
@@ -911,6 +910,11 @@ struct card* inp_deckcopy_ln(struct card* deck)
             deck = deck->nextcard;
             continue;
         }
+        else if (*(deck->line) == '*') {
+            deck = deck->nextcard;
+            continue;
+        }
+
         if (nd) { /* First card already found */
             /* d is the card at the end of the deck */
             d = d->nextcard = TMALLOC(struct card, 1);
@@ -928,9 +932,6 @@ struct card* inp_deckcopy_ln(struct card* deck)
         }
         d->actualLine = NULL;
         deck = deck->nextcard;
-        while (deck && *(deck->line) == '*') { /* skip comments */
-            deck = deck->nextcard;
-        }
     } /* end of loop over cards in the source deck */
 
     return nd;
