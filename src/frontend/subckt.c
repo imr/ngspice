@@ -1637,6 +1637,8 @@ numnodes(const char *line, struct subs *subs, wordlist const *modnames)
     /* for a given device type.                                          */
     /* Paolo Nenzi Jan-2001                                              */
 
+    /* If model names equal node names, this code will fail! */
+
     if ((c == 'm') || (c == 'p') || (c == 'q')) { /* IF this is a mos, cpl or bjt*/
         char *s = nexttok(line);       /* Skip the instance name */
         int gotit = 0;
