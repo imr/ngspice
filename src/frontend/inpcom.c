@@ -9230,6 +9230,15 @@ static void inp_poly_2g6_compat(struct card* deck) {
                 continue;
             if (ciprefix("cur", curr_line))
                 continue;
+            /* the next four are HSPICE specific */
+            if (ciprefix("vccs", curr_line))
+                continue;
+            if (ciprefix("vcvs", curr_line))
+                continue;
+            if (ciprefix("ccvs", curr_line))
+                continue;
+            if (ciprefix("cccs", curr_line))
+                continue;
             break;
         default:
             continue;
