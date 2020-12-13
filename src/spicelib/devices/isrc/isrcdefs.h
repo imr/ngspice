@@ -123,9 +123,7 @@ enum {
     ISRC_D_F2,
     ISRC_VOLTS,
     ISRC_AM,
-#ifdef XSPICE
     ISRC_CURRENT,
-#endif
 };
 
 enum {
