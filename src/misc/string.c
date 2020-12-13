@@ -76,7 +76,7 @@ char *dup_string(const char *str, size_t n_char)
     char *p;
 
     if ((p = TMALLOC(char, n_char + 1)) != NULL) {
-        (void) strncpy(p, str, n_char);
+        (void) strncpy(p, str, n_char + 1);
         p[n_char] = '\0';
     }
     return p;

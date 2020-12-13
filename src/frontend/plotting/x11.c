@@ -133,6 +133,8 @@ static void resize(Widget w, XtPointer client_data, XEvent *ev, Boolean *continu
 static void hardcopy(Widget w, XtPointer client_data, XtPointer call_data);
 static void killwin(Widget w, XtPointer client_data, XtPointer call_data);
 
+int X11_GetLenStr(GRAPH* gr, char* instring);
+
 
 static int
 errorhandler(Display *display, XErrorEvent *errorev)
@@ -739,7 +741,7 @@ X11_Text(const char *text, int x, int y, int angle)
     if (angle == 0) {
          XftDrawStringUtf8(
             DEVDEP(currentgraph).draw, &DEVDEP(currentgraph).color, DEVDEP(currentgraph).font0,
-                x, currentgraph->absolute.height - y, (FcChar8*)text, strlen(text));
+                x, currentgraph->absolute.height - y, (FcChar8*)text, (int)strlen(text));
     }
     else if (angle == 90) {
         int wlen=0, wheight;
@@ -748,7 +750,7 @@ X11_Text(const char *text, int x, int y, int angle)
 
         XftDrawStringUtf8(
             DEVDEP(currentgraph).draw, &DEVDEP(currentgraph).color, DEVDEP(currentgraph).font90,
-                x + (int)(1.5 * wlen), currentgraph->absolute.height - y + (int)(0.5 * wheight), (FcChar8*)text, strlen(text));
+                x + (int)(1.5 * wlen), currentgraph->absolute.height - y + (int)(0.5 * wheight), (FcChar8*)text, (int)strlen(text));
     }
     else
         fprintf(stderr, " Xft: angles other than 0 or 90 are not supported in ngspice\n");
@@ -1063,7 +1065,7 @@ zoomin(GRAPH *graph)
         SWAP(double, fy0, fy1);
     }
 
-    strncpy(buf2, graph->plotname, sizeof(buf2));
+    strncpy(buf2, graph->plotname, sizeof(buf2) - 1);
     if ((t = strchr(buf2, ':')) != NULL)
         *t = '\0';
 
@@ -1378,7 +1380,7 @@ Xget_str_length(const char *text, int* wlen, int* wheight, XftFont* gfont, char*
         XftPatternDestroy(ext_pat);
     }
     if(gfont)
-        XftTextExtentsUtf8( display, gfont, (XftChar8 *)text, strlen(text), &extents );
+        XftTextExtentsUtf8( display, gfont, (XftChar8 *)text, (int)strlen(text), &extents );
     else {
         return 1;
     }
