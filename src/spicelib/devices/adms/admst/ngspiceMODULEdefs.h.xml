@@ -89,20 +89,11 @@
 #endif
 
 #define EXIT_IF_ISNAN(var) \\
-if(isnan((double) var)) \\
 { \\
-  printf(&quot;%%s:%%i:bug:isnan:&quot;#var&quot;\\n&quot;,__FILE__,__LINE__); \\
-  printf(&quot;Please send this message to laurent.lemaitre@freescale.com\\n&quot;); \\
-  NGSPICE_DEBUG \\
-  exit(1); /*__asm__ __volatile__ (&quot;int \$03&quot;);*/ \\
-} \\
-if(isinf((double) var)) \\
-{ \\
-  printf(&quot;%%s:%%i:bug:isinf:&quot;#var&quot;\\n&quot;,__FILE__,__LINE__); \\
-  printf(&quot;Please send this message to laurent.lemaitre@freescale.com\\n&quot;); \\
-  NGSPICE_DEBUG \\
-  exit(1); /*__asm__ __volatile__ (&quot;int \$03&quot;);*/ \\
 }
+
+static inline double max(double x,double y)  { return ((x)&gt;(y))?(x):(y); }
+static inline double min(double x,double y)  { return ((x)&lt;(y))?(x):(y); }
 
 /* ngspice \$simparam variables
     gdev                (1/Ohms): Additional conductance to be added to nonlinear branches for conductance homotopy convergence algorithm.
@@ -133,56 +124,62 @@ if(isinf((double) var)) \\
 #define _circuit_temp      ckt-&gt;CKTtemp
 #define _scale             1.0
 
-#define _cos(val,arg)            val = cos(arg);
+#define _f_cos(val,arg)          val = cos(arg);
 #define _d_cos(val,dval,arg)     val = cos(arg);     dval = (-sin(arg));
-#define _sin(val,arg)            val = sin(arg);
+#define _f_sin(val,arg)          val = sin(arg);
 #define _d_sin(val,dval,arg)     val = sin(arg);     dval = (cos(arg));
-#define _tan(val,arg)            val = tan(arg);
+#define _f_tan(val,arg)          val = tan(arg);
 #define _d_tan(val,dval,arg)     val = tan(arg);     dval = (1.0/cos(arg)/cos(arg));
-#define _hypot(xy,x,y)           xy = sqrt((x)*(x)+(y)*(y));
+#define _f_asinh(val,arg)        val = asinh(arg);
+#define _d_asinh(val,dval,arg)   val = asinh(arg);   dval = (1.0/sqrt(arg*arg + 1));
+#define _f_hypot(xy,x,y)         xy = sqrt((x)*(x)+(y)*(y));
 #define _dx_hypot(dx,xy,x,y)     dx = (x)/(xy);
 #define _dy_hypot(dy,xy,x,y)     dy = (y)/(xy);
-#define _max(xy,x,y)             xy = ((x)&gt;(y))?(x):(y);
+#define _f_max(xy,x,y)           xy = ((x)&gt;(y))?(x):(y);
 #define _dx_max(dx,xy,x,y)       dx = ((x)&gt;(y))?1.0:0.0;
 #define _dy_max(dy,xy,x,y)       dy = ((x)&gt;(y))?0.0:1.0;
-#define _min(xy,x,y)             xy = ((x)&lt;(y))?(x):(y);
+#define _f_min(xy,x,y)           xy = ((x)&lt;(y))?(x):(y);
 #define _dx_min(dx,xy,x,y)       dx = ((x)&lt;(y))?1.0:0.0;
 #define _dy_min(dy,xy,x,y)       dy = ((x)&lt;(y))?0.0:1.0;
-#define _cosh(val,arg)           val = cosh(arg);
+#define _f_cosh(val,arg)         val = cosh(arg);
 #define _d_cosh(val,dval,arg)    val = cosh(arg);    dval = (sinh(arg));
-#define _sinh(val,arg)           val = sinh(arg);
+#define _f_sinh(val,arg)         val = sinh(arg);
 #define _d_sinh(val,dval,arg)    val = sinh(arg);    dval = (cosh(arg));
-#define _tanh(val,arg)           val = tanh(arg);
+#define _f_tanh(val,arg)         val = tanh(arg);
 #define _d_tanh(val,dval,arg)    val = tanh(arg);    dval = (1.0/cosh(arg)/cosh(arg));
-#define _acos(val,arg)           val = acos(arg);
+#define _f_acos(val,arg)         val = acos(arg);
 #define _d_acos(val,dval,arg)    val = acos(arg);    dval = (-1.0/sqrt(1-arg*arg));
-#define _asin(val,arg)           val = asin(arg);
+#define _f_asin(val,arg)         val = asin(arg);
 #define _d_asin(val,dval,arg)    val = asin(arg);    dval = (+1.0/sqrt(1-arg*arg));
-#define _atan(val,arg)           val = atan(arg);
+#define _f_atan(val,arg)         val = atan(arg);
 #define _d_atan(val,dval,arg)    val = atan(arg);    dval = (+1.0/(1+arg*arg));
-#define _logE(val,arg)           val = log(arg);
+#define _f_logE(val,arg)         val = log(arg);
 #define _d_logE(val,dval,arg)    val = log(arg);     dval = (1.0/arg);
-#define _log10(val,arg)          val = log10(arg);
+#define _f_log10(val,arg)        val = log10(arg);
 #define _d_log10(val,dval,arg)   val = log10(arg);   dval = (1.0/arg/log(10));
-#define _exp(val,arg)            val = exp(arg);
+#define _f_exp(val,arg)          val = exp(arg);
 #define _d_exp(val,dval,arg)     val = exp(arg);     dval = val;
-#define _sqrt(val,arg)           val = sqrt(arg);
+#define _f_sqrt(val,arg)         val = sqrt(arg);
 #define _d_sqrt(val,dval,arg)    val = sqrt(arg);    dval = (1.0/val/2.0);
-#define _pow(xy,x,y)             xy = pow(x,y);
+#define _f_pow(xy,x,y)           xy = pow(x,y);
 #define _dx_pow(dx,xy,x,y)       dx = (x==0.0)?0.0:((y/x)*xy);
 #define _dy_pow(dy,xy,x,y)       dy = (x==0.0)?0.0:((log(x)/exp(0.0))*xy);
 
-#define _div1(x,y)               ((x)/(y))
-#define _div0(xy,x,y)            xy=(x)/(y);
-#define _div(xy,dx,x,y)          dx=1/(y); xy=(x)*dx;
+#define _f_atan2(xy,x,y)         xy = atan2(x,y);
+#define _dx_atan2(dx,x,y)        dx = -(y)/((x)*(x)+(y)*(y));
+#define _dy_atan2(dy,x,y)        dy = (x)/((x)*(x)+(y)*(y));
+
+#define _f_div1(x,y)             ((x)/(y))
+#define _f_div0(xy,x,y)          xy=(x)/(y);
+#define _f_div(xy,dx,x,y)        dx=1/(y); xy=(x)*dx;
 #define _dx_div(dx,xy,x,y)
 #define _dy_div(dy,dx,xy,x,y)    dy = -xy*dx;
 
-#define _limexp(val,arg)         val = ((arg)&lt;(90)) ? (exp(arg)) : (exp(90)*(1.0+(arg-90)));
+#define _f_limexp(val,arg)       val = ((arg)&lt;(90)) ? (exp(arg)) : (exp(90)*(1.0+(arg-90)));
 #define _d_limexp(val,dval,arg)  val = ((arg)&lt;(90)) ? (exp(arg)) : (exp(90)*(1.0+(arg-90))); dval = val;
-#define _fabs(val,arg)           val = fabs(arg);
+#define _f_fabs(val,arg)         val = fabs(arg);
 #define _d_fabs(val,dval,arg)    val = fabs(arg);    dval = (((val)&gt;=0)?(+1.0):(-1.0));
-#define _abs(val)                ((val)&lt;(0) ? (-(val)):(val))
+#define _f_abs(val)              ((val)&lt;(0) ? (-(val)):(val))
 
 /* declarations for $(module) MOSFETs */
 
@@ -205,6 +202,17 @@ typedef struct s$(module)instance {
     <admst:text format="  /*%s*/"/>
   </admst:if>
   <admst:text format="\n"/>
+</admst:for-each>
+<admst:for-each select="node[grounded='no']">
+  <admst:choose>
+    <admst:when test="[location='internal']">
+      <admst:text format="  unsigned %(name)Node_mine :1;\n"/>
+    </admst:when>
+    <admst:otherwise>
+      <admst:text format="  unsigned %(name)Node_mine :1;\n"/>
+      <admst:text format="  unsigned %(name)Node_connected :1;\n"/>
+    </admst:otherwise>
+  </admst:choose>
 </admst:for-each>
   /* instance parameters */
 <admst:for-each select="variable[parametertype='instance' and input='yes']">
@@ -260,10 +268,19 @@ typedef struct s$(module)instance {
   </admst:if>
 </admst:for-each>
 
-#define $(module)numStates 0
-
 } $(module)instance ;
 
+enum {
+<admst:for-each select="variable">
+  <admst:if test="attribute[name='desc']">
+    <admst:if test="[not((input='yes' and (parametertype='model' or parametertype='instance')) or (input='np' and (scope='global_model' or scope='global_instance')))]">
+      hide_%(name),
+#define %(name) ((struct hides *)hide_%(name))
+    </admst:if>
+  </admst:if>
+</admst:for-each>
+    $(module)numStates
+};
 
 /* per model data */
 
@@ -314,6 +331,13 @@ typedef struct s$(module)model {         /* model structure */
     <admst:value-of select="name"/>
     <admst:text format="  $(module)_instance_%s,\n"/>
   </admst:for-each>
+  <admst:for-each select="variable">
+    <admst:if test="attribute[name='desc']">
+      <admst:if test="[not((input='yes' and (parametertype='model' or parametertype='instance')) or (input='np' and (scope='global_model' or scope='global_instance')))]">
+        $(module)_ask_%(name),
+      </admst:if>
+    </admst:if>
+  </admst:for-each>
   <admst:text format="  DUMMY_INSTANCE"/>
   <admst:text format="\n} e_$(module)_instance;\n"/>
 
@@ -322,7 +346,7 @@ typedef struct s$(module)model {         /* model structure */
 
 #include &quot;$(module)ext.h&quot;
 <admst:if test="[not(nilled(analogfunction))]">
-#include &quot;analogfunction.h&quot;
+#include &quot;$(module).analogfunction.h&quot;
 </admst:if>
 
 #endif /*$(module)*/
@@ -332,11 +356,8 @@ typedef struct s$(module)model {         /* model structure */
 <admst:for-each select="/module">
   <admst:value-of select="attribute[name='ngspicename']/value"/>
   <admst:open file="%sdefs.h">
-    <admst:value-of select="/simulator/package_string"/>
-    <admst:text format="/***\n*** Interface: %s\n"/>
-    <admst:value-of select="/simulator/currentdate"/>
-    <admst:value-of select="/simulator/fullname"/>
-    <admst:text format=" *** created by: %s - %s ***/\n"/>
+    <admst:text format="/***\n*** Interface: %(/simulator/package_string)\n"/>
+    <admst:text format=" *** created by: %(/simulator/fullname) ***/\n"/>
     <admst:apply-templates select="." match="code"/>
   </admst:open>
   <admst:value-of select="attribute[name='ngspicename']/value"/>

@@ -99,6 +99,10 @@ int $(module)setup (SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *
   <admst:text format="}\n"/>
 </admst:if>
 </admst:for-each>
+      /* External Nodes, connected ? */
+<admst:for-each select="node[location='external']">
+      here->%(name)Node_connected = (here->%(name)Node &gt;= 0);
+</admst:for-each>
 <admst:if test="node[location='internal']">
       /* Internal Nodes */
       {
@@ -110,9 +114,12 @@ int $(module)setup (SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *
 </admst:for-each>
 <admst:value-of select="name"/>
         here->%sNode = -1;
+        here->%(name)Node_mine = 0;
 </admst:for-each>
       }
 </admst:if>
+       ((GENinstance*)here)->GENstate = *states;
+       *states += $(module)numStates;
       /* set states */
 <admst:for-each select="source[dynamic='yes']">
 <admst:value-of select="branch/nnode/name"/>
@@ -132,19 +139,18 @@ int $(module)setup (SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *
       {
         int error;
         CKTnode *tmp;
-<admst:for-each select="node[location='internal']">
+<admst:for-each select="node[location!='ground']">
 <admst:variable name="info" select="no info"/>
 <admst:for-each select="attribute[name='info']">
   <admst:value-of select="value"/>
   <admst:variable name="info" select="%s"/>
 </admst:for-each>
-<admst:value-of select="name"/>
-<admst:value-of select="name"/>
-        if(here->%sNode == -1)
+        if(here->%(name)Node == -1)
         {
-          error=CKTmkVolt(ckt,&amp;tmp,here-&gt;$(module)name,&quot;$info&quot;);
+          error=CKTmkVolt(ckt,&amp;tmp,here-&gt;$(module)name,&quot;X%(name)X&quot;);
           if(error) return(error);
-          here->%sNode = tmp->number;
+          here->%(name)Node = tmp->number;
+          here->%(name)Node_mine = 1;
         }
 </admst:for-each>
       }
@@ -178,14 +184,21 @@ $(module)unsetup(GENmodel *inModel, CKTcircuit *ckt)
   {
     for ( here = $(module)instances(model) ;here != NULL ; here = $(module)nextInstance(here) )
     {
-<admst:for-each select="reverse(node[location='internal'])">
-<admst:value-of select="name"/>
-<admst:value-of select="name"/>
-<admst:value-of select="name"/>
-        if (here->%sNode > 0) {
-            CKTdltNNum(ckt, here->%sNode);
-            here->%sNode = -1;
+<admst:for-each select="node[location='external']">
+        if (here->%(name)Node_mine) {
+            if (here->%(name)Node > 0)
+                CKTdltNNum(ckt, here->%(name)Node);
+            here->%(name)Node_mine = 0;
         }
+        if (!here->%(name)Node_connected)
+            here->%(name)Node = -1;
+</admst:for-each>
+<admst:for-each select="reverse(node[location='internal'])">
+        if (here->%(name)Node_mine)
+            if (here->%(name)Node > 0)
+                CKTdltNNum(ckt, here->%(name)Node);
+        here->%(name)Node = -1;
+        here->%(name)Node_mine = 0;
 </admst:for-each>
     }
   }
@@ -197,11 +210,8 @@ $(module)unsetup(GENmodel *inModel, CKTcircuit *ckt)
 <admst:for-each select="/module">
   <admst:value-of select="attribute[name='ngspicename']/value"/>
   <admst:open file="%ssetup.c">
-    <admst:value-of select="/simulator/package_string"/>
-    <admst:text format="/***\n*** Interface: %s\n"/>
-    <admst:value-of select="/simulator/currentdate"/>
-    <admst:value-of select="/simulator/fullname"/>
-    <admst:text format=" *** created by: %s - %s ***/\n"/>
+    <admst:text format="/***\n*** Interface: %(/simulator/package_string)\n"/>
+    <admst:text format=" *** created by: %(/simulator/fullname) ***/\n"/>
     <admst:apply-templates select="." match="code"/>
   </admst:open>
   <admst:value-of select="attribute[name='ngspicename']/value"/>
