@@ -72,8 +72,8 @@ typedef struct x11info {
     int lastx, lasty;   /* used in X_DrawLine */
     int lastlinestyle;  /* used in X_DrawLine */
     Pixel colors[NUMCOLORS];
-    char txtcolor[16];
-    char bgcolor[16];
+    char txtcolor[32];
+    char bgcolor[32];
     char fname[BSIZE_SP];
     int fsize;
     /* use with xft */
@@ -110,7 +110,7 @@ static GRAPH *lasthardcopy; /* graph user selected */
 static int X11_Open = 0;
 static int numdispplanes;
 static int xfont_size;
-static char fontname[513];
+static char fontname[BSIZE_SP];
 
 /* static functions */
 static void initlinestyles(void);
@@ -244,7 +244,7 @@ initcolors(GRAPH *graph)
     /* Silence incorrect compiler warning about possibly not being init */
     XColor bgcolor = {0};
 
-    char buf[BSIZE_SP], colorstring[BSIZE_SP];
+    char buf[BSIZE_SP], colorstring[32];
     int xmaxcolors = NUMCOLORS; /* note: can we get rid of this? */
 
     if (numdispplanes == 1) {
@@ -310,7 +310,7 @@ initcolors(GRAPH *graph)
             }
             if (i == 0) {
                 bgcolor = visualcolor;
-                strncpy(DEVDEP(graph).bgcolor, colorstring, 15);
+                strncpy(DEVDEP(graph).bgcolor, colorstring, 32);
             }
             if ((!gridgiven) && (i == 1)) {
                 /* select grid color according to background color.
@@ -320,17 +320,17 @@ initcolors(GRAPH *graph)
                         (int) (1.5 * bgcolor.green) + (int) bgcolor.blue;
                 if (tcolor > 92160) {
                     graph->colorarray[1] = BlackPixel(display, DefaultScreen(display));
-                    strncpy(DEVDEP(graph).txtcolor, "black", 15);
+                    strncpy(DEVDEP(graph).txtcolor, "black", 32);
                 }
                 else {
                     graph->colorarray[1] = WhitePixel(display, DefaultScreen(display));
-                    strncpy(DEVDEP(graph).txtcolor, "white", 15);
+                    strncpy(DEVDEP(graph).txtcolor, "white", 32);
                 }
             }
             else {
                 graph->colorarray[i] = visualcolor.pixel;
                 if (i == 1)
-                    strncpy(DEVDEP(graph).txtcolor, colorstring, 15);
+                    strncpy(DEVDEP(graph).txtcolor, colorstring, 32);
             }
         }
     }
@@ -520,7 +520,7 @@ X11_NewViewport(GRAPH *graph)
     /* set up fonts */
     if (!cp_getvar("xfont", CP_STRING, fontname, sizeof(fontname)))
         (void) strcpy(fontname, DEF_FONT);
-    strncpy(DEVDEP(graph).fname, fontname, BSIZE_SP - 1);
+    strncpy(DEVDEP(graph).fname, fontname, BSIZE_SP);
 
 #ifndef HAVE_LIBXFT
     for (p = fontname; *p && *p <= ' '; p++)
