@@ -26,7 +26,7 @@
 <!-- expression//function: mapping verilog-name == C-name of function -->
 <admst:template match="fname">
   <admst:choose>
-    <admst:when test="[name='div']"><admst:return name="fname" value="_div1"/></admst:when>
+    <admst:when test="[name='div']"><admst:return name="fname" value="_f_div1"/></admst:when>
     <admst:when test="[name='abs']"><admst:return name="fname" value="fabs"/></admst:when>
     <admst:when test="[name='\$shrinkl']"><admst:return name="fname" value="shrinkl"/></admst:when>
     <admst:when test="[name='\$shrinka']"><admst:return name="fname" value="shrinka"/></admst:when>
@@ -37,11 +37,22 @@
     <admst:when test="[name='\$model']"><admst:return name="fname" value="_modelname"/></admst:when>
     <admst:when test="[name='\$instance']"><admst:return name="fname" value="_instancename"/></admst:when>
     <admst:when test="[name='\$temperature']"><admst:return name="fname" value="_circuit_temp"/></admst:when>
-    <admst:otherwise><admst:return name="fname" value="%(name)"/></admst:otherwise>
+    <admst:when test="[name='abs' or name='acos' or name='asinh' or name='acosh' or name='atanh' or name='asin' or name='atan' or name='cos' or name='cosh' or name='exp' or name='hypot' or name='limexp' or name='ln' or name='log' or name='sin' or name='sinh' or name='sqrt' or name='tan' or name='tanh' or name='atan2' or name='pow' or name='max' or name='min']">
+      <admst:return name="fname" value="%(name)"/>
+    </admst:when>
+    <admst:otherwise><admst:return name="fname" value="$(module)_%(name)"/></admst:otherwise>
   </admst:choose>
 </admst:template>
 
 <admst:template match="function">
+  <admst:choose>
+    <admst:when test="[name='\$port_connected']">
+      <admst:message format="ZZ 11!! port_connecte, this one\n"/>
+      <admst:for-each select="arguments[position(.)=1]">
+        <admst:value-to select="/simulator/tmp" value="(here->%(.)Node_connected /* port_connected 13 */)"/>
+      </admst:for-each>
+    </admst:when>
+    <admst:otherwise>
   <admst:variable name="function" select="%(name)"/>
   <admst:variable name="args" select=""/>
   <admst:for-each select="arguments">
@@ -56,15 +67,9 @@
     <admst:when test="[name='analysis']">
       <admst:apply-templates select="." match="function:analysis"/>
     </admst:when>
-    <admst:when test="[name='\$given']">
+    <admst:when test="[name='\$given' or name='\$param_given']">
       <admst:for-each select="arguments[position(.)=1]">
-        <admst:if test="[datatypename!='variable']">
-          <admst:error format="$given: argument is not a variable\n"/>
-        </admst:if>
-        <admst:if test="[input='no']">
-          <admst:value-of select="name"/>
-          <admst:error format="$given(%s): argument is not a parameter\n"/>
-        </admst:if>
+        <admst:assert test="[datatypename='variable' and input='yes']" format="%(../name)(%(../arguments[1])): argument is not a parameter\n"/>
         <admst:choose>
           <admst:when test="[parametertype='model']">
             <admst:value-of select="name"/>
@@ -75,10 +80,21 @@
             <admst:value-to select="/simulator/tmp" value="here->%s_Given"/>
           </admst:when>
           <admst:otherwise>
-            <admst:error format="$given(%s): should not be reached\n"/>
+            <admst:error format="%(../name)(%(../arguments[1])): should not be reached\n"/>
           </admst:otherwise>
         </admst:choose>
       </admst:for-each>
+    </admst:when>
+    <!-- fixme, seems to be necessairy only because dependency detection does not drop an unneeded expression requiring $vt -->
+    <admst:when test="[name='\$vt']">
+      <admst:choose>
+        <admst:when test="[nilled(arguments)]">
+          <admst:value-to select="/simulator/tmp" value="((BOLTZMANN/ELECTRON_CHARGE)*ckt->CKTtemp)"/>
+        </admst:when>
+        <admst:when test="arguments[count(.)=1]">
+          <admst:value-to select="/simulator/tmp" value="((BOLTZMANN/ELECTRON_CHARGE)*(%(arguments[1])))"/>
+        </admst:when>
+      </admst:choose>
     </admst:when>
     <admst:otherwise>
       <admst:variable name="mycode" select=""/>
@@ -98,6 +114,8 @@
       </admst:if>
       <admst:variable name="mycode" select="%(fname(.)/[name='fname']/value)$mycode"/>
       <admst:value-to select="/simulator/tmp" value="$mycode"/>
+    </admst:otherwise>
+  </admst:choose>
     </admst:otherwise>
   </admst:choose>
 </admst:template>
@@ -133,17 +151,47 @@
         </admst:choose>
       </admst:if>
     </admst:when>
+    <admst:when test="[datatypename='case']">
+      <admst:text format="/* -- CASE BEGIN -- */;\n"/>
+      <admst:variable name="casecondition" path="case"/>
+      <admst:variable name="havedefault" string="no"/>
+      <!-- check for default -->
+      <admst:for-each select="caseitem/[defaultcase='yes']">
+        <admst:variable name="havedefault" string="yes"/>
+      </admst:for-each>
+      <admst:for-each select="caseitem/[defaultcase='no']">
+          <admst:text format="/* CASE ITEM */\n"/>
+          <admst:text format="if\n("/>
+          <admst:join select="condition" separator="||">
+            <admst:apply-templates select="$(casecondition)" match="expression:stringify:noprobe"/>
+            <admst:text format="((%s)==(%(.)))"/>
+          </admst:join>
+          <admst:text format=")\n"/>
+          <admst:text format="{\n"/>
+          <admst:apply-templates select="code" match="evaluatetopology"/>
+          <admst:text format="}\n"/>
+          <admst:text format="else\n"/>
+      </admst:for-each>
+      <admst:text select="[$havedefault='no']" format="{ /* no default */ }\n"/>
+      <admst:for-each select="caseitem/[defaultcase='yes']">
+          <admst:text format="/* CASE DEFAULT */\n"/>
+          <admst:text format="{\n"/>
+          <admst:apply-templates select="code" match="evaluatetopology"/>
+          <admst:text format="}\n"/>
+      </admst:for-each>
+      <admst:text format="/* -- CASE END -- */;\n"/>
+    </admst:when>
     <admst:when test="[datatypename='contribution']">
       <admst:if test="lhs[discipline/potential=nature]">
         <admst:choose>
           <admst:when test="lhs/branch[grounded='no']">
             <admst:text test="lhs/branch/nnode[location='internal']"
-              format="here->%(lhs/branch/nnode/name)Node = here->%(lhs/branch/pnode/name)Node; /* nnode collapsed */ \n"/>
+              format="here->%(lhs/branch/nnode/name)Node = here->%(lhs/branch/pnode/name)Node; /* nnode collapsed */\n  here->%(lhs/branch/nnode/name)Node_mine = 0;\n"/>
             <admst:text test="lhs/branch/pnode[location='internal']"
-              format="here->%(lhs/branch/pnode/name)Node = here->%(lhs/branch/nnode/name)Node; /* pnode collapsed */ \n"/>
+              format="here->%(lhs/branch/pnode/name)Node = here->%(lhs/branch/nnode/name)Node; /* pnode collapsed */\n  here->%(lhs/branch/pnode/name)Node_mine = 0;\n"/>
           </admst:when>
           <admst:otherwise>
-            <admst:text format="here->%(lhs/branch/pnode/name)Node = 0; /* pnode collapsed to GND */ \n"/>
+            <admst:text format="here->%(lhs/branch/pnode/name)Node = 0; /* pnode collapsed to GND */ \n  here->%(lhs/branch/pnode/name)Node_mine = 0;\n"/>
           </admst:otherwise>
         </admst:choose>
       </admst:if>
@@ -214,6 +262,9 @@
 #include &quot;ngspice/ifsim.h&quot;
 #include &quot;ngspice/suffix.h&quot;
 
+#define  ELECTRON_CHARGE        1.602191770e-19         /* C */
+#define  BOLTZMANN              1.38062259e-23          /* J/oK */
+
 #define jacobian(a,b) here-&gt;PTR_J_##a##_##b##_required=1;
 #define static_jacobian4(p,q,r,s)  jacobian(p,r) jacobian(p,s) jacobian(q,r) jacobian(q,s)
 #define static_jacobian2s(p,q,r)   jacobian(p,r) jacobian(q,r)
@@ -238,6 +289,7 @@ int $(module)guesstopology (SMPmatrix *matrix, CKTcircuit *ckt, $(module)model *
 {
   NG_IGNOREABLE(matrix);
   NG_IGNOREABLE(ckt);
+
 <admst:template match="evaluate.localvariables">
   <admst:choose>
     <admst:when test="[datatypename='assignment']">
@@ -292,10 +344,11 @@ int $(module)guesstopology (SMPmatrix *matrix, CKTcircuit *ckt, $(module)model *
 
 <admst:variable name="localvariables"/>
 <admst:for-each select="/module">
+  <!-- fixme, this $(module) variable diverts from other usage pattern -->
   <admst:variable name="module" select="%(attribute[name='ngspicename']/value)"/>
   <admst:open file="$(module)guesstopology.c">
     <admst:text format="/***\n*** Interface: %(/simulator/package_string)\n"/>
-    <admst:text format=" *** created by: %(/simulator/fullname) - %(/simulator/currentdate) ***/\n"/>
+    <admst:text format=" *** created by: %(/simulator/fullname) ***/\n"/>
     <admst:apply-templates select="." match="code"/>
   </admst:open>
   <admst:message format="$(module)guesstopology.c: file created\n"/>

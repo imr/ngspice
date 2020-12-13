@@ -37,6 +37,7 @@ BUILT_SOURCES = \\
 	$(module).c	\\
 	$(module).hxx	\\
 	$(module)acld.c	\\
+	$(module).analogfunction.c \\
 	$(module)ask.c	\\
 	$(module)defs.h	\\
 	$(module)del.c	\\
@@ -65,6 +66,8 @@ CLEANFILES = \\
 	.$(module).va.adms \\
 	.adms.implicit.xml \\
 	.interface.xml \\
+	constants.vams \\
+	disciplines.vams \\
 	*.h \\
 	*.xml
 
@@ -82,11 +85,13 @@ DISTCLEANFILES = Makefile.am \\
 	Makefile.in
 
 \%.c \%.hxx \\
-	\%acld.c \%ask.c \%defs.h \%del.c \%dest.c \%ext.h \%guesstopology.c \\
+	\%acld.c \%.analogfunction.c \%ask.c \%defs.h \%del.c \%dest.c \%ext.h \%guesstopology.c \\
 	\%init.c \%init.h \%itf.h \%load.c \%mask.c \%mdel.c \%mpar.c \%par.c \\
 	\%pzld.c \%setup.c \%temp.c \%trunc.c \\
  : \$(srcdir)/admsva/\%.va \\
+	\$(ADMSXMLINTERFACE)/adms.implicit.xml \\
 	\$(ADMSXMLINTERFACE)/ngspiceVersion.xml \\
+	\$(ADMSXMLINTERFACE)/analogfunction.xml \\
 	\$(ADMSXMLINTERFACE)/ngspiceMODULEitf.h.xml \\
 	\$(ADMSXMLINTERFACE)/ngspiceMODULEinit.c.xml \\
 	\$(ADMSXMLINTERFACE)/ngspiceMODULEinit.h.xml \\
@@ -110,7 +115,10 @@ DISTCLEANFILES = Makefile.am \\
 	\$(ADMSXMLINTERFACE)/ngspiceMODULE.hxx.xml \\
 	\$(ADMSXMLINTERFACE)/ngspiceMODULE.c.xml
 	\$(ADMSXML) -I\$(srcdir) -I\$(srcdir)/admsva \$&lt; \\
+	-x \\
+	-e \$(ADMSXMLINTERFACE)/adms.implicit.xml \\
 	-e \$(ADMSXMLINTERFACE)/ngspiceVersion.xml \\
+	-e \$(ADMSXMLINTERFACE)/analogfunction.xml \\
 	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEitf.h.xml \\
 	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEinit.c.xml \\
 	-e \$(ADMSXMLINTERFACE)/ngspiceMODULEinit.h.xml \\
@@ -138,11 +146,8 @@ DISTCLEANFILES = Makefile.am \\
 
 <admst:for-each select="/module">
   <admst:open file="Makefile.am">
-    <admst:value-of select="/simulator/package_string"/>
-    <admst:text format="##\n## Interface: %s\n"/>
-    <admst:value-of select="/simulator/currentdate"/>
-    <admst:value-of select="/simulator/fullname"/>
-    <admst:text format="## created by: %s - %s\n"/>
+    <admst:text format="##\n## Interface: %(/simulator/package_string)\n"/>
+    <admst:text format="## created by: %(/simulator/fullname)\n"/>
     <admst:apply-templates select="." match="code"/>
   </admst:open>
   <admst:message format="Makefile.am: file created\n"/>

@@ -11,6 +11,9 @@
 <admst:variable name="epq"/>
 
 <admst:template match="c:math_h">
+#define  ELECTRON_CHARGE        1.602191770e-19         /* C */
+#define  BOLTZMANN              1.38062259e-23          /* J/oK */
+
 /* arithmetics */
 #define EXP90 1.220403294317841e+039
 #define m00_hypot(v00,x,y)      v00 = sqrt((x)*(x)+(y)*(y));
@@ -61,6 +64,15 @@
 #define m00_abs(v00)            ((v00)&lt;(0)?(-(v00)):(v00))
 #define m00_limexp(v00,x)       v00 = ((x)&lt;90.0?exp(x):EXP90*(x-89.0));
 #define m10_limexp(v10,v00,x)   v10 = ((x)&lt;90.0?(v00):EXP90);
+#define m00_atan2(v00,x,y)      v00 = atan2(x,y);
+#define m10_atan2(v10,x,y)      v10 = (-(y)/((x)*(x)+(y)*(y)));
+#define m11_atan2(v11,x,y)      v11 = ((x)/((x)*(x)+(y)*(y)));
+#define m00_acosh(v00,x)        v00 = acosh(x);
+#define m10_acosh(v10,v00,x)    v10 = (1.0/(sqrt(x-1)*sqrt(x+1)));
+#define m00_asinh(v00,x)        v00 = asinh(x);
+#define m10_asinh(v10,v00,x)    v10 = (1.0/(sqrt(x*x+1)));
+#define m00_atanh(v00,x)        v00 = atanh(x);
+#define m10_atanh(v10,v00,x)    v10 = (1.0/(1-x*x));
 
 #define m20_logE(v00)         (-1.0/v00/v00)
 #define m20_exp(v00)          exp(v00)
@@ -83,57 +95,6 @@
 #define _DERIVATE2
 <admst:variable name="requiredderivateforddx" select="yes"/>
 </admst:if>
-</admst:template>
-
-<admst:template match="c:analogfunction:math_h">
-inline double _cos(double arg)             { return  cos(arg); }
-inline double _d0_cos(double arg)          { return (-sin(arg)); }
-inline double _sin(double arg)             { return  sin(arg); }
-inline double _d0_sin(double arg)          { return (cos(arg)); }
-inline double _tan(double arg)             { return  tan(arg); }
-inline double _d0_tan(double arg)          { return (1.0/cos(arg)/cos(arg)); }
-inline double _cosh(double arg)            { return  cosh(arg); }
-inline double _d0_cosh(double arg)         { return (sinh(arg)); }
-inline double _sinh(double arg)            { return  sinh(arg); }
-inline double _d0_sinh(double arg)         { return (cosh(arg)); }
-inline double _tanh(double arg)            { return  tanh(arg); }
-inline double _d0_tanh(double arg)         { return (1.0/cosh(arg)/cosh(arg)); }
-inline double _acos(double arg)            { return  acos(arg); }
-inline double _d0_acos(double arg)         { return (-1.0/sqrt(1-arg*arg)); }
-inline double _asin(double arg)            { return  asin(arg); }
-inline double _d0_asin(double arg)         { return (+1.0/sqrt(1-arg*arg)); }
-inline double _atan(double arg)            { return  atan(arg); }
-inline double _d0_atan(double arg)         { return (+1.0/(1+arg*arg)); }
-inline double _logE(double arg)            { return  log(arg); }
-inline double _d0_logE(double arg)         { return (1.0/arg); }
-inline double _log10(double arg)           { return  log10(arg); }
-inline double _d0_log10(double arg)        { return (1.0/arg/log(10)); }
-inline double _exp(double arg)             { return  exp(arg); }
-inline double _d0_exp(double arg)          { return exp(arg); }
-inline double _sqrt(double arg)            { return  sqrt(arg); }
-inline double _d0_sqrt(double arg)         { return (1.0/sqrt(arg)/2.0); }
-inline double _abs(double arg)             { return  fabs(arg); }
-inline double _d0_abs(double arg)          { return (((arg)&gt;=0)?(+1.0):(-1.0)); }
-
-inline double _hypot(double x,double y)    { return sqrt((x)*(x)+(y)*(y)); }
-inline double _d0_hypot(double x,double y) { return (x)/sqrt((x)*(x)+(y)*(y)); }
-inline double _d1_hypot(double x,double y) { return (y)/sqrt((x)*(x)+(y)*(y)); }
-
-inline double _max(double x,double y)      { return ((x)&gt;(y))?(x):(y); }
-inline double _d0_max(double x,double y)   { return ((x)&gt;(y))?1.0:0.0; }
-inline double _d1_max(double x,double y)   { return ((x)&gt;(y))?0.0:1.0; }
-
-inline double _min(double x,double y)      { return ((x)&lt;(y))?(x):(y); }
-inline double _d0_min(double x,double y)   { return ((x)&lt;(y))?1.0:0.0; }
-inline double _d1_min(double x,double y)   { return ((x)&lt;(y))?0.0:1.0; }
-
-inline double _pow(double x,double y)      { return pow(x,y); }
-inline double _d0_pow(double x,double y)   { return (x==0.0)?0.0:((y/x)*pow(x,y)); }
-inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.0))*pow(x,y)); }
-
-#define _limexp(arg)    _exp(val,arg)
-#define _d_limexp(arg)  _d_exp(val,dval,arg)
-
 </admst:template>
 
 
@@ -677,9 +638,10 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
       </admst:for-each>
       <admst:choose>
         <admst:when test="[ name='cos' or name='sin' or name='tan' or name='cosh' or name='sinh' or name='tanh' or name='acos' or name='asin'
+                            or name='asinh' or name='acosh' or name='atanh' or name='atan2'
                             or name='atan' or name='ln' or name='log' or name='exp' or name='sqrt' or name='abs' or name='limexp'
                             or name='div' or name='pow' or name='hypot' or name='min' or name='max' ]">
-          <admst:return name="x" value="_$function($args)"/>
+          <admst:return name="x" value="_f_$function($args)"/>
           <admst:for-each select="$globalanalogfunction/variable[input='yes']">
             <admst:value-of select="name"/> <admst:variable name="name" select="%s"/>
             <admst:variable name="ret" select=""/>
@@ -1051,6 +1013,9 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
     <admst:when test="[name='equ']">
       <admst:return name="bname" value="=="/>
     </admst:when>
+    <admst:when test="[name='multmod']">
+      <admst:return name="bname" value="%%"/>
+    </admst:when>
     <admst:when test="[name='notequ']">
       <admst:return name="bname" value="!="/>
     </admst:when>
@@ -1129,6 +1094,9 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
     </admst:when>
     <admst:when test="[input='no' and scope='global_instance']">
       <admst:variable name="e" select="pInst-&gt;%(name)"/>
+    </admst:when>
+    <admst:when test="attribute[name='desc']">
+      <admst:variable name="e" select="ckt->CKTstate0[((GENinstance*)here)->GENstate + hide_%(name)]"/>
     </admst:when>
     <admst:otherwise>
       <admst:variable name="e" select="%(name)"/>
@@ -1860,19 +1828,22 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
       <admst:variable name="xpq" select="$epq"/>
       <admst:variable name="e" select="_DDT($x)"/>
     </admst:when>
-    <admst:when test="[name='\$given']">
+    <admst:when test="[name='\$port_connected']">
+      <admst:assert test="arguments[1]/[datatypename='node']" format="%(name): argument is not a node\n"/>
+      <admst:variable name="e" select="(here->%(arguments[1])Node_connected /* port_connected 12 */)"/>
+    </admst:when>
+    <admst:when test="[name='\$given' or name='\$param_given']">
       <admst:variable name="arg1" select="%(arguments[1])"/>
-      <admst:assert test="$arg1/adms[datatypename='variable']" format="\$given: argument is not a variable\n"/>
-      <admst:assert test="$arg1/[input='yes']" format="\$given(%(name)): argument is not a parameter\n"/>
+      <admst:assert test="$arg1/[datatypename='variable' and input='yes']" format="%(name): argument is not a parameter\n"/>
       <admst:choose>
         <admst:when test="$arg1/[parametertype='model']">
-          <admst:variable name="e" select="_mpg(%(name),%(name)Given)"/>
+          <admst:variable name="e" select="(model->%(arguments[1])_Given)"/>
         </admst:when>
         <admst:when test="$arg1/[parametertype='instance']">
-          <admst:variable name="e" select="_ipg(%(name),%(name)Given)"/>
+          <admst:variable name="e" select="(here->%(arguments[1])_Given)"/>
         </admst:when>
         <admst:otherwise>
-          <admst:fatal format="$given(): should not be reached\n"/>
+          <admst:fatal format="%(name): should not be reached\n"/>
         </admst:otherwise>
       </admst:choose>
     </admst:when>
@@ -1883,6 +1854,16 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
     <admst:when test="[name='\$mfactor']">
       <admst:assert test="[nilled(arguments)]" format="%(name): should not have arguments\n"/>
       <admst:variable name="e" select="MFACTOR"/>
+    </admst:when>
+    <admst:when test="[name='\$simparam']">
+      <admst:choose>
+        <admst:when test="[arguments[1]/value='gmin']">
+          <admst:variable name="e" select="_circuit_gmin"/>
+        </admst:when>
+        <admst:otherwise>
+          <admst:fatal format="%(.): not implemented\n"/>
+        </admst:otherwise>
+      </admst:choose>
     </admst:when>
     <admst:when test="[name='\$vt']">
       <admst:choose>
@@ -1935,7 +1916,7 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
       </admst:for-each>
       <admst:variable name="e" select="$(fname)($args)"/>
     </admst:when>
-    <admst:when test="[name='abs' or name='acos' or name='asin' or name='atan' or name='cos' or name='cosh' or name='exp' or name='hypot' or name='limexp' or name='ln' or name='log' or name='sin' or name='sinh' or name='sqrt' or name='tan' or name='tanh']">
+    <admst:when test="[name='abs' or name='acos' or name='asinh' or name='acosh' or name='atanh' or name='asin' or name='atan' or name='cos' or name='cosh' or name='exp' or name='hypot' or name='limexp' or name='ln' or name='log' or name='sin' or name='sinh' or name='sqrt' or name='tan' or name='tanh' or name='atan2']">
       <admst:assert test="arguments[count(.)=1]" format="%(name): should have one argument exactly\n"/>
       <admst:variable name="index" select="%(index(subexpression/expression/function,.))"/>
       <admst:variable name="fname" select="%(funcname(.)/[name='fname']/value)"/>
@@ -1946,7 +1927,7 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
       <admst:variable name="xpq" select="$epq"/>
       <admst:variable name="e" select="d00_$(fname)$index"/>
     </admst:when>
-    <admst:when test="[name='div' or name='pow' or name='hypot' or name='min' or name='max']">
+    <admst:when test="[name='div' or name='pow' or name='hypot' or name='min' or name='max' or name='atan2']">
       <admst:assert test="arguments[count(.)=2]" format="%(name): should have two argument exactly\n"/>
       <admst:variable name="index" select="%(index(./subexpression/expression/function,.))"/>
       <admst:variable name="fname" select="%(funcname(.)/[name='fname']/value)"/>
@@ -1980,7 +1961,7 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
         <admst:apply-templates select="." match="ddx"/>
         <admst:variable name="dargs" select="$dargs$ep"/>
       </admst:for-each>
-      <admst:variable name="e" select="$(fname)($args)"/>
+      <admst:variable name="e" select="$(module)_$(fname)($args)"/>
     </admst:otherwise>
   </admst:choose>
 
@@ -1988,11 +1969,15 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
   <admst:choose>
     <admst:when test="[name='absdelay']">
     </admst:when>
-    <admst:when test="[name='\$given']">
+    <admst:when test="[name='\$given' or name='\$param_given']">
+    </admst:when>
+    <admst:when test="[name='\$port_connected']">
     </admst:when>
     <admst:when test="[name='\$temperature']">
     </admst:when>
     <admst:when test="[name='\$mfactor']">
+    </admst:when>
+    <admst:when test="[name='\$simparam']">
     </admst:when>
     <admst:when test="[name='\$vt']">
       <admst:choose>
@@ -2019,7 +2004,7 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
     <admst:when test="[name='ddt']">
       <admst:variable name="ep" select="$xp"/>
     </admst:when>
-    <admst:when test="[name='abs' or name='acos' or name='asin' or name='atan' or name='cos' or name='cosh' or name='exp' or name='hypot' or name='limexp' or name='ln' or name='log' or name='sin' or name='sinh' or name='sqrt' or name='tan' or name='tanh']">
+    <admst:when test="[name='abs' or name='acos' or name='asinh' or name='acosh' or name='atanh' or name='asin' or name='atan' or name='cos' or name='cosh' or name='exp' or name='hypot' or name='limexp' or name='ln' or name='log' or name='sin' or name='sinh' or name='sqrt' or name='tan' or name='tanh' or name='atan2']">
       <admst:variable name="index" select="%(index(subexpression/expression/function,.))"/>
       <admst:choose>
         <admst:when test="[$xp='0.0']">
@@ -2030,7 +2015,7 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
         </admst:otherwise>
       </admst:choose>
     </admst:when>
-    <admst:when test="[name='div' or name='pow' or name='hypot' or name='min' or name='max']">
+    <admst:when test="[name='div' or name='pow' or name='hypot' or name='min' or name='max' or name='atan2']">
       <admst:variable name="index" select="%(index(./subexpression/expression/function,.))"/>
       <admst:choose>
         <admst:when test="[$xp='0.0' and $yp='0.0']">
@@ -2048,7 +2033,7 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
       </admst:choose>
     </admst:when>
     <admst:otherwise>
-      <admst:variable name="ep" select="d_$(fname)($args,$dargs)"/>
+      <admst:variable name="ep" select="$(module)_d_$(fname)($args,$dargs)"/>
     </admst:otherwise>
   </admst:choose>
   <admst:if test="$qprobe">
@@ -2057,11 +2042,15 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
   <admst:choose>
     <admst:when test="[name='absdelay']">
     </admst:when>
-    <admst:when test="[name='\$given']">
+    <admst:when test="[name='\$given' or name='\$param_given']">
+    </admst:when>
+    <admst:when test="[name='\$port_connected']">
     </admst:when>
     <admst:when test="[name='\$temperature']">
     </admst:when>
     <admst:when test="[name='\$mfactor']">
+    </admst:when>
+    <admst:when test="[name='\$simparam']">
     </admst:when>
     <admst:when test="[name='\$vt']">
       <admst:choose>
@@ -2088,7 +2077,7 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
     <admst:when test="[name='ddt']">
       <admst:variable name="eq" select="$xq"/>
     </admst:when>
-    <admst:when test="[name='abs' or name='acos' or name='asin' or name='atan' or name='cos' or name='cosh' or name='exp' or name='hypot' or name='limexp' or name='ln' or name='log' or name='sin' or name='sinh' or name='sqrt' or name='tan' or name='tanh']">
+    <admst:when test="[name='abs' or name='acos' or name='asinh' or name='acosh' or name='atanh' or name='asin' or name='atan' or name='cos' or name='cosh' or name='exp' or name='hypot' or name='limexp' or name='ln' or name='log' or name='sin' or name='sinh' or name='sqrt' or name='tan' or name='tanh' or name='atan2']">
       <admst:variable name="index" select="%(index(subexpression/expression/function,.))"/>
       <admst:choose>
         <admst:when test="[$xq='0.0']">
@@ -2099,7 +2088,7 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
         </admst:otherwise>
       </admst:choose>
     </admst:when>
-    <admst:when test="[name='div' or name='pow' or name='hypot' or name='min' or name='max']">
+    <admst:when test="[name='div' or name='pow' or name='hypot' or name='min' or name='max' or name='atan2']">
       <admst:variable name="index" select="%(index(./subexpression/expression/function,.))"/>
       <admst:choose>
         <admst:when test="[$xq='0.0' and $yq='0.0']">
@@ -2117,12 +2106,12 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
       </admst:choose>
     </admst:when>
     <admst:otherwise>
-      <admst:variable name="eq" select="d_$(fname)($args,$dargs)"/>
+      <admst:variable name="eq" select="$(module)_d_$(fname)($args,$dargs)"/>
     </admst:otherwise>
   </admst:choose>
 
   <admst:choose>
-    <admst:when test="[name='abs' or name='acos' or name='asin' or name='atan' or name='cos' or name='cosh' or name='exp' or name='hypot' or name='limexp' or name='ln' or name='log' or name='sin' or name='sinh' or name='sqrt' or name='tan' or name='tanh']">
+    <admst:when test="[name='abs' or name='acos' or name='asinh' or name='acosh' or name='atanh' or name='asin' or name='atan' or name='cos' or name='cosh' or name='exp' or name='hypot' or name='limexp' or name='ln' or name='log' or name='sin' or name='sinh' or name='sqrt' or name='tan' or name='tanh' or name='atan2']">
       <admst:variable name="index" select="%(index(./subexpression/expression/function,.))"/>
       <admst:variable name="fname" select="%(funcname(.)/[name='fname']/value)"/>
       <admst:choose>
@@ -2280,14 +2269,14 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
   <admst:variable name="rhs" select="%(rhs)"/>
   <admst:variable name="lhs" select="%(lhs)"/>
   <admst:text test="[dynamic='yes']" format="#if defined(_DYNAMIC)\n"/>
-  <admst:text test="rhs/function" format="{\n"/>
+  <admst:text test="rhs/function[name!='\$simparam']" format="{\n"/>
         <admst:for-each select="lhs/probe">
           <admst:variable name="pprobe" select="%(.)"/>
           <admst:if test="$lhs/ddxprobe/branch/pnode[.=$pprobe/branch/pnode or .=$pprobe/branch/nnode]">
             <admst:variable name="ddxinsidederivate" select="yes"/>
           </admst:if>
         </admst:for-each>
-  <admst:apply-templates select="rhs/function" match="function:precomputation"/>
+  <admst:apply-templates select="rhs/function[name!='\$simparam']" match="function:precomputation"/>
   <admst:if test="lhs[insource='yes']">
     <admst:apply-templates select="rhs[not(nilled(function))]" match="function:derivate:precomputation"/>
   </admst:if>
@@ -2333,7 +2322,14 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
           </admst:when>
         </admst:choose>
       </admst:for-each>
-      <admst:text format="%(lhs/name)=$allep;\n"/>
+      <admst:choose>
+        <admst:when test="lhs/attribute[name='desc']">
+          <admst:text format="ckt->CKTstate0[((GENinstance*)here)->GENstate + hide_%(lhs/name)]=$allep; /* indeed 3 */\n"/>
+        </admst:when>
+        <admst:otherwise>
+          <admst:text format="%(lhs/name)=$allep; /* indeed 3 */\n"/>
+        </admst:otherwise>
+      </admst:choose>
       <admst:text format="EXIT_IF_ISNAN(%(lhs/name))\n"/>
       <admst:text format="#endif\n"/>
     </admst:when>
@@ -2385,7 +2381,7 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
       <admst:text format="EXIT_IF_ISNAN($e)\n"/>
     </admst:otherwise>
   </admst:choose>
-  <admst:text test="rhs/function" format="}\n"/>
+  <admst:text test="rhs/function[name!='\$simparam']" format="}\n"/>
   <admst:text test="[dynamic='yes']" format="#endif\n"/>
 </admst:template>
 
@@ -2491,17 +2487,19 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
 </admst:template>
 
 <admst:template match="contribution:nonoise">
-  <admst:if test="rhs[not(nilled(function[class='builtin']))]">
+  <admst:if test="rhs[not(nilled(function[class='builtin' and name!='\$simparam']))]">
     <admst:choose>
       <admst:when test="[dynamic='yes']">
         <admst:text format="#if defined(_DYNAMIC)\n"/>
       </admst:when>
     </admst:choose>
     <admst:text format="{\n"/>
-    <admst:for-each select="rhs/function">
+    <admst:for-each select="rhs/function[name!='\$simparam']">
       <admst:value-of select="position(.)-1"/>
-      <admst:apply-templates select="." match="function:getname"/>
-      <admst:text format="double __%s_%s=0.0;\n"/>
+      <admst:apply-templates select="." match="function:getname">
+        <admst:value-of select="returned('function:getname')/value"/>
+        <admst:text format="double __%s_%s=0.0;\n"/>
+      </admst:apply-templates>
     </admst:for-each>
     <admst:apply-templates select="." match="ddx:function:computation"/>
   </admst:if>
@@ -2574,7 +2572,7 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
       </admst:if>
     </admst:if>
   </admst:for-each>
-  <admst:if test="rhs[not(nilled(function[class='builtin']))]">
+  <admst:if test="rhs[not(nilled(function[class='builtin' and name!='\$simparam']))]">
     <admst:text format="}\n"/>
     <admst:if test="[dynamic='yes']">
       <admst:text format="#endif /* _DYNAMIC */\n"/>
@@ -2601,6 +2599,37 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
   <admst:text select="if[dynamic='yes']" format="#endif /* if(...) */\n"/>
 </admst:template>
 
+<!-- analog//case -->
+<admst:template match="case">
+  <admst:text format="/* -- CASE BEGIN -- */;\n"/>
+  <admst:variable name="casecondition" path="case"/>
+  <admst:variable name="havedefault" string="no"/>
+  <!-- check for default -->
+  <admst:for-each select="caseitem/[defaultcase='yes']">
+    <admst:variable name="havedefault" string="yes"/>
+  </admst:for-each>
+  <admst:for-each select="caseitem/[defaultcase='no']">
+    <admst:text format="/* CASE ITEM */\n"/>
+    <admst:text format="if\n("/>
+    <admst:join select="condition" separator="||">
+      <admst:text format="((%(e($casecondition/tree)))==(%(.)))"/>
+    </admst:join>
+    <admst:text format=")\n"/>
+    <admst:text test="code/[datatypename!='block']" format="{\n"/>
+    <admst:apply-templates select="code" match="%(datatypename)" required="yes"/>
+    <admst:text test="code/[datatypename!='block']" format="}\n"/>
+    <admst:text format="else\n"/>
+  </admst:for-each>
+  <admst:text select="[$havedefault='no']" format="{ /* no default */ }\n"/>
+  <admst:for-each select="caseitem/[defaultcase='yes']">
+    <admst:text format="/* CASE DEFAULT */\n"/>
+    <admst:text test="code/[datatypename!='block']" format="{\n"/>
+    <admst:apply-templates select="code" match="%(datatypename)" required="yes"/>
+    <admst:text test="code/[datatypename!='block']" format="}\n"/>
+  </admst:for-each>
+  <admst:text format="/* -- CASE END -- */;\n"/>
+</admst:template>
+
 <!-- analog//nilled -->
 <admst:template match="nilled">
 </admst:template>
@@ -2620,20 +2649,25 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
 <!-- analog//callfunctions -->
 <admst:template match="callfunction">
   <admst:choose>
-    <admst:when test="function[name='\$strobe']">printf(</admst:when>
-    <admst:when test="function[name='\$warning']">_warning(</admst:when>
-    <admst:when test="function[name='\$error']">_error(</admst:when>
-    <admst:when test="function[name='\$finish']">_finish(</admst:when>
-    <admst:when test="function[name='\$stop']">_stop(</admst:when>
+    <admst:when test="function[name='\$strobe']">
+      <admst:text format="printf("/>
+      <admst:join select="function/arguments" separator=",">
+      <admst:text format="%(e(tree))"/>
+      </admst:join>
+      <admst:text format=");\n"/>
+      <admst:text format="printf(&quot;\\n&quot;);\n"/>
+    </admst:when>
+    <admst:when test="function[name='\$finish']">
+      <admst:text format="controlled_exit("/>
+      <admst:join select="function/arguments" separator=",">
+      <admst:text format="%(e(tree))"/>
+      </admst:join>
+      <admst:text format=");\n"/>
+    </admst:when>
     <admst:otherwise>
-      <admst:fatal format="function not supported: %(function/name)\n"/>
+      <admst:text format="%(function/name): not supported by this interface\n"/>
     </admst:otherwise>
   </admst:choose>
-  <admst:join select="function/arguments" separator=",">
-    %(e(tree))
-    <admst:if test="[position(.)=1]">&quot;\\n&quot;</admst:if>
-  </admst:join>
-  <admst:text format="); fflush(stdout);\n"/>
 </admst:template>
 
 <!-- analog/code -->
@@ -2650,7 +2684,13 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
   </admst:new>
   <admst:if test="block/adms[datatypename='module']">
     <admst:text test="[static='no' and dynamic='yes']" format="#if defined(_DYNAMIC)\n"/>
-    <admst:text test="[scope='local']" format="%(vtype(.)) %(name);\n"/>
+    <admst:choose>
+      <admst:when test="attribute[name='desc']">
+      </admst:when>
+      <admst:otherwise>
+        <admst:text test="[scope='local']" format="%(vtype(.)) %(name);\n"/>
+      </admst:otherwise>
+    </admst:choose>
     <admst:if test="[insource='yes']/probe">
       <admst:for-each select="probe">
         <admst:variable name="pprobe" select="%(.)"/>
@@ -2701,8 +2741,13 @@ inline double _d1_pow(double x,double y)   { return (x==0.0)?0.0:((log(x)/exp(0.
     <admst:when test="adms[datatypename='callfunction']"/>
     <admst:when test="adms[datatypename='nilled']"/>
     <admst:when test="adms[datatypename='blockvariable']"/>
+    <admst:when test="adms[datatypename='case']">
+      <admst:for-each select="caseitem">
+        <admst:apply-templates select="code" match="block:local:declaration"/>
+      </admst:for-each>
+    </admst:when>
     <admst:otherwise>
-      <admst:fatal format="'datatypename=%(adms/datatypename)': should not be reached %s\n"/>
+      <admst:fatal format="'datatypename=%(adms/datatypename)': should not be reached !\n"/>
     </admst:otherwise>
   </admst:choose>
 </admst:template>
