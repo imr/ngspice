@@ -715,7 +715,9 @@ struct card *inp_readall(FILE *fp, const char *dir_name,
             return NULL;
 
         /* don't remove unused model if we have an .if clause, because we
-           cannot yet decide here which model we finally will need */
+           cannot yet decide here which model we finally will need.
+           There is another trial using these functions in inpc,
+           when the netlist is expanded and flattened.*/
         if (!has_if) {
             comment_out_unused_subckt_models(working);
             inp_rem_unused_models(root, working);
