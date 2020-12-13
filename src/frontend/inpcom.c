@@ -144,7 +144,7 @@ static struct func_temper *inp_new_func(char *funcname, char *funcbody,
 static void inp_delete_funcs(struct func_temper *funcs);
 
 static bool chk_for_line_continuation(char *line);
-static void comment_out_unused_subckt_models(struct card *start_card);
+void comment_out_unused_subckt_models(struct card *start_card);
 static char inp_get_elem_ident(char *type);
 static void rem_mfg_from_models(struct card *start_card);
 static void inp_fix_macro_param_func_paren_io(struct card *begin_card);
@@ -166,10 +166,10 @@ static char *inp_pathresolve(const char *name);
 static char *inp_pathresolve_at(const char *name, const char *dir);
 static char *search_plain_identifier(char *str, const char *identifier);
 
-static struct nscope *inp_add_levels(struct card *deck);
+struct nscope *inp_add_levels(struct card *deck);
 static struct card_assoc *find_subckt(struct nscope *scope, const char *name);
 static void inp_rem_levels(struct nscope *root);
-static void inp_rem_unused_models(struct nscope *root, struct card *deck);
+void inp_rem_unused_models(struct nscope *root, struct card *deck);
 static struct modellist *inp_find_model(
         struct nscope *scope, const char *name);
 
@@ -2285,7 +2285,7 @@ static void get_subckts_for_subckt(struct card *start_card, char *subckt_name,
   also comment out .param lines with no parameters defined
 */
 
-static void comment_out_unused_subckt_models(struct card *start_card)
+void comment_out_unused_subckt_models(struct card *start_card)
 {
     struct card *card;
     struct nlist *used_subckts, *used_models;
@@ -8869,7 +8869,7 @@ static struct modellist *inp_find_model(
 
 /* scan through deck and add level information to all struct card
  * depending on nested subcircuits */
-static struct nscope *inp_add_levels(struct card *deck)
+struct nscope *inp_add_levels(struct card *deck)
 {
     struct card *card;
     int skip_control = 0;
@@ -8974,7 +8974,7 @@ static void mark_all_binned(struct nscope *scope, char *name)
 }
 
 
-static void inp_rem_unused_models(struct nscope *root, struct card *deck)
+void inp_rem_unused_models(struct nscope *root, struct card *deck)
 {
     struct card *card;
     int skip_control = 0;
