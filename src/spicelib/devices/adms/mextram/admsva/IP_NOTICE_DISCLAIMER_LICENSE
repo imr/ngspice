@@ -1,0 +1,48 @@
+// Copyright (c) 2000-2007, NXP Semiconductors
+// Copyright (c) 2007-2014, Delft University of Technology
+// Copyright (c) 2015, Auburn University
+
+INTELLECTUAL PROPERTY NOTICE, DISCLAIMER AND LICENSE
+
+The Mextram model and documentation presented at this website, 
+denoted as the Model, 
+has been developed by NXP Semiconductors until 2007, 
+Delft University of Technology from 2007 to 2014, 
+and Auburn University since April 2015.
+
+The Model is distributed as is, completely without any expressed 
+or implied warranty or service support. 
+NXP Semiconductors, Delft University of Technology, 
+Auburn University and their employees are not liable for 
+the condition or performance of the Model.
+
+NXP Semiconductors, Delft University of Technology, 
+Auburn University own 
+the copyright and grant users a perpetual, 
+irrevocable, worldwide, non-exclusive, royalty-free 
+license with respect to the Model as set forth below.
+
+NXP Semiconductors, Delft University of Technology, Auburn University 
+hereby disclaim all implied warranties.
+
+NXP Semiconductors, Delft University of Technology, Auburn University  
+grant the users the right to modify, copy, and 
+redistribute the Model and documentation, 
+both within the user's organization and externally, 
+subject to the following restrictions
+
+1. The users agree not to charge for the code 
+itself but may charge for additions, extensions, or support.
+
+2. In any product based on the Model, the users agree to acknowledge 
+NXP Semiconductors, Delft University of Technology, Auburn University  
+that developed the Model. This acknowledgment 
+shall appear in the product documentation.
+
+3. The users agree to obey all restrictions governing redistribution 
+or export of the Model.  
+
+4. The users agree to reproduce any copyright notice which appears 
+on the Model on any copy or modification of such made available 
+to others.
+

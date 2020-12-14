@@ -1,31 +1,45 @@
-// Evaluate the operating point (outout) variables
-begin 
+// Copyright (c) 2000-2007, NXP Semiconductor
+// Copyright (c) 2007-2014, Delft University of Technology
+// Copyright (c) 2015, Auburn University
+// All rights reserved, see IP_NOTICE_DISCLAIMER_LICENSE for further information.
+
+// Evaluate the operating point (output) variables
+begin
 
 `ifdef __VAMS_COMPACT_MODELING__
+
 
 // The external currents and the current gain
 OP_ic     = I(<c>);        // External DC collector current
 OP_ib     = I(<b>);        // External DC base Current
-OP_betadc = OP_ic / OP_ib; // External DC Current gain
+
+if (OP_ib == 0)
+    begin
+        OP_betadc = 0.0 ;
+    end
+else
+    begin
+        OP_betadc = OP_ic / OP_ib; // External DC Current gain
+    end
 
 // begin added in MXT 504.9:
-OP_ie     = I(<e>);        // External DC emitter current
+OP_ie     = I(<e>);    // External DC emitter current
 OP_vbe    = V(b, e);   // External base-emitter bias
 OP_vce    = V(c, e);   // External collector-emitter bias
 OP_vbc    = V(b, c);   // External base-collector bias
 
 `ifdef SUBSTRATE
-OP_is     = I(<s>);        // External DC emitter current
-OP_vse    = V(s, e);   // External substrate-emitter bias
-OP_vbs    = V(b, s);   // External base-substrate bias
-OP_vsc    = V(s, c);   // External substrate-collector bias
+    OP_is     = I(<s>);    // External DC emitter current
+    OP_vse    = V(s, e);   // External substrate-emitter bias
+    OP_vbs    = V(b, s);   // External base-substrate bias
+    OP_vsc    = V(s, c);   // External substrate-collector bias
 `endif
 
 // end added in MXT 504.9:
 
 // The internal voltage differences
 OP_vb2e1 = Vb2e1;  // Internal base-emiter bias
-OP_vb2c2 = Vb2c2;  // Internal base-emiter bias 
+OP_vb2c2 = Vb2c2;  // Internal base-emiter bias
 OP_vb2c1 = Vb2c1;  // Internal base-collector bias including epilayer
 
 OP_vb1c1 = Vb1b2 + Vb2c1;  // External base-collector bias without contact resistances
@@ -42,7 +56,7 @@ OP_ib1b2 = Ib1b2;         // Pinched-base current
 OP_ib1   = Ib1;           // Ideal forward base current
 OP_sib1  = Ib1_s;         // Ideal side-wall base current
 //
-// 504.8, RvdT, TU-Delft April. 2009: 
+// 504.8, RvdT, TU-Delft April. 2009:
 //
 OP_izteb  = Izteb ;        // Zener tunneling current
 //
@@ -52,9 +66,9 @@ OP_iavl  = Iavl;          // Avalanche current
 OP_iex   = Iex;           // Extrinsic reverse base current
 OP_xiex  = XIex;          // Extrinsic reverse base current
 `ifdef SUBSTRATE
-OP_isub  = Isub;          // Substrate current
-OP_xisub = XIsub;         // Substrate current
-OP_isf   = Isf;           // Substrate-collector current
+    OP_isub  = Isub;          // Substrate current
+    OP_xisub = XIsub;         // Substrate current
+    OP_isf   = Isf;           // Substrate-collector current
 `endif
 OP_ire   = - Vee1 / RE_TM;  // Current through emiter resistance
 OP_irbc  = Vbb1 / RBC_TM; // Current through constant base resistance
@@ -70,14 +84,14 @@ OP_sqte  = Qte_s; // Sidewall base-emiter depletion charge
 OP_qbe   = Qbe;   // Base-emiter diffusion charge
 OP_qbc   = Qbc;   // Base-collector diffusion charge
 OP_qtc   = Qtc;   // Base-colector depletion charge
-OP_qepi  = Qepi;  // Epilayer diffusion charge 
+OP_qepi  = Qepi;  // Epilayer diffusion charge
 OP_qb1b2 = Qb1b2; // AC current crowding charge
 OP_qtex  = Qtex;  // Extrinsic base-collector depletion charge
 OP_xqtex = XQtex; // Extrinsic base-collector depletion charge
 OP_qex   = Qex;   // Extrinsic base-collector diffusion charge
 OP_xqex  = XQex;  // Extrinsic base-collector diffusion charge
 `ifdef SUBSTRATE
-OP_qts   = Qts;   // Collector substrate depletion charge
+    OP_qts   = Qts;   // Collector substrate depletion charge
 `endif
 
 // Small signal equivalent circuit conductances and resistances
@@ -125,11 +139,10 @@ OP_rcbli  = RCCin_TM; // Extrinsic buried layer resistance
 
 
 `ifdef SUBSTRATE
-OP_gs     = ddx(Isub, V(b)) + ddx(Isub, V(b1));  // Conductance parasitic PNP transitor
-OP_xgs    = ddx(XIsub, V(b)) ; // Conductance parasitic PNP transistor
-OP_gsf    = ddx(Isf, V(s)) ;   // Conductance substrate-collector current
+    OP_gs     = ddx(Isub, V(b)) + ddx(Isub, V(b1));  // Conductance parasitic PNP transitor
+    OP_xgs    = ddx(XIsub, V(b)) ; // Conductance parasitic PNP transistor
+    OP_gsf    = ddx(Isf, V(s)) ;   // Conductance substrate-collector current
 `endif
-
 
 
 // Small signal equivalent circuit capacitances
@@ -148,12 +161,12 @@ OP_cbcy   =  - ddx(Qtc + Qbc + Qepi, V(c2)); // Capacitance floor b-c junction
 OP_cbcz   =  - ddx(Qtc + Qbc + Qepi, V(c1)); // Capacitance floor b-c junction
 
 // Capacitance extrinsic b-c junction :
-OP_cbcex  =   ddx(Qtex + Qex,V(e))    
-            + ddx(Qtex + Qex,V(b1 ))    
-            + ddx(Qtex + Qex,V(b2))    
-            + ddx(Qtex + Qex,V(e1))    
+OP_cbcex  =   ddx(Qtex + Qex,V(e))
+            + ddx(Qtex + Qex,V(b1 ))
+            + ddx(Qtex + Qex,V(b2))
+            + ddx(Qtex + Qex,V(e1))
             + ddx(Qtex + Qex,V(c2)) ;
- 
+
 // Capacitance extrinsic b-c junction :
 OP_xcbcex =  ddx(XQtex + XQex, V(b)) ;
 
@@ -164,20 +177,20 @@ OP_cb1b2y =  - ddx(Qb1b2, V(c2));  // Cross-capacitance AC current crowding
 OP_cb1b2z =  - ddx(Qb1b2, V(c1)) ;  // Cross-capacitance AC current crowding
 
 `ifdef SUBSTRATE
-OP_cts    = ddx(Qts, V(s)) ; // Capacitance s-c junction
+    OP_cts    = ddx(Qts, V(s)) ; // Capacitance s-c junction
 `endif
 
 // Approximate small signal equivalent circuit
 dydx = (OP_gx - OP_gmux)            / (OP_grcvy + OP_gmuy - OP_gy);
 dydz = (OP_gz - OP_grcvz - OP_gmuz) / (OP_grcvy + OP_gmuy - OP_gy);
-gpi  = OP_sgpi + OP_gpix + OP_gmux + OP_gpiz + OP_gmuz +    
+gpi  = OP_sgpi + OP_gpix + OP_gmux + OP_gpiz + OP_gmuz +
        (OP_gpiy + OP_gmuy) * (dydx + dydz);
 OP_gm   = (OP_grcvy * (OP_gx - OP_gmux +                   // Transconductance
-           OP_gz - OP_gmuz) - OP_grcvz * 
+           OP_gz - OP_gmuz) - OP_grcvz *
           (OP_gy - OP_gmuy)) / (OP_grcvy + OP_gmuy - OP_gy);
 OP_beta = OP_gm / gpi;                                     // Current amplification
 OP_gout = ((OP_gy - OP_gmuy) * OP_grcvz -                  // Output conductance
-          (OP_gz - OP_gmuz) * OP_grcvy) / 
+          (OP_gz - OP_gmuz) * OP_grcvy) /
           (OP_grcvy + OP_gmuy - OP_gy);
 OP_gmu  = OP_gpiz + OP_gmuz + (OP_gpiy + OP_gmuy) * dydz + // Feedback transconductance
           OP_gmuex + OP_xgmuex;
@@ -208,7 +221,7 @@ rz = alpha_ft * rx;
 ry = (1.0 - OP_grcvz * rz) / OP_grcvy;
 rb1b2 = gammax * rx + gammay * ry + gammaz * rz;
 rex = rz + rb1b2 - OP_rcbli;
-xrex = rex + RBC_TM * ((gbfx + OP_gmux) * rx + (gbfy + OP_gmuy) * ry +
+xrex = rz + rb1b2 + RBC_TM * ((gbfx + OP_gmux) * rx + (gbfy + OP_gmuy) * ry +
        (gbfz + OP_gmuz) * rz) - OP_rcbli - OP_rcblx;
 
 taut = OP_scbe * (rx + rb1b2) + (OP_cbex + OP_cbcx) * rx + (OP_cbey + OP_cbcy) *
@@ -222,7 +235,7 @@ OP_vb2c2star = Vb2c2star;         // Physical value of internal base-collector b
 
 //self-heating
 `ifdef SELFHEATING
-OP_pdiss = power;                 // Dissipation
+    OP_pdiss = power_dis;         // Dissipation
 `endif
 
 OP_tk = Tk;                       // Actual temperature
