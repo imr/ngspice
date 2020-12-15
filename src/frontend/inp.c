@@ -2477,7 +2477,7 @@ static void rem_unused_mos_models(struct card* deck) {
             }
             /* what is the device's model name? */
             char* mname = nexttok(curr_line);
-            int nonodes = 4;
+            int nonodes = 4; /* FIXME: this is a hack! How to really detect the number of nodes? */
             int jj;
             for (jj = 0; jj < nonodes; jj++) {
                 mname = nexttok(mname);
