@@ -17,19 +17,19 @@
 
 ///////////////////////////////////////////
 //
-// Macros and constants used in JUNCAP2 
+// Macros and constants used in JUNCAP2
 //
 ///////////////////////////////////////////
 
 // Other constants
-`define MINTEMP          -250                               
-`define vbilow            0.050                             
-`define a                 2                                 
+`define MINTEMP          -250
+`define vbilow            0.050
+`define a                 2
 `define epsch             0.1
-`define dvbi              0.050                               
-`define epsav             1E-6                              
-`define vbrmax            1000                              
-`define alphaav           0.999                             
+`define dvbi              0.050
+`define epsav             1E-6
+`define vbrmax            1000
+`define alphaav           0.999
 `define vmaxlarge         1E8
 `define aerfc             0.29214664
 `define twothirds         0.666666666666667
@@ -44,8 +44,8 @@
 `define TRJ_cliplow        `MINTEMP
 `define IMAX_cliplow       1E-12
 `define CJORBOT_cliplow    1E-12
-`define CJORSTI_cliplow    1E-18    
-`define CJORGAT_cliplow    1E-18    
+`define CJORSTI_cliplow    1E-18
+`define CJORGAT_cliplow    1E-18
 `define VBIR_cliplow       `vbilow
 `define P_cliplow          0.05
 `define P_cliphigh         0.95
@@ -140,7 +140,7 @@ end
 // Smoothing functions
 
 `define hypfunction2(x,x0,eps,hyp2) \
-hyp2 = 0.5 * ((x) + (x0) - sqrt(((x) - (x0)) * ((x) - (x0)) + 4 * (eps) * (eps))); 
+hyp2 = 0.5 * ((x) + (x0) - sqrt(((x) - (x0)) * ((x) - (x0)) + 4 * (eps) * (eps)));
 
 `define hypfunction5(x,x0,eps,hyp5) \
 h1   = 4.0 * (eps) * (eps); \
@@ -149,7 +149,7 @@ h2d  = (x) + (eps) * h2; \
 h3   = (x0) + h2d; \
 h4   = (x0) - h2d; \
 h5   = sqrt(h4 * h4 + h1); \
-hyp5 = 2.0 * ((x) * (x0) / (h3 + h5)); 
+hyp5 = 2.0 * ((x) * (x0) / (h3 + h5));
 
 
 // A special function used to calculate TAT-currents,
@@ -232,7 +232,7 @@ end else begin \
       fbreakdown = fstop + (vav + `alphaav * VBR) * slope; \
    end \
 end \
-Ijprime = (id + isrh + itat + ibbt) * fbreakdown; 
+Ijprime = (id + isrh + itat + ibbt) * fbreakdown;
 
 
 // The following code is written as a macro because the naming of the instance parameters is

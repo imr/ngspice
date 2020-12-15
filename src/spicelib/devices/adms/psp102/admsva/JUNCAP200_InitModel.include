@@ -33,7 +33,7 @@
          PBOT_i       = `CLIP_BOTH(PBOT      , `P_cliplow,`P_cliphigh);
          PSTI_i       = `CLIP_BOTH(PSTI      , `P_cliplow,`P_cliphigh);
          PGAT_i       = `CLIP_BOTH(PGAT      , `P_cliplow,`P_cliphigh);
-         IDSATRBOT_i  = `CLIP_LOW( IDSATRBOT , `IDSATR_cliplow);  
+         IDSATRBOT_i  = `CLIP_LOW( IDSATRBOT , `IDSATR_cliplow);
          IDSATRSTI_i  = `CLIP_LOW( IDSATRSTI , `IDSATR_cliplow);
          IDSATRGAT_i  = `CLIP_LOW( IDSATRGAT , `IDSATR_cliplow);
          CSRHBOT_i    = `CLIP_LOW( CSRHBOT   , `CSRH_cliplow);
@@ -84,9 +84,9 @@
          ftdgat         = (pow(auxt, 1.5)) * exp(0.5 * ((phigrgat * phitrinv) - (phigdgat * phitdinv)));
 
          // temperature-scaled saturation current for ideal-current model
-         idsatbot       = IDSATRBOT_i * ftdbot * ftdbot;  
-         idsatsti       = IDSATRSTI_i * ftdsti * ftdsti;  
-         idsatgat       = IDSATRGAT_i * ftdgat * ftdgat;  
+         idsatbot       = IDSATRBOT_i * ftdbot * ftdbot;
+         idsatsti       = IDSATRSTI_i * ftdsti * ftdsti;
+         idsatgat       = IDSATRGAT_i * ftdgat * ftdgat;
 
          // built-in voltages before limiting
          ubibot        = VBIRBOT_i * auxt - 2 * phitd * ln(ftdbot);
@@ -137,11 +137,11 @@
          wdepnulrinvbot = 1 / wdepnulrbot;
          wdepnulrinvsti = 1 / wdepnulrsti;
          wdepnulrinvgat = 1 / wdepnulrgat;
-                  
+
          // inverse values of built-in voltages at reference temperature, needed in SRH and BBT model
-         VBIRBOTinv    = 1 / VBIRBOT_i; 
-         VBIRSTIinv    = 1 / VBIRSTI_i; 
-         VBIRGATinv    = 1 / VBIRGAT_i; 
+         VBIRBOTinv    = 1 / VBIRBOT_i;
+         VBIRSTIinv    = 1 / VBIRSTI_i;
+         VBIRGATinv    = 1 / VBIRGAT_i;
 
          // some constants needed in erfc-approximation, needed in TAT model
          perfc         = (`SQRTPI * `aerfc);
@@ -154,9 +154,9 @@
          deltaEgat     = max(0.5 * phigdgat, phitd);
 
          // values of atat, needed in TAT model
-         atatbot       = deltaEbot * phitdinv; 
-         atatsti       = deltaEsti * phitdinv; 
-         atatgat       = deltaEgat * phitdinv; 
+         atatbot       = deltaEbot * phitdinv;
+         atatsti       = deltaEsti * phitdinv;
+         atatgat       = deltaEgat * phitdinv;
 
          // values of btatpart, needed in TAT model
          btatpartbot   = sqrt(32 * MEFFTATBOT_i * `MELE * `QELE * (deltaEbot * deltaEbot * deltaEbot)) / (3 * `HBAR);
@@ -177,7 +177,7 @@
          VBRinvbot     = 1 / VBRBOT_i;
          VBRinvsti     = 1 / VBRSTI_i;
          VBRinvgat     = 1 / VBRGAT_i;
-         
+
          // slopes for linear extraploation close to and beyond breakdown, needed in avalanche/breakdown model
          slopebot      = -(fstopbot * fstopbot * pow(`alphaav, (PBRBOT_i - 1))) * PBRBOT_i * VBRinvbot;
          slopesti      = -(fstopsti * fstopsti * pow(`alphaav, (PBRSTI_i - 1))) * PBRSTI_i * VBRinvsti;

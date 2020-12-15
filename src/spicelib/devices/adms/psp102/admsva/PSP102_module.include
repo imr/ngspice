@@ -1,5 +1,5 @@
 `undef P
-`define P(txt) (*txt*) 
+`define P(txt) (*txt*)
 //======================================================================================
 //======================================================================================
 // Filename: PSP102_module.include
@@ -27,7 +27,7 @@
     // Extra internal nodes for correlated drain and gate noise
     electrical NOI;
     electrical NOI2;
-    
+
     // Extra branches for correlated drain and gate noise
     branch (NOI) NOII;
     branch (NOI) NOIR;
@@ -61,7 +61,7 @@
     branch(INT7) SPLINE7;
     branch(INT8) SPLINE8;
     branch(INT9) SPLINE9;
-  
+
     branch(INT1) RES1;
     branch(INT2) RES2;
     branch(INT3) RES3;
@@ -170,7 +170,7 @@
     parameter real    BGIDL    = 41.0      `from(   0.0,inf     ) `P(info="GIDL probability factor at TR" unit="V" );
     parameter real    STBGIDL  =  0.0                             `P(info="Temperature dependence of BGIDL" unit="V/K" );
     parameter real    CGIDL    =  0.0                             `P(info="Back-bias dependence of GIDL" unit="" );
- 
+
     //  Charge model parameters
     parameter real    COX      =  1.0e-14  `from(    0.0,inf    ) `P(info="Oxide capacitance for intrinsic channel" unit="F" );
     parameter real    CGOV     =  1.0e-15  `from(    0.0,inf    ) `P(info="Oxide capacitance for gate-drain/source overlap" unit="F" );
@@ -409,12 +409,12 @@
 
     //  NQS parameters
     parameter real    SWNQS    =  0.0      `from(   0.0,9.0     ) `P(info="Flag for NQS, 0=off, 1, 2, 3, 5, or 9=number of collocation points" unit="" );
-    parameter real    MUNQSO   =  1.0                             `P(info="Relative mobility for NQS modelling" );    
-    parameter real    RGO      =  1.0e-3                          `P(info="Gate resistance" );                        
-    parameter real    RBULKO   =  1.0e-3                          `P(info="Bulk resistance between node BP and BI" unit="Ohm" ); 
-    parameter real    RWELLO   =  1.0e-3                          `P(info="Well resistance between node BI and B" unit="Ohm" );  
-    parameter real    RJUNSO   =  1.0e-3                          `P(info="Source-side bulk resistance between node BI and BS" unit="Ohm" ); 
-    parameter real    RJUNDO   =  1.0e-3                          `P(info="Drain-side bulk resistance between node BI and BD" unit="Ohm" ); 
+    parameter real    MUNQSO   =  1.0                             `P(info="Relative mobility for NQS modelling" );
+    parameter real    RGO      =  1.0e-3                          `P(info="Gate resistance" );
+    parameter real    RBULKO   =  1.0e-3                          `P(info="Bulk resistance between node BP and BI" unit="Ohm" );
+    parameter real    RWELLO   =  1.0e-3                          `P(info="Well resistance between node BI and B" unit="Ohm" );
+    parameter real    RJUNSO   =  1.0e-3                          `P(info="Source-side bulk resistance between node BI and BS" unit="Ohm" );
+    parameter real    RJUNDO   =  1.0e-3                          `P(info="Drain-side bulk resistance between node BI and BD" unit="Ohm" );
 `endif // NQSmodel
 
     // Stress Model Parameters
@@ -464,11 +464,11 @@
     //  Variables
     //
     //////////////////////////
-    
+
     // Variables for geometrical scaling rules
     real    L_i, W_i, SA_i, SB_i;
     real    LEN, WEN, iL, iW, delLPS, delWOD, LE, WE, iLE, iWE, Lcv, Wcv, LEcv, WEcv;
-    
+
 `ifdef Binning
     // Auxiliary variables for binning-rules
     real    iLEWE, iiLE, iiWE, iiLEWE, iiiLEWE;
@@ -480,7 +480,7 @@
     real    LP1_i, LP2_i, WBET_i, AXL_i, ALP1L2_i, ALP2L2_i;
     real    NSUB, AA, BB, NSUB0e, NPCKe, LPCKe;
     real    FBET1e, LP1e, GPE, GWE, tmpx;
-`endif // Binning    
+`endif // Binning
 
     // List of local parameters
     real    VFB, STVFB, TOX, NEFF, VNSUB, NSLP, DNSUB, DPHIB, NP, CT;
@@ -521,7 +521,7 @@
 
     real temp, temp1, temp2, tempM;
     real help;
-    
+
     real TKR, TKD, TKD_sq, dT, rT, rTn;
     real phit, inv_phit, Eg, phibFac, CoxPrime, tox_sq;
     real delVg, CoxovPrime, GOV, GOV2;
@@ -581,17 +581,17 @@
     real arg1, arg2max, arg2mina;
 
     integer CHNL_TYPE;
-    
+
 `ifdef NQSmodel
     // Variables used in NQS-calculations
     real SWNQS_i, MUNQS_i, RG_i, RBULK_i, RWELL_i, RJUNS_i, RJUND_i;
     real Qp1_0, Qp2_0, Qp3_0, Qp4_0, Qp5_0, Qp6_0, Qp7_0, Qp8_0, Qp9_0;
-    real fk1, fk2, fk3, fk4, fk5, fk6, fk7, fk8, fk9; 
-    
+    real fk1, fk2, fk3, fk4, fk5, fk6, fk7, fk8, fk9;
+
     real phi_p1, phi_p2, phi_p3;
     real phi_p4, phi_p5, phi_p6;
     real phi_p7, phi_p8, phi_p9;
-    
+
     real Qp1, Qp2, Qp3;
     real Qp4, Qp5, Qp6;
     real Qp7, Qp8, Qp9;
@@ -599,10 +599,10 @@
 
     real QG_NQS, QS_NQS, QD_NQS;
     real pd, Gp, Gp2, a_factrp, marginp, x_sp, x_dp;
-    
+
     real dfQi, fQi, dQis, dQis_1, d2Qis, dQbs, dQy, d2Qy, dpsy2;
     real ym, inorm, Tnorm, Qb_tmp, QbSIGN;
-    real r_nqs, vnorm, vnorm_inv; 
+    real r_nqs, vnorm, vnorm_inv;
     real NQS_xg1, NQS_yg, NQS_z, NQS_eta, NQS_a, NQS_c, NQS_tau, NQS_D0, NQS_xi, NQS_p;
     real NQS_q, NQS_temp, NQS_A_fac, NQS_xbar, NQS_w, NQS_x0, NQS_u, NQS_y0;
     real xphi, fk0, thesat2, Fvsat;
@@ -634,7 +634,7 @@
 
     real ctype     `P(ask="yes" info="Flag for channel type" unit="");
     real sdint     `P(ask="yes" info="Flag for source-drain interchange" unit="");
-    
+
     real ise       `P(ask="yes" info="Total source current" unit="A");
     real ige       `P(ask="yes" info="Total gate current" unit="A");
     real ide       `P(ask="yes" info="Total drain current" unit="A");
@@ -669,13 +669,13 @@
     real vgt       `P(ask="yes" info="Effective gate drive voltage including back bias and drain bias effects" unit="V");
     real vdss      `P(ask="yes" info="Drain saturation voltage at actual bias" unit="V");
     real vsat      `P(ask="yes" info="Saturation limit" unit="V");
-    
+
     real gm        `P(ask="yes" info="Transconductance" unit="1/Ohm");
     real gmb       `P(ask="yes" info="Substrate transconductance" unit="1/Ohm");
     real gds       `P(ask="yes" info="Output conductance" unit="1/Ohm");
     real gjs       `P(ask="yes" info="Source junction conductance" unit="1/Ohm");
     real gjd       `P(ask="yes" info="Drain junction conductance" unit="1/Ohm");
-    
+
     real cdd       `P(ask="yes" info="Drain capacitance" unit="F");
     real cdg       `P(ask="yes" info="Drain-gate capacitance" unit="F");
     real cds       `P(ask="yes" info="Drain-source capacitance" unit="F");
@@ -694,7 +694,7 @@
     real cbb       `P(ask="yes" info="Bulk capacitance" unit="F");
     real cgsol     `P(ask="yes" info="Total gate-source overlap capacitance" unit="F");
     real cgdol     `P(ask="yes" info="Total gate-drain overlap capacitance" unit="F");
-    
+
     real cjs       `P(ask="yes" info="Total source junction capacitance" unit="F");
     real cjsbot    `P(ask="yes" info="Source junction capacitance (bottom component)" unit="F");
     real cjsgat    `P(ask="yes" info="Source junction capacitance (gate-edge component)" unit="F");
@@ -703,7 +703,7 @@
     real cjdbot    `P(ask="yes" info="Drain junction capacitance (bottom component)" unit="F");
     real cjdgat    `P(ask="yes" info="Drain junction capacitance (gate-edge component)" unit="F");
     real cjdsti    `P(ask="yes" info="Drain junction capacitance (STI-edge component)" unit="F");
-    
+
     real weff      `P(ask="yes" info="Effective channel width for geometrical models" unit="m");
     real leff      `P(ask="yes" info="Effective channel length for geometrical models" unit="m");
     real u         `P(ask="yes" info="Transistor gain" unit="");
@@ -734,6 +734,9 @@
 
     analog begin
 
+`ifdef insideADMS
+        `INITIAL_MODEL
+`endif
         begin : initial_model
         // Code independent of bias or instance parameters
         // This block needs to be evaluated only once
@@ -788,7 +791,7 @@
             rTn        =  TKR / TKD;
             phit       =  TKD * `KBOL / `QELE;
             inv_phit   =  1.0 / phit;
-            
+
             // Local process parameters
             Eg         =  1.179 - 9.025e-5 * TKD - 3.05e-7 * TKD_sq;
             phibFac    =  (1.045 + 4.5e-4 * TKD) * (0.523 + 1.4e-3 * TKD - 1.48e-6 * TKD_sq) * TKD_sq / 9.0E4;
@@ -830,6 +833,9 @@
 
         end // initial_model
 
+`ifdef insideADMS
+        `INITIAL_INSTANCE
+`endif
         begin : initial_instance
         // Code independent of bias, but dependent on instance parameters,
         //   (including code dependent on parameters which could IN PRINCIPLE be scaled)
@@ -945,7 +951,7 @@
 
             // Saturation voltage
             AX         = AXO / (1.0 + AXL_i * iLE);
-            
+
             // Channel length modulation
             ALP        = ALPL * pow(iLE, ALPLEXP) * (1.0 + ALPW * iWE);
             tmpx       = pow(iLE, ALP1LEXP);
@@ -953,14 +959,14 @@
             tmpx       = pow(iLE, ALP2LEXP);
             ALP2       = ALP2L1 * tmpx * (1.0 + ALP2W * iWE) / (1.0 + ALP2L2_i * iLE * tmpx);
             VP         = VPO;
-            
+
             // Impact ionization
             A1         = A1O * (1.0 + A1L * iLE) * (1.0 + A1W * iWE);
             A2         = A2O;
             STA2       = STA2O;
             A3         = A3O * (1.0 + A3L * iLE) * (1.0 + A3W * iWE);
             A4         = A4O * (1.0 + A4L * iLE) * (1.0 + A4W * iWE);
-            
+
             // Gate current
             GCO        = GCOO;
             IGINV      = IGINVLW / (iWE * iLE);
@@ -969,20 +975,20 @@
             GC2        = GC2O;
             GC3        = GC3O;
             CHIB       = CHIBO;
-            
+
             // GIDL
             AGIDL      = AGIDLW * LOV_i / (LEN * iWE);
             BGIDL      = BGIDLO;
             STBGIDL    = STBGIDLO;
             CGIDL      = CGIDLO;
-            
+
             // Charge model parameters
             COX        = `EPSOX * WEcv * LEcv / TOX_i;
             CGOV       = `EPSOX * WEcv * LOV_i / TOXOV_i;
             CGBOV      = CGBOVL * Lcv / LEN;
             CFR        = CFRW * Wcv / WEN;
             FNT        = FNTO;
-            
+
             // Noise model parameters
             NFA        = iWE * iLE * NFALW;
             NFB        = iWE * iLE * NFBLW;
@@ -1170,7 +1176,7 @@
             tf_ther    =  pow(rTn, STRS_i);
             RS_i       =  RS_i * tf_ther;
             THER_i     =  2 * BET_i * RS_i;
-            
+
             // Velocity saturation
             tf_thesat  =  pow(rTn, STTHESAT_i);
             THESAT_i   =  THESAT_i * tf_thesat;
@@ -1220,7 +1226,7 @@
             RJUNS_i    = `CLIP_LOW(RJUNS, 1.0e-6);
             RJUND_i    = `CLIP_LOW(RJUND, 1.0e-6);
             RWELL_i    = `CLIP_LOW(RWELL, 1.0e-6);
-            
+
             // Conductance of parasitic resistance
             ggate      =  MULT_i / RG_i;
             gbulk      =  MULT_i / RBULK_i;
@@ -1247,7 +1253,7 @@
             asrh       = 0.0;
             vav        = 0.0;
             vbi_minus_vjsrh = 0.0;
-            
+
             if (SWJUNCAP == 0.0) begin
                 ABSOURCE_i = 0.0;
                 LSSOURCE_i = 0.0;
@@ -1259,33 +1265,33 @@
                 VMAXD      = 0.0;
             end else begin
                 if (SWJUNCAP == 2.0) begin
-                    ABSOURCE_i = `CLIP_LOW(AS, `AB_cliplow); 
-                    LSSOURCE_i = `CLIP_LOW(PS, `LS_cliplow); 
-                    LGSOURCE_i = juncapwidth; 
-                    ABDRAIN_i  = `CLIP_LOW(AD, `AB_cliplow); 
-                    LSDRAIN_i  = `CLIP_LOW(PD, `LS_cliplow); 
+                    ABSOURCE_i = `CLIP_LOW(AS, `AB_cliplow);
+                    LSSOURCE_i = `CLIP_LOW(PS, `LS_cliplow);
+                    LGSOURCE_i = juncapwidth;
+                    ABDRAIN_i  = `CLIP_LOW(AD, `AB_cliplow);
+                    LSDRAIN_i  = `CLIP_LOW(PD, `LS_cliplow);
                     LGDRAIN_i  = juncapwidth;
                 end else begin
                     if (SWJUNCAP == 3.0) begin
-                        ABSOURCE_i = `CLIP_LOW(AS, `AB_cliplow); 
-                        ABDRAIN_i  = `CLIP_LOW(AD, `AB_cliplow); 
-                        LSSOURCE_i = `CLIP_LOW(PS - juncapwidth, `LS_cliplow); 
-                        LGSOURCE_i = juncapwidth; 
-                        LSDRAIN_i  = `CLIP_LOW(PD - juncapwidth, `LS_cliplow); 
+                        ABSOURCE_i = `CLIP_LOW(AS, `AB_cliplow);
+                        ABDRAIN_i  = `CLIP_LOW(AD, `AB_cliplow);
+                        LSSOURCE_i = `CLIP_LOW(PS - juncapwidth, `LS_cliplow);
+                        LGSOURCE_i = juncapwidth;
+                        LSDRAIN_i  = `CLIP_LOW(PD - juncapwidth, `LS_cliplow);
                         LGDRAIN_i  = juncapwidth;
                     end else begin
-                        ABSOURCE_i = `CLIP_LOW(ABSOURCE, `AB_cliplow); 
-                        LSSOURCE_i = `CLIP_LOW(LSSOURCE, `LS_cliplow); 
-                        LGSOURCE_i = `CLIP_LOW(LGSOURCE, `LG_cliplow); 
-                        ABDRAIN_i  = `CLIP_LOW(ABDRAIN, `AB_cliplow); 
-                        LSDRAIN_i  = `CLIP_LOW(LSDRAIN, `LS_cliplow); 
+                        ABSOURCE_i = `CLIP_LOW(ABSOURCE, `AB_cliplow);
+                        LSSOURCE_i = `CLIP_LOW(LSSOURCE, `LS_cliplow);
+                        LGSOURCE_i = `CLIP_LOW(LGSOURCE, `LG_cliplow);
+                        ABDRAIN_i  = `CLIP_LOW(ABDRAIN, `AB_cliplow);
+                        LSDRAIN_i  = `CLIP_LOW(LSDRAIN, `LS_cliplow);
                         LGDRAIN_i  = `CLIP_LOW(LGDRAIN, `LG_cliplow);
                     end
                 end
                 `JuncapInitInstance(ABSOURCE_i, LSSOURCE_i, LGSOURCE_i, VMAXS, vbimins, vchs, vfmins, vbbtlims)
                 `JuncapInitInstance(ABDRAIN_i,  LSDRAIN_i,  LGDRAIN_i,  VMAXD, vbimind, vchd, vfmind, vbbtlimd)
             end
-            
+
 
         end // initial_instance
 
@@ -1294,7 +1300,7 @@
         //      DC bias dependent quantities (calculations for current contribs)
         //
         /////////////////////////////////////////////////////////////////////////////
-        
+
         begin : evaluateStatic
             // Initialisation of some variables
             SP_S_x1    =  0.0;
@@ -1349,7 +1355,7 @@
                 Vjuns      =  V(S, `Bjs);
                 Vjund      =  V(D, `Bjd);
             end
-            
+
             // Source-drain interchange
             sigVds     =  1.0;
             if (Vds < 0.0) begin
@@ -1365,7 +1371,7 @@
 
             xgs_ov     = -Vgs * inv_phit;
             xgd_ov     = -Vgd * inv_phit;
-            
+
             // 4.2.1 Conditioning of terminal voltages
             temp       =  `MINA(Vdb, Vsb, bphi) + phix;
             Vsbstar    =  Vsb - `MINA(temp, 0, aphi) + phix1;
@@ -1377,7 +1383,7 @@
             delVg      =  CF_i * (Vdsx * (1 + CFB_i * Vsbx)); // DIBL
             Vgb1       =  Vgb1 + delVg;
             xg         =  Vgb1 * inv_phit1;
-            
+
             // 4.2.2 Bias dependent body factor
             if (DNSUB_i > 0.0) begin
                 Dnsub       =  DNSUB_i * `MAXA(0, Vgs + Vsb - VNSUB_i, NSLP_i);
@@ -1385,7 +1391,7 @@
             end else begin
                 Gf          =  G_0;
             end
-            
+
             // 4.2.3 Surface potential at source side
             Gf2        =  Gf * Gf;
             inv_Gf2    =  1.0 / Gf2;
@@ -1403,7 +1409,7 @@
             x_d        =  x_s;
             x_m        =  x_s;
             x_ds       =  0.0;
-            
+
             //
             // Core PSP current calculation
             //
@@ -1412,7 +1418,7 @@
                 Ids        =  0.0;
                 xgm        =  xg - x_s;
                 Voxm       =  xgm * phit1;
-                qeff       =  Voxm; 
+                qeff       =  Voxm;
                 Vdsat      =  Vdsat_lim;
             end else begin // (xg > 0)
                 delta_1s   =  0.0;
@@ -1431,23 +1437,23 @@
                     delta_1s   = `ke05 / `P3(xn_s - x_s - `se05);
                     Es         = `ke05 / `P3(x_s - `se05);
                 end
-                Ds         =  delta_1s - delta_ns * (x_s + 1.0 + xi0s); 
+                Ds         =  delta_1s - delta_ns * (x_s + 1.0 + xi0s);
                 if (x_s < 1.0e-5) begin
                     Ps         =  0.5 * (x_s * x_s * (1.0 - `oneThird * (x_s * (1.0 - 0.25 * x_s))));
                     Ds         =  `oneSixth * (delta_ns * x_s * x_s * x_s * (1.0 + 1.75 * x_s));
                     temp       =  sqrt(1.0 - `oneThird * (x_s * (1.0 - 0.25 * x_s)));
                     sqm        =  `invSqrt2 * (x_s * temp);
-                    alpha      =  1.0 + Gf * `invSqrt2 * (1.0 - 0.5 * x_s + `oneSixth * (x_s * x_s)) / temp; 
+                    alpha      =  1.0 + Gf * `invSqrt2 * (1.0 - 0.5 * x_s + `oneSixth * (x_s * x_s)) / temp;
                 end else begin
                     Ps         =  x_s - 1.0 + Es;
                     sqm        =  sqrt(Ps);
-                    alpha      =  1.0 + 0.5 * (Gf * (1.0 - Es) / sqm); 
+                    alpha      =  1.0 + 0.5 * (Gf * (1.0 - Es) / sqm);
                 end
                 Em     =  Es;
                 Ed     =  Em;
                 Dm     =  Ds;
                 Dd     =  Dm;
-                
+
                 // 4.2.4 Drain saturation voltage
                 Rxcor      =  (1.0 + 0.2 * XCOR_i * Vsbx) / (1.0 + XCOR_i * Vsbx);
                 if ( Ds > `ke05) begin
@@ -1496,7 +1502,7 @@
                     Phi_sat    =  Phi0_Phi2 / (Phi_0_2 + sqrt(Phi_0_2 * Phi_0_2 - 1.98 * Phi0_Phi2));
                     Vdsat      =  Phi_sat - phit1 * ln(1.0 + Phi_sat * (Phi_sat - 2.0 * asat * phit1) * inv_Gf2 / (phit1 * phit1 * Ds));
                 end else begin
-                    Vdsat      =  Vdsat_lim; 
+                    Vdsat      =  Vdsat_lim;
                 end
                 temp      =  pow(Vds / Vdsat, AX_i);
                 Vdse      =  Vds * pow(1.0 + temp, -inv_AX);
@@ -1560,18 +1566,18 @@
                 if (x_m < 1.0e-5) begin
                     Pm         =  0.5 * (x_m * x_m * (1.0 - `oneThird * (x_m * (1.0 - 0.25 * x_m))));
                     xgm        =  Gf * sqrt(Dm + Pm);
-                    
+
                     // 4.2.7 Polysilicon depletion
                     if (kp > 0.0) begin
                         eta_p       =  1.0 / sqrt(1.0 + kp * xgm);
                     end // (kp > 0.0)
                     temp       =  sqrt(1.0 - `oneThird * (x_m * (1.0 - 0.25 * x_m)));
                     sqm        =  `invSqrt2 * (x_m * temp);
-                    alpha      =  eta_p + `invSqrt2 * (Gf * (1.0 - 0.5 * x_m + `oneSixth * (x_m * x_m)) / temp); 
+                    alpha      =  eta_p + `invSqrt2 * (Gf * (1.0 - 0.5 * x_m + `oneSixth * (x_m * x_m)) / temp);
                 end else begin
                     Pm         =  x_m - 1.0 + Em;
                     xgm        =  Gf * sqrt(Dm + Pm);
-                    
+
                     // 4.2.7 Polysilicon depletion
                     if (kp > 0.0) begin
                         d0         =  1.0 - Em + 2.0 * (xgm * inv_Gf2);
@@ -1593,7 +1599,7 @@
                         dps        =  x_ds * phit1;
                     end // (kp > 0.0)
                     sqm        =  sqrt(Pm);
-                    alpha      =  eta_p + 0.5 * (Gf * (1.0 - Em) / sqm); 
+                    alpha      =  eta_p + 0.5 * (Gf * (1.0 - Em) / sqm);
                 end
 
                 // 4.2.8 Potential midpoint inversion charge
@@ -1793,7 +1799,7 @@
             if ((SWGIDL != 0) && (AGIDL_i > 0)) begin
 
                 // GIDL current computation
-                if (Vovd < 0) begin                    
+                if (Vovd < 0) begin
                     Vtovd        = sqrt(Vovd * Vovd + CGIDL_i * CGIDL_i * (Vdb * Vdb) + 1.0e-6);
                     temp = -BGIDL_i / Vtovd;
                     `expl_low(temp, temp2)
@@ -1808,7 +1814,7 @@
                     Igisl        = -AGIDL_i * (Vsb * Vovs * Vtovs * temp2);
                 end
             end // (SWGIDL != 0)
-          
+
         end // evaluateStatic
 
 
@@ -1863,20 +1869,20 @@
             marginp    =  0.0;
             if (SWNQS_i != 0) begin
                 if (xg <= 0.0) begin
-                    ym         =  0.5; 
+                    ym         =  0.5;
                     pd         =  1.0;
-                    Gp         =  Gf; 
+                    Gp         =  Gf;
                 end else begin
                     ym         =  0.5 * ( 1.0 + 0.25 * (dps / H));
                     pd         =  xgm / (xg - x_m);
                     Gp         =  Gf / pd;
                 end
-                Gp2        =  Gp * Gp; 
+                Gp2        =  Gp * Gp;
                 a_factrp   =  1.0 + Gp * `invSqrt2;
                 marginp    =  1e-5 * a_factrp;
             end
 `endif // NQSmodel
-           
+
         end // evaluateDynamic
 
 
@@ -1887,7 +1893,7 @@
         /////////////////////////////////////////////////////////////////////////////
 
         begin : evaluateStaticDynamic
-            
+
             // Source side
             VAK     = Vjuns;
             VMAX    = VMAXS;
@@ -1896,7 +1902,7 @@
             vch     = vchs;
             vbbtlim = vbbtlims;
             `juncapcommon(ABSOURCE_i,LSSOURCE_i,LGSOURCE_i,isjunbot,qsjunbot,isjunsti,qsjunsti,isjungat,qsjungat)
-            
+
             // Drain side
             VAK     = Vjund;
             VMAX    = VMAXD;
@@ -1931,7 +1937,7 @@
             Igbe       = MULT_i * Igb;
             Igse       = MULT_i * Igs;
             Igde       = MULT_i * Igd;
-            
+
             // GIDL/GISL current
             Igidle     = MULT_i * Igidl;
             Igisle     = MULT_i * Igisl;
@@ -1942,7 +1948,7 @@
             // JUNCAP2
             isjun = MULT_i * (ABSOURCE_i * isjunbot + LSSOURCE_i * isjunsti + LGSOURCE_i * isjungat);
             idjun = MULT_i * (ABDRAIN_i  * idjunbot + LSDRAIN_i  * idjunsti + LGDRAIN_i  * idjungat);
-            
+
             // Convert back for NMOS-PMOS and Source-Drain interchange
             if (sigVds > 0) begin
                 I(D, `Bint)     <+  CHNL_TYPE * (Iimpacte + Igidle);
@@ -2140,14 +2146,14 @@
         /////////////////////////////////////////////////////////////////////////////
 
         begin : OPinfo
-        
+
             // The output variables defined below are currently not available in
             // Verilog-A, but only in the SiMKit-C-code which was generated from
             // this source. Similar functionality will be available in Verilog-A
             // from Verilog-A version 2.2 onwards. However, a different syntax is
             // to be used (see Verilog AMS language reference manual, version 2.2,
             // november 2004, Accellera).
-            
+
             // Auxiliary variables
             id_op     = Idse + Iimpacte + Igidle - Igde;
             is        = -Idse + Igisle - Igse;
@@ -2159,18 +2165,18 @@
             facvsb     = Vsbstar + facvsb0;
             sig1k      = 2 * `PI * 1000 * CGeff;
             sig1k      = sig1k * sig1k * mig;
-            
+
 
             ////////////////////////////////////////////////////////////////////////////////////
             //
             // Actual operation point output variables
             //
             ////////////////////////////////////////////////////////////////////////////////////
-            
+
             // Note: In this section (and ONLY in this section) `drain' always refers to
             //       the highest-potential end of the channel. Therefore, care has to be
             //       taken for derivatives w.r.t. terminal voltages when sigVds == -1.
-            
+
             sdint      = sigVds;
             ctype      = CHNL_TYPE;
 
@@ -2249,7 +2255,7 @@
                 cjdbot     = -MULT_i * CHNL_TYPE * ABSOURCE_i * ddx(qsjunbot, V(S, `Bjs));
                 cjdgat     = -MULT_i * CHNL_TYPE * LGSOURCE_i * ddx(qsjungat, V(S, `Bjs));
                 cjdsti     = -MULT_i * CHNL_TYPE * LSSOURCE_i * ddx(qsjunsti, V(S, `Bjs));
-                cjd        =  cjdbot + cjdgat + cjdsti;                                     
+                cjd        =  cjdbot + cjdgat + cjdsti;
             end else begin
                 ise        = is - isjun;
                 ige        = ig;
@@ -2316,7 +2322,7 @@
                 cjsbot     = -MULT_i * CHNL_TYPE * ABSOURCE_i * ddx(qsjunbot, V(S, `Bjs));
                 cjsgat     = -MULT_i * CHNL_TYPE * LGSOURCE_i * ddx(qsjungat, V(S, `Bjs));
                 cjssti     = -MULT_i * CHNL_TYPE * LSSOURCE_i * ddx(qsjunsti, V(S, `Bjs));
-                cjs        =  cjsbot + cjsgat + cjssti;                                     
+                cjs        =  cjsbot + cjsgat + cjssti;
                 cjdbot     = -MULT_i * CHNL_TYPE * ABDRAIN_i * ddx(qdjunbot, V(D, `Bjd));
                 cjdgat     = -MULT_i * CHNL_TYPE * LGDRAIN_i * ddx(qdjungat, V(D, `Bjd));
                 cjdsti     = -MULT_i * CHNL_TYPE * LSDRAIN_i * ddx(qdjunsti, V(D, `Bjd));
