@@ -1389,7 +1389,11 @@ translate(struct card *deck, char *formal, char *actual, char *scname, const cha
             tfree(name);
             bxx_putc(&buffer, ' ');
 
-            nnodes = numnodes(c->line, subs, modnames);
+            /* FIXME anothet hack: if no models found for m devices, set number of nodes to 4 */
+            if (!modnames && *(c->line) == 'm')
+                nnodes = 4;
+            else
+                nnodes = numnodes(c->line, subs, modnames);
             while (--nnodes >= 0) {
                 name = gettok_node(&s);
                 if (name == NULL) {
