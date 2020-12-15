@@ -33,15 +33,15 @@
 // `undef LocalModel
 // `define Binning
 
-module PSP102VA(D, G, S, B)
+module PSP102VA(D, G, S, B);
 
-`P(
-  info = "PSP MOSFET Model"
-  version = `VERS
-  revision = `VREV
-  simkit:name = "psp1020"
-  simkit:desc = "psp_1020"
-);
+//`P(
+//  info = "PSP MOSFET Model"
+//  version = `VERS
+//  revision = `VREV
+//  simkit:name = "psp1020"
+//  simkit:desc = "psp_1020"
+//)
 
 `include "PSP102_module.include"
 

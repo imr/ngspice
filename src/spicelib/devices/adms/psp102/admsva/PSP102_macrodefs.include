@@ -18,7 +18,7 @@
 
 /////////////////////////////////////////////
 //
-// Macros and constants used in PSP 
+// Macros and constants used in PSP
 //
 /////////////////////////////////////////////
 
@@ -86,7 +86,7 @@ end else begin \
     mu             =  (nu) * (nu) / (tau) + 0.5 * ((c) * (c)) - (a) * (b); \
     y              =  (eta) + (a) * nu / (mu + (nu / mu) * (c) * ((c) * (c) * `oneThird - (a) * (b))); \
 end
- 
+
 //
 //  sp_s     surface potential calculation
 //

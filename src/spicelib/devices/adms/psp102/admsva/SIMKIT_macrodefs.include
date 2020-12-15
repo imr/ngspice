@@ -17,7 +17,7 @@
 
 //////////////////////////////////////////////////////////////
 //
-//  General macros and constants for compact va-models 
+//  General macros and constants for compact va-models
 //
 //////////////////////////////////////////////////////////////
 
@@ -30,18 +30,22 @@
 `define CLIP_HIGH(val,max)     ((val)<(max)?(val):(max))
 `define CLIP_BOTH(val,min,max) ((val)>(min)?((val)<(max)?(val):(max)):(min))
 
-    // Note 1: In this va-code, the `P-macro is defined such that its argument
-    // is ignored during compilation; in this source code it acts as
-    // a comment
-    // Note 2: In this va-code, the "from" keyword in the parameter
-    // list is not used. Silent clipping is used instead. One could enable
-    // the Verilog-A range checking by redefining the `from-macro below.
-    `define P(txt)
-    `define AT_MODEL
-    `define AT_INSTANCE
-    `define AT_NOISE
+// Note 1: In this va-code, the `P-macro is defined such that its argument
+// is ignored during compilation; in this source code it acts as
+// a comment
+// Note 2: In this va-code, the "from" keyword in the parameter
+// list is not used. Silent clipping is used instead. One could enable
+// the Verilog-A range checking by redefining the `from-macro below.
+`define P(txt)
+`ifdef insideADMS
+    `define from(lower,upper) from[lower:upper]
+    `define INITIAL_MODEL @(initial_model)
+    `define INITIAL_INSTANCE @(initial_instance)
+`else
     `define from(lower,upper)
-//    `define from(lower,upper) from[lower:upper]
+    `define INITIAL_MODEL
+    `define INITIAL_INSTANCE
+`endif
 
 // Some  functions
 `define MAX(x,y)              ((x)>(y)?(x):(y))
@@ -52,14 +56,14 @@
 `define SQRTPI                1.77245385090551603
 
 // Physical constants
-`define KELVINCONVERSION      273.15                            
-`define KBOL                  1.3806505E-23                     
-`define QELE                  1.6021918E-19                     
-`define HBAR                  1.05457168E-34                       
+`define KELVINCONVERSION      273.15
+`define KBOL                  1.3806505E-23
+`define QELE                  1.6021918E-19
+`define HBAR                  1.05457168E-34
 `define MELE                  9.1093826E-31
 `define EPSSI                 1.045E-10
 
-// Other constants 
+// Other constants
 `define oneThird              3.3333333333333333e-01
 `define twoThirds             6.6666666666666667e-01
 

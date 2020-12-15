@@ -16,13 +16,13 @@
 //
 
 
-    // declaration of variables needed in macro "calcerfcexpmtat"             
-    real ysq, terfc, erfcpos;                                                
-                                                                         
-    // declaration of variables needed in hypfunction 5 
-    real h1, h2, h2d, h3, h4, h5;                                            
-                                                                         
-    // declaration of variables used within macro "juncapfunction"           
+    // declaration of variables needed in macro "calcerfcexpmtat"
+    real ysq, terfc, erfcpos;
+
+    // declaration of variables needed in hypfunction 5
+    real h1, h2, h2d, h3, h4, h5;
+
+    // declaration of variables used within macro "juncapfunction"
     real tmp, id;
     real isrh, vbi_minus_vjsrh, wsrhstep, dwsrh, wsrh, wdep, asrh;
     real itat, btat, twoatatoverthreebtat, umaxbeforelimiting, umax, sqrtumax, umaxpoweronepointfive;
@@ -44,7 +44,7 @@
     real tkr, tkd, auxt, KBOL_over_QELE, phitr, phitrinv, phitd, phitdinv;
     real deltaphigr, phigrbot, phigrsti, phigrgat, deltaphigd, phigdbot, phigdsti, phigdgat;
     real ftdbot, ftdsti, ftdgat, idsatbot, idsatsti, idsatgat, exp_VMAX_over_phitd;
-    real ubibot, ubisti, ubigat, vbibot, vbisti, vbigat; 
+    real ubibot, ubisti, ubigat, vbibot, vbisti, vbigat;
     real vbibot2, vbisti2, vbigat2, vbibot2r, vbisti2r, vbigat2r;
     real vbiinvbot, vbiinvsti, vbiinvgat;
     real one_minus_PBOT, one_minus_PSTI, one_minus_PGAT;
@@ -61,7 +61,7 @@
     real fstopbot, fstopsti, fstopgat, VBRinvbot, VBRinvsti, VBRinvgat;
     real slopebot, slopesti, slopegat;
     real vmaxbot, vmaxsti, vmaxgat, VMAX;
-   
+
     // declaration of variables calculated outside macro "juncapfunction", voltage-dependent part
     real VAK, idmult, vj, z, zinv, two_psistar, vjlim, vjsrh, vbbt, vav;
- 
+
