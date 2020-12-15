@@ -2106,28 +2106,28 @@
 
             // Noise contribs
             I(NOI2)   <+  V(NOI2);
-            I(NOI2)   <+  white_noise(c_igid);
-            I(NOII)   <+  white_noise(sqig * sqig * (1.0 - c_igid));
+            I(NOI2)   <+  white_noise(c_igid, "white");
+            I(NOII)   <+  white_noise(sqig * sqig * (1.0 - c_igid), "white");
             I(NOII)   <+  -sqig * V(NOI2);
             I(NOIR)   <+  V(NOIR);
             I(NOIC)   <+  ddt(mig * CGeff * V(NOIC));
-            I(D,S)    <+  flicker_noise(MULT_i * Sfl, 1.0);
-            I(D,S)    <+  white_noise(sqid * sqid * (1.0 - c_igid));
+            I(D,S)    <+  flicker_noise(MULT_i * Sfl, 1.0, "flicker");
+            I(D,S)    <+  white_noise(sqid * sqid * (1.0 - c_igid), "white");
             I(D,S)    <+  sqid * V(NOI2);
             I(`Gint,S)<+  ddt(0.5 * ((1.0 + sigVds) * mig * CGeff * V(NOIC)));
             I(`Gint,D)<+  ddt(0.5 * ((1.0 - sigVds) * mig * CGeff * V(NOIC)));
-            I(`Gint,S)<+  white_noise(shot_igs);
-            I(`Gint,D)<+  white_noise(shot_igd);
+            I(`Gint,S)<+  white_noise(shot_igs, "white");
+            I(`Gint,D)<+  white_noise(shot_igd, "white");
             // JUNCAP2
             I(`Bjs,S) <+  white_noise(sjnoise, "shot");
             I(`Bjd,D) <+  white_noise(djnoise, "shot");
 `ifdef NQSmodel
             // Parasitic resistances
-            I(GP,G)   <+  white_noise(rgatenoise);
-            I(BP,BI)  <+  white_noise(rbulknoise);
-            I(BS,BI)  <+  white_noise(rjunsnoise);
-            I(BD,BI)  <+  white_noise(rjundnoise);
-            I(B ,BI)  <+  white_noise(rwellnoise);
+            I(GP,G)   <+  white_noise(rgatenoise, "white");
+            I(BP,BI)  <+  white_noise(rbulknoise, "white");
+            I(BS,BI)  <+  white_noise(rjunsnoise, "white");
+            I(BD,BI)  <+  white_noise(rjundnoise, "white");
+            I(B ,BI)  <+  white_noise(rwellnoise, "white");
 `endif // NQSmodel
         end // noise
 
