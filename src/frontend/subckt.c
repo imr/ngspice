@@ -614,11 +614,10 @@ doit(struct card *deck, wordlist *modnames) {
                  */
                 if (sss) {
 //                    tprint(sss->su_def);
-                    struct card *su_deck = inp_deckcopy_ln(sss->su_def);
+                    struct card *su_deck = inp_deckcopy(sss->su_def);
                     /* If we have modern PDKs, we have to reduce the amount of memory required.
                        We try to reduce the models to the one really used.
                        Otherwise su_deck is full of unused binning models.*/
-//                    struct card* su_deck = NULL;
                     if ((newcompat.hs || newcompat.spe) && c->w > 0 && c->l > 0) {
                         /* extract wmin, wmax, lmin, lmax */
                         struct card* new_deck = su_deck;
