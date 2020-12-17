@@ -1096,12 +1096,16 @@ if test "x$enable_adms" = xyes ; then
     fi
     AC_DEFINE([ADMS], [1], [Support for Verilog-A models])
 
-    VLADEVDIR=" adms/ekv \
+    VLADEVDIR=" adms/bsimbulk \
+                adms/bsimcmg \
+                adms/ekv \
                 adms/hicum0 \
                 adms/mextram \
                 adms/psp102 "
 
 # The makefiles for adms (to be added to AC_CONFIG_FILES by ./autogen.sh --adms)
+#VLAMKF    src/spicelib/devices/adms/bsimbulk/Makefile
+#VLAMKF    src/spicelib/devices/adms/bsimcmg/Makefile
 #VLAMKF    src/spicelib/devices/adms/ekv/Makefile
 #VLAMKF    src/spicelib/devices/adms/hicum0/Makefile
 #VLAMKF    src/spicelib/devices/adms/mextram/Makefile
@@ -1109,9 +1113,11 @@ if test "x$enable_adms" = xyes ; then
 
     NOTVLADEVDIR=""
 
-    VLADEV=" spicelib/devices/adms/ekv/libekv.la \
+    VLADEV=" spicelib/devices/adms/bsimbulk/libbsimbulk.la \
+             spicelib/devices/adms/bsimcmg/libbsimcmg.la \
+             spicelib/devices/adms/ekv/libekv.la \
              spicelib/devices/adms/hicum0/libhicum0.la \
-              spicelib/devices/adms/mextram/libbjt504t.la \
+             spicelib/devices/adms/mextram/libbjt504t.la \
              spicelib/devices/adms/psp102/libpsp102.la "
 
 else
@@ -1312,6 +1318,7 @@ AC_CONFIG_FILES([Makefile
                  tests/bsim3soifd/Makefile
                  tests/bsim3soipd/Makefile
                  tests/bsim4/Makefile
+                 tests/bsimbulk/Makefile
                  tests/bsimsoi/Makefile
                  tests/filters/Makefile
                  tests/general/Makefile
