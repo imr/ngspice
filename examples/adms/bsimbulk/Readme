@@ -1,0 +1,5 @@
+Under Linux environment, enter 'csh run' to run all benchmark tests in a single run (only compile VA once).
+After simulation, enter 'csh clean' to remove unwanted files (only .lis left).
+
+To run single netlist, enter
+'hspice -hdlpath ../code -i xxx.sp -o xxx.lis'
