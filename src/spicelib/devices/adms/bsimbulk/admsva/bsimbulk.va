@@ -189,7 +189,7 @@
 
 `define BSIMBULKRdsEndIso(Weffcj, Rsh, DMCG, DMCI, DMDG, nuEnd, rgeo, SRCFLAG, Rend) \
     if (SRCFLAG == 1) begin \
-        case(rgeo) \
+        case (rgeo) \
         1, 2, 5: begin \
             if (nuEnd == 0.0) begin \
                 Rend = 0.0; \
@@ -213,7 +213,7 @@
         end \
         endcase \
     end else begin \
-        case(rgeo) \
+        case (rgeo) \
         1, 3, 7: begin \
             if (nuEnd == 0.0) begin \
                 Rend = 0.0; \
@@ -242,7 +242,7 @@
 `define BSIMBULKRdsEndSha(Weffcj, Rsh, DMCG, DMCI, DMDG, nuEnd, rgeo, SRCFLAG, Rend) \
     begin \
         if (SRCFLAG == 1) begin \
-            case(rgeo) \
+            case (rgeo) \
             1, 2, 5: begin \
                 if (nuEnd == 0.0) begin \
                     Rend = 0.0; \
@@ -267,7 +267,7 @@
             end \
             endcase \
         end else begin \
-            case(rgeo) \
+            case (rgeo) \
             1, 3, 7: begin \
                 if (nuEnd == 0.0) begin \
                     Rend = 0.0; \
@@ -314,7 +314,7 @@
                 end \
             end \
         end \
-        case(geo) \
+        case (geo) \
         0: begin \
             if (SRCFLAG == 1) begin \
                 `BSIMBULKRdsEndIso(Weffcj, Rsh, DMCG, DMCI, DMDG, nuEndS, \
@@ -457,7 +457,7 @@
     ADsha = DMCG * Weffcj;\
     ASmer = DMDG * Weffcj;  \
     ADmer = DMDG * Weffcj;  \
-        case(geo) \
+        case (geo) \
         0: begin \
             Ps = nuEndS * PSiso + nuIntS * PSsha;\
             Pd = nuEndD * PDiso + nuIntD * PDsha;\
@@ -2770,7 +2770,7 @@ analog begin
     end
     if (ASYMMOD != 0) begin
         VSATR_t = VSATR_i * pow(TRatio, -AT_i);
-        if(VSATR_t < 100.0) begin
+        if (VSATR_t < 100.0) begin
             $strobe("Warning: VSATR(%f) = %e is less than 100, setting it to 100.", DevTemp, VSATR_t);
             VSATR_t = 100.0;
         end
@@ -3335,7 +3335,7 @@ analog begin
 
     // Channel length modulation, Ref: BSIM4 Model
     Vasat = Vdssat + EsatL;
-    if(PCLM_a != 0.0) begin
+    if (PCLM_a != 0.0) begin
         if (PCLMG < 0.0) begin
             T1 = PCLM_a / (1.0 - PCLMG * qia / EsatL) / Fp;
         end else begin
@@ -3792,7 +3792,7 @@ analog begin
     T0d   = (Nl + Nstar) * (Nl + Nstar);
     T0e   = NOIA * `q * Vt;
     if (FNOIMOD == 1) begin
-        if(LINTNOI >= (Leff - LH) / 2.0) begin
+        if (LINTNOI >= (Leff - LH) / 2.0) begin
             $strobe("Warning: LINTNOI = %e is too large - Leff for noise is negative.  Re-setting LINTNOI = 0.", LINTNOI);
             LINTNOI_i = 0.0;
         end else begin

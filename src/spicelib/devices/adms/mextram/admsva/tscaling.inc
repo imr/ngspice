@@ -5,7 +5,7 @@
 
 // Temperature scaling of parameters
 
-   // The excess transistor temperature due to the self-heating
+// The excess transistor temperature due to the self-heating
 `ifdef SELFHEATING
     Tki = V(dt);
     // *** Convergence related smoothing ***
@@ -13,12 +13,12 @@
         Tki = - ln(1.0 - Tki);
     end
     `linLog(Vdt, Tki, 200.0);
-//   `min_logexp(Vdt, Tki, 200.0, 10.0);
+    //   `min_logexp(Vdt, Tki, 200.0, 10.0);
 `else
     Vdt = 0.0;
 `endif
 
-    // Temperature variables
+// Temperature variables
 Tk   = Tamb + Vdt;
 
 tN  = Tk / Trk;
@@ -30,13 +30,13 @@ VdtINV = VtINV - VtrINV;
 
 lntN = ln(tN) ;
 
-   // begin: RvdT, November 2008, "Zener tunneling model"
+// begin: RvdT, November 2008, "Zener tunneling model"
 //      VGZEB_T = VGZEBOK - AVGEB*Tk*Tk / (Tk + TVGEB) ;
 `max_logexp(VGZEB_T, VGZEBOK - AVGEB*Tk*Tk / (Tk + TVGEB), 0.05, 0.1) ;
 
-   // end: RvdT, November 2008, "Zener tunneling model"
+// end: RvdT, November 2008, "Zener tunneling model"
 
-  // Depletion capacitances
+// Depletion capacitances
 
 UdeT = -3.0 * Vt * ln(tN) + VDE * tN + (1.0 - tN) * VGB;
 `max_logexp(VDE_T, `VDLOW, UdeT, Vt);
@@ -62,7 +62,7 @@ CJCscaleINV = 1.0 / CJCscale;
 CJC_T = CJC * CJCscale;
 XP_T  = XP  * CJCscaleINV;
 
-   // Resistances
+// Resistances
 
 // RvdT, November 2008:
 // Instead of the following definition
@@ -122,9 +122,9 @@ VER_T = VER * x * y;
 
 `ifdef SUBSTRATE
     ISS_T = ISS * exp(lntN * (4.0 - AS)) * exp(-VGS * VdtINV);
-// New 504.9:
+    // New 504.9:
     ICSS_T = ICSS * exp(lntN * (3.5 - 0.5 * ASUB)) * exp(-VGS * VdtINV);
-// End New 504.9.
+    // End New 504.9.
 
     if ((ISS_T > 0.0))
         IKS_T = IKS * exp(lntN * (1.0 - AS)) * (IS_T / IS) * (ISS / ISS_T);
@@ -132,14 +132,14 @@ VER_T = VER * x * y;
         IKS_T = IKS * exp(lntN * (1.0 - AS));
 `endif
 
-   // Transit times
+// Transit times
 
 TAUE_T = TAUE * exp(lntN * (AB - 2.0)) * exp(-DVGTE * VdtINV);
 TAUB_T = TAUB * exp(lntN * (AQBO + AB - 1.0));
 TEPI_T = TEPI * exp(lntN * (AEPI - 1.0));
 TAUR_T = TAUR * (TAUB_T + TEPI_T) / (TAUB + TEPI);
 
-   // Avalanche constant
+// Avalanche constant
 
 Tk300 = Tk - 300.0;
 // RvdT, 15-02-2008: prevent division by zero and overflow at high temperatures:
@@ -152,12 +152,12 @@ begin
     BnT = Bn * 1.081 ;
 end
 
-  // Heterojunction features
+// Heterojunction features
 
 DEG_T = DEG * exp(lntN * AQBO);
 
 `ifdef SELFHEATING
-  // Temperature scaling of the thermal resistance
+    // Temperature scaling of the thermal resistance
 
     RTH_Tamb = RTH * pow(Tamb / Trk, ATH);
 `endif
@@ -177,7 +177,7 @@ IZEB_TM = IZEB_T * MULT ;
 IHC_M  = IHC   * MULT;
 `ifdef SUBSTRATE
     ISS_TM = ISS_T * MULT;
-// New: 504.9
+    // New: 504.9
     ICSS_TM = ICSS_T * MULT;
     IKS_TM = IKS_T * MULT;
 `endif

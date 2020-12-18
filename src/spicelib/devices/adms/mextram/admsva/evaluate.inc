@@ -6,7 +6,7 @@
 // Evaluate model equations
 
 begin  // Currents and charges
-// Nodal biases
+    // Nodal biases
 
     Vb2c1 = TYPE * V(b2, c1);
     Vb2c2 = TYPE * V(b2, c2);
@@ -22,7 +22,7 @@ begin  // Currents and charges
     Vbe   = TYPE * V(b,  e);
     Vbc   = TYPE * V(b,  c);
 
-/* RvdT, 03-12-2007, voltage differences
+    /* RvdT, 03-12-2007, voltage differences
  associated with distributed parasitic collector.
  Evaluated taking values of resistances into account:
  in case of vanishing resistance corresponding node
@@ -65,7 +65,7 @@ begin  // Currents and charges
 `endif
 
 
-// Exponential bias terms
+    // Exponential bias terms
 
     `expLin(eVb2c2,Vb2c2 * VtINV)
     `expLin(eVb2e1,Vb2e1 * VtINV)
@@ -75,7 +75,7 @@ begin  // Currents and charges
     `expLin(eVbc3,Vbc3  * VtINV)
 `ifdef SUBSTRATE
     `expLin(eVsc1,Vsc1  * VtINV)
-// RvdT MXT504.10, new: eVsc3, eVsc4
+    // RvdT MXT504.10, new: eVsc3, eVsc4
     `expLin(eVsc3,Vsc3  * VtINV)
     `expLin(eVsc4,Vsc4  * VtINV)
 `endif
@@ -85,9 +85,9 @@ begin  // Currents and charges
     `expLin(eVb2c2VDC,(Vb2c2 - VDC_T) * VtINV)
     `expLin(eVb2c1VDC,(Vb2c1 - VDC_T) * VtINV)
 
-// Governing equations
+    // Governing equations
 
-// Epilayer model
+    // Epilayer model
 
     K0 = sqrt(1.0 + 4.0 * eVb2c2VDC);
     Kw = sqrt(1.0 + 4.0 * eVb2c1VDC);
@@ -124,7 +124,7 @@ begin  // Currents and charges
             p0star =  gp02 + sqrt(sqr_arg);
         else
             p0star = gp0_help / (sqrt(sqr_arg) - gp02);
-    //     if (p0star < `TEN_M40) p0star = 0.0;
+        //     if (p0star < `TEN_M40) p0star = 0.0;
 
 
         eVb2c2star = p0star * (p0star + 1.0) * exp(VDC_T * VtINV);
@@ -169,7 +169,7 @@ begin  // Currents and charges
     Vte = VDE_T / (1.0 - PE) * (1.0 - E0BE) +
          `AJE * (Vb2e1 - Vje);
 
-       // Effective collector junction capacitance bias
+    // Effective collector junction capacitance bias
 
     Vjunc = Vb2c1 + Vxi0;
     bjc = (`AJC - XP_T) / (1.0 - XP_T);
@@ -180,7 +180,7 @@ begin  // Currents and charges
           fI * bjc * (Vjunc - Vjc);
     Vtc = (1.0 - XP_T) * Vcv + XP_T * Vb2c1;
 
-       // Transfer current
+    // Transfer current
 
     If0 = 4.0 * IS_TM / IK_TM;
     f1 =  If0 * eVb2e1;
@@ -222,16 +222,16 @@ begin  // Currents and charges
           (tmpExp + exp(0.5 * VLR * VtINV)) +
           my_gmin  * Vb1c4;
 
-// begin  RvdT, November 2008, MXT504.8_alpha
+    // begin  RvdT, November 2008, MXT504.8_alpha
 
-// Base-emitter tunneling current
-// max E-field E0BE calculated in BE depletion charge model:
+    // Base-emitter tunneling current
+    // max E-field E0BE calculated in BE depletion charge model:
 
     if (IZEB > 0.0 && NZEB > 0.0 && Vb2e1 < 0)
     begin
         `expLin(eZEB, nZEB_T * (1 - (pow2_2mPE/(2.0*E0BE))))
-// Force all derivatives at Vb2e1=0 to zero by using in DZEB a
-// modified dE0BE expression for E0BE:
+        // Force all derivatives at Vb2e1=0 to zero by using in DZEB a
+        // modified dE0BE expression for E0BE:
         x = Vb2e1 * inv_VDE_T ;
         dE0BE = pow(- x, -2.0-PE)*(PE*(1-PE*PE-3*x*(PE-1))-6*x*x*(PE-1+x)) * `one_sixth  ;
         `expLin(edZEB, Vb2e1 * pow2_2mPE * nZEB_T / (VGZEB_T * dE0BE ))
@@ -244,25 +244,25 @@ begin  // Currents and charges
         Izteb = 0 ;
     end
 
-// end  RvdT, November 2008, MXT504.8_alpha
+    // end  RvdT, November 2008, MXT504.8_alpha
 
     // Iex, Isub (XIex, XIsub)
     g1 = If0 * eVb1c4;
     g2 = 4.0 * eVb1c4VDC;
 
-// nBex until and including MXT 504.9:
-//     nBex = g1 / (1.0 + sqrt(1.0 + g1));
-// nBex since MXT 504.10.1: Ackn. Jos Peters, Geoffrey Coram
+    // nBex until and including MXT 504.9:
+    //     nBex = g1 / (1.0 + sqrt(1.0 + g1));
+    // nBex since MXT 504.10.1: Ackn. Jos Peters, Geoffrey Coram
     nBex = (g1 - If0) / (1.0 + sqrt(1.0 + g1));
     pWex = g2 / (1.0 + sqrt(1.0 + g2));
-/* Iex until and including MXT 504.9:
+    /* Iex until and including MXT 504.9:
     Iex = (1.0 / BRI_T) * (0.5 * IK_TM * nBex - IS_TM);
 */
-// Iex since MXT 504.10: RvdT@TUDelft Q1, 2011:
+    // Iex since MXT 504.10: RvdT@TUDelft Q1, 2011:
     Iex = IK_TM * nBex / (2.0 * BRI_T) ;
 
 `ifdef SUBSTRATE
-// RvdT MXT504.10, new term: eVsc4
+    // RvdT MXT504.10, new term: eVsc4
     if (EXSUB == 1.0)
         Isub = 2.0 * ISS_TM * (eVb1c4 - eVsc4) /
               (1.0 + sqrt(1.0 + 4.0 * (IS_TM / IKS_TM) * eVb1c4));
@@ -270,11 +270,11 @@ begin  // Currents and charges
         Isub = 2.0 * ISS_TM * (eVb1c4 - 1.0) /
               (1.0 + sqrt(1.0 + 4.0 * (IS_TM / IKS_TM) * eVb1c4));
 
-// until504.8:   Isf =  ISS_TM * (eVsc1 - 1.0);
-// New 504.9:
+    // until504.8:   Isf =  ISS_TM * (eVsc1 - 1.0);
+    // New 504.9:
 
     if (ICSS < 0.0)
-// this clause is to implement backwards compatibility
+        // this clause is to implement backwards compatibility
     begin
         Isf =  ISS_TM  * (eVsc1 - 1.0);
     end
@@ -283,7 +283,7 @@ begin  // Currents and charges
         Isf =  ICSS_TM * (eVsc1 - 1.0);
     end
 
-// End: New 504.9.
+    // End: New 504.9.
 
 `endif
 
@@ -293,7 +293,7 @@ begin  // Currents and charges
     XIsub = 0.0;
 `endif
 
-/* begin: RvdT, Q4 2012, Mextram 504.11: added EXMOD=2 option:     */
+    /* begin: RvdT, Q4 2012, Mextram 504.11: added EXMOD=2 option:     */
     if (EXMOD == 1 || EXMOD == 2)
     begin
 
@@ -304,18 +304,18 @@ begin  // Currents and charges
 `endif
 
         Xg1 = If0 * eVbc3;
-// XnBex until and including MXT 504.9:
-//       XnBex = Xg1 / (1.0 + sqrt(1.0 + Xg1));
-// XnBex in MXT 504.10.1: Ackn. Jos Peters, Geoffrey Coram:
+        // XnBex until and including MXT 504.9:
+        //       XnBex = Xg1 / (1.0 + sqrt(1.0 + Xg1));
+        // XnBex in MXT 504.10.1: Ackn. Jos Peters, Geoffrey Coram:
         XnBex = (Xg1 - If0) / (1.0 + sqrt(1.0 + Xg1));
-/* XIMex until and including MXT 504.9:
+        /* XIMex until and including MXT 504.9:
         XIMex = XEXT * (0.5 * IK_TM * XnBex - IS_TM) / BRI_T;
 */
-// XIMex in MXT 504.10: RvdT@TUDelft Q1, 2011:
+        // XIMex in MXT 504.10: RvdT@TUDelft Q1, 2011:
         XIMex = XEXT * 0.5 * IK_TM * XnBex / BRI_T;
 
 `ifdef SUBSTRATE
-// RvdT MXT504.10, new term: eVsc3
+        // RvdT MXT504.10, new term: eVsc3
         if (EXSUB == 1.0)
             XIMsub = XEXT * 2.0 * ISS_TM * (eVbc3 - eVsc3) /
                     (1.0 + sqrt(1.0 + 4.0 * IS_T / IKS_T * eVbc3));
@@ -346,7 +346,7 @@ begin  // Currents and charges
             Fex  = 1.0 ;
         end
 
-/* end: RvdT, Q4, 2012, Mextram 504.11: added EXMOD=2 option:     */
+        /* end: RvdT, Q4, 2012, Mextram 504.11: added EXMOD=2 option:     */
 
         XIex = Fex * XIMex;
 
@@ -360,7 +360,7 @@ begin  // Currents and charges
         XnBex = 0 ;
     end
 
-   // Variable base resistance
+    // Variable base resistance
 
     q0Q = 1.0 + Vte / VER_T + Vtc / VEF_T;
     `max_hyp0(q1Q, q0Q, 0.1);
@@ -369,7 +369,7 @@ begin  // Currents and charges
     Rb2 = 3.0 * RBV_TM / qBQ;
     Ib1b2 =  (2.0 * Vt * (eVb1b2 - 1.0) + Vb1b2) / Rb2;
 
-   // Weak-avalanche current
+    // Weak-avalanche current
 
     Iavl = 0.0;
     Gem  = 0.0;
@@ -421,9 +421,9 @@ begin  // Currents and charges
         Vb2c2star = Vb2c2;
 
 `ifdef SELFHEATING
-// Power dissipation
+    // Power dissipation
 
-// RvdT 03-12-2007, modified power equation due to distribution collector resistance
+    // RvdT 03-12-2007, modified power equation due to distribution collector resistance
 
     power_dis =  In * (Vb2e1 - Vb2c2star) +
             Ic1c2 * (Vb2c2star - Vb2c1) -
@@ -434,8 +434,8 @@ begin  // Currents and charges
             Vc4c1 * Vc4c1 * GCCin_TM +
             Vbb1  * Vbb1  / RBC_TM +
             Ib1b2 * Vb1b2 +
-// 504.8: Nov. 2008, RvdT, TU_Delft: Zener current contribution added:
-// Izteb > 0 for Vb2e1 < 0, hence the minus sign:
+    // 504.8: Nov. 2008, RvdT, TU_Delft: Zener current contribution added:
+    // Izteb > 0 for Vb2e1 < 0, hence the minus sign:
             (Ib1 + Ib2 - Izteb) * Vb2e1 +
             Ib1_s * Vb1e1 +
 `ifdef SUBSTRATE
@@ -444,193 +444,193 @@ begin  // Currents and charges
             XIsub * (Vbc3 - Vsc3) +
             Isf * Vsc1;
 `else
-            (Iex + Ib3) * Vb1c4 + XIex * Vbc3;
+        (Iex + Ib3) * Vb1c4 + XIex * Vbc3;
 `endif
 
 `endif
 
 
-   // Charges
+        // Charges
 
-    Qte = (1.0 - XCJE) * CJE_TM * Vte;
-    `min_logexp(Vje_s, Vb1e1, Vfe, a_VDE);
-    Qte_s = XCJE * CJE_TM * (VDE_T / (1.0 - PE) *
+        Qte = (1.0 - XCJE) * CJE_TM * Vte;
+        `min_logexp(Vje_s, Vb1e1, Vfe, a_VDE);
+        Qte_s = XCJE * CJE_TM * (VDE_T / (1.0 - PE) *
             (1.0 - pow(1.0 - Vje_s * inv_VDE_T, 1.0 - PE)) +
              `AJE * (Vb1e1 - Vje_s));
 
-    Qtc = XCJC * CJC_TM * Vtc;
-    Qb0 = TAUB_T * IK_TM;
-    Qbe_qs = 0.5 * Qb0 * n0 * q1Q;
-    Qbc_qs = 0.5 * Qb0 * nB * q1Q;
+        Qtc = XCJC * CJC_TM * Vtc;
+        Qb0 = TAUB_T * IK_TM;
+        Qbe_qs = 0.5 * Qb0 * n0 * q1Q;
+        Qbc_qs = 0.5 * Qb0 * nB * q1Q;
 
-    a_VDC = 0.1 * VDC_T;
-    `min_logexp(Vjcex, Vb1c4, Vfc, a_VDC);
-    Vtexv = VDC_T / (1.0 - PC) * (1.0 - pow(1.0 - Vjcex / VDC_T, 1.0 - PC)) +
+        a_VDC = 0.1 * VDC_T;
+        `min_logexp(Vjcex, Vb1c4, Vfc, a_VDC);
+        Vtexv = VDC_T / (1.0 - PC) * (1.0 - pow(1.0 - Vjcex / VDC_T, 1.0 - PC)) +
             bjc * (Vb1c4 - Vjcex);
-    Qtex = CJC_TM * ((1.0 - XP_T) * Vtexv + XP_T * Vb1c4) *
+        Qtex = CJC_TM * ((1.0 - XP_T) * Vtexv + XP_T * Vb1c4) *
            (1.0 - XCJC) * (1.0 - XEXT);
 
-    `min_logexp(XVjcex, Vbc3, Vfc, a_VDC);
-    XVtexv = VDC_T / (1.0 - PC) * (1.0 - pow(1.0 - XVjcex / VDC_T, 1.0 - PC)) +
+        `min_logexp(XVjcex, Vbc3, Vfc, a_VDC);
+        XVtexv = VDC_T / (1.0 - PC) * (1.0 - pow(1.0 - XVjcex / VDC_T, 1.0 - PC)) +
              bjc * (Vbc3 - XVjcex);
-    XQtex = CJC_TM * ((1.0 - XP_T) * XVtexv + XP_T * Vbc3) *
+        XQtex = CJC_TM * ((1.0 - XP_T) * XVtexv + XP_T * Vbc3) *
             (1.0 - XCJC) * XEXT;
 
 `ifdef SUBSTRATE
-    a_VDS = 0.1 * VDS_T;
-    Vfs = VDS_T * (1.0 - pow(`AJS , -1.0 / PS));
-    `min_logexp(Vjs, Vsc1, Vfs, a_VDS);
-    Qts = CJS_TM * (VDS_T / (1.0 - PS) *
+        a_VDS = 0.1 * VDS_T;
+        Vfs = VDS_T * (1.0 - pow(`AJS , -1.0 / PS));
+        `min_logexp(Vjs, Vsc1, Vfs, a_VDS);
+        Qts = CJS_TM * (VDS_T / (1.0 - PS) *
         (1.0 - pow(1.0 - Vjs / VDS_T, 1.0 - PS)) +  `AJS * (Vsc1 - Vjs));
 `endif
 
-    Qe0 = TAUE_T * IK_TM * pow(IS_TM / IK_TM, 1.0 / MTAU);
-    `expLin(tmpExp,Vb2e1 / (MTAU * Vt))
+        Qe0 = TAUE_T * IK_TM * pow(IS_TM / IK_TM, 1.0 / MTAU);
+        `expLin(tmpExp,Vb2e1 / (MTAU * Vt))
 
-    // Niu Q2, 2016, for fixing reverse VBE noise when KE=1, KC=1,
-    // Previous Qe_qs causes unphysically large noise correlation time constant tau_n
-    Qe_qs = Qe0 * tmpExp;
+        // Niu Q2, 2016, for fixing reverse VBE noise when KE=1, KC=1,
+        // Previous Qe_qs causes unphysically large noise correlation time constant tau_n
+        Qe_qs = Qe0 * tmpExp;
 
-    Qepi0 = 4.0 * TEPI_T * Vt / RCV_TM;
-    Qepi = 0.5 * Qepi0 * xi_w * (p0star + pW + 2.0);
+        Qepi0 = 4.0 * TEPI_T * Vt / RCV_TM;
+        Qepi = 0.5 * Qepi0 * xi_w * (p0star + pW + 2.0);
 
-    Qex = TAUR_T * 0.5 * (Qb0 * nBex + Qepi0 * pWex) / (TAUB_T + TEPI_T);
-    XQex = 0.0;
+        Qex = TAUR_T * 0.5 * (Qb0 * nBex + Qepi0 * pWex) / (TAUB_T + TEPI_T);
+        XQex = 0.0;
 
-    if (EXMOD == 1) begin
+        if (EXMOD == 1) begin
 
-       Qex = Qex * (1.0 - XEXT);
-       Xg2 = 4.0 * eVbc3VDC;
-       XpWex = Xg2 / (1.0 + sqrt(1.0 + Xg2));
-       XQex = 0.5 * Fex * XEXT * TAUR_T *
+            Qex = Qex * (1.0 - XEXT);
+            Xg2 = 4.0 * eVbc3VDC;
+            XpWex = Xg2 / (1.0 + sqrt(1.0 + Xg2));
+            XQex = 0.5 * Fex * XEXT * TAUR_T *
               (Qb0 * XnBex + Qepi0 * XpWex) / (TAUB_T + TEPI_T);
 
-    end
+        end
 
-    Qb1b2 = 0.0;
-    if (EXPHI == 1)
-    begin
-        dVteVje = pow(1.0 - Vje * inv_VDE_T, -PE) - `AJE;
-        Vb2e1Vfe = (Vb2e1 - Vfe) / a_VDE;
-        if (Vb2e1Vfe < 0.0)
-           dVjeVb2e1 = 1.0 / (1.0 + exp(Vb2e1Vfe));
+        Qb1b2 = 0.0;
+        if (EXPHI == 1)
+        begin
+            dVteVje = pow(1.0 - Vje * inv_VDE_T, -PE) - `AJE;
+            Vb2e1Vfe = (Vb2e1 - Vfe) / a_VDE;
+            if (Vb2e1Vfe < 0.0)
+                dVjeVb2e1 = 1.0 / (1.0 + exp(Vb2e1Vfe));
+            else
+                dVjeVb2e1 = exp(- Vb2e1Vfe) / (1.0 + exp(- Vb2e1Vfe));
+
+            dVteVb2e1 = dVteVje * dVjeVb2e1 + `AJE;
+            dQteVb2e1 = (1.0 - XCJE) * CJE_TM * dVteVb2e1;
+
+            dn0Vb2e1 = If0 * eVb2e1 * VtINV * (0.5 / sqrt(1.0 + f1));
+            dQbeVb2e1 = 0.5 * Qb0 * q1Q * dn0Vb2e1;
+
+            // Niu, Q2 2016. Modified to fix reverse VBE noise problem.
+            dQeVb2e1 = Qe_qs / (MTAU * Vt);
+
+            Qb1b2 = 0.2 * Vb1b2 * (dQteVb2e1 + dQbeVb2e1 + dQeVb2e1);
+
+            Qe = (1 - KE) * Qe_qs;
+            Qbe_qs_eff = Qbe_qs + KE * Qe_qs;
+            Qbc = XQB * Qbe_qs_eff + Qbc_qs;
+            Qbe = (1 - XQB) * Qbe_qs_eff;
+
+        end
         else
-           dVjeVb2e1 = exp(- Vb2e1Vfe) / (1.0 + exp(- Vb2e1Vfe));
-
-        dVteVb2e1 = dVteVje * dVjeVb2e1 + `AJE;
-        dQteVb2e1 = (1.0 - XCJE) * CJE_TM * dVteVb2e1;
-
-        dn0Vb2e1 = If0 * eVb2e1 * VtINV * (0.5 / sqrt(1.0 + f1));
-        dQbeVb2e1 = 0.5 * Qb0 * q1Q * dn0Vb2e1;
-
-        // Niu, Q2 2016. Modified to fix reverse VBE noise problem.
-        dQeVb2e1 = Qe_qs / (MTAU * Vt);
-
-        Qb1b2 = 0.2 * Vb1b2 * (dQteVb2e1 + dQbeVb2e1 + dQeVb2e1);
-
-        Qe = (1 - KE) * Qe_qs;
-        Qbe_qs_eff = Qbe_qs + KE * Qe_qs;
-        Qbc = XQB * Qbe_qs_eff + Qbc_qs;
-        Qbe = (1 - XQB) * Qbe_qs_eff;
-
-    end
-    else
-    begin
-        Qbe = Qbe_qs;
-        Qbc = Qbc_qs;
-        Qe = Qe_qs;
-    end
+        begin
+            Qbe = Qbe_qs;
+            Qbc = Qbc_qs;
+            Qe = Qe_qs;
+        end
 
 
-// Add branch current contributions
+        // Add branch current contributions
 
-    // Static currents
-    I(c1, c2) <+ TYPE * Ic1c2;
-    I(c2, e1) <+ TYPE * In;
-    I(b1, e1) <+ TYPE * Ib1_s;
-// begin  RvdT, 28-10-2008, MXT504.8_alpha
-// contribution tunnel current added
-    I(b2, e1) <+ TYPE * (Ib1 + Ib2 - Izteb);
+        // Static currents
+        I(c1, c2) <+ TYPE * Ic1c2;
+        I(c2, e1) <+ TYPE * In;
+        I(b1, e1) <+ TYPE * Ib1_s;
+        // begin  RvdT, 28-10-2008, MXT504.8_alpha
+        // contribution tunnel current added
+        I(b2, e1) <+ TYPE * (Ib1 + Ib2 - Izteb);
 
 `ifdef SUBSTRATE
-    I(b1, s)  <+ TYPE * Isub;
-    I(b,  s)  <+ TYPE * XIsub;
-    I(s,  c1) <+ TYPE * Isf;
+        I(b1, s)  <+ TYPE * Isub;
+        I(b,  s)  <+ TYPE * XIsub;
+        I(s,  c1) <+ TYPE * Isf;
 `endif
-    I(b1, b2) <+ TYPE * Ib1b2;
-    I(b2, c2) <+ TYPE * (-1.0 * Iavl);
-    I(e,  e1) <+ TYPE * Vee1 / RE_TM;
-    I(b,  b1) <+ TYPE * Vbb1 / RBC_TM;
+        I(b1, b2) <+ TYPE * Ib1b2;
+        I(b2, c2) <+ TYPE * (-1.0 * Iavl);
+        I(e,  e1) <+ TYPE * Vee1 / RE_TM;
+        I(b,  b1) <+ TYPE * Vbb1 / RBC_TM;
 
 `ifdef SELFHEATING
-    // Electrical equivalent for the thermal network
-    I(dt) <+ V(dt) / RTH_Tamb_M;
-    I(dt) <+ ddt(CTH_M * V(dt));
-    I(dt) <+ -1.0 *  power_dis;
+        // Electrical equivalent for the thermal network
+        I(dt) <+ V(dt) / RTH_Tamb_M;
+        I(dt) <+ ddt(CTH_M * V(dt));
+        I(dt) <+ -1.0 *  power_dis;
 `endif
 
 
-    // Dynamic currents
-    I(b2, e1) <+ ddt(TYPE * (Qte + Qbe + Qe));
-    I(b1, e1) <+ ddt(TYPE * (Qte_s));
-    I(b2, c2) <+ ddt(TYPE * (Qtc + Qbc + Qepi));
+        // Dynamic currents
+        I(b2, e1) <+ ddt(TYPE * (Qte + Qbe + Qe));
+        I(b1, e1) <+ ddt(TYPE * (Qte_s));
+        I(b2, c2) <+ ddt(TYPE * (Qtc + Qbc + Qepi));
 `ifdef SUBSTRATE
-    I(s,  c1) <+ ddt(TYPE * Qts);
+        I(s,  c1) <+ ddt(TYPE * Qts);
 `endif
-    I(b1, b2) <+ ddt(TYPE * Qb1b2);
-    I(b,   e) <+ ddt(TYPE * CBEO_M * Vbe);
-    I(b,   c) <+ ddt(TYPE * CBCO_M * Vbc);
+        I(b1, b2) <+ ddt(TYPE * Qb1b2);
+        I(b,   e) <+ ddt(TYPE * CBEO_M * Vbe);
+        I(b,   c) <+ ddt(TYPE * CBCO_M * Vbc);
 
-end  // Currents and charges
+    end  // Currents and charges
 
 
-/* RvdT, Delft Univ. Tech. 03-12-2007.
+    /* RvdT, Delft Univ. Tech. 03-12-2007.
 Distribution of parasitic collector resistance.
 This construct supports the case
 RCBLI = 0.0 and or RCBLX = 0.0 .
 It is up to the compiler to adjust the circuit topology
 and perform a node-collapse in such cases. */
-if (RCBLX > 0.0)
-begin
-    I(b,  c3) <+ TYPE * XIex;
-    I(c,  c3) <+ TYPE * Vcc3  * GCCxx_TM ;
-    I(b,  c3) <+ ddt(TYPE * (XQtex + XQex));
-    if (RCBLI > 0.0)
+    if (RCBLX > 0.0)
     begin
-        I(c4, c1) <+ TYPE * Vc4c1 * GCCin_TM;
-        I(b1, c4) <+ TYPE * (Ib3 + Iex);
-        I(c3, c4) <+ TYPE * Vc3c4 * GCCex_TM ;
-        I(b1, c4) <+ ddt(TYPE * (Qtex + Qex));
+        I(b,  c3) <+ TYPE * XIex;
+        I(c,  c3) <+ TYPE * Vcc3  * GCCxx_TM ;
+        I(b,  c3) <+ ddt(TYPE * (XQtex + XQex));
+        if (RCBLI > 0.0)
+        begin
+            I(c4, c1) <+ TYPE * Vc4c1 * GCCin_TM;
+            I(b1, c4) <+ TYPE * (Ib3 + Iex);
+            I(c3, c4) <+ TYPE * Vc3c4 * GCCex_TM ;
+            I(b1, c4) <+ ddt(TYPE * (Qtex + Qex));
+        end
+        else
+        begin
+            V(c4, c1) <+ 0.0 ;
+            I(b1, c1) <+ TYPE * (Ib3 + Iex);
+            I(b1, c1) <+ ddt(TYPE * (Qtex + Qex));
+            I(c3, c1) <+ TYPE * Vc3c4 * GCCex_TM ;
+        end
     end
     else
     begin
-        V(c4, c1) <+ 0.0 ;
-        I(b1, c1) <+ TYPE * (Ib3 + Iex);
-        I(b1, c1) <+ ddt(TYPE * (Qtex + Qex));
-        I(c3, c1) <+ TYPE * Vc3c4 * GCCex_TM ;
+        V(c3, c4) <+ 0 ;
+        if (RCBLI > 0.0)
+        begin
+            I(b,  c4) <+ TYPE * XIex;
+            I(c,  c4) <+ TYPE * Vcc3  * GCCxx_TM ;
+            I(c4, c1) <+ TYPE * Vc4c1 * GCCin_TM;
+            I(b1, c4) <+ TYPE * (Ib3 + Iex);
+            I(b1, c4) <+ ddt(TYPE * (Qtex + Qex));
+            I(b,  c4) <+ ddt(TYPE * (XQtex + XQex));
+        end
+        else
+        begin
+            I(b,  c1) <+ TYPE * XIex;
+            I(c,  c1) <+ TYPE * Vcc3  * GCCxx_TM ;
+            V(c4, c1) <+ 0.0 ;
+            I(b1, c1) <+ TYPE * (Ib3 + Iex);
+            I(b1, c1) <+ ddt(TYPE * (Qtex + Qex));
+            I(b,  c1) <+ ddt(TYPE * (XQtex + XQex));
+            I(c3, c1) <+ TYPE * Vc3c4 * GCCex_TM ;
+        end
     end
-end
-else
-begin
-    V(c3, c4) <+ 0 ;
-    if (RCBLI > 0.0)
-    begin
-        I(b,  c4) <+ TYPE * XIex;
-        I(c,  c4) <+ TYPE * Vcc3  * GCCxx_TM ;
-        I(c4, c1) <+ TYPE * Vc4c1 * GCCin_TM;
-        I(b1, c4) <+ TYPE * (Ib3 + Iex);
-        I(b1, c4) <+ ddt(TYPE * (Qtex + Qex));
-        I(b,  c4) <+ ddt(TYPE * (XQtex + XQex));
-    end
-    else
-    begin
-        I(b,  c1) <+ TYPE * XIex;
-        I(c,  c1) <+ TYPE * Vcc3  * GCCxx_TM ;
-        V(c4, c1) <+ 0.0 ;
-        I(b1, c1) <+ TYPE * (Ib3 + Iex);
-        I(b1, c1) <+ ddt(TYPE * (Qtex + Qex));
-        I(b,  c1) <+ ddt(TYPE * (XQtex + XQex));
-        I(c3, c1) <+ TYPE * Vc3c4 * GCCex_TM ;
-    end
-end
 

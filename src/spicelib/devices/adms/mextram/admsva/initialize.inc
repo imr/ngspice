@@ -10,7 +10,7 @@ else
 
 // Initialize model constants
 
-    // Impact ionization constants (NPN - PNP)
+// Impact ionization constants (NPN - PNP)
 
 if (TYPE == 1) begin
 
@@ -26,7 +26,7 @@ end
 
 Xext1 = 1.0 - XEXT;
 
-    // Temperature independent  MULT scaling
+// Temperature independent  MULT scaling
 
 `ifdef SELFHEATING
     CTH_M  = CTH   * MULT;
