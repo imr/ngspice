@@ -95,31 +95,31 @@
 //           values (exp_high), or both (expl), to avoid overflows
 //           and underflows and retain C-3 continuity
 `define expl(x, res) \
-if (abs(x) < `se05) begin\
-    res       = exp(x); \
-end else begin \
-    if ((x) < -`se05) begin\
-        res       = `ke05 / `P3(-`se05 - (x)); \
-    end else begin\
-        res       =  `ke05inv * `P3((x) - `se05); \
-    end \
-end
+    if (abs(x) < `se05) begin\
+        res       = exp(x); \
+    end else begin \
+        if ((x) < -`se05) begin\
+            res       = `ke05 / `P3(-`se05 - (x)); \
+        end else begin\
+            res       =  `ke05inv * `P3((x) - `se05); \
+        end \
+    end
 
 `define expl_low(x, res) \
-if ((x) > -`se05) begin\
-    res       =  exp(x); \
-end else begin\
-    res       = `ke05 / `P3(-`se05 - (x)); \
-end
+    if ((x) > -`se05) begin\
+        res       =  exp(x); \
+    end else begin\
+        res       = `ke05 / `P3(-`se05 - (x)); \
+    end
 
 `define expl_high(x, res) \
-if ((x) < `se05) begin\
-    res       = exp(x); \
-end else begin \
-    res       =  `ke05inv * `P3((x) - `se05); \
-end
+    if ((x) < `se05) begin\
+        res       = exp(x); \
+    end else begin \
+        res       =  `ke05inv * `P3((x) - `se05); \
+    end
 
 `define swap(a, b) \
-temp = a; \
-a    = b; \
-b    = temp;
+    temp = a; \
+    a    = b; \
+    b    = temp;

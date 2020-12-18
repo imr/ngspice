@@ -4,7 +4,7 @@
 // ********************************************************
 //
 // ********************************************************
-// * Copyright 2016 Regents of the University of California. 
+// * Copyright 2016 Regents of the University of California.
 // * All rights reserved.
 // *
 // * Project Director: Prof. Chenming Hu.
@@ -18,7 +18,7 @@
 // support. The University of California and its employees are not liable
 // for the condition or performance of the software.
 // The University of California owns the copyright and grants users a perpetual,
-// irrevocable, worldwide, non-exclusive, royalty-free license with 
+// irrevocable, worldwide, non-exclusive, royalty-free license with
 // respect to the software as set forth below.
 // The University of California hereby disclaims all implied warranties.
 // The University of California grants the users the right to modify, copy,
@@ -35,8 +35,8 @@
 // the software on any copy or modification of such made available
 // to others
 // Agreed to on __Jan 01, 2016__________________
-// By: ___University of California, Berkeley____ 
-//     ___Chenming Hu_____________________ 
+// By: ___University of California, Berkeley____
+//     ___Chenming Hu_____________________
 //     ___Professor in Graduate School _______
 // ********************************************************
 
@@ -119,7 +119,7 @@
 //  MPIxx    model    parameter integer
 //  IPRxx    instance parameter real
 //  IPIxx    instance parameter integer
-//     || 
+//     ||
 //     cc    closed lower bound, closed upper bound
 //     oo    open   lower bound, open   upper bound
 //     co    closed lower bound, open   upper bound
@@ -137,49 +137,49 @@
 `define ALIAS(alias,paramName) aliasparam alias = paramName ;
 `define OPP(nam,uni,des)               (*units=uni,                   desc=des*)           real    nam ;
 
-`define MPRnb(nam,def,uni,        des) (*units=uni,                   desc=des*) parameter real    nam=def ; 
+`define MPRnb(nam,def,uni,        des) (*units=uni,                   desc=des*) parameter real    nam=def ;
 `define MPRex(nam,def,uni,exc,    des) (*units=uni,                   desc=des*) parameter real    nam=def exclude exc ;
-`define MPRcc(nam,def,uni,lwr,upr,des) (*units=uni,                   desc=des*) parameter real    nam=def from[lwr:upr] ; 
-`define MPRoo(nam,def,uni,lwr,upr,des) (*units=uni,                   desc=des*) parameter real    nam=def from(lwr:upr) ; 
-`define MPRco(nam,def,uni,lwr,upr,des) (*units=uni,                   desc=des*) parameter real    nam=def from[lwr:upr) ; 
-`define MPRoc(nam,def,uni,lwr,upr,des) (*units=uni,                   desc=des*) parameter real    nam=def from(lwr:upr] ; 
+`define MPRcc(nam,def,uni,lwr,upr,des) (*units=uni,                   desc=des*) parameter real    nam=def from[lwr:upr] ;
+`define MPRoo(nam,def,uni,lwr,upr,des) (*units=uni,                   desc=des*) parameter real    nam=def from(lwr:upr) ;
+`define MPRco(nam,def,uni,lwr,upr,des) (*units=uni,                   desc=des*) parameter real    nam=def from[lwr:upr) ;
+`define MPRoc(nam,def,uni,lwr,upr,des) (*units=uni,                   desc=des*) parameter real    nam=def from(lwr:upr] ;
 `define MPRcz(nam,def,uni,        des) (*units=uni,                   desc=des*) parameter real    nam=def from[  0:inf);
 `define MPRoz(nam,def,uni,        des) (*units=uni,                   desc=des*) parameter real    nam=def from(  0:inf);
 
 `define MPInb(nam,def,uni,        des) (*units=uni,                   desc=des*) parameter integer nam=def ;
 `define MPIex(nam,def,uni,exc,    des) (*units=uni,                   desc=des*) parameter integer nam=def exclude exc ;
 `define MPIcc(nam,def,uni,lwr,upr,des) (*units=uni,                   desc=des*) parameter integer nam=def from[lwr:upr] ;
-`define MPIoo(nam,def,uni,lwr,upr,des) (*units=uni,                   desc=des*) parameter integer nam=def from(lwr:upr) ; 
-`define MPIco(nam,def,uni,lwr,upr,des) (*units=uni,                   desc=des*) parameter integer nam=def from[lwr:upr) ; 
-`define MPIoc(nam,def,uni,lwr,upr,des) (*units=uni,                   desc=des*) parameter integer nam=def from(lwr:upr] ; 
+`define MPIoo(nam,def,uni,lwr,upr,des) (*units=uni,                   desc=des*) parameter integer nam=def from(lwr:upr) ;
+`define MPIco(nam,def,uni,lwr,upr,des) (*units=uni,                   desc=des*) parameter integer nam=def from[lwr:upr) ;
+`define MPIoc(nam,def,uni,lwr,upr,des) (*units=uni,                   desc=des*) parameter integer nam=def from(lwr:upr] ;
 `define MPIcz(nam,def,uni,        des) (*units=uni,                   desc=des*) parameter integer nam=def from[  0:inf);
 `define MPIoz(nam,def,uni,        des) (*units=uni,                   desc=des*) parameter integer nam=def from(  0:inf);
 
 `define MPIsw(nam,def,uni,        des) (*units=uni,                   desc=des*) parameter integer nam=def from[  0:  1] ;
 `define MPIty(nam,def,uni,        des) (*units=uni,                   desc=des*) parameter integer nam=def from[ -1:  1] exclude 0 ;
 
-`define IPRnb(nam,def,uni,        des) (*units=uni, type="instance",  desc=des*) parameter real    nam=def ; 
+`define IPRnb(nam,def,uni,        des) (*units=uni, type="instance",  desc=des*) parameter real    nam=def ;
 `define IPRex(nam,def,uni,exc,    des) (*units=uni, type="instance",  desc=des*) parameter real    nam=def exclude exc ;
-`define IPRcc(nam,def,uni,lwr,upr,des) (*units=uni, type="instance",  desc=des*) parameter real    nam=def from[lwr:upr] ; 
-`define IPRoo(nam,def,uni,lwr,upr,des) (*units=uni, type="instance",  desc=des*) parameter real    nam=def from(lwr:upr) ; 
-`define IPRco(nam,def,uni,lwr,upr,des) (*units=uni, type="instance",  desc=des*) parameter real    nam=def from[lwr:upr) ; 
-`define IPRoc(nam,def,uni,lwr,upr,des) (*units=uni, type="instance",  desc=des*) parameter real    nam=def from(lwr:upr] ; 
+`define IPRcc(nam,def,uni,lwr,upr,des) (*units=uni, type="instance",  desc=des*) parameter real    nam=def from[lwr:upr] ;
+`define IPRoo(nam,def,uni,lwr,upr,des) (*units=uni, type="instance",  desc=des*) parameter real    nam=def from(lwr:upr) ;
+`define IPRco(nam,def,uni,lwr,upr,des) (*units=uni, type="instance",  desc=des*) parameter real    nam=def from[lwr:upr) ;
+`define IPRoc(nam,def,uni,lwr,upr,des) (*units=uni, type="instance",  desc=des*) parameter real    nam=def from(lwr:upr] ;
 `define IPRcz(nam,def,uni,        des) (*units=uni, type="instance",  desc=des*) parameter real    nam=def from[  0:inf);
 `define IPRoz(nam,def,uni,        des) (*units=uni, type="instance",  desc=des*) parameter real    nam=def from(  0:inf);
 
 `define IPInb(nam,def,uni,        des) (*units=uni, type="instance",  desc=des*) parameter integer nam=def ;
 `define IPIex(nam,def,uni,exc,    des) (*units=uni, type="instance",  desc=des*) parameter integer nam=def exclude exc ;
-`define IPIcc(nam,def,uni,lwr,upr,des) (*units=uni, type="instance",  desc=des*) parameter integer nam=def from[lwr:upr] ; 
-`define IPIoo(nam,def,uni,lwr,upr,des) (*units=uni, type="instance",  desc=des*) parameter integer nam=def from(lwr:upr) ; 
-`define IPIco(nam,def,uni,lwr,upr,des) (*units=uni, type="instance",  desc=des*) parameter integer nam=def from[lwr:upr) ; 
-`define IPIoc(nam,def,uni,lwr,upr,des) (*units=uni, type="instance",  desc=des*) parameter integer nam=def from(lwr:upr] ; 
+`define IPIcc(nam,def,uni,lwr,upr,des) (*units=uni, type="instance",  desc=des*) parameter integer nam=def from[lwr:upr] ;
+`define IPIoo(nam,def,uni,lwr,upr,des) (*units=uni, type="instance",  desc=des*) parameter integer nam=def from(lwr:upr) ;
+`define IPIco(nam,def,uni,lwr,upr,des) (*units=uni, type="instance",  desc=des*) parameter integer nam=def from[lwr:upr) ;
+`define IPIoc(nam,def,uni,lwr,upr,des) (*units=uni, type="instance",  desc=des*) parameter integer nam=def from(lwr:upr] ;
 `define IPIcz(nam,def,uni,        des) (*units=uni, type="instance",  desc=des*) parameter integer nam=def from[  0:inf);
 `define IPIoz(nam,def,uni,        des) (*units=uni, type="instance",  desc=des*) parameter integer nam=def from(  0:inf);
 
 `ifdef EXPLICIT_MFACTOR
-   `define IPM                         (*units="" , type="instance",  desc="multiplicity factor"*) parameter real m=1.0 from(0.0:inf) ;
-   `define MFACTOR_USE m 
-`else // 
-   `define IPM
-   `define MFACTOR_USE 1.0
+    `define IPM                         (*units="" , type="instance",  desc="multiplicity factor"*) parameter real m=1.0 from(0.0:inf) ;
+    `define MFACTOR_USE m
+`else //
+    `define IPM
+    `define MFACTOR_USE 1.0
 `endif

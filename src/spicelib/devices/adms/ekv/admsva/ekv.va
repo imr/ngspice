@@ -81,98 +81,98 @@ module ekv (d,g,s,b);
     // Instance parameters
 
     // - intrinsic model
-    parameter real l=10e-6 from [0:inf) `P(type="instance" info="Drawn length [m]" units="m");
-    parameter real w=10e-6 from [0:inf) `P(type="instance" info="Drawn width [m]" units="m");
-    parameter real m=1.0   from [1:inf) `P(type="instance" info="Parallel multiplier" units="m");
-    parameter real ns=1.0  from [1:inf) `P(type="instance" info="Series multiplier" units="m");
-    parameter real dtemp = 0.0 from (-inf:inf) `P(type="instance" info="Difference sim. temp and device temp" units="C");
+    parameter real l=10e-6 from [0:inf) `P(type="instance" desc="Drawn length [m]" units="m");
+    parameter real w=10e-6 from [0:inf) `P(type="instance" desc="Drawn width [m]" units="m");
+    parameter real m=1.0   from [1:inf) `P(type="instance" desc="Parallel multiplier" units="m");
+    parameter real ns=1.0  from [1:inf) `P(type="instance" desc="Series multiplier" units="m");
+    parameter real dtemp = 0.0 from (-inf:inf) `P(type="instance" desc="Difference sim. temp and device temp" units="C");
 
     // - external parasitics
-    parameter real ad=0.0 from [0:inf) `P(type="instance" info="Drain area" units="m^2");
-    parameter real as=0.0 from [0:inf) `P(type="instance" info="Source area" units="m^2");
-    parameter real pd=0.0 from [0:inf) `P(type="instance" info="Drain perimeter" units="m");
-    parameter real ps=0.0 from [0:inf) `P(type="instance" info="Source perimeter" units="m");
-    parameter real nrd=0.0 from [0:inf) `P(type="instance" info="Drain no. squares");
-    parameter real nrs=0.0 from [0:inf) `P(type="instance" info="Source no. squares");
+    parameter real ad=0.0 from [0:inf) `P(type="instance" desc="Drain area" units="m^2");
+    parameter real as=0.0 from [0:inf) `P(type="instance" desc="Source area" units="m^2");
+    parameter real pd=0.0 from [0:inf) `P(type="instance" desc="Drain perimeter" units="m");
+    parameter real ps=0.0 from [0:inf) `P(type="instance" desc="Source perimeter" units="m");
+    parameter real nrd=0.0 from [0:inf) `P(type="instance" desc="Drain no. squares");
+    parameter real nrs=0.0 from [0:inf) `P(type="instance" desc="Source no. squares");
 
     // Model parameters
 
-    parameter integer nmos=1 from [0:1] `P(info="MOS channel type");
-    parameter integer pmos=1 from [0:1] `P(info="MOS channel type");
+    parameter integer nmos=1 from [0:1] `P(desc="MOS channel type");
+    parameter integer pmos=1 from [0:1] `P(desc="MOS channel type");
     parameter integer type=1 from [-1:1] exclude 0;
-    parameter real tnom=27.0 from [-273.15:inf) `P(info="Nominal temperature" units="C");
-    parameter real imax=1.0 from [0:inf) `P(info="Maximum forward junction current before linearization" units="A");
+    parameter real tnom=27.0 from [-273.15:inf) `P(desc="Nominal temperature" units="C");
+    parameter real imax=1.0 from [0:inf) `P(desc="Maximum forward junction current before linearization" units="A");
 
     // - intrinsic model (optional, section 4.2.1)
-    parameter real tox=0.0 from [0:inf) `P(info="Oxide thickness" units="m");
-    parameter real nsub=0.0 from [0:inf) `P(info="Channel doping" units="cm^-3");
-    parameter real vfb=-1.0 from (-inf:inf) `P(info="Flat-band voltage" units="V");
+    parameter real tox=0.0 from [0:inf) `P(desc="Oxide thickness" units="m");
+    parameter real nsub=0.0 from [0:inf) `P(desc="Channel doping" units="cm^-3");
+    parameter real vfb=-1.0 from (-inf:inf) `P(desc="Flat-band voltage" units="V");
 
-    parameter real uo=0.0 from [0:inf) `P(info="Low-field mobility" units="cm^2/Vs");
-    parameter real vmax=0.0 from [0:inf) `P(info="Saturation velocity" units="m/s");
-    parameter real theta=0.0 from [0:inf) `P(info="Mobility reduction coefficient" units="V^-1");
+    parameter real uo=0.0 from [0:inf) `P(desc="Low-field mobility" units="cm^2/Vs");
+    parameter real vmax=0.0 from [0:inf) `P(desc="Saturation velocity" units="m/s");
+    parameter real theta=0.0 from [0:inf) `P(desc="Mobility reduction coefficient" units="V^-1");
 
     // - intrinsic model (process related, section 4.1)
-    parameter real cox=0.7e-3 from [1e-6:inf) `P(info="Oxide capacitance" units="F/m^2");
-    parameter real xj=0.1e-6 from [1n:inf) `P(info="Junction depth" units="m");
-    parameter real dl=0.0    from (-inf:inf) `P(info="Length correction" units="m");
-    parameter real dw=0.0    from (-inf:inf) `P(info="Width correction" units="m");
+    parameter real cox=0.7e-3 from [1e-6:inf) `P(desc="Oxide capacitance" units="F/m^2");
+    parameter real xj=0.1e-6 from [1n:inf) `P(desc="Junction depth" units="m");
+    parameter real dl=0.0    from (-inf:inf) `P(desc="Length correction" units="m");
+    parameter real dw=0.0    from (-inf:inf) `P(desc="Width correction" units="m");
 
     // - intrinsic model (basic, section 4.2)
-    parameter real gamma=0.7 from [0:inf) `P(info="Body effect parameter" units="V^0.5");
-    parameter real phi=0.5 from [0.1:inf) `P(info="Bulk Fermi potential (*2)" units="V");
-    parameter real vto=0.5 from (-inf:inf) `P(info="Long-channel threshold voltage" units="V");
-    parameter real kp=20e-6 from [0.0:inf) `P(info="Transconductance parameter" units="A/V^2");
-    parameter real ucrit=1.0e+6 from [100e+3:inf) `P(info="Longitudinal critical field" units="V/m");
-    parameter real e0=1.0e-9 from [1e-12:inf) `P(info="Mobility reduction coefficient" units="V/m");
+    parameter real gamma=0.7 from [0:inf) `P(desc="Body effect parameter" units="V^0.5");
+    parameter real phi=0.5 from [0.1:inf) `P(desc="Bulk Fermi potential (*2)" units="V");
+    parameter real vto=0.5 from (-inf:inf) `P(desc="Long-channel threshold voltage" units="V");
+    parameter real kp=20e-6 from [0.0:inf) `P(desc="Transconductance parameter" units="A/V^2");
+    parameter real ucrit=1.0e+6 from [100e+3:inf) `P(desc="Longitudinal critical field" units="V/m");
+    parameter real e0=1.0e-9 from [1e-12:inf) `P(desc="Mobility reduction coefficient" units="V/m");
 
     // - intrinsic model (channel length modulation and charge sharing, section 4.3)
-    parameter real lambda=0.5 from [0:inf) `P(info="Depletion length coefficient (CLM)");
-    parameter real weta=0.25 from (-inf:inf) `P(info="Narrow-channel effect coefficient");
-    parameter real leta=0.1 from (-inf:inf) `P(info="Short-channel effect coefficient");
+    parameter real lambda=0.5 from [0:inf) `P(desc="Depletion length coefficient (CLM)");
+    parameter real weta=0.25 from (-inf:inf) `P(desc="Narrow-channel effect coefficient");
+    parameter real leta=0.1 from (-inf:inf) `P(desc="Short-channel effect coefficient");
 
     // - intrinsic model (reverse short channel effect, section 4.4)
-    parameter real q0=0.0 from (-inf:inf) `P(info="RSCE peak charge density" units="C/m^2");
-    parameter real lk=0.29e-6 from [10n:inf) `P(info="RSCE characteristic length" units="m");
+    parameter real q0=0.0 from (-inf:inf) `P(desc="RSCE peak charge density" units="C/m^2");
+    parameter real lk=0.29e-6 from [10n:inf) `P(desc="RSCE characteristic length" units="m");
 
     // - intrinsic model (impact ionization, section 4.5)
-    parameter real iba=0.0 from (-inf:inf) `P(info="First impact ionization coefficient" units="m^-1");
-    parameter real ibb=3e8 from [1e8:inf) `P(info="Second impact ionization coefficient" units="V/m");
-    parameter real ibn=1.0 from [0.1:inf) `P(info="Saturation voltage factor for impact ionization");
+    parameter real iba=0.0 from (-inf:inf) `P(desc="First impact ionization coefficient" units="m^-1");
+    parameter real ibb=3e8 from [1e8:inf) `P(desc="Second impact ionization coefficient" units="V/m");
+    parameter real ibn=1.0 from [0.1:inf) `P(desc="Saturation voltage factor for impact ionization");
 
     // - intrinsic model (temperature, section 4.6)
-    parameter real tcv=1e-3 from (-inf:inf) `P(info="Threshold voltage TC" units="V/deg");
-    parameter real bex=-1.5 from (-inf:inf) `P(info="Mobility temperature exponent");
-    parameter real ucex=0.8 from (-inf:inf) `P(info="Longitudinal critical field temperature exponent");
-    parameter real ibbt=9e-4 from (-inf:inf) `P(info="Temperature coefficient for ibb" units="K^-1");
+    parameter real tcv=1e-3 from (-inf:inf) `P(desc="Threshold voltage TC" units="V/deg");
+    parameter real bex=-1.5 from (-inf:inf) `P(desc="Mobility temperature exponent");
+    parameter real ucex=0.8 from (-inf:inf) `P(desc="Longitudinal critical field temperature exponent");
+    parameter real ibbt=9e-4 from (-inf:inf) `P(desc="Temperature coefficient for ibb" units="K^-1");
 
     // - intrinsic model (matching, section 4.7)
-    parameter real avto=0.0 from (-inf:inf) `P(info="Area related vto mismatch parameter" units="Vm");
-    parameter real akp=0.0 from (-inf:inf) `P(info="Area related kp mismatch parameter" units="m");
-    parameter real agamma=0.0 from (-inf:inf) `P(info="Area related gamma mismatch parameter" units="V^0.5*m");
+    parameter real avto=0.0 from (-inf:inf) `P(desc="Area related vto mismatch parameter" units="Vm");
+    parameter real akp=0.0 from (-inf:inf) `P(desc="Area related kp mismatch parameter" units="m");
+    parameter real agamma=0.0 from (-inf:inf) `P(desc="Area related gamma mismatch parameter" units="V^0.5*m");
 
     // - intrinsic model (flicker noise, section 4.8)
-    parameter real kf=0.0 from [0:inf) `P(info="Flicker noise coefficient");
-    parameter real af=1.0 from (-inf:inf) `P(info="Flicker noise exponent");
+    parameter real kf=0.0 from [0:inf) `P(desc="Flicker noise coefficient");
+    parameter real af=1.0 from (-inf:inf) `P(desc="Flicker noise exponent");
 
     // - external parasitic parameters
-    parameter real hdif=0.0 from [0:inf) `P(info="S/D diffusion length (/2)" units="m");
-    parameter real rsh=0.0 from [0:inf) `P(info="S/D sheet resistance" units="Ohm");
-    parameter real js=0.0 from [0:inf) `P(info="S/D junction saturation current density" units="A/m^2");
-    parameter real jsw=0.0 from [0:inf) `P(info="S/D junction sidewall saturation current density" units="A/m");
-    parameter real xti=0.0 from [0:inf) `P(info="S/D diode saturation current temperature exponent");
-    parameter real n=1 from [0.5:10] `P(info="S/D diode emission coefficient");
-    parameter real cj=0.0 from [0:inf) `P(info="S/D zero-bias junction capacitance per area" units="F/m^2");
-    parameter real cjsw=0.0 from [0:inf) `P(info="S/D zero-bias junction capacitance per perimeter" units="F/m");
-    parameter real pb=0.8 from (0:inf) `P(info="S/D bottom junction builtin potential" units="V");
-    parameter real pbsw=pb from (0:inf) `P(info="S/D sidewall junction builtin potential" units="V");
-    parameter real mj=0.5 from (0:inf) `P(info="S/D bottom junction grading coefficient");
-    parameter real mjsw=0.333 from (0:inf) `P(info="S/D sidewall junction grading coefficient");
-    parameter real fc=0.5 from (0:inf) `P(info="S/D bottom junction forward-bias threshold");
-    parameter real fcsw=fc from (0:inf) `P(info="S/D sidewall junction forward-bias threshold");
-    parameter real cgso=1.5e-10 from [0:inf) `P(info="Gate-source overlap capacitance per width" units="F/m");
-    parameter real cgdo=1.5e-10 from [0:inf) `P(info="Gate-drain overlap capacitance per width" units="F/m");
-    parameter real cgbo=4.0e-10 from [0:inf) `P(info="Gate-bulk overlap capacitance per length" units="F/m");
+    parameter real hdif=0.0 from [0:inf) `P(desc="S/D diffusion length (/2)" units="m");
+    parameter real rsh=0.0 from [0:inf) `P(desc="S/D sheet resistance" units="Ohm");
+    parameter real js=0.0 from [0:inf) `P(desc="S/D junction saturation current density" units="A/m^2");
+    parameter real jsw=0.0 from [0:inf) `P(desc="S/D junction sidewall saturation current density" units="A/m");
+    parameter real xti=0.0 from [0:inf) `P(desc="S/D diode saturation current temperature exponent");
+    parameter real n=1 from [0.5:10] `P(desc="S/D diode emission coefficient");
+    parameter real cj=0.0 from [0:inf) `P(desc="S/D zero-bias junction capacitance per area" units="F/m^2");
+    parameter real cjsw=0.0 from [0:inf) `P(desc="S/D zero-bias junction capacitance per perimeter" units="F/m");
+    parameter real pb=0.8 from (0:inf) `P(desc="S/D bottom junction builtin potential" units="V");
+    parameter real pbsw=pb from (0:inf) `P(desc="S/D sidewall junction builtin potential" units="V");
+    parameter real mj=0.5 from (0:inf) `P(desc="S/D bottom junction grading coefficient");
+    parameter real mjsw=0.333 from (0:inf) `P(desc="S/D sidewall junction grading coefficient");
+    parameter real fc=0.5 from (0:inf) `P(desc="S/D bottom junction forward-bias threshold");
+    parameter real fcsw=fc from (0:inf) `P(desc="S/D sidewall junction forward-bias threshold");
+    parameter real cgso=1.5e-10 from [0:inf) `P(desc="Gate-source overlap capacitance per width" units="F/m");
+    parameter real cgdo=1.5e-10 from [0:inf) `P(desc="Gate-drain overlap capacitance per width" units="F/m");
+    parameter real cgbo=4.0e-10 from [0:inf) `P(desc="Gate-bulk overlap capacitance per length" units="F/m");
 
     // Declaration of variables
     integer mode, MOStype;
@@ -193,6 +193,8 @@ module ekv (d,g,s,b);
 
     analog begin
 
+        MOStype = 1;
+
         gmin = $simparam("gmin");
 
         `INITIAL_MODEL     // Model Initialization
@@ -204,8 +206,7 @@ module ekv (d,g,s,b);
             end else begin
                 MOStype = (`PGIVEN(type)) ? type : `NMOS;
             end
-
-//$strobe("MOStype %d", MOStype);
+            //$strobe("MOStype %d", MOStype);
 
             if (`PGIVEN(cox)) begin
                 cox_p = cox;
