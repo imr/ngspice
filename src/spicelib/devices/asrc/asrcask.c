@@ -37,6 +37,9 @@ ASRCask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFvalu
     case ASRC_TC2:
         value->rValue = here->ASRCtc2;
         return(OK);
+    case ASRC_M:
+        value->rValue = here->ASRCm;
+        return(OK);
     case ASRC_CURRENT:
         value->tValue =
             (here->ASRCtype == ASRC_CURRENT) ? here->ASRCtree : NULL;
