@@ -587,12 +587,13 @@ static inline double _d0_vt(double arg)           { (void) arg; return (1.380650
           </admst:apply-templates>
         </admst:for-each>
         <admst:choose>
-          <admst:when test="[ name='cos' or name='sin' or name='tan' or
+          <admst:when test="[name='cos' or name='sin' or name='tan' or
                             name='cosh' or name='sinh' or name='tanh' or
                             name='acos' or name='asin' or name='atan' or name='atan2' or
                             name='acosh' or name='asinh' or name='atanh' or
-                            name='ln' or name='log' or name='exp' or name='sqrt' or name='abs' or name='limexp'
-                            or name='div' or name='pow' or name='hypot' or name='min' or name='max' or name='\$vt' ]">
+                            name='ln' or name='log' or name='exp' or name='sqrt' or name='abs' or name='limexp' or
+                            name='div' or name='pow' or name='hypot' or name='min' or name='max' or name='\$vt' or
+                            name='floor' or name='ceil']">
             <admst:return name="x" value="_fn_$function($args)"/>
             <admst:for-each select="$globalanalogfunction/variable[input='yes']">
               <admst:value-of select="name"/> <admst:variable name="name" select="%s"/>

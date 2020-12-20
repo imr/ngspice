@@ -180,6 +180,8 @@ static inline double min(double x,double y)  { return ((x)&lt;(y))?(x):(y); }
 #define _f_fabs(val,arg)         val = fabs(arg);
 #define _d_fabs(val,dval,arg)    val = fabs(arg);    dval = (((val)&gt;=0)?(+1.0):(-1.0));
 #define _f_abs(val)              ((val)&lt;(0) ? (-(val)):(val))
+#define _f_floor(val,arg)        val = floor(arg);
+#define _f_ceil(val,arg)         val = ceil(arg);
 
 /* declarations for $(module) MOSFETs */
 
