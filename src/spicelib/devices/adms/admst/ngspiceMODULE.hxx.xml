@@ -62,6 +62,8 @@
 #define m00_exp(v00,x)          v00 = exp(x);
 #define m10_exp(v10,v00,x)      v10 = v00;
 #define m00_abs(v00)            ((v00)&lt;(0)?(-(v00)):(v00))
+#define m00_floor(v00,x)        v00 = floor(x);
+#define m00_ceil(v00,x)         v00 = ceil(x);
 #define m00_limexp(v00,x)       v00 = ((x)&lt;90.0?exp(x):EXP90*(x-89.0));
 #define m10_limexp(v10,v00,x)   v10 = ((x)&lt;90.0?(v00):EXP90);
 #define m00_atan2(v00,x,y)      v00 = atan2(x,y);

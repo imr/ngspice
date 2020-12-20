@@ -37,7 +37,13 @@
     <admst:when test="[name='\$model']"><admst:return name="fname" value="_modelname"/></admst:when>
     <admst:when test="[name='\$instance']"><admst:return name="fname" value="_instancename"/></admst:when>
     <admst:when test="[name='\$temperature']"><admst:return name="fname" value="_circuit_temp"/></admst:when>
-    <admst:when test="[name='abs' or name='acos' or name='asinh' or name='acosh' or name='atanh' or name='asin' or name='atan' or name='cos' or name='cosh' or name='exp' or name='hypot' or name='limexp' or name='ln' or name='log' or name='sin' or name='sinh' or name='sqrt' or name='tan' or name='tanh' or name='atan2' or name='pow' or name='max' or name='min']">
+    <admst:when test="[name='cos' or name='sin' or name='tan' or
+                      name='cosh' or name='sinh' or name='tanh' or
+                      name='acos' or name='asin' or name='atan' or name='atan2' or
+                      name='acosh' or name='asinh' or name='atanh' or
+                      name='ln' or name='log' or name='exp' or name='sqrt' or name='abs' or name='limexp' or
+                      name='div' or name='pow' or name='hypot' or name='min' or name='max' or name='\$vt' or
+                      name='floor' or name='ceil']">
       <admst:return name="fname" value="%(name)"/>
     </admst:when>
     <admst:otherwise><admst:return name="fname" value="$(module)_%(name)"/></admst:otherwise>
@@ -47,7 +53,7 @@
 <admst:template match="function">
   <admst:choose>
     <admst:when test="[name='\$port_connected']">
-      <admst:message format="ZZ 11!! port_connecte, this one\n"/>
+      <admst:message format="ZZ 11!! port_connected, this one\n"/>
       <admst:for-each select="arguments[position(.)=1]">
         <admst:value-to select="/simulator/tmp" value="(here->%(.)Node_connected /* port_connected 13 */)"/>
       </admst:for-each>
