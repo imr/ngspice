@@ -182,6 +182,9 @@ static void ltspice_compat_a(struct card *oldcard);
 static void inp_repair_dc_ps(struct card* oldcard);
 static void inp_get_w_l_x(struct card* oldcard);
 
+static char* eval_m(char* line, char* tline);
+static char* eval_tc(char* line, char* tline);
+
 #ifndef EXT_ASC
 static void utf8_syntax_check(struct card *deck);
 #endif
@@ -744,7 +747,7 @@ struct card *inp_readall(FILE *fp, const char *dir_name,
         inp_reorder_params(subckt_w_params, cc);
 
         /* Special handling for large PDKs: We need to know W and L of
-           transistor subcircuits by checking their x invokcation */
+           transistor subcircuits by checking their x invocation */
         inp_get_w_l_x(working);
 
         inp_fix_inst_calls_for_numparam(subckt_w_params, working);
@@ -4783,6 +4786,49 @@ static char* eval_tc(char* line, char *tline) {
     return ret_str;
 }
 
+/* return a string that consists of m evaluated
+   or having a rhs for numparam expansion {...}.
+   The retun string has to be freed by the caller after its usage. */
+static char* eval_m(char* line, char* tline) {
+    double m;
+    char* str_ptr, * m_ptr, * m_str = NULL;
+    char* cut_line = line;
+    str_ptr = strstr(cut_line, "m=");
+    if (str_ptr) {
+        /* We need to have 'm=something */
+        if (str_ptr[2]) {
+            m_ptr = str_ptr + 2;
+            int error = 0;
+            m = INPevaluate(&m_ptr, &error, 1);
+            /*We have a value and create the tc1 string */
+            if (error == 0) {
+                m_str = tprintf("m=%15.8e", m);
+            }
+            else if (error == 1 && *m_ptr == '{' && m_ptr + 1 && *(m_ptr + 1) != '}') {
+                char* bra = gettok_char(&m_ptr, '}', TRUE, TRUE);
+                if (bra) {
+                    m_str = tprintf("m=%s", bra);
+                    tfree(bra);
+                }
+                else {
+                    fprintf(stderr, "Warning: Cannot copy m in line\n   %s\n   ignored\n", tline);
+                    m_str = copy(" ");
+                }
+            }
+            else {
+                fprintf(stderr, "Warning: Cannot copy m in line\n   %s\n   ignored\n", tline);
+                m_str = copy(" ");
+            }
+        }
+    }
+    else {
+        m_str = copy(" ");
+    }
+
+    return m_str;
+}
+
+
 /* ps compatibility:
    Exxx n1 n2 TABLE {0.45*v(1)} = (-1, -0.5) (-0.5, 0) (0, 2) (0.5, 2) (1, 1)
    -->
@@ -5397,14 +5443,18 @@ static void inp_compat(struct card *card)
             /* evauate tc1 and tc2 */
             char* tcrstr = eval_tc(cut_line, card->line);
 
+            /* evauate m */
+            char* mstr = eval_m(cut_line, card->line);
+
             /* white noise model by x2line, x3line, x4line
                if instance parameter noisy=1 (or noise=1) is set */
             bool rnoise = FALSE;
             if (strstr(cut_line, "noisy=1") || strstr(cut_line, "noise=1"))
                 rnoise = TRUE;
 
-            xline = tprintf("b%s %s %s i = v(%s, %s)/(%s) %s reciproctc=1",
-                    title_tok, node1, node2, node1, node2, equation, tcrstr);
+            /* tc1, tc2, and m are enabled */
+            xline = tprintf("b%s %s %s i = v(%s, %s)/(%s) %s %s reciproctc=1 reciprocm=0",
+                    title_tok, node1, node2, node1, node2, equation, tcrstr, mstr);
             if (rnoise) {
                 x2line = tprintf("b%s_1 %s %s i = i(v%s_3)/sqrt(%s)",
                         title_tok, node1, node2, title_tok, equation);
@@ -5414,6 +5464,7 @@ static void inp_compat(struct card *card)
             }
 
             tfree(tcrstr);
+            tfree(mstr);
 
             // comment out current old R line
             *(card->line) = '*';
@@ -6113,9 +6164,10 @@ static char *inp_modify_exp(/* NOT CONST */ char *expr)
                     wl->wl_word = copy(buf);
                 }
                 else if (cieq(buf, "tc1") || cieq(buf, "tc2") ||
-                        cieq(buf, "reciproctc")) {
+                        cieq(buf, "reciproctc") || cieq(buf, "m") || cieq(buf, "reciprocm")) {
                     s = skip_ws(s);
-                    /* no {} around tc1 = or tc2 = , these are temp coeffs. */
+                    /* no {} around tc1 = or tc2 = , these are temp coeffs. 
+                       m= is a multiplier*/
                     if (s[0] == '=' && s[1] != '=') {
                         buf[i++] = '=';
                         buf[i] = '\0';
