@@ -38,6 +38,11 @@ ASRCpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
             if (here->ASRCreciproctc == 1)
                 factor = 1 / factor;
 
+            if (here->ASRCreciprocm == 1)
+                factor = factor / here->ASRCm;
+            else
+                factor = factor * here->ASRCm;
+
             j = 0;
 
             /* Get the function evaluated and the derivatives too */

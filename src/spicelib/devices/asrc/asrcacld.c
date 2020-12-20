@@ -39,6 +39,11 @@ ASRCacLoad(GENmodel *inModel, CKTcircuit *ckt)
             if (here->ASRCreciproctc == 1)
                 factor = 1 / factor;
 
+            if (here->ASRCreciprocm == 1)
+                factor = factor / here->ASRCm;
+            else
+                factor = factor * here->ASRCm;
+
             /*
              * Get the function and its derivatives from the
              * field in the instance structure. The field is

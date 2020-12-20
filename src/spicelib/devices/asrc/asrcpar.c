@@ -34,9 +34,17 @@ ASRCparam(int param, IFvalue *value, GENinstance *fast, IFvalue *select)
         here->ASRCtc2 = value->rValue;
         here->ASRCtc2Given = TRUE;
         break;
+    case ASRC_M:
+        here->ASRCm = value->rValue;
+        here->ASRCmGiven = TRUE;
+        break;
     case ASRC_RTC:
         here->ASRCreciproctc = value->iValue;
         here->ASRCreciproctcGiven = TRUE;
+        break;
+    case ASRC_RM:
+        here->ASRCreciprocm = value->iValue;
+        here->ASRCreciprocmGiven = TRUE;
         break;
     default:
         return(E_BADPARM);

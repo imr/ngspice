@@ -19,6 +19,8 @@ IFparm ASRCpTable[] = { /* parameters */
     IOPU("tc1", ASRC_TC1, IF_REAL, "First order temp. coefficient"),
     IOPU("tc2", ASRC_TC2, IF_REAL, "Second order temp. coefficient"),
     IOPU("reciproctc", ASRC_RTC, IF_INTEGER, "Flag to calculate reciprocal temperature behaviour"),
+    IOPU("m", ASRC_M, IF_REAL, "Multiplier"),
+    IOPU("reciprocm", ASRC_RM, IF_INTEGER, "Flag to calculate reciprocal multiplier behaviour"),
     OP("i", ASRC_OUTPUTCURRENT, IF_REAL, "Current through source"),
     OP("v", ASRC_OUTPUTVOLTAGE, IF_REAL, "Voltage across source"),
     OP("pos_node", ASRC_POS_NODE, IF_INTEGER, "Positive Node"),
