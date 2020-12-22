@@ -104,10 +104,8 @@ ft_sigintr(void)
 
 
 RETSIGTYPE
-sigfloat(int sig, int code)
+sigfloat(int code)
 {
-    NG_IGNORE(sig);
-
     fperror("Error", code);
     rewind(cp_out);
     (void) signal(SIGFPE, (SIGNAL_FUNCTION) sigfloat);
