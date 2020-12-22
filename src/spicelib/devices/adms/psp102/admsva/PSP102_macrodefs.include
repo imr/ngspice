@@ -4,17 +4,23 @@
 //======================================================================================
 //======================================================================================
 //
-//  (c) Copyright 2007, All Rights Reserved, NXP Semiconductors
+//  (c) Copyright notice
+//
+//  Since 2012 until today, PSP has been co-developed by NXP Semiconductors and
+//  Delft University of Technology. For this part of the model, each claim undivided
+//  ownership and copyrights
+//  Until and including 2011, PSP has been co-developed by NXP Semiconductors and
+//  Arizona State University. For this part of the model, NXP Semiconductors claims
+//  undivided ownership and copyrights.
 //
 //
-//  Version: 102.1, April 2007 (Simkit 2.5)
+//  Version: 102.5.0, December 2013
 //
 //======================================================================================
 //======================================================================================
 //
-// Further information can be found in the file readme.txt
+// Further information can be found in the file releasenotesPSP102.txt
 //
-
 
 /////////////////////////////////////////////
 //
@@ -23,7 +29,7 @@
 /////////////////////////////////////////////
 
 // Explicit Gmin
-`define GMIN 1E-15
+`define GMIN $simparam("gmin")
 
 `define PMOS                 -1
 `define NMOS                 +1
@@ -33,7 +39,6 @@
 `define MAXA(x,y,a)           0.5*((x)+(y)+sqrt(((x)-(y))*((x)-(y))+(a)))
 
 // Physical constants
-`define EPSOX                 3.453E-11
 `define QMN                   5.951993
 `define QMP                   7.448711
 
@@ -41,20 +46,10 @@
 `define DELTA1                0.02
 `define invSqrt2              7.0710678118654746e-01
 `define oneSixth              1.6666666666666667e-01
-`define exp80                 5.5406223843935098e+34
-`define exp160                3.0698496406442424e+69
 
-`ifdef NQSmodel
-    `define Gint GP
-    `define Bint BP
-    `define Bjs  BS
-    `define Bjd  BD
-`else // NQSmodel
-    `define Gint G
-    `define Bint B
-    `define Bjs  B
-    `define Bjd  B
-`endif // NQSModel
+
+`define OPdef(OPvarname, OPdesc, OPunit) (*desc=OPdesc*) real OPvarname;
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -73,19 +68,14 @@
 //           around the arguments in the expressions are necessary)
 `define sigma(a,c,tau,eta,y) \
     nu         =  (a) + (c); \
-    mu         =  nu * nu / (tau) + 0.5 * ((c) * (c)) - (a); \
-    y          =  (eta) + (a) * nu / (mu + (nu / mu) * (c) * ((c) * (c) * `oneThird - (a)));
-
+    mutau      =  nu * nu + (tau) * (0.5 * ((c) * (c)) - (a)); \
+    y          =  (eta) + (a) * nu * (tau) / (mutau + (nu / mutau) * (tau) * (tau) * (c) * ((c) * (c) * `oneThird - (a)));
 
 // modified version of sigma, which takes 4 arguments
 `define sigma2(a,b,c,tau,eta,y) \
     nu = (a) + (c); \
-    if (abs(tau) < 1e-120) begin /*sometimes tau is extremely small...*/\
-        y              =  (eta); \
-    end else begin \
-        mu             =  (nu) * (nu) / (tau) + 0.5 * ((c) * (c)) - (a) * (b); \
-        y              =  (eta) + (a) * nu / (mu + (nu / mu) * (c) * ((c) * (c) * `oneThird - (a) * (b))); \
-    end
+    mutau          =  (nu) * (nu) + (tau) * (0.5 * ((c) * (c)) - (a) * (b)); \
+    y              =  (eta) + (a) * nu * (tau) / (mutau + (nu / mutau) * (tau) * (tau) * (c) * ((c) * (c) * `oneThird - (a) * (b)));
 
 //
 //  sp_s     surface potential calculation
@@ -248,3 +238,37 @@
         end \
         sp         = -sp; \
     end
+
+// This construct is used for parasitic resistances.
+// If R=0, the Verilog-A compiler should recognize
+// that the corresponding nodes can be collapsed
+`define CollapsableR(G, R, SN, N1, N2) \
+    if ((R) > 0.0) begin \
+        I(N1, N2) <+ MULT_i * (G) * V(N1, N2); \
+        I(N1, N2) <+ white_noise(MULT_i * SN); \
+    end else begin \
+        V(N1, N2) <+ 0.0; \
+    end
+
+`define NonCollapsableR(G, R, SN, N1, N2) \
+    I(N1, N2) <+ MULT_i * (G) * V(N1, N2); \
+    I(N1, N2) <+ white_noise(MULT_i * SN, "thermal noise");
+
+// This macro is used for asymmetric overlap regions.
+// The following variables are changed to those for source/drain side.
+`define ChangeToSource \
+    GOV       = GOV_s; \
+    GOV2      = GOV2_s; \
+    xi_ov     = xi_ov_s; \
+    inv_xi_ov = inv_xi_ov_s; \
+    x_mrg_ov  = x_mrg_ov_s; \
+    inv_xg1   = inv_xg1_s;
+
+
+`define ChangeToDrain \
+    GOV       = GOV_d; \
+    GOV2      = GOV2_d; \
+    xi_ov     = xi_ov_d; \
+    inv_xi_ov = inv_xi_ov_d; \
+    x_mrg_ov  = x_mrg_ov_d; \
+    inv_xg1   = inv_xg1_d;

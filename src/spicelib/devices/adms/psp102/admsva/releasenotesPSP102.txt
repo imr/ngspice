@@ -1,0 +1,102 @@
+======================================================================================
+======================================================================================
+
+  ---------------------------
+  Verilog-A definition of PSP
+  ---------------------------
+
+
+  (c) Copyright notice
+
+  Since 2012 until today, PSP has been co-developed by NXP Semiconductors and
+  Delft University of Technology. For this part of the model, each claim undivided
+  ownership and copyrights
+  Until and including 2011, PSP has been co-developed by NXP Semiconductors and
+  Arizona State University. For this part of the model, NXP Semiconductors claims
+  undivided ownership and copyrights.
+
+
+  Version: PSP 102.5.0 (including JUNCAP2 200.4.0), December 2013
+
+  This version of PSP is contained in SiMKit 4.2
+  
+======================================================================================
+======================================================================================
+
+  Authors: G.D.J. Smit, A.J. Scholten, and D.B.M. Klaassen (NXP Semiconductors)
+           R. van der Toorn (Delft University of Technology)
+
+  Former contributers:
+           G. Gildenblat, W. Yao, Z. Zhu, X. Li and W. Wu (Arizona State University)
+           R. van Langevelde (Philips Research)
+
+  The most recent version of the model code, the documentation, and contact
+  information can be found on:
+
+       http://psp.ewi.tudelft.nl/
+
+======================================================================================
+======================================================================================
+
+This package consists of the following files:
+
+     - releasenotesPSP102.txt         This file
+
+     - psp102.va                      Main file for global ("geometrical") model
+     - psp102b.va                     Main file for global binning model
+     - psp102e.va                     Main file for local  ("electrical") model
+     - psp102_nqs.va                  Main file for global ("geometrical") model with NQS-effects
+     - psp102b_nqs.va                 Main file for global binning model with NQS-effects
+     - psp102e_nqs.va                 Main file for local  ("electrical") model with NQS-effects
+
+     - Common102_macrodefs.include    Common macro definitions
+     - PSP102_macrodefs.include       Macro definitions for PSP
+     - PSP102_module.include          Actual model code for intrinsic MOS model
+     - PSP102_binning.include         Geometry scaling equation for binning
+     - PSP102_binpars.include         Parameterlist for global PSP binning model
+     - PSP102_nqs_macrodefs.include   Macro definitions for PSP-NQS
+     - PSP102_InitNQS.include         PSP-NQS initialization code
+     - PSP102_ChargesNQS.include      Calculation of NQS-charge contributions
+     - JUNCAP200_macrodefs.include    Macro definitions for JUNCAP2 model
+     - JUNCAP200_parlist.include      JUNCAP2 parameter list
+     - JUNCAP200_varlist1.include     JUNCAP2 variable declarations
+     - JUNCAP200_varlist2.include     JUNCAP2 variable declarations
+     - JUNCAP200_InitModel.include    JUNCAP2 model initialization code
+
+======================================================================================
+======================================================================================
+
+Usage
+-----
+
+Depending which model one wants to use, one should compile one of the seven .va-files
+(psp102.va, psp102b.va, psp102e.va, psp102_nqs.va, psp102b_nqs.va, and psp102e_nqs.va).
+The module names are "PSP102VA" and "PSPNQS102VA" for the global PSP-model (QS and
+NQS, respectively), and similarly "PSP102BVA" and "PSPNQS102BVA" for the binning
+PSP-model, "PSP102EVA" and "PSPNQS102EVA" for the local PSP-model.
+
+For the stand-alone version of JUNCAP2, version 200.4.0, please refer to the distribution
+of PSP103.
+
+======================================================================================
+======================================================================================
+
+Release notes vA-code of PSP 102.5.0 (December 2013)
+----------------------------------------------------
+
+Changes:
+
+- Added excess noise model.
+- Solved minor numerical issue in avalanche current calculation (occurring when A4 is
+  large and the body is forward biased).
+- Fixed missing T-scaling in OP-output variables lp_bgidl and lp_bgidld.
+
+PSP 102.5.0 is backwards compatible with the previous version, PSP 102.4.0.
+
+======================================================================================
+======================================================================================
+
+The authors want to thank Laurent Lemaitre and Colin McAndrew (Freescale)
+for their help with ADMS and the implementation of the model code. Geoffrey
+Coram (Analog Devices) is acknowledged for input concerning the Verilog-A
+implementation of the model.

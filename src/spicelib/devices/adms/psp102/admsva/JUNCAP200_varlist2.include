@@ -1,0 +1,59 @@
+//======================================================================================
+//======================================================================================
+// Filename: JUNCAP200_varlist2.include
+//======================================================================================
+//======================================================================================
+//
+//  (c) Copyright notice
+//
+//  Since 2012 until today, PSP has been co-developed by NXP Semiconductors and
+//  Delft University of Technology. For this part of the model, each claim undivided
+//  ownership and copyrights
+//  Until and including 2011, PSP has been co-developed by NXP Semiconductors and
+//  Arizona State University. For this part of the model, NXP Semiconductors claims
+//  undivided ownership and copyrights.
+//
+//
+//  Version: 102.5.0 (PSP), 200.4.0 (JUNCAP), December 2013
+//
+//======================================================================================
+//======================================================================================
+//
+// Further information can be found in the file releasenotesPSP102.txt
+//
+//================================================================
+// Variables that are different for source and drain side junction
+// and have a scope larger than a single macro-call
+//================================================================
+
+`ifdef JUNCAP_StandAlone
+    real AB_i, LS_i, LG_i;
+    real zflagbot, zflagsti, zflaggat;
+    real VMAX, exp_VMAX_over_phitd, vbimin, vch, vfmin, vbbtlim;
+
+    // JUNCAP-express variables
+    real xhighf1, expxhf1, xhighf2, expxhf2, xhighr, expxhr;
+
+    // JUNCAP2-express intermediate parameters
+    real ISATFOR1, MFOR1, ISATFOR2, MFOR2, ISATREV, MREV, m0flag;
+`else // JUNCAP_StandAlone
+    real ABSOURCE_i, LSSOURCE_i, LGSOURCE_i, AS_i, PS_i;
+    real zflagbot_s, zflagsti_s, zflaggat_s;
+    real VMAX_s, exp_VMAX_over_phitd_s, vbimin_s, vch_s, vfmin_s, vbbtlim_s;
+
+    // JUNCAP-express variables
+    real xhighf1_s, expxhf1_s, xhighf2_s, expxhf2_s, xhighr_s, expxhr_s, m0flag_s;
+
+    // JUNCAP2-express intermediate parameters
+    real ISATFOR1_s, MFOR1_s, ISATFOR2_s, MFOR2_s, ISATREV_s, MREV_s;
+
+    real ABDRAIN_i, LSDRAIN_i, LGDRAIN_i, AD_i, PD_i;
+    real zflagbot_d, zflagsti_d, zflaggat_d;
+    real VMAX_d, exp_VMAX_over_phitd_d, vbimin_d, vch_d, vfmin_d, vbbtlim_d;
+
+    // JUNCAP-express variables
+    real xhighf1_d, expxhf1_d, xhighf2_d, expxhf2_d, xhighr_d, expxhr_d, m0flag_d;
+
+    // JUNCAP2-express intermediate parameters
+    real ISATFOR1_d, MFOR1_d, ISATFOR2_d, MFOR2_d, ISATREV_d, MREV_d;
+`endif // JUNCAP_StandAlone

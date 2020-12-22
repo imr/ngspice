@@ -1,18 +1,25 @@
 //======================================================================================
 //======================================================================================
-// Filename: SIMKIT_macrodefs.include
+// Filename: Common102_macrodefs.include
 //======================================================================================
 //======================================================================================
 //
-//  (c) Copyright 2007, All Rights Reserved, NXP Semiconductors
+//  (c) Copyright notice
+//
+//  Since 2012 until today, PSP has been co-developed by NXP Semiconductors and
+//  Delft University of Technology. For this part of the model, each claim undivided
+//  ownership and copyrights
+//  Until and including 2011, PSP has been co-developed by NXP Semiconductors and
+//  Arizona State University. For this part of the model, NXP Semiconductors claims
+//  undivided ownership and copyrights.
 //
 //
-//  Version: 102.1, April 2007 (Simkit 2.5)
+//  Version: 102.5.0 (PSP), 200.4.0 (JUNCAP), December 2013
 //
 //======================================================================================
 //======================================================================================
 //
-// Further information can be found in the file readme.txt
+// Further information can be found in the file releasenotesPSP102.txt
 //
 
 //////////////////////////////////////////////////////////////
@@ -36,15 +43,16 @@
 // Note 2: In this va-code, the "from" keyword in the parameter
 // list is not used. Silent clipping is used instead. One could enable
 // the Verilog-A range checking by redefining the `from-macro below.
-`define P(txt)
 `ifdef insideADMS
-    `define from(lower,upper) from[lower:upper]
+    `define P(txt) (*txt*)
     `define INITIAL_MODEL @(initial_model)
     `define INITIAL_INSTANCE @(initial_instance)
+    `define from(lower,upper) from [lower:upper]
 `else
-    `define from(lower,upper)
+    `define P(txt)
     `define INITIAL_MODEL
     `define INITIAL_INSTANCE
+    `define from(lower,upper)
 `endif
 
 // Some  functions
@@ -61,7 +69,8 @@
 `define QELE                  1.6021918E-19
 `define HBAR                  1.05457168E-34
 `define MELE                  9.1093826E-31
-`define EPSSI                 1.045E-10
+`define EPSO                  8.8541878176E-12
+`define EPSRSI                11.8
 
 // Other constants
 `define oneThird              3.3333333333333333e-01

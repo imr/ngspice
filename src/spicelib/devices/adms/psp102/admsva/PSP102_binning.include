@@ -1,0 +1,152 @@
+//======================================================================================
+//======================================================================================
+// Filename: PSP102_binning.include
+//======================================================================================
+//======================================================================================
+//
+//  (c) Copyright notice
+//
+//  Since 2012 until today, PSP has been co-developed by NXP Semiconductors and
+//  Delft University of Technology. For this part of the model, each claim undivided
+//  ownership and copyrights
+//  Until and including 2011, PSP has been co-developed by NXP Semiconductors and
+//  Arizona State University. For this part of the model, NXP Semiconductors claims
+//  undivided ownership and copyrights.
+//
+//
+//  Version: 102.5.0, December 2013
+//
+//======================================================================================
+//======================================================================================
+//
+// Further information can be found in the file releasenotesPSP102.txt
+//
+
+// auxiliary variables
+iLEWE        = iLE * iWE;
+iiLE         = LE / LEN;
+iiWE         = WE / WEN;
+iiLEWE       = iiLE * iiWE;
+iiiLEWE      = iiWE / iiLE;
+
+// auxiliary variables for COX only
+iiLEcv       = LEcv / LEN;
+iiWEcv       = WEcv / WEN;
+iiLEWEcv     = iiLEcv * iiWEcv;
+
+// auxiliary variables for CGOV only
+iLEcv        = LEN / LEcv;
+iiiLEWEcv    = iiWEcv / iiLEcv;
+
+// auxiliary variables for CGBOV only
+iiLcv        = Lcv / LEN;
+iiWcv        = Wcv / WEN;
+iiLWcv       = iiLcv * iiWcv;
+
+// auxiliary variables for CFR only
+iLcv         = LEN / Lcv;
+iiiLWcv      = iiWcv / iiLcv;
+
+// Process parameters
+VFB          = POVFB + iLE * PLVFB + iWE * PWVFB + iLEWE * PLWVFB;
+STVFB        = POSTVFB + iLE * PLSTVFB + iWE * PWSTVFB + iLEWE * PLWSTVFB;
+TOX          = POTOX;
+EPSROX       = POEPSROX;
+NEFF         = PONEFF + iLE * PLNEFF + iWE * PWNEFF + iLEWE * PLWNEFF;
+VNSUB        = POVNSUB;
+NSLP         = PONSLP;
+DNSUB        = PODNSUB;
+DPHIB        = PODPHIB + iLE * PLDPHIB + iWE * PWDPHIB + iLEWE * PLWDPHIB;
+NP           = PONP + iLE * PLNP + iWE * PWNP + iLEWE * PLWNP;
+CT           = POCT + iLE * PLCT + iWE * PWCT + iLEWE * PLWCT;
+TOXOV        = POTOXOV;
+TOXOVD       = POTOXOVD;
+NOV          = PONOV + iLE * PLNOV + iWE * PWNOV + iLEWE * PLWNOV;
+NOVD         = PONOVD + iLE * PLNOVD + iWE * PWNOVD + iLEWE * PLWNOVD;
+
+// DIBL parameters
+CF           = POCF + iLE * PLCF + iWE * PWCF + iLEWE * PLWCF;
+CFB          = POCFB;
+
+// Mobility parameters
+BETN         = POBETN + iLE * PLBETN + iiWE * PWBETN + iiiLEWE * PLWBETN;
+
+
+STBET        = POSTBET + iLE * PLSTBET + iWE * PWSTBET + iLEWE * PLWSTBET;
+MUE          = POMUE + iLE * PLMUE + iWE * PWMUE + iLEWE * PLWMUE;
+STMUE        = POSTMUE;
+THEMU        = POTHEMU;
+STTHEMU      = POSTTHEMU;
+CS           = POCS + iLE * PLCS + iWE * PWCS + iLEWE * PLWCS;
+STCS         = POSTCS;
+XCOR         = POXCOR + iLE * PLXCOR + iWE * PWXCOR + iLEWE * PLWXCOR;
+STXCOR       = POSTXCOR;
+FETA         = POFETA;
+
+// Series resistance parameters
+RS           = PORS + iLE * PLRS + iWE * PWRS + iLEWE * PLWRS;
+STRS         = POSTRS;
+RSB          = PORSB;
+RSG          = PORSG;
+
+// Velocity saturation parameters
+THESAT       = POTHESAT + iLE * PLTHESAT + iWE * PWTHESAT + iLEWE * PLWTHESAT;
+STTHESAT     = POSTTHESAT + iLE * PLSTTHESAT + iWE * PWSTTHESAT + iLEWE * PLWSTTHESAT;
+THESATB      = POTHESATB + iLE * PLTHESATB + iWE * PWTHESATB + iLEWE * PLWTHESATB;
+THESATG      = POTHESATG + iLE * PLTHESATG + iWE * PWTHESATG + iLEWE * PLWTHESATG;
+
+// Saturation voltage parameters
+AX           = POAX + iLE * PLAX + iWE * PWAX + iLEWE * PLWAX;
+
+// Channel length modulation (CLM) parameters
+ALP          = POALP + iLE * PLALP + iWE * PWALP + iLEWE * PLWALP;
+ALP1         = POALP1 + iLE * PLALP1 + iWE * PWALP1 + iLEWE * PLWALP1;
+ALP2         = POALP2 + iLE * PLALP2 + iWE * PWALP2 + iLEWE * PLWALP2;
+VP           = POVP;
+
+// Impact ionization parameters
+A1           = POA1 + iLE * PLA1 + iWE * PWA1 + iLEWE * PLWA1;
+A2           = POA2;
+STA2         = POSTA2;
+A3           = POA3 + iLE * PLA3 + iWE * PWA3 + iLEWE * PLWA3;
+A4           = POA4 + iLE * PLA4 + iWE * PWA4 + iLEWE * PLWA4;
+GCO          = POGCO;
+
+// Gate current parameters
+IGINV        = POIGINV + iiLE * PLIGINV + iiWE * PWIGINV + iiLEWE * PLWIGINV;
+IGOV         = POIGOV + iLE * PLIGOV + iiWE * PWIGOV + iiiLEWE * PLWIGOV;
+IGOVD        = POIGOVD + iLE * PLIGOVD + iiWE * PWIGOVD + iiiLEWE * PLWIGOVD;
+STIG         = POSTIG;
+GC2          = POGC2;
+GC3          = POGC3;
+CHIB         = POCHIB;
+
+// Gate-induced drain leakage (GIDL) parameters
+AGIDL        = POAGIDL + iLE * PLAGIDL + iiWE * PWAGIDL + iiiLEWE * PLWAGIDL;
+AGIDLD       = POAGIDLD + iLE * PLAGIDLD + iiWE * PWAGIDLD + iiiLEWE * PLWAGIDLD;
+BGIDL        = POBGIDL;
+BGIDLD       = POBGIDLD;
+STBGIDL      = POSTBGIDL;
+STBGIDLD     = POSTBGIDLD;
+CGIDL        = POCGIDL;
+CGIDLD       = POCGIDLD;
+
+// Charge model parameters
+COX          = POCOX + iiLEcv * PLCOX + iiWEcv * PWCOX + iiLEWEcv * PLWCOX;
+CGOV         = POCGOV + iLEcv * PLCGOV + iiWEcv * PWCGOV + iiiLEWEcv * PLWCGOV;
+CGOVD        = POCGOVD + iLEcv * PLCGOVD + iiWEcv * PWCGOVD + iiiLEWEcv * PLWCGOVD;
+CGBOV        = POCGBOV + iiLcv * PLCGBOV + iiWcv * PWCGBOV + iiLWcv * PLWCGBOV;
+CFR          = POCFR + iLcv * PLCFR + iiWcv * PWCFR + iiiLWcv * PLWCFR;
+CFRD         = POCFRD + iLcv * PLCFRD + iiWcv * PWCFRD + iiiLWcv * PLWCFRD;
+
+// Noise model parameters
+FNT          = POFNT;
+FNTEXC       = iLE * iLE * (POFNTEXC + iLE * PLFNTEXC + iWE * PWFNTEXC + iLEWE * PLWFNTEXC);
+NFA          = PONFA + iLE * PLNFA + iWE * PWNFA + iLEWE * PLWNFA;
+NFB          = PONFB + iLE * PLNFB + iWE * PWNFB + iLEWE * PLWNFB;
+NFC          = PONFC + iLE * PLNFC + iWE * PWNFC + iLEWE * PLWNFC;
+EF           = POEF;
+
+// Well proximity effect parameters
+KVTHOWE      = POKVTHOWE + iLE * PLKVTHOWE + iWE * PWKVTHOWE + iLEWE * PLWKVTHOWE;
+KUOWE        = POKUOWE + iLE * PLKUOWE + iWE * PWKUOWE + iLEWE * PLWKUOWE;
