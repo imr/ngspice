@@ -1,0 +1,62 @@
+INTELLECTUAL PROPERTY NOTICE, DISCLAIMER AND LICENSE
+
+The compact model software and documentation presented at this website
+form a whole that will henceforth be denoted as the "Model".
+
+The Model presented at this website has been co-developed by NXP
+Semiconductors and Arizona State University until and including 2011.
+For this part of the Model, NXP Semiconductors claims undivided
+ownership and copyrights.
+
+Since 2012 until today the Model has been co-developed by 
+NXP Semiconductors and Delft University of Technology and
+for this part each claim undivided ownership and copyrights.
+
+
+DISCLAIMER
+
+The owners are fully free to further develop, adapt and extend the
+Model as they judge necessary or desirable. 
+
+The Model is distributed as is, completely without any express or
+implied warranty, or service support. The owners and their employees
+are not liable in any way for the condition or performance of the
+Model. The owners hereby disclaim all implied warranties.
+
+
+LICENSE
+
+
+NXP Semiconductors and Delft University of Technology hereby grant
+users a perpetual, irrevocable, worldwide, non-exclusive, royalty-free
+license with respect to Versions of the Model which have been released
+through this website http://psp.ewi.tudelft.nl.
+
+NXP Semiconductors and Delft University of Technology grant the users
+the right to modify, copy and redistribute the Model, both within the
+user's organization and externally, subject to the following
+restrictions.
+
+
+RESTRICTIONS
+
+1. The users agree not to charge for the Model itself but may
+charge for additions, extensions, or support.
+
+2. In any product based on the Model, the users agree to acknowledge
+the owners as developers of the Model. This acknowledgment shall
+appear in the product documentation.
+
+3.  The users agree to only use the name of CMC standard models to
+identify implementations of the CMC standard models which produce the
+same outputs as Standard code for the same inputs passing all CMC QA
+tests.
+
+4. The users agree to obey all government restrictions governing
+redistribution or export of the software.
+
+5. The users agree to reproduce any copyright notice which appears on
+the software and documentation on any copy or modification of such
+made available to others.
+
+
