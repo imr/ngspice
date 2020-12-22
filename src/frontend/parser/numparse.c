@@ -192,7 +192,7 @@ static int get_decimal_number(const char **p_str, double *p_val)
     /* Ensure string either starts with a digit or a decimal point followed
      * by a digit */
     if ((!isdigit(ch_cur) && ch_cur != '.') ||
-            ((ch_cur == '.') && !isdigit(p_cur[1]))) {
+            ((ch_cur == '.') && !isdigit_c(p_cur[1]))) {
         return -1;
     }
 

@@ -2096,7 +2096,7 @@ static int is_a_modelname(const char *s)
     }
 
     /* test if we have a true number */
-    if (*st == '\0' || isspace(*st)) {
+    if (*st == '\0' || isspace_c(*st)) {
         return FALSE;
     }
 
@@ -2139,7 +2139,7 @@ static int is_a_modelname(const char *s)
             break;
     }
     /* test if we have a true scale factor */
-    if (*st == '\0' || isspace(*st))
+    if (*st == '\0' || isspace_c(*st))
         return FALSE;
 
     /* test if people use Ohms, F, H for RLC, like pF or uOhms */
@@ -2152,7 +2152,7 @@ static int is_a_modelname(const char *s)
     else if ((*st == 'f') || (*st == 'h'))
         st = st + 1;
 
-    if (*st == '\0' || isspace(*st)) {
+    if (*st == '\0' || isspace_c(*st)) {
         return FALSE;
     }
 
@@ -8029,8 +8029,8 @@ static struct card *pspice_compat(struct card *oldcard)
             }
             else { // if an integer number, it is node4
                 bool is_node4 = TRUE;
-                while (*cut_line && !isspace(*cut_line))
-                    if (!isdigit(*cut_line++))
+                while (*cut_line && !isspace_c(*cut_line))
+                    if (!isdigit_c(*cut_line++))
                         is_node4 = FALSE; // already model name
                 if (is_node4) {
                     cut_line = nexttok(cut_line); // model name
