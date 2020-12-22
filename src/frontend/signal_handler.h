@@ -7,7 +7,7 @@
 #define ngspice_SIGNAL_HANDLER_H
 
 RETSIGTYPE ft_sigintr(void);
-RETSIGTYPE sigfloat(int sig, int code);
+RETSIGTYPE sigfloat(int code);
 RETSIGTYPE sigstop(void);
 RETSIGTYPE sigcont(void);
 RETSIGTYPE sigill(void);
