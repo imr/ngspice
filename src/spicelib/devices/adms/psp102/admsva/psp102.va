@@ -30,6 +30,10 @@
 
 `include "PSP102_macrodefs.include"
 
+//`define Binning true
+//`define LocalModel true
+//`define NQSmodel true 
+
 // Note: some verilog-A compilers have problems handling the ddx-operator,
 // which occurs in definition of OP-output variables. If the line below is
 // commented out, all OP-output variables using the ddx-operator are skipped.
