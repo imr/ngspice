@@ -13,18 +13,16 @@ Modified: 2001 Paolo Nenzi (Cider Integration)
 
 
 static int
-model_numnodes(int type)
+model_max_numnodes(int type)
 {
+    if (type == INPtypelook("VBIC") ||
+        type == INPtypelook("hicum2"))
+        return 5;
 #ifdef ADMS
     if (type == INPtypelook("hicum0") ||
         type == INPtypelook("bjt504t"))
         return 5;
-#else
-    if (type == INPtypelook("VBIC") ||
-        type == INPtypelook("hicum2"))
-        return 5;
 #endif
-
     return 4;
 }
 
@@ -78,14 +76,14 @@ void INP2Q(CKTcircuit *ckt, INPtables * tab, struct card *current, CKTnode *gnod
         INPtermInsert(ckt, &token, tab, &node[i]);
     }
 
-    int model_numnodes_ = model_numnodes(thismodel->INPmodType);
-    if (i > model_numnodes_) {
+    int model_numnodes = model_max_numnodes(thismodel->INPmodType);
+    if (i > model_numnodes) {
         LITERR("Too many nodes for this model type");
         return;
     }
 
     /* tie missing ports to ground, (substrate and thermal node) */
-    while (i < model_numnodes_)
+    while (i < model_numnodes)
         node[i++] = gnode;
 
     numnodes = i;
