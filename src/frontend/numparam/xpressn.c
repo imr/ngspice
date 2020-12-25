@@ -1424,13 +1424,10 @@ nupa_subcktcall(dico_t *dico, const char *s, const char *x,
     const char *i2 = strstr(ds_get_buf(&tstr), "params:");
 
     if (i2) {
-        const char *optr, *jptr;
-
-        pscopy(&tstr, i2 + 7, NULL);
+        const char* optr, * jptr;
 
         /* search identifier to the left of '=' assignments */
-
-        for (optr = ds_get_buf(&tstr);
+        for (optr = i2 + 7;
                 (jptr = strchr(optr, '=')) != NULL;
                 optr = jptr + 1)
         {
