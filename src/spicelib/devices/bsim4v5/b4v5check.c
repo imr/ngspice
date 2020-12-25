@@ -50,7 +50,7 @@ CKTcircuit *ckt)
     wl = wlstart = TMALLOC(wordlist, 1);
     wl->wl_prev = NULL;
     wl->wl_next = NULL;
-    wl->wl_word = tprintf("Checking parameters for BSIM 4.5 model %s\n", model->BSIM4v5modName);
+    wl->wl_word = tprintf("\nChecking parameters for BSIM 4.5 model %s\n", model->BSIM4v5modName);
 
     if ((here->BSIM4v5rgateMod == 2) || (here->BSIM4v5rgateMod == 3))
     {   if ((here->BSIM4v5trnqsMod == 1) || (here->BSIM4v5acnqsMod == 1)) {
