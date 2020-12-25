@@ -1,10 +1,46 @@
+Ngspice-34, Jan ??, 2021
+============
+- New features:
+    + Improved VBIC model
+    + Get the vector type automatically, if db, ph, cph are applied.
+    + Enable finding 'spinit' if its path contains spaces.
+    + Increase buffer size for command 'listing' to 4096 bytes.
+    + Add compatibility modes for EAGLE (ea) and Spectre (spe).
+    + Add parameter 'plain' to 'plot' command.
+    + Add variables 'plainplot', 'plainwrite', 'plainlet'
+    + Add RF bipolar model HICUM 2.4 to the ngspice C sources.
+    + Add charge formulation for non-linear capacitors.
+    + Remove outdated code from contrib and unsupported directories.
+    + When installing ngspice executable, do not install the headers.
+    + Add support for tc1, tc2, and m for behavioral resistors,
+      which use the B source internally.
+    + Add supporting E_constant Vconst 0 TABLE {Max(V(DP)-V(GN),0)}=((20,120)).
+    + Remove the XSPICE limitation of the current source flag "current".
+    + Remove the XSPICE dependency of the phase parameter for the
+      independent current source.
+    + Drastically reduce the memory requirements if there is a PDK with
+      a lot of binning models (e.g. the SkyWater PDK).
+    + Update to admst: Enhance the Verilog A compatibility.
+    + Add most recent PSP102, Mextram504, BSIMBULK, and BSIMCMG models
+      to the ngspice adms sources.
+    + Model checking for BSIM4.5 will only write to file if an excursion
+      is detected (still to be added to the other BSIM models)
+    + Many code updates not visible to the user, but enhancing stability
+      and efficiency
+
+- Bug fixes:
+    + many bugs fixed and code improvements (see bugs 523 and up)
+    + memory leaks removed
+    
+    
+
 Ngspice-33, Oct 18th, 2020
 ============
 - New features:
     + try first storing the temporary file in user directory,
       only then in current directory.
     + Add adding the ngspice icon to the MINGW executable.
-    + Do not print tansient initial conditions, if uic is selected.
+    + Do not print transient initial conditions, if uic is selected.
     + Enable node names with special characters like '/'.
     + Do not print "Units" on a graph, if unknown type or settype notype is given.
     + Unify batch mode and control mode raw file output.
