@@ -6072,8 +6072,9 @@ static char *inp_modify_exp(/* NOT CONST */ char *expr)
     char *s;
     wordlist *wl = NULL, *wlist = NULL;
 
-    /* Scan the expression and replace all '{' and '}' with ' ' */
-    for (s = expr; *s; s++) {
+    /* Scan the expression and replace all '{' and '}' with ' '.
+       As soon as we encounter a tc1=, tc2=, or m=, stop it. */
+    for (s = expr; *s && !(ciprefix("tc1=", s) || ciprefix("tc2=", s) || ciprefix("m=", s)) ; s++) {
         if ((*s == '{') || (*s == '}')) {
             *s = ' ';
         }
@@ -6163,23 +6164,12 @@ static char *inp_modify_exp(/* NOT CONST */ char *expr)
                         cieq(buf, "temp")) {
                     wl->wl_word = copy(buf);
                 }
-                else if (cieq(buf, "tc1") || cieq(buf, "tc2") ||
-                        cieq(buf, "reciproctc") || cieq(buf, "m") || cieq(buf, "reciprocm")) {
-                    s = skip_ws(s);
-                    /* no {} around tc1 = or tc2 = , these are temp coeffs. 
-                       m= is a multiplier*/
-                    if (s[0] == '=' && s[1] != '=') {
-                        buf[i++] = '=';
-                        buf[i] = '\0';
-                        s++;
-                        wl->wl_word = copy(buf);
-                    }
-                    else {
-                        wl->wl_word = tprintf("({%s})", buf);
-                    }
-                    /* '-' following the '=' is attached to number as its sign
-                     */
-                    c_arith = TRUE;
+                /* as soon as we encounter tc1= or tc2= (temp coeffs.) or
+                   m= (multiplier), the expression is done */
+                else if ((*s == '=') && (cieq(buf, "tc1") || cieq(buf, "tc2") ||
+                        cieq(buf, "reciproctc") || cieq(buf, "m") || cieq(buf, "reciprocm"))) {
+                    wl->wl_word = tprintf("%s%s", buf, s);
+                    break;
                 }
                 else {
                     /* {} around all other tokens */
