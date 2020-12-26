@@ -19,7 +19,7 @@ if [ -z "$testProgramFlags" ] ; then
     testProgramFlags="-nw"
 fi
 
-testProgramFlags="-d -V"
+#testProgramFlags="-d -V"
 
 
 help() {

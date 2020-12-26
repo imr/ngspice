@@ -10,9 +10,9 @@ endif
 SUBDIRS +=		\
 	bsim3		\
 	bsim4		\
-	bsimbulk	\
 	bsimsoi		\
 	hisim		\
+	hicum2		\
 	hisimhv1	\
 	hisimhv2
 
