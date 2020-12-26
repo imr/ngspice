@@ -51,6 +51,10 @@ Makefile.in
 /src/maths/cmaths/test_cx_mag
 /src/maths/cmaths/test_cx_ph
 
+/src/spicelib/devices/adms/*/*.*
+!/src/spicelib/devices/adms/admst/*.*
+!/src/spicelib/devices/adms/*/admsva/*.*
+
 /src/ngmakeidx
 /src/ngmultidec
 /src/ngnutmeg
@@ -59,8 +63,6 @@ Makefile.in
 /src/ngspice
 /src/ngspice.idx
 /src/spinit
-
-!/xgraph/Makefile.in
 
 /release*
 /debug*
