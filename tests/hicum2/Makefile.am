@@ -1,15 +1,17 @@
 ## Process this file with automake to produce Makefile.in
 
 
+TESTS = npn/qaSpec
 
-TESTS = FG.cir			\
-	FG_sh.cir
-
-TESTS_ENVIRONMENT = $(SHELL) $(top_srcdir)/tests/bin/check.sh $(top_builddir)/src/ngspice
+TESTS_ENVIRONMENT = \
+	$(SHELL) $(top_srcdir)/tests/bin/check_cmc.sh \
+	$(top_builddir)/src/ngspice
 
 EXTRA_DIST = \
-        $(TESTS) \
-        $(TESTS:.cir=.out)
-
+	$(TESTS) \
+	npn
 
 MAINTAINERCLEANFILES = Makefile.in
+
+clean-local:
+	rm -rf npn/results ngspiceCkt
