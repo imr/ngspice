@@ -237,6 +237,10 @@ HICUMpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
             *(here->HICUMemitEICollCIPtr)          +=  Ibiei_Vbici;
             *(here->HICUMbaseBICollCIPtr)          += -Ibiei_Vbici;
             *(here->HICUMemitEIBaseBIPtr)          += -Ibiei_Vbici;
+            if (nqs) {
+                *(here->HICUMbaseBIXfPtr)          +=  Ibiei_Vxf;
+                *(here->HICUMemitEIXfPtr)          += -Ibiei_Vxf;
+            }
 
 //          Stamp element: Ibpei
             *(here->HICUMbaseBPBaseBPPtr)          +=  Ibpei_Vbpei;
