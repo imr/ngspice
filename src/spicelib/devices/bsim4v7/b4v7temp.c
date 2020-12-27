@@ -2313,7 +2313,8 @@ int Size_Not_Found, i;
 
               if (BSIM4v7checkModel(model, here, ckt))
               {
-                  SPfrontEnd->IFerrorf (ERR_FATAL, "Fatal error(s) detected during BSIM4v7.6.0 parameter checking for %s in model %s", model->BSIM4v7modName, here->BSIM4v7name);
+                  SPfrontEnd->IFerrorf(ERR_FATAL,
+                      "detected during BSIM4.7.0 parameter checking for \n    model %s of device instance %s\n", model->BSIM4v7modName, here->BSIM4v7name);
                   return(E_BADPARM);
               }
          } /* End instance */
