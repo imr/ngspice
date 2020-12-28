@@ -7812,7 +7812,7 @@ static struct card *pspice_compat(struct card *oldcard)
                     switch (ll) {
                     case 5:
                         {
-                        char* newline = tprintf(".model %s %s level=45 %s", modname, modtype, lv);
+                        char* newline = tprintf(".model %s %s level=44 %s", modname, modtype, lv);
                         tfree(card->line);
                         card->line = newline;
                         }
