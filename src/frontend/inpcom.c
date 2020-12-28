@@ -7791,6 +7791,59 @@ static struct card *pspice_compat(struct card *oldcard)
         }
     }
 
+    /* .model xxx NMOS/PMOS level=6 --> level = 8, version=3.2.4
+       .model xxx NMOS/PMOS level=7 --> level = 8, version=3.2.4
+       .model xxx NMOS/PMOS level=5 --> level = 45
+       .model xxx NMOS/PMOS level=8 --> level = 14, version=4.5.0 */
+    for (card = newcard; card; card = card->nextcard) {
+        char* cut_line = card->line;
+        if (ciprefix(".model", cut_line)) {
+            char* modname, *modtype;
+            cut_line = nexttok(cut_line); /* skip .model */
+            modname = gettok(&cut_line); /* save model name */
+            modtype = gettok(&cut_line); /* save model type */
+            if (cieq(modtype, "NMOS") || cieq(modtype, "PMOS")) {
+                char* lv = strstr(cut_line, "level=");
+                if (lv) {
+                    int ll;
+                    lv = lv + 6;
+                    char* ntok = gettok(&lv);
+                    ll = atoi(ntok);
+                    switch (ll) {
+                    case 5:
+                        {
+                        char* newline = tprintf(".model %s %s level=45 %s", modname, modtype, lv);
+                        tfree(card->line);
+                        card->line = newline;
+                        }
+                        break;
+                    case 6:
+                    case 7:
+                        {
+                        char* newline = tprintf(".model %s %s level=8 version=3.2.4 %s", modname, modtype, lv);
+                        tfree(card->line);
+                        card->line = newline;
+                        }
+                        break;
+                    case 8:
+                        {
+                        char* newline = tprintf(".model %s %s level=14 version=4.5.0 %s", modname, modtype, lv);
+                        tfree(card->line);
+                        card->line = newline;
+                        }
+                        break;
+                    default:
+                        break;
+                    }
+                    tfree(ntok);
+                }
+            }
+            tfree(modname);
+            tfree(modtype);
+        }
+    }
+
+
     /* x ... params: p1=val1, p2=val2 replace comma separator by space.
        Do nothing if you are inside of { }. */
     for (card = newcard; card; card = card->nextcard) {
