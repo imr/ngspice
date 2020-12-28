@@ -26,8 +26,6 @@
 #include "ngspice/wordlist.h"
 #include "ngspice/cpextern.h"
 
-
-
 /* Check for correctness of the BSIM4.5 parameters:
    If parameter excursions are found, put the warning or error message into a wordlist. 
    Only then open a file bsim4v5.out and print the data into the file. */
@@ -42,15 +40,39 @@ CKTcircuit *ckt)
     FILE *fplog;
     wordlist* wl, *wlstart;
 
-    pParam = here->pParam;
-
     if (cp_getvar("ng_nomodcheck", CP_BOOL, NULL, 0))
         return(0);
+
+    static char modname[BSIZE_SP];
+    size_t mlen = strlen(model->BSIM4v5modName);
+
+    if (mlen < BSIZE_SP) {
+        /* Check the model named model->BSIM4v5modName only once,
+           because BSIM4v5checkModel() is called for each instance. */
+        if (!strncmp(modname, model->BSIM4v5modName, mlen))
+            return(0);
+        strcpy(modname, model->BSIM4v5modName);
+    }
+
+    pParam = here->pParam;
 
     wl = wlstart = TMALLOC(wordlist, 1);
     wl->wl_prev = NULL;
     wl->wl_next = NULL;
     wl->wl_word = tprintf("\nChecking parameters for BSIM 4.5 model %s\n", model->BSIM4v5modName);
+
+    if ((strcmp(model->BSIM4v5version, "4.5.0")) && (strncmp(model->BSIM4v5version, "4.50", 4)) && (strncmp(model->BSIM4v5version, "4.5", 3))
+        && (strcmp(model->BSIM4v5version, "4.4.0")) && (strncmp(model->BSIM4v5version, "4.40", 4)) && (strncmp(model->BSIM4v5version, "4.4", 3))
+        && (strcmp(model->BSIM4v5version, "4.3.0")) && (strncmp(model->BSIM4v5version, "4.30", 4)) && (strncmp(model->BSIM4v5version, "4.3", 3))
+        && (strcmp(model->BSIM4v5version, "4.2.0")) && (strncmp(model->BSIM4v5version, "4.20", 4)) && (strncmp(model->BSIM4v5version, "4.2", 3))
+        && (strcmp(model->BSIM4v5version, "4.1.0")) && (strncmp(model->BSIM4v5version, "4.10", 4)) && (strncmp(model->BSIM4v5version, "4.1", 3))
+        && (strcmp(model->BSIM4v5version, "4.0.0")) && (strncmp(model->BSIM4v5version, "4.00", 4)) && (strncmp(model->BSIM4v5version, "4.0", 3)))
+    {
+        printf("Warning: This model supports BSIM4 versions 4.0, 4.1, 4.2, 4.3, 4.4, 4.5\n");
+        printf("You specified a wrong version number. Working now with BSIM4v5\n");
+        wl_append_word(&wl, &wl, tprintf("Warning: This model supports BSIM4 versions 4.0, 4.1, 4.2, 4.3, 4.4, 4.5\n"));
+        wl_append_word(&wl, &wl, tprintf("You specified a wrong version number. Working now with BSIM4v5.\n"));
+    }
 
     if ((here->BSIM4v5rgateMod == 2) || (here->BSIM4v5rgateMod == 3))
     {   if ((here->BSIM4v5trnqsMod == 1) || (here->BSIM4v5acnqsMod == 1)) {
@@ -767,11 +789,6 @@ CKTcircuit *ckt)
     }
 
     wl_free(wlstart);
-
-    if ((strcmp(model->BSIM4v5version, "4.5.0")) && (strncmp(model->BSIM4v5version, "4.50", 4)) && (strncmp(model->BSIM4v5version, "4.5", 3)))
-    {
-        printf("Warning: This model is BSIM4.5.0; you specified a wrong version number '%s'.\n", model->BSIM4v5version);
-    }
 
     return(Fatal_Flag);
 }

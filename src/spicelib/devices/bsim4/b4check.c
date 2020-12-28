@@ -87,15 +87,34 @@ CKTcircuit *ckt)
     FILE *fplog;
     wordlist* wl, *wlstart;
 
-    pParam = here->pParam;
-
     if (cp_getvar("ng_nomodcheck", CP_BOOL, NULL, 0))
         return(0);
+
+    static char modname[BSIZE_SP];
+    size_t mlen = strlen(model->BSIM4modName);
+
+    if (mlen < BSIZE_SP) {
+        /* Check the model named model->BSIM4modName only once,
+           because BSIM4checkModel() is called for each instance. */
+        if (!strncmp(modname, model->BSIM4modName, mlen))
+            return(0);
+        strcpy(modname, model->BSIM4modName);
+    }
+
+    pParam = here->pParam;
 
     wl = wlstart = TMALLOC(wordlist, 1);
     wl->wl_prev = NULL;
     wl->wl_next = NULL;
-    wl->wl_word = tprintf("\nChecking parameters for BSIM 4.7 model %s\n", model->BSIM4modName);
+    wl->wl_word = tprintf("\nChecking parameters for BSIM 4.8 model %s\n", model->BSIM4modName);
+
+    if ((strcmp(model->BSIM4version, "4.8.1")) && (strncmp(model->BSIM4version, "4.81", 4)) && (strncmp(model->BSIM4version, "4.8", 3)))
+    {
+        printf("Warning: This model supports BSIM4 version 4.8\n");
+        printf("You specified a wrong version number. Working now with BSIM4.8.1\n");
+        wl_append_word(&wl, &wl, tprintf("Warning: This model supports BSIM4 version 4.8\n"));
+        wl_append_word(&wl, &wl, tprintf("You specified a wrong version number. Working now with BSIM4.8.1.\n"));
+    }
 
     if ((here->BSIM4rgateMod == 2) || (here->BSIM4rgateMod == 3))
     {   if ((here->BSIM4trnqsMod == 1) || (here->BSIM4acnqsMod == 1)) {
@@ -927,11 +946,6 @@ CKTcircuit *ckt)
     }
 
     wl_free(wlstart);
-
-    if ((strcmp(model->BSIM4version, "4.8.1")) && (strncmp(model->BSIM4version, "4.81", 4)) && (strncmp(model->BSIM4version, "4.8", 3)))
-    {
-        printf("Warning: This model is BSIM4.8.1; you specified a wrong version number '%s'.\n", model->BSIM4version);
-    }
 
     return(Fatal_Flag);
 }
