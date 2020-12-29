@@ -367,12 +367,19 @@ char *INPdomodel(CKTcircuit *ckt, struct card *image, INPtables * tab)
 			    }
 			    break;
 			case 45:
-			case 69:
 				type = INPtypelook("psp102");
 				if (type < 0) {
 				    err =
 				    INPmkTemp
 				    ("Device type PSP102 not available in this binary\n");
+			    }
+				break;
+			case 69:
+				type = INPtypelook("psp103");
+				if (type < 0) {
+				    err =
+				    INPmkTemp
+				    ("Device type PSP103 not available in this binary\n");
 			    }
 				break;
 #endif

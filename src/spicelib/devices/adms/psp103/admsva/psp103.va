@@ -1,0 +1,54 @@
+//======================================================================================
+//======================================================================================
+// Filename: psp103.va
+//======================================================================================
+//======================================================================================
+//
+//  (c) Copyright notice
+//
+//  Since 2015 until today, PSP has been co-developed by NXP Semiconductors and
+//  CEA-Leti. For this part of the model, each claim undivided ownership and copyrights
+//  Since 2012 until 2015, PSP has been co-developed by NXP Semiconductors and
+//  Delft University of Technology. For this part of the model, each claim undivided
+//  ownership and copyrights
+//  Until and including 2011, PSP has been co-developed by NXP Semiconductors and
+//  Arizona State University. For this part of the model, NXP Semiconductors claims
+//  undivided ownership and copyrights.
+//
+//
+//  Version: 103.7.0 (PSP), 200.6.0 (JUNCAP), April 2019
+//
+//======================================================================================
+//======================================================================================
+//
+// Further information can be found in the file releasenotesPSP103.txt
+//
+
+`include "discipline.h"
+
+//`define NQSmodel true
+
+//`define SelfHeating true
+
+`include "Common103_macrodefs.include"
+
+`include "JUNCAP200_macrodefs.include"
+
+`include "PSP103_macrodefs.include"
+
+// Note: some verilog-A compilers have problems handling the ddx-operator,
+// which occurs in definition of OP-output variables. If the line below is
+// commented out, all OP-output variables using the ddx-operator are skipped.
+`define OPderiv
+
+/////////////////////////////////////////////////////////////////////////////
+//
+//  PSP global model code
+//
+/////////////////////////////////////////////////////////////////////////////
+
+module PSP103VA(D, G, S, B);
+
+`include "PSP103_module.include"
+
+endmodule

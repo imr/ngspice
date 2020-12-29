@@ -1,0 +1,206 @@
+
+======================================================================================
+======================================================================================
+                      Silicon Integration Initiative (Si2)
+                    Compact Model Coalition In-Code Statement
+
+  Software is distributed as is, completely without warranty or service support. The
+  Commissariat a l'energie atomique et aux energies alternatives (CEA), NXP
+  Semiconductors, and Delft University of Technology, along with their employees are
+  not liable for the condition or performance of the software.
+
+  NXP Semiconductors, Delft University of Technology, and CEA own the copyright and
+  grant users a perpetual, irrevocable, worldwide, non-exclusive, royalty-free license
+  with respect to the software as set forth below.
+  
+  NXP Semiconductors, Delft University of Technology, and CEA hereby disclaim all
+  implied warranties.
+
+  NXP Semiconductors, Delft University of Technology, and CEA grant the users the right
+  to modify, copy, and redistribute the software and documentation, both within the
+  user's organization and externally, subject to the following restrictions:
+  
+    1. The users agree not to charge for the NXP Semiconductors, Delft University of
+       Technology, and CEA-developed code itself but may charge for additions,
+       extensions, or support.
+
+    2. In any product based on the software, the users agree to acknowledge NXP
+       Semiconductors, Delft University of Technology, and CEA that developed the
+       software. This acknowledgement shall appear in the product documentation.
+
+    3. Redistributions to others of source code and documentation must retain the
+       copyright notice, disclaimer, and list of conditions.
+
+    4. Redistributions to others in binary form must reproduce the copyright notice,
+       disclaimer, and list of conditions in the documentation and/or other materials
+       provided with the distribution.
+
+  CMC In-Code Statement Revision: 103.7.0 (PSP), 04/29/2019
+                                  200.6.0 (JUNCAP),04/29/2019
+
+======================================================================================
+======================================================================================
+
+  Authors: G.D.J. Smit, A.J. Scholten, and D.B.M. Klaassen (NXP Semiconductors)
+           O. Rozeau, S. Martinie, T. Poiroux, J.C. Barbé (CEA-Leti)
+
+  Former contributers:
+           G. Gildenblat, W. Yao, Z. Zhu, X. Li and W. Wu (Arizona State University)
+           R. van Langevelde (Philips Research)
+           R. van der Toorn (Delft University of Technology)
+
+  The most recent version of the model code, the documentation, and contact
+  information can be found on:
+
+       http://www.cea.fr/cea-tech/leti/pspsupport
+       
+======================================================================================
+======================================================================================
+
+This package consists of the following files:
+
+     - releasenotesPSP103.txt         This file
+
+     - psp103.va                      Main file for PSP model
+     - psp103t.va                     Main file for PSP model with self heating
+     - psp103_nqs.va                  Main file for PSP model with NQS-effects
+     - juncap200.va                   Main file for JUNCAP2 stand-alone model
+
+     - Common103_macrodefs.include    Common macro definitions
+     - PSP103_macrodefs.include       Macro definitions for PSP
+     - PSP103_module.include          Actual model code for intrinsic MOS model
+     - PSP103_parlist.include         Model parameter list for PSP model
+     - PSP103_scaling.include         Geometry scaling equations for PSP model
+     - PSP103_nqs_macrodefs.include   Macro definitions for PSP-NQS
+     - PSP103_InitNQS.include         PSP-NQS initialization code
+     - PSP103_ChargesNQS.include      Calculation of NQS-charge contributions
+     - JUNCAP200_macrodefs.include    Macro definitions for JUNCAP2 model
+     - JUNCAP200_parlist.include      JUNCAP2 parameter list
+     - JUNCAP200_varlist.include      JUNCAP2 variable declarations
+     - JUNCAP200_InitModel.include    JUNCAP2 model initialization code
+
+======================================================================================
+======================================================================================
+
+Usage
+-----
+
+Depending which model one wants to use, one should compile one of the four .va-files
+(psp103.va, psp103t.va, psp103_nqs.va, and juncap200.va). The module names are
+"PSP103VA", "PSP103TVA", and "PSPNQS103VA" (for QS, self heating, and NQS,
+respectively), and "JUNCAP200" for the JUNCAP2-model.
+
+
+======================================================================================
+======================================================================================
+
+Release notes vA-code of PSP 103.7.0 (April 2019)
+---------------------------------------------------------
+
+Changes include
+    - More efficient calculations of Vdsp and Vdspedge
+    - Additional parameters for overlaps gate leakage currents
+    - Charge partitioning: new switch parameter SWQPART to modify the charge
+      partitioning between the drain and the source
+    - Additional parameters for charge model decoupling to improve CV description
+    - Minor modification on code files organization
+
+- PSP103_macrodefs.include:
+    - Addition of variable declarations in SPcalcLocalVarDecl macro: line 280
+    - Calculation of THESATAC_T: line 390
+    - Includes SPCalculation.include file as a new macro called "SPCalculation"
+
+- PSP103_parlist.include:
+    - New file including PSP103_binpars.include and model parameter declaration from 
+      PSP103_module.include
+    - Addition of new parameters SWQSAT, SWQPART, CFAC, THESATAC, AXAC, ALPAC, GC2OV,
+      GC3OV, CFACL, CFACLEXP, CFACW, THESATACO, THESATACL, THESATACLEXP, THESATACW,
+      THESATACLW, AXACO, AXACL, ALPACL, ALPACLEXP, ALPACW, GC2OVO, GC3OVO, POCFAC,
+      PLCFAC, PWCFAC, PLWCFAC, POTHESATAC, PLTHESATAC, PWTHESATAC, PLWTHESATAC,
+      POAXAC, PLAXAC, PWAXAC, PLWAXAC, POGC2OV, POGC3OV, KVSATAC
+
+- PSP103_scaling.include:
+    - New file including PSP103_binning.include and geometry scaling equations from 
+      PSP103_module.include
+    - Addition of new internal local parameters, associated scaling rules and clipped 
+      variables: CFAC_p, THESATAC_p, AXAC_p, ALPAC_p, GC2OV_p, GC3OV_p, CFAC_i, 
+      THESATAC_i, AXAC_i, ALPAC_i, GC2OV_i, GC3OV_i
+    - Introduction of mechanical stress effect on THESATAC_p and CFAC_p. Minor 
+      modifications of the stress model using the internal variable temp00. 
+
+- PSP103_module.include:
+    - New OP-output variables: lp_cfac, lp_thesatac, lp_axac, lp_alpac, lp_gc2ov, 
+      lp_gc3ov: lines 399, 423, 428, 430, 446, 447, 2128, 2152, 2157, 2159, 2175, 2176.
+    - New max clipping value of SWIGATE_i: line 542
+    - New variables SWQSAT_i, SWQPART_i: lines 150, 550 and 551
+    - Calculation of internal global-binning parameters for the charge model: lines 619
+      to 651
+    - Calculation of GCQOV variable for overlap gate leakage currents: lines 237, 782 
+      to 788
+    - New variable declaration for charge model THESATAC_T: lines 225 and 1040 
+    - Vgb is now calculated in line 1089
+    - Modifications for overlaps leakage currents GC2_i, GC3_i and GCQ are replaced by
+      GC2OV_i, GC3OV_i and GCQOV: lines 1209 to 1246
+    - New calculation of Vdspedge: line 1344
+    - Calculation of cfloc, thesatloc, axloc and alploc: lines 1136 to 1139, lines 1403 to
+      1406 and lines 1418 to 1421
+    - Modification of the condition "SWDELVTAC_i != 0" ("else" case was cancelled): lines 
+      1408 to 1415
+    - Addition of the condition "SWQSAT_i != 0" for Q-model decoupling in saturation: lines 
+      1417 to 1422
+    - Addition of the condition "SWQPART_i == 1.0" for charge partitioning and calculation
+      of the new charge partitioning: lines 1484 to 1490
+
+- PSP103_SPCalculation.include: cancelled file
+
+- PSP103_binpars.include: cancelled file
+
+- PSP103_binning.include: cancelled file
+
+PSP 103.7.0 is backwards compatible with the previous version, PSP 103.6.0
+
+
+======================================================================================
+======================================================================================
+
+Release notes vA-code of JUNCAP 200.6.0 (April 2019)
+---------------------------------------------------------
+
+Change includes:
+    - Bug fix on juncap express model (induced by negative values of MFOR2 and
+      ISATFOR2 variables)
+    - Addition of 2 multiplier factors for current IFACTOR and charge CFACTOR
+
+- JUNCAP200_parlist.include:
+    - Declaration of 2 new model parameters IFACTOR and CFACTOR: lines 36 and 37
+
+- JUNCAP200_varlist1.include: cancelled file
+
+- JUNCAP200_varlist2.include: cancelled file
+
+- JUNCAP200_varlist.include:
+    - New file including JUNCAP200_varlist1.include and JUNCAP200_varlist2.include
+
+- JUNCAP200_macrodefs.include:
+    - Definition of 2 new constants IFACTOR_cliplow and CFACTOR_cliplow: lines 57
+      and 58
+    - Addition of CFACTOR in the calculation of Qjprime: line 221
+    - Addition of IFACTOR in the calculation of Ijprime: line 276
+    - Modification of condition for calculation of MFOR2 and ISATFOR2 variables
+      to avoid a bug on juncap express model.
+
+- JUNCAP200_InitModel.include:
+    - Addition of cliiped variables IFACTOR_i and CFACTOR_i: lines 36 and 37
+
+- juncap200.va:
+    - Included new file for variable declarations: line 81
+
+JUNCAP 200.6.0 is backwards compatible with the previous version, JUNCAP 200.5.0
+
+
+=====================================================================================
+======================================================================================
+The authors want to thank Laurent Lemaitre and Colin McAndrew (Freescale)
+for their help with ADMS and the implementation of the model code. Geoffrey
+Coram (Analog Devices) is acknowledged for input concerning the Verilog-A
+implementation of the model.

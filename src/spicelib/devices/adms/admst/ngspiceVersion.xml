@@ -1943,6 +1943,12 @@
           <admst:value-to select="value" value="psp102"/>
         </admst:new>
       </admst:when>
+      <admst:when test="[lower-case(name)='psp103va']">
+        <admst:new datatype="attribute" arguments="ngspicename">
+          <admst:push into="../attribute" select="." onduplicate="abort"/>
+          <admst:value-to select="value" value="psp103"/>
+        </admst:new>
+      </admst:when>
       <admst:otherwise>
         <admst:new datatype="attribute" arguments="ngspicename">
           <admst:push into="../attribute" select="." onduplicate="abort"/>
@@ -2049,6 +2055,52 @@
         </admst:if>
       </admst:when>
       <admst:when test="[lower-case(name)='psp102va']">
+        <admst:if test="[nilled(variable[name='nmos'])]">
+          <admst:value-of select="analog"/>
+          <admst:value-of select="."/>
+          <admst:new datatype="variable" arguments="%p,nmos,%p">
+            <admst:push into="module/variable" select="." onduplicate="ignore"/>
+            <admst:value-to select="sizetype" value="scalar"/>
+            <admst:value-to select="type" value="integer"/>
+            <admst:value-to select="input" value="yes"/>
+            <admst:value-to select="output" value="yes"/>
+            <admst:value-to select="parametertype" value="model"/>
+            <admst:value-to select="scope" value="global_model"/>
+            <admst:new datatype="number" arguments="1">
+              <admst:value-to select="scalingunit" value="1"/>
+              <admst:value-of select="."/>
+              <admst:value-of select="../module"/>
+              <admst:new datatype="expression" arguments="%p,%p">
+                <admst:value-of select="."/>
+                <admst:value-to select="../../default" value="%p"/>
+              </admst:new>
+            </admst:new>
+          </admst:new>
+        </admst:if>
+        <admst:if test="[nilled(variable[name='pmos'])]">
+          <admst:value-of select="analog"/>
+          <admst:value-of select="."/>
+          <admst:new datatype="variable" arguments="%p,pmos,%p">
+            <admst:push into="module/variable" select="." onduplicate="ignore"/>
+            <admst:value-to select="sizetype" value="scalar"/>
+            <admst:value-to select="type" value="integer"/>
+            <admst:value-to select="input" value="yes"/>
+            <admst:value-to select="output" value="yes"/>
+            <admst:value-to select="parametertype" value="model"/>
+            <admst:value-to select="scope" value="global_model"/>
+            <admst:new datatype="number" arguments="1">
+              <admst:value-to select="scalingunit" value="1"/>
+              <admst:value-of select="."/>
+              <admst:value-of select="../module"/>
+              <admst:new datatype="expression" arguments="%p,%p">
+                <admst:value-of select="."/>
+                <admst:value-to select="../../default" value="%p"/>
+              </admst:new>
+            </admst:new>
+          </admst:new>
+        </admst:if>
+      </admst:when>
+      <admst:when test="[lower-case(name)='psp103va']">
         <admst:if test="[nilled(variable[name='nmos'])]">
           <admst:value-of select="analog"/>
           <admst:value-of select="."/>
