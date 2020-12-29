@@ -23,12 +23,12 @@
  * it doesn't.  */
 void com_hardcopy(wordlist *wl)
 {
-    /* Check if there is a graph available */
+    /* Check if there is a graph available 
     if (currentgraph == (GRAPH *) NULL) {
         (void) fprintf(cp_err, "There is no graph to hardcopy.\n");
         return;
     }
-
+*/
     char *fname;
     size_t n_byte_fname; /* size of fname in bytes, including null */
     char buf[BSIZE_SP], device[BSIZE_SP];
