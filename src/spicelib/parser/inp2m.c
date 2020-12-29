@@ -145,6 +145,7 @@ INP2M(CKTcircuit *ckt, INPtables *tab, struct card *current)
 #ifdef ADMS
         thismodel->INPmodType != INPtypelook("ekv") &&
         thismodel->INPmodType != INPtypelook("psp102") &&
+        thismodel->INPmodType != INPtypelook("psp103") &&
         thismodel->INPmodType != INPtypelook("bsimbulk") &&
         thismodel->INPmodType != INPtypelook("bsimcmg") &&
 #endif

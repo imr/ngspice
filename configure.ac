@@ -1101,7 +1101,8 @@ if test "x$enable_adms" = xyes ; then
                 adms/ekv \
                 adms/hicum0 \
                 adms/mextram \
-                adms/psp102 "
+                adms/psp102 \
+                adms/psp103 "
 
 # The makefiles for adms (to be added to AC_CONFIG_FILES by ./autogen.sh --adms)
 #VLAMKF    src/spicelib/devices/adms/bsimbulk/Makefile
@@ -1110,6 +1111,7 @@ if test "x$enable_adms" = xyes ; then
 #VLAMKF    src/spicelib/devices/adms/hicum0/Makefile
 #VLAMKF    src/spicelib/devices/adms/mextram/Makefile
 #VLAMKF    src/spicelib/devices/adms/psp102/Makefile
+#VLAMKF    src/spicelib/devices/adms/psp103/Makefile
 
     NOTVLADEVDIR=""
 
@@ -1118,7 +1120,8 @@ if test "x$enable_adms" = xyes ; then
              spicelib/devices/adms/ekv/libekv.la \
              spicelib/devices/adms/hicum0/libhicum0.la \
              spicelib/devices/adms/mextram/libbjt504t.la \
-             spicelib/devices/adms/psp102/libpsp102.la "
+             spicelib/devices/adms/psp102/libpsp102.la \
+             spicelib/devices/adms/psp103/libpsp103.la "
 
 else
 
