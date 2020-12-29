@@ -7791,13 +7791,16 @@ static struct card *pspice_compat(struct card *oldcard)
         }
     }
 
-    /* .model xxx NMOS/PMOS level=6 --> level = 8, version=3.2.4
-       .model xxx NMOS/PMOS level=7 --> level = 8, version=3.2.4
-       .model xxx NMOS/PMOS level=5 --> level = 45
-       .model xxx NMOS/PMOS level=8 --> level = 14, version=4.5.0 */
+    /* .model xxx NMOS/PMOS level=6 --> level = 8,  version=3.2.4
+       .model xxx NMOS/PMOS level=7 --> level = 8,  version=3.2.4
+       .model xxx NMOS/PMOS level=5 --> level = 44
+       .model xxx NMOS/PMOS level=8 --> level = 14, version=4.5.0
+       .model xxx NPN/PNP   level=2 --> level = 6
+       .model xxx LPNP      level=n --> level = 1 subs=-1       */
     for (card = newcard; card; card = card->nextcard) {
         char* cut_line = card->line;
         if (ciprefix(".model", cut_line)) {
+            char *cut_del = cut_line = inp_remove_ws(copy(cut_line));
             char* modname, *modtype;
             cut_line = nexttok(cut_line); /* skip .model */
             modname = gettok(&cut_line); /* save model name */
@@ -7812,6 +7815,7 @@ static struct card *pspice_compat(struct card *oldcard)
                     switch (ll) {
                     case 5:
                         {
+                        /* EKV 2.6 in the adms branch */
                         char* newline = tprintf(".model %s %s level=44 %s", modname, modtype, lv);
                         tfree(card->line);
                         card->line = newline;
@@ -7820,6 +7824,7 @@ static struct card *pspice_compat(struct card *oldcard)
                     case 6:
                     case 7:
                         {
+                        /* BSIM3 version 3.2.4 */
                         char* newline = tprintf(".model %s %s level=8 version=3.2.4 %s", modname, modtype, lv);
                         tfree(card->line);
                         card->line = newline;
@@ -7827,6 +7832,7 @@ static struct card *pspice_compat(struct card *oldcard)
                         break;
                     case 8:
                         {
+                        /* BSIM4 version 4.5.0 */
                         char* newline = tprintf(".model %s %s level=14 version=4.5.0 %s", modname, modtype, lv);
                         tfree(card->line);
                         card->line = newline;
@@ -7838,11 +7844,39 @@ static struct card *pspice_compat(struct card *oldcard)
                     tfree(ntok);
                 }
             }
+            else if (cieq(modtype, "NPN") || cieq(modtype, "PNP")) {
+                char* lv = strstr(cut_line, "level=");
+                if (lv) {
+                    int ll;
+                    lv = lv + 6;
+                    char* ntok = gettok(&lv);
+                    ll = atoi(ntok);
+                    switch (ll) {
+                    case 2:
+                        {
+                        /* MEXTRAM 504.12.1 in the adms branch */
+                        char* newline = tprintf(".model %s %s level=6 %s", modname, modtype, lv);
+                        tfree(card->line);
+                        card->line = newline;
+                        }
+                        break;
+                    default:
+                        break;
+                    }
+                    tfree(ntok);
+                }
+            }
+            else if (cieq(modtype, "LPNP")) {
+                /* lateral PNP enabled */
+                char* newline = tprintf(".model %s PNP level=1 subs=-1 %s", modname, cut_line);
+                tfree(card->line);
+                card->line = newline;
+            }
             tfree(modname);
             tfree(modtype);
+            tfree(cut_del);
         }
     }
-
 
     /* x ... params: p1=val1, p2=val2 replace comma separator by space.
        Do nothing if you are inside of { }. */
