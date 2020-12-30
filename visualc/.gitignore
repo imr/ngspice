@@ -20,6 +20,9 @@
 /vngspice-fftw/
 /sharedspice/
 
+/ADMS/
+/vngspice-adms/
+
 /.vs/
 *.vc.db
 spinit
