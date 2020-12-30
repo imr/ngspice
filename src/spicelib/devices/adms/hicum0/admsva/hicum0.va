@@ -156,8 +156,8 @@ organization and externally, subject to the following restrictions.
 `define TMIN        -100.00
 `define MIN_R       0.001
 //`define GMIN        1.0e-12
-`define GMIN        $simparam("gmin")        //suggested by L.L
-//`define GMIN        $simparam("gmin",1e-12)  //suggested by L.L
+//`define GMIN        $simparam("gmin")        //suggested by L.L
+`define GMIN        $simparam("gmin",1e-12)  //suggested by L.L
 
 `define QCMODF(vj,cj0,vd,z,aj,cjf)\
     if (cj0 > 0.0) begin\
@@ -1136,10 +1136,10 @@ module hic0_full (c,b,e,s,tnode);
 
         // Following code is an intermediate solution:
         // ******************************************
-        if (flsh == 0 || rth_t < `MIN_R) begin
+        if (flsh == 0 || rth < `MIN_R) begin
             I(br_sht)   <+ Vrth/`MIN_R;
         end else begin
-            I(br_sht)   <+ Vrth/rth_t-pterm;   //`P(spectre:gmin="add");
+            I(br_sht)   <+ Vrth/rth-pterm;     //`P(spectre:gmin="add");
             I(br_sht)   <+ ddt(cth*Vrth);
         end
         // ******************************************
@@ -1150,7 +1150,7 @@ module hic0_full (c,b,e,s,tnode);
         //if (flsh == 0 || rth < `MIN_R) begin
         //  V(br_sht)   <+ 0.0;
         //end else begin
-        //  I(br_sht)   <+ Vrth/rth_t-pterm ;//`P(spectre:gmin="add");
+        //  I(br_sht)   <+ Vrth/rth_t-pterm ;  //`P(spectre:gmin="add");
         //  I(br_sht)   <+ ddt(cth*Vrth);
         //
         //end
