@@ -39,13 +39,13 @@
 // ADMS specific definitions
 `ifdef insideADMS
     `define P(p) (*p*)
-    `define MODEL @(initial_model)
-    `define INSTANCE @(initial_instance)
+    `define INITIAL_MODEL @(initial_model)
+    `define INITIAL_INSTANCE @(initial_instance)
     `define NOISE @(noise)
 `else
     `define P(p)
-    `define MODEL
-    `define INSTANCE
+    `define INITIAL_MODEL
+    `define INITIAL_INSTANCE
     `define NOISE
 `endif
 
@@ -127,4 +127,7 @@
 
 `define MPIsw(nam,def,uni,        des) (*units=uni,                   desc=des*) parameter integer nam=def from[  0:  1] ;
 `define MPIty(nam,def,uni,        des) (*units=uni,                   desc=des*) parameter integer nam=def from[ -1:  1] exclude 0 ;
+
+`define IPRnb(nam,def,uni,        des) (*units=uni, type="instance",  desc=des*) parameter real    nam=def;
+`define IPRcz(nam,def,uni,        des) (*units=uni, type="instance",  desc=des*) parameter real    nam=def from[  0:inf);
 

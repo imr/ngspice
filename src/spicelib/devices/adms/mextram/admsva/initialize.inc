@@ -9,7 +9,8 @@ else
     my_gmin = $simparam("gmin");
 
 // Initialize model constants
-
+`INITIAL_INSTANCE
+begin
 // Impact ionization constants (NPN - PNP)
 
 if (TYPE == 1) begin
@@ -85,4 +86,4 @@ inv_VGZEB_Tr = 1.0 / VGZEB_Tr;
 inv_VDE = 1.0 / VDE;
 
 // end: RvdT, November 2008; Zener tunneling current model
-
+end

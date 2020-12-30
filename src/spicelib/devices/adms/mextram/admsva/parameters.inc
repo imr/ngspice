@@ -6,7 +6,7 @@
 // Mextram parameters
 `MPIco( LEVEL          ,504            ,""            ,504         ,505         ,"Model level" )
 `MPRco( TREF           ,25.0           ,""            ,-273.0      ,inf         ,"Reference temperature" )
-`MPRnb( DTA            ,0.0            ,""                                      ,"Difference between the local and global ambient temperatures" )
+`IPRnb( DTA            ,0.0            ,""                                      ,"Difference between the local and global ambient temperatures" )
 `MPIcc( EXMOD          ,1              ,""            ,0           ,2           ,"Flag for extended modeling of the reverse current gain" )
 `MPIcc( EXPHI          ,1              ,""            ,0           ,1           ,"Flag for the distributed high-frequency effects in transient" )
 `MPIcc( EXAVL          ,0              ,""            ,0           ,1           ,"Flag for extended modeling of avalanche currents" )
@@ -105,7 +105,7 @@
 `MPRnb( ATH            ,0.0             ,""                                     ,"Temperature coefficient of the thermal resistance" )
 `endif
 
-`MPRoo( MULT           ,1.0             ,""            ,0.0        ,inf         ,"Multiplication factor" )
+`IPRcz( MULT           ,1.0             ,""                                     ,"Multiplication factor" )
 `MPIty( TYPE           ,1               ,""                                     ,"Flag for NPN (1) or PNP (-1) transistor type" )
 `MPRoc( GMIN           ,1.0e-13         ,""            ,0.0        ,1e-10       ,"Minimum conductance" )
 
