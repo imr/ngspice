@@ -14,15 +14,16 @@ vb b 0 dc=0
 m1 d g s b pch W=10e-6 L=10e-6
 
 .dc vd -0.1 0.1 0.001 vg -1 -0.4 0.3
-*.probe dc ids=par'-i(vd)'
-*.probe dc gx=deriv(ids)
-*.probe dc gx2=deriv(gx)
-*.probe dc gx3=deriv(gx2)
-*.print dc par'ids' par'gx' par'gx2' par'gx3'
 
 .control
 run
-plot i(es)
+plot -i(vd)
+let gx=deriv(-i(vd))
+let gx2=deriv(gx)
+let gx3=deriv(gx2)
+plot gx
+plot gx2
+plot gx3
 .endc
 
 .end
