@@ -3,7 +3,7 @@
 .option post ingold numdgt=10
 .temp 27
 
-.hdl "bsimbulk.va"
+*.hdl "bsimbulk.va"
 .include "model.l"
 
 v1 vdd 0 dc=1.0
