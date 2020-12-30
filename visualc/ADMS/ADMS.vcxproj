@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{ecef2ffe-20dc-4056-b11a-557472400938}</ProjectGuid>
+    <RootNamespace>ADMS</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>icm\$(ProjectName);..\src\include;..\..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>icm\$(ProjectName);..\src\include;..\..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>icm\$(ProjectName);..\src\include;..\..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>icm\$(ProjectName);..\src\include;..\..\src\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\spicelib\devices\adms\bsimbulk\bsimbulk.analogfunction.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\bsimbulk\bsimbulk.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\bsimbulk\bsimbulkacld.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\bsimbulk\bsimbulkask.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\bsimbulk\bsimbulkdel.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\bsimbulk\bsimbulkdest.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\bsimbulk\bsimbulkguesstopology.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\bsimbulk\bsimbulkinit.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\bsimbulk\bsimbulkload.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\bsimbulk\bsimbulkmask.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\bsimbulk\bsimbulkmdel.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\bsimbulk\bsimbulkmpar.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\bsimbulk\bsimbulknoise.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\bsimbulk\bsimbulkpar.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\bsimbulk\bsimbulkpzld.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\bsimbulk\bsimbulksetup.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\bsimbulk\bsimbulktemp.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\bsimbulk\bsimbulktrunc.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\bsimcmg\bsimcmg.analogfunction.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\bsimcmg\bsimcmg.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\bsimcmg\bsimcmgacld.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\bsimcmg\bsimcmgask.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\bsimcmg\bsimcmgdel.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\bsimcmg\bsimcmgdest.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\bsimcmg\bsimcmgguesstopology.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\bsimcmg\bsimcmginit.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\bsimcmg\bsimcmgload.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\bsimcmg\bsimcmgmask.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\bsimcmg\bsimcmgmdel.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\bsimcmg\bsimcmgmpar.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\bsimcmg\bsimcmgnoise.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\bsimcmg\bsimcmgpar.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\bsimcmg\bsimcmgpzld.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\bsimcmg\bsimcmgsetup.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\bsimcmg\bsimcmgtemp.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\bsimcmg\bsimcmgtrunc.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\ekv\ekv.analogfunction.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\ekv\ekv.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\ekv\ekvacld.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\ekv\ekvask.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\ekv\ekvdel.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\ekv\ekvdest.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\ekv\ekvguesstopology.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\ekv\ekvinit.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\ekv\ekvload.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\ekv\ekvmask.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\ekv\ekvmdel.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\ekv\ekvmpar.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\ekv\ekvnoise.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\ekv\ekvpar.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\ekv\ekvpzld.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\ekv\ekvsetup.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\ekv\ekvtemp.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\ekv\ekvtrunc.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\hicum0\hicum0.analogfunction.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\hicum0\hicum0.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\hicum0\hicum0acld.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\hicum0\hicum0ask.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\hicum0\hicum0del.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\hicum0\hicum0dest.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\hicum0\hicum0guesstopology.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\hicum0\hicum0init.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\hicum0\hicum0load.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\hicum0\hicum0mask.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\hicum0\hicum0mdel.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\hicum0\hicum0mpar.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\hicum0\hicum0noise.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\hicum0\hicum0par.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\hicum0\hicum0pzld.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\hicum0\hicum0setup.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\hicum0\hicum0temp.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\hicum0\hicum0trunc.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\mextram\bjt504t.analogfunction.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\mextram\bjt504t.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\mextram\bjt504tacld.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\mextram\bjt504task.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\mextram\bjt504tdel.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\mextram\bjt504tdest.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\mextram\bjt504tguesstopology.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\mextram\bjt504tinit.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\mextram\bjt504tload.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\mextram\bjt504tmask.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\mextram\bjt504tmdel.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\mextram\bjt504tmpar.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\mextram\bjt504tnoise.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\mextram\bjt504tpar.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\mextram\bjt504tpzld.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\mextram\bjt504tsetup.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\mextram\bjt504ttemp.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\mextram\bjt504ttrunc.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\psp102\psp102.analogfunction.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\psp102\psp102.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\psp102\psp102acld.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\psp102\psp102ask.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\psp102\psp102del.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\psp102\psp102dest.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\psp102\psp102guesstopology.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\psp102\psp102init.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\psp102\psp102load.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\psp102\psp102mask.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\psp102\psp102mdel.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\psp102\psp102mpar.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\psp102\psp102noise.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\psp102\psp102par.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\psp102\psp102pzld.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\psp102\psp102setup.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\psp102\psp102temp.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\psp102\psp102trunc.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\psp103\psp103.analogfunction.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\psp103\psp103.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\psp103\psp103acld.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\psp103\psp103ask.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\psp103\psp103del.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\psp103\psp103dest.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\psp103\psp103guesstopology.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\psp103\psp103init.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\psp103\psp103load.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\psp103\psp103mask.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\psp103\psp103mdel.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\psp103\psp103mpar.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\psp103\psp103noise.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\psp103\psp103par.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\psp103\psp103pzld.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\psp103\psp103setup.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\psp103\psp103temp.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\psp103\psp103trunc.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\spicelib\devices\adms\bsimbulk\bsimbulk.analogfunction.h" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\bsimbulk\bsimbulk.hxx" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\bsimbulk\bsimbulkdefs.h" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\bsimbulk\bsimbulkext.h" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\bsimbulk\bsimbulkinit.h" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\bsimbulk\bsimbulkitf.h" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\bsimcmg\bsimcmg.analogfunction.h" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\bsimcmg\bsimcmg.hxx" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\bsimcmg\bsimcmgdefs.h" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\bsimcmg\bsimcmgext.h" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\bsimcmg\bsimcmginit.h" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\bsimcmg\bsimcmgitf.h" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\ekv\constants.h" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\ekv\discipline.h" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\ekv\ekv.analogfunction.h" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\ekv\ekv.hxx" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\ekv\ekvdefs.h" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\ekv\ekvext.h" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\ekv\ekvinit.h" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\ekv\ekvitf.h" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\hicum0\constants.h" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\hicum0\discipline.h" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\hicum0\hicum0.analogfunction.h" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\hicum0\hicum0.hxx" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\hicum0\hicum0defs.h" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\hicum0\hicum0ext.h" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\hicum0\hicum0init.h" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\hicum0\hicum0itf.h" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\mextram\bjt504t.analogfunction.h" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\mextram\bjt504t.hxx" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\mextram\bjt504tdefs.h" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\mextram\bjt504text.h" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\mextram\bjt504tinit.h" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\mextram\bjt504titf.h" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\mextram\discipline.h" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\psp102\discipline.h" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\psp102\psp102.analogfunction.h" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\psp102\psp102.hxx" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\psp102\psp102defs.h" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\psp102\psp102ext.h" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\psp102\psp102init.h" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\psp102\psp102itf.h" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\psp103\discipline.h" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\psp103\psp103.analogfunction.h" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\psp103\psp103.hxx" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\psp103\psp103defs.h" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\psp103\psp103ext.h" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\psp103\psp103init.h" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\psp103\psp103itf.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
