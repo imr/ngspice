@@ -334,7 +334,7 @@ int $(module)guesstopology (SMPmatrix *matrix, CKTcircuit *ckt, $(module)model *
   </admst:for-each>
   <admst:for-each select="$localvariables">
     <admst:if test="[type='integer']">int %(name);\n</admst:if>
-    <admst:if test="[type='real']">double %(name)=0.0/0.0;\n</admst:if>
+    <admst:if test="[type='real']">double %(name)=0.0;\n</admst:if>
     <admst:if test="[type='string']">char* %(name);\n</admst:if>
   </admst:for-each>
   <admst:for-each select="analog/code[datatypename='block']/item">

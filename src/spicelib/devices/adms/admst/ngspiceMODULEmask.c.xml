@@ -63,7 +63,7 @@ int $(module)mAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
   default:
     return(-1);
   }
-  return(-1);
+
 }
 
 </admst:template>

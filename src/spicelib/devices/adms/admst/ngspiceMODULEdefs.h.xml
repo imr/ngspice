@@ -91,10 +91,10 @@
 #define EXIT_IF_ISNAN(var) \\
 { \\
 }
-
+#ifndef _MSC_VER
 static inline double max(double x,double y)  { return ((x)&gt;(y))?(x):(y); }
 static inline double min(double x,double y)  { return ((x)&lt;(y))?(x):(y); }
-
+#endif
 /* ngspice \$simparam variables
     gdev                (1/Ohms): Additional conductance to be added to nonlinear branches for conductance homotopy convergence algorithm.
     gmin                (1/Ohms): Minimum conductance placed in parallel with nonlinear branches.

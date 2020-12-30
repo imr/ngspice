@@ -82,7 +82,7 @@ int $(module)ask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, 
   default:
     return(-1);
   }
-  return(-1);
+
 }
 
 </admst:template>

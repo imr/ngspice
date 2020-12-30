@@ -1031,7 +1031,7 @@
       <admst:if test="[static='no' and dynamic='yes']">#if defined(_DYNAMIC)\n</admst:if>
       <admst:value-of select="name"/>
       <admst:if test="[type='integer']">int %s;\n</admst:if>
-      <admst:if test="[type='real']">double %s=0.0/0.0;\n</admst:if>
+      <admst:if test="[type='real']">double %s=0.0;\n</admst:if>
       <admst:if test="[type='string']">char* %s;\n</admst:if>
       <admst:if test="[insource='yes']">
         <admst:if test="probe">
