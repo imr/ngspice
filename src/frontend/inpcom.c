@@ -7804,7 +7804,7 @@ static struct card *pspice_compat(struct card *oldcard)
             char* modname, *modtype;
             cut_line = nexttok(cut_line); /* skip .model */
             modname = gettok(&cut_line); /* save model name */
-            modtype = gettok(&cut_line); /* save model type */
+            modtype = gettok_noparens(&cut_line); /* save model type */
             if (cieq(modtype, "NMOS") || cieq(modtype, "PMOS")) {
                 char* lv = strstr(cut_line, "level=");
                 if (lv) {
