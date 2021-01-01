@@ -5,6 +5,7 @@
 
 struct compat
 {
+	bool isset; /* at least one mode is set */
 	bool hs; /* HSPICE */
 	bool s3; /* spice3 */
 	bool ll; /* all */

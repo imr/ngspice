@@ -174,6 +174,8 @@ static struct modellist *inp_find_model(
         struct nscope *scope, const char *name);
 
 void tprint(struct card *deck);
+static void print_compat_mode(void);
+static void set_compat_mode(void);
 static struct card *pspice_compat(struct card *newcard);
 static void pspice_compat_a(struct card *oldcard);
 static struct card *ltspice_compat(struct card *oldcard);
@@ -532,7 +534,7 @@ Currently available are flags for:
 - LTSPICE, HSPICE, Spice3, PSPICE, KiCad, Spectre
 */
 struct compat newcompat;
-static void new_compat_mode(void)
+static void set_compat_mode(void)
 {
     char behaviour[80];
     newcompat.hs = FALSE;
@@ -541,23 +543,27 @@ static void new_compat_mode(void)
     newcompat.ki = FALSE;
     newcompat.a = FALSE;
     newcompat.spe = FALSE;
+    newcompat.isset = FALSE;
+    newcompat.s3 = FALSE;
     if (cp_getvar("ngbehavior", CP_STRING, behaviour, sizeof(behaviour))) {
         if (strstr(behaviour, "hs"))
-            newcompat.hs = TRUE;
+            newcompat.isset = newcompat.hs = TRUE; /*HSPICE*/
         if (strstr(behaviour, "ps"))
-            newcompat.ps = TRUE;
+            newcompat.isset = newcompat.ps = TRUE; /*PSPICE*/
         if (strstr(behaviour, "lt"))
-            newcompat.lt = TRUE;
+            newcompat.isset = newcompat.lt = TRUE; /*LTSPICE*/
         if (strstr(behaviour, "ki"))
-            newcompat.ki = TRUE;
+            newcompat.isset = newcompat.ki = TRUE; /*KiCad*/
         if (strstr(behaviour, "a"))
-            newcompat.a = TRUE;
+            newcompat.isset = newcompat.a = TRUE; /*complete netlist, used in conjuntion with other mode*/
         if (strstr(behaviour, "ll"))
-            newcompat.ll = TRUE;
+            newcompat.isset = newcompat.ll = TRUE; /*all (currently not used)*/
+        if (strstr(behaviour, "s3"))
+            newcompat.isset = newcompat.s3 = TRUE; /*spice3 only*/
         if (strstr(behaviour, "eg"))
-            newcompat.eg = TRUE;
+            newcompat.isset = newcompat.eg = TRUE; /*EAGLE*/
         if (strstr(behaviour, "spe")) {
-            newcompat.spe = TRUE;
+            newcompat.isset = newcompat.spe = TRUE; /*Spectre*/
             newcompat.ps = newcompat.lt = newcompat.ki = newcompat.a = FALSE;
         }
     }
@@ -566,6 +572,34 @@ static void new_compat_mode(void)
         newcompat.hs = FALSE;
     }
 }
+
+/* Print the compatibility flags */
+static void print_compat_mode(void) {
+    if (newcompat.isset) {
+        fprintf(stdout, "\nCompatibility modes selected:");
+        if (newcompat.hs)
+            fprintf(stdout, " hs");
+        if (newcompat.ps)
+            fprintf(stdout, " ps");
+        if (newcompat.lt)
+            fprintf(stdout, " lt");
+        if (newcompat.ki)
+            fprintf(stdout, " ki");
+        if (newcompat.a)
+            fprintf(stdout, " a");
+        if (newcompat.ll)
+            fprintf(stdout, " ll");
+        if (newcompat.eg)
+            fprintf(stdout, " eg");
+        if (newcompat.spe)
+            fprintf(stdout, " spe");
+        fprintf(stdout, "\n\n");
+    }
+    else {
+        fprintf(stdout, "\nNo compatibility mode selected!\n\n");
+    }
+}
+
 
 /* We check x lines for w= and l= and fill in their values.
    To be used when expanding subcircuits with binned model cards. */
@@ -672,7 +706,7 @@ struct card *inp_readall(FILE *fp, const char *dir_name,
 
     num_libraries = 0;
     /* set the members of the compatibility structure */
-    new_compat_mode();
+    set_compat_mode();
 
     rv = inp_read(fp, 0, dir_name, comfile, intfile);
     cc = rv.cc;
@@ -693,6 +727,8 @@ struct card *inp_readall(FILE *fp, const char *dir_name,
 
         /* skip title line */
         struct card *working = cc->nextcard;
+
+        print_compat_mode();
 
         delete_libs();
 
