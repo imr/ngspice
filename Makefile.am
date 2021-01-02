@@ -7,7 +7,7 @@ EXTRA_DIST = FAQ autogen.sh Stuarts_Poly_Notes  \
 		ANALYSES BUGS AUTHORS ChangeLog \
 		DEVICES NEWS README README.tcl \
 		README.shared-xspice README.vdmos \
-		README.adms README-old.adms contrib \
+		README.adms README-old.adms \
 		examples m4 visualc \
 		build-for-mac-os.sh \
 		cross-compile.sh cross-compile-shared.sh \
