@@ -23,8 +23,11 @@
 `define VEXLIM  400.0
 `define PI      3.1415926
 
+`define NGSPICE_ADMS
+
 // Desriptions and units
-`ifdef __VAMS_COMPACT_MODELING__
+//`ifdef __VAMS_COMPACT_MODELING__
+`ifdef NGSPICE_ADMS
     `define OPP(nam,uni,des) (* desc="des", units="uni" *) real nam;
     `define PAR(des,uni) (* desc="des", units="uni" *) parameter real
     `define PAI(des,uni) (* desc="des", units="uni" *) parameter integer

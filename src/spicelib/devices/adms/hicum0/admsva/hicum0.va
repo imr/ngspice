@@ -141,7 +141,7 @@ organization and externally, subject to the following restrictions.
 `include "discipline.h"
 
 // Comment this line, if calculation of operating point values should be omitted
-//`define CALC_OP
+`define CALC_OP
 
 // Comment this line, if calculation of noise analysis should be omitted
 //`define CALC_NOISE
@@ -1139,7 +1139,7 @@ module hic0_full (c,b,e,s,tnode);
         if (flsh == 0 || rth < `MIN_R) begin
             I(br_sht)   <+ Vrth/`MIN_R;
         end else begin
-            I(br_sht)   <+ Vrth/rth-pterm;     //`P(spectre:gmin="add");
+            I(br_sht)   <+ Vrth/rth_t-pterm;     //`P(spectre:gmin="add");
             I(br_sht)   <+ ddt(cth*Vrth);
         end
         // ******************************************
@@ -1192,14 +1192,18 @@ module hic0_full (c,b,e,s,tnode);
 
 
 `ifdef CALC_OP
-            if (analysis("static")) begin : OP_calculation
+//            if (analysis("static")) begin : OP_calculation
+            begin : OP_calculation
                 real oRPIi, oRMUi, oROi, gAVL;
                 real Cdei, Cdci, Cjei, Cjci, Cjcx, CBC;
                 real R_tot;
 
-                IB = I(<b>);
-                IC = I(<c>);
-                ISUB = I(<s>);
+//                IB = I(<b>);
+//                IC = I(<c>);
+//                ISUB = I(<s>);
+                IB = ibe;
+                IC = it;
+                ISUB = ijsc;
                 IAVL = iavl;
 
                 VBE = V(b,e);
@@ -1207,7 +1211,8 @@ module hic0_full (c,b,e,s,tnode);
                 VCE = V(c,e);
                 VSC = V(s,c);
 
-                GMi = ddx(it_wop,V(bi));
+//                GMi = ddx(it_wop,V(bi));
+                GMi = ddx(it,V(bi));
 
                 oRPIi = ddx(ijbe,V(bi));
                 RPIi = 1.0/(oRPIi+1e-12);
