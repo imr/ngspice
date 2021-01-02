@@ -15,6 +15,7 @@ struct compat
 	bool a; /* whole netlist */
 	bool spe; /* spectre */
 	bool eg; /* EAGLE */
+	bool mc; /* to be set for 'make check' */
 };
 
 extern struct compat newcompat;
