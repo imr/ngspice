@@ -545,6 +545,7 @@ static void set_compat_mode(void)
     newcompat.spe = FALSE;
     newcompat.isset = FALSE;
     newcompat.s3 = FALSE;
+    newcompat.mc = FALSE;
     if (cp_getvar("ngbehavior", CP_STRING, behaviour, sizeof(behaviour))) {
         if (strstr(behaviour, "hs"))
             newcompat.isset = newcompat.hs = TRUE; /*HSPICE*/
@@ -566,17 +567,28 @@ static void set_compat_mode(void)
             newcompat.isset = newcompat.spe = TRUE; /*Spectre*/
             newcompat.ps = newcompat.lt = newcompat.ki = newcompat.a = FALSE;
         }
+        if (strstr(behaviour, "mc")) {
+            newcompat.isset = FALSE;
+            newcompat.mc = TRUE; /*make check*/
+        }
     }
     if (newcompat.hs && newcompat.ps) {
         fprintf(stderr, "Warning: hs and ps compatibility are mutually exclusive, switch to ps!\n");
         newcompat.hs = FALSE;
     }
+    /* reset everything for 'make check' */
+    if (newcompat.mc)
+        newcompat.eg = newcompat.hs = newcompat.spe = newcompat.ps = 
+        newcompat.ll = newcompat.lt = newcompat.ki = newcompat.a = FALSE;
 }
 
 /* Print the compatibility flags */
 static void print_compat_mode(void) {
+    if (newcompat.mc) /* make check */
+        return;
     if (newcompat.isset) {
-        fprintf(stdout, "\nCompatibility modes selected:");
+        fprintf(stdout, "\n");
+        fprintf(stdout, "Compatibility modes selected:");
         if (newcompat.hs)
             fprintf(stdout, " hs");
         if (newcompat.ps)
@@ -589,6 +601,8 @@ static void print_compat_mode(void) {
             fprintf(stdout, " a");
         if (newcompat.ll)
             fprintf(stdout, " ll");
+        if (newcompat.s3)
+            fprintf(stdout, " s3");
         if (newcompat.eg)
             fprintf(stdout, " eg");
         if (newcompat.spe)
@@ -596,7 +610,8 @@ static void print_compat_mode(void) {
         fprintf(stdout, "\n\n");
     }
     else {
-        fprintf(stdout, "\nNo compatibility mode selected!\n\n");
+        fprintf(stdout, "\n");
+        fprintf(stdout, "No compatibility mode selected!\n\n");
     }
 }
 
@@ -2432,7 +2447,7 @@ void comment_out_unused_subckt_models(struct card *start_card)
         if (remove_subckt)
             *line = '*'; /* make line a comment */
     }
-
+#if 0
     /* comment out any unused models */
     for (card = start_card; card; card = card->nextcard) {
 
@@ -2460,7 +2475,7 @@ void comment_out_unused_subckt_models(struct card *start_card)
             tfree(model_name);
         }
     }
-
+#endif
     nlist_destroy(used_subckts);
     nlist_destroy(used_models);
 }
