@@ -2228,6 +2228,7 @@ static const char *nlist_find(const struct nlist *nlist, const char *name)
     return NULL;
 }
 
+#if 0 /* see line 2452 */
 static const char *nlist_model_find(
         const struct nlist *nlist, const char *name)
 {
@@ -2237,6 +2238,7 @@ static const char *nlist_model_find(
             return nlist->names[i];
     return NULL;
 }
+#endif
 
 static void nlist_adjoin(struct nlist *nlist, char *name)
 {
