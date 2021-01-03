@@ -41,9 +41,9 @@ sf_alloc(int n       /* number of elements */,
 
     /* Use calloc so that any internal allocations will be set to NULL to
      * facilitate error recovery */
-    if ((ptr = calloc(n, size)) == NULL) {
+    if ((ptr = calloc((size_t)n, size)) == NULL) {
         cm_message_printf("%s: cannot allocate %zd bytes : ",
-                __FILE__, n * size);
+                __FILE__, (size_t)n * size);
         return NULL;
     }
 
