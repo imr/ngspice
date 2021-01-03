@@ -1,7 +1,7 @@
-  Ngspice F.A.Q.Version 2.5 (ngspice-33 release)
+  Ngspice F.A.Q.Version 2.6 (ngspice-34 release)
 
   Maintained by Holger Vogt
-  Last update: 04-27-2020
+  Last update: 01-03-2021
 
   This document contains the Frequently Asked Questions (and Answers)
   for ngspice project.
@@ -249,41 +249,41 @@
 
   The latest version released is:
 
-  * ngspice-33 (released on 18/10/2020)
+  * ngspice-34 (released on 10/01/2021)
 
 
  2.2.  What are the latest features in the current release?
 
 - New features:
-    + try first storing the temporary file in user directory,
-      only then in current directory.
-    + Add adding the ngspice icon to the MINGW executable.
-    + Do not print tansient initial conditions, if uic is selected.
-    + Enable node names with special characters like '/'.
-    + Do not print "Units" on a graph, if unknown type or settype notype is given.
-    + Unify batch mode and control mode raw file output.
-    + Make PPerror message more verbose.
-    + Make the pwl parameter r adjustable by .param.
-    + Enable flags xdelta, ydelta for 'gnuplot' command.
-    + Enable special characters for cpl model names and parameters.
-    + New command 'cutout': Cut out part of each vector of the current tran plot
-      and copy into a new plot
-    + Compatibility switches KiCad 'ki', and Spectre 'spe'
-    + Remove vceo= and icrating= from bjt model cards.
-    + The tests of cmaths function will be done only on request.
-    + Add alternative temperature model for certain jfet parameters.
-    + Add BJT Kull Quasi-Saturation model.
-    + Improve self heating tempaerature handling in VDMOS model.
-    + Use W/nf for selecting binning model.
-    + Add wnflag as an instance parameter.
-    + Add PSPICE compatible ISWITCH.
-    + Add a limit capability to the code model aswitch.
-    + Add a new code model pswitch.
-    + Many conde updates not visible to the user, but enhancing stability
+    + Improved VBIC model
+    + Get the vector type automatically, if db, ph, cph are applied.
+    + Enable finding 'spinit' if its path contains spaces.
+    + Increase buffer size for command 'listing' to 4096 bytes.
+    + Add compatibility modes for EAGLE (ea) and Spectre (spe).
+    + Add parameter 'plain' to 'plot' command.
+    + Add variables 'plainplot', 'plainwrite', 'plainlet'
+    + Add RF bipolar model HICUM 2.4 to the ngspice C sources.
+    + Add charge formulation for non-linear capacitors.
+    + Remove outdated code from contrib and unsupported directories.
+    + When installing ngspice executable, do not install the headers.
+    + Add support for tc1, tc2, and m for behavioral resistors,
+      which use the B source internally.
+    + Add supporting E_constant Vconst 0 TABLE {Max(V(DP)-V(GN),0)}=((20,120)).
+    + Remove the XSPICE limitation of the current source flag "current".
+    + Remove the XSPICE dependency of the phase parameter for the
+      independent current source.
+    + Drastically reduce the memory requirements if there is a PDK with
+      a lot of binning models (e.g. the SkyWater PDK).
+    + Update to admst: Enhance the Verilog A compatibility.
+    + Add most recent PSP102, Mextram504, BSIMBULK, and BSIMCMG models
+      to the ngspice adms sources.
+    + Model checking for BSIM4.5 will only write to file if an excursion
+      is detected (still to be added to the other BSIM models)
+    + Many code updates not visible to the user, but enhancing stability
       and efficiency
 
 - Bug fixes:
-    + many bugs fixed and code improvements (see bugs 484 and up)
+    + many bugs fixed and code improvements (see bugs 523 and up)
     + memory leaks removed
 
 
@@ -375,7 +375,7 @@
 
  4.4.  Disclaimer and Copyright
 
-  Copyright: Holger Vogt, 2020
+  Copyright: Holger Vogt, 2021
   License: Creative Commons Attribution Share-Alike (CC-BY-SA) v4.0.
   This document is provided as is. The information in it is not
   warranted to be correct: you use it at your own risk.
