@@ -469,11 +469,27 @@ char *INPdomodel(CKTcircuit *ckt, struct card *image, INPtables * tab)
 #endif
     /*  --------  Check if model is a resistor --------- */
     else if (strcmp(type_name, "r") == 0) {
-			type = INPtypelook("Resistor");
-			if (type < 0) {
-			    err =
-				INPmkTemp
-				("Device type Resistor not available in this binary\n");
+			err = INPfindLev(line,&lev);
+			switch(lev) {
+				case 0:
+				case 1:
+				default:
+					type = INPtypelook("Resistor");
+					if (type < 0) {
+						err =
+						INPmkTemp
+						("Device type Resistor not available in this binary\n");
+					}
+				break;
+#ifdef ADMS
+				case 2:
+					type = INPtypelook("r2_cmc");
+					if (type < 0) {
+			  		  err = INPmkTemp(
+			  			  "Device type R2_CMC not available in this binary\n");
+					}
+				break;
+#endif
 			}
 			INPmakeMod(modname, type, image);
     }

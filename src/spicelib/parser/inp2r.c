@@ -51,7 +51,11 @@ void INP2R(CKTcircuit *ckt, INPtables * tab, struct card *current)
 #endif
 
     if (mytype < 0) {
-        if ((mytype = INPtypelook("Resistor")) < 0) {
+        if ((mytype = INPtypelook("Resistor")) < 0
+#ifdef ADMS
+          || (mytype = INPtypelook("r2_cmc")) < 0
+#endif
+        ){
             LITERR("Device type Resistor not supported by this binary\n");
             return;
         }

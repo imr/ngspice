@@ -133,6 +133,7 @@ extern struct coreInfo_t  coreInfo; /* cmexport.c */
 #include "adms/psp103/psp103itf.h"
 #include "adms/bsimbulk/bsimbulkitf.h"
 #include "adms/bsimcmg/bsimcmgitf.h"
+#include "adms/r2_cmc/r2_cmcitf.h"
 #endif
 #ifdef CIDER
 /* Numerical devices (Cider integration) */
@@ -217,6 +218,7 @@ static SPICEdev *(*static_devices[])(void) = {
     (SPICEdev *(*)(void)) get_psp103_info,
     (SPICEdev *(*)(void)) get_bsimbulk_info,
     (SPICEdev *(*)(void)) get_bsimcmg_info,
+    (SPICEdev *(*)(void)) get_r2_cmc_info,
 #endif
 
 #ifdef NDEV

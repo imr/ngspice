@@ -269,6 +269,24 @@
     <ClCompile Include="..\..\src\spicelib\devices\adms\psp103\psp103setup.c" />
     <ClCompile Include="..\..\src\spicelib\devices\adms\psp103\psp103temp.c" />
     <ClCompile Include="..\..\src\spicelib\devices\adms\psp103\psp103trunc.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\r2_cmc\r2_cmc.analogfunction.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\r2_cmc\r2_cmc.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\r2_cmc\r2_cmcacld.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\r2_cmc\r2_cmcask.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\r2_cmc\r2_cmcdel.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\r2_cmc\r2_cmcdest.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\r2_cmc\r2_cmcguesstopology.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\r2_cmc\r2_cmcinit.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\r2_cmc\r2_cmcload.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\r2_cmc\r2_cmcmask.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\r2_cmc\r2_cmcmdel.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\r2_cmc\r2_cmcmpar.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\r2_cmc\r2_cmcnoise.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\r2_cmc\r2_cmcpar.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\r2_cmc\r2_cmcpzld.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\r2_cmc\r2_cmcsetup.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\r2_cmc\r2_cmctemp.c" />
+    <ClCompile Include="..\..\src\spicelib\devices\adms\r2_cmc\r2_cmctrunc.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\spicelib\devices\adms\bsimbulk\bsimbulk.analogfunction.h" />
@@ -320,6 +338,12 @@
     <ClInclude Include="..\..\src\spicelib\devices\adms\psp103\psp103ext.h" />
     <ClInclude Include="..\..\src\spicelib\devices\adms\psp103\psp103init.h" />
     <ClInclude Include="..\..\src\spicelib\devices\adms\psp103\psp103itf.h" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\r2_cmc\r2_cmc.analogfunction.h" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\r2_cmc\r2_cmc.hxx" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\r2_cmc\r2_cmcdefs.h" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\r2_cmc\r2_cmcext.h" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\r2_cmc\r2_cmcinit.h" />
+    <ClInclude Include="..\..\src\spicelib\devices\adms\r2_cmc\r2_cmcitf.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
