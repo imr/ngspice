@@ -1,0 +1,898 @@
+`include "cmcModels.inc"
+
+//
+//  Set up two versions of the model (which is defined in the
+//  file r2_cmc_core.va), an isothermal model and an electrothermal model.
+//
+
+//`define electroThermal
+
+`define LEVEL    1002
+`define GFORM            // if GFORM is defined an I=V*g formulation is used, else a V=I*r formulation is used
+`define VERSION  1.0
+`define REVISION 0.0
+
+//
+//  r2[_et]_cmc: Compact Model Council (CMC) 2-terminal Resistor Model
+//
+//  This is the 2-terminal resistor model developed by the resistor
+//  subcommittee of the CMC. The goal was to have a standard 2-terminal
+//  resistor model with standard parameter names and a standard,
+//  numerically well behaved nonlinearity model.
+//
+//  The nonlinearity model is that proposed by Agere Systems
+//  (from Kausar Banoo, Kumud Singhal, and Hermann Gummel).
+//
+//  A self-heating (electro-thermal) version is included via conditionals.
+//  It is anticipated that this will be provided as a separate
+//  form of the model (r2_et_cmc where "et" means electro-thermal)
+//  and the local temperature rise terminal will be made available
+//  optionally, this has been requested for resistors in power
+//  technologies. The non-self-heating form, r2_cmc, is expected to
+//  be available as a new level model (the level number assigned
+//  depending on what level models are already available within
+//  a simulator, the value of 2 used here is an example).
+//
+
+//
+//  Version  1.0
+//  Revision 0.0
+//  Date     2005 Nov 12
+//  Comments Model as approved at Oct 2005 CMC meeting
+//           - notes from Agere systems added to documentation
+//
+//  Version  1.0
+//  Revision 0.0_preview3
+//  Date     2005 Oct 08
+//  Comments Updates based on second round of comments
+//           - electrothermal model name changed to r2_et_cmc so the
+//             _cmc tag would be at the end
+//           - top-level calling structure changed to make addition
+//             of other models more structured, and have all information
+//             directly relevant to r2[_et]_cmc in this file
+//           - LEVEL and other parameters moved to this file rather than
+//             the top-level file for the same reason, and LEVEL was
+//             set to the value 1002
+//           - single line if statements have begin ... end added for safety
+//             and consistency of style
+//           - linear TC added for flicker noise coefficient
+//           - notes and documentation added that
+//             tc1, tc2, c1, c2, isnoisy
+//             should be both instance and model parameters
+//           - tc1e and tc2e (the effective temperature coefficients of resistance)
+//             were updated to include a width dependence and to
+//             have a length dependence that varies with c1 and c2
+//           - added an instance parameter switch sw_et to enable the self-heating
+//             model to be turned off
+//           - added min and max parameters for length and width, and if
+//             a drawn geometry is outside these limits then a warning is issued
+//           - handling of tmin and tmax changed:
+//             specific clipping limits added (used for self-heating)
+//             warnings added if ambient temperature is outside the limits
+//             clipping of temperature to limits changed to be smooth
+//           - temperature coefficient of resistance clamped smoothly
+//             rather than having a hard limit
+//
+//  Version  1.0
+//  Revision 0.0_preview2
+//  Date     2005 Sep 02
+//  Comments Updates based on first round of comments
+//           - changed name to r2_cmc from cmc_r2
+//           - fixed up improperly defined variables
+//           - modified some names for consistency with documentation
+//           - set up a top-level file that up both
+//             isoThermal and electroThermal versions are defined
+//           - set switch to resistance form to be done based on
+//             resistance at tnom, so the form does not change
+//             during a temperature sweep
+//           - fixed errors in LRM2.2 code
+//
+//  Version  1.0
+//  Revision 0.0_preview1
+//  Date     2005 Jul 01
+//  Comments Initial code for review by CMC resistor subcommittee
+//
+
+//
+//  Instance parameters are:
+//           m multiplicity factor (number in parallel, implicit for LRM2.2)
+//           w design width  of resistor body
+//           l design length of resistor body
+//           r resistance (per segment, total resistance is r/m)
+//          c1 contact at terminal 1: 0=no 1=yes
+//          c2 contact at terminal 2: 0=no 1=yes
+//       trise local temperature delta to ambient (before self-heating)
+//     isnoisy switch for noise: 0=no 1=yes
+//
+
+//
+//  The c1 and c2 parameters control the addition of "end" effects
+//  to the model. If these are both zero ("no contact") then no end
+//  effects are added. If only one is non-zero 1/2 the end effects are
+//  added. If both are non-zero full end effects are added. This
+//  is to facilitate the implementation of multi-section models in a
+//  subckt. c1=c2=0 for all internal sections, c1=0,c2=1 for the
+//  "left" end segment, c1=1,c2=0 for the "right" end segment.
+//
+//  The basic nonlinearity is:
+//
+//    R=R0*(1-p2-p3+p2*sqrt(1+(q2*E)**2)+p3*cbrt(1+(q3*abs(E))**3))
+//
+//  where cbrt() is the cube root operation. The use
+//  of abs(E) leads to a singularity in higher order derivatives,
+//  but because of the power of the term it does not show up
+//  until the 4th derivative of the current.
+//
+//  For q3*abs(E) somewhat greater than 1, the p3,q3 term
+//  leads a resistance factor of (1+p3*(q3*abs(E)-1)) so p3*q3
+//  is in essence a first order field coefficient of
+//  resistance.
+//  For q2*E somewhat less than 1, the p2,q2 term leads to a
+//  resistance factor (1+0.5*p2*(q2*E)**2) so 0.5*p2*q2**2 is in essence
+//  a second order field coefficient of resistance.
+//  The bias dependent nonlinearity is done via field rather than voltage,
+//  to get reasonable scaling with length.
+//
+//  There is no explicit handling of end resistances, they are assumed
+//  to be accounted for by xl. If there is a difference between the TC's
+//  of the end resistance compared to the body resistance, it can be shown that
+//  TC_overall=TC_body+Rend*(TC_end-TC_body)/(rsh*(L+xl))
+//  therefore a 1/length term is included for the TCs to allow this effect
+//  to be modeled.
+//
+//  Some Verilog-A compilers have difficulties handling the contrib type
+//  switch based on resistance value. Conditional switches have been
+//  put in this code to handle this for now. Comment out the `define GFORM
+//  line at the top to switch to the resistance form.
+//
+
+//
+//  Usage with model:
+//  instanceId (n1 n2) modelName l=L w=W [trise=TRISE] [m]
+//  model modelName r[esistor]
+//  + level=assignedLevelForR2_CmcModel
+//  + param=value
+//  OR (for simulators that use model names rather than levels)
+//  model modelName r2_cmc
+//  + param=value
+//  (NOTE: specify any two of w,l,r and the other will be calculated).
+//
+//  Usage without model:
+//  instanceId (n1 n2) r[esistor] r=value [trise=TRISE] [m]
+//
+//  If this model is used with only r specified, then the geometry is taken
+//  to be w/l=1um/1um and these values are used for 1/f noise calculation.
+//  Note that this then means the 1/f noise is not geometry dependent,
+//  which is incorrect. For proper modeling of 1/f noise you
+//  should use the form where two of w,l,r are specified as instance parameters.
+//
+//  The following parameters should be treated as model or instance parameters,
+//  with instance parameter specification over-riding model parameter specification:
+//    tc1
+//    tc2
+//    c1
+//    c2
+//    isnoisy
+//  There is no construct in Verilog-A for denoting this, but this should be
+//  implemented as such within a simulator.
+//
+
+//
+//  Verilog-A Notes:
+//
+//  1. It is expected that, to be able to handle small- and zero-value resistances,
+//  the model implementation will transform from an I=G*V form for higher resistance
+//  values to a V=I*R form for lower resistance values. The switch should be based
+//  on zero-bias resistance, not voltage (and, for the self-heating version temperature)
+//  dependent resistance, to avoid changing the model formulation during simulation.
+//  The "G" or "R" formulation should be determined once at set-up and kept from then on.
+//  The current and voltage calculations are separated from noise calculations,
+//  to partition code for implementation efficiency. This causes errors with some
+//  Verilog-A compilers, as they think the contribution type can switch between
+//  various parts of the code. Therefore the switch is done using the macro `GFORM,
+//  and commented equivalent Verilog-A code is included, to indicate the intent.
+//
+//  2. There is no way to implement the LRM2.2 $param_given() function in
+//  LRM2.1 code, the concept is not part of the language. Therefore the
+//  model ONLY works with w,l specified as instance parameters when run
+//  in an LRM2.1 compliant compiler. Also, although the "m" parameter is
+//  known for LRM2.2, it apparently still needs to be declared explicity
+//  as a model parameter.
+//
+//  3. When testing with the R form of the model, there are some differences in
+//  simulation results w.r.t. the G form of the model, which was used to generate
+//  the reference test results. These appear to be from slight differences in convergence.
+//
+//  Apologies for the nested conditionals. It makes the code hard to read, but is
+//  needed as there are different possible forms (isothermal, electrothermal;
+//  conductance form, resistance form) as well as different syntax for different
+//  language versions.
+//
+//  There is no `ifndef XXX in Verilog-A, the "notXXX" macros are defined for convenience.
+//
+
+`ifdef electroThermal
+    `ifdef notElectroThermal
+        `undef notElectroThermal
+    `endif
+`else
+    `define notElectroThermal
+`endif
+
+`ifdef electroThermal
+    module r2_et_cmc(n1,n2);
+`else
+    module r2_cmc(n1,n2);
+`endif
+//`ifdef insideADMS
+//    (*
+//        info="r2_cmc two-terminal resistor model"
+//        version="`VERSION"
+//        revision="`REVISION"
+//        spice:prefix="r"
+//        spice:level="`LEVEL"
+//    *)
+//`endif
+//;
+
+//
+//  Node definitions (if the self-heating modeling is selected, the
+//  local temperature rise node is internal, and not external)
+//
+
+inout      n1,n2;
+electrical n1;
+electrical n2;
+`ifdef electroThermal
+    electrical dt;
+`endif
+
+//
+//  Branch definitions
+//
+
+branch (n1,n2)   b_r;    // resistance
+branch (n1,n2)   b_n;    // separate definition for noise, which is always a current contribution
+`ifdef electroThermal
+    branch (dt)      b_rth;  // thermal resistance
+    branch (dt)      b_ith;  // thermal generation, 2nd definition is to fool floating node detection in some compilers
+`endif
+
+//
+//  Instance parameters
+//
+
+`IPM
+`IPRco( w       ,   1.0e-06,"m"         ,   0.0,   inf, "design width  of resistor body")
+`IPRco( l       ,   1.0e-06,"m"         ,   0.0,   inf, "design length of resistor body")
+`IPRco( r       , 100.0    ,"Ohm"       ,   0.0,   inf, "resistance (per segment, total resistance is r/m)")
+`IPIcc( c1      ,   1      ,""          ,     0,     1, "contact at terminal 1: 0=no 1=yes")
+`IPIcc( c2      ,   1      ,""          ,     0,     1, "contact at terminal 2: 0=no 1=yes")
+`IPRnb( trise   ,   0.0    ,"degC"                    , "local temperature delta to ambient (before self-heating)")
+`IPIcc( isnoisy ,   1      ,""          ,     0,     1, "switch for noise: 0=no and 1=yes")
+`ifdef electroThermal
+    `IPIcc( sw_et   ,   1      ,""          ,     0,     1, "switch for turning off self-heating: 0=exclude and 1=include")
+`endif
+
+//
+//  Special model parameters, some may be simulator global parameters
+//
+
+`MPRnb( version , `VERSION ,""                        , "model version")
+`MPRnb( revision, `REVISION,""                        , "model revision (subversion)")
+`MPRoc( scale   ,   1.0    ,""          ,   0.0,   1.0, "scale  factor for instance geometries")
+`MPRco( shrink  ,   0.0    ,"%"         ,   0.0, 100.0, "shrink percentage for instance geometries")
+`MPRcc( tmin    ,-100.0    ,"degC"      ,-250.0,  27.0, "minimum ambient temperature")
+`MPRcc( tmax    , 500.0    ,"degC"      ,  27.0,1000.0, "maximum ambient temperature")
+`MPRoo( rthresh ,   1.0e-03,"Ohm"       ,   0.0,   inf, "threshold to switch to resistance form")
+
+//
+//  Model parameters
+//
+
+`MPRnb( level   , `LEVEL   ,""                        , "model level")
+`MPRcc( tnom    ,  27.0    ,"degC"      ,-250.0,1000.0, "nominal (reference) temperature")
+`MPRoo( rsh     , 100.0    ,"Ohm/sq"    ,   0.0,   inf, "sheet resistance")
+`MPRco( lmin    ,   0.0    ,"um"        ,   0.0,   inf, "minimum allowed drawn length")
+`MPRoo( lmax    ,   9.9e09 ,"um"        ,   0.0,   inf, "maximum allowed drawn length")
+`MPRco( wmin    ,   0.0    ,"um"        ,   0.0,   inf, "minimum allowed drawn width")
+`MPRoo( wmax    ,   9.9e09 ,"um"        ,   0.0,   inf, "maximum allowed drawn width")
+`MPRnb( xw      ,   0.0    ,"um"                      , "width  offset (total)")
+`MPRnb( xl      ,   0.0    ,"um"                      , "length offset (total)")
+`MPRnb( dxle    ,   0.0    ,"um"                      , "length delta for field calculation")
+`MPIcc( sw_efgeo,   0      ,""          ,     0,     1, "switch for electric field geometry calculation: 0=design and 1=effective")
+`MPRco( q3      ,   0.0    ,"um/V"      ,   0.0,   inf, "1/field at which the linear field coefficient activates")
+`MPRco( p3      ,   0.0    ,""          ,   0.0,   1.0, "linear field coefficient factor: EC1=p3*q3")
+`MPRco( q2      ,   0.0    ,"um/V"      ,   0.0,   inf, "1/field at which the quadratic field coefficient activates")
+`MPRco( p2      ,   0.0    ,""          ,   0.0,1.0-p3, "quadratic field coefficient factor: EC2=0.5*p2*q2^2")
+`MPRco( kfn     ,   0.0    ,""          ,   0.0,   inf, "flicker noise coefficient (unit depends on afn)")
+`MPRoo( afn     ,   2.0    ,""          ,   0.0,   inf, "flicker noise current exponent")
+`MPRoo( bfn     ,   1.0    ,""          ,   0.0,   inf, "flicker noise 1/f exponent")
+`MPIcc( sw_fngeo,   0      ,""          ,     0,     1, "switch for flicker noise geometry calculation: 0=design and 1=effective")
+`MPRoo( jmax    , 100.0    ,"A/um"      ,   0.0,   inf, "maximum current density")
+`MPRcc( tminclip,-100.0    ,"degC"      ,-250.0,  27.0, "clip minimum temperature")
+`MPRcc( tmaxclip, 500.0    ,"degC"      ,  27.0,1000.0, "clip maximum temperature")
+`MPRnb( tc1     ,   0.0    ,"/K"                      , "resistance linear    TC")
+`MPRnb( tc2     ,   0.0    ,"/K^2"                    , "resistance quadratic TC")
+`MPRnb( tc1l    ,   0.0    ,"um/K"                    , "resistance linear    TC length coefficient")
+`MPRnb( tc2l    ,   0.0    ,"um/K^2"                  , "resistance quadratic TC length coefficient")
+`MPRnb( tc1w    ,   0.0    ,"um/K"                    , "resistance linear    TC width  coefficient")
+`MPRnb( tc2w    ,   0.0    ,"um/K^2"                  , "resistance quadratic TC width  coefficient")
+`MPRnb( tc1kfn  ,   0.0    ,""                        , "flicker noise coefficient linear TC")
+`ifdef electroThermal
+    `MPRoo( gth0    ,   1.0e+06,"W/K"       ,   0.0,   inf, "thermal conductance fixed component")
+    `MPRco( gthp    ,   0.0    ,"W/K/um"    ,   0.0,   inf, "thermal conductance perimeter component")
+    `MPRco( gtha    ,   0.0    ,"W/K/um^2"  ,   0.0,   inf, "thermal conductance area component")
+    `MPRco( cth0    ,   0.0    ,"s*W/K"     ,   0.0,   inf, "thermal capacitance fixed component")
+    `MPRco( cthp    ,   0.0    ,"s*W/K/um"  ,   0.0,   inf, "thermal capacitance perimeter component")
+    `MPRco( ctha    ,   0.0    ,"s*W/K/um^2",   0.0,   inf, "thermal capacitance area component")
+`endif
+
+//
+//  Supported aliases for parameters
+//
+
+`ALIAS(dtemp,trise)
+`ALIAS(dta,trise)
+
+//
+//  These variables will be displayed as part of operating point information.
+//
+
+`OPP( v_OP     ,"V"   ,"voltage across resistor")
+`OPP( i_OP     ,"A"   ,"current through resistor")
+`OPP( power_OP ,"W"   ,"dissipated power")
+`OPP( leff     ,"um"  ,"effective electrical length in um")
+`OPP( weff     ,"um"  ,"effective electrical width  in um")
+`OPP( r0_OP    ,"Ohm" ,"zero-bias resistance (per segment)")
+`OPP( r_dc_OP  ,"Ohm" ,"DC resistance (including bias dependence and m)")
+`OPP( r_ac_OP  ,"Ohm" ,"AC resistance (including bias dependence and m)")
+`ifdef electroThermal
+    `OPP( rth     ,"K/W"  ,"thermal resistance")
+    `OPP( cth     ,"s*W/K","thermal capacitance")
+    `OPP( dt_et   ,"K"    ,"self-heating temperature rise")
+`endif
+
+`ifdef notInsideADMS
+    analog begin : analogBlock
+`endif
+
+    real i, v, power, r0, weff_um, leff_um, r_dc, r_ac;
+
+    real tiniK,tdevK,scaleFac,shrinkL,delt,tcr,xleff;
+    real lFactor,l_um,w_um,l_umForE,g0,r0_t,g0_t,kfn_t;
+    real sqrf,cbrf,tdevC,wn,fn,rthrR2;
+    real rFactor,vin,E,q2E,q3E,tc1e,tc2e;
+    integer GFORM;
+    `ifdef __VAMS_COMPACT_MODELING__
+        `ifdef GFORM
+            real g_ac;
+        `else
+            real drfdv;
+        `endif
+    `else
+        real drfdv,g_ac;
+    `endif
+    `ifdef electroThermal
+        real gth,Vrth,Ith,Irth,Qcth,p_um,a_um2,dg0dt,tmp1;
+    `endif
+
+    //
+    //  Code independent of bias or instance parameters
+    //
+
+`ifdef insideADMS
+    analog begin
+        @(initial_instance) begin
+`else
+        begin : initializeModel
+`endif
+            if (level!=`LEVEL) begin
+                `ERROR("ERROR: r2 model called with incorrect level parameter")
+            end
+            `SCALE
+            `SHRINKL
+            `RTHRESH
+            lFactor  =  shrinkL*scaleFac*1.0e6;     // conversion factor from instance l to um
+            tiniK    = `TABS_NIST2004+tnom;
+            tdevC    = $temperature+trise-`TABS_NIST2004;    // device temperature
+            if (tdevC<tmin) begin
+                `WARNING("WARNING: ambient temperature is lower than allowed minimum");
+            end
+            if (tdevC>tmax) begin
+                `WARNING("WARNING: ambient temperature is higher than allowed maximum");
+            end
+            `ifdef notElectroThermal
+                `CLIPB1p0(tdevC,tdevC,tminclip,tmaxclip);
+                tdevK    =  tdevC+`TABS_NIST2004;
+                delt     =  tdevK-tiniK;                // temperature w.r.t. tnom
+                kfn_t    =  (1+delt*tc1kfn)*kfn;
+                if (kfn_t<0.0) begin
+                    kfn_t    =  0.0;
+                end
+            `endif
+//        end // initializeModel
+
+        //
+        //  Code independent of bias but dependent on instance parameters
+        //
+
+//`ifdef insideADMS
+//        @(initial_instance) begin
+//`else
+//        begin : initializeInstance
+//`endif
+            if (c1&&c2) begin
+                xleff    =  xl;                     // contacted at both ends, use full xl
+            end else if (c1||c2) begin
+                xleff    =  xl*0.5;                 // contacted at one end, include 1/2 of xl effect
+            end else begin
+                xleff    =  0.0;                    // not contacted
+            end
+
+            //
+            //      For geometric processing, the order of importance is taken to be
+            //      w,l,r. The evaluation of whether a V contrib should be used, for
+            //      low resistance, rather than the usual I contrib, is based on
+            //      calculations at nominal temperature and zero bias, and so will
+            //      not cause a formulation switch with bias. The cases where
+            //      conductance or resistance are zero is handled.
+            //
+
+            if (`TESTGIVEN(l)&&`TESTGIVEN(r)&&!`TESTGIVEN(w)) begin
+
+                //
+                //          If l and r are specified, but w is not, then calculate w
+                //          (if w is also specified, this over-rides the specified r)
+                //
+
+                if (r==0.0||l==0.0) begin
+                    l_um     =  0.0;
+                    leff_um  =  0.0;
+                    w_um     =  w*lFactor;
+                    weff_um  =  w_um+xw; // this could be negative, but has no effect so is not flagged as `ERROR
+                    r0       =  0.0;
+                    g0       =  1.0e99;  // cannot set to inf
+                end else begin
+                    l_um     =  l*lFactor;
+                    leff_um  =  l_um+xleff;
+                    if (leff_um<0.0) begin
+                        `ERROR("ERROR: calculated effective r2_cmc resistor length is < 0.0")
+                    end
+                    if (leff_um>0.0) begin
+                        weff_um  =  (rsh/r)*leff_um;
+                        w_um     =  weff_um-xw;
+                        if (w_um<=0.0) begin
+                            `ERROR("ERROR: calculated design r2_cmc resistor width is <= 0.0")
+                        end
+                        r0       =  r;
+                        g0       =  1.0/r0;
+                    end else begin
+                        w_um     =  w*lFactor;
+                        weff_um  =  w_um+xw; // this could be negative, but has no effect so is not flagged as `ERROR
+                        r0       =  0.0;
+                        g0       =  1.0e99;  // cannot set to inf
+                    end
+                end
+            end else if (`TESTGIVEN(r)&&!`TESTGIVEN(l)) begin
+
+                //
+                //          If r is specified, but l is not, calculate l based on either
+                //          a specified or the default w (it does not matter which),
+                //          this also handles the case of usage without a .model card
+                //
+
+                if (r==0.0) begin
+                    l_um     =  0.0;
+                    leff_um  =  0.0;
+                    w_um     =  w*lFactor;
+                    weff_um  =  w_um+xw; // this could be negative, but has no effect so is not flagged as `ERROR
+                    r0       =  0.0;
+                    g0       =  1.0e99;  // cannot set to inf
+                end else if (w==0.0) begin
+                    w_um     =  0.0;
+                    weff_um  =  0.0;
+                    l_um     =  l*lFactor;
+                    leff_um  =  l_um+xleff;  // this could be negative, but has no effect so is not flagged as `ERROR
+                    r0       =  1.0e99;      // cannot set to inf
+                    g0       =  0.0;
+                end else begin
+                    w_um     =  w*lFactor;
+                    weff_um  =  w_um+xw;
+                    if (weff_um<0.0) begin
+                        `ERROR("ERROR: calculated effective r2_cmc resistor width is < 0.0")
+                    end
+                    if (weff_um>0.0) begin
+                        leff_um  =  (r/rsh)*weff_um;
+                        l_um     =  leff_um-xleff;
+                        if (l_um<=0.0) begin
+                            `ERROR("ERROR: calculated design r2_cmc resistor length is <= 0.0")
+                        end
+                        r0       =  r;
+                        g0       =  1.0/r0;
+                    end else begin
+                        l_um     =  l*lFactor;
+                        leff_um  =  l_um+xleff;  // this could be negative, but has no effect so is not flagged as `ERROR
+                        r0       =  1.0e99;      // cannot set to inf
+                        g0       =  0.0;
+                    end
+                end
+            end else begin
+
+                //
+                //              For all other cases, r is calculated as a function of
+                //              geometry, either specified or default. Either l and w
+                //              are both specified, in which case they over-ride
+                //              specification of r, or else r is not specified.
+                //
+
+                if (w==0.0) begin
+                    w_um     =  0.0;
+                    weff_um  =  0.0;
+                    l_um     =  l*lFactor;
+                    leff_um  =  l_um+xleff;  // this could be negative, but has no effect so is not flagged as `ERROR
+                    r0       =  1.0e99;      // cannot set to inf
+                    g0       =  0.0;
+                end else if (l==0.0) begin
+                    l_um     =  0.0;
+                    leff_um  =  0.0;
+                    w_um     =  w*lFactor;
+                    weff_um  =  w_um+xw; // this could be negative, but has no effect so is not flagged as `ERROR
+                    r0       =  0.0;
+                    g0       =  1.0e99;  // cannot set to inf
+                end else begin
+                    w_um     =  w*lFactor;
+                    weff_um  =  w_um+xw;
+                    if (weff_um<0.0) begin
+                        `ERROR("ERROR: calculated effective r2_cmc resistor width is < 0.0")
+                    end
+                    l_um     =  l*lFactor;
+                    leff_um  =  l_um+xleff;
+                    if (weff_um>0.0) begin
+                        if (leff_um<0.0) begin
+                            `ERROR("ERROR: calculated effective r2_cmc resistor length is < 0.0")
+                        end
+                        if (leff_um>0.0) begin
+                            r0       =  rsh*(leff_um/weff_um);
+                            g0       =  1.0/r0;
+                        end else begin
+                            r0       =  0.0;
+                            g0       =  1.0e99; // cannot set to inf
+                        end
+                    end else begin
+                        r0       =  1.0e99; // cannot set to inf, also don't need to check if(leff_um>0.0) for this case
+                        g0       =  0.0;
+                    end
+                end
+            end
+            if (l_um<lmin) begin
+                `WARNING("WARNING: drawn length is smaller than allowed minimum");
+            end
+            if (l_um>lmax) begin
+                `WARNING("WARNING: drawn length is greater than allowed maximum");
+            end
+            if (w_um<wmin) begin
+                `WARNING("WARNING: drawn width is smaller than allowed minimum");
+            end
+            if (w_um>wmax) begin
+                `WARNING("WARNING: drawn width is greater than allowed maximum");
+            end
+            if (sw_efgeo) begin
+                l_umForE =  leff_um+dxle;
+            end else begin
+                l_umForE =  l_um+dxle;
+            end
+            if (l_umForE<=0.0&&r0>0.0&&(p2>0.0||p3>0.0)) begin
+                `ERROR("ERROR: calculated effective r2_cmc resistor length for E calculation is < 0.0")
+            end
+            tc1e     =  tc1;
+            tc2e     =  tc2;
+            if (leff_um>0.0) begin
+                if (c1&&c2) begin
+                    tc1e     =  tc1e+tc1l/leff_um;
+                    tc2e     =  tc2e+tc2l/leff_um;
+                end else if (c1||c2) begin
+                    tc1e     =  tc1e+0.5*tc1l/leff_um;
+                    tc2e     =  tc2e+0.5*tc2l/leff_um;
+                end
+            end
+            if (weff_um>0.0) begin
+                tc1e     =  tc1e+tc1w/weff_um;
+                tc2e     =  tc2e+tc2w/weff_um;
+            end
+            `ifdef __VAMS_COMPACT_MODELING__
+                if (r0>(rthrR2/$mfactor)) begin
+            `else
+                if (r0>(rthrR2/m)) begin
+            `endif
+                GFORM    =  1;
+            end else begin
+                GFORM    =  0;
+            end
+            `ifdef electroThermal
+                if (c1&&c2) begin
+                    p_um     =  2.0*(l_um+w_um);
+                end else if (c1||c2) begin
+                    p_um     =  2.0*l_um+w_um;
+                end else begin
+                    p_um     =  2.0*l_um;
+                end
+                a_um2    =  l_um*w_um;
+                gth      =  gth0+gthp*p_um+gtha*a_um2;
+                cth      =  cth0+cthp*p_um+ctha*a_um2;
+            `else // notElectroThermal
+                tcr      =  (1+delt*(tc1e+delt*tc2e));
+                `CLIPL0p1(tcr,tcr,0.01)
+                r0_t     =  r0*tcr;
+                g0_t     =  g0/tcr;
+            `endif
+        end // initialInstance
+
+        //
+        //  DC bias dependent quantities
+        //
+        //  Note that for the resistance form the expression for v(i)
+        //  is implicit in v because of the voltage dependence of conductance.
+        //  For efficiency the nonlinearity is not computed if the
+        //  field coefficients are zero.
+        //
+
+        begin : evaluateStatic
+            `ifdef electroThermal
+                Vrth     =  sw_et*V(b_rth);
+                tdevC    =  tdevC+Vrth;
+                `CLIPB1p0(tdevC,tdevC,tminclip,tmaxclip);
+                tdevK    =  tdevC+`TABS_NIST2004;
+                delt     =  tdevK-tiniK;                // temperature w.r.t. tnom
+                tcr      =  (1+delt*(tc1e+delt*tc2e));
+                `CLIPL0p1(tcr,tcr,0.01)
+                r0_t     =  r0*tcr;
+                g0_t     =  g0/tcr;
+                kfn_t    =  (1+delt*tc1kfn)*kfn;
+                if (kfn_t<0.0) begin
+                    kfn_t    =  0.0;
+                end
+            `endif
+            vin      =  V(b_r);
+            if (r0>0.0&&(p2>0.0||p3>0.0)) begin
+                E        =  vin/l_umForE;
+                q2E      =  q2*E;
+                sqrf     =  sqrt(1.0+q2E*q2E);
+                q3E      =  q3*abs(E);
+                cbrf     =  pow((1.0+q3E*q3E*q3E),`oneThird);
+                rFactor  =  1.0-p2-p3+p2*sqrf+p3*cbrf;
+            end else
+                rFactor  =  1.0;
+            r_dc     =  r0_t*rFactor;
+            `ifdef GFORM // if (GFORM) begin
+                v        =  vin;
+                i        =  v/r_dc;
+            `else  // end else begin // RFORM
+                `ifdef __VAMS_COMPACT_MODELING__
+                    i        =  I(b_r);
+                `else
+                    i        =  I(b_r)/m;             // need per-segment value
+                `endif
+                v        =  i*r_dc;
+            `endif // end
+            `ifdef electroThermal
+                Ith      = -v*i;                       // power generation, negative as it flows from dt to 0
+                Irth     =  Vrth*gth;
+            `endif
+            if (weff_um>0.0) begin
+                if (abs(i/weff_um)>jmax) begin
+                    `WARNING("WARNING: current density is greater than specified by jmax");
+                end
+            end
+        end // evaluateStatic
+
+        begin : evaluateDynamic
+            `ifdef electroThermal
+                Qcth     =  Vrth*cth;
+            `endif
+        end // evaluateDynamic
+
+        begin : loadStatic
+            `ifdef GFORM // if (GFORM) begin
+                `ifdef __VAMS_COMPACT_MODELING__
+                    I(b_r)   <+ i;
+                `else
+                    I(b_r)   <+ i*m;
+                `endif
+            `else  // end else begin // RFORM
+                V(b_r)   <+ v;
+            `endif // end
+            `ifdef electroThermal
+                `ifdef __VAMS_COMPACT_MODELING__
+                    I(b_rth) <+ Irth;
+                    I(b_ith) <+ Ith;
+                `else
+                    I(b_rth) <+ Irth*m;
+                    I(b_ith) <+ Ith*m;
+                `endif
+            `endif
+        end // loadStatic
+
+        begin : loadDynamic
+            `ifdef electroThermal
+                `ifdef __VAMS_COMPACT_MODELING__
+                    I(b_rth) <+ ddt(Qcth);
+                `else
+                    I(b_rth) <+ ddt(Qcth*m);
+                `endif
+            `endif
+        end // loadDynamic
+
+        //
+        //  Noise contributions
+        //
+
+        `ifdef insideADMS
+            @(noise) begin
+            `else
+            begin : noise
+            `endif
+            if (isnoisy&&r0>0.0&&g0>0.0) begin
+                wn       =  4.0*`KB_NIST2004*tdevK*g0_t/rFactor;
+                if (sw_fngeo&&leff_um>0.0&&weff_um>0.0) begin
+                    fn       =  kfn_t*pow(abs(i/weff_um),afn)*weff_um/leff_um;
+                end else if (l_um>0.0&&w_um>0.0) begin
+                    fn       =  kfn_t*pow(abs(i/w_um),afn)*w_um/l_um;
+                end else begin
+                    fn       =  0.0;
+                end
+            end else begin
+                wn       =  0.0;
+                fn       =  0.0;
+            end
+            `ifdef not__VAMS_COMPACT_MODELING__
+                wn       =  wn*m;
+                fn       =  fn*m;
+            `endif
+            I(b_n)   <+ white_noise(wn,"white noise");
+            I(b_n)   <+ flicker_noise(fn,bfn,"1/f noise");
+        end // noise
+
+        //
+        //  Useful quantities to display for OP and other purposes
+        //
+        //  LRM2.2 allows use of ddx() which means explicit, hand-coded
+        //  calculation of derivatives is not required. However for the
+        //  electroThermal model the derivatives need to be calculated
+        //  as the total derivative is required for display, not just
+        //  the partial with respect to terminal voltages or branch
+        //  currents (which is all that is available from ddx()).
+        //
+        //  For: i=v*g0_t/rf(v) (where rf is a short-hand for rFactor)
+        //  g_ac=di_dv=g0_t/rf-g0_t*v*drf_dv/rf^2=(g0_t-i*drf_dv)/rf
+        //
+        //  For: v=i*r0_t*rf(v)
+        //  r_ac=dv_di=r0_t*rf+i*r0_t*drf_dv*dv_di=ddx(v,I(b_r))+(v*drf_dv/rf)*r_ac
+        //  therefore
+        //  r_ac=ddx(v,I(b_r))/(1-v*drf_dv/rf)
+        //
+        //  For the electroThermal conductance form model:
+        //  i=v*g0(t)/rf(v)
+        //  g0(t)=g0/tcr=g0/(1+delt*(tc1e+delt*tc2e))
+        //  delt=i*v/gth
+        //  therefore
+        //  ddelt_dv=i/gth+(v/gth)*di_dv
+        //  dg0_dt=ddx(g0_t,V(dt))=g0(t)*(tc1e+2*delt*tc2e)/tcr
+        //  di_dv=ddx(i,V(n1))+(v/rf)*dg0_dt*di_dv
+        //  g_ac=(ddx(i,V(n1))+i*v*dg0_dt/(gth*rf))/(1-v*v*dg0_dt/(gth*rf))
+        //  which is what is implemented below.
+        //
+        //  For the electroThermal resistance form model:
+        //  v=i*r0(t)*rf(v)
+        //  r0(t)=r0*tcr=r0*(1+delt*(tc1e+delt*tc2e))
+        //  delt=i*v/gth
+        //  therefore
+        //  ddelt_i=v/gth+(i/gth)*dv_di
+        //  dr0_dt=ddx(r0_t,V(dt))=r0*(tc1e+2*delt*tc2e)
+        //  dv_di=ddx(v,I(b_r))+i*r0*drf_dv*dv_di+i*rf*dr0_dt*ddelt_di
+        //  r_ac=(ddx(v,I(b_r))+v*i*rf*dr0_dt/gth)/(1-v*drf_dv/rf-i*i*rf*dr0_dt/gth)
+        //  which is what is implemented below.
+        //
+
+        begin : postProcess
+            power = i*v;
+            if (r0>0.0&&g0>0.0) begin
+                r_dc     =  r0_t*rFactor;
+                `ifdef __VAMS_COMPACT_MODELING__
+                    `ifdef GFORM // if (GFORM) begin
+                        g_ac     =  ddx(i,V(n1));
+                        `ifdef electroThermal
+                            dg0dt    =  ddx(g0_t,V(dt));
+                            tmp1     =  v*dg0dt/(gth*rFactor);
+                            if ((1.0-v*tmp1)!=0.0) begin
+                                g_ac     =  (g_ac+i*tmp1)/(1.0-v*tmp1); // denominator is zero in thermal runaway, cannot happen if tcr>0
+                            end else begin
+                                g_ac     =  1.0e99;
+                            end
+                        `endif
+                        if (g_ac!=0.0) begin
+                            r_ac     =  1.0/g_ac;
+                        end else begin
+                            r_ac     =  1.0e99;
+                        end
+                    `else  // end else begin // RFORM
+                        drfdv    =  ddx(rFactor,V(n1));
+                        `ifdef electroThermal
+                            dg0dt    =  1.0/ddx(r0_t,V(dt));
+                            tmp1     =  i*rFactor/(dg0dt*gth);
+                            if ((1.0-v*drfdv/rFactor-i*tmp1)!=0.0) begin
+                                r_ac     =  (ddx(v,I(b_r))+v*tmp1)/(1.0-v*drfdv/rFactor-i*tmp1);
+                            end else begin
+                                r_ac     =  1.0e99;
+                            end
+                        `else // notElectroThermal
+                            r_ac     =  ddx(v,I(b_r))/(1.0-v*drfdv/rFactor);
+                        `endif
+                    `endif // end
+                `else // not__VAMS_COMPACT_MODELING__
+                    if ((p2>0.0||p3>0.0)) begin
+                        if (vin>=0.0)
+                            drfdv    =  (p2*q2*q2E/sqrf+p3*q3*q3E*q3E/(cbrf*cbrf))/l_umForE;
+                        else
+                            drfdv    =  (p2*q2*q2E/sqrf-p3*q3*q3E*q3E/(cbrf*cbrf))/l_umForE;
+                        g_ac     =  (g0_t-i*drfdv)/rFactor;
+                    end else
+                        g_ac     =  1.0/r_dc;
+                    `ifdef electroThermal
+                        dg0dt    = -g0_t*(tc1e+2.0*delt*tc2e)/tcr;
+                        tmp1     =  v*dg0dt/(gth*rFactor);
+                        if ((1.0-v*tmp1)!=0.0) begin
+                            g_ac     =  (g_ac+i*tmp1)/(1.0-v*tmp1); // denominator is zero in thermal runaway, cannot happen if tcr>0
+                        end else begin
+                            g_ac     =  1.0e99;
+                        end
+                    `endif
+                    if (g_ac!=0.0) begin
+                        r_ac     =  1.0/g_ac;
+                    end else begin
+                        r_ac     =  1.0e99;
+                    end
+                `endif
+            end else begin
+                r_dc  =  r0; // this is 1.0e99 if g0==0.0, cannot set to inf
+                r_ac  =  r0; // this is 1.0e99 if g0==0.0, cannot set to inf
+            end
+            `ifdef __VAMS_COMPACT_MODELING__
+                //      i        =  $mfactor*i;
+                //      power    =  $mfactor*power;
+                //      r_dc     =  r_dc/$mfactor;
+                //      r_ac     =  r_ac/$mfactor;
+                i        =  1*i;
+                power    =  1*power;
+                r_dc     =  r_dc/1;
+                r_ac     =  r_ac/1;
+            `else // not__VAMS_COMPACT_MODELING__
+                i        =  m*i;
+                power    =  m*power;
+                r_dc     =  r_dc/m;
+                r_ac     =  r_ac/m;
+            `endif
+            `ifdef electroThermal
+                dt_et    =  Vrth;
+                `ifdef __VAMS_COMPACT_MODELING__
+                    //      rth      =  1.0/(gth*$mfactor);
+                    //      cth      =  cth*$mfactor;
+                    rth      =  1.0/(gth*1);
+                    cth      =  cth*1;
+                `else // not__VAMS_COMPACT_MODELING__
+                    rth      =  1.0/(gth*m);
+                    cth      =  cth*m;
+                `endif
+            `endif
+            power_OP = power;
+            v_OP = v;
+            i_OP = i;
+            r0_OP = r0;
+            weff = weff_um;
+            leff = leff_um;
+            r_dc_OP = r_dc;
+            r_ac_OP = r_ac;
+        end // postProcess
+
+    end // analog
+endmodule
