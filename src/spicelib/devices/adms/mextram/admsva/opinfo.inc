@@ -105,7 +105,7 @@ begin
 
         OP_gz     = - ddx(In, V(c1));      // Reverse transconductance
 
-        OP_sgpi   = - ddx(Ib1_s, V(e))
+        OP_sgpi   = 
                 - ddx(Ib1_s, V(e1));   // Conductance sidewal b-e junction
         OP_gpix   = - ddx(Ib1+Ib2, V(e1)); // Conductance floor b-e junction
 
@@ -117,7 +117,7 @@ begin
         OP_gmuz   =  ddx( Iavl, V(c1));   // Conductance of avalanche current
 
         // Conductance extrinsic b-c current :
-        OP_gmuex  =   ddx(Iex+Ib3, V(e))
+        OP_gmuex  = 
                 + ddx(Iex+Ib3, V(b1))
                 + ddx(Iex+Ib3, V(b2))
                 + ddx(Iex+Ib3, V(e1))
@@ -128,9 +128,10 @@ begin
         OP_grcvy  =  - ddx(Ic1c2, V(c2)); // Conductance of epilayer current
         OP_grcvz  =  - ddx(Ic1c2, V(c1));  // Conductance of epilayer current
 
-        //    OP_rbv    = 1.0 / (- ddx(Ib1b2, V(b2)) - ddx(Ib1b2, V(c2)));  // Base resistance
+//        OP_rbv    = 1.0 / (- ddx(Ib1b2, V(b2)) - ddx(Ib1b2, V(c2)));  // Base resistance
+        OP_rbv    = Rb2;  // FIXME: Base resistance - very, very raw
 
-        OP_grbvx  = - ddx(Ib1b2, V(e)) - ddx(Ib1b2, V(e1)); // Early effect on base resistance
+        OP_grbvx  = - ddx(Ib1b2, V(e1)); // Early effect on base resistance
         OP_grbvy  = - ddx(Ib1b2, V(c2)); // Early effect on base resistance
 
         OP_grbvz  = - ddx(Ib1b2, V(c1)); // Early effect on base resistance
@@ -143,7 +144,7 @@ begin
 
 
 `ifdef SUBSTRATE
-        OP_gs     = ddx(Isub, V(b)) + ddx(Isub, V(b1));  // Conductance parasitic PNP transitor
+        OP_gs     = ddx(Isub, V(b1));  // Conductance parasitic PNP transitor
         OP_xgs    = ddx(XIsub, V(b)) ; // Conductance parasitic PNP transistor
         OP_gsf    = ddx(Isf, V(s)) ;   // Conductance substrate-collector current
 `endif
@@ -151,7 +152,7 @@ begin
 
 
         // Small signal equivalent circuit capacitances
-        OP_scbe   = - ddx(Qte_s, V(e)) - ddx(Qte_s, V(e1)); // Capacitance sidewall b-e junction
+        OP_scbe   = - ddx(Qte_s, V(e1)); // Capacitance sidewall b-e junction
 
         OP_cbex   = - ddx(Qte + Qbe + Qe, V(e1)) ;           // Capacitance floor b-e junction
 
@@ -159,14 +160,14 @@ begin
 
         OP_cbez   = - ddx(Qbe, V(c1)); // Early effect on b-e diffusion junction
 
-        OP_cbcx   = - ddx(Qbc, V(e)) - ddx(Qbc, V(e1)); // Early effect on b-c diffusion junction
+        OP_cbcx   = - ddx(Qbc, V(e1)); // Early effect on b-c diffusion junction
 
 
         OP_cbcy   =  - ddx(Qtc + Qbc + Qepi, V(c2)); // Capacitance floor b-c junction
         OP_cbcz   =  - ddx(Qtc + Qbc + Qepi, V(c1)); // Capacitance floor b-c junction
 
         // Capacitance extrinsic b-c junction :
-        OP_cbcex  =   ddx(Qtex + Qex,V(e))
+        OP_cbcex  = 
                 + ddx(Qtex + Qex,V(b1 ))
                 + ddx(Qtex + Qex,V(b2))
                 + ddx(Qtex + Qex,V(e1))
@@ -177,7 +178,7 @@ begin
 
         OP_cb1b2  = - ddx(Qb1b2, V(b2)) - ddx(Qb1b2, V(c2));  // Capacitance AC current crowding
 
-        OP_cb1b2x =  - ddx(Qb1b2, V(e)) - ddx(Qb1b2, V(e1));  // Cross-capacitance AC current crowding
+        OP_cb1b2x =  - ddx(Qb1b2, V(e1));  // Cross-capacitance AC current crowding
         OP_cb1b2y =  - ddx(Qb1b2, V(c2));  // Cross-capacitance AC current crowding
         OP_cb1b2z =  - ddx(Qb1b2, V(c1)) ;  // Cross-capacitance AC current crowding
 
