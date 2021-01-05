@@ -29,9 +29,8 @@ Table of contents
  6.1 DIO - Junction Diode
 7. Bipolar devices
  7.1 BJT - Bipolar Junction Transistor
- 7.2 BJT2 - Bipolar Junction Transistor
- 7.3 VBIC - Bipolar Junction Transistor
- 7.4 HICUM2 - Bipolar Model
+ 7.2 VBIC - Bipolar Junction Transistor
+ 7.3 HICUM2 - Bipolar Model
 8. FET devices
  8.1 JFET - Junction Field Effect transistor
 9. HFET Devices
@@ -345,28 +344,12 @@ will be updated every time the device specific code is altered or changed to ref
 
      Enhancements over the original model:
      - Parallel Multiplier
-     - Temperature difference from circuit temperature
-     - Different area parameters for collector, base and emitter
-
- 7.2 BJT2 - Bipolar Junction Transistor
-
-     Ver:    N/A
-     Class:  Q
-     Level:  2
-     Dir:    devices/bjt2
-     Status:
-
-     This is the BJT model written by Alan Gillespie to support lateral
-     devices. The model has been hacked by Dietmar Warning fixing some bugs
-     and adding some features (temp. dependency on resistors).
-
-     Enhancements over the original model:
-     - Parallel Multiplier
      - Temperature dependency on rc,rb,re
      - Temperature difference from circuit temperature
      - Different area parameters for collector, base and emitter
+     - Support lateral PNP
 
- 7.3 VBIC - Bipolar Junction Transistor
+ 7.2 VBIC - Bipolar Junction Transistor
 
      Ver:    N/A
      Class:  Q
@@ -381,6 +364,18 @@ will be updated every time the device specific code is altered or changed to ref
 
      Notes: This is the 4 terminals model, without excess phase and thermal
             network.
+
+ 7.3 HICUM 2 - Bipolar Junction Transistor for high frequency
+
+     Ver:    2.4 
+     Class:  Q
+     Level:  4 & 9
+     Dir:    devices/hicum2
+
+     HICUM: HIgh CUrrent Model is a physics-based geometry-scalable compact
+     model for homo- and heterojunction bipolar transistors, developed by
+     the HICUM Group at CEDIC, University of Technology Dresden, Germany.
+     Web Site: https://www.iee.et.tu-dresden.de/iee/eb/hic_new/hic_intro.html
 
 
 8. FET devices

@@ -30,7 +30,7 @@ char *CNVgettok(char **s)
 
     /* skip over any white space */
 
-    while (isspace(**s) || (**s == '=') ||
+    while (isspace_c(**s) || (**s == '=') ||
             (**s == '(') || (**s == ')') || (**s == ','))
         (*s)++;
 
@@ -49,7 +49,7 @@ char *CNVgettok(char **s)
         /* or a mess o' characters.            */
         i = 0;
         while ( (**s != '\0') &&
-                (! ( isspace(**s) || (**s == '=') ||
+                (! ( isspace_c(**s) || (**s == '=') ||
                      (**s == '(') || (**s == ')') ||
                      (**s == ',')
                    ) )  ) {
@@ -63,7 +63,7 @@ char *CNVgettok(char **s)
 
     /* skip over white space up to next token */
 
-    while (isspace(**s) || (**s == '=') ||
+    while (isspace_c(**s) || (**s == '=') ||
             (**s == '(') || (**s == ')') || (**s == ','))
         (*s)++;
 
