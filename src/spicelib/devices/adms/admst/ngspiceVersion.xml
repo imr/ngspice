@@ -1868,21 +1868,21 @@
 <admst:template match="callfunction">
   <admst:choose>
     <admst:when test="function[name='\$strobe']">
-      <admst:text format="fprintf(stdout,"/>
+      <admst:text format="fprintf(stdout"/>
+      <admst:for-each select="function/arguments">
+        <admst:apply-templates select="." match="expression:stringify:noprobe"/>
+        <admst:text format=",%s"/>
+      </admst:for-each>
+      <admst:text format=");\n"/>
     </admst:when>
     <admst:when test="function[name='\$finish']">
-      <admst:text format="controlled_exit("/>
+      <admst:text format="controlled_exit(1);\n"/>
     </admst:when>
     <admst:otherwise>
       <admst:value-of select="function/name"/>
       <admst:text format="%s: not supported by this interface\n"/>
     </admst:otherwise>
   </admst:choose>
-  <admst:for-each select="function/arguments">
-    <admst:apply-templates select="." match="expression:stringify:noprobe"/>
-    <admst:text format="%s"/>
-  </admst:for-each>
-  <admst:text format=");\n"/>
   <admst:choose>
     <admst:when test="function[name='\$strobe']">
       <admst:text format="fprintf(stdout,&quot;\\n&quot;);\n"/>
