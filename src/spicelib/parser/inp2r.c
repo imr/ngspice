@@ -51,11 +51,7 @@ void INP2R(CKTcircuit *ckt, INPtables * tab, struct card *current)
 #endif
 
     if (mytype < 0) {
-        if ((mytype = INPtypelook("Resistor")) < 0
-#ifdef ADMS
-          || (mytype = INPtypelook("r2_cmc")) < 0
-#endif
-        ){
+        if ((mytype = INPtypelook("Resistor")) < 0) {
             LITERR("Device type Resistor not supported by this binary\n");
             return;
         }
@@ -153,7 +149,11 @@ void INP2R(CKTcircuit *ckt, INPtables * tab, struct card *current)
           INPinsert(&model, tab);
           current->error = INPgetMod(ckt, model, &thismodel, tab);
           if (thismodel != NULL) {
-            if (mytype != thismodel->INPmodType) {
+            if ((INPtypelook("Resistor") != thismodel->INPmodType)
+#ifdef ADMS
+               && (INPtypelook("r2_cmc") != thismodel->INPmodType)
+#endif
+            ) {
                 LITERR("incorrect model type for resistor");
                 return;
             }
