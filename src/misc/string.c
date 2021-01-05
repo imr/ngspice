@@ -73,10 +73,10 @@ int prefix_n(size_t n_char_prefix, const char *prefix,
  */
 char *dup_string(const char *str, size_t n_char)
 {
-    char *p;
+    char *p = TMALLOC(char, n_char + 1);
 
-    if ((p = TMALLOC(char, n_char + 1)) != NULL) {
-        (void) strncpy(p, str, n_char + 1);
+    if (p != NULL) {
+        (void) memcpy(p, str, n_char + 1);
         p[n_char] = '\0';
     }
     return p;
