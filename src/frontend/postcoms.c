@@ -420,7 +420,7 @@ done:
 }
 
 
-/* Write out some data inti a ngspice raw file with 'write filename expr'.
+/* Write out some data into a ngspice raw file with 'write filename expr'.
  * If vectors (expr) from various plots are selected, they are written
  * out as seperate plots.  In any case, we have to be sure to write out
  * the scales for everything we write. If expr is omitted, all vectors
