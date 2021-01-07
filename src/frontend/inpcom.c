@@ -565,7 +565,7 @@ static void set_compat_mode(void)
             newcompat.isset = newcompat.eg = TRUE; /*EAGLE*/
         if (strstr(behaviour, "spe")) {
             newcompat.isset = newcompat.spe = TRUE; /*Spectre*/
-            newcompat.ps = newcompat.lt = newcompat.ki = newcompat.a = FALSE;
+            newcompat.ps = newcompat.lt = newcompat.ki = newcompat.eg = FALSE;
         }
         if (strstr(behaviour, "mc")) {
             newcompat.isset = FALSE;
@@ -597,8 +597,6 @@ static void print_compat_mode(void) {
             fprintf(stdout, " lt");
         if (newcompat.ki)
             fprintf(stdout, " ki");
-        if (newcompat.a)
-            fprintf(stdout, " a");
         if (newcompat.ll)
             fprintf(stdout, " ll");
         if (newcompat.s3)
@@ -607,6 +605,8 @@ static void print_compat_mode(void) {
             fprintf(stdout, " eg");
         if (newcompat.spe)
             fprintf(stdout, " spe");
+        if (newcompat.a)
+            fprintf(stdout, " a");
         fprintf(stdout, "\n\n");
     }
     else {
