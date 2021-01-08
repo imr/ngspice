@@ -1578,7 +1578,7 @@ const struct nupa_type S_nupa_unknown = { "NUPA_UNKNOWN" };
 static char* sort_idlist(char* list) {
     wordlist* wl = NULL, *wle = NULL;
     bool start = TRUE;
-    char* cut_list = list;
+    char* cut_list = list, *ret;
     while (*cut_list != '\0') {
         int error;
         char* token = gettok_char(&cut_list, ';', TRUE, FALSE);
@@ -1600,5 +1600,7 @@ static char* sort_idlist(char* list) {
             start = FALSE;
         }
     }
-    return wl_flatten(wle);
+    ret = wl_flatten(wle);
+    wl_free(wle);
+    return ret;
 }
