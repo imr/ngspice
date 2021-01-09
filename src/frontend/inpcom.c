@@ -25,6 +25,7 @@ Author: 1985 Wayne A. Christopher
 #include "ngspice/ftedefs.h"
 #include "ngspice/fteext.h"
 #include "ngspice/fteinp.h"
+#include "numparam/general.h"
 
 #include <limits.h>
 #include <stdlib.h>
@@ -4999,7 +5000,8 @@ static void inp_compat(struct card *card)
             */
             if ((str_ptr = strstr(curr_line, "table")) != NULL) {
                 char *expression, *firstno, *secondno;
-                char xar[1024], yar[1024];
+                DS_CREATE(dxar, 200);
+                DS_CREATE(dyar, 200);
                 cut_line = curr_line;
                 /* title and nodes */
                 title_tok = gettok(&cut_line);
@@ -5054,8 +5056,6 @@ static void inp_compat(struct card *card)
                             "a%s %%v(%s_int2) %%v(%s_int1) xfer_%s",
                             title_tok, title_tok, title_tok, title_tok);
                     /* (x0, y0) (x1, y1) (x2, y2) to x0 x1 x2, y0 y1 y2 */
-                    xar[0] = '\0';
-                    yar[0] = '\0';
                     int ipairs = 0;
                     char* pair_line = cut_line;
                     while (*cut_line != '\0') {
@@ -5069,10 +5069,10 @@ static void inp_compat(struct card *card)
                         }
                         else if (!firstno && !secondno)
                             continue;
-                        strcat(xar, firstno);
-                        strcat(xar, " ");
-                        strcat(yar, secondno);
-                        strcat(yar, " ");
+                        sadd(&dxar, firstno);
+                        cadd(&dxar, ' ');
+                        sadd(&dyar, secondno);
+                        cadd(&dyar, ' ');
                         tfree(firstno);
                         tfree(secondno);
                         ipairs++;
@@ -5099,7 +5099,7 @@ static void inp_compat(struct card *card)
                         ckt_array[3] = tprintf(
                             ".model xfer_%s pwl(x_array=[%s] y_array=[%s] "
                             "input_domain=0.1 fraction=TRUE limit=TRUE)",
-                            title_tok, xar, yar);
+                            title_tok, ds_get_buf(&dxar), ds_get_buf(&dyar));
                         // comment out current variable e line
                         *(card->line) = '*';
                         // insert new lines immediately after current line
@@ -5110,6 +5110,8 @@ static void inp_compat(struct card *card)
                     tfree(title_tok);
                     tfree(node1);
                     tfree(node2);
+                    ds_free(&dxar);
+                    ds_free(&dyar);
                 }
              }
 
@@ -5181,7 +5183,8 @@ static void inp_compat(struct card *card)
             if ((str_ptr = strstr(curr_line, "table")) != NULL) {
                 char *expression, *firstno, *secondno;
                 char *m_ptr, *m_token;
-                char xar[1024], yar[1024];
+                DS_CREATE(dxar, 200);
+                DS_CREATE(dyar, 200);
                 cut_line = curr_line;
                 /* title and nodes */
                 title_tok = gettok(&cut_line);
@@ -5255,8 +5258,6 @@ static void inp_compat(struct card *card)
                 ckt_array[2] = tprintf("a%s %%v(%s_int2) %%v(%s_int1) xfer_%s",
                         stok, stok, stok, stok);
                 /* (x0, y0) (x1, y1) (x2, y2) to x0 x1 x2, y0 y1 y2 */
-                xar[0] = '\0';
-                yar[0] = '\0';
                 int ipairs = 0;
                 char* pair_line = cut_line;
                 while (*cut_line != '\0') {
@@ -5269,10 +5270,10 @@ static void inp_compat(struct card *card)
                     }
                     else if (!firstno && !secondno)
                         continue;
-                    strcat(xar, firstno);
-                    strcat(xar, " ");
-                    strcat(yar, secondno);
-                    strcat(yar, " ");
+                    sadd(&dxar, firstno);
+                    cadd(&dxar, ' ');
+                    sadd(&dyar, secondno);
+                    cadd(&dyar, ' ');
                     tfree(firstno);
                     tfree(secondno);
                     ipairs++;
@@ -5297,7 +5298,7 @@ static void inp_compat(struct card *card)
                 }
                 else {
                     ckt_array[3] = tprintf(".model xfer_%s pwl(x_array=[%s] y_array=[%s] "
-                        "input_domain=0.1 fraction=TRUE limit=TRUE)", stok, xar, yar);
+                        "input_domain=0.1 fraction=TRUE limit=TRUE)", stok, ds_get_buf(&dxar), ds_get_buf(&dyar));
                     // comment out current variable g line
                     *(card->line) = '*';
                     // insert new lines immediately after current line
@@ -5311,6 +5312,8 @@ static void inp_compat(struct card *card)
                 tfree(node1);
                 tfree(node2);
                 tfree(m_token);
+                ds_free(&dxar);
+                ds_free(&dyar);
             }
             /*
               Gxxx n1 n2 CUR = {equation}
