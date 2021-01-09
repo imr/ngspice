@@ -19,7 +19,8 @@ if [ -z "$testProgramFlags" ] ; then
     testProgramFlags="-nw"
 fi
 
-#testProgramFlags="-d -V"
+# uncomment this to preserve netlist after test:
+# testProgramFlags="-d -V"
 
 
 help() {
