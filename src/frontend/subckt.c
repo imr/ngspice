@@ -698,7 +698,9 @@ doit(struct card *deck, wordlist *modnames) {
                             }
 
                             float csl = (float)scale * c->l;
-                            float csw = (float)scale * c->w;
+                            /* scale by nf */
+                            float csw = (float)scale * c->w / c->nf;
+                            /*fprintf(stdout, "Debug: nf = %f\n", c->nf);*/
                             if (csl >= flmin && csl < flmax && csw >= fwmin && csw < fwmax) {
                                 /* use the current .model card */
                                 prev = su_deck;
@@ -823,6 +825,7 @@ struct card * inp_deckcopy(struct card *deck) {
         d->linenum = deck->linenum;
         d->w = deck->w;
         d->l = deck->l;
+        d->nf = deck->nf;
         d->line = copy(deck->line);
         if (deck->error)
             d->error = copy(deck->error);
@@ -867,6 +870,7 @@ struct card *inp_deckcopy_oc(struct card * deck)
         }
         d->w = deck->w;
         d->l = deck->l;
+        d->nf = deck->nf;
         d->linenum_orig = deck->linenum;
         d->linenum = i++;
         d->line = copy(deck->line);
@@ -923,6 +927,7 @@ struct card* inp_deckcopy_ln(struct card* deck)
         }
         d->w = deck->w;
         d->l = deck->l;
+        d->nf = deck->nf;
         d->linenum_orig = deck->linenum_orig;
         d->linenum = deck->linenum;
         d->line = copy(deck->line);

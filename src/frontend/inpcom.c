@@ -617,13 +617,32 @@ static void print_compat_mode(void) {
 }
 
 
-/* We check x lines for w= and l= and fill in their values.
-   To be used when expanding subcircuits with binned model cards. */
+/* We check x lines for nf=, w= and l= and fill in their values.
+   To be used when expanding subcircuits with binned model cards. 
+   
+   In subckt.c, function doit(), lines 621ff. the unsused models
+   are filtered out. 'nf' given on an x line (subcircuit invocation)
+   is aknowledged. The option 'wnflag', if set to 0 in .spiceinit,
+   will set 'nf' to 1 and thus suppress its usage.
+   
+   In inp.c, function rem_unused_mos_models, another trial to removing
+   unused MOS models is given, this time on the expanded m lines and
+   its models.*/
 void inp_get_w_l_x(struct card* card) {
+    int wnflag;
+    if (!cp_getvar("wnflag", CP_NUM, &wnflag, 0)) {
+        if (newcompat.spe || newcompat.hs)
+            wnflag = 1;
+        else
+            wnflag = 0;
+    }
     for (; card; card = card->nextcard) {
         char* curr_line = card->line;
         int skip_control = 0;
-        char* w = NULL, * l = NULL;
+        char* w = NULL, * l = NULL, * nf = NULL;
+
+        card->w = card->l = 0;
+        card->nf = 1.;
 
         /* exclude any command inside .control ... .endc */
         if (ciprefix(".control", curr_line)) {
@@ -639,7 +658,6 @@ void inp_get_w_l_x(struct card* card) {
         }
         /* only subcircuit invocations */
         if (*curr_line != 'x' && !newcompat.hs && !newcompat.spe) {
-            card->w = card->l = 0;
             continue;
         }
 
@@ -649,15 +667,14 @@ void inp_get_w_l_x(struct card* card) {
             w = w + 3;
             card->w = (float)INPevaluate(&w, &err, 0);
             if(err) { 
-                card->w = card->l = 0;
+                card->w = 0;
                 continue;
-           }
+            }
         }
         else {
             card->w = card->l = 0;
             continue;
         }
-
 
         l = strstr(curr_line, " l=");
         if (l) {
@@ -665,14 +682,28 @@ void inp_get_w_l_x(struct card* card) {
             l = l + 3;
             card->l = (float)INPevaluate(&l, &err, 0);
             if(err) { 
-                card->w = card->l = 0;
+                card->l = 0;
                 continue;
-           }
+            }
         }
         else {
             card->w = card->l = 0;
             continue;
-        }  
+        }
+        nf = strstr(curr_line, " nf=");
+        if (nf) {
+            int err;
+            nf = nf + 4;
+            card->nf = (float)INPevaluate(&nf, &err, 0);
+            if (err) {
+                card->w = card->l = 0;
+                card->nf = 1.;
+                continue;
+            }
+        }
+        else {
+            continue;
+        }
     }
 }
 
