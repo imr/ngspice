@@ -66,14 +66,6 @@ biasList V(coll)=0.500000,1.000000,1.500000
 outputs I(coll) I(base)
 modelParameters parameters/npn_1D_no_aval
 
-test fgum_dc_npn_1D_breakdown
-temperature -50 0 27 50 100 150
-biases V(emit)=0 V(subs)=0
-biasSweep V(base)=0.300000,1.040000,0.020000
-biasList V(coll)=0.500000,1.000000,1.500000
-outputs I(coll) I(base)
-modelParameters parameters/npn_1D_breakdown
-
 test fgum_dc_npn_internal
 temperature -50 0 27 50 100 150
 biases V(emit)=0 V(subs)=0
@@ -114,32 +106,6 @@ biasList V(coll)=0.500000,1.000000,1.500000
 outputs I(coll) I(base)
 modelParameters parameters/npn_vert_nqs
 
-test fgum_dc_npn_lat_nqs
-temperature -50 0 27 50 100 150
-biases V(emit)=0 V(subs)=0
-biasSweep V(base)=0.300000,1.040000,0.020000
-biasList V(coll)=0.500000,1.000000,1.500000
-outputs I(coll) I(base)
-modelParameters parameters/npn_lat_nqs
-
-test fgum_ac_npn_1D_ac
-temperature 27
-biases V(emit)=0 V(subs)=0
-biasSweep V(base)=0.750000,1.050000,0.010000
-biasList V(coll)=0.500000,1.000000,1.500000
-freq dec 10 1e+010 2e+010
-outputs G(base,base) G(base,coll) G(coll,base) G(coll,coll) C(base,base) C(base,coll) C(coll,base) C(coll,coll)
-modelParameters parameters/npn_1D
-
-test fgum_ac_npn_1D_no_aval_ac
-temperature 27
-biases V(emit)=0 V(subs)=0
-biasSweep V(base)=0.750000,1.050000,0.010000
-biasList V(coll)=0.500000,1.000000,1.500000
-freq dec 10 1e+010 2e+010
-outputs G(base,base) G(base,coll) G(coll,base) G(coll,coll) C(base,base) C(base,coll) C(coll,base) C(coll,coll)
-modelParameters parameters/npn_1D_no_aval
-
 test fgum_ac_npn_1D_breakdown_dc
 temperature 27
 biases V(emit)=0 V(subs)=0
@@ -156,15 +122,6 @@ biasList V(coll)=0.500000,1.000000,1.500000
 freq dec 10 1e+010 2e+010
 outputs G(base,base) G(base,coll) G(coll,base) G(coll,coll) C(base,base) C(base,coll) C(coll,base) C(coll,coll)
 modelParameters parameters/npn_1D_breakdown
-
-test fgum_ac_npn_internal_ac
-temperature 27
-biases V(emit)=0 V(subs)=0
-biasSweep V(base)=0.750000,1.050000,0.010000
-biasList V(coll)=0.500000,1.000000,1.500000
-freq dec 10 1e+010 2e+010
-outputs G(base,base) G(base,coll) G(coll,base) G(coll,coll) C(base,base) C(base,coll) C(coll,base) C(coll,coll)
-modelParameters parameters/npn_internal
 
 test fgum_ac_npn_full_dc
 temperature 27
@@ -216,15 +173,6 @@ biasList V(coll)=0.500000,1.000000,1.500000
 outputs I(coll) I(base)
 modelParameters parameters/npn_full_subcoupl
 
-test fgum_ac_npn_full_subcoupl_ac
-temperature 27
-biases V(emit)=0 V(subs)=0
-biasSweep V(base)=0.750000,1.050000,0.010000
-biasList V(coll)=0.500000,1.000000,1.500000
-freq dec 10 1e+010 2e+010
-outputs G(base,base) G(base,coll) G(coll,base) G(coll,coll) C(base,base) C(base,coll) C(coll,base) C(coll,coll)
-modelParameters parameters/npn_full_subcoupl
-
 test fgum_ac_npn_full_subcoupl_peri_con_dc
 temperature 27
 biases V(emit)=0 V(subs)=0
@@ -241,15 +189,6 @@ biasList V(coll)=0.500000,1.000000,1.500000
 freq dec 10 1e+010 2e+010
 outputs G(base,base) G(base,coll) G(coll,base) G(coll,coll) C(base,base) C(base,coll) C(coll,base) C(coll,coll)
 modelParameters parameters/npn_full_subcoupl_peri_con
-
-test fgum_ac_npn_full_subcoupl_peri_bias_ac
-temperature 27
-biases V(emit)=0 V(subs)=0
-biasSweep V(base)=0.750000,1.050000,0.010000
-biasList V(coll)=0.500000,1.000000,1.500000
-freq dec 10 1e+010 2e+010
-outputs G(base,base) G(base,coll) G(coll,base) G(coll,coll) C(base,base) C(base,coll) C(coll,base) C(coll,coll)
-modelParameters parameters/npn_full_subcoupl_peri_bias
 
 test fgum_ac_npn_vert_nqs_dc
 temperature 27
@@ -292,14 +231,6 @@ biasList V(base)=0.600000,0.650000,0.700000,0.750000,0.800000,0.850000,0.900000
 outputs I(coll) I(base)
 modelParameters parameters/npn_full
 
-test fout_npn_1D_npn_vert_nqs
-temperature 27
-biases V(emit)=0 V(subs)=0
-biasSweep V(coll)=0.000000,6.000000,0.050000
-biasList V(base)=0.600000,0.650000,0.700000,0.750000,0.800000,0.850000,0.900000
-outputs I(coll) I(base)
-modelParameters parameters/npn_vert_nqs
-
 test fout_npn_1D_npn_lat_nqs
 temperature 27
 biases V(emit)=0 V(subs)=0
@@ -336,14 +267,6 @@ biasSweep V(base)=-1.000000,0.700000,0.050000
 outputs I(coll) I(base)
 modelParameters parameters/npn_internal
 
-test CBE_npn_internal_ac
-temperature -50 27 50 150
-biases V(emit)=0 V(subs)=0 V(coll)=0.000000
-biasSweep V(base)=-1.000000,0.700000,0.050000
-freq dec 10 1e+009 1e+010
-outputs G(base,base) G(base,coll) G(coll,base) G(coll,coll) C(base,base) C(base,coll) C(coll,base) C(coll,coll)
-modelParameters parameters/npn_internal
-
 test CBE_npn_full_dc
 temperature -50 27 50 150
 biases V(emit)=0 V(subs)=0 V(coll)=0.000000
@@ -351,27 +274,11 @@ biasSweep V(base)=-1.000000,0.700000,0.050000
 outputs I(coll) I(base)
 modelParameters parameters/npn_full
 
-test CBE_npn_full_ac
-temperature -50 27 50 150
-biases V(emit)=0 V(subs)=0 V(coll)=0.000000
-biasSweep V(base)=-1.000000,0.700000,0.050000
-freq dec 10 1e+009 1e+010
-outputs G(base,base) G(base,coll) G(coll,base) G(coll,coll) C(base,base) C(base,coll) C(coll,base) C(coll,coll)
-modelParameters parameters/npn_full
-
 test CBE_npn_full_sh_dc
 temperature -50 27 50 150
 biases V(emit)=0 V(subs)=0 V(coll)=0.000000
 biasSweep V(base)=-1.000000,0.700000,0.050000
 outputs I(coll) I(base)
-modelParameters parameters/npn_full_sh
-
-test CBE_npn_full_sh_ac
-temperature -50 27 50 150
-biases V(emit)=0 V(subs)=0 V(coll)=0.000000
-biasSweep V(base)=-1.000000,0.700000,0.050000
-freq dec 10 1e+009 1e+010
-outputs G(base,base) G(base,coll) G(coll,base) G(coll,coll) C(base,base) C(base,coll) C(coll,base) C(coll,coll)
 modelParameters parameters/npn_full_sh
 
 test CBE_npn_full_subtran_dc
@@ -388,14 +295,6 @@ biasSweep V(base)=-1.000000,0.700000,0.050000
 outputs I(coll) I(base)
 modelParameters parameters/npn_full_subcoupl
 
-test CBE_npn_full_subcoupl_ac
-temperature -50 27 50 150
-biases V(emit)=0 V(subs)=0 V(coll)=0.000000
-biasSweep V(base)=-1.000000,0.700000,0.050000
-freq dec 10 1e+009 1e+010
-outputs G(base,base) G(base,coll) G(coll,base) G(coll,coll) C(base,base) C(base,coll) C(coll,base) C(coll,coll)
-modelParameters parameters/npn_full_subcoupl
-
 test CBE_npn_full_subcoupl_peri_con_dc
 temperature -50 27 50 150
 biases V(emit)=0 V(subs)=0 V(coll)=0.000000
@@ -410,14 +309,6 @@ biasSweep V(base)=-1.000000,0.700000,0.050000
 outputs I(coll) I(base)
 modelParameters parameters/npn_full_subcoupl_peri_bias
 
-test CBE_npn_full_subcoupl_peri_bias_ac
-temperature -50 27 50 150
-biases V(emit)=0 V(subs)=0 V(coll)=0.000000
-biasSweep V(base)=-1.000000,0.700000,0.050000
-freq dec 10 1e+009 1e+010
-outputs G(base,base) G(base,coll) G(coll,base) G(coll,coll) C(base,base) C(base,coll) C(coll,base) C(coll,coll)
-modelParameters parameters/npn_full_subcoupl_peri_bias
-
 test CBE_npn_vert_nqs_dc
 temperature -50 27 50 150
 biases V(emit)=0 V(subs)=0 V(coll)=0.000000
@@ -425,27 +316,11 @@ biasSweep V(base)=-1.000000,0.700000,0.050000
 outputs I(coll) I(base)
 modelParameters parameters/npn_vert_nqs
 
-test CBE_npn_vert_nqs_ac
-temperature -50 27 50 150
-biases V(emit)=0 V(subs)=0 V(coll)=0.000000
-biasSweep V(base)=-1.000000,0.700000,0.050000
-freq dec 10 1e+009 1e+010
-outputs G(base,base) G(base,coll) G(coll,base) G(coll,coll) C(base,base) C(base,coll) C(coll,base) C(coll,coll)
-modelParameters parameters/npn_vert_nqs
-
 test CBE_npn_lat_nqs_dc
 temperature -50 27 50 150
 biases V(emit)=0 V(subs)=0 V(coll)=0.000000
 biasSweep V(base)=-1.000000,0.700000,0.050000
 outputs I(coll) I(base)
-modelParameters parameters/npn_lat_nqs
-
-test CBE_npn_lat_nqs_ac
-temperature -50 27 50 150
-biases V(emit)=0 V(subs)=0 V(coll)=0.000000
-biasSweep V(base)=-1.000000,0.700000,0.050000
-freq dec 10 1e+009 1e+010
-outputs G(base,base) G(base,coll) G(coll,base) G(coll,coll) C(base,base) C(base,coll) C(coll,base) C(coll,coll)
 modelParameters parameters/npn_lat_nqs
 
 test CBC_CCS_npn_1D_dc
@@ -460,14 +335,6 @@ temperature -50 27 50 150
 biases V(emit)=0 V(subs)=0 V(base)=0.000000
 biasSweep V(coll)=1.000000,-0.700000,-0.050000
 outputs I(coll) I(base)
-modelParameters parameters/npn_1D_no_aval
-
-test CBC_CCS_npn_1D_no_aval_ac
-temperature -50 27 50 150
-biases V(emit)=0 V(subs)=0 V(base)=0.000000
-biasSweep V(coll)=1.000000,-0.700000,-0.050000
-freq dec 10 1e+009 1e+010
-outputs G(base,base) G(base,coll) G(coll,base) G(coll,coll) C(base,base) C(base,coll) C(coll,base) C(coll,coll)
 modelParameters parameters/npn_1D_no_aval
 
 test CBC_CCS_npn_1D_breakdown_dc
@@ -491,27 +358,11 @@ biasSweep V(coll)=1.000000,-0.700000,-0.050000
 outputs I(coll) I(base)
 modelParameters parameters/npn_full
 
-test CBC_CCS_npn_full_ac
-temperature -50 27 50 150
-biases V(emit)=0 V(subs)=0 V(base)=0.000000
-biasSweep V(coll)=1.000000,-0.700000,-0.050000
-freq dec 10 1e+009 1e+010
-outputs G(base,base) G(base,coll) G(coll,base) G(coll,coll) C(base,base) C(base,coll) C(coll,base) C(coll,coll)
-modelParameters parameters/npn_full
-
 test CBC_CCS_npn_full_sh_dc
 temperature -50 27 50 150
 biases V(emit)=0 V(subs)=0 V(base)=0.000000
 biasSweep V(coll)=1.000000,-0.700000,-0.050000
 outputs I(coll) I(base)
-modelParameters parameters/npn_full_sh
-
-test CBC_CCS_npn_full_sh_ac
-temperature -50 27 50 150
-biases V(emit)=0 V(subs)=0 V(base)=0.000000
-biasSweep V(coll)=1.000000,-0.700000,-0.050000
-freq dec 10 1e+009 1e+010
-outputs G(base,base) G(base,coll) G(coll,base) G(coll,coll) C(base,base) C(base,coll) C(coll,base) C(coll,coll)
 modelParameters parameters/npn_full_sh
 
 test CBC_CCS_npn_full_subtran_dc
@@ -528,14 +379,6 @@ biasSweep V(coll)=1.000000,-0.700000,-0.050000
 outputs I(coll) I(base)
 modelParameters parameters/npn_full_subcoupl
 
-test CBC_CCS_npn_full_subcoupl_ac
-temperature -50 27 50 150
-biases V(emit)=0 V(subs)=0 V(base)=0.000000
-biasSweep V(coll)=1.000000,-0.700000,-0.050000
-freq dec 10 1e+009 1e+010
-outputs G(base,base) G(base,coll) G(coll,base) G(coll,coll) C(base,base) C(base,coll) C(coll,base) C(coll,coll)
-modelParameters parameters/npn_full_subcoupl
-
 test CBC_CCS_npn_full_subcoupl_peri_con_dc
 temperature -50 27 50 150
 biases V(emit)=0 V(subs)=0 V(base)=0.000000
@@ -550,14 +393,6 @@ biasSweep V(coll)=1.000000,-0.700000,-0.050000
 outputs I(coll) I(base)
 modelParameters parameters/npn_full_subcoupl_peri_bias
 
-test CBC_CCS_npn_full_subcoupl_peri_bias_ac
-temperature -50 27 50 150
-biases V(emit)=0 V(subs)=0 V(base)=0.000000
-biasSweep V(coll)=1.000000,-0.700000,-0.050000
-freq dec 10 1e+009 1e+010
-outputs G(base,base) G(base,coll) G(coll,base) G(coll,coll) C(base,base) C(base,coll) C(coll,base) C(coll,coll)
-modelParameters parameters/npn_full_subcoupl_peri_bias
-
 test CBC_CCS_npn_vert_nqs_dc
 temperature -50 27 50 150
 biases V(emit)=0 V(subs)=0 V(base)=0.000000
@@ -570,14 +405,6 @@ temperature -50 27 50 150
 biases V(emit)=0 V(subs)=0 V(base)=0.000000
 biasSweep V(coll)=1.000000,-0.700000,-0.050000
 outputs I(coll) I(base)
-modelParameters parameters/npn_lat_nqs
-
-test CBC_CCS_npn_lat_nqs_ac
-temperature -50 27 50 150
-biases V(emit)=0 V(subs)=0 V(base)=0.000000
-biasSweep V(coll)=1.000000,-0.700000,-0.050000
-freq dec 10 1e+009 1e+010
-outputs G(base,base) G(base,coll) G(coll,base) G(coll,coll) C(base,base) C(base,coll) C(coll,base) C(coll,coll)
 modelParameters parameters/npn_lat_nqs
 
 test vce_0_npn_1D
