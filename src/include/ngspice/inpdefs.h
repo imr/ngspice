@@ -84,6 +84,7 @@ struct card {
     struct nscope *level;
     float w;
     float l;
+    float nf;
 };
 
 /* structure used to save models in after they are read during pass 1 */

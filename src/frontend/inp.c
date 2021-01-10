@@ -2452,9 +2452,10 @@ static void rem_unused_mos_models(struct card* deck) {
     }
     for (tmpc = deck; tmpc; tmpc = tmpc->nextcard) {
         char* curr_line = tmpc->line;
-        /* We only look for MOS devices and extract W and L */
+        /* We only look for MOS devices and extract W, L, nf, and wnflag */
         if (*curr_line == 'm') {
-            float w = 0., l = 0.;
+            float w = 0., l = 0., nf = 1., wnf = 1.;
+            int wnflag = 0;
             char* wstr = strstr(curr_line, " w=");
             if (wstr) {
                 int err;
@@ -2475,6 +2476,36 @@ static void rem_unused_mos_models(struct card* deck) {
                     continue;
                 }
             }
+            char* nfstr = strstr(curr_line, " nf=");
+            if (nfstr) {
+                int err;
+                nfstr = nfstr + 4;
+                nfstr = skip_ws(nfstr);
+                nf = (float)INPevaluate(&nfstr, &err, 0);
+                if (err) {
+                    continue;
+                }
+            }
+            char* wnstr = strstr(curr_line, " wnflag=");
+            if (wnstr) {
+                int err;
+                wnstr = wnstr + 8;
+                wnstr = skip_ws(wnstr);
+                wnf = (float)INPevaluate(&wnstr, &err, 0);
+                if (err) {
+                    continue;
+                }
+            }
+            if (!cp_getvar("wnflag", CP_NUM, &wnflag, 0)) {
+                if (newcompat.spe || newcompat.hs)
+                    wnflag = 1;
+                else
+                    wnflag = 0;
+            }
+
+            nf = wnflag * wnf > 0.5f ? nf : 1.f;
+            w = w / nf;
+
             /* what is the device's model name? */
             char* mname = nexttok(curr_line);
             int nonodes = 4; /* FIXME: this is a hack! How to really detect the number of nodes? */
