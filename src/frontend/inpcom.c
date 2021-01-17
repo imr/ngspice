@@ -113,7 +113,7 @@ long dynsubst; /* spicenum.c 221 */
 static bool has_if = FALSE; /* if we have an .if ... .endif pair */
 
 static char *readline(FILE *fd);
-static int get_number_terminals(char *c);
+int get_number_terminals(char *c);
 static void inp_stripcomments_deck(struct card *deck, bool cs);
 static void inp_stripcomments_line(char *s, bool cs);
 static void inp_fix_for_numparam(
@@ -4214,7 +4214,7 @@ static int inp_get_param_level(
 }
 
 
-static int get_number_terminals(char *c)
+int get_number_terminals(char *c)
 {
     int i, j, k;
     char *name[12];
@@ -4250,18 +4250,25 @@ static int get_number_terminals(char *c)
             break;
         case 'm': /* recognition of 4, 5, 6, or 7 nodes for SOI devices needed
                    */
+        {
             i = 0;
+            char* cc, * ccfree;
+            cc = copy(c);
+            /* required to make m= 1 a single token m=1 */
+            ccfree = cc = inp_remove_ws(cc);
             /* find the first token with "off" or "=" in the line*/
-            while ((i < 20) && (*c != '\0')) {
-                char *inst = gettok_instance(&c);
+            while ((i < 20) && (*cc != '\0')) {
+                char* inst = gettok_instance(&cc);
                 strncpy(nam_buf, inst, sizeof(nam_buf) - 1);
                 txfree(inst);
                 if (strstr(nam_buf, "off") || strchr(nam_buf, '=') || strstr(nam_buf, "tnodeout") || strstr(nam_buf, "thermal"))
                     break;
                 i++;
             }
+            tfree(ccfree);
             return i - 2;
             break;
+        }
         case 'p': /* recognition of up to 100 cpl nodes */
             i = j = 0;
             /* find the last token in the line*/
