@@ -76,6 +76,7 @@ Modified: 2000 AlansFixes
 #include "numparam/numpaif.h"
 
 extern void line_free_x(struct card *deck, bool recurse);
+extern int get_number_terminals(char* c);
 
 #define line_free(line, flag)                   \
     do {                                        \
@@ -1395,7 +1396,7 @@ translate(struct card *deck, char *formal, char *actual, char *scname, const cha
 
             /* FIXME anothet hack: if no models found for m devices, set number of nodes to 4 */
             if (!modnames && *(c->line) == 'm')
-                nnodes = 4;
+                nnodes = get_number_terminals(c->line);
             else
                 nnodes = numnodes(c->line, subs, modnames);
             while (--nnodes >= 0) {
