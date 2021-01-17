@@ -136,13 +136,13 @@ GENmodel *inMod)
             mod->BSIM3npeak = value->rValue;
             mod->BSIM3npeakGiven = TRUE;
             if (mod->BSIM3npeak > 1.0e20)
-                mod->BSIM3npeak *= 1.0e-6;
+                mod->BSIM3npeak = 1.0e20;
             break;
         case BSIM3_MOD_NGATE:
             mod->BSIM3ngate = value->rValue;
             mod->BSIM3ngateGiven = TRUE;
             if (mod->BSIM3ngate > 1.0e23)
-                mod->BSIM3ngate *= 1.0e-6;
+                mod->BSIM3ngate = 1.0e23;
             break;
         case BSIM3_MOD_GAMMA1:
             mod->BSIM3gamma1 = value->rValue;

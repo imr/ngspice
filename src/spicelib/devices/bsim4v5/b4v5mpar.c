@@ -194,20 +194,20 @@ GENmodel *inMod)
         case BSIM4v5_MOD_NDEP:
             mod->BSIM4v5ndep = value->rValue;
             mod->BSIM4v5ndepGiven = TRUE;
-	    if (mod->BSIM4v5ndep > 1.0e20)
-		mod->BSIM4v5ndep *= 1.0e-6;
+            if (mod->BSIM4v5ndep > 1.0e20)
+                mod->BSIM4v5ndep = 1.0e20;
             break;
         case BSIM4v5_MOD_NSD:
             mod->BSIM4v5nsd = value->rValue;
             mod->BSIM4v5nsdGiven = TRUE;
             if (mod->BSIM4v5nsd > 1.0e23)
-                mod->BSIM4v5nsd *= 1.0e-6;
+                mod->BSIM4v5nsd = 1.0e23;
             break;
         case BSIM4v5_MOD_NGATE:
             mod->BSIM4v5ngate = value->rValue;
             mod->BSIM4v5ngateGiven = TRUE;
-	    if (mod->BSIM4v5ngate > 1.0e23)
-		mod->BSIM4v5ngate *= 1.0e-6;
+            if (mod->BSIM4v5ngate > 1.0e23)
+               mod->BSIM4v5ngate = 1.0e23;
             break;
         case BSIM4v5_MOD_GAMMA1:
             mod->BSIM4v5gamma1 = value->rValue;

@@ -278,19 +278,19 @@ GENmodel *inMod)
             mod->BSIM4v7ndep = value->rValue;
             mod->BSIM4v7ndepGiven = TRUE;
             if (mod->BSIM4v7ndep > 1.0e20)
-                mod->BSIM4v7ndep *= 1.0e-6;
+                mod->BSIM4v7ndep = 1.0e20;
             break;
         case BSIM4v7_MOD_NSD:
             mod->BSIM4v7nsd = value->rValue;
             mod->BSIM4v7nsdGiven = TRUE;
             if (mod->BSIM4v7nsd > 1.0e23)
-                mod->BSIM4v7nsd *= 1.0e-6;
+                mod->BSIM4v7nsd = 1.0e23;
             break;
         case BSIM4v7_MOD_NGATE:
             mod->BSIM4v7ngate = value->rValue;
             mod->BSIM4v7ngateGiven = TRUE;
             if (mod->BSIM4v7ngate > 1.0e23)
-                mod->BSIM4v7ngate *= 1.0e-6;
+                mod->BSIM4v7ngate = 1.0e23;
             break;
         case BSIM4v7_MOD_GAMMA1:
             mod->BSIM4v7gamma1 = value->rValue;
