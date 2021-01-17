@@ -1063,7 +1063,7 @@ static void
 double_to_string(DSTRINGPTR qstr_p, double value)
 {
     char buf[ACT_CHARACTS + 1];
-    if (snprintf(buf, sizeof(buf), "% 25.17e", value) != ACT_CHARACTS) {
+    if (snprintf(buf, sizeof(buf), "% 23.15e  ", value) != ACT_CHARACTS) {
         fprintf(stderr, "ERROR: xpressn.c, %s(%d)\n", __FUNCTION__, __LINE__);
         controlled_exit(1);
     }
