@@ -4281,10 +4281,15 @@ static int get_number_terminals(char *c)
             /* QXXXXXXX NC NB NE <NS> <NT> MNAME <AREA> <OFF> <IC=VBE, VCE>
              * <TEMP=T> */
             /* 12 tokens maximum */
+        {
+            char* cc, * ccfree;
             i = j = 0;
-            while ((i < 12) && (*c != '\0')) {
-                char *comma;
-                name[i] = gettok_instance(&c);
+            cc = copy(c);
+            /* required to make m= 1 a single token m=1 */
+            ccfree = cc = inp_remove_ws(cc);
+            while ((i < 12) && (*cc != '\0')) {
+                char* comma;
+                name[i] = gettok_instance(&cc);
                 if (strstr(name[i], "off") || strchr(name[i], '='))
                     j++;
 #ifdef CIDER
@@ -4302,11 +4307,12 @@ static int get_number_terminals(char *c)
                     j++;
                 i++;
             }
+            tfree(ccfree);
             i--;
             area_found = FALSE;
             for (k = i; k > i - j - 1; k--) {
                 bool only_digits = TRUE;
-                char *nametmp = name[k];
+                char* nametmp = name[k];
                 /* MNAME has to contain at least one alpha character. AREA may
                    be assumed if we have a token with only digits, and where
                    the previous token does not end with a ',' */
@@ -4327,6 +4333,7 @@ static int get_number_terminals(char *c)
                 return i - j - 1;
             }
             break;
+        }
         default:
             return 0;
             break;
