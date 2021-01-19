@@ -283,13 +283,13 @@ GENmodel *inMod)
         case BSIM4v7_MOD_NSD:
             mod->BSIM4v7nsd = value->rValue;
             mod->BSIM4v7nsdGiven = TRUE;
-            if (mod->BSIM4v7nsd > 1.0e23)
+            if (mod->BSIM4v7nsd > 1.000001e24)
                 mod->BSIM4v7nsd *= 1.0e-6;
             break;
         case BSIM4v7_MOD_NGATE:
             mod->BSIM4v7ngate = value->rValue;
             mod->BSIM4v7ngateGiven = TRUE;
-            if (mod->BSIM4v7ngate > 1.0e23)
+            if (mod->BSIM4v7ngate > 1.000001e24)
                 mod->BSIM4v7ngate *= 1.0e-6;
             break;
         case BSIM4v7_MOD_GAMMA1:

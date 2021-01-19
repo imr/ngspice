@@ -141,7 +141,7 @@ GENmodel *inMod)
         case BSIM3_MOD_NGATE:
             mod->BSIM3ngate = value->rValue;
             mod->BSIM3ngateGiven = TRUE;
-            if (mod->BSIM3ngate > 1.0e23)
+            if (mod->BSIM3ngate > 1.000001e24)
                 mod->BSIM3ngate *= 1.0e-6;
             break;
         case BSIM3_MOD_GAMMA1:
