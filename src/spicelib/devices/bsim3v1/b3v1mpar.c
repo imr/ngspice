@@ -124,7 +124,7 @@ BSIM3v1mParam(int param, IFvalue *value, GENmodel *inMod)
         case BSIM3v1_MOD_NGATE:
             mod->BSIM3v1ngate = value->rValue;
             mod->BSIM3v1ngateGiven = TRUE;
-            if (mod->BSIM3v1ngate > 1.0e23)
+            if (mod->BSIM3v1ngate > 1.000001e24)
               mod->BSIM3v1ngate *= 1.0e-6;
             break;
         case BSIM3v1_MOD_GAMMA1:
