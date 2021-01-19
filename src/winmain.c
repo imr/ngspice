@@ -229,13 +229,6 @@ SetAnalyse(char *Analyse,   /* in: analysis type */
     ftime(&timenow);
     timediff(&timenow, &timebefore, &diffsec, &diffmillisec);
 
-    /* info every one percent of progress:
-       actual time, progress,
-       to catch linearity of progress of simulation */
-    if (ft_ngdebug && !strcmp(Analyse, "tran"))
-        if ((int)((double)DecaPercent/10.) > (int)((double)OldPercent/10.))
-            win_x_printf("%3.1f%% percent progress after %4.2f seconds.\n", (double)DecaPercent/10., seconds());
-
     OldPercent = DecaPercent;
     /* output only into hwAnalyse window and if time elapsed is larger than
        DELTATIME given value, or if analysis has changed, else return */
