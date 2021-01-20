@@ -202,7 +202,7 @@ struct inp_read_t inp_read( FILE *fp, int call_depth, const char *dir_name,
 
 
 #ifdef XSPICE
-static void inp_poly_2g6_compat(struct card* deck);
+static int inp_poly_2g6_compat(struct card* deck);
 #else
 static void inp_poly_err(struct card *deck);
 #endif
@@ -797,8 +797,10 @@ struct card *inp_readall(FILE *fp, const char *dir_name,
 
         inp_remove_excess_ws(working);
 
-        if(inp_vdmos_model(working))
+        if(inp_vdmos_model(working)) {
+            line_free_x(cc, TRUE);
             return NULL;
+        }
 
         /* don't remove unused model if we have an .if clause, because we
            cannot yet decide here which model we finally will need.
@@ -844,7 +846,10 @@ struct card *inp_readall(FILE *fp, const char *dir_name,
         if (cp_getvar("addcontrol", CP_BOOL, NULL, 0))
             inp_add_control_section(working, &rv.line_number);
 #ifdef XSPICE
-        inp_poly_2g6_compat(working);
+        if (inp_poly_2g6_compat(working)) {
+            line_free_x(cc, TRUE);
+            return NULL;
+        }
 #else
         inp_poly_err(working);
 #endif
@@ -9419,7 +9424,7 @@ static void inp_repair_dc_ps(struct card* deck) {
 /* spice2g6 allows to omit the poly(n) statement, if the
    polynomial is one-dimensional (n==1).
    For compatibility with the XSPIXE code, we have to add poly(1) appropriately. */
-static void inp_poly_2g6_compat(struct card* deck) {
+static int inp_poly_2g6_compat(struct card* deck) {
     struct card* card;
     int skip_control = 0;
 
@@ -9483,7 +9488,7 @@ static void inp_poly_2g6_compat(struct card* deck) {
             curr_line = nexttok(curr_line);
             if (!curr_line) {
                 fprintf(stderr, "Error: not enough parameters in line\n   %s\n", thisline);
-                controlled_exit(1);
+                return 1;
             }
             /* The next token may be a simple text token or an expression
                enclosed in brackets */
@@ -9495,7 +9500,7 @@ static void inp_poly_2g6_compat(struct card* deck) {
                 curr_line = nexttok(curr_line);
             if (!curr_line) {
                 fprintf(stderr, "Error: not enough parameters in line\n   %s\n", thisline);
-                controlled_exit(1);
+                return 1;
             }
             if (*curr_line == '\0')
                 continue;
@@ -9505,7 +9510,7 @@ static void inp_poly_2g6_compat(struct card* deck) {
             curr_line = nexttok(curr_line);
             if (!curr_line) {
                 fprintf(stderr, "Error: not enough parameters in line\n   %s\n", thisline);
-                controlled_exit(1);
+                return 1;
             }
             /* The next token may be a simple text token or an expression
                enclosed in brackets */
@@ -9517,7 +9522,7 @@ static void inp_poly_2g6_compat(struct card* deck) {
                 curr_line = nexttok(curr_line);
             if (!curr_line) {
                 fprintf(stderr, "Error: not enough parameters in line\n   %s\n", thisline);
-                controlled_exit(1);
+                return 1;
             }
             if (*curr_line == '\0')
                 continue;
@@ -9542,5 +9547,6 @@ static void inp_poly_2g6_compat(struct card* deck) {
         card->line = newline;
         tfree(endofline);
     }
+    return 0;
 }
 #endif
