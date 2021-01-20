@@ -799,6 +799,7 @@ struct card *inp_readall(FILE *fp, const char *dir_name,
 
         if(inp_vdmos_model(working)) {
             line_free_x(cc, TRUE);
+            inp_rem_levels(root);
             return NULL;
         }
 
@@ -848,6 +849,7 @@ struct card *inp_readall(FILE *fp, const char *dir_name,
 #ifdef XSPICE
         if (inp_poly_2g6_compat(working)) {
             line_free_x(cc, TRUE);
+            inp_rem_levels(root);
             return NULL;
         }
 #else
