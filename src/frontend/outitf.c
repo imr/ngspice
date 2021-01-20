@@ -82,7 +82,7 @@ int fixme_inoise_type = SV_NOTYPE;
 #define DOUBLE_PRECISION    15
 
 
-static clock_t lastclock, currclock;
+static clock_t lastclock, currclock, startclock;
 static double *rowbuf;
 static size_t column, rowbuflen;
 
@@ -433,7 +433,7 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
     sh_vecinit(run);
 #endif
 
-    lastclock = clock();
+    startclock = clock();
     return (OK);
 }
 
@@ -547,7 +547,7 @@ OUTpD_memory(runDesc *run, IFvalue *refValue, IFvalue *valuePtr)
             if (ft_ngdebug && d->type == IF_REAL && eq(d->name, "speedcheck")) {
                 /* current time */
                 clock_t cl = clock();
-                double tt = ((double)cl - (double)lastclock) / CLOCKS_PER_SEC;
+                double tt = ((double)cl - (double)startclock) / CLOCKS_PER_SEC;
                 plotAddRealValue(d, tt);
             }
             else if (d->type == IF_REAL)
