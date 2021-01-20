@@ -7262,6 +7262,7 @@ static int inp_vdmos_model(struct card *deck)
                     "    drain, gate, source, tjunction, tcase\n"
                     "    in VDMOS instance line with thermal model\n"
                     "    %s\n", card->line);
+                fprintf(stderr, "No circuit loaded!\n");
                 return 1;
             }
             /* next token is the model name of instance */
@@ -7281,6 +7282,7 @@ static int inp_vdmos_model(struct card *deck)
                 "    drain, gate, source, tjunction, tcase\n"
                 "    in VDMOS instance line with thermal model\n"
                 "    %s\n", card->line);
+            fprintf(stderr, "No circuit loaded!\n");
             tfree(instmodname);
             return 1;
         }
@@ -9490,6 +9492,7 @@ static int inp_poly_2g6_compat(struct card* deck) {
             curr_line = nexttok(curr_line);
             if (!curr_line) {
                 fprintf(stderr, "Error: not enough parameters in line\n   %s\n", thisline);
+                fprintf(stderr, "No circuit loaded!\n");
                 return 1;
             }
             /* The next token may be a simple text token or an expression
@@ -9502,6 +9505,7 @@ static int inp_poly_2g6_compat(struct card* deck) {
                 curr_line = nexttok(curr_line);
             if (!curr_line) {
                 fprintf(stderr, "Error: not enough parameters in line\n   %s\n", thisline);
+                fprintf(stderr, "No circuit loaded!\n");
                 return 1;
             }
             if (*curr_line == '\0')
@@ -9512,6 +9516,7 @@ static int inp_poly_2g6_compat(struct card* deck) {
             curr_line = nexttok(curr_line);
             if (!curr_line) {
                 fprintf(stderr, "Error: not enough parameters in line\n   %s\n", thisline);
+                fprintf(stderr, "No circuit loaded!\n");
                 return 1;
             }
             /* The next token may be a simple text token or an expression
@@ -9524,6 +9529,7 @@ static int inp_poly_2g6_compat(struct card* deck) {
                 curr_line = nexttok(curr_line);
             if (!curr_line) {
                 fprintf(stderr, "Error: not enough parameters in line\n   %s\n", thisline);
+                fprintf(stderr, "No circuit loaded!\n");
                 return 1;
             }
             if (*curr_line == '\0')
