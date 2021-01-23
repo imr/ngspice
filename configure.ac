@@ -1297,6 +1297,7 @@ AC_CONFIG_FILES([Makefile
                  src/frontend/trannoise/Makefile
                  src/frontend/wdisp/Makefile
                  src/include/ngspice/Makefile
+                 src/include/cppduals/duals/Makefile
                  src/maths/Makefile
                  src/maths/cmaths/Makefile
                  src/maths/fft/Makefile
