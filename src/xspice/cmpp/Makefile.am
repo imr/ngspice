@@ -6,7 +6,7 @@ EXTRA_DIST = .gitignore
 
 MAINTAINERCLEANFILES = Makefile.in
 
-bin_PROGRAMS = cmpp
+noinst_PROGRAMS = cmpp
 
 AM_CPPFLAGS = -I. -I$(srcdir)
 AM_YFLAGS = -d
