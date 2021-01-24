@@ -165,8 +165,10 @@ struct variable *(*if_getparam)(CKTcircuit *ckt, char **name, char *param, int i
 
 /* static functions */
 int SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator);
+#ifndef SHARED_MODULE
 static ATTRIBUTE_NORETURN void sp_shutdown(int exitval);
 static void app_rl_readlines(void);
+#endif /* SHARED_MODULE */
 
 #if defined(HAVE_GNUREADLINE) || defined(HAVE_BSDEDITLINE)
 static char *prompt(void);
@@ -176,13 +178,14 @@ static int app_event_func(void);
 #endif
 #endif
 
+#ifndef SHARED_MODULE
 static void show_help(void);
 static bool read_initialisation_file(const char *dir, const char *name);
 
 #ifdef SIMULATOR
 static void append_to_stream(FILE *dest, FILE *source);
 #endif
-
+#endif /* SHARED_MODULE */
 extern IFsimulator SIMinfo;
 
 #ifdef SIMULATOR
@@ -511,7 +514,7 @@ SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator)
 } /* end of function SIMinit */
 
 
-
+#ifndef SHARED_MODULE
 /* -------------------------------------------------------------------------- */
 /* Shutdown gracefully. */
 static ATTRIBUTE_NORETURN void
@@ -528,6 +531,7 @@ sp_shutdown(int exitval)
         exitval = EXIT_NORMAL;
     exit(exitval);
 }
+#endif
 
 /* -------------------------------------------------------------------------- */
 
@@ -593,6 +597,7 @@ app_event_func(void)
 
 #endif
 
+#ifndef SHARED_MODULE
 /* -------------------------------------------------------------------------- */
 /* This is the command processing loop for spice and nutmeg.
    The function is called even when GNU readline is unavailable, in which
@@ -670,7 +675,6 @@ app_rl_readlines(void)
     }
 #endif /* defined(HAVE_GNUREADLINE) || defined(HAVE_BSDEDITLINE) */
 } /* end of function app_rl_readlines */
-
 
 
 /* -------------------------------------------------------------------------- */
@@ -768,8 +772,6 @@ static bool read_initialisation_file(const char *dir, const char *name)
     return result;
 } /* end of function read_initialisation_file */
 
-
-
 /* -------------------------------------------------------------------------- */
 static void print_news(void)
 {
@@ -786,7 +788,7 @@ static void print_news(void)
         }
     }
 } /* end of function print_news */
-
+#endif
 
 #ifdef HAS_WINGUI
 #define main xmain
