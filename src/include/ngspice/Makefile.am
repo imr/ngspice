@@ -3,9 +3,6 @@
 nodist_include_HEADERS = \
 	config.h
 
-dist-hook:
-	rm -rf `find $(distdir) -name config.h.in`
-
 noinst_HEADERS = \
 	tclspice.h	\
 	acdefs.h	\
