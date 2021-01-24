@@ -1,8 +1,10 @@
 ## Process this file with automake to produce Makefile.in
 
 nodist_include_HEADERS = \
-	config.h	\
-	config.h.in
+	config.h
+
+dist-hook:
+	rm -rf `find $(distdir) -name config.h.in`
 
 noinst_HEADERS = \
 	tclspice.h	\
