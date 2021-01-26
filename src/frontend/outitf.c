@@ -749,7 +749,7 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
 
 
 
-int OUTwReference(void *plotPtr, IFvalue *valuePtr, void **refPtr)
+int OUTwReference(runDesc*plotPtr, IFvalue *valuePtr, void **refPtr)
 {
     NG_IGNORE(refPtr);
     NG_IGNORE(valuePtr);
