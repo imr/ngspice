@@ -14,6 +14,10 @@ Authors: 1991 David Gates
 #ifndef ngspice_NUMENUM_H
 #define ngspice_NUMENUM_H
 
+#ifdef _MSC_VER
+#undef INTERFACE
+#endif
+
 /* Doping Profiles */
 #define UNIF         101
 #define LIN          102
