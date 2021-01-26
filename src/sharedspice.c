@@ -189,13 +189,133 @@ typedef void (*sighandler)(int);
 extern bool wantevtdata;
 #endif
 
-extern IFfrontEnd nutmeginfo;
+
+/********** includes copied from main.c ************/
+#ifdef CIDER
+# include "ngspice/numenum.h"
+# include "maths/misc/accuracy.h"
+#endif
+
+/********** global variables copied from main.c ************/
+FILE* slogp = NULL;          /* soa log file ('--soa-log file' command line option) */
+
+/* Frontend and circuit options */
+IFsimulator* ft_sim = NULL;
+
+char* errRtn;     /* name of the routine declaring error */
+char* errMsg = NULL;     /* descriptive message about what went wrong */
+char* cp_program; /* program name 'ngspice' */
+
+char* Infile_Path = NULL; /* Path to netlist input file */
+
+char* hlp_filelist[] = { "ngspice", NULL };
+
+
+/* Allocate space for global constants declared in const.h
+ * and set their values */
+double CONSTroot2 = CONSTsqrt2;
+double CONSTvt0 = CONSTboltz * REFTEMP / CHARGE;
+double CONSTKoverQ = CONSTboltz / CHARGE;
+double CONSTe = CONSTnap;
+
+IFfrontEnd* SPfrontEnd = NULL;
+int DEVmaxnum = 0;
+
+const bool ft_nutmeg = FALSE;
+extern struct comm spcp_coms[];
+struct comm* cp_coms = spcp_coms;
+
+/* Main options */
+static bool ft_servermode = FALSE;
+bool ft_batchmode = FALSE;
+bool ft_pipemode = FALSE;
+bool rflag = FALSE; /* has rawfile */
+
+/* Frontend options */
+bool ft_intrpt = FALSE;     /* Set by the (void) signal handlers. TRUE = we've been interrupted. */
+bool ft_setflag = FALSE;    /* TRUE = Don't abort simulation after an interrupt. */
+char* ft_rawfile = "rawspice.raw";
+
+#ifdef XSPICE
+bool wantevtdata = FALSE;
+#endif
+
+bool orflag = FALSE; /* global for -o option */
+
+/* Globals definitions for Machine Accuracy Limits
+ * (needed by CIDER)
+ */
+double BMin;                /* lower limit for B(x) */
+double BMax;                /* upper limit for B(x) */
+double ExpLim;              /* limit for exponential */
+double Accuracy;            /* accuracy of the machine */
+double MuLim, MutLim;
+
+IFfrontEnd nutmeginfo = {
+    IFnewUid,
+    IFdelUid,
+    OUTstopnow,
+    seconds,
+    OUTerror,
+    OUTerrorf,
+    OUTpBeginPlot,
+    OUTpData,
+    OUTwBeginPlot,
+    OUTwReference,
+    OUTwData,
+    OUTwEnd,
+    OUTendPlot,
+    OUTbeginDomain,
+    OUTendDomain,
+    OUTattributes
+};
+
+
+#ifdef CIDER
+/* Global debug flags from CIDER, soon they will become
+ * spice variables :)
+ */
+BOOLEAN ONEacDebug = FALSE;
+BOOLEAN ONEdcDebug = TRUE;
+BOOLEAN ONEtranDebug = TRUE;
+BOOLEAN ONEjacDebug = FALSE;
+
+BOOLEAN TWOacDebug = FALSE;
+BOOLEAN TWOdcDebug = TRUE;
+BOOLEAN TWOtranDebug = TRUE;
+BOOLEAN TWOjacDebug = FALSE;
+
+/* CIDER Global Variable Declarations */
+
+int BandGapNarrowing;
+int TempDepMobility, ConcDepMobility, FieldDepMobility, TransDepMobility;
+int SurfaceMobility, MatchingMobility, MobDeriv;
+int CCScattering;
+int Srh, Auger, ConcDepLifetime, AvalancheGen;
+int FreezeOut = FALSE;
+int OneCarrier;
+
+int MaxIterations = 100;
+int AcAnalysisMethod = DIRECT;
+
+double Temp, RelTemp, Vt;
+double RefPsi;/* potential at Infinity */
+double EpsNorm, VNorm, NNorm, LNorm, TNorm, JNorm, GNorm, ENorm;
+
+/* end cider globals */
+#endif /* CIDER */
+
+struct variable* (*if_getparam)(CKTcircuit* ckt, char** name, char* param, int ind, int do_model);
+/***********************************************************/
+
+extern IFsimulator SIMinfo;
 
 extern struct comm spcp_coms[ ];
 extern void DevInit(void);
-extern int SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator);
 extern wordlist *cp_varwl(struct variable *var);
 extern void create_circbyline(char *line, bool reset, bool lastline);
+
+static int SIMinit(IFfrontEnd *frontEnd, IFsimulator **simulator);
 
 void exec_controls(wordlist *shcontrols);
 void rem_controls(void);
@@ -300,7 +420,29 @@ get_plot_byname(char* plotname)
     return pl;
 }
 
+/* -------------------------------------------------------------------------- */
+static int
+SIMinit(IFfrontEnd* frontEnd, IFsimulator** simulator)
+{
+    spice_init_devices();
+    SIMinfo.numDevices = DEVmaxnum = num_devices();
+    SIMinfo.devices = devices_ptr();
+    SIMinfo.numAnalyses = spice_num_analysis();
 
+    /* va: we recast, because we use only the public part */
+    SIMinfo.analyses = (IFanalysis**)spice_analysis_ptr();
+
+
+#ifdef CIDER
+    /* Evaluates limits of machine accuracy for CIDER */
+    evalAccLimits();
+#endif /* CIDER */
+
+    SPfrontEnd = frontEnd;
+    *simulator = &SIMinfo;
+
+    return OK;
+} /* end of function SIMinit */
 
 /******************************************************************/
 /*     Main spice command executions and thread control           */

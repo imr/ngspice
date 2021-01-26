@@ -27,7 +27,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 #include "ngspice/inpdefs.h"
 
-#if defined(XSPICE) && defined(SIMULATOR)
+#if defined(XSPICE) && (defined(SIMULATOR) || defined(SHARED_MODULE))
 #include "ngspice/evtproto.h"
 #endif
 
@@ -209,7 +209,7 @@ com_remcirc(wordlist *wl)
     /* The next lines stem from com_rset */
     INPkillMods();
 
-#if defined(XSPICE) && defined(SIMULATOR)
+#if defined(XSPICE) && (defined(SIMULATOR) || defined(SHARED_MODULE))
     /* remove event queues, if XSPICE and not nutmeg */
     if (ft_curckt->ci_ckt)
         EVTunsetup(ft_curckt->ci_ckt);

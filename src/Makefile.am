@@ -493,7 +493,6 @@ if SHARED_MODULE
 lib_LTLIBRARIES = libngspice.la
 
 libngspice_la_SOURCES = \
-	main.c \
 	conf.c \
 	conf.h \
 	ngspice.c \

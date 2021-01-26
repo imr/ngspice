@@ -1088,7 +1088,6 @@
     <ClCompile Include="..\src\frontend\variable.c" />
     <ClCompile Include="..\src\frontend\vectors.c" />
     <ClCompile Include="..\src\frontend\where.c" />
-    <ClCompile Include="..\src\main.c" />
     <ClCompile Include="..\src\maths\cmaths\cmath1.c" />
     <ClCompile Include="..\src\maths\cmaths\cmath2.c" />
     <ClCompile Include="..\src\maths\cmaths\cmath3.c" />
