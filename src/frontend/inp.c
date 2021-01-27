@@ -761,8 +761,22 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             if (newcompat.hs || newcompat.spe) {
                 struct card* scan;
                 double dscale = 1;
-                struct card* scoptions = line_reverse(line_nconc(options, inp_deckcopy(com_options)));
-                for (scan = scoptions; scan; scan = scan->nextcard) {
+                /* from .options */
+                for (scan = options; scan; scan = scan->nextcard) {
+                    char* tmpscale = strstr(scan->line, "scale=");
+                    if (tmpscale) {
+                        int err;
+                        tmpscale = tmpscale + 6;
+                        dscale = INPevaluate(&tmpscale, &err, 1);
+                        if (err == 0)
+                            cp_vset("scale", CP_REAL, &dscale);
+                        else
+                            fprintf(stderr, "\nError: Could not set 'scale' variable\n");
+                        break;
+                    }
+                }
+                /* from options in a .control section */
+                for (scan = com_options; scan; scan = scan->nextcard) {
                     char* tmpscale = strstr(scan->line, "scale=");
                     if (tmpscale) {
                         int err;
