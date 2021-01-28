@@ -276,7 +276,7 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
                         addDataDesc(run, dataNames[i], dataType, i, initmem);
                     }
             /* generate a vector of real time information */
-            if (ft_ngdebug && eq(refName, "time")) {
+            if (ft_ngdebug && refName && eq(refName, "time")) {
                  addDataDesc(run, "speedcheck", IF_REAL, numNames, initmem);
             }
         }
