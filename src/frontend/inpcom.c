@@ -9455,9 +9455,9 @@ static int inp_poly_2g6_compat(struct card* deck) {
         case 'g':
         case 'e':
         case 'f':
-            curr_line = nexttok(curr_line);
-            curr_line = nexttok(curr_line);
-            curr_line = nexttok(curr_line);
+            curr_line = nexttok_noparens(curr_line);
+            curr_line = nexttok_noparens(curr_line);
+            curr_line = nexttok_noparens(curr_line);
             /* exclude all of the following fourth tokens */
             if (ciprefix("poly", curr_line))
                 continue;
@@ -9488,8 +9488,8 @@ static int inp_poly_2g6_compat(struct card* deck) {
         switch (*thisline) {
         case 'g':
         case 'e':
-            curr_line = nexttok(curr_line);
-            curr_line = nexttok(curr_line);
+            curr_line = nexttok_noparens(curr_line);
+            curr_line = nexttok_noparens(curr_line);
             if (!curr_line) {
                 fprintf(stderr, "Error: not enough parameters in line\n   %s\n", thisline);
                 fprintf(stderr, "No circuit loaded!\n");

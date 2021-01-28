@@ -450,6 +450,40 @@ nexttok(const char *s)
     return (char *) s;
 }
 
+/*-------------------------------------------------------------------------*
+ * nexttok skips over whitespaces and the next token in s
+ *   returns NULL if there is nothing left to skip.
+ * It replaces constructs like txfree(gettok(&actstring)) by
+ * actstring = nexttok(actstring). This is derived from the gettok_noparens version.
+ * It acts like gettok, except that it treats parens and commas like
+ * whitespace.
+ *-------------------------------------------------------------------------*/
+
+char*
+nexttok_noparens(const char* s)
+{
+    if (!s)
+        return NULL;
+    int paren = 0;
+
+    s = skip_ws(s);
+    if (!*s)
+        return NULL;
+
+    for (; *s && !isspace_c(*s); s++)
+        if (*s == '(')
+            break;
+        else if (*s == ')')
+            break;
+        else if (*s == ',')
+            break;
+
+    while (isspace_c(*s) || *s == ',' || *s == '(' || *s == ')')
+        s++;
+
+    return (char*)s;
+}
+
 
 /*-------------------------------------------------------------------------*
  * gettok skips over whitespaces or '=' and returns the next token found,
