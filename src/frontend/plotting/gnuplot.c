@@ -21,6 +21,7 @@
 #else
 #include <unistd.h>
 #endif
+#include <locale.h>
 
 #define GP_MAXVECTORS 64
 
@@ -65,6 +66,11 @@ void ft_gnuplot(double *xlims, double *ylims,
 
     char filename_data[128];
     char filename_plt[128];
+
+#ifdef SHARED_MODULE
+    char* llocale = setlocale(LC_NUMERIC, NULL);
+    setlocale(LC_NUMERIC, "C");
+#endif
 
     snprintf(filename_data, 128, "%s.data", filename);
     snprintf(filename_plt, 128, "%s.plt", filename);
@@ -404,6 +410,10 @@ void ft_gnuplot(double *xlims, double *ylims,
             perror(NULL);
         }
     }
+#ifdef SHARED_MODULE
+    /* go back to what it was before */
+    setlocale(LC_NUMERIC, llocale);
+#endif
 }
 
 
