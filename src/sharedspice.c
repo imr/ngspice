@@ -275,15 +275,15 @@ IFfrontEnd nutmeginfo = {
 /* Global debug flags from CIDER, soon they will become
  * spice variables :)
  */
-BOOLEAN ONEacDebug = FALSE;
-BOOLEAN ONEdcDebug = TRUE;
-BOOLEAN ONEtranDebug = TRUE;
-BOOLEAN ONEjacDebug = FALSE;
+int ONEacDebug = FALSE;
+int ONEdcDebug = TRUE;
+int ONEtranDebug = TRUE;
+int ONEjacDebug = FALSE;
 
-BOOLEAN TWOacDebug = FALSE;
-BOOLEAN TWOdcDebug = TRUE;
-BOOLEAN TWOtranDebug = TRUE;
-BOOLEAN TWOjacDebug = FALSE;
+int TWOacDebug = FALSE;
+int TWOdcDebug = TRUE;
+int TWOtranDebug = TRUE;
+int TWOjacDebug = FALSE;
 
 /* CIDER Global Variable Declarations */
 
