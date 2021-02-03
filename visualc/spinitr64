@@ -13,7 +13,6 @@ set filetype=ascii
 ** default (if compiled with --enable-openmp) is: 2
 set num_threads=4
 set interactive
-set stepsizelimit
 
 strcmp __flag $program "ngspice"
 if $__flag = 0
