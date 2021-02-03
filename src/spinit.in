@@ -13,8 +13,6 @@ set x11lineararcs
 ** default (if compiled with --enable-openmp) is: 2
 *set num_threads=4
 set interactive
-* step size is limited to TSTEP in tansient simulation
-set stepsizelimit
 
 strcmp __flag $program "ngspice"
 if $__flag = 0
