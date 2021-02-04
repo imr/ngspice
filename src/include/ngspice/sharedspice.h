@@ -88,6 +88,10 @@ request to the caller or an request for exiting upon error,
 done by callback function ngexit().
 */
 
+#ifndef PACKAGE_VERSION
+#define PACKAGE_VERSION "34+"
+#endif
+
 #ifndef NGSPICE_DLL_H
 #define NGSPICE_DLL_H
 
