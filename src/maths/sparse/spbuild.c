@@ -105,6 +105,9 @@ spClear(MatrixPtr Matrix)
     /* Clear matrix. */
     if (Matrix->PreviousMatrixWasComplex || Matrix->Complex)
     {
+#ifdef USE_OMP
+#pragma omp parallel for private(pElement)
+#endif
 	for (I = Matrix->Size; I > 0; I--)
 	{
 	    pElement = Matrix->FirstInCol[I];
@@ -118,6 +121,9 @@ spClear(MatrixPtr Matrix)
     }
     else
     {
+#ifdef USE_OMP
+#pragma omp parallel for private(pElement)
+#endif
 	for (I = Matrix->Size; I > 0; I--)
 	{
 	    pElement = Matrix->FirstInCol[I];
