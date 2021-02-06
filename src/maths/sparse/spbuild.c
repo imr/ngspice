@@ -96,7 +96,6 @@ static void ExpandTranslationArrays( MatrixPtr, int );
 void
 spClear(MatrixPtr Matrix)
 {
-     ElementPtr  pElement;
      int  I;
 
     /* Begin `spClear'. */
@@ -106,11 +105,11 @@ spClear(MatrixPtr Matrix)
     if (Matrix->PreviousMatrixWasComplex || Matrix->Complex)
     {
 #ifdef USE_OMP
-#pragma omp parallel for private(pElement)
+#pragma omp parallel for private(I) schedule(static, 1024)
 #endif
 	for (I = Matrix->Size; I > 0; I--)
 	{
-	    pElement = Matrix->FirstInCol[I];
+        ElementPtr  pElement = Matrix->FirstInCol[I];
 	    while (pElement != NULL)
 	    {
 		pElement->Real = 0.0;
@@ -122,11 +121,11 @@ spClear(MatrixPtr Matrix)
     else
     {
 #ifdef USE_OMP
-#pragma omp parallel for private(pElement)
+#pragma omp parallel for private(I)  schedule(static, 1024)
 #endif
 	for (I = Matrix->Size; I > 0; I--)
 	{
-	    pElement = Matrix->FirstInCol[I];
+        ElementPtr  pElement = Matrix->FirstInCol[I];
 	    while (pElement != NULL)
 	    {
 		pElement->Real = 0.0;
