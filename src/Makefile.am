@@ -262,14 +262,19 @@ endif !NO_HELP
 ## sconvert:
 
 ngsconvert_SOURCES =  ngsconvert.c
-
-ngsconvert_LDADD =  \
-	frontend/com_history.lo \
-	frontend/libfte.la \
-	frontend/parser/libparser.la \
-	maths/misc/libmathmisc.la \
-	misc/libmisc.la
-
+ngsconvert_LDADD = \
+	frontend/dvec.lo \
+    frontend/rawfile.lo \
+    frontend/typesdef.lo \
+    frontend/variable.lo \
+    frontend/dimens.lo \
+    frontend/quote.lo \
+    frontend/parser/lexical.lo \
+    frontend/parser/numparse.lo \
+    misc/string.lo \
+    misc/wlist.lo \
+    misc/misc_time.lo \
+    misc/alloc.lo
 
 ## proc2mod:
 
