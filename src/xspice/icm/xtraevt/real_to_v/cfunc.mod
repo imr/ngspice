@@ -34,18 +34,18 @@ void ucm_real_to_v (ARGS)
 
     case ANALOG:
         if(TIME == 0.0) {
-            OUTPUT(out) = *in;
+            OUTPUT(out) = *in * PARAM(gain);
             v[0] = *in;
             v[1] = *in;
         }
         else {
             if(TIME <= t[0])
-                OUTPUT(out) = v[0];
+                OUTPUT(out) = v[0] * PARAM(gain);
             else if(TIME >= t[1])
-                OUTPUT(out) = v[1];
+                OUTPUT(out) = v[1] * PARAM(gain);
             else {
                 OUTPUT(out) = v[0] + (v[1] - v[0]) *
-                                (TIME - t[0]) / (t[1] - t[0]);
+                                (TIME - t[0]) / (t[1] - t[0]) * PARAM(gain);
             }
         }
         break;
