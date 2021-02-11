@@ -19,7 +19,7 @@ vjt tj 0 25
 dc vd 0 3 0.1 vg 2.8 3.2 0.2
 dc vd 0 3 0.1 vg 3.5 5 0.5
 * plot similar to output characteristics in data sheet
-plot vs#branch vs v(Nvd) dc1.vs#branch vs dc1.v(Nvd) noretraceplot
+plot vs#branch vs v(Nvd) dc1.vs#branch vs dc1.v(Nvd)
 .endc
 
 .end
