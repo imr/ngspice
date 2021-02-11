@@ -7830,7 +7830,8 @@ static bool del_models(struct vsmodels *vsmodel)
 * replace T_ABS by temp and T_REL_GLOBAL by dtemp in .model cards
 * get the area factor for diodes and bipolar devices
 * in subcircuit .subckt and X lines with 'params:' statement
-  replace comma separator by space. Do nothing if comma is inside of {}. */
+  replace comma separator by space. Do nothing if comma is inside of {}.
+* in .model, if double curly braces {{}}, replace the inner by {()}  */
 static struct card *pspice_compat(struct card *oldcard)
 {
     struct card *card, *newcard, *nextcard;
@@ -7907,6 +7908,8 @@ static struct card *pspice_compat(struct card *oldcard)
        .model xxx NMOS/PMOS level=8 --> level = 14, version=4.5.0
        .model xxx NPN/PNP   level=2 --> level = 6
        .model xxx LPNP      level=n --> level = 1 subs=-1       */
+
+    /* check for double '{', replace the inner '{', '}' by '(', ')'*/
     for (card = newcard; card; card = card->nextcard) {
         char* cut_line = card->line;
         if (ciprefix(".model", cut_line)) {
@@ -7985,6 +7988,27 @@ static struct card *pspice_compat(struct card *oldcard)
             tfree(modname);
             tfree(modtype);
             tfree(cut_del);
+
+            /* check for double '{', replace the inner '{', '}' by '(', ')'*/
+            cut_line = strchr(card->line, '{');
+            if (cut_line)
+            {
+                int level = 1;
+                cut_line++;
+                while (*cut_line != '\0') {
+                    if (*cut_line == '{') {
+                        level++;
+                        if (level > 1)
+                            *cut_line = '(';
+                    }
+                    if (*cut_line == '}') {
+                        if (level > 1)
+                            *cut_line = ')';
+                        level--;
+                    }
+                    cut_line++;
+                }
+            }
         }
     }
 
