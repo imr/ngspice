@@ -23,6 +23,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "variable.h"
 #include "com_unset.h"
 
+#ifndef SHARED_MODULE
 #ifdef HAVE_GNUREADLINE
 #include <readline/readline.h>
 #include <readline/history.h>
@@ -32,6 +33,7 @@ extern char history_file[];
 #ifdef HAVE_BSDEDITLINE
 #include <editline/readline.h>
 extern char history_file[];
+#endif
 #endif
 
 #ifdef SHARED_MODULE
@@ -291,12 +293,14 @@ static void
 byemesg(void)
 {
 
+#ifndef SHARED_MODULE
 #if defined(HAVE_GNUREADLINE) || defined(HAVE_BSDEDITLINE)
     /*  write out command history only when saying goodbye.  */
     if (cp_interactive && (cp_maxhistlength > 0)) {
         stifle_history(cp_maxhistlength);
         write_history(history_file);
     }
+#endif
 #endif
 
     printf("%s-%s done\n", ft_sim->simulator, ft_sim->version);
