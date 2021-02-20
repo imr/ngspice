@@ -77,7 +77,7 @@ struct card_assoc {
 struct card {
     int linenum;
     int linenum_orig;
-    int numnodes;
+    int nunodes;
     char *line;
     char *error;
     struct card *nextcard;

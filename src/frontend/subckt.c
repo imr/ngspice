@@ -874,7 +874,7 @@ struct card *inp_deckcopy_oc(struct card * deck)
         d->nf = deck->nf;
         d->linenum_orig = deck->linenum;
         d->linenum = i++;
-        d->numnodes = deck->numnodes;
+        d->nunodes = deck->nunodes;
         d->line = copy(deck->line);
         if (deck->error) {
             d->error = copy(deck->error);
@@ -932,7 +932,7 @@ struct card* inp_deckcopy_ln(struct card* deck)
         d->nf = deck->nf;
         d->linenum_orig = deck->linenum_orig;
         d->linenum = deck->linenum;
-        d->numnodes = deck->numnodes;
+        d->nunodes = deck->nunodes;
         d->line = copy(deck->line);
         if (deck->error) {
             d->error = copy(deck->error);
