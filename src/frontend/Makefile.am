@@ -126,6 +126,7 @@ libfte_la_SOURCES = \
     hpgl.h      \
     inp.c       \
     inp.h       \
+    inp_numnode.c  \
     inpcom.c    \
     inpcom.h    \
     interp.c    \

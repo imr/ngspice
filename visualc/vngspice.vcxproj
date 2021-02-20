@@ -1487,6 +1487,7 @@
     <ClCompile Include="..\src\frontend\init.c" />
     <ClCompile Include="..\src\frontend\inp.c" />
     <ClCompile Include="..\src\frontend\inpcom.c" />
+    <ClCompile Include="..\src\frontend\inp_numnode.c" />
     <ClCompile Include="..\src\frontend\interp.c" />
     <ClCompile Include="..\src\frontend\inventory.c" />
     <ClCompile Include="..\src\frontend\linear.c" />

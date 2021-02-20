@@ -101,6 +101,7 @@ struct func_temper
 };
 
 extern void line_free_x(struct card *deck, bool recurse);
+extern int getnumnodes(struct card* deck);
 
 /* Collect information for dynamic allocation of numparam arrays */
 /* number of lines in input deck */
@@ -133,7 +134,7 @@ static void inp_reorder_params(
 static int inp_split_multi_param_lines(struct card *deck, int line_number);
 static void inp_sort_params(struct card *param_cards,
         struct card *card_bf_start, struct card *s_c, struct card *e_c);
-static char *inp_remove_ws(char *s);
+char *inp_remove_ws(char *s);
 static void inp_compat(struct card *deck);
 static void inp_bsource_compat(struct card *deck);
 static bool inp_temper_compat(struct card *card);
@@ -210,7 +211,7 @@ static void inp_poly_err(struct card *deck);
 
 /* insert a new card, just behind the given card */
 static struct card *insert_new_line(
-        struct card *card, char *line, int linenum, int linenum_orig, int numnodes)
+        struct card *card, char *line, int linenum, int linenum_orig, int nunodes)
 {
     struct card *x = TMALLOC(struct card, 1);
 
@@ -220,7 +221,7 @@ static struct card *insert_new_line(
     x->line = line;
     x->linenum = linenum;
     x->linenum_orig = linenum_orig;
-    x->numnodes = numnodes;
+    x->nunodes = nunodes;
     x->level = card ? card->level : NULL;
 
     if (card)
@@ -464,7 +465,7 @@ static void inp_stitch_continuation_lines(struct card *working)
                 }
                 else {
                     prev->actualLine =
-                            insert_new_line(NULL, s, prev->linenum, 0, prev->numnodes);
+                            insert_new_line(NULL, s, prev->linenum, 0, prev->nunodes);
                     prev->actualLine->level = prev->level;
                     prev->actualLine->nextcard = working;
                 }
@@ -793,6 +794,8 @@ struct card *inp_readall(FILE *fp, const char *dir_name,
             pspice_compat_a(working);
 
         struct nscope *root = inp_add_levels(working);
+
+        getnumnodes(working);
 
         inp_fix_for_numparam(subckt_w_params, working);
 
@@ -2871,7 +2874,7 @@ static char *inp_fix_subckt(struct names *subckt_w_params, char *s)
  *   thats odd and very naive business
  */
 
-static char *inp_remove_ws(char *s)
+char *inp_remove_ws(char *s)
 {
     char *x = s;
     char *d = s;
@@ -3058,7 +3061,7 @@ static struct card *expand_section_ref(struct card *c, const char *dir_name)
             struct card *t = section_def;
             for (; t; t = t->nextcard) {
                 c = insert_new_line(
-                        c, copy(t->line), t->linenum, t->linenum_orig, t->numnodes);
+                        c, copy(t->line), t->linenum, t->linenum_orig, t->nunodes);
                 if (t == section_def) {
                     c->line[0] = '*';
                     c->line[1] = '<';
@@ -7286,6 +7289,10 @@ static int inp_vdmos_model(struct card *deck)
             fprintf(stderr, "No circuit loaded!\n");
             tfree(instmodname);
             return 1;
+        }
+        else if (curr_line[0] == 'm' && newcompat.lt) {
+            /* VDMOS in LTSPICE have 4 nodes with S and B being equal.
+            So reduce the number of nodes to 3. */
         }
     }
     return 0;
