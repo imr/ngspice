@@ -8,6 +8,7 @@ Table of contents
  2.1 CAP - Linear capacitor
  2.2 IND - Linear inductor
  2.3 RES - Linear resistor
+ 2.4 R, L, C behavioral (non-linear) devices
 3. Distributed Elements
  3.1 CPL - Simple Coupled Multiconductor Lines (Kspice)
  3.2 LTRA - Lossy Transmission line
@@ -30,7 +31,7 @@ Table of contents
 7. Bipolar devices
  7.1 BJT - Bipolar Junction Transistor
  7.2 VBIC - Bipolar Junction Transistor
- 7.3 HICUM2 - Bipolar Model
+ 7.3 HICUM2 - Bipolar High Speed Junction Transistor
 8. FET devices
  8.1 JFET - Junction Field Effect transistor
 9. HFET Devices
@@ -63,8 +64,9 @@ Table of contents
  12.5 SOI3 - STAG SOI3 Model
 13. Verilog-A models
  13.1 EKV MOS model
- 13.2 PSP MOS model
- 13.3 HICUM0 Bipolar Model
+ 13.2 PSP MOS model 102
+ 13.3 PSP MOS model 103
+ 13.4 HICUM0 Bipolar Model
  13.5 Mextram Bipolar Model
 14. XSPICE code models
 
@@ -77,7 +79,6 @@ will be updated every time the device specific code is altered or changed to ref
 
 
 2. Linear Devices
-
 
  2.1 CAP - Linear capacitor
 
@@ -128,9 +129,13 @@ will be updated every time the device specific code is altered or changed to ref
       - Flicker noise
       - Preliminary technology scaling support
 
+ 2.4 R, L, and C behavioral (non-linear) devices
+     Their values are determined by an expression (equation)
+	 which may contain a combination of voltage and current
+	 sources embedded in a mathematical function.
+
 
 3. Distributed elements
-
 
  3.1 CPL - Simple Coupled Multiconductor Lines (Kspice)
 
@@ -214,10 +219,6 @@ will be updated every time the device specific code is altered or changed to ref
      Dir:    devices/asrc
      Status:
 
-     The arbitrary source code has been corrected with the patch
-     available on the Internet. There is still an issue to fix, the
-     current of current-controlled generators.
-
  4.2 CCCS - Current Controlled Current Source
 
       Ver:    N/A
@@ -283,11 +284,12 @@ will be updated every time the device specific code is altered or changed to ref
      Dir:    devices/vsrc
      Status:
 
-     This is the original spice device improved by Alan Gillespie
-     with the following features:
+     The original spice device improved with the following features:
 
      - Source ramping
      - Check for non-monotonic series in PWL
+     - Random values
+     - White, 1/f, and random telegraph transient noise sources
 
 
 5. Switches
@@ -367,9 +369,9 @@ will be updated every time the device specific code is altered or changed to ref
 
  7.3 HICUM 2 - Bipolar Junction Transistor for high frequency
 
-     Ver:    2.4 
+     Ver:    2.4
      Class:  Q
-     Level:  4 & 9
+     Level:  8
      Dir:    devices/hicum2
 
      HICUM: HIgh CUrrent Model is a physics-based geometry-scalable compact
@@ -785,11 +787,11 @@ will be updated every time the device specific code is altered or changed to ref
       backward compatible with its previous versions BSIMSOI3.x.
       Usable for partially/full depleted devices.
 
-      Web site at: http://www-device.eecs.berkeley.edu/~bsimsoi
+      Web site at: https://bsim.berkeley.edu/models/bsimsoi/
 
-       Enhancements over the original model:
-       - Parallel Multiplier
-           - Support for Multi-core processors using OpenMP
+      Enhancements over the original model:
+      - Parallel Multiplier
+      - Support for Multi-core processors using OpenMP
 
 
 
@@ -817,11 +819,11 @@ will be updated every time the device specific code is altered or changed to ref
 
       EKV version based on a contribution of Ivan Riis Nielsen 11/2006
 
-      Web site at: http://legwww.epfl.ch/ekv/
+      Web site at: https://www.epfl.ch/labs/iclab/ekv/model/
       (but EPFL is not publishing any usefull code)
 
 
- 13.2 PSP MOS Model
+ 13.2 PSP MOS Model 102
 
       Ver:    102.1
       Level:  45
@@ -830,8 +832,16 @@ will be updated every time the device specific code is altered or changed to ref
 
       Philips SimKit 2.5.
 
+ 13.3 PSP MOS Model 103
 
- 13.3 HICUM0 Bipolar Model
+      Ver:    102.1
+      Level:  69
+      Dir:    devices/adms/psp103
+      Status: TO BE TESTED
+
+      Philips SimKit 2.5.
+
+ 13.4 HICUM0 Bipolar Model
 
       Ver:    Level_0 Version_1.12
       Level:  7
@@ -840,16 +850,6 @@ will be updated every time the device specific code is altered or changed to ref
 
       A simplified version of HICUM Level2 model for BJT
       Web site at: http://www.iee.et.tu-dresden.de/iee/eb/hic_new
-
-
- 13.4 HICUM2 Bipolar Model
-
-      Ver:    Level_2 Version_2.22
-      Level:  8
-      Dir:    devices/adms/hicum2
-      Status: TO BE TESTED
-
-      Web site at: http://www.iee.et.tu-dresden.de/iee/eb/hic_new/hic_start.html
 
 
  13.5 Mextram Bipolar Model
