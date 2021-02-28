@@ -61,10 +61,10 @@ if $oscompiled = 1 | $oscompiled = 8
   shell Start plot_5.svg
   shell Start plot_6.svg
 else
-* for CYGWIN
-  shell xterm -e gs  plot_4.svg &
-  shell xterm -e gs  plot_5.svg &
-  shell xterm -e gs  plot_6.svg &  
+* for CYGWIN, Linux
+  shell feh --magick-timeout 1  plot_4.svg &
+  shell feh --magick-timeout 1  plot_5.svg &
+  shell feh --magick-timeout 1  plot_6.svg &
 end
 .endc
 
