@@ -52,7 +52,10 @@ void WPRINT_PrintInit(HWND hwnd);              /* Windows printer init */
 void WaitForIdle(void);                        /* wait until no more events */
 
 static void WIN_ScreentoData(GRAPH *graph, int x, int y, double *fx, double *fy);
-static LRESULT HcpyPlot(HWND hwnd);
+static LRESULT HcpyPlotPS(HWND hwnd);
+static LRESULT HcpyPlotPSBW(HWND hwnd);
+static LRESULT HcpyPlotSVG(HWND hwnd);
+static LRESULT HcpyPlotSVGBW(HWND hwnd);
 static LRESULT HcpyPlotBW(HWND hwnd);
 static LRESULT PrintPlot(HWND hwnd);
 static LRESULT PrintInit(HWND hwnd);
@@ -88,18 +91,24 @@ static WNDCLASSW     TheWndClassW;                  /* Plot-window class */
 static HFONT         PlotFont;                     /* which font */
 #define              ID_DRUCKEN      0xEFF0        /* System Menue: print */
 #define              ID_DRUCKEINR    0xEFE0        /* System Menue: printer setup */
-#define              ID_HARDCOPY     0xEFD0        /* System Menue: hardcopy color*/
-#define              ID_HARDCOPY_BW  0xEFB0        /* System Menue: hardcopy b&w*/
+#define              ID_HARDCOPY_PS     0xEFD0        /* System Menue: hardcopy PS color*/
+#define              ID_HARDCOPY_PS_BW  0xEFB0        /* System Menue: hardcopy PS b&w*/
+#define              ID_HARDCOPY_SVG    0xEFA0        /* System Menue: hardcopy SVG color*/
+#define              ID_HARDCOPY_SVG_BW 0xEF00        /* System Menue: hardcopy SVG b&w*/
 #define              ID_MASK         0xFFF0;       /* System-Menue: mask */
 
 static char         *STR_DRUCKEN   = "Printer..."; /* System menue strings */
 static char         *STR_DRUCKEINR = "Printer setup...";
-static char         *STR_HARDCOPY = "Postscript file, color";
-static char         *STR_HARDCOPY_BW = "Postscript file, b&w";
+static char         *STR_HARDCOPY_PS = "Postscript file, color";
+static char         *STR_HARDCOPY_PS_BW = "Postscript file, b&w";
+static char         *STR_HARDCOPY_SVG = "SVG file, color";
+static char         *STR_HARDCOPY_SVG_BW = "SVG file, b&w";
 static wchar_t *     STRW_DRUCKEN   = L"Printer..."; /* System menue strings */
 static wchar_t *     STRW_DRUCKEINR = L"Printer setup...";
 static wchar_t *     STRW_HARDCOPY  = L"Postscript file, color";
 static wchar_t *     STRW_HARDCOPY_BW = L"Postscript file, b&w";
+static wchar_t *     STRW_HARDCOPY_SVG = L"SVG file, color";
+static wchar_t *     STRW_HARDCOPY_SVG_BW = L"SVG file, b&w";
 static bool          isblack = TRUE;               /* background color of plot is black */
 static bool          isblackold = TRUE;
 static int           linewidth = 0;                /* linewidth of grid and plot */
@@ -268,13 +277,35 @@ static int LType(int ColorIndex)
 
 /* postscript hardcopy from a plot window */
 /* called by SystemMenue / Postscript hardcopy */
-static LRESULT HcpyPlot(HWND hwnd)
+static LRESULT HcpyPlotPS(HWND hwnd)
 {
     NG_IGNORE(hwnd);
+    cp_vset("hcopydevtype", CP_STRING, "postscript");
     com_hardcopy(NULL);
     return 0;
 }
 
+/* postscript hardcopy from a plot window */
+/* called by SystemMenue / Postscript hardcopy */
+static LRESULT HcpyPlotSVG(HWND hwnd)
+{
+    NG_IGNORE(hwnd);
+    cp_vset("hcopydevtype", CP_STRING, "svg");
+    com_hardcopy(NULL);
+    return 0;
+}
+
+static LRESULT HcpyPlotPSBW(HWND hwnd)
+{
+    cp_vset("hcopydevtype", CP_STRING, "postscript");
+    return HcpyPlotBW(hwnd);
+}
+
+static LRESULT HcpyPlotSVGBW(HWND hwnd)
+{
+    cp_vset("hcopydevtype", CP_STRING, "svg");
+    return HcpyPlotBW(hwnd);
+}
 
 static LRESULT HcpyPlotBW(HWND hwnd)
 {
@@ -414,8 +445,10 @@ LRESULT CALLBACK PlotWindowProc(HWND hwnd, UINT uMsg,
         switch(cmd) {
         case ID_DRUCKEN:     return PrintPlot(hwnd);
         case ID_DRUCKEINR:   return PrintInit(hwnd);
-        case ID_HARDCOPY:    return HcpyPlot(hwnd);
-        case ID_HARDCOPY_BW: return HcpyPlotBW(hwnd);
+        case ID_HARDCOPY_PS:    return HcpyPlotPS(hwnd);
+        case ID_HARDCOPY_PS_BW: return HcpyPlotPSBW(hwnd);
+        case ID_HARDCOPY_SVG:    return HcpyPlotSVG(hwnd);
+        case ID_HARDCOPY_SVG_BW: return HcpyPlotSVGBW(hwnd);
         }
     }
     goto WIN_DEFAULT;
@@ -764,8 +797,10 @@ int WIN_NewViewport(GRAPH *graph)
     AppendMenu(sysmenu, MF_SEPARATOR, 0, NULL);
     AppendMenu(sysmenu, MF_STRING, ID_DRUCKEN,   STR_DRUCKEN);
     AppendMenu(sysmenu, MF_STRING, ID_DRUCKEINR, STR_DRUCKEINR);
-    AppendMenu(sysmenu, MF_STRING, ID_HARDCOPY, STR_HARDCOPY);
-    AppendMenu(sysmenu, MF_STRING, ID_HARDCOPY_BW, STR_HARDCOPY_BW);
+    AppendMenu(sysmenu, MF_STRING, ID_HARDCOPY_PS, STR_HARDCOPY_PS);
+//    AppendMenu(sysmenu, MF_STRING, ID_HARDCOPY_PS_BW, STR_HARDCOPY_PS_BW);
+    AppendMenu(sysmenu, MF_STRING, ID_HARDCOPY_SVG, STR_HARDCOPY_SVG);
+//    AppendMenu(sysmenu, MF_STRING, ID_HARDCOPY_SVG_BW, STR_HARDCOPY_SVG_BW);
 
     /* set default parameters of DC */
     SetBkColor(dc, graph->colorarray[0]);
