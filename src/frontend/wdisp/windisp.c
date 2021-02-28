@@ -270,9 +270,7 @@ static int LType(int ColorIndex)
 /* called by SystemMenue / Postscript hardcopy */
 static LRESULT HcpyPlot(HWND hwnd)
 {
-    int colorval = isblack? 0 : 1;
     NG_IGNORE(hwnd);
-    cp_vset("hcopypscolor", CP_NUM, &colorval);
     com_hardcopy(NULL);
     return 0;
 }
@@ -280,12 +278,38 @@ static LRESULT HcpyPlot(HWND hwnd)
 
 static LRESULT HcpyPlotBW(HWND hwnd)
 {
-    int bgcolor;
     NG_IGNORE(hwnd);
-    if (cp_getvar("hcopypscolor", CP_NUM, &bgcolor, 0)) {
-        cp_remvar("hcopypscolor");
+    unsigned int  colorid;
+    char colorN[16], colorstring[30], tmpcolor[16][30];
+
+    /* save current colors, set color0 to white and alls others to black  */
+    for (colorid = 0; colorid < 16; ++colorid) {
+        sprintf(colorN, "color%d", colorid);
+        if (cp_getvar(colorN, CP_STRING, colorstring, sizeof(colorstring))) {
+            strcpy(tmpcolor[colorid], colorstring);
+        }
+        else {
+            strcpy(tmpcolor[colorid], "empty");
+        }
+        if (colorid == 0)
+            cp_vset(colorN, CP_STRING, "white");
+        else
+            cp_vset(colorN, CP_STRING, "black");
     }
+
+    /* The plot file creation */
     com_hardcopy(NULL);
+
+    /* reset colorN to the previous values */
+    for (colorid = 0; colorid < 16; ++colorid) {
+        sprintf(colorN, "color%d", colorid);
+        if (strcmp(tmpcolor[colorid], "empty") == 0) {
+            cp_remvar(colorN);
+        }
+        else {
+            cp_vset(colorN, CP_STRING, tmpcolor[colorid]);
+        }
+    }
     return 0;
 }
 
