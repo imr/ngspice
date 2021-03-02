@@ -459,13 +459,7 @@ X11_NewViewport(GRAPH *graph)
         { XtNright, (XtArgVal) XtChainRight }
     };
     static Arg buttonargs[ ] = {
-        { XtNlabel, (XtArgVal) NULL },
-        { XtNfromVert, (XtArgVal) NULL },
-        { XtNbottom, (XtArgVal) XtChainTop },
-        { XtNtop, (XtArgVal) XtChainTop },
-        { XtNleft, (XtArgVal) XtRubber },
-        { XtNright, (XtArgVal) XtRubber },
-        { XtNresizable, (XtArgVal) TRUE }
+        { XtNlabel, (XtArgVal) NULL }
     };
     static Arg viewargs[] = {
         { XtNresizable, (XtArgVal) TRUE },
