@@ -137,6 +137,8 @@ extern void cp_doquit(void);
 
 static struct History_info *init_history(void);
 
+void UpdateMainText(void);
+
 // ---------------------------<Message Handling>-------------------------------
 
 // Warte, bis keine Messages mehr zu bearbeiten sind
@@ -1915,7 +1917,10 @@ winmessage(char *new_msg)
         MessageBox(NULL, new_msg, "Ngspice Info", MB_OK | MB_ICONERROR);
 }
 
-
+void
+UpdateMainText(void) {
+    DisplayText();
+}
 
 #else /* HAS_WINGUI not defined */
 /* Prevent warning regarding empty translation unit */
