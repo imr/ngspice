@@ -69,6 +69,7 @@ extern int         DevSwitch(char *devname);
 extern int         NewViewport(GRAPH *pgraph);
 extern void        com_hardcopy(wordlist *wl);
 extern void        wincolor_graph(COLORREF* ColorTable, int noc, GRAPH* graph);
+extern void        UpdateMainText(void);
 
 /* defines */
 #define RAD_TO_DEG   (180.0 / M_PI)
@@ -280,8 +281,14 @@ static int LType(int ColorIndex)
 static LRESULT HcpyPlotPS(HWND hwnd)
 {
     NG_IGNORE(hwnd);
+    int i = 1;
     cp_vset("hcopydevtype", CP_STRING, "postscript");
+    /* If not set, the color will be b&w, i = 1 is white background */
+    cp_vset("hcopypscolor", CP_NUM, &i);
     com_hardcopy(NULL);
+    /* update the text in the main window */
+    UpdateMainText();
+    SetFocus(swString);
     return 0;
 }
 
@@ -292,6 +299,9 @@ static LRESULT HcpyPlotSVG(HWND hwnd)
     NG_IGNORE(hwnd);
     cp_vset("hcopydevtype", CP_STRING, "svg");
     com_hardcopy(NULL);
+    /* update the text in the main window */
+    UpdateMainText();
+    SetFocus(swString);
     return 0;
 }
 
