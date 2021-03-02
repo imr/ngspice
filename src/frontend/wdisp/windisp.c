@@ -293,7 +293,7 @@ static LRESULT HcpyPlotPS(HWND hwnd)
 }
 
 /* postscript hardcopy from a plot window */
-/* called by SystemMenue / Postscript hardcopy */
+/* called by SystemMenue / SVG hardcopy */
 static LRESULT HcpyPlotSVG(HWND hwnd)
 {
     NG_IGNORE(hwnd);
