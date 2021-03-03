@@ -34,6 +34,9 @@ plot vss2#branch vs v(22) title 'Series resistor: Drain current versus drain vol
 
 *** postscript ***
 set hcopydevtype = postscript
+setcs hcopyfont=Helvetica
+set hcopyfontsize=14
+
 set hcopypscolor=0 ; background black
 hardcopy plot_4.ps vss#branch title 'Drain current versus drain voltage' xlabel 'Drain voltage' ylabel 'Drain current'
 set hcopypscolor=1 ; background white
@@ -45,9 +48,13 @@ if $oscompiled = 1 | $oscompiled = 8
 * for CYGWIN
 else
   shell xterm -e gs  plot_5.ps &
+  shell xterm -e gs  plot_4.ps &
 end
 
 *** svg ***
+set svg_intopts = ( 512 384 20 0 1 2 0 )
+setcs svg_stropts = ( white Arial Arial )
+
 set hcopydevtype = svg
 *set color0=white
 set color1=blue
