@@ -30,9 +30,9 @@ set nolegend
 
 * the default settings
 * "svgwidth", "svgheight",  "svgfont-size", "svgfont-width", "svguse-color", "svgstroke-width", "svggrid-width",
-set svg_intopts = ( 1024, 768, 16, 0, 1, 2, 0 )
+set svg_intopts = ( 512 384 20 0 1 2 0 )
 * "svgbackground", "svgfont-family", "svgfont"
-set svg_stropts= ( )
+setcs svg_stropts = ( blue Arial Arial )
 
 *** svg ***
 set hcopydevtype = svg
