@@ -24,7 +24,7 @@ Xop 0 opin vdd vss opout MCP6041
 *               Non-inverting Input
 
 *.dc Vin -2.2 2.2 0.1
-*.tran 0.1m 10m
+.tran 0.1m 10m
 
 .control
 ac dec 10 1 100k
