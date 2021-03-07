@@ -464,7 +464,6 @@ nexttok_noparens(const char* s)
 {
     if (!s)
         return NULL;
-    int paren = 0;
 
     s = skip_ws(s);
     if (!*s)
