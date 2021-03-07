@@ -737,11 +737,13 @@ drawlingrid(GRAPH *graph, char *units, int spacing, int nsp, double dst, double 
         if (nsp == 1)
             j += 1000;
     }
-    if (axis == x_axis)
-        DevDrawText(units, (int) (graph->absolute.width * RELPOSXUNIT + unitshift), graph->fontheight, 0);
-    else
-        DevDrawText(units, graph->fontwidth,
-                    (int) (graph->absolute.height - 2 * graph->fontheight), 0);
+    if (!graph->nounits) {
+        if (axis == x_axis)
+            DevDrawText(units, (int)(graph->absolute.width * RELPOSXUNIT + unitshift), graph->fontheight, 0);
+        else
+            DevDrawText(units, graph->fontwidth,
+                (int)(graph->absolute.height - 2 * graph->fontheight), 0);
+    }
     DevUpdate();
 }
 
@@ -943,12 +945,14 @@ drawloggrid(GRAPH *graph, char *units, int hmt, int lmt, int decsp, int subs, in
         }
     }
 
-    if (axis == x_axis)
-        DevDrawText(units, (int) (graph->absolute.width * RELPOSXUNIT + unitshift),
-                    graph->fontheight, 0);
-    else
-        DevDrawText(units, graph->fontwidth,
-                    (int) (graph->absolute.height - 2 * graph->fontheight), 0);
+    if (!graph->nounits) {
+        if (axis == x_axis)
+            DevDrawText(units, (int)(graph->absolute.width * RELPOSXUNIT + unitshift),
+                +graph->fontheight, 0);
+        else
+            DevDrawText(units, graph->fontwidth,
+                (int)(graph->absolute.height - 2 * graph->fontheight), 0);
+    }
 
     DevUpdate();
 }

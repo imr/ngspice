@@ -135,6 +135,7 @@ int gr_init(double *xlims, double *ylims, /* The size of the screen. */
     }
 
     cp_getvar("nolegend", CP_BOOL, &(graph->nolegend), 0);
+    cp_getvar("nounits", CP_BOOL, &(graph->nounits), 0);
 
     if (!xlims || !ylims) {
         internalerror("gr_init:  no range specified");

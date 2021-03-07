@@ -33,7 +33,7 @@ struct graph {
     int currentcolor;
     int linestyle;
 
-    bool nolegend;
+    bool nolegend, nounits;
 
     struct {
         int height, width;
