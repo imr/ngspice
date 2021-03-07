@@ -17,9 +17,12 @@ Modified: 2001 AlansFixes
 
 #include <stdlib.h>
 
-#ifdef HAS_WINGUI
+#if defined(_MSC_VER) || defined(__MINGW32__)
 #undef BOOLEAN
 #include <windows.h>
+#endif
+
+#ifdef HAS_WINGUI
 typedef struct {      /* Extra window data */
     HWND  wnd;        /* window */
     HDC   hDC;        /* Device context of window */
