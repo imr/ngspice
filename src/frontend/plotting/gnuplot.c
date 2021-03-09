@@ -61,7 +61,7 @@ void ft_gnuplot(double *xlims, double *ylims,
     struct dvec *v, *scale = NULL;
     double xval, yval, prev_xval, extrange;
     int i, dir, numVecs, linewidth, gridlinewidth, err, terminal_type;
-    bool xlog, ylog, nogrid, markers;
+    bool xlog, ylog, nogrid, markers, nolegend;
     char buf[BSIZE_SP], pointstyle[BSIZE_SP], *text, plotstyle[BSIZE_SP], terminal[BSIZE_SP];
 
     char filename_data[128];
@@ -136,6 +136,13 @@ void ft_gnuplot(double *xlims, double *ylims,
             markers = TRUE;
         else
             markers = FALSE;
+    }
+
+    if (!cp_getvar("nolegend", CP_BOOL, NULL, 0)) {
+        nolegend = FALSE;
+    }
+    else {
+        nolegend = TRUE;
     }
 
     /* Make sure the gridtype is supported. */
@@ -248,6 +255,9 @@ void ft_gnuplot(double *xlims, double *ylims,
 
     if (gridlinewidth > 1)
         fprintf(file, "set border lw %d\n", gridlinewidth);
+
+    if(nolegend)
+        fprintf(file, "set key off\n");
 
     if (plottype == PLOT_COMB) {
         strcpy(plotstyle, "boxes");
