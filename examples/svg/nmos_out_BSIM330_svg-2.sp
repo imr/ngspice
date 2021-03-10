@@ -1,4 +1,4 @@
-*****  NMOS Transistor BSIM3 (Id-Vds) with Rd ***
+*****  NMOS (Id-Vds) SVG plot file 2 ***
 
 M1 2 1 3 4 n1 W=1u L=0.35u Pd=1.5u Ps=1.5u ad=1.5p as=1.5p
 vgs 1 0 3.5 
