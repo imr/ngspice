@@ -398,7 +398,7 @@ void ft_gnuplot(double *xlims, double *ylims,
         (void) sprintf(buf, "xterm -e gnuplot %s - &", filename_plt);
     }
     else {
-        (void) sprintf(buf, "gnuplot -p %s - &", filename_plt);
+        (void) sprintf(buf, "gnuplot -persist %s &", filename_plt);
     }
 #endif
     err = system(buf);
