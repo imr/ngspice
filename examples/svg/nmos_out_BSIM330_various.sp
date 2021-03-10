@@ -1,4 +1,4 @@
-*****  NMOS Transistor BSIM3 (Id-Vds) with Rd ***
+*****  NMOS (Id-Vds) SVG plot file 2 ***
 
 M1 2 1 3 4 n1 W=1u L=0.35u Pd=1.5u Ps=1.5u ad=1.5p as=1.5p
 vgs 1 0 3.5 
@@ -47,8 +47,8 @@ if $oscompiled = 1 | $oscompiled = 8
   shell Start /B plot_5.ps
 * for CYGWIN
 else
-  shell xterm -e gs  plot_5.ps &
-  shell xterm -e gs  plot_4.ps &
+  shell gv  plot_5.ps &
+  shell gv  plot_4.ps &
 end
 
 *** svg ***
@@ -66,7 +66,6 @@ hardcopy plot_5.svg vss#branch title 'Drain current versus drain voltage' xlabel
 if $oscompiled = 1 | $oscompiled = 8
   shell Start /B plot_4.svg
   shell Start /B plot_5.svg
-*  shell Start /B plot_6.svg
 * for CYGWIN, Linux
 else
   shell feh --magick-timeout 1  plot_4.svg &
