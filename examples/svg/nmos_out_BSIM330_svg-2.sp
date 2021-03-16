@@ -30,6 +30,8 @@ set svg_intopts = ( 512 384 20 0 1 5 2 )
 * "svgbackground", "svgfont-family", "svgfont"
 setcs svg_stropts = ( yellow Arial Arial )
 
+
+
 *** svg ***
 set hcopydevtype = svg
 *set color0=white
@@ -37,14 +39,21 @@ set color1=blue
 set color2=green
 set nounits
 
-hardcopy plot_1.svg vss#branch title 'Drain current versus drain voltage' xlabel 'Drain voltage / V' ylabel 'Drain current / µA'
+hardcopy plot_10.svg vss#branch title 'Drain current versus drain voltage' xlabel 'Drain voltage / V' ylabel 'Drain current / µA'
+
+unset svg_intopts
+set svg_intopts = ( 512 384 16 0 1 5 2 )
+hardcopy plot_11.svg vss#branch title 'Drain current versus drain voltage' xlabel 'Drain voltage / V' ylabel 'Drain current / µA'
+
 
 * for MS Windows only
 if $oscompiled = 1 | $oscompiled = 8
-  shell Start plot_1.svg
+  shell Start plot_10.svg
+  shell Start plot_11.svg
 else
 * for CYGWIN, Linux
-  shell feh --magick-timeout 1  plot_1.svg &
+  shell feh --magick-timeout 1  plot_10.svg &
+  shell feh --magick-timeout 1  plot_11.svg &
 end
 .endc
 
