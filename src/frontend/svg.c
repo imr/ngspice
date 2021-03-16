@@ -101,7 +101,7 @@ static FILE *plotfile;
 static int screenflag = 0;
 static int hcopygraphid;
 
-const char *colors[] = {"black",
+const char *svgcolors[] = {"black",
                         "white",
                         "red",
                         "blue",
@@ -123,6 +123,8 @@ const char *colors[] = {"black",
                         "#949494",    /*19: gray for smith grid */
                         "#888"};      /*20: gray for normal grid */
 
+static char** colors;
+
 /* Set scale, color and size of the plot */
 int
 SVG_Init(void)
@@ -130,6 +132,27 @@ SVG_Init(void)
     char          colorN[16], colorstring[30], strbuf[512];
     unsigned int  colorid, i;
     struct variable *vb, *va;
+    bool intopts_isset = FALSE, stropts_isset = FALSE;
+    unsigned int numberofcolors = NUMELEMS(svgcolors);
+
+    /* set intopts and stropts as basic data */
+    if (cp_getvar("svg_intopts", CP_LIST, &va, 0)) {
+        i = 0;
+        while (i < NUM_INTS && va) {
+            Cfg.ints[i++] = va->va_num;
+            va = va->va_next;
+        }
+        intopts_isset = TRUE;
+    }
+    if (cp_getvar("svg_stropts", CP_LIST, &vb, 0)) {
+        i = 0;
+        while (i < NUM_STRINGS && vb) {
+            tfree(Cfg.strings[i]);
+            Cfg.strings[i++] = strdup(vb->va_string);
+            vb = vb->va_next;
+        }
+        stropts_isset = TRUE;
+    }
 
     /* plot size */
     if (!cp_getvar("hcopywidth", CP_STRING, &Cfg.ints[SVG_WIDTH], sizeof(Cfg.ints[SVG_WIDTH]))) {
@@ -159,49 +182,32 @@ SVG_Init(void)
 
     if (cp_getvar("hcopyfont", CP_STRING, &strbuf, sizeof(strbuf))) {
         Cfg.strings[SVG_FONT] = strdup(strbuf);
-    } else {
+    }
+    else if (!stropts_isset) {
         Cfg.strings[SVG_FONT] = strdup("Helvetica");
     }
+
     if (cp_getvar("hcopyfontfamily", CP_STRING, &strbuf, sizeof(strbuf))) {
         Cfg.strings[SVG_FONT_FAMILY] = strdup(strbuf);
     }
-    else {
+    else if (!stropts_isset){
         Cfg.strings[SVG_FONT_FAMILY] = strdup("Helvetica");
     }
 
-    if (!cp_getvar("hcopyfontsize", CP_NUM, &Cfg.ints[SVG_FONT_SIZE], 0)) {
-        Cfg.ints[SVG_FONT_SIZE] = 10;
-        Cfg.ints[SVG_FONT_WIDTH] = 6;
-    }
-    else {
-        if ((Cfg.ints[SVG_FONT_SIZE] < 10) || (Cfg.ints[SVG_FONT_SIZE] > 18))
-            Cfg.ints[SVG_FONT_SIZE] = 10;
-    }
+    cp_getvar("hcopyfontsize", CP_NUM, &Cfg.ints[SVG_FONT_SIZE], 0);
 
-    /* override the above when intopts and stropts are set */
-    if (cp_getvar("svg_intopts", CP_LIST, &va, 0)) {
-        i = 0;
-        while (i < NUM_INTS && va) {
-            Cfg.ints[i++] = va->va_num;
-            va = va->va_next;
-        }
-    }
-    if (cp_getvar("svg_stropts", CP_LIST, &vb, 0)) {
-        i = 0;
-        while (i < NUM_STRINGS && vb) {
-            tfree(Cfg.strings[i]);
-            Cfg.strings[i++] = strdup(vb->va_string);
-            vb = vb->va_next;
-        }
-    }
+    colors = TMALLOC(char*, numberofcolors);
 
     /* Look for colour overrides: HTML/X11 #xxxxxx style. */
-    for (colorid = 0; colorid < NUMELEMS(colors); ++colorid) {
+    for (colorid = 0; colorid < numberofcolors; ++colorid) {
         sprintf(colorN, "color%d", colorid);
         if (cp_getvar(colorN, CP_STRING, colorstring, sizeof(colorstring))) {
             colors[colorid] = strdup(colorstring);
             if (colorid == 0)
-                Cfg.strings[SVG_BACKGROUND] = colors[0];
+                Cfg.strings[SVG_BACKGROUND] = strdup(colors[0]);
+        }
+        else {
+            colors[colorid] = strdup(svgcolors[colorid]);
         }
     }
 
@@ -213,12 +219,11 @@ SVG_Init(void)
         /* Black and white. */
         dispdev->numcolors = 2;
     } else {
-        dispdev->numcolors = NUMELEMS(colors);
+        dispdev->numcolors = NUMELEMS(svgcolors);
     }
 
     if (SVGuse_color == 1) {
         /* Suppress dashes in favour of color. */
-
         dispdev->numlinestyles = 2;
     } else {
         dispdev->numlinestyles = NUMELEMS(linestyles);
@@ -311,11 +316,19 @@ SVG_Close(void)
      * without having reached SVG_NewViewport
      */
 
+    int i;
+
     if (plotfile) {
         closepath(DEVDEP_P(currentgraph));
         fprintf(plotfile, "</svg>\n");
         fclose(plotfile);
         plotfile = NULL;
+    }
+
+    if (colors) {
+        for (i = 0; i < NUMELEMS(svgcolors); i++)
+            tfree(colors[i]);
+        tfree(colors);
     }
 
     /* In case of hardcopy command destroy the hardcopy graph
@@ -454,7 +467,6 @@ SVG_SetLinestyle(int linestyleid)
         /* Caller ignores dispdev->numlinestyles.  Keep quiet,
          * but allow dotted grid.
          */
-
         currentgraph->linestyle = 0;
         return 0;
     }
@@ -476,7 +488,7 @@ SVG_SetLinestyle(int linestyleid)
 int
 SVG_SetColor(int colorid)
 {
-    if (colorid < 0 || colorid > (int)NUMELEMS(colors)) {
+    if (colorid < 0 || colorid > (int)NUMELEMS(svgcolors)) {
         internalerror("bad colorid inside SVG_SelectColor");
         return 1;
     }
