@@ -26,7 +26,7 @@ set nolegend
 
 * the default settings
 * "svgwidth", "svgheight",  "svgfont-size", "svgfont-width", "svguse-color", "svgstroke-width", "svggrid-width",
-set svg_intopts = ( 512 384 20 0 1 5 2 )
+set svg_intopts = ( 512 384 16 8 1 5 2 )
 * "svgbackground", "svgfont-family", "svgfont"
 setcs svg_stropts = ( yellow Arial Arial )
 
@@ -42,7 +42,7 @@ set nounits
 hardcopy plot_10.svg vss#branch title 'Drain current versus drain voltage' xlabel 'Drain voltage / V' ylabel 'Drain current / µA'
 
 unset svg_intopts
-set svg_intopts = ( 512 384 16 0 1 5 2 )
+set svg_intopts = ( 512 384 6 0 1 5 2 )
 hardcopy plot_11.svg vss#branch title 'Drain current versus drain voltage' xlabel 'Drain voltage / V' ylabel 'Drain current / µA'
 
 
