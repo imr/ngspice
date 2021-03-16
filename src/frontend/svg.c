@@ -331,6 +331,9 @@ SVG_Close(void)
         tfree(colors);
     }
 
+    for (i = 0; i < NUM_STRINGS; i++)
+        tfree(Cfg.strings[i]);
+
     /* In case of hardcopy command destroy the hardcopy graph
      * and reset currentgraph to graphid 1, if possible
      */
