@@ -265,8 +265,11 @@ void com_hardcopy(wordlist *wl)
         }
     }
 
-    if (tempf && *device)
+    if (tempf && *device) {
         (void) unlink(fname);
+    }
+
+    tfree(fname);
 
     /* restore previous graphics context by retrieving the previous currentgraph */
     PopGraphContext();

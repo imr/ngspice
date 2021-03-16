@@ -181,16 +181,20 @@ SVG_Init(void)
         Cfg.ints[SVG_GRID_WIDTH] = 0;
 
     if (cp_getvar("hcopyfont", CP_STRING, &strbuf, sizeof(strbuf))) {
+        tfree(Cfg.strings[SVG_FONT]);
         Cfg.strings[SVG_FONT] = strdup(strbuf);
     }
     else if (!stropts_isset) {
+        tfree(Cfg.strings[SVG_FONT]);
         Cfg.strings[SVG_FONT] = strdup("Helvetica");
     }
 
     if (cp_getvar("hcopyfontfamily", CP_STRING, &strbuf, sizeof(strbuf))) {
+        tfree(Cfg.strings[SVG_FONT_FAMILY]);
         Cfg.strings[SVG_FONT_FAMILY] = strdup(strbuf);
     }
     else if (!stropts_isset){
+        tfree(Cfg.strings[SVG_FONT_FAMILY]);
         Cfg.strings[SVG_FONT_FAMILY] = strdup("Helvetica");
     }
 
@@ -203,8 +207,10 @@ SVG_Init(void)
         sprintf(colorN, "color%d", colorid);
         if (cp_getvar(colorN, CP_STRING, colorstring, sizeof(colorstring))) {
             colors[colorid] = strdup(colorstring);
-            if (colorid == 0)
+            if (colorid == 0) {
+                tfree(Cfg.strings[SVG_BACKGROUND]);
                 Cfg.strings[SVG_BACKGROUND] = strdup(colors[0]);
+            }
         }
         else {
             colors[colorid] = strdup(svgcolors[colorid]);
@@ -301,6 +307,8 @@ SVG_NewViewport(GRAPH *graph)
             SVGbackground ? SVGbackground : "black");
 
     /* Allocate and initialise per-graph data. */
+
+    tfree(graph->devdep);
 
     graph->devdep = TMALLOC(SVGdevdep, 1);
     ddp = DEVDEP_P(graph);
