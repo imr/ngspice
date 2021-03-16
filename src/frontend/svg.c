@@ -123,30 +123,13 @@ const char *colors[] = {"black",
                         "#949494",    /*19: gray for smith grid */
                         "#888"};      /*20: gray for normal grid */
 
-void SVG_LinestyleColor(int linestyleid, int colorid);
-void SVG_SelectColor(int colorid);
-void SVG_Stroke(void);
-
-
 /* Set scale, color and size of the plot */
-
 int
 SVG_Init(void)
 {
     char          colorN[16], colorstring[30], strbuf[512];
     unsigned int  colorid, i;
     struct variable *vb, *va;
-
-    /* Look for colour overrides: HTML/X11 #xxxxxx style. */
-
-    for (colorid = 0; colorid < NUMELEMS(colors); ++colorid) {
-        sprintf(colorN, "color%d", colorid);
-        if (cp_getvar(colorN, CP_STRING, colorstring, sizeof(colorstring))) {
-            colors[colorid] = strdup(colorstring);
-            if (colorid == 0)
-                Cfg.strings[SVG_BACKGROUND] = colors[colorid];
-        }
-    }
 
     /* plot size */
     if (!cp_getvar("hcopywidth", CP_STRING, &Cfg.ints[SVG_WIDTH], sizeof(Cfg.ints[SVG_WIDTH]))) {
@@ -212,14 +195,22 @@ SVG_Init(void)
         }
     }
 
-    /* Get other options. */
+    /* Look for colour overrides: HTML/X11 #xxxxxx style. */
+    for (colorid = 0; colorid < NUMELEMS(colors); ++colorid) {
+        sprintf(colorN, "color%d", colorid);
+        if (cp_getvar(colorN, CP_STRING, colorstring, sizeof(colorstring))) {
+            colors[colorid] = strdup(colorstring);
+            if (colorid == 0)
+                Cfg.strings[SVG_BACKGROUND] = colors[0];
+        }
+    }
 
+    /* Get other options. */
     if (SVGgrid_width == 0)
         SVGgrid_width = (2 * SVGstroke_width) / 3;
 
     if (SVGuse_color == 0) {
         /* Black and white. */
-
         dispdev->numcolors = 2;
     } else {
         dispdev->numcolors = NUMELEMS(colors);
@@ -239,7 +230,6 @@ SVG_Init(void)
 }
 
 /* Plot and fill bounding box */
-
 int
 SVG_NewViewport(GRAPH *graph)
 {
