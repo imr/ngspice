@@ -36,35 +36,48 @@ setcs svg_stropts = ( blue Arial Arial )
 
 *** svg ***
 set hcopydevtype = svg
+
+hardcopy plot_0.svg vss#branch title 'Drain current versus drain voltage' xlabel 'Drain voltage' ylabel 'Drain current'
+
 set color0=white
 set color1=blue
 set color2=green
-hardcopy plot_4.svg vss#branch title 'Drain current versus drain voltage' xlabel 'Drain voltage' ylabel 'Drain current'
+hardcopy plot_1.svg vss#branch title 'Drain current versus drain voltage' xlabel 'Drain voltage' ylabel 'Drain current'
 
 set svg_intopts = ( 512, 384, 16, 0, 1, 2, 0 )
 
 set color0=blue
 set color1=white
 set color2=red
-hardcopy plot_5.svg vss#branch title 'Drain current versus drain voltage' xlabel 'Drain voltage' ylabel 'Drain current'
+hardcopy plot_2.svg vss#branch title 'Drain current versus drain voltage' xlabel 'Drain voltage' ylabel 'Drain current'
 
 set svg_intopts = ( 512, 384, 16, 0, 0, 2, 2 )
 
 set color0=black
 set color1=yellow
 set color2=white
-hardcopy plot_6.svg vss#branch title 'Drain current versus drain voltage' xlabel 'Drain voltage' ylabel 'Drain current'
+hardcopy plot_3.svg vss#branch title 'Drain current versus drain voltage' xlabel 'Drain voltage' ylabel 'Drain current'
+
+unset color0
+unset color1
+unset color2
+hardcopy plot_4.svg vss#branch title 'Drain current versus drain voltage' xlabel 'Drain voltage' ylabel 'Drain current'
+
 
 * for MS Windows only
 if $oscompiled = 1 | $oscompiled = 8
+  shell Start plot_0.svg
+  shell Start plot_1.svg
+  shell Start plot_2.svg
+  shell Start plot_3.svg
   shell Start plot_4.svg
-  shell Start plot_5.svg
-  shell Start plot_6.svg
 else
 * for CYGWIN, Linux
+  shell feh --magick-timeout 1  plot_0.svg &
+  shell feh --magick-timeout 1  plot_1.svg &
+  shell feh --magick-timeout 1  plot_2.svg &
+  shell feh --magick-timeout 1  plot_3.svg &
   shell feh --magick-timeout 1  plot_4.svg &
-  shell feh --magick-timeout 1  plot_5.svg &
-  shell feh --magick-timeout 1  plot_6.svg &
 end
 .endc
 
