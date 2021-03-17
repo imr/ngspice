@@ -51,9 +51,15 @@ if $oscompiled = 1 | $oscompiled = 8
   shell Start plot_10.svg
   shell Start plot_11.svg
 else
+  if $oscompiled = 7
+* macOS (using feh from homebrew)
+    shell feh --conversion-timeout 1  plot_10.svg &
+    shell feh --conversion-timeout 1  plot_11.svg &
+  else
 * for CYGWIN, Linux
-  shell feh --magick-timeout 1  plot_10.svg &
-  shell feh --magick-timeout 1  plot_11.svg &
+    shell feh --magick-timeout 1  plot_10.svg &
+    shell feh --magick-timeout 1  plot_11.svg &
+  end
 end
 .endc
 
