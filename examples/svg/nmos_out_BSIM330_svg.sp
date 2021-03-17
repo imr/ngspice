@@ -81,13 +81,23 @@ if $oscompiled = 1 | $oscompiled = 8
   shell Start plot_4.svg
   shell Start plot_5.svg
 else
+  if $oscompiled = 7
+* macOS (using feh and ImageMagick from homebrew)
+    shell feh --conversion-timeout 1  plot_0.svg &
+    shell feh --conversion-timeout 1  plot_1.svg &
+    shell feh --conversion-timeout 1  plot_2.svg &
+    shell feh --conversion-timeout 1  plot_3.svg &
+    shell feh --conversion-timeout 1  plot_4.svg &
+    shell feh --conversion-timeout 1  plot_5.svg &
+  else
 * for CYGWIN, Linux
-  shell feh --magick-timeout 1  plot_0.svg &
-  shell feh --magick-timeout 1  plot_1.svg &
-  shell feh --magick-timeout 1  plot_2.svg &
-  shell feh --magick-timeout 1  plot_3.svg &
-  shell feh --magick-timeout 1  plot_4.svg &
-  shell feh --magick-timeout 1  plot_5.svg &
+    shell feh --magick-timeout 1  plot_0.svg &
+    shell feh --magick-timeout 1  plot_1.svg &
+    shell feh --magick-timeout 1  plot_2.svg &
+    shell feh --magick-timeout 1  plot_3.svg &
+    shell feh --magick-timeout 1  plot_4.svg &
+    shell feh --magick-timeout 1  plot_5.svg &
+  end
 end
 .endc
 

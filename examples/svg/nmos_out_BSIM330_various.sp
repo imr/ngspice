@@ -66,10 +66,16 @@ hardcopy plot_5.svg vss#branch title 'Drain current versus drain voltage' xlabel
 if $oscompiled = 1 | $oscompiled = 8
   shell Start /B plot_4.svg
   shell Start /B plot_5.svg
-* for CYGWIN, Linux
 else
-  shell feh --magick-timeout 1  plot_4.svg &
-  shell feh --magick-timeout 1  plot_5.svg &
+  if $oscompiled = 7
+* macOS (using feh from homebrew)
+    shell feh --conversion-timeout 1  plot_4.svg &
+    shell feh --conversion-timeout 1  plot_5.svg &
+* for CYGWIN, Linux
+  else
+    shell feh --magick-timeout 1  plot_4.svg &
+    shell feh --magick-timeout 1  plot_5.svg &
+  end
 end
 .endc
 

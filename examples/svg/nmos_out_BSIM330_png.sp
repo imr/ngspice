@@ -34,13 +34,17 @@ set nolegend
 * only the gnuplot window, no gnuplot files
 gnuplot temp vss#branch vss2#branch title 'Drain current versus drain voltage' xlabel 'Drain voltage / V' ylabel 'Drain current / µA'
 
-
-* for MS Windows only
+* MS Windows
 if $oscompiled = 1 | $oscompiled = 8
   shell Start c:\"program files"\irfanview\i_view64.exe plot_1.png
 else
+  if $oscompiled = 7
+* macOS (using feh from homebrew)
+    shell feh --conversion-timeout 1  plot_1.png &
+  else
 * for CYGWIN, Linux
-  shell feh --magick-timeout 1  plot_1.png &
+    shell feh --magick-timeout 1  plot_1.png &
+  end
 end
 .endc
 
