@@ -305,6 +305,7 @@ int PS_NewViewport(GRAPH *graph)
     /* set up a reasonable font */
     fprintf(plotfile, "/%sLatin1 findfont %d scalefont setfont\n\n",
             psfont, (int) (fontsize * scale));
+    tfree(graph->devdep);
     graph->devdep = TMALLOC(PSdevdep, 1);
     graph->n_byte_devdep = sizeof(PSdevdep);
     DEVDEP(graph).lastlinestyle = -1;
