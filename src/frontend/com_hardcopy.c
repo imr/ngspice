@@ -23,7 +23,7 @@
  * it doesn't.  */
 void com_hardcopy(wordlist *wl)
 {
-    char *fname;
+    char *fname = NULL;
     size_t n_byte_fname; /* size of fname in bytes, including null */
     char buf[BSIZE_SP], device[BSIZE_SP];
     bool tempf = FALSE;
@@ -117,7 +117,7 @@ void com_hardcopy(wordlist *wl)
                 n_byte_fname += 3;
             }
         }
-        tempgraph->devdep = fname;
+        tempgraph->devdep = copy(fname);
         tempgraph->n_byte_devdep = n_byte_fname;
 
         if (NewViewport(tempgraph)) {
@@ -150,7 +150,7 @@ void com_hardcopy(wordlist *wl)
                 return;
             }
             tempgraph = CopyGraph(response.reply.graph);
-            tempgraph->devdep = fname;
+            tempgraph->devdep = copy(fname);
             tempgraph->n_byte_devdep = n_byte_fname;
             if (NewViewport(tempgraph)) {
                 DevSwitch(NULL);
