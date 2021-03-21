@@ -117,9 +117,8 @@ inline int substring(const char *sub, const char *str)
 
 #ifdef CIDER
 /* cider integration */ 
-
-int cinprefix(register char *p, register char *s, register int n);
-int cimatch(register char *p, register char *s); 
+int cinprefix(char *p, char *s, int n);
+int cimatch(char *p, char *s); 
 #endif
 
 
