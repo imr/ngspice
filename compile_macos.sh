@@ -50,14 +50,15 @@ if test "$1" = "d"; then
   echo "configuring for 64 bit debug"
   echo
 # You may add  --enable-adms to the following command for adding adms generated devices
-  ../configure --with-x --enable-xspice --enable-cider --with-readline=yes --enable-openmp CFLAGS="-m64 -O0 -g -Wall -I/opt/X11/include/freetype2" LDFLAGS="-m64 -lomp -g"
+# builtin readline not compatible (Big Sur), readline via Homebrew required (in /usr/local/opt)
+  ../configure --with-x --enable-xspice --enable-cider --with-readline=/usr/local/opt --enable-openmp CFLAGS="-m64 -O0 -g -Wall -I/opt/X11/include/freetype2" LDFLAGS="-m64 -lomp -g"
 else
    cd release
    if [ $? -ne 0 ]; then  echo "cd release failed"; exit 1 ; fi
   echo "configuring for 64 bit release"
   echo
 # You may add  --enable-adms to the following command for adding adms generated devices
-  ../configure --with-x --enable-xspice --enable-cider --with-readline=yes --enable-openmp --disable-debug CFLAGS="-m64 -O2 -I/opt/X11/include/freetype2" LDFLAGS="-m64 -lomp"
+  ../configure --with-x --enable-xspice --enable-cider --with-readline=/usr/local/opt --enable-openmp --disable-debug CFLAGS="-m64 -O2 -I/opt/X11/include/freetype2" LDFLAGS="-m64 -lomp"
 fi
 if [ $? -ne 0 ]; then  echo "../configure failed"; exit 1 ; fi
 
