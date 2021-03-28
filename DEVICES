@@ -332,6 +332,7 @@ will be updated every time the device specific code is altered or changed to ref
      - Forward and reverse knee currents
      - Periphery (sidewall) effects
      - Temperature correction of some parameters
+     - Self heating
 
 
 7. Bipolar devices
@@ -716,16 +717,22 @@ will be updated every time the device specific code is altered or changed to ref
        Web site: http://home.hiroshima-u.ac.jp/usdl/HiSIM.html
 
 
-       11.15 VDMOS - Simple PowerMOS model
+ 11.15 VDMOS - Simple PowerMOS model
 
        Ver:    1
        Class:  M
        Level:  -
        Dir:    devices/vdmos
-       Status: TO BE TESTED.
+       Status: o.k.
 
        This is a simplified Power MOS model, derived from MOS1 and
        diode, similar to LTSPICE and SuperSpice VDMOS
+
+       Enhancements over the original model:
+        - Self heating with temp nodes junction and case
+        - Weak inversion
+        - Quasi-saturation
+
 
 12. SOI devices
 
@@ -834,7 +841,7 @@ will be updated every time the device specific code is altered or changed to ref
 
  13.3 PSP MOS Model 103
 
-      Ver:    102.1
+      Ver:    103.1
       Level:  69
       Dir:    devices/adms/psp103
       Status: TO BE TESTED

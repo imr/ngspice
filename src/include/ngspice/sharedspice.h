@@ -1,5 +1,5 @@
 /* header file for shared ngspice */
-/* Copyright 2013 Holger Vogt */
+/* Copyright 2021 Holger Vogt */
 /* Modified BSD license */
 
 /*
@@ -91,7 +91,7 @@ All boolean signals (NG_BOOL) are of type int.
 */
 
 #ifndef NGSPICE_PACKAGE_VERSION
-#define NGSPICE_PACKAGE_VERSION "34+"
+#define NGSPICE_PACKAGE_VERSION "35"
 #endif
 /* we have NG_BOOL instead of BOOL */
 #ifndef HAS_NG_BOOL

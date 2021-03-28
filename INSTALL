@@ -5,7 +5,7 @@ Table of contents
 
   1 Ngspice installation (LINUX)
    1.1 Prerequisites
-   1.2 Install from tarball (e.g. ngspice-34.tar.gz)
+   1.2 Install from tarball (e.g. ngspice-35.tar.gz)
    1.3 Install from git repository
    1.4 Advanced Install
     1.4.1 Most useful options
@@ -38,8 +38,12 @@ This file describes the procedures to install ngspice from sources.
  is needed. Almost any LINUX offers a complete C development environment.
  Ngspice is developed on GNU/Linux with gcc and GNU make.
 
+ Ngspice may be compiled in three different variant, each with its own
+ configure settings. Standard ngsoice executable, ngspice as a shared
+ library and ngspice as a tcl/tk library.
+
  The following software must be installed in your system to compile ngspice:
- bison, flex, X11 headers and libs, Xaw, Xmu, Xext, Xft, FontConfig, 
+ bison, flex, X11 headers and libs, Xaw, Xmu, Xext, Xft, FontConfig,
  Xrender, and freetype headers (e.g. libX11-devel) and libs (e.g. libX11-6),
  and readline.
 
@@ -54,14 +58,14 @@ This file describes the procedures to install ngspice from sources.
  information on ngspice and its usage.
 
 
-1.2 Install from tarball (e.g. ngspice-34.tar.gz)
+1.2 Install from tarball (e.g. ngspice-35.tar.gz)
 
  This covers installation from a release distribution (for example
- ngspice-34.tar.gz, the so called tar ball).
+ ngspice-35.tar.gz, the so called tar ball).
 
  After downloading the tar ball to a local directory unpack it using:
 
- $ tar -zxvf ngspice-34.tar.gz
+ $ tar -zxvf ngspice-35.tar.gz
 
  Now change directories in to the top-level source directory (where this
  INSTALL file can be found).
@@ -137,7 +141,10 @@ This file describes the procedures to install ngspice from sources.
  $ make 2>&1 | tee make.log
  $ sudo make install
 
-A bash script compile_linux.sh is available including all useful options.
+ A bash script compile_linux.sh is available including all useful options.
+
+ The configure settings for the ngspice shared library are:
+ $ ../configure --with-ngshared --enable-xspice --disable-debug --enable-cider --enable-openmp --enable-adms
 
  If a problem is found with the build process, please submit a report to
  the ngspice development team. Please provide information about your system
@@ -218,7 +225,8 @@ A bash script compile_linux.sh is available including all useful options.
         plain ngspice.
 
  --with-editline=yes
-        Enables the use of the BSD editline library (libedit).
+        Enables the use of the BSD editline library (libedit) instaed
+        of readline.
         See http://www.thrysoee.dk/editline/
 
 
@@ -276,8 +284,8 @@ A bash script compile_linux.sh is available including all useful options.
 
  Or on systems that have the `env' program, you can do it like this:
      env CPPFLAGS=-I/usr/local/include LDFLAGS=-s ./configure
-     
- On CentOS with older GCC it might be necessary to add -std=c99 
+
+ On CentOS with older GCC it might be necessary to add -std=c99
  to the CFLAGS in ./compile_linux.sh .
 
 3 Compiling For Multiple Architectures
@@ -417,7 +425,7 @@ A bash script compile_linux.sh is available including all useful options.
  automake, libtool, FLEX and BISON, all available with pacman in MSYSS2).
  Some links are given below which describe the procedures.
 
-     Installing from the tarball, e.g. ngspice-34.tar.gz, is simple: After
+     Installing from the tarball, e.g. ngspice-35.tar.gz, is simple: After
  expanding, you may just run ./compile_min.sh from the ngspice directory.
 
      The default installation location of ngspice is the Windows path
@@ -542,12 +550,20 @@ but may give some hints how to use the ngspice control language.
  example, the German edition is available at no cost from
  https://www.visualstudio.com/de/vs/community/.
 
+ Install flex/bison from https://github.com/lexxmark/winflexbison/releases.
+ When the ngspice sources are installed in D:\myspices\ngspice, then
+ create a directory D:\myspices\flex-bison and expand the contents from
+ https://github.com/lexxmark/winflexbison/releases/download/v2.5.24/win_flex_bison-2.5.24.zip
+ into this directory.
+
  Goto  /ngspice/visualc.
 
  Start MS Visual Studio 2019 by double click onto vngspice.sln.
 
  After MS Visual Studio has opened up, select debug or release version
  by checking 'Build' , 'Configuration Manager', 'Debug' or 'ReleaseOmp'.
+ 32 bit compilation (x86) is possible, but deprecated and will be removed
+ in the near future. 64 bit (x64) is the preferred option.
 
  Start making ngspice (called vngspice.exe) by selecting 'Build' and
  'Rebuild vngspice'.
@@ -575,14 +591,19 @@ but may give some hints how to use the ngspice control language.
 
  If you intend to install vngspice into another directory, e.g. D:\MySpice,
  you have to edit  /visualc/include/config.h and alter the entries:
- #define NGSPICEBINDIR "C:/Spice/bin"
- #define NGSPICEDATADIR "C:/Spice/share/ngspice"
+ #define NGSPICEBINDIR "C:/Spice64/bin"
+ #define NGSPICEDATADIR "C:/Spice64/share/ngspice"
  to
  #define NGSPICEBINDIR "D:/MySpice/bin"
  #define NGSPICEDATADIR "D:/MySpice/share/ngspice"
 
  If the code model files *.cm are not available, you will get warning messages,
  but you may use ngspice in the normal way (of course without XSPICE extensions).
+
+ The ngspice.dll shared library may be made by selecting sharedspice.sln from
+ ngspice/visualc. Code models are not made (see above how to generate them), and
+ ngspice.dll is not installed to anywhere, but (for release) may be found in
+ ngspice\visualc\sharedspice\ReleaseOMP.x64.
 
 
 
@@ -652,6 +673,6 @@ cross-compile-shared.sh.
       ./configure --enable-adms --enable-cider --enable-xspice --enable-openmp --enable-pss --with-readline=yes --enable-debug=no
  6. Compile NGSPICE invoking "make -j4"
  7. Install NGSPICE invoking "make install" or "sudo make install"
- 
+
  A compile script compile_macos.sh contains all necessary steps.
- 
+
