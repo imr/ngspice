@@ -62,24 +62,30 @@ static double opramptime = 0.;
 void com_optran(wordlist* wl) {
     wordlist* wltmp = wl;
     char* stpstr;
-    int err;
+    int err, optrancom;
     /* current circuit */
     if (!ft_curckt) {
         fprintf(cp_err, "Error: no circuit loaded\n");
         return;
     }
     /* wordlist with 6 parameters */
-    ft_curckt->ci_defTask->TSKnoOpIter = strtol(wltmp->wl_word, &stpstr, 10);
+    optrancom = strtol(wltmp->wl_word, &stpstr, 10);
     if ((errno == ERANGE) || (*stpstr != '\0'))
         goto bugquit;
+    if (optrancom == 0)
+        ft_curckt->ci_defTask->TSKnoOpIter = 1;
+    else
+        ft_curckt->ci_defTask->TSKnoOpIter = 0;
     wltmp = wltmp->wl_next;
-    ft_curckt->ci_defTask->TSKnumGminSteps = strtol(wltmp->wl_word, &stpstr, 10);
+    optrancom = strtol(wltmp->wl_word, &stpstr, 10);
     if ((errno == ERANGE) || (*stpstr != '\0'))
         goto bugquit;
+    ft_curckt->ci_defTask->TSKnumGminSteps = optrancom;
     wltmp = wltmp->wl_next;
-    ft_curckt->ci_defTask->TSKnumSrcSteps = strtol(wltmp->wl_word, &stpstr, 10);
+    optrancom = strtol(wltmp->wl_word, &stpstr, 10);
     if ((errno == ERANGE) || (*stpstr != '\0'))
         goto bugquit;
+    ft_curckt->ci_defTask->TSKnumSrcSteps = optrancom;
     wltmp = wltmp->wl_next;
     stpstr = wltmp->wl_word;
     opstepsize = INPevaluate(&stpstr, &err, 1);
