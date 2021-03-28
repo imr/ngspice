@@ -854,6 +854,7 @@ lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3
     <ClInclude Include="..\src\frontend\com_state.h" />
     <ClInclude Include="..\src\frontend\com_strcmp.h" />
     <ClInclude Include="..\src\frontend\com_unset.h" />
+    <ClInclude Include="..\src\frontend\com_wr_ic.h" />
     <ClInclude Include="..\src\frontend\control.h" />
     <ClInclude Include="..\src\frontend\cpitf.h" />
     <ClInclude Include="..\src\frontend\define.h" />
@@ -1453,6 +1454,7 @@ lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3
     <ClCompile Include="..\src\frontend\com_strcmp.c" />
     <ClCompile Include="..\src\frontend\com_sysinfo.c" />
     <ClCompile Include="..\src\frontend\com_unset.c" />
+    <ClCompile Include="..\src\frontend\com_wr_ic.c" />
     <ClCompile Include="..\src\frontend\control.c" />
     <ClCompile Include="..\src\frontend\cpitf.c" />
     <ClCompile Include="..\src\frontend\define.c" />
