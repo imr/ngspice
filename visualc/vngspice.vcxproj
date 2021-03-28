@@ -862,6 +862,7 @@
     <ClInclude Include="..\src\frontend\com_state.h" />
     <ClInclude Include="..\src\frontend\com_strcmp.h" />
     <ClInclude Include="..\src\frontend\com_unset.h" />
+    <ClInclude Include="..\src\frontend\com_wr_ic.h" />
     <ClInclude Include="..\src\frontend\control.h" />
     <ClInclude Include="..\src\frontend\cpitf.h" />
     <ClInclude Include="..\src\frontend\define.h" />
@@ -1452,6 +1453,7 @@
     <ClCompile Include="..\src\frontend\com_measure2.c" />
     <ClCompile Include="..\src\frontend\com_option.c" />
     <ClCompile Include="..\src\frontend\com_plot.c" />
+    <ClCompile Include="..\src\frontend\com_wr_ic.c" />
     <ClCompile Include="..\src\frontend\com_rehash.c" />
     <ClCompile Include="..\src\frontend\com_set.c" />
     <ClCompile Include="..\src\frontend\com_setscale.c" />
