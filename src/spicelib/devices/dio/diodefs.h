@@ -117,6 +117,9 @@ typedef struct sDIOinstance {
     double DIOjunctionSWCap;     /* geometry adjusted junction sidewall capacitance */
     double DIOtRecSatCur; /* temperature adjusted recombination saturation current */
 
+    double DIOcmetal; /* parasitic metal overlap capacitance */
+    double DIOcpoly;  /* parasitic polysilicon overlap capacitance */
+
 /*
  * naming convention:
  * x = vdiode
@@ -235,6 +238,15 @@ typedef struct sDIOmodel {       /* model structure for a diode */
     unsigned DIOrecSatCurGiven : 1;
     unsigned DIOrecEmissionCoeffGiven : 1;
 
+    unsigned DIOlengthMetalGiven : 1;     /* Length of metal capacitor (level=3) */
+    unsigned DIOlengthPolyGiven : 1;      /* Length of polysilicon capacitor (level=3) */
+    unsigned DIOwidthMetalGiven : 1;      /* Width of metal capacitor (level=3) */
+    unsigned DIOwidthPolyGiven : 1;       /* Width of polysilicon capacitor (level=3) */
+    unsigned DIOmetalOxideThickGiven : 1; /* Thickness of the metal to bulk oxide (level=3) */
+    unsigned DIOpolyOxideThickGiven : 1;  /* Thickness of the polysilicon to bulk oxide (level=3) */
+    unsigned DIOmetalMaskOffsetGiven : 1; /* Masking and etching effects in metal (level=3)") */
+    unsigned DIOpolyMaskOffsetGiven : 1;  /* Masking and etching effects in polysilicon (level=3) */
+
     int    DIOlevel;   /* level selector */
     double DIOsatCur;   /* saturation current */
     double DIOsatSWCur;   /* Sidewall saturation current */
@@ -289,6 +301,15 @@ typedef struct sDIOmodel {       /* model structure for a diode */
     double DIObv_max; /* maximum voltage in reverse direction */
     double DIOrecSatCur; /* Recombination saturation current */
     double DIOrecEmissionCoeff; /* Recombination emission coefficient */
+
+    double DIOlengthMetal;     /* Length of metal capacitor (level=3) */
+    double DIOlengthPoly;      /* Length of polysilicon capacitor (level=3) */
+    double DIOwidthMetal;      /* Width of metal capacitor (level=3) */
+    double DIOwidthPoly;       /* Width of polysilicon capacitor (level=3) */
+    double DIOmetalOxideThick; /* Thickness of the metal to bulk oxide (level=3) */
+    double DIOpolyOxideThick;  /* Thickness of the polysilicon to bulk oxide (level=3) */
+    double DIOmetalMaskOffset; /* Masking and etching effects in metal (level=3)") */
+    double DIOpolyMaskOffset;  /* Masking and etching effects in polysilicon (level=3) */
 
 } DIOmodel;
 
@@ -372,6 +393,15 @@ enum {
     DIO_MOD_BV_MAX,
     DIO_MOD_ISR,
     DIO_MOD_NR,
+
+    DIO_MOD_LM,
+    DIO_MOD_LP,
+    DIO_MOD_WM,
+    DIO_MOD_WP,
+    DIO_MOD_XOM,
+    DIO_MOD_XOI,
+    DIO_MOD_XM,
+    DIO_MOD_XP,
 };
 
 #include "dioext.h"

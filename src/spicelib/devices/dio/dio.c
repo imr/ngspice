@@ -109,6 +109,15 @@ IFparm DIOmPTable[] = { /* model parameters */
  IOP( "isr",  DIO_MOD_ISR,  IF_REAL, "Recombination saturation current"),
  IOP( "nr",   DIO_MOD_NR,   IF_REAL, "Recombination current emission coefficient"),
 
+ IOP( "lm",  DIO_MOD_LM,  IF_REAL, "Length of metal capacitor (level=3)"),
+ IOP( "lp",  DIO_MOD_LP,  IF_REAL, "Length of polysilicon capacitor (level=3)"),
+ IOP( "wm",  DIO_MOD_WM,  IF_REAL, "Width of metal capacitor (level=3)"),
+ IOP( "wp",  DIO_MOD_WP,  IF_REAL, "Width of polysilicon capacitor (level=3)"),
+ IOP( "xom", DIO_MOD_XOM, IF_REAL, "Thickness of the metal to bulk oxide (level=3)"),
+ IOP( "xoi", DIO_MOD_XOI, IF_REAL, "Thickness of the polysilicon to bulk oxide (level=3)"),
+ IOP( "xm",  DIO_MOD_XM,  IF_REAL, "Masking and etching effects in metal (level=3)"),
+ IOP( "xp",  DIO_MOD_XP,  IF_REAL, "Masking and etching effects in polysilicon (level=3)"),
+
  IP( "d",    DIO_MOD_D,   IF_FLAG, "Diode model")
 };
 

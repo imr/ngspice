@@ -15,14 +15,20 @@ Modified by Paolo Nenzi 2003 and Dietmar Warning 2012
 #include "diodefs.h"
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
+#include "ngspice/fteext.h"
 
 int
 DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 {
+    double scale;
+
     DIOmodel *model = (DIOmodel*)inModel;
     DIOinstance *here;
     int error;
     CKTnode *tmp;
+
+    if (!cp_getvar("scale", CP_REAL, &scale, 0))
+        scale = 1;
 
     /*  loop through all the diode models */
     for( ; model != NULL; model = DIOnextModel(model)) {
@@ -166,6 +172,31 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             model->DIOrecSatCur = 1e-14;
         }
 
+        if(!model->DIOlengthMetal) {
+            model->DIOlengthMetal = 0.0;
+        }
+        if(!model->DIOlengthPoly) {
+            model->DIOlengthPoly = 0.0;
+        }
+        if(!model->DIOwidthMetal) {
+            model->DIOwidthMetal = 0.0;
+        }
+        if(!model->DIOwidthPoly) {
+            model->DIOwidthPoly = 0.0;
+        }
+        if(!model->DIOmetalOxideThick) {
+            model->DIOmetalOxideThick = 10e3;
+        }
+        if(!model->DIOpolyOxideThick) {
+            model->DIOpolyOxideThick = 10e3;
+        }
+        if(!model->DIOmetalMaskOffset) {
+            model->DIOmetalMaskOffset = 0.0;
+        }
+        if(!model->DIOpolyMaskOffset) {
+            model->DIOpolyMaskOffset = 0.0;
+        }
+
         /* loop through all the instances of the model */
         for (here = DIOinstances(model); here != NULL ;
                 here=DIOnextInstance(here)) {
@@ -200,6 +231,13 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             here->DIOreverseKneeCurrent = model->DIOreverseKneeCurrent * here->DIOarea;
             here->DIOjunctionCap = model->DIOjunctionCap * here->DIOarea;
             here->DIOjunctionSWCap = model->DIOjunctionSWCap * here->DIOpj;
+
+            here->DIOcmetal = 3.9 * 8.854214871e-12 / model->DIOmetalOxideThick 
+                              * (model->DIOwidthMetal * scale + model->DIOmetalMaskOffset) 
+                              * (model->DIOlengthMetal * scale + model->DIOmetalMaskOffset);
+            here->DIOcpoly = 3.9 * 8.854214871e-12 / model->DIOpolyOxideThick 
+                              * (model->DIOwidthPoly * scale + model->DIOpolyMaskOffset) 
+                              * (model->DIOlengthPoly * scale + model->DIOpolyMaskOffset);
 
             here->DIOstate = *states;
             *states += DIOnumStates;
