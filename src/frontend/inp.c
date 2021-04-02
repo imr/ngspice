@@ -1358,6 +1358,10 @@ inp_dodeck(
         }
     } // if (!noparse)  . . .
 
+    /* If option cshunt is given, add capacitors to each voltage node */
+    if (ft_curckt->ci_defTask->TSKcshunt > 0.)
+        INPpas4(ckt, tab);
+
     /* add title of deck to data base */
     /* this won't work if the title is the empty string
     *    cp_addkword() doesn't work for tt === ""

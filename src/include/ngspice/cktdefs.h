@@ -215,6 +215,7 @@ struct CKTcircuit {
 #endif /* NEWTRUNC */
     double CKTgmin;             /* .options GMIN */
     double CKTgshunt;           /* .options RSHUNT */
+    double CKTcshunt;           /* .options CSHUNT */
     double CKTdelmin;           /* minimum time step for tran analysis */
     double CKTtrtol;            /* .options TRTOL */
     double CKTfinalTime;        /* TSTOP */
