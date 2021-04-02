@@ -71,6 +71,7 @@ CKTdoJob(CKTcircuit *ckt, int reset, TSKtask *task)
     ckt->CKTvoltTol  = task->TSKvoltTol;
     ckt->CKTgmin  = task->TSKgmin;
     ckt->CKTgshunt  = task->TSKgshunt;
+    ckt->CKTcshunt  = task->TSKcshunt;
     ckt->CKTdelmin  = task->TSKdelmin;
     ckt->CKTtrtol  = task->TSKtrtol; 
 #ifdef XSPICE

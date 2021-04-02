@@ -172,6 +172,9 @@ CKTsetOpt(CKTcircuit *ckt, JOB *anal, int opt, IFvalue *val)
     case OPT_EPSMIN:
         task->TSKepsmin = val->rValue;
         break;
+    case OPT_CSHUNT:
+        task->TSKcshunt = val->rValue;
+        break;
 /* gtri - begin - wbk - add new options */
 #ifdef XSPICE
     case OPT_EVT_MAX_OP_ALTER:
@@ -238,6 +241,7 @@ static IFparm OPTtbl[] = {
  { "rshunt", OPT_ENH_RSHUNT, IF_SET|IF_REAL, "Shunt resistance from analog nodes to ground" },
 /* gtri - end   - wbk - add new options */
 #endif
+ { "cshunt", OPT_CSHUNT, IF_SET|IF_REAL, "Shunt capacitor from analog nodes to ground" },
  { "noopiter", OPT_NOOPITER,IF_SET|IF_FLAG,"Go directly to gmin stepping" },
  { "gmin", OPT_GMIN,IF_SET|IF_REAL,"Minimum conductance" },
  { "gshunt", OPT_GSHUNT,IF_SET|IF_REAL,"Shunt conductance" },

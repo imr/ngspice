@@ -136,6 +136,7 @@ void INPpas1(CKTcircuit *, struct card *, INPtables *);
 void INPpas2(CKTcircuit *, struct card *, INPtables *, TSKtask *);
 void INPpas3(
         CKTcircuit *, struct card *, INPtables *, TSKtask *, IFparm *, int);
+void INPpas4(CKTcircuit *, INPtables *);
 int INPpName(char *, IFvalue *, CKTcircuit *, int, GENinstance *);
 int INPtermInsert(CKTcircuit *, char **, INPtables *, CKTnode **);
 int INPtermSearch(CKTcircuit*, char**, INPtables*, CKTnode**);

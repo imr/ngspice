@@ -51,6 +51,7 @@ struct TSKtask {
 #endif /* NEWTRUNC */
     double TSKgmin;
     double TSKgshunt;   /* shunt conductance (CKTdiagGmin) */
+    double TSKcshunt;   /* shunt capacitor to ground */
     double TSKdelmin;
     double TSKtrtol;
     double TSKdefaultMosM;
