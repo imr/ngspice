@@ -349,7 +349,8 @@ next1:      if (model->DIOsatSWCurGiven) {              /* sidewall current */
 
                 diffcap = here->DIOtTransitTime*gdb;
                 diffcapSW = here->DIOtTransitTime*gdsw;
-                capd = diffcap + diffcapSW + deplcap + deplcapSW;
+
+                capd = diffcap + diffcapSW + deplcap + deplcapSW + here->DIOcmetal + here->DIOcpoly;
 
                 here->DIOcap = capd;
 
