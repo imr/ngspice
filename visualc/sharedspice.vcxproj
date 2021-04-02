@@ -882,6 +882,7 @@
     <ClInclude Include="..\src\spicelib\parser\inppas1.h" />
     <ClInclude Include="..\src\spicelib\parser\inppas2.h" />
     <ClInclude Include="..\src\spicelib\parser\inppas3.h" />
+    <ClInclude Include="..\src\spicelib\parser\inppas4.h" />
     <ClInclude Include="..\src\spicelib\parser\inpxx.h" />
     <ClInclude Include=".\src\include\inttypes.h" />
     <ClInclude Include=".\src\include\ngspice\config.h" />
@@ -2193,6 +2194,7 @@
     <ClCompile Include="..\src\spicelib\parser\inppas1.c" />
     <ClCompile Include="..\src\spicelib\parser\inppas2.c" />
     <ClCompile Include="..\src\spicelib\parser\inppas3.c" />
+    <ClCompile Include="..\src\spicelib\parser\inppas4.c" />
     <ClCompile Include="..\src\spicelib\parser\inppname.c" />
     <ClCompile Include="..\src\spicelib\parser\inpptree.c" />
     <ClCompile Include="..\src\spicelib\parser\inpsymt.c" />
