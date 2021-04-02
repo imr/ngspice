@@ -86,6 +86,7 @@ CKTnewTask(CKTcircuit *ckt, TSKtask **taskPtr, IFuid taskName, TSKtask **defPtr)
         /* use the application defaults */
         tsk->TSKgmin            = 1e-12;
         tsk->TSKgshunt          = 0;
+        tsk->TSKcshunt          = -1;
         tsk->TSKabstol          = 1e-12;
         tsk->TSKreltol          = 1e-3;
         tsk->TSKchgtol          = 1e-14;
