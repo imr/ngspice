@@ -158,17 +158,17 @@ if_inpdeck(struct card *deck, INPtables **tab)
 
     ft_curckt->ci_curTask = ft_curckt->ci_defTask;
 
-    /* reset the model table, will be filled in anew in INPpas1() */
+    /* Parse the .model lines. Enter the model into the global model table modtab. */
     modtab = NULL;
     INPpas1(ckt, deck->nextcard, *tab);
     /* store the new model table in the current circuit */
     ft_curckt->ci_modtab = modtab;
+
+    /* Scan through the instance lines and parse the circuit. */
     INPpas2(ckt, deck->nextcard, *tab, ft_curckt->ci_defTask);
 
-    /* INPpas2 has been modified to ignore .NODESET and .IC
-     * cards. These are left till INPpas3 so that we can check for
-     * nodeset/ic of non-existant nodes.  */
-
+    /* Fill in .NODESET and .IC data.
+     * nodeset/ic of non-existent nodes is rejected.  */
     INPpas3(ckt, deck->nextcard,
             *tab, ft_curckt->ci_defTask, ft_sim->nodeParms,
             ft_sim->numNodeParms);
