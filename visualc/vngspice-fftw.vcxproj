@@ -1328,6 +1328,7 @@ lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3
     <ClInclude Include="..\src\spicelib\parser\inppas1.h" />
     <ClInclude Include="..\src\spicelib\parser\inppas2.h" />
     <ClInclude Include="..\src\spicelib\parser\inppas3.h" />
+    <ClInclude Include="..\src\spicelib\parser\inppas4.h" />
     <ClInclude Include="..\src\spicelib\parser\inpxx.h" />
     <ClInclude Include="..\src\winmain.h" />
     <ClInclude Include=".\src\include\inttypes.h" />
@@ -2647,6 +2648,7 @@ lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3
     <ClCompile Include="..\src\spicelib\parser\inppas1.c" />
     <ClCompile Include="..\src\spicelib\parser\inppas2.c" />
     <ClCompile Include="..\src\spicelib\parser\inppas3.c" />
+    <ClCompile Include="..\src\spicelib\parser\inppas4.c" />
     <ClCompile Include="..\src\spicelib\parser\inppname.c" />
     <ClCompile Include="..\src\spicelib\parser\inpptree.c" />
     <ClCompile Include="..\src\spicelib\parser\inpsymt.c" />
