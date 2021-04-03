@@ -149,7 +149,6 @@ char *INPfindVer(char *line, char *version);
 int INPgetStr(char **line, char **token, int gobble);
 int INPgetTitle(CKTcircuit **ckt, struct card **data);
 int INPgetUTok(char **line, char **token, int gobble);
-int INPgetU2Tok(char **line, char **token, int gobble);
 int INPremTerm(char *token, INPtables *tab);
 
 
