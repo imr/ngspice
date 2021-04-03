@@ -57,6 +57,7 @@ CKTnewTask(CKTcircuit *ckt, TSKtask **taskPtr, IFuid taskName, TSKtask **defPtr)
         tsk->TSKvoltTol         = def->TSKvoltTol;
         tsk->TSKgmin            = def->TSKgmin;
         tsk->TSKgshunt          = def->TSKgshunt;
+        tsk->TSKcshunt          = def->TSKcshunt;
         /* delmin */
         tsk->TSKtrtol           = def->TSKtrtol;
         tsk->TSKdefaultMosM     = def->TSKdefaultMosM;

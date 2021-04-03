@@ -25,7 +25,7 @@ Author: 1985 Thomas L. Quarles
 
 /* pass 4 - If option cshunt is given,
 add a capacitor to each voltage node */
-void INPpas4(CKTcircuit *ckt, INPtables * tab)
+void INPpas4(CKTcircuit *ckt, INPtables *tab)
 {
     CKTnode* node;
     int mytype = -1;
@@ -34,6 +34,11 @@ void INPpas4(CKTcircuit *ckt, INPtables * tab)
     GENinstance* fast;   /* pointer to the actual instance */
     IFvalue ptemp;       /* a value structure to package capacitance into */
     int nadded = 0;      /* capacitors added */
+    double csval = 0.;        /* cshunt capacitors value */
+
+    /* get the cshunt value */
+    if (!cp_getvar("cshunt_value", CP_REAL, &csval, 0))
+        return;
 
     if ((mytype = INPtypelook("Capacitor")) < 0) {
         fprintf(stderr, "Device type Capacitor not supported by this binary\n");
@@ -57,7 +62,7 @@ void INPpas4(CKTcircuit *ckt, INPtables * tab)
             (*(ft_sim->bindNode))(ckt, fast, 1, node);
 
             /* value of the capacitance */
-            ptemp.rValue = ft_curckt->ci_defTask->TSKcshunt;
+            ptemp.rValue = csval;
             error = INPpName("capacitance", &ptemp, ckt, mytype, fast);
 
             /* add device numbers for statistics */
@@ -68,5 +73,5 @@ void INPpas4(CKTcircuit *ckt, INPtables * tab)
             nadded++;
         }
     }
-    printf("Option cshunt: %d capacitors added with %g F each\n", nadded, ft_curckt->ci_defTask->TSKcshunt);
+    printf("Option cshunt: %d capacitors added with %g F each\n", nadded, csval);
 }
