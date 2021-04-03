@@ -394,49 +394,66 @@ inp_remove_recent(void) {
         line_free(recent_deck, TRUE);
 }
 
-/* check for .option seed=[val|random] and set the random number generator */
+
+/* Check for .option seed=[val|random] and set the random number generator.
+   Check for .option cshunt=val and set a global variable
+   Input is the option deck (already sorted for .option) */
 void
-eval_seed_opt(struct card *deck)
+eval_opt(struct card* deck)
 {
-    struct card *card;
+    struct card* card;
     bool has_seed = FALSE;
+    bool has_cshunt = FALSE;
 
     for (card = deck; card; card = card->nextcard) {
-        char *line = card->line;
-        if (*line == '*')
-            continue;
-        if (ciprefix(".option", line) || ciprefix("option", line)) {
-            /* option seedinfo */
-            if (strstr(line, "seedinfo"))
-                setseedinfo();
-            char *begtok = strstr(line, "seed=");
-            if (begtok)
-                begtok = &begtok[5]; /*skip seed=*/
-            if (begtok) {
-                if (has_seed)
-                    fprintf(cp_err, "Warning: Multiple 'option seed=val|random' found!\n");
-                char *token = gettok(&begtok);
-                /* option seed=random [seed='random'] */
-                if (eq(token, "random") || eq(token, "{random}")) {
-                    time_t acttime = time(NULL);
-                    /* get random value from time in seconds since 1.1.1970 */
-                    int rseed = (int)(acttime - 1470000000);
-                    cp_vset("rndseed", CP_NUM, &rseed);
+        char* line = card->line;
+
+        if (strstr(line, "seedinfo"))
+            setseedinfo();
+        char* begtok = strstr(line, "seed=");
+        if (begtok)
+            begtok = &begtok[5]; /*skip seed=*/
+        if (begtok) {
+            if (has_seed)
+                fprintf(cp_err, "Warning: Multiple 'option seed=val|random' found!\n");
+            char* token = gettok(&begtok);
+            /* option seed=random [seed='random'] */
+            if (eq(token, "random") || eq(token, "{random}")) {
+                time_t acttime = time(NULL);
+                /* get random value from time in seconds since 1.1.1970 */
+                int rseed = (int)(acttime - 1600000000);
+                cp_vset("rndseed", CP_NUM, &rseed);
+                com_sseed(NULL);
+                has_seed = TRUE;
+            }
+            /* option seed=val*/
+            else {
+                int sr = atoi(token);
+                if (sr <= 0)
+                    fprintf(cp_err, "Warning: Cannot convert 'option seed=%s' to seed value, skipped!\n", token);
+                else {
+                    cp_vset("rndseed", CP_NUM, &sr);
                     com_sseed(NULL);
                     has_seed = TRUE;
                 }
-                /* option seed=val*/
-                else {
-                    int sr = atoi(token);
-                    if (sr <= 0)
-                        fprintf(cp_err, "Warning: Cannot convert 'option seed=%s' to seed value, skipped!\n", token);
-                    else {
-                        cp_vset("rndseed", CP_NUM, &sr);
-                        com_sseed(NULL);
-                        has_seed = TRUE;
-                    }
-                }
-                tfree(token);
+            }
+            tfree(token);
+        }
+
+        begtok = strstr(line, "cshunt=");
+        if (begtok)
+            begtok = &begtok[7]; /*skip cshunt=*/
+        if (begtok) {
+            int err = 0;
+            if (has_cshunt)
+                fprintf(cp_err, "Warning: Multiple '.option cshunt=val' found!\n");
+            /* option cshunt=val*/
+            double sr = INPevaluate(&begtok, &err, 0);
+            if (sr <= 0 || err)
+                fprintf(cp_err, "Warning: Cannot convert 'option cshunt=%s' to capacitor value, skipped!\n", begtok);
+            else {
+                cp_vset("cshunt_value", CP_REAL, &sr);
+                has_cshunt = TRUE;
             }
         }
     }
@@ -483,8 +500,6 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
     if (fp || intfile) {
         deck = inp_readall(fp, dir_name, comfile, intfile, &expr_w_temper);
 
-        /* here we check for .option seed=[val|random] and set the random number generator */
-        eval_seed_opt(deck);
         /* files starting with *ng_script are user supplied command files */
         if (deck && ciprefix("*ng_script", deck->line))
             comfile = TRUE;
@@ -557,7 +572,9 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
         /* Extract the .option lines from the deck into 'options',
            and remove them from the deck. */
         options = inp_getopts(deck);
-
+        /* Check for .option seed=[val|random] and set the random number generator.
+           Check for .option cshunt=val and set a global variable cshunt_value */
+        eval_opt(options);
         /* copy a deck before subckt substitution. */
         realdeck = inp_deckcopy(deck);
 
@@ -1357,10 +1374,6 @@ inp_dodeck(
             } // switch  . . .
         }
     } // if (!noparse)  . . .
-
-    /* If option cshunt is given, add capacitors to each voltage node */
-    if (ft_curckt->ci_defTask->TSKcshunt > 0.)
-        INPpas4(ckt, tab);
 
     /* add title of deck to data base */
     /* this won't work if the title is the empty string
