@@ -172,28 +172,28 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             model->DIOrecSatCur = 1e-14;
         }
 
-        if(!model->DIOlengthMetal) {
+        if(!model->DIOlengthMetalGiven) {
             model->DIOlengthMetal = 0.0;
         }
-        if(!model->DIOlengthPoly) {
+        if(!model->DIOlengthPolyGiven) {
             model->DIOlengthPoly = 0.0;
         }
-        if(!model->DIOwidthMetal) {
+        if(!model->DIOwidthMetalGiven) {
             model->DIOwidthMetal = 0.0;
         }
-        if(!model->DIOwidthPoly) {
+        if(!model->DIOwidthPolyGiven) {
             model->DIOwidthPoly = 0.0;
         }
-        if(!model->DIOmetalOxideThick) {
-            model->DIOmetalOxideThick = 10e3;
+        if(!model->DIOmetalOxideThickGiven) {
+            model->DIOmetalOxideThick = 1e-06; /* m */
         }
-        if(!model->DIOpolyOxideThick) {
-            model->DIOpolyOxideThick = 10e3;
+        if(!model->DIOpolyOxideThickGiven) {
+            model->DIOpolyOxideThick = 1e-06; /* m */
         }
-        if(!model->DIOmetalMaskOffset) {
+        if(!model->DIOmetalMaskOffsetGiven) {
             model->DIOmetalMaskOffset = 0.0;
         }
-        if(!model->DIOpolyMaskOffset) {
+        if(!model->DIOpolyMaskOffsetGiven) {
             model->DIOpolyMaskOffset = 0.0;
         }
 
@@ -232,10 +232,10 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             here->DIOjunctionCap = model->DIOjunctionCap * here->DIOarea;
             here->DIOjunctionSWCap = model->DIOjunctionSWCap * here->DIOpj;
 
-            here->DIOcmetal = 3.9 * 8.854214871e-12 / model->DIOmetalOxideThick 
+            here->DIOcmetal = CONSTepsSiO2 / model->DIOmetalOxideThick 
                               * (model->DIOwidthMetal * scale + model->DIOmetalMaskOffset) 
                               * (model->DIOlengthMetal * scale + model->DIOmetalMaskOffset);
-            here->DIOcpoly = 3.9 * 8.854214871e-12 / model->DIOpolyOxideThick 
+            here->DIOcpoly = CONSTepsSiO2 / model->DIOpolyOxideThick 
                               * (model->DIOwidthPoly * scale + model->DIOpolyMaskOffset) 
                               * (model->DIOlengthPoly * scale + model->DIOpolyMaskOffset);
 
