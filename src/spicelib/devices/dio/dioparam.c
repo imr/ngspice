@@ -67,6 +67,24 @@ DIOparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
         case DIO_AREA_SENS:
             here->DIOsenParmNo = value->iValue;
             break;
+
+        case DIO_LM:
+            here->DIOlengthMetal = value->rValue * scale;
+            here->DIOlengthMetalGiven = TRUE;
+            break;
+        case DIO_LP:
+            here->DIOlengthPoly = value->rValue * scale;
+            here->DIOlengthPolyGiven = TRUE;
+            break;
+        case DIO_WM:
+            here->DIOwidthMetal = value->rValue * scale;
+            here->DIOwidthMetalGiven = TRUE;
+            break;
+        case DIO_WP:
+            here->DIOwidthPoly = value->rValue * scale;
+            here->DIOwidthPolyGiven = TRUE;
+            break;
+
         default:
             return(E_BADPARM);
     }

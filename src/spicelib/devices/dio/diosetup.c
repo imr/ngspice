@@ -20,15 +20,10 @@ Modified by Paolo Nenzi 2003 and Dietmar Warning 2012
 int
 DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 {
-    double scale;
-
     DIOmodel *model = (DIOmodel*)inModel;
     DIOinstance *here;
     int error;
     CKTnode *tmp;
-
-    if (!cp_getvar("scale", CP_REAL, &scale, 0))
-        scale = 1;
 
     /*  loop through all the diode models */
     for( ; model != NULL; model = DIOnextModel(model)) {
@@ -221,23 +216,41 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
             here->DIOarea = here->DIOarea * here->DIOm;
             here->DIOpj = here->DIOpj * here->DIOm;
+            here->DIOcmetal = 0.0; 
+            here->DIOcpoly = 0.0; 
             if (model->DIOlevel == 3) {
+                double wm, lm, wp, lp;
                 if((here->DIOwGiven) && (here->DIOlGiven))  {
                     here->DIOarea = here->DIOw * here->DIOl * here->DIOm;
                     here->DIOpj = (2 * here->DIOw + 2 * here->DIOl) * here->DIOm;
                 }
+                if (here->DIOwidthMetalGiven) 
+                    wm = here->DIOwidthMetal;
+                else
+                    wm = model->DIOwidthMetal;
+                if (here->DIOlengthMetalGiven) 
+                    lm = here->DIOlengthMetal;
+                else
+                    lm = model->DIOlengthMetal;
+                if (here->DIOwidthPolyGiven) 
+                    wp = here->DIOwidthPoly;
+                else
+                    wp = model->DIOwidthPoly;
+                if (here->DIOlengthPolyGiven) 
+                    lp = here->DIOlengthPoly;
+                else
+                    lp = model->DIOlengthPoly;
+                here->DIOcmetal = CONSTepsSiO2 / model->DIOmetalOxideThick  * here->DIOm
+                                  * (wm + model->DIOmetalMaskOffset) 
+                                  * (lm + model->DIOmetalMaskOffset);
+                here->DIOcpoly = CONSTepsSiO2 / model->DIOpolyOxideThick  * here->DIOm
+                                  * (wp + model->DIOpolyMaskOffset) 
+                                  * (lp + model->DIOpolyMaskOffset);
             }
             here->DIOforwardKneeCurrent = model->DIOforwardKneeCurrent * here->DIOarea;
             here->DIOreverseKneeCurrent = model->DIOreverseKneeCurrent * here->DIOarea;
             here->DIOjunctionCap = model->DIOjunctionCap * here->DIOarea;
             here->DIOjunctionSWCap = model->DIOjunctionSWCap * here->DIOpj;
-
-            here->DIOcmetal = CONSTepsSiO2 / model->DIOmetalOxideThick 
-                              * (model->DIOwidthMetal * scale + model->DIOmetalMaskOffset) 
-                              * (model->DIOlengthMetal * scale + model->DIOmetalMaskOffset);
-            here->DIOcpoly = CONSTepsSiO2 / model->DIOpolyOxideThick 
-                              * (model->DIOwidthPoly * scale + model->DIOpolyMaskOffset) 
-                              * (model->DIOlengthPoly * scale + model->DIOpolyMaskOffset);
 
             here->DIOstate = *states;
             *states += DIOnumStates;
