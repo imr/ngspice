@@ -76,11 +76,21 @@ typedef struct sDIOinstance {
     unsigned DIOtempGiven : 1;  /* flag to indicate temperature was specified */
     unsigned DIOdtempGiven : 1; /* flag to indicate dtemp given */
 
+    unsigned DIOlengthMetalGiven : 1; /* Length of metal capacitor (level=3) */
+    unsigned DIOlengthPolyGiven : 1;  /* Length of polysilicon capacitor (level=3) */
+    unsigned DIOwidthMetalGiven : 1;  /* Width of metal capacitor (level=3) */
+    unsigned DIOwidthPolyGiven : 1;   /* Width of polysilicon capacitor (level=3) */
+
     double DIOarea;     /* area factor for the diode */
     double DIOpj;       /* perimeter for the diode */
     double DIOw;        /* width for the diode */
     double DIOl;        /* length for the diode */
     double DIOm;        /* multiplier for the diode */
+
+    double DIOlengthMetal;   /* Length of metal capacitor (level=3) */
+    double DIOlengthPoly;    /* Length of polysilicon capacitor (level=3) */
+    double DIOwidthMetal;    /* Width of metal capacitor (level=3) */
+    double DIOwidthPoly;     /* Width of polysilicon capacitor (level=3) */
 
     double DIOinitCond;      /* initial condition */
     double DIOtemp;          /* temperature of the instance */
@@ -338,6 +348,10 @@ enum {
     DIO_L,
     DIO_M,
     DIO_DTEMP,
+    DIO_LM,
+    DIO_LP,
+    DIO_WM,
+    DIO_WP,
 };
 
 /* model parameters */

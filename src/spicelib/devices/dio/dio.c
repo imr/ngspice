@@ -19,6 +19,10 @@ IFparm DIOpTable[] = { /* parameters */
  IOPU("w",     DIO_W,     IF_REAL, "Diode width"),
  IOPU("l",     DIO_L,     IF_REAL, "Diode length"),
  IOPU("m",     DIO_M,     IF_REAL, "Multiplier"),
+ IOPU("lm",    DIO_LM,    IF_REAL, "Length of metal capacitor (level=3)"),
+ IOPU("lp",    DIO_LP,    IF_REAL, "Length of polysilicon capacitor (level=3)"),
+ IOPU("wm",    DIO_WM,    IF_REAL, "Width of metal capacitor (level=3)"),
+ IOPU("wp",    DIO_WP,    IF_REAL, "Width of polysilicon capacitor (level=3)"),
 
  IP("sens_area",DIO_AREA_SENS,IF_FLAG,"flag to request sensitivity WRT area"),
  OP("vd",      DIO_VOLTAGE,IF_REAL, "Diode voltage"),
