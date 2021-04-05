@@ -19,14 +19,9 @@ Modified by Paolo Nenzi 2003 and Dietmar Warning 2012
 int
 DIOparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 {
-    double scale;
-
     DIOinstance *here = (DIOinstance*)inst;
 
     NG_IGNORE(select);
-
-    if (!cp_getvar("scale", CP_REAL, &scale, 0))
-        scale = 1;
 
     switch(param) {
         case DIO_AREA:
@@ -38,11 +33,11 @@ DIOparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             here->DIOpjGiven = TRUE;
             break;
         case DIO_W:
-            here->DIOw = value->rValue * scale;
+            here->DIOw = value->rValue;
             here->DIOwGiven = TRUE;
             break;
         case DIO_L:
-            here->DIOl = value->rValue * scale;
+            here->DIOl = value->rValue;
             here->DIOlGiven = TRUE;
             break;
         case DIO_M:
@@ -69,19 +64,19 @@ DIOparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
             break;
 
         case DIO_LM:
-            here->DIOlengthMetal = value->rValue * scale;
+            here->DIOlengthMetal = value->rValue;
             here->DIOlengthMetalGiven = TRUE;
             break;
         case DIO_LP:
-            here->DIOlengthPoly = value->rValue * scale;
+            here->DIOlengthPoly = value->rValue;
             here->DIOlengthPolyGiven = TRUE;
             break;
         case DIO_WM:
-            here->DIOwidthMetal = value->rValue * scale;
+            here->DIOwidthMetal = value->rValue;
             here->DIOwidthMetalGiven = TRUE;
             break;
         case DIO_WP:
-            here->DIOwidthPoly = value->rValue * scale;
+            here->DIOwidthPoly = value->rValue;
             here->DIOwidthPolyGiven = TRUE;
             break;
 
