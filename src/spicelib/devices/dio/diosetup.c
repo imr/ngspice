@@ -24,6 +24,10 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
     DIOinstance *here;
     int error;
     CKTnode *tmp;
+    double scale;
+
+    if (!cp_getvar("scale", CP_REAL, &scale, 0))
+        scale = 1;
 
     /*  loop through all the diode models */
     for( ; model != NULL; model = DIOnextModel(model)) {
@@ -224,6 +228,8 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                     here->DIOarea = here->DIOw * here->DIOl * here->DIOm;
                     here->DIOpj = (2 * here->DIOw + 2 * here->DIOl) * here->DIOm;
                 }
+                here->DIOarea = here->DIOarea * scale * scale;
+                here->DIOpj = here->DIOpj * scale;
                 if (here->DIOwidthMetalGiven) 
                     wm = here->DIOwidthMetal;
                 else
@@ -241,11 +247,11 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 else
                     lp = model->DIOlengthPoly;
                 here->DIOcmetal = CONSTepsSiO2 / model->DIOmetalOxideThick  * here->DIOm
-                                  * (wm + model->DIOmetalMaskOffset) 
-                                  * (lm + model->DIOmetalMaskOffset);
+                                  * (wm * scale + model->DIOmetalMaskOffset) 
+                                  * (lm * scale + model->DIOmetalMaskOffset);
                 here->DIOcpoly = CONSTepsSiO2 / model->DIOpolyOxideThick  * here->DIOm
-                                  * (wp + model->DIOpolyMaskOffset) 
-                                  * (lp + model->DIOpolyMaskOffset);
+                                  * (wp * scale + model->DIOpolyMaskOffset) 
+                                  * (lp * scale + model->DIOpolyMaskOffset);
             }
             here->DIOforwardKneeCurrent = model->DIOforwardKneeCurrent * here->DIOarea;
             here->DIOreverseKneeCurrent = model->DIOreverseKneeCurrent * here->DIOarea;
