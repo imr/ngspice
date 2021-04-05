@@ -761,32 +761,58 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             if (newcompat.hs || newcompat.spe) {
                 struct card* scan;
                 double dscale = 1;
-                /* from .options */
-                for (scan = options; scan; scan = scan->nextcard) {
-                    char* tmpscale = strstr(scan->line, "scale=");
-                    if (tmpscale) {
-                        int err;
-                        tmpscale = tmpscale + 6;
-                        dscale = INPevaluate(&tmpscale, &err, 1);
-                        if (err == 0)
-                            cp_vset("scale", CP_REAL, &dscale);
-                        else
-                            fprintf(stderr, "\nError: Could not set 'scale' variable\n");
-                        break;
-                    }
-                }
-                /* from options in a .control section */
+                /* from options in a script */
                 for (scan = com_options; scan; scan = scan->nextcard) {
                     char* tmpscale = strstr(scan->line, "scale=");
                     if (tmpscale) {
                         int err;
                         tmpscale = tmpscale + 6;
                         dscale = INPevaluate(&tmpscale, &err, 1);
-                        if (err == 0)
+                        if (err == 0) {
                             cp_vset("scale", CP_REAL, &dscale);
+                            printf("option SCALE: Scale set to %g for instance and model parameters\n", dscale);
+                        }
                         else
                             fprintf(stderr, "\nError: Could not set 'scale' variable\n");
-                        break;
+                    }
+                    tmpscale = strstr(scan->line, "scalm=");
+                    if (tmpscale) {
+                        int err;
+                        tmpscale = tmpscale + 6;
+                        dscale = INPevaluate(&tmpscale, &err, 1);
+                        if (err == 0) {
+                            cp_vset("scalm", CP_REAL, &dscale);
+                            fprintf(stderr, "Warning: option SCALM is not supported.\n");
+                        }
+                        else
+                            fprintf(stderr, "\nError: Could not set 'scalm' variable\n");
+                    }
+                }
+                /* from .options (will override the previous settings) */
+                for (scan = options; scan; scan = scan->nextcard) {
+                    char* tmpscale = strstr(scan->line, "scale=");
+                    if (tmpscale) {
+                        int err;
+                        tmpscale = tmpscale + 6;
+                        dscale = INPevaluate(&tmpscale, &err, 1);
+                        if (err == 0) {
+                            cp_vset("scale", CP_REAL, &dscale);
+                            printf("option SCALE: Scale set to %g for instance and model parameters\n", dscale);
+                        }
+                        else
+                            fprintf(stderr, "\nError: Could not set 'scale' variable\n");
+                    }
+                    tmpscale = strstr(scan->line, "scalm=");
+                    if (tmpscale) {
+                        int err;
+                        tmpscale = tmpscale + 6;
+                        dscale = INPevaluate(&tmpscale, &err, 1);
+                        if (err == 0) {
+                            cp_vset("scalm", CP_REAL, &dscale);
+                            fprintf(stderr, "Warning: option SCALM is not supported\n");
+                        }
+                        else
+                            fprintf(stderr, "\nError: Could not set 'scalm' variable\n");
                     }
                 }
             }
@@ -1093,11 +1119,9 @@ inp_dodeck(
     struct circ *ct;
     struct card *dd;
     CKTcircuit *ckt;
-    char *s;
     INPtables *tab = NULL;
     struct variable *eev = NULL;
-    wordlist *wl;
-    bool noparse, ii;
+    bool noparse;
     int print_listing;
     bool have_err = FALSE;
     int warn;          /* whether SOA check should be performed */
@@ -1127,52 +1151,6 @@ inp_dodeck(
         ft_curckt->FTEstats = TMALLOC(FTESTATistics, 1);
     }
     noparse = cp_getvar("noparse", CP_BOOL, NULL, 0);
-
-
-    /* We check preliminary for the scale option. This special processing
-       is needed because we need the scale info BEFORE building the circuit
-       and seems there is no other way to do this. */
-    if (!noparse) {
-        struct card *opt_beg = options;
-        for (; options; options = options->nextcard) {
-            s = skip_non_ws(options->line);
-
-            ii = cp_interactive;
-            cp_interactive = FALSE;
-            wl = cp_lexer(s);
-            cp_interactive = ii;
-            if (!wl || !wl->wl_word || !*wl->wl_word)
-                continue;
-            if (eev)
-                eev->va_next = cp_setparse(wl);
-            else
-                ct->ci_vars = eev = cp_setparse(wl);
-            wl_free(wl);
-            while (eev && (eev->va_next))
-                eev = eev->va_next;
-        }
-        for (eev = ct->ci_vars; eev; eev = eev->va_next) {
-            switch (eev->va_type) {
-            case CP_BOOL:
-                break;
-            case CP_NUM:
-                break;
-            case CP_REAL:
-                if (strcmp("scale", eev->va_name) == 0) {
-                    cp_vset("scale", CP_REAL, &eev->va_real);
-                    printf("Scale set to %g\n", eev->va_real);
-                }
-                break;
-            case CP_STRING:
-                break;
-            default: {
-                fprintf(stderr, "ERROR: enumeration value `CP_LIST' not handled in inp_dodeck\nAborting...\n");
-                controlled_exit(EXIT_FAILURE);
-            }
-            } /* switch  . . . */
-        }
-        options = opt_beg; // back to the beginning
-    } /* if (!noparse)  . . . */
 
     /*----------------------------------------------------
      * Now assuming that we wanna parse this deck, we call
