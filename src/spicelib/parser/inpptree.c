@@ -5,6 +5,7 @@ Author: 1987 Wayne A. Christopher, U. C. Berkeley CAD Group
 //#define TRACE
 
 #include "ngspice/ngspice.h"
+#include "ngspice/compatmode.h"
 #include "ngspice/ifsim.h"
 #include "ngspice/iferrmsg.h"
 #include "ngspice/inpdefs.h"
@@ -448,11 +449,16 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
             break;
 
         case PTF_EXP:                /* u > EXPARGMAX -> EXPMAX, that is exp(EXPARGMAX), else exp(u) */
-            arg1 = mkb(PT_TERN,
-                mkf(PTF_GT0, mkb(PT_MINUS, p->left, mkcon(EXPARGMAX))),
-                mkb(PT_COMMA,
-                    mkcon(EXPMAX),
-                    mkf(PTF_EXP, p->left)));
+            if (newcompat.ps) {
+                arg1 = mkb(PT_TERN,
+                    mkf(PTF_GT0, mkb(PT_MINUS, p->left, mkcon(EXPARGMAX))),
+                    mkb(PT_COMMA,
+                        mkcon(EXPMAX),
+                        mkf(PTF_EXP, p->left)));
+            }
+            else {                   /* exp(u) */
+                arg1 = mkf(PTF_EXP, p->left);
+            }
 
 #ifdef TRACE1
             printf("debug exp, %s, returns; ", __func__);
