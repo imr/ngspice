@@ -390,6 +390,33 @@ static void delete_names(struct names *p)
     tfree(p);
 }
 
+/* concatenate 2 strings, with space if spa == TRUE,
+   return malloced string (replacement for tprintf,
+   which is not efficient enough when reading PDKs
+   under Linux) */
+static char *cat2strings(char *s1, char *s2, bool spa)
+{
+   if (s2 == NULL || *s2 == '\0') {
+        return copy(s1);
+    }
+    else if (s1 == NULL || *s1 == '\0') {
+        return copy(s2);
+    }
+    size_t lges = strlen(s1) + strlen(s2) + 2;
+    char *nextstr;
+    char *strsum = TMALLOC(char, lges);
+    if (spa) {
+        nextstr = memccpy(strsum, s1, '\0', lges);
+        *(nextstr - 1) = ' ';
+        nextstr = memccpy(nextstr, s2, '\0', lges);
+    }
+    else {
+        nextstr = (char*)memccpy(strsum, s1, '\0', lges) - 1;
+        nextstr = (char*)memccpy(nextstr, s2, '\0', lges) - 1;
+        *nextstr = '\0';
+    }
+    return strsum;
+}
 
 
 /* line1
@@ -399,7 +426,6 @@ static void delete_names(struct names *p)
    Proccedure: store regular card in prev, skip comment lines (*..) and some
    others
    */
-
 static void inp_stitch_continuation_lines(struct card *working)
 {
     struct card *prev = NULL;
@@ -444,9 +470,19 @@ static void inp_stitch_continuation_lines(struct card *working)
                     prev->nextcard = tmpl;
                 }
 
-                /* create buffer and write last and current line into it. */
+                /* create buffer and write last and current line into it.
+                   When reading a PDK, the following may be called more than 1e6 times. */
+#if defined (_MSC_VER)
+                /* vsnprintf (used by tprintf) in Windows is efficient, VS2019 arb. referencevalue 7,
+                   cat2strings() yields ref. speed value 12 only, CYGWIN is 12 in both cases,
+                   MINGW is 36. */
                 buffer = tprintf("%s %s", prev->line, s + 1);
-
+#else
+                /* vsnprintf in Linux is very inefficient, ref. value 24
+                   cat2strings() is efficient with  ref. speed value 6,
+                   MINGW is 12 */
+                buffer = cat2strings(prev->line, s + 1, TRUE);
+#endif
                 /* replace prev->line by buffer */
                 s = prev->line;
                 prev->line = buffer;
