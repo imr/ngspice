@@ -215,11 +215,12 @@ PTcosh(double arg)
     return (cosh(arg));
 }
 
-/* Limit the exp: If arg > EXPARGMAX (arbitrarily selected to 14), continue with linear output */
+/* Limit the exp: If arg > EXPARGMAX (arbitrarily selected to 14), continue with linear output,
+   if compatmode PSPICE is selected*/
 double
 PTexp(double arg)
 {
-    if (arg > EXPARGMAX)
+    if (newcompat.ps && arg > EXPARGMAX)
         return EXPMAX * (arg - EXPARGMAX + 1.);
     else
         return (exp(arg));
