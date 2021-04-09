@@ -390,6 +390,7 @@ static void delete_names(struct names *p)
     tfree(p);
 }
 
+#ifndef _MSC_VER
 /* concatenate 2 strings, with space if spa == TRUE,
    return malloced string (replacement for tprintf,
    which is not efficient enough when reading PDKs
@@ -417,6 +418,7 @@ static char *cat2strings(char *s1, char *s2, bool spa)
     }
     return strsum;
 }
+#endif
 
 
 /* line1
