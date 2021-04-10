@@ -83,8 +83,11 @@ pvec(struct dvec *d)
 
     if (d->v_numdims > 1) {
         dimstring(d->v_dims, d->v_numdims, buf3);
-        size_t icopy = BSIZE_SP - 11;
-        snprintf(buf2, icopy, ", dims = [%s]", buf3);
+        size_t icopy = BSIZE_SP - 1;
+        size_t len = (size_t)snprintf(buf2, icopy, ", dims = [%s]", buf3);
+        if (len > icopy) {
+            fprintf(stderr, "Warning: Potential buffer overflow while setting a vector dimension");
+        }
         strcat(buf, buf2);
     }
 

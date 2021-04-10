@@ -93,7 +93,7 @@ inp_nutsource(FILE *fp, bool comfile, char *filename)
                 ld = dd;
                 continue;
             }
-            (void) strncpy(name, dd->line, BSIZE_SP);
+            (void) strncpy(name, dd->line, BSIZE_SP - 1);
             s = skip_ws(name);
             t = skip_non_ws(s);
             *t = '\0';
