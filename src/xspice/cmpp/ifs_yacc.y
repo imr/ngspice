@@ -221,6 +221,11 @@ static void check_port_type_direction (Dir_t dir, Port_Type_t port_type)
    case DIFF_VOLTAGE:
    case CURRENT:
    case DIFF_CURRENT:
+      if (dir == CMPP_INOUT) {
+         yyerror ("Port types `v', `vd', `i', `id' are not valid for `inout' ports");
+         ifs_num_errors++;
+      }
+       break;
    case DIGITAL:
    case USER_DEFINED:
       /*
@@ -229,8 +234,8 @@ static void check_port_type_direction (Dir_t dir, Port_Type_t port_type)
       break;
    case VSOURCE_CURRENT:
       if (dir != CMPP_IN) {
-	 yyerror ("Port type `vnam' is only valid for `in' ports");
-	 ifs_num_errors++;
+         yyerror ("Port type `vnam' is only valid for `in' ports");
+         ifs_num_errors++;
       }
       break;
    case CONDUCTANCE:
@@ -238,8 +243,8 @@ static void check_port_type_direction (Dir_t dir, Port_Type_t port_type)
    case RESISTANCE:
    case DIFF_RESISTANCE:
       if (dir != CMPP_INOUT) {
-	 yyerror ("Port types `g', `gd', `h', `hd' are only valid for `inout' ports");
-	 ifs_num_errors++;
+         yyerror ("Port types `g', `gd', `h', `hd' are only valid for `inout' ports");
+         ifs_num_errors++;
       }
       break;
    default:
