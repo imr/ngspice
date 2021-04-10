@@ -2512,7 +2512,7 @@ static void rem_unused_mos_models(struct card* deck) {
                     wnflag = 0;
             }
 
-            nf = wnflag * wnf > 0.5f ? nf : 1.f;
+            nf = (float)wnflag * wnf > 0.5f ? nf : 1.f;
             w = w / nf;
 
             /* what is the device's model name? */
