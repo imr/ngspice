@@ -9,6 +9,7 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/inpmacs.h"
 #include "ngspice/fteext.h"
 #include "ngspice/iferrmsg.h"
+#include "ngspice/cktdefs.h"
 
 #include "inppas4.h"
 #include "inpxx.h"
