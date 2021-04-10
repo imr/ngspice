@@ -53,14 +53,13 @@ static struct {
 #define SVGfont_family (Cfg.strings[SVG_FONT_FAMILY])
 #define SVGfont (Cfg.strings[SVG_FONT])
 
-static char * const intopts[] = {
+/* svg_intopts are:
   "svgwidth", "svgheight",  "svgfont-size", "svgfont-width", "svguse-color",
-  "svgstroke-width", "svggrid-width",
-};
+  "svgstroke-width", "svggrid-width"
 
-static char * const stropts[] = {
-    "svgbackground", "svgfont-family", "svgfont",
-};
+  svg_stropts are:
+    "svgbackground", "svgfont-family", "svgfont"
+*/
 
 typedef struct {
     int  lastx, lasty;
@@ -324,7 +323,7 @@ SVG_Close(void)
      * without having reached SVG_NewViewport
      */
 
-    int i;
+    size_t i;
 
     if (plotfile) {
         closepath(DEVDEP_P(currentgraph));
