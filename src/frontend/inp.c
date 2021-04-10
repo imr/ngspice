@@ -72,7 +72,7 @@ static void rem_unused_mos_models(struct card* deck);
 //void inp_mc_free(void);
 //void inp_remove_recent(void);
 static bool mc_reload = FALSE;
-void eval_seed_opt(struct card *deck);
+void eval_opt(struct card *deck);
 
 extern bool ft_batchmode;
 
