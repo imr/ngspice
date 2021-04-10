@@ -47,44 +47,44 @@ NON-STANDARD FEATURES
 #include <string.h>
 #include "ifs_yacc_y.h"
 
-#define	yymaxdepth ifs_yymaxdepth
-#define	yyparse	ifs_yyparse
-#define	yylex	ifs_yylex
-#define	yyerror	ifs_yyerror
-#define	yylval	ifs_yylval
-#define	yychar	ifs_yychar
-#define	yydebug	ifs_yydebug
-#define	yypact	ifs_yypact
-#define	yyr1	ifs_yyr1
-#define	yyr2	ifs_yyr2
-#define	yydef	ifs_yydef
-#define	yychk	ifs_yychk
-#define	yypgo	ifs_yypgo
-#define	yyact	ifs_yyact
-#define	yyexca	ifs_yyexca
+#define yymaxdepth ifs_yymaxdepth
+#define yyparse ifs_yyparse
+#define yylex   ifs_yylex
+#define yyerror ifs_yyerror
+#define yylval  ifs_yylval
+#define yychar  ifs_yychar
+#define yydebug ifs_yydebug
+#define yypact  ifs_yypact
+#define yyr1    ifs_yyr1
+#define yyr2    ifs_yyr2
+#define yydef   ifs_yydef
+#define yychk   ifs_yychk
+#define yypgo   ifs_yypgo
+#define yyact   ifs_yyact
+#define yyexca  ifs_yyexca
 #define yyerrflag ifs_yyerrflag
-#define yynerrs	ifs_yynerrs
-#define	yyps	ifs_yyps
-#define	yypv	ifs_yypv
-#define	yys	ifs_yys
-#define	yy_yys	ifs_yyyys
-#define	yystate	ifs_yystate
-#define	yytmp	ifs_yytmp
-#define	yyv	ifs_yyv
-#define	yy_yyv	ifs_yyyyv
-#define	yyval	ifs_yyval
-#define	yylloc	ifs_yylloc
-#define yyreds	ifs_yyreds
-#define yytoks	ifs_yytoks
-#define yylhs	ifs_yyyylhs
-#define yylen	ifs_yyyylen
+#define yynerrs ifs_yynerrs
+#define yyps    ifs_yyps
+#define yypv    ifs_yypv
+#define yys ifs_yys
+#define yy_yys  ifs_yyyys
+#define yystate ifs_yystate
+#define yytmp   ifs_yytmp
+#define yyv ifs_yyv
+#define yy_yyv  ifs_yyyyv
+#define yyval   ifs_yyval
+#define yylloc  ifs_yylloc
+#define yyreds  ifs_yyreds
+#define yytoks  ifs_yytoks
+#define yylhs   ifs_yyyylhs
+#define yylen   ifs_yyyylen
 #define yydefred ifs_yyyydefred
-#define yydgoto	ifs_yyyydgoto
+#define yydgoto ifs_yyyydgoto
 #define yysindex ifs_yyyysindex
 #define yyrindex ifs_yyyyrindex
 #define yygindex ifs_yyyygindex
-#define yytable	 ifs_yyyytable
-#define yycheck	 ifs_yyyycheck
+#define yytable  ifs_yyyytable
+#define yycheck  ifs_yyyycheck
 #define yyname   ifs_yyyyname
 #define yyrule   ifs_yyyyrule
 
@@ -122,10 +122,10 @@ static size_t alloced_size [4];
  * !!!!! since that will cause garbage uninitialized data...
  * !!!!! (FIX THIS!)
  */
-#define DEFAULT_SIZE_CONN	100
-#define DEFAULT_SIZE_PARAM	100
-#define DEFAULT_SIZE_INST_VAR	100
-#define GROW_SIZE		10
+#define DEFAULT_SIZE_CONN   100
+#define DEFAULT_SIZE_PARAM  100
+#define DEFAULT_SIZE_INST_VAR   100
+#define GROW_SIZE       10
 
 typedef enum {
    TBL_NAME,
@@ -141,9 +141,9 @@ typedef struct {
 
 Context_t context;
 
-#define ITEM_BUFFER_SIZE 20	/* number of items that can be put in a table
-				 * before requiring a new xxx_TABLE: keyword
-				 */
+#define ITEM_BUFFER_SIZE 20 /* number of items that can be put in a table
+                 * before requiring a new xxx_TABLE: keyword
+                 */
 #define FOR_ITEM(i) for (i = item_offset; i < num_items; i++)
 #define ITEM_BUF(i) item_buffer[i-item_offset]
 
@@ -160,12 +160,12 @@ Context_t context;
     if (TBL->struct_name[i].has_lower_bound) {\
       assert (ITEM_BUF(i).range.u.bounds.lower.bound.kind == CMPP_INTEGER);\
        TBL->struct_name[i].lower_bound =\
-	ITEM_BUF(i).range.u.bounds.lower.bound.u.ivalue;\
+    ITEM_BUF(i).range.u.bounds.lower.bound.u.ivalue;\
     }\
     if (TBL->struct_name[i].has_upper_bound) {\
        assert (ITEM_BUF(i).range.u.bounds.upper.bound.kind == CMPP_INTEGER);\
        TBL->struct_name[i].upper_bound =\
-	  ITEM_BUF(i).range.u.bounds.upper.bound.u.ivalue;\
+      ITEM_BUF(i).range.u.bounds.upper.bound.u.ivalue;\
     }\
   }
 
@@ -185,7 +185,7 @@ find_conn_ref (char *name)
    
    for (i = 0; i < TBL->num_conn; i++) {
       if (strcmp (name, TBL->conn[i].name) == 0) {
-	 return i;
+     return i;
       }
    }
    sprintf (str, "Port `%s' not found", name);
@@ -268,10 +268,10 @@ static void check_default_type (Conn_Info_t conn)
    
    for (i = 0; i < conn.num_allowed_types; i++) {
       if (conn.default_port_type == conn.allowed_port_type[i]) {
-	 if ((conn.default_port_type != USER_DEFINED) ||
-	     (strcmp (conn.default_type, conn.allowed_type[i]) == 0)) {
-	    return;
-	 }
+         if ((conn.default_port_type != USER_DEFINED) ||
+            (strcmp (conn.default_type, conn.allowed_type[i]) == 0)) {
+         return;
+         }
       }
    }
    yyerror ("Port default type is not an allowed type");
@@ -291,19 +291,19 @@ assign_ctype_list (Conn_Info_t  *conn, Ctype_List_t *ctype_list )
       conn->num_allowed_types++;
    }
    conn->allowed_type = (char**) calloc ((size_t) conn->num_allowed_types,
-					 sizeof (char*));
+                     sizeof (char*));
    conn->allowed_port_type = (Port_Type_t*) calloc ((size_t) conn->num_allowed_types,
-						    sizeof (Port_Type_t));
+                            sizeof (Port_Type_t));
    if (! (conn->allowed_type && conn->allowed_port_type)) {
       fatal ("Could not allocate memory");
    }
    for (i = conn->num_allowed_types-1, p = ctype_list; p; i--, p = p->next) {
       if (ctype_class == C_UNDEF) {
-	 ctype_class = get_ctype_class (p->ctype.kind);
+         ctype_class = get_ctype_class (p->ctype.kind);
       }
       if (ctype_class != get_ctype_class (p->ctype.kind)) {
-	 yyerror ("Incompatible port types in `allowed_types' clause");
-	 ifs_num_errors++;
+        yyerror ("Incompatible port types in `allowed_types' clause");
+        ifs_num_errors++;
       }
       check_port_type_direction (conn->direction, p->ctype.kind);
       
@@ -322,8 +322,8 @@ assign_value (Data_Type_t type, Value_t *dest_value, My_Value_t src_value)
       return;
    } else if (type != src_value.kind) {
       sprintf (str, "Invalid parameter type (saw %s - expected %s)",
-	       dtype_to_str[src_value.kind],
-	       dtype_to_str[type] );
+           dtype_to_str[src_value.kind],
+           dtype_to_str[type] );
       yyerror (str);
       ifs_num_errors++;
    } 
@@ -377,34 +377,34 @@ check_item_num (void)
    if (item > (int) alloced_size [context.table] ) {
       switch (context.table) {
       case TBL_NAME:
-	 break;
+         break;
       case TBL_PORT:
-	 alloced_size[context.table] += GROW_SIZE;
-	 TBL->conn = (Conn_Info_t*)
-	    realloc (TBL->conn,
-		     alloced_size [context.table] * sizeof (Conn_Info_t));
-	 if (! TBL->conn) {
-	    fatal ("Error allocating memory for port definition");
-	 }
-	 break;
+         alloced_size[context.table] += GROW_SIZE;
+         TBL->conn = (Conn_Info_t*)
+               realloc (TBL->conn,
+               alloced_size [context.table] * sizeof (Conn_Info_t));
+         if (! TBL->conn) {
+            fatal ("Error allocating memory for port definition");
+         }
+         break;
       case TBL_PARAMETER:
-	 alloced_size [context.table] += GROW_SIZE;
-	 TBL->param = (Param_Info_t*)
-	    realloc (TBL->param,
-		     alloced_size [context.table] * sizeof (Param_Info_t));
-	 if (! TBL->param) {
-	    fatal ("Error allocating memory for parameter definition");
-	 }
-	 break;
+         alloced_size [context.table] += GROW_SIZE;
+         TBL->param = (Param_Info_t*)
+               realloc (TBL->param,
+               alloced_size [context.table] * sizeof (Param_Info_t));
+         if (! TBL->param) {
+            fatal ("Error allocating memory for parameter definition");
+         }
+         break;
       case TBL_STATIC_VAR:
-	 alloced_size [context.table] += GROW_SIZE;
-	 TBL->inst_var = (Inst_Var_Info_t*)
-	    realloc (TBL->inst_var,
-		     alloced_size [context.table] * sizeof (Inst_Var_Info_t));
-	 if (! TBL->inst_var) {
-	    fatal ("Error allocating memory for static variable definition");
-	 }
-	 break;
+         alloced_size [context.table] += GROW_SIZE;
+         TBL->inst_var = (Inst_Var_Info_t*)
+               realloc (TBL->inst_var,
+               alloced_size [context.table] * sizeof (Inst_Var_Info_t));
+        if (! TBL->inst_var) {
+           fatal ("Error allocating memory for static variable definition");
+        }
+        break;
       }
    }
    item++;
@@ -416,29 +416,29 @@ check_end_item_num (void)
 {
    if (num_items_fixed) {
       if (item != num_items) {
-	 char buf[200];
-	 sprintf
-	    (buf,
-	     "Wrong number of elements in sub-table (saw %d - expected %d)",
-	     item - item_offset,
-	     num_items - item_offset);
-	 fatal (buf);
+         char buf[200];
+         sprintf
+               (buf,
+               "Wrong number of elements in sub-table (saw %d - expected %d)",
+               item - item_offset,
+               num_items - item_offset);
+         fatal (buf);
       }
    } else {
       num_items = item;
       num_items_fixed = true;
       switch (context.table) {
       case TBL_NAME:
-	 break;
+         break;
       case TBL_PORT:
-	 TBL->num_conn = num_items;
-	 break;
+         TBL->num_conn = num_items;
+         break;
       case TBL_PARAMETER:
-	 TBL->num_param = num_items;
-	 break;
+         TBL->num_param = num_items;
+         break;
       case TBL_STATIC_VAR:
-	 TBL->num_inst_var = num_items;
-	 break;
+         TBL->num_inst_var = num_items;
+         break;
       }
    }
    item = item_offset;
@@ -502,32 +502,32 @@ check_end_item_num (void)
 %token TOK_STRING_LITERAL
 
 %union {
-   Ctype_List_t 	*ctype_list;
-   Dir_t		dir;
-   bool			btype;
-   Range_t		range;
-   Data_Type_t		dtype;
-   My_Port_Type_t	ctype;
-   My_Value_t		value;
-   char			*str;
-   Bound_t		bound;
-   int			ival;
-   double		rval;
-   Complex_t		cval;
+   Ctype_List_t     *ctype_list;
+   Dir_t        dir;
+   bool         btype;
+   Range_t      range;
+   Data_Type_t      dtype;
+   My_Port_Type_t   ctype;
+   My_Value_t       value;
+   char         *str;
+   Bound_t      bound;
+   int          ival;
+   double       rval;
+   Complex_t        cval;
 }
 
-%type	<ctype_list>	ctype_list delimited_ctype_list
-%type	<dir>		direction
-%type	<ctype>		ctype
-%type	<dtype>		dtype
-%type	<range>		range int_range
-%type	<value>		value number integer_value value_or_dash
-%type	<str>		identifier string
-%type	<btype>		btype
-%type	<bound>		int_or_dash number_or_dash
-%type	<ival>		integer
-%type	<rval>		real
-%type	<cval>		complex
+%type   <ctype_list>    ctype_list delimited_ctype_list
+%type   <dir>       direction
+%type   <ctype>     ctype
+%type   <dtype>     dtype
+%type   <range>     range int_range
+%type   <value>     value number integer_value value_or_dash
+%type   <str>       identifier string
+%type   <btype>     btype
+%type   <bound>     int_or_dash number_or_dash
+%type   <ival>      integer
+%type   <rval>      real
+%type   <cval>      complex
 
 %start ifs_file
 
@@ -546,414 +546,409 @@ YYSTYPE item_buffer [ITEM_BUFFER_SIZE];
 
 %%
 
-ifs_file		: {TBL->num_conn = 0;
-			   TBL->num_param = 0;
-			   TBL->num_inst_var = 0;
+ifs_file : {TBL->num_conn = 0;
+               TBL->num_param = 0;
+               TBL->num_inst_var = 0;
 
-			   saw_function_name = false;
-			   saw_model_name = false;
+               saw_function_name = false;
+               saw_model_name = false;
 
-			   alloced_size [TBL_PORT] = DEFAULT_SIZE_CONN;
-			   alloced_size [TBL_PARAMETER] = DEFAULT_SIZE_PARAM;
-			   alloced_size [TBL_STATIC_VAR] = 
-			      DEFAULT_SIZE_INST_VAR;
+               alloced_size [TBL_PORT] = DEFAULT_SIZE_CONN;
+               alloced_size [TBL_PARAMETER] = DEFAULT_SIZE_PARAM;
+               alloced_size [TBL_STATIC_VAR] = DEFAULT_SIZE_INST_VAR;
 
-			   TBL->conn = (Conn_Info_t*)
-			      calloc (DEFAULT_SIZE_CONN,
-				      sizeof (Conn_Info_t));
- 		     	   TBL->param = (Param_Info_t*)
-			      calloc (DEFAULT_SIZE_PARAM,
-				      sizeof (Param_Info_t));
-			   TBL->inst_var = (Inst_Var_Info_t*)
-			      calloc (DEFAULT_SIZE_INST_VAR,
-				      sizeof (Inst_Var_Info_t));
-			   if (! (TBL->conn && TBL->param &&
-				  TBL->inst_var) ) {
-			      fatal ("Could not allocate enough memory");
-			   } 
-  			  }
-			  list_of_tables
-			;
+               TBL->conn = (Conn_Info_t*)
+                     calloc(DEFAULT_SIZE_CONN, sizeof (Conn_Info_t));
+               TBL->param = (Param_Info_t*)
+                    calloc (DEFAULT_SIZE_PARAM, sizeof (Param_Info_t));
+               TBL->inst_var = (Inst_Var_Info_t*)
+                  calloc (DEFAULT_SIZE_INST_VAR, sizeof (Inst_Var_Info_t));
+               if (! (TBL->conn && TBL->param && TBL->inst_var) ) {
+                  fatal ("Could not allocate enough memory");
+               } 
+            }
+            list_of_tables
+            ;
 
-list_of_tables		: table
-			| list_of_tables table
-   			;
+list_of_tables      : table
+            | list_of_tables table
+            ;
 
-table			: TOK_NAME_TABLE 
-			    {context.table = TBL_NAME;} 
-			  name_table
-   			| TOK_PORT_TABLE
-			    {context.table = TBL_PORT;
-			     did_default_type = false;
-			     did_allowed_types = false;
-			     INIT (TBL->num_conn);}
-			  port_table
-			    {TBL->num_conn = num_items;}
-			| TOK_PARAMETER_TABLE 
-			    {context.table = TBL_PARAMETER;
-			     INIT (TBL->num_param);}
-			  parameter_table	
-			    {TBL->num_param = num_items;}
-			| TOK_STATIC_VAR_TABLE 
-			    {context.table = TBL_STATIC_VAR;
-			     INIT (TBL->num_inst_var);}
-			  static_var_table
-			    {TBL->num_inst_var = num_items;}
-			;
+table           : TOK_NAME_TABLE 
+                {context.table = TBL_NAME;} 
+              name_table
+            | TOK_PORT_TABLE
+                {context.table = TBL_PORT;
+                 did_default_type = false;
+                 did_allowed_types = false;
+                 INIT (TBL->num_conn);}
+              port_table
+                {TBL->num_conn = num_items;}
+            | TOK_PARAMETER_TABLE 
+                {context.table = TBL_PARAMETER;
+                 INIT (TBL->num_param);}
+              parameter_table   
+                {TBL->num_param = num_items;}
+            | TOK_STATIC_VAR_TABLE 
+                {context.table = TBL_STATIC_VAR;
+                 INIT (TBL->num_inst_var);}
+              static_var_table
+                {TBL->num_inst_var = num_items;}
+            ;
 
-name_table		: /* empty */
-			| name_table name_table_item
-			;
+name_table      : /* empty */
+            | name_table name_table_item
+            ;
 
-name_table_item		: TOK_C_FUNCTION_NAME identifier
-			  {TBL->name.c_fcn_name =strdup (ifs_yytext);
- 			   saw_function_name = true;
-			   if (parser_just_names && saw_model_name) return 0;}
-			| TOK_SPICE_MODEL_NAME identifier
-			  {TBL->name.model_name = strdup (ifs_yytext);
- 			   saw_model_name = true;
-			   if (parser_just_names && saw_function_name) return 0;}
-			| TOK_DESCRIPTION string
-			  {TBL->name.description = strdup (ifs_yytext);}
-			;
+name_table_item     : TOK_C_FUNCTION_NAME identifier
+              {TBL->name.c_fcn_name =strdup (ifs_yytext);
+               saw_function_name = true;
+               if (parser_just_names && saw_model_name) return 0;}
+            | TOK_SPICE_MODEL_NAME identifier
+              {TBL->name.model_name = strdup (ifs_yytext);
+               saw_model_name = true;
+               if (parser_just_names && saw_function_name) return 0;}
+            | TOK_DESCRIPTION string
+              {TBL->name.description = strdup (ifs_yytext);}
+            ;
 
-port_table	: /* empty */
-			| port_table port_table_item
-			;
+port_table  : /* empty */
+            | port_table port_table_item
+            ;
 
-port_table_item	: TOK_PORT_NAME list_of_ids 
-			  {int i;
-			   END;
-			   FOR_ITEM (i) {
-			      TBL->conn[i].name = ITEM_BUF(i).str;
-			   }}
-			| TOK_DESCRIPTION list_of_strings
-			  {int i;
-			   END;
-			   FOR_ITEM (i) {
-			      TBL->conn[i].description = ITEM_BUF(i).str;
-			   }}
-			| TOK_DIRECTION list_of_directions 
-			  {int i;
-			   END;
-			   FOR_ITEM (i) {
-			      TBL->conn[i].direction = ITEM_BUF(i).dir;
-			   }}
-			| TOK_DEFAULT_TYPE list_of_ctypes 
-			  {int i;
-			   END;
-			   did_default_type = true;
-			   FOR_ITEM (i) {
-			      TBL->conn[i].default_port_type = 
-				 ITEM_BUF(i).ctype.kind;
-			      TBL->conn[i].default_type = ITEM_BUF(i).ctype.id;
-			      if (did_allowed_types) {
-				 check_default_type (TBL->conn[i]);
-			      }
-			   }}
-			| TOK_ALLOWED_TYPES list_of_ctype_lists 
-			  {int i;
-			   END;
-			   did_allowed_types = true;
-			   FOR_ITEM (i) {
-			      assign_ctype_list (&TBL->conn[i],
-						 ITEM_BUF(i).ctype_list);
-			      if (did_default_type) {
-				 check_default_type (TBL->conn[i]);
-			      }
-			   }}
-			| TOK_ARRAY list_of_bool 
-			  {int i;
-			   END;
-			   FOR_ITEM (i) {
-			      TBL->conn[i].is_array = ITEM_BUF(i).btype;
-			   }}
-			| TOK_ARRAY_BOUNDS list_of_array_bounds 
-			  {int i;
-			   END;
-			   FOR_ITEM (i) {
-			      ASSIGN_BOUNDS (conn, i);
-			      assert (!TBL->conn[i].has_conn_ref);
-			   }}
-			| TOK_NULL_ALLOWED list_of_bool  
-			  {int i;
-			   END;
-			   FOR_ITEM (i) {
-			      TBL->conn[i].null_allowed = ITEM_BUF(i).btype;
-			   }}
-			;
+port_table_item : TOK_PORT_NAME list_of_ids 
+              {int i;
+               END;
+               FOR_ITEM (i) {
+                  TBL->conn[i].name = ITEM_BUF(i).str;
+               }}
+            | TOK_DESCRIPTION list_of_strings
+              {int i;
+               END;
+               FOR_ITEM (i) {
+                  TBL->conn[i].description = ITEM_BUF(i).str;
+               }}
+            | TOK_DIRECTION list_of_directions 
+              {int i;
+               END;
+               FOR_ITEM (i) {
+                  TBL->conn[i].direction = ITEM_BUF(i).dir;
+               }}
+            | TOK_DEFAULT_TYPE list_of_ctypes 
+              {int i;
+               END;
+               did_default_type = true;
+               FOR_ITEM (i) {
+                  TBL->conn[i].default_port_type = 
+                 ITEM_BUF(i).ctype.kind;
+                  TBL->conn[i].default_type = ITEM_BUF(i).ctype.id;
+                  if (did_allowed_types) {
+                 check_default_type (TBL->conn[i]);
+                  }
+               }}
+            | TOK_ALLOWED_TYPES list_of_ctype_lists 
+              {int i;
+               END;
+               did_allowed_types = true;
+               FOR_ITEM (i) {
+                  assign_ctype_list (&TBL->conn[i],
+                         ITEM_BUF(i).ctype_list);
+                  if (did_default_type) {
+                 check_default_type (TBL->conn[i]);
+                  }
+               }}
+            | TOK_ARRAY list_of_bool 
+              {int i;
+               END;
+               FOR_ITEM (i) {
+                  TBL->conn[i].is_array = ITEM_BUF(i).btype;
+               }}
+            | TOK_ARRAY_BOUNDS list_of_array_bounds 
+              {int i;
+               END;
+               FOR_ITEM (i) {
+                  ASSIGN_BOUNDS (conn, i);
+                  assert (!TBL->conn[i].has_conn_ref);
+               }}
+            | TOK_NULL_ALLOWED list_of_bool  
+              {int i;
+               END;
+               FOR_ITEM (i) {
+                  TBL->conn[i].null_allowed = ITEM_BUF(i).btype;
+               }}
+            ;
 
-parameter_table		: /* empty */
-			| parameter_table parameter_table_item
-			;
+parameter_table     : /* empty */
+            | parameter_table parameter_table_item
+            ;
 
-parameter_table_item	: TOK_PARAMETER_NAME list_of_ids 
-			  {int i;
-			   END;
-			   FOR_ITEM (i) {
-			      TBL->param[i].name = ITEM_BUF(i).str;
-			   }}
-			| TOK_DESCRIPTION list_of_strings 
-			  {int i;
-			   END;
-			   FOR_ITEM (i) {
-			      TBL->param[i].description = ITEM_BUF(i).str;
-			   }}
-			| TOK_DATA_TYPE list_of_dtypes 
-			  {int i;
-			   END;
-			   FOR_ITEM (i) {
-			      check_dtype_not_pointer (ITEM_BUF(i).dtype);
-			      TBL->param[i].type = ITEM_BUF(i).dtype;
-			   }}
-			| TOK_DEFAULT_VALUE list_of_values 
-			  {int i;
-			   END;
-			   FOR_ITEM (i) {
-			      TBL->param[i].has_default = 
-				 ITEM_BUF(i).value.has_value;
-			      if (TBL->param[i].has_default) {
-   			         assign_value (TBL->param[i].type,
-					       &TBL->param[i].default_value,
-					       ITEM_BUF(i).value);
-			      }
-			   }}
-			| TOK_LIMITS list_of_ranges 
-			  {int i;
-			   END;
-			   FOR_ITEM (i) {
-			      assign_limits (TBL->param[i].type, 
-					     &TBL->param[i],
-					     ITEM_BUF(i).range);
-			   }}
-			| TOK_ARRAY list_of_bool 
-			  {int i;
-			   END;
-			   FOR_ITEM (i) {
-			      TBL->param[i].is_array = ITEM_BUF(i).btype;
-			   }}
-			| TOK_ARRAY_BOUNDS list_of_array_bounds 
-			  {int i;
-			   END;
-			   FOR_ITEM (i) {
-			      ASSIGN_BOUNDS (param, i);
-			   }}
-			| TOK_NULL_ALLOWED list_of_bool  
-			  {int i;
-			   END;
-			   FOR_ITEM (i) {
-			      TBL->param[i].null_allowed = ITEM_BUF(i).btype;
-			   }}
-			;
+parameter_table_item    : TOK_PARAMETER_NAME list_of_ids 
+              {int i;
+               END;
+               FOR_ITEM (i) {
+                  TBL->param[i].name = ITEM_BUF(i).str;
+               }}
+            | TOK_DESCRIPTION list_of_strings 
+              {int i;
+               END;
+               FOR_ITEM (i) {
+                  TBL->param[i].description = ITEM_BUF(i).str;
+               }}
+            | TOK_DATA_TYPE list_of_dtypes 
+              {int i;
+               END;
+               FOR_ITEM (i) {
+                  check_dtype_not_pointer (ITEM_BUF(i).dtype);
+                  TBL->param[i].type = ITEM_BUF(i).dtype;
+               }}
+            | TOK_DEFAULT_VALUE list_of_values 
+              {int i;
+               END;
+               FOR_ITEM (i) {
+                  TBL->param[i].has_default = 
+                 ITEM_BUF(i).value.has_value;
+                  if (TBL->param[i].has_default) {
+                     assign_value (TBL->param[i].type,
+                           &TBL->param[i].default_value,
+                           ITEM_BUF(i).value);
+                  }
+               }}
+            | TOK_LIMITS list_of_ranges 
+              {int i;
+               END;
+               FOR_ITEM (i) {
+                  assign_limits (TBL->param[i].type, 
+                         &TBL->param[i],
+                         ITEM_BUF(i).range);
+               }}
+            | TOK_ARRAY list_of_bool 
+              {int i;
+               END;
+               FOR_ITEM (i) {
+                  TBL->param[i].is_array = ITEM_BUF(i).btype;
+               }}
+            | TOK_ARRAY_BOUNDS list_of_array_bounds 
+              {int i;
+               END;
+               FOR_ITEM (i) {
+                  ASSIGN_BOUNDS (param, i);
+               }}
+            | TOK_NULL_ALLOWED list_of_bool  
+              {int i;
+               END;
+               FOR_ITEM (i) {
+                  TBL->param[i].null_allowed = ITEM_BUF(i).btype;
+               }}
+            ;
 
-static_var_table	: /* empty */
-			| static_var_table static_var_table_item
-			;
+static_var_table    : /* empty */
+            | static_var_table static_var_table_item
+            ;
 
-static_var_table_item	: TOK_STATIC_VAR_NAME list_of_ids 
-			  {int i;
-			   END;
-			   FOR_ITEM (i) {
-			      TBL->inst_var[i].name = ITEM_BUF(i).str;
-			   }}
-			| TOK_DESCRIPTION list_of_strings 
-			  {int i;
-			   END;
-			   FOR_ITEM (i) {
-			      TBL->inst_var[i].description = ITEM_BUF(i).str;
-			   }}
-			| TOK_DATA_TYPE list_of_dtypes 
-			  {int i;
-			   END;
-			   FOR_ITEM (i) {
-			      TBL->inst_var[i].type = ITEM_BUF(i).dtype;
-			   }}
-			| TOK_ARRAY list_of_bool 
-			  {int i;
-			   END;
-			   FOR_ITEM (i) {
-			      TBL->inst_var[i].is_array = ITEM_BUF(i).btype;
-			   }}
-			;
+static_var_table_item   : TOK_STATIC_VAR_NAME list_of_ids 
+              {int i;
+               END;
+               FOR_ITEM (i) {
+                  TBL->inst_var[i].name = ITEM_BUF(i).str;
+               }}
+            | TOK_DESCRIPTION list_of_strings 
+              {int i;
+               END;
+               FOR_ITEM (i) {
+                  TBL->inst_var[i].description = ITEM_BUF(i).str;
+               }}
+            | TOK_DATA_TYPE list_of_dtypes 
+              {int i;
+               END;
+               FOR_ITEM (i) {
+                  TBL->inst_var[i].type = ITEM_BUF(i).dtype;
+               }}
+            | TOK_ARRAY list_of_bool 
+              {int i;
+               END;
+               FOR_ITEM (i) {
+                  TBL->inst_var[i].is_array = ITEM_BUF(i).btype;
+               }}
+            ;
 
-list_of_ids		: /* empty */
-			| list_of_ids identifier {ITEM; BUF.str = $2;}
-			;
+list_of_ids     : /* empty */
+            | list_of_ids identifier {ITEM; BUF.str = $2;}
+            ;
 
-list_of_array_bounds	: /* empty */
-			| list_of_array_bounds int_range
-			   {ITEM; 
-			    BUF.range = $2;}
-			| list_of_array_bounds identifier 
-			   {ITEM; 
-			    BUF.range.is_named = true;
-			    BUF.range.u.name = $2;}
-			;
+list_of_array_bounds    : /* empty */
+            | list_of_array_bounds int_range
+               {ITEM; 
+                BUF.range = $2;}
+            | list_of_array_bounds identifier 
+               {ITEM; 
+                BUF.range.is_named = true;
+                BUF.range.u.name = $2;}
+            ;
 
-list_of_strings		: /* empty */
-			| list_of_strings string {ITEM; BUF.str = $2;}
-			;
+list_of_strings     : /* empty */
+            | list_of_strings string {ITEM; BUF.str = $2;}
+            ;
 
-list_of_directions	: /* empty */
-			| list_of_directions direction {ITEM; BUF.dir = $2;}
-			;
+list_of_directions  : /* empty */
+            | list_of_directions direction {ITEM; BUF.dir = $2;}
+            ;
 
-direction		: TOK_DIR_IN	{$$ = CMPP_IN;}
-			| TOK_DIR_OUT	{$$ = CMPP_OUT;}
-			| TOK_DIR_INOUT	{$$ = CMPP_INOUT;}
-			;
+direction       : TOK_DIR_IN    {$$ = CMPP_IN;}
+            | TOK_DIR_OUT   {$$ = CMPP_OUT;}
+            | TOK_DIR_INOUT {$$ = CMPP_INOUT;}
+            ;
 
-list_of_bool		: /* empty */
-			| list_of_bool btype {ITEM; BUF.btype = $2;}
-			;
+list_of_bool        : /* empty */
+            | list_of_bool btype {ITEM; BUF.btype = $2;}
+            ;
 
-list_of_ctypes		: /* empty */
-			| list_of_ctypes ctype {ITEM; BUF.ctype = $2;}
-			;
+list_of_ctypes      : /* empty */
+            | list_of_ctypes ctype {ITEM; BUF.ctype = $2;}
+            ;
 
-ctype			: TOK_CTYPE_V	{$$.kind = VOLTAGE;}
-			| TOK_CTYPE_VD	{$$.kind = DIFF_VOLTAGE;}
-			| TOK_CTYPE_VNAM {$$.kind = VSOURCE_CURRENT;}
-			| TOK_CTYPE_I	{$$.kind = CURRENT;}
-			| TOK_CTYPE_ID	{$$.kind = DIFF_CURRENT;}
-			| TOK_CTYPE_G	{$$.kind = CONDUCTANCE;}
-			| TOK_CTYPE_GD	{$$.kind = DIFF_CONDUCTANCE;}
-			| TOK_CTYPE_H	{$$.kind = RESISTANCE;}
-			| TOK_CTYPE_HD	{$$.kind = DIFF_RESISTANCE;}
-			| TOK_CTYPE_D	{$$.kind = DIGITAL;}
-			| identifier	{$$.kind = USER_DEFINED;
-					 $$.id   = $1;}
-			;
+ctype           : TOK_CTYPE_V   {$$.kind = VOLTAGE;}
+            | TOK_CTYPE_VD  {$$.kind = DIFF_VOLTAGE;}
+            | TOK_CTYPE_VNAM {$$.kind = VSOURCE_CURRENT;}
+            | TOK_CTYPE_I   {$$.kind = CURRENT;}
+            | TOK_CTYPE_ID  {$$.kind = DIFF_CURRENT;}
+            | TOK_CTYPE_G   {$$.kind = CONDUCTANCE;}
+            | TOK_CTYPE_GD  {$$.kind = DIFF_CONDUCTANCE;}
+            | TOK_CTYPE_H   {$$.kind = RESISTANCE;}
+            | TOK_CTYPE_HD  {$$.kind = DIFF_RESISTANCE;}
+            | TOK_CTYPE_D   {$$.kind = DIGITAL;}
+            | identifier    {$$.kind = USER_DEFINED;
+                     $$.id   = $1;}
+            ;
 
-list_of_dtypes		: /* empty */
-			| list_of_dtypes dtype {ITEM; BUF.dtype = $2;}
-			;
+list_of_dtypes      : /* empty */
+            | list_of_dtypes dtype {ITEM; BUF.dtype = $2;}
+            ;
 
-dtype			: TOK_DTYPE_REAL	{$$ = CMPP_REAL;}
-			| TOK_DTYPE_INT		{$$ = CMPP_INTEGER;}
-			| TOK_DTYPE_BOOLEAN	{$$ = CMPP_BOOLEAN;}
-			| TOK_DTYPE_COMPLEX	{$$ = CMPP_COMPLEX;}
-			| TOK_DTYPE_STRING	{$$ = CMPP_STRING;}
-			| TOK_DTYPE_POINTER	{$$ = CMPP_POINTER;}
-			;
+dtype           : TOK_DTYPE_REAL    {$$ = CMPP_REAL;}
+            | TOK_DTYPE_INT     {$$ = CMPP_INTEGER;}
+            | TOK_DTYPE_BOOLEAN {$$ = CMPP_BOOLEAN;}
+            | TOK_DTYPE_COMPLEX {$$ = CMPP_COMPLEX;}
+            | TOK_DTYPE_STRING  {$$ = CMPP_STRING;}
+            | TOK_DTYPE_POINTER {$$ = CMPP_POINTER;}
+            ;
 
-list_of_ranges		: /* empty */
-			| list_of_ranges range {ITEM; BUF.range = $2;}
-			;
+list_of_ranges      : /* empty */
+            | list_of_ranges range {ITEM; BUF.range = $2;}
+            ;
 
-int_range		: TOK_DASH {$$.is_named = false; 
-				    $$.u.bounds.lower.has_bound = false;
-				    $$.u.bounds.upper.has_bound = false;}
-			| TOK_LBRACKET int_or_dash maybe_comma int_or_dash
-			  TOK_RBRACKET
-			   {$$.is_named = false;
-			    $$.u.bounds.lower = $2;
-			    $$.u.bounds.upper = $4;}
-			;
+int_range       : TOK_DASH {$$.is_named = false; 
+                    $$.u.bounds.lower.has_bound = false;
+                    $$.u.bounds.upper.has_bound = false;}
+            | TOK_LBRACKET int_or_dash maybe_comma int_or_dash
+              TOK_RBRACKET
+               {$$.is_named = false;
+                $$.u.bounds.lower = $2;
+                $$.u.bounds.upper = $4;}
+            ;
 
-maybe_comma		: /* empty */
-			| TOK_COMMA
-			;
+maybe_comma     : /* empty */
+            | TOK_COMMA
+            ;
 
-int_or_dash		: TOK_DASH {$$.has_bound = false;}
-			| integer_value   {$$.has_bound = true; 
-				           $$.bound = $1;}
-   			;
+int_or_dash     : TOK_DASH {$$.has_bound = false;}
+            | integer_value   {$$.has_bound = true; 
+                           $$.bound = $1;}
+            ;
 
-range			: TOK_DASH {$$.is_named = false; 
-				    $$.u.bounds.lower.has_bound = false;
-				    $$.u.bounds.upper.has_bound = false;}
-			| TOK_LBRACKET number_or_dash maybe_comma 
-			  number_or_dash TOK_RBRACKET 
-			   {$$.is_named = false;
-			    $$.u.bounds.lower = $2;
-			    $$.u.bounds.upper = $4;}
-			;
+range           : TOK_DASH {$$.is_named = false; 
+                    $$.u.bounds.lower.has_bound = false;
+                    $$.u.bounds.upper.has_bound = false;}
+            | TOK_LBRACKET number_or_dash maybe_comma 
+              number_or_dash TOK_RBRACKET 
+               {$$.is_named = false;
+                $$.u.bounds.lower = $2;
+                $$.u.bounds.upper = $4;}
+            ;
 
-number_or_dash		: TOK_DASH {$$.has_bound = false;}
-			| number {$$.has_bound = true; 
-				  $$.bound = $1;}
-   			;
+number_or_dash      : TOK_DASH {$$.has_bound = false;}
+            | number {$$.has_bound = true; 
+                  $$.bound = $1;}
+            ;
 
-list_of_values		: /* empty */
-			| list_of_values value_or_dash {ITEM; BUF.value = $2;}
-			;
+list_of_values      : /* empty */
+            | list_of_values value_or_dash {ITEM; BUF.value = $2;}
+            ;
 
-value_or_dash		: TOK_DASH {$$.has_value = false;}
-			| value
-			;
+value_or_dash       : TOK_DASH {$$.has_value = false;}
+            | value
+            ;
 
-value			: string	{$$.has_value = true;
-					 $$.kind = CMPP_STRING;
-					 $$.u.svalue = $1;}
-			| btype		{$$.has_value = true;
-					 $$.kind = CMPP_BOOLEAN;
-					 $$.u.bvalue = $1;}
-			| complex	{$$.has_value = true;
-					 $$.kind = CMPP_COMPLEX;
-					 $$.u.cvalue = $1;}
-			| number
-			;
+value           : string    {$$.has_value = true;
+                     $$.kind = CMPP_STRING;
+                     $$.u.svalue = $1;}
+            | btype     {$$.has_value = true;
+                     $$.kind = CMPP_BOOLEAN;
+                     $$.u.bvalue = $1;}
+            | complex   {$$.has_value = true;
+                     $$.kind = CMPP_COMPLEX;
+                     $$.u.cvalue = $1;}
+            | number
+            ;
 
-complex			: TOK_LANGLE real maybe_comma real TOK_RANGLE
-			  {$$.real = $2;
-			   $$.imag = $4;}
-			;
+complex         : TOK_LANGLE real maybe_comma real TOK_RANGLE
+              {$$.real = $2;
+               $$.imag = $4;}
+            ;
 
-list_of_ctype_lists	: /* empty */
-			| list_of_ctype_lists delimited_ctype_list 
-			    {ITEM; BUF.ctype_list = $2;}
-			;
+list_of_ctype_lists : /* empty */
+            | list_of_ctype_lists delimited_ctype_list 
+                {ITEM; BUF.ctype_list = $2;}
+            ;
 
-delimited_ctype_list	: TOK_LBRACKET ctype_list TOK_RBRACKET {$$ = $2;}
-			;
+delimited_ctype_list    : TOK_LBRACKET ctype_list TOK_RBRACKET {$$ = $2;}
+            ;
 
-ctype_list		: ctype 
-			   {$$ = (Ctype_List_t*)calloc (1,
-							sizeof (Ctype_List_t));
-			    if (!$$) {
-			       fatal ("Error allocating memory");
-			    }
-			    $$->ctype = $1;
-			    $$->next = (Ctype_List_t*)0;}
-			| ctype_list maybe_comma ctype
-			   {$$ = (Ctype_List_t*)calloc (1, 
-							sizeof (Ctype_List_t));
-			    if (!$$) {
-			       fatal ("Error allocating memory");
-			    }
-			    $$->ctype = $3;
-			    $$->next = $1;
-			    /*$$->next = (Ctype_List_t*)0;
-			    assert ($1);
-			    $1->next = $$;*/}
-			;
+ctype_list      : ctype 
+               {$$ = (Ctype_List_t*)calloc (1,
+                            sizeof (Ctype_List_t));
+                if (!$$) {
+                   fatal ("Error allocating memory");
+                }
+                $$->ctype = $1;
+                $$->next = (Ctype_List_t*)0;}
+            | ctype_list maybe_comma ctype
+               {$$ = (Ctype_List_t*)calloc (1, 
+                            sizeof (Ctype_List_t));
+                if (!$$) {
+                   fatal ("Error allocating memory");
+                }
+                $$->ctype = $3;
+                $$->next = $1;
+                /*$$->next = (Ctype_List_t*)0;
+                assert ($1);
+                $1->next = $$;*/}
+            ;
 
-btype			: TOK_BOOL_YES	{$$ = true;}
-			| TOK_BOOL_NO	{$$ = false;}
-			;
+btype           : TOK_BOOL_YES  {$$ = true;}
+            | TOK_BOOL_NO   {$$ = false;}
+            ;
 
-string			: TOK_STRING_LITERAL {$$ = strdup(ifs_yytext);}
-			;
+string          : TOK_STRING_LITERAL {$$ = strdup(ifs_yytext);}
+            ;
 
-identifier		: TOK_IDENTIFIER {$$ = strdup(ifs_yytext);}
-			;
+identifier      : TOK_IDENTIFIER {$$ = strdup(ifs_yytext);}
+            ;
 
-number			: real	{$$.has_value = true;
-				 $$.kind = CMPP_REAL;
-				 $$.u.rvalue = $1;}
-			| integer_value
-			;
+number          : real  {$$.has_value = true;
+                 $$.kind = CMPP_REAL;
+                 $$.u.rvalue = $1;}
+            | integer_value
+            ;
 
-integer_value		: integer	{$$.has_value = true;
-					 $$.kind = CMPP_INTEGER;
-					 $$.u.ivalue = $1;}
-			;
+integer_value       : integer   {$$.has_value = true;
+                     $$.kind = CMPP_INTEGER;
+                     $$.u.ivalue = $1;}
+            ;
 
-real			: TOK_REAL_LITERAL {$$ = yydval;}
-			;
+real            : TOK_REAL_LITERAL {$$ = yydval;}
+            ;
 
-integer			: TOK_INT_LITERAL  {$$ = yyival;}
-			;
+integer         : TOK_INT_LITERAL  {$$ = yyival;}
+            ;
 
 %%
