@@ -246,9 +246,9 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
 
         /* Pass 1. */
         if (numsaves && !saveall) {
-            for (i = 0; i < numsaves; i++)
-                if (!savesused[i])
-                    for (j = 0; j < numNames; j++)
+            for (i = 0; i < numsaves; i++) {
+                if (!savesused[i]) {
+                    for (j = 0; j < numNames; j++) {
                         if (name_eq(saves[i].name, dataNames[j])) {
                             addDataDesc(run, dataNames[j], dataType, j, initmem);
                             savesused[i] = TRUE;
@@ -262,6 +262,9 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
                             saves[i].used = 1;
                             break;
                         }
+                    }
+                }
+            }
         } else {
             for (i = 0; i < numNames; i++)
                 if (!refName || !name_eq(dataNames[i], refName))
