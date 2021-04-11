@@ -217,6 +217,14 @@ DIOmParam(int param, IFvalue *value, GENmodel *inModel)
             model->DIOrecEmissionCoeff = value->rValue;
             model->DIOrecEmissionCoeffGiven = TRUE;
             break;
+        case  DIO_MOD_RTH0:
+            model->DIOrth0 = value->rValue;
+            model->DIOrth0Given = TRUE;
+            break;
+        case  DIO_MOD_CTH0:
+            model->DIOcth0 = value->rValue;
+            model->DIOcth0Given = TRUE;
+            break;
 
         case DIO_MOD_LM:
             model->DIOlengthMetal = value->rValue;

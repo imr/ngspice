@@ -48,6 +48,9 @@ DIOask (CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
         case DIO_M:
             value->rValue = here->DIOm;
             return(OK);
+        case DIO_THERMAL:
+            value->iValue = here->DIOthermal;
+            return(OK);
 
         case DIO_TEMP:
             value->rValue = here->DIOtemp-CONSTCtoK;
@@ -81,7 +84,9 @@ DIOask (CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
                 return(E_ASKPOWER);
             } else {
                 value->rValue = *(ckt->CKTstate0 + here->DIOcurrent) *
-                        *(ckt->CKTstate0 + here->DIOvoltage);
+                        *(ckt->CKTstate0 + here->DIOvoltage) +
+                        *(ckt->CKTstate0 + here->DIOcurrent) *
+                        *(ckt->CKTstate0 + here->DIOcurrent) / here->DIOtConductance;
             }
             return(OK);
         case DIO_QUEST_SENS_DC:

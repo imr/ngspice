@@ -178,6 +178,12 @@ DIOmAsk (CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
         case DIO_MOD_NR:
             value->rValue = model->DIOrecEmissionCoeff;
             return(OK);
+        case DIO_MOD_RTH0:
+            value->rValue = model->DIOrth0; 
+            return(OK);
+        case DIO_MOD_CTH0:
+            value->rValue = model->DIOcth0; 
+            return(OK);
 
         case DIO_MOD_LM:
             value->rValue = model->DIOlengthMetal;
