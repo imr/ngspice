@@ -7230,7 +7230,7 @@ static void inp_quote_params(struct card *c, struct card *end_c,
 */
 static int inp_vdmos_model(struct card *deck)
 {
-#define MODNUMBERS 256
+#define MODNUMBERS 2048
 
     struct card *card;
     struct card *vmodels[MODNUMBERS]; /* list of pointers to vdmos model cards */
@@ -7283,7 +7283,7 @@ static int inp_vdmos_model(struct card *deck)
             j++;
             if (j == MODNUMBERS) {
                 vmodels[j - 1] = NULL;
-                continue;
+                break;
             }
             vmodels[j] = NULL;
         }
