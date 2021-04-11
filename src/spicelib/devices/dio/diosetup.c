@@ -171,6 +171,27 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             model->DIOrecSatCur = 1e-14;
         }
 
+        /* set lower limit of saturation current */
+        if (model->DIOsatCur < ckt->CKTepsmin)
+            model->DIOsatCur = ckt->CKTepsmin;
+
+        if(!model->DIOnomTempGiven) {
+            model->DIOnomTemp = ckt->CKTnomTemp;
+        }
+
+        if((!model->DIOresistGiven) || (model->DIOresist==0)) {
+            model->DIOconductance = 0.0;
+        } else {
+            model->DIOconductance = 1/model->DIOresist;
+        }
+
+        if (!model->DIOrth0Given) {
+            model->DIOrth0 = 0;
+        }
+        if (!model->DIOcth0Given) {
+            model->DIOcth0 = 1e-5;
+        }
+
         if(!model->DIOlengthMetalGiven) {
             model->DIOlengthMetal = 0.0;
         }
@@ -286,6 +307,8 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 }
             }
 
+            int selfheat = ((here->DIOtempNode > 0) && (here->DIOthermal) && (model->DIOrth0Given));
+
 /* macro to make elements with built in test for out of memory */
 #define TSTALLOC(ptr,first,second) \
 do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
@@ -299,6 +322,17 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
             TSTALLOC(DIOposPosPtr,DIOposNode,DIOposNode);
             TSTALLOC(DIOnegNegPtr,DIOnegNode,DIOnegNode);
             TSTALLOC(DIOposPrimePosPrimePtr,DIOposPrimeNode,DIOposPrimeNode);
+
+            if (selfheat) {
+                TSTALLOC(DIOtempPosPtr,      DIOtempNode,     DIOposNode);
+                TSTALLOC(DIOtempPosPrimePtr, DIOtempNode,     DIOposPrimeNode);
+                TSTALLOC(DIOtempNegPtr,      DIOtempNode,     DIOnegNode);
+                TSTALLOC(DIOtempTempPtr,     DIOtempNode,     DIOtempNode);
+                TSTALLOC(DIOposTempPtr,      DIOposNode,      DIOtempNode);
+                TSTALLOC(DIOposPrimeTempPtr, DIOposPrimeNode, DIOtempNode);
+                TSTALLOC(DIOnegTempPtr,      DIOnegNode,      DIOtempNode);
+            }
+
         }
     }
     return(OK);

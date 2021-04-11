@@ -1648,7 +1648,7 @@ numnodes(const char *line, struct subs *subs, wordlist const *modnames)
 
     /* If model names equal node names, this code will fail! */
 
-    if ((c == 'm') || (c == 'p') || (c == 'q')) { /* IF this is a mos, cpl or bjt*/
+    if ((c == 'm') || (c == 'p') || (c == 'q') || (c == 'd')) { /* IF this is a mos, cpl, bjt or diode */
         char *s = nexttok(line);       /* Skip the instance name */
         int gotit = 0;
         int i = 0;
@@ -1928,7 +1928,27 @@ devmodtranslate(struct card *s, char *subname, wordlist * const orig_modnames)
             name = gettok_node(&t);  /* get second attached netname */
             bxx_printf(&buffer, "%s ", name);
             tfree(name);
-            name = gettok(&t);
+            name = gettok_node(&t);  /* this can be either a model name or a node name. */
+            if (name == NULL) {
+                name = copy(""); /* allow 'tfree' */
+            } else {
+                found = 0;
+                while (!found) {
+                    wlsub = wl_find(name, orig_modnames);
+                    if (wlsub) {
+                        found = 1;
+                        break;
+                    } else {
+                        bxx_printf(&buffer, "%s ", name);
+                        tfree(name);
+                        name = gettok(&t);
+                        if (name == NULL) {  /* No token anymore - leave */
+                            name = copy(""); /* allow 'tfree' */
+                            break;
+                        }
+                    }
+                }  /* while  */
+            }
 
             translate_mod_name(&buffer, name, subname, orig_modnames);
 
@@ -2162,7 +2182,7 @@ inp_numnodes(char c)
     case 'c':
         return (2);
     case 'd':
-        return (2);
+        return (3);
     case 'e':
         return (2); /* changed from 4 to 2 by SDB on 4.22.2003 to enable POLY */
     case 'f':

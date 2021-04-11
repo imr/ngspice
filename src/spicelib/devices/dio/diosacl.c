@@ -110,7 +110,7 @@ DIOsAcLoad(GENmodel *inModel, CKTcircuit *ckt)
             geq0 = *(here->DIOsenGeq);
             xceq0 = *(here->DIOsenCeq) * ckt->CKTomega;
             A0 = here->DIOarea;
-            gspr0=here->DIOtConductance*A0;
+            gspr0=here->DIOtConductance;
             cpos0 = gspr0 * vspr;
             icpos0 = gspr0 * ivspr;
             cposprm0 = geq0 * vd - xceq0 * ivd - cpos0;

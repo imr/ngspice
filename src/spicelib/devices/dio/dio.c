@@ -23,6 +23,7 @@ IFparm DIOpTable[] = { /* parameters */
  IOPU("lp",    DIO_LP,    IF_REAL, "Length of polysilicon capacitor (level=3)"),
  IOPU("wm",    DIO_WM,    IF_REAL, "Width of metal capacitor (level=3)"),
  IOPU("wp",    DIO_WP,    IF_REAL, "Width of polysilicon capacitor (level=3)"),
+ IOP("thermal",DIO_THERMAL, IF_FLAG, "Self heating mode selector"),
 
  IP("sens_area",DIO_AREA_SENS,IF_FLAG,"flag to request sensitivity WRT area"),
  OP("vd",      DIO_VOLTAGE,IF_REAL, "Diode voltage"),
@@ -112,7 +113,10 @@ IFparm DIOmPTable[] = { /* model parameters */
  IOP( "bv_max",   DIO_MOD_BV_MAX,  IF_REAL, "maximum voltage in reverse direction"),
  IOP( "isr",  DIO_MOD_ISR,  IF_REAL, "Recombination saturation current"),
  IOP( "nr",   DIO_MOD_NR,   IF_REAL, "Recombination current emission coefficient"),
-
+/* self heating */
+ IOP("rth0",  DIO_MOD_RTH0,  IF_REAL, "Self-heating thermal resistance"),
+ IOP("cth0",  DIO_MOD_CTH0,  IF_REAL, "Self-heating thermal capacitance"),
+/* scaled parasitic capacitances level 3 model */
  IOP( "lm",  DIO_MOD_LM,  IF_REAL, "Length of metal capacitor (level=3)"),
  IOP( "lp",  DIO_MOD_LP,  IF_REAL, "Length of polysilicon capacitor (level=3)"),
  IOP( "wm",  DIO_MOD_WM,  IF_REAL, "Width of metal capacitor (level=3)"),
@@ -127,7 +131,8 @@ IFparm DIOmPTable[] = { /* model parameters */
 
 char *DIOnames[] = {
     "D+",
-    "D-"
+    "D-",
+    "Tj"
 };
 
 int DIOnSize = NUMELEMS(DIOnames);
