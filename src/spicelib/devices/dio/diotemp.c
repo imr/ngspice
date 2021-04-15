@@ -208,7 +208,6 @@ void DIOtempUpdate(DIOmodel *inModel, DIOinstance *here, double Temp, CKTcircuit
             tol=ckt->CKTreltol*cbv;
             xbv=tBreakdownVoltage-model->DIObrkdEmissionCoeff*vt*log(1+cbv/
                     (here->DIOtSatCur));
-            iter=0;
             for(iter=0 ; iter < 25 ; iter++) {
                 xbv=tBreakdownVoltage-model->DIObrkdEmissionCoeff*vt*log(cbv/
                         (here->DIOtSatCur)+1-xbv/vt);
