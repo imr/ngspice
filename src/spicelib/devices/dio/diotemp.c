@@ -199,25 +199,25 @@ void DIOtempUpdate(DIOmodel *inModel, DIOinstance *here, double Temp, CKTcircuit
         if (cbv < here->DIOtSatCur * tBreakdownVoltage/vt) {
             cbv=here->DIOtSatCur * tBreakdownVoltage/vt;
 #ifdef TRACE
-        SPfrontEnd->IFerrorf (ERR_WARNING, "%s: breakdown current increased to %g to resolve", here->DIOname, cbv);
-        SPfrontEnd->IFerrorf (ERR_WARNING,
-        "incompatibility with specified saturation current");
+            SPfrontEnd->IFerrorf (ERR_WARNING, "%s: breakdown current increased to %g to resolve", here->DIOname, cbv);
+            SPfrontEnd->IFerrorf (ERR_WARNING,
+            "incompatibility with specified saturation current");
 #endif
-        xbv=tBreakdownVoltage;
-    } else {
-        tol=ckt->CKTreltol*cbv;
-        xbv=tBreakdownVoltage-model->DIObrkdEmissionCoeff*vt*log(1+cbv/
-                (here->DIOtSatCur));
-        iter=0;
-        for(iter=0 ; iter < 25 ; iter++) {
-            xbv=tBreakdownVoltage-model->DIObrkdEmissionCoeff*vt*log(cbv/
-                    (here->DIOtSatCur)+1-xbv/vt);
-            xcbv=here->DIOtSatCur *
-                 (exp((tBreakdownVoltage-xbv)/(model->DIObrkdEmissionCoeff*vt))-1+xbv/vt);
-            if (fabs(xcbv-cbv) <= tol) goto matched;
-        }
+            xbv=tBreakdownVoltage;
+        } else {
+            tol=ckt->CKTreltol*cbv;
+            xbv=tBreakdownVoltage-model->DIObrkdEmissionCoeff*vt*log(1+cbv/
+                    (here->DIOtSatCur));
+            iter=0;
+            for(iter=0 ; iter < 25 ; iter++) {
+                xbv=tBreakdownVoltage-model->DIObrkdEmissionCoeff*vt*log(cbv/
+                        (here->DIOtSatCur)+1-xbv/vt);
+                xcbv=here->DIOtSatCur *
+                     (exp((tBreakdownVoltage-xbv)/(model->DIObrkdEmissionCoeff*vt))-1+xbv/vt);
+                if (fabs(xcbv-cbv) <= tol) goto matched;
+            }
 #ifdef TRACE
-                    SPfrontEnd->IFerrorf (ERR_WARNING, "%s: unable to match forward and reverse diode regions: bv = %g, ibv = %g", here->DIOname, xbv, xcbv);
+            SPfrontEnd->IFerrorf (ERR_WARNING, "%s: unable to match forward and reverse diode regions: bv = %g, ibv = %g", here->DIOname, xbv, xcbv);
 #endif
         }
         matched:
