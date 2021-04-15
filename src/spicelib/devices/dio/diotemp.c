@@ -197,8 +197,8 @@ void DIOtempUpdate(DIOmodel *inModel, DIOinstance *here, double Temp, CKTcircuit
             cbv = here->DIOm * model->DIObreakdownCurrent * here->DIOarea;
         }
         if (cbv < here->DIOtSatCur * tBreakdownVoltage/vt) {
-            cbv=here->DIOtSatCur * tBreakdownVoltage/vt;
 #ifdef TRACE
+            cbv=here->DIOtSatCur * tBreakdownVoltage/vt;
             SPfrontEnd->IFerrorf (ERR_WARNING, "%s: breakdown current increased to %g to resolve", here->DIOname, cbv);
             SPfrontEnd->IFerrorf (ERR_WARNING,
             "incompatibility with specified saturation current");
