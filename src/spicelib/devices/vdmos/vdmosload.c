@@ -89,7 +89,6 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
              * here.  They may be moved at the expense of instance size
              */
 
-            delTemp = 0.0;
             if ((ckt->CKTmode & MODEINITSMSIG)) {
                 vgs = *(ckt->CKTstate0 + here->VDMOSvgs);
                 vds = *(ckt->CKTstate0 + here->VDMOSvds);
@@ -682,10 +681,6 @@ bypass:
             double tol;     /* temporary for tolerance calculations */
 #endif
 
-            cd = 0.0;
-            cdb = 0.0;
-            gd = 0.0;
-            gdb = 0.0;
             gspr = here->VDIOtConductance;
 
             vt = CONSTKoverQ * Temp;
