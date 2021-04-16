@@ -95,12 +95,8 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
 #endif /* SENSDEBUG */
 
             }
-            cd = 0.0;
-            cdb = 0.0;
             cdsw = 0.0;
             cdsw_dT = 0.0;
-            gd = 0.0;
-            gdb = 0.0;
             gdsw = 0.0;
             delTemp = 0.0;
             vt = CONSTKoverQ * here->DIOtemp;
