@@ -153,6 +153,7 @@ static bool cont_condition;
 #include "frontend/com_measure2.h"
 #include "frontend/misccoms.h"
 #include "ngspice/stringskip.h"
+#include "variable.h"
 
 #ifdef HAVE_FTIME
 #include <sys/timeb.h>
@@ -387,7 +388,6 @@ static SendEvtData* sendevt;
 #endif
 static void* euserptr;
 static wordlist *shcontrols;
-
 
 // thread IDs
 unsigned int main_id, ng_id, command_id;
@@ -822,6 +822,8 @@ ngSpice_Init(SendChar* printfcn, SendStat* statusfcn, ControlledExit* ngspiceexi
 {
     sighandler old_sigsegv = NULL;
 
+    struct variable* sourcepathvar;
+
     pfcn = printfcn;
     /* if caller sends NULL, don't send printf strings */
     if (!pfcn)
@@ -997,6 +999,11 @@ ngSpice_Init(SendChar* printfcn, SendStat* statusfcn, ControlledExit* ngspiceexi
 
     if(!myvec)
         myvec = TMALLOC(vector_info, sizeof(vector_info));
+
+    /* Read first entry of sourcepath var, set Infile_path for code models */
+    if ( cp_getvar("sourcepath", CP_LIST, &sourcepathvar, 0)) {
+        Infile_Path = copy(sourcepathvar->va_string);
+    }
 
 #if !defined(low_latency)
     /* If caller has sent valid address for pfcn */
