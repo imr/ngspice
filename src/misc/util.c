@@ -266,6 +266,7 @@ ngdirname(const char *name)
 FILE *
 newfopen(const char *fn, const char* md)
 {
+    FILE* fp;
     if (fn == NULL)
         return NULL;
     wchar_t wfn[BSIZE_SP];
@@ -276,7 +277,15 @@ newfopen(const char *fn, const char* md)
         fprintf(stderr, "%s could not be converted\n", fn);
         return NULL;
     }
-    return _wfopen(wfn, wmd);
+    fp = _wfopen(wfn, wmd);
+
+/* If wide char fails, at least fopen may try the potentially ANSI encoded special characters like á */
+#undef fopen
+    if (fp == NULL)
+        fp = fopen(fn, md);
+#define fopen newfopen
+
+    return fp;
 }
 #endif
 #endif
