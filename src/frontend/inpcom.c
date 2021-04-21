@@ -4276,6 +4276,8 @@ int get_number_terminals(char *c)
         case 'b':
         case 'v':
         case 'i':
+            return 2;
+            break;
         case 'd':
             i = 0;
             /* find the first token with "off" or "=" in the line*/
