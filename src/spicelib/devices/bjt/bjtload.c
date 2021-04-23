@@ -348,9 +348,6 @@ BJTload(GENmodel *inModel, CKTcircuit *ckt)
                     vrci=model->BJTtype*(
                         *(ckt->CKTrhsOld+here->BJTcollCXNode)-
                         *(ckt->CKTrhsOld+here->BJTcolPrimeNode));
-                    vsub=model->BJTtype*model->BJTsubs*(
-                        *(ckt->CKTrhsOld+here->BJTsubstNode)-
-                        *(ckt->CKTrhsOld+here->BJTsubstConNode));
 #ifndef PREDICTOR
                 }
 #endif /* PREDICTOR */

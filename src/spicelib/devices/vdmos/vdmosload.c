@@ -228,7 +228,6 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                                             delTemp = *(ckt->CKTstate0 + here->VDMOSdelTemp);
                                             /*  calculate Vds for temperature conductance calculation
                                                 in bypass (used later when filling Temp node matrix)  */
-                                            Vds = here->VDMOSmode > 0 ? vds : -vds;
                                             cdrain = here->VDMOSmode * (here->VDMOScd);
                                             if (ckt->CKTmode & (MODETRAN | MODETRANOP)) {
                                                 capgs = (*(ckt->CKTstate0 + here->VDMOScapgs) +
@@ -259,7 +258,6 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
                                     , von);
                     vds = vgs - vgd;
                     vds = DEVlimvds(vds, *(ckt->CKTstate0 + here->VDMOSvds));
-                    vgd = vgs - vds;
                 } else {
                     vgd = DEVfetlim(vgd, vgdo, von);
                     vds = vgs - vgd;
