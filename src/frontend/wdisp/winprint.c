@@ -305,7 +305,8 @@ int WPRINT_NewViewport(GRAPH * graph)
         TextOut(PrinterDC, PrinterWidth - graph->fontwidth, -1*yoffset, graph->plotname,
             (int)strlen(graph->plotname));
 #else
-        const int n_byte_wide = 2 * (int) strlen(graph->plotname) + 1;
+        /* wtext needs not to be NULL-terminated */
+        const int n_byte_wide = (int) strlen(graph->plotname);
         wchar_t * const wtext = TMALLOC(wchar_t, n_byte_wide);
         MultiByteToWideChar(CP_UTF8, 0, graph->plotname, -1, wtext,
                 n_byte_wide);
@@ -458,7 +459,8 @@ int WPRINT_Text(char * text, int x, int y, int degrees)
 #ifdef EXT_ASC
     TextOut(PrinterDC, x, PrinterHeight - y - currentgraph->fontheight, text, (int)strlen(text));
 #else
-    const int n_byte_wide = 2 * (int) strlen(text) + 1;
+    /* wtext needs not to be NULL-terminated */
+    const int n_byte_wide = (int) strlen(text);
     wchar_t * const wtext = TMALLOC(wchar_t, n_byte_wide);
     MultiByteToWideChar(CP_UTF8, 0, text, -1, wtext, n_byte_wide);
     TextOutW(PrinterDC, x, PrinterHeight - y - currentgraph->fontheight,
