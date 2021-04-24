@@ -1079,10 +1079,10 @@ int WIN_Text(const char *text, int x, int y, int angle)
     lfw.lfEscapement = angle * 10;
     lfw.lfOrientation = angle * 10;
     lfw.lfWeight = 500;
-    lfw.lfItalic = 0;
+    lfw.lfItalic = FALSE;
     lfw.lfUnderline = 0;
     lfw.lfStrikeOut = 0;
-    lfw.lfCharSet = 0;
+    lfw.lfCharSet = DEFAULT_CHARSET;
     lfw.lfOutPrecision = 0;
     lfw.lfClipPrecision = 0;
     lfw.lfQuality = 0;
@@ -1096,6 +1096,10 @@ int WIN_Text(const char *text, int x, int y, int angle)
         wchar_t wface[32];
         swprintf(wface, 32, L"%S", facename);
         (void)lstrcpyW(lfw.lfFaceName, wface);
+        if (strstr(facename, "Bold"))
+            lfw.lfWeight = 700;
+        if (strstr(facename, "Italic"))
+            lfw.lfItalic = TRUE;
     }
     if (!cp_getvar("wfont_size", CP_NUM, &(lfw.lfHeight), 0)) {
         lfw.lfHeight = 18;
@@ -1113,8 +1117,9 @@ int WIN_Text(const char *text, int x, int y, int angle)
 #ifdef EXT_ASC
     TextOut(wd->hDC, x, wd->Area.bottom - y - currentgraph->fontheight, text, (int)strlen(text));
 #else
-    const int n_byte_wide = 2 * (int) strlen(text) + 1;
+    const int n_byte_wide = (int) strlen(text);
     wchar_t * const wtext = TMALLOC(wchar_t, n_byte_wide);
+    /* wtext needs not to be NULL-terminated */
     MultiByteToWideChar(CP_UTF8, 0, text, -1, wtext, n_byte_wide);
     TextOutW(wd->hDC, x, wd->Area.bottom - y - currentgraph->fontheight,
             wtext, n_byte_wide);
