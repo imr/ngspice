@@ -761,13 +761,14 @@ int WIN_NewViewport(GRAPH *graph)
                           0, 0, WinLineWidth, i * 2 - 22, NULL, NULL, hInst, NULL);
 #else
    /* UTF-8 support */
-    const int n_byte_wide = 2 * (int) strlen(graph->plotname) + 1;
+    const int n_byte_wide = (int) strlen(graph->plotname) + 1;
     wchar_t * const wtext = TMALLOC(wchar_t, n_byte_wide);
-    const int n_byte_wide2 = 2 * (int) strlen(WindowName) + 1;
+    const int n_byte_wide2 = (int) strlen(WindowName) + 1;
     wchar_t * const wtext2 = TMALLOC(wchar_t, n_byte_wide2);
     /* translate UTF-8 to UTF-16 */
     MultiByteToWideChar(CP_UTF8, 0, graph->plotname, -1, wtext, n_byte_wide);
     MultiByteToWideChar(CP_UTF8, 0, WindowName, -1, wtext2, n_byte_wide2);
+    /* CreateWindowW requires NULL-terminated wtext */
     window = CreateWindowW(wtext2, wtext, WS_OVERLAPPEDWINDOW,
         0, 0, WinLineWidth, i * 2 - 22, NULL, NULL, hInst, NULL);
     txfree(wtext);
