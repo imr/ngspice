@@ -3,7 +3,7 @@
 set hcopydevtype = postscript
 set hcopypscolor=1
 set hcopyscale=1
-set color2=rgb:F/0/0
+set color2=rgb:FF/0/0
 *setcs hcopyfont=Arial
 *
 *setcs hcopyfont='Nimbus Mono-Regular'
