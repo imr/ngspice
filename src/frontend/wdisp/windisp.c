@@ -15,6 +15,7 @@
 #include "ngspice/ftedev.h"
 #include "ngspice/ftedbgra.h"
 #include "ngspice/fteext.h"
+#include "ngspice/stringskip.h"
 #include "../plotting/graf.h"
 #include "../plotting/graphdb.h"
 #include "windisp.h"
@@ -1090,17 +1091,30 @@ int WIN_Text(const char *text, int x, int y, int angle)
     lfw.lfPitchAndFamily = 0;
 
     /* set up fonts */
-    if (!cp_getvar("wfont", CP_STRING, facename, sizeof(facename))) {
+    if (!cp_getvar("wfont", CP_STRING, facename, sizeof(facename) - 1)) {
         (void)lstrcpyW(lfw.lfFaceName, DEFW_FONTW);
     }
     else {
+        /* Read a font name (see https://docs.microsoft.com/en-us/typography/fonts/windows_10_font_list) 
+           Set lfw if Bold or Italic is found, remove both from facename, remove trailing spaces */
         wchar_t wface[32];
+        char* tmpstr = strstr(facename, "Bold");
+        if (tmpstr) {
+            lfw.lfWeight = 700;
+            memcpy(tmpstr, "    ", 4);
+        }
+        char* tmpstr2 = strstr(facename, "Italic");
+        if (tmpstr2) {
+            lfw.lfItalic = TRUE;
+            memcpy(tmpstr2, "      ", 6);
+        }
+        /* remove trailing spaces */
+        if (tmpstr || tmpstr2) {
+            char* const f_end = skip_back_ws(facename + strlen(facename), facename);
+            *f_end = '\0';
+        }
         swprintf(wface, 32, L"%S", facename);
         (void)lstrcpyW(lfw.lfFaceName, wface);
-        if (strstr(facename, "Bold"))
-            lfw.lfWeight = 700;
-        if (strstr(facename, "Italic"))
-            lfw.lfItalic = TRUE;
     }
     if (!cp_getvar("wfont_size", CP_NUM, &(lfw.lfHeight), 0)) {
         lfw.lfHeight = 18;
