@@ -761,9 +761,9 @@ int WIN_NewViewport(GRAPH *graph)
                           0, 0, WinLineWidth, i * 2 - 22, NULL, NULL, hInst, NULL);
 #else
    /* UTF-8 support */
-    const int n_byte_wide = (int) strlen(graph->plotname);
+    const int n_byte_wide = 2 * (int) strlen(graph->plotname) + 1;
     wchar_t * const wtext = TMALLOC(wchar_t, n_byte_wide);
-    const int n_byte_wide2 = (int) strlen(WindowName);
+    const int n_byte_wide2 = 2 * (int) strlen(WindowName) + 1;
     wchar_t * const wtext2 = TMALLOC(wchar_t, n_byte_wide2);
     /* translate UTF-8 to UTF-16 */
     MultiByteToWideChar(CP_UTF8, 0, graph->plotname, -1, wtext, n_byte_wide);
