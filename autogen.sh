@@ -59,7 +59,8 @@ error_and_exit()
 
 check_awk()
 {
-    (awk --version) < /dev/null > /dev/null 2>&1 || {
+    (awk --version) < /dev/null > /dev/null 2>&1 ||
+    (awk -W version) < /dev/null > /dev/null 2>&1 || {
 	echo
 	echo "You must have awk installed to compile $PROJECT with --adms."
 	exit 1
