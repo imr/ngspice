@@ -22,7 +22,6 @@ BJTask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFvalue
 {
     BJTinstance *here = (BJTinstance*)instPtr;
     double tmp;
-    int itmp;
     double vr;
     double vi;
     double sr;
@@ -232,6 +231,7 @@ BJTask(CKTcircuit *ckt, GENinstance *instPtr, int which, IFvalue *value, IFvalue
             return(OK);
         case BJT_QUEST_SENS_CPLX:
             if(ckt->CKTsenInfo){
+               int itmp;
                itmp = select->iValue + 1;
                value->cValue.real= *(ckt->CKTsenInfo->SEN_RHS[itmp]+
                    here->BJTsenParmNo);

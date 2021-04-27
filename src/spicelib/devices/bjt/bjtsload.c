@@ -314,7 +314,6 @@ restore:
                 *(ckt->CKTstate0 + here->BJTstate + i) = *(SaveState0 + i);
             }
             *(ckt->CKTstate1 + here->BJTcexbc) = *(SaveState0 + 21);
-            *(ckt->CKTstate1 + here->BJTcexbc) = *(SaveState0 + 21);
             here->BJTcapbe = *(SaveState0 + 23) ;
             here->BJTcapbc = *(SaveState0 + 24) ;
             here->BJTcapsub = *(SaveState0 + 25) ;

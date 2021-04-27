@@ -3977,14 +3977,7 @@ for (; model != NULL; model = B3SOIPDnextModel(model))
                       gTtdp = - (gTtg + gTtb + gTtsp);
 		  }
 
-		   if (model->B3SOIPDtype > 0)
-		   {   
-		       ceqqg = ceqqg;
-		       ceqqb = ceqqb;
-		       ceqqe = ceqqe;
-		       ceqqd = ceqqd;
-		   }
-		   else
+		   if (model->B3SOIPDtype < 0)
 		   {   
 		       ceqbodcon = -ceqbodcon;
 		       ceqbody = -ceqbody;

@@ -803,7 +803,7 @@ bypass:
                 /*
                 *   charge storage elements
                 */
-                double czero, czof2, diffcharge, deplcharge, diffcap, deplcap;
+                double czero, diffcharge, deplcharge, diffcap, deplcap;
                 czero = here->VDIOtJctCap;
                 if (vd < here->VDIOtDepCap) {
                     arg = 1 - vd / here->VDIOtJctPot;
@@ -811,6 +811,7 @@ bypass:
                     deplcharge = here->VDIOtJctPot*czero*(1 - arg*sarg) / (1 - here->VDIOtGradingCoeff);
                     deplcap = czero*sarg;
                 } else {
+                    double czof2;
                     czof2 = czero / here->VDIOtF2;
                     deplcharge = czero*here->VDIOtF1 + czof2*(here->VDIOtF3*(vd - here->VDIOtDepCap) +
                                  (here->VDIOtGradingCoeff / (here->VDIOtJctPot + here->VDIOtJctPot))*(vd*vd - here->VDIOtDepCap*here->VDIOtDepCap));

@@ -49,7 +49,6 @@ VDMOSconvTest(GENmodel *inModel, CKTcircuit *ckt)
                 delTemp = *(ckt->CKTrhs + here->VDMOStempNode);
                 deldelTemp = delTemp - *(ckt->CKTstate0 + here->VDMOSdelTemp);
             } else {
-                delTemp = 0.0;
                 deldelTemp = 0.0;
             }
 
