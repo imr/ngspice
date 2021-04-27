@@ -458,7 +458,7 @@ int load_opus(const char *name)
     add_device(num, devs, 1);
 
 #ifdef TRACE
-        printf("Got %u devices.\n", num);
+        printf("Got %d devices.\n", num);
 #endif
 
 
@@ -486,7 +486,7 @@ int load_opus(const char *name)
 
     add_udn(num, udns);
 #ifdef TRACE
-    printf("Got %u udns.\n", num);
+    printf("Got %d udns.\n", num);
 #endif
 
     /* Give the code model access to facilities provided by ngspice. */

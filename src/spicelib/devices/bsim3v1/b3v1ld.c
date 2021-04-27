@@ -2353,10 +2353,12 @@ line900:
 	   if (model->BSIM3v1type > 0)
 	   {   ceqbs += (here->BSIM3v1cbs - (here->BSIM3v1gbs  - ckt->CKTgmin) * vbs);
                ceqbd += (here->BSIM3v1cbd - (here->BSIM3v1gbd  - ckt->CKTgmin) * vbd);
+               /*
                ceqqg = ceqqg;
                ceqqb = ceqqb;
                ceqqd = ceqqd;
                cqcheq = cqcheq;
+               */
 	   }
 	   else
 	   {   ceqbs = -ceqbs - (here->BSIM3v1cbs - (here->BSIM3v1gbs

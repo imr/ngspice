@@ -521,11 +521,11 @@ next1:      vtn=vt*here->BJTtemissionCoeffF;
              *   Kull's Quasi-Saturation model
              */
             if (model->BJTintCollResistGiven) {
-                double Kbci,Kbci_Vbci,Kbcx,Kbcx_Vbcx;
-                double rKp1,rKp1_Vbci,rKp1_Vbcx,xvar1,xvar1_Vbci,xvar1_Vbcx;
-                double Vcorr,Vcorr_Vbci,Vcorr_Vbcx,Iohm,Iohm_Vrci,Iohm_Vbci,Iohm_Vbcx;
-                double quot,quot_Vrci;
                 if (vrci > 0.) {
+                    double Kbci,Kbci_Vbci,Kbcx,Kbcx_Vbcx;
+                    double rKp1,rKp1_Vbci,rKp1_Vbcx,xvar1,xvar1_Vbci,xvar1_Vbcx;
+                    double Vcorr,Vcorr_Vbci,Vcorr_Vbcx,Iohm,Iohm_Vrci,Iohm_Vbci,Iohm_Vbcx;
+                    double quot,quot_Vrci;
                     Kbci = sqrt(1+here->BJTtepiDoping*exp(vbc/vt));
                     Kbci_Vbci = here->BJTtepiDoping*exp(vbc/vt)/(2*vt*Kbci);
                     Kbcx = sqrt(1+here->BJTtepiDoping*exp(vbcx/vt));

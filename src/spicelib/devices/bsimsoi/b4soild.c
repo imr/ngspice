@@ -10263,14 +10263,7 @@ line900:
                     = gdtotb = ceqgdtot = 0.0;
             }
 
-            if (model->B4SOItype > 0)
-            {
-                ceqqg = ceqqg;
-                ceqqb = ceqqb;
-                ceqqe = ceqqe;
-                ceqqd = ceqqd;
-            }
-            else
+            if (model->B4SOItype < 0)
             {
                 ceqbodcon = -ceqbodcon;
                 ceqbody = -ceqbody;

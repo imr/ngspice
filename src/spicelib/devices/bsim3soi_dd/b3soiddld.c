@@ -3996,14 +3996,7 @@ if (here->B3SOIDDdebugMod > 2)
                       gTtdp = - (gTtg + gTtb + gTte + gTtsp);
 		  }
 
-		   if (model->B3SOIDDtype > 0)
-		   {   
-		       ceqqg = ceqqg;
-		       ceqqb = ceqqb;
-		       ceqqe = ceqqe;
-		       ceqqd = ceqqd;
-		   }
-		   else
+		   if (model->B3SOIDDtype < 0)
 		   {   
 		       ceqbodcon = -ceqbodcon;
 		       ceqbody = -ceqbody;

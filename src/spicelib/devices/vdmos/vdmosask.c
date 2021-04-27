@@ -166,9 +166,6 @@ VDMOSask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value,
                     value->rValue += fabs(*(ckt->CKTstate0 + here->VDMOScqgd) *
                                           (*(ckt->CKTrhsOld + here->VDMOSgNode) -
                                            *(ckt->CKTrhsOld + here->VDMOSdNode)));
-                }
-                if ((ckt->CKTcurrentAnalysis & DOING_TRAN) && 
-                        !(ckt->CKTmode & MODETRANOP)) {
                     value->rValue += fabs(*(ckt->CKTstate0 + here->VDMOScqgs) *
                                           (*(ckt->CKTrhsOld + here->VDMOSgNode) -
                                            *(ckt->CKTrhsOld + here->VDMOSsNode)));
