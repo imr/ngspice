@@ -29,7 +29,7 @@ VDMOSacLoad(GENmodel *inModel, CKTcircuit *ckt)
     double GmT;
     double xcsT, xcTt;
 
-    register int selfheat;
+    int selfheat;
 
     for( ; model != NULL; model = VDMOSnextModel(model)) {
         for(here = VDMOSinstances(model); here!= NULL;

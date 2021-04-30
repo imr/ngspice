@@ -56,7 +56,7 @@ VDMOSload(GENmodel *inModel, CKTcircuit *ckt)
     int Check_th, Check_dio;
     int error;
 
-    register int selfheat;
+    int selfheat;
     double rd0T, rd1T, dBeta_dT, dIds_dT;
     double Vrd=0.0, dIth_dVrd=0.0, dIrd_dT=0.0;
     double drd0T_dT, drd1T_dT, drd_dT, dgdrain_dT=0.0;

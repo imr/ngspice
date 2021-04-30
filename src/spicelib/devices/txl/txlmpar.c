@@ -16,7 +16,7 @@ Author: 1992 Charles Hough
 int
 TXLmParam(int param, IFvalue *value, GENmodel *inModel)
 {
-    register TXLmodel *model = (TXLmodel *)inModel;
+    TXLmodel *model = (TXLmodel *)inModel;
     switch(param) {
         case TXL_R:
             model->R = value->rValue;

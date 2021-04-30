@@ -29,7 +29,7 @@ static void copy_coeffs(double **dst, IFvalue *value)
 int
 CPLmParam(int param, IFvalue *value, GENmodel *inModel)
 {
-    register CPLmodel *model = (CPLmodel *)inModel;
+    CPLmodel *model = (CPLmodel *)inModel;
     switch(param) {
         case CPL_R:
             copy_coeffs(& model->Rm, value);
