@@ -670,7 +670,7 @@ expC(double ar,	double ai, double h, double *cr, double *ci)
 static int 
 multC(double ar, double	ai, double br, double bi, double *cr, double *ci)
 {
-	register double	tp;
+	double	tp;
 
 	tp = ar*br - ai*bi;
 	*ci = ar*bi + ai*br;
