@@ -321,8 +321,6 @@ BJTload(GENmodel *inModel, CKTcircuit *ckt)
                             *(ckt->CKTstate1 + here->BJTgx);
                     *(ckt->CKTstate0 + here->BJTvsub) =
                             *(ckt->CKTstate1 + here->BJTvsub);
-                    vsub = (1+xfact)**(ckt->CKTstate1 + here->BJTvsub)-
-                            xfact* *(ckt->CKTstate2 + here->BJTvsub);
                     *(ckt->CKTstate0 + here->BJTirci) =
                             *(ckt->CKTstate1 + here->BJTirci);
                     *(ckt->CKTstate0 + here->BJTirci_Vrci) =
