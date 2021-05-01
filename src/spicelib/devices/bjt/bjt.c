@@ -221,6 +221,8 @@ IFparm BJTmPTable[] = { /* model parameters */
  IOP("tise2", BJT_MOD_TISE2, IF_REAL, "ISE 2. temperature coefficient"),
  IOP("tisc1", BJT_MOD_TISC1, IF_REAL, "ISC 1. temperature coefficient"),
  IOP("tisc2", BJT_MOD_TISC2, IF_REAL, "ISC 2. temperature coefficient"),
+ IOP("tiss1", BJT_MOD_TISS1, IF_REAL, "ISS 1. temperature coefficient"),
+ IOP("tiss2", BJT_MOD_TISS2, IF_REAL, "ISS 2. temperature coefficient"),
  IOP("quasimod", BJT_MOD_QUASIMOD, IF_INTEGER, "Temperature equation selector"),
  IOP("vg",   BJT_MOD_EGQS,   IF_REAL, "Energy gap for QS temp. dependency"),
  IOP("cn",    BJT_MOD_XRCI,  IF_REAL, "Temperature exponent of RCI"),
