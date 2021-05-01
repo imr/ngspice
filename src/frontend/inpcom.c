@@ -869,13 +869,13 @@ struct card *inp_readall(FILE *fp, const char *dir_name,
         inp_fix_param_values(working);
 
         inp_reorder_params(subckt_w_params, cc);
-
+//        tprint(working);
         /* Special handling for large PDKs: We need to know W and L of
            transistor subcircuits by checking their x invocation */
         inp_get_w_l_x(working);
 
         inp_fix_inst_calls_for_numparam(subckt_w_params, working);
-//        tprint(working);
+
         delete_names(subckt_w_params);
         subckt_w_params = NULL;
         if (!cp_getvar("no_auto_gnd", CP_BOOL, NULL, 0))
@@ -3312,7 +3312,36 @@ static int inp_fix_subckt_multiplier(struct names *subckt_w_params,
         /* no 'm' for model cards */
         if (ciprefix(".model", curr_line))
             continue;
-        new_str = tprintf("%s m={m}", curr_line);
+        if (newcompat.hs) {
+            /* if there is already an m=xx in the instance line, multiply it with the new m */
+            char* mult = strstr(curr_line, " m=");
+            if (mult) {
+                char* beg = copy_substring(curr_line, mult);
+                mult = mult + 3;
+                char* multval = gettok(&mult);
+                /* replace { } or ' ' by ( ) to avoid double braces */
+                if (*multval == '{' || *multval == '\'') {
+                    *multval = '(';
+                }
+                char* tmpstr = strchr(multval, '}');
+                if (tmpstr) {
+                    *tmpstr = ')';
+                }
+                tmpstr = strchr(multval, '\'');
+                if (tmpstr) {
+                    *tmpstr = ')';
+                }
+                new_str = tprintf("%s m={m*%s} %s", beg, multval, mult);
+                tfree(beg);
+                tfree(multval);
+            }
+            else {
+                new_str = tprintf("%s m={m}", curr_line);
+            }
+        }
+        else {
+            new_str = tprintf("%s m={m}", curr_line);
+        }
 
         tfree(card->line);
         card->line = new_str;
@@ -8910,6 +8939,7 @@ static void inp_check_syntax(struct card *deck)
 {
     struct card *card;
     int check_control = 0, check_subs = 0, check_if = 0, check_ch = 0;
+    bool mwarn = FALSE;
 
     /* will lead to crash in inp.c, fcn inp_spsource */
     if (ciprefix(".param", deck->line) || ciprefix(".meas", deck->line)) {
@@ -8953,6 +8983,13 @@ static void inp_check_syntax(struct card *deck)
         }
         // check for .subckt ... .ends
         else if (ciprefix(".subckt", cut_line)) {
+            // warn if m=xx on .subckt line
+            if (newcompat.hs && !mwarn) {
+                if (strstr(cut_line, " m=") || strstr(cut_line, " m =")) {
+                    fprintf(stderr, "Warning: m=xx on .subckt line will override multiplier m hierarchy!\n\n");
+                    mwarn = TRUE;
+                }
+            }
             // nesting may be critical if params are involved
             if (check_subs > 0 && strchr(cut_line, '='))
                 fprintf(cp_err,
