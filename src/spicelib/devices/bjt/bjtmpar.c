@@ -470,6 +470,14 @@ BJTmParam(int param, IFvalue *value, GENmodel *inModel)
             mods->BJTtisc2 = value->rValue;
             mods->BJTtisc2Given = TRUE;
             break;
+        case BJT_MOD_TISS1:
+            mods->BJTtiss1 = value->rValue;
+            mods->BJTtiss1Given = TRUE;
+            break;
+        case BJT_MOD_TISS2:
+            mods->BJTtiss2 = value->rValue;
+            mods->BJTtiss2Given = TRUE;
+            break;
         case BJT_MOD_QUASIMOD:
             mods->BJTquasimod = value->iValue;
             mods->BJTquasimodGiven = TRUE;

@@ -390,6 +390,12 @@ BJTmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
         case BJT_MOD_TISC2:
             value->rValue = here->BJTtisc2;
             return(OK);
+        case BJT_MOD_TISS1:
+            value->rValue = here->BJTtiss1;
+            return(OK);
+        case BJT_MOD_TISS2:
+            value->rValue = here->BJTtiss2;
+            return(OK);
         case BJT_MOD_QUASIMOD:
             value->iValue = here->BJTquasimod;
             return(OK);

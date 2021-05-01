@@ -335,6 +335,12 @@ BJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if(!model->BJTtisc2Given) {
             model->BJTtisc2 = 0.0;
         }
+        if(!model->BJTtiss1Given) {
+            model->BJTtiss1 = 0.0;
+        }
+        if(!model->BJTtiss2Given) {
+            model->BJTtiss2 = 0.0;
+        }
         if(!model->BJTquasimodGiven) {
             model->BJTquasimod = 0;
         }

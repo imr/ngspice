@@ -489,6 +489,8 @@ typedef struct sBJTmodel {          /* model structure for a bjt */
     double BJTtise2;
     double BJTtisc1;
     double BJTtisc2;
+    double BJTtiss1;
+    double BJTtiss2;
     int    BJTquasimod;
     double BJTenergyGapQS;
     double BJTtempExpRCI;
@@ -606,6 +608,8 @@ typedef struct sBJTmodel {          /* model structure for a bjt */
     unsigned BJTtise2Given : 1;
     unsigned BJTtisc1Given : 1;
     unsigned BJTtisc2Given : 1;
+    unsigned BJTtiss1Given : 1;
+    unsigned BJTtiss2Given : 1;
     unsigned BJTquasimodGiven : 1;
     unsigned BJTenergyGapQSGiven : 1;
     unsigned BJTtempExpRCIGiven : 1;
@@ -757,6 +761,8 @@ enum {
     BJT_MOD_TISE2,
     BJT_MOD_TISC1,
     BJT_MOD_TISC2,
+    BJT_MOD_TISS1,
+    BJT_MOD_TISS2,
     BJT_MOD_QUASIMOD,
     BJT_MOD_EGQS,
     BJT_MOD_XRCI,
