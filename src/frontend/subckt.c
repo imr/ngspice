@@ -1932,11 +1932,9 @@ devmodtranslate(struct card *s, char *subname, wordlist * const orig_modnames)
             if (name == NULL) {
                 name = copy(""); /* allow 'tfree' */
             } else {
-                found = 0;
-                while (!found) {
+                for (;;) {
                     wlsub = wl_find(name, orig_modnames);
                     if (wlsub) {
-                        found = 1;
                         break;
                     } else {
                         bxx_printf(&buffer, "%s ", name);
@@ -2089,11 +2087,9 @@ devmodtranslate(struct card *s, char *subname, wordlist * const orig_modnames)
             if (name == NULL) {
                 name = copy(""); /* allow 'tfree' */
             } else {
-                found = 0;
-                while (!found) {
+                for (;;) {
                     wlsub = wl_find(name, orig_modnames);
                     if (wlsub) {
-                        found = 1;
                         break;
                     } else {
                         bxx_printf(&buffer, "%s ", name);
