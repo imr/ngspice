@@ -93,6 +93,10 @@ All boolean signals (NG_BOOL) are of type int.
 #ifndef NGSPICE_PACKAGE_VERSION
 #define NGSPICE_PACKAGE_VERSION "34+"
 #endif
+/* we have NG_BOOL instead of BOOL */
+#ifndef HAS_NG_BOOL
+#define HAS_NG_BOOL 1
+#endif
 
 #ifndef NGSPICE_DLL_H
 #define NGSPICE_DLL_H
