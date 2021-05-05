@@ -256,7 +256,7 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
                             break;
                         }
                         /* generate a vector of real time information */
-                        else if (ft_ngdebug && eq(refName, "time") && eq(saves[i].name, "speedcheck")) {
+                        else if (ft_ngdebug && refName && eq(refName, "time") && eq(saves[i].name, "speedcheck")) {
                             addDataDesc(run, "speedcheck", IF_REAL, j, initmem);
                             savesused[i] = TRUE;
                             saves[i].used = 1;
