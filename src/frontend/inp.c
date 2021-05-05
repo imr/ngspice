@@ -1169,6 +1169,51 @@ inp_dodeck(
     }
     noparse = cp_getvar("noparse", CP_BOOL, NULL, 0);
 
+    /* Read the options, create variables and store them
+       in ftcurckt->ci_vars */
+    if (!noparse) {
+        char* s;
+        bool ii;
+        wordlist* wl;
+        struct card* opt_beg = options;
+        for (; options; options = options->nextcard) {
+            s = skip_non_ws(options->line);
+
+            ii = cp_interactive;
+            cp_interactive = FALSE;
+            wl = cp_lexer(s);
+            cp_interactive = ii;
+            if (!wl || !wl->wl_word || !*wl->wl_word)
+                continue;
+            if (eev)
+                eev->va_next = cp_setparse(wl);
+            else
+                ct->ci_vars = eev = cp_setparse(wl);
+            wl_free(wl);
+            while (eev && (eev->va_next))
+                eev = eev->va_next;
+        }
+        for (eev = ct->ci_vars; eev; eev = eev->va_next) {
+            switch (eev->va_type) {
+            case CP_BOOL:
+                break;
+            case CP_NUM:
+                break;
+            case CP_REAL:
+                break;
+            case CP_STRING:
+                break;
+            default: {
+                fprintf(stderr, "ERROR: wrong format in option %s!\n", eev->va_name);
+                fprintf(stderr, "   Aborting...\n");
+                controlled_exit(EXIT_FAILURE);
+            }
+            } /* switch  . . . */
+        }
+        options = opt_beg; // back to the beginning
+    } /* if (!noparse)  . . . */
+
+
     /*----------------------------------------------------
      * Now assuming that we wanna parse this deck, we call
      * if_inpdeck which takes the deck and returns a
