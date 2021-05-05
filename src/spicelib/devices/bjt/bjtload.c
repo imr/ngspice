@@ -434,8 +434,13 @@ BJTload(GENmodel *inModel, CKTcircuit *ckt)
                 vbc = DEVpnjlim(vbc,*(ckt->CKTstate0 + here->BJTvbc),vt,
                         here->BJTtVcrit,&ichk1);
                 if (ichk1 == 1) icheck=1;
-                vsub = DEVpnjlim(vsub,*(ckt->CKTstate0 + here->BJTvsub),vt,
-                        here->BJTtSubVcrit,&ichk1);
+                if (model->BJTsubSatCurGiven) {
+                    vsub = DEVpnjlim(vsub,*(ckt->CKTstate0 + here->BJTvsub),vt,
+                            here->BJTtSubVcrit,&ichk1);
+                } else {
+                    vsub = DEVpnjlim(vsub,*(ckt->CKTstate0 + here->BJTvsub),vt,
+                            50,&ichk1);
+                }
                 if (ichk1 == 1) icheck=1;
                 vrci = vbc - vbcx; /* in case vbc was limited */
             }
@@ -502,19 +507,22 @@ next1:      vtn=vt*here->BJTtemissionCoeffF;
             gbcn+=ckt->CKTgmin;
             cbcn+=ckt->CKTgmin*vbc;
 
-            vts=vt*here->BJTtemissionCoeffS;
-
-            if(vsub <= -3*vts) {
-                arg=3*vts/(vsub*CONSTe);
-                arg = arg * arg * arg;
-                gdsub = csubsat*3*arg/vsub+ckt->CKTgmin;
-                cdsub = -csubsat*(1+arg)+ckt->CKTgmin*vsub;
+            if (model->BJTsubSatCurGiven) {
+                vts=vt*here->BJTtemissionCoeffS;
+                if(vsub <= -3*vts) {
+                    arg=3*vts/(vsub*CONSTe);
+                    arg = arg * arg * arg;
+                    gdsub = csubsat*3*arg/vsub+ckt->CKTgmin;
+                    cdsub = -csubsat*(1+arg)+ckt->CKTgmin*vsub;
+                } else {
+                    evsub = exp(MIN(MAX_EXP_ARG,vsub/vts));
+                    gdsub = csubsat*evsub/vts + ckt->CKTgmin;
+                    cdsub = csubsat*(evsub-1) + ckt->CKTgmin*vsub;
+                }
             } else {
-                evsub = exp(MIN(MAX_EXP_ARG,vsub/vts));
-                gdsub = csubsat*evsub/vts + ckt->CKTgmin;
-                cdsub = csubsat*(evsub-1) + ckt->CKTgmin*vsub;
+                gdsub = ckt->CKTgmin;
+                cdsub = ckt->CKTgmin*vsub;
             }
-
             /*
              *   Kull's Quasi-Saturation model
              */
