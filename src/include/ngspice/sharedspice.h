@@ -87,7 +87,7 @@ ngspice.dll should never call exit() directly, but handle either the 'quit'
 request to the caller or an request for exiting upon error,
 done by callback function ngexit().
 
-All boolean signals (BOOL) are of type int.
+All boolean signals (NG_BOOL) are of type int.
 */
 
 #ifndef NGSPICE_PACKAGE_VERSION
@@ -130,8 +130,8 @@ struct ngcomplex {
 typedef struct ngcomplex ngcomplex_t;
 #endif
 
-/* For C++ compatibility */
-typedef int BOOL;
+/* ngspice traditionally treats a boolean var as int */
+typedef int NG_BOOL;
 
 /* vector info obtained from any vector in ngspice.dll.
    Allows direct access to the ngspice internal vector structure,
@@ -149,8 +149,8 @@ typedef struct vecvalues {
     char* name;        /* name of a specific vector */
     double creal;      /* actual data value */
     double cimag;      /* actual data value */
-    BOOL is_scale;     /* if 'name' is the scale vector */
-    BOOL is_complex;   /* if the data are complex numbers */
+    NG_BOOL is_scale;     /* if 'name' is the scale vector */
+    NG_BOOL is_complex;   /* if the data are complex numbers */
 } vecvalues, *pvecvalues;
 
 typedef struct vecvaluesall {
@@ -164,7 +164,7 @@ typedef struct vecinfo
 {
     int number;     /* number of vector, as postion in the linked list of vectors, starts with 0 */
     char *vecname;  /* name of the actual vector */
-    BOOL is_real;   /* TRUE if the actual vector has real data */
+    NG_BOOL is_real;   /* TRUE if the actual vector has real data */
     void *pdvec;    /* a void pointer to struct dvec *d, the actual vector */
     void *pdvecscale; /* a void pointer to struct dvec *ds, the scale vector */
 } vecinfo, *pvecinfo;
@@ -221,11 +221,11 @@ typedef int (SendStat)(char*, int, void*);
    void* return pointer received from caller
 */
 /* asking for controlled exit */
-typedef int (ControlledExit)(int, BOOL, BOOL, int, void*);
+typedef int (ControlledExit)(int, NG_BOOL, NG_BOOL, int, void*);
 /*
    int   exit status
-   BOOL  if true: immediate unloading dll, if false: just set flag, unload is done when function has returned
-   BOOL  if true: exit upon 'quit', if false: exit due to ngspice.dll error
+   NG_BOOL  if true: immediate unloading dll, if false: just set flag, unload is done when function has returned
+   NG_BOOL  if true: exit upon 'quit', if false: exit due to ngspice.dll error
    int   identification number of calling ngspice shared lib
    void* return pointer received from caller
 */
@@ -247,9 +247,9 @@ typedef int (SendInitData)(pvecinfoall, int, void*);
 */
 
 /* indicate if background thread is running */
-typedef int (BGThreadRunning)(BOOL, int, void*);
+typedef int (BGThreadRunning)(NG_BOOL, int, void*);
 /*
-   BOOL        true if background thread is running
+   NG_BOOL        true if background thread is running
    int         identification number of calling ngspice shared lib
    void*       return pointer received from caller
 */
@@ -404,11 +404,11 @@ char** ngSpice_AllVecs(char* plotname);
 
 /* returns TRUE if ngspice is running in a second (background) thread */
 IMPEXP
-BOOL ngSpice_running(void);
+NG_BOOL ngSpice_running(void);
 
 /* set a breakpoint in ngspice */
 IMPEXP
-BOOL ngSpice_SetBkpt(double time);
+NG_BOOL ngSpice_SetBkpt(double time);
 
 
 #ifdef __cplusplus
