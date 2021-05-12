@@ -35,7 +35,6 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
     register double *xdata, *ydata;
     bool rot, increasing = FALSE;
     double dx = 0.0, dy = 0.0, lx = 0.0, ly = 0.0;
-    int dir;
 
     /* if already started, use saved degree */
     if (nostart) {
@@ -135,7 +134,7 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
         to FALSE by flag 'retraceplot' in command 'plot'.
         Then everything is plotted. */
         bool mono = (currentgraph->plottype != PLOT_RETLIN);
-        dir = 0;
+        int dir = 0;
         for (i = 0, j = v->v_length; i < j; i++) {
             dx = isreal(xs) ? xs->v_realdata[i] :
                 realpart(xs->v_compdata[i]);
