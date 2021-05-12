@@ -58,7 +58,7 @@ IFparm HICUMpTable[] = { /* parameters */
  OP("vbiei",    HICUM_QUEST_VBIEI,   IF_REAL, "Internal BE voltage"),
  OP("vbpbi",    HICUM_QUEST_VBPBI,   IF_REAL, "Peripheral Base to internal Base voltage"),
  OP("vbici",    HICUM_QUEST_VBICI,   IF_REAL, "Internal BC voltage"),
- OP("vciei",    HICUM_QUEST_VCIEI,   IF_REAL, "Interal  CE voltage"),
+ OP("vciei",    HICUM_QUEST_VCIEI,   IF_REAL, "Internal CE voltage"),
 /* currents */
  OP("ic",     HICUM_QUEST_CC,    IF_REAL, "Collector current"),
  OP("iavl",   HICUM_QUEST_CAVL,  IF_REAL, "Avalanche current"),
