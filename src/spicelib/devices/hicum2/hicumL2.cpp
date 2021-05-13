@@ -1171,7 +1171,8 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             if(ckt->CKTmode & MODEINITSMSIG) {
                 Vbiei = *(ckt->CKTstate0 + here->HICUMvbiei);
                 Vbici = *(ckt->CKTstate0 + here->HICUMvbici);
-                Vciei = Vbiei - Vbici;
+                // dead assign:
+                //Vciei = Vbiei - Vbici;
                 Vbpei = *(ckt->CKTstate0 + here->HICUMvbpei);
                 Vbpci = *(ckt->CKTstate0 + here->HICUMvbpci);
                 Vbci = model->HICUMtype*(
@@ -1210,7 +1211,8 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             } else if(ckt->CKTmode & MODEINITTRAN) {
                 Vbiei = *(ckt->CKTstate1 + here->HICUMvbiei);
                 Vbici = *(ckt->CKTstate1 + here->HICUMvbici);
-                Vciei = Vbiei - Vbici;
+                // dead assign:
+                //Vciei = Vbiei - Vbici;
                 Vbpei = *(ckt->CKTstate1 + here->HICUMvbpei);
                 Vbpci = *(ckt->CKTstate1 + here->HICUMvbpci);
                 Vbci = model->HICUMtype*(
@@ -1266,7 +1268,8 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             } else if((ckt->CKTmode & MODEINITJCT) && (here->HICUMoff==0)) {
                 Vbiei = here->HICUMtVcrit;
                 Vbici = 0.0;
-                Vciei = Vbiei - Vbici;
+                // dead assign:
+                //Vciei = Vbiei - Vbici;
                 Vsc = Vsici = 0.0;
                 Vbe = Vbpei = Vbiei;
                 Vbci = Vbpci = Vbici;
@@ -1283,7 +1286,8 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                     ( (ckt->CKTmode & MODEINITFIX) && (here->HICUMoff!=0))) {
                 Vbe=0.0;
                 Vbiei=Vbe;
-                Vciei=0.0;
+                // dead assign:
+                //Vciei=0.0;
                 Vbci=Vbici=Vbpci=0.0;
                 Vbpei=0.0;
                 Vsc=Vsici=0.0;
@@ -1308,10 +1312,11 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                             xfact * *(ckt->CKTstate2 + here->HICUMvsici);
                     Vbpbi = (1+xfact) * *(ckt->CKTstate1 + here->HICUMvbpbi)-
                             xfact * *(ckt->CKTstate2 + here->HICUMvbpbi);
-                    Vxf   = (1+xfact) * *(ckt->CKTstate1 + here->HICUMvxf)-
-                            xfact * *(ckt->CKTstate2 + here->HICUMvxf);
-                    Vxf1  = (1+xfact) * *(ckt->CKTstate1 + here->HICUMvxf1)-
-                            xfact * *(ckt->CKTstate2 + here->HICUMvxf1);
+                    // dead assign:
+                    // Vxf   = (1+xfact) * *(ckt->CKTstate1 + here->HICUMvxf)-
+                    //         xfact * *(ckt->CKTstate2 + here->HICUMvxf);
+                    // Vxf1  = (1+xfact) * *(ckt->CKTstate1 + here->HICUMvxf1)-
+                    //         xfact * *(ckt->CKTstate2 + here->HICUMvxf1);
                     Vxf2  = (1+xfact) * *(ckt->CKTstate1 + here->HICUMvxf2)-
                             xfact * *(ckt->CKTstate2 + here->HICUMvxf2);
                     Vrth  = (1+xfact) * *(ckt->CKTstate1 + here->HICUMvrth);
@@ -1458,9 +1463,10 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                     Vbiei = model->HICUMtype*(
                         *(ckt->CKTrhsOld+here->HICUMbaseBINode)-
                         *(ckt->CKTrhsOld+here->HICUMemitEINode));
-                    Vbe   = model->HICUMtype*(
-                        *(ckt->CKTrhsOld+here->HICUMbaseNode)-
-                        *(ckt->CKTrhsOld+here->HICUMemitNode));
+                    // no direct Vbe branch exists, dont need this voltage:
+                    // Vbe   = model->HICUMtype*(
+                    //     *(ckt->CKTrhsOld+here->HICUMbaseNode)-
+                    //     *(ckt->CKTrhsOld+here->HICUMemitNode));
                     Vbici = model->HICUMtype*(
                         *(ckt->CKTrhsOld+here->HICUMbaseBINode)-
                         *(ckt->CKTrhsOld+here->HICUMcollCINode));
@@ -1485,8 +1491,9 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                     Vsici = model->HICUMtype*(
                         *(ckt->CKTrhsOld+here->HICUMsubsSINode)-
                         *(ckt->CKTrhsOld+here->HICUMcollCINode));
-                    Vxf   = *(ckt->CKTrhsOld + here->HICUMxfNode);
-                    Vxf1  = *(ckt->CKTrhsOld + here->HICUMxf1Node);
+                    // not needed because convergence in NQS network is not checked here
+                    //Vxf   = *(ckt->CKTrhsOld + here->HICUMxfNode);
+                    //Vxf1  = *(ckt->CKTrhsOld + here->HICUMxf1Node);
                     Vxf2  = *(ckt->CKTrhsOld + here->HICUMxf2Node);
                     Vciei = Vbiei - Vbici;
                     if (selfheat) {
@@ -1517,9 +1524,6 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                     *(ckt->CKTrhsOld+here->HICUMemitNode));
                 Vsc = model->HICUMtype*(
                     *(ckt->CKTrhsOld+here->HICUMsubsNode)-
-                    *(ckt->CKTrhsOld+here->HICUMcollNode));
-                Vcic = model->HICUMtype*(
-                    *(ckt->CKTrhsOld+here->HICUMcollCINode)-
                     *(ckt->CKTrhsOld+here->HICUMcollNode));
                 Vbci = model->HICUMtype*(
                     *(ckt->CKTrhsOld+here->HICUMbaseNode)-
@@ -1715,7 +1719,8 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                     Ibpci_Vbpci = *(ckt->CKTstate0 + here->HICUMibpci_Vbpci);
                     Ibpci_Vrth  = *(ckt->CKTstate0 + here->HICUMibpci_Vrth);
 
-                    Ieie        = *(ckt->CKTstate0 + here->HICUMieie);
+                    //dead assign:
+                    //Ieie        = *(ckt->CKTstate0 + here->HICUMieie);
                     Ieie_Vrth   = *(ckt->CKTstate0 + here->HICUMieie_Vrth);
 
                     Isis_Vsis   = *(ckt->CKTstate0 + here->HICUMisis_Vsis);
@@ -1873,12 +1878,13 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
             a_h    = result_a_h.rpart(); //needed to check if newton iteration needed
             Q_p    = result_Q_p.rpart(); //needed to check if newton iteration needed
             Tf     = result_Tf.rpart();  //needed to check if newton iteration needed
-            itf_dT = result_itf.dpart();
-            itr_dT = result_itr.dpart();
-            Qf_dT  = result_Qf.dpart();
-            Qr_dT  = result_Qr.dpart();
-            Q_bf_dT= result_Q_bf.dpart();
-            Tf_dT  = result_Tf.dpart();
+            // dead assign:
+            //itf_dT = result_itf.dpart();
+            //itr_dT = result_itr.dpart();
+            //Qf_dT  = result_Qf.dpart();
+            //Qr_dT  = result_Qr.dpart();
+            //Q_bf_dT= result_Q_bf.dpart();
+            //Tf_dT  = result_Tf.dpart();
 
             if (!(Qf > RTOLC*Q_p || a_h > RTOLC)) { // in this case the newton is not run and the derivatives of the initial solution are needed
                 calc_it_initial(Temp_dual, Vbiei    , Vbici    , Q_0+1_e*Q_0_dT      , T_f0+1_e*T_f0_dT     , ick+1_e*ick_dT      , &result_itf, &result_itr, &result_Qf, &result_Qr, &result_Q_bf, &result_a_h, &result_Q_p, &result_Tf);
@@ -2195,8 +2201,9 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 Ixf1       = Vxf1;
                 Ixf1_Vxf1  = 1.0;
                 Ixf1_Vxf2  = 0;
-                Ixf1_ditf  = 0;
-                Ixf1_dTf   = 0;
+                // dead assign:
+                //Ixf1_ditf  = 0;
+                //Ixf1_dTf   = 0;
                 Ixf1_Vbiei = 0;
                 Ixf1_Vbici = 0;
                 Ixf1_dT    = 0;
@@ -2204,7 +2211,8 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 Ixf2       = Vxf2;
                 Ixf2_Vxf2  = 1.0;
                 Ixf2_Vxf1  = 0;
-                Ixf2_dTf   = 0;
+                // dead assign:
+                //Ixf2_dTf   = 0;
                 Ixf2_Vbiei = 0;
                 Ixf2_Vbici = 0;
                 Ixf2_dT    = 0;
@@ -2217,8 +2225,9 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
                 Ixf        = Vxf;
                 Ixf_Vxf    = 1.0;
-                Ixf_Tf     = 0;
-                Ixf_Qdei   = 0;
+                // dead assign:
+                //Ixf_Tf     = 0;
+                //Ixf_Qdei   = 0;
                 Ixf_Vbiei  = 0;
                 Ixf_Vbici  = 0;
                 Ixf_dT     = 0;
