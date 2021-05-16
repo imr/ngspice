@@ -1806,6 +1806,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
                 here->HICUMtemp_Vrth = Tdev_Vrth;
             } else {
                 Temp =  here->HICUMtemp;
+                Tdev_Vrth = 0;
                 here->HICUMdtemp_sh  = 0;
                 here->HICUMtemp_Vrth = 0;
             }
