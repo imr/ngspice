@@ -214,7 +214,6 @@ cp_usrvars(void)
 
 
 /* Extract the .option lines from the deck */
-
 struct card *
 inp_getopts(struct card *deck)
 {
@@ -222,7 +221,9 @@ inp_getopts(struct card *deck)
 
     for (dd = deck->nextcard; dd; dd = next) {
         next = dd->nextcard;
-        if (ciprefix(".opt", dd->line)) {
+        /* .option with params is excluded here. These options will be handled
+        after parameter substitution by INP2dot(), dot_options(), and INPdoOpts(). */
+        if (ciprefix(".opt", dd->line) && !strchr(dd->line, '{')) {
             inp_casefix(dd->line);
             if (last)
                 last->nextcard = dd->nextcard;
