@@ -376,13 +376,13 @@ handlekeypressed(Widget w, XtPointer client_data, XEvent *ev, Boolean *continue_
         ret = Xget_str_length("我能吞下", &wl, &wh, NULL, DEVDEP(graph).fname, DEVDEP(graph).fsize);*/
     if (ret == 1) {
         fprintf(cp_err, "Error: Could not establish a font for %s\n", DEVDEP(graph).fname);
-        goto end;
     }
-    XWarpPointer(display, None, DEVDEP(graph).window, 0, 0, 0, 0,
-                 keyev->x + (int)(1.2 * wl),
-                 keyev->y);
+    else {
+        XWarpPointer(display, None, DEVDEP(graph).window, 0, 0, 0, 0,
+            keyev->x + (int)(1.2 * wl),
+            keyev->y);
+    }
 #endif
-end:
     PopGraphContext();
 }
 
@@ -726,7 +726,9 @@ X11_Text(const char *text, int x, int y, int angle)
 #ifndef HAVE_LIBXFT
     if (DEVDEP(currentgraph).isopen) {
         if (angle != 0) {
-            fprintf(stderr, " No Xft: angles other than 0 are not supported\n");
+            if (ft_ngdebug)
+                fprintf(stderr, "\nWarning: No Xft: angles other than 0 are not supported\n");
+            angle = 0;
         }
         XDrawString(display, DEVDEP(currentgraph).window,
                     DEVDEP(currentgraph).gc, x,
