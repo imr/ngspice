@@ -476,7 +476,6 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
     struct card *deck = NULL, *dd, *ld, *prev_param = NULL, *prev_card = NULL;
     struct card *realdeck = NULL, *options = NULL, *curr_meas = NULL;
     char *tt = NULL, name[BSIZE_SP + 1], *s, *t, *temperature = NULL;
-    double testemp = 0.0;
     bool commands = FALSE;
     wordlist *wl = NULL, *end = NULL, *wl_first = NULL;
     wordlist *controls = NULL, *pre_controls = NULL;
@@ -635,14 +634,6 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
     else {  /* must be regular deck . . . . */
         /* loop through deck and handle control cards */
         for (dd = deck->nextcard; dd; dd = ld->nextcard) {
-            /* get temp from deck */
-            if (ciprefix(".temp", dd->line)) {
-                s = skip_ws(dd->line + 5);
-                if (temperature) {
-                    txfree(temperature);
-                }
-                temperature = copy(s);
-            }
             /* Ignore comment lines, but not lines begining with '*#',
                but remove them, if they are in a .control ... .endc section */
             s = skip_ws(dd->line);
@@ -740,17 +731,6 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             for (wl = pre_controls; wl; wl = wl->wl_next)
                 cp_evloop(wl->wl_word);
             wl_free(pre_controls);
-        }
-
-        /* set temperature if defined to a preliminary variable which may be used
-           in numparam evaluation */
-        if (temperature) {
-            temperature_value = atof(temperature);
-            cp_vset("pretemp", CP_REAL, &temperature_value);
-        }
-        if (ft_ngdebug) {
-            cp_getvar("pretemp", CP_REAL, &testemp, 0);
-            printf("test temperature %f\n", testemp);
         }
 
         /* We are done handling the control stuff.  Now process remainder of deck.
@@ -999,6 +979,15 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                 prev_card->nextcard = dd->nextcard;
                 curr_meas->nextcard = NULL;
                 dd                 = prev_card;
+            }
+            /* get temp from deck */
+            if (ciprefix(".temp", dd->line)) {
+                s = skip_ws(dd->line + 5);
+                if (temperature) {
+                    txfree(temperature);
+                }
+                temperature = copy(s);
+                *(dd->line) = '*';
             }
             prev_card = dd;
         }  //end of for-loop
