@@ -1172,3 +1172,13 @@ static int find_roots(double a1_in, double a2_in, double a3_in,
    return(1);
 }
 
+int
+TXLdevDelete(GENinstance* inst)
+{
+    TXLinstance* here = (TXLinstance*)inst;
+    if (here->txline2)
+        tfree(here->txline2);
+    if (here->txline)
+        tfree(here->txline);
+    return OK;
+}
