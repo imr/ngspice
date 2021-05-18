@@ -7721,7 +7721,23 @@ static struct card *find_model(struct card *startcard,
     return returncard;
 }
 
-/* do the .model replacement required by ako (a kind of)
+/* Process any .distribution cards for PSPICE's Monte-Carlo feature.
+ * A .distribution card defines a probability distribution by a PWL
+ * density function.  This could be rewritten as a function that
+ * returns a random value following that distribution.
+ * For now, just comment it away.
+ */
+static void do_distribution(struct card *oldcard) {
+    while (oldcard) {
+        char *line = oldcard->line;
+
+        if (line && ciprefix(".distribution", line))
+            *line = '*';
+        oldcard = oldcard->nextcard;
+    }
+}
+
+/* Do the .model replacement required by ako (a kind of)
  * PSPICE does not support nested .subckt definitions, so
  * a simple structure is needed: search for ako:modelname,
  * then for modelname in the subcircuit or in the top level.
@@ -7740,31 +7756,37 @@ static struct card *ako_model(struct card *startcard)
     for (card = startcard; card; card = card->nextcard) {
         char *akostr, *searchname;
         char *cut_line = card->line;
+
         if (ciprefix(".subckt", cut_line))
             subcktcard = card;
         else if (ciprefix(".ends", cut_line))
             subcktcard = NULL;
-        if (ciprefix(".model", cut_line) &&
-                ((akostr = strstr(cut_line, "ako:")) != NULL) &&
+        if (ciprefix(".model", cut_line)) {
+            if ((akostr = strstr(cut_line, "ako:")) != NULL &&
                 isspace_c(akostr[-1])) {
-            akostr += 4;
-            searchname = gettok(&akostr);
-            cut_line = nexttok(cut_line);
-            newmname = gettok(&cut_line);
-            newmtype = gettok_noparens(&akostr);
-            /* find the model and do the replacement */
-            if (subcktcard)
-                returncard = find_model(subcktcard, card, searchname,
-                        newmname, newmtype, akostr);
-            if (returncard || !subcktcard)
-                returncard = find_model(startcard, card, searchname, newmname,
-                        newmtype, akostr);
-            tfree(searchname);
-            tfree(newmname);
-            tfree(newmtype);
-            /* replacement not possible, bail out */
-            if (returncard)
-                break;
+                akostr += 4;
+                searchname = gettok(&akostr);
+                cut_line = nexttok(cut_line);
+                newmname = gettok(&cut_line);
+                newmtype = gettok_noparens(&akostr);
+
+                /* Find the model and do the replacement. */
+
+                if (subcktcard)
+                    returncard = find_model(subcktcard, card, searchname,
+                                            newmname, newmtype, akostr);
+                if (returncard || !subcktcard)
+                    returncard = find_model(startcard, card, searchname,
+                                            newmname, newmtype, akostr);
+                tfree(searchname);
+                tfree(newmname);
+                tfree(newmtype);
+
+                /* Replacement not possible, bail out. */
+
+                if (returncard)
+                    break;
+            }
         }
     }
     return returncard;
@@ -7925,6 +7947,9 @@ static struct card *pspice_compat(struct card *oldcard)
         controlled_exit(1);
     }
 
+    /* Process .distribution cards. */
+    do_distribution(oldcard);
+
     /* replace TABLE function in E source */
     replace_table(oldcard);
 
@@ -7988,12 +8013,14 @@ static struct card *pspice_compat(struct card *oldcard)
        .model xxx NPN/PNP   level=2 --> level = 6
        .model xxx LPNP      level=n --> level = 1 subs=-1       */
 
-    /* check for double '{', replace the inner '{', '}' by '(', ')'*/
+    /* Check for double '{', replace the inner '{', '}' by '(', ')'.
+       Also, remove any Monte - Carlo variation parameters from .model cards.*/
     for (card = newcard; card; card = card->nextcard) {
         char* cut_line = card->line;
         if (ciprefix(".model", cut_line)) {
-            char *cut_del = cut_line = inp_remove_ws(copy(cut_line));
-            char* modname, *modtype;
+            char* modname, *modtype, *curr_line;
+            int i;
+            char *cut_del = curr_line = cut_line = inp_remove_ws(copy(cut_line));
             cut_line = nexttok(cut_line); /* skip .model */
             modname = gettok(&cut_line); /* save model name */
             modtype = gettok_noparens(&cut_line); /* save model type */
@@ -8010,7 +8037,7 @@ static struct card *pspice_compat(struct card *oldcard)
                         /* EKV 2.6 in the adms branch */
                         char* newline = tprintf(".model %s %s level=44 %s", modname, modtype, lv);
                         tfree(card->line);
-                        card->line = newline;
+                        card->line = curr_line = newline;
                         }
                         break;
                     case 6:
@@ -8019,7 +8046,7 @@ static struct card *pspice_compat(struct card *oldcard)
                         /* BSIM3 version 3.2.4 */
                         char* newline = tprintf(".model %s %s level=8 version=3.2.4 %s", modname, modtype, lv);
                         tfree(card->line);
-                        card->line = newline;
+                        card->line = curr_line = newline;
                         }
                         break;
                     case 8:
@@ -8027,7 +8054,7 @@ static struct card *pspice_compat(struct card *oldcard)
                         /* BSIM4 version 4.5.0 */
                         char* newline = tprintf(".model %s %s level=14 version=4.5.0 %s", modname, modtype, lv);
                         tfree(card->line);
-                        card->line = newline;
+                        card->line = curr_line = newline;
                         }
                         break;
                     default:
@@ -8049,7 +8076,7 @@ static struct card *pspice_compat(struct card *oldcard)
                         /* MEXTRAM 504.12.1 in the adms branch */
                         char* newline = tprintf(".model %s %s level=6 %s", modname, modtype, lv);
                         tfree(card->line);
-                        card->line = newline;
+                        card->line = curr_line = newline;
                         }
                         break;
                     default:
@@ -8062,14 +8089,13 @@ static struct card *pspice_compat(struct card *oldcard)
                 /* lateral PNP enabled */
                 char* newline = tprintf(".model %s PNP level=1 subs=-1 %s", modname, cut_line);
                 tfree(card->line);
-                card->line = newline;
+                card->line = curr_line = newline;
             }
             tfree(modname);
             tfree(modtype);
-            tfree(cut_del);
 
             /* check for double '{', replace the inner '{', '}' by '(', ')'*/
-            cut_line = strchr(card->line, '{');
+            cut_line = strchr(curr_line, '{');
             if (cut_line)
             {
                 int level = 1;
@@ -8088,8 +8114,39 @@ static struct card *pspice_compat(struct card *oldcard)
                     cut_line++;
                 }
             }
-        }
-    }
+            /* Remove any Monte-Carlo variation parameters. They qualify
+             * a previous parameter, so there must be at least 3 tokens.
+             * There are two keywords "dev" (different values for each device),
+             * and "lot" (all devices of this model share a value).
+             * The keyword may be optionally followed by '/' and
+             * a probability distribution name, then there must be '=' and
+             * a value, then an optional '%' indicating relative rather than
+             * absolute variation. Allow muliple lot and dev on a single .model line.
+             */
+            bool remdevlot = FALSE;
+            cut_line = curr_line;
+            for (i = 0; i < 3; i++)
+                cut_line = nexttok(cut_line);
+            while (cut_line) {
+                if (!strncmp(cut_line, "dev=", 4) ||
+                    !strncmp(cut_line, "lot=", 4)) {
+                    while (*cut_line && !isspace_c(*cut_line)) {
+                        *cut_line++ = ' ';
+                    }
+                    remdevlot = TRUE;
+                    cut_line = skip_ws(cut_line);
+                    continue;
+                }
+                cut_line = nexttok(cut_line);
+            }
+            if (remdevlot) {
+                tfree(card->line);
+                card->line = curr_line;
+            }
+            else
+                tfree(cut_del);
+        } // if .model
+    } // for loop through all cards
 
     /* x ... params: p1=val1, p2=val2 replace comma separator by space.
        Do nothing if you are inside of { }. */
