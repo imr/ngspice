@@ -861,3 +861,13 @@ HICUMunsetup(
     }
     return OK;
 }
+
+int
+HICUMmDelete(GENmodel* gen_model)
+{
+    HICUMmodel* model = (HICUMmodel*)gen_model;
+
+    FREE(model->HICUMversion);
+
+    return OK;
+}
