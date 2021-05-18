@@ -1175,10 +1175,18 @@ static int find_roots(double a1_in, double a2_in, double a3_in,
 int
 TXLdevDelete(GENinstance* inst)
 {
+    VI_list_txl *tmplist, *prevlist;
     TXLinstance* here = (TXLinstance*)inst;
     if (here->txline2)
         tfree(here->txline2);
-    if (here->txline)
+    if (here->txline) {
+        prevlist = tmplist = here->txline->vi_head;
+        while(tmplist) {
+           tmplist = tmplist->next;
+           tfree(prevlist);
+           prevlist = tmplist;
+        }
         tfree(here->txline);
+    }
     return OK;
 }
