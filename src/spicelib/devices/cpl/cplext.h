@@ -11,4 +11,3 @@ extern int CPLmParam(int,IFvalue*, GENmodel*);
 extern int CPLparam(int,IFvalue*, GENinstance*, IFvalue*);
 extern int CPLsetup(SMPmatrix*, GENmodel*, CKTcircuit*, int*);
 extern int CPLunsetup(GENmodel*, CKTcircuit*);
-extern int CPLdevDelete(GENinstance*);
