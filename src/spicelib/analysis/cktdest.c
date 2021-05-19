@@ -79,6 +79,10 @@ CKTdestroy(CKTcircuit *ckt)
     ckt->CKTnodes = NULL;
     ckt->CKTlastNode = NULL;
 
+    /* LTRA code addition */
+    if (ckt->CKTtimePoints != NULL)
+        FREE(ckt->CKTtimePoints);
+
     FREE(ckt->CKTrhs);
     FREE(ckt->CKTrhsOld);
     FREE(ckt->CKTrhsSpare);
