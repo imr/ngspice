@@ -2146,3 +2146,21 @@ static int rotate(int dim_in, int p, int q)
 
 }
 
+int
+CPLdevDelete(GENinstance* inst)
+{
+    VI_list* tmplist, * prevlist;
+    CPLinstance* here = (CPLinstance*)inst;
+    if (here->cplines2)
+        tfree(here->cplines2);
+    if (here->cplines) {
+        prevlist = tmplist = here->cplines->vi_head;
+        while (tmplist) {
+            tmplist = tmplist->next;
+            tfree(prevlist);
+            prevlist = tmplist;
+        }
+        tfree(here->cplines);
+    }
+    return OK;
+}
