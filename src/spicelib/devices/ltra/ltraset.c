@@ -240,3 +240,31 @@ LTRAunsetup(GENmodel *inModel, CKTcircuit *ckt)
   }
   return OK;
 }
+
+int
+LTRAdevDelete(GENinstance* inst)
+{
+    LTRAinstance* here = (LTRAinstance*)inst;
+    if (here->LTRAv1)
+        tfree(here->LTRAv1);
+    if (here->LTRAi1)
+        tfree(here->LTRAi1);
+    if (here->LTRAv2)
+        tfree(here->LTRAv2);
+    if (here->LTRAi2)
+        tfree(here->LTRAi2);
+    return OK;
+}
+
+int
+LTRAmDelete(GENmodel* gen_model)
+{
+    LTRAmodel* model = (LTRAmodel*)gen_model;
+    if (model->LTRAh1dashCoeffs)
+        tfree(model->LTRAh1dashCoeffs);
+    if (model->LTRAh2Coeffs)
+        tfree(model->LTRAh2Coeffs);
+    if (model->LTRAh3dashCoeffs)
+        tfree(model->LTRAh3dashCoeffs);
+    return OK;
+}
