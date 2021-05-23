@@ -577,7 +577,7 @@ static void EVTbackup_output_queue(
         output = *output_ptr;
 
         while(output) {
-            if(output->event_time > new_time)
+            if (output->posted_time < new_time)
                 break;
             output_ptr = &((*output_ptr)->next);
             output = *output_ptr;
