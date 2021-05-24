@@ -153,7 +153,7 @@ static bool cont_condition;
 #include "frontend/com_measure2.h"
 #include "frontend/misccoms.h"
 #include "ngspice/stringskip.h"
-#include "variable.h"
+#include "frontend/variable.h"
 
 #ifdef HAVE_FTIME
 #include <sys/timeb.h>
