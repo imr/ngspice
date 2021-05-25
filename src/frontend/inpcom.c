@@ -2279,7 +2279,8 @@ static int is_a_modelname(const char *s)
         st = st + 5;
     else if ((*st == 'f') || (*st == 'h'))
         st = st + 1;
-
+    else if (newcompat.lt && isdigit_c(*st)) /* 4k7 */
+        return FALSE;
     if (*st == '\0' || isspace_c(*st)) {
         return FALSE;
     }
