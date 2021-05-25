@@ -1,0 +1,81 @@
+/*.......1.........2.........3.........4.........5.........6.........7.........8
+================================================================================
+
+-------------------------------------------------------------------------
+ Copyright 2011 Thomas Sailer
+ 3 - Clause BSD license
+ (see COPYING or https://opensource.org/licenses/BSD-3-Clause)
+-------------------------------------------------------------------------
+
+AUTHORS
+
+     19 May 2011     Thomas Sailer
+
+
+SUMMARY
+
+    This file contains the interface specification file for the
+    delay code model.
+
+===============================================================================*/
+
+NAME_TABLE:
+
+C_Function_Name:       cm_delay
+Spice_Model_Name:      delay
+Description:           "analog delay line"
+
+
+PORT_TABLE:
+
+Port_Name:             in             out           cntrl
+Description:           "input"        "output"      "control"
+Direction:             in             out           in
+Default_Type:          v              v             v
+Allowed_Types:         [v,vd,vnam]    [v,vd]        [v,vd,i,id]
+Vector:                no             no            no
+Vector_Bounds:          -              -             -
+Null_Allowed:          no             no            yes
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:     delay            buffer_size
+Description:        "time delay"     "size of delay buffer"
+Data_Type:          real             int
+Default_Value:      0.0              1024
+Limits:             -                [1 -]
+Vector:             no               no
+Vector_Bounds:      -                -
+Null_Allowed:       yes              yes
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:     has_delay_cnt
+Description:        "controlled delay"
+Data_Type:          boolean
+Default_Value:      FALSE
+Limits:             -
+Vector:             no
+Vector_Bounds:      -
+Null_Allowed:       yes
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:     delmin           delmax
+Description:        "min delay"      "max delay"
+Data_Type:          real             real
+Default_Value:      0                0
+Limits:             [0 -]            [0 -]
+Vector:             no               no
+Vector_Bounds:       -                -
+Null_Allowed:       yes              yes
+
+
+STATIC_VAR_TABLE:
+
+Static_Var_Name:    locdata
+Description:        "local static data"
+Data_Type:          pointer
