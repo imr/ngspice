@@ -1,0 +1,25 @@
+ngspice resistor/capacitor value check
+* set ngbehavior=lt required in spice.rc
+R1 1 0 2m5
+R2 1 0 2meg5
+R3 1 0 2M5
+R4 1 0 2R5
+R5 1 0 27R56
+R6 1 0 1e5
+R7 1 0 56Ohms
+R8 1 0 1.7Meg
+R9 1 0 1e-3wwww
+R10 1 0 -1.7
+V1 1 0 1
+C1 1 0 1u2
+C2 1 0 3m3
+C3 1 0 4f7
+C5 1 0 15p
+C6 1 0 2200u
+C7 1 0 2200u2nnn
+
+.control
+show r c
+.endc
+
+.end
