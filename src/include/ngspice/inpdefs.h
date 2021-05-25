@@ -116,6 +116,7 @@ char *INPerrCat(char *, char *);
 char *INPstrCat(char *, char, char *);
 char *INPerror(int);
 double INPevaluate(char **, int *, int);
+double INPevaluateRKM(char **, int *, int);
 char *INPfindLev(char *, int *);
 char *INPgetMod(CKTcircuit *, char *, INPmodel **, INPtables *);
 char *INPgetModBin(CKTcircuit *, char *, INPmodel **, INPtables *, char *);
