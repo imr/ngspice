@@ -8533,11 +8533,10 @@ static struct card *pspice_compat(struct card *oldcard)
                 tfree(card->line);
                 rep_spar(modpar);
                 card->line = tprintf(
-                        ".model a%s aswitch(%s %s %s %s  log=TRUE  limit=TRUE)", modname,
-                        modpar[0], modpar[1], modpar[2], modpar[3]);
-//                card->line = tprintf(
-//                        ".model a%s pswitch(%s %s %s %s  log=TRUE)", modname,
+//                        ".model a%s aswitch(%s %s %s %s  log=TRUE  limit=TRUE)", modname,
 //                        modpar[0], modpar[1], modpar[2], modpar[3]);
+                        ".model a%s pswitch(%s %s %s %s  log=TRUE)", modname,
+                        modpar[0], modpar[1], modpar[2], modpar[3]);
             }
             for (i = 0; i < 4; i++)
                 tfree(modpar[i]);
@@ -8552,11 +8551,11 @@ static struct card *pspice_compat(struct card *oldcard)
 
     /* no need to continue if no vswitch is found */
     if (!modelsfound)
-        return newcard;
+        goto iswi;
 
     /* no need to change the switch instances if switch sw is used */
     if (have_vh && have_vt)
-        return newcard;
+        goto iswi;
 
     /* second scan: find the switch instances s calling a vswitch model and
      * transform them */
@@ -8612,6 +8611,8 @@ static struct card *pspice_compat(struct card *oldcard)
     }
     del_models(modelsfound);
     modelsfound = NULL;
+
+iswi:;
 
     /* if iswitch part s, replace
      * W1 D S VC SWN
@@ -8717,7 +8718,9 @@ static struct card *pspice_compat(struct card *oldcard)
                 tfree(card->line);
                 rep_spar(modpar);
                 card->line = tprintf(
-                    ".model a%s aswitch(%s %s %s %s  log=TRUE  limit=TRUE)", modname,
+                    //                    ".model a%s aswitch(%s %s %s %s  log=TRUE  limit=TRUE)", modname,
+                    //                   modpar[0], modpar[1], modpar[2], modpar[3]);
+                    ".model a%s pswitch(%s %s %s %s  log=TRUE)", modname,
                     modpar[0], modpar[1], modpar[2], modpar[3]);
             }
             for (i = 0; i < 4; i++)
@@ -8731,7 +8734,7 @@ static struct card *pspice_compat(struct card *oldcard)
         }
     }
 
-    /* no need to continue if no vswitch is found */
+    /* no need to continue if no iswitch is found */
     if (!modelsfound)
         return newcard;
 
