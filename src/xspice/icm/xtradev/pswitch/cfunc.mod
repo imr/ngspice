@@ -231,6 +231,10 @@ void cm_pswitch(ARGS)  /* structure holding parms,
         }
         
         pi_pcntl = INPUT(out) / r * (loc->c2 * inmean * inmean - loc->c1);
+        if(r == r_on) 
+            pi_pcntl = 0;
+        if(r == r_off)
+            pi_pcntl = 0;
         pi_pvout = 1.0 / r;
         
     }
@@ -246,9 +250,9 @@ void cm_pswitch(ARGS)  /* structure holding parms,
 
     if(ANALYSIS != MIF_AC) {            /* Output DC & Transient Values  */
         OUTPUT(out) = INPUT(out) / r;      
-//        PARTIAL(out,out) = pi_pvout;
-//        PARTIAL(out,cntl_in) = pi_pcntl;
-        cm_analog_auto_partial();
+        PARTIAL(out,out) = pi_pvout;
+        PARTIAL(out,cntl_in) = pi_pcntl;
+//        cm_analog_auto_partial();
 
     /* Note that the minus signs are required  because current is positive 
        flowing INTO rather than OUT OF a component node.       */
