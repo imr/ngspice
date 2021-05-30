@@ -129,6 +129,10 @@ CSWload(GENmodel *inModel, CKTcircuit *ckt)
             ckt->CKTstate0[here->CSWswitchstate] = current_state;
             ckt->CKTstate1[here->CSWswitchstate] = previous_state;
 
+//            ckt->CKTstate0[here->CSWctrlvalue] = i_ctrl;
+            /* FIXME: without this statement truncation is not used, as with SW.
+               But test are needed to check if improvments are possible. */
+
             if (current_state == REALLY_ON || current_state == HYST_ON)
                 g_now = model->CSWonConduct;
             else
