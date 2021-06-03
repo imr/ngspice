@@ -30,11 +30,11 @@ PORT_TABLE:
 
 Port_Name:             cntl_in            out            
 Description:           "input"            "resistive output"
-Direction:             in                 inout
-Default_Type:          v                  gd 
-Allowed_Types:         [v,vd,i,id,vnam]   [gd] 
-Vector:                 no                 no
-Vector_Bounds:          -                  -  
+Direction:             inout              inout
+Default_Type:          gd                 gd
+Allowed_Types:         [g,gd]             [gd]
+Vector:                no                 no
+Vector_Bounds:         -                  -
 Null_Allowed:          no                 no 
 
 
@@ -66,14 +66,14 @@ Null_Allowed:      yes                  yes
 
 PARAMETER_TABLE:
 
-Parameter_Name:    r_on	
-Description:       "on resistance"
-Data_Type:         real 
-Default_Value:     1.0	 
-Limits:            - 
-Vector:             no 
-Vector_Bounds:      - 
-Null_Allowed:      yes 
+Parameter_Name:    r_on	                r_cntl_in
+Description:       "on resistance"      "input resistance for control terminal"
+Data_Type:         real                 real
+Default_Value:     1.0	                1.0e12
+Limits:            -                    -
+Vector:             no                  no
+Vector_Bounds:      -                   -
+Null_Allowed:      yes                  yes
 
 
 STATIC_VAR_TABLE:
