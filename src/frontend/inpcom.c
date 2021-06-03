@@ -8598,14 +8598,14 @@ static struct card *pspice_compat(struct card *oldcard)
             if ((nesting > 0) &&
                     find_a_model(modelsfound, stoks[5], subcktline->line)) {
                 tfree(card->line);
-                card->line = tprintf("a%s %%vd(%s %s) %%gd(%s %s) a%s",
+                card->line = tprintf("a%s %%gd(%s %s) %%gd(%s %s) a%s",
                         stoks[0], stoks[3], stoks[4], stoks[1], stoks[2],
                         stoks[5]);
             }
             /* if model is not within same subcircuit, search at top level */
             else if (find_a_model(modelsfound, stoks[5], "top")) {
                 tfree(card->line);
-                card->line = tprintf("a%s %%vd(%s %s) %%gd(%s %s) a%s",
+                card->line = tprintf("a%s %%gd(%s %s) %%gd(%s %s) a%s",
                         stoks[0], stoks[3], stoks[4], stoks[1], stoks[2],
                         stoks[5]);
             }
