@@ -139,6 +139,7 @@ void cm_pswitch(ARGS)  /* structure holding parms,
     double cntl_off;     /* voltage below the switch has resistance roff */ 
     double r_on;         /* on resistance */
     double r_off;        /* off resistance */
+    double r_cntl_in;    /* input resistance for control terminal */
     double logmean;      /* log-mean of resistor values */
     double logratio;     /* log-ratio of resistor values */
     double cntl_mean;    /* mean of control values */
@@ -153,7 +154,7 @@ void cm_pswitch(ARGS)  /* structure holding parms,
 
     Mif_Complex_t ac_gain;
                    
-    char *cntl_error = "\n*****ERROR*****\nPSWITCH: CONTROL voltage delta less than 1.0e-12\n";
+
     
     Local_Data_t *loc;    /* Pointer to local static data, not to be included
                                        in the state vector */
@@ -165,15 +166,19 @@ void cm_pswitch(ARGS)  /* structure holding parms,
     cntl_off = PARAM(cntl_off);
     r_on = PARAM(r_on);
     r_off = PARAM(r_off);
+    r_cntl_in = PARAM(r_cntl_in);
 
-    if( r_on < 1.0e-3 ) r_on = 1.0e-3;  /* Set minimum 'ON' resistance */  
+    r_on = (r_on < 1.0e-3) ? 1.0e-3 : r_on;  /* Set minimum 'ON' resistance */
+    r_off = (r_off > 1.0e12) ? 1.0e12 : r_off;  /* Set maximum 'OFF' resistance */
 
-    if( (fabs(cntl_on - cntl_off) < 1.0e-12) ) {
-        cm_message_send(cntl_error);          
-        return;
-    }
 
     if(INIT == 1) { /* first time through, allocate memory, set static parameters */
+        char *cntl_error = "\n*****ERROR*****\nPSWITCH: CONTROL voltage delta less than 1.0e-12\n";
+
+        if( (fabs(cntl_on - cntl_off) < 1.0e-12) ) {
+            cm_message_send(cntl_error);
+            return;
+        }
 
         CALLBACK = cm_pswitch_callback;
 
@@ -182,13 +187,24 @@ void cm_pswitch(ARGS)  /* structure holding parms,
         loc = STATIC_VAR (locdata);
 
         if ( PARAM(log) == MIF_TRUE ) {   /* Logarithmic Variation in 'R' */
+            if (cntl_on > cntl_off)
+            {
+                cntl_on = 1;
+                cntl_off = 0;
+            }
+            else
+            {
+                cntl_on = 0;
+                cntl_off = 1;
+            }
+
             loc->logmean = log(sqrt(r_on * r_off));
             loc->logratio = log(r_on / r_off);
-            loc->cntl_mean = (cntl_on + cntl_off) / 2.;
+            loc->cntl_mean = 0.5;
             loc->cntl_diff = cntl_on - cntl_off;
             loc->intermediate = loc->logratio / loc->cntl_diff;
             loc->c1 = 1.5 * loc->logratio / loc->cntl_diff;
-            loc->c3 = 2. * loc->logratio / pow(loc->cntl_diff, 3);
+            loc->c3 = 2. * loc->logratio / (loc->cntl_diff * loc->cntl_diff * loc->cntl_diff); //pow(loc->cntl_diff, 3);
             loc->c2 = 3 * loc->c3;
         } else {
             loc->cntl_diff = cntl_on - cntl_off;
@@ -204,37 +220,42 @@ void cm_pswitch(ARGS)  /* structure holding parms,
         cntl_mean = loc->cntl_mean;
         cntl_diff = loc->cntl_diff;
         intermediate = loc->intermediate;
-        double inmean = INPUT(cntl_in) - cntl_mean;
-        if (cntl_on >= cntl_off) {
-            if (INPUT(cntl_in) >= cntl_on) {
+        double inmean;// = INPUT(cntl_in) - cntl_mean;
+        int outOfLimit = 0;
+        if (cntl_on > cntl_off) {
+            inmean = ((INPUT(cntl_in) - PARAM(cntl_off)) / (PARAM(cntl_on) - PARAM(cntl_off))) - cntl_mean;
+            if (INPUT(cntl_in) > cntl_on) {
                 r = r_on;
+                outOfLimit = 1;
             }
-            else if (INPUT(cntl_in) <= cntl_off) {
+            else if (INPUT(cntl_in) < cntl_off) {
                 r = r_off;
+                outOfLimit = 1;
             }
             else {
-                r = exp(logmean + 3 * logratio * inmean / (2 * cntl_diff) - loc->c3 * pow(inmean, 3));
+                r = exp(logmean + loc->c1 * inmean - loc->c3 * inmean * inmean * inmean);
                 if(r<r_on) r=r_on;/* minimum resistance limiter */ 
             }
         } else {
-            if (INPUT(cntl_in) <= cntl_on) {
+            inmean = (PARAM(cntl_on) - (INPUT(cntl_in)) / (PARAM(cntl_off) - PARAM(cntl_on))) - cntl_mean;
+            if (INPUT(cntl_in) < cntl_on) {
                 r = r_on;
+                outOfLimit = 1;
             }
-            else if (INPUT(cntl_in) >= cntl_off) {
+            else if (INPUT(cntl_in) > cntl_off) {
                 r = r_off;
+                outOfLimit = 1;
             }
             else {
-                r = exp(logmean + 3 * logratio * inmean / (2 * cntl_diff) - loc->c3 * pow(inmean, 3));
-//                r = exp(logmean + 3 * logratio * (INPUT(cntl_in) - cntl_mean) / (2 * cntl_diff) - 2 * logratio * pow((INPUT(cntl_in) - cntl_mean), 3) / pow(cntl_diff, 3));
+                r = exp(logmean + loc->c1 * inmean - loc->c3 * inmean * inmean * inmean);
                 if(r<r_on) r=r_on;/* minimum resistance limiter */                
             }
         }
         
         pi_pcntl = INPUT(out) / r * (loc->c2 * inmean * inmean - loc->c1);
-        if(r == r_on) 
+        if(1 == outOfLimit){
             pi_pcntl = 0;
-        if(r == r_off)
-            pi_pcntl = 0;
+        }
         pi_pvout = 1.0 / r;
         
     }
@@ -249,10 +270,14 @@ void cm_pswitch(ARGS)  /* structure holding parms,
     }                                 
 
     if(ANALYSIS != MIF_AC) {            /* Output DC & Transient Values  */
-        OUTPUT(out) = INPUT(out) / r;      
-        PARTIAL(out,out) = pi_pvout;
-        PARTIAL(out,cntl_in) = pi_pcntl;
-//        cm_analog_auto_partial();
+        OUTPUT(out) = INPUT(out) / r;
+        OUTPUT(cntl_in) = INPUT(cntl_in) / r_cntl_in;
+//        PARTIAL(out,out) = pi_pvout;
+//        PARTIAL(out,cntl_in) = pi_pcntl;
+//        PARTIAL(cntl_in,cntl_in) = 1 / r_cntl_in;
+//        PARTIAL(cntl_in,out) = 0;           /* cntl input resistance is
+//                                              independent to out port */
+        cm_analog_auto_partial();
 
     /* Note that the minus signs are required  because current is positive 
        flowing INTO rather than OUT OF a component node.       */
