@@ -7455,9 +7455,13 @@ static void inp_meas_current(struct card *deck)
             /* we have found it, but not (in error) at the beginning of the
              * line */
             if (s && s > v) {
-                /* '{' if at beginning of expression, '=' possible in B-line
-                 */
-                if (is_arith_char(s[-1]) || s[-1] == '{' || s[-1] == '=' ||
+                /* %i( may be part of the node definition in a XSPICE instance, so skip it here */
+                if (*curr_line == 'a' && s[-1] == '%') {
+                    s++;
+                    continue;
+                }
+                 /* '{' if at beginning of expression, '=' possible in B-line */
+                else if (is_arith_char(s[-1]) || s[-1] == '{' || s[-1] == '=' ||
                         isspace_c(s[-1])) {
                     s += 2;
                     if (*s == 'v') {
