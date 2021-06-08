@@ -8722,10 +8722,9 @@ iswi:;
                 tfree(card->line);
                 rep_spar(modpar);
                 card->line = tprintf(
-                    //                    ".model a%s aswitch(%s %s %s %s  log=TRUE  limit=TRUE)", modname,
-                    //                   modpar[0], modpar[1], modpar[2], modpar[3]);
-                    ".model a%s pswitch(%s %s %s %s  log=TRUE)", modname,
-                    modpar[0], modpar[1], modpar[2], modpar[3]);
+                    /* FIXME: a new switch derived from pswitch with vnam input is due */
+                    ".model a%s aswitch(%s %s %s %s  log=TRUE  limit=TRUE)", modname,
+                   modpar[0], modpar[1], modpar[2], modpar[3]);
             }
             for (i = 0; i < 4; i++)
                 tfree(modpar[i]);
