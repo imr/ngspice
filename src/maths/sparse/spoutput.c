@@ -604,8 +604,8 @@ spFileVector(MatrixPtr Matrix, char *File, RealVector RHS, RealVector iRHS)
     assert( IS_SPARSE( Matrix ) && RHS != NULL);
 
     if (File) {
-        /* Open File in append mode. */
-        pMatrixFile = fopen(File,"a");
+        /* Open File in write mode. */
+        pMatrixFile = fopen(File,"w");
         if (pMatrixFile == NULL)
 	    return 0;
     }
