@@ -205,6 +205,7 @@ void cm_delay(ARGS)
             delay = PARAM(delay);
             if (delay < 0.0) {
                 delay = 0.0;
+                cm_message_send("Negative delay not allowed, set to 0");
             }
 
             /*** allocate static storage for *loc ***/
@@ -235,13 +236,31 @@ void cm_delay(ARGS)
             if (PARAM(has_delay_cnt) == MIF_TRUE) {
                 if (PARAM_NULL(delmin))
                     loc->tdelmin = 0.0;
-                else
+                else {
                     loc->tdelmin = PARAM(delmin);
+                    if (loc->tdelmin < 0) {
+                        loc->tdelmin = 0.0;
+                        cm_message_send("Negative min delay not allowed, set to 0");
+                    }
+                    else if (loc->tdelmin > ckt->CKTfinalTime) {
+                        loc->tdelmin = ckt->CKTfinalTime;
+                        cm_message_send("min delay greater than final sim time not allowed, set to final time");
+                    }
+                }
 
                 if (PARAM_NULL(delmax))
                     loc->tdelmax = ckt->CKTfinalTime;
-                else
+                else {
                     loc->tdelmax = PARAM(delmax);
+                    if (loc->tdelmax < 0) {
+                        loc->tdelmin = 0.0;
+                        cm_message_send("Negative max delay not allowed, set to 0");
+                    }
+                    else if (loc->tdelmax > ckt->CKTfinalTime) {
+                        loc->tdelmax = ckt->CKTfinalTime;
+                        cm_message_send("max delay greater than final sim time not allowed, set to final time");
+                    }
+                }
             }
 
             loc->buff_write = 0;
@@ -263,7 +282,7 @@ void cm_delay(ARGS)
                                                        to previous time storage */
 
         delay = loc->tdelay;
-        if (delay == 0.0) {
+        if (delay == 0.0 && !PARAM(has_delay_cnt)) {
             OUTPUT(out) = INPUT(in);
             return;
         }
@@ -302,6 +321,8 @@ void cm_delay(ARGS)
         if (TIME < delay) {
             OUTPUT(out) = loc->start_val;
         }
+        else if (delay == 0)
+            OUTPUT(out) = INPUT(in);
         else
             OUTPUT(out) = loc->buffer[loc->buff_del];
 
