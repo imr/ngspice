@@ -15,10 +15,11 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 #include <unistd.h>
 #endif
 
-
 #ifndef TEMPFORMAT
 #define TEMPFORMAT "temp%s%d"
 #endif
+
+#define TEMPFORMAT2 "%s%d_%d.tmp"
 
 char *
 smktemp(char *id)
@@ -35,3 +36,21 @@ smktemp(char *id)
     }
     return tprintf(TEMPFORMAT, id, getpid());
 }
+
+
+char*
+smktemp2(char* id, int n)
+{
+    if (!id)
+        id = "sp";
+    const char* const home = getenv("HOME");
+    if (home) {
+        return tprintf("%s"TEMPFORMAT2, home, id, getpid(), n);
+    }
+    const char* const usr = getenv("USERPROFILE");
+    if (usr) {
+        return tprintf("%s\\"TEMPFORMAT2, usr, id, getpid(), n);
+    }
+    return tprintf(TEMPFORMAT2, id, getpid(), n);
+}
+

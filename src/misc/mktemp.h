@@ -7,5 +7,6 @@
 #define ngspice_MKTEMP_H
 
 char * smktemp(char *id);
+char * smktemp2(char *id, int n);
 
 #endif
