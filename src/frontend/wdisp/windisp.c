@@ -281,12 +281,14 @@ static int LType(int ColorIndex)
 /* called by SystemMenue / Postscript hardcopy */
 static LRESULT HcpyPlotPS(HWND hwnd)
 {
-    NG_IGNORE(hwnd);
     int i = 1;
+    GRAPH* tmpgr = currentgraph;
+    currentgraph = pGraph(hwnd);
     cp_vset("hcopydevtype", CP_STRING, "postscript");
     /* If not set, the color will be b&w, i = 1 is white background */
     cp_vset("hcopypscolor", CP_NUM, &i);
     com_hardcopy(NULL);
+    currentgraph = tmpgr;
     /* update the text in the main window */
     UpdateMainText();
     SetFocus(swString);
@@ -297,9 +299,11 @@ static LRESULT HcpyPlotPS(HWND hwnd)
 /* called by SystemMenue / SVG hardcopy */
 static LRESULT HcpyPlotSVG(HWND hwnd)
 {
-    NG_IGNORE(hwnd);
+    GRAPH* tmpgr = currentgraph;
+    currentgraph = pGraph(hwnd);
     cp_vset("hcopydevtype", CP_STRING, "svg");
     com_hardcopy(NULL);
+    currentgraph = tmpgr;
     /* update the text in the main window */
     UpdateMainText();
     SetFocus(swString);
