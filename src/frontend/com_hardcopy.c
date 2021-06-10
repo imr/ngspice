@@ -35,6 +35,8 @@ void com_hardcopy(wordlist *wl)
     int hc_button;
     int foundit;
 
+    static int n;
+
     if (!cp_getvar("hcopydev", CP_STRING, device, sizeof(device)))
         *device = '\0';
 
@@ -53,7 +55,8 @@ void com_hardcopy(wordlist *wl)
     }
     else {
         hc_button = 1;
-        fname = smktemp("hc");
+        fname = smktemp2("hc", n);
+        n++;
         tempf = TRUE;
         n_byte_fname = (strlen(fname) + 1) * sizeof *fname;
         if (!strcmp(devtype, "svg")) {
