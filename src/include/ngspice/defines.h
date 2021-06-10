@@ -69,6 +69,7 @@
 #define DIR_CWD             "."
 
 #define TEMPFORMAT          "%s%d.tmp"
+#define TEMPFORMAT2         "%s%d_%d.tmp"
 
 /*
 #define SYSTEM_PLOT5LPR     "lpr -P%s -g %s"
@@ -82,6 +83,7 @@
 #define DIR_CWD             "."
 
 #define TEMPFORMAT          "/tmp/%s%d"
+#define TEMPFORMAT2         "/tmp/%s%d_%d"
 #define SYSTEM_PLOT5LPR     "lpr -P%s -g %s"
 #define SYSTEM_PSLPR        "lpr -P%s %s"
 #define SYSTEM_MAIL         "Mail -s \"%s (%s) Bug Report\" %s"

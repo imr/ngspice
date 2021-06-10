@@ -18,8 +18,10 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 #ifndef TEMPFORMAT
 #define TEMPFORMAT "temp%s%d"
 #endif
+#ifndef TEMPFORMAT2
+#define TEMPFORMAT "temp%s%d_%d"
+#endif
 
-#define TEMPFORMAT2 "%s%d_%d.tmp"
 
 char *
 smktemp(char *id)
