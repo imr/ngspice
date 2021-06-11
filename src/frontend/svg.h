@@ -13,5 +13,6 @@ disp_fn_Text_t             SVG_Text;
 disp_fn_SetLinestyle_t     SVG_SetLinestyle;
 disp_fn_SetColor_t         SVG_SetColor;
 disp_fn_Update_t           SVG_Update;
+disp_fn_Finalize_t         SVG_Finalize;
 
 #endif

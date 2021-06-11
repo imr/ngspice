@@ -517,6 +517,12 @@ SVG_Update(void)
     return 0;
 }
 
+int
+SVG_Finalize(void)
+{
+    fputs("\"/>\n", plotfile);
+    return 0;
+}
 
 /**************** PRIVATE FUNCTIONS OF SVG FRONTEND ***************************/
 

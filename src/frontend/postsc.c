@@ -490,6 +490,11 @@ int PS_Update(void)
     return 0;
 }
 
+int PS_Finalize(void)
+{
+    fprintf(plotfile, "stroke\n");
+    return 0;
+}
 
 /**************** PRIVAT FUNCTIONS OF PS FRONTEND *****************************/
 
