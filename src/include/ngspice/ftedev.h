@@ -29,6 +29,7 @@ typedef int  disp_fn_DefineLinestyle_t (int linestyleid, int mask);
 typedef int  disp_fn_SetLinestyle_t (int linestyleid);
 typedef int  disp_fn_SetColor_t (int colorid);
 typedef int  disp_fn_Update_t (void);
+typedef int  disp_fn_Finalize_t (void);
 typedef int  disp_fn_Track_t (void);
 typedef int  disp_fn_MakeMenu_t (void);
 typedef int  disp_fn_MakeDialog_t (void);
@@ -53,7 +54,7 @@ typedef struct {
     disp_fn_SetLinestyle_t     *SetLinestyle;
     disp_fn_SetColor_t         *SetColor;
     disp_fn_Update_t           *Update;
-/*  int (*NDCtoScreen)(); */
+    disp_fn_Finalize_t         *Finalize;
     disp_fn_Track_t            *Track;
     disp_fn_MakeMenu_t         *MakeMenu;
     disp_fn_MakeDialog_t       *MakeDialog;

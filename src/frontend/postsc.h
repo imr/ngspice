@@ -16,5 +16,6 @@ disp_fn_Text_t             PS_Text;
 disp_fn_SetLinestyle_t     PS_SetLinestyle;
 disp_fn_SetColor_t         PS_SetColor;
 disp_fn_Update_t           PS_Update;
+disp_fn_Finalize_t         PS_Finalize;
 
 #endif

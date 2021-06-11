@@ -25,6 +25,7 @@ void DefineLinestyle(int linestyleid, int mask);
 void SetLinestyle(int linestyleid);
 void SetColor(int colorid);
 void DevUpdate(void);
+void DevFinalize(void);
 void DatatoScreen(GRAPH *graph, double x, double y, int *screenx, int *screeny);
 void Input(REQUEST *request, RESPONSE *response);
 void SaveText(GRAPH *graph, char *text, int x, int y);
