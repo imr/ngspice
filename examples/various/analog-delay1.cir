@@ -1,0 +1,52 @@
+Examples of XSPICE analog delay
+
+.param freq=1k
+
+** constant delay
+a1 in1 out1 cntrl1 newdelay
+.model newdelay delay(delay=400u)
+V1 in1 0 dc 0 sin(0 1 'freq')
+Vc1 cntrl1 0 0
+
+** delay of one sin period distributed between 2 and 8 ms
+a2 in2 out2 cntrl2 newdelay2
+.model newdelay2 delay(has_delay_cnt=TRUE)
+V2 in2 0 dc 0 sin(0 1 1k)
+Vc2 cntrl2 0 dc 0.01 Pulse (0.00 0.1 2m 6m 2m 1 1)
+
+** delay controlled between delmin and delmax
+a3 in3 out3 cntrl3 newdelay3
+.model newdelay3 delay(delmin=0.05m delmax=0.2m has_delay_cnt=TRUE)
+V3 in3 0 dc 0.05 pulse(0 0.95 0.1m 10u 10u 0.3m 0.6m)
+Vc3 cntrl3 0 dc 0.01 Pulse (0 1 3m 4m 2m 1 1)
+
+** delay of one period
+a4 in4 out4 cntrl4 newdelay4
+.model newdelay4 delay(delay=0.6m)
+V4 in4 0 dc 0.05 pulse(0 0.95 0.1m 10u 10u 0.3m 0.6m)
+Vc4 cntrl4 0 dc 0.01 Pulse (0.01 0.02 4m 2m 2m 1 1)
+
+** sin distortion estimate: 
+a5 in5 out5 cntrl5 newdelay5
+* delay of a half cycle
+.model newdelay5 delay(delay='1/freq/2')
+V5 in5 0 dc 0 sin(0 1 'freq')
+Vc5 cntrl5 0 0
+*results
+* < 0.05%  for 10000 steps per sin cycle
+* < 0.3% for 1000 steps per sin cycle
+* < 5% for 100 steps per sin cycle
+
+.control
+tran 1u 10m
+set xbrushwidth=2
+plot v(in1) V(out1) title 'Const delay'
+plot v(in2) V(out2) title 'Variable delay'
+plot v(in3) V(out3) title 'Variable delay'
+plot v(in3)*V(out3) title 'Variable delay, pulse overlap'
+plot v(in4) V(out4) xlimit 3m 7m title 'One period delay'
+plot v(in5)+V(out5) ylimit -0.01 0.01 xlimit 3m 7m title 'Half period delay plus Input'
+
+.endc
+
+.end
