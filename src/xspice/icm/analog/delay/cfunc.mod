@@ -10,7 +10,7 @@ The ngspice team
 
 AUTHORS
 
-    21 May 2021     Holger Vogt
+    12 June 2021     Holger Vogt
 
 
 MODIFICATIONS
@@ -172,7 +172,6 @@ void cm_delay(ARGS)
     int buffer_size, delay_step;
     double delay;
     double delmin, delmax;
-    double *ins, *ins_old;
 
     mLocal_Data_t *loc;        /* Pointer to local static data, not to be included
                                        in the state vector */
@@ -224,14 +223,6 @@ void cm_delay(ARGS)
             }
             loc->buffer_size = buffer_size;
 
-            cm_analog_alloc(TRUE,sizeof(double));
-            ins = (double *) cm_analog_get_ptr(TRUE,0);  /* Set out pointer to current
-                                                                time storage */
-            ins_old = (double *) cm_analog_get_ptr(TRUE,1);  /* Set old-output-state pointer
-                                                       to previous time storage */
-
-            *ins = *ins_old = loc->start_val = INPUT(in);
-
             /* The delay is controlled by input delay_cnt */
             if (PARAM(has_delay_cnt) == MIF_TRUE) {
                 if (PARAM_NULL(delmin))
@@ -276,15 +267,14 @@ void cm_delay(ARGS)
 
         loc = STATIC_VAR (locdata);
 
-        ins = (double *) cm_analog_get_ptr(TRUE,0);  /* Set out pointer to current
-                                                                time storage */
-        ins_old = (double *) cm_analog_get_ptr(TRUE,1);  /* Set old-output-state pointer
-                                                       to previous time storage */
-
         delay = loc->tdelay;
         if (delay == 0.0 && !PARAM(has_delay_cnt)) {
             OUTPUT(out) = INPUT(in);
             return;
+        }
+
+        if (delay < loc->tstep) {
+            delay = 0.;
         }
 
         if (TIME == 0.0)
@@ -293,21 +283,12 @@ void cm_delay(ARGS)
         /* input, simply interpolated to TSTEP        */
         double tacct = loc->step_count * loc->tstep;
         if (TIME >= tacct) {
-            double curr_in;
-/*            double tdiff = TIME - tacct;
-            // interpolate
-            if (tdiff > 0) {
-                curr_in = loc->prev_val + (INPUT(in) - loc->prev_val) / (TIME - loc->tprev) * tacct;
-            }
-            else*/
-                curr_in = INPUT(in);
-            
-            loc->buffer[loc->buff_write] = *ins = curr_in;
+            loc->buffer[loc->buff_write] = INPUT(in);
             /* next buffer location, circular, for writing */
             loc->buff_write = (loc->buff_write + 1) % loc->buffer_size;
             loc->step_count++;
             loc->tprev = tacct;
-            loc->prev_val = curr_in;
+            loc->prev_val = INPUT(in);
         }
 
         delmin = loc->tdelmin;
@@ -325,6 +306,10 @@ void cm_delay(ARGS)
             OUTPUT(out) = INPUT(in);
         else
             OUTPUT(out) = loc->buffer[loc->buff_del];
+
+        /* add offset to reduce error */
+        /* FIXME: may not be needed if (better) interpolation */
+        delay += 0.5 * loc->tstep;
 
         /* delay in steps */
         delay_step = (int)(delay / loc->tstep);
