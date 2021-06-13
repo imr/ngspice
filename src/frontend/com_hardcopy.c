@@ -128,7 +128,7 @@ void com_hardcopy(wordlist *wl)
             return;
         }
         gr_resize(tempgraph);
-        /* use DevClear to add final statement in file, "/> or "stroke"*/
+        /* use DevFinalize to add final statement in file, "/> or "stroke"*/
         DevFinalize();
         DestroyGraph(tempgraph->graphid);
         DevSwitch(NULL);
