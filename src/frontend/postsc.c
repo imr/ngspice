@@ -183,13 +183,13 @@ int PS_Init(void)
 
     /* get linewidth information from spinit */
     if (!cp_getvar("xbrushwidth", CP_REAL, &linewidth, 0))
-        linewidth = 0;
+        linewidth = 1;
     if (linewidth < 0)
         linewidth = 0;
 
     /* get linewidth for grid from spinit */
     if (!cp_getvar("xgridwidth", CP_REAL, &gridlinewidth, 0))
-        gridlinewidth = linewidth;
+        gridlinewidth = 1;
     if (gridlinewidth < 0)
         gridlinewidth = 0;
 
