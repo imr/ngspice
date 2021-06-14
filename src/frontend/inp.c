@@ -767,7 +767,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                         dscale = INPevaluate(&tmpscale, &err, 1);
                         if (err == 0) {
                             cp_vset("scale", CP_REAL, &dscale);
-                            printf("option SCALE: Scale set to %g for instance and model parameters\n", dscale);
+                            printf("option SCALE: Scale is set to %g for instance and model parameters\n", dscale);
                         }
                         else
                             fprintf(stderr, "\nError: Could not set 'scale' variable\n");
@@ -794,7 +794,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                         dscale = INPevaluate(&tmpscale, &err, 1);
                         if (err == 0) {
                             cp_vset("scale", CP_REAL, &dscale);
-                            printf("option SCALE: Scale set to %g for instance and model parameters\n", dscale);
+                            printf("option SCALE: Scale is set to %g for instance and model parameters\n", dscale);
                         }
                         else
                             fprintf(stderr, "\nError: Could not set 'scale' variable\n");
