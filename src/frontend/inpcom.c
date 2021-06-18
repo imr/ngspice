@@ -863,6 +863,7 @@ struct card *inp_readall(FILE *fp, const char *dir_name,
         int ii;
         for (ii = 0; ii < 5; ii++)
             inp_fix_agauss_in_param(working, statfcn[ii]);
+
         inp_fix_temper_in_param(working);
 
         inp_expand_macros_in_deck(NULL, working);
@@ -7109,7 +7110,10 @@ static char *inp_functionalise_identifier(char *curr_line, char *identifier)
     size_t len = strlen(identifier);
     char *p, *str = curr_line;
 
-    for (p = str; (p = search_identifier(p, identifier, str)) != NULL;)
+    /* Start replacing identifier by func only after the first '=' */
+    char* estr = strchr(curr_line, '=');
+
+    for (p = estr; (p = search_identifier(p, identifier, str)) != NULL;)
         if (p[len] != '(') {
             int prefix_len = (int) (p + len - str);
             char *x = str;
