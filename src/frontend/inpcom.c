@@ -695,7 +695,7 @@ void inp_get_w_l_x(struct card* card) {
             continue;
         }
         /* only subcircuit invocations */
-        if (*curr_line != 'x' && !newcompat.hs && !newcompat.spe) {
+        if (*curr_line != 'x' || (!newcompat.hs && !newcompat.spe)) {
             continue;
         }
 
