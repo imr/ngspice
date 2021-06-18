@@ -7110,8 +7110,17 @@ static char *inp_functionalise_identifier(char *curr_line, char *identifier)
     size_t len = strlen(identifier);
     char *p, *str = curr_line;
 
-    /* Start replacing identifier by func only after the first '=' */
-    char* estr = strchr(curr_line, '=');
+    /* Start replacing identifier by func only after the first '=' or '{' */
+    char* estr1 = strchr(curr_line, '=');
+    char* estr2 = strchr(curr_line, '{');
+    char* estr;
+    if (estr1 && estr2)
+        estr = (estr1 < estr2) ? estr1 : estr2;
+    else if (estr1)
+        estr = estr1;
+    else
+        estr = estr2;
+
 
     for (p = estr; (p = search_identifier(p, identifier, str)) != NULL;)
         if (p[len] != '(') {
