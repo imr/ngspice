@@ -7114,13 +7114,16 @@ static char *inp_functionalise_identifier(char *curr_line, char *identifier)
     char* estr1 = strchr(curr_line, '=');
     char* estr2 = strchr(curr_line, '{');
     char* estr;
+
+    if (!estr1 && !estr2)
+        return str;
+
     if (estr1 && estr2)
         estr = (estr1 < estr2) ? estr1 : estr2;
     else if (estr1)
         estr = estr1;
     else
         estr = estr2;
-
 
     for (p = estr; (p = search_identifier(p, identifier, str)) != NULL;)
         if (p[len] != '(') {
