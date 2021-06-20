@@ -87,6 +87,12 @@ INPdevParse(char **line, CKTcircuit *ckt, int dev, GENinstance *fast,
         error = ft_sim->setInstanceParm (ckt, fast, p->id, val, NULL);
         if (error) {
             rtn = INPerror(error);
+            if (rtn && error == E_BADPARM) {
+                /* add the parameter name to error message */
+                char* extended_rtn = tprintf("%s: %s", p->keyword, rtn);
+                tfree(rtn);
+                rtn = extended_rtn;
+            }
             goto quit;
         }
 
