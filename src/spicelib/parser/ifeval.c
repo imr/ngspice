@@ -31,6 +31,11 @@ IFeval(IFparseTree * tree, double gmin, double *result, double *vals,
     int i, err;
     INPparseTree *myTree = (INPparseTree *) tree;
 
+    if (!myTree) {
+        fprintf(stderr, "\nInternal error: No tree to evaluate.\n");
+        controlled_exit(EXIT_BAD);
+    }
+
 #ifdef TRACE
     INPptPrint("calling PTeval, tree = ", tree);
     printf("values:");
