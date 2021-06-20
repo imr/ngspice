@@ -46,6 +46,14 @@ ASRCparam(int param, IFvalue *value, GENinstance *fast, IFvalue *select)
         here->ASRCreciprocm = value->iValue;
         here->ASRCreciprocmGiven = TRUE;
         break;
+    case ASRC_TEMP:
+        here->ASRCtemp = value->rValue + CONSTCtoK;
+        here->ASRCtempGiven = TRUE;
+        break;
+    case ASRC_DTEMP:
+        here->ASRCdtemp = value->rValue;
+        here->ASRCdtempGiven = TRUE;
+        break;
     default:
         return(E_BADPARM);
     }
