@@ -6349,8 +6349,12 @@ static char *inp_modify_exp(/* NOT CONST */ char *expr)
                 if ((*s == '(') || cieq(buf, "hertz") ||
                         cieq(buf, "temper") || cieq(buf, "time") ||
                         cieq(buf, "pi") || cieq(buf, "e") ||
-                        cieq(buf, "pwl") || cieq(buf, "dtemp") ||
-                        cieq(buf, "temp")) {
+                        cieq(buf, "pwl")) {
+                    wl->wl_word = copy(buf);
+                }
+                /* no parens {} around instance parameters temp and dtemp (on left hand side) */
+                else if ((*s == '=') &&
+                    (cieq(buf, "dtemp") || cieq(buf, "temp"))) {
                     wl->wl_word = copy(buf);
                 }
                 /* as soon as we encounter tc1= or tc2= (temp coeffs.) or
