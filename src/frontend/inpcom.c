@@ -9671,8 +9671,11 @@ static int inp_poly_2g6_compat(struct card* deck) {
             curr_line = nexttok_noparens(curr_line);
             curr_line = nexttok_noparens(curr_line);
             curr_line = nexttok_noparens(curr_line);
-            if (!curr_line)
+            if (!curr_line) {
+                fprintf(stderr, "Error: bad syntax of line\n   %s\n", thisline);
+                fprintf(stderr, "No circuit loaded!\n");
                 return 1;
+            }
             /* exclude all of the following fourth tokens */
             if (ciprefix("poly", curr_line))
                 continue;
