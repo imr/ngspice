@@ -9023,28 +9023,33 @@ static void ltspice_compat_a(struct card *oldcard)
 static void inp_check_syntax(struct card *deck)
 {
     struct card *card;
-    int check_control = 0, check_subs = 0, check_if = 0, check_ch = 0;
+    int check_control = 0, check_subs = 0, check_if = 0, check_ch = 0, ii;
     bool mwarn = FALSE;
+    char* subs[10];  /* store subckt lines */
+    int ends = 0;  /* store .ends line numbers */
 
-    /* will lead to crash in inp.c, fcn inp_spsource */
+    /* prevent crash in inp.c, fcn inp_spsource: */
     if (ciprefix(".param", deck->line) || ciprefix(".meas", deck->line)) {
         fprintf(cp_err, "\nError: title line is missing!\n\n");
         controlled_exit(EXIT_BAD);
     }
+
+    for (ii = 0; ii < 10; ii++)
+        subs[ii] = NULL;
 
     for (card = deck; card; card = card->nextcard) {
         char *cut_line = card->line;
         if (*cut_line == '*' || *cut_line == '\0')
             continue;
         // check for unusable leading characters and change them to '*'
-        if (strchr("=[]?()&%$\"!:,\f", *cut_line)) {
+        if (strchr("=[]?()&%$\"!:,\f;", *cut_line)) {
             if (ft_stricterror) {
                 fprintf(stderr, "Error: '%c' is not allowed as first character in line %s.\n", *cut_line, cut_line);
                 controlled_exit(EXIT_BAD);
             }
             else {
                 if (!check_ch) {
-                    fprintf(stderr, "Warning: Unusual leading characters like '%c' or others out of '= [] ? () & %% $\"!:,'\n", *cut_line);
+                    fprintf(stderr, "Warning: Unusual leading characters like '%c' or others out of '= [] ? () & %% $\"!:,;\\f'\n", *cut_line);
                     fprintf(stderr, "    in netlist or included files, will be replaced with '*'\n");
                     check_ch = 1; /* just one warning */
                 }
@@ -9080,11 +9085,19 @@ static void inp_check_syntax(struct card *deck)
                 fprintf(cp_err,
                         "\nWarning: Nesting of subcircuits with parameters "
                         "is only marginally supported!\n\n");
+            if (check_subs < 10)
+                subs[check_subs] = cut_line;
+            else
+                fprintf(stderr, "Warning: .subckt nesting larger than 10, check may not catch all errors\n");
             check_subs++;
             continue;
         }
         else if (ciprefix(".ends", cut_line)) {
             check_subs--;
+            if (check_subs >= 0 && check_subs < 10)
+                subs[check_subs] = NULL;
+            else if (ends == 0) /* store first occurence */
+                ends = card->linenum_orig;
             continue;
         }
         // check for .if ... .endif
@@ -9111,6 +9124,10 @@ static void inp_check_syntax(struct card *deck)
         fprintf(cp_err,
                 "\nError: Mismatch of .subckt ... .ends statements!\n");
         fprintf(cp_err, "    This will cause subsequent errors.\n\n");
+        if (ends > 0)
+            fprintf(cp_err, "Check .ends in line number %d\n", ends);
+        else
+            fprintf(cp_err, "Check line %s\n", subs[0]);
         controlled_exit(EXIT_BAD);
     }
     if (check_if != 0) {
