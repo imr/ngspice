@@ -9037,7 +9037,7 @@ static void inp_check_syntax(struct card *deck)
         if (*cut_line == '*' || *cut_line == '\0')
             continue;
         // check for unusable leading characters and change them to '*'
-        if (strchr("=[]?()&%$\"!:,", *cut_line)) {
+        if (strchr("=[]?()&%$\"!:,\f", *cut_line)) {
             if (ft_stricterror) {
                 fprintf(stderr, "Error: '%c' is not allowed as first character in line %s.\n", *cut_line, cut_line);
                 controlled_exit(EXIT_BAD);
