@@ -887,8 +887,8 @@ struct card *inp_readall(FILE *fp, const char *dir_name,
             inp_add_control_section(working, &rv.line_number);
 #ifdef XSPICE
         if (inp_poly_2g6_compat(working)) {
-            line_free_x(cc, TRUE);
             inp_rem_levels(root);
+            line_free_x(cc, TRUE);
             return NULL;
         }
 #else
@@ -9671,6 +9671,8 @@ static int inp_poly_2g6_compat(struct card* deck) {
             curr_line = nexttok_noparens(curr_line);
             curr_line = nexttok_noparens(curr_line);
             curr_line = nexttok_noparens(curr_line);
+            if (!curr_line)
+                return 1;
             /* exclude all of the following fourth tokens */
             if (ciprefix("poly", curr_line))
                 continue;
