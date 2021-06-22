@@ -9050,7 +9050,8 @@ static void inp_check_syntax(struct card *deck)
             else {
                 if (!check_ch) {
                     fprintf(stderr, "Warning: Unusual leading characters like '%c' or others out of '= [] ? () & %% $\"!:,;\\f'\n", *cut_line);
-                    fprintf(stderr, "    in netlist or included files, will be replaced with '*'\n");
+                    fprintf(stderr, "    in netlist or included files, will be replaced with '*'.\n");
+                    fprintf(stderr, "    Check line no %d:  %s\n\n", card->linenum_orig, cut_line);
                     check_ch = 1; /* just one warning */
                 }
                 *cut_line = '*';
