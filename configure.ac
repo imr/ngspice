@@ -1161,23 +1161,42 @@ fi
 #  ----  Default: disabled.                                     ----
 #  ----  Hope to see in the future readline replacement.        ----
 
-if test "x$with_readline" != xyes; then
+if test "x$with_readline" = x  ||  test "x$with_readline" = xno ; then
     AC_MSG_RESULT([GNU readline disabled.])
 else
-    if test "x$with_tcl" = x  ||  test "x$with_tcl" = xno ; then
-        AC_MSG_RESULT([Checking for readline:])
-        AC_CHECK_HEADERS([readline/readline.h readline/history.h],
-            [AC_DEFINE([HAVE_GNUREADLINE], [], [Define if we have GNU readline])],
-            [AC_MSG_ERROR([Couldn't find GNU readline headers.])])
-        AC_SEARCH_LIBS([tputs], [ncurses tinfo termcap],
-            [AC_DEFINE([HAVE_TERMCAP], [], [Define if we have ncurses/terminfo or termcap])],
-            [AC_MSG_ERROR([Found neither ncurses/terminfo or termcap])])
-        AC_CHECK_LIB([readline], [readline],
-            [LIBS="$LIBS -lreadline"],
-            [AC_MSG_ERROR([Couldn't find readline libraries.])])
+    if test "x$with_readline" = xyes; then
+        if test "x$with_tcl" = x  ||  test "x$with_tcl" = xno ; then
+            AC_MSG_RESULT([Checking for readline:])
+            AC_CHECK_HEADERS([readline/readline.h readline/history.h],
+                [AC_DEFINE([HAVE_GNUREADLINE], [], [Define if we have GNU readline])],
+                [AC_MSG_ERROR([Couldn't find GNU readline headers.])])
+            AC_SEARCH_LIBS([tputs], [ncurses tinfo termcap],
+                [AC_DEFINE([HAVE_TERMCAP], [], [Define if we have ncurses/terminfo or termcap])],
+                [AC_MSG_ERROR([Found neither ncurses/terminfo or termcap])])
+            AC_CHECK_LIB([readline], [readline],
+                [LIBS="$LIBS -lreadline"],
+                [AC_MSG_ERROR([Couldn't find readline libraries.])])
+        fi
+    else
+# Especially defined for macOS (Big Sur), with readline installed from Brew
+        for dir in \
+            $with_readline
+            do
+                if test "x$with_tcl" = x  ||  test "x$with_tcl" = xno ; then
+                    AC_MSG_RESULT([Checking for readline:])
+                    AC_CHECK_HEADERS([$dir/include/readline/readline.h $dir/include/readline/history.h],
+                        [AC_DEFINE([HAVE_GNUREADLINE], [], [Define if we have GNU readline])],
+                        [AC_MSG_ERROR([Couldn't find GNU readline headers.])])
+                    AC_SEARCH_LIBS([tputs], [ncurses tinfo termcap],
+                        [AC_DEFINE([HAVE_TERMCAP], [], [Define if we have ncurses/terminfo or termcap])],
+                        [AC_MSG_ERROR([Found neither ncurses/terminfo or termcap])])
+                    AC_CHECK_LIB([readline], [readline],
+                        [LIBS="$LIBS -lreadline"],
+                        [AC_MSG_ERROR([Couldn't find readline libraries.])])
+                fi
+            done
     fi
 fi
-
 
 #  ----  Option to include BSD editline support in ngspice CLI  ----
 #  ----  Default: disabled.                                     ----
