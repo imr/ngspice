@@ -16,6 +16,22 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 #ifndef HAVE_QSORT
 #ifndef qsort
-qsort() {}
+int compar(const void* a, const void* b);
+
+int compar(const void* a, const void* b) {
+    NG_IGNORE(a);
+    NG_IGNORE(b);
+    return 0;
+}
+
+void qsort(void* base, size_t num, size_t size,
+    int (*compar)(const void* a, const void* b))
+{
+    NG_IGNORE(base);
+    NG_IGNORE(num);
+    NG_IGNORE(size);
+    NG_IGNORE(compar);
+}
+
 #endif
 #endif
