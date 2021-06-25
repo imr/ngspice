@@ -14,6 +14,7 @@ Author:	1992 David A. Gates, U. C. Berkeley CAD Group
 #include "ngspice/numenum.h"
 #include "ngspice/spmatrix.h"
 #include "ngspice/cidersupt.h"
+#include "ngspice/cpextern.h"
 
 
 /* Used in Solution Projection Calculations */
@@ -160,4 +161,20 @@ foundError(int error)
 	    break;
     }
     return( matrixError );
+}
+
+/* Return TRUE if the filetype variable matches the string 's' */
+BOOLEAN compareFiletypeVar(char *s)
+{
+	char buf[BSIZE_SP];
+
+	if (cp_getvar("filetype", CP_STRING, buf, sizeof(buf))) {
+		if (!strcmp(buf, s)) {
+			return TRUE;
+		} else {
+			return FALSE;
+		}
+	} else {
+		return FALSE;
+	} 
 }

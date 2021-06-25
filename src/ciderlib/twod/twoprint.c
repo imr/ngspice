@@ -20,7 +20,7 @@ Author:	1992 David A. Gates, U. C. Berkeley CAD Group
 
 
 void
-TWOprnSolution(FILE *file, TWOdevice *pDevice, OUTPcard *output)
+TWOprnSolution(FILE *file, TWOdevice *pDevice, OUTPcard *output, BOOLEAN asciiSave, char *extra)
 {
   int index, xIndex, yIndex;
   int numVars = 0;
@@ -34,6 +34,7 @@ TWOprnSolution(FILE *file, TWOdevice *pDevice, OUTPcard *output)
   double jcy, jdy, jny, jpy, jty;
   double *xScale = pDevice->xScale;
   double *yScale = pDevice->yScale;
+  int ii;
 
   if (output->OUTPnumVars == -1) {
     /* First pass. Need to count number of variables in output. */
@@ -123,7 +124,11 @@ TWOprnSolution(FILE *file, TWOdevice *pDevice, OUTPcard *output)
 
   /* Initialize rawfile */
   numVars = output->OUTPnumVars;
-  fprintf(file, "Title: Device %s internal state\n", pDevice->name);
+  if (extra != NULL) {
+    fprintf(file, "Title: Device %s (%s) internal state\n", pDevice->name, extra);
+  } else {
+    fprintf(file, "Title: Device %s internal state\n", pDevice->name);
+  }
   fprintf(file, "Plotname: Device Cross Section\n");
   fprintf(file, "Flags: real\n");
   fprintf(file, "Command: deftype p xs cross\n");
@@ -205,7 +210,11 @@ TWOprnSolution(FILE *file, TWOdevice *pDevice, OUTPcard *output)
   if (output->OUTPmup) {
     fprintf(file, "\t%d	mup	mobility\n", numVars++);
   }
-  fprintf(file, "Binary:\n");
+  if (asciiSave) {
+    fprintf(file, "Values:\n");
+  } else {
+    fprintf(file, "Binary:\n");
+  }
 
   for (xIndex = 1; xIndex <= pDevice->numXNodes; xIndex++) {
     for (yIndex = 1; yIndex <= pDevice->numYNodes; yIndex++) {
@@ -215,8 +224,9 @@ TWOprnSolution(FILE *file, TWOdevice *pDevice, OUTPcard *output)
 	/* Find the element to which this node belongs. */
 	for (index = 0; index < 4; index++) {
 	  pElem = pNode->pElems[index];
-	  if (pElem != NULL && pElem->evalNodes[(index + 2) % 4])
+	  if (pElem != NULL && pElem->evalNodes[(index + 2) % 4]) {
 	      break;
+          }
 	}
 	nodeFields(pElem, pNode, &ex, &ey);
 	nodeCurrents(pElem, pNode, &mun, &mup,
@@ -307,14 +317,32 @@ TWOprnSolution(FILE *file, TWOdevice *pDevice, OUTPcard *output)
 	if (output->OUTPmup) {
 	  data[numVars++] = mup;
 	}
-	fwrite(data, sizeof(double), (size_t) numVars, file);
+	if (asciiSave) {
+	  for (ii = 0; ii < numVars; ii++) {
+	    if (ii == 0) {
+	        fprintf(file, "%d %d", yIndex, xIndex);
+	    }
+	    fprintf(file, "\t%e\n", data[ii]);
+	  } 
+	} else {
+	  fwrite(data, sizeof(double), (size_t) numVars, file);
+	}
       } else {
 	for (index = 0; index < output->OUTPnumVars; index++) {
 	  data[index] = 0.0;
 	}
 	data[0] = yScale[yIndex] * 1e-2;
 	data[1] = xScale[xIndex] * 1e-2;
-	fwrite(data, sizeof(double), (size_t) numVars, file);
+	if (asciiSave) {
+	  for (ii = 0; ii < numVars; ii++) {
+	    if (ii == 0) {
+	      fprintf(file, "%d %d", yIndex, xIndex);
+	    }
+	    fprintf(file, "\t%e\n", data[ii]);
+	  }
+	} else {
+	  fwrite(data, sizeof(double), (size_t) numVars, file);
+	}
       }
     }
   }
