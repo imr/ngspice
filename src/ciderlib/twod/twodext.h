@@ -120,7 +120,7 @@ extern void TWOQrhsLoad(TWOdevice *);
 extern void TWOQcommonTerms(TWOdevice *);
 
 /*twoprint.c */
-extern void TWOprnSolution(FILE *, TWOdevice *, OUTPcard *);
+extern void TWOprnSolution(FILE *, TWOdevice *, OUTPcard *, BOOLEAN, char *);
 extern void TWOmemStats(FILE *, TWOdevice *);
 extern void TWOcpuStats(FILE *, TWOdevice *);
 

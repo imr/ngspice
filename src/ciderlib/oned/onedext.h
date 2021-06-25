@@ -76,7 +76,7 @@ extern void ONEQrhsLoad(ONEdevice *);
 extern void ONEQcommonTerms(ONEdevice *);
 
 /*oneprint.c */
-extern void ONEprnSolution(FILE *, ONEdevice *, OUTPcard *);
+extern void ONEprnSolution(FILE *, ONEdevice *, OUTPcard *, BOOLEAN, char *);
 extern void ONEmemStats(FILE *, ONEdevice *);
 extern void ONEcpuStats(FILE *f, ONEdevice *);
 

@@ -87,6 +87,7 @@ extern double guessNewConc(double , double );
 extern double lookup(double **, double );
 extern BOOLEAN hasSORConverged(double *, double *, int);
 extern BOOLEAN foundError(int );
+extern BOOLEAN compareFiletypeVar(char *);
 
 
 

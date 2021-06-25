@@ -38,6 +38,7 @@ NBJT2dump(GENmodel *inModel, CKTcircuit *ckt)
   char *prefix;
   int *state_num;
   int anyOutput = 0;
+  BOOLEAN writeAscii = TRUE;
 
   if (ckt->CKTmode & MODEDCOP) {
     prefix = "OP";
@@ -69,12 +70,15 @@ NBJT2dump(GENmodel *inModel, CKTcircuit *ckt)
 	anyOutput = 1;
 	sprintf(fileName, "%s%s.%d.%s", output->OUTProotFile, prefix,
 	    *state_num, inst->NBJT2name);
-	if ((fpState = fopen(fileName, "wb")) == NULL) {
+
+	writeAscii = compareFiletypeVar("ascii");
+
+	if (!(fpState = fopen(fileName, (writeAscii ? "w" : "wb")))) {
 	  perror(fileName);
 	} else {
 	  NBJT2putHeader(fpState, ckt, inst);
 	  TWOprnSolution(fpState, inst->NBJT2pDevice,
-	      model->NBJT2outputs);
+	      model->NBJT2outputs, writeAscii, "nbjt2");
 	  fclose(fpState);
 	  LOGmakeEntry(fileName, description);
 	}
