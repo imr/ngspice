@@ -478,7 +478,7 @@ DCtrCurv(CKTcircuit *ckt, int restart)
 #ifdef HAS_PROGREP
         if (i == job->TRCVnestLevel) {
             actval += job->TRCVvStep[job->TRCVnestLevel];
-            SetAnalyse("dc", abs((int)(actval * 1000. / actdiff)));
+            SetAnalyse("dc", abs((int)((actval - job->TRCVvStart[job->TRCVnestLevel]) * 1000. / actdiff)));
         }
 #endif
 
