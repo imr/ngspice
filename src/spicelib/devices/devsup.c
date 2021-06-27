@@ -160,13 +160,16 @@ DEVlimitlog(
     double LIM_TOL,
     int *check)
 {
+    static bool shown = FALSE;
     *check = 0;
-    if (isnan (deltemp) || isnan (deltemp_old))
+    if (!shown && (isnan (deltemp) || isnan (deltemp_old)))
     {
-        fprintf(stderr, "\nThe temperature limiting function received NaN.\n");
+        fprintf(stderr, "\n\nThe temperature limiting function received NaN.\n");
         fprintf(stderr, "Please check your power dissipation and improve your heat sink Rth!\n");
+        fprintf(stderr, "    This message will be shown only once.\n\n");
         deltemp = 0.0;
         *check = 1;
+        shown = TRUE;
     }
     /* Logarithmic damping of deltemp beyond LIM_TOL */
     if (deltemp > deltemp_old + LIM_TOL) {
