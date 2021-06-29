@@ -94,7 +94,9 @@ electrical BD;
     //  Special model parameters, some are also simulator global variables
     parameter real    LEVEL    =  102                             `P(info="Model level" unit="");
 
-    parameter real    TYPE     =  1.0      `from(   -1.0,1.0    ) `P(info="Channel type parameter, +1=NMOS -1=PMOS" unit="");
+    parameter integer TYPE     =  1        `from(   -1  ,1      ) `P(info="Channel type parameter, +1=NMOS -1=PMOS" unit="");
+    parameter integer nmos     =  1        `from(    0,  1      ) `P(desc="MOS channel type");
+    parameter integer pmos     =  1        `from(    0,  1      ) `P(desc="MOS channel type");
     parameter real    TR       =  21.0     `from( -273.0,inf    ) `P(info="nominal (reference) temperature" unit="C");
 
     //  Switch parameters that turn models or effects on or off
@@ -250,7 +252,9 @@ electrical BD;
         //  Special model parameters
         parameter real    LEVEL    =  1020                            `P(info="Model level" unit="");
 
-        parameter real    TYPE     =  1.0      `from(     -1,1      ) `P(info="Channel type parameter, +1=NMOS -1=PMOS" unit="");
+        parameter integer TYPE     =  1        `from(   -1,  1      ) `P(info="Channel type parameter, +1=NMOS -1=PMOS" unit="");
+        parameter integer nmos     =  1        `from(    0,  1      ) `P(desc="MOS channel type");
+        parameter integer pmos     =  1        `from(    0,  1      ) `P(desc="MOS channel type");
 
         // Reference Temperature
         parameter real    TR       =  21.0     `from( -273.0,inf    ) `P(info="nominal (reference) temperature" unit="C");
@@ -992,11 +996,14 @@ analog begin
         // 4.1 Internal parameters (including temperature scaling)
         // (only internal parameters independent on instance parameters
         //  are calculated in this section)
-        if (TYPE >= 0) begin
-            CHNL_TYPE  = `NMOS;
+        if (`PGIVEN(nmos)) begin
+            CHNL_TYPE = `NMOS;
+        end else if (`PGIVEN(pmos)) begin
+            CHNL_TYPE = `PMOS;
         end else begin
-            CHNL_TYPE  = `PMOS;
+            CHNL_TYPE = (`PGIVEN(TYPE)) ? TYPE : `NMOS;
         end
+        //$strobe("CHNL_TYPE %d", CHNL_TYPE);
 
         // Transistor temperature
         TR_i       =  `CLIP_LOW(TR, -273);

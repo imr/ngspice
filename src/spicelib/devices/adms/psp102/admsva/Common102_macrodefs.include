@@ -37,6 +37,7 @@
 `define CLIP_HIGH(val,max)     ((val)<(max)?(val):(max))
 `define CLIP_BOTH(val,min,max) ((val)>(min)?((val)<(max)?(val):(max)):(min))
 
+`define PGIVEN(p) $param_given(p) 
 // Note 1: In this va-code, the `P-macro is defined such that its argument
 // is ignored during compilation; in this source code it acts as
 // a comment

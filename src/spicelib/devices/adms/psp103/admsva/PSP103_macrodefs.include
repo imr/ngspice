@@ -32,6 +32,7 @@
 
 // Explicit Gmin
 `define GMIN $simparam("gmin",1e-15)
+`define PGIVEN(p) $param_given(p) 
 
 `define PMOS                 -1
 `define NMOS                 +1

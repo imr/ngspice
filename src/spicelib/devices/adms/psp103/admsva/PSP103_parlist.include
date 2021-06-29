@@ -30,6 +30,9 @@
 //  Special model parameters, some are also simulator global variables
 `MPInb(LEVEL          ,103        ,""                                   ,"Model level")
 `MPIty(TYPE           ,1          ,""                                   ,"Channel type parameter, +1=NMOS -1=PMOS")
+
+`MPIty(nmos           ,1          ,""                                   ,"MOS channel type")
+`MPIty(pmos           ,1          ,""                                   ,"MOS channel type")
 `MPRco(TR             ,21.0       ,"degC"     ,-273.0      ,inf         ,"nominal (reference) temperature")
 
 //  Switch parameters that turn models or effects on or off
