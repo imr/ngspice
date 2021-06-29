@@ -584,11 +584,14 @@ analog begin
     begin : initial_model
 
         // Clipping and rounding of switch parameters
-        if (TYPE >= 0) begin
-            CHNL_TYPE   = `NMOS;
+        if (`PGIVEN(nmos)) begin
+            CHNL_TYPE = `NMOS;
+        end else if (`PGIVEN(pmos)) begin
+            CHNL_TYPE = `PMOS;
         end else begin
-            CHNL_TYPE   = `PMOS;
+            CHNL_TYPE = (`PGIVEN(TYPE)) ? TYPE : `NMOS;
         end
+        //$strobe("CHNL_TYPE %d", CHNL_TYPE);
         EPSSI       = `EPSO * `EPSRSI;
         SWGEO_i     =  floor(`CLIP_BOTH(SWGEO,     0.0, 2.0) + 0.5);
         SWIGATE_i   =  floor(`CLIP_BOTH(SWIGATE,   0.0, 2.0) + 0.5);
