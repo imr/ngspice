@@ -5131,7 +5131,7 @@ static void inp_compat(struct card *card)
                    y_array=[y0 y1 y2]
                    input_domain=0.1 fraction=TRUE)
             */
-            if ((str_ptr = strstr(curr_line, "table")) != NULL) {
+            if ((str_ptr = search_plain_identifier(curr_line, "table")) != NULL) {
                 char *expression, *firstno, *secondno;
                 DS_CREATE(dxar, 200);
                 DS_CREATE(dyar, 200);
@@ -5313,7 +5313,7 @@ static void inp_compat(struct card *card)
                    y_array=[y0 y1 y2]
                    input_domain=0.1 fraction=TRUE)
             */
-            if ((str_ptr = strstr(curr_line, "table")) != NULL) {
+            if ((str_ptr = search_plain_identifier(curr_line, "table")) != NULL) {
                 char *expression, *firstno, *secondno;
                 char *m_ptr, *m_token;
                 DS_CREATE(dxar, 200);
@@ -7642,13 +7642,13 @@ static void inp_meas_current(struct card *deck)
     }
 }
 
-/* replace the E source TABLE function by a B source pwl
- * (used by ST OpAmps and comparators).
+/* replace the E and G source TABLE function by a B source pwl
+ * (used by ST OpAmps and comparators of Infineon models).
  * E_RO_3 VB_3 VB_4  VALUE={ TABLE( V(VCCP,VCCN), 2 , 35 , 3.3 , 15 , 5 , 10
  *         )*I(VreadIo)}
  * will become
- * BE_RO_3_1 TABLE_NEW_1 0 v = pwl( V(VCCP,VCCN), 2 , 35 , 3.3 , 15 , 5 , 10
- *        ) E_RO_3 VB_3 VB_4  VALUE={ V(TABLE_NEW_1)*I(VreadIo)}
+ * BE_RO_3_1 TABLE_NEW_1 0 v = pwl( V(VCCP,VCCN), 2 , 35 , 3.3 , 15 , 5 , 10) 
+ * E_RO_3 VB_3 VB_4  VALUE={ V(TABLE_NEW_1)*I(VreadIo)}
  */
 static void replace_table(struct card *startcard)
 {
@@ -7656,16 +7656,17 @@ static void replace_table(struct card *startcard)
     static int numb = 0;
     for (card = startcard; card; card = card->nextcard) {
         char *cut_line = card->line;
-        if (*cut_line == 'e') {
-            char *valp = strstr(cut_line, "value={");
-            if (valp) {
+        if (*cut_line == 'e' || *cut_line == 'g') {
+            char *valp = search_plain_identifier(cut_line, "value");
+            char *valp2 = search_plain_identifier(cut_line, "cur");
+            if (valp || (valp2 && *cut_line == 'g')) {
                 char *ftablebeg = strstr(cut_line, "table(");
                 while (ftablebeg) {
                     /* get the beginning of the line */
                     char *begline = copy_substring(cut_line, ftablebeg);
                     /* get the table function */
                     char *tabfun = gettok_char(&ftablebeg, ')', TRUE, TRUE);
-                    /* the new e line */
+                    /* the new e, g line */
                     char *neweline = tprintf("%s v(table_new_%d)%s",
                             begline, numb, ftablebeg);
                     char *newbline =
