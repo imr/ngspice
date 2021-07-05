@@ -15,6 +15,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 #ifdef HAS_WINGUI
 void winmessage(char *new_msg);
+extern void  UpdateMainText(void);
 #elif defined SHARED_MODULE
 extern ATTRIBUTE_NORETURN void shared_exit(int status);
 #endif
@@ -27,8 +28,10 @@ ATTRIBUTE_NORETURN void
 controlled_exit(int status)
 {
 #ifdef HAS_WINGUI
-    if (status)
+    if (status) {
+        UpdateMainText(); /* get any remaining error messages into main text window */
         winmessage("Fatal error in NGSPICE");
+    }
     exit(status);
 #elif defined SHARED_MODULE
     /* do not exit, if shared ngspice, but call back */
