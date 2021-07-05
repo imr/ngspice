@@ -169,7 +169,7 @@ static char *search_plain_identifier(char *str, const char *identifier);
 
 struct nscope *inp_add_levels(struct card *deck);
 static struct card_assoc *find_subckt(struct nscope *scope, const char *name);
-static void inp_rem_levels(struct nscope *root);
+void inp_rem_levels(struct nscope *root);
 void inp_rem_unused_models(struct nscope *root, struct card *deck);
 static struct modellist *inp_find_model(
         struct nscope *scope, const char *name);
@@ -9388,7 +9388,7 @@ struct nscope *inp_add_levels(struct card *deck)
 }
 
 /* remove the level and subckts entries */
-static void inp_rem_levels(struct nscope *root)
+void inp_rem_levels(struct nscope *root)
 {
     struct card_assoc *p = root->subckts;
     while (p) {

@@ -78,6 +78,7 @@ extern bool ft_batchmode;
 
 /* from inpcom.c */
 extern struct nscope* inp_add_levels(struct card *deck);
+extern void inp_rem_levels(struct nscope* root);
 extern void comment_out_unused_subckt_models(struct card *deck);
 extern void inp_rem_unused_models(struct nscope *root, struct card *deck);
 
@@ -2409,6 +2410,7 @@ static void rem_unused_mos_models(struct card* deck) {
     struct nscope* root = inp_add_levels(deck);
     comment_out_unused_subckt_models(deck);
     inp_rem_unused_models(root, deck);
+    inp_rem_levels(root);
     /* remove unused binning models */
     for (tmpc = deck; tmpc; tmppc = tmpc, tmpc = tmpc->nextcard) {
         char* curr_line;
