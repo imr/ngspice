@@ -7477,7 +7477,7 @@ static void inp_meas_current(struct card *deck)
              * line */
             if (s && s > v) {
                 /* %i( may be part of the node definition in a XSPICE instance, so skip it here */
-                if (*curr_line == 'a' && s[-1] == '%') {
+                if (*v == 'a' && s[-1] == '%') {
                     s++;
                     continue;
                 }
