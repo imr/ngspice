@@ -209,7 +209,7 @@ NIiter(CKTcircuit *ckt, int maxIter)
             double diff, maxdiff = 0;
             for (node = ckt->CKTnodes->next; node; node = node->next)
                 if (node->type == SP_VOLTAGE) {
-                    diff = ckt->CKTrhs[node->number] - ckt->CKTrhsOld[node->number];
+                    diff = fabs(ckt->CKTrhs[node->number] - ckt->CKTrhsOld[node->number]);
                     if (maxdiff < diff)
                         maxdiff = diff;
                 }
