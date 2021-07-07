@@ -590,6 +590,7 @@ LRESULT CALLBACK PlotWindowProc(HWND hwnd, UINT uMsg,
                         (fye - fy0) / (fxe - fx0), (fxe - fx0) / (fye - fy0));
             }
         }
+        UpdateMainText();
         SetFocus(swString);
     }
     goto WIN_DEFAULT;
