@@ -13,6 +13,8 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 #include "frontend/variable.h"
 
+#include "misc/tilde.h"
+
 #ifndef X_DISPLAY_MISSING
 Widget toplevel;
 #endif
@@ -117,7 +119,10 @@ cp_getvar(char *n, enum cp_types type, void *r, size_t rs)
 }
 
 char *
-cp_tildexpand(char *s)
+cp_tildexpand(const char *s)
 {
 	return tildexpand(s);
 }
+
+void
+controlled_exit(int status) { exit(status); }
