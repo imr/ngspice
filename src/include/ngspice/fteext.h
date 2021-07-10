@@ -286,9 +286,6 @@ extern int ft_findpoint(double pt, double *lims, int maxp, int minp, bool islog)
 extern double *ft_minmax(struct dvec *v, bool real);
 extern void ft_graf(struct dvec *v, struct dvec *xs, bool nostart);
 
-/* postcoms.c */
-extern bool set_double_quotes(wordlist * wl);
-
 /* rawfile.c */
 extern int raw_prec;
 extern void raw_write(char *name, struct plot *pl, bool app, bool binary);

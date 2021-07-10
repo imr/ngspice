@@ -297,9 +297,6 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
     char *nxlabel = NULL, *nylabel = NULL, *ntitle = NULL;
     double tstep, tstart, tstop, ttime;
 
-    /* v(/out) --> v("/out") when node name starts with math or number char */
-    set_double_quotes(wl);
-
     /* Save start of vectors on entry for cleaning up junk left behind
      * by ft_getpnames() */
     struct dvec *dv_head_orig =
