@@ -25,6 +25,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 #include "ngspice/compatmode.h"
 
+bool set_double_quotes(wordlist* wl);
 static void killplot(struct plot *pl);
 static void DelPlotWindows(struct plot *pl);
 
@@ -47,6 +48,50 @@ is_scale_vec_of_current_plot(const char *v_name)
 } /* end of function is_scale_vec_of_current_plot */
 
 
+/* writing, printing or plotting will fail when the node name starts with
+   a number or math character, even when enclosed in V() like V(2p). So
+   automatically place "" around, like V("2p"). Take care in the code
+   following set_double_quotes() that the double quotes are removed when
+   printing the name. Returns TRUE when quotes have been set. Multiple
+   v() may occur in a row.
+*/
+bool set_double_quotes(wordlist* wl)
+{
+    wordlist* wltmp;
+    bool retval = FALSE;
+    for (wltmp = wl; wltmp; wltmp = wltmp->wl_next) {
+        char* tmpstr, *tmpstr1, *tmpstr2 = NULL, *newstr;
+        tmpstr = tmpstr1 = wltmp->wl_word;
+        while (tmpstr && *tmpstr != '\0') {
+            tmpstr = strstr(tmpstr, "v(");
+            if (!tmpstr)
+                continue;
+            else if (tmpstr == wltmp->wl_word && tmpstr[2] != '\"')
+                tmpstr2 = tmpstr;
+            else if (tmpstr[2] == '\"' || (!isspace_c(tmpstr[-1]) && !is_arith_char(tmpstr[-1]))) {
+                tmpstr++;
+                continue;
+            }
+            else
+                tmpstr2 = tmpstr;
+            /* test if math character or number */
+            if (tmpstr2 && (is_arith_char(tmpstr2[2]) || isdigit(tmpstr2[2]))) {
+                char* mstr;
+                tmpstr2 += 2;
+                char* bstr = copy_substring(wltmp->wl_word, tmpstr2);
+                mstr = gettok_char(&tmpstr2, ')', FALSE, FALSE);
+                newstr = tprintf("%s%s%s%s%s", bstr, "\"", mstr, "\"", tmpstr2);
+                tfree(bstr);
+                tfree(mstr);
+                tfree(wltmp->wl_word);
+                wltmp->wl_word = tmpstr = newstr;
+            }
+            else
+                tmpstr++;
+        }
+    }
+    return retval;
+}
 
 /* Remove vectors in the wordlist from the current plot */
 void
@@ -132,6 +177,8 @@ com_print(wordlist *wl)
 
     if (wl == NULL)
         return;
+
+    set_double_quotes(wl);
 
     buf = TMALLOC(char, BSIZE_SP);
     buf2 = TMALLOC(char, BSIZE_SP);
@@ -441,6 +488,7 @@ com_write(wordlist *wl)
     if (wl) {
         file = wl->wl_word;
         wl = wl->wl_next;
+        set_double_quotes(wl);
     } else {
         file = ft_rawfile;
     }
