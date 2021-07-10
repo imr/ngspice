@@ -95,7 +95,8 @@ void INP2D(CKTcircuit *ckt, INPtables * tab, struct card *current)
     for (i = 0; i < max_i; i++)
         if (i < numnodes)
             IFC (bindNode, (ckt, fast, i + 1, node[i]));
-        else
+        else if (thismodel->INPmodType != INPtypelook("NUMD")
+            && (thismodel->INPmodType != INPtypelook("NUMD2")))
             GENnode(fast)[i] = -1;
 
     PARSECALL((&line, ckt, type, fast, &leadval, &waslead, tab));
