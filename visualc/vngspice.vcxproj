@@ -1167,6 +1167,7 @@
     <ClInclude Include="..\src\spicelib\devices\cktaccept.h" />
     <ClInclude Include="..\src\spicelib\devices\cpl\cpldefs.h" />
     <ClInclude Include="..\src\spicelib\devices\cpl\cplext.h" />
+    <ClInclude Include="..\src\spicelib\devices\cpl\cplhash.h" />
     <ClInclude Include="..\src\spicelib\devices\cpl\cplinit.h" />
     <ClInclude Include="..\src\spicelib\devices\cpl\cplitf.h" />
     <ClInclude Include="..\src\spicelib\devices\csw\cswdefs.h" />
