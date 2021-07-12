@@ -326,6 +326,7 @@ extern void *nghash_find(NGHASHPTR hashtable, void * user_key) ;
 extern void *nghash_find_again(NGHASHPTR hashtable, void * user_key) ;
 extern void *_nghash_find_again(NGHASHPTR hashtable, void * user_key,BOOL *status) ;
 extern void *nghash_delete(NGHASHPTR hashtable, void * user_key) ;
+extern void *nghash_delete_special(NGHASHPTR hashtable, void* user_key);
 extern void *nghash_insert(NGHASHPTR hashtable, void * user_key, void * data) ;
 /*
 The four functions above replace the old nghash_search function.  The same
