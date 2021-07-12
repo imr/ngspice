@@ -13,6 +13,7 @@ Modified: 2004 Paolo Nenzi - (ng)spice integration
 #include "ngspice/suffix.h"
 
 #include "ngspice/multi_line.h"
+#include "cplhash.h"
 
 
 
