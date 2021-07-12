@@ -24,6 +24,8 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "plotting/plotting.h"
 
 #include "ngspice/compatmode.h"
+#include "ngspice/dstring.h"
+#include "numparam/general.h"
 
 bool set_double_quotes(wordlist* wl);
 static void killplot(struct plot *pl);
@@ -48,49 +50,104 @@ is_scale_vec_of_current_plot(const char *v_name)
 } /* end of function is_scale_vec_of_current_plot */
 
 
+
+
+static bool is_all_digits(char* tstr)
+{
+    while (*tstr != '\0') {
+        if (!isdigit_c(*tstr))
+            return FALSE;
+        tstr++;
+    }
+    return TRUE;
+}
+
 /* writing, printing or plotting will fail when the node name starts with
    a number or math character, even when enclosed in V() like V(2p). So
-   automatically place "" around, like V("2p"). Take care in the code
-   following set_double_quotes() that the double quotes are removed when
-   printing the name. Returns TRUE when quotes have been set. Multiple
+   automatically place "" around, like V("2p"). Returns the parse tree. Multiple
    v() may occur in a row.
 */
-bool set_double_quotes(wordlist* wl)
+struct pnode* ft_getpnames_quotes(wordlist* wl)
 {
-    wordlist* wltmp;
-    bool retval = FALSE;
-    for (wltmp = wl; wltmp; wltmp = wltmp->wl_next) {
-        char* tmpstr, *tmpstr1, *tmpstr2 = NULL, *newstr;
-        tmpstr = tmpstr1 = wltmp->wl_word;
-        while (tmpstr && *tmpstr != '\0') {
-            tmpstr = strstr(tmpstr, "v(");
-            if (!tmpstr)
-                continue;
-            else if (tmpstr == wltmp->wl_word && tmpstr[2] != '\"')
-                tmpstr2 = tmpstr;
-            else if (tmpstr[2] == '\"' || (!isspace_c(tmpstr[-1]) && !is_arith_char(tmpstr[-1]))) {
-                tmpstr++;
-                continue;
+    struct pnode* names = NULL;
+    char* sz = wl_flatten(wl);
+    if (strstr(sz, "v("))
+    {
+        char* tmpstr;
+        char* nsz = tmpstr = stripWhiteSpacesInsideParens(sz);
+        DS_CREATE(ds1, 100);
+        /* put double quotes around tokens which start with math or number chars */
+        while (tmpstr[2] != '\0') {
+            /*check if we have v(something) at the beginning after arithchar or space */
+            if (tmpstr[0] == 'v' && tmpstr[1] == '(' && (nsz == tmpstr || isspace_c(tmpstr[-1]) || is_arith_char(tmpstr[-1]))) {
+                char* tmpstr2, * partoken2 = NULL;
+                tmpstr += 2;
+                /* get the complete zzz of v(zzz) */
+                char* tpartoken = tmpstr2 = gettok_char(&tmpstr, ')', FALSE, FALSE);
+                /* check if this is v(zzz) or v(xx,yy) */
+                char* partoken1 = gettok_char(&tpartoken, ',', FALSE, FALSE);
+                sadd(&ds1, "v(");
+                if (partoken1) {
+                    /* we have a xx and yy */
+                    partoken2 = copy(tpartoken + 1);
+                    if (is_all_digits(partoken1)) {
+                        sadd(&ds1, partoken1);
+                    }
+                    else if (isdigit_c(*partoken1) || is_arith_char(*partoken1)) {
+                        cadd(&ds1, '\"');
+                        sadd(&ds1, partoken1);
+                        cadd(&ds1, '\"');
+                    }
+                    else
+                        sadd(&ds1, partoken1);
+                    cadd(&ds1, ',');
+                    if (is_all_digits(partoken2)) {
+                        sadd(&ds1, partoken2);
+                    }
+                    else if (isdigit_c(*partoken2) || is_arith_char(*partoken2)) {
+                        cadd(&ds1, '\"');
+                        sadd(&ds1, partoken2);
+                        cadd(&ds1, '\"');
+                    }
+                    else
+                        sadd(&ds1, partoken2);
+                }
+                else {
+                    if (is_all_digits(tmpstr2)) {
+                        sadd(&ds1, tmpstr2);
+                    }
+                    else if (isdigit_c(*tmpstr2) || is_arith_char(*tmpstr2)) {
+                        cadd(&ds1, '\"');
+                        sadd(&ds1, tmpstr2);
+                        cadd(&ds1, '\"');
+                    }
+                    else
+                        sadd(&ds1, tmpstr2);
+                }
+
+                tfree(tmpstr2);
+                tfree(partoken1);
+                tfree(partoken2);
             }
-            else
-                tmpstr2 = tmpstr;
-            /* test if math character or number */
-            if (tmpstr2 && (is_arith_char(tmpstr2[2]) || isdigit(tmpstr2[2]))) {
-                char* mstr;
-                tmpstr2 += 2;
-                char* bstr = copy_substring(wltmp->wl_word, tmpstr2);
-                mstr = gettok_char(&tmpstr2, ')', FALSE, FALSE);
-                newstr = tprintf("%s%s%s%s%s", bstr, "\"", mstr, "\"", tmpstr2);
-                tfree(bstr);
-                tfree(mstr);
-                tfree(wltmp->wl_word);
-                wltmp->wl_word = tmpstr = newstr;
-            }
-            else
-                tmpstr++;
+            cadd(&ds1, *tmpstr);
+            tmpstr++;
         }
+        /* compensate for tmpstr[2] != '\0' */
+        cadd(&ds1, *tmpstr);
+        tmpstr++;
+        cadd(&ds1, *tmpstr);
+
+
+        char* newline = ds_get_buf(&ds1);
+        names = ft_getpnames_from_string(newline, TRUE);
+        ds_free(&ds1);
+        tfree(nsz);
     }
-    return retval;
+    else {
+        names = ft_getpnames_from_string(sz, TRUE);
+    }
+    tfree(sz);
+    return names;
 }
 
 /* Remove vectors in the wordlist from the current plot */
@@ -178,8 +235,6 @@ com_print(wordlist *wl)
     if (wl == NULL)
         return;
 
-    set_double_quotes(wl);
-
     buf = TMALLOC(char, BSIZE_SP);
     buf2 = TMALLOC(char, BSIZE_SP);
 
@@ -194,7 +249,9 @@ com_print(wordlist *wl)
     }
 
     ngood = 0;
-    names = ft_getpnames(wl, TRUE);
+
+    names = ft_getpnames_quotes(wl);
+
     for (pn = names; pn; pn = pn->pn_next) {
         if ((v = ft_evaluate(pn)) == NULL)
             continue;
@@ -488,7 +545,6 @@ com_write(wordlist *wl)
     if (wl) {
         file = wl->wl_word;
         wl = wl->wl_next;
-        set_double_quotes(wl);
     } else {
         file = ft_rawfile;
     }
@@ -509,9 +565,9 @@ com_write(wordlist *wl)
        We offer plain writing of the vectors. This enables node names containing +, -, / etc. */
     if (!plainwrite) {
         if (wl)
-            names = ft_getpnames(wl, TRUE);
+            names = ft_getpnames_quotes(wl);
         else
-            names = ft_getpnames(&all, TRUE);
+            names = ft_getpnames_quotes(&all);
 
         if (names == NULL) {
             return;

@@ -298,7 +298,6 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
     double tstep, tstart, tstop, ttime;
 
     /* v(/out) --> v("/out") when node name starts with math or number char */
-    set_double_quotes(wl);
 
     /* Save start of vectors on entry for cleaning up junk left behind
      * by ft_getpnames() */
@@ -778,7 +777,7 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
          * node is a dummy node.
          */
 
-        names = ft_getpnames(wl->wl_next, FALSE);
+        names = ft_getpnames_quotes(wl->wl_next);
         if (names == (struct pnode*)NULL) {
             goto quit1;
         }
