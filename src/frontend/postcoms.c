@@ -67,7 +67,7 @@ static bool is_all_digits(char* tstr)
    automatically place "" around, like V("2p"). Returns the parse tree. Multiple
    v() may occur in a row.
 */
-struct pnode* ft_getpnames_quotes(wordlist* wl)
+struct pnode* ft_getpnames_quotes(wordlist* wl, bool check)
 {
     struct pnode* names = NULL;
     char* sz = wl_flatten(wl);
@@ -77,7 +77,7 @@ struct pnode* ft_getpnames_quotes(wordlist* wl)
         char* nsz = tmpstr = stripWhiteSpacesInsideParens(sz);
         DS_CREATE(ds1, 100);
         /* put double quotes around tokens which start with math or number chars */
-        while (tmpstr[2] != '\0') {
+        while (*tmpstr != '\0') {
             /*check if we have v(something) at the beginning after arithchar or space */
             if (tmpstr[0] == 'v' && tmpstr[1] == '(' && (nsz == tmpstr || isspace_c(tmpstr[-1]) || is_arith_char(tmpstr[-1]))) {
                 char* tmpstr2, * partoken2 = NULL;
@@ -132,19 +132,14 @@ struct pnode* ft_getpnames_quotes(wordlist* wl)
             cadd(&ds1, *tmpstr);
             tmpstr++;
         }
-        /* compensate for tmpstr[2] != '\0' */
-        cadd(&ds1, *tmpstr);
-        tmpstr++;
-        cadd(&ds1, *tmpstr);
-
 
         char* newline = ds_get_buf(&ds1);
-        names = ft_getpnames_from_string(newline, TRUE);
+        names = ft_getpnames_from_string(newline, check);
         ds_free(&ds1);
         tfree(nsz);
     }
     else {
-        names = ft_getpnames_from_string(sz, TRUE);
+        names = ft_getpnames_from_string(sz, check);
     }
     tfree(sz);
     return names;
@@ -250,7 +245,7 @@ com_print(wordlist *wl)
 
     ngood = 0;
 
-    names = ft_getpnames_quotes(wl);
+    names = ft_getpnames_quotes(wl, TRUE);
 
     for (pn = names; pn; pn = pn->pn_next) {
         if ((v = ft_evaluate(pn)) == NULL)
@@ -565,9 +560,9 @@ com_write(wordlist *wl)
        We offer plain writing of the vectors. This enables node names containing +, -, / etc. */
     if (!plainwrite) {
         if (wl)
-            names = ft_getpnames_quotes(wl);
+            names = ft_getpnames_quotes(wl, TRUE);
         else
-            names = ft_getpnames_quotes(&all);
+            names = ft_getpnames_quotes(&all, TRUE);
 
         if (names == NULL) {
             return;

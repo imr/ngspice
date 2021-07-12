@@ -287,7 +287,7 @@ extern double *ft_minmax(struct dvec *v, bool real);
 extern void ft_graf(struct dvec *v, struct dvec *xs, bool nostart);
 
 /* postcoms.c */
-extern struct pnode *ft_getpnames_quotes(wordlist *wl);
+extern struct pnode *ft_getpnames_quotes(wordlist *wl, bool check);
 
 /* rawfile.c */
 extern int raw_prec;

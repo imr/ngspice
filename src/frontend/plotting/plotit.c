@@ -777,7 +777,7 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
          * node is a dummy node.
          */
 
-        names = ft_getpnames_quotes(wl->wl_next);
+        names = ft_getpnames_quotes(wl->wl_next, FALSE);
         if (names == (struct pnode*)NULL) {
             goto quit1;
         }
