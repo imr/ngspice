@@ -147,6 +147,9 @@ CPLsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
 
     NG_IGNORE(state);
 
+    /* hash table for local gc */
+    mem_init();
+
     /*  loop through all the models */
     for( ; model != NULL; model = CPLnextModel(model)) {
 
@@ -349,6 +352,7 @@ CPLunsetup(GENmodel *inModel, CKTcircuit *ckt)
             here->CPLibr2Given = 0;
         }
     }
+    mem_delete();
     return OK;
 }
 
