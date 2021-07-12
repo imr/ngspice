@@ -1,20 +1,23 @@
+/**********
+Copyright 2021 The ngspice team  All rights
+reserved.
+Author: 2021 Holger Vogt
+3-clause BSD license
+**********/
+
 /* This is a test file including a local garbage collector and removal.
-It might be especially useful, if the ngspice shared library (.dll or .so)
-is loaded and unloaded several times by a master program.
-At ngspice initialization mem_init() is called setting up a hash table
+It might be especially useful, because cpl transmission lines have
+several memory leaks during runtime in difficult to control process
+sequence..
+At initialization in CPLsetup() mem_init() is called setting up a hash table
 to store memory addresses.
-Each time calloc() is called, the resulting address is stored.
-Each time free() is called, the address is removed.
+Each time TMALLOC is called, the resulting address is stored.
+Each time tfree() is called, the address is removed.
 For realloc(), the old address is deleted, the new one is stored,
 if there is a change in the address.
 Upon exiting the program, mem_delete() is called, deleting all memory
 at addresses still in the hash table, then the hash table itself is removed.
-The Windows dll uses DllMain() to call mem_delete() exit, the LINUX .so
-will use void __attribute__((destructor)) mem_delete(void) or atexit()
-(both are not tested so far).
-
-The master program has to make copies of all the data that have to be kept
-for further use before detaching the shared lib! */
+CPLunsetup() calls mem_delete(). */
 
 #include "ngspice/ngspice.h"
 #include "ngspice/iferrmsg.h"
@@ -58,7 +61,7 @@ void mem_init(void) {
 }
 
 /* add to counter and hash table if memory is allocated */
-static int memsaved(void *ptr) {
+int memsaved(void *ptr) {
     if (gc_is_on) {
         gc_is_on = 0;
 
@@ -77,7 +80,7 @@ static int memsaved(void *ptr) {
 }
 
 /* add to counter and remove from hash table if memory is deleted */
-static void memdeleted(const void *ptr) {
+void memdeleted(const void *ptr) {
     if (gc_is_on) {
         gc_is_on = 0;
         if (nghash_delete_special(memory_table, (void*)ptr) == NULL) {
