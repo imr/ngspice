@@ -11,6 +11,7 @@ Author: 1992 Charles Hough
 #include "cpldefs.h"
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
+#include "cplhash.h"
 
 
 static void copy_coeffs(double **dst, IFvalue *value)
@@ -21,6 +22,7 @@ static void copy_coeffs(double **dst, IFvalue *value)
         tfree(*dst);
 
     *dst = TMALLOC(double, n);
+    memsaved(*dst);
 
     memcpy(*dst, value->v.vec.rVec, (size_t) n * sizeof(double));
 }
