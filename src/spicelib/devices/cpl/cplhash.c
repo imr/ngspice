@@ -16,6 +16,10 @@ will use void __attribute__((destructor)) mem_delete(void) or atexit()
 The master program has to make copies of all the data that have to be kept
 for further use before detaching the shared lib! */
 
+#include "ngspice/ngspice.h"
+#include "ngspice/iferrmsg.h"
+#include "ngspice/hash.h"
+
 // #define DB_FULL /* uncomment for debugging output, all addresses to files */
 #ifdef DB_FULL
 #define DB
