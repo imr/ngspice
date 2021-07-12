@@ -2049,6 +2049,7 @@
     <ClCompile Include="..\src\spicelib\devices\cktsoachk.c" />
     <ClCompile Include="..\src\spicelib\devices\cpl\cpl.c" />
     <ClCompile Include="..\src\spicelib\devices\cpl\cplask.c" />
+    <ClCompile Include="..\src\spicelib\devices\cpl\cplhash.c" />
     <ClCompile Include="..\src\spicelib\devices\cpl\cplinit.c" />
     <ClCompile Include="..\src\spicelib\devices\cpl\cplload.c" />
     <ClCompile Include="..\src\spicelib\devices\cpl\cplmask.c" />
