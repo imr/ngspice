@@ -9,7 +9,7 @@ Author:	1992 Charles Hough
 #include "cpldefs.h"
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
-
+#include "cplhash.h"
 
 VI_list	*pool_vi;
 static double ratio[MAX_CP_TX_LINES];
@@ -337,8 +337,10 @@ copy_cp(CPLine *new, CPLine *old)
 		new->taul[i] = old->taul[i];
 
 		for (j = 0; j <	m; j++)	{
-			if (new->h1t[i][j] == NULL)
-				new->h1t[i][j] = TMALLOC(TMS, 1);
+			if (new->h1t[i][j] == NULL) {
+				TMS *nptr = new->h1t[i][j] = TMALLOC(TMS, 1);
+				memsaved(nptr);
+			}
 			new->h1t[i][j]->ifImg =	old->h1t[i][j]->ifImg;
 			new->h1t[i][j]->aten = old->h1t[i][j]->aten;
 			new->h1C[i][j] = old->h1C[i][j];
@@ -351,8 +353,10 @@ copy_cp(CPLine *new, CPLine *old)
 				new->h1e[i][j][k] = old->h1e[i][j][k];
 			}
 			for (l = 0; l <	m; l++)	{
-				if (new->h2t[i][j][l] == NULL)
-					new->h2t[i][j][l] = TMALLOC(TMS, 1);
+				if (new->h2t[i][j][l] == NULL) {
+					TMS *nptr = new->h2t[i][j][l] = TMALLOC(TMS, 1);
+					memsaved(nptr);
+				}
 				new->h2t[i][j][l]->ifImg = old->h2t[i][j][l]->ifImg;
 				new->h2t[i][j][l]->aten	= old->h2t[i][j][l]->aten;
 				new->h2C[i][j][l] = old->h2C[i][j][l];
@@ -366,8 +370,10 @@ copy_cp(CPLine *new, CPLine *old)
 						= old->h2t[i][j][l]->tm[k].cnv_o;
 				}
 
-				if (new->h3t[i][j][l] == NULL)
-					new->h3t[i][j][l] = TMALLOC(TMS, 1);
+				if (new->h3t[i][j][l] == NULL) {
+					TMS* nptr = new->h3t[i][j][l] = TMALLOC(TMS, 1);
+                    memsaved(nptr);
+				}
 				new->h3t[i][j][l]->ifImg = old->h3t[i][j][l]->ifImg;
 				new->h3t[i][j][l]->aten	= old->h3t[i][j][l]->aten;
 				for (k = 0; k <	3; k++)	{
@@ -623,7 +629,12 @@ static VI_list
 		q = pool_vi;
 	    pool_vi = pool_vi->pool;
 		return(q);
-    } else return(TMALLOC(VI_list, 1));
+	}
+	else {
+		VI_list* nptr = TMALLOC(VI_list, 1);
+		memsaved(nptr);
+		return(nptr);
+	}
 }
 
 static void
