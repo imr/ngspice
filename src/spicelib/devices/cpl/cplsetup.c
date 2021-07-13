@@ -49,7 +49,7 @@ Modified: 2004 Paolo Nenzi - (ng)spice integration
 
 
 #define CPLTFREE(ptr) {                         \
-        memdelete(ptr);                         \
+        memdeleted(ptr);                        \
         tfree(ptr);                             \
 }
 
@@ -209,9 +209,13 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
 			noL = here->dimension;
 
 			here->CPLposNodes = TMALLOC(int, noL);
+			memsaved(here->CPLposNodes);
 			here->CPLnegNodes = TMALLOC(int, noL);
+			memsaved(here->CPLnegNodes);
 			here->CPLibr1 = TMALLOC(int, noL);
+			memsaved(here->CPLibr1);
 			here->CPLibr2 = TMALLOC(int, noL);
+			memsaved(here->CPLibr2);
 
 			VECTOR_ALLOC(double, here->CPLibr1Ibr1Ptr, noL);
 			VECTOR_ALLOC(double, here->CPLibr2Ibr2Ptr, noL);
@@ -231,33 +235,37 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
 
 
 			branchname = TMALLOC(char*, here->dimension);
+			memsaved(branchname);
 			if (!here->CPLibr1Given) {
 				for (m = 0; m < here->dimension; m++) {
 					branchname[m] = TMALLOC(char, MAX_STRING);
+					memsaved(branchname[m]);
 					sprintf(branchname[m], "branch1_%d", m);
 					error =
 						CKTmkCur(ckt, &tmp, here->CPLname, branchname[m]);
 					if (error) return (error);
 					here->CPLibr1[m] = tmp->number;
-					tfree(branchname[m]);
+					CPLTFREE(branchname[m]);
 				}
 				here->CPLibr1Given = 1;
 			}
-			tfree(branchname);
+			CPLTFREE(branchname);
 			branchname = TMALLOC(char*, here->dimension);
+			memsaved(branchname);
 			if (!here->CPLibr2Given) {
 				for (m = 0; m < here->dimension; m++) {
 					branchname[m] = TMALLOC(char, MAX_STRING);
+					memsaved(branchname[m]);
 					sprintf(branchname[m], "branch2_%d", m);
 					error =
 						CKTmkCur(ckt, &tmp, here->CPLname, branchname[m]);
 					if (error) return (error);
 					here->CPLibr2[m] = tmp->number;
-					tfree(branchname[m]);
+					CPLTFREE(branchname[m]);
 				}
 				here->CPLibr2Given = 1;
 			}
-			tfree(branchname);
+			CPLTFREE(branchname);
 
 			for (m = 0; m < here->dimension; m++) {
 				for (node = ckt->CKTnodes; node; node = node->next) {
@@ -355,10 +363,10 @@ CPLunsetup(GENmodel* inModel, CKTcircuit* ckt)
 				}
 			}
 
-			tfree(here->CPLposNodes);
-			tfree(here->CPLnegNodes);
-			tfree(here->CPLibr1);
-			tfree(here->CPLibr2);
+			CPLTFREE(here->CPLposNodes);
+			CPLTFREE(here->CPLnegNodes);
+			CPLTFREE(here->CPLibr1);
+			CPLTFREE(here->CPLibr2);
 
 			/* reset switches */
 			here->CPLdcGiven = 0;
@@ -385,7 +393,9 @@ ReadCpL(CPLinstance* here, CKTcircuit* ckt)
 	ERLINE* er;
 
 	c = TMALLOC(CPLine, 1);
+	memsaved(c);
 	c2 = TMALLOC(CPLine, 1);
+	memsaved(c2);
 	c->vi_head = c->vi_tail = NULL;
 	noL = c->noL = here->dimension;
 	here->cplines = c;
@@ -393,6 +403,7 @@ ReadCpL(CPLinstance* here, CKTcircuit* ckt)
 
 	for (i = 0; i < noL; i++) {
 		ec = TMALLOC(ECPLine, 1);
+		memsaved(ec);
 		name = here->in_node_names[i];
 		nd = insert_node(name);
 		ec->link = nd->cplptr;
@@ -402,9 +413,11 @@ ReadCpL(CPLinstance* here, CKTcircuit* ckt)
 		c2->in_node[i] = nd;
 
 		er = TMALLOC(ERLINE, 1);
+		memsaved(er);
 		er->link = nd->rlptr;
 		nd->rlptr = er;
 		er->rl = lines[i] = TMALLOC(RLINE, 1);
+		memsaved(er->rl);
 		er->rl->in_node = nd;
 
 		c->dc1[i] = c->dc2[i] = 0.0;
@@ -412,6 +425,7 @@ ReadCpL(CPLinstance* here, CKTcircuit* ckt)
 
 	for (i = 0; i < noL; i++) {
 		ec = TMALLOC(ECPLine, 1);
+		memsaved(ec);
 		name = here->out_node_names[i];
 		nd = insert_node(name);
 		ec->link = nd->cplptr;
@@ -421,6 +435,7 @@ ReadCpL(CPLinstance* here, CKTcircuit* ckt)
 		c2->out_node[i] = nd;
 
 		er = TMALLOC(ERLINE, 1);
+		memsaved(er);
 		er->link = nd->rlptr;
 		nd->rlptr = er;
 		er->rl = lines[i];
@@ -466,6 +481,7 @@ ReadCpL(CPLinstance* here, CKTcircuit* ckt)
 				c->h1t[i][j] = NULL;
 			else {
 				c->h1t[i][j] = TMALLOC(TMS, 1);
+				memsaved(c->h1t[i][j]);
 				d = c->h1t[i][j]->aten = SIV[i][j].C_0;
 				c->h1t[i][j]->ifImg = (int)(SIV[i][j].Poly[6] - 1.0);
 				/* since originally 2 for img 1 for noimg */
@@ -490,6 +506,7 @@ ReadCpL(CPLinstance* here, CKTcircuit* ckt)
 					c->h2t[i][j][k] = NULL;
 				else {
 					c->h2t[i][j][k] = TMALLOC(TMS, 1);
+					memsaved(c->h2t[i][j][k]);
 					d = c->h2t[i][j][k]->aten = IWI[i][j].C_0[k];
 					c->h2t[i][j][k]->ifImg = (int)(IWI[i][j].Poly[k][6] - 1.0);
 					/* since originally 2 for img 1 for noimg */
@@ -511,6 +528,7 @@ ReadCpL(CPLinstance* here, CKTcircuit* ckt)
 					c->h3t[i][j][k] = NULL;
 				else {
 					c->h3t[i][j][k] = TMALLOC(TMS, 1);
+					memsaved(c->h3t[i][j][k]);
 					d = c->h3t[i][j][k]->aten = IWV[i][j].C_0[k];
 					c->h3t[i][j][k]->ifImg = (int)(IWV[i][j].Poly[k][6] - 1.0);
 					/* since originally 2 for img 1 for noimg */
@@ -535,6 +553,7 @@ ReadCpL(CPLinstance* here, CKTcircuit* ckt)
 	for (i = 0; i < noL; i++) {
 		if (c->taul[i] < ckt->CKTmaxStep) {
 			errMsg = TMALLOC(char, strlen(message) + 1);
+			memsaved(errMsg);
 			strcpy(errMsg, message);
 			return(-1);
 		}
@@ -558,23 +577,33 @@ new_memory(int dim, int deg, int deg_o)
 	NG_IGNORE(deg);
 
 	for (i = 0; i < dim; i++)
-		for (j = 0; j < dim; j++)
+		for (j = 0; j < dim; j++) {
 			SiSv_1[i][j] = (double*)calloc((size_t)(deg_o + 1), sizeof(double));
+			memsaved(SiSv_1[i][j]);
+		}
 
 	for (i = 0; i < dim; i++)
-		for (j = 0; j < dim; j++)
+		for (j = 0; j < dim; j++) {
 			Sip[i][j] = (double*)calloc((size_t)(deg_o + 1), sizeof(double));
+			memsaved(Sip[i][j]);
+		}
 
 	for (i = 0; i < dim; i++)
-		for (j = 0; j < dim; j++)
+		for (j = 0; j < dim; j++) {
 			Si_1p[i][j] = (double*)calloc((size_t)(deg_o + 1), sizeof(double));
+			memsaved(Si_1p[i][j]);
+		}
 
 	for (i = 0; i < dim; i++)
-		for (j = 0; j < dim; j++)
+		for (j = 0; j < dim; j++) {
 			Sv_1p[i][j] = (double*)calloc((size_t)(deg_o + 1), sizeof(double));
+			memsaved(Sv_1p[i][j]);
+		}
 
-	for (i = 0; i < dim; i++)
+	for (i = 0; i < dim; i++) {
 		W[i] = (double*)calloc(MAX_DEG, sizeof(double));
+		memsaved(W[i]);
+	}
 }
 
 /***
@@ -589,6 +618,7 @@ static double*
 vector(int nl, int nh)
 {
 	double* v = TMALLOC(double, nh - nl + 1);
+	memsaved(v);
 
 	if (!v) {
 		fprintf(stderr, "Memory Allocation Error by tmalloc in vector().\n");
@@ -604,7 +634,7 @@ free_vector(double* v, int nl, int nh)
 {
 	NG_IGNORE(nh);
 	double* freev = v + nl;
-	tfree(freev);
+	CPLTFREE(freev);
 }
 
 static void
@@ -1520,7 +1550,7 @@ static void matrix_p_mult(
 			}
 	for (i = 0; i < dim; i++)
 		for (j = 0; j < dim; j++)
-			tfree(T[i][j]);
+			CPLTFREE(T[i][j]);
 
 	/**********
 	for (i  = 0; i < dim; i++)
@@ -1880,6 +1910,7 @@ insert_ND(char* name, NDnamePt* ndn)
 
 	if (*ndn == NULL) {
 		p = *ndn = TMALLOC(NDname, 1);
+		memsaved(p);
 		p->nd = NULL;
 		p->right = p->left = NULL;
 		strcpy(p->id, name);
@@ -1933,6 +1964,7 @@ static NODE
 	NODE* n;
 
 	n = TMALLOC(NODE, 1);
+	memsaved(n);
 	n->mptr = NULL;
 	n->gptr = NULL;
 	n->cptr = NULL;
@@ -2001,6 +2033,7 @@ ordering(void)
 				m = j;
 			}
 		e = TMALLOC(MAXE, 1);
+		memsaved(e);
 		row = sort(row, mv, i, m, e);
 	}
 }
@@ -2102,7 +2135,7 @@ diag(int dims)
 
 	while (row) {
 		MAXE_PTR tmp_row = row->next;
-		tfree(row);
+		CPLTFREE(row);
 		row = tmp_row;
 	}
 }
