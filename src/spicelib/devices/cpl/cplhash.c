@@ -22,6 +22,7 @@ CPLunsetup() calls mem_delete(). */
 #include "ngspice/ngspice.h"
 #include "ngspice/iferrmsg.h"
 #include "ngspice/hash.h"
+#include "ngspice/fteext.h"
 
 // #define DB_FULL /* uncomment for debugging output, all addresses to files */
 #ifdef DB_FULL
@@ -73,7 +74,7 @@ int memsaved(void *ptr) {
 #endif
 #endif
         } else
-            fprintf(stderr, "Could not insert item into hashtable at 0x%p\n", ptr);
+            fprintf(stderr, "Warning: Could not insert item into hashtable at 0x%p\n", ptr);
         gc_is_on = 1;
     }
     return OK;
@@ -90,8 +91,8 @@ void memdeleted(const void *ptr) {
             fprintf(freelog, "0x%p\n", ptr);
 #endif
         }
-        else
-            fprintf(stderr, "Could not delete item from hashtable at 0x%p\n", ptr);
+        else if (ft_ngdebug)
+            fprintf(stderr, "Warning: Could not delete item from hashtable at 0x%p\n", ptr);
 #else
         }
 #endif
