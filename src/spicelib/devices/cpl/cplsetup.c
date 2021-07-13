@@ -19,24 +19,38 @@ Modified: 2004 Paolo Nenzi - (ng)spice integration
 
 #define VECTOR_ALLOC(type, vec, n) {            \
         vec = TMALLOC(type *, n);               \
+        memsaved(vec);                          \
 }
 
 #define MATRIX_ALLOC(type, mat, m, j) {         \
         int k;                                  \
         mat = TMALLOC(type **, m);              \
+        memsaved(mat);                          \
         for (k = 0; k < m; k++) {               \
             VECTOR_ALLOC(type, mat[k], j);      \
         }                                       \
 }
 
-#define VECTOR_FREE(vec) tfree(vec)
+#define VECTOR_FREE(vec) {                      \
+        memdeleted(vec);                        \
+        tfree(vec);                             \
+}
+
 
 #define MATRIX_FREE(mat, m, j) {                \
         int k;                                  \
         for (k = 0; k < m; k++) {               \
-            tfree(mat[k]);                       \
+            memdeleted(mat[k]);                 \
+            tfree(mat[k]);                      \
         }                                       \
-        tfree(mat);                              \
+        memdeleted(mat);                        \
+        tfree(mat);                             \
+}
+
+
+#define CPLTFREE(ptr) {                         \
+        memdelete(ptr);                         \
+        tfree(ptr);                             \
 }
 
 #define MAX_DEG 8
