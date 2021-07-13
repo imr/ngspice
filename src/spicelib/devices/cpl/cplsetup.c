@@ -374,7 +374,7 @@ CPLunsetup(GENmodel* inModel, CKTcircuit* ckt)
 			here->CPLibr2Given = 0;
 		}
 	}
-	mem_delete();
+//	mem_delete();
 	return OK;
 }
 
@@ -1408,6 +1408,7 @@ generate_out(int dim, int deg_o)
 				}
 			}
 			p = SIV[i][j].Poly = (double*)calloc(7, sizeof(double));
+			memsaved(p);
 			p[0] = c1;
 			p[1] = c2;
 			p[2] = c3;
@@ -1540,6 +1541,7 @@ static void matrix_p_mult(
 			for (k = 0; k < dim; k++) {
 				p = X[i][j].Poly[k] =
 					(double*)calloc((size_t)(deg_o + 1), sizeof(double));
+				memsaved(p);
 				mult_p(A_in[i][k], T[k][j], p, deg, deg_o, deg_o);
 				t1 = X[i][j].C_0[k] = p[0];
 				if (t1 != 0.0) {
