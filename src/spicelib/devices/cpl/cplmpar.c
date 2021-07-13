@@ -18,8 +18,10 @@ static void copy_coeffs(double **dst, IFvalue *value)
 {
     int n = value->v.numValue;
 
-    if(*dst)
+    if (*dst) {
+        memdeleted(*dst);
         tfree(*dst);
+    }
 
     *dst = TMALLOC(double, n);
     memsaved(*dst);
