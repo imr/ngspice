@@ -6106,10 +6106,9 @@ static void replace_token(
    functions containing nodes like v(node), v(node1, node2), i(branch)
    and other keywords like TEMPER. --> Only parameter replacement in numparam
 */
-
 static void inp_bsource_compat(struct card *card)
 {
-    char *equal_ptr, *str_ptr, *new_str, *final_str;
+    char *equal_ptr, *new_str, *final_str;
     int skip_control = 0;
 
     for (; card; card = card->nextcard) {
@@ -6144,9 +6143,7 @@ static void inp_bsource_compat(struct card *card)
                 fprintf(stderr, "ERROR: mal formed B line: %s\n", curr_line);
                 controlled_exit(EXIT_FAILURE);
             }
-            /* find the m={m} token and remove it */
-            if ((str_ptr = strstr(curr_line, "m={m}")) != NULL)
-                memcpy(str_ptr, "     ", 5);
+            /* prepare to skip parsing in numparam with expressions */
             new_str = inp_modify_exp(equal_ptr + 1);
             final_str = tprintf("%.*s %s", (int) (equal_ptr + 1 - curr_line),
                     curr_line, new_str);
