@@ -2629,7 +2629,8 @@ static char *inp_spawn_brace(char *s)
   removes  " " quotes, returns lower case letters,
   replaces non-printable characters with '_', however if
   non-printable character is the only character in a line,
-  replace it by '*'
+  replace it by '*'. If there is a XSPICE code model .model
+  line with file input, keep quotes and case for the file path.
   *-------------------------------------------------------------------------*/
 
 void inp_casefix(char *string)
@@ -2641,8 +2642,28 @@ void inp_casefix(char *string)
         *string = '*';
         return;
     }
-    if (string)
+    if (string) {
+#ifdef XSPICE
+        /* special treatment of code model file input */
+        char* tmpstr = NULL;
+        bool keepquotes = ciprefix(".model", string);
+        if (keepquotes){
+            tmpstr = strstr(string, "file=");
+            keepquotes = keepquotes && tmpstr;
+        }
+#endif
         while (*string) {
+#ifdef XSPICE
+            /* exclude file name inside of quotes from getting lower case,
+               keep quotes to enable spaces in file path */
+            if (keepquotes && string == tmpstr) {
+                string = string + 6; // past first quote
+                while (*string && *string != '"')
+                    string++;
+                if (*string)
+                    string++; // past second quote
+            }
+#endif
             if (*string == '"') {
                 *string++ = ' ';
                 while (*string && *string != '"')
@@ -2658,6 +2679,7 @@ void inp_casefix(char *string)
                 *string = tolower_c(*string);
             string++;
         }
+    }
 #endif
 }
 
