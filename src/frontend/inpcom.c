@@ -188,6 +188,8 @@ static void inp_get_w_l_x(struct card* oldcard);
 static char* eval_m(char* line, char* tline);
 static char* eval_tc(char* line, char* tline);
 
+static void rem_double_braces(struct card* card);
+
 #ifndef EXT_ASC
 static void utf8_syntax_check(struct card *deck);
 #endif
@@ -7948,6 +7950,42 @@ static bool del_models(struct vsmodels *vsmodel)
     return TRUE;
 }
 
+/* Check for double '{', replace the inner '{', '}' by '(', ')'
+   in .subckt or .model (which both may stem from external sources) */
+static void rem_double_braces(struct card* newcard)
+{
+    struct card* card;
+    int slevel = 0;
+
+    for (card = newcard; card; card = card->nextcard) {
+        char* cut_line = card->line;
+        if (ciprefix(".subckt", cut_line))
+            slevel++;
+        else if (ciprefix(".ends", cut_line))
+            slevel--;
+        if (ciprefix(".model", cut_line) || slevel > 0) {
+            cut_line = strchr(cut_line, '{');
+            if (cut_line) {
+                int level = 1;
+                cut_line++;
+                while (*cut_line != '\0') {
+                    if (*cut_line == '{') {
+                        level++;
+                        if (level > 1)
+                            *cut_line = '(';
+                    }
+                    else if (*cut_line == '}') {
+                        if (level > 1)
+                            *cut_line = ')';
+                        level--;
+                    }
+                    cut_line++;
+                }
+            }
+        }
+    }
+}
+
 /**** PSPICE to ngspice **************
 * .model replacement in ako (a kind of) model descriptions
 * replace the E source TABLE function by a B source pwl
@@ -7998,6 +8036,9 @@ static struct card *pspice_compat(struct card *oldcard)
 
     /* replace TABLE function in E source */
     replace_table(oldcard);
+
+    /* remove double braces */
+    rem_double_braces(oldcard);
 
     /* add predefined params TEMP, VT, GMIN to beginning of deck */
     char *new_str = copy(".param temp = 'temper'");
@@ -8057,10 +8098,8 @@ static struct card *pspice_compat(struct card *oldcard)
        .model xxx NMOS/PMOS level=5 --> level = 44
        .model xxx NMOS/PMOS level=8 --> level = 14, version=4.5.0
        .model xxx NPN/PNP   level=2 --> level = 6
-       .model xxx LPNP      level=n --> level = 1 subs=-1       */
-
-    /* Check for double '{', replace the inner '{', '}' by '(', ')'.
-       Also, remove any Monte - Carlo variation parameters from .model cards.*/
+       .model xxx LPNP      level=n --> level = 1 subs=-1
+       Remove any Monte - Carlo variation parameters from .model cards.*/
     for (card = newcard; card; card = card->nextcard) {
         char* cut_line = card->line;
         if (ciprefix(".model", cut_line)) {
@@ -8140,26 +8179,6 @@ static struct card *pspice_compat(struct card *oldcard)
             tfree(modname);
             tfree(modtype);
 
-            /* check for double '{', replace the inner '{', '}' by '(', ')'*/
-            cut_line = strchr(curr_line, '{');
-            if (cut_line)
-            {
-                int level = 1;
-                cut_line++;
-                while (*cut_line != '\0') {
-                    if (*cut_line == '{') {
-                        level++;
-                        if (level > 1)
-                            *cut_line = '(';
-                    }
-                    if (*cut_line == '}') {
-                        if (level > 1)
-                            *cut_line = ')';
-                        level--;
-                    }
-                    cut_line++;
-                }
-            }
             /* Remove any Monte-Carlo variation parameters. They qualify
              * a previous parameter, so there must be at least 3 tokens.
              * There are two keywords "dev" (different values for each device),
@@ -8864,11 +8883,16 @@ static void pspice_compat_a(struct card *oldcard)
  *         Revepsilon=0.2 Epsilon=0.2 Ilimit=7 Revilimit=7)
  * Remove '.backanno'
  */
-struct card *ltspice_compat(struct card *oldcard)
+static struct card *ltspice_compat(struct card *oldcard)
 {
     struct card *card, *newcard, *nextcard;
     struct vsmodels *modelsfound = NULL;
     int skip_control = 0;
+
+
+    /* remove double braces only if not yet done in pspice_compat() */
+    if (!newcompat.ps)
+        rem_double_braces(oldcard);
 
     /* add funcs uplim, dnlim to beginning of deck */
     char *new_str =
