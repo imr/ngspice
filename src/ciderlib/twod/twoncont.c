@@ -211,7 +211,7 @@ void
 	      pNode->fNPsiOx   = spGetElement( matrix, nEqn, psiEqnOxP );
 	    }
 	  } else { /* Horizontal Slice */
-	    if ( nIndex <= 1 ) { /* Top Side */
+	    if ( nIndex == 0 || nIndex == 3 ) { /* Left (Top?) Side : bug 483 */
 	      pNode->fNPsiIn   = spGetElement( matrix, nEqn, psiEqnInM );
 	      pNode->fNPsiInP1 = spGetElement( matrix, nEqn, psiEqnInP );
 	      pNode->fNPsiOx   = spGetElement( matrix, nEqn, psiEqnOxM );
