@@ -2664,6 +2664,8 @@ void inp_casefix(char *string)
                     string++;
                 if (*string)
                     string++; // past second quote
+                if (*string == '\0')
+                    break;
             }
 #endif
             if (*string == '"') {
@@ -2675,7 +2677,7 @@ void inp_casefix(char *string)
                 if (*string == '"')
                     *string = ' ';
             }
-            if (!isspace_c(*string) && !isprint_c(*string))
+            if (*string && !isspace_c(*string) && !isprint_c(*string))
                 *string = '_';
             if (isupper_c(*string))
                 *string = tolower_c(*string);
