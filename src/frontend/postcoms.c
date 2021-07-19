@@ -79,7 +79,7 @@ struct pnode* ft_getpnames_quotes(wordlist* wl, bool check)
         /* put double quotes around tokens which start with math or number chars */
         while (*tmpstr != '\0') {
             /*check if we have v(something) at the beginning after arithchar or space */
-            if (tmpstr[0] == 'v' && tmpstr[1] == '(' && (nsz == tmpstr || isspace_c(tmpstr[-1]) || is_arith_char(tmpstr[-1]))) {
+            if (tmpstr[0] == 'v' && tmpstr[1] == '(' && (nsz == tmpstr || isspace_c(tmpstr[-1]) || is_arith_char(tmpstr[-1]) || tmpstr[-1] == '.')) {
                 char* tmpstr2, * partoken2 = NULL;
                 tmpstr += 2;
                 /* get the complete zzz of v(zzz) */
