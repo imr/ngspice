@@ -161,6 +161,10 @@ cx_interpolate(void *data, short int type, int length, int *newlength, short int
     if (grouping == 0)
         grouping = length;
 
+    if (grouping != length) {
+        fprintf(cp_err, "Error: interpolation of multi-dimensional vectors is currntly not supported\n");
+        return (NULL);
+    }
     /* First do some sanity checks. */
     if (!pl || !pl->pl_scale || !newpl || !newpl->pl_scale) {
         fprintf(cp_err, "Internal error: cx_interpolate: bad scale\n");
@@ -216,10 +220,12 @@ cx_interpolate(void *data, short int type, int length, int *newlength, short int
     if (!cp_getvar("polydegree", CP_NUM, &degree, 0))
         degree = 1;
 
+    /* FIXME: this function is defect: ns data cannot have same base and grouping 
+       as the original data. Will now do only if grouping == length. */
     for (base = 0; base < length; base += grouping) {
         if (!ft_interpolate((double *) data + base, d + base,
             os->v_realdata + base, grouping,
-            ns->v_realdata + base, grouping, degree))
+            ns->v_realdata + base, ns->v_length, degree))
         {
             tfree(d);
             return (NULL);
