@@ -1,7 +1,7 @@
-  Ngspice F.A.Q.Version 2.6 (ngspice-34 release)
+  Ngspice F.A.Q.Version 2.6 (ngspice-35 release)
 
   Maintained by Holger Vogt
-  Last update: 01-03-2021
+  Last update: 07-20-2021
 
   This document contains the Frequently Asked Questions (and Answers)
   for ngspice project.
@@ -249,7 +249,7 @@
 
   The latest version released is:
 
-  * ngspice-34 (released on 10/01/2021)
+  * ngspice-35 (released on 07/31/2021)
 
 
  2.2.  What are the latest features in the current release?
