@@ -1,3 +1,40 @@
+Ngspice-35, July 31st, 2021
+============
+- New features:
+    + Version info in sharedspice.h.
+    + Replace double braces {{...}} by {(...)} in netlist (PSLT mode).
+    + Add plotting of graphics in SVG format.
+    + Setting variable 'nounits' allows suppressing the unit in a graph.
+    + Update of macOS configure script.
+    + In sharedspice API, convert all boolean variables to type integer
+      for C++ compatibility.
+    + Add geometry scaling to diode device model (level 3).
+    + In PS mode exp function is limited to exp(14).
+    + Speed enhancement for using SkyWater PDK under Linux.
+    + Add option Cshunt which adds a capacitor to each circuit voltage node.
+    + Diode device model now has a self heating option.
+    + Allow opening files with names containing ANSI special characters.
+    + Enable using parameters in .options lines.
+    + For C and R devices enable value tokens like 4k7 or 1u2
+      in addition to 4.7k and 1.2u.
+    + New XSPICE pswitch for internally replacing the vswitch.
+    + Within a single run, allow multiple PS or SVG plots with different names.
+    + Don't replace a device model name by a parameter,
+      if both have the same names.
+    + Analog delay code model 'delay'.
+    + B source (ASRC) will acknowledge temp and dtemp instance parameters.
+    + In CIDER printing of either ASCII or binary is supported.
+    + PSP models now support NMOS and PMOS, update to parameters and examples.
+    + E and G source TABLE function replaces by a B source pwl.
+    + re-enable making the old help system for Linux/Cygwin
+      by --enable-help --enable-oldapps.
+    + Enable the m parameter in E, G, B, R behavioral source/devices.
+
+- Bug fixes:
+    + many bugs fixed and code improvements (see bugs 539 and up)
+    + memory leaks removed
+
+
 Ngspice-34, Jan 31st, 2021
 ============
 - New features:
@@ -31,8 +68,8 @@ Ngspice-34, Jan 31st, 2021
 - Bug fixes:
     + many bugs fixed and code improvements (see bugs 523 and up)
     + memory leaks removed
-    
-    
+
+
 
 Ngspice-33, Oct 18th, 2020
 ============
