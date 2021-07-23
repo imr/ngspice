@@ -1,0 +1,75 @@
+Ring Oscillator with various current and voltage measurements
+* outside and inside of subcircuits
+
+* inverter w/o current measurement
+.subckt inv in out vdd vss
+mn1 out in vss vss mynmos W=1u L=0.25u
+mp1 out in vdd vdd mypmos W=2u L=0.25u
+.ends
+
+* inverter with current measurement
+.subckt invmeas in out vdd vss
+mn1 out in mea mea mynmos W=1u L=0.25u
+mp1 out in vdd vdd mypmos W=2u L=0.25u
+vmeas mea vss 0
+.ends
+
+* inverter with power output
+.subckt invp in out vdd vss
+mn1 out in mea mea mynmos W=3u L=0.25u
+mp1 out in vdd vdd mypmos W=6u L=0.25u
+vmeas mea vss 0
+.ends
+
+
+.subckt ro dd ss ssb out
+* ring oscillator
+Xinv1 n1 n2 dd ss inv
+Xinv2 n2 n3 dd ss inv
+Xinv3 n3 n4 dd ss inv
+Xinv4 n4 n5 dd ss inv
+Xinv5 n5 n1 dd ss invmeas
+* output buffer
+Xinv6 n5 outi dd ssb inv
+Xinv7 outi out dd ssb invp
+.ends
+
+Xro dd ss ssb out ro
+
+Vdd dd 0 1.5
+Vss ss 0 0
+Vssb ssb 0 0
+
+* use internally predefined model parameters
+.model mynmos nmos level=14 version=4.5.0
+.model mypmos pmos level=14 version=4.5.0
+
+.option savecurrents
+
+.control
+*use save ... if option savecurrents is not given
+*save all @m.xro.xinv2.mn1[id]
+tran 2p 3n
+*use remzerovec if option savecurrents is given
+remzerovec
+
+set xbrushwidth=2
+set color0=white
+
+*output voltage after output buffer
+plot v(out)
+
+* measure currents
+* v.xro.xinv5.vmeas#branch current through inverter 5
+* vss#branch total ro current
+* @m.xro.xinv2.mn1[id] drain current of transistor m1 in inverter 2
+plot v.xro.xinv5.vmeas#branch vss#branch @m.xro.xinv2.mn1[id]
+
+* vssb#branch current through output buffer
+plot vssb#branch
+
+* plot voltages at nodes internal to subcircuit instance xro
+plot xro.n1 xro.n2 xro.n3 xro.n4 xro.n5 xro.outi
+.endc
+
+.end
