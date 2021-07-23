@@ -48,7 +48,7 @@ Vssb ssb 0 0
 
 .control
 *use save ... if option savecurrents is not given
-*save all @m.xro.xinv2.mn1[id]
+*save all @m.xro.xinv2.mn1[id] @m.xro.xinv3.mn1[id]
 tran 2p 3n
 *use remzerovec if option savecurrents is given
 remzerovec
@@ -70,6 +70,12 @@ plot vssb#branch
 
 * plot voltages at nodes internal to subcircuit instance xro
 plot xro.n1 xro.n2 xro.n3 xro.n4 xro.n5 xro.outi
+
+* Write the drain current of transistor m1 in inverter 3 into
+* a raw file
+write id.raw @m.xro.xinv3.mn1[id]
+* and into a table
+wrdata id.out @m.xro.xinv3.mn1[id]
 .endc
 
 .end
