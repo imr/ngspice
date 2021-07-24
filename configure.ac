@@ -11,19 +11,27 @@
 # Initialization
 # ---------------
 
+# Ensure a recent version of Autoconf is in use
+# Older versions may not work with this script and this will report the
+# problem to the user.
+AC_PREREQ([2.59])
+
+m4_define([ngspice_major_version], [35])
+m4_define([ngspice_minor_version], [0])
+m4_define([ngspice_version],
+      [ngspice_major_version])
+
 # Initialization of configure
-AC_INIT([ngspice], [35], [http://ngspice.sourceforge.net/bugrep.html])
+AC_INIT([ngspice], [ngspice_version], [http://ngspice.sourceforge.net/bugrep.html])
+
+# Revision stamp the generated ./configure script
+AC_REVISION([$Revision: ngspice_version$])
+
+# Libtool shared ngspice versioning info
+AC_SUBST([NG_SO_VERSION], [0:1:0])
 
 # Unique file in the source directory
 AC_CONFIG_SRCDIR([src/ngspice.c])
-
-# Ensure a recent version of Autoconf is in use
-# Older versions may not work with this script and this will report the
-# problem to the user.  (2.52 is a guess and might need some adjustment)
-AC_PREREQ([2.59])
-
-# Revision stamp the generated ./configure script
-AC_REVISION([$Revision$])
 
 # Create a configuration header
 AC_CONFIG_HEADER([src/include/ngspice/config.h])
