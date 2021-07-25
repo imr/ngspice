@@ -27,9 +27,6 @@ AC_INIT([ngspice], [ngspice_version], [http://ngspice.sourceforge.net/bugrep.htm
 # Revision stamp the generated ./configure script
 AC_REVISION([$Revision: ngspice_version$])
 
-# Libtool shared ngspice versioning info
-AC_SUBST([NG_SO_VERSION], [0:1:0])
-
 # Unique file in the source directory
 AC_CONFIG_SRCDIR([src/ngspice.c])
 
@@ -52,7 +49,83 @@ AC_SUBST([AM_CPPFLAGS], ['-I. -I$(srcdir) -I$(top_builddir)/src/include'])
 
 AC_CONFIG_MACRO_DIR([m4])
 
+# Enable the automatically build of shared and static libraries
+LT_INIT([shared static])
 
+# Setting the libtool versioning
+###################################################################################
+#                                                                                 #
+#  To set the version of the library, libtool provides the -version-info          #
+#  parameter, which accepts three numbers, separated by colons, that are called   #
+#  respectively, current, revision and age. Both their name and their behavior,   #
+#  nowadays, have to be considered fully arbitrary, as the explanation provided   #
+#  in the official documentation is confusing to say the least, and can be, in    #
+#  some cases, considered completely wrong.                                       #
+#  https://autotools.io/libtool/version.html                                      #
+#                                                                                 #
+###################################################################################
+#
+# How to work with the libtool versioning?
+#
+# Follow the following steps from top to bottom. This means always start at point 1
+# if you plan to make a release and change the values.
+# Every new library starts with a version 'current'  (short 'c') = 0
+#                                         'revision' (short 'r') = 0
+#                                         'age'      (short 'a') = 0
+#
+# Update the libtool versioning only after the release of a public release of ngspice.
+# Go through the following checklist from top to bottom and check your needs, following
+# the reminded changes if you can say "Yes" for specific check.
+#
+# 1. Only existing code has changed, no functional changes.
+#    If the library source code has changed but *no* new symbols were added at all
+#    since the last update, then increment the revision (c:r:a becomes c:r+1:a).
+#    This is usually happen if the existing source of a function was changed for
+#    bug fixing e.g.
+#
+#  --> Increase the 'LT_NGSPICE_REVISION' value with *every* new software release
+#      within one release cycle.
+#
+# 2. Interfaces were added, functions have changed or are removed.
+#    If any interfaces [exported functions or data] have been added, got internal
+#    changes that implies a different behavior or removed and by this the visible
+#    symbols have changed since the last update, increment current, and set the
+#    revision to 0 (c:r:a becomes c+1:r=0:a).
+#    The new modified behavior of the library isn't backward compatible!
+#
+#  --> Increase the 'LT_NGSPICE_CURRENT' value whenever as an interface has been added
+#      or removed. This implies also a API change! You mostly have to change the
+#      'ngspice_major_version'!
+#  --> Set 'LT_NGSPICE_REVISION' to 0.
+#
+# 3. Interfaces were added but none removed or changed.
+#    If any interfaces have been added since the last public release and non of the
+#    existing interfaces were removed and existing interfaces have not changed internal
+#    functionality then the new library is backward compatible. Existing binaries can
+#    use the new library the same way than as the existing old library without loosing
+#    existing functionality or breakage.
+#    Increase age by 1 (c:r:a becomes c:r:a+1).
+#
+#  --> Increase the 'LT_NGSPICE_AGE' value only if the changes made to the ABI are
+#      backward compatible.
+#
+# 4. Interfaces were removed or have functional changes.
+#    If any interfaces within the library have been removed since the last public
+#    release or got some internal changes that let the interface act different than
+#    before, then set age to 0. The library isn't backwards compatible.
+#
+#  --> Set 'LT_NGSPICE_AGE' to 0.
+
+LT_NGSPICE_CURRENT=0
+LT_NGSPICE_REVISION=1
+LT_NGSPICE_AGE=0
+LIBNGSPICE_SO_VERSION=$LT_NGSPICE_CURRENT.$LT_NGSPICE_REVISION.$LT_NGSPICE_AGE
+
+# Announce the libtool version
+AC_SUBST(LT_NGSPICE_CURRENT)
+AC_SUBST(LT_NGSPICE_REVISION)
+AC_SUBST(LT_NGSPICE_AGE)
+AC_SUBST(LIBNGSPICE_SO_VERSION)
 
 # Package Options
 # ---------------
