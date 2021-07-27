@@ -170,7 +170,7 @@ static void cm_delay_callback(ARGS, Mif_Callback_Reason_t reason);
 void cm_delay(ARGS)
 {
     int buffer_size, delay_step;
-    double delay;
+    double delay, lcntrl;
     double delmin, delmax;
 
     mLocal_Data_t *loc;        /* Pointer to local static data, not to be included
@@ -252,6 +252,10 @@ void cm_delay(ARGS)
                         cm_message_send("max delay greater than final sim time not allowed, set to final time");
                     }
                 }
+                if (loc->tdelmax < loc->tdelmin) {
+                    loc->tdelmax = loc->tdelmin;
+                    cm_message_send("max delay smaller than min delay, set to min delay");
+                }
             }
 
             loc->buff_write = 0;
@@ -294,8 +298,14 @@ void cm_delay(ARGS)
         delmin = loc->tdelmin;
         delmax = loc->tdelmax;
 
+        lcntrl =  INPUT(cntrl);
+        if (lcntrl < 0)
+            lcntrl = 0.;
+        else if (lcntrl > 1.)
+            lcntrl = 1.;
+
         if (PARAM(has_delay_cnt) == MIF_TRUE) {
-            delay = (delmax - delmin) * INPUT(cntrl) + delmin;
+            delay = (delmax - delmin) * lcntrl + delmin;
         }
 
         /* time not yet advanced for delay output */
