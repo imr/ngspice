@@ -7,10 +7,11 @@ Table of contents
    1.1 Prerequisites
    1.2 Install from tarball (e.g. ngspice-35.tar.gz)
    1.3 Install from git repository
-   1.4 Advanced Install
-    1.4.1 Most useful options
-    1.4.2 Options Specific to Enable Ngspice as a shared library
-    1.4.3 Options Useful for Debugging Ngspice
+   1.4 ngspice as a shared library
+   1.5 Advanced Install
+    1.5.1 Most useful options
+    1.5.2 Options Specific to Enable Ngspice as a shared library
+    1.5.3 Options Useful for Debugging Ngspice
   2 Compilers and Options
   3 Compiling For Multiple Architectures
   4 Installation Names
@@ -42,20 +43,30 @@ This file describes the procedures to install ngspice from sources.
  configure settings. Standard ngsoice executable, ngspice as a shared
  library and ngspice as a tcl/tk library.
 
- The following software must be installed in your system to compile ngspice:
+ The following software must be installed in your system to compile
+ ngspice as a standard executable (command-line input, file and graphics
+ output):
  bison, flex, X11 headers and libs, Xaw, Xmu, Xext, Xft, FontConfig,
  Xrender, and freetype headers (e.g. libX11-devel) and libs (e.g. libX11-6),
  and readline.
+
+ ngspice as a shared library (no graphics and no command-line interfaces)
+ will need bison and flex only.
+
+ If libfftw is detected on your system, it will be used instead of the
+ internal fft procedure.
 
  If you want to compile the source from the git repository you need
  additional software: autoconf, automake, libtool.
 
  The following software may be needed when enabling additional features:
- editline, tcl/tk, adms
+ editline, tcl/tk, adms.
 
  Please have a look at the actual ngspice manual, downloadable at
  http://ngspice.sourceforge.net/docs.html, which gives you much more
  information on ngspice and its usage.
+
+ For compiling ngspice as a shared library, see section 1.4.
 
 
 1.2 Install from tarball (e.g. ngspice-35.tar.gz)
@@ -127,7 +138,7 @@ This file describes the procedures to install ngspice from sources.
  $ sudo make install
 
  See the section titled 'Advanced Install' for instructions about arguments
- that can be passed to ./configure to customise the build and installation.
+ that can be passed to ./configure to customize the build and installation.
 
  Preferred arguments to ./configure to obtain a comfortably working ngspice may be
  --with-readline=yes and --disable-debug (for a smaller and speed optimized
@@ -141,20 +152,27 @@ This file describes the procedures to install ngspice from sources.
  $ make 2>&1 | tee make.log
  $ sudo make install
 
- A bash script compile_linux.sh is available including all useful options.
-
- The configure settings for the ngspice shared library are:
- $ ../configure --with-ngshared --enable-xspice --disable-debug --enable-cider --enable-openmp --enable-adms
-
- If a problem is found with the build process, please submit a report to
- the ngspice development team. Please provide information about your system
- and any ./configure arguments you are using, together with any error
- messages.  Ideally you would have tried to fix the problem yourself first.
- If you have fixed the problem then the development team will love to hear
- from you.
+ A bash script compile_linux.sh is available including all useful options,
+ compiling and installation procedures.
 
 
-1.4 Advanced Install
+1.4 ngspice as a shared library
+
+ The relevant configure options for the ngspice shared library are:
+ $ --with-ngshared --enable-xspice --disable-debug --enable-cider --enable-openmp
+
+ Typically the two aliases libngspice.so, libngspice.so.0 and the compiled
+ library libngspice.so.0.0.1 are made. The install locations depend on
+ the Linux distribution and may be set by the --prefix configure flag.
+
+ Again there is a bash script compile_linux_shared.sh with all useful options,
+ compiling and installation procedures.
+
+ libtool versioning is available and may be set in configure.ac, if relevant
+ changes to the source code have been made.
+
+
+1.5 Advanced Install
 
  Some extra options can be provided to './configure'. To get all available
  options do:
@@ -167,7 +185,7 @@ This file describes the procedures to install ngspice from sources.
  The following sections provide some guidance and descriptions for many,
  but not all, of these options.
 
- 1.4.1 Most useful options:
+ 1.5.1 Most useful options:
 
  --enable-adms
         ADMS is an experimental model compiler that translates
@@ -195,7 +213,7 @@ This file describes the procedures to install ngspice from sources.
 
  --disable-debug
         This option will remove the '-g' option passed to the compiler
-        and add -O2 optimisation (instead of default O0).
+        and add -O2 optimization (instead of default O0).
         This speeds up simulating significantly, and is recommended for
         normal use.
 
@@ -208,7 +226,12 @@ This file describes the procedures to install ngspice from sources.
         fft instead. Default is 'yes'.
 
 
-1.4.2 Options Specific to Enable Ngspice as a shared library
+ --with-editline=yes
+        Enables the use of the BSD editline library (libedit) instead
+        of readline.
+        See http://www.thrysoee.dk/editline/
+
+1.5.2 Options Specific to Enable Ngspice as a shared library
 
  --with-ngshared
         This option let you compile ngspice as a shared
@@ -216,21 +239,15 @@ This file describes the procedures to install ngspice from sources.
         ngspice. This option excludes using --with-x or
         --with-wingui. Useful additional options are
         --enable-xspice --enable-cider --enable-openmp.
-        No graphics inetrface is provided, this has to be
+        No graphics interface is provided, this has to be
         handled by the controlling application.
 
  --with-tcl=tcldir
-        When configured with this option the tcl module
+        When configured with this option, the tcl module
         "tclspice" is compiled and installed instead of
         plain ngspice.
 
- --with-editline=yes
-        Enables the use of the BSD editline library (libedit) instaed
-        of readline.
-        See http://www.thrysoee.dk/editline/
-
-
-1.4.3 Options Useful for Debugging Ngspice
+1.5.3 Options Useful for Debugging Ngspice
 
  --enable-ansi
         Configure will try to find an option for your compiler so that
@@ -270,6 +287,14 @@ This file describes the procedures to install ngspice from sources.
 
  --enable-stepdebug
         Turns on debugging of convergence stepping??
+
+
+ If a problem is found with the build process, please submit a report
+ to the ngspice development team using the ngspice discussion forum at
+ https://sourceforge.net/p/ngspice/discussion/133842/. Please provide
+ information about your system and any ./configure arguments you are
+ using, together with any error messages. If you have fixed the
+ problem yourself, then the development team will love to hear from you.
 
 
 2 Compilers and Options
@@ -521,9 +546,15 @@ This file describes the procedures to install ngspice from sources.
                 spectrum
                 spinit
 
-The scripts in directory ngspice/scripts are outdated
-(except for spinit, the basic ngspice initialization script),
-but may give some hints how to use the ngspice control language.
+ The scripts in directory ngspice/scripts are somewhat outdated
+ (except for spinit, the basic ngspice initialization script),
+ but may give some hints how to use the ngspice control language.
+
+ A bash script compile_min.sh is available including all useful options,
+ compiling and installation procedures.
+
+ The shared library libngspice-0.dll may be created by using the
+ script compile_min_shared.sh.
 
 
 9.2 make ngspice with MS Visual Studio 2019
