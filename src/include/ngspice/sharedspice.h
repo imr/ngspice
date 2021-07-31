@@ -87,7 +87,8 @@ ngspice.dll should never call exit() directly, but handle either the 'quit'
 request to the caller or an request for exiting upon error,
 done by callback function ngexit().
 
-All boolean signals (NG_BOOL) are of type int.
+All boolean signals (NG_BOOL) are of type _Bool, if ngspice is compiled. They
+are of type bool if sharedspice.h is used externally.
 */
 
 #ifndef NGSPICE_PACKAGE_VERSION
@@ -134,8 +135,15 @@ struct ngcomplex {
 typedef struct ngcomplex ngcomplex_t;
 #endif
 
-/* ngspice traditionally treats a boolean var as int */
-typedef int NG_BOOL;
+/* NG_BOOL is the boolean variable at the ngspice interface.
+   When ompiling ngspice shared module, typedef to _BOOL, which is boolean in C,
+   when used externally, keep it to be of type bool,
+   as has been available in the past. */
+#ifndef SHARED_MODULE
+typedef bool NG_BOOL;
+#else
+typedef _Bool NG_BOOL;
+#endif
 
 /* vector info obtained from any vector in ngspice.dll.
    Allows direct access to the ngspice internal vector structure,
