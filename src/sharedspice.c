@@ -378,8 +378,8 @@ static bool nobgtrwanted = FALSE;
 static bool wantvdat = FALSE;
 static bool wantidat = FALSE;
 static bool wantsync = FALSE;
-static bool immediate = FALSE;
-static bool coquit = FALSE;
+static NG_BOOL immediate = FALSE;
+static NG_BOOL coquit = FALSE;
 static jmp_buf errbufm, errbufc;
 static int intermj = 1;
 #ifdef XSPICE
@@ -452,7 +452,7 @@ SIMinit(IFfrontEnd* frontEnd, IFsimulator** simulator)
 static threadId_t tid, printtid, tid2;
 
 static bool fl_running = FALSE;
-static bool fl_exited = TRUE;
+static NG_BOOL fl_exited = TRUE;
 
 static bool printstopp = FALSE;
 static bool ps_exited = TRUE;
@@ -776,7 +776,7 @@ read_initialisation_file(const char *dir, const char *name)
 
 /* Checks if ngspice is running in the background */
 IMPEXP
-bool
+NG_BOOL
 ngSpice_running (void)
 {
     return (fl_running && !fl_exited);
@@ -1231,7 +1231,7 @@ static int bkpttmpsize = 0;
 
 /* set a breakpoint in ngspice */
 IMPEXP
-bool ngSpice_SetBkpt(double time)
+NG_BOOL ngSpice_SetBkpt(double time)
 {
     int error;
     CKTcircuit *ckt = NULL;
