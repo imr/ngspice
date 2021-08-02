@@ -162,7 +162,7 @@ cx_interpolate(void *data, short int type, int length, int *newlength, short int
         grouping = length;
 
     if (grouping != length) {
-        fprintf(cp_err, "Error: interpolation of multi-dimensional vectors is currntly not supported\n");
+        fprintf(cp_err, "Error: interpolation of multi-dimensional vectors is currently not supported\n");
         return (NULL);
     }
     /* First do some sanity checks. */
