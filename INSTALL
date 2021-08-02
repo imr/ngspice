@@ -1,6 +1,12 @@
 Ngspice installation instructions
 =================================
 
+Important notice: with ngspice-35 there has been an update
+to the XSPICE code models (analog.cm etc.). Therefore it 
+is not sufficient to only re-make the main executable,
+you will have to compile and install the code models as well,
+e.g. with --enable-xspice.
+
 Table of contents
 
   1 Ngspice installation (LINUX)
