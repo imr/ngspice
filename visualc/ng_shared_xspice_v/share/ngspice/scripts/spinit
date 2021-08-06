@@ -1,0 +1,25 @@
+* Modified ngspice init file
+*set rndseed=12
+** ascii rawfile **
+set filetype=ascii
+** frontend debug output **
+*set ngdebug
+** asking after quit **
+*set askquit
+** set the number of threads in openmp
+** default (if compiled with --enable-openmp) is: 2
+set num_threads=4
+
+strcmp __flag $program "ngspice"
+if $__flag = 0
+
+* Load the codemodels
+ codemodel C:/Spice64d/lib/ngspice/spice2poly.cm
+ codemodel C:/Spice64d/lib/ngspice/analog.cm
+ codemodel C:/Spice64d/lib/ngspice/digital.cm
+ codemodel C:/Spice64d/lib/ngspice/xtradev.cm
+ codemodel C:/Spice64d/lib/ngspice/xtraevt.cm
+ codemodel C:/Spice64d/lib/ngspice/table.cm
+
+end
+unset __flag

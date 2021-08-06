@@ -5,4 +5,7 @@ Compile shared ngspice with Debug and 64 bit
 Compile the example caller with Visual Studio
 using ng_shared_test_v.sln.
 
+Edit share/ngspice/scripts/spinit to enter the
+proper path for the XSPICE code models.
+
 Start the example with calling ng_shared_start.bat
