@@ -111,12 +111,12 @@ void * ngdllhandle = NULL;
 pthread_t mainthread;
 #endif // _MSC_VER
 
-int main()
+int main(int argc, char* argv[])
 {
-    char *errmsg = NULL, *loadstring, *curplot, *vecname;
+    char *errmsg = NULL, *loadstring = NULL, *curplot, *vecname;
     int *ret, i;
     char **vecarray;
-
+    printf("\n");
     printf("****************************\n");
     printf("**  ngspice shared start  **\n");
     printf("****************************\n");
@@ -124,17 +124,28 @@ int main()
 #ifndef _MSC_VER
     mainthread = pthread_self();
 #endif // _MSC_VER
+    printf("ng_shared_test_v.exe found in %s\n", argv[0]);
+
     printf("Load ngspice.dll\n");
+
+    /* path to shared ngspice via command line */
+    if (argc > 1) {
+        loadstring = argv[1];
+        ngdllhandle = dlopen(loadstring, RTLD_NOW);
+    }
+    /* try some standard paths */
+    if (!ngdllhandle) {
 #ifdef __CYGWIN__
-    loadstring = "/cygdrive/c/cygwin/usr/local/bin/cygngspice-0.dll";
+        loadstring = "/cygdrive/c/cygwin/usr/local/bin/cygngspice-0.dll";
 #elif _MSC_VER
-    loadstring = "..\\..\\sharedspice\\Debug.x64\\ngspice.dll";
+        loadstring = "..\\..\\sharedspice\\Debug.x64\\ngspice.dll";
 #elif __MINGW32__
-    loadstring = "D:\\Spice_general\\ngspice\\visualc-shared\\Debug\\bin\\ngspice.dll";
+        loadstring = "D:\\Spice_general\\ngspice\\visualc-shared\\Debug\\bin\\ngspice.dll";
 #else
-    loadstring = "libngspice.so";
+        loadstring = "libngspice.so";
 #endif
-    ngdllhandle = dlopen(loadstring, RTLD_NOW);
+        ngdllhandle = dlopen(loadstring, RTLD_NOW);
+    }
     errmsg = dlerror();
     if (errmsg)
         printf("%s\n", errmsg);
@@ -142,7 +153,11 @@ int main()
         printf("ngspice.dll loaded\n");
     else {
         printf("ngspice.dll not loaded !\n");
-//        exit(1);
+/* Delay closing the Windows console */
+#if defined(__MINGW32__) || defined(_MSC_VER)
+        Sleep(3000);
+#endif
+        exit(1);
     }
 
     ngSpice_Init_handle = dlsym(ngdllhandle, "ngSpice_Init");
@@ -187,7 +202,7 @@ int main()
     ret = ((int * (*)(SendEvtData*, SendInitEvtData*, void*)) ngSpice_Init_Evt_handle)(ng_getevtdata,
             ng_getinitevtdata, NULL);
 
-//    goto test2;
+ //   goto test2;
 
     testnumber = 1;
     printf("\n**  Test no. %d with sourcing digital input file **\n\n", testnumber);
@@ -222,7 +237,7 @@ int main()
         dlclose(ngdllhandle);
         printf("ngspice.dll unloaded\n\n");
         ngdllhandle = NULL;
-        return 0;
+        return 1;
     }
 
     /* simulate for 500 milli seconds or until simulation has finished */
@@ -403,6 +418,8 @@ test2:
         usleep(1000000);
 #endif
     }
+    ret = ((int * (*)(char*)) ngSpice_Command_handle)("alter VCC = 5");
+
     ret = ((int * (*)(char*)) ngSpice_Command_handle)("bg_resume");
 
     /* wait for 1s while simulation continues */
@@ -526,6 +543,11 @@ ng_exit(int exitstatus, bool immediate, bool quitexit, int ident, void* userdata
         will_unload = true;
     }
 
+    /* Delay closing the Windows console */
+#if defined(__MINGW32__) || defined(_MSC_VER)
+    Sleep(3000);
+#endif
+
     return exitstatus;
 
 }
@@ -537,11 +559,11 @@ ng_data(pvecvaluesall vdata, int numvecs, int ident, void* userdata)
     double tscale;
     static double olddat = 0.0;
     static int i, j;
-    char *vecname = "V(6)";
+    char *vecname = "V(12)";
 
     if (firsttime) {
         for (i = 0; i < numvecs; i++) {
-            /* We have a look at vector V(6) from adder_mos.cir.
+            /* We have a look at vector V(12) from adder_mos.cir.
                Get the index i */
             if (cieq(vdata->vecsa[i]->name, vecname))
                 break;
@@ -558,8 +580,8 @@ ng_data(pvecvaluesall vdata, int numvecs, int ident, void* userdata)
     }
     if ((testnumber == 2)  && (i < numvecs)){
         v2dat = vdata->vecsa[i]->creal;
-        /* print output value only if it has changed */
-        if (olddat != v2dat) {
+        /* print output value only if it has changed by more than 10 mV */
+        if ((olddat + 0.01 < v2dat) || (olddat - 0.01 > v2dat)) {
             tscale = vdata->vecsa[j]->creal;
             printf("real value of vector %s is %e at %e\n", vdata->vecsa[i]->name, v2dat, tscale);
         }
