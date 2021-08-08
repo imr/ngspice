@@ -1,6 +1,7 @@
-Ngspice-35, July 31st, 2021
+Ngspice-35, August 8th, 2021
 ============
 - New features:
+    + Libtool version info for shared ngspice
     + Version info in sharedspice.h.
     + Replace double braces {{...}} by {(...)} in netlist (PSLT mode).
     + Add plotting of graphics in SVG format.
