@@ -12,7 +12,7 @@ vertically, 90°, by using the Windows API or the Linux Xft library.
 Postscript plotting uses only a UNICODE subset, namely
 ISO-8859-1/ISO-8859-15, that allows extended ascii.
 
-Better looking fonts are now used for labelling the axes.
+Better looking fonts are now used for labeling the axes.
 
 Variables xbrushwidth and xgridwidth (to be set e.g. in
 .spiceinit or directly before a plot command) allow setting 
