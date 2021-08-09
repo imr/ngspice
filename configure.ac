@@ -16,7 +16,7 @@
 # problem to the user.
 AC_PREREQ([2.59])
 
-m4_define([ngspice_major_version], [35])
+m4_define([ngspice_major_version], [35+])
 m4_define([ngspice_minor_version], [0])
 m4_define([ngspice_version],
       [ngspice_major_version])
