@@ -39,13 +39,13 @@ DIOsoaCheck(CKTcircuit *ckt, GENmodel *inModel)
 
         for (here = DIOinstances(model); here; here = DIOnextInstance(here)) {
 
-            vd = ckt->CKTrhsOld [here->DIOposPrimeNode] -
+            vd = ckt->CKTrhsOld [here->DIOposNode] -
                  ckt->CKTrhsOld [here->DIOnegNode];
 
             if (vd > model->DIOfv_max)
                 if (warns_fv < maxwarns) {
                     soa_printf(ckt, (GENinstance*) here,
-                               "Vj=%g has exceeded Fv_max=%g\n",
+                               "Vd=%g V has exceeded Fv_max=%g V\n",
                                vd, model->DIOfv_max);
                     warns_fv++;
                 }
@@ -53,7 +53,7 @@ DIOsoaCheck(CKTcircuit *ckt, GENmodel *inModel)
             if (-vd > model->DIObv_max)
                 if (warns_bv < maxwarns) {
                     soa_printf(ckt, (GENinstance*) here,
-                               "Vj=%g has exceeded Bv_max=%g\n",
+                               "Vd=%g V has exceeded Bv_max=%g V\n",
                                vd, model->DIObv_max);
                     warns_bv++;
                 }
@@ -62,8 +62,8 @@ DIOsoaCheck(CKTcircuit *ckt, GENmodel *inModel)
             if (id > fabs(model->DIOid_max))
                 if (warns_id < maxwarns) {
                     soa_printf(ckt, (GENinstance*) here,
-                               "Id=%g has exceeded Id_max=%g\n",
-                               id, model->DIOid_max);
+                               "Id=%g A at Vd=%g V has exceeded Id_max=%g A\n",
+                               id, vd, model->DIOid_max);
                     warns_id++;
                 }
 
@@ -75,8 +75,8 @@ DIOsoaCheck(CKTcircuit *ckt, GENmodel *inModel)
             if (pd > fabs(model->DIOpd_max))
                 if (warns_pd < maxwarns) {
                     soa_printf(ckt, (GENinstance*) here,
-                               "Pd=%g has exceeded Pd_max=%g\n",
-                               pd, model->DIOpd_max);
+                               "Pd=%g W at Vd=%g V has exceeded Pd_max=%g W\n",
+                               pd, vd, model->DIOpd_max);
                     warns_pd++;
                 }
 
@@ -84,8 +84,8 @@ DIOsoaCheck(CKTcircuit *ckt, GENmodel *inModel)
             if (te > model->DIOte_max)
                 if (warns_te < maxwarns) {
                     soa_printf(ckt, (GENinstance*) here,
-                               "Te=%g has exceeded te_max=%g\n",
-                               te, model->DIOte_max);
+                               "Te=%g C at Vd=%g V has exceeded te_max=%g C\n",
+                               te, vd, model->DIOte_max);
                     warns_te++;
                 }
 
