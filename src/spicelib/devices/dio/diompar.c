@@ -209,6 +209,18 @@ DIOmParam(int param, IFvalue *value, GENmodel *inModel)
             model->DIObv_max = value->rValue;
             model->DIObv_maxGiven = TRUE;
             break;
+        case DIO_MOD_ID_MAX:
+            model->DIOid_max = value->rValue;
+            model->DIOid_maxGiven = TRUE;
+            break;
+        case DIO_MOD_PD_MAX:
+            model->DIOpd_max = value->rValue;
+            model->DIOpd_maxGiven = TRUE;
+            break;
+        case DIO_MOD_TE_MAX:
+            model->DIOte_max = value->rValue;
+            model->DIOte_maxGiven = TRUE;
+            break;
         case DIO_MOD_ISR:
             model->DIOrecSatCur = value->rValue;
             model->DIOrecSatCurGiven = TRUE;

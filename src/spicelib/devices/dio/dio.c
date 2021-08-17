@@ -108,11 +108,16 @@ IFparm DIOmPTable[] = { /* model parameters */
  IOPR( "ib", DIO_MOD_IBV, IF_REAL, "Current at reverse breakdown voltage"),
  IOP( "tcv", DIO_MOD_TCV, IF_REAL, "Reverse breakdown voltage temperature coefficient"),
  OPU( "cond", DIO_MOD_COND,IF_REAL, "Ohmic conductance"),
-
- IOP( "fv_max",   DIO_MOD_FV_MAX,  IF_REAL, "maximum voltage in forward direction"),
- IOP( "bv_max",   DIO_MOD_BV_MAX,  IF_REAL, "maximum voltage in reverse direction"),
  IOP( "isr",  DIO_MOD_ISR,  IF_REAL, "Recombination saturation current"),
  IOP( "nr",   DIO_MOD_NR,   IF_REAL, "Recombination current emission coefficient"),
+
+ /* SOA parameters */
+ IOP( "fv_max",   DIO_MOD_FV_MAX,  IF_REAL, "maximum voltage in forward direction"),
+ IOP( "bv_max",   DIO_MOD_BV_MAX,  IF_REAL, "maximum voltage in reverse direction"),
+ IOP( "id_max",   DIO_MOD_ID_MAX,  IF_REAL, "maximum current"),
+ IOP( "te_max",   DIO_MOD_TE_MAX,  IF_REAL, "temperature"),
+ IOP( "pd_max",   DIO_MOD_PD_MAX,  IF_REAL, "maximum power dissipation"),
+
 /* self heating */
  IOP("rth0",  DIO_MOD_RTH0,  IF_REAL, "Self-heating thermal resistance"),
  IOP("cth0",  DIO_MOD_CTH0,  IF_REAL, "Self-heating thermal capacitance"),
