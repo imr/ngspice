@@ -275,6 +275,9 @@ typedef struct sDIOmodel {       /* model structure for a diode */
     unsigned DIOtunEGcorrectionFactorGiven : 1;
     unsigned DIOfv_maxGiven : 1;
     unsigned DIObv_maxGiven : 1;
+    unsigned DIOid_maxGiven : 1;
+    unsigned DIOpd_maxGiven : 1;
+    unsigned DIOte_maxGiven : 1;
     unsigned DIOrecSatCurGiven : 1;
     unsigned DIOrecEmissionCoeffGiven : 1;
 
@@ -342,6 +345,9 @@ typedef struct sDIOmodel {       /* model structure for a diode */
     double DIOtunEGcorrectionFactor; /* EG correction factor for tunneling (KEG) */
     double DIOfv_max; /* maximum voltage in forward direction */
     double DIObv_max; /* maximum voltage in reverse direction */
+    double DIOid_max; /* maximum current */
+    double DIOpd_max; /* maximum power dissipation */
+    double DIOte_max; /* maximum temperature */
     double DIOrecSatCur; /* Recombination saturation current */
     double DIOrecEmissionCoeff; /* Recombination emission coefficient */
 
@@ -442,6 +448,9 @@ enum {
     DIO_MOD_KEG,
     DIO_MOD_FV_MAX,
     DIO_MOD_BV_MAX,
+    DIO_MOD_ID_MAX,
+    DIO_MOD_TE_MAX,
+    DIO_MOD_PD_MAX,
     DIO_MOD_ISR,
     DIO_MOD_NR,
     DIO_MOD_RTH0,

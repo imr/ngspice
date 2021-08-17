@@ -164,6 +164,15 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if(!model->DIObv_maxGiven) {
             model->DIObv_max = 1e99;
         }
+        if(!model->DIOid_maxGiven) {
+            model->DIOid_max = 1e99;
+        }
+        if(!model->DIOpd_maxGiven) {
+            model->DIOpd_max = 1e99;
+        }
+        if(!model->DIOte_maxGiven) {
+            model->DIOte_max = 1e99;
+        }
         if(!model->DIOrecEmissionCoeffGiven) {
             model->DIOrecEmissionCoeff = 1;
         }
