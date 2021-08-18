@@ -20,6 +20,7 @@ DIOsoaCheck(CKTcircuit *ckt, GENmodel *inModel)
     double vd;  /* current diode voltage */
     double id;  /* current diode current */
     double pd;  /* current diode power */
+    double pd_max;  /* maximum diode power */
     double te;  /* current diode temperature */
     int maxwarns;
     static int warns_fv = 0, warns_bv = 0, warns_id = 0, warns_pd = 0, warns_te = 0;
@@ -45,7 +46,7 @@ DIOsoaCheck(CKTcircuit *ckt, GENmodel *inModel)
             if (vd > model->DIOfv_max)
                 if (warns_fv < maxwarns) {
                     soa_printf(ckt, (GENinstance*) here,
-                               "Vd=%g V has exceeded Fv_max=%g V\n",
+                               "Vd=%.4g V has exceeded Fv_max=%.4g V\n",
                                vd, model->DIOfv_max);
                     warns_fv++;
                 }
@@ -53,7 +54,7 @@ DIOsoaCheck(CKTcircuit *ckt, GENmodel *inModel)
             if (-vd > model->DIObv_max)
                 if (warns_bv < maxwarns) {
                     soa_printf(ckt, (GENinstance*) here,
-                               "Vd=%g V has exceeded Bv_max=%g V\n",
+                               "Vd=%.4g V has exceeded Bv_max=%.4g V\n",
                                vd, model->DIObv_max);
                     warns_bv++;
                 }
@@ -62,7 +63,7 @@ DIOsoaCheck(CKTcircuit *ckt, GENmodel *inModel)
             if (id > fabs(model->DIOid_max))
                 if (warns_id < maxwarns) {
                     soa_printf(ckt, (GENinstance*) here,
-                               "Id=%g A at Vd=%g V has exceeded Id_max=%g A\n",
+                               "Id=%.4g A at Vd=%.4g V has exceeded Id_max=%.4g A\n",
                                id, vd, model->DIOid_max);
                     warns_id++;
                 }
@@ -72,25 +73,65 @@ DIOsoaCheck(CKTcircuit *ckt, GENmodel *inModel)
                       *(ckt->CKTstate0 + here->DIOvoltage) +
                       *(ckt->CKTstate0 + here->DIOcurrent) *
                       *(ckt->CKTstate0 + here->DIOcurrent) / here->DIOtConductance);
-            if (pd > fabs(model->DIOpd_max))
-                if (warns_pd < maxwarns) {
-                    soa_printf(ckt, (GENinstance*) here,
-                               "Pd=%g W at Vd=%g V has exceeded Pd_max=%g W\n",
-                               pd, vd, model->DIOpd_max);
-                    warns_pd++;
-                }
 
-            te = here->DIOtemp - CONSTCtoK;
-            if (te > model->DIOte_max)
-                if (warns_te < maxwarns) {
-                    soa_printf(ckt, (GENinstance*) here,
-                               "Te=%g C at Vd=%g V has exceeded te_max=%g C\n",
-                               te, vd, model->DIOte_max);
-                    warns_te++;
+            /* calculate max power including derating:
+               up to tnom the derating is zero,
+               at maximum temp allowed the derating is 100%.
+               Device temperature by self-heating or given externally. */
+            if (here->DIOthermal && model->DIOrth0Given && model->DIOpd_maxGiven
+                && model->DIOte_maxGiven && model->DIOnomTempGiven) {
+                te = ckt->CKTrhsOld[here->DIOtempNode];
+                if (te < model->DIOnomTemp)
+                    pd_max = model->DIOpd_max;
+                else {
+                    pd_max = model->DIOpd_max - (te - model->DIOnomTemp) / model->DIOrth0;
+                    pd_max = (pd_max > 0) ? pd_max : 0.;
                 }
+                if (pd > pd_max)
+                    if (warns_pd < maxwarns) {
+                        soa_printf(ckt, (GENinstance*)here,
+                            "Pd=%.4g W at Vd=%.4g V and Te=%.4g C has exceeded Pd_max=%.4g W\n",
+                            pd, vd, te, pd_max);
+                        warns_pd++;
+                    }
+                if (te > model->DIOte_max)
+                    if (warns_te < maxwarns) {
+                        soa_printf(ckt, (GENinstance*)here,
+                            "Te=%.4g C at Vd=%.4g V has exceeded te_max=%.4g C\n",
+                            te, vd, model->DIOte_max);
+                        warns_te++;
+                    }
 
+            }
+            /* derating without self-heating, external temp given */
+            else if (!here->DIOthermal && here->DIOtempGiven && model->DIOrth0Given && model->DIOpd_maxGiven 
+                                 && model->DIOte_maxGiven && model->DIOnomTempGiven) {
+                if (here->DIOtemp < model->DIOnomTemp)
+                    pd_max = model->DIOpd_max;
+                else {
+                    pd_max = model->DIOpd_max - (here->DIOtemp - model->DIOnomTemp) / model->DIOrth0;
+                    pd_max = (pd_max > 0) ? pd_max : 0.;
+                }
+                if (pd > pd_max)
+                    if (warns_pd < maxwarns) {
+                        soa_printf(ckt, (GENinstance*)here,
+                            "Pd=%.4g W at Vd=%.4g V and Te=%.4g C has exceeded Pd_max=%.4g W\n",
+                            pd, vd, here->DIOtemp - CONSTCtoK, pd_max);
+                        warns_pd++;
+                    }
+            }
+            /* no derating */
+            else {
+                pd_max = model->DIOpd_max;
+                if (pd > pd_max)
+                    if (warns_pd < maxwarns) {
+                        soa_printf(ckt, (GENinstance*)here,
+                            "Pd=%.4g W at Vd=%.4g V has exceeded Pd_max=%.4g W\n",
+                            pd, vd, pd_max);
+                        warns_pd++;
+                    }
+            }
         }
-
     }
 
     return OK;
