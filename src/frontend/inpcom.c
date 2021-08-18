@@ -4884,10 +4884,10 @@ char *ya_search_identifier(char *str, const char *identifier, char *str_begin)
                 before = '\0';
 
             if (is_arith_char(before) || isspace_c(before) ||
-                    (str <= str_begin)) {
+                    before == ',' || (str <= str_begin)) {
                 char after = str[strlen(identifier)];
-                if ((is_arith_char(after) || isspace_c(after) ||
-                            after == '\0'))
+                if (is_arith_char(after) || isspace_c(after) ||
+                            after == '\0' || after == ',')
                     break;
             }
 
@@ -7258,8 +7258,8 @@ static void inp_quote_params(struct card *c, struct card *end_c,
 
                 char *rest = s + strlen(deps[i].param_name);
 
-                if (s > curr_line && (isspace_c(s[-1]) || s[-1] == '=') &&
-                        (isspace_c(*rest) || *rest == '\0' || *rest == ')')) {
+                if (s > curr_line && (isspace_c(s[-1]) || s[-1] == '=' || s[-1] == ',') &&
+                        (isspace_c(*rest) || *rest == '\0'  || *rest == ',' || *rest == ')')) {
                     int prefix_len;
 
                     if (isspace_c(s[-1])) {
