@@ -1,0 +1,72 @@
+**
+* Numerical models for a
+* polysilicon emitter complementary bipolar process.
+* The default device size is 1um by 10um (LxW)
+**
+
+.model M_NPN nbjt level=1
++ title One-Dimensional Numerical Bipolar
++ options base.depth=0.15 base.area=0.1 base.length=1.0 defa=10p
++ x.mesh loc=-0.2 n=1
++ x.mesh loc=0.0  n=51
++ x.mesh wid=0.15 h.e=0.0001 h.m=.004 r=1.2
++ x.mesh wid=1.15 h.s=0.0001 h.m=.004 r=1.2
++ domain   num=1 material=1 x.l=0.0
++ domain   num=2 material=2 x.h=0.0
++ material num=1 silicon
++ mobility mat=1 concmod=ct fieldmod=ct
++ material num=2 polysilicon
++ mobility mat=2 concmod=ct fieldmod=ct
++ doping gauss n.type conc=3e20  x.l=-0.2 x.h=0.0 char.len=0.047
++ doping gauss p.type conc=5e18  x.l=-0.2 x.h=0.0 char.len=0.100
++ doping unif  n.type conc=1e16  x.l=0.0 x.h=1.3
++ doping gauss n.type conc=5e19  x.l=1.3 x.h=1.3 char.len=0.100
++ models bgn srh auger conctau concmob fieldmob ^aval
++ method devtol=1e-12 ac=direct itlim=15
++ output rootfile="PEBJT1--" Psi N.CONC P.conc
+
+.model M_NPSUB numd level=1
++ title One-Dimensional Numerical Collector-Substrate Diode
++ options defa=10p
++ x.mesh loc=1.3  n=1
++ x.mesh loc=2.0  n=101
++ domain   num=1 material=1
++ material num=1 silicon
++ mobility mat=1 concmod=ct fieldmod=ct
++ doping gauss n.type conc=5e19  x.l=1.3 x.h=1.3 char.len=0.100
++ doping unif  p.type conc=1e15  x.l=0.0 x.h=2.0
++ models bgn srh auger conctau concmob fieldmob ^aval
++ method devtol=1e-12 itlim=10
+
+.model M_PNP nbjt level=1
++ title One-Dimensional Numerical Bipolar
++ options base.depth=0.2 base.area=0.1 base.length=1.0 defa=10p
++ x.mesh loc=-0.2 n=1
++ x.mesh loc=0.0  n=51
++ x.mesh wid=0.20 h.e=0.0001 h.m=.004 r=1.2
++ x.mesh wid=1.10 h.s=0.0001 h.m=.004 r=1.2
++ domain   num=1 material=1 x.l=0.0
++ domain   num=2 material=2 x.h=0.0
++ material num=1 silicon
++ mobility mat=1 concmod=ct fieldmod=ct
++ material num=2 polysilicon
++ mobility mat=2 concmod=ct fieldmod=ct
++ doping gauss p.type conc=3e20  x.l=-0.2 x.h=0.0 char.len=0.047
++ doping gauss n.type conc=5e17  x.l=-0.2 x.h=0.0 char.len=0.200
++ doping unif  p.type conc=1e16  x.l=0.0 x.h=1.3
++ doping gauss p.type conc=5e19  x.l=1.3 x.h=1.3 char.len=0.100
++ models bgn srh auger conctau concmob fieldmob ^aval
++ method devtol=1e-12 ac=direct itlim=15
+
+.model M_PNSUB numd level=1
++ title One-Dimensional Numerical Collector-Substrate Diode
++ options defa=10p
++ x.mesh loc=1.3  n=1
++ x.mesh loc=2.0  n=101
++ domain   num=1 material=1
++ material num=1 silicon
++ mobility mat=1 concmod=ct fieldmod=ct
++ doping gauss p.type conc=5e19  x.l=1.3 x.h=1.3 char.len=0.100
++ doping unif  n.type conc=1e15  x.l=0.0 x.h=2.0
++ models bgn srh auger conctau concmob fieldmob ^aval
++ method devtol=1e-12 itlim=10

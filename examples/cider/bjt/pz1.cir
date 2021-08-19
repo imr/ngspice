@@ -9,9 +9,10 @@ Q1  5 4 2 M_NPN AREA=4 SAVE
 RL  1 5 2.5k
 CL  5 0 0.1pF
 
-.INCLUDE pebjt.lib
+.INCLUDE pebjt1.lib
 
 .PZ 3 0 5 0 vol pz
 
 .PRINT PZ ALL
+.OP
 .END

@@ -209,6 +209,72 @@ static int inp_poly_2g6_compat(struct card* deck);
 static void inp_poly_err(struct card *deck);
 #endif
 
+#ifdef CIDER
+static char *keep_case_of_cider_param(char *buffer)
+{
+    int numq = 0, keep_case = 0;
+    char *s = 0;
+    /* Retain the case of strings enclosed in double quotes for
+       output rootfile and doping infile params within Cider .model
+       statements. Also for the ic.file filename param in an element
+       instantiation statement.
+       No nested double quotes.
+    */
+    for (s = buffer; *s && (*s != '\n'); s++) {
+        if (*s == '\"') {
+            numq++; 
+        }
+    }
+    if (numq == 2) {
+        /* One pair of double quotes */
+        for (s = buffer; *s && (*s != '\n'); s++) {
+            if (*s == '\"') {
+                keep_case = (keep_case == 0 ? 1 : 0); 
+            }
+            if (!keep_case) {
+                *s = tolower_c(*s);
+            }
+        }
+    } else {
+        for (s = buffer; *s && (*s != '\n'); s++) {
+            *s = tolower_c(*s);
+        }
+    }
+    return s;
+}
+
+static int is_comment_or_blank(char *buffer)
+{
+    /* Assume line buffers have initial whitespace removed */
+	switch (buffer[0]) {
+        case '*':
+        case '$':
+        case '#':
+        case '\n':
+        case '\0':
+            return 1;
+        default:
+            return 0;
+    }
+}
+
+static int turn_off_case_retention(char *buffer)
+{
+    if (buffer[0] == '.') {
+        if (ciprefix(".model", buffer)) {
+            return 0;
+        } else {
+            return 1;
+        }
+    } else if (is_comment_or_blank(buffer)) {
+        return 0;
+    } else if (buffer[0] == '+') {
+        return 0;
+    } else {
+        return 1;
+    }
+}
+#endif
 
 /* insert a new card, just behind the given card */
 static struct card *insert_new_line(
@@ -1012,6 +1078,9 @@ struct inp_read_t inp_read( FILE *fp, int call_depth, const char *dir_name,
     static int is_control = 0; /* We are reading from a .control section */
 
     bool found_end = FALSE, shell_eol_continuation = FALSE;
+#ifdef CIDER
+    static int in_cider_model = 0;
+#endif
 
     /* First read in all lines & put them in the struct cc */
     for (;;) {
@@ -1238,6 +1307,27 @@ struct inp_read_t inp_read( FILE *fp, int call_depth, const char *dir_name,
          * double quotes are printed. */
         {
             char *s;
+#ifdef CIDER
+            if (ciprefix(".model", buffer)) { 
+                if (strcasestr(buffer, " numos") ||
+                   strcasestr(buffer, " numd") ||   /* Also numd2 */
+                   strcasestr(buffer, " nbjt")) {   /* Also nbjt2 */
+                    in_cider_model = 1;
+                } else {
+                    in_cider_model = 0;
+                }
+#ifdef TRACE
+                printf("Found .model Cider model is %s\n",
+                    (in_cider_model ? "ON" : "OFF"));
+#endif
+            }
+            if (in_cider_model && turn_off_case_retention(buffer)) {
+                in_cider_model = 0;
+#ifdef TRACE
+                printf("Cider model is OFF\n");
+#endif
+            }
+#endif
             if (ciprefix("plot", buffer) || ciprefix("gnuplot", buffer) ||
                     ciprefix("hardcopy", buffer)) {
                 /* lower case excluded for tokens following title, xlabel,
@@ -1316,6 +1406,15 @@ struct inp_read_t inp_read( FILE *fp, int call_depth, const char *dir_name,
                         *s = tolower_c(*s);
                 }
             }
+#ifdef CIDER
+            else if (in_cider_model && !is_comment_or_blank(buffer) &&
+                    (ciprefix(".model", buffer) || buffer[0] == '+')) {
+                s = keep_case_of_cider_param(buffer);
+            }
+            else if (strcasestr(buffer, "ic.file")) {
+                s = keep_case_of_cider_param(buffer);
+            }
+#endif
             /* no lower case letters for lines beginning with: */
             else if (!ciprefix("write", buffer) &&
                     !ciprefix("wrdata", buffer) &&

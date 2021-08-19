@@ -354,6 +354,7 @@ ONEmemStats(FILE *file, ONEdevice *pDevice)
   int numContactNodes;
 
 
+  if (!pDevice) { return; }
   fprintf(file, "----------------------------------------\n");
   fprintf(file, "Device %s Memory Usage:\n", pDevice->name);
   fprintf(file, "Item                     Count     Bytes\n");
@@ -425,10 +426,12 @@ void
 ONEcpuStats(FILE *file, ONEdevice *pDevice)
 {
   static const char cpuFormat[] = "%-20s%10g%10g%10g%10g%10g\n";
-  ONEstats *pStats = pDevice->pStats;
+  ONEstats *pStats = NULL;
   double total;
   int iTotal;
 
+  if (!pDevice) { return; }
+  pStats = pDevice->pStats;
   fprintf(file,
       "----------------------------------------------------------------------\n");
   fprintf(file,

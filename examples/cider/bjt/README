@@ -1,0 +1,11 @@
+
+Run:
+
+    ngspice -b pz1.cir 
+
+and the operating point file 'PEBJT1--OP.0.q1' is generated.
+
+The .model in the included library 'pebjt1.lib' has an output rootfile
+parameter which determines the PEBJT1-- prefix.  The mixed case in the name
+of the generated OP file is retained. Without any rootfile or output statement
+in the .model, the file created will be named 'OP.0.q1'.

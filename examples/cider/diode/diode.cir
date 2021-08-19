@@ -29,7 +29,8 @@ D1  1 2 M_PN AREA=100
 .option acct bypass=0 abstol=1e-18 itl2=100
 .op
 .ac dec 10 100kHz 10gHz
+.print ac i(Vpp)
 .dc Vpp -3.0v 2.0001v 50mv
-.print i(Vpp)
+.print dc i(Vpp)
 
 .END
