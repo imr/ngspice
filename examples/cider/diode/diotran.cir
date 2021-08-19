@@ -26,6 +26,6 @@ D1  3 2 M_PN area=100
 
 .option acct bypass=1 abstol=1e-15 itl2=100
 .tran 0.001ns 1.0ns
-.print i(Vpp)
+.print tran i(Vpp)
 
 .END
