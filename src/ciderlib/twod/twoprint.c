@@ -380,6 +380,7 @@ TWOmemStats(FILE *file, TWOdevice *pDevice)
   TWOchannel *pChannel;
   int numContactNodes;
 
+  if (!pDevice) { return; }
   fprintf(file, "----------------------------------------\n");
   fprintf(file, "Device %s Memory Usage:\n", pDevice->name );
   fprintf(file, "Item                     Count     Bytes\n");
@@ -460,10 +461,12 @@ void
 TWOcpuStats(FILE *file, TWOdevice *pDevice)
 {
   static const char cpuFormat[] = "%-20s%10g%10g%10g%10g%10g\n";
-  TWOstats *pStats = pDevice->pStats;
+  TWOstats *pStats = NULL;
   double total;
   int iTotal;
 
+  if (!pDevice) { return; }
+  pStats = pDevice->pStats;
   fprintf(file,
       "----------------------------------------------------------------------\n");
   fprintf(file,

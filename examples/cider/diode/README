@@ -1,0 +1,18 @@
+
+Run:
+
+    ngspice -b pd1.cir
+
+This will generate the operating point file 'Pre-Pin-Diode-OP.0.d1', which
+is read as the ic.file (initial condition file) for 'pindiode.cir'.
+Note that if there is no output line in the .model section of 'pd1.cir',
+the generated file will be named 'OP.0.d1'. In this case the ic.file value
+in 'pindiode.cir' would need to be chenged to match it.
+
+Then:
+
+    ngspice -b pindiode.cir
+
+can be run which will input 'Pre-Pin-Diode-OP.0.d1'. If you do not run
+'pd1.cir' first, the 'pindiode.cir' simulation will run OK but tell you it
+cannot find the iinitial condition file.

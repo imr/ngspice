@@ -54,6 +54,6 @@ CB  3 4 0.1pf
 + method ac=direct onec
 
 .tran 0.2ns 40ns
-.print v(4)
+.print tran v(4)
 .options acct bypass=1 method=gear
 .end
