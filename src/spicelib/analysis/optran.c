@@ -45,6 +45,7 @@ static int OPbreakSize;
 static double opfinaltime = 1e-6;
 static double opstepsize = 1e-8;
 static double opramptime = 0.;
+static bool nooptran = TRUE;
 
 /* command to set the 6 optran flags
     CKTnoOpIter (default 0, set by 'option noopiter')
@@ -68,6 +69,7 @@ void com_optran(wordlist* wl) {
         fprintf(cp_err, "Error: no circuit loaded\n");
         return;
     }
+    nooptran = FALSE;
     /* wordlist with 6 parameters */
     optrancom = strtol(wltmp->wl_word, &stpstr, 10);
     if ((errno == ERANGE) || (*stpstr != '\0'))
@@ -240,6 +242,11 @@ OPtran(CKTcircuit *ckt)
 #if defined SHARED_MODULE
     int redostep;
 #endif
+
+    /* if optran command has not been given (in .spiceinit or in .control section,
+       we don' use optran */
+    if (nooptran)
+        return 1;
 /*
     ACAN *acjob = (ACAN *) ckt->CKTcurJob;
     TRANan *trjob = (TRANan *) ckt->CKTcurJob;
