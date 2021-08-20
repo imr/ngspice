@@ -369,6 +369,20 @@ BJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             model->BJTvceMax = 1e99;
         }
 
+        if(!model->BJTicMaxGiven) {
+            model->BJTicMax = 1e99;
+        }
+        if(!model->BJTibMaxGiven) {
+            model->BJTibMax = 1e99;
+        }
+        if(!model->BJTpowMaxGiven) {
+            model->BJTpowMax = 1e99;
+        }
+        if(!model->BJTteMaxGiven) {
+            model->BJTteMax = 1e99;
+        }
+
+
 /*
  * COMPATABILITY WARNING!
  * special note:  for backward compatability to much older models, spice 2G

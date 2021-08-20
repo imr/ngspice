@@ -506,6 +506,27 @@ BJTmParam(int param, IFvalue *value, GENmodel *inModel)
             mods->BJTvceMax = value->rValue;
             mods->BJTvceMaxGiven = TRUE;
             break;
+        case BJT_MOD_IC_MAX:
+            mods->BJTicMax = value->rValue;
+            mods->BJTicMaxGiven = TRUE;
+            break;
+        case BJT_MOD_IB_MAX:
+            mods->BJTibMax = value->rValue;
+            mods->BJTibMaxGiven = TRUE;
+            break;
+        case BJT_MOD_POW_MAX:
+            mods->BJTpowMax = value->rValue;
+            mods->BJTpowMaxGiven = TRUE;
+            break;
+        case BJT_MOD_TE_MAX:
+            mods->BJTteMax = value->rValue;
+            mods->BJTteMaxGiven = TRUE;
+            break;
+        case BJT_MOD_RTH0:
+            mods->BJTrth0 = value->rValue;
+            mods->BJTrth0Given = TRUE;
+            break;
+
         default:
             return(E_BADPARM);
     }
