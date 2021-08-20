@@ -220,7 +220,7 @@ int OPsetBreak(CKTcircuit *ckt, double time)
    Thus this algorithm creates an operating point to start other simulations.
    The code is derived from dctran.c by removing all un-needed parts.*/
 int
-OPtran(CKTcircuit *ckt)
+OPtran(CKTcircuit *ckt, int oldconverged)
 {
     int i;
     double olddelta;
@@ -243,10 +243,10 @@ OPtran(CKTcircuit *ckt)
     int redostep;
 #endif
 
-    /* if optran command has not been given (in .spiceinit or in .control section,
+    /* if optran command has not been given (in .spiceinit or in .control section),
        we don' use optran */
     if (nooptran)
-        return 1;
+        return oldconverged;
 /*
     ACAN *acjob = (ACAN *) ckt->CKTcurJob;
     TRANan *trjob = (TRANan *) ckt->CKTcurJob;
