@@ -55,7 +55,7 @@ static double opramptime = 0.;
     opramptime
 
     A typical command may be
-    optran 1 0 0 50u 10m 0
+    optran 0 0 0 50u 10m 0
     (no initial iteration, no gmin stepping, no source stepping,
     stepsize for optran 50 us, optran run until 10 ms, no supply ramping
     */
