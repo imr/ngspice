@@ -1,7 +1,7 @@
 .title KiCad schematic
-.include "TL072-dual.lib"
-.include "opa1612c-dual.lib"
-.include "opa1656c-dual.lib"
+.include "models/TL072-dual.lib"
+.include "models/opa1612c-dual.lib"
+.include "models/opa1656c-dual.lib"
 V1 Net-_C1-Pad2_ GND dc 0 ac 1
 V2 15+ GND dc 15
 V3 GND 15- dc 15
