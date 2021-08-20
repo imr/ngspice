@@ -1,0 +1,117 @@
+SOA test for generic diode, including self-heating
+* forward direction
+* ngspice-35
+
+*.temp  200
+
+vtamb tamb 0 27
+
+v1 1 0 0.7
+R1 1 0 100 ; just a parallel resistor
+D1 1 0 tj dmod thermal
+Rtj tj tamb 100 ; the thermal resistance junction to ambient
+* diode model parameters include all SOA parameters
+.model dmod d (rs=200m bv=21 rth0=1e6 tnom=25 fv_max=1.5 bv_max=20 id_max=1.5 pd_max=1 te_max=175)
+
+.option warn=1 maxwarns=2
+
+.control
+save  @d1[id] all
+*dc v1 3 -22.5 -0.5
+dc v1 0.02 2 0.02
+*display
+set xbrushwidth=3
+
+* get data from diode model
+let pdmax =  @dmod[pd_max]
+let idmax = @dmod[id_max]
+let vmax = @dmod[fv_max]
+let tmax = @dmod[te_max]
+let tnom = @dmod[tnom]
+
+let iid = @d1[id]
+let ilen = length(iid)
+let soa = unitvec(ilen) * idmax
+* the current power dissipation in the diode
+let pd=@d1[id]*v(1) + 1p ; 1p for log scale, avoid 0
+
+* plot the static SOA diagram
+* no self heating
+let i = 0
+while i < ilen
+* power limit
+  let pp = soa[i] * v(1)[i]
+  if pp > pdmax
+    let soa[i] = soa[i] * pdmax / pp
+  end
+* voltage limit
+  if v(1)[i] > vmax
+    let soa[i] = 1p
+  end
+* temperature limit
+  let tcur = pp * @Rtj[r] + v(tamb)
+  if tcur[i] > tmax
+    let soa[i] = 1p
+  end  
+  let i = i + 1
+end
+
+settype current iid soa
+plot iid soa loglog ylimit 10m 10 xlimit 0.1 1 title 'Diode SOA (safe operating area, no self-heating)' ylabel 'Diode current' xlabel 'Diode forward voltage'
+
+
+
+unlet pdmax
+let pdmax = @dmod[pd_max] - (v(tj) - tnom) / @Rtj[r]
+let tdio = v(tj)
+
+echo
+*echo pdmax $&pdmax 
+*echo temp $&tdio 
+*echo tnom $&tnom
+echo
+
+let plen = length(pdmax)
+let i = 0
+while i < plen
+  if pdmax[i] < 0
+    let pdmax[i] = 1p
+  end
+  let i = i + 1
+end
+
+* plot the static SOA diagram
+* now with self heating
+let i = 0
+while i < ilen
+* power limit
+  let pp = soa[i] * v(1)[i]
+  if pp > pdmax[i]
+    let soa[i] = soa[i] * pdmax[i] / pp
+  end
+* voltage limit
+  if v(1)[i] > vmax
+    let soa[i] = 1p
+  end
+* temperature limit
+  let tcur = pp * @Rtj[r] + v(tamb)
+  if tcur[i] > tmax
+    let soa[i] = 1p
+  end  
+  let i = i + 1
+end
+
+settype current iid soa
+plot iid soa loglog ylimit 10m 10 xlimit 0.1 1  title 'Diode SOA (safe operating area, including self-heating)' ylabel 'Diode current' xlabel 'Diode forward voltage'
+
+*settype power pd pdmax
+*plot pd pdmax loglog ylimit 1m 10 xlimit 0.1 1
+
+*settype temperature tj
+*plot tj
+
+*plot pd vs tj pdmax vs tj
+
+.endc
+
+.end
