@@ -89,7 +89,9 @@ CKTop (CKTcircuit *ckt, long int firstmode, long int continuemode,
             return converged;
     }
 
-    converged = OPtran(ckt);
+    /* If command 'optran' is not given, the function
+       returns immediately with the previous 'converged' */
+    converged = OPtran(ckt, converged);
 
 #ifdef XSPICE
     /* gtri - wbk - add convergence problem reporting flags */
