@@ -229,7 +229,12 @@ IFparm BJTmPTable[] = { /* model parameters */
  IOP("d",     BJT_MOD_XD,    IF_REAL, "Temperature exponent of VO"),
  IOP("vbe_max", BJT_MOD_VBE_MAX, IF_REAL, "maximum voltage B-E junction"),
  IOP("vbc_max", BJT_MOD_VBC_MAX, IF_REAL, "maximum voltage B-C junction"),
- IOP("vce_max", BJT_MOD_VCE_MAX, IF_REAL, "maximum voltage C-E branch")
+ IOP("vce_max", BJT_MOD_VCE_MAX, IF_REAL, "maximum voltage C-E branch"),
+ IOP("pow_max", BJT_MOD_POW_MAX, IF_REAL, "maximum device power dissipation"),
+ IOP("ic_max", BJT_MOD_IC_MAX, IF_REAL, "maximum collector current"),
+ IOP("ib_max", BJT_MOD_IB_MAX, IF_REAL, "maximum base current"),
+ IOP("te_max", BJT_MOD_TE_MAX, IF_REAL, "maximum temperature"),
+ IOP("rth0", BJT_MOD_RTH0, IF_REAL, "thermal resistance juntion to ambient"),
 };
 
 char *BJTnames[] = {
