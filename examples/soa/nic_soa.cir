@@ -1,0 +1,39 @@
+CMOS NIC
+*
+.subckt osc_cmos ib_osz lc ra vdd vss
+m16 ib_osz ib_osz vss vss n1 w=20u l=1u m=8
+m15 ra ib_osz vss vss n1 w=20u l=1u m=2
+m8 net99 net95 ra ra n1 w=20u l=1u m=2
+m1 net95 net95 net93 net93 n1 w=20u l=1u m=2
+m25 net99 net99 vdd vdd p1 w=3.3u l=0.5u m=1
+m5 net99 net99 vdd vdd p1 w=20u l=1u m=5
+m4 net95 net99 vdd vdd p1 w=20u l=1u m=5
+r23 net99 vss r=38K
+r18 net93 lc r=10
+.ends osc_cmos
+*
+.subckt psens LC
+R1 LC P001 40K
+L1 LC P002 14.9u
+R2 P002 0 0.55
+L2 P001 0 1.4m
+.ends psens
+*
+xi36 bias lc ra vdd 0 osc_cmos
+v39 vdd 0 dc=3.5 pulse ( 0 3.5 10u 10n 10n 1 2 )
+r4 ra 0 3.972K
+c23 lc 0 1.8n
+i37 vdd bias dc=1u
+*
+xi18 lc psens
+*
+.option warn=1
+.control
+tran 1u 1m 0 50n
+plot v(LC)
+.endc
+*
+.include modelcard.nmos
+.include modelcard.pmos
+*
+.end
