@@ -74,7 +74,7 @@ DIOsoaCheck(CKTcircuit *ckt, GENmodel *inModel)
                       *(ckt->CKTstate0 + here->DIOcurrent) *
                       *(ckt->CKTstate0 + here->DIOcurrent) / here->DIOtConductance);
 
-            /* calculate max power including derating:
+            /* Calculate max power including derating:
                up to tnom the derating is zero,
                at maximum temp allowed the derating is 100%.
                Device temperature by self-heating or given externally. */
@@ -103,9 +103,10 @@ DIOsoaCheck(CKTcircuit *ckt, GENmodel *inModel)
                     }
 
             }
-            /* derating without self-heating, external temp given */
-            else if (!here->DIOthermal && here->DIOtempGiven && model->DIOrth0Given && model->DIOpd_maxGiven 
-                                 && model->DIOte_maxGiven && model->DIOnomTempGiven) {
+            /* Derating of max allowed power dissipation, without self-heating,
+            external temp given by .temp (global) or instance parameter 'temp',
+            therefore no temperature limits are calculated */
+            else if (!here->DIOthermal && model->DIOrth0Given && model->DIOpd_maxGiven && model->DIOnomTempGiven) {
                 if (here->DIOtemp < model->DIOnomTemp)
                     pd_max = model->DIOpd_max;
                 else {
@@ -120,7 +121,7 @@ DIOsoaCheck(CKTcircuit *ckt, GENmodel *inModel)
                         warns_pd++;
                     }
             }
-            /* no derating */
+            /* No derating, max power is fixed by model parameter pd_max */
             else {
                 pd_max = model->DIOpd_max;
                 if (pd > pd_max)
