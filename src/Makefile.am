@@ -15,6 +15,10 @@ if !TCL_MODULE
 if !SHARED_MODULE
 bin_PROGRAMS =  ngspice
 
+if CIDER_WANTED
+bin_PROGRAMS += ciderconvert
+endif
+
 if OLDAPPS
 if !WINGUI
 bin_PROGRAMS += ngnutmeg ngsconvert ngproc2mod ngmultidec ngmakeidx
@@ -34,12 +38,15 @@ EXTRA_DIST = ngspice.txt setplot spectrum \
 	     tclspice.c tclspice.map pkgIndex.tcl.in spinit.in tclspinit.in \
 	     main.c sharedspice.c ngicon.rc ngspice.ico
 
+if CIDER_WANTED
+EXTRA_DIST += ciderplot.py
+endif
 
 initdatadir = $(pkgdatadir)/scripts
 
 initdata_DATA = spinit setplot spectrum
 if CIDER_WANTED
-initdata_DATA += devload devaxis ciderinit
+initdata_DATA += devload devaxis ciderinit ciderplot.py
 endif
 
 DYNAMIC_DEVICELIBS =					\
@@ -110,6 +117,10 @@ ngspice_SOURCES = \
 	conf.c \
 	conf.h \
 	ngspice.c
+
+if CIDER_WANTED
+ciderconvert_SOURCES = ciderconvert.c
+endif
 
 ngspice_CPPFLAGS = $(AM_CPPFLAGS) -DSIMULATOR
 
