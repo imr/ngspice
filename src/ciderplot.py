@@ -52,26 +52,21 @@ def get_index_of_name(nm, vdefs_l):
     return -1
 
 
-def get_zvar_wanted(vdefs_l, dtypes_d, twod=True):
-    count = 0
+def get_zvar_wanted(vdefs_l, dtypes_d):
     for v in vdefs_l:
+        if v[1] == 'x' or v[1] == 'y':
+            continue
         unit = get_units_of_type(v[2], dtypes_d)
-        count = count + 1
-        print('  %3d  %6s   %s  %s' % (int(v[0]), v[1], v[2], unit))
-    if twod:
-        lownum = 2
-    else:
-        lownum = 1
-    hinum = count - 1
-    msg = 'Enter variable number in the range >=' + str(lownum) \
-        + ' and <=' + str(hinum) + ': '
+        print('   %8s   %s  %s' % (v[1], v[2], unit))
     try:
-        vnum = int(input(msg))
-        if vnum < lownum or vnum > hinum:
-            print('Variable number', vnum, 'out of range')
-            return -1
-        else:
-            return vnum
+        choice = input('Enter name of variable: ')
+        for v in vdefs_l:
+            if v[1] == 'x' or v[1] == 'y':
+                continue
+            if choice == v[1]:
+                return int(v[0])
+        print('This is not one of the choices')
+        return -1
     except Exception:
         print('What\'s that?')
         return -1
@@ -170,10 +165,8 @@ def choose_magnitude(mag_l):
             yindex = item[2]
             break
     if xindex == -1 or yindex == -1:
-        print('You chose badly!')
+        print('This is not one of the choices')
         return -1, -1, ''
-    else:
-        print('You chose well')
     return xindex, yindex, the_chosen_one
 
 
@@ -229,7 +222,7 @@ def interactive_1d(xl, zarr, xinfo, title, vdefs_l, dtypes_d):
     while one_more:
         yabs = False
         ylog = False
-        which_var = get_zvar_wanted(vdefs_l, dtypes_d, twod=False)
+        which_var = get_zvar_wanted(vdefs_l, dtypes_d)
         if which_var != -1:
             yinfo = get_name_units(which_var, vdefs_l, dtypes_d)
             yabs = yn_input('Abs y values ')
