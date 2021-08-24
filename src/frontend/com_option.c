@@ -10,7 +10,7 @@
 
 /* The option command. Syntax is option [opt ...] [opt = val ...].
  * Val may be a string, an int, a float, or a list of the
- * form (elt1 elt2 ...).  */
+ * form ( elt1 elt2 ... ).  */
 void
 com_option(wordlist *wl)
 {
