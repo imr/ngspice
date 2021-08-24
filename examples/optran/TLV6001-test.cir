@@ -20,11 +20,8 @@ XU1 Net-_R3-Pad2_ Net-_R1-Pad2_ Vcc GND Vout TLV6001
 .save V(Vout)
 .ac dec 10 100m 20k
 
-*.options NOOPITER GMINSTEPS=0
-*.options  RELTOL=1e-3 VNTOL=1u PIVTOL=1e-11
-
 .control
-optran 1 1 1 100n 10u 0
+optran 0 0 0 100n 10u 0 ; override optran from spinit
 run
 plot db(Vout)
 set units=degrees
