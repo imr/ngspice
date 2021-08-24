@@ -66,6 +66,7 @@ static void recifeval(struct card *pdeck);
 static char *upper(register char *string);
 static void rem_unused_mos_models(struct card* deck);
 
+extern void com_optran(wordlist * wl);
 
 
 //void inp_source_recent(void);
@@ -1346,6 +1347,10 @@ inp_dodeck(
         tfree(ct->ci_filename);
 #endif
     ct->ci_filename = copy(filename);
+
+    /* load the optran data, if provided by .spiceinit or spinit.
+       Return immediately, if optran is not selected.*/
+    com_optran(NULL);
 
     if (!noparse) {
         /*
