@@ -375,8 +375,8 @@ BJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if(!model->BJTibMaxGiven) {
             model->BJTibMax = 1e99;
         }
-        if(!model->BJTpowMaxGiven) {
-            model->BJTpowMax = 1e99;
+        if(!model->BJTpdMaxGiven) {
+            model->BJTpdMax = 1e99;
         }
         if(!model->BJTteMaxGiven) {
             model->BJTteMax = 1e99;

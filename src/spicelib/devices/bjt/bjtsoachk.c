@@ -18,18 +18,18 @@ BJTsoaCheck(CKTcircuit *ckt, GENmodel *inModel)
     BJTmodel *model = (BJTmodel *) inModel;
     BJTinstance *here;
     double vbe, vbc, vce;    /* actual bjt voltages */
-    double pow;
+    double pd;
     double ic, ib;           /* actual bjt currents */
     int maxwarns;
     static int warns_vbe = 0, warns_vbc = 0, warns_vce = 0;
-    static int warns_pow = 0, warns_ic = 0, warns_ib = 0;
+    static int warns_pd = 0, warns_ic = 0, warns_ib = 0;
 
 
     if (!ckt) {
         warns_vbe = 0;
         warns_vbc = 0;
         warns_vce = 0;
-        warns_pow = 0;
+        warns_pd = 0;
         warns_ic = 0;
         warns_ib = 0;
         return OK;
@@ -90,49 +90,49 @@ BJTsoaCheck(CKTcircuit *ckt, GENmodel *inModel)
                     warns_ib++;
                 }
 
-            if (warns_pow < maxwarns) {
-                pow = fabs(*(ckt->CKTstate0 + here->BJTcc) *
+            if (warns_pd < maxwarns) {
+                pd = fabs(*(ckt->CKTstate0 + here->BJTcc) *
                     (*(ckt->CKTrhsOld + here->BJTcolNode) -
                         *(ckt->CKTrhsOld + here->BJTemitNode))
                 );
-                pow += fabs(*(ckt->CKTstate0 + here->BJTcb) *
+                pd += fabs(*(ckt->CKTstate0 + here->BJTcb) *
                     (*(ckt->CKTrhsOld + here->BJTbaseNode) -
                         *(ckt->CKTrhsOld + here->BJTemitNode))
                 );
-                pow += fabs(*(ckt->CKTstate0 + here->BJTcdsub) *
+                pd += fabs(*(ckt->CKTstate0 + here->BJTcdsub) *
                     (*(ckt->CKTrhsOld + here->BJTsubstConNode) -
                         *(ckt->CKTrhsOld + here->BJTsubstNode))
                 );
                 if ((ckt->CKTcurrentAnalysis & DOING_TRAN) && !(ckt->CKTmode &
                     MODETRANOP)) {
-                    pow += *(ckt->CKTstate0 + here->BJTcqsub) *
+                    pd += *(ckt->CKTstate0 + here->BJTcqsub) *
                         fabs(*(ckt->CKTrhsOld + here->BJTsubstConNode) -
                             *(ckt->CKTrhsOld + here->BJTsubstNode));
                 }
-                pow *= here->BJTm;
+                pd *= here->BJTm;
                 /* derating without self-heating, external temp and model tnom given */
-                if (model->BJTrth0Given && model->BJTpowMaxGiven && model->BJTtnomGiven) {
-                    double pow_max;
+                if (model->BJTrth0Given && model->BJTpdMaxGiven && model->BJTtnomGiven) {
+                    double pd_max;
                     if (here->BJTtemp < model->BJTtnom)
-                        pow_max = model->BJTpowMax;
+                        pd_max = model->BJTpdMax;
                     else {
-                        pow_max = model->BJTpowMax - (here->BJTtemp - model->BJTtnom) / model->BJTrth0;
-                        pow_max = (pow_max > 0) ? pow_max : 0.;
+                        pd_max = model->BJTpdMax - (here->BJTtemp - model->BJTtnom) / model->BJTrth0;
+                        pd_max = (pd_max > 0) ? pd_max : 0.;
                     }
-                    if (pow > pow_max) {
+                    if (pd > pd_max) {
                         soa_printf(ckt, (GENinstance*)here,
-                            "Pow=%.4g W has exceeded Pow_max=%.4g W\n        at Vce=%.4g V, Ib=%.4g A, Ic=%.4g A, and Te=%.4g C\n",
-                            pow, pow_max, vce, ib, ic, here->BJTtemp - CONSTCtoK);
-                        warns_pow++;
+                            "Pd=%.4g W has exceeded Pd_max=%.4g W\n        at Vce=%.4g V, Ib=%.4g A, Ic=%.4g A, and Te=%.4g C\n",
+                            pow, pd_max, vce, ib, ic, here->BJTtemp - CONSTCtoK);
+                        warns_pd++;
                     }
                 }
                 /* no derating */
                 else {
-                    if (pow > model->BJTpowMax) {
+                    if (pd > model->BJTpdMax) {
                         soa_printf(ckt, (GENinstance*)here,
-                            "Pow=%.4g W has exceeded Pow_max=%.4g W\n        at Vce=%.4g V, Ib=%.4g A, and Ic=%.4g A\n",
-                            pow, model->BJTpowMax, vce, ib, ic);
-                        warns_pow++;
+                            "Pd=%.4g W has exceeded Pd_max=%.4g W\n        at Vce=%.4g V, Ib=%.4g A, and Ic=%.4g A\n",
+                            pd, model->BJTpdMax, vce, ib, ic);
+                        warns_pd++;
                     }
                 }
             }

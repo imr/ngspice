@@ -422,8 +422,8 @@ BJTmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
         case BJT_MOD_IB_MAX:
             value->rValue = here->BJTibMax;
             return(OK);
-        case BJT_MOD_POW_MAX:
-            value->rValue = here->BJTpowMax;
+        case BJT_MOD_PD_MAX:
+            value->rValue = here->BJTpdMax;
         case BJT_MOD_RTH0:
             value->rValue = here->BJTrth0;
             return(OK);
