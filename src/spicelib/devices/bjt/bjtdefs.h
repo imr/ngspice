@@ -500,7 +500,7 @@ typedef struct sBJTmodel {          /* model structure for a bjt */
     double BJTvceMax; /* maximum voltage over C-E branch */
     double BJTicMax;  /* maximum collector current */
     double BJTibMax;  /* maximum base current */
-    double BJTpowMax; /* maximum device power dissipation */
+    double BJTpdMax; /* maximum device power dissipation */
     double BJTteMax;  /* maximum device temperature */
     double BJTrth0;   /* thermal resistance juntion to ambient */
 
@@ -622,7 +622,7 @@ typedef struct sBJTmodel {          /* model structure for a bjt */
     unsigned BJTvbeMaxGiven : 1;
     unsigned BJTvbcMaxGiven : 1;
     unsigned BJTvceMaxGiven : 1;
-    unsigned BJTpowMaxGiven : 1;
+    unsigned BJTpdMaxGiven : 1;
     unsigned BJTicMaxGiven : 1;
     unsigned BJTibMaxGiven : 1;
     unsigned BJTteMaxGiven : 1;
@@ -780,7 +780,7 @@ enum {
     BJT_MOD_VBE_MAX,
     BJT_MOD_VBC_MAX,
     BJT_MOD_VCE_MAX,
-    BJT_MOD_POW_MAX,
+    BJT_MOD_PD_MAX,
     BJT_MOD_IC_MAX,
     BJT_MOD_IB_MAX,
     BJT_MOD_TE_MAX,

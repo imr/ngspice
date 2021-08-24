@@ -514,9 +514,9 @@ BJTmParam(int param, IFvalue *value, GENmodel *inModel)
             mods->BJTibMax = value->rValue;
             mods->BJTibMaxGiven = TRUE;
             break;
-        case BJT_MOD_POW_MAX:
-            mods->BJTpowMax = value->rValue;
-            mods->BJTpowMaxGiven = TRUE;
+        case BJT_MOD_PD_MAX:
+            mods->BJTpdMax = value->rValue;
+            mods->BJTpdMaxGiven = TRUE;
             break;
         case BJT_MOD_TE_MAX:
             mods->BJTteMax = value->rValue;
