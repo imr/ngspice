@@ -58,36 +58,87 @@ static bool nooptran = TRUE;
     A typical command may be
     optran 0 0 0 50u 10m 0
     (no initial iteration, no gmin stepping, no source stepping,
-    stepsize for optran 50 us, optran run until 10 ms, no supply ramping
+    stepsize for optran 50 us, optran run until 10 ms, no supply ramping.
+
+    If com_optran is given in .spiceinit, the circuit is not yet loaded. So
+    we firstly fill the static vars opstepsize, opfinaltime,
+    and opramptime. Later from inp.c we call com_optran again and set the
+    data in ft_curckt->ci_defTask.
     */
 void com_optran(wordlist* wl) {
     wordlist* wltmp = wl;
     char* stpstr;
     int err, optrancom;
+    static bool dataset = FALSE;
+    static bool getdata = FALSE;
+    static int opiter = 1;
+    static int ngminsteps = 1;
+    static int nsrcsteps = 1;
+
     /* current circuit */
-    if (!ft_curckt) {
-        fprintf(cp_err, "Error: no circuit loaded\n");
+    if (ft_curckt && dataset && wl == NULL) { /* called from inp.c */
+        ft_curckt->ci_defTask->TSKnoOpIter = opiter;
+        ft_curckt->ci_defTask->TSKnumGminSteps = ngminsteps;
+        ft_curckt->ci_defTask->TSKnumSrcSteps = nsrcsteps;
+        getdata = FALSE; /* allow more calls to 'optran' */
         return;
     }
+    else if (!ft_curckt && !dataset && wl == NULL) {
+        fprintf(stderr, "Error: syntax error with command 'optran'!\n");
+        fprintf(stderr, "    Command ingnored\n");
+        return;
+    }
+    else if (ft_curckt && !dataset && wl == NULL) {
+        /* no optran wanted */
+        return;
+    }
+    else if (!ft_curckt && !dataset) { /* called from .spiceinit */
+        getdata = TRUE;
+    }
+
+
+
     nooptran = FALSE;
     /* wordlist with 6 parameters */
     optrancom = strtol(wltmp->wl_word, &stpstr, 10);
     if ((errno == ERANGE) || (*stpstr != '\0'))
         goto bugquit;
-    if (optrancom == 0)
-        ft_curckt->ci_defTask->TSKnoOpIter = 1;
-    else
-        ft_curckt->ci_defTask->TSKnoOpIter = 0;
+    if (optrancom == 0) {
+        if (getdata) {
+            opiter = 1;
+        }
+        else {
+            ft_curckt->ci_defTask->TSKnoOpIter = 1;
+        }
+    }
+    else {
+        if (getdata) {
+            opiter = 0;
+        }
+        else {
+            ft_curckt->ci_defTask->TSKnoOpIter = 0;
+        }
+    }
     wltmp = wltmp->wl_next;
     optrancom = strtol(wltmp->wl_word, &stpstr, 10);
     if ((errno == ERANGE) || (*stpstr != '\0'))
         goto bugquit;
-    ft_curckt->ci_defTask->TSKnumGminSteps = optrancom;
+    if (getdata) {
+        ngminsteps = optrancom;
+    }
+    else {
+        ft_curckt->ci_defTask->TSKnumGminSteps = optrancom;
+    }
     wltmp = wltmp->wl_next;
     optrancom = strtol(wltmp->wl_word, &stpstr, 10);
     if ((errno == ERANGE) || (*stpstr != '\0'))
         goto bugquit;
-    ft_curckt->ci_defTask->TSKnumSrcSteps = optrancom;
+    if (getdata) {
+        nsrcsteps = optrancom;
+    }
+    else {
+        ft_curckt->ci_defTask->TSKnumSrcSteps = optrancom;
+    }
     wltmp = wltmp->wl_next;
     stpstr = wltmp->wl_word;
     opstepsize = INPevaluate(&stpstr, &err, 1);
@@ -114,6 +165,7 @@ void com_optran(wordlist* wl) {
         fprintf(stderr, "Error: Ramp time larger than final time.\n");
         goto bugquit;
     }
+    dataset = TRUE;
     return;
 bugquit:
     fprintf(stderr, "Error in command 'optran'\n");
