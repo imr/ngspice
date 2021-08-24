@@ -508,6 +508,10 @@ enum {
     VDMOS_MOD_VDS_MAX,
     VDMOS_MOD_VGSR_MAX,
     VDMOS_MOD_VGDR_MAX,
+    VDMOS_MOD_PD_MAX,
+    VDMOS_MOD_ID_MAX,
+    VDMOS_MOD_IB_MAX,
+    VDMOS_MOD_TE_MAX,
 };
 
 /* device questions */
