@@ -15,7 +15,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/param.h>
-#if defined(BSD)
+#if defined(BSD) && defined(HAVE_SYS_SYSCTL_H)
 #include <sys/sysctl.h>
 #endif
 #if defined(__APPLE__) && defined(__MACH__)
@@ -91,7 +91,7 @@ unsigned long long getAvailableMemorySize(void)
     /* Linux/UNIX variants. ------------------------------------------- */
     /* Prefer sysctl() over sysconf() except sysctl() HW_REALMEM and HW_PHYSMEM */
 
-#if defined(CTL_HW) && (defined(HW_MEMSIZE) || defined(HW_PHYSMEM64))
+#if defined(CTL_HW) && (defined(HW_MEMSIZE) || defined(HW_PHYSMEM64)) && defined(HAVE_SYS_SYSCTL_H)
     int mib[2];
     mib[0] = CTL_HW;
 #if defined(HW_MEMSIZE)
@@ -119,7 +119,7 @@ unsigned long long getAvailableMemorySize(void)
     return (size_t)sysconf( _SC_PHYS_PAGES ) *
         (size_t)sysconf( _SC_PAGE_SIZE );
 
-#elif defined(CTL_HW) && (defined(HW_PHYSMEM) || defined(HW_REALMEM))
+#elif defined(CTL_HW) && (defined(HW_PHYSMEM) || defined(HW_REALMEM)) && defined(HAVE_SYS_SYSCTL_H)
     /* DragonFly BSD, FreeBSD, NetBSD, OpenBSD, and OSX. -------- */
     int mib[2];
     mib[0] = CTL_HW;

@@ -1304,6 +1304,8 @@ fi
 
 # Use AC_CHECK_HEADERS so the HAVE_*_H symbol gets defined
 AC_CHECK_HEADERS([ncurses/termcap.h termcap.h])
+AC_CHECK_HEADERS([sys/sysctl.h])
+
 
 # --enable-openmp: Use OpenMP on multi-core processors
 AC_ARG_ENABLE([openmp],
