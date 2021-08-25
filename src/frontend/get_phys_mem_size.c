@@ -17,7 +17,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/param.h>
-#if defined(BSD)
+#if defined(BSD) && defined(HAVE_SYS_SYSCTL_H)
 #include <sys/sysctl.h>
 #endif
 
@@ -98,7 +98,7 @@ unsigned long long getMemorySize(void)
     return (unsigned long long) sysconf(_SC_PHYS_PAGES) *
             (unsigned long long) sysconf(_SC_PAGE_SIZE);
 
-#elif defined(CTL_HW) && (defined(HW_PHYSMEM) || defined(HW_REALMEM))
+#elif defined(CTL_HW) && (defined(HW_PHYSMEM) || defined(HW_REALMEM)) && defined(HAVE_SYS_SYSCTL_H)
     /* DragonFly BSD, FreeBSD, NetBSD, OpenBSD, and OSX. -------- */
     int mib[2];
     mib[0] = CTL_HW;
