@@ -274,6 +274,62 @@ static int turn_off_case_retention(char *buffer)
         return 1;
     }
 }
+
+static int line_contains(char *buf, char *str)
+{
+    char *s = buf;
+    size_t num = strlen(str);
+    while (*s && (*s != '\n')) {
+        while (isspace_c(*s)) {
+            s++;
+        }
+        if (*s && (*s != '\n')) {
+            if (strncasecmp(s, str, num) == 0) {
+                return 1;
+            }
+        } else {
+            return 0;
+        }
+        while (!isspace_c(*s)) {
+            s++;
+        }
+    }
+    return 0;
+}
+
+static int is_cider_model(char *buf)
+{
+    char *s;
+    if (!ciprefix(".model", buf)) {
+        return 0;
+    }
+    s = buf;
+    while (!isspace_c(*s)) {
+        s++;
+    }
+    while (*s && (*s != '\n')) {
+        while (isspace_c(*s)) {
+            s++;
+        }
+        if (*s && (*s != '\n')) {
+            if (strncasecmp(s, "numos", 4) == 0) {
+                return 1;
+            }
+            if (strncasecmp(s, "numd", 4) == 0) {
+                return 1;
+            }
+            if (strncasecmp(s, "nbjt", 4) == 0) {
+                return 1;
+            }
+        } else {
+            return 0;
+        }
+        while (!isspace_c(*s)) {
+            s++;
+        }
+    }
+    return 0;
+}
 #endif
 
 /* insert a new card, just behind the given card */
@@ -1308,14 +1364,8 @@ struct inp_read_t inp_read( FILE *fp, int call_depth, const char *dir_name,
         {
             char *s;
 #ifdef CIDER
-            if (ciprefix(".model", buffer)) { 
-                if (strcasestr(buffer, " numos") ||
-                   strcasestr(buffer, " numd") ||   /* Also numd2 */
-                   strcasestr(buffer, " nbjt")) {   /* Also nbjt2 */
-                    in_cider_model = 1;
-                } else {
-                    in_cider_model = 0;
-                }
+            if (ciprefix(".model", buffer)) {
+                in_cider_model = is_cider_model(buffer);
 #ifdef TRACE
                 printf("Found .model Cider model is %s\n",
                     (in_cider_model ? "ON" : "OFF"));
@@ -1411,7 +1461,7 @@ struct inp_read_t inp_read( FILE *fp, int call_depth, const char *dir_name,
                     (ciprefix(".model", buffer) || buffer[0] == '+')) {
                 s = keep_case_of_cider_param(buffer);
             }
-            else if (strcasestr(buffer, "ic.file")) {
+            else if (line_contains(buffer, "ic.file")) {
                 s = keep_case_of_cider_param(buffer);
             }
 #endif
