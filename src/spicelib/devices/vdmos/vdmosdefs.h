@@ -39,7 +39,7 @@ typedef struct sVDMOSinstance {
 #define VDMOSname gen.GENname
 #define VDMOSstates gen.GENstate
 
-    const int VDMOSdNode;  /* number of the gate node of the mosfet */
+    const int VDMOSdNode;  /* number of the drain node of the mosfet */
     const int VDMOSgNode;  /* number of the gate node of the mosfet */
     const int VDMOSsNode;  /* number of the source node of the mosfet */
     int VDMOStempNode;  /* number of the temperature node of the mosfet */
@@ -361,6 +361,12 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
     double VDMOSvdsMax;
     double VDMOSvgsrMax;
     double VDMOSvgdrMax;
+    double VDMOSid_max;
+    double VDMOSidr_max;
+    double VDMOSpd_max;
+    double VDMOSrth_ext;
+    double VDMOSte_max;
+    double VDMOSderating;
 
     unsigned VDMOStypeGiven  :1;
     unsigned VDMOSdrainResistanceGiven   :1;
@@ -424,6 +430,12 @@ typedef struct sVDMOSmodel {       /* model structure for a resistor */
     unsigned VDMOSvdsMaxGiven  :1;
     unsigned VDMOSvgsrMaxGiven  :1;
     unsigned VDMOSvgdrMaxGiven  :1;
+    unsigned VDMOSrth_extGiven  :1;
+    unsigned VDMOSpd_maxGiven  :1;
+    unsigned VDMOSte_maxGiven  :1;
+    unsigned VDMOSid_maxGiven  :1;
+    unsigned VDMOSidr_maxGiven  :1;
+    unsigned VDMOSderatingGiven  :1;
 } VDMOSmodel;
 
 #ifndef NMOS
@@ -510,8 +522,10 @@ enum {
     VDMOS_MOD_VGDR_MAX,
     VDMOS_MOD_PD_MAX,
     VDMOS_MOD_ID_MAX,
-    VDMOS_MOD_IB_MAX,
+    VDMOS_MOD_IDR_MAX,
     VDMOS_MOD_TE_MAX,
+    VDMOS_MOD_RTH_EXT,
+    VDMOS_MOD_DERATING,
 };
 
 /* device questions */

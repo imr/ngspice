@@ -182,6 +182,7 @@ VDMOSmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case VDMOS_MOD_TKSUBTHRES2:
             value->rValue = model->VDMOStksubthres2; 
             return(OK);
+        /* SOA */
         case VDMOS_MOD_VGS_MAX:
             value->rValue = model->VDMOSvgsMax;
             return(OK);
@@ -197,6 +198,25 @@ VDMOSmAsk(CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case VDMOS_MOD_VGDR_MAX:
             value->rValue = model->VDMOSvgdrMax;
             return(OK);
+        case VDMOS_MOD_PD_MAX:
+            value->rValue = model->VDMOSpd_max;
+            return(OK);
+        case VDMOS_MOD_ID_MAX:
+            value->rValue = model->VDMOSid_max;
+            return(OK);
+        case VDMOS_MOD_IDR_MAX:
+            value->rValue = model->VDMOSidr_max;
+            return(OK);
+        case VDMOS_MOD_TE_MAX:
+            value->rValue = model->VDMOSte_max;
+            return(OK);
+        case VDMOS_MOD_RTH_EXT:
+            value->rValue = model->VDMOSrth_ext;
+            return(OK);
+        case VDMOS_MOD_DERATING:
+            value->rValue = model->VDMOSderating;
+            return(OK);
+
         default:
             return(E_BADPARM);
     }
