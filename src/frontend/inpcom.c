@@ -1461,7 +1461,8 @@ struct inp_read_t inp_read( FILE *fp, int call_depth, const char *dir_name,
                     (ciprefix(".model", buffer) || buffer[0] == '+')) {
                 s = keep_case_of_cider_param(buffer);
             }
-            else if (line_contains(buffer, "ic.file")) {
+            else if (!is_comment_or_blank(buffer) &&
+                    line_contains(buffer, "ic.file")) {
                 s = keep_case_of_cider_param(buffer);
             }
 #endif
