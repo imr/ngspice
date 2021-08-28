@@ -625,6 +625,9 @@ EVTprintvcd(wordlist *wl)
     more = MIF_FALSE;
     next_step = 1e30;
     for (i = 0; i < nargs; i++) {
+        /* prevent crash if save(d1), and d1 is a digital node */
+        if (node_data[i] == NULL)
+            continue;
         step = node_data[i]->step;
         g_evt_udn_info[udn_index[i]]->print_val
             (node_data[i]->node_value, "all", &value);

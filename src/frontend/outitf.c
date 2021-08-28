@@ -398,6 +398,7 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
         {
             fprintf(cp_err, "Error: no data saved for %s; analysis not run\n",
                     spice_analysis_get_description(analysisPtr->JOBtype));
+            fprintf(cp_err, "    Command 'save' on a digital node?\n");
             return E_NOTFOUND;
         }
 
