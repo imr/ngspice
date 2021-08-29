@@ -69,8 +69,10 @@ ASRCload(GENmodel *inModel, CKTcircuit *ckt)
             for (i = 0; i < here->ASRCtree->numVars; i++)
                 asrc_vals[i] = ckt->CKTrhsOld[here->ASRCvars[i]];
 
-            if (here->ASRCtree->IFeval(here->ASRCtree, ckt->CKTgmin, &rhs, asrc_vals, asrc_derivs) != OK)
+            if (here->ASRCtree->IFeval(here->ASRCtree, ckt->CKTgmin, &rhs, asrc_vals, asrc_derivs) != OK) {
+                fprintf(stderr, "    in line %s\n\n", here->gen.GENname);
                 return(E_BADPARM);
+            }
 
             /* The convergence test */
             here->ASRCprev_value = rhs;
