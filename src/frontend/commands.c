@@ -615,10 +615,10 @@ struct comm spcp_coms[] = {
       { 0, 0, 0, 0 }, E_DEFHMASK, 6, 6,
       NULL,
       ": Prepare optran by setting 6 flags " },
-    { "write_ic", com_wric, TRUE, FALSE,
+    { "wrnodev", com_wric, TRUE, FALSE,
       { 0, 0, 0, 0 }, E_DEFHMASK, 0, 1,
       NULL,
-      ": Save current node values to file " },
+      ": Save current node voltage values to file " },
 #ifdef HAVE_TSEARCH
     { "check_ifparm", com_check_ifparm, TRUE, FALSE,
       { 0, 0, 0, 0 }, E_DEFHMASK, 0, 0,
