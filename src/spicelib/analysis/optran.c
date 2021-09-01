@@ -68,7 +68,8 @@ static bool nooptran = TRUE;
 void com_optran(wordlist* wl) {
     wordlist* wltmp = wl;
     char* stpstr;
-    int err, optrancom;
+    int err;
+    long int optrancom;
     static bool dataset = FALSE;
     static bool getdata = FALSE;
     static int opiter = 1;
@@ -96,8 +97,8 @@ void com_optran(wordlist* wl) {
         getdata = TRUE;
     }
 
-
-
+    int saved = errno;
+    errno = 0;
     nooptran = FALSE;
     /* wordlist with 6 parameters */
     optrancom = strtol(wltmp->wl_word, &stpstr, 10);
@@ -166,6 +167,8 @@ void com_optran(wordlist* wl) {
         goto bugquit;
     }
     dataset = TRUE;
+    if (errno == 0)
+        errno = saved;
     return;
 bugquit:
     fprintf(stderr, "Error in command 'optran'\n");
