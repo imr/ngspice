@@ -475,10 +475,14 @@ satisfied(struct dbcomm *d, struct plot *plot)
             fprintf(cp_err, "Error: %s: no such node\n", d->db_nodename1);
             return (FALSE);
         }
+        if (v1->v_length == 0)
+            return (FALSE);
+
         if (isreal(v1))
             d1 = v1->v_realdata[v1->v_length - 1];
         else
             d1 = realpart((v1->v_compdata[v1->v_length - 1]));
+
     } else {
         d1 = d->db_value1;
     }
