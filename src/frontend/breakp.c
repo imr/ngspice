@@ -24,6 +24,7 @@ static void printcond(struct dbcomm *d, FILE *fp);
 
 static int howmanysteps = 0;
 static int steps = 0;
+static bool interpolated = FALSE;
 
 
 /* Set a breakpoint. Possible commands are:
@@ -41,6 +42,14 @@ com_stop(wordlist *wl)
         fprintf(cp_err, "No circuit loaded. Stopping is not possible.\n");
         return;
     }
+
+    /* Check to see if we have to consider interpolated data. */
+    if (cp_getvar("interp", CP_BOOL, NULL, 0)) {
+        interpolated = TRUE;
+        fprintf(cp_out, "Note: Stop condition has to fit the interpolated time data!\n\n");
+    }
+    else
+        interpolated = FALSE;
 
     struct dbcomm *thisone = NULL;
     struct dbcomm *d = NULL;
@@ -469,6 +478,7 @@ satisfied(struct dbcomm *d, struct plot *plot)
 {
     struct dvec *v1 = NULL, *v2 = NULL;
     double d1, d2;
+    static double laststoptime = 0.;
 
     if (d->db_nodename1) {
         if ((v1 = vec_fromplot(d->db_nodename1, plot)) == NULL) {
@@ -496,13 +506,22 @@ satisfied(struct dbcomm *d, struct plot *plot)
             d2 = v2->v_realdata[v2->v_length - 1];
         else
             d2 = realpart((v2->v_compdata[v2->v_length - 1]));
+    /* option interp: no new time step since last stop */
+    } else if (interpolated && AlmostEqualUlps(d1, laststoptime, 3)){    
+        d2 = 0.;
     } else {
         d2 = d->db_value2;
     }
 
     switch (d->db_op) {
     case DBC_EQU:
-        return (AlmostEqualUlps(d1, d2, 3) ? TRUE : FALSE);
+    {
+        bool hit = AlmostEqualUlps(d1, d2, 3) ? TRUE : FALSE;
+        /* option interp: save the last stop time */
+        if (interpolated && hit)
+            laststoptime = d1;
+        return hit;
+    }
         // return ((d1 == d2) ? TRUE : FALSE);
     case DBC_NEQ:
         return ((d1 != d2) ? TRUE : FALSE);
