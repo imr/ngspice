@@ -13,6 +13,7 @@ set filetype=ascii
 ** default (if compiled with --enable-openmp) is: 2
 set num_threads=4
 set interactive
+optran 1 1 1 100n 10u 0
 
 strcmp __flag $program "ngspice"
 if $__flag = 0
