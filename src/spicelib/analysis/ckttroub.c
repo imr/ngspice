@@ -8,6 +8,7 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 #include "ngspice/devdefs.h"
 #include "vsrc/vsrcdefs.h"
 #include "isrc/isrcdefs.h"
+#include "res/resdefs.h"
 #include "ngspice/jobdefs.h"
 
 #include "analysis.h"
@@ -21,7 +22,7 @@ CKTtrouble(CKTcircuit *ckt, char *optmsg)
     char	msg_buf[513];
     char	*emsg;
     TRCV	*cv;
-    int		vcode, icode;
+    int		vcode, icode, rcode;
     char	*msg_p;
     SPICEanalysis *an;
     int		i;
@@ -56,14 +57,20 @@ CKTtrouble(CKTcircuit *ckt, char *optmsg)
 	cv = (TRCV*) ckt->CKTcurJob;
 	vcode = CKTtypelook("Vsource");
 	icode = CKTtypelook("Isource");
+	rcode = CKTtypelook("Resistor");
 
 	for (i = 0; i <= cv->TRCVnestLevel; i++) {
 	    msg_p += strlen(msg_p);
 		if (cv->TRCVvType[i] == vcode) { /* voltage source */
 			sprintf(msg_p, " %s = %g: ", cv->TRCVvName[i],
 				((VSRCinstance*)(cv->TRCVvElt[i]))->VSRCdcValue);
-		} else if (cv->TRCVvType[i] == TEMP_CODE) { /* temp sweep, if optran fails) */
+		}
+		else if (cv->TRCVvType[i] == TEMP_CODE) { /* temp sweep, if optran fails) */
 			sprintf(msg_p, " %s = %g: ", cv->TRCVvName[i], ckt->CKTtemp - CONSTCtoK);
+		}
+		else if (cv->TRCVvType[i] == rcode) {
+			sprintf(msg_p, " %s = %g: ", cv->TRCVvName[i],
+				((RESinstance*)(cv->TRCVvElt[i]))->RESresist);
 	    } else {
 		sprintf(msg_p, " %s = %g: ", cv->TRCVvName[i],
 		    ((ISRCinstance*)(cv->TRCVvElt[i]))->ISRCdcValue);
