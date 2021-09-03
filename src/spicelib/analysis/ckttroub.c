@@ -59,9 +59,11 @@ CKTtrouble(CKTcircuit *ckt, char *optmsg)
 
 	for (i = 0; i <= cv->TRCVnestLevel; i++) {
 	    msg_p += strlen(msg_p);
-	    if(cv->TRCVvType[i]==vcode) { /* voltage source */
-		sprintf(msg_p, " %s = %g: ", cv->TRCVvName[i],
-		    ((VSRCinstance*)(cv->TRCVvElt[i]))->VSRCdcValue);
+		if (cv->TRCVvType[i] == vcode) { /* voltage source */
+			sprintf(msg_p, " %s = %g: ", cv->TRCVvName[i],
+				((VSRCinstance*)(cv->TRCVvElt[i]))->VSRCdcValue);
+		} else if (cv->TRCVvType[i] == TEMP_CODE) { /* temp sweep, if optran fails) */
+			sprintf(msg_p, " %s = %g: ", cv->TRCVvName[i], ckt->CKTtemp - CONSTCtoK);
 	    } else {
 		sprintf(msg_p, " %s = %g: ", cv->TRCVvName[i],
 		    ((ISRCinstance*)(cv->TRCVvElt[i]))->ISRCdcValue);
