@@ -325,7 +325,7 @@ raw_read(char *name) {
     char *date = NULL;
     struct plot *plots = NULL, *curpl = NULL;
     char buf[BSIZE_SP], *s, *t, *r;
-    int flags = 0, nvars = 0, npoints = 0, i, j;
+    int flags = 0, nvars = 0, npoints = 0, i, j, k;
     int ndimpoints, numdims = 0, dims[MAXDIMS];
     bool raw_padded = TRUE, is_ascii = FALSE;
     double junk;
@@ -618,6 +618,16 @@ raw_read(char *name) {
                         fprintf(cp_err, "Error: unable to read point count\n");
                         break;
                     }
+#ifdef CIDER
+                    /* special for 2D CIDER: read second point count,
+                       written by TWOprnSolution() in twoprint.c, line 323 */
+                    if (eq(curpl->pl_name, "Device Cross Section")) {
+                        if (fscanf(fp, " %d", &k) != 1) {
+                            fprintf(cp_err, "Error: unable to read second point count\n");
+                            break;
+                        }
+                    }
+#endif
                     for (v = curpl->pl_dvecs; v; v = v->v_next) {
                         if (i < v->v_length) {
                             if (flags & VF_REAL) {
