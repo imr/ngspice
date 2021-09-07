@@ -139,10 +139,9 @@ nonempty_arglist:
 static void
 PTerror (YYLTYPE *locp, char **line, struct INPparseNode **retval, void *ckt, char const *s)
 {
-  NG_IGNORE(locp);
   NG_IGNORE(line);
   NG_IGNORE(retval);
   NG_IGNORE(ckt);
 
-  fprintf (stderr, "%s: %s\n", __func__, s);
+  fprintf (stderr, "\n%s: %s, parsing stopped at\n    %s\n\n", __func__, s, locp->start);
 }
