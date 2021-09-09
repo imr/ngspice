@@ -246,7 +246,7 @@ static char *keep_case_of_cider_param(char *buffer)
 static int is_comment_or_blank(char *buffer)
 {
     /* Assume line buffers have initial whitespace removed */
-	switch (buffer[0]) {
+    switch (buffer[0]) {
         case '*':
         case '$':
         case '#':
@@ -260,6 +260,9 @@ static int is_comment_or_blank(char *buffer)
 
 static int turn_off_case_retention(char *buffer)
 {
+    if (!buffer) {
+        return 1;
+    }
     if (buffer[0] == '.') {
         if (ciprefix(".model", buffer)) {
             return 0;
@@ -275,60 +278,126 @@ static int turn_off_case_retention(char *buffer)
     }
 }
 
-static int line_contains(char *buf, char *str)
+static char *make_lower_case_copy(char *inbuf)
 {
-    char *s = buf;
-    size_t num = strlen(str);
-    while (*s && (*s != '\n')) {
-        while (isspace_c(*s)) {
-            s++;
-        }
-        if (*s && (*s != '\n')) {
-            if (strncasecmp(s, str, num) == 0) {
-                return 1;
-            }
-        } else {
-            return 0;
-        }
-        while (!isspace_c(*s)) {
-            s++;
-        }
+    char *s = NULL;
+    char *rets = NULL;
+    size_t lenb = 0;
+
+    if (!inbuf) {
+        return NULL;
     }
-    return 0;
+    lenb = strlen(inbuf);
+    if (lenb < 1) {
+        return NULL;
+    }
+    rets = dup_string(inbuf, lenb);
+    if (!rets) {
+        return NULL;
+    }
+    for (s = rets; *s; s++) {
+        *s = tolower_c(*s);
+    }
+    return rets;
+}
+
+static int ignore_line(char *buf)
+{
+    /* Can the line in buf be ignored for ic.file checking?
+       Expect to examine only diode, mos, bipolar instance lines.
+       If the ic.file param is on a continuation line, it will be missed.
+       This should be rare.
+    */
+    if (!buf) {
+        return 1;
+    }
+    if (buf[0] == '.') {
+        return 1;
+    }
+    if (is_comment_or_blank(buf)) {
+        return 1;
+    }
+    /* Interpreter d.., q.., m.. */
+    switch (buf[0]) {
+        case 'D':
+        case 'd':
+            if (ciprefix("dc", buf)
+             || ciprefix("dowhile", buf) || ciprefix("define", buf)
+             || ciprefix("deftype", buf) || ciprefix("delete", buf)
+             || ciprefix("destroy", buf) || ciprefix("devhelp", buf)
+             || ciprefix("diff", buf)    || ciprefix("display", buf)
+            ) {
+                return 1;
+            } else {
+                return 0;
+            }
+            break;
+        case 'M':
+        case 'm':
+            if (ciprefix("mc_source", buf)  || ciprefix("meas", buf)
+             || ciprefix("mdump", buf)      || ciprefix("mrdump", buf)
+            ) {
+                return 1;
+            } else {
+                return 0;
+            }
+            break;
+        case 'Q':
+        case 'q':
+            if (ciprefix("quit", buf)) {
+                return 1;
+            } else {
+                return 0;
+            }
+            break;
+        default:
+            break;
+    }
+    return 1;
+}
+
+static int line_contains_icfile(char *buf)
+{
+    /* Find "ic.file" in a lower cased copy of buf. */
+    char str[] = "ic.file";
+    char *s = NULL;
+
+    if (ignore_line(buf)) {
+        return 0;
+    }
+    /* make_lower_case_copy checks its input string */
+    s = make_lower_case_copy(buf);
+    if (!s) {
+        return 0;
+    }
+    if (strstr(s, str)) {
+        tfree(s);
+        return 1;
+    } else {
+        tfree(s);
+        return 0;
+    }
 }
 
 static int is_cider_model(char *buf)
 {
+    /* Expect numos, numd, nbjt to be on the same line as the .model.
+       Otherwise it will be missed if on a continuation line.
+       This should be rare.
+    */
     char *s;
     if (!ciprefix(".model", buf)) {
         return 0;
     }
-    s = buf;
-    while (!isspace_c(*s)) {
-        s++;
+    s = make_lower_case_copy(buf);
+    if (!s) return 0;
+    if (strstr(s, "numos") || strstr(s, "numd") || strstr(s, "nbjt")) {
+        tfree(s);
+        return 1;
+    } else {
+        tfree(s);
+        return 0;
     }
-    while (*s && (*s != '\n')) {
-        while (isspace_c(*s)) {
-            s++;
-        }
-        if (*s && (*s != '\n')) {
-            if (strncasecmp(s, "numos", 4) == 0) {
-                return 1;
-            }
-            if (strncasecmp(s, "numd", 4) == 0) {
-                return 1;
-            }
-            if (strncasecmp(s, "nbjt", 4) == 0) {
-                return 1;
-            }
-        } else {
-            return 0;
-        }
-        while (!isspace_c(*s)) {
-            s++;
-        }
-    }
-    return 0;
 }
 #endif
 
@@ -1461,8 +1530,7 @@ struct inp_read_t inp_read( FILE *fp, int call_depth, const char *dir_name,
                     (ciprefix(".model", buffer) || buffer[0] == '+')) {
                 s = keep_case_of_cider_param(buffer);
             }
-            else if (!is_comment_or_blank(buffer) &&
-                    line_contains(buffer, "ic.file")) {
+            else if (line_contains_icfile(buffer)) {
                 s = keep_case_of_cider_param(buffer);
             }
 #endif
