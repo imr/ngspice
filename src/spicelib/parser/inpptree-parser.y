@@ -63,8 +63,8 @@
 %left   TOK_LE TOK_LT TOK_GE TOK_GT
 %left   '-' '+'
 %left   '*' '/'
-%left   NEG '!'  /* negation--unary minus, and boolean not */
 %left   '^'      /* exponentiation */
+%left   NEG '!'  /* negation--unary minus, and boolean not */
 
 %initial-action      /* initialize yylval */
 {
