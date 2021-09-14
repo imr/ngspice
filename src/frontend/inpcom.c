@@ -9375,6 +9375,41 @@ static void inp_check_syntax(struct card *deck)
             check_if--;
             continue;
         }
+        /* check for missing ac <val> in voltage or current source */
+        if (check_control == 0 && strchr("VvIi", *cut_line)) {
+            int err = 0;
+            char* acline = search_plain_identifier(cut_line, "ac");
+            if (acline == NULL)
+                continue;
+            /* skip ac */
+            char* nacline = acline + 2;
+             /* skip white spaces */
+            nacline = skip_ws(nacline);
+            /* if no numberr token, go to */
+            if (*nacline == '\0')
+                err = 1;
+            else {
+                /* skip potential = , found by make check */
+                if (*nacline == '=')
+                    nacline++;
+                char* nnacline = nacline;
+                /* get first token after ac */
+                char* numtok = gettok_node(&nnacline);
+                char* numtokfree = numtok;
+                /* check if token is a valid number */
+                INPevaluate(&numtok, &err, 0);
+                tfree(numtokfree);
+            }
+            /* if no number, replace 'ac' by 'ac 1 0' */
+            if (err){
+                char *begstr = copy_substring(cut_line, acline);
+                char* newline = tprintf("%s  ac ( 1 0 ) %s", begstr, nacline);
+                tfree(begstr);
+                tfree(card->line);
+                card->line = newline;
+            }
+            continue;
+        }
     }
 
     if (check_control > 0) {
