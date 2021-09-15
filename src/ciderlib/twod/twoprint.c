@@ -35,6 +35,7 @@ TWOprnSolution(FILE *file, TWOdevice *pDevice, OUTPcard *output, BOOLEAN asciiSa
   double *xScale = pDevice->xScale;
   double *yScale = pDevice->yScale;
   int ii;
+  int point_number = 0;
 
   if (output->OUTPnumVars == -1) {
     /* First pass. Need to count number of variables in output. */
@@ -320,7 +321,8 @@ TWOprnSolution(FILE *file, TWOdevice *pDevice, OUTPcard *output, BOOLEAN asciiSa
 	if (asciiSave) {
 	  for (ii = 0; ii < numVars; ii++) {
 	    if (ii == 0) {
-	        fprintf(file, "%d %d", yIndex, xIndex);
+	        fprintf(file, "%d", point_number);
+	        point_number++;
 	    }
 	    fprintf(file, "\t%e\n", data[ii]);
 	  } 
@@ -336,7 +338,8 @@ TWOprnSolution(FILE *file, TWOdevice *pDevice, OUTPcard *output, BOOLEAN asciiSa
 	if (asciiSave) {
 	  for (ii = 0; ii < numVars; ii++) {
 	    if (ii == 0) {
-	      fprintf(file, "%d %d", yIndex, xIndex);
+	      fprintf(file, "%d", point_number);
+	      point_number++;
 	    }
 	    fprintf(file, "\t%e\n", data[ii]);
 	  }
