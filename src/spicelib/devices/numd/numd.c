@@ -10,7 +10,7 @@ Author:	1987 Kartikeya Mayaram, U. C. Berkeley CAD Group
 
 IFparm NUMDpTable[] = {		/* parameters */
   IP("off", NUMD_OFF, IF_FLAG, "Initially off"),
-  IP("ic.file", NUMD_IC_FILE, IF_REAL, "Initial conditions file"),
+  IP("ic.file", NUMD_IC_FILE, IF_STRING, "Initial conditions file"),
   IOP("area", NUMD_AREA, IF_REAL, "Area factor"),
   IP("save", NUMD_PRINT, IF_INTEGER, "Save Solutions"),
   IPR("print", NUMD_PRINT, IF_INTEGER, "Print Solutions"),
