@@ -1135,12 +1135,12 @@ vlength2delta(int len)
     /* TSTOP / TSTEP */
     int points = ft_curckt->ci_ckt->CKTtimeListSize;
     /* transient and pss analysis (points > 0) upon start */
-    if (len == 0 && points > 0) {
+    if ((ft_curckt->ci_ckt->CKTmode & MODETRAN) && len == 0 && points > 0) {
         /* number of timesteps plus some overhead */
         return points + 100;
     }
     /* transient and pss if original estimate is exceeded */
-    else if (points > 0) {
+    else if ((ft_curckt->ci_ckt->CKTmode & MODETRAN) && points > 0) {
         /* check where we are */
         double timerel = ft_curckt->ci_ckt->CKTtime / ft_curckt->ci_ckt->CKTfinalTime;
         /* return an estimate of the appropriate number of time points, if more than 20% of
@@ -1150,6 +1150,11 @@ vlength2delta(int len)
         /* If not, just double the available memory */
         else
             return len;
+    }
+    /* op */
+    else if (ft_curckt->ci_ckt->CKTmode & MODEDCOP) {
+        /* op with length 1 */
+        return 1;
     }
     /* other analysis types that do not set CKTtimeListSize */
     else
