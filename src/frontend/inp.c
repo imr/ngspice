@@ -134,7 +134,7 @@ Xprintf(FILE *fdst, const char *fmt, ...)
 }
 
 
-/* Do a listing. Use is listing [expanded] [logical] [physical] [deck] */
+/* Do a listing. Use is listing [expanded] [logical] [physical] [deck] [runable] */
 void
 com_listing(wordlist *wl)
 {
@@ -165,6 +165,11 @@ com_listing(wordlist *wl)
                 case 'E':
                     expand = TRUE;
                     break;
+                case 'r':
+                case 'R':
+                    expand = TRUE;
+                    type = LS_RUNABLE;
+                    break;
                 default:
                     fprintf(cp_err, "Error: bad listing type %s\n", s);
                     return; /* SJB - don't go on after an error */
@@ -176,7 +181,7 @@ com_listing(wordlist *wl)
         if (do_param_listing) {
             nupa_list_params(cp_out);
         } else {
-            if (type != LS_DECK)
+            if (type != LS_DECK && type != LS_RUNABLE)
                 fprintf(cp_out, "\t%s\n\n", ft_curckt->ci_name);
             inp_list(cp_out,
                      expand ? ft_curckt->ci_deck : ft_curckt->ci_origdeck,
@@ -233,15 +238,20 @@ inp_list(FILE *file, struct card *deck, struct card *extras, int type)
 
     renumber = cp_getvar("renumber", CP_BOOL, NULL, 0);
 
-    if (type == LS_LOGICAL) {
+    if (type == LS_LOGICAL || type == LS_RUNABLE) {
     top1:
         for (here = deck; here; here = here->nextcard) {
             if (renumber)
                 here->linenum = i;
             if (ciprefix(".end", here->line) && !isalpha_c(here->line[4]))
                 continue;
-            if (*here->line != '*') {
+            if ((*here->line != '*') && (type == LS_LOGICAL)) {
                 Xprintf(file, "%6d : %s\n", here->linenum, upper(here->line));
+                if (here->error)
+                    Xprintf(file, "%s\n", here->error);
+            }
+            else if ((*here->line != '*') && (type == LS_RUNABLE)) {
+                Xprintf(file, "%s\n", upper(here->line));
                 if (here->error)
                     Xprintf(file, "%s\n", here->error);
             }
@@ -254,7 +264,10 @@ inp_list(FILE *file, struct card *deck, struct card *extras, int type)
             goto top1;
         }
 
-        Xprintf(file, "%6d : .end\n", i);
+        if (type == LS_LOGICAL)
+            Xprintf(file, "%6d : .end\n", i);
+        else if (type == LS_RUNABLE)
+            Xprintf(file, ".end\n");
 
     } else if ((type == LS_PHYSICAL) || (type == LS_DECK)) {
 

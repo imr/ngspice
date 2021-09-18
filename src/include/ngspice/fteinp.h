@@ -13,6 +13,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #define LS_LOGICAL  1
 #define LS_PHYSICAL 2
 #define LS_DECK  3
+#define LS_RUNABLE  4
 
 #endif
 
