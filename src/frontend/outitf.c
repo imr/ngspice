@@ -656,7 +656,13 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
 #endif
 
             if (run->data[i].regular) {
-                if (run->data[i].type == IF_REAL)
+                if (ft_ngdebug && run->data[i].type == IF_REAL && eq(run->data[i].name, "speedcheck")) {
+                    /* current time */
+                    clock_t cl = clock();
+                    double tt = ((double)cl - (double)startclock) / CLOCKS_PER_SEC;
+                    fileAddRealValue(run->fp, run->binary, tt);
+                }
+                else if (run->data[i].type == IF_REAL)
                     fileAddRealValue(run->fp, run->binary,
                             valuePtr->v.vec.rVec [run->data[i].outIndex]);
                 else if (run->data[i].type == IF_COMPLEX)
