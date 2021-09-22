@@ -106,6 +106,8 @@ struct dvec *EVTfindvec(
     return(NULL);
   if(! g_mif_info.ckt->evt)
     return(NULL);
+  if(! g_mif_info.ckt->evt->info.node_table)
+    return(NULL);
   if(g_mif_info.ckt->evt->counts.num_nodes == 0)
     return(NULL);
 
