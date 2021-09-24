@@ -93,6 +93,8 @@ typedef struct {
                                    to width*depth, one short will hold a
                                    12-state bit description.    */
 
+    bool   init_ok;             /* set to true if init is succeful */
+
 } Local_Data_t;
 
 
@@ -1015,6 +1017,14 @@ void cm_d_source(ARGS)
         /* close source file */
         if (source)
             fclose(source);
+
+        if (err > 0) {
+            loc->init_ok = FALSE;
+            cm_message_send(" dsource will return only its initial state.\n");
+            return;
+        }
+        else
+            loc->init_ok = TRUE;
     }
     else {      /*** Retrieve previous values ***/
 
@@ -1023,6 +1033,9 @@ void cm_d_source(ARGS)
         row_index_old  = (int *) cm_event_get_ptr(0,1);
 
         loc = STATIC_VAR (locdata);
+
+        if (!loc->init_ok)
+            return;
 
         /* Set old values to new... */
         *row_index = *row_index_old;
