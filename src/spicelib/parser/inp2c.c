@@ -58,7 +58,7 @@ void INP2C(CKTcircuit *ckt, INPtables * tab, struct card *current)
 
     /* enable reading values like 4u7 */
     if (newcompat.lt)
-        val = INPevaluateRKM(&line, &error1, 1);	/* [<val>] */
+        val = INPevaluateRKM_C(&line, &error1, 1);	/* [<val>] */
     else
         val = INPevaluate(&line, &error1, 1);	/* [<val>] */
     

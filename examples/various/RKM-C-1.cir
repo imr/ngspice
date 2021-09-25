@@ -1,0 +1,19 @@
+RKM Capacitors
+
+V1 2 0 1
+R1 2 1 4K7
+C1 1 0 4p7
+C2 1 0 4n7
+C3 1 0 4u7
+C4 1 0 4m7
+C5 1 0 4F7
+C6 1 0 47p3
+C7 1 0 470p
+C8 1 0 4µ76 tc1=1e-6 tc2=1e-9 dtemp=6
+C9 1 0 4m7
+
+.control
+show c
+.endc
+
+.end
