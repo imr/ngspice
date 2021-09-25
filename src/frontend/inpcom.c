@@ -2431,6 +2431,8 @@ static int is_a_modelname(const char *s)
     /*token contains a '=' */
     if (strchr(s, '='))
         return FALSE;
+    if (newcompat.lt && *s == 'r')
+        s++;
     /* first character of model name is character from alphabet */
     if (isalpha_c(s[0]))
         return TRUE;
@@ -9876,6 +9878,7 @@ utf8_check(unsigned char *s)
             while (*z) {
                 *y++ = *z++;
             }
+            *y = '\0';
             s++;
         }
         else if ((s[0] & 0xe0) == 0xc0) {
