@@ -9871,7 +9871,6 @@ utf8_check(unsigned char *s)
         else if (s[0] == 0xc2 && s[1] == 0xb5) {
             /* translate utf-8 micro µ to u */
             s[0] = 'u';
-            s[1] = ' ';
             /* remove second byte */
             unsigned char *y = s + 1;
             unsigned char *z = s + 2;
