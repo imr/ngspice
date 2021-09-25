@@ -9851,7 +9851,8 @@ void inp_rem_unused_models(struct nscope *root, struct card *deck)
  * or overlong UTF-8 sequence found, or NULL if the string contains
  * only correct UTF-8. It also spots UTF-8 sequences that could cause
  * trouble if converted to UTF-16, namely surrogate characters
- * (U+D800..U+DFFF) and non-Unicode positions (U+FFFE..U+FFFF).*/
+ * (U+D800..U+DFFF) and non-Unicode positions (U+FFFE..U+FFFF).
+ * In addition we check for some ngspice-specific characters like µ etc.*/
 #ifndef EXT_ASC
 static unsigned char*
 utf8_check(unsigned char *s)
@@ -9860,6 +9861,23 @@ utf8_check(unsigned char *s)
         if (*s < 0x80)
             /* 0xxxxxxx */
             s++;
+        else if (*s == 0xb5) {
+            /* translate ansi micro µ to u */
+            *s = 'u';
+            s++;
+        }
+        else if (s[0] == 0xc2 && s[1] == 0xb5) {
+            /* translate utf-8 micro µ to u */
+            s[0] = 'u';
+            s[1] = ' ';
+            /* remove second byte */
+            unsigned char *y = s + 1;
+            unsigned char *z = s + 2;
+            while (*z) {
+                *y++ = *z++;
+            }
+            s++;
+        }
         else if ((s[0] & 0xe0) == 0xc0) {
             /* 110XXXXx 10xxxxxx */
             if ((s[1] & 0xc0) != 0x80 ||
