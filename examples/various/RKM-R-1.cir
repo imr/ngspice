@@ -8,9 +8,10 @@ R4 1 0 470R
 R5 1 0 47K
 R6 1 0 47K3
 R7 1 0 470K
-R8 1 0 4M7  tc1=1e-6 tc2=1e-9 dtemp=6
+R8 1 0 4Meg7  tc1=1e-6 tc2=1e-9 dtemp=6
 R9 1 0 4L7
 R10 1 0 470L
+R11 1 0 4M7
 
 .control
 show r

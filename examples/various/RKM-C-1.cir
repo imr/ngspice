@@ -11,6 +11,7 @@ C6 1 0 47p3
 C7 1 0 470p
 C8 1 0 4µ76 tc1=1e-6 tc2=1e-9 dtemp=6
 C9 1 0 4m7
+C10 1 0 470nF
 
 .control
 show c

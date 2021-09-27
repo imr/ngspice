@@ -394,7 +394,7 @@ INPevaluateRKM_R(char** line, int* error, int gobble)
             mantis *= 25.4;     /* Mil */
         }
         else {
-            expo1 = expo1 + 6;  /* Meg as well */
+            expo1 = expo1 - 3;  /* m, M for milli */
             hasmulti = TRUE;
         }
         break;
