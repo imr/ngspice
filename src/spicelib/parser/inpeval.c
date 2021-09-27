@@ -593,8 +593,7 @@ INPevaluateRKM_C(char** line, int* error, int gobble)
         break;
     case 'r':
     case 'R':
-    case 'f':
-    case 'F': /* no femto when compat LT */
+
         expo1 = expo1;
         hasmulti = TRUE;
         break;
@@ -606,6 +605,11 @@ INPevaluateRKM_C(char** line, int* error, int gobble)
     case 'p':
     case 'P':
         expo1 = expo1 - 12;
+        hasmulti = TRUE;
+        break;
+    case 'f':
+    case 'F':
+        expo1 = expo1 - 15;
         hasmulti = TRUE;
         break;
     case 'm':
