@@ -51,15 +51,15 @@ if test "$1" = "d"; then
   echo
 # You may add  --enable-adms to the following command for adding adms generated devices
 # Builtin readline is not compatible (Big Sur), readline via Homebrew required (in /usr/local/opt)
-# Standard clang does not support OpenMP
-  ../configure --with-x --enable-xspice --enable-cider --with-readline=/usr/local/opt/readline CFLAGS="-m64 -O0 -g -Wall -I/opt/X11/include/freetype2 -I/usr/local/opt/readline/include" LDFLAGS="-m64 -g -L/usr/local/opt/readline/lib"
+# Use gcc-11 from Homebrew to support OpenMP
+  ../configure --with-x --enable-xspice --enable-cider --with-readline=/usr/local/opt/readline CC="gcc-11" CXX="g++-11" CFLAGS="-m64 -O0 -g -Wall -I/opt/X11/include/freetype2 -I/usr/local/opt/readline/include" LDFLAGS="-m64 -g -L/usr/local/opt/readline/lib -L/opt/X11/lib"
 else
    cd release
    if [ $? -ne 0 ]; then  echo "cd release failed"; exit 1 ; fi
   echo "configuring for 64 bit release"
   echo
 # You may add  --enable-adms to the following command for adding adms generated devices
-  ../configure --with-x --enable-xspice --enable-cider --with-readline=/usr/local/opt/readline --disable-debug CFLAGS="-m64 -O2 -I/opt/X11/include/freetype2 -I/usr/local/opt/readline/include" LDFLAGS="-m64 -L/usr/local/opt/readline/lib"
+  ../configure --with-x --enable-xspice --enable-cider --with-readline=/usr/local/opt/readline --disable-debug --enable-openmp CC="gcc-11" CXX="g++-11" CFLAGS="-m64 -O2 -I/opt/X11/include/freetype2 -I/usr/local/opt/readline/include -I/usr/local/opt/ncurses/include -I/usr/local/include" LDFLAGS="-m64 -L/usr/local/opt/readline/lib -L/usr/local/opt/ncurses/lib -L/opt/X11/lib -L/usr/local/lib"
 fi
 if [ $? -ne 0 ]; then  echo "../configure failed"; exit 1 ; fi
 
