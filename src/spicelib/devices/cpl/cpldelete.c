@@ -16,6 +16,6 @@ CPLDelete(GENinstance *gen_inst)
 {
     NG_IGNORE(gen_inst);
 
-//    mem_delete();
+    mem_delete();
     return OK;
 }
