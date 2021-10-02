@@ -374,7 +374,8 @@ CPLunsetup(GENmodel* inModel, CKTcircuit* ckt)
 			here->CPLibr2Given = 0;
 		}
 	}
-//	mem_delete();
+	mem_delete();
+	ndn_btree = NULL;
 	return OK;
 }
 
