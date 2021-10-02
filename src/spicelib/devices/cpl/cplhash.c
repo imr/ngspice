@@ -23,6 +23,7 @@ CPLunsetup() calls mem_delete(). */
 #include "ngspice/iferrmsg.h"
 #include "ngspice/hash.h"
 #include "ngspice/fteext.h"
+#include "cpldefs.h"
 
 // #define DB_FULL /* uncomment for debugging output, all addresses to files */
 #ifdef DB_FULL
@@ -74,7 +75,7 @@ int memsaved(void *ptr) {
 #endif
 #endif
         } else
-            fprintf(stderr, "Warning: Could not insert item into hashtable at 0x%p\n", ptr);
+            fprintf(stderr, "Warning: CPL GC Could not insert item into hashtable at 0x%p\n", ptr);
         gc_is_on = 1;
     }
     return OK;
@@ -92,7 +93,7 @@ void memdeleted(const void *ptr) {
 #endif
         }
         else if (ft_ngdebug)
-            fprintf(stderr, "Warning: Could not delete item from hashtable at 0x%p\n", ptr);
+            fprintf(stderr, "Warning: CPL GC Could not delete item from hashtable at 0x%p\n", ptr);
 #else
         }
 #endif
@@ -122,8 +123,8 @@ void my_key_free(void * key)
 void mem_delete(void) {
 #ifdef DB
     char buf[128];
-    printf("memory allocated %d times, freed %d times\n", mem_in, mem_out);
-    printf("Size of hash table to be freed: %d entries.\n", nghash_get_size(memory_table));
+    printf("CPL GC memory allocated %d times, freed %d times\n", mem_in, mem_out);
+    printf("CPL GC size of hash table to be freed: %d entries.\n", nghash_get_size(memory_table));
 #ifdef DB_FULL
     void *data, *key;
     data = nghash_enumeratek(memory_table, &key, TRUE);
@@ -141,7 +142,9 @@ void mem_delete(void) {
 #ifdef DB
     /* printf via sh_printf will need some info from variables that have
     been deleted already, therefore we use fputs */
-    sprintf(buf, "Number of addresses freed: %d entries.\n", mem_freed);
+    sprintf(buf, "CPL GC number of addresses freed: %d entries.\n", mem_freed);
     fputs(buf, stdout);
 #endif
+    pool_vi = NULL;
+    mem_freed = mem_in = mem_out = 0;
 }
