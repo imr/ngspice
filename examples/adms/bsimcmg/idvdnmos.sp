@@ -16,7 +16,7 @@ vbs bulk  0 dc=0.2
 m1 drain gate 0 bulk 0 nmos1 TFIN=15n L=40n NFIN=10 NRS=1 NRD=1 D=40n
 
 * --- DC Analysis ---
-.dc vds 0 1 0.01 vgs 0 1.0 0.1
+.dc vds -0.1 1 0.01 vgs 0 1.0 0.1
 .probe dc ids=par`-i(vds)`
 .probe dc gds=deriv(ids)
 .print dc par'ids' par'gds'
@@ -30,6 +30,7 @@ let xgds = deriv(ids)
 plot ids
 plot xgds
 plot @m1[gds]
+plot xgds @m1[gds]
 
 save @m1[gds]
 set temp = 27
