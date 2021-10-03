@@ -90,8 +90,8 @@
 %right  ','
 %left   '-' '+'
 %left   '*' '/' '%'
-%right  '^'      /* exponentiation */
 %left   NEG      /* negation--unary minus */
+%right  '^'      /* exponentiation */
 %left   '[' ']'
 
 %initial-action      /* initialize yylval */
