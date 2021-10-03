@@ -201,6 +201,10 @@ CPLload(GENmodel *inModel, CKTcircuit *ckt)
 						double a, b;
 
 						tms = cp->h1t[i][j];
+						if (!tms) {
+							fprintf(stderr, "\nError in CPL %s: Forbidden combination of model parameters!\n", here->gen.GENname);
+							controlled_exit(1);
+						}
 						if (tms->ifImg)	{
 							tms->tm[0].cnv_i = - cp->dc1[j]	*
 								tms->tm[0].c / tms->tm[0].x;
@@ -222,6 +226,10 @@ CPLload(GENmodel *inModel, CKTcircuit *ckt)
 
 						for (l = 0; l <	cp->noL; l++) {
 							tms = cp->h2t[i][j][l];
+							if (!tms) {
+								fprintf(stderr, "\nError in CPL %s: Forbidden combination of model parameters!\n", here->gen.GENname);
+								controlled_exit(1);
+							}
 							for (k = 0; k <	3; k++)	{
 								tms->tm[k].cnv_i = 0.0;
 								tms->tm[k].cnv_o = 0.0;
@@ -229,6 +237,10 @@ CPLload(GENmodel *inModel, CKTcircuit *ckt)
 						}
 						for (l = 0; l <	cp->noL; l++) {
 							tms = cp->h3t[i][j][l];
+							if (!tms) {
+								fprintf(stderr, "\nError in CPL %s: Forbidden combination of model parameters!\n", here->gen.GENname);
+								controlled_exit(1);
+							}
 							if (tms->ifImg)	{
 								tms->tm[0].cnv_i = - cp->dc1[j]	*
 									tms->tm[0].c / tms->tm[0].x;
