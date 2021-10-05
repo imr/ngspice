@@ -47,6 +47,12 @@ BJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if(!model->BJTsatCurGiven) {
             model->BJTsatCur = 1e-16;
         }
+        if(!model->BJTBEsatCurGiven) {
+            model->BJTBEsatCur = model->BJTsatCur;
+        }
+        if(!model->BJTBCsatCurGiven) {
+            model->BJTBCsatCur = model->BJTsatCur;
+        }
         if(!model->BJTbetaFGiven) {
             model->BJTbetaF = 100;
         }
@@ -395,19 +401,6 @@ BJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if(!model->BJTteMaxGiven) {
             model->BJTteMax = 1e99;
         }
-
-
-/*
- * COMPATABILITY WARNING!
- * special note:  for backward compatability to much older models, spice 2G
- * implemented a special case which checked if B-E leakage saturation
- * current was >1, then it was instead a the B-E leakage saturation current
- * divided by IS, and multiplied it by IS at this point.  This was not
- * handled correctly in the 2G code, and there is some question on its
- * reasonability, since it is also undocumented, so it has been left out
- * here.  It could easily be added with 1 line.  (The same applies to the B-C
- * leakage saturation current).   TQ  6/29/84
- */
 
         /* loop through all the instances of the model */
         for (here = BJTinstances(model); here != NULL ;

@@ -60,6 +60,8 @@ typedef struct sBJTinstance {
     double BJTtemp;     /* instance temperature */
     double BJTdtemp;     /* instance delta temperature from circuit */
     double BJTtSatCur;  /* temperature adjusted saturation current */
+    double BJTBEtSatCur;  /* temperature adjusted saturation current */
+    double BJTBCtSatCur;  /* temperature adjusted saturation current */
     double BJTtBetaF;   /* temperature adjusted forward beta */
     double BJTtBetaR;   /* temperature adjusted reverse beta */
     double BJTtBEleakCur;  /* temperature adjusted B-E leakage current */
@@ -371,6 +373,8 @@ typedef struct sBJTmodel {          /* model structure for a bjt */
 
     double BJTtnom; /* nominal temperature */
     double BJTsatCur;   /* input - don't use */
+    double BJTBEsatCur;
+    double BJTBCsatCur;
     double BJTbetaF;    /* input - don't use */
     double BJTemissionCoeffF;
     double BJTearlyVoltF;
@@ -505,6 +509,8 @@ typedef struct sBJTmodel {          /* model structure for a bjt */
     unsigned BJTsubsGiven : 1;
     unsigned BJTtnomGiven : 1;
     unsigned BJTsatCurGiven : 1;
+    unsigned BJTBEsatCurGiven : 1;
+    unsigned BJTBCsatCurGiven : 1;
     unsigned BJTbetaFGiven : 1;
     unsigned BJTemissionCoeffFGiven : 1;
     unsigned BJTearlyVoltFGiven : 1;
@@ -659,6 +665,8 @@ enum {
     BJT_MOD_NPN = 101,
     BJT_MOD_PNP,
     BJT_MOD_IS,
+    BJT_MOD_IBE,
+    BJT_MOD_IBC,
     BJT_MOD_BF,
     BJT_MOD_NF,
     BJT_MOD_VAF,

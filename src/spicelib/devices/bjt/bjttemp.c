@@ -146,6 +146,14 @@ BJTtemp(GENmodel *inModel, CKTcircuit *ckt)
             if ((model->BJTtlev == 0) || (model->BJTtlev == 1)) {
                 factor = exp(factlog);
                 here->BJTtSatCur = model->BJTsatCur * factor;
+                if (model->BJTBEsatCurGiven) {
+                    factor = exp(factlog / model->BJTemissionCoeffF);
+                    here->BJTBEtSatCur = model->BJTBEsatCur * factor;
+                }
+                if (model->BJTBCsatCurGiven) {
+                    factor = exp(factlog / model->BJTemissionCoeffR);
+                    here->BJTBCtSatCur = model->BJTBCsatCur * factor;
+                }
                 if (model->BJTsubSatCurGiven)
                     here->BJTtSubSatCur = model->BJTsubSatCur * factor;
             } else if (model->BJTtlev == 3) {
