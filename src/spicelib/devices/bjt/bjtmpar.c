@@ -66,10 +66,6 @@ BJTmParam(int param, IFvalue *value, GENmodel *inModel)
             mods->BJTleakBEcurrent = value->rValue;
             mods->BJTleakBEcurrentGiven = TRUE;
             break;
-        case BJT_MOD_C2:
-            mods->BJTc2 = value->rValue;
-            mods->BJTc2Given=TRUE;
-            break;
         case BJT_MOD_NE:
             mods->BJTleakBEemissionCoeff = value->rValue;
             mods->BJTleakBEemissionCoeffGiven = TRUE;
@@ -93,10 +89,6 @@ BJTmParam(int param, IFvalue *value, GENmodel *inModel)
         case BJT_MOD_ISC:
             mods->BJTleakBCcurrent = value->rValue;
             mods->BJTleakBCcurrentGiven = TRUE;
-            break;
-        case BJT_MOD_C4:
-            mods->BJTc4 = value->rValue;
-            mods->BJTc4Given=TRUE;
             break;
         case BJT_MOD_NC:
             mods->BJTleakBCemissionCoeff = value->rValue;
