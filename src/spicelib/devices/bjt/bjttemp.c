@@ -44,20 +44,6 @@ BJTtemp(GENmodel *inModel, CKTcircuit *ckt)
         vtnom = CONSTKoverQ * model->BJTtnom;
         fact1 = model->BJTtnom/REFTEMP;
 
-        if(!model->BJTleakBEcurrentGiven) {
-            if(model->BJTc2Given) {
-                model->BJTleakBEcurrent = model->BJTc2 * model->BJTsatCur;
-            } else {
-                model->BJTleakBEcurrent = 0;
-            }
-        }
-        if(!model->BJTleakBCcurrentGiven) {
-            if(model->BJTc4Given) {
-                model->BJTleakBCcurrent = model->BJTc4 * model->BJTsatCur;
-            } else {
-                model->BJTleakBCcurrent = 0;
-            }
-        }
         if(!model->BJTminBaseResistGiven) {
             model->BJTminBaseResist = model->BJTbaseResist;
         }

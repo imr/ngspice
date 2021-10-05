@@ -57,9 +57,6 @@ BJTmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
         case BJT_MOD_ISE:
             value->rValue = here->BJTleakBEcurrent;
             return(OK);
-        case BJT_MOD_C2:
-            value->rValue = here->BJTc2;
-            return(OK);
         case BJT_MOD_NE:
             value->rValue = here->BJTleakBEemissionCoeff;
             return(OK);
@@ -77,9 +74,6 @@ BJTmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
             return(OK);
         case BJT_MOD_ISC:
             value->rValue = here->BJTleakBCcurrent;
-            return(OK);
-        case BJT_MOD_C4:
-            value->rValue = here->BJTc4;
             return(OK);
         case BJT_MOD_NC:
             value->rValue = here->BJTleakBCemissionCoeff;
