@@ -82,6 +82,8 @@ IFparm BJTmPTable[] = { /* model parameters */
  IOP("tnom", BJT_MOD_TNOM, IF_REAL, "Parameter measurement temperature"),
  IOPR("tref", BJT_MOD_TNOM, IF_REAL, "Parameter measurement temperature"),
  IOP("is",   BJT_MOD_IS,   IF_REAL, "Saturation Current"),
+ IOP("ibe",  BJT_MOD_IBE,  IF_REAL, "Base-Emitter saturation Current"),
+ IOP("ibc",  BJT_MOD_IBC,  IF_REAL, "Base-Collector saturation Current"),
  IOP("bf",   BJT_MOD_BF,   IF_REAL, "Ideal forward beta"),
  IOP("nf",   BJT_MOD_NF,   IF_REAL, "Forward emission coefficient"),
  IOP("vaf",  BJT_MOD_VAF,  IF_REAL, "Forward Early voltage"),

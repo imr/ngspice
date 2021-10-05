@@ -35,7 +35,7 @@ int BJTdSetup(GENmodel *inModel, CKTcircuit *ckt)
     double cbe;
     double cben;
     double cdis;
-    double csat;
+    double csatbe, csatbc;
     double ctot;
     double czbc;
     double czbcf2;
@@ -153,7 +153,8 @@ int BJTdSetup(GENmodel *inModel, CKTcircuit *ckt)
             /*
              *   dc model paramters
              */
-            csat=here->BJTtSatCur*here->BJTarea * here->BJTm;
+            csatbe=here->BJTBEtSatCur*here->BJTarea * here->BJTm;
+            csatbc=here->BJTBCtSatCur*here->BJTarea * here->BJTm;
             rbpr=here->BJTtminBaseResist/(here->BJTarea * here->BJTm);
             rbpi=here->BJTtbaseResist/(here->BJTarea * here->BJTm)-rbpr;
             oik=here->BJTtinvRollOffF/(here->BJTarea * here->BJTm);
@@ -228,9 +229,9 @@ int BJTdSetup(GENmodel *inModel, CKTcircuit *ckt)
             vtn=vt*here->BJTtemissionCoeffF;
             if(vbe > -5*vtn){
                 evbe=exp(vbe/vtn);
-                cbe=csat*(evbe-1)+ckt->CKTgmin*vbe;
-                gbe=csat*evbe/vtn+ckt->CKTgmin;
-                gbe2 = csat*evbe/vtn/vtn;
+                cbe=csatbe*(evbe-1)+ckt->CKTgmin*vbe;
+                gbe=csatbe*evbe/vtn+ckt->CKTgmin;
+                gbe2 = csatbe*evbe/vtn/vtn;
                 gbe3 = gbe2/vtn;
 
                 /* note - these are actually derivs, not Taylor
@@ -247,7 +248,7 @@ int BJTdSetup(GENmodel *inModel, CKTcircuit *ckt)
                     gben3=gben2/vte;
                 }
             } else {
-                gbe = -csat/vbe+ckt->CKTgmin;
+                gbe = -csatbe/vbe+ckt->CKTgmin;
                 gbe2=gbe3=gben2=gben3=0;
                 cbe=gbe*vbe;
                 gben = -c2/vbe;
@@ -256,9 +257,9 @@ int BJTdSetup(GENmodel *inModel, CKTcircuit *ckt)
             vtn=vt*here->BJTtemissionCoeffR;
             if(vbc > -5*vtn) {
                 evbc=exp(vbc/vtn);
-                cbc=csat*(evbc-1)+ckt->CKTgmin*vbc;
-                gbc=csat*evbc/vtn+ckt->CKTgmin;
-                gbc2=csat*evbc/vtn/vtn;
+                cbc=csatbc*(evbc-1)+ckt->CKTgmin*vbc;
+                gbc=csatbc*evbc/vtn+ckt->CKTgmin;
+                gbc2=csatbc*evbc/vtn/vtn;
                 gbc3=gbc2/vtn;
                 if (c4 == 0) {
                     cbcn=0;
@@ -272,7 +273,7 @@ int BJTdSetup(GENmodel *inModel, CKTcircuit *ckt)
                     gbcn3=gbcn2/vtc;
                 }
             } else {
-                gbc = -csat/vbc+ckt->CKTgmin;
+                gbc = -csatbc/vbc+ckt->CKTgmin;
                 gbc2=gbc3=0;
                 cbc = gbc*vbc;
                 gbcn = -c4/vbc;

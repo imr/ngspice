@@ -42,6 +42,12 @@ BJTmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
         case BJT_MOD_IS:
             value->rValue = here->BJTsatCur;
             return(OK);
+        case BJT_MOD_IBE:
+            value->rValue = here->BJTBEsatCur;
+            return(OK);
+        case BJT_MOD_IBC:
+            value->rValue = here->BJTBCsatCur;
+            return(OK);
         case BJT_MOD_BF:
             value->rValue = here->BJTbetaF;
             return(OK);
