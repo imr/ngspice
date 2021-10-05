@@ -46,6 +46,14 @@ BJTmParam(int param, IFvalue *value, GENmodel *inModel)
             mods->BJTsatCur = value->rValue;
             mods->BJTsatCurGiven = TRUE;
             break;
+        case BJT_MOD_IBE:
+            mods->BJTBEsatCur = value->rValue;
+            mods->BJTBEsatCurGiven = TRUE;
+            break;
+        case BJT_MOD_IBC:
+            mods->BJTBCsatCur = value->rValue;
+            mods->BJTBCsatCurGiven = TRUE;
+            break;
         case BJT_MOD_BF:
             mods->BJTbetaF = value->rValue;
             mods->BJTbetaFGiven = TRUE;

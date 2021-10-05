@@ -53,7 +53,7 @@ BJTload(GENmodel *inModel, CKTcircuit *ckt)
     double geqsub;
     double ceqsub;
     double cex;
-    double csat;
+    double csatbe, csatbc;
     double csubsat;
     double ctot;
     double czbc;
@@ -172,7 +172,8 @@ BJTload(GENmodel *inModel, CKTcircuit *ckt)
             /*
              *   dc model paramters
              */
-            csat=here->BJTtSatCur*here->BJTarea;
+            csatbe=here->BJTBEtSatCur*here->BJTarea;
+            csatbc=here->BJTBCtSatCur*here->BJTarea;
             csubsat=here->BJTtSubSatCur*here->BJTarea;
             rbpr=here->BJTtminBaseResist/here->BJTarea;
             rbpi=here->BJTtbaseResist/here->BJTarea-rbpr;
@@ -451,13 +452,13 @@ next1:      vtn=vt*here->BJTtemissionCoeffF;
 
             if(vbe >= -3*vtn){
                 evbe=exp(vbe/vtn);
-                cbe=csat*(evbe-1);
-                gbe=csat*evbe/vtn;
+                cbe=csatbe*(evbe-1);
+                gbe=csatbe*evbe/vtn;
             } else {
                 arg=3*vtn/(vbe*CONSTe);
                 arg = arg * arg * arg;
-                cbe = -csat*(1+arg);
-                gbe = csat*3*arg/vbe;
+                cbe = -csatbe*(1+arg);
+                gbe = csatbe*3*arg/vbe;
             }
             if (c2 == 0) {
                 cben=0;
@@ -481,13 +482,13 @@ next1:      vtn=vt*here->BJTtemissionCoeffF;
 
             if(vbc >= -3*vtn) {
                 evbc=exp(vbc/vtn);
-                cbc=csat*(evbc-1);
-                gbc=csat*evbc/vtn;
+                cbc=csatbc*(evbc-1);
+                gbc=csatbc*evbc/vtn;
             } else {
                 arg=3*vtn/(vbc*CONSTe);
                 arg = arg * arg * arg;
-                cbc = -csat*(1+arg);
-                gbc = csat*3*arg/vbc;
+                cbc = -csatbc*(1+arg);
+                gbc = csatbc*3*arg/vbc;
             }
             if (c4 == 0) {
                 cbcn=0;
