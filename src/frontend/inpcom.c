@@ -2424,21 +2424,38 @@ static char *get_adevice_model_name(char *line)
  *   To distinguish modelname tokens from other tokens
  *   by checking if token is not a valid ngspice number
  */
-static int is_a_modelname(const char *s)
+static int is_a_modelname(char *s, const char* line)
 {
     char *st;
     double testval;
+        int error = 0;
+        char* evalrc;
+
     /*token contains a '=' */
     if (strchr(s, '='))
         return FALSE;
-    if (newcompat.lt && *s == 'r')
-        s++;
-    /* first character of model name is character from alphabet */
-    if (isalpha_c(s[0]))
-        return TRUE;
     /* first characters not allowed in model name (including '\0')*/
     if (strchr("{*^@\\\'", s[0]))
         return FALSE;
+
+    /* RKM: r100 4k7 are  valid numbers for resistors,
+       so not valid model names. */
+    if (newcompat.lt && *line == 'r') {
+        evalrc = s;
+        INPevaluateRKM_R(&evalrc, &error, 0);
+        if (*evalrc == '\0' && !error)
+            return FALSE;
+    }
+    if (newcompat.lt && *line == 'c') {
+        evalrc = s;
+        INPevaluateRKM_C(&evalrc, &error, 0);
+        if (*evalrc == '\0' && !error)
+            return FALSE;
+    }
+    /* first character of model name is character from alphabet */
+    if (isalpha_c(s[0]))
+        return TRUE;
+
     /* not beeing a valid number */
     testval = strtod(s, &st);
     /* conversion failed, so no number */
@@ -2502,8 +2519,6 @@ static int is_a_modelname(const char *s)
         st = st + 5;
     else if ((*st == 'f') || (*st == 'h'))
         st = st + 1;
-    else if (newcompat.lt && isdigit_c(*st)) /* 4k7 */
-        return FALSE;
     if (*st == '\0' || isspace_c(*st)) {
         return FALSE;
     }
@@ -2621,7 +2636,7 @@ static void get_subckts_for_subckt(struct card *start_card, char *subckt_name,
                 int num_terminals = get_number_terminals(line);
                 if (num_terminals != 0) {
                     char *model_name = get_model_name(line, num_terminals);
-                    if (is_a_modelname(model_name))
+                    if (is_a_modelname(model_name, line))
                         nlist_adjoin(used_models, model_name);
                     else
                         tfree(model_name);
@@ -2710,7 +2725,7 @@ void comment_out_unused_subckt_models(struct card *start_card)
                 int num_terminals = get_number_terminals(line);
                 if (num_terminals != 0) {
                     char *model_name = get_model_name(line, num_terminals);
-                    if (is_a_modelname(model_name))
+                    if (is_a_modelname(model_name, line))
                         nlist_adjoin(used_models, model_name);
                     else
                         tfree(model_name);
@@ -9818,9 +9833,9 @@ void inp_rem_unused_models(struct nscope *root, struct card *deck)
                 elem_model_name = get_model_name(curr_line, num_terminals);
 
             /* ignore certain cases, for example
-             *    C5 node1 node2 42.0
+             *    'C5 node1 node2 42.0' or 'R2 node1 node2 4k7'
              */
-            if (is_a_modelname(elem_model_name)) {
+            if (is_a_modelname(elem_model_name, curr_line)) {
 
                 struct modellist *m =
                         inp_find_model(card->level, elem_model_name);
