@@ -53,6 +53,20 @@ BJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if(!model->BJTemissionCoeffFGiven) {
             model->BJTemissionCoeffF = 1;
         }
+        if(!model->BJTleakBEcurrentGiven) {
+            model->BJTleakBEcurrent = 0;
+        } else {
+            if(model->BJTleakBEcurrent > 1e-04) {
+                model->BJTleakBEcurrent = model->BJTsatCur * model->BJTleakBEcurrent;
+            }
+        }
+        if(!model->BJTleakBCcurrentGiven) {
+            model->BJTleakBCcurrent = 0;
+        } else {
+            if(model->BJTleakBCcurrent > 1e-04) {
+                model->BJTleakBCcurrent = model->BJTsatCur * model->BJTleakBCcurrent;
+            }
+        }
         if(!model->BJTleakBEemissionCoeffGiven) {
             model->BJTleakBEemissionCoeff = 1.5;
         }

@@ -376,14 +376,12 @@ typedef struct sBJTmodel {          /* model structure for a bjt */
     double BJTearlyVoltF;
     double BJTrollOffF;
     double BJTleakBEcurrent;    /* input - don't use */
-    double BJTc2;
     double BJTleakBEemissionCoeff;
     double BJTbetaR;    /* input - don't use */
     double BJTemissionCoeffR;
     double BJTearlyVoltR;
     double BJTrollOffR;
     double BJTleakBCcurrent;    /* input - don't use */
-    double BJTc4;
     double BJTleakBCemissionCoeff;
     double BJTbaseResist;
     double BJTbaseCurrentHalfResist;
@@ -512,14 +510,12 @@ typedef struct sBJTmodel {          /* model structure for a bjt */
     unsigned BJTearlyVoltFGiven : 1;
     unsigned BJTrollOffFGiven : 1;
     unsigned BJTleakBEcurrentGiven : 1;
-    unsigned BJTc2Given : 1;
     unsigned BJTleakBEemissionCoeffGiven : 1;
     unsigned BJTbetaRGiven : 1;
     unsigned BJTemissionCoeffRGiven : 1;
     unsigned BJTearlyVoltRGiven : 1;
     unsigned BJTrollOffRGiven : 1;
     unsigned BJTleakBCcurrentGiven : 1;
-    unsigned BJTc4Given : 1;
     unsigned BJTleakBCemissionCoeffGiven : 1;
     unsigned BJTbaseResistGiven : 1;
     unsigned BJTbaseCurrentHalfResistGiven : 1;
@@ -668,14 +664,12 @@ enum {
     BJT_MOD_VAF,
     BJT_MOD_IKF,
     BJT_MOD_ISE,
-    BJT_MOD_C2,
     BJT_MOD_NE,
     BJT_MOD_BR,
     BJT_MOD_NR,
     BJT_MOD_VAR,
     BJT_MOD_IKR,
     BJT_MOD_ISC,
-    BJT_MOD_C4,
     BJT_MOD_NC,
     BJT_MOD_RB,
     BJT_MOD_IRB,
