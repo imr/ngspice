@@ -47,11 +47,11 @@ BJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if(!model->BJTsatCurGiven) {
             model->BJTsatCur = 1e-16;
         }
-        if(!model->BJTBEsatCurGiven) {
-            model->BJTBEsatCur = model->BJTsatCur;
+        if(!model->BJTBEsatCurGiven) { /* temp update will decide of IS usage */
+            model->BJTBEsatCur = 0.0;
         }
-        if(!model->BJTBCsatCurGiven) {
-            model->BJTBCsatCur = model->BJTsatCur;
+        if(!model->BJTBCsatCurGiven) { /* temp update will decide of IS usage */
+            model->BJTBCsatCur = 0.0;
         }
         if(!model->BJTbetaFGiven) {
             model->BJTbetaF = 100;
