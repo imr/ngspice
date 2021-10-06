@@ -173,7 +173,13 @@ BJTload(GENmodel *inModel, CKTcircuit *ckt)
              *   dc model paramters
              */
             csatbe=here->BJTBEtSatCur*here->BJTarea;
-            csatbc=here->BJTBCtSatCur*here->BJTarea;
+            if (model->BJTsubs == VERTICAL) {
+                csatbc=here->BJTBCtSatCur * here->BJTareab;
+                c4=here->BJTtBCleakCur * here->BJTareab;
+            } else {
+                csatbc=here->BJTBCtSatCur * here->BJTareac;
+                c4=here->BJTtBCleakCur * here->BJTareac;
+            }
             csubsat=here->BJTtSubSatCur*here->BJTarea;
             rbpr=here->BJTtminBaseResist/here->BJTarea;
             rbpi=here->BJTtbaseResist/here->BJTarea-rbpr;
@@ -183,10 +189,6 @@ BJTload(GENmodel *inModel, CKTcircuit *ckt)
             c2=here->BJTtBEleakCur*here->BJTarea;
             vte=here->BJTtleakBEemissionCoeff*vt;
             oikr=here->BJTtinvRollOffR/here->BJTarea;
-            if (model->BJTsubs == VERTICAL)
-                c4=here->BJTtBCleakCur * here->BJTareab;
-            else
-                c4=here->BJTtBCleakCur * here->BJTareac;
             vtc=here->BJTtleakBCemissionCoeff*vt;
             td=model->BJTexcessPhaseFactor;
             xjrb=here->BJTtbaseCurrentHalfResist*here->BJTarea;
