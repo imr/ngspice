@@ -100,8 +100,8 @@ check_adms()
     ($ADMSXML --version) < /dev/null > /dev/null 2>&1 || {
         echo
 	echo "You must have admsXml installed to compile adms models."
-	echo "See http://mot-adms.sourceforge.net"
-	echo "(newest stable release is recommended)"
+	echo "See https://sourceforge.net/projects/mot-adms/"
+	echo "(version 2.3.6, tested for ngspice under MINGW on MS Windows)"
         DIE=1
     }
 }
@@ -129,7 +129,7 @@ check_adms_va()
         if [ "$FOK" -eq 1 ]; then
             echo "Error: No *.va file found in $adms_dir/admsva"
             echo "Please download patch file ng-adms-va.tar.gz from"
-            echo "http://ngspice.sourceforge.net/experimental/ng-adms-va.tar.gz"
+            echo "http://ngspice.sourceforge.net/experimental/ngspice-adms-va.7z"
             echo "and expand it into the ngspice directory"
             echo
             DIE=1
