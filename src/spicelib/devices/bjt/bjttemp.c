@@ -149,15 +149,29 @@ BJTtemp(GENmodel *inModel, CKTcircuit *ckt)
                 if (model->BJTBEsatCurGiven) {
                     factor = exp(factlog / model->BJTemissionCoeffF);
                     here->BJTBEtSatCur = model->BJTBEsatCur * factor;
+                } else {
+                    here->BJTBEtSatCur = here->BJTtSatCur;
                 }
                 if (model->BJTBCsatCurGiven) {
                     factor = exp(factlog / model->BJTemissionCoeffR);
                     here->BJTBCtSatCur = model->BJTBCsatCur * factor;
+                } else {
+                    here->BJTBCtSatCur = here->BJTtSatCur;
                 }
                 if (model->BJTsubSatCurGiven)
                     here->BJTtSubSatCur = model->BJTsubSatCur * factor;
             } else if (model->BJTtlev == 3) {
                 here->BJTtSatCur = pow(model->BJTsatCur,(1+model->BJTtis1*dt+model->BJTtis2*dt*dt));
+                if (model->BJTBEsatCurGiven) {
+                    here->BJTBEtSatCur = pow(model->BJTBEsatCur,(1+model->BJTtis1*dt+model->BJTtis2*dt*dt));
+                } else {
+                    here->BJTBEtSatCur = here->BJTtSatCur;
+                }
+                if (model->BJTBCsatCurGiven) {
+                    here->BJTBCtSatCur = pow(model->BJTBCsatCur,(1+model->BJTtis1*dt+model->BJTtis2*dt*dt));
+                } else {
+                    here->BJTBCtSatCur = here->BJTtSatCur;
+                }
                 if (model->BJTsubSatCurGiven)
                     here->BJTtSubSatCur = pow(model->BJTsubSatCur,(1+model->BJTtiss1*dt+model->BJTtiss2*dt*dt));
             }
