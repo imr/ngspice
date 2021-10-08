@@ -8754,12 +8754,12 @@ static struct card *pspice_compat(struct card *oldcard)
 
     /* first scan: find the vswitch models, transform them and put them into a
      * list */
-
+    bool have_vt = FALSE, have_vh = FALSE;
     for (card = newcard; card; card = card->nextcard) {
-        char* str;
-        static struct card* subcktline = NULL;
+        char *str;
+        static struct card *subcktline = NULL;
         static int nesting = 0;
-        char* cut_line = card->line;
+        char *cut_line = card->line;
         if (ciprefix(".subckt", cut_line)) {
             subcktline = card;
             nesting++;
@@ -8768,11 +8768,9 @@ static struct card *pspice_compat(struct card *oldcard)
             nesting--;
 
         if (ciprefix(".model", card->line) && strstr(card->line, "vswitch")) {
-            /* roff ron voff von */
-            double s_values[4] = { 1e6, 1., 0., 1. }; /* default values */
-            /* roff ron vt vh */
-            double s_st_values[4] = { 1e12, 1., 0., 0. }; /* default values */
-            char* modname;
+            char *modpar[4];
+            char *modname;
+            int i;
 
             card->line = str = inp_remove_ws(card->line);
             str = nexttok(str); /* throw away '.model' */
@@ -8781,78 +8779,83 @@ static struct card *pspice_compat(struct card *oldcard)
                 tfree(modname);
                 continue;
             }
-            str = nexttok_noparens(str); /* throw away 'vswitch' */
-            /* the S_ST switch */
-            if (strstr(str, "vt=") || strstr(str, "vh=")) {
-                int error;
-                while (str) {
-                    char* token = gettok_noparens(&str);
-                    if (!token)
-                        break;
-                    char* ntoken = strchr(token, '=');
-                    if (!ntoken)
-                        break;
-                    ntoken++;
-                    double val = INPevaluate(&ntoken, &error, 0);
-                    if (ciprefix("roff=", token))
-                        s_st_values[0] = val;
-                    else if (ciprefix("ron=", token))
-                        s_st_values[1] = val;
-                    else if (ciprefix("vt=", token))
-                        s_st_values[2] = val;
-                    else if (ciprefix("vh=", token))
-                        s_st_values[3] = val;
-                    tfree(token);
-                }
-                char* newline = tprintf(".model %s sw (roff=%g ron=%g vt=%g vh=%g)", modname,
-                    s_st_values[0], s_st_values[1], s_st_values[2], s_st_values[3]);
-                tfree(card->line);
-                card->line = newline;
+            /* we have to find 4 parameters, identified by '=', separated by
+             * spaces */
+            char *equalptr[4];
+            equalptr[0] = strstr(str, "=");
+            if (!equalptr[0]) {
+                fprintf(stderr,
+                        "Error: not enough parameters in vswitch model\n   "
+                        "%s\n",
+                        card->line);
+                controlled_exit(1);
             }
-            /* the S switch */
-            else if (strstr(str, "von=") || strstr(str, "voff=")) {
-                int error;
-                while (str) {
-                    char* token = gettok_noparens(&str);
-                    if (!token)
-                        break;
-                    char* ntoken = strchr(token, '=');
-                    if (!ntoken)
-                        break;
-                    ntoken++;
-                    double val = INPevaluate(&ntoken, &error, 0);
-                    if (ciprefix("roff=", token))
-                        s_values[0] = val;
-                    else if (ciprefix("ron=", token))
-                        s_values[1] = val;
-                    else if (ciprefix("voff=", token))
-                        s_values[2] = val;
-                    else if (ciprefix("von=", token))
-                        s_values[3] = val;
-                    tfree(token);
+            for (i = 1; i < 4; i++) {
+                equalptr[i] = strstr(equalptr[i - 1] + 1, "=");
+                if (!equalptr[i]) {
+                    fprintf(stderr,
+                            "Error: not enough parameters in vswitch model\n "
+                            "  %s\n",
+                            card->line);
+                    controlled_exit(1);
                 }
-                /* replace VON by cntl_on, VOFF by cntl_off, RON by r_on, and ROFF by r_off */
-                char* newline = tprintf(".model a%s pswitch (r_off=%g r_on=%g cntl_off=%g cntl_on=%g  log=TRUE)", modname,
-                    s_values[0], s_values[1], s_values[2], s_values[3]);
-                tfree(card->line);
-                card->line = newline;
-                /* enter models into list only for code models */
-                if (nesting > 0)
-                    modelsfound = insert_new_model(
-                        modelsfound, modname, subcktline->line);
-                else
-                    modelsfound = insert_new_model(modelsfound, modname, "top");
+            }
+            for (i = 0; i < 4; i++) {
+                equalptr[i] = skip_back_ws(equalptr[i], str);
+                while (*(equalptr[i]) != '(' && !isspace_c(*(equalptr[i])) &&
+                        *(equalptr[i]) != ',')
+                    (equalptr[i])--;
+                (equalptr[i])++;
+            }
+            for (i = 0; i < 3; i++)
+                modpar[i] = copy_substring(equalptr[i], equalptr[i + 1] - 1);
+            if (strrchr(equalptr[3], ')'))
+                modpar[3] = copy_substring(
+                        equalptr[3], strrchr(equalptr[3], ')'));
+            else
+                /* vswitch defined without parens */
+                modpar[3] = copy(equalptr[3]);
+
+            /* check if we have parameters VT and VH */
+            for (i = 0; i < 4; i++) {
+                if (ciprefix("vh", modpar[i]))
+                    have_vh = TRUE;
+                if (ciprefix("vt", modpar[i]))
+                    have_vt = TRUE;
+            }
+            if (have_vh && have_vt) {
+                /* replace vswitch by sw */
+                char *vs = strstr(card->line, "vswitch");
+                memmove(vs, "     sw", 7);
             }
             else {
-                fprintf(stderr, "Error: Bad switch model in line %s\n", card->line);
+                /* replace VON by cntl_on, VOFF by cntl_off, RON by r_on, and
+                 * ROFF by r_off */
+                tfree(card->line);
+                rep_spar(modpar);
+                card->line = tprintf(
+//                        ".model a%s aswitch(%s %s %s %s  log=TRUE  limit=TRUE)", modname,
+//                        modpar[0], modpar[1], modpar[2], modpar[3]);
+                        ".model a%s pswitch(%s %s %s %s  log=TRUE)", modname,
+                        modpar[0], modpar[1], modpar[2], modpar[3]);
             }
-
+            for (i = 0; i < 4; i++)
+                tfree(modpar[i]);
+            if (nesting > 0)
+                modelsfound = insert_new_model(
+                        modelsfound, modname, subcktline->line);
+            else
+                modelsfound = insert_new_model(modelsfound, modname, "top");
             tfree(modname);
         }
     }
 
     /* no need to continue if no vswitch is found */
     if (!modelsfound)
+        goto iswi;
+
+    /* no need to change the switch instances if switch sw is used */
+    if (have_vh && have_vt)
         goto iswi;
 
     /* second scan: find the switch instances s calling a vswitch model and
