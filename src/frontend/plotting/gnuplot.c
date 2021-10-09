@@ -50,22 +50,225 @@ quote_gnuplot_string(FILE *stream, char *s)
 }
 
 
+static double **dmatrix(int nrow, int ncol)
+{
+    double **d;
+    int i;
+    if (nrow < 2 && ncol < 2) {
+        /* Who could want a 1x1 matrix? */
+        return NULL;
+    }
+    d = TMALLOC(double *, nrow);
+    for (i = 0; i < nrow; i++) {
+        d[i] = TMALLOC(double, ncol);
+    }
+    return d;
+}
+
+
+static void dmatrix_free(double **d, int nrow, int ncol)
+{
+    int i;
+    (void) ncol;
+    if (d && nrow > 1) {
+        for (i = 0; i < nrow; i++) {
+            tfree(d[i]);
+        }
+        tfree(d);
+    }
+}
+
+
+static bool has_contour_data(struct dvec *vecs)
+{
+    struct plot *curpl = NULL;
+    struct dvec *v = NULL, *xvec = NULL, *yvec = NULL;
+    int xdim, ydim, i, npoints;
+    bool len_mismatch = FALSE, wrong_type = FALSE;
+
+    if (!vecs) {
+        return FALSE;
+    }
+    curpl = vecs->v_plot;
+    if (!curpl) {
+        return FALSE;
+    }
+    xdim = curpl->pl_xdim2d;
+    ydim = curpl->pl_ydim2d;
+    if (xdim < 2 || ydim < 2) {
+        return FALSE;
+    }
+
+    for (v = vecs, i = 0; v; v = v->v_link2) {
+        i++;
+    }
+    if (i > 1) {
+        printf("Specify only one expr for an xycontour plot:");
+        for (v = vecs; v; v = v->v_link2) {
+            printf(" '%s'", v->v_name);
+        }
+        printf("\n");
+        return FALSE;
+    } else if (i < 1) {
+        return FALSE;
+    }
+    if (!(vecs->v_flags & VF_REAL)) {
+        wrong_type = TRUE;
+    }
+    npoints = xdim * ydim;
+    if (vecs->v_length != npoints) {
+        len_mismatch = TRUE;
+    }
+
+#ifdef VERBOSE_GNUPLOT
+    printf("curpl vecs:");
+    for (v = curpl->pl_dvecs; v; v = v->v_next) {
+        printf(" '%s'", v->v_name);
+    }
+    printf("\n");
+    printf("vecs:      ");
+    for (v = vecs; v; v = v->v_next) {
+        printf(" '%s'", v->v_name);
+    }
+    printf("\n");
+#endif
+
+    for (v = vecs; v; v = v->v_next) {
+        /* Find the x and y vectors from the last part of the list.
+           Passing by the the plotarg expr parsing elements at the front.
+        */
+        if (!(v->v_flags & VF_REAL)) {
+            /* Only real types allowed */
+            wrong_type = TRUE;
+        }
+        if (v->v_length != npoints) {
+            /* Assume length 1 is a constant number */
+            if (v->v_length != 1) {
+                len_mismatch = TRUE;
+            }
+        }
+        if (eq(v->v_name, "y")) {
+            yvec = v;
+            continue;
+        }
+        if (eq(v->v_name, "x")) {
+            xvec = v;
+        }
+    }
+    if (len_mismatch) {
+        printf("Vector lengths mismatch, ignoring xycontour\n");
+    }
+    if (wrong_type) {
+        printf("Non-real expr or constant, ignoring xycontour\n");
+    }
+    if (!xvec || !yvec || len_mismatch || wrong_type) {
+        return FALSE;
+    }
+    return TRUE;
+}
+
+
+/* Precondition: has_contour_data was called and returned TRUE */
+static int write_contour_data(FILE *filed, struct dvec *vecs)
+{
+    struct plot *curpl = NULL;
+    struct dvec *v = NULL, *xvec = NULL, *yvec = NULL;
+    int xdim, ydim, i, j, npoints, idx;
+    double *ycol;
+    double **zmat;
+
+    if (!filed || !vecs) {
+        return 1;
+    }
+    curpl = vecs->v_plot;
+    if (!curpl) {
+        return 1;
+    }
+    xdim = curpl->pl_xdim2d;
+    ydim = curpl->pl_ydim2d;
+    if (xdim < 2 || ydim < 2) {
+        return 1;
+    }
+
+    npoints = xdim * ydim;
+    for (v = vecs; v; v = v->v_next) {
+        /* Use the x and y vectors from the last part of the list. */
+        if (eq(v->v_name, "y")) {
+            yvec = v;
+            continue;
+        }
+        if (eq(v->v_name, "x")) {
+            xvec = v;
+        }
+    }
+    if (!xvec || !yvec) {
+        return 1;
+    }
+
+    /* First output row has the x vector values */
+    fprintf(filed, "%d", xdim);
+    for (i = 0, j = 0; i < xdim; j += ydim) {
+        if (j >= xvec->v_length) {
+            return 1;
+        }
+        fprintf(filed, " %e", 1.0e6 * xvec->v_realdata[j]);
+        i++;
+    }
+    fprintf(filed, "\n");
+
+    ycol = TMALLOC(double, ydim);
+    for (i = 0; i < ydim; i++) {
+        ycol[i] = 1.0e6 * yvec->v_realdata[i];
+    }
+    zmat = dmatrix(ydim, xdim);
+    idx = 0;
+    for (i = 0; i < xdim; i++) {
+        for (j = 0; j < ydim; j++) {
+            zmat[j][i] = vecs->v_realdata[idx];
+            idx++;
+        }
+    }
+    if (idx != npoints) {
+        tfree(ycol);
+        dmatrix_free(zmat, ydim, xdim);
+        return 1;
+    }
+
+    /* Subsequent output rows have a y vector value and the z matrix
+       values corresponding to that y vector. There is a z matrix value
+       for each x vector column.
+    */
+    for (i = 0; i < ydim; i++) {
+        fprintf(filed, "%e", ycol[i]);
+        for (j = 0; j < xdim; j++) {
+            fprintf(filed, " %e", zmat[i][j]);
+        }
+        fprintf(filed, "\n");
+    }
+
+    tfree(ycol);
+    dmatrix_free(zmat, ydim, xdim);
+    return 0;
+}
+
+
 void ft_gnuplot(double *xlims, double *ylims,
         double xdel, double ydel,
         const char *filename, const char *title,
         const char *xlabel, const char *ylabel,
         GRIDTYPE gridtype, PLOTTYPE plottype,
-        struct dvec *vecs)
+        struct dvec *vecs, bool xycontour)
 {
     FILE *file, *file_data;
     struct dvec *v, *scale = NULL;
     double xval, yval, prev_xval, extrange;
     int i, dir, numVecs, linewidth, gridlinewidth, err, terminal_type;
-    bool xlog, ylog, nogrid, markers, nolegend;
+    bool xlog, ylog, nogrid, markers, nolegend, contours = FALSE;
     char buf[BSIZE_SP], pointstyle[BSIZE_SP], *text, plotstyle[BSIZE_SP], terminal[BSIZE_SP];
 
     char filename_data[128];
     char filename_plt[128];
+    char *vtypename = NULL;
 
 #ifdef SHARED_MODULE
     char* llocale = setlocale(LC_NUMERIC, NULL);
@@ -90,6 +293,10 @@ void ft_gnuplot(double *xlims, double *ylims,
         fprintf(cp_err, "Error: range min ... max too small for using gnuplot.\n");
         fprintf(cp_err, "  Consider plotting with offset %g.\n", ylims[0]);
         return;
+    }
+
+    if (xycontour) {
+        contours = has_contour_data(vecs);
     }
 
     extrange = 0.05 * (ylims[1] - ylims[0]);
@@ -190,86 +397,104 @@ void ft_gnuplot(double *xlims, double *ylims,
 #endif
     fprintf(file, "set termoption noenhanced\n");
 #endif
-    if (title) {
-        text = cp_unquote(title);
-        fprintf(file, "set title ");
-        quote_gnuplot_string(file, text);
-        fprintf(file, "\n");
-        tfree(text);
-    }
-    if (xlabel) {
-        text = cp_unquote(xlabel);
-        fprintf(file, "set xlabel ");
-        quote_gnuplot_string(file, text);
-        fprintf(file, "\n");
-        tfree(text);
-    }
-    if (ylabel) {
-        text = cp_unquote(ylabel);
-        fprintf(file, "set ylabel ");
-        quote_gnuplot_string(file, text);
-        fprintf(file, "\n");
-        tfree(text);
-    }
-    if (!nogrid) {
-        if (gridlinewidth > 1)
-            fprintf(file, "set grid lw %d \n" , gridlinewidth);
-        else
-            fprintf(file, "set grid\n");
-    }
-    if (xlog) {
-        fprintf(file, "set logscale x\n");
-        if (xlims)
-            fprintf(file, "set xrange [%1.0e:%1.0e]\n", 
-                pow(10, floor(log10(xlims[0]))), pow(10, ceil(log10(xlims[1]))));
-        fprintf(file, "set mxtics 10\n");
-        fprintf(file, "set grid mxtics\n");
-    } else {
-        fprintf(file, "unset logscale x \n");
-        if (xlims)
-            fprintf(file, "set xrange [%e:%e]\n", xlims[0], xlims[1]);
-    }
-    if (ylog) {
-        fprintf(file, "set logscale y \n");
-        if (ylims)
-            fprintf(file, "set yrange [%1.0e:%1.0e]\n", 
-                pow(10, floor(log10(ylims[0]))), pow(10, ceil(log10(ylims[1]))));
-        fprintf(file, "set mytics 10\n");
-        fprintf(file, "set grid mytics\n");
-    } else {
-        fprintf(file, "unset logscale y \n");
-        if (ylims)
-            fprintf(file, "set yrange [%e:%e]\n", ylims[0] - extrange, ylims[1] + extrange);
-    }
-
-    if (xdel > 0.)
-        fprintf(file, "set xtics %e\n", xdel);
-    else
-        fprintf(file, "#set xtics 1\n");
-    fprintf(file, "#set x2tics 1\n");
-    if (ydel > 0.)
-        fprintf(file, "set ytics %e\n", ydel);
-    else
-        fprintf(file, "#set ytics 1\n");
-    fprintf(file, "#set y2tics 1\n");
-
-    if (gridlinewidth > 1)
-        fprintf(file, "set border lw %d\n", gridlinewidth);
-
-    if(nolegend)
-        fprintf(file, "set key off\n");
-
-    if (plottype == PLOT_COMB) {
-        strcpy(plotstyle, "boxes");
-    } else if (plottype == PLOT_POINT) {
-        if (markers) {
-            // fprintf(file, "Markers: True\n");
+    if (contours) {
+        fprintf(file, "set view map\n");
+        fprintf(file, "set contour\n");
+        fprintf(file, "unset surface\n");
+        fprintf(file, "set cntrparam levels 20\n");
+        fprintf(file, "set xlabel 'X microns'\n");
+        fprintf(file, "set ylabel 'Y microns'\n");
+        fprintf(file, "set key outside right\n");
+        fprintf(file, "set title '%s - %s", vecs->v_plot->pl_title,
+            vecs->v_name);
+        vtypename = ft_typabbrev(vecs->v_type);
+        if (vtypename) {
+            fprintf(file, " %s'\n", vtypename);
         } else {
-            // fprintf(file, "LargePixels: True\n");
+            fprintf(file, "'\n");
         }
-        strcpy(plotstyle, "points");
     } else {
-        strcpy(plotstyle, "lines");
+        if (title) {
+            text = cp_unquote(title);
+            fprintf(file, "set title ");
+            quote_gnuplot_string(file, text);
+            fprintf(file, "\n");
+            tfree(text);
+        }
+        if (xlabel) {
+            text = cp_unquote(xlabel);
+            fprintf(file, "set xlabel ");
+            quote_gnuplot_string(file, text);
+            fprintf(file, "\n");
+            tfree(text);
+        }
+        if (ylabel) {
+            text = cp_unquote(ylabel);
+            fprintf(file, "set ylabel ");
+            quote_gnuplot_string(file, text);
+            fprintf(file, "\n");
+            tfree(text);
+        }
+        if (!nogrid) {
+            if (gridlinewidth > 1)
+                fprintf(file, "set grid lw %d \n" , gridlinewidth);
+            else
+                fprintf(file, "set grid\n");
+        }
+        if (xlog) {
+            fprintf(file, "set logscale x\n");
+            if (xlims)
+                fprintf(file, "set xrange [%1.0e:%1.0e]\n", 
+                    pow(10, floor(log10(xlims[0]))), pow(10, ceil(log10(xlims[1]))));
+            fprintf(file, "set mxtics 10\n");
+            fprintf(file, "set grid mxtics\n");
+        } else {
+            fprintf(file, "unset logscale x \n");
+            if (xlims)
+                fprintf(file, "set xrange [%e:%e]\n", xlims[0], xlims[1]);
+        }
+        if (ylog) {
+            fprintf(file, "set logscale y \n");
+            if (ylims)
+                fprintf(file, "set yrange [%1.0e:%1.0e]\n", 
+                    pow(10, floor(log10(ylims[0]))), pow(10, ceil(log10(ylims[1]))));
+            fprintf(file, "set mytics 10\n");
+            fprintf(file, "set grid mytics\n");
+        } else {
+            fprintf(file, "unset logscale y \n");
+            if (ylims)
+                fprintf(file, "set yrange [%e:%e]\n", ylims[0] - extrange, ylims[1] + extrange);
+        }
+
+        if (xdel > 0.)
+            fprintf(file, "set xtics %e\n", xdel);
+        else
+            fprintf(file, "#set xtics 1\n");
+        fprintf(file, "#set x2tics 1\n");
+        if (ydel > 0.)
+            fprintf(file, "set ytics %e\n", ydel);
+        else
+            fprintf(file, "#set ytics 1\n");
+        fprintf(file, "#set y2tics 1\n");
+
+        if (gridlinewidth > 1)
+            fprintf(file, "set border lw %d\n", gridlinewidth);
+
+        if(nolegend)
+            fprintf(file, "set key off\n");
+
+        if (plottype == PLOT_COMB) {
+            strcpy(plotstyle, "boxes");
+        } else if (plottype == PLOT_POINT) {
+            if (markers) {
+                // fprintf(file, "Markers: True\n");
+            } else {
+                // fprintf(file, "LargePixels: True\n");
+            }
+            strcpy(plotstyle, "points");
+        } else {
+            strcpy(plotstyle, "lines");
+        }
     }
 
     /* Open the output gnuplot data file. */
@@ -277,25 +502,33 @@ void ft_gnuplot(double *xlims, double *ylims,
         perror(filename);
         return;
     }
-    fprintf(file, "set format y \"%%g\"\n");
-    fprintf(file, "set format x \"%%g\"\n");
-
-    if ((terminal_type != 3) && (terminal_type != 5)) {
-        fprintf(file, "plot ");
-        i = 0;
-
-        /* Write out the gnuplot command */
-        for (v = vecs; v; v = v->v_link2) {
-            scale = v->v_scale;
-            if (v->v_name) {
-                i = i + 2;
-                if (i > 2) fprintf(file, ",\\\n");
-                fprintf(file, "\'%s\' using %d:%d with %s lw %d title ",
-                    filename_data, i - 1, i, plotstyle, linewidth);
-                quote_gnuplot_string(file, v->v_name);
-            }
+    if (contours) {
+        if ((terminal_type != 3) && (terminal_type != 5)) {
+            fprintf(file,
+            "splot '%s' nonuniform matrix using 1:2:3 with lines lw 2 "
+            "title ' '\n", filename_data);
         }
-        fprintf(file, "\n");
+    } else {
+        fprintf(file, "set format y \"%%g\"\n");
+        fprintf(file, "set format x \"%%g\"\n");
+
+        if ((terminal_type != 3) && (terminal_type != 5)) {
+            fprintf(file, "plot ");
+            i = 0;
+
+            /* Write out the gnuplot command */
+            for (v = vecs; v; v = v->v_link2) {
+                scale = v->v_scale;
+                if (v->v_name) {
+                    i = i + 2;
+                    if (i > 2) fprintf(file, ",\\\n");
+                    fprintf(file, "\'%s\' using %d:%d with %s lw %d title ",
+                        filename_data, i - 1, i, plotstyle, linewidth);
+                    quote_gnuplot_string(file, v->v_name);
+                }
+            }
+            fprintf(file, "\n");
+        }
     }
 
     /* terminal_type
@@ -321,60 +554,77 @@ void ft_gnuplot(double *xlims, double *ylims,
         fprintf(file, "replot\n");
     }
 
-    if ((terminal_type == 3) || (terminal_type == 5)) {
-        fprintf(file, "plot ");
-        i = 0;
-
-        /* Write out the gnuplot command */
-        for (v = vecs; v; v = v->v_link2) {
-            scale = v->v_scale;
-            if (v->v_name) {
-                i = i + 2;
-                if (i > 2) fprintf(file, ",\\\n");
-                fprintf(file, "\'%s\' using %d:%d with %s lw %d title ",
-                    filename_data, i - 1, i, plotstyle, linewidth);
-                quote_gnuplot_string(file, v->v_name);
-            }
+    if (contours) {
+        if ((terminal_type == 3) || (terminal_type == 5)) {
+            fprintf(file,
+            "splot '%s' nonuniform matrix using 1:2:3 with lines lw 2 "
+            "title ' '\n", filename_data);
+            fprintf(file, "exit\n");
         }
-        fprintf(file, "\n");
-        fprintf(file, "exit\n");
+    } else {
+        if ((terminal_type == 3) || (terminal_type == 5)) {
+            fprintf(file, "plot ");
+            i = 0;
+
+            /* Write out the gnuplot command */
+            for (v = vecs; v; v = v->v_link2) {
+                scale = v->v_scale;
+                if (v->v_name) {
+                    i = i + 2;
+                    if (i > 2) fprintf(file, ",\\\n");
+                    fprintf(file, "\'%s\' using %d:%d with %s lw %d title ",
+                        filename_data, i - 1, i, plotstyle, linewidth);
+                    quote_gnuplot_string(file, v->v_name);
+                }
+            }
+            fprintf(file, "\n");
+            fprintf(file, "exit\n");
+        }
     }
 
 
 
     (void) fclose(file);
 
-    /* Write out the data and setup arrays */
-    bool mono = (plottype != PLOT_RETLIN);
-    dir = 0;
-    prev_xval = NAN;
-    for (i = 0; i < scale->v_length; i++) {
-        for (v = vecs; v; v = v->v_link2) {
-            scale = v->v_scale;
-
-            xval = isreal(scale) ?
-                   scale->v_realdata[i] : realpart(scale->v_compdata[i]);
-
-            yval = isreal(v) ?
-                   v->v_realdata[i] : realpart(v->v_compdata[i]);
-
-            if (i > 0 && (mono || (scale->v_plot && scale->v_plot->pl_scale == scale))) {
-                if (dir * (xval - prev_xval) < 0) {
-                    /* direction reversal, start a new graph */
-                    fprintf(file_data, "\n");
-                    dir = 0;
-                } else if (!dir && xval > prev_xval) {
-                    dir = 1;
-                } else if (!dir && xval < prev_xval) {
-                    dir = -1;
-                }
-            }
-
-            fprintf(file_data, "%e %e ", xval, yval);
-
-            prev_xval = xval;
+    if (contours) {
+        if (write_contour_data(file_data, vecs) != 0) {
+            fprintf(stderr, "Error when writing contour data file\n");
+            (void) fclose(file_data);
+            return;
         }
-        fprintf(file_data, "\n");
+    } else {
+        /* Write out the data and setup arrays */
+        bool mono = (plottype != PLOT_RETLIN);
+        dir = 0;
+        prev_xval = NAN;
+        for (i = 0; i < scale->v_length; i++) {
+            for (v = vecs; v; v = v->v_link2) {
+                scale = v->v_scale;
+
+                xval = isreal(scale) ?
+                       scale->v_realdata[i] : realpart(scale->v_compdata[i]);
+
+                yval = isreal(v) ?
+                       v->v_realdata[i] : realpart(v->v_compdata[i]);
+
+                if (i > 0 && (mono || (scale->v_plot && scale->v_plot->pl_scale == scale))) {
+                    if (dir * (xval - prev_xval) < 0) {
+                        /* direction reversal, start a new graph */
+                        fprintf(file_data, "\n");
+                        dir = 0;
+                    } else if (!dir && xval > prev_xval) {
+                        dir = 1;
+                    } else if (!dir && xval < prev_xval) {
+                        dir = -1;
+                    }
+                }
+
+                fprintf(file_data, "%e %e ", xval, yval);
+
+                prev_xval = xval;
+            }
+            fprintf(file_data, "\n");
+        }
     }
 
     (void) fclose(file_data);

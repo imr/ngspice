@@ -390,6 +390,8 @@ raw_read(char *name) {
             if (!title)
                 title = copy("default title");
             curpl->pl_title = title;
+            curpl->pl_xdim2d = -1;
+            curpl->pl_ydim2d = -1;
             date = NULL;
             title = NULL;
             flags = VF_PERMANENT;
@@ -606,6 +608,14 @@ raw_read(char *name) {
                 }
             }
 
+            if ((numdims == 2) && (flags & VF_REAL) &&
+                    eq(curpl->pl_name, "Device Cross Section")) {
+                if ((dims[0] > 1) && (dims[1] > 1) &&
+                        (npoints == dims[0] * dims[1])) {
+                    curpl->pl_xdim2d = dims[0];
+                    curpl->pl_ydim2d = dims[1];
+                }
+            }
             if ((*buf == 'v') || (*buf == 'V'))
                 is_ascii = TRUE;
             else

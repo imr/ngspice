@@ -25,6 +25,8 @@ struct plot {
     bool pl_written;		/* Some or all of the vecs have been saved. */
     bool pl_lookup_valid;	/* vector lookup table valid */
     int pl_ndims;		/* Number of dimensions */
+    int pl_xdim2d;		/* 2D Cider plot x dimension */
+    int pl_ydim2d;		/* 2D Cider plot y dimension */
 } ;
 
 
