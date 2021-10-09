@@ -287,7 +287,7 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
     static GRIDTYPE gtype = GRID_LIN;
     static PLOTTYPE ptype = PLOT_LIN;
 
-    bool gfound = FALSE, pfound = FALSE, oneval = FALSE;
+    bool gfound = FALSE, pfound = FALSE, oneval = FALSE, contour2d = FALSE;
     double ylims[2], xlims[2];
     struct pnode *pn, *names = NULL;
     struct dvec *d = NULL, *vecs = NULL, *lv = NULL, *lastvs = NULL;
@@ -361,6 +361,8 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
         goto quit1;
     }
 
+    /* See if contours for 2D Cider data can be plotted with gnuplot */
+    contour2d = getflag(wl, "xycontour");
 
     /* Now extract all the parameters. */
     sameflag = getflag(wl, "samep");
@@ -1149,7 +1151,7 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
                    title ? title : vecs->v_plot->pl_title,
                    xlabel ? xlabel : ft_typabbrev(vecs->v_scale->v_type),
                    ylabel ? ylabel : ft_typabbrev(y_type),
-                   gtype, ptype, vecs);
+                   gtype, ptype, vecs, contour2d);
         rtn = TRUE;
         goto quit;
     }
