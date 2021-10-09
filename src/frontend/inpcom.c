@@ -8077,62 +8077,6 @@ static struct card *ako_model(struct card *startcard)
     return returncard;
 }
 
-/* in       out
-   von      cntl_on
-   voff     cntl_off
-   ron      r_on
-   roff     r_off
-*/
-static int rep_spar(char *inpar[4])
-{
-    int i;
-    for (i = 0; i < 4; i++) {
-        char *t, *strend;
-        char *tok = inpar[i];
-        if ((t = strstr(tok, "von")) != NULL) {
-            strend = copy(t + 1);
-            tfree(inpar[i]);
-            inpar[i] = tprintf("cntl_%s", strend);
-            tfree(strend);
-        }
-        else if ((t = strstr(tok, "voff")) != NULL) {
-            strend = copy(t + 1);
-            tfree(inpar[i]);
-            inpar[i] = tprintf("cntl_%s", strend);
-            tfree(strend);
-        }
-        else if ((t = strstr(tok, "ion")) != NULL) {
-            strend = copy(t + 1);
-            tfree(inpar[i]);
-            inpar[i] = tprintf("cntl_%s", strend);
-            tfree(strend);
-        }
-        else if ((t = strstr(tok, "ioff")) != NULL) {
-            strend = copy(t + 1);
-            tfree(inpar[i]);
-            inpar[i] = tprintf("cntl_%s", strend);
-            tfree(strend);
-        }
-        else if ((t = strstr(tok, "ron")) != NULL) {
-            strend = copy(t + 1);
-            tfree(inpar[i]);
-            inpar[i] = tprintf("r_%s", strend);
-            tfree(strend);
-        }
-        else if ((t = strstr(tok, "roff")) != NULL) {
-            strend = copy(t + 1);
-            tfree(inpar[i]);
-            inpar[i] = tprintf("r_%s", strend);
-            tfree(strend);
-        }
-        else {
-            fprintf(stderr, "Bad vswitch parameter %s\n", tok);
-            return 1;
-        }
-    }
-    return 0;
-}
-
 struct vsmodels {
     char *modelname;
     char *subcktline;
@@ -8752,9 +8696,8 @@ static struct card *pspice_compat(struct card *oldcard)
 
      * simple hierachy, as nested subcircuits are not allowed in PSPICE */
 
-    /* first scan: find the vswitch models, transform them and put them into a
-     * list */
-    bool have_vt = FALSE, have_vh = FALSE;
+    /* first scan: find the vswitch models, transform them and put the S models
+       into a list */
     for (card = newcard; card; card = card->nextcard) {
         char *str;
         static struct card *subcktline = NULL;
@@ -8768,94 +8711,132 @@ static struct card *pspice_compat(struct card *oldcard)
             nesting--;
 
         if (ciprefix(".model", card->line) && strstr(card->line, "vswitch")) {
-            char *modpar[4];
             char *modname;
-            int i;
 
-            card->line = str = inp_remove_ws(card->line);
+            str = card->line = inp_remove_ws(card->line);
             str = nexttok(str); /* throw away '.model' */
             INPgetNetTok(&str, &modname, 0); /* model name */
             if (!ciprefix("vswitch", str)) {
                 tfree(modname);
                 continue;
             }
-            /* we have to find 4 parameters, identified by '=', separated by
-             * spaces */
-            char *equalptr[4];
-            equalptr[0] = strstr(str, "=");
-            if (!equalptr[0]) {
-                fprintf(stderr,
-                        "Error: not enough parameters in vswitch model\n   "
-                        "%s\n",
-                        card->line);
-                controlled_exit(1);
-            }
-            for (i = 1; i < 4; i++) {
-                equalptr[i] = strstr(equalptr[i - 1] + 1, "=");
-                if (!equalptr[i]) {
-                    fprintf(stderr,
-                            "Error: not enough parameters in vswitch model\n "
-                            "  %s\n",
-                            card->line);
-                    controlled_exit(1);
+            str = nexttok_noparens(str); /* throw away 'vswitch' */
+            /* S_ST switch (parameters ron, roff, vt, vh)
+             * we have to find 0 to 4 parameters, identified by 'vh=' etc.
+             * Parameters not found have to be replaced by their default values. */
+            if (strstr(str, "vt=") || strstr(str, "vh=")) {
+                char* newstr;
+                char* lstr = copy(str);
+                char* partstr = strstr(lstr, "ron=");
+                if (!partstr) {
+                    newstr = tprintf("%s %s", "ron=1.0", lstr);  //default value
+                    tfree(lstr);
+                    lstr = newstr;
                 }
+                partstr = strstr(lstr, "roff=");
+                if (!partstr) {
+                    newstr = tprintf("%s %s", "roff=1.0e12", lstr);  //default value
+                    tfree(lstr);
+                    lstr = newstr;
+                }
+                partstr = strstr(lstr, "vt=");
+                if (!partstr) {
+                    newstr = tprintf("%s %s", "vt=0", lstr);  //default value
+                    tfree(lstr);
+                    lstr = newstr;
+                }
+                partstr = strstr(lstr, "vh=");
+                if (!partstr) {
+                    newstr = tprintf("%s %s", "vh=0", lstr);  //default value
+                    tfree(lstr);
+                    lstr = newstr;
+                }
+                tfree(card->line);
+                if (lstr[strlen(lstr) - 1] == ')')
+                    card->line = tprintf(".model %s sw ( %s", modname, lstr);
+                else
+                    card->line = tprintf(".model %s sw %s", modname, lstr);
+                tfree(lstr);
+                tfree(modname);
             }
-            for (i = 0; i < 4; i++) {
-                equalptr[i] = skip_back_ws(equalptr[i], str);
-                while (*(equalptr[i]) != '(' && !isspace_c(*(equalptr[i])) &&
-                        *(equalptr[i]) != ',')
-                    (equalptr[i])--;
-                (equalptr[i])++;
-            }
-            for (i = 0; i < 3; i++)
-                modpar[i] = copy_substring(equalptr[i], equalptr[i + 1] - 1);
-            if (strrchr(equalptr[3], ')'))
-                modpar[3] = copy_substring(
-                        equalptr[3], strrchr(equalptr[3], ')'));
-            else
-                /* vswitch defined without parens */
-                modpar[3] = copy(equalptr[3]);
-
-            /* check if we have parameters VT and VH */
-            for (i = 0; i < 4; i++) {
-                if (ciprefix("vh", modpar[i]))
-                    have_vh = TRUE;
-                if (ciprefix("vt", modpar[i]))
-                    have_vt = TRUE;
-            }
-            if (have_vh && have_vt) {
-                /* replace vswitch by sw */
-                char *vs = strstr(card->line, "vswitch");
-                memmove(vs, "     sw", 7);
+            /* S vswitch  (parameters ron, roff, von, voff) */
+            /* We have to find 0 to 4 parameters, identified by 'von=' etc. and
+             * replace them by the pswitch code model parameters
+             * replace VON by cntl_on, VOFF by cntl_off, RON by r_on, and ROFF by r_off.
+             * Parameters not found have to be replaced by their default values. */
+            else if (strstr(str, "von=") || strstr(str, "voff=")) {
+                char* newstr, *begstr;
+                char* lstr = copy(str);
+                /* ron */
+                char* partstr = strstr(lstr, "ron=");
+                if (!partstr) {
+                    newstr = tprintf("%s %s", "r_on=1.0", lstr);  //default value
+                }
+                else {
+                    begstr = copy_substring(lstr, partstr);
+                    newstr = tprintf("%s r_on%s", begstr, partstr + 3);
+                }
+                tfree(lstr);
+                lstr = newstr;
+                /* roff */
+                partstr = strstr(lstr, "roff=");
+                if (!partstr) {
+                    newstr = tprintf("%s %s", "r_off=1.0e6", lstr);  //default value
+                }
+                else {
+                    begstr = copy_substring(lstr, partstr);
+                    newstr = tprintf("%s r_off%s", begstr, partstr + 4);
+                }
+                tfree(lstr);
+                lstr = newstr;
+                /* von */
+                partstr = strstr(lstr, "von=");
+                if (!partstr) {
+                    newstr = tprintf("%s %s", "cntl_on=1", lstr);  //default value
+                    tfree(lstr);
+                    lstr = newstr;
+                }
+                else {
+                    begstr = copy_substring(lstr, partstr);
+                    newstr = tprintf("%s cntl_on%s", begstr, partstr + 3);
+                }
+                tfree(lstr);
+                lstr = newstr;
+                /* voff */
+                partstr = strstr(lstr, "voff=");
+                if (!partstr) {
+                    newstr = tprintf("%s %s", "cntl_off=0", lstr);  //default value
+                    tfree(lstr);
+                    lstr = newstr;
+                }
+                else {
+                    begstr = copy_substring(lstr, partstr);
+                    newstr = tprintf("%s cntl_off%s", begstr, partstr + 4);
+                }
+                tfree(lstr);
+                lstr = newstr;
+                tfree(card->line);
+                if (lstr[strlen(lstr) - 1] == ')')
+                    card->line = tprintf(".model a%s pswitch( log=TRUE %s", modname, lstr);
+                else
+                    card->line = tprintf(".model a%s pswitch(%s log=TRUE)", modname, lstr);
+                tfree(lstr);
+                /* add to list, to change vswitch instance to code model line */
+                if (nesting > 0)
+                    modelsfound = insert_new_model(
+                        modelsfound, modname, subcktline->line);
+                else
+                    modelsfound = insert_new_model(modelsfound, modname, "top");
+                tfree(modname);
             }
             else {
-                /* replace VON by cntl_on, VOFF by cntl_off, RON by r_on, and
-                 * ROFF by r_off */
-                tfree(card->line);
-                rep_spar(modpar);
-                card->line = tprintf(
-//                        ".model a%s aswitch(%s %s %s %s  log=TRUE  limit=TRUE)", modname,
-//                        modpar[0], modpar[1], modpar[2], modpar[3]);
-                        ".model a%s pswitch(%s %s %s %s  log=TRUE)", modname,
-                        modpar[0], modpar[1], modpar[2], modpar[3]);
+                fprintf(stderr, "Error: Bad switch model in line %s\n", card->line);
             }
-            for (i = 0; i < 4; i++)
-                tfree(modpar[i]);
-            if (nesting > 0)
-                modelsfound = insert_new_model(
-                        modelsfound, modname, subcktline->line);
-            else
-                modelsfound = insert_new_model(modelsfound, modname, "top");
-            tfree(modname);
         }
     }
 
     /* no need to continue if no vswitch is found */
     if (!modelsfound)
-        goto iswi;
-
-    /* no need to change the switch instances if switch sw is used */
-    if (have_vh && have_vt)
         goto iswi;
 
     /* second scan: find the switch instances s calling a vswitch model and
@@ -8939,7 +8920,6 @@ iswi:;
 
      /* first scan: find the iswitch models, transform them and put them into a
       * list */
-    bool have_it = FALSE, have_ih = FALSE;
     for (card = newcard; card; card = card->nextcard) {
         char* str;
         static struct card* subcktline = NULL;
@@ -8953,9 +8933,7 @@ iswi:;
             nesting--;
 
         if (ciprefix(".model", card->line) && strstr(card->line, "iswitch")) {
-            char* modpar[4];
             char* modname;
-            int i;
 
             card->line = str = inp_remove_ws(card->line);
             str = nexttok(str); /* throw away '.model' */
@@ -8964,6 +8942,122 @@ iswi:;
                 tfree(modname);
                 continue;
             }
+            str = nexttok_noparens(str); /* throw away 'iswitch' */
+            /* S_ST switch (parameters ron, roff, it, ih)
+             * we have to find 0 to 4 parameters, identified by 'ih=' etc.
+             * Parameters not found have to be replaced by their default values. */
+            if (strstr(str, "it=") || strstr(str, "ih=")) {
+                char* newstr;
+                char* lstr = copy(str);
+                char* partstr = strstr(lstr, "ron=");
+                if (!partstr) {
+                    newstr = tprintf("%s %s", "ron=1.0", lstr);  //default value
+                    tfree(lstr);
+                    lstr = newstr;
+                }
+                partstr = strstr(lstr, "roff=");
+                if (!partstr) {
+                    newstr = tprintf("%s %s", "roff=1.0e12", lstr);  //default value
+                    tfree(lstr);
+                    lstr = newstr;
+                }
+                partstr = strstr(lstr, "it=");
+                if (!partstr) {
+                    newstr = tprintf("%s %s", "it=0", lstr);  //default value
+                    tfree(lstr);
+                    lstr = newstr;
+                }
+                partstr = strstr(lstr, "ih=");
+                if (!partstr) {
+                    newstr = tprintf("%s %s", "ih=0", lstr);  //default value
+                    tfree(lstr);
+                    lstr = newstr;
+                }
+                tfree(card->line);
+                if (lstr[strlen(lstr) - 1] == ')')
+                    card->line = tprintf(".model %s csw ( %s", modname, lstr);
+                else
+                    card->line = tprintf(".model %s csw %s", modname, lstr);
+                tfree(lstr);
+                tfree(modname);
+            }
+            /* S vswitch  (parameters ron, roff, ion, ioff) */
+            /* We have to find 0 to 4 parameters, identified by 'ion=' etc. and
+             * replace them by the pswitch code model parameters
+             * replace VON by cntl_on, VOFF by cntl_off, RON by r_on, and ROFF by r_off.
+             * Parameters not found have to be replaced by their default values. */
+            else if (strstr(str, "ion=") || strstr(str, "ioff=")) {
+                char* newstr, * begstr;
+                char* lstr = copy(str);
+                /* ron */
+                char* partstr = strstr(lstr, "ron=");
+                if (!partstr) {
+                    newstr = tprintf("%s %s", "r_on=1.0", lstr);  //default value
+                }
+                else {
+                    begstr = copy_substring(lstr, partstr);
+                    newstr = tprintf("%s r_on%s", begstr, partstr + 3);
+                }
+                tfree(lstr);
+                lstr = newstr;
+                /* roff */
+                partstr = strstr(lstr, "roff=");
+                if (!partstr) {
+                    newstr = tprintf("%s %s", "r_off=1.0e6", lstr);  //default value
+                }
+                else {
+                    begstr = copy_substring(lstr, partstr);
+                    newstr = tprintf("%s r_off%s", begstr, partstr + 4);
+                }
+                tfree(lstr);
+                lstr = newstr;
+                /* von */
+                partstr = strstr(lstr, "ion=");
+                if (!partstr) {
+                    newstr = tprintf("%s %s", "cntl_on=1", lstr);  //default value
+                    tfree(lstr);
+                    lstr = newstr;
+                }
+                else {
+                    begstr = copy_substring(lstr, partstr);
+                    newstr = tprintf("%s cntl_on%s", begstr, partstr + 3);
+                }
+                tfree(lstr);
+                lstr = newstr;
+                /* voff */
+                partstr = strstr(lstr, "ioff=");
+                if (!partstr) {
+                    newstr = tprintf("%s %s", "cntl_off=0", lstr);  //default value
+                    tfree(lstr);
+                    lstr = newstr;
+                }
+                else {
+                    begstr = copy_substring(lstr, partstr);
+                    newstr = tprintf("%s cntl_off%s", begstr, partstr + 4);
+                }
+                tfree(lstr);
+                lstr = newstr;
+                tfree(card->line);
+                if (lstr[strlen(lstr) - 1] == ')')
+                    card->line = tprintf(".model a%s aswitch( log=TRUE limit=TRUE %s", modname, lstr);
+                else
+                    card->line = tprintf(".model a%s aswitch(%s log=TRUE limit=TRUE)", modname, lstr);
+                tfree(lstr);
+                /* add to list, to change vswitch instance to code model line */
+                if (nesting > 0)
+                    modelsfound = insert_new_model(
+                        modelsfound, modname, subcktline->line);
+                else
+                    modelsfound = insert_new_model(modelsfound, modname, "top");
+                tfree(modname);
+            }
+            else {
+                fprintf(stderr, "Error: Bad switch model in line %s\n", card->line);
+            }
+        }
+    }
+
+#if(0)
             /* we have to find 4 parameters, identified by '=', separated by
              * spaces */
             char* equalptr[4];
@@ -9033,13 +9127,9 @@ iswi:;
             tfree(modname);
         }
     }
-
+#endif
     /* no need to continue if no iswitch is found */
     if (!modelsfound)
-        return newcard;
-
-    /* no need to change the switch instances if switch csw is used */
-    if (have_ih && have_it)
         return newcard;
 
     /* second scan: find the switch instances s calling an iswitch model and
