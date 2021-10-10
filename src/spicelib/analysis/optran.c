@@ -166,6 +166,10 @@ void com_optran(wordlist* wl) {
         fprintf(stderr, "Error: Ramp time larger than final time.\n");
         goto bugquit;
     }
+    /* optran deselected by setting opstepsize to 0 */
+    if (opstepsize == 0)
+        nooptran = TRUE;
+
     dataset = TRUE;
     if (errno == 0)
         errno = saved;
