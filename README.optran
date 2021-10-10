@@ -21,13 +21,20 @@ option gminsteps=0
 Step 3 may be skipped by 
 option srcsteps=0
 
-In this branch a fourth method is added:
+Recently a fourth method has been added:
 4) Start a transient simulation for a specific amount of time.
    Keep all data local. Keep the matrix values as an
    operating point for the simulation following.
 If this fails, finally stop.
 
-Operating point by transient is initiated by the command 'optran'.
+Operating point by transient is now standard. The fefault optran
+data are 1 1 1 100n 10u. That is: first iteration, gmin stepping
+and source stepping are set to ON. The optran step time is 100n,
+the total optran time is 10u, supply ramping (not yet established)
+is OFF.
+
+You may change its performance by the command 'optran' in spinit,
+.spiceinit or in a .control section.
 The first three entries will override noopiter, gminsteps, srcsteps.
 A typical command may be
 optran 0 0 0 50u 10m 0
@@ -41,8 +48,6 @@ frequency divided by 10 as the optran simulation time.
 
 A method to stop the op transient simulation, when all nodes
 have become stable, might be desirable, but has not yet been implemented.
-
-
 
 The transient op calculation uses the 'UIC' flag for its startup.
 Basically two applications come to mind: You may use this with
