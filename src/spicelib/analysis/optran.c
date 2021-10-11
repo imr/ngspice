@@ -40,6 +40,9 @@ extern int sharedsync(double*, double*, double, double, double, int, int*, int);
 extern int ng_ident;      /* for debugging */
 #endif
 
+int OPclrBreak(CKTcircuit* ckt);
+int OPsetBreak(CKTcircuit* ckt, double time);
+
 static double *opbreaks;
 static int OPbreakSize;
 static double opfinaltime = 1e-6;
@@ -69,10 +72,10 @@ void com_optran(wordlist* wl) {
     wordlist* wltmp = wl;
     char* stpstr;
     int err;
-    long int optrancom;
+    int optrancom;
     static bool dataset = FALSE;
     static bool getdata = FALSE;
-    static int opiter = 1;
+    static unsigned int opiter = 1;
     static int ngminsteps = 1;
     static int nsrcsteps = 1;
 
@@ -101,7 +104,7 @@ void com_optran(wordlist* wl) {
     errno = 0;
     nooptran = FALSE;
     /* wordlist with 6 parameters */
-    optrancom = strtol(wltmp->wl_word, &stpstr, 10);
+    optrancom = (int)strtol(wltmp->wl_word, &stpstr, 10);
     if ((errno == ERANGE) || (*stpstr != '\0'))
         goto bugquit;
     if (optrancom == 0) {
@@ -121,7 +124,7 @@ void com_optran(wordlist* wl) {
         }
     }
     wltmp = wltmp->wl_next;
-    optrancom = strtol(wltmp->wl_word, &stpstr, 10);
+    optrancom = (int)strtol(wltmp->wl_word, &stpstr, 10);
     if ((errno == ERANGE) || (*stpstr != '\0'))
         goto bugquit;
     if (getdata) {
@@ -131,7 +134,7 @@ void com_optran(wordlist* wl) {
         ft_curckt->ci_defTask->TSKnumGminSteps = optrancom;
     }
     wltmp = wltmp->wl_next;
-    optrancom = strtol(wltmp->wl_word, &stpstr, 10);
+    optrancom = (int)strtol(wltmp->wl_word, &stpstr, 10);
     if ((errno == ERANGE) || (*stpstr != '\0'))
         goto bugquit;
     if (getdata) {
