@@ -86,7 +86,7 @@ for (model=firstModel; model != NULL; model=BJTnextModel(model)) {
 		case N_DENS:
 		    NevalSrc(&noizDens[BJTRCNOIZ],&lnNdens[BJTRCNOIZ],
 				 ckt,THERMNOISE,inst->BJTcollCXNode,inst->BJTcolNode,
-				 inst->BJTtcollectorConduct * inst->BJTarea * inst->BJTm);
+				 inst->BJTtcollectorConduct * inst->BJTm);
 
 		    NevalSrc(&noizDens[BJTRBNOIZ],&lnNdens[BJTRBNOIZ],
 				 ckt,THERMNOISE,inst->BJTbasePrimeNode,inst->BJTbaseNode,
@@ -94,7 +94,7 @@ for (model=firstModel; model != NULL; model=BJTnextModel(model)) {
 
 		    NevalSrc(&noizDens[BJT_RE_NOISE],&lnNdens[BJT_RE_NOISE],
 				 ckt,THERMNOISE,inst->BJTemitPrimeNode,inst->BJTemitNode,
-				 inst->BJTtemitterConduct * inst->BJTarea * inst-> BJTm);
+				 inst->BJTtemitterConduct * inst-> BJTm);
 
 		    NevalSrc(&noizDens[BJTICNOIZ],&lnNdens[BJTICNOIZ],
 			         ckt,SHOTNOISE,inst->BJTcolPrimeNode, inst->BJTemitPrimeNode,

@@ -153,21 +153,17 @@ int BJTdSetup(GENmodel *inModel, CKTcircuit *ckt)
             /*
              *   dc model paramters
              */
-            csatbe=here->BJTBEtSatCur*here->BJTarea * here->BJTm;
-            csatbc=here->BJTBCtSatCur*here->BJTarea * here->BJTm;
-            rbpr=here->BJTtminBaseResist/(here->BJTarea * here->BJTm);
-            rbpi=here->BJTtbaseResist/(here->BJTarea * here->BJTm)-rbpr;
-            oik=here->BJTtinvRollOffF/(here->BJTarea * here->BJTm);
-            c2=here->BJTtBEleakCur*here->BJTarea * here->BJTm;
+            csatbe=here->BJTBEtSatCur * here->BJTm;
+            csatbc=here->BJTBCtSatCur * here->BJTm;
+            rbpr=here->BJTtminBaseResist/here->BJTm;
+            rbpi=here->BJTtbaseResist/here->BJTm-rbpr;
+            oik=here->BJTtinvRollOffF/here->BJTm;
+            c2=here->BJTtBEleakCur * here->BJTm;
             vte=here->BJTtleakBEemissionCoeff*vt;
-            oikr=here->BJTtinvRollOffR/(here->BJTarea * here->BJTm);
+            oikr=here->BJTtinvRollOffR/here->BJTm;
             c4=here->BJTtBCleakCur * here->BJTm;
-            if (model->BJTsubs == VERTICAL)
-                c4 *= here->BJTareab;
-            else
-                c4 *= here->BJTareac; /* lateral transistor */
             vtc=here->BJTtleakBCemissionCoeff*vt;
-            xjrb=here->BJTtbaseCurrentHalfResist*here->BJTarea * here->BJTm;
+            xjrb=here->BJTtbaseCurrentHalfResist * here->BJTm;
 
 
             /*
@@ -488,25 +484,17 @@ int BJTdSetup(GENmodel *inModel, CKTcircuit *ckt)
             xme=here->BJTtjunctionExpBE;
             cdis=model->BJTbaseFractionBCcap;
             ctot=here->BJTtBCcap * here->BJTm;
-            if (model->BJTsubs == VERTICAL)
-                ctot *= here->BJTareab;
-            else
-                ctot *= here->BJTareac;
             czbc=ctot*cdis;
             czbx=ctot-czbc;
             pc=here->BJTtBCpot;
             xmc=here->BJTtjunctionExpBC;
             fcpe=here->BJTtDepCap;
-            czcs=model->BJTcapSub * here->BJTm;
-            if (model->BJTsubs == VERTICAL)
-                czcs *= here->BJTareac;
-            else
-                czcs *= here->BJTareab;
+            czcs=here->BJTtSubcap * here->BJTm;
             ps=model->BJTpotentialSubstrate;
             xms=model->BJTexponentialSubstrate;
             xtf=model->BJTtransitTimeBiasCoeffF;
             ovtf=model->BJTtransitTimeVBCFactor;
-            xjtf=here->BJTttransitTimeHighCurrentF*here->BJTarea * here->BJTm;
+            xjtf=here->BJTttransitTimeHighCurrentF * here->BJTm;
             if(tf != 0 && vbe >0) {
                 EqualDeriv(&d_cbe, &d_p);
                 d_cbe.value = cbe;
