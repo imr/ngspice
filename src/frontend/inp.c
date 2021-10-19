@@ -721,7 +721,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                         ciprefix(".four", s) ||
                         eq(s, ".plot") ||
                         eq(s, ".print") ||
-                        eq(s, ".save") ||
+/*                        eq(s, ".save") || add .save only after subcircuit expansion */
                         eq(s, ".op") ||
                         ciprefix(".meas", s) ||
                         eq(s, ".tf")) {
@@ -837,6 +837,15 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                     tfree(tt);
                     return 1;
                 }
+
+            /* Scan the deck again, now also adding .save commands to wl_first */
+            for (dd = deck->nextcard; dd; dd = dd->nextcard) {
+                char* curr_line = dd->line;
+                if (ciprefix(".save", curr_line)) {
+                    wl_append_word(&wl_first, &end, copy(dd->line));
+                    *curr_line = '*';
+                }
+            }
 
             /* Now handle translation of spice2c6 POLYs. */
 #ifdef XSPICE
