@@ -1176,7 +1176,7 @@ translate(struct card *deck, char *formal, char *actual, char *scname, const cha
         switch (dev_type) {
 
         case '.':
-            if (ciprefix(".ic", s) || ciprefix(".nodeset", s)) {
+            if (ciprefix(".ic", s) || ciprefix(".nodeset", s) || ciprefix(".save", s)) {
                 while ((paren_ptr = strchr(s, '(')) != NULL) {
                     name = paren_ptr + 1;
 
