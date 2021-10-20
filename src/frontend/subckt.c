@@ -1179,6 +1179,8 @@ translate(struct card *deck, char *formal, char *actual, char *scname, const cha
             if (ciprefix(".save", s)) {
                 while ((paren_ptr = strchr(s, '(')) != NULL) {
                     bool curr = FALSE;
+                    char* comma_ptr = NULL;
+
                     if (ciprefix(" i(", paren_ptr - 2))
                         curr = TRUE;
 
@@ -1189,13 +1191,27 @@ translate(struct card *deck, char *formal, char *actual, char *scname, const cha
                         goto quit;
                     }
 
-                    bxx_put_substring(&buffer, s, name);
-                    if (curr)
-                        translate_inst_name(&buffer, scname, name, paren_ptr);
-                    else
-                        translate_node_name(&buffer, scname, name, paren_ptr);
+                    comma_ptr = strchr(s, ',');
 
-                    s = paren_ptr;
+                    bxx_put_substring(&buffer, s, name);
+                    /* i(Vxx) */
+                    if (curr) {
+                        translate_inst_name(&buffer, scname, name, paren_ptr);
+                        s = paren_ptr;
+                    }
+                    /* V(a,b) */
+                    else if (comma_ptr && comma_ptr < paren_ptr) {
+                        translate_node_name(&buffer, scname, name, comma_ptr);
+                        bxx_putc(&buffer, ',');
+                        name = comma_ptr + 1;
+                        translate_node_name(&buffer, scname, name, paren_ptr);
+                        s = paren_ptr;
+                    }
+                    /* V(a) */
+                    else {
+                        translate_node_name(&buffer, scname, name, paren_ptr);
+                        s = paren_ptr;
+                    }
                 }
                 bxx_put_cstring(&buffer, s); /* rest of line */
                 break;
