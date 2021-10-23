@@ -241,6 +241,9 @@ next1:
             if (selfheat) {
                 Temp = here->DIOtemp + delTemp;
                 DIOtempUpdate(model, here, Temp, ckt);
+                vt = CONSTKoverQ * Temp;
+                vte = model->DIOemissionCoeff * vt;
+                vtebrk = model->DIObrkdEmissionCoeff * vt;
             } else {
                 Temp = here->DIOtemp;
             }
@@ -250,9 +253,6 @@ next1:
             csatsw = here->DIOtSatSWCur;
             csatsw_dT = here->DIOtSatSWCur_dT;
             gspr = here->DIOtConductance;
-            vt = CONSTKoverQ * Temp;
-            vte = model->DIOemissionCoeff * vt;
-            vtebrk = model->DIObrkdEmissionCoeff * vt;
 
             if (model->DIOsatSWCurGiven) {              /* sidewall current */
 
