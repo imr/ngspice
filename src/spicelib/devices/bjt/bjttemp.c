@@ -154,39 +154,50 @@ BJTtemp(GENmodel *inModel, CKTcircuit *ckt)
             if ((model->BJTtlev == 0) || (model->BJTtlev == 1)) {
                 factor = exp(factlog);
                 here->BJTtSatCur = here->BJTarea * model->BJTsatCur * factor;
-                if (model->BJTBEsatCurGiven) {
+                if ((model->BJTBEsatCurGiven) && (model->BJTBCsatCurGiven)) {
                     factor = exp(factlog / model->BJTemissionCoeffF);
                     here->BJTBEtSatCur = here->BJTarea * model->BJTBEsatCur * factor;
                 } else {
                     here->BJTBEtSatCur = here->BJTtSatCur;
                 }
-                if (model->BJTBCsatCurGiven) {
+                if ((model->BJTBEsatCurGiven) && (model->BJTBCsatCurGiven)) {
                     factor = exp(factlog / model->BJTemissionCoeffR);
                     here->BJTBCtSatCur = model->BJTBCsatCur * factor;
                 } else {
                     here->BJTBCtSatCur = here->BJTtSatCur;
                 }
                 if (model->BJTsubSatCurGiven)
-                    here->BJTtSubSatCur = here->BJTarea * model->BJTsubSatCur * factor;
+                    here->BJTtSubSatCur = model->BJTsubSatCur * factor;
             } else if (model->BJTtlev == 3) {
                 here->BJTtSatCur = here->BJTarea * pow(model->BJTsatCur,(1+model->BJTtis1*dt+model->BJTtis2*dt*dt));
-                if (model->BJTBEsatCurGiven) {
+                if ((model->BJTBEsatCurGiven) && (model->BJTBCsatCurGiven)) {
                     here->BJTBEtSatCur = here->BJTarea * pow(model->BJTBEsatCur,(1+model->BJTtis1*dt+model->BJTtis2*dt*dt));
                 } else {
                     here->BJTBEtSatCur = here->BJTtSatCur;
                 }
-                if (model->BJTBCsatCurGiven) {
+                if ((model->BJTBEsatCurGiven) && (model->BJTBCsatCurGiven)) {
                     here->BJTBCtSatCur = pow(model->BJTBCsatCur,(1+model->BJTtis1*dt+model->BJTtis2*dt*dt));
                 } else {
                     here->BJTBCtSatCur = here->BJTtSatCur;
                 }
                 if (model->BJTsubSatCurGiven)
-                    here->BJTtSubSatCur = here->BJTarea * pow(model->BJTsubSatCur,(1+model->BJTtiss1*dt+model->BJTtiss2*dt*dt));
+                    here->BJTtSubSatCur = pow(model->BJTsubSatCur,(1+model->BJTtiss1*dt+model->BJTtiss2*dt*dt));
             }
             if (model->BJTsubs == VERTICAL) {
                 here->BJTBCtSatCur *= here->BJTareab;
             } else {
                 here->BJTBCtSatCur *= here->BJTareac;
+            }
+            if (model->BJTsubSatCurGiven) {
+                if ((model->BJTBEsatCurGiven) && (model->BJTBCsatCurGiven)) {
+                    if (model->BJTsubs == VERTICAL) {
+                        here->BJTtSubSatCur *= here->BJTareac;
+                    } else {
+                        here->BJTtSubSatCur *= here->BJTareab;
+                    }
+                } else {
+                    here->BJTtSubSatCur *= here->BJTarea;
+                }
             }
 
             if (model->BJTintCollResistGiven) {
