@@ -50,7 +50,7 @@ static double opstepsize = 1e-8;
 static double opramptime = 0.;
 static bool nooptran = TRUE;
 
-/* command to set the 6 optran flags
+/* command to set the 7 optran flags
     CKTnoOpIter (default 0, set by 'option noopiter')
     CKTnumGminSteps
     CKTnumSrcSteps
@@ -58,10 +58,13 @@ static bool nooptran = TRUE;
     opfinaltime
     opramptime
 
+    and the variable optran_c_val
+
     A typical command may be
-    optran 0 0 0 50u 10m 0
+    optran 0 0 0 50u 10m 0 100p
     (no initial iteration, no gmin stepping, no source stepping,
-    stepsize for optran 50 us, optran run until 10 ms, no supply ramping.
+    stepsize for optran 50 us, optran run until 10 ms, no supply ramping,
+    cshunt during optran 100 p)
 
     If com_optran is given in .spiceinit, the circuit is not yet loaded. So
     we firstly fill the static vars opstepsize, opfinaltime,
@@ -153,6 +156,14 @@ void com_optran(wordlist* wl) {
     opfinaltime = INPevaluate(&stpstr, &err, 1);
     if (err || (*stpstr != '\0'))
         goto bugquit;
+    wltmp = wltmp->wl_next;
+    stpstr = wltmp->wl_word;
+    double opcshunt = 0.;
+    opcshunt = INPevaluate(&stpstr, &err, 1);
+    if (err || (*stpstr != '\0'))
+        goto bugquit;
+    if (opcshunt > 0.)
+        cp_vset("optran_cshunt_val", CP_REAL, &opcshunt);
     wltmp = wltmp->wl_next;
     stpstr = wltmp->wl_word;
     opramptime = INPevaluate(&stpstr, &err, 1);
@@ -474,7 +485,7 @@ OPtran(CKTcircuit *ckt, int oldconverged)
     /* We are finished */
     if(AlmostEqualUlps( optime, opfinaltime, 100 ) ) {
         tfree(opbreaks);
-        SPfrontEnd->IFerrorf(ERR_INFO, "Transient op finished successfully");
+        SPfrontEnd->IFerrorf(ERR_INFO, "Transient op stop time reached");
         ckt->CKTmaxStep = prevmaxstepsize;
         ckt->CKTstep = prevstepsize;
         return(OK);

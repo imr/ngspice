@@ -74,15 +74,16 @@ cp_init(void)
     in .control. */
     {
         wordlist* wl_optran;
-        /* the default optran parameters: 1 1 1 100n 10u 0 */
-        char* sbuf[7];
+        /* the default optran parameters: 1 1 1 100n 10u 0 0 */
+        char* sbuf[8];
         sbuf[0] = "1";
         sbuf[1] = "1";
         sbuf[2] = "1";
         sbuf[3] = "100n";
         sbuf[4] = "10u";
         sbuf[5] = "0";
-        sbuf[6] = NULL;
+        sbuf[6] = "0";
+        sbuf[7] = NULL;
         wl_optran = wl_build((const char* const*)sbuf);
         com_optran(wl_optran);
         wl_free(wl_optran);

@@ -612,7 +612,7 @@ struct comm spcp_coms[] = {
       NULL,
       ": Print circuit inventory" },
     { "optran", com_optran, TRUE, FALSE,
-      { 0, 0, 0, 0 }, E_DEFHMASK, 6, 6,
+      { 0, 0, 0, 0 }, E_DEFHMASK, 7, 7,
       NULL,
       ": Prepare optran by setting 6 flags " },
     { "wrnodev", com_wric, TRUE, FALSE,

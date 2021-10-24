@@ -38,41 +38,77 @@ void INPpas4(CKTcircuit *ckt, INPtables *tab)
     double csval = 0.;        /* cshunt capacitors value */
 
     /* get the cshunt value */
-    if (!cp_getvar("cshunt_value", CP_REAL, &csval, 0))
-        return;
+    if (cp_getvar("cshunt_value", CP_REAL, &csval, 0)) {
 
-    if ((mytype = INPtypelook("Capacitor")) < 0) {
-        fprintf(stderr, "Device type Capacitor not supported by this binary\n");
-        return;
-    }
-
-    if (!tab->defCmod) {    /* create default C model */
-        IFnewUid(ckt, &uid, NULL, "C", UID_MODEL, NULL);
-        error = (*(ft_sim->newModel))(ckt, mytype, &(tab->defCmod), uid);
-    }
-
-    /* scan through all nodes, add a new C device for each voltage node */
-    for (node = ckt->CKTnodes; node; node = node->next) {
-        if (node->type == NODE_VOLTAGE && (node->number > 0)) {
-            int nn = node->number;
-            char* devname = tprintf("capac%dshunt", nn);
-
-            (*(ft_sim->newInstance))(ckt, tab->defCmod, &fast, devname);
-
-           /* the top node, second node is gnd automatically */
-            (*(ft_sim->bindNode))(ckt, fast, 1, node);
-
-            /* value of the capacitance */
-            ptemp.rValue = csval;
-            error = INPpName("capacitance", &ptemp, ckt, mytype, fast);
-
-            /* add device numbers for statistics */
-            ckt->CKTstat->STATdevNum[mytype].instNum++;
-            ckt->CKTstat->STATtotalDev++;
-
-            tfree(devname);
-            nadded++;
+        if ((mytype = INPtypelook("Capacitor")) < 0) {
+            fprintf(stderr, "Device type Capacitor not supported by this binary\n");
+            return;
         }
+
+        if (!tab->defCmod) {    /* create default C model */
+            IFnewUid(ckt, &uid, NULL, "C", UID_MODEL, NULL);
+            error = (*(ft_sim->newModel))(ckt, mytype, &(tab->defCmod), uid);
+        }
+
+        /* scan through all nodes, add a new C device for each voltage node */
+        for (node = ckt->CKTnodes; node; node = node->next) {
+            if (node->type == NODE_VOLTAGE && (node->number > 0)) {
+                int nn = node->number;
+                char* devname = tprintf("capac%dshunt", nn);
+
+                (*(ft_sim->newInstance))(ckt, tab->defCmod, &fast, devname);
+
+                /* the top node, second node is gnd automatically */
+                (*(ft_sim->bindNode))(ckt, fast, 1, node);
+
+                /* value of the capacitance */
+                ptemp.rValue = csval;
+                error = INPpName("capacitance", &ptemp, ckt, mytype, fast);
+
+                /* add device numbers for statistics */
+                ckt->CKTstat->STATdevNum[mytype].instNum++;
+                ckt->CKTstat->STATtotalDev++;
+
+                nadded++;
+            }
+        }
+        printf("Option cshunt: %d capacitors added with %g F each\n", nadded, csval);
     }
-    printf("Option cshunt: %d capacitors added with %g F each\n", nadded, csval);
+    /* get the cshunt value for optran */
+    else if (cp_getvar("optran_cshunt_val", CP_REAL, &csval, 0)) {
+
+        if ((mytype = INPtypelook("Capacitor")) < 0) {
+            fprintf(stderr, "Device type Capacitor not supported by this binary\n");
+            return;
+        }
+
+        if (!tab->defCmod) {    /* create default C model */
+            IFnewUid(ckt, &uid, NULL, "C", UID_MODEL, NULL);
+            error = (*(ft_sim->newModel))(ckt, mytype, &(tab->defCmod), uid);
+        }
+
+        /* scan through all nodes, add a new C device for each voltage node */
+        for (node = ckt->CKTnodes; node; node = node->next) {
+            if (node->type == NODE_VOLTAGE && (node->number > 0)) {
+                int nn = node->number;
+                char* devname = tprintf("coptran%dshunt", nn);
+
+                (*(ft_sim->newInstance))(ckt, tab->defCmod, &fast, devname);
+
+                /* the top node, second node is gnd automatically */
+                (*(ft_sim->bindNode))(ckt, fast, 1, node);
+
+                /* value of the capacitance */
+                ptemp.rValue = csval;
+                error = INPpName("capacitance", &ptemp, ckt, mytype, fast);
+
+                /* add device numbers for statistics */
+                ckt->CKTstat->STATdevNum[mytype].instNum++;
+                ckt->CKTstat->STATtotalDev++;
+
+                nadded++;
+            }
+        }
+        printf("optran cshunt: %d capacitors added with %g F each\n", nadded, csval);
+    }
 }
