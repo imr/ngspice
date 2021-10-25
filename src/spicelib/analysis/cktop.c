@@ -15,6 +15,7 @@ Modified: 2005 Paolo Nenzi - Restructured
 #include "ngspice/enh.h"
 #endif
 
+extern void remoptrancshunt(void);
 
 static int dynamic_gmin(CKTcircuit *, long int, long int, int);
 static int spice3_gmin(CKTcircuit *, long int, long int, int);
@@ -28,6 +29,8 @@ CKTop (CKTcircuit *ckt, long int firstmode, long int continuemode,
        int iterlim)
 {
     int converged;
+    double csval = 0.;
+    bool remc = cp_getvar("optran_cshunt_val", CP_REAL, &csval, 0);
 
 #ifdef HAS_PROGREP
     SetAnalyse("op", 0);
@@ -42,8 +45,12 @@ CKTop (CKTcircuit *ckt, long int firstmode, long int continuemode,
             (ckt->CKTnumGminSteps <= 0) && (ckt->CKTnumSrcSteps <= 0);
 #endif
         converged = NIiter (ckt, iterlim);
-        if (converged == 0)
-            return converged;   /* successfull */
+        if (converged == 0) {
+            if (remc) {
+                remoptrancshunt();
+            }
+            return converged;  /* successfull */
+        }
     } else {
         converged = 1;          /* the 'go directly to gmin stepping' option */
     }
@@ -70,8 +77,12 @@ CKTop (CKTcircuit *ckt, long int firstmode, long int continuemode,
         else {
             converged = spice3_gmin(ckt, firstmode, continuemode, iterlim);
         }
-        if (converged == 0) /* If gmin-stepping worked... move out */
+        if (converged == 0) {/* If gmin-stepping worked... move out */
+            if (remc) {
+                remoptrancshunt();
+            }
             return converged;
+        }
     }
 
     /* ... otherwise try stepping sources ...
@@ -85,13 +96,22 @@ CKTop (CKTcircuit *ckt, long int firstmode, long int continuemode,
             converged = gillespie_src(ckt, firstmode, continuemode, iterlim);
         else
             converged = spice3_src(ckt, firstmode, continuemode, iterlim);
-        if (converged == 0) /* If gmin-stepping worked... move out */
+        if (converged == 0) {/* If gmin-stepping worked... move out */
+            if (remc) {
+                remoptrancshunt();
+            }            
             return converged;
+        }
     }
 
     /* If command 'optran' is not given, the function
        returns immediately with the previous 'converged' */
     converged = OPtran(ckt, converged);
+    /* remove the optran C-shunt capacitors from the linked list
+       of instances for default model "C" and from the DEVnameHash table */
+    if (remc) {
+        remoptrancshunt();
+    }
 
 #ifdef XSPICE
     /* gtri - wbk - add convergence problem reporting flags */
