@@ -75,7 +75,7 @@ void INPpas4(CKTcircuit *ckt, INPtables *tab)
         printf("Option cshunt: %d capacitors added with %g F each\n", nadded, csval);
     }
     /* get the cshunt value for optran */
-    else if (cp_getvar("optran_cshunt_val", CP_REAL, &csval, 0)) {
+    if (cp_getvar("optran_cshunt_val", CP_REAL, &csval, 0)) {
 
         if ((mytype = INPtypelook("Capacitor")) < 0) {
             fprintf(stderr, "Device type Capacitor not supported by this binary\n");
@@ -109,6 +109,63 @@ void INPpas4(CKTcircuit *ckt, INPtables *tab)
                 nadded++;
             }
         }
-        printf("optran cshunt: %d capacitors added with %g F each\n", nadded, csval);
+        if(ft_ngdebug)
+            printf("optran C-shunt: %d capacitors added with %g F each\n", nadded, csval);
     }
 }
+
+/* Remove the optran C-shunt instances from the list of instances in capacitor model "C".
+   Models are at the bottom of the instance linked list.*/
+void remoptrancshunt(void)
+{
+    int delnum = 0;
+    GENinstance *inst, *interm;
+    /* get the model pointer for C */
+    GENmodel* inModel = ft_curckt->ci_symtab->defCmod;
+    /* get the pointer to the hash table of instances */
+    NGHASHPTR delhash = ft_curckt->ci_ckt->DEVnameHash;
+    inst = inModel->GENinstances;
+    while (prefix("coptran", inst->GENname)) {
+        interm = inst;
+        inst = inst->GENnextInstance;
+        nghash_delete(delhash, interm->GENname);
+        tfree(interm->GENname);
+        tfree(interm);
+        delnum++;
+    }
+    /* restore the new instance list */
+    inModel->GENinstances = inst;
+    if(ft_ngdebug)
+        printf("optran C-shunt: %d capacitors deleted from C instance list\n", delnum);
+}
+
+#if (0)
+void remoptrancshunt_old(void)
+{
+    GENinstance *fast, *inst1, *inst2, *interm, *prev;
+    /* get the model for C */
+    GENmodel *inModel = ft_curckt->ci_symtab->defCmod;
+    inst1 = prev = inModel->GENinstances;
+    inst2 = fast = inModel->GENinstances->GENnextInstance;
+    while (fast) {
+        if (prefix("coptran", fast->GENname)) {
+            /* delete the instance */
+            interm = fast;
+            fast = fast->GENnextInstance;
+            nghash_delete(ft_curckt->ci_ckt->DEVnameHash, interm->GENname);
+            tfree(interm->GENname);
+            tfree(interm);
+            prev->GENnextInstance = fast;
+        }
+        else {
+            prev = fast;
+            fast = fast->GENnextInstance;
+        }
+    }
+    if (prefix("coptran", inst1->GENname)) {
+        inModel->GENinstances = inst1->GENnextInstance;
+        tfree(inst1->GENname);
+        tfree(inst1);
+    }
+}
+#endif

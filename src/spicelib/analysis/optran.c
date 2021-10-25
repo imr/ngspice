@@ -40,6 +40,8 @@ extern int sharedsync(double*, double*, double, double, double, int, int*, int);
 extern int ng_ident;      /* for debugging */
 #endif
 
+extern void remoptrancshunt(void);
+
 int OPclrBreak(CKTcircuit* ckt);
 int OPsetBreak(CKTcircuit* ckt, double time);
 
@@ -488,6 +490,7 @@ OPtran(CKTcircuit *ckt, int oldconverged)
         SPfrontEnd->IFerrorf(ERR_INFO, "Transient op stop time reached");
         ckt->CKTmaxStep = prevmaxstepsize;
         ckt->CKTstep = prevstepsize;
+        remoptrancshunt();
         return(OK);
     }
 
