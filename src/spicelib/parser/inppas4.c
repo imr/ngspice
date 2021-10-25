@@ -34,7 +34,7 @@ void INPpas4(CKTcircuit *ckt, INPtables *tab)
     int error;           /* error code temporary */
     GENinstance* fast;   /* pointer to the actual instance */
     IFvalue ptemp;       /* a value structure to package capacitance into */
-    int nadded = 0;      /* capacitors added */
+    int nadded;          /* capacitors added */
     double csval = 0.;        /* cshunt capacitors value */
 
     /* get the cshunt value */
@@ -44,6 +44,8 @@ void INPpas4(CKTcircuit *ckt, INPtables *tab)
             fprintf(stderr, "Device type Capacitor not supported by this binary\n");
             return;
         }
+
+        nadded = 0;
 
         if (!tab->defCmod) {    /* create default C model */
             IFnewUid(ckt, &uid, NULL, "C", UID_MODEL, NULL);
@@ -81,6 +83,8 @@ void INPpas4(CKTcircuit *ckt, INPtables *tab)
             fprintf(stderr, "Device type Capacitor not supported by this binary\n");
             return;
         }
+
+        nadded = 0;
 
         if (!tab->defCmod) {    /* create default C model */
             IFnewUid(ckt, &uid, NULL, "C", UID_MODEL, NULL);
