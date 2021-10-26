@@ -70,7 +70,6 @@ void INPpas4(CKTcircuit *ckt, INPtables *tab)
             ckt->CKTstat->STATdevNum[mytype].instNum++;
             ckt->CKTstat->STATtotalDev++;
 
-            tfree(devname);
             nadded++;
         }
     }
