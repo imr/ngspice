@@ -38,6 +38,9 @@ void mem_delete(void);
 int memsaved(void *ptr);
 void memdeleted(const void *ptr);
 
+void my_free_func(void* data);
+void my_key_free(void* key);
+
 int gc_is_on = 0;
 
 /* add some debugging printout */

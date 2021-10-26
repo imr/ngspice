@@ -75,7 +75,7 @@ void com_optran(wordlist* wl) {
     int optrancom;
     static bool dataset = FALSE;
     static bool getdata = FALSE;
-    static unsigned int opiter = 1;
+    static unsigned char opiter = 1;
     static int ngminsteps = 1;
     static int nsrcsteps = 1;
 
