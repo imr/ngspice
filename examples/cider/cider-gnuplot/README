@@ -1,0 +1,22 @@
+
+To run gnuplot xycontour tests.
+-------------------------------
+
+The gnuplot command in ngspice is:
+
+    gnuplot <file> xycontour <expr>
+
+xycontour is a new flag. Only a single <expr> is allowed to be plotted
+in a contour diagram. With <expr1> vs <expr2> only <expr1> is plotted.
+
+    ngspice passq.cir
+
+This plots xy contour diagrams for 2d Cider save file data.
+On visualc Windows in a cmd shell, run 'winq.cir'.
+
+    ngspice passq1.cir
+
+This checks that gnuplot <file> xycontour <expr> works with 1d data.
+The xycontour flag is just ignored.
+On visualc Windows in a cmd shell, run 'winq1.cir'.
+
