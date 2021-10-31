@@ -106,7 +106,7 @@ typedef enum token_type_s {CNV_NO_TOK,CNV_STRING_TOK} Cnv_Token_Type_t;
 /*=== FUNCTION PROTOTYPE DEFINITIONS ===*/
 
 
-
+static void free_local_data(Local_Data_t *loc);
 
 
 
@@ -820,6 +820,20 @@ static int cm_read_source(FILE *source, Local_Data_t *loc)
 }
 
 
+static void cm_d_source_callback(ARGS,
+        Mif_Callback_Reason_t reason)
+{
+    switch (reason) {
+        case MIF_CB_DESTROY: {
+            Local_Data_t *loc = STATIC_VAR(locdata);
+            if (loc) {
+                free_local_data(loc);
+                STATIC_VAR(locdata) = loc = NULL;
+            }
+            break;
+        } /* end of case MIF_CB_DESTROY */
+    } /* end of switch over reason being called */
+} /* end of function cm_d_source_callback */
 
 
 
@@ -956,6 +970,7 @@ void cm_d_source(ARGS)
         /*** allocate static storage for *loc ***/
         STATIC_VAR (locdata) = calloc (1 , sizeof ( Local_Data_t ));
         loc = STATIC_VAR (locdata);
+        CALLBACK = cm_d_source_callback;
 
         /*** allocate storage for *index, *bits & *timepoint ***/
 
@@ -1162,5 +1177,20 @@ void cm_d_source(ARGS)
     }
 }
 
+/* Free memory allocations in Local_Data_t structure */
+static void free_local_data(Local_Data_t *loc)
+{
+    if (loc == (Local_Data_t *) NULL) {
+        return;
+    }
+    /* Free data table and related values */
+    if (loc->all_timepoints) {
+        free(loc->all_timepoints);
+    }
+    if (loc->all_data) {
+        free(loc->all_data);
+    }
+    free(loc);
+} /* end of function free_local_data */
 
 
