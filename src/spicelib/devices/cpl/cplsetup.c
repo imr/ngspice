@@ -1535,6 +1535,7 @@ static void matrix_p_mult(
 	for (i = 0; i < dim; i++)
 		for (j = 0; j < dim; j++) {
 			p = T[i][j] = (double*)calloc((size_t)(deg_o + 1), sizeof(double));
+			memsaved(p);
 			mult_p(B[i][j], D1[i], p, deg, deg_o, deg_o);
 		}
 	for (i = 0; i < dim; i++)
