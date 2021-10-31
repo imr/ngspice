@@ -1626,8 +1626,6 @@ static int cm_read_state_file(FILE *state_file,State_Table_t *states)
             
                         token = CNVget_token(&s, &type);
 
-                        if(!token)
-                            return 1;
 
                         if ( j < states->num_inputs ) {
     
@@ -1641,7 +1639,6 @@ static int cm_read_state_file(FILE *state_file,State_Table_t *states)
              
                             /* if this bit was not recognized, return with an error  */
                             if (3 == bit_value) {
-                                free(token);
                                 return 1;                            
                             }
                             else { /* need to store this value in the inputs[] array */
@@ -1662,8 +1659,7 @@ static int cm_read_state_file(FILE *state_file,State_Table_t *states)
                         
                                 states->next_state[i] = (int) number;
                             }
-                        }
-                        free(token);
+                        }       
                     } 
 
                 }
@@ -1754,10 +1750,10 @@ void cm_d_state(ARGS)
     Digital_t                 in,   /* storage for each input bit */
                              out;   /* storage for each output bit */
 
-    Digital_State_t         *clk = NULL,   /* storage for clock value  */
-                        *clk_old = NULL,   /* previous clock value     */
-                          *reset = NULL,   /* current reset value  */
-                      *reset_old = NULL;   /* previous reset value  */
+    Digital_State_t         *clk,   /* storage for clock value  */
+                        *clk_old,   /* previous clock value     */
+                          *reset,   /* current reset value  */
+                      *reset_old;   /* previous reset value  */
 
 
 
