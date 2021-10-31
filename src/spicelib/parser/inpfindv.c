@@ -1,7 +1,7 @@
 /* INPfindVer(line,version)
  *      find the 'version' parameter on the given line and return its
  *      return 'default' as version if not found
- * 
+ *
  */
 
 #include "ngspice/ngspice.h"
@@ -16,23 +16,23 @@ char *INPfindVer(char *line, char *version)
 
     where = strstr(line, "version");
 
-    if (where != NULL) {	/* found a version keyword on the line */
+    if (where != NULL) {    /* found a version keyword on the line */
 
-	where += 7;		/* skip the version keyword */
-	while ((*where == ' ') || (*where == '\t') || (*where == '=') ||
-	       (*where == ',') || (*where == '(') || (*where == ')') ||
-	       (*where == '+')) {	/* legal white space - ignore */
-	    where++;
-	}
+        where += 7;     /* skip the version keyword */
+        while ((*where == ' ') || (*where == '\t') || (*where == '=') ||
+               (*where == ',') || (*where == '(') || (*where == ')') ||
+               (*where == '+')) {   /* legal white space - ignore */
+            where++;
+        }
 
-	/* now the magic string */
-	sscanf(where, "%s", version);	/* We get the version number */
+        /* now the magic string */
+        sscanf(where, "%s", version);   /* We get the version number */
 
-	return (NULL);
+        return (NULL);
     }
-    else {			/* no level on the line => default */
+    else {          /* no level on the line => default */
         sprintf( version, "default" );
-	printf("Warning -- Version not specified on line \"%s\"\nSetting version to 'default'.\n", line);
-	return (NULL);
+        printf("Warning -- Version not specified on line \"%s\"\nSetting version to 'default'.\n", line);
+        return (NULL);
     }
 }
