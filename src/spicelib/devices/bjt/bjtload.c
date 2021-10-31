@@ -131,9 +131,12 @@ BJTload(GENmodel *inModel, CKTcircuit *ckt)
     double vrci=0.0, delvrci;
     double Irci=0.0, Irci_Vrci=0.0, Irci_Vbci=0.0, Irci_Vbcx=0.0;
     double Qbci=0.0, Qbci_Vbci=0.0, Qbcx, Qbcx_Vbcx=0.0, gbcx, cbcx;
+    int ttype;
 
     /*  loop through all the models */
     for( ; model != NULL; model = BJTnextModel(model)) {
+
+        ttype = model->BJTtype*model->BJTsubs;
 
         /* loop through all the instances of the model */
         for (here = BJTinstances(model); here != NULL ;
@@ -179,7 +182,7 @@ BJTload(GENmodel *inModel, CKTcircuit *ckt)
                     vbx=model->BJTtype*(
                         *(ckt->CKTrhsOp+here->BJTbaseNode)-
                         *(ckt->CKTrhsOp+here->BJTcolPrimeNode));
-                    vsub=model->BJTtype*model->BJTsubs*(
+                    vsub=ttype*(
                       *(ckt->CKTrhsOp+here->BJTsubstNode)-
                       *(ckt->CKTrhsOp+here->BJTsubstConNode));
                 }
@@ -193,7 +196,7 @@ BJTload(GENmodel *inModel, CKTcircuit *ckt)
                         vbx=model->BJTtype*(
                             *(ckt->CKTrhsOld+here->BJTbaseNode)-
                             *(ckt->CKTrhsOld+here->BJTcolPrimeNode));
-                        vsub=model->BJTtype*model->BJTsubs*(
+                        vsub=ttype*(
                             *(ckt->CKTrhsOld+here->BJTsubstNode)-
                             *(ckt->CKTrhsOld+here->BJTsubstConNode));
                     }
@@ -201,7 +204,7 @@ BJTload(GENmodel *inModel, CKTcircuit *ckt)
                         vbx=model->BJTtype*(
                             *(ckt->CKTrhsOp+here->BJTbaseNode)-
                             *(ckt->CKTrhsOp+here->BJTcolPrimeNode));
-                        vsub=model->BJTtype*model->BJTsubs*(
+                        vsub=ttype*(
                             *(ckt->CKTrhsOp+here->BJTsubstNode)-
                             *(ckt->CKTrhsOp+here->BJTsubstConNode));
                     }
@@ -221,7 +224,7 @@ BJTload(GENmodel *inModel, CKTcircuit *ckt)
                 vbx=model->BJTtype*(
                     *(ckt->CKTrhsOld+here->BJTbaseNode)-
                     *(ckt->CKTrhsOld+here->BJTcolPrimeNode));
-                vsub=model->BJTtype*model->BJTsubs*(
+                vsub=ttype*(
                     *(ckt->CKTrhsOld+here->BJTsubstNode)-
                     *(ckt->CKTrhsOld+here->BJTsubstConNode));
             } else if(ckt->CKTmode & MODEINITTRAN) {
@@ -232,7 +235,7 @@ BJTload(GENmodel *inModel, CKTcircuit *ckt)
                 vbx=model->BJTtype*(
                     *(ckt->CKTrhsOld+here->BJTbaseNode)-
                     *(ckt->CKTrhsOld+here->BJTcolPrimeNode));
-                vsub=model->BJTtype*model->BJTsubs*(
+                vsub=ttype*(
                     *(ckt->CKTrhsOld+here->BJTsubstNode)-
                     *(ckt->CKTrhsOld+here->BJTsubstConNode));
                 if( (ckt->CKTmode & MODETRAN) && (ckt->CKTmode & MODEUIC) ) {
@@ -331,7 +334,7 @@ BJTload(GENmodel *inModel, CKTcircuit *ckt)
                 vbx=model->BJTtype*(
                     *(ckt->CKTrhsOld+here->BJTbaseNode)-
                     *(ckt->CKTrhsOld+here->BJTcolPrimeNode));
-                vsub=model->BJTtype*model->BJTsubs*(
+                vsub=ttype*(
                     *(ckt->CKTrhsOld+here->BJTsubstNode)-
                     *(ckt->CKTrhsOld+here->BJTsubstConNode));
                 cchat= *(ckt->CKTstate0 + here->BJTcc)+(*(ckt->CKTstate0 +
@@ -882,7 +885,7 @@ load:
              *  load current excitation vector
              */
             geqsub = gcsub + gdsub;
-            ceqsub=model->BJTtype * model->BJTsubs *
+            ceqsub=ttype *
                     (*(ckt->CKTstate0 + here->BJTcqsub) + cdsub - vsub*geqsub);
             ceqbx=model->BJTtype * (*(ckt->CKTstate0 + here->BJTcqbx) -
                     vbx * geqbx);
