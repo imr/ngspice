@@ -26,8 +26,10 @@ char *INPfindVer(char *line, char *version)
         }
 
         /* now the magic string */
-        sscanf(where, "%s", version);   /* We get the version number */
-
+        if (sscanf(where, "%s", version) != 1) { /* We get the version number */
+            sprintf( version, "default" );
+            printf("Warning -- Version not specified correct on line \"%s\"\nSetting version to 'default'.\n", line);
+        }
         return (NULL);
     }
     else {          /* no level on the line => default */
