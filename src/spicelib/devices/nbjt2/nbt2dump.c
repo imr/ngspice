@@ -73,7 +73,8 @@ NBJT2dump(GENmodel *inModel, CKTcircuit *ckt)
 
 	writeAscii = compareFiletypeVar("ascii");
 
-	if (!(fpState = fopen(fileName, (writeAscii ? "w" : "wb")))) {
+	fpState = fopen(fileName, (writeAscii ? "w" : "wb"));
+	if (!fpState) {
 	  perror(fileName);
 	} else {
 	  NBJT2putHeader(fpState, ckt, inst);
