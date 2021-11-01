@@ -75,13 +75,13 @@ void com_optran(wordlist* wl) {
     int optrancom;
     static bool dataset = FALSE;
     static bool getdata = FALSE;
-    static unsigned char opiter = 1;
+    static bool opiter = TRUE;
     static int ngminsteps = 1;
     static int nsrcsteps = 1;
 
     /* current circuit */
     if (ft_curckt && dataset && wl == NULL) { /* called from inp.c */
-        ft_curckt->ci_defTask->TSKnoOpIter = opiter;
+        ft_curckt->ci_defTask->TSKnoOpIter = (opiter != 0);
         ft_curckt->ci_defTask->TSKnumGminSteps = ngminsteps;
         ft_curckt->ci_defTask->TSKnumSrcSteps = nsrcsteps;
         getdata = FALSE; /* allow more calls to 'optran' */
@@ -109,7 +109,7 @@ void com_optran(wordlist* wl) {
         goto bugquit;
     if (optrancom == 0) {
         if (getdata) {
-            opiter = 1;
+            opiter = TRUE;
         }
         else {
             ft_curckt->ci_defTask->TSKnoOpIter = 1;
@@ -117,7 +117,7 @@ void com_optran(wordlist* wl) {
     }
     else {
         if (getdata) {
-            opiter = 0;
+            opiter = FALSE;
         }
         else {
             ft_curckt->ci_defTask->TSKnoOpIter = 0;
