@@ -8775,6 +8775,7 @@ static struct card *pspice_compat(struct card *oldcard)
                 else {
                     begstr = copy_substring(lstr, partstr);
                     newstr = tprintf("%s r_on%s", begstr, partstr + 3);
+                    tfree(begstr);
                 }
                 tfree(lstr);
                 lstr = newstr;
@@ -8786,6 +8787,7 @@ static struct card *pspice_compat(struct card *oldcard)
                 else {
                     begstr = copy_substring(lstr, partstr);
                     newstr = tprintf("%s r_off%s", begstr, partstr + 4);
+                    tfree(begstr);
                 }
                 tfree(lstr);
                 lstr = newstr;
@@ -8799,6 +8801,7 @@ static struct card *pspice_compat(struct card *oldcard)
                 else {
                     begstr = copy_substring(lstr, partstr);
                     newstr = tprintf("%s cntl_on%s", begstr, partstr + 3);
+                    tfree(begstr);
                 }
                 tfree(lstr);
                 lstr = newstr;
@@ -8812,6 +8815,7 @@ static struct card *pspice_compat(struct card *oldcard)
                 else {
                     begstr = copy_substring(lstr, partstr);
                     newstr = tprintf("%s cntl_off%s", begstr, partstr + 4);
+                    tfree(begstr);
                 }
                 tfree(lstr);
                 lstr = newstr;
