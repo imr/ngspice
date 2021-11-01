@@ -295,8 +295,7 @@ OPtran(CKTcircuit *ckt, int oldconverged)
     int converged;
     int firsttime;
     int error;
-    int save_order;
-    long save_mode;
+
     double maxstepsize = 0.0, prevmaxstepsize = 0.0, prevstepsize=0.;
 
     int ltra_num;
@@ -382,9 +381,6 @@ OPtran(CKTcircuit *ckt, int oldconverged)
 #endif
 
         firsttime = 1;
-        save_mode = (ckt->CKTmode&MODEUIC) | MODETRANOP | MODEINITJCT;
-        save_order = ckt->CKTorder;
-
 
 #ifdef XSPICE
 /* gtri - begin - wbk - Add Breakpoint stuff */
@@ -665,8 +661,7 @@ resume:
 
         ckt->CKTdeltaOld[0]=ckt->CKTdelta;
         NIcomCof(ckt);
-        save_mode = ckt->CKTmode;
-        save_order = ckt->CKTorder;
+
 #ifdef XSPICE
 /* gtri - begin - wbk - Add Breakpoint stuff */
 
