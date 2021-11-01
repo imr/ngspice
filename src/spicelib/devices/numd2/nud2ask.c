@@ -116,5 +116,4 @@ NUMD2ask(CKTcircuit *ckt, GENinstance *inInst, int which, IFvalue *value, IFvalu
     return (E_BADPARM);
   }
   /* NOTREACHED */
-  return (E_BADPARM);
 }
