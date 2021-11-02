@@ -62,6 +62,16 @@ static bool is_all_digits(char* tstr)
     return TRUE;
 }
 
+static bool has_arith_char(char* tstr)
+{
+    while (*tstr != '\0') {
+        if (is_arith_char(*tstr))
+            return TRUE;
+        tstr++;
+    }
+    return FALSE;
+}
+
 /* writing, printing or plotting will fail when the node name starts with
    a number or math character, even when enclosed in V() like V(2p). So
    automatically place "" around, like V("2p"). Returns the parse tree. Multiple
@@ -71,7 +81,7 @@ struct pnode* ft_getpnames_quotes(wordlist* wl, bool check)
 {
     struct pnode* names = NULL;
     char* sz = wl_flatten(wl);
-    if (strstr(sz, "v("))
+    if (strstr(sz, "v(") || strstr(sz, "V("))
     {
         char* tmpstr;
         char* nsz = tmpstr = stripWhiteSpacesInsideParens(sz);
@@ -79,7 +89,7 @@ struct pnode* ft_getpnames_quotes(wordlist* wl, bool check)
         /* put double quotes around tokens which start with math or number chars */
         while (*tmpstr != '\0') {
             /*check if we have v(something) at the beginning after arithchar or space */
-            if (tmpstr[0] == 'v' && tmpstr[1] == '(' && (nsz == tmpstr || isspace_c(tmpstr[-1]) || is_arith_char(tmpstr[-1]) || tmpstr[-1] == '.')) {
+            if ((tmpstr[0] == 'v' || tmpstr[0] == 'V') && tmpstr[1] == '(' && (nsz == tmpstr || isspace_c(tmpstr[-1]) || is_arith_char(tmpstr[-1]) || tmpstr[-1] == '.')) {
                 char* tmpstr2, * partoken2 = NULL;
                 tmpstr += 2;
                 /* get the complete zzz of v(zzz) */
@@ -113,10 +123,11 @@ struct pnode* ft_getpnames_quotes(wordlist* wl, bool check)
                         sadd(&ds1, partoken2);
                 }
                 else {
+                    bool hac = has_arith_char(tmpstr2);
                     if (is_all_digits(tmpstr2)) {
                         sadd(&ds1, tmpstr2);
                     }
-                    else if (isdigit_c(*tmpstr2) || is_arith_char(*tmpstr2)) {
+                    else if (isdigit_c(*tmpstr2) || hac) {
                         cadd(&ds1, '\"');
                         sadd(&ds1, tmpstr2);
                         cadd(&ds1, '\"');
