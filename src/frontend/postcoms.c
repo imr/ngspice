@@ -79,13 +79,14 @@ static bool has_arith_char(char* tstr)
 */
 struct pnode* ft_getpnames_quotes(wordlist* wl, bool check)
 {
-    struct pnode* names = NULL;
+    struct pnode* names = NULL, *tmpnode = NULL;
     char* sz = wl_flatten(wl);
-    if (strstr(sz, "v(") || strstr(sz, "V("))
+    if ((strstr(sz, "v(") || strstr(sz, "V(")) && !cp_getvar("noquotesinoutput", CP_BOOL, NULL, 0))
     {
         char* tmpstr;
         char* nsz = tmpstr = stripWhiteSpacesInsideParens(sz);
-        DS_CREATE(ds1, 100);
+        DS_CREATE(ds1, 100); /* the new name string*/
+        DS_CREATE(dsquote, 100); /* only the quoted strings*/
         /* put double quotes around tokens which start with math or number chars */
         while (*tmpstr != '\0') {
             /*check if we have v(something) at the beginning after arithchar or space */
@@ -100,13 +101,20 @@ struct pnode* ft_getpnames_quotes(wordlist* wl, bool check)
                 if (partoken1) {
                     /* we have a xx and yy */
                     partoken2 = copy(tpartoken + 1);
+                    bool hac1 = has_arith_char(partoken1);
+                    bool hac2 = has_arith_char(partoken2);
                     if (is_all_digits(partoken1)) {
                         sadd(&ds1, partoken1);
                     }
-                    else if (isdigit_c(*partoken1) || is_arith_char(*partoken1)) {
+                    else if (isdigit_c(*partoken1) || hac1) {
                         cadd(&ds1, '\"');
                         sadd(&ds1, partoken1);
                         cadd(&ds1, '\"');
+                        /* save all hyphenated strings only */
+                        cadd(&dsquote, '\"');
+                        sadd(&dsquote, partoken1);
+                        cadd(&dsquote, '\"');
+                        cadd(&dsquote, ' ');
                     }
                     else
                         sadd(&ds1, partoken1);
@@ -114,10 +122,15 @@ struct pnode* ft_getpnames_quotes(wordlist* wl, bool check)
                     if (is_all_digits(partoken2)) {
                         sadd(&ds1, partoken2);
                     }
-                    else if (isdigit_c(*partoken2) || is_arith_char(*partoken2)) {
+                    else if (isdigit_c(*partoken2) || hac2) {
                         cadd(&ds1, '\"');
                         sadd(&ds1, partoken2);
                         cadd(&ds1, '\"');
+                        /* save all hyphenated strings only */
+                        cadd(&dsquote, '\"');
+                        sadd(&dsquote, partoken2);
+                        cadd(&dsquote, '\"');
+                        cadd(&dsquote, ' ');
                     }
                     else
                         sadd(&ds1, partoken2);
@@ -131,6 +144,11 @@ struct pnode* ft_getpnames_quotes(wordlist* wl, bool check)
                         cadd(&ds1, '\"');
                         sadd(&ds1, tmpstr2);
                         cadd(&ds1, '\"');
+                        /* save all hyphenated strings only */
+                        sadd(&dsquote, "v(\"");
+                        sadd(&dsquote, tmpstr2);
+                        sadd(&dsquote, "\")");
+                        cadd(&dsquote, ' ');
                     }
                     else
                         sadd(&ds1, tmpstr2);
@@ -148,6 +166,28 @@ struct pnode* ft_getpnames_quotes(wordlist* wl, bool check)
         names = ft_getpnames_from_string(newline, check);
         ds_free(&ds1);
         tfree(nsz);
+        /* restore the old node name after parsing */
+        char *quotedstrings =  ds_get_buf(&dsquote);
+        for (tmpnode = names; tmpnode; tmpnode = tmpnode->pn_next) {
+            if (strstr(quotedstrings, tmpnode->pn_name)) {
+                char newstr[100];
+                char* tmp = tmpnode->pn_name;
+                int ii = 0;
+                /* copy to newstr without double quotes */
+                while (*tmp && ii < 99) {
+                    if (*(tmp) == '\"') {
+                        tmp++;
+                        continue;
+                    }
+                    newstr[ii] = *(tmp++);
+                    ii++;
+                }
+                newstr[ii] = '\0';
+                tfree(tmpnode->pn_name);
+                tmpnode->pn_name = copy(newstr);
+            }
+        }
+        ds_free(&dsquote);
     }
     else {
         names = ft_getpnames_from_string(sz, check);
