@@ -1176,7 +1176,47 @@ translate(struct card *deck, char *formal, char *actual, char *scname, const cha
         switch (dev_type) {
 
         case '.':
-            if (ciprefix(".ic", s) || ciprefix(".nodeset", s)) {
+            if (ciprefix(".save", s)) {
+                while ((paren_ptr = strchr(s, '(')) != NULL) {
+                    bool curr = FALSE;
+                    char* comma_ptr = NULL;
+
+                    if (ciprefix(" i(", paren_ptr - 2))
+                        curr = TRUE;
+
+                    name = paren_ptr + 1;
+
+                    if ((paren_ptr = strchr(name, ')')) == NULL) {
+                        fprintf(cp_err, "Error: missing closing ')' for .save statement %s\n", c->line);
+                        goto quit;
+                    }
+
+                    comma_ptr = strchr(s, ',');
+
+                    bxx_put_substring(&buffer, s, name);
+                    /* i(Vxx) */
+                    if (curr) {
+                        translate_inst_name(&buffer, scname, name, paren_ptr);
+                        s = paren_ptr;
+                    }
+                    /* V(a,b) */
+                    else if (comma_ptr && comma_ptr < paren_ptr) {
+                        translate_node_name(&buffer, scname, name, comma_ptr);
+                        bxx_putc(&buffer, ',');
+                        name = comma_ptr + 1;
+                        translate_node_name(&buffer, scname, name, paren_ptr);
+                        s = paren_ptr;
+                    }
+                    /* V(a) */
+                    else {
+                        translate_node_name(&buffer, scname, name, paren_ptr);
+                        s = paren_ptr;
+                    }
+                }
+                bxx_put_cstring(&buffer, s); /* rest of line */
+                break;
+            }
+            else if (ciprefix(".ic", s) || ciprefix(".nodeset", s)) {
                 while ((paren_ptr = strchr(s, '(')) != NULL) {
                     name = paren_ptr + 1;
 

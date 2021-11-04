@@ -77,10 +77,11 @@ NON-STANDARD FEATURES
 
 typedef struct {
     int width,  /* width of table...equal to size of out port */
-        depth;  /* depth of table...equal to size of
+        depth,  /* depth of table...equal to size of
                    "timepoints" array, and to the total
                    number of vectors retrieved from the
-                   source.in file.                                  */
+                   source.in file. */
+        imal;   /* array size malloced */
 
     double   *all_timepoints;   /* the storage array for the
                                    timepoints, as read from file.
@@ -93,6 +94,8 @@ typedef struct {
                                    to width*depth, one short will hold a
                                    12-state bit description.    */
 
+    bool   init_ok;             /* set to true if init is succeful */
+
 } Local_Data_t;
 
 
@@ -104,7 +107,7 @@ typedef enum token_type_s {CNV_NO_TOK,CNV_STRING_TOK} Cnv_Token_Type_t;
 /*=== FUNCTION PROTOTYPE DEFINITIONS ===*/
 
 
-
+static void free_local_data(Local_Data_t *loc);
 
 
 
@@ -716,6 +719,7 @@ static int cm_read_source(FILE *source, Local_Data_t *loc)
                                        source file which needs to be stored */
 
     i = 0;
+    loc->imal = 0;
     s = temp;
     while ( fgets(s,MAX_STRING_SIZE,source) != NULL) {
 
@@ -750,6 +754,7 @@ static int cm_read_source(FILE *source, Local_Data_t *loc)
 
                 /* set storage space for bits in a row and set them to 0*/
                 loc->all_data[i] = (char*)malloc(sizeof(char) * (size_t) loc->width);
+                loc->imal = i;
                 for (n = 0; n < loc->width; n++)
                     loc->all_data[i][n] = 0;
 
@@ -758,6 +763,9 @@ static int cm_read_source(FILE *source, Local_Data_t *loc)
                 for (j=0; j<(loc->width + 1); j++) {
 
                     token = CNVget_token(&s, &type);
+
+                    if (!token)
+                        return 4;
 
                     if ( 0 == j ) { /* obtain timepoint value... */
 
@@ -775,6 +783,7 @@ static int cm_read_source(FILE *source, Local_Data_t *loc)
                                than the previous value, then return with
                                an error message... */
                             if ( loc->all_timepoints[i] <= loc->all_timepoints[i-1] ) {
+                                free(token);
                                 return 3;
                             }
                         }
@@ -800,14 +809,14 @@ static int cm_read_source(FILE *source, Local_Data_t *loc)
 
                         /* if this bit was not recognized, return with an error  */
                         if (12 == bit_value) {
+                            free(token);
                             return 4;
                         }
                         else { /* need to store this value in the all_data[] array */
                             loc->all_data[i][j-1] = bit_value;
                         }
                     }
-                    if (token)
-                        free(token);
+                    free(token);
                 }
                 i++;
             }
@@ -818,6 +827,20 @@ static int cm_read_source(FILE *source, Local_Data_t *loc)
 }
 
 
+static void cm_d_source_callback(ARGS,
+        Mif_Callback_Reason_t reason)
+{
+    switch (reason) {
+        case MIF_CB_DESTROY: {
+            Local_Data_t *loc = STATIC_VAR(locdata);
+            if (loc) {
+                free_local_data(loc);
+                STATIC_VAR(locdata) = loc = NULL;
+            }
+            break;
+        } /* end of case MIF_CB_DESTROY */
+    } /* end of switch over reason being called */
+} /* end of function cm_d_source_callback */
 
 
 
@@ -954,6 +977,7 @@ void cm_d_source(ARGS)
         /*** allocate static storage for *loc ***/
         STATIC_VAR (locdata) = calloc (1 , sizeof ( Local_Data_t ));
         loc = STATIC_VAR (locdata);
+        CALLBACK = cm_d_source_callback;
 
         /*** allocate storage for *index, *bits & *timepoint ***/
 
@@ -1015,6 +1039,14 @@ void cm_d_source(ARGS)
         /* close source file */
         if (source)
             fclose(source);
+
+        if (err > 0) {
+            loc->init_ok = FALSE;
+            cm_message_send(" dsource will return only its initial state.\n");
+            return;
+        }
+        else
+            loc->init_ok = TRUE;
     }
     else {      /*** Retrieve previous values ***/
 
@@ -1023,6 +1055,9 @@ void cm_d_source(ARGS)
         row_index_old  = (int *) cm_event_get_ptr(0,1);
 
         loc = STATIC_VAR (locdata);
+
+        if (!loc->init_ok)
+            return;
 
         /* Set old values to new... */
         *row_index = *row_index_old;
@@ -1149,5 +1184,23 @@ void cm_d_source(ARGS)
     }
 }
 
+/* Free memory allocations in Local_Data_t structure */
+static void free_local_data(Local_Data_t *loc)
+{
+    if (loc == (Local_Data_t *) NULL) {
+        return;
+    }
+    /* Free data table and related values */
+    if (loc->all_timepoints) {
+        free(loc->all_timepoints);
+    }
+    if (loc->all_data) {
+        int i;
+        for (i = 0; i <= loc->imal; i++)
+            free(loc->all_data[i]);
+        free(loc->all_data);
+    }
+    free(loc);
+} /* end of function free_local_data */
 
 

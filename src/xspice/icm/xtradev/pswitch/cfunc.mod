@@ -239,7 +239,7 @@ void cm_pswitch(ARGS)  /* structure holding parms,
                 if(r<r_on) r=r_on;/* minimum resistance limiter */ 
             }
         } else {
-            inmean = (PARAM(cntl_on) - (INPUT(cntl_in)) / (PARAM(cntl_off) - PARAM(cntl_on))) - cntl_mean;
+            inmean = ((PARAM(cntl_on) - INPUT(cntl_in)) / (PARAM(cntl_off) - PARAM(cntl_on))) - cntl_mean;
             if (INPUT(cntl_in) < cntl_on) {
                 r = r_on;
                 outOfLimit = 1;

@@ -66,6 +66,7 @@ static void recifeval(struct card *pdeck);
 static char *upper(register char *string);
 static void rem_unused_mos_models(struct card* deck);
 
+extern void com_optran(wordlist * wl);
 
 
 //void inp_source_recent(void);
@@ -133,7 +134,7 @@ Xprintf(FILE *fdst, const char *fmt, ...)
 }
 
 
-/* Do a listing. Use is listing [expanded] [logical] [physical] [deck] */
+/* Do a listing. Use is listing [expanded] [logical] [physical] [deck] [runable] */
 void
 com_listing(wordlist *wl)
 {
@@ -164,6 +165,11 @@ com_listing(wordlist *wl)
                 case 'E':
                     expand = TRUE;
                     break;
+                case 'r':
+                case 'R':
+                    expand = TRUE;
+                    type = LS_RUNABLE;
+                    break;
                 default:
                     fprintf(cp_err, "Error: bad listing type %s\n", s);
                     return; /* SJB - don't go on after an error */
@@ -175,7 +181,7 @@ com_listing(wordlist *wl)
         if (do_param_listing) {
             nupa_list_params(cp_out);
         } else {
-            if (type != LS_DECK)
+            if (type != LS_DECK && type != LS_RUNABLE)
                 fprintf(cp_out, "\t%s\n\n", ft_curckt->ci_name);
             inp_list(cp_out,
                      expand ? ft_curckt->ci_deck : ft_curckt->ci_origdeck,
@@ -232,15 +238,20 @@ inp_list(FILE *file, struct card *deck, struct card *extras, int type)
 
     renumber = cp_getvar("renumber", CP_BOOL, NULL, 0);
 
-    if (type == LS_LOGICAL) {
+    if (type == LS_LOGICAL || type == LS_RUNABLE) {
     top1:
         for (here = deck; here; here = here->nextcard) {
             if (renumber)
                 here->linenum = i;
             if (ciprefix(".end", here->line) && !isalpha_c(here->line[4]))
                 continue;
-            if (*here->line != '*') {
+            if ((*here->line != '*') && (type == LS_LOGICAL)) {
                 Xprintf(file, "%6d : %s\n", here->linenum, upper(here->line));
+                if (here->error)
+                    Xprintf(file, "%s\n", here->error);
+            }
+            else if ((*here->line != '*') && (type == LS_RUNABLE)) {
+                Xprintf(file, "%s\n", upper(here->line));
                 if (here->error)
                     Xprintf(file, "%s\n", here->error);
             }
@@ -253,7 +264,10 @@ inp_list(FILE *file, struct card *deck, struct card *extras, int type)
             goto top1;
         }
 
-        Xprintf(file, "%6d : .end\n", i);
+        if (type == LS_LOGICAL)
+            Xprintf(file, "%6d : .end\n", i);
+        else if (type == LS_RUNABLE)
+            Xprintf(file, ".end\n");
 
     } else if ((type == LS_PHYSICAL) || (type == LS_DECK)) {
 
@@ -707,7 +721,7 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                         ciprefix(".four", s) ||
                         eq(s, ".plot") ||
                         eq(s, ".print") ||
-                        eq(s, ".save") ||
+/*                        eq(s, ".save") || add .save only after subcircuit expansion */
                         eq(s, ".op") ||
                         ciprefix(".meas", s) ||
                         eq(s, ".tf")) {
@@ -823,6 +837,15 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                     tfree(tt);
                     return 1;
                 }
+
+            /* Scan the deck again, now also adding .save commands to wl_first */
+            for (dd = deck->nextcard; dd; dd = dd->nextcard) {
+                char* curr_line = dd->line;
+                if (ciprefix(".save", curr_line)) {
+                    wl_append_word(&wl_first, &end, copy(dd->line));
+                    *curr_line = '*';
+                }
+            }
 
             /* Now handle translation of spice2c6 POLYs. */
 #ifdef XSPICE
@@ -1346,6 +1369,10 @@ inp_dodeck(
         tfree(ct->ci_filename);
 #endif
     ct->ci_filename = copy(filename);
+
+    /* load the optran data, if provided by .spiceinit or spinit.
+       Return immediately, if optran is not selected.*/
+    com_optran(NULL);
 
     if (!noparse) {
         /*

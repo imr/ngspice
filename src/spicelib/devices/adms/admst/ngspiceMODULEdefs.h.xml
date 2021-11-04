@@ -217,12 +217,20 @@ typedef struct s$(module)instance {
   </admst:choose>
 </admst:for-each>
   /* instance parameters */
+
 <admst:for-each select="variable[parametertype='instance' and input='yes']">
   <admst:value-of select="name"/>
+  <admst:text format="  unsigned %s_Given  :1;"/>
+  <admst:if test="attribute[name='info']">
+    <admst:value-of select="."/>
+    <admst:text format="  /*%s*/"/>
+  </admst:if>
+  <admst:text format="\n"/>
+</admst:for-each>
+<admst:for-each select="variable[parametertype='instance' and input='yes']">
   <admst:value-of select="name"/>
   <admst:apply-templates select="." match="dectype"/>
-  <admst:text format="%s;\n"/>
-  <admst:text format="  unsigned %s_Given  :1;"/>
+  <admst:text format="%s;"/>
   <admst:if test="attribute[name='info']">
     <admst:value-of select="."/>
     <admst:text format="  /*%s*/"/>
@@ -254,10 +262,12 @@ typedef struct s$(module)instance {
 <admst:for-each select="jacobian">
   <admst:value-of select="column/name"/>
   <admst:value-of select="row/name"/>
-  <admst:text format="  double *PTR_J_%s_%s;\n"/>
+  <admst:text format="    unsigned int PTR_J_%s_%s_required : 1;\n"/>
+</admst:for-each>
+<admst:for-each select="jacobian">
   <admst:value-of select="column/name"/>
   <admst:value-of select="row/name"/>
-  <admst:text format="    int PTR_J_%s_%s_required;\n"/>
+  <admst:text format="  double *PTR_J_%s_%s;\n"/>
   <admst:if test="[static='yes']">
     <admst:value-of select="column/name"/>
     <admst:value-of select="row/name"/>
@@ -297,10 +307,17 @@ typedef struct s$(module)model {         /* model structure */
   /* model parameters */
   <admst:for-each select="variable[parametertype='model' and input='yes']">
     <admst:value-of select="name"/>
+    <admst:text format="  unsigned %s_Given  :1;"/>
+    <admst:if test="attribute[name='info']">
+      <admst:value-of select="."/>
+      <admst:text format="  /*%s*/"/>
+    </admst:if>
+    <admst:text format="\n"/>
+  </admst:for-each>
+  <admst:for-each select="variable[parametertype='model' and input='yes']">
     <admst:value-of select="name"/>
     <admst:apply-templates select="." match="dectype"/>
-    <admst:text format="%s;\n"/>
-    <admst:text format="  unsigned %s_Given  :1;"/>
+    <admst:text format="%s;"/>
     <admst:if test="attribute[name='info']">
       <admst:value-of select="."/>
       <admst:text format="  /*%s*/"/>

@@ -7,6 +7,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 #include "ngspice/ngspice.h"
 #include "ngspice/cpdefs.h"
+#include "../spicelib/analysis/com_optran.h"
 
 #include "init.h"
 #include "variable.h"
@@ -67,4 +68,23 @@ cp_init(void)
     itmp = 8;
 #endif
     cp_vset("oscompiled", CP_NUM, &itmp);
+
+    /* To make optran the standard, call com_optran here.
+    May be overridden by entry in spinit or .spiceinit or a local call
+    in .control. */
+    {
+        wordlist* wl_optran;
+        /* the default optran parameters: 1 1 1 100n 10u 0 */
+        char* sbuf[7];
+        sbuf[0] = "1";
+        sbuf[1] = "1";
+        sbuf[2] = "1";
+        sbuf[3] = "100n";
+        sbuf[4] = "10u";
+        sbuf[5] = "0";
+        sbuf[6] = NULL;
+        wl_optran = wl_build((const char* const*)sbuf);
+        com_optran(wl_optran);
+        wl_free(wl_optran);
+    }
 }

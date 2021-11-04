@@ -1,0 +1,21 @@
+RKM Resistors
+
+V1 1 0 1
+R1 1 0 4K7   ; 4.7k
+R2 1 0 4R7   ; 4.7
+R3 1 0 R47   ; 0.47
+R4 1 0 470R  ; 470
+R5 1 0 47K   ; 47k
+R6 1 0 47K3  ; 47.3k
+R7 1 0 470K  ; 470k
+R8 1 0 4Meg7  tc1=1e-6 tc2=1e-9 dtemp=6
+*            ; 4.7Meg  <-- Not defined in the RKM notation
+R9 1 0 4L7   ; 4.7m
+R10 1 0 470L ; 470m
+R11 1 0 4M7  ; 4.7m  <-- This deviates from the RKM notation
+
+.control
+show r
+.endc
+
+.end

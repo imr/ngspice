@@ -60,6 +60,8 @@ typedef struct sBJTinstance {
     double BJTtemp;     /* instance temperature */
     double BJTdtemp;     /* instance delta temperature from circuit */
     double BJTtSatCur;  /* temperature adjusted saturation current */
+    double BJTBEtSatCur;  /* temperature adjusted saturation current */
+    double BJTBCtSatCur;  /* temperature adjusted saturation current */
     double BJTtBetaF;   /* temperature adjusted forward beta */
     double BJTtBetaR;   /* temperature adjusted reverse beta */
     double BJTtBEleakCur;  /* temperature adjusted B-E leakage current */
@@ -371,19 +373,19 @@ typedef struct sBJTmodel {          /* model structure for a bjt */
 
     double BJTtnom; /* nominal temperature */
     double BJTsatCur;   /* input - don't use */
+    double BJTBEsatCur;
+    double BJTBCsatCur;
     double BJTbetaF;    /* input - don't use */
     double BJTemissionCoeffF;
     double BJTearlyVoltF;
     double BJTrollOffF;
     double BJTleakBEcurrent;    /* input - don't use */
-    double BJTc2;
     double BJTleakBEemissionCoeff;
     double BJTbetaR;    /* input - don't use */
     double BJTemissionCoeffR;
     double BJTearlyVoltR;
     double BJTrollOffR;
     double BJTleakBCcurrent;    /* input - don't use */
-    double BJTc4;
     double BJTleakBCemissionCoeff;
     double BJTbaseResist;
     double BJTbaseCurrentHalfResist;
@@ -498,23 +500,28 @@ typedef struct sBJTmodel {          /* model structure for a bjt */
     double BJTvbeMax; /* maximum voltage over B-E junction */
     double BJTvbcMax; /* maximum voltage over B-C junction */
     double BJTvceMax; /* maximum voltage over C-E branch */
+    double BJTicMax;  /* maximum collector current */
+    double BJTibMax;  /* maximum base current */
+    double BJTpdMax; /* maximum device power dissipation */
+    double BJTteMax;  /* maximum device temperature */
+    double BJTrth0;   /* thermal resistance juntion to ambient */
 
     unsigned BJTsubsGiven : 1;
     unsigned BJTtnomGiven : 1;
     unsigned BJTsatCurGiven : 1;
+    unsigned BJTBEsatCurGiven : 1;
+    unsigned BJTBCsatCurGiven : 1;
     unsigned BJTbetaFGiven : 1;
     unsigned BJTemissionCoeffFGiven : 1;
     unsigned BJTearlyVoltFGiven : 1;
     unsigned BJTrollOffFGiven : 1;
     unsigned BJTleakBEcurrentGiven : 1;
-    unsigned BJTc2Given : 1;
     unsigned BJTleakBEemissionCoeffGiven : 1;
     unsigned BJTbetaRGiven : 1;
     unsigned BJTemissionCoeffRGiven : 1;
     unsigned BJTearlyVoltRGiven : 1;
     unsigned BJTrollOffRGiven : 1;
     unsigned BJTleakBCcurrentGiven : 1;
-    unsigned BJTc4Given : 1;
     unsigned BJTleakBCemissionCoeffGiven : 1;
     unsigned BJTbaseResistGiven : 1;
     unsigned BJTbaseCurrentHalfResistGiven : 1;
@@ -617,6 +624,11 @@ typedef struct sBJTmodel {          /* model structure for a bjt */
     unsigned BJTvbeMaxGiven : 1;
     unsigned BJTvbcMaxGiven : 1;
     unsigned BJTvceMaxGiven : 1;
+    unsigned BJTpdMaxGiven : 1;
+    unsigned BJTicMaxGiven : 1;
+    unsigned BJTibMaxGiven : 1;
+    unsigned BJTteMaxGiven : 1;
+    unsigned BJTrth0Given : 1;
 } BJTmodel;
 
 #ifndef NPN
@@ -653,19 +665,19 @@ enum {
     BJT_MOD_NPN = 101,
     BJT_MOD_PNP,
     BJT_MOD_IS,
+    BJT_MOD_IBE,
+    BJT_MOD_IBC,
     BJT_MOD_BF,
     BJT_MOD_NF,
     BJT_MOD_VAF,
     BJT_MOD_IKF,
     BJT_MOD_ISE,
-    BJT_MOD_C2,
     BJT_MOD_NE,
     BJT_MOD_BR,
     BJT_MOD_NR,
     BJT_MOD_VAR,
     BJT_MOD_IKR,
     BJT_MOD_ISC,
-    BJT_MOD_C4,
     BJT_MOD_NC,
     BJT_MOD_RB,
     BJT_MOD_IRB,
@@ -770,6 +782,11 @@ enum {
     BJT_MOD_VBE_MAX,
     BJT_MOD_VBC_MAX,
     BJT_MOD_VCE_MAX,
+    BJT_MOD_PD_MAX,
+    BJT_MOD_IC_MAX,
+    BJT_MOD_IB_MAX,
+    BJT_MOD_TE_MAX,
+    BJT_MOD_RTH0,
 };
 
 /* device questions */

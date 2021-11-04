@@ -11,14 +11,16 @@ Author: 1992 Charles Hough
 #include "cpldefs.h"
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
+#include "cplhash.h"
 
 
 static void copy_coeffs(double **dst, IFvalue *value)
 {
     int n = value->v.numValue;
 
-    if(*dst)
+    if (*dst) {
         tfree(*dst);
+    }
 
     *dst = TMALLOC(double, n);
 

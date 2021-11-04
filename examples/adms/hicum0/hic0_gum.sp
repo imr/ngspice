@@ -7,9 +7,8 @@ X1 C B 0 S DT hicumL0V1p1_c_sbt
 
 .control
 dc vb 0.2 1.4 0.01
-run
-plot abs(i(vc)) abs(i(vb)) abs(i(vs)) ylimit 0.1e-12 100e-3 ylog
-plot abs(i(vc))/abs(i(vb)) vs abs(-i(vc)) xlog xlimit 1e-09 10e-3 ylimit 0 300
+plot abs(i(vc)) abs(i(vb)) abs(i(vs)) ylimit 0.1p 100m ylog
+plot abs(i(vc))/abs(i(vb)) vs abs(i(vc)) xlog xlimit 100p 100m  ylimit 0 200 retraceplot
 .endc
 
 .include model-card-hicumL0V1p11.lib

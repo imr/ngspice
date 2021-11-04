@@ -1,0 +1,65 @@
+Adding transient simulation top generate the operating point of a circuit
+
+The operating point of a circuit has to be established before a transient, ac, 
+or noise simulation may be started.
+
+The procedure, as found in cktop.c is as follows:
+1) Iterate the matrix with the starting values
+If this fails:
+2) Start gmin stepping
+If this fails:
+3) start source stepping
+
+If this again fails, bail out.
+
+Step 1 may be skipped by
+option noopiter
+
+Step 2 may be skipped by
+option gminsteps=0
+
+Step 3 may be skipped by 
+option srcsteps=0
+
+Recently a fourth method has been added:
+4) Start a transient simulation for a specific amount of time.
+   Keep all data local. Keep the matrix values as an
+   operating point for the simulation following.
+If this fails, finally stop.
+
+Operating point by transient is now standard. The fefault optran
+data are 1 1 1 100n 10u. That is: first iteration, gmin stepping
+and source stepping are set to ON. The optran step time is 100n,
+the total optran time is 10u, supply ramping (not yet established)
+is OFF.
+
+You may change its performance by the command 'optran' in spinit,
+.spiceinit or in a .control section.
+The first three entries will override noopiter, gminsteps, srcsteps.
+A typical command may be
+optran 0 0 0 50u 10m 0
+(no initial iteration, no gmin stepping, no source stepping,
+stepsize for optran 50 us, optran run until 10 ms, no supply ramping
+
+The time for transient is determined a priori. If a transient
+simulation follows, choose 100 time the TSTEP value. If an ac
+or noise simulation follows, take the inverted starting
+frequency divided by 10 as the optran simulation time.
+
+A method to stop the op transient simulation, when all nodes
+have become stable, might be desirable, but has not yet been implemented.
+
+The transient op calculation uses the 'UIC' flag for its startup.
+Basically two applications come to mind: You may use this with
+constant voltage and current sources and simulate until the 
+output is stable. A method to automatically stop the op transient
+simulation when all nodes have become stable, might be desirable,
+but has not yet been implemented.
+One also may use the optran for a first transient simulation, maybe
+with different step sizes, before the next (tran, ac, pz, noise)
+simulation is commencing. So you may reach a certain bias point
+quickly and with coarse time steps, and then continue with fine
+steps to see details. For example a power amp in electro-thermal
+simulation may run for some seconds (minutes?) until the final
+temperature is reached, and then the detailed transient or
+an ac simulation starts.

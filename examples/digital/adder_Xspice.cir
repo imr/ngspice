@@ -62,23 +62,25 @@ X1     1  2  3  4  5  6  7  8  s0 s1 s2 s3  d0 c3 FOURBIT
 * save inputs
 *.save V(a1) V(a2) V(a3) V(a4) V(a5) V(a6) V(a7) V(a8) 
 
-*.save v(1)
-
-
 .control
-*save v(1)
 TRAN 500p 6400NS
 rusage
 display
 edisplay
+
 * save data to input directory
 cd $inputdir 
 eprvcd 1 2 3 4 5 6 7 8 s0 s1 s2 s3 c3 > adder_x.vcd
-* plotting the vcd file (e.g. with GTKWave)
-* For Windows: returns control to ngspice
-shell start gtkwave adder_x.vcd --script nggtk.tcl
-* Others
-*shell gtkwave adder_x.vcd --script nggtk.tcl &
+* plotting the vcd file with GTKWave
+if $oscompiled = 1 | $oscompiled = 8  ; MS Windows
+  shell start gtkwave adder_x.vcd --script nggtk.tcl
+else
+  if $oscompiled = 7 ; macOS, manual tweaking required (mark, insert, Zoom Fit)
+    shell open -a gtkwave adder_x.vcd
+  else ; Linux and others
+    shell gtkwave adder_x.vcd --script nggtk.tcl &
+  end
+end
 .endc
 
 .END

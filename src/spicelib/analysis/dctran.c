@@ -231,7 +231,7 @@ DCtran(CKTcircuit *ckt,
             CKTncDump(ckt);
             fprintf(stdout,"\n");
             fflush(stdout);
-        } else if (ckt->CKTmode & MODEUIC) {
+        } else if (ckt->CKTmode & MODEUIC && !ft_ngdebug) {
             fprintf(stdout,"Using transient initial conditions\n");
             fflush(stdout);
         } else if (!ft_noacctprint && !ft_noinitprint) {

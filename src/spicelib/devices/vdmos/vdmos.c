@@ -128,8 +128,8 @@ IFparm VDMOSmPTable[] = { /* model parameters */
  IOPA("cgs",    VDMOS_MOD_CGS,    IF_REAL, "Gate-source capacitance"),
 
 /* self heating */
- IOP("rthjc",  VDMOS_MOD_RTHJC,  IF_REAL, "Self-heating thermal resistance"),
- IOP("rthca",  VDMOS_MOD_RTHCA,  IF_REAL, "Self-heating thermal resistance"),
+ IOP("rthjc",  VDMOS_MOD_RTHJC,  IF_REAL, "Self-heating thermal resistance, junction-to-case"),
+ IOP("rthca",  VDMOS_MOD_RTHCA,  IF_REAL, "Self-heating thermal resistance, case-to-ambient"),
  IOP("cthj",   VDMOS_MOD_CTHJ,  IF_REAL, "Self-heating thermal capacitance"),
  
 /* soa check */
@@ -138,6 +138,12 @@ IFparm VDMOSmPTable[] = { /* model parameters */
  IOP("vds_max", VDMOS_MOD_VDS_MAX, IF_REAL, "maximum voltage D-S branch"),
  IOP("vgsr_max", VDMOS_MOD_VGSR_MAX, IF_REAL, "maximum voltage G-S branch"),
  IOP("vgdr_max", VDMOS_MOD_VGDR_MAX, IF_REAL, "maximum voltage G-D branch"),
+ IOP("pd_max", VDMOS_MOD_PD_MAX, IF_REAL, "maximum device power dissipation"),
+ IOP("id_max", VDMOS_MOD_ID_MAX, IF_REAL, "maximum drain/source current"),
+ IOP("idr_max", VDMOS_MOD_IDR_MAX, IF_REAL, "maximum drain/source reverse current"),
+ IOP("te_max", VDMOS_MOD_TE_MAX, IF_REAL, "maximum temperature"),
+ IOP("rth_ext", VDMOS_MOD_RTH_EXT, IF_REAL, "thermal resistance case to ambient, incl. heat sink"),
+ IOP("derating", VDMOS_MOD_DERATING, IF_REAL, "thermal derating for power"),
 };
 
 char *VDMOSnames[] = {

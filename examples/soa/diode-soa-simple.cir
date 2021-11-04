@@ -1,0 +1,37 @@
+SOA test for generic diode, including self-heating
+* forward direction
+* ngspice-35
+
+.temp  100
+
+vtamb tamb 0 27
+
+v1 1 0 0.7
+R1 1 0 100 ; just a parallel resistor
+Dth1 1 0 tj dmod1 thermal
+Rtj tj tamb 100 ; the thermal resistance junction to ambient
+* diode model parameters include all SOA parameters
+.model dmod1 d (rs=200m bv=21 rth0=1e6 tnom=25 fv_max=1.5 bv_max=20 id_max=1.5 pd_max=1 te_max=175)
+
+D2 1 0 dmod2 temp=125
+* diode model parameters include all SOA parameters
+.model dmod2 d (rs=200m bv=21 rth0=100 tnom=25 fv_max=1.5 bv_max=20 id_max=1.5 pd_max=1 te_max=175)
+
+.option warn=1 maxwarns=2
+
+.control
+save  @dth1[id] @d2[id] all
+*dc v1 3 -22.5 -0.5
+dc v1 0.02 2 0.02
+*display
+
+set xbrushwidth=3
+plot @dth1[id] @d2[id] loglog ylimit 10m 10 xlimit 0.1 1
+
+
+settype temperature tj
+plot tj xlimit 0.5 1 ylimit 0 300
+
+.endc
+
+.end

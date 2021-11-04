@@ -1,0 +1,55 @@
+.temp {envtemp}
+.param envtemp=40
+.option savecurrents
+.control
+set controlswait
+if $?sharedmode
+* script for shared ngspice
+version
+rusage
+else
+*** script for standard ngspice
+* Start optran without first iteration,
+* without gmin stepping and without src stepping
+* optran step size 10 ms, duration 40s,
+optran 1 0 0 10m 40 0
+* check the first 10 ms, input is switched on after 5 ms
+tran 1u 10m
+echo
+* output power
+let po = @ra1[i] * v(out)
+meas tran power_rms rms po from=5m to=10m
+echo
+rusage
+* temperature transistor Q6
+set xbrushwidth=4
+settype temperature q6tj q6tc q6hs
+plot q6tj q6tc q6hs q3tj q3tc q3hs ylimit 40 140
+set xbrushwidth=2
+* input and output voltages
+plot in out
+* power supply currents
+*plot V1#branch V2#branch ylimit -50 50
+plot V1#branch V2#branch ylimit -10 10
+* output current
+plot @ra1[i]
+*plot @ra1[i] xlimit 0 5m ylimit -0.3 0.3
+* resistance of thermistor2 TH1, TH2
+let rth1 = (v("net-_d3a1-pad1_") - v("net-_r11-pad1_")) / (@b.xth1.brtherm[i] + 1n)
+let rth2 = (v("net-_d1a1-pad2_") - v("net-_r12-pad1_")) / (@b.xth2.brtherm[i] + 1n)
+settype impedance rth1 rth2
+plot rth1 rth2 ylimit 0 5k
+
+ac dec 10 1 1Meg
+plot db(out)
+plot cph(out)
+
+tran 1u 100m
+fft out
+set xbrushwidth=4
+set color0=white
+plot mag(out) xlimit 0 10k
+* to see the harmonics
+plot mag(out) xlimit 0 10k ylimit 0 30m
+end
+.endc

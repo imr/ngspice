@@ -1,0 +1,22 @@
+RKM Capacitors
+
+V1 2 0 1
+R1 2 1 4K7
+C1 1 0 4p7   ; 4.7p
+C2 1 0 4n7   ; 4.7n
+C3 1 0 4u7   ; 4.7u
+C4 1 0 4m7   ; 4.7m
+C5 1 0 4F7   ; 4.7f  <-- This deviates from the RKM notation
+C6 1 0 47p3  ; 47.3p
+C7 1 0 470p  ; 470p
+C8 1 0 4u76 tc1=1e-6 tc2=1e-9 dtemp=6
+*            ; 4.76u
+C9 1 0 4m7   ; 4.7m
+C10 1 0 470nF ; 470n
+C11 1 0 47fF ; 47f  <-- This deviates from the RKM notation
+
+.control
+show c
+.endc
+
+.end

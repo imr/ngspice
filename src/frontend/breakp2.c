@@ -48,7 +48,7 @@ com_save2(wordlist *wl, char *name)
 void
 settrace(wordlist *wl, int what, char *name)
 {
-    struct dbcomm *d, *last;
+    struct dbcomm *d, *last, *dbcheck;
 
     if (!ft_curckt) {
         fprintf(cp_err, "Error: no circuit loaded\n");
@@ -101,6 +101,15 @@ settrace(wordlist *wl, int what, char *name)
             /* wrd_chtrace(s, TRUE, what); */
         }
 
+        /* Don't save a nodename more than once */
+        if (db_type == DB_SAVE) {
+            for (dbcheck = dbs; dbcheck; dbcheck = dbcheck->db_next) {
+                if (dbcheck->db_type == DB_SAVE && eq(dbcheck->db_nodename1, db_nodename1)) {
+                    goto loopend;
+                }
+            }
+        }
+
         d = TMALLOC(struct dbcomm, 1);
         d->db_analysis = name;
         d->db_type = db_type;
@@ -113,6 +122,8 @@ settrace(wordlist *wl, int what, char *name)
             ft_curckt->ci_dbs = dbs = d;
 
         last = d;
+
+    loopend:;
     }
 }
 

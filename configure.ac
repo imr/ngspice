@@ -16,7 +16,7 @@
 # problem to the user.
 AC_PREREQ([2.59])
 
-m4_define([ngspice_major_version], [35])
+m4_define([ngspice_major_version], [35+])
 m4_define([ngspice_minor_version], [0])
 m4_define([ngspice_version],
       [ngspice_major_version])
@@ -1304,6 +1304,8 @@ fi
 
 # Use AC_CHECK_HEADERS so the HAVE_*_H symbol gets defined
 AC_CHECK_HEADERS([ncurses/termcap.h termcap.h])
+AC_CHECK_HEADERS([sys/sysctl.h])
+
 
 # --enable-openmp: Use OpenMP on multi-core processors
 AC_ARG_ENABLE([openmp],

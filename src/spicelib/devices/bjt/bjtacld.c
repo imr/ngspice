@@ -44,8 +44,8 @@ BJTacLoad(GENmodel *inModel, CKTcircuit *ckt)
 
             m = here->BJTm;
 
-            gcpr=here->BJTtcollectorConduct * here->BJTarea;
-            gepr=here->BJTtemitterConduct * here->BJTarea;
+            gcpr=here->BJTtcollectorConduct;
+            gepr=here->BJTtemitterConduct;
             gpi= *(ckt->CKTstate0 + here->BJTgpi);
             gmu= *(ckt->CKTstate0 + here->BJTgmu);
             gm= *(ckt->CKTstate0 + here->BJTgm);

@@ -85,7 +85,13 @@ CKTop (CKTcircuit *ckt, long int firstmode, long int continuemode,
             converged = gillespie_src(ckt, firstmode, continuemode, iterlim);
         else
             converged = spice3_src(ckt, firstmode, continuemode, iterlim);
+        if (converged == 0) /* If gmin-stepping worked... move out */
+            return converged;
     }
+
+    /* If command 'optran' is not given, the function
+       returns immediately with the previous 'converged' */
+    converged = OPtran(ckt, converged);
 
 #ifdef XSPICE
     /* gtri - wbk - add convergence problem reporting flags */

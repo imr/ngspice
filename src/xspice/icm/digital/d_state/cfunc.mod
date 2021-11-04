@@ -1454,6 +1454,9 @@ static int cm_read_state_file(FILE *state_file,State_Table_t *states)
                                  + 3); j++) {
             
                         token = CNVget_token(&s, &type);
+
+                        if(!token)
+                            return 1;
                       
 
                         if ( 0 == j ) { /* obtain state value... */
@@ -1487,6 +1490,7 @@ static int cm_read_state_file(FILE *state_file,State_Table_t *states)
                  
                                 /* if this bit was not recognized, return with an error  */
                                 if (12 == bit_value) {
+                                    free(token);
                                     return 1;                            
                                 }
                                 else { /* need to store this value in the bits[] array */
@@ -1511,6 +1515,7 @@ static int cm_read_state_file(FILE *state_file,State_Table_t *states)
                      
                                     /* if this bit was not recognized, return with an error  */
                                     if (3 == bit_value) {
+                                        free(token);
                                         return 1;                            
                                     }
                                     else { /* need to store this value in the inputs[] array */
@@ -1534,7 +1539,8 @@ static int cm_read_state_file(FILE *state_file,State_Table_t *states)
                                     }
                                 }
                             }
-                        }       
+                        }
+                        free(token);       
                     }
                 }
                 else { /**** continuation type loop ****/
@@ -1626,6 +1632,8 @@ static int cm_read_state_file(FILE *state_file,State_Table_t *states)
             
                         token = CNVget_token(&s, &type);
 
+                        if(!token)
+                            return 1;
 
                         if ( j < states->num_inputs ) {
     
@@ -1639,6 +1647,7 @@ static int cm_read_state_file(FILE *state_file,State_Table_t *states)
              
                             /* if this bit was not recognized, return with an error  */
                             if (3 == bit_value) {
+                                free(token);
                                 return 1;                            
                             }
                             else { /* need to store this value in the inputs[] array */
@@ -1659,7 +1668,8 @@ static int cm_read_state_file(FILE *state_file,State_Table_t *states)
                         
                                 states->next_state[i] = (int) number;
                             }
-                        }       
+                        }
+                        free(token);
                     } 
 
                 }
@@ -1776,7 +1786,6 @@ void cm_d_state(ARGS)
 
     if(INIT) {  /* initial pass */ 
 
-
         /*** open file and count the number of vectors in it ***/
         state_file = fopen_with_path( PARAM(state_file), "r");
 
@@ -1832,6 +1841,7 @@ void cm_d_state(ARGS)
         states = states_old = (State_Table_t *) cm_event_get_ptr(0,0);
         clk = clk_old = (Digital_State_t *) cm_event_get_ptr(1,0);
         reset = reset_old = (Digital_State_t *) cm_event_get_ptr(2,0);
+        *reset = *reset_old = *clk = *clk_old = ZERO;
 
         /*** Send file pointer and the four storage pointers      ***/
         /*** to "cm_read_state_file()". This will return after    ***/

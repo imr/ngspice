@@ -398,6 +398,7 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
         {
             fprintf(cp_err, "Error: no data saved for %s; analysis not run\n",
                     spice_analysis_get_description(analysisPtr->JOBtype));
+            fprintf(cp_err, "    Command 'save' on a digital node?\n");
             return E_NOTFOUND;
         }
 
@@ -655,7 +656,13 @@ OUTpData(runDesc *plotPtr, IFvalue *refValue, IFvalue *valuePtr)
 #endif
 
             if (run->data[i].regular) {
-                if (run->data[i].type == IF_REAL)
+                if (ft_ngdebug && run->data[i].type == IF_REAL && eq(run->data[i].name, "speedcheck")) {
+                    /* current time */
+                    clock_t cl = clock();
+                    double tt = ((double)cl - (double)startclock) / CLOCKS_PER_SEC;
+                    fileAddRealValue(run->fp, run->binary, tt);
+                }
+                else if (run->data[i].type == IF_REAL)
                     fileAddRealValue(run->fp, run->binary,
                             valuePtr->v.vec.rVec [run->data[i].outIndex]);
                 else if (run->data[i].type == IF_COMPLEX)
@@ -1134,12 +1141,12 @@ vlength2delta(int len)
     /* TSTOP / TSTEP */
     int points = ft_curckt->ci_ckt->CKTtimeListSize;
     /* transient and pss analysis (points > 0) upon start */
-    if (len == 0 && points > 0) {
+    if ((ft_curckt->ci_ckt->CKTmode & MODETRAN) && len == 0 && points > 0) {
         /* number of timesteps plus some overhead */
         return points + 100;
     }
     /* transient and pss if original estimate is exceeded */
-    else if (points > 0) {
+    else if ((ft_curckt->ci_ckt->CKTmode & MODETRAN) && points > 0) {
         /* check where we are */
         double timerel = ft_curckt->ci_ckt->CKTtime / ft_curckt->ci_ckt->CKTfinalTime;
         /* return an estimate of the appropriate number of time points, if more than 20% of
@@ -1149,6 +1156,11 @@ vlength2delta(int len)
         /* If not, just double the available memory */
         else
             return len;
+    }
+    /* op */
+    else if (ft_curckt->ci_ckt->CKTmode & MODEDCOP) {
+        /* op with length 1 */
+        return 1;
     }
     /* other analysis types that do not set CKTtimeListSize */
     else

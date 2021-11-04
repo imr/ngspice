@@ -1,0 +1,31 @@
+.title KiCad schematic
+.include "./models/TLV6001.LIB"
+Vsignal1 Vin GND dc 2.5 ac 1
+Vcc1 Vcc GND 5
+R1 Vin Net-_R1-Pad2_ 1000
+R2 Vout Net-_R1-Pad2_ 1meg
+R3 Vcc Net-_R3-Pad2_ 10k
+R4 Net-_R3-Pad2_ GND 10k
+XU1 Net-_R3-Pad2_ Net-_R1-Pad2_ Vcc GND Vout TLV6001
+.save @vsignal1[i]
+.save @vcc1[i]
+.save @r1[i]
+.save @r2[i]
+.save @r3[i]
+.save @r4[i]
+.save V(Net-_R1-Pad2_)
+.save V(Net-_R3-Pad2_)
+.save V(Vcc)
+.save V(Vin)
+.save V(Vout)
+.ac dec 10 100m 20k
+
+.control
+optran 0 0 0 100n 10u 0 ; override optran from spinit
+run
+plot db(Vout)
+set units=degrees
+plot ph(Vout)
+.endc
+
+.end

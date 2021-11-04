@@ -42,6 +42,12 @@ BJTmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
         case BJT_MOD_IS:
             value->rValue = here->BJTsatCur;
             return(OK);
+        case BJT_MOD_IBE:
+            value->rValue = here->BJTBEsatCur;
+            return(OK);
+        case BJT_MOD_IBC:
+            value->rValue = here->BJTBCsatCur;
+            return(OK);
         case BJT_MOD_BF:
             value->rValue = here->BJTbetaF;
             return(OK);
@@ -56,9 +62,6 @@ BJTmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
             return(OK);
         case BJT_MOD_ISE:
             value->rValue = here->BJTleakBEcurrent;
-            return(OK);
-        case BJT_MOD_C2:
-            value->rValue = here->BJTc2;
             return(OK);
         case BJT_MOD_NE:
             value->rValue = here->BJTleakBEemissionCoeff;
@@ -77,9 +80,6 @@ BJTmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
             return(OK);
         case BJT_MOD_ISC:
             value->rValue = here->BJTleakBCcurrent;
-            return(OK);
-        case BJT_MOD_C4:
-            value->rValue = here->BJTc4;
             return(OK);
         case BJT_MOD_NC:
             value->rValue = here->BJTleakBCemissionCoeff;
@@ -416,6 +416,21 @@ BJTmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
             return(OK);
         case BJT_MOD_VCE_MAX:
             value->rValue = here->BJTvceMax;
+            return(OK);
+        case BJT_MOD_IC_MAX:
+            value->rValue = here->BJTicMax;
+            return(OK);
+        case BJT_MOD_IB_MAX:
+            value->rValue = here->BJTibMax;
+            return(OK);
+        case BJT_MOD_PD_MAX:
+            value->rValue = here->BJTpdMax;
+            return(OK);
+        case BJT_MOD_RTH0:
+            value->rValue = here->BJTrth0;
+            return(OK);
+        case BJT_MOD_TE_MAX:
+            value->rValue = here->BJTteMax;
             return(OK);
         default:
             return(E_BADPARM);

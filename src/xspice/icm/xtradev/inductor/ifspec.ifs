@@ -39,7 +39,7 @@ NON-STANDARD FEATURES
 
 NAME_TABLE:
 
-Spice_Model_Name:      inductor
+Spice_Model_Name:      inductoric
 C_Function_Name:       cm_inductor
 Description:           "Inductor with current initial condition"
 

@@ -862,6 +862,7 @@
     <ClInclude Include="..\src\frontend\com_state.h" />
     <ClInclude Include="..\src\frontend\com_strcmp.h" />
     <ClInclude Include="..\src\frontend\com_unset.h" />
+    <ClInclude Include="..\src\frontend\com_wr_ic.h" />
     <ClInclude Include="..\src\frontend\control.h" />
     <ClInclude Include="..\src\frontend\cpitf.h" />
     <ClInclude Include="..\src\frontend\define.h" />
@@ -1167,6 +1168,7 @@
     <ClInclude Include="..\src\spicelib\devices\cktaccept.h" />
     <ClInclude Include="..\src\spicelib\devices\cpl\cpldefs.h" />
     <ClInclude Include="..\src\spicelib\devices\cpl\cplext.h" />
+    <ClInclude Include="..\src\spicelib\devices\cpl\cplhash.h" />
     <ClInclude Include="..\src\spicelib\devices\cpl\cplinit.h" />
     <ClInclude Include="..\src\spicelib\devices\cpl\cplitf.h" />
     <ClInclude Include="..\src\spicelib\devices\csw\cswdefs.h" />
@@ -1452,6 +1454,7 @@
     <ClCompile Include="..\src\frontend\com_measure2.c" />
     <ClCompile Include="..\src\frontend\com_option.c" />
     <ClCompile Include="..\src\frontend\com_plot.c" />
+    <ClCompile Include="..\src\frontend\com_wr_ic.c" />
     <ClCompile Include="..\src\frontend\com_rehash.c" />
     <ClCompile Include="..\src\frontend\com_set.c" />
     <ClCompile Include="..\src\frontend\com_setscale.c" />
@@ -1702,6 +1705,7 @@
     <ClCompile Include="..\src\spicelib\analysis\ninteg.c" />
     <ClCompile Include="..\src\spicelib\analysis\noisean.c" />
     <ClCompile Include="..\src\spicelib\analysis\nsetparm.c" />
+    <ClCompile Include="..\src\spicelib\analysis\optran.c" />
     <ClCompile Include="..\src\spicelib\analysis\pssaskq.c" />
     <ClCompile Include="..\src\spicelib\analysis\pssinit.c" />
     <ClCompile Include="..\src\spicelib\analysis\psssetp.c" />
@@ -2049,9 +2053,12 @@
     <ClCompile Include="..\src\spicelib\devices\cktsoachk.c" />
     <ClCompile Include="..\src\spicelib\devices\cpl\cpl.c" />
     <ClCompile Include="..\src\spicelib\devices\cpl\cplask.c" />
+    <ClCompile Include="..\src\spicelib\devices\cpl\cpldelete.c" />
+    <ClCompile Include="..\src\spicelib\devices\cpl\cplhash.c" />
     <ClCompile Include="..\src\spicelib\devices\cpl\cplinit.c" />
     <ClCompile Include="..\src\spicelib\devices\cpl\cplload.c" />
     <ClCompile Include="..\src\spicelib\devices\cpl\cplmask.c" />
+    <ClCompile Include="..\src\spicelib\devices\cpl\cplmdel.c" />
     <ClCompile Include="..\src\spicelib\devices\cpl\cplmpar.c" />
     <ClCompile Include="..\src\spicelib\devices\cpl\cplparam.c" />
     <ClCompile Include="..\src\spicelib\devices\cpl\cplsetup.c" />

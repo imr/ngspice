@@ -8,12 +8,6 @@ Author: 1985 Thomas L. Quarles
  * available to the next level(s) up the calling hierarchy
  */
 
-/*
- * You may define the preprocessor symbolo
- * BJT_COMPAT to enable compatibility with
- * archaic spice2 bjt model
- */ 
- 
 #include "ngspice/ngspice.h"
 #include "ngspice/devdefs.h"
 #include "bjtdefs.h"
@@ -88,6 +82,8 @@ IFparm BJTmPTable[] = { /* model parameters */
  IOP("tnom", BJT_MOD_TNOM, IF_REAL, "Parameter measurement temperature"),
  IOPR("tref", BJT_MOD_TNOM, IF_REAL, "Parameter measurement temperature"),
  IOP("is",   BJT_MOD_IS,   IF_REAL, "Saturation Current"),
+ IOP("ibe",  BJT_MOD_IBE,  IF_REAL, "Base-Emitter saturation Current"),
+ IOP("ibc",  BJT_MOD_IBC,  IF_REAL, "Base-Collector saturation Current"),
  IOP("bf",   BJT_MOD_BF,   IF_REAL, "Ideal forward beta"),
  IOP("nf",   BJT_MOD_NF,   IF_REAL, "Forward emission coefficient"),
  IOP("vaf",  BJT_MOD_VAF,  IF_REAL, "Forward Early voltage"),
@@ -95,9 +91,7 @@ IFparm BJTmPTable[] = { /* model parameters */
  IOP("ikf",  BJT_MOD_IKF,  IF_REAL, "Forward beta roll-off corner current"),
  IOPR("ik",  BJT_MOD_IKF,  IF_REAL, "Forward beta roll-off corner current"),
  IOP("ise",  BJT_MOD_ISE,  IF_REAL, "B-E leakage saturation current"),
-#ifdef BJT_COMPAT  
- IOP("c2",   BJT_MOD_C2,   IF_REAL, "Obsolete parameter name"),
-#endif 
+ IOPR("c2",  BJT_MOD_ISE,  IF_REAL, "B-E leakage saturation current alias"),
  IOP("ne",   BJT_MOD_NE,   IF_REAL, "B-E leakage emission coefficient"),
  IOP("br",   BJT_MOD_BR,   IF_REAL, "Ideal reverse beta"),
  IOP("nr",   BJT_MOD_NR,   IF_REAL, "Reverse emission coefficient"),
@@ -105,9 +99,7 @@ IFparm BJTmPTable[] = { /* model parameters */
  IOPR("vb",  BJT_MOD_VAR,  IF_REAL, "Reverse Early voltage"),
  IOP("ikr",  BJT_MOD_IKR,  IF_REAL, "reverse beta roll-off corner current"),
  IOP("isc",  BJT_MOD_ISC,  IF_REAL, "B-C leakage saturation current"),
-#ifdef BJT_COMPAT 
- IOP("c4",   BJT_MOD_C4,   IF_REAL, "Obsolete parameter name"),
-#endif 
+ IOPR("c4",  BJT_MOD_ISC,  IF_REAL, "B-C leakage saturation current alias"),
  IOP("nc",   BJT_MOD_NC,   IF_REAL, "B-C leakage emission coefficient"),
  IOP("rb",   BJT_MOD_RB,   IF_REAL, "Zero bias base resistance"),
  IOP("irb",  BJT_MOD_IRB,  IF_REAL, "Current for base resistance=(rb+rbm)/2"),
@@ -229,7 +221,12 @@ IFparm BJTmPTable[] = { /* model parameters */
  IOP("d",     BJT_MOD_XD,    IF_REAL, "Temperature exponent of VO"),
  IOP("vbe_max", BJT_MOD_VBE_MAX, IF_REAL, "maximum voltage B-E junction"),
  IOP("vbc_max", BJT_MOD_VBC_MAX, IF_REAL, "maximum voltage B-C junction"),
- IOP("vce_max", BJT_MOD_VCE_MAX, IF_REAL, "maximum voltage C-E branch")
+ IOP("vce_max", BJT_MOD_VCE_MAX, IF_REAL, "maximum voltage C-E branch"),
+ IOP("pd_max", BJT_MOD_PD_MAX, IF_REAL, "maximum device power dissipation"),
+ IOP("ic_max", BJT_MOD_IC_MAX, IF_REAL, "maximum collector current"),
+ IOP("ib_max", BJT_MOD_IB_MAX, IF_REAL, "maximum base current"),
+ IOP("te_max", BJT_MOD_TE_MAX, IF_REAL, "maximum temperature"),
+ IOP("rth0", BJT_MOD_RTH0, IF_REAL, "thermal resistance juntion to ambient"),
 };
 
 char *BJTnames[] = {

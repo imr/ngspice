@@ -5,16 +5,14 @@ Vss 2 0 0.0v
 
 X1 1 2 3 4 INV
 X2 1 2 4 5 INV
-X3 1 2 5 3 INV
+X3 1 2 5 33 INV
 *X4 1 2 6 7 INV
 *X5 1 2 7 8 INV
 *X6 1 2 8 9 INV
 *X7 1 2 9 3 INV
 
-.IC V(3)=0.0v V(4)=2.5v V(5)=5.0v
-* V(6)=0.0v V(7)=5.0v V(8)=0.0v V(9)=5.0v
-
-Vin 3 0 2.5v
+* pulse to start oscillation
+Vstart 33 3 dc 0 pulse(0 2.5 0.5n 1n 1n 1n 1)
 
 .SUBCKT INV 1   2   3   4
 *           Vdd Vss Vin Vout
@@ -116,8 +114,8 @@ Vbn 2 26 0.0v
 + models concmob fieldmob bgn srh conctau
 + method ac=direct onec
 
-.tran 0.1ns 20ns
-.print tran v(4)
-.plot tran v(4)
+.tran 0.1ns 16ns
+.print tran v(3) v(33)
+.plot tran v(3) v(33)
 .options acct bypass=1 method=gear nopage
 .end

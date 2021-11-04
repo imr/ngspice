@@ -7,7 +7,6 @@ Q1 C B 0 S DT BJTRF1
 
 .control
 dc vb 0.2 1.4 0.01
-run
 plot abs(i(vc)) abs(i(vb)) abs(i(vs)) ylog xlimit 0.3 1.4 ylimit 1e-12 100e-3
 plot abs(i(vc))/abs(i(vb)) vs abs(-i(vc)) xlog xlimit 1e-09 10e-3 ylimit 0 150
 .endc

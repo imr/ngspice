@@ -47,11 +47,31 @@ BJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if(!model->BJTsatCurGiven) {
             model->BJTsatCur = 1e-16;
         }
+        if(!model->BJTBEsatCurGiven) { /* temp update will decide of IS usage */
+            model->BJTBEsatCur = 0.0;
+        }
+        if(!model->BJTBCsatCurGiven) { /* temp update will decide of IS usage */
+            model->BJTBCsatCur = 0.0;
+        }
         if(!model->BJTbetaFGiven) {
             model->BJTbetaF = 100;
         }
         if(!model->BJTemissionCoeffFGiven) {
             model->BJTemissionCoeffF = 1;
+        }
+        if(!model->BJTleakBEcurrentGiven) {
+            model->BJTleakBEcurrent = 0;
+        } else {
+            if(model->BJTleakBEcurrent > 1e-04) {
+                model->BJTleakBEcurrent = model->BJTsatCur * model->BJTleakBEcurrent;
+            }
+        }
+        if(!model->BJTleakBCcurrentGiven) {
+            model->BJTleakBCcurrent = 0;
+        } else {
+            if(model->BJTleakBCcurrent > 1e-04) {
+                model->BJTleakBCcurrent = model->BJTsatCur * model->BJTleakBCcurrent;
+            }
         }
         if(!model->BJTleakBEemissionCoeffGiven) {
             model->BJTleakBEemissionCoeff = 1.5;
@@ -369,17 +389,18 @@ BJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             model->BJTvceMax = 1e99;
         }
 
-/*
- * COMPATABILITY WARNING!
- * special note:  for backward compatability to much older models, spice 2G
- * implemented a special case which checked if B-E leakage saturation
- * current was >1, then it was instead a the B-E leakage saturation current
- * divided by IS, and multiplied it by IS at this point.  This was not
- * handled correctly in the 2G code, and there is some question on its
- * reasonability, since it is also undocumented, so it has been left out
- * here.  It could easily be added with 1 line.  (The same applies to the B-C
- * leakage saturation current).   TQ  6/29/84
- */
+        if(!model->BJTicMaxGiven) {
+            model->BJTicMax = 1e99;
+        }
+        if(!model->BJTibMaxGiven) {
+            model->BJTibMax = 1e99;
+        }
+        if(!model->BJTpdMaxGiven) {
+            model->BJTpdMax = 1e99;
+        }
+        if(!model->BJTteMaxGiven) {
+            model->BJTteMax = 1e99;
+        }
 
         /* loop through all the instances of the model */
         for (here = BJTinstances(model); here != NULL ;

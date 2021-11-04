@@ -69,6 +69,7 @@ libfte_la_SOURCES = \
     com_sysinfo.c   \
     com_unset.c \
     com_unset.h \
+    com_wr_ic.c  \
     completion.h    \
     control.h   \
     control.c   \

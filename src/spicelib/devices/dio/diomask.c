@@ -172,6 +172,15 @@ DIOmAsk (CKTcircuit *ckt, GENmodel *inModel, int which, IFvalue *value)
         case DIO_MOD_BV_MAX:
             value->rValue = model->DIObv_max;
             return(OK);
+        case DIO_MOD_ID_MAX:
+            value->rValue = model->DIOid_max;
+            return(OK);
+        case DIO_MOD_PD_MAX:
+            value->rValue = model->DIOpd_max;
+            return(OK);
+        case DIO_MOD_TE_MAX:
+            value->rValue = model->DIOte_max;
+            return(OK);
         case DIO_MOD_ISR:
             value->rValue = model->DIOrecSatCur;
             return(OK);

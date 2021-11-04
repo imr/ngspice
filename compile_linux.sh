@@ -5,6 +5,8 @@
 # Procedure:
 # Install gcc, bison, flex, libtool, autoconf, automake, 
 # libx11 and libx11-dev (headers), libXaw and libXaw-dev, libreadline and dev
+# xmu, xet, xt, libxft, libxrender, libfreetype, libfontconfig
+# for details please see the ngspice manual, chapt. 32.1.
 # Declare 'compile_linux.sh' executable and start compiling with
 # './compile_linux.sh' or './compile_linux.sh d' from the ngspice directory.
 # Options:

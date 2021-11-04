@@ -31,8 +31,6 @@ BJTload(GENmodel *inModel, CKTcircuit *ckt)
     double arg3;
     double arg;
     double argtf;
-    double c2;
-    double c4;
     double capbc;
     double capbe;
     double capbx=0;
@@ -53,8 +51,6 @@ BJTload(GENmodel *inModel, CKTcircuit *ckt)
     double geqsub;
     double ceqsub;
     double cex;
-    double csat;
-    double csubsat;
     double ctot;
     double czbc;
     double czbcf2;
@@ -83,8 +79,6 @@ BJTload(GENmodel *inModel, CKTcircuit *ckt)
     double gbe;
     double gben;
     double gcsub;
-    double gcpr;
-    double gepr;
     double geq;
     double geqbx;
     double geqcb;
@@ -94,8 +88,6 @@ BJTload(GENmodel *inModel, CKTcircuit *ckt)
     double go;
     double gpi;
     double gx;
-    double oik;
-    double oikr;
     double ovtf;
     double pc;
     double pe;
@@ -104,10 +96,8 @@ BJTload(GENmodel *inModel, CKTcircuit *ckt)
     double q2;
     double qb;
     double rbpi;
-    double rbpr;
     double sarg;
     double sqarg;
-    double td;
     double temp;
     double tf;
     double tr;
@@ -125,7 +115,6 @@ BJTload(GENmodel *inModel, CKTcircuit *ckt)
 #ifndef PREDICTOR
     double xfact;
 #endif
-    double xjrb;
     double xjtf;
     double xmc;
     double xme;
@@ -142,9 +131,12 @@ BJTload(GENmodel *inModel, CKTcircuit *ckt)
     double vrci=0.0, delvrci;
     double Irci=0.0, Irci_Vrci=0.0, Irci_Vbci=0.0, Irci_Vbcx=0.0;
     double Qbci=0.0, Qbci_Vbci=0.0, Qbcx, Qbcx_Vbcx=0.0, gbcx, cbcx;
+    int ttype;
 
     /*  loop through all the models */
     for( ; model != NULL; model = BJTnextModel(model)) {
+
+        ttype = model->BJTtype*model->BJTsubs;
 
         /* loop through all the instances of the model */
         for (here = BJTinstances(model); here != NULL ;
@@ -172,23 +164,9 @@ BJTload(GENmodel *inModel, CKTcircuit *ckt)
             /*
              *   dc model paramters
              */
-            csat=here->BJTtSatCur*here->BJTarea;
-            csubsat=here->BJTtSubSatCur*here->BJTarea;
-            rbpr=here->BJTtminBaseResist/here->BJTarea;
-            rbpi=here->BJTtbaseResist/here->BJTarea-rbpr;
-            gcpr=here->BJTtcollectorConduct*here->BJTarea;
-            gepr=here->BJTtemitterConduct*here->BJTarea;
-            oik=here->BJTtinvRollOffF/here->BJTarea;
-            c2=here->BJTtBEleakCur*here->BJTarea;
+            rbpi=here->BJTtbaseResist-here->BJTtminBaseResist;
             vte=here->BJTtleakBEemissionCoeff*vt;
-            oikr=here->BJTtinvRollOffR/here->BJTarea;
-            if (model->BJTsubs == VERTICAL)
-                c4=here->BJTtBCleakCur * here->BJTareab;
-            else
-                c4=here->BJTtBCleakCur * here->BJTareac;
             vtc=here->BJTtleakBCemissionCoeff*vt;
-            td=model->BJTexcessPhaseFactor;
-            xjrb=here->BJTtbaseCurrentHalfResist*here->BJTarea;
 
             if(SenCond){
 #ifdef SENSDEBUG
@@ -204,7 +182,7 @@ BJTload(GENmodel *inModel, CKTcircuit *ckt)
                     vbx=model->BJTtype*(
                         *(ckt->CKTrhsOp+here->BJTbaseNode)-
                         *(ckt->CKTrhsOp+here->BJTcolPrimeNode));
-                    vsub=model->BJTtype*model->BJTsubs*(
+                    vsub=ttype*(
                       *(ckt->CKTrhsOp+here->BJTsubstNode)-
                       *(ckt->CKTrhsOp+here->BJTsubstConNode));
                 }
@@ -218,7 +196,7 @@ BJTload(GENmodel *inModel, CKTcircuit *ckt)
                         vbx=model->BJTtype*(
                             *(ckt->CKTrhsOld+here->BJTbaseNode)-
                             *(ckt->CKTrhsOld+here->BJTcolPrimeNode));
-                        vsub=model->BJTtype*model->BJTsubs*(
+                        vsub=ttype*(
                             *(ckt->CKTrhsOld+here->BJTsubstNode)-
                             *(ckt->CKTrhsOld+here->BJTsubstConNode));
                     }
@@ -226,7 +204,7 @@ BJTload(GENmodel *inModel, CKTcircuit *ckt)
                         vbx=model->BJTtype*(
                             *(ckt->CKTrhsOp+here->BJTbaseNode)-
                             *(ckt->CKTrhsOp+here->BJTcolPrimeNode));
-                        vsub=model->BJTtype*model->BJTsubs*(
+                        vsub=ttype*(
                             *(ckt->CKTrhsOp+here->BJTsubstNode)-
                             *(ckt->CKTrhsOp+here->BJTsubstConNode));
                     }
@@ -246,7 +224,7 @@ BJTload(GENmodel *inModel, CKTcircuit *ckt)
                 vbx=model->BJTtype*(
                     *(ckt->CKTrhsOld+here->BJTbaseNode)-
                     *(ckt->CKTrhsOld+here->BJTcolPrimeNode));
-                vsub=model->BJTtype*model->BJTsubs*(
+                vsub=ttype*(
                     *(ckt->CKTrhsOld+here->BJTsubstNode)-
                     *(ckt->CKTrhsOld+here->BJTsubstConNode));
             } else if(ckt->CKTmode & MODEINITTRAN) {
@@ -257,7 +235,7 @@ BJTload(GENmodel *inModel, CKTcircuit *ckt)
                 vbx=model->BJTtype*(
                     *(ckt->CKTrhsOld+here->BJTbaseNode)-
                     *(ckt->CKTrhsOld+here->BJTcolPrimeNode));
-                vsub=model->BJTtype*model->BJTsubs*(
+                vsub=ttype*(
                     *(ckt->CKTrhsOld+here->BJTsubstNode)-
                     *(ckt->CKTrhsOld+here->BJTsubstConNode));
                 if( (ckt->CKTmode & MODETRAN) && (ckt->CKTmode & MODEUIC) ) {
@@ -356,7 +334,7 @@ BJTload(GENmodel *inModel, CKTcircuit *ckt)
                 vbx=model->BJTtype*(
                     *(ckt->CKTrhsOld+here->BJTbaseNode)-
                     *(ckt->CKTrhsOld+here->BJTcolPrimeNode));
-                vsub=model->BJTtype*model->BJTsubs*(
+                vsub=ttype*(
                     *(ckt->CKTrhsOld+here->BJTsubstNode)-
                     *(ckt->CKTrhsOld+here->BJTsubstConNode));
                 cchat= *(ckt->CKTstate0 + here->BJTcc)+(*(ckt->CKTstate0 +
@@ -451,27 +429,27 @@ next1:      vtn=vt*here->BJTtemissionCoeffF;
 
             if(vbe >= -3*vtn){
                 evbe=exp(vbe/vtn);
-                cbe=csat*(evbe-1);
-                gbe=csat*evbe/vtn;
+                cbe=here->BJTBEtSatCur*(evbe-1);
+                gbe=here->BJTBEtSatCur*evbe/vtn;
             } else {
                 arg=3*vtn/(vbe*CONSTe);
                 arg = arg * arg * arg;
-                cbe = -csat*(1+arg);
-                gbe = csat*3*arg/vbe;
+                cbe = -here->BJTBEtSatCur*(1+arg);
+                gbe = here->BJTBEtSatCur*3*arg/vbe;
             }
-            if (c2 == 0) {
+            if (here->BJTtBEleakCur == 0) {
                 cben=0;
                 gben=0;
             } else {
                 if(vbe >= -3*vte){
                     evben=exp(vbe/vte);
-                    cben=c2*(evben-1);
-                    gben=c2*evben/vte;
+                    cben=here->BJTtBEleakCur*(evben-1);
+                    gben=here->BJTtBEleakCur*evben/vte;
                 } else {
                     arg=3*vte/(vbe*CONSTe);
                     arg = arg * arg * arg;
-                    cben = -c2*(1+arg);
-                    gben = c2*3*arg/vbe;
+                    cben = -here->BJTtBEleakCur*(1+arg);
+                    gben = here->BJTtBEleakCur*3*arg/vbe;
                 }
             }
             gben+=ckt->CKTgmin;
@@ -481,27 +459,27 @@ next1:      vtn=vt*here->BJTtemissionCoeffF;
 
             if(vbc >= -3*vtn) {
                 evbc=exp(vbc/vtn);
-                cbc=csat*(evbc-1);
-                gbc=csat*evbc/vtn;
+                cbc=here->BJTBCtSatCur*(evbc-1);
+                gbc=here->BJTBCtSatCur*evbc/vtn;
             } else {
                 arg=3*vtn/(vbc*CONSTe);
                 arg = arg * arg * arg;
-                cbc = -csat*(1+arg);
-                gbc = csat*3*arg/vbc;
+                cbc = -here->BJTBCtSatCur*(1+arg);
+                gbc = here->BJTBCtSatCur*3*arg/vbc;
             }
-            if (c4 == 0) {
+            if (here->BJTtBCleakCur == 0) {
                 cbcn=0;
                 gbcn=0;
             } else {
                 if(vbc >= -3*vtc) {
                     evbcn=exp(vbc/vtc);
-                    cbcn=c4*(evbcn-1);
-                    gbcn=c4*evbcn/vtc;
+                    cbcn=here->BJTtBCleakCur*(evbcn-1);
+                    gbcn=here->BJTtBCleakCur*evbcn/vtc;
                 } else {
                     arg=3*vtc/(vbc*CONSTe);
                     arg = arg * arg * arg;
-                    cbcn = -c4*(1+arg);
-                    gbcn = c4*3*arg/vbc;
+                    cbcn = -here->BJTtBCleakCur*(1+arg);
+                    gbcn = here->BJTtBCleakCur*3*arg/vbc;
                 }
             }
             gbcn+=ckt->CKTgmin;
@@ -512,12 +490,12 @@ next1:      vtn=vt*here->BJTtemissionCoeffF;
                 if(vsub <= -3*vts) {
                     arg=3*vts/(vsub*CONSTe);
                     arg = arg * arg * arg;
-                    gdsub = csubsat*3*arg/vsub+ckt->CKTgmin;
-                    cdsub = -csubsat*(1+arg)+ckt->CKTgmin*vsub;
+                    gdsub = here->BJTtSubSatCur*3*arg/vsub+ckt->CKTgmin;
+                    cdsub = -here->BJTtSubSatCur*(1+arg)+ckt->CKTgmin*vsub;
                 } else {
                     evsub = exp(MIN(MAX_EXP_ARG,vsub/vts));
-                    gdsub = csubsat*evsub/vts + ckt->CKTgmin;
-                    cdsub = csubsat*(evsub-1) + ckt->CKTgmin*vsub;
+                    gdsub = here->BJTtSubSatCur*evsub/vts + ckt->CKTgmin;
+                    cdsub = here->BJTtSubSatCur*(evsub-1) + ckt->CKTgmin*vsub;
                 }
             } else {
                 gdsub = ckt->CKTgmin;
@@ -585,12 +563,12 @@ next1:      vtn=vt*here->BJTtemissionCoeffF;
              *   determine base charge terms
              */
             q1=1/(1-here->BJTtinvEarlyVoltF*vbc-here->BJTtinvEarlyVoltR*vbe);
-            if(oik == 0 && oikr == 0) {
+            if(here->BJTtinvRollOffF == 0 && here->BJTtinvRollOffR == 0) {
                 qb=q1;
                 dqbdve=q1*qb*here->BJTtinvEarlyVoltR;
                 dqbdvc=q1*qb*here->BJTtinvEarlyVoltF;
             } else {
-                q2=oik*cbe+oikr*cbc;
+                q2=here->BJTtinvRollOffF*cbe+here->BJTtinvRollOffR*cbc;
                 arg=MAX(0,1+4*q2);
                 sqarg=1;
                 if(!model->BJTnkfGiven) {
@@ -600,11 +578,11 @@ next1:      vtn=vt*here->BJTtemissionCoeffF;
                 }
                 qb=q1*(1+sqarg)/2;
                 if(!model->BJTnkfGiven) {
-                    dqbdve=q1*(qb*here->BJTtinvEarlyVoltR+oik*gbe/sqarg);
-                    dqbdvc=q1*(qb*here->BJTtinvEarlyVoltF+oikr*gbc/sqarg);
+                    dqbdve=q1*(qb*here->BJTtinvEarlyVoltR+here->BJTtinvRollOffF*gbe/sqarg);
+                    dqbdvc=q1*(qb*here->BJTtinvEarlyVoltF+here->BJTtinvRollOffR*gbc/sqarg);
                 } else {
-                    dqbdve=q1*(qb*here->BJTtinvEarlyVoltR+oik*gbe*2*sqarg*model->BJTnkf/arg);
-                    dqbdvc=q1*(qb*here->BJTtinvEarlyVoltF+oikr*gbc*2*sqarg*model->BJTnkf/arg);
+                    dqbdve=q1*(qb*here->BJTtinvEarlyVoltR+here->BJTtinvRollOffF*gbe*2*sqarg*model->BJTnkf/arg);
+                    dqbdvc=q1*(qb*here->BJTtinvEarlyVoltF+here->BJTtinvRollOffR*gbc*2*sqarg*model->BJTnkf/arg);
                 }
             }
             /*
@@ -614,8 +592,8 @@ next1:      vtn=vt*here->BJTtemissionCoeffF;
             cc=0;
             cex=cbe;
             gex=gbe;
-            if(ckt->CKTmode & (MODETRAN | MODEAC) && td != 0) {
-                arg1=ckt->CKTdelta/td;
+            if(ckt->CKTmode & (MODETRAN | MODEAC) && model->BJTexcessPhaseFactor != 0) {
+                arg1=ckt->CKTdelta/model->BJTexcessPhaseFactor;
                 arg2=3*arg1;
                 arg1=arg2*arg1;
                 denom=1+arg1+arg2;
@@ -638,12 +616,12 @@ next1:      vtn=vt*here->BJTtemissionCoeffF;
              */
             cc=cc+(cex-cbc)/qb-cbc/here->BJTtBetaR-cbcn;
             cb=cbe/here->BJTtBetaF+cben+cbc/here->BJTtBetaR+cbcn;
-            gx=rbpr+rbpi/qb;
-            if(xjrb != 0) {
-                arg1=MAX(cb/xjrb,1e-9);
+            gx=here->BJTtminBaseResist+rbpi/qb;
+            if(here->BJTtbaseCurrentHalfResist != 0) {
+                arg1=MAX(cb/here->BJTtbaseCurrentHalfResist,1e-9);
                 arg2=(-1+sqrt(1+14.59025*arg1))/2.4317/sqrt(arg1);
                 arg1=tan(arg2);
-                gx=rbpr+3*rbpi*(arg1-arg2)/arg2/arg1/arg1;
+                gx=here->BJTtminBaseResist+3*rbpi*(arg1-arg2)/arg2/arg1/arg1;
             }
             if(gx != 0) gx=1/gx;
             gpi=gbe/here->BJTtBetaF+gben;
@@ -658,28 +636,22 @@ next1:      vtn=vt*here->BJTtemissionCoeffF;
                  */
                 tf=here->BJTttransitTimeF;
                 tr=here->BJTttransitTimeR;
-                czbe=here->BJTtBEcap*here->BJTarea;
+                czbe=here->BJTtBEcap;
                 pe=here->BJTtBEpot;
                 xme=here->BJTtjunctionExpBE;
                 cdis=model->BJTbaseFractionBCcap;
-                if (model->BJTsubs == VERTICAL)
-                    ctot=here->BJTtBCcap*here->BJTareab;
-                else
-                    ctot=here->BJTtBCcap*here->BJTareac;
+                ctot=here->BJTtBCcap;
                 czbc=ctot*cdis;
                 czbx=ctot-czbc;
                 pc=here->BJTtBCpot;
                 xmc=here->BJTtjunctionExpBC;
                 fcpe=here->BJTtDepCap;
-                if (model->BJTsubs == VERTICAL)
-                    czsub=here->BJTtSubcap*here->BJTareac;
-                else
-                    czsub=here->BJTtSubcap*here->BJTareab;
+                czsub=here->BJTtSubcap;
                 ps=here->BJTtSubpot;
                 xms=here->BJTtjunctionExpSub;
                 xtf=model->BJTtransitTimeBiasCoeffF;
                 ovtf=model->BJTtransitTimeVBCFactor;
-                xjtf=here->BJTttransitTimeHighCurrentF*here->BJTarea;
+                xjtf=here->BJTttransitTimeHighCurrentF;
                 if(tf != 0 && vbe >0) {
                     argtf=0;
                     arg2=0;
@@ -913,7 +885,7 @@ load:
              *  load current excitation vector
              */
             geqsub = gcsub + gdsub;
-            ceqsub=model->BJTtype * model->BJTsubs *
+            ceqsub=ttype *
                     (*(ckt->CKTstate0 + here->BJTcqsub) + cdsub - vsub*geqsub);
             ceqbx=model->BJTtype * (*(ckt->CKTstate0 + here->BJTcqbx) -
                     vbx * geqbx);
@@ -933,24 +905,24 @@ load:
             /*
              *  load y matrix
              */
-            *(here->BJTcolColPtr) +=  m * (gcpr);
+            *(here->BJTcolColPtr) +=  m * (here->BJTtcollectorConduct);
             *(here->BJTbaseBasePtr) +=  m * (gx+geqbx);
-            *(here->BJTemitEmitPtr) += m * (gepr);
+            *(here->BJTemitEmitPtr) += m * (here->BJTtemitterConduct);
             *(here->BJTcolPrimeColPrimePtr) += m * (gmu+go+geqbx);
-            *(here->BJTcollCXcollCXPtr) += m * (gcpr);
+            *(here->BJTcollCXcollCXPtr) += m * (here->BJTtcollectorConduct);
             *(here->BJTsubstConSubstConPtr) += m * (geqsub);
             *(here->BJTbasePrimeBasePrimePtr) += m * (gx +gpi+gmu+geqcb);
-            *(here->BJTemitPrimeEmitPrimePtr) += m * (gpi+gepr+gm+go);
-            *(here->BJTcollCollCXPtr) += m * (-gcpr);
+            *(here->BJTemitPrimeEmitPrimePtr) += m * (gpi+here->BJTtemitterConduct+gm+go);
+            *(here->BJTcollCollCXPtr) += m * (-here->BJTtcollectorConduct);
             *(here->BJTbaseBasePrimePtr) += m * (-gx);
-            *(here->BJTemitEmitPrimePtr) += m * (-gepr);
-            *(here->BJTcollCXCollPtr) += m * (-gcpr);
+            *(here->BJTemitEmitPrimePtr) += m * (-here->BJTtemitterConduct);
+            *(here->BJTcollCXCollPtr) += m * (-here->BJTtcollectorConduct);
             *(here->BJTcolPrimeBasePrimePtr) += m * (-gmu+gm);
             *(here->BJTcolPrimeEmitPrimePtr) += m * (-gm-go);
             *(here->BJTbasePrimeBasePtr) += m * (-gx);
             *(here->BJTbasePrimeColPrimePtr) += m * (-gmu-geqcb);
             *(here->BJTbasePrimeEmitPrimePtr) += m * (-gpi);
-            *(here->BJTemitPrimeEmitPtr) += m * (-gepr);
+            *(here->BJTemitPrimeEmitPtr) += m * (-here->BJTtemitterConduct);
             *(here->BJTemitPrimeColPrimePtr) += m * (-go+geqcb);
             *(here->BJTemitPrimeBasePrimePtr) += m * (-gpi-gm-geqcb);
             *(here->BJTsubstSubstPtr) += m * (geqsub);
