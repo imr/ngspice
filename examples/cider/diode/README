@@ -7,7 +7,7 @@ This will generate the operating point file 'Pre-Pin-Diode-OP.0.d1', which
 is read as the ic.file (initial condition file) for 'pindiode.cir'.
 Note that if there is no output line in the .model section of 'pd1.cir',
 the generated file will be named 'OP.0.d1'. In this case the ic.file value
-in 'pindiode.cir' would need to be chenged to match it.
+in 'pindiode.cir' would need to be changed to match it.
 
 Then:
 
