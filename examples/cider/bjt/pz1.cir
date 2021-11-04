@@ -14,5 +14,8 @@ CL  5 0 0.1pF
 .PZ 3 0 5 0 vol pz
 
 .PRINT PZ ALL
-.OP
 .END
+
+.control
+OP
+.endc
