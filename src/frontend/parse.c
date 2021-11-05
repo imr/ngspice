@@ -13,6 +13,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ngspice/fteparse.h"
 #include "ngspice/fteext.h"
 #include "ngspice/sim.h"
+#include "numparam/general.h"
 
 #include "evaluate.h"
 #include "parse.h"
@@ -27,6 +28,7 @@ extern int PPparse(char **, struct pnode **);
 #endif
 
 void db_print_pnode_tree(struct pnode *p, char *print);
+struct pnode* ft_getpnames_quotes(wordlist* wl, bool check);
 
 
 struct pnode *ft_getpnames_from_string(const char *sz, bool check)
@@ -68,6 +70,154 @@ ft_getpnames(const wordlist *wl, bool check)
 
     return pn; /* Return the parsed result */
 } /* end of function ft_getpnames */
+
+
+
+static bool is_all_digits(char* tstr)
+{
+    while (*tstr != '\0') {
+        if (!isdigit_c(*tstr))
+            return FALSE;
+        tstr++;
+    }
+    return TRUE;
+}
+
+static bool has_arith_char(char* tstr)
+{
+    while (*tstr != '\0') {
+        if (is_arith_char(*tstr))
+            return TRUE;
+        tstr++;
+    }
+    return FALSE;
+}
+
+/* writing, printing or plotting will fail when the node name starts with
+   a number or math character, even when enclosed in V() like V(2p). So
+   automatically place "" around, like V("2p"). Returns the parse tree. Multiple
+   v() may occur in a row. Remove "" again after the tree is set up.
+*/
+struct pnode* ft_getpnames_quotes(wordlist* wl, bool check)
+{
+    struct pnode* names = NULL, * tmpnode = NULL;
+    char* sz = wl_flatten(wl);
+    if ((strstr(sz, "v(") || strstr(sz, "V(")) && !cp_getvar("noquotesinoutput", CP_BOOL, NULL, 0))
+    {
+        char* tmpstr;
+        char* nsz = tmpstr = stripWhiteSpacesInsideParens(sz);
+        DS_CREATE(ds1, 100); /* the new name string*/
+        DS_CREATE(dsquote, 100); /* only the quoted strings*/
+        /* put double quotes around tokens which start with number chars or include a math char */
+        while (*tmpstr != '\0') {
+            /*check if we have v(something) at the beginning, after arithchar, after space,
+              or after dot. Skip V(" because it is already quoted. */
+            if ((tmpstr[0] == 'v' || tmpstr[0] == 'V') && tmpstr[1] == '('  && tmpstr[2] != '\"' &&
+                    (nsz == tmpstr || isspace_c(tmpstr[-1]) || is_arith_char(tmpstr[-1]) || tmpstr[-1] == '.')) {
+                char* tmpstr2, * partoken2 = NULL;
+                tmpstr += 2;
+                /* get the complete zzz of v(zzz) */
+                char* tpartoken = tmpstr2 = gettok_char(&tmpstr, ')', FALSE, FALSE);
+                /* check if this is v(zzz) or v(xx,yy) */
+                char* partoken1 = gettok_char(&tpartoken, ',', FALSE, FALSE);
+                sadd(&ds1, "v(");
+                if (partoken1) {
+                    /* we have a xx and yy */
+                    partoken2 = copy(tpartoken + 1);
+                    bool hac1 = has_arith_char(partoken1);
+                    bool hac2 = has_arith_char(partoken2);
+                    if (is_all_digits(partoken1)) {
+                        sadd(&ds1, partoken1);
+                    }
+                    else if (isdigit_c(*partoken1) || hac1) {
+                        cadd(&ds1, '\"');
+                        sadd(&ds1, partoken1);
+                        cadd(&ds1, '\"');
+                        /* save all hyphenated strings only */
+                        cadd(&dsquote, '\"');
+                        sadd(&dsquote, partoken1);
+                        cadd(&dsquote, '\"');
+                        cadd(&dsquote, ' ');
+                    }
+                    else
+                        sadd(&ds1, partoken1);
+                    cadd(&ds1, ',');
+                    if (is_all_digits(partoken2)) {
+                        sadd(&ds1, partoken2);
+                    }
+                    else if (isdigit_c(*partoken2) || hac2) {
+                        cadd(&ds1, '\"');
+                        sadd(&ds1, partoken2);
+                        cadd(&ds1, '\"');
+                        /* save all hyphenated strings only */
+                        cadd(&dsquote, '\"');
+                        sadd(&dsquote, partoken2);
+                        cadd(&dsquote, '\"');
+                        cadd(&dsquote, ' ');
+                    }
+                    else
+                        sadd(&ds1, partoken2);
+                }
+                else {
+                    bool hac = has_arith_char(tmpstr2);
+                    if (is_all_digits(tmpstr2)) {
+                        sadd(&ds1, tmpstr2);
+                    }
+                    else if (isdigit_c(*tmpstr2) || hac) {
+                        cadd(&ds1, '\"');
+                        sadd(&ds1, tmpstr2);
+                        cadd(&ds1, '\"');
+                        /* save all hyphenated strings only */
+                        sadd(&dsquote, "v(\"");
+                        sadd(&dsquote, tmpstr2);
+                        sadd(&dsquote, "\")");
+                        cadd(&dsquote, ' ');
+                    }
+                    else
+                        sadd(&ds1, tmpstr2);
+                }
+
+                tfree(tmpstr2);
+                tfree(partoken1);
+                tfree(partoken2);
+            }
+            cadd(&ds1, *tmpstr);
+            tmpstr++;
+        }
+
+        char* newline = ds_get_buf(&ds1);
+        names = ft_getpnames_from_string(newline, check);
+        ds_free(&ds1);
+        tfree(nsz);
+        /* restore the old node name after parsing */
+        char* quotedstrings = ds_get_buf(&dsquote);
+        for (tmpnode = names; tmpnode; tmpnode = tmpnode->pn_next) {
+            if (strstr(quotedstrings, tmpnode->pn_name)) {
+                char newstr[100];
+                char* tmp = tmpnode->pn_name;
+                int ii = 0;
+                /* copy to newstr without double quotes */
+                while (*tmp && ii < 99) {
+                    if (*(tmp) == '\"') {
+                        tmp++;
+                        continue;
+                    }
+                    newstr[ii] = *(tmp++);
+                    ii++;
+                }
+                newstr[ii] = '\0';
+                tfree(tmpnode->pn_name);
+                tmpnode->pn_name = copy(newstr);
+            }
+        }
+        ds_free(&dsquote);
+    }
+    else {
+        names = ft_getpnames_from_string(sz, check);
+    }
+    tfree(sz);
+    return names;
+}
 
 
 
