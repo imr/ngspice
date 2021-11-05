@@ -107,7 +107,6 @@ struct pnode* ft_getpnames_quotes(wordlist* wl, bool check)
         char* tmpstr;
         char* nsz = tmpstr = stripWhiteSpacesInsideParens(sz);
         DS_CREATE(ds1, 100); /* the new name string*/
-        DS_CREATE(dsquote, 100); /* only the quoted strings*/
         /* put double quotes around tokens which start with number chars or include a math char */
         while (*tmpstr != '\0') {
             /*check if we have v(something) at the beginning, after arithchar, after space,
@@ -133,11 +132,6 @@ struct pnode* ft_getpnames_quotes(wordlist* wl, bool check)
                         cadd(&ds1, '\"');
                         sadd(&ds1, partoken1);
                         cadd(&ds1, '\"');
-                        /* save all hyphenated strings only */
-                        cadd(&dsquote, '\"');
-                        sadd(&dsquote, partoken1);
-                        cadd(&dsquote, '\"');
-                        cadd(&dsquote, ' ');
                     }
                     else
                         sadd(&ds1, partoken1);
@@ -149,11 +143,6 @@ struct pnode* ft_getpnames_quotes(wordlist* wl, bool check)
                         cadd(&ds1, '\"');
                         sadd(&ds1, partoken2);
                         cadd(&ds1, '\"');
-                        /* save all hyphenated strings only */
-                        cadd(&dsquote, '\"');
-                        sadd(&dsquote, partoken2);
-                        cadd(&dsquote, '\"');
-                        cadd(&dsquote, ' ');
                     }
                     else
                         sadd(&ds1, partoken2);
@@ -167,11 +156,6 @@ struct pnode* ft_getpnames_quotes(wordlist* wl, bool check)
                         cadd(&ds1, '\"');
                         sadd(&ds1, tmpstr2);
                         cadd(&ds1, '\"');
-                        /* save all hyphenated strings only */
-                        sadd(&dsquote, "v(\"");
-                        sadd(&dsquote, tmpstr2);
-                        sadd(&dsquote, "\")");
-                        cadd(&dsquote, ' ');
                     }
                     else
                         sadd(&ds1, tmpstr2);
@@ -190,13 +174,13 @@ struct pnode* ft_getpnames_quotes(wordlist* wl, bool check)
         ds_free(&ds1);
         tfree(nsz);
         /* restore the old node name after parsing */
-        char* quotedstrings = ds_get_buf(&dsquote);
         for (tmpnode = names; tmpnode; tmpnode = tmpnode->pn_next) {
-            if (strstr(quotedstrings, tmpnode->pn_name)) {
+            if (strstr(tmpnode->pn_name, "v(\"")) {
+//            if (strstr(quotedstrings, tmpnode->pn_name)) {
                 char newstr[100];
                 char* tmp = tmpnode->pn_name;
                 int ii = 0;
-                /* copy to newstr without double quotes */
+                // copy to newstr without double quotes
                 while (*tmp && ii < 99) {
                     if (*(tmp) == '\"') {
                         tmp++;
@@ -210,7 +194,6 @@ struct pnode* ft_getpnames_quotes(wordlist* wl, bool check)
                 tmpnode->pn_name = copy(newstr);
             }
         }
-        ds_free(&dsquote);
     }
     else {
         names = ft_getpnames_from_string(sz, check);
