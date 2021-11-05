@@ -1,0 +1,18 @@
+Test: internally generated quotes around node names containing math chars
+
+V1 in+ 0 1.2
+R1 in+ 1N 500
+R2 1N R*C 500
+C1 R*C 0 1u
+
+.ic V(R*C)=0
+
+
+.tran 1u 5m
+
+.control
+run
+plot v(in+) v(R*C) v(in+)*V("R*C") 1.2*v(in+)*V(R*C) v(1N)
+.endc
+
+.end
