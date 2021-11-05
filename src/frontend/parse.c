@@ -176,7 +176,6 @@ struct pnode* ft_getpnames_quotes(wordlist* wl, bool check)
         /* restore the old node name after parsing */
         for (tmpnode = names; tmpnode; tmpnode = tmpnode->pn_next) {
             if (strstr(tmpnode->pn_name, "v(\"")) {
-//            if (strstr(quotedstrings, tmpnode->pn_name)) {
                 char newstr[100];
                 char* tmp = tmpnode->pn_name;
                 int ii = 0;
