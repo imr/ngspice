@@ -162,7 +162,7 @@ com_spec(wordlist *wl)
         }
     }
 
-    names = ft_getpnames(wl, TRUE);
+    names = ft_getpnames_quotes(wl, TRUE);
     vlist = NULL;
     ngood = 0;
     for (pn = names; pn; pn = pn->pn_next) {
