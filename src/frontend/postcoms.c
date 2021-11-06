@@ -24,6 +24,8 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "plotting/plotting.h"
 
 #include "ngspice/compatmode.h"
+#include "ngspice/dstring.h"
+#include "numparam/general.h"
 
 static void killplot(struct plot *pl);
 static void DelPlotWindows(struct plot *pl);
@@ -45,7 +47,6 @@ is_scale_vec_of_current_plot(const char *v_name)
     /* Test if this vector's name matches the scale vector's name */
     return cieq(v_name, pl_scale->v_name);
 } /* end of function is_scale_vec_of_current_plot */
-
 
 
 /* Remove vectors in the wordlist from the current plot */
@@ -147,7 +148,9 @@ com_print(wordlist *wl)
     }
 
     ngood = 0;
-    names = ft_getpnames(wl, TRUE);
+
+    names = ft_getpnames_quotes(wl, TRUE);
+
     for (pn = names; pn; pn = pn->pn_next) {
         if ((v = ft_evaluate(pn)) == NULL)
             continue;
@@ -461,9 +464,9 @@ com_write(wordlist *wl)
        We offer plain writing of the vectors. This enables node names containing +, -, / etc. */
     if (!plainwrite) {
         if (wl)
-            names = ft_getpnames(wl, TRUE);
+            names = ft_getpnames_quotes(wl, TRUE);
         else
-            names = ft_getpnames(&all, TRUE);
+            names = ft_getpnames_quotes(&all, TRUE);
 
         if (names == NULL) {
             return;
