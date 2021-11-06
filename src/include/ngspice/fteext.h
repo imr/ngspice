@@ -279,6 +279,7 @@ extern struct pnode *alloc_pnode(void);
         ptr = NULL;                             \
     } while(0)
 extern void free_pnode_x(struct pnode *t);
+extern struct pnode* ft_getpnames_quotes(wordlist* wl, bool check);
 
 /* plotcurve.c */
 
