@@ -86,7 +86,7 @@ com_fft(wordlist *wl)
     if (fft_windows(window, win, time, length, maxt, span, order) == 0)
         goto done;
 
-    names = ft_getpnames(wl, TRUE);
+    names = ft_getpnames_quotes(wl, TRUE);
     vlist = NULL;
     ngood = 0;
     for (pn = names; pn; pn = pn->pn_next) {
@@ -316,7 +316,7 @@ com_psd(wordlist *wl)
     if (fft_windows(window, win, time, length, maxt, span, order) == 0)
         goto done;
 
-    names = ft_getpnames(wl, TRUE);
+    names = ft_getpnames_quotes(wl, TRUE);
     vlist = NULL;
     ngood = 0;
     for (pn = names; pn; pn = pn->pn_next) {
