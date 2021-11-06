@@ -298,7 +298,7 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
     double tstep, tstart, tstop, ttime;
 
     /* Save start of vectors on entry for cleaning up junk left behind
-     * by ft_getpnames() */
+     * by ft_getpnames_quotes() */
     struct dvec *dv_head_orig =
             plot_cur ? plot_cur->pl_dvecs : (struct dvec *) NULL;
 
@@ -768,7 +768,7 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
         /* Now parse the vectors.  We have a list of the form
          * "a b vs c d e vs f g h".  Since it's a bit of a hassle for
          * us to parse the vector boundaries here, we do this -- call
-         * ft_getpnames() without the check flag, and then look for 0-length
+         * ft_getpnames_quotes() without the check flag, and then look for 0-length
          * vectors with the name "vs"...  This is a sort of a gross hack,
          * since we have to check for 0-length vectors ourselves after
          * evaulating the pnodes...
@@ -777,7 +777,7 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
          * node is a dummy node.
          */
 
-        names = ft_getpnames(wl->wl_next, FALSE);
+        names = ft_getpnames_quotes(wl->wl_next, FALSE);
         if (names == (struct pnode*)NULL) {
             goto quit1;
         }
