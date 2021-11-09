@@ -347,7 +347,7 @@ cp_istrue(wordlist *wl)
     wl = cp_bquote(wl);
 
     /* parse the condition */
-    names = ft_getpnames(wl, TRUE);
+    names = ft_getpnames_quotes(wl, TRUE);
     wl_free(wl);
 
     /* evaluate the parsed condition.

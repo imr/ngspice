@@ -90,7 +90,7 @@ fourier(wordlist *wl, struct plot *current_plot)
     nphase = TMALLOC(double, nfreqs);
 
     wl = wl->wl_next;
-    names = ft_getpnames(wl, TRUE);
+    names = ft_getpnames_quotes(wl, TRUE);
     for (pn = names; pn; pn = pn->pn_next) {
         vec = ft_evaluate(pn);
         for (; vec; vec = vec->v_link2) {
