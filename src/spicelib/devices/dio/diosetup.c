@@ -179,6 +179,9 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if(!model->DIOrecSatCurGiven) {
             model->DIOrecSatCur = 1e-14;
         }
+        if (!model->DIOsoftRevRecParamGiven) {
+            model->DIOsoftRevRecParam = 0.0;
+        }
 
         /* set lower limit of saturation current */
         if (model->DIOsatCur < ckt->CKTepsmin)

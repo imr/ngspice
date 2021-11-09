@@ -110,6 +110,7 @@ IFparm DIOmPTable[] = { /* model parameters */
  OPU( "cond", DIO_MOD_COND,IF_REAL, "Ohmic conductance"),
  IOP( "isr",  DIO_MOD_ISR,  IF_REAL, "Recombination saturation current"),
  IOP( "nr",   DIO_MOD_NR,   IF_REAL, "Recombination current emission coefficient"),
+ IOP( "vp",   DIO_MOD_VP,   IF_REAL, "Soft reverse recovery parameter"),
 
  /* SOA parameters */
  IOP( "fv_max",   DIO_MOD_FV_MAX,  IF_REAL, "maximum voltage in forward direction"),
