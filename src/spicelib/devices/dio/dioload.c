@@ -242,7 +242,7 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
             /*
              *   compute dc current and derivitives
              */
-next1:      
+next1:
             if (selfheat) {
                 Temp = here->DIOtemp + delTemp;
                 DIOtempUpdate(model, here, Temp, ckt);
@@ -318,11 +318,11 @@ next1:
                     evd_rec = exp(vd/(vterec));
                     cdb_rec = here->DIOtRecSatCur*(evd_rec-1);
                     gdb_rec = here->DIOtRecSatCur*evd_rec/vterec;
-                    cdb_rec_dT = here->DIOtRecSatCur_dT * (evd_rec - 1) 
+                    cdb_rec_dT = here->DIOtRecSatCur_dT * (evd_rec - 1)
                                 -here->DIOtRecSatCur * vd * evd_rec / (vterec*Temp);
                     t1 = pow((1-vd/here->DIOtJctPot), 2) + 0.005;
                     gen_fac = pow(t1, here->DIOtGradingCoeff/2);
-                    gen_fac_vd = -here->DIOtGradingCoeff * (1-vd/here->DIOtJctPot) 
+                    gen_fac_vd = -here->DIOtGradingCoeff * (1-vd/here->DIOtJctPot)
                                                          * pow(t1, (here->DIOtGradingCoeff/2-1));
                     cdb_rec = cdb_rec * gen_fac;
                     gdb_rec = gdb_rec * gen_fac + cdb_rec * gen_fac_vd;
@@ -338,7 +338,7 @@ next1:
 
                 arg = 3*vte/(vd*CONSTe);
                 arg = arg * arg * arg;
-                darg_dT = 3 * arg / Temp; 
+                darg_dT = 3 * arg / Temp;
                 cdb = -csat*(1+arg);
                 gdb = csat*3*arg/vd;
                 cdb_dT = -csat_dT - (csat_dT*arg + csat*darg_dT);
@@ -361,7 +361,7 @@ next1:
 
                 cdsw = cdsw - here->DIOtTunSatSWCur * (evd - 1);
                 gdsw = gdsw + here->DIOtTunSatSWCur * evd / vtetun;
-                cdsw_dT = cdsw_dT - here->DIOtTunSatSWCur_dT * (evd - 1) 
+                cdsw_dT = cdsw_dT - here->DIOtTunSatSWCur_dT * (evd - 1)
                                   - here->DIOtTunSatSWCur * vd * evd / (vtetun * Temp);
 
             }
@@ -439,104 +439,111 @@ next1:
                     deplcapSW = czof2SW*(here->DIOtF3SW+model->DIOgradingSWCoeff*vd/here->DIOtJctSWPot);
                 }
 
-                /* diffusion charge */
-                if (ckt->CKTmode & MODEINITTRAN) {
-                    diffcharge = tt * cdb;
-                    diffcap = tt * gdb;
-                    *(ckt->CKTstate2 + here->DIOdiffCharge) = diffcharge;
-                    *(ckt->CKTstate2 + here->DIOdiffCap) = diffcap;
-                    *(ckt->CKTstate1 + here->DIOdiffCharge) = diffcharge;
-                    *(ckt->CKTstate1 + here->DIOdiffCap) = diffcap;
-                    *(ckt->CKTstate1 + here->DIOoldCurr) = cdb;
-                    *(ckt->CKTstate1 + here->DIOoldCond) = gdb;
+                if (model->DIOsoftRevRecParamGiven) {
+
+                    /* diffusion charge */
+                    if (ckt->CKTmode & MODEINITTRAN) {
+                        diffcharge = tt * cdb;
+                        diffcap = tt * gdb;
+                        *(ckt->CKTstate2 + here->DIOdiffCharge) = diffcharge;
+                        *(ckt->CKTstate2 + here->DIOdiffCap) = diffcap;
+                        *(ckt->CKTstate1 + here->DIOdiffCharge) = diffcharge;
+                        *(ckt->CKTstate1 + here->DIOdiffCap) = diffcap;
+                        *(ckt->CKTstate1 + here->DIOoldCurr) = cdb;
+                        *(ckt->CKTstate1 + here->DIOoldCond) = gdb;
+                    }
+                    else {
+                        /*
+                        //Fixed-point iteration
+                        double diffcharge_old, diffcap_old;
+
+                        //Forward Euler predictor
+                        diffcharge = (*(ckt->CKTstate1 + here->DIOdiffCharge))*(1 - (ckt->CKTdelta) / (tt*vp)) + ((ckt->CKTdelta)*(*(ckt->CKTstate1 + here->DIOoldCurr)) / vp);
+                        diffcap = (*(ckt->CKTstate1 + here->DIOdiffCap))*(1 - (ckt->CKTdelta) / (tt*vp)) + ((ckt->CKTdelta)*(*(ckt->CKTstate1 + here->DIOoldCond)) / vp);
+                        do {
+                            diffcharge_old = diffcharge;
+                            diffcharge = (*(ckt->CKTstate1 + here->DIOdiffCharge)) + (((ckt->CKTdelta) / vp)*(cdb - (diffcharge_old / tt)));
+                        } while (fabs(diffcharge - diffcharge_old) > 1e-12);
+                        do {
+                            diffcap_old = diffcap;
+                            diffcap = (*(ckt->CKTstate1 + here->DIOdiffCap)) + (((ckt->CKTdelta) / vp)*(gdb - (diffcap_old / tt)));
+                        } while (fabs(diffcap - diffcap_old) > 1e-12);
+                        */
+
+                        /*
+                        //Newton's method
+                        double diffcharge_old, diffcap_old;
+
+                        //Forward Euler predictor
+                        diffcharge = (*(ckt->CKTstate1 + here->DIOdiffCharge))*(1 - (ckt->CKTdelta) / (tt*vp)) + ((ckt->CKTdelta)*(*(ckt->CKTstate1 + here->DIOoldCurr)) / vp);
+                        diffcap = (*(ckt->CKTstate1 + here->DIOdiffCap))*(1 - (ckt->CKTdelta) / (tt*vp)) + ((ckt->CKTdelta)*(*(ckt->CKTstate1 + here->DIOoldCond)) / vp);
+                        do {
+                            diffcharge_old = diffcharge;
+                            diffcharge = diffcharge_old + ((tt*vp*(*(ckt->CKTstate1 + here->DIOdiffCharge)) + tt*(ckt->CKTdelta)*cdb - diffcharge_old*((ckt->CKTdelta) + tt*vp)) / ((ckt->CKTdelta) + tt*vp));
+                        } while (fabs(diffcharge - diffcharge_old) > 1e-12);
+
+                        do {
+                            diffcap_old = diffcap;
+                            diffcap = diffcap_old + ((tt*vp*(*(ckt->CKTstate1 + here->DIOdiffCap)) + tt * (ckt->CKTdelta)*gdb - diffcap_old * ((ckt->CKTdelta) + tt*vp)) / ((ckt->CKTdelta) + tt*vp));
+                        } while (fabs(diffcap - diffcap_old) > 1e-12);
+                        */
+
+                        //Backward Difference Operator
+                        //diffcharge = tt * (cdb - vp * (((*(ckt->CKTstate1 + here->DIOdiffCharge)) - (*(ckt->CKTstate2 + here->DIOdiffCharge))) / (ckt->CKTdeltaOld[1])));
+                        //diffcap = tt * (gdb - vp * (((*(ckt->CKTstate1 + here->DIOdiffCap)) - (*(ckt->CKTstate2 + here->DIOdiffCap))) / (ckt->CKTdeltaOld[1])));
+
+                        //Standard Diffy-Q w/ trap integral
+                        //diffcharge = ((ckt->CKTdelta) / (2.0*vt))*(exp(-(ckt->CKTdelta) / (tt*vt))*(*(ckt->CKTstate1 + here->DIOoldCurr)) + cdb) + exp(-(ckt->CKTdelta) / (tt*vt))*(*(ckt->CKTstate1 + here->DIOdiffCharge));
+                        //diffcap = ((ckt->CKTdelta) / (2.0*vt))*(exp(-(ckt->CKTdelta) / (tt*vt))*(*(ckt->CKTstate1 + here->DIOoldCond)) + gdb) + exp(-(ckt->CKTdelta) / (tt*vt))*(*(ckt->CKTstate1 + here->DIOdiffCap));
+
+                        //Forward Euler
+                        //diffcharge = ((*(ckt->CKTstate1 + here->DIOdiffCharge))*(tt*vp - (ckt->CKTdelta)) + (ckt->CKTdelta)*tt*cdb) / (tt*vp);
+                        //diffcap = ((*(ckt->CKTstate1 + here->DIOdiffCap))*(tt*vp - (ckt->CKTdelta)) + (ckt->CKTdelta)*tt*gdb) / (tt*vp);
+
+                        //Backward Euler
+                        //diffcharge = tt*((vp*(*(ckt->CKTstate1 + here->DIOdiffCharge)) + (ckt->CKTdelta)*cdb) / (tt*vp + (ckt->CKTdelta)));
+                        //diffcap = tt*((vp*(*(ckt->CKTstate1 + here->DIOdiffCap)) + (ckt->CKTdelta)*gdb) / (tt*vp + (ckt->CKTdelta)));
+
+                        //Trap
+                        diffcharge = ((*(ckt->CKTstate1 + here->DIOdiffCharge))*(2.0*tt*vp - (ckt->CKTdelta)) + (ckt->CKTdelta)*tt*((*(ckt->CKTstate1 + here->DIOoldCurr)) + cdb)) / (2.0*tt*vp + (ckt->CKTdelta));
+                        diffcap = ((*(ckt->CKTstate1 + here->DIOdiffCap))*(2.0*tt*vp - (ckt->CKTdelta)) + (ckt->CKTdelta)*tt*((*(ckt->CKTstate1 + here->DIOoldCond)) + gdb)) / (2.0*tt*vp + (ckt->CKTdelta));
+
+                        //Gear
+                        //diffcharge = tt*((vp*(4.0*(*(ckt->CKTstate1 + here->DIOdiffCharge)) - (*(ckt->CKTstate2 + here->DIOdiffCharge))) + 2.0*(ckt->CKTdelta)*cdb) / (3.0*tt*vp + 2.0*(ckt->CKTdelta)));
+                        //diffcap = tt*((vp*(4.0*(*(ckt->CKTstate1 + here->DIOdiffCap)) - (*(ckt->CKTstate2 + here->DIOdiffCap))) + 2.0*(ckt->CKTdelta)*gdb) / (3.0*tt*vp + 2.0*(ckt->CKTdelta)));
+
+                        //Nothing
+                        //diffcharge = tt * cdb;
+                        //diffcap = tt * gdb;
+                    }
+
+                    *(ckt->CKTstate0 + here->DIOdiffCharge) = diffcharge;
+                    *(ckt->CKTstate0 + here->DIOdiffCap) = diffcap;
+                    *(ckt->CKTstate0 + here->DIOoldCurr) = cdb;
+                    *(ckt->CKTstate0 + here->DIOoldCond) = gdb;
+
+                    //printf("Time: %e\n", ckt->CKTtime);
+                    //printf("Charge: %e\n", diffcharge);
+                    //printf("Cap: %e\n", diffcap);
+                    //printf("Curr: %e\n", cdb);
+                    //printf("Cond: %e\n", gdb);
+                    //printf("DelCharge: %e\n", diffcharge-(*(ckt->CKTstate1 + here->DIOdiffCharge)));
+                    //printf("DelCap: %e\n", diffcap-(*(ckt->CKTstate1 + here->DIOdiffCap)));
+                    //printf("DelCurr: %e\n", cdb-(*(ckt->CKTstate1 + here->DIOoldCurr)));
+                    //printf("DelCond: %e\n\n", gdb-(*(ckt->CKTstate1 + here->DIOoldCond)));
+
+                } else {
+
+                    diffcharge = tt*cdb;
+                    diffcap = tt*gdb;
+
                 }
-                else {
-                    /*
-                    //Fixed-point iteration
-                    double diffcharge_old, diffcap_old;
 
-                    //Forward Euler predictor
-                    diffcharge = (*(ckt->CKTstate1 + here->DIOdiffCharge))*(1 - (ckt->CKTdelta) / (tt*vp)) + ((ckt->CKTdelta)*(*(ckt->CKTstate1 + here->DIOoldCurr)) / vp);
-                    diffcap = (*(ckt->CKTstate1 + here->DIOdiffCap))*(1 - (ckt->CKTdelta) / (tt*vp)) + ((ckt->CKTdelta)*(*(ckt->CKTstate1 + here->DIOoldCond)) / vp);
-                    do {
-                        diffcharge_old = diffcharge;
-                        diffcharge = (*(ckt->CKTstate1 + here->DIOdiffCharge)) + (((ckt->CKTdelta) / vp)*(cdb - (diffcharge_old / tt)));
-                    } while (fabs(diffcharge - diffcharge_old) > 1e-12);
-                    do {
-                        diffcap_old = diffcap;
-                        diffcap = (*(ckt->CKTstate1 + here->DIOdiffCap)) + (((ckt->CKTdelta) / vp)*(gdb - (diffcap_old / tt)));
-                    } while (fabs(diffcap - diffcap_old) > 1e-12);
-                    */
-
-                    /*
-                    //Newton's method
-                    double diffcharge_old, diffcap_old;
-
-                    //Forward Euler predictor
-                    diffcharge = (*(ckt->CKTstate1 + here->DIOdiffCharge))*(1 - (ckt->CKTdelta) / (tt*vp)) + ((ckt->CKTdelta)*(*(ckt->CKTstate1 + here->DIOoldCurr)) / vp);
-                    diffcap = (*(ckt->CKTstate1 + here->DIOdiffCap))*(1 - (ckt->CKTdelta) / (tt*vp)) + ((ckt->CKTdelta)*(*(ckt->CKTstate1 + here->DIOoldCond)) / vp);
-                    do {
-                        diffcharge_old = diffcharge;
-                        diffcharge = diffcharge_old + ((tt*vp*(*(ckt->CKTstate1 + here->DIOdiffCharge)) + tt*(ckt->CKTdelta)*cdb - diffcharge_old*((ckt->CKTdelta) + tt*vp)) / ((ckt->CKTdelta) + tt*vp));
-                    } while (fabs(diffcharge - diffcharge_old) > 1e-12);
-
-                    do {
-                        diffcap_old = diffcap;
-                        diffcap = diffcap_old + ((tt*vp*(*(ckt->CKTstate1 + here->DIOdiffCap)) + tt * (ckt->CKTdelta)*gdb - diffcap_old * ((ckt->CKTdelta) + tt*vp)) / ((ckt->CKTdelta) + tt*vp));
-                    } while (fabs(diffcap - diffcap_old) > 1e-12);
-                    */
-
-                    //Backward Difference Operator
-                    //diffcharge = tt * (cdb - vp * (((*(ckt->CKTstate1 + here->DIOdiffCharge)) - (*(ckt->CKTstate2 + here->DIOdiffCharge))) / (ckt->CKTdeltaOld[1])));
-                    //diffcap = tt * (gdb - vp * (((*(ckt->CKTstate1 + here->DIOdiffCap)) - (*(ckt->CKTstate2 + here->DIOdiffCap))) / (ckt->CKTdeltaOld[1])));
-
-                    //Standard Diffy-Q w/ trap integral
-                    //diffcharge = ((ckt->CKTdelta) / (2.0*vt))*(exp(-(ckt->CKTdelta) / (tt*vt))*(*(ckt->CKTstate1 + here->DIOoldCurr)) + cdb) + exp(-(ckt->CKTdelta) / (tt*vt))*(*(ckt->CKTstate1 + here->DIOdiffCharge));
-                    //diffcap = ((ckt->CKTdelta) / (2.0*vt))*(exp(-(ckt->CKTdelta) / (tt*vt))*(*(ckt->CKTstate1 + here->DIOoldCond)) + gdb) + exp(-(ckt->CKTdelta) / (tt*vt))*(*(ckt->CKTstate1 + here->DIOdiffCap));
-
-                    //Forward Euler
-                    //diffcharge = ((*(ckt->CKTstate1 + here->DIOdiffCharge))*(tt*vp - (ckt->CKTdelta)) + (ckt->CKTdelta)*tt*cdb) / (tt*vp);
-                    //diffcap = ((*(ckt->CKTstate1 + here->DIOdiffCap))*(tt*vp - (ckt->CKTdelta)) + (ckt->CKTdelta)*tt*gdb) / (tt*vp);
-
-                    //Backward Euler
-                    //diffcharge = tt*((vp*(*(ckt->CKTstate1 + here->DIOdiffCharge)) + (ckt->CKTdelta)*cdb) / (tt*vp + (ckt->CKTdelta)));
-                    //diffcap = tt*((vp*(*(ckt->CKTstate1 + here->DIOdiffCap)) + (ckt->CKTdelta)*gdb) / (tt*vp + (ckt->CKTdelta)));
-
-                    //Trap
-                    diffcharge = ((*(ckt->CKTstate1 + here->DIOdiffCharge))*(2.0*tt*vp - (ckt->CKTdelta)) + (ckt->CKTdelta)*tt*((*(ckt->CKTstate1 + here->DIOoldCurr)) + cdb)) / (2.0*tt*vp + (ckt->CKTdelta));
-                    diffcap = ((*(ckt->CKTstate1 + here->DIOdiffCap))*(2.0*tt*vp - (ckt->CKTdelta)) + (ckt->CKTdelta)*tt*((*(ckt->CKTstate1 + here->DIOoldCond)) + gdb)) / (2.0*tt*vp + (ckt->CKTdelta));
-
-                    //Gear
-                    //diffcharge = tt*((vp*(4.0*(*(ckt->CKTstate1 + here->DIOdiffCharge)) - (*(ckt->CKTstate2 + here->DIOdiffCharge))) + 2.0*(ckt->CKTdelta)*cdb) / (3.0*tt*vp + 2.0*(ckt->CKTdelta)));
-                    //diffcap = tt*((vp*(4.0*(*(ckt->CKTstate1 + here->DIOdiffCap)) - (*(ckt->CKTstate2 + here->DIOdiffCap))) + 2.0*(ckt->CKTdelta)*gdb) / (3.0*tt*vp + 2.0*(ckt->CKTdelta)));
-
-                    //Nothing
-                    //diffcharge = tt * cdb;
-                    //diffcap = tt * gdb;
-                }
-
-                *(ckt->CKTstate0 + here->DIOdiffCharge) = diffcharge;
-                *(ckt->CKTstate0 + here->DIOdiffCap) = diffcap;
-                *(ckt->CKTstate0 + here->DIOoldCurr) = cdb;
-                *(ckt->CKTstate0 + here->DIOoldCond) = gdb;
-
-                //printf("Time: %e\n", ckt->CKTtime);
-                //printf("Charge: %e\n", diffcharge);
-                //printf("Cap: %e\n", diffcap);
-                //printf("Curr: %e\n", cdb);
-                //printf("Cond: %e\n", gdb);
-                //printf("DelCharge: %e\n", diffcharge-(*(ckt->CKTstate1 + here->DIOdiffCharge)));
-                //printf("DelCap: %e\n", diffcap-(*(ckt->CKTstate1 + here->DIOdiffCap)));
-                //printf("DelCurr: %e\n", cdb-(*(ckt->CKTstate1 + here->DIOoldCurr)));
-                //printf("DelCond: %e\n\n", gdb-(*(ckt->CKTstate1 + here->DIOoldCond)));
-
-                //diffcharge = here->DIOtTransitTime*cdb;
-                diffchargeSW = here->DIOtTransitTime*cdsw;
+                diffchargeSW = tt*cdsw;
                 *(ckt->CKTstate0 + here->DIOcapCharge) =
                         diffcharge + diffchargeSW + deplcharge + deplchargeSW;
 
-                //diffcap = here->DIOtTransitTime*gdb;
-                diffcapSW = here->DIOtTransitTime*gdsw;
+                diffcapSW = tt*gdsw;
 
                 capd = diffcap + diffcapSW + deplcap + deplcapSW + here->DIOcmetal + here->DIOcpoly;
 
