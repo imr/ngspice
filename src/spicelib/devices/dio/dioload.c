@@ -504,7 +504,7 @@ next1:
                         //diffcap = ((*(ckt->CKTstate1 + here->DIOdiffCap))*(tt*vp - dt) + dt*tt*gdb) / (tt*vp);
 
                         //Backward Euler
-                        //diffcharge = tt*((vp*(*(ckt->CKTstate1 + here->DIOdiffCharge)) + dt*cdb) / (tt*vp + dt));
+                        //diffcharge = tt*((vp*(*(ckt->CKTstate1 + here->DIOdiffCharge)) + dt*(*(ckt->CKTstate1 + here->DIOoldCurr))) / (tt*vp + dt));
                         //diffcap = tt*((vp*(*(ckt->CKTstate1 + here->DIOdiffCap)) + dt*gdb) / (tt*vp + dt));
 
                         //Trap
@@ -512,7 +512,7 @@ next1:
                         diffcap = ((*(ckt->CKTstate1 + here->DIOdiffCap))*(2.0*tt*vp - dt) + dt*tt*((*(ckt->CKTstate1 + here->DIOoldCond)) + gdb)) / (2.0*tt*vp + dt);
 
                         //Gear
-                        //diffcharge = tt*((vp*(4.0*(*(ckt->CKTstate1 + here->DIOdiffCharge)) - (*(ckt->CKTstate2 + here->DIOdiffCharge))) + 2.0*dt*cdb) / (3.0*tt*vp + 2.0*dt));
+                        //diffcharge = tt*((vp*(4.0*(*(ckt->CKTstate1 + here->DIOdiffCharge)) - (*(ckt->CKTstate2 + here->DIOdiffCharge))) + 2.0*dt*(*(ckt->CKTstate1 + here->DIOoldCurr))) / (3.0*tt*vp + 2.0*dt));
                         //diffcap = tt*((vp*(4.0*(*(ckt->CKTstate1 + here->DIOdiffCap)) - (*(ckt->CKTstate2 + here->DIOdiffCap))) + 2.0*dt*gdb) / (3.0*tt*vp + 2.0*dt));
 
                         //Nothing
