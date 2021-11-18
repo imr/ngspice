@@ -60,9 +60,9 @@ CKTop (CKTcircuit *ckt, long int firstmode, long int continuemode,
             }
             /* first the new gmin, then the old gmin */
             else {
-                converged = new_gmin(ckt, firstmode, continuemode, iterlim);
+                converged = dynamic_gmin(ckt, firstmode, continuemode, iterlim);
                 if(converged != 0) {
-                    converged = dynamic_gmin(ckt, firstmode, continuemode, iterlim);
+                    converged = new_gmin(ckt, firstmode, continuemode, iterlim);
                 }
 
             }
@@ -275,7 +275,7 @@ spice3_gmin (CKTcircuit *ckt, long int firstmode,
     int converged, i;
 
     ckt->CKTmode = firstmode;
-    SPfrontEnd->IFerrorf (ERR_INFO, "Starting gmin stepping");
+    SPfrontEnd->IFerrorf (ERR_INFO, "Starting spice3 gmin stepping");
 
     ckt->CKTdiagGmin =
         (ckt->CKTgshunt == 0) ? ckt->CKTgmin :  ckt->CKTgshunt;
@@ -311,7 +311,7 @@ spice3_gmin (CKTcircuit *ckt, long int firstmode,
     converged = NIiter (ckt, iterlim);
 
     if (converged == 0) {
-        SPfrontEnd->IFerrorf (ERR_INFO, "gmin stepping completed");
+        SPfrontEnd->IFerrorf (ERR_INFO, "spice3 gmin stepping completed");
 
 #ifdef XSPICE
         /* gtri - wbk - add convergence problem reporting flags */
@@ -319,7 +319,7 @@ spice3_gmin (CKTcircuit *ckt, long int firstmode,
 #endif
 
     } else {
-        SPfrontEnd->IFerrorf (ERR_WARNING, "gmin stepping failed");
+        SPfrontEnd->IFerrorf (ERR_WARNING, "spice3 gmin stepping failed");
     }
 
     return converged;
