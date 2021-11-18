@@ -467,6 +467,7 @@ next1:
                             diffcharge_old = diffcharge;
                             diffcharge = (*(ckt->CKTstate1 + here->DIOdiffCharge)) + ((dt / vp)*(cdb - (diffcharge_old / tt)));
                         } while (fabs(diffcharge - diffcharge_old) > 1e-12);
+
                         do {
                             diffcap_old = diffcap;
                             diffcap = (*(ckt->CKTstate1 + here->DIOdiffCap)) + ((dt / vp)*(gdb - (diffcap_old / tt)));
@@ -504,8 +505,10 @@ next1:
                         //diffcap = ((*(ckt->CKTstate1 + here->DIOdiffCap))*(tt*vp - dt) + dt*tt*gdb) / (tt*vp);
 
                         //Backward Euler
-                        //diffcharge = tt*((vp*(*(ckt->CKTstate1 + here->DIOdiffCharge)) + dt*(*(ckt->CKTstate1 + here->DIOoldCurr))) / (tt*vp + dt));
-                        //diffcap = tt*((vp*(*(ckt->CKTstate1 + here->DIOdiffCap)) + dt*gdb) / (tt*vp + dt));
+                        ////diffcharge = tt*((vp*(*(ckt->CKTstate1 + here->DIOdiffCharge)) + dt*(*(ckt->CKTstate1 + here->DIOoldCurr))) / (tt*vp + dt));
+                        ////diffcap = tt*((vp*(*(ckt->CKTstate1 + here->DIOdiffCap)) + dt*(*(ckt->CKTstate1 + here->DIOoldCond))) / (tt*vp + dt));
+                        //diffcharge = tt*((vp*(*(ckt->CKTstate1 + here->DIOdiffCharge)) + dt*cdb) / (tt*vp + dt));
+                        //diffcap = tt*((vp*(*(ckt->CKTstate1 + here->DIOdiffCap))    + dt*gdb) / (tt*vp + dt));
 
                         //Trap
                         diffcharge = ((*(ckt->CKTstate1 + here->DIOdiffCharge))*(2.0*tt*vp - dt) + dt*tt*((*(ckt->CKTstate1 + here->DIOoldCurr)) + cdb)) / (2.0*tt*vp + dt);
@@ -518,6 +521,10 @@ next1:
                         //Nothing
                         //diffcharge = tt * cdb;
                         //diffcap = tt * gdb;
+
+                        //// Q = tt ( Id - VP dQdt)
+                        //diffcharge = tt * (cdb - vp * ( *(ckt->CKTstate1 + here->DIOdiffCharge) - *(ckt->CKTstate2 + here->DIOdiffCharge) ) / dt);
+                        //diffcap =  tt * (gdb - vp * ( *(ckt->CKTstate1 + here->DIOdiffCap)    - *(ckt->CKTstate2 + here->DIOdiffCap)    ) / dt);
                     }
 
                     *(ckt->CKTstate0 + here->DIOdiffCharge) = diffcharge;
@@ -525,7 +532,7 @@ next1:
                     *(ckt->CKTstate0 + here->DIOoldCurr) = cdb;
                     *(ckt->CKTstate0 + here->DIOoldCond) = gdb;
 
-                    //printf("Time: %e\n", ckt->CKTtime);
+                    //printf("Time: %e dt: %g\n", ckt->CKTtime, ckt->CKTdelta);
                     //printf("Charge: %e\n", diffcharge);
                     //printf("Cap: %e\n", diffcap);
                     //printf("Curr: %e\n", cdb);
