@@ -455,7 +455,6 @@ next1:
                     else {
                         double dt;
                         dt = ckt->CKTdelta;
-                        //dt = 1/ckt->CKTag[0];
                         /*
                         //Fixed-point iteration
                         double diffcharge_old, diffcap_old;
@@ -505,8 +504,8 @@ next1:
                         //diffcap = ((*(ckt->CKTstate1 + here->DIOdiffCap))*(tt*vp - dt) + dt*tt*gdb) / (tt*vp);
 
                         //Backward Euler
-                        ////diffcharge = tt*((vp*(*(ckt->CKTstate1 + here->DIOdiffCharge)) + dt*(*(ckt->CKTstate1 + here->DIOoldCurr))) / (tt*vp + dt));
-                        ////diffcap = tt*((vp*(*(ckt->CKTstate1 + here->DIOdiffCap)) + dt*(*(ckt->CKTstate1 + here->DIOoldCond))) / (tt*vp + dt));
+                        //diffcharge = tt*((vp*(*(ckt->CKTstate1 + here->DIOdiffCharge)) + dt*(*(ckt->CKTstate1 + here->DIOoldCurr))) / (tt*vp + dt));
+                        //diffcap = tt*((vp*(*(ckt->CKTstate1 + here->DIOdiffCap)) + dt*(*(ckt->CKTstate1 + here->DIOoldCond))) / (tt*vp + dt));
                         //diffcharge = tt*((vp*(*(ckt->CKTstate1 + here->DIOdiffCharge)) + dt*cdb) / (tt*vp + dt));
                         //diffcap = tt*((vp*(*(ckt->CKTstate1 + here->DIOdiffCap))    + dt*gdb) / (tt*vp + dt));
 
@@ -532,6 +531,7 @@ next1:
                     *(ckt->CKTstate0 + here->DIOoldCurr) = cdb;
                     *(ckt->CKTstate0 + here->DIOoldCond) = gdb;
 
+                    //printf("%e %e %e %e %e %e\n", ckt->CKTtime, ckt->CKTdelta, diffcharge, diffcap, cdb, gdb);
                     //printf("Time: %e dt: %g\n", ckt->CKTtime, ckt->CKTdelta);
                     //printf("Charge: %e\n", diffcharge);
                     //printf("Cap: %e\n", diffcap);
@@ -551,13 +551,15 @@ next1:
 
                 diffchargeSW = tt*cdsw;
                 *(ckt->CKTstate0 + here->DIOcapCharge) =
-                        diffcharge + diffchargeSW + deplcharge + deplchargeSW;
+                        diffchargeSW + deplcharge + deplchargeSW;
+                *(ckt->CKTstate0 + here->DIOdiffCharge) =
+                        diffcharge;
 
                 diffcapSW = tt*gdsw;
 
-                capd = diffcap + diffcapSW + deplcap + deplcapSW + here->DIOcmetal + here->DIOcpoly;
+                capd = diffcapSW + deplcap + deplcapSW + here->DIOcmetal + here->DIOcpoly;
 
-                here->DIOcap = capd;
+                here->DIOcap = diffcap + capd;
 
                 /*
                  *   store small-signal parameters
@@ -565,7 +567,7 @@ next1:
                 if( (!(ckt->CKTmode & MODETRANOP)) ||
                         (!(ckt->CKTmode & MODEUIC)) ) {
                     if (ckt->CKTmode & MODEINITSMSIG){
-                        *(ckt->CKTstate0 + here->DIOcapCurrent) = capd;
+                        *(ckt->CKTstate0 + here->DIOcapCurrent) = diffcap + capd;
 
                         if(SenCond){
                             *(ckt->CKTstate0 + here->DIOcurrent) = cd;
@@ -597,14 +599,22 @@ next1:
                     if (ckt->CKTmode & MODEINITTRAN) {
                         *(ckt->CKTstate1 + here->DIOcapCharge) =
                                 *(ckt->CKTstate0 + here->DIOcapCharge);
+                        *(ckt->CKTstate1 + here->DIOdiffCharge) =
+                                *(ckt->CKTstate0 + here->DIOdiffCharge);
                     }
                     error = NIintegrate(ckt,&geq,&ceq,capd,here->DIOcapCharge);
                     if(error) return(error);
                     gd=gd+geq;
                     cd=cd+*(ckt->CKTstate0 + here->DIOcapCurrent);
+                    error = NIintegrate(ckt,&geq,&ceq,diffcap,here->DIOdiffCharge);
+                    if(error) return(error);
+                    gd=gd+geq;
+                    cd=cd+*(ckt->CKTstate0 + here->DIOdiffCurrent);
                     if (ckt->CKTmode & MODEINITTRAN) {
                         *(ckt->CKTstate1 + here->DIOcapCurrent) =
                                 *(ckt->CKTstate0 + here->DIOcapCurrent);
+                        *(ckt->CKTstate1 + here->DIOdiffCurrent) =
+                                *(ckt->CKTstate0 + here->DIOdiffCurrent);
                     }
                     if (selfheat)
                     {

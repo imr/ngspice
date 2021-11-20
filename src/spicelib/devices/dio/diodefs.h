@@ -199,19 +199,20 @@ typedef struct sDIOinstance {
 #define DIOcapCharge DIOstate+3
 #define DIOcapCurrent DIOstate+4
 #define DIOdiffCharge DIOstate+5
-#define DIOdiffCap DIOstate+6
-#define DIOoldCurr DIOstate+7
-#define DIOoldCond DIOstate+8
+#define DIOdiffCurrent DIOstate+6
+#define DIOdiffCap DIOstate+7
+#define DIOoldCurr DIOstate+8
+#define DIOoldCond DIOstate+9
 
-#define DIOqth DIOstate+9      /* thermal capacitor charge */
-#define DIOcqth DIOstate+10    /* thermal capacitor current */
+#define DIOqth DIOstate+10     /* thermal capacitor charge */
+#define DIOcqth DIOstate+11    /* thermal capacitor current */
 
-#define DIOdeltemp DIOstate+11 /* thermal voltage over rth0 */
-#define DIOdIdio_dT DIOstate+12
+#define DIOdeltemp DIOstate+12 /* thermal voltage over rth0 */
+#define DIOdIdio_dT DIOstate+13
 
-#define DIOnumStates 13
+#define DIOnumStates 14
 
-#define DIOsensxp DIOstate+13    /* charge sensitivities and their derivatives.
+#define DIOsensxp DIOstate+14    /* charge sensitivities and their derivatives.
                                  * +10 for the derivatives - pointer to the
                                  * beginning of the array */
 
