@@ -413,6 +413,10 @@ EVTdisplay(wordlist *wl)
         out_printf("No event node available!\n");
         return;
     }
+    if (!ckt->evt->jobs.job_plot) {
+        out_printf("No event job run, no data available!\n");
+        return;
+    }
     out_printf("\nList of event nodes in plot %s\n", ckt->evt->jobs.job_plot[ckt->evt->jobs.cur_job]);
     out_printf("    %-20s: %-5s, %s\n\n", "node name", "type", "number of events");
     node_index = 0;
