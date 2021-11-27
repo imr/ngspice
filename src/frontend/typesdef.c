@@ -12,6 +12,7 @@ Author: 1986 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ngspice/ftedefs.h"
 #include "ngspice/dvec.h"
 #include "ngspice/sim.h"
+#include "ngspice/tskdefs.h"
 #include "typesdef.h"
 
 
@@ -357,9 +358,17 @@ com_stype(wordlist *wl)
     }
 
     for (wl = wl->wl_next; wl; wl = wl->wl_next) {
-        struct dvec *v = vec_get(wl->wl_word);
-        if (!v)
-            fprintf(cp_err, "Error: no such vector %s.\n", wl->wl_word);
+        const char* vecname = wl->wl_word;
+        if (*vecname == '@'&& !ft_curckt->ci_curTask->jobs) {
+            fprintf(cp_err, "Warning: Vector %s is available only after the simulation has been run!\n", vecname);
+            fprintf(cp_err, "    Command 'settype %s' is ignored\n\n", vecname);
+            continue;
+        }
+        struct dvec *v = vec_get(vecname);
+        if (!v) {
+            fprintf(cp_err, "Warning: no such vector %s.\n", vecname);
+            fprintf(cp_err, "    Command 'settype %s' is ignored\n\n", vecname);
+        }
         else
             for (; v; v = v->v_link2)
                 if (v->v_flags & VF_PERMANENT)
