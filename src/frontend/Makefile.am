@@ -129,6 +129,7 @@ libfte_la_SOURCES = \
     inp.h       \
     inpcom.c    \
     inpcom.h    \
+    inpc_probe.c    \
     interp.c    \
     interp.h    \
     inventory.c     \
