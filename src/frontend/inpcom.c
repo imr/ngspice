@@ -190,6 +190,7 @@ static char* eval_tc(char* line, char* tline);
 
 static void rem_double_braces(struct card* card);
 
+extern void inp_probe(struct card* card);
 #ifndef EXT_ASC
 static void utf8_syntax_check(struct card *deck);
 #endif
@@ -402,7 +403,7 @@ static int is_cider_model(char *buf)
 #endif
 
 /* insert a new card, just behind the given card */
-static struct card *insert_new_line(
+struct card *insert_new_line(
         struct card *card, char *line, int linenum, int linenum_orig)
 {
     struct card *x = TMALLOC(struct card, 1);
@@ -1023,6 +1024,8 @@ struct card *inp_readall(FILE *fp, const char *dir_name,
             pspice_compat_a(working);
 
         struct nscope *root = inp_add_levels(working);
+
+        inp_probe(working);
 
         inp_fix_for_numparam(subckt_w_params, working);
 
@@ -4578,6 +4581,19 @@ int get_number_terminals(char *c)
                 strncpy(nam_buf, inst, sizeof(nam_buf) - 1);
                 txfree(inst);
                 if (strstr(nam_buf, "off") || strstr(nam_buf, "thermal") || strchr(nam_buf, '='))
+                    break;
+                i++;
+            }
+            return i - 2;
+            break;
+        case 'x':
+            i = 0;
+            /* find the first token with "params:" or "=" in the line*/
+            while ((i < 100) && (*c != '\0')) {
+                char *inst = gettok_instance(&c);
+                strncpy(nam_buf, inst, sizeof(nam_buf) - 1);
+                txfree(inst);
+                if (strstr(nam_buf, "params") || strchr(nam_buf, '='))
                     break;
                 i++;
             }
