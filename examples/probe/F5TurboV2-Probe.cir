@@ -1,0 +1,74 @@
+.title Pass Labs F5Turbo V2, schematic and netlist by KiCad
+.include "F5models.lib"
+.probe I(R19) vd(R10) v(in) v(out) vd(Net-_P3-Pad1_, 0)   ; <------------------------------------------
+*.probe (all)   ; <------------------------------------------
+JQ2 Net-_P2-Pad1_ Net-_Q1-Pad2_ Net-_P3-Pad1_ 2SJ74
+R4 0 Net-_P3-Pad1_ 10
+R6 Net-_P2-Pad1_ -32 1k
+MQ5 out Net-_Q5-Pad2_ Net-_D1a1-Pad2_ IRFP240
+R15 Net-_Q5-Pad2_ Net-_P2-Pad1_ 47.5
+R12 Net-_R12-Pad1_ Net-_P2-Pad1_ 2.2k
+RTH2 Net-_D1a1-Pad2_ Net-_R12-Pad1_ 4.7k
+XP2 Net-_P2-Pad1_ -32 -32 RPOT value=5k ratio=0.15
+R21 Net-_D1a1-Pad2_ -32 1
+R10 out Net-_P3-Pad1_ 220
+R9 out Net-_P3-Pad1_ 220
+JQ1 Net-_P1-Pad1_ Net-_Q1-Pad2_ Net-_P3-Pad1_ 2SK170
+R1 Net-_Q1-Pad2_ in 1k
+XP3 Net-_P3-Pad1_ 0 Net-_P3-Pad1_ RPOT value=200 ratio=0.85
+R5 +32 Net-_P1-Pad1_ 1k
+R3 Net-_P3-Pad1_ 0 10
+R2 in 0 47.5k
+.probe i(R2)   ; <------------------------------------------
+R19 +32 Net-_D4a1-Pad1_ 1
+R14 Net-_Q4-Pad2_ Net-_P1-Pad1_ 47.5
+D3a1 +32 Net-_D3a1-Pad1_ DMOD
+D3b1 +32 Net-_D3a1-Pad1_ DMOD
+R20 +32 Net-_D4a1-Pad1_ 1
+D4a1 +32 Net-_D4a1-Pad1_ DMOD
+D4b1 +32 Net-_D4a1-Pad1_ DMOD
+MQ4 out Net-_Q4-Pad2_ Net-_D4a1-Pad1_ IRFP9240
+.probe V(MQ4:3)   ; <------------------------------------------
+R11 Net-_R11-Pad1_ Net-_P1-Pad1_ 2.2k
+RTH1 Net-_D3a1-Pad1_ Net-_R11-Pad1_ 4.7k
+XP1 Net-_P1-Pad1_ +32 +32 RPOT value=5k ratio=0.15
+R13 Net-_Q3-Pad2_ Net-_P1-Pad1_ 47.5
+MQ3 out Net-_Q3-Pad2_ Net-_D3a1-Pad1_ IRFP9240
+.probe i(MQ3, 3) i(MQ5, s)  ; <------------------------------------------
+R18 +32 Net-_D3a1-Pad1_ 1
+R17 +32 Net-_D3a1-Pad1_ 1
+R7 out Net-_P3-Pad1_ 220
+R8 out Net-_P3-Pad1_ 220
+D1b1 Net-_D1a1-Pad2_ -32 DMOD
+R22 Net-_D1a1-Pad2_ -32 1
+R23 Net-_D2a1-Pad2_ -32 1
+R24 Net-_D2a1-Pad2_ -32 1
+D1a1 Net-_D1a1-Pad2_ -32 DMOD
+R16 Net-_Q6-Pad2_ Net-_P2-Pad1_ 47.5
+MQ6 out Net-_Q6-Pad2_ Net-_D2a1-Pad2_ IRFP240
+.probe vd(MQ6: 2:1)   ; <------------------------------------------
+D2a1 Net-_D2a1-Pad2_ -32 DMOD
+D2b1 Net-_D2a1-Pad2_ -32 DMOD
+Rl1 out 0 4
+V1 +32 0 32
+V2 -32 0 -32
+V3 in 0 sin(0 2 1k)
+.probe I(XP2,1)   ; <------------------------------------------
+
+* erroneous .probe parameters 
+.probe (xyz)   ; <------------------------------------------
+.probe Vd(MQ3: 7 : 0)   ; <------------------------------------------
+.probe i(MQ8, s)   ; <------------------------------------------
+
+.tran 10u 10m
+
+
+.control
+run
+display
+rusage
+plot out in
+plot i(mq3:s) i(mq5:s)
+.endc
+
+.end
