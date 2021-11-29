@@ -9958,8 +9958,9 @@ void inp_rem_unused_models(struct nscope *root, struct card *deck)
                     mark_all_binned(m->model->level, elem_model_name);
                 }
                 else {
-                    fprintf(stderr, "warning, can't find model %s\n",
-                            elem_model_name);
+                    fprintf(stderr, "warning, can't find model '%s' from line\n    "
+                           "%s\n",
+                            elem_model_name, curr_line);
                 }
             }
 
