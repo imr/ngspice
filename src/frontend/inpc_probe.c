@@ -129,11 +129,15 @@ void inp_probe(struct card* deck)
             continue;
         if (*curr_line == '.')
             continue;
+        if (*curr_line == '\0')
+            continue;
 
         /* here we should go on with only true device instances at top level.
            Put all instance names as key into a hash table, with the address as parameter. */
            /* Get the instance name as key */
         char* instname = gettok_instance(&curr_line);
+        if (!instname)
+            continue;
         nghash_insert(instances, instname, card);
     }
 
@@ -175,8 +179,12 @@ void inp_probe(struct card* deck)
                 continue;
             if (*curr_line == '.')
                 continue;
+            if (*curr_line == '\0')
+                continue;
 
             char* instname = gettok_instance(&curr_line);
+            if (!instname)
+                continue;
 
             /* select elements not in need of a measure Vsource */
             if (strchr("evihk", *instname))
@@ -191,6 +199,14 @@ void inp_probe(struct card* deck)
                 char *strnode1, *strnode2, *nodename2;
                 strnode1 = gettok(&thisline);
                 strnode2 = gettok(&thisline);
+
+                if (!strnode2 || *strnode2 == '\0') {
+                    fprintf(stderr, "Warning: Cannot read 2 nodes in line %s\n", curr_line);
+                    fprintf(stderr, "    Instance not ready for .probe command\n");
+                    tfree(strnode1);
+                    tfree(strnode2);
+                    continue;
+                }
 
                 nodename2 = get_terminal_name(instname, "2", instances);
 
@@ -220,6 +236,12 @@ void inp_probe(struct card* deck)
                     char* thisnode;
                     char nodebuf[20];
                     thisnode = gettok(&thisline);
+                    if (!thisnode || *thisnode == '\0') {
+                        fprintf(stderr, "Warning: Cannot read node %d in line %s\n", i, curr_line);
+                        fprintf(stderr, "    Instance not ready for .probe command\n");
+                        tfree(thisnode);
+                        continue;
+                    }
                     char* newnode = tprintf("int_%s_%s_%d", thisnode, instname, i);
                     sadd(&dnewline, newnode);
                     cadd(&dnewline, ' ');
@@ -238,9 +260,6 @@ void inp_probe(struct card* deck)
                         char* nodesaves = tprintf("%s:%s#branch", instname, nodename);
                         allsaves = wl_cons(nodesaves, allsaves);    
                     }
-
-
-                    
 
                     tfree(newnode);
                     tfree(nodename);
@@ -331,6 +350,13 @@ void inp_probe(struct card* deck)
                     thisline = nexttok(thisline); /* skip instance name */
                     strnode1 = gettok(&thisline);
                     strnode2 = gettok(&thisline);
+                    if (!strnode2 || *strnode2 == '\0') {
+                        fprintf(stderr, "Warning: Cannot read 2 nodes in line %s\n", tmpcard1->line);
+                        fprintf(stderr, "    Instance not ready for .probe command\n");
+                        tfree(strnode1);
+                        tfree(strnode2);
+                        continue;
+                    }
                     newline = tprintf("Ediff%d_%s vd_%s 0 %s %s 1", ee, instname1, instname1, strnode1, strnode2);
 
                     char* nodesaves = tprintf("vd_%s", instname1);
@@ -347,7 +373,12 @@ void inp_probe(struct card* deck)
                 else {
                     char* tmpstr2, *nodename1, *nodename2;
                     struct card* tmpcard2;
+                    tmpstr2 = tmpstr;
                     instname1 = gettok_char(&tmpstr, ':', FALSE, FALSE);
+                    if (!instname1) {
+                        fprintf(stderr, "Warning: Cannot read instance name in %s, ignored\n");
+                        continue;
+                    }
                     tmpcard1 = nghash_find(instances, instname1);
                     if (!tmpcard1) {
                         fprintf(stderr, "Warning: Could not find the instance line for %s,\n   .probe %s will be ignored\n", instname1, wltmp->wl_word);
@@ -367,6 +398,11 @@ void inp_probe(struct card* deck)
 
                         tmpstr2++; /* beyond ',' */
                         instname2 = gettok_char(&tmpstr2, ':', FALSE, FALSE);
+                        if (!instname2) {
+                            fprintf(stderr, "Warning: Cannot read instance name in %s, ignored\n", tmpstr);
+                            tfree(nodename1);
+                            continue;
+                        }
                         tmpstr2++; /* beyond ':' */
                         tmpcard2 = nghash_find(instances, instname2);
                         if (!tmpcard2) {

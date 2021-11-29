@@ -17,7 +17,7 @@ mp1 out in dd dd pm
 .probe i(mp1:s) i(mn1:s) v(in) v(out) vd(mn1:d:s) vd(mp1:1, mn1:1)
 
 * buggy inputs
-.probe i(mn1:z) vd(mp1:0:0) vd(mp1:1:1) hhhh) i(:u) VD(z) i(())
+.probe i(mn1:z) vd(mp1:0:0) vd(mp1:1:1) hhhh) i(:u) VD(z) i(()) vd(:0:0) i(:z)
 
 .save @mn1[id]
 
