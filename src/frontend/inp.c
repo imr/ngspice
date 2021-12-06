@@ -83,6 +83,8 @@ extern void inp_rem_levels(struct nscope* root);
 extern void comment_out_unused_subckt_models(struct card *deck);
 extern void inp_rem_unused_models(struct nscope *root, struct card *deck);
 
+extern void modprobenames(INPtables * tab);
+
 #ifdef SHARED_MODULE
 extern void exec_controls(wordlist *controls);
 #endif
@@ -1236,6 +1238,10 @@ inp_dodeck(
         startTime = seconds();
         ckt = if_inpdeck(deck, &tab);
         ft_curckt->FTEstats->FTESTATnetParseTime = seconds() - startTime;
+        /* if .probe, rename the current measurement node vcurr_ */
+        if (cp_getvar("probe_is_given", CP_BOOL, NULL, 0)) {
+            modprobenames(tab);
+        }
     } else {
         ckt = NULL;
     }

@@ -1,0 +1,35 @@
+.probe test with simple CMOS inverter
+
+Vd dd 0 dc 5
+Vin in 0 dc 0 PULSE (0 5 0 10n 10n 100n 200n)
+Vs ss 0 dc 0
+
+
+mn1 out in ss ss nm
+mp1 out in dd dd pm
+.model nm nmos
+.model pm pmos
+
+*.dc vin 0 5 0.1
+.tran 5n 500n
+
+* inputs o.k.
+.probe i(mp1:s) i(mn1:s) v(in) v(out) vd(mn1:d:s) vd(mp1:1, mn1:1)
+
+* buggy inputs
+.probe i(mn1:z) vd(mp1:0:0) vd(mp1:1:1) hhhh) i(:u) VD(z) i(()) vd(:0:0) i(:z)
+
+.save @mn1[id]
+
+.control
+run
+display
+set xbrushwidth=2
+*plot commands o.k.
+plot i(mn1:s) i(mp1:s)
+*buggy plot commands
+plot i(mp1:8)
+plot in out
+plot  @mn1[id] - i(mn1:s)
+.endc
+.end
