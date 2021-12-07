@@ -154,18 +154,10 @@ SVG_Init(void)
     }
 
     /* plot size */
-    if (!cp_getvar("hcopywidth", CP_STRING, &Cfg.ints[SVG_WIDTH], sizeof(Cfg.ints[SVG_WIDTH]))) {
-        dispdev->width = Cfg.ints[SVG_WIDTH];
-    }
-    else {
-        dispdev->width = SVGwidth;
-    }
-    if (!cp_getvar("hcopyheight", CP_STRING, &Cfg.ints[SVG_HEIGHT], sizeof(Cfg.ints[SVG_HEIGHT]))) {
-        dispdev->height = Cfg.ints[SVG_HEIGHT];
-    }
-    else {
-        dispdev->height = SVGheight;
-    }
+    cp_getvar("hcopywidth", CP_NUM, &SVGwidth, 0);
+    dispdev->width = SVGwidth;
+    cp_getvar("hcopyheight", CP_NUM, &SVGheight, 0);
+    dispdev->height = SVGheight;
 
     /* get linewidth information from spinit */
     if (!cp_getvar("xbrushwidth", CP_NUM, &Cfg.ints[SVG_STROKE_WIDTH], 0))

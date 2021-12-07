@@ -60,6 +60,7 @@ hardcopy plot_3.svg vss#branch title 'Drain current versus drain voltage' xlabel
 
 * reset the colors
 set svg_intopts = ( 512, 384, 12, 0, 1, 2, 2 )
+
 unset color0
 unset color1
 unset color2
@@ -69,6 +70,9 @@ hardcopy plot_4.svg vss#branch title 'Drain current versus drain voltage' xlabel
 set color0="#F0E68C"
 set color1="#DDA0DD"
 set color2"#EE82EE"
+* set width and hight
+set hcopywidth=1024
+set hcopyheight=768
 hardcopy plot_5.svg vss#branch title 'Drain current versus drain voltage' xlabel 'Drain voltage' ylabel 'Drain current'
 
 
