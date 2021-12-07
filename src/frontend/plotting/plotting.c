@@ -7,7 +7,7 @@
 struct plot constantplot = {
     "Constant values", Spice_Build_Date, "constants",
     "const", NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-    TRUE, FALSE, 0
+    TRUE, FALSE, 0, 0, 0
 };
 
 struct plot *plot_cur = &constantplot;
