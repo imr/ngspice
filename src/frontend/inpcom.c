@@ -7543,6 +7543,27 @@ static void inp_quote_params(struct card *c, struct card *end_c,
                 }
             }
         }
+        /* Now check if we have nested {..{  }...}, which is not accepted by numparam code.
+           Replace the inner { } by ( ) */
+        char* cut_line = c->line;
+        cut_line = strchr(cut_line, '{');
+        if (cut_line) {
+            int level = 1;
+            cut_line++;
+            while (*cut_line != '\0') {
+                if (*cut_line == '{') {
+                    level++;
+                    if (level > 1)
+                        *cut_line = '(';
+                }
+                else if (*cut_line == '}') {
+                    if (level > 1)
+                        *cut_line = ')';
+                    level--;
+                }
+                cut_line++;
+            }
+        }
     }
 }
 
