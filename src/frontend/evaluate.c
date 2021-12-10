@@ -838,7 +838,7 @@ apply_func_funcall(struct func *func, struct dvec *v, int *newlength, short int 
     /* Modified for passing necessary parameters to the derive function - A.Roldan */
 
     if (eq(func->fu_name, "interpolate") || eq(func->fu_name, "deriv") || eq(func->fu_name, "group_delay")
-        || eq(func->fu_name, "fft") || eq(func->fu_name, "ifft"))       /* Ack */
+        || eq(func->fu_name, "fft") || eq(func->fu_name, "ifft") || eq(func->fu_name, "integ"))
     {
         void * (*f) (void *data, short int type, int length,
                      int *newlength, short int *newtype,

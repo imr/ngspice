@@ -435,6 +435,56 @@ cx_deriv(void *data, short int type, int length, int *newlength, short int *newt
 
 }
 
+/* integrate a vector using trapezoidal rule */
+void*
+cx_integ(void* data, short int type, int length, int* newlength, short int* newtype, struct plot* pl, struct plot* newpl, int grouping)
+{
+    if (grouping == 0)
+        grouping = length;
+    /* First do some sanity checks. */
+    if (!pl || !pl->pl_scale || !newpl || !newpl->pl_scale) {
+        fprintf(cp_err, "Internal error: cx_integ: bad scale\n");
+        return (NULL);
+    }
+
+    *newlength = length;
+    *newtype = type;
+
+    if (type == VF_COMPLEX) {
+        fprintf(cp_err, "Error: Function integ is not supported for complex data\n");
+        return (NULL);
+    }
+    else
+    {
+        /* all-real case */
+        double* outdata, * indata;
+        double* scale;
+        int i;
+        double delta;
+
+        indata = (double*)data;
+        outdata = alloc_d(length);
+        scale = alloc_d(length);
+
+         /* Modified to deal with complex frequency vector */
+        if (iscomplex(pl->pl_scale))
+            for (i = 0; i < length; i++)
+                scale[i] = realpart(pl->pl_scale->v_compdata[i]);
+        else
+            for (i = 0; i < length; i++)
+                scale[i] = pl->pl_scale->v_realdata[i];
+
+        /* use trapezoidal rule */
+        outdata[0] = 0;
+        for (i = 1; i < length; i++) {
+            delta = scale[i] - scale[i - 1];
+            outdata[i] = outdata[i - 1] + (indata[i] + indata[i - 1]) * delta / 2.;
+        }
+
+        tfree(scale);
+        return (char*)outdata;
+    }
+}
 
 void *
 cx_group_delay(void *data, short int type, int length, int *newlength, short int *newtype, struct plot *pl, struct plot *newpl, int grouping)
