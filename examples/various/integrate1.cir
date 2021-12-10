@@ -1,0 +1,28 @@
+Test of integ
+
+i1 0 1 1
+R1 1 2 1
+C1 2 3 1 ic=0
+Vm1 3 0 0
+
+v2 11 0 dc 0 sin (0 1 2)
+
+v3 31 0 dc 0 pulse (0 1 0.1 0.1 0.1 0.1 0.6)
+
+.tran 0.01 1
+
+.control
+run
+display
+let int1 = integ(Vm1#branch)
+
+plot int1 v(2)
+
+let int2 = integ(v(11))
+plot v(11) int2
+
+let int3 = integ(v(31))
+plot v(31) int3
+
+.endc
+.end
