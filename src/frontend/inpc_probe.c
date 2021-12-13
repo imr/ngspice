@@ -246,7 +246,7 @@ void inp_probe(struct card* deck)
                     sadd(&dnewline, newnode);
                     cadd(&dnewline, ' ');
                     /* to make the nodes unique */
-                    snprintf(nodebuf, 10, "%d", i);
+                    snprintf(nodebuf, 12, "%d", i);
                     nodename = get_terminal_name(instname, nodebuf, instances);
                     char* vline = tprintf("vcurr_%s:%s:%s_%s %s %s 0", instname, nodename, thisnode, nodebuf, newnode, thisnode);
                     card = insert_new_line(card, vline, 0, 0);
@@ -376,7 +376,7 @@ void inp_probe(struct card* deck)
                     tmpstr2 = tmpstr;
                     instname1 = gettok_char(&tmpstr, ':', FALSE, FALSE);
                     if (!instname1) {
-                        fprintf(stderr, "Warning: Cannot read instance name in %s, ignored\n");
+                        fprintf(stderr, "Warning: Cannot read instance name in %s, ignored\n", tmpstr);
                         continue;
                     }
                     tmpcard1 = nghash_find(instances, instname1);
