@@ -195,6 +195,9 @@ extern void inp_probe(struct card* card);
 static void utf8_syntax_check(struct card *deck);
 #endif
 
+struct card* insert_new_line(
+    struct card* card, char* line, int linenum, int linenum_orig);
+
 struct inp_read_t {
     struct card *cc;
     int line_number;
