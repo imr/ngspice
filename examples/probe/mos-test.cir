@@ -14,9 +14,9 @@ mp1 out in dd dd pm
 .tran 5n 500n
 
 * inputs o.k.
-.probe i(mp1:s) i(mn1:s) v(in) v(out) vd(mn1:d:s) vd(mp1:1, mn1:1)
+.probe i(mp1:s) i(mn1:s) v(in) v(out) vd(mn1:d:s) vd(mp1:1, mn1:1) vd(mn1:1:0)
 
-* buggy inputs
+* buggy inputs (to check the error messages)
 .probe i(mn1:z) vd(mp1:0:0) vd(mp1:1:1) hhhh) i(:u) VD(z) i(()) vd(:0:0) i(:z)
 
 .save @mn1[id]
@@ -27,8 +27,9 @@ display
 set xbrushwidth=2
 *plot commands o.k.
 plot i(mn1:s) i(mp1:s)
-*buggy plot commands
+*buggy plot command
 plot i(mp1:8)
+* plot o.k.
 plot in out
 plot  @mn1[id] - i(mn1:s)
 .endc
