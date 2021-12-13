@@ -289,9 +289,9 @@ void inp_probe(struct card* deck)
             /* check for differential voltage probes:
                v(nR1) voltage at node named nR1
                vd(R1) voltage across a two-terminal device named R1
-               vd([m4:1) voltage at instance node 1 of device m4
-               v(m4:1:3) voltage between instance nodes 1 and 3 of device m4
-               v(m4:1, m5:3) voltage between instance node 1 of device m4 and node 3 of device m5 */
+               vd(m4:1:0) voltage at instance node 1 of device m4
+               vd(m4:1:3) voltage between instance nodes 1 and 3 of device m4
+               vd(m4:1, m5:3) voltage between instance node 1 of device m4 and node 3 of device m5 */
                /* no nodes after first token: must be a node itself */
 
             /* v(nodename), voltage at node named nodename */
