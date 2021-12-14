@@ -1136,8 +1136,9 @@ void modprobenames(INPtables* tab) {
             /* copy from char no. 7 to (and excluding) second colon */
             char* endname = strchr(name, ':');
             endname = strchr(endname + 1, ':');
-            char* newname = name + 7;
-            snprintf(name, endname - newname + 1, "%s", newname);
+            char* newname = copy_substring(name + 7, endname);
+            tfree(GENinst->GENname);
+            GENinst->GENname = newname;
         }
         /* Do not inlude the x in the new name */
         else if (prefix("vcurr_", name)) {
@@ -1146,13 +1147,15 @@ void modprobenames(INPtables* tab) {
             char* endname2 = strchr(endname + 1, ':');
             /* two-terminal device, one colon, copy all from char no. 6 to (and excluding) colon */
             if (!endname2) {
-                char* newname = name + 6;
-                snprintf(name, endname - newname + 1, "%s", newname);
+                char* newname = copy_substring(name + 6, endname);
+                tfree(GENinst->GENname);
+                GENinst->GENname = newname;
             }
             /* copy from char no. 6 to (and excluding) second colon */
             else {
-                char* newname = name + 6;
-                snprintf(name, endname2 - newname + 1, "%s", newname);
+                char* newname = copy_substring(name + 6, endname2);
+                tfree(GENinst->GENname);
+                GENinst->GENname = newname;
             }
         }
     }
