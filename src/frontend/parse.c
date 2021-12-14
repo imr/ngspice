@@ -28,8 +28,6 @@ extern int PPparse(char **, struct pnode **);
 #endif
 
 void db_print_pnode_tree(struct pnode *p, char *print);
-struct pnode* ft_getpnames_quotes(wordlist* wl, bool check);
-
 
 struct pnode *ft_getpnames_from_string(const char *sz, bool check)
 {
