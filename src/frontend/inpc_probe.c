@@ -1132,15 +1132,15 @@ void modprobenames(INPtables* tab) {
     GENinstance* GENinst;
     for (GENinst = tab->defVmod->GENinstances; GENinst; GENinst = GENinst->GENnextInstance) {
         char* name = GENinst->GENname;
+        /* Do not inlude the x in the new name, XU1 -> U1 */
         if (prefix("vcurr_x", name) && !isdigit_c(name[7])) {
             /* copy from char no. 7 to (and excluding) second colon */
             char* endname = strchr(name, ':');
             endname = strchr(endname + 1, ':');
             char* newname = copy_substring(name + 7, endname);
-            tfree(GENinst->GENname);
-            GENinst->GENname = newname;
+            memcpy(name, newname, strlen(newname) + 1);
+            tfree(newname);
         }
-        /* Do not inlude the x in the new name */
         else if (prefix("vcurr_", name)) {
             /* copy from char no. 6 to (and excluding) second colon */
             char* endname = strchr(name, ':');
@@ -1148,14 +1148,14 @@ void modprobenames(INPtables* tab) {
             /* two-terminal device, one colon, copy all from char no. 6 to (and excluding) colon */
             if (!endname2) {
                 char* newname = copy_substring(name + 6, endname);
-                tfree(GENinst->GENname);
-                GENinst->GENname = newname;
+                memcpy(name, newname, strlen(newname) + 1);
+                tfree(newname);
             }
             /* copy from char no. 6 to (and excluding) second colon */
             else {
                 char* newname = copy_substring(name + 6, endname2);
-                tfree(GENinst->GENname);
-                GENinst->GENname = newname;
+                memcpy(name, newname, strlen(newname) + 1);
+                tfree(newname);
             }
         }
     }
