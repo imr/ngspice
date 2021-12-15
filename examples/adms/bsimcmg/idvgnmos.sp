@@ -18,9 +18,11 @@ m1 supply gate 0 bulk  t nmos1 TFIN=15n L=30n NFIN=10 NRS=1 NRD=1 D=40n
 
 * --- DC Analysis ---
 .dc vgs -0.5 1.0 0.01 vds 0.05 1 0.95
-.probe dc par'-i(vds)'
-.probe dc par'-i(vbs)'
-.print dc i(X1.d)
+*.probe dc par'-i(vds)'
+*.probe dc par'-i(vbs)'
+*.print dc i(X1.d)
+
+.save i(vds) i(vbs)
 
 .control
 set temp = 27
