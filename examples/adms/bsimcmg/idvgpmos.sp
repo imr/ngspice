@@ -18,13 +18,13 @@ m1 supply gate 0 bulk 0 pmos1 TFIN=15n L=30n NFIN=10 NRS=1 NRD=1
 
 * --- DC Analysis ---
 .dc vgs 0.5 -1.0 -0.01 
-.probe dc ids=par`i(vds)`
-.probe dc gds=deriv(ids)
-.print dc par'ids' par'-gds'
+*.probe dc ids=par`i(vds)`
+*.probe dc gds=deriv(ids)
+*.print dc par'ids' par'-gds'
 
 .control
 
-save @m1[gm]
+save @m1[gm] i(vds)
 
 set temp = 27
 run
