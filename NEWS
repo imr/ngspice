@@ -1,3 +1,29 @@
+Ngspice-36, January 1st, 2022
+============
+- New features:
+    + Add function 'integ' to control language.
+    + New dot command .probe
+      for current and differential voltage measurements.
+    + Allow math characters in node names.
+    + Enable x/y contour plots for 2d Cider using gnuplot.
+    + Update to bipolar model, incl. IBE and IBC parameters.
+    + Add garbage collector to cpl code to remove any mem leakage.
+    + Enable .save within subcircuits.
+    + New compile scripts for macOS, for Apple clang and Homebrew gcc.
+      gcc allows compiling a fully featured ngspice (incl. OpenMP) on MAC.
+    + Add RKM notation (e.g. 4k7) if compat mode LT.
+    + Add 'µ' as special character in netlists.
+    + Add parameter 'r' to command 'listing' for (runable).
+    + Fix several issues with CIDER.
+    + New command 'wrnodev' to print  matrix RHS in form of .ic = V(node_xx).
+    + Transient operating pointadded to gmin and source stepping.
+    + More SOA parameters on more devices (V, I, T, P).
+
+- Bug fixes:
+    + many bugs fixed and code improvements (see bugs 557 and up)
+    + making error messages more verbose
+    + memory leaks removed
+
 Ngspice-35, August 8th, 2021
 ============
 - New features:
