@@ -105,6 +105,7 @@ settrace(wordlist *wl, int what, char *name)
         if (db_type == DB_SAVE) {
             for (dbcheck = dbs; dbcheck; dbcheck = dbcheck->db_next) {
                 if (dbcheck->db_type == DB_SAVE && eq(dbcheck->db_nodename1, db_nodename1)) {
+                    tfree(db_nodename1);
                     goto loopend;
                 }
             }
