@@ -323,6 +323,10 @@ static void EVTcreate_state(
 
     Evt_State_t         *new_state;
     Evt_State_t         *prev_state;
+    Evt_State_t         *first_state;
+
+    MIFinstance* inst = ckt->evt->info.inst_table[inst_index]->inst_ptr;
+    int type = inst->gen.GENmodPtr->GENmodType;
 
     /* Get variables for fast access */
     state_data = ckt->evt->data.state;
@@ -365,6 +369,23 @@ static void EVTcreate_state(
         state_data->modified[inst_index] = MIF_TRUE;
         state_data->modified_index[(state_data->num_modified)++] = inst_index;
     }
+
+    /* The ad bridge (type 78) and the DA bridge (type 79) used to consume a lot
+       of memory, because for each time step a new state had been created and
+       added to the state linked list.
+       During evaluation, however, only the two last stated are used. Therefore the
+       following code deletes a state from the head of the ist, when there are more than
+       two states.
+       FIXME: this could be done more efficiently (e.g. by not mallocong  new states),
+       but one carefully has to update relevant indices. */
+    if ((type == 78 || type == 79) && (state_data->head[inst_index]->next->next)) {
+        first_state = state_data->head[inst_index];
+        ckt->evt->data.state->head[inst_index] = first_state->next;
+        tfree(first_state->block);
+        tfree(first_state);
+        ckt->evt->data.state->head[inst_index]->prev = NULL;
+    }
+
 }
 
 
