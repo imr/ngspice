@@ -1,0 +1,58 @@
+This document is covered by the Creative Commons Attribution Share-Alike (CC-BY-SA) v4.0. .
+
+***************  Verilog A Device models in ngspice ******************************************
+
+
+1 Introduction
+
+New compact device models today are released as Verilog-A code. Ngspice applies ADMS to
+translate the va code into ngspice C syntax. Currently a limited number of Verilog-A models is
+supported: HICUM level0 and level2 (HICUM model web page), MEXTRAM (MEXTRAM
+model web page), EKV (EKV model web page) and PSP (NXP PSP web site).
+
+
+2 ADMS
+
+ADMS is a code generator that converts electrical compact device models specified in high-level
+description language into ready-to-compile C code for the API of spice simulators. Based on
+transformations specified in XML language, ADMS transforms Verilog-AMS code into other
+target languages. Here we use it to to translate the va code into ngspice C syntax.
+To make use of it, a set of ngspice specific XML files is distributed with ngspice in ngspice\
+src\spicelib\devices\adms\admst. Their translation is done by the code generator executable
+admsXml (see below).
+
+
+3 How to integrate a Verilog-A model into ngspice
+
+3.1 How to setup a *.va model for ngspice
+
+Unfortunately most of the above named models’ licenses are not compatible to free software
+rules as defined by DFSG. Therefore since ngspice-28 the va model files are no longer part of
+the standard ngspice distribution. They may however be downloaded as a tar.gz archive from the
+ngspice-30 file distribution folder. After downloading, you may expand the zipped files into
+your ngspice top level folder. The models enable dc, ac, and tran simulations. Noise simulation
+is not supported.
+Other (foreign) va model files will not compile without code tweaking, due to the limited
+capabilities of our ADMS installation.
+
+
+3.2 Adding admsXml to your build environment
+
+The actual admsXml code is maintained by the QUCS project and is available at GitHub.
+Information on how to compile and install admsXml for Linux or Cygwin is available on the
+GitHub page. For MS Windows users admsXml.exe is available for download from
+https://sourceforge.net/projects/mot-adms/. You may copy admsXml.exe to your MSYS2 setup 
+into the folder msys64\mingw64\bin, if 64 bit compilation is intended.
+More information, though partially outdated, is obtainable from the ngspice web pages 
+(http://ngspice.sourceforge.net/admshowto.html) and from README-old.adms.
+
+
+3.3 Compile ngspice with ADMS
+
+In the top level ngspice folder there are two compile scripts compile_min.sh and compile_linux.sh.
+They contain information how to compile ngspice with ADMS. You will have to run autogen.sh
+with the adms flag
+./autogen.sh --adms
+In addition you have to add --enable-adms to the ./configure command. Please check chapter
+32.1 of the ngspice manual for perequisites and further details.
+Compiling ngspice with ADMS with MS Visual Studio is not supported.
