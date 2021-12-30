@@ -70,6 +70,7 @@ libfte_la_SOURCES = \
     com_unset.c \
     com_unset.h \
     com_wr_ic.c  \
+    com_wr_ic.h  \
     completion.h    \
     control.h   \
     control.c   \
