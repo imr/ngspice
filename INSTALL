@@ -2,7 +2,7 @@ Ngspice installation instructions
 =================================
 
 Important notice: since ngspice-35 there has been an update
-to the XSPICE code models (analog.cm etc.). Therefore it 
+to the XSPICE code models (analog.cm etc.). Therefore it
 is not sufficient to only re-make the main executable,
 you will have to compile and install the code models as well,
 e.g. with --enable-xspice.
@@ -18,6 +18,7 @@ Table of contents
     1.5.1 Most useful options
     1.5.2 Options Specific to Enable Ngspice as a shared library
     1.5.3 Options Useful for Debugging Ngspice
+   1.6 Installation on Red Hat, Oracle or Centos Linux
   2 Compilers and Options
   3 Compiling For Multiple Architectures
   4 Installation Names
@@ -305,6 +306,14 @@ This file describes the procedures to install ngspice from sources.
  information about your system and any ./configure arguments you are
  using, together with any error messages. If you have fixed the
  problem yourself, then the development team will love to hear from you.
+
+
+1.6 Installation on Red Hat, Oracle or Centos
+
+ These OSs, widely distributed among commercial users, require some
+ special considerations. There is an extra document, "NGSPICE on Red
+ Hat Like Distributions.pdf", provided by Justin Fisher, available with
+ the ngspice distribution.
 
 
 2 Compilers and Options
@@ -716,7 +725,7 @@ cross-compile-shared.sh.
       ./configure --enable-adms --enable-cider --enable-xspice --enable-openmp --enable-pss --with-readline=yes --enable-debug=no
  6. Compile NGSPICE invoking "make -j4"
  7. Install NGSPICE invoking "make install" or "sudo make install"
- 
+
 Resulting dependencies of ngspice
     /usr/local/opt/ncurses/lib/libncursesw.6.dylib
     /usr/local/opt/gcc/lib/gcc/11/libstdc++.6.dylib
