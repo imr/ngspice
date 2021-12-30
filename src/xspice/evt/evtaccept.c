@@ -140,12 +140,26 @@ void EVTaccept(
     num_modified = state_data->num_modified;
     /* Loop through list of items modified since last time */
     for(i = 0; i < num_modified; i++) {
+        Evt_State_t         *state;
+
         /* Get the index of the state modified */
         index = state_data->modified_index[i];
-        /* Update last_step for this index */
-        state_data->last_step[index] = state_data->tail[index];
         /* Reset the modified flag */
         state_data->modified[index] = MIF_FALSE;
+        /* Get the last saved state for this instance. */
+        state = *(state_data->tail[index]);
+        /* Dump everything older on the instance-specific free list,
+         * recreating the setup after the initial calls to cm_event_alloc().
+         */
+        if (!state)
+            continue;
+        if (state->prev) {
+            state->prev->next = state_data->free[index];
+            state_data->free[index] = state_data->head[index];
+        }
+        state_data->head[index] = state;
+        state_data->last_step[index] = state_data->tail[index] =
+            &state_data->head[index];
     }
     /* Reset number modified to zero */
     state_data->num_modified = 0;
