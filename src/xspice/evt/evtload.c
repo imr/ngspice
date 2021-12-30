@@ -376,7 +376,7 @@ static void EVTcreate_state(
        During evaluation, however, only the two last stated are used. Therefore the
        following code deletes a state from the head of the ist, when there are more than
        two states.
-       FIXME: this could be done more efficiently (e.g. by not mallocing  new states),
+       FIXME: this could be done more efficiently (e.g. by not mallocong  new states),
        but one carefully has to update relevant indices. */
     if ((type == 78 || type == 79) && (state_data->head[inst_index]->next->next)) {
         first_state = state_data->head[inst_index];
