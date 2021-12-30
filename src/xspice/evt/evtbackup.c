@@ -236,8 +236,6 @@ static void EVTbackup_state_data(
     Evt_State_t         *tail;
     Evt_State_t         *free_head;
 
-
-
     /* Get pointers for quick access */
     state_data = ckt->evt->data.state;
 
@@ -247,13 +245,6 @@ static void EVTbackup_state_data(
 
         /* Get the inst index */
         inst_index = state_data->modified_index[i];
-
-        MIFinstance* inst = ckt->evt->info.inst_table[inst_index]->inst_ptr;
-        int type = inst->gen.GENmodPtr->GENmodType;
-
-        /* no backup for hybrid AD and DA states */
-        if (type == 78 || type == 79)
-            continue;
 
         /* Scan data for this inst from last_step to determine new setting */
         /* for tail, and splice later data into the free list */
@@ -285,12 +276,6 @@ static void EVTbackup_state_data(
     /* Update/compact the modified list */
     for(i = 0, j = 0; i < num_modified; i++) {
         inst_index = state_data->modified_index[i];
-        MIFinstance* inst = ckt->evt->info.inst_table[inst_index]->inst_ptr;
-        int type = inst->gen.GENmodPtr->GENmodType;
-
-        /* no backup for hybrid AD and DA states */
-        if (type == 78 || type == 79)
-            continue;        
         /* If nothing after last_step, remove this index from the modified list */
         if((*(state_data->last_step[inst_index]))->next == NULL) {
             state_data->modified[inst_index] = MIF_FALSE;
