@@ -343,7 +343,7 @@ void inp_probe(struct card* deck)
                     char* thisline = tmpcard1->line;
                     numnodes1 = get_number_terminals(thisline);
                     if (numnodes1 != 2) {
-                        fprintf(stderr, "Warning: Instnace %s has more than 2 nodes,\n   .probe %s will be ignored\n", instname1, wltmp->wl_word);
+                        fprintf(stderr, "Warning: Instance %s has more than 2 nodes,\n   .probe %s will be ignored\n", instname1, wltmp->wl_word);
                         tfree(instname1);
                         continue;
                     }
