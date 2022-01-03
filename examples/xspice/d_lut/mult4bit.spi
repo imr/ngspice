@@ -103,6 +103,7 @@ Xmult4 p7 p6 p5 p4 p3 p2 p1 p0 a3 a2 a1 a0 b3 b2 b1 b0 mult4bit
 .control
 
 tran 50us 12825us 25us
+rusage
 linearize
 
 let aa = (((v(a3))*2 + v(a2))*2 + v(a1))*2 + v(a0)

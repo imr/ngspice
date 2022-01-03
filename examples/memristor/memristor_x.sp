@@ -78,6 +78,7 @@ plot res vs time res1 vs tran1.time res2 vs tran2.time  title 'Memristor with th
 plot res vs v(1) res1 vs tran1.v(1) res2 vs tran2.v(1) retraceplot title 'Memristor with threshold: resistance'
 * current through resistor for all plots versus voltage
 plot i(v1) vs v(1) tran1.i(v1) vs tran1.v(1) tran2.i(v1) vs tran2.v(1) retraceplot title 'Memristor with threshold: external current loops'
+rusage
 .endc
 
 .end

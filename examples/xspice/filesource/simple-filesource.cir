@@ -22,6 +22,7 @@ Rload2 N_IN2 0 1k
 option NOINIT ACCT
 
 tran 1us 100us
+rusage
 display
 plot allv
 .endc

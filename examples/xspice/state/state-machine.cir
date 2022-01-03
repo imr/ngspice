@@ -29,6 +29,7 @@ a5 cntl clk var_clock
 
 .control
 tran 1us 10ms
+rusage
 write spifsim.raw
 plot cntl out_msb+2 out_lsb+8
 eprvcd n_one clk n_zero msb lsb > spifsim.vcd
