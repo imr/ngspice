@@ -132,8 +132,8 @@ static void EVTdequeue_output(
         /* Get pointer to next event in queue at this index */
         output = *(output_queue->current[index]);
 
-        /* If event time does not match current time, skip */
-        if(output->event_time != time)
+        /* If cleaned or event time does not match current time, skip */
+        if(!output || output->event_time != time)
             continue;
 
         /* It must match, so pull the event from the queue and process it */
@@ -232,8 +232,8 @@ void EVTdequeue_inst(
         /* Get pointer to next event in queue at this index */
         inst = *(inst_queue->current[index]);
 
-        /* If event time does not match current time, skip */
-        if(inst->event_time != time)
+        /* If cleaned or event time does not match current time, skip */
+        if(!inst || inst->event_time != time)
             continue;
 
         /* It must match, so pull the event from the queue and process it */
