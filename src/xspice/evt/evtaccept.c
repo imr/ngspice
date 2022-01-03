@@ -93,12 +93,29 @@ void EVTaccept(
     num_modified = inst_queue->num_modified;
     /* Loop through list of items modified since last time */
     for(i = 0; i < num_modified; i++) {
+        Evt_Inst_Event_t *stale, *next;
+
         /* Get the index of the inst modified */
         index = inst_queue->modified_index[i];
-        /* Update last_step for this index */
-        inst_queue->last_step[index] = inst_queue->current[index];
         /* Reset the modified flag */
         inst_queue->modified[index] = MIF_FALSE;
+        /* Move stale entries to the free list. */
+        next = inst_queue->head[index];
+        while (next) {
+            if (next->event_time >= time ||
+                &next->next == inst_queue->current[index]) {
+                break;
+            }
+            stale = next;
+            next = next->next;
+            stale->next = inst_queue->free[index];
+            inst_queue->free[index] = stale;
+        }
+        inst_queue->head[index] = next;
+        if (!next)
+            inst_queue->current[index] = &inst_queue->head[index];
+        /* Update last_step for this index */
+        inst_queue->last_step[index] = inst_queue->current[index];
     }
     /* Record the new last_time and reset number modified to zero */
     inst_queue->last_time = time;
@@ -109,12 +126,29 @@ void EVTaccept(
     num_modified = output_queue->num_modified;
     /* Loop through list of items modified since last time */
     for(i = 0; i < num_modified; i++) {
+        Evt_Output_Event_t *stale, *next;
+
         /* Get the index of the output modified */
         index = output_queue->modified_index[i];
-        /* Update last_step for this index */
-        output_queue->last_step[index] = output_queue->current[index];
         /* Reset the modified flag */
         output_queue->modified[index] = MIF_FALSE;
+        /* Move stale entries to the free list. */
+        next = output_queue->head[index];
+        while (next) {
+            if (next->event_time >= time ||
+                &next->next == output_queue->current[index]) {
+                break;
+            }
+            stale = next;
+            next = next->next;
+            stale->next = output_queue->free[index];
+            output_queue->free[index] = stale;
+        }
+        output_queue->head[index] = next;
+        if (!next)
+            output_queue->current[index] = &output_queue->head[index];
+        /* Update last_step for this index */
+        output_queue->last_step[index] = output_queue->current[index];
     }
     /* Record the new last_time and reset number modified to zero */
     output_queue->last_time = time;
