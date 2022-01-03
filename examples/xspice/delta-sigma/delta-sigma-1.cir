@@ -95,6 +95,7 @@ abridge22 [dclk xsinc.ddivndel1 xsinc.ddivndel2 dv] [acclk acset acres acin] dac
 .control
 save inp inm adaclout adaccout ; save memory space
 tran 0.1u $&simtime
+rusage
 * analog out, scaled 'manually'; sinc filter counter; analog differential in
 plot 4.1*(adaclout-0.486) adaccout v(inp)-v(inm) ylimit -0.6 0.6
 * modulator dig out
