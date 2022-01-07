@@ -95,9 +95,8 @@ void EVTdequeue(CKTcircuit *ckt, double time);
 int EVTload(CKTcircuit *ckt, int inst_index);
 
 void EVTprint(wordlist *wl);
-
 void EVTprintvcd(wordlist *wl);
-
+void EVTsave(wordlist *wl);
 void EVTdisplay(wordlist *wl);
 
 int EVTop(

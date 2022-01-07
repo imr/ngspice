@@ -70,7 +70,7 @@ void EVTaccept(
 
     Evt_Inst_Queue_t    *inst_queue;
     Evt_Output_Queue_t  *output_queue;
-
+    Evt_Node_Info_t    **node_table;
     Evt_Node_Data_t     *node_data;
     Evt_State_Data_t    *state_data;
     Evt_Msg_Data_t      *msg_data;
@@ -83,7 +83,7 @@ void EVTaccept(
     /* Get often used pointers */
     inst_queue = &(ckt->evt->queue.inst);
     output_queue = &(ckt->evt->queue.output);
-
+    node_table = ckt->evt->info.node_table;
     node_data = ckt->evt->data.node;
     state_data = ckt->evt->data.state;
     msg_data = ckt->evt->data.msg;
@@ -161,10 +161,25 @@ void EVTaccept(
     for(i = 0; i < num_modified; i++) {
         /* Get the index of the node modified */
         index = node_data->modified_index[i];
-        /* Update last_step for this index */
-        node_data->last_step[index] = node_data->tail[index];
         /* Reset the modified flag */
         node_data->modified[index] = MIF_FALSE;
+
+        if (node_table[index]->save) {
+            /* Update last_step for this index */
+            node_data->last_step[index] = node_data->tail[index];
+        } else {
+            Evt_Node_t *keep;
+
+            /* If not recording history, discard all but the last item.
+             * It may be needed to restore the previous state on backup.
+             */
+            keep = *(node_data->tail[index]);
+            *(node_data->tail[index]) = node_data->free[index];
+            node_data->free[index] = node_data->head[index];
+            node_data->head[index] = keep;
+            node_data->last_step[index] = node_data->tail[index] =
+                &node_data->head[index];
+        }
     }
     /* Reset number modified to zero */
     node_data->num_modified = 0;

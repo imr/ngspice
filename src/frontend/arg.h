@@ -14,6 +14,7 @@ void arg_load(const wordlist *wl, const struct comm *command);
 void arg_let(const wordlist *wl, const struct comm *command);
 void arg_set(const wordlist *wl, const struct comm *command);
 void arg_display(const wordlist *wl, const struct comm *command);
+void arg_enodes(const wordlist *wl, const struct comm *command);
 void outmenuprompt(const char *string);
 
 
