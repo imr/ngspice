@@ -93,6 +93,7 @@ abridge22 [dclk xsinc.ddivndel1 xsinc.ddivndel2 dv] [acclk acset acres acin] dac
 
 
 .control
+esave none
 save inp inm adaclout adaccout ; save memory space
 tran 0.1u $&simtime
 rusage
