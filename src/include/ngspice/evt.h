@@ -83,6 +83,7 @@ struct Evt_Node_Info {
     char              *name;           /* Name of node in deck */
     int               udn_index;       /* Index of the node type */
     Mif_Boolean_t     invert;          /* True if need to make inverted copy */
+    Mif_Boolean_t     save;            /* Save data for this node */
     int               num_ports;       /* Number of ports connected to this node */
     int               num_outputs;     /* Number of outputs connected to this node */
     int               num_insts;       /* The number of insts receiving node as input */

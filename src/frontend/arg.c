@@ -18,7 +18,9 @@ Author: 1987 Jeffrey M. Hsu
 
 
 static void common(const char *string, const struct wordlist *wl,
-        const struct comm *command);
+                   const struct comm *command);
+static void common_list(const char *string, const struct wordlist *wl,
+                        const struct comm *command);
 static int countargs(const wordlist *wl);
 
 
@@ -108,6 +110,12 @@ void arg_display(const wordlist *wl, const struct comm *command)
 }
 
 
+void arg_enodes(const wordlist *wl, const struct comm *command)
+{
+    common_list("which event nodes", wl, command);
+}
+
+
 /* a common prompt routine */
 static void common(const char *string, const struct wordlist *wl,
         const struct comm *command)
@@ -127,6 +135,30 @@ static void common(const char *string, const struct wordlist *wl,
         command->co_func(w);
     }
 } /* end of function common */
+
+
+/* A common prompt routine for commands that take a list. */
+static void common_list(const char *string, const struct wordlist *wl,
+                        const struct comm *command)
+{
+    struct wordlist *w;
+    char *buf;
+
+    if (!countargs(wl)) {
+        outmenuprompt(string);
+        if ((buf = prompt(cp_in)) == NULL) /* prompt aborted */
+            return;               /* don't execute command */
+        /* do something with the wordlist */
+        w = cp_lexer(buf);
+        if (!w)
+            return;
+        if (w->wl_word) {
+            /* O.K. now call fn */
+            command->co_func(w);
+        }
+        wl_free(w);
+    }
+}
 
 
 void
