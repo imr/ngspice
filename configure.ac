@@ -158,6 +158,10 @@ AC_ARG_ENABLE([adms],
 AC_ARG_ENABLE([pss],
     [AS_HELP_STRING([--enable-pss], [Enable PSS Analysis, (experimental)])])
 
+# --enable-sp: enable S Parameter Analysis
+AC_ARG_ENABLE([sp],
+    [AS_HELP_STRING([--enable-sp], [Enable S parameter Analysis])])
+
 # --enable-relpath: Relative path for binary and data. Default is "no".
 # ngspice shared may want relative paths for spinit etc.
 AC_ARG_ENABLE([relpath],
@@ -1161,11 +1165,19 @@ if test "x$enable_cider" = xyes; then
     AC_DEFINE([CIDER], [1], [The CIDER enhancements])
 fi
 
+# Add S parameter analysis to ngspice.
+if test "x$enable_sp" = xyes; then
+    AC_MSG_RESULT([S parameter analysis enabled])
+    AC_DEFINE([RFSPICE], [1], [S parameter analysis])
+fi
+
 AM_CONDITIONAL([CIDER_WANTED], [test "x$enable_cider" = xyes])
 AM_CONDITIONAL([NUMDEV_WANTED], [test "x$enable_cider" = xyes])
 
 
 AM_CONDITIONAL([PSS_WANTED], [test "x$enable_pss" = xyes])
+
+AM_CONDITIONAL([SP_WANTED], [test "x$enable_sp" = xyes])
 
 AM_CONDITIONAL([SENSE2_WANTED], [test "x$enable_sense2" = xyes])
 

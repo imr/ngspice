@@ -108,6 +108,14 @@ libckt_la_SOURCES += \
 		psssetp.c
 endif
 
+if SP_WANTED
+libckt_la_SOURCES += \
+		cktspdum.c		\
+		span.c	\
+		spaskq.c	\
+		spsetp.c
+endif
+
 
 AM_CPPFLAGS = @AM_CPPFLAGS@  -I$(top_srcdir)/src/include -I$(top_srcdir)/src/spicelib/devices
 AM_CFLAGS = $(STATIC)
