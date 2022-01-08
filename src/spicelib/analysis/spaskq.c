@@ -11,6 +11,7 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/spdefs.h"
 #include "ngspice/cktdefs.h"
 
+#ifdef RFSPICE
 
 /* ARGSUSED */
 int
@@ -70,4 +71,4 @@ SPaskQuest(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
     }
     return(OK);
 }
-
+#endif

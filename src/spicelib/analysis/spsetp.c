@@ -11,6 +11,8 @@ Author: 1985 Thomas L. Quarles
 
 #include "analysis.h"
 
+#ifdef RFSPICE
+
 /* ARGSUSED */
 int
 SPsetParm(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
@@ -112,3 +114,4 @@ SPICEanalysis SPinfo  = {
     NULL,
     SPan
 };
+#endif
