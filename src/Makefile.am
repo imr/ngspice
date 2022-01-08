@@ -185,6 +185,11 @@ ngspice_LDADD += \
 	maths/sparse/libsparse.la \
 	misc/libmisc.la
 
+if SP_WANTED
+ngspice_LDADD += \
+    maths/dense/libdense.la
+endif
+
 if !WINGUI
 if !NO_X
 ngspice_LDADD += frontend/help/libhlp.la
@@ -462,6 +467,11 @@ libspice_la_LIBADD += \
 	maths/sparse/libsparse.la \
 	misc/libmisc.la \
 	$(LIBS)
+
+if SP_WANTED
+libspice_la_LIBADD += \
+    maths/dense/libdense.la
+endif
 
 libspice_la_CFLAGS = -shared
 libspice_la_LDFLAGS =  -shared -Wl,--version-script=$(srcdir)/tclspice.map
