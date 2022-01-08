@@ -32,6 +32,19 @@ typedef struct sVSRCinstance {
     const int VSRCposNode;    /* number of positive node of source */
     const int VSRCnegNode;    /* number of negative node of source */
 
+#ifdef RFSPICE
+    int VSRCresNode;                /* number of internal node of source (ZSeries) */
+
+    double* VSRCposPosPtr;           /* pointer to sparse matrix diagonal at
+                                     * (positive,positive) */
+    double* VSRCnegNegPtr;           /* pointer to sparse matrix diagonal at
+                                     * (negative,negative) */
+    double* VSRCposNegPtr;           /* pointer to sparse matrix offdiagonal at
+                                     * (positive,negative) */
+    double* VSRCnegPosPtr;           /* pointer to sparse matrix offdiagonal at
+                                     * (negative,positive) */
+#endif
+
     int VSRCbranch; /* equation number of branch equation added for source */
 
     int VSRCfunctionType;   /* code number of function type for source */
@@ -77,6 +90,24 @@ typedef struct sVSRCinstance {
     unsigned VSRCdF1given    :1 ;  /* flag to indicate source is an f1 distortion input */
     unsigned VSRCdF2given    :1 ;  /* flag to indicate source is an f2 distortion input */
     unsigned VSRCrGiven      :1 ;  /* flag to indicate repeating pwl */
+#ifdef RFSPICE
+    unsigned VSRCportNumGiven : 1;      /* Flag to indicate Port Num is given */
+    unsigned VSRCportZ0Given : 1;       /* Flag to indicate Port Z0 is given */
+    unsigned VSRCportPowerGiven : 1;    /* Flag to indicate Port Power is given*/
+    unsigned VSRCportFreqGiven : 1;     /* Flag to indicate Port Frequency is given*/
+    unsigned VSRCportPhaseGiven : 1;    /* Flag to indicate Port Phase is given*/
+    unsigned  VSRCisPort : 1;           /* Flag indicating if this is a port*/
+    double       VSRCVAmplitude;        /* Support variable: Open Circuit Port Voltage */
+    double       VSRC2pifreq;           /* Calculate 2*pi*freq once */
+    unsigned int VSRCportNum;           /* Port index*/
+    double       VSRCportZ0;            /* Port internal impedance*/
+    double       VSRCportY0;            /* Port internal admittance*/
+    double       VSRCportPower;         /* Port power (W) for HB analysis */
+    double       VSRCportFreq;          /* Port frequency */
+    double       VSRCportPhase;         /* Port Initial Phase */
+    double       VSRCportPhaseRad;      /* Port Initial Phase (rad) */
+    double       VSRCki;                /* Normalization Factor for Kurosawa power wave*/
+#endif
 } VSRCinstance ;
 
 
@@ -105,7 +136,11 @@ enum {
     AM,
     TRNOISE,
     TRRANDOM,
-    EXTERNAL,
+    EXTERNAL
+#ifdef RFSPICE
+    ,
+    PORT
+#endif
 };
 
 #endif
@@ -136,6 +171,13 @@ enum {
     VSRC_AM,
     VSRC_R,
     VSRC_TD,
+#ifdef RFSPICE
+    VSRC_PORTNUM,
+    VSRC_PORTZ0,
+    VSRC_PORTFREQ,
+    VSRC_PORTPWR,
+    VSRC_PORTPHASE,
+#endif
     VSRC_TRNOISE,
     VSRC_TRRANDOM,
     VSRC_EXTERNAL,

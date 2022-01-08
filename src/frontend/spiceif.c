@@ -220,9 +220,14 @@ if_run(CKTcircuit *ckt, char *what, wordlist *args, INPtables *tab)
         eq(what, "tf") ||
         eq(what, "noise")
 #ifdef WITH_PSS
-        /* SP: Steady State Analysis */
+        /* Steady State Analysis */
         || eq(what, "pss")
-        /* SP */
+#endif
+#ifdef RFSPICE
+        || eq(what, "sp")
+#ifdef WITH_HB
+        || eq(what, "hb")
+#endif
 #endif
         )
     {

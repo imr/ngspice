@@ -49,10 +49,47 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
     return(E_NOMEM);\
 } } while(0)
 
+#ifdef RFSPICE
+            if (here->VSRCisPort)
+            {
+                error = CKTmkVolt(ckt, &tmp, here->VSRCname, "res");
+                if (error) return(error);
+                here->VSRCresNode = tmp->number;
+                if (ckt->CKTcopyNodesets) {
+                    CKTnode* tmpNode;
+                    IFuid tmpName;
+                    if (CKTinst2Node(ckt, here, 1, &tmpNode, &tmpName) == OK) {
+                        if (tmpNode->nsGiven) {
+                            tmp->nodeset = tmpNode->nodeset;
+                            tmp->nsGiven = tmpNode->nsGiven;
+                        }
+                    }
+                }
+
+                TSTALLOC(VSRCposPosPtr, VSRCposNode, VSRCposNode);
+                TSTALLOC(VSRCnegNegPtr, VSRCresNode, VSRCresNode);
+                TSTALLOC(VSRCposNegPtr, VSRCposNode, VSRCresNode);
+                TSTALLOC(VSRCnegPosPtr, VSRCresNode, VSRCposNode);
+
+                TSTALLOC(VSRCposIbrPtr, VSRCresNode, VSRCbranch);
+                TSTALLOC(VSRCnegIbrPtr, VSRCnegNode, VSRCbranch);
+                TSTALLOC(VSRCibrNegPtr, VSRCbranch, VSRCnegNode);
+                TSTALLOC(VSRCibrPosPtr, VSRCbranch, VSRCresNode);
+            }
+            else
+            {
+                TSTALLOC(VSRCposIbrPtr, VSRCposNode, VSRCbranch);
+                TSTALLOC(VSRCnegIbrPtr, VSRCnegNode, VSRCbranch);
+                TSTALLOC(VSRCibrNegPtr, VSRCbranch, VSRCnegNode);
+                TSTALLOC(VSRCibrPosPtr, VSRCbranch, VSRCposNode);
+            }
+#else
             TSTALLOC(VSRCposIbrPtr, VSRCposNode, VSRCbranch);
             TSTALLOC(VSRCnegIbrPtr, VSRCnegNode, VSRCbranch);
             TSTALLOC(VSRCibrNegPtr, VSRCbranch, VSRCnegNode);
             TSTALLOC(VSRCibrPosPtr, VSRCbranch, VSRCposNode);
+#endif
+
         }
     }
     return(OK);
@@ -73,6 +110,12 @@ VSRCunsetup(GENmodel *inModel, CKTcircuit *ckt)
 	    if (here->VSRCbranch > 0)
 		CKTdltNNum(ckt, here->VSRCbranch);
             here->VSRCbranch = 0;
+#ifdef RFSPICE
+            if ((here->VSRCresNode > 0) & (here->VSRCisPort))
+                CKTdltNNum(ckt, here->VSRCresNode);
+            here->VSRCresNode = 0;
+
+#endif
 	}
     }
     return OK;

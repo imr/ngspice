@@ -177,15 +177,22 @@ com_noise(wordlist *wl)
 
 
 #ifdef WITH_PSS
-/* SP: Steady State Analysis */
+/* Steady State Analysis */
 void
 com_pss(wordlist *wl)
 {
     dosim("pss", wl);
 }
-/* SP */
 #endif
 
+#ifdef RFSPICE
+/* S parameter Analysis*/
+void
+com_sp(wordlist* wl)
+{
+    dosim("sp", wl);
+}
+#endif
 
 static int dosim(
         char *what, /* in: command

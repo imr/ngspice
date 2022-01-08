@@ -134,5 +134,14 @@ CKTinit(CKTcircuit **ckt)		/* new circuit to create */
     g_mif_info.auto_partial.local = MIF_FALSE;
 /* gtri - end - wbk - 01/12/91 */
 #endif
+
+#ifdef RFSPICE
+    sckt->CKTportCount = 0;
+    sckt->CKTactivePort = 0;
+    sckt->CKTVSRCid = -1;
+    sckt->CKTrfPorts = NULL;
+    sckt->CKTSmat = sckt->CKTAmat = sckt->CKTBmat = sckt->CKTYmat = sckt->CKTZmat = NULL;
+#endif
+
     return OK;
 }

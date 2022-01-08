@@ -25,11 +25,21 @@ typedef struct {
 
 /* available step types: XXX should be somewhere else */
 
+#ifdef RFSPICE
+#ifndef ngspice_SPDEFS_H
 enum {
     DECADE = 1,
     OCTAVE,
     LINEAR,
 };
+#endif
+#else
+enum {
+    DECADE = 1,
+    OCTAVE,
+    LINEAR,
+};
+#endif
 
 enum {
     AC_DEC = 1,

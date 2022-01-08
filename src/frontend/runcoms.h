@@ -20,6 +20,9 @@ void com_sens(wordlist *wl);
 void com_disto(wordlist *wl);
 void com_noise(wordlist *wl);
 void com_run(wordlist *wl);
+#ifdef RFSPICE
+void com_sp(wordlist* wl);
+#endif
 
 extern FILE *rawfileFp;
 extern bool rawfileBinary;

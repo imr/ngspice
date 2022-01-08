@@ -40,10 +40,36 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
         for (here = VSRCinstances(model); here != NULL ;
                 here=VSRCnextInstance(here)) {
 
-            *(here->VSRCposIbrPtr) += 1.0 ;
-            *(here->VSRCnegIbrPtr) -= 1.0 ;
-            *(here->VSRCibrPosPtr) += 1.0 ;
-            *(here->VSRCibrNegPtr) -= 1.0 ;
+#ifndef RFSPICE
+            *(here->VSRCposIbrPtr) += 1.0;
+            *(here->VSRCnegIbrPtr) -= 1.0;
+            *(here->VSRCibrPosPtr) += 1.0;
+            *(here->VSRCibrNegPtr) -= 1.0;
+#else
+            if (here->VSRCisPort)
+            {
+                // here->VSRCcurrent = (*(ckt->CKTrhs[Old] + (here->VSRCbranch))
+
+                *(here->VSRCposIbrPtr) += 1.0;
+                *(here->VSRCnegIbrPtr) -= 1.0;
+                *(here->VSRCibrPosPtr) += 1.0;
+                *(here->VSRCibrNegPtr) -= 1.0;
+
+                double g0 = here->VSRCportY0;
+                *(here->VSRCposPosPtr) += g0;
+                *(here->VSRCnegNegPtr) += g0;
+                *(here->VSRCposNegPtr) -= g0;
+                *(here->VSRCnegPosPtr) -= g0;
+        }
+            else
+            {
+                *(here->VSRCposIbrPtr) += 1.0;
+                *(here->VSRCnegIbrPtr) -= 1.0;
+                *(here->VSRCibrPosPtr) += 1.0;
+                *(here->VSRCibrNegPtr) -= 1.0;
+            }
+#endif
+
             if( (ckt->CKTmode & (MODEDCOP | MODEDCTRANCURVE)) &&
                     here->VSRCdcGiven ) {
                 /* load using DC value */
@@ -366,6 +392,13 @@ VNoi3 3 0  DC 0 TRNOISE(0 0 0 0 15m 22u 50u) : generate RTS noise
                             value += here->VSRCdcValue;
                     }
                     break;
+#endif
+#ifdef RFSPICE
+                    case PORT:
+                    {
+                        value += here->VSRCVAmplitude * cos(time * here->VSRC2pifreq);
+
+                    }
 #endif
 
                 } // switch

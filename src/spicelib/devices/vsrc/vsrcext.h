@@ -16,3 +16,7 @@ extern int VSRCsetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 extern int VSRCunsetup(GENmodel*,CKTcircuit*);
 extern int VSRCpzSetup(SMPmatrix*,GENmodel*,CKTcircuit*,int*);
 extern int VSRCtemp(GENmodel*,CKTcircuit*);
+#ifdef RFSPICE
+extern int VSRCspupdate(GENmodel*, CKTcircuit*);
+extern int VSRCgetActivePortNodes(GENmodel* inModel, CKTcircuit* ckt, int* posNodes, int* negNodes);
+#endif
