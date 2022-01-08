@@ -614,6 +614,106 @@ dot_pss(char *line, void *ckt, INPtables *tab, struct card *current,
 /* SP */
 #endif
 
+
+#ifdef RFSPICE
+/* S Parameter Analyis */
+static int
+dot_sp(char* line, void* ckt, INPtables* tab, struct card* current,
+    void* task, void* gnode, JOB* foo)
+{
+    int error;			/* error code temporary */
+    IFvalue ptemp;		/* a value structure to package resistance into */
+    IFvalue* parm;		/* a pointer to a value struct for function returns */
+    int which;			/* which analysis we are performing */
+    char* steptype;		/* ac analysis, type of stepping function */
+
+    NG_IGNORE(gnode);
+
+    /* .ac {DEC OCT LIN} NP FSTART FSTOP */
+    which = ft_find_analysis("SP");
+    if (which == -1) {
+        LITERR("S-Params analysis unsupported.\n");
+        return (0);
+    }
+    IFC(newAnalysis, (ckt, which, "SP Analysis", &foo, task));
+    INPgetTok(&line, &steptype, 1);	/* get DEC, OCT, or LIN */
+    ptemp.iValue = 1;
+    GCA(INPapName, (ckt, which, foo, steptype, &ptemp));
+    tfree(steptype);
+    parm = INPgetValue(ckt, &line, IF_INTEGER, tab); /* number of points */
+    GCA(INPapName, (ckt, which, foo, "numsteps", parm));
+    parm = INPgetValue(ckt, &line, IF_REAL, tab);	/* fstart */
+    GCA(INPapName, (ckt, which, foo, "start", parm));
+    parm = INPgetValue(ckt, &line, IF_REAL, tab);	/* fstop */
+    GCA(INPapName, (ckt, which, foo, "stop", parm));
+    parm = INPgetValue(ckt, &line, IF_INTEGER, tab);	/* fstop */
+    GCA(INPapName, (ckt, which, foo, "donoise", parm));
+    return (0);
+}
+
+#ifdef WITH_HB
+/* HB */
+static int
+dot_hb(char* line, void* ckt, INPtables* tab, struct card* current,
+    void* task, void* gnode, JOB* foo)
+{
+    int error;			/* error code temporary */
+    IFvalue ptemp;		/* a value structure to package resistance into */
+    IFvalue* parm;		/* a pointer to a value struct for function returns */
+    char* nname;		/* the oscNode name */
+    CKTnode* nnode;		/* the oscNode node */
+    int which;			/* which analysis we are performing */
+    char* word;			/* something to stick a word of input into */
+
+    NG_IGNORE(gnode);
+
+    /* .pss Fguess StabTime OscNode <UIC>*/
+    which = ft_find_analysis("PSS");
+    if (which == -1) {
+        LITERR("Periodic steady state analysis unsupported.\n");
+        return (0);
+    }
+    IFC(newAnalysis, (ckt, which, "Harmonic Balance State Analysis", &foo, task));
+
+    parm = INPgetValue(ckt, &line, IF_REALVEC, tab);		/* Fguess */
+    GCA(INPapName, (ckt, which, foo, "freq", parm));
+
+    parm = INPgetValue(ckt, &line, IF_INTVEC, tab);		/* StabTime */
+    GCA(INPapName, (ckt, which, foo, "harmonics", parm));
+
+    INPgetNetTok(&line, &nname, 0);
+    INPtermInsert(ckt, &nname, tab, &nnode);
+    ptemp.nValue = nnode;
+    GCA(INPapName, (ckt, which, foo, "oscnode", &ptemp));	/* OscNode given as string */
+
+    parm = INPgetValue(ckt, &line, IF_INTEGER, tab);		/* PSS points */
+    GCA(INPapName, (ckt, which, foo, "points", parm));
+
+    parm = INPgetValue(ckt, &line, IF_INTEGER, tab);		/* PSS harmonics */
+    GCA(INPapName, (ckt, which, foo, "harmonics", parm));
+
+    parm = INPgetValue(ckt, &line, IF_INTEGER, tab);		/* SC iterations */
+    GCA(INPapName, (ckt, which, foo, "sc_iter", parm));
+
+    parm = INPgetValue(ckt, &line, IF_REAL, tab);		/* Steady coefficient */
+    GCA(INPapName, (ckt, which, foo, "steady_coeff", parm));
+
+    if (*line) {
+        INPgetTok(&line, &word, 1);	/* uic? */
+        if (strcmp(word, "uic") == 0) {
+            ptemp.iValue = 1;
+            GCA(INPapName, (ckt, which, foo, "uic", &ptemp));
+        }
+        else {
+            fprintf(stderr, "Error: unknown parameter %s on .pss - ignored\n", word);
+        }
+    }
+    return (0);
+}
+#endif
+
+#endif
+
 static int
 dot_options(char *line, CKTcircuit *ckt, INPtables *tab, struct card *current,
             TSKtask *task, CKTnode *gnode, JOB *foo)
@@ -699,6 +799,20 @@ INP2dot(CKTcircuit *ckt, INPtables *tab, struct card *current, TSKtask *task, CK
         rtn = dot_pss(line, ckt, tab, current, task, gnode, foo);
         goto quit;
         /* SP */
+#endif
+#ifdef RFSPICE
+    }
+    else if ((strcmp(token, ".sp") == 0)) {
+        rtn = dot_sp(line, ckt, tab, current, task, gnode, foo);
+        goto quit;
+        /* SP */
+#ifdef WITH_HB
+    }
+    else if ((strcmp(token, ".hb") == 0)) {
+        rtn = dot_hb(line, ckt, tab, current, task, gnode, foo);
+        goto quit;
+        /* SP */
+#endif
 #endif
     } else if ((strcmp(token, ".subckt") == 0) ||
                (strcmp(token, ".ends") == 0)) {

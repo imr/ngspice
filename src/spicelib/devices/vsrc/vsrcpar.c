@@ -288,7 +288,52 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
         }
         break;
 #endif
+#ifdef RFSPICE
+        /*
+        * NB If either Freq or Power are given, the Function type is overridden
+        * If not, we have a passive port: can be used for AC/SP/Noise but the time
+        * domain value is given by preceding Function definition (if present).
+        */
+        case VSRC_PORTNUM:
+        {
+            here->VSRCportNum = value->iValue;
+            here->VSRCportNumGiven = TRUE;
+            here->VSRCisPort = ((here->VSRCportNumGiven) & (here->VSRCportNum > 0) & (here->VSRCportZ0 > 0.0));
+            break;
+        }
+        case VSRC_PORTZ0:
+        {
+            here->VSRCportZ0 = value->rValue;
+            here->VSRCVAmplitude = sqrt(here->VSRCportPower * 4.0 * here->VSRCportZ0);
+            here->VSRCisPort = ((here->VSRCportNumGiven) & (here->VSRCportNum > 0) & (here->VSRCportZ0 > 0.0));
+            here->VSRCportZ0Given = TRUE;
+            break;
+        }
+        case VSRC_PORTPWR:
+        {
+            here->VSRCportPower = value->rValue;
+            here->VSRCportPowerGiven = TRUE;
 
+            here->VSRCfunctionType = PORT;
+
+            break;
+        }
+        case VSRC_PORTFREQ:
+        {
+            here->VSRCportFreq = value->rValue;
+            here->VSRCportFreqGiven = TRUE;
+
+            here->VSRCfunctionType = PORT;
+
+            break;
+        }
+        case VSRC_PORTPHASE:
+        {
+            here->VSRCportPhase = value->rValue;
+            here->VSRCportPhaseGiven = TRUE;
+        }
+        break;
+#endif
         default:
             return(E_BADPARM);
     }

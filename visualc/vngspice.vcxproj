@@ -311,7 +311,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;tmp-bison;src\include;..\src\spicelib\parser;..\src\include;..\src\include\cppduals;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;_MSC_PLATFORM_TOOLSET=$(PlatformToolsetVersion);NGDEBUG;CONFIG64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>RFSPICE;_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;_MSC_PLATFORM_TOOLSET=$(PlatformToolsetVersion);NGDEBUG;CONFIG64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
       </ExceptionHandling>
@@ -363,7 +363,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <AdditionalIncludeDirectories>..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;tmp-bison;src\include;..\src\spicelib\parser;..\src\include;..\src\include\cppduals;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;_MSC_PLATFORM_TOOLSET=$(PlatformToolsetVersion);CONFIG64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>RFSPICE;_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;_MSC_PLATFORM_TOOLSET=$(PlatformToolsetVersion);CONFIG64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
       </ExceptionHandling>
@@ -511,7 +511,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;tmp-bison;src\include;..\src\spicelib\parser;..\src\include;..\src\include\cppduals;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;_MSC_PLATFORM_TOOLSET=$(PlatformToolsetVersion);NGDEBUG;CONSOLE;CONFIG64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>RFSPICE;_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;_MSC_PLATFORM_TOOLSET=$(PlatformToolsetVersion);NGDEBUG;CONSOLE;CONFIG64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
       </ExceptionHandling>
@@ -563,7 +563,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <AdditionalIncludeDirectories>..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;tmp-bison;src\include;..\src\spicelib\parser;..\src\include;..\src\include\cppduals;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;_MSC_PLATFORM_TOOLSET=$(PlatformToolsetVersion);CONSOLE;CONFIG64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>RFSPICE;_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;_MSC_PLATFORM_TOOLSET=$(PlatformToolsetVersion);CONSOLE;CONFIG64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
       </ExceptionHandling>
@@ -669,7 +669,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <AdditionalIncludeDirectories>..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;tmp-bison;src\include;..\src\spicelib\parser;..\src\include;..\src\include\cppduals;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;_MSC_PLATFORM_TOOLSET=$(PlatformToolsetVersion);USE_OMP;CONFIG64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>RFSPICE;_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;_MSC_PLATFORM_TOOLSET=$(PlatformToolsetVersion);USE_OMP;CONFIG64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
       </ExceptionHandling>
@@ -778,7 +778,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <AdditionalIncludeDirectories>..\src\maths\poly;..\src\frontend;..\src\spicelib\devices;tmp-bison;src\include;..\src\spicelib\parser;..\src\include;..\src\include\cppduals;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;_MSC_PLATFORM_TOOLSET=$(PlatformToolsetVersion);CONSOLE;CONFIG64;USE_OMP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>RFSPICE;_CRT_SECURE_NO_DEPRECATE;SIMULATOR;XSPICE;_MSC_PLATFORM_TOOLSET=$(PlatformToolsetVersion);CONSOLE;CONFIG64;USE_OMP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
       </ExceptionHandling>
@@ -952,6 +952,7 @@
     <ClInclude Include="..\src\include\ngspice\cmconstants.h" />
     <ClInclude Include="..\src\include\ngspice\cmproto.h" />
     <ClInclude Include="..\src\include\ngspice\cmtypes.h" />
+    <ClInclude Include="..\src\include\ngspice\spdefs.h" />
     <ClInclude Include="..\src\include\ngspice\wincolornames.h" />
     <ClInclude Include="..\src\include\ngspice\compatmode.h" />
     <ClInclude Include="..\src\include\ngspice\complex.h" />
@@ -1065,6 +1066,7 @@
     <ClInclude Include="..\src\maths\cmaths\cmath2.h" />
     <ClInclude Include="..\src\maths\cmaths\cmath3.h" />
     <ClInclude Include="..\src\maths\cmaths\cmath4.h" />
+    <ClInclude Include="..\src\maths\dense\dense.h" />
     <ClInclude Include="..\src\maths\fft\fftlib.h" />
     <ClInclude Include="..\src\maths\fft\matlib.h" />
     <ClInclude Include="..\src\maths\misc\accuracy.h" />
@@ -1562,6 +1564,7 @@
     <ClCompile Include="..\src\maths\cmaths\cmath2.c" />
     <ClCompile Include="..\src\maths\cmaths\cmath3.c" />
     <ClCompile Include="..\src\maths\cmaths\cmath4.c" />
+    <ClCompile Include="..\src\maths\dense\dense.c" />
     <ClCompile Include="..\src\maths\deriv\atander.c" />
     <ClCompile Include="..\src\maths\deriv\cosderiv.c" />
     <ClCompile Include="..\src\maths\deriv\cubeder.c" />
@@ -1682,6 +1685,7 @@
     <ClCompile Include="..\src\spicelib\analysis\cktsetup.c" />
     <ClCompile Include="..\src\spicelib\analysis\cktsgen.c" />
     <ClCompile Include="..\src\spicelib\analysis\cktsopt.c" />
+    <ClCompile Include="..\src\spicelib\analysis\cktspdum.c" />
     <ClCompile Include="..\src\spicelib\analysis\ckttemp.c" />
     <ClCompile Include="..\src\spicelib\analysis\cktterr.c" />
     <ClCompile Include="..\src\spicelib\analysis\ckttroub.c" />
@@ -1715,6 +1719,9 @@
     <ClCompile Include="..\src\spicelib\analysis\pzsetp.c" />
     <ClCompile Include="..\src\spicelib\analysis\sensaskq.c" />
     <ClCompile Include="..\src\spicelib\analysis\senssetp.c" />
+    <ClCompile Include="..\src\spicelib\analysis\span.c" />
+    <ClCompile Include="..\src\spicelib\analysis\spaskq.c" />
+    <ClCompile Include="..\src\spicelib\analysis\spsetp.c" />
     <ClCompile Include="..\src\spicelib\analysis\tfanal.c" />
     <ClCompile Include="..\src\spicelib\analysis\tfaskq.c" />
     <ClCompile Include="..\src\spicelib\analysis\tfsetp.c" />

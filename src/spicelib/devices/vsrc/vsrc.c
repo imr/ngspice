@@ -26,6 +26,13 @@ IFparm VSRCpTable[] = { /* parameters */
 #ifdef SHARED_MODULE
  IOP ("external", VSRC_EXTERNAL, IF_STRING,"external source description"),
 #endif
+  #ifdef RFSPICE
+ IOP("portnum",   VSRC_PORTNUM,         IF_INTEGER,"Port index"),
+ IOP("z0",        VSRC_PORTZ0,          IF_REAL,   "Port impedance"),
+ IOP("pwr",       VSRC_PORTPWR,         IF_REAL,   "Port Power"),
+ IOP("freq",      VSRC_PORTFREQ,        IF_REAL,   "Port frequency"),
+ IOP("phase",    VSRC_PORTPHASE,       IF_REAL,   "Phase of the source"),
+#endif
  OPU ("pos_node",VSRC_POS_NODE,  IF_INTEGER,"Positive node of source"),
  OPU ("neg_node",VSRC_NEG_NODE,  IF_INTEGER,"Negative node of source"),
  OPU ("function",VSRC_FCN_TYPE,  IF_INTEGER,"Function of the source"),

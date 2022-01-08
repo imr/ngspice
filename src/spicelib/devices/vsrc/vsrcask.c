@@ -110,6 +110,23 @@ VSRCask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *
                          *(ckt->CKTrhsOld + here->VSRCbranch);
             }
             return(OK);
+#ifdef RFSPICE
+        case VSRC_PORTNUM:
+            value->rValue = here->VSRCportNum;
+            return (OK);
+        case VSRC_PORTZ0:
+            value->rValue = here->VSRCportZ0;
+            return (OK);
+        case VSRC_PORTPWR:
+            value->rValue = here->VSRCportPower;
+            return (OK);
+        case VSRC_PORTFREQ:
+            value->rValue = here->VSRCportFreq;
+            return (OK);
+        case VSRC_PORTPHASE:
+            value->rValue = here->VSRCportPhase;
+            return (OK);
+#endif
 #ifdef SHARED_MODULE
         case VSRC_EXTERNAL:
             /* Don't do anything */

@@ -112,6 +112,9 @@ typedef enum {
    IPC_ANAL_DCTRCURVE,
    IPC_ANAL_AC,
    IPC_ANAL_TRAN,
+#ifdef RFSPICE
+   IPC_ANAL_SP
+#endif
 } Ipc_Anal_t;
 
 

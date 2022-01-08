@@ -32,6 +32,9 @@
 #include "ngspice/noisedef.h"
 #include "ngspice/hash.h"
 
+#ifdef RFSPICE
+#include "../maths/dense/dense.h"
+#endif
 
 
 struct CKTnode {
@@ -187,6 +190,11 @@ struct CKTcircuit {
 #define MODEINITTRAN    0x1000
 #define MODEINITPRED    0x2000
 
+#ifdef RFSPICE
+#define MODESP          0x4000
+#define MODESPNOISE     0x8000
+#endif
+
 /* old 'nosolv' paramater */
 #define MODEUIC 0x10000l
 
@@ -274,7 +282,17 @@ struct CKTcircuit {
     Enh_Ckt_Data_t *enh;        /* data used by general enhancements */
 #endif
 /* gtri - evt - wbk - 5/20/91 - add event-driven and enhancements data */
-
+#ifdef RFSPICE
+    unsigned int  CKTactivePort;/* Identify active port during S-Param analysis*/
+    unsigned int  CKTportCount; /* Number of RF ports */
+    int           CKTVSRCid;    /* Place holder for VSRC Devices id*/
+    GENinstance** CKTrfPorts;   /* List of all RF ports (HB & SP) */
+    CMat* CKTAmat;
+    CMat* CKTBmat;
+    CMat* CKTSmat;
+    CMat* CKTYmat;
+    CMat* CKTZmat;
+#endif
 #ifdef WITH_PSS
 /* SP: Periodic Steady State Analysis - 100609 */
     double CKTstabTime;		/* PSS stab time */
@@ -356,6 +374,9 @@ extern int CKTmodAsk(CKTcircuit *, GENmodel *, int , IFvalue *, IFvalue *);
 extern int CKTmodCrt(CKTcircuit *, int , GENmodel **, IFuid);
 extern int CKTmodParam(CKTcircuit *, GENmodel *, int , IFvalue *, IFvalue *);
 extern int CKTnames(CKTcircuit *, int *, IFuid **);
+#ifdef RFSPICE
+extern int CKTSPnames(CKTcircuit*, int*, IFuid**);
+#endif
 extern int CKTdnames(CKTcircuit *);
 extern int CKTnewAnal(CKTcircuit *, int , IFuid , JOB **, TSKtask *);
 extern int CKTnewEq(CKTcircuit *, CKTnode **, IFuid);
@@ -423,12 +444,22 @@ extern int TRANsetParm(CKTcircuit *, JOB *, int , IFvalue *);
 extern int TRANinit(CKTcircuit *, JOB *);
 
 #ifdef WITH_PSS
-/* SP: Steady State Analysis */
+/* Steady State Analysis */
 extern int PSSaskQuest(CKTcircuit *, JOB *, int , IFvalue *);
 extern int PSSsetParm(CKTcircuit *, JOB *, int , IFvalue *);
 extern int PSSinit(CKTcircuit *, JOB *);
 extern int DCpss(CKTcircuit *, int);
-/* SP */
+#endif
+
+#ifdef RFSPICE
+extern int SPan(CKTcircuit*, int);
+extern int SPaskQuest(CKTcircuit*, JOB*, int, IFvalue*);
+extern int SPsetParm(CKTcircuit*, JOB*, int, IFvalue*);
+extern int CKTspDump(CKTcircuit*, double, runDesc*);
+extern int CKTspLoad(CKTcircuit*);
+extern unsigned int CKTmatrixIndex(CKTcircuit*, unsigned int, unsigned int);
+extern int CKTspCalcPowerWave(CKTcircuit* ckt);
+extern int CKTspCalcSMatrix(CKTcircuit* ckt);
 #endif
 
 #ifdef __cplusplus
@@ -452,6 +483,10 @@ extern int NIreinit(CKTcircuit *);
 extern int NIsenReinit(CKTcircuit *);
 extern int NIdIter (CKTcircuit *);
 extern void NInzIter(CKTcircuit *, int, int);
+#ifdef RFSPICE
+extern int NIspPreload(CKTcircuit*);
+extern int NIspSolve(CKTcircuit*);
+#endif
 #ifdef __cplusplus
 }
 #endif
