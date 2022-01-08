@@ -34,7 +34,7 @@ int CKTspCalcPowerWave(CKTcircuit* ckt)
     double* rhsold = ckt->CKTrhsOld;
     double* irhsold = ckt->CKTirhsOld;
     int col = ckt->CKTactivePort - 1;
-    for (int port = 0; port < ckt->CKTportCount; port++)
+    for (unsigned int port = 0; port < ckt->CKTportCount; port++)
     {
         VSRCinstance* pSrc = (VSRCinstance*)(ckt->CKTrfPorts[port]);
         int row = pSrc->VSRCportNum - 1;
