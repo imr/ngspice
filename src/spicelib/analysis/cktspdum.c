@@ -15,6 +15,8 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/ifsim.h"
 #include "vsrc/vsrcdefs.h"
 
+#ifdef RFSPICE
+
 unsigned int CKTmatrixIndex(CKTcircuit* ckt, unsigned int source, unsigned int dest)
 {
     return  source * ckt->CKTportCount + dest;
@@ -106,3 +108,4 @@ CKTspDump(CKTcircuit *ckt, double freq, runDesc *plot)
     FREE(data);
     return(OK);
 }
+#endif
