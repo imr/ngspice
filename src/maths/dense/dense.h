@@ -77,8 +77,6 @@ extern Mat* inverse(Mat* A);
 extern CMat* cinverse(CMat* A);
 extern Mat* copyvalue(Mat* A);
 extern CMat* copycvalue(CMat* A);
-extern Mat* copyvalue(Mat* A);
-extern CMat* copycvalue(CMat* A);
 extern Mat* triinverse(Mat* A);
 extern CMat* ctriinverse(CMat* A);
 extern Mat* rowechelon(Mat* A);
