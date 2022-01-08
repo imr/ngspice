@@ -13,7 +13,7 @@ Author: 1985 Thomas L. Quarles
 
 
 /* ARGSUSED */
-int 
+int
 SPaskQuest(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 {
     SPAN *job = (SPAN *) anal;

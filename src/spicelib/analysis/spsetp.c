@@ -12,7 +12,7 @@ Author: 1985 Thomas L. Quarles
 #include "analysis.h"
 
 /* ARGSUSED */
-int 
+int
 SPsetParm(CKTcircuit *ckt, JOB *anal, int which, IFvalue *value)
 {
     SPAN *job = (SPAN *) anal;
@@ -97,7 +97,7 @@ static IFparm SPparms[] = {
 };
 
 SPICEanalysis SPinfo  = {
-    { 
+    {
         "SP",
         "S-Parameters analysis",
 
