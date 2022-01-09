@@ -73,6 +73,7 @@ extern double trace(Mat* A);
 extern cplx ctrace(CMat* A);
 extern Mat* adjoint(Mat* A);
 extern CMat* cadjoint(CMat* A);
+extern CMat* ctransposeconj(CMat* source);
 extern Mat* inverse(Mat* A);
 extern CMat* cinverse(CMat* A);
 extern Mat* copyvalue(Mat* A);
@@ -92,10 +93,11 @@ extern MatList* lu(Mat* A);
 extern double innermultiply(Mat* a, Mat* b);
 extern MatList* qr(Mat* A);
 extern int complexmultiplydest(CMat* M, cplx c, CMat* dest);
-extern int cinversedest(CMat* A, CMat* dest);
+extern void cinversedest(CMat* A, CMat* dest);
 extern int copycvaluedest(CMat* A, CMat* dest);
 extern int cmultiplydest(CMat* A, CMat* B, CMat* dest);
-
-
+extern void init(Mat* A, double d);
+extern void cinit(CMat* A, double dr, double di);
+extern void resizemat(Mat* A, int r, int c);
 
 #endif
