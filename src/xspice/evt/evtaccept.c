@@ -70,7 +70,7 @@ void EVTaccept(
 
     Evt_Inst_Queue_t    *inst_queue;
     Evt_Output_Queue_t  *output_queue;
-
+    Evt_Node_Info_t    **node_table;
     Evt_Node_Data_t     *node_data;
     Evt_State_Data_t    *state_data;
     Evt_Msg_Data_t      *msg_data;
@@ -83,7 +83,7 @@ void EVTaccept(
     /* Get often used pointers */
     inst_queue = &(ckt->evt->queue.inst);
     output_queue = &(ckt->evt->queue.output);
-
+    node_table = ckt->evt->info.node_table;
     node_data = ckt->evt->data.node;
     state_data = ckt->evt->data.state;
     msg_data = ckt->evt->data.msg;
@@ -93,12 +93,29 @@ void EVTaccept(
     num_modified = inst_queue->num_modified;
     /* Loop through list of items modified since last time */
     for(i = 0; i < num_modified; i++) {
+        Evt_Inst_Event_t *stale, *next;
+
         /* Get the index of the inst modified */
         index = inst_queue->modified_index[i];
-        /* Update last_step for this index */
-        inst_queue->last_step[index] = inst_queue->current[index];
         /* Reset the modified flag */
         inst_queue->modified[index] = MIF_FALSE;
+        /* Move stale entries to the free list. */
+        next = inst_queue->head[index];
+        while (next) {
+            if (next->event_time >= time ||
+                &next->next == inst_queue->current[index]) {
+                break;
+            }
+            stale = next;
+            next = next->next;
+            stale->next = inst_queue->free[index];
+            inst_queue->free[index] = stale;
+        }
+        inst_queue->head[index] = next;
+        if (!next)
+            inst_queue->current[index] = &inst_queue->head[index];
+        /* Update last_step for this index */
+        inst_queue->last_step[index] = inst_queue->current[index];
     }
     /* Record the new last_time and reset number modified to zero */
     inst_queue->last_time = time;
@@ -109,12 +126,29 @@ void EVTaccept(
     num_modified = output_queue->num_modified;
     /* Loop through list of items modified since last time */
     for(i = 0; i < num_modified; i++) {
+        Evt_Output_Event_t *stale, *next;
+
         /* Get the index of the output modified */
         index = output_queue->modified_index[i];
-        /* Update last_step for this index */
-        output_queue->last_step[index] = output_queue->current[index];
         /* Reset the modified flag */
         output_queue->modified[index] = MIF_FALSE;
+        /* Move stale entries to the free list. */
+        next = output_queue->head[index];
+        while (next) {
+            if (next->event_time >= time ||
+                &next->next == output_queue->current[index]) {
+                break;
+            }
+            stale = next;
+            next = next->next;
+            stale->next = output_queue->free[index];
+            output_queue->free[index] = stale;
+        }
+        output_queue->head[index] = next;
+        if (!next)
+            output_queue->current[index] = &output_queue->head[index];
+        /* Update last_step for this index */
+        output_queue->last_step[index] = output_queue->current[index];
     }
     /* Record the new last_time and reset number modified to zero */
     output_queue->last_time = time;
@@ -127,10 +161,25 @@ void EVTaccept(
     for(i = 0; i < num_modified; i++) {
         /* Get the index of the node modified */
         index = node_data->modified_index[i];
-        /* Update last_step for this index */
-        node_data->last_step[index] = node_data->tail[index];
         /* Reset the modified flag */
         node_data->modified[index] = MIF_FALSE;
+
+        if (node_table[index]->save) {
+            /* Update last_step for this index */
+            node_data->last_step[index] = node_data->tail[index];
+        } else {
+            Evt_Node_t *keep;
+
+            /* If not recording history, discard all but the last item.
+             * It may be needed to restore the previous state on backup.
+             */
+            keep = *(node_data->tail[index]);
+            *(node_data->tail[index]) = node_data->free[index];
+            node_data->free[index] = node_data->head[index];
+            node_data->head[index] = keep;
+            node_data->last_step[index] = node_data->tail[index] =
+                &node_data->head[index];
+        }
     }
     /* Reset number modified to zero */
     node_data->num_modified = 0;
@@ -140,12 +189,26 @@ void EVTaccept(
     num_modified = state_data->num_modified;
     /* Loop through list of items modified since last time */
     for(i = 0; i < num_modified; i++) {
+        Evt_State_t         *state;
+
         /* Get the index of the state modified */
         index = state_data->modified_index[i];
-        /* Update last_step for this index */
-        state_data->last_step[index] = state_data->tail[index];
         /* Reset the modified flag */
         state_data->modified[index] = MIF_FALSE;
+        /* Get the last saved state for this instance. */
+        state = *(state_data->tail[index]);
+        /* Dump everything older on the instance-specific free list,
+         * recreating the setup after the initial calls to cm_event_alloc().
+         */
+        if (!state)
+            continue;
+        if (state->prev) {
+            state->prev->next = state_data->free[index];
+            state_data->free[index] = state_data->head[index];
+        }
+        state_data->head[index] = state;
+        state_data->last_step[index] = state_data->tail[index] =
+            &state_data->head[index];
     }
     /* Reset number modified to zero */
     state_data->num_modified = 0;

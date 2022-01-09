@@ -14,6 +14,8 @@
 #include "ngspice/ftedebug.h"
 #include "ngspice/cktdefs.h"
 
+void com_wric(wordlist* wl);
+
  /* Print the current node status to a file with format
     .ic V(node) = value 
  */

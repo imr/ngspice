@@ -771,6 +771,7 @@ CKTcircuit *ckt)
         }
     }
 
+    wordlist* wlfree = wlstart;
     if (wlstart->wl_next) {
         if ((fplog = fopen("bsim4v5.out", "w")) != NULL) {
             while (wlstart) {
@@ -788,7 +789,7 @@ CKTcircuit *ckt)
         }
     }
 
-    wl_free(wlstart);
+    wl_free(wlfree);
 
     return(Fatal_Flag);
 }

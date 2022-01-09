@@ -9,10 +9,11 @@ EXTRA_DIST = FAQ autogen.sh Stuarts_Poly_Notes  \
 		README.shared-xspice README.vdmos \
 		README.adms README-old.adms README.utf8 \
 		examples m4 visualc \
-		build-for-mac-os.sh \
 		cross-compile.sh cross-compile-shared.sh \
 		compile_min.sh compile_linux.sh compile_min_shared.sh \
-		compile_linux_shared.sh compile_macos.sh ngspice.pc.in .gitignore
+		compile_linux_shared.sh \
+		compile_macos_clang.sh compile_macos_gcc.sh \
+		ngspice.pc.in .gitignore
 
 MAINTAINERCLEANFILES = Makefile.in aclocal.m4 ar-lib compile config.guess \
 			src/include/ngspice/config.h.in config.sub configure install-sh \

@@ -51,6 +51,14 @@ ASRCload(GENmodel *inModel, CKTcircuit *ckt)
             else
                 factor = factor * here->ASRCm;
 
+#ifdef XSPICE_EXP
+            value *= ckt->CKTsrcFact;
+            value *= cm_analog_ramp_factor();
+#else
+            if (ckt->CKTmode & MODETRANOP)
+                factor *= ckt->CKTsrcFact;
+#endif
+
             /*
              * Get the function and its derivatives evaluated
              */

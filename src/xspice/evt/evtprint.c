@@ -413,12 +413,15 @@ EVTdisplay(wordlist *wl)
         out_printf("No event node available!\n");
         return;
     }
-    if (!ckt->evt->jobs.job_plot) {
-        out_printf("No event job run, no data available!\n");
-        return;
+    if (ckt->evt->jobs.job_plot) {
+        out_printf("\nList of event nodes in plot %s\n",
+                   ckt->evt->jobs.job_plot[ckt->evt->jobs.cur_job]);
+    } else {
+        out_printf("\nList of event nodes\n");
     }
-    out_printf("\nList of event nodes in plot %s\n", ckt->evt->jobs.job_plot[ckt->evt->jobs.cur_job]);
-    out_printf("    %-20s: %-5s, %s\n\n", "node name", "type", "number of events");
+    out_printf("    %-20s: %-5s, %s\n\n",
+               "node name", "type", "number of events");
+
     node_index = 0;
     while (node) {
         Evt_Node_t  *node_data = NULL;
@@ -426,11 +429,12 @@ EVTdisplay(wordlist *wl)
         char *type;
 
         udn_index = node_table[node_index]->udn_index;
-        if (ckt->evt->data.node)
+        if (ckt->evt->data.node) {
             node_data = ckt->evt->data.node->head[node_index];
-        while (node_data) {
-            count++;
-            node_data = node_data->next;
+            while (node_data) {
+                count++;
+                node_data = node_data->next;
+            }
         }
         type = g_evt_udn_info[udn_index]->name;
         out_printf("    %-20s: %-5s, %5d\n", node->name, type, count);
@@ -629,9 +633,6 @@ EVTprintvcd(wordlist *wl)
     more = MIF_FALSE;
     next_step = 1e30;
     for (i = 0; i < nargs; i++) {
-        /* prevent crash if save(d1), and d1 is a digital node */
-        if (node_data[i] == NULL)
-            continue;
         step = node_data[i]->step;
         g_evt_udn_info[udn_index[i]]->print_val
             (node_data[i]->node_value, "all", &value);
@@ -712,4 +713,68 @@ EVTprintvcd(wordlist *wl)
     } /* end while there is more data */
 
     out_printf("\n\n");
+}
+
+/* Mark event nodes whose data should be saved for printing.
+ * By default, all nodes are saved, so initial "none" clears.
+ */
+
+static void set_all(CKTcircuit *ckt, Mif_Boolean_t val)
+{
+    int               i, count;
+    Evt_Node_Info_t **node_table;
+
+    count = ckt->evt->counts.num_nodes;
+    node_table = ckt->evt->info.node_table;
+    for (i = 0; i < count; i++)
+        node_table[i]->save = val;
+}
+
+void
+EVTsave(wordlist *wl)
+{
+    int               i;
+    Mif_Boolean_t     save;
+    wordlist         *w;
+    CKTcircuit       *ckt;
+    Evt_Node_Info_t **node_table;
+
+    if (wl == NULL) {
+        printf("Usage: esave all | none | <node1> <node2> ...\n");
+        return;
+    }
+
+    /* Get needed pointers. */
+
+    ckt = g_mif_info.ckt;
+    if (!ckt) {
+        fprintf(cp_err, "Error: no circuit loaded.\n");
+        return;
+    }
+    node_table = ckt->evt->info.node_table;
+
+    /* Deal with "all" and "none". */
+
+    save = MIF_FALSE;
+    if (wl->wl_next == NULL &&
+        (!strcmp("none", wl->wl_word) ||
+         (save = !strcmp("all", wl->wl_word)))) {
+        set_all(ckt, save);
+        return;
+    }
+
+    set_all(ckt, MIF_FALSE);    /* Clear previous settings. */
+
+    /* Set save flag for each argument */
+
+    for (w = wl; w; w = w->wl_next) {
+        i = get_index(w->wl_word);
+        if (i < 0) {
+            fprintf(cp_err, "ERROR - Node %s is not an event node.\n",
+                    w->wl_word);
+            return;
+        }
+//        node_table[i]->save = MIF_FALSE;
+        node_table[i]->save = MIF_TRUE;
+    }
 }

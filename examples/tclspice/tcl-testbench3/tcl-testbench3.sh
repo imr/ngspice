@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # -*- mode: tcl -*- \
         exec wish -f "$0" ${1+"$@"}
 

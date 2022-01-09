@@ -10,7 +10,7 @@ static void Evt_Node_Data_destroy(Evt_Ckt_Data_t *evt, Evt_Node_Data_t *node_dat
 static void Evt_Msg_Data_destroy(Evt_Ckt_Data_t *evt, Evt_Msg_Data_t *msg_data);
 static void Evt_Queue_destroy(Evt_Ckt_Data_t *evt, Evt_Queue_t *queue);
 static void Evt_State_Data_destroy(Evt_Ckt_Data_t *evt, Evt_State_Data_t *state_data);
-static void Evt_Data_destroy(Evt_Ckt_Data_t *evt, Evt_Data_t *data);
+//static void Evt_Data_destroy(Evt_Ckt_Data_t *evt, Evt_Data_t *data);
 static void Evt_Job_destroy(Evt_Ckt_Data_t* evt, Evt_Job_t *job);
 static void Evt_Info_destroy(Evt_Info_t *info);
 
@@ -99,7 +99,7 @@ Evt_Queue_destroy(Evt_Ckt_Data_t *evt, Evt_Queue_t *queue)
     tfree(output_queue->changed);
 }
 
-
+/*
 static void
 Evt_Data_destroy(Evt_Ckt_Data_t *evt, Evt_Data_t *data)
 {
@@ -112,7 +112,7 @@ Evt_Data_destroy(Evt_Ckt_Data_t *evt, Evt_Data_t *data)
     tfree(data->msg);
     tfree(data->statistics);
 }
-
+*/
 
 static void
 Evt_State_Data_destroy(Evt_Ckt_Data_t *evt, Evt_State_Data_t *state_data)

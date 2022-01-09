@@ -1,0 +1,44 @@
+Demonstrate the ngspice integration methods
+* function interg
+* meas ... ... INTEG
+* code model INTEG
+
+i1 0 1 1
+R1 1 2 1
+C1 2 3 1
+Vm1 3 0 0
+.ic v(2) = 0
+
+v2 11 0 dc 0 sin (0 1 2)
+
+v3 31 0 dc 0 pulse (0 1 0.1 0.1 0.1 0.1 0.6)
+
+* integrate during transient simulation
+V4 in 0 dc 0 pwl (0 0 1 1)
+aint in out int_in
+.model int_in int(in_offset=0.0 gain=1.0
++ out_lower_limit=-1e12 out_upper_limit=1e12
++ limit_range=1e-9 out_ic=0.0)
+
+.tran 0.01 1
+
+.control
+run
+display
+
+* integrate after the simulation
+let int1 = integ(Vm1#branch)
+plot int1 v(2)
+
+let int2 = integ(v(11))
+plot v(11) int2
+
+let int3 = integ(v(31))
+plot v(31) int3
+
+plot in out
+* get the integral value of a vector section
+meas tran yint INTEG v(out) from=0.4 to=0.6
+
+.endc
+.end

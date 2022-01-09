@@ -246,7 +246,7 @@ void inp_probe(struct card* deck)
                     sadd(&dnewline, newnode);
                     cadd(&dnewline, ' ');
                     /* to make the nodes unique */
-                    snprintf(nodebuf, 10, "%d", i);
+                    snprintf(nodebuf, 12, "%d", i);
                     nodename = get_terminal_name(instname, nodebuf, instances);
                     char* vline = tprintf("vcurr_%s:%s:%s_%s %s %s 0", instname, nodename, thisnode, nodebuf, newnode, thisnode);
                     card = insert_new_line(card, vline, 0, 0);
@@ -289,9 +289,9 @@ void inp_probe(struct card* deck)
             /* check for differential voltage probes:
                v(nR1) voltage at node named nR1
                vd(R1) voltage across a two-terminal device named R1
-               vd([m4:1) voltage at instance node 1 of device m4
-               v(m4:1:3) voltage between instance nodes 1 and 3 of device m4
-               v(m4:1, m5:3) voltage between instance node 1 of device m4 and node 3 of device m5 */
+               vd(m4:1:0) voltage at instance node 1 of device m4
+               vd(m4:1:3) voltage between instance nodes 1 and 3 of device m4
+               vd(m4:1, m5:3) voltage between instance node 1 of device m4 and node 3 of device m5 */
                /* no nodes after first token: must be a node itself */
 
             /* v(nodename), voltage at node named nodename */
@@ -343,7 +343,7 @@ void inp_probe(struct card* deck)
                     char* thisline = tmpcard1->line;
                     numnodes1 = get_number_terminals(thisline);
                     if (numnodes1 != 2) {
-                        fprintf(stderr, "Warning: Instnace %s has more than 2 nodes,\n   .probe %s will be ignored\n", instname1, wltmp->wl_word);
+                        fprintf(stderr, "Warning: Instance %s has more than 2 nodes,\n   .probe %s will be ignored\n", instname1, wltmp->wl_word);
                         tfree(instname1);
                         continue;
                     }
@@ -376,7 +376,7 @@ void inp_probe(struct card* deck)
                     tmpstr2 = tmpstr;
                     instname1 = gettok_char(&tmpstr, ':', FALSE, FALSE);
                     if (!instname1) {
-                        fprintf(stderr, "Warning: Cannot read instance name in %s, ignored\n");
+                        fprintf(stderr, "Warning: Cannot read instance name in %s, ignored\n", tmpstr);
                         continue;
                     }
                     tmpcard1 = nghash_find(instances, instname1);
@@ -1132,27 +1132,30 @@ void modprobenames(INPtables* tab) {
     GENinstance* GENinst;
     for (GENinst = tab->defVmod->GENinstances; GENinst; GENinst = GENinst->GENnextInstance) {
         char* name = GENinst->GENname;
+        /* Do not inlude the x in the new name, XU1 -> U1 */
         if (prefix("vcurr_x", name) && !isdigit_c(name[7])) {
             /* copy from char no. 7 to (and excluding) second colon */
             char* endname = strchr(name, ':');
             endname = strchr(endname + 1, ':');
-            char* newname = name + 7;
-            snprintf(name, endname - newname + 1, "%s", newname);
+            char* newname = copy_substring(name + 7, endname);
+            memcpy(name, newname, strlen(newname) + 1);
+            tfree(newname);
         }
-        /* Do not inlude the x in the new name */
         else if (prefix("vcurr_", name)) {
             /* copy from char no. 6 to (and excluding) second colon */
             char* endname = strchr(name, ':');
             char* endname2 = strchr(endname + 1, ':');
             /* two-terminal device, one colon, copy all from char no. 6 to (and excluding) colon */
             if (!endname2) {
-                char* newname = name + 6;
-                snprintf(name, endname - newname + 1, "%s", newname);
+                char* newname = copy_substring(name + 6, endname);
+                memcpy(name, newname, strlen(newname) + 1);
+                tfree(newname);
             }
             /* copy from char no. 6 to (and excluding) second colon */
             else {
-                char* newname = name + 6;
-                snprintf(name, endname2 - newname + 1, "%s", newname);
+                char* newname = copy_substring(name + 6, endname2);
+                memcpy(name, newname, strlen(newname) + 1);
+                tfree(newname);
             }
         }
     }

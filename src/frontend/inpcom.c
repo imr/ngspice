@@ -195,6 +195,9 @@ extern void inp_probe(struct card* card);
 static void utf8_syntax_check(struct card *deck);
 #endif
 
+struct card* insert_new_line(
+    struct card* card, char* line, int linenum, int linenum_orig);
+
 struct inp_read_t {
     struct card *cc;
     int line_number;
@@ -7541,6 +7544,27 @@ static void inp_quote_params(struct card *c, struct card *end_c,
                 else {
                     s += strlen(deps[i].param_name);
                 }
+            }
+        }
+        /* Now check if we have nested {..{  }...}, which is not accepted by numparam code.
+           Replace the inner { } by ( ) */
+        char* cut_line = c->line;
+        cut_line = strchr(cut_line, '{');
+        if (cut_line) {
+            int level = 1;
+            cut_line++;
+            while (*cut_line != '\0') {
+                if (*cut_line == '{') {
+                    level++;
+                    if (level > 1)
+                        *cut_line = '(';
+                }
+                else if (*cut_line == '}') {
+                    if (level > 1)
+                        *cut_line = ')';
+                    level--;
+                }
+                cut_line++;
             }
         }
     }

@@ -39,6 +39,7 @@ Vc5 cntrl5 0 0
 
 .control
 tran 1u 10m
+rusage
 set xbrushwidth=2
 plot v(in1) V(out1) title 'Const delay'
 plot v(in2) V(out2) title 'Variable delay'

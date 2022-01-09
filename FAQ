@@ -1,7 +1,7 @@
-  Ngspice F.A.Q.Version 2.6 (ngspice-35 release)
+  Ngspice F.A.Q.Version 2.7 (ngspice-36 release)
 
   Maintained by Holger Vogt
-  Last update: 07-20-2021
+  Last update: 12-18-2021
 
   This document contains the Frequently Asked Questions (and Answers)
   for ngspice project.
@@ -249,41 +249,33 @@
 
   The latest version released is:
 
-  * ngspice-35 (released on 07/31/2021)
+  * ngspice-36 (released on 01/01/2022)
 
 
  2.2.  What are the latest features in the current release?
 
 - New features:
-    + Improved VBIC model
-    + Get the vector type automatically, if db, ph, cph are applied.
-    + Enable finding 'spinit' if its path contains spaces.
-    + Increase buffer size for command 'listing' to 4096 bytes.
-    + Add compatibility modes for EAGLE (ea) and Spectre (spe).
-    + Add parameter 'plain' to 'plot' command.
-    + Add variables 'plainplot', 'plainwrite', 'plainlet'
-    + Add RF bipolar model HICUM 2.4 to the ngspice C sources.
-    + Add charge formulation for non-linear capacitors.
-    + Remove outdated code from contrib and unsupported directories.
-    + When installing ngspice executable, do not install the headers.
-    + Add support for tc1, tc2, and m for behavioral resistors,
-      which use the B source internally.
-    + Add supporting E_constant Vconst 0 TABLE {Max(V(DP)-V(GN),0)}=((20,120)).
-    + Remove the XSPICE limitation of the current source flag "current".
-    + Remove the XSPICE dependency of the phase parameter for the
-      independent current source.
-    + Drastically reduce the memory requirements if there is a PDK with
-      a lot of binning models (e.g. the SkyWater PDK).
-    + Update to admst: Enhance the Verilog A compatibility.
-    + Add most recent PSP102, Mextram504, BSIMBULK, and BSIMCMG models
-      to the ngspice adms sources.
-    + Model checking for BSIM4.5 will only write to file if an excursion
-      is detected (still to be added to the other BSIM models)
-    + Many code updates not visible to the user, but enhancing stability
-      and efficiency
+    + Add function 'integ' to control language.
+    + New dot command .probe
+      for current and differential voltage measurements.
+    + Allow math characters in node names.
+    + Enable x/y contour plots for 2d Cider using gnuplot.
+    + Update to bipolar model, incl. IBE and IBC parameters.
+    + Add garbage collector to cpl code to remove any mem leakage.
+    + Enable .save within subcircuits.
+    + New compile scripts for macOS, for Apple clang and Homebrew gcc.
+      gcc allows compiling a fully featured ngspice (incl. OpenMP) on MAC.
+    + Add RKM notation (e.g. 4k7) if compat mode LT.
+    + Add 'µ' as special character in netlists.
+    + Add parameter 'r' to command 'listing' for (runable).
+    + Fix several issues with CIDER.
+    + New command 'wrnodev' to print  matrix RHS in form of .ic = V(node_xx).
+    + Transient operating pointadded to gmin and source stepping.
+    + More SOA parameters on more devices (V, I, T, P).
 
 - Bug fixes:
-    + many bugs fixed and code improvements (see bugs 523 and up)
+    + many bugs fixed and code improvements (see bugs 557 and up)
+    + making error messages more verbose
     + memory leaks removed
 
 
@@ -375,7 +367,7 @@
 
  4.4.  Disclaimer and Copyright
 
-  Copyright: Holger Vogt, 2021
+  Copyright: Holger Vogt, 2022
   License: Creative Commons Attribution Share-Alike (CC-BY-SA) v4.0.
   This document is provided as is. The information in it is not
   warranted to be correct: you use it at your own risk.

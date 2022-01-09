@@ -28,8 +28,6 @@ extern int PPparse(char **, struct pnode **);
 #endif
 
 void db_print_pnode_tree(struct pnode *p, char *print);
-struct pnode* ft_getpnames_quotes(wordlist* wl, bool check);
-
 
 struct pnode *ft_getpnames_from_string(const char *sz, bool check)
 {
@@ -363,6 +361,7 @@ struct func ft_funcs[] = {
     { "vecd",        cx_d },
     { "interpolate", (cx_function_t*) cx_interpolate },
     { "deriv",       (cx_function_t*) cx_deriv },
+    { "integ",       (cx_function_t*) cx_integ },
     { "fft",         (cx_function_t*) cx_fft },
     { "ifft",        (cx_function_t*) cx_ifft },
     { "v",           NULL },
