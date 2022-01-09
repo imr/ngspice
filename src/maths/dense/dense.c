@@ -1,10 +1,13 @@
 
 #include "dense.h"
+#include "ngspice/ngspice.h"
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
 #include "ngspice/bool.h"
 #include "ngspice/iferrmsg.h"
+
+inline double cmod(cplx a);
 
 inline void setcplx(cplx* d, double r, double i)
 {
@@ -22,6 +25,18 @@ inline cplx cmultco(cplx a, cplx b)
 	cplx res;
 	res.re = a.re * b.re - a.im * b.im;
 	res.im = a.im * b.re + a.re * b.im;
+	return res;
+}
+
+
+
+inline cplx cdivco(cplx a, cplx b)
+{
+	cplx res;
+	double dmod = cmod(b);
+	dmod *= dmod;
+	res.re = (a.re * b.re + a.im * b.im) / dmod;
+	res.im = (a.im * b.re - a.re * b.im) / dmod;
 	return res;
 }
 
@@ -78,9 +93,14 @@ inline void csubd(cplx* res, cplx a, double d)
 	res->re = a.re - d;
 }
 
+inline double cmodinv(cplx a)
+{
+	return 1.0 / cmod(a);
+}
+
 inline double cmod(cplx a)
 {
-	return 1.0 / (a.re * a.re + a.im * a.im);
+	return (a.re * a.re + a.im * a.im);
 }
 
 inline int ciszero(cplx a)
@@ -90,11 +110,20 @@ inline int ciszero(cplx a)
 inline cplx cinv(cplx a)
 {
 	cplx res;
-	double cpmod = cmod(a);
+	double cpmod = cmodinv(a);
 	res.re = a.re * cpmod;
 	res.im = -a.im * cpmod;
 	return res;
 }
+
+inline cplx conju(cplx a)
+{
+	cplx res;
+	res.re = a.re;
+	res.im = -a.im;
+	return res;
+}
+
 
 void showmat(Mat* A) {
 	if (A->row > 0 && A->col > 0) {
@@ -151,13 +180,18 @@ void showcmat(CMat* A) {
 }
 
 CMat* newcmat(int r, int c, double dr, double di) {
-	CMat* M = (CMat*)malloc(sizeof(CMat));
+	CMat* M = (CMat*)tmalloc(sizeof(CMat));
+
 	if (M == NULL) return NULL;
 	
 	M->row = r; M->col = c;
-	M->d = (cplx**)malloc(sizeof(cplx*) * r);
+	M->d = (cplx**)tmalloc(sizeof(cplx*) * r);
+	if (M->d == NULL) {
+		tfree(M);  return NULL;
+	}
+
 	for (int i = 0; i < r; i++)
-		M->d[i] = (cplx*)malloc(sizeof(cplx) * c);
+		M->d[i] = (cplx*)tmalloc(sizeof(cplx) * c);
 
 	for (int i = 0; i < M->row; i++) {
 		for (int j = 0; j < M->col; j++) {
@@ -168,27 +202,47 @@ CMat* newcmat(int r, int c, double dr, double di) {
 	return M;
 }
 
+void init(Mat* A, double d)
+{
+	for (int i = 0; i < A->row; i++) {
+		for (int j = 0; j < A->col; j++) {
+			A->d[i][j] = d;
+		}
+	}
+}
+void cinit(CMat* A, double dr, double di)
+{
+	cplx ci;
+	ci.re = dr;
+	ci.im = di;
+	for (int i = 0; i < A->row; i++) {
+		for (int j = 0; j < A->col; j++) {
+			A->d[i][j] = ci;
+		}
+	}
+}
+
 
 
 CMat* newcmatnoinit(int r, int c) {
-	CMat* M = (CMat*)malloc(sizeof(CMat));
+	CMat* M = (CMat*)tmalloc(sizeof(CMat));
 	if (M == NULL) return NULL;
 	M->row = r; M->col = c;
 
-	M->d = (cplx**)malloc(sizeof(cplx*) * r);
+	M->d = (cplx**)tmalloc(sizeof(cplx*) * r);
 	for (int i = 0; i < r; i++)
-		M->d[i] = (cplx*)malloc(sizeof(cplx) * c);
+		M->d[i] = (cplx*)tmalloc(sizeof(cplx) * c);
 	return M;
 }
 
 Mat* newmat(int r, int c, double d) {
-	Mat* M = (Mat*)malloc(sizeof(Mat));
+	Mat* M = (Mat*)tmalloc(sizeof(Mat));
 	if (M == NULL) return NULL;
 
 	M->row = r; M->col = c;
-	M->d = (double**)malloc(sizeof(double*) * r);
+	M->d = (double**)tmalloc(sizeof(double*) * r);
 	for (int i = 0; i < r; i++)
-		M->d[i] = (double*)malloc(sizeof(double) * c);
+		M->d[i] = (double*)tmalloc(sizeof(double) * c);
 
 	for (int i = 0; i < M->row; i++) {
 		for (int j = 0; j < M->col; j++) {
@@ -199,13 +253,13 @@ Mat* newmat(int r, int c, double d) {
 }
 
 Mat* newmatnoinit(int r, int c) {
-	Mat* M = (Mat*)malloc(sizeof(Mat));
+	Mat* M = (Mat*)tmalloc(sizeof(Mat));
 	if (M == NULL) return NULL;
 
 	M->row = r; M->col = c;
-	M->d = (double**)malloc(sizeof(double*) * r);
+	M->d = (double**)tmalloc(sizeof(double*) * r);
 	for (int i = 0; i < r; i++)
-		M->d[i] = (double*)malloc(sizeof(double) * c);
+		M->d[i] = (double*)tmalloc(sizeof(double) * c);
 
 	return M;
 }
@@ -217,16 +271,19 @@ void resizemat(Mat* A, int r, int c)
 	if ((A->row == r) && (A->col == c))
 		return;
 
-	for (int r = 0; r < A->row; r++)
-		free(A->d[r]);
+	for (int ri = 0; ri < A->row; ri++)
+		tfree(A->d[ri]);
 
 	if (A->d != NULL)
-		free(A->d);
+		tfree(A->d);
 	
 	A->row = r; A->col = c;
-	A->d = (double**)malloc(sizeof(double*) * r);
+	A->d = (double**)tmalloc(sizeof(double*) * r);
+
+	if (A->d == NULL) return;
+
 	for (int i = 0; i < r; i++)
-		A->d[i] = (double*)malloc(sizeof(double) * c);
+		A->d[i] = (double*)tmalloc(sizeof(double) * c);
 }
 
 void resizecmat(CMat* A, int r, int c)
@@ -235,16 +292,19 @@ void resizecmat(CMat* A, int r, int c)
 	if ((A->row == r) && (A->col == c))
 		return;
 
-	for (int r = 0; r < A->row; r++)
-		free(A->d[r]);
+	for (int ri = 0; ri < A->row; ri++)
+		tfree(A->d[ri]);
 
 	if (A->d != NULL)
-		free(A->d);
+		tfree(A->d);
 
 	A->row = r; A->col = c;
-	A->d = (cplx**)malloc(sizeof(cplx*) * r);
+	A->d = (cplx**)tmalloc(sizeof(cplx*) * r);
+
+	if (A->d == NULL) return;
+
 	for (int i = 0; i < r; i++)
-		A->d[i] = (cplx*)malloc(sizeof(cplx) * c);
+		A->d[i] = (cplx*)tmalloc(sizeof(cplx) * c);
 }
 
 
@@ -252,24 +312,24 @@ void freecmat(CMat* A) {
 	if (A == NULL) return;
 
 	for (int r = 0; r < A->row; r++)
-		free(A->d[r]);
+		tfree(A->d[r]);
 
 	if (A->d!=NULL)
-		free(A->d);
+		tfree(A->d);
 
-	free(A);
+	tfree(A);
 }
 
 void freemat(Mat* A) {
 	if (A == NULL) return;
 
 	for (int r = 0; r < A->row; r++)
-		free(A->d[r]);
+		tfree(A->d[r]);
 
 	if (A->d!=NULL)
-		free(A->d);
+		tfree(A->d);
 
-	free(A);
+	tfree(A);
 }
 
 CMat* ceye(int n) {
@@ -406,7 +466,7 @@ Mat* sum(Mat* A, Mat* B) {
 	int r = A->row;
 	int c = A->col;
 	Mat* C = newmatnoinit(r, c);
-	int k = 0;
+
 	for (int i = 0; i < r; i++) {
 		for (int j = 0; j < c; j++) {
 			C->d[i][j] = A->d[i][j] + B->d[i][j];
@@ -479,7 +539,7 @@ void submat2(Mat* A, Mat* B, int r1, int r2, int c1, int c2) {
 }
 
 CMat* subcmat(CMat* A, int r1, int r2, int c1, int c2) {
-	CMat* B = newmatnoinit(r2 - r1 + 1, c2 - c1 + 1);
+	CMat* B = newcmatnoinit(r2 - r1 + 1, c2 - c1 + 1);
 	int k = 0;
 	for (int i = r1; i <= r2; i++) {
 		for (int j = c1; j <= c2; j++) {
@@ -566,7 +626,7 @@ int cmultiplydest(CMat* A, CMat* B, CMat* dest) {
 		return (OK);
 	}
 	else if (r2 == 1 && c2 == 1) {
-		complexmultiply(A, B->d[0][0],dest);
+		complexmultiplydest(A, B->d[0][0],dest);
 		return (OK);
 	}
 
@@ -807,7 +867,14 @@ Mat* adjoint(Mat* A) {
 
 
 
-
+extern CMat* ctransposeconj(CMat* source)
+{
+	CMat* dest = newcmatnoinit(source->col, source->row);
+	for (int i = 0; i < dest->row; i++)
+		for (int j = 0; j < dest->col; j++)
+			dest->d[i][j] = conju(source->d[j][i]);
+	return dest;
+}
 
 CMat* cadjoint(CMat* A) {
 	CMat* B = newcmatnoinit(A->row, A->col);
@@ -845,14 +912,16 @@ CMat* cinverse(CMat* A) {
 	return C;
 }
 
-int cinversedest(CMat* A, CMat* dest) {
+
+void cinversedest(CMat* A, CMat* dest) {
 	CMat* B = cadjoint(A);
 	cplx de = cinv(cdet(A));
 
 	complexmultiplydest(B, de, dest);
 	freecmat(B);
-	return (OK);
+	return;
 }
+
 	
 
 Mat* copyvalue(Mat* A) {
@@ -938,7 +1007,7 @@ Mat* rowechelon(Mat* A) {
 	int ind2 = 0;
 	for (int i = 0; i < B->row; i++) {
 		for (int j = 0; j < B->col; j++) {
-			if (B->d[i * B->col + j] != 0 && j < ind1) {
+			if (B->d[i][j] != 0 && j < ind1) {
 				ind1 = j;
 				ind2 = i;
 				break;
@@ -1002,7 +1071,7 @@ Mat* rowechelon(Mat* A) {
 CMat* crowechelon(CMat* A) {
 	if (A->row == 1) {
 		for (int j = 0; j < A->col; j++) {
-			if (cmod(A->d[0][j]) != 0) {
+			if (cmodinv(A->d[0][j]) != 0) {
 				CMat* B = complexmultiply(A,cinv(A->d[0][j]));
 				return B;
 			}
@@ -1093,7 +1162,7 @@ Mat* hconcat(Mat* A, Mat* B) {
 
 CMat* chconcat(CMat* A, CMat* B) {
 	CMat* C = newcmatnoinit(A->row, A->col + B->col);
-	int k = 0;
+
 	for (int i = 0; i < A->row; i++) {
 		int k = 0;
 		for (int j = 0; j < A->col; j++, k++) {
@@ -1152,10 +1221,9 @@ double norm(Mat* A) {
 
 double cnorm(CMat* A) {
 	double d = 0;
-	int k = 0;
 	for (int i = 0; i < A->row; i++) {
 		for (int j = 0; j < A->col; j++) {
-			d += cmod(A->d[i][j]);
+			d += cmodinv(A->d[i][j]);
 		}
 	}
 	d = sqrt(d);
@@ -1218,9 +1286,9 @@ Mat* nullmat(Mat* A) {
 
 MatList* lu(Mat* A) {
 	if (A->row == 1) {
-		MatList* ml = (MatList*)malloc(sizeof(MatList));
+		MatList* ml = (MatList*)tmalloc(sizeof(MatList));
 		ml->mat = newmat(1, 1, A->d[0][0]);
-		ml->next = (MatList*)malloc(sizeof(MatList));
+		ml->next = (MatList*)tmalloc(sizeof(MatList));
 		ml->next->mat = newmat(1, 1, 1);
 		return ml;
 	}
@@ -1260,13 +1328,13 @@ MatList* lu(Mat* A) {
 			}
 		}
 	}
-	MatList* ml = (MatList*)malloc(sizeof(MatList));
+	MatList* ml = (MatList*)tmalloc(sizeof(MatList));
 	ml->mat = L;
-	ml->next = (MatList*)malloc(sizeof(MatList));;
+	ml->next = (MatList*)tmalloc(sizeof(MatList));;
 	ml->next->mat = U;
 	freemat(w);
 	freemat(v);
-	free(mlb);
+	tfree(mlb);
 	return ml;
 }
 
@@ -1313,9 +1381,9 @@ MatList* qr(Mat* A) {
 			R->d[j][j1] = innermultiply(uj, submat(A, 0, r-1, j1, j1)) / nuj;
 		}
 	}
-	MatList* ml = (MatList*)malloc(sizeof(MatList));
+	MatList* ml = (MatList*)tmalloc(sizeof(MatList));
 	ml->mat = Q;
-	ml->next = (MatList*)malloc(sizeof(MatList));;
+	ml->next = (MatList*)tmalloc(sizeof(MatList));;
 	ml->next->mat = R;
 	freemat(ek);
 	freemat(uj);
