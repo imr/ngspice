@@ -166,7 +166,7 @@ ipc_transport_initialize_server (
      /* with version 1 (mailboxes) functions of the same names.            */
 {
   struct        sockaddr_in server;     /* Server specifications for socket*/
-  int  server_length;                   /* Size of server structure        */
+  socklen_t  server_length;             /* Size of server structure        */
   int  port_num;                        /* Port number converted from server_name */
 
   NG_IGNORE(mode);

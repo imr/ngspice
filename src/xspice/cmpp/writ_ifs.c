@@ -105,7 +105,7 @@ int write_ifs_c_file(
 
     /* Open the ifspec.c file for write access */
     if ((filename = gen_filename(filename_in, "w")) == (char *) NULL) {
-        print_error("ERROR - Unable to build path to \"%s\".", filename);
+        print_error("ERROR - Unable to build path to \"%s\".", filename_in);
         xrc = -1;
         goto EXITPOINT;
     }
