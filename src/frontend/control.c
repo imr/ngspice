@@ -227,7 +227,8 @@ docommand(wordlist *wlist)
         {
             int nargs = wl_length(wlist->wl_next);
             if (nargs < command->co_minargs) {
-                if (command->co_argfn) {
+                if (command->co_argfn &&
+                    cp_getvar("interactive", CP_BOOL, NULL, 0)) {
                     command->co_argfn (wlist->wl_next, command);
                 } else {
                     fprintf(cp_err, "%s: too few args.\n", s);

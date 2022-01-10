@@ -1091,6 +1091,13 @@ int main(int argc, char **argv)
         cp_nocc = FALSE;
     }
 
+    if ((iflag || istty) && !ft_batchmode) {
+        /* Enable interactive prompting. */
+
+        bool x_true = TRUE;
+        cp_vset("interactive", CP_BOOL, &x_true);
+    }
+
     if (ft_servermode) {             /* in server no init file */
         readinit = FALSE;
     }
