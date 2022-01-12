@@ -8913,9 +8913,21 @@ static struct card *pspice_compat(struct card *oldcard)
         if (ciprefix("s", cut_line)) {
             /* check for the model name */
             int i;
+            bool good = TRUE;
             char *stoks[6];
-            for (i = 0; i < 6; i++)
+            for (i = 0; i < 6; i++) {
                 stoks[i] = gettok_node(&cut_line);
+                if (!stoks[i]) {
+                    fprintf(stderr, "Error: Bad syntax in line:\n    %s\n", card->line);
+                    good = FALSE;
+                    break;
+                }
+            }
+            if (!good) {
+                for (i = 0; i < 6; i++)
+                    tfree(stoks[i]);
+                continue;
+            }
             /* rewrite s line and replace it if a model is found */
             if ((nesting > 0) &&
                     find_a_model(modelsfound, stoks[5], subcktline->line)) {
