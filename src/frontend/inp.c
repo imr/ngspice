@@ -1023,9 +1023,17 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
 
         /* set temperature, if defined, to new value.
            cp_vset will set the variable "temp" and also set CKTtemp,
-           so we can do it only here because the circuit has to be already there */
+           so we can do it only here because the circuit has to be already existing */
         if (temperature) {
-            temperature_value = atof(temperature);
+            char *endstr;
+            temperature_value = strtod(temperature, &endstr);
+            /* number strngs from numparam may contain trailing spaces */
+            endstr = skip_ws(endstr);
+            /* if endstr contains characters, temperature has not been a pure number string */
+            if (*endstr != '\0') {
+                fprintf(stderr, "Warning: Could not set temperature to %s\n   Set to default 27 C instead.\n", temperature);
+                temperature_value = 27;
+            }
             cp_vset("temp", CP_REAL, &temperature_value);
             txfree(temperature);
         }
