@@ -1006,9 +1006,12 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                 curr_meas->nextcard = NULL;
                 dd                 = prev_card;
             }
-            /* get temp from deck */
+            /* get temp from deck .temp 125 or .temp=125 */
             if (ciprefix(".temp", dd->line)) {
                 s = skip_ws(dd->line + 5);
+                if (*s == '=') {
+                    s = skip_ws(s + 1);
+                }
                 if (temperature) {
                     txfree(temperature);
                 }
