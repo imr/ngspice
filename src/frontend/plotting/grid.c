@@ -55,9 +55,9 @@ static void smithgrid(GRAPH *graph);
 static void drawsmithgrid(GRAPH *graph);
 static void arcset(GRAPH *graph, double rad, double prevrad, double irad, double iprevrad,
                    double radoff, int maxrad, int centx, int centy, int xoffset, int yoffset,
-                   char *plab, char *nlab, int pdeg, int ndeg, int pxmin, int pxmax);
+                   char *plab, char *nlab, int pdeg, int ndeg, int pxmin, int pxmax, bool isgrid);
 static double cliparc(double cx, double cy, double rad, double start, double end, int iclipx,
-                      int iclipy, int icliprad, int flag);
+                      int iclipy, int icliprad, int flag, bool isgrid);
 
 static void drawlingrid(GRAPH *graph, char *units, int spacing, int nsp, double dst, double lmt,
                         double hmt, bool onedec, int mult, double mag, int digits, Axis axis);
@@ -1078,7 +1078,7 @@ drawpolargrid(GRAPH *graph)
     DevDrawArc(graph->grid.xaxis.circular.center,
                graph->grid.yaxis.circular.center,
                graph->grid.xaxis.circular.radius,
-               0.0, 2*M_PI);
+               0.0, 2*M_PI, TRUE);
     SetLinestyle(1);
 
     /* Now draw the circles. */
@@ -1092,7 +1092,7 @@ drawpolargrid(GRAPH *graph)
                 (double) relrad, 0.0, 2*M_PI,
                 graph->grid.xaxis.circular.center,
                 graph->grid.yaxis.circular.center,
-                graph->grid.xaxis.circular.radius, 0);
+                graph->grid.xaxis.circular.radius, 0, TRUE);
         /* Toss on the label */
         if (relcx || relcy)
             theta = atan2((double) relcy, (double) relcx);
@@ -1476,7 +1476,7 @@ drawsmithgrid(GRAPH *graph)
                (int) (0.5 + RAD_TO_DEG * (M_PI - dphi[k])),
                (int) (0.5 + RAD_TO_DEG * (M_PI + dphi[k])),
                gr_xcenter - zheight,
-               gr_xcenter + zheight);
+               gr_xcenter + zheight, TRUE);
     }
     if (mag == 20) {
         fprintf(cp_err, "smithgrid: Internal Error: screwed up\n");
@@ -1485,7 +1485,7 @@ drawsmithgrid(GRAPH *graph)
 
     SetLinestyle(0);
 
-    DevDrawArc(gr_xcenter, gr_ycenter, gr_radius, 0.0, 2*M_PI);
+    DevDrawArc(gr_xcenter, gr_ycenter, gr_radius, 0.0, 2*M_PI, TRUE);
 
     /*
      * if ((xoff > - gr_radius) && (xoff < gr_radius)) {
@@ -1529,7 +1529,7 @@ drawsmithgrid(GRAPH *graph)
  */
 
 static void
-arcset(GRAPH *graph, double rad, double prevrad, double irad, double iprevrad, double radoff, int maxrad, int centx, int centy, int xoffset, int yoffset, char *plab, char *nlab, int pdeg, int ndeg, int pxmin, int pxmax)
+arcset(GRAPH *graph, double rad, double prevrad, double irad, double iprevrad, double radoff, int maxrad, int centx, int centy, int xoffset, int yoffset, char *plab, char *nlab, int pdeg, int ndeg, int pxmin, int pxmax, bool isgrid)
 {
     double aclip;
     double angle = atan2((double) iprevrad, (double) rad);
@@ -1545,21 +1545,21 @@ arcset(GRAPH *graph, double rad, double prevrad, double irad, double iprevrad, d
 
     cliparc((double) (centx + xoffset + radoff - rad),
             (double) (centy + yoffset), rad, 2*angle,
-            2 * M_PI - 2 * angle, centx, centy, maxrad, 0);
+            2 * M_PI - 2 * angle, centx, centy, maxrad, 0, isgrid);
 
     /* These circles are not part of the smith chart
      * Let's draw them anyway
      */
     cliparc((double) (centx + xoffset + radoff + rad),
             (double) (centy + yoffset), rad, M_PI + 2 * angle,
-            M_PI - 2 * angle, centx, centy, maxrad, 0);
+            M_PI - 2 * angle, centx, centy, maxrad, 0, isgrid);
 
     /* Draw the upper and lower circles.  */
     SetColor(19);
     aclip = cliparc((double) (centx + xoffset + radoff),
                     (double) (centy + yoffset + irad), irad,
                     (double) (M_PI * 1.5 + 2 * iangle),
-                    (double) (M_PI * 1.5 - 2 * iangle), centx, centy, maxrad, 1);
+                    (double) (M_PI * 1.5 - 2 * iangle), centx, centy, maxrad, 1, isgrid);
     if ((aclip > M_PI / 180) && (pdeg > 1)) {
         xlab = (int)(centx + xoffset + radoff + irad * cos(aclip));
         ylab = (int)(centy + yoffset + irad * (1 + sin(aclip)));
@@ -1579,7 +1579,7 @@ arcset(GRAPH *graph, double rad, double prevrad, double irad, double iprevrad, d
                     (double) (centy + yoffset - irad), irad,
                     (double) (M_PI / 2 + 2 * iangle),
                     (double) (M_PI / 2 - 2 * iangle), centx, centy, maxrad,
-                    (iangle == 0) ? 2 : 0);
+                    (iangle == 0) ? 2 : 0, isgrid);
     if ((aclip >= 0 && aclip < 2*M_PI - M_PI/180) && (pdeg < 359)) {
         xlab = (int)(centx + xoffset + radoff + irad * cos(aclip));
         ylab = (int)(centy + yoffset + irad * (sin(aclip) - 1));
@@ -1616,7 +1616,7 @@ arcset(GRAPH *graph, double rad, double prevrad, double irad, double iprevrad, d
  */
 
 static double
-cliparc(double cx, double cy, double rad, double start, double end, int iclipx, int iclipy, int icliprad, int flag)
+cliparc(double cx, double cy, double rad, double start, double end, int iclipx, int iclipy, int icliprad, int flag, bool isgrid)
 {
     double clipx, clipy, cliprad;
     double sclip = 0.0, eclip = 0.0;
@@ -1635,7 +1635,7 @@ cliparc(double cx, double cy, double rad, double start, double end, int iclipx, 
         return (-1);
     if (dist + rad < cliprad) {
         /* The arc is entirely in the boundary. */
-        DevDrawArc((int)cx, (int)cy, (int)rad, start, end-start);
+        DevDrawArc((int)cx, (int)cy, (int)rad, start, end-start, isgrid);
         return (flag?start:end);
     } else if ((dist - rad >= cliprad) || (rad - dist >= cliprad)) {
         /* The arc is outside of the boundary. */
@@ -1704,7 +1704,7 @@ cliparc(double cx, double cy, double rad, double start, double end, int iclipx, 
         if (start > d) {
             SWAP(double, start, d);
         }
-        DevDrawArc((int)cx, (int)cy, (int)rad, start, d-start);
+        DevDrawArc((int)cx, (int)cy, (int)rad, start, d-start, isgrid);
         sclip = start;
         eclip = d;
     }
@@ -1733,7 +1733,7 @@ cliparc(double cx, double cy, double rad, double start, double end, int iclipx, 
     }
 
     if (in) {
-        DevDrawArc((int)cx, (int)cy, (int)rad, l, d-l);
+        DevDrawArc((int)cx, (int)cy, (int)rad, l, d-l, isgrid);
         sclip = l;
         eclip = d;
     }
@@ -1745,7 +1745,7 @@ cliparc(double cx, double cy, double rad, double start, double end, int iclipx, 
 
     /* And from here to the end. */
     if (in) {
-        DevDrawArc((int)cx, (int)cy, (int)rad, d, end-d);
+        DevDrawArc((int)cx, (int)cy, (int)rad, d, end-d, isgrid);
         /* special case */
         if (flag != 2) {
             sclip = d;
