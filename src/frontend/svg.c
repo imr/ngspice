@@ -384,7 +384,7 @@ SVG_DrawLine(int x1, int y1, int x2, int y2, bool isgrid)
 
 
 int
-SVG_Arc(int x0, int y0, int r, double theta, double delta_theta)
+SVG_Arc(int x0, int y0, int r, double theta, double delta_theta, bool isgrid)
 {
     double x1, y1, x2, y2, left;
     SVGdevdep *ddp;
@@ -405,6 +405,12 @@ SVG_Arc(int x0, int y0, int r, double theta, double delta_theta)
     }
 
     ddp = DEVDEP_P(currentgraph);
+    if (isgrid != ddp->isgrid) {
+        closepath(ddp);
+        ddp->isgrid = isgrid;
+    }
+    if (isgrid && ddp->inpath == NOPATH)
+        startpath_width(ddp, SVGgrid_width);
     CHECK_PATH;
 
     x1 = (double) x0 + r * cos(theta);

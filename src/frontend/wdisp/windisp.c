@@ -957,7 +957,7 @@ WIN_DrawLine(int x1, int y1, int x2, int y2, bool isgrid)
 }
 
 
-int WIN_Arc(int x0, int y0, int radius, double theta, double delta_theta)
+int WIN_Arc(int x0, int y0, int radius, double theta, double delta_theta, bool isgrid)
 /*
  * Notes:
  *    Draws an arc of <radius> and center at (x0,y0) beginning at
@@ -1006,7 +1006,10 @@ int WIN_Arc(int x0, int y0, int radius, double theta, double delta_theta)
     ye = (int)(dy0 + (r * sin(theta + delta_theta)));
 
     /* plot */
-    NewPen = CreatePen(LType(wd->ColorIndex), linewidth, currentgraph->colorarray[wd->ColorIndex]);
+    if (isgrid)
+         NewPen = CreatePen(LType(wd->ColorIndex), currentgraph->gridwidth, currentgraph->colorarray[wd->ColorIndex]);
+    else
+         NewPen = CreatePen(LType(wd->ColorIndex), currentgraph->graphwidth, currentgraph->colorarray[wd->ColorIndex]);
     OldPen = SelectObject(wd->hDC, NewPen);
     Arc(wd->hDC, left, yb-top, right, yb-bottom, xs, yb-ys, xe, yb-ye);
     OldPen = SelectObject(wd->hDC, OldPen);

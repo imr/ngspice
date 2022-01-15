@@ -696,7 +696,7 @@ X11_DrawLine(int x1, int y1, int x2, int y2, bool isgrid)
 
 
 int
-X11_Arc(int x0, int y0, int radius, double theta, double delta_theta)
+X11_Arc(int x0, int y0, int radius, double theta, double delta_theta, bool isgrid)
 {
     int t1, t2;
 
@@ -708,10 +708,18 @@ X11_Arc(int x0, int y0, int radius, double theta, double delta_theta)
         t2 = (int) (64 * (180.0 / M_PI) * delta_theta);
         if (t2 == 0)
             return 0;
-        XDrawArc(display, DEVDEP(currentgraph).window, DEVDEP(currentgraph).gc,
+        if (isgrid) {
+            XDrawArc(display, DEVDEP(currentgraph).window, DEVDEP(currentgraph).gridgc,
+                x0 - radius,
+                currentgraph->absolute.height - radius - y0,
+                (Dimension)(2 * radius), (Dimension)(2 * radius), t1, t2);
+        }
+        else {
+            XDrawArc(display, DEVDEP(currentgraph).window, DEVDEP(currentgraph).gc,
                  x0 - radius,
                  currentgraph->absolute.height - radius - y0,
                  (Dimension) (2 * radius), (Dimension) (2 * radius), t1, t2);
+        }
     }
 
     return 0;

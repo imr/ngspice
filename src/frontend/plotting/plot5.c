@@ -123,8 +123,9 @@ Plt5_DrawLine(int x1, int y1, int x2, int y2, bool isgrid)
 }
 
 
-int Plt5_Arc(int xc, int yc, int radius, double theta, double delta_theta)
+int Plt5_Arc(int xc, int yc, int radius, double theta, double delta_theta, bool isgrid)
 {
+    NG_IGNORE(isgrid);
     int x0, y0, x1, y1;
 
     if (delta_theta < 0) {
