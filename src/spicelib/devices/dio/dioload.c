@@ -60,7 +60,7 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
     int Check_dio=0, Check_th;
     int error;
     int SenCond=0;    /* sensitivity condition */
-    double diffcharge, diffchargeSW, deplcharge, deplchargeSW, diffcap, diffcapSW, deplcap, deplcapSW;
+    double diffcharge, deplcharge, deplchargeSW, diffcap, deplcap, deplcapSW;
 
     double deldelTemp, delTemp, Temp;
     double ceqqth=0.0, Ith=0.0, gcTt=0.0, vrs=0.0;
@@ -379,19 +379,19 @@ next1:
 
             if (vd >= -3*vte) { /* limit forward */
 
-                if( (model->DIOforwardKneeCurrent > 0.0) && (cd > 1.0e-18) ) {
+                if( (model->DIOforwardKneeCurrentGiven) && (cd > 1.0e-18) ) {
                     ikf_area_m = here->DIOforwardKneeCurrent;
                     sqrt_ikf = sqrt(cd/ikf_area_m);
                     gd = ((1+sqrt_ikf)*gd - cd*gd/(2*sqrt_ikf*ikf_area_m))/(1+2*sqrt_ikf + cd/ikf_area_m) + ckt->CKTgmin;
                     cd = cd/(1+sqrt_ikf) + ckt->CKTgmin*vd;
                 } else {
-                    gd = gd + ckt->CKTgmin;
-                    cd = cd + ckt->CKTgmin*vd;
+                   gd = gd + ckt->CKTgmin;
+                   cd = cd + ckt->CKTgmin*vd;
                 }
 
             } else {            /* limit reverse */
 
-                if( (model->DIOreverseKneeCurrent > 0.0) && (cd < -1.0e-18) ) {
+                if( (model->DIOreverseKneeCurrentGiven) && (cd < -1.0e-18) ) {
                     ikr_area_m = here->DIOreverseKneeCurrent;
                     sqrt_ikr = sqrt(cd/(-ikr_area_m));
                     gd = ((1+sqrt_ikr)*gd + cd*gd/(2*sqrt_ikr*ikr_area_m))/(1+2*sqrt_ikr - cd/ikr_area_m) + ckt->CKTgmin;
@@ -433,15 +433,13 @@ next1:
                     deplcapSW = czof2SW*(here->DIOtF3SW+model->DIOgradingSWCoeff*vd/here->DIOtJctSWPot);
                 }
 
-                diffcharge = here->DIOtTransitTime*cdb;
-                diffchargeSW = here->DIOtTransitTime*cdsw;
+                diffcharge = here->DIOtTransitTime*cd;
                 *(ckt->CKTstate0 + here->DIOcapCharge) =
-                        diffcharge + diffchargeSW + deplcharge + deplchargeSW;
+                        diffcharge + deplcharge + deplchargeSW;
 
-                diffcap = here->DIOtTransitTime*gdb;
-                diffcapSW = here->DIOtTransitTime*gdsw;
+                diffcap = here->DIOtTransitTime*gd;
 
-                capd = diffcap + diffcapSW + deplcap + deplcapSW + here->DIOcmetal + here->DIOcpoly;
+                capd = diffcap + deplcap + deplcapSW + here->DIOcmetal + here->DIOcpoly;
 
                 here->DIOcap = capd;
 
