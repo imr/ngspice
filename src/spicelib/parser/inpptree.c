@@ -15,6 +15,8 @@ Author: 1987 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "inpptree-parser.h"
 #include "inpptree-parser-y.h"
 
+extern bool ft_stricterror;
+
 #ifdef OLD_BISON
 int PTparse(char **line, INPparseNode **p, CKTcircuit *ckt);
 #endif
@@ -1109,6 +1111,9 @@ INPparseNode *PT_mkfnode(const char *fname, INPparseNode * arg)
 
     if (i == NUM_FUNCS) {
         fprintf(stderr, "Error: no such function '%s'\n", buf);
+        if (ft_stricterror)
+            controlled_exit(EXIT_BAD);
+
         return mkfirst(NULL, arg);
     }
 
@@ -1547,7 +1552,7 @@ void free_tree(INPparseNode *pt)
         break;
 
     default:
-        printf("oops");
+        printf("oops ");
         break;
     }
 
@@ -1666,7 +1671,7 @@ void printTree(INPparseNode * pt)
         break;
 
     default:
-        printf("oops");
+        printf("oops ");
         break;
     }
     return;

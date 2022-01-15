@@ -219,10 +219,18 @@ message(dico_t *dico, const char *fmt, ...)
     va_list ap;
 
     if (dico->srcline >= 0)
-        fprintf
+        if (ft_ngdebug) {
+            fprintf
             (stderr,
-             "Original line no.: %d, new internal line no.: %d:\n",
-             dico->oldline, dico->srcline);
+                "Netlist line no. %d, new internal line no. %d:\n",
+                dico->oldline, dico->srcline);
+        }
+        else {
+            fprintf
+            (stderr,
+                "Netlist line no. %d:\n",
+                dico->oldline);
+        }
 
     va_start(ap, fmt);
     vfprintf(stderr, fmt, ap);
@@ -385,7 +393,7 @@ fetchnumentry(dico_t *dico, char *s, bool *perr)
     if (entry && (entry->tp == NUPA_REAL))
         return entry->vl;
 
-    *perr = message(dico, "Undefined number [%s]\n", s);
+    *perr = message(dico, "Undefined parameter [%s]\n", s);
     return 0.0;
 }
 

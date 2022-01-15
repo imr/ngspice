@@ -1006,9 +1006,12 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                 curr_meas->nextcard = NULL;
                 dd                 = prev_card;
             }
-            /* get temp from deck */
+            /* get temp from deck .temp 125 or .temp=125 */
             if (ciprefix(".temp", dd->line)) {
                 s = skip_ws(dd->line + 5);
+                if (*s == '=') {
+                    s = skip_ws(s + 1);
+                }
                 if (temperature) {
                     txfree(temperature);
                 }
@@ -1020,9 +1023,17 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
 
         /* set temperature, if defined, to new value.
            cp_vset will set the variable "temp" and also set CKTtemp,
-           so we can do it only here because the circuit has to be already there */
+           so we can do it only here because the circuit has to be already existing */
         if (temperature) {
-            temperature_value = atof(temperature);
+            char *endstr;
+            temperature_value = strtod(temperature, &endstr);
+            /* number strngs from numparam may contain trailing spaces */
+            endstr = skip_ws(endstr);
+            /* if endstr contains characters, temperature has not been a pure number string */
+            if (*endstr != '\0') {
+                fprintf(stderr, "Warning: Could not set temperature to %s\n   Set to default 27 C instead.\n", temperature);
+                temperature_value = 27;
+            }
             cp_vset("temp", CP_REAL, &temperature_value);
             txfree(temperature);
         }
@@ -1301,7 +1312,7 @@ inp_dodeck(
                         out_printf("Warning: Model issue on line %d :\n  %.*s ...\n%s\n",
                                    dd->linenum_orig, 72, dd->line, dd->error);
                     else {
-                        out_printf("Error on line %d :\n  %s\n%s\n",
+                        out_printf("Error on line %d or its substitute:\n  %s\n%s\n",
                                    dd->linenum_orig, dd->line, dd->error);
                         have_err = TRUE;
                         return 1;

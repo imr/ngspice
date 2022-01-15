@@ -2154,8 +2154,8 @@ static void inp_chk_for_multi_in_vcvs(struct card *c, int *line_number)
                 tfree(xy_values2[1]);
 
                 *c->line = '*';
-                c = insert_new_line(c, m_instance, (*line_number)++, 0);
-                c = insert_new_line(c, m_model, (*line_number)++, 0);
+                c = insert_new_line(c, m_instance, (*line_number)++, c->linenum_orig);
+                c = insert_new_line(c, m_model, (*line_number)++, c->linenum_orig);
             }
         }
     }
@@ -4997,7 +4997,7 @@ static void inp_reorder_params(
 // iterate through deck and find lines with multiply defined parameters
 //
 // split line up into multiple lines and place those new lines immediately
-// afetr the current multi-param line in the deck
+// after the current multi-param line in the deck
 
 static int inp_split_multi_param_lines(struct card *card, int line_num)
 {
@@ -5063,7 +5063,7 @@ static int inp_split_multi_param_lines(struct card *card, int line_num)
             *(card->line) = '*';
             // insert new param lines immediately after current line
             for (i = 0; i < counter; i++)
-                card = insert_new_line(card, array[i], line_num++, 0);
+                card = insert_new_line(card, array[i], line_num++, card->linenum_orig);
 
             tfree(array);
         }
@@ -5371,6 +5371,7 @@ static void inp_compat(struct card *card)
     for (; card; card = card->nextcard) {
 
         char *curr_line = card->line;
+        int currlinenumber = card->linenum_orig;
 
         /* exclude any command inside .control ... .endc */
         if (ciprefix(".control", curr_line)) {
@@ -5506,7 +5507,7 @@ static void inp_compat(struct card *card)
                         *(card->line) = '*';
                         // insert new lines immediately after current line
                         for (i = 0; i < 2; i++)
-                            card = insert_new_line(card, ckt_array[i], 0, 0);
+                            card = insert_new_line(card, ckt_array[i], (int)i + 1, currlinenumber);
                     }
                     else {
                         ckt_array[3] = tprintf(
@@ -5517,7 +5518,7 @@ static void inp_compat(struct card *card)
                         *(card->line) = '*';
                         // insert new lines immediately after current line
                         for (i = 0; i < 4; i++)
-                            card = insert_new_line(card, ckt_array[i], 0, 0);
+                            card = insert_new_line(card, ckt_array[i], (int)i + 1, currlinenumber);
                     }
                     tfree(expression);
                     tfree(title_tok);
@@ -5562,7 +5563,7 @@ static void inp_compat(struct card *card)
                 *(card->line) = '*';
                 // insert new B source line immediately after current line
                 for (i = 0; i < 2; i++)
-                    card = insert_new_line(card, ckt_array[i], 0, 0);
+                    card = insert_new_line(card, ckt_array[i], (int)i + 1, currlinenumber);
 
                 tfree(title_tok);
                 tfree(node1);
@@ -5707,7 +5708,7 @@ static void inp_compat(struct card *card)
                     *(card->line) = '*';
                     // insert new lines immediately after current line
                     for (i = 0; i < 2; i++)
-                        card = insert_new_line(card, ckt_array[i], 0, 0);
+                        card = insert_new_line(card, ckt_array[i], (int)i + 1, currlinenumber);
                 }
                 else {
                     ckt_array[3] = tprintf(".model xfer_%s pwl(x_array=[%s] y_array=[%s] "
@@ -5716,7 +5717,7 @@ static void inp_compat(struct card *card)
                     *(card->line) = '*';
                     // insert new lines immediately after current line
                     for (i = 0; i < 4; i++)
-                        card = insert_new_line(card, ckt_array[i], 0, 0);
+                        card = insert_new_line(card, ckt_array[i], (int)i + 1, currlinenumber);
                 }
 
                 tfree(expression);
@@ -5773,7 +5774,7 @@ static void inp_compat(struct card *card)
                 *(card->line) = '*';
                 // insert new B source line immediately after current line
                 for (i = 0; i < 2; i++)
-                    card = insert_new_line(card, ckt_array[i], 0, 0);
+                    card = insert_new_line(card, ckt_array[i], (int)i + 1, currlinenumber);
 
                 tfree(title_tok);
                 tfree(m_token);
@@ -5819,7 +5820,7 @@ static void inp_compat(struct card *card)
                 *(card->line) = '*';
                 // insert new three lines immediately after current line
                 for (i = 0; i < 3; i++)
-                    card = insert_new_line(card, ckt_array[i], 0, 0);
+                    card = insert_new_line(card, ckt_array[i], (int)i + 1, currlinenumber);
 
                 tfree(title_tok);
                 tfree(vnamstr);
@@ -5865,7 +5866,7 @@ static void inp_compat(struct card *card)
                 *(card->line) = '*';
                 // insert new three lines immediately after current line
                 for (i = 0; i < 3; i++)
-                    card = insert_new_line(card, ckt_array[i], 0, 0);
+                    card = insert_new_line(card, ckt_array[i], (int)i + 1, currlinenumber);
 
                 tfree(title_tok);
                 tfree(vnamstr);
@@ -5938,11 +5939,11 @@ static void inp_compat(struct card *card)
             // comment out current old R line
             *(card->line) = '*';
             // insert new B source line immediately after current line
-            card = insert_new_line(card, xline, 0, 0);
+            card = insert_new_line(card, xline, 1, currlinenumber);
             if (rnoise) {
-                card = insert_new_line(card, x2line, 0, 0);
-                card = insert_new_line(card, x3line, 0, 0);
-                card = insert_new_line(card, x4line, 0, 0);
+                card = insert_new_line(card, x2line, 2, currlinenumber);
+                card = insert_new_line(card, x3line, 3, currlinenumber);
+                card = insert_new_line(card, x4line, 4, currlinenumber);
             }
 
             tfree(title_tok);
@@ -6019,7 +6020,7 @@ static void inp_compat(struct card *card)
             *(card->line) = '*';
             // insert new B source line immediately after current line
             for (i = 0; i < 3; i++)
-                card = insert_new_line(card, ckt_array[i], 0, 0);
+                card = insert_new_line(card, ckt_array[i], (int)i + 1, currlinenumber);
 
             tfree(title_tok);
             tfree(node1);
@@ -6079,7 +6080,7 @@ static void inp_compat(struct card *card)
             *(card->line) = '*';
             // insert new B source line immediately after current line
             for (i = 0; i < 3; i++)
-                card = insert_new_line(card, ckt_array[i], 0, 0);
+                card = insert_new_line(card, ckt_array[i], (int)i + 1, currlinenumber);
 
             tfree(title_tok);
             tfree(node1);
@@ -6235,7 +6236,7 @@ static void inp_compat(struct card *card)
                 card->line = inp_remove_ws(curr_line);
                 // insert new B source line immediately after current line
                 for (ii = paui; ii < pai; ii++)
-                    card = insert_new_line(card, ckt_array[ii], 0, 0);
+                    card = insert_new_line(card, ckt_array[ii], (int)ii + 1, currlinenumber);
 
                 paui = pai;
             }
@@ -6332,7 +6333,7 @@ static void inp_compat(struct card *card)
                 // *(ckt_array[0]) = '*';
                 // insert new B source line immediately after current line
                 for (ii = paui; ii < pai; ii++)
-                    card = insert_new_line(card, ckt_array[ii], 0, 0);
+                    card = insert_new_line(card, ckt_array[ii], (int)ii + 1, currlinenumber);
 
                 paui = pai;
                 // continue;
@@ -6779,6 +6780,7 @@ static void inp_add_series_resistor(struct card *deck)
 
         if (ciprefix("l", cut_line)) {
 
+            int currlinenumber = card->linenum_orig;
             char *title_tok = gettok(&cut_line);
             char *node1 = gettok(&cut_line);
             char *node2 = gettok(&cut_line);
@@ -6793,8 +6795,8 @@ static void inp_add_series_resistor(struct card *deck)
             *(card->line) = '*';
 
             // insert new new L and R lines immediately after current line
-            card = insert_new_line(card, newL, 0, 0);
-            card = insert_new_line(card, newR, 0, 0);
+            card = insert_new_line(card, newL, 1, currlinenumber);
+            card = insert_new_line(card, newR, 2, currlinenumber);
 
             tfree(title_tok);
             tfree(node1);
@@ -6830,7 +6832,7 @@ static void subckt_params_to_param(struct card *card)
             /* card->line ends with subcircuit name */
             cut_line[-1] = '\0';
             /* insert new_line after card->line */
-            insert_new_line(card, new_line, card->linenum + 1, 0);
+            insert_new_line(card, new_line, card->linenum + 1, card->linenum_orig);
         }
     }
 }
@@ -6948,7 +6950,7 @@ static void inp_dot_if(struct card *card)
             char *firstbr = strchr(curr_line, '(');
             char *lastbr = strrchr(curr_line, ')');
             if ((!firstbr) || (!lastbr)) {
-                fprintf(cp_err, "Error in netlist line %d\n",
+                fprintf(cp_err, "Error in netlist line no. %d\n",
                         card->linenum_orig);
                 fprintf(cp_err, "   Bad syntax: %s\n\n", curr_line);
                 controlled_exit(EXIT_BAD);
@@ -7921,7 +7923,7 @@ static void inp_meas_current(struct card *deck)
                     new_line = tprintf("%s %s %s_vmeas_%d 0",
                             new_tok, node1, node1, sn);
                     /* insert new_line after card->line */
-                    insert_new_line(card, new_line, card->linenum + 1, 0);
+                    insert_new_line(card, new_line, card->linenum + 1, card->linenum_orig);
                 }
                 sn++;
                 tfree(new_tok);
@@ -7975,7 +7977,7 @@ static void replace_table(struct card *startcard)
                     tfree(begline);
                     tfree(card->line);
                     card->line = cut_line = neweline;
-                    insert_new_line(card, newbline, 0, 0);
+                    insert_new_line(card, newbline, 0, card->linenum_orig);
                     /* read next TABLE function in cut_line */
                     ftablebeg = strstr(cut_line, "table(");
                 }
@@ -8913,9 +8915,21 @@ static struct card *pspice_compat(struct card *oldcard)
         if (ciprefix("s", cut_line)) {
             /* check for the model name */
             int i;
+            bool good = TRUE;
             char *stoks[6];
-            for (i = 0; i < 6; i++)
+            for (i = 0; i < 6; i++) {
                 stoks[i] = gettok_node(&cut_line);
+                if (!stoks[i]) {
+                    fprintf(stderr, "Error: Bad syntax in line:\n    %s\n", card->line);
+                    good = FALSE;
+                    break;
+                }
+            }
+            if (!good) {
+                for (i = 0; i < 6; i++)
+                    tfree(stoks[i]);
+                continue;
+            }
             /* rewrite s line and replace it if a model is found */
             if ((nesting > 0) &&
                     find_a_model(modelsfound, stoks[5], subcktline->line)) {
