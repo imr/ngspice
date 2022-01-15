@@ -15,10 +15,15 @@ V2 out 0 dc 0 ac 0 portnum 2 z0 50 ; pwr 0.002 freq 3.2e9
 .control
 run
 display
-set xbrushwidth=2
+set xbrushwidth=5
+set xgridwidth=2
 plot mag(S_1_1) mag(S_1_2) mag(S_2_1) mag(S_2_2)
 plot S_1_1 smithgrid
 plot S_1_2 polar
+set hcopydevtype = svg
+hardcopy plot_1.svg  S_1_2 polar
+hardcopy plot_2.svg  S_1_1 smithgrid
+
 .endc
 
 .end
