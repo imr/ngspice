@@ -358,13 +358,19 @@ nupa_done(void)
         bool is_interactive = FALSE;
         if (cp_getvar("interactive", CP_BOOL, NULL, 0))
             is_interactive = TRUE;
-        printf(" Copies=%d Evals=%d Placeholders=%ld Symbols=%d Errors=%d\n",
-               linecountS, evalcountS, placeholder, dictsize, nerrors);
+        if (ft_ngdebug)
+            printf(" Copies=%d Evals=%d Placeholders=%ld Symbols=%d Errors=%d\n",
+                linecountS, evalcountS, placeholder, dictsize, nerrors);
         /* debug: ask if spice run really wanted */
         if (ft_batchmode)
             controlled_exit(EXIT_FAILURE);
         if (!is_interactive) {
-            fprintf(cp_err, "Numparam expansion errors: Problem with input file.\n");
+            if (ft_ngdebug) {
+                fprintf(cp_err, "Numparam expansion errors: Problem with the input netlist.\n");
+            }
+            else {
+                fprintf(cp_err, "    Please check your input netlist.\n");
+            }
             controlled_exit(EXIT_FAILURE);
         }
         for (;;) {

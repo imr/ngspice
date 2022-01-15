@@ -1547,7 +1547,7 @@ void free_tree(INPparseNode *pt)
         break;
 
     default:
-        printf("oops");
+        printf("oops ");
         break;
     }
 
@@ -1666,7 +1666,7 @@ void printTree(INPparseNode * pt)
         break;
 
     default:
-        printf("oops");
+        printf("oops ");
         break;
     }
     return;
