@@ -1517,7 +1517,7 @@ get_measure2(
     char errbuf[100];
     char *mAnalysis = NULL;     // analysis type
     char *mName = NULL;         // name given to the measured output
-    char *mFunction = "";
+    char *mFunction = NULL;
     int precision;              // measurement precision
     ANALYSIS_TYPE_T mFunctionType = AT_UNKNOWN;
     int wl_cnt;
@@ -1579,6 +1579,7 @@ get_measure2(
                 tfree(mAnalysis);
                 return MEASUREMENT_FAILURE;
             }
+            mFunction = copy(words->wl_word);
             break;
         }
         default:
@@ -1604,6 +1605,7 @@ get_measure2(
         printf("\tinvalid num params\n");
         tfree(mName);
         tfree(mAnalysis);
+        tfree(mFunction);
         return MEASUREMENT_FAILURE;
     }
 
@@ -1702,6 +1704,7 @@ err_ret1:
         tfree(measTarg);
         tfree(measTrig->m_vec);
         tfree(measTrig);
+        tfree(mFunction);
 
         return ret_val;
     }
@@ -1774,6 +1777,7 @@ err_ret2:
         tfree(meas);
         tfree(measFind->m_vec);
         tfree(measFind);
+        tfree(mFunction);
 
         return ret_val;
     }
@@ -1811,6 +1815,7 @@ err_ret3:
         tfree(meas->m_vec);
         tfree(meas->m_vec2);
         tfree(meas);
+        tfree(mFunction);
 
         return ret_val;
     }
@@ -1854,6 +1859,7 @@ err_ret4:
         tfree(mName);
         tfree(meas->m_vec);
         tfree(meas);
+        tfree(mFunction);
 
         return ret_val;
 
@@ -1898,6 +1904,7 @@ err_ret5:
         tfree(mName);
         tfree(meas->m_vec);
         tfree(meas);
+        tfree(mFunction);
 
         return ret_val;
     }
@@ -1953,6 +1960,7 @@ err_ret6:
         tfree(mName);
         tfree(measTrig->m_vec);
         tfree(measTrig);
+        tfree(mFunction);
 
         return ret_val;
     }
@@ -2001,6 +2009,7 @@ err_ret7:
         tfree(mName);
         tfree(measTrig->m_vec);
         tfree(measTrig);
+        tfree(mFunction);
 
         return ret_val;
     }
@@ -2011,9 +2020,9 @@ err_ret7:
     case AT_ERR2:
     case AT_ERR3:
     {
-        printf("\tmeasure '%s'  failed\n", mName);
-        printf("Error: measure  %s  :\n", mName);
-        printf("\tfunction '%s' currently not supported\n", mFunction);
+        printf("\nError: measure  %s failed:\n", mName);
+        printf("\tfunction '%s' currently not supported\n\n", mFunction);
+        tfree(mFunction);
         break;
     }
 
