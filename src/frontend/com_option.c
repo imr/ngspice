@@ -61,9 +61,11 @@ com_option(wordlist *wl)
         printf("pivrel      (pivot)   = %g\n", circuit->CKTpivotRelTol);
 
         printf("\nIteration limits:\n");
-        printf("ITL1 = %d\n", circuit->CKTdcMaxIter);
-        printf("ITL2 = %d\n", circuit->CKTdcTrcvMaxIter);
-        printf("ITL4 = %d\n", circuit->CKTtranMaxIter);
+        printf("itl1 (DC iterations) = %d\n", circuit->CKTdcMaxIter);
+        printf("itl2 (DC transfer curve iterations) = %d\n", circuit->CKTdcTrcvMaxIter);
+        printf("itl4 (transient iterations) = %d\n", circuit->CKTtranMaxIter);
+        printf("gminsteps = %d\n", circuit->CKTnumGminSteps);
+        printf("srcsteps = %d\n", circuit->CKTnumSrcSteps);
 
         printf("\nTruncation error correction:\n");
         printf("trtol = %f\n", circuit->CKTtrtol);
