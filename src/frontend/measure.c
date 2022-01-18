@@ -216,7 +216,7 @@ do_measure(
 )
 {
     struct card *meas_card, *meas_results = NULL, *end = NULL, *newcard;
-    char        *line, *an_name, *an_type, *resname, *meastype, *str_ptr, out_line[1000];
+    char        *line, *an_name, *an_type, *resname, *meastype, *str_ptr, out_line[1000], out_file[1000];
     int         ok = 0;
     int         fail;
     int         num_failed = 0;
@@ -225,6 +225,7 @@ do_measure(
     bool        measures_passed;
     wordlist    *measure_word_list;
     int         precision = measure_get_precision();
+    FILE       *measout = NULL;
 
 #ifdef HAS_PROGREP
     if (!chk_only)
@@ -250,6 +251,12 @@ do_measure(
         fprintf(cp_err, "  Option autostop is not available, ignored!\n\n");
         cp_remvar("autostop");
         return (FALSE);
+    }
+
+    if (cp_getvar("measoutfile", CP_STRING, out_file, sizeof(out_file))) {
+        measout = fopen(out_file, "w");
+        if (!measout)
+            fprintf(stderr, " Warning: Could not open file %s\n", out_file);
     }
 
     /* Evaluating the linked list of .meas cards, assembled from the input deck
@@ -293,6 +300,23 @@ do_measure(
 
             if (!chk_only && strcmp(an_type, "tran") == 0) {
                 fprintf(stdout, "\n  Measurements for Transient Analysis\n\n");
+                if (measout)
+                    fprintf(measout, "\n  Measurements for Transient Analysis\n\n");
+            }
+            else if (!chk_only && strcmp(an_type, "dc") == 0) {
+                fprintf(stdout, "\n  Measurements for DC Analysis\n\n");
+                if (measout)
+                    fprintf(measout, "\n  Measurements for DC Analysis\n\n");
+            }
+            else if (!chk_only && strcmp(an_type, "ac") == 0) {
+                fprintf(stdout, "\n  Measurements for AC Analysis\n\n");
+                if (measout)
+                    fprintf(measout, "\n  Measurements for AC Analysis\n\n");
+            }
+            else if (!chk_only && strcmp(an_type, "sp") == 0) {
+                fprintf(stdout, "\n  Measurements for SP Analysis\n\n");
+                if (measout)
+                    fprintf(measout, "\n  Measurements for SP Analysis\n\n");
             }
         }
 
@@ -395,8 +419,11 @@ do_measure(
 
         if (strncmp(meastype, "param", 5) != 0 && strncmp(meastype, "expr", 4) != 0) {
 
-            if (!chk_only)
+            if (!chk_only) {
                 fprintf(stdout, "%s", newcard->line);
+                if (measout)
+                    fprintf(measout, "%s", newcard->line);
+            }
             end     = newcard;
             newcard = newcard->nextcard;
 
@@ -409,8 +436,11 @@ do_measure(
             continue;
         }
 
-        if (!chk_only)
+        if (!chk_only) {
             fprintf(stdout, "%-20s=", resname);
+            if (measout)
+                fprintf(measout, "%-20s=", resname);
+        }
 
         if (!chk_only) {
             ok = nupa_eval(meas_card);
@@ -418,16 +448,25 @@ do_measure(
             if (ok) {
                 str_ptr = strstr(meas_card->line, meastype);
                 if (!get_double_value(&str_ptr, meastype, &result, chk_only)) {
-                    if (!chk_only)
+                    if (!chk_only) {
                         fprintf(stdout, "   failed\n");
+                        if (measout)
+                            fprintf(measout, "   failed\n");
+                    }
                 } else {
-                    if (!chk_only)
+                    if (!chk_only) {
                         fprintf(stdout, "  %.*e\n", precision, result);
+                        if (measout)
+                            fprintf(measout, "  %.*e\n", precision, result);
+                    }
                     nupa_add_param(resname, result);
                 }
             } else {
-                if (!chk_only)
+                if (!chk_only) {
                     fprintf(stdout, "   failed\n");
+                    if (measout)
+                        fprintf(measout, "   failed\n");
+                }
             }
         }
         txfree(an_type);
@@ -435,13 +474,19 @@ do_measure(
         txfree(meastype);
     }
 
-    if (!chk_only)
+    if (!chk_only) {
         fprintf(stdout, "\n");
+        if (measout)
+            fprintf(measout, "\n");
+    }
 
     txfree(an_name);
 
     fflush(stdout);
-
+    if (measout) {
+        fclose(measout);
+        measout = NULL;
+    }
     return(measures_passed);
 }
 
