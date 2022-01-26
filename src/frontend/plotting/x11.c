@@ -572,8 +572,9 @@ X11_NewViewport(GRAPH *graph)
     DEVDEP(graph).window = XtWindow(DEVDEP(graph).view);
     DEVDEP(graph).isopen = 0;
     w_attrs.bit_gravity = ForgetGravity;
-    XChangeWindowAttributes(display, DEVDEP(graph).window, CWBitGravity,
-                            &w_attrs);
+    w_attrs.backing_store = Always;
+    XChangeWindowAttributes(display, DEVDEP(graph).window,
+                            CWBitGravity | CWBackingStore, &w_attrs);
 
     int linewidth, gridlinewidth;
     /* If we had a previous graph, e.g. after zooming, we
