@@ -164,7 +164,14 @@ void EVTaccept(
         /* Reset the modified flag */
         node_data->modified[index] = MIF_FALSE;
 
-        if (node_table[index]->save) {
+        /* Optionally store node values for later examination.
+         * The test of CKTtime here is copied from dctran.c.
+         * CKTinitTime is from the tstart parameter of the "tran"
+         * command or card.
+         */
+
+        if (node_table[index]->save && ckt->CKTtime >= ckt->CKTinitTime &&
+            (ckt->CKTtime > 0 || !(ckt->CKTmode & MODEUIC))) {
             /* Update last_step for this index */
             node_data->last_step[index] = node_data->tail[index];
         } else {
