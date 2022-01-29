@@ -40,8 +40,9 @@ typedef struct {      /* Extra window data */
     HDC   hDC;        /* Device context of window */
     RECT  Area;       /* plot area */
     int   ColorIndex; /* Index of actual color */
-    int   PaintFlag;  /* 1 with WM_PAINT */
+    int   PaintFlag;  /* WM_PAINT redraw active */
     int   FirstFlag;  /* 1 before first update */
+    int   PaintRequested;
 } tWindowData;
 typedef tWindowData *tpWindowData;       /* pointer to it */
 
@@ -449,6 +450,8 @@ LRESULT CALLBACK PlotWindowProc(HWND hwnd, UINT uMsg,
     char buf2[128];
     char *t;
     HDC hdc;
+    GRAPH *gr;
+    tpWindowData wd;
     HPEN OldPen;
     HPEN NewPen;
 
@@ -470,7 +473,7 @@ LRESULT CALLBACK PlotWindowProc(HWND hwnd, UINT uMsg,
 
     case WM_LBUTTONDOWN:
     {
-        GRAPH *gr = pGraph(hwnd);
+        gr = pGraph(hwnd);
         xep = x0 = LOWORD (lParam);
         yep = y0 = HIWORD (lParam);
         /* generate x,y data from grid coordinates */
@@ -483,7 +486,7 @@ LRESULT CALLBACK PlotWindowProc(HWND hwnd, UINT uMsg,
         /* left mouse button: connect coordinate pair by dashed pair of x, y lines */
         if (wParam & MK_LBUTTON) {
             hdc = GetDC(hwnd);
-            GRAPH* gr = pGraph(hwnd);
+            gr = pGraph(hwnd);
             isblack = get_black(gr);
             if (isblack) {
                 prevmix = SetROP2(hdc, R2_XORPEN);
@@ -517,7 +520,7 @@ LRESULT CALLBACK PlotWindowProc(HWND hwnd, UINT uMsg,
         /* right mouse button: create white (black) dashed box */
         else if (wParam & MK_RBUTTON) {
             hdc = GetDC (hwnd);
-            GRAPH* gr = pGraph(hwnd);
+            gr = pGraph(hwnd);
             isblack = get_black(gr);
             if (isblack)
                 prevmix = SetROP2(hdc, R2_XORPEN);
@@ -557,7 +560,7 @@ LRESULT CALLBACK PlotWindowProc(HWND hwnd, UINT uMsg,
     /* calculate and print out the data */
     case WM_LBUTTONUP:
     {
-        GRAPH *gr = pGraph(hwnd);
+        gr = pGraph(hwnd);
         xe = LOWORD (lParam);
         ye = HIWORD (lParam);
         WIN_ScreentoData(gr, xe, ye, &fxe, &fye);
@@ -599,7 +602,7 @@ LRESULT CALLBACK PlotWindowProc(HWND hwnd, UINT uMsg,
     /* get starting coordinates upon right mouse button down */
     case WM_RBUTTONDOWN:
     {
-        GRAPH *gr = pGraph(hwnd);
+        gr = pGraph(hwnd);
         x0 = xep = LOWORD (lParam);
         y0 = yep = HIWORD (lParam);
         WIN_ScreentoData(gr, x0, y0, &fx0, &fy0);
@@ -611,7 +614,7 @@ LRESULT CALLBACK PlotWindowProc(HWND hwnd, UINT uMsg,
     /* start plot loop with argument buf   */
     case WM_RBUTTONUP:
     {
-        GRAPH *gr = pGraph(hwnd);
+        gr = pGraph(hwnd);
         xe = LOWORD (lParam);
         ye = HIWORD (lParam);
         /* do nothing if mouse curser is not moved in both x and y */
@@ -645,13 +648,12 @@ LRESULT CALLBACK PlotWindowProc(HWND hwnd, UINT uMsg,
 
     case WM_CLOSE: /* close window */
     {
-        GRAPH *g = pGraph(hwnd);
-
-        if (g) {
-            /* if g equals currentgraph, reset currentgraph. */
-            if (g == currentgraph)
+        gr = pGraph(hwnd);
+        if (gr) {
+            /* if gr equals currentgraph, reset currentgraph. */
+            if (gr == currentgraph)
                 currentgraph = NULL;
-            DestroyGraph(g->graphid);
+            DestroyGraph(gr->graphid);
         }
     }
     goto WIN_DEFAULT;
@@ -659,24 +661,22 @@ LRESULT CALLBACK PlotWindowProc(HWND hwnd, UINT uMsg,
     case WM_PAINT: /* replot window (e.g. after Resize) */
     {
         PAINTSTRUCT ps;
-        GRAPH *g;
-        tpWindowData wd;
         HDC saveDC;    /* the DC from BeginPaint is different... */
         HDC newDC;
 
         /* has to happen */
         newDC = BeginPaint(hwnd, &ps);
-        g = pGraph(hwnd);
-        if (g) {
-            wd = pWindowData(g);
+        gr = pGraph(hwnd);
+        if (gr) {
+            wd = pWindowData(gr);
             if (wd) {
                 if (!wd->PaintFlag && !wd->FirstFlag) {
                     /* avoid recursive call */
-                    wd->PaintFlag = 1;
+                    wd->PaintFlag++;
                     /* get window sizes */
                     GetClientRect(hwnd, &(wd->Area));
-                    g->absolute.width  = wd->Area.right;
-                    g->absolute.height = wd->Area.bottom;
+                    gr->absolute.width  = wd->Area.right;
+                    gr->absolute.height = wd->Area.bottom;
                     /* switch DC */
                     saveDC = wd->hDC;
                     wd->hDC = newDC;
@@ -684,15 +684,17 @@ LRESULT CALLBACK PlotWindowProc(HWND hwnd, UINT uMsg,
                     /* plot anew */
                     {
                         GRAPH *tmp = currentgraph;
-                        currentgraph = g;
-                        gr_resize(g);
+                        currentgraph = gr;
+                        gr_resize(gr);
                         currentgraph = tmp;
                     }
 
                     /* switch DC */
                     wd->hDC = saveDC;
                     /* ready */
-                    wd->PaintFlag = 0;
+                    --wd->PaintFlag;
+                } else {
+                    wd->PaintRequested = 1;
                 }
             }
         }
@@ -701,10 +703,33 @@ LRESULT CALLBACK PlotWindowProc(HWND hwnd, UINT uMsg,
     }
     return 0;
 
+    /* Skip painting during move or resize. */
+
+    case WM_ENTERSIZEMOVE:
+        gr = pGraph(hwnd);
+        if (gr) {
+            wd = pWindowData(gr);
+            if (wd) {
+                wd->PaintFlag++;         // Do not repaint while unstable.
+                wd->PaintRequested = 0;  // Detect ignored paints.
+            }
+        }
+        return 0;
+    case WM_EXITSIZEMOVE:
+        gr = pGraph(hwnd);
+        if (gr) {
+            wd = pWindowData(gr);
+            if (wd)
+                wd->PaintFlag--;
+            if (wd->PaintRequested)
+                InvalidateRect (hwnd, NULL, TRUE);
+        }
+        return 0;
+
     default:
     WIN_DEFAULT:
 #ifdef EXT_ASC
-        return DefWindowProc(hwnd, uMsg, wParam, lParam);
+       return DefWindowProc(hwnd, uMsg, wParam, lParam);
 #else
        return DefWindowProcW( hwnd, uMsg, wParam, lParam);
 #endif
