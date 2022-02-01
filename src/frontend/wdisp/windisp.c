@@ -437,13 +437,109 @@ static bool get_black(GRAPH* graph)
         return TRUE;
 }
 
+/* Rubber-band drawing state. Static as the pointer is in only one window.*/
+
+static struct {
+    enum rb_state {Idle, Left, Right} state;            // What is happening
+    int                               x0, y0, xep, yep; // Box corners
+    double                            fx0, fy0;         // Saved position
+
+    /* Temporary handles, etc for active window. */
+
+    HWND                              hwnd;
+    HDC                               hdc;
+    GRAPH                            *gr;
+    HPEN                              OldPen;
+    int                               prevmix;          // Saved ROP2
+} RB;
+
+/* Draw lines.  If RB.xep, RB.yep have not been updated this will erase. */
+
+static void RB_draw(void)
+{
+    MoveToEx(RB.hdc, RB.x0, RB.y0, NULL);
+    LineTo(RB.hdc, RB.x0, RB.yep);
+    LineTo(RB.hdc, RB.xep, RB.yep);
+    if (RB.state == Right) {
+        LineTo(RB.hdc, RB.xep, RB.y0);
+        LineTo(RB.hdc, RB.x0, RB.y0);
+    }
+}
+
+/* Mouse button down. */
+
+static void RB_down(enum rb_state which, HWND hwnd, LPARAM lParam)
+{
+    HPEN            NewPen;
+    TRACKMOUSEEVENT tme;
+
+    if (RB.state != Idle) {
+        if (hwnd != RB.hwnd) {
+            /* This should not happen! */
+
+            RB_draw(); // Erases
+        } else {
+            return;
+        }
+    }
+    RB.state = which;
+    RB.xep = RB.x0 = LOWORD(lParam);
+    RB.yep = RB.y0 = HIWORD(lParam);
+    RB.gr = pGraph(hwnd);
+    WIN_ScreentoData(RB.gr, RB.x0, RB.y0, &RB.fx0, &RB.fy0);
+
+    /* Set-up drawing. */
+
+    RB.hwnd = hwnd;
+    RB.hdc = GetDC(hwnd);
+    if (get_black(RB.gr))
+        RB.prevmix = SetROP2(RB.hdc, R2_XORPEN);
+    else
+        RB.prevmix = SetROP2(RB.hdc, R2_NOTXORPEN);
+
+    /* Create white dashed pen */
+
+    NewPen = CreatePen(LType(12), 0, RB.gr->colorarray[1]);
+    RB.OldPen = SelectObject(RB.hdc, NewPen);
+
+    /* Request a WM_MOUSELEAVE message when the pointer leaves the window. */
+
+    tme.cbSize = sizeof (TRACKMOUSEEVENT);
+    tme.dwFlags = TME_LEAVE;
+    tme.hwndTrack = hwnd;
+    tme.dwHoverTime = HOVER_DEFAULT;
+    TrackMouseEvent(&tme);
+}
+
+/* Respond to mouse dragging. */
+static void RB_drag(enum rb_state which, LPARAM lParam)
+{
+    if (which != RB.state)
+        return;
+    RB_draw();                  // Erases.
+    RB.xep = LOWORD(lParam);
+    RB.yep = HIWORD(lParam);
+    RB_draw();                  // Draw new lines.
+}
+
+static void RB_end(void)
+{
+    RB_draw();                  // Erases.
+    RB.state = Idle;
+
+    /* Restore standard color mix. */
+
+    SetROP2(RB.hdc, RB.prevmix);
+    DeleteObject(SelectObject(RB.hdc, RB.OldPen));
+    ReleaseDC(RB.hwnd, RB.hdc);
+}
+
+
 /* window procedure */
 LRESULT CALLBACK PlotWindowProc(HWND hwnd, UINT uMsg,
         WPARAM wParam, LPARAM lParam)
 {
-    static int x0, y0, xep, yep;
-    int xe, ye, prevmix;
-    static double fx0, fy0;
+    int xe, ye;
     double fxe, fye;
     double angle;
     char buf[BSIZE_SP];
@@ -452,8 +548,6 @@ LRESULT CALLBACK PlotWindowProc(HWND hwnd, UINT uMsg,
     HDC hdc;
     GRAPH *gr;
     tpWindowData wd;
-    HPEN OldPen;
-    HPEN NewPen;
 
     switch (uMsg) {
     case WM_SYSCOMMAND:
@@ -472,126 +566,64 @@ LRESULT CALLBACK PlotWindowProc(HWND hwnd, UINT uMsg,
     goto WIN_DEFAULT;
 
     case WM_LBUTTONDOWN:
-    {
-        gr = pGraph(hwnd);
-        xep = x0 = LOWORD (lParam);
-        yep = y0 = HIWORD (lParam);
-        /* generate x,y data from grid coordinates */
-        WIN_ScreentoData(gr, x0, y0, &fx0, &fy0);
-    }
-    goto WIN_DEFAULT;
+        RB_down(Left, hwnd, lParam);
+        goto WIN_DEFAULT;
 
     case WM_MOUSEMOVE:
-    {
-        /* left mouse button: connect coordinate pair by dashed pair of x, y lines */
         if (wParam & MK_LBUTTON) {
-            hdc = GetDC(hwnd);
-            gr = pGraph(hwnd);
-            isblack = get_black(gr);
-            if (isblack) {
-                prevmix = SetROP2(hdc, R2_XORPEN);
-            }
-            else {
-                prevmix = SetROP2(hdc, R2_NOTXORPEN);
-            }
-            /* Create white dashed pen */
-            NewPen = CreatePen(LType(12), 0, gr->colorarray[1]);
-            OldPen = SelectObject(hdc, NewPen);
-            /* draw lines with previous coodinates -> delete old line because of XOR */
-            MoveToEx (hdc, x0, y0, NULL);
-            LineTo   (hdc, x0, yep);
-            LineTo   (hdc, xep, yep);
-            /* get new end point */
-            xe = LOWORD (lParam);
-            ye = HIWORD (lParam);
-            /* draw new lines */
-            MoveToEx (hdc, x0, y0, NULL);
-            LineTo   (hdc, x0, ye);
-            LineTo   (hdc, xe, ye);
-            /* restore standard color mix */
-            SetROP2(hdc, prevmix);
-            OldPen = SelectObject(hdc, OldPen);
-            DeleteObject(NewPen);
-            ReleaseDC (hwnd, hdc);
-            /* restore new to previous coordinates */
-            yep = ye;
-            xep = xe;
+            /* Left mouse button: connect coordinate pair
+             * by dashed pair of x, y lines.
+             */
+
+            RB_drag(Left, lParam);
         }
-        /* right mouse button: create white (black) dashed box */
-        else if (wParam & MK_RBUTTON) {
-            hdc = GetDC (hwnd);
-            gr = pGraph(hwnd);
-            isblack = get_black(gr);
-            if (isblack)
-                prevmix = SetROP2(hdc, R2_XORPEN);
-            else
-                prevmix = SetROP2(hdc, R2_NOTXORPEN);
-            /* Create white (black) dashed pen */
-            NewPen = CreatePen(LType(12), 0, gr->colorarray[1]);
-            OldPen = SelectObject(hdc, NewPen);
-            /* draw box with previous coodinates -> delete old lines because of XOR */
-            MoveToEx (hdc, x0, y0, NULL);
-            LineTo   (hdc, x0, yep);
-            LineTo   (hdc, xep, yep);
-            LineTo   (hdc, xep, y0);
-            LineTo   (hdc, x0, y0);
-            /* get new end point */
-            xe = LOWORD (lParam);
-            ye = HIWORD (lParam);
-            /* draw new box */
-            MoveToEx (hdc, x0, y0, NULL);
-            LineTo   (hdc, x0, ye);
-            LineTo   (hdc, xe, ye);
-            LineTo   (hdc, xe, y0);
-            LineTo   (hdc, x0, y0);
-            /* restore standard color mix */
-            SetROP2(hdc, prevmix);
-            OldPen = SelectObject(hdc, OldPen);
-            DeleteObject(NewPen);
-            ReleaseDC (hwnd, hdc);
-            /* restore new to previous coordinates */
-            yep = ye;
-            xep = xe;
+        if (wParam & MK_RBUTTON) {
+            /* Right mouse button: create dashed box. */
+
+            RB_drag(Right, lParam);
         }
-    }
-    goto WIN_DEFAULT;
+        goto WIN_DEFAULT;
 
     /* get final coordinates upon left mouse up */
     /* calculate and print out the data */
     case WM_LBUTTONUP:
     {
+        if (RB.state != Left)
+            goto WIN_DEFAULT;
+        RB_end();
         gr = pGraph(hwnd);
         xe = LOWORD (lParam);
         ye = HIWORD (lParam);
         WIN_ScreentoData(gr, xe, ye, &fxe, &fye);
 
         /* print it out */
-        if (xe == x0 && ye == y0) {     /* only one location */
-            fprintf(stdout, "\nx0 = %g, y0 = %g\n", fx0, fy0);
+        if (abs(xe - RB.x0) < 2 && abs(ye - RB.y0) < 2) { // Not moved much.
+            fprintf(stdout, "\nx0 = %g, y0 = %g\n", RB.fx0, RB.fy0);
             if (gr->grid.gridtype == GRID_POLAR ||
                 gr->grid.gridtype == GRID_SMITH ||
                 gr->grid.gridtype == GRID_SMITHGRID)
             {
-                angle = RAD_TO_DEG * atan2(fy0, fx0);
+                angle = RAD_TO_DEG * atan2(RB.fy0, RB.fx0);
                 fprintf(stdout, "r0 = %g, a0 = %g\n",
-                        hypot(fx0, fy0),
+                        hypot(RB.fx0, RB.fy0),
                         (angle > 0) ? angle : 360.0 + angle);
             }
         }
         else  {
             /* need to print info about two points */
             /* trigger re-plotting the graph to get rid of the coordinate rectangle */
-            InvalidateRect (hwnd, NULL, TRUE);
+            //InvalidateRect (hwnd, NULL, TRUE);
             fprintf(stdout, "\nx0 = %g, y0 = %g    x1 = %g, y1 = %g\n",
-                    fx0, fy0, fxe, fye);
-            fprintf(stdout, "dx = %g, dy = %g\n", fxe-fx0, fye - fy0);
-            if (xe != x0 && ye != y0) {
+                    RB.fx0, RB.fy0, fxe, fye);
+            fprintf(stdout, "dx = %g, dy = %g\n", fxe - RB.fx0, fye - RB.fy0);
+            if (xe != RB.x0 && ye != RB.y0) {
                 /* add slope info if both dx and dy are zero, */
                 /* because otherwise either dy/dx or dx/dy is zero, */
                 /* which is uninteresting */
 
                 fprintf(stdout, "dy/dx = %g    dx/dy = %g\n",
-                        (fye - fy0) / (fxe - fx0), (fxe - fx0) / (fye - fy0));
+                        (fye - RB.fy0) / (fxe - RB.fx0),
+                        (fxe - RB.fx0) / (fye - RB.fy0));
             }
         }
         UpdateMainText();
@@ -601,29 +633,29 @@ LRESULT CALLBACK PlotWindowProc(HWND hwnd, UINT uMsg,
 
     /* get starting coordinates upon right mouse button down */
     case WM_RBUTTONDOWN:
-    {
-        gr = pGraph(hwnd);
-        x0 = xep = LOWORD (lParam);
-        y0 = yep = HIWORD (lParam);
-        WIN_ScreentoData(gr, x0, y0, &fx0, &fy0);
-    }
-    goto WIN_DEFAULT;
+        RB_down(Right, hwnd, lParam);
+        goto WIN_DEFAULT;
 
     /* get final coordinates upon right mouse button up */
     /* copy xlimit, ylimit command into buf */
     /* start plot loop with argument buf   */
     case WM_RBUTTONUP:
     {
+        if (RB.state != Right) {
+            SetFocus(swString);
+            goto WIN_DEFAULT;
+        }
+        RB_end();
         gr = pGraph(hwnd);
         xe = LOWORD (lParam);
         ye = HIWORD (lParam);
-        /* do nothing if mouse curser is not moved in both x and y */
-        if ((xe == x0) || (ye == y0)) {
+        /* do nothing if mouse cursor is not moved in both x and y */
+        if ((xe == RB.x0) || (ye == RB.y0)) {
             SetFocus(swString);
             goto WIN_DEFAULT;
         }
         /* trigger re-plotting the graph to get rid of the coordinate rectangle */
-        InvalidateRect(hwnd, NULL, TRUE);
+        //InvalidateRect(hwnd, NULL, TRUE);
 
         WIN_ScreentoData(gr, xe, ye, &fxe, &fye);
 
@@ -633,18 +665,25 @@ LRESULT CALLBACK PlotWindowProc(HWND hwnd, UINT uMsg,
 
         if (!eq(plot_cur->pl_typename, buf2)) {
             (void) sprintf(buf,
-//       "setplot %s; %s xlimit %e %e ylimit %e %e; setplot $curplot\n",
-                           "setplot %s; %s xlimit %e %e ylimit %e %e sgraphid %d\n",
-                           buf2, gr->commandline, fx0, fxe, fy0, fye, gr->graphid);
+                           "setplot %s; %s xlimit %e %e ylimit %e %e "
+                           "sgraphid %d\n",
+                           buf2, gr->commandline,
+                           RB.fx0, fxe, RB.fy0, fye, gr->graphid);
         } else {
             (void) sprintf(buf, "%s xlimit %e %e ylimit %e %e sgraphid %d\n",
-                           gr->commandline, fx0, fxe, fy0, fye, gr->graphid);
+                           gr->commandline,
+                           RB.fx0, fxe, RB.fy0, fye, gr->graphid);
         }
 
         (void) cp_evloop(buf);
         SetFocus(swString);
     }
     goto WIN_DEFAULT;
+
+    case WM_MOUSELEAVE:         // Pointer has left window.
+        if (RB.state != Idle)
+            RB_end();
+        return 0;
 
     case WM_CLOSE: /* close window */
     {
