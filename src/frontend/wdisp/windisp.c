@@ -700,11 +700,14 @@ LRESULT CALLBACK PlotWindowProc(HWND hwnd, UINT uMsg,
     case WM_PAINT: /* replot window (e.g. after Resize) */
     {
         PAINTSTRUCT ps;
-        HDC saveDC;    /* the DC from BeginPaint is different... */
         HDC newDC;
 
-        /* has to happen */
+        /* Has to happen, but the DC is not used.  Responses to some
+         * paint requests are faked here, and the clipping region in newDC
+         * reflects those previous lies.  Redraw everything.
+         */
         newDC = BeginPaint(hwnd, &ps);
+
         gr = pGraph(hwnd);
         if (gr) {
             wd = pWindowData(gr);
@@ -716,9 +719,6 @@ LRESULT CALLBACK PlotWindowProc(HWND hwnd, UINT uMsg,
                     GetClientRect(hwnd, &(wd->Area));
                     gr->absolute.width  = wd->Area.right;
                     gr->absolute.height = wd->Area.bottom;
-                    /* switch DC */
-                    saveDC = wd->hDC;
-                    wd->hDC = newDC;
 
                     /* plot anew */
                     {
@@ -728,8 +728,6 @@ LRESULT CALLBACK PlotWindowProc(HWND hwnd, UINT uMsg,
                         currentgraph = tmp;
                     }
 
-                    /* switch DC */
-                    wd->hDC = saveDC;
                     /* ready */
                     --wd->PaintFlag;
                 } else {
