@@ -500,7 +500,7 @@ void
 // 	      pNode->fNPsiOx   = spGetElement( matrix, nEqn, psiEqnOxM );
 // 	      pNode->fNPsiOxP1 = spGetElement( matrix, nEqn, psiEqnOxP );
 // =======
-// 	    if ( nIndex <= 1 ) { /* Top Side */
+ 	    if ( nIndex <= 1 ) { /* Top Side */
 // 
 // #ifdef KLU
 //               pNode->fNPsiIn = SMPmakeEltKLUforCIDER (matrix, nEqn, psiEqnInM) ;
