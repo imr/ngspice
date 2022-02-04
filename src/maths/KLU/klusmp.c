@@ -17,6 +17,10 @@ extern double scalbn(double, int);
 extern double logb(double);
 #endif
 
+#ifdef HAS_WINGUI
+#include "ngspice/wstdio.h"
+#endif
+
 static void LoadGmin_CSC (double **diag, unsigned int n, double Gmin) ;
 static void LoadGmin (SMPmatrix *eMatrix, double Gmin) ;
 
