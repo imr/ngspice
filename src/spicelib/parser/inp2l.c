@@ -8,6 +8,7 @@ Author: 1988 Thomas L. Quarles
 #include "ngspice/inpdefs.h"
 #include "ngspice/inpmacs.h"
 #include "ngspice/fteext.h"
+#include "ngspice/compatmode.h"
 #include "inpxx.h"
 
 void INP2L(CKTcircuit *ckt, INPtables * tab, struct card *current)
@@ -54,8 +55,14 @@ void INP2L(CKTcircuit *ckt, INPtables * tab, struct card *current)
     INPtermInsert(ckt, &nname1, tab, &node1);
     INPgetNetTok(&line, &nname2, 1);
     INPtermInsert(ckt, &nname2, tab, &node2);
-    val = INPevaluate(&line, &error1, 1);
-    
+
+//    val = INPevaluate(&line, &error1, 1);
+
+    /* enable reading values like 4u7 */
+    if (newcompat.lt)
+        val = INPevaluateRKM_L(&line, &error1, 1);	/* [<val>] */
+    else
+        val = INPevaluate(&line, &error1, 1);	/* [<val>] */
     saveline = line;
     
     INPgetNetTok(&line, &model, 1);
