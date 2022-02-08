@@ -74,9 +74,6 @@ gr_fixgrid(GRAPH *graph, double xdelta, double ydelta, int xtype, int ytype)
 {
     double *dd;
 
-    if (graph->grid.gridtype == GRID_NONE)
-        graph->grid.gridtype = GRID_LIN;
-
     SetColor(1);
     SetLinestyle(1);
 
