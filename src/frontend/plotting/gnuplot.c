@@ -402,6 +402,7 @@ void ft_gnuplot(double *xlims, double *ylims,
         fprintf(file, "set contour\n");
         fprintf(file, "unset surface\n");
         fprintf(file, "set cntrparam levels 20\n");
+        fprintf(file, "set yrange reverse\n");
         fprintf(file, "set xlabel 'X microns'\n");
         fprintf(file, "set ylabel 'Y microns'\n");
         fprintf(file, "set key outside right\n");
