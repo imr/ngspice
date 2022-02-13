@@ -230,8 +230,10 @@ GL_DrawLine(int x1, int y1, int x2, int y2, bool isgrid)
 
 
 /* ARGSUSED */
-int GL_Arc(int x0, int y0, int r, double theta, double delta_theta)
+int GL_Arc(int x0, int y0, int r, double theta, double delta_theta, bool isgrid)
 {
+    NG_IGNORE(isgrid);
+    
     int  x1, y1, angle;
 
     x1 = x0 + (int)(r * cos(theta));

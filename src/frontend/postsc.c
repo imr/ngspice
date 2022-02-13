@@ -381,7 +381,7 @@ PS_DrawLine(int x1, int y1, int x2, int y2, bool isgrid)
 }
 
 
-int PS_Arc(int x0, int y0, int r, double theta, double delta_theta)
+int PS_Arc(int x0, int y0, int r, double theta, double delta_theta, bool isgrid)
 {
     double x1, y1;
     double angle1, angle2;
@@ -395,6 +395,12 @@ int PS_Arc(int x0, int y0, int r, double theta, double delta_theta)
     fprintf(plotfile, "%f %f moveto ", x1+(double)xoff, y1+(double)yoff);
     fprintf(plotfile, "%d %d %d %f %f arc\n", x0+xoff, y0+yoff, r,
             angle1, angle2);
+
+        if(isgrid)
+            fprintf(plotfile, "%f setlinewidth\n", gridlinewidth);
+        else
+            fprintf(plotfile, "%f setlinewidth\n", linewidth);
+
     fprintf(plotfile, "stroke\n");
 
     DEVDEP(currentgraph).linecount = 0;

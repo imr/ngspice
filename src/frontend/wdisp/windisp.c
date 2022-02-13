@@ -558,7 +558,6 @@ LRESULT CALLBACK PlotWindowProc(HWND hwnd, UINT uMsg,
     case WM_LBUTTONUP:
     {
         GRAPH *gr = pGraph(hwnd);
-        InvalidateRect (hwnd, NULL, TRUE);
         xe = LOWORD (lParam);
         ye = HIWORD (lParam);
         WIN_ScreentoData(gr, xe, ye, &fxe, &fye);
@@ -578,6 +577,8 @@ LRESULT CALLBACK PlotWindowProc(HWND hwnd, UINT uMsg,
         }
         else  {
             /* need to print info about two points */
+            /* trigger re-plotting the graph to get rid of the coordinate rectangle */
+            InvalidateRect (hwnd, NULL, TRUE);
             fprintf(stdout, "\nx0 = %g, y0 = %g    x1 = %g, y1 = %g\n",
                     fx0, fy0, fxe, fye);
             fprintf(stdout, "dx = %g, dy = %g\n", fxe-fx0, fye - fy0);
@@ -611,7 +612,6 @@ LRESULT CALLBACK PlotWindowProc(HWND hwnd, UINT uMsg,
     case WM_RBUTTONUP:
     {
         GRAPH *gr = pGraph(hwnd);
-        InvalidateRect (hwnd, NULL, TRUE);
         xe = LOWORD (lParam);
         ye = HIWORD (lParam);
         /* do nothing if mouse curser is not moved in both x and y */
@@ -619,6 +619,9 @@ LRESULT CALLBACK PlotWindowProc(HWND hwnd, UINT uMsg,
             SetFocus(swString);
             goto WIN_DEFAULT;
         }
+        /* trigger re-plotting the graph to get rid of the coordinate rectangle */
+        InvalidateRect(hwnd, NULL, TRUE);
+
         WIN_ScreentoData(gr, xe, ye, &fxe, &fye);
 
         strncpy(buf2, gr->plotname, sizeof(buf2));
@@ -954,7 +957,7 @@ WIN_DrawLine(int x1, int y1, int x2, int y2, bool isgrid)
 }
 
 
-int WIN_Arc(int x0, int y0, int radius, double theta, double delta_theta)
+int WIN_Arc(int x0, int y0, int radius, double theta, double delta_theta, bool isgrid)
 /*
  * Notes:
  *    Draws an arc of <radius> and center at (x0,y0) beginning at
@@ -1003,7 +1006,10 @@ int WIN_Arc(int x0, int y0, int radius, double theta, double delta_theta)
     ye = (int)(dy0 + (r * sin(theta + delta_theta)));
 
     /* plot */
-    NewPen = CreatePen(LType(wd->ColorIndex), linewidth, currentgraph->colorarray[wd->ColorIndex]);
+    if (isgrid)
+         NewPen = CreatePen(LType(wd->ColorIndex), currentgraph->gridwidth, currentgraph->colorarray[wd->ColorIndex]);
+    else
+         NewPen = CreatePen(LType(wd->ColorIndex), currentgraph->graphwidth, currentgraph->colorarray[wd->ColorIndex]);
     OldPen = SelectObject(wd->hDC, NewPen);
     Arc(wd->hDC, left, yb-top, right, yb-bottom, xs, yb-ys, xe, yb-ye);
     OldPen = SelectObject(wd->hDC, OldPen);

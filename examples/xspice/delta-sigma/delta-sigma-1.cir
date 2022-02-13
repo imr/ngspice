@@ -97,8 +97,9 @@ esave none
 save inp inm adaclout adaccout ; save memory space
 tran 0.1u $&simtime
 rusage
+set xbrushwidth=2
 * analog out, scaled 'manually'; sinc filter counter; analog differential in
-plot 4.1*(adaclout-0.486) adaccout v(inp)-v(inm) ylimit -0.6 0.6
+plot 4.1*(adaclout-0.486) adaccout v(inp)-v(inm) ylimit -0.6 0.6 ylabel 'input, output and external signals'
 * modulator dig out
 * eprint dv > digi1.txt
 * 

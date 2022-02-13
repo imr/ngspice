@@ -135,7 +135,11 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
         Then everything is plotted. */
         bool mono = (currentgraph->plottype != PLOT_RETLIN);
         int dir = 0;
-        for (i = 0, j = v->v_length; i < j; i++) {
+        int vlength = v->v_length;
+        int slength = xs->v_length;
+        if (slength != vlength)
+            fprintf(stderr, "Warning: length of vector %s and its scale do not match, plot may be truncated!\n", v->v_name);
+        for (i = 0, j = MIN(vlength, slength); i < j; i++) {
             dx = isreal(xs) ? xs->v_realdata[i] :
                 realpart(xs->v_compdata[i]);
             dy = isreal(v) ? v->v_realdata[i] :

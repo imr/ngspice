@@ -118,6 +118,7 @@ char *INPerror(int);
 double INPevaluate(char **, int *, int);
 double INPevaluateRKM_R(char **, int *, int);
 double INPevaluateRKM_C(char **, int *, int);
+double INPevaluateRKM_L(char **, int *, int);
 char *INPfindLev(char *, int *);
 char *INPgetMod(CKTcircuit *, char *, INPmodel **, INPtables *);
 char *INPgetModBin(CKTcircuit *, char *, INPmodel **, INPtables *, char *);

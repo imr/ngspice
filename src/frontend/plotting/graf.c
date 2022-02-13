@@ -264,10 +264,169 @@ int gr_init(double *xlims, double *ylims, /* The size of the screen. */
 }
 
 
+/* Once the line compression code is thorougly tested, checking code can
+ * be removed.  But for now ...
+ */
+#define LINE_COMPRESSION_CHECKS
+
+/* Data and functions for line compression:
+ * try to not keep drawing the same pixels by combining co-linear segments.
+ */
+
+static struct {
+    enum { EMPTY, LINE, VERTICAL } state;
+    int                            x_start, y_start, x_end, y_end;
+    int                            lc_min, lc_max;
+#define prev_x2 lc_min                    // Alternate name
+#ifdef LINE_COMPRESSION_CHECKS
+    struct dvec                   *dv;    // Sanity checking.
+#endif
+} LC;
+
+/* Flush pending line drawing. */
+
+static void LC_flush(void)
+{
+    switch (LC.state) {
+    case EMPTY:
+        return;
+    case LINE:
+        DevDrawLine(LC.x_start, LC.y_start, LC.x_end, LC.y_end, FALSE);
+        break;
+    case VERTICAL:
+        DevDrawLine(LC.x_start, LC.lc_min, LC.x_start, LC.lc_max, FALSE);
+        break;
+    }
+    LC.state = EMPTY;
+}
+
+/* This replaces DevDrawLine() - low-level line drawing call. */
+
+#ifdef LINE_COMPRESSION_CHECKS
+static void drawLine(int x1, int y1, int x2, int y2, struct dvec *dv)
+{
+    if (LC.dv) {
+        if (LC.dv != dv) {
+            fprintf(cp_err, "LC: DV changed!\n");
+            LC_flush();
+            LC.dv = dv;
+        }
+    } else {
+        LC.dv = dv;
+        if (LC.state != EMPTY) {
+            fprintf(cp_err, "LC: State %d but DV NULL.\n", (int)LC.state);
+            LC_flush();
+        }
+    }
+#else
+static void drawLine(int x1, int y1, int x2, int y2)
+{
+#endif
+    switch (LC.state) {
+    refill:
+        LC_flush();
+        // Fall through ...
+    case EMPTY:
+        if (x1 == x2) {
+            /* Vertical */
+
+            LC.state = VERTICAL;
+            LC.x_start = x1;
+            LC.y_end = y2;
+            if (y1 < y2) {
+                LC.lc_min = y1;
+                LC.lc_max = y2;
+            } else {
+                LC.lc_min = y2;
+                LC.lc_max = y1;
+            }
+        } else {
+            LC.state = LINE;
+            LC.prev_x2 = x2;
+
+            /* Store with LC.x_start < LC.x_end. */
+
+            if (x1 < x2) {
+                LC.x_start = x1;
+                LC.y_start = y1;
+                LC.x_end = x2;
+                LC.y_end = y2;
+            } else {
+                LC.x_start = x2;
+                LC.y_start = y2;
+                LC.x_end = x1;
+                LC.y_end = y1;
+            }
+        }
+        break;
+    case LINE:
+        if ((int64_t)(x2 - x1) * (LC.y_end - LC.y_start) !=
+            (int64_t)(y2 - y1) * (LC.x_end - LC.x_start)) {
+            /* Not in line. */
+
+            goto refill;
+        }
+        if (x1 != LC.prev_x2) {
+            /* Not contiguous. */
+
+            if (x1 > LC.x_end) {
+                if (x2 > LC.x_end) {
+                    /* Hole. */
+
+                    goto refill;
+                }
+                LC.x_end = x1;
+                LC.y_end = y1;
+            } else if (x1 < LC.x_start) {
+                if (x2 < LC.x_start) {
+                    /* Hole. */
+
+                    goto refill;
+                }
+                LC.x_start = x1;
+                LC.y_start = y1;
+            }
+        }
+
+        if (x2 > LC.x_end) {
+            LC.x_end = x2;
+            LC.y_end = y2;
+        } else if (x2 < LC.x_start) {
+            LC.x_start = x2;
+            LC.y_start = y2;
+        }
+        LC.prev_x2 = x2;
+        break;
+    case VERTICAL:
+        if (x1 != LC.x_start || x2 != LC.x_start)
+            goto refill;
+        if (y1 != LC.y_end) {
+            /* Not contiguous, check for hole. */
+
+            if (y1 < LC.lc_min) {
+                if (y2 < LC.lc_min)
+                    goto refill;
+                LC.lc_min = y1;
+            } else if (y1 > LC.lc_max) {
+                if (y2 > LC.lc_max)
+                    goto refill;
+                LC.lc_max = y1;
+            }
+        }
+
+        if (y2 < LC.lc_min)
+            LC.lc_min = y2;
+        else if (y2 > LC.lc_max)
+            LC.lc_max = y2;
+        LC.y_end = y2;
+        break;
+    }
+}
+
 /*
  *  Add a point to the curve we're currently drawing.
  *  Should be in between a gr_init() and a gr_end()
- *    expect when iplotting, very bad hack
+ *    except when iplotting, very bad hack
  *  Differences from old gr_point:
  *    We save points here, instead of in lower levels.
  *    Assume we are in right context
@@ -327,7 +486,11 @@ void gr_point(struct dvec *dv,
         /* If it's a linear plot, ignore first point since we don't
            want to connect with oldx and oldy. */
         if (np)
-            DevDrawLine(fromx, fromy, tox, toy, FALSE);
+#ifdef LINE_COMPRESSION_CHECKS
+            drawLine(fromx, fromy, tox, toy, dv);
+#else
+            drawLine(fromx, fromy, tox, toy);
+#endif
 
         if ((tics = currentgraph->ticdata) != NULL) {
             for (; *tics < HUGE; tics++)
@@ -348,7 +511,11 @@ void gr_point(struct dvec *dv,
         DatatoScreen(currentgraph,
                      0.0, currentgraph->datawindow.ymin,
                      &dummy, &ymin);
-        DevDrawLine(tox, ymin, tox, toy, FALSE);
+#ifdef LINE_COMPRESSION_CHECKS
+        drawLine(tox, ymin, tox, toy, dv);
+#else
+        drawLine(tox, ymin, tox, toy);
+#endif
         break;
     case PLOT_POINT:
         /* Here, gi_linestyle is the character used for the point.  */
@@ -497,7 +664,15 @@ void drawlegend(GRAPH *graph, int plotno, struct dvec *dv)
 /* end one plot of a graph */
 void gr_end(struct dvec *dv)
 {
+    LC_flush();
+#ifdef LINE_COMPRESSION_CHECKS
+    if (LC.dv && LC.dv != dv)
+        fprintf(cp_err, "LC: DV changed in gr_end()!\n");
+    else
+        LC.dv = NULL;
+#else
     NG_IGNORE(dv);
+#endif
     DevUpdate();
 }
 
@@ -895,6 +1070,10 @@ static int iplot(struct plot *pl, int id)
                              (isreal(v) ? v->v_realdata[len - 2] :
                               realpart(v->v_compdata[len - 2])),
                              len - 1);
+                    LC_flush();    // Disable line compression here ..
+#ifdef LINE_COMPRESSION_CHECKS
+                    LC.dv = NULL;  // ... and suppress warnings.
+#endif
                 }
             }
         }

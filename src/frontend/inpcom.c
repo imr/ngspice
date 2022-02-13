@@ -2458,6 +2458,12 @@ static int is_a_modelname(char *s, const char* line)
         if (*evalrc == '\0' && !error)
             return FALSE;
     }
+    if (newcompat.lt && *line == 'l') {
+        evalrc = s;
+        INPevaluateRKM_L(&evalrc, &error, 0);
+        if (*evalrc == '\0' && !error)
+            return FALSE;
+    }
     /* first character of model name is character from alphabet */
     if (isalpha_c(s[0]))
         return TRUE;
