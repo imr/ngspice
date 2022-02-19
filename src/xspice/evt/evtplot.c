@@ -152,6 +152,12 @@ struct dvec *EVTfindvec(
   /* Get the UDN type index */
   udn_index = node_table[i]->udn_index;
 
+  if (!g_mif_info.ckt->evt->data.node) {
+//    fprintf(stderr, "Warning: No event data available! \n   Simulation not yet run?\n");
+    tfree(name);
+    return(NULL);
+  }
+
   /* Count the number of events */
   head = g_mif_info.ckt->evt->data.node->head[i];
 
