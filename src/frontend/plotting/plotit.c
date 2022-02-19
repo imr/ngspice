@@ -287,7 +287,7 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
     static GRIDTYPE gtype = GRID_LIN;
     static PLOTTYPE ptype = PLOT_LIN;
 
-    bool gfound = FALSE, pfound = FALSE, oneval = FALSE, contour2d = FALSE;
+    bool gfound = FALSE, pfound = FALSE, oneval = FALSE, contour2d = FALSE, digitop = FALSE;
     double ylims[2], xlims[2];
     struct pnode *pn, *names = NULL;
     struct dvec *d = NULL, *vecs = NULL, *lv = NULL, *lastvs = NULL;
@@ -365,6 +365,8 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
     contour2d = getflag(wl, "xycontour");
 
     /* Now extract all the parameters. */
+    digitop = getflag(wl, "digitop");
+
     sameflag = getflag(wl, "samep");
 
     if (!sameflag || !xlim) {
@@ -848,6 +850,28 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
                     d->v_name);
             goto quit;
         }
+    }
+
+    /* Add n * 1.1 to digital event node based vectors */
+    if (digitop) {
+        double spacing = 1.0999999; /* numerical precision: stay below (rounded) ymax */
+        double nn = 0.;
+        int ii = 0;
+        for (d = vecs; d; d = d->v_link2) {
+            if (d->v_scale && eq(d->v_scale->v_name, "step") && (d->v_scale->v_type == SV_TIME) && (d->v_type == SV_VOLTAGE)) {
+                for (ii = 0; ii < d->v_length; ii++) {
+                    d->v_realdata[ii] += nn;
+                }
+                nn += spacing;
+            }
+        }
+        if (!ydelta)
+            ydelta = TMALLOC(double, 1);
+        *ydelta = spacing;
+        if (!ylim)
+            ylim = TMALLOC(double, 2);
+        ylim[0] = 0;
+        ylim[1] = nn;
     }
 
     /* If there are higher dimensional vectors, transform them into a
