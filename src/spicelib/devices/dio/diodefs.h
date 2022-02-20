@@ -41,19 +41,19 @@ typedef struct sDIOinstance {
     const int DIOtempNode;    /* number of the temperature node of the diode */
     int DIOposPrimeNode;      /* number of positive prime node of diode */
 
-    double *DIOposPosPrimePtr;      /* pointer to sparse matrix at 
+    double *DIOposPosPrimePtr;      /* pointer to sparse matrix at
                                      * (positive,positive prime) */
-    double *DIOnegPosPrimePtr;      /* pointer to sparse matrix at 
+    double *DIOnegPosPrimePtr;      /* pointer to sparse matrix at
                                      * (negative,positive prime) */
-    double *DIOposPrimePosPtr;      /* pointer to sparse matrix at 
+    double *DIOposPrimePosPtr;      /* pointer to sparse matrix at
                                      * (positive prime,positive) */
-    double *DIOposPrimeNegPtr;      /* pointer to sparse matrix at 
+    double *DIOposPrimeNegPtr;      /* pointer to sparse matrix at
                                      * (positive prime,negative) */
-    double *DIOposPosPtr;   /* pointer to sparse matrix at 
+    double *DIOposPosPtr;   /* pointer to sparse matrix at
                              * (positive,positive) */
-    double *DIOnegNegPtr;   /* pointer to sparse matrix at 
+    double *DIOnegNegPtr;   /* pointer to sparse matrix at
                              * (negative,negative) */
-    double *DIOposPrimePosPrimePtr; /* pointer to sparse matrix at 
+    double *DIOposPrimePosPrimePtr; /* pointer to sparse matrix at
                                      * (positive prime,positive prime) */
 
     /* self heating */
@@ -131,7 +131,7 @@ typedef struct sDIOinstance {
     double DIOtVcrit;   /* temperature adjusted V crit */
     double DIOtF1;      /* temperature adjusted f1 */
     double DIOtBrkdwnV; /* temperature adjusted breakdown voltage */
-    
+
     double DIOtF2;     /* coeff. for capacitance equation precomputation */
     double DIOtF3;     /* coeff. for capacitance equation precomputation */
     double DIOtF2SW;   /* coeff. for capacitance equation precomputation */
@@ -190,7 +190,7 @@ typedef struct sDIOinstance {
 
 #define DIOsenGeq DIOsens /* stores the perturbed values of geq */
 #define DIOsenCeq DIOsens + 3 /* stores the perturbed values of ceq */
-#define DIOdphidp DIOsens + 6 
+#define DIOdphidp DIOsens + 6
 
 
 #define DIOvoltage DIOstate
@@ -297,7 +297,7 @@ typedef struct sDIOmodel {       /* model structure for a diode */
     double DIOsatCur;   /* saturation current */
     double DIOsatSWCur;   /* Sidewall saturation current */
 
-    double DIOresist;             /* ohmic series resistance */ 
+    double DIOresist;             /* ohmic series resistance */
     double DIOresistTemp1;        /* series resistance 1st order temp. coeff. */
     double DIOresistTemp2;        /* series resistance 2nd order temp. coeff. */
     double DIOconductance;        /* conductance corresponding to ohmic R */

@@ -237,7 +237,7 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
             /*
              *   compute dc current and derivitives
              */
-next1:      
+next1:
             if (selfheat) {
                 Temp = here->DIOtemp + delTemp;
                 DIOtempUpdate(model, here, Temp, ckt);
@@ -313,11 +313,11 @@ next1:
                     evd_rec = exp(vd/(vterec));
                     cdb_rec = here->DIOtRecSatCur*(evd_rec-1);
                     gdb_rec = here->DIOtRecSatCur*evd_rec/vterec;
-                    cdb_rec_dT = here->DIOtRecSatCur_dT * (evd_rec - 1) 
+                    cdb_rec_dT = here->DIOtRecSatCur_dT * (evd_rec - 1)
                                 -here->DIOtRecSatCur * vd * evd_rec / (vterec*Temp);
                     t1 = pow((1-vd/here->DIOtJctPot), 2) + 0.005;
                     gen_fac = pow(t1, here->DIOtGradingCoeff/2);
-                    gen_fac_vd = -here->DIOtGradingCoeff * (1-vd/here->DIOtJctPot) 
+                    gen_fac_vd = -here->DIOtGradingCoeff * (1-vd/here->DIOtJctPot)
                                                          * pow(t1, (here->DIOtGradingCoeff/2-1));
                     cdb_rec = cdb_rec * gen_fac;
                     gdb_rec = gdb_rec * gen_fac + cdb_rec * gen_fac_vd;
@@ -333,7 +333,7 @@ next1:
 
                 arg = 3*vte/(vd*CONSTe);
                 arg = arg * arg * arg;
-                darg_dT = 3 * arg / Temp; 
+                darg_dT = 3 * arg / Temp;
                 cdb = -csat*(1+arg);
                 gdb = csat*3*arg/vd;
                 cdb_dT = -csat_dT - (csat_dT*arg + csat*darg_dT);
@@ -356,7 +356,7 @@ next1:
 
                 cdsw = cdsw - here->DIOtTunSatSWCur * (evd - 1);
                 gdsw = gdsw + here->DIOtTunSatSWCur * evd / vtetun;
-                cdsw_dT = cdsw_dT - here->DIOtTunSatSWCur_dT * (evd - 1) 
+                cdsw_dT = cdsw_dT - here->DIOtTunSatSWCur_dT * (evd - 1)
                                   - here->DIOtTunSatSWCur * vd * evd / (vtetun * Temp);
 
             }
@@ -385,8 +385,8 @@ next1:
                     gd = ((1+sqrt_ikf)*gd - cd*gd/(2*sqrt_ikf*ikf_area_m))/(1+2*sqrt_ikf + cd/ikf_area_m) + ckt->CKTgmin;
                     cd = cd/(1+sqrt_ikf) + ckt->CKTgmin*vd;
                 } else {
-                   gd = gd + ckt->CKTgmin;
-                   cd = cd + ckt->CKTgmin*vd;
+                    gd = gd + ckt->CKTgmin;
+                    cd = cd + ckt->CKTgmin*vd;
                 }
 
             } else {            /* limit reverse */

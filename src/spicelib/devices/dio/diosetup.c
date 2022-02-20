@@ -250,8 +250,8 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 
             here->DIOarea = here->DIOarea * here->DIOm;
             here->DIOpj = here->DIOpj * here->DIOm;
-            here->DIOcmetal = 0.0; 
-            here->DIOcpoly = 0.0; 
+            here->DIOcmetal = 0.0;
+            here->DIOcpoly = 0.0;
             if (model->DIOlevel == 3) {
                 double wm, lm, wp, lp;
                 if((here->DIOwGiven) && (here->DIOlGiven))  {
@@ -260,27 +260,27 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 }
                 here->DIOarea = here->DIOarea * scale * scale;
                 here->DIOpj = here->DIOpj * scale;
-                if (here->DIOwidthMetalGiven) 
+                if (here->DIOwidthMetalGiven)
                     wm = here->DIOwidthMetal;
                 else
                     wm = model->DIOwidthMetal;
-                if (here->DIOlengthMetalGiven) 
+                if (here->DIOlengthMetalGiven)
                     lm = here->DIOlengthMetal;
                 else
                     lm = model->DIOlengthMetal;
-                if (here->DIOwidthPolyGiven) 
+                if (here->DIOwidthPolyGiven)
                     wp = here->DIOwidthPoly;
                 else
                     wp = model->DIOwidthPoly;
-                if (here->DIOlengthPolyGiven) 
+                if (here->DIOlengthPolyGiven)
                     lp = here->DIOlengthPoly;
                 else
                     lp = model->DIOlengthPoly;
                 here->DIOcmetal = CONSTepsSiO2 / model->DIOmetalOxideThick  * here->DIOm
-                                  * (wm * scale + model->DIOmetalMaskOffset) 
+                                  * (wm * scale + model->DIOmetalMaskOffset)
                                   * (lm * scale + model->DIOmetalMaskOffset);
                 here->DIOcpoly = CONSTepsSiO2 / model->DIOpolyOxideThick  * here->DIOm
-                                  * (wp * scale + model->DIOpolyMaskOffset) 
+                                  * (wp * scale + model->DIOpolyMaskOffset)
                                   * (lp * scale + model->DIOpolyMaskOffset);
             }
             here->DIOforwardKneeCurrent = model->DIOforwardKneeCurrent * here->DIOarea;
