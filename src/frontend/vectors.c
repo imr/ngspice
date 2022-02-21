@@ -22,12 +22,16 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "vectors.h"
 #include "ngspice/dstring.h"
 #include "plotting/plotting.h"
-
+#ifdef XSPICE
+#include "ngspice/evt.h"
+#include "ngspice/mif.h"
+#endif
 
 static struct dvec *findvec_all(struct plot *pl);
 static struct dvec *findvec_allv(struct plot *pl);
 static struct dvec *findvec_alli(struct plot *pl);
 static struct dvec *findvec_ally(struct plot *pl);
+static struct dvec *findvec_alle(void);
 static struct dvec *find_permanent_vector_by_name(
         NGHASHPTR pl_lookup_table, char *name);
 static enum ALL_TYPE_ENUM get_all_type(const char *word);
@@ -81,11 +85,12 @@ enum ALL_TYPE_ENUM {
     ALL_TYPE_ALL,
     ALL_TYPE_ALLV,
     ALL_TYPE_ALLI,
-    ALL_TYPE_ALLY
+    ALL_TYPE_ALLY,
+    ALL_TYPE_ALLE
 };
 
 
-/* Efficient identification of "all", "allv", "alli", "ally", and anything
+/* Efficient identification of "all", "allv", "alli", "ally", "alle", and anything
  * else */
 static enum ALL_TYPE_ENUM get_all_type(const char *word)
 {
@@ -125,6 +130,13 @@ static enum ALL_TYPE_ENUM get_all_type(const char *word)
         else {
             return ALL_TYPE_NONE;
         }
+    case 'e':
+        if (word[4] == '\0') {
+            return ALL_TYPE_ALLE;
+        }
+        else {
+            return ALL_TYPE_NONE;
+        }
     default:
         return ALL_TYPE_NONE;
     } /* end of swith over char after "all" */
@@ -141,7 +153,7 @@ static struct dvec *findvec(char *word, struct plot *pl)
         return NULL;
     }
 
-    /* Identify and handle special cases all, allv, alli, ally */
+    /* Identify and handle special cases all, allv, alli, ally, alle */
     switch (get_all_type(word)) {
     case ALL_TYPE_ALL:
         return findvec_all(pl);
@@ -151,6 +163,8 @@ static struct dvec *findvec(char *word, struct plot *pl)
         return findvec_alli(pl);
     case ALL_TYPE_ALLY:
         return findvec_ally(pl);
+    case ALL_TYPE_ALLE:
+        return findvec_alle();
     default: /* case ALL_TYPE_NOT_ALL -- not some type of ALL */
         break;
     }
@@ -244,7 +258,52 @@ FINDVEC_ALL_GEN(findvec_ally,
         (d->v_flags & VF_PERMANENT) &&
                 (!cieq(d->v_name, pl->pl_scale->v_name)))
 
+#ifdef XSPICE
+/* special case for finding all event nodes and return them as linked vectors */
+static struct dvec* findvec_alle(void) {
 
+    struct dvec* d, * newv = NULL, * end = NULL, * v;
+    int i, num_nodes;
+    Evt_Node_Info_t** node_table;
+
+    /* We need to create a new plot because of veccmp() is used */
+    struct plot* pl = plot_alloc("digi");
+    pl->pl_title = copy("DigitalData");
+    pl->pl_name = copy("digital");
+    pl->pl_date = copy(datestring());
+    plot_new(pl);
+    /* Look for node name in the event-driven node list */
+    num_nodes = g_mif_info.ckt->evt->counts.num_nodes;
+    node_table = g_mif_info.ckt->evt->info.node_table;
+    /* find all event data, create vectors, link them to v_link2 */
+    for (i = 0; i < num_nodes; i++) {
+        char* name = node_table[i]->name;
+        d = EVTfindvec(name);
+        if (!d)
+            continue;
+        /* nothing to plot */
+        if (d->v_length == 1)
+            continue;
+        d->v_plot = pl;
+        d->v_plot->pl_typename = copy("dig1");
+        if (d->v_link2) {
+            v = vec_copy(d);
+            vec_new(v);
+        }
+        else {
+            v = d;
+        }
+        if (end) {
+            end->v_link2 = v;
+         }
+         else {
+            newv = v;
+         }
+         end = v;
+    }
+    return newv;
+}
+#endif
 
 /* Find a permanent vector with the given name */
 static struct dvec *find_permanent_vector_by_name(
