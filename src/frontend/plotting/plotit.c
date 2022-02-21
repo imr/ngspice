@@ -852,13 +852,13 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
         }
     }
 
-    /* Add n * 1.1 to digital event node based vectors */
+    /* Add n * spacing (e.g. 1.3) to digital event node based vectors */
     if (digitop) {
-        double spacing = 1.0999999; /* numerical precision: stay below (rounded) ymax */
+        double spacing = 1.5;
         double nn = 0.;
         int ii = 0;
         for (d = vecs; d; d = d->v_link2) {
-            if (d->v_scale && eq(d->v_scale->v_name, "step") && (d->v_scale->v_type == SV_TIME) && (d->v_type == SV_VOLTAGE)) {
+            if (d->v_scale && eq(d->v_scale->v_name, "step") && (d->v_scale->v_type == SV_TIME) && (d->v_type == SV_VOLTAGE) && (d->v_length > 1)) {
                 for (ii = 0; ii < d->v_length; ii++) {
                     d->v_realdata[ii] += nn;
                 }
@@ -868,10 +868,20 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
         if (!ydelta)
             ydelta = TMALLOC(double, 1);
         *ydelta = spacing;
-        if (!ylim)
+        if (!ylim) {
             ylim = TMALLOC(double, 2);
-        ylim[0] = 0;
-        ylim[1] = nn;
+            ylim[0] = 0;
+            ylim[1] = nn;
+        }
+        else {
+            if (ylim[0] < 1.5)
+            /* catch the bottom line */
+                ylim[0] = 0;
+            else
+            /* If we redraw, set again multiples of 'spacing' */
+                ylim[0] = ((int)(ylim[0] / spacing) + 1) * spacing;
+            ylim[1] = ((int)(ylim[1] / spacing) + 1) * spacing;
+        }
     }
 
     /* If there are higher dimensional vectors, transform them into a
