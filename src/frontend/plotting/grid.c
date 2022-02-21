@@ -633,6 +633,8 @@ lingrid(GRAPH *graph, double lo, double hi, double delta, int type, Axis axis)
         nsp = (int)((hi - lo) / delta);
         if (nsp > 100)
             nsp = 100;
+        if (nsp < 1)
+            nsp = 1;
     }
     spacing = (max - margin) / nsp;
 
