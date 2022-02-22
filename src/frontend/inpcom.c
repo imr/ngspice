@@ -9567,8 +9567,15 @@ static void inp_check_syntax(struct card *deck)
                 /* get first token after ac */
                 char* numtok = gettok_node(&nnacline);
                 char* numtokfree = numtok;
-                /* check if token is a valid number */
-                INPevaluate(&numtok, &err, 0);
+                /* Check if token is a parameter, to be filled in later */
+                if (*numtok == '\'' || *numtok == '{') {
+                    err = 0;
+                }
+                else {
+                    /* check if token is a valid number */
+                    INPevaluate(&numtok, &err, 0);
+                }
+
                 tfree(numtokfree);
             }
             /* if no number, replace 'ac' by 'ac 1 0' */
