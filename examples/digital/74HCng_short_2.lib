@@ -28,7 +28,7 @@
 * tr 19n/7n /  /6n
 .SUBCKT 74HC00  in1 in2 out  NVCC NVGND  vcc1={vcc} tripdt1={tripdt}
 .param td1={1e-9*(9-3-3)*4.0/(vcc1-0.5)}
-.param Rout={60*4.0/(vcc1-0.5)} $ standard output driver
+.param Rout={60*4.0/(vcc1-0.5)} ; standard output driver
 *Cin1 in1 0 3.5p
 *Cin2 in2 0 3.5p
 abridge2 [in1 in2] [din1 din2] adc_buff
@@ -49,7 +49,7 @@ Rout out20 out {Rout}
 * tr 19n/7n/6n
 .SUBCKT 74HC02  in1 in2 out  NVCC NVGND  vcc1={vcc} tripdt1={tripdt}
 .param td1={1e-9*(9-3-3)*4.0/(vcc1-0.5)}
-.param Rout={60*4.0/(vcc1-0.5)} $ standard output driver
+.param Rout={60*4.0/(vcc1-0.5)} ; standard output driver
 *Cin1 in1 0 3.5p
 *Cin2 in2 0 3.5p
 abridge2 [in1 in2] [din1 din2] adc_buff
@@ -68,7 +68,7 @@ Rout out20 out {Rout}
 * tr 19n/7n/6n
 .SUBCKT 74HC08  in1 in2 out  NVCC NVGND  vcc1={vcc} tripdt1={tripdt}
 .param td1={1e-9*(9-3-3)*4.0/(vcc1-0.5)}
-.param Rout={60*4.0/(vcc1-0.5)} $ standard output driver
+.param Rout={60*4.0/(vcc1-0.5)} ; standard output driver
 *Cin1 in1 0 3.5p
 *Cin2 in2 0 3.5p
 abridge2 [in1 in2] [din1 din2] adc_buff
@@ -89,7 +89,7 @@ Rout out20 out {Rout}
 * tr 19n/7n/6n
 .SUBCKT 74HC32  in1 in2 out  NVCC NVGND  vcc1={vcc} tripdt1={tripdt}
 .param td1={1e-9*(9-3-3)*4.0/(vcc1-0.5)}
-.param Rout={60*4.0/(vcc1-0.5)} $ standard output driver
+.param Rout={60*4.0/(vcc1-0.5)} ; standard output driver
 *Cin1 in1 0 3.5p
 *Cin2 in2 0 3.5p
 abridge2 [in1 in2] [din1 din2] adc_buff
@@ -108,7 +108,7 @@ Rout out20 out {Rout}
 * tr 19n/7n/6n
 .SUBCKT 74HC86  in1 in2 out  NVCC NVGND  vcc1={vcc} tripdt1={tripdt}
 .param td1={1e-9*(14-3-3)*4.0/(vcc1-0.5)}
-.param Rout={60*4.0/(vcc1-0.5)} $ standard output driver
+.param Rout={60*4.0/(vcc1-0.5)} ; standard output driver
 *Cin1 in1 0 3.5p
 *Cin2 in2 0 3.5p
 abridge2 [in1 in2] [din1 din2] adc_buff
