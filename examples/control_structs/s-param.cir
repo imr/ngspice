@@ -49,15 +49,15 @@ RS2 66 6 0.001
 RS3 22 6 1e12
 RS4 66 2 1e12
 *Driver
-Vacdc 1 0 DC 'Vbias_in' AC 1 $ ac voltage and dc bias at input (applied through load resistor)
+Vacdc 1 0 DC 'Vbias_in' AC 1 ; ac voltage and dc bias at input (applied through load resistor)
 R1 1 2 'Rbase'
-E1 3 0 2 0 2       $ amplify in port ac voltage by 2
-Vac 3 4 DC 0 AC 1  $ subtract driving ac voltage
+E1 3 0 2 0 2       ; amplify in port ac voltage by 2
+Vac 3 4 DC 0 AC 1  ; subtract driving ac voltage
 R_loop 4 5 0.001
-R3 5 0 1           $ ground return for measure node 5
+R3 5 0 1           ; ground return for measure node 5
 *Readout
-E2 7 0 6 0 2       $ amplify out port ac voltage by 2
-R4 6 8 'Rbase'     $ load resistor at output (ac)
+E2 7 0 6 0 2       ; amplify out port ac voltage by 2
+R4 6 8 'Rbase'     ; load resistor at output (ac)
 Vdc 8 0 DC 'Vbias_out' AC 0 $ dc bias at output (applied through load resistor)
 .ends
 

@@ -24,10 +24,10 @@ VR2 r2  0 dc 0 trrandom (2 'ttime10' 0 1)  ; Gauss controlling voltage
 * If Gauss, factor 0.033 is 10% equivalent to 3 sigma
 * if uniform, uniform between +/- 10%
 R2 4 6  R = 'res + 0.033 * res*V(r2)'  ; behavioral resistor
-*R2 4 6 'res' $ constant R
+*R2 4 6 'res' ; constant R
 
 VC2 c2 0 dc 0  trrandom (2 'ttime10' 0 1)
-*C2	6 	3'cn'  $ constant C
+*C2	6 	3'cn'  ; constant C
 C2 6 3 C = 'cn + 0.033 * cn*V(c2)'  ; behavioral capacitor
 
 VR1 r1  0 dc 0 trrandom (2 'ttime10' 0 1)
@@ -74,7 +74,7 @@ ROUT	5	6	10
 .control
 option noinit
 run
-plot V(4) 5*V(r1) 5*V(r2) 5*V(c1) 5*V(c2)
+plot 5*V(r1) 5*V(r2) 5*V(c1) 5*V(c2) V(4)
 linearize v(4)
 fft v(4)
 let v4mag =  mag(v(4))
