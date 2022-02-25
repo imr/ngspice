@@ -34,7 +34,7 @@ plot dc3.vs2#branch vs2#branch
 * David Zan, (c) 2017/03/02 Preliminary
 .MODEL IXTH80N20L VDMOS Nchan Vds=200
 + VTO=4 KP=15
-+ Lambda=3m  $ will be reset by altermod to original 2m
++ Lambda=3m  ; will be reset by altermod to original 2m
 + Mtriode=0.4
 + Ksubthres=120m
 + subshift=160m
@@ -46,12 +46,12 @@ plot dc3.vs2#branch vs2#branch
 + NBV=4
 + TT=250e-9
 + vq=100
-+ rq=0.5  $ will be reset by altermod to original 0
++ rq=0.5  ; will be reset by altermod to original 0
 
 * David Zan, (c) 2017/03/02 Preliminary
 .MODEL IXTH48P20P VDMOS Pchan Vds=200
 + VTO=-4 KP=10
-+ Lambda=7m  $ will be reset by altermod to original 5m  
++ Lambda=7m  ; will be reset by altermod to original 5m  
 + Mtriode=0.3   
 + Ksubthres=120m
 + Rs=10m Rd=20m Rds=200e6
@@ -62,6 +62,6 @@ plot dc3.vs2#branch vs2#branch
 + NBV=4
 + TT=260e-9
 + vq=100
-+ rq=0.5  $ will be reset by altermod to original 0
++ rq=0.5  ; will be reset by altermod to original 0
 
 .end
