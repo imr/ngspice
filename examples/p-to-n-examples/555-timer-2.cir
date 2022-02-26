@@ -63,7 +63,7 @@
     * applications, up to 100Hz.
     .INCLUDE TLC555.LIB
     .TRAN 10u 100MS
-    .OPTIONS RELTOL=.0001
+*    .OPTIONS RELTOL=.0001 chgtol=1e-11
     .SAVE  v(16) v(13) v(17)
     .SAVE  v(1) v(4) v(3)
 
