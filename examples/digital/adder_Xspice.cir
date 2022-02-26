@@ -63,6 +63,7 @@ X1     1  2  3  4  5  6  7  8  s0 s1 s2 s3  d0 c3 FOURBIT
 *.save V(a1) V(a2) V(a3) V(a4) V(a5) V(a6) V(a7) V(a8) 
 
 .control
+esave 1 2 3 4 5 6 7 8 s0 s1 s2 s3 c3
 TRAN 500p 6400NS
 rusage
 display
