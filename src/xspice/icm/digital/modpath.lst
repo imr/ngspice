@@ -17,6 +17,7 @@ d_or
 d_osc
 d_pulldown
 d_pullup
+d_pwm
 d_ram
 d_source
 d_srff
