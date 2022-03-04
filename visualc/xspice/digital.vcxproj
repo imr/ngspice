@@ -276,6 +276,10 @@
       <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="icm\digital\d_pullup\d_pullup-ifspec.c" />
+    <ClCompile Include="icm\digital\d_pwm\d_pwm-cfunc.c">
+      <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="icm\digital\d_pwm\d_pwm-ifspec.c" />
     <ClCompile Include="icm\digital\d_ram\d_ram-cfunc.c">
       <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -353,6 +357,8 @@
     <None Include="..\..\src\xspice\icm\digital\d_pulldown\ifspec.ifs" />
     <None Include="..\..\src\xspice\icm\digital\d_pullup\cfunc.mod" />
     <None Include="..\..\src\xspice\icm\digital\d_pullup\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\digital\d_pwm\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\digital\d_pwm\ifspec.ifs" />
     <None Include="..\..\src\xspice\icm\digital\d_ram\cfunc.mod" />
     <None Include="..\..\src\xspice\icm\digital\d_ram\ifspec.ifs" />
     <None Include="..\..\src\xspice\icm\digital\d_source\cfunc.mod" />
