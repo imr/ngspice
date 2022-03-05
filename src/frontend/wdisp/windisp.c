@@ -35,18 +35,27 @@
 #include "ngspice/suffix.h"
 
 /* Typen */
-typedef struct {      /* Extra window data */
-    HWND  wnd;        /* window */
-    HDC   hDC;        /* Device context of window */
-    RECT  Area;       /* plot area */
-    int   ColorIndex; /* Index of actual color */
-    int   PaintFlag;  /* WM_PAINT redraw active */
-    int   FirstFlag;  /* 1 before first update */
-    int   PaintRequested;
+typedef struct win_plot {       /* Extra window data */
+    HWND  wnd;                  /* window */
+    HDC   hDC;                  /* Device context of window */
+    RECT  Area;                 /* plot area */
+    int   ColorIndex;           /* Index of actual color */
+
+    /* Support for incremental drawing. */
+
+    GRAPH                   *gr;        /* Back link to parent structure. */
+    struct win_plot         *next;      /* List of plots needing redrawing. */
+    struct incremental_plot  incr;      /* Drawing state (fteext.h). */
 } tWindowData;
 typedef tWindowData *tpWindowData;       /* pointer to it */
 
 #define pWindowData(g) ((tpWindowData)(g->devdep))
+
+/* Definitions for incremental plotting. */
+
+tpWindowData PlotHead;                  /* Linked list of active plots. */
+
+#define MAXPOINTS 5000 /* Maximum points processed in incremental drawing. */
 
 LRESULT CALLBACK PlotWindowProc(HWND hwnd,     /* window procedure */
                                 UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -689,6 +698,22 @@ LRESULT CALLBACK PlotWindowProc(HWND hwnd, UINT uMsg,
     {
         gr = pGraph(hwnd);
         if (gr) {
+            wd = pWindowData(gr);
+            if (wd) {
+                tpWindowData *find;
+
+                /* Remove from linked list. */
+
+                for (find = &PlotHead; *find; find = &(*find)->next) {
+                    if (*find == wd) {
+                        *find = wd->next;
+                        wd->next = NULL;
+                        break;
+                    }
+                }
+                if (wd->incr.state == Active)
+                    gr_abort_incr(&wd->incr);
+            }
             /* if gr equals currentgraph, reset currentgraph. */
             if (gr == currentgraph)
                 currentgraph = NULL;
@@ -704,7 +729,9 @@ LRESULT CALLBACK PlotWindowProc(HWND hwnd, UINT uMsg,
 
         /* Has to happen, but the DC is not used.  Responses to some
          * paint requests are faked here, and the clipping region in newDC
-         * reflects those previous lies.  Redraw everything.
+         * reflects those previous lies.  Also, to keep Windows happy,
+         * EndPaint() is called here, but if there are many points to plot,
+         * drawing will be done incrementally by W32Paint(). Redraw everything.
          */
         newDC = BeginPaint(hwnd, &ps);
 
@@ -712,26 +739,36 @@ LRESULT CALLBACK PlotWindowProc(HWND hwnd, UINT uMsg,
         if (gr) {
             wd = pWindowData(gr);
             if (wd) {
-                if (!wd->PaintFlag && !wd->FirstFlag) {
-                    /* avoid recursive call */
-                    wd->PaintFlag++;
-                    /* get window sizes */
-                    GetClientRect(hwnd, &(wd->Area));
+                struct incremental_plot *incr;
+                bool                     was_drawing;
+
+                /* Already drawing? */
+
+                incr = &wd->incr;
+                was_drawing = (incr->state <= Active);
+                if (incr->state == Active) {
+                    /* Stop.  */
+
+                    gr_abort_incr(incr);
+                }
+
+                /* get window sizes */
+                GetClientRect(hwnd, &(wd->Area));
+                if (wd->Area.right != gr->absolute.width ||
+                    wd->Area.bottom != gr->absolute.height) {
                     gr->absolute.width  = wd->Area.right;
                     gr->absolute.height = wd->Area.bottom;
+                    gr_resize(gr);
+                }
 
-                    /* plot anew */
-                    {
-                        GRAPH *tmp = currentgraph;
-                        currentgraph = gr;
-                        gr_resize(gr);
-                        currentgraph = tmp;
-                    }
+                /* Start or restart drawing at next idle point. */
 
-                    /* ready */
-                    --wd->PaintFlag;
-                } else {
-                    wd->PaintRequested = 1;
+                incr->state = Start;
+                if (!was_drawing) {
+                    /* Add to linked list. */
+
+                    wd->next = PlotHead;
+                    PlotHead = wd;
                 }
             }
         }
@@ -739,29 +776,6 @@ LRESULT CALLBACK PlotWindowProc(HWND hwnd, UINT uMsg,
         EndPaint(hwnd, &ps);
     }
     return 0;
-
-    /* Skip painting during move or resize. */
-
-    case WM_ENTERSIZEMOVE:
-        gr = pGraph(hwnd);
-        if (gr) {
-            wd = pWindowData(gr);
-            if (wd) {
-                wd->PaintFlag++;         // Do not repaint while unstable.
-                wd->PaintRequested = 0;  // Detect ignored paints.
-            }
-        }
-        return 0;
-    case WM_EXITSIZEMOVE:
-        gr = pGraph(hwnd);
-        if (gr) {
-            wd = pWindowData(gr);
-            if (wd)
-                wd->PaintFlag--;
-            if (wd->PaintRequested)
-                InvalidateRect (hwnd, NULL, TRUE);
-        }
-        return 0;
 
     default:
     WIN_DEFAULT:
@@ -771,6 +785,31 @@ LRESULT CALLBACK PlotWindowProc(HWND hwnd, UINT uMsg,
        return DefWindowProcW( hwnd, uMsg, wParam, lParam);
 #endif
     }
+}
+
+/* Incremental plotting to keep the UI alive during big plots.
+ * This function is called from the message loop when the program
+ * is ready to wait for input.
+ */
+
+void W32Paint(void)
+{
+    tpWindowData             wd;
+    struct incremental_plot *incr;
+
+    wd = PlotHead;
+    if (!wd)
+        return;
+    incr = &wd->incr;
+    if (incr->state <= Active)
+        gr_redraw_incr(wd->gr, incr);
+    if (incr->state <= Active)
+        return;
+
+    /* Plotting complete. */
+
+    PlotHead = wd->next;
+    wd->next = NULL;
 }
 
 
@@ -870,9 +909,10 @@ int WIN_NewViewport(GRAPH *graph)
     /* set the Color Index */
     wd->ColorIndex = 0;
 
-    /* still no flag */
-    wd->PaintFlag = 0;
-    wd->FirstFlag = 1;
+    wd->gr = graph;
+    wd->next = NULL;
+    wd->incr.state = Done;      // Mark as inactive.
+    wd->incr.maximum = MAXPOINTS;
 
     /* modify system menu */
     sysmenu = GetSystemMenu(window, FALSE);
@@ -935,7 +975,7 @@ int WIN_NewViewport(GRAPH *graph)
         graph->gridwidth = gridlinewidth;
 
     /* wait until the window is really there */
-    WaitForIdle();
+    //    WaitForIdle();
 
     /* ready */
     return 0;
@@ -984,8 +1024,8 @@ int WIN_Clear(void)
         return 0;
 
     /* this is done by the window itself */
-    if (!wd->PaintFlag)  /* not necessary with WM_PAINT */
-        SendMessage(wd->wnd, WM_ERASEBKGND, (WPARAM) wd->hDC, 0);
+
+    SendMessage(wd->wnd, WM_ERASEBKGND, (WPARAM) wd->hDC, 0);
 
     return 0;
 }
@@ -1014,7 +1054,6 @@ WIN_DrawLine(int x1, int y1, int x2, int y2, bool isgrid)
     LineTo(wd->hDC, x2, wd->Area.bottom - y2);
     OldPen = SelectObject(wd->hDC, OldPen);
     DeleteObject(NewPen);
-    WaitForIdle();
     return 0;
 }
 
@@ -1073,7 +1112,6 @@ int WIN_Arc(int x0, int y0, int radius, double theta, double delta_theta)
     Arc(wd->hDC, left, yb-top, right, yb-bottom, xs, yb-ys, xe, yb-ye);
     OldPen = SelectObject(wd->hDC, OldPen);
     DeleteObject(NewPen);
-    WaitForIdle();
     return 0;
 }
 
@@ -1260,19 +1298,6 @@ int WIN_SetColor(int color)
 
 int WIN_Update(void)
 {
-    tpWindowData wd;
-
-    if (!currentgraph)
-        return 0;
-
-    wd = pWindowData(currentgraph);
-    if (!wd)
-        return 0;
-
-    /* After the first run of Update() */
-    /* FirstFlag again handles WM_PAINT messages. */
-    /* This prevents double painting during displaying the window. */
-    wd->FirstFlag = 0;
     return 0;
 }
 

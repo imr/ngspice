@@ -7,6 +7,7 @@
 #include "ngspice/pnode.h"
 #include "ngspice/sim.h"
 #include "ngspice/fteext.h"
+#include "ngspice/ftedev.h"
 #include "ngspice/compatmode.h"
 
 #include <circuits.h>
@@ -1074,6 +1075,11 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
         tfree(ylim);
     }
 
+    /* If devname is null, use the current default device. */
+
+    if (!devname && dispdev)
+        devname = dispdev->name;
+
     /* We don't want to try to deal with Smith plots for asciiplot. */
     if (devname && eq(devname, "lpr")) {
         /* check if we should (can) linearize */
@@ -1197,9 +1203,16 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
         goto quit;
     }
 
-    /* Now plot all the graphs. */
-    for (d = vecs; d; d = d->v_link2) {
-        ft_graf(d, oneval ? NULL : d->v_scale, FALSE);
+    if (devname && (eq(devname, "X11") || eq(devname, "Windows"))) {
+        /* Drawing is done on exposure. */
+
+        for (d = vecs; d; d = d->v_link2)
+            gr_start(d);
+    } else {
+        /* Now plot all the graphs. */
+
+        for (d = vecs; d; d = d->v_link2)
+            ft_graf(d, oneval ? NULL : d->v_scale, FALSE, NULL);
     }
 
     gr_clean();

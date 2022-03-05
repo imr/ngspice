@@ -15,6 +15,7 @@ Author: 1988 Jeffrey M. Hsu
 #  include <sys/types.h>  /* PN */
 #  include <unistd.h>     /* PN */
 #  include <locale.h>
+#  include <setjmp.h>
 
 #  include "ngspice/graph.h"
 #  include "ngspice/ftedbgra.h"
@@ -61,6 +62,7 @@ Author: 1988 Jeffrey M. Hsu
 #define BOXSIZE 30      /* initial size of bounding box for zoomin */
 
 #define NUMCOLORS 20
+#define MAXPOINTS 10000 /* Maximum points processed in incremental drawing. */
 
 typedef struct x11info {
     Window window;
@@ -84,6 +86,7 @@ typedef struct x11info {
     XftColor color;
     Colormap cmap;
 #endif
+    struct incremental_plot incr; // Incremental drawing.
 } X11devdep;
 
 #define DEVDEP(g) (*((X11devdep *) (g)->devdep))
@@ -470,6 +473,8 @@ X11_NewViewport(GRAPH *graph)
 
     graph->devdep = TMALLOC(X11devdep, 1);
     graph->n_byte_devdep = sizeof(X11devdep);
+    DEVDEP(graph).incr.state = Start;   // Incremental drawing set-up.
+    DEVDEP(graph).incr.maximum = MAXPOINTS;
 
     /* set up new shell */
     DEVDEP(graph).shell = XtCreateApplicationShell
@@ -1192,15 +1197,38 @@ void RemoveWindow(GRAPH *graph)
         XftDrawDestroy(DEVDEP(graph).draw);
         XftColorFree(display, DefaultVisual(display, 0), DEVDEP(graph).cmap, &DEVDEP(graph).color);
 #endif
+
+        if (DEVDEP(graph).incr.state == Active)
+            gr_abort_incr(&DEVDEP(graph).incr);
     }
 
     if (graph == currentgraph)
         currentgraph = NULL;
-
     DestroyGraph(graph->graphid);
 } /* end of function RemoveWindow */
 
+/* Xt event loop idle-time function: continue incremental drawing.
+ * This keeps getting called until it returns True.
+ */
 
+static Boolean continue_drawing(XtPointer arg)
+{
+    GRAPH                   *graph;
+    struct incremental_plot *incr;
+    int                      graphid = (int)(intptr_t)arg;
+
+    graph = FindGraph(graphid);
+    if (!graph)
+        return True;
+    incr = &DEVDEP(graph).incr;
+    gr_redraw_incr(graph, incr);
+    if (incr->state == Done) {
+        XSetClipMask(display, DEVDEP(graph).gc, None);
+        return True;
+    } else {
+        return False;
+    }
+}
 
 /* call higher gr_redraw routine */
 static void
@@ -1237,14 +1265,23 @@ redraw(Widget w, XtPointer client_data, XEvent *event, Boolean *continue_dispatc
 
     noclear = True;
     {
-        GRAPH *tmp = currentgraph;
-        currentgraph = graph;
-        gr_redraw(graph);
-        currentgraph = tmp;
+        struct incremental_plot *incr = &DEVDEP(graph).incr;
+
+        if (incr->state == Active) {
+            /* Already drawing. Redraw complete window. */
+
+            gr_abort_incr(incr);
+            XSetClipMask(display, DEVDEP(graph).gc, None);
+            incr->state = Start; // continue_drawing() will restart.
+        } else {
+            incr->state = Start;
+            gr_redraw_incr(graph, incr);
+            if (incr->state != Done)
+                XtAddWorkProc(continue_drawing,
+                              (XtPointer)(intptr_t)graph->graphid);
+        }
     }
     noclear = False;
-
-    XSetClipMask(display, DEVDEP(graph).gc, None);
 }
 
 
@@ -1275,51 +1312,52 @@ resize(Widget w, XtPointer client_data, XEvent *call_data, Boolean *continue_dis
     }
 }
 
-
-int
-X11_Input(REQUEST *request, RESPONSE *response)
+/* Dummy input handler. */
+static void dummy_input_proc(XtPointer d1, int *d2, XtInputId *d3)
 {
-    XEvent ev;
-    int nfds;
-    fd_set rfds;
+    NG_IGNORE(d2);
+    NG_IGNORE(d3);
+
+    longjmp(*(jmp_buf *)d1, 1);
+}
+
+int X11_Input(REQUEST *request, RESPONSE *response)
+{
+    static int       last_fd = -1;
+    static XtInputId last_id;
+    int              fd;
+    XEvent           ev;
+    jmp_buf          input_jumper;
 
     switch (request->option) {
-
     case char_option:
-        nfds = ConnectionNumber(display) > fileno(request->fp) ?
-            ConnectionNumber(display) :
-        fileno(request->fp);
+        fd = fileno(request->fp);
+        if (fd != last_fd) {
+            if (last_fd >= 0)
+                XtRemoveInput(last_id);
+            last_fd = fd;
+            last_id = XtAddInput(fd, (XtPointer)(intptr_t)XtInputReadMask,
+                                 dummy_input_proc, (XtPointer)&input_jumper);
+        }
 
-        for (;;) {
+        if (setjmp(input_jumper)) {
+            /* Jumped out of XtNextEvent() in the other branch.
+             * Stop looking for alternate input and process any events.
+             */
 
-            /* first read off the queue before doing the select */
+            XtRemoveInput(last_id);
+            last_fd = -1;
             while (XtPending()) {
                 XtNextEvent(&ev);
                 XtDispatchEvent(&ev);
             }
+        } else {
+            /* Process events and idle functions: exit via longjmp() above. */
 
-            /* block on ConnectionNumber and request->fp */
-            /* PN: added fd_set * casting */
-            FD_ZERO(&rfds);
-            FD_SET(fileno(request->fp), &rfds);
-            FD_SET(ConnectionNumber(display), &rfds);
-            select (nfds + 1,
-                    &rfds,
-                    NULL,
-                    NULL,
-                    NULL);
-
-            /* handle X events first */
-            if (FD_ISSET (ConnectionNumber(display), &rfds))
-                /* handle ALL X events */
-                while (XtPending()) {
-                    XtNextEvent(&ev);
-                    XtDispatchEvent(&ev);
-                }
-
-            if (FD_ISSET (fileno(request->fp), &rfds))
-                goto out;
-
+            for (;;) {
+                XtNextEvent(&ev);
+                XtDispatchEvent(&ev);
+            }
         }
         break;
 
@@ -1351,7 +1389,6 @@ X11_Input(REQUEST *request, RESPONSE *response)
         break;
     }
 
-out:
     if (response)
         response->option = request->option;
     return 0;

@@ -565,8 +565,11 @@ void gr_resize(GRAPH *graph)
        plot if the resize was from a small window to a larger window.
        So in order to keep the clever X11 expose event handling, we
        have the X11 resize routine pull out expose events for that
-       window, and we redraw on resize also.  */
-#ifdef X_DISPLAY_MISSING
+       window, and we redraw on resize also.
+
+       Windows is similar, but checks for resize on WM_PAINT.
+  */
+#if defined(X_DISPLAY_MISSING) && !defined(HAS_WINGUI)
     gr_redraw(graph);
 #endif
 }
@@ -627,7 +630,7 @@ void gr_redraw(GRAPH *graph)
                 (link->vector->v_scale ?
                  link->vector->v_scale :
                  link->vector->v_plot->pl_scale),
-                TRUE);
+                TRUE, NULL);
     }
 
     gr_restoretext(graph);
@@ -635,6 +638,96 @@ void gr_redraw(GRAPH *graph)
     PopGraphContext();
 }
 
+
+/* Redraw everything in struct *graph, over multiple calls.
+ * The caller need only initialise the incr->state member to Start,
+ * and set the incr->maximum member.  That limits the number of vector entries
+ * that are plotted in a single call.
+ *
+ * On return, if state is Active, another call is needed and eventually,
+ * the state will be Done.  To abort the sequence and release resources,
+ * set state to Abort.
+ */
+void gr_redraw_incr(GRAPH *graph, struct incremental_plot *incr)
+{
+    struct dveclist *link;
+
+    /* establish current graph so default graphic calls will work right */
+    PushGraphContext(graph);
+
+    switch(incr->state) {
+    case Start:
+        incr->vecnum = 0;
+        incr->state = Active;
+        incr->istate = Start;
+        DevClear();
+
+        /* Redraw grid. */
+
+        gr_redrawgrid(graph);
+        link = incr->link = graph->plotdata;
+
+        /* Redraw legend. */
+
+        if (!graph->nolegend)
+            drawlegend(graph, incr->vecnum++, link->vector);
+
+        // Fall through
+    case Active:
+        link = incr->link; // Recover current vector
+
+        /* Replot data
+           if onevalue, pass it a NULL scale
+           otherwise, if vec has its own scale, pass that
+           else pass vec's plot's scale
+        */
+        ft_graf(link->vector,
+                (graph->onevalue ?
+                 NULL : (link->vector->v_scale ?
+                         link->vector->v_scale :
+                         link->vector->v_plot->pl_scale)),
+                TRUE, incr);
+
+        switch (incr->istate) {
+        case Start:
+        case Abort:
+            abort();    // This can not happen!
+            break;
+        case Active:
+            break;
+        case Done:
+            link = link->next;
+            if (link) {
+                /* Redraw legend. */
+
+                if (!graph->nolegend)
+                    drawlegend(graph, incr->vecnum++, link->vector);
+                incr->link = link;
+                incr->istate = Start; // Start next on following call.
+            } else {
+                gr_restoretext(graph);
+                incr->state = Done;
+            }
+            break;
+        }
+        break;
+    case Done:
+        break;
+    case Abort:
+        gr_abort_incr(incr);
+        break;
+    }
+    PopGraphContext();
+}
+
+void gr_abort_incr(struct incremental_plot *incr)
+{
+    /* Pass it through. */
+
+    incr->istate = Abort;
+    ft_graf(NULL, NULL, FALSE, incr);
+    incr->istate = Start;
+}
 
 void gr_restoretext(GRAPH *graph)
 {
@@ -758,7 +851,7 @@ static int iplot(struct plot *pl, int id)
         for (v = pl->pl_dvecs; v; v = v->v_next) {
             if (v->v_flags & VF_PLOT) {
                 gr_start_internal(v, FALSE);
-                ft_graf(v, xs, TRUE);
+                ft_graf(v, xs, TRUE, NULL);
             }
         }
         inited = 1;

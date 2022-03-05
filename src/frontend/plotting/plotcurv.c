@@ -24,17 +24,130 @@ static void plotinterval(struct dvec *v, double lo, double hi, register double *
 
 /* Plot the vector v, with scale xs.  If we are doing curve-fitting, then
  * do some tricky stuff.
+ *
+ * This function may be called multiple times to plot a single vector so that
+ * each call is short, keeping the UI responsive.  The *incr structure
+ * describes the progress made in previous calls.  If incr is NULL
+ * a complete vector is plotted in one call.
+ *
+ * These macros allow some local variables to be replaced by members of *incr.
  */
 
+#define i   ip->index // int
+#define end ip->end   // int
+#define dir ip->dir   // int
+#define lx  ip->lx    // double
+#define ly  ip->ly    // double
+
+/* Macros for early returns during incremental plotting and
+ * adjusting number of loops.
+ */
+
+#define INCR_RETURN \
+    if (incr) { \
+        if (i >= end) \
+            incr->istate = Done; \
+        else \
+            return; \
+    }
+
+#define INCR_RETURN_MORE \
+    if (incr && i < end) \
+            return; \
+    i = 0;
+
+#define INCR_SCALE_LIMIT(s) \
+    if (incr) {  \
+        limit *= s; \
+        if (limit > end) \
+            limit = end; \
+    }
+
 void
-ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
+ft_graf(struct dvec *v, struct dvec *xs, bool nostart,
+        struct incremental_plot *incr)
 {
-    int degree, gridsize, length;
-    register int i, j, l;
-    double *scratch, *result, *gridbuf, *mm;
-    register double *xdata, *ydata;
-    bool rot, increasing = FALSE;
-    double dx = 0.0, dy = 0.0, lx = 0.0, ly = 0.0;
+    struct incremental_plot  local, *ip;
+    int                      degree, gridsize, length, limit;
+    register int             j, l;
+    double                  *scratch, *result, *gridbuf, *mm;
+    register double         *xdata, *ydata;
+    bool                     rot, increasing = FALSE;
+    double                   dx, dy;
+
+    if (incr) {
+        /* Using multiple calls. In the Active state jump back to an
+         * active plotting loop using previous values for local variables.
+         *
+         * Sensitive readers should stop here and avoid all blocks
+         * beginning "if (incr)".
+         */
+
+        ip = incr;                      // Use passed context for variables
+        switch(incr->istate) {
+        case Start:
+            i = 0;
+            incr->istate = Active;
+            end = v->v_length;
+            if (xs && xs->v_length < end)
+                end = xs->v_length;
+            limit = (incr->maximum > end) ? end : incr->maximum;
+            break;
+        case Active:
+            limit = incr->index + incr->maximum;
+            if (limit > end)
+                limit = end;
+
+            switch (incr->type) {
+            case Scan_Monotonic:
+                goto resume_mono;
+                break;
+            case Oneval:
+                goto resume_oneval;
+                break;
+            case Simple:
+                goto resume_simple;
+                break;
+            case Regrid:
+                goto resume_regrid;
+                break;
+            case Poly:
+                goto resume_poly;
+                break;
+            }
+            break;
+        case Done:
+            return; // Not expected!
+            break;
+        case Abort:
+            incr->type = Done;
+            switch (incr->type) {
+            case Regrid:
+                goto resume_regrid;    // Dummy for now.
+                break;
+            case Poly:
+                goto resume_poly;      // Dummy for now.
+                break;
+            default:
+                return;                // No memory to be freed.
+            }
+            break;
+        }
+    } else {
+        ip = &local;                    // Use automatic variable
+        i = 0;
+        end = v->v_length;
+        if (xs && xs->v_length < end)
+            end = xs->v_length;
+        limit = end;
+    }
+
+    if (xs && v->v_length != xs->v_length) {
+        fprintf(stderr,
+                "Warning: length of vector %s and its scale %s "
+                "do not match, plot may be truncated!\n",
+                v->v_name, xs->v_name);
+    }
 
     /* if already started, use saved degree */
     if (nostart) {
@@ -45,8 +158,8 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
         currentgraph->degree = degree;
     }
 
-    if (degree > v->v_length)
-        degree = v->v_length;
+    if (degree > end)
+        degree = end;
 
     if (degree < 1) {
         fprintf(cp_err, "Error: polydegree is %d, can't plot...\n",
@@ -62,26 +175,32 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
         return;
     }
 
-    if (gridsize && xs) {
+    if (gridsize && xs && end > 1) {
+        ip->type = Scan_Monotonic;
+        INCR_SCALE_LIMIT(32);
+    resume_mono:
         if (isreal(xs)) {
             increasing = (xs->v_realdata[0] < xs->v_realdata[1]);
-            for (i = 0; i < xs->v_length - 1; i++)
+            for (; i < end - 1; i++)
                 if (increasing != (xs->v_realdata[i] < xs->v_realdata[i + 1])) {
                     fprintf(cp_err,
                             "Warning: scale not monotonic, gridsize not relevant.\n");
                     gridsize = 0;
+                    i = end;
                     break;
                 }
         } else {
             increasing = (realpart(xs->v_compdata[0]) < realpart(xs->v_compdata[1]));
-            for (i = 0; i < xs->v_length - 1; i++)
+            for (; i < end - 1; i++)
                 if (increasing != (realpart(xs->v_compdata[i]) < realpart(xs->v_compdata[i + 1]))) {
                     fprintf(cp_err,
                             "Warning: scale not monotonic, gridsize not relevant.\n");
                     gridsize = 0;
+                    i = end;
                     break;
                 }
         }
+        INCR_RETURN_MORE
     }
 
     if (!nostart)
@@ -90,12 +209,14 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
     /* Do the one value case */
 
     if (!xs) {
-        for (i = 0; i < v->v_length; i++) {
+        ip->type = Oneval;
+    resume_oneval:
+        for (; i < limit; i++) {
 
             /* We should do the one - point case too!
              *      Important for pole-zero for example
              */
-            if (v->v_length == 1) {
+            if (end == 1) {
                 j = 0;
             } else {
                 j = i-1;
@@ -119,6 +240,7 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
                          imagpart(v->v_compdata[j]), (j == i ? 1 : i));
             }
         }
+        INCR_RETURN
         gr_end(v);
         return;
     }
@@ -130,12 +252,20 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
      */
     if ((degree == 1) && (gridsize == 0)) {
         /* We have to take care of non-monotonic x-axis values.
-        If they occur, plotting is suppressed, except for mono is set
-        to FALSE by flag 'retraceplot' in command 'plot'.
-        Then everything is plotted. */
-        bool mono = (currentgraph->plottype != PLOT_RETLIN);
-        int dir = 0;
-        for (i = 0, j = v->v_length; i < j; i++) {
+         * If they occur, plotting is suppressed, except for mono is set
+         * to FALSE by flag 'retraceplot' in command 'plot'.
+         * Then everything is plotted.
+         */
+        bool mono;
+
+        ip->type = Simple;
+        dir = 0;
+        lx = 0.0;
+        ly = 0.0;
+    resume_simple:
+
+        mono = (currentgraph->plottype != PLOT_RETLIN);
+        for (; i < limit; i++) {
             dx = isreal(xs) ? xs->v_realdata[i] :
                 realpart(xs->v_compdata[i]);
             dy = isreal(v) ? v->v_realdata[i] :
@@ -152,9 +282,13 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
             lx = dx;
             ly = dy;
         }
-        if (v->v_length == 1)
+        if (end == 1) {
             gr_point(v, dx, dy, lx, ly, 1);
+        } else
+            INCR_RETURN
         gr_end(v);
+        if (incr)
+            incr->istate = Done;
         return;
     }
 
@@ -168,8 +302,8 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
         if (isreal(v)) {
             ydata = v->v_realdata;
         } else {
-            ydata = TMALLOC(double, v->v_length);
-            for (i = 0; i < v->v_length; i++)
+            ydata = TMALLOC(double, end);
+            for (i = 0; i < end; i++)
                 ydata[i] = realpart(v->v_compdata[i]);
         }
 
@@ -189,7 +323,7 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
         else
             for (i = 0, dy = mm[1]; i < gridsize; i++, dy -= dx)
                 gridbuf[i] = dy;
-        if (!ft_interpolate(ydata, result, xdata, v->v_length, gridbuf,
+        if (!ft_interpolate(ydata, result, xdata, end, gridbuf,
                             gridsize, degree)) {
             fprintf(cp_err, "Error: can't put %s on gridsize %d\n",
                     v->v_name, gridsize);
@@ -199,6 +333,7 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
          * figure out where to put the tic marks to correspond with
          * the actual data...
          */
+    resume_regrid:
         for (i = 0; i < gridsize; i++)
             gr_point(v, gridbuf[i], result[i],
                      gridbuf[i ? (i - 1) : i], result[i ? (i - 1) : i], -1);
@@ -250,6 +385,7 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
         }
     }
 
+ resume_poly:
     /* Plot this part of the curve... */
     for (i = 0; i < degree; i++)
         if (rot)
@@ -260,7 +396,7 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
     /* Now plot the rest, piece by piece... l is the
      * last element under consideration.
      */
-    length = v->v_length;
+    length = end;
     for (l = degree + 1; l < length; l++) {
 
         /* Shift the old stuff by one and get another value. */
@@ -298,6 +434,9 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
         else
             plotinterval(v, xdata[degree - 1], xdata[degree],
                          result, degree, FALSE);
+        if (incr)
+            incr->istate = Done;
+
     }
 
     tfree(scratch);
@@ -308,6 +447,11 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
     gr_end(v);
 }
 
+#undef i
+#undef end
+#undef dir
+#undef lx
+#undef ly
 
 #define GRANULARITY 10
 

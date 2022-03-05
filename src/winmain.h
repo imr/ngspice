@@ -10,6 +10,11 @@ int xmain(int argc, char *argv[]);
 static char* rlead(char*);
 #endif
 
+/* Definitions for incremental plotting - windisp.c. */
+
+extern struct win_plot *PlotHead;;
+extern void W32Paint(void);
+
 void winmessage(char*);
 
 void WaitForIdle(void);

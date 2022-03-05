@@ -8,6 +8,10 @@
    Modified BSD license
 */
 
+/* Developer note: inserting printf() for debugging does not work in this file.
+ * Use win_x_printf() or similar win_x_XXXX() functions defined below.
+ */
+
 #include "ngspice/config.h"
 
 #ifdef HAS_WINGUI
@@ -33,7 +37,6 @@
 #include <sys/timeb.h>
 #ifdef __MINGW32__
 #include <tchar.h>
-#include <stdio.h>
 #endif
 
 #include "hist_info.h" /* history management */
@@ -153,7 +156,6 @@ WaitForIdle(void)
     }
 }
 
-
 // ---------------------------<Message Handling>-------------------------------
 
 // Warte, bis keine Messages mehr zu bearbeiten sind,
@@ -162,10 +164,18 @@ static void
 WaitForMessage(void)
 {
     MSG m;
-    // arbeite alle Nachrichten ab
-    while (PeekMessage(&m, NULL, 0, 0, PM_REMOVE)) {
-        TranslateMessage(&m);
-        DispatchMessage(&m);
+
+    for (;;) {
+        // arbeite alle Nachrichten ab
+        while (PeekMessage(&m, NULL, 0, 0, PM_REMOVE)) {
+            TranslateMessage(&m);
+            DispatchMessage(&m);
+        }
+
+        if (PlotHead)
+            W32Paint();         // Incremental plotting.
+        else
+            break;
     }
     WaitMessage();
 }
@@ -527,6 +537,7 @@ PostSpiceCommand(const char * const cmd)
 static LRESULT CALLBACK
 MainWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+    static BOOL Maximised;          /* Main window is maximised */
     switch (uMsg) {
 
         /* command issued by pushing the "Quit" button */
@@ -549,7 +560,7 @@ MainWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
     case WM_SIZE:
         HANDLE_WM_SIZE(hwnd, wParam, lParam, Main_OnSize);
-        goto DEFAULT_AFTER;
+        return 0;
 
     default:
     DEFAULT_AFTER:

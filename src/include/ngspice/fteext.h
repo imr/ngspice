@@ -286,7 +286,31 @@ extern struct pnode* ft_getpnames_quotes(wordlist* wl, bool check);
 
 extern int ft_findpoint(double pt, double *lims, int maxp, int minp, bool islog);
 extern double *ft_minmax(struct dvec *v, bool real);
-extern void ft_graf(struct dvec *v, struct dvec *xs, bool nostart);
+
+/* Context structure for incremental plotting, passed as argument to
+ * gr_redraw_incr() and optionally to ft_graf().
+ */
+
+struct incremental_plot {
+    struct dveclist                     *link;    // Current vector
+    int                                  vecnum; // Count vectors
+    enum {Start, Active, Done, Abort}    state, istate;
+    enum {Scan_Monotonic, Oneval, Simple, Regrid, Poly}
+                                         type;    // Processing step.
+    int                                  maximum; // Maximum points to plot.
+    int                                  index;   // Current point
+    int                                  end;     // Effective end of vector.
+
+    /* For type == Simple; */
+
+    int                                  dir;
+    double                               lx, ly;
+};
+
+void gr_redraw_incr(GRAPH *graph, struct incremental_plot *incr);
+void gr_abort_incr(struct incremental_plot *incr);
+extern void ft_graf(struct dvec *v, struct dvec *xs, bool nostart,
+                    struct incremental_plot *incr);
 
 /* rawfile.c */
 extern int raw_prec;
