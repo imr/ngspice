@@ -24,4 +24,10 @@ extern int HICUMtrunc(GENmodel*,CKTcircuit*,double*);
 extern int HICUMnoise(int,int,GENmodel*,CKTcircuit*,Ndata*,double*);
 extern int HICUMsoaCheck(CKTcircuit *, GENmodel *);
 
+#ifdef KLU
+extern int HICUMbindCSC (GENmodel*, CKTcircuit*) ;
+extern int HICUMbindCSCComplex (GENmodel*, CKTcircuit*) ;
+extern int HICUMbindCSCComplexToReal (GENmodel*, CKTcircuit*) ;
+#endif
+
 #endif
