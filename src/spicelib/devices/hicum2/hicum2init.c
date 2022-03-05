@@ -75,6 +75,12 @@ SPICEdev HICUMinfo = {
     .DEVdump = NULL,
     .DEVacct = NULL,
 #endif
+
+#ifdef KLU
+    .DEVbindCSC = HICUMbindCSC,
+    .DEVbindCSCComplex = HICUMbindCSCComplex,
+    .DEVbindCSCComplexToReal = HICUMbindCSCComplexToReal,
+#endif
 };
 
 

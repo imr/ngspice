@@ -365,6 +365,89 @@ typedef struct sHICUMinstance {
 #endif /*NONOISE*/
 /* the above to avoid allocating memory when it is not needed */
 
+#ifdef KLU
+    BindElement *HICUMbaseBaseBinding ;
+    BindElement *HICUMbaseBaseBPBinding ;
+    BindElement *HICUMbaseBIBaseBIBinding ;
+    BindElement *HICUMbaseBIBaseBPBinding ;
+    BindElement *HICUMbaseBICollCIBinding ;
+    BindElement *HICUMbaseBIEmitEIBinding ;
+    BindElement *HICUMbaseBItempBinding ;
+    BindElement *HICUMbaseBIXfBinding ;
+    BindElement *HICUMbaseBPBaseBIBinding ;
+    BindElement *HICUMbaseBPBaseBinding ;
+    BindElement *HICUMbaseBPBaseBPBinding ;
+    BindElement *HICUMbaseBPCollCIBinding ;
+    BindElement *HICUMbaseBPEmitBinding ;
+    BindElement *HICUMbaseBPEmitEIBinding ;
+    BindElement *HICUMbaseBPSubsSIBinding ;
+    BindElement *HICUMbaseBPtempBinding ;
+    BindElement *HICUMbaseCollCIBinding ;
+    BindElement *HICUMbaseEmitBinding ;
+    BindElement *HICUMbaseTempBinding ;
+    BindElement *HICUMcollCIBaseBIBinding ;
+    BindElement *HICUMcollCIBaseBinding ;
+    BindElement *HICUMcollCIBaseBPBinding ;
+    BindElement *HICUMcollCICollBinding ;
+    BindElement *HICUMcollCICollCIBinding ;
+    BindElement *HICUMcollCIEmitEIBinding ;
+    BindElement *HICUMcollCISubsSIBinding ;
+    BindElement *HICUMcollCItempBinding ;
+    BindElement *HICUMcollCIXf2Binding ;
+    BindElement *HICUMcollCollBinding ;
+    BindElement *HICUMcollCollCIBinding ;
+    BindElement *HICUMcollSubsBinding ;
+    BindElement *HICUMcollTempBinding ;
+    BindElement *HICUMemitBaseBinding ;
+    BindElement *HICUMemitBaseBPBinding ;
+    BindElement *HICUMemitEIBaseBIBinding ;
+    BindElement *HICUMemitEIBaseBPBinding ;
+    BindElement *HICUMemitEICollCIBinding ;
+    BindElement *HICUMemitEIEmitBinding ;
+    BindElement *HICUMemitEIEmitEIBinding ;
+    BindElement *HICUMemitEItempBinding ;
+    BindElement *HICUMemitEIXf2Binding ;
+    BindElement *HICUMemitEIXfBinding ;
+    BindElement *HICUMemitEmitBinding ;
+    BindElement *HICUMemitEmitEIBinding ;
+    BindElement *HICUMemitTempBinding ;
+    BindElement *HICUMsubsCollBinding ;
+    BindElement *HICUMsubsSIBaseBPBinding ;
+    BindElement *HICUMsubsSICollCIBinding ;
+    BindElement *HICUMsubsSISubsBinding ;
+    BindElement *HICUMsubsSISubsSIBinding ;
+    BindElement *HICUMsubsSItempBinding ;
+    BindElement *HICUMsubsSubsBinding ;
+    BindElement *HICUMsubsSubsSIBinding ;
+    BindElement *HICUMsubsTempBinding ;
+    BindElement *HICUMtempBaseBIBinding ;
+    BindElement *HICUMtempBaseBinding ;
+    BindElement *HICUMtempBaseBPBinding ;
+    BindElement *HICUMtempCollBinding ;
+    BindElement *HICUMtempCollCIBinding ;
+    BindElement *HICUMtempEmitBinding ;
+    BindElement *HICUMtempEmitEIBinding ;
+    BindElement *HICUMtempSubsSIBinding ;
+    BindElement *HICUMtempTempBinding ;
+    BindElement *HICUMxf1BaseBIBinding ;
+    BindElement *HICUMxf1CollCIBinding ;
+    BindElement *HICUMxf1EmitEIBinding ;
+    BindElement *HICUMxf1TempBinding ;
+    BindElement *HICUMxf1Xf1Binding ;
+    BindElement *HICUMxf1Xf2Binding ;
+    BindElement *HICUMxf2BaseBIBinding ;
+    BindElement *HICUMxf2CollCIBinding ;
+    BindElement *HICUMxf2EmitEIBinding ;
+    BindElement *HICUMxf2TempBinding ;
+    BindElement *HICUMxf2Xf1Binding ;
+    BindElement *HICUMxf2Xf2Binding ;
+    BindElement *HICUMxfBaseBIBinding ;
+    BindElement *HICUMxfCollCIBinding ;
+    BindElement *HICUMxfEmitEIBinding ;
+    BindElement *HICUMxfTempBinding ;
+    BindElement *HICUMxfXfBinding ;
+#endif
+
 } HICUMinstance;
 
 /* entries in the state vector for hicum: */
