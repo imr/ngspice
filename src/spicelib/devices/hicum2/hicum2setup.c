@@ -754,9 +754,6 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
 
             }
 
-            TSTALLOC(HICUMbaseBPSubsSIPtr ,HICUMbaseBPNode,HICUMsubsSINode);
-            TSTALLOC(HICUMsubsSIBaseBPPtr ,HICUMsubsSINode,HICUMbaseBPNode);
-
             if (selfheat) {
                 TSTALLOC(HICUMcollTempPtr, HICUMcollNode, HICUMtempNode);
                 TSTALLOC(HICUMbaseTempPtr,HICUMbaseNode,HICUMtempNode);
