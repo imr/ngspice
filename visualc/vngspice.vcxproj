@@ -2244,6 +2244,7 @@
     <ClCompile Include="..\src\spicelib\devices\hicum2\hicum2.c" />
     <ClCompile Include="..\src\spicelib\devices\hicum2\hicum2acld.c" />
     <ClCompile Include="..\src\spicelib\devices\hicum2\hicum2ask.c" />
+    <ClCompile Include="..\src\spicelib\devices\hicum2\hicum2bindCSC.c" />
     <ClCompile Include="..\src\spicelib\devices\hicum2\hicum2conv.c" />
     <ClCompile Include="..\src\spicelib\devices\hicum2\hicum2getic.c" />
     <ClCompile Include="..\src\spicelib\devices\hicum2\hicum2init.c" />
