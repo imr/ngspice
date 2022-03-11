@@ -613,7 +613,7 @@ SPan(CKTcircuit *ckt, int restart)
 
         /* gtri - modify - wbk - 12/19/90 - Send IPC stuff */
 #else
-        error = CKTspDump(ckt, freq, acPlot);
+        error = CKTspDump(ckt, freq, spPlot);
 #endif	
         if (error) {
             UPDATE_STATS(DOING_AC);
