@@ -31,7 +31,9 @@ static struct dvec *findvec_all(struct plot *pl);
 static struct dvec *findvec_allv(struct plot *pl);
 static struct dvec *findvec_alli(struct plot *pl);
 static struct dvec *findvec_ally(struct plot *pl);
+#ifdef XSPICE
 static struct dvec *findvec_alle(void);
+#endif
 static struct dvec *find_permanent_vector_by_name(
         NGHASHPTR pl_lookup_table, char *name);
 static enum ALL_TYPE_ENUM get_all_type(const char *word);
@@ -163,8 +165,10 @@ static struct dvec *findvec(char *word, struct plot *pl)
         return findvec_alli(pl);
     case ALL_TYPE_ALLY:
         return findvec_ally(pl);
+#ifdef XSPICE
     case ALL_TYPE_ALLE:
         return findvec_alle();
+#endif
     default: /* case ALL_TYPE_NOT_ALL -- not some type of ALL */
         break;
     }
