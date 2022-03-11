@@ -1475,9 +1475,9 @@ com_alter_mod(wordlist *wl)
         inptoken = gettok(&modelline); /* skip model type */
         tfree(inptoken);
         while ((inptoken = gettok_node(&modelline)) != NULL) {
-            /* exclude level, version and mfg */
+            /* exclude level, version, mfg, and type */
             if (ciprefix("version", inptoken) || ciprefix("level", inptoken) ||
-                ciprefix("mfg", inptoken)) {
+                ciprefix("mfg", inptoken) || ciprefix("type", inptoken) ) {
                 tfree(inptoken);
                 continue;
             }
