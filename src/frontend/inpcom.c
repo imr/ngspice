@@ -5661,6 +5661,8 @@ static void inp_compat(struct card *card)
                    '}' (braces around token after '=') */
                 if ((str_ptr = strchr(cut_line, '=')) != NULL)
                     *str_ptr = ' ';
+                /* FIXME: To enable adding expressions in {} as pwl parameters, we need an intelligent
+                   removal of {}, not just brute force as following now. */
                 if ((str_ptr = strchr(cut_line, '{')) != NULL)
                     *str_ptr = ' ';
                 if ((str_ptr = strchr(cut_line, '}')) != NULL)
@@ -5681,8 +5683,16 @@ static void inp_compat(struct card *card)
                 int ipairs = 0;
                 char* pair_line = cut_line;
                 while (*cut_line != '\0') {
-                    firstno = gettok_node(&cut_line);
-                    secondno = gettok_node(&cut_line);
+                    /* If we have expressions in {}, we copy the complete expression,
+                       otherwise only the next token. */
+                    if (*cut_line == '{')
+                        firstno = gettok_char(&cut_line, '}', TRUE, TRUE);
+                    else
+                        firstno = gettok_node(&cut_line);
+                    if (*cut_line == '{')
+                        secondno = gettok_char(&cut_line, '}', TRUE, TRUE);
+                    else
+                        secondno = gettok_node(&cut_line);
                     if ((!firstno && secondno) || (firstno && !secondno)) {
                         fprintf(stderr, "Error: Missing token in %s\n",
                                 curr_line);
