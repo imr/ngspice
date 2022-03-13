@@ -9660,6 +9660,17 @@ static void rem_mfg_from_models(struct card *deck)
                         start++;
                     }
             }
+            start = strstr(curr_line, "type=");
+            if (start) {
+                end = nexttok(start);
+                if (*end == '\0')
+                    *start = '\0';
+                else
+                    while (start < end) {
+                        *start = ' ';
+                        start++;
+                    }
+            }
         }
     }
 }
