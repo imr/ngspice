@@ -10,7 +10,7 @@
 #include "ngspice/hash.h"
 #include "ngspice/inpdefs.h"
 #include "ngspice/wordlist.h"
-
+#include "ngspice/stringskip.h"
 
 void inp_probe(struct card* card);
 void modprobenames(INPtables* tab);
@@ -18,6 +18,7 @@ void modprobenames(INPtables* tab);
 extern struct card* insert_new_line(
     struct card* card, char* line, int linenum, int linenum_orig);
 extern int get_number_terminals(char* c);
+extern char* search_plain_identifier(char* str, const char* identifier);
 
 static char* get_terminal_name(char* element, char* numberstr, NGHASHPTR instances);
 static char* get_terminal_number(char* element, char* numberstr);
@@ -68,20 +69,34 @@ void inp_probe(struct card* deck)
         char* tmpstr = wltmp->wl_word;
         /* skip *probe */
         tmpstr = nexttok(tmpstr);
-        if (*tmpstr == '\0')
-            continue;
-        if (ciprefix("(all)", tmpstr)) {
+
+        if (*tmpstr == '\0') {
+            fprintf(stderr, "Note: Empty .probe command, treated as .probe alli\n");
             haveall = TRUE;
+            continue;
+        }
+
+        /* set haveall and remove 'alli' token */
+        char *allistr = search_plain_identifier(tmpstr, "alli");
+        if (allistr) {
+            haveall = TRUE;
+            memcpy(allistr, "    ", 4);
+        }
+
+        tmpstr = skip_ws(tmpstr);
+        if (!strchr("vipVIP", *tmpstr)) {
+            fprintf(stderr, "Warning: Strange parameter in line %s, ingnored\n", wltmp->wl_word);
             tmpstr = nexttok(tmpstr);
         }
         nextnode = gettok_char(&tmpstr, ')', TRUE, FALSE);
+
+        if (haveall == FALSE && !nextnode) {
+            fprintf(stderr, "Warning: Strange parameter in line %s, ingnored\n", wltmp->wl_word);
+            continue;
+        }
+
         while (nextnode && (*nextnode != '\0')) {
-            if (cieq(nextnode, "(all)")) {
-                haveall = TRUE;
-            }
-            else {
-                probeparams = wl_cons(nextnode, probeparams);
-            }
+            probeparams = wl_cons(nextnode, probeparams);
 
             if (ciprefix("vd(", nextnode)) {
                 havedifferential = TRUE;
