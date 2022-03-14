@@ -37,8 +37,9 @@ R5 Net-_C4-Pad1_ Net-_R4-Pad1_ 19.5k
 .param envtemp=25
 .tran 200u 10
 .option RELTOL=.01 ABSTOL=1N VNTOL=10u
-.probe v(tj1) v(tj2) v(tcase1) v(tcase2) v(in) v(out) (all)
+.probe v(tj1) v(tj2) v(tcase1) v(tcase2) v(in) v(out)
 .probe i(m1:s) vd(m2:s, m1:s) vd(M2:1:3)
+.probe alli
 .save @m1[id] @m2[id] ; in out
 .control
 set controlswait
