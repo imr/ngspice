@@ -1,7 +1,7 @@
 .title Pass Labs F5Turbo V2, schematic and netlist by KiCad
 .include "F5models.lib"
 .probe I(R19) vd(R10) v(in) v(out) vd(Net-_P3-Pad1_, 0)   ; <------------------------------------------
-*.probe (all)   ; <------------------------------------------
+*.probe alli   ; <------------------------------------------
 JQ2 Net-_P2-Pad1_ Net-_Q1-Pad2_ Net-_P3-Pad1_ 2SJ74
 R4 0 Net-_P3-Pad1_ 10
 R6 Net-_P2-Pad1_ -32 1k
