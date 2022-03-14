@@ -165,7 +165,7 @@ static char *inp_spawn_brace(char *s);
 
 static char *inp_pathresolve(const char *name);
 static char *inp_pathresolve_at(const char *name, const char *dir);
-static char *search_plain_identifier(char *str, const char *identifier);
+char *search_plain_identifier(char *str, const char *identifier);
 
 struct nscope *inp_add_levels(struct card *deck);
 static struct card_assoc *find_subckt(struct nscope *scope, const char *name);
@@ -824,7 +824,7 @@ static void print_compat_mode(void) {
         return;
     if (newcompat.isset) {
         fprintf(stdout, "\n");
-        fprintf(stdout, "Compatibility modes selected:");
+        fprintf(stdout, "Note: Compatibility modes selected:");
         if (newcompat.hs)
             fprintf(stdout, " hs");
         if (newcompat.ps)
@@ -847,7 +847,7 @@ static void print_compat_mode(void) {
     }
     else {
         fprintf(stdout, "\n");
-        fprintf(stdout, "No compatibility mode selected!\n\n");
+        fprintf(stdout, "Note: No compatibility mode selected!\n\n");
     }
 }
 
@@ -5158,7 +5158,7 @@ char *ya_search_identifier(char *str, const char *identifier, char *str_begin)
 }
 
 
-static char *search_plain_identifier(char *str, const char *identifier)
+char *search_plain_identifier(char *str, const char *identifier)
 {
     if (str && identifier) {
         char *str_begin = str;
