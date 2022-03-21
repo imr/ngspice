@@ -716,13 +716,18 @@ cp_evloop(char *string)
             if (!wlist->wl_next) {
                 cend[stackp]->co_numtimes = -1;
             } else {
-                char *s;
+                char *s = "1";
                 double val;
 
                 struct wordlist *t;  /*CDHW*/
                 /*CDHW wlist = cp_variablesubst(cp_bquote(cp_doglob(wl_copy(wlist)))); Wrong order? Leak? CDHW*/
                 t = cp_doglob(cp_bquote(cp_variablesubst(wl_copy(wlist)))); /*CDHW leak from cp_doglob? */
-                s = t->wl_next->wl_word;
+
+                if (!t->wl_next) {
+                    fprintf(cp_err, "Error: Undefined number after command 'repeat', assume 1\n");
+                }
+                else
+                    s = t->wl_next->wl_word;
 
                 if (ft_numparse(&s, FALSE, &val) > 0) {
                     /* Can be converted to int */
