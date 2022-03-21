@@ -1,5 +1,5 @@
 OPWIEN.CIR - OPAMP WIEN-BRIDGE OSCILLATOR
-* http://www.ecircuitcenter.com/circuits/opwien/opwien.htm
+* http://www.ecircuitcenter.com/Circuits/opwien/OPWIEN.CIR
 * single simulation run
 * 2 resistors and 2 capacitors of Wien bridge a varied statistically
 * number of variations: varia
