@@ -344,6 +344,12 @@ if_run(CKTcircuit *ckt, char *what, wordlist *args, INPtables *tab)
         (eq(what, "pss")) ||
         /* SP */
 #endif
+#ifdef RFSPICE
+        (eq(what, "sp")) ||
+#ifdef WITH_HB
+        (eq(what, "hb")) ||
+#endif
+#endif
         (eq(what, "run")))
     {
         /*CDHW Run the analysis pointed to by ci_curTask CDHW*/
