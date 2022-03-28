@@ -237,7 +237,7 @@ trrandom_state_init(int rndtype, double TS, double TD, double PARAM1, double PAR
     this->TD = TD;
     this->PARAM1 = PARAM1;
     this->PARAM2 = PARAM2;
-    this->value = 0.0;
+    this->value = PARAM2;
 
     return this;
 }
