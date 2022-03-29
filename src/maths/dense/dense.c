@@ -599,8 +599,8 @@ CMat* cremoverow(CMat* A, int r) {
 }
 CMat* cremovecol(CMat* A, int c) {
 	CMat* B = newcmatnoinit(A->row, A->col - 1);
-	int coldest = 0;
 	for (int i = 0; i < A->row; i++) {
+		int coldest = 0;
 		for (int j = 0; j < A->col; j++) {
 			if (j != c) {
 				B->d[i][coldest] = A->d[i][j];
@@ -624,8 +624,8 @@ void cremoverow2(CMat* A, CMat* B, int r) {
 	return;
 }
 void cremovecol2(CMat* A, CMat* B, int c) {
-	int coldest = 0;
 	for (int i = 0; i < A->row; i++) {
+		int coldest = 0;
 		for (int j = 0; j < A->col; j++) {
 			if (j != c) {
 				B->d[i][coldest] = A->d[i][j];
