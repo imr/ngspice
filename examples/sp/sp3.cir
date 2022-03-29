@@ -1,0 +1,27 @@
+Example of VSRC as voltage ports
+* https://qucs-help.readthedocs.io/en/spice4qucs/RF.html fig. 13.2
+*
+*
+V1 in 0 dc 0 ac 1 portnum 1 z0 50 ; pwr 0.001 freq 2.3e9
+
+C1 in 0 318.3n
+L1  in out 1.592m
+C2 out 0 318.3n
+
+V2 out 0 dc 0 ac 0 portnum 2 z0 50 ; pwr 0.002 freq 3.2e9
+
+.control
+sp dec 100 1 1e6 0
+display
+set xbrushwidth=5
+set xgridwidth=2
+plot mag(S_1_1) mag(S_1_2) mag(S_2_1) mag(S_2_2)
+plot S_1_1 smithgrid
+plot S_1_2 polar
+set hcopydevtype = svg
+hardcopy plot_1.svg  S_1_2 polar
+hardcopy plot_2.svg  S_1_1 smithgrid
+
+.endc
+
+.end

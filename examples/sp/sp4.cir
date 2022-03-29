@@ -1,0 +1,20 @@
+Example of VSRC as power ports * *
+
+V1 in 0 dc 0 ac 1 portnum 1 z0 100
+*V1 in 0 dc 1 ac 1
+Rpt in x 100
+C1 x 0 1e-9
+R2 x out 10
+V2 out 0 dc 0 ac 0 portnum 2 z0 50
+*V2 out 0 dc 0 ac 0
+V3 x 0 portnum 3 z0 200
+
+.sp lin 100 1e8 1e9 1
+*.ac dec 100 1 1e8
+
+.control
+run
+quit
+.endc
+
+.end
