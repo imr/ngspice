@@ -95,7 +95,6 @@ int NIspSolve(CKTcircuit* ckt)
 
 #endif
 
-
 int
 NIacIter(CKTcircuit *ckt)
 {

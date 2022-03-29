@@ -616,7 +616,7 @@ dot_pss(char *line, void *ckt, INPtables *tab, struct card *current,
 
 
 #ifdef RFSPICE
-/* S Parameter Analyis */
+/* S-Parameter Analyis */
 static int
 dot_sp(char* line, void* ckt, INPtables* tab, struct card* current,
     void* task, void* gnode, JOB* foo)
@@ -652,7 +652,7 @@ dot_sp(char* line, void* ckt, INPtables* tab, struct card* current,
 }
 
 #ifdef WITH_HB
-/* HB */
+/*SP: Steady State Analyis */
 static int
 dot_hb(char* line, void* ckt, INPtables* tab, struct card* current,
     void* task, void* gnode, JOB* foo)
@@ -713,6 +713,7 @@ dot_hb(char* line, void* ckt, INPtables* tab, struct card* current,
 #endif
 
 #endif
+
 
 static int
 dot_options(char *line, CKTcircuit *ckt, INPtables *tab, struct card *current,

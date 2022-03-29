@@ -112,6 +112,8 @@ CKTdestroy(CKTcircuit *ckt)
     freecmat(ckt->CKTSmat); ckt->CKTSmat = NULL;
     freecmat(ckt->CKTYmat); ckt->CKTYmat = NULL;
     freecmat(ckt->CKTZmat); ckt->CKTZmat = NULL;
+    freecmat(ckt->CKTNoiseCYmat); ckt->CKTNoiseCYmat = NULL;
+    freecmat(ckt->CKTadjointRHS); ckt->CKTadjointRHS = NULL;
 #endif
 
     FREE(ckt);

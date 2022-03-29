@@ -118,7 +118,25 @@ typedef struct {
 
 
 /* misc constants */
+#ifdef RFSPICE
 
+#define NOISE_ADD_OUTVAR(ckt, data, fmt, aname, bname)                  \
+    if (ckt->CKTcurrentAnalysis & DOING_SP) {                           \
+          ckt->CKTnoiseSourceCount++;                                   \
+    }                                                                   \
+    else\
+    do {                                                                \
+        data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1); \
+        if (!data->namelist)                                            \
+            return E_NOMEM;                                             \
+        char *name = tprintf(fmt, aname, bname);                        \
+        if (!name)                                                      \
+            return E_NOMEM;                                             \
+        SPfrontEnd->IFnewUid(ckt, &(data->namelist[data->numPlots++]),  \
+                             NULL, name, UID_OTHER, NULL);              \
+        tfree(name);                                                    \
+    } while(0)                                           
+#else
 #define NOISE_ADD_OUTVAR(ckt, data, fmt, aname, bname)                  \
     do {                                                                \
         data->namelist = TREALLOC(IFuid, data->namelist, data->numPlots + 1); \
@@ -131,7 +149,7 @@ typedef struct {
                              NULL, name, UID_OTHER, NULL);              \
         tfree(name);                                                    \
     } while(0)
-
+#endif
 
 void NevalSrc (double *noise, double *lnNoise, CKTcircuit *ckt, int type, int node1, int node2, double param);
 void NevalSrc2 (double *, double *, CKTcircuit *, int, int, int, double, int, int, double, double);

@@ -15,7 +15,16 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/ifsim.h"
 #include "vsrc/vsrcdefs.h"
 
-#ifdef RFSPICE
+extern CMat* eyem;
+extern CMat* zref;
+extern CMat* gn;
+extern CMat* gninv;
+
+extern double NF;
+extern double Rn;
+extern cplx   Sopt;
+extern double Fmin;
+
 
 unsigned int CKTmatrixIndex(CKTcircuit* ckt, unsigned int source, unsigned int dest)
 {
@@ -28,6 +37,25 @@ int CKTspCalcSMatrix(CKTcircuit* ckt)
     if (Ainv == NULL) return (E_NOMEM);
     cmultiplydest(ckt->CKTBmat, Ainv, ckt->CKTSmat);
     freecmat(Ainv);
+    // Calculate Y matrix
+    CMat* temp = cmultiply(ckt->CKTSmat, zref);
+    CMat* temp2 = csum(temp, zref);
+    CMat* temp3 = cmultiply(temp2, gn);
+    
+    CMat* temp4 = cminus(eyem, ckt->CKTSmat);
+    CMat* temp5 = cinverse(temp4);
+    
+    cmultiplydest(temp5, temp3, temp);
+    cmultiplydest(gninv, temp, ckt->CKTZmat);
+
+    cinversedest(ckt->CKTZmat, ckt->CKTYmat);
+
+    freecmat(temp);
+    freecmat(temp2);
+    freecmat(temp3);
+    freecmat(temp4);
+    freecmat(temp5);        
+
     return (OK);
 }
 
@@ -64,8 +92,9 @@ int CKTspCalcPowerWave(CKTcircuit* ckt)
     return (OK);
 }
 
+
 int
-CKTspDump(CKTcircuit *ckt, double freq, runDesc *plot)
+CKTspDump(CKTcircuit *ckt, double freq, runDesc *plot, unsigned int doNoise)
 {
     double *rhsold;
     double *irhsold;
@@ -77,10 +106,20 @@ CKTspDump(CKTcircuit *ckt, double freq, runDesc *plot)
     rhsold = ckt->CKTrhsOld;
     irhsold = ckt->CKTirhsOld;
     freqData.rValue = freq;
-    unsigned int extraSPdataCount =   ckt->CKTportCount * ckt->CKTportCount;
+    unsigned int extraSPdataCount =  3* ckt->CKTportCount * ckt->CKTportCount;
     valueData.v.numValue = ckt->CKTmaxEqNum - 1 + extraSPdataCount;
 
-    data = TMALLOC(IFcomplex, ckt->CKTmaxEqNum - 1 + extraSPdataCount);
+    unsigned int datasize = ckt->CKTmaxEqNum - 1 + extraSPdataCount;
+    
+    // Add Cy matrix, NF, Rn, SOpt, NFmin
+    if (doNoise)
+    {
+        datasize += ckt->CKTportCount * ckt->CKTportCount;
+        if (ckt->CKTportCount == 2)  // account for NF, Sopt, NFmin, Rn
+            datasize += 4;
+    }   
+
+    data = TMALLOC(IFcomplex, datasize);
     valueData.v.vec.cVec = data;
     for (i=0;i<ckt->CKTmaxEqNum-1;i++) {
         data[i].real = rhsold[i+1];
@@ -89,18 +128,85 @@ CKTspDump(CKTcircuit *ckt, double freq, runDesc *plot)
     
     if (ckt->CKTrfPorts )
     {
+        unsigned int nPlot = ckt->CKTmaxEqNum - 1 ;
         // Cycle thru all ports
         for (unsigned int pdest = 0; pdest < ckt->CKTportCount; pdest++)
         {
             for (unsigned int psource = 0; psource < ckt->CKTportCount; psource++)
             {
-                unsigned int nPlot = ckt->CKTmaxEqNum - 1 + CKTmatrixIndex(ckt, pdest, psource);
                 cplx sij = ckt->CKTSmat->d[pdest][psource];
                 data[nPlot].real = sij.re;
                 data[nPlot].imag = sij.im;
+                nPlot++; 
             }
         }
+
+        // Put Y data
+        for (unsigned int pdest = 0; pdest < ckt->CKTportCount; pdest++)
+        {
+            for (unsigned int psource = 0; psource < ckt->CKTportCount; psource++)
+            {
+                //unsigned int nPlot = ckt->CKTmaxEqNum - 1 + CKTmatrixIndex(ckt, pdest, psource);
+                cplx yij = ckt->CKTYmat->d[pdest][psource];
+                data[nPlot].real = yij.re;
+                data[nPlot].imag = yij.im;
+                nPlot++;
+            }
+        }
+
+        // Put Z data
+        for (unsigned int pdest = 0; pdest < ckt->CKTportCount; pdest++)
+        {
+            for (unsigned int psource = 0; psource < ckt->CKTportCount; psource++)
+            {
+                //unsigned int nPlot = ckt->CKTmaxEqNum - 1 + CKTmatrixIndex(ckt, pdest, psource);
+                cplx zij = ckt->CKTZmat->d[pdest][psource];
+                data[nPlot].real = zij.re;
+                data[nPlot].imag = zij.im;
+                nPlot++;
+            }
+        }
+
+        if (doNoise)
+        {
+            // Put Cy data
+            for (unsigned int pdest = 0; pdest < ckt->CKTportCount; pdest++)
+            {
+                for (unsigned int psource = 0; psource < ckt->CKTportCount; psource++)
+                {
+                    //unsigned int nPlot = ckt->CKTmaxEqNum - 1 + CKTmatrixIndex(ckt, pdest, psource);
+                    cplx CYij = ckt->CKTNoiseCYmat->d[pdest][psource];
+                    data[nPlot].real = CYij.re;
+                    data[nPlot].imag = CYij.im;
+                    nPlot++;
+                }
+            }
+
+            if (ckt->CKTportCount == 2)
+            {
+                // If we have two ports, put also  NF, Sopt, NFmin, Rn
+                data[nPlot].real = NF;
+                data[nPlot].imag = 0.0;
+                nPlot++;
+
+                data[nPlot].real = Sopt.re;
+                data[nPlot].imag = Sopt.im;
+                nPlot++;
+
+                data[nPlot].real = Fmin;
+                data[nPlot].imag = 0.0;
+                nPlot++;
+
+                data[nPlot].real = Rn;
+                data[nPlot].imag = 0.0;
+                nPlot++;
+            }
+
+
+        }
     }
+
+
     
 
     SPfrontEnd->OUTpData(plot, &freqData, &valueData);
@@ -108,4 +214,3 @@ CKTspDump(CKTcircuit *ckt, double freq, runDesc *plot)
     FREE(data);
     return(OK);
 }
-#endif

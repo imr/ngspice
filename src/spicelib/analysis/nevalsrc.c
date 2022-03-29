@@ -15,15 +15,81 @@ Author: 1987 Gary W. Ng
  */
 
 
+/*
+Modified by Alessio Cacciatori: S-Params noise is calculated as noise current
+correlation matrix. Per each noise source, the noise voltage at RF ports is converted
+as an input noise current source by using (already availalble) Y matrix.
+Outside RFSPICE declaration, code is legacy NGSPICE code.
+*/
+
 #include "ngspice/ngspice.h"
 #include "ngspice/cktdefs.h"
 #include "ngspice/const.h"
 #include "ngspice/noisedef.h"
 
+#ifdef RFSPICE
+#include "../maths/dense/denseinlines.h"
+
+extern CMat* eyem;
+extern CMat* zref;
+extern CMat* gn;
+extern CMat* gninv;
+extern CMat* vNoise;
+extern CMat* iNoise;
+
+#endif
 
 void
 NevalSrc (double *noise, double *lnNoise, CKTcircuit *ckt, int type, int node1, int node2, double param)
 {
+#ifdef RFSPICE
+    if (ckt->CKTcurrentAnalysis & DOING_SP)
+    {
+        double inoise = 0.0;
+
+        switch (type) {
+
+        case SHOTNOISE:
+            inoise =  2 * CHARGE * fabs(param);          /* param is the dc current in a semiconductor */
+            break;
+
+        case THERMNOISE:
+            inoise =  4 * CONSTboltz * ckt->CKTtemp * param;         /* param is the conductance of a resistor */
+            break;
+
+        case N_GAIN:
+            inoise = 0.0;
+            break;
+
+        }
+        inoise = sqrt(inoise);
+        // Calculate input equivalent noise current source (we have port impedance attached)
+        for (unsigned int s = 0; s < ckt->CKTportCount; s++)
+            vNoise->d[0][s] = cmultdo(csubco(ckt->CKTadjointRHS->d[s][node1], ckt->CKTadjointRHS->d[s][node2]), inoise);
+
+        for (unsigned int d = 0; d < ckt->CKTportCount; d++)
+        {
+            cplx in;
+            double yport = 1.0 / zref->d[d][d].re;
+
+            in.re = vNoise->d[0][d].re * yport;
+            in.im = vNoise->d[0][d].im * yport;
+
+            for (unsigned int s = 0; s < ckt->CKTportCount; s++)
+                caddc(&in, in, cmultco(ckt->CKTYmat->d[d][s], vNoise->d[0][s]));
+
+            iNoise->d[0][d] = in;
+        }
+
+
+        for (unsigned int d = 0; d < ckt->CKTportCount; d++)
+            for (unsigned int s = 0; s < ckt->CKTportCount; s++)
+                ckt->CKTNoiseCYmat->d[d][s] = caddco(ckt->CKTNoiseCYmat->d[d][s], cmultco(iNoise->d[0][d], conju(iNoise->d[0][s])));
+
+        return;
+    }
+
+#endif
     double realVal;
     double imagVal;
     double gain;
@@ -87,6 +153,69 @@ double phi21)     /* Phase of signal 2 relative to signal 1 */
     double realOut, imagOut, param_gain;
     double T0, T1, T2, T3;
 
+#ifdef RFSPICE
+    if (ckt->CKTcurrentAnalysis & DOING_SP)
+    {
+
+        double knoise = 0.0;
+        
+        T0 = sqrt(param1);
+        T1 = sqrt(param2);
+        cplx cfact; 
+        cfact.re = cos(phi21);
+        cfact.im = sin(phi21);
+
+
+        switch (type) {
+
+        case SHOTNOISE:
+            knoise = 2 * CHARGE;          /* param is the dc current in a semiconductor */
+            break;
+
+        case THERMNOISE:
+            knoise = 4 * CONSTboltz * ckt->CKTtemp;         /* param is the conductance of a resistor */
+            break;
+
+        case N_GAIN:
+            knoise = 0.0;
+            break;
+
+        }
+
+        knoise = sqrt(knoise);
+        // Calculate input equivalent noise current source (we have port impedance attached)
+        for (unsigned int s = 0; s < ckt->CKTportCount; s++)
+        {
+            cplx vNoiseA = cmultdo(csubco(ckt->CKTadjointRHS->d[s][node1], ckt->CKTadjointRHS->d[s][node2]), knoise * sqrt(param1) );
+            cplx vNoiseB = cmultco(cmultdo(csubco(ckt->CKTadjointRHS->d[s][node3], ckt->CKTadjointRHS->d[s][node4]), knoise * sqrt(param1)), cfact);
+
+            vNoise->d[0][s] = caddco(vNoiseA, vNoiseB);
+        }
+
+        for (unsigned int d = 0; d < ckt->CKTportCount; d++)
+        {
+            double yport = 1.0 / zref->d[d][d].re;
+
+            cplx in;
+            in.re = vNoise->d[0][d].re * yport;
+            in.im = vNoise->d[0][d].im * yport;
+
+            for (unsigned int s = 0; s < ckt->CKTportCount; s++)
+                caddc(&in, in, cmultco(ckt->CKTYmat->d[d][s], vNoise->d[0][s]));
+
+            iNoise->d[0][d] = in;
+        }
+
+
+        for (unsigned int d = 0; d < ckt->CKTportCount; d++)
+            for (unsigned int s = 0; s < ckt->CKTportCount; s++)
+                ckt->CKTNoiseCYmat->d[d][s] = caddco(ckt->CKTNoiseCYmat->d[d][s], cmultco(iNoise->d[0][d], conju(iNoise->d[0][s])));
+
+        return;
+    }
+#endif
+
+
     realVal1 = ckt->CKTrhs [node1] - ckt->CKTrhs [node2];
     imagVal1 = ckt->CKTirhs [node1] - ckt->CKTirhs [node2];
     realVal2 = ckt->CKTrhs [node3] - ckt->CKTrhs [node4];
@@ -130,10 +259,59 @@ void
 NevalSrcInstanceTemp (double *noise, double *lnNoise, CKTcircuit *ckt, int type,
            int node1, int node2, double param, double param2)
 {
+
+
+#ifdef RFSPICE
+    if (ckt->CKTcurrentAnalysis & DOING_SP)
+    {
+        double inoise = 0.0;
+
+        switch (type) {
+
+        case SHOTNOISE:
+            inoise = 2 * CHARGE * fabs(param);          /* param is the dc current in a semiconductor */
+            break;
+
+        case THERMNOISE:
+            inoise = 4.0 *CONSTboltz* (ckt->CKTtemp + param2)* param;         /* param is the conductance of a resistor */
+            break;
+
+        case N_GAIN:
+            inoise = 0.0;
+            return;
+
+        }
+
+        inoise = sqrt(inoise);
+        // Calculate input equivalent noise current source (we have port impedance attached)
+        for (unsigned int s = 0; s < ckt->CKTportCount; s++)
+            vNoise->d[0][s] = cmultdo(csubco(ckt->CKTadjointRHS->d[s][node1], ckt->CKTadjointRHS->d[s][node2]),inoise);
+
+        for (unsigned int d = 0; d < ckt->CKTportCount; d++)
+        {
+            cplx in;
+            double yport = 1.0 / zref->d[d][d].re;
+
+            in.re = vNoise->d[0][d].re * yport;
+            in.im = vNoise->d[0][d].im * yport;
+
+            for (unsigned int s = 0; s < ckt->CKTportCount; s++)
+                caddc(&in, in, cmultco(ckt->CKTYmat->d[d][s], vNoise->d[0][s]));
+
+            iNoise->d[0][d] = in;
+        }
+
+
+        for (unsigned int d = 0; d < ckt->CKTportCount; d++)
+            for (unsigned int s = 0; s < ckt->CKTportCount; s++)
+                ckt->CKTNoiseCYmat->d[d][s] = caddco(ckt->CKTNoiseCYmat->d[d][s], cmultco(iNoise->d[0][d], conju(iNoise->d[0][s])));
+
+        return;
+    }
+#endif
     double realVal;
     double imagVal;
     double gain;
-
     realVal = ckt->CKTrhs [node1] - ckt->CKTrhs [node2];
     imagVal = ckt->CKTirhs [node1] - ckt->CKTirhs [node2];
     gain = (realVal*realVal) + (imagVal*imagVal);

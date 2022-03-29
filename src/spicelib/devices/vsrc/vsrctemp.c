@@ -88,7 +88,26 @@ VSRCtemp(GENmodel *inModel, CKTcircuit *ckt)
                 ckt->CKTrfPorts = (GENinstance**)TREALLOC(GENinstance*, ckt->CKTrfPorts, ckt->CKTportCount);
                 ckt->CKTrfPorts[ckt->CKTportCount - 1] = (GENinstance*)here;
 
-
+                // Reorder ports according to their PortNum
+                unsigned int done = 0;
+                while (!done)
+                {
+                    int nMax = ckt->CKTportCount - 1;
+                    done = 1;
+                    for (int n = 0; n < nMax; n++)
+                    {
+                        VSRCinstance* a = (VSRCinstance*)ckt->CKTrfPorts[n];
+                        VSRCinstance* b = (VSRCinstance*)ckt->CKTrfPorts[n + 1];
+                        if (a->VSRCportNum > b->VSRCportNum)
+                        {
+                            // Swap a and b. Restart
+                            done = 0;
+                            ckt->CKTrfPorts[n] = (GENinstance*)b;
+                            ckt->CKTrfPorts[n + 1] = (GENinstance*)a;
+                            break;
+                        }
+                    }
+                }
             }
 #endif
         }
