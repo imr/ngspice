@@ -8,7 +8,7 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/ngspice.h"
 #include "ngspice/ifsim.h"
 #include "ngspice/iferrmsg.h"
-#include "ngspice/spdefs.h"
+#include "ngspice/spardefs.h"
 #include "ngspice/cktdefs.h"
 
 #ifdef RFSPICE

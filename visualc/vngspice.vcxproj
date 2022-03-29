@@ -952,7 +952,7 @@
     <ClInclude Include="..\src\include\ngspice\cmconstants.h" />
     <ClInclude Include="..\src\include\ngspice\cmproto.h" />
     <ClInclude Include="..\src\include\ngspice\cmtypes.h" />
-    <ClInclude Include="..\src\include\ngspice\spdefs.h" />
+    <ClInclude Include="..\src\include\ngspice\spardefs.h" />
     <ClInclude Include="..\src\include\ngspice\wincolornames.h" />
     <ClInclude Include="..\src\include\ngspice\compatmode.h" />
     <ClInclude Include="..\src\include\ngspice\complex.h" />
@@ -1067,6 +1067,7 @@
     <ClInclude Include="..\src\maths\cmaths\cmath3.h" />
     <ClInclude Include="..\src\maths\cmaths\cmath4.h" />
     <ClInclude Include="..\src\maths\dense\dense.h" />
+    <ClInclude Include="..\src\maths\dense\denseinlines.h" />
     <ClInclude Include="..\src\maths\fft\fftlib.h" />
     <ClInclude Include="..\src\maths\fft\matlib.h" />
     <ClInclude Include="..\src\maths\misc\accuracy.h" />
@@ -1686,6 +1687,7 @@
     <ClCompile Include="..\src\spicelib\analysis\cktsgen.c" />
     <ClCompile Include="..\src\spicelib\analysis\cktsopt.c" />
     <ClCompile Include="..\src\spicelib\analysis\cktspdum.c" />
+    <ClCompile Include="..\src\spicelib\analysis\cktspnoise.c" />
     <ClCompile Include="..\src\spicelib\analysis\ckttemp.c" />
     <ClCompile Include="..\src\spicelib\analysis\cktterr.c" />
     <ClCompile Include="..\src\spicelib\analysis\ckttroub.c" />
@@ -1709,6 +1711,7 @@
     <ClCompile Include="..\src\spicelib\analysis\nevalsrc.c" />
     <ClCompile Include="..\src\spicelib\analysis\ninteg.c" />
     <ClCompile Include="..\src\spicelib\analysis\noisean.c" />
+    <ClCompile Include="..\src\spicelib\analysis\noisesp.c" />
     <ClCompile Include="..\src\spicelib\analysis\nsetparm.c" />
     <ClCompile Include="..\src\spicelib\analysis\optran.c" />
     <ClCompile Include="..\src\spicelib\analysis\pssaskq.c" />

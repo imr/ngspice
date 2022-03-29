@@ -292,6 +292,11 @@ struct CKTcircuit {
     CMat* CKTSmat;
     CMat* CKTYmat;
     CMat* CKTZmat;
+    // Data for RF Noise Calculations
+    double* CKTportY;
+    CMat* CKTNoiseCYmat;
+    unsigned int CKTnoiseSourceCount;
+    CMat* CKTadjointRHS;       // Matrix where Znj are stored. Znj = impedance from j-th noise source to n-th port
 #endif
 #ifdef WITH_PSS
 /* SP: Periodic Steady State Analysis - 100609 */
@@ -455,7 +460,7 @@ extern int DCpss(CKTcircuit *, int);
 extern int SPan(CKTcircuit*, int);
 extern int SPaskQuest(CKTcircuit*, JOB*, int, IFvalue*);
 extern int SPsetParm(CKTcircuit*, JOB*, int, IFvalue*);
-extern int CKTspDump(CKTcircuit*, double, runDesc*);
+extern int CKTspDump(CKTcircuit*, double, runDesc*, unsigned int);
 extern int CKTspLoad(CKTcircuit*);
 extern unsigned int CKTmatrixIndex(CKTcircuit*, unsigned int, unsigned int);
 extern int CKTspCalcPowerWave(CKTcircuit* ckt);

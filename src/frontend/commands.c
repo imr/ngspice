@@ -307,12 +307,11 @@ struct comm spcp_coms[] = {
 /* SP */
 #endif
 #ifdef RFSPICE
-/* SP: S parameter Analysis */
+/* S parameter Analysis */
     { "sp", com_sp, TRUE, TRUE,
       { 0, 0, 0, 0 }, E_DEFHMASK, 0, LOTS,
       NULL,
-      "[.sp line args] : Do a S parameter analysis." },
-        /* SP */
+      "[.sp line args] : Do an S-parameter analysis." },
 #endif
     { "ac", com_ac, TRUE, TRUE,
       { 0, 0, 0, 0 }, E_DEFHMASK, 0, LOTS,

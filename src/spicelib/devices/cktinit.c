@@ -141,6 +141,9 @@ CKTinit(CKTcircuit **ckt)		/* new circuit to create */
     sckt->CKTVSRCid = -1;
     sckt->CKTrfPorts = NULL;
     sckt->CKTSmat = sckt->CKTAmat = sckt->CKTBmat = sckt->CKTYmat = sckt->CKTZmat = NULL;
+    sckt->CKTNoiseCYmat = NULL;
+    sckt->CKTadjointRHS = NULL;
+    sckt->CKTnoiseSourceCount = 0;
 #endif
 
     return OK;

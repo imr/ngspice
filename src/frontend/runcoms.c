@@ -186,7 +186,7 @@ com_pss(wordlist *wl)
 #endif
 
 #ifdef RFSPICE
-/* S parameter Analysis*/
+/* S-parameter Analysis*/
 void
 com_sp(wordlist* wl)
 {

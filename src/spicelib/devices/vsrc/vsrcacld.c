@@ -11,6 +11,32 @@ Author: 1985 Thomas L. Quarles
 
 #ifdef RFSPICE
 
+
+int VSRCspinit(GENmodel* inModel, CKTcircuit* ckt, CMat* zref, CMat* gn, CMat* gninv)
+{
+    if (!(ckt->CKTmode & MODESP) && !(ckt->CKTcurrentAnalysis & DOING_SP))
+        return (OK);
+    VSRCmodel* model = (VSRCmodel*)inModel;
+    VSRCinstance* here;
+
+    for (; model != NULL; model = VSRCnextModel(model)) {
+
+        /* loop through all the instances of the model */
+        for (here = VSRCinstances(model); here != NULL;
+            here = VSRCnextInstance(here)) {
+
+            if (here->VSRCisPort)
+            {
+                int i = here->VSRCportNum - 1;
+                zref->d[i][i].re = here->VSRCportZ0;
+                gn->d[i][i].re = 2.0 * here->VSRCki;
+                gninv->d[i][i].re = 1.0 / gn->d[i][i].re;
+            }
+        }
+    }
+    return (OK);
+}
+
 int VSRCspupdate(GENmodel* inModel, CKTcircuit* ckt)
 {
     if (!(ckt->CKTmode & MODESP))
@@ -36,12 +62,14 @@ int VSRCspupdate(GENmodel* inModel, CKTcircuit* ckt)
 }
 
 
-int VSRCgetActivePortNodes(GENmodel* inModel, CKTcircuit* ckt, int* posNodes, int* negNodes)
+
+int VSRCgetActivePorts(GENmodel* inModel, CKTcircuit* ckt, VSRCinstance** ports)
 {
     if (!(ckt->CKTmode & MODESP))
         return (OK);
     for (unsigned int n = 0; n < ckt->CKTportCount; n++)
-        posNodes[n] = negNodes[n] = 0;
+        ports[n] = NULL;
+
     VSRCmodel* model = (VSRCmodel*)inModel;
     VSRCinstance* here;
 
@@ -54,9 +82,7 @@ int VSRCgetActivePortNodes(GENmodel* inModel, CKTcircuit* ckt, int* posNodes, in
             if (here->VSRCisPort)
             {
                 int id = here->VSRCportNum - 1;
-                posNodes[id] = here->VSRCposNode;
-                negNodes[id] = here->VSRCnegNode;
-
+                ports[id] = here;
             }
         }
     }
@@ -78,9 +104,9 @@ VSRCacLoad(GENmodel* inModel, CKTcircuit* ckt)
 
             double acReal, acImag;
 
+
 #ifdef RFSPICE
-            double g0;
-            g0 = 0;
+            double g0 = 0;
             acReal = 0.0;
             acImag = 0.0;
             /*
