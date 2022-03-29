@@ -28,6 +28,7 @@ Outside RFSPICE declaration, code is legacy NGSPICE code.
 #include "ngspice/noisedef.h"
 
 #ifdef RFSPICE
+#include "../maths/dense/dense.h"
 #include "../maths/dense/denseinlines.h"
 
 extern CMat* eyem;
