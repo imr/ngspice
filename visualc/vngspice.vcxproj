@@ -914,7 +914,7 @@
     <ClInclude Include="..\src\frontend\plotting\plotting.h" />
     <ClInclude Include="..\src\frontend\plotting\pvec.h" />
     <ClInclude Include="..\src\frontend\plotting\x11.h" />
-    <ClInclude Include="..\src\frontend\plotting\xgraph.h" />
+
     <ClInclude Include="..\src\frontend\points.h" />
     <ClInclude Include="..\src\frontend\postcoms.h" />
     <ClInclude Include="..\src\frontend\postsc.h" />
@@ -1046,6 +1046,7 @@
     <ClInclude Include="..\src\include\ngspice\sensgen.h" />
     <ClInclude Include="..\src\include\ngspice\sim.h" />
     <ClInclude Include="..\src\include\ngspice\smpdefs.h" />
+    <ClInclude Include="..\src\include\ngspice\spdefs.h" />
     <ClInclude Include="..\src\include\ngspice\sperror.h" />
     <ClInclude Include="..\src\include\ngspice\spmatrix.h" />
     <ClInclude Include="..\src\include\ngspice\stringutil.h" />
@@ -1457,7 +1458,7 @@
     <ClCompile Include="..\src\frontend\com_measure2.c" />
     <ClCompile Include="..\src\frontend\com_option.c" />
     <ClCompile Include="..\src\frontend\com_plot.c" />
-    <ClCompile Include="..\src\frontend\com_wr_ic.c" />
+
     <ClCompile Include="..\src\frontend\com_rehash.c" />
     <ClCompile Include="..\src\frontend\com_set.c" />
     <ClCompile Include="..\src\frontend\com_setscale.c" />
@@ -1467,6 +1468,7 @@
     <ClCompile Include="..\src\frontend\com_strcmp.c" />
     <ClCompile Include="..\src\frontend\com_sysinfo.c" />
     <ClCompile Include="..\src\frontend\com_unset.c" />
+    <ClCompile Include="..\src\frontend\com_wr_ic.c" />
     <ClCompile Include="..\src\frontend\control.c" />
     <ClCompile Include="..\src\frontend\cpitf.c" />
     <ClCompile Include="..\src\frontend\define.c" />
