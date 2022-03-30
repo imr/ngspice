@@ -15,14 +15,14 @@
 #define PACKAGE "ngspice"
 
 /* Version number of package */
-#define VERSION "36+" //" Built on " __DATE__ " at " __TIME__
+#define VERSION "36+"
 
 /* Define the directory for executables */
 #define NGSPICEBINDIR "../bin"
 /* Define the directory for architecture independent data files */
 #define NGSPICEDATADIR "../share/ngspice"
 
-/* If defined, there wiöll be no UNICODE support, only extended ASCII */
+/* If defined, there will be no UNICODE support, only extended ASCII */
 /*#undef EXT_ASC */
 
 /**********************************************************************/
