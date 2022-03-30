@@ -8,12 +8,16 @@ Author: 1985 Thomas L. Quarles
      * into the rawfile.
      */
 
+
+
 #include "ngspice/ngspice.h"
 #include "ngspice/smpdefs.h"
 #include "ngspice/cktdefs.h"
 #include "ngspice/iferrmsg.h"
 #include "ngspice/ifsim.h"
 #include "vsrc/vsrcdefs.h"
+
+#ifdef RFSPICE
 
 extern CMat* eyem;
 extern CMat* zref;
@@ -214,3 +218,5 @@ CKTspDump(CKTcircuit *ckt, double freq, runDesc *plot, unsigned int doNoise)
     FREE(data);
     return(OK);
 }
+
+#endif
