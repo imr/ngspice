@@ -1,5 +1,5 @@
 /*
-**** 
+****
 * Alessio Cacciatori 2021
 ****
 */
@@ -12,7 +12,7 @@
 #ifdef XSPICE
 #include "ngspice/evt.h"
 #include "ngspice/enh.h"
-/* gtri - add - wbk - 12/19/90 - Add headers */ 
+/* gtri - add - wbk - 12/19/90 - Add headers */
 #include "ngspice/mif.h"
 #include "ngspice/evtproto.h"
 #include "ngspice/ipctiein.h"
@@ -27,6 +27,7 @@
 #include "vsrc/vsrcext.h"
 #include "../maths/dense/dense.h"
 #include "../maths/dense/denseinlines.h"
+
 
 
 
@@ -68,19 +69,17 @@ double Fmin = 0;
 double refPortY0;
 
 int
-CKTspnoise(CKTcircuit * ckt, int mode, int operation, Ndata * data)
+CKTspnoise(CKTcircuit* ckt, int mode, int operation, Ndata* data, NOISEAN* noisean)
 {
-    NOISEAN* job = (NOISEAN*)ckt->CKTcurJob;
+    // Temporarily assign current job as a (dummy) NOISEAN analysis
+    // This is needed to avoid
+    SPAN* oldJob = (SPAN*)ckt->CKTcurJob;
+    ckt->CKTcurJob = (JOB*)noisean;
 
     double outNdens;
     int i;
-#ifdef LEGACY
-    IFvalue outData;    /* output variable (points to list of outputs)*/
-    IFvalue refVal; /* reference variable (always 0)*/
-#endif
     int error;
     outNdens = 0.0;
-    job->NStpsSm = 1;
 
     /* let each device decide how many and what type of noise sources it has */
 
@@ -91,7 +90,11 @@ CKTspnoise(CKTcircuit * ckt, int mode, int operation, Ndata * data)
             if (a == 0) a = 2;
             error = DEVices[i]->DEVnoise(mode, operation, ckt->CKThead[i],
                 ckt, data, &outNdens);
-            if (error) return (error);
+            if (error)
+            {
+                ckt->CKTcurJob = (JOB*)oldJob;
+                return (error);
+            }
         }
     }
 
@@ -107,17 +110,17 @@ CKTspnoise(CKTcircuit * ckt, int mode, int operation, Ndata * data)
     {
 
         // We have the Cy noise matrix,
-       
+
         // Equations from Stephen Maas 'Noise'
         double knorm = 4.0 * CONSTboltz * (ckt->CKTtemp);
-        CMat* tempCy = cscalarmultiply(ckt->CKTNoiseCYmat, 1.0/knorm); // cmultiply(, YConj);
+        CMat* tempCy = cscalarmultiply(ckt->CKTNoiseCYmat, 1.0 / knorm); // cmultiply(, YConj);
 
 
         if (ckt->CKTportCount == 2)
         {
-            
+
             double Y21mod = cmodsqr(ckt->CKTYmat->d[1][0]);
-            Rn = (tempCy->d[1][1].re / Y21mod) ;
+            Rn = (tempCy->d[1][1].re / Y21mod);
             cplx Ycor = csubco(ckt->CKTYmat->d[0][0],
                 cmultco(
                     cdivco(tempCy->d[0][1], tempCy->d[1][1]),
@@ -137,50 +140,11 @@ CKTspnoise(CKTcircuit * ckt, int mode, int operation, Ndata * data)
             Fmin = 10.0 * log10(Fmin);
             NF = 10.0 * log10(NF);
         }
-     
+
         freecmat(tempCy);
-     }
+    }
 
-
-#ifdef LEGACY
-        switch (mode) {
-
-        case N_DENS:
-            if ((job->NStpsSm == 0)
-                || data->prtSummary)
-            {
-                data->outpVector[data->outNumber++] = outNdens;
-                data->outpVector[data->outNumber++] =
-                    (outNdens * data->GainSqInv);
-
-                refVal.rValue = data->freq; /* the reference is the freq */
-                if (!data->squared)
-                    for (i = 0; i < data->outNumber; i++)
-                        if (data->squared_value[i])
-                            data->outpVector[i] = sqrt(data->outpVector[i]);
-                outData.v.numValue = data->outNumber; /* vector number */
-                outData.v.vec.rVec = data->outpVector; /* vector of outputs */
-                SPfrontEnd->OUTpData(data->NplotPtr, &refVal, &outData);
-            }
-            break;
-
-        case INT_NOIZ:
-            data->outpVector[data->outNumber++] = data->outNoiz;
-            data->outpVector[data->outNumber++] = data->inNoise;
-            if (!data->squared)
-                for (i = 0; i < data->outNumber; i++)
-                    if (data->squared_value[i])
-                        data->outpVector[i] = sqrt(data->outpVector[i]);
-            outData.v.vec.rVec = data->outpVector; /* vector of outputs */
-            outData.v.numValue = data->outNumber; /* vector number */
-            SPfrontEnd->OUTpData(data->NplotPtr, &refVal, &outData);
-            break;
-
-        default:
-            return (E_INTERN);
-        }
-#endif
-        break;
+    break;
 
     case N_CLOSE:
         SPfrontEnd->OUTendPlot(data->NplotPtr);
@@ -194,14 +158,16 @@ CKTspnoise(CKTcircuit * ckt, int mode, int operation, Ndata * data)
         break;
 
     default:
+        ckt->CKTcurJob = (JOB*)oldJob;
         return (E_INTERN);
     }
+    ckt->CKTcurJob = (JOB*)oldJob;
     return (OK);
 }
 
 
 int
-NInspIter(CKTcircuit * ckt, VSRCinstance* port)
+NInspIter(CKTcircuit* ckt, VSRCinstance* port)
 {
     int i;
 
@@ -273,7 +239,7 @@ int initSPmatrix(CKTcircuit* ckt, int doNoise)
         return (E_NOMEM);
 
     // Now that we have found the model, we may init the Zref and Gn ports
-    if (ckt->CKTVSRCid>=0)
+    if (ckt->CKTVSRCid >= 0)
         VSRCspinit(ckt->CKThead[ckt->CKTVSRCid], ckt, zref, gn, gninv);
 
     if (doNoise)
@@ -284,7 +250,7 @@ int initSPmatrix(CKTcircuit* ckt, int doNoise)
         ckt->CKTNoiseCYmat = newcmatnoinit(ckt->CKTportCount, ckt->CKTportCount);
         if (ckt->CKTNoiseCYmat == NULL) return (E_NOMEM);
 
-        // Use CKTadjointRHS as a convenience storage for all solutions (each solution per each 
+        // Use CKTadjointRHS as a convenience storage for all solutions (each solution per each
         // port excitation)
         if (ckt->CKTadjointRHS != NULL) freecmat(ckt->CKTadjointRHS);
         ckt->CKTadjointRHS = newcmatnoinit(ckt->CKTportCount, ckt->CKTmaxEqNum);
@@ -337,12 +303,32 @@ void deleteSPmatrix(CKTcircuit* ckt)
     ckt->CKTadjointRHS = NULL;
 }
 
+
+NOISEAN* SPcreateNoiseAnalysys(CKTcircuit* ckt)
+{
+    NOISEAN* internalNoiseAN = TMALLOC(NOISEAN, 1);
+    if (internalNoiseAN==NULL) return NULL;
+    SPAN* span = (SPAN*)ckt->CKTcurJob;
+
+    internalNoiseAN->NstartFreq = span->SPstartFreq;
+    internalNoiseAN->NstopFreq  = span->SPstopFreq;
+    internalNoiseAN->NStpsSm = 1; // Force to output noise at every freq step
+    internalNoiseAN->JOBnextJob = NULL;
+    internalNoiseAN->JOBtype = span->JOBtype;
+    internalNoiseAN->JOBname = NULL;
+    internalNoiseAN->NfreqDelta = span->SPfreqDelta;
+    internalNoiseAN->NstpType = span->SPstepType;
+    internalNoiseAN->NnumSteps = span->SPnumberSteps;
+    return internalNoiseAN;
+}
+
+
 int
-SPan(CKTcircuit *ckt, int restart)
+SPan(CKTcircuit* ckt, int restart)
 {
 
 
-    SPAN *job = (SPAN *) ckt->CKTcurJob;
+    SPAN* job = (SPAN*)ckt->CKTcurJob;
 
     double freq;
     double freqTol; /* tolerence parameter for finding final frequency */
@@ -354,17 +340,22 @@ SPan(CKTcircuit *ckt, int restart)
     int error;
     int numNames;
     int i;
-    IFuid *nameList;  /* va: tmalloc'ed list of names */
+    IFuid* nameList;  /* va: tmalloc'ed list of names */
     IFuid freqUid;
-    static runDesc *spPlot = NULL;
-    runDesc *plot = NULL;
+    static runDesc* spPlot = NULL;
+    runDesc* plot = NULL;
 
     double* rhswoPorts = NULL;
     double* irhswoPorts = NULL;
 
+    NOISEAN* internalNoiseAN = NULL;
+    // Noise analysis is performed at each freq of the SP Analysis
+    // A temporary dummy job is therefore created
+
+
     /* variable must be static, for continuation of interrupted (Ctrl-C),
     longer lasting noise anlysis */
-    static Ndata* data=NULL;
+    static Ndata* data = NULL;
     if (job->SPdoNoise)
     {
         data = TMALLOC(Ndata, 1);
@@ -380,18 +371,18 @@ SPan(CKTcircuit *ckt, int restart)
 
 
 #ifdef XSPICE
-/* gtri - add - wbk - 12/19/90 - Add IPC stuff and anal_init and anal_type */
+    /* gtri - add - wbk - 12/19/90 - Add IPC stuff and anal_init and anal_type */
 
-    /* Tell the beginPlot routine what mode we're in */
+        /* Tell the beginPlot routine what mode we're in */
 
-    // For now, let's keep this as IPC_ANAL_AC (TBD)
+        // For now, let's keep this as IPC_ANAL_AC (TBD)
     g_ipc.anal_type = IPC_ANAL_AC;
 
     /* Tell the code models what mode we're in */
     g_mif_info.circuit.anal_type = MIF_DC;
     g_mif_info.circuit.anal_init = MIF_TRUE;
 
-/* gtri - end - wbk */
+    /* gtri - end - wbk */
 #endif
 
     /* start at beginning */
@@ -436,7 +427,7 @@ SPan(CKTcircuit *ckt, int restart)
         if (job->SPdoNoise)
         {
             data->lstFreq = job->SPstartFreq - 1;
-            data->delFreq = 1.0;
+            data->delFreq = 0.0;
         }
 
 #ifdef XSPICE
@@ -452,7 +443,7 @@ SPan(CKTcircuit *ckt, int restart)
             EVTop_save(ckt, MIF_TRUE, 0.0);
         }
         else
-#endif 
+#endif
             /* If no event-driven instances, do what SPICE normally does */
             if (!ckt->CKTnoopac) { /* skip OP if option NOOPAC is set and circuit is linear */
                 error = CKTop(ckt,
@@ -598,26 +589,27 @@ SPan(CKTcircuit *ckt, int restart)
 
 
 
-	tfree(nameList);		
-	if(error) return(error);
+        tfree(nameList);
+        if (error) return(error);
 
         if (job->SPstepType != LINEAR) {
-	    SPfrontEnd->OUTattributes (spPlot, NULL, OUT_SCALE_LOG, NULL);
-	}
+            SPfrontEnd->OUTattributes(spPlot, NULL, OUT_SCALE_LOG, NULL);
+        }
         freq = job->SPstartFreq;
 
-    } else {    /* continue previous analysis */
+    }
+    else {    /* continue previous analysis */
         freq = job->SPsaveFreq;
         job->SPsaveFreq = 0; /* clear the 'old' frequency */
-	/* fix resume? saj, indeed !*/
-        error = SPfrontEnd->OUTpBeginPlot (NULL, NULL,
-                                           NULL,
-                                           NULL, 0,
-                                           666, NULL, 666,
-                                           &spPlot);
-	/* saj*/    
+    /* fix resume? saj, indeed !*/
+        error = SPfrontEnd->OUTpBeginPlot(NULL, NULL,
+            NULL,
+            NULL, 0,
+            666, NULL, 666,
+            &spPlot);
+        /* saj*/
     }
-        
+
     switch (job->SPstepType) {
     case DECADE:
     case OCTAVE:
@@ -633,14 +625,14 @@ SPan(CKTcircuit *ckt, int restart)
 
 
 #ifdef XSPICE
-/* gtri - add - wbk - 12/19/90 - Set anal_init and anal_type */
+    /* gtri - add - wbk - 12/19/90 - Set anal_init and anal_type */
 
     g_mif_info.circuit.anal_init = MIF_TRUE;
 
     /* Tell the code models what mode we're in */
     g_mif_info.circuit.anal_type = MIF_AC;
 
-/* gtri - end - wbk */
+    /* gtri - end - wbk */
 #endif
 
     INIT_STATS();
@@ -651,13 +643,22 @@ SPan(CKTcircuit *ckt, int restart)
         return (E_NOMEM);
 
     // Create Noise UID, if needed
-
     if (job->SPdoNoise)
     {
+        internalNoiseAN = SPcreateNoiseAnalysys(ckt);
+        if (internalNoiseAN == NULL)
+            return (E_NOMEM);
 
         data->numPlots = 0;                /* we don't have any plots  yet */
-        error = CKTspnoise(ckt, N_DENS, N_OPEN, data);
-        if (error) return(error);
+        data->freq = freq;
+
+
+        error = CKTspnoise(ckt, N_DENS, N_OPEN, data, internalNoiseAN);
+
+        if (error) {
+            tfree(internalNoiseAN);
+            return(error);
+        }
     }
 
     ckt->CKTactivePort = 0;
@@ -688,7 +689,7 @@ SPan(CKTcircuit *ckt, int restart)
                 EVTop_save(ckt, MIF_TRUE, 0.0);
             }
             else
-#endif 
+#endif
                 // If no event-driven instances, do what SPICE normally does
                 error = CKTop(ckt,
                     (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITJCT,
@@ -707,7 +708,7 @@ SPan(CKTcircuit *ckt, int restart)
             }
         }
 
-        // Store previous rhs 
+        // Store previous rhs
         if (rhswoPorts == NULL)
             rhswoPorts = (double*)TMALLOC(double, ckt->CKTmaxEqNum);
         else
@@ -735,7 +736,7 @@ SPan(CKTcircuit *ckt, int restart)
 
         int vsrcLookupType = CKTtypelook("Vsource");
         int vsrcRoot = -1;
-        
+
         // Get VSRCs root model
         if (ckt->CKTVSRCid == -1)
         {
@@ -761,12 +762,12 @@ SPan(CKTcircuit *ckt, int restart)
         // Pre-load everything but RF Ports (these will be updated in the next cycle).
         error = NIspPreload(ckt);
         if (error) return (error);
-        
-//        error = VSRCsaveNPData(ckt->CKThead[vsrcRoot]);
-//        if (error) return (error);
 
-        //Keep a backup copy
-        memcpy(rhswoPorts, ckt->CKTrhs,  ckt->CKTmaxEqNum * sizeof(double));
+        //        error = VSRCsaveNPData(ckt->CKThead[vsrcRoot]);
+        //        if (error) return (error);
+
+                //Keep a backup copy
+        memcpy(rhswoPorts, ckt->CKTrhs, ckt->CKTmaxEqNum * sizeof(double));
         memcpy(rhswoPorts, ckt->CKTirhs, ckt->CKTmaxEqNum * sizeof(double));
 
         for (activePort = 1; activePort <= ckt->CKTportCount; activePort++)
@@ -836,7 +837,7 @@ SPan(CKTcircuit *ckt, int restart)
         if (job->SPdoNoise)
         {
 
-            data->delFreq = freq - data->lstFreq;
+
             data->freq = freq;
 
 
@@ -847,7 +848,7 @@ SPan(CKTcircuit *ckt, int restart)
                 /* the frequency will NOT be stored in array[0]  as before; instead,
                  * it will be given in refVal.rValue (see later)
                  */
-                ckt->CKTactivePort = activePort+1;
+                ckt->CKTactivePort = activePort + 1;
 
                 NInspIter(ckt, (VSRCinstance*)(ckt->CKTrfPorts[activePort]));   /* solve the adjoint system */
                 /* put the solution of the current adjoint system into the storage matrix*/
@@ -861,15 +862,16 @@ SPan(CKTcircuit *ckt, int restart)
                     ckt->CKTadjointRHS->d[activePort][j] = temp;
                 }
             }
-             /* 
-            now we have all the solutions of the adjoint system, we may look into actual
-            noise sourches
-             */
+            /*
+           now we have all the solutions of the adjoint system, we may look into actual
+           noise sourches
+            */
 
-            error = CKTspnoise(ckt, N_DENS, N_CALC, data);
+            error = CKTspnoise(ckt, N_DENS, N_CALC, data, internalNoiseAN);
             if (error)
             {
-               tfree(data);
+                tfree(internalNoiseAN);
+                tfree(data);
                 tfree(rhswoPorts);
                 tfree(irhswoPorts);
                 deleteSPmatrix(ckt);
@@ -878,7 +880,7 @@ SPan(CKTcircuit *ckt, int restart)
             data->lstFreq = freq;
         }
 
-        
+
 #ifdef XSPICE
         /* gtri - modify - wbk - 12/19/90 - Send IPC stuff */
 
@@ -893,9 +895,10 @@ SPan(CKTcircuit *ckt, int restart)
         /* gtri - modify - wbk - 12/19/90 - Send IPC stuff */
 #else
         error = CKTspDump(ckt, freq, acPlot, job->SPdoNoise));
-#endif	
+#endif
         if (error) {
             UPDATE_STATS(DOING_AC);
+            tfree(internalNoiseAN);
             tfree(rhswoPorts);
             tfree(irhswoPorts);
             tfree(data);
@@ -940,6 +943,7 @@ SPan(CKTcircuit *ckt, int restart)
         if (job->SPfreqDelta == 0) goto endsweep;
         break;
         default:
+            tfree(internalNoiseAN);
             tfree(rhswoPorts);
             tfree(irhswoPorts);
             tfree(data);
@@ -949,9 +953,10 @@ SPan(CKTcircuit *ckt, int restart)
         }
     }
 endsweep:
-    SPfrontEnd->OUTendPlot (spPlot);
+    SPfrontEnd->OUTendPlot(spPlot);
     spPlot = NULL;
     UPDATE_STATS(0);
+    tfree(internalNoiseAN);
     tfree(rhswoPorts);
     tfree(irhswoPorts);
     deleteSPmatrix(ckt);
