@@ -15,12 +15,12 @@ Author: 1987 Gary W. Ng
  */
 
 
-/*
-Modified by Alessio Cacciatori: S-Params noise is calculated as noise current
-correlation matrix. Per each noise source, the noise voltage at RF ports is converted
-as an input noise current source by using (already availalble) Y matrix.
-Outside RFSPICE declaration, code is legacy NGSPICE code.
-*/
+ /*
+ Modified by Alessio Cacciatori: S-Params noise is calculated as noise current
+ correlation matrix. Per each noise source, the noise voltage at RF ports is converted
+ as an input noise current source by using (already availalble) Y matrix.
+ Outside RFSPICE declaration, code is legacy NGSPICE code.
+ */
 
 #include "ngspice/ngspice.h"
 #include "ngspice/cktdefs.h"
@@ -28,20 +28,17 @@ Outside RFSPICE declaration, code is legacy NGSPICE code.
 #include "ngspice/noisedef.h"
 
 #ifdef RFSPICE
-#include "../maths/dense/dense.h"
-#include "../maths/dense/denseinlines.h"
-
 extern CMat* eyem;
 extern CMat* zref;
 extern CMat* gn;
 extern CMat* gninv;
 extern CMat* vNoise;
 extern CMat* iNoise;
-
+#include "../../maths/dense/denseinlines.h"
 #endif
 
 void
-NevalSrc (double *noise, double *lnNoise, CKTcircuit *ckt, int type, int node1, int node2, double param)
+NevalSrc(double* noise, double* lnNoise, CKTcircuit* ckt, int type, int node1, int node2, double param)
 {
 #ifdef RFSPICE
     if (ckt->CKTcurrentAnalysis & DOING_SP)
@@ -51,15 +48,21 @@ NevalSrc (double *noise, double *lnNoise, CKTcircuit *ckt, int type, int node1, 
         switch (type) {
 
         case SHOTNOISE:
-            inoise =  2 * CHARGE * fabs(param);          /* param is the dc current in a semiconductor */
+            inoise = 2 * CHARGE * fabs(param);          /* param is the dc current in a semiconductor */
+            *noise = inoise;
+            *lnNoise = log(MAX(*noise, N_MINLOG));
             break;
 
         case THERMNOISE:
-            inoise =  4 * CONSTboltz * ckt->CKTtemp * param;         /* param is the conductance of a resistor */
+            inoise = 4 * CONSTboltz * ckt->CKTtemp * param;         /* param is the conductance of a resistor */
+            *noise = inoise;
+            *lnNoise = log(MAX(*noise, N_MINLOG));
             break;
 
         case N_GAIN:
             inoise = 0.0;
+            *noise = cmodu(csubco(ckt->CKTadjointRHS->d[0][node1], ckt->CKTadjointRHS->d[0][node2]));
+
             break;
 
         }
@@ -95,19 +98,19 @@ NevalSrc (double *noise, double *lnNoise, CKTcircuit *ckt, int type, int node1, 
     double imagVal;
     double gain;
 
-    realVal = ckt->CKTrhs [node1] - ckt->CKTrhs [node2];
-    imagVal = ckt->CKTirhs [node1] - ckt->CKTirhs [node2];
-    gain = (realVal*realVal) + (imagVal*imagVal);
+    realVal = ckt->CKTrhs[node1] - ckt->CKTrhs[node2];
+    imagVal = ckt->CKTirhs[node1] - ckt->CKTirhs[node2];
+    gain = (realVal * realVal) + (imagVal * imagVal);
     switch (type) {
 
     case SHOTNOISE:
         *noise = gain * 2 * CHARGE * fabs(param);          /* param is the dc current in a semiconductor */
-          *lnNoise = log( MAX(*noise,N_MINLOG) );
+        *lnNoise = log(MAX(*noise, N_MINLOG));
         break;
 
     case THERMNOISE:
         *noise = gain * 4 * CONSTboltz * ckt->CKTtemp * param;         /* param is the conductance of a resistor */
-        *lnNoise = log( MAX(*noise,N_MINLOG) );
+        *lnNoise = log(MAX(*noise, N_MINLOG));
         break;
 
     case N_GAIN:
@@ -131,22 +134,22 @@ NevalSrc (double *noise, double *lnNoise, CKTcircuit *ckt, int type, int node1, 
  *   "case by case" basis.  What we CAN provide, though, is the noise
  *   gain associated with the 1/f source.
  */
-/* Modified by Darsen Lu for BSIM4 tnoiMod=2 10/10/2010
-*/
+ /* Modified by Darsen Lu for BSIM4 tnoiMod=2 10/10/2010
+ */
 
 void
-NevalSrc2 (
-double *noise,
-double *lnNoise,
-CKTcircuit *ckt,
-int type,
-int node1,
-int node2,
-double param1,
-int node3,
-int node4,
-double param2,
-double phi21)     /* Phase of signal 2 relative to signal 1 */
+NevalSrc2(
+    double* noise,
+    double* lnNoise,
+    CKTcircuit* ckt,
+    int type,
+    int node1,
+    int node2,
+    double param1,
+    int node3,
+    int node4,
+    double param2,
+    double phi21)     /* Phase of signal 2 relative to signal 1 */
 
 {
     double realVal1, imagVal1;
@@ -159,10 +162,10 @@ double phi21)     /* Phase of signal 2 relative to signal 1 */
     {
 
         double knoise = 0.0;
-        
+
         T0 = sqrt(param1);
         T1 = sqrt(param2);
-        cplx cfact; 
+        cplx cfact;
         cfact.re = cos(phi21);
         cfact.im = sin(phi21);
 
@@ -171,14 +174,20 @@ double phi21)     /* Phase of signal 2 relative to signal 1 */
 
         case SHOTNOISE:
             knoise = 2 * CHARGE;          /* param is the dc current in a semiconductor */
+            *noise = knoise;
+            *lnNoise = log(MAX(*noise, N_MINLOG));
             break;
 
         case THERMNOISE:
             knoise = 4 * CONSTboltz * ckt->CKTtemp;         /* param is the conductance of a resistor */
+        // For this simulation we are not collecting any statistics on output nodes. Force noise to 0
+            *noise = knoise;
+            *lnNoise = log(MAX(*noise, N_MINLOG));
             break;
 
         case N_GAIN:
             knoise = 0.0;
+            *noise = cmodu(csubco(ckt->CKTadjointRHS->d[0][node1], ckt->CKTadjointRHS->d[0][node2]));
             break;
 
         }
@@ -187,7 +196,7 @@ double phi21)     /* Phase of signal 2 relative to signal 1 */
         // Calculate input equivalent noise current source (we have port impedance attached)
         for (unsigned int s = 0; s < ckt->CKTportCount; s++)
         {
-            cplx vNoiseA = cmultdo(csubco(ckt->CKTadjointRHS->d[s][node1], ckt->CKTadjointRHS->d[s][node2]), knoise * sqrt(param1) );
+            cplx vNoiseA = cmultdo(csubco(ckt->CKTadjointRHS->d[s][node1], ckt->CKTadjointRHS->d[s][node2]), knoise * sqrt(param1));
             cplx vNoiseB = cmultco(cmultdo(csubco(ckt->CKTadjointRHS->d[s][node3], ckt->CKTadjointRHS->d[s][node4]), knoise * sqrt(param1)), cfact);
 
             vNoise->d[0][s] = caddco(vNoiseA, vNoiseB);
@@ -217,27 +226,27 @@ double phi21)     /* Phase of signal 2 relative to signal 1 */
 #endif
 
 
-    realVal1 = ckt->CKTrhs [node1] - ckt->CKTrhs [node2];
-    imagVal1 = ckt->CKTirhs [node1] - ckt->CKTirhs [node2];
-    realVal2 = ckt->CKTrhs [node3] - ckt->CKTrhs [node4];
-    imagVal2 = ckt->CKTirhs [node3] - ckt->CKTirhs [node4];
+    realVal1 = ckt->CKTrhs[node1] - ckt->CKTrhs[node2];
+    imagVal1 = ckt->CKTirhs[node1] - ckt->CKTirhs[node2];
+    realVal2 = ckt->CKTrhs[node3] - ckt->CKTrhs[node4];
+    imagVal2 = ckt->CKTirhs[node3] - ckt->CKTirhs[node4];
     T0 = sqrt(param1);
     T1 = sqrt(param2);
     T2 = T1 * cos(phi21);
     T3 = T1 * sin(phi21);
     realOut = T0 * realVal1 + T2 * realVal2 - T3 * imagVal2;
     imagOut = T0 * imagVal1 + T2 * imagVal2 + T3 * realVal2;
-    param_gain = (realOut*realOut) + (imagOut*imagOut);
+    param_gain = (realOut * realOut) + (imagOut * imagOut);
     switch (type) {
 
     case SHOTNOISE:
         *noise = 2.0 * CHARGE * fabs(param_gain);          /* param is the dc current in a semiconductor */
-          *lnNoise = log( MAX(*noise,N_MINLOG) );
+        *lnNoise = log(MAX(*noise, N_MINLOG));
         break;
 
     case THERMNOISE:
         *noise = 4.0 * CONSTboltz * ckt->CKTtemp * param_gain;         /* param is the conductance of a resistor */
-        *lnNoise = log( MAX(*noise,N_MINLOG) );
+        *lnNoise = log(MAX(*noise, N_MINLOG));
         break;
 
     case N_GAIN:
@@ -257,12 +266,14 @@ will implement dtemp feature.
 */
 
 void
-NevalSrcInstanceTemp (double *noise, double *lnNoise, CKTcircuit *ckt, int type,
-           int node1, int node2, double param, double param2)
+NevalSrcInstanceTemp(double* noise, double* lnNoise, CKTcircuit* ckt, int type,
+    int node1, int node2, double param, double param2)
 {
 
 
 #ifdef RFSPICE
+    // For this simulation we are not collecting any statistics on output nodes. Force noise to 0
+
     if (ckt->CKTcurrentAnalysis & DOING_SP)
     {
         double inoise = 0.0;
@@ -271,14 +282,21 @@ NevalSrcInstanceTemp (double *noise, double *lnNoise, CKTcircuit *ckt, int type,
 
         case SHOTNOISE:
             inoise = 2 * CHARGE * fabs(param);          /* param is the dc current in a semiconductor */
+        // For this simulation we are not collecting any statistics on output nodes. Force noise to 0
+            *noise = inoise;
+            *lnNoise = log(MAX(*noise, N_MINLOG));
             break;
 
         case THERMNOISE:
-            inoise = 4.0 *CONSTboltz* (ckt->CKTtemp + param2)* param;         /* param is the conductance of a resistor */
+            inoise = 4.0 * CONSTboltz * (ckt->CKTtemp + param2) * param;         /* param is the conductance of a resistor */
+        // For this simulation we are not collecting any statistics on output nodes. Force noise to 0
+            *noise = inoise;
+            *lnNoise = log(MAX(*noise, N_MINLOG));
             break;
 
         case N_GAIN:
             inoise = 0.0;
+            *noise = cmodu(csubco(ckt->CKTadjointRHS->d[0][node1], ckt->CKTadjointRHS->d[0][node2]));
             return;
 
         }
@@ -286,7 +304,7 @@ NevalSrcInstanceTemp (double *noise, double *lnNoise, CKTcircuit *ckt, int type,
         inoise = sqrt(inoise);
         // Calculate input equivalent noise current source (we have port impedance attached)
         for (unsigned int s = 0; s < ckt->CKTportCount; s++)
-            vNoise->d[0][s] = cmultdo(csubco(ckt->CKTadjointRHS->d[s][node1], ckt->CKTadjointRHS->d[s][node2]),inoise);
+            vNoise->d[0][s] = cmultdo(csubco(ckt->CKTadjointRHS->d[s][node1], ckt->CKTadjointRHS->d[s][node2]), inoise);
 
         for (unsigned int d = 0; d < ckt->CKTportCount; d++)
         {
@@ -313,20 +331,20 @@ NevalSrcInstanceTemp (double *noise, double *lnNoise, CKTcircuit *ckt, int type,
     double realVal;
     double imagVal;
     double gain;
-    realVal = ckt->CKTrhs [node1] - ckt->CKTrhs [node2];
-    imagVal = ckt->CKTirhs [node1] - ckt->CKTirhs [node2];
-    gain = (realVal*realVal) + (imagVal*imagVal);
+    realVal = ckt->CKTrhs[node1] - ckt->CKTrhs[node2];
+    imagVal = ckt->CKTirhs[node1] - ckt->CKTirhs[node2];
+    gain = (realVal * realVal) + (imagVal * imagVal);
     switch (type) {
 
     case SHOTNOISE:
         *noise = gain * 2 * CHARGE * fabs(param);          /* param is the dc current in a semiconductor */
-          *lnNoise = log( MAX(*noise,N_MINLOG) );
+        *lnNoise = log(MAX(*noise, N_MINLOG));
         break;
 
     case THERMNOISE:
         *noise = gain * 4 * CONSTboltz * (ckt->CKTtemp + param2)  /* param2 is the instance temperature difference */
-                 * param;                                         /* param is the conductance of a resistor */
-        *lnNoise = log( MAX(*noise,N_MINLOG) );
+            * param;                                         /* param is the conductance of a resistor */
+        *lnNoise = log(MAX(*noise, N_MINLOG));
         break;
 
     case N_GAIN:
