@@ -13,5 +13,5 @@ Author: 1985 Thomas L. Quarles
 GENinstance *
 CKTfndDev(CKTcircuit *ckt, IFuid name)
 {
-    return nghash_find(ckt->DEVnameHash, name);
+    return ckt ? nghash_find(ckt->DEVnameHash, name) : NULL;
 }
