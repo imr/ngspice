@@ -221,8 +221,8 @@ INPevaluateRKM_R(char** line, int* error, int gobble)
     tmpline = *line;
 
     if (gobble) {
-        /* MW. INPgetUTok should be called with gobble=0 or it make
-         * errors in v(1,2) exp */
+        /* MW. INPgetUTok should be called with gobble=0 or it leads to
+         * errors in v(1,2) expression */
         *error = INPgetUTok(line, &token, 0);
         if (*error)
             return (0.0);
@@ -363,8 +363,24 @@ INPevaluateRKM_R(char** line, int* error, int gobble)
         break;
     case 'r':
     case 'R':
-        expo1 = expo1;
-        hasmulti = TRUE;
+        /* This should be R150, i.e. R followed by an integer number */
+        {
+            int num;
+            char ch;
+            if (sscanf(here + 1, "%i%c", &num, &ch) == 1) {
+                expo1 = expo1;
+                hasmulti = TRUE;
+            }
+            else {
+                *error = 1;
+                if (gobble) {
+                    FREE(token);
+                    /* back out the 'gettok' operation */
+                    *line = tmpline;
+                }
+                return (0);
+            }
+        }
         break;
     case 'n':
     case 'N':
