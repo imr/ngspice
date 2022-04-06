@@ -32,7 +32,8 @@ V1 n2 0 1
   let rcur = start                ; set the start value for R2
 * the loop
   dowhile run < op_runs
-    echo run no. $&run with R2 = $&rcur Ohms
+    echo
+    echo **** run no. $&run with R2 = $&rcur Ohms ****
     altermod R2 r = $&rcur        ; model parameter r of model rmod for R2 is changed to rcur
     op                            ; simulate operating point, plot op1 is created
     setplot $plot_out             ; go to the output plot
