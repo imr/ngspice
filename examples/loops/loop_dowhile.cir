@@ -1,0 +1,12 @@
+example dowhile loop
+.control
+
+let loopindex = 0
+dowhile loopindex <> 5
+  echo index is $&loopindex
+  let loopindex = loopindex + 1
+end
+
+.endc
+
+.end

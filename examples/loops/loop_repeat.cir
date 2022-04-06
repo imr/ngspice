@@ -1,0 +1,11 @@
+example repeat loop
+.control
+
+set loops = 7
+repeat $loops
+  echo How many loops? $loops
+end
+
+.endc
+
+.end

@@ -1,0 +1,53 @@
+* dc loop with .param change
+* We alter resistor R2
+
+.param pr2 = 1k
+
+* The circuit
+R1 n1 0 1k
+R2 n2 n1 {pr2}
+
+V1 n2 0 1
+
+
+* start and end values for R2
+.csparam start = {pr2}
+.csparam end = 0.1k
+.csparam delta = 0.05k
+
+* control script
+.control
+* create a new plot for storing the measurements
+  set curplot = new               ; create a new plot
+  set curplottitle = "OutputData"
+  set plot_out = $curplot         ; store its name to 'plot_out'
+
+  if (end < start)                ; find appropriate sign for delta
+    let delta = -abs(delta)
+  else
+    let delta = abs(delta)
+  end
+  let ldelta = delta              ; loop delta, original delta will be restored to csparam by 'reset'
+  let op_runs = floor((end - start)/delta) + 1  ; number of runs for simulation
+  let run = 0                     ; number of actual run
+  let vnode2 = unitvec(op_runs)   ; vector for all n1 voltages
+  let r2val = unitvec(op_runs)    ; vector for all resistor values  
+  let rcur = start                ; set the start value for R2
+* the loop
+  dowhile run < op_runs
+    alterparam pr2 = $&rcur       ; instance parameter resistance for R2 is changed to rcur
+    reset                         ; make .param change effective
+    op                            ; simulate operating point, plot op1 is created
+    setplot $plot_out             ; go to the output plot
+    let vnode2[run] = op1.v(n1)   ; store the current n1 voltage value
+    let r2val[run] = rcur         ; store the current R2 resistance value
+    destroy op1
+    let rcur = rcur + ldelta
+    let run = run + 1
+  end
+  settype impedance r2val
+  settype voltage vnode2
+  plot vnode2 vs r2val
+.endc
+
+.end

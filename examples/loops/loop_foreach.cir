@@ -1,0 +1,15 @@
+example foreach loop
+.control
+
+foreach val -40 -20 0 20 40
+  echo var is $val
+end
+echo
+set myvariable = ( -4 -2 0 2 4 )
+foreach var $myvariable
+  echo var is $var
+end
+
+.endc
+
+.end
