@@ -366,12 +366,6 @@ cx_deriv(void *data, short int type, int length, int *newlength, short int *newt
          * check that the frequency is complex vector not to abort.
          */
 
-
-        /* Original problematic code
-            * for (i = 0; i < length; i++)
-            *    scale[i] = pl->pl_scale->v_realdata[i];
-        */
-
         /* Modified to deal with complex frequency vector */
         if (iscomplex(pl->pl_scale))
             for (i = 0; i < length; i++)
@@ -412,16 +406,15 @@ cx_deriv(void *data, short int type, int length, int *newlength, short int *newt
                 k = j;
             }
 
+            /* FIXME: replaced j+base by j, to avoid crash, but why j+base here? */
             for (j = k; j < length; j++)
             {
-                /* Again the same error */
-                        /* x = pl->pl_scale->v_realdata[j + base]; */
                 if (iscomplex(pl->pl_scale))
-                    x = realpart(pl->pl_scale->v_compdata[j+base]);  /* For complex scale vector */
+                    x = realpart(pl->pl_scale->v_compdata[j]);  /* For complex scale vector */
                 else
-                    x = pl->pl_scale->v_realdata[j + base];           /* For real scale vector */
+                    x = pl->pl_scale->v_realdata[j];           /* For real scale vector */
 
-                outdata[j + base] = ft_peval(x, coefs, degree - 1);
+                outdata[j] = ft_peval(x, coefs, degree - 1);
             }
         }
 
