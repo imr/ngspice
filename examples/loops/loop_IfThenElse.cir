@@ -1,0 +1,19 @@
+example if then else loop
+.control
+
+foreach val -40 -20 0 20 40
+  if $val < 0
+    echo variable $val is less than 0
+  else
+    echo variable $val is greater than or equal to 0
+  end
+end
+
+let vec = 1
+if vec = 1 ; $&vec = 1     is possible as well
+  echo vec is $&vec
+end
+
+.endc
+
+.end
