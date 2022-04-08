@@ -48,8 +48,6 @@ NON-STANDARD FEATURES
 #include  "ngspice/evtproto.h"
 
 
-
-static int EVTcheck_nodes(CKTcircuit *ckt);
 static int EVTcount_hybrids(CKTcircuit *ckt);
 static int EVTinit_info(CKTcircuit *ckt);
 static int EVTinit_queue(CKTcircuit *ckt);
@@ -87,9 +85,6 @@ int EVTinit(
 
     int  err;           /* SPICE error return code   0 = OK */
 
-    /*    static char *err_no_hybrids = "ERROR - no hybrids found in input deck";*/
-
-
     /* Exit immediately if there are no event-driven instances */
     /* but don't complain */
     if(ckt->evt->counts.num_insts == 0)
@@ -97,20 +92,6 @@ int EVTinit(
 
     /* Count the number of hybrids and hybrid outputs */
     err = EVTcount_hybrids(ckt);
-    if(err)
-        return(err);
-
-    /* Exit with error if there are no hybrids in the circuit. */
-    /* Will probably remove this restriction later... */
-/*
-    if(ckt->evt->counts.num_hybrids == 0) {
-        errMsg = TMALLOC(char, strlen(err_no_hybrids) + 1);
-        strcpy(errMsg, err_no_hybrids);
-        return(E_PRIVATE);
-    }
-*/
-    /* Check that event nodes have not been used as analog nodes also */
-    err = EVTcheck_nodes(ckt);
     if(err)
         return(err);
 
@@ -189,46 +170,6 @@ static int EVTcount_hybrids(
     ckt->evt->counts.num_hybrids = num_hybrids;
     ckt->evt->counts.num_hybrid_outputs = num_hybrid_outputs;
 
-    return(OK);
-}
-
-
-/*
-EVTcheck_nodes
-
-Report error if any event node name is also used as an analog node.
-*/
-
-
-static int EVTcheck_nodes(
-    CKTcircuit *ckt)             /* The circuit structure */
-{
-
-    CKTnode             *analog_node;
-    Evt_Node_Info_t     *event_node;
-
-    static char *err_prefix  = "ERROR - node ";
-    static char *err_collide = " cannot be both analog and digital";
-
-
-    /* Report error if any analog node name matches any event node name */
-    event_node = ckt->evt->info.node_list;
-    while(event_node) {
-        analog_node = ckt->CKTnodes;
-        while(analog_node) {
-            if(strcmp(event_node->name, analog_node->name) == 0) {
-                errMsg = tprintf("%s%s%s", err_prefix,
-                                   event_node->name,
-                                   err_collide);
-                fprintf(stdout, "%s\n", errMsg);
-                return(E_PRIVATE);
-            }
-            analog_node = analog_node->next;
-        }
-        event_node = event_node->next;
-    }
-
-    /* Return */
     return(OK);
 }
 
