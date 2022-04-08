@@ -43,13 +43,6 @@ Author: 1985 Wayne A. Christopher
 #include "ngspice/randnumb.h"
 #include "ngspice/compatmode.h"
 
-#define line_free(line, flag)                   \
-    do {                                        \
-        line_free_x(line, flag);                \
-        line = NULL;                            \
-    } while(0)
-
-
 static struct card *com_options = NULL;
 static struct card *mc_deck = NULL;
 static struct card *recent_deck = NULL;
@@ -61,7 +54,6 @@ static void dotifeval(struct card *deck);
 static void eval_agauss(struct card *deck, char *fcn);
 static wordlist *inp_savecurrents(struct card *deck, struct card *options,
         wordlist *wl, wordlist *controls);
-void line_free_x(struct card *deck, bool recurse);
 static void recifeval(struct card *pdeck);
 static char *upper(register char *string);
 static void rem_unused_mos_models(struct card* deck);
@@ -188,6 +180,9 @@ com_listing(wordlist *wl)
             inp_list(cp_out,
                      expand ? ft_curckt->ci_deck : ft_curckt->ci_origdeck,
                      ft_curckt->ci_options, type);
+            if (expand && ft_curckt->ci_auto && type != LS_RUNNABLE)
+                inp_list(cp_out, ft_curckt->ci_auto,
+                         ft_curckt->ci_options, type);
         }
     } else {
         fprintf(cp_err, "Error: no circuit loaded.\n");

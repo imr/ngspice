@@ -233,6 +233,8 @@ com_remcirc(wordlist *wl)
     line_free(dd, TRUE);
     dd = ft_curckt->ci_meas;
     line_free(dd, TRUE);
+    dd = ft_curckt->ci_auto;
+    line_free(dd, TRUE);
 
     wl_free(ft_curckt->ci_commands);
 

@@ -88,7 +88,6 @@ static int finddev(CKTcircuit *ckt, char *name, GENinstance **devptr, GENmodel *
 /* espice fix integration */
 static int finddev_special(CKTcircuit *ckt, char *name, GENinstance **devptr, GENmodel **modptr, int *device_or_model);
 
-
 /* Input a single deck, and return a pointer to the circuit. */
 
 CKTcircuit *
@@ -166,6 +165,12 @@ if_inpdeck(struct card *deck, INPtables **tab)
 
     /* Scan through the instance lines and parse the circuit. */
     INPpas2(ckt, deck->nextcard, *tab, ft_curckt->ci_defTask);
+#ifdef XSPICE
+    if (!Evtcheck_nodes(ckt, *tab)) {
+        ft_sperror(E_PRIVATE, "Evtcheck_nodes");
+        return NULL;
+    }
+#endif
 
     /* If option cshunt is given, add capacitors to each voltage node */
     INPpas4(ckt, *tab);

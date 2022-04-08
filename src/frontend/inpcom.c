@@ -195,9 +195,6 @@ extern void inp_probe(struct card* card);
 static void utf8_syntax_check(struct card *deck);
 #endif
 
-struct card* insert_new_line(
-    struct card* card, char* line, int linenum, int linenum_orig);
-
 struct inp_read_t {
     struct card *cc;
     int line_number;
@@ -405,7 +402,10 @@ static int is_cider_model(char *buf)
 }
 #endif
 
-/* insert a new card, just behind the given card */
+/* Insert a new card, just behind the given card.
+ * The new card takes ownership of the memory pointed to by "line".
+ */
+
 struct card *insert_new_line(
         struct card *card, char *line, int linenum, int linenum_orig)
 {

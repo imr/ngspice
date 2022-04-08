@@ -128,6 +128,11 @@ void EVTaccept(
     CKTcircuit *ckt,    /* main circuit struct */
     double     time);    /* time at which analog soln was accepted */
 
+struct INPtables;
+bool Evtcheck_nodes(
+    CKTcircuit         *ckt,             /* The circuit structure */
+    struct INPtables   *stab);           /* Symbol table. */
+
 struct dvec *EVTfindvec(char *node);
 
 #endif

@@ -12,5 +12,11 @@ void com_source(wordlist *wl);
 void com_mc_source(wordlist *wl);
 void com_circbyline(wordlist *wl);
 
+void line_free_x(struct card *deck, bool recurse);
+#define line_free(line, flag)                   \
+    do {                                        \
+        line_free_x(line, flag);                \
+        line = NULL;                            \
+    } while(0)
 
 #endif
