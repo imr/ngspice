@@ -1,0 +1,220 @@
+/*
+ * Author: 2000 Wladek Grabinski; EKV v2.6 Model Upgrade
+ * Author: 1997 Eckhard Brass;    EKV v2.5 Model Implementation
+ *     (C) 1990 Regents of the University of California. Spice3 Format
+ */
+
+#include "ngspice/ngspice.h"
+#include "ngspice/devdefs.h"
+#include "ngspice/ifsim.h"
+#include "ekvdefs.h"
+#include "ngspice/suffix.h"
+
+IFparm EKVpTable[] = { /* parameters */
+
+	    IOPU("l",      EKV_L,          IF_REAL   , "Length"),
+	    IOPU("w",      EKV_W,          IF_REAL   , "Width"),
+	    IOPU("ad",     EKV_AD,         IF_REAL   , "Drain area"),
+	    IOPU("as",     EKV_AS,         IF_REAL   , "Source area"),
+	    IOPU("pd",     EKV_PD,         IF_REAL   , "Drain perimeter"),
+	    IOPU("ps",     EKV_PS,         IF_REAL   , "Source perimeter"),
+	    IOPU("nrd",    EKV_NRD,        IF_REAL   , "Drain squares"),
+	    IOPU("nrs",    EKV_NRS,        IF_REAL   , "Source squares"),
+	    IP("off",      EKV_OFF,        IF_FLAG   , "Device initially off"),
+	    IOPU("icvds",  EKV_IC_VDS,     IF_REAL   , "Initial D-S voltage"),
+	    IOPU("icvgs",  EKV_IC_VGS,     IF_REAL   , "Initial G-S voltage"),
+	    IOPU("icvbs",  EKV_IC_VBS,     IF_REAL   , "Initial B-S voltage"),
+	    IP( "ic",      EKV_IC,  IF_REALVEC, "Vector of D-S, G-S, B-S voltages"),
+	    IP( "sens_l",  EKV_L_SENS, IF_FLAG, "flag to request sensitivity WRT length"),
+	    IP( "sens_w",  EKV_W_SENS, IF_FLAG, "flag to request sensitivity WRT width"),
+
+	    OP( "id",      EKV_CD,         IF_REAL,    "Drain current"),
+	    OP( "isub",    EKV_ISUB,       IF_REAL,    "Substrate current"),
+	    OPU( "is",     EKV_CS,         IF_REAL,    "Source current"),
+	    OPU( "ig",     EKV_CG,         IF_REAL,    "Gate current "),
+	    OPU( "ib",     EKV_CB,         IF_REAL,    "Bulk current "),
+	    OP( "ibd",     EKV_CBD,    IF_REAL,    "B-D junction current"),
+	    OP( "ibs",     EKV_CBS,    IF_REAL,    "B-S junction current"),
+	    OP( "vgs",     EKV_VGS,        IF_REAL,    "Gate-Source voltage"),
+	    OP( "vds",     EKV_VDS,        IF_REAL,    "Drain-Source voltage"),
+	    OP( "vbs",     EKV_VBS,        IF_REAL,    "Bulk-Source voltage"),
+	    OPU( "vbd",    EKV_VBD,        IF_REAL,    "Bulk-Drain voltage"),
+	    /*
+ OP( "cgs",     EKV_CGS,        IF_REAL   , "Gate-Source capacitance"),
+ OP( "cgd",     EKV_CGD,        IF_REAL   , "Gate-Drain capacitance"),
+ */
+
+	    OPU( "dnode",      EKV_DNODE,      IF_INTEGER, "Number of the drain node "),
+	    OPU( "gnode",      EKV_GNODE,      IF_INTEGER, "Number of the gate node "),
+	    OPU( "snode",      EKV_SNODE,      IF_INTEGER, "Number of the source node "),
+	    OPU( "bnode",      EKV_BNODE,      IF_INTEGER, "Number of the node "),
+	    OPU( "dnodeprime", EKV_DNODEPRIME, IF_INTEGER, "Number of int. drain node"),
+	    OPU( "snodeprime", EKV_SNODEPRIME, IF_INTEGER, "Number of int. source node "),
+
+	    OP( "vth",          EKV_VON,        IF_REAL,    "Threshold voltage"),
+	    OP( "vgeff",        EKV_VGEFF,      IF_REAL,    "Effective gate voltage"),
+	    OP( "vp",           EKV_VP,         IF_REAL,    "Pinch-off voltage"),
+	    OP( "vdsat",        EKV_VDSAT,      IF_REAL,    "Saturation drain voltage"),
+	    OP( "vgprime",      EKV_VGPRIME,    IF_REAL,    "vgprime"),
+	    OP( "vgstar",       EKV_VGSTAR,     IF_REAL,    "vgstar"),
+	    OPU( "sourcevcrit",  EKV_SOURCEVCRIT,IF_REAL,   "Critical source voltage"),
+	    OPU( "drainvcrit",   EKV_DRAINVCRIT, IF_REAL,   "Critical drain voltage"),
+	    OPU( "rs", EKV_SOURCERESIST, IF_REAL, "Source resistance"),
+	    OPU("sourceconductance", EKV_SOURCECONDUCT, IF_REAL, "Conductance of source"),
+	    OPU( "rd",  EKV_DRAINRESIST,  IF_REAL, "Drain conductance"),
+	    OPU("drainconductance",  EKV_DRAINCONDUCT,  IF_REAL, "Conductance of drain"),
+
+	    OP( "gm",      EKV_GM,      IF_REAL,    "Transconductance"),
+	    OP( "gds",     EKV_GDS,     IF_REAL,    "Drain-Source conductance"),
+	    OP( "gmb",     EKV_GMBS,    IF_REAL,    "Bulk-Source transconductance"),
+	    OP( "gms",     EKV_GMS,     IF_REAL,    "Source transconductance"),
+	    OPU( "gbd",    EKV_GBD,     IF_REAL,    "Bulk-Drain conductance"),
+	    OPU( "gbs",    EKV_GBS,     IF_REAL,    "Bulk-Source conductance"),
+	    OP( "if",      EKV_IF,      IF_REAL,    "Forward current"),
+	    OP( "ir",      EKV_IR,      IF_REAL,    "Reverse current"),
+	    OP( "irprime", EKV_IRPRIME, IF_REAL,    "Reverse current (prime)"),
+	    OP( "n_slope", EKV_SLOPE,   IF_REAL,    "Slope factor"),
+	    OP( "tau",     EKV_TAU,     IF_REAL,    "NQS time constant"),
+
+	    OP( "cbd",     EKV_CAPBD,   IF_REAL,    "Bulk-Drain capacitance"),
+	    OP( "cbs",     EKV_CAPBS,   IF_REAL,    "Bulk-Source capacitance"),
+	    OP( "cgs",     EKV_CAPGS,   IF_REAL,    "Gate-Source capacitance"),
+	    OP( "cgd",     EKV_CAPGD,   IF_REAL,    "Gate-Drain capacitance"),
+	    OP( "cgb",     EKV_CAPGB,   IF_REAL,    "Gate-Bulk capacitance"),
+
+	    OP( "cqgs", EKV_CQGS,IF_REAL, "Capacitance due to gate-source charge storage"),
+	    OP( "cqgd", EKV_CQGD,IF_REAL, "Capacitance due to gate-drain charge storage"),
+	    OP( "cqgb", EKV_CQGB,IF_REAL, "Capacitance due to gate-bulk charge storage"),
+	    OP( "cqbd", EKV_CQBD,IF_REAL, "Capacitance due to bulk-drain charge storage"),
+	    OP( "cqbs", EKV_CQBS,IF_REAL, "Capacitance due to bulk-source charge storage"),
+
+	    OPU( "cbd0", EKV_CAPZEROBIASBD, IF_REAL, "Zero-Bias B-D junction capacitance"),
+	    OPU( "cbdsw0", EKV_CAPZEROBIASBDSW, IF_REAL,    " "),
+	    OPU( "cbs0", EKV_CAPZEROBIASBS, IF_REAL, "Zero-Bias B-S junction capacitance"),
+	    OPU( "cbssw0", EKV_CAPZEROBIASBSSW, IF_REAL,    " "),
+
+	    OP( "qgs", EKV_QGS, IF_REAL,    "Gate-Source charge storage"),
+	    OP( "qgd", EKV_QGD, IF_REAL,    "Gate-Drain charge storage"),
+	    OP( "qgb", EKV_QGB, IF_REAL,    "Gate-Bulk charge storage"),
+	    OP( "qbd", EKV_QBD, IF_REAL,    "Bulk-Drain charge storage"),
+	    OP( "qbs", EKV_QBS, IF_REAL,    "Bulk-Source charge storage"),
+
+	    OPU("tvto",   EKV_TVTO,   IF_REAL,    "temp. corrected vto"),
+	    OPU("tkp",    EKV_TKP,    IF_REAL,    "temp. corrected kp"), 
+	    OPU("tphi",   EKV_TPHI,   IF_REAL,    "temp. corrected phi"),
+	    OPU("tucrit", EKV_TUCRIT, IF_REAL,    "temp. corrected ucrit"),
+	    OPU("tibb",   EKV_TIBB,   IF_REAL,    "temp. corrected tibb"), 
+	    OPU("trd",    EKV_TRD,    IF_REAL,    "temp. corrected rd"),
+	    OPU("trs",    EKV_TRS,    IF_REAL,    "temp. corrected rs"),
+	    OPU("trsh",   EKV_TRSH,   IF_REAL,    "temp. corrected rsh"),
+	    OPU("trdc",   EKV_TRDC,   IF_REAL,    "temp. corrected rdc"),
+	    OPU("trsc",   EKV_TRSC,   IF_REAL,    "temp. corrected rsc"), 
+	    OPU("tis",    EKV_TIS,    IF_REAL,    "temp. corrected is"),
+	    OPU("tjs",    EKV_TJS,    IF_REAL,    "temp. corrected js"),
+	    OPU("tjsw",   EKV_TJSW,   IF_REAL,    "temp. corrected jsw"),
+	    OPU("tpb",    EKV_TPB,    IF_REAL,    "temp. corrected pb"),
+	    OPU("tpbsw",  EKV_TPBSW,  IF_REAL,    "temp. corrected pbsw"),
+	    OPU("tcbd",   EKV_TCBD,   IF_REAL,    "temp. corrected cbd"),
+	    OPU("tcbs",   EKV_TCBS,   IF_REAL,    "temp. corrected cbs"),
+	    OPU("tcj",    EKV_TCJ,    IF_REAL,    "temp. corrected cj"),
+	    OPU("tcjsw",  EKV_TCJSW,  IF_REAL,    "temp. corrected cjsw"),
+	    OPU("taf",    EKV_TAF,    IF_REAL,    "temp. corrected af"),
+	    OP( "power",  EKV_POWER,  IF_REAL,    "Instaneous power"),
+	    IOP("temp",   EKV_TEMP,   IF_REAL,    "Instance temperature"),
+
+	    OPU( "sens_l_dc",    EKV_L_SENS_DC,  IF_REAL,    "dc sensitivity wrt length"),
+	    OPU( "sens_l_real", EKV_L_SENS_REAL,IF_REAL,
+	    "real part of ac sensitivity wrt length"),
+	    OPU( "sens_l_imag",  EKV_L_SENS_IMAG,IF_REAL,    
+	    "imag part of ac sensitivity wrt length"),
+	    OPU( "sens_l_mag",   EKV_L_SENS_MAG, IF_REAL,    
+	    "sensitivity wrt l of ac magnitude"),
+	    OPU( "sens_l_ph",    EKV_L_SENS_PH,  IF_REAL,    
+	    "sensitivity wrt l of ac phase"),
+	    OPU( "sens_l_cplx",  EKV_L_SENS_CPLX,IF_COMPLEX, "ac sensitivity wrt length"),
+	    OPU( "sens_w_dc",    EKV_W_SENS_DC,  IF_REAL,    "dc sensitivity wrt width"),
+	    OPU( "sens_w_real",  EKV_W_SENS_REAL,IF_REAL,    
+	    "real part of ac sensitivity wrt width"),
+	    OPU( "sens_w_imag",  EKV_W_SENS_IMAG,IF_REAL,    
+	    "imag part of ac sensitivity wrt width"),
+	    OPU( "sens_w_mag",   EKV_W_SENS_MAG, IF_REAL,    
+	    "sensitivity wrt w of ac magnitude"),
+	    OPU( "sens_w_ph",    EKV_W_SENS_PH,  IF_REAL,    
+	    "sensitivity wrt w of ac phase"),
+	    OPU( "sens_w_cplx",  EKV_W_SENS_CPLX,IF_COMPLEX, "ac sensitivity wrt width")
+};
+
+IFparm EKVmPTable[] = { /* model parameters */
+	OP("type",   EKV_MOD_TYPE,  IF_STRING, "N-channel or P-channel MOS"),
+	    IOP("ekvint", EKV_MOD_EKVINT, IF_REAL   ,"interpolation function selector"),
+	    IOP("vto",   EKV_MOD_VTO,   IF_REAL   ,"Nominal threshold voltage"),
+	    IOP("kp",    EKV_MOD_KP,    IF_REAL   ,"Transconductance parameter"),
+	    IOP("gamma", EKV_MOD_GAMMA, IF_REAL   ,"Body effect parameter"),
+	    IOP("phi",   EKV_MOD_PHI,   IF_REAL   ,"Bulk Fermi potential"),
+	    IOP("cox",   EKV_MOD_COX,   IF_REAL   ,"Gate oxide capacitance"),
+	    IOP("xj",    EKV_MOD_XJ,    IF_REAL   ,"Junction depth"),
+	    IOP("theta", EKV_MOD_THETA, IF_REAL   ,"Mobility reduction coefficient"),
+	    IOP("e0",    EKV_MOD_E0,    IF_REAL   ,"NEW Mobility reduction coefficient"),
+	    IOP("ucrit", EKV_MOD_UCRIT, IF_REAL   ,"Longitudinal critical field"),
+	    IOP("dw",    EKV_MOD_DW,    IF_REAL   ,"Channel width correction"),
+	    IOP("dl",    EKV_MOD_DL,    IF_REAL   ,"Channel length correction"),
+	    IOP("lambda",EKV_MOD_LAMBDA,IF_REAL   ,"Depletion length coefficient"),
+	    IOP("weta",  EKV_MOD_WETA,  IF_REAL   ,"Narrow channel effect coefficient"),
+	    IOP("leta",  EKV_MOD_LETA,  IF_REAL   ,"Short channel coefficient"),
+	    IOP("iba",   EKV_MOD_IBA,   IF_REAL   ,"First impact ionization coefficient"),
+	    IOP("ibb",   EKV_MOD_IBB,   IF_REAL   ,"Second impact ionization coefficient"),
+	    IOP("ibn",   EKV_MOD_IBN,   IF_REAL   ,"Saturation voltage factor for impact ionization"),
+	    IOP("q0",    EKV_MOD_Q0,    IF_REAL   ,"RSCE excess charge"),
+	    IOP("lk",    EKV_MOD_LK,    IF_REAL   ,"RSCE characteristic length"),
+	    IOP("tcv",   EKV_MOD_TCV,   IF_REAL   ,"Threshold voltage temperature coefficient"),
+	    IOP("bex",   EKV_MOD_BEX,   IF_REAL   ,"Mobility temperature exponent"),
+	    IOP("ucex",  EKV_MOD_UCEX,  IF_REAL   ,"Longitudinal critical field temperature coefficient"),
+	    IOP("ibbt",  EKV_MOD_IBBT,  IF_REAL   ,"Temperature coefficient for ibb"),
+	    IOP("nqs",   EKV_MOD_NQS,   IF_REAL   ,"Non-Quasi-Static operation switch"),
+	    IOP("satlim",EKV_MOD_SATLIM,IF_REAL   ,"Ratio defining the saturation limit"),
+	    IOP("kf",    EKV_MOD_KF,    IF_REAL   ,"Flicker noise coefficient"),
+	    IOP("af",    EKV_MOD_AF,    IF_REAL   ,"Flicker noise exponent"),
+	    IOP("is",    EKV_MOD_IS,    IF_REAL   ,"Bulk p-n saturation current"),
+	    IOP("js",    EKV_MOD_JS,    IF_REAL   ,"Bulk p-n bottom saturation current per area"),
+	    IOP("jsw",   EKV_MOD_JSW,   IF_REAL   ,"Bulk p-n sidewall saturation current per length"),
+	    IOP("n",     EKV_MOD_N,     IF_REAL   ,"Emission coefficient"),
+	    IOPA("cbd",  EKV_MOD_CBD,   IF_REAL   ,"B-D p-n capacitance"),
+	    IOPA("cbs",  EKV_MOD_CBS,   IF_REAL   ,"B-S p-n capacitance"),
+	    IOPA("cj",   EKV_MOD_CJ,    IF_REAL   ,"Bottom p-n capacitance per area"),
+	    IOPA("cjsw", EKV_MOD_CJSW,  IF_REAL   ,"Sidewall p-n capacitance per length"),
+	    IOP("mj",    EKV_MOD_MJ,    IF_REAL   ,"Bottom p-n grading coefficient"),
+	    IOP("mjsw",  EKV_MOD_MJSW,  IF_REAL   ,"Sidewall p-n grading coefficient"),
+	    IOP("fc",    EKV_MOD_FC,    IF_REAL   ,"Forward p-n capacitance coefficient"),
+	    IOP("pb",    EKV_MOD_PB,    IF_REAL   ,"Bulk p-n junction potential"),
+	    IOP("pbsw",  EKV_MOD_PBSW,  IF_REAL   ,"Bulk sidewall p-n junction potential"),
+	    IOP("tt",    EKV_MOD_TT,    IF_REAL   ,"Bulk p-n transit time"),
+	    IOPA("cgso", EKV_MOD_CGSO,  IF_REAL   ,"Gate-source overlap capacitance"),
+	    IOPA("cgdo", EKV_MOD_CGDO,  IF_REAL   ,"Gate-drain overlap capacitance"),
+	    IOPA("cgbo", EKV_MOD_CGBO,  IF_REAL   ,"Gate-bulk overlap capacitance"),
+	    IOP("rs",    EKV_MOD_RS,    IF_REAL   ,"Source ohmic resistance"),
+	    IOP("rd",    EKV_MOD_RD,    IF_REAL   ,"Drain ohmic resistance"),
+	    IOP("rsh",   EKV_MOD_RSH,   IF_REAL   ,"Drain, source sheet resistance"),
+	    IOP("rsc",   EKV_MOD_RSC,   IF_REAL   ,"Source contact resistance"),
+	    IOP("rdc",   EKV_MOD_RDC,   IF_REAL   ,"Drain contact resistance"),
+	    IOP("xti",   EKV_MOD_XTI,   IF_REAL   ,"Junction current temperature exponent"),
+	    IOP("tr1",   EKV_MOD_TR1,   IF_REAL   ,"1st-order temperature coefficient"),
+	    IOP("tr2",   EKV_MOD_TR2,   IF_REAL   ,"2nd-order temperature coefficient"),
+	    IOP("nlevel",EKV_MOD_NLEVEL,IF_REAL   ,"Noise level selector"),
+	    IP("nmos",   EKV_MOD_NMOS,  IF_FLAG   ,"N type MOSfet model"),
+	    IP("pmos",   EKV_MOD_PMOS,  IF_FLAG   ,"P type MOSfet model"),
+	    IOP("tnom",  EKV_MOD_TNOM,  IF_REAL   ,"Parameter measurement temperature")
+};
+
+char *EKVnames[] = {
+	"Drain",
+	"Gate",
+	"Source",
+	"Bulk"
+};
+
+int EKVnSize = NUMELEMS(EKVnames);
+int EKVpTSize = NUMELEMS(EKVpTable);
+int EKVmPTSize = NUMELEMS(EKVmPTable);
+
+int EKViSize = sizeof(EKVinstance);
+int EKVmSize = sizeof(EKVmodel);
