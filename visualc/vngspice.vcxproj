@@ -2077,6 +2077,7 @@
     <ClCompile Include="..\src\spicelib\devices\csw\cswtrunc.c" />
     <ClCompile Include="..\src\spicelib\devices\dev.c" />
     <ClCompile Include="..\src\spicelib\devices\devsup.c" />
+
     <ClCompile Include="..\src\spicelib\devices\dio\dio.c" />
     <ClCompile Include="..\src\spicelib\devices\dio\dioacld.c" />
     <ClCompile Include="..\src\spicelib\devices\dio\dioask.c" />
@@ -2100,6 +2101,24 @@
     <ClCompile Include="..\src\spicelib\devices\dio\diosupd.c" />
     <ClCompile Include="..\src\spicelib\devices\dio\diotemp.c" />
     <ClCompile Include="..\src\spicelib\devices\dio\diotrunc.c" />
+    <ClCompile Include="..\src\spicelib\devices\ekv2\ekv.c" />
+    <ClCompile Include="..\src\spicelib\devices\ekv2\ekvacld.c" />
+    <ClCompile Include="..\src\spicelib\devices\ekv2\ekvask.c" />
+    <ClCompile Include="..\src\spicelib\devices\ekv2\ekvcap.c" />
+    <ClCompile Include="..\src\spicelib\devices\ekv2\ekvconv.c" />
+    <ClCompile Include="..\src\spicelib\devices\ekv2\ekvdel.c" />
+    <ClCompile Include="..\src\spicelib\devices\ekv2\ekveval.c" />
+    <ClCompile Include="..\src\spicelib\devices\ekv2\ekvic.c" />
+    <ClCompile Include="..\src\spicelib\devices\ekv2\ekvinit.c" />
+    <ClCompile Include="..\src\spicelib\devices\ekv2\ekvload.c" />
+    <ClCompile Include="..\src\spicelib\devices\ekv2\ekvmask.c" />
+    <ClCompile Include="..\src\spicelib\devices\ekv2\ekvmpar.c" />
+    <ClCompile Include="..\src\spicelib\devices\ekv2\ekvnoi.c" />
+    <ClCompile Include="..\src\spicelib\devices\ekv2\ekvpar.c" />
+    <ClCompile Include="..\src\spicelib\devices\ekv2\ekvset.c" />
+    <ClCompile Include="..\src\spicelib\devices\ekv2\ekvtemp.c" />
+    <ClCompile Include="..\src\spicelib\devices\ekv2\ekvtrun.c" />
+    <ClCompile Include="..\src\spicelib\devices\ekv2\nevalsrcekv.c" />
     <ClCompile Include="..\src\spicelib\devices\hfet1\hfet.c" />
     <ClCompile Include="..\src\spicelib\devices\hfet1\hfetacl.c" />
     <ClCompile Include="..\src\spicelib\devices\hfet1\hfetask.c" />
