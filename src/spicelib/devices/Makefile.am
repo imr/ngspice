@@ -23,6 +23,7 @@ SUBDIRS = \
 	cpl	\
 	csw	\
 	dio	\
+	ekv2	\
 	ind	\
 	isrc	\
 	hfet1	\
@@ -85,6 +86,7 @@ DIST_SUBDIRS = \
 	cpl	\
 	csw	\
 	dio	\
+	ekv2	\
 	ind	\
 	isrc	\
 	hfet1	\

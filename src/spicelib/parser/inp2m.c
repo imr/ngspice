@@ -139,11 +139,11 @@ INP2M(CKTcircuit *ckt, INPtables *tab, struct card *current)
         thismodel->INPmodType != INPtypelook("BSIM3v0") &&
         thismodel->INPmodType != INPtypelook("BSIM3v1") &&
         thismodel->INPmodType != INPtypelook("SOI3") &&
+        thismodel->INPmodType != INPtypelook("EKV") &&
 #ifdef CIDER
         thismodel->INPmodType != INPtypelook("NUMOS") &&
 #endif
 #ifdef ADMS
-        thismodel->INPmodType != INPtypelook("ekv") &&
         thismodel->INPmodType != INPtypelook("psp102") &&
         thismodel->INPmodType != INPtypelook("psp103") &&
         thismodel->INPmodType != INPtypelook("bsimbulk") &&

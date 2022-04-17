@@ -65,6 +65,7 @@ DYNAMIC_DEVICELIBS =					\
 	spicelib/devices/cpl/libcpl.la			\
 	spicelib/devices/csw/libcsw.la			\
 	spicelib/devices/dio/libdio.la			\
+	spicelib/devices/ekv2/libekv2.la			\
 	spicelib/devices/ind/libind.la			\
 	spicelib/devices/isrc/libisrc.la		\
 	spicelib/devices/hfet1/libhfet.la		\

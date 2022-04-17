@@ -358,14 +358,6 @@ char *INPdomodel(CKTcircuit *ckt, struct card *image, INPtables * tab)
 				    INPmkTemp
 				    ("Device type BSIMCMG not available in this binary\n");}
 			    break;
-			case 44:
-				type = INPtypelook("ekv");
-				if (type < 0) {
-				    err =
-				    INPmkTemp
-				    ("Device type EKV not available in this binary\n");
-			    }
-			    break;
 			case 45:
 				type = INPtypelook("psp102");
 				if (type < 0) {
@@ -383,6 +375,14 @@ char *INPdomodel(CKTcircuit *ckt, struct card *image, INPtables * tab)
 			    }
 				break;
 #endif
+			case 44:
+				type = INPtypelook("EKV");
+				if (type < 0) {
+				    err =
+				    INPmkTemp
+				    ("Device type EKV not available in this binary\n");
+			    }
+			    break;
 			case 55:
 			    type = INPtypelook("B3SOIFD");
 			    if (type < 0) {

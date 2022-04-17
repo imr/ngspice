@@ -95,6 +95,7 @@ extern struct coreInfo_t  coreInfo; /* cmexport.c */
 #include "ccvs/ccvsitf.h"
 #include "csw/cswitf.h"
 #include "dio/dioitf.h"
+#include "ekv2/ekvitf.h"
 #include "hfet1/hfetitf.h"
 #include "hfet2/hfet2itf.h"
 #include "hicum2/hicum2itf.h"
@@ -172,6 +173,7 @@ static SPICEdev *(*static_devices[])(void) = {
     get_cpl_info,
     get_csw_info,
     get_dio_info,
+    get_ekv_info,
     get_hfeta_info,
     get_hfet2_info,
     get_hicum_info,
@@ -310,7 +312,7 @@ SPICEdev ** devices(void)
 #else
 #define DEVICES_USED {"asrc", "bjt", "vbic", "bsim1", "bsim2", "bsim3", "bsim3v32", "bsim3v2", "bsim3v1", "bsim4", "bsim4v5", "bsim4v6", "bsim4v7", \
                       "bsim4soi", "bsim3soipd", "bsim3soifd", "bsim3soidd", "hisim2", "hisimhv1", "hisimhv2", \
-                      "cap", "cccs", "ccvs", "csw", "dio", "hfet", "hfet2", "ind", "isrc", "jfet", "ltra", "mes", "mesa" ,"mos1", "mos2", "mos3", \
+                      "cap", "cccs", "ccvs", "csw", "dio", "ekv", "hfet", "hfet2", "ind", "isrc", "jfet", "ltra", "mes", "mesa" ,"mos1", "mos2", "mos3", \
                       "mos6", "mos9", "res", "soi3", "sw", "tra", "urc", "vccs", "vcvs", "vsrc", "hicum2"}
 #endif
 int load_dev(char *name) {

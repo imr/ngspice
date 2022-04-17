@@ -1354,6 +1354,7 @@ AC_CONFIG_FILES([Makefile
                  src/spicelib/devices/csw/Makefile
                  src/spicelib/devices/cpl/Makefile
                  src/spicelib/devices/dio/Makefile
+                 src/spicelib/devices/ekv2/Makefile
                  src/spicelib/devices/ind/Makefile
                  src/spicelib/devices/isrc/Makefile
                  src/spicelib/devices/hfet1/Makefile
