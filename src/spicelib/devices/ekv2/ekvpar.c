@@ -109,5 +109,4 @@ IFvalue *select)
 	default:
 		return(E_BADPARM);
 	}
-	return(OK);
 }

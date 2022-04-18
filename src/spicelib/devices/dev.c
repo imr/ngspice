@@ -129,7 +129,6 @@ extern struct coreInfo_t  coreInfo; /* cmexport.c */
 #ifdef ADMS
 #include "adms/hicum0/hicum0itf.h"
 #include "adms/mextram/bjt504titf.h"
-#include "adms/ekv/ekvitf.h"
 #include "adms/psp102/psp102itf.h"
 #include "adms/psp103/psp103itf.h"
 #include "adms/bsimbulk/bsimbulkitf.h"
@@ -215,7 +214,6 @@ static SPICEdev *(*static_devices[])(void) = {
 #ifdef ADMS
     (SPICEdev *(*)(void)) get_hicum0_info,
     (SPICEdev *(*)(void)) get_bjt504t_info,
-    (SPICEdev *(*)(void)) get_ekv_info,
     (SPICEdev *(*)(void)) get_psp102_info,
     (SPICEdev *(*)(void)) get_psp103_info,
     (SPICEdev *(*)(void)) get_bsimbulk_info,
