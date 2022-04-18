@@ -1180,6 +1180,7 @@
     <ClInclude Include="..\src\spicelib\devices\dio\dioext.h" />
     <ClInclude Include="..\src\spicelib\devices\dio\dioinit.h" />
     <ClInclude Include="..\src\spicelib\devices\dio\dioitf.h" />
+    <ClInclude Include="..\src\spicelib\devices\ekv2\ekvdefs.h" />
     <ClInclude Include="..\src\spicelib\devices\hfet1\hfetdefs.h" />
     <ClInclude Include="..\src\spicelib\devices\hfet1\hfetext.h" />
     <ClInclude Include="..\src\spicelib\devices\hfet1\hfetinit.h" />
@@ -2077,7 +2078,6 @@
     <ClCompile Include="..\src\spicelib\devices\csw\cswtrunc.c" />
     <ClCompile Include="..\src\spicelib\devices\dev.c" />
     <ClCompile Include="..\src\spicelib\devices\devsup.c" />
-
     <ClCompile Include="..\src\spicelib\devices\dio\dio.c" />
     <ClCompile Include="..\src\spicelib\devices\dio\dioacld.c" />
     <ClCompile Include="..\src\spicelib\devices\dio\dioask.c" />
