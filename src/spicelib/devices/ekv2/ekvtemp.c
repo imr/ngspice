@@ -30,7 +30,7 @@ CKTcircuit *ckt)
 	double phi_term;
 
 	/* loop through all the resistor models */
-	for( ; model != NULL; model = model->EKVnextModel) {
+	for( ; model != NULL; model = EKVnextModel(model)) {
 
 		/* perform model defaulting */
 		if (!model->EKVtnomGiven)
@@ -51,8 +51,8 @@ CKTcircuit *ckt)
 		/* now model parameter preprocessing */
 
 		/* loop through all instances of the model */
-		for(here = model->EKVinstances; here!= NULL; 
-		    here = here->EKVnextInstance) {
+		for(here = EKVinstances(model); here!= NULL; 
+		    here = EKVnextInstance(here)) {
 
 			double czbd;    /* zero voltage bulk-drain capacitance */
 			double czbdsw;  /* zero voltage bulk-drain sidewall capacitance */

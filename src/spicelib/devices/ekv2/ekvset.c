@@ -29,7 +29,7 @@ int *states)
 	CKTnode *tmp;
 
 	/*  loop through all the EKV device models */
-	for( ; model != NULL; model = model->EKVnextModel ) {
+	for( ; model != NULL; model = EKVnextModel(model) ) {
 		if(!model->EKVtypeGiven) {
 			model->EKVtype = NMOS;
 		}
@@ -203,8 +203,8 @@ int *states)
 		}
 
 		/* loop through all the instances of the model */
-		for (here = model->EKVinstances; here != NULL ;
-		    here=here->EKVnextInstance) {
+		for (here = EKVinstances(model); here != NULL ;
+		    here=EKVnextInstance(here)) {
 
 			if(!here->EKVdrainPerimiterGiven) {
 				here->EKVdrainPerimiter = 0;
@@ -306,10 +306,10 @@ CKTcircuit *ckt)
 	EKVinstance *here;
 
 	for (model = (EKVmodel *)inModel; model != NULL;
-	    model = model->EKVnextModel)
+	    model = EKVnextModel(model))
 	{
-		for (here = model->EKVinstances; here != NULL;
-		    here=here->EKVnextInstance)
+		for (here = EKVinstances(model); here != NULL;
+		    here=EKVnextInstance(here))
 		{
 			if (here->EKVdNodePrime
 			    && here->EKVdNodePrime != here->EKVdNode)

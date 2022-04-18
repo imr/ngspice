@@ -40,11 +40,19 @@
 /* information needed for each instance */
 
 typedef struct sEKVinstance {
-	struct sEKVmodel *sEKVmodPtr; /* backpointer to model */
-	struct sEKVinstance *EKVnextInstance;  /* pointer to next instance of
-	                                              *current model*/
-	IFuid EKVname; /* pointer to character string naming this instance */
-	int EKVstates;     /* index into state table for this device */
+
+//	struct sEKVmodel *sEKVmodPtr; /* backpointer to model */
+//	struct sEKVinstance *EKVnextInstance;  /* pointer to next instance of										   
+//										   *current model*/
+//	IFuid EKVname; /* pointer to character string naming this instance */
+//	int EKVstates;     /* index into state table for this device */
+
+
+	struct GENinstance gen;
+#define EKVmodPtr(inst) ((struct sEKVmodel *)((inst)->gen.GENmodPtr))
+#define EKVnextInstance(inst) ((struct sEKVinstance *)((inst)->gen.GENnextInstance))
+#define EKVname gen.GENname
+#define EKVstates gen.GENstate
 
 	int EKVdNode;  /* number of the gate node of the mosfet */
 	int EKVgNode;  /* number of the gate node of the mosfet */
@@ -347,13 +355,22 @@ pointer to the beginning of the array */
      */
 
 
-typedef struct sEKVmodel {          /* model structure for a resistor */
-	int EKVmodType;                 /* type index to this device type */
-	struct sEKVmodel *EKVnextModel; /* pointer to next possible model 
-	                                     *in linked list */
-	EKVinstance * EKVinstances;     /* pointer to list of instances 
-	                                     * that have this model */
-	IFuid EKVmodName;               /* pointer to character string naming this model */
+typedef struct sEKVmodel {          /* model structure for the EKV transistor */
+
+	struct GENmodel gen;
+
+#define EKVmodType gen.GENmodType
+#define EKVnextModel(inst) ((struct sEKVmodel *)((inst)->gen.GENnextModel))
+#define EKVinstances(inst) ((EKVinstance *)((inst)->gen.GENinstances))
+#define EKVmodName gen.GENmodName
+
+//	int EKVmodType;                 /* type index to this device type */
+//	struct sEKVmodel *EKVnextModel; /* pointer to next possible model 
+//	                                     *in linked list */
+//	EKVinstance * EKVinstances;     /* pointer to list of instances 
+//	                                     * that have this model */
+//	IFuid EKVmodName;               /* pointer to character string naming this model */
+
 	int EKVtype;       /* device type : 1 = nmos,  -1 = pmos */
 	double EKVtnom;    /* temperature at which parameters measured */
 	double EKVekvint;

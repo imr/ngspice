@@ -67,11 +67,11 @@ double *OnDens)
 		""                  /* total transistor noise */
 	};
 
-	for (model=firstModel; model != NULL; model=model->EKVnextModel) {
+	for (model=firstModel; model != NULL; model=EKVnextModel(model)) {
 
 		coxSquared = model->EKVcox * model->EKVcox;
 
-		for (inst=model->EKVinstances; inst != NULL; inst=inst->EKVnextInstance) {
+		for (inst=EKVinstances(model); inst != NULL; inst=EKVnextInstance(inst)) {
 
 			temp=inst->EKVtemp;
 

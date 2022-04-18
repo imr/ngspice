@@ -32,9 +32,9 @@ CKTcircuit *ckt)
 	double vgdo;
 	double tol;
 
-	for( ; model != NULL; model = model->EKVnextModel) {
-		for(here = model->EKVinstances; here!= NULL;
-		    here = here->EKVnextInstance) {
+	for( ; model != NULL; model = EKVnextModel(model)) {
+		for(here = EKVinstances(model); here!= NULL;
+		    here = EKVnextInstance(here)) {
 
 			vbs = model->EKVtype * ( 
 			    *(ckt->CKTrhs+here->EKVbNode) -

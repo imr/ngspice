@@ -36,9 +36,9 @@ CKTcircuit *ckt)
 	double EffectiveLength;
 	double EffectiveWidth;
 
-	for( ; model != NULL; model = model->EKVnextModel) {
-		for(here = model->EKVinstances; here!= NULL;
-		    here = here->EKVnextInstance) {
+	for( ; model != NULL; model = EKVnextModel(model)) {
+		for(here = EKVinstances(model); here!= NULL;
+		    here = EKVnextInstance(here)) {
 
 			if (here->EKVmode < 0) {
 				xnrm=0;

@@ -100,11 +100,11 @@ CKTcircuit *ckt)
 #endif /* CAPBYPASS */ 
 
 	/*  loop through all the EKV device models */
-	for( ; model != NULL; model = model->EKVnextModel ) {
+	for( ; model != NULL; model = EKVnextModel(model) ) {
 
 		/* loop through all the instances of the model */
-		for (here = model->EKVinstances; here != NULL ;
-		    here=here->EKVnextInstance) {
+		for (here = EKVinstances(model); here != NULL ;
+		    here=EKVnextInstance(here)) {
 
 			vt = CONSTKoverQ * here->EKVtemp;
 			Check=1;

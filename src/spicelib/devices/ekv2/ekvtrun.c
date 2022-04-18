@@ -22,8 +22,8 @@ double *timeStep)
 	EKVmodel *model = (EKVmodel *)inModel;
 	EKVinstance *here;
 
-	for( ; model != NULL; model = model->EKVnextModel) {
-		for(here=model->EKVinstances;here!=NULL;here = here->EKVnextInstance){
+	for( ; model != NULL; model = EKVnextModel(model)) {
+		for(here=EKVinstances(model);here!=NULL;here = EKVnextInstance(here)){
 			CKTterr(here->EKVqgs,ckt,timeStep);
 			CKTterr(here->EKVqgd,ckt,timeStep);
 			CKTterr(here->EKVqgb,ckt,timeStep);

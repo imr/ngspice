@@ -25,8 +25,8 @@ CKTcircuit *ckt)
      * external nodes to get values
      */
 
-	for( ; model ; model = model->EKVnextModel) {
-		for(here = model->EKVinstances; here ; here = here->EKVnextInstance) {
+	for( ; model ; model = EKVnextModel(model)) {
+		for(here = EKVinstances(model); here ; here = EKVnextInstance(here)) {
 			if(!here->EKVicVBSGiven) {
 				here->EKVicVBS = 
 				    *(ckt->CKTrhs + here->EKVbNode) - 
