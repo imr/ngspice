@@ -15,8 +15,9 @@
 
 extern void EKVcap(EKVmodel*,EKVinstance*,
 double,double,double*,double*,double*);
-extern void EKVevaluate(double,double,double,EKVinstance*,EKVmodel*,
-double*,double*,CKTcircuit*);
+
+extern void EKVevaluate(CKTcircuit*, EKVmodel*,
+EKVinstance*, double, double, double, double*, double*);
 
 int
 EKVload(
@@ -450,10 +451,9 @@ next1:
              */
 
 			if (vds>=0.0)
-				EKVevaluate(vds,vbs,vgs,here,model,&von,&vdsat,ckt);
+				EKVevaluate(ckt, model,here,vds,vbs,vgs,&von,&vdsat);
 			else
-				EKVevaluate(-vds,vbd,vgd,here,model,&von,&vdsat,ckt);
-
+				EKVevaluate(ckt, model,here,-vds,vbs,vgs,&von,&vdsat);
 			cdrain = here->EKVcd;
 
 			/* now deal with n vs p polarity */
