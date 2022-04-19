@@ -258,9 +258,9 @@ double *cgb)
  *    cgsb = dQG_dVS;   cbsb = dQB_dVS;  cdsb = dQD_dVS; cssb = dQS_dVS;
  */
 
-	*cgs = dQG_dVS;
-	*cgd = dQG_dVD;
-	*cgb = -(dQG_dVG + dQG_dVD + dQG_dVS);
+	*cgs = -dQG_dVS;
+	*cgd = -dQG_dVD;
+	*cgb = (dQG_dVG + dQG_dVD + dQG_dVS);
 
 /*
  * XQC = 1.0 
