@@ -5,6 +5,13 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 /*
  * Expand global characters.
+ *
+ * e.g. text substitution like requested in the following script
+ * set text = "mytext"
+ * set newtext = new.{$text}
+ * echo $newtext
+ *
+ *
  */
 #include <stdint.h>
 
