@@ -152,7 +152,9 @@ docommand(wordlist *wlist)
     wlist = cp_bquote(wlist);
     pwlist(wlist, "After backquote substitution");
 
-    wlist = cp_doglob(wlist);
+    /* Do not expand braces after command circbyline, keep them intact */
+    if (!eq(wlist->wl_word, "circbyline"))
+        wlist = cp_doglob(wlist);
     pwlist(wlist, "After globbing");
 
     pwlist_echo(wlist, "Becomes >");
