@@ -7,6 +7,10 @@ if XSPICE_WANTED
 SUBDIRS += xspice
 endif
 
+if OSDI_WANTED
+SUBDIRS += osdi
+endif
+
 if CIDER_WANTED
 SUBDIRS += ciderlib
 endif
@@ -97,6 +101,8 @@ DYNAMIC_DEVICELIBS =					\
 	@VLADEV@
 
 
+
+
 ## Build ngspice first:
 
 ## compile the icon:
@@ -116,6 +122,8 @@ ngspice_CPPFLAGS = $(AM_CPPFLAGS) -DSIMULATOR
 if WINGUI
 ngspice_LDFLAGS = -municode $(AM_LDFLAGS)
 ngspice_SOURCES += winmain.c hist_info.c
+else
+ngspice_LDFLAGS = 
 endif
 
 ngspice_LDADD = \
@@ -157,9 +165,9 @@ ngspice_LDADD += \
 	xspice/evt/libevtxsp.la \
 	xspice/enh/libenhxsp.la \
 	xspice/ipc/libipcxsp.la \
-	xspice/idn/libidnxsp.la \
-	@XSPICEDLLIBS@
+	xspice/idn/libidnxsp.la 
 endif
+ngspice_LDADD += @XSPICEDLLIBS@
 
 ngspice_LDADD += \
 	frontend/parser/libparser.la \
@@ -173,6 +181,10 @@ ngspice_LDADD += \
 	ciderlib/oned/libcideroned.la     \
 	ciderlib/input/libciderinput.la   \
 	ciderlib/support/libcidersuprt.la
+endif
+
+if OSDI_WANTED
+ngspice_LDADD += osdi/libosdi.la 
 endif
 
 ngspice_LDADD += \
@@ -439,9 +451,9 @@ libspice_la_LIBADD += \
 	xspice/evt/libevtxsp.la \
 	xspice/enh/libenhxsp.la \
 	xspice/ipc/libipcxsp.la \
-	xspice/idn/libidnxsp.la \
-	@XSPICEDLLIBS@
+	xspice/idn/libidnxsp.la 
 endif
+libspice_la_LIBADD += @XSPICEDLLIBS@
 
 libspice_la_LIBADD += \
 	frontend/parser/libparser.la \
@@ -455,6 +467,11 @@ libspice_la_LIBADD += \
 	ciderlib/oned/libcideroned.la     \
 	ciderlib/input/libciderinput.la   \
 	ciderlib/support/libcidersuprt.la
+endif
+
+
+if OSDI_WANTED
+libspice_la_LIBADD += osdi/libosdi.la 
 endif
 
 libspice_la_LIBADD += \
@@ -558,9 +575,9 @@ libngspice_la_LIBADD += \
 	xspice/evt/libevtxsp.la \
 	xspice/enh/libenhxsp.la \
 	xspice/ipc/libipcxsp.la \
-	xspice/idn/libidnxsp.la \
-	@XSPICEDLLIBS@
+	xspice/idn/libidnxsp.la 
 endif
+libngspice_la_LIBADD += @XSPICEDLLIBS@
 
 libngspice_la_LIBADD += \
 	frontend/parser/libparser.la \
@@ -575,6 +592,9 @@ libngspice_la_LIBADD += \
 	ciderlib/input/libciderinput.la   \
 	ciderlib/support/libcidersuprt.la
 endif
+
+
+libngspice_la_LIBADD += osdi/libosdi.la 
 
 libngspice_la_LIBADD += \
 	maths/deriv/libderiv.la \

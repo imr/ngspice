@@ -679,7 +679,7 @@ char *INPdomodel(CKTcircuit *ckt, struct card *image, INPtables * tab)
 
     /*  --------  Default action  --------- */
     else {
-#ifndef XSPICE
+#if !defined(XSPICE) && !defined(OSDI) 
 	type = -1;
 	err = tprintf("unknown model type %s - ignored\n", type_name);
 #else
