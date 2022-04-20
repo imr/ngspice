@@ -11,6 +11,7 @@ Author: 1985 Wayne A. Christopher
 
 /* Note: Must include shlwapi.h before ngspice header defining BOOL due
  * to conflict */
+#include <stdio.h>
 #ifdef _WIN32
 #include <shlwapi.h> /* for definition of PathIsRelativeA() */
 #pragma comment(lib, "Shlwapi.lib")
@@ -1557,6 +1558,8 @@ struct inp_read_t inp_read( FILE *fp, int call_depth, const char *dir_name,
                     !ciprefix("wrdata", buffer) &&
                     !ciprefix(".lib", buffer) && !ciprefix(".inc", buffer) &&
                     !ciprefix("codemodel", buffer) &&
+                    !ciprefix("osdi", buffer) &&
+                    !ciprefix("pre_osdi", buffer) &&
                     !ciprefix("echo", buffer) && !ciprefix("shell", buffer) &&
                     !ciprefix("source", buffer) && !ciprefix("cd ", buffer) &&
                     !ciprefix("load", buffer) && !ciprefix("setcs", buffer)) {
@@ -2346,6 +2349,8 @@ static char *get_subckt_model_name(char *line)
     name = skip_non_ws(line); // eat .subckt|.model
     name = skip_ws(name);
 
+    
+
     end_ptr = skip_non_ws(name);
 
     return copy_substring(name, end_ptr);
@@ -2395,14 +2400,29 @@ static char *get_model_type(char *line)
 }
 
 
-static char *get_adevice_model_name(char *line)
+static char *get_adevice_model_name(char *line, struct nscope *scope)
 {
-    char *ptr_end, *ptr_beg;
+    char *beg_ptr, *end_ptr, *name;
+    int i = 0;
 
-    ptr_end = skip_back_ws(strchr(line, '\0'), line);
-    ptr_beg = skip_back_non_ws(ptr_end, line);
+    beg_ptr = skip_non_ws(line); /* eat device name */
+    beg_ptr = skip_ws(beg_ptr);
 
-    return copy_substring(ptr_beg, ptr_end);
+    for (i = 0; i < 30; i++) { /* skip the terminals */
+        end_ptr = skip_non_ws(beg_ptr);
+        name = copy_substring(beg_ptr, end_ptr);
+        if (inp_find_model(scope, name)){
+            return name;
+        }else if (beg_ptr == end_ptr){
+            break;
+        }
+        end_ptr = skip_ws(end_ptr);
+        beg_ptr = end_ptr;
+        
+    }
+
+    
+    return NULL;
 }
 
 
@@ -2621,7 +2641,7 @@ static void get_subckts_for_subckt(struct card *start_card, char *subckt_name,
                 nlist_adjoin(used_subckts, inst_subckt_name);
             }
             else if (*line == 'a') {
-                char *model_name = get_adevice_model_name(line);
+                char *model_name = get_adevice_model_name( line, card->level);
                 nlist_adjoin(used_models, model_name);
             }
             else if (has_models) {
@@ -2707,7 +2727,7 @@ void comment_out_unused_subckt_models(struct card *start_card)
                 nlist_adjoin(used_subckts, subckt_name);
             }
             else if (*line == 'a') {
-                char *model_name = get_adevice_model_name(line);
+                char *model_name = get_adevice_model_name(line, card->level);
                 nlist_adjoin(used_models, model_name);
             }
             else if (has_models) {
@@ -10239,9 +10259,12 @@ void inp_rem_unused_models(struct nscope *root, struct card *deck)
         /* num_terminals may be 0 for a elements */
         if ((num_terminals != 0) || (*curr_line == 'a')) {
             char *elem_model_name;
-            if (*curr_line == 'a')
-                elem_model_name = get_adevice_model_name(curr_line);
-            else
+            if (*curr_line == 'a'){
+                elem_model_name = get_adevice_model_name( curr_line, card->level);
+                if (!elem_model_name){
+                    continue;
+                }
+            }else
                 elem_model_name = get_model_name(curr_line, num_terminals);
 
             /* ignore certain cases, for example
@@ -10282,7 +10305,7 @@ void inp_rem_unused_models(struct nscope *root, struct card *deck)
  * only correct UTF-8. It also spots UTF-8 sequences that could cause
  * trouble if converted to UTF-16, namely surrogate characters
  * (U+D800..U+DFFF) and non-Unicode positions (U+FFFE..U+FFFF).
- * In addition we check for some ngspice-specific characters like µ etc.*/
+ * In addition we check for some ngspice-specific characters like ï¿½ etc.*/
 #ifndef EXT_ASC
 static unsigned char*
 utf8_check(unsigned char *s)
@@ -10292,12 +10315,12 @@ utf8_check(unsigned char *s)
             /* 0xxxxxxx */
             s++;
         else if (*s == 0xb5) {
-            /* translate ansi micro µ to u */
+            /* translate ansi micro ï¿½ to u */
             *s = 'u';
             s++;
         }
         else if (s[0] == 0xc2 && s[1] == 0xb5) {
-            /* translate utf-8 micro µ to u */
+            /* translate utf-8 micro ï¿½ to u */
             s[0] = 'u';
             /* remove second byte */
             unsigned char *y = s + 1;
