@@ -356,11 +356,7 @@ void load_alldevs(void){
 }
 #endif
 
-/*--------------------   XSPICE additions below  ----------------------*/
-#ifdef XSPICE
-#include "ngspice/mif.h"
-#include "ngspice/cm.h"
-#include "ngspice/cpextern.h"
+#if defined(XSPICE) || defined(OSDI)
 #include "ngspice/fteext.h"  /* for ft_sim */
 #include "ngspice/cktdefs.h" /* for DEVmaxnum */
 
@@ -379,7 +375,14 @@ static void relink(void) {
   return;
 }
 
-int add_device(int n, SPICEdev **devs, int flag){
+#endif
+
+/*--------------------   XSPICE additions below  ----------------------*/
+#ifdef XSPICE
+#include "ngspice/cm.h"
+#include "ngspice/cpextern.h"
+#include "ngspice/mif.h"
+int add_device(int n, SPICEdev **devs, int flag) {
   int i;
   int dnum = DEVNUM + n;
   DEVices = TREALLOC(SPICEdev *, DEVices, dnum);
@@ -566,3 +569,35 @@ static void free_dlerr_msg(char *msg)
 #endif /* Windows emulation of dlopen, dlsym, and dlerr */
 #endif
 /*--------------------   end of XSPICE additions  ----------------------*/
+
+#ifdef OSDI
+#include "ngspice/osdiitf.h"
+
+static int osdi_add_device(int n, OsdiRegistryEntry *devs) {
+  int i;
+  int dnum = DEVNUM + n;
+  DEVices = TREALLOC(SPICEdev *, DEVices, dnum);
+#ifdef XSPICE
+  DEVicesfl = TREALLOC(int, DEVicesfl, dnum);
+#endif
+  for (i = 0; i < n; i++) {
+#ifdef TRACE
+    printf("Added device: %s\n", devs[i]->DEVpublic.name);
+#endif
+    DEVices[DEVNUM + i] = osdi_create_spicedev(&devs[i]);
+  }
+  DEVNUM += n;
+  relink();
+  return 0;
+}
+
+int load_osdi(const char *path) {
+  OsdiObjectFile file = load_object_file(path);
+  if (file.num_entries < 0) {
+    return file.num_entries;
+  }
+
+  osdi_add_device(file.num_entries, file.entrys);
+  return 0;
+}
+#endif

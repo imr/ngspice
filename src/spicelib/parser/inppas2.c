@@ -99,7 +99,12 @@ void INPpas2(CKTcircuit *ckt, struct card *data, INPtables * tab, TSKtask *task)
 	    /* blank line (tab leading) */
 	    break;
 
-#ifdef XSPICE
+#ifdef OSDI
+	case 'A':   /* Aname <cm connections> <mname> */
+	    // OSDI handles xspice 
+	    INP2A(ckt, tab, current);
+	    break;
+#elif XSPICE
 	    /* gtri - add - wbk - 10/23/90 - add case for 'A' devices */
 
 	case 'A':   /* Aname <cm connections> <mname> */
@@ -245,7 +250,6 @@ void INPpas2(CKTcircuit *ckt, struct card *data, INPtables * tab, TSKtask *task)
 	case 'B':
 	    /* Bname <node> <node> [V=expr] [I=expr] */
 	    /* Arbitrary source. */
-	    INP2B(ckt, tab, current);
 	    break;
 
 	case '.':   /* .<something> Many possibilities */

@@ -18,6 +18,7 @@ Author: 1985 Wayne A. Christopher
 #include "ngspice/fteinp.h"
 #include "inp.h"
 
+#include "ngspice/osdiitf.h"
 #include "runcoms.h"
 #include "inpcom.h"
 #include "circuits.h"
@@ -565,7 +566,6 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
     if (fp) {
         cp_vset("inputdir", CP_STRING, dir_name);
     }
-    tfree(dir_name);
 
     /* if nothing came back from inp_readall, e.g. after calling ngspice without parameters,
        just close fp and return to caller */
@@ -740,8 +740,16 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
            before the circuit structure is set up */
         if (pre_controls) {
             pre_controls = wl_reverse(pre_controls);
-            for (wl = pre_controls; wl; wl = wl->wl_next)
+            for (wl = pre_controls; wl; wl = wl->wl_next){
+#ifdef OSDI
+                inputdir = dir_name;
+#endif
                 cp_evloop(wl->wl_word);
+            }
+
+#ifdef OSDI
+            inputdir = NULL;
+#endif
             wl_free(pre_controls);
         }
 
@@ -1108,18 +1116,29 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
            of commands. Thus this is delegated to a function using a third thread, that
            only starts when the background thread has finished (sharedspice.c).*/
 #ifdef SHARED_MODULE
-        for (wl = controls; wl; wl = wl->wl_next)
+        for (wl = controls; wl; wl = wl->wl_next){
+#ifdef OSDI
+            inputdir = dir_name;
+#endif
             if (cp_getvar("controlswait", CP_BOOL, NULL, 0)) {
                 exec_controls(wl_copy(wl));
                 break;
             }
             else
                 cp_evloop(wl->wl_word);
+        }
 #else
-        for (wl = controls; wl; wl = wl->wl_next)
+        for (wl = controls; wl; wl = wl->wl_next){
+#ifdef OSDI
+            inputdir = dir_name;
+#endif
             cp_evloop(wl->wl_word);
+        }
 #endif
         wl_free(controls);
+#ifdef OSDI
+            inputdir = NULL;
+#endif
     }
 
     /* Now reset everything.  Pop the control stack, and fix up the IO
@@ -1131,6 +1150,9 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
     cp_curerr = lasterr;
 
     tfree(tt);
+    tfree(dir_name);
+
+
 
     return 0;
 }

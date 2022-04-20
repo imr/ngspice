@@ -71,6 +71,11 @@ libinp_la_SOURCES = \
 		sperror.c	\
 		inpxx.h
 
+
+if OSDI_WANTED
+libinp_la_SOURCES += inp2a.c
+endif
+
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include -I$(top_srcdir)/src/frontend
 AM_CFLAGS = $(STATIC)
 AM_YFLAGS = -d
