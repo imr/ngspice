@@ -31,6 +31,9 @@ unnamed MIT license, compatible to New BSD
 ngspice/src/spicelib/devices/adms/admst
 LGPLv2.1
 
+ngspice/src/osdi
+GPLv2 or newer
+
 ngspice/src/spicelib/devices/ndev
 public domain
 

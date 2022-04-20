@@ -13,8 +13,11 @@ Modified: 2001 Paolo Nenzi (Cider Integration)
 #include "ngspice/cpstd.h"
 #include "ngspice/fteext.h"
 #include "ngspice/compatmode.h"
+#include "ngspice/devdefs.h"
 #include "inpxx.h"
 #include <errno.h>
+#include <stdio.h>
+#include <string.h>
 
 #ifdef CIDER
 
@@ -111,6 +114,14 @@ create_model(CKTcircuit *ckt, INPmodel *modtmp, INPtables *tab)
     INPgetNetTok(&line, &parm, 1);        /* throw away 'modname' */
     tfree(parm);
 
+#ifdef OSDI
+    /* osdi models don't accept their device type as an argument */
+    if (device->registry_entry){ 
+        INPgetNetTok(&line, &parm, 1); /* throw away osdi */
+        tfree(parm);
+    }
+#endif
+
     while (*line) {
         INPgetTok(&line, &parm, 1);
         if (!*parm) {
@@ -130,6 +141,7 @@ create_model(CKTcircuit *ckt, INPmodel *modtmp, INPtables *tab)
             /* just grab the number and throw away */
             /* since we already have that info from pass1 */
             INPgetValue(ckt, &line, IF_REAL, tab);
+        
         } else {
 
             p = find_instance_parameter(parm, device);
