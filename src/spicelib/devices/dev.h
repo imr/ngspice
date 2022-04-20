@@ -15,5 +15,9 @@ int DEVflag(int type);
 void load_alldevs(void);
 int load_dev(char *name);
 #endif
+
+#ifdef OSDI
+int load_osdi(const char *);
+#endif
 #endif
 
