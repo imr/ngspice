@@ -8,6 +8,7 @@
 
 /* inp2xx.c */
 
+void INP2A(CKTcircuit *ckt, INPtables *tab, struct card *current);
 void INP2B(CKTcircuit *ckt, INPtables *tab, struct card *current);
 void INP2C(CKTcircuit *ckt, INPtables *tab, struct card *current);
 void INP2D(CKTcircuit *ckt, INPtables *tab, struct card *current);

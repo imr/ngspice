@@ -13,6 +13,7 @@ Modified: 1999 Paolo Nenzi - Now we can use a two digits level code -
 #include "ngspice/ngspice.h"
 #include "ngspice/inpdefs.h"
 #include "inpxx.h"
+#include <stdio.h>
 
 char *INPfindLev(char *line, int *level)
 {
@@ -67,4 +68,42 @@ char *INPfindLev(char *line, int *level)
 #endif
         return (NULL);
     }
+}
+
+
+
+char *INPfindModule(char *line) {
+  char *where;
+
+  /*
+   *where = line;
+   */
+
+  where = strstr(line, "module");
+
+  if (where != NULL) { /* found a level keyword on the line */
+
+    where += 6; /* skip the module keyword */
+    while ((*where == ' ') || (*where == '\t') ||
+           (*where == '=')) { /* legal white space - ignore */
+      where++;
+    }
+    char *end = where;
+    while (isalpha(*end) || isdigit(*end) || *end == '_' ||
+           *end == '$') { /* find end of word */
+      end++;
+    }
+
+
+    return dup_string(where, (size_t)end - (size_t)where);
+  }
+
+  else { /* no module on the line => default */
+#ifdef TRACE
+    fprintf(stderr,
+            "Warning -- Module not specified on line \"%s\"\nUsing level 1.\n",
+            line);
+#endif
+    return (NULL);
+  }
 }

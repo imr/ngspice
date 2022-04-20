@@ -70,6 +70,7 @@ DYNAMIC_DEVICELIBS =					\
 	spicelib/devices/hfet1/libhfet.la		\
 	spicelib/devices/hfet2/libhfet2.la		\
 	spicelib/devices/hicum2/libhicum2.la		\
+	spicelib/devices/osdi/libosdi.la		\
 	spicelib/devices/hisim2/libhisim2.la		\
 	spicelib/devices/hisimhv1/libhisimhv1.la	\
 	spicelib/devices/hisimhv2/libhisimhv2.la	\

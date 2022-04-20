@@ -28,6 +28,7 @@ SUBDIRS = \
 	hfet1	\
 	hfet2	\
 	hicum2	\
+	osdi	\
 	hisim2	\
 	hisimhv1	\
 	hisimhv2	\
@@ -63,6 +64,7 @@ SUBDIRS += nbjt nbjt2 numd  numd2 numos
 endif
 
 DIST_SUBDIRS = \
+	osdi \
 	asrc	\
 	bjt	\
 	bsim1	\

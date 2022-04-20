@@ -72,6 +72,8 @@ ivars(char *argv0)
     mkvar(&Help_Path, Spice_Lib_Dir, "helpdir", "SPICE_HELP_DIR");
     /* where spinit is found */
     mkvar(&Lib_Path, Spice_Lib_Dir, "scripts", "SPICE_SCRIPTS");
+    /* used to search for OSDI models*/
+    mkvar(&OSDI_Path, Spice_Lib_Dir, "osdi", "SPICE_OSDI");
     /* used to call ngspice with aspice command, not used in Windows mode */
     mkvar(&Spice_Path, Spice_Exec_Dir, "ngspice", "SPICE_PATH");
     tfree(temp);
@@ -113,4 +115,5 @@ destroy_ivars(void)
     tfree(Lib_Path);
     tfree(Spice_Path);
     tfree(Inp_Path);
+    tfree(OSDI_Path);
 }

@@ -8,6 +8,7 @@ EXTRA_DIST = inpptree-parser-y.h
 libinp_la_SOURCES = \
 		ifeval.c	\
 		ifnewuid.c	\
+		inp2a.c		\
 		inp2b.c		\
 		inp2c.c		\
 		inp2d.c		\

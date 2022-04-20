@@ -183,6 +183,9 @@ extern int        DEVmaxnum;    /* size of DEVices array */
 
 
 
-#define DEV_DEFAULT	0x1
+#define DEV_STATIC	0x1
+#define DEV_DEFAULT_CHECK	0x2
+#define DEV_DEFAULT (DEV_DEFAULT_CHECK | DEV_STATIC)
+#define DEV_OSDI	0x4
 
 #endif

@@ -3,10 +3,13 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 **********/
 
+#include "ngspice/fteext.h"
 #include "ngspice/ngspice.h"
 #include "ngspice/iferrmsg.h"
 #include "ngspice/inpdefs.h"
+#include "ngspice/devdefs.h"
 #include "inpxx.h"
+#include <stdio.h>
 
 /*--------------------------------------------------------------
  * This fcn takes the model card & examines it.  Depending upon
@@ -42,6 +45,22 @@ char *INPdomodel(CKTcircuit *ckt, struct card *image, INPtables * tab)
     INPinsert(&modname, tab);	   /* stick model name into table */
     INPgetTok(&line, &type_name, 1);     /* get model type */
 
+    if (!strcmp(type_name, "osdi") || !strcmp(type_name, "veriloga") ||
+        !strcmp(type_name, "va")) {
+        char *module;
+        INPgetTok(&line, &module, 1);     /* get model type */
+        if (module) {
+            type = INPtypelook_flag(module, DEV_OSDI);
+            if (type < 0) {
+                err = tprintf(
+                    "%s module %s was not found in any of the loaded libraries\n",
+                    type_name, module);
+            }
+        } else {
+            err = tprintf("Device type %s requires a module\n", type_name);
+        }
+        INPmakeMod(modname, type, image);
+    } else
     /*  -----  Check if model is a BJT --------- */
     if (strcmp(type_name, "npn") == 0 || strcmp(type_name, "pnp") == 0) {
 			err = INPfindLev(line,&lev);

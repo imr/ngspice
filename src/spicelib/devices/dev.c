@@ -30,11 +30,14 @@
 #include "ngspice/ngspice.h"
 #include "assert.h"
 
+#include "ngspice/iferrmsg.h"
 #include "ngspice/devdefs.h"
 #include "ngspice/ifsim.h"
 
 #include "dev.h"
 #include "ngspice/memory.h" /* to alloc, realloc devices*/
+
+#include "osdi/osdiitf.h"
 
 
 #ifdef XSPICE
@@ -276,11 +279,22 @@ spice_init_devices(void)
     DEVicesfl = TMALLOC(int, DEVNUM);
     /* tmalloc should automatically zero the array! */
 #endif
+    // load the object files and allocate additional space for OSDI devices
+    // this could also be done later with realloc
+    int num_osdi_devices = osdi_load_devices();
+    if (num_osdi_devices < 0) {
+      // TODO error handeling
+      printf("FATAL error during osdi device load\n %s\n", errMsg);
+      exit(1);
+    }
 
-    DEVices = TMALLOC(SPICEdev *, DEVNUM);
+    DEVices = TMALLOC(SPICEdev *, DEVNUM + num_osdi_devices);
 
     for (i = 0; i < DEVNUM; i++)
         DEVices[i] = static_devices[i]();
+
+    osdi_get_info((uint32_t)DEVNUM, (uint32_t)num_osdi_devices);
+    DEVNUM += num_osdi_devices;
 }
 
 int num_devices(void)
