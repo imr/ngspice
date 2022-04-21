@@ -79,8 +79,6 @@ typedef struct MatList{
  CMat* cinverse(CMat* A);
  Mat* copyvalue(Mat* A);
  CMat* copycvalue(CMat* A);
- Mat* copyvalue(Mat* A);
- CMat* copycvalue(CMat* A);
  Mat* triinverse(Mat* A);
  CMat* ctriinverse(CMat* A);
  Mat* rowechelon(Mat* A);
