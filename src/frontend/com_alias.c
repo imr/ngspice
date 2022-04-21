@@ -97,8 +97,8 @@ cp_doalias(wordlist *wlist)
 
         if (!ntries) {
             fprintf(cp_err, "Error: alias loop.\n");
-            wlist->wl_word = NULL;
-            return (wlist);
+            wl_free(comm);
+            return wl_cons(NULL, NULL);
         }
 
         wl_append(end, comm);
