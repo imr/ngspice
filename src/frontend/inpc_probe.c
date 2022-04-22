@@ -22,11 +22,12 @@ extern char* search_plain_identifier(char* str, const char* identifier);
 
 static char* get_terminal_name(char* element, char* numberstr, NGHASHPTR instances);
 static char* get_terminal_number(char* element, char* numberstr);
+static int setallvsources(struct card* tmpcard, NGHASHPTR instances, char* instname, int numnodes, bool haveall);
 
 
 /* Find any line starting with .probe: assemble all parameters like
    <empty>     add V(0) current measure sources to all device nodes in addition to .save all
-   all         add V(0) current measure sources to all device nodes in addition to .save all
+   alli        add V(0) current measure sources to all device nodes in addition to .save all
    I(R1)       add V(0) measure source to node 1 of a two-terminal device R1
    I(M4,3)     add V(0) measure source to node 3 of a multi-terminal device M4
    Vd(R1)     add E source inputs to measure voltage difference to both terminals of a two-terminal device R1
@@ -157,7 +158,7 @@ void inp_probe(struct card* deck)
     }
 
     if (haveall || probeparams == NULL) {
-        /* Either we have 'all' among the .probe parameters, or we have a single .probe command without parameters:
+        /* Either we have 'alli' among the .probe parameters, or we have a single .probe command without parameters:
            Add current measure voltage sources for all devices, add differential E sources only for selected devices. */
         int numnodes, i;
 
@@ -241,6 +242,7 @@ void inp_probe(struct card* deck)
                 tfree(strnode2);
                 tfree(newnode);
                 tfree(nodename2);
+
             }
             else {
                 char* nodename;
@@ -263,7 +265,7 @@ void inp_probe(struct card* deck)
                     /* to make the nodes unique */
                     snprintf(nodebuf, 12, "%d", i);
                     nodename = get_terminal_name(instname, nodebuf, instances);
-                    char* vline = tprintf("vcurr_%s:%s:%s_%s %s %s 0", instname, nodename, thisnode, nodebuf, newnode, thisnode);
+                    char* vline = tprintf("vcurr_%s:%s:%s_%s %s %s 0", instname, nodename, thisnode, nodebuf, thisnode, newnode);
                     card = insert_new_line(card, vline, 0, 0);
 
                     /* special treatment for xlines: keep the x if next char is a number */
@@ -662,7 +664,7 @@ void inp_probe(struct card* deck)
                 }
             }
 
-            /* No .probe parameter 'all' (has been treated already), but dedicated current probes requested */
+            /* No .probe parameter 'alli' (has been treated already), but dedicated current probes requested */
             else if (!haveall && ciprefix("i(", tmpstr)) {
                 char* instname, * node1 = NULL, *nodename1;
                 struct card* tmpcard;
@@ -741,8 +743,12 @@ void inp_probe(struct card* deck)
                     tfree(nodename2);
                 }
                 else if (!node1 && numnodes > 2) {
-                    fprintf(stderr, "Warning: Node info is missing,\n   .probe %s will be ignored\n", wltmp->wl_word);
+                    int err = 0;
                     tfree(nodename1);
+                    err = setallvsources(tmpcard, instances, instname, numnodes, haveall);
+                    if (err) {
+                        fprintf(stderr, "Warning: Cannot set zero voltage sources,\n   .probe %s will be ignored\n", wltmp->wl_word);
+                    }
                     continue;
                 }
                 /* i(X1, 2): add voltage source to user defined node */
@@ -778,7 +784,7 @@ void inp_probe(struct card* deck)
 
                     newline = tprintf("%s %s %s", begstr, newnode, thisline);
 
-                    char* vline = tprintf("vcurr_%s:%s:%s_%s %s %s 0", instname, nodename1, node1,  strnode1, newnode, strnode1);
+                    char* vline = tprintf("vcurr_%s:%s:%s_%s %s %s 0", instname, nodename1, node1,  strnode1, strnode1, newnode);
 
                     tfree(tmpcard->line);
                     tmpcard->line = newline;
@@ -814,6 +820,7 @@ void inp_probe(struct card* deck)
             card = deck->nextcard;
             card = insert_new_line(card, newline, 0, 0);
         }
+
     }
     nghash_free(instances, NULL, NULL);
 }
@@ -1174,4 +1181,67 @@ void modprobenames(INPtables* tab) {
             }
         }
     }
+}
+
+static int setallvsources(struct card *tmpcard, NGHASHPTR instances, char *instname, int numnodes, bool haveall)
+{
+    
+    struct card* card;
+    char* newline;
+    int nodenum;
+    bool err = FALSE;
+    wordlist * allsaves = NULL;
+
+    if (haveall)
+        return 1;
+
+    for (nodenum = 1; nodenum <= numnodes; nodenum++) {
+        int i;
+        char* instline = tmpcard->line;
+        for (i = nodenum; i > 0; i--) {
+            instline = nexttok(instline);
+        }
+        char* begstr = copy_substring(tmpcard->line, instline);
+        char* strnode1 = gettok(&instline);
+        char* newnode = tprintf("int_%s_%s_%d", strnode1, instname, nodenum);
+        char nodenumstr[3];
+        char *nodename1 = get_terminal_name(instname, _itoa(nodenum, nodenumstr, 10), instances);
+
+        newline = tprintf("%s %s %s", begstr, newnode, instline);
+
+        char* vline = tprintf("vcurr_%s:%s:%s_%s %s %s 0", instname, nodename1, nodenumstr, strnode1, strnode1, newnode);
+
+        tfree(tmpcard->line);
+        tmpcard->line = newline;
+
+        card = tmpcard->nextcard;
+
+        card = insert_new_line(card, vline, 0, 0);
+
+        /* special treatment for xlines: keep the x if next char is a number */
+        if (*instname == 'x' && !isdigit_c(instname[1])) {
+            char* nodesaves = tprintf("%s:%s#branch", instname + 1, nodename1);
+            allsaves = wl_cons(nodesaves, allsaves);
+        }
+        else {
+            char* nodesaves = tprintf("%s:%s#branch", instname, nodename1);
+            allsaves = wl_cons(nodesaves, allsaves);
+        }
+
+        tfree(begstr);
+        tfree(strnode1);
+        tfree(newnode);
+        tfree(nodename1);
+    }
+
+    if (allsaves) {
+        allsaves = wl_cons(copy(".save"), allsaves);
+        char* newsaveline = wl_flatten(allsaves);
+        wl_free(allsaves);
+        allsaves = NULL;
+        card = tmpcard->nextcard;
+        card = insert_new_line(card, newsaveline, 0, 0);
+    }
+
+    return 0;
 }
