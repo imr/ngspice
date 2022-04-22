@@ -859,11 +859,9 @@ static int iplot(struct plot *pl, int id)
     double start, stop, step;
     bool changed = FALSE;
     int yt;
-    char *yl = NULL;
     double xlims[2], ylims[2];
     static REQUEST reqst = { checkup_option, NULL };
     int inited = 0;
-    char commandline[513];
     int n_vec_plot = 0;
 
     /* Exit if nothing is being plotted */
@@ -878,6 +876,11 @@ static int iplot(struct plot *pl, int id)
     }
 
     if (len == IPOINTMIN || !id) { /* Do initialization */
+        unsigned int  index, len;
+        char          commandline[4196];
+
+        strcpy(commandline, "plot ");
+        index = 5;
         resumption = FALSE;
         /* Draw the grid for the first time, and plot everything. */
         lims = ft_minmax(xs, TRUE);
@@ -894,9 +897,13 @@ static int iplot(struct plot *pl, int id)
                 if (ylims[1] < lims[1]) {
                     ylims[1] = lims[1];
                 }
-                if (!yl) {
-                    yl = v->v_name;
-                }
+                len = (unsigned int)snprintf(commandline + index,
+                                             (sizeof commandline) - index,
+                                             "%s ", v->v_name);
+                if (commandline[index + len - 1] == ' ') // Not truncated
+                    index += len;
+                else
+                    commandline[index] = '\0';           // Crop partial name
             }
         }
 
@@ -920,14 +927,9 @@ static int iplot(struct plot *pl, int id)
             }
         }
 
-        /* note: have command options for iplot to specify xdelta,
-           etc.  So don't need static variables hack.  Assume default
-           values for now.  */
-        sprintf(commandline, "plot %s", yl);
-
         (void) gr_init(xlims, ylims, xs->v_name,
                 pl->pl_title, NULL, n_vec_plot, 0.0, 0.0,
-                GRID_LIN, PLOT_LIN, xs->v_name, yl, xs->v_type, yt,
+                GRID_LIN, PLOT_LIN, xs->v_name, "V", xs->v_type, yt,
                 plot_cur->pl_typename, commandline, 0);
 
         for (v = pl->pl_dvecs; v; v = v->v_next) {
@@ -942,6 +944,12 @@ static int iplot(struct plot *pl, int id)
     else {
         /* plot the last points and resize if needed */
         Input(&reqst, NULL);
+
+        /* Window was closed? */
+
+        if (!currentgraph)
+            return 0;
+
         /* First see if we have to make the screen bigger */
         dy = (isreal(xs) ? xs->v_realdata[len - 1] :
               realpart(xs->v_compdata[len - 1]));
@@ -1098,6 +1106,8 @@ static void set(struct plot *plot, struct dbcomm *db, bool unset, short mode)
     }
 
     for (dc = db; dc; dc = dc->db_also) {
+        if (dc->db_nodename1 == NULL)
+            continue;
         v = vec_fromplot(dc->db_nodename1, plot);
         if (!v || v->v_plot != plot) {
             if (!eq(dc->db_nodename1, "0") && !unset) {
@@ -1154,9 +1164,14 @@ void gr_iplot(struct plot *plot)
     hit = 0;
     for (db = dbs; db; db = db->db_next) {
         if (db->db_type == DB_IPLOT || db->db_type == DB_IPLOTALL) {
+            if (db->db_graphid) {
+                GRAPH *gr;
 
-            if (db->db_graphid)
-                PushGraphContext(FindGraph(db->db_graphid));
+                gr = FindGraph(db->db_graphid);
+                if (!gr)
+                    continue;
+                PushGraphContext(gr);
+            }
 
             set(plot, db, FALSE, VF_PLOT);
 
