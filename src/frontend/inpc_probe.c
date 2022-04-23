@@ -22,13 +22,14 @@ extern char* search_plain_identifier(char* str, const char* identifier);
 
 static char* get_terminal_name(char* element, char* numberstr, NGHASHPTR instances);
 static char* get_terminal_number(char* element, char* numberstr);
-static int setallvsources(struct card* tmpcard, NGHASHPTR instances, char* instname, int numnodes, bool haveall);
+static int setallvsources(struct card* tmpcard, NGHASHPTR instances, char* instname, int numnodes, bool haveall, bool power);
 
 
 /* Find any line starting with .probe: assemble all parameters like
    <empty>     add V(0) current measure sources to all device nodes in addition to .save all
    alli        add V(0) current measure sources to all device nodes in addition to .save all
    I(R1)       add V(0) measure source to node 1 of a two-terminal device R1
+   I(Q1)       add V(0) measure sources to all nodes of a multi-terminal device Q1
    I(M4,3)     add V(0) measure source to node 3 of a multi-terminal device M4
    Vd(R1)     add E source inputs to measure voltage difference to both terminals of a two-terminal device R1
    Vd(X1:2:3) add E source inputs to terminals 2 and 3 of a multi-terminal device X1
@@ -745,7 +746,7 @@ void inp_probe(struct card* deck)
                 else if (!node1 && numnodes > 2) {
                     int err = 0;
                     tfree(nodename1);
-                    err = setallvsources(tmpcard, instances, instname, numnodes, haveall);
+                    err = setallvsources(tmpcard, instances, instname, numnodes, haveall, FALSE);
                     if (err) {
                         fprintf(stderr, "Warning: Cannot set zero voltage sources,\n   .probe %s will be ignored\n", wltmp->wl_word);
                     }
@@ -806,6 +807,33 @@ void inp_probe(struct card* deck)
                     tfree(newnode);
                     tfree(nodename1);
                 }
+            }
+            /* measure the power of a device */
+            else if (ciprefix("p(", tmpstr))
+            {
+                char* instname;
+                struct card* tmpcard;
+                int numnodes;
+
+                tmpstr += 2;
+                instname = gettok_noparens(&tmpstr);
+                tmpcard = nghash_find(instances, instname);
+                if (!tmpcard) {
+                    fprintf(stderr, "Warning: Could not find the instance line for %s,\n   .probe %s will be ignored\n", instname, wltmp->wl_word);
+                    continue;
+                }
+                char* thisline = tmpcard->line;
+                numnodes = get_number_terminals(thisline);
+                int err = 0;
+                /* call fcn with power requested */
+                err = setallvsources(tmpcard, instances, instname, numnodes, haveall, TRUE);
+                if (err == 1) {
+                    fprintf(stderr, "Warning: Cannot set zero voltage sources,\n   .probe %s will be ignored\n", wltmp->wl_word);
+                }
+                else if (err == 2) {
+                    fprintf(stderr, "Warning: Zero voltage sources already set,\n   .probe %s will be ignored\n", wltmp->wl_word);
+                }
+                continue;
             }
             else if (!haveall) {
                 fprintf(stderr, "Warning: unknown .probe parameter %s,\n   .probe %s will be ignored!\n", tmpstr, wltmp->wl_word);
@@ -1183,18 +1211,53 @@ void modprobenames(INPtables* tab) {
     }
 }
 
-static int setallvsources(struct card *tmpcard, NGHASHPTR instances, char *instname, int numnodes, bool haveall)
+/* If a command like .probe i(Q1) is found, set 0 VSRC (voltage source) in series to all nodes of the device Q1.
+   Polarity of VSRC is that its node 2 is directed towards the device, its node 1 towards the outer net connection. 
+   If .probe p(Q1) is found, flag power is true, then do additional power calculations:
+   Define a reference voltage of an n-terminal device as Vref = (V(1) + V(2) +...+ V(n)) / n  with terminal (node) voltages V(n).
+   Calculate power PQ1 = (v(1) - Vref) * i1 + (V(2) - Vref) * i2 + ... + (V(n) - Vref) * in) with terminal currents in.
+   See "Quantities of a Multiterminal Circuit Determined on the Basis of Kirchhoff’s Laws", M. Depenbrock, 
+   ETEP Vol. 8, No. 4, July/August 1998 */
+static int setallvsources(struct card *tmpcard, NGHASHPTR instances, char *instname, int numnodes, bool haveall, bool power)
 {
     
     struct card* card;
     char* newline;
     int nodenum;
-    bool err = FALSE;
+    int err = 0;
     wordlist * allsaves = NULL;
 
-    if (haveall)
-        return 1;
+    if (haveall && !power)
+        return 2;
 
+    DS_CREATE(BVrefline, 200);
+    DS_CREATE(Bpowerline, 200);
+    DS_CREATE(Bpowersave, 200);
+
+    if (power) {
+        /* For example: Bq1Vref q1Vref 0 V = 1/3*( */
+        char numbuf[3];
+        cadd(&BVrefline, 'B');
+        sadd(&BVrefline, instname);
+        sadd(&BVrefline, "Vref ");
+        sadd(&BVrefline, instname);
+        sadd(&BVrefline, "Vref 0 V = 1/");
+        sadd(&BVrefline, _itoa(numnodes, numbuf, 10));
+        sadd(&BVrefline, "*(");
+        /* For example: Bq1power q1:power 0 V = */
+        cadd(&Bpowerline, 'B');
+        sadd(&Bpowerline, instname);
+        sadd(&Bpowerline, "power ");
+        sadd(&Bpowerline, instname);
+        cadd(&Bpowerline, ':');
+        sadd(&Bpowerline, "power 0 V = 0+");
+        /* For example: q1:power */
+        sadd(&Bpowersave, instname);
+        cadd(&Bpowersave, ':');
+        sadd(&Bpowersave, "power");
+    }
+
+    /* Scan through all nodes of the device */
     for (nodenum = 1; nodenum <= numnodes; nodenum++) {
         int i;
         char* instline = tmpcard->line;
@@ -1218,14 +1281,44 @@ static int setallvsources(struct card *tmpcard, NGHASHPTR instances, char *instn
 
         card = insert_new_line(card, vline, 0, 0);
 
+        char* nodesaves;
         /* special treatment for xlines: keep the x if next char is a number */
         if (*instname == 'x' && !isdigit_c(instname[1])) {
-            char* nodesaves = tprintf("%s:%s#branch", instname + 1, nodename1);
+            nodesaves = tprintf("%s:%s#branch", instname + 1, nodename1);
             allsaves = wl_cons(nodesaves, allsaves);
         }
         else {
-            char* nodesaves = tprintf("%s:%s#branch", instname, nodename1);
+            nodesaves = tprintf("%s:%s#branch", instname, nodename1);
             allsaves = wl_cons(nodesaves, allsaves);
+        }
+
+        if (power) {
+            /* For example V(1)+V(2)+V(3)*/
+            if (nodenum == 1)
+               sadd(&BVrefline, "V(");
+            else
+               sadd(&BVrefline, "+V(");
+            sadd(&BVrefline, newnode);
+            cadd(&BVrefline, ')');
+            /*For example: (V(node1)-V(q1Vref))*node1#branch+(V(node2)-V(q1Vref))*node2#branch */
+            if (nodenum == 1)
+               sadd(&Bpowerline, "(V(");
+            else
+               sadd(&Bpowerline, "+(V(");
+            sadd(&Bpowerline, newnode);
+            sadd(&Bpowerline, ")-V(");
+            sadd(&Bpowerline, instname);
+            sadd(&Bpowerline, "Vref))*i(vcurr_");
+            sadd(&Bpowerline, instname);
+            cadd(&Bpowerline, ':');
+            sadd(&Bpowerline, nodename1);
+            cadd(&Bpowerline, ':');
+            sadd(&Bpowerline, nodenumstr);
+            cadd(&Bpowerline, '_');
+            sadd(&Bpowerline, strnode1);
+            cadd(&Bpowerline, ')');
+
+            allsaves = wl_cons(copy(ds_get_buf(&Bpowersave)), allsaves);
         }
 
         tfree(begstr);
@@ -1243,5 +1336,15 @@ static int setallvsources(struct card *tmpcard, NGHASHPTR instances, char *instn
         card = insert_new_line(card, newsaveline, 0, 0);
     }
 
-    return 0;
+    if (power) {
+        cadd(&BVrefline, ')');
+        card = tmpcard->nextcard;
+        card = insert_new_line(card, copy(ds_get_buf(&BVrefline)), 0, 0);
+        card = insert_new_line(card, copy(ds_get_buf(&Bpowerline)), 0, 0);
+    }
+
+    ds_free(&BVrefline);
+    ds_free(&Bpowerline);
+    ds_free(&Bpowersave);
+    return err;
 }
