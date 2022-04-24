@@ -2878,8 +2878,10 @@ static char *inp_spawn_brace(char *s)
   removes  " " quotes, returns lower case letters,
   replaces non-printable characters with '_', however if
   non-printable character is the only character in a line,
-  replace it by '*'. If there is a XSPICE code model .model
-  line with file input, keep quotes and case for the file path.
+  replace it by '*'. Leave quotes in .param, .subckt and x
+  (subcircuit instance) cards to allow string-valued parameters.
+  If there is a XSPICE code model .model line with file input,
+  keep quotes and case for the file path.
   *-------------------------------------------------------------------------*/
 
 void inp_casefix(char *string)
@@ -2892,20 +2894,23 @@ void inp_casefix(char *string)
         return;
     }
     if (string) {
+        bool keepquotes;
+
 #ifdef XSPICE
-        /* special treatment of code model file input */
         char* tmpstr = NULL;
-        bool keepquotes = ciprefix(".model", string);
-        if (keepquotes){
+
+        /* Special treatment of code model file input. */
+
+        if (ciprefix(".model", string))
             tmpstr = strstr(string, "file=");
-            keepquotes = keepquotes && tmpstr;
-        }
 #endif
+        keepquotes = ciprefix(".param", string); // Allow string params
+
         while (*string) {
 #ifdef XSPICE
             /* exclude file name inside of quotes from getting lower case,
                keep quotes to enable spaces in file path */
-            if (keepquotes && string == tmpstr) {
+            if (string == tmpstr) {
                 string = string + 6; // past first quote
                 while (*string && *string != '"')
                     string++;
@@ -2916,12 +2921,13 @@ void inp_casefix(char *string)
             }
 #endif
             if (*string == '"') {
-                *string++ = ' ';
+                if (!keepquotes)
+                    *string++ = ' ';
                 while (*string && *string != '"')
                     string++;
                 if (*string == '\0')
                     continue; /* needed if string is "something ! */
-                if (*string == '"')
+                if (*string == '"' && !keepquotes)
                     *string = ' ';
             }
             if (*string && !isspace_c(*string) && !isprint_c(*string))
@@ -5037,24 +5043,40 @@ static int inp_split_multi_param_lines(struct card *card, int line_num)
 
                 char *beg_param, *end_param;
 
-                bool get_expression = FALSE;
-                bool get_paren_expression = FALSE;
+                int expression_depth = 0;
+                int paren_depth = 0;
 
                 beg_param = skip_back_ws(equal_ptr, curr_line);
                 beg_param = skip_back_non_ws(beg_param, curr_line);
                 end_param = skip_ws(equal_ptr + 1);
-                while (*end_param != '\0' &&
-                        (!isspace_c(*end_param) || get_expression ||
-                                get_paren_expression)) {
-                    if (*end_param == '{')
-                        get_expression = TRUE;
-                    if (*end_param == '(')
-                        get_paren_expression = TRUE;
-                    if (*end_param == '}')
-                        get_expression = FALSE;
-                    if (*end_param == ')')
-                        get_paren_expression = FALSE;
-                    end_param++;
+                while (*end_param && !isspace_c(*end_param)) {
+                    /* Advance over numeric or string expression. */
+
+                    if (*end_param == '"') {
+                        /* RHS is quoted string. */
+
+                        end_param++;
+                        while (*end_param != '\0' && *end_param != '"')
+                            end_param++;
+                        if (*end_param == '"')
+                            end_param++;
+                    } else {
+                        while (*end_param != '\0' && *end_param != '"' &&
+                               (!isspace_c(*end_param) ||
+                                expression_depth || paren_depth)) {
+                            if (*end_param == ',' && paren_depth == 0)
+                                break;
+                            if (*end_param == '{')
+                                ++expression_depth;
+                            if (*end_param == '(')
+                                ++paren_depth;
+                            if (*end_param == '}' && expression_depth > 0)
+                                --expression_depth;
+                            if (*end_param == ')' && paren_depth > 0)
+                                --paren_depth;
+                            end_param++;
+                        }
+                    }
                 }
 
                 if (end_param[-1] == ',')

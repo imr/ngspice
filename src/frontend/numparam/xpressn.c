@@ -232,7 +232,6 @@ message(dico_t *dico, const char *fmt, ...)
                 dico->oldline);
         }
     }
-
     va_start(ap, fmt);
     vfprintf(stderr, fmt, ap);
     va_end(ap);
@@ -275,7 +274,6 @@ dico_free_entry(entry_t *entry)
 {
     if (entry->symbol)
         txfree(entry->symbol);
-
     txfree(entry);
 }
 
@@ -338,7 +336,7 @@ dicostack_pop(dico_t *dico)
                     inst_name, entry->symbol) != DS_E_OK) {
                 controlled_exit(-1);
             }
-            nupa_add_inst_param(ds_get_buf(&param_name), entry->vl);
+            nupa_copy_inst_entry(ds_get_buf(&param_name), entry);
             dico_free_entry(entry);
         }
         nghash_free(htable_p, NULL, NULL);
@@ -439,6 +437,8 @@ del_attrib(void *entry_p)
     entry_t *entry = (entry_t*) entry_p;
     if(entry) {
         tfree(entry->symbol);
+        if (entry->sbbase)
+            tfree(entry->sbbase);
         tfree(entry);
     }
 }
@@ -1060,6 +1060,79 @@ formula(dico_t *dico, const char *s, const char *s_end, bool *perror)
 }
 
 
+/* Check for a string expression, return end  pointer or NULL.
+ * A string expression is a sequence of quoted strings and string
+ * variables, optionally enclosed by '{}' with no interventing space.
+ * If successful return pointer to next char, otherwise NULL.
+ * Evaluated string is returned in *qstr_p (may be NULL).
+ */
+
+static char *string_expr(dico_t *dico, DSTRINGPTR qstr_p,
+                         const char *t, const char *t_end)
+{
+    const char *tie;
+    bool        ok = FALSE;
+
+    while (isblank(*t) && t < t_end)
+        ++t;
+    if (qstr_p)
+        ds_clear(qstr_p);
+    for (; t < t_end; ) {
+        if (*t == '"') {
+            /* String constant. */
+
+            tie = ++t;
+            while (*t != '"' && t < t_end)
+                ++t;
+            if (qstr_p)
+                pscat(qstr_p, tie, t);
+            if (*t == '"')
+                ++t;
+            ok = TRUE;
+            continue;
+        }
+        if (*t == '{') {
+            /* Isolate and check wrapped identifier. */
+
+            tie = ++t;
+            while (t < t_end) {
+                if (*t == '}')
+                    break;
+                ++t;
+            }
+        } else {
+            /* Last option: naked string-valued param. */
+
+            tie = t;
+            t = fetchid(t, t_end);
+            if (t == tie )
+                return NULL;
+        }
+        /* Now pointers tie, t should bracket an identifier. */
+
+        {
+            DS_CREATE(lcl_str, 200);
+            entry_t    *entry;
+
+            /* Formula is a single identifier. */
+
+            pscopy(&lcl_str, tie, t);
+            entry = entrynb(dico, ds_get_buf(&lcl_str));
+            ds_free(&lcl_str);
+            if (entry && (entry->tp == NUPA_STRING)) {
+                if (qstr_p)
+                    pscat(qstr_p, entry->sbbase, NULL);
+                ok = TRUE;
+            } else {
+                return NULL;
+            }
+        }
+        if (*t == '}')
+            ++t;
+    }
+    return ok ? (char *)t : NULL;
+}
+
 /* stupid, produce a string representation of a given double
  *   to be spliced back into the circuit deck
  * we want *exactly* 25 chars, we have
@@ -1088,7 +1161,8 @@ evaluate_expr(dico_t *dico, DSTRINGPTR qstr_p, const char *t, const char * const
     double u;
 
     ds_clear(qstr_p);
-
+    if (string_expr(dico, qstr_p, t, t_end))
+        return 0;
     u = formula(dico, t, t_end, &err);
     if (err)
         return err;
@@ -1222,38 +1296,31 @@ getword(const char *s, DSTRINGPTR tstr_p)
 
 
 static char *
-getexpress(nupa_type *type, DSTRINGPTR tstr_p, const char *s)
+getexpress(dico_t *dico, nupa_type *type, DSTRINGPTR tstr_p, const char *s)
 /* returns expression-like string until next separator
    Input  i=position before expr, output  i=just after expr, on separator.
    returns tpe=='R' if (numeric, 'S' if (string only
 */
 {
-    const char * const s_end = s + strlen(s);
+    const char *s_end = s + strlen(s);
     const char *p;
     nupa_type tpe;
 
     while ((s < s_end - 1) && ((unsigned char)(* s) <= ' '))
         s++;                    /*white space ? */
 
-    if (*s == '"') {            /* string constant */
+    /* Check for injected semicolon separator in assignment list. */
+    p = strchr(s, ';');
+    if (p)
+        s_end = p;
 
-        s++;
-        p = s;
-
-        while ((p < s_end - 1) && (*p != '"'))
-            p++;
-
-        do
-            p++;
-        while ((p < s_end) && ((unsigned char)(*p) <= ' '));
-
+    p = string_expr(dico, NULL, s, s_end);
+    if (p) {
         tpe = NUPA_STRING;
-
     } else {
 
         if (*s == '{')
             s++;
-
         p = s;
 
         for (; p < s_end; p++) {
@@ -1279,7 +1346,6 @@ getexpress(nupa_type *type, DSTRINGPTR tstr_p, const char *s)
                 }
             }
         }
-
         tpe = NUPA_REAL;
     }
 
@@ -1287,9 +1353,6 @@ getexpress(nupa_type *type, DSTRINGPTR tstr_p, const char *s)
 
     if (*p == '}')
         p++;
-
-    if (tpe == NUPA_STRING)
-        p++;                    /* beyond quote */
 
     if (type)
         *type = tpe;
@@ -1309,7 +1372,8 @@ nupa_assignment(dico_t *dico, const char *s, char mode)
     /* s has the format: ident = expression; ident= expression ...  */
     const char * const s_end = s + strlen(s);
     const char *p = s;
-
+    const char *tmp;
+    char       *sval = NULL;
     bool error = 0;
     nupa_type dtype;
     int wval = 0;
@@ -1344,23 +1408,26 @@ nupa_assignment(dico_t *dico, const char *s, char mode)
             break;
         }
 
-        p = getexpress(&dtype, &ustr, p + 1) + 1;
+        p = getexpress(dico, &dtype, &ustr, p + 1) + 1;
 
+        tmp = ds_get_buf(&ustr);
         if (dtype == NUPA_REAL) {
-            const char *tmp = ds_get_buf(&ustr);
             rval = formula(dico, tmp, tmp + strlen(tmp), &error);
             if (error) {
                 message(dico,
                         " Formula() error.\n"
-                        "      %s\n", s);
+                        "      |%s| : |%s|=|%s|\n", s, ds_get_buf(&tstr), ds_get_buf(&ustr));
                 break;
             }
         } else if (dtype == NUPA_STRING) {
-            wval = (int) (p - s);
+            DS_CREATE(sstr, 200);
+            string_expr(dico, &sstr, tmp, tmp + strlen(tmp));
+            sval = copy(ds_get_buf(&sstr));
+            ds_free(&sstr);
         }
 
         error = nupa_define(dico, ds_get_buf(&tstr), mode /* was ' ' */ ,
-                            dtype, rval, wval, NULL);
+                            dtype, rval, wval, sval);
         if (error)
             break;
 
@@ -1420,8 +1487,9 @@ nupa_subcktcall(dico_t *dico, const char *s, const char *x,
 
     /***** first, analyze the subckt definition line */
     n = 0; /* number of parameters if any */
-
     scopys(&tstr, s);
+
+    /* Get the subcircuit name in subname. */
 
     const char *j2 = strstr(ds_get_buf(&tstr), "subckt");
     if (j2) {
@@ -1430,6 +1498,8 @@ nupa_subcktcall(dico_t *dico, const char *s, const char *x,
     } else {
         err = message(dico, " ! a subckt line!\n");
     }
+
+    /* Scan the .subckt line for assignments, copying templates to idlist. */
 
     const char *i2 = strstr(ds_get_buf(&tstr), "params:");
 
@@ -1485,7 +1555,7 @@ nupa_subcktcall(dico_t *dico, const char *s, const char *x,
         char * const t_p = ds_get_buf(&tstr);
         char *jp = NULL;
 
-        /* search for the last occurence of `subname' in the given line */
+        /* Search for the last occurence of `subname' in the call line. */
         for (;;) {
             char *next_p = search_isolated_identifier(jp ? jp + 1 : t_p,
                     ds_get_buf(&subname));
@@ -1503,7 +1573,6 @@ nupa_subcktcall(dico_t *dico, const char *s, const char *x,
             /* jp is pointing to the 1st position of arglist now */
 
             while (*jp) {
-
                 /* try to fetch valid arguments */
                 char *kp = jp;
                 ds_clear(&ustr);
@@ -1513,13 +1582,16 @@ nupa_subcktcall(dico_t *dico, const char *s, const char *x,
                     jp = skip_non_ws(kp);
                     pscopy(&ustr, kp, jp);
                 } else if (*kp == '{') {
-                    jp = getexpress(NULL, &ustr, jp);
+                    jp = getexpress(dico, NULL, &ustr, jp);
                 } else {
                     jp++;
                     if ((unsigned char) (*kp) > ' ')
                         message(dico, "Subckt call, symbol %c not understood\n", *kp);
                 }
 
+                /* Substitute the parameter for one of the '$' characters
+                 * in idlist.
+                 */
                 char * const u_p = ds_get_buf(&ustr);
                 if (*u_p) {
                     char * const idlist_p = ds_get_buf(&idlist);

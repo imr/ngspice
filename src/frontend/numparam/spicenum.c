@@ -415,6 +415,9 @@ dump_symbol_table(NGHASHPTR htable_p, FILE *fp)
     {
         if (entry->tp == NUPA_REAL)
             fprintf(fp, "       ---> %s = %g\n", entry->symbol, entry->vl);
+        else if (entry->tp == NUPA_STRING)
+            fprintf(fp, "       ---> %s = \"%s\"\n",
+                    entry->symbol, entry->sbbase);
     }
 }
 
@@ -456,8 +459,7 @@ nupa_list_params(FILE *fp)
  * Otherwise, we have to exhaust all of the tables including the global
  * table.
  * ----------------------------------------------------------------- */
-double
-nupa_get_param(char *param_name, int *found)
+static entry_t *nupa_get_entry(const char *param_name)
 {
     dico_t *dico = dicoS;       /* local copy for speed */
     int depth;                  /* nested subcircit depth */
@@ -465,21 +467,40 @@ nupa_get_param(char *param_name, int *found)
     for (depth = dico->stack_depth; depth >= 0; depth--) {
         NGHASHPTR htable_p = dico->symbols[depth];
         if (htable_p) {
-            entry_t *entry = (entry_t *) nghash_find(htable_p, param_name);
-            if (entry) {
-                *found = 1;
-                return entry->vl;
-            }
+            entry_t *entry;
+
+            entry = (entry_t *)nghash_find(htable_p, (void *)param_name);
+            if (entry)
+                return entry;
         }
     }
+    return NULL;
+}
 
+double
+nupa_get_param(const char *param_name, int *found)
+{
+    entry_t *entry = nupa_get_entry(param_name);
+    if (entry && entry->tp == NUPA_REAL) {
+        *found = 1;
+        return entry->vl;
+    }
     *found = 0;
     return 0;
 }
 
+const char *
+nupa_get_string_param(const char *param_name)
+{
+    entry_t *entry = nupa_get_entry(param_name);
+    if (entry && entry->tp == NUPA_STRING)
+        return entry->sbbase;
+    return NULL;
+}
 
-void
-nupa_add_param(char *param_name, double value)
+
+static void
+nupa_copy_entry(entry_t *proto)
 {
     dico_t *dico = dicoS;       /* local copy for speed */
     entry_t *entry;             /* current entry */
@@ -491,18 +512,32 @@ nupa_add_param(char *param_name, double value)
 
     htable_p = dico->symbols[dico->stack_depth];
 
-    entry = attrib(dico, htable_p, param_name, 'N');
+    entry = attrib(dico, htable_p, proto->symbol, 'N');
     if (entry) {
-        entry->vl = value;
-        entry->tp = NUPA_REAL;
-        entry->ivl = 0;
-        entry->sbbase = NULL;
+        entry->vl = proto->vl;
+        entry->tp = proto->tp;
+        entry->ivl = proto->ivl;
+        entry->sbbase = proto->sbbase;
     }
 }
 
 
 void
-nupa_add_inst_param(char *param_name, double value)
+nupa_add_param(char *param_name, double value)
+{
+    entry_t entry;
+
+    entry.symbol = param_name;
+    entry.vl = value;
+    entry.tp = NUPA_REAL;
+    entry.ivl = 0;
+    entry.sbbase = NULL;
+    nupa_copy_entry(&entry);
+}
+
+
+void
+nupa_copy_inst_entry(char *param_name, entry_t *proto)
 {
     dico_t *dico = dicoS;       /* local copy for speed */
     entry_t *entry;             /* current entry */
@@ -512,10 +547,10 @@ nupa_add_inst_param(char *param_name, double value)
 
     entry = attrib(dico, dico->inst_symbols, param_name, 'N');
     if (entry) {
-        entry->vl = value;
-        entry->tp = NUPA_REAL;
-        entry->ivl = 0;
-        entry->sbbase = NULL;
+        entry->vl = proto->vl;
+        entry->tp = proto->tp;
+        entry->ivl = proto->ivl;
+        entry->sbbase = proto->sbbase;
     }
 }
 
@@ -542,7 +577,7 @@ nupa_copy_inst_dico(void)
              entry;
              entry = (entry_t *) nghash_enumerateRE(dico->inst_symbols, &iter))
         {
-            nupa_add_param(entry->symbol, entry->vl);
+            nupa_copy_entry(entry);
             dico_free_entry(entry);
         }
 

@@ -9,6 +9,7 @@
 #include "ngspice/bool.h"
 
 
+void pscat(DSTRINGPTR s, const char *str, const char *stop);
 void pscopy(DSTRINGPTR s, const char *str, const char *stop);
 void scopyd(DSTRINGPTR dst, const DSTRINGPTR src);
 void scopys(DSTRINGPTR a, const char *b);
