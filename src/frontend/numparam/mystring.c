@@ -123,21 +123,26 @@ scopys(DSTRINGPTR s, const char *t)     /* returns success flag */
 }
 
 
-/* Copy until stop char (exclusive) or end of string if none given */
+/* Concatentate until stop char (exclusive) or end of string if none given */
+
 void
-pscopy(DSTRINGPTR dstr_p, const char *t, const char *stop)
+pscat(DSTRINGPTR dstr_p, const char *t, const char *stop)
 {
     if (!stop) { /* locate end of string if no stop char given */
         stop = strchr(t, '\0');
     }
-
-    ds_clear(dstr_p);
     if (ds_cat_mem(dstr_p, t, (size_t) (stop - t)) != DS_E_OK) {
         fprintf(stderr, "Error: DS could not copy partially string %s\n", t);
         controlled_exit(-1);
     }
+} /* end of function pscat */
 
-    return;
+/* Copy until stop char (exclusive) or end of string if none given */
+void
+pscopy(DSTRINGPTR dstr_p, const char *t, const char *stop)
+{
+    ds_clear(dstr_p);
+    pscat(dstr_p, t, stop);
 } /* end of function pscopy */
 
 

@@ -68,3 +68,4 @@ void nupa_subcktexit(dico_t *);
 entry_t *entrynb(dico_t *dico, char *s);
 entry_t *attrib(dico_t *, NGHASHPTR htable, char *t, char op);
 void del_attrib(void *);
+void nupa_copy_inst_entry(char *param_name, entry_t *proto);
