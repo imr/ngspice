@@ -269,15 +269,8 @@ void inp_probe(struct card* deck)
                     char* vline = tprintf("vcurr_%s:%s:%s_%s %s %s 0", instname, nodename, thisnode, nodebuf, thisnode, newnode);
                     card = insert_new_line(card, vline, 0, 0);
 
-                    /* special treatment for xlines: keep the x if next char is a number */
-                    if (*instname == 'x' && !isdigit_c(instname[1])) {
-                        char* nodesaves = tprintf("%s:%s#branch", instname + 1, nodename);
-                        allsaves = wl_cons(nodesaves, allsaves);                    
-                    }
-                    else {
-                        char* nodesaves = tprintf("%s:%s#branch", instname, nodename);
-                        allsaves = wl_cons(nodesaves, allsaves);    
-                    }
+                    char* nodesaves = tprintf("%s:%s#branch", instname, nodename);
+                    allsaves = wl_cons(nodesaves, allsaves);
 
                     tfree(newnode);
                     tfree(nodename);
@@ -792,15 +785,8 @@ void inp_probe(struct card* deck)
 
                     tmpcard = insert_new_line(tmpcard, vline, 0, 0);
 
-                    /* special treatment for xlines: keep the x if next char is a number */
-                    if (*instname == 'x' && !isdigit_c(instname[1])) {
-                        char* nodesaves = tprintf("%s:%s#branch", instname + 1, nodename1);
-                        allsaves = wl_cons(nodesaves, allsaves);
-                    }
-                    else {
-                        char* nodesaves = tprintf("%s:%s#branch", instname, nodename1);
-                        allsaves = wl_cons(nodesaves, allsaves);
-                    }
+                    char* nodesaves = tprintf("%s:%s#branch", instname, nodename1);
+                    allsaves = wl_cons(nodesaves, allsaves);
 
                     tfree(begstr);
                     tfree(strnode1);
@@ -1182,16 +1168,7 @@ void modprobenames(INPtables* tab) {
     GENinstance* GENinst;
     for (GENinst = tab->defVmod->GENinstances; GENinst; GENinst = GENinst->GENnextInstance) {
         char* name = GENinst->GENname;
-        /* Do not inlude the x in the new name, XU1 -> U1 */
-        if (prefix("vcurr_x", name) && !isdigit_c(name[7])) {
-            /* copy from char no. 7 to (and excluding) second colon */
-            char* endname = strchr(name, ':');
-            endname = strchr(endname + 1, ':');
-            char* newname = copy_substring(name + 7, endname);
-            memcpy(name, newname, strlen(newname) + 1);
-            tfree(newname);
-        }
-        else if (prefix("vcurr_", name)) {
+        if (prefix("vcurr_", name)) {
             /* copy from char no. 6 to (and excluding) second colon */
             char* endname = strchr(name, ':');
             char* endname2 = strchr(endname + 1, ':');
@@ -1291,16 +1268,8 @@ static int setallvsources(struct card *tmpcard, NGHASHPTR instances, char *instn
 
         card = insert_new_line(card, vline, 0, 0);
 
-        char* nodesaves;
-        /* special treatment for xlines: keep the x if next char is a number */
-        if (*instname == 'x' && !isdigit_c(instname[1])) {
-            nodesaves = tprintf("%s:%s#branch", instname + 1, nodename1);
-            allsaves = wl_cons(nodesaves, allsaves);
-        }
-        else {
-            nodesaves = tprintf("%s:%s#branch", instname, nodename1);
-            allsaves = wl_cons(nodesaves, allsaves);
-        }
+        char* nodesaves = tprintf("%s:%s#branch", instname, nodename1);
+        allsaves = wl_cons(nodesaves, allsaves);
 
         if (power) {
             /* For example V(1)+V(2)+V(3)*/
