@@ -4602,7 +4602,7 @@ int get_number_terminals(char *c)
                 char *inst = gettok_instance(&c);
                 strncpy(nam_buf, inst, sizeof(nam_buf) - 1);
                 txfree(inst);
-                if (strstr(nam_buf, "params") || strchr(nam_buf, '='))
+                if (search_plain_identifier(nam_buf, "params:") || strchr(nam_buf, '='))
                     break;
                 i++;
             }
