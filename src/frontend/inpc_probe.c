@@ -1242,7 +1242,7 @@ static int setallvsources(struct card *tmpcard, NGHASHPTR instances, char *instn
         sadd(&BVrefline, "Vref ");
         sadd(&BVrefline, instname);
         sadd(&BVrefline, "Vref 0 V = 1/");
-        sadd(&BVrefline, _itoa(numnodes, numbuf, 10));
+        sadd(&BVrefline, itoa10(numnodes, numbuf));
         sadd(&BVrefline, "*(");
         /* For example: Bq1power q1:power 0 V = */
         cadd(&Bpowerline, 'B');
@@ -1278,7 +1278,7 @@ static int setallvsources(struct card *tmpcard, NGHASHPTR instances, char *instn
         char* strnode1 = gettok(&instline);
         char* newnode = tprintf("int_%s_%s_%d", strnode1, instname, nodenum);
         char nodenumstr[3];
-        char *nodename1 = get_terminal_name(instname, _itoa(nodenum, nodenumstr, 10), instances);
+        char *nodename1 = get_terminal_name(instname, itoa10(nodenum, nodenumstr), instances);
 
         newline = tprintf("%s %s %s", begstr, newnode, instline);
 

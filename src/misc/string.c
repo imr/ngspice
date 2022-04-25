@@ -1403,3 +1403,29 @@ bool has_escape_or_quote(size_t n, const char *str)
     return FALSE;
 } /* end of function may_have_eq */
 
+/* Converts integer to string.
+   Return the result string.
+   Only 10 radix is supported */
+char *itoa10(int n, char s[])
+{
+    int i, j, sign;
+    char c;
+
+    if ((sign = n) < 0)  /* record sign */
+        n = -n;          /* make n positive */
+    i = 0;
+    do {       /* generate digits in reverse order */
+        s[i++] = n % 10 + '0';   /* get next digit */
+    } while ((n /= 10) > 0);     /* delete it */
+    if (sign < 0)
+        s[i++] = '-';
+    s[i] = '\0';
+    /* revert string */
+    for (i = 0, j = (int)strlen(s) - 1; i < j; i++, j--) {
+        c = s[i];
+        s[i] = s[j];
+        s[j] = c;
+    }
+    return s;
+}
+
