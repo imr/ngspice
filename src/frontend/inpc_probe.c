@@ -1250,11 +1250,21 @@ static int setallvsources(struct card *tmpcard, NGHASHPTR instances, char *instn
         sadd(&Bpowerline, "power ");
         sadd(&Bpowerline, instname);
         cadd(&Bpowerline, ':');
-        sadd(&Bpowerline, "power 0 V = 0+");
+        sadd(&Bpowerline, "power 0 V = 0+"); /*FIXME 0+ required to suppress adding {} and numparam failure*/
         /* For example: q1:power */
         sadd(&Bpowersave, instname);
         cadd(&Bpowersave, ':');
         sadd(&Bpowersave, "power");
+
+        /* special for VDMOS: exclude thermal nodes */
+        if (*instname == 'm' && strstr(tmpcard->line, "thermal"))
+            numnodes = 3;
+        /* special for MOS, exclude temp nodes (not always possible) */
+        if (*instname == 'm' && numnodes > 5)
+            numnodes = 5;
+        /* special for diodes, they have 2 terminals, so exclude thermal nodes */
+        if (*instname == 'd')
+            numnodes = 2;
     }
 
     /* Scan through all nodes of the device */
