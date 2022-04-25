@@ -876,7 +876,7 @@ static int iplot(struct plot *pl, int id)
     }
 
     if (len == IPOINTMIN || !id) { /* Do initialization */
-        unsigned int  index, len;
+        unsigned int  index, node_len;
         char          commandline[4196];
 
         strcpy(commandline, "plot ");
@@ -897,11 +897,11 @@ static int iplot(struct plot *pl, int id)
                 if (ylims[1] < lims[1]) {
                     ylims[1] = lims[1];
                 }
-                len = (unsigned int)snprintf(commandline + index,
-                                             (sizeof commandline) - index,
-                                             "%s ", v->v_name);
-                if (commandline[index + len - 1] == ' ') // Not truncated
-                    index += len;
+                node_len = (unsigned int)snprintf(commandline + index,
+                                                  (sizeof commandline) - index,
+                                                  "%s ", v->v_name);
+                if (commandline[index + node_len - 1] == ' ') // Not truncated
+                    index += node_len;
                 else
                     commandline[index] = '\0';           // Crop partial name
             }
