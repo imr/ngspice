@@ -23,7 +23,8 @@ void old_show(wordlist *wl);
 
 /* DEVHELP*/
 void devhelp(wordlist *wl);
-void printdesc(IFparm p, bool csv);
+void printheaders(bool print_type, bool print_flags, bool csv);
+void printdesc(IFparm p, bool print_type, bool print_flags, bool csv);
 
 
 
