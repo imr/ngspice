@@ -39,7 +39,7 @@ C3 out 0 33.2p
 ** The following subcircuit to be changed only by an experienced user!
 
 *** Driver and readout
-X1 in out S22 S12 S_PARAM
+X1 in out S_2_2 S_1_2 S_PARAM
 
 .SUBCKT S_PARAM 22 66 5 7
 * Resistors emulate switches with Ron=0.001 and Roff=1e12
@@ -58,22 +58,22 @@ R3 5 0 1           ; ground return for measure node 5
 *Readout
 E2 7 0 6 0 2       ; amplify out port ac voltage by 2
 R4 6 8 'Rbase'     ; load resistor at output (ac)
-Vdc 8 0 DC 'Vbias_out' AC 0 $ dc bias at output (applied through load resistor)
+Vdc 8 0 DC 'Vbias_out' AC 0 ; dc bias at output (applied through load resistor)
 .ends
 
 ** Check the two ac lines below for being equal!
 .control
 set noaskquit
 set filetype=ascii
-*** measurement for s11 and s21
+*** measurement for s_1_1 and s_2_1
 op
 ** save bias voltages to vector
-let Vdcnew=V(X1.1) $ former Vacdc 
-let Vacdcnew=v(X1.8) $ former Vdc 
+let Vdcnew=V(X1.1) ; former Vacdc 
+let Vacdcnew=v(X1.8) ; former Vdc 
 ** first ac measurement (change this line only together with following ac line)
-*ac lin 20 0.1G 2G $ use for bip transistor
-ac lin 100 2.5MEG 250MEG $ use for Tschebyschef 
-*ac lin 101 1k 10G $ use for RC
+*ac lin 20 0.1G 2G ; use for bip transistor
+ac lin 100 2.5MEG 250MEG ; use for Tschebyschef 
+*ac lin 101 1k 10G ; use for RC
 ** 
 ** switch input and output
 alter R.X1.RS1=1e12
@@ -83,38 +83,39 @@ alter R.X1.RS4=0.001
 ** switch bias voltages between in and out
 alter V.X1.Vacdc DC=op1.Vacdcnew
 alter V.X1.Vdc DC=op1.Vdcnew
-*** measurement for s12 and s22
+*** measurement for s_1_2 and s_2_2
 op
 ** second ac measurement (change this line only together with ac line above)
-*ac lin 20 0.1G 2G $ use for bip transistor
-ac lin 100 2.5MEG 250MEG $ use for Tschebyschef 
-*ac lin 101 1 10G $ use for RC 
+*ac lin 20 0.1G 2G ; use for bip transistor
+ac lin 100 2.5MEG 250MEG ; use for Tschebyschef 
+*ac lin 101 1 10G ; use for RC 
 **
-let s11=ac1.s22
-let s21=ac1.s12
-settype s-param S11 S21 S22 S12
+let s_1_1=ac1.s_2_2
+let s_2_1=ac1.s_1_2
+settype s-param S_1_1 S_2_1 S_2_2 S_1_2
 
-let S11db = db(s11)
-let S12db = db(s12)
-let S21db = db(s21)
-let S22db = db(s22)
+let S11db = db(s_1_1)
+let S12db = db(s_1_2)
+let S21db = db(s_2_1)
+let S22db = db(s_2_2)
 settype decibel S11db S21db S22db S12db
 
-let P11=180*ph(s11)/pi
-let P21=180*ph(s21)/pi
-let P22=180*ph(S22)/pi
-let P12=180*ph(S12)/pi
+let P11=180*ph(s_1_1)/pi
+let P21=180*ph(s_2_1)/pi
+let P22=180*ph(S_2_2)/pi
+let P12=180*ph(S_1_2)/pi
 settype phase P11 P21 P22 P12
 
 let Rbase=@R.X1.R4[Resistance]
 settype impedance Rbase
 
-*plot s11db s21db S22db S12db ylimit -50 0 xlog $ used with RC 
-plot s11db s21db S22db S12db ylimit -0.5 0 $ used with Tschebyschef  
+*plot s11db s21db S22db S12db ylimit -50 0 xlog ; used with RC 
+set xbrushwidth=2
+plot s11db s21db S22db S12db ylimit -0.5 0 ; used with Tschebyschef  
 plot P11 P21 P22 P12
-plot smithgrid S11 S12
-*wrdata s3046 mag(S11) P11 mag(S21) P21 mag(S22) P22 mag(S12) P12 $ write simple table
-wrs2p s3046.s2p $ write touchstone vers. 1 file s3046.s2p
+plot smithgrid S_1_1 S_1_2
+*wrdata s3046 mag(S_1_1) P11 mag(S_2_1) P21 mag(S_2_2) P22 mag(S_1_2) P12 ; write simple table
+wrs2p $inputdir/s3046.s2p ; write touchstone vers. 1 file s3046.s2p
 .endc
 
 .end
