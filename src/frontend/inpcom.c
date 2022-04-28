@@ -4589,7 +4589,7 @@ int get_number_terminals(char *c)
                 char *inst = gettok_instance(&c);
                 strncpy(nam_buf, inst, sizeof(nam_buf) - 1);
                 txfree(inst);
-                if (strstr(nam_buf, "off") || strstr(nam_buf, "thermal") || strchr(nam_buf, '='))
+                if ( i > 3 && (search_plain_identifier(nam_buf, "off") || search_plain_identifier(nam_buf, "thermal") || strchr(nam_buf, '=')))
                     break;
                 i++;
             }
@@ -4602,7 +4602,7 @@ int get_number_terminals(char *c)
                 char *inst = gettok_instance(&c);
                 strncpy(nam_buf, inst, sizeof(nam_buf) - 1);
                 txfree(inst);
-                if (strstr(nam_buf, "params") || strchr(nam_buf, '='))
+                if (search_plain_identifier(nam_buf, "params:") || strchr(nam_buf, '='))
                     break;
                 i++;
             }
@@ -4630,12 +4630,13 @@ int get_number_terminals(char *c)
             cc = copy(c);
             /* required to make m= 1 a single token m=1 */
             ccfree = cc = inp_remove_ws(cc);
-            /* find the first token with "off" or "=" in the line*/
+            /* find the first token with "off", "tnodeout", "thermal" or "=" in the line*/
             while ((i < 20) && (*cc != '\0')) {
                 char* inst = gettok_instance(&cc);
                 strncpy(nam_buf, inst, sizeof(nam_buf) - 1);
                 txfree(inst);
-                if (strstr(nam_buf, "off") || strchr(nam_buf, '=') || strstr(nam_buf, "tnodeout") || strstr(nam_buf, "thermal"))
+                if ( i > 4 && (search_plain_identifier(nam_buf, "off") || strchr(nam_buf, '=') ||
+                    search_plain_identifier(nam_buf, "tnodeout") || search_plain_identifier(nam_buf, "thermal")))
                     break;
                 i++;
             }

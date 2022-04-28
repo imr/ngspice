@@ -75,7 +75,7 @@ int substring_n(size_t n_char_pattern, const char *p_pattern,
         size_t n_char_str, const char *p_str);
 char *tprintf(const char *fmt, ...) ATTR_TPRINTF;
 char *tvprintf(const char *fmt, va_list args);
-
+char* itoa10(int val, char* buf);
 
 
 /* Allocate and create a copy of a string if the argument is not null or

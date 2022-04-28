@@ -38,6 +38,8 @@ static void if_set_binned_model(CKTcircuit *, char *, char *, struct dvec *);
  *   devhelp devname         : shows all parameters of that model/instance
  *   devhelp devname parname : shows parameter meaning
  *   Options: -csv (comma separated value for generating docs)
+ *            -type (show parameter types)
+ *            -flags (show parameter flags)
  */
 
 void
@@ -54,7 +56,9 @@ devhelp(wordlist *wl)
     int i, k = 0;
     int devindex = -1, devInstParNo = 0, devModParNo = 0;
     bool found = FALSE;
-    bool csv = FALSE;
+    bool print_type = FALSE;
+    bool print_flags = FALSE;
+    bool print_csv = FALSE;
     wordlist *wlist;
     IFparm *plist;
 
@@ -74,9 +78,17 @@ devhelp(wordlist *wl)
         return;
     }
 
-    /* The first argument must be the csv option or a device name */
-    if (wlist && wlist->wl_word && eq(wlist->wl_word, "-csv")) {
-        csv = TRUE;
+    while (TRUE) {
+        /* -type, -csv, -flags options can be passed as the initial arguments */
+        if (wlist && wlist->wl_word && eq(wlist->wl_word, "-type")) {
+            print_type = TRUE;
+        } else if (wlist && wlist->wl_word && eq(wlist->wl_word, "-flags")) {
+            print_flags = TRUE;
+        } else if (wlist && wlist->wl_word && eq(wlist->wl_word, "-csv")) {
+            print_csv = TRUE;
+        } else
+            break;
+
         if (wlist->wl_next)
             wlist = wlist->wl_next;
         else
@@ -123,11 +135,8 @@ devhelp(wordlist *wl)
                 found = TRUE;
                 out_init();
                 out_printf("Model Parameters\n");
-                if (csv)
-                    out_printf("id#, Name, Dir, Description\n");
-                else
-                    out_printf("%5s\t %-10s\t Dir\t Description\n", "id#", "Name");
-                printdesc(plist[i], csv);
+                printheaders(print_type, print_flags, print_csv);
+                printdesc(plist[i], print_type, print_flags, print_csv);
                 out_send("\n");
             }
         }
@@ -139,11 +148,7 @@ devhelp(wordlist *wl)
                     found = TRUE;
                     out_init();
                     out_printf("Instance Parameters\n");
-                    if (csv)
-                        out_printf("id#, Name, Dir, Description\n");
-                    else
-                        out_printf("%5s\t %-10s\t Dir\t Description\n", "id#", "Name");
-                    printdesc(plist[i], csv);
+                    printdesc(plist[i], print_type, print_flags, print_csv);
                     out_send("\n");
                 }
             }
@@ -159,26 +164,50 @@ devhelp(wordlist *wl)
     out_init();
     out_printf("%s - %s\n\n", ft_sim->devices[devindex]->name, ft_sim->devices[devindex]->description);
     out_printf("Model Parameters\n");
-    if (csv)
-        out_printf("id#, Name, Dir, Description\n");
-    else
-        out_printf("%5s\t %-10s\t Dir\t Description\n", "id#", "Name");
+    printheaders(print_type, print_flags, print_csv);
 
     plist = ft_sim->devices[devindex]->modelParms;
     for (i = 0; i < devModParNo; i++)
-        printdesc(plist[i], csv);
+        printdesc(plist[i], print_type, print_flags, print_csv);
     out_printf("\n");
     out_printf("Instance Parameters\n");
-    if (csv)
-        out_printf("id#, Name, Dir, Description\n");
-    else
-        out_printf("%5s\t %-10s\t Dir\t Description\n", "id#", "Name");
+    printheaders(print_type, print_flags, print_csv);
 
     plist = ft_sim->devices[devindex]->instanceParms;
     for (i = 0; i < devInstParNo; i++)
-        printdesc(plist[i], csv);
+        printdesc(plist[i], print_type, print_flags, print_csv);
 
     out_send("\n");
+}
+
+
+/*
+ * Print headers for printdesc()
+ */
+
+void
+printheaders(bool print_type, bool print_flags, bool csv)
+{
+    if (csv)
+        out_printf("id#, Name, Dir, ");
+    else
+        out_printf("%5s\t %-10s\t Dir\t ", "id#", "Name");
+
+    if (print_type) {
+        if (csv)
+            out_printf("Type, ");
+        else
+            out_printf("%-10s\t ", "Type");
+    }
+
+    if (print_flags) {
+        if (csv)
+            out_printf("Flags, ");
+        else
+            out_printf("%-6s\t ", "Flags");
+    }
+
+    out_printf("Description\n");
 }
 
 
@@ -188,23 +217,27 @@ devhelp(wordlist *wl)
  */
 
 void
-printdesc(IFparm p, bool csv)
+printdesc(IFparm p, bool print_type, bool print_flags, bool csv)
 {
     char sep;
-    int spacer1, spacer2;
+    int id_spacer, keyword_spacer, type_spacer, flags_spacer;
 
     /* First we indentify the separator */
     if (csv) {
         sep = ',';
-        spacer1 = 0;
-        spacer2 = 0;
+        id_spacer = 0;
+        keyword_spacer = 0;
+        type_spacer = 0;
+        flags_spacer = 0;
     } else {
         sep = '\t';
-        spacer1 = 5;
-        spacer2 = 10;
+        id_spacer = 5;
+        keyword_spacer = 10;
+        type_spacer = 10;
+        flags_spacer = 5;
     }
 
-    out_printf("%*d%c %-*s%c ", spacer1, p.id, sep, spacer2, p.keyword, sep);
+    out_printf("%*d%c %-*s%c ", id_spacer, p.id, sep, keyword_spacer, p.keyword, sep);
 
     if (p.dataType & IF_SET)
         if (p.dataType & IF_ASK)
@@ -213,6 +246,101 @@ printdesc(IFparm p, bool csv)
             out_printf("in%c ", sep);
     else
         out_printf("out%c ", sep);
+
+    if (print_type) {
+        switch (p.dataType & IF_VARTYPES) {
+        case IF_FLAG:
+            out_printf("%-*s%c ", type_spacer, "flag", sep);
+            break;
+        case IF_INTEGER:
+            out_printf("%-*s%c ", type_spacer, "integer", sep);
+            break;
+        case IF_REAL:
+            out_printf("%-*s%c ", type_spacer, "real", sep);
+            break;
+        case IF_COMPLEX:
+            out_printf("%-*s%c ", type_spacer, "complex", sep);
+            break;
+        case IF_NODE:
+            out_printf("%-*s%c ", type_spacer, "node", sep);
+            break;
+        case IF_INSTANCE:
+            out_printf("%-*s%c ", type_spacer, "instance", sep);
+            break;
+        case IF_STRING:
+            out_printf("%-*s%c ", type_spacer, "string", sep);
+            break;
+        case IF_PARSETREE:
+            out_printf("%-*s%c ", type_spacer, "parsetree", sep);
+            break;
+        case IF_VECTOR: /* A few variables have only the vector vartype bit set */
+            out_printf("%-*s%c ", type_spacer, "vector", sep);
+            break;
+        case IF_FLAGVEC:
+            out_printf("%-*s%c ", type_spacer, "flagvec", sep);
+            break;
+        case IF_INTVEC:
+            out_printf("%-*s%c ", type_spacer, "intvec", sep);
+            break;
+        case IF_REALVEC:
+            out_printf("%-*s%c ", type_spacer, "realvec", sep);
+            break;
+        case IF_CPLXVEC:
+            out_printf("%-*s%c ", type_spacer, "cplxvec", sep);
+            break;
+        case IF_NODEVEC:
+            out_printf("%-*s%c ", type_spacer, "nodevec", sep);
+            break;
+        case IF_INSTVEC:
+            out_printf("%-*s%c ", type_spacer, "instvec", sep);
+            break;
+        case IF_STRINGVEC:
+            out_printf("%-*s%c ", type_spacer, "stringvec", sep);
+            break;
+        default:
+            out_printf("%-*s%c ", type_spacer, "?????????", sep);
+        }
+    }
+
+    if (print_flags) {
+        char flags_str[20 + 1] = "";
+
+        if (p.dataType & IF_NONSENSE)
+            strncat(flags_str, "X", 20);
+
+        if (p.dataType & IF_SETQUERY)
+            strncat(flags_str, "Q", 20);
+
+        if (p.dataType & IF_CHKQUERY)
+            strncat(flags_str, "Z", 20);
+
+        if (p.dataType & IF_ORQUERY)
+            strncat(flags_str, "QO", 20);
+
+        if (p.dataType & IF_AC)
+            strncat(flags_str, "A", 20);
+
+        if (p.dataType & IF_PRINCIPAL)
+            strncat(flags_str, "P", 20);
+
+        if (p.dataType & IF_AC_ONLY)
+            strncat(flags_str, "AA", 20);
+
+        if (p.dataType & IF_NOISE)
+            strncat(flags_str, "N", 20);
+
+        if (p.dataType & IF_UNINTERESTING)
+            strncat(flags_str, "U", 20);
+
+        if (p.dataType & IF_REDUNDANT)
+            strncat(flags_str, "R", 20);
+
+        // Is empty?
+        if (flags_str[0] == '\0')
+            strncat(flags_str, "-", 20);
+
+        out_printf("%-*s%c ", flags_spacer, flags_str, sep);
+    }
 
     if (p.description)
         out_printf("%s\n", p.description);

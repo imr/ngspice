@@ -40,6 +40,7 @@ R5 Net-_C4-Pad1_ Net-_R4-Pad1_ 19.5k
 .probe v(tj1) v(tj2) v(tcase1) v(tcase2) v(in) v(out)
 .probe i(m1:s) vd(m2:s, m1:s) vd(M2:1:3)
 .probe alli
+.probe p(M2) p(M1) p(XU1)
 .save @m1[id] @m2[id] ; in out
 .control
 set controlswait
@@ -52,8 +53,14 @@ rusage
 settype temperature  tj1 tj2 tcase1 tcase2
 plot tj1 tj2 tcase1 tcase2
 plot in out xlimit 6 6.04
-plot i(u1:vcc-) i(u1:vcc+)*(-1) xlimit 6 6.04
+plot i(xu1:vcc-) i(xu1:vcc+)*(-1) xlimit 6 6.04
 plot @m1[id] + i(m1:d) xlimit 9 9.04
+settype power m1:power m2:power xu1:power
+plot  m1:power m2:power ylimit 11 21
+plot xu1:power
+meas tran m1power avg  m1:power
+meas tran m2power avg  m2:power
+meas tran U1power avg  xu1:power
 end
 .endc
 .end
