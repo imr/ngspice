@@ -631,6 +631,8 @@ com_write_sparam(wordlist *wl)
     else
         file = "s_param.s2p";
 
+    fprintf(stderr, "Note: only 2 ports 1 and 2 are supported by wrs2p\n");
+
     /* generate wordlist with all vectors required*/
     sbuf[0] = "frequency";
     sbuf[1] = "S_1_1";
