@@ -283,8 +283,8 @@ struct CKTcircuit {
 #endif
 /* gtri - evt - wbk - 5/20/91 - add event-driven and enhancements data */
 #ifdef RFSPICE
-    unsigned int  CKTactivePort;/* Identify active port during S-Param analysis*/
-    unsigned int  CKTportCount; /* Number of RF ports */
+    int  CKTactivePort;/* Identify active port during S-Param analysis*/
+    int  CKTportCount; /* Number of RF ports */
     int           CKTVSRCid;    /* Place holder for VSRC Devices id*/
     GENinstance** CKTrfPorts;   /* List of all RF ports (HB & SP) */
     CMat* CKTAmat;
@@ -295,7 +295,7 @@ struct CKTcircuit {
     // Data for RF Noise Calculations
     double* CKTportY;
     CMat* CKTNoiseCYmat;
-    unsigned int CKTnoiseSourceCount;
+    int CKTnoiseSourceCount;
     CMat* CKTadjointRHS;       // Matrix where Znj are stored. Znj = impedance from j-th noise source to n-th port
 #endif
 #ifdef WITH_PSS
@@ -460,9 +460,9 @@ extern int DCpss(CKTcircuit *, int);
 extern int SPan(CKTcircuit*, int);
 extern int SPaskQuest(CKTcircuit*, JOB*, int, IFvalue*);
 extern int SPsetParm(CKTcircuit*, JOB*, int, IFvalue*);
-extern int CKTspDump(CKTcircuit*, double, runDesc*, unsigned int);
+extern int CKTspDump(CKTcircuit*, double, runDesc*, int);
 extern int CKTspLoad(CKTcircuit*);
-extern unsigned int CKTmatrixIndex(CKTcircuit*, unsigned int, unsigned int);
+extern int CKTmatrixIndex(CKTcircuit*, int, int);
 extern int CKTspCalcPowerWave(CKTcircuit* ckt);
 extern int CKTspCalcSMatrix(CKTcircuit* ckt);
 #endif

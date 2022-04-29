@@ -24,8 +24,8 @@ VSRCtemp(GENmodel *inModel, CKTcircuit *ckt)
 
 #ifdef RFSPICE
     ckt->CKTportCount = 0;
-    unsigned int* portIDs;
-    unsigned int  prevPort;
+    int* portIDs;
+    int  prevPort;
 #endif
 
     /*  loop through all the voltage source models */
@@ -114,11 +114,11 @@ VSRCtemp(GENmodel *inModel, CKTcircuit *ckt)
     }
 
 #ifdef RFSPICE
-    portIDs = (unsigned int*)malloc(ckt->CKTportCount * sizeof(unsigned int));
+    portIDs = (int*)malloc((size_t)ckt->CKTportCount * sizeof(int));
     if (portIDs == NULL)
         return (E_NOMEM);
 
-    unsigned int curport = 0;
+    int curport = 0;
 
     // Sweep thru all ports to check for correct indexing
 
@@ -130,7 +130,7 @@ VSRCtemp(GENmodel *inModel, CKTcircuit *ckt)
 
             if (!here->VSRCisPort) continue;
 
-            unsigned int curId = here->VSRCportNum;
+            int curId = here->VSRCportNum;
             // If port Index > port Count then we have either a duplicate number or a missing number
             if (curId > ckt->CKTportCount)
             {
