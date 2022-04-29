@@ -218,7 +218,7 @@ message(dico_t *dico, const char *fmt, ...)
 {
     va_list ap;
 
-    if (dico->srcline >= 0)
+    if (dico->srcline >= 0) {
         if (ft_ngdebug) {
             fprintf
             (stderr,
@@ -231,6 +231,7 @@ message(dico_t *dico, const char *fmt, ...)
                 "Netlist line no. %d:\n",
                 dico->oldline);
         }
+    }
 
     va_start(ap, fmt);
     vfprintf(stderr, fmt, ap);
