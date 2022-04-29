@@ -99,7 +99,7 @@ typedef struct sVSRCinstance {
     unsigned  VSRCisPort : 1;           /* Flag indicating if this is a port*/
     double       VSRCVAmplitude;        /* Support variable: Open Circuit Port Voltage */
     double       VSRC2pifreq;           /* Calculate 2*pi*freq once */
-    unsigned int VSRCportNum;           /* Port index*/
+    int          VSRCportNum;           /* Port index*/
     double       VSRCportZ0;            /* Port internal impedance*/
     double       VSRCportY0;            /* Port internal admittance*/
     double       VSRCportPower;         /* Port power (W) for HB analysis */
@@ -188,7 +188,5 @@ enum {
 /* device questions */
 
 /* model questions */
-
-#include "vsrcext.h"
 
 #endif /*VSRC*/

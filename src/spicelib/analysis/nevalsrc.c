@@ -68,10 +68,10 @@ NevalSrc(double* noise, double* lnNoise, CKTcircuit* ckt, int type, int node1, i
         }
         inoise = sqrt(inoise);
         // Calculate input equivalent noise current source (we have port impedance attached)
-        for (unsigned int s = 0; s < ckt->CKTportCount; s++)
+        for (int s = 0; s < ckt->CKTportCount; s++)
             vNoise->d[0][s] = cmultdo(csubco(ckt->CKTadjointRHS->d[s][node1], ckt->CKTadjointRHS->d[s][node2]), inoise);
 
-        for (unsigned int d = 0; d < ckt->CKTportCount; d++)
+        for (int d = 0; d < ckt->CKTportCount; d++)
         {
             cplx in;
             double yport = 1.0 / zref->d[d][d].re;
@@ -79,15 +79,15 @@ NevalSrc(double* noise, double* lnNoise, CKTcircuit* ckt, int type, int node1, i
             in.re = vNoise->d[0][d].re * yport;
             in.im = vNoise->d[0][d].im * yport;
 
-            for (unsigned int s = 0; s < ckt->CKTportCount; s++)
+            for (int s = 0; s < ckt->CKTportCount; s++)
                 caddc(&in, in, cmultco(ckt->CKTYmat->d[d][s], vNoise->d[0][s]));
 
             iNoise->d[0][d] = in;
         }
 
 
-        for (unsigned int d = 0; d < ckt->CKTportCount; d++)
-            for (unsigned int s = 0; s < ckt->CKTportCount; s++)
+        for (int d = 0; d < ckt->CKTportCount; d++)
+            for (int s = 0; s < ckt->CKTportCount; s++)
                 ckt->CKTNoiseCYmat->d[d][s] = caddco(ckt->CKTNoiseCYmat->d[d][s], cmultco(iNoise->d[0][d], conju(iNoise->d[0][s])));
 
         return;
@@ -194,7 +194,7 @@ NevalSrc2(
 
         knoise = sqrt(knoise);
         // Calculate input equivalent noise current source (we have port impedance attached)
-        for (unsigned int s = 0; s < ckt->CKTportCount; s++)
+        for (int s = 0; s < ckt->CKTportCount; s++)
         {
             cplx vNoiseA = cmultdo(csubco(ckt->CKTadjointRHS->d[s][node1], ckt->CKTadjointRHS->d[s][node2]), knoise * sqrt(param1));
             cplx vNoiseB = cmultco(cmultdo(csubco(ckt->CKTadjointRHS->d[s][node3], ckt->CKTadjointRHS->d[s][node4]), knoise * sqrt(param1)), cfact);
@@ -202,7 +202,7 @@ NevalSrc2(
             vNoise->d[0][s] = caddco(vNoiseA, vNoiseB);
         }
 
-        for (unsigned int d = 0; d < ckt->CKTportCount; d++)
+        for (int d = 0; d < ckt->CKTportCount; d++)
         {
             double yport = 1.0 / zref->d[d][d].re;
 
@@ -210,15 +210,15 @@ NevalSrc2(
             in.re = vNoise->d[0][d].re * yport;
             in.im = vNoise->d[0][d].im * yport;
 
-            for (unsigned int s = 0; s < ckt->CKTportCount; s++)
+            for (int s = 0; s < ckt->CKTportCount; s++)
                 caddc(&in, in, cmultco(ckt->CKTYmat->d[d][s], vNoise->d[0][s]));
 
             iNoise->d[0][d] = in;
         }
 
 
-        for (unsigned int d = 0; d < ckt->CKTportCount; d++)
-            for (unsigned int s = 0; s < ckt->CKTportCount; s++)
+        for (int d = 0; d < ckt->CKTportCount; d++)
+            for (int s = 0; s < ckt->CKTportCount; s++)
                 ckt->CKTNoiseCYmat->d[d][s] = caddco(ckt->CKTNoiseCYmat->d[d][s], cmultco(iNoise->d[0][d], conju(iNoise->d[0][s])));
 
         return;
@@ -303,10 +303,10 @@ NevalSrcInstanceTemp(double* noise, double* lnNoise, CKTcircuit* ckt, int type,
 
         inoise = sqrt(inoise);
         // Calculate input equivalent noise current source (we have port impedance attached)
-        for (unsigned int s = 0; s < ckt->CKTportCount; s++)
+        for (int s = 0; s < ckt->CKTportCount; s++)
             vNoise->d[0][s] = cmultdo(csubco(ckt->CKTadjointRHS->d[s][node1], ckt->CKTadjointRHS->d[s][node2]), inoise);
 
-        for (unsigned int d = 0; d < ckt->CKTportCount; d++)
+        for (int d = 0; d < ckt->CKTportCount; d++)
         {
             cplx in;
             double yport = 1.0 / zref->d[d][d].re;
@@ -314,15 +314,15 @@ NevalSrcInstanceTemp(double* noise, double* lnNoise, CKTcircuit* ckt, int type,
             in.re = vNoise->d[0][d].re * yport;
             in.im = vNoise->d[0][d].im * yport;
 
-            for (unsigned int s = 0; s < ckt->CKTportCount; s++)
+            for (int s = 0; s < ckt->CKTportCount; s++)
                 caddc(&in, in, cmultco(ckt->CKTYmat->d[d][s], vNoise->d[0][s]));
 
             iNoise->d[0][d] = in;
         }
 
 
-        for (unsigned int d = 0; d < ckt->CKTportCount; d++)
-            for (unsigned int s = 0; s < ckt->CKTportCount; s++)
+        for (int d = 0; d < ckt->CKTportCount; d++)
+            for (int s = 0; s < ckt->CKTportCount; s++)
                 ckt->CKTNoiseCYmat->d[d][s] = caddco(ckt->CKTNoiseCYmat->d[d][s], cmultco(iNoise->d[0][d], conju(iNoise->d[0][s])));
 
         return;

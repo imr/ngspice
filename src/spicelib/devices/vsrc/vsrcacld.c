@@ -67,7 +67,7 @@ int VSRCgetActivePorts(GENmodel* inModel, CKTcircuit* ckt, VSRCinstance** ports)
 {
     if (!(ckt->CKTmode & MODESP))
         return (OK);
-    for (unsigned int n = 0; n < ckt->CKTportCount; n++)
+    for (int n = 0; n < ckt->CKTportCount; n++)
         ports[n] = NULL;
 
     VSRCmodel* model = (VSRCmodel*)inModel;

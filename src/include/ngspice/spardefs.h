@@ -25,8 +25,8 @@ typedef struct {
 
     unsigned SPdoNoise : 1; /* Flag to indicate if SP noise must be calculated*/
 
-    unsigned int SPnoiseInput;
-    unsigned int SPnoiseOutput;
+    int SPnoiseInput;
+    int SPnoiseOutput;
 } SPAN;
 
 /* available step types: XXX should be somewhere else */
