@@ -1108,7 +1108,7 @@ HICUMload(GENmodel *inModel, CKTcircuit *ckt)
 
         // Model_initialization
         int selfheat = ((model->HICUMflsh > 0) && (model->HICUMrthGiven) && (model->HICUMrth > 0.0));
-        int nqs      = ((model->HICUMflnqs != 0 || model->HICUMflcomp < 2.3) && (model->HICUMalit > 0 || model->HICUMalqf > 0));
+        int nqs      = ((model->HICUMflnqs != 0 || model->HICUMflcomp < 2.3) && (model->HICUMt0Given) && (model->HICUMt0 > 0.0) && (model->HICUMalit > 0 || model->HICUMalqf > 0));
 
         // Avoid divide-by-zero and define infinity other way
         // High current correction for 2D and 3D effects
