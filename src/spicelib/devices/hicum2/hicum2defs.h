@@ -720,6 +720,10 @@ typedef struct sHICUMmodel {           /* model structure for a hicum */
     double HICUMvbcMax; /* maximum voltage over B-C junction */
     double HICUMvceMax; /* maximum voltage over C-E branch */
 
+//Model internal switches
+    int HICUMselfheat;
+    int HICUMnqs;
+
 //Circuit simulator specific parameters
     unsigned HICUMtypeGiven : 1;
     unsigned HICUMtnomGiven : 1;
