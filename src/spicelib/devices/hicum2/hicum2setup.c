@@ -474,7 +474,7 @@ HICUMsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             model->HICUMvceMax = 1e99;
 
         int selfheat = (((model->HICUMflsh == 1) || (model->HICUMflsh == 2)) && (model->HICUMrthGiven) && (model->HICUMrth > 0.0));
-        int nqs      = ( (model->HICUMflnqs != 0 || model->HICUMflcomp < 2.3) && (model->HICUMalit > 0 || model->HICUMalqf > 0));
+        int nqs      = ((model->HICUMflnqs != 0 || model->HICUMflcomp < 2.3) && (model->HICUMt0Given) && (model->HICUMt0 > 0.0) && (model->HICUMalit > 0 || model->HICUMalqf > 0));
 
         /* loop through all the instances of the model */
         for (here = HICUMinstances(model); here != NULL ;
