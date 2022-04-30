@@ -1,6 +1,7 @@
 /* udevices.c translate PSPICE U* instances and timing models */
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include <string.h>
 #include <ctype.h>
 #include <assert.h>
@@ -8,6 +9,7 @@
 #include "ngspice/memory.h"
 #include "ngspice/bool.h"
 #include "ngspice/stringskip.h"
+#include "ngspice/stringutil.h"
 #include "ngspice/udevices.h"
 /*
  TODO check for name collisions with new names
@@ -16,8 +18,6 @@
  TODO investigate the method for generating model names
 */
 
-#define BUFSIZE 2048
-#define SMBUFSIZE 256
 /* #define TRACE */
 
 /* device types */
@@ -254,7 +254,11 @@ static char *find_xspice_for_delay(char *itype)
     return NULL;
 }
 
-/* Xlator and Xlate */
+/*
+  Xlator and Xlate
+  Xlate struct data is stored in an Xlatorp list struct
+  Used to save translated instance and model statements
+*/
 static void delete_xlate(Xlatep p)
 {
     if (p) {
@@ -426,16 +430,34 @@ static void interpret_xlator(Xlatorp xp, BOOL brief)
 
 /* static Xlatorp for collecting timing model delays */
 static Xlatorp model_xlatorp = NULL;
+static Xlatorp default_models = NULL;
 
 void create_model_xlator(void)
 {
+    Xlatep xdata;
+
     model_xlatorp = create_xlator();
+    default_models = create_xlator();
+    /*  .model d0_gate ugate ()  */
+    xdata = create_xlate("", "", "ugate", "", "d0_gate", "");
+    (void) add_xlator(default_models, xdata);
+    /*  .model d0_gff ugff ()  */
+    xdata = create_xlate("", "", "ugff", "", "d0_gff", "");
+    (void) add_xlator(default_models, xdata);
+    /*  .model d0_eff ueff ()  */
+    xdata = create_xlate("", "", "ueff", "", "d0_eff", "");
+    (void) add_xlator(default_models, xdata);
+    /*  .model d0_tgate utgate ()  */
+    xdata = create_xlate("", "", "utgate", "", "d0_tgate", "");
+    (void) add_xlator(default_models, xdata);
 }
 
 void cleanup_model_xlator(void)
 {
     delete_xlator(model_xlatorp);
     model_xlatorp = NULL;
+    delete_xlator(default_models);
+    default_models = NULL;
 }
 
 static Xlatep create_xlate_model(char *delays,
@@ -444,14 +466,13 @@ static Xlatep create_xlate_model(char *delays,
     return create_xlate("", delays, utype, xspice, tmodel, "");
 }
 
-static Xlatep find_in_model_xlator(Xlatep x)
+static Xlatep find_in_xlator(Xlatep x, Xlatorp xlp)
 {
     Xlatep x1;
 
     if (!x) { return NULL; }
-    if (!model_xlatorp) { return NULL; }
-    for (x1 = first_xlator(model_xlatorp); x1;
-        x1 = next_xlator(model_xlatorp)) {
+    if (!xlp) { return NULL; }
+    for (x1 = first_xlator(xlp); x1; x1 = next_xlator(xlp)) {
         if (strcmp(x1->tmodel, x->tmodel) == 0 &&
             strcmp(x1->utype, x->utype) == 0) {
             if (strcmp(x1->xspice, x->xspice) == 0) {
@@ -460,6 +481,15 @@ static Xlatep find_in_model_xlator(Xlatep x)
         }
     }
     return NULL;
+}
+static Xlatep find_in_model_xlator(Xlatep x)
+{
+    Xlatep x1;
+
+    x1 = find_in_xlator(x, model_xlatorp);
+    if (x1) { return x1; }
+    x1 = find_in_xlator(x, default_models);
+    return x1;
 }
 
 static void add_delays_to_model_xlator(char *delays,
@@ -475,8 +505,10 @@ static void add_delays_to_model_xlator(char *delays,
     x = create_xlate_model(delays, utype, xspice, tmodel);
     x1 = find_in_model_xlator(x);
     if (x1) {
+/*
         printf("Already found timing model %s utype %s\n",
              x1->tmodel, x1->utype);
+*/
         delete_xlate(x);
         return;
     }
@@ -919,23 +951,17 @@ char *new_inverter(char *iname, char *node, Xlatorp xlp)
     /* Return the name of the output of the new inverter */
     /* tfree the returned string after it has been used ny the caller */
     char *tmp = NULL;
-    size_t sz;
     Xlatep xdata = NULL;
 
-    sz = 2*strlen(iname) + 3*strlen(node) + strlen("d_zero_inv99");
-    sz += 100; /* that should be enough */
-    tmp = TMALLOC(char, sz);
-    tmp[0] = '\0';
-    sprintf(tmp, "a%s_%s  %s", iname, node, node);
-    sprintf(tmp + strlen(tmp), "  not_%s_%s", iname, node);
-    sprintf(tmp + strlen(tmp), "  d_zero_inv99");
+    tmp = tprintf("a%s_%s  %s  not_%s_%s  d_zero_inv99",
+        iname, node, node, iname, node);
     /* instantiate the new inverter */
     /* e.g. au5_s1bar  s1bar  not_u5_s1bar  d_zero_inv99 */
     xdata = create_xlate_translated(tmp);
     (void) add_xlator(xlp, xdata);
-    tmp[0] = '\0';
+    tfree(tmp);
     /* the name of the inverter output */
-    sprintf(tmp, "not_%s_%s", iname, node);
+    tmp = tprintf("not_%s_%s", iname, node);
     return tmp;
 }
 
@@ -951,10 +977,9 @@ static BOOL gen_timing_model(
       xspice instance and model lines (not to be confused with model_xlatorp.
     */
     Xlatep xin = NULL, xout = NULL, newdata;
-    char work[BUFSIZE];
+    char *s1;
     BOOL retval;
 
-    printf("Need model %s %s for %s\n", tmodel, xspice, newname);
     if (strcmp(utype, "ugff") == 0) {
         xin = create_xlate_model("", utype, xspice, tmodel);
     } else {
@@ -963,14 +988,14 @@ static BOOL gen_timing_model(
     xout = find_in_model_xlator(xin);
     if (xout) {
         /* Don't delete xout or the model_xlatorp will be corrupted */
-        //printf("Found tming model %s %s\n", xout->tmodel, xout->utype);
         print_xlate(xout);
-        work[0] = '\0';
-        sprintf(work, ".model %s %s", newname, xspice);
         if (xout->delays && strlen(xout->delays) > 0) {
-            sprintf(work + strlen(work), "%s", xout->delays);
+            s1 = tprintf(".model %s %s%s", newname, xspice, xout->delays);
+        } else {
+            s1 = tprintf(".model %s %s", newname, xspice);
         }
-        newdata = create_xlate_translated(work);
+        newdata = create_xlate_translated(s1);
+        tfree(s1);
         (void) add_xlator(xlp, newdata);
         retval = TRUE;
     } else {
@@ -986,8 +1011,7 @@ static Xlatorp gen_dff_instance(struct dff_instance *ip)
     char *itype, *iname, **darr, **qarr, **qbarr;
     char *preb, *clrb, *clk, *tmodel, *qout, *qbout;
     int i, num_gates;
-    char work[BUFSIZE];
-    char smallbuf[SMBUFSIZE];
+    char *modelnm, *s1;
     Xlatorp xxp = NULL;
     Xlatep xdata = NULL;
     BOOL need_preb_inv = FALSE, need_clrb_inv = FALSE;
@@ -1019,31 +1043,27 @@ static Xlatorp gen_dff_instance(struct dff_instance *ip)
 
     clk = ip->clk;
     tmodel = ip->tmodel;
-    smallbuf[0] = '\0';
     /* model name, same for each dff */
-    sprintf(smallbuf, "d_a%s%s", iname, itype);
+    modelnm = tprintf("d_a%s%s", iname, itype);
     for (i = 0; i < num_gates; i++) {
-        work[0] = '\0';
-        sprintf(work, "a%s_%d", iname, i);
-        sprintf(work + strlen(work), "  %s  %s  %s  %s",
-            darr[i], clk, preb, clrb);
         qout = qarr[i];
         if (strcmp(qout, "$d_nc") == 0) {
             qout = "NULL";
         }
-        sprintf(work + strlen(work), "  %s", qout);
         qbout = qbarr[i];
         if (strcmp(qbout, "$d_nc") == 0) {
             qbout = "NULL";
         }
-        sprintf(work + strlen(work), "  %s", qbout);
-        sprintf(work + strlen(work), "  %s", smallbuf);
-        xdata = create_xlate_instance(work, " d_dff", tmodel, smallbuf);
+        s1 = tprintf( "a%s_%d  %s  %s  %s  %s  %s  %s  %s",
+            iname, i, darr[i], clk, preb, clrb, qout, qbout, modelnm
+        );
+        xdata = create_xlate_instance(s1, " d_dff", tmodel, modelnm);
         xxp = add_xlator(xxp, xdata);
+        tfree(s1);
     }
-    if (!gen_timing_model(tmodel, "ueff", "d_dff", smallbuf, xxp)) {
+    if (!gen_timing_model(tmodel, "ueff", "d_dff", modelnm, xxp)) {
         printf("WARNING unable to find tmodel %s for %s d_dff\n",
-            tmodel, smallbuf);
+            tmodel, modelnm);
     }
     if (need_preb_inv || need_clrb_inv) {
         xdata = create_xlate_translated(".model d_zero_inv99 d_inverter");
@@ -1051,6 +1071,7 @@ static Xlatorp gen_dff_instance(struct dff_instance *ip)
     }
     if (need_preb_inv) { tfree(preb); }
     if (need_clrb_inv) { tfree(clrb); }
+    tfree(modelnm);
 
     return xxp;
     return NULL;
@@ -1061,8 +1082,7 @@ static Xlatorp gen_jkff_instance(struct jkff_instance *ip)
     char *itype, *iname, **jarr, **karr, **qarr, **qbarr;
     char *preb, *clrb, *clkb, *tmodel, *qout, *qbout;
     int i, num_gates;
-    char work[BUFSIZE];
-    char smallbuf[SMBUFSIZE];
+    char *modelnm, *s1;
     Xlatorp xxp = NULL;
     Xlatep xdata = NULL;
     BOOL need_preb_inv = FALSE, need_clrb_inv = FALSE;
@@ -1098,39 +1118,36 @@ static Xlatorp gen_jkff_instance(struct jkff_instance *ip)
     clkb = new_inverter(iname, clkb, xxp);
 
     tmodel = ip->tmodel;
-    smallbuf[0] = '\0';
     /* model name, same for each latch */
-    sprintf(smallbuf, "d_a%s%s", iname, itype);
+    modelnm = tprintf("d_a%s%s", iname, itype);
     for (i = 0; i < num_gates; i++) {
-        work[0] = '\0';
-        sprintf(work, "a%s_%d", iname, i);
-        sprintf(work + strlen(work), "  %s  %s  %s  %s  %s",
-            jarr[i], karr[i], clkb, preb, clrb);
         qout = qarr[i];
         if (strcmp(qout, "$d_nc") == 0) {
             qout = "NULL";
         }
-        sprintf(work + strlen(work), "  %s", qout);
         qbout = qbarr[i];
         if (strcmp(qbout, "$d_nc") == 0) {
             qbout = "NULL";
         }
-        sprintf(work + strlen(work), "  %s  %s", qbout, smallbuf);
-        xdata = create_xlate_instance(work, " d_jkff", tmodel, smallbuf);
+        s1 = tprintf("a%s_%d  %s  %s  %s  %s  %s  %s  %s  %s",
+            iname, i, jarr[i], karr[i], clkb, preb, clrb, qout, qbout, modelnm
+        );
+        xdata = create_xlate_instance(s1, " d_jkff", tmodel, modelnm);
         xxp = add_xlator(xxp, xdata);
+        tfree(s1);
     }
-    if (!gen_timing_model(tmodel, "ueff", "d_jkff", smallbuf, xxp)) {
+    if (!gen_timing_model(tmodel, "ueff", "d_jkff", modelnm, xxp)) {
         printf("WARNING unable to find tmodel %s for %s d_jkff\n",
-            tmodel, smallbuf);
+            tmodel, modelnm);
     }
     xdata = create_xlate_translated(".model d_zero_inv99 d_inverter");
     xxp = add_xlator(xxp, xdata);
     tfree(clkb);
     if (need_preb_inv) { tfree(preb); }
     if (need_clrb_inv) { tfree(clrb); }
+    tfree(modelnm);
 
     return xxp;
-    return NULL;
 }
 
 static Xlatorp gen_dltch_instance(struct dltch_instance *ip)
@@ -1138,8 +1155,7 @@ static Xlatorp gen_dltch_instance(struct dltch_instance *ip)
     char *itype, *iname, **darr, **qarr, **qbarr;
     char *preb, *clrb, *gate, *tmodel, *qout, *qbout;
     int i, num_gates;
-    char work[BUFSIZE];
-    char smallbuf[SMBUFSIZE];
+    char *modelnm, *s1, *s2, *s3;
     Xlatorp xxp = NULL;
     Xlatep xdata = NULL;
     BOOL need_preb_inv = FALSE, need_clrb_inv = FALSE;
@@ -1169,35 +1185,35 @@ static Xlatorp gen_dltch_instance(struct dltch_instance *ip)
     }
     gate = ip->gate;
     tmodel = ip->tmodel;
-    smallbuf[0] = '\0';
     /* model name, same for each latch */
-    sprintf(smallbuf, "d_a%s%s", iname, itype);
+    modelnm = tprintf("d_a%s%s", iname, itype);
     for (i = 0; i < num_gates; i++) {
-        work[0] = '\0';
-        sprintf(work, "a%s_%d", iname, i);
-        sprintf(work + strlen(work), "  %s  %s  %s  %s",
-            darr[i], gate, preb, clrb);
         qout = qarr[i];
         if (strcmp(qout, "$d_nc") == 0) {
             /* NULL not allowed??? */
-            sprintf(work + strlen(work), "  nco%s_%d", iname, i);
+            s1 = tprintf("a%s_%d  %s  %s  %s  %s  nco%s_%d",
+                iname, i, darr[i], gate, preb, clrb, iname, i);
         } else {
-            sprintf(work + strlen(work), "  %s", qout);
+            s1 = tprintf("a%s_%d  %s  %s  %s  %s  %s",
+                iname, i, darr[i], gate, preb, clrb, qout);
         }
         qbout = qbarr[i];
         if (strcmp(qbout, "$d_nc") == 0) {
             /* NULL not allowed??? */
-            sprintf(work + strlen(work), " ncn%s_%d", iname, i);
+            s2 = tprintf(" ncn%s_%d  %s", iname, i, modelnm);
         } else {
-            sprintf(work + strlen(work), "  %s", qbout);
+            s2 = tprintf("  %s  %s", qbout, modelnm);
         }
-        sprintf(work + strlen(work), "  %s", smallbuf);
-        xdata = create_xlate_instance(work, " d_dlatch", tmodel, smallbuf);
+        s3 = tprintf("%s%s", s1, s2);
+        xdata = create_xlate_instance(s3, " d_dlatch", tmodel, modelnm);
         xxp = add_xlator(xxp, xdata);
+        tfree(s1);
+        tfree(s2);
+        tfree(s3);
     }
-    if (!gen_timing_model(tmodel, "ugff", "d_dlatch", smallbuf, xxp)) {
+    if (!gen_timing_model(tmodel, "ugff", "d_dlatch", modelnm, xxp)) {
         printf("WARNING unable to find tmodel %s for %s d_dlatch\n",
-            tmodel, smallbuf);
+            tmodel, modelnm);
     }
     if (need_preb_inv || need_clrb_inv) {
         xdata = create_xlate_translated(".model d_zero_inv99 d_inverter");
@@ -1205,6 +1221,7 @@ static Xlatorp gen_dltch_instance(struct dltch_instance *ip)
     }
     if (need_preb_inv) { tfree(preb); }
     if (need_clrb_inv) { tfree(clrb); }
+    tfree(modelnm);
 
     return xxp;
 }
@@ -1212,18 +1229,18 @@ static Xlatorp gen_dltch_instance(struct dltch_instance *ip)
 static Xlatorp gen_gate_instance(struct gate_instance *gip)
 {
     char **inarr, **outarr, *itype, *iname, *enable, *tmodel;
-    char *work, *xspice = NULL, *connector = NULL;
+    char *xspice = NULL, *connector = NULL;
     BOOL vector = FALSE, tristate_gate = FALSE, simple_gate = FALSE;
     BOOL tristate_array = FALSE, simple_array = FALSE;
     BOOL add_tristate = FALSE;
-    char smallbuf[SMBUFSIZE], modelbuf[SMBUFSIZE];
+    char *modelnm = NULL, *startvec = NULL, *endvec = NULL;
+    char *input_buf = NULL;
     int i, j, k, width, num_gates, num_ins, num_outs;
     size_t sz;
     Xlatorp xxp = NULL;
     Xlatep xdata = NULL;
 
     if (!gip) { return NULL; }
-    smallbuf[0] = '\0';
     itype = gip->hdrp->instance_type;
     iname = gip->hdrp->instance_name;
     inarr = gip->inputs;
@@ -1238,6 +1255,7 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
     vector = has_vector_inputs(itype);
 
     if (num_gates == 1) {
+        char *inst_begin = NULL;
         assert(num_outs == 1);
         simple_gate = is_gate(itype);
         tristate_gate = is_tristate(itype);
@@ -1256,53 +1274,76 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
         }
         assert(xspice);
         xxp = create_xlator();
-        work = TMALLOC(char, BUFSIZE);
-        work[0] = '\0';
         /* Now build the instance name and inputs section */
-        /* instance name */
-        sprintf(work, "a%s ", iname);
-        if (vector) { strcat(work, "["); }
-        /* inputs */
-        for (i = 0; i < width; i++) {
-            sprintf(work + strlen(work), " %s", inarr[i]);
+        if (vector) {
+            startvec = "[";
+            endvec = " ]";
+        } else {
+            startvec = "";
+            endvec = "";
         }
-        if (vector) { strcat(work, " ]"); }
+        /* inputs */
+        /* First calculate the space */
+        sz = 0;
+        for (i = 0; i < width; i++) {
+            sz += strlen(inarr[i]) + 4; // Extra 4 spaces separating
+        }
+        input_buf = TMALLOC(char, sz);
+        input_buf[0] = '\0';
+        for (i = 0; i < width; i++) {
+            sprintf(input_buf + strlen(input_buf), " %s", inarr[i]);
+        }
+        /* instance name and inputs */
         /* add the tristate enable if required on original */
         if (enable) {
             assert(tristate_gate);
             if (!add_tristate) {
-                sprintf(work + strlen(work),"  %s", enable);
+                /* Warning: changing the format string affects input_buf sz */
+                inst_begin = tprintf("a%s %s%s%s  %s",
+                    iname, startvec, input_buf, endvec, enable);
+            } else {
+                /* Warning: changing the format string affects input_buf sz */
+                inst_begin = tprintf("a%s %s%s%s",
+                    iname, startvec, input_buf, endvec);
             }
+        } else {
+            /* Warning: changing the format string affects input_buf sz */
+            inst_begin = tprintf("a%s %s%s%s",
+                iname, startvec, input_buf, endvec);
         }
+        tfree(input_buf);
+
         /* connector if required for tristate */
-        sprintf(smallbuf, "a%s_%s", iname, outarr[0]);
-        connector = TMALLOC(char, strlen(smallbuf) + 1);
-        connector[0] = '\0';
-        (void) memcpy(connector, smallbuf, strlen(smallbuf) + 1);
+        connector = tprintf("a%s_%s", iname, outarr[0]);
 
         /* keep a copy of the model name of original gate */
-        modelbuf[0] = '\0';
-        sprintf(modelbuf, "d_a%s%s", iname, itype);
+        modelnm = tprintf("d_a%s%s", iname, itype);
 
         if (!add_tristate) {
+            char *instance_stmt = NULL;
             /* add output + model name  => translated instance */
-            sprintf(work + strlen(work), " %s %s", outarr[0], modelbuf);
-            xdata = create_xlate_instance(work, xspice, tmodel, modelbuf);
+            instance_stmt = tprintf("%s %s %s",
+                                    inst_begin, outarr[0], modelnm);
+            xdata = create_xlate_instance(instance_stmt,
+                                          xspice, tmodel, modelnm);
             xxp = add_xlator(xxp, xdata);
+            tfree(instance_stmt);
             if (simple_gate) {
                 if (!gen_timing_model(tmodel, "ugate", xspice,
-                    modelbuf, xxp)) {
+                    modelnm, xxp)) {
                     printf("WARNING unable to find tmodel %s for %s %s\n",
-                        tmodel, modelbuf, xspice);
+                        tmodel, modelnm, xspice);
                 }
             } else { /* must be trstate gate buf3 */
                 if (!gen_timing_model(tmodel, "utgate", xspice,
-                    modelbuf, xxp)) {
+                    modelnm, xxp)) {
                     printf("WARNING unable to find tmodel %s for %s %s\n",
-                        tmodel, modelbuf, xspice);
+                        tmodel, modelnm, xspice);
                 }
             }
         } else {
+            char *new_model_nm = NULL;
+            char *new_stmt = NULL;
             /*
              Use connector as original gate output and tristate input;
              tristate has original gate output and utgate delay;
@@ -1310,34 +1351,39 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
              Complete the translation of the original gate adding
              the connector as output + model name.
             */
-            sprintf(work + strlen(work), " %s %s", connector, modelbuf);
-            xdata = create_xlate_instance(work, xspice, "", modelbuf);
+            new_stmt = tprintf("%s %s %s", inst_begin, connector, modelnm);
+            xdata = create_xlate_instance(new_stmt, xspice, "", modelnm);
             xxp = add_xlator(xxp, xdata);
+            tfree(new_stmt);
             /* new model statement e.g.   .model d_au2nand3 d_nand */
-            work[0] = '\0';
-            sprintf(work, ".model %s %s", modelbuf, xspice);
-            xdata = create_xlate_translated(work);
+            new_stmt = tprintf(".model %s %s", modelnm, xspice);
+            xdata = create_xlate_translated(new_stmt);
             xxp = add_xlator(xxp, xdata);
+            tfree(new_stmt);
             /* now the added tristate */
-            work[0] = '\0';
-            modelbuf[0] = '\0';
             /* model name of added tristate */
-            sprintf(modelbuf, "d_a%stribuf", iname);
-            sprintf(work, "a%s_tri %s %s %s %s", iname, connector,
-                enable, outarr[0], modelbuf);
-            xdata = create_xlate_instance(work, "d_tristate", tmodel, modelbuf);
+            new_model_nm = tprintf("d_a%stribuf", iname);
+            new_stmt = tprintf("a%s_tri %s %s %s %s",
+                iname, connector, enable, outarr[0], new_model_nm);
+            xdata = create_xlate_instance(new_stmt, "d_tristate",
+                tmodel, new_model_nm);
             xxp = add_xlator(xxp, xdata);
+            tfree(new_stmt);
             if (!gen_timing_model(tmodel, "utgate", "d_tristate",
-                modelbuf, xxp)) {
+                new_model_nm, xxp)) {
                 printf("WARNING unable to find tmodel %s for %s %s\n",
-                    tmodel, modelbuf, xspice);
+                    tmodel, new_model_nm, xspice);
             }
+            tfree(new_model_nm);
         }
-        tfree(work);
         tfree(connector);
+        tfree(modelnm);
+        tfree(inst_begin);
         return xxp;
 
     } else {
+        char *primary_model = NULL, *s1 = NULL, *s2 = NULL, *s3 = NULL;
+        int ksave;
         /* arrays of gates */
         /* NOTE (n)and3a, (n)or3a, (n)xora types are not supported */
         assert(num_outs == num_gates);
@@ -1363,104 +1409,122 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
         }
         assert(xspice);
         xxp = create_xlator();
-        sz = BUFSIZE;
-        work = TMALLOC(char, sz);
         k = 0;
         connector = NULL;
+        if (vector) {
+            startvec = "[";
+            endvec = " ]";
+        } else {
+            startvec = "";
+            endvec = "";
+        }
         /* model name, same for all primary gates */
-        modelbuf[0] = '\0';
-        sprintf(modelbuf, "d_a%s%s", iname, itype); 
+        primary_model = tprintf("d_a%s%s", iname, itype); 
         for (i = 0; i < num_gates; i++) {
-            work[0] = '\0';
-            /* create new instance name for primary gate */
-            sprintf(work, "a%s_%d ", iname, i);
-            if (vector) { strcat(work, "["); }
+            /* inputs */
+            /* First calculate the space */
+            ksave = k;
+            sz = 0;
             for (j = 0; j < width; j++) {
                 /* inputs for primary gate */
-                sprintf(work + strlen(work), " %s", inarr[k]);
+                sz += strlen(inarr[k]) + 4; // Extra 4 spaces separating
                 k++;
             }
-            if (vector) { strcat(work, " ]"); }
+            k = ksave;
+            input_buf = TMALLOC(char, sz);
+            input_buf[0] = '\0';
+            for (j = 0; j < width; j++) {
+                /* inputs for primary gate */
+                /* Warning: changing the format string affects input_buf sz */
+                sprintf(input_buf + strlen(input_buf), " %s", inarr[k]);
+                k++;
+            }
+            /* create new instance name for primary gate */
             if (enable) {
                 if (!add_tristate) {
-                    sprintf(work + strlen(work),"  %s", enable);
+                    s1 = tprintf("a%s_%d %s%s%s  %s",
+                        iname, i, startvec, input_buf, endvec, enable);
                 } else {
+                    s1 = tprintf("a%s_%d %s%s%s",
+                        iname, i, startvec, input_buf, endvec);
                     /* connector if required for tristate */
-                    sprintf(smallbuf, "a%s_%d_%s", iname, i, outarr[i]);
-                    connector = TMALLOC(char, strlen(smallbuf) + 1);
-                    connector[0] = '\0';
-                    (void) memcpy(connector, smallbuf, strlen(smallbuf) + 1);
+                    connector = tprintf("a%s_%d_%s", iname, i, outarr[i]);
                 }
+            } else {
+                s1 = tprintf("a%s_%d %s%s%s",
+                    iname, i, startvec, input_buf, endvec);
             }
+            tfree(input_buf);
             /* output of primary gate */
             if (add_tristate) {
-                sprintf(work + strlen(work), " %s", connector);
+                s2 = tprintf(" %s %s", connector, primary_model);
             } else {
-                sprintf(work + strlen(work), " %s", outarr[i]);
+                s2 = tprintf(" %s %s", outarr[i], primary_model);
             }
             /* translated instance */
-            sprintf(work + strlen(work), " %s", modelbuf);
+            s3 = tprintf("%s%s", s1, s2);
+
             if (add_tristate) {
-                xdata = create_xlate_instance(work, xspice, "", modelbuf);
+                xdata = create_xlate_instance(s3, xspice, "", primary_model);
                 xxp = add_xlator(xxp, xdata);
             } else {
-                xdata = create_xlate_instance(work, xspice, tmodel, modelbuf);
+                xdata = create_xlate_instance(s3, xspice, tmodel,
+                    primary_model);
                 xxp = add_xlator(xxp, xdata);
+            }
+            tfree(s1);
+            tfree(s2);
+            tfree(s3);
+
+            if (!add_tristate) {
                 if (tristate_array) {
                     assert(strcmp(xspice, "d_tristate") == 0);
                     assert(strcmp(itype, "buf3a") == 0);
                     if (i == 0 && !gen_timing_model(tmodel, "utgate",
-                                            xspice, modelbuf, xxp)) {
+                                            xspice, primary_model, xxp)) {
                         printf("WARNING unable to find tmodel %s for %s %s\n",
-                            tmodel, modelbuf, xspice);
+                            tmodel, primary_model, xspice);
                     }
                 } else {
                     if (i == 0 && !gen_timing_model(tmodel, "ugate",
-                                            xspice, modelbuf, xxp)) {
+                                            xspice, primary_model, xxp)) {
                         printf("WARNING unable to find tmodel %s for %s %s\n",
-                            tmodel, modelbuf, xspice);
+                            tmodel, primary_model, xspice);
                     }
                 }
             }
 
             if (add_tristate) {
+                char *s1 = NULL, *modelnm = NULL;
                 if (i == 0) {
                     /* Zero delay model for all original array instances */
-                    work[0] = '\0';
-                    sprintf(work, ".model %s %s", modelbuf, xspice); 
-                    xdata = create_xlate_translated(work);
+                    s1 = tprintf(".model %s %s", primary_model, xspice); 
+                    xdata = create_xlate_translated(s1);
                     xxp = add_xlator(xxp, xdata);
+                    tfree(s1);
                 }
-
-                work[0] = '\0';
-                smallbuf[0] = '\0';
                 /* model name of added tristate */
-                sprintf(smallbuf, "d_a%stribuf", iname);
+                modelnm = tprintf("d_a%stribuf", iname);
                 /*
                  instance name of added tristate, connector,
                  enable, original primary gate output, timing model.
                 */
-                sprintf(work, "a%s_%d_tri %s %s %s %s", iname, i, connector,
-                    enable, outarr[i], smallbuf);
-                xdata = create_xlate_instance(work, "d_tristate",
-                    tmodel, smallbuf);
+                s1 = tprintf("a%s_%d_tri %s %s %s %s", iname, i, connector,
+                    enable, outarr[i], modelnm);
+                xdata = create_xlate_instance(s1, "d_tristate",
+                    tmodel, modelnm);
                 xxp = add_xlator(xxp, xdata);
+                tfree(s1);
                 if (i == 0 && !gen_timing_model(tmodel, "utgate",
-                                        "d_tristate", smallbuf, xxp)) {
+                                        "d_tristate", modelnm, xxp)) {
                     printf("WARNING unable to find tmodel %s for %s %s\n",
-                        tmodel, smallbuf, "d_tristate");
+                        tmodel, modelnm, "d_tristate");
                 }
+                tfree(modelnm);
                 tfree(connector);
             }
-
-            if (strlen(work) > BUFSIZE/2) {
-                tfree(work);
-                sz += BUFSIZE;
-                printf("TMALLOC work size %lu\n", sz);
-                work = TMALLOC(char, sz);
-            }
         }
-        tfree(work);
+        tfree(primary_model);
         return xxp;
     }
     return NULL;
@@ -1555,7 +1619,6 @@ static void estimate_typ(struct timing_data *tdp)
     char *min, *typ, *max;
     float valmin, valmax, average;
     char *units1, *units2;
-    static char avebuf[SMBUFSIZE];
 
     if (!tdp) { return; }
     min = tdp->min;
@@ -1577,12 +1640,10 @@ static void estimate_typ(struct timing_data *tdp)
             valmin = strtof(tmpmin, &units1);
             valmax = strtof(tmpmax, &units2);
             average = (valmin + valmax) / 2.0;
-            sprintf(avebuf, "%.2f%s", average, units2);
+            tdp->ave = tprintf("%.2f%s", average, units2);
             if (strcmp(units1, units2) != 0) {
                 printf("WARNING units do not match\n");
             }
-            tdp->ave = TMALLOC(char, strlen(avebuf) + 1);
-            (void) memcpy(tdp->ave, avebuf, strlen(avebuf) + 1);
             tdp->estimate = EST_AVE;
             return;
         }
@@ -1618,8 +1679,6 @@ static char *get_estimate(struct timing_data *tdp)
 static char *get_delays_ugate(char *rem, char *d_name)
 {
     char *rising, *falling, *delays = NULL;
-    int count;
-    char work_buf[BUFSIZE];
     struct timing_data *tdp1, *tdp2;
 
     tdp1 = create_min_typ_max("tplh", rem);
@@ -1630,11 +1689,8 @@ static char *get_delays_ugate(char *rem, char *d_name)
     falling = get_estimate(tdp2);
     if (rising && falling) {
         if (strlen(rising) > 0 && strlen(falling) > 0) {
-            count = sprintf(work_buf, "(rise_delay = %s fall_delay = %s)",
+            delays = tprintf("(rise_delay = %s fall_delay = %s)",
                             rising, falling);
-            count++;
-            delays = TMALLOC(char, count);
-            (void) memcpy(delays, work_buf, count);
         }
     }
     delete_timing_data(tdp1);
@@ -1646,8 +1702,6 @@ static char *get_delays_utgate(char *rem, char *d_name)
 {
     /* Return estimate of tristate delay (delay = val3) */
     char *rising, *falling, *delays = NULL;
-    int count;
-    char work_buf[BUFSIZE];
     struct timing_data *tdp1, *tdp2;
 
     tdp1 = create_min_typ_max("tplh", rem);
@@ -1658,10 +1712,7 @@ static char *get_delays_utgate(char *rem, char *d_name)
     falling = get_estimate(tdp2);
     if (rising && falling) {
         if (strlen(rising) > 0 && strlen(falling) > 0) {
-            count = sprintf(work_buf, "(delay = %s)", rising);
-            count++;
-            delays = TMALLOC(char, count);
-            (void) memcpy(delays, work_buf, count);
+            delays = tprintf("(delay = %s)", rising);
         }
     }
     delete_timing_data(tdp1);
@@ -1674,8 +1725,6 @@ static char *get_delays_ueff(char *rem, char *d_name)
     char *delays = NULL;
     char *clkqrise, *clkqfall, *pcqrise, *pcqfall;
     char *clkd, *setd, *resetd;
-    int count;
-    char work_buf[BUFSIZE];
     struct timing_data *tdp1, *tdp2, *tdp3, *tdp4;
 
     tdp1 = create_min_typ_max("tpclkqlh", rem);
@@ -1704,24 +1753,21 @@ static char *get_delays_ueff(char *rem, char *d_name)
         setd = resetd = pcqfall;
     }
     if (clkd && setd) {
-        count = sprintf(work_buf, "(clk_delay = %s "
+        delays = tprintf("(clk_delay = %s "
             "set_delay = %s reset_delay = %s "
             "rise_delay = 1.0ns fall_delay = 2.0ns)",
             clkd, setd, resetd);
     } else if (clkd) {
-        count = sprintf(work_buf, "(clk_delay = %s "
+        delays = tprintf("(clk_delay = %s "
             "rise_delay = 1.0ns fall_delay = 2.0ns)",
             clkd);
     } else if (setd) {
-        count = sprintf(work_buf, "(set_delay = %s reset_delay = %s "
+        delays = tprintf("(set_delay = %s reset_delay = %s "
             "rise_delay = 1.0ns fall_delay = 2.0ns)",
             setd, resetd);
     } else {
-        count = sprintf(work_buf, "(rise_delay = 1.0ns fall_delay = 2.0ns)");
+        delays = tprintf("(rise_delay = 1.0ns fall_delay = 2.0ns)");
     }
-    count++;
-    delays = TMALLOC(char, count);
-    (void) memcpy(delays, work_buf, count);
     delete_timing_data(tdp1);
     delete_timing_data(tdp2);
     delete_timing_data(tdp3);
@@ -1734,7 +1780,7 @@ static char *get_delays_ugff(char *rem, char *d_name)
     char *delays = NULL, *dname;
     char *tpdqlh, *tpdqhl, *tpgqlh, *tpgqhl, *tppcqlh, *tppcqhl;
     char *d_delay, *enab, *setd, *resetd;
-    char work_buf[BUFSIZE];
+    char *s1, *s2;
     struct timing_data *tdp1, *tdp2, *tdp3, *tdp4, *tdp5, *tdp6;
 
     if (strcmp(d_name, "d_dlatch") == 0) {
@@ -1762,16 +1808,11 @@ static char *get_delays_ugff(char *rem, char *d_name)
     tdp6 = create_min_typ_max("tppcqhl", rem);
     estimate_typ(tdp6);
     tppcqhl = get_estimate(tdp6);
-    work_buf[0] = '\0';
-    strcpy(work_buf, "(");
     d_delay = NULL;
     if (tpdqlh && strlen(tpdqlh) > 0) {
         d_delay = tpdqlh;
     } else if (tpdqhl && strlen(tpdqhl) > 0) {
         d_delay = tpdqhl;
-    }
-    if (d_delay) {
-        sprintf(&work_buf[strlen(work_buf)], "%s = %s ", dname, d_delay);
     }
     enab = NULL;
     if (tpgqlh && strlen(tpgqlh) > 0) {
@@ -1779,8 +1820,18 @@ static char *get_delays_ugff(char *rem, char *d_name)
     } else if (tpgqhl && strlen(tpgqhl) > 0) {
         enab = tpgqhl;
     }
+    s1 = NULL;
     if (enab) {
-        sprintf(&work_buf[strlen(work_buf)], "enable_delay = %s ", enab);
+        if (d_delay) {
+            s1 = tprintf("%s = %s enable_delay = %s ",
+                dname, d_delay, enab);
+        } else {
+            s1 = tprintf("enable_delay = %s ", enab);
+        }
+    } else {
+        if (d_delay) {
+            s1 = tprintf("%s = %s ", dname, d_delay);
+        }
     }
     setd = NULL;
     resetd = NULL;
@@ -1790,13 +1841,19 @@ static char *get_delays_ugff(char *rem, char *d_name)
         setd = resetd = tppcqhl;
     }
     if (setd) {
-        sprintf(&work_buf[strlen(work_buf)],
-            "set_delay = %s reset_delay = %s ", setd, resetd);
+        s2 = tprintf("set_delay = %s reset_delay = %s "
+            "rise_delay = 1.0ns fall_delay = 2.0ns)",
+            setd, resetd);
+    } else {
+        s2 = tprintf("rise_delay = 1.0ns fall_delay = 2.0ns)");
     }
-    sprintf(&work_buf[strlen(work_buf)],
-        "rise_delay = 1.0ns fall_delay = 2.0ns)");
-    delays = TMALLOC(char, strlen(work_buf) + 1);
-    (void) memcpy(delays, work_buf, strlen(work_buf) + 1);
+    if (s1) {
+        delays = tprintf("(%s%s", s1, s2);
+        tfree(s1);
+    } else {
+        delays = tprintf("(%s", s2);
+    }
+    tfree(s2);
     delete_timing_data(tdp1);
     delete_timing_data(tdp2);
     delete_timing_data(tdp3);
@@ -1830,45 +1887,50 @@ static BOOL u_process_model(char *nline, char *original,
     if (remainder) {
         if (strcmp(utype, "ugate") == 0) {
             delays = get_delays_ugate(remainder, xspice);
-            printf("<%s>\n", delays);
             if (delays) {
+                printf("<%s>\n", delays);
                 add_delays_to_model_xlator(delays, utype, "", tmodel);
             } else {
+                printf("<(null)>\n");
                 add_delays_to_model_xlator("", utype, "", tmodel);
             }
             if (delays) { tfree(delays); }
         } else if (strcmp(utype, "utgate") == 0) {
             delays = get_delays_utgate(remainder, xspice);
-            printf("<%s>\n", delays);
             if (delays) {
+                printf("<%s>\n", delays);
                 add_delays_to_model_xlator(delays, utype, "", tmodel);
             } else {
+                printf("<(null)>\n");
                 add_delays_to_model_xlator("", utype, "", tmodel);
             }
             if (delays) { tfree(delays); }
         } else if (strcmp(utype, "ueff") == 0) {
             delays = get_delays_ueff(remainder, xspice);
-            printf("<%s>\n", delays);
             if (delays) {
+                printf("<%s>\n", delays);
                 add_delays_to_model_xlator(delays, utype, "", tmodel);
             } else {
+                printf("<(null)>\n");
                 add_delays_to_model_xlator("", utype, "", tmodel);
             }
             if (delays) { tfree(delays); }
         } else if (strcmp(utype, "ugff") == 0) {
             delays = get_delays_ugff(remainder, "d_dlatch");
-            printf("<%s>\n", delays);
             if (delays) {
+                printf("<%s>\n", delays);
                 add_delays_to_model_xlator(delays, utype, "d_dlatch", tmodel);
             } else {
+                printf("<(null)>\n");
                 add_delays_to_model_xlator("", utype, "d_dlatch", tmodel);
             }
             if (delays) { tfree(delays); }
             delays = get_delays_ugff(remainder, "d_srlatch");
-            printf("<%s>\n", delays);
             if (delays) {
+                printf("<%s>\n", delays);
                 add_delays_to_model_xlator(delays, utype, "d_srlatch", tmodel);
             } else {
+                printf("<(null)>\n");
                 add_delays_to_model_xlator("", utype, "d_srlatch", tmodel);
             }
             if (delays) { tfree(delays); }
@@ -2367,7 +2429,9 @@ BOOL u_process_instance(char *nline)
         retval = FALSE;
     }
     if (xp) {
-        //interpret_xlator(xp, TRUE);
+#ifdef TRACE
+        interpret_xlator(xp, TRUE);
+#endif
         delete_xlator(xp);
     }
     return retval;
