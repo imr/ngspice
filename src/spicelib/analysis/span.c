@@ -23,7 +23,7 @@
 
 
 #ifdef RFSPICE
-#include "vsrc/vsrcext.h"
+#include "vsrc/vsrcdefs.h"
 #include "../maths/dense/dense.h"
 #include "../maths/dense/denseinlines.h"
 

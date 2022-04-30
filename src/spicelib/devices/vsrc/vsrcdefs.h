@@ -189,4 +189,6 @@ enum {
 
 /* model questions */
 
+#include "vsrcext.h"
+
 #endif /*VSRC*/
