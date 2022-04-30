@@ -304,6 +304,11 @@ static struct op uops[] = {
 
 /* We have 'v' declared as a function, because if we don't then the defines
  * we do for vm(), etc won't work. This is caught in evaluate(). Bad kludge.
+ *
+ * When these functions are called (apply_func_funcall() evaluate.c),
+ * the actual argument list is longer than declared here.  Only the functions
+ * with casts use the extra arguments.  The double casts prevent warnings
+ * with some gcc versions.
  */
 
 typedef void* cx_function_t(void*, short int, int, int*, short int*);
@@ -350,7 +355,7 @@ struct func ft_funcs[] = {
     { "mean",        cx_mean },
     { "stddev",      cx_stddev },
     { "avg",         cx_avg }, /* A.Roldan 03/06/05 incremental average new function */
-    { "group_delay", (cx_function_t*) cx_group_delay }, /* A.Roldan 10/06/05 group delay new function */
+    { "group_delay", (cx_function_t*)(void *) cx_group_delay }, /* A.Roldan 10/06/05 group delay new function */
     { "vector",      cx_vector },
     { "unitvec",     cx_unitvec },
     { "length",      cx_length },
@@ -359,11 +364,11 @@ struct func ft_funcs[] = {
     { "vecmax",      cx_max },
     { "maximum",     cx_max },
     { "vecd",        cx_d },
-    { "interpolate", (cx_function_t*) cx_interpolate },
-    { "deriv",       (cx_function_t*) cx_deriv },
-    { "integ",       (cx_function_t*) cx_integ },
-    { "fft",         (cx_function_t*) cx_fft },
-    { "ifft",        (cx_function_t*) cx_ifft },
+    { "interpolate", (cx_function_t*)(void *) cx_interpolate },
+    { "deriv",       (cx_function_t*)(void *) cx_deriv },
+    { "integ",       (cx_function_t*)(void *) cx_integ },
+    { "fft",         (cx_function_t*)(void *) cx_fft },
+    { "ifft",        (cx_function_t*)(void *) cx_ifft },
     { "v",           NULL },
     { NULL,          NULL }
 };
