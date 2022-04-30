@@ -21,8 +21,9 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 static void gen_DatatoScreen(GRAPH *graph, double x, double y, int *screenx, int *screeny);
 static int gen_Input(REQUEST *request, RESPONSE *response);
 static int nop(void);
+#define NOP ((void *)nop)
 static int nodev(void);
-
+#define NODEV ((void *)nodev)
 
 #ifndef X_DISPLAY_MISSING
 #include "plotting/x11.h"
@@ -41,13 +42,13 @@ static int nodev(void);
 DISPDEVICE device[] = {
 
     { "error", 0, 0, 0, 0, 0, 0,
-      (disp_fn_Init_t *) nop, (disp_fn_NewViewport_t *) nop,
-      (disp_fn_Close_t *) nop, (disp_fn_Clear_t *) nop,
-      (disp_fn_DrawLine_t *) nop, (disp_fn_Arc_t *) nop, (disp_fn_Text_t *) nop,
-      (disp_fn_DefineColor_t *) nop, (disp_fn_DefineLinestyle_t *) nop,
-      (disp_fn_SetLinestyle_t *) nop, (disp_fn_SetColor_t *) nop, (disp_fn_Update_t *) nop, (disp_fn_Finalize_t *) nop,
-      (disp_fn_Track_t *) nop, (disp_fn_MakeMenu_t *) nop, (disp_fn_MakeDialog_t *) nop, gen_Input,
-      (disp_fn_DatatoScreen_t *) nop,},
+      (disp_fn_Init_t *) NOP, (disp_fn_NewViewport_t *) NOP,
+      (disp_fn_Close_t *) NOP, (disp_fn_Clear_t *) NOP,
+      (disp_fn_DrawLine_t *) NOP, (disp_fn_Arc_t *) NOP, (disp_fn_Text_t *) NOP,
+      (disp_fn_DefineColor_t *) NOP, (disp_fn_DefineLinestyle_t *) NOP,
+      (disp_fn_SetLinestyle_t *) NOP, (disp_fn_SetColor_t *) NOP, (disp_fn_Update_t *) NOP, (disp_fn_Finalize_t *) NOP,
+      (disp_fn_Track_t *) NOP, (disp_fn_MakeMenu_t *) NOP, (disp_fn_MakeDialog_t *) NOP, gen_Input,
+      (disp_fn_DatatoScreen_t *) NOP,},
 
 #ifndef X_DISPLAY_MISSING
     { "X11", 0, 0, 1024, 864, 0, 0,
@@ -55,8 +56,8 @@ DISPDEVICE device[] = {
       X11_Close, X11_Clear,
       X11_DrawLine, X11_Arc, X11_Text,
       X11_DefineColor, X11_DefineLinestyle,
-      X11_SetLinestyle, X11_SetColor, X11_Update,  (disp_fn_Finalize_t*) nop,
-      (disp_fn_Track_t *) nodev, (disp_fn_MakeMenu_t *) nodev, (disp_fn_MakeDialog_t *) nodev, X11_Input,
+      X11_SetLinestyle, X11_SetColor, X11_Update,  (disp_fn_Finalize_t*) NOP,
+      (disp_fn_Track_t *) NODEV, (disp_fn_MakeMenu_t *) NODEV, (disp_fn_MakeDialog_t *) NODEV, X11_Input,
       gen_DatatoScreen,},
 #endif
 
@@ -66,8 +67,8 @@ DISPDEVICE device[] = {
       WIN_Close, WIN_Clear,
       WIN_DrawLine, WIN_Arc, WIN_Text,
       WIN_DefineColor, WIN_DefineLinestyle,
-      WIN_SetLinestyle, WIN_SetColor, WIN_Update,  (disp_fn_Finalize_t*) nop,
-      (disp_fn_Track_t *) nodev, (disp_fn_MakeMenu_t *) nodev, (disp_fn_MakeDialog_t *) nodev, gen_Input,
+      WIN_SetLinestyle, WIN_SetColor, WIN_Update,  (disp_fn_Finalize_t*) NOP,
+      (disp_fn_Track_t *) NODEV, (disp_fn_MakeMenu_t *) NODEV, (disp_fn_MakeDialog_t *) NODEV, gen_Input,
       gen_DatatoScreen, }, /* WIN_DiagramReady */
 
     /* Warning: name "WinPrint" do not change! */
@@ -76,8 +77,8 @@ DISPDEVICE device[] = {
       WPRINT_Close, WPRINT_Clear,
       WPRINT_DrawLine, WPRINT_Arc, WPRINT_Text,
       WPRINT_DefineColor, WPRINT_DefineLinestyle,
-      WPRINT_SetLinestyle, WPRINT_SetColor, WPRINT_Update,  (disp_fn_Finalize_t*) nop,
-      (disp_fn_Track_t *) nodev, (disp_fn_MakeMenu_t *) nodev, (disp_fn_MakeDialog_t *) nodev, (disp_fn_Input_t *) nodev,
+      WPRINT_SetLinestyle, WPRINT_SetColor, WPRINT_Update,  (disp_fn_Finalize_t*) NOP,
+      (disp_fn_Track_t *) NODEV, (disp_fn_MakeMenu_t *) NODEV, (disp_fn_MakeDialog_t *) NODEV, (disp_fn_Input_t *) NODEV,
       gen_DatatoScreen, }, /* WPRINT_DiagramReady */
 #endif
 
@@ -87,8 +88,8 @@ DISPDEVICE device[] = {
       sp_Tk_Close, sp_Tk_Clear,
       sp_Tk_DrawLine, sp_Tk_Arc, sp_Tk_Text,
       sp_Tk_DefineColor, sp_Tk_DefineLinestyle,
-      sp_Tk_SetLinestyle, sp_Tk_SetColor, sp_Tk_Update,  (disp_fn_Finalize_t*) nop,
-      (disp_fn_Track_t *) nodev, (disp_fn_MakeMenu_t *) nodev, (disp_fn_MakeDialog_t *) nodev, (disp_fn_Input_t *) nodev,
+      sp_Tk_SetLinestyle, sp_Tk_SetColor, sp_Tk_Update,  (disp_fn_Finalize_t*) NOP,
+      (disp_fn_Track_t *) NODEV, (disp_fn_MakeMenu_t *) NODEV, (disp_fn_MakeDialog_t *) NODEV, (disp_fn_Input_t *) NODEV,
       gen_DatatoScreen, },
 #endif
 
@@ -96,46 +97,46 @@ DISPDEVICE device[] = {
       Plt5_Init, Plt5_NewViewport,
       Plt5_Close, Plt5_Clear,
       Plt5_DrawLine, Plt5_Arc, Plt5_Text,
-      (disp_fn_DefineColor_t *) nodev, (disp_fn_DefineLinestyle_t *) nodev,
-      Plt5_SetLinestyle, Plt5_SetColor, Plt5_Update,  (disp_fn_Finalize_t*) nop,
-      (disp_fn_Track_t *) nodev, (disp_fn_MakeMenu_t *) nodev, (disp_fn_MakeDialog_t *) nodev, (disp_fn_Input_t *) nodev,
+      (disp_fn_DefineColor_t *) NODEV, (disp_fn_DefineLinestyle_t *) NODEV,
+      Plt5_SetLinestyle, Plt5_SetColor, Plt5_Update,  (disp_fn_Finalize_t*) NOP,
+      (disp_fn_Track_t *) NODEV, (disp_fn_MakeMenu_t *) NODEV, (disp_fn_MakeDialog_t *) NODEV, (disp_fn_Input_t *) NODEV,
       gen_DatatoScreen, },
 
     { "postscript", 0, 0, 1000, 1000, 0, 0,
       PS_Init, PS_NewViewport,
       PS_Close, PS_Clear,
       PS_DrawLine, PS_Arc, PS_Text,
-      (disp_fn_DefineColor_t *) nodev, (disp_fn_DefineLinestyle_t *) nodev,
+      (disp_fn_DefineColor_t *) NODEV, (disp_fn_DefineLinestyle_t *) NODEV,
       PS_SetLinestyle, PS_SetColor, PS_Update, PS_Finalize,
-      (disp_fn_Track_t *) nodev, (disp_fn_MakeMenu_t *) nodev, (disp_fn_MakeDialog_t *) nodev, (disp_fn_Input_t *) nodev,
+      (disp_fn_Track_t *) NODEV, (disp_fn_MakeMenu_t *) NODEV, (disp_fn_MakeDialog_t *) NODEV, (disp_fn_Input_t *) NODEV,
       gen_DatatoScreen, },
 
     { "svg", 0, 0, 1000, 1000, 0, 0,
       SVG_Init, SVG_NewViewport,
       SVG_Close, SVG_Clear,
       SVG_DrawLine, SVG_Arc, SVG_Text,
-      (disp_fn_DefineColor_t*)nodev, (disp_fn_DefineLinestyle_t*)nodev,
+      (disp_fn_DefineColor_t*)NODEV, (disp_fn_DefineLinestyle_t*)NODEV,
       SVG_SetLinestyle, SVG_SetColor, SVG_Update, SVG_Finalize,
-      (disp_fn_Track_t*)nodev, (disp_fn_MakeMenu_t*)nodev, (disp_fn_MakeDialog_t*)nodev, (disp_fn_Input_t*)nodev,
+      (disp_fn_Track_t*)NODEV, (disp_fn_MakeMenu_t*)NODEV, (disp_fn_MakeDialog_t*)NODEV, (disp_fn_Input_t*)NODEV,
       gen_DatatoScreen, },
 
     { "hpgl", 0, 0, 1000, 1000, 0, 0,
       GL_Init, GL_NewViewport,
       GL_Close, GL_Clear,
       GL_DrawLine, GL_Arc, GL_Text,
-      (disp_fn_DefineColor_t *) nodev, (disp_fn_DefineLinestyle_t *) nodev,
-      GL_SetLinestyle, GL_SetColor, GL_Update,  (disp_fn_Finalize_t*) nop,
-      (disp_fn_Track_t *) nodev, (disp_fn_MakeMenu_t *) nodev, (disp_fn_MakeDialog_t *) nodev, (disp_fn_Input_t *) nodev,
+      (disp_fn_DefineColor_t *) NODEV, (disp_fn_DefineLinestyle_t *) NODEV,
+      GL_SetLinestyle, GL_SetColor, GL_Update,  (disp_fn_Finalize_t*) NOP,
+      (disp_fn_Track_t *) NODEV, (disp_fn_MakeMenu_t *) NODEV, (disp_fn_MakeDialog_t *) NODEV, (disp_fn_Input_t *) NODEV,
       gen_DatatoScreen, },
 
     { "PrinterOnly", 0, 0, 24, 80, 0, 0,
-      (disp_fn_Init_t *) nodev, (disp_fn_NewViewport_t *)  nodev,
-      (disp_fn_Close_t *) nop, (disp_fn_Clear_t *) nodev,
-      (disp_fn_DrawLine_t *) nodev, (disp_fn_Arc_t *) nodev, (disp_fn_Text_t *) nodev,
-      (disp_fn_DefineColor_t *) nodev, (disp_fn_DefineLinestyle_t *) nodev,
-      (disp_fn_SetLinestyle_t *) nodev, (disp_fn_SetColor_t *) nodev, (disp_fn_Update_t *) nop,  (disp_fn_Finalize_t*) nop,
-      (disp_fn_Track_t *) nodev, (disp_fn_MakeMenu_t *) nodev, (disp_fn_MakeDialog_t *) nodev, gen_Input,
-      (disp_fn_DatatoScreen_t *) nodev, },
+      (disp_fn_Init_t *) NODEV, (disp_fn_NewViewport_t *)  NODEV,
+      (disp_fn_Close_t *) NOP, (disp_fn_Clear_t *) NODEV,
+      (disp_fn_DrawLine_t *) NODEV, (disp_fn_Arc_t *) NODEV, (disp_fn_Text_t *) NODEV,
+      (disp_fn_DefineColor_t *) NODEV, (disp_fn_DefineLinestyle_t *) NODEV,
+      (disp_fn_SetLinestyle_t *) NODEV, (disp_fn_SetColor_t *) NODEV, (disp_fn_Update_t *) NOP,  (disp_fn_Finalize_t*) NOP,
+      (disp_fn_Track_t *) NODEV, (disp_fn_MakeMenu_t *) NODEV, (disp_fn_MakeDialog_t *) NODEV, gen_Input,
+      (disp_fn_DatatoScreen_t *) NODEV, },
 
 };
 
