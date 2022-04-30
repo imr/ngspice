@@ -27,8 +27,11 @@
 #include "../maths/dense/dense.h"
 #include "../maths/dense/denseinlines.h"
 
-
-
+int CKTspnoise(CKTcircuit* ckt, int mode, int operation, Ndata* data, NOISEAN* noisean);
+int NInspIter(CKTcircuit* ckt, VSRCinstance* port);
+int initSPmatrix(CKTcircuit* ckt, int doNoise);
+void deleteSPmatrix(CKTcircuit* ckt);
+NOISEAN* SPcreateNoiseAnalysys(CKTcircuit* ckt);
 
 #define INIT_STATS() \
 do { \
