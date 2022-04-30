@@ -8,6 +8,10 @@
 #include "ngspice/bool.h"
 #include "ngspice/iferrmsg.h"
 
+cplx cdet(CMat* M);
+double det(Mat* M);
+void resizecmat(CMat* A, int r, int c);
+
 void showmat(Mat* A) {
 	if (A->row > 0 && A->col > 0) {
 
