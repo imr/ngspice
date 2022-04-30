@@ -26,7 +26,8 @@ Modified: 2001 AlansFixes
 extern int fixme_onoise_type;
 extern int fixme_inoise_type;
 
-#ifdef RFSPICE
+/* not used */
+#ifdef RFSPICE_
 
 int
 NOISEsp (CKTcircuit *ckt, int restart)
