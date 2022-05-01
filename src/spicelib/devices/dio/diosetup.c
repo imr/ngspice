@@ -90,10 +90,18 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             model->DIOgradingSWCoeff = .33;
         }
         if(!model->DIOforwardKneeCurrentGiven) {
-            model->DIOforwardKneeCurrent = 0.0;
+            model->DIOforwardKneeCurrent = 1.0;
+        } else {
+            if (model->DIOforwardKneeCurrent < ckt->CKTepsmin) {
+                model->DIOforwardKneeCurrentGiven = FALSE;
+            }
         }
         if(!model->DIOreverseKneeCurrentGiven) {
-            model->DIOreverseKneeCurrent = 0.0;
+            model->DIOreverseKneeCurrent = 1.0;
+        } else {
+            if (model->DIOreverseKneeCurrent < ckt->CKTepsmin) {
+                model->DIOreverseKneeCurrentGiven = FALSE;
+            }
         }
         if(!model->DIObrkdEmissionCoeffGiven) {
             model->DIObrkdEmissionCoeff = model->DIOemissionCoeff;
