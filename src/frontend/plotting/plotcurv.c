@@ -87,15 +87,26 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
     if (!nostart)
         gr_start(v);
 
-    /* Do the one value case */
+    if (xs) {
+        /* Check vector lengths. */
 
-    if (!xs) {
-        for (i = 0; i < v->v_length; i++) {
+        if (v->v_length != xs->v_length) {
+            fprintf(stderr,
+                    "Warning: length of vector %s and its scale %s do "
+                    "not match, plot may be truncated!\n",
+                    v->v_name, xs->v_name);
+        }
+        length = MIN(v->v_length, xs->v_length);
+    } else {
+        /* Do the one value case */
+
+        length = v->v_length;
+        for (i = 0; i < length; i++) {
 
             /* We should do the one - point case too!
              *      Important for pole-zero for example
              */
-            if (v->v_length == 1) {
+            if (length == 1) {
                 j = 0;
             } else {
                 j = i-1;
@@ -133,13 +144,10 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
         If they occur, plotting is suppressed, except for mono is set
         to FALSE by flag 'retraceplot' in command 'plot'.
         Then everything is plotted. */
+
         bool mono = (currentgraph->plottype != PLOT_RETLIN);
         int dir = 0;
-        int vlength = v->v_length;
-        int slength = xs->v_length;
-        if (slength != vlength)
-            fprintf(stderr, "Warning: length of vector %s and its scale do not match, plot may be truncated!\n", v->v_name);
-        for (i = 0, j = MIN(vlength, slength); i < j; i++) {
+        for (i = 0; i < length; i++) {
             dx = isreal(xs) ? xs->v_realdata[i] :
                 realpart(xs->v_compdata[i]);
             dy = isreal(v) ? v->v_realdata[i] :
@@ -156,7 +164,7 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
             lx = dx;
             ly = dy;
         }
-        if (v->v_length == 1)
+        if (length == 1)
             gr_point(v, dx, dy, lx, ly, 1);
         gr_end(v);
         return;
@@ -172,16 +180,16 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
         if (isreal(v)) {
             ydata = v->v_realdata;
         } else {
-            ydata = TMALLOC(double, v->v_length);
-            for (i = 0; i < v->v_length; i++)
+            ydata = TMALLOC(double, length);
+            for (i = 0; i < length; i++)
                 ydata[i] = realpart(v->v_compdata[i]);
         }
 
         if (isreal(xs)) {
             xdata = xs->v_realdata;
         } else {
-            xdata = TMALLOC(double, xs->v_length);
-            for (i = 0; i < xs->v_length; i++)
+            xdata = TMALLOC(double, length);
+            for (i = 0; i < length; i++)
                 xdata[i] = realpart(xs->v_compdata[i]);
         }
 
@@ -193,7 +201,7 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
         else
             for (i = 0, dy = mm[1]; i < gridsize; i++, dy -= dx)
                 gridbuf[i] = dy;
-        if (!ft_interpolate(ydata, result, xdata, v->v_length, gridbuf,
+        if (!ft_interpolate(ydata, result, xdata, length, gridbuf,
                             gridsize, degree)) {
             fprintf(cp_err, "Error: can't put %s on gridsize %d\n",
                     v->v_name, gridsize);
@@ -264,7 +272,7 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
     /* Now plot the rest, piece by piece... l is the
      * last element under consideration.
      */
-    length = v->v_length;
+
     for (l = degree + 1; l < length; l++) {
 
         /* Shift the old stuff by one and get another value. */
