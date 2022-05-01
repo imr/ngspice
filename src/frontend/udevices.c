@@ -1,4 +1,38 @@
-/* udevices.c translate PSPICE U* instances and timing models */
+/*
+    udevices.c translate PSPICE U* instances and timing models.
+
+    Notes: To translate Pspice U* devices in a subcircuit containing
+    U* instance and Pspice .model cards, two passes through the subcircuit
+    are necessary. The first pass is to translate the timing models from
+    the .model cards. This timing delay information is stored. The second
+    pass is for translating the U* instance cards to generate equivalent
+    Xspice digital device instances and their timing delay .model cards
+    using the previously stored delays.
+
+    Some limitations are:
+        No support for logicexp, pindly, and constraint behavioral primitives.
+        Approximations to the Pspice timing delays. Typical values for delays
+        are estimated. Pspice has a rich set of timing simulation features,
+        such as checks for setup/hold violations, minimum pulse width, and
+        hazard detection.
+        Only the common logic gates, flip-flops, and latches are suported.
+
+   First pass through a subcircuit. Call create_model_xlator() and read the
+   .model cards by calling u_process_model_line() (or similar) for each card,
+   The delays for the different types (ugate, utgate, ueff, ugff) are stored
+   by get_delays_...() and add_delays_to_model_xlator().
+
+   Second pass through a subcircuit. To translate each U* instance call
+   u_process_instance_line() (or similar). This calls translate_...()
+   functions for gates, tristate, flip-flops and latches. translate_...()
+   calls add_..._inout_timing_model() to parse the U* card, and then calls
+   gen_..._instance(). Creating new cards to replace the U* and .model
+   cards needs modifying where the output goes from processing an instance.
+   This will be added either to this file or to frontend/inpcom.c.
+   Finally, call cleanup_model_xlator() before repeating the sequence for
+   another subcircuit.
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -12,10 +46,8 @@
 #include "ngspice/stringutil.h"
 #include "ngspice/udevices.h"
 /*
- TODO check for name collisions with new names
- TODO add support for compound gates
- TODO add support for srff, pullup/down
- TODO investigate the method for generating model names
+ TODO check for name collisions when creating new names
+ TODO add support for compound gates, srff, pullup/down
 */
 
 /* #define TRACE */
@@ -949,7 +981,7 @@ static struct instance_hdr *create_instance_header(char *line)
 char *new_inverter(char *iname, char *node, Xlatorp xlp)
 {
     /* Return the name of the output of the new inverter */
-    /* tfree the returned string after it has been used ny the caller */
+    /* tfree the returned string after it has been used by the caller */
     char *tmp = NULL;
     Xlatep xdata = NULL;
 
@@ -1385,7 +1417,7 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
         char *primary_model = NULL, *s1 = NULL, *s2 = NULL, *s3 = NULL;
         int ksave;
         /* arrays of gates */
-        /* NOTE (n)and3a, (n)or3a, (n)xora types are not supported */
+        /* NOTE (n)and3a, (n)or3a, (n)xor3a types are not supported */
         assert(num_outs == num_gates);
         assert(num_ins == num_gates * width);
         simple_array = is_gate_array(itype);

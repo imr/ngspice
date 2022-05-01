@@ -184,6 +184,7 @@ libfte_la_SOURCES = \
     svg.h       \
     typesdef.c  \
     typesdef.h  \
+    udevices.c   \
     vectors.c   \
     vectors.h   \
     where.c     \
