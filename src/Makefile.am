@@ -588,6 +588,11 @@ libngspice_la_LIBADD += \
 	$(LIBS) \
 	$(OPENMP_CFLAGS)
 
+if SP_WANTED
+libngspice_la_LIBADD += \
+    maths/dense/libdense.la
+endif
+
 libngspice_la_CFLAGS = -shared
 
 libngspice_la_LDFLAGS =  -shared
