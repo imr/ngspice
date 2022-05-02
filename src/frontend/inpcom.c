@@ -52,6 +52,11 @@ Author: 1985 Wayne A. Christopher
 /* gtri - end - 12/12/90 */
 #endif
 
+/* #define INTEGRATE_UDEVICES */
+#ifdef INTEGRATE_UDEVICES
+#include "ngspice/udevices.h"
+#endif
+
 /* SJB - Uncomment this line for debug tracing */
 /*#define TRACE*/
 
@@ -8226,6 +8231,109 @@ static void rem_double_braces(struct card* newcard)
     }
 }
 
+#ifdef INTEGRATE_UDEVICES
+static struct card *u_instances(struct card *startcard)
+{
+    struct card *card, *returncard = NULL, *subcktcard = NULL;
+    int level = 0;
+    int models_ok = 0, models_not_ok = 0;
+    int udev_ok = 0, udev_not_ok = 0;
+    BOOL create_called = FALSE, repeat_pass = FALSE;
+    BOOL skip_next = FALSE;
+
+    card = startcard;
+    while (card) {
+        char *cut_line = card->line;
+
+        skip_next = FALSE;
+        printf("line: %s\n", cut_line);
+        if (ciprefix(".subckt", cut_line)) {
+            models_ok = models_not_ok = 0;
+            udev_ok = udev_not_ok = 0;
+            level++;
+            if (level > 1) {
+                /* Bail out */
+                printf("Too many nesting levels\n");
+                break;
+            }
+            subcktcard = card;
+            printf("** subckt: %s\n", cut_line);
+            if (!repeat_pass) {
+                if (create_called) {
+                    cleanup_model_xlator();
+                }
+                create_model_xlator();
+                create_called = TRUE;
+                printf("Doing first pass\n");
+            } else {
+                printf("Doing second pass\n");
+            }
+        } else if (ciprefix(".ends", cut_line)) {
+            level--;
+            printf("** ends: %s\n", cut_line);
+            if (repeat_pass) {
+                printf("Second pass ");
+            } else {
+                printf("First pass ");
+            }
+            printf("udev_ok=%d udev_not_ok=%d models_ok=%d models_not_ok=%d\n",
+                udev_ok, udev_not_ok, models_ok, models_not_ok);
+            if (models_not_ok > 0 || udev_not_ok > 0) {
+                repeat_pass = FALSE;
+                cleanup_model_xlator();
+                create_called = FALSE;
+            } else if (udev_ok > 0) {
+                printf("Repeat subckt\n");
+                repeat_pass = TRUE;
+                card = subcktcard;
+                skip_next = TRUE;
+            } else {
+                repeat_pass = FALSE;
+                cleanup_model_xlator();
+                create_called = FALSE;
+            }
+            subcktcard = NULL;
+        } else if (ciprefix(".model", cut_line)) {
+            if (subcktcard && !repeat_pass) {
+                printf("** model: %s\n", cut_line);
+                if (!u_process_model_line(cut_line)) {
+                    printf("Unable to convert model\n");
+                    models_not_ok++;
+                } else {
+                    models_ok++;
+                }
+            }
+        } else if (ciprefix("u", cut_line)) {
+            if (subcktcard) {
+                printf("** instance: %s\n", cut_line);
+                if (repeat_pass) {
+                    if (!u_process_instance(cut_line)) {
+                        /* Bail out */
+                        printf("Unable to convert instance\n");
+                        break;
+                    }
+                } else {
+                    if (u_check_instance(cut_line)) {
+                        printf("Instance can be converted\n");
+                        udev_ok++;
+                    } else {
+                        printf("Instance can NOT be converted\n");
+                        udev_not_ok++;
+                    }
+                }
+            }
+        }
+        if (!skip_next) {
+            card = card->nextcard;
+        }
+    }
+    if (create_called) {
+        cleanup_model_xlator();
+    }
+    return returncard;
+}
+#endif
+
 /**** PSPICE to ngspice **************
 * .model replacement in ako (a kind of) model descriptions
 * replace the E source TABLE function by a B source pwl
@@ -8270,6 +8378,13 @@ static struct card *pspice_compat(struct card *oldcard)
         fprintf(stderr, "Error: no model found for %s\n", errcard->line);
         controlled_exit(1);
     }
+
+#ifdef INTEGRATE_UDEVICES
+    {
+        struct card *ucard;
+        ucard = u_instances(oldcard);
+    }
+#endif
 
     /* Process .distribution cards. */
     do_distribution(oldcard);

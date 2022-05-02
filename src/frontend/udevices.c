@@ -50,7 +50,7 @@
  TODO add support for compound gates, srff, pullup/down
 */
 
-/* #define TRACE */
+#define TRACE
 
 /* device types */
 #define D_AND    0
@@ -203,8 +203,10 @@ static char *find_xspice_for_delay(char *itype)
         if (strcmp(itype, "and3") == 0)  { return xspice_tab[D_AND]; }
         if (strcmp(itype, "and3a") == 0) { return xspice_tab[D_AND]; }
 
+/*  Not implemented
         if (strcmp(itype, "ao") == 0)  { return xspice_tab[D_AO]; }
         if (strcmp(itype, "aoi") == 0) { return xspice_tab[D_AOI]; }
+*/
         break;
     }
     case 'b': {
@@ -259,17 +261,23 @@ static char *find_xspice_for_delay(char *itype)
         if (strcmp(itype, "or3") == 0)  { return xspice_tab[D_OR]; }
         if (strcmp(itype, "or3a") == 0) { return xspice_tab[D_OR]; }
 
+/*  Not implemented
         if (strcmp(itype, "oa") == 0)  { return xspice_tab[D_OA]; }
         if (strcmp(itype, "oai") == 0) { return xspice_tab[D_OAI]; }
+*/
         break;
     }
     case 'p': {
+/*  Not implemented
         if (strcmp(itype, "pulldn") == 0) { return xspice_tab[D_DOWN]; }
         if (strcmp(itype, "pullup") == 0) { return xspice_tab[D_UP]; }
+*/
         break;
     }
     case 's': {
+/*  Not implemented
         if (strcmp(itype, "srff") == 0) { return xspice_tab[D_SRFF]; }
+*/
         break;
     }
     case 'x': {
@@ -2474,15 +2482,16 @@ BOOL u_process_model_line(char *line)
     /* Translate a .model line to find the delays */
     /* Return TRUE if ok */
     char *newline;
+    BOOL retval;
     size_t n = strlen(line) - 1;
 
     if (n > 0 && line[n] == '\n') line[n] = '\0';
     if (strncmp(line, ".model ", strlen(".model ")) == 0) {
         newline = TMALLOC(char, strlen(line) + 1);
         (void) memcpy(newline, line, strlen(line) + 1);
-        u_process_model(newline, line, "model_new_name", "d_xspice");
+        retval = u_process_model(newline, line, "model_new_name", "d_xspice");
         tfree(newline);
-        return TRUE;
+        return retval;
     } else {
         return FALSE;
     }
