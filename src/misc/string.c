@@ -217,7 +217,7 @@ int get_int_n(const char *str, size_t n, int *p_value)
    
     /* Iterate over chars until end or char that is not numeric */ 
     for ( ; p_cur != p_end; ++p_cur) {
-        char ch_cur = *str;
+        char ch_cur = *p_cur;
         if (!isdigit(ch_cur)) { /* Test for exit due to non-numeric char */
             break;
         }
