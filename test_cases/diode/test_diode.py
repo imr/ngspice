@@ -1,6 +1,6 @@
 """ test OSDI simulation of diode
 """
-import os
+import os, shutil
 import numpy as np
 import subprocess
 import pandas as pd
@@ -17,10 +17,10 @@ directory = os.path.dirname(__file__)
 # The integration test proves the functioning of the OSDI interface.  The Ngspice diode is quite
 # complicated and the results are therefore not exactly the same.
 # Future tests will target Verilog-A models like HICUM/L2 that should yield exactly the same results as the Ngspice implementation.
-create_osdi_diode = True
-if create_osdi_diode:
+
+
+def create_shared_object():
     # plave the file "diode_va.c" next to this file
-    path_c_code = os.path.join(directory, "diode_va.c")
     subprocess.run(
         [
             "gcc",
@@ -38,7 +38,7 @@ if create_osdi_diode:
         ["gcc", "-shared", "-o", "diode_va.so", "diode_va.o", "-ggdb"],
         cwd=directory,
     )
-    os.makedirs(os.path.join(directory, "test_osdi/osdi"), exist_ok=True)
+    os.makedirs(os.path.join(directory, "test_osdi", "osdi"), exist_ok=True)
     subprocess.run(["mv", "diode_va.so", "test_osdi/osdi/diode_va.so"], cwd=directory)
     subprocess.run(["rm", "diode_va.o"], cwd=directory)
 
@@ -60,8 +60,14 @@ def test_ngspice():
     # make directories for test cases
     dir_osdi = os.path.join(directory, "test_osdi")
     dir_built_in = os.path.join(directory, "test_built_in")
+    # remove old results:
+    for directory_i in [dir_osdi, dir_built_in]:
+        shutil.rmtree(directory_i)
+
     for directory_i in [dir_osdi, dir_built_in]:
         os.makedirs(directory_i, exist_ok=True)
+
+    create_shared_object()
 
     # write netlists
     with open(os.path.join(dir_osdi, "netlist.sp"), "w") as netlist_handle:
