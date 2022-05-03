@@ -5,6 +5,8 @@ import numpy as np
 import subprocess
 import pandas as pd
 
+directory = os.path.dirname(__file__)
+
 # This test runs a DC, AC and Transient Simulation of a simple diode.
 # The diode is available in the "OSDI" Git project and needs to be compiled to a shared object
 # and then bet put into /usr/local/share/ngspice/osdi:
@@ -15,6 +17,30 @@ import pandas as pd
 # The integration test proves the functioning of the OSDI interface.  The Ngspice diode is quite
 # complicated and the results are therefore not exactly the same.
 # Future tests will target Verilog-A models like HICUM/L2 that should yield exactly the same results as the Ngspice implementation.
+create_osdi_diode = True
+if create_osdi_diode:
+    # plave the file "diode_va.c" next to this file
+    path_c_code = os.path.join(directory, "diode_va.c")
+    subprocess.run(
+        [
+            "gcc",
+            "-c",
+            "-Wall",
+            "-I",
+            "../../src/spicelib/devices/osdi/",
+            "-fpic",
+            "diode_va.c",
+            "-ggdb",
+        ],
+        cwd=directory,
+    )
+    subprocess.run(
+        ["gcc", "-shared", "-o", "diode_va.so", "diode_va.o", "-ggdb"],
+        cwd=directory,
+    )
+    os.makedirs(os.path.join(directory, "test_osdi/osdi"), exist_ok=True)
+    subprocess.run(["mv", "diode_va.so", "test_osdi/osdi/diode_va.so"], cwd=directory)
+    subprocess.run(["rm", "diode_va.o"], cwd=directory)
 
 
 # specify location of Ngspice executable to be tested
@@ -22,7 +48,6 @@ ngspice_path = "../../../debug/src/ngspice"
 
 
 def test_ngspice():
-    directory = os.path.dirname(__file__)
     path_netlist = os.path.join(directory, "netlist.sp")
 
     # open netlist and activate Ngspice diode

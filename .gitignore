@@ -87,6 +87,7 @@ src/spicelib/parser/inpptree-parser.h
 # Visual Studio Code user options files
 .vscode/
 
-test_cases/diode/test_osdi/.osdi/diode_va.so
 test_cases/diode/test_osdi/*
 test_cases/diode/test_built_in/*
+test_cases/diode/diode_va.c
+test_cases/diode/osdi.h
