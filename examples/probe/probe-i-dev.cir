@@ -1,0 +1,41 @@
+test .probe i(dev)
+
+Vcc 1 0 1
+RC 1 c 100
+vbb 2 0 1
+RB 2 b 300
+
+vee e 0 0
+
+Q1 c b e nbipmod
+.model nbipmod npn
+
+
+.subckt pbip c b e s
+Q1 c b e s pbipmod
+.model pbipmod pnp
+.ends
+
+Vcc1 11 0 -1
+RC1 11 c1 100
+vbb1 12 0 -1
+RB1 12 b1 300
+vee1 e1 0 0
+vss1 s1 0 0
+
+X1 c1 b1 e1 s1  pbip
+
+*.probe i(x1) i(q1)
+.probe p(Q1) p(X1)
+
+.control
+*op
+dc vbb 0 2 0.01
+settype power q1:power
+plot q1:power
+display
+*print all
+.endc
+
+.end
+
