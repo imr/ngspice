@@ -1,19 +1,5 @@
 """ test OSDI simulation of diode
 """
-import types
-from pathlib import Path
-from DMT.core import DutType, Sweep, specifiers, SimCon, Plot, MCard
-from DMT.core.circuit import (
-    Circuit,
-    CircuitElement,
-    RESISTANCE,
-    DIODE,
-    SHORT,
-    VOLTAGE,
-)
-
-from DMT.ngspice import DutNgspice
-
 import os
 import numpy as np
 import subprocess
@@ -29,6 +15,7 @@ import pandas as pd
 # The integration test proves the functioning of the OSDI interface.  The Ngspice diode is quite
 # complicated and the results are therefore not exactly the same.
 # Future tests will target Verilog-A models like HICUM/L2 that should yield exactly the same results as the Ngspice implementation.
+
 
 # specify location of Ngspice executable to be tested
 ngspice_path = "../../../debug/src/ngspice"
@@ -164,8 +151,8 @@ if __name__ == "__main__":
     plt.semilogx(
         ac_data_osdi["frequency"], ac_data_osdi["i(vsense)"] * 1e3, label="OSDI"
     )
-    plt.xlabel(r"$f(H)$")
-    plt.ylabel(r"$\Re \left\{ \underline{Y}_{11} \right\} (\mathrm{mS})$")
+    plt.xlabel("$f(\\mathrm{H})$")
+    plt.ylabel("$\\Re \\left\{ Y_{11} \\right\} (\\mathrm{mS})$")
     plt.legend()
     fig = plt.figure()
     plt.semilogx(
@@ -180,8 +167,8 @@ if __name__ == "__main__":
         ac_data_osdi["i(vsense).1"] * 1e3 / omega,
         label="OSDI",
     )
-    plt.xlabel(r"$f(\mathrm{H})$")
-    plt.ylabel(r"$\Im \left\{ \underline{Y}_{11} \right\}/(\omega) (\mathrm{mF})$")
+    plt.xlabel("$f(\\mathrm{H})$")
+    plt.ylabel("$\\Im\\left\{Y_{11}\\right\}/(\\omega) (\\mathrm{mF})$")
     plt.legend()
 
     # TR plot
