@@ -87,5 +87,6 @@ src/spicelib/parser/inpptree-parser.h
 # Visual Studio Code user options files
 .vscode/
 
+test_cases/diode/__pycache__/*
 test_cases/diode/test_osdi/*
 test_cases/diode/test_built_in/*

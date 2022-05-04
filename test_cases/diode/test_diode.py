@@ -44,7 +44,8 @@ def create_shared_object():
 
 
 # specify location of Ngspice executable to be tested
-ngspice_path = "../../../debug/src/ngspice"
+ngspice_path = os.path.join(directory, "../../debug/src/ngspice")
+ngspice_path = os.path.abspath(ngspice_path)
 
 
 def test_ngspice():
@@ -62,7 +63,7 @@ def test_ngspice():
     dir_built_in = os.path.join(directory, "test_built_in")
     # remove old results:
     for directory_i in [dir_osdi, dir_built_in]:
-        shutil.rmtree(directory_i)
+        shutil.rmtree(directory_i, ignore_errors=True)
 
     for directory_i in [dir_osdi, dir_built_in]:
         os.makedirs(directory_i, exist_ok=True)
@@ -88,24 +89,24 @@ def test_ngspice():
         )
 
     # read DC simulation results
-    dc_data_osdi = pd.read_csv(os.path.join(dir_osdi, "dc_sim.ngspice"), sep="\s+")
+    dc_data_osdi = pd.read_csv(os.path.join(dir_osdi, "dc_sim.ngspice"), sep="\\s+")
     dc_data_built_in = pd.read_csv(
-        os.path.join(dir_built_in, "dc_sim.ngspice"), sep="\s+"
+        os.path.join(dir_built_in, "dc_sim.ngspice"), sep="\\s+"
     )
 
     id_osdi = dc_data_osdi["i(vsense)"].to_numpy()
     id_built_in = dc_data_built_in["i(vsense)"].to_numpy()
 
     # read AC simulation results
-    ac_data_osdi = pd.read_csv(os.path.join(dir_osdi, "ac_sim.ngspice"), sep="\s+")
+    ac_data_osdi = pd.read_csv(os.path.join(dir_osdi, "ac_sim.ngspice"), sep="\\s+")
     ac_data_built_in = pd.read_csv(
-        os.path.join(dir_built_in, "ac_sim.ngspice"), sep="\s+"
+        os.path.join(dir_built_in, "ac_sim.ngspice"), sep="\\s+"
     )
 
     # read TR simulation results
-    tr_data_osdi = pd.read_csv(os.path.join(dir_osdi, "tr_sim.ngspice"), sep="\s+")
+    tr_data_osdi = pd.read_csv(os.path.join(dir_osdi, "tr_sim.ngspice"), sep="\\s+")
     tr_data_built_in = pd.read_csv(
-        os.path.join(dir_built_in, "tr_sim.ngspice"), sep="\s+"
+        os.path.join(dir_built_in, "tr_sim.ngspice"), sep="\\s+"
     )
 
     # test simulation results
