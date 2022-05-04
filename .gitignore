@@ -89,5 +89,3 @@ src/spicelib/parser/inpptree-parser.h
 
 test_cases/diode/test_osdi/*
 test_cases/diode/test_built_in/*
-test_cases/diode/diode_va.c
-test_cases/diode/osdi.h
