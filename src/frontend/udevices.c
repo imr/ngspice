@@ -47,7 +47,7 @@
 #include "ngspice/udevices.h"
 /*
  TODO check for name collisions when creating new names
- TODO add support for compound gates, srff, pullup/down
+ TODO add support for oa and oai gates, srff, pullup/down
 */
 
 #define TRACE
@@ -91,6 +91,16 @@ struct gate_instance {
     char *enable;
     int num_outs;
     char **outputs;
+    char *tmodel;
+};
+
+struct compound_instance {
+    struct instance_hdr *hdrp;
+    int num_gates;
+    int width;
+    int num_ins;
+    char **inputs;
+    char *output;
     char *tmodel;
 };
 
@@ -203,10 +213,8 @@ static char *find_xspice_for_delay(char *itype)
         if (strcmp(itype, "and3") == 0)  { return xspice_tab[D_AND]; }
         if (strcmp(itype, "and3a") == 0) { return xspice_tab[D_AND]; }
 
-/*  Not implemented
         if (strcmp(itype, "ao") == 0)  { return xspice_tab[D_AO]; }
         if (strcmp(itype, "aoi") == 0) { return xspice_tab[D_AOI]; }
-*/
         break;
     }
     case 'b': {
@@ -522,6 +530,7 @@ static Xlatep find_in_xlator(Xlatep x, Xlatorp xlp)
     }
     return NULL;
 }
+
 static Xlatep find_in_model_xlator(Xlatep x)
 {
     Xlatep x1;
@@ -911,6 +920,42 @@ static struct gate_instance *create_gate_instance(struct instance_hdr *hdrp)
     return gip;
 }
 
+static struct compound_instance *create_compound_instance(
+    struct instance_hdr *hdrp)
+{
+    struct compound_instance *ci;
+
+    ci = TMALLOC(struct compound_instance, 1);
+    ci->hdrp = hdrp;
+    ci->num_gates = 0;
+    ci->width = 0;
+    ci->num_ins = 0;
+    ci->inputs = NULL;
+    ci->output = NULL;
+    ci->tmodel = NULL;
+    return ci;
+}
+
+static void delete_compound_instance(struct compound_instance *ci)
+{
+    char **namearr;
+    int i;
+
+    if (!ci) { return; }
+    if (ci->hdrp) { delete_instance_hdr(ci->hdrp); }
+    if (ci->num_ins > 0 && ci->inputs) {
+        namearr = ci->inputs;
+        for (i = 0; i < ci->num_ins; i++) {
+            tfree(namearr[i]);
+        }
+        tfree(ci->inputs);
+    }
+    if (ci->output) { tfree(ci->output); }
+    if (ci->tmodel) { tfree(ci->tmodel); }
+    tfree(ci);
+    return;
+}
+
 static void delete_gate_instance(struct gate_instance *gip)
 {
     char **namearr;
@@ -1263,6 +1308,116 @@ static Xlatorp gen_dltch_instance(struct dltch_instance *ip)
     if (need_clrb_inv) { tfree(clrb); }
     tfree(modelnm);
 
+    return xxp;
+}
+
+static Xlatorp gen_compound_instance(struct compound_instance *compi)
+{
+    char **inarr, *itype, *output, *tmodel, *outgate = NULL;
+    int i, j, k, width, num_gates;
+    int num_ins_kept = 0;
+    char *model_name = NULL, *inst = NULL, **connector = NULL;
+    char *new_inst = NULL, *model_stmt = NULL, *final_model_name = NULL;
+    char *new_stmt = NULL;
+    char *tmp;
+    size_t sz = 0;
+    Xlatorp xxp = NULL;
+    Xlatep xdata = NULL;
+
+    if (!compi) { return NULL; }
+    itype = compi->hdrp->instance_type;
+    inst = compi->hdrp->instance_name;
+    if (strcmp(itype, "aoi") == 0) {
+        outgate = "d_nor";
+    } else if (strcmp(itype, "ao") == 0) {
+        outgate = "d_or";
+    } else {
+        return NULL;
+    }
+    inarr = compi->inputs;
+    width = compi->width;
+    num_gates = compi->num_gates;
+    output = compi->output;
+    tmodel = compi->tmodel;
+    model_name = tprintf("d_%s%s", inst, itype);
+    connector = TMALLOC(char *, num_gates);
+    xxp = create_xlator();
+    k = 0;
+    for (i = 0; i < num_gates; i++) {
+        for (j = 0; j < width; j++) {
+            sz += strlen(inarr[k]) + 8; // Room for space between each name
+            k++;
+        }
+    }
+    tmp = TMALLOC(char, sz);
+    tmp[0] = '\0';
+    k = 0;
+    for (i = 0; i < num_gates; i++) {
+        connector[i] = tprintf("con%s_%d", inst, i);
+        num_ins_kept = 0;
+        tmp[0] = '\0';
+        /* $d_hi AND gate inputs are ignored */
+        for (j = 0; j < width; j++) {
+            if (strcmp(inarr[k], "$d_hi") != 0) {
+                num_ins_kept++;
+                sprintf(tmp + strlen(tmp), " %s", inarr[k]);
+            }
+            k++;
+        }
+        if (num_ins_kept >= 2) {
+            new_inst = tprintf("a%s_%d [%s ] %s %s", inst, i,
+                tmp, connector[i], model_name);
+            xdata = create_xlate_translated(new_inst);
+            xxp = add_xlator(xxp, xdata);
+            tfree(new_inst);
+        } else if (num_ins_kept == 1) {
+            /*
+              connector[i] is the remaining input connected
+              directly to the OR/NOR final gate.
+            */
+            tfree(connector[i]);
+            connector[i] = tprintf("%s", tmp);
+        } else {
+            assert(FALSE);
+        }
+    }
+    model_stmt = tprintf(".model %s d_and", model_name);
+    xdata = create_xlate_translated(model_stmt);
+    xxp = add_xlator(xxp, xdata);
+    tfree(model_stmt);
+
+    /* Final OR/NOR gate */
+    final_model_name = tprintf("%s_out", model_name);
+    tfree(tmp);
+
+    sz =0;
+    for (i = 0; i < num_gates; i++) {
+        sz += strlen(connector[i]) + 8; // Room for space between each name
+    }
+    tmp = TMALLOC(char, sz);
+    tmp[0] = '\0';
+    for (i = 0; i < num_gates; i++) {
+        sprintf(tmp + strlen(tmp), " %s", connector[i]);
+    }
+    new_stmt = tprintf("a%s_out [%s ] %s %s",
+        inst, tmp, output, final_model_name);
+    xdata = create_xlate_translated(new_stmt);
+    xxp = add_xlator(xxp, xdata);
+    tfree(new_stmt);
+    tfree(tmp);
+    /* timing model for output gate */
+    if (!gen_timing_model(tmodel, "ugate", outgate,
+            final_model_name, xxp)) {
+        printf("WARNING unable to find tmodel %s for %s %s\n",
+            tmodel, final_model_name, outgate);
+    }
+
+    tfree(final_model_name);
+    for (i = 0; i < num_gates; i++) {
+        if (connector[i]) { tfree(connector[i]); }
+    }
+    if (connector) { tfree(connector); }
+    tfree(model_name);
     return xxp;
 }
 
@@ -1709,10 +1864,13 @@ static char *get_estimate(struct timing_data *tdp)
       or finished with this return value.
     */
     if (!tdp) { return NULL; }
-    if (tdp->estimate == EST_MIN) { return tdp->min; }
-    if (tdp->estimate == EST_TYP) { return tdp->typ; }
-    if (tdp->estimate == EST_MAX) { return tdp->max; }
-    if (tdp->estimate == EST_AVE) { return tdp->ave; }
+    switch (tdp->estimate) {
+        case EST_MIN: return tdp->min;
+        case EST_TYP: return tdp->typ;
+        case EST_MAX: return tdp->max;
+        case EST_AVE: return tdp->ave;
+        default: break;
+    }
     return NULL;
 }
 
@@ -1903,22 +2061,35 @@ static char *get_delays_ugff(char *rem, char *d_name)
     return delays;
 }
 
+static void print_delays(char *delays)
+{
+    if (delays) {
+        printf("<%s>\n", delays);
+    } else {
+        printf("<(null)>\n");
+    }
+    return;
+}
+
 static BOOL u_process_model(char *nline, char *original,
                           char *newname, char *xspice)
 {
     char *tok, *remainder, *delays = NULL, *utype, *tmodel;
-    BOOL retval = TRUE;
+    BOOL retval = TRUE, verbose = FALSE;
+#ifdef TRACE
+    //verbose = TRUE;
+#endif
 
     /* .model */
     tok = strtok(nline, " \t");
     /* model name */
     tok = strtok(NULL, " \t");
-    printf("\nmodel_name -> %s\n", tok);
+    if (verbose) printf("\nmodel_name -> %s\n", tok);
     tmodel = TMALLOC(char, strlen(tok) + 1);
     memcpy(tmodel, tok, strlen(tok) + 1);
     /* model utype */
     tok = strtok(NULL, " \t(");
-    printf("model_utype -> %s\n", tok);
+    if (verbose) printf("model_utype -> %s\n", tok);
     utype = TMALLOC(char, strlen(tok) + 1);
     memcpy(utype, tok, strlen(tok) + 1);
 
@@ -1927,52 +2098,32 @@ static BOOL u_process_model(char *nline, char *original,
     if (remainder) {
         if (strcmp(utype, "ugate") == 0) {
             delays = get_delays_ugate(remainder, xspice);
-            if (delays) {
-                printf("<%s>\n", delays);
-                add_delays_to_model_xlator(delays, utype, "", tmodel);
-            } else {
-                printf("<(null)>\n");
-                add_delays_to_model_xlator("", utype, "", tmodel);
-            }
+            add_delays_to_model_xlator((delays ? delays : ""),
+                utype, "", tmodel);
+            if (verbose) print_delays(delays);
             if (delays) { tfree(delays); }
         } else if (strcmp(utype, "utgate") == 0) {
             delays = get_delays_utgate(remainder, xspice);
-            if (delays) {
-                printf("<%s>\n", delays);
-                add_delays_to_model_xlator(delays, utype, "", tmodel);
-            } else {
-                printf("<(null)>\n");
-                add_delays_to_model_xlator("", utype, "", tmodel);
-            }
+            add_delays_to_model_xlator((delays ? delays : ""),
+                utype, "", tmodel);
+            if (verbose) print_delays(delays);
             if (delays) { tfree(delays); }
         } else if (strcmp(utype, "ueff") == 0) {
             delays = get_delays_ueff(remainder, xspice);
-            if (delays) {
-                printf("<%s>\n", delays);
-                add_delays_to_model_xlator(delays, utype, "", tmodel);
-            } else {
-                printf("<(null)>\n");
-                add_delays_to_model_xlator("", utype, "", tmodel);
-            }
+            add_delays_to_model_xlator((delays ? delays : ""),
+                utype, "", tmodel);
+            if (verbose) print_delays(delays);
             if (delays) { tfree(delays); }
         } else if (strcmp(utype, "ugff") == 0) {
             delays = get_delays_ugff(remainder, "d_dlatch");
-            if (delays) {
-                printf("<%s>\n", delays);
-                add_delays_to_model_xlator(delays, utype, "d_dlatch", tmodel);
-            } else {
-                printf("<(null)>\n");
-                add_delays_to_model_xlator("", utype, "d_dlatch", tmodel);
-            }
+            add_delays_to_model_xlator((delays ? delays : ""),
+                utype, "d_dlatch", tmodel);
+            if (verbose) print_delays(delays);
             if (delays) { tfree(delays); }
             delays = get_delays_ugff(remainder, "d_srlatch");
-            if (delays) {
-                printf("<%s>\n", delays);
-                add_delays_to_model_xlator(delays, utype, "d_srlatch", tmodel);
-            } else {
-                printf("<(null)>\n");
-                add_delays_to_model_xlator("", utype, "d_srlatch", tmodel);
-            }
+            add_delays_to_model_xlator((delays ? delays : ""),
+                utype, "d_srlatch", tmodel);
+            if (verbose) print_delays(delays);
             if (delays) { tfree(delays); }
         } else {
             retval = FALSE;
@@ -2164,6 +2315,59 @@ static struct jkff_instance *add_jkff_inout_timing_model(
     (void) memcpy(jkffip->tmodel, tok, strlen(tok) + 1);
     tfree(copyline);
     return jkffip;
+}
+
+static struct compound_instance *add_compound_inout_timing_model(
+    struct instance_hdr *hdr, char *start)
+{
+    char *tok, *copyline, *itype  = hdr->instance_type, *name;
+    int i, j, k, n1 =hdr->num1, n2 = hdr->num2, inwidth, numgates;
+    struct compound_instance *compi;
+    char **inarr;
+    BOOL first = TRUE;
+
+    if (strcmp(itype, "aoi") == 0 || strcmp(itype, "ao") == 0) {
+         inwidth = n1;
+         numgates = n2;
+    } else {
+        return NULL;
+    }
+    compi = create_compound_instance(hdr);
+    compi->num_gates = numgates;
+    compi->width = inwidth;
+    compi->num_ins = numgates * inwidth;
+    copyline = TMALLOC(char, strlen(start) + 1);
+    (void) memcpy(copyline, start, strlen(start) + 1);
+    inarr = TMALLOC(char *, compi->num_ins);
+    compi->inputs = inarr;
+    /* all the inputs, inwidth inputs per gate */
+    k = 0;
+    for (i = 0; i < numgates; i++) {
+        for (j = 0; j < inwidth; j++) {
+            if (first) {
+                tok = strtok(copyline, " \t");
+                first = FALSE;
+            } else {
+                tok = strtok(NULL, " \t");
+            }
+            name = TMALLOC(char, strlen(tok) + 1);
+            (void) memcpy(name, tok, strlen(tok) + 1);
+            inarr[k] = name;
+            k++;
+        }
+    }
+    /* one output */
+    tok = strtok(NULL, " \t");
+    name = TMALLOC(char, strlen(tok) + 1);
+    (void) memcpy(name, tok, strlen(tok) + 1);
+    compi->output = name;
+    /* timing model */
+    tok = strtok(NULL, " \t");
+    name = TMALLOC(char, strlen(tok) + 1);
+    (void) memcpy(name, tok, strlen(tok) + 1);
+    compi->tmodel = name;
+    tfree(copyline);
+    return compi;
 }
 
 static struct gate_instance *add_array_inout_timing_model(
@@ -2398,6 +2602,7 @@ static Xlatorp translate_gate(struct instance_hdr *hdr, char *start)
     /* if unable to translate return 0, else return 1 */
     char *itype;
     struct gate_instance *igatep;
+    struct compound_instance *compi;
     Xlatorp xp;
 
     itype = hdr->instance_type;
@@ -2413,6 +2618,13 @@ static Xlatorp translate_gate(struct instance_hdr *hdr, char *start)
         if (igatep) {
             xp = gen_gate_instance(igatep);
             delete_gate_instance(igatep);
+            return xp;
+        }
+    } else if (strcmp(itype, "aoi") == 0 || strcmp(itype, "ao") == 0) {
+        compi = add_compound_inout_timing_model(hdr, start);
+        if (compi) {
+            xp = gen_compound_instance(compi);
+            delete_compound_instance(compi);
             return xp;
         }
     } else {
@@ -2455,11 +2667,14 @@ BOOL u_process_instance(char *nline)
         delete_instance_hdr(hdr);
         return FALSE;
     }
+    // printf("iname %s itype %s\n", hdr->instance_name, itype);
     /* Skip past instance name, type, pwr, gnd */
     p1 = skip_past_words(nline, 4);
     if (is_gate(itype) || is_gate_array(itype)) {
         xp = translate_gate(hdr, p1);
     } else if (is_tristate(itype) || is_tristate_array(itype)) {
+        xp = translate_gate(hdr, p1);
+    } else if (strcmp(itype, "aoi") == 0 || strcmp(itype, "ao") == 0) {
         xp = translate_gate(hdr, p1);
     } else if (strcmp(itype, "dff") == 0 || strcmp(itype, "jkff") == 0 ||
         strcmp(itype, "dltch") == 0) {
