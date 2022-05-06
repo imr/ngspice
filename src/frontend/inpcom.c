@@ -52,7 +52,7 @@ Author: 1985 Wayne A. Christopher
 /* gtri - end - 12/12/90 */
 #endif
 
-/* #define INTEGRATE_UDEVICES */
+#define INTEGRATE_UDEVICES
 #ifdef INTEGRATE_UDEVICES
 #include "ngspice/udevices.h"
 #endif
@@ -8232,21 +8232,43 @@ static void rem_double_braces(struct card* newcard)
 }
 
 #ifdef INTEGRATE_UDEVICES
+static void list_the_cards(struct card *startcard, char *prefix)
+{
+    struct card *card;
+    if (!startcard) { return; }
+    for (card = startcard; card; card = card->nextcard) {
+        char* cut_line = card->line;
+        printf("%s %s\n", prefix, cut_line);
+    }
+}
+
+static struct card *the_last_card(struct card *startcard)
+{
+    struct card *card, *lastcard = NULL;
+    if (!startcard) { return NULL; }
+    for (card = startcard; card; card = card->nextcard) {
+        lastcard = card;
+    }
+    return lastcard;
+}
+
 static struct card *u_instances(struct card *startcard)
 {
     struct card *card, *returncard = NULL, *subcktcard = NULL;
+    struct card *newcard = NULL, *last_newcard = NULL;
     int level = 0;
     int models_ok = 0, models_not_ok = 0;
     int udev_ok = 0, udev_not_ok = 0;
     BOOL create_called = FALSE, repeat_pass = FALSE;
-    BOOL skip_next = FALSE;
+    BOOL skip_next = FALSE, verbose = FALSE;
+    char *tmp = NULL, *pos;
 
     card = startcard;
     while (card) {
         char *cut_line = card->line;
 
         skip_next = FALSE;
-        printf("line: %s\n", cut_line);
+        if (verbose) printf("line: %s\n", cut_line);
         if (ciprefix(".subckt", cut_line)) {
             models_ok = models_not_ok = 0;
             udev_ok = udev_not_ok = 0;
@@ -8256,48 +8278,68 @@ static struct card *u_instances(struct card *startcard)
                 printf("Too many nesting levels\n");
                 break;
             }
+            tmp = TMALLOC(char, strlen(cut_line) + 1);
+            (void) memcpy(tmp, cut_line, strlen(cut_line) + 1);
             subcktcard = card;
-            printf("** subckt: %s\n", cut_line);
+            if (verbose) printf("** subckt: %s\n", cut_line);
             if (!repeat_pass) {
                 if (create_called) {
-                    cleanup_model_xlator();
+                    cleanup_udevice();
                 }
-                create_model_xlator();
+                initialize_udevice();
                 create_called = TRUE;
-                printf("Doing first pass\n");
+                if (verbose) printf("Doing first pass\n");
             } else {
-                printf("Doing second pass\n");
+               pos = strstr(tmp, "optional");
+               if (pos) {
+                   *pos = '\0';
+               }
+               //printf("  %s\n", tmp);
+               if (verbose)  printf("Doing second pass\n");
             }
+            //tfree(tmp);
         } else if (ciprefix(".ends", cut_line)) {
             level--;
-            printf("** ends: %s\n", cut_line);
+            if (verbose) printf("** ends: %s\n", cut_line);
             if (repeat_pass) {
-                printf("Second pass ");
+                newcard = replacement_udevice_cards();
+                if (newcard) {
+                    subcktcard->nextcard = newcard;
+                    tfree(subcktcard->line);
+                    subcktcard->line = tmp;
+                    //list_the_cards(newcard, "Replacement:");
+                    last_newcard = the_last_card(newcard);
+                    if (last_newcard) {
+                        last_newcard->nextcard = card; // the .ends card
+                    }
+                }
+                if (verbose) printf("Second pass ");
+                //printf("  %s\n", cut_line);
             } else {
-                printf("First pass ");
+                if (verbose) printf("First pass ");
             }
-            printf("udev_ok=%d udev_not_ok=%d models_ok=%d models_not_ok=%d\n",
+            if (verbose) printf("udev_ok=%d udev_not_ok=%d models_ok=%d models_not_ok=%d\n",
                 udev_ok, udev_not_ok, models_ok, models_not_ok);
             if (models_not_ok > 0 || udev_not_ok > 0) {
                 repeat_pass = FALSE;
-                cleanup_model_xlator();
+                cleanup_udevice();
                 create_called = FALSE;
             } else if (udev_ok > 0) {
-                printf("Repeat subckt\n");
+                if (verbose) printf("Repeat subckt\n");
                 repeat_pass = TRUE;
                 card = subcktcard;
                 skip_next = TRUE;
             } else {
                 repeat_pass = FALSE;
-                cleanup_model_xlator();
+                cleanup_udevice();
                 create_called = FALSE;
             }
             subcktcard = NULL;
         } else if (ciprefix(".model", cut_line)) {
             if (subcktcard && !repeat_pass) {
-                printf("** model: %s\n", cut_line);
+                if (verbose) printf("** model: %s\n", cut_line);
                 if (!u_process_model_line(cut_line)) {
-                    printf("Unable to convert model\n");
+                    if (verbose) printf("Unable to convert model\n");
                     models_not_ok++;
                 } else {
                     models_ok++;
@@ -8305,30 +8347,32 @@ static struct card *u_instances(struct card *startcard)
             }
         } else if (ciprefix("u", cut_line)) {
             if (subcktcard) {
-                printf("** instance: %s\n", cut_line);
+                if (verbose) printf("** instance: %s\n", cut_line);
                 if (repeat_pass) {
                     if (!u_process_instance(cut_line)) {
                         /* Bail out */
-                        printf("Unable to convert instance\n");
+                        if (verbose) printf("Unable to convert instance\n");
                         break;
                     }
                 } else {
                     if (u_check_instance(cut_line)) {
-                        printf("Instance can be converted\n");
+                        if (verbose) printf("Instance can be converted\n");
                         udev_ok++;
                     } else {
-                        printf("Instance can NOT be converted\n");
+                        if (verbose) printf("Instance can NOT be converted\n");
                         udev_not_ok++;
                     }
                 }
             }
+        } else {
+            udev_not_ok++;
         }
         if (!skip_next) {
             card = card->nextcard;
         }
     }
     if (create_called) {
-        cleanup_model_xlator();
+        cleanup_udevice();
     }
     return returncard;
 }
@@ -8380,10 +8424,13 @@ static struct card *pspice_compat(struct card *oldcard)
     }
 
 #ifdef INTEGRATE_UDEVICES
+    //list_the_cards(oldcard, "After AKO");
+/* Here
     {
         struct card *ucard;
         ucard = u_instances(oldcard);
     }
+*/
 #endif
 
     /* Process .distribution cards. */
@@ -8418,6 +8465,18 @@ static struct card *pspice_compat(struct card *oldcard)
     new_str = copy(".func int(x) { sign(x)*floor(abs(x)) }");
     nextcard = insert_new_line(nextcard, new_str, 9, 0);
     nextcard->nextcard = oldcard;
+
+#ifdef INTEGRATE_UDEVICES
+/* or here? */
+    {
+        struct card *ucard;
+        //ucard = u_instances(oldcard);
+        //ucard = u_instances(nextcard);
+        ucard = u_instances(newcard);
+        list_the_cards(oldcard, "After udevices");
+    }
+#endif
+
 
     /* add predefined parameters TEMP, VT after each subckt call */
     /* FIXME: This should not be necessary if we had a better sense of

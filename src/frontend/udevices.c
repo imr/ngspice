@@ -17,10 +17,13 @@
         hazard detection.
         Only the common logic gates, flip-flops, and latches are suported.
 
-   First pass through a subcircuit. Call create_model_xlator() and read the
+   First pass through a subcircuit. Call initialize_udevice() and read the
    .model cards by calling u_process_model_line() (or similar) for each card,
    The delays for the different types (ugate, utgate, ueff, ugff) are stored
-   by get_delays_...() and add_delays_to_model_xlator().
+   by get_delays_...() and add_delays_to_model_xlator(). Also, during the
+   first pass, check that each U* instance can be translated to Xspice.
+   If there are any .model or U* instance cards that cannot be processed
+   in the .subckt, then there is no second pass and the .subckt is skipped.
 
    Second pass through a subcircuit. To translate each U* instance call
    u_process_instance_line() (or similar). This calls translate_...()
@@ -29,7 +32,7 @@
    gen_..._instance(). Creating new cards to replace the U* and .model
    cards needs modifying where the output goes from processing an instance.
    This will be added either to this file or to frontend/inpcom.c.
-   Finally, call cleanup_model_xlator() before repeating the sequence for
+   Finally, call cleanup_udevice() before repeating the sequence for
    another subcircuit.
 */
 
@@ -44,13 +47,13 @@
 #include "ngspice/bool.h"
 #include "ngspice/stringskip.h"
 #include "ngspice/stringutil.h"
+#include "ngspice/inpdefs.h"
 #include "ngspice/udevices.h"
-/*
- TODO check for name collisions when creating new names
- TODO add support for oa and oai gates, srff, pullup/down
-*/
 
-#define TRACE
+extern struct card* insert_new_line(
+    struct card* card, char* line, int linenum, int linenum_orig);
+
+/* #define TRACE */
 
 /* device types */
 #define D_AND    0
@@ -159,6 +162,10 @@ typedef struct s_xlator {
     Xlatep tail;
     Xlatep iter;
 } Xlator;
+
+#ifdef TRACE
+static void interpret_xlator(Xlatorp xp, BOOL brief);
+#endif
 
 /* For timing model extraction */
 #define EST_UNK -1
@@ -324,25 +331,21 @@ static void delete_xlate(Xlatep p)
 static Xlatep create_xlate(char *translated, char *delays, char *utype,
     char *xspice, char *tmodel, char *mname)
 {
+    /* Any unused parameter is called with an empty string "" */
     Xlatep xlp;
 
     xlp = TMALLOC(Xlate, 1);
     xlp->next = NULL;
     xlp->translated = TMALLOC(char, strlen(translated) + 1);
     strcpy(xlp->translated, translated);
-
     xlp->delays = TMALLOC(char, strlen(delays) + 1);
     strcpy(xlp->delays, delays);
-
     xlp->utype = TMALLOC(char, strlen(utype) + 1);
     strcpy(xlp->utype, utype);
-
     xlp->xspice = TMALLOC(char, strlen(xspice) + 1);
     strcpy(xlp->xspice, xspice);
-
     xlp->tmodel = TMALLOC(char, strlen(tmodel) + 1);
     strcpy(xlp->tmodel, tmodel);
-
     xlp->mname = TMALLOC(char, strlen(mname) + 1);
     strcpy(xlp->mname, mname);
     return xlp;
@@ -448,6 +451,19 @@ static Xlatep next_xlator(Xlatorp xp)
     return ret;
 }
 
+static Xlatorp append_xlator(Xlatorp dest, Xlatorp src)
+{
+    Xlatep x1, copy;
+
+    if (!dest || !src) { return NULL; }
+    for (x1 = first_xlator(src); x1; x1 = next_xlator(src)) {
+        copy = create_xlate(x1->translated, x1->delays, x1->utype,
+            x1->xspice, x1->tmodel, x1->mname);
+        dest = add_xlator(dest, copy);
+    }
+    return dest;
+}
+
 #ifdef TRACE
 static void interpret_xlator(Xlatorp xp, BOOL brief)
 {
@@ -479,11 +495,59 @@ static void interpret_xlator(Xlatorp xp, BOOL brief)
 /* static Xlatorp for collecting timing model delays */
 static Xlatorp model_xlatorp = NULL;
 static Xlatorp default_models = NULL;
+static Xlatorp translated_p = NULL;
 
-void create_model_xlator(void)
+static void create_translated_xlator(void)
+{
+    translated_p = create_xlator();
+}
+
+static void cleanup_translated_xlator(void)
+{
+#ifdef TRACE
+    printf("\nStart cleanup\n");
+    interpret_xlator(translated_p, TRUE);
+    printf("End cleanup\n");
+#endif
+    delete_xlator(translated_p);
+    translated_p = NULL;
+}
+
+struct card *replacement_udevice_cards(void)
+{
+    struct card *newcard = NULL, *nextcard = NULL;
+    char *new_str = NULL;
+    Xlatep x;
+    int count = 0;
+
+    if (!translated_p) { return NULL; }
+    for (x = first_xlator(translated_p); x; x = next_xlator(translated_p)) {
+        new_str = copy(x->translated);
+        if (count == 0) {
+            count++;
+            newcard = insert_new_line(NULL, new_str, 0, 0);
+        } else if (count == 1) {
+            count++;
+            nextcard = insert_new_line(newcard, new_str, 0, 0);
+        } else {
+            count++;
+            nextcard = insert_new_line(nextcard, new_str, 0, 0);
+        }
+    }
+/*
+    for (card = newcard; card; card = card->nextcard) {
+        char* cut_line = card->line;
+        printf("NEW CARD: %s\n", cut_line);
+    }
+*/
+    return newcard;
+}
+
+void initialize_udevice(void)
 {
     Xlatep xdata;
 
+    create_translated_xlator();
     model_xlatorp = create_xlator();
     default_models = create_xlator();
     /*  .model d0_gate ugate ()  */
@@ -500,8 +564,9 @@ void create_model_xlator(void)
     (void) add_xlator(default_models, xdata);
 }
 
-void cleanup_model_xlator(void)
+void cleanup_udevice(void)
 {
+    cleanup_translated_xlator();
     delete_xlator(model_xlatorp);
     model_xlatorp = NULL;
     delete_xlator(default_models);
@@ -2684,6 +2749,7 @@ BOOL u_process_instance(char *nline)
         retval = FALSE;
     }
     if (xp) {
+        append_xlator(translated_p, xp);
 #ifdef TRACE
         interpret_xlator(xp, TRUE);
 #endif
