@@ -30,10 +30,11 @@
    functions for gates, tristate, flip-flops and latches. translate_...()
    calls add_..._inout_timing_model() to parse the U* card, and then calls
    gen_..._instance(). Creating new cards to replace the U* and .model
-   cards needs modifying where the output goes from processing an instance.
-   This will be added either to this file or to frontend/inpcom.c.
-   Finally, call cleanup_udevice() before repeating the sequence for
-   another subcircuit.
+   cards is done by calling replacement_udevice_cards(), which returns a
+   list of new cards. The list of cards is then to be inserted after the
+   .subckt card and before the .ends card.  This occurs in the function
+   u_instances() in frontend/inpcom.c.  Finally, call cleanup_udevice()
+   before repeating the sequence for another subcircuit.
 */
 
 #include <stdio.h>
@@ -2126,6 +2127,7 @@ static char *get_delays_ugff(char *rem, char *d_name)
     return delays;
 }
 
+/*
 static void print_delays(char *delays)
 {
     if (delays) {
@@ -2135,26 +2137,22 @@ static void print_delays(char *delays)
     }
     return;
 }
+*/
 
 static BOOL u_process_model(char *nline, char *original,
                           char *newname, char *xspice)
 {
     char *tok, *remainder, *delays = NULL, *utype, *tmodel;
-    BOOL retval = TRUE, verbose = FALSE;
-#ifdef TRACE
-    //verbose = TRUE;
-#endif
+    BOOL retval = TRUE;
 
     /* .model */
     tok = strtok(nline, " \t");
     /* model name */
     tok = strtok(NULL, " \t");
-    if (verbose) printf("\nmodel_name -> %s\n", tok);
     tmodel = TMALLOC(char, strlen(tok) + 1);
     memcpy(tmodel, tok, strlen(tok) + 1);
     /* model utype */
     tok = strtok(NULL, " \t(");
-    if (verbose) printf("model_utype -> %s\n", tok);
     utype = TMALLOC(char, strlen(tok) + 1);
     memcpy(utype, tok, strlen(tok) + 1);
 
@@ -2165,30 +2163,25 @@ static BOOL u_process_model(char *nline, char *original,
             delays = get_delays_ugate(remainder, xspice);
             add_delays_to_model_xlator((delays ? delays : ""),
                 utype, "", tmodel);
-            if (verbose) print_delays(delays);
             if (delays) { tfree(delays); }
         } else if (strcmp(utype, "utgate") == 0) {
             delays = get_delays_utgate(remainder, xspice);
             add_delays_to_model_xlator((delays ? delays : ""),
                 utype, "", tmodel);
-            if (verbose) print_delays(delays);
             if (delays) { tfree(delays); }
         } else if (strcmp(utype, "ueff") == 0) {
             delays = get_delays_ueff(remainder, xspice);
             add_delays_to_model_xlator((delays ? delays : ""),
                 utype, "", tmodel);
-            if (verbose) print_delays(delays);
             if (delays) { tfree(delays); }
         } else if (strcmp(utype, "ugff") == 0) {
             delays = get_delays_ugff(remainder, "d_dlatch");
             add_delays_to_model_xlator((delays ? delays : ""),
                 utype, "d_dlatch", tmodel);
-            if (verbose) print_delays(delays);
             if (delays) { tfree(delays); }
             delays = get_delays_ugff(remainder, "d_srlatch");
             add_delays_to_model_xlator((delays ? delays : ""),
                 utype, "d_srlatch", tmodel);
-            if (verbose) print_delays(delays);
             if (delays) { tfree(delays); }
         } else {
             retval = FALSE;
@@ -2439,7 +2432,7 @@ static struct gate_instance *add_array_inout_timing_model(
     struct instance_hdr *hdr, char *start)
 {
     char *tok, *copyline, *itype  = hdr->instance_type;
-    BOOL first = TRUE, tristate = FALSE, verbose = FALSE;
+    BOOL first = TRUE, tristate = FALSE;
     int i, j, k, n1 =hdr->num1, n2 = hdr->num2, inwidth, numgates;
     struct gate_instance *gip = NULL;
     char **inarr = NULL, **outarr = NULL, *name;
@@ -2475,10 +2468,6 @@ static struct gate_instance *add_array_inout_timing_model(
     gip->num_outs = numgates;
     copyline = TMALLOC(char, strlen(start) + 1);
     (void) memcpy(copyline, start, strlen(start) + 1);
-    if (verbose) {
-        printf("instance: %s itype: %s\n",
-               hdr->instance_name, hdr->instance_type);
-    }
     /*
      numgates gates, each gate has inwidth inputs and 1 output
      inputs first
@@ -2497,7 +2486,6 @@ static struct gate_instance *add_array_inout_timing_model(
             name = TMALLOC(char, strlen(tok) + 1);
             (void) memcpy(name, tok, strlen(tok) + 1);
             inarr[k] = name;
-            if (verbose) { printf(" gate %d input(%d): %s\n", i, j, tok); }
             k++;
         }
     }
@@ -2507,7 +2495,6 @@ static struct gate_instance *add_array_inout_timing_model(
         name = TMALLOC(char, strlen(tok) + 1);
         (void) memcpy(name, tok, strlen(tok) + 1);
         gip->enable = name;
-        if (verbose) { printf(" enable: %s\n", tok); }
     }
     /* outputs next */
     outarr = TMALLOC(char *, numgates);
@@ -2517,14 +2504,12 @@ static struct gate_instance *add_array_inout_timing_model(
         name = TMALLOC(char, strlen(tok) + 1);
         (void) memcpy(name, tok, strlen(tok) + 1);
         outarr[i] = name;
-        if (verbose) { printf(" gate %d output: %s\n", i, tok); }
     }
     /* timing model last */
     tok = strtok(NULL, " \t");
     name = TMALLOC(char, strlen(tok) + 1);
     (void) memcpy(name, tok, strlen(tok) + 1);
     gip->tmodel = name;
-    if (verbose) { printf(" tmodel: %s\n", tok); }
     tfree(copyline);
     return gip;
 }
@@ -2534,7 +2519,7 @@ static struct gate_instance *add_gate_inout_timing_model(
 {
     char *tok, *copyline, *itype  = hdr->instance_type;
     int i, n1 = hdr->num1, n2 = hdr->num2, inwidth;
-    BOOL first = TRUE, tristate = FALSE, verbose = FALSE;
+    BOOL first = TRUE, tristate = FALSE;
     struct gate_instance *gip = NULL;
     char **inarr = NULL, **outarr = NULL, *name;
 
@@ -2564,10 +2549,6 @@ static struct gate_instance *add_gate_inout_timing_model(
     gip->num_outs = 1;
     copyline = TMALLOC(char, strlen(start) + 1);
     (void) memcpy(copyline, start, strlen(start) + 1);
-    if (verbose) {
-        printf("instance: %s itype: %s\n",
-               hdr->instance_name, hdr->instance_type);
-    }
     /* inputs */
     inarr = TMALLOC(char *, gip->num_ins);
     gip->inputs = inarr;
@@ -2581,7 +2562,6 @@ static struct gate_instance *add_gate_inout_timing_model(
         name = TMALLOC(char, strlen(tok) + 1);
         (void) memcpy(name, tok, strlen(tok) + 1);
         inarr[i] = name;
-        if (verbose) { printf(" input(%d): %s\n", i, tok); }
     }
     /* enable for tristate */
     if (tristate) {
@@ -2589,7 +2569,6 @@ static struct gate_instance *add_gate_inout_timing_model(
         name = TMALLOC(char, strlen(tok) + 1);
         (void) memcpy(name, tok, strlen(tok) + 1);
         gip->enable = name;
-        if (verbose) { printf(" enable: %s\n", tok); }
     }
     /* output */
     assert(gip->num_outs == 1);
@@ -2599,13 +2578,11 @@ static struct gate_instance *add_gate_inout_timing_model(
     name = TMALLOC(char, strlen(tok) + 1);
     (void) memcpy(name, tok, strlen(tok) + 1);
     outarr[0] = name;
-    if (verbose) { printf(" output: %s\n", tok); }
     /* timing model last */
     tok = strtok(NULL, " \t");
     name = TMALLOC(char, strlen(tok) + 1);
     (void) memcpy(name, tok, strlen(tok) + 1);
     gip->tmodel = name;
-    if (verbose) { printf(" tmodel: %s\n", tok); }
     tfree(copyline);
     return gip;
 }
