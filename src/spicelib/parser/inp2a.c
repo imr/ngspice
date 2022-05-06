@@ -4,15 +4,20 @@ Author: 1988 Thomas L. Quarles
 Modified: 2001 Paolo Nenzi (Cider Integration)
 **********/
 
+#include "ngspice/ngspice.h"
+
 #include "ngspice/devdefs.h"
 #include "ngspice/fteext.h"
 #include "ngspice/ifsim.h"
 #include "ngspice/inpdefs.h"
 #include "ngspice/inpmacs.h"
-#include "ngspice/ngspice.h"
 
 #include "inpxx.h"
 #include <stdio.h>
+
+#ifdef XSPICE
+#include "ngspice/mifproto.h"
+#endif
 
 void INP2A(CKTcircuit *ckt, INPtables *tab, struct card *current) {
   /* Mname <node> <node> <node> <node> <model> [L=<val>]
@@ -68,8 +73,13 @@ void INP2A(CKTcircuit *ckt, INPtables *tab, struct card *current) {
   mdfast = thismodel->INPmodfast;
   IFdevice *dev = ft_sim->devices[type];
 
-  if (!(dev->flags & DEV_OSDI)) {
+  if (!dev->registry_entry) {
+
+#ifdef XSPICE
+    MIF_INP2A(ckt, tab, current);
+#else
     LITERR("incorrect model type! Expected OSDI device");
+#endif
     return;
   }
 

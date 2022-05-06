@@ -8,7 +8,6 @@ EXTRA_DIST = inpptree-parser-y.h
 libinp_la_SOURCES = \
 		ifeval.c	\
 		ifnewuid.c	\
-		inp2a.c		\
 		inp2b.c		\
 		inp2c.c		\
 		inp2d.c		\
@@ -71,6 +70,11 @@ libinp_la_SOURCES = \
 		ptfuncs.c	\
 		sperror.c	\
 		inpxx.h
+
+
+if OSDI_WANTED
+libinp_la_SOURCES += inp2a.c
+endif
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include -I$(top_srcdir)/src/frontend
 AM_CFLAGS = $(STATIC)

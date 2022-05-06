@@ -172,8 +172,8 @@ int OSDIsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
   GENinstance *gen_inst;
   int err;
 
-  OsdiRegistryEntry entry = osdi_reg_entry_model(inModel);
-  const OsdiDescriptor *descr = entry.descriptor;
+  OsdiRegistryEntry *entry = osdi_reg_entry_model(inModel);
+  const OsdiDescriptor *descr = entry->descriptor;
 
   /* setup a temporary buffer */
   uint32_t *node_ids = TMALLOC(uint32_t, descr->num_nodes);
@@ -280,8 +280,8 @@ extern int OSDItemp(GENmodel *inModel, CKTcircuit *ckt) {
   int res;
   GENinstance *gen_inst;
 
-  OsdiRegistryEntry entry = osdi_reg_entry_model(inModel);
-  const OsdiDescriptor *descr = entry.descriptor;
+  OsdiRegistryEntry *entry = osdi_reg_entry_model(inModel);
+  const OsdiDescriptor *descr = entry->descriptor;
 
   for (gen_model = inModel; gen_model != NULL;
        gen_model = gen_model->GENnextModel) {
@@ -332,8 +332,8 @@ extern int OSDIunsetup(GENmodel *inModel, CKTcircuit *ckt) {
   GENinstance *gen_inst;
   int num;
 
-  OsdiRegistryEntry entry = osdi_reg_entry_model(inModel);
-  const OsdiDescriptor *descr = entry.descriptor;
+  OsdiRegistryEntry *entry = osdi_reg_entry_model(inModel);
+  const OsdiDescriptor *descr = entry->descriptor;
 
   for (gen_model = inModel; gen_model != NULL;
        gen_model = gen_model->GENnextModel) {
@@ -341,6 +341,11 @@ extern int OSDIunsetup(GENmodel *inModel, CKTcircuit *ckt) {
     for (gen_inst = gen_model->GENinstances; gen_inst != NULL;
          gen_inst = gen_inst->GENnextInstance) {
       void *inst = osdi_instance_data(entry, gen_inst);
+
+      // reset is collapsible
+      bool *is_collapsible =
+          (bool *)(((char *)inst) + descr->is_collapsible_offset);
+      memset(is_collapsible, 0, sizeof(bool) * descr->num_collapsible);
 
       uint32_t *node_mapping =
           (uint32_t *)(((char *)inst) + descr->node_mapping_offset);

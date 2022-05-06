@@ -12,10 +12,9 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/cpdefs.h"
 #include "ngspice/fteext.h"
 #include "ngspice/ifsim.h"
-#include "ngspice/devdefs.h"
 #include "inpxx.h"
 
-int INPtypelook_flag(char *type, int flag)
+int INPtypelook(char *type)
 {
 
     int i;
@@ -35,7 +34,7 @@ int INPtypelook_flag(char *type, int flag)
              printf("In INPtypelook, checking model type = %s against existing model = %s, . . .\n", type, ft_sim->devices[i]->name);
 #endif
 
-	if (ft_sim->devices[i] && strcasecmp(type, ft_sim->devices[i]->name) == 0 && ft_sim->devices[i]->flags & flag) {
+	if (ft_sim->devices[i] && strcasecmp(type, ft_sim->devices[i]->name) == 0) {
 	    /* found the device - return it */
 
 #ifdef TRACE
@@ -54,13 +53,3 @@ int INPtypelook_flag(char *type, int flag)
 
     return -1;
 }
-
-// backwards compatability: only look for static devices
-int INPtypelook(char *type)
-{
-    return INPtypelook_flag(type, DEV_STATIC);
-
-}
-
-
-

@@ -7,6 +7,10 @@ if XSPICE_WANTED
 SUBDIRS += xspice
 endif
 
+if OSDI_WANTED
+SUBDIRS += osdi
+endif
+
 if CIDER_WANTED
 SUBDIRS += ciderlib
 endif
@@ -70,7 +74,6 @@ DYNAMIC_DEVICELIBS =					\
 	spicelib/devices/hfet1/libhfet.la		\
 	spicelib/devices/hfet2/libhfet2.la		\
 	spicelib/devices/hicum2/libhicum2.la		\
-	spicelib/devices/osdi/libosdi.la		\
 	spicelib/devices/hisim2/libhisim2.la		\
 	spicelib/devices/hisimhv1/libhisimhv1.la	\
 	spicelib/devices/hisimhv2/libhisimhv2.la	\
@@ -96,6 +99,8 @@ DYNAMIC_DEVICELIBS =					\
 	spicelib/devices/vdmos/libvdmos.la		\
 	spicelib/devices/vsrc/libvsrc.la		\
 	@VLADEV@
+
+
 
 
 ## Build ngspice first:
@@ -174,6 +179,10 @@ ngspice_LDADD += \
 	ciderlib/oned/libcideroned.la     \
 	ciderlib/input/libciderinput.la   \
 	ciderlib/support/libcidersuprt.la
+endif
+
+if OSDI_WANTED
+ngspice_LDADD += osdi/libosdi.la 
 endif
 
 ngspice_LDADD += \
@@ -458,6 +467,11 @@ libspice_la_LIBADD += \
 	ciderlib/support/libcidersuprt.la
 endif
 
+
+if OSDI_WANTED
+libspice_la_LIBADD += osdi/libosdi.la 
+endif
+
 libspice_la_LIBADD += \
 	maths/deriv/libderiv.la \
 	maths/cmaths/libcmaths.la \
@@ -576,6 +590,9 @@ libngspice_la_LIBADD += \
 	ciderlib/input/libciderinput.la   \
 	ciderlib/support/libcidersuprt.la
 endif
+
+
+libngspice_la_LIBADD += osdi/libosdi.la 
 
 libngspice_la_LIBADD += \
 	maths/deriv/libderiv.la \

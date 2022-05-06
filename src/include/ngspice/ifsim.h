@@ -299,6 +299,10 @@ struct IFdevice {
 #endif
 
     int flags;          /* DEV_ */
+
+#ifdef OSDI
+    const void *registry_entry;
+#endif
 };
 
 

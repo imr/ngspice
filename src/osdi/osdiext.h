@@ -8,7 +8,7 @@
 #include "ngspice/smpdefs.h"
 #include <stdint.h>
 
-#include "osdiitf.h"
+#include "ngspice/osdiitf.h"
 
 extern int OSDImParam(int, IFvalue *, GENmodel *);
 extern int OSDIparam(int, IFvalue *, GENinstance *, IFvalue *);
@@ -17,7 +17,7 @@ extern int OSDIunsetup(GENmodel *, CKTcircuit *);
 extern int OSDIask(CKTcircuit *, GENinstance *, int, IFvalue *, IFvalue *);
 extern int OSDIload(GENmodel *, CKTcircuit *);
 extern int OSDItemp(GENmodel *, CKTcircuit *);
-extern int OSDIacLoad(GENmodel *,CKTcircuit*);
+extern int OSDIacLoad(GENmodel *, CKTcircuit *);
 /* extern int OSDIconvTest(GENmodel*,CKTcircuit*); */
 /* extern int OSDImDelete(GENmodel*); */
 /* extern int OSDIgetic(GENmodel*,CKTcircuit*); */

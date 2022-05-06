@@ -65,8 +65,8 @@ extern int OSDIload(GENmodel *inModel, CKTcircuit *ckt) {
                               .names_str = sim_params_str,
                               .vals_str = NULL};
 
-  OsdiRegistryEntry entry = osdi_reg_entry_model(inModel);
-  const OsdiDescriptor *descr = entry.descriptor;
+  OsdiRegistryEntry *entry = osdi_reg_entry_model(inModel);
+  const OsdiDescriptor *descr = entry->descriptor;
 
   for (gen_model = inModel; gen_model; gen_model = gen_model->GENnextModel) {
     void *model = osdi_model_data(gen_model);

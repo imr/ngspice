@@ -76,19 +76,19 @@ extern int OSDIparam(int param, IFvalue *value, GENinstance *instPtr,
                      IFvalue *select) {
 
   NG_IGNORE(select);
-  OsdiRegistryEntry entry = osdi_reg_entry_inst(instPtr);
-  const OsdiDescriptor *descr = entry.descriptor;
+  OsdiRegistryEntry *entry = osdi_reg_entry_inst(instPtr);
+  const OsdiDescriptor *descr = entry->descriptor;
 
   if (param > (int)descr->num_instance_params) {
 
     // special handleing for temperature parameters
     OsdiExtraInstData *inst = osdi_extra_instance_data(entry, instPtr);
-    if (param == (int)entry.dt) {
+    if (param == (int)entry->dt) {
       inst->dt = value->rValue;
       inst->dt_given = true;
       return (OK);
     }
-    if (param == (int)entry.temp) {
+    if (param == (int)entry->temp) {
       inst->temp = value->rValue;
       inst->temp_given = true;
       return (OK);
@@ -106,8 +106,8 @@ extern int OSDIparam(int param, IFvalue *value, GENinstance *instPtr,
 
 extern int OSDImParam(int param, IFvalue *value, GENmodel *modelPtr) {
   NG_IGNORE(select);
-  OsdiRegistryEntry entry = osdi_reg_entry_model(modelPtr);
-  const OsdiDescriptor *descr = entry.descriptor;
+  OsdiRegistryEntry *entry = osdi_reg_entry_model(modelPtr);
+  const OsdiDescriptor *descr = entry->descriptor;
 
   if (param > (int)descr->num_params ||
       param < (int)descr->num_instance_params) {
@@ -140,11 +140,11 @@ extern int OSDIask(CKTcircuit *ckt, GENinstance *instPtr, int id,
   NG_IGNORE(select);
   NG_IGNORE(ckt);
 
-  OsdiRegistryEntry entry = osdi_reg_entry_inst(instPtr);
+  OsdiRegistryEntry *entry = osdi_reg_entry_inst(instPtr);
   void *inst = osdi_instance_data(entry, instPtr);
   void *model = osdi_model_data_from_inst(instPtr);
 
-  const OsdiDescriptor *descr = entry.descriptor;
+  const OsdiDescriptor *descr = entry->descriptor;
 
   if (id > (int)(descr->num_params + descr->num_instance_params)) {
     return (E_BADPARM);

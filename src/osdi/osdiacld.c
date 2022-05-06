@@ -19,8 +19,8 @@ int OSDIacLoad(GENmodel *inModel, CKTcircuit *ckt) {
   GENmodel *gen_model;
   GENinstance *gen_inst;
 
-  OsdiRegistryEntry entry = osdi_reg_entry_model(inModel);
-  const OsdiDescriptor *descr = entry.descriptor;
+  OsdiRegistryEntry *entry = osdi_reg_entry_model(inModel);
+  const OsdiDescriptor *descr = entry->descriptor;
   for (gen_model = inModel; gen_model; gen_model = gen_model->GENnextModel) {
     for (gen_inst = gen_model->GENinstances; gen_inst;
          gen_inst = gen_inst->GENnextInstance) {

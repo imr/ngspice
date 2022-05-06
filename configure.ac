@@ -146,6 +146,10 @@ AC_ARG_ENABLE([oldapps],
 AC_ARG_ENABLE([xspice],
     [AS_HELP_STRING([--enable-xspice], [Enable XSPICE enhancements])])
 
+# --enable-osdi: define OSDI in the code. This is for osdi support
+AC_ARG_ENABLE([osdi],
+    [AS_HELP_STRING([--enable-osdi], [Enable OSDI integration])])
+
 # --enable-cider: define CIDER in the code. This is for CIDER support
 AC_ARG_ENABLE([cider],
     [AS_HELP_STRING([--enable-cider], [Enable CIDER enhancements])])
@@ -1158,6 +1162,12 @@ AC_SUBST([XSPICEDLLIBS])
 
 AM_CONDITIONAL([XSPICE_WANTED], [test "x$enable_xspice" = xyes])
 
+if test "x$enable_osdi" = xyes; then
+    AC_MSG_RESULT([OSDI features included])
+    AC_DEFINE([OSDI], [1], [The OSDI enhancements])
+fi
+
+AM_CONDITIONAL([OSDI_WANTED], [test "x$enable_osdi" = xyes])
 
 # Add CIDER enhancements to ngspice.
 if test "x$enable_cider" = xyes; then
@@ -1373,7 +1383,6 @@ AC_CONFIG_FILES([Makefile
                  src/spicelib/devices/hfet1/Makefile
                  src/spicelib/devices/hfet2/Makefile
                  src/spicelib/devices/hicum2/Makefile
-                 src/spicelib/devices/osdi/Makefile
                  src/spicelib/devices/hisim2/Makefile
                  src/spicelib/devices/hisimhv1/Makefile
                  src/spicelib/devices/hisimhv2/Makefile
@@ -1439,6 +1448,7 @@ AC_CONFIG_FILES([Makefile
                  src/xspice/enh/Makefile
                  src/xspice/ipc/Makefile
                  src/xspice/idn/Makefile
+                 src/osdi/Makefile
                  tests/Makefile
                  tests/bsim1/Makefile
                  tests/bsim2/Makefile

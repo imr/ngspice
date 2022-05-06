@@ -163,7 +163,7 @@ dgen_next(dgen **dgx)
         if (!dg->dev_list) {
             if ((dg->flags & DGEN_ALLDEVS) ||
                 ((dg->flags & DGEN_DEFDEVS) &&
-                 (ft_sim->devices[dg->dev_type_no]->flags & DEV_DEFAULT_CHECK)))
+                 (ft_sim->devices[dg->dev_type_no]->flags & DEV_DEFAULT)))
             {
                 done = 1;
             } else {
