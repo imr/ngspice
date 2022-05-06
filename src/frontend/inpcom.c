@@ -8232,6 +8232,7 @@ static void rem_double_braces(struct card* newcard)
 }
 
 #ifdef INTEGRATE_UDEVICES
+/*
 static void list_the_cards(struct card *startcard, char *prefix)
 {
     struct card *card;
@@ -8241,6 +8242,7 @@ static void list_the_cards(struct card *startcard, char *prefix)
         printf("%s %s\n", prefix, cut_line);
     }
 }
+*/
 
 static struct card *the_last_card(struct card *startcard)
 {
@@ -8251,6 +8253,19 @@ static struct card *the_last_card(struct card *startcard)
     }
     return lastcard;
 }
+ static void remove_old_cards(struct card *first, struct card *stop)
+{
+    struct card *x, *next = NULL;
+    if (!first || !stop || (first == stop)) { return; }
+    for (x = first; (x && (x != stop)); x = next) {
+        //printf("Remove %s\n", x->line);
+        if (x->line) { tfree(x->line); }
+        if (x->error) { tfree(x->error); }
+        next = x->nextcard;
+        tfree(x);
+    }
+
+}
 
 static struct card *u_instances(struct card *startcard)
 {
@@ -8260,15 +8275,14 @@ static struct card *u_instances(struct card *startcard)
     int models_ok = 0, models_not_ok = 0;
     int udev_ok = 0, udev_not_ok = 0;
     BOOL create_called = FALSE, repeat_pass = FALSE;
-    BOOL skip_next = FALSE, verbose = FALSE;
-    char *tmp = NULL, *pos;
+    BOOL skip_next = FALSE;
+    char *tmp = NULL, *pos, *new_str = NULL;
 
     card = startcard;
     while (card) {
         char *cut_line = card->line;
 
         skip_next = FALSE;
-        if (verbose) printf("line: %s\n", cut_line);
         if (ciprefix(".subckt", cut_line)) {
             models_ok = models_not_ok = 0;
             udev_ok = udev_not_ok = 0;
@@ -8278,54 +8292,44 @@ static struct card *u_instances(struct card *startcard)
                 printf("Too many nesting levels\n");
                 break;
             }
-            tmp = TMALLOC(char, strlen(cut_line) + 1);
-            (void) memcpy(tmp, cut_line, strlen(cut_line) + 1);
             subcktcard = card;
-            if (verbose) printf("** subckt: %s\n", cut_line);
             if (!repeat_pass) {
                 if (create_called) {
                     cleanup_udevice();
                 }
                 initialize_udevice();
                 create_called = TRUE;
-                if (verbose) printf("Doing first pass\n");
             } else {
-               pos = strstr(tmp, "optional");
-               if (pos) {
-                   *pos = '\0';
-               }
-               //printf("  %s\n", tmp);
-               if (verbose)  printf("Doing second pass\n");
+                tmp = TMALLOC(char, strlen(cut_line) + 1);
+                (void) memcpy(tmp, cut_line, strlen(cut_line) + 1);
+                pos = strstr(tmp, "optional");
+                if (pos) {
+                    *pos = '\0';
+                }
+                new_str = copy(tmp);
+                tfree(tmp);
             }
-            //tfree(tmp);
         } else if (ciprefix(".ends", cut_line)) {
             level--;
-            if (verbose) printf("** ends: %s\n", cut_line);
             if (repeat_pass) {
                 newcard = replacement_udevice_cards();
                 if (newcard) {
+                    remove_old_cards(subcktcard->nextcard, card);
                     subcktcard->nextcard = newcard;
                     tfree(subcktcard->line);
-                    subcktcard->line = tmp;
+                    subcktcard->line = new_str;
                     //list_the_cards(newcard, "Replacement:");
                     last_newcard = the_last_card(newcard);
                     if (last_newcard) {
                         last_newcard->nextcard = card; // the .ends card
                     }
                 }
-                if (verbose) printf("Second pass ");
-                //printf("  %s\n", cut_line);
-            } else {
-                if (verbose) printf("First pass ");
             }
-            if (verbose) printf("udev_ok=%d udev_not_ok=%d models_ok=%d models_not_ok=%d\n",
-                udev_ok, udev_not_ok, models_ok, models_not_ok);
             if (models_not_ok > 0 || udev_not_ok > 0) {
                 repeat_pass = FALSE;
                 cleanup_udevice();
                 create_called = FALSE;
             } else if (udev_ok > 0) {
-                if (verbose) printf("Repeat subckt\n");
                 repeat_pass = TRUE;
                 card = subcktcard;
                 skip_next = TRUE;
@@ -8337,9 +8341,7 @@ static struct card *u_instances(struct card *startcard)
             subcktcard = NULL;
         } else if (ciprefix(".model", cut_line)) {
             if (subcktcard && !repeat_pass) {
-                if (verbose) printf("** model: %s\n", cut_line);
                 if (!u_process_model_line(cut_line)) {
-                    if (verbose) printf("Unable to convert model\n");
                     models_not_ok++;
                 } else {
                     models_ok++;
@@ -8347,19 +8349,15 @@ static struct card *u_instances(struct card *startcard)
             }
         } else if (ciprefix("u", cut_line)) {
             if (subcktcard) {
-                if (verbose) printf("** instance: %s\n", cut_line);
                 if (repeat_pass) {
                     if (!u_process_instance(cut_line)) {
                         /* Bail out */
-                        if (verbose) printf("Unable to convert instance\n");
                         break;
                     }
                 } else {
                     if (u_check_instance(cut_line)) {
-                        if (verbose) printf("Instance can be converted\n");
                         udev_ok++;
                     } else {
-                        if (verbose) printf("Instance can NOT be converted\n");
                         udev_not_ok++;
                     }
                 }
@@ -8423,16 +8421,6 @@ static struct card *pspice_compat(struct card *oldcard)
         controlled_exit(1);
     }
 
-#ifdef INTEGRATE_UDEVICES
-    //list_the_cards(oldcard, "After AKO");
-/* Here
-    {
-        struct card *ucard;
-        ucard = u_instances(oldcard);
-    }
-*/
-#endif
-
     /* Process .distribution cards. */
     do_distribution(oldcard);
 
@@ -8467,13 +8455,10 @@ static struct card *pspice_compat(struct card *oldcard)
     nextcard->nextcard = oldcard;
 
 #ifdef INTEGRATE_UDEVICES
-/* or here? */
     {
         struct card *ucard;
-        //ucard = u_instances(oldcard);
-        //ucard = u_instances(nextcard);
         ucard = u_instances(newcard);
-        list_the_cards(oldcard, "After udevices");
+        //list_the_cards(oldcard, "After udevices");
     }
 #endif
 
