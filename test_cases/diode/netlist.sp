@@ -9,7 +9,7 @@ Vsense Dx D DC 0
 
 * model definitions:
 .model dmod_built_in d( bv=5.0000000000e+01 is=1e-13 n=1.05 thermal=1 tnom=27 rth0=100 rs=5 cj0=1e-15 vj=0.5 m=0.6 )
-.model dmod_osdi osdi diode_va rs=5 is=1e-13 n=1.05 Rth=100 cj0=1e-15 vj=0.5 m=0.6
+.model dmod_osdi diode_va rs=5 is=1e-13 n=1.05 Rth=100 cj0=1e-15 vj=0.5 m=0.6
 
 *OSDI Diode:
 *OSDI_ACTIVATE*A1 D 0 T dmod_osdi
@@ -19,6 +19,8 @@ Vsense Dx D DC 0
 
 
 .control
+pre_osdi diode.osdi
+
 set filetype=ascii
 set wr_vecnames
 set wr_singlescale

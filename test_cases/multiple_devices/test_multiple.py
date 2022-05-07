@@ -12,16 +12,16 @@ directory = os.path.dirname(__file__)
 # and then bet put into /usr/local/share/ngspice/osdi:
 #
 # > make osdi_resistor
-# > cp resistor_osdi.so /usr/local/share/ngspice/osdi/resistor_osdi.so
+# > cp resistor_osdi.osdi /usr/local/share/ngspice/osdi/resistor_osdi.osdi
 # > make osdi_capacitor
-# > cp capacitor_osdi.so /usr/local/share/ngspice/osdi/capacitor_osdi.so
+# > cp capacitor_osdi.osdi /usr/local/share/ngspice/osdi/capacitor_osdi.osdi
 #
 # The integration test proves the functioning of the OSDI interface.
 # Future tests will target Verilog-A models like HICUM/L2 that should yield exactly the same results as the Ngspice implementation.
 
 
 def create_shared_object():
-    # place the file "resistor_va.c" and "capacitor_va.c" next to this file
+    # place the file "resistor.c" and "capacitor.c" next to this file
     for dev in ["capacitor", "resistor"]:
         subprocess.run(
             [
@@ -29,22 +29,21 @@ def create_shared_object():
                 "-c",
                 "-Wall",
                 "-I",
-                "../../src/spicelib/devices/osdi/",
+                "../../src/osdi/",
                 "-fpic",
-                dev + "_va.c",
+                dev + ".c",
                 "-ggdb",
             ],
             cwd=directory,
         )
         subprocess.run(
-            ["gcc", "-shared", "-o", dev + "_va.so", dev + "_va.o", "-ggdb"],
+            ["gcc", "-shared", "-o", dev + ".osdi", dev + ".o", "-ggdb"],
             cwd=directory,
         )
-        os.makedirs(os.path.join(directory, "test_osdi", "osdi"), exist_ok=True)
         subprocess.run(
-            ["mv", dev + "_va.so", "test_osdi/osdi/" + dev + "_va.so"], cwd=directory
+            ["mv", dev + ".osdi", "test_osdi/" + dev + ".osdi"], cwd=directory
         )
-        subprocess.run(["rm", dev + "_va.o"], cwd=directory)
+        subprocess.run(["rm", dev + ".o"], cwd=directory)
 
 
 # specify location of Ngspice executable to be tested

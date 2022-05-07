@@ -32,7 +32,7 @@ build_ngspice:
     - ./autogen.sh
     - mkdir debug
     - cd debug
-    - ../configure --with-x --with-readline=yes LIBS=-ldl 
+    - ../configure --disable-silent-rules --without-ngshared --enable-osdi LIBS=-ldl FLAGS="-m64 -O0 -Wall -Wno-unused-but-set-variable" LDFLAGS="-m64"
     - make
   artifacts:
     paths:

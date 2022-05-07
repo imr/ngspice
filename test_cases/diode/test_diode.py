@@ -12,7 +12,7 @@ directory = os.path.dirname(__file__)
 # and then bet put into /usr/local/share/ngspice/osdi:
 #
 # > make osdi_diode
-# > cp diode_osdi.so /usr/local/share/ngspice/osdi/diode_osdi.so
+# > cp diode_osdi.osdi /usr/local/share/ngspice/osdi/diode_osdi.osdi
 #
 # The integration test proves the functioning of the OSDI interface.  The Ngspice diode is quite
 # complicated and the results are therefore not exactly the same.
@@ -20,27 +20,26 @@ directory = os.path.dirname(__file__)
 
 
 def create_shared_object():
-    # place the file "diode_va.c" next to this file
+    # place the file "diode.c" next to this file
     subprocess.run(
         [
             "gcc",
             "-c",
             "-Wall",
             "-I",
-            "../../src/spicelib/devices/osdi/",
+            "../../src/osdi/",
             "-fpic",
-            "diode_va.c",
+            "diode.c",
             "-ggdb",
         ],
         cwd=directory,
     )
     subprocess.run(
-        ["gcc", "-shared", "-o", "diode_va.so", "diode_va.o", "-ggdb"],
+        ["gcc", "-shared", "-o", "diode.osdi", "diode.o", "-ggdb"],
         cwd=directory,
     )
-    os.makedirs(os.path.join(directory, "test_osdi", "osdi"), exist_ok=True)
-    subprocess.run(["mv", "diode_va.so", "test_osdi/osdi/diode_va.so"], cwd=directory)
-    subprocess.run(["rm", "diode_va.o"], cwd=directory)
+    subprocess.run(["mv", "diode.osdi", "test_osdi/diode.osdi"], cwd=directory)
+    subprocess.run(["rm", "diode.o"], cwd=directory)
 
 
 # specify location of Ngspice executable to be tested
