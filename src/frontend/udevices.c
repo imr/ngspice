@@ -277,10 +277,8 @@ static char *find_xspice_for_delay(char *itype)
         if (strcmp(itype, "or3") == 0)  { return xspice_tab[D_OR]; }
         if (strcmp(itype, "or3a") == 0) { return xspice_tab[D_OR]; }
 
-/*  Not implemented
         if (strcmp(itype, "oa") == 0)  { return xspice_tab[D_OA]; }
         if (strcmp(itype, "oai") == 0) { return xspice_tab[D_OAI]; }
-*/
         break;
     }
     case 'p': {
@@ -756,6 +754,15 @@ static BOOL is_gate(char *itype)
     if (is_vector_gate(itype)) { return TRUE; }
     if (is_buf_gate(itype)) { return TRUE; }
     if (is_xor_gate(itype)) { return TRUE; }
+    return FALSE;
+}
+
+static BOOL is_compound_gate(char *itype)
+{
+    if (strcmp(itype, "aoi") == 0) { return TRUE; }
+    if (strcmp(itype, "ao") == 0) { return TRUE; }
+    if (strcmp(itype, "oa") == 0) { return TRUE; }
+    if (strcmp(itype, "oai") == 0) { return TRUE; }
     return FALSE;
 }
 
@@ -1379,7 +1386,8 @@ static Xlatorp gen_dltch_instance(struct dltch_instance *ip)
 
 static Xlatorp gen_compound_instance(struct compound_instance *compi)
 {
-    char **inarr, *itype, *output, *tmodel, *outgate = NULL;
+    char **inarr, *itype, *output, *tmodel;
+    char *outgate = NULL, *ingates = NULL, *logic_val = NULL;
     int i, j, k, width, num_gates;
     int num_ins_kept = 0;
     char *model_name = NULL, *inst = NULL, **connector = NULL;
@@ -1395,8 +1403,20 @@ static Xlatorp gen_compound_instance(struct compound_instance *compi)
     inst = compi->hdrp->instance_name;
     if (strcmp(itype, "aoi") == 0) {
         outgate = "d_nor";
+        ingates = "d_and";
+        logic_val = "$d_hi";
     } else if (strcmp(itype, "ao") == 0) {
         outgate = "d_or";
+        ingates = "d_and";
+        logic_val = "$d_hi";
+    } else if (strcmp(itype, "oai") == 0) {
+        outgate = "d_nand";
+        ingates = "d_or";
+        logic_val = "$d_lo";
+    } else if (strcmp(itype, "oa") == 0) {
+        outgate = "d_and";
+        ingates = "d_or";
+        logic_val = "$d_lo";
     } else {
         return NULL;
     }
@@ -1423,8 +1443,9 @@ static Xlatorp gen_compound_instance(struct compound_instance *compi)
         num_ins_kept = 0;
         tmp[0] = '\0';
         /* $d_hi AND gate inputs are ignored */
+        /* $d_lo OR gate inputs are ignored */
         for (j = 0; j < width; j++) {
-            if (strcmp(inarr[k], "$d_hi") != 0) {
+            if (strcmp(inarr[k], logic_val) != 0) {
                 num_ins_kept++;
                 sprintf(tmp + strlen(tmp), " %s", inarr[k]);
             }
@@ -1439,7 +1460,7 @@ static Xlatorp gen_compound_instance(struct compound_instance *compi)
         } else if (num_ins_kept == 1) {
             /*
               connector[i] is the remaining input connected
-              directly to the OR/NOR final gate.
+              directly to the OR/NOR, AND/NAND final gate.
             */
             tfree(connector[i]);
             connector[i] = tprintf("%s", tmp);
@@ -1447,16 +1468,17 @@ static Xlatorp gen_compound_instance(struct compound_instance *compi)
             assert(FALSE);
         }
     }
-    model_stmt = tprintf(".model %s d_and", model_name);
+    /* .model statement for the input gates */
+    model_stmt = tprintf(".model %s %s", model_name, ingates);
     xdata = create_xlate_translated(model_stmt);
     xxp = add_xlator(xxp, xdata);
     tfree(model_stmt);
 
-    /* Final OR/NOR gate */
+    /* Final OR/NOR, AND/NAND gate */
     final_model_name = tprintf("%s_out", model_name);
     tfree(tmp);
 
-    sz =0;
+    sz = 0;
     for (i = 0; i < num_gates; i++) {
         sz += strlen(connector[i]) + 8; // Room for space between each name
     }
@@ -1465,6 +1487,7 @@ static Xlatorp gen_compound_instance(struct compound_instance *compi)
     for (i = 0; i < num_gates; i++) {
         sprintf(tmp + strlen(tmp), " %s", connector[i]);
     }
+    /* instance statement for the final gate */
     new_stmt = tprintf("a%s_out [%s ] %s %s",
         inst, tmp, output, final_model_name);
     xdata = create_xlate_translated(new_stmt);
@@ -2384,7 +2407,7 @@ static struct compound_instance *add_compound_inout_timing_model(
     char **inarr;
     BOOL first = TRUE;
 
-    if (strcmp(itype, "aoi") == 0 || strcmp(itype, "ao") == 0) {
+    if (is_compound_gate(itype)) {
          inwidth = n1;
          numgates = n2;
     } else {
@@ -2662,7 +2685,7 @@ static Xlatorp translate_gate(struct instance_hdr *hdr, char *start)
             delete_gate_instance(igatep);
             return xp;
         }
-    } else if (strcmp(itype, "aoi") == 0 || strcmp(itype, "ao") == 0) {
+    } else if (is_compound_gate(itype)) {
         compi = add_compound_inout_timing_model(hdr, start);
         if (compi) {
             xp = gen_compound_instance(compi);
@@ -2716,7 +2739,7 @@ BOOL u_process_instance(char *nline)
         xp = translate_gate(hdr, p1);
     } else if (is_tristate(itype) || is_tristate_array(itype)) {
         xp = translate_gate(hdr, p1);
-    } else if (strcmp(itype, "aoi") == 0 || strcmp(itype, "ao") == 0) {
+    } else if (is_compound_gate(itype)) {
         xp = translate_gate(hdr, p1);
     } else if (strcmp(itype, "dff") == 0 || strcmp(itype, "jkff") == 0 ||
         strcmp(itype, "dltch") == 0) {
