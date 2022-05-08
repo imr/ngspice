@@ -103,6 +103,8 @@ GENmodel *inMod)
             break;
 
         case  BSIM4v5_MOD_VERSION :
+            if (mod->BSIM4v5version)
+                free(mod->BSIM4v5version);
             mod->BSIM4v5version = value->sValue;
             mod->BSIM4v5versionGiven = TRUE;
             break;
