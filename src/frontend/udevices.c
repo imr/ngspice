@@ -282,10 +282,8 @@ static char *find_xspice_for_delay(char *itype)
         break;
     }
     case 'p': {
-/*  Not implemented
         if (strcmp(itype, "pulldn") == 0) { return xspice_tab[D_DOWN]; }
         if (strcmp(itype, "pullup") == 0) { return xspice_tab[D_UP]; }
-*/
         break;
     }
     case 's': {
@@ -2625,6 +2623,44 @@ static char *skip_past_words(char *start, int count)
     return p1;
 }
 
+static Xlatorp translate_pull(struct instance_hdr *hdr, char *start)
+{
+    char *itype, *xspice, *iname, *newline = NULL, *tok;
+    char *model_name, *inst_stmt, *model_stmt;
+    int i, numpulls;
+    Xlatorp xp = NULL;
+    Xlatep xdata = NULL;
+
+    itype = hdr->instance_type;
+    iname = hdr->instance_name;
+    numpulls = hdr->num1;
+    xp = create_xlator();
+    /* pull devices do not have a timing model, just need the xspice name */
+    xspice = find_xspice_for_delay(itype);
+    newline = TMALLOC(char, strlen(start) + 1);
+    (void) memcpy(newline, start, strlen(start) + 1);
+    model_name = tprintf("d_%s%s", iname, itype);
+    for (i = 0; i < numpulls; i++) {
+        if (i == 0) {
+            tok = strtok(newline, " \t");
+        } else {
+            tok = strtok(NULL, " \t");
+        }
+        inst_stmt = tprintf("a%s_%d %s %s", iname, i, tok, model_name);
+        xdata = create_xlate_translated(inst_stmt);
+        xp = add_xlator(xp, xdata);
+        tfree(inst_stmt);
+    }
+    model_stmt = tprintf(".model %s %s(load = 1pf)", model_name, xspice);
+    xdata = create_xlate_translated(model_stmt);
+    xp = add_xlator(xp, xdata);
+    tfree(model_stmt);
+    tfree(model_name);
+    tfree(newline);
+    delete_instance_hdr(hdr);
+    return xp;
+}
+
 static Xlatorp translate_ff_latch(struct instance_hdr *hdr, char *start)
 {
     char *itype;
@@ -2744,6 +2780,8 @@ BOOL u_process_instance(char *nline)
     } else if (strcmp(itype, "dff") == 0 || strcmp(itype, "jkff") == 0 ||
         strcmp(itype, "dltch") == 0) {
         xp = translate_ff_latch(hdr, p1);
+    } else if (strcmp(itype, "pullup") == 0 || strcmp(itype, "pulldn") == 0) {
+        xp = translate_pull(hdr, p1);
     } else {
         delete_instance_hdr(hdr);
         retval = FALSE;

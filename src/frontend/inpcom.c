@@ -8232,7 +8232,7 @@ static void rem_double_braces(struct card* newcard)
 }
 
 #ifdef INTEGRATE_UDEVICES
-/*
+#ifdef TRACE
 static void list_the_cards(struct card *startcard, char *prefix)
 {
     struct card *card;
@@ -8242,7 +8242,7 @@ static void list_the_cards(struct card *startcard, char *prefix)
         printf("%s %s\n", prefix, cut_line);
     }
 }
-*/
+#endif
 
 static struct card *the_last_card(struct card *startcard)
 {
@@ -8363,7 +8363,9 @@ static struct card *u_instances(struct card *startcard)
                 }
             }
         } else {
-            udev_not_ok++;
+            if (!ciprefix("*", cut_line)) {
+                udev_not_ok++;
+            }
         }
         if (!skip_next) {
             card = card->nextcard;
@@ -8457,8 +8459,13 @@ static struct card *pspice_compat(struct card *oldcard)
 #ifdef INTEGRATE_UDEVICES
     {
         struct card *ucard;
+#ifdef TRACE
+        list_the_cards(newcard, "Before udevices");
+#endif
         ucard = u_instances(newcard);
-        //list_the_cards(oldcard, "After udevices");
+#ifdef TRACE
+        list_the_cards(oldcard, "After udevices");
+#endif
     }
 #endif
 
