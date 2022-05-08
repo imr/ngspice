@@ -8232,6 +8232,7 @@ static void rem_double_braces(struct card* newcard)
 }
 
 #ifdef INTEGRATE_UDEVICES
+/* #define TRACE */
 #ifdef TRACE
 static void list_the_cards(struct card *startcard, char *prefix)
 {
@@ -8464,7 +8465,7 @@ static struct card *pspice_compat(struct card *oldcard)
 #endif
         ucard = u_instances(newcard);
 #ifdef TRACE
-        list_the_cards(oldcard, "After udevices");
+        list_the_cards(newcard, "After udevices");
 #endif
     }
 #endif
