@@ -1,0 +1,32 @@
+** Example S--parameters of a Tschebyschef Low Pass filter
+C1 in 0 33.2p
+L1 in 2 99.2n
+C2 2 0 57.2p
+L2 2 out 99.2n
+C3 out 0 33.2p
+
+V1 in 0 dc 0 ac 1 portnum 1 z0 50
+V2 out 0 dc 0 ac 0 portnum 2 z0 50
+
+.sp lin 100 2.5MEG 250MEG ; use for Tschebyschef 
+
+.control
+run
+let S11db = db(s_1_1)
+let S12db = db(s_1_2)
+let S21db = db(s_2_1)
+let S22db = db(s_2_2)
+settype decibel S11db S21db S22db S12db
+
+let P11=180*ph(s_1_1)/pi
+let P21=180*ph(s_2_1)/pi
+let P22=180*ph(S_2_2)/pi
+let P12=180*ph(S_1_2)/pi
+settype phase P11 P21 P22 P12
+set xbrushwidth=2
+plot s11db s21db S22db S12db ylimit -0.5 0 ; used with Tschebyschef  
+plot P11 P21 P22 P12
+plot smithgrid S_1_1 S_1_2
+.endc
+
+.end

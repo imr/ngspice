@@ -121,9 +121,6 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
     /*  loop through all the models */
     for( ; model != NULL; model = HICUMnextModel(model)) {
 
-        int selfheat = ( (model->HICUMflsh > 0) && (model->HICUMrthGiven) && (model->HICUMrth > 0.0));
-        int nqs      = ( (model->HICUMflnqs != 0 || model->HICUMflcomp < 2.3) && (model->HICUMalit > 0 || model->HICUMalqf > 0));
-
         /* loop through all the instances of the model */
         for( here = HICUMinstances(model); here!= NULL;
                 here = HICUMnextInstance(here)) {
@@ -156,7 +153,7 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
             } else {
                 Isis_Vsis    = 0.0;
             }
-            if(selfheat) {
+            if(model->HICUMselfheat) {
                 Irth_Vrth    = (1/here->HICUMrth_t.rpart - *(ckt->CKTstate0 + here->HICUMvrth)/(here->HICUMrth_t.rpart*here->HICUMrth_t.rpart) * here->HICUMrth_t.dpart);
             } else {
                 Irth_Vrth    = 0.0;
@@ -238,7 +235,7 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
             *(here->HICUMemitEICollCIPtr)          +=  Ibiei_Vbici;
             *(here->HICUMbaseBICollCIPtr)          += -Ibiei_Vbici;
             *(here->HICUMemitEIBaseBIPtr)          += -Ibiei_Vbici;
-            if (nqs) {
+            if (model->HICUMnqs) {
                 *(here->HICUMbaseBIXfPtr)          +=  Ibiei_Vxf;
                 *(here->HICUMemitEIXfPtr)          += -Ibiei_Vxf;
             }
@@ -268,7 +265,7 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
             *(here->HICUMemitEICollCIPtr)          +=  Iciei_Vbici;
             *(here->HICUMcollCICollCIPtr)          += -Iciei_Vbici;
             *(here->HICUMemitEIBaseBIPtr)          += -Iciei_Vbici;
-            if (nqs) { 
+            if (model->HICUMnqs) { 
                 *(here->HICUMcollCIXf2Ptr)             +=  Iciei_Vxf2;
                 *(here->HICUMemitEIXf2Ptr)             += -Iciei_Vxf2;
             }
@@ -336,7 +333,7 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
             *(here->HICUMsubsSISubsPtr)            += -Isis_Vsis;
             *(here->HICUMsubsSubsSIPtr)            += -Isis_Vsis;
 
-            if (nqs) { 
+            if (model->HICUMnqs) { 
                 //Ixf1
                 *(here->HICUMxf1BaseBIPtr)             += +Ixf1_Vbiei;
                 *(here->HICUMxf1EmitEIPtr)             += -Ixf1_Vbiei;
@@ -448,7 +445,7 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
             *(here->HICUMemitEICollCIPtr +1)           +=  XQf_Vbici;
             *(here->HICUMbaseBICollCIPtr +1)           += -XQf_Vbici;
             *(here->HICUMemitEIBaseBIPtr +1)           += -XQf_Vbici;
-            if (nqs) { 
+            if (model->HICUMnqs) { 
                 *(here->HICUMbaseBIXfPtr    +1)            +=  XQf_Vxf;
                 *(here->HICUMemitEIXfPtr    +1)            += -XQf_Vxf;
             }
@@ -525,7 +522,7 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
             *(here->HICUMsubsSISubsSIPtr + 1)         +=  XQsu_Vsis;
             *(here->HICUMsubsSISubsPtr + 1)           += -XQsu_Vsis;
             *(here->HICUMsubsSubsSIPtr + 1)           += -XQsu_Vsis;
-            if (nqs) { 
+            if (model->HICUMnqs) { 
                 //Qxf1
                 *(here->HICUMxf1Xf1Ptr + 1)               += +XQxf1_Vxf1;
                 //Qxf2
@@ -535,7 +532,7 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
             }
 
             // Stamps with SH
-            if (selfheat) { 
+            if (model->HICUMselfheat) { 
 //              Stamp element: Ibiei  f_Bi = +   f_Ei = -
                 *(here->HICUMbaseBItempPtr)            +=  Ibiei_Vrth;
                 *(here->HICUMemitEItempPtr)            += -Ibiei_Vrth;
@@ -570,7 +567,7 @@ HICUMacLoad(GENmodel *inModel, CKTcircuit *ckt)
 //              Branch: bpsi, Stamp element: Its
                 *(here->HICUMbaseBPtempPtr)            +=  Ibpsi_Vrth;
                 *(here->HICUMsubsSItempPtr)            += -Ibpsi_Vrth;
-                if (nqs) { 
+                if (model->HICUMnqs) { 
     //              Stamp element: Ixf    f_xf = +   
                     *(here->HICUMxfTempPtr)                +=  Ixf_Vrth;
     //              Stamp element: Ixf1    f_xf1 = +   

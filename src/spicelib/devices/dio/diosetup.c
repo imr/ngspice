@@ -89,11 +89,17 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if(!model->DIOgradingSWCoeffGiven) {
             model->DIOgradingSWCoeff = .33;
         }
-        if(!model->DIOforwardKneeCurrentGiven) {
-            model->DIOforwardKneeCurrent = 0.0;
+        if(model->DIOforwardKneeCurrentGiven) {
+            if (model->DIOforwardKneeCurrent < ckt->CKTepsmin) {
+                model->DIOforwardKneeCurrentGiven = FALSE;
+                printf("Warning: IKF too small - model effect disabled!\n");
+            }
         }
-        if(!model->DIOreverseKneeCurrentGiven) {
-            model->DIOreverseKneeCurrent = 0.0;
+        if(model->DIOreverseKneeCurrentGiven) {
+            if (model->DIOreverseKneeCurrent < ckt->CKTepsmin) {
+                model->DIOreverseKneeCurrentGiven = FALSE;
+                printf("Warning: IKK too small - model effect disabled!\n");
+            }
         }
         if(!model->DIObrkdEmissionCoeffGiven) {
             model->DIObrkdEmissionCoeff = model->DIOemissionCoeff;

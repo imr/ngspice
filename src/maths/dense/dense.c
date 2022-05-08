@@ -8,6 +8,10 @@
 #include "ngspice/bool.h"
 #include "ngspice/iferrmsg.h"
 
+cplx cdet(CMat* M);
+double det(Mat* M);
+void resizecmat(CMat* A, int r, int c);
+
 void showmat(Mat* A) {
 	if (A->row > 0 && A->col > 0) {
 
@@ -68,13 +72,13 @@ CMat* newcmat(int r, int c, double dr, double di) {
 	if (M == NULL) return NULL;
 	
 	M->row = r; M->col = c;
-	M->d = (cplx**)tmalloc(sizeof(cplx*) * r);
+	M->d = (cplx**)tmalloc(sizeof(cplx*) * (size_t)r);
 	if (M->d == NULL) {
 		tfree(M);  return NULL;
 	}
 
 	for (int i = 0; i < r; i++)
-		M->d[i] = (cplx*)tmalloc(sizeof(cplx) * c);
+		M->d[i] = (cplx*)tmalloc(sizeof(cplx) * (size_t)c);
 
 	for (int i = 0; i < M->row; i++) {
 		for (int j = 0; j < M->col; j++) {
@@ -112,9 +116,9 @@ CMat* newcmatnoinit(int r, int c) {
 	if (M == NULL) return NULL;
 	M->row = r; M->col = c;
 
-	M->d = (cplx**)tmalloc(sizeof(cplx*) * r);
+	M->d = (cplx**)tmalloc(sizeof(cplx*) * (size_t)r);
 	for (int i = 0; i < r; i++)
-		M->d[i] = (cplx*)tmalloc(sizeof(cplx) * c);
+		M->d[i] = (cplx*)tmalloc(sizeof(cplx) * (size_t)c);
 	return M;
 }
 
@@ -123,9 +127,9 @@ Mat* newmat(int r, int c, double d) {
 	if (M == NULL) return NULL;
 
 	M->row = r; M->col = c;
-	M->d = (double**)tmalloc(sizeof(double*) * r);
+	M->d = (double**)tmalloc(sizeof(double*) * (size_t)r);
 	for (int i = 0; i < r; i++)
-		M->d[i] = (double*)tmalloc(sizeof(double) * c);
+		M->d[i] = (double*)tmalloc(sizeof(double) * (size_t)c);
 
 	for (int i = 0; i < M->row; i++) {
 		for (int j = 0; j < M->col; j++) {
@@ -140,9 +144,9 @@ Mat* newmatnoinit(int r, int c) {
 	if (M == NULL) return NULL;
 
 	M->row = r; M->col = c;
-	M->d = (double**)tmalloc(sizeof(double*) * r);
+	M->d = (double**)tmalloc(sizeof(double*) * (size_t)r);
 	for (int i = 0; i < r; i++)
-		M->d[i] = (double*)tmalloc(sizeof(double) * c);
+		M->d[i] = (double*)tmalloc(sizeof(double) * (size_t)c);
 
 	return M;
 }
@@ -161,12 +165,12 @@ void resizemat(Mat* A, int r, int c)
 		tfree(A->d);
 	
 	A->row = r; A->col = c;
-	A->d = (double**)tmalloc(sizeof(double*) * r);
+	A->d = (double**)tmalloc(sizeof(double*) * (size_t)r);
 
 	if (A->d == NULL) return;
 
 	for (int i = 0; i < r; i++)
-		A->d[i] = (double*)tmalloc(sizeof(double) * c);
+		A->d[i] = (double*)tmalloc(sizeof(double) * (size_t)c);
 }
 
 void resizecmat(CMat* A, int r, int c)
@@ -182,12 +186,12 @@ void resizecmat(CMat* A, int r, int c)
 		tfree(A->d);
 
 	A->row = r; A->col = c;
-	A->d = (cplx**)tmalloc(sizeof(cplx*) * r);
+	A->d = (cplx**)tmalloc(sizeof(cplx*) * (size_t)r);
 
 	if (A->d == NULL) return;
 
 	for (int i = 0; i < r; i++)
-		A->d[i] = (cplx*)tmalloc(sizeof(cplx) * c);
+		A->d[i] = (cplx*)tmalloc(sizeof(cplx) * (size_t)c);
 }
 
 

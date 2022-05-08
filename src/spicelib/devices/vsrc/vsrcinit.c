@@ -3,7 +3,7 @@
 #include "ngspice/devdefs.h"
 
 #include "vsrcitf.h"
-#include "vsrcext.h"
+#include "vsrcdefs.h"
 #include "vsrcinit.h"
 
 

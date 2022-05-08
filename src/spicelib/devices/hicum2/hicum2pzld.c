@@ -122,9 +122,6 @@ HICUMpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
     /*  loop through all the models */
     for( ; model != NULL; model = HICUMnextModel(model)) {
 
-        int selfheat = ( (model->HICUMflsh > 0) && (model->HICUMrthGiven) && (model->HICUMrth > 0.0));
-        int nqs      = ( (model->HICUMflnqs != 0 || model->HICUMflcomp < 2.3) && (model->HICUMalit > 0 || model->HICUMalqf > 0));
-
         /* loop through all the instances of the model */
         for( here = HICUMinstances(model); here!= NULL;
                 here = HICUMnextInstance(here)) {
@@ -157,7 +154,7 @@ HICUMpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
             } else {
                 Isis_Vsis    = 0.0;
             }
-            if(selfheat) {
+            if(model->HICUMselfheat) {
                 Irth_Vrth    = (1/here->HICUMrth_t.rpart - *(ckt->CKTstate0 + here->HICUMvrth)/(here->HICUMrth_t.rpart*here->HICUMrth_t.rpart) * here->HICUMrth_t.dpart);
             } else {
                 Irth_Vrth    = 0.0;
@@ -237,7 +234,7 @@ HICUMpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
             *(here->HICUMemitEICollCIPtr)          +=  Ibiei_Vbici;
             *(here->HICUMbaseBICollCIPtr)          += -Ibiei_Vbici;
             *(here->HICUMemitEIBaseBIPtr)          += -Ibiei_Vbici;
-            if (nqs) {
+            if (model->HICUMnqs) {
                 *(here->HICUMbaseBIXfPtr)          +=  Ibiei_Vxf;
                 *(here->HICUMemitEIXfPtr)          += -Ibiei_Vxf;
             }
@@ -267,7 +264,7 @@ HICUMpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
             *(here->HICUMemitEICollCIPtr)          +=  Iciei_Vbici;
             *(here->HICUMcollCICollCIPtr)          += -Iciei_Vbici;
             *(here->HICUMemitEIBaseBIPtr)          += -Iciei_Vbici;
-            if (nqs) { 
+            if (model->HICUMnqs) { 
                 *(here->HICUMcollCIXf2Ptr)             +=  Iciei_Vxf2;
                 *(here->HICUMemitEIXf2Ptr)             += -Iciei_Vxf2;
             }
@@ -335,7 +332,7 @@ HICUMpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
             *(here->HICUMsubsSISubsPtr)            += -Isis_Vsis;
             *(here->HICUMsubsSubsSIPtr)            += -Isis_Vsis;
 
-            if (nqs) { 
+            if (model->HICUMnqs) { 
                 //Ixf1
                 *(here->HICUMxf1BaseBIPtr)             += +Ixf1_Vbiei;
                 *(here->HICUMxf1EmitEIPtr)             += -Ixf1_Vbiei;
@@ -471,7 +468,7 @@ HICUMpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
             *(here->HICUMbaseBICollCIPtr)              += -XQf_Vbici*(s->real);
             *(here->HICUMemitEIBaseBIPtr +1)           += -XQf_Vbici*(s->imag);
             *(here->HICUMemitEIBaseBIPtr)              += -XQf_Vbici*(s->real);
-            if (nqs) { 
+            if (model->HICUMnqs) { 
                 *(here->HICUMbaseBIXfPtr    +1)            +=  XQf_Vxf*(s->imag);
                 *(here->HICUMbaseBIXfPtr   )               +=  XQf_Vxf*(s->real);
                 *(here->HICUMemitEIXfPtr    +1)            += -XQf_Vxf*(s->imag);
@@ -610,7 +607,7 @@ HICUMpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
             *(here->HICUMsubsSISubsPtr )              += -XQsu_Vsis*(s->real);
             *(here->HICUMsubsSubsSIPtr + 1)           += -XQsu_Vsis*(s->imag);
             *(here->HICUMsubsSubsSIPtr )              += -XQsu_Vsis*(s->real);
-            if (nqs) { 
+            if (model->HICUMnqs) { 
                 //Qxf1
                 *(here->HICUMxf1Xf1Ptr + 1)               += +XQxf1_Vxf1*(s->imag);
                 *(here->HICUMxf1Xf1Ptr)                   += +XQxf1_Vxf1*(s->real);
@@ -623,7 +620,7 @@ HICUMpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
             }
 
             // Stamps with SH
-            if (selfheat) { 
+            if (model->HICUMselfheat) { 
 //              Stamp element: Ibiei  f_Bi = +   f_Ei = -
                 *(here->HICUMbaseBItempPtr)            +=  Ibiei_Vrth;
                 *(here->HICUMemitEItempPtr)            += -Ibiei_Vrth;
@@ -660,7 +657,7 @@ HICUMpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
 //              Branch: bpsi, Stamp element: Its
                 *(here->HICUMbaseBPtempPtr)            +=  Ibpsi_Vrth;
                 *(here->HICUMsubsSItempPtr)            += -Ibpsi_Vrth;
-                if (nqs) { 
+                if (model->HICUMnqs) { 
     //              Stamp element: Ixf    f_xf = +   
                     *(here->HICUMxfTempPtr)                +=  Ixf_Vrth;
     //              Stamp element: Ixf1    f_xf1 = +   

@@ -608,7 +608,7 @@ done:
    with command wrs2p file .
    Format info from http://www.eda.org/ibis/touchstone_ver2.0/touchstone_ver2_0.pdf
    See example 13 on page 15: Two port, ASCII, real-imaginary
-   Check if S11, S21, S12, S22 and frequency vectors are available
+   Check if S_1_1, S_2_1, S_1_2, S_2_2 and frequency vectors are available
    Check if vector Rbase is available
    Call spar_write()
 */
@@ -631,12 +631,14 @@ com_write_sparam(wordlist *wl)
     else
         file = "s_param.s2p";
 
+    fprintf(stderr, "Note: only 2 ports 1 and 2 are supported by wrs2p\n");
+
     /* generate wordlist with all vectors required*/
     sbuf[0] = "frequency";
-    sbuf[1] = "S11";
-    sbuf[2] = "S21";
-    sbuf[3] = "S12";
-    sbuf[4] = "S22";
+    sbuf[1] = "S_1_1";
+    sbuf[2] = "S_2_1";
+    sbuf[3] = "S_1_2";
+    sbuf[4] = "S_2_2";
     sbuf[5] = NULL;
     wl_sparam = wl_build((const char * const *) sbuf);
 

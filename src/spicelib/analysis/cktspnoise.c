@@ -19,13 +19,14 @@ Author: 1987 Gary W. Ng
 #include "ngspice/noisedef.h"
 #include "ngspice/sperror.h"
 
-#ifdef RFSPICE
+ /* not used, CKTspnoise is in span.c */
+#ifdef RFSPICE_
 
 // Derived from CKTnoise
 
 
 int
-CKTSPnoise (CKTcircuit *ckt, int mode, int operation, Ndata *data)
+CKTSPnoise(CKTcircuit *ckt, int mode, int operation, Ndata *data)
 {
     NOISEAN *job = (NOISEAN *) ckt->CKTcurJob;
 

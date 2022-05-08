@@ -30,7 +30,7 @@ extern cplx   Sopt;
 extern double Fmin;
 
 
-unsigned int CKTmatrixIndex(CKTcircuit* ckt, unsigned int source, unsigned int dest)
+int CKTmatrixIndex(CKTcircuit* ckt, int source, int dest)
 {
     return  source * ckt->CKTportCount + dest;
 };
@@ -68,7 +68,7 @@ int CKTspCalcPowerWave(CKTcircuit* ckt)
     double* rhsold = ckt->CKTrhsOld;
     double* irhsold = ckt->CKTirhsOld;
     int col = ckt->CKTactivePort - 1;
-    for (unsigned int port = 0; port < ckt->CKTportCount; port++)
+    for (int port = 0; port < ckt->CKTportCount; port++)
     {
         VSRCinstance* pSrc = (VSRCinstance*)(ckt->CKTrfPorts[port]);
         int row = pSrc->VSRCportNum - 1;
@@ -98,7 +98,7 @@ int CKTspCalcPowerWave(CKTcircuit* ckt)
 
 
 int
-CKTspDump(CKTcircuit *ckt, double freq, runDesc *plot, unsigned int doNoise)
+CKTspDump(CKTcircuit *ckt, double freq, runDesc *plot, int doNoise)
 {
     double *rhsold;
     double *irhsold;
@@ -110,10 +110,10 @@ CKTspDump(CKTcircuit *ckt, double freq, runDesc *plot, unsigned int doNoise)
     rhsold = ckt->CKTrhsOld;
     irhsold = ckt->CKTirhsOld;
     freqData.rValue = freq;
-    unsigned int extraSPdataCount =  3* ckt->CKTportCount * ckt->CKTportCount;
+    int extraSPdataCount =  3* ckt->CKTportCount * ckt->CKTportCount;
     valueData.v.numValue = ckt->CKTmaxEqNum - 1 + extraSPdataCount;
 
-    unsigned int datasize = ckt->CKTmaxEqNum - 1 + extraSPdataCount;
+    int datasize = ckt->CKTmaxEqNum - 1 + extraSPdataCount;
     
     // Add Cy matrix, NF, Rn, SOpt, NFmin
     if (doNoise)
@@ -132,11 +132,11 @@ CKTspDump(CKTcircuit *ckt, double freq, runDesc *plot, unsigned int doNoise)
     
     if (ckt->CKTrfPorts )
     {
-        unsigned int nPlot = ckt->CKTmaxEqNum - 1 ;
+        int nPlot = ckt->CKTmaxEqNum - 1 ;
         // Cycle thru all ports
-        for (unsigned int pdest = 0; pdest < ckt->CKTportCount; pdest++)
+        for (int pdest = 0; pdest < ckt->CKTportCount; pdest++)
         {
-            for (unsigned int psource = 0; psource < ckt->CKTportCount; psource++)
+            for (int psource = 0; psource < ckt->CKTportCount; psource++)
             {
                 cplx sij = ckt->CKTSmat->d[pdest][psource];
                 data[nPlot].real = sij.re;
@@ -146,9 +146,9 @@ CKTspDump(CKTcircuit *ckt, double freq, runDesc *plot, unsigned int doNoise)
         }
 
         // Put Y data
-        for (unsigned int pdest = 0; pdest < ckt->CKTportCount; pdest++)
+        for (int pdest = 0; pdest < ckt->CKTportCount; pdest++)
         {
-            for (unsigned int psource = 0; psource < ckt->CKTportCount; psource++)
+            for (int psource = 0; psource < ckt->CKTportCount; psource++)
             {
                 //unsigned int nPlot = ckt->CKTmaxEqNum - 1 + CKTmatrixIndex(ckt, pdest, psource);
                 cplx yij = ckt->CKTYmat->d[pdest][psource];
@@ -159,9 +159,9 @@ CKTspDump(CKTcircuit *ckt, double freq, runDesc *plot, unsigned int doNoise)
         }
 
         // Put Z data
-        for (unsigned int pdest = 0; pdest < ckt->CKTportCount; pdest++)
+        for (int pdest = 0; pdest < ckt->CKTportCount; pdest++)
         {
-            for (unsigned int psource = 0; psource < ckt->CKTportCount; psource++)
+            for (int psource = 0; psource < ckt->CKTportCount; psource++)
             {
                 //unsigned int nPlot = ckt->CKTmaxEqNum - 1 + CKTmatrixIndex(ckt, pdest, psource);
                 cplx zij = ckt->CKTZmat->d[pdest][psource];
@@ -174,9 +174,9 @@ CKTspDump(CKTcircuit *ckt, double freq, runDesc *plot, unsigned int doNoise)
         if (doNoise)
         {
             // Put Cy data
-            for (unsigned int pdest = 0; pdest < ckt->CKTportCount; pdest++)
+            for (int pdest = 0; pdest < ckt->CKTportCount; pdest++)
             {
-                for (unsigned int psource = 0; psource < ckt->CKTportCount; psource++)
+                for (int psource = 0; psource < ckt->CKTportCount; psource++)
                 {
                     //unsigned int nPlot = ckt->CKTmaxEqNum - 1 + CKTmatrixIndex(ckt, pdest, psource);
                     cplx CYij = ckt->CKTNoiseCYmat->d[pdest][psource];

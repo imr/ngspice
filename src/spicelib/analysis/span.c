@@ -24,12 +24,14 @@
 
 #ifdef RFSPICE
 #include "vsrc/vsrcdefs.h"
-#include "vsrc/vsrcext.h"
 #include "../maths/dense/dense.h"
 #include "../maths/dense/denseinlines.h"
 
-
-
+int CKTspnoise(CKTcircuit* ckt, int mode, int operation, Ndata* data, NOISEAN* noisean);
+int NInspIter(CKTcircuit* ckt, VSRCinstance* port);
+int initSPmatrix(CKTcircuit* ckt, int doNoise);
+void deleteSPmatrix(CKTcircuit* ckt);
+NOISEAN* SPcreateNoiseAnalysys(CKTcircuit* ckt);
 
 #define INIT_STATS() \
 do { \
@@ -514,7 +516,7 @@ SPan(CKTcircuit* ckt, int restart)
             plot = NULL;
         }
 
-        unsigned int extraSPdataLength = 3 * ckt->CKTportCount * ckt->CKTportCount;
+        int extraSPdataLength = 3 * ckt->CKTportCount * ckt->CKTportCount;
         if (job->SPdoNoise)
         {
             extraSPdataLength += ckt->CKTportCount * ckt->CKTportCount; // Add Cy
@@ -526,8 +528,8 @@ SPan(CKTcircuit* ckt, int restart)
 
 
         // Create UIDs
-        for (unsigned int dest = 1; dest <= ckt->CKTportCount; dest++)
-            for (unsigned int j = 1; j <= ckt->CKTportCount; j++)
+        for (int dest = 1; dest <= ckt->CKTportCount; dest++)
+            for (int j = 1; j <= ckt->CKTportCount; j++)
             {
                 char tmpBuf[32];
                 sprintf(tmpBuf, "S_%d_%d", dest, j);
@@ -536,8 +538,8 @@ SPan(CKTcircuit* ckt, int restart)
             }
 
         // Create UIDs
-        for (unsigned int dest = 1; dest <= ckt->CKTportCount; dest++)
-            for (unsigned int j = 1; j <= ckt->CKTportCount; j++)
+        for (int dest = 1; dest <= ckt->CKTportCount; dest++)
+            for (int j = 1; j <= ckt->CKTportCount; j++)
             {
                 char tmpBuf[32];
                 sprintf(tmpBuf, "Y_%d_%d", dest, j);
@@ -546,8 +548,8 @@ SPan(CKTcircuit* ckt, int restart)
             }
 
         // Create UIDs
-        for (unsigned int dest = 1; dest <= ckt->CKTportCount; dest++)
-            for (unsigned int j = 1; j <= ckt->CKTportCount; j++)
+        for (int dest = 1; dest <= ckt->CKTportCount; dest++)
+            for (int j = 1; j <= ckt->CKTportCount; j++)
             {
                 char tmpBuf[32];
                 sprintf(tmpBuf, "Z_%d_%d", dest, j);
@@ -559,8 +561,8 @@ SPan(CKTcircuit* ckt, int restart)
         if (job->SPdoNoise)
         {
             // Create UIDs
-            for (unsigned int dest = 1; dest <= ckt->CKTportCount; dest++)
-                for (unsigned int j = 1; j <= ckt->CKTportCount; j++)
+            for (int dest = 1; dest <= ckt->CKTportCount; dest++)
+                for (int j = 1; j <= ckt->CKTportCount; j++)
                 {
                     char tmpBuf[32];
                     sprintf(tmpBuf, "Cy_%d_%d", dest, j);
@@ -665,7 +667,7 @@ SPan(CKTcircuit* ckt, int restart)
     /* main loop through all scheduled frequencies */
     while (freq <= job->SPstopFreq + freqTol) {
 
-        unsigned int activePort = 0;
+        int activePort = 0;
         //
         if (SPfrontEnd->IFpauseTest()) {
             /* user asked us to pause via an interrupt */
@@ -767,14 +769,14 @@ SPan(CKTcircuit* ckt, int restart)
         //        if (error) return (error);
 
                 //Keep a backup copy
-        memcpy(rhswoPorts, ckt->CKTrhs, ckt->CKTmaxEqNum * sizeof(double));
-        memcpy(rhswoPorts, ckt->CKTirhs, ckt->CKTmaxEqNum * sizeof(double));
+        memcpy(rhswoPorts, ckt->CKTrhs, (size_t)ckt->CKTmaxEqNum * sizeof(double));
+        memcpy(rhswoPorts, ckt->CKTirhs, (size_t)ckt->CKTmaxEqNum * sizeof(double));
 
         for (activePort = 1; activePort <= ckt->CKTportCount; activePort++)
         {
             // Copy the backup RHS into CKT's RHS
-            memcpy(ckt->CKTrhs, rhswoPorts, ckt->CKTmaxEqNum * sizeof(double));
-            memcpy(ckt->CKTirhs, irhswoPorts, ckt->CKTmaxEqNum * sizeof(double));
+            memcpy(ckt->CKTrhs, rhswoPorts, (size_t)ckt->CKTmaxEqNum * sizeof(double));
+            memcpy(ckt->CKTirhs, irhswoPorts, (size_t)ckt->CKTmaxEqNum * sizeof(double));
             ckt->CKTactivePort = activePort;
 
             // Update only VSRCs
@@ -894,7 +896,7 @@ SPan(CKTcircuit* ckt, int restart)
 
         /* gtri - modify - wbk - 12/19/90 - Send IPC stuff */
 #else
-        error = CKTspDump(ckt, freq, acPlot, job->SPdoNoise));
+        error = CKTspDump(ckt, freq, spPlot, job->SPdoNoise);
 #endif
         if (error) {
             UPDATE_STATS(DOING_AC);
