@@ -1410,6 +1410,7 @@ static int cm_read_state_file(FILE *state_file,State_Table_t *states)
                 type = CNV_STRING_TOK;
                 while ( type != CNV_NO_TOK ) {
                     token = CNVget_token(&s, &type);
+		    free(token);
                     j++;
                 }
                 num_tokens = (j-1);
@@ -1815,7 +1816,10 @@ void cm_d_state(ARGS)
         states->num_outputs = PORT_SIZE(out);
         
 
-        /* assign storage for arrays to pointers in states table    */
+        /* Assign storage for arrays to pointers in states table.
+         * This needs to be fixed as the memory can not be recovered.
+         * The *states data is deleted before any deletion callback is made.
+         */
         states->state = (int *) calloc((size_t) (states->depth + 1), sizeof(int));
         states->bits = (short *) calloc((size_t) (states->num_outputs * states->depth / 4 + 1), sizeof(short));
         states->inputs = (short *) calloc((size_t) (states->num_inputs * states->depth / 8 + 1), sizeof(short));

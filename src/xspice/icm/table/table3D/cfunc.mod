@@ -705,6 +705,7 @@ static Table3_Data_t *init_local_data(const char *filename, int interporder)
                         cm_message_printf("Too many numbers in y row "
                                 "no. %d of table %d.",
                                 lLineCount, lTableCount);
+                        free(token);
                         xrc = -1;
                         goto EXITPOINT;
                     }
