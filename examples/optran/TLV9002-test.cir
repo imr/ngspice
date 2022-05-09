@@ -1,5 +1,5 @@
 .title KiCad schematic
-.include "./models/TLV9002.LIB"
+.include "./models/TLV9002.lib"
 Vsignal1 Vin GND dc 2.5 ac 1
 Vcc1 Vcc GND 5
 R1 Vin Net-_R1-Pad2_ 1000
