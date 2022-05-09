@@ -843,7 +843,7 @@ apply_func_funcall(struct func *func, struct dvec *v, int *newlength, short int 
         void * (*f) (void *data, short int type, int length,
                      int *newlength, short int *newtype,
                      struct plot *, struct plot *, int) =
-            (void * (*) (void *, short int, int, int *, short int *, struct plot *, struct plot *, int)) func->fu_func;
+            (void * (*) (void *, short int, int, int *, short int *, struct plot *, struct plot *, int)) (void *)func->fu_func;
         data = f
             (isreal(v) ? (void *) v->v_realdata : (void *) v->v_compdata,
              (short) (isreal(v) ? VF_REAL : VF_COMPLEX),
