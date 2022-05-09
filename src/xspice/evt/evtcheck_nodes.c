@@ -90,53 +90,56 @@ for device libraries whose devices are defined by subcircuits.
    except in the case of a digital node where the parameter name is assumed
    to be "vcc". Initialise an internal variable, vcc, to zero.
 
-2: Given a parameter name, find the most deeply-nested (in subcircuits) XSPICE
-   device that is connected to the node.  Search upwards through the enclosing
-   subcircuits for a definition of the parameter.  If found, set vcc from
-   the parameter.
+2: Given that parameter name, find the most deeply-nested (in subcircuits)
+   XSPICE device that is connected to the node.  Search upwards through
+   the enclosing subcircuits for a definition of the parameter.
+   If found, set vcc from the parameter.
 
 3: If a command interpreter variable "no_auto_bridge_family": exists, go to
-   step 5.  Search the connected device instances for a parameter, "Family"
-   with a string value.  The first one found will be used.  If the first
-   character of the value is not '*', the setup card will be ".include
-   FFFFF_DDD_bridge.cir" where FFFFF is the family and DDD is the signal
-   direction for the XSPICE device: "in", "out" or "inout".  The device card
-   will be "Xauto_bridge%d %s %s bridge_FFFFF_DDD vcc=%g", so a suitably
-   parameterised subcircuit must be defined in the file.
+   step 5.  Search the connected device instances for a parameter, "family"
+   with a string value.  The first one found will be used.  If no such
+   instance exists, search for a string-valued parameter, "family",
+   in enclosing subcircuits, as in step 2.  If the first character of the
+   value is not '*', the setup card will be ".include bridge_FFFFF_DDD.cir"
+   where FFFFF is the family and DDD is the signal direction for
+   the XSPICE device: "in", "out" or "inout".  The device card will be
+   "Xauto_bridge%d %s %s bridge_FFFFF_DDD vcc=%g", so a suitably
+   parameterised subcircuit must be defined in the included file.
 
-4: If the first character was '*', look for a variable
-   "auto_bridge_FFFFF_TTTT_DDD" where FFFFF is the family, TTTT is the node
-   type string and DDD is the direction.  So this might be
+4: If the first character of "family" was '*', look for a variable
+   "auto_bridge_FFFFF_TTTT_DDD" where FFFFF is the family without '*',
+   TTTT is the node type string and DDD is the direction.  So this might be
    "auto_bridge_74HCT_d_inout" for a digital node.  Use the variable's value
-   in step 6.
+   as in step 6, proceeding to step 5 if checks fail.
 
-5: Look for a variable "auto_bridge_TTTT_DDD_NNNN" where TTTT and DDD are as
-   before and NNNN is the integer part of (vcc * 10).
+5: Look for a variable "auto_bridge_TTTT_DDD" where TTTT and DDD are as before.
 
-6: Check and use the variable's value from step 2 or 5.  It must be a list
+6: Check and use the variable's value from step 4 or 5.  It must be a list
    of two or three elements: the setup card, device card and an optional
-   third value.  If present, the third value in the list must be an integer,
-   specifying the maximum number of nodes handled by a single device.  If
-   not present, or zero, there is no limit.  If no variable was found, the
-   circuit fails, except for digital nodes where defaults are
-   supplied. Example:
+   third value.  If the setup card is not ".include", it is formatted
+   with multiple copies of vcc (example below).  If present, the third
+   value in the list must be an integer, specifying the maximum number of
+   nodes handled by a single device.  If not present, or zero, there is
+   no limit.  If no variable was found, the circuit fails, except for
+   digital nodes where defaults are supplied.  For digital the defaults
+   are:
 
-   set auto_bridge_real_out_0 = ( ".model real_output_bridge d_to_real"
-                                 "areal_bridge%d [ %s ] null [%s] delay=1e-6" )
-
-   (This would be on a single line and the spaces are important.)
-
-   For digital the defaults are:
-
-   ( ".model auto_adc adc_bridge(in_low = %g in_high = %g)"
+   ( ".model auto_adc adc_bridge(in_low = {%g/2} in_high = {%g/2})"
      "auto_adc%d [ %s ] [ %s ] auto_adc" )
 
-   and
+   for a digital input and
 
    ( ".model auto_dac dac_bridge(out_low = 0 out_high = %g)"
      "auto_dac%d [ %s ] [ %s ] auto_dac" )
 
-  with vcc/2.0 or vcc substituted for %g as appropriate.
+  for digital output.
+
+  A non-digital example (real to analogue) is:
+
+   set auto_bridge_real_out = ( ".model real_to_v_bridge r_to_v"
+   + "areal_bridge%d %s null %s real_to_v_bridge" 1 )
+
+   (The spaces are important.)
 
   An example of an included subcircuit might be:
 
@@ -151,8 +154,8 @@ for device libraries whose devices are defined by subcircuits.
    and invoked by:
 
    set auto_bridge_d_out_30 = ( ".include test_sub.cir"
-                                "xauto_buf%d %s %s auto_buf vcc=%g"
-                                1 )
+   +                            "xauto_buf%d %s %s auto_buf vcc=%g"
+   +                            1 )
 */
 
 /* Working information about a type of bridge. */
@@ -227,7 +230,7 @@ static struct card *expand_deck(struct card *head)
 static struct card *flush_card(struct bridge *bridge, int ln,
                                struct card *last)
 {
-    char         buff[2 * sizeof bridge->held + 128];
+    char buff[2 * sizeof bridge->held + 128];
 
     bridge->held[bridge->end_index] = '\0';
     snprintf(buff, sizeof buff, bridge->format,
@@ -271,14 +274,22 @@ static MIFinstance *find_inst(CKTcircuit *ckt, int index)
     return chase ? chase->inst_ptr : NULL;
 }
 
-/* All ports are declared as outputs, but some may be INOUT. */
+/* All connected ports are declared as outputs, but some may be INOUT. */
 
 static Mif_Dir_t scan_ports(Evt_Node_Info_t *event_node, CKTcircuit *ckt)
 {
+    Evt_Node_Info_t   *chase;
     Evt_Inst_Index_t  *inst_list;
-    Evt_Inst_Info_t  **inst_table;
+    int                index;
 
-    inst_table = ckt->evt->info.inst_table;
+    /* Find the node index. */
+
+    for (index = 0, chase = ckt->evt->info.node_list;
+         chase && chase != event_node;
+         ++index, chase= chase->next);
+
+    /* Look for inout ports connected to this node. */
+
     for (inst_list = event_node->inst_list;
          inst_list;
          inst_list = inst_list->next) {
@@ -291,14 +302,19 @@ static Mif_Dir_t scan_ports(Evt_Node_Info_t *event_node, CKTcircuit *ckt)
             int              j;
 
             conn = inst->conn[i];
-            if (conn->is_null || !conn->is_input)
+            if (conn->is_null || !conn->is_input || !conn->is_output)
                 continue;
             for (j = 0; j < conn->size; ++j) {
                 Mif_Port_Data_t  *port;
 
                 port = conn->port[j];
-                if (!strcmp(port->pos_node_str, event_node->name) ||
-                    !strcmp(port->neg_node_str, event_node->name)) {
+                if (port->type != MIF_DIGITAL &&
+                    port->type != MIF_USER_DEFINED) {
+                    /* Analogue, ignore. */
+
+                    continue;
+                }
+                if (port->evt_data.node_index == index) {
                     /* An inout connection to this node. */
 
                     return MIF_INOUT;
@@ -402,7 +418,10 @@ static const char *scan_devices(Evt_Node_Info_t   *event_node,
             }
         }
     }
-    return best_inst ? best_inst->MIFname : NULL;
+
+    /* The device name is a.<subcircuit name>.<original device name> */
+
+    return best_inst ? best_inst->MIFname + 2 : NULL;
 }
 
 /* Can a bridge element be inserted? */
@@ -417,8 +436,8 @@ static struct bridge *find_bridge(Evt_Node_Info_t  *event_node,
     const char                 *format = NULL;
     const char                 *type_name, *family, *s_family, *deep;
     char                       *setup, *vcc_parm, *dot;
-    double                      vcc;
-    int                         max = 0, ok;
+    double                      vcc = 0.0;
+    int                         max = 0, ok = 0;
     struct variable            *cvar = NULL;
     char                        buff[256];
 
@@ -449,28 +468,40 @@ static struct bridge *find_bridge(Evt_Node_Info_t  *event_node,
 
     family = NULL;
     deep = scan_devices(event_node, ckt, &family);
-    if (family && cp_getvar("no_auto_bridge_family", CP_BOOL, NULL, 0))
-        family = NULL;
 
-    /* Look for a real parameter (.param type) in the device's subcircuit,
-     * and those enclosing it.
+    /* Look for a real parameter (.param type) and perhaps a string-valued
+     * "family" parameter in the device's subcircuit and those enclosing it.
      */
 
     snprintf(buff, sizeof buff, "%s", deep);
     while ((dot = strrchr(buff, '.'))) {
-        snprintf(dot + 1, sizeof buff - (size_t)(dot - buff), vcc_parm);
-        vcc = nupa_get_param(buff, &ok);
-        if (ok)
+        if (!ok) {
+            snprintf(dot + 1, sizeof buff - (size_t)(dot - buff), vcc_parm);
+            vcc = nupa_get_param(buff, &ok);
+        }
+        if (!family) {
+            snprintf(dot + 1, sizeof buff - (size_t)(dot - buff), "family");
+            family = nupa_get_string_param(buff);
+        }
+        if (ok && family)
             break;
         *dot = '\0';
     }
-    if (dot == NULL) {
+
+    if (!ok) {
         vcc = nupa_get_param(vcc_parm, &ok);
-        if (!ok && event_node->udn_index == 0) // Fallback default for digital.
-            vcc = 3.3;
-    } else {
-        vcc = 0;
+        if (!ok) {
+            if (event_node->udn_index == 0)
+                vcc = 3.3; // Fallback default for digital.
+            else
+                vcc = 0;
+        }
     }
+
+    if (!family)
+        family = nupa_get_string_param("family");
+    if (family && cp_getvar("no_auto_bridge_family", CP_BOOL, NULL, 0))
+        family = NULL;
 
     if (family && *family == '*') {
         s_family = family + 1;
@@ -504,7 +535,7 @@ static struct bridge *find_bridge(Evt_Node_Info_t  *event_node,
     if (family) {
         /* Use standard pattern for known parts family. */
 
-        snprintf(buff, sizeof buff, ".include %s_%s_bridge.cir",
+        snprintf(buff, sizeof buff, ".include bridge_%s_%s.cir",
                  family, dirs[direction]);
         setup = copy(buff);
         snprintf(buff, sizeof buff,
@@ -523,20 +554,22 @@ static struct bridge *find_bridge(Evt_Node_Info_t  *event_node,
     if (!format && !cvar) {
         /* General variable lookup. */
 
-        snprintf(buff, sizeof buff, "auto_bridge_%s_%s_%d",
-                 type_name, dirs[direction], (int)(vcc * 10));
+        snprintf(buff, sizeof buff, "auto_bridge_%s_%s",
+                 type_name, dirs[direction]);
         cp_getvar(buff, CP_LIST, &cvar, sizeof cvar);
     }
     if (!format && cvar) {
-        struct variable *v1, *v2, *v3;
+        struct variable *v2, *v3;
 
-        v1 = cvar->va_vlist;
-        if (v1 && v1->va_type == CP_STRING) {
-            v2 = v1->va_next;
+        /* The first element of the list is returned. */
+
+        if (cvar && cvar->va_type == CP_STRING &&
+            cvar->va_string && cvar->va_string[0]) {
+            v2 = cvar->va_next;
             if (v2->va_type == CP_STRING &&
                 v2->va_string && v2->va_string[0]) {
                 format = copy(v2->va_string);
-                setup = copy(v1->va_string);
+                setup = copy(cvar->va_string);
 
                 v3 = v2->va_next;
                 if (v3 && v3->va_type == CP_NUM)
@@ -556,28 +589,28 @@ static struct bridge *find_bridge(Evt_Node_Info_t  *event_node,
             return NULL; // Abandon hope, for now.
         } else {
             if (direction == MIF_IN) {
-                snprintf(buff, sizeof buff,
-                        ".model auto_adc adc_bridge(in_low = %g in_high = %g)",
-                        vcc/2.0, vcc/2.0);
+                setup = ".model auto_adc adc_bridge("
+                        "in_low = {%g/2} in_high = {%g/2})",
                 format = copy("auto_adc%d [ %s ] [ %s ] auto_adc");
             } else {    // MIF_OUT
-#if 0
-                snprintf(buff, sizeof buff, ".include test_sub.cir");
-                format = copy("xauto_buf%d %s %s auto_buf vcc=%g");
-                max = 1;
-#else
-                snprintf(buff, sizeof buff,
-                        ".model auto_dac dac_bridge"
-                        "(out_low = 0 out_high = %g)",
-                        vcc);
-                format = copy("auto_dac%d [ %s ] [ %s ] auto_dac");
-#endif
+                setup = ".model auto_dac dac_bridge("
+                        "out_low = 0 out_high = %g)";
+                format = "auto_dac%d [ %s ] [ %s ] auto_dac";
             }
-            setup = copy(buff);
+            setup = copy(setup);
+            format = copy(format);
         }
     }
     if (!format)
         return NULL;
+
+    /* If the setup is not a .include card, format it with vcc. */
+
+    if (strncmp(setup, ".inc", 4)) {
+        snprintf(buff, sizeof buff, setup, vcc, vcc, vcc, vcc, vcc);
+        tfree(setup);
+        setup = copy(buff);
+    }
 
     /* Make a new bridge structure. */
 
@@ -607,8 +640,8 @@ bool Evtcheck_nodes(
     struct bridge       *bridge_list = NULL, *bridge;
     CKTnode             *analog_node;
     Evt_Node_Info_t     *event_node;
-    struct card         *head = NULL, *lastcard = NULL, *card;
-    int                  ln = 0, do_expand = 0, show;
+    struct card         *head = NULL, *lastcard = NULL;
+    int                  ln = 0, show;
 
     /* Is auto-bridge enabled? */
 
@@ -641,73 +674,70 @@ bool Evtcheck_nodes(
                     if (head)
                         line_free(head, TRUE);
                     return FALSE;
-                }
+                 }
 
-                if (bridge->setup) {
-                    /* Model/include card for bridge.
-                     * bridge->setup must be dynamic (for tfree()).
-                     */
+                 if (!head) {
+                     /* Add a title card, so it can be skipped over. */
 
-                    if (!strncmp(".inc", bridge->setup, 4))
-                        do_expand = 1;
-                    card = insert_new_line(lastcard, bridge->setup,
-                                           BIG + ln++, 0);
-                    if (!lastcard)
-                        head = card;
-                    lastcard = card;
-                    bridge->setup = NULL;       // Output just once.
-                }
+                     head = insert_new_line(lastcard,
+                                            copy("* Auto-bridge sub-deck."),
+                                            BIG + ln++, 0);
+                     lastcard = head;
+                 }
 
-                /* Card buffer full? */
+                 if (bridge->setup) {
+                     /* Model/include card for bridge.
+                      * bridge->setup must be dynamic (for tfree()).
+                      */
 
-                nl = (int)strlen(analog_node->name);
-                if ((bridge->max && bridge->count >= bridge->max) ||
-                    bridge->end_index + nl + 2 > (int)(sizeof bridge->held)) {
-                    /* Buffer full, flush card. */
+                     lastcard = insert_new_line(lastcard, bridge->setup,
+                                                BIG + ln++, 0);
+                     bridge->setup = NULL;       // Output just once.
+                 }
 
-                    card = flush_card(bridge, ln++, lastcard);
-                    if (!lastcard)
-                        head = card;
-                    lastcard = card;
-                }
+                 /* Card buffer full? */
 
-                /* Copy node name to card contents buffer. */
+                 nl = (int)strlen(analog_node->name);
+                 if ((bridge->max && bridge->count >= bridge->max) ||
+                     bridge->end_index + nl + 2 > (int)(sizeof bridge->held)) {
+                     /* Buffer full, flush card. */
 
-                bridge->count++;
-                if (bridge->end_index)
-                    bridge->held[bridge->end_index++] = ' ';
-                strcpy(bridge->held + bridge->end_index, analog_node->name);
-                bridge->end_index += nl;
-            }
-        }
+                     lastcard = flush_card(bridge, ln++, lastcard);
+                 }
+
+                 /* Copy node name to card contents buffer. */
+
+                 bridge->count++;
+                 if (bridge->end_index)
+                     bridge->held[bridge->end_index++] = ' ';
+                 strcpy(bridge->held + bridge->end_index, analog_node->name);
+                 bridge->end_index += nl;
+             }
+         }
     }
 
     /* Flush cards. */
 
     for (bridge = bridge_list; bridge; bridge = bridge->next) {
-        if (bridge->end_index > 0) {
-            card = flush_card(bridge, ln++, lastcard);
-            if (!lastcard)
-                head = card;
-            lastcard = card;
-        }
+        if (bridge->end_index > 0) 
+            lastcard = flush_card(bridge, ln++, lastcard);
     }
 
-    if (!lastcard)
+    if (!head)
         return TRUE;  // No success, but also no failures - nothing to bridge.
 
     if (show >= AB_DECK) {
+        struct card *card;
+
         for (card = head; card; card = card->nextcard)
             printf("%d: %s\n", card->linenum, card->line);
     }
 
-    /* If there are any .include cards, expand them. */
+    /* Expand .include cards and expressions. */
 
-    if (do_expand) {
-        head = expand_deck(head);
-        if (!head)
-            return FALSE;
-    }
+    head = expand_deck(head);
+    if (!head)
+        return FALSE;
 
     /* Push the cards into the circuit. */
 
