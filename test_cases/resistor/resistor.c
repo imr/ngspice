@@ -25,7 +25,7 @@ extern OsdiDescriptor OSDI_DESCRIPTORS[1];
 
 // number of nodes and definitions of node ids for nicer syntax in this file
 // note: order should be same as "nodes" list defined later
-#define NUM_NODES 3
+#define NUM_NODES 2
 #define P 0
 #define M 1
 

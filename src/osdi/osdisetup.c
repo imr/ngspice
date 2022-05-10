@@ -87,14 +87,14 @@ static uint32_t collapse_nodes(const OsdiDescriptor *descr, void *inst,
     uint32_t from = descr->collapsible[i].node_1;
     uint32_t to = descr->collapsible[i].node_2;
 
-    /* terminal scan not be collapsed because these are created by the simulator
+    /* terminals created by the simulator cannot be collapsed
      */
     if (node_mapping[from] < connected_terminals &&
         (to == descr->num_nodes || node_mapping[to] < connected_terminals ||
          node_mapping[to] == descr->num_nodes)) {
       continue;
     }
-    /* ensure that from is always the smaller node */
+    /* ensure that to is always the smaller node */
     if (to != descr->num_nodes && node_mapping[from] < node_mapping[to]) {
       uint32_t temp = from;
       from = to;
@@ -102,16 +102,18 @@ static uint32_t collapse_nodes(const OsdiDescriptor *descr, void *inst,
     }
 
     from = node_mapping[from];
-    if (node_mapping[to] != descr->num_nodes) {
+    if (to != descr->num_nodes) {
       to = node_mapping[to];
     }
 
     /* replace nodes mapped to from with to and reduce the number of nodes */
-    for (uint32_t j = 0; j < descr->num_collapsible; j++) {
+    for (uint32_t j = 0; j < descr->num_nodes; j++) {
       if (node_mapping[j] == from) {
         node_mapping[j] = to;
       } else if (node_mapping[j] > from) {
-        node_mapping[j] -= 1;
+        if (node_mapping[j]!= num_nodes){
+          node_mapping[j] -= 1;
+        }
       }
     }
     num_nodes -= 1;
