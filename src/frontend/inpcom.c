@@ -8256,12 +8256,17 @@ static struct card *the_last_card(struct card *startcard)
 }
  static void remove_old_cards(struct card *first, struct card *stop)
 {
-    struct card *x, *next = NULL;
+    struct card *x, *y, *next = NULL, *nexta = NULL;
     if (!first || !stop || (first == stop)) { return; }
     for (x = first; (x && (x != stop)); x = next) {
-        //printf("Remove %s\n", x->line);
         if (x->line) { tfree(x->line); }
         if (x->error) { tfree(x->error); }
+        for (y = x->actualLine; y; y = nexta) {
+            if (y->line) { tfree(y->line); }
+            if (y->error) { tfree(y->error); }
+            nexta = y->nextcard;
+            tfree(y);
+        }
         next = x->nextcard;
         tfree(x);
     }
