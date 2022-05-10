@@ -524,6 +524,7 @@ static Table2_Data_t *init_local_data(const char *filename, int order)
             while (token) {
                 if (i == ix) {
                     cm_message_printf("Too many numbers in x row.");
+                    free(token);
                     xrc = -1;
                     goto EXITPOINT;
                 }

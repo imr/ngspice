@@ -87,6 +87,7 @@ VSRCask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *
             return (OK);
         case VSRC_CURRENT:
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
+                FREE(errMsg);
                 errMsg = TMALLOC(char, strlen(msg) + 1);
                 errRtn = "VSRCask";
                 strcpy(errMsg,msg);
@@ -100,6 +101,7 @@ VSRCask(CKTcircuit *ckt, GENinstance *inst, int which, IFvalue *value, IFvalue *
             return(OK);
         case VSRC_POWER:
             if (ckt->CKTcurrentAnalysis & DOING_AC) {
+                FREE(errMsg);
                 errMsg = TMALLOC(char, strlen(msg) + 1);
                 errRtn = "VSRCask";
                 strcpy(errMsg,msg);

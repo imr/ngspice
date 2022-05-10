@@ -30,6 +30,14 @@ EVTdest(Evt_Ckt_Data_t *evt)
     return OK;
 }
 
+static void free_events(Evt_Inst_Event_t *event)
+{
+    while (event) {
+        Evt_Inst_Event_t *next = event->next;
+        tfree(event);
+        event = next;
+    }
+}
 
 static void
 Evt_Queue_destroy(Evt_Ckt_Data_t *evt, Evt_Queue_t *queue)
@@ -40,15 +48,11 @@ Evt_Queue_destroy(Evt_Ckt_Data_t *evt, Evt_Queue_t *queue)
 
     int i;
 
-    /* instance queue */
     for (i = 0; i < evt->counts.num_insts; i++) {
-        Evt_Inst_Event_t *event = inst_queue->head[i];
-        while (event) {
-            Evt_Inst_Event_t *next = event->next;
-            tfree(event);
-            event = next;
-        }
+        free_events(inst_queue->head[i]);
+        free_events(inst_queue->free[i]);
     }
+
     tfree(inst_queue->head);
     tfree(inst_queue->current);
     tfree(inst_queue->last_step);
@@ -114,6 +118,16 @@ Evt_Data_destroy(Evt_Ckt_Data_t *evt, Evt_Data_t *data)
 }
 */
 
+static void free_state(Evt_State_t *state)
+{
+    while (state) {
+        Evt_State_t *next = state->next;
+        tfree(state->block);
+        tfree(state);
+        state = next;
+    }
+}
+
 static void
 Evt_State_Data_destroy(Evt_Ckt_Data_t *evt, Evt_State_Data_t *state_data)
 {
@@ -123,13 +137,8 @@ Evt_State_Data_destroy(Evt_Ckt_Data_t *evt, Evt_State_Data_t *state_data)
         return;
 
     for (i = 0; i < evt->counts.num_insts; i++) {
-        Evt_State_t *state = state_data->head[i];
-        while (state) {
-            Evt_State_t *next = state->next;
-            tfree(state->block);
-            tfree(state);
-            state = next;
-        }
+        free_state(state_data->head[i]);
+        free_state(state_data->free[i]);
     }
 
     tfree(state_data->head);
