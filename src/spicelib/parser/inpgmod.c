@@ -119,8 +119,6 @@ create_model(CKTcircuit *ckt, INPmodel *modtmp, INPtables *tab)
     if (device->registry_entry){ 
         INPgetNetTok(&line, &parm, 1); /* throw away osdi */
         tfree(parm);
-        INPgetNetTok(&line, &parm, 1); /* throw away module name */
-        tfree(parm);
     }
 #endif
 
