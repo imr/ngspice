@@ -43,6 +43,7 @@ struct pnode *ft_getpnames_from_string(const char *sz, bool check)
      * structure must also be freed if the check fails since it is not
      * being returned. */
     if (check && !checkvalid(pn)) {
+        dvec_free(pn->pn_value);
         free_pnode(pn);
         return (struct pnode *) NULL;
     }
