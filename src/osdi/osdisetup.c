@@ -287,7 +287,7 @@ extern int OSDItemp(GENmodel *inModel, CKTcircuit *ckt) {
        gen_model = gen_model->GENnextModel) {
     void *model = osdi_model_data(gen_model);
 
-    handle = (OsdiNgspiceHandle){.kind = 1, .name = gen_model->GENmodName};
+    handle = (OsdiNgspiceHandle){.kind = 4, .name = gen_model->GENmodName};
     init_info = descr->setup_model((void *)&handle, model);
     res = handle_init_info(init_info, descr);
     if (res) {

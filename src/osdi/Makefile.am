@@ -13,6 +13,7 @@ libosdi_la_SOURCES =	\
 	osdiregistry.c	\
 	osdisetup.c \
 	osdiitf.h
+	exported.txt
 
 
 

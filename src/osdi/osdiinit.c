@@ -86,11 +86,11 @@ extern SPICEdev *osdi_create_spicedev(const OsdiRegistryEntry *entry) {
   // allocate and fill instance params (and opvars)
   int *num_instance_para_names = TMALLOC(int, 1);
   for (uint32_t i = 0; i < descr->num_instance_params; i++) {
-    *num_instance_para_names += (int) (1 + descr->param_opvar[i].num_alias);
+    *num_instance_para_names += (int)(1 + descr->param_opvar[i].num_alias);
   }
   for (uint32_t i = descr->num_params;
        i < descr->num_opvars + descr->num_params; i++) {
-    *num_instance_para_names += (int) (1 + descr->param_opvar[i].num_alias);
+    *num_instance_para_names += (int)(1 + descr->param_opvar[i].num_alias);
   }
   if (entry->dt != UINT32_MAX) {
     *num_instance_para_names += 1;
@@ -121,7 +121,7 @@ extern SPICEdev *osdi_create_spicedev(const OsdiRegistryEntry *entry) {
   // allocate and fill model params
   int *num_model_para_names = TMALLOC(int, 1);
   for (uint32_t i = descr->num_instance_params; i < descr->num_params; i++) {
-    *num_model_para_names += (int) (1 + descr->param_opvar[i].num_alias);
+    *num_model_para_names += (int)(1 + descr->param_opvar[i].num_alias);
   }
   IFparm *model_para_names = TMALLOC(IFparm, *num_model_para_names);
   dst = model_para_names;
@@ -143,7 +143,7 @@ extern SPICEdev *osdi_create_spicedev(const OsdiRegistryEntry *entry) {
       .numModelParms = num_model_para_names,
       .modelParms = model_para_names,
       .flags = DEV_DEFAULT,
-      .registry_entry = (void*) entry,
+      .registry_entry = (void *)entry,
   };
 
   size_t inst_off = entry->inst_offset;
@@ -169,4 +169,36 @@ extern SPICEdev *osdi_create_spicedev(const OsdiRegistryEntry *entry) {
   OSDIinfo->DEVunsetup = OSDIunsetup;
 
   return OSDIinfo;
+}
+
+extern FILE *osdi_init_log_message(void *handle_, uint32_t lvl) {
+  OsdiNgspiceHandle *handle = handle_;
+  switch (lvl) {
+  case LOG_LVL_DEBUG:
+    fprintf(stdout, "OSDI(debug) %s: ", handle->name);
+    break;
+  case LOG_LVL_INFO:
+    fprintf(stdout, "OSDI(info) %s: ", handle->name);
+    break;
+  case LOG_LVL_WARN:
+    fprintf(stdout, "OSDI(warn) %s: ", handle->name);
+    break;
+  case LOG_LVL_ERR:
+    fprintf(stderr, "OSDI(err) %s: ", handle->name);
+    return stderr;
+  case LOG_LVL_FATAL:
+    fprintf(stderr, "OSDI(fatal) %s: ", handle->name);
+    return stderr;
+  default:
+    fprintf(stdout, "OSDI(unkown) %s", handle->name);
+    break;
+  }
+  return stdout;
+}
+
+extern void osdi_finish_log_message(void *handle, FILE *stream, uint32_t lvl) {
+
+  NG_IGNORE(handle);
+  NG_IGNORE(stream);
+  NG_IGNORE(lvl);
 }

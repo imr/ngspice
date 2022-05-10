@@ -77,7 +77,7 @@ extern int OSDIload(GENmodel *inModel, CKTcircuit *ckt) {
 
       /* hpyothetically this could run in parallel we do not write any shared
        data here*/
-      handle = (OsdiNgspiceHandle){.kind = 2, .name = gen_inst->GENname};
+      handle = (OsdiNgspiceHandle){.kind = 3, .name = gen_inst->GENname};
       /* TODO initial conditions? */
       uint32_t ret_flags = descr->eval(&handle, inst, model, flags,
                                        ckt->CKTrhsOld, &sim_params_);

@@ -18,7 +18,7 @@
 #if (!defined HAS_WINGUI) && (!defined __MINGW32__) && (!defined _MSC_VER)
 
 #include <dlfcn.h> /* to load libraries*/
-#define OPENLIB(path) dlopen(path, RTLD_LAZY | RTLD_LOCAL)
+#define OPENLIB(path) dlopen(path, RTLD_NOW | RTLD_LOCAL)
 #define GET_SYM(lib, sym) dlsym(lib, sym)
 #define FREE_DLERR_MSG(msg)
 
