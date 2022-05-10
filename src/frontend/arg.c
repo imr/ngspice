@@ -133,6 +133,7 @@ static void common(const char *string, const struct wordlist *wl,
         w = process(w);
         /* O.K. now call fn */
         command->co_func(w);
+        wl_free(w);
     }
 } /* end of function common */
 

@@ -1156,6 +1156,8 @@ void cp_vprint(void)
                 out_printf("( %s )\n", s);
             else
                 out_printf("%s\n", s);
+            wl_free(wl);
+            tfree(s);
         }
     }
 
