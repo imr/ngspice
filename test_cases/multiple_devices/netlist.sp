@@ -3,12 +3,12 @@ OSDI Multiple Devices Test
 
 
 * one voltage source for sweeping, one for sensing:
-VD Dx 0 DC 0 AC 1 SIN (0.5 0.2 1M)
+VD Dx 0 DC 0 AC 1 SIN (0.5 0.2 10M)
 Vsense Dx D DC 0 
 
 * model definitions:
 .model rmod_osdi resistor_va r=20
-.model cmod_osdi capacitor_va r=5e-12
+.model cmod_osdi capacitor_va c=5
 
 *OSDI Resistor and Capacitor:
 *OSDI_ACTIVATE*A1 D 0 rmod_osdi
@@ -18,7 +18,7 @@ Vsense Dx D DC 0
 *Built-in Capacitor and Resistor:
 *BUILT_IN_ACTIVATE*R1 D 0 20
 *BUILT_IN_ACTIVATE*R2 D 0 20
-*BUILT_IN_ACTIVATE*C1 D 0 5e-12
+*BUILT_IN_ACTIVATE*C1 D 0 5
 
 
 .control
