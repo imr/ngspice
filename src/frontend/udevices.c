@@ -1109,15 +1109,15 @@ char *new_inverter(char *iname, char *node, Xlatorp xlp)
     char *tmp = NULL;
     Xlatep xdata = NULL;
 
-    tmp = tprintf("a%s_%s  %s  not_%s_%s  d_zero_inv99",
+    tmp = tprintf("a%s_%s  %s  not_a%s_%s  d_zero_inv99",
         iname, node, node, iname, node);
     /* instantiate the new inverter */
-    /* e.g. au5_s1bar  s1bar  not_u5_s1bar  d_zero_inv99 */
+    /* e.g. au5_s1bar  s1bar  not_au5_s1bar  d_zero_inv99 */
     xdata = create_xlate_translated(tmp);
     (void) add_xlator(xlp, xdata);
     tfree(tmp);
     /* the name of the inverter output */
-    tmp = tprintf("not_%s_%s", iname, node);
+    tmp = tprintf("not_a%s_%s", iname, node);
     return tmp;
 }
 
@@ -1200,7 +1200,7 @@ static Xlatorp gen_dff_instance(struct dff_instance *ip)
     clk = ip->clk;
     tmodel = ip->tmodel;
     /* model name, same for each dff */
-    modelnm = tprintf("d_a%s%s", iname, itype);
+    modelnm = tprintf("d_a%s_%s", iname, itype);
     for (i = 0; i < num_gates; i++) {
         qout = qarr[i];
         if (strcmp(qout, "$d_nc") == 0) {
@@ -1275,7 +1275,7 @@ static Xlatorp gen_jkff_instance(struct jkff_instance *ip)
 
     tmodel = ip->tmodel;
     /* model name, same for each latch */
-    modelnm = tprintf("d_a%s%s", iname, itype);
+    modelnm = tprintf("d_a%s_%s", iname, itype);
     for (i = 0; i < num_gates; i++) {
         qout = qarr[i];
         if (strcmp(qout, "$d_nc") == 0) {
@@ -1342,7 +1342,7 @@ static Xlatorp gen_dltch_instance(struct dltch_instance *ip)
     gate = ip->gate;
     tmodel = ip->tmodel;
     /* model name, same for each latch */
-    modelnm = tprintf("d_a%s%s", iname, itype);
+    modelnm = tprintf("d_a%s_%s", iname, itype);
     for (i = 0; i < num_gates; i++) {
         qout = qarr[i];
         if (strcmp(qout, "$d_nc") == 0) {
@@ -1423,7 +1423,7 @@ static Xlatorp gen_compound_instance(struct compound_instance *compi)
     num_gates = compi->num_gates;
     output = compi->output;
     tmodel = compi->tmodel;
-    model_name = tprintf("d_%s%s", inst, itype);
+    model_name = tprintf("d_%s_%s", inst, itype);
     connector = TMALLOC(char *, num_gates);
     xxp = create_xlator();
     k = 0;
@@ -1437,7 +1437,7 @@ static Xlatorp gen_compound_instance(struct compound_instance *compi)
     tmp[0] = '\0';
     k = 0;
     for (i = 0; i < num_gates; i++) {
-        connector[i] = tprintf("con%s_%d", inst, i);
+        connector[i] = tprintf("con_%s_%d", inst, i);
         num_ins_kept = 0;
         tmp[0] = '\0';
         /* $d_hi AND gate inputs are ignored */
@@ -1599,7 +1599,7 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
         connector = tprintf("a%s_%s", iname, outarr[0]);
 
         /* keep a copy of the model name of original gate */
-        modelnm = tprintf("d_a%s%s", iname, itype);
+        modelnm = tprintf("d_a%s_%s", iname, itype);
 
         if (!add_tristate) {
             char *instance_stmt = NULL;
@@ -1644,7 +1644,7 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
             tfree(new_stmt);
             /* now the added tristate */
             /* model name of added tristate */
-            new_model_nm = tprintf("d_a%stribuf", iname);
+            new_model_nm = tprintf("d_a%s_tribuf", iname);
             new_stmt = tprintf("a%s_tri %s %s %s %s",
                 iname, connector, enable, outarr[0], new_model_nm);
             xdata = create_xlate_instance(new_stmt, "d_tristate",
@@ -1701,7 +1701,7 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
             endvec = "";
         }
         /* model name, same for all primary gates */
-        primary_model = tprintf("d_a%s%s", iname, itype); 
+        primary_model = tprintf("d_a%s_%s", iname, itype); 
         for (i = 0; i < num_gates; i++) {
             /* inputs */
             /* First calculate the space */
@@ -1786,7 +1786,7 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
                     tfree(s1);
                 }
                 /* model name of added tristate */
-                modelnm = tprintf("d_a%stribuf", iname);
+                modelnm = tprintf("d_a%s_tribuf", iname);
                 /*
                  instance name of added tristate, connector,
                  enable, original primary gate output, timing model.
@@ -2639,7 +2639,7 @@ static Xlatorp translate_pull(struct instance_hdr *hdr, char *start)
     xspice = find_xspice_for_delay(itype);
     newline = TMALLOC(char, strlen(start) + 1);
     (void) memcpy(newline, start, strlen(start) + 1);
-    model_name = tprintf("d_%s%s", iname, itype);
+    model_name = tprintf("d_%s_%s", iname, itype);
     for (i = 0; i < numpulls; i++) {
         if (i == 0) {
             tok = strtok(newline, " \t");
