@@ -7,7 +7,7 @@ VD Dx 0 DC 0 AC 1 SIN (0.5 0.2 1M)
 Vsense Dx D DC 0 
 
 * model definitions:
-.model cmod_osdi osdi capacitor_va c=5e-12
+.model cmod_osdi capacitor_va c=5e-12
 
 *OSDI Capacitor:
 *OSDI_ACTIVATE*A1 D 0 cmod_osdi
@@ -17,6 +17,7 @@ Vsense Dx D DC 0
 
 
 .control
+pre_osdi capacitor.osdi
 set filetype=ascii
 set wr_vecnames
 set wr_singlescale

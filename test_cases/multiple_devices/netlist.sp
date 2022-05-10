@@ -1,4 +1,4 @@
-OSDI Resistor Test
+OSDI Multiple Devices Test
 .options abstol=1e-15
 
 
@@ -7,15 +7,17 @@ VD Dx 0 DC 0 AC 1 SIN (0.5 0.2 1M)
 Vsense Dx D DC 0 
 
 * model definitions:
-.model rmod_osdi resistor_va r=10
+.model rmod_osdi resistor_va r=20
 .model cmod_osdi capacitor_va r=5e-12
 
 *OSDI Resistor and Capacitor:
 *OSDI_ACTIVATE*A1 D 0 rmod_osdi
-*OSDI_ACTIVATE*A2 D 0 cmod_osdi
+*OSDI_ACTIVATE*A2 D 0 rmod_osdi
+*OSDI_ACTIVATE*A3 D 0 cmod_osdi
 
 *Built-in Capacitor and Resistor:
-*BUILT_IN_ACTIVATE*R1 D 0 10
+*BUILT_IN_ACTIVATE*R1 D 0 20
+*BUILT_IN_ACTIVATE*R2 D 0 20
 *BUILT_IN_ACTIVATE*C1 D 0 5e-12
 
 

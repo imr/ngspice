@@ -5,7 +5,12 @@ import numpy as np
 import subprocess
 import pandas as pd
 
-directory = os.path.dirname(__file__)
+import sys
+sys.path.append(
+    os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
+
+from testing import prepare_test
+
 
 # This test runs a DC, AC and Transient Simulation of a simple resistor.
 # The capacitor is available as a C file and needs to be compiled to a shared object
@@ -17,102 +22,32 @@ directory = os.path.dirname(__file__)
 # The integration test proves the functioning of the OSDI interface.
 # Future tests will target Verilog-A models like HICUM/L2 that should yield exactly the same results as the Ngspice implementation.
 
-
-def create_shared_object():
-    # place the file "resistor_va.c" next to this file
-    subprocess.run(
-        [
-            "gcc",
-            "-c",
-            "-Wall",
-            "-I",
-            "../../src/spicelib/devices/osdi/",
-            "-fpic",
-            "resistor_va.c",
-            "-ggdb",
-        ],
-        cwd=directory,
-    )
-    subprocess.run(
-        ["gcc", "-shared", "-o", "resistor_va.so", "resistor_va.o", "-ggdb"],
-        cwd=directory,
-    )
-    os.makedirs(os.path.join(directory, "test_osdi", "osdi"), exist_ok=True)
-    subprocess.run(
-        ["mv", "resistor_va.so", "test_osdi/osdi/resistor_va.so"], cwd=directory
-    )
-    subprocess.run(["rm", "resistor_va.o"], cwd=directory)
-
-
-# specify location of Ngspice executable to be tested
-ngspice_path = os.path.join(directory, "../../debug/src/ngspice")
-ngspice_path = os.path.abspath(ngspice_path)
+directory = os.path.dirname(__file__)
 
 
 def test_ngspice():
-    path_netlist = os.path.join(directory, "netlist.sp")
-
-    # open netlist and activate Ngspice resistor
-    with open(path_netlist) as netlist_handle:
-        netlist_raw = netlist_handle.read()
-
-    netlist_osdi = netlist_raw.replace("*OSDI_ACTIVATE*", "")
-    netlist_built_in = netlist_raw.replace("*BUILT_IN_ACTIVATE*", "")
-
-    # make directories for test cases
-    dir_osdi = os.path.join(directory, "test_osdi")
-    dir_built_in = os.path.join(directory, "test_built_in")
-    # remove old results:
-    for directory_i in [dir_osdi, dir_built_in]:
-        shutil.rmtree(directory_i, ignore_errors=True)
-
-    for directory_i in [dir_osdi, dir_built_in]:
-        os.makedirs(directory_i, exist_ok=True)
-
-    create_shared_object()
-
-    # write netlists
-    with open(os.path.join(dir_osdi, "netlist.sp"), "w") as netlist_handle:
-        netlist_handle.write(netlist_osdi)
-
-    with open(os.path.join(dir_built_in, "netlist.sp"), "w") as netlist_handle:
-        netlist_handle.write(netlist_built_in)
-
-    # run simulations with Ngspice
-    for directory_i in [dir_osdi, dir_built_in]:
-        subprocess.run(
-            [
-                ngspice_path,
-                "netlist.sp",
-                "-b",
-            ],
-            cwd=directory_i,
-        )
+    dir_osdi, dir_built_in = prepare_test(directory)
 
     # read DC simulation results
     dc_data_osdi = pd.read_csv(os.path.join(dir_osdi, "dc_sim.ngspice"), sep="\\s+")
-    dc_data_built_in = pd.read_csv(os.path.join(dir_osdi, "dc_sim.ngspice"), sep="\\s+")
-    # dc_data_built_in = pd.read_csv(
-    #     os.path.join(dir_built_in, "dc_sim.ngspice"), sep="\\s+"
-    # )
+    dc_data_built_in = pd.read_csv(
+        os.path.join(dir_built_in, "dc_sim.ngspice"), sep="\\s+"
+    )
 
     id_osdi = dc_data_osdi["i(vsense)"].to_numpy()
-    id_built_in = dc_data_osdi["i(vsense)"].to_numpy()
-    # id_built_in = dc_data_built_in["i(vsense)"].to_numpy()
+    id_built_in = dc_data_built_in["i(vsense)"].to_numpy()
 
     # read AC simulation results
     ac_data_osdi = pd.read_csv(os.path.join(dir_osdi, "ac_sim.ngspice"), sep="\\s+")
-    ac_data_built_in = pd.read_csv(os.path.join(dir_osdi, "ac_sim.ngspice"), sep="\\s+")
-    # ac_data_built_in = pd.read_csv(
-    #     os.path.join(dir_built_in, "ac_sim.ngspice"), sep="\\s+"
-    # )
+    ac_data_built_in = pd.read_csv(
+        os.path.join(dir_built_in, "ac_sim.ngspice"), sep="\\s+"
+    )
 
     # read TR simulation results
     tr_data_osdi = pd.read_csv(os.path.join(dir_osdi, "tr_sim.ngspice"), sep="\\s+")
-    tr_data_built_in = pd.read_csv(os.path.join(dir_osdi, "tr_sim.ngspice"), sep="\\s+")
-    # tr_data_built_in = pd.read_csv(
-    #     os.path.join(dir_built_in, "tr_sim.ngspice"), sep="\\s+"
-    # )
+    tr_data_built_in = pd.read_csv(
+        os.path.join(dir_built_in, "tr_sim.ngspice"), sep="\\s+"
+    )
 
     # test simulation results
     id_osdi = dc_data_osdi["i(vsense)"].to_numpy()
