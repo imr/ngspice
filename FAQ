@@ -1,7 +1,7 @@
-  Ngspice F.A.Q.Version 2.7 (ngspice-36 release)
+  Ngspice F.A.Q.Version 2.7 (ngspice-37 release)
 
   Maintained by Holger Vogt
-  Last update: 12-18-2021
+  Last update: May 11 2022
 
   This document contains the Frequently Asked Questions (and Answers)
   for ngspice project.
@@ -249,29 +249,32 @@
 
   The latest version released is:
 
-  * ngspice-36 (released on 01/01/2022)
+  * ngspice-37 (released on May 22 2022)
 
 
  2.2.  What are the latest features in the current release?
 
 - New features:
-    + Add function 'integ' to control language.
-    + New dot command .probe
-      for current and differential voltage measurements.
-    + Allow math characters in node names.
-    + Enable x/y contour plots for 2d Cider using gnuplot.
-    + Update to bipolar model, incl. IBE and IBC parameters.
-    + Add garbage collector to cpl code to remove any mem leakage.
-    + Enable .save within subcircuits.
-    + New compile scripts for macOS, for Apple clang and Homebrew gcc.
-      gcc allows compiling a fully featured ngspice (incl. OpenMP) on MAC.
-    + Add RKM notation (e.g. 4k7) if compat mode LT.
-    + Add 'µ' as special character in netlists.
-    + Add parameter 'r' to command 'listing' for (runable).
-    + Fix several issues with CIDER.
-    + New command 'wrnodev' to print  matrix RHS in form of .ic = V(node_xx).
-    + Transient operating pointadded to gmin and source stepping.
-    + More SOA parameters on more devices (V, I, T, P).
+    + Reduce XSPICE memory consumption dramatically 
+      (> factor of 10).
+    + Add source stepping to B source
+    + Add 'esave' command to save only specific event nodes.
+    + Accept '.temp=125' or .temp='param'.
+    + Enable output redirection for meas command.
+    + Use total current for diffcap calculation in diode model.
+    + Speed output and reduces file size when plotting large
+      result vectors (Windows).
+    + Enable RKM notation also for inductors (e.g. 1u2 for 1.2u).
+    + Add S parameter simulation (command '.sp').
+    + Add new flag 'digitop' for the 'plot' command.
+    + Add a flag 'alle' (all event nodes) to the plot command.
+    + New code model d_pwm: hybrid oscillator (analg control in,
+      digital out) with PWM.
+    + Make "nogrid" plotting option work.
+    + Add current measurement for all nodes of a device,
+      e.g. .probe i(Q1) will measure Ic, Ib, Ie (and Is).
+    + .probe P(dev): Add measurement of power dissipation in a device.
+    + Add new flags -type and -flags to command devhelp.
 
 - Bug fixes:
     + many bugs fixed and code improvements (see bugs 557 and up)
