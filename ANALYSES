@@ -19,6 +19,7 @@ Table of Contents
  8 Transfer function analysis (TF)
  9 Transient analysis (TRAN)
  10 Periodic steady state analysis (PSS, experimental feature)
+ 11 S-parameter analysis (SP)
 
 
 
@@ -111,5 +112,11 @@ Table of Contents
 
     The periodic steady state analysis computes solutions for oscillating
  circuits. Currently only the autonomous case is implemented.
+
+
+11 S-parameter analysis
+
+    Evaluate s-parameters on any port of a multiport circuit, store the resulting
+ data in a Touchstone file
 
 
