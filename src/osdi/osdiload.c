@@ -13,6 +13,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/types.h>
 
 #define NUM_SIM_PARAMS 4
 char *sim_params[NUM_SIM_PARAMS + 1] = {"gdev", "gmin", "tnom",
@@ -26,16 +27,19 @@ extern int OSDIload(GENmodel *inModel, CKTcircuit *ckt) {
   double dump;
 
   bool is_init_smsig = ckt->CKTmode & MODEINITSMSIG;
+  bool is_sweep = ckt->CKTmode & MODEDCTRANCURVE;
   bool is_ac = ckt->CKTmode & (MODEAC | MODEINITSMSIG);
   bool is_tran_op = ((ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC));
-  bool is_tran = ckt->CKTmode & (MODEDCTRANCURVE | MODETRAN) || is_tran_op;
+  bool is_tran = ckt->CKTmode & (MODETRAN) || is_tran_op;
   bool is_init_tran = ckt->CKTmode & MODEINITTRAN;
 
   uint32_t flags = CALC_RESIST_JACOBIAN;
 
-  if (is_init_smsig) {
+  if (is_init_smsig || is_sweep) {
     flags |= CALC_OP;
-  } else {
+  }
+
+  if (!is_init_smsig) {
     flags |= CALC_RESIST_RESIDUAL;
   }
 
@@ -152,6 +156,7 @@ extern int OSDIload(GENmodel *inModel, CKTcircuit *ckt) {
       } else {
         /* copy internal derivatives into global matrix */
         descr->load_jacobian_resist(inst);
+
         /* calculate spice RHS from internal currents and store into global RHS
          */
         descr->load_spice_rhs_dc(inst, ckt->CKTrhs, ckt->CKTrhsOld);
