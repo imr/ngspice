@@ -129,3 +129,8 @@ Vector:              no
 Vector_Bounds:       -                                
 Null_Allowed:       no                          
 
+STATIC_VAR_TABLE:
+
+Static_Var_Name:    table
+Data_Type:	    pointer
+Description:        "State transition table"
