@@ -105,6 +105,7 @@ noinst_HEADERS = \
 	sharedspice.h	\
 	sim.h		\
 	smpdefs.h	\
+	spardefs.h	\
 	sperror.h	\
 	spmatrix.h	\
 	stringskip.h	\
