@@ -8358,12 +8358,12 @@ static struct card *u_instances(struct card *startcard)
                 if (create_called) {
                     cleanup_udevice();
                 }
-                initialize_udevice();
+                initialize_udevice(subcktcard->line);
                 create_called = TRUE;
             } else {
                 tmp = TMALLOC(char, strlen(cut_line) + 1);
                 (void) memcpy(tmp, cut_line, strlen(cut_line) + 1);
-                pos = strstr(tmp, "optional");
+                pos = strstr(tmp, "optional:");
                 if (pos) {
                     *pos = '\0';
                 }
@@ -8384,6 +8384,7 @@ static struct card *u_instances(struct card *startcard)
                     if (last_newcard) {
                         last_newcard->nextcard = card; // the .ends card
                     }
+                    create_ports_list();
                 }
             }
             if (models_not_ok > 0 || udev_not_ok > 0) {
@@ -8412,8 +8413,13 @@ static struct card *u_instances(struct card *startcard)
             if (subcktcard) {
                 if (repeat_pass) {
                     if (!u_process_instance(cut_line)) {
-                        /* Bail out */
-                        break;
+                        repeat_pass = FALSE;
+                        cleanup_udevice();
+                        create_called = FALSE;
+                        subcktcard = NULL;
+                        models_ok = models_not_ok = 0;
+                        udev_ok = udev_not_ok = 0;
+                        skip_next = FALSE;
                     }
                 } else {
                     if (u_check_instance(cut_line)) {
@@ -8428,6 +8434,7 @@ static struct card *u_instances(struct card *startcard)
                 udev_not_ok++;
             }
         }
+
         if (!skip_next) {
             card = card->nextcard;
         }
