@@ -1,0 +1,7 @@
+{
+    extern "C"
+    {
+       osdi_init_log_message;
+       osdi_finish_log_message;
+    };
+};
