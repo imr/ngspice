@@ -42,7 +42,6 @@
 #include <stdarg.h>
 #include <string.h>
 #include <ctype.h>
-#include <assert.h>
 #include "ngspice/ngspice.h"
 #include "ngspice/memory.h"
 #include "ngspice/bool.h"
@@ -1357,7 +1356,6 @@ static struct instance_hdr *create_instance_header(char *line)
         tmp = TMALLOC(char, strlen(tok) + 1);
         strcpy(tmp, tok);
         p4 = strchr(tmp, '(');
-        assert(p4 != NULL);
         *p4 = '\0';
         tmp1 = TMALLOC(char, strlen(tmp) + 1);
         (void) memcpy(tmp1, tmp, strlen(tmp) + 1);
@@ -1365,7 +1363,6 @@ static struct instance_hdr *create_instance_header(char *line)
         tfree(tmp);
 
         p2 = strchr(tok, ')');
-        assert(p2 != NULL);
         p3 = strchr(tok, ',');
         if (p3) {
             hdr->num1 = (int) strtol(p1 + 1, &endp, 10);
@@ -1762,8 +1759,6 @@ static Xlatorp gen_compound_instance(struct compound_instance *compi)
             */
             tfree(connector[i]);
             connector[i] = tprintf("%s", tmp);
-        } else {
-            assert(FALSE);
         }
     }
     /* .model statement for the input gates */
@@ -1834,7 +1829,6 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
     num_outs = gip->num_outs;
     enable = gip->enable;
     tmodel = gip->tmodel;
-    assert(num_gates >= 1);
     vector = has_vector_inputs(itype);
     for (i = 0; i < num_ins; i++) {
         add_input_pin(inarr[i]);
@@ -1853,23 +1847,18 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
 
     if (num_gates == 1) {
         char *inst_begin = NULL;
-        assert(num_outs == 1);
         simple_gate = is_gate(itype);
         tristate_gate = is_tristate(itype);
         if (!simple_gate && !tristate_gate) { return NULL; }
-        if (simple_gate && tristate_gate) { assert(FALSE); }
         add_tristate = FALSE;
         if (simple_gate) {
-            assert(!enable);
             xspice = find_xspice_for_delay(itype);
         } else if (tristate_gate) {
-            assert(enable);
             xspice = find_xspice_for_delay(itype);
             if (strcmp(itype, "buf3") != 0) {
                 add_tristate = TRUE;
             }
         }
-        assert(xspice);
         xxp = create_xlator();
         /* Now build the instance name and inputs section */
         if (vector) {
@@ -1893,7 +1882,6 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
         /* instance name and inputs */
         /* add the tristate enable if required on original */
         if (enable) {
-            assert(tristate_gate);
             if (!add_tristate) {
                 /* Warning: changing the format string affects input_buf sz */
                 inst_begin = tprintf("a%s %s%s%s  %s",
@@ -1983,14 +1971,10 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
         int ksave;
         /* arrays of gates */
         /* NOTE (n)and3a, (n)or3a, (n)xor3a types are not supported */
-        assert(num_outs == num_gates);
-        assert(num_ins == num_gates * width);
         simple_array = is_gate_array(itype);
         tristate_array = is_tristate_array(itype);
         add_tristate = FALSE;
         if (simple_array) {
-            assert(!tristate_array);
-            assert(!enable);
             xspice = find_xspice_for_delay(itype);
         } else if (tristate_array) {
             xspice = find_xspice_for_delay(itype);
@@ -1999,12 +1983,7 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
             } else if (strcmp(itype, "buf3a") != 0) {
                 return NULL;
             }
-            assert(enable);
-            assert(!vector);
-        } else {
-            assert(FALSE);
         }
-        assert(xspice);
         xxp = create_xlator();
         k = 0;
         connector = NULL;
@@ -2075,8 +2054,6 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
 
             if (!add_tristate) {
                 if (tristate_array) {
-                    assert(strcmp(xspice, "d_tristate") == 0);
-                    assert(strcmp(itype, "buf3a") == 0);
                     if (i == 0 && !gen_timing_model(tmodel, "utgate",
                                             xspice, primary_model, xxp)) {
                         printf("WARNING unable to find tmodel %s for %s %s\n",
@@ -2854,12 +2831,11 @@ static struct gate_instance *add_gate_inout_timing_model(
     struct instance_hdr *hdr, char *start)
 {
     char *tok, *copyline, *itype  = hdr->instance_type;
-    int i, n1 = hdr->num1, n2 = hdr->num2, inwidth;
+    int i, n1 = hdr->num1, inwidth;
     BOOL first = TRUE, tristate = FALSE;
     struct gate_instance *gip = NULL;
     char **inarr = NULL, **outarr = NULL, *name;
 
-    assert(n2 == -1);
     if (is_vector_gate(itype)) {
         inwidth = n1;
     } else if (is_vector_tristate(itype)) {
@@ -2907,7 +2883,6 @@ static struct gate_instance *add_gate_inout_timing_model(
         gip->enable = name;
     }
     /* output */
-    assert(gip->num_outs == 1);
     outarr = TMALLOC(char *, gip->num_outs);
     gip->outputs = outarr;
     tok = strtok(NULL, " \t");
@@ -2978,6 +2953,7 @@ static Xlatorp translate_pull(struct instance_hdr *hdr, char *start)
 
 static Xlatorp translate_ff_latch(struct instance_hdr *hdr, char *start)
 {
+    /* If OK return Xlatorp else return NULL */
     char *itype;
     struct dff_instance *dffp = NULL;
     struct jkff_instance *jkffp = NULL;
@@ -3007,7 +2983,6 @@ static Xlatorp translate_ff_latch(struct instance_hdr *hdr, char *start)
             return xp;
         }
     } else {
-        assert(FALSE);
         return NULL;
     }
     return NULL;
@@ -3015,7 +2990,7 @@ static Xlatorp translate_ff_latch(struct instance_hdr *hdr, char *start)
 
 static Xlatorp translate_gate(struct instance_hdr *hdr, char *start)
 {
-    /* if unable to translate return 0, else return 1 */
+    /* If OK return Xlatorp else return NULL */
     char *itype;
     struct gate_instance *igatep;
     struct compound_instance *compi;
@@ -3044,7 +3019,6 @@ static Xlatorp translate_gate(struct instance_hdr *hdr, char *start)
             return xp;
         }
     } else {
-        assert(FALSE);
         return NULL;
     }
     return NULL;
