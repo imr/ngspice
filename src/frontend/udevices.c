@@ -1335,7 +1335,7 @@ static void delete_gate_instance(struct gate_instance *gip)
 
 static struct instance_hdr *create_instance_header(char *line)
 {
-    char *tok, *p1, *p2, *p3, *p4, *endp, *newline, *tmp, *tmp1;
+    char *tok, *p1, *p3, *p4, *endp, *newline, *tmp, *tmp1;
     struct instance_hdr *hdr = NULL;
 
     newline = TMALLOC(char, strlen(line) + 1);
@@ -1362,7 +1362,6 @@ static struct instance_hdr *create_instance_header(char *line)
         hdr->instance_type = tmp1;
         tfree(tmp);
 
-        p2 = strchr(tok, ')');
         p3 = strchr(tok, ',');
         if (p3) {
             hdr->num1 = (int) strtol(p1 + 1, &endp, 10);
