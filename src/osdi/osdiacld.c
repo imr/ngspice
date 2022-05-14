@@ -22,13 +22,15 @@ int OSDIacLoad(GENmodel *inModel, CKTcircuit *ckt) {
   OsdiRegistryEntry *entry = osdi_reg_entry_model(inModel);
   const OsdiDescriptor *descr = entry->descriptor;
   for (gen_model = inModel; gen_model; gen_model = gen_model->GENnextModel) {
+    void *model = osdi_model_data(gen_model);
+
     for (gen_inst = gen_model->GENinstances; gen_inst;
          gen_inst = gen_inst->GENnextInstance) {
       void *inst = osdi_instance_data(entry, gen_inst);
       // nothing to calculate just load the matrix entries calculated during
       // operating point iterations
-      descr->load_jacobian_resist(inst);
-      descr->load_jacobian_react(inst, ckt->CKTomega);
+      descr->load_jacobian_resist(inst, model);
+      descr->load_jacobian_react(inst, model, ckt->CKTomega);
     }
   }
   return (OK);

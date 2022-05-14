@@ -49,3 +49,6 @@ typedef struct OsdiNgspiceHandle {
   uint32_t kind;
   char *name;
 } OsdiNgspiceHandle;
+
+/* values returned by $simparam*/
+OsdiSimParas get_simparams(const CKTcircuit *ckt);

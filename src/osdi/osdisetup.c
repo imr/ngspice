@@ -7,6 +7,7 @@
 #include "ngspice/ngspice.h"
 #include "ngspice/typedefs.h"
 
+#include "osdi.h"
 #include "osdidefs.h"
 
 #include <stdint.h>
@@ -20,24 +21,26 @@ static int handle_init_info(OsdiInitInfo info, const OsdiDescriptor *descr) {
   if (info.flags & (EVAL_RET_FLAG_FATAL | EVAL_RET_FLAG_FINISH)) {
     return (E_PANIC);
   }
+
   if (info.num_errors == 0) {
     return (OK);
   }
+
 
   for (uint32_t i = 0; i < info.num_errors; i++) {
     OsdiInitError *err = &info.errors[i];
     switch (err->code) {
     case INIT_ERR_OUT_OF_BOUNDS: {
       char *param = descr->param_opvar[err->payload.parameter_id].name[0];
-      printf("Parameter %s is out of bounds!", param);
+      printf("Parameter %s is out of bounds!\n", param);
       break;
     }
     default:
-      printf("Unkown OSDO init error code %d!", err->code);
+      printf("Unkown OSDO init error code %d!\n", err->code);
     }
   }
   free(info.errors);
-  errMsg = "Errors occurred during initalization";
+  errMsg = tprintf("%i errors occurred during initalization", info.num_errors);
   return (E_PRIVATE);
 }
 
@@ -65,8 +68,7 @@ static uint32_t collapse_nodes(const OsdiDescriptor *descr, void *inst,
   /* access data inside instance */
   uint32_t *node_mapping =
       (uint32_t *)(((char *)inst) + descr->node_mapping_offset);
-  bool *is_collapsible =
-      (bool *)(((char *)inst) + descr->is_collapsible_offset);
+  bool *collapsed = (bool *)(((char *)inst) + descr->collapsed_offset);
 
   /* without collapsing just return the total number of nodes */
   uint32_t num_nodes = descr->num_nodes;
@@ -78,7 +80,7 @@ static uint32_t collapse_nodes(const OsdiDescriptor *descr, void *inst,
 
   for (uint32_t i = 0; i < descr->num_collapsible; i++) {
     /* check if the collapse hint (V(x,y) <+ 0) was executed */
-    if (!is_collapsible[i]) {
+    if (!collapsed[i]) {
       continue;
     }
 
@@ -174,6 +176,8 @@ int OSDIsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
 
   OsdiRegistryEntry *entry = osdi_reg_entry_model(inModel);
   const OsdiDescriptor *descr = entry->descriptor;
+  OsdiSimParas sim_params_ = get_simparams(ckt);
+  OsdiSimParas *sim_params = &sim_params_;
 
   /* setup a temporary buffer */
   uint32_t *node_ids = TMALLOC(uint32_t, descr->num_nodes);
@@ -191,7 +195,9 @@ int OSDIsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
 
     /* setup model parameter (setup_model)*/
     handle = (OsdiNgspiceHandle){.kind = 1, .name = gen_model->GENmodName};
-    init_info = descr->setup_model((void *)&handle, model);
+    descr->setup_model((void *)&handle, model, sim_params, &init_info);
+    printf("setup_model: %i %i %p\n", init_info.flags, init_info.num_errors,
+           init_info.errors);
     res = handle_init_info(init_info, descr);
     if (res) {
       errRtn = "OSDI setup_model";
@@ -228,8 +234,8 @@ int OSDIsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
       /* calculate op independent data, init instance parameters and determine
        which collapsing occurs*/
       handle = (OsdiNgspiceHandle){.kind = 2, .name = gen_inst->GENname};
-      init_info = descr->setup_instance((void *)&handle, inst, model, temp,
-                                        connected_terminals);
+      descr->setup_instance((void *)&handle, inst, model, temp,
+                            connected_terminals, sim_params, &init_info);
       res = handle_init_info(init_info, descr);
       if (res) {
         errRtn = "OSDI setup_instance";
@@ -283,12 +289,15 @@ extern int OSDItemp(GENmodel *inModel, CKTcircuit *ckt) {
   OsdiRegistryEntry *entry = osdi_reg_entry_model(inModel);
   const OsdiDescriptor *descr = entry->descriptor;
 
+  OsdiSimParas sim_params_ = get_simparams(ckt);
+  OsdiSimParas *sim_params = &sim_params_;
+
   for (gen_model = inModel; gen_model != NULL;
        gen_model = gen_model->GENnextModel) {
     void *model = osdi_model_data(gen_model);
 
     handle = (OsdiNgspiceHandle){.kind = 4, .name = gen_model->GENmodName};
-    init_info = descr->setup_model((void *)&handle, model);
+    descr->setup_model((void *)&handle, model, sim_params, &init_info);
     res = handle_init_info(init_info, descr);
     if (res) {
       errRtn = "OSDI setup_model (OSDItemp)";
@@ -312,8 +321,8 @@ extern int OSDItemp(GENmodel *inModel, CKTcircuit *ckt) {
 
       handle = (OsdiNgspiceHandle){.kind = 2, .name = gen_inst->GENname};
       // TODO optional terminals
-      init_info = descr->setup_instance((void *)&handle, inst, model, temp,
-                                        descr->num_terminals);
+      descr->setup_instance((void *)&handle, inst, model, temp,
+                            descr->num_terminals, sim_params, &init_info);
       res = handle_init_info(init_info, descr);
       if (res) {
         errRtn = "OSDI setup_instance (OSDItemp)";
@@ -343,9 +352,8 @@ extern int OSDIunsetup(GENmodel *inModel, CKTcircuit *ckt) {
       void *inst = osdi_instance_data(entry, gen_inst);
 
       // reset is collapsible
-      bool *is_collapsible =
-          (bool *)(((char *)inst) + descr->is_collapsible_offset);
-      memset(is_collapsible, 0, sizeof(bool) * descr->num_collapsible);
+      bool *collapsed = (bool *)(((char *)inst) + descr->collapsed_offset);
+      memset(collapsed, 0, sizeof(bool) * descr->num_collapsible);
 
       uint32_t *node_mapping =
           (uint32_t *)(((char *)inst) + descr->node_mapping_offset);

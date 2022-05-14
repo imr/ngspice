@@ -13,12 +13,33 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/types.h>
 
-#define NUM_SIM_PARAMS 4
-char *sim_params[NUM_SIM_PARAMS + 1] = {"gdev", "gmin", "tnom",
-                                        "simulatorVersion", NULL};
+#define NUM_SIM_PARAMS 5
+char *sim_params[NUM_SIM_PARAMS + 1] = {
+    "gdev", "gmin", "tnom", "simulatorVersion", "sourceScaleFactor", NULL};
 char *sim_params_str[1] = {NULL};
+
+double sim_param_vals[NUM_SIM_PARAMS] = {};
+
+/* values returned by $simparam*/
+OsdiSimParas get_simparams(const CKTcircuit *ckt) {
+
+  double simulatorVersion = strtod(PACKAGE_VERSION, NULL);
+  double gdev = ckt->CKTgmin;
+  double sourceScaleFactor = ckt->CKTsrcFact;
+  double gmin = ((ckt->CKTgmin) > (ckt->CKTdiagGmin)) ? (ckt->CKTgmin)
+                                                      : (ckt->CKTdiagGmin);
+  double sim_param_vals_[NUM_SIM_PARAMS] = {
+      gdev, gmin, ckt->CKTnomTemp, simulatorVersion, sourceScaleFactor};
+  memcpy(&sim_param_vals, &sim_param_vals_, sizeof(double) * NUM_SIM_PARAMS);
+  OsdiSimParas sim_params_ = {.names = sim_params,
+                              .vals = (double *)&sim_param_vals,
+                              .names_str = sim_params_str,
+                              .vals_str = NULL};
+  return sim_params_;
+}
 
 extern int OSDIload(GENmodel *inModel, CKTcircuit *ckt) {
   OsdiNgspiceHandle handle;
@@ -34,6 +55,8 @@ extern int OSDIload(GENmodel *inModel, CKTcircuit *ckt) {
   bool is_init_tran = ckt->CKTmode & MODEINITTRAN;
 
   uint32_t flags = CALC_RESIST_JACOBIAN;
+
+  OsdiSimParas sim_params_ = get_simparams(ckt);
 
   if (is_init_smsig || is_sweep) {
     flags |= CALC_OP;
@@ -56,18 +79,6 @@ extern int OSDIload(GENmodel *inModel, CKTcircuit *ckt) {
   }
 
   int ret = OK;
-
-  /* values returned by $simparam*/
-  double simulatorVersion = strtod(PACKAGE_VERSION, NULL);
-  double gdev = ckt->CKTgmin;
-  double gmin = ((ckt->CKTgmin) > (ckt->CKTdiagGmin)) ? (ckt->CKTgmin)
-                                                      : (ckt->CKTdiagGmin);
-  double sim_param_vals[NUM_SIM_PARAMS] = {gdev, gmin, ckt->CKTnomTemp,
-                                           simulatorVersion};
-  OsdiSimParas sim_params_ = {.names = sim_params,
-                              .vals = sim_param_vals,
-                              .names_str = sim_params_str,
-                              .vals_str = NULL};
 
   OsdiRegistryEntry *entry = osdi_reg_entry_model(inModel);
   const OsdiDescriptor *descr = entry->descriptor;
@@ -116,10 +127,10 @@ extern int OSDIload(GENmodel *inModel, CKTcircuit *ckt) {
       if (is_tran) {
         /* load dc matrix and capacitances (charge derivative multiplied with
          * CKTag[0]) */
-        descr->load_jacobian_tran(inst, ckt->CKTag[0]);
+        descr->load_jacobian_tran(inst, model, ckt->CKTag[0]);
 
         /* load static rhs and dynamic linearized rhs (SUM Vb * dIa/dVb)*/
-        descr->load_spice_rhs_tran(inst, ckt->CKTrhs, ckt->CKTrhsOld,
+        descr->load_spice_rhs_tran(inst, model, ckt->CKTrhs, ckt->CKTrhsOld,
                                    ckt->CKTag[0]);
 
         uint32_t *node_mapping =
@@ -155,11 +166,11 @@ extern int OSDIload(GENmodel *inModel, CKTcircuit *ckt) {
         }
       } else {
         /* copy internal derivatives into global matrix */
-        descr->load_jacobian_resist(inst);
+        descr->load_jacobian_resist(inst, model);
 
         /* calculate spice RHS from internal currents and store into global RHS
          */
-        descr->load_spice_rhs_dc(inst, ckt->CKTrhs, ckt->CKTrhsOld);
+        descr->load_spice_rhs_dc(inst, model, ckt->CKTrhs, ckt->CKTrhsOld);
       }
     }
   }

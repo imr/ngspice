@@ -10,7 +10,7 @@
 
 
 #define OSDI_VERSION_MAJOR_CURR 0
-#define OSDI_VERSION_MINOR_CURR 2
+#define OSDI_VERSION_MINOR_CURR 3
 
 #define PARA_TY_MASK 3
 #define PARA_TY_REAL 0
@@ -108,7 +108,7 @@ typedef struct OsdiDescriptor {
 
   uint32_t num_collapsible;
   OsdiNodePair *collapsible;
-  size_t is_collapsible_offset;
+  size_t collapsed_offset;
 
   OsdiNoiseSource *noise_sources;
   uint32_t num_noise_src;
@@ -120,8 +120,6 @@ typedef struct OsdiDescriptor {
 
   size_t residual_resist_offset;
   size_t residual_react_offset;
-  size_t jacobian_resist_offset;
-  size_t jacobian_react_offset;
   size_t node_mapping_offset;
   size_t jacobian_ptr_resist_offset;
   size_t jacobian_ptr_react_offset;
@@ -131,21 +129,25 @@ typedef struct OsdiDescriptor {
 
   void *(*access)(void *inst, void *model, uint32_t id, uint32_t flags);
 
-  OsdiInitInfo (*setup_model)(void *handle, void *model);
-  OsdiInitInfo (*setup_instance)(void *handle, void *inst, void *model,
-                                     double temperature, uint32_t num_terminals);
+  void (*setup_model)(void *handle, void *model, OsdiSimParas *sim_params,
+                                     OsdiInitInfo *res);
+  void (*setup_instance)(void *handle, void *inst, void *model,
+                                     double temperature, uint32_t num_terminals,
+                                     OsdiSimParas *sim_params, OsdiInitInfo *res);
 
   uint32_t (*eval)(void *handle, void *inst, void *model, uint32_t flags,
                         double *prev_solve, OsdiSimParas *sim_params);
   void (*load_noise)(void *inst, void *model, double freq, double *noise_dens,
                   double *ln_noise_dens);
-  void (*load_residual_resist)(void *inst, double *dst);
-  void (*load_residual_react)(void *inst, double *dst);
-  void (*load_spice_rhs_dc)(void *inst, double *dst, double* prev_solve);
-  void (*load_spice_rhs_tran)(void *inst, double *dst, double* prev_solve, double alpha);
-  void (*load_jacobian_resist)(void *inst);
-  void (*load_jacobian_react)(void *inst, double alpha);
-  void (*load_jacobian_tran)(void *inst, double alpha);
+  void (*load_residual_resist)(void *inst, void* model, double *dst);
+  void (*load_residual_react)(void *inst, void* model, double *dst);
+  void (*load_spice_rhs_dc)(void *inst, void* model, double *dst,
+                  double* prev_solve);
+  void (*load_spice_rhs_tran)(void *inst, void* model, double *dst,
+                  double* prev_solve, double alpha);
+  void (*load_jacobian_resist)(void *inst, void* model);
+  void (*load_jacobian_react)(void *inst, void* model, double alpha);
+  void (*load_jacobian_tran)(void *inst, void* model, double alpha);
 }OsdiDescriptor;
 
 
