@@ -1,4 +1,5 @@
  TIMER 555
+ * The models of this library are in the public domain
  * https://www.electro-tech-online.com/threads/spice-and-555-timer.5806/
  .SUBCKT UA555  32 30 19 23 33 1  21
     *           TR O  R  F  TH D  V
@@ -62,6 +63,7 @@
     * The LM555 timer model is designed for low frequency
     * applications, up to 100Hz.
     .INCLUDE TLC555.LIB
+    * The 555 TI model is available at https://www.ti.com/lit/zip/slfm005 
     .TRAN 10u 100MS
 *    .OPTIONS RELTOL=.0001
     .SAVE  v(16) v(13) v(17)
