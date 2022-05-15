@@ -50,7 +50,7 @@ def test_ngspice():
     # test simulation results
     id_osdi = dc_data_osdi["i(vsense)"].to_numpy()
     id_built_in = dc_data_built_in["i(vsense)"].to_numpy()
-    np.testing.assert_allclose(id_osdi[0:20], id_built_in[0:20], rtol=0.01)
+    np.testing.assert_allclose(id_osdi[20:40], id_built_in[20:40], rtol=0.03)
 
     return (
         dc_data_osdi,
