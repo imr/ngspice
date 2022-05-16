@@ -136,17 +136,18 @@ extern int OSDIload(GENmodel *inModel, CKTcircuit *ckt) {
         uint32_t *node_mapping =
             (uint32_t *)(((char *)inst) + descr->node_mapping_offset);
 
-        double *residual_react =
-            (double *)(((char *)inst) + descr->residual_react_offset);
-
         /* use numeric integration to obtain the remainer of the RHS*/
         int state = gen_inst->GENstate;
         for (uint32_t i = 0; i < descr->num_nodes; i++) {
-          if (descr->nodes[i].is_reactive) {
+          if (descr->nodes[i].react_residual_off != UINT32_MAX) {
+
+            double residual_react = *((
+                double *)(((char *)inst) + descr->nodes[i].react_residual_off));
+
             /* store charges in state vector*/
-            ckt->CKTstate0[state] = residual_react[i];
+            ckt->CKTstate0[state] = residual_react;
             if (is_init_tran) {
-              ckt->CKTstate1[state] = residual_react[i];
+              ckt->CKTstate1[state] = residual_react;
             }
 
             /* we only care about the numeric integration itself not ceq/geq

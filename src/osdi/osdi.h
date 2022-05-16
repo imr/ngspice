@@ -25,6 +25,11 @@
 #define ACCESS_FLAG_SET 1
 #define ACCESS_FLAG_INSTANCE 4
 
+#define JACOBIAN_ENTRY_RESIST_CONST 1
+#define JACOBIAN_ENTRY_REACT_CONST 2
+#define JACOBIAN_ENTRY_RESIST 4
+#define JACOBIAN_ENTRY_REACT 8
+
 #define CALC_RESIST_RESIDUAL 1
 #define CALC_REACT_RESIDUAL 2
 #define CALC_RESIST_JACOBIAN 4
@@ -74,11 +79,19 @@ typedef struct OsdiNodePair {
   uint32_t node_2;
 }OsdiNodePair;
 
+typedef struct OsdiJacobianEntry {
+  OsdiNodePair nodes;
+  uint32_t react_ptr_off;
+  uint32_t flags;
+}OsdiJacobianEntry;
+
 typedef struct OsdiNode {
   char *name;
-  bool is_reactive;
   char *units;
   char *residual_units;
+  uint32_t resist_residual_off;
+  uint32_t react_residual_off;
+  bool is_flow;
 }OsdiNode;
 
 typedef struct OsdiParamOpvar {
@@ -103,12 +116,11 @@ typedef struct OsdiDescriptor {
   OsdiNode *nodes;
 
   uint32_t num_jacobian_entries;
-  OsdiNodePair *jacobian_entries;
-  bool *const_jacobian_entries;
+  OsdiJacobianEntry *jacobian_entries;
 
   uint32_t num_collapsible;
   OsdiNodePair *collapsible;
-  size_t collapsed_offset;
+  uint32_t collapsed_offset;
 
   OsdiNoiseSource *noise_sources;
   uint32_t num_noise_src;
@@ -118,14 +130,11 @@ typedef struct OsdiDescriptor {
   uint32_t num_opvars;
   OsdiParamOpvar *param_opvar;
 
-  size_t residual_resist_offset;
-  size_t residual_react_offset;
-  size_t node_mapping_offset;
-  size_t jacobian_ptr_resist_offset;
-  size_t jacobian_ptr_react_offset;
+  uint32_t node_mapping_offset;
+  uint32_t jacobian_ptr_resist_offset;
 
-  size_t instance_size;
-  size_t model_size;
+  uint32_t instance_size;
+  uint32_t model_size;
 
   void *(*access)(void *inst, void *model, uint32_t id, uint32_t flags);
 

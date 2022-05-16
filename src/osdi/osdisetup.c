@@ -26,7 +26,6 @@ static int handle_init_info(OsdiInitInfo info, const OsdiDescriptor *descr) {
     return (OK);
   }
 
-
   for (uint32_t i = 0; i < info.num_errors; i++) {
     OsdiInitError *err = &info.errors[i];
     switch (err->code) {
@@ -90,19 +89,19 @@ static uint32_t collapse_nodes(const OsdiDescriptor *descr, void *inst,
     /* terminals created by the simulator cannot be collapsed
      */
     if (node_mapping[from] < connected_terminals &&
-        (to == descr->num_nodes || node_mapping[to] < connected_terminals ||
-         node_mapping[to] == descr->num_nodes)) {
+        (to == UINT32_MAX || node_mapping[to] < connected_terminals ||
+         node_mapping[to] == UINT32_MAX)) {
       continue;
     }
     /* ensure that to is always the smaller node */
-    if (to != descr->num_nodes && node_mapping[from] < node_mapping[to]) {
+    if (to != UINT32_MAX && node_mapping[from] < node_mapping[to]) {
       uint32_t temp = from;
       from = to;
       to = temp;
     }
 
     from = node_mapping[from];
-    if (to != descr->num_nodes) {
+    if (to != UINT32_MAX) {
       to = node_mapping[to];
     }
 
@@ -110,10 +109,8 @@ static uint32_t collapse_nodes(const OsdiDescriptor *descr, void *inst,
     for (uint32_t j = 0; j < descr->num_nodes; j++) {
       if (node_mapping[j] == from) {
         node_mapping[j] = to;
-      } else if (node_mapping[j] > from) {
-        if (node_mapping[j]!= num_nodes){
-          node_mapping[j] -= 1;
-        }
+      } else if (node_mapping[j] > from && node_mapping[j] != UINT32_MAX) {
+        node_mapping[j] -= 1;
       }
     }
     num_nodes -= 1;
@@ -128,7 +125,7 @@ static void write_node_mapping(const OsdiDescriptor *descr, void *inst,
   uint32_t *node_mapping =
       (uint32_t *)(((char *)inst) + descr->node_mapping_offset);
   for (uint32_t i = 0; i < descr->num_nodes; i++) {
-    if (node_mapping[i] == descr->num_nodes) {
+    if (node_mapping[i] == UINT32_MAX) {
       /* gnd node */
       node_mapping[i] = 0;
     } else {
@@ -145,12 +142,9 @@ static int init_matrix(SMPmatrix *matrix, const OsdiDescriptor *descr,
   double **jacobian_ptr_resist =
       (double **)(((char *)inst) + descr->jacobian_ptr_resist_offset);
 
-  double **jacobian_ptr_react =
-      (double **)(((char *)inst) + descr->jacobian_ptr_react_offset);
-
   for (uint32_t i = 0; i < descr->num_jacobian_entries; i++) {
-    uint32_t equation = descr->jacobian_entries[i].node_1;
-    uint32_t unkown = descr->jacobian_entries[i].node_2;
+    uint32_t equation = descr->jacobian_entries[i].nodes.node_1;
+    uint32_t unkown = descr->jacobian_entries[i].nodes.node_2;
     equation = node_mapping[equation];
     unkown = node_mapping[unkown];
     double *ptr = SMPmakeElt(matrix, (int)equation, (int)unkown);
@@ -159,8 +153,13 @@ static int init_matrix(SMPmatrix *matrix, const OsdiDescriptor *descr,
       return (E_NOMEM);
     }
     jacobian_ptr_resist[i] = ptr;
+    uint32_t react_off = descr->jacobian_entries[i].react_ptr_off;
     // complex number for ac analysis
-    jacobian_ptr_react[i] = ptr + 1;
+    if (react_off != UINT32_MAX) {
+
+      double **jacobian_ptr_react = (double **)(((char *)inst) + react_off);
+      *jacobian_ptr_react = ptr + 1;
+    }
   }
   return (OK);
 }
@@ -187,7 +186,7 @@ int OSDIsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
   /* determine the number of states required by each instance */
   int num_states = 0;
   for (uint32_t i = 0; i < descr->num_nodes; i++) {
-    if (descr->nodes[i].is_reactive) {
+    if (descr->nodes[i].react_residual_off != UINT32_MAX) {
       num_states += 2;
     }
   }
@@ -252,7 +251,11 @@ int OSDIsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
       /* create internal nodes as required */
       for (uint32_t i = connected_terminals; i < num_nodes; i++) {
         // TODO handle currents  correctly
-        error = CKTmkVolt(ckt, &tmp, gen_inst->GENname, descr->nodes[i].name);
+        if (descr->nodes[i].is_flow) {
+          error = CKTmkCur(ckt, &tmp, gen_inst->GENname, descr->nodes[i].name);
+        } else {
+          error = CKTmkVolt(ckt, &tmp, gen_inst->GENname, descr->nodes[i].name);
+        }
         if (error)
           return (error);
         node_ids[i] = (uint32_t)tmp->number;
