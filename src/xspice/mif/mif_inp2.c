@@ -567,9 +567,13 @@ MIF_INP2A (
 
         param_info = &(DEVices[type]->DEVpublic.param[i]);
 
-        if(mdfast->param[i]->is_null) {
-            if(! param_info->has_default) {
-                LITERR("Parameter on model has no default");
+        /* Don't check for model iron core with hysteresis (type 110) due to always missing defaults */
+        /* FIXME: preliminary, bug is generated elsewhere */
+        if (mdfast->param[i]->is_null && type != 110) {
+            if (!param_info->has_default) {
+                char* emessage = tprintf("Parameter %s on model %s has no default", param_info->name, mdfast->gen.GENmodName);
+                LITERR(emessage);
+                tfree(emessage);
                 gc_end();
                 return;
             } else if((param_info->is_array) && (! param_info->has_conn_ref)) {
