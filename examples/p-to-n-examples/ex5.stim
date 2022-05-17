@@ -1,0 +1,17 @@
+*        e   c   1   2   3   4   5   6   7   7
+*        n   k   i   i   i   i   i   i   i   i
+0.000    0s  0s  1s  1s  0s  0s  1s  1s  0s  0s
+5.0ns    0s  1s  1s  1s  0s  0s  1s  1s  0s  0s
+10.0ns   0s  0s  0s  0s  1s  1s  0s  0s  1s  1s
+20.0ns   0s  1s  0s  0s  1s  1s  0s  0s  1s  1s
+30.0ns   1s  0s  0s  0s  1s  1s  0s  0s  1s  1s
+45.0ns   0s  0s  0s  0s  0s  0s  1s  1s  1s  1s
+55.0ns   0s  1s  0s  0s  1s  0s  1s  0s  1s  1s
+65.0ns   0s  0s  0s  0s  0s  0s  0s  0s  0s  0s
+75.0ns   0s  1s  0s  0s  0s  0s  0s  0s  0s  0s
+85.0ns   0s  0s  0s  0s  0s  0s  0s  0s  0s  0s
+90.0ns   0s  0s  1s  1s  1s  1s  0s  0s  0s  0s
+95.0ns   0s  1s  1s  1s  1s  1s  0s  0s  0s  0s
+105.0ns  0s  0s  0s  0s  0s  0s  1s  1s  1s  1s
+115.0ns  0s  1s  0s  0s  0s  0s  1s  1s  1s  1s
+125.0ns  0s  0s  0s  0s  0s  0s  1s  1s  1s  1s
