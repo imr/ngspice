@@ -197,8 +197,6 @@ int OSDIsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
     /* setup model parameter (setup_model)*/
     handle = (OsdiNgspiceHandle){.kind = 1, .name = gen_model->GENmodName};
     descr->setup_model((void *)&handle, model, sim_params, &init_info);
-    printf("setup_model: %i %i %p\n", init_info.flags, init_info.num_errors,
-           init_info.errors);
     res = handle_init_info(init_info, descr);
     if (res) {
       errRtn = "OSDI setup_model";
@@ -321,7 +319,7 @@ extern int OSDItemp(GENmodel *inModel, CKTcircuit *ckt) {
         temp = extra_inst_data->temp;
       }
       if (extra_inst_data->dt_given) {
-        temp = extra_inst_data->dt;
+        temp += extra_inst_data->dt;
       }
 
       handle = (OsdiNgspiceHandle){.kind = 2, .name = gen_inst->GENname};
