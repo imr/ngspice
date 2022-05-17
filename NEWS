@@ -1,3 +1,32 @@
+Ngspice-37, May 22nd, 2022
+============
+- New features:
+    + Reduce XSPICE memory consumption dramatically 
+      (> factor of 10).
+    + Add source stepping to B source
+    + Add 'esave' command to save only specific event nodes.
+    + Accept '.temp=125' or .temp='param'.
+    + Enable output redirection for meas command.
+    + Use total current for diffcap calculation in diode model.
+    + Speed output and reduces file size when plotting large
+      result vectors (Windows).
+    + Enable RKM notation also for inductors (e.g. 1u2 for 1.2u).
+    + Add S parameter simulation (command '.sp').
+    + Add new flag 'digitop' for the 'plot' command.
+    + Add a flag 'alle' (all event nodes) to the plot command.
+    + New code model d_pwm: hybrid oscillator (analg control in,
+      digital out) with PWM.
+    + Make "nogrid" plotting option work.
+    + Add current measurement for all nodes of a device,
+      e.g. .probe i(Q1) will measure Ic, Ib, Ie (and Is).
+    + .probe P(dev): Add measurement of power dissipation in a device.
+    + Add new flags -type and -flags to command devhelp.
+
+- Bug fixes:
+    + many bugs fixed and code improvements (see bugs 557 and up)
+    + making error messages more verbose
+    + memory leaks removed
+
 Ngspice-36, January 1st, 2022
 ============
 - New features:

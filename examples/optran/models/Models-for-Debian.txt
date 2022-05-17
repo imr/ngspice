@@ -1,0 +1,11 @@
+Device models for Debian
+
+Due to licensing restrictions (incompatibility with DFSG), 
+the device models from TI cannot be part of the Debian distribution.
+You may download the models OPA1611.LIB, TLV6001.LIB, TLV9002.lib,
+opa1656.lib, TLC555.LIB from the TI web pages at
+https://www.ti.com/lit/zip/sbom396
+https://www.ti.com/lit/zip/sboma15
+https://www.ti.com/lit/zip/sbomah7
+https://www.ti.com/lit/zip/sbomaw8
+https://www.ti.com/lit/zip/slfm005

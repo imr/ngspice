@@ -827,7 +827,8 @@ will be updated every time the device specific code is altered or changed to ref
       EKV version based on a contribution of Ivan Riis Nielsen 11/2006
 
       Web site at: https://www.epfl.ch/labs/iclab/ekv/model/
-      (but EPFL is not publishing any usefull code)
+      (The model from https://github.com/ekv26/model is not compatible
+      to the current ngspice adms implementation)
 
 
  13.2 PSP MOS Model 102
