@@ -1,0 +1,131 @@
+Some dff
+
+* ----------------------------------------------------------- 74LV374A ------
+*  Octal Edge-Triggered D-Type Flip-Flops With 3-State Outputs
+*
+*  TI PDF File
+*  bss    2/28/03
+*
+.SUBCKT 74LV374A OEBAR CLK 1D 2D 3D 4D 5D 6D 7D 8D 1Q 2Q 3Q 4Q 5Q 6Q 7Q 8Q
++     optional: DPWR_3V=$G_DPWR_3V DGND_3V=$G_DGND_3V
++     params: MNTYMXDLY=0 IO_LEVEL=0
+
+U1 dff(8) DPWR_3V DGND_3V
++     $D_HI $D_HI CLK
++     1D 2D 3D 4D 5D 6D 7D 8D
++     $D_NC $D_NC $D_NC $D_NC $D_NC $D_NC $D_NC $D_NC
++     1QB 2QB 3QB 4QB 5QB 6QB 7QB 8QB
++     DLY1_LV374 IO_LV-A MNTYMXDLY={MNTYMXDLY} IO_LEVEL={IO_LEVEL}
+
+U2 inv DPWR_3V DGND_3V
++     OEBAR OE
++     D0_GATE IO_LV-A MNTYMXDLY={MNTYMXDLY} IO_LEVEL={IO_LEVEL}
+
+U3 inv3a(8) DPWR_3V DGND_3V
++     1QB 2QB 3QB 4QB 5QB 6QB 7QB 8QB
++     OE
++     1Q 2Q 3Q 4Q 5Q 6Q 7Q 8Q
++     DLY2_LV374 IO_LV-A MNTYMXDLY={MNTYMXDLY} IO_LEVEL={IO_LEVEL}
+
+.model DLY1_LV374 ueff(tpclkqhlTY=8.3ns tpclkqhlMX=16.2ns tpclkqlhTY=8.3ns tpclkqlhMX=16.2ns
++                      twclklMN=5ns twclkhMN=5ns tsudclkMN=4.5ns thdclkMN=2ns)
+
+.model DLY2_LV374 utgate (tplzTY=5.9ns tplzMX=14ns tphzTY=5.9ns tphzMX=14ns
++                         tpzlTY=7.7ns tpzlMX=14.5ns tpzhTY=7.7ns tpzhMX=14.5ns)
+                                 
+.ENDS 74LV374A
+
+* ----------------------------------------------------------- 74LV574A ------
+*  Octal Edge-Triggered D-Type Flip-Flops With 3-State Outputs
+*
+*  TI PDF File
+*  bss    2/28/03
+*
+.SUBCKT 74LV574A OEBAR CLK 1D 2D 3D 4D 5D 6D 7D 8D 
++     1Q 2Q 3Q 4Q 5Q 6Q 7Q 8Q
++     optional: DPWR_3V=$G_DPWR_3V DGND_3V=$G_DGND_3V
++     params: MNTYMXDLY=0 IO_LEVEL=0
+
+U1 inv DPWR_3V DGND_3V
++     OEBAR OE
++     D0_GATE IO_LV-A MNTYMXDLY={MNTYMXDLY} IO_LEVEL={IO_LEVEL}
+
+U2 dff(8) DPWR_3V DGND_3V
++     $D_HI $D_HI CLK
++     1D 2D 3D 4D 5D 6D 7D 8D
++     Q1 Q2 Q3 Q4 Q5 Q6 Q7 Q8
++     $D_NC $D_NC $D_NC $D_NC $D_NC $D_NC $D_NC $D_NC
++     DLY_LV574 IO_LV-A MNTYMXDLY={MNTYMXDLY} IO_LEVEL={IO_LEVEL}
+
+U3 buf3a(8) DPWR_3V DGND_3V
++     Q1 Q2 Q3 Q4 Q5 Q6 Q7 Q8
++     OE
++     1Q 2Q 3Q 4Q 5Q 6Q 7Q 8Q 
++     DLY_LV574Z IO_LV-A MNTYMXDLY={MNTYMXDLY} IO_LEVEL={IO_LEVEL}
+
+.model DLY_LV574 ueff(tpclkqhlTY=8.1ns tpclkqhlMX=16.7ns tpclkqlhTY=8.1ns tpclkqlhMX=16.7ns
++                      twclklMN=5ns twclkhMN=5ns tsudclkMN=3.5ns thdclkMN=1.5ns)
+
+.model DLY_LV574Z utgate (tpzhTY=7.7ns tpzhMX=16.3ns tpzlTY=7.7ns tpzlMX=16.3ns
++                         tphzTY=6.1ns tphzMX=15ns tplzTY=6.1ns tplzMX=15ns)
+
+.ENDS 74LV574A
+
+
+x1 oeb clk 1in 2in 3in 4in 5in 6in 7in 8in o1 o2 o3 o4 o5 o6 o7 o8 74lv374a
+x2 oeb clk 1in 2in 3in 4in 5in 6in 7in 8in q1 q2 q3 q4 q5 q6 q7 q8 74lv574a
+
+a1 [oeb clk 1in 2in 3in 4in 5in 6in 7in 8in] input_vec1
+.model input_vec1 d_source(input_file = "ex5.stim")
+
+x3 1000 1001 1002 1003 1004 1005 1006 1007 1008 1009 74als242b
+
+* ----------------------------------------------------------- 74ALS242B ------
+*  Quad Bus Transceivers With 3-State Outputs
+*
+*  The ALS/AS Logic Data Book, 1986, TI Pages 2-271 to 2-276
+*  jds    5/25/94
+*
+.SUBCKT 74ALS242B GABBAR GBA A1 A2 A3 A4 B1 B2 B3 B4 
++     optional:  DPWR=$G_DPWR DGND=$G_DGND
++     params:  MNTYMXDLY=0 IO_LEVEL=0
+
+uf0 inv DPWR DGND
++     GABBAR GAB
++     D0_GATE IO_ALS00 MNTYMXDLY={MNTYMXDLY} IO_LEVEL={IO_LEVEL}
+
+uf1 inv3a(4) DPWR DGND
++     A1 A2 A3 A4 
++     GAB
++     B1 B2 B3 B4 
++     DLY_MOD IO_ALS00 MNTYMXDLY={MNTYMXDLY} IO_LEVEL={IO_LEVEL}
+
+uf2 inv3a(4) DPWR DGND
++     B1 B2 B3 B4 
++     GBA
++     A1 A2 A3 A4
++     DLY_MOD IO_ALS00 MNTYMXDLY={MNTYMXDLY} IO_LEVEL={IO_LEVEL}
+
+.model DLY_MOD utgate (TPLHMN=-1 TPLHTY=5ns TPLHMX=-1
++                                             TPHLMN=-1 TPHLTY=5ns TPHLMX=-1
++                                             TPZLMN=-1 TPZLTY=11ns  TPZLMX=-1
++                                             TPZHMN=-1 TPZHTY=10ns  TPZHMX=-1
++                                             TPLZMN=-1  TPLZTY=5ns TPLZMX=-1
++                                             TPHZMN=-1 TPHZTY=6ns TPHZMX=-1)
+
+.ENDS 74ALS242B
+
+.tran 0.1ns 150ns 0
+.save all
+
+.control
+listing expand
+run
+*display
+*edisplay
+eprint o1 o2 o3 o4 o5 o6 o7 o8
+eprint q1 q2 q3 q4 q5 q6 q7 q8
+*plot q4 o6
+quit
+.endc
+.end

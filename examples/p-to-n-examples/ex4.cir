@@ -1,0 +1,84 @@
+Full adder pspice
+
+* ----------------------------------------------------------- 74LV86A ------
+*  Quad 2-Input Exclusive-Or Gate
+*
+*  TI PDF File
+*  bss    2/24/03
+*
+.SUBCKT 74LV86A  1A 1B 1Y
++     optional: DPWR_3V=$G_DPWR_3V DGND_3V=$G_DGND_3V
++     params: MNTYMXDLY=0 IO_LEVEL=0
+
+U1 xor DPWR_3V DGND_3V
++     1A 1B 1Y
++     DLY_LV86 IO_LV-A MNTYMXDLY={MNTYMXDLY} IO_LEVEL={IO_LEVEL}
+
+.model DLY_LV86 ugate (tplhTY=7.4ns tplhMX=14.5ns tphlTY=7.4ns tphlMX=14.5ns)
+
+.ENDS  74LV86A
+
+* ----------------------------------------------------------- 74LV08A ------
+*  Quad 2-Input And Gate
+*
+*  TI PDF File
+*  bss    2/21/03
+*
+.SUBCKT 74LV08A  1A 1B 1Y
++     optional: DPWR_3V=$G_DPWR_3V DGND_3V=$G_DGND_3V
++     params: MNTYMXDLY=0 IO_LEVEL=0
+
+U1 and(2) DPWR_3V DGND_3V
++     1A 1B 1Y
++     DLY_LV08 IO_LV-A MNTYMXDLY={MNTYMXDLY} IO_LEVEL={IO_LEVEL}
+
+.model DLY_LV08 ugate (tplhTY=7.5ns tplhMX=12.3ns tphlTY=7.5ns tphlMX=12.3ns)
+
+.ENDS  74LV08A
+
+* ----------------------------------------------------------- 74LV32A ------
+*  Quad 2-Input Or Gate
+*
+*  TI PDF File
+*  bss    2/24/03
+*
+.SUBCKT 74LV32A  1A 1B 1Y
++     optional: DPWR_3V=$G_DPWR_3V DGND_3V=$G_DGND_3V
++     params: MNTYMXDLY=0 IO_LEVEL=0
+
+U1 or(2) DPWR_3V DGND_3V
++     1A 1B 1Y
++     DLY_LV32 IO_LV-A MNTYMXDLY={MNTYMXDLY} IO_LEVEL={IO_LEVEL}
+
+.model DLY_LV32 ugate (
++  tplhTY=6.9ns tplhMX=11.4ns tphlTY=6.9ns tphlMX=11.4ns)
+
+.ENDS  74LV32A
+
+.subckt hadd a b sum carry
+x1_xor a b sum 74lv86a
+x2_and a b carry 74lv08a
+.ends hadd
+
+.subckt fadd a b cin sum cout
+x1_ha a b 1 2 hadd
+x2_ha 1 cin sum 3 hadd
+x3_or 3 2 cout 74lv32a
+.ends fadd
+
+x1 a b cin sum cout fadd
+a2  [a b cin] input_vec1
+.model input_vec1 d_source(input_file = "ex4.stim")
+
+.tran 0.5ns 1650ns 0
+.save all
+.control
+listing expand
+run
+display
+edisplay
+eprint a b cin sum cout
+*plot cout sum
+quit
+.endc
+.end
