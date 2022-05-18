@@ -1,0 +1,57 @@
+counter.cir
+
+.subckt counter high clear clk qa qb qc qd 5 7 9 11
+U1 JKFF(1) $G_DPWR $G_DGND  HIGH CLEAR CLK HIGH HIGH QA 5
++ D0_EFF IO_STD IO_LEVEL=0 MNTYMXDLY=2
+U2 JKFF(1) $G_DPWR $G_DGND  HIGH CLEAR QA HIGH HIGH QB 7
++ D0_EFF IO_STD IO_LEVEL=0 MNTYMXDLY=2
+U3 JKFF(1) $G_DPWR $G_DGND  HIGH CLEAR QB HIGH HIGH QC 9
++ D0_EFF IO_STD IO_LEVEL=0 MNTYMXDLY=2
+U4 JKFF(1) $G_DPWR $G_DGND  HIGH CLEAR QC HIGH HIGH QD 11
++ D0_EFF IO_STD IO_LEVEL=0 MNTYMXDLY=2
+.MODEL D0_EFF UEFF ()
+.ends counter
+
+*** input sources ***
+vclk 100 0 pulse( 0.0 1.0 50ns 0ns 0ns 50ns 100ns )
+vreset 200 0  pulse( 1.0 0.0 10ns 0ns 0ns 50ns ) 
+vhigh 300 0 DC 1.0
+
+*** adc_bridge blocks ***
+aconverter [100 200 300] [clock clr hi] adc_bridge1
+.model adc_bridge1 adc_bridge (in_low=0.1 in_high=0.9 
++                              rise_delay=1.0e-12 fall_delay=1.0e-12)
+
+*** resistors to ground ***
+r1 100 0 1k
+r2 200 0 1k
+r3 300 0 1k
+
+x1 hi clr clock q1 q2 q3 q4 q1b q2b q3b q4b counter
+
+*.TRAN 1e-008 4u 0 
+.save all
+
+.control
+TRAN 1e-008 4u 0 
+run
+listing
+display
+edisplay
+*eprint hi clr clock q1 q2 q3 q4
+* save data to input directory
+cd $inputdir 
+eprvcd hi clr clock q1 q2 q3 q4 > counter.vcd
+* plotting the vcd file with GTKWave
+if $oscompiled = 1 | $oscompiled = 8  ; MS Windows
+  shell start gtkwave counter.vcd --script nggtk.tcl
+else
+  if $oscompiled = 7 ; macOS, manual tweaking required (mark, insert, Zoom Fit)
+    shell open -a gtkwave counter.vcd
+  else ; Linux and others
+    shell gtkwave counter.vcd --script nggtk.tcl &
+  end
+end
+quit
+.endc
+.END
