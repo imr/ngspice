@@ -1455,9 +1455,19 @@ static Xlatorp gen_dff_instance(struct dff_instance *ip)
     darr = ip->d_in;
     qarr = ip->q_out;
     qbarr = ip->qb_out;
-    xxp = create_xlator();
-
     preb = ip->prebar;
+    clrb = ip->clrbar;
+    for (i = 0; i < num_gates; i++) {
+        if (strncmp(darr[i], "$d_", 3) == 0) { return NULL; }
+    }
+    if (strcmp(preb, "$d_lo") == 0 || strcmp(preb, "$d_nc") == 0) {
+        return NULL;
+    }
+    if (strcmp(clrb, "$d_lo") == 0 || strcmp(clrb, "$d_nc") == 0) {
+        return NULL;
+    }
+
+    xxp = create_xlator();
     add_input_pin(preb);
     if (strcmp(preb, "$d_hi") == 0) {
         preb = "NULL";
@@ -1466,7 +1476,6 @@ static Xlatorp gen_dff_instance(struct dff_instance *ip)
         preb = new_inverter(iname, preb, xxp);
     }
 
-    clrb = ip->clrbar;
     add_input_pin(clrb);
     if (strcmp(clrb, "$d_hi") == 0) {
         clrb = "NULL";
@@ -1512,7 +1521,6 @@ static Xlatorp gen_dff_instance(struct dff_instance *ip)
     tfree(modelnm);
 
     return xxp;
-    return NULL;
 }
 
 static Xlatorp gen_jkff_instance(struct jkff_instance *ip)
@@ -1533,9 +1541,20 @@ static Xlatorp gen_jkff_instance(struct jkff_instance *ip)
     karr = ip->k_in;
     qarr = ip->q_out;
     qbarr = ip->qb_out;
-    xxp = create_xlator();
-
     preb = ip->prebar;
+    clrb = ip->clrbar;
+    for (i = 0; i < num_gates; i++) {
+        if (strncmp(jarr[i], "$d_", 3) == 0) { return NULL; }
+        if (strncmp(karr[i], "$d_", 3) == 0) { return NULL; }
+    }
+    if (strcmp(preb, "$d_lo") == 0 || strcmp(preb, "$d_nc") == 0) {
+        return NULL;
+    }
+    if (strcmp(clrb, "$d_lo") == 0 || strcmp(clrb, "$d_nc") == 0) {
+        return NULL;
+    }
+
+    xxp = create_xlator();
     add_input_pin(preb);
     if (strcmp(preb, "$d_hi") == 0) {
         preb = "NULL";
@@ -1544,7 +1563,6 @@ static Xlatorp gen_jkff_instance(struct jkff_instance *ip)
         preb = new_inverter(iname, preb, xxp);
     }
 
-    clrb = ip->clrbar;
     add_input_pin(clrb);
     if (strcmp(clrb, "$d_hi") == 0) {
         clrb = "NULL";
@@ -1612,8 +1630,19 @@ static Xlatorp gen_dltch_instance(struct dltch_instance *ip)
     darr = ip->d_in;
     qarr = ip->q_out;
     qbarr = ip->qb_out;
-    xxp = create_xlator();
     preb = ip->prebar;
+    clrb = ip->clrbar;
+    for (i = 0; i < num_gates; i++) {
+        if (strncmp(darr[i], "$d_", 3) == 0) { return NULL; }
+    }
+    if (strcmp(preb, "$d_lo") == 0 || strcmp(preb, "$d_nc") == 0) {
+        return NULL;
+    }
+    if (strcmp(clrb, "$d_lo") == 0 || strcmp(clrb, "$d_nc") == 0) {
+        return NULL;
+    }
+
+    xxp = create_xlator();
     add_input_pin(preb);
     if (strcmp(preb, "$d_hi") == 0) {
         preb = "NULL";
@@ -1622,7 +1651,6 @@ static Xlatorp gen_dltch_instance(struct dltch_instance *ip)
         preb = new_inverter(iname, preb, xxp);
     }
 
-    clrb = ip->clrbar;
     add_input_pin(clrb);
     if (strcmp(clrb, "$d_hi") == 0) {
         clrb = "NULL";
@@ -3048,7 +3076,6 @@ BOOL u_process_instance(char *nline)
     char *p1, *itype, *xspice;
     struct instance_hdr *hdr = create_instance_header(nline);
     Xlatorp xp = NULL;
-    BOOL retval = TRUE;
 
     itype = hdr->instance_type;
     xspice = find_xspice_for_delay(itype);
@@ -3072,7 +3099,7 @@ BOOL u_process_instance(char *nline)
         xp = translate_pull(hdr, p1);
     } else {
         delete_instance_hdr(hdr);
-        retval = FALSE;
+        return FALSE;
     }
     if (xp) {
         append_xlator(translated_p, xp);
@@ -3080,8 +3107,10 @@ BOOL u_process_instance(char *nline)
         interpret_xlator(xp, TRUE);
 #endif
         delete_xlator(xp);
+        return TRUE;
+    } else {
+        return FALSE;
     }
-    return retval;
 }
 
 BOOL u_process_model_line(char *line)
