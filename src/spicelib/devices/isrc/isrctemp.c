@@ -35,17 +35,16 @@ ISRCtemp(GENmodel *inModel, CKTcircuit *ckt)
             if(here->ISRCacGiven && !here->ISRCacPGiven) {
                 here->ISRCacPhase = 0;
             }
-            if(!here->ISRCdcGiven) {
-                /* no DC value - either have a transient value, or none */
-                if(here->ISRCfuncTGiven) {
-                    SPfrontEnd->IFerrorf (ERR_WARNING,
-                            "%s: no DC value, transient time 0 value used",
-                            here->ISRCname);
-                } else {
-                    SPfrontEnd->IFerrorf (ERR_WARNING,
-                            "%s: has no value, DC 0 assumed",
-                            here->ISRCname);
-                }
+            if (!here->ISRCdcGiven && !here->ISRCfuncTGiven) {
+                /* no DC value, no transient value */
+                SPfrontEnd->IFerrorf(ERR_INFO,
+                    "%s: has no value, DC 0 assumed",
+                    here->ISRCname);
+            }
+            else if (here->ISRCdcGiven && here->ISRCfuncTGiven) {
+                SPfrontEnd->IFerrorf(ERR_INFO,
+                    "%s: dc value used for op instead of transient time 0 value.",
+                    here->ISRCname);
             }
             if(!here->ISRCmGiven)
                 here->ISRCmValue = 1;
