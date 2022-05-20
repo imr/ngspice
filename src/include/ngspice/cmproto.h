@@ -96,6 +96,9 @@ int cm_message_printf(const char *fmt, ...);
 double cm_netlist_get_c(void);
 double cm_netlist_get_l(void);
 
+const char *cm_get_node_name(const char *, unsigned int);
+bool        cm_probe_node(unsigned int, unsigned int, void *);
+
 Complex_t cm_complex_set(double real, double imag);
 Complex_t cm_complex_add(Complex_t x, Complex_t y);
 Complex_t cm_complex_subtract(Complex_t x, Complex_t y);

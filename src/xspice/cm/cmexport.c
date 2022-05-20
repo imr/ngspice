@@ -58,6 +58,8 @@ struct coreInfo_t  coreInfo =
   cm_message_send,
   cm_netlist_get_c,
   cm_netlist_get_l,
+  cm_get_node_name,
+  cm_probe_node,
   cm_complex_set,
   cm_complex_add,
   cm_complex_subtract,
