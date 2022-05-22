@@ -15,7 +15,7 @@
         are estimated. Pspice has a rich set of timing simulation features,
         such as checks for setup/hold violations, minimum pulse width, and
         hazard detection.
-        Only the common logic gates, flip-flops, and latches are suported.
+        Only the common logic gates, flip-flops, and latches are supported.
 
    First pass through a subcircuit. Call initialize_udevice() and read the
    .model cards by calling u_process_model_line() (or similar) for each card,
@@ -32,9 +32,12 @@
    gen_..._instance(). Creating new cards to replace the U* and .model
    cards is done by calling replacement_udevice_cards(), which returns a
    list of new cards. The list of cards is then to be inserted after the
-   .subckt card and before the .ends card.  This occurs in the function
-   u_instances() in frontend/inpcom.c.  Finally, call cleanup_udevice()
-   before repeating the sequence for another subcircuit.
+   .subckt card and before the .ends card.  This occurs in the driver
+   function u_instances() in frontend/inpcom.c.
+   Finally, call cleanup_udevice() before repeating the sequence for
+   another subcircuit.
+
+   More explanations are provided below in comments with NOTE.
 */
 
 #include <stdio.h>
@@ -184,8 +187,12 @@ struct timing_data {
     int estimate;
 };
 
-/*
-  Pin lists for inputs, outputs, tristate outputs.
+/* NOTE
+  Pin lists contain the names of instance inputs, outputs, tristate outputs.
+  These pin_lists are created by add_..._pin() calls within the various
+  gen_..._instance() calls. When a .subckt ... .ends sequence is completed,
+  create_ports_list() can be called to determine the IN/OUT/INOUT directions
+  of the subckt ports.
 */
 #define DIR_UNKNOWN  0
 #define DIR_IN       1
@@ -569,10 +576,14 @@ static char *find_xspice_for_delay(char *itype)
     return NULL;
 }
 
-/*
+/* NOTE
   Xlator and Xlate
-  Xlate struct data is stored in an Xlatorp list struct
-  Used to save translated instance and model statements
+  Xlate struct data is stored in an Xlator list struct.
+  Used to save translated instance and model statements.
+  After an Xlator has been created, Xlate data is generated via
+  create_xlate() and entered into the Xlator by add_xlator().
+  A first_xlator() ... next_xlator() iteration loop will retrieve
+  the Xlate data entries in an Xlator.
 */
 static void delete_xlate(Xlatep p)
 {
@@ -628,7 +639,7 @@ static void print_xlate(Xlatep xp)
     printf("translated %s\n", xp->translated);
     printf("delays %s\n", xp->delays);
     printf("utype %s ", xp->utype);
-    printf("xspixe %s ", xp->xspice);
+    printf("xspice %s ", xp->xspice);
     printf("tmodel %s ", xp->tmodel);
     printf("mname %s\n", xp->mname);
 }
@@ -754,7 +765,11 @@ static void interpret_xlator(Xlatorp xp, BOOL brief)
 
 /* static Xlatorp for collecting timing model delays */
 static Xlatorp model_xlatorp = NULL;
+
+/* static Xlatorp for default zero delay models */
 static Xlatorp default_models = NULL;
+
+/* static Xlatorp for storing translated instance and model statements */
 static Xlatorp translated_p = NULL;
 
 static void create_translated_xlator(void)
@@ -773,6 +788,11 @@ static void cleanup_translated_xlator(void)
     translated_p = NULL;
 }
 
+/* NOTE
+  replacement_udevice_cards() is called by the driver function u_instances()
+  in frontend/inpcom.c so that the new Xspice instance and model statements
+  can be spliced into the card deck.
+*/
 struct card *replacement_udevice_cards(void)
 {
     struct card *newcard = NULL, *nextcard = NULL;
@@ -794,12 +814,6 @@ struct card *replacement_udevice_cards(void)
             nextcard = insert_new_line(nextcard, new_str, 0, 0);
         }
     }
-/*
-    for (card = newcard; card; card = card->nextcard) {
-        char* cut_line = card->line;
-        printf("NEW CARD: %s\n", cut_line);
-    }
-*/
     return newcard;
 }
 
@@ -1079,6 +1093,15 @@ static void delete_instance_hdr(struct instance_hdr *hdr)
     return;
 }
 
+/* NOTE
+  There are translate_...() functions for each instance type (gates, arrays
+  of gates, compound gates, dff, jkff, dltch).
+  For each type (except pullup/down) an instance struct is created by calling
+  the corresponding create_..._instance() then add_..._inout_timing_model()
+  functions. The instance struct returned by add_..._inout_timing_model()
+  is passed to the corresponding gen_..._instance() function, and the Xspice
+  translations are stored in Xlator translated_p.
+*/
 static struct dff_instance *create_dff_instance(struct instance_hdr *hdrp)
 {
     struct dff_instance *dffip;
@@ -1457,15 +1480,6 @@ static Xlatorp gen_dff_instance(struct dff_instance *ip)
     qbarr = ip->qb_out;
     preb = ip->prebar;
     clrb = ip->clrbar;
-    for (i = 0; i < num_gates; i++) {
-        if (strncmp(darr[i], "$d_", 3) == 0) { return NULL; }
-    }
-    if (strcmp(preb, "$d_lo") == 0 || strcmp(preb, "$d_nc") == 0) {
-        return NULL;
-    }
-    if (strcmp(clrb, "$d_lo") == 0 || strcmp(clrb, "$d_nc") == 0) {
-        return NULL;
-    }
 
     xxp = create_xlator();
     add_input_pin(preb);
@@ -1543,16 +1557,6 @@ static Xlatorp gen_jkff_instance(struct jkff_instance *ip)
     qbarr = ip->qb_out;
     preb = ip->prebar;
     clrb = ip->clrbar;
-    for (i = 0; i < num_gates; i++) {
-        if (strncmp(jarr[i], "$d_", 3) == 0) { return NULL; }
-        if (strncmp(karr[i], "$d_", 3) == 0) { return NULL; }
-    }
-    if (strcmp(preb, "$d_lo") == 0 || strcmp(preb, "$d_nc") == 0) {
-        return NULL;
-    }
-    if (strcmp(clrb, "$d_lo") == 0 || strcmp(clrb, "$d_nc") == 0) {
-        return NULL;
-    }
 
     xxp = create_xlator();
     add_input_pin(preb);
@@ -1632,15 +1636,6 @@ static Xlatorp gen_dltch_instance(struct dltch_instance *ip)
     qbarr = ip->qb_out;
     preb = ip->prebar;
     clrb = ip->clrbar;
-    for (i = 0; i < num_gates; i++) {
-        if (strncmp(darr[i], "$d_", 3) == 0) { return NULL; }
-    }
-    if (strcmp(preb, "$d_lo") == 0 || strcmp(preb, "$d_nc") == 0) {
-        return NULL;
-    }
-    if (strcmp(clrb, "$d_lo") == 0 || strcmp(clrb, "$d_nc") == 0) {
-        return NULL;
-    }
 
     xxp = create_xlator();
     add_input_pin(preb);
@@ -2280,6 +2275,12 @@ static char *get_estimate(struct timing_data *tdp)
     return NULL;
 }
 
+/* NOTE
+  The get_delays_...() functions calculate estimates of typical delays
+  from the Pspice ugate, utgate, ueff, and ugff timing models.
+  These functions are called from u_process_model(), and the delay strings
+  are added to the timing model Xlator by add_delays_to_model_xlator().
+*/
 static char *get_delays_ugate(char *rem, char *d_name)
 {
     char *rising, *falling, *delays = NULL;
@@ -2467,18 +2468,6 @@ static char *get_delays_ugff(char *rem, char *d_name)
     return delays;
 }
 
-/*
-static void print_delays(char *delays)
-{
-    if (delays) {
-        printf("<%s>\n", delays);
-    } else {
-        printf("<(null)>\n");
-    }
-    return;
-}
-*/
-
 static BOOL u_process_model(char *nline, char *original,
                           char *newname, char *xspice)
 {
@@ -2589,6 +2578,26 @@ static struct dff_instance *add_dff_inout_timing_model(
     dffip->tmodel = TMALLOC(char, strlen(tok) + 1);
     (void) memcpy(dffip->tmodel, tok, strlen(tok) + 1);
     tfree(copyline);
+
+    /* Reject incompatible inputs */
+    arrp = dffip->d_in;
+    for (i = 0; i < num_gates; i++) {
+        if (strncmp(arrp[i], "$d_", 3) == 0) {
+            tfree(dffip);
+            return NULL;
+        }
+    }
+    if (strcmp(dffip->prebar, "$d_lo") == 0 ||
+        strcmp(dffip->prebar, "$d_nc") == 0) {
+        tfree(dffip);
+        return NULL;
+    }
+    if (strcmp(dffip->clrbar, "$d_lo") == 0 ||
+        strcmp(dffip->clrbar, "$d_nc") == 0) {
+        tfree(dffip);
+        return NULL;
+    }
+
     return dffip;
 }
 
@@ -2646,6 +2655,25 @@ static struct dltch_instance *add_dltch_inout_timing_model(
     dlp->tmodel = TMALLOC(char, strlen(tok) + 1);
     (void) memcpy(dlp->tmodel, tok, strlen(tok) + 1);
     tfree(copyline);
+
+    /* Reject incompatible inputs */
+    arrp = dlp->d_in;
+    for (i = 0; i < num_gates; i++) {
+        if (strncmp(arrp[i], "$d_", 3) == 0) {
+            tfree(dlp);
+            return NULL;
+        }
+    }
+    if (strcmp(dlp->prebar, "$d_lo") == 0 ||
+        strcmp(dlp->prebar, "$d_nc") == 0) {
+        tfree(dlp);
+        return NULL;
+    }
+    if (strcmp(dlp->clrbar, "$d_lo") == 0 ||
+        strcmp(dlp->clrbar, "$d_nc") == 0) {
+        tfree(dlp);
+        return NULL;
+    }
     return dlp;
 }
 
@@ -2653,7 +2681,7 @@ static struct jkff_instance *add_jkff_inout_timing_model(
     struct instance_hdr *hdr, char *start)
 {
     char *tok, *copyline;
-    char *name, **arrp;
+    char *name, **arrp, **arrpk;
     int i, num_gates = hdr->num1;
     struct jkff_instance *jkffip = NULL;
 
@@ -2712,6 +2740,27 @@ static struct jkff_instance *add_jkff_inout_timing_model(
     jkffip->tmodel = TMALLOC(char, strlen(tok) + 1);
     (void) memcpy(jkffip->tmodel, tok, strlen(tok) + 1);
     tfree(copyline);
+
+    /* Reject incompatible inputs */
+    arrp = jkffip->j_in;
+    arrpk = jkffip->k_in;
+    for (i = 0; i < num_gates; i++) {
+        if (strncmp(arrp[i], "$d_", 3) == 0 ||
+            strncmp(arrpk[i], "$d_", 3) == 0) {
+            tfree(jkffip);
+            return NULL;
+        }
+    }
+    if (strcmp(jkffip->prebar, "$d_lo") == 0 ||
+        strcmp(jkffip->prebar, "$d_nc") == 0) {
+        tfree(jkffip);
+        return NULL;
+    }
+    if (strcmp(jkffip->clrbar, "$d_lo") == 0 ||
+        strcmp(jkffip->clrbar, "$d_nc") == 0) {
+        tfree(jkffip);
+        return NULL;
+    }
     return jkffip;
 }
 
@@ -3070,6 +3119,11 @@ BOOL u_check_instance(char *line)
     }
 }
 
+/* NOTE
+  The input nline is expected to be a card in the deck which contains
+  a Pspice u* instance statement with all the '+' continuations added
+  minus the '+'.
+*/
 BOOL u_process_instance(char *nline)
 {
     /* Return TRUE if ok */
@@ -3113,6 +3167,11 @@ BOOL u_process_instance(char *nline)
     }
 }
 
+/* NOTE
+  The input line is expected to be a card in the deck which contains
+  a Pspice .model timing model statement with all the '+' continuations
+  added minus the '+'.
+*/
 BOOL u_process_model_line(char *line)
 {
     /* Translate a .model line to find the delays */
