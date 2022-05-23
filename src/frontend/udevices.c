@@ -424,6 +424,16 @@ void create_ports_list(void)
     pos = strstr(copy_line, "optional:");
     if (pos) {
         *pos = '\0';
+    } else {
+        pos = strstr(copy_line, "params:");
+        if (pos) {
+            *pos = '\0';
+        } else {
+            pos = strstr(copy_line, "text:");
+            if (pos) {
+                *pos = '\0';
+            }
+        }
     }
     /* skip past .subckt and its name */
     tok = strtok(copy_line, " \t");
