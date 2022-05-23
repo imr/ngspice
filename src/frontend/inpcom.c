@@ -8337,7 +8337,7 @@ static struct card *u_instances(struct card *startcard)
     int udev_ok = 0, udev_not_ok = 0;
     BOOL create_called = FALSE, repeat_pass = FALSE;
     BOOL skip_next = FALSE;
-    char *tmp = NULL, *pos, *new_str = NULL;
+    char *tmp = NULL, *pos, *posp, *new_str = NULL;
 
     card = startcard;
     while (card) {
@@ -8361,11 +8361,25 @@ static struct card *u_instances(struct card *startcard)
                 initialize_udevice(subcktcard->line);
                 create_called = TRUE;
             } else {
+                /* Pspice definition of .subckt card:
+                   .SUBCKT <name> [node]*
+                   + [OPTIONAL: < <interface node> = <default value> >*]
+                   + [PARAMS: < <name> = <value> >* ]
+                   + [TEXT: < <name> = <text value> >* ]
+                   ...
+                   .ENDS
+                */
                 tmp = TMALLOC(char, strlen(cut_line) + 1);
                 (void) memcpy(tmp, cut_line, strlen(cut_line) + 1);
                 pos = strstr(tmp, "optional:");
+                posp = strstr(tmp, "params:");
+                /* If there is an optional: and a param: then posp > pos */
                 if (pos) {
+                    /* Remove the optional: section if present */
                     *pos = '\0';
+                    if (posp) {
+                        strcat(tmp, posp);
+                    }
                 }
                 new_str = copy(tmp);
                 tfree(tmp);
