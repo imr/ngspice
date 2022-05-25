@@ -952,6 +952,7 @@
     <ClInclude Include="..\src\include\ngspice\cmproto.h" />
     <ClInclude Include="..\src\include\ngspice\cmtypes.h" />
     <ClInclude Include="..\src\include\ngspice\spardefs.h" />
+    <ClInclude Include="..\src\include\ngspice\udevices.h" />
     <ClInclude Include="..\src\include\ngspice\wincolornames.h" />
     <ClInclude Include="..\src\include\ngspice\compatmode.h" />
     <ClInclude Include="..\src\include\ngspice\complex.h" />
@@ -1553,6 +1554,7 @@
     <ClCompile Include="..\src\frontend\trannoise\FastNorm3.c" />
     <ClCompile Include="..\src\frontend\trannoise\wallace.c" />
     <ClCompile Include="..\src\frontend\typesdef.c" />
+    <ClCompile Include="..\src\frontend\udevices.c" />
     <ClCompile Include="..\src\frontend\variable.c" />
     <ClCompile Include="..\src\frontend\vectors.c" />
     <ClCompile Include="..\src\frontend\wdisp\wincolor.c" />
