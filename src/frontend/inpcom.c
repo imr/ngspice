@@ -8232,8 +8232,6 @@ static void rem_double_braces(struct card* newcard)
 }
 
 #ifdef INTEGRATE_UDEVICES
-/* #define TRACE */
-#ifdef TRACE
 static void list_the_cards(struct card *startcard, char *prefix)
 {
     struct card *card;
@@ -8243,7 +8241,6 @@ static void list_the_cards(struct card *startcard, char *prefix)
         printf("%s %s\n", prefix, cut_line);
     }
 }
-#endif
 
 static struct card *the_last_card(struct card *startcard)
 {
@@ -8338,7 +8335,10 @@ static struct card *u_instances(struct card *startcard)
                     subcktcard->nextcard = newcard;
                     tfree(subcktcard->line);
                     subcktcard->line = new_str;
-                    //list_the_cards(newcard, "Replacement:");
+                    if (ft_ngdebug) {
+                        printf("%s\n", new_str);
+                        list_the_cards(newcard, "Replacement:");
+                    }
                     last_newcard = the_last_card(newcard);
                     if (last_newcard) {
                         last_newcard->nextcard = card; // the .ends card
