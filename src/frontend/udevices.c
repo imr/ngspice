@@ -51,6 +51,7 @@
 #include "ngspice/stringskip.h"
 #include "ngspice/stringutil.h"
 #include "ngspice/inpdefs.h"
+#include "ngspice/cpextern.h"
 #include "ngspice/udevices.h"
 
 extern struct card* insert_new_line(
@@ -191,8 +192,6 @@ struct timing_data {
   Pin lists contain the names of instance inputs, outputs, tristate outputs.
   These pin_lists are created by add_..._pin() calls within the various
   gen_..._instance() calls. When a .subckt ... .ends sequence is completed,
-  create_ports_list() can be called to determine the IN/OUT/INOUT directions
-  of the subckt ports.
 */
 #define DIR_UNKNOWN  0
 #define DIR_IN       1
@@ -207,6 +206,7 @@ struct pin_entry {
 };
 
 static char *subckt_saved = NULL;
+static int pins_and_ports = 0; // If non-zero then generate pins and ports
 static struct pin_entry *subckt_ports = NULL;
 static struct pin_entry *input_pins = NULL;
 static struct pin_entry *output_pins = NULL;
@@ -218,7 +218,7 @@ static struct pin_entry *add_pin(char *name, int pin_type, BOOL is_port)
     char *tmp;
     size_t sz;
 
-    if (!subckt_saved) {
+    if (!pins_and_ports || !subckt_saved) {
         /* subckt_saved is necessary for the port list */
         return NULL;
     }
@@ -301,28 +301,30 @@ static struct pin_entry *find_pin(char *name, int pin_type, BOOL is_port)
 
 static void add_input_pin(char *name)
 {
-    if (strncmp(name, "$d_", 3) != 0) {
+    if (pins_and_ports && strncmp(name, "$d_", 3) != 0) {
         (void) add_pin(name, DIR_IN, FALSE);
     }
 }
 
 static void add_output_pin(char *name)
 {
-    if (strncmp(name, "$d_", 3) != 0) {
+    if (pins_and_ports && strncmp(name, "$d_", 3) != 0) {
         (void) add_pin(name, DIR_OUT, FALSE);
     }
 }
 
 static void add_tristate_pin(char *name)
 {
-    if (strncmp(name, "$d_", 3) != 0) {
+    if (pins_and_ports && strncmp(name, "$d_", 3) != 0) {
         (void) add_pin(name, DIR_TRI, FALSE);
     }
 }
 
 static void add_port(char *name, int pin_type)
 {
-    add_pin(name, pin_type, TRUE);
+    if (pins_and_ports) {
+        add_pin(name, pin_type, TRUE);
+    }
 }
 
 static struct pin_entry *find_input_pin(char *name)
@@ -402,6 +404,9 @@ static void print_pin_list(struct pin_entry *plist)
 
 static void print_all_pin_lists(BOOL just_ports)
 {
+    if (!pins_and_ports) {
+        return;
+    }
     if (subckt_saved) {
         printf("%s\n", subckt_saved);
     }
@@ -413,13 +418,19 @@ static void print_all_pin_lists(BOOL just_ports)
     print_pin_list(subckt_ports);
 }
 
-void create_ports_list(void)
+/*
+  create_ports_list() can be called to determine the IN/OUT/INOUT directions
+  of the subckt ports.
+*/
+static void create_ports_list(void)
 {
     char *copy_line, *tok, *pos;
     BOOL inp = FALSE, outp = FALSE, tri = FALSE;
     int port_type;
 
-    if (!subckt_saved) { return; }
+    if (!pins_and_ports || !subckt_saved) {
+        return;
+    }
     copy_line = tprintf("%s", subckt_saved);
     pos = strstr(copy_line, "optional:");
     if (pos) {
@@ -857,10 +868,15 @@ void initialize_udevice(char *subckt_line)
     /*  .model d0_tgate utgate ()  */
     xdata = create_xlate("", "", "utgate", "", "d0_tgate", "");
     (void) add_xlator(default_models, xdata);
+    /* Variable ps_pins_and_ports != 0 to turn on pins and ports */
+    if (!cp_getvar("ps_pins_and_ports", CP_NUM, &pins_and_ports, 0)) {
+        pins_and_ports = 0;
+    }
 }
 
 void cleanup_udevice(void)
 {
+    create_ports_list();
     cleanup_translated_xlator();
     delete_xlator(model_xlatorp);
     model_xlatorp = NULL;

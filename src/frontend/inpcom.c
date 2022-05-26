@@ -8343,7 +8343,6 @@ static struct card *u_instances(struct card *startcard)
                     if (last_newcard) {
                         last_newcard->nextcard = card; // the .ends card
                     }
-                    create_ports_list();
                 }
             }
             if (models_not_ok > 0 || udev_not_ok > 0) {
