@@ -206,12 +206,18 @@ struct pin_entry {
     int pin_type;
 };
 
+/*
+  static data cleared and reset by initialize_udevice(),
+  cleared by cleanup_udevice().
+*/
 static char *subckt_saved = NULL;
 static int pins_and_ports = 0; // If non-zero then generate pins and ports
 static struct pin_entry *subckt_ports = NULL;
 static struct pin_entry *input_pins = NULL;
 static struct pin_entry *output_pins = NULL;
 static struct pin_entry *tristate_pins = NULL;
+/* .model d_zero_inv99 d_inverter just once per subckt */
+static BOOL add_zero_delay_inverter_model = FALSE;
 
 static struct pin_entry *add_pin(char *name, int pin_type, BOOL is_port)
 {
@@ -823,6 +829,10 @@ struct card *replacement_udevice_cards(void)
     int count = 0;
 
     if (!translated_p) { return NULL; }
+    if (add_zero_delay_inverter_model) {
+        x = create_xlate_translated(".model d_zero_inv99 d_inverter");
+        translated_p = add_xlator(translated_p, x);
+    }
     for (x = first_xlator(translated_p); x; x = next_xlator(translated_p)) {
         new_str = copy(x->translated);
         if (count == 0) {
@@ -873,6 +883,8 @@ void initialize_udevice(char *subckt_line)
     if (!cp_getvar("ps_pins_and_ports", CP_NUM, &pins_and_ports, 0)) {
         pins_and_ports = 0;
     }
+    /* reset for the new subckt */
+    add_zero_delay_inverter_model = FALSE;
 }
 
 void cleanup_udevice(void)
@@ -888,6 +900,7 @@ void cleanup_udevice(void)
         tfree(subckt_saved);
         subckt_saved = NULL;
     }
+    add_zero_delay_inverter_model = FALSE;
 }
 
 static Xlatep create_xlate_model(char *delays,
@@ -896,8 +909,9 @@ static Xlatep create_xlate_model(char *delays,
     return create_xlate("", delays, utype, xspice, tmodel, "");
 }
 
-static Xlatep find_in_xlator(Xlatep x, Xlatorp xlp)
+static Xlatep find_tmodel_in_xlator(Xlatep x, Xlatorp xlp)
 {
+    /* Only for timing model xlators */
     Xlatep x1;
 
     if (!x) { return NULL; }
@@ -916,9 +930,9 @@ static Xlatep find_in_model_xlator(Xlatep x)
 {
     Xlatep x1;
 
-    x1 = find_in_xlator(x, model_xlatorp);
+    x1 = find_tmodel_in_xlator(x, model_xlatorp);
     if (x1) { return x1; }
-    x1 = find_in_xlator(x, default_models);
+    x1 = find_tmodel_in_xlator(x, default_models);
     return x1;
 }
 
@@ -1553,8 +1567,7 @@ static Xlatorp gen_dff_instance(struct dff_instance *ip)
             tmodel, modelnm);
     }
     if (need_preb_inv || need_clrb_inv) {
-        xdata = create_xlate_translated(".model d_zero_inv99 d_inverter");
-        xxp = add_xlator(xxp, xdata);
+        add_zero_delay_inverter_model = TRUE;
     }
     if (need_preb_inv) { tfree(preb); }
     if (need_clrb_inv) { tfree(clrb); }
@@ -1607,7 +1620,7 @@ static Xlatorp gen_jkff_instance(struct jkff_instance *ip)
     clkb = new_inverter(iname, clkb, xxp);
 
     tmodel = ip->tmodel;
-    /* model name, same for each latch */
+    /* model name, same for each jkff */
     modelnm = tprintf("d_a%s_%s", iname, itype);
     for (i = 0; i < num_gates; i++) {
         qout = qarr[i];
@@ -1633,8 +1646,7 @@ static Xlatorp gen_jkff_instance(struct jkff_instance *ip)
         printf("WARNING unable to find tmodel %s for %s d_jkff\n",
             tmodel, modelnm);
     }
-    xdata = create_xlate_translated(".model d_zero_inv99 d_inverter");
-    xxp = add_xlator(xxp, xdata);
+    add_zero_delay_inverter_model = TRUE;
     tfree(clkb);
     if (need_preb_inv) { tfree(preb); }
     if (need_clrb_inv) { tfree(clrb); }
@@ -1716,8 +1728,7 @@ static Xlatorp gen_dltch_instance(struct dltch_instance *ip)
             tmodel, modelnm);
     }
     if (need_preb_inv || need_clrb_inv) {
-        xdata = create_xlate_translated(".model d_zero_inv99 d_inverter");
-        xxp = add_xlator(xxp, xdata);
+        add_zero_delay_inverter_model = TRUE;
     }
     if (need_preb_inv) { tfree(preb); }
     if (need_clrb_inv) { tfree(clrb); }
