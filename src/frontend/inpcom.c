@@ -187,6 +187,7 @@ static void inp_get_w_l_x(struct card* oldcard);
 
 static char* eval_m(char* line, char* tline);
 static char* eval_tc(char* line, char* tline);
+static char* eval_mvalue(char* line, char* tline);
 
 static void rem_double_braces(struct card* card);
 
@@ -5260,9 +5261,9 @@ static char* eval_tc(char* line, char *tline) {
     return ret_str;
 }
 
-/* return a string that consists of m evaluated
-   or having a rhs for numparam expansion {...}.
-   The retun string has to be freed by the caller after its usage. */
+/* return a string that consists of m evaluated (like m=5)
+   or having a rhs for numparam expansion m={...}.
+   The return string has to be freed by the caller after its usage. */
 static char* eval_m(char* line, char* tline) {
     double m;
     char* str_ptr, * m_ptr, * m_str = NULL;
@@ -5274,7 +5275,7 @@ static char* eval_m(char* line, char* tline) {
             m_ptr = str_ptr + 2;
             int error = 0;
             m = INPevaluate(&m_ptr, &error, 1);
-            /*We have a value and create the tc1 string */
+            /*We have a value and create the m string */
             if (error == 0) {
                 m_str = tprintf("m=%15.8e", m);
             }
@@ -5297,6 +5298,48 @@ static char* eval_m(char* line, char* tline) {
     }
     else {
         m_str = copy(" ");
+    }
+
+    return m_str;
+}
+
+/* return a string that consists of the m value only.
+   If m is not given, return string "1".
+   The return string has to be freed by the caller after its usage. */
+static char* eval_mvalue(char* line, char* tline) {
+    double m;
+    char* str_ptr, * m_ptr, * m_str = NULL;
+    char* cut_line = line;
+    str_ptr = strstr(cut_line, "m=");
+    if (str_ptr) {
+        /* We need to have 'm=something */
+        if (str_ptr[2]) {
+            m_ptr = str_ptr + 2;
+            int error = 0;
+            m = INPevaluate(&m_ptr, &error, 1);
+            /*We have a value and create the m string */
+            if (error == 0) {
+                m_str = tprintf("%15.8e", m);
+            }
+            else if (error == 1 && *m_ptr == '{' && m_ptr + 1 && *(m_ptr + 1) != '}') {
+                char* bra = gettok_char(&m_ptr, '}', TRUE, TRUE);
+                if (bra) {
+                    m_str = tprintf("%s", bra);
+                    tfree(bra);
+                }
+                else {
+                    fprintf(stderr, "Warning: Cannot copy m in line\n   %s\n   ignored\n", tline);
+                    m_str = copy(" ");
+                }
+            }
+            else {
+                fprintf(stderr, "Warning: Cannot copy m in line\n   %s\n   ignored\n", tline);
+                m_str = copy(" ");
+            }
+        }
+    }
+    else {
+        m_str = copy("1");
     }
 
     return m_str;
@@ -5930,7 +5973,7 @@ static void inp_compat(struct card *card)
             /* evauate tc1 and tc2 */
             char* tcrstr = eval_tc(cut_line, card->line);
 
-            /* evauate m */
+            /* evaluate m */
             char* mstr = eval_m(cut_line, card->line);
 
             /* white noise model by x2line, x3line, x4line
@@ -6011,10 +6054,13 @@ static void inp_compat(struct card *card)
             /* evauate tc1 and tc2 */
             char* tcrstr = eval_tc(cut_line, card->line);
 
+            /* evaluate m */
+            char* mstr = eval_mvalue(cut_line, card->line);
+
             if (strstr(curr_line, "c=")) { /* capacitance formulation */
                 // Exxx  n-aux 0  n2 n1  1
-                ckt_array[0] = tprintf("e%s %s_int1 0 %s %s 1", title_tok,
-                        title_tok, node2, node1);
+                ckt_array[0] = tprintf("e%s %s_int1 0 %s %s %s", title_tok,
+                        title_tok, node2, node1, mstr);
                 // Cxxx  n-aux 0  1
                 ckt_array[1] = tprintf("c%s %s_int1 0 1", title_tok, title_tok);
                 // Bxxx  n1 n2  I = i(Exxx) * equation
@@ -6023,8 +6069,8 @@ static void inp_compat(struct card *card)
                         title_tok, node1, node2, title_tok, equation, tcrstr);
             } else {                       /* charge formulation */
                 // Gxxx  n1 n2 n-aux 0  1
-                ckt_array[0] = tprintf("g%s %s %s %s_int1 0 1", 
-                            title_tok, node1, node2, title_tok);
+                ckt_array[0] = tprintf("g%s %s %s %s_int1 0 %s",
+                            title_tok, node1, node2, title_tok, mstr);
                 // Lxxx  n-aux 0 1
                 ckt_array[1] = tprintf("l%s %s_int1 0 1", title_tok, title_tok);
                 // Bxxx  0 n-aux I = equation
@@ -6033,6 +6079,7 @@ static void inp_compat(struct card *card)
                         title_tok, title_tok, equation, tcrstr);
             }
             tfree(tcrstr);
+            tfree(mstr);
             // comment out current variable capacitor line
             *(card->line) = '*';
             // insert new B source line immediately after current line
@@ -6082,17 +6129,21 @@ static void inp_compat(struct card *card)
             /* evauate tc1 and tc2 */
             char* tcrstr = eval_tc(cut_line, card->line);
 
+            /* evaluate m */
+            char* mstr = eval_mvalue(cut_line, card->line);
+
             // Fxxx  n-aux 0  Bxxx  1
             ckt_array[0] = tprintf("f%s %s_int2 0 b%s -1",
                     title_tok, title_tok, title_tok);
             // Lxxx  n-aux 0  1
             ckt_array[1] = tprintf("l%s %s_int2 0 1", title_tok, title_tok);
             // Bxxx  n1 n2  V = v(n-aux) * equation
-            ckt_array[2] = tprintf("b%s %s %s v = v(%s_int2) * (%s) "
+            ckt_array[2] = tprintf("b%s %s %s v = v(%s_int2) * (%s) / %s "
                                     "%s reciproctc=0",
-                    title_tok, node2, node1, title_tok, equation, tcrstr);
+                    title_tok, node2, node1, title_tok, equation, mstr, tcrstr);
 
             tfree(tcrstr);
+            tfree(mstr);
             // comment out current variable inductor line
             *(card->line) = '*';
             // insert new B source line immediately after current line
