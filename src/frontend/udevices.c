@@ -189,6 +189,79 @@ struct timing_data {
     int estimate;
 };
 
+/* btree */
+typedef struct nnode *TREE;
+struct nnode {
+    char *name;
+    TREE left;
+    TREE right;
+};
+
+static TREE btree_root = NULL;
+
+/* #define UDEV_BTREE */
+#ifdef UDEV_BTREE
+static TREE new_nnode(char *name)
+{
+    TREE newp;
+    newp = TMALLOC(struct nnode, 1);
+    newp->left = NULL;
+    newp->right = NULL;
+    newp->name = TMALLOC(char, strlen(name) + 1);
+    strcpy(newp->name, name);
+    return newp;
+}
+
+TREE tinsert(char *name, TREE t)
+{
+    int cmp;
+    if (t == NULL) {
+        t = new_nnode(name);
+        return t;
+    }
+    cmp = strcmp(name, t->name);
+    if (cmp < 0) {
+        t->left = tinsert(name, t->left);
+    } else if (cmp > 0) {
+        t->right = tinsert(name, t->right);
+    }
+    return t;
+}
+
+int tmember(char *name, TREE t)
+{
+    int cmp;
+    while (t != NULL) {
+        cmp = strcmp(name, t->name);
+        if (cmp == 0) {
+            return 1;
+        } else if (cmp < 0) {
+            t = t->left;
+        } else {
+            t = t->right;
+        }
+    }
+    return 0;
+}
+
+void delete_btree(TREE t)
+{
+    if (t == NULL) { return; }
+    delete_btree(t->left);
+    delete_btree(t->right);
+    tfree(t->name);
+    tfree(t);
+}
+
+void print_btree(TREE t)
+{
+    if (t == NULL) { return; }
+    print_btree(t->left);
+    printf("%s\n", t->name);
+    print_btree(t->right);
+}
+#endif
+
 /* NOTE
   Pin lists contain the names of instance inputs, outputs, tristate outputs.
   These pin_lists are created by add_..._pin() calls within the various
@@ -215,9 +288,46 @@ static int pins_and_ports = 0; // If non-zero then generate pins and ports
 static struct pin_entry *subckt_ports = NULL;
 static struct pin_entry *input_pins = NULL;
 static struct pin_entry *output_pins = NULL;
-static struct pin_entry *tristate_pins = NULL;
+static struct pin_entry *tristate_pins = NULL; // Subset of output pins
 /* .model d_zero_inv99 d_inverter just once per subckt */
 static BOOL add_zero_delay_inverter_model = FALSE;
+
+static void check_name_unused(char *name)
+{
+    if (!pins_and_ports) { return; }
+#ifdef UDEV_BTREE
+    if (tmember(name, btree_root)) {
+        printf("ERROR udevice name %s already used\n", name);
+        return;
+    } else {
+        btree_root = tinsert(name, btree_root);
+    }
+#else
+    return;
+#endif
+}
+
+#ifdef UDEV_BTREE
+static void check_for_name_collisions(void)
+{
+    struct pin_entry *pin;
+    for (pin = subckt_ports; pin; pin = pin->next) {
+        if (tmember(pin->name, btree_root)) {
+            printf("ERROR subckt port name collision %s\n", pin->name);
+        }
+    }
+    for (pin = input_pins; pin; pin = pin->next) {
+        if (tmember(pin->name, btree_root)) {
+            printf("ERROR input pin name collision %s\n", pin->name);
+        }
+    }
+    for (pin = output_pins; pin; pin = pin->next) {
+        if (tmember(pin->name, btree_root)) {
+            printf("ERROR output pin name collision %s\n", pin->name);
+        }
+    }
+}
+#endif
 
 static struct pin_entry *add_pin(char *name, int pin_type, BOOL is_port)
 {
@@ -885,11 +995,18 @@ void initialize_udevice(char *subckt_line)
     }
     /* reset for the new subckt */
     add_zero_delay_inverter_model = FALSE;
+#ifdef UDEV_BTREE
+    delete_btree(btree_root);
+#endif
+    btree_root = NULL;
 }
 
 void cleanup_udevice(void)
 {
     create_ports_list();
+#ifdef UDEV_BTREE
+    check_for_name_collisions();
+#endif
     cleanup_translated_xlator();
     delete_xlator(model_xlatorp);
     model_xlatorp = NULL;
@@ -901,6 +1018,12 @@ void cleanup_udevice(void)
         subckt_saved = NULL;
     }
     add_zero_delay_inverter_model = FALSE;
+#ifdef UDEV_BTREE
+    printf("btree-->\n");
+    print_btree(btree_root);
+    delete_btree(btree_root);
+#endif
+    btree_root = NULL;
 }
 
 static Xlatep create_xlate_model(char *delays,
@@ -1445,16 +1568,22 @@ char *new_inverter(char *iname, char *node, Xlatorp xlp)
 {
     /* Return the name of the output of the new inverter */
     /* tfree the returned string after it has been used by the caller */
-    char *tmp = NULL;
+    char *tmp = NULL, *instance_name = NULL, *not_node = NULL;
     Xlatep xdata = NULL;
 
-    tmp = tprintf("a%s_%s  %s  not_a%s_%s  d_zero_inv99",
-        iname, node, node, iname, node);
+    instance_name = tprintf("a%s_%s", iname, node);
+    check_name_unused(instance_name);
+    not_node = tprintf("not_%s", instance_name);
+    check_name_unused(not_node);
+    tmp = tprintf("%s  %s  %s  d_zero_inv99",
+        instance_name, node, not_node);
     /* instantiate the new inverter */
     /* e.g. au5_s1bar  s1bar  not_au5_s1bar  d_zero_inv99 */
     xdata = create_xlate_translated(tmp);
     (void) add_xlator(xlp, xdata);
     tfree(tmp);
+    tfree(instance_name);
+    tfree(not_node);
     /* the name of the inverter output */
     tmp = tprintf("not_a%s_%s", iname, node);
     return tmp;
@@ -1543,7 +1672,9 @@ static Xlatorp gen_dff_instance(struct dff_instance *ip)
     tmodel = ip->tmodel;
     /* model name, same for each dff */
     modelnm = tprintf("d_a%s_%s", iname, itype);
+    check_name_unused(modelnm);
     for (i = 0; i < num_gates; i++) {
+        char *instance_name = NULL;
         qout = qarr[i];
         add_output_pin(qout);
         if (eq(qout, "$d_nc")) {
@@ -1554,13 +1685,16 @@ static Xlatorp gen_dff_instance(struct dff_instance *ip)
         if (eq(qbout, "$d_nc")) {
             qbout = "NULL";
         }
+        instance_name = tprintf("a%s_%d", iname, i);
+        check_name_unused(instance_name);
         add_input_pin(darr[i]);
-        s1 = tprintf( "a%s_%d  %s  %s  %s  %s  %s  %s  %s",
-            iname, i, darr[i], clk, preb, clrb, qout, qbout, modelnm
+        s1 = tprintf( "%s  %s  %s  %s  %s  %s  %s  %s",
+            instance_name, darr[i], clk, preb, clrb, qout, qbout, modelnm
         );
         xdata = create_xlate_instance(s1, " d_dff", tmodel, modelnm);
         xxp = add_xlator(xxp, xdata);
         tfree(s1);
+        tfree(instance_name);
     }
     if (!gen_timing_model(tmodel, "ueff", "d_dff", modelnm, xxp)) {
         printf("WARNING unable to find tmodel %s for %s d_dff\n",
@@ -1622,7 +1756,9 @@ static Xlatorp gen_jkff_instance(struct jkff_instance *ip)
     tmodel = ip->tmodel;
     /* model name, same for each jkff */
     modelnm = tprintf("d_a%s_%s", iname, itype);
+    check_name_unused(modelnm);
     for (i = 0; i < num_gates; i++) {
+        char *instance_name = NULL;
         qout = qarr[i];
         add_output_pin(qout);
         if (eq(qout, "$d_nc")) {
@@ -1635,12 +1771,16 @@ static Xlatorp gen_jkff_instance(struct jkff_instance *ip)
         }
         add_input_pin(jarr[i]);
         add_input_pin(karr[i]);
-        s1 = tprintf("a%s_%d  %s  %s  %s  %s  %s  %s  %s  %s",
-            iname, i, jarr[i], karr[i], clkb, preb, clrb, qout, qbout, modelnm
+        instance_name = tprintf("a%s_%d", iname, i);
+        check_name_unused(instance_name);
+        s1 = tprintf("%s  %s  %s  %s  %s  %s  %s  %s  %s",
+            instance_name, jarr[i], karr[i], clkb, preb, clrb,
+            qout, qbout, modelnm
         );
         xdata = create_xlate_instance(s1, " d_jkff", tmodel, modelnm);
         xxp = add_xlator(xxp, xdata);
         tfree(s1);
+        tfree(instance_name);
     }
     if (!gen_timing_model(tmodel, "ueff", "d_jkff", modelnm, xxp)) {
         printf("WARNING unable to find tmodel %s for %s d_jkff\n",
@@ -1696,16 +1836,20 @@ static Xlatorp gen_dltch_instance(struct dltch_instance *ip)
     tmodel = ip->tmodel;
     /* model name, same for each latch */
     modelnm = tprintf("d_a%s_%s", iname, itype);
+    check_name_unused(modelnm);
     for (i = 0; i < num_gates; i++) {
+        char *instance_name = NULL;
         qout = qarr[i];
         add_output_pin(qout);
+        instance_name = tprintf("a%s_%d", iname, i);
+        check_name_unused(instance_name);
         if (eq(qout, "$d_nc")) {
             /* NULL not allowed??? */
-            s1 = tprintf("a%s_%d  %s  %s  %s  %s  nco%s_%d",
-                iname, i, darr[i], gate, preb, clrb, iname, i);
+            s1 = tprintf("%s  %s  %s  %s  %s  nco%s_%d",
+                instance_name, darr[i], gate, preb, clrb, iname, i);
         } else {
-            s1 = tprintf("a%s_%d  %s  %s  %s  %s  %s",
-                iname, i, darr[i], gate, preb, clrb, qout);
+            s1 = tprintf("%s  %s  %s  %s  %s  %s",
+                instance_name, darr[i], gate, preb, clrb, qout);
         }
         add_input_pin(darr[i]);
         qbout = qbarr[i];
@@ -1722,6 +1866,7 @@ static Xlatorp gen_dltch_instance(struct dltch_instance *ip)
         tfree(s1);
         tfree(s2);
         tfree(s3);
+        tfree(instance_name);
     }
     if (!gen_timing_model(tmodel, "ugff", "d_dlatch", modelnm, xxp)) {
         printf("WARNING unable to find tmodel %s for %s d_dlatch\n",
@@ -1745,7 +1890,7 @@ static Xlatorp gen_compound_instance(struct compound_instance *compi)
     int num_ins_kept = 0;
     char *model_name = NULL, *inst = NULL, **connector = NULL;
     char *new_inst = NULL, *model_stmt = NULL, *final_model_name = NULL;
-    char *new_stmt = NULL;
+    char *new_stmt = NULL, *instance_name = NULL;
     char *tmp;
     size_t sz = 0;
     Xlatorp xxp = NULL;
@@ -1779,6 +1924,7 @@ static Xlatorp gen_compound_instance(struct compound_instance *compi)
     output = compi->output;
     tmodel = compi->tmodel;
     model_name = tprintf("d_%s_%s", inst, itype);
+    check_name_unused(model_name);
     connector = TMALLOC(char *, num_gates);
     xxp = create_xlator();
     k = 0;
@@ -1793,6 +1939,7 @@ static Xlatorp gen_compound_instance(struct compound_instance *compi)
     k = 0;
     for (i = 0; i < num_gates; i++) {
         connector[i] = tprintf("con_%s_%d", inst, i);
+        check_name_unused(connector[i]);
         num_ins_kept = 0;
         tmp[0] = '\0';
         /* $d_hi AND gate inputs are ignored */
@@ -1806,11 +1953,14 @@ static Xlatorp gen_compound_instance(struct compound_instance *compi)
             k++;
         }
         if (num_ins_kept >= 2) {
-            new_inst = tprintf("a%s_%d [%s ] %s %s", inst, i,
+            instance_name = tprintf("a%s_%d", inst, i);
+            check_name_unused(instance_name);
+            new_inst = tprintf("%s [%s ] %s %s", instance_name,
                 tmp, connector[i], model_name);
             xdata = create_xlate_translated(new_inst);
             xxp = add_xlator(xxp, xdata);
             tfree(new_inst);
+            tfree(instance_name);
         } else if (num_ins_kept == 1) {
             /*
               connector[i] is the remaining input connected
@@ -1818,6 +1968,7 @@ static Xlatorp gen_compound_instance(struct compound_instance *compi)
             */
             tfree(connector[i]);
             connector[i] = tprintf("%s", tmp);
+            check_name_unused(connector[i]);
         }
     }
     /* .model statement for the input gates */
@@ -1828,6 +1979,7 @@ static Xlatorp gen_compound_instance(struct compound_instance *compi)
 
     /* Final OR/NOR, AND/NAND gate */
     final_model_name = tprintf("%s_out", model_name);
+    check_name_unused(final_model_name);
     tfree(tmp);
 
     sz = 0;
@@ -1840,12 +1992,15 @@ static Xlatorp gen_compound_instance(struct compound_instance *compi)
         sprintf(tmp + strlen(tmp), " %s", connector[i]);
     }
     /* instance statement for the final gate */
-    new_stmt = tprintf("a%s_out [%s ] %s %s",
-        inst, tmp, output, final_model_name);
+    instance_name = tprintf("a%s_out", inst);
+    check_name_unused(instance_name);
+    new_stmt = tprintf("%s [%s ] %s %s",
+        instance_name, tmp, output, final_model_name);
     add_output_pin(output);
     xdata = create_xlate_translated(new_stmt);
     xxp = add_xlator(xxp, xdata);
     tfree(new_stmt);
+    tfree(instance_name);
     tfree(tmp);
     /* timing model for output gate */
     if (!gen_timing_model(tmodel, "ugate", outgate,
@@ -1871,7 +2026,7 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
     BOOL tristate_array = FALSE, simple_array = FALSE;
     BOOL add_tristate = FALSE;
     char *modelnm = NULL, *startvec = NULL, *endvec = NULL;
-    char *input_buf = NULL;
+    char *input_buf = NULL, *instance_name = NULL;
     int i, j, k, width, num_gates, num_ins, num_outs;
     size_t sz;
     Xlatorp xxp = NULL;
@@ -1939,6 +2094,9 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
             sprintf(input_buf + strlen(input_buf), " %s", inarr[i]);
         }
         /* instance name and inputs */
+        instance_name = tprintf("a%s", iname);
+        check_name_unused(instance_name);
+        tfree(instance_name);
         /* add the tristate enable if required on original */
         if (enable) {
             if (!add_tristate) {
@@ -1958,10 +2116,11 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
         tfree(input_buf);
 
         /* connector if required for tristate */
-        connector = tprintf("a%s_%s", iname, outarr[0]);
+        connector = tprintf("con_a%s_%s", iname, outarr[0]);
 
         /* keep a copy of the model name of original gate */
         modelnm = tprintf("d_a%s_%s", iname, itype);
+        check_name_unused(modelnm);
 
         if (!add_tristate) {
             char *instance_stmt = NULL;
@@ -1995,6 +2154,7 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
              Complete the translation of the original gate adding
              the connector as output + model name.
             */
+            check_name_unused(connector);
             new_stmt = tprintf("%s %s %s", inst_begin, connector, modelnm);
             xdata = create_xlate_instance(new_stmt, xspice, "", modelnm);
             xxp = add_xlator(xxp, xdata);
@@ -2007,6 +2167,7 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
             /* now the added tristate */
             /* model name of added tristate */
             new_model_nm = tprintf("d_a%s_tribuf", iname);
+            check_name_unused(new_model_nm);
             new_stmt = tprintf("a%s_tri %s %s %s %s",
                 iname, connector, enable, outarr[0], new_model_nm);
             xdata = create_xlate_instance(new_stmt, "d_tristate",
@@ -2055,6 +2216,7 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
         }
         /* model name, same for all primary gates */
         primary_model = tprintf("d_a%s_%s", iname, itype); 
+        check_name_unused(primary_model);
         for (i = 0; i < num_gates; i++) {
             /* inputs */
             /* First calculate the space */
@@ -2075,6 +2237,9 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
                 k++;
             }
             /* create new instance name for primary gate */
+            instance_name = tprintf("a%s_%d", iname, i);
+            check_name_unused(instance_name);
+            tfree(instance_name);
             if (enable) {
                 if (!add_tristate) {
                     s1 = tprintf("a%s_%d %s%s%s  %s",
@@ -2083,7 +2248,8 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
                     s1 = tprintf("a%s_%d %s%s%s",
                         iname, i, startvec, input_buf, endvec);
                     /* connector if required for tristate */
-                    connector = tprintf("a%s_%d_%s", iname, i, outarr[i]);
+                    connector = tprintf("con_a%s_%d_%s", iname, i, outarr[i]);
+                    check_name_unused(connector);
                 }
             } else {
                 s1 = tprintf("a%s_%d %s%s%s",
@@ -2138,16 +2304,21 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
                 }
                 /* model name of added tristate */
                 modelnm = tprintf("d_a%s_tribuf", iname);
+                if (i == 0) {
+                    check_name_unused(modelnm);
+                }
                 /*
                  instance name of added tristate, connector,
                  enable, original primary gate output, timing model.
                 */
-                s1 = tprintf("a%s_%d_tri %s %s %s %s", iname, i, connector,
+                instance_name = tprintf("a%s_%d_tri", iname, i);
+                s1 = tprintf("%s %s %s %s %s", instance_name, connector,
                     enable, outarr[i], modelnm);
                 xdata = create_xlate_instance(s1, "d_tristate",
                     tmodel, modelnm);
                 xxp = add_xlator(xxp, xdata);
                 tfree(s1);
+                tfree(instance_name);
                 if (i == 0 && !gen_timing_model(tmodel, "utgate",
                                         "d_tristate", modelnm, xxp)) {
                     printf("WARNING unable to find tmodel %s for %s %s\n",
