@@ -1968,7 +1968,6 @@ static Xlatorp gen_compound_instance(struct compound_instance *compi)
             */
             tfree(connector[i]);
             connector[i] = tprintf("%s", tmp);
-            check_name_unused(connector[i]);
         }
     }
     /* .model statement for the input gates */
