@@ -428,7 +428,12 @@ com_measure_when(
                 value = get_value(meas, d, i); //d->v_compdata[i].cx_real;
             else
                 value = d->v_realdata[i];
-            scaleValue = dScale->v_compdata[i].cx_real;
+            if (dScale->v_compdata)
+                scaleValue = dScale->v_compdata[i].cx_real;
+            else {
+                fprintf(cp_err, "Error: no valid frequency scale for 'meas ac ...'\n");
+                return MEASUREMENT_FAILURE;
+            }
         } else if (sp_check) {
             if (d->v_compdata)
                 value = get_value(meas, d, i); //d->v_compdata[i].cx_real;
@@ -668,7 +673,12 @@ measure_at(
                 value = d->v_realdata[i];
                 // fprintf(cp_err, "Warning: 'meas ac' input vector is real!\n");
             }
-            svalue = dScale->v_compdata[i].cx_real;
+            if (dScale->v_compdata)
+                svalue = dScale->v_compdata[i].cx_real;
+            else {
+                fprintf(cp_err, "Error: no valid frequency scale for 'meas ac ...'\n");
+                return MEASUREMENT_FAILURE;
+            }
         } else if (sp_check) {
             if (d->v_compdata)
                 value = get_value(meas, d, i); //d->v_compdata[i].cx_real;
@@ -770,7 +780,12 @@ measure_minMaxAvg(
                 value = d->v_realdata[i];
                 // fprintf(cp_err, "Warning: 'meas ac' input vector is real!\n");
             }
-            svalue = dScale->v_compdata[i].cx_real;
+            if (dScale->v_compdata)
+                svalue = dScale->v_compdata[i].cx_real;
+            else {
+                fprintf(cp_err, "Error: no valid frequency scale for 'meas ac ...'\n");
+                return MEASUREMENT_FAILURE;
+            }
         } else if (sp_check) {
             if (d->v_compdata)
                 value = get_value(meas, d, i); //d->v_compdata[i].cx_real;
