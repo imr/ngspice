@@ -1,4 +1,4 @@
-counter.cir
+Conversion of Pspice counter
 
 .subckt counter high clear clk qa qb qc qd 5 7 9 11
 U1 JKFF(1) $G_DPWR $G_DGND  HIGH CLEAR CLK HIGH HIGH QA 5
