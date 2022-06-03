@@ -8355,7 +8355,7 @@ static struct card *u_instances(struct card *startcard)
                 if (create_called) {
                     cleanup_udevice();
                 }
-                initialize_udevice(subcktcard->line);
+                initialize_udevice();
                 create_called = TRUE;
             } else {
                 /* Pspice definition of .subckt card:

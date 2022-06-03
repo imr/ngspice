@@ -1,4 +1,4 @@
-Mixed IO types  
+Mixed IO types with conversion of Pspice nand and divider.
 * This circuit contains a mixture of IO types, including  
 * analog, digital, user-defined (real), and 'null'. 
 *  
