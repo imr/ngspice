@@ -51,7 +51,6 @@
 #include "ngspice/stringskip.h"
 #include "ngspice/stringutil.h"
 #include "ngspice/inpdefs.h"
-#include "ngspice/cpextern.h"
 #include "ngspice/macros.h"
 #include "ngspice/udevices.h"
 
@@ -130,6 +129,19 @@ struct jkff_instance {
     int num_gates;
     char **j_in;
     char **k_in;
+    char **q_out;
+    char **qb_out;
+    char *tmodel;
+};
+
+struct srff_instance {
+    struct instance_hdr *hdrp;
+    char *prebar;
+    char *clrbar;
+    char *gate;
+    int num_gates;
+    char **s_in;
+    char **r_in;
     char **q_out;
     char **qb_out;
     char *tmodel;
@@ -292,9 +304,7 @@ static char *find_xspice_for_delay(char *itype)
         break;
     }
     case 's': {
-/*  Not implemented
         if (eq(itype, "srff")) { return xspice_tab[D_SRFF]; }
-*/
         break;
     }
     case 'x': {
@@ -574,6 +584,10 @@ static Xlatep find_tmodel_in_xlator(Xlatep x, Xlatorp xlp)
             if (eq(x1->xspice, x->xspice)) {
                 return x1;
             }
+            if (xlp == default_models && eq(x->utype, "ugff") &&
+                eq(x->tmodel, "d0_gff")) {
+                return x1;
+            }
         }
     }
     return NULL;
@@ -788,7 +802,7 @@ static void delete_instance_hdr(struct instance_hdr *hdr)
 
 /* NOTE
   There are translate_...() functions for each instance type (gates, arrays
-  of gates, compound gates, dff, jkff, dltch).
+  of gates, compound gates, dff, jkff, dltch, srff).
   For each type (except pullup/down) an instance struct is created by calling
   the corresponding create_..._instance() then add_..._inout_timing_model()
   functions. The instance struct returned by add_..._inout_timing_model()
@@ -966,6 +980,69 @@ static void delete_jkff_instance(struct jkff_instance *jkp)
         }
     }
     tfree(jkp);
+    return;
+}
+
+static struct srff_instance *create_srff_instance(struct instance_hdr *hdrp)
+{
+    struct srff_instance *srffp;
+
+    srffp = TMALLOC(struct srff_instance, 1);
+    srffp->hdrp = hdrp;
+    srffp->prebar = NULL;
+    srffp->clrbar = NULL;
+    srffp->gate = NULL;
+    srffp->num_gates = 0;
+    srffp->s_in = NULL;
+    srffp->r_in = NULL;
+    srffp->q_out = NULL;
+    srffp->qb_out = NULL;
+    srffp->tmodel = NULL;
+    return srffp;
+}
+
+static void delete_srff_instance(struct srff_instance *srffp)
+{
+    char **arr;
+    int i;
+
+    if (!srffp) { return; }
+    if (srffp->hdrp) { delete_instance_hdr(srffp->hdrp); }
+    if (srffp->prebar) { tfree(srffp->prebar); }
+    if (srffp->clrbar) { tfree(srffp->clrbar); }
+    if (srffp->gate) { tfree(srffp->gate); }
+    if (srffp->tmodel) { tfree(srffp->tmodel); }
+    if (srffp->num_gates > 0) {
+        if (srffp->s_in) {
+            arr = srffp->s_in;
+            for (i = 0; i < srffp->num_gates; i++) {
+                tfree(arr[i]);
+            }
+            tfree(srffp->s_in);
+        }
+        if (srffp->r_in) {
+            arr = srffp->r_in;
+            for (i = 0; i < srffp->num_gates; i++) {
+                tfree(arr[i]);
+            }
+            tfree(srffp->r_in);
+        }
+        if (srffp->q_out) {
+            arr = srffp->q_out;
+            for (i = 0; i < srffp->num_gates; i++) {
+                tfree(arr[i]);
+            }
+            tfree(srffp->q_out);
+        }
+        if (srffp->qb_out) {
+            arr = srffp->qb_out;
+            for (i = 0; i < srffp->num_gates; i++) {
+                tfree(arr[i]);
+            }
+            tfree(srffp->qb_out);
+        }
+    }
+    tfree(srffp);
     return;
 }
 
@@ -1350,7 +1427,7 @@ static Xlatorp gen_dltch_instance(struct dltch_instance *ip)
         instance_name = tprintf("a%s_%d", iname, i);
         if (eq(qout, "$d_nc")) {
             /* NULL not allowed??? */
-            s1 = tprintf("%s  %s  %s  %s  %s  nco%s_%d",
+            s1 = tprintf("%s  %s  %s  %s  %s  nco_%s_%d",
                 instance_name, darr[i], gate, preb, clrb, iname, i);
         } else {
             s1 = tprintf("%s  %s  %s  %s  %s  %s",
@@ -1359,7 +1436,7 @@ static Xlatorp gen_dltch_instance(struct dltch_instance *ip)
         qbout = qbarr[i];
         if (eq(qbout, "$d_nc")) {
             /* NULL not allowed??? */
-            s2 = tprintf(" ncn%s_%d  %s", iname, i, modelnm);
+            s2 = tprintf(" ncn_%s_%d  %s", iname, i, modelnm);
         } else {
             s2 = tprintf("  %s  %s", qbout, modelnm);
         }
@@ -1373,6 +1450,86 @@ static Xlatorp gen_dltch_instance(struct dltch_instance *ip)
     }
     if (!gen_timing_model(tmodel, "ugff", "d_dlatch", modelnm, xxp)) {
         printf("WARNING unable to find tmodel %s for %s d_dlatch\n",
+            tmodel, modelnm);
+    }
+    if (need_preb_inv || need_clrb_inv) {
+        add_zero_delay_inverter_model = TRUE;
+    }
+    if (need_preb_inv) { tfree(preb); }
+    if (need_clrb_inv) { tfree(clrb); }
+    tfree(modelnm);
+
+    return xxp;
+}
+
+static Xlatorp gen_srff_instance(struct srff_instance *srffp)
+{
+    char *itype, *iname, **sarr, **rarr, **qarr, **qbarr;
+    char *preb, *clrb, *gate, *tmodel, *qout, *qbout;
+    int i, num_gates;
+    char *modelnm, *s1, *s2, *s3;
+    Xlatorp xxp = NULL;
+    Xlatep xdata = NULL;
+    BOOL need_preb_inv = FALSE, need_clrb_inv = FALSE;
+
+    if (!srffp) { return NULL; }
+    itype = srffp->hdrp->instance_type;
+    iname = srffp->hdrp->instance_name;
+    num_gates = srffp->num_gates;
+    sarr = srffp->s_in;
+    rarr = srffp->r_in;
+    qarr = srffp->q_out;
+    qbarr = srffp->qb_out;
+    preb = srffp->prebar;
+    clrb = srffp->clrbar;
+
+    xxp = create_xlator();
+    if (eq(preb, "$d_hi")) {
+        preb = "NULL";
+    } else {
+        need_preb_inv = TRUE;
+        preb = new_inverter(iname, preb, xxp);
+    }
+
+    if (eq(clrb, "$d_hi")) {
+        clrb = "NULL";
+    } else {
+        need_clrb_inv = TRUE;
+        clrb = new_inverter(iname, clrb, xxp);
+    }
+    gate = srffp->gate;
+    tmodel = srffp->tmodel;
+    /* model name, same for each latch */
+    modelnm = tprintf("d_a%s_%s", iname, itype);
+    for (i = 0; i < num_gates; i++) {
+        char *instance_name = NULL;
+        qout = qarr[i];
+        instance_name = tprintf("a%s_%d", iname, i);
+        if (eq(qout, "$d_nc")) {
+            /* NULL not allowed??? */
+            s1 = tprintf("%s  %s  %s  %s  %s  %s  nco_%s_%d",
+                instance_name, sarr[i], rarr[i], gate, preb, clrb, iname, i);
+        } else {
+            s1 = tprintf("%s  %s  %s  %s  %s  %s  %s",
+                instance_name, sarr[i], rarr[i], gate, preb, clrb, qout);
+        }
+        qbout = qbarr[i];
+        if (eq(qbout, "$d_nc")) {
+            /* NULL not allowed??? */
+            s2 = tprintf(" ncn_%s_%d  %s", iname, i, modelnm);
+        } else {
+            s2 = tprintf("  %s  %s", qbout, modelnm);
+        }
+        s3 = tprintf("%s%s", s1, s2);
+        xdata = create_xlate_instance(s3, " d_srlatch", tmodel, modelnm);
+        xxp = add_xlator(xxp, xdata);
+        tfree(s1);
+        tfree(s2);
+        tfree(s3);
+        tfree(instance_name);
+    }
+    if (!gen_timing_model(tmodel, "ugff", "d_srlatch", modelnm, xxp)) {
+        printf("WARNING unable to find tmodel %s for %s d_srlatch\n",
             tmodel, modelnm);
     }
     if (need_preb_inv || need_clrb_inv) {
@@ -2337,6 +2494,10 @@ static struct dltch_instance *add_dltch_inout_timing_model(
             return NULL;
         }
     }
+    if (strncmp(dlp->gate, "$d_", 3) == 0) {
+        tfree(dlp);
+        return NULL;
+    }
     if (eq(dlp->prebar, "$d_lo") || eq(dlp->prebar, "$d_nc")) {
         tfree(dlp);
         return NULL;
@@ -2431,6 +2592,99 @@ static struct jkff_instance *add_jkff_inout_timing_model(
         return NULL;
     }
     return jkffip;
+}
+
+static struct srff_instance *add_srff_inout_timing_model(
+    struct instance_hdr *hdr, char *start)
+{
+    char *tok, *copyline;
+    char *name, **arrp, **arrpr;
+    int i, num_gates = hdr->num1;
+    struct srff_instance *srffp = NULL;
+
+    srffp = create_srff_instance(hdr);
+    srffp->num_gates = num_gates;
+    copyline = TMALLOC(char, strlen(start) + 1);
+    (void) memcpy(copyline, start, strlen(start) + 1);
+
+    /* prebar, clrbar, gate */
+    tok = strtok(copyline, " \t");
+    srffp->prebar = TMALLOC(char, strlen(tok) + 1);
+    (void) memcpy(srffp->prebar, tok, strlen(tok) + 1);
+
+    tok = strtok(NULL, " \t");
+    srffp->clrbar = TMALLOC(char, strlen(tok) + 1);
+    (void) memcpy(srffp->clrbar, tok, strlen(tok) + 1);
+
+    tok = strtok(NULL, " \t");
+    srffp->gate = TMALLOC(char, strlen(tok) + 1);
+    (void) memcpy(srffp->gate, tok, strlen(tok) + 1);
+
+    /* s inputs */
+    srffp->s_in = TMALLOC(char *, num_gates);
+    arrp = srffp->s_in;
+    for (i = 0; i < num_gates; i++) {
+        tok = strtok(NULL, " \t");
+        name = TMALLOC(char, strlen(tok) + 1);
+        (void) memcpy(name, tok, strlen(tok) + 1);
+        arrp[i] = name;
+    }
+    /* r inputs */
+    srffp->r_in = TMALLOC(char *, num_gates);
+    arrp = srffp->r_in;
+    for (i = 0; i < num_gates; i++) {
+        tok = strtok(NULL, " \t");
+        name = TMALLOC(char, strlen(tok) + 1);
+        (void) memcpy(name, tok, strlen(tok) + 1);
+        arrp[i] = name;
+    }
+    /* q_out outputs */
+    srffp->q_out = TMALLOC(char *, num_gates);
+    arrp = srffp->q_out;
+    for (i = 0; i < num_gates; i++) {
+        tok = strtok(NULL, " \t");
+        name = TMALLOC(char, strlen(tok) + 1);
+        (void) memcpy(name, tok, strlen(tok) + 1);
+        arrp[i] = name;
+    }
+    /* qb_out outputs */
+    srffp->qb_out = TMALLOC(char *, num_gates);
+    arrp = srffp->qb_out;
+    for (i = 0; i < num_gates; i++) {
+        tok = strtok(NULL, " \t");
+        name = TMALLOC(char, strlen(tok) + 1);
+        (void) memcpy(name, tok, strlen(tok) + 1);
+        arrp[i] = name;
+    }
+    /* timing model */
+    tok = strtok(NULL, " \t");
+    srffp->tmodel = TMALLOC(char, strlen(tok) + 1);
+    (void) memcpy(srffp->tmodel, tok, strlen(tok) + 1);
+    tfree(copyline);
+
+    /* Reject incompatible inputs */
+    arrp = srffp->s_in;
+    arrpr = srffp->r_in;
+    for (i = 0; i < num_gates; i++) {
+        if (strncmp(arrp[i], "$d_", 3) == 0 ||
+            strncmp(arrpr[i], "$d_", 3) == 0) {
+            tfree(srffp);
+            return NULL;
+        }
+    }
+    if (strncmp(srffp->gate, "$d_", 3) == 0) {
+        tfree(srffp);
+        return NULL;
+    }
+    if (eq(srffp->prebar, "$d_lo") || eq(srffp->prebar, "$d_nc")) {
+        tfree(srffp);
+        return NULL;
+    }
+    if (eq(srffp->clrbar, "$d_lo") || eq(srffp->clrbar, "$d_nc")) {
+        tfree(srffp);
+        return NULL;
+    }
+    return srffp;
 }
 
 static struct compound_instance *add_compound_inout_timing_model(
@@ -2702,6 +2956,7 @@ static Xlatorp translate_ff_latch(struct instance_hdr *hdr, char *start)
     char *itype;
     struct dff_instance *dffp = NULL;
     struct jkff_instance *jkffp = NULL;
+    struct srff_instance *srffp = NULL;
     struct dltch_instance *dltchp = NULL;
     Xlatorp xp;
 
@@ -2718,6 +2973,13 @@ static Xlatorp translate_ff_latch(struct instance_hdr *hdr, char *start)
         if (jkffp) {
             xp = gen_jkff_instance(jkffp);
             delete_jkff_instance(jkffp);
+            return xp;
+        }
+    } else if (eq(itype, "srff")) {
+        srffp = add_srff_inout_timing_model(hdr, start);
+        if (srffp) {
+            xp = gen_srff_instance(srffp);
+            delete_srff_instance(srffp);
             return xp;
         }
     } else if (eq(itype, "dltch")) {
@@ -2815,7 +3077,8 @@ BOOL u_process_instance(char *nline)
         xp = translate_gate(hdr, p1);
     } else if (is_compound_gate(itype)) {
         xp = translate_gate(hdr, p1);
-    } else if (eq(itype, "dff") || eq(itype, "jkff") || eq(itype, "dltch")) {
+    } else if (eq(itype, "dff") || eq(itype, "jkff") ||
+        eq(itype, "dltch") || eq(itype, "srff")) {
         xp = translate_ff_latch(hdr, p1);
     } else if (eq(itype, "pullup") || eq(itype, "pulldn")) {
         xp = translate_pull(hdr, p1);
