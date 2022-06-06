@@ -378,19 +378,6 @@ static Xlatep create_xlate_instance(
     return create_xlate(translated, "", "", xspice, tmodel, mname);
 }
 
-/*
-static void print_xlate(Xlatep xp)
-{
-    if (!xp) { return; }
-    printf("translated %s\n", xp->translated);
-    printf("delays %s\n", xp->delays);
-    printf("utype %s ", xp->utype);
-    printf("xspice %s ", xp->xspice);
-    printf("tmodel %s ", xp->tmodel);
-    printf("mname %s\n", xp->mname);
-}
-*/
-
 static Xlatorp create_xlator(void)
 {
     Xlatorp xp;
@@ -546,7 +533,9 @@ void initialize_udevice(void)
     xdata = create_xlate("", "", "ugate", "", "d0_gate", "");
     (void) add_xlator(default_models, xdata);
     /*  .model d0_gff ugff ()  */
-    xdata = create_xlate("", "", "ugff", "", "d0_gff", "");
+    xdata = create_xlate("", "", "ugff", "d_dlatch", "d0_gff", "");
+    (void) add_xlator(default_models, xdata);
+    xdata = create_xlate("", "", "ugff", "d_srlatch", "d0_gff", "");
     (void) add_xlator(default_models, xdata);
     /*  .model d0_eff ueff ()  */
     xdata = create_xlate("", "", "ueff", "", "d0_eff", "");
@@ -584,10 +573,6 @@ static Xlatep find_tmodel_in_xlator(Xlatep x, Xlatorp xlp)
     for (x1 = first_xlator(xlp); x1; x1 = next_xlator(xlp)) {
         if (eq(x1->tmodel, x->tmodel) && eq(x1->utype, x->utype)) {
             if (eq(x1->xspice, x->xspice)) {
-                return x1;
-            }
-            if (xlp == default_models && eq(x->utype, "ugff") &&
-                eq(x->tmodel, "d0_gff")) {
                 return x1;
             }
         }
@@ -1219,7 +1204,6 @@ static BOOL gen_timing_model(
     xout = find_in_model_xlator(xin);
     if (xout) {
         /* Don't delete xout or the model_xlatorp will be corrupted */
-        //print_xlate(xout);
         if (xout->delays && strlen(xout->delays) > 0) {
             s1 = tprintf(".model %s %s%s", newname, xspice, xout->delays);
         } else {
@@ -1681,7 +1665,7 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
     BOOL add_tristate = FALSE;
     char *modelnm = NULL, *startvec = NULL, *endvec = NULL;
     char *input_buf = NULL, *instance_name = NULL;
-    int i, j, k, width, num_gates, num_ins, num_outs;
+    int i, j, k, width, num_gates;
     size_t sz;
     Xlatorp xxp = NULL;
     Xlatep xdata = NULL;
@@ -1693,8 +1677,6 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
     outarr = gip->outputs;
     width = gip->width;
     num_gates = gip->num_gates;
-    num_ins = gip->num_ins;
-    num_outs = gip->num_outs;
     enable = gip->enable;
     tmodel = gip->tmodel;
     vector = has_vector_inputs(itype);
