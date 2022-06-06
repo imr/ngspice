@@ -378,9 +378,10 @@ static Xlatep create_xlate_instance(
     return create_xlate(translated, "", "", xspice, tmodel, mname);
 }
 
+/*
 static void print_xlate(Xlatep xp)
 {
-    if (xp) { return; }
+    if (!xp) { return; }
     printf("translated %s\n", xp->translated);
     printf("delays %s\n", xp->delays);
     printf("utype %s ", xp->utype);
@@ -388,6 +389,7 @@ static void print_xlate(Xlatep xp)
     printf("tmodel %s ", xp->tmodel);
     printf("mname %s\n", xp->mname);
 }
+*/
 
 static Xlatorp create_xlator(void)
 {
@@ -1217,7 +1219,7 @@ static BOOL gen_timing_model(
     xout = find_in_model_xlator(xin);
     if (xout) {
         /* Don't delete xout or the model_xlatorp will be corrupted */
-        print_xlate(xout);
+        //print_xlate(xout);
         if (xout->delays && strlen(xout->delays) > 0) {
             s1 = tprintf(".model %s %s%s", newname, xspice, xout->delays);
         } else {
@@ -2113,7 +2115,7 @@ static char *get_estimate(struct timing_data *tdp)
   These functions are called from u_process_model(), and the delay strings
   are added to the timing model Xlator by add_delays_to_model_xlator().
 */
-static char *get_delays_ugate(char *rem, char *d_name)
+static char *get_delays_ugate(char *rem)
 {
     char *rising, *falling, *delays = NULL;
     struct timing_data *tdp1, *tdp2;
@@ -2135,7 +2137,7 @@ static char *get_delays_ugate(char *rem, char *d_name)
     return delays;
 }
 
-static char *get_delays_utgate(char *rem, char *d_name)
+static char *get_delays_utgate(char *rem)
 {
     /* Return estimate of tristate delay (delay = val3) */
     char *rising, *falling, *delays = NULL;
@@ -2157,7 +2159,7 @@ static char *get_delays_utgate(char *rem, char *d_name)
     return delays;
 }
 
-static char *get_delays_ueff(char *rem, char *d_name)
+static char *get_delays_ueff(char *rem)
 {
     char *delays = NULL;
     char *clkqrise, *clkqfall, *pcqrise, *pcqfall;
@@ -2300,8 +2302,7 @@ static char *get_delays_ugff(char *rem, char *d_name)
     return delays;
 }
 
-static BOOL u_process_model(char *nline, char *original,
-                          char *newname, char *xspice)
+static BOOL u_process_model(char *nline, char *original)
 {
     char *tok, *remainder, *delays = NULL, *utype, *tmodel;
     BOOL retval = TRUE;
@@ -2321,17 +2322,17 @@ static BOOL u_process_model(char *nline, char *original,
     remainder = strchr(original, '(');
     if (remainder) {
         if (eq(utype, "ugate")) {
-            delays = get_delays_ugate(remainder, xspice);
+            delays = get_delays_ugate(remainder);
             add_delays_to_model_xlator((delays ? delays : ""),
                 utype, "", tmodel);
             if (delays) { tfree(delays); }
         } else if (eq(utype, "utgate")) {
-            delays = get_delays_utgate(remainder, xspice);
+            delays = get_delays_utgate(remainder);
             add_delays_to_model_xlator((delays ? delays : ""),
                 utype, "", tmodel);
             if (delays) { tfree(delays); }
         } else if (eq(utype, "ueff")) {
-            delays = get_delays_ueff(remainder, xspice);
+            delays = get_delays_ueff(remainder);
             add_delays_to_model_xlator((delays ? delays : ""),
                 utype, "", tmodel);
             if (delays) { tfree(delays); }
@@ -3112,7 +3113,7 @@ BOOL u_process_model_line(char *line)
     if (strncmp(line, ".model ", strlen(".model ")) == 0) {
         newline = TMALLOC(char, strlen(line) + 1);
         (void) memcpy(newline, line, strlen(line) + 1);
-        retval = u_process_model(newline, line, "model_new_name", "d_xspice");
+        retval = u_process_model(newline, line);
         tfree(newline);
         return retval;
     } else {
