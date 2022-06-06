@@ -4614,6 +4614,10 @@ line755:
           if (!ChargeComputationNeeded)
               goto line850;
 
+          /* no integration, if dc sweep, but keep evaluating capacitances */
+          if (ckt->CKTmode & MODEDCTRANCURVE)
+              goto line850;
+
           if (ckt->CKTmode & MODEINITTRAN)
           {   *(ckt->CKTstate1 + here->BSIM4qb) =
                     *(ckt->CKTstate0 + here->BSIM4qb);
