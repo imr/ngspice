@@ -231,10 +231,9 @@ int ByPass, ChargeComputationNeeded, error, Check, Check1, Check2;
 
 ScalingFactor = 1.0e-9;
 ChargeComputationNeeded =  
-                 ((ckt->CKTmode & (MODEAC | MODETRAN | MODEINITSMSIG)) ||
+                 ((ckt->CKTmode & (MODEDCTRANCURVE | MODEAC | MODETRAN | MODEINITSMSIG)) ||
                  ((ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC)))
                  ? 1 : 0;
-ChargeComputationNeeded = 1;
 
 #ifndef USE_OMP
 for (; model != NULL; model = BSIM4v5nextModel(model))
@@ -4186,6 +4185,10 @@ line755:
           }
 
           if (!ChargeComputationNeeded)
+              goto line850;
+
+          /* no integration, if dc sweep, but keep evaluating capacitances */
+          if (ckt->CKTmode & MODEDCTRANCURVE)
               goto line850;
 
           if (ckt->CKTmode & MODEINITTRAN)
