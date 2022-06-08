@@ -466,9 +466,8 @@ DCtran(CKTcircuit *ckt,
 /* gtri - end - wbk - Update event queues/data for accepted timepoint */
 #endif
     ckt->CKTstat->STAToldIter = ckt->CKTstat->STATnumIter;
-    if(check_autostop("tran") ||
-      fabs(ckt->CKTtime - ckt->CKTfinalTime) < ckt->CKTminBreak ||
-      AlmostEqualUlps( ckt->CKTtime, ckt->CKTfinalTime, 100 ) ) {
+    if (check_autostop("tran") ||
+        ckt->CKTfinalTime - ckt->CKTtime < ckt->CKTminBreak) {
 #ifdef STEPDEBUG
         printf(" done:  time is %g, final time is %g, and tol is %g\n",
         ckt->CKTtime, ckt->CKTfinalTime, ckt->CKTminBreak);
@@ -590,21 +589,24 @@ resume:
 /* gtri - end - wbk - Add Breakpoint stuff */
 
 /* gtri - begin - wbk - Modify Breakpoint stuff */
-    /* Throw out any permanent breakpoint times <= current time */
-    for (;;) {
+    /* Throw out any permanent breakpoint with time <= current time or in the
+     * very near future, unless it the final stop break.
+     */
 #ifdef STEPDEBUG
-        printf("    brk_pt: %g    ckt_time: %g    ckt_min_break: %g\n",ckt->CKTbreaks[0], ckt->CKTtime, ckt->CKTminBreak);
+    printf("    brk_pt: %g    ckt_time: %g    ckt_min_break: %g\n",
+           ckt->CKTbreaks[0], ckt->CKTtime, ckt->CKTminBreak);
 #endif
-        if(AlmostEqualUlps(ckt->CKTbreaks[0], ckt->CKTtime, 100) ||
-           ckt->CKTbreaks[0] <= ckt->CKTtime + ckt->CKTminBreak) {
+    while ((ckt->CKTbreaks[0] <= ckt->CKTtime + ckt->CKTminBreak ||
+            AlmostEqualUlps(ckt->CKTbreaks[0], ckt->CKTtime, 100)) &&
+           ckt->CKTbreaks[0] < ckt->CKTfinalTime) {
 #ifdef STEPDEBUG
-            printf("throwing out permanent breakpoint times <= current time (brk pt: %g)\n",ckt->CKTbreaks[0]);
-            printf("    ckt_time: %g    ckt_min_break: %g\n",ckt->CKTtime, ckt->CKTminBreak);
+        printf("throwing out permanent breakpoint times <= current time "
+               "(brk pt: %g)\n",
+               ckt->CKTbreaks[0]);
+        printf("    ckt_time: %g    ckt_min_break: %g\n",
+               ckt->CKTtime, ckt->CKTminBreak);
 #endif
-            CKTclrBreak(ckt);
-        } else {
-            break;
-        }
+        CKTclrBreak(ckt);
     }
     /* Force the breakpoint if appropriate */
     if(ckt->CKTtime + ckt->CKTdelta > ckt->CKTbreaks[0]) {
