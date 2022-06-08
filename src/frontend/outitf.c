@@ -1150,11 +1150,17 @@ vlength2delta(int len)
         double timerel = ft_curckt->ci_ckt->CKTtime / ft_curckt->ci_ckt->CKTfinalTime;
         /* return an estimate of the appropriate number of time points, if more than 20% of
            the anticipated total time has passed */
-        if (timerel > 0.2)
-            return (int)(len / timerel) - len + 1;
-        /* If not, just double the available memory */
-        else
+        if (timerel > 0.2) {
+            int proposed = (int)(len / timerel) - len + 1;
+
+            if (proposed > 0)
+                return proposed;
+            return 16; // Probably enough as past end of simulation.
+        } else {
+            /* If not, just double the available memory */
+
             return len;
+        }
     }
     /* op */
     else if (ft_curckt->ci_ckt->CKTmode & MODEDCOP) {
