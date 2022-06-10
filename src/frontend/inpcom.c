@@ -1050,7 +1050,8 @@ struct card *inp_readall(FILE *fp, const char *dir_name,
             inp_rem_unused_models(root, working);
         }
 
-        rem_mfg_from_models(working);
+        if (newcompat.lt || newcompat.ps)
+            rem_mfg_from_models(working);
 
         subckt_params_to_param(working);
 
@@ -9689,8 +9690,8 @@ static void rem_mfg_from_models(struct card *deck)
             continue;
         /* remove mfg=name */
         if (ciprefix(".model", curr_line)) {
-            start = strstr(curr_line, "mfg=");
-            if (start) {
+            start = search_plain_identifier(curr_line, "mfg");
+            if (start && start[3] == '=') {
                 end = nexttok(start);
                 if (*end == '\0')
                     *start = '\0';
@@ -9700,8 +9701,8 @@ static void rem_mfg_from_models(struct card *deck)
                         start++;
                     }
             }
-            start = strstr(curr_line, "icrating=");
-            if (start) {
+            start = search_plain_identifier(curr_line, "icrating");
+            if (start && start[8] == '=') {
                 end = nexttok(start);
                 if (*end == '\0')
                     *start = '\0';
@@ -9711,8 +9712,8 @@ static void rem_mfg_from_models(struct card *deck)
                         start++;
                     }
             }
-            start = strstr(curr_line, "vceo=");
-            if (start) {
+            start = search_plain_identifier(curr_line, "vceo");
+            if (start && start[4] == '=') {
                 end = nexttok(start);
                 if (*end == '\0')
                     *start = '\0';
@@ -9722,8 +9723,8 @@ static void rem_mfg_from_models(struct card *deck)
                         start++;
                     }
             }
-            start = strstr(curr_line, "type=");
-            if (start) {
+            start = search_plain_identifier(curr_line, "type");
+            if (start && start[4] == '=') {
                 end = nexttok(start);
                 if (*end == '\0')
                     *start = '\0';
