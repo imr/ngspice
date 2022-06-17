@@ -275,6 +275,7 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
                         !strstr(dataNames[i], "#collector") &&
                         !strstr(dataNames[i], "#collCX") &&
                         !strstr(dataNames[i], "#emitter") &&
+                        !strstr(dataNames[i], "probe_int_") && /* created by .probe */
                         !strstr(dataNames[i], "#base"))
                     {
                         addDataDesc(run, dataNames[i], dataType, i, initmem);
