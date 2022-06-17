@@ -272,7 +272,7 @@ ft_typabbrev(int typenum)
 {
     if ((typenum < NUMTYPES) && (typenum >= 0)) {
         char* tp = types[typenum].t_abbrev;
-        if (cieq("rad", tp) && cx_degrees)
+        if (tp && cieq("rad", tp) && cx_degrees)
             return ("Degree");
         else
             return tp;
