@@ -227,7 +227,7 @@ void inp_probe(struct card* deck)
 
                 nodename2 = get_terminal_name(instname, "2", instances);
 
-                char* newnode = tprintf("int_%s_%s", strnode2, instname);
+                char* newnode = tprintf("probe_int_%s_%s", strnode2, instname);
                 char* vline = tprintf("vcurr_%s:%s_%s %s %s 0", instname, nodename2, strnode2, newnode, strnode2);
                 char *newline = tprintf("%s %s %s %s", instname, strnode1, newnode, thisline);
 
@@ -260,7 +260,7 @@ void inp_probe(struct card* deck)
                         tfree(thisnode);
                         continue;
                     }
-                    char* newnode = tprintf("int_%s_%s_%d", thisnode, instname, i);
+                    char* newnode = tprintf("probe_int_%s_%s_%d", thisnode, instname, i);
                     sadd(&dnewline, newnode);
                     cadd(&dnewline, ' ');
                     /* to make the nodes unique */
@@ -718,7 +718,7 @@ void inp_probe(struct card* deck)
 
                     nodename2 = get_terminal_name(instname, "2", instances);
 
-                    char* newnode = tprintf("int_%s_%s_2", strnode2, instname);
+                    char* newnode = tprintf("probe_int_%s_%s_2", strnode2, instname);
                     char* vline = tprintf("vcurr_%s:%s_%s %s %s 0", instname, nodename2, strnode2, newnode, strnode2);
                     newline = tprintf("%s %s %s", begstr, newnode, thisline);
 
@@ -774,7 +774,7 @@ void inp_probe(struct card* deck)
 
                     char* strnode1 = gettok(&thisline);
 
-                    char* newnode = tprintf("int_%s_%s_%d", strnode1, instname, nodenum);
+                    char* newnode = tprintf("probe_int_%s_%s_%d", strnode1, instname, nodenum);
 
                     newline = tprintf("%s %s %s", begstr, newnode, thisline);
 
@@ -1253,7 +1253,7 @@ static int setallvsources(struct card *tmpcard, NGHASHPTR instances, char *instn
         }
         char* begstr = copy_substring(tmpcard->line, instline);
         char* strnode1 = gettok(&instline);
-        char* newnode = tprintf("int_%s_%s_%d", strnode1, instname, nodenum);
+        char* newnode = tprintf("probe_int_%s_%s_%d", strnode1, instname, nodenum);
         char nodenumstr[3];
         char *nodename1 = get_terminal_name(instname, itoa10(nodenum, nodenumstr), instances);
 
