@@ -268,11 +268,12 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
         } else {
             for (i = 0; i < numNames; i++)
                 if (!refName || !name_eq(dataNames[i], refName))
-                    /*  Save the node as long as it's an internal device node  */
+                    /*  Save the node as long as it's not an internal device node  */
                     if (!strstr(dataNames[i], "#internal") &&
                         !strstr(dataNames[i], "#source") &&
                         !strstr(dataNames[i], "#drain") &&
                         !strstr(dataNames[i], "#collector") &&
+                        !strstr(dataNames[i], "#collCX") &&
                         !strstr(dataNames[i], "#emitter") &&
                         !strstr(dataNames[i], "#base"))
                     {
@@ -295,6 +296,7 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
                     strstr(dataNames[i], "#source") ||
                     strstr(dataNames[i], "#drain") ||
                     strstr(dataNames[i], "#collector") ||
+                    strstr(dataNames[i], "#collCX") ||
                     strstr(dataNames[i], "#emitter") ||
                     strstr(dataNames[i], "#base"))
                 {
@@ -304,6 +306,8 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
                     ch = strchr(tmpname, '#');
 
                     if (strstr(ch, "#collector")) {
+                        strcpy(ch, "[ic]");
+                    } else if (strstr(ch, "#collCX")) {
                         strcpy(ch, "[ic]");
                     } else if (strstr(ch, "#base")) {
                         strcpy(ch, "[ib]");
