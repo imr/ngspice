@@ -7933,6 +7933,9 @@ static void inp_meas_current(struct card *deck)
             if (*curr_line == '*')
                 continue;
 
+            if (*curr_line == '\0')
+                continue;
+
             if (*curr_line == '.') {
                 if (ciprefix(".subckt", curr_line))
                     subs++;
