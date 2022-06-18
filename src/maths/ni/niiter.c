@@ -18,6 +18,7 @@ Modified: 2001 AlansFixes
 #include "ngspice/cktdefs.h"
 #include "ngspice/smpdefs.h"
 #include "ngspice/sperror.h"
+#include "ngspice/fteext.h"
 
 
 /* NIiter() - return value is non-zero for convergence failure */
@@ -30,6 +31,8 @@ NIiter(CKTcircuit *ckt, int maxIter)
 
     int iterno = 0;
     int ipass = 0;
+
+    static int msgcount = 0;
 
     /* some convergence issues that get resolved by increasing max iter */
     if (maxIter < 100)
@@ -116,9 +119,13 @@ NIiter(CKTcircuit *ckt, int maxIter)
                 if (error) {
                     /* new feature - we can now find out something about what is
                      * wrong - so we ask for the troublesome entry
+                     * Limit the number of messages to 6, if not 'set ngdebug'.
                      */
-                    SMPgetError(ckt->CKTmatrix, &i, &j);
-                    SPfrontEnd->IFerrorf (ERR_WARNING, "singular matrix:  check nodes %s and %s\n", NODENAME(ckt, i), NODENAME(ckt, j));
+                    if (ft_ngdebug || msgcount < 6) {
+                        SMPgetError(ckt->CKTmatrix, &i, &j);
+                        SPfrontEnd->IFerrorf(ERR_WARNING, "singular matrix:  check nodes %s and %s\n", NODENAME(ckt, i), NODENAME(ckt, j));
+                        msgcount += 1;
+                    }
                     ckt->CKTstat->STATnumIter += iterno;
 #ifdef STEPDEBUG
                     printf("reorder returned error \n");
