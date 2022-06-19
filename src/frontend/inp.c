@@ -1737,7 +1737,10 @@ com_source(wordlist *wl)
 #ifdef SHARED_MODULE
             controlled_exit(1);
 #else
-            cp_evloop(NULL);
+            if (cp_getvar("interactive", CP_BOOL, NULL, 0))
+                cp_evloop(NULL);
+            else
+                controlled_exit(1);
 #endif
         }
         while (wl) {
@@ -1752,7 +1755,10 @@ com_source(wordlist *wl)
 #ifdef SHARED_MODULE
                 controlled_exit(1);
 #else
-                cp_evloop(NULL);
+                if (cp_getvar("interactive", CP_BOOL, NULL, 0))
+                    cp_evloop(NULL);
+                else
+                    controlled_exit(1);
 #endif
             }
             while ((n = fread(buf, 1, BSIZE_SP, tp)) > 0)
@@ -1774,7 +1780,10 @@ com_source(wordlist *wl)
 #ifdef SHARED_MODULE
         controlled_exit(1);
 #else
-        cp_evloop(NULL);
+        if (cp_getvar("interactive", CP_BOOL, NULL, 0))
+            cp_evloop(NULL);
+        else
+            controlled_exit(1);
 #endif
         return;
     }
