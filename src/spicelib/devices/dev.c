@@ -542,7 +542,7 @@ static void free_dlerr_msg(char *msg) {
 
 #include "ngspice/osdiitf.h"
 
-static int add_device(int n, OsdiRegistryEntry *devs) {
+static int osdi_add_device(int n, OsdiRegistryEntry *devs) {
   int i;
   int dnum = DEVNUM + n;
   DEVices = TREALLOC(SPICEdev *, DEVices, dnum);
@@ -566,7 +566,7 @@ int load_osdi(const char *path) {
     return file.num_entries;
   }
 
-  add_device(file.num_entries, file.entrys);
+  osdi_add_device(file.num_entries, file.entrys);
   return 0;
 }
 
