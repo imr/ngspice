@@ -115,7 +115,7 @@ extern int OSDImParam(int param, IFvalue *value, GENmodel *modelPtr) {
   }
 
   void *model = osdi_model_data(modelPtr);
-  void *dst = descr->access(model, model, (uint32_t)param, ACCESS_FLAG_SET);
+  void *dst = descr->access(NULL, model, (uint32_t)param, ACCESS_FLAG_SET);
 
   return osdi_write_param(dst, value, param, descr);
 }

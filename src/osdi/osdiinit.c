@@ -11,10 +11,12 @@
 #include "ngspice/ngspice.h"
 #include "ngspice/typedefs.h"
 
+#include "osdi.h"
 #include "osdidefs.h"
 
 #include <stddef.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 /*
@@ -171,34 +173,39 @@ extern SPICEdev *osdi_create_spicedev(const OsdiRegistryEntry *entry) {
   return OSDIinfo;
 }
 
-extern FILE *osdi_init_log_message(void *handle_, uint32_t lvl) {
+extern void osdi_log(void *handle_, char *msg, uint32_t lvl) {
   OsdiNgspiceHandle *handle = handle_;
-  switch (lvl) {
+  FILE *dst = stdout;
+  switch (lvl & LOG_LVL_MASK) {
   case LOG_LVL_DEBUG:
-    fprintf(stdout, "OSDI(debug) %s: ", handle->name);
+    printf("OSDI(debug) %s: ", handle->name);
+    break;
+  case LOG_LVL_DISPLAY:
+    printf("OSDI %s: ", handle->name);
     break;
   case LOG_LVL_INFO:
-    fprintf(stdout, "OSDI(info) %s: ", handle->name);
+    printf("OSDI(info) %s: ", handle->name);
     break;
   case LOG_LVL_WARN:
-    fprintf(stdout, "OSDI(warn) %s: ", handle->name);
+    fprintf(stderr, "OSDI(warn) %s: ", handle->name);
+    dst = stderr;
     break;
   case LOG_LVL_ERR:
     fprintf(stderr, "OSDI(err) %s: ", handle->name);
-    return stderr;
+    dst = stderr;
+    break;
   case LOG_LVL_FATAL:
     fprintf(stderr, "OSDI(fatal) %s: ", handle->name);
-    return stderr;
+    dst = stderr;
+    break;
   default:
-    fprintf(stdout, "OSDI(unkown) %s", handle->name);
+    fprintf(stderr, "OSDI(unkown) %s", handle->name);
     break;
   }
-  return stdout;
-}
 
-extern void osdi_finish_log_message(void *handle, FILE *stream, uint32_t lvl) {
-
-  NG_IGNORE(handle);
-  NG_IGNORE(stream);
-  NG_IGNORE(lvl);
+  if (lvl & LOG_FMT_ERR) {
+    fprintf(dst, "failed to format\"%s\"\n", msg);
+  } else {
+    fprintf(dst, "%s", msg);
+  }
 }

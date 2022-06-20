@@ -42,11 +42,15 @@
 #define EVAL_RET_FLAG_FINISH 4
 #define EVAL_RET_FLAG_STOP 8
 
+
+#define LOG_LVL_MASK 8
 #define LOG_LVL_DEBUG 0
-#define LOG_LVL_INFO 1
-#define LOG_LVL_WARN 2
-#define LOG_LVL_ERR 3
-#define LOG_LVL_FATAL 4
+#define LOG_LVL_DISPLAY 1
+#define LOG_LVL_INFO 2
+#define LOG_LVL_WARN 3
+#define LOG_LVL_ERR 4
+#define LOG_LVL_FATAL 5
+#define LOG_FMT_ERR 16
 
 #define INIT_ERR_OUT_OF_BOUNDS 1
 
@@ -161,6 +165,5 @@ typedef struct OsdiDescriptor {
 
 
 
-extern FILE *osdi_init_log_message(void *handle, uint32_t lvl);
-extern void osdi_finish_log_message(void *handle, FILE *stream, uint32_t lvl);
+extern void osdi_log(void *handle, char* msg, uint32_t lvl);
 

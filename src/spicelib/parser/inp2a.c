@@ -53,9 +53,9 @@ void INP2A(CKTcircuit *ckt, INPtables *tab, struct card *current) {
     if (i >= 2) {
       txfree(INPgetMod(ckt, token, &thismodel, tab));
 
-      /* check if using model binning -- pass in line since need 'l' and 'w' */
-      if (!thismodel)
-        txfree(INPgetModBin(ckt, token, &thismodel, tab, line));
+      /* /1* check if using model binning -- pass in line since need 'l' and 'w' *1/ */
+      /* if (!thismodel) */
+      /*   txfree(INPgetModBin(ckt, token, &thismodel, tab, line)); */
 
       if (thismodel) {
         INPinsert(&token, tab);
