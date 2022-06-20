@@ -47,22 +47,15 @@ INDsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
              model->INDmodNt = 0.0;
         }
         if (!model->INDmuGiven) {
-             model->INDmu = 0.0;
+             model->INDmu = 1.0;
         }
           
 	/* precompute specific inductance (one turn) */
-	if((model->INDlengthGiven) 
-              && (model->INDlength > 0.0)) {
-                
-		if (model->INDmuGiven)
-                    model->INDspecInd = (model->INDmu * CONSTmuZero 
-		     * model->INDcsect * model->INDcsect) / model->INDlength;   
-		else
-                   model->INDspecInd = (CONSTmuZero * model->INDcsect
-		   * model->INDcsect ) / model->INDlength; 
-	
+	if((model->INDlengthGiven) && (model->INDlength > 0.0)) {
+         model->INDspecInd = (model->INDmu * CONSTmuZero
+		     * model->INDcsect) / model->INDlength;
 	} else  {
-	        model->INDspecInd = 0.0;
+	     model->INDspecInd = 0.0;
 	}	
         
 	if (!model->INDmIndGiven) 
