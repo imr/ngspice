@@ -29,7 +29,8 @@ extern "C"
 }
 #endif
 
-using namespace duals::literals;
+using namespace duals;
+#define e1 (dual<double>(0.0, 1.0))
 
 #define TMAX  326.85
 #define TMIN -100.0
@@ -168,7 +169,7 @@ void hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double
 
 
     // Smooth ngspice T clipping
-    temp = clip_temperature( *(HICUMTemp)+1_e );
+    temp = clip_temperature( *(HICUMTemp)+e1 );
     *(HICUMTemp) = temp.rpart();
     *(Tdev_Vrth) = temp.dpart();
 
@@ -186,7 +187,7 @@ void hicum_thermal_update(HICUMmodel *inModel, HICUMinstance *inInstance, double
 
     //This routine calculates the derivatives with respect to Vrth. Since at some point
     // Tdev becomes constant (see above), we need to account for this like below.
-    //temp = *(HICUMTemp)+1_e* *(Tdev_Vrth);  // dual number device temperature
+    //temp = *(HICUMTemp)+e1* *(Tdev_Vrth);  // dual number device temperature
 
     vt   = temp*CONSTKoverQ;                  // dual valued temperature voltage
 
