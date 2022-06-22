@@ -317,8 +317,13 @@ ft_cpinit(void)
             }
         }
 
-        if (!found)
-            fprintf(cp_err, "Note: can't find init file.\n");
+        if (!found) {
+#if defined TCL_MODULE
+            fprintf(cp_err, "Note: can't find the initialization file tclspinit.\n");
+#else
+            fprintf(cp_err, "Note: can't find the initialization file spinit.\n");
+#endif
+        }
     }
 
     tcap_init();
