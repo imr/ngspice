@@ -972,6 +972,7 @@ static void
 fileInit_pass2(runDesc *run)
 {
     int i, type;
+    bool keepbranch = cp_getvar("keep#branch", CP_BOOL, NULL, 0);
 
     for (i = 0; i < run->numData; i++) {
 
@@ -979,7 +980,7 @@ fileInit_pass2(runDesc *run)
 
         type = guess_type(name);
 
-        if (type == SV_CURRENT) {
+        if (type == SV_CURRENT && !keepbranch) {
             char *branch = strstr(name, "#branch");
             if (branch)
                 *branch = '\0';
