@@ -37,6 +37,10 @@ INDmParam(int param, IFvalue *value, GENmodel *inModel)
         mod->INDcsect = value->rValue;
         mod->INDcsectGiven = TRUE;
         break;
+    case IND_MOD_DIA:
+        mod->INDdia = value->rValue;
+        mod->INDdiaGiven = TRUE;
+        break;
     case IND_MOD_LENGTH :
         mod->INDlength = value->rValue;
         mod->INDlengthGiven = TRUE;
