@@ -165,9 +165,9 @@ ngspice_LDADD += \
 	xspice/evt/libevtxsp.la \
 	xspice/enh/libenhxsp.la \
 	xspice/ipc/libipcxsp.la \
-	xspice/idn/libidnxsp.la \
-	@XSPICEDLLIBS@
+	xspice/idn/libidnxsp.la 
 endif
+ngspice_LDADD += @XSPICEDLLIBS@
 
 ngspice_LDADD += \
 	frontend/parser/libparser.la \
@@ -452,9 +452,9 @@ libspice_la_LIBADD += \
 	xspice/evt/libevtxsp.la \
 	xspice/enh/libenhxsp.la \
 	xspice/ipc/libipcxsp.la \
-	xspice/idn/libidnxsp.la \
-	@XSPICEDLLIBS@
+	xspice/idn/libidnxsp.la 
 endif
+libspice_la_LIBADD += @XSPICEDLLIBS@
 
 libspice_la_LIBADD += \
 	frontend/parser/libparser.la \
@@ -576,9 +576,9 @@ libngspice_la_LIBADD += \
 	xspice/evt/libevtxsp.la \
 	xspice/enh/libenhxsp.la \
 	xspice/ipc/libipcxsp.la \
-	xspice/idn/libidnxsp.la \
-	@XSPICEDLLIBS@
+	xspice/idn/libidnxsp.la 
 endif
+libngspice_la_LIBADD += @XSPICEDLLIBS@
 
 libngspice_la_LIBADD += \
 	frontend/parser/libparser.la \
