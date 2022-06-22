@@ -158,7 +158,7 @@ void raw_write(char *name, struct plot *pl, bool app, bool binary)
 
     fprintf(fp, "Variables:\n");
     for (i = 0, v = pl->pl_dvecs; v; v = v->v_next) {
-        /* write i(name) instaed of name#branch */
+        /* write i(name) instead of name#branch */
         if (v->v_type == SV_CURRENT && !keepbranch) {
             branch = NULL;
             /* get name only*/
