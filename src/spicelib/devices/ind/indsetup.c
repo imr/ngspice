@@ -32,10 +32,10 @@ INDsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if (!model->INDmIndGiven) {
              model->INDmInd = 0.0;
         }
-	if (!model->INDtnomGiven) {
+        if (!model->INDtnomGiven) {
              model->INDtnom = ckt->CKTnomTemp;
         }
-	if (!model->INDtc1Given) {
+        if (!model->INDtc1Given) {
              model->INDtempCoeff1 = 0.0;
         }
         if (!model->INDtc2Given) {
@@ -43,6 +43,9 @@ INDsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         }
         if (!model->INDcsectGiven){
              model->INDcsect = 0.0;
+        }
+        if (!model->INDdiaGiven){
+             model->INDdia = 0.0;
         }
         if (!model->INDlengthGiven) {
              model->INDlength = 0.0;
@@ -53,30 +56,32 @@ INDsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if (!model->INDmuGiven) {
              model->INDmu = 1.0;
         }
-          
-	/* precompute specific inductance (one turn) */
-	if((model->INDlengthGiven) && (model->INDlength > 0.0)) {
-         model->INDspecInd = (model->INDmu * CONSTmuZero
-		     * model->INDcsect) / model->INDlength;
-	} else  {
-	     model->INDspecInd = 0.0;
-	}
 
-    /* Lundin's geometry correction factor */
-    model->INDspecInd *= Lundin(model->INDlength, model->INDcsect);
+        /* diameter takes preference over cross section */
+        if (model->INDdiaGiven) {
+            model->INDcsect = PI * model->INDdia * model->INDdia / 4.;
+        }
+          
+        /* precompute specific inductance (one turn) */
+        if((model->INDlengthGiven) && (model->INDlength > 0.0)) {
+             model->INDspecInd = (model->INDmu * CONSTmuZero
+		         * model->INDcsect) / model->INDlength;
+        } else  {
+            model->INDspecInd = 0.0;
+        }
+
+        /* Lundin's geometry correction factor */
+        model->INDspecInd *= Lundin(model->INDlength, model->INDcsect);
 
 /*
-    double kl = Lundin(model->INDlength, model->INDcsect);
-    double Dl = model->INDlength / sqrt(model->INDcsect / PI) / 2.;
-    fprintf(stdout, "Lundin's correction factor %f at l/D %f\n", kl, Dl);
+        double kl = Lundin(model->INDlength, model->INDcsect);
+        double Dl = model->INDlength / sqrt(model->INDcsect / PI) / 2.;
+        fprintf(stdout, "Lundin's correction factor %f at l/D %f\n", kl, Dl);
 */
 
-    /* How many turns ? */
-	if (!model->INDmIndGiven) 
+        /* How many turns ? */
+        if (!model->INDmIndGiven) 
             model->INDmInd = model->INDmodNt * model->INDmodNt * model->INDspecInd;
-		   
-            
-        
 	
         /* loop through all the instances of the model */
         for (here = INDinstances(model); here != NULL ;
