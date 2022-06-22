@@ -145,8 +145,11 @@ static double Lundin(double l, double csec)
     /* x = solenoid diam. / length */
     double num, den, kk, x, xx, xxxx;
 
-    if (csec < 1e-12 || l < 1e-6)
+    if (csec < 1e-12 || l < 1e-6) {
+        fprintf(stderr, "Warning: coil geometries too small (< 1um length dimensions),\n");
+        fprintf(stderr, "    Lundin's correction factor will not be calculated\n");
         return 1;
+    }
 
     x = sqrt(csec / PI) * 2. / l;
 
