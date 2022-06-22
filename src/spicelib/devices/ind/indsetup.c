@@ -10,6 +10,10 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
+#define PI 3.141592654
+
+static double Lundin(double l, double csec);
+
 int
 INDsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
    /* load the inductor structure with those pointers needed later 
@@ -56,8 +60,18 @@ INDsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
 		     * model->INDcsect) / model->INDlength;
 	} else  {
 	     model->INDspecInd = 0.0;
-	}	
-        
+	}
+
+    /* Lundin's geometry correction factor */
+    model->INDspecInd *= Lundin(model->INDlength, model->INDcsect);
+
+/*
+    double kl = Lundin(model->INDlength, model->INDcsect);
+    double Dl = model->INDlength / sqrt(model->INDcsect / PI) / 2.;
+    fprintf(stdout, "Lundin's correction factor %f at l/D %f\n", kl, Dl);
+*/
+
+    /* How many turns ? */
 	if (!model->INDmIndGiven) 
             model->INDmInd = model->INDmodNt * model->INDmodNt * model->INDspecInd;
 		   
@@ -118,3 +132,32 @@ INDunsetup(GENmodel *inModel, CKTcircuit *ckt)
     }
     return OK;
 }
+
+/* Calculates Nagaoka's coeff. using Lundin's handbook formula.
+   D: W. Knight, https://g3ynh.info/zdocs/magnetics/Solenoids.pdf, p. 36 */
+static double Lundin(double l, double csec)
+{
+    /* x = solenoid diam. / length */
+    double num, den, kk, x, xx, xxxx;
+
+    if (csec < 1e-12 || l < 1e-6)
+        return 1;
+
+    x = sqrt(csec / PI) * 2. / l;
+
+    xx = x * x;
+    xxxx = xx * xx;
+
+    if (x < 1) {
+        num = 1 + 0.383901 * xx + 0.017108 * xxxx;
+        den = 1 + 0.258952 * xx;
+        return num / den - 4 * x / (3 * PI);
+    }
+    else {
+        num = (log(4 * x) - 0.5) * (1 + 0.383901 / xx + 0.017108 / xxxx);
+        den = 1 + 0.258952 / xx;
+        kk = 0.093842 / xx + 0.002029 / xxxx - 0.000801 / (xx * xxxx);
+        return 2 * (num / den + kk) / (PI * x);
+    }
+}
+
