@@ -3,7 +3,7 @@ import os
 import shutil
 import glob
 from pathlib import Path
-from typing import Optional
+from typing import Optional, List, Dict, Tuple
 import regex as re
 from subprocess import run, PIPE
 import pandas as pd
@@ -132,13 +132,13 @@ def parse_temps(line):
 
 
 class TestInfo:
-    biases: Optional[dict[str, str]] = None
-    bias_list: Optional[tuple[str, list[str]]]  = None
+    biases: Optional[Dict[str, str]] = None
+    bias_list: Optional[Tuple[str, List[str]]]  = None
     bias_sweep = None
-    temps: Optional[list[str]] = None
+    temps: Optional[List[str]] = None
     freqs: Optional[str] = None
-    dc_outputs: Optional[list[tuple[str, str]]] = None
-    ac_outputs:  Optional[dict[str,list[tuple[str, str, bool, str, str]]]] = None
+    dc_outputs: Optional[List[Tuple[str, str]]] = None
+    ac_outputs:  Optional[Dict[str,List[Tuple[str, str, bool, str, str]]]] = None
     instanceParameters: str= ""
     modelParameters: str = ""
     line: str = ""
@@ -362,13 +362,19 @@ quit 0
 .end
 """
 
-    def dc_results_path(self) -> Path:
-        return Path("results")/f"{self.name}.ngspice"
+    def dc_results_path(self, old=False) -> Path:
+        dir = "results"
+        if old:
+            dir = "results_old"
+        return Path(dir)/f"{self.name}.ngspice"
 
-    def ac_results_path(self, pin: str) -> Path:
-        return Path("results")/f"{self.name}_{pin}.ngspice"
+    def ac_results_path(self, pin: str, old=False) -> Path:
+        dir = "results"
+        if old:
+            dir = "results_old"
+        return Path(dir)/f"{self.name}_{pin}.ngspice"
 
-    def run(self, osdi_file, va_module, type_arg):
+    def run(self, osdi_file, va_module, type_arg, old_sim_ref=False, capture=True, check=True):
         if not (self.dc_outputs or self.ac_outputs):
             return
 
@@ -378,12 +384,15 @@ quit 0
         netlist = self.gen_netlist(osdi_file, va_module, type_arg)
         Path(netlist_path).write_text(netlist)
 
-        res = run([ngspice_path, netlist_path, "-b"], capture_output=True)
+        res = run([ngspice_path, netlist_path, "-b"], capture_output=capture)
         res.check_returncode()
         # res.check_returncode()
 
         reference_path = Path("reference")/f"{self.name}.standard"
         references = pd.read_csv(reference_path, sep="\\s+")
+
+        if not check:
+            return
 
         if self.dc_outputs:
             results_path = self.dc_results_path()
@@ -396,6 +405,13 @@ quit 0
             results = results.apply(pd.to_numeric, errors='coerce')
             firstcol = results.iloc[:,1].to_numpy()
             results = results[np.bitwise_not(np.isnan(firstcol))]
+            
+            if old_sim_ref:
+                ref_path = self.dc_results_path(old=True)
+                references = pd.read_csv(ref_path, sep="\\s+")
+                references = references.apply(pd.to_numeric, errors='coerce')
+                firstcol = references.iloc[:,1].to_numpy()
+                references = references[np.bitwise_not(np.isnan(firstcol))]
 
             for result_col, ref_col in self.dc_outputs:
                 reference = references[ref_col].to_numpy()
@@ -404,7 +420,7 @@ quit 0
                     result = -result
 
                 adiff = np.abs(result-reference)
-                rdiff = adiff/reference
+                rdiff = adiff/np.abs(reference)
                 err = np.bitwise_not(np.bitwise_or(rdiff < rtol, adiff < atol_dc))
                 if not np.any(err):
                     continue
@@ -424,19 +440,33 @@ quit 0
                 firstcol = results.iloc[:,1].to_numpy()
                 results = results[np.bitwise_not(np.isnan(firstcol))]
 
+                if old_sim_ref:
+                    ref_path = self.ac_results_path(pin, old=True)
+                    references = pd.read_csv(ref_path, sep="\\s+")
+                    references = references.apply(pd.to_numeric, errors='coerce')
+                    firstcol = references.iloc[:,1].to_numpy()
+                    references = references[np.bitwise_not(np.isnan(firstcol))]
+
                 for result_col, ref_col, is_cap, pin1, pin2  in outputs:
                     result = results[result_col].to_numpy()
-                    reference = references[ref_col].to_numpy()
-                    if is_cap:
-                        if"Freq" in references:
-                            result = result /(twoPi*results["frequency"])
-                        if pin1 == pin2:
-                            result = -result
+                    if old_sim_ref:
+                        reference = references[result_col].to_numpy()
+                        # print(ref_col)
+                        # print(references)
+                        # print(results)
                     else:
-                        result = -result
+                        reference = references[ref_col].to_numpy()
+                    if not old_sim_ref:
+                        if is_cap:
+                            if"Freq" in references:
+                                result = result /(twoPi*results["frequency"])
+                            if pin1 == pin2:
+                                result = -result
+                        else:
+                            result = -result
 
                     adiff = np.abs(result-reference)
-                    rdiff = adiff/reference
+                    rdiff = adiff/np.abs(reference)
                     err = np.bitwise_not(np.bitwise_or(rdiff < rtol, adiff < atol_ac))
                     if not np.any(err):
                         continue
@@ -457,10 +487,10 @@ def removeComments(string):
     return string
 
 class QaSpec:
-    temps: list[str]
-    pins: list[str]
-    floating: list[str]
-    tests: list[TestInfo]
+    temps: List[str]
+    pins: List[str]
+    floating: List[str]
+    tests: List[TestInfo]
     dir: Path
 
     def __init__(self, dir: Path):
@@ -503,10 +533,27 @@ class QaSpec:
 
         os.chdir(old_dir)
 
+    def run(self, va_file, va_module, type_arg, filter=None, openvaf=None, cache = None, old_sim_ref=False, capture=True, check=True):
+        if openvaf:
+            if not cache:
+                result = run(
+                    ["md5sum", openvaf],
+                    stdout=PIPE,
+                )
+                result.check_returncode()
+                md5sum = result.stdout[:-1].decode("utf-8").split(" ")[0]
+                cache = f"./.cache/{md5sum}"
+                Path(cache).mkdir(parents=True,exist_ok=True)
+        else:
+            openvaf = "openvaf"
 
-    def run(self, va_file, va_module, type_arg, filter=None):
+        args = [openvaf,"-b", va_file]
+        if cache:
+            args.append("--cache-dir")
+            args.append(cache)
+        # print(args, cache)
         result = run(
-            ["openvaf","-b", va_file],
+            args,
             stdout=PIPE,
         )
         result.check_returncode()
@@ -515,17 +562,25 @@ class QaSpec:
         old_dir = os.getcwd()
         os.chdir(self.dir)
 
+
+
         dirpath = Path('netlists')
-        if dirpath.exists() and dirpath.is_dir():
+        if dirpath.exists():
             shutil.rmtree(dirpath)
         os.mkdir("netlists")
 
         dirpath = Path('results')
-        if dirpath.exists() and dirpath.is_dir():
+        if old_sim_ref:
+            old_path = Path("results_old")
+            if old_path.exists():
+                shutil.rmtree(old_path)
+            shutil.move(dirpath,old_path)
+        elif dirpath.exists():
             shutil.rmtree(dirpath)
-        os.mkdir("results")
+
+        dirpath.mkdir(exist_ok=False)
         for test in self.tests:
             if filter and not test.name in filter:
                 continue
-            test.run(osdi_file, va_module, type_arg)
+            test.run(osdi_file, va_module, type_arg, old_sim_ref=old_sim_ref, capture=capture, check=check)
         os.chdir(old_dir)
