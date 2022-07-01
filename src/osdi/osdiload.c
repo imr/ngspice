@@ -54,28 +54,31 @@ extern int OSDIload(GENmodel *inModel, CKTcircuit *ckt) {
   bool is_tran = ckt->CKTmode & (MODETRAN) || is_tran_op;
   bool is_init_tran = ckt->CKTmode & MODEINITTRAN;
 
-  uint32_t flags = CALC_RESIST_JACOBIAN;
-
-  OsdiSimParas sim_params_ = get_simparams(ckt);
+  OsdiSimInfo sim_info = {
+      .paras = get_simparams(ckt),
+      .abstime = (is_tran || is_tran_op) ? ckt->CKTtime : 0.0,
+      .prev_solve = ckt->CKTrhsOld,
+      .flags = CALC_RESIST_JACOBIAN,
+  };
 
   if (is_init_smsig || is_sweep) {
-    flags |= CALC_OP;
+    sim_info.flags |= CALC_OP;
   }
 
   if (!is_init_smsig) {
-    flags |= CALC_RESIST_RESIDUAL;
+    sim_info.flags |= CALC_RESIST_RESIDUAL;
   }
 
   if (is_tran || is_ac || is_tran_op) {
-    flags |= CALC_REACT_JACOBIAN;
+    sim_info.flags |= CALC_REACT_JACOBIAN;
   }
 
   if (is_tran || is_tran_op) {
-    flags |= CALC_REACT_RESIDUAL;
+    sim_info.flags |= CALC_REACT_RESIDUAL;
   }
 
   if (ckt->CKTmode & MODEACNOISE) {
-    flags |= CALC_NOISE;
+    sim_info.flags |= CALC_NOISE;
   }
 
   int ret = OK;
@@ -94,8 +97,7 @@ extern int OSDIload(GENmodel *inModel, CKTcircuit *ckt) {
        data here*/
       handle = (OsdiNgspiceHandle){.kind = 3, .name = gen_inst->GENname};
       /* TODO initial conditions? */
-      uint32_t ret_flags = descr->eval(&handle, inst, model, flags,
-                                       ckt->CKTrhsOld, &sim_params_);
+      uint32_t ret_flags = descr->eval(&handle, inst, model, &sim_info);
 
       /* call to $fatal in Verilog-A abort!*/
       if (ret_flags & EVAL_RET_FLAG_FATAL) {

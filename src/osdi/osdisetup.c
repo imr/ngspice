@@ -323,9 +323,20 @@ extern int OSDItemp(GENmodel *inModel, CKTcircuit *ckt) {
       }
 
       handle = (OsdiNgspiceHandle){.kind = 2, .name = gen_inst->GENname};
-      // TODO optional terminals
+      /* find number of connected ports to allow evaluation of $port_connected
+       * and to handle node collapsing correctly later
+       * */
+      int *terminals = (int *)(gen_inst + 1);
+      uint32_t connected_terminals = descr->num_terminals;
+      for (uint32_t i = 0; i < descr->num_terminals; i++) {
+        if (terminals[i] == -1) {
+          connected_terminals = i;
+          break;
+        }
+      }
+
       descr->setup_instance((void *)&handle, inst, model, temp,
-                            descr->num_terminals, sim_params, &init_info);
+                            connected_terminals, sim_params, &init_info);
       res = handle_init_info(init_info, descr);
       if (res) {
         errRtn = "OSDI setup_instance (OSDItemp)";

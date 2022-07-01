@@ -163,12 +163,17 @@ extern SPICEdev *osdi_create_spicedev(const OsdiRegistryEntry *entry) {
   // fill generic functions
   OSDIinfo->DEVparam = OSDIparam;
   OSDIinfo->DEVmodParam = OSDImParam;
-  OSDIinfo->DEVsetup = OSDIsetup;
   OSDIinfo->DEVask = OSDIask;
+  OSDIinfo->DEVsetup = OSDIsetup;
+  OSDIinfo->DEVpzSetup = OSDIsetup;
   OSDIinfo->DEVtemperature = OSDItemp;
+  OSDIinfo->DEVunsetup = OSDIunsetup;
   OSDIinfo->DEVload = OSDIload;
   OSDIinfo->DEVacLoad = OSDIacLoad;
-  OSDIinfo->DEVunsetup = OSDIunsetup;
+  OSDIinfo->DEVpzLoad = OSDIpzLoad;
+  OSDIinfo->DEVtrunc = OSDItrunc;
+
+
 
   return OSDIinfo;
 }
