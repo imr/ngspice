@@ -23,6 +23,8 @@ extern uint32_t OSDI_VERSION_MINOR;
 extern uint32_t OSDI_NUM_DESCRIPTORS;
 extern OsdiDescriptor OSDI_DESCRIPTORS[1];
 
+#define IGNORE(x) (void)x
+
 // number of nodes and definitions of node ids for nicer syntax in this file
 // note: order should be same as "nodes" list defined later
 #define NUM_NODES 4
@@ -52,8 +54,7 @@ extern OsdiDescriptor OSDI_DESCRIPTORS[1];
 #define TNODE_CI 13
 
 // The model structure for the diode
-typedef struct DiodeModel
-{
+typedef struct DiodeModel {
   double Rs;
   bool Rs_given;
   double Is;
@@ -82,16 +83,16 @@ typedef struct DiodeModel
 } DiodeModel;
 
 // The instace structure for the diode
-typedef struct DiodeInstace
-{
+typedef struct DiodeInstace {
   double mfactor; // multiplication factor for parallel devices
   bool mfactor_given;
   double temperature;
-  double rhs_resist[NUM_NODES];
-  double rhs_react[NUM_NODES];
+  double residual_resist[NUM_NODES];
+  double residual_react_A;
+  double residual_react_CI;
   double jacobian_resist[NUM_MATRIX];
   double jacobian_react[NUM_MATRIX];
-  bool is_collapsible[NUM_COLLAPSIBLE];
+  bool collapsed[NUM_COLLAPSIBLE];
   double *jacobian_ptr_resist[NUM_MATRIX];
   double *jacobian_ptr_react[NUM_MATRIX];
   uint32_t node_off[NUM_NODES];
@@ -99,33 +100,25 @@ typedef struct DiodeInstace
 
 #define EXP_LIM 80.0
 
-double limexp(double x)
-{
-  if (x < EXP_LIM)
-  {
+static double limexp(double x) {
+  if (x < EXP_LIM) {
     return exp(x);
-  }
-  else
-  {
+  } else {
     return exp(EXP_LIM) * (x + 1 - EXP_LIM);
   }
 }
 
-double dlimexp(double x)
-{
-  if (x < EXP_LIM)
-  {
+static double dlimexp(double x) {
+  if (x < EXP_LIM) {
     return exp(x);
-  }
-  else
-  {
+  } else {
     return exp(EXP_LIM);
   }
 }
 
 // implementation of the access function as defined by the OSDI spec
-void *osdi_access(void *inst_, void *model_, uint32_t id, uint32_t flags)
-{
+static void *osdi_access(void *inst_, void *model_, uint32_t id,
+                         uint32_t flags) {
   DiodeModel *model = (DiodeModel *)model_;
   DiodeInstace *inst = (DiodeInstace *)inst_;
 
@@ -135,13 +128,10 @@ void *osdi_access(void *inst_, void *model_, uint32_t id, uint32_t flags)
   switch (id) // id of params defined in param_opvar array
   {
   case 0:
-    if (flags & ACCESS_FLAG_INSTANCE)
-    {
+    if (flags & ACCESS_FLAG_INSTANCE) {
       value = (void *)&inst->mfactor;
       given = &inst->mfactor_given;
-    }
-    else
-    {
+    } else {
       value = (void *)&model->mfactor;
       given = &model->mfactor_given;
     }
@@ -194,8 +184,7 @@ void *osdi_access(void *inst_, void *model_, uint32_t id, uint32_t flags)
     return NULL;
   }
 
-  if (flags & ACCESS_FLAG_SET)
-  {
+  if (flags & ACCESS_FLAG_SET) {
     *given = true;
   }
 
@@ -203,102 +192,96 @@ void *osdi_access(void *inst_, void *model_, uint32_t id, uint32_t flags)
 }
 
 // implementation of the setup_model function as defined in the OSDI spec
-OsdiInitInfo setup_model(void *_handle, void *model_)
-{
+static void setup_model(void *handle, void *model_, OsdiSimParas *sim_params,
+                        OsdiInitInfo *res) {
   DiodeModel *model = (DiodeModel *)model_;
 
+  IGNORE(handle);
+  IGNORE(sim_params);
+
   // set parameters and check bounds
-  if (!model->mfactor_given)
-  {
+  if (!model->mfactor_given) {
     model->mfactor = 1.0;
   }
-  if (!model->Rs_given)
-  {
+  if (!model->Rs_given) {
     model->Rs = 1e-9;
   }
-  if (!model->Is_given)
-  {
+  if (!model->Is_given) {
     model->Is = 1e-14;
   }
-  if (!model->zetars_given)
-  {
+  if (!model->zetars_given) {
     model->zetars = 0;
   }
-  if (!model->N_given)
-  {
+  if (!model->N_given) {
     model->N = 1;
   }
-  if (!model->Cj0_given)
-  {
+  if (!model->Cj0_given) {
     model->Cj0 = 0;
   }
-  if (!model->Vj_given)
-  {
+  if (!model->Vj_given) {
     model->Vj = 1.0;
   }
-  if (!model->M_given)
-  {
+  if (!model->M_given) {
     model->M = 0.5;
   }
-  if (!model->Rth_given)
-  {
+  if (!model->Rth_given) {
     model->Rth = 0;
   }
-  if (!model->zetarth_given)
-  {
+  if (!model->zetarth_given) {
     model->zetarth = 0;
   }
-  if (!model->zetais_given)
-  {
+  if (!model->zetais_given) {
     model->zetais = 0;
   }
-  if (!model->Tnom_given)
-  {
+  if (!model->Tnom_given) {
     model->Tnom = 300;
   }
 
-  return (OsdiInitInfo){.flags = 0, .num_errors = 0, .errors = NULL};
+  *res = (OsdiInitInfo){.flags = 0, .num_errors = 0, .errors = NULL};
 }
 
 // implementation of the setup_instace function as defined in the OSDI spec
-OsdiInitInfo setup_instance(void *_handle, void *inst_, void *model_,
-                            double temperature, uint32_t _num_terminals)
-{
+static void setup_instance(void *handle, void *inst_, void *model_,
+                           double temperature, uint32_t num_terminals,
+                           OsdiSimParas *sim_params, OsdiInitInfo *res) {
+
+  IGNORE(handle);
+  IGNORE(num_terminals);
+  IGNORE(sim_params);
+
   DiodeInstace *inst = (DiodeInstace *)inst_;
   DiodeModel *model = (DiodeModel *)model_;
 
-  // Here the logic for node collapsing ist implemented. The indices in this list must adhere to the "collapsible" List of node pairs.
-  if (model->Rs<1e-9){ // Rs between Ci C
-    inst->is_collapsible[0] = true;
+  // Here the logic for node collapsing ist implemented. The indices in this
+  // list must adhere to the "collapsible" List of node pairs.
+  if (model->Rs < 1e-9) { // Rs between Ci C
+    inst->collapsed[0] = true;
   }
-  if (model->Rth<1e-9){ // Rs between Ci C
-    inst->is_collapsible[1] = true;
+  if (model->Rth < 1e-9) { // Rs between Ci C
+    inst->collapsed[1] = true;
   }
 
-  if (!inst->mfactor_given)
-  {
-    if (model->mfactor_given)
-    {
+  if (!inst->mfactor_given) {
+    if (model->mfactor_given) {
       inst->mfactor = model->mfactor;
-    }
-    else
-    {
+    } else {
       inst->mfactor = 1;
     }
   }
 
   inst->temperature = temperature;
-  return (OsdiInitInfo){.flags = 0, .num_errors = 0, .errors = NULL};
+  *res = (OsdiInitInfo){.flags = 0, .num_errors = 0, .errors = NULL};
 }
 
 // implementation of the eval function as defined in the OSDI spec
-uint32_t eval(void *handle, void *inst_, void *model_, uint32_t flags,
-              double *prev_solve, OsdiSimParas *sim_params)
-{
+static uint32_t eval(void *handle, void *inst_, void *model_,
+                     OsdiSimInfo *info) {
+  IGNORE(handle);
   DiodeModel *model = (DiodeModel *)model_;
   DiodeInstace *inst = (DiodeInstace *)inst_;
 
   // get voltages
+  double *prev_solve = info->prev_solve;
   double va = prev_solve[inst->node_off[A]];
   double vc = prev_solve[inst->node_off[C]];
   double vci = prev_solve[inst->node_off[CI]];
@@ -308,11 +291,9 @@ uint32_t eval(void *handle, void *inst_, void *model_, uint32_t flags,
   double vaci = va - vci;
 
   double gmin = 1e-12;
-  for (int i = 0; sim_params->names[i] != NULL; i++)
-  {
-    if (strcmp(sim_params->names[i], "gmin") == 0)
-    {
-      gmin = sim_params->vals[i];
+  for (int i = 0; info->paras.names[i] != NULL; i++) {
+    if (strcmp(info->paras.names[i], "gmin") == 0) {
+      gmin = info->paras.vals[i];
     }
   }
 
@@ -325,18 +306,18 @@ uint32_t eval(void *handle, void *inst_, void *model_, uint32_t flags,
   double pq = 1.602176462e-19;
   double t_dev = inst->temperature + vdtj;
   double tdev_tnom = t_dev / model->Tnom;
-  double rs_t = model->Rs * powf(tdev_tnom, model->zetars);
-  double rth_t = model->Rth * powf(tdev_tnom, model->zetarth);
-  double is_t = model->Is * powf(tdev_tnom, model->zetais);
+  double rs_t = model->Rs * pow(tdev_tnom, model->zetars);
+  double rth_t = model->Rth * pow(tdev_tnom, model->zetarth);
+  double is_t = model->Is * pow(tdev_tnom, model->zetais);
   double vt = t_dev * pk / pq;
 
   // derivatives w.r.t. temperature
   double rs_dt = model->zetars * model->Rs *
-                 powf(tdev_tnom, model->zetars - 1.0) / model->Tnom;
+                 pow(tdev_tnom, model->zetars - 1.0) / model->Tnom;
   double rth_dt = model->zetarth * model->Rth *
-                  powf(tdev_tnom, model->zetarth - 1.0) / model->Tnom;
+                  pow(tdev_tnom, model->zetarth - 1.0) / model->Tnom;
   double is_dt = model->zetais * model->Is *
-                 powf(tdev_tnom, model->zetais - 1.0) / model->Tnom;
+                 pow(tdev_tnom, model->zetais - 1.0) / model->Tnom;
   double vt_tj = pk / pq;
 
   // evaluate model equations and calculate all derivatives
@@ -351,23 +332,22 @@ uint32_t eval(void *handle, void *inst_, void *model_, uint32_t flags,
   double irs = 0;
   double g = 0;
   double grt = 0;
-  if (!inst->is_collapsible[0]) {
+  if (!inst->collapsed[0]) {
     irs = vcic / rs_t;
     g = 1.0 / rs_t;
     grt = -irs / rs_t * rs_dt;
   }
 
-
   // thermal resistance
   double irth = 0;
   double gt = 0;
-  if (!inst->is_collapsible[1]) {
+  if (!inst->collapsed[1]) {
     irth = vdtj / rth_t;
     gt = 1.0 / rth_t - irth / rth_t * rth_dt;
   }
 
   // charge
-  double vf = model->Vj * (1.0 - powf(3.04, -1.0 / model->M));
+  double vf = model->Vj * (1.0 - pow(3.04, -1.0 / model->M));
   double x = (vf - vaci) / vt;
   double x_vt = -x / vt;
   double x_dtj = x_vt * vt_tj;
@@ -383,22 +363,22 @@ uint32_t eval(void *handle, void *inst_, void *model_, uint32_t flags,
   double vd_dtj = vd_x * x_dtj + vd_y * y_dtj + vd_vt * vt_tj;
   double vd_vaci = vd_x * x_vaci + vd_y * y_vaci;
   double qd = model->Cj0 * vaci * model->Vj *
-              (1.0 - powf(1.0 - vd / model->Vj, 1.0 - model->M)) /
+              (1.0 - pow(1.0 - vd / model->Vj, 1.0 - model->M)) /
               (1.0 - model->M);
   double qd_vd = model->Cj0 * model->Vj / (1.0 - model->M) * (1.0 - model->M) *
-                 powf(1.0 - vd / model->Vj, 1.0 - model->M - 1.0) / model->Vj;
+                 pow(1.0 - vd / model->Vj, 1.0 - model->M - 1.0) / model->Vj;
   double qd_dtj = qd_vd * vd_dtj;
   double qd_vaci = qd_vd * vd_vaci;
 
   // thermal power source = current source
-  double ith = id * vaci ;
-  double ith_vtj = gdt * vaci ;
+  double ith = id * vaci;
+  double ith_vtj = gdt * vaci;
   double ith_vcic = 0;
   double ith_vaci = gd * vaci + id;
-  if (!inst->is_collapsible[0]) {
+  if (!inst->collapsed[0]) {
     ith_vcic = 2.0 * vcic / rs_t;
-    ith += powf(vcic, 2.0) / rs_t;
-    ith_vtj -= - powf(vcic, 2.0) / rs_t / rs_t * rs_dt;
+    ith += pow(vcic, 2.0) / rs_t;
+    ith_vtj -= -pow(vcic, 2.0) / rs_t / rs_t * rs_dt;
   }
 
   id += gmin * vaci;
@@ -410,28 +390,25 @@ uint32_t eval(void *handle, void *inst_, void *model_, uint32_t flags,
   // write rhs
   ////////////////
 
-  if (flags & CALC_RESIST_RESIDUAL)
-  {
+  if (info->flags & CALC_RESIST_RESIDUAL) {
     // write resist rhs
-    inst->rhs_resist[A] = id * mfactor;
-    inst->rhs_resist[CI] = -id * mfactor + irs * mfactor;
-    inst->rhs_resist[C] = -irs * mfactor;
-    inst->rhs_resist[TNODE] = -ith * mfactor + irth * mfactor;
+    inst->residual_resist[A] = id * mfactor;
+    inst->residual_resist[CI] = -id * mfactor + irs * mfactor;
+    inst->residual_resist[C] = -irs * mfactor;
+    inst->residual_resist[TNODE] = -ith * mfactor + irth * mfactor;
   }
 
-  if (flags & CALC_REACT_RESIDUAL)
-  {
+  if (info->flags & CALC_REACT_RESIDUAL) {
     // write react rhs
-    inst->rhs_react[A] = qd * mfactor;
-    inst->rhs_react[CI] = -qd * mfactor;
+    inst->residual_react_A = qd * mfactor;
+    inst->residual_react_CI = -qd * mfactor;
   }
 
   //////////////////
   // write Jacobian
   //////////////////
 
-  if (flags & CALC_RESIST_JACOBIAN)
-  {
+  if (info->flags & CALC_RESIST_JACOBIAN) {
     // stamp diode (current flowing from Ci into A)
     inst->jacobian_resist[A_A] = gd * mfactor;
     inst->jacobian_resist[A_CI] = -gd * mfactor;
@@ -460,8 +437,7 @@ uint32_t eval(void *handle, void *inst_, void *model_, uint32_t flags,
     inst->jacobian_resist[TNODE_A] = ith_vaci * mfactor;
   }
 
-  if (flags & CALC_REACT_JACOBIAN)
-  {
+  if (info->flags & CALC_REACT_JACOBIAN) {
     // write react matrix
     // stamp Qd between nodes A and Ci depending also on dT
     inst->jacobian_react[A_A] = qd_vaci * mfactor;
@@ -477,43 +453,45 @@ uint32_t eval(void *handle, void *inst_, void *model_, uint32_t flags,
 }
 
 // TODO implementation of the load_noise function as defined in the OSDI spec
-void load_noise(void *inst, void *model, double freq, double *noise_dens,
-                double *ln_noise_dens)
-{
+static void load_noise(void *inst, void *model, double freq, double *noise_dens,
+                       double *ln_noise_dens) {
+  IGNORE(inst);
+  IGNORE(model);
+  IGNORE(freq);
+  IGNORE(noise_dens);
+  IGNORE(ln_noise_dens);
   // TODO add noise to example
 }
 
-#define LOAD_RHS_RESIST(name) \
-  dst[inst->node_off[name]] += inst->rhs_resist[name];
+#define LOAD_RESIDUAL_RESIST(name)                                             \
+  dst[inst->node_off[name]] += inst->residual_resist[name];
 
 // implementation of the load_rhs_resist function as defined in the OSDI spec
-void load_residual_resist(void *inst_, double *dst)
-{
+static void load_residual_resist(void *inst_, void *model, double *dst) {
   DiodeInstace *inst = (DiodeInstace *)inst_;
 
-  LOAD_RHS_RESIST(A)
-  LOAD_RHS_RESIST(CI)
-  LOAD_RHS_RESIST(C)
-  LOAD_RHS_RESIST(TNODE)
+  IGNORE(model);
+  LOAD_RESIDUAL_RESIST(A)
+  LOAD_RESIDUAL_RESIST(CI)
+  LOAD_RESIDUAL_RESIST(C)
+  LOAD_RESIDUAL_RESIST(TNODE)
 }
-
-#define LOAD_RHS_REACT(name) dst[inst->node_off[name]] += inst->rhs_react[name];
 
 // implementation of the load_rhs_react function as defined in the OSDI spec
-void load_residual_react(void *inst_, double *dst)
-{
+static void load_residual_react(void *inst_, void *model, double *dst) {
+  IGNORE(model);
   DiodeInstace *inst = (DiodeInstace *)inst_;
 
-  LOAD_RHS_REACT(A)
-  LOAD_RHS_REACT(CI)
+  dst[inst->node_off[A]] += inst->residual_react_A;
+  dst[inst->node_off[CI]] += inst->residual_react_CI;
 }
 
-#define LOAD_MATRIX_RESIST(name) \
+#define LOAD_MATRIX_RESIST(name)                                               \
   *inst->jacobian_ptr_resist[name] += inst->jacobian_resist[name];
 
 // implementation of the load_matrix_resist function as defined in the OSDI spec
-void load_jacobian_resist(void *inst_)
-{
+static void load_jacobian_resist(void *inst_, void *model) {
+  IGNORE(model);
   DiodeInstace *inst = (DiodeInstace *)inst_;
   LOAD_MATRIX_RESIST(A_A)
   LOAD_MATRIX_RESIST(A_CI)
@@ -534,12 +512,12 @@ void load_jacobian_resist(void *inst_)
   LOAD_MATRIX_RESIST(TNODE_CI)
 }
 
-#define LOAD_MATRIX_REACT(name) \
+#define LOAD_MATRIX_REACT(name)                                                \
   *inst->jacobian_ptr_react[name] += inst->jacobian_react[name] * alpha;
 
 // implementation of the load_matrix_react function as defined in the OSDI spec
-void load_jacobian_react(void *inst_, double alpha)
-{
+static void load_jacobian_react(void *inst_, void *model, double alpha) {
+  IGNORE(model);
   DiodeInstace *inst = (DiodeInstace *)inst_;
   LOAD_MATRIX_REACT(A_A)
   LOAD_MATRIX_REACT(A_CI)
@@ -550,16 +528,15 @@ void load_jacobian_react(void *inst_, double alpha)
   LOAD_MATRIX_REACT(CI_TNODE)
 }
 
-#define LOAD_MATRIX_TRAN(name) \
+#define LOAD_MATRIX_TRAN(name)                                                 \
   *inst->jacobian_ptr_resist[name] += inst->jacobian_react[name] * alpha;
 
 // implementation of the load_matrix_tran function as defined in the OSDI spec
-void load_jacobian_tran(void *inst_, double alpha)
-{
+static void load_jacobian_tran(void *inst_, void *model, double alpha) {
   DiodeInstace *inst = (DiodeInstace *)inst_;
 
   // set dc stamps
-  load_jacobian_resist(inst_);
+  load_jacobian_resist(inst_, model);
 
   // add reactive contributions
   LOAD_MATRIX_TRAN(A_A)
@@ -572,41 +549,39 @@ void load_jacobian_tran(void *inst_, double alpha)
 }
 
 // implementation of the load_spice_rhs_dc function as defined in the OSDI spec
-void load_spice_rhs_dc(void *inst_, double *dst, double *prev_solve)
-{
+static void load_spice_rhs_dc(void *inst_, void *model, double *dst,
+                              double *prev_solve) {
+  IGNORE(model);
   DiodeInstace *inst = (DiodeInstace *)inst_;
   double va = prev_solve[inst->node_off[A]];
   double vci = prev_solve[inst->node_off[CI]];
   double vc = prev_solve[inst->node_off[C]];
   double vdtj = prev_solve[inst->node_off[TNODE]];
 
-  dst[inst->node_off[A]] += inst->jacobian_resist[A_A] * va +
-                            inst->jacobian_resist[A_TNODE] * vdtj +
-                            inst->jacobian_resist[A_CI] * vci -
-                            inst->rhs_resist[A];
+  dst[inst->node_off[A]] +=
+      inst->jacobian_resist[A_A] * va + inst->jacobian_resist[A_TNODE] * vdtj +
+      inst->jacobian_resist[A_CI] * vci - inst->residual_resist[A];
 
   dst[inst->node_off[CI]] += inst->jacobian_resist[CI_A] * va +
                              inst->jacobian_resist[CI_TNODE] * vdtj +
                              inst->jacobian_resist[CI_CI] * vci -
-                             inst->rhs_resist[CI];
+                             inst->residual_resist[CI];
 
-  dst[inst->node_off[C]] += inst->jacobian_resist[C_C] * vc +
-                            inst->jacobian_resist[C_CI] * vci +
-                            inst->jacobian_resist[C_TNODE] * vdtj -
-                            inst->rhs_resist[C];
+  dst[inst->node_off[C]] +=
+      inst->jacobian_resist[C_C] * vc + inst->jacobian_resist[C_CI] * vci +
+      inst->jacobian_resist[C_TNODE] * vdtj - inst->residual_resist[C];
 
   dst[inst->node_off[TNODE]] += inst->jacobian_resist[TNODE_A] * va +
                                 inst->jacobian_resist[TNODE_C] * vc +
                                 inst->jacobian_resist[TNODE_CI] * vci +
                                 inst->jacobian_resist[TNODE_TNODE] * vdtj -
-                                inst->rhs_resist[TNODE];
+                                inst->residual_resist[TNODE];
 }
 
 // implementation of the load_spice_rhs_tran function as defined in the OSDI
 // spec
-void load_spice_rhs_tran(void *inst_, double *dst, double *prev_solve,
-                         double alpha)
-{
+static void load_spice_rhs_tran(void *inst_, void *model, double *dst,
+                                double *prev_solve, double alpha) {
 
   DiodeInstace *inst = (DiodeInstace *)inst_;
   double va = prev_solve[inst->node_off[A]];
@@ -614,46 +589,83 @@ void load_spice_rhs_tran(void *inst_, double *dst, double *prev_solve,
   double vdtj = prev_solve[inst->node_off[TNODE]];
 
   // set DC rhs
-  load_spice_rhs_dc(inst_, dst, prev_solve);
+  load_spice_rhs_dc(inst_, model, dst, prev_solve);
 
   // add contributions due to reactive elements
-  dst[inst->node_off[A]] +=
-      alpha * (inst->jacobian_react[A_A] * va +
-               inst->jacobian_react[A_CI] * vci +
-               inst->jacobian_react[A_TNODE] * vdtj);
+  dst[inst->node_off[A]] += alpha * (inst->jacobian_react[A_A] * va +
+                                     inst->jacobian_react[A_CI] * vci +
+                                     inst->jacobian_react[A_TNODE] * vdtj);
 
   dst[inst->node_off[CI]] += alpha * (inst->jacobian_react[CI_CI] * vci +
                                       inst->jacobian_react[CI_A] * va +
                                       inst->jacobian_react[CI_TNODE] * vdtj);
 }
 
-// structure that provides information of all nodes of the model
-OsdiNode nodes[NUM_NODES] = {
-    {.name = "A", .units = "V", .is_reactive = true},
-    {.name = "C", .units = "V"},
-    {.name = "dT", .units = "K"},
-    {.name = "CI", .units = "V", .is_reactive = true},
-};
+#define RESIST_RESIDUAL_OFF(NODE)                                              \
+  (offsetof(DiodeInstace, residual_resist) + sizeof(uint32_t) * NODE)
 
-// boolean array that tells which Jacobian entries are constant. Nothing is
-// constant with selfheating, though.
-bool const_jacobian_entries[NUM_MATRIX] = {};
+// structure that provides information of all nodes of the model
+const OsdiNode nodes[NUM_NODES] = {
+    {
+        .name = "A",
+        .units = "V",
+        .residual_units = "A",
+        .resist_residual_off = RESIST_RESIDUAL_OFF(A),
+        .react_residual_off = offsetof(DiodeInstace, residual_react_A),
+    },
+    {
+        .name = "C",
+        .units = "V",
+        .residual_units = "A",
+        .resist_residual_off = RESIST_RESIDUAL_OFF(C),
+        .react_residual_off = UINT32_MAX, // no reactive residual
+
+    },
+    {
+        .name = "dT",
+        .units = "K",
+        .residual_units = "W",
+        .resist_residual_off = RESIST_RESIDUAL_OFF(TNODE),
+        .react_residual_off = UINT32_MAX, // no reactive residual
+    },
+    {
+        .name = "CI",
+        .units = "V",
+        .residual_units = "A",
+        .resist_residual_off = RESIST_RESIDUAL_OFF(TNODE),
+        .react_residual_off = offsetof(DiodeInstace, residual_react_CI),
+
+    },
+};
+#define JACOBI_ENTRY(N1, N2)                                                   \
+  {                                                                            \
+    .nodes = {N1, N2}, .flags = JACOBIAN_ENTRY_RESIST | JACOBIAN_ENTRY_REACT,  \
+    .react_ptr_off =                                                           \
+        offsetof(DiodeInstace, jacobian_ptr_react) + sizeof(double*) * N1##_##N2  \
+  }
+
+#define RESIST_JACOBI_ENTRY(N1, N2)                                            \
+  {                                                                            \
+    .nodes = {N1, N2}, .flags = JACOBIAN_ENTRY_RESIST,                         \
+    .react_ptr_off = UINT32_MAX                                                \
+  }
+
 // these node pairs specify which entries in the Jacobian must be accounted for
-OsdiNodePair jacobian_entries[NUM_MATRIX] = {
-    {CI, CI},
-    {CI, C},
-    {C, CI},
-    {C, C},
-    {A, A},
-    {A, CI},
-    {CI, A},
-    {A, TNODE},
-    {C, TNODE},
-    {CI, TNODE},
-    {TNODE, TNODE},
-    {TNODE, A},
-    {TNODE, C},
-    {TNODE, CI},
+OsdiJacobianEntry jacobian_entries[NUM_MATRIX] = {
+    JACOBI_ENTRY(CI, CI),
+    RESIST_JACOBI_ENTRY(CI, C),
+    RESIST_JACOBI_ENTRY(C, CI),
+    RESIST_JACOBI_ENTRY(C, C),
+    JACOBI_ENTRY(A, A),
+    JACOBI_ENTRY(A, CI),
+    JACOBI_ENTRY(CI, A),
+    JACOBI_ENTRY(A, TNODE),
+    RESIST_JACOBI_ENTRY(C, TNODE),
+    JACOBI_ENTRY(CI, TNODE),
+    RESIST_JACOBI_ENTRY(TNODE, TNODE),
+    RESIST_JACOBI_ENTRY(TNODE, A),
+    RESIST_JACOBI_ENTRY(TNODE, C),
+    RESIST_JACOBI_ENTRY(TNODE, CI),
 };
 OsdiNodePair collapsible[NUM_COLLAPSIBLE] = {
     {CI, C},
@@ -776,27 +788,17 @@ OsdiDescriptor OSDI_DESCRIPTORS[1] = {{
     .num_nodes = NUM_NODES,
     .num_terminals = 3,
     .nodes = (OsdiNode *)&nodes,
+    .node_mapping_offset = offsetof(DiodeInstace, node_off),
 
     // matrix entries
     .num_jacobian_entries = NUM_MATRIX,
-    .jacobian_entries = (OsdiNodePair *)&jacobian_entries,
-    .const_jacobian_entries = (bool *)&const_jacobian_entries,
-
-    // memory
-    .instance_size = sizeof(DiodeInstace),
-    .model_size = sizeof(DiodeModel),
-    .residual_resist_offset = offsetof(DiodeInstace, rhs_resist),
-    .residual_react_offset = offsetof(DiodeInstace, rhs_react),
-    .node_mapping_offset = offsetof(DiodeInstace, node_off),
-    .jacobian_resist_offset = offsetof(DiodeInstace, jacobian_resist),
-    .jacobian_react_offset = offsetof(DiodeInstace, jacobian_react),
+    .jacobian_entries = (OsdiJacobianEntry *)&jacobian_entries,
     .jacobian_ptr_resist_offset = offsetof(DiodeInstace, jacobian_ptr_resist),
-    .jacobian_ptr_react_offset = offsetof(DiodeInstace, jacobian_ptr_react),
 
     // node collapsing
     .num_collapsible = NUM_COLLAPSIBLE,
     .collapsible = collapsible,
-    .is_collapsible_offset = offsetof(DiodeInstace, is_collapsible),
+    .collapsed_offset = offsetof(DiodeInstace, collapsed),
 
     // noise
     .noise_sources = NULL,
@@ -807,6 +809,13 @@ OsdiDescriptor OSDI_DESCRIPTORS[1] = {{
     .num_instance_params = 1,
     .num_opvars = 0,
     .param_opvar = (OsdiParamOpvar *)&params,
+
+    // step size bound
+    .bound_step_offset = UINT32_MAX,
+
+    // memory
+    .instance_size = sizeof(DiodeInstace),
+    .model_size = sizeof(DiodeModel),
 
     // setup
     .access = &osdi_access,
