@@ -496,18 +496,22 @@ cx_group_delay(void *data, short int type, int length, int *newlength, short int
         return (NULL);
     }
 
-
-    if (type == VF_COMPLEX)
-        for (i = 0; i < length; i++)
-        {
-            v_phase[i] = radtodeg(cph(cc[i]));
+    if (type == VF_COMPLEX) {
+        /*  accept continuous phase over 90° boundaries */
+        double last_ph = cph(cc[0]);
+        v_phase[0] = radtodeg(last_ph);
+        for (i = 1; i < length; i++) {
+            double ph = cph(cc[i]);
+            last_ph = ph - (2 * M_PI) * floor((ph - last_ph) / (2 * M_PI) + 0.5);
+            v_phase[i] = radtodeg(last_ph);
+//            fprintf(stderr, "v_phase %e, cc %e %e\n", v_phase[i], cc[i].cx_real, cc[i].cx_imag);
         }
+    }
     else
     {
         fprintf(cp_err, "Signal must be complex to calculate group delay\n");
         return (NULL);
     }
-
 
     type = VF_REAL;
 
