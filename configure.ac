@@ -187,6 +187,10 @@ AC_ARG_WITH([ngshared],
 AC_ARG_ENABLE([utf8],
     [AS_HELP_STRING([--disable-utf8], [Don't use utf-8 or tchar (default is UNICODE support with utf-8)])])
 
+# --enable-shortcheck: CMC quality check only for BSIM3/4 to shorten check time
+AC_ARG_ENABLE([shortcheck],
+    [AS_HELP_STRING([--enable-shortcheck], [CMC QA check only for BSIM4/4])])
+
 # old options, not maintained, may even not work at all
 
 # --enable-ansi: try to force --ansi option to the compiler
@@ -1157,6 +1161,8 @@ AC_SUBST([XSPICEINIT])
 AC_SUBST([XSPICEDLLIBS])
 
 AM_CONDITIONAL([XSPICE_WANTED], [test "x$enable_xspice" = xyes])
+
+AM_CONDITIONAL([SHORT_CHECK_WANTED], [test "x$enable_shortcheck" = xyes])
 
 
 # Add CIDER enhancements to ngspice.
