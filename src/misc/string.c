@@ -30,6 +30,8 @@ static inline const char *next_substr(
         const size_t msb_factor, const size_t h_pattern, size_t *p_h_string);
 static bool can_overlap(size_t n_char_pattern, const char * const p_pattern);
 
+static void findtok_np(char** p_str, char** p_token, char** p_token_end);
+
 
 /* This function returns true if the string s begins with the
  * string p and false otherwise. */
@@ -454,7 +456,7 @@ nexttok(const char *s)
  * nexttok skips over whitespaces and the next token in s
  *   returns NULL if there is nothing left to skip.
  * It replaces constructs like txfree(gettok(&actstring)) by
- * actstring = nexttok(actstring). This is derived from the gettok_noparens version.
+ * actstring = nexttok(actstring). This is derived from the gettok_np version.
  * It acts like gettok, except that it treats parens and commas like
  * whitespace.
  *-------------------------------------------------------------------------*/
@@ -605,6 +607,60 @@ char *gettok_noparens(char **s)
     return copy_substring(token, token_e);
 } /* end of function gettok_noparens */
 
+
+/* findtok_np() does the string scanning for gettok_np() but
+ * does not allocate a token. It skips over all white spaces, ',',  '('and ')' */
+static
+void findtok_np(char** p_str, char** p_token, char** p_token_end)
+{
+    char* str = *p_str;
+
+    while (isspace_c(*str) || *str == ',' || *str == '(' || *str == ')')
+        str++;
+
+    if (!*str) {
+        *p_str = str;
+        *p_token = (char*)NULL;
+        return;
+    }
+
+    *p_token = str; /* Token starts after whitespace */
+    {
+        char c;
+        while ((c = *str) != '\0' &&
+            !isspace_c(c) &&
+            (c != '(') &&
+            (c != ')') &&
+            (c != ',')
+            ) {
+            str++;
+        }
+    }
+    *p_token_end = str;
+
+    while (isspace_c(*str) || *str == ',' || *str == '(' || *str == ')')
+        str++;
+
+    *p_str = str;
+} /* end of function findtok_noparen */
+
+
+
+/*-------------------------------------------------------------------------*
+ * gettok_np acts like gettok, except that it treats parens and commas like
+ * whitespace. That is, it stops parsing and returns when it finds one of
+ * those chars.  It then moves s beyond all white spaces, ',',  '('and ')'.
+ *-------------------------------------------------------------------------*/
+char* gettok_np(char** s)
+{
+    char* token, * token_e;
+    findtok_np(s, &token, &token_e);
+    if (token == (char*)NULL) {
+        return (char*)NULL; /* return NULL if we come to end of line */
+    }
+
+    return copy_substring(token, token_e);
+} /* end of function gettok_noparens */
 
 /*-------------------------------------------------------------------------*
 * gettok_model acts like gettok_noparens, however when it encounters a '{', 
