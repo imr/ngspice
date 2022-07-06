@@ -760,15 +760,6 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             endTime = seconds();
             loadTime = endTime - startTime;
             startTime = endTime;
-            /*This is for the globel param setting only */
-            /* replace agauss(x,y,z) in each b-line by suitable value, one for all */
-            bool statlocal = cp_getvar("statlocal", CP_BOOL, NULL, 0);
-            if (!statlocal) {
-                static char *statfcn[] = {"agauss", "gauss", "aunif", "unif", "limit"};
-                int ii;
-                for (ii = 0; ii < 5; ii++)
-                    eval_agauss(deck, statfcn[ii]);
-            }
 
             /* If we have large PDK deck, search for scale option and set 
             the variable 'scale'*/
@@ -839,6 +830,15 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                     tfree(tt);
                     return 1;
                 }
+
+            /* replace agauss(x,y,z) in each b-line by suitable value, one for all */
+            bool statlocal = cp_getvar("statlocal", CP_BOOL, NULL, 0);
+            if (!statlocal) {
+                static char* statfcn[] = { "agauss", "gauss", "aunif", "unif", "limit" };
+                int ii;
+                for (ii = 0; ii < 5; ii++)
+                    eval_agauss(deck, statfcn[ii]);
+            }
 
             /* Scan the deck again, now also adding .save commands to wl_first */
             for (dd = deck->nextcard; dd; dd = dd->nextcard) {
@@ -2360,7 +2360,7 @@ eval_agauss(struct card *deck, char *fcn)
     double x, y, z, val;
     int skip_control = 0;
 
-    card = deck;
+    card = deck->nextcard; /* skip title line */
     for (; card; card = card->nextcard) {
 
         char *ap, *curr_line = card->line;
@@ -2384,7 +2384,7 @@ eval_agauss(struct card *deck, char *fcn)
         while ((ap = search_identifier(curr_line, fcn, curr_line)) != NULL) {
             char *lparen, *begstr, *contstr = NULL, *new_line, *midstr;
             char *tmp1str, *tmp2str, *delstr;
-            int nerror;
+            int nerror = 0;
 
             begstr = copy_substring(curr_line, ap);
             lparen = strchr(ap, '(');
@@ -2392,21 +2392,21 @@ eval_agauss(struct card *deck, char *fcn)
             if (lparen + 1)
                 contstr = copy(lparen + 1);
             tmp1str++; /* skip '(' */
-            /* find the parameters */
-            delstr = tmp2str = gettok(&tmp1str);
+            /* find the parameters, ignore ( ) , */
+            delstr = tmp2str = gettok_np(&tmp1str);
             x = INPevaluate(&tmp2str, &nerror, 1);
             tfree(delstr);
-            delstr = tmp2str = gettok(&tmp1str);
+            delstr = tmp2str = gettok_np(&tmp1str);
             y = INPevaluate(&tmp2str, &nerror, 1);
             tfree(delstr);
             if (cieq(fcn, "agauss")) {
-                delstr = tmp2str = gettok(&tmp1str);
+                delstr = tmp2str = gettok_np(&tmp1str);
                 z = INPevaluate(&tmp2str, &nerror, 1);
                 tfree(delstr);
                 val = agauss(x, y, z);
             }
             else if (cieq(fcn, "gauss")) {
-                delstr = tmp2str = gettok(&tmp1str);
+                delstr = tmp2str = gettok_np(&tmp1str);
                 z = INPevaluate(&tmp2str, &nerror, 1);
                 tfree(delstr);
                 val = gauss(x, y, z);
