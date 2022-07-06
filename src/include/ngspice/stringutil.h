@@ -55,6 +55,7 @@ size_t get_substring_matches(size_t n_char_pattern, const char *p_pattern,
 char *gettok(char **s);
 char *gettok_char(char **s, char p, bool inc_p, bool nested);
 char *gettok_instance(char **);
+char *gettok_np(char **);
 bool has_escape_or_quote(size_t n, const char *str);
 bool is_arith_char(char c);
 bool isquote(char ch);
