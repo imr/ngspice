@@ -36,6 +36,7 @@ struct sINDinstance {
 
     int INDbrEq;    /* number of the branch equation added for current */
     double INDinduct;    /* inductance */
+    double INDinductinst;/* inductance on instance line */
     double INDm;         /* Parallel multiplier */
     double INDtc1;       /* first temperature coefficient of resistors */
     double INDtc2;       /* second temperature coefficient of resistors */
