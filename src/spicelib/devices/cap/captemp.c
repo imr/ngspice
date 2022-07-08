@@ -52,7 +52,7 @@ CAPtemp(GENmodel *inModel, CKTcircuit *ckt)
             if (!here->CAPscaleGiven) here->CAPscale = 1.0;
             if (!here->CAPmGiven)     here->CAPm     = 1.0;
 
-            if (!here->CAPcapGiven)  { /* No instance capacitance given */
+            if (!here->CAPcapGiven) { /* No instance capacitance given */
                 if (!model->CAPmCapGiven) { /* No model capacitange given */
                     here->CAPcapac =
                         model->CAPcj *
@@ -60,11 +60,14 @@ CAPtemp(GENmodel *inModel, CKTcircuit *ckt)
                         (here->CAPlength - model->CAPshort) +
                         model->CAPcjsw * 2 * (
                             (here->CAPlength - model->CAPshort) +
-                            (here->CAPwidth - model->CAPnarrow) );
-                } else {
+                            (here->CAPwidth - model->CAPnarrow));
+                }
+                else {
                     here->CAPcapac = model->CAPmCap;
                 }
             }
+            else
+                here->CAPcapac = here->CAPcapacinst; /* reset capacitance to instance value */
 
             difference = (here->CAPtemp + here->CAPdtemp) - model->CAPtnom;
 

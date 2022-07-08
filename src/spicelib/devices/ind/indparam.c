@@ -22,7 +22,7 @@ INDparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
 
     switch(param) {
     case IND_IND:
-        here->INDinduct = value->rValue;
+        here->INDinductinst = here->INDinduct = value->rValue;
         if (!here->INDmGiven)
             here->INDm =1.0;
         here->INDindGiven = TRUE;

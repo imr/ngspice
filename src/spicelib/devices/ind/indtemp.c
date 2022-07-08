@@ -52,6 +52,9 @@ INDtemp(GENmodel *inModel, CKTcircuit *ckt)
                 else
                     here->INDinduct = model->INDmInd;
             }
+            else
+                here->INDinduct = here->INDinductinst; /* reset inductance to instance value */
+
             difference = (here->INDtemp + here->INDdtemp) - model->INDtnom;
 
             /* instance parameters tc1 and tc2 will override

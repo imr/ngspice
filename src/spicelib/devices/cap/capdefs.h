@@ -33,6 +33,7 @@ typedef struct sCAPinstance {
     double CAPtemp;     /* temperature at which this capacitor operates */
     double CAPdtemp;    /* delta-temperature of this instance */
     double CAPcapac;    /* capacitance */
+    double CAPcapacinst;/* capacitance on instance line */
     double CAPinitCond; /* initial capacitor voltage if specified */
     double CAPwidth;    /* width of the capacitor */
     double CAPlength;   /* length of the capacitor */
