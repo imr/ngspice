@@ -50,13 +50,12 @@ extern int OSDIload(GENmodel *inModel, CKTcircuit *ckt) {
   bool is_init_smsig = ckt->CKTmode & MODEINITSMSIG;
   bool is_sweep = ckt->CKTmode & MODEDCTRANCURVE;
   bool is_ac = ckt->CKTmode & (MODEAC | MODEINITSMSIG);
-  bool is_tran_op = ((ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC));
-  bool is_tran = ckt->CKTmode & (MODETRAN) || is_tran_op;
+  bool is_tran = ckt->CKTmode & (MODETRAN);
   bool is_init_tran = ckt->CKTmode & MODEINITTRAN;
 
   OsdiSimInfo sim_info = {
       .paras = get_simparams(ckt),
-      .abstime = (is_tran || is_tran_op) ? ckt->CKTtime : 0.0,
+      .abstime = is_tran ? ckt->CKTtime : 0.0,
       .prev_solve = ckt->CKTrhsOld,
       .flags = CALC_RESIST_JACOBIAN,
   };
@@ -69,11 +68,11 @@ extern int OSDIload(GENmodel *inModel, CKTcircuit *ckt) {
     sim_info.flags |= CALC_RESIST_RESIDUAL;
   }
 
-  if (is_tran || is_ac || is_tran_op) {
+  if (is_tran || is_ac) {
     sim_info.flags |= CALC_REACT_JACOBIAN;
   }
 
-  if (is_tran || is_tran_op) {
+  if (is_tran) {
     sim_info.flags |= CALC_REACT_RESIDUAL;
   }
 
