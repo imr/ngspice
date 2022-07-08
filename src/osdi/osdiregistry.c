@@ -230,7 +230,6 @@ extern OsdiObjectFile load_object_file(const char *input) {
   const char *path = resolve_input_path(input);
   if (!path) {
     printf("Error opening osdi lib \"%s\": No such file or directory!\n", input);
-    FREE_DLERR_MSG(error);
     return INVALID_OBJECT;
   }
 
