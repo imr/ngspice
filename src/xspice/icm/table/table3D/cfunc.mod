@@ -247,10 +247,18 @@ x0yiy-1 x1yiy-1 x2yiy-1 ... xix-1yiy-1
 /*=== CM_table3D ROUTINE ===*/
 
 
+/* How quickly partial derivative ramps to zero at boundary. */
+
+#define RAMP_WIDTH 0.125
+
+static const char exceed_fmt[] = "%c value %g exceeds table limits,\n"
+                                 "  please enlarge range of your table.";
+
 void cm_table3D(ARGS) /* structure holding parms, inputs, outputs, etc. */
 {
     int size, xind, yind, zind;
     double xval, yval, zval, xoff, yoff, zoff, xdiff, ydiff, zdiff;
+    double xramp, yramp, zramp;
     double derivval[3], outval;
 
     Table3_Data_t *loc;   /* Pointer to local static data, not to be included
@@ -279,28 +287,68 @@ void cm_table3D(ARGS) /* structure holding parms, inputs, outputs, etc. */
 
     /* check table ranges */
     if (xval < loc->xcol[0] || xval > loc->xcol[loc->ix - 1]) {
-        if (PARAM(verbose) > 0) {
-            cm_message_printf("x value %g exceeds table limits,\n"
-                    "  please enlarge range of your table",
-                    xval);
+        /* x input out of region: use nearest point in region, ramping
+         * partial derivative to zero at edge.
+         */
+
+        if (PARAM(verbose) > 0)
+            cm_message_printf(exceed_fmt, 'x', xval);
+	if (xval < loc->xcol[0]) {
+            xramp = 1 - ((loc->xcol[0] - xval) /
+                         (RAMP_WIDTH * (loc->xcol[1] - loc->xcol[0])));
+            if (xramp < 0.0)
+                xramp = 0.0;
+            xval = loc->xcol[0];
+        } else {
+            xramp = 1 - ((xval - loc->xcol[loc->ix - 1]) /
+                         (RAMP_WIDTH * (loc->xcol[loc->ix - 1] -
+                                        loc->xcol[loc->ix - 2])));
+            if (xramp < 0.0)
+                xramp = 0.0;
+            xval = loc->xcol[loc->ix - 1];
         }
-        return;
+    } else {
+        xramp = 1.0;
     }
     if (yval < loc->ycol[0] || yval > loc->ycol[loc->iy - 1]) {
-        if (PARAM(verbose) > 0) {
-            cm_message_printf("y value %g exceeds table limits,\n"
-                    "  please enlarge range of your table",
-                    yval);
+        if (PARAM(verbose) > 0)
+            cm_message_printf(exceed_fmt, 'y', yval);
+	if (yval < loc->ycol[0]) {
+            yramp = 1 - ((loc->ycol[0] - yval) /
+                         (RAMP_WIDTH * (loc->ycol[1] - loc->ycol[0])));
+            if (yramp < 0.0)
+                yramp = 0.0;
+            yval = loc->ycol[0];
+        } else {
+            yramp = 1 - ((yval - loc->ycol[loc->iy - 1]) /
+                         (RAMP_WIDTH * (loc->ycol[loc->iy - 1] -
+                                        loc->ycol[loc->iy - 2])));
+            if (yramp < 0.0)
+                yramp = 0.0;
+            yval = loc->ycol[loc->iy - 1];
         }
-        return;
+    } else {
+        yramp = 1.0;
     }
     if (zval < loc->zcol[0] || zval > loc->zcol[loc->iz - 1]) {
-        if (PARAM(verbose) > 0) {
-            cm_message_printf("z value %g exceeds table limits,\n"
-                    "  please enlarge range of your table",
-                    zval);
+        if (PARAM(verbose) > 0)
+            cm_message_printf(exceed_fmt, 'z', zval);
+	if (zval < loc->zcol[0]) {
+            zramp = 1 - ((loc->zcol[0] - zval) /
+                         (RAMP_WIDTH * (loc->zcol[1] - loc->zcol[0])));
+            if (zramp < 0.0)
+                zramp = 0.0;
+            zval = loc->zcol[0];
+        } else {
+            zramp = 1 - ((zval - loc->zcol[loc->iz - 1]) /
+                         (RAMP_WIDTH * (loc->zcol[loc->iz - 1] -
+                                        loc->zcol[loc->iz - 2])));
+            if (zramp < 0.0)
+                zramp = 0.0;
+            zval = loc->zcol[loc->iz - 1];
         }
-        return;
+    } else {
+        zramp = 1.0;
     }
 
 
@@ -329,15 +377,18 @@ void cm_table3D(ARGS) /* structure holding parms, inputs, outputs, etc. */
                   DER                 /* what to compute [FUNC, DER, BOTH] */
                   );
 
-    /* xind and yind may become too large */
+    /* xind may become too large when xval == xcol[loc->ix - 1] */
     if (xind == loc->ix - 1) {
         --xind;
+	xoff += loc->xcol[xind + 1] - loc->xcol[xind];
     }
     if (yind == loc->iy - 1) {
         --yind;
+	yoff += loc->ycol[yind + 1] - loc->ycol[yind];
     }
     if (zind == loc->iz - 1) {
         --zind;
+	zoff += loc->zcol[zind + 1] - loc->zcol[zind];
     }
 
     /* overwrite outval from sf_eno3_apply by trilinear interpolation */
@@ -351,11 +402,11 @@ void cm_table3D(ARGS) /* structure holding parms, inputs, outputs, etc. */
         double xderiv, yderiv, zderiv, outv;
         outv = PARAM(offset) + PARAM(gain) * outval;
         OUTPUT(out) = outv;
-        xderiv = PARAM(gain) * derivval[0] / xdiff;
+        xderiv = xramp * PARAM(gain) * derivval[0] / xdiff;
         PARTIAL(out, inx) = xderiv;
-        yderiv = PARAM(gain) * derivval[1] / ydiff;
+        yderiv = yramp * PARAM(gain) * derivval[1] / ydiff;
         PARTIAL(out, iny) = yderiv;
-        zderiv = PARAM(gain) * derivval[2] / zdiff;
+        zderiv = zramp * PARAM(gain) * derivval[2] / zdiff;
         PARTIAL(out, inz) = zderiv;
 
         if (PARAM(verbose) > 1) {
@@ -366,13 +417,13 @@ void cm_table3D(ARGS) /* structure holding parms, inputs, outputs, etc. */
     }
     else {
         Mif_Complex_t ac_gain;
-        ac_gain.real = PARAM(gain) * derivval[0] / xdiff;
+        ac_gain.real = xramp * PARAM(gain) * derivval[0] / xdiff;
         ac_gain.imag= 0.0;
         AC_GAIN(out, inx) = ac_gain;
-        ac_gain.real = PARAM(gain) * derivval[1] / ydiff;
+        ac_gain.real = yramp * PARAM(gain) * derivval[1] / ydiff;
         ac_gain.imag= 0.0;
         AC_GAIN(out, iny) = ac_gain;
-        ac_gain.real = PARAM(gain) * derivval[2] / zdiff;
+        ac_gain.real = zramp * PARAM(gain) * derivval[2] / zdiff;
         ac_gain.imag= 0.0;
         AC_GAIN(out, iny) = ac_gain;
     }
