@@ -58,7 +58,7 @@
 #define StatusElHeight (StatusHeight - 2 * StatusFrame)
 #define SourceLength 500        // Platz fuer Source File Name
 #define AnalyseLength 100       // Platz fuer Analyse
-#define QuitButtonLength 80
+#define QuitButtonLength 60
 
 /* Define the macro below to create a larger main window that is useful
  * for seeing debug output that is generated before the window can be
@@ -69,6 +69,7 @@
 #define NG_IGNORE(x)  (void)x
 
 #define QUIT_BUTTON_ID 2
+#define STOP_BUTTON_ID 3
 
 /* Types */
 typedef char SBufLine[SBufSize + 1];  // Eingabezeile
@@ -82,7 +83,8 @@ HWND            swString;           /* input string */
 HWND            hwStatus;           /* status bar */
 HWND            hwSource;           /* display of source name */
 HWND            hwAnalyse;          /* analysis window */
-HWND            hwQuitButton;       /* Pause button */
+HWND            hwQuitButton;       /* End button */
+HWND            hwStopButton;       /* Pause button */
 static int      nReturnCode = 0;    /* WinMain return value */
 static int      nShowState;         /* Display mode of main window */
 #ifdef EXT_ASC
@@ -134,6 +136,7 @@ extern bool ft_batchmode;
 extern FILE *flogp;     /* definition see xmain.c, stdout redirected to file */
 
 extern void cp_doquit(void);
+extern void cp_evloop(char*);
 
 static struct History_info *init_history(void);
 
@@ -506,11 +509,13 @@ Main_OnSize(HWND hwnd, UINT state, int cx, int cy)
 
     /* Expand Status Elements */
     h = cy - LineHeight + StatusFrame - 2;
-    int statbegin = 3 * StatusFrame + QuitButtonLength + AnalyseLength + 4;
+    int statbegin = 3 * StatusFrame + 2 * QuitButtonLength + AnalyseLength + 5;
     MoveWindow(hwSource, StatusFrame, h, cx - statbegin - BorderSize, StatusElHeight, TRUE);
     MoveWindow( hwAnalyse, cx - statbegin, h, AnalyseLength, StatusElHeight, TRUE);
     MoveWindow( hwQuitButton, cx - StatusFrame - QuitButtonLength - 1,
        h + 1, QuitButtonLength, StatusElHeight, TRUE);
+    MoveWindow(hwStopButton, cx - StatusFrame - QuitButtonLength - QuitButtonLength - 3,
+        h + 1, QuitButtonLength, StatusElHeight, TRUE);
 }
 
 
@@ -531,12 +536,18 @@ MainWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
         /* command issued by pushing the "Quit" button */
     case WM_COMMAND:
-        if (HIWORD(wParam) == BN_CLICKED)
-            if (ft_batchmode &&
+        if (HIWORD(wParam) == BN_CLICKED) {
+            if (ft_batchmode && LOWORD(wParam) == QUIT_BUTTON_ID &&
                 (MessageBox(NULL, "Do you want to quit ngspice?", "Quit", MB_OKCANCEL | MB_ICONERROR) == IDCANCEL))
                 goto DEFAULT_AFTER;
+            if (ft_batchmode && LOWORD(wParam) == STOP_BUTTON_ID &&
+                (MessageBox(NULL, "Stop in Batch Mode is not available!", "Stop", MB_OK) == IDOK))
+                goto DEFAULT_AFTER;
+        }
         if (LOWORD(wParam) == QUIT_BUTTON_ID)
             SendMessage(GetParent((HWND)lParam), WM_CLOSE, 0, 0);
+        if (LOWORD(wParam) == STOP_BUTTON_ID)
+            SendMessage(GetParent((HWND)lParam), WM_USER, 0, 0);
         /* write all achieved so far to log file */
         if (flogp)
             win_x_fflush(flogp);
@@ -546,6 +557,10 @@ MainWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         cp_doquit();
         /* continue if the user declined the 'quit' command */
         return 0;
+
+    case WM_USER:
+        cp_evloop(NULL);
+        goto DEFAULT_AFTER;
 
     case WM_SIZE:
         HANDLE_WM_SIZE(hwnd, wParam, lParam, Main_OnSize);
@@ -1288,15 +1303,18 @@ wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR
 #else
     hwQuitButton = CreateWindowW(L"BUTTON", L"Quit", WS_CHILD | BS_PUSHBUTTON, 0, 0, QuitButtonLength,
                                  StatusElHeight, hwMain, (HMENU)(UINT_PTR)QUIT_BUTTON_ID, hInst, NULL);
+    hwStopButton = CreateWindowW(L"BUTTON", L"Stop", WS_CHILD | BS_PUSHBUTTON, 0, 0, QuitButtonLength,
+                                 StatusElHeight, hwMain, (HMENU)(UINT_PTR)STOP_BUTTON_ID, hInst, NULL);
 #endif
 
     if (!hwQuitButton)
         goto THE_END;
 
     SetWindowFont(hwQuitButton, efont, FALSE);
+    SetWindowFont(hwStopButton, efont, FALSE);
 
     /* Define a minimum width */
-    int MinWidth = AnalyseLength + SourceLength + QuitButtonLength + 48;
+    int MinWidth = AnalyseLength + SourceLength + QuitButtonLength + QuitButtonLength + 48;
     if (WinLineWidth < MinWidth)
         WinLineWidth = MinWidth;
 
@@ -1314,6 +1332,7 @@ wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR
     ShowWindow(hwSource, SW_SHOWNORMAL);
     ShowWindow(hwAnalyse, SW_SHOWNORMAL);
     ShowWindow(hwQuitButton, SW_SHOWNORMAL);
+    ShowWindow(hwStopButton, SW_SHOWNORMAL);
     ClearInput();
     DisplayText();
     SetSource("");
