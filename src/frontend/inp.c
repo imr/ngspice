@@ -1894,7 +1894,7 @@ void create_circbyline(char *line, bool reset, bool lastline)
     }
     if (ft_ngdebug) {
         if (linec == 0)
-            fprintf(stdout, "**** circbyline: circuit netlist sent to shared ngspice ****\n");
+            fprintf(stdout, "**** circuit array: circuit netlist sent to shared ngspice ****\n");
         fprintf(stdout, "%d   %s\n", linec, line);
     }
     circarray[linec++] = line; /* add card to deck */
