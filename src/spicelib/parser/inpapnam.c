@@ -18,10 +18,10 @@ INPapName(CKTcircuit *ckt, int type, JOB *analPtr, char *parmname,
     IFparm *if_parm;
 
     if (!parmname)
-	return (E_BADPARM);
+        return (E_BADPARM);
 
     if (!ft_sim->analyses[type])
-	return (E_BADPARM);
+        return (E_BADPARM);
 
     if_parm = ft_find_analysis_parm(type, parmname);
 
