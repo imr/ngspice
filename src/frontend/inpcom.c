@@ -3696,9 +3696,12 @@ static void inp_fix_inst_calls_for_numparam(
 
             if (find_name(subckt_w_params, subckt_name)) {
                 struct card *d;
-
-                d = find_subckt(c->level, subckt_name)->line;
-                {
+                struct card_assoc* ca = find_subckt(c->level, subckt_name);
+                if (ca)
+                    d = ca->line;
+                else
+                    continue;
+                if (d) {
                     char *subckt_line = d->line;
                     subckt_line = skip_non_ws(subckt_line);
                     subckt_line = skip_ws(subckt_line);
