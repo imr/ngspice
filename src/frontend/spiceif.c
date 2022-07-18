@@ -311,7 +311,7 @@ if_run(CKTcircuit *ckt, char *what, wordlist *args, INPtables *tab)
         INPpas2(ckt, &deck, tab, ft_curckt->ci_specTask);
 
         if (deck.error) {
-            fprintf(cp_err, "Warning: %s\n", deck.error);
+            fprintf(cp_err, "Error: %sin   %s\n\n", deck.error, deck.line);
             return 2;
         }
     }
