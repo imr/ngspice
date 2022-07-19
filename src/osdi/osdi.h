@@ -36,6 +36,17 @@
 #define CALC_REACT_JACOBIAN 8
 #define CALC_NOISE 16
 #define CALC_OP 32
+#define CALC_RESIST_LIM_RHS 64
+#define CALC_REACT_LIM_RHS 128
+#define ENABLE_LIM 256
+#define INIT_LIM 512
+#define ANALYSIS_NOISE 1024
+#define ANALYSIS_DC 2048
+#define ANALYSIS_AC 4096
+#define ANALYSIS_TRAN 8192
+#define ANALYSIS_IC 16384
+#define ANALYSIS_STATIC 32768
+#define ANALYSIS_NODESET 65536
 
 #define EVAL_RET_FLAG_LIM 1
 #define EVAL_RET_FLAG_FATAL 2
@@ -56,6 +67,12 @@
 
 
 
+typedef struct OsdiLimFunction {
+  char *name;
+  uint32_t num_args;
+  void *func_ptr;
+}OsdiLimFunction;
+
 typedef struct OsdiSimParas {
   char **names;
   double *vals;
@@ -67,6 +84,8 @@ typedef struct OsdiSimInfo {
     OsdiSimParas paras;
     double abstime;
     double *prev_solve;
+    double *prev_state;
+    double *next_state;
     uint32_t flags;
 }OsdiSimInfo;
 
@@ -102,6 +121,8 @@ typedef struct OsdiNode {
   char *residual_units;
   uint32_t resist_residual_off;
   uint32_t react_residual_off;
+  uint32_t resist_limit_rhs_off;
+  uint32_t react_limit_rhs_off;
   bool is_flow;
 }OsdiNode;
 
@@ -144,6 +165,9 @@ typedef struct OsdiDescriptor {
   uint32_t node_mapping_offset;
   uint32_t jacobian_ptr_resist_offset;
 
+  uint32_t num_states;
+  uint32_t state_idx_off;
+
   uint32_t bound_step_offset;
 
   uint32_t instance_size;
@@ -162,6 +186,8 @@ typedef struct OsdiDescriptor {
                   double *ln_noise_dens);
   void (*load_residual_resist)(void *inst, void* model, double *dst);
   void (*load_residual_react)(void *inst, void* model, double *dst);
+  void (*load_limit_rhs_resist)(void *inst, void* model, double *dst);
+  void (*load_limit_rhs_react)(void *inst, void* model, double *dst);
   void (*load_spice_rhs_dc)(void *inst, void* model, double *dst,
                   double* prev_solve);
   void (*load_spice_rhs_tran)(void *inst, void* model, double *dst,
@@ -172,6 +198,4 @@ typedef struct OsdiDescriptor {
 }OsdiDescriptor;
 
 
-
-extern void osdi_log(void *handle, char* msg, uint32_t lvl);
 

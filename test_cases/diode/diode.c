@@ -22,6 +22,10 @@ extern uint32_t OSDI_VERSION_MAJOR;
 extern uint32_t OSDI_VERSION_MINOR;
 extern uint32_t OSDI_NUM_DESCRIPTORS;
 extern OsdiDescriptor OSDI_DESCRIPTORS[1];
+extern OsdiLimFunction OSDI_LIM_TABLE[1];
+extern uint32_t OSDI_LIM_TABLE_LEN;
+
+#define sqrt2 1.4142135623730950488016887242097
 
 #define IGNORE(x) (void)x
 
@@ -88,6 +92,10 @@ typedef struct DiodeInstace {
   bool mfactor_given;
   double temperature;
   double residual_resist[NUM_NODES];
+  double lim_rhs_resist_A;
+  double lim_rhs_resist_CI;
+  double lim_rhs_react_A;
+  double lim_rhs_react_CI;
   double residual_react_A;
   double residual_react_CI;
   double jacobian_resist[NUM_MATRIX];
@@ -96,6 +104,7 @@ typedef struct DiodeInstace {
   double *jacobian_ptr_resist[NUM_MATRIX];
   double *jacobian_ptr_react[NUM_MATRIX];
   uint32_t node_off[NUM_NODES];
+  uint32_t state_idx;
 } DiodeInstace;
 
 #define EXP_LIM 80.0
@@ -273,6 +282,9 @@ static void setup_instance(void *handle, void *inst_, void *model_,
   *res = (OsdiInitInfo){.flags = 0, .num_errors = 0, .errors = NULL};
 }
 
+#define CONSTsqrt2 1.4142135623730950488016887242097
+typedef double (*pnjlim_t)(bool, bool *, double, double, double, double);
+
 // implementation of the eval function as defined in the OSDI spec
 static uint32_t eval(void *handle, void *inst_, void *model_,
                      OsdiSimInfo *info) {
@@ -297,6 +309,7 @@ static uint32_t eval(void *handle, void *inst_, void *model_,
     }
   }
 
+  uint32_t ret_flags = 0;
   ////////////////////////////////
   // evaluate model equations
   ////////////////////////////////
@@ -310,6 +323,22 @@ static uint32_t eval(void *handle, void *inst_, void *model_,
   double rth_t = model->Rth * pow(tdev_tnom, model->zetarth);
   double is_t = model->Is * pow(tdev_tnom, model->zetais);
   double vt = t_dev * pk / pq;
+
+  double delvaci = 0.0;
+  if (info->flags & ENABLE_LIM && OSDI_LIM_TABLE[0].func_ptr) {
+    double vte = inst->temperature * pk / pq;
+    bool icheck = false;
+    double vaci_old = info->prev_state[inst->state_idx];
+    pnjlim_t pnjlim = OSDI_LIM_TABLE[0].func_ptr;
+    double vaci_new = pnjlim(info->flags & INIT_LIM, &icheck, vaci, vaci_old,
+                             vte, vte * log(vte / (sqrt2 * model->Is)));
+    printf("%g %g\n", vaci, vaci_new);
+    delvaci = vaci_new - vaci;
+    vaci = vaci_new;
+    info->prev_state[inst->state_idx] = vaci;
+  } else {
+    printf("ok?");
+  }
 
   // derivatives w.r.t. temperature
   double rs_dt = model->zetars * model->Rs *
@@ -398,10 +427,22 @@ static uint32_t eval(void *handle, void *inst_, void *model_,
     inst->residual_resist[TNODE] = -ith * mfactor + irth * mfactor;
   }
 
+  if (info->flags & CALC_RESIST_LIM_RHS) {
+    // write resist rhs
+    inst->lim_rhs_resist_A = gd * mfactor * delvaci;
+    inst->lim_rhs_resist_CI = -gd * mfactor * delvaci;
+  }
+
   if (info->flags & CALC_REACT_RESIDUAL) {
     // write react rhs
     inst->residual_react_A = qd * mfactor;
     inst->residual_react_CI = -qd * mfactor;
+  }
+
+  if (info->flags & CALC_REACT_LIM_RHS) {
+    // write resist rhs
+    inst->lim_rhs_react_A = qd_vaci * mfactor * delvaci;
+    inst->lim_rhs_react_CI = -qd_vaci * mfactor * delvaci;
   }
 
   //////////////////
@@ -449,7 +490,7 @@ static uint32_t eval(void *handle, void *inst_, void *model_,
     inst->jacobian_react[CI_TNODE] = -qd_dtj * mfactor;
   }
 
-  return 0;
+  return ret_flags;
 }
 
 // TODO implementation of the load_noise function as defined in the OSDI spec
@@ -484,6 +525,25 @@ static void load_residual_react(void *inst_, void *model, double *dst) {
 
   dst[inst->node_off[A]] += inst->residual_react_A;
   dst[inst->node_off[CI]] += inst->residual_react_CI;
+}
+
+// implementation of the load_lim_rhs_resist function as defined in the OSDI
+// spec
+static void load_lim_rhs_resist(void *inst_, void *model, double *dst) {
+  DiodeInstace *inst = (DiodeInstace *)inst_;
+
+  IGNORE(model);
+  dst[inst->node_off[A]] += inst->lim_rhs_resist_A;
+  dst[inst->node_off[CI]] += inst->lim_rhs_resist_CI;
+}
+
+// implementation of the load_lim_rhs_react function as defined in the OSDI spec
+static void load_lim_rhs_react(void *inst_, void *model, double *dst) {
+  DiodeInstace *inst = (DiodeInstace *)inst_;
+
+  IGNORE(model);
+  dst[inst->node_off[A]] += inst->lim_rhs_react_A;
+  dst[inst->node_off[CI]] += inst->lim_rhs_react_CI;
 }
 
 #define LOAD_MATRIX_RESIST(name)                                               \
@@ -558,13 +618,15 @@ static void load_spice_rhs_dc(void *inst_, void *model, double *dst,
   double vc = prev_solve[inst->node_off[C]];
   double vdtj = prev_solve[inst->node_off[TNODE]];
 
-  dst[inst->node_off[A]] +=
-      inst->jacobian_resist[A_A] * va + inst->jacobian_resist[A_TNODE] * vdtj +
-      inst->jacobian_resist[A_CI] * vci - inst->residual_resist[A];
+  dst[inst->node_off[A]] += inst->jacobian_resist[A_A] * va +
+                            inst->jacobian_resist[A_TNODE] * vdtj +
+                            inst->jacobian_resist[A_CI] * vci +
+                            inst->lim_rhs_resist_A - inst->residual_resist[A];
 
   dst[inst->node_off[CI]] += inst->jacobian_resist[CI_A] * va +
                              inst->jacobian_resist[CI_TNODE] * vdtj +
-                             inst->jacobian_resist[CI_CI] * vci -
+                             inst->jacobian_resist[CI_CI] * vci +
+                             inst->lim_rhs_resist_CI -
                              inst->residual_resist[CI];
 
   dst[inst->node_off[C]] +=
@@ -592,13 +654,15 @@ static void load_spice_rhs_tran(void *inst_, void *model, double *dst,
   load_spice_rhs_dc(inst_, model, dst, prev_solve);
 
   // add contributions due to reactive elements
-  dst[inst->node_off[A]] += alpha * (inst->jacobian_react[A_A] * va +
-                                     inst->jacobian_react[A_CI] * vci +
-                                     inst->jacobian_react[A_TNODE] * vdtj);
+  dst[inst->node_off[A]] +=
+      alpha *
+      (inst->jacobian_react[A_A] * va + inst->jacobian_react[A_CI] * vci +
+       inst->jacobian_react[A_TNODE] * vdtj + inst->lim_rhs_react_A);
 
-  dst[inst->node_off[CI]] += alpha * (inst->jacobian_react[CI_CI] * vci +
-                                      inst->jacobian_react[CI_A] * va +
-                                      inst->jacobian_react[CI_TNODE] * vdtj);
+  dst[inst->node_off[CI]] +=
+      alpha *
+      (inst->jacobian_react[CI_CI] * vci + inst->jacobian_react[CI_A] * va +
+       inst->jacobian_react[CI_TNODE] * vdtj + inst->lim_rhs_react_CI);
 }
 
 #define RESIST_RESIDUAL_OFF(NODE)                                              \
@@ -640,8 +704,8 @@ const OsdiNode nodes[NUM_NODES] = {
 #define JACOBI_ENTRY(N1, N2)                                                   \
   {                                                                            \
     .nodes = {N1, N2}, .flags = JACOBIAN_ENTRY_RESIST | JACOBIAN_ENTRY_REACT,  \
-    .react_ptr_off =                                                           \
-        offsetof(DiodeInstace, jacobian_ptr_react) + sizeof(double*) * N1##_##N2  \
+    .react_ptr_off = offsetof(DiodeInstace, jacobian_ptr_react) +              \
+                     sizeof(double *) * N1##_##N2                              \
   }
 
 #define RESIST_JACOBI_ENTRY(N1, N2)                                            \
@@ -813,21 +877,30 @@ OsdiDescriptor OSDI_DESCRIPTORS[1] = {{
     // step size bound
     .bound_step_offset = UINT32_MAX,
 
+    .num_states = 1,
+    .state_idx_off = offsetof(DiodeInstace, state_idx),
+
     // memory
     .instance_size = sizeof(DiodeInstace),
     .model_size = sizeof(DiodeModel),
 
     // setup
-    .access = &osdi_access,
-    .setup_model = &setup_model,
-    .setup_instance = &setup_instance,
-    .eval = &eval,
-    .load_noise = &load_noise,
-    .load_residual_resist = &load_residual_resist,
-    .load_residual_react = &load_residual_react,
-    .load_spice_rhs_dc = &load_spice_rhs_dc,
-    .load_spice_rhs_tran = &load_spice_rhs_tran,
-    .load_jacobian_resist = &load_jacobian_resist,
-    .load_jacobian_react = &load_jacobian_react,
-    .load_jacobian_tran = &load_jacobian_tran,
+    .access = osdi_access,
+    .setup_model = setup_model,
+    .setup_instance = setup_instance,
+    .eval = eval,
+    .load_noise = load_noise,
+    .load_residual_resist = load_residual_resist,
+    .load_residual_react = load_residual_react,
+    .load_spice_rhs_dc = load_spice_rhs_dc,
+    .load_spice_rhs_tran = load_spice_rhs_tran,
+    .load_jacobian_resist = load_jacobian_resist,
+    .load_jacobian_react = load_jacobian_react,
+    .load_jacobian_tran = load_jacobian_tran,
+    .load_limit_rhs_react = load_lim_rhs_react,
+    .load_limit_rhs_resist = load_lim_rhs_resist,
 }};
+
+OsdiLimFunction OSDI_LIM_TABLE[1] = {{.name = "pnjlim", .num_args = 2}};
+
+uint32_t OSDI_LIM_TABLE_LEN = 1;

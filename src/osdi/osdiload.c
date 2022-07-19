@@ -49,14 +49,19 @@ extern int OSDIload(GENmodel *inModel, CKTcircuit *ckt) {
 
   bool is_init_smsig = ckt->CKTmode & MODEINITSMSIG;
   bool is_sweep = ckt->CKTmode & MODEDCTRANCURVE;
+  bool is_dc = ckt->CKTmode & (MODEDCOP | MODEDCTRANCURVE);
   bool is_ac = ckt->CKTmode & (MODEAC | MODEINITSMSIG);
   bool is_tran = ckt->CKTmode & (MODETRAN);
+  bool is_tran_op = ckt->CKTmode & (MODETRANOP);
   bool is_init_tran = ckt->CKTmode & MODEINITTRAN;
+  bool is_init_junc = ckt->CKTmode & MODEINITJCT;
 
   OsdiSimInfo sim_info = {
       .paras = get_simparams(ckt),
       .abstime = is_tran ? ckt->CKTtime : 0.0,
       .prev_solve = ckt->CKTrhsOld,
+      .prev_state = ckt->CKTstates[0],
+      .next_state = ckt->CKTstates[0],
       .flags = CALC_RESIST_JACOBIAN,
   };
 
@@ -64,20 +69,37 @@ extern int OSDIload(GENmodel *inModel, CKTcircuit *ckt) {
     sim_info.flags |= CALC_OP;
   }
 
-  if (!is_init_smsig) {
-    sim_info.flags |= CALC_RESIST_RESIDUAL;
+  if (is_dc) {
+    sim_info.flags |= ANALYSIS_DC | ANALYSIS_STATIC;
   }
 
-  if (is_tran || is_ac) {
-    sim_info.flags |= CALC_REACT_JACOBIAN;
+  if (!is_init_smsig) {
+    sim_info.flags |= CALC_RESIST_RESIDUAL | ENABLE_LIM | CALC_RESIST_LIM_RHS;
   }
 
   if (is_tran) {
-    sim_info.flags |= CALC_REACT_RESIDUAL;
+    sim_info.flags |= CALC_REACT_JACOBIAN | CALC_REACT_RESIDUAL |
+                      CALC_REACT_LIM_RHS | ANALYSIS_TRAN;
+  }
+
+  if (is_tran_op) {
+    sim_info.flags |= ANALYSIS_TRAN;
+  }
+
+  if (is_ac) {
+    sim_info.flags |= CALC_REACT_JACOBIAN | ANALYSIS_AC;
+  }
+
+  if (is_init_tran) {
+    sim_info.flags |= ANALYSIS_IC | ANALYSIS_STATIC;
+  }
+
+  if (is_init_junc) {
+    sim_info.flags |= INIT_LIM;
   }
 
   if (ckt->CKTmode & MODEACNOISE) {
-    sim_info.flags |= CALC_NOISE;
+    sim_info.flags |= CALC_NOISE | ANALYSIS_NOISE;
   }
 
   int ret = OK;
@@ -119,7 +141,9 @@ extern int OSDIload(GENmodel *inModel, CKTcircuit *ckt) {
         extra_inst_data->finish = true;
       }
       if (ret_flags & EVAL_RET_FLAG_LIM) {
-        extra_inst_data->lim = true;
+        ckt->CKTnoncon++;
+        ckt->CKTtroubleElt = gen_inst;
+
       }
       if (ret_flags & EVAL_RET_FLAG_STOP) {
         ret = (E_PAUSE);
@@ -138,7 +162,7 @@ extern int OSDIload(GENmodel *inModel, CKTcircuit *ckt) {
             (uint32_t *)(((char *)inst) + descr->node_mapping_offset);
 
         /* use numeric integration to obtain the remainer of the RHS*/
-        int state = gen_inst->GENstate;
+        int state = gen_inst->GENstate + (int) descr->num_states;
         for (uint32_t i = 0; i < descr->num_nodes; i++) {
           if (descr->nodes[i].react_residual_off != UINT32_MAX) {
 

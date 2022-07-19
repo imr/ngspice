@@ -30,7 +30,6 @@ typedef struct OsdiExtraInstData {
   double temp;
   bool temp_given;
   bool dt_given;
-  bool lim;
   bool finish;
 
 } __attribute__((aligned(sizeof(max_align_t)))) OsdiExtraInstData;
@@ -52,3 +51,17 @@ typedef struct OsdiNgspiceHandle {
 
 /* values returned by $simparam*/
 OsdiSimParas get_simparams(const CKTcircuit *ckt);
+
+typedef void (*osdi_log_ptr)(void *handle, char *msg, uint32_t lvl);
+void osdi_log(void *handle_, char *msg, uint32_t lvl);
+
+typedef void (*osdi_log_ptr)(void *handle, char *msg, uint32_t lvl);
+
+double osdi_pnjlim(bool init, bool *icheck, double vnew, double vold, double vt,
+                   double vcrit);
+
+double osdi_limvds(bool init, bool *icheck, double vnew, double vold);
+double osdi_limitlog(bool init, bool *icheck, double vnew, double vold,
+                     double LIM_TOL);
+double osdi_fetlim(bool init, bool *icheck, double vnew, double vold,
+                   double vto);

@@ -15,7 +15,7 @@ libosdi_la_SOURCES =	\
 	osdiitf.h \
 	osditrunc.c \
 	osdipzld.c \
-	exported.txt
+	osdicallbacks.c
 
 
 

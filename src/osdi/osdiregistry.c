@@ -205,6 +205,23 @@ static size_t calc_osdi_instance_data_off(const OsdiDescriptor *descr) {
   }                                                                            \
   const ty *name = (ty *)sym;
 
+#define INIT_CALLBACK(name, ty)                                                \
+  sym = GET_SYM(handle, STRINGIFY(name));                                      \
+  if (sym) {                                                                   \
+    ty *slot = (ty *)sym;                                                      \
+    *slot = name;                                                              \
+  }
+
+#define IS_LIM_FUN(fun_name, num_args_, val)                                   \
+  if (strcmp(lim_table[i].name, fun_name) == 0) {                              \
+    if (lim_table[i].num_args == num_args_) {                                  \
+      lim_table[i].func_ptr = (void *)val;                                     \
+      continue;                                                                \
+    } else {                                                                   \
+      expected_args = num_args_;                                               \
+    }                                                                          \
+  }
+
 static NGHASHPTR known_object_files = NULL;
 #define DUMMYDATA ((void *)42)
 /**
@@ -229,7 +246,8 @@ extern OsdiObjectFile load_object_file(const char *input) {
   }
   const char *path = resolve_input_path(input);
   if (!path) {
-    printf("Error opening osdi lib \"%s\": No such file or directory!\n", input);
+    printf("Error opening osdi lib \"%s\": No such file or directory!\n",
+           input);
     return INVALID_OBJECT;
   }
 
@@ -260,6 +278,37 @@ extern OsdiObjectFile load_object_file(const char *input) {
 
   GET_CONST(OSDI_NUM_DESCRIPTORS, uint32_t);
   GET_PTR(OSDI_DESCRIPTORS, OsdiDescriptor);
+
+  INIT_CALLBACK(osdi_log, osdi_log_ptr)
+
+  uint32_t lim_table_len = 0;
+  sym = GET_SYM(handle, "OSDI_LIM_TABLE_LEN");
+  if (sym) {
+    lim_table_len = *((uint32_t *)sym);
+  }
+
+  sym = GET_SYM(handle, "OSDI_LIM_TABLE");
+  OsdiLimFunction *lim_table = NULL;
+  if (sym) {
+    lim_table = (OsdiLimFunction *)sym;
+  } else {
+    lim_table_len = 0;
+  }
+
+  for (uint32_t i = 0; i < lim_table_len; i++) {
+    int expected_args = -1;
+    IS_LIM_FUN("pnjlim", 2, osdi_pnjlim)
+    IS_LIM_FUN("limvds", 0, osdi_limvds)
+    IS_LIM_FUN("fetlim", 1, osdi_fetlim)
+    IS_LIM_FUN("limitlog", 1, osdi_limitlog)
+    if (expected_args == -1) {
+      printf("warning(osdi): unkown $limit function \"%s\"", lim_table[i].name);
+    } else {
+      printf("warning(osdi): unexpected number of arguments %i (expected %i) "
+             "for \"%s\", ignoring...",
+             lim_table[i].num_args, expected_args, lim_table[i].name);
+    }
+  }
 
   OsdiRegistryEntry *dst = TMALLOC(OsdiRegistryEntry, OSDI_NUM_DESCRIPTORS);
 

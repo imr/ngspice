@@ -134,6 +134,16 @@ static void write_node_mapping(const OsdiDescriptor *descr, void *inst,
   }
 }
 
+/* NGSPICE state vectors for an instance are always continous so we just write
+ * state_start .. state_start + num_state to state_idx */
+static void write_state_ids(const OsdiDescriptor *descr, void *inst,
+                            uint32_t state_start) {
+  uint32_t *state_idx = (uint32_t *)(((char *)inst) + descr->state_idx_off);
+  for (uint32_t i = 0; i < descr->num_states; i++) {
+    state_idx[i] = state_start + i;
+  }
+}
+
 static int init_matrix(SMPmatrix *matrix, const OsdiDescriptor *descr,
                        void *inst) {
   uint32_t *node_mapping =
@@ -184,7 +194,7 @@ int OSDIsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
   uint32_t *node_ids = TMALLOC(uint32_t, descr->num_nodes);
 
   /* determine the number of states required by each instance */
-  int num_states = 0;
+  int num_states = (int)descr->num_states;
   for (uint32_t i = 0; i < descr->num_nodes; i++) {
     if (descr->nodes[i].react_residual_off != UINT32_MAX) {
       num_states += 2;
@@ -269,6 +279,7 @@ int OSDIsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
 
       /* reserve space in the state vector*/
       gen_inst->GENstate = *states;
+      write_state_ids(descr, inst, (uint32_t)*states);
       *states += num_states;
     }
   }

@@ -185,7 +185,6 @@ endif
 
 if OSDI_WANTED
 ngspice_LDADD += osdi/libosdi.la 
-ngspice_LDFLAGS += -Wl,--dynamic-list=$(top_srcdir)/src/osdi/exported.txt 
 endif
 
 ngspice_LDADD += \
