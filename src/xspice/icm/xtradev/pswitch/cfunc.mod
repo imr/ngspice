@@ -85,7 +85,10 @@ cm_pswitch_callback(ARGS, Mif_Callback_Reason_t reason)
     switch (reason) {
         case MIF_CB_DESTROY: {
             Local_Data_t *loc = STATIC_VAR (locdata);
-            free(loc);
+	    if (loc) {
+                free(loc);
+                STATIC_VAR (locdata) = NULL;
+            }
             break;
         }
     }
