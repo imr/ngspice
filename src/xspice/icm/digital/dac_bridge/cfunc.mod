@@ -155,23 +155,16 @@ void cm_dac_bridge(ARGS)
          rise_slope,        /* level_inc divided by t_rise */
          fall_slope,        /* level_inc divided by t_fall */
            time_inc,        /* time increment since last analog call */
-               test,        /* testing variable */
-        *breakpoint;        /* holding variable to prevent infinite
-                               posting of the same breakpoint */
-
-
+               test;        /* testing variable */
 
     int           i,        /* generic loop counter index */
-	           size;        /* number of input & output ports */
+	       size;        /* number of input & output ports */
          
                         
 
     Digital_State_t   *in,       /* base address of array holding all input 
                                     values  */
                   *in_old;       /* array holding previous input values */
-
-
-
 
 
     /* determine "width" of the node bridge... */
@@ -215,14 +208,12 @@ void cm_dac_bridge(ARGS)
                                     
         /* allocate output space and obtain adresses */
         cm_analog_alloc(0, size * (int) sizeof(double));
-        cm_analog_alloc(1, sizeof(double));
         
         /* assign discrete addresses */
         in = in_old = (Digital_State_t *) cm_event_get_ptr(0,0);
 
         /* assign analog addresses */
         out = out_old = (double *) cm_analog_get_ptr(0,0);
-        breakpoint = (double *) cm_analog_get_ptr(1,0);
 
 
         /* read current input values */
@@ -265,18 +256,13 @@ void cm_dac_bridge(ARGS)
 
         /** Retrieve previous values... **/
 
-
         /* assign discrete addresses */
         in = (Digital_State_t *) cm_event_get_ptr(0,0);
         in_old= (Digital_State_t *) cm_event_get_ptr(0,1);
 
-
-
         /* assign analog addresses */
         out = (double *) cm_analog_get_ptr(0,0);
         out_old = (double *) cm_analog_get_ptr(0,1);
-        breakpoint = (double *) cm_analog_get_ptr(1,0);
-
 
         /* read current input values */
         for (i=0; i<size; i++) {
@@ -458,8 +444,6 @@ void cm_dac_bridge(ARGS)
                     break;
 
                 }                                             
-
-
 
                 /* determine required new breakpoint for the end of
                    the output analog transition & post              */
