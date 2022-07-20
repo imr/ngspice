@@ -1592,6 +1592,7 @@ static void callback(ARGS, Mif_Callback_Reason_t reason)
         if (table->next_state)
             free(table->next_state);
         free(table);
+	STATIC_VAR(table) = NULL;
     }
 }
                                         
