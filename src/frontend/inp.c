@@ -882,6 +882,10 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                 else
                     fprintf(stderr, "Warning: Cannot open file debug-out2.txt for saving debug info\n");
             }
+
+            /* handle .if ... .elseif ... .else ... .endif statements. */
+            dotifeval(deck);
+
             for (dd = deck; dd; dd = dd->nextcard) {
                 /* get csparams and create vectors, being
                    available in .control section, in plot 'const' */
@@ -901,9 +905,6 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                     wl_free(wlist);
                 }
             }
-
-            /* handle .if ... .elseif ... .else ... .endif statements. */
-            dotifeval(deck);
 
             /* merge the two option line structs
                com_options (comfile == TRUE, filled in from spinit, .spiceinit, and *ng_sript), and
