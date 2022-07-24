@@ -1055,7 +1055,8 @@ struct card *inp_readall(FILE *fp, const char *dir_name,
             inp_rem_unused_models(root, working);
         }
 
-        rem_mfg_from_models(working);
+        if (newcompat.lt || newcompat.ps)
+            rem_mfg_from_models(working);
 
         subckt_params_to_param(working);
 
@@ -3695,9 +3696,12 @@ static void inp_fix_inst_calls_for_numparam(
 
             if (find_name(subckt_w_params, subckt_name)) {
                 struct card *d;
-
-                d = find_subckt(c->level, subckt_name)->line;
-                {
+                struct card_assoc* ca = find_subckt(c->level, subckt_name);
+                if (ca)
+                    d = ca->line;
+                else
+                    continue;
+                if (d) {
                     char *subckt_line = d->line;
                     subckt_line = skip_non_ws(subckt_line);
                     subckt_line = skip_ws(subckt_line);
@@ -7622,24 +7626,27 @@ static void inp_quote_params(struct card *c, struct card *end_c,
             }
         }
         /* Now check if we have nested {..{  }...}, which is not accepted by numparam code.
-           Replace the inner { } by ( ) */
+           Replace the inner { } by ( ). Do this only when this is not a behavioral device
+           which will become a B source. B source handling is special in inp.c. */
         char* cut_line = c->line;
-        cut_line = strchr(cut_line, '{');
-        if (cut_line) {
-            int level = 1;
-            cut_line++;
-            while (*cut_line != '\0') {
-                if (*cut_line == '{') {
-                    level++;
-                    if (level > 1)
-                        *cut_line = '(';
-                }
-                else if (*cut_line == '}') {
-                    if (level > 1)
-                        *cut_line = ')';
-                    level--;
-                }
+        if (!b_transformation_wanted(cut_line)) {
+            cut_line = strchr(cut_line, '{');
+            if (cut_line) {
+                int level = 1;
                 cut_line++;
+                while (*cut_line != '\0') {
+                    if (*cut_line == '{') {
+                        level++;
+                        if (level > 1)
+                            *cut_line = '(';
+                    }
+                    else if (*cut_line == '}') {
+                        if (level > 1)
+                            *cut_line = ')';
+                        level--;
+                    }
+                    cut_line++;
+                }
             }
         }
     }
@@ -7935,6 +7942,9 @@ static void inp_meas_current(struct card *deck)
             }
 
             if (*curr_line == '*')
+                continue;
+
+            if (*curr_line == '\0')
                 continue;
 
             if (*curr_line == '.') {
@@ -9881,8 +9891,8 @@ static void rem_mfg_from_models(struct card *deck)
             continue;
         /* remove mfg=name */
         if (ciprefix(".model", curr_line)) {
-            start = strstr(curr_line, "mfg=");
-            if (start) {
+            start = search_plain_identifier(curr_line, "mfg");
+            if (start && start[3] == '=') {
                 end = nexttok(start);
                 if (*end == '\0')
                     *start = '\0';
@@ -9892,8 +9902,8 @@ static void rem_mfg_from_models(struct card *deck)
                         start++;
                     }
             }
-            start = strstr(curr_line, "icrating=");
-            if (start) {
+            start = search_plain_identifier(curr_line, "icrating");
+            if (start && start[8] == '=') {
                 end = nexttok(start);
                 if (*end == '\0')
                     *start = '\0';
@@ -9903,8 +9913,8 @@ static void rem_mfg_from_models(struct card *deck)
                         start++;
                     }
             }
-            start = strstr(curr_line, "vceo=");
-            if (start) {
+            start = search_plain_identifier(curr_line, "vceo");
+            if (start && start[4] == '=') {
                 end = nexttok(start);
                 if (*end == '\0')
                     *start = '\0';
@@ -9914,8 +9924,8 @@ static void rem_mfg_from_models(struct card *deck)
                         start++;
                     }
             }
-            start = strstr(curr_line, "type=");
-            if (start) {
+            start = search_plain_identifier(curr_line, "type");
+            if (start && start[4] == '=') {
                 end = nexttok(start);
                 if (*end == '\0')
                     *start = '\0';

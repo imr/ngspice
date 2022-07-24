@@ -34,7 +34,6 @@ INTERFACES
                              
     CMevt.c              void *cm_event_alloc()
                          void *cm_event_get_ptr()
-                         
 
 
 REFERENCED FILES
@@ -56,8 +55,6 @@ NON-STANDARD FEATURES
 #include <string.h>
 #include <stdlib.h>
 
-                                      
-
 /*=== CONSTANTS ========================*/
 
 #define MAX_STRING_SIZE 200
@@ -68,91 +65,64 @@ NON-STANDARD FEATURES
 #define OK 0
 #define FAIL 1                                        
 
-
-
-
 /*=== MACROS ===========================*/
 
-
-
-  
 /*=== LOCAL VARIABLES & TYPEDEFS =======*/                         
 
-typedef struct { 
+typedef struct {
     int current_state,  /* current state of the machine (similar to
                            current state of the union, current state
                            of the economy, etc. etc. 8-)                */
-               index0,  /* actual word number (0 to depth-1) in which the 
+        index0,         /* actual word number (0 to depth-1) in which the
                            first line of the current_state definition
                            may be found.                                */
-               indexN,  /* word number (0 to depth-1) of the final curren_state
+        indexN;         /* word number (0 to depth-1) of the final curren_state
                            definition line...if a state is defined in only one
                            line, index0 and indexN will be equal.       */
-          num_outputs,  /* width of bits[] table...equal to size of 
-                           out port                               */
-           num_inputs,  /* width of inputs[] table...equal to size of 
-                           in port                                */
-                depth,  /* depth of table...equal to size of
-                           current_state & next_state arrays, 
-                           and to the total number of vectors 
-                           retrieved from the
-                           state.in file.                               */
-               *state,  /* integer array holding the state
+} Dynamic_State_t;
+
+typedef struct {
+    int     num_outputs,/* width of bits[] table...equal to size of out port.*/
+            num_inputs, /* width of inputs[] table...equal to size of in port*/
+            depth,      /* depth of table...equal to size of
+                           current_state & next_state arrays,
+                           and to the total number of vectors
+                           retrieved from the state.in file.            */
+           *state,      /* integer array holding the state
                            index values...note that each state will
                            have at least one and as many as 2^N
                            "words" assigned to it, where N = number
                            of input lines to the state machine.         */
-          *next_state;  /* integer array holding the next state
+           *next_state; /* integer array holding the next state
                            to jump to given the input values
-                           held by the inputs[] array...note that each 
+                           held by the inputs[] array...note that each
                            state will have at least one and as many as 2^N
                            "words" assigned to it, where N = number
                            of input lines to the state machine.         */
 
 
-    short   *bits,  /* the storage array for the 
-                       output bit representations...
-                       this will have size equal to
-                       (width * depth)/4, since one
-                       short will hold four 12-state
-                       bit descriptions.                */
-          *inputs;  /* the storage array for the 
-                       input bit representations...
-                       this will have size equal to
-                       (width * depth)/8, since one
-                       short will hold eight 3-state
-                       bit descriptions.                */
+    short  *bits,       /* the storage array for the
+                           output bit representations...
+                           this will have size equal to
+                           (width * depth)/4, since one
+                           short will hold four 12-state
+                           bit descriptions.                */
+           *inputs;     /* the storage array for the
+                           input bit representations...
+                           this will have size equal to
+                           (width * depth)/8, since one
+                           short will hold eight 3-state
+                           bit descriptions.                */
 } State_Table_t;
 
-
-
-
-
-
-
-
 /* Type definition for each possible token returned. */
+
 typedef enum token_type_s {CNV_NO_TOK,CNV_STRING_TOK} Cnv_Token_Type_t;
-
-
-
-
-
-
 typedef char line_t[82]; /* A SPICE size line. <= 80 characters plus '\n\0' */
 
 
-
-
-
-    
-           
 /*=== FUNCTION PROTOTYPE DEFINITIONS ===*/
 
-
-                   
-
-                                      
 
 /*==============================================================================
 
@@ -173,7 +143,7 @@ SUMMARY
 
 INTERFACES       
 
-    FILE                 ROUTINE CALLED     
+    FILE                 ROUTINE CALLED
 
     N/A                  N/A
 
@@ -639,11 +609,11 @@ NON-STANDARD FEATURES
 ************************************************/
 
 
-static int cm_set_indices(State_Table_t *states)
+static int cm_set_indices(Dynamic_State_t *states, State_Table_t *table)
 {             
-    int         i,  /* indexing variable */
-       index0_set,  /* flag for index0   */
-       indexN_set;  /* flag for index1   */
+    int i,           /* indexing variable */
+        index0_set,  /* flag for index0   */
+        indexN_set;  /* flag for index1   */
 
 
     states->index0 = 0;
@@ -651,10 +621,10 @@ static int cm_set_indices(State_Table_t *states)
     index0_set = 0;
     indexN_set = 0;
 
+    for (i = 0; i < table->depth; i++) {
+        /* Loop through all states. */
 
-    for (i=0; i< states->depth; i++) { /* loop through all states */
-
-        if ( states->state[i] == states->current_state ) { 
+        if (table->state[i] == states->current_state) {
             /* states match... */
 
             /* if not already set, set index0... */
@@ -736,7 +706,8 @@ NON-STANDARD FEATURES
 ************************************************/
 
 
-static int cm_compare_to_inputs(State_Table_t *states,int index,int bit_number, Digital_State_t in)
+static int cm_compare_to_inputs(State_Table_t *table, int index,
+                                int bit_number, Digital_State_t in)
 {
     int      int1,      /* temp storage variable    */
         bit_index,      /* bits base address at which word bits will
@@ -751,13 +722,13 @@ static int cm_compare_to_inputs(State_Table_t *states,int index,int bit_number, 
 
 
     /* obtain offset value from index, word_width & bit_number */
-    int1 = index * states->num_inputs + bit_number;
+    int1 = index * table->num_inputs + bit_number;
 
     bit_index = int1 >> 3;
     bit_offset = int1 & 7;
 
     /* retrieve entire base_address bits integer... */
-    base = states->inputs[bit_index];
+    base = table->inputs[bit_index];
                          
     /* for each offset, mask off the bits and determine values */
 
@@ -897,8 +868,8 @@ NON-STANDARD FEATURES
 *   Created 7/23/91               J.P.Murray    *
 ************************************************/
 
-static void cm_store_inputs_value(State_Table_t *states,int index, int bit_number,
-                                int in_val)
+static void cm_store_inputs_value(State_Table_t *table, int index,
+                                  int bit_number, int in_val)
 
 {
     int       /*err,*/      /* error index value    */
@@ -910,24 +881,22 @@ static void cm_store_inputs_value(State_Table_t *states,int index, int bit_numbe
         
     short    base;      /* variable to hold current base integer for
                            comparison purposes. */
-                                        
 
+    /* obtain offset value from word_number, word_width & bit_number */
 
-    /* obtain offset value from word_number, word_width & 
-       bit_number */
-    int1 = index * states->num_inputs + bit_number;
+    int1 = index * table->num_inputs + bit_number;
 
     bit_index = int1 >> 3;
     bit_offset = int1 & 7;
 
     /* retrieve entire base_address bits integer... */
-    base = states->inputs[bit_index];
+    base = table->inputs[bit_index];
                          
     /* for each offset, mask off the bits and store values */
     cm_inputs_mask_and_store(&base,bit_offset,in_val);
                           
     /* store modified base value */
-    states->inputs[bit_index] = base;                   
+    table->inputs[bit_index] = base;
 }
 
 
@@ -1173,8 +1142,8 @@ NON-STANDARD FEATURES
 *   Last Modified 7/23/91         J.P.Murray    *
 ************************************************/
 
-static void cm_get_bits_value(State_Table_t *states,int index, int bit_number,
-                              Digital_t *out)
+static void cm_get_bits_value(State_Table_t *table, int index,
+                              int bit_number, Digital_t *out)
 
 {
     int       /*err,*/      /* error index value    */
@@ -1190,13 +1159,13 @@ static void cm_get_bits_value(State_Table_t *states,int index, int bit_number,
 
 
     /* obtain offset value from index, word_width & bit_number */
-    int1 = index * states->num_outputs + bit_number;
+    int1 = index * table->num_outputs + bit_number;
 
     bit_index = int1 >> 2;
     bit_offset = int1 & 3;
 
     /* retrieve entire base_address bits integer... */
-    base = states->bits[bit_index];
+    base = table->bits[bit_index];
                          
     /* for each offset, mask off the bits and determine values */
 
@@ -1262,8 +1231,8 @@ NON-STANDARD FEATURES
 *   Last Modified 7/23/91         J.P.Murray    *
 ************************************************/
 
-static void cm_store_bits_value(State_Table_t *states,int index, int bit_number,
-                                int in_val)
+static void cm_store_bits_value(State_Table_t *table, int index,
+                                int bit_number, int in_val)
 
 {
     int       /*err,*/      /* error index value    */
@@ -1277,22 +1246,21 @@ static void cm_store_bits_value(State_Table_t *states,int index, int bit_number,
                            comparison purposes. */
                                         
 
-
     /* obtain offset value from word_number, word_width & 
        bit_number */
-    int1 = index * states->num_outputs + bit_number;
+    int1 = index * table->num_outputs + bit_number;
 
     bit_index = int1 >> 2;
     bit_offset = int1 & 3;
 
     /* retrieve entire base_address bits integer... */
-    base = states->bits[bit_index];
+    base = table->bits[bit_index];
                          
     /* for each offset, mask off the bits and store values */
     cm_bits_mask_and_store(&base,bit_offset,in_val);
                           
     /* store modified base value */
-    states->bits[bit_index] = base;                   
+    table->bits[bit_index] = base;
 }
 
 
@@ -1353,7 +1321,7 @@ NON-STANDARD FEATURES
 *   Last Modified 7/23/91         J.P.Murray      *
 **************************************************/
 
-static int cm_read_state_file(FILE *state_file,State_Table_t *states)
+static int cm_read_state_file(FILE *state_file, State_Table_t *table)
 {
     int         i,  /* indexing variable    */
                 j,  /* indexing variable    */
@@ -1410,7 +1378,8 @@ static int cm_read_state_file(FILE *state_file,State_Table_t *states)
                 type = CNV_STRING_TOK;
                 while ( type != CNV_NO_TOK ) {
                     token = CNVget_token(&s, &type);
-		    free(token);
+		    if (token)
+		       free(token);
                     j++;
                 }
                 num_tokens = (j-1);
@@ -1429,12 +1398,11 @@ static int cm_read_state_file(FILE *state_file,State_Table_t *states)
                            (e.g. "           0 1 -> 7").
                 */
     
-                if ( (3 + states->num_inputs + states->num_outputs) == 
-                      num_tokens) {
+                if (3 + table->num_inputs + table->num_outputs == num_tokens) {
                     string_type = HEADER;
                 }
                 else {
-                    if ( (2 + states->num_inputs) == num_tokens) {
+                    if ( (2 + table->num_inputs) == num_tokens) {
                         string_type = CONTINUATION;
                     }
                     else { /* Number of tokens is incorrect */
@@ -1451,27 +1419,27 @@ static int cm_read_state_file(FILE *state_file,State_Table_t *states)
     
                 if ( HEADER == string_type ) { /**** header type loop ****/
     
-                    for (j=0; j<(states->num_inputs + states->num_outputs 
-                                 + 3); j++) {
+                    for (j = 0;
+                         j < table->num_inputs + table->num_outputs + 3;
+                         j++) {
             
                         token = CNVget_token(&s, &type);
 
                         if(!token)
                             return 1;
-                      
 
                         if ( 0 == j ) { /* obtain state value... */
                             
                             /* convert to a floating point number... */
                             cnv_get_spice_value(token,&number);
             
-                            states->state[i] = (int) number;
+                            table->state[i] = (int)number;
 
                              
                         }
                         else { /* obtain each bit value & set bits entry    */
             
-                            if ( states->num_outputs >= j ) {
+                            if ( table->num_outputs >= j ) {
         
                                 /* preset this bit location */
                                 bit_value = 12;
@@ -1494,18 +1462,16 @@ static int cm_read_state_file(FILE *state_file,State_Table_t *states)
                                     free(token);
                                     return 1;                            
                                 }
-                                else { /* need to store this value in the bits[] array */
-                                                                                            
-                                    cm_store_bits_value(states,i,(j-1),bit_value);
-
-    
+                                else {
+                                    /* need to store this value in the bits[] array */
+                                    cm_store_bits_value(table, i, j - 1,
+                                                        bit_value);
                                 }
                             } 
                             else { /* obtain inputs info... */
-    
-                                if ( (states->num_outputs + states->num_inputs) 
-                                     >= j ) { 
-    
+                                int idx;
+
+                                if (table->num_outputs + table->num_inputs >= j) {
                                     /* preset this bit location */
                                     bit_value = 3;
                      
@@ -1519,24 +1485,24 @@ static int cm_read_state_file(FILE *state_file,State_Table_t *states)
                                         free(token);
                                         return 1;                            
                                     }
-                                    else { /* need to store this value in the inputs[] array */
-                                                                                                
-                                        cm_store_inputs_value(states,i,(j-1-states->num_outputs),bit_value);
-    
+                                    else {
+                                        /* need to store this value in the inputs[] array */
+                                        idx = j - 1 - table->num_outputs;
+                                        cm_store_inputs_value(table, i, idx,
+                                                              bit_value);
                                     }
                                 }
                                 else { /* obtain next_state value */
-    
-                                    if ( (1 + states->num_outputs + states->num_inputs) 
-                                         == j ) { 
+                                    idx =  1 + table->num_outputs +
+                                               table->num_inputs;
+                                    if (idx == j) {
                                         /* skip the "->" token */
                                     }
                                     else {
-    
                                         /* convert to a floating point number... */
                                         cnv_get_spice_value(token,&number);
             
-                                        states->next_state[i] = (int) number;
+                                        table->next_state[i] = (int) number;
                                     }
                                 }
                             }
@@ -1545,98 +1511,26 @@ static int cm_read_state_file(FILE *state_file,State_Table_t *states)
                     }
                 }
                 else { /**** continuation type loop ****/
-    
                     /* set state value to previous state value */
-                    states->state[i] = states->state[i-1];
+
+                    table->state[i] = table->state[i - 1];
                                                          
                     /* set bits values to previous bits values */
-                    for (j=0; j<states->num_outputs; j++) {      
-    
-                        /*** Retrieve the previous bit value ***?                              
-                        cm_get_bits_value(*states,i,j,&out);
-    
-                        switch (out.state) {
-    
-                        case ZERO:
-                            switch (out.strength) {
-                                
-                            case STRONG:
-                                bit_value = 0;
-                                break;
-    
-                            case RESISTIVE:
-                                bit_value = 3;
-                                break;
-    
-                            case HI_IMPEDANCE:
-                                bit_value = 6;
-                                break;
-    
-                            case UNDETERMINED:
-                                bit_value = 9;
-                                break;
-                            }
-                            break;
-    
-                        case ONE:
-                            switch (out.strength) {
-                                
-                            case STRONG:
-                                bit_value = 1;
-                                break;
-    
-                            case RESISTIVE:
-                                bit_value = 4;
-                                break;
-    
-                            case HI_IMPEDANCE:
-                                bit_value = 7;
-                                break;
-    
-                            case UNDETERMINED:
-                                bit_value = 10;
-                                break;
-                            }
-                            break;
-    
-                        case UNKNOWN:
-                            switch (out.strength) {
-                                
-                            case STRONG:
-                                bit_value = 2;
-                                break;
-    
-                            case RESISTIVE:
-                                bit_value = 5;
-                                break;
-    
-                            case HI_IMPEDANCE:
-                                bit_value = 8;
-                                break;
-    
-                            case UNDETERMINED:
-                                bit_value = 11;
-                                break;
-                            }
-                            break;
-    
-                        }
-*/
+                    for (j = 0; j < table->num_outputs; j++) {
         
                         /*** Store this bit value ***/
     
-                        cm_store_bits_value(states,i,j,bit_value);
-    
+                        cm_store_bits_value(table, i, j, bit_value);
                     }
     
-                    for (j=0; j<(2 + states->num_inputs); j++) {
+                    for (j=0; j<(2 + table->num_inputs); j++) {
             
                         token = CNVget_token(&s, &type);
 
                         if(!token)
                             return 1;
 
-                        if ( j < states->num_inputs ) {
+                        if ( j < table->num_inputs ) {
     
                             /* preset this bit location */
                             bit_value = 3;
@@ -1651,23 +1545,20 @@ static int cm_read_state_file(FILE *state_file,State_Table_t *states)
                                 free(token);
                                 return 1;                            
                             }
-                            else { /* need to store this value in the inputs[] array */
-                                                                                        
-                                cm_store_inputs_value(states,i,j,bit_value);
-    
+                            else {
+                                /* need to store this value in the inputs[] array */
+                                cm_store_inputs_value(table, i, j, bit_value);
                             } 
                         }
                         else { /* obtain next_state value */
-    
-                            if ( states->num_inputs == j ) { 
+                            if ( table->num_inputs == j ) {
                                 /* skip the "->" token */
                             }
                             else {
-    
                                 /* convert to a floating point number... */
+
                                 cnv_get_spice_value(token,&number);
-                        
-                                states->next_state[i] = (int) number;
+                                table->next_state[i] = (int) number;
                             }
                         }
                         free(token);
@@ -1682,9 +1573,28 @@ static int cm_read_state_file(FILE *state_file,State_Table_t *states)
     return 0;
 }
             
+/* Free allocated storage. */
 
+static void callback(ARGS, Mif_Callback_Reason_t reason)
+{
+    if (reason == MIF_CB_DESTROY) {
+        State_Table_t    *table;
 
-
+        table = (State_Table_t *)STATIC_VAR(table);
+        if (!table)
+            return;
+        if (table->state)
+            free(table->state);
+        if (table->bits)
+            free(table->bits);
+        if (table->inputs)
+            free(table->inputs);
+        if (table->next_state)
+            free(table->next_state);
+        free(table);
+	STATIC_VAR(table) = NULL;
+    }
+}
                                         
 /*==============================================================================
 
@@ -1740,52 +1650,52 @@ NON-STANDARD FEATURES
 
 void cm_d_state(ARGS) 
 {
-    int                    i,   /* generic loop counter index */
-                           j,   /* generic loop counter index */
-                         err=0,   /* integer for storage of error status  */
-                        test;   /* testing integer  */   
+    int               i, j,       /* Generic loop counter indices. */
+                      err=0,      /* Integer for storage of error status.  */
+                      test;       /* Testing integer.  */
                
-    State_Table_t    *states,   /* pointer to base address structure
-                                   for all state arrays. *states
-                                   contains the pointers to 
-                                   state[], bits[], input[]
-                                   and next_state[] arrays. These
-                                   arrays are allocated using
-                                   calloc, so they do not take up
-                                   rotational storage space...only
-                                   the *states structure does this. */
+    State_Table_t    *table;      /* Pointer to base address structure
+                                     for all state arrays. *table
+                                     contains the pointers to
+                                     state[], bits[], input[]
+                                     and next_state[] arrays. These
+                                     arrays are allocated using
+                                     calloc, so they do not take up
+                                     rotational storage space...only
+                                     the *states structure does that. */
+    Dynamic_State_t  *states,      /* Pointer to dynamic state structure. */
                      *states_old;                                        
-    FILE         *state_file;   /* pointer to the state.in input
-                                   vector file */
+    Digital_t         in, out;     /* Storage for each input and  bit. */
 
-    Digital_t                 in,   /* storage for each input bit */
-                             out;   /* storage for each output bit */
+    Digital_State_t  *clk,         /* Storage for current and clock value.  */
+                     *clk_old,     /* Previous clock value. */
+                     *reset    ,   /* Current reset value.  */
+                     *reset_old;   /* Previous reset value.  */
 
-    Digital_State_t         *clk,   /* storage for clock value  */
-                        *clk_old,   /* previous clock value     */
-                          *reset,   /* current reset value  */
-                      *reset_old;   /* previous reset value  */
+    static char      *index_error =
+        "\nERROR\n  D_STATE: An error exists in the ordering of states "
+        "values\n  in the states->state[] array. This is usually caused\n"
+        " by non-contiguous state definitions in the state.in file.\n";
 
+        /****** Setup required state variables ******/
 
+    if (INIT) {  /* initial pass */
+        FILE  *state_file; /* Pointer to the state.in input vector file. */
+	char   temp[MAX_STRING_SIZE], /* Holding string variable for testing
+                                         input from state.in. */
+              *s;                     /* Main string variable. */
 
-    char   temp[MAX_STRING_SIZE],   /* holding string variable for testing
-                                       input from state.in */
-                              *s;   /* main string variable */ 
+        static char *open_error =
+	    "\nERROR\n  D_STATE: failed to open state file.\n";
+        static char *loading_error =
+	    "\nERROR\n  D_STATE: state file was not read successfully.\n  "
+	    "The most common cause of this problem is a\n  "
+	    "trailing blank line in the state.in file.\n";
 
-    char *open_error = "\nERROR\n  D_STATE: failed to open state file.\n";
+	/* Allocate storage for the state transition table. */
 
-    char *loading_error = "\nERROR\n  D_STATE: state file was not read successfully. \n  The most common cause of this problem is a\n  trailing blank line in the state.in file \n";
-
-    char *index_error = "\nERROR\n  D_STATE: An error exists in the ordering of states values\n  in the states->state[] array. This is usually caused \n  by non-contiguous state definitions in the state.in file \n";
-/*    char buf[100];*/
-
-
-
-        
-
-    /****** Setup required state variables ******/
-
-    if(INIT) {  /* initial pass */ 
+        table = calloc(1, sizeof (State_Table_t));
+        STATIC_VAR(table) = table;
 
         /*** open file and count the number of vectors in it ***/
         state_file = fopen_with_path( PARAM(state_file), "r");
@@ -1793,59 +1703,48 @@ void cm_d_state(ARGS)
         /* increment counter if not a comment until EOF reached... */
         i = 0;                                                
         s = temp;
-        if (state_file!=NULL)
-            while ( fgets(s,MAX_STRING_SIZE,state_file) != NULL) {
+        if (state_file != NULL)
+            while (fgets(s, MAX_STRING_SIZE, state_file) != NULL) {
                 if ( '*' != s[0] ) {
-                    while(isspace_c(*s) || (*s == '*')) 
+                    while (isspace_c(*s) || (*s == '*'))
                         (s)++;
-                    if ( *s != '\0' ) i++;
+                    if (*s != '\0')
+                        i++;
                 }
                 s = temp;
             }
 
-        /*** allocate storage for *states... ***/
-
-        cm_event_alloc(0,sizeof(State_Table_t));
-        states = states_old = (State_Table_t *) cm_event_get_ptr(0,0);
-
         /* Store depth value */
-        states->depth = i;
+        table->depth = i;
 
         /* Retrieve widths for bits[] and inputs[] */
-        states->num_inputs = PORT_SIZE(in);
-        states->num_outputs = PORT_SIZE(out);
+        table->num_inputs = PORT_SIZE(in);
+        table->num_outputs = PORT_SIZE(out);
         
+        /* Assign storage for arrays to pointers in state table. */
+        table->state = (int *)calloc((size_t) (table->depth + 1), sizeof(int));
+        table->bits =(short *)calloc(
+                         (size_t)(table->num_outputs * table->depth / 4 + 1),
+                         sizeof (short));
+        table->inputs = (short *)calloc(
+                            (size_t)(table->num_inputs * table->depth / 8 + 1),
+                            sizeof (short));
+        table->next_state = (int *)calloc((size_t)(table->depth + 1),
+                                          sizeof (int));
+        CALLBACK = callback;    // To free those allocations.
 
-        /* Assign storage for arrays to pointers in states table.
-         * This needs to be fixed as the memory can not be recovered.
-         * The *states data is deleted before any deletion callback is made.
-         */
-        states->state = (int *) calloc((size_t) (states->depth + 1), sizeof(int));
-        states->bits = (short *) calloc((size_t) (states->num_outputs * states->depth / 4 + 1), sizeof(short));
-        states->inputs = (short *) calloc((size_t) (states->num_inputs * states->depth / 8 + 1), sizeof(short));
-        states->next_state = (int *) calloc((size_t) (states->depth + 1), sizeof(int));
-        
+        /*** allocate storage for *states... ***/
 
-        /* Initialize *state, *bits, *inputs & *next_state to zero  */
-        for (i=0; i<states->depth; i++) {
-            states->state[i] = 0;
-            states->next_state[i] = 0;
-        }        
-        for (i=0; i<(test=(states->num_outputs * states->depth)/4); i++) states->bits[i] = 0;
-        for (i=0; i<(test=(states->num_inputs * states->depth)/8); i++) states->inputs[i] = 0;
-
-                                                             
+        cm_event_alloc(0, sizeof (Dynamic_State_t));
 
         /*** allocate storage for *clk, *clk_old, *reset & *reset_old... ***/
-        cm_event_alloc(1,sizeof(Digital_State_t));
+        cm_event_alloc(1, sizeof (Digital_State_t));
+        cm_event_alloc(2, sizeof (Digital_State_t));
 
-        cm_event_alloc(2,sizeof(Digital_State_t));
-
-        /* fetch states again, it might have moved per realloc */
-        states = states_old = (State_Table_t *) cm_event_get_ptr(0,0);
-        clk = clk_old = (Digital_State_t *) cm_event_get_ptr(1,0);
-        reset = reset_old = (Digital_State_t *) cm_event_get_ptr(2,0);
-        *reset = *reset_old = *clk = *clk_old = ZERO;
+        clk = clk_old = (Digital_State_t *)cm_event_get_ptr(1, 0);
+        *clk = ZERO;
+        reset = reset_old = (Digital_State_t *)cm_event_get_ptr(2, 0);
+        *reset = ZERO;
 
         /*** Send file pointer and the four storage pointers      ***/
         /*** to "cm_read_state_file()". This will return after    ***/
@@ -1857,37 +1756,36 @@ void cm_d_state(ARGS)
 
         if (state_file) {
             rewind(state_file);
-            err = cm_read_state_file(state_file,states);
+            err = cm_read_state_file(state_file, table);
         } else {
             err = 2;
         }
 
-        if (err == 1) /* problem occurred in load...send error msg. */
+        if (err == 1) /* Problem occurred in load. */
             cm_message_send(loading_error);
-        else if (err == 2)  /* problem opening the state file...send error msg. */   
+        else if (err == 2)  /* Problem opening the state file. */
             cm_message_send(open_error);
 
         if (err > 0) {
             /* Reset arrays to zero */
-            for (i=0; i<states->depth; i++) {
-                states->state[i] = 0;
-                states->next_state[i] = 0;
+            for (i = 0; i < table->depth; i++) {
+                table->state[i] = 0;
+                table->next_state[i] = 0;
             }        
-            for (i=0; i<(test=(states->num_outputs * states->depth)/4); i++) states->bits[i] = 0;
-            for (i=0; i<(test=(states->num_inputs * states->depth)/8); i++) states->inputs[i] = 0;
-            
+            for (i=0; i<(test=(table->num_outputs * table->depth)/4); i++)
+                table->bits[i] = 0;
+            for (i=0; i<(test=(table->num_inputs * table->depth)/8); i++)
+                table->inputs[i] = 0;
             return;
         }
 
         /* close state_file */
         if (state_file)
             fclose(state_file);
-                                 
 
         /* declare load values */
        
-        // for (i=0; i<states->num_outputs; i++) {
-        for (i=0; i<states->num_inputs; i++) {
+        for (i = 0; i < table->num_inputs; i++) {
             LOAD(in[i]) = PARAM(input_load);
         }              
 
@@ -1896,45 +1794,38 @@ void cm_d_state(ARGS)
         if ( !PORT_NULL(reset) ) {
             LOAD(reset) = PARAM(reset_load);
         }
-
     }
     else {  /**** Retrieve previous values ****/
 
-        states = (State_Table_t *) cm_event_get_ptr(0,0);
-		states_old = (State_Table_t *) cm_event_get_ptr(0,1);
-		// Copy storage
-		*states = *states_old;
+        table = (State_Table_t *)STATIC_VAR(table);
+        clk = (Digital_State_t *)cm_event_get_ptr(1, 0);
+        clk_old = (Digital_State_t *)cm_event_get_ptr(1, 1);
 
-        clk = (Digital_State_t *) cm_event_get_ptr(1,0);
-        clk_old = (Digital_State_t *) cm_event_get_ptr(1,1);
-
-        reset = (Digital_State_t *) cm_event_get_ptr(2,0);
-        reset_old = (Digital_State_t *) cm_event_get_ptr(2,1);
-
+        reset = (Digital_State_t *)cm_event_get_ptr(2, 0);
+        reset_old = (Digital_State_t *)cm_event_get_ptr(2, 1);
     }
 
-
+    states = (Dynamic_State_t *)cm_event_get_ptr(0, 0);
+    states_old = (Dynamic_State_t *)cm_event_get_ptr(0, 1);
 
     /******* Determine analysis type and output appropriate values *******/
 
-    if ( 0.0 == TIME ) {   /****** DC analysis...output w/o delays ******/
-                     
+    if (0.0 == TIME) {   /****** DC analysis...output w/o delays ******/
         /* set current state to default */
         states->current_state = PARAM(reset_state);
         
         /* set indices for this state   */
-        err = cm_set_indices(states);
-        if ( err == TRUE ) {
+        err = cm_set_indices(states, table);
+        if (err == TRUE) {
             cm_message_send(index_error);
             return;
         }
 
-
         /* Output new values... */
-        for (i=0; i<states->num_outputs; i++) {
+        for (i=0; i < table->num_outputs; i++) {
 
             /* retrieve output value */
-            cm_get_bits_value(states,states->index0,i,&out);
+            cm_get_bits_value(table,states->index0,i,&out);
 
             OUTPUT_STATE(out[i]) = out.state;
             OUTPUT_STRENGTH(out[i]) = out.strength;
@@ -1954,8 +1845,6 @@ void cm_d_state(ARGS)
             *reset = INPUT_STATE(reset);
         }
 
-
-
         /***** Find input that has changed... *****/
 
         /**** Test reset value for change ****/
@@ -1966,17 +1855,17 @@ void cm_d_state(ARGS)
                 states->current_state = PARAM(reset_state);
 
                 /* set indices for this state   */
-                err = cm_set_indices(states);
+                err = cm_set_indices(states, table);
                 if ( err == TRUE ) {
                     cm_message_send(index_error);
                     return;
                 }
 
                 /* Output new values... */
-                for (i=0; i<states->num_outputs; i++) {
+                for (i=0; i<table->num_outputs; i++) {
         
                     /* retrieve output value */
-                    cm_get_bits_value(states,states->index0,i,&out);
+                    cm_get_bits_value(table, states->index0, i, &out);
         
                     OUTPUT_STATE(out[i]) = out.state;
                     OUTPUT_STRENGTH(out[i]) = out.strength;
@@ -1987,7 +1876,7 @@ void cm_d_state(ARGS)
             case ZERO:
             case UNKNOWN:
                 /* output remains at current value */
-                for (i=0; i<states->num_outputs; i++) {
+                for (i=0; i<table->num_outputs; i++) {
                     OUTPUT_CHANGED(out[i]) = FALSE;
                 }
                 break;
@@ -2019,18 +1908,19 @@ void cm_d_state(ARGS)
     
                             /* for each bit of the inputs value for this 
                                entry...*/
-                            for (j=0; j<states->num_inputs; j++) {
+                            for (j = 0; j < table->num_inputs; j++) {
     
                                 /* retrieve the current input bit... */
                                 in.state = INPUT_STATE(in[j]);
     
                                 /* ...& compare to the corresponding
                                    inputs[i] value. */
-                                err = cm_compare_to_inputs(states,i,j,in.state);
+                                err = cm_compare_to_inputs(table, i, j,
+                                                           in.state);
                                 
                                 /* break if comparison was no-good... */
-                                if ( 0 != err ) break;
-    
+                                if (0 != err)
+                                    break;
                             }
                                                       
                             /* if the comparison of the entire input
@@ -2042,24 +1932,24 @@ void cm_d_state(ARGS)
                            we will not change states... */
     
                         if ( 0 == err ) {
-    
                             /* use "i" to retrieve the next state value:
                                store this into current_state... */
-                            states->current_state = states->next_state[i];
+
+                            states->current_state = table->next_state[i];
     
                             /* set indices for this new state   */
-                            err = cm_set_indices(states);     
+                            err = cm_set_indices(states, table);
                             if ( err == TRUE ) {
                                 cm_message_send(index_error);
                                 return;
                             }
                     
                             /* Output new values... */
-                            for (i=0; i<states->num_outputs; i++) {
-                       
+                            for (i=0; i<table->num_outputs; i++) {
                                 /* retrieve output value */
-                                cm_get_bits_value(states,states->index0,i,&out);
-            
+
+                                cm_get_bits_value(table, states->index0,
+                                                  i, &out);
                                 OUTPUT_STATE(out[i]) = out.state;
                                 OUTPUT_STRENGTH(out[i]) = out.strength;
                                 OUTPUT_DELAY(out[i]) = PARAM(clk_delay);
@@ -2068,7 +1958,7 @@ void cm_d_state(ARGS)
                         }
                         else { /* no change in state or in output */
     
-                            for (i=0; i<states->num_outputs; i++) {
+                            for (i=0; i<table->num_outputs; i++) {
                                 OUTPUT_CHANGED(out[i]) = FALSE;
                             }
     
@@ -2080,7 +1970,7 @@ void cm_d_state(ARGS)
                     case UNKNOWN:
                         
                         /* no change in state or in output */
-                        for (i=0; i<states->num_outputs; i++) {
+                        for (i=0; i<table->num_outputs; i++) {
                             OUTPUT_CHANGED(out[i]) = FALSE;
                         }
     
@@ -2090,7 +1980,7 @@ void cm_d_state(ARGS)
                 else {   /* input value must have changed...
                             return previous output value.    */
 
-                    for (i=0; i<states->num_outputs; i++) {
+                    for (i=0; i<table->num_outputs; i++) {
                         OUTPUT_CHANGED(out[i]) = FALSE;
                     }
                 }
@@ -2098,14 +1988,10 @@ void cm_d_state(ARGS)
             else {   /* Reset is active...
                         return previous output values.    */
 
-                for (i=0; i<states->num_outputs; i++) {
+                for (i=0; i<table->num_outputs; i++) {
                     OUTPUT_CHANGED(out[i]) = FALSE;
                 }
-
             }
         }        
     }
 }
-
-
-

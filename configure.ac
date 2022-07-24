@@ -16,7 +16,7 @@
 # problem to the user.
 AC_PREREQ([2.59])
 
-m4_define([ngspice_major_version], [37])
+m4_define([ngspice_major_version], [37+])
 m4_define([ngspice_minor_version], [0])
 m4_define([ngspice_version],
       [ngspice_major_version])
@@ -186,6 +186,10 @@ AC_ARG_WITH([ngshared],
 # --disable-utf8: don't use utf-8 and tchar for string representation, UNICODE support disabled
 AC_ARG_ENABLE([utf8],
     [AS_HELP_STRING([--disable-utf8], [Don't use utf-8 or tchar (default is UNICODE support with utf-8)])])
+
+# --enable-shortcheck: CMC quality check only for BSIM3/4 to shorten check time
+AC_ARG_ENABLE([shortcheck],
+    [AS_HELP_STRING([--enable-shortcheck], [CMC QA check only for BSIM4/4])])
 
 # old options, not maintained, may even not work at all
 
@@ -1157,6 +1161,8 @@ AC_SUBST([XSPICEINIT])
 AC_SUBST([XSPICEDLLIBS])
 
 AM_CONDITIONAL([XSPICE_WANTED], [test "x$enable_xspice" = xyes])
+
+AM_CONDITIONAL([SHORT_CHECK_WANTED], [test "x$enable_shortcheck" = xyes])
 
 
 # Add CIDER enhancements to ngspice.

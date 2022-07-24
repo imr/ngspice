@@ -59,7 +59,7 @@ int stackp = 0;
  */
 
 /* no redirection after the following commands (we may need more to add here!) */
-static char *noredirect[] = { "stop", "define", NULL };
+static char *noredirect[] = { "stop", "define", "circbyline", NULL};
 
 
 /* This function returns the (first) structure wit the label s */

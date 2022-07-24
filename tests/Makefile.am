@@ -7,6 +7,13 @@ if XSPICE_WANTED
 SUBDIRS += xspice
 endif
 
+if SHORT_CHECK_WANTED
+SUBDIRS +=		\
+	bsim3		\
+	bsim4
+endif
+
+if !SHORT_CHECK_WANTED
 SUBDIRS +=		\
 	bsim3		\
 	bsim4		\
@@ -15,6 +22,7 @@ SUBDIRS +=		\
 	hicum2		\
 	hisimhv1	\
 	hisimhv2
+endif
 
 DIST_SUBDIRS =		\
 	bsim1		\

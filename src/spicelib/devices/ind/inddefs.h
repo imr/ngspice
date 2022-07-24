@@ -36,6 +36,7 @@ struct sINDinstance {
 
     int INDbrEq;    /* number of the branch equation added for current */
     double INDinduct;    /* inductance */
+    double INDinductinst;/* inductance on instance line */
     double INDm;         /* Parallel multiplier */
     double INDtc1;       /* first temperature coefficient of resistors */
     double INDtc2;       /* second temperature coefficient of resistors */
@@ -101,6 +102,7 @@ struct sINDmodel {             /* model structure for an inductor */
     double INDtempCoeff1;  /* first temperature coefficient */
     double INDtempCoeff2;  /* second  temperature coefficient */
     double INDcsect;       /* Cross section of inductor */
+    double INDdia;         /* Diameter of (cylindrical) inductor */
     double INDlength;      /* Mean length of magnetic path */
     double INDmodNt;       /* Model number of turns */
     double INDmu;          /* Relative magnetic permeability */
@@ -109,6 +111,7 @@ struct sINDmodel {             /* model structure for an inductor */
     unsigned INDtc1Given   : 1; /* flag to indicate tc1 was specified */
     unsigned INDtc2Given   : 1; /* flag to indicate tc2 was specified */
     unsigned INDcsectGiven : 1; /* flag to indicate cross section given */
+    unsigned INDdiaGiven   : 1; /* flag to indicate diameter given */
     unsigned INDlengthGiven: 1; /* flag to indicate length given */
     unsigned INDmodNtGiven : 1; /* flag to indicate mod. n. of turns given */
     unsigned INDmuGiven    : 1; /* flag to indicate mu_r given */
@@ -196,6 +199,7 @@ enum {
     IND_MOD_TC2,
     IND_MOD_TNOM,
     IND_MOD_CSECT,
+    IND_MOD_DIA,
     IND_MOD_LENGTH,
     IND_MOD_NT,
     IND_MOD_MU,

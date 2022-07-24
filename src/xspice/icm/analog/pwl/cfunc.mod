@@ -232,9 +232,12 @@ cm_pwl_callback(ARGS, Mif_Callback_Reason_t reason)
             double *last_x_value = STATIC_VAR (last_x_value);
             double *x = STATIC_VAR (x);
             double *y = STATIC_VAR (y);
-            free(last_x_value);
-            free(x);
-            free(y);
+            if (last_x_value)
+                free(last_x_value);
+            if (x)
+                free(x);
+            if (y)
+                free(y);
             STATIC_VAR (last_x_value) = NULL;
             STATIC_VAR (x) = NULL;
             STATIC_VAR (y) = NULL;

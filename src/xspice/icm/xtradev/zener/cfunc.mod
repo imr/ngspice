@@ -48,6 +48,7 @@ NON-STANDARD FEATURES
 /*=== INCLUDE FILES ====================*/
 
 #include <math.h>
+#include <stdlib.h>
 
                                       
 
@@ -70,6 +71,20 @@ NON-STANDARD FEATURES
 
 
 
+static void
+cm_zener_callback(ARGS, Mif_Callback_Reason_t reason)
+{
+    switch (reason) {
+        case MIF_CB_DESTROY: {
+            double *loc = STATIC_VAR(previous_voltage);
+	    if (loc) {
+                free(loc);
+                STATIC_VAR(previous_voltage) = NULL;
+            }
+            break;
+        }
+    }
+}
 
                    
 /*==============================================================================
@@ -180,6 +195,7 @@ void cm_zener(ARGS)  /* structure holding parms,
         /* Set previous_voltage value to zero... */
         *previous_voltage = 0.0;
 
+        CALLBACK = cm_zener_callback;
     }  
     else {
 

@@ -706,7 +706,7 @@ drawlingrid(GRAPH *graph, char *units, int spacing, int nsp, double dst, double 
         j = (int)m;
         if (j == 0)
             SetLinestyle(0);
-        if (graph->grid.gridtype != GRID_NONE) {
+        if (graph->grid.gridtype != GRID_NONE && graph->grid.gridtype != GRID_DIGITAL_NONE) {
             if (axis == x_axis)
                 DevDrawLine(graph->viewportxoff + i,
                             graph->viewportyoff, graph->viewportxoff + i,
@@ -726,7 +726,7 @@ drawlingrid(GRAPH *graph, char *units, int spacing, int nsp, double dst, double 
             DevDrawText(buf, graph->viewportxoff + i -
                         ((int) strlen(buf) * graph->fontwidth) / 2,
                         (int) (graph->fontheight * 2.5), 0);
-        else
+        else if (graph->grid.gridtype != GRID_DIGITAL && graph->grid.gridtype != GRID_DIGITAL_NONE)
             DevDrawText(buf, graph->viewportxoff - 2 -
                         graph->fontwidth * (int) strlen(buf),
                         graph->viewportyoff + i -
@@ -736,10 +736,12 @@ drawlingrid(GRAPH *graph, char *units, int spacing, int nsp, double dst, double 
         if (nsp == 1)
             j += 1000;
     }
+    /* the x axis unit (bottom right) and the y axis unit (upper left) */
     if (!graph->nounits) {
         if (axis == x_axis)
             DevDrawText(units, (int)(graph->absolute.width * RELPOSXUNIT + unitshift), graph->fontheight, 0);
-        else
+        /* y axis unit only when no digitop plot */
+        else if (graph->grid.gridtype != GRID_DIGITAL && graph->grid.gridtype != GRID_DIGITAL_NONE)
             DevDrawText(units, graph->fontwidth,
                 (int)(graph->absolute.height - 2 * graph->fontheight), 0);
     }

@@ -51,6 +51,7 @@ NON-STANDARD FEATURES
 /*=== INCLUDE FILES ====================*/
 
 #include "oneshot.h"
+#include <stdlib.h>
 
 
 
@@ -85,6 +86,20 @@ typedef struct {
 
 
 
+static void
+oneshot_callback(ARGS, Mif_Callback_Reason_t reason)
+{
+    switch (reason) {
+        case MIF_CB_DESTROY: {
+            Local_Data_t *loc = STATIC_VAR (locdata);
+	    if (loc) {
+                free(loc);
+		STATIC_VAR (locdata) = NULL;
+	    }
+            break;
+        }
+    }
+}
 
 
 /*==============================================================================
@@ -253,6 +268,7 @@ void cm_oneshot(ARGS)  /* structure holding parms,
         /*** allocate static storage for *loc ***/
         STATIC_VAR (locdata) = calloc (1 , sizeof ( Local_Data_t ));
         loc = STATIC_VAR (locdata);
+	CALLBACK = oneshot_callback;
 
         /* Allocate storage for breakpoint domain & pulse width values */
         x = loc->control = (double *) calloc((size_t) cntl_size, sizeof(double));

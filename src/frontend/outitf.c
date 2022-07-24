@@ -268,12 +268,14 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
         } else {
             for (i = 0; i < numNames; i++)
                 if (!refName || !name_eq(dataNames[i], refName))
-                    /*  Save the node as long as it's an internal device node  */
+                    /*  Save the node as long as it's not an internal device node  */
                     if (!strstr(dataNames[i], "#internal") &&
                         !strstr(dataNames[i], "#source") &&
                         !strstr(dataNames[i], "#drain") &&
                         !strstr(dataNames[i], "#collector") &&
+                        !strstr(dataNames[i], "#collCX") &&
                         !strstr(dataNames[i], "#emitter") &&
+                        !strstr(dataNames[i], "probe_int_") && /* created by .probe */
                         !strstr(dataNames[i], "#base"))
                     {
                         addDataDesc(run, dataNames[i], dataType, i, initmem);
@@ -295,6 +297,7 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
                     strstr(dataNames[i], "#source") ||
                     strstr(dataNames[i], "#drain") ||
                     strstr(dataNames[i], "#collector") ||
+                    strstr(dataNames[i], "#collCX") ||
                     strstr(dataNames[i], "#emitter") ||
                     strstr(dataNames[i], "#base"))
                 {
@@ -304,6 +307,8 @@ beginPlot(JOB *analysisPtr, CKTcircuit *circuitPtr, char *cktName, char *analNam
                     ch = strchr(tmpname, '#');
 
                     if (strstr(ch, "#collector")) {
+                        strcpy(ch, "[ic]");
+                    } else if (strstr(ch, "#collCX")) {
                         strcpy(ch, "[ic]");
                     } else if (strstr(ch, "#base")) {
                         strcpy(ch, "[ib]");
@@ -922,7 +927,9 @@ fileInit(runDesc *run)
     printf("No. of Data Columns : %d  \n", run->numData);
 }
 
-
+/* Trying to guess the type of a vector, using either their special names
+   or special parameter names for @ vecors. FIXME This guessing may fail
+   due to the many options, especially for the @ vectors. */
 static int
 guess_type(const char *name)
 {
@@ -946,6 +953,9 @@ guess_type(const char *name)
         type = SV_RES;
     else if (cieq(name, "i-sweep"))
         type = SV_CURRENT;
+    /* current source ISRC parameters for current */
+    else if (substring("@i", name) && (substring("[c]", name) || substring("[dc]", name) || substring("[current]", name)))
+            type = SV_CURRENT;
     else if ((*name == '@') && substring("[g", name)) /* token starting with [g */
         type = SV_ADMITTANCE;
     else if ((*name == '@') && substring("[c", name))
@@ -967,6 +977,7 @@ static void
 fileInit_pass2(runDesc *run)
 {
     int i, type;
+    bool keepbranch = cp_getvar("keep#branch", CP_BOOL, NULL, 0);
 
     for (i = 0; i < run->numData; i++) {
 
@@ -974,7 +985,7 @@ fileInit_pass2(runDesc *run)
 
         type = guess_type(name);
 
-        if (type == SV_CURRENT) {
+        if (type == SV_CURRENT && !keepbranch) {
             char *branch = strstr(name, "#branch");
             if (branch)
                 *branch = '\0';
@@ -1150,11 +1161,17 @@ vlength2delta(int len)
         double timerel = ft_curckt->ci_ckt->CKTtime / ft_curckt->ci_ckt->CKTfinalTime;
         /* return an estimate of the appropriate number of time points, if more than 20% of
            the anticipated total time has passed */
-        if (timerel > 0.2)
-            return (int)(len / timerel) - len + 1;
-        /* If not, just double the available memory */
-        else
+        if (timerel > 0.2) {
+            int proposed = (int)(len / timerel) - len + 1;
+
+            if (proposed > 0)
+                return proposed;
+            return 16; // Probably enough as past end of simulation.
+        } else {
+            /* If not, just double the available memory */
+
             return len;
+        }
     }
     /* op */
     else if (ft_curckt->ci_ckt->CKTmode & MODEDCOP) {

@@ -1095,6 +1095,7 @@
     <ClCompile Include="..\src\frontend\trannoise\FastNorm3.c" />
     <ClCompile Include="..\src\frontend\trannoise\wallace.c" />
     <ClCompile Include="..\src\frontend\typesdef.c" />
+    <ClCompile Include="..\src\frontend\udevices.c" />
     <ClCompile Include="..\src\frontend\variable.c" />
     <ClCompile Include="..\src\frontend\vectors.c" />
     <ClCompile Include="..\src\frontend\where.c" />

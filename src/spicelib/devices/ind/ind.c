@@ -44,6 +44,7 @@ IFparm INDmPTable[] = { /* model parameters */
     IOPA(  "tc2",    IND_MOD_TC2,      IF_REAL,"Second order temp. coefficient"),
     IOPXU( "tnom",   IND_MOD_TNOM,     IF_REAL,"Parameter measurement temperature"),
     IOPA(  "csect",  IND_MOD_CSECT,    IF_REAL,"Inductor cross section"),
+    IOPA(  "dia",    IND_MOD_DIA,      IF_REAL,"Inductor diameter"),
     IOPA(  "length", IND_MOD_LENGTH,   IF_REAL,"Inductor length"),
     IOPA(  "nt",     IND_MOD_NT,       IF_REAL,"Model number of turns"),
     IOPA(  "mu",     IND_MOD_MU,       IF_REAL,"Relative magnetic permeability"),

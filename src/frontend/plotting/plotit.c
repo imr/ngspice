@@ -852,29 +852,43 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
         }
     }
 
-    /* Add n * spacing (e.g. 1.3) to digital event node based vectors */
+    /* Add n * spacing (e.g. 1.5) to digital event node based vectors */
     if (digitop) {
         double spacing = 1.5;
         double nn = 0.;
-        int ii = 0;
+        int ii = 0, jj = 0;
+
         for (d = vecs; d; d = d->v_link2) {
             if (d->v_scale && eq(d->v_scale->v_name, "step") && (d->v_scale->v_type == SV_TIME) && (d->v_type == SV_VOLTAGE) && (d->v_length > 1)) {
                 for (ii = 0; ii < d->v_length; ii++) {
                     d->v_realdata[ii] += nn;
                 }
                 nn += spacing;
+                jj++ ;
             }
         }
         if (!ydelta)
             ydelta = TMALLOC(double, 1);
         *ydelta = spacing;
+        /* new plot */
         if (!ylim) {
             ylim = TMALLOC(double, 2);
             ylim[0] = 0;
-            ylim[1] = nn;
+            /* make ylim[1] a multiple of 2*1.5 */
+            if (jj % 2 == 0)
+                ylim[1] = nn;
+            else
+                ylim[1] = nn + 1.5;
         }
+        /* re-scaled plot */
         else {
-            if (ylim[0] < 1.5)
+            /* just figure out that ylim[0] < ylim[1] */
+            if (ylim[0] > ylim[1]) {
+                double interm = ylim[1];
+                ylim[1] = ylim[0];
+                ylim[0] = interm;
+            }
+            if (ylim[0] < 1.1)
             /* catch the bottom line */
                 ylim[0] = 0;
             else
@@ -882,6 +896,11 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
                 ylim[0] = ((int)(ylim[0] / spacing) + 1) * spacing;
             ylim[1] = ((int)(ylim[1] / spacing) + 1) * spacing;
         }
+        /* suppress y labeling */
+        if (gtype == GRID_NONE)
+            gtype = GRID_DIGITAL_NONE;
+        else
+            gtype = GRID_DIGITAL;
     }
 
     /* If there are higher dimensional vectors, transform them into a

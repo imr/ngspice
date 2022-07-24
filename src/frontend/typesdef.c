@@ -50,13 +50,13 @@ static struct type types[NUMTYPES] = {
     { "pole", NULL, FALSE, FALSE },
     { "zero", NULL, FALSE, FALSE },
     { "s-param", NULL, FALSE, FALSE },
-    { "temp-sweep", "Celsius", FALSE, FALSE }, /* Added by HT */
-    { "res-sweep", "Ohms", FALSE, FALSE },     /* Added by HT */
-    { "impedance", "Ohms", FALSE, FALSE },     /* Added by A.Roldan */
-    { "admittance", "Mhos", FALSE, FALSE },    /* Added by A.Roldan */
-    { "power", "W", FALSE, FALSE },            /* Added by A.Roldan */
-    { "phase", "Degree", FALSE, FALSE },       /* Added by A.Roldan */
-    { "decibel", "dB", FALSE, FALSE },         /* Added by A.Roldan */
+    { "temp-sweep", "Celsius", FALSE, FALSE },
+    { "res-sweep", "Ohms", FALSE, FALSE },
+    { "impedance", "Ohms", FALSE, FALSE },
+    { "admittance", "Mhos", FALSE, FALSE },
+    { "power", "W", FALSE, FALSE },
+    { "phase", "rad", FALSE, FALSE },
+    { "decibel", "dB", FALSE, FALSE },
     { "capacitance", "F", FALSE, FALSE },
     { "charge", "C", FALSE, FALSE },
     { "temperature", "Celsius", FALSE, FALSE }
@@ -270,8 +270,13 @@ com_dftype(wordlist *wl)
 char *
 ft_typabbrev(int typenum)
 {
-    if ((typenum < NUMTYPES) && (typenum >= 0))
-        return (types[typenum].t_abbrev);
+    if ((typenum < NUMTYPES) && (typenum >= 0)) {
+        char* tp = types[typenum].t_abbrev;
+        if (tp && cieq("rad", tp) && cx_degrees)
+            return ("Degree");
+        else
+            return tp;
+    }
     else
         return (NULL);
 }

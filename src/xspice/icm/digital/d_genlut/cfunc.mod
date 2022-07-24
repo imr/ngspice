@@ -65,6 +65,20 @@ NON-STANDARD FEATURES
 
 
 
+static void
+genlut_callback(ARGS, Mif_Callback_Reason_t reason)
+{
+    switch (reason) {
+        case MIF_CB_DESTROY: {
+            Digital_t *loc = STATIC_VAR (locdata);
+	    if (loc) {
+                free(loc);
+                STATIC_VAR (locdata) = NULL;
+            }
+            break;
+        }
+    }
+}
 
 
 /*==============================================================================
@@ -170,6 +184,7 @@ void cm_d_genlut(ARGS)
         /* allocate storage for the lookup table */
         STATIC_VAR (locdata) = calloc((size_t) tablelen, sizeof(Digital_t));
         lookup_table = STATIC_VAR (locdata);
+	CALLBACK = genlut_callback;
 
         /* allocate storage for the outputs */
         cm_event_alloc(0, osize * (int) sizeof(Digital_t));

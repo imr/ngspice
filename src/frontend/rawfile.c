@@ -51,8 +51,10 @@ void raw_write(char *name, struct plot *pl, bool app, bool binary)
     double dd;
     char buf[BSIZE_SP];
     char *branch;
+    bool keepbranch = FALSE;
 
     raw_padding = !cp_getvar("nopadding", CP_BOOL, NULL, 0);
+    keepbranch = cp_getvar("keep#branch", CP_BOOL, NULL, 0);
 
     /* Why bother printing out an empty plot? */
     if (!pl->pl_dvecs) {
@@ -156,8 +158,8 @@ void raw_write(char *name, struct plot *pl, bool app, bool binary)
 
     fprintf(fp, "Variables:\n");
     for (i = 0, v = pl->pl_dvecs; v; v = v->v_next) {
-        /* write i(name) instaed of name#branch */
-        if (v->v_type == SV_CURRENT) {
+        /* write i(name) instead of name#branch */
+        if (v->v_type == SV_CURRENT && !keepbranch) {
             branch = NULL;
             /* get name only*/
             if ((branch = strstr(v->v_name, "#branch")) != NULL) {
