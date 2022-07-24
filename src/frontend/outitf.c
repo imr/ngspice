@@ -927,7 +927,9 @@ fileInit(runDesc *run)
     printf("No. of Data Columns : %d  \n", run->numData);
 }
 
-
+/* Trying to guess the type of a vector, using either their special names
+   or special parameter names for @ vecors. FIXME This guessing may fail
+   due to the many options, especially for the @ vectors. */
 static int
 guess_type(const char *name)
 {
@@ -951,6 +953,9 @@ guess_type(const char *name)
         type = SV_RES;
     else if (cieq(name, "i-sweep"))
         type = SV_CURRENT;
+    /* current source ISRC parameters for current */
+    else if (substring("@i", name) && (substring("[c]", name) || substring("[dc]", name) || substring("[current]", name)))
+            type = SV_CURRENT;
     else if ((*name == '@') && substring("[g", name)) /* token starting with [g */
         type = SV_ADMITTANCE;
     else if ((*name == '@') && substring("[c", name))
