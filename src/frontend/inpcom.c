@@ -8362,7 +8362,7 @@ static struct card *u_instances(struct card *startcard)
                 if (create_called) {
                     cleanup_udevice();
                 }
-                initialize_udevice();
+                initialize_udevice(subcktcard->line);
                 create_called = TRUE;
             } else {
                 /* Pspice definition of .subckt card:
@@ -8405,6 +8405,9 @@ static struct card *u_instances(struct card *startcard)
                     if (last_newcard) {
                         last_newcard->nextcard = card; // the .ends card
                     }
+                } else {
+                    models_ok = models_not_ok = 0;
+                    udev_ok = udev_not_ok = 0;
                 }
             }
             if (models_not_ok > 0 || udev_not_ok > 0) {
