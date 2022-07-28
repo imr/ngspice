@@ -51,6 +51,7 @@
 #include "ngspice/stringskip.h"
 #include "ngspice/stringutil.h"
 #include "ngspice/inpdefs.h"
+#include "ngspice/cpextern.h"
 #include "ngspice/macros.h"
 #include "ngspice/udevices.h"
 
@@ -60,18 +61,9 @@ extern struct card* insert_new_line(
 /*
   When TRACE is defined, the Pspice input lines are printed with
   prefix TRANS_IN, and the translated Xspice equivalent lines are
-  printed with prefix TRANS_OUT. Also, the name lists or btrees
-  are dumped.
+  printed with prefix TRANS_OUT. Also, the name lists are dumped.
 */
 //#define TRACE
-
-/*
-  Choose name lists or btrees. Which is more efficient depends on
-  whether the names are entered in almost sorted order. Usuually there
-  will be < 20 entries.
-*/
-static int use_lists = 0;
-static int use_btrees = 1;
 
 /* device types */
 #define D_AND    0
@@ -209,82 +201,16 @@ struct timing_data {
     int estimate;
 };
 
-/* btree */
-typedef struct nnode *TREE;
-struct nnode {
-    char *name;
-    TREE left;
-    TREE right;
-};
-
-static TREE new_nnode(char *name)
-{
-    TREE newp;
-    newp = TMALLOC(struct nnode, 1);
-    newp->left = NULL;
-    newp->right = NULL;
-    newp->name = TMALLOC(char, strlen(name) + 1);
-    strcpy(newp->name, name);
-    return newp;
-}
-
-static TREE tinsert(char *name, TREE t)
-{
-    int cmp;
-    if (t == NULL) {
-        t = new_nnode(name);
-        return t;
-    }
-    cmp = strcmp(name, t->name);
-    if (cmp < 0) {
-        t->left = tinsert(name, t->left);
-    } else if (cmp > 0) {
-        t->right = tinsert(name, t->right);
-    }
-    return t;
-}
-
-static int tmember(char *name, TREE t)
-{
-    int cmp;
-    while (t != NULL) {
-        cmp = strcmp(name, t->name);
-        if (cmp == 0) {
-            return 1;
-        } else if (cmp < 0) {
-            t = t->left;
-        } else {
-            t = t->right;
-        }
-    }
-    return 0;
-}
-
-static void delete_btree(TREE t)
-{
-    if (t == NULL) { return; }
-    delete_btree(t->left);
-    delete_btree(t->right);
-    tfree(t->name);
-    tfree(t);
-}
-
-#ifdef TRACE
-static void print_btree(TREE t)
-{
-    if (t == NULL) { return; }
-    print_btree(t->left);
-    printf("%s\n", t->name);
-    print_btree(t->right);
-}
-#endif
-
 /* name entries */
 typedef struct name_entry *NAME_ENTRY;
 struct name_entry {
     char *name;
     NAME_ENTRY next;
 };
+
+#ifdef TRACE
+static void print_name_list(NAME_ENTRY nelist);
+#endif
 
 static NAME_ENTRY new_name_entry(char *name)
 {
@@ -331,10 +257,14 @@ static NAME_ENTRY find_name_entry(char *name, NAME_ENTRY nelist)
     return NULL;
 }
 
-static void clear_name_list(NAME_ENTRY nelist)
+static void clear_name_list(NAME_ENTRY nelist, char *msg)
 {
     NAME_ENTRY x = NULL, next = NULL;
     if (!nelist) { return; }
+#ifdef TRACE
+    printf("%s\n", msg);
+    print_name_list(nelist);
+#endif
     for (x = nelist; x; x = next) {
         next = x->next;
         if (x->name) { tfree(x->name); }
@@ -346,10 +276,13 @@ static void clear_name_list(NAME_ENTRY nelist)
 static void print_name_list(NAME_ENTRY nelist)
 {
     NAME_ENTRY x = NULL;
+    int count = 0;
     if (!nelist) { return; }
     for (x = nelist; x; x = x->next) {
         printf("%s\n", x->name);
+        count++;
     }
+    printf("NAME_COUNT %d\n", count);
 }
 #endif
 
@@ -357,29 +290,18 @@ static void print_name_list(NAME_ENTRY nelist)
   static data cleared and reset by initialize_udevice(),
   cleared by cleanup_udevice().
 */
-static TREE new_names_btree = NULL;
-static TREE pin_names_btree = NULL;
+static int port_directions = 0;  // If non-zero list subckt port directions
 static NAME_ENTRY new_names_list = NULL;
-static NAME_ENTRY pin_names_list = NULL;
+static NAME_ENTRY input_names_list = NULL;
+static NAME_ENTRY output_names_list = NULL;
+static NAME_ENTRY tristate_names_list = NULL;
+static NAME_ENTRY port_names_list = NULL;
 static unsigned int num_name_collisions = 0;
 /* .model d_zero_inv99 d_inverter just once per subckt */
 static BOOL add_zero_delay_inverter_model = FALSE;
 
 static void check_name_unused(char *name)
 {
-    if (use_btrees) {
-    if (tmember(name, new_names_btree)) {
-        printf("ERROR udevice name %s already used\n", name);
-        num_name_collisions++;
-    } else {
-        if (!new_names_btree) {
-            new_names_btree = tinsert(name, new_names_btree);
-        } else {
-            (void) tinsert(name, new_names_btree);
-        }
-    }
-    }
-    if (use_lists) {
     if (find_name_entry(name, new_names_list)) {
         printf("ERROR udevice name %s already used\n", name);
         num_name_collisions++;
@@ -390,39 +312,28 @@ static void check_name_unused(char *name)
             (void) add_name_entry(name, new_names_list);
         }
     }
-    }
 }
 
-static void tree1_in_tree2(TREE t1, TREE t2)
+static void find_collision(char *name, NAME_ENTRY nelist)
 {
-    if (t1 == NULL) { return; }
-    tree1_in_tree2(t1->left, t2);
-    if (tmember(t1->name, t2)) {
+    if (!nelist) { return; }
+    if (find_name_entry(name, nelist)) {
         printf("ERROR name collision: internal node %s "
-            "collides with a pin or port\n", t1->name);
+            "collides with a pin or port\n", name);
         num_name_collisions++;
     }
-    tree1_in_tree2(t1->right, t2);
 }
 
 static BOOL there_are_name_collisions(void)
 {
-    if (use_btrees) {
-    if (new_names_btree && pin_names_btree) {
-        tree1_in_tree2(new_names_btree, pin_names_btree);
-    }
-    }
-    if (use_lists) {
-    if (new_names_list && pin_names_list) {
+    if (new_names_list) {
         NAME_ENTRY x = NULL;
         for (x = new_names_list; x; x = x->next) {
-            if (find_name_entry(x->name, pin_names_list)) {
-                printf("ERROR name collision: internal node %s "
-                    "collides with a pin or port\n", x->name);
-                num_name_collisions++;
-            }
+            find_collision(x->name, input_names_list);
+            find_collision(x->name, output_names_list);
+            find_collision(x->name, tristate_names_list);
+            find_collision(x->name, port_names_list);
         }
-    }
     }
 //#define IGNORE_COLLISIONS
 #ifdef IGNORE_COLLISIONS
@@ -433,27 +344,38 @@ static BOOL there_are_name_collisions(void)
 }
 
 
-static void add_pin_name(char *name)
+static void add_pin_name(char *name, NAME_ENTRY *nelistp)
 {
     if (strncmp(name, "$d_", 3) != 0) {
-    if (use_btrees) {
-        if (!pin_names_btree) {
-            pin_names_btree = tinsert(name, pin_names_btree);
+        if (!(*nelistp)) {
+            *nelistp = add_name_entry(name, *nelistp);
         } else {
-            (void) tinsert(name, pin_names_btree);
+            (void) add_name_entry(name, *nelistp);
         }
-    }
-    if (use_lists) {
-        if (!pin_names_list) {
-            pin_names_list = add_name_entry(name, pin_names_list);
-        } else {
-            (void) add_name_entry(name, pin_names_list);
-        }
-    }
     }
 }
 
-static void add_port_names(char *subckt_line)
+static void add_input_pin(char *name)
+{
+    add_pin_name(name, &input_names_list);
+}
+
+static void add_output_pin(char *name)
+{
+    add_pin_name(name, &output_names_list);
+}
+
+static void add_tristate_pin(char *name)
+{
+    add_pin_name(name, &tristate_names_list);
+}
+
+static void add_port_name(char *name)
+{
+    add_pin_name(name, &port_names_list);
+}
+
+static void add_all_port_names(char *subckt_line)
 {
     char *copy_line, *tok, *pos;
 
@@ -462,6 +384,10 @@ static void add_port_names(char *subckt_line)
     }
 #ifdef TRACE
     printf("TRANS_IN  %s\n", subckt_line);
+#else
+    if (port_directions) {
+        printf("%s\n", subckt_line);
+    }
 #endif
     copy_line = tprintf("%s", subckt_line);
     pos = strstr(copy_line, "optional:");
@@ -485,7 +411,7 @@ static void add_port_names(char *subckt_line)
     tok = strtok(copy_line, " \t");
     tok = strtok(NULL, " \t");
     while ((tok = strtok(NULL, " \t")) != NULL) {
-        add_pin_name(tok);
+        add_port_name(tok);
     }
     tfree(copy_line);
 }
@@ -825,13 +751,18 @@ void initialize_udevice(char *subckt_line)
 {
     Xlatep xdata;
 
-    new_names_btree = NULL;
-    pin_names_btree = NULL;
     new_names_list = NULL;
-    pin_names_list = NULL;
+    input_names_list = NULL;
+    output_names_list = NULL;
+    tristate_names_list = NULL;
+    port_names_list = NULL;
     num_name_collisions = 0;
+    /* Variable ps_port_directions != 0 to turn on pins and ports */
+    if (!cp_getvar("ps_port_directions", CP_NUM, &port_directions, 0)) {
+        port_directions = 0;
+    }
     if (subckt_line && strncmp(subckt_line, ".subckt", 7) == 0) {
-        add_port_names(subckt_line);
+        add_all_port_names(subckt_line);
     }
 
     create_translated_xlator();
@@ -855,46 +786,61 @@ void initialize_udevice(char *subckt_line)
     add_zero_delay_inverter_model = FALSE;
 }
 
+static void determine_port_type(void)
+{
+    BOOL inp = FALSE, outp = FALSE, tri = FALSE;
+    char *port_type = NULL;
+    NAME_ENTRY x = NULL;
+
+    for (x = port_names_list; x; x = x->next) {
+        inp = (find_name_entry(x->name, input_names_list) ? TRUE : FALSE);
+        outp = (find_name_entry(x->name, output_names_list) ? TRUE : FALSE);
+        tri = (find_name_entry(x->name, tristate_names_list) ? TRUE : FALSE);
+        port_type = "UNKNOWN";
+        if (tri) {
+            if (outp && inp) {
+                port_type = "INOUT";
+            } else if (outp) {
+                port_type = "OUT";
+            }
+        } else {
+            if (outp && inp) {
+                port_type = "OUT";
+            } else if (outp) {
+                port_type = "OUT";
+            } else if (inp) {
+                port_type = "IN";
+            }
+        }
+#ifdef TRACE
+        printf("port: %s %s\n", x->name, port_type);
+#else
+        if (port_directions) {
+            printf("port: %s %s\n", x->name, port_type);
+        }
+#endif
+    }
+}
+
 void cleanup_udevice(void)
 {
+    determine_port_type();
     cleanup_translated_xlator();
     delete_xlator(model_xlatorp);
     model_xlatorp = NULL;
     delete_xlator(default_models);
     default_models = NULL;
     add_zero_delay_inverter_model = FALSE;
-    if (pin_names_btree) {
-#ifdef TRACE
-        printf("PIN_PORT_NAMES_BTREE\n");
-        print_btree(pin_names_btree);
-#endif
-        delete_btree(pin_names_btree);
-        pin_names_btree = NULL;
-    }
-    if (new_names_btree) {
-#ifdef TRACE
-        printf("NEW_NAMES_BTREE\n");
-        print_btree(new_names_btree);
-#endif
-        delete_btree(new_names_btree);
-        new_names_btree = NULL;
-    }
-    if (pin_names_list) {
-#ifdef TRACE
-        printf("PIN_NAMES_LIST\n");
-        print_name_list(pin_names_list);
-#endif
-        clear_name_list(pin_names_list);
-        pin_names_list = NULL;
-    }
-    if (new_names_list) {
-#ifdef TRACE
-        printf("NEW_NAMES_LIST\n");
-        print_name_list(new_names_list);
-#endif
-        clear_name_list(new_names_list);
-        new_names_list = NULL;
-    }
+    clear_name_list(input_names_list, "INPUT_PINS");
+    input_names_list = NULL;
+    clear_name_list(output_names_list, "OUTPUT_PINS");
+    output_names_list = NULL;
+    clear_name_list(tristate_names_list, "TRISTATE_PINS");
+    tristate_names_list = NULL;
+    clear_name_list(port_names_list, "PORT_NAMES");
+    port_names_list = NULL;
+    clear_name_list(new_names_list, "NEW_NAMES");
+    new_names_list = NULL;
 }
 
 static Xlatep create_xlate_model(char *delays,
@@ -1583,7 +1529,7 @@ static Xlatorp gen_dff_instance(struct dff_instance *ip)
     clrb = ip->clrbar;
 
     xxp = create_xlator();
-    add_pin_name(preb);
+    add_input_pin(preb);
     if (eq(preb, "$d_hi")) {
         preb = "NULL";
     } else {
@@ -1591,7 +1537,7 @@ static Xlatorp gen_dff_instance(struct dff_instance *ip)
         preb = new_inverter(iname, preb, xxp);
     }
 
-    add_pin_name(clrb);
+    add_input_pin(clrb);
     if (eq(clrb, "$d_hi")) {
         clrb = "NULL";
     } else {
@@ -1600,23 +1546,23 @@ static Xlatorp gen_dff_instance(struct dff_instance *ip)
     }
 
     clk = ip->clk;
-    add_pin_name(clk);
+    add_input_pin(clk);
     tmodel = ip->tmodel;
     /* model name, same for each dff */
     modelnm = tprintf("d_a%s_%s", iname, itype);
     for (i = 0; i < num_gates; i++) {
         char *instance_name = NULL;
         qout = qarr[i];
-        add_pin_name(qout);
+        add_output_pin(qout);
         if (eq(qout, "$d_nc")) {
             qout = "NULL";
         }
         qbout = qbarr[i];
-        add_pin_name(qbout);
+        add_output_pin(qbout);
         if (eq(qbout, "$d_nc")) {
             qbout = "NULL";
         }
-        add_pin_name(darr[i]);
+        add_input_pin(darr[i]);
         instance_name = tprintf("a%s_%d", iname, i);
         s1 = tprintf( "%s  %s  %s  %s  %s  %s  %s  %s",
             instance_name, darr[i], clk, preb, clrb, qout, qbout, modelnm
@@ -1662,7 +1608,7 @@ static Xlatorp gen_jkff_instance(struct jkff_instance *ip)
     clrb = ip->clrbar;
 
     xxp = create_xlator();
-    add_pin_name(preb);
+    add_input_pin(preb);
     if (eq(preb, "$d_hi")) {
         preb = "NULL";
     } else {
@@ -1670,7 +1616,7 @@ static Xlatorp gen_jkff_instance(struct jkff_instance *ip)
         preb = new_inverter(iname, preb, xxp);
     }
 
-    add_pin_name(clrb);
+    add_input_pin(clrb);
     if (eq(clrb, "$d_hi")) {
         clrb = "NULL";
     } else {
@@ -1680,7 +1626,7 @@ static Xlatorp gen_jkff_instance(struct jkff_instance *ip)
 
     /* require a positive edge clock */
     clkb = ip->clkbar;
-    add_pin_name(clkb);
+    add_input_pin(clkb);
     clkb = new_inverter(iname, clkb, xxp);
 
     tmodel = ip->tmodel;
@@ -1689,17 +1635,17 @@ static Xlatorp gen_jkff_instance(struct jkff_instance *ip)
     for (i = 0; i < num_gates; i++) {
         char *instance_name = NULL;
         qout = qarr[i];
-        add_pin_name(qout);
+        add_output_pin(qout);
         if (eq(qout, "$d_nc")) {
             qout = "NULL";
         }
         qbout = qbarr[i];
-        add_pin_name(qbout);
+        add_output_pin(qbout);
         if (eq(qbout, "$d_nc")) {
             qbout = "NULL";
         }
-        add_pin_name(jarr[i]);
-        add_pin_name(karr[i]);
+        add_input_pin(jarr[i]);
+        add_input_pin(karr[i]);
         instance_name = tprintf("a%s_%d", iname, i);
         s1 = tprintf("%s  %s  %s  %s  %s  %s  %s  %s  %s",
             instance_name, jarr[i], karr[i], clkb, preb, clrb,
@@ -1744,7 +1690,7 @@ static Xlatorp gen_dltch_instance(struct dltch_instance *ip)
     clrb = ip->clrbar;
 
     xxp = create_xlator();
-    add_pin_name(preb);
+    add_input_pin(preb);
     if (eq(preb, "$d_hi")) {
         preb = "NULL";
     } else {
@@ -1752,7 +1698,7 @@ static Xlatorp gen_dltch_instance(struct dltch_instance *ip)
         preb = new_inverter(iname, preb, xxp);
     }
 
-    add_pin_name(clrb);
+    add_input_pin(clrb);
     if (eq(clrb, "$d_hi")) {
         clrb = "NULL";
     } else {
@@ -1760,14 +1706,14 @@ static Xlatorp gen_dltch_instance(struct dltch_instance *ip)
         clrb = new_inverter(iname, clrb, xxp);
     }
     gate = ip->gate;
-    add_pin_name(gate);
+    add_input_pin(gate);
     tmodel = ip->tmodel;
     /* model name, same for each latch */
     modelnm = tprintf("d_a%s_%s", iname, itype);
     for (i = 0; i < num_gates; i++) {
         char *instance_name = NULL;
         qout = qarr[i];
-        add_pin_name(qout);
+        add_output_pin(qout);
         instance_name = tprintf("a%s_%d", iname, i);
         if (eq(qout, "$d_nc")) {
             /* NULL not allowed??? */
@@ -1780,9 +1726,9 @@ static Xlatorp gen_dltch_instance(struct dltch_instance *ip)
             s1 = tprintf("%s  %s  %s  %s  %s  %s",
                 instance_name, darr[i], gate, preb, clrb, qout);
         }
-        add_pin_name(darr[i]);
+        add_input_pin(darr[i]);
         qbout = qbarr[i];
-        add_pin_name(qbout);
+        add_output_pin(qbout);
         if (eq(qbout, "$d_nc")) {
             /* NULL not allowed??? */
             s2 = tprintf(" ncn_%s_%d  %s", iname, i, modelnm);
@@ -1836,7 +1782,7 @@ static Xlatorp gen_srff_instance(struct srff_instance *srffp)
     clrb = srffp->clrbar;
 
     xxp = create_xlator();
-    add_pin_name(preb);
+    add_input_pin(preb);
     if (eq(preb, "$d_hi")) {
         preb = "NULL";
     } else {
@@ -1844,7 +1790,7 @@ static Xlatorp gen_srff_instance(struct srff_instance *srffp)
         preb = new_inverter(iname, preb, xxp);
     }
 
-    add_pin_name(clrb);
+    add_input_pin(clrb);
     if (eq(clrb, "$d_hi")) {
         clrb = "NULL";
     } else {
@@ -1852,17 +1798,17 @@ static Xlatorp gen_srff_instance(struct srff_instance *srffp)
         clrb = new_inverter(iname, clrb, xxp);
     }
     gate = srffp->gate;
-    add_pin_name(gate);
+    add_input_pin(gate);
     tmodel = srffp->tmodel;
     /* model name, same for each latch */
     modelnm = tprintf("d_a%s_%s", iname, itype);
     for (i = 0; i < num_gates; i++) {
         char *instance_name = NULL;
         qout = qarr[i];
-        add_pin_name(qout);
+        add_output_pin(qout);
         instance_name = tprintf("a%s_%d", iname, i);
-        add_pin_name(sarr[i]);
-        add_pin_name(rarr[i]);
+        add_input_pin(sarr[i]);
+        add_input_pin(rarr[i]);
         if (eq(qout, "$d_nc")) {
             /* NULL not allowed??? */
             s1 = tprintf("%s  %s  %s  %s  %s  %s  nco_%s_%d",
@@ -1875,7 +1821,7 @@ static Xlatorp gen_srff_instance(struct srff_instance *srffp)
                 instance_name, sarr[i], rarr[i], gate, preb, clrb, qout);
         }
         qbout = qbarr[i];
-        add_pin_name(qbout);
+        add_output_pin(qbout);
         if (eq(qbout, "$d_nc")) {
             /* NULL not allowed??? */
             s2 = tprintf(" ncn_%s_%d  %s", iname, i, modelnm);
@@ -1972,7 +1918,7 @@ static Xlatorp gen_compound_instance(struct compound_instance *compi)
             if (!eq(inarr[k], logic_val)) {
                 num_ins_kept++;
                 sprintf(tmp + strlen(tmp), " %s", inarr[k]);
-                add_pin_name(inarr[k]);
+                add_input_pin(inarr[k]);
             }
             k++;
         }
@@ -2013,7 +1959,7 @@ static Xlatorp gen_compound_instance(struct compound_instance *compi)
         sprintf(tmp + strlen(tmp), " %s", connector[i]);
     }
     /* instance statement for the final gate */
-    add_pin_name(output);
+    add_output_pin(output);
     instance_name = tprintf("a%s_out", inst);
     new_stmt = tprintf("%s [%s ] %s %s",
         instance_name, tmp, output, final_model_name);
@@ -2065,11 +2011,18 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
     tmodel = gip->tmodel;
     vector = has_vector_inputs(itype);
     for (i = 0; i < num_ins; i++) {
-        add_pin_name(inarr[i]);
+        add_input_pin(inarr[i]);
     }
-    if (enable) { add_pin_name(enable); }
-    for (i = 0; i < num_outs; i++) {
-        add_pin_name(outarr[i]);
+    if (enable) { add_input_pin(enable); }
+    if (is_tristate(itype) || is_tristate_array(itype)) {
+        for (i = 0; i < num_outs; i++) {
+            add_tristate_pin(outarr[i]);
+            add_output_pin(outarr[i]);
+        }
+    } else {
+        for (i = 0; i < num_outs; i++) {
+            add_output_pin(outarr[i]);
+        }
     }
 
     if (num_gates == 1) {
@@ -2720,6 +2673,10 @@ static BOOL u_process_model(char *nline, char *original)
             add_delays_to_model_xlator((delays ? delays : ""),
                 utype, "d_srlatch", tmodel);
             if (delays) { tfree(delays); }
+        } else if (eq(utype, "uio")) {
+            /* skip uio models */
+            retval = TRUE;
+            delays = NULL;
         } else {
             retval = FALSE;
             delays = NULL;
