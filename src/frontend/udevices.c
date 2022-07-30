@@ -58,11 +58,6 @@
 extern struct card* insert_new_line(
     struct card* card, char* line, int linenum, int linenum_orig);
 
-/*
-  When TRACE is defined, the Pspice input lines are printed with
-  prefix TRANS_IN, and the translated Xspice equivalent lines are
-  printed with prefix TRANS_OUT. Also, the name lists are dumped.
-*/
 //#define TRACE
 
 /* device types */
@@ -290,7 +285,7 @@ static void print_name_list(NAME_ENTRY nelist)
   static data cleared and reset by initialize_udevice(),
   cleared by cleanup_udevice().
 */
-static int port_directions = 0;  // If non-zero list subckt port directions
+static int ps_port_directions = 0;  // If non-zero list subckt port directions
 static NAME_ENTRY new_names_list = NULL;
 static NAME_ENTRY input_names_list = NULL;
 static NAME_ENTRY output_names_list = NULL;
@@ -382,13 +377,11 @@ static void add_all_port_names(char *subckt_line)
     if (!subckt_line) {
         return;
     }
-#ifdef TRACE
-    printf("TRANS_IN  %s\n", subckt_line);
-#else
-    if (port_directions) {
+    if (ps_port_directions >= 2) {
+        printf("TRANS_IN  %s\n", subckt_line);
+    } else if (ps_port_directions) {
         printf("%s\n", subckt_line);
     }
-#endif
     copy_line = tprintf("%s", subckt_line);
     pos = strstr(copy_line, "optional:");
     if (pos) {
@@ -404,9 +397,6 @@ static void add_all_port_names(char *subckt_line)
             }
         }
     }
-#ifdef TRACE
-    printf("%s\n", copy_line);
-#endif
     /* skip past .subckt and its name */
     tok = strtok(copy_line, " \t");
     tok = strtok(NULL, " \t");
@@ -726,9 +716,9 @@ struct card *replacement_udevice_cards(void)
         translated_p = add_xlator(translated_p, x);
     }
     for (x = first_xlator(translated_p); x; x = next_xlator(translated_p)) {
-#ifdef TRACE
-        printf("TRANS_OUT  %s\n", x->translated);
-#endif
+        if (ps_port_directions >= 2) {
+            printf("TRANS_OUT  %s\n", x->translated);
+        }
         new_str = copy(x->translated);
         if (count == 0) {
             count++;
@@ -741,9 +731,6 @@ struct card *replacement_udevice_cards(void)
             nextcard = insert_new_line(nextcard, new_str, 0, 0);
         }
     }
-#ifdef TRACE
-    printf("TRANS_OUT\n");
-#endif
     return newcard;
 }
 
@@ -757,9 +744,14 @@ void initialize_udevice(char *subckt_line)
     tristate_names_list = NULL;
     port_names_list = NULL;
     num_name_collisions = 0;
-    /* Variable ps_port_directions != 0 to turn on pins and ports */
-    if (!cp_getvar("ps_port_directions", CP_NUM, &port_directions, 0)) {
-        port_directions = 0;
+    /*
+      Variable ps_port_directions != 0 to turn on pins and ports.
+      If ps_port_directions >= 2 also print the Pspice input lines with
+      prefix TRANS_IN, and the translated Xspice equivalent lines
+      with prefix TRANS_OUT.
+    */
+    if (!cp_getvar("ps_port_directions", CP_NUM, &ps_port_directions, 0)) {
+        ps_port_directions = 0;
     }
     if (subckt_line && strncmp(subckt_line, ".subckt", 7) == 0) {
         add_all_port_names(subckt_line);
@@ -812,13 +804,9 @@ static void determine_port_type(void)
                 port_type = "IN";
             }
         }
-#ifdef TRACE
-        printf("port: %s %s\n", x->name, port_type);
-#else
-        if (port_directions) {
+        if (ps_port_directions) {
             printf("port: %s %s\n", x->name, port_type);
         }
-#endif
     }
 }
 
@@ -3413,10 +3401,9 @@ BOOL u_process_instance(char *nline)
         delete_instance_hdr(hdr);
         return FALSE;
     }
-#ifdef TRACE
-    printf("TRANS_IN  %s\n", nline);
-#endif
-    // printf("iname %s itype %s\n", hdr->instance_name, itype);
+    if (ps_port_directions >= 2) {
+        printf("TRANS_IN  %s\n", nline);
+    }
     /* Skip past instance name, type, pwr, gnd */
     p1 = skip_past_words(nline, 4);
     if (is_gate(itype) || is_gate_array(itype)) {
@@ -3458,9 +3445,9 @@ BOOL u_process_model_line(char *line)
 
     if (n > 0 && line[n] == '\n') line[n] = '\0';
     if (strncmp(line, ".model ", strlen(".model ")) == 0) {
-#ifdef TRACE
-        printf("TRANS_IN  %s\n", line);
-#endif
+        if (ps_port_directions >= 2) {
+            printf("TRANS_IN  %s\n", line);
+        }
         newline = TMALLOC(char, strlen(line) + 1);
         (void) memcpy(newline, line, strlen(line) + 1);
         retval = u_process_model(newline, line);
