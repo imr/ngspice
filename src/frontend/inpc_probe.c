@@ -47,7 +47,7 @@ void inp_probe(struct card* deck)
     int skip_control = 0;
     int skip_subckt = 0;
     wordlist* probes = NULL, *probeparams = NULL, *wltmp, *allsaves = NULL;
-    bool haveall = FALSE, havedifferential = FALSE, t = TRUE;
+    bool haveall = FALSE, havedifferential = FALSE, t = TRUE, havesave = FALSE;
     NGHASHPTR instances;   /* instance hash table */
     int ee = 0; /* serial number for sources */
 
@@ -61,6 +61,37 @@ void inp_probe(struct card* deck)
     /* no .probe command */
     if (probes == NULL)
         return;
+
+    /* check for '.save' and (in a .control section) 'save'.
+       If not found, add '.save all' */
+    for (card = deck; card; card = card->nextcard) {
+        /* find .save */
+        if (ciprefix(".save", card->line)) {
+            havesave = TRUE;
+            break;
+        }
+        /* exclude any command inside .control ... .endc */
+        else if (ciprefix(".control", card->line)) {
+            skip_control++;
+            continue;
+        }
+        else if (ciprefix(".endc", card->line)) {
+            skip_control--;
+            continue;
+        }
+        else if (skip_control > 0) {
+            if (ciprefix("save ", card->line)) {
+                havesave = TRUE;
+                break;
+            }
+        }
+    }
+    skip_control = 0;
+
+    if (!havesave) {
+        char* vline = copy(".save all");
+        deck = insert_new_line(deck, vline, 0, 0);
+    }
 
     /* set a variable if .probe command is given */
     cp_vset("probe_is_given", CP_BOOL, &t);
@@ -1194,7 +1225,9 @@ void modprobenames(INPtables* tab) {
    Define a reference voltage of an n-terminal device as Vref = (V(1) + V(2) +...+ V(n)) / n  with terminal (node) voltages V(n).
    Calculate power PQ1 = (v(1) - Vref) * i1 + (V(2) - Vref) * i2 + ... + (V(n) - Vref) * in) with terminal currents in.
    See "Quantities of a Multiterminal Circuit Determined on the Basis of Kirchhoff’s Laws", M. Depenbrock, 
-   ETEP Vol. 8, No. 4, July/August 1998 */
+   ETEP Vol. 8, No. 4, July/August 1998.
+   probe_int_ is used to trigger supressing the vectors when saving the results. Internal vectors thus are
+   not saved. */
 static int setallvsources(struct card *tmpcard, NGHASHPTR instances, char *instname, int numnodes, bool haveall, bool power)
 {
     
@@ -1214,15 +1247,15 @@ static int setallvsources(struct card *tmpcard, NGHASHPTR instances, char *instn
     if (power) {
         /* For example: Bq1Vref q1Vref 0 V = 1/3*( */
         char numbuf[3];
-        cadd(&BVrefline, 'B');
+        sadd(&BVrefline, "Bprobe_int_");
         sadd(&BVrefline, instname);
         sadd(&BVrefline, "Vref ");
         sadd(&BVrefline, instname);
-        sadd(&BVrefline, "Vref 0 V = 1/");
+        sadd(&BVrefline, "probe_int_Vref 0 V = 1/");
         sadd(&BVrefline, itoa10(numnodes, numbuf));
         sadd(&BVrefline, "*(");
         /* For example: Bq1power q1:power 0 V = */
-        cadd(&Bpowerline, 'B');
+        sadd(&Bpowerline, "Bprobe_int_");
         sadd(&Bpowerline, instname);
         sadd(&Bpowerline, "power ");
         sadd(&Bpowerline, instname);
@@ -1259,7 +1292,7 @@ static int setallvsources(struct card *tmpcard, NGHASHPTR instances, char *instn
 
         newline = tprintf("%s %s %s", begstr, newnode, instline);
 
-        char* vline = tprintf("vcurr_%s:%s:%s_%s %s %s 0", instname, nodename1, nodenumstr, strnode1, strnode1, newnode);
+        char* vline = tprintf("vcurr_%s:probe_int_%s:%s_%s %s %s 0", instname, nodename1, nodenumstr, strnode1, strnode1, newnode);
 
         tfree(tmpcard->line);
         tmpcard->line = newline;
@@ -1267,9 +1300,6 @@ static int setallvsources(struct card *tmpcard, NGHASHPTR instances, char *instn
         card = tmpcard->nextcard;
 
         card = insert_new_line(card, vline, 0, 0);
-
-        char* nodesaves = tprintf("%s:%s#branch", instname, nodename1);
-        allsaves = wl_cons(nodesaves, allsaves);
 
         if (power) {
             /* For example V(1)+V(2)+V(3)*/
@@ -1279,7 +1309,7 @@ static int setallvsources(struct card *tmpcard, NGHASHPTR instances, char *instn
                sadd(&BVrefline, "+V(");
             sadd(&BVrefline, newnode);
             cadd(&BVrefline, ')');
-            /*For example: (V(node1)-V(q1Vref))*node1#branch+(V(node2)-V(q1Vref))*node2#branch */
+            /*For example: (V(node1)-V(q1probe_int_Vref))*node1#branch+(V(node2)-V(q1Vref))*node2#branch */
             if (nodenum == 1)
                sadd(&Bpowerline, "(V(");
             else
@@ -1287,9 +1317,9 @@ static int setallvsources(struct card *tmpcard, NGHASHPTR instances, char *instn
             sadd(&Bpowerline, newnode);
             sadd(&Bpowerline, ")-V(");
             sadd(&Bpowerline, instname);
-            sadd(&Bpowerline, "Vref))*i(vcurr_");
+            sadd(&Bpowerline, "probe_int_Vref))*i(vcurr_");
             sadd(&Bpowerline, instname);
-            cadd(&Bpowerline, ':');
+            sadd(&Bpowerline, ":probe_int_");
             sadd(&Bpowerline, nodename1);
             cadd(&Bpowerline, ':');
             sadd(&Bpowerline, nodenumstr);
