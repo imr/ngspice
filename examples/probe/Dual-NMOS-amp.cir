@@ -55,7 +55,6 @@ plot tj1 tj2 tcase1 tcase2
 plot in out xlimit 6 6.04
 plot i(xu1:vcc-) i(xu1:vcc+)*(-1) xlimit 6 6.04
 plot @m1[id] + i(m1:d) xlimit 9 9.04
-settype power m1:power m2:power xu1:power
 plot  m1:power m2:power ylimit 11 21
 plot xu1:power
 meas tran m1power avg  m1:power

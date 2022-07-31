@@ -31,7 +31,6 @@ X1 c1 b1 e1 s1  pbip
 .control
 *op
 dc vbb 0 2 0.01
-settype power q1:power
 plot q1:power
 display
 *print all

@@ -953,6 +953,8 @@ guess_type(const char *name)
         type = SV_RES;
     else if (cieq(name, "i-sweep"))
         type = SV_CURRENT;
+    else if (strstr(name, ":power\0"))
+        type = SV_POWER;
     /* current source ISRC parameters for current */
     else if (substring("@i", name) && (substring("[c]", name) || substring("[dc]", name) || substring("[current]", name)))
             type = SV_CURRENT;

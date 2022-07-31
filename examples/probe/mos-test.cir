@@ -1,4 +1,4 @@
-.probe test with simple CMOS inverter
+.probe test with simple CMOS inverter, many buggy .probe commands
 
 Vd dd 0 dc 5
 Vin in 0 dc 0 PULSE (0 5 0 10n 10n 100n 200n)
