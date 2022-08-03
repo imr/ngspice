@@ -34,7 +34,8 @@ RTH1 Net-_D3a1-Pad1_ Net-_R11-Pad1_ 4.7k
 XP1 Net-_P1-Pad1_ +32 +32 RPOT value=5k ratio=0.15
 R13 Net-_Q3-Pad2_ Net-_P1-Pad1_ 47.5
 MQ3 out Net-_Q3-Pad2_ Net-_D3a1-Pad1_ IRFP9240
-.probe p(MQ3, 3) p(MQ5, s)  ; <------------------------------------------
+.probe i(MQ3, 3) i(MQ5, s)  ; <------------------------------------------
+.probe p(MQ3) p(MQ5)  ; <------------------------------------------
 R18 +32 Net-_D3a1-Pad1_ 1
 R17 +32 Net-_D3a1-Pad1_ 1
 R7 out Net-_P3-Pad1_ 220
@@ -69,7 +70,6 @@ display
 rusage
 plot out in
 plot i(mq3:s) i(mq5:s)
-settype power mq3:power mq5:power
 plot mq3:power mq5:power
 meas tran mq3power avg mq3:power
 meas tran mq5power avg mq5:power

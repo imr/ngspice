@@ -5168,10 +5168,11 @@ char *ya_search_identifier(char *str, const char *identifier, char *str_begin)
     return str;
 }
 
-
+/* Check for 'identifier' being in string str, surrounded by chars
+   not being a member of alphanumeric or '_' characters. */
 char *search_plain_identifier(char *str, const char *identifier)
 {
-    if (str && identifier) {
+    if (str && identifier && *identifier != '\0') {
         char *str_begin = str;
         while ((str = strstr(str, identifier)) != NULL) {
             char before;
