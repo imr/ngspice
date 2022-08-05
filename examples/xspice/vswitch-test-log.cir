@@ -1,0 +1,52 @@
+* sw ring-oscillators
+
+.control
+destroy all
+run
+plot I(vmeasurea) I(vmeasureb) I(vmeasurec) I(vmeasured)
+plot V(outa) V(outb) V(outc) V(outd)
+rusage 
+.endc
+
+.tran 3m 3
+
+VDD VDD2 0 DC 3
+Rla VDD2 outa 1k
+Rlb VDD2 outb 1k
+Rlc VDD2 outc 1k
+Rld VDD2 outd 1k
+
+VMEASUREa DGNDa 0 dc 0
+VMEASUREb DGNDb 0 dc 0
+VMEASUREc DGNDc 0 dc 0
+VMEASUREd DGNDd 0 dc 0
+
+Vin in 0 pulse ( 0 3 0 3 3 10 10 )
+
+xsa in outa DGNDa switcha
+xsb in outb DGNDb switchb
+xsc in outc DGNDc switchc
+xsd in outd DGNDd switchd
+
+
+.subckt switcha In Out DGND
+a.xx17.asn %gd in DGND %gd out DGND aswswitch
+.model aswswitch pswitch( log=true cntl_on=1.5 cntl_off=2.5 r_on=1k r_off=2g)
+.ends
+
+.subckt switchb In Out DGND
+a.xx17.asn %gd in DGND %gd out DGND aswswitch
+.model aswswitch pswitch( log=true cntl_on=1.5 cntl_off=2.5 r_on=1k r_off=2k)
+.ends
+
+.subckt switchc In Out DGND
+a.xx17.asn %gd in DGND %gd out DGND aswswitch
+.model aswswitch pswitch( log=true cntl_on=2.5 cntl_off=1.5 r_on=1k r_off=2g)
+.ends
+
+.subckt switchd In Out DGND
+a.xx17.asn %gd in DGND %gd out DGND aswswitch
+.model aswswitch pswitch( log=true cntl_on=2.5 cntl_off=1.5 r_on=1k r_off=2k)
+.ends
+
+.end

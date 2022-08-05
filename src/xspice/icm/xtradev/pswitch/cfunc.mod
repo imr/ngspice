@@ -6,14 +6,14 @@ FILE pswitch/cfunc.mod
 3-Clause BSD
 
 Copyright 2020 The ngspice team
-               
 
-AUTHORS                      
+
+AUTHORS
 
     27 September 2020     Holger Vogt
 
 
-MODIFICATIONS   
+MODIFICATIONS
 
     03 June 2021    Yurii Demchyna
 
@@ -24,17 +24,17 @@ SUMMARY
     code model.
 
 
-INTERFACES       
+INTERFACES
 
-    FILE                 ROUTINE CALLED     
+    FILE                 ROUTINE CALLED
 
-    CMmacros.h           cm_message_send();                   
+    CMmacros.h           cm_message_send();
 
 
 REFERENCED FILES
 
     Inputs from and outputs to ARGS structure.
-                     
+
 
 NON-STANDARD FEATURES
 
@@ -47,7 +47,7 @@ NON-STANDARD FEATURES
 #include <stdlib.h>
 #include <math.h>
 
-                                      
+
 
 /*=== CONSTANTS ========================*/
 
@@ -58,8 +58,8 @@ NON-STANDARD FEATURES
 
 
 
-  
-/*=== LOCAL VARIABLES & TYPEDEFS =======*/                         
+
+/*=== LOCAL VARIABLES & TYPEDEFS =======*/
 
 typedef struct {
 
@@ -71,12 +71,14 @@ typedef struct {
                 the resistance of the switch when the
                 controlling voltage is between cntl_on
                 and cntl_of */
+    double cntl_on;      /* voltage above which switch come on */
+    double cntl_off;     /* voltage below the switch has resistance roff */
     double c1;           /* some constants */
     double c2;
     double c3;
 } Local_Data_t;
-    
-           
+
+
 /*=== FUNCTION PROTOTYPE DEFINITIONS ===*/
 
 static void
@@ -98,33 +100,33 @@ cm_pswitch_callback(ARGS, Mif_Callback_Reason_t reason)
 
 
 
-                   
+
 /*==============================================================================
 
 FUNCTION cm_pswitch()
 
-AUTHORS                      
+AUTHORS
 
     27 September 2020     Holger Vogt
 
-MODIFICATIONS   
+MODIFICATIONS
 
 SUMMARY
 
     This function implements the pswitch code model.
 
-INTERFACES       
+INTERFACES
 
-    FILE                 ROUTINE CALLED     
+    FILE                 ROUTINE CALLED
 
-    CMmacros.h           cm_message_send();                   
+    CMmacros.h           cm_message_send();
 
 RETURNED VALUE
-    
+
     Returns inputs and outputs via ARGS structure.
 
 GLOBAL VARIABLES
-    
+
     NONE
 
 NON-STANDARD FEATURES
@@ -137,11 +139,11 @@ NON-STANDARD FEATURES
 
 
 
-void cm_pswitch(ARGS)  /* structure holding parms, 
+void cm_pswitch(ARGS)  /* structure holding parms,
                                           inputs, outputs, etc.     */
 {
     double cntl_on;      /* voltage above which switch come on */
-    double cntl_off;     /* voltage below the switch has resistance roff */ 
+    double cntl_off;     /* voltage below the switch has resistance roff */
     double r_on;         /* on resistance */
     double r_off;        /* off resistance */
     double r_cntl_in;    /* input resistance for control terminal */
@@ -158,17 +160,15 @@ void cm_pswitch(ARGS)  /* structure holding parms,
     double pi_pcntl;     /* partial of the output wrt control input */
 
     Mif_Complex_t ac_gain;
-                   
 
-    
+
+
     Local_Data_t *loc;    /* Pointer to local static data, not to be included
                                        in the state vector */
-                       
+
 
     /* Retrieve frequently used parameters... */
 
-    cntl_on = PARAM(cntl_on);
-    cntl_off = PARAM(cntl_off);
     r_on = PARAM(r_on);
     r_off = PARAM(r_off);
     r_cntl_in = PARAM(r_cntl_in);
@@ -180,9 +180,11 @@ void cm_pswitch(ARGS)  /* structure holding parms,
     if(INIT == 1) { /* first time through, allocate memory, set static parameters */
         char *cntl_error = "\n*****ERROR*****\nPSWITCH: CONTROL voltage delta less than 1.0e-12\n";
 
+        cntl_on = PARAM(cntl_on);
+        cntl_off = PARAM(cntl_off);
         if( (fabs(cntl_on - cntl_off) < 1.0e-12) ) {
-            cm_message_send(cntl_error);
-            return;
+            cntl_on += 0.001;
+            cntl_off -= 0.001;
         }
 
         CALLBACK = cm_pswitch_callback;
@@ -190,6 +192,9 @@ void cm_pswitch(ARGS)  /* structure holding parms,
         /*** allocate static storage for *loc ***/
         STATIC_VAR (locdata) = calloc (1 , sizeof ( Local_Data_t ));
         loc = STATIC_VAR (locdata);
+
+        loc->cntl_on = cntl_on;
+        loc->cntl_off = cntl_off;
 
         if ( PARAM(log) == MIF_TRUE ) {   /* Logarithmic Variation in 'R' */
             if (cntl_on > cntl_off)
@@ -219,6 +224,8 @@ void cm_pswitch(ARGS)  /* structure holding parms,
 
     loc = STATIC_VAR (locdata);
 
+    cntl_on = loc->cntl_on;
+    cntl_off = loc->cntl_off;
     if ( PARAM(log) == MIF_TRUE ) {   /* Logarithmic Variation in 'R' */
         logmean = loc->logmean;
         logratio = loc->logratio;
@@ -228,7 +235,7 @@ void cm_pswitch(ARGS)  /* structure holding parms,
         double inmean;// = INPUT(cntl_in) - cntl_mean;
         int outOfLimit = 0;
         if (cntl_on > cntl_off) {
-            inmean = ((INPUT(cntl_in) - PARAM(cntl_off)) / (PARAM(cntl_on) - PARAM(cntl_off))) - cntl_mean;
+            inmean = (INPUT(cntl_in) - cntl_off) / (cntl_on - cntl_off) - cntl_mean;
             if (INPUT(cntl_in) > cntl_on) {
                 r = r_on;
                 outOfLimit = 1;
@@ -239,10 +246,10 @@ void cm_pswitch(ARGS)  /* structure holding parms,
             }
             else {
                 r = exp(logmean + loc->c1 * inmean - loc->c3 * inmean * inmean * inmean);
-                if(r<r_on) r=r_on;/* minimum resistance limiter */ 
+                if(r<r_on) r=r_on;/* minimum resistance limiter */
             }
         } else {
-            inmean = ((PARAM(cntl_on) - INPUT(cntl_in)) / (PARAM(cntl_off) - PARAM(cntl_on))) - cntl_mean;
+            inmean = (cntl_on - INPUT(cntl_in)) / (cntl_on - cntl_off) - cntl_mean;
             if (INPUT(cntl_in) < cntl_on) {
                 r = r_on;
                 outOfLimit = 1;
@@ -253,26 +260,53 @@ void cm_pswitch(ARGS)  /* structure holding parms,
             }
             else {
                 r = exp(logmean + loc->c1 * inmean - loc->c3 * inmean * inmean * inmean);
-                if(r<r_on) r=r_on;/* minimum resistance limiter */                
+                if(r<r_on) r=r_on;/* minimum resistance limiter */
             }
         }
-        
+
         pi_pcntl = INPUT(out) / r * (loc->c2 * inmean * inmean - loc->c1);
         if(1 == outOfLimit){
             pi_pcntl = 0;
         }
         pi_pvout = 1.0 / r;
-        
+
     }
     else {                      /* Linear Variation in 'R' */
         intermediate = loc->intermediate;
-        cntl_diff = loc->cntl_diff;        
-        r = INPUT(cntl_in) * intermediate + ((r_off*cntl_on - 
-                r_on*cntl_off) / cntl_diff);
+        cntl_diff = loc->cntl_diff;
+        if (cntl_diff >=0) {
+            if (INPUT(cntl_in) < cntl_off) {
+                r = r_off;
+                pi_pcntl = 0;
+            }
+            else if (INPUT(cntl_in) > cntl_on) {
+                r = r_on;
+                pi_pcntl = 0;
+            }
+            else {
+                r = INPUT(cntl_in) * intermediate + ((r_off*cntl_on -
+                    r_on*cntl_off) / cntl_diff);
+                pi_pcntl = -intermediate * INPUT(out) / (r*r);
+            }
+        }
+        else {
+            if (INPUT(cntl_in) > cntl_off) {
+                r = r_off;
+                pi_pcntl = 0;
+            }
+            else if (INPUT(cntl_in) < cntl_on) {
+                r = r_on;
+                pi_pcntl = 0;
+            }
+            else {
+                r = INPUT(cntl_in) * intermediate + ((r_off*cntl_on -
+                    r_on*cntl_off) / cntl_diff);
+                pi_pcntl = -intermediate * INPUT(out) / (r*r);
+            }        
+        }
         if(r<=1.0e-9) r=1.0e-9;/* minimum resistance limiter */
         pi_pvout = 1.0 / r;
-        pi_pcntl = -intermediate * INPUT(out) / (r*r);
-    }                                 
+    }
 
     if(ANALYSIS != MIF_AC) {            /* Output DC & Transient Values  */
         OUTPUT(out) = INPUT(out) / r;
@@ -284,7 +318,7 @@ void cm_pswitch(ARGS)  /* structure holding parms,
 //                                              independent to out port */
         cm_analog_auto_partial();
 
-    /* Note that the minus signs are required  because current is positive 
+    /* Note that the minus signs are required  because current is positive
        flowing INTO rather than OUT OF a component node.       */
     }
     else {                              /*   Output AC Gain Values      */
@@ -296,5 +330,5 @@ void cm_pswitch(ARGS)  /* structure holding parms,
         ac_gain.imag= 0.0;
         AC_GAIN(out,cntl_in) = ac_gain;
     }
-} 
+}
 
