@@ -2139,7 +2139,6 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
         char *primary_model = NULL, *s1 = NULL, *s2 = NULL, *s3 = NULL;
         int ksave;
         /* arrays of gates */
-        /* NOTE (n)and3a, (n)or3a, (n)xor3a types are not supported */
         simple_array = is_gate_array(itype);
         tristate_array = is_tristate_array(itype);
         add_tristate = FALSE;
@@ -2147,10 +2146,10 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
             xspice = find_xspice_for_delay(itype);
         } else if (tristate_array) {
             xspice = find_xspice_for_delay(itype);
-            if (eq("inv3a", itype)) {
+            if (eq(itype, "buf3a")) {
+                add_tristate = FALSE;
+            } else {
                 add_tristate = TRUE;
-            } else if (!eq(itype, "buf3a")) {
-                return NULL;
             }
         }
         xxp = create_xlator();
@@ -2163,7 +2162,12 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
             startvec = "";
             endvec = "";
         }
-        /* model name, same for all primary gates */
+        /*
+         model name, same for all primary gates
+         Note that for arrays of tristate gates, other than buf3a, the
+         primary gates have zero delay models and utgate delay is added
+         to the model of a trailing tristate buffer.
+        */
         primary_model = tprintf("d_a%s_%s", iname, itype); 
         for (i = 0; i < num_gates; i++) {
             /* inputs */
@@ -2187,9 +2191,13 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
             /* create new instance name for primary gate */
             if (enable) {
                 if (!add_tristate) {
+                    /* primary gate instance name + inputs + enable */
+                    /* this is the buf3a case */
                     s1 = tprintf("a%s_%d %s%s%s  %s",
                         iname, i, startvec, input_buf, endvec, enable);
                 } else {
+                    /* primary gate instance name + inputs */
+                    /* enable is added later to trailing tristate buffer */
                     s1 = tprintf("a%s_%d %s%s%s",
                         iname, i, startvec, input_buf, endvec);
                     /* connector if required for tristate */
@@ -2197,6 +2205,7 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
                     check_name_unused(connector);
                 }
             } else {
+                /* primary gate instance name + inputs */
                 s1 = tprintf("a%s_%d %s%s%s",
                     iname, i, startvec, input_buf, endvec);
             }
@@ -2207,7 +2216,10 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
             } else {
                 s2 = tprintf(" %s %s", outarr[i], primary_model);
             }
-            /* translated instance */
+            /*
+             translated instance name + inputs + outputs of a primary gate
+             for buf3a the enable is also included
+            */
             s3 = tprintf("%s%s", s1, s2);
 
             if (add_tristate) {
