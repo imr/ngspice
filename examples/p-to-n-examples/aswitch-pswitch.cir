@@ -29,11 +29,11 @@ aa2 N001 %gd(N002 0) switch4
 .model switch4 aswitch(cntl_off=1.9 cntl_on=2.3 r_off=1e12
 + r_on=1k log=TRUE limit=TRUE)
 
-ap1 N001 %gd(N004 0) switch5
+ap1 N001 0 %gd(N004 0) switch5
 .model switch5 pswitch(cntl_off=1.1 cntl_on=0.9 r_off=1e12
 + r_on=1k log=TRUE)
 
-ap2 N001 %gd(N004 0) switch6
+ap2 N001 0 %gd(N004 0) switch6
 .model switch6 pswitch(cntl_off=1.9 cntl_on=2.3 r_off=1e12
 + r_on=1k log=TRUE)
 
