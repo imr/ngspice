@@ -1,0 +1,60 @@
+ab_counter.cir for IN/OUT auto_bridge
+
+.param highv=5.0
+.param lowv=0.0
+
+.subckt counter high clear clk qa qb qc qd 5 7 9 11
++  params: vcc={highv}
+U1 JKFF(1) $G_DPWR $G_DGND  HIGH CLEAR CLK HIGH HIGH QA 5
++ D0_EFF IO_STD IO_LEVEL=0 MNTYMXDLY=2
+U2 JKFF(1) $G_DPWR $G_DGND  HIGH CLEAR QA HIGH HIGH QB 7
++ D0_EFF IO_STD IO_LEVEL=0 MNTYMXDLY=2
+U3 JKFF(1) $G_DPWR $G_DGND  HIGH CLEAR QB HIGH HIGH QC 9
++ D0_EFF IO_STD IO_LEVEL=0 MNTYMXDLY=2
+U4 JKFF(1) $G_DPWR $G_DGND  HIGH CLEAR QC HIGH HIGH QD 11
++ D0_EFF IO_STD IO_LEVEL=0 MNTYMXDLY=2
+.MODEL D0_EFF UEFF ()
+.ends counter
+
+*** input sources ***
+vclk 100 0 lowv pulse( lowv highv 50ns 0ns 0ns 50ns 100ns )
+vreset 200 0 lowv pulse( highv lowv 10ns 0ns 0ns 50ns ) 
+vhigh 300 0 DC highv
+
+*** resistors to ground ***
+r1 100 0 1k
+r2 200 0 1k
+r3 300 0 1k
+r4 1000 0 1k
+r5 1001 0 1k
+r6 1002 0 1k
+r7 1003 0 1k
+
+x1 300 200 100 q1 q2 q3 q4 1000 1001 1002 1003 counter
+
+*.TRAN 1e-008 4u 0 
+.save all
+
+.control
+TRAN 1e-008 4u 0 
+run
+listing expand
+display
+edisplay
+
+* save data to input directory
+cd $inputdir 
+eprvcd 300 200 100 q1 q2 q3 q4 1000 1001 1002 1003 > ab_counter.vcd
+* plotting the vcd file with GTKWave
+if $oscompiled = 1 | $oscompiled = 8  ; MS Windows
+  shell start gtkwave ab_counter.vcd --script nggtk.tcl
+else
+  if $oscompiled = 7 ; macOS, manual tweaking required (mark, insert, Zoom Fit)
+    shell open -a gtkwave ab_counter.vcd
+  else ; Linux and others
+    shell gtkwave ab_counter.vcd --script nggtk.tcl &
+  end
+end
+quit
+.endc
+.END
