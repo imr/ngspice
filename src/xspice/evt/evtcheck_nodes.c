@@ -96,15 +96,14 @@ for device libraries whose devices are defined by subcircuits.
    If found, set vcc from the parameter.
 
 3: If a command interpreter variable "no_auto_bridge_family": exists, go to
-   step 5.  Search the connected device instances for a parameter, "family"
-   with a string value.  The first one found will be used.  If no such
-   instance exists, search for a string-valued parameter, "family",
-   in enclosing subcircuits, as in step 2.  If the first character of the
-   value is not '*', the setup card will be ".include bridge_FFFFF_DDD.cir"
-   where FFFFF is the family and DDD is the signal direction for
-   the XSPICE device: "in", "out" or "inout".  The device card will be
-   "Xauto_bridge%d %s %s bridge_FFFFF_DDD vcc=%g", so a suitably
-   parameterised subcircuit must be defined in the included file.
+   step 5.  Search the connected device instances for a parameter,
+   "family" with a string value.  The first one found will be used.
+   If the first character of the value is not '*', the setup card will
+   be ".include bridge_FFFFF_DDD.cir" where FFFFF is the family and
+   DDD is the signal direction for the XSPICE device: "in", "out" or
+   "inout".  The device card will be "Xauto_bridge%d %s %s
+   bridge_FFFFF_DDD vcc=%g", so a suitably parameterised subcircuit
+   must be defined in the included file.
 
 4: If the first character of "family" was '*', look for a variable
    "auto_bridge_FFFFF_TTTT_DDD" where FFFFF is the family without '*',
@@ -469,8 +468,8 @@ static struct bridge *find_bridge(Evt_Node_Info_t  *event_node,
     family = NULL;
     deep = scan_devices(event_node, ckt, &family);
 
-    /* Look for a real parameter (.param type) and perhaps a string-valued
-     * "family" parameter in the device's subcircuit and those enclosing it.
+    /* Look for a real parameter (.param type) in the device's subcircuit
+     * and those enclosing it.
      */
 
     snprintf(buff, sizeof buff, "%s", deep);
@@ -479,11 +478,7 @@ static struct bridge *find_bridge(Evt_Node_Info_t  *event_node,
             snprintf(dot + 1, sizeof buff - (size_t)(dot - buff), vcc_parm);
             vcc = nupa_get_param(buff, &ok);
         }
-        if (!family) {
-            snprintf(dot + 1, sizeof buff - (size_t)(dot - buff), "family");
-            family = nupa_get_string_param(buff);
-        }
-        if (ok && family)
+        if (ok)
             break;
         *dot = '\0';
     }
@@ -498,8 +493,6 @@ static struct bridge *find_bridge(Evt_Node_Info_t  *event_node,
         }
     }
 
-    if (!family)
-        family = nupa_get_string_param("family");
     if (family && cp_getvar("no_auto_bridge_family", CP_BOOL, NULL, 0))
         family = NULL;
 
