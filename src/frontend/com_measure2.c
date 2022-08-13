@@ -469,6 +469,19 @@ com_measure_when(
         else if ((ac_check || sp_check) && (scaleValue < 0))
             continue;
 
+        if (dc_check) {
+            /* dc: start from pos or neg scale value */
+            if ((scaleValue < meas->m_from) || (scaleValue > meas->m_to))
+                continue;
+        } else {
+            /* all others: start from neg scale value */
+            if (scaleValue < meas->m_from)
+                continue;
+
+            if ((meas->m_to != 0.0e0) && (scaleValue > meas->m_to))
+                break;
+        }
+
         /* if 'dc': reset first if scale jumps back to origin */
         if ((first > 1) && (dc_check && (meas->m_td == scaleValue)))
             first = 1;
@@ -1666,6 +1679,13 @@ get_measure2(
             measure_errMessage(mName, mFunction, "TARG", errbuf, autocheck);
             goto err_ret1;
         }
+
+        // If there was a FROM propagate trig<->targ
+
+        if (measTrig->m_from !=0.0 && measTarg->m_from == 0.0)
+            measTarg->m_from = measTrig->m_from;
+        else if (measTarg->m_from !=0.0 && measTrig->m_from == 0.0)
+            measTrig->m_from = measTarg->m_from;
 
         // measure trig
         if (measTrig->m_at == 1e99)
