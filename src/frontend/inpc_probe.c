@@ -715,7 +715,13 @@ void inp_probe(struct card* deck)
                     continue;
                 }
                 char* thisline = tmpcard->line;
-                numnodes = get_number_terminals(thisline);
+
+                /* special treatment for controlled current sources and switches:
+                   We have three or four tokens until model name, but only the first 2 are relevant nodes. */
+                if (strchr("fgsw", *instname))
+                    numnodes = 2;
+                else
+                    numnodes = get_number_terminals(thisline);
 
                 /* skip ',' */
                 if (*tmpstr == ',')
