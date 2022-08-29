@@ -7,12 +7,12 @@ v1 1 0 DC 0.0 PWL (0 0 2e-3 2 4e-3 0)
 * please note influence of instance parameters ON , OFF
 v2 2 0 DC 0.0 PWL (0 0.9 2e-3 2 4e-3 0.4)
 * switch control current
-i3 3 0 DC 0.0 PWL (0 0 2e-3 2m 4e-3 0) $ <--- switch control current
+i3 3 0 DC 0.0 PWL (0 0 2e-3 2m 4e-3 0) ; <--- switch control current
 * load voltage
 v4 4 0 DC 2.0
 * input load for current source i3
 r3 3 33 10k
-vm3 0 33 dc 0 $ <--- measure the current
+vm3 0 33 dc 0 ; <--- measure the current
 * ouput load resistors
 r10 4 10 10k
 r20 4 20 10k
@@ -32,12 +32,12 @@ run
 display
 set xbrushwidth=2
 plot v(1) v(10)
-plot v(10) vs v(1) $ <-- get hysteresis loop
-plot v(2) v(20) $ <--- different initial values
-plot v(20) vs v(2) $ <-- get hysteresis loop
-plot v(2) v(30) $ <--- different initial values
-plot v(30) vs v(2) retraceplot $ <-- get hysteresis loop
-plot v(40) vs vm3#branch retraceplot $ <--- current controlled switch hysteresis
+plot v(10) vs v(1) ; <-- get hysteresis loop
+plot v(2) v(20) ; <--- different initial values
+plot v(20) vs v(2) ; <-- get hysteresis loop
+plot v(2) v(30) ; <--- different initial values
+plot v(30) vs v(2) retraceplot ; <-- get hysteresis loop
+plot v(40) vs vm3#branch retraceplot ; <--- current controlled switch hysteresis
 plot i(s1) i(s2) i(s3)
 plot i(w1) vs i(vm3)
 .endc
