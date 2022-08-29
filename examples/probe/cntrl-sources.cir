@@ -21,10 +21,10 @@ Rh h1 0 1.67
 * source control voltage
 v2 2 0 DC 0.0 PWL (0 0.9 2e-3 2 4e-3 0.4)
 * source control current
-I1 3 0 DC 0.0 PWL (0 0 2e-3 2m 4e-3 -2m) $ <--- control current
+I1 3 0 DC 0.0 PWL (0 0 2e-3 2m 4e-3 -2m) ; <--- control current
 
-vf 33 3 dc 0 $ <--- measure the current
-vh 0 33 dc 0 $ <--- measure the current
+vf 33 3 dc 0 ; <--- measure the current
+vh 0 33 dc 0 ; <--- measure the current
 * load voltage
 
 
