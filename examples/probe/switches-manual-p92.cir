@@ -1,6 +1,6 @@
 Switch test
 .tran 2us 5ms
-.probe I(w1) I(s1) I(s2) I(s3) ; alli
+.probe I(w1) I(s1) I(s2) I(s3) P(s2) P(w1); alli
 * switch control voltage
 v1 1 0 DC 0.0 PWL (0 0 2e-3 2 4e-3 0)
 * switch control voltage starting inside hysteresis window
@@ -25,7 +25,7 @@ s3 30 0 2 0 switch1 ON
 .model switch1 sw vt=1 vh=0.2 ron=1 roff=10k
 *
 w1 40 0 vm3 wswitch1 off
-.model wswitch1 csw it=1m ih=0.2m ron=1 roff=10k
+.model wswitch1 csw it=1m ih=0.2m ron=1k roff=10k
 *
 .control
 run
@@ -40,5 +40,6 @@ plot v(30) vs v(2) retraceplot ; <-- get hysteresis loop
 plot v(40) vs vm3#branch retraceplot ; <--- current controlled switch hysteresis
 plot i(s1) i(s2) i(s3)
 plot i(w1) vs i(vm3)
+plot s2:power w1:power
 .endc
 .end
