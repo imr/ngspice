@@ -235,10 +235,15 @@ void inp_probe(struct card* deck)
                 continue;
 
             /* select elements not in need of a measure Vsource */
-            if (strchr("evihk", *instname))
+            if (strchr("ehvk", *instname))
                 continue;
 
-            numnodes = get_number_terminals(card->line);
+            /* special treatment for controlled current sources and switches:
+               We have three or four tokens until model name, but only the first 2 are relevant nodes. */
+            if (strchr("fgsw", *instname))
+                numnodes = 2;
+            else
+                numnodes = get_number_terminals(card->line);
 
             char* thisline = curr_line;
             prevcard = card;
