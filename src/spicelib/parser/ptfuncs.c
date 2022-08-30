@@ -216,21 +216,29 @@ PTcosh(double arg)
 }
 
 /* Limit the exp: If arg > EXPARGMAX (arbitrarily selected to 14), continue with linear output,
-   if compatmode PSPICE is selected*/
+   if compatmode PSPICE is selected.
+   If arg exceeds 227.9559242, output its exp value 1e99. */
 double
 PTexp(double arg)
 {
     if (newcompat.ps && arg > EXPARGMAX)
         return EXPMAX * (arg - EXPARGMAX + 1.);
+    else if (arg > 227.9559242)
+        return 1e99;
     else
         return (exp(arg));
 }
 
+/* If arg < , returning HUGE will lead to an error message.
+   If arg == 0, don't bail out, but return an arbitrarily very negative value (-1e99).
+   Arg 0 may happen, when starting iteration for op or dc simulation. */
 double
 PTlog(double arg)
 {
     if (arg < 0.0)
         return (HUGE);
+    if (arg == 0)
+        return -1e99;
     return (log(arg));
 }
 
@@ -239,6 +247,8 @@ PTlog10(double arg)
 {
     if (arg < 0.0)
         return (HUGE);
+    if (arg == 0)
+        return -1e99;
     return (log10(arg));
 }
 
