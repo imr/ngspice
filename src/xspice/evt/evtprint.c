@@ -408,11 +408,12 @@ EVTdisplay(wordlist *wl)
     }
     node = ckt->evt->info.node_list;
     node_table = ckt->evt->info.node_table;
-    out_init();
-    if (!node) {
+
+    if (!node || !node_table) {
         out_printf("No event node available!\n");
         return;
     }
+    out_init();
     if (ckt->evt->jobs.job_plot) {
         out_printf("\nList of event nodes in plot %s\n",
                    ckt->evt->jobs.job_plot[ckt->evt->jobs.cur_job]);
