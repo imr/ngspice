@@ -270,15 +270,19 @@ static struct dvec* findvec_alle(void) {
     int i, num_nodes;
     Evt_Node_Info_t** node_table;
 
+    /* Look for node name in the event-driven node list */
+    num_nodes = g_mif_info.ckt->evt->counts.num_nodes;
+    node_table = g_mif_info.ckt->evt->info.node_table;
+    if (num_nodes == 0 || !node_table)
+        return NULL;
+
     /* We need to create a new plot because of veccmp() is used */
     struct plot* pl = plot_alloc("digi");
     pl->pl_title = copy("DigitalData");
     pl->pl_name = copy("digital");
     pl->pl_date = copy(datestring());
     plot_new(pl);
-    /* Look for node name in the event-driven node list */
-    num_nodes = g_mif_info.ckt->evt->counts.num_nodes;
-    node_table = g_mif_info.ckt->evt->info.node_table;
+
     /* find all event data, create vectors, link them to v_link2 */
     for (i = 0; i < num_nodes; i++) {
         char* name = node_table[i]->name;
