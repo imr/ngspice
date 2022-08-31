@@ -390,9 +390,12 @@ static void update_option_variables(const char *sz_var_name,
    Without quotes tokens like 2N5401_C will be evaluated as real number 2n, i.e. 2e-9 */
 struct variable *cp_setparse(wordlist *wl)
 {
-    char *name = NULL, *val, *copyval, *s, *ss;
+    char *name = NULL, *val, *copyval, *s, *ss, *printout = NULL;
     struct variable *listv = NULL, *vv, *lv = NULL;
     struct variable *vars = NULL;
+
+    if (wl)
+        printout = wl_flatten(wl);
 
     /* Step through the list of words. Words may be various combinations of
      * the information needed to set a variable. For example, to set x to
@@ -417,8 +420,9 @@ struct variable *cp_setparse(wordlist *wl)
         if (wl && eq(wl->wl_word, "=")) { /* name<space>= */
             wl = wl->wl_next;
             if (wl == NULL) {
-                fprintf(cp_err, "Error: bad set form.\n");
-                tfree(name);    /*DG: cp_unquote Memory leak*/
+                fprintf(cp_err, "Error: bad set form in line\n    %s", printout);
+                tfree(name);
+                tfree(printout);
                 if (ft_stricterror)
                     controlled_exit(EXIT_BAD);
                 return NULL;
@@ -446,8 +450,9 @@ struct variable *cp_setparse(wordlist *wl)
             }
         }
         else {
-            fprintf(cp_err, "Error: bad set form.\n");
-            tfree(name); /*DG: cp_unquote Memory leak: free name befor exiting */
+            fprintf(cp_err, "Error: bad set form in line\n    %s", printout);
+            tfree(name);
+            tfree(printout);
             if (ft_stricterror)
                 controlled_exit(EXIT_BAD);
             return NULL;
@@ -505,8 +510,9 @@ struct variable *cp_setparse(wordlist *wl)
                 wl = wl->wl_next;
             }
             if (balance && !wl) {
-                fprintf(cp_err, "Error: bad set form.\n");
-                tfree(name); /* va: cp_unquote memory leak: free name before exiting */
+                fprintf(cp_err, "Error: bad set form in line\n    %s", printout);
+                tfree(name);
+                tfree(printout);
                 if (ft_stricterror)
                     controlled_exit(EXIT_BAD);
                 return NULL;
@@ -545,6 +551,9 @@ struct variable *cp_setparse(wordlist *wl)
 
     if (name) {
         tfree(name);
+    }
+    if (printout) {
+        tfree(printout);
     }
     return vars;
 } /* end of function cp_setparse */
