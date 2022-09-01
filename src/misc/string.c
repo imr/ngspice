@@ -393,6 +393,9 @@ gettok(char **s)
     int paren;
     const char *token, *token_e;
 
+    if (!*s)
+        return NULL;
+
     paren = 0;
 
     *s = skip_ws(*s);
@@ -599,6 +602,10 @@ void findtok_noparen(char **p_str, char **p_token, char **p_token_end)
 char *gettok_noparens(char **s)
 {
     char *token, *token_e;
+
+    if (!*s)
+        return NULL;
+
     findtok_noparen(s, &token, &token_e);
     if (token == (char *) NULL) {
         return (char *) NULL; /* return NULL if we come to end of line */
@@ -654,6 +661,10 @@ void findtok_np(char** p_str, char** p_token, char** p_token_end)
 char* gettok_np(char** s)
 {
     char* token, * token_e;
+
+    if (!*s)
+        return NULL;
+
     findtok_np(s, &token, &token_e);
     if (token == (char*)NULL) {
         return (char*)NULL; /* return NULL if we come to end of line */
@@ -672,6 +683,9 @@ gettok_model(char **s)
 {
     char c;
     const char *token, *token_e;
+
+    if (!*s)
+        return NULL;
 
     *s = skip_ws(*s);
 
@@ -706,6 +720,9 @@ gettok_instance(char **s)
     char c;
     const char *token, *token_e;
 
+    if (!*s)
+        return NULL;
+
     *s = skip_ws(*s);
 
     if (!**s)
@@ -739,6 +756,9 @@ gettok_char(char **s, char p, bool inc_p, bool nested)
 {
     char c;
     const char *token, *token_e;
+
+    if (!*s)
+        return NULL;
 
     *s = skip_ws(*s);
 
