@@ -2252,7 +2252,17 @@ inp_savecurrents(struct card *deck, struct card *options, wordlist *wl, wordlist
         switch (devline[0]) {
         case 'm':
             devname = gettok(&devline);
-            newline = tprintf(".save @%s[id] @%s[is] @%s[ig] @%s[ib]",
+            if (strstr(options->line, "savecurrents_bsim3"))
+                newline = tprintf(".save @%s[id] @%s[ibd] @%s[ibs]",
+                              devname, devname, devname);
+            else if (strstr(options->line, "savecurrents_bsim4"))
+                newline = tprintf(".save @%s[id] @%s[ibd] @%s[ibs] @%s[isub] @%s[igidl] @%s[igisl] @%s[igs] @%s[igb] @%s[igd] @%s[igcs] @%s[igcd]",
+                              devname, devname, devname, devname, devname, devname, devname, devname, devname, devname, devname);
+            else if (strstr(options->line, "savecurrents_mos1"))
+                newline = tprintf(".save @%s[id] @%s[is] @%s[ig] @%s[ib] @%s[ibd] @%s[ibs]",
+                              devname, devname, devname, devname, devname, devname);
+            else
+                newline = tprintf(".save @%s[id] @%s[is] @%s[ig] @%s[ib]",
                               devname, devname, devname, devname);
             break;
         case 'j':
