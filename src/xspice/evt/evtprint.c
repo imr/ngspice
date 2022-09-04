@@ -727,6 +727,8 @@ static void set_all(CKTcircuit *ckt, Mif_Boolean_t val)
 
     count = ckt->evt->counts.num_nodes;
     node_table = ckt->evt->info.node_table;
+    if (!node_table)
+        return;
     for (i = 0; i < count; i++)
         node_table[i]->save = val;
 }
@@ -752,7 +754,10 @@ EVTsave(wordlist *wl)
         fprintf(cp_err, "Error: no circuit loaded.\n");
         return;
     }
+
     node_table = ckt->evt->info.node_table;
+    if (!node_table)
+        return;
 
     /* Deal with "all" and "none". */
 
