@@ -245,11 +245,11 @@ checkvalid(struct pnode *pn)
                 !eq(pn->pn_value->v_name, "list")) {
                 if (eq(pn->pn_value->v_name, "all"))
                     fprintf(cp_err,
-                            "Error: %s: no matching vectors.\n",
+                            "Warning from checkvalid: %s: no matching vectors.\n",
                             pn->pn_value->v_name);
                 else
                     fprintf(cp_err,
-                            "Error(checkvalid): vector %s is not available or has zero length.\n",
+                            "Warning from checkvalid: vector %s is not available or has zero length.\n",
                             pn->pn_value->v_name);
                 return (FALSE);
             }
