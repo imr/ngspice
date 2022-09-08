@@ -356,10 +356,11 @@ static int examine_device(MIFinstance *inst, const char **family)
          }
      }
  
-     for (i = 0, dot = inst->MIFname;
-          (dot = strchr(dot, '.'));
-          dot += 1, ++i)
-         ;
+     for (i = 0, dot = strchr(inst->MIFname, '.'); dot; dot += 1, ++i) {
+         dot = strchr(dot, '.');
+         if (dot == NULL)
+             break;
+     }
      return i;
 }
 
@@ -388,7 +389,8 @@ static const char *scan_devices(Evt_Node_Info_t   *event_node,
         }
     }
 
-    if ((left = event_node->num_outputs)) {
+    left = event_node->num_outputs;
+    if (left) {
         Evt_Node_Info_t    *node;
         Evt_Output_Info_t  *oip;
         int                 i, my_index;
@@ -432,9 +434,10 @@ static struct bridge *find_bridge(Evt_Node_Info_t  *event_node,
     static const char * const   dirs[] = {"in", "out", "inout"};
     struct bridge              *bridge;
     Mif_Dir_t                   direction;
+    char                       *setup = NULL;
     const char                 *format = NULL;
     const char                 *type_name, *family, *s_family, *deep;
-    char                       *setup, *vcc_parm, *dot;
+    char                       *vcc_parm, *dot;
     double                      vcc = 0.0;
     int                         max = 0, ok = 0;
     struct variable            *cvar = NULL;
@@ -473,7 +476,8 @@ static struct bridge *find_bridge(Evt_Node_Info_t  *event_node,
      */
 
     snprintf(buff, sizeof buff, "%s", deep);
-    while ((dot = strrchr(buff, '.'))) {
+    dot = strrchr(buff, '.');
+    while (dot) {
         if (!ok) {
             snprintf(dot + 1, sizeof buff - (size_t)(dot - buff), vcc_parm);
             vcc = nupa_get_param(buff, &ok);
@@ -481,6 +485,7 @@ static struct bridge *find_bridge(Evt_Node_Info_t  *event_node,
         if (ok)
             break;
         *dot = '\0';
+        dot = strrchr(buff, '.');
     }
 
     if (!ok) {

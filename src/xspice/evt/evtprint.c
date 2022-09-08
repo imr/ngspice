@@ -737,7 +737,6 @@ void
 EVTsave(wordlist *wl)
 {
     int               i;
-    Mif_Boolean_t     save;
     wordlist         *w;
     CKTcircuit       *ckt;
     Evt_Node_Info_t **node_table;
@@ -761,12 +760,14 @@ EVTsave(wordlist *wl)
 
     /* Deal with "all" and "none". */
 
-    save = MIF_FALSE;
-    if (wl->wl_next == NULL &&
-        (!strcmp("none", wl->wl_word) ||
-         (save = !strcmp("all", wl->wl_word)))) {
-        set_all(ckt, save);
-        return;
+    if (wl->wl_next == NULL) {
+        if (!strcmp("none", wl->wl_word)) {
+            set_all(ckt, MIF_FALSE);
+            return;
+        } else if (!strcmp("all", wl->wl_word)) {
+            set_all(ckt, MIF_TRUE);
+            return;
+        }
     }
 
     set_all(ckt, MIF_FALSE);    /* Clear previous settings. */
@@ -780,7 +781,6 @@ EVTsave(wordlist *wl)
                     w->wl_word);
             return;
         }
-//        node_table[i]->save = MIF_FALSE;
         node_table[i]->save = MIF_TRUE;
     }
 }
