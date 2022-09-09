@@ -1,0 +1,27 @@
+* test of XSPICE pwlts
+
+V1 1 0 1
+a6 3 pwlts1
+C6 33 0 0.1
+R6 33 3 1
+a7 4 pwlts2
+C7 44 0 0.1
+R4 44 4 1
+
+.model pwlts1 pwlts(x_array=[0 0.1 0.2 0.8 0.9 1 1.1]
++ y_array=[0.1 0.1 1 1 0 0 0.2]
++ input_domain=0.01 fraction=FALSE)
+
+.model pwlts2 pwlts(x_array=[0 0.1 0.2 0.8 0.9 1 1.1]
++ y_array=[0.1 0.1 1 1 0 0 0.2]
++ input_domain=0.2 fraction=TRUE limit=true)
+
+.control
+tran 0.001 1.5
+*ac dec 10 1 1Meg
+*dc V1 0 1 0.1
+set xbrushwidth=2
+plot v(3) v(33) v(4) v(44)
+.endc
+
+.end
