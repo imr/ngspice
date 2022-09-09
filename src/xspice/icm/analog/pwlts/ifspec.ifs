@@ -1,0 +1,92 @@
+/*.......1.........2.........3.........4.........5.........6.........7.........8
+================================================================================
+Public Domain
+
+Georgia Tech Research Corporation
+Atlanta, Georgia 30332
+
+
+AUTHORS
+
+    19 Apr 1991     Jeffrey P. Murray
+    01 Nov 2020     Holger Vogt
+
+
+SUMMARY
+
+    This file contains the interface specification file for the
+    analog pwl code model.
+
+===============================================================================*/
+
+NAME_TABLE:
+
+
+C_Function_Name:       cm_pwlts
+Spice_Model_Name:      pwlts
+Description:           "piecwise linear controlled source, time input"
+
+
+PORT_TABLE:
+
+Port_Name:             out
+Description:           "output"
+Direction:             out
+Default_Type:          v
+Allowed_Types:         [v,vd,i,id]
+Vector:                no
+Vector_Bounds:         -
+Null_Allowed:          no
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:     x_array                     y_array
+Description:        "x-element array"           "y-element array"
+Data_Type:          real                        real
+Default_Value:      -                           -
+Limits:             -                           -
+Vector:              yes                         yes
+Vector_Bounds:       [2 -]                       [2 -]
+Null_Allowed:       no                          no
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:     input_domain            fraction
+Description:        "input sm. domain"      "smoothing %/abs switch"
+Data_Type:          real                    boolean
+Default_Value:      0.01                    TRUE
+Limits:             [1e-12 0.5]	             -
+Vector:              no                      no
+Vector_Bounds:       -                       -
+Null_Allowed:       yes                     yes
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:     limit
+Description:        "const or linearily extrapolated output"
+Data_Type:          boolean
+Default_Value:      FALSE
+Limits:             -
+Vector:             no
+Vector_Bounds:      -
+Null_Allowed:       yes
+
+
+STATIC_VAR_TABLE:
+
+Static_Var_Name:    last_x_value
+Data_Type:          pointer
+Vector:              no
+Description:        "iteration holding variable for limiting"
+
+
+STATIC_VAR_TABLE:
+
+Static_Var_Name:    x                       y
+Data_Type:          pointer                 pointer
+Description:        "time array"   "y-coefficient array"
+
+
