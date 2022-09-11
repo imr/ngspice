@@ -1089,8 +1089,12 @@ struct card *inp_readall(FILE *fp, const char *dir_name,
             inp_fix_gnd_name(working);
         inp_chk_for_multi_in_vcvs(working, &rv.line_number);
 
-        if (cp_getvar("addcontrol", CP_BOOL, NULL, 0))
+        /* "addcontrol" variable is set if "ngspice -a file" was used. */
+
+        if (cp_getvar("addcontrol", CP_BOOL, NULL, 0)) {
             inp_add_control_section(working, &rv.line_number);
+            cp_remvar("addcontrol"); // Use only for initial netlist
+        }
 #ifdef XSPICE
         if (inp_poly_2g6_compat(working)) {
             inp_rem_levels(root);
@@ -2170,76 +2174,44 @@ static void inp_chk_for_multi_in_vcvs(struct card *c, int *line_number)
 
 
 /* If ngspice is started with option -a, then variable 'autorun'
- *   will be set and the following function scans the deck.
- * If 'run' is not found, a .control section will be added:
+ * will be set and a control section is inserted to try and ensure
+ * some analysis is done;
+ *
  *   .control
- *   run
- *   op              ; if .op is found
+ *   strcmp __flag $curplot const
+ *   if $__flag eq 0
+ *     run
+ *   end
  *   write rawfile   ; if rawfile given
  *   .endc
+ *
+ * The effect is that "run" is executed if there was no previous
+ * analysis.
  */
 static void inp_add_control_section(struct card *deck, int *line_number)
 {
-    struct card *c, *prev_card = NULL;
-    bool found_control = FALSE, found_run = FALSE;
-    bool found_end = FALSE;
-    char *op_line = NULL, rawfile[1000], *line;
+    static const char * const cards[] =
+        {".control", "strcmp __flag $curplot const", "if $__flag eq 0",
+         "  run", "end", NULL};
+    const char   * const *lp;
+    struct card   *c, *prev_card = NULL, *last_end = NULL;
+    char           rawfile[1000], *line;
 
     for (c = deck; c; c = c->nextcard) {
-
-        if (*c->line == '*')
-            continue;
-
-        if (ciprefix(".op ", c->line)) {
-            *c->line = '*';
-            op_line = c->line + 1;
-        }
-
         if (ciprefix(".end", c->line))
-            found_end = TRUE;
-
-        if (found_control && ciprefix("run", c->line))
-            found_run = TRUE;
-
-        if (ciprefix(".control", c->line))
-            found_control = TRUE;
-
-        if (ciprefix(".endc", c->line)) {
-            found_control = FALSE;
-
-            if (!found_run) {
-                prev_card = insert_new_line(
-                        prev_card, copy("run"), (*line_number)++, 0);
-                found_run = TRUE;
-            }
-
-            if (cp_getvar("rawfile", CP_STRING, rawfile, sizeof(rawfile))) {
-                line = tprintf("write %s", rawfile);
-                prev_card =
-                        insert_new_line(prev_card, line, (*line_number)++, 0);
-            }
-        }
-
+            last_end = prev_card;
         prev_card = c;
     }
 
-    // check if need to add control section
-    if (!found_run && found_end) {
-
-        deck = insert_new_line(deck, copy(".control"), (*line_number)++, 0);
-
-        deck = insert_new_line(deck, copy("run"), (*line_number)++, 0);
-
-        if (op_line)
-            deck = insert_new_line(deck, copy(op_line), (*line_number)++, 0);
-
-        if (cp_getvar("rawfile", CP_STRING, rawfile, sizeof(rawfile))) {
-            line = tprintf("write %s", rawfile);
-            deck = insert_new_line(deck, line, (*line_number)++, 0);
-        }
-
-        deck = insert_new_line(deck, copy(".endc"), (*line_number)++, 0);
+    if (last_end)
+        prev_card = last_end;
+    for (lp = cards; *lp; ++lp)
+        prev_card = insert_new_line(prev_card, copy(*lp), (*line_number)++, 0);
+    if (cp_getvar("rawfile", CP_STRING, rawfile, sizeof(rawfile))) {
+        line = tprintf("write %s", rawfile);
+        prev_card = insert_new_line(prev_card, line, (*line_number)++, 0);
     }
+    insert_new_line(prev_card, copy(".endc"), (*line_number)++, 0);
 }
 
 
