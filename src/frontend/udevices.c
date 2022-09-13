@@ -286,6 +286,7 @@ static void print_name_list(NAME_ENTRY nelist)
   cleared by cleanup_udevice().
 */
 static int ps_port_directions = 0;  // If non-zero list subckt port directions
+static int ps_udevice_msgs = 0;  // Controls the verbosity of U* warnings
 static NAME_ENTRY new_names_list = NULL;
 static NAME_ENTRY input_names_list = NULL;
 static NAME_ENTRY output_names_list = NULL;
@@ -294,6 +295,8 @@ static NAME_ENTRY port_names_list = NULL;
 static unsigned int num_name_collisions = 0;
 /* .model d_zero_inv99 d_inverter just once per subckt */
 static BOOL add_zero_delay_inverter_model = FALSE;
+static char *current_subckt = NULL;
+static unsigned int subckt_msg_count = 0;
 
 static void check_name_unused(char *name)
 {
@@ -753,8 +756,18 @@ void initialize_udevice(char *subckt_line)
     if (!cp_getvar("ps_port_directions", CP_NUM, &ps_port_directions, 0)) {
         ps_port_directions = 0;
     }
+    /*
+      Set ps_udevice_msgs to print warnings about PSpice device types.
+      ps_udevice_msgs==1 prints unsupported instance types when
+      found in a subckt.
+    */
+    if (!cp_getvar("ps_udevice_msgs", CP_NUM, &ps_udevice_msgs, 0)) {
+        ps_udevice_msgs = 0;
+    }
     if (subckt_line && strncmp(subckt_line, ".subckt", 7) == 0) {
         add_all_port_names(subckt_line);
+        current_subckt = TMALLOC(char, strlen(subckt_line) + 1);
+        strcpy(current_subckt, subckt_line);
     }
 
     create_translated_xlator();
@@ -829,6 +842,11 @@ void cleanup_udevice(void)
     port_names_list = NULL;
     clear_name_list(new_names_list, "NEW_NAMES");
     new_names_list = NULL;
+    if (current_subckt) {
+        tfree(current_subckt);
+        current_subckt = NULL;
+    }
+    subckt_msg_count = 0;
 }
 
 static Xlatep create_xlate_model(char *delays,
@@ -3375,10 +3393,20 @@ BOOL u_check_instance(char *line)
 
     itype = hdr->instance_type;
     xspice = find_xspice_for_delay(itype);
-    delete_instance_hdr(hdr);
     if (!xspice) {
+        if (ps_udevice_msgs == 1) {
+            if (current_subckt && subckt_msg_count == 0) {
+                printf("%s\n", current_subckt);
+            }
+            subckt_msg_count++;
+            printf("WARNING ");
+            printf("Instance %s type %s is not supported\n",
+                hdr->instance_name, itype);
+        }
+        delete_instance_hdr(hdr);
         return FALSE;
     } else {
+        delete_instance_hdr(hdr);
         return TRUE;
     }
 }
