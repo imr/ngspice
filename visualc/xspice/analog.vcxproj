@@ -232,6 +232,8 @@
       <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="icm\analog\oneshot\oneshot-ifspec.c" />
+    <ClCompile Include="icm\analog\pwlts\pwlts-cfunc.c" />
+    <ClCompile Include="icm\analog\pwlts\pwlts-ifspec.c" />
     <ClCompile Include="icm\analog\pwl\pwl-cfunc.c" />
     <ClCompile Include="icm\analog\pwl\pwl-ifspec.c" />
     <ClCompile Include="icm\analog\sine\sine-cfunc.c" />

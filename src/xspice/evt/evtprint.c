@@ -408,11 +408,12 @@ EVTdisplay(wordlist *wl)
     }
     node = ckt->evt->info.node_list;
     node_table = ckt->evt->info.node_table;
-    out_init();
-    if (!node) {
+
+    if (!node || !node_table) {
         out_printf("No event node available!\n");
         return;
     }
+    out_init();
     if (ckt->evt->jobs.job_plot) {
         out_printf("\nList of event nodes in plot %s\n",
                    ckt->evt->jobs.job_plot[ckt->evt->jobs.cur_job]);
@@ -726,6 +727,8 @@ static void set_all(CKTcircuit *ckt, Mif_Boolean_t val)
 
     count = ckt->evt->counts.num_nodes;
     node_table = ckt->evt->info.node_table;
+    if (!node_table)
+        return;
     for (i = 0; i < count; i++)
         node_table[i]->save = val;
 }
@@ -751,7 +754,10 @@ EVTsave(wordlist *wl)
         fprintf(cp_err, "Error: no circuit loaded.\n");
         return;
     }
+
     node_table = ckt->evt->info.node_table;
+    if (!node_table)
+        return;
 
     /* Deal with "all" and "none". */
 

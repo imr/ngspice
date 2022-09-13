@@ -23,7 +23,14 @@ plot S_1_2 polar
 set hcopydevtype = svg
 hardcopy plot_1.svg  S_1_2 polar
 hardcopy plot_2.svg  S_1_1 smithgrid
-
+* set colors, tested with MS Windows
+set color0=white ; background
+set color1=black ; circumference, reflection magnitue = 1
+set color18=red ; grid for const resistance
+set color19=blue ; grid for const reactance
+set color4=darkgreen ; data 1
+set color5=orange ; data 2
+plot S_1_1 S_1_2 smithgrid
 .endc
 
 .end

@@ -235,10 +235,15 @@ void inp_probe(struct card* deck)
                 continue;
 
             /* select elements not in need of a measure Vsource */
-            if (strchr("evihk", *instname))
+            if (strchr("ehvk", *instname))
                 continue;
 
-            numnodes = get_number_terminals(card->line);
+            /* special treatment for controlled current sources and switches:
+               We have three or four tokens until model name, but only the first 2 are relevant nodes. */
+            if (strchr("fgsw", *instname))
+                numnodes = 2;
+            else
+                numnodes = get_number_terminals(card->line);
 
             char* thisline = curr_line;
             prevcard = card;
@@ -710,7 +715,13 @@ void inp_probe(struct card* deck)
                     continue;
                 }
                 char* thisline = tmpcard->line;
-                numnodes = get_number_terminals(thisline);
+
+                /* special treatment for controlled current sources and switches:
+                   We have three or four tokens until model name, but only the first 2 are relevant nodes. */
+                if (strchr("fgsw", *instname))
+                    numnodes = 2;
+                else
+                    numnodes = get_number_terminals(thisline);
 
                 /* skip ',' */
                 if (*tmpstr == ',')
@@ -840,7 +851,14 @@ void inp_probe(struct card* deck)
                     continue;
                 }
                 char* thisline = tmpcard->line;
-                numnodes = get_number_terminals(thisline);
+
+                /* special treatment for controlled current sources and switches:
+                   We have three or four tokens until model name, but only the first 2 are relevant nodes. */
+                if (strchr("fgsw", *instname))
+                    numnodes = 2;
+                else
+                    numnodes = get_number_terminals(thisline);
+
                 int err = 0;
                 /* call fcn with power requested */
                 err = setallvsources(tmpcard, instances, instname, numnodes, haveall, TRUE);

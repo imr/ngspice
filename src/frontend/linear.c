@@ -30,7 +30,11 @@ com_linearize(wordlist *wl)
     struct dvec *lin;
     int len, i;
 
-    if (!plot_cur || !plot_cur->pl_dvecs || !plot_cur->pl_scale) {
+    if (!plot_cur || !plot_cur->pl_typename || !ciprefix("tran", plot_cur->pl_typename)) {
+        fprintf(cp_err, "Error: plot must be a transient analysis\n");
+        return;
+    }
+    if (!plot_cur->pl_dvecs || !plot_cur->pl_scale) {
         fprintf(cp_err, "Error: no vectors available\n");
         return;
     }
@@ -39,10 +43,7 @@ com_linearize(wordlist *wl)
                 plot_cur->pl_typename);
         return;
     }
-    if (!ciprefix("tran", plot_cur->pl_typename)) {
-        fprintf(cp_err, "Error: plot must be a transient analysis\n");
-        return;
-    }
+
     /* check if circuit is loaded and TSTART, TSTOP, TSTEP are available
        if no circuit is loaded, but vectors are available, obtain
        start, stop, step data from scale vector */
