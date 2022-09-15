@@ -3394,7 +3394,7 @@ BOOL u_check_instance(char *line)
     itype = hdr->instance_type;
     xspice = find_xspice_for_delay(itype);
     if (!xspice) {
-        if (ps_udevice_msgs == 1) {
+        if (ps_udevice_msgs >= 1) {
             if (current_subckt && subckt_msg_count == 0) {
                 printf("%s\n", current_subckt);
             }
@@ -3402,6 +3402,9 @@ BOOL u_check_instance(char *line)
             printf("WARNING ");
             printf("Instance %s type %s is not supported\n",
                 hdr->instance_name, itype);
+            if (ps_udevice_msgs >= 2) {
+                printf("%s\n", line);
+            }
         }
         delete_instance_hdr(hdr);
         return FALSE;
