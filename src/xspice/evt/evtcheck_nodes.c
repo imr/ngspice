@@ -123,15 +123,23 @@ for device libraries whose devices are defined by subcircuits.
    digital nodes where defaults are supplied.  For digital the defaults
    are:
 
-   ( ".model auto_adc adc_bridge(in_low = {%g/2} in_high = {%g/2})"
+   ( ".model auto_adc adc_bridge(in_low = '%g/2' in_high = '%g/2')"
      "auto_adc%d [ %s ] [ %s ] auto_adc" )
 
-   for a digital input and
+   for a digital input with
 
    ( ".model auto_dac dac_bridge(out_low = 0 out_high = %g)"
      "auto_dac%d [ %s ] [ %s ] auto_dac" )
 
-  for digital output.
+  for digital output and
+
+   ( ".model auto_bidi bidi_bridge(out_high=%g in_low='%g/2' in_high='%g/2')"
+     "auto_bidi%d [ %s ] [ %s ] null auto_bidi" )
+
+  for a node with a digital inout port or with both inputs and outputs.
+  Note that single quotes surround expressions to be evaluated during
+  netlist parsing.  They are preferred to braces because braces are stripped
+  by the "set" command.
 
   A non-digital example (real to analogue) is:
 
@@ -589,21 +597,21 @@ static struct bridge *find_bridge(Evt_Node_Info_t  *event_node,
     /* Last and probably most common case, default digital bridges. */
 
     if (!format && event_node->udn_index == 0) {
-        if (direction == MIF_INOUT) {
-            return NULL; // Abandon hope, for now.
+        if (direction == MIF_IN) {
+            setup = ".model auto_adc adc_bridge("
+                    "in_low = '%g/2' in_high = '%g/2')";
+            format = copy("auto_adc%d [ %s ] [ %s ] auto_adc");
+        } else if (direction == MIF_OUT) {    // MIF_OUT
+            setup = ".model auto_dac dac_bridge("
+                    "out_low = 0 out_high = %g)";
+            format = "auto_dac%d [ %s ] [ %s ] auto_dac";
         } else {
-            if (direction == MIF_IN) {
-                setup = ".model auto_adc adc_bridge("
-                        "in_low = {%g/2} in_high = {%g/2})",
-                format = copy("auto_adc%d [ %s ] [ %s ] auto_adc");
-            } else {    // MIF_OUT
-                setup = ".model auto_dac dac_bridge("
-                        "out_low = 0 out_high = %g)";
-                format = "auto_dac%d [ %s ] [ %s ] auto_dac";
-            }
-            setup = copy(setup);
-            format = copy(format);
+            setup = ".model auto_bidi bidi_bridge("
+                    "out_high = %g in_low = '%g/2' in_high = '%g/2')";
+            format = "auto_bidi%d [ %s ] [ %s ] null auto_bidi";
         }
+        setup = copy(setup);
+        format = copy(format);
     }
     if (!format)
         return NULL;
