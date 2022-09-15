@@ -1,0 +1,23 @@
+  ADDER - 4 BIT ALL-74HC00-GATE BINARY ADDER WITH AUTOMATIC BRIDGING
+  * behavioral gate description
+  * Automatic A/D insertion using bi-directional bridges
+
+* Override the default bridges and force use of the bidi_bridges with
+* directions pre-set.
+
+.control
+pre_set auto_bridge_d_out =
++ ( ".model auto_bridge_out bidi_bridge(direction=0 out_high=%g)"
++   "auto_bridge_out%d [ %s ] [ %s ] null auto_bridge_out" )
+pre_set auto_bridge_d_in =
++ ( ".model auto_bridge_in bidi_bridge(direction=1 in_low='%g/2' in_high='%g/2')"
++   "auto_bridge_in%d [ %s ] [ %s ] null auto_bridge_in" )
+.endc
+
+*** SUBCIRCUIT DEFINITIONS
+.include 74HCng_auto.lib
+.param vcc=3 tripdt=6n
+
+.include ../adder_common.inc
+
+.END

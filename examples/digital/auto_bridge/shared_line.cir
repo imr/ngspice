@@ -1,0 +1,31 @@
+Test bidi_bridge direction changes and automatic bridging
+
+Va a 0 pulse 0 3 0 1u 1.2u 500u 1m
+Vb b 0 pulse 0 3 0 1u 1.2u 100u 200u
+Vctl ctl 0 pulse 0 3 10m 1u 1u 10m 20m
+
+Ainv ctl not_ctl invert
+.model invert d_inverter
+
+* Transmitter/receiver for an analogue bus line
+
+.subckt driver in enable out bus
+Atran in enable int tristate
+Arec int out buffer
+Rout int bus 20 // Make bus an analogue node, with bridge
+.ends
+
+.model buffer d_buffer
+.model tristate d_tristate
+
+Xa a ctl out_a bus driver
+Xb b not_ctl out_b bus driver
+Rload bus 0 1k
+
+.control
+save  a out_a b out_b
+tran 1m 40m
+plot out_a
+listing e
+.endc
+.end

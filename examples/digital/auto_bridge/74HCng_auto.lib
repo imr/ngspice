@@ -1,0 +1,35 @@
+*  74hcng_auto.lib - simplified wrapper for XSPICE NAND gate
+*
+*  derived from 74HCng_short_2.lib but using automatic D<->A bridges.
+*  derived from 74HCxxx Model libraray for LTSPICE from www.linear.com/software
+*
+*  XSPICE gate models are used, with output to an analogue node.
+*
+*  Delays are given for Vcc = 2V/4.5V/6V (HC) from the
+*  Philips data sheets. http://www.philipslogic.com
+*
+*  Delays are given for Vcc = 2V/4.5V/6V .
+*  Used delay:  Td = (Tpd-Tr/2)*(4.5-0.5)/(Vcc-0.5)
+*  The gate delay has to be set to tpd minus 3ns for the input filter
+*  and another minus 3ns for Trise/2
+*    td1 = tpd  - 3ns - 3ns
+*
+
+.param vcc=5 tripdt=6n
+
+*
+* 2-input NAND gate
+* vcc 2 /4.5/5 /6
+* tpd 25n/9n/7n/7n
+* tr 19n/7n /  /6n
+.SUBCKT 74HC00  in1 in2 out  NVCC NVGND  vcc1={vcc} tripdt1={tripdt}
+.param td1={1e-9*(9-3-3)*4.0/(vcc1-0.5)}
+.param Rout={60*4.0/(vcc1-0.5)} ; standard output driver
+.param Rload=10k ; The bidi bridge analogue port is type 'g' and needs load
+
+a6 [in1 in2] dout nand1
+.model nand1 d_nand(rise_delay = {td1} fall_delay = {td1}
++ input_load = 0.5e-12)
+Rout dout out {Rout}
+Rload dout 0 {Rload}
+.ends
