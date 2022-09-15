@@ -1,0 +1,11 @@
+  ADDER - 4 BIT ALL-74HC00-GATE BINARY ADDER WITH AUTOMATIC BRIDGING
+  * behavioral gate description
+  * Automatic A/D insertion
+*** SUBCIRCUIT DEFINITIONS
+.include 74HCng_auto.lib
+
+.param vcc=3 tripdt=6n
+
+.include ../adder_common.inc
+
+.END
