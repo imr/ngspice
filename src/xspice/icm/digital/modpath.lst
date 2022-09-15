@@ -1,5 +1,6 @@
 adc_bridge
 dac_bridge
+bidi_bridge
 d_and
 d_buffer
 d_dff

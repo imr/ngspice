@@ -1,0 +1,196 @@
+/*
+AUTHORS
+
+     24 Apr 2022     Giles Atkinson
+
+SUMMARY
+
+    This file contains the interface specification file for the
+    hybrid bidi_bridge code model, a (potentially) bidirectional
+    analogue/digital bridge.  The device has direction inputs
+    but if they are not driven it tries to behave like a piece of wire.
+    A parameter may override any direction inputs.
+    The analogue ports are type "g" as that is bidirectional.
+*/
+
+NAME_TABLE:
+
+
+C_Function_Name:       cm_bidi_bridge
+Spice_Model_Name:      bidi_bridge
+Description:           "bidirectional digital/analog node bridge"
+
+
+PORT_TABLE:
+
+Port_Name:           a                  d
+Description:         "analog"          "digital in/out"
+Direction:           inout              inout
+Default_Type:        g                  d
+Allowed_Types:       [g, gd]            [d]
+Vector:              yes                yes
+Vector_Bounds:       [1 -]              [1 -]
+Null_Allowed:        no                 no
+
+/* The direction of the bridge ports may be controlled by digital inputs.
+ * If null, or the value is UNKNOWN the bridge will be truly bi-directional.
+ */
+
+PORT_TABLE:
+
+Port_Name:           dir
+Description:         "direction"
+Direction:           in
+Default_Type:        d
+Allowed_Types:       [d]
+Vector:              yes
+Vector_Bounds:       -
+Null_Allowed:        yes
+
+/* Alternatively, this parameter sets direction: 0-2 for DAC, ADC, ignore.
+ * Values 0/1 override the direction port.
+ */
+
+PARAMETER_TABLE:
+
+Parameter_Name:     direction           input_load
+Description:        "force direction"   "capacitive input load (F)"
+Data_Type:          int                 real
+Default_Value:      2                   1.0e-12
+Limits:             [0 2]               -
+Vector:             no                  no
+Vector_Bounds:      -                   -
+Null_Allowed:       yes                 yes
+
+/* Output strength is 0 (strong, default) or 1 (resistive).
+ * Smooth controls use of smoothing functions, default is 0 (no smoothing).
+ */
+
+PARAMETER_TABLE:
+
+Parameter_Name:     strength            smooth
+Description:        "output strength"   "smoothing level"
+Data_Type:          int                 int
+Default_Value:      0                   0
+Limits:             [0 2]               [0 2]
+Vector:             no                  no
+Vector_Bounds:      -                   -
+Null_Allowed:       yes                 yes
+
+/* Analog thresholds, in_low may be greater than in-high, enabling hysteresis.
+*/
+
+PARAMETER_TABLE:
+
+Parameter_Name:     in_low
+Description:        "maximum 0-valued analog input"
+Data_Type:          real
+Default_Value:      0.1
+Limits:             -
+Vector:             no
+Vector_Bounds:      -
+Null_Allowed:       yes
+
+PARAMETER_TABLE:
+
+Parameter_Name:     in_high
+Description:        "minimum 1-valued analog input"
+Data_Type:          real
+Default_Value:      0.9
+Limits:             -
+Vector:             no
+Vector_Bounds:      -
+Null_Allowed:       yes
+
+PARAMETER_TABLE:
+
+/* Analog maximum and minimum output voltages. */
+
+Parameter_Name:     out_low
+Description:        "minimum analog output voltage for 'ZERO' digital input"
+Data_Type:          real
+Default_Value:      0.0
+Limits:             -
+Vector:             no
+Vector_Bounds:      -
+Null_Allowed:       yes
+
+PARAMETER_TABLE:
+
+Parameter_Name:     out_high
+Description:        "maximum analog output voltage for 'ONE' digital input"
+Data_Type:          real
+Default_Value:      3.3
+Limits:             -
+Vector:             no
+Vector_Bounds:      -
+Null_Allowed:       yes
+
+/* Analog maximum current. */
+
+PARAMETER_TABLE:
+
+Parameter_Name:     drive_low                   drive_high
+Description:        "max current to ground"     "max current to ground"
+Data_Type:          real                        real
+Default_Value:      0.02                        0.02
+Limits:             -                           -
+Vector:             no                          no
+Vector_Bounds:      -                           -
+Null_Allowed:       yes                         yes
+
+/* Strong analog output cuts off smoothly at the voltage limits.
+ * Let vth = out_high - r_sth * drive_high.
+ * Then for input voltage v, with drive_high > v > vth,
+ * the maximum output current is (drive_high - v) / r_sth
+ */
+
+PARAMETER_TABLE:
+
+Parameter_Name:     r_stl                       r_sth
+Description:        "low taper resistance"      "high taper resistance"
+Data_Type:          real                        real
+Default_Value:      20                          20
+Limits:             [1e-6 -]                    [1e-6 -]
+Vector:             no                          no
+Vector_Bounds:      -                           -
+Null_Allowed:       yes                         yes
+
+/* Resistive analog drive. */
+
+PARAMETER_TABLE:
+
+Parameter_Name:     r_low                       r_high
+Description:        "drive resistor to ground" "drive resistor to out_high"
+Data_Type:          real                        real
+Default_Value:      10000                       10000
+Limits:             [1e-6 -]                    [1e-6 -]
+Vector:             no                          no
+Vector_Bounds:      -                           -
+Null_Allowed:       yes                         yes
+
+/* Analog rise and fall times. */
+
+PARAMETER_TABLE:
+
+Parameter_Name:     t_rise                      t_fall
+Description:        "rise time 0 -> 1"          "fall time 1 -> 0"
+Data_Type:          real                        real
+Default_Value:      1.0e-9                      1.0e-9
+Limits:             [1e-12 -]                   [1e-12 -]
+Vector:             no                          no
+Vector_Bounds:      -                           -
+Null_Allowed:       yes                         yes
+
+/* Digital rise and fall delays. */
+
+PARAMETER_TABLE:
+
+Parameter_Name:     rise_delay                  fall_delay
+Description:        "rise delay 0 -> 1"         "fall delay 1 -> 0"
+Data_Type:          real                        real
+Default_Value:      1.0e-9                      1.0e-9
+Limits:             [1e-12 -]                   [1e-12 -]
+Vector:             no                          no
+Vector_Bounds:      -                           -
+Null_Allowed:       yes                         yes
