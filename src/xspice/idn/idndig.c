@@ -123,40 +123,53 @@ static void idn_digital_resolve(int num_struct,
     Digital_t   **dig_struct_array;
     Digital_t   *dig_struct;
 
-    static int  map[12][12] = {
-                          {  0,  2,  2,  0,  0,  0,  0,  0,  0,  0,  2,  2},
-                          {  2,  1,  2,  1,  1,  1,  1,  1,  1,  2,  1,  1},
-                          {  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2},
-                          {  0,  1,  2,  3,  5,  5,  3,  3,  3,  9, 11, 11},
-                          {  0,  1,  2,  5,  4,  5,  4,  4,  4, 11, 10, 11},
-                          {  0,  1,  2,  5,  5,  5,  5,  5,  5, 10, 11, 11},
-                          {  0,  1,  2,  3,  4,  5,  6,  8,  8,  9, 11, 11},
-                          {  0,  1,  2,  3,  4,  5,  8,  7,  8, 11, 10, 11},
-                          {  0,  1,  2,  3,  4,  5,  8,  8,  8, 11, 11, 11},
-                          {  0,  2,  2,  9, 11, 11,  9, 11, 11,  9, 11, 11},
-                          {  2,  1,  2, 11, 10, 11, 11, 10, 11, 11, 10, 11},
-                          {  2,  1,  2, 11, 11, 11, 11, 11, 11, 11, 11, 11} };
+#define e(v, s) (((s) * 3) + (v))
+#define L ZERO
+#define H ONE
+#define U UNKNOWN
+#define s STRONG
+#define r RESISTIVE
+#define z HI_IMPEDANCE
+#define u UNDETERMINED
 
+    static const int map[12][12] = {
+// ------------ e(L,s), e(H,s), e(U,s), e(L,r), e(H,r), e(U,r), e(L,z), e(H,z), e(U,z), e(L,u), e(H,u), e(U,u)  -----------
+
+/* e(L,s) */  { e(L,s), e(U,s), e(U,s), e(L,s), e(L,s), e(L,s), e(L,s), e(L,s), e(L,s), e(L,s), e(U,s), e(U,s)},  // e(L,s)
+/* e(H,s) */  { e(U,s), e(H,s), e(U,s), e(H,s), e(H,s), e(H,s), e(H,s), e(H,s), e(H,s), e(U,s), e(H,s), e(U,s)},  // e(H,s)
+/* e(U,s) */  { e(U,s), e(U,s), e(U,s), e(U,s), e(U,s), e(U,s), e(U,s), e(U,s), e(U,s), e(U,s), e(U,s), e(U,s)},  // e(U,s)
+/* e(L,r) */  { e(L,s), e(H,s), e(U,s), e(L,r), e(U,r), e(U,r), e(L,r), e(L,r), e(L,r), e(L,u), e(U,u), e(U,u)},  // e(L,r)
+/* e(H,r) */  { e(L,s), e(H,s), e(U,s), e(U,r), e(H,r), e(U,r), e(H,r), e(H,r), e(H,r), e(U,u), e(H,u), e(U,u)},  // e(H,r)
+/* e(U,r) */  { e(L,s), e(H,s), e(U,s), e(U,r), e(U,r), e(U,r), e(U,r), e(U,r), e(U,r), e(U,u), e(U,u), e(U,u)},  // e(H,r)
+/* e(L,z) */  { e(L,s), e(H,s), e(U,s), e(L,r), e(H,r), e(U,r), e(L,z), e(U,z), e(U,z), e(L,u), e(U,u), e(U,u)},  // e(L,z)
+/* e(H,z) */  { e(L,s), e(H,s), e(U,s), e(L,r), e(H,r), e(U,r), e(U,z), e(H,z), e(U,z), e(U,u), e(H,u), e(U,u)},  // e(H,z)
+/* e(U,z) */  { e(L,s), e(H,s), e(U,s), e(L,r), e(H,r), e(U,r), e(U,z), e(U,z), e(U,z), e(U,u), e(U,u), e(U,u)},  // e(U,z)
+/* e(L,u) */  { e(L,s), e(U,s), e(U,s), e(L,u), e(U,u), e(U,u), e(L,u), e(U,u), e(U,u), e(L,u), e(U,u), e(U,u)},  // e(L,u)
+/* e(H,u) */  { e(U,s), e(H,s), e(U,s), e(U,u), e(H,u), e(U,u), e(U,u), e(H,u), e(U,u), e(U,u), e(H,u), e(U,u)},  // e(H,u)
+/* e(U,u) */  { e(U,s), e(U,s), e(U,s), e(U,u), e(U,u), e(U,u), e(U,u), e(U,u), e(U,u), e(U,u), e(U,u), e(U,u)}}; // e(U,u)
+
+// ----------- e(L,s), e(H,s), e(U,s), e(L,r), e(H,r), e(U,r), e(L,z), e(H,z), e(U,z), e(L,u), e(H,u), e(U,u)  ------------
     int i;
-
     int index1;
     int index2;
 
     /* Cast the input void pointers to pointers of the digital type */
     dig_struct = (Digital_t *) evt_struct;
-    dig_struct_array = (Digital_t   **)evt_struct_array;
+    dig_struct_array = (Digital_t **)evt_struct_array;
 
-    /* Copy the first member of the array directly to the output */
-    dig_struct->state = dig_struct_array[0]->state;
-    dig_struct->strength = dig_struct_array[0]->strength;
+    if (num_struct < 2) {
+        /* Copy the first member of the array directly to the output */
+        dig_struct->state = dig_struct_array[0]->state;
+	dig_struct->strength = dig_struct_array[0]->strength;
+	return;
+    }
 
     /* Convert struct to index into map */
-    index1 = (int) (dig_struct->state + dig_struct->strength * 3);
-
+    index1 = (int)(dig_struct_array[0]->state +
+                   dig_struct_array[0]->strength * 3);
 
     /* For the remaining members, perform the resolution algorithm */
     for(i = 1; i < num_struct; i++) {
-
         /* Convert struct to index into map */
         index2 = (int)(dig_struct_array[i]->state +
                        dig_struct_array[i]->strength * 3);
