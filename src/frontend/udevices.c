@@ -2766,16 +2766,16 @@ static struct dff_instance *add_dff_inout_timing_model(
     arrp = dffip->d_in;
     for (i = 0; i < num_gates; i++) {
         if (strncmp(arrp[i], "$d_", 3) == 0) {
-            tfree(dffip);
+            delete_dff_instance(dffip);
             return NULL;
         }
     }
     if (eq(dffip->prebar, "$d_lo") || eq(dffip->prebar, "$d_nc")) {
-        tfree(dffip);
+        delete_dff_instance(dffip);
         return NULL;
     }
     if (eq(dffip->clrbar, "$d_lo") || eq(dffip->clrbar, "$d_nc")) {
-        tfree(dffip);
+        delete_dff_instance(dffip);
         return NULL;
     }
 
@@ -2841,20 +2841,20 @@ static struct dltch_instance *add_dltch_inout_timing_model(
     arrp = dlp->d_in;
     for (i = 0; i < num_gates; i++) {
         if (strncmp(arrp[i], "$d_", 3) == 0) {
-            tfree(dlp);
+            delete_dltch_instance(dlp);
             return NULL;
         }
     }
     if (strncmp(dlp->gate, "$d_", 3) == 0) {
-        tfree(dlp);
+        delete_dltch_instance(dlp);
         return NULL;
     }
     if (eq(dlp->prebar, "$d_lo") || eq(dlp->prebar, "$d_nc")) {
-        tfree(dlp);
+        delete_dltch_instance(dlp);
         return NULL;
     }
     if (eq(dlp->clrbar, "$d_lo") || eq(dlp->clrbar, "$d_nc")) {
-        tfree(dlp);
+        delete_dltch_instance(dlp);
         return NULL;
     }
     return dlp;
@@ -2930,16 +2930,16 @@ static struct jkff_instance *add_jkff_inout_timing_model(
     for (i = 0; i < num_gates; i++) {
         if (strncmp(arrp[i], "$d_", 3) == 0 ||
             strncmp(arrpk[i], "$d_", 3) == 0) {
-            tfree(jkffip);
+            delete_jkff_instance(jkffip);
             return NULL;
         }
     }
     if (eq(jkffip->prebar, "$d_lo") || eq(jkffip->prebar, "$d_nc")) {
-        tfree(jkffip);
+        delete_jkff_instance(jkffip);
         return NULL;
     }
     if (eq(jkffip->clrbar, "$d_lo") || eq(jkffip->clrbar, "$d_nc")) {
-        tfree(jkffip);
+        delete_jkff_instance(jkffip);
         return NULL;
     }
     return jkffip;
@@ -3019,20 +3019,20 @@ static struct srff_instance *add_srff_inout_timing_model(
     for (i = 0; i < num_gates; i++) {
         if (strncmp(arrp[i], "$d_", 3) == 0 ||
             strncmp(arrpr[i], "$d_", 3) == 0) {
-            tfree(srffp);
+            delete_srff_instance(srffp);
             return NULL;
         }
     }
     if (strncmp(srffp->gate, "$d_", 3) == 0) {
-        tfree(srffp);
+        delete_srff_instance(srffp);
         return NULL;
     }
     if (eq(srffp->prebar, "$d_lo") || eq(srffp->prebar, "$d_nc")) {
-        tfree(srffp);
+        delete_srff_instance(srffp);
         return NULL;
     }
     if (eq(srffp->clrbar, "$d_lo") || eq(srffp->clrbar, "$d_nc")) {
-        tfree(srffp);
+        delete_srff_instance(srffp);
         return NULL;
     }
     return srffp;
