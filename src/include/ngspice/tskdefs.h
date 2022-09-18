@@ -41,7 +41,7 @@ struct TSKtask {
     int TSKnumSrcSteps;     /* number of steps for source stepping */
     int TSKnumGminSteps;    /* number of steps for Gmin stepping */
     double TSKgminFactor;   /* factor for Gmin stepping */
-    double TSKminBreak;
+    double TSKminBreak;     /* minimum time difference between breakpoints */
     double TSKabstol;
     double TSKpivotAbsTol;
     double TSKpivotRelTol;
