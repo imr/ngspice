@@ -627,8 +627,11 @@ int EVTswitch_plot(CKTcircuit* ckt, const char* plottypename) {
     Evt_Job_t* jobs;
     Evt_Data_t* data;
 
+    if (!ckt)
+        return (E_NOTFOUND);
+
     if (ckt->evt->counts.num_insts == 0)
-        return(OK);
+        return(E_NOTFOUND);
 
     jobs = &(ckt->evt->jobs);
     data = &(ckt->evt->data);
