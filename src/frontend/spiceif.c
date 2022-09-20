@@ -330,6 +330,11 @@ if_run(CKTcircuit *ckt, char *what, wordlist *args, INPtables *tab)
     if (eq(what, "run")) {
         ft_curckt->ci_curTask = ft_curckt->ci_defTask;
         ft_curckt->ci_curOpt = ft_curckt->ci_defOpt;
+        if (ft_curckt->ci_curTask->jobs == NULL) {
+            /* nothing to 'run' */
+            fprintf(stderr, "Warning: No job (tran, ac, op etc.) defined:\n");
+            return (3);
+        }
     }
 
     /* -- Find out what we are supposed to do.              */
