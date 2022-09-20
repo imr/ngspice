@@ -1625,10 +1625,12 @@ void com_snsave(wordlist *wl)
     TSKtask *task;
 
     if (!ft_curckt) {
-        fprintf(cp_err, "Error: there is no circuit loaded.\n");
+        fprintf(cp_err, "Warning: there is no circuit loaded.\n");
+        fprintf(cp_err, "    Command 'snsave' is ignored.\n");
         return;
     } else if (!ft_curckt->ci_ckt) { /* Set noparse? */
-        fprintf(cp_err, "Error: circuit not parsed.\n");
+        fprintf(cp_err, "Warning: circuit not parsed.\n");
+        fprintf(cp_err, "    Command 'snsave' is ignored.\n");
         return;
     }
 
@@ -1647,7 +1649,7 @@ void com_snsave(wordlist *wl)
     task = ft_curckt->ci_curTask;
 
     if (task->jobs->JOBtype != 4) {
-        fprintf(cp_err, "Only saving of tran analysis is implemented\n");
+        fprintf(cp_err, "Warning: Only saving of tran analysis is implemented\n");
         return;
     }
 
