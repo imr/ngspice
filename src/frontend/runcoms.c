@@ -349,6 +349,12 @@ static int dosim(
             err = 1;
             cp_vset("sim_status", CP_NUM, &err);
         }
+        else if (err == 3) {
+            fprintf(cp_err, "%s simulation not started\n", what);
+            ft_curckt->ci_inprogress = FALSE;
+            err = 1;
+            cp_vset("sim_status", CP_NUM, &err);
+        }
         else {
             ft_curckt->ci_inprogress = FALSE;
         }
