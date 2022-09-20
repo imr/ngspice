@@ -31,7 +31,8 @@ com_removecirc(wordlist *wl)
     NG_IGNORE(wl);
 
     if (!ft_curckt) {
-        fprintf(cp_err, "Error: there is no circuit loaded.\n");
+        fprintf(cp_err, "Warning: there is no circuit loaded.\n");
+        fprintf(cp_err, "    Command 'remcirc' is ignored.\n");
         return;
     }
 
