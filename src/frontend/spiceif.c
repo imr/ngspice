@@ -75,6 +75,7 @@ CDHW*/
 #endif
 
 extern INPmodel *modtab;
+extern bool ft_batchmode;
 
 static struct variable *parmtovar(IFvalue *pv, IFparm *opt);
 static IFparm *parmlookup(IFdevice *dev, GENinstance **inptr, char *param,
@@ -332,8 +333,10 @@ if_run(CKTcircuit *ckt, char *what, wordlist *args, INPtables *tab)
         ft_curckt->ci_curOpt = ft_curckt->ci_defOpt;
         if (ft_curckt->ci_curTask->jobs == NULL) {
             /* nothing to 'run' */
-            fprintf(stderr, "Warning: No job (tran, ac, op etc.) defined:\n");
-            return (3);
+            if (!ft_batchmode) {
+                fprintf(stderr, "Warning: No job (tran, ac, op etc.) defined:\n");
+                return (3);
+            }
         }
     }
 
