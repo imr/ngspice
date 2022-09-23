@@ -38,6 +38,9 @@ INTERFACES
     cm_get_path()
     cm_get_circuit()
 
+    cm_get_node_name()
+    cm_probe_node()
+
 REFERENCED FILES
 
     None.
@@ -49,6 +52,8 @@ NON-STANDARD FEATURES
 =========================================================================== */
 #include "ngspice/ngspice.h"
 #include "ngspice/cm.h"
+#include "ngspice/evt.h"
+#include "ngspice/evtudn.h"
 #include "ngspice/enh.h"
 #include "ngspice/mif.h"
 #include "ngspice/cktdefs.h"
@@ -721,4 +726,79 @@ access to the (fundamental) ckt pointer.
 CKTcircuit *cm_get_circuit(void)
 {
     return(g_mif_info.ckt);
+}
+
+/* Get the name of a circuit node connected to a port. */
+
+const char *cm_get_node_name(const char *port_name, unsigned int index)
+{
+    MIFinstance      *instance;
+    Mif_Conn_Data_t  *conn;
+    Mif_Port_Data_t  *port;
+    int               i;
+
+    instance = g_mif_info.instance;
+    for (i = 0; i < instance->num_conn; ++i) {
+        conn = instance->conn[i];
+        if (!strcmp(port_name, conn->name)) {
+            if (index >= (unsigned int)conn->size)
+                return NULL;
+            port = conn->port[index];
+            if (port->type == MIF_DIGITAL || port->type == MIF_USER_DEFINED) {
+                /* Event node, no name in port data. */
+
+                i = port->evt_data.node_index;
+                return g_mif_info.ckt->evt->info.node_table[i]->name;
+            }
+            return port->pos_node_str;
+        }
+    }
+    return NULL;
+}
+
+/* Test the resolved value of a connected Digital/UDN node, given
+ * an assumed value for a particular port.
+ */
+
+bool cm_probe_node(unsigned int  conn_index,  // Connection index
+                   unsigned int  port_index,  // Port index within connection
+                   void         *value)       // Inout UDN value
+{
+    MIFinstance      *instance;
+    Mif_Conn_Data_t  *conn;
+    Mif_Port_Data_t  *port;
+    Mif_Evt_Data_t   *edata;
+    Evt_Node_Info_t  *node_info;
+    Evt_Node_t       *this;
+    void             *hold;
+    int               num_outputs;
+
+    instance = g_mif_info.instance;
+    if (conn_index >= (unsigned int)instance->num_conn)
+        return FALSE;
+    conn = instance->conn[conn_index];
+    if (port_index >= (unsigned int)conn->size)
+        return FALSE;
+    port = conn->port[port_index];
+    if (port->type != MIF_DIGITAL && port->type != MIF_USER_DEFINED)
+        return FALSE;
+    edata = &port->evt_data;
+    node_info = g_mif_info.ckt->evt->info.node_table[edata->node_index];
+    num_outputs = node_info->num_outputs;
+    if (num_outputs <= 1)
+        return num_outputs == 1;    // This should be the only output.
+    this = g_mif_info.ckt->evt->data.node->rhsold + edata->node_index;
+
+    /* Replace the actual output with the test value and resolve.
+     * It is assumed that the resolve function will not use its output
+     * as a working variable.  (True for digital, real and integer.)
+     */
+
+    hold = this->output_value[edata->output_subindex];
+    this->output_value[edata->output_subindex] = value;
+    g_evt_udn_info[node_info->udn_index]->resolve(num_outputs,
+                                                  this->output_value,
+                                                  value);
+    this->output_value[edata->output_subindex] = hold;
+    return TRUE;
 }

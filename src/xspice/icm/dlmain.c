@@ -338,6 +338,16 @@ double cm_netlist_get_l(void) {
 	return (coreitf->dllitf_cm_netlist_get_l)();
 }
 
+const char *cm_get_node_name(const char *port, unsigned int index) {
+    return coreitf->dllitf_cm_get_node_name(port, index);
+}
+
+bool cm_probe_node(unsigned int  conn_index,
+                   unsigned int  port_index,
+                   void         *value) {
+    return coreitf->dllitf_cm_probe_node(conn_index, port_index, value);
+}
+
 Complex_t cm_complex_set(double real, double imag) {
 	return (coreitf->dllitf_cm_complex_set)(real,imag);
 }

@@ -885,7 +885,7 @@ int PPlex(YYSTYPE *lvalp, struct PPltype *llocp, char **line)
              *   vthing#branch
              *   i(vthing)
              */
-            for (; *sbuf && !strchr(specials, *sbuf); sbuf++)
+            for (; *sbuf && !strchr(specials, *sbuf); sbuf++) {
                 if (*sbuf == '@') {
                     atsign = 1;
                 }
@@ -897,16 +897,22 @@ int PPlex(YYSTYPE *lvalp, struct PPltype *llocp, char **line)
                         sbuf++;
                     }
                     break;
-                }
-            /* keep the identifier i(vss) as a single token, even as dc1.i(vss) */
-                else if (prefix("i(v", sbuf)) {
+                } else if ((sbuf == start || sbuf[-1] == '.') &&
+                           prefix("i(v", sbuf)) {
+                    /* Special case for current through voltage source:
+                     * keep the identifier i(vss) as a single token,
+                     * even as dc1.i(vss).
+                     */
+
                     if (get_r_paren(&sbuf) == 1) {
-                        fprintf(stderr, "Error: missing ')' in token\n    %s\n", start);
+                        fprintf(stderr,
+                                "Error: missing ')' in token\n    %s\n",
+                                start);
                         break;
                     }
-                    sbuf--;
+                    sbuf--; // Point at ')', last accepted char.
                 }
-
+            }
             lvalp->str = copy_substring(start, sbuf);
             lexer_return(TOK_STR, 0);
         }

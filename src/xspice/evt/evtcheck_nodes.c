@@ -123,15 +123,23 @@ for device libraries whose devices are defined by subcircuits.
    digital nodes where defaults are supplied.  For digital the defaults
    are:
 
-   ( ".model auto_adc adc_bridge(in_low = {%g/2} in_high = {%g/2})"
+   ( ".model auto_adc adc_bridge(in_low = '%g/2' in_high = '%g/2')"
      "auto_adc%d [ %s ] [ %s ] auto_adc" )
 
-   for a digital input and
+   for a digital input with
 
    ( ".model auto_dac dac_bridge(out_low = 0 out_high = %g)"
      "auto_dac%d [ %s ] [ %s ] auto_dac" )
 
-  for digital output.
+  for digital output and
+
+   ( ".model auto_bidi bidi_bridge(out_high=%g in_low='%g/2' in_high='%g/2')"
+     "auto_bidi%d [ %s ] [ %s ] null auto_bidi" )
+
+  for a node with a digital inout port or with both inputs and outputs.
+  Note that single quotes surround expressions to be evaluated during
+  netlist parsing.  They are preferred to braces because braces are stripped
+  by the "set" command.
 
   A non-digital example (real to analogue) is:
 
@@ -187,10 +195,15 @@ static struct card *expand_deck(struct card *head)
     struct card  *card, *next;
     char        **pointers;
     int           i, dico;
+    bool          save_debug;
 
-    /* Save the current parameter symbol table. */
+    /* Save the current parameter symbol table and debug global.
+     * Prevent overwriting of debug output in inp_readall().
+     */
 
     dico = nupa_add_dicoslist();
+    save_debug = ft_ngdebug;
+    ft_ngdebug = FALSE;
 
     /* Count the cards, allocate and fill a pointer array. */
 
@@ -213,6 +226,7 @@ static struct card *expand_deck(struct card *head)
     circarray = pointers;
     card = inp_readall(NULL, Infile_Path, FALSE, TRUE, NULL);
     card = inp_subcktexpand(card);
+    ft_ngdebug = save_debug;
 
     /* Destroy the parameter table that was created in subcircuit/parameter
      * expansion and restore the previous version.
@@ -356,10 +370,11 @@ static int examine_device(MIFinstance *inst, const char **family)
          }
      }
  
-     for (i = 0, dot = inst->MIFname;
-          (dot = strchr(dot, '.'));
-          dot += 1, ++i)
-         ;
+     for (i = 0, dot = strchr(inst->MIFname, '.'); dot; dot += 1, ++i) {
+         dot = strchr(dot, '.');
+         if (dot == NULL)
+             break;
+     }
      return i;
 }
 
@@ -388,7 +403,8 @@ static const char *scan_devices(Evt_Node_Info_t   *event_node,
         }
     }
 
-    if ((left = event_node->num_outputs)) {
+    left = event_node->num_outputs;
+    if (left) {
         Evt_Node_Info_t    *node;
         Evt_Output_Info_t  *oip;
         int                 i, my_index;
@@ -432,9 +448,10 @@ static struct bridge *find_bridge(Evt_Node_Info_t  *event_node,
     static const char * const   dirs[] = {"in", "out", "inout"};
     struct bridge              *bridge;
     Mif_Dir_t                   direction;
+    char                       *setup = NULL;
     const char                 *format = NULL;
     const char                 *type_name, *family, *s_family, *deep;
-    char                       *setup, *vcc_parm, *dot;
+    char                       *vcc_parm, *dot;
     double                      vcc = 0.0;
     int                         max = 0, ok = 0;
     struct variable            *cvar = NULL;
@@ -473,7 +490,8 @@ static struct bridge *find_bridge(Evt_Node_Info_t  *event_node,
      */
 
     snprintf(buff, sizeof buff, "%s", deep);
-    while ((dot = strrchr(buff, '.'))) {
+    dot = strrchr(buff, '.');
+    while (dot) {
         if (!ok) {
             snprintf(dot + 1, sizeof buff - (size_t)(dot - buff), vcc_parm);
             vcc = nupa_get_param(buff, &ok);
@@ -481,6 +499,7 @@ static struct bridge *find_bridge(Evt_Node_Info_t  *event_node,
         if (ok)
             break;
         *dot = '\0';
+        dot = strrchr(buff, '.');
     }
 
     if (!ok) {
@@ -578,21 +597,21 @@ static struct bridge *find_bridge(Evt_Node_Info_t  *event_node,
     /* Last and probably most common case, default digital bridges. */
 
     if (!format && event_node->udn_index == 0) {
-        if (direction == MIF_INOUT) {
-            return NULL; // Abandon hope, for now.
+        if (direction == MIF_IN) {
+            setup = ".model auto_adc adc_bridge("
+                    "in_low = '%g/2' in_high = '%g/2')";
+            format = copy("auto_adc%d [ %s ] [ %s ] auto_adc");
+        } else if (direction == MIF_OUT) {    // MIF_OUT
+            setup = ".model auto_dac dac_bridge("
+                    "out_low = 0 out_high = %g)";
+            format = "auto_dac%d [ %s ] [ %s ] auto_dac";
         } else {
-            if (direction == MIF_IN) {
-                setup = ".model auto_adc adc_bridge("
-                        "in_low = {%g/2} in_high = {%g/2})",
-                format = copy("auto_adc%d [ %s ] [ %s ] auto_adc");
-            } else {    // MIF_OUT
-                setup = ".model auto_dac dac_bridge("
-                        "out_low = 0 out_high = %g)";
-                format = "auto_dac%d [ %s ] [ %s ] auto_dac";
-            }
-            setup = copy(setup);
-            format = copy(format);
+            setup = ".model auto_bidi bidi_bridge("
+                    "out_high = %g in_low = '%g/2' in_high = '%g/2')";
+            format = "auto_bidi%d [ %s ] [ %s ] null auto_bidi";
         }
+        setup = copy(setup);
+        format = copy(format);
     }
     if (!format)
         return NULL;
