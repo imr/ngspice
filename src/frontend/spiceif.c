@@ -333,7 +333,7 @@ if_run(CKTcircuit *ckt, char *what, wordlist *args, INPtables *tab)
         ft_curckt->ci_curOpt = ft_curckt->ci_defOpt;
         if (ft_curckt->ci_curTask->jobs == NULL) {
             /* nothing to 'run' */
-            if (!ft_batchmode) {
+            if (!ft_batchmode) { /* FIXME: This is a hack to re-enable 'make check' */
                 fprintf(stderr, "Warning: No job (tran, ac, op etc.) defined:\n");
                 return (3);
             }
