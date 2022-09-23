@@ -8308,7 +8308,6 @@ static struct card *u_instances(struct card *startcard)
 {
     struct card *card, *returncard = NULL, *subcktcard = NULL;
     struct card *newcard = NULL, *last_newcard = NULL;
-    int level = 0;
     int models_ok = 0, models_not_ok = 0;
     int udev_ok = 0, udev_not_ok = 0;
     BOOL create_called = FALSE, repeat_pass = FALSE;
@@ -8322,12 +8321,6 @@ static struct card *u_instances(struct card *startcard)
         if (ciprefix(".subckt", cut_line)) {
             models_ok = models_not_ok = 0;
             udev_ok = udev_not_ok = 0;
-            level++;
-            if (level > 1) {
-                /* Bail out */
-                printf("Too many nesting levels\n");
-                break;
-            }
             subcktcard = card;
             if (!repeat_pass) {
                 if (create_called) {
@@ -8337,7 +8330,6 @@ static struct card *u_instances(struct card *startcard)
                 create_called = TRUE;
             }
         } else if (ciprefix(".ends", cut_line)) {
-            level--;
             if (repeat_pass) {
                 newcard = replacement_udevice_cards();
                 if (newcard) {
