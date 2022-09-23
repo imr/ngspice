@@ -208,6 +208,8 @@
       <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="icm\digital\adc_bridge\adc_bridge-ifspec.c" />
+    <ClCompile Include="icm\digital\bidi_bridge\bidi_bridge-cfunc.c" />
+    <ClCompile Include="icm\digital\bidi_bridge\bidi_bridge-ifspec.c" />
     <ClCompile Include="icm\digital\dac_bridge\dac_bridge-cfunc.c">
       <AdditionalIncludeDirectories>..\..\src\xspice\%(RelativeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -321,6 +323,8 @@
   <ItemGroup>
     <None Include="..\..\src\xspice\icm\digital\adc_bridge\cfunc.mod" />
     <None Include="..\..\src\xspice\icm\digital\adc_bridge\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\digital\bidi_bridge\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\digital\bidi_bridge\ifspec.ifs" />
     <None Include="..\..\src\xspice\icm\digital\dac_bridge\cfunc.mod" />
     <None Include="..\..\src\xspice\icm\digital\dac_bridge\ifspec.ifs" />
     <None Include="..\..\src\xspice\icm\digital\d_and\cfunc.mod" />
