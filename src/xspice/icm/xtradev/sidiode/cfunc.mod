@@ -147,23 +147,22 @@ void cm_sidiode(ARGS)  /* structure holding parms,
             grev = 1./PARAM(rrev);
 
         hRevepsilon = 0.5 * PARAM(revepsilon);
-        loc->Va = Va = Vrev - hRevepsilon;
-        loc->Vb = Vb = Vrev + hRevepsilon;
+        loc->Va = Va = Vrev - PARAM(revepsilon); //hRevepsilon;
+        loc->Vb = Vb = Vrev; //+ hRevepsilon;
+        loc->a2 = grev/Revilimit;
         if(hRevepsilon > 0.0) {
             loc->a1 = (goff - grev)/PARAM(revepsilon);
-            loc->a2 = grev/Revilimit;
             loc->revepsi = MIF_TRUE;
         }
         else
             loc->revepsi = MIF_FALSE;
 
         hEpsilon = 0.5 * PARAM(epsilon);
-        loc->Vc = Vc = Vfwd - hEpsilon;
-        loc->Vd = Vd = Vfwd + hEpsilon;
-
+        loc->Vc = Vc = Vfwd; // - hEpsilon;
+        loc->Vd = Vd = Vfwd + PARAM(epsilon); //hEpsilon;
+        loc->b2 = gon/Ilimit;
         if(hEpsilon > 0.0) {
             loc->b1 = (gon - goff)/PARAM(epsilon);
-            loc->b2 = gon/Ilimit;
             loc->epsi = MIF_TRUE;
         }
         else
