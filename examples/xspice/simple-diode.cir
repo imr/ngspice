@@ -1,0 +1,25 @@
+simple diode automatic test
+* 'set ngbehavior=lta'   required in .spiceinit
+V1 in 0 dc 0
+
+D1 in out1 A
+R1 out1 0 1u
+D2 in out2 B
+R2 out2 0 1u
+D3 in out3 C
+R3 out3 0 1u
+
+.probe alli
+
+.model A D(Ron=1 Roff=1Meg Vfwd=1 Vrev=2)
+.model B D(Ron=1 Roff=1Meg Vfwd=1 Vrev=2 Ilimit=1 RevILimit=1)
+.model C D(Ron=1 Roff=1Meg Vfwd=1 Vrev=2 Ilimit=1 RevILimit=1 epsilon=1 revepsilon=1)
+
+.control
+dc V1 -5 5 1m
+display
+set xbrushwidth=2
+plot i(r1) i(r2) i(r3)
+.endc
+
+.end
