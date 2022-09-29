@@ -9590,6 +9590,13 @@ static struct card *ltspice_compat(struct card *oldcard)
                     search_plain_identifier(card->line, "ilimit")) {
                 char *modname;
 
+                /* remove parameter 'noiseless' (the model is noiseless anyway) */
+                char *nonoise = search_plain_identifier(card->line, "noiseless");
+                if (nonoise) {
+                    size_t iii;
+                    for (iii = 0; iii < 9; iii++)
+                        nonoise[iii] = ' ';
+                }
                 card->line = str = inp_remove_ws(card->line);
                 str = nexttok(str); /* throw away '.model' */
                 INPgetNetTok(&str, &modname, 0); /* model name */
