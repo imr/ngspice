@@ -67,7 +67,7 @@ static char *resolve_path(const char *name) {
     char *const buf = ds_get_buf(&ds);
     buf[0] = buf[1];
     buf[1] = ':';
-    char *const resolved_path = inp_pathresolve(buf);
+    char *const resolved_path = resolve_path(buf);
     ds_free(&ds);
     return resolved_path;
   }
@@ -92,7 +92,7 @@ static char *resolve_path(const char *name) {
 #endif
 
   return (char *)NULL;
-} /* end of function inp_pathresolve */
+} 
 
 static char *resolve_input_path(const char *name) {
   /* if name is an absolute path name,

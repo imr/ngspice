@@ -105,7 +105,6 @@ extern int OSDIparam(int param, IFvalue *value, GENinstance *instPtr,
 }
 
 extern int OSDImParam(int param, IFvalue *value, GENmodel *modelPtr) {
-  NG_IGNORE(select);
   OsdiRegistryEntry *entry = osdi_reg_entry_model(modelPtr);
   const OsdiDescriptor *descr = entry->descriptor;
 
