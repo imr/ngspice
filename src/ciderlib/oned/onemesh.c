@@ -72,7 +72,7 @@ ONEbuildMesh(ONEdevice *pDevice, ONEcoord *pCoord, ONEdomain *pDomain,
   for (index = 2; index < pDevice->numNodes; index++) {
     pNode = nodeArray[index];
     if (!pNode->nodeType) {
-      printf("Error: No domain defined for node %d\n", pNode->nodeI);
+      fprintf(stderr, "Error: No domain defined for node %d\n", pNode->nodeI);
       error = TRUE;
     }
   }
