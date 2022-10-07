@@ -77,9 +77,8 @@ static void measure_errMessage(const char *mName, const char *mFunction,
         const char *trigTarg, const char *errMsg, int chk_only)
 {
     if (!chk_only) {
-        printf("\nError: measure  %s  %s(%s) : ", mName, mFunction, trigTarg);
-        printf("%s", errMsg);
-        // printf("\tmeasure '%s'  failed\n", mName);
+        fprintf(stderr, "\nError: measure  %s  %s(%s) : ", mName, mFunction, trigTarg);
+        fprintf(stderr, "%s", errMsg);
     }
 }
 
@@ -1629,9 +1628,9 @@ get_measure2(
     }
 
     if (wl_cnt < 3) {
-        printf("\tmeasure '%s'  failed\n", mName);
-        printf("Error: measure  %s  :\n", mName);
-        printf("\tinvalid num params\n");
+        fprintf(stderr, "\tmeasure '%s'  failed\n", mName);
+        fprintf(stderr, "Error: measure  %s  :\n", mName);
+        fprintf(stderr, "\tinvalid num params\n");
         tfree(mName);
         tfree(mAnalysis);
         tfree(mFunction);
@@ -2056,8 +2055,8 @@ err_ret7:
     case AT_ERR2:
     case AT_ERR3:
     {
-        printf("\nError: measure  %s failed:\n", mName);
-        printf("\tfunction '%s' currently not supported\n\n", mFunction);
+        fprintf(stderr, "\nError: measure  %s failed:\n", mName);
+        fprintf(stderr, "\tfunction '%s' currently not supported\n\n", mFunction);
         tfree(mFunction);
         break;
     }
