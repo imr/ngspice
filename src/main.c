@@ -593,18 +593,12 @@ app_event_func(void)
 
 #endif
 
-/* -------------------------------------------------------------------------- */
-/* This is the command processing loop for spice and nutmeg.
-   The function is called even when GNU readline is unavailable, in which
-   case it falls back to repeatable calling cp_evloop()
-   SJB 26th April 2005 */
+/* Initialisation for readline. */
+
 static void
-app_rl_readlines(void)
+app_rl_init(void)
 {
 #if defined(HAVE_GNUREADLINE) || defined(HAVE_BSDEDITLINE)
-    /* GNU Readline Support -- Andrew Veliath <veliaa@rpi.edu> */
-    char *line, *expanded_line;
-
     /* ---  set up readline params --- */
     strcpy(history_file, getenv("HOME"));
     strcat(history_file, "/.");
@@ -617,16 +611,31 @@ app_rl_readlines(void)
     rl_readline_name = application_name;
     rl_instream = cp_in;
     rl_outstream = cp_out;
-#ifndef X_DISPLAY_MISSING
-    if (dispdev->Input == X11_Input)
-        rl_event_hook = app_event_func;
-#endif
     rl_catch_signals = 0;   /* disable signal handling  */
 
     /* sjb - what to do for editline?
        This variable is not supported by editline. */
 #if defined(HAVE_GNUREADLINE)
     rl_catch_sigwinch = 1;  /* allow readline to respond to resized windows  */
+#endif
+#endif
+}
+
+/* -------------------------------------------------------------------------- */
+/* This is the command processing loop for spice and nutmeg.
+   The function is called even when GNU readline is unavailable, in which
+   case it falls back to repeatable calling cp_evloop()
+   SJB 26th April 2005 */
+static void
+app_rl_readlines(void)
+{
+#if defined(HAVE_GNUREADLINE) || defined(HAVE_BSDEDITLINE)
+    /* GNU Readline Support -- Andrew Veliath <veliaa@rpi.edu> */
+    char *line, *expanded_line;
+
+#ifndef X_DISPLAY_MISSING
+    if (dispdev->Input == X11_Input)
+        rl_event_hook = app_event_func;
 #endif
 
     /* note that we want some mechanism to detect ctrl-D and expand it to exit */
@@ -1151,7 +1160,11 @@ int main(int argc, char **argv)
     fprintf(stdout, "We are ready to read initialization files.\n");
 #endif
 
-    /* To catch interrupts during .spiceinit... */
+    /* To catch interrupts during .spiceinit... Readline must be initialised
+     * so that it is safe to call ft_sigintr_cleanup();
+     */
+
+    app_rl_init();
     if (SETJMP(jbuf, 1)) {
         ft_sigintr_cleanup();
         fprintf(cp_err, "Warning: error executing .spiceinit.\n");

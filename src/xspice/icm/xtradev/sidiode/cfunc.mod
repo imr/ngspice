@@ -131,7 +131,9 @@ void cm_sidiode(ARGS)  /* structure holding parms,
 
     if (INIT==1) {  /* First pass...allocate memory and calculate some constants... */
 
-        double grev, goff, gon, Va, Vb, Vc, Vd, hEpsilon, hRevepsilon;
+        double grev, goff, gon, Va, Vb, Vc, Vd;
+        double lEpsilon = PARAM(epsilon);
+        double lRevepsilon = PARAM(revepsilon);
 
         CALLBACK = cm_sidiode_callback;
 
@@ -146,24 +148,21 @@ void cm_sidiode(ARGS)  /* structure holding parms,
         else
             grev = 1./PARAM(rrev);
 
-        hRevepsilon = 0.5 * PARAM(revepsilon);
-        loc->Va = Va = Vrev - hRevepsilon;
-        loc->Vb = Vb = Vrev + hRevepsilon;
-        if(hRevepsilon > 0.0) {
-            loc->a1 = (goff - grev)/PARAM(revepsilon);
-            loc->a2 = grev/Revilimit;
+        loc->Va = Va = Vrev - lRevepsilon;
+        loc->Vb = Vb = Vrev;
+        loc->a2 = grev/Revilimit;
+        if(lRevepsilon > 0.0) {
+            loc->a1 = (goff - grev)/lRevepsilon;
             loc->revepsi = MIF_TRUE;
         }
         else
             loc->revepsi = MIF_FALSE;
 
-        hEpsilon = 0.5 * PARAM(epsilon);
-        loc->Vc = Vc = Vfwd - hEpsilon;
-        loc->Vd = Vd = Vfwd + hEpsilon;
-
-        if(hEpsilon > 0.0) {
-            loc->b1 = (gon - goff)/PARAM(epsilon);
-            loc->b2 = gon/Ilimit;
+        loc->Vc = Vc = Vfwd;
+        loc->Vd = Vd = Vfwd + lEpsilon;
+        loc->b2 = gon/Ilimit;
+        if(lEpsilon > 0.0) {
+            loc->b1 = (gon - goff)/lEpsilon;
             loc->epsi = MIF_TRUE;
         }
         else
