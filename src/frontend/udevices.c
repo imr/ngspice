@@ -2271,41 +2271,40 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
             }
 
             if (add_tristate) {
-                char *s1 = NULL, *modelnm = NULL;
+                char *str1 = NULL, *modname = NULL;
                 if (i == 0) {
                     /* Zero delay model for all original array instances */
-                    s1 = tprintf(".model %s %s", primary_model, xspice); 
-                    xdata = create_xlate_translated(s1);
+                    str1 = tprintf(".model %s %s", primary_model, xspice); 
+                    xdata = create_xlate_translated(str1);
                     xxp = add_xlator(xxp, xdata);
-                    tfree(s1);
+                    tfree(str1);
                 }
                 /* model name of added tristate */
-                modelnm = tprintf("d_a%s_tribuf", iname);
+                modname = tprintf("d_a%s_tribuf", iname);
                 /*
                  instance name of added tristate, connector,
                  enable, original primary gate output, timing model.
                 */
                 instance_name = tprintf("a%s_%d_tri", iname, i);
-                s1 = tprintf("%s %s %s %s %s", instance_name, connector,
-                    enable, outarr[i], modelnm);
-                xdata = create_xlate_instance(s1, "d_tristate",
-                    tmodel, modelnm);
+                str1 = tprintf("%s %s %s %s %s", instance_name, connector,
+                    enable, outarr[i], modname);
+                xdata = create_xlate_instance(str1, "d_tristate",
+                    tmodel, modname);
                 xxp = add_xlator(xxp, xdata);
-                tfree(s1);
+                tfree(str1);
                 tfree(instance_name);
                 if (i == 0 && !gen_timing_model(tmodel, "utgate",
-                                        "d_tristate", modelnm, xxp)) {
+                                        "d_tristate", modname, xxp)) {
                     printf("WARNING unable to find tmodel %s for %s %s\n",
-                        tmodel, modelnm, "d_tristate");
+                        tmodel, modname, "d_tristate");
                 }
-                tfree(modelnm);
+                tfree(modname);
                 tfree(connector);
             }
         }
         tfree(primary_model);
         return xxp;
     }
-    return NULL;
 }
 
 static void extract_model_param(char *rem, char *pname, char *buf)
