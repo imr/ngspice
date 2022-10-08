@@ -254,6 +254,8 @@ static NAME_ENTRY find_name_entry(char *name, NAME_ENTRY nelist)
 
 static void clear_name_list(NAME_ENTRY nelist, char *msg)
 {
+    NG_IGNORE(msg);
+
     NAME_ENTRY x = NULL, next = NULL;
     if (!nelist) { return; }
 #ifdef TRACE
@@ -2415,7 +2417,7 @@ static void estimate_typ(struct timing_data *tdp)
         if (strlen(tmpmin) > 0 && strlen(tmpmax) > 0) {
             valmin = strtof(tmpmin, &units1);
             valmax = strtof(tmpmax, &units2);
-            average = (valmin + valmax) / 2.0;
+            average = (valmin + valmax) / (float)2.0;
             tdp->ave = tprintf("%.2f%s", average, units2);
             if (!eq(units1, units2)) {
                 printf("WARNING units do not match\n");
