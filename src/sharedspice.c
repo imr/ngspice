@@ -927,10 +927,23 @@ ngSpice_Init(SendChar* printfcn, SendStat* statusfcn, ControlledExit* ngspiceexi
     }
 #else /* ~ HAVE_PWD_H */
              /* load user's initialisation file
-               try accessing the initialisation file .spiceinit in the current directory
-               if that fails try the alternate name spice.rc, then look into the HOME
-               directory, then into USERPROFILE */
+               try accessing the initialisation file .spiceinit in a user provided
+               path read from environmental variable SPICE_USERINIT_DIR, 
+               if that fails try the alternate name spice.rc, then look into
+               the current directory, then the HOME directory, then into USERPROFILE */
     do {
+        {
+            const char* const userinit = getenv("SPICE_USERINIT_DIR");
+            if (userinit) {
+                if (read_initialisation_file(userinit, INITSTR) != FALSE) {
+                    break;
+                }
+                if (read_initialisation_file(userinit, ALT_INITSTR) != FALSE) {
+                    break;
+                }
+            }
+        }
+
         if (read_initialisation_file("", INITSTR) != FALSE) {
             break;
         }
