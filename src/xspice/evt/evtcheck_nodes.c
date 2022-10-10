@@ -600,7 +600,7 @@ static struct bridge *find_bridge(Evt_Node_Info_t  *event_node,
         if (direction == MIF_IN) {
             setup = ".model auto_adc adc_bridge("
                     "in_low = '%g/2' in_high = '%g/2')";
-            format = copy("auto_adc%d [ %s ] [ %s ] auto_adc");
+            format = "auto_adc%d [ %s ] [ %s ] auto_adc";
         } else if (direction == MIF_OUT) {    // MIF_OUT
             setup = ".model auto_dac dac_bridge("
                     "out_low = 0 out_high = %g)";
