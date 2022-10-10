@@ -8828,9 +8828,8 @@ static struct card *pspice_compat(struct card *oldcard)
             }
         }
         /* We may have '~' in path names or A devices */
-        char *firsttok = nexttok(card->line); /* skip over whitespaces */
-        if (ciprefix(".inc", firsttok) || ciprefix(".lib", firsttok) ||
-                ciprefix("A", firsttok))
+        if (ciprefix(".inc", card->line) || ciprefix(".lib", card->line) ||
+                ciprefix("A", card->line))
             continue;
 
         if ((t = strstr(card->line, "~")) != NULL) {
