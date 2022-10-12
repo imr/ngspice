@@ -1,3 +1,7 @@
+/** \file cmath.h
+    \brief Header file for cmath*.c
+*/
+
 #ifndef ngspice_CMATH_H
 #define ngspice_CMATH_H
 
