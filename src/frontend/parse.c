@@ -4,6 +4,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 **********/
 
 /*
+ * Control language parser:
  * A simple operator-precedence parser for algebraic expressions.
  * This also handles relational and logical expressions.
  */

@@ -4,6 +4,8 @@ Author: 1987 Wayne A. Christopher, U. C. Berkeley CAD Group
 **********/
 //#define TRACE
 
+/* Tree generator for B-Source parser */
+
 #include "ngspice/ngspice.h"
 #include "ngspice/compatmode.h"
 #include "ngspice/ifsim.h"
