@@ -1,7 +1,11 @@
 /*************
- * Header file for cmath4.c
  * 1999 E. Rouat
+ * 3-Clause BSD
  ************/
+
+ /** \file cmath4.h
+	 \brief Header file for cmath4.c, function prototypes
+ */
 
 #ifndef ngspice_CMATH4_H
 #define ngspice_CMATH4_H

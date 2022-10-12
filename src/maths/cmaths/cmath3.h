@@ -1,7 +1,11 @@
 /*************
- * Header file for cmath3.c
  * 1999 E. Rouat
+ * 3-Clause BSD
  ************/
+
+ /** \file cmath3.h
+     \brief Header file for cmath3.c, function prototypes
+ */
 
 #ifndef ngspice_CMATH3_H
 #define ngspice_CMATH3_H
