@@ -4,7 +4,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 **********/
 
 /** \file cmath3.c
-    \brief functions for the control language parser
+    \brief functions for the control language parser: divide, comma, power, eq, gt, lt, ge, le, ne
 
     Routines to do complex mathematical functions. These routines require
     the -lm libraries. We sacrifice a lot of space to be able

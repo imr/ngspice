@@ -4,7 +4,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 **********/
 
 /** \file cmath1.c
-    \brief functions for the control language parser
+    \brief functions for the control language parser: mag, ph, cph, unwrap, j, real, conj, pos, db, log10, log, exp, sqrt, sin, sinh, cos, coh, tan, tanh, atan, sortorder 
 
     Routines to do complex mathematical functions. These routines require
     the -lm libraries. We sacrifice a lot of space to be able
