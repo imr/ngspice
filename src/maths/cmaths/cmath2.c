@@ -549,7 +549,7 @@ cx_unitvec(void *data, short int type, int length, int *newlength, short int *ne
  *  cx_something(data1, data2, datatype1, datatype2, length)
  *
  * The length of the two data vectors is always the same, and is the length
- * of the result. The result type is complex iff one of the args is
+ * of the result. The result type is complex if one of the args is
  * complex.
  */
 
