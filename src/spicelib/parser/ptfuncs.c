@@ -70,7 +70,24 @@ PTdivide(double arg1, double arg2)
 double
 PTpower(double arg1, double arg2)
 {
-    return pow(fabs(arg1), arg2);
+    double res;
+    if (newcompat.lt) {
+        if(arg1 >= 0)
+            res = pow(arg1, arg2);
+        else {
+            /* If arg2 is quasi an integer, round it to have pow not fail
+               when arg1 is negative. Takes into account the double 
+               representation which sometimes differs in the last digit. */
+            if (AlmostEqualUlps(trunc(arg2), arg2, 3))
+                res = pow(arg1, round(arg2));
+            else
+                /* As per LTSPICE specification for ** */
+                res = 0;
+        }
+    }
+    else
+        res = pow(fabs(arg1), arg2);
+    return res;
 }
 
 double
