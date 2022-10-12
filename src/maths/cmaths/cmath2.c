@@ -3,6 +3,20 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 **********/
 
+/** \file cmath2.c
+    \brief functions for the control language parser
+
+    Routines to do complex mathematical functions. These routines require
+    the -lm libraries. We sacrifice a lot of space to be able
+    to avoid having to do a seperate call for every vector element,
+    but it pays off in time savings.  These routines should never
+    allow FPE's to happen.
+
+    Complex functions are called as follows:
+     cx_something(data, type, length, &newlength, &newtype),
+     and return a char * that is cast to complex or double.
+*/
+
 /*
  * Routines to do complex mathematical functions. These routines require
  * the -lm libraries. We sacrifice a lot of space to be able
