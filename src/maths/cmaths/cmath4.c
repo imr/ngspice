@@ -4,7 +4,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 **********/
 
 /** \file cmath4.c
-    \brief functions for the control language parser
+    \brief functions for the control language parser: and, or, not, interpolate, deriv, integ, group_delay, fft, ifft
 
     Routines to do complex mathematical functions. These routines require
     the -lm libraries. We sacrifice a lot of space to be able

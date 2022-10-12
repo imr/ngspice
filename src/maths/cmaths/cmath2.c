@@ -4,7 +4,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 **********/
 
 /** \file cmath2.c
-    \brief functions for the control language parser
+    \brief functions for the control language parser: norm, uminus, rnd, sunif, sgauss, poisson, exponential, mean, stddev, length, vector, unitvec, plus, minus, times, mod, max, min, d, avg, floor, ceil, nint
 
     Routines to do complex mathematical functions. These routines require
     the -lm libraries. We sacrifice a lot of space to be able
