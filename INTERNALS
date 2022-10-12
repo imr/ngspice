@@ -1,0 +1,68 @@
+CODE ORGANIZATION
+
+    The top level directory contains several README files on
+    specific topics, info and news, compile scripts for
+    Linux, macOS, Cygwin, MINGW, configure.ac used by
+    autogen.sh to create file configure used by the "../configure" command.
+
+    "m4/" is use in the configure step.
+
+    "examples/" contains several spice input files.
+
+    "test/" contains several spice input files for 'make check' and other
+    tests
+
+    "man/" contains UNIX style manual pages (only short infos).
+
+    "visualc/" project files to enable compilation with MS Visual Studio.
+
+    "src/" and its subdirectories contain all of the C source code.
+    It contains the top level files "main.c" used by ngspice and 
+    "sharedspice.c" used by ngspice as shared library.
+    There are also main files for outdated ngnutmeg, nghelp, ngmultidec,
+    ngproc2mod, and ngsconvert.
+    
+    "src/ciderlib" hosts the code for the CIDER extension to ngspice, a
+    2D process simulator offering connection between process and devices
+    to be simulated by ngspice.
+    
+    "src/xspice" contains the code for the XSPICE extension to ngspice, an
+    interface to analog and digital code models for true mixed signal simulation.    
+
+    "src/misc"   Miscellaneous utility and portability routines.
+    
+    "src/include" Header files for all *.c files of ngspice.    
+
+    "src/spicelib" is the device library and analysis portion of ngspice. Within
+    it are the following subdirectories:
+        devices/    All of the device specific code, with a subdir for
+                    each device implementation.
+        analysis/   All of the analysis code.
+        parser/     To set up the matrix derived from the netlist.
+        
+    "src/maths" contains all maths functions of ngspice with
+        ni/ Numerical algorithms (used by ckt routines).
+        sparse/ Sparse matrix package (used by ckt and ni).
+        cmaths/ Functions used in the control language
+        fft/ Fast Fourier transform function (internal or interface to fftw)
+        poly/ Interpolation functions
+        misc/ Various math support algorithms
+        deriv/ Various partial derivatives used by some device models (bjt, MOS1-9)
+        dense/ Matrix operations used by S-parameter simulation
+        
+    "src/frontend" contains the code for interfacing ngspice to its input and output.
+        Files com_*.c contain the control language commands. outitf.c organizes the
+        output file structure, rawfile.c writes output files, parse.c is the control
+        language function parser. svg and postscript output are handled as well.
+        inp.c, inpcom.c and subckt.c serve the main input handling functions: 
+        reading the netlist, parsing it, dealing with compatibility, expanding 
+        subcircuits and preparing the internal circuit structure.
+        
+        Furthermore it contains subdirs     
+        help/    The windowed help system (outdated).
+        numparam/    Parser for .param and .func statements.
+        parser/ More front end -- "C shell".
+        wdisp/  MS Windows GUI
+        trannoise/ random number and noise generator
+        plotting/ plot interface to X11, gnuplot, and preparing output graphs 
+                  (curves and grid), interpreter for 'plot' command (plotit.c)
