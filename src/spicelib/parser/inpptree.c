@@ -331,12 +331,22 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
 #define b  p->right
         if (b->type == PT_CONSTANT) {
             arg1 = PTdifferentiate(a, varnum);
-            newp = mkb(PT_TIMES,
-                       mkb(PT_TIMES,
-                           mkcon(b->constant),
-                           mkf(PTF_PWR,
-                               mkb(PT_COMMA, a, mkcon(b->constant - 1.0)))),
-                       arg1);
+            if (newcompat.lt) {
+                newp = mkb(PT_TIMES,
+                    mkb(PT_TIMES,
+                        mkcon(b->constant),
+                        mkf(PTF_POW,
+                            mkb(PT_COMMA, a, mkcon(b->constant - 1.0)))),
+                    arg1);
+            }
+            else {
+                newp = mkb(PT_TIMES,
+                    mkb(PT_TIMES,
+                        mkcon(b->constant),
+                        mkf(PTF_PWR,
+                            mkb(PT_COMMA, a, mkcon(b->constant - 1.0)))),
+                    arg1);
+            }
         }
         else if (a->type == PT_CONSTANT){
             arg2 = PTdifferentiate(b, varnum);
