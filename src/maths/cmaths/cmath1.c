@@ -4,7 +4,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 **********/
 
 /** \file cmath1.c
-    \brief functions for the control language parser: mag, ph, cph, unwrap, j, real, conj, pos, db, log10, log, exp, sqrt, sin, sinh, cos, coh, tan, tanh, atan, sortorder 
+    \brief Functions for the control language parser: mag, ph, cph, unwrap, j, real, conj, pos, db, log10, log, exp, sqrt, sin, sinh, cos, coh, tan, tanh, atan, sortorder 
 
     Routines to do complex mathematical functions. These routines require
     the -lm libraries. We sacrifice a lot of space to be able
@@ -14,7 +14,9 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 
     Complex functions are called as follows:
      cx_something(data, type, length, &newlength, &newtype),
-     and return a char * that is cast to complex or double.
+     and return a void* that has to be cast to complex or double.
+     Integers newlength and newtype contain the newly resulting length
+     of the void* vector and its new type (REAL or COMPLEX).
 */
 
 
@@ -32,12 +34,16 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #define win_x_fprintf fprintf
 #endif
 
-/* This flag determines whether degrees or radians are used. The radtodeg
- * and degtorad macros are no-ops if this is FALSE.
+/**This global flag determines whether degrees or radians are used. The radtodeg
+ * and degtorad macros are no-ops if this is FALSE. It will be set to TRUE in options.c
+ * if variable (option) 'unit' is equal to 'degree'. 
  */
-
 bool cx_degrees = FALSE;
 
+/** Magnitude of real and complex vectors:
+    fabs() for real,
+    hypot() for complex.
+*/
 void *
 cx_mag(void *data, short int type, int length, int *newlength, short int *newtype)
 {
@@ -57,6 +63,10 @@ cx_mag(void *data, short int type, int length, int *newlength, short int *newtyp
     return ((void *) d);
 }
 
+/** Phase of vectors:
+    0 for real,
+    atan2() for complex.
+*/
 void *
 cx_ph(void *data, short int type, int length, int *newlength, short int *newtype)
 {
@@ -74,7 +84,10 @@ cx_ph(void *data, short int type, int length, int *newlength, short int *newtype
     return ((void *) d);
 }
 
-/* SJdV Modified from above to find closest from +2pi,0, -2pi */
+/** Continuous phase of vectors:
+    0 for real,
+    atan2() for complex.
+    Modified from cx_ph to find closest from +2pi,0, -2pi. */
 void *
 cx_cph(void *data, short int type, int length, int *newlength, short int *newtype)
 {
@@ -97,7 +110,9 @@ cx_cph(void *data, short int type, int length, int *newlength, short int *newtyp
     return ((void *) d);
 }
 
-/* Modified from above but with real phase vector in degrees as input */
+/** Modified from cx_cph(), but with real phase vector in degrees as input.
+    Currently not in use.
+*/
 void *
 cx_unwrap(void *data, short int type, int length, int *newlength, short int *newtype)
 {
@@ -120,7 +135,7 @@ cx_unwrap(void *data, short int type, int length, int *newlength, short int *new
     return ((void *) d);
 }
 
-/* If this is pure imaginary we might get real, but never mind... */
+/** Multiply by i (imaginary unit). */
 void *cx_j(void *data, short int type, int length, int *newlength,
         short int *newtype)
 {
@@ -147,6 +162,7 @@ void *cx_j(void *data, short int type, int length, int *newlength,
     return (void *) c;
 }
 
+/** Return the real part of the vector. */
 void *cx_real(void *data, short int type, int length, int *newlength,
         short int *newtype)
 {
@@ -171,6 +187,7 @@ void *cx_real(void *data, short int type, int length, int *newlength,
     return (void *) d;
 }
 
+/** Return the imaginary part of the vector. */
 void *cx_imag(void *data, short int type, int length, int *newlength,
         short int *newtype)
 {
@@ -197,7 +214,7 @@ void *cx_imag(void *data, short int type, int length, int *newlength,
 
 
 
-/* Create complex conjugate of data */
+/** Create complex conjugate of data. */
 void *cx_conj(void *data, short int type, int length,
         int *p_newlength, short int *p_newtype)
 {
@@ -224,8 +241,9 @@ void *cx_conj(void *data, short int type, int length,
 
 
 
-/* This is obsolete... */
-
+/* Return a vector with 1s for positive and 0 for negative element values of the input vector.
+   Currently not in use.
+   */
 void *
 cx_pos(void *data, short int type, int length, int *newlength, short int *newtype)
 {
@@ -245,6 +263,10 @@ cx_pos(void *data, short int type, int length, int *newlength, short int *newtyp
     return ((void *) d);
 }
 
+/** Calculatue values in db as 20.0 * log10.
+    Prior to this use macro rcheck() to check for input values being positive.
+    Return NULL if not.
+*/
 void *cx_db(void *data, short int type, int length,
         int *newlength, short int *newtype)
 {
@@ -291,7 +313,11 @@ EXITPOINT:
 } /* end of function cx_db */
 
 
-
+/** Return the common logarithm.
+    Prior to this use macro rcheck() to check for input values being positive or 0.
+    Return -log10(HUGE) when magnitude is 0.
+    Return NULL if negative.
+*/
 void *cx_log10(void *data, short int type, int length,
         int *newlength, short int *newtype)
 {
@@ -353,7 +379,11 @@ EXITPOINT:
 } /* end of function cx_log10 */
 
 
-
+/** Return the natural logarithm.
+    Prior to this use macro rcheck() to check for input values being positive or 0.
+    Return -log(HUGE) when magnitude is 0.
+    Return NULL if negative.
+*/
 void *cx_log(void *data, short int type, int length,
         int *newlength, short int *newtype)
 {
@@ -412,7 +442,10 @@ EXITPOINT:
 } /* end of function cx_log */
 
 
-
+/** Return the exponential of a vector:
+    exp() for real,
+    exp(realpart)*cos(imagpart), exp(realpart)*sin(imagpart) for imaginary.
+    */
 void *
 cx_exp(void *data, short int type, int length, int *newlength, short int *newtype)
 {
@@ -445,6 +478,10 @@ cx_exp(void *data, short int type, int length, int *newlength, short int *newtyp
     }
 }
 
+/** Square root of a complex vector:
+    Determine if the result vector is real or complex (due to input being negative or already complex).
+    Distinction of cases: Input complex, then real part pos., neg. or 0. Input real negative or real positive.
+    */
 void *
 cx_sqrt(void *data, short int type, int length, int *newlength, short int *newtype)
 {
@@ -529,6 +566,9 @@ cx_sqrt(void *data, short int type, int length, int *newlength, short int *newty
     }
 }
 
+/** sin of a complex vector: 
+    sin(realpart)*cosh(imagpart), cos(realpart)*sinh(imagpart)
+    */
 void *
 cx_sin(void *data, short int type, int length, int *newlength, short int *newtype)
 {
@@ -560,6 +600,8 @@ cx_sin(void *data, short int type, int length, int *newlength, short int *newtyp
     }
 }
 
+/** sinh of a complex vector:
+    sinh(x+iy) = sinh(x)*cos(y) + i * cosh(x)*sin(y) */
 void *
 cx_sinh(void *data, short int type, int length, int *newlength, short int *newtype)
 {
@@ -593,7 +635,9 @@ cx_sinh(void *data, short int type, int length, int *newlength, short int *newty
     }
 }
 
-
+/** cos of a complex vector:
+    cos(realpart)*cosh(imagpart), -sin(realpart)*sinh(imagpart)
+    */
 void *
 cx_cos(void *data, short int type, int length, int *newlength, short int *newtype)
 {
@@ -625,7 +669,9 @@ cx_cos(void *data, short int type, int length, int *newlength, short int *newtyp
     }
 }
 
-
+/**cosh of a complex vector:
+   cosh(x+iy) = cosh(x)*cos(y) + i * sinh(x)*sin(y)
+   */
 void *
 cx_cosh(void *data, short int type, int length, int *newlength, short int *newtype)
 {
@@ -661,7 +707,9 @@ cx_cosh(void *data, short int type, int length, int *newlength, short int *newty
 }
 
 
-
+/** tan for real valued vectors. Used by cx_tanh.
+    Prior to this use macro rcheck() to check for input values not being 0.
+    Return NULL if 0.*/
 static double *d_tan(double *dd, int length)
 {
     int xrc = 0;
@@ -683,7 +731,7 @@ EXITPOINT:
 } /* end of function d_tan */
 
 
-
+/** tanh for real valued vectors. Used by cx_tanh. */
 static double *
 d_tanh(double *dd, int length)
 {
@@ -697,7 +745,9 @@ d_tanh(double *dd, int length)
     return d;
 }
 
-/* See https://proofwiki.org/wiki/Tangent_of_Complex_Number (formulation 4) among
+/** tan of a complex vector. 
+ * Used by cx_tan
+ * See https://proofwiki.org/wiki/Tangent_of_Complex_Number (formulation 4) among
  * others for the tangent formula:
 
  * sin z = sin(x + iy) = sin x cos(iy) + cos x sin(iy) = sin x cosh y + i cos x sinh y
@@ -741,10 +791,10 @@ static ngcomplex_t *c_tan(ngcomplex_t *cc, int length)
 
 
 
-/* complex tanh function, uses tanh(z) = -i * tan(i * z).
- * Unfortunately, it did so very inefficiently (a memory allocations per
- * value calculated!) and leaked memory badly (all of the aforementioned
- * allocations.) These issues were fixed 2020-03-04 */
+/**complex tanh function:
+   uses tanh(z) = -i * tan(i * z).
+   Used by cx_tanh.
+ */
 static ngcomplex_t *c_tanh(ngcomplex_t *cc, int length)
 {
     ngcomplex_t * const tmp = alloc_c(length); /* i * z */
@@ -784,7 +834,7 @@ static ngcomplex_t *c_tanh(ngcomplex_t *cc, int length)
 } /* end of function c_tanh */
 
 
-
+/** tan of a complex vector */
 void *
 cx_tan(void *data, short int type, int length, int *newlength, short int *newtype)
 {
@@ -798,6 +848,7 @@ cx_tan(void *data, short int type, int length, int *newlength, short int *newtyp
     }
 }
 
+/** tanh of a complex vector */
 void *
 cx_tanh(void *data, short int type, int length, int *newlength, short int *newtype)
 {
@@ -811,6 +862,7 @@ cx_tanh(void *data, short int type, int length, int *newlength, short int *newty
     }
 }
 
+/** atan of a complex vector: return atan of the real part. */
 void *
 cx_atan(void *data, short int type, int length, int *newlength, short int *newtype)
 {
@@ -835,7 +887,7 @@ cx_atan(void *data, short int type, int length, int *newlength, short int *newty
     return ((void *) d);
 }
 
-/* Struct to store and order the values of the amplitudes preserving the index in the original array */
+/** Struct to store and order the values of the amplitudes preserving the index in the original array */
 typedef struct {
     double amplitude;
     int index;
@@ -843,11 +895,10 @@ typedef struct {
 
 static int compare_structs (const void *a, const void *b);
 
-/*
+/**
  *  Returns the positions of the elements in a real vector
  *  after they have been sorted into increasing order using a stable method (qsort).
  */
-
 void *
 cx_sortorder(void *data, short int type, int length, int *newlength, short int *newtype)
 {
@@ -879,6 +930,7 @@ cx_sortorder(void *data, short int type, int length, int *newlength, short int *
     return ((void *) d);
 }
 
+/** Compares ampplitudes of vector elements. Input to qsort. */
 static int
 compare_structs(const void *a, const void *b)
 {
