@@ -17,8 +17,9 @@ CODE ORGANIZATION
     "visualc/" project files to enable compilation with MS Visual Studio.
 
     "src/" and its subdirectories contain all of the C source code.
-    It contains the top level files "main.c" used by ngspice and 
-    "sharedspice.c" used by ngspice as shared library.
+    It contains the top level files "main.c" used by ngspice console
+    as entry point, "winmain.c" as entry and setup of the MS Windows GUI,
+    and "sharedspice.c" used as entry for ngspice as a shared library.
     There are also main files for outdated ngnutmeg, nghelp, ngmultidec,
     ngproc2mod, and ngsconvert.
     
