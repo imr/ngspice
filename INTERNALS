@@ -22,17 +22,17 @@ CODE ORGANIZATION
     and "sharedspice.c" used as entry for ngspice as a shared library.
     There are also main files for outdated ngnutmeg, nghelp, ngmultidec,
     ngproc2mod, and ngsconvert.
-    
+
     "src/ciderlib" hosts the code for the CIDER extension to ngspice, a
     2D process simulator offering connection between process and devices
     to be simulated by ngspice.
-    
+
     "src/xspice" contains the code for the XSPICE extension to ngspice, an
-    interface to analog and digital code models for true mixed signal simulation.    
+    interface to analog and digital code models for true mixed signal simulation.
 
     "src/misc"   Miscellaneous utility and portability routines.
-    
-    "src/include" Header files for all *.c files of ngspice.    
+
+    "src/include" Header files for all *.c files of ngspice.
 
     "src/spicelib" is the device library and analysis portion of ngspice. Within
     it are the following subdirectories:
@@ -40,7 +40,7 @@ CODE ORGANIZATION
                     each device implementation.
         analysis/   All of the analysis code.
         parser/     To set up the matrix derived from the netlist.
-        
+
     "src/maths" contains all maths functions of ngspice with
         ni/ Numerical algorithms (used by ckt routines).
         sparse/ Sparse matrix package (used by ckt and ni).
@@ -50,20 +50,20 @@ CODE ORGANIZATION
         misc/ Various math support algorithms
         deriv/ Various partial derivatives used by some device models (bjt, MOS1-9)
         dense/ Matrix operations used by S-parameter simulation
-        
+
     "src/frontend" contains the code for interfacing ngspice to its input and output.
         Files com_*.c contain the control language commands. outitf.c organizes the
         output file structure, rawfile.c writes output files, parse.c is the control
         language function parser. svg and postscript output are handled as well.
-        inp.c, inpcom.c and subckt.c serve the main input handling functions: 
-        reading the netlist, parsing it, dealing with compatibility, expanding 
+        inp.c, inpcom.c and subckt.c serve the main input handling functions:
+        reading the netlist, parsing it, dealing with compatibility, expanding
         subcircuits and preparing the internal circuit structure.
-        
-        Furthermore it contains subdirs     
+
+        Furthermore it contains subdirs
         help/    The windowed help system (outdated).
         numparam/    Parser for .param and .func statements.
         parser/ More front end -- "C shell".
-        wdisp/  MS Windows GUI
-        trannoise/ random number and noise generator
-        plotting/ plot interface to X11, gnuplot, and preparing output graphs 
+        wdisp/  MS Windows GUI for plotting
+        trannoise/ random number and noise generators
+        plotting/ plot interface to X11, gnuplot, and preparing output graphs
                   (curves and grid), interpreter for 'plot' command (plotit.c)
