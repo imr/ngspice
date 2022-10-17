@@ -140,7 +140,7 @@ BJTtemp(GENmodel *inModel, CKTcircuit *ckt)
                 fprintf(stderr, "Warning: parameter mjc (including tempco) of model %s is limited to 0.999\n", model->gen.GENmodName);
             }
             here->BJTtjunctionExpSub = model->BJTexponentialSubstrate * (1+model->BJTtmjs1*dt+model->BJTtmjs2*dt*dt);
-            if (here->BJTtjunctionExpSub > 0.999) {/* limit required due to line 314 */
+            if (here->BJTtjunctionExpSub > 0.999) {/* limit required due to line 732 in bjtload.c */
                 here->BJTtjunctionExpSub = 0.999;
                 fprintf(stderr, "Warning: parameter mjs (including tempco) of model %s is limited to 0.999\n", model->gen.GENmodName);
             }
