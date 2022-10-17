@@ -130,8 +130,20 @@ BJTtemp(GENmodel *inModel, CKTcircuit *ckt)
             here->BJTttransitTimeF = model->BJTtransitTimeF * (1+model->BJTttf1*dt+model->BJTttf2*dt*dt);
             here->BJTttransitTimeR = model->BJTtransitTimeR * (1+model->BJTttr1*dt+model->BJTttr2*dt*dt);
             here->BJTtjunctionExpBE = model->BJTjunctionExpBE * (1+model->BJTtmje1*dt+model->BJTtmje2*dt*dt);
+            if (here->BJTtjunctionExpBE > 0.999) {/* limit required due to line 310 */
+                here->BJTtjunctionExpBE = 0.999;
+                fprintf(stderr, "Warning: parameter mje (including tempco) of model %s is limited to 0.999\n", model->gen.GENmodName);
+            }
             here->BJTtjunctionExpBC = model->BJTjunctionExpBC * (1+model->BJTtmjc1*dt+model->BJTtmjc2*dt*dt);
+            if (here->BJTtjunctionExpBC > 0.999) {/* limit required due to line 314 */
+                here->BJTtjunctionExpBC = 0.999;
+                fprintf(stderr, "Warning: parameter mjc (including tempco) of model %s is limited to 0.999\n", model->gen.GENmodName);
+            }
             here->BJTtjunctionExpSub = model->BJTexponentialSubstrate * (1+model->BJTtmjs1*dt+model->BJTtmjs2*dt*dt);
+            if (here->BJTtjunctionExpSub > 0.999) {/* limit required due to line 314 */
+                here->BJTtjunctionExpSub = 0.999;
+                fprintf(stderr, "Warning: parameter mjs (including tempco) of model %s is limited to 0.999\n", model->gen.GENmodName);
+            }
             here->BJTtemissionCoeffS = model->BJTemissionCoeffS * (1+model->BJTtns1*dt+model->BJTtns2*dt*dt);
 
             vt = here->BJTtemp * CONSTKoverQ;
