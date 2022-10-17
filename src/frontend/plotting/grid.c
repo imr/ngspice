@@ -639,12 +639,12 @@ lingrid(GRAPH *graph, double lo, double hi, double delta, int type, Axis axis)
     dd[1] = hi;
 
     /* Reset the max coordinate to deal with round-off error. */
-    if (nsp && (delta == 0.0)) {
+    if (nsp) {
         if (axis == x_axis)
             graph->viewport.width = (int)(spacing * nsp);
         else
             graph->viewport.height = (int)(spacing * nsp);
-    } else if (!nsp) {
+    } else {
         nsp = 1;
     }
 
