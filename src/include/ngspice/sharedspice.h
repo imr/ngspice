@@ -14,7 +14,7 @@ defined in the caller are sent to ngspice.dll.
 
 Callback funtion typedefs
 SendChar       typedef of callback function for reading printf, fprintf, fputs
-SendStat       typedef of callback function for reading status string and precent value
+SendStat       typedef of callback function for reading status string and percent value
 ControlledExit typedef of callback function for tranferring a signal upon
                ngspice controlled_exit to caller. May be used by caller
                to detach ngspice.dll.
