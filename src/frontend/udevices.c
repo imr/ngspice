@@ -54,6 +54,7 @@
 #include "ngspice/cpextern.h"
 #include "ngspice/macros.h"
 #include "ngspice/udevices.h"
+#include "ngspice/logicexp.h"
 
 extern struct card* insert_new_line(
     struct card* card, char* line, int linenum, int linenum_orig);
@@ -3433,7 +3434,13 @@ BOOL u_check_instance(char *line)
             printf("WARNING ");
             printf("Instance %s type %s is not supported\n",
                 hdr->instance_name, itype);
-            if (ps_udevice_msgs >= 2) {
+            if (eq(itype, "logicexp")) {
+                if (ps_udevice_msgs == 3)
+                    (void) f_logicexp(line);
+            } else if (eq(itype, "pindly")) {
+                if (ps_udevice_msgs == 3)
+                    (void) f_pindly(line);
+            } else if (ps_udevice_msgs == 3) {
                 printf("%s\n", line);
             }
         }
