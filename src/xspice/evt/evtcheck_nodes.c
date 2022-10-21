@@ -493,7 +493,7 @@ static struct bridge *find_bridge(Evt_Node_Info_t  *event_node,
     dot = strrchr(buff, '.');
     while (dot) {
         if (!ok) {
-            snprintf(dot + 1, sizeof buff - (size_t)(dot - buff), vcc_parm);
+            snprintf(dot + 1, sizeof buff - (size_t)(dot - buff), "%s", vcc_parm);
             vcc = nupa_get_param(buff, &ok);
         }
         if (ok)
