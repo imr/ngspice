@@ -1302,6 +1302,7 @@ BOOL f_logicexp(char *line)
         num_ins = (int) strtol(parse_lexer->lexer_buf, &endp, 10);
     } else {
         printf("ERROR logicexp input count is not an integer\n");
+        delete_lexer(parse_lexer);
         return FALSE;
     }
     t = lex_scan();
@@ -1312,6 +1313,7 @@ BOOL f_logicexp(char *line)
         num_outs = (int) strtol(parse_lexer->lexer_buf, &endp, 10);
     } else {
         printf("ERROR logicexp output count is not an integer\n");
+        delete_lexer(parse_lexer);
         return FALSE;
     }
     num_outs = (int) strtol(parse_lexer->lexer_buf, &endp, 10);
