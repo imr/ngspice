@@ -297,6 +297,7 @@ static NAME_ENTRY port_names_list = NULL;
 static unsigned int num_name_collisions = 0;
 /* .model d_zero_inv99 d_inverter just once per subckt */
 static BOOL add_zero_delay_inverter_model = FALSE;
+static BOOL add_drive_hilo = FALSE;
 static char *current_subckt = NULL;
 static unsigned int subckt_msg_count = 0;
 
@@ -720,6 +721,29 @@ struct card *replacement_udevice_cards(void)
         x = create_xlate_translated(".model d_zero_inv99 d_inverter");
         translated_p = add_xlator(translated_p, x);
     }
+    if (add_drive_hilo) {
+        x = create_xlate_translated(".subckt hilo_dollar___lo drive___0");
+        translated_p = add_xlator(translated_p, x);
+        x = create_xlate_translated("a1 0 drive___0 dbuf1");
+        translated_p = add_xlator(translated_p, x);
+        x = create_xlate_translated(".model dbuf1 d_buffer");
+        translated_p = add_xlator(translated_p, x);
+        x = create_xlate_translated(".ends hilo_dollar___lo");
+        translated_p = add_xlator(translated_p, x);
+        x = create_xlate_translated(".subckt hilo_dollar___hi drive___1");
+        translated_p = add_xlator(translated_p, x);
+        x = create_xlate_translated("a2 0 drive___1 dinv1");
+        translated_p = add_xlator(translated_p, x);
+        x = create_xlate_translated(".model dinv1 d_inverter");
+        translated_p = add_xlator(translated_p, x);
+        x = create_xlate_translated(".ends hilo_dollar___hi");
+        translated_p = add_xlator(translated_p, x);
+        x = create_xlate_translated("x8100000 hilo_drive___1 hilo_dollar___hi");
+        translated_p = add_xlator(translated_p, x);
+        x = create_xlate_translated("x8100001 hilo_drive___0 hilo_dollar___lo");
+        translated_p = add_xlator(translated_p, x);
+
+    }
     for (x = first_xlator(translated_p); x; x = next_xlator(translated_p)) {
         if (ps_port_directions >= 2) {
             printf("TRANS_OUT  %s\n", x->translated);
@@ -791,6 +815,7 @@ void initialize_udevice(char *subckt_line)
     (void) add_xlator(default_models, xdata);
     /* reset for the new subckt */
     add_zero_delay_inverter_model = FALSE;
+    add_drive_hilo = FALSE;
 }
 
 static void determine_port_type(void)
@@ -834,6 +859,7 @@ void cleanup_udevice(void)
     delete_xlator(default_models);
     default_models = NULL;
     add_zero_delay_inverter_model = FALSE;
+    add_drive_hilo = FALSE;
     clear_name_list(input_names_list, "INPUT_PINS");
     input_names_list = NULL;
     clear_name_list(output_names_list, "OUTPUT_PINS");
@@ -2708,6 +2734,25 @@ static BOOL u_process_model(char *nline, char *original)
     return retval;
 }
 
+static char *get_name_hilo(char *tok_str)
+{
+    char *name = NULL;
+
+    if (eq(tok_str, "$d_hi")) {
+        name = TMALLOC(char, strlen("hilo_drive___1") + 1);
+        strcpy(name, "hilo_drive___1");
+        add_drive_hilo = TRUE;
+    } else if (eq(tok_str, "$d_lo")) {
+        name = TMALLOC(char, strlen("hilo_drive___0") + 1);
+        strcpy(name, "hilo_drive___0");
+        add_drive_hilo = TRUE;
+    } else {
+        name = TMALLOC(char, strlen(tok_str) + 1);
+        (void) memcpy(name, tok_str, strlen(tok_str) + 1);
+    }
+    return name;
+}
+
 static struct dff_instance *add_dff_inout_timing_model(
     struct instance_hdr *hdr, char *start)
 {
@@ -2735,9 +2780,7 @@ static struct dff_instance *add_dff_inout_timing_model(
     arrp = dffip->d_in;
     for (i = 0; i < num_gates; i++) {
         tok = strtok(NULL, " \t");
-        name = TMALLOC(char, strlen(tok) + 1);
-        (void) memcpy(name, tok, strlen(tok) + 1);
-        arrp[i] = name;
+        arrp[i] = get_name_hilo(tok);
     }
     /* q_out outputs */
     dffip->q_out = TMALLOC(char *, num_gates);
@@ -2766,7 +2809,7 @@ static struct dff_instance *add_dff_inout_timing_model(
     /* Reject incompatible inputs */
     arrp = dffip->d_in;
     for (i = 0; i < num_gates; i++) {
-        if (strncmp(arrp[i], "$d_", 3) == 0) {
+        if (eq(arrp[i], "$d_nc")) {
             delete_dff_instance(dffip);
             return NULL;
         }
@@ -2795,7 +2838,7 @@ static struct dltch_instance *add_dltch_inout_timing_model(
     dlp->num_gates = num_gates;
     copyline = TMALLOC(char, strlen(start) + 1);
     (void) memcpy(copyline, start, strlen(start) + 1);
-    /* prebar, clrbar, clk */
+    /* prebar, clrbar, clk(gate) */
     tok = strtok(copyline, " \t");
     dlp->prebar = TMALLOC(char, strlen(tok) + 1);
     (void) memcpy(dlp->prebar, tok, strlen(tok) + 1);
@@ -2803,16 +2846,14 @@ static struct dltch_instance *add_dltch_inout_timing_model(
     dlp->clrbar = TMALLOC(char, strlen(tok) + 1);
     (void) memcpy(dlp->clrbar, tok, strlen(tok) + 1);
     tok = strtok(NULL, " \t");
-    dlp->gate = TMALLOC(char, strlen(tok) + 1);
-    (void) memcpy(dlp->gate, tok, strlen(tok) + 1);
+    dlp->gate = get_name_hilo(tok);
+
     /* d inputs */
     dlp->d_in = TMALLOC(char *, num_gates);
     arrp = dlp->d_in;
     for (i = 0; i < num_gates; i++) {
         tok = strtok(NULL, " \t");
-        name = TMALLOC(char, strlen(tok) + 1);
-        (void) memcpy(name, tok, strlen(tok) + 1);
-        arrp[i] = name;
+        arrp[i] = get_name_hilo(tok);
     }
     /* q_out outputs */
     dlp->q_out = TMALLOC(char *, num_gates);
@@ -2841,12 +2882,12 @@ static struct dltch_instance *add_dltch_inout_timing_model(
     /* Reject incompatible inputs */
     arrp = dlp->d_in;
     for (i = 0; i < num_gates; i++) {
-        if (strncmp(arrp[i], "$d_", 3) == 0) {
+        if (eq(arrp[i], "$d_nc")) {
             delete_dltch_instance(dlp);
             return NULL;
         }
     }
-    if (strncmp(dlp->gate, "$d_", 3) == 0) {
+    if (eq(dlp->gate, "$d_nc")) {
         delete_dltch_instance(dlp);
         return NULL;
     }
@@ -2888,18 +2929,14 @@ static struct jkff_instance *add_jkff_inout_timing_model(
     arrp = jkffip->j_in;
     for (i = 0; i < num_gates; i++) {
         tok = strtok(NULL, " \t");
-        name = TMALLOC(char, strlen(tok) + 1);
-        (void) memcpy(name, tok, strlen(tok) + 1);
-        arrp[i] = name;
+        arrp[i] = get_name_hilo(tok);
     }
     /* k inputs */
     jkffip->k_in = TMALLOC(char *, num_gates);
     arrp = jkffip->k_in;
     for (i = 0; i < num_gates; i++) {
         tok = strtok(NULL, " \t");
-        name = TMALLOC(char, strlen(tok) + 1);
-        (void) memcpy(name, tok, strlen(tok) + 1);
-        arrp[i] = name;
+        arrp[i] = get_name_hilo(tok);
     }
     /* q_out outputs */
     jkffip->q_out = TMALLOC(char *, num_gates);
@@ -2929,8 +2966,7 @@ static struct jkff_instance *add_jkff_inout_timing_model(
     arrp = jkffip->j_in;
     arrpk = jkffip->k_in;
     for (i = 0; i < num_gates; i++) {
-        if (strncmp(arrp[i], "$d_", 3) == 0 ||
-            strncmp(arrpk[i], "$d_", 3) == 0) {
+        if (eq(arrp[i], "$d_nc") || eq(arrpk[i], "$d_nc")) {
             delete_jkff_instance(jkffip);
             return NULL;
         }
@@ -2969,26 +3005,21 @@ static struct srff_instance *add_srff_inout_timing_model(
     (void) memcpy(srffp->clrbar, tok, strlen(tok) + 1);
 
     tok = strtok(NULL, " \t");
-    srffp->gate = TMALLOC(char, strlen(tok) + 1);
-    (void) memcpy(srffp->gate, tok, strlen(tok) + 1);
+    srffp->gate = get_name_hilo(tok);
 
     /* s inputs */
     srffp->s_in = TMALLOC(char *, num_gates);
     arrp = srffp->s_in;
     for (i = 0; i < num_gates; i++) {
         tok = strtok(NULL, " \t");
-        name = TMALLOC(char, strlen(tok) + 1);
-        (void) memcpy(name, tok, strlen(tok) + 1);
-        arrp[i] = name;
+        arrp[i] = get_name_hilo(tok);
     }
     /* r inputs */
     srffp->r_in = TMALLOC(char *, num_gates);
     arrp = srffp->r_in;
     for (i = 0; i < num_gates; i++) {
         tok = strtok(NULL, " \t");
-        name = TMALLOC(char, strlen(tok) + 1);
-        (void) memcpy(name, tok, strlen(tok) + 1);
-        arrp[i] = name;
+        arrp[i] = get_name_hilo(tok);
     }
     /* q_out outputs */
     srffp->q_out = TMALLOC(char *, num_gates);
@@ -3018,13 +3049,12 @@ static struct srff_instance *add_srff_inout_timing_model(
     arrp = srffp->s_in;
     arrpr = srffp->r_in;
     for (i = 0; i < num_gates; i++) {
-        if (strncmp(arrp[i], "$d_", 3) == 0 ||
-            strncmp(arrpr[i], "$d_", 3) == 0) {
+        if (eq(arrp[i], "$d_nc") || eq(arrpr[i], "$d_nc")) {
             delete_srff_instance(srffp);
             return NULL;
         }
     }
-    if (strncmp(srffp->gate, "$d_", 3) == 0) {
+    if (eq(srffp->gate, "$d_nc")) {
         delete_srff_instance(srffp);
         return NULL;
     }
