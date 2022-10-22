@@ -3,17 +3,6 @@
 #include <string.h>
 #include <ctype.h>
 
-//#define LOCAL_BUILD
-#ifdef LOCAL_BUILD
-#include "ngspice/ngspice/memory.h"
-#include "ngspice/ngspice/macros.h"
-#include "ngspice/ngspice/bool.h"
-#include "ngspice/ngspice/ngspice.h"
-#include "ngspice/ngspice/stringskip.h"
-#include "ngspice/ngspice/stringutil.h"
-#include "ngspice/ngspice/dstring.h"
-#include "logicexp.h"
-#else
 #include "ngspice/memory.h"
 #include "ngspice/macros.h"
 #include "ngspice/bool.h"
@@ -22,7 +11,7 @@
 #include "ngspice/stringutil.h"
 #include "ngspice/dstring.h"
 #include "ngspice/logicexp.h"
-#endif
+#include "ngspice/udevices.h"
 
 /* Start of btree symbol table */
 #define SYM_INPUT       1
@@ -594,6 +583,7 @@ static char *get_inv_tail(char *str)
 
 static void gen_inverters(SYM_TAB t)
 {
+    DS_CREATE(instance, 128);
     if (t == NULL)
         return;
     gen_inverters(t->left);
@@ -601,13 +591,21 @@ static void gen_inverters(SYM_TAB t)
         if (t->ref_count >= 1) {
             printf("%s %s %s d_inv_zero_delay\n", get_inst_name(),
                 t->name, get_inverter_output_name(t->name));
+
+            ds_clear(&instance);
+            ds_cat_printf(&instance, "%s %s %s d_inv_zero_delay",
+                get_inst_name(), t->name, get_inverter_output_name(t->name));
+            u_add_instance(ds_get_buf(&instance));
         }
     }
+    ds_free(&instance);
     gen_inverters(t->right);
 }
 
 static void gen_models(void)
 {
+    DS_CREATE(model, 64);
+
     printf(".model d_inv_zero_delay d_inverter\n");
     printf(".model d__inverter__1 d_inverter\n");
     printf(".model d__buffer__1 d_buffer\n");
@@ -617,6 +615,44 @@ static void gen_models(void)
     printf(".model d__xor__1 d_xor\n");
     printf(".model d__nor__1 d_nor\n");
     printf(".model d__or__1 d_or\n");
+
+    ds_clear(&model);
+    ds_cat_printf(&model, ".model d_inv_zero_delay d_inverter");
+    u_add_instance(ds_get_buf(&model));
+
+    ds_clear(&model);
+    ds_cat_printf(&model, ".model d__inverter__1 d_inverter");
+    u_add_instance(ds_get_buf(&model));
+
+    ds_clear(&model);
+    ds_cat_printf(&model, ".model d__buffer__1 d_buffer");
+    u_add_instance(ds_get_buf(&model));
+
+    ds_clear(&model);
+    ds_cat_printf(&model, ".model d__nand__1 d_nand");
+    u_add_instance(ds_get_buf(&model));
+
+    ds_clear(&model);
+    ds_cat_printf(&model, ".model d__and__1 d_and");
+    u_add_instance(ds_get_buf(&model));
+
+    ds_clear(&model);
+    ds_cat_printf(&model, ".model d__xnor__1 d_xnor");
+    u_add_instance(ds_get_buf(&model));
+
+    ds_clear(&model);
+    ds_cat_printf(&model, ".model d__xor__1 d_xor");
+    u_add_instance(ds_get_buf(&model));
+
+    ds_clear(&model);
+    ds_cat_printf(&model, ".model d__nor__1 d_nor");
+    u_add_instance(ds_get_buf(&model));
+
+    ds_clear(&model);
+    ds_cat_printf(&model, ".model d__or__1 d_or");
+    u_add_instance(ds_get_buf(&model));
+
+    ds_free(&model);
 }
 
 static void aerror(char *s)
@@ -1073,6 +1109,8 @@ static void gen_gates(PTABLE gate_tab, SYM_TAB parser_symbols)
         }
 
         printf("%s\n", ds_get_buf(&instance));
+
+        u_add_instance(ds_get_buf(&instance));
     }
     delete_lexer(lxr);
     ds_free(&out_name);
@@ -1354,7 +1392,7 @@ BOOL f_logicexp(char *line)
 
 BOOL f_pindly(char *line)
 {
-    printf("\nf_pindly: %s\n", line);
-    return FALSE;
+    //printf("\nf_pindly: %s\n", line);
+    return TRUE;
 }
 
