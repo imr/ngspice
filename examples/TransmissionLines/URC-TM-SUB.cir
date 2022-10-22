@@ -1,0 +1,16 @@
+URC transmission line
+
+.subckt UTM in out gnd1
+U1 in out gnd1 URCMOD L =20m
+.model URCMOD URC CPERL=100p RPERL=100k FMAX=10G
+.ends
+
+XUTM 1 2 0 UTM
+
+VS 1  0 dc 0 PULSE (0 5 15.9NS 0.2NS 0.2NS 15.8NS 32NS )
+.control
+TRAN 0.2N 47N 0 0.1N
+plot v(1) v(2)
+.endc
+
+.end
