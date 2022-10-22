@@ -7,5 +7,6 @@ BOOL u_check_instance(char *line);
 void initialize_udevice(char *subckt_line);
 struct card *replacement_udevice_cards(void);
 void cleanup_udevice(void);
+void u_add_instance(char *str);
 
 #endif

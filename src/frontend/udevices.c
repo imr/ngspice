@@ -764,6 +764,16 @@ struct card *replacement_udevice_cards(void)
     return newcard;
 }
 
+void u_add_instance(char *str)
+{
+    Xlatep x;
+
+    if (str && strlen(str) > 0) {
+        x = create_xlate_translated(str);
+        (void) add_xlator(translated_p, x);
+    }
+}
+
 void initialize_udevice(char *subckt_line)
 {
     Xlatep xdata;
@@ -3426,6 +3436,11 @@ BOOL u_check_instance(char *line)
     itype = hdr->instance_type;
     xspice = find_xspice_for_delay(itype);
     if (!xspice) {
+        if (eq(itype, "logicexp") || eq(itype, "pindly")
+            || eq(itype, "constraint")) {
+            delete_instance_hdr(hdr);
+            return TRUE;
+        }
         if (ps_udevice_msgs >= 1) {
             if (current_subckt && subckt_msg_count == 0) {
                 printf("%s\n", current_subckt);
@@ -3434,13 +3449,7 @@ BOOL u_check_instance(char *line)
             printf("WARNING ");
             printf("Instance %s type %s is not supported\n",
                 hdr->instance_name, itype);
-            if (eq(itype, "logicexp")) {
-                if (ps_udevice_msgs == 3)
-                    (void) f_logicexp(line);
-            } else if (eq(itype, "pindly")) {
-                if (ps_udevice_msgs == 3)
-                    (void) f_pindly(line);
-            } else if (ps_udevice_msgs == 3) {
+            if (ps_udevice_msgs >= 2) {
                 printf("%s\n", line);
             }
         }
@@ -3467,8 +3476,19 @@ BOOL u_process_instance(char *nline)
     itype = hdr->instance_type;
     xspice = find_xspice_for_delay(itype);
     if (!xspice) {
-        delete_instance_hdr(hdr);
-        return FALSE;
+        if (eq(itype, "logicexp")) {
+            delete_instance_hdr(hdr);
+            return f_logicexp(nline);
+        } else if (eq(itype, "pindly")) {
+            delete_instance_hdr(hdr);
+            return f_pindly(nline);
+        } else if (eq(itype, "constraint")) {
+            delete_instance_hdr(hdr);
+            return TRUE;
+        } else {
+            delete_instance_hdr(hdr);
+            return FALSE;
+        }
     }
     if (ps_port_directions >= 2) {
         printf("TRANS_IN  %s\n", nline);
