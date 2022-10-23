@@ -16,9 +16,6 @@ its source code, test and example files except for the files listed below.
 
 ************** files with licenses different to 'Modified BSD' ****************
 
-* ngspice/contrib
-GPL, Public Domain
-
 * ngspice/m4
 unnamed, compatible to DFSG
 

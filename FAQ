@@ -1,7 +1,7 @@
-  Ngspice F.A.Q.Version 2.7 (ngspice-37 release)
+  Ngspice F.A.Q.Version 2.8 (ngspice-38 release)
 
   Maintained by Holger Vogt
-  Last update: May 11 2022
+  Last update: Oct 23 2022
 
   This document contains the Frequently Asked Questions (and Answers)
   for ngspice project.
@@ -151,7 +151,7 @@
     and Cider. The ngspice manual today contains description of all
     features ngspice is offering. It is however not a tutorial of ngspice
     usage, but there are now several good ones available on the internet
-    (see http://ngspice.sourceforge.net/tutorials.html).
+    (see https://ngspice.sourceforge.io/tutorials.html).
 
 
  1.7 Legal issues
@@ -208,37 +208,40 @@
   web server and then moved to sourceforge. Sourceforge provides an
   archiving service that cam be accessed via the summary page:
 
-  http://sourceforge.net/p/ngspice/mailman/
+  https://sourceforge.net/p/ngspice/mailman/
 
 
  1.11  Where can I get a copy of ngspice?
 
-  You can download ngspice from:
+  You can download ngspice source code or MS Windows executables from:
 
-  http://sourceforge.net/projects/ngspice/files/ng-spice-rework/
+  https://sourceforge.net/projects/ngspice/files/ng-spice-rework/
+  
+  Nearly all distributions for MINGW, Cygwin, Linux, macOS and
+  others offer install-ready copies of ngspice.
 
 
  1.12  Where should I look on the World Wide Web for ngspice stuff?
 
   Look at the official Ngpice Web Page:
 
-  http://ngspice.sourceforge.net
+  https://ngspice.sourceforge.io
 
 
  1.13  Where should I look on the World Wide Web for Spice documentation?
 
   There is a detailed ngspice manual available at:
-  http://ngspice.sourceforge.net/docs.html
+  https://ngspice.sourceforge.io/docs.html
 
   Others docs are assembled at:
-  http://ngspice.sourceforge.net/literature.html
+  https://ngspice.sourceforge.io/literature.html
 
 
  1.14  Are there some (official) tutorials available?
  
   Yes, they are, for ngspice, ngspice within KiCAD and on eletro-thermal
   simulation. You may find them at:
-  http://ngspice.sourceforge.net/tutorials.html
+  https://ngspice.sourceforge.io/tutorials.html
 
 
 
@@ -249,35 +252,46 @@
 
   The latest version released is:
 
-  * ngspice-37 (released on May 22 2022)
+  * ngspice-38 (released on Oct 30 2022)
 
 
  2.2.  What are the latest features in the current release?
 
 - New features:
-    + Reduce XSPICE memory consumption dramatically 
-      (> factor of 10).
-    + Add source stepping to B source
-    + Add 'esave' command to save only specific event nodes.
-    + Accept '.temp=125' or .temp='param'.
-    + Enable output redirection for meas command.
-    + Use total current for diffcap calculation in diode model.
-    + Speed output and reduces file size when plotting large
-      result vectors (Windows).
-    + Enable RKM notation also for inductors (e.g. 1u2 for 1.2u).
-    + Add S parameter simulation (command '.sp').
-    + Add new flag 'digitop' for the 'plot' command.
-    + Add a flag 'alle' (all event nodes) to the plot command.
-    + New code model d_pwm: hybrid oscillator (analg control in,
-      digital out) with PWM.
-    + Make "nogrid" plotting option work.
-    + Add current measurement for all nodes of a device,
-      e.g. .probe i(Q1) will measure Ic, Ib, Ie (and Is).
-    + .probe P(dev): Add measurement of power dissipation in a device.
-    + Add new flags -type and -flags to command devhelp.
+    + Add multiplier flag 'm' to behavioral capacitor and inductor.
+    + Re-enable dc sweep after transient sim.
+    + When plotting the phase, standard now is "Radiant".
+    + Add Lundin's geometry correction to the inductance formula.
+    + New variable keep#branch to write the current to raw file
+      in the old fashion     	1	v1#branch	current
+    + Translate PSPICE U instances into equivaalent XSPICE code models.
+    + New configure flag --enable-shortcheck to enable a shortened make check
+     (only BSIM3 and BSIM4).
+    + B source will accept parameters in statistical functions like agauss.
+    + WinGUI: Add a button 'Stop' to stop a simulation in intercative
+      or control mode.
+    + Update to the .probe p (power measurement) and .probe alli commands.
+    + Update to XSPICE aswitch and pswitch.
+    + Make FROM/TO work in TRIG/TARG and WHEN variants of .meas/meas command.
+    + Limits to exp function, allow 0 for log (returning -1e99), used
+      when starting iterations.
+    + Insert XSPICE bridging devices automatically when an analogue node
+      has the same name as an XSPICE event node.
+    + New options savecurrents_bsim3, savecurrents_bsim4, savecurrents_mos1.
+    + pwlts: a pwl v/i source with time input, smoothing and limiting
+      functions.
+    + New functions to the Code Model Library: cm_get_node_name()
+      and cm_probe_node().
+    + XSPICE: Add bidirectional digital/analog bridge.
+    + Search for .spiceinit firstly in a user defined directory named in env
+      SPICE_USERINIT_DIR, then in the current directory, then in HOME, then
+      in USERPROFILE.
+    + If compatmode is lt, change the pow(x,y) and x**y functions:
+      If x < 0, output only if y is integer number, otherwise output 0.
+    + Add a limit of 0.999 to bipolar parameters mje, mjc, and mjs.
 
 - Bug fixes:
-    + many bugs fixed and code improvements (see bugs 557 and up)
+    + many bugs fixed and code improvements (see bugs 583 and up)
     + making error messages more verbose
     + memory leaks removed
 
@@ -303,7 +317,7 @@
   feature-request and bugs trackers. You can use them or subscribe to
   mailing lists and post there. The former is preferred since almost
   it allows to track all necessary actions upon a bug. The web site at
-  http://ngspice.sourceforge.net/bugrep.html will give you more details.
+  https://ngspice.sourceforge.io/bugrep.html will give you more details.
 
 
  2.6.  How can I join the development?

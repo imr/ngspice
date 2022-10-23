@@ -69,6 +69,7 @@ Table of contents
  13.4 HICUM0 Bipolar Model
  13.5 Mextram Bipolar Model
 14. XSPICE code models
+15. Digital Building Blocks (U instances)
 
                              ------------------
 
@@ -870,3 +871,9 @@ will be updated every time the device specific code is altered or changed to ref
       Web site at: http://mextram.ewi.tudelft.nl/ and http://mextram.sourceforge.net/
 
  14. XSpice code models, see ngspice manual chapt. 12
+ 
+ 15. Digital Building Blocks (U instances)
+ 
+       U instances are digital primitives which may be used (in proper combination) to
+       model digital devices, e.g. from the 74xx or 40xx families. ngspice maps them
+       onto XSPICE models, which allows a fast event based simulation.
