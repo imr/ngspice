@@ -274,6 +274,9 @@ com_version(wordlist *wl)
 #ifdef EXP_DEV
             fprintf(cp_out, "** Experimental devices enabled.\n");
 #endif
+#ifdef SHARED_MODULE
+            fprintf(cp_out, "** ngspice shared library.\n");
+#endif
             fprintf(cp_out, "******\n");
 
         } else if (!eq(ft_sim->version, s)) {
