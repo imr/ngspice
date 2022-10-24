@@ -125,7 +125,8 @@ run
 *edisplay
 eprint o1 o2 o3 o4 o5 o6 o7 o8
 eprint q1 q2 q3 q4 q5 q6 q7 q8
-*plot q4 o6
-quit
+*set xbrushwidth=2
+plot  o1 o2 o3 o4 o5 o6 o7 o8 q1 q2 q3 q4 q5 q6 q7 q8 digitop
+*quit
 .endc
 .end
