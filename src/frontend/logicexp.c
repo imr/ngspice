@@ -224,6 +224,7 @@ static int lex_punct(int c)
     case '(':
     case ')':
     case ':':
+    case '.':
         return c;
     default:
         break;
@@ -1316,6 +1317,8 @@ static void bparse(char *line, BOOL new_lexer)
 }
 /* End of logicexp parser */
 
+static LEXER current_lexer = NULL;
+
 static BOOL expect_token(
     int tok, int expected_tok, char *expected_str, BOOL msg)
 {
@@ -1324,20 +1327,19 @@ static BOOL expect_token(
             printf("ERROR expect_token failed tok %d expected_tok %d\n",
                 tok, expected_tok);
         }
-        delete_lexer(parse_lexer);
         return FALSE;
     }
     if (tok == LEX_ID) {
         if (expected_str) {
-            if (eq(expected_str, parse_lexer->lexer_buf))
+            LEXER lx = current_lexer;
+            if (strcmp(expected_str, lx->lexer_buf) == 0)
                 return TRUE;
             else {
                 if (msg) {
                     printf(
                     "ERROR expect_token failed lexer_buf %s expected_str %s\n",
-                        parse_lexer->lexer_buf, expected_str);
+                        lx->lexer_buf, expected_str);
                 }
-                delete_lexer(parse_lexer);
                 return FALSE;
             }
         } else { // Any LEX_ID string matches
@@ -1356,68 +1358,69 @@ BOOL f_logicexp(char *line)
     printf("\nf_logicexp: %s\n", line);
 #endif
     lex_init(line);
+    current_lexer = parse_lexer;
     (void) add_sym_tab_entry("logic", SYM_KEY_WORD,
         &parse_lexer->lexer_sym_tab);
     t = lex_scan(); // U*
-    if (!expect_token(t, LEX_ID, NULL, TRUE)) return FALSE;
+    if (!expect_token(t, LEX_ID, NULL, TRUE)) goto error_return;
     /* logicexp ( int , int ) */
     t = lex_scan();
-    if (!expect_token(t, LEX_ID, "logicexp", TRUE)) return FALSE;
+    if (!expect_token(t, LEX_ID, "logicexp", TRUE)) goto error_return;
     t = lex_scan();
-    if (!expect_token(t, '(', NULL, TRUE)) return FALSE;
+    if (!expect_token(t, '(', NULL, TRUE)) goto error_return;
     t = lex_scan();
-    if (!expect_token(t, LEX_ID, NULL, TRUE)) return FALSE;
+    if (!expect_token(t, LEX_ID, NULL, TRUE)) goto error_return;
     if (lex_all_digits(parse_lexer->lexer_buf)) {
         num_ins = (int) strtol(parse_lexer->lexer_buf, &endp, 10);
     } else {
         printf("ERROR logicexp input count is not an integer\n");
-        delete_lexer(parse_lexer);
-        return FALSE;
+        goto error_return;
     }
     t = lex_scan();
-    if (!expect_token(t, ',', NULL, TRUE)) return FALSE;
+    if (!expect_token(t, ',', NULL, TRUE)) goto error_return;
     t = lex_scan();
-    if (!expect_token(t, LEX_ID, NULL, TRUE)) return FALSE;
+    if (!expect_token(t, LEX_ID, NULL, TRUE)) goto error_return;
     if (lex_all_digits(parse_lexer->lexer_buf)) {
         num_outs = (int) strtol(parse_lexer->lexer_buf, &endp, 10);
     } else {
         printf("ERROR logicexp output count is not an integer\n");
-        delete_lexer(parse_lexer);
-        return FALSE;
+        goto error_return;
     }
     t = lex_scan();
-    if (!expect_token(t, ')', NULL, TRUE)) return FALSE;
+    if (!expect_token(t, ')', NULL, TRUE)) goto error_return;
     t = lex_scan(); // pwr
-    if (!expect_token(t, LEX_ID, NULL, TRUE)) return FALSE;
+    if (!expect_token(t, LEX_ID, NULL, TRUE)) goto error_return;
     t = lex_scan(); // gnd
-    if (!expect_token(t, LEX_ID, NULL, TRUE)) return FALSE;
+    if (!expect_token(t, LEX_ID, NULL, TRUE)) goto error_return;
     /* num_ins input ids */
     for (i = 0; i < num_ins; i++) {
         t = lex_scan();
-        if (!expect_token(t, LEX_ID, NULL, TRUE)) {
-            return FALSE;
-        }
+        if (!expect_token(t, LEX_ID, NULL, TRUE)) goto error_return;
         (void) add_sym_tab_entry(parse_lexer->lexer_buf,
             SYM_INPUT, &parse_lexer->lexer_sym_tab);
     }
     /* num_outs output ids */
     for (i = 0; i < num_outs; i++) {
         t = lex_scan();
-        if (!expect_token(t, LEX_ID, NULL, TRUE)) {
-            return FALSE;
-        }
+        if (!expect_token(t, LEX_ID, NULL, TRUE)) goto error_return;
         (void) add_sym_tab_entry(parse_lexer->lexer_buf,
             SYM_OUTPUT, &parse_lexer->lexer_sym_tab);
     }
     /* timing model */
     t = lex_scan();
-    if (!expect_token(t, LEX_ID, NULL, TRUE)) return FALSE;
+    if (!expect_token(t, LEX_ID, NULL, TRUE)) goto error_return;
     //printf("TMODEL: %s\n", parse_lexer->lexer_buf);
     (void) add_sym_tab_entry(parse_lexer->lexer_buf,
         SYM_TMODEL, &parse_lexer->lexer_sym_tab);
     bparse(line, FALSE);
 
+    current_lexer = NULL;
     return TRUE;
+
+error_return:
+    delete_lexer(parse_lexer);
+    current_lexer = NULL;
+    return FALSE;
 }
 
 /* pindly handling */
@@ -1478,124 +1481,246 @@ static void gen_output_buffers(void)
                 tin = tin->next;
                 tout = tout->next;
             }
-            u_add_instance(
-            ".model d_pindly_buf d_buffer(rise_delay=10ns fall_delay=10ns)");
             ds_free(&instance);
         }
     }
 }
-
-static BOOL pexpect_token(
-    int tok, int expected_tok, char *expected_str, BOOL msg)
+static char *get_typ_estimate(char *min, char *typ, char *max)
 {
-    BOOL val;
-    val = expect_token(tok, expected_tok, expected_str, msg);
-    if (!val)
-        cleanup_pindly();
-    return val;
+    char *tmpmax = NULL, *tmpmin = NULL;
+    float valmin, valmax, average;
+    char *units1, *units2;
+    static char tbuf[128];
+
+    if (typ && strlen(typ) > 0 && typ[0] != '-') {
+        strcpy(tbuf, typ);
+        return tbuf;
+    }
+    if (max && strlen(max) > 0 && max[0] != '-') {
+        tmpmax = max;
+    }
+    if (min && strlen(min) > 0 && min[0] != '-') {
+        tmpmin = min;
+    }
+    if (tmpmin && tmpmax) {
+        if (strlen(tmpmin) > 0 && strlen(tmpmax) > 0) {
+            valmin = strtof(tmpmin, &units1);
+            valmax = strtof(tmpmax, &units2);
+            average = (valmin + valmax) / (float)2.0;
+            sprintf(tbuf, "%.2f%s", average, units2);
+            if (strcmp(units1, units2) != 0) {
+                printf("WARNING units do not match\n");
+            }
+            return tbuf;
+        }
+    } else if (tmpmax && strlen(tmpmax) > 0) {
+        strcpy(tbuf, tmpmax);
+        return tbuf;
+    } else if (tmpmin && strlen(tmpmin) > 0) {
+        strcpy(tbuf, tmpmin);
+        return tbuf;
+    } else {
+        return NULL;
+    }
+    return NULL;
+}
+
+static void gen_output_models(LEXER lx)
+{
+    int val, which = 0;
+    BOOL in_delay = FALSE;
+    float typ_max_val = 0.0, typ_val = 0.0;
+    char *units;
+    DS_CREATE(dmin, 16);
+    DS_CREATE(dtyp, 16);
+    DS_CREATE(dmax, 16);
+    DS_CREATE(dtyp_max_str, 16);
+    DSTRINGPTR dsp = NULL;
+
+    val = lexer_set_start("pindly:", lx);
+    val = lexer_scan(lx); // "pindly"
+    val = lexer_scan(lx); // ':'
+    val = lexer_scan(lx);
+    while (val != '\0') {
+        if (val == LEX_ID) {
+            if (strcmp(lx->lexer_buf, "delay") == 0) {
+                ds_clear(&dmin);
+                ds_clear(&dtyp);
+                ds_clear(&dmax);
+                in_delay = TRUE;
+            }
+#ifdef TRACE
+            printf("ID: \"%s\"\n", lx->lexer_buf);
+        } else if (val == LEX_OTHER) {
+            printf("OTHER: \"%s\"\n", lx->lexer_buf);
+        } else {
+            printf("TOK: %d <%c>\n", val, val);
+#endif
+        }
+        if (in_delay) {
+            switch (which) {
+            case 0:
+                dsp = &dmin;
+                break;
+            case 1:
+                dsp = &dtyp;
+                break;
+            case 2:
+                dsp = &dmax;
+                break;
+            default:
+                assert(FALSE);
+                break;
+            };
+            if (val == '.')
+                ds_cat_printf(dsp, "%c", val);
+            else if (val == LEX_ID && strcmp(lx->lexer_buf, "delay") != 0)
+                ds_cat_printf(dsp, "%s", lx->lexer_buf);
+            if (val == ',') {
+                which++;
+            }
+        }
+        if (val == ')') {
+            if (in_delay) {
+                char *s;
+                s = get_typ_estimate(ds_get_buf(&dmin),
+                    ds_get_buf(&dtyp), ds_get_buf(&dmax));
+#ifdef TRACE
+                printf("\tMIN: \"%s\"", ds_get_buf(&dmin));
+                printf(" TYP: \"%s\"", ds_get_buf(&dtyp));
+                printf(" MAX: \"%s\"", ds_get_buf(&dmax));
+                if (s)
+                    printf(" ESTIMATE: \"%s\"\n", s);
+                else
+                    printf(" ESTIMATE: UNKNOWN\n");
+#endif
+                if (s) {
+                    typ_val = strtof(s, &units);
+                    if (typ_val > typ_max_val) {
+                        ds_clear(&dtyp_max_str);
+                        ds_cat_str(&dtyp_max_str, s);
+                        typ_max_val = typ_val;
+                    }
+                }
+            }
+            in_delay = FALSE;
+            which = 0;
+        }
+        val = lexer_scan(lx);
+    }
+    if (ds_get_length(&dtyp_max_str) > 0) {
+        ds_clear(&dmax); // dmax was no longer in use
+        ds_cat_printf(&dmax,
+            ".model d_pindly_buf d_buffer(rise_delay=%s fall_delay=%s)",
+            ds_get_buf(&dtyp_max_str), ds_get_buf(&dtyp_max_str));
+        u_add_instance(ds_get_buf(&dmax));
+    } else {
+        u_add_instance(
+        ".model d_pindly_buf d_buffer(rise_delay=10ns fall_delay=10ns)");
+    }
+    ds_free(&dmin);
+    ds_free(&dtyp);
+    ds_free(&dmax);
+    ds_free(&dtyp_max_str);
 }
 
 BOOL f_pindly(char *line)
 {
     int t, num_ios = 0, num_refs = 0, num_ena = 0, i;
     char *endp;
+    LEXER lxr;
 
 #ifdef TRACE
     printf("\nf_pindly: %s\n", line);
 #endif
     init_ios_tab();
-    lex_init(line);
-    t = lex_scan(); // U*
-    if (!pexpect_token(t, LEX_ID, NULL, TRUE)) return FALSE;
+    lxr = new_lexer(line);
+    current_lexer = lxr;
+    t = lexer_scan(lxr); // U*
+    if (!expect_token(t, LEX_ID, NULL, TRUE)) goto error_return;
 
     /* pindly ( int , int, int ) */
-    t = lex_scan();
-    if (!pexpect_token(t, LEX_ID, "pindly", TRUE)) return FALSE;
+    t = lexer_scan(lxr);
+    if (!expect_token(t, LEX_ID, "pindly", TRUE)) goto error_return;
 
-    t = lex_scan();
-    if (!pexpect_token(t, '(', NULL, TRUE)) return FALSE;
+    t = lexer_scan(lxr);
+    if (!expect_token(t, '(', NULL, TRUE)) goto error_return;
 
-    t = lex_scan();
-    if (!pexpect_token(t, LEX_ID, NULL, TRUE)) return FALSE;
-    if (lex_all_digits(parse_lexer->lexer_buf)) {
-        num_ios = (int) strtol(parse_lexer->lexer_buf, &endp, 10);
+    t = lexer_scan(lxr);
+    if (!expect_token(t, LEX_ID, NULL, TRUE)) goto error_return;
+    if (lex_all_digits(lxr->lexer_buf)) {
+        num_ios = (int) strtol(lxr->lexer_buf, &endp, 10);
     } else {
         printf("ERROR pindly io count is not an integer\n");
-        delete_lexer(parse_lexer);
-        cleanup_pindly();
-        return FALSE;
+        goto error_return;
     }
 
-    t = lex_scan();
-    if (!pexpect_token(t, ',', NULL, TRUE)) return FALSE;
+    t = lexer_scan(lxr);
+    if (!expect_token(t, ',', NULL, TRUE)) goto error_return;
 
-    t = lex_scan();
-    if (!pexpect_token(t, LEX_ID, NULL, TRUE)) return FALSE;
-    if (lex_all_digits(parse_lexer->lexer_buf)) {
-        num_ena = (int) strtol(parse_lexer->lexer_buf, &endp, 10);
+    t = lexer_scan(lxr);
+    if (!expect_token(t, LEX_ID, NULL, TRUE)) goto error_return;
+    if (lex_all_digits(lxr->lexer_buf)) {
+        num_ena = (int) strtol(lxr->lexer_buf, &endp, 10);
     } else {
         printf("ERROR pindly enable count is not an integer\n");
-        delete_lexer(parse_lexer);
-        cleanup_pindly();
-        return FALSE;
+        goto error_return;
     }
     if (num_ena != 0) {
-        delete_lexer(parse_lexer);
-        cleanup_pindly();
-        return FALSE;
+        goto error_return;
     }
 
-    t = lex_scan();
-    if (!pexpect_token(t, ',', NULL, TRUE)) return FALSE;
+    t = lexer_scan(lxr);
+    if (!expect_token(t, ',', NULL, TRUE)) goto error_return;
 
-    t = lex_scan();
-    if (!pexpect_token(t, LEX_ID, NULL, TRUE)) return FALSE;
-    if (lex_all_digits(parse_lexer->lexer_buf)) {
-        num_refs = (int) strtol(parse_lexer->lexer_buf, &endp, 10);
+    t = lexer_scan(lxr);
+    if (!expect_token(t, LEX_ID, NULL, TRUE)) goto error_return;
+    if (lex_all_digits(lxr->lexer_buf)) {
+        num_refs = (int) strtol(lxr->lexer_buf, &endp, 10);
     } else {
         printf("ERROR pindly refs count is not an integer\n");
-        delete_lexer(parse_lexer);
-        cleanup_pindly();
-        return FALSE;
+        goto error_return;
     }
 
-    t = lex_scan();
-    if (!pexpect_token(t, ')', NULL, TRUE)) return FALSE;
+    t = lexer_scan(lxr);
+    if (!expect_token(t, ')', NULL, TRUE)) goto error_return;
 
-    t = lex_scan(); // pwr
-    if (!pexpect_token(t, LEX_ID, NULL, TRUE)) return FALSE;
-    t = lex_scan(); // gnd
-    if (!pexpect_token(t, LEX_ID, NULL, TRUE)) return FALSE;
+    t = lexer_scan(lxr); // pwr
+    if (!expect_token(t, LEX_ID, NULL, TRUE)) goto error_return;
+    t = lexer_scan(lxr); // gnd
+    if (!expect_token(t, LEX_ID, NULL, TRUE)) goto error_return;
 
     /* num_ios input ids */
     for (i = 0; i < num_ios; i++) {
-        t = lex_scan();
-        if (!pexpect_token(t, LEX_ID, NULL, TRUE)) {
-            return FALSE;
-        }
-        (void) ios_tab_add(parse_lexer->lexer_buf, TRUE);
+        t = lexer_scan(lxr);
+        if (!expect_token(t, LEX_ID, NULL, TRUE)) goto error_return;
+        (void) ios_tab_add(lxr->lexer_buf, TRUE);
     }
 
     /* num_refs reference nodes which are ignored */
     for (i = 0; i < num_refs; i++) {
-        t = lex_scan();
-        if (!pexpect_token(t, LEX_ID, NULL, TRUE)) {
-            return FALSE;
-        }
+        t = lexer_scan(lxr);
+        if (!expect_token(t, LEX_ID, NULL, TRUE)) goto error_return;
     }
     /* num_ios output ids */
     for (i = 0; i < num_ios; i++) {
-        t = lex_scan();
-        if (!pexpect_token(t, LEX_ID, NULL, TRUE)) {
-            return FALSE;
-        }
-        (void) ios_tab_add(parse_lexer->lexer_buf, FALSE);
+        t = lexer_scan(lxr);
+        if (!expect_token(t, LEX_ID, NULL, TRUE)) goto error_return;
+        (void) ios_tab_add(lxr->lexer_buf, FALSE);
     }
 
     print_ios_tabs();
     gen_output_buffers();
-    delete_lexer(parse_lexer);
+    gen_output_models(lxr);
+    delete_lexer(lxr);
     cleanup_pindly();
+    current_lexer = NULL;
     return TRUE;
+
+error_return:
+    delete_lexer(lxr);
+    cleanup_pindly();
+    current_lexer = NULL;
+    return FALSE;
 }
 
