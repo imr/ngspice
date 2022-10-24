@@ -1,3 +1,9 @@
+/*
+    logicexp.c
+
+    Convert PSpice LOGICEXP logic expressions into XSPICE gates.
+    Extract timing delay estimates from PINDLY statements.
+*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -12,6 +18,8 @@
 #include "ngspice/dstring.h"
 #include "ngspice/logicexp.h"
 #include "ngspice/udevices.h"
+
+/* #define TRACE */
 
 /* Start of btree symbol table */
 #define SYM_INPUT       1
@@ -525,6 +533,21 @@ static TLINE tab_find(PTABLE pt, char *str, BOOL start_of_line)
     }
     return NULL;
 }
+
+//#define TABLE_PRINT
+#ifdef TABLE_PRINT
+static void table_print(TLINE first)
+{
+    TLINE t;
+    if (!first)
+        return;
+    t = first;
+    while (t) {
+        printf("%s\n", t->line);
+        t = t->next;
+    }
+}
+#endif
 /* End parse table */
 
 /* Start of logicexp parser */
@@ -589,12 +612,12 @@ static void gen_inverters(SYM_TAB t)
     gen_inverters(t->left);
     if (t->attribute & SYM_INVERTER) {
         if (t->ref_count >= 1) {
-            printf("%s %s %s d_inv_zero_delay\n", get_inst_name(),
-                t->name, get_inverter_output_name(t->name));
-
             ds_clear(&instance);
             ds_cat_printf(&instance, "%s %s %s d_inv_zero_delay",
                 get_inst_name(), t->name, get_inverter_output_name(t->name));
+#ifdef TRACE
+            printf("%s\n", ds_get_buf(&instance));
+#endif
             u_add_instance(ds_get_buf(&instance));
         }
     }
@@ -606,6 +629,7 @@ static void gen_models(void)
 {
     DS_CREATE(model, 64);
 
+#ifdef TRACE
     printf(".model d_inv_zero_delay d_inverter\n");
     printf(".model d__inverter__1 d_inverter\n");
     printf(".model d__buffer__1 d_buffer\n");
@@ -615,6 +639,7 @@ static void gen_models(void)
     printf(".model d__xor__1 d_xor\n");
     printf(".model d__nor__1 d_nor\n");
     printf(".model d__or__1 d_or\n");
+#endif
 
     ds_clear(&model);
     ds_cat_printf(&model, ".model d_inv_zero_delay d_inverter");
@@ -1107,9 +1132,9 @@ static void gen_gates(PTABLE gate_tab, SYM_TAB parser_symbols)
             delete_lexer(lxr);
             lxr = new_lexer(t->line);
         }
-
+#ifdef TRACE
         printf("%s\n", ds_get_buf(&instance));
-
+#endif
         u_add_instance(ds_get_buf(&instance));
     }
     delete_lexer(lxr);
@@ -1259,8 +1284,13 @@ static void bparse(char *line, BOOL new_lexer)
         ds_cat_str(&stmt, lx->lexer_buf);
         end_pos = bstmt();
 
+#ifdef TRACE
         ds_cat_mem(&stmt, &lx->lexer_line[start_pos], end_pos - start_pos);
         printf("\n* Stmt(%d): %s\n\n", stmt_num, ds_get_buf(&stmt));
+#else
+        (void) start_pos;
+        (void) end_pos;
+#endif
 
         beval_order();
 
@@ -1278,7 +1308,6 @@ static void bparse(char *line, BOOL new_lexer)
     gen_inverters(lx->lexer_sym_tab);
     gen_models();
     ds_free(&stmt);
-#define TRACE
 #ifdef TRACE
     if (!new_lexer)
         print_sym_tab(lx->lexer_sym_tab, FALSE);
@@ -1323,7 +1352,9 @@ BOOL f_logicexp(char *line)
     int t, num_ins = 0, num_outs = 0, i;
     char *endp;
 
+#ifdef TRACE
     printf("\nf_logicexp: %s\n", line);
+#endif
     lex_init(line);
     (void) add_sym_tab_entry("logic", SYM_KEY_WORD,
         &parse_lexer->lexer_sym_tab);
@@ -1354,7 +1385,6 @@ BOOL f_logicexp(char *line)
         delete_lexer(parse_lexer);
         return FALSE;
     }
-    num_outs = (int) strtol(parse_lexer->lexer_buf, &endp, 10);
     t = lex_scan();
     if (!expect_token(t, ')', NULL, TRUE)) return FALSE;
     t = lex_scan(); // pwr
@@ -1382,7 +1412,7 @@ BOOL f_logicexp(char *line)
     /* timing model */
     t = lex_scan();
     if (!expect_token(t, LEX_ID, NULL, TRUE)) return FALSE;
-    printf("TMODEL: %s\n", parse_lexer->lexer_buf);
+    //printf("TMODEL: %s\n", parse_lexer->lexer_buf);
     (void) add_sym_tab_entry(parse_lexer->lexer_buf,
         SYM_TMODEL, &parse_lexer->lexer_sym_tab);
     bparse(line, FALSE);
@@ -1390,9 +1420,182 @@ BOOL f_logicexp(char *line)
     return TRUE;
 }
 
+/* pindly handling */
+static PTABLE ios_in_tab = NULL;
+static PTABLE ios_out_tab = NULL;
+
+static void init_ios_tab(void)
+{
+    ios_in_tab = new_parse_table();
+    ios_out_tab = new_parse_table();
+}
+
+static void cleanup_pindly(void)
+{
+    delete_parse_table(ios_in_tab);
+    delete_parse_table(ios_out_tab);
+    ios_in_tab = NULL;
+    ios_out_tab = NULL;
+}
+
+static TLINE ios_tab_add(char *ioname, BOOL is_input)
+{
+    if (is_input)
+        return add_to_parse_table(ios_in_tab, ioname, TRUE);
+    else
+        return add_to_parse_table(ios_out_tab, ioname, TRUE);
+}
+
+static void print_ios_tabs(void)
+{
+#ifdef TABLE_PRINT
+    if (ios_in_tab) {
+        printf("ios_in_tab\n");
+        table_print(ios_in_tab->first);
+    }
+    if (ios_out_tab) {
+        printf("ios_out_tab\n");
+        table_print(ios_out_tab->first);
+    }
+#endif
+}
+
+static void gen_output_buffers(void)
+{
+    TLINE tin, tout;
+    if (ios_in_tab && ios_out_tab) {
+        if (!ios_in_tab->first || !ios_out_tab->first) {
+            return;
+        } else {
+            DS_CREATE(instance, 128);
+            tin = ios_in_tab->first;
+            tout = ios_out_tab->first;
+            while (tin && tout) {
+                ds_clear(&instance);
+                ds_cat_printf(&instance, "%s %s %s d_pindly_buf",
+                   get_inst_name(), tin->line, tout->line);
+                u_add_instance(ds_get_buf(&instance));
+                tin = tin->next;
+                tout = tout->next;
+            }
+            u_add_instance(
+            ".model d_pindly_buf d_buffer(rise_delay=10ns fall_delay=10ns)");
+            ds_free(&instance);
+        }
+    }
+}
+
+static BOOL pexpect_token(
+    int tok, int expected_tok, char *expected_str, BOOL msg)
+{
+    BOOL val;
+    val = expect_token(tok, expected_tok, expected_str, msg);
+    if (!val)
+        cleanup_pindly();
+    return val;
+}
+
 BOOL f_pindly(char *line)
 {
-    //printf("\nf_pindly: %s\n", line);
+    int t, num_ios = 0, num_refs = 0, num_ena = 0, i;
+    char *endp;
+
+#ifdef TRACE
+    printf("\nf_pindly: %s\n", line);
+#endif
+    init_ios_tab();
+    lex_init(line);
+    t = lex_scan(); // U*
+    if (!pexpect_token(t, LEX_ID, NULL, TRUE)) return FALSE;
+
+    /* pindly ( int , int, int ) */
+    t = lex_scan();
+    if (!pexpect_token(t, LEX_ID, "pindly", TRUE)) return FALSE;
+
+    t = lex_scan();
+    if (!pexpect_token(t, '(', NULL, TRUE)) return FALSE;
+
+    t = lex_scan();
+    if (!pexpect_token(t, LEX_ID, NULL, TRUE)) return FALSE;
+    if (lex_all_digits(parse_lexer->lexer_buf)) {
+        num_ios = (int) strtol(parse_lexer->lexer_buf, &endp, 10);
+    } else {
+        printf("ERROR pindly io count is not an integer\n");
+        delete_lexer(parse_lexer);
+        cleanup_pindly();
+        return FALSE;
+    }
+
+    t = lex_scan();
+    if (!pexpect_token(t, ',', NULL, TRUE)) return FALSE;
+
+    t = lex_scan();
+    if (!pexpect_token(t, LEX_ID, NULL, TRUE)) return FALSE;
+    if (lex_all_digits(parse_lexer->lexer_buf)) {
+        num_ena = (int) strtol(parse_lexer->lexer_buf, &endp, 10);
+    } else {
+        printf("ERROR pindly enable count is not an integer\n");
+        delete_lexer(parse_lexer);
+        cleanup_pindly();
+        return FALSE;
+    }
+    if (num_ena != 0) {
+        delete_lexer(parse_lexer);
+        cleanup_pindly();
+        return FALSE;
+    }
+
+    t = lex_scan();
+    if (!pexpect_token(t, ',', NULL, TRUE)) return FALSE;
+
+    t = lex_scan();
+    if (!pexpect_token(t, LEX_ID, NULL, TRUE)) return FALSE;
+    if (lex_all_digits(parse_lexer->lexer_buf)) {
+        num_refs = (int) strtol(parse_lexer->lexer_buf, &endp, 10);
+    } else {
+        printf("ERROR pindly refs count is not an integer\n");
+        delete_lexer(parse_lexer);
+        cleanup_pindly();
+        return FALSE;
+    }
+
+    t = lex_scan();
+    if (!pexpect_token(t, ')', NULL, TRUE)) return FALSE;
+
+    t = lex_scan(); // pwr
+    if (!pexpect_token(t, LEX_ID, NULL, TRUE)) return FALSE;
+    t = lex_scan(); // gnd
+    if (!pexpect_token(t, LEX_ID, NULL, TRUE)) return FALSE;
+
+    /* num_ios input ids */
+    for (i = 0; i < num_ios; i++) {
+        t = lex_scan();
+        if (!pexpect_token(t, LEX_ID, NULL, TRUE)) {
+            return FALSE;
+        }
+        (void) ios_tab_add(parse_lexer->lexer_buf, TRUE);
+    }
+
+    /* num_refs reference nodes which are ignored */
+    for (i = 0; i < num_refs; i++) {
+        t = lex_scan();
+        if (!pexpect_token(t, LEX_ID, NULL, TRUE)) {
+            return FALSE;
+        }
+    }
+    /* num_ios output ids */
+    for (i = 0; i < num_ios; i++) {
+        t = lex_scan();
+        if (!pexpect_token(t, LEX_ID, NULL, TRUE)) {
+            return FALSE;
+        }
+        (void) ios_tab_add(parse_lexer->lexer_buf, FALSE);
+    }
+
+    print_ios_tabs();
+    gen_output_buffers();
+    delete_lexer(parse_lexer);
+    cleanup_pindly();
     return TRUE;
 }
 
