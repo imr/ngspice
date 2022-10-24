@@ -119,6 +119,7 @@ noinst_HEADERS = \
 	twodev.h	\
 	twomesh.h	\
 	typedefs.h	\
+	udevices.h      \
 	wordlist.h	\
 	1-f-code.h	\
 	FastNorm3.h	\
