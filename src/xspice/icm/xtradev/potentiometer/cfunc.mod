@@ -18,6 +18,7 @@ AUTHORS
 MODIFICATIONS   
 
     19 June 1992     Jeffrey P. Murray
+    22 October 2022  Holger Vogt
                                    
 
 SUMMARY
@@ -131,6 +132,14 @@ void cm_potentiometer (ARGS)
     /* Retrieve frequently used parameters... */
 
     position = PARAM(position);
+
+    /* guard against 0 or 1
+    FIXME: checking the parameter limits is not yet implemented */
+    if (position <= 0)
+       position = 1e-9;
+    else if (position >= 1)
+       position = 0.999999999;
+
     resistance = PARAM(r);
 
     /* Retrieve input voltages... */
