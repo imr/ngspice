@@ -246,6 +246,10 @@ This file describes the procedures to install ngspice from sources.
         Enables a 'make check' with strongly reduced runtime. Besides some
         regression tests only BSIM3 and BSM4 devices are checked.
 
+ --enable-shortcheck
+        Enables a 'make check' with strongly reduced runtime. Besides some
+        regression tests only BSIM3 and BSM4 devices are checked.
+
 1.5.2 Options Specific to Enable Ngspice as a shared library
 
  --with-ngshared
