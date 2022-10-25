@@ -126,7 +126,7 @@ static void print_sym_tab(SYM_TAB t, BOOL with_addr)
     if (t == NULL) { return; }
     print_sym_tab(t->left, with_addr);
     if (with_addr)
-        printf("%p --> \n", t);
+        printf("%p --> \n", (void *)t);
     printf("\"%s\"    %d  ref_count=%d", t->name, t->attribute, t->ref_count);
     if (t->alias)
         printf("  alias = \"%s\"", t->alias);
@@ -189,7 +189,7 @@ static int lexer_set_start(char *s, LEXER lx)
     pos = strstr(lx->lexer_line, s);
     if (!pos)
         return -1;
-    lx->lexer_pos = pos - &lx->lexer_line[0];
+    lx->lexer_pos = (int) (pos - &lx->lexer_line[0]);
     lx->lexer_back = lx->lexer_pos;
     return lx->lexer_pos;
 }
@@ -321,7 +321,7 @@ static int lexer_scan(LEXER lx)
         else if (lex_ident(c)) {
             int i = 0;
             while (lex_ident(c)) {
-                lx->lexer_buf[i] = c;
+                lx->lexer_buf[i] = (char) c;
                 assert(i < LEX_BUF_SZ);
                 i++;
                 c = lexer_getchar(lx);
@@ -332,7 +332,7 @@ static int lexer_scan(LEXER lx)
                 lexer_putback(lx);
             return LEX_ID;
         } else {
-            lx->lexer_buf[0] = c;
+            lx->lexer_buf[0] = (char) c;
             lx->lexer_buf[1] = '\0';
             return LEX_OTHER;
         }
@@ -346,7 +346,7 @@ static int lex_scan(void)
 
 static BOOL lex_all_digits(char *str)
 {
-    int i;
+    size_t i;
     if (!str || strlen(str) < 1)
         return FALSE;
     for (i = 0; i < strlen(str); i++) {
@@ -791,10 +791,9 @@ static void bexpr(void)
     }
 }
 
-static int bstmt(void)
+static void bstmt(void)
 {
     /* A stmt is: output_name = { expr } */
-    int end_pos;
     SYM_TAB entry = NULL;
     LEXER lx = parse_lexer;
     DS_CREATE(tname, 64);
@@ -827,7 +826,6 @@ static int bstmt(void)
 
     bexpr();
 
-    end_pos = lx->lexer_pos;
     if (ds_get_length(&d_curr_line) > 0) {
         (void) ptab_add_line(ds_get_buf(&d_curr_line), TRUE);
     }
@@ -841,7 +839,7 @@ static int bstmt(void)
     ds_free(&assign);
     ds_free(&tname);
     adepth--;
-    return end_pos;
+    return;
 }
 
 static PTABLE optimize_gen_tab(PTABLE pt)
@@ -1255,7 +1253,7 @@ static void beval_order(void)
 
 static void bparse(char *line, BOOL new_lexer)
 {
-    int start_pos = 0, end_pos = 0, stmt_num = 0;
+    int stmt_num = 0;
     LEXER lx;
     PTABLE opt_tab1 = NULL, opt_tab2 = NULL;
     DS_CREATE(stmt, LEX_BUF_SZ);
@@ -1280,18 +1278,9 @@ static void bparse(char *line, BOOL new_lexer)
         init_parse_tables();
         adepth = max_adepth = 0;
         stmt_num++;
-        start_pos = lx->lexer_pos;
         ds_clear(&stmt);
         ds_cat_str(&stmt, lx->lexer_buf);
-        end_pos = bstmt();
-
-#ifdef TRACE
-        ds_cat_mem(&stmt, &lx->lexer_line[start_pos], end_pos - start_pos);
-        printf("\n* Stmt(%d): %s\n\n", stmt_num, ds_get_buf(&stmt));
-#else
-        (void) start_pos;
-        (void) end_pos;
-#endif
+        bstmt();
 
         beval_order();
 
