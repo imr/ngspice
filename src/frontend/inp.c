@@ -1878,8 +1878,12 @@ void create_circbyline(char *line, bool reset, bool lastline)
         circarray = TREALLOC(char *, circarray, n_elem_alloc);
     }
 
-    /* Remove any leading whitespace by shifting */
     char *p_src = skip_ws(line);
+    /* return if line is empty */
+    if (*p_src == '\0')
+        return;
+
+    /* Remove any leading whitespace by shifting */
     if (p_src != line) {
         char *p_dst = line;
         char ch_cur;
