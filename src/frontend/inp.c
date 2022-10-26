@@ -1903,7 +1903,7 @@ void create_circbyline(char *line, bool reset, bool lastline)
      * free the deck. The card allocations themselves will be freed
      * elsewhere */
     if (ciprefix(".end", line) && (line[4] == '\0' || isspace_c(line[4]))) {
-        circarray[linec] = NULL; /* termiante the deck */
+        circarray[linec] = NULL; /* terminate the deck */
         inp_spsource((FILE *) NULL, FALSE, NULL, TRUE); /* process */
         tfree(circarray); /* set to empty */
         linec = 0;
