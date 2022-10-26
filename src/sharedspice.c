@@ -1085,6 +1085,22 @@ int  ngSpice_Command(char* comexec)
     return 1;
 }
 
+#ifdef XSPICE
+/* Set the input path for files loaded by code models.
+   If NULL is sent, return the current Infile_Path. */
+IMPEXP
+char *ngCM_Input_Path(const char* path)
+{
+    /* delete existing command memory */
+    if (path) {
+        txfree(Infile_Path);
+        Infile_Path = copy(path);
+    }
+    fprintf(stdout, "Note: Codel model file loading path is %s\n", Infile_Path);
+    return Infile_Path;
+}
+#endif
+
 /* Return information about a vector to the caller */
 IMPEXP
 pvector_info  ngGet_Vec_Info(char* vecname)
