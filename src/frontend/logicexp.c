@@ -1413,67 +1413,179 @@ error_return:
 }
 
 /* pindly handling */
-static PTABLE ios_in_tab = NULL;
-static PTABLE ios_out_tab = NULL;
+/* C++ with templates would generalize the different TABLEs */
+typedef struct pindly_line *PLINE;
+struct pindly_line {
+    char *in_name;
+    char *out_name;
+    char *ena_name;
+    char *delays;
+    PLINE next;
+};
 
-static void init_ios_tab(void)
+typedef struct pindly_table *PINTABLE;
+struct pindly_table {
+    PLINE first;
+    PLINE last;
+    int num_entries;
+};
+
+static PINTABLE new_pindly_table(void)
 {
-    ios_in_tab = new_parse_table();
-    ios_out_tab = new_parse_table();
+    PINTABLE pint;
+    pint = TMALLOC(struct pindly_table, 1);
+    pint->first = pint->last = NULL;
+    pint->num_entries = 0;
+    return pint;
 }
 
-static void cleanup_pindly(void)
+static int num_pindly_entries(PINTABLE pint)
 {
-    delete_parse_table(ios_in_tab);
-    delete_parse_table(ios_out_tab);
-    ios_in_tab = NULL;
-    ios_out_tab = NULL;
-}
-
-static TLINE ios_tab_add(char *ioname, BOOL is_input)
-{
-    if (is_input)
-        return add_to_parse_table(ios_in_tab, ioname, TRUE);
+    if (!pint)
+        return 0;
     else
-        return add_to_parse_table(ios_out_tab, ioname, TRUE);
+        return pint->num_entries;
 }
 
-static void print_ios_tabs(void)
+static PLINE new_pindly_line(void)
 {
-#ifdef TABLE_PRINT
-    if (ios_in_tab) {
-        printf("ios_in_tab\n");
-        table_print(ios_in_tab->first);
+    PLINE p = NULL;
+    p = TMALLOC(struct pindly_line, 1);
+    p->in_name = p->out_name = p->ena_name = p->delays = NULL;
+    return p;
+}
+
+static PLINE add_new_pindly_line(PINTABLE pint)
+{
+    PLINE p;
+    p = new_pindly_line();
+    p->next = NULL;
+    if (!pint->first) {
+        pint->first = pint->last = p;
+    } else {
+        pint->last->next = p;
+        pint->last = p;
     }
-    if (ios_out_tab) {
-        printf("ios_out_tab\n");
-        table_print(ios_out_tab->first);
-    }
+    pint->num_entries++;
+    return p;
+}
+
+static PLINE set_in_name(char *s, PLINE p)
+{
+    if (p->in_name) tfree(p->in_name);
+    p->in_name = TMALLOC(char, (strlen(s) + 1));
+    strcpy(p->in_name, s);
+    return p;
+}
+
+static PLINE set_out_name(char *s, PLINE p)
+{
+    if (p->out_name) tfree(p->out_name);
+    p->out_name = TMALLOC(char, (strlen(s) + 1));
+    strcpy(p->out_name, s);
+    return p;
+}
+
+#if 0
+static PLINE set_ena_name(char *s, PLINE p)
+{
+    if (p->ena_name) tfree(p->ena_name);
+    p->ena_name = TMALLOC(char, (strlen(s) + 1));
+    strcpy(p->ena_name, s);
+    return p;
+}
 #endif
+
+static PLINE set_delays(char *s, PLINE p)
+{
+    if (p->delays) tfree(p->delays);
+    p->delays = TMALLOC(char, (strlen(s) + 1));
+    strcpy(p->delays, s);
+    return p;
 }
 
-static void gen_output_buffers(void)
+static void delete_pindly_table(PINTABLE pint)
 {
-    TLINE tin, tout;
-    if (ios_in_tab && ios_out_tab) {
-        if (!ios_in_tab->first || !ios_out_tab->first) {
-            return;
-        } else {
-            DS_CREATE(instance, 128);
-            tin = ios_in_tab->first;
-            tout = ios_out_tab->first;
-            while (tin && tout) {
-                ds_clear(&instance);
-                ds_cat_printf(&instance, "%s %s %s d_pindly_buf",
-                   get_inst_name(), tin->line, tout->line);
-                u_add_instance(ds_get_buf(&instance));
-                tin = tin->next;
-                tout = tout->next;
-            }
-            ds_free(&instance);
-        }
+    PLINE p, next;
+    if (!pint)
+        return;
+    next = pint->first;
+    while (next) {
+        p = next;
+        if (p->in_name) tfree(p->in_name);
+        if (p->out_name) tfree(p->out_name);
+        if (p->ena_name) tfree(p->ena_name);
+        if (p->delays) tfree(p->delays);
+        next = p->next;
+        tfree(p);
+    }
+    tfree(pint);
+}
+
+static PLINE nth_pindly_entry(PINTABLE pint, int n)
+{
+    /* Entries ore from 0 to num_entries - 1 */
+    PLINE p, next;
+    int count = 0;
+    if (n < 0) return NULL;
+    if (n > pint->num_entries - 1) return NULL;
+    next = pint->first;
+    while (next) {
+        p = next;
+        if (count == n) return p;
+        count++;
+        next = p->next;
+    }
+    return NULL;
+}
+
+static PLINE find_pindly_out_name(PINTABLE pint, char *name)
+{
+    PLINE p, next;
+    if (!pint) return NULL;
+    next = pint->first;
+    while (next) {
+        p = next;
+        if (strcmp(p->out_name, name) == 0) return p;
+        next = p->next;
+    }
+    return NULL;
+}
+
+static PINTABLE pindly_tab = NULL;
+
+static void init_pindly_tab(void)
+{
+    pindly_tab = new_pindly_table();
+}
+
+static void cleanup_pindly_tab(void)
+{
+    delete_pindly_table(pindly_tab);
+    pindly_tab = NULL;
+}
+
+static void gen_pindly_buffers(void)
+{
+    DS_CREATE(dbuf, 128);
+    PLINE pline = NULL;
+
+    pline = pindly_tab->first;
+    while (pline) {
+        char *iname = NULL;
+        ds_clear(&dbuf);
+        iname = get_inst_name();
+        ds_cat_printf(&dbuf, "%s %s %s d_pindly_buf_%s", iname,
+            pline->in_name, pline->out_name, iname);
+        u_add_instance(ds_get_buf(&dbuf));
+        ds_clear(&dbuf);
+        ds_cat_printf(&dbuf, ".model d_pindly_buf_%s d_buffer%s",
+            iname, pline->delays);
+        u_add_instance(ds_get_buf(&dbuf));
+        pline = pline->next;
     }
 }
+
 static char *get_typ_estimate(char *min, char *typ, char *max)
 {
     char *tmpmax = NULL, *tmpmin = NULL;
@@ -1516,35 +1628,73 @@ static char *get_typ_estimate(char *min, char *typ, char *max)
 
 static void gen_output_models(LEXER lx)
 {
-    int val, which = 0;
-    BOOL in_delay = FALSE;
+    int val, which = 0, arrlen = 0, idx = 0, i;
+    BOOL in_delay = FALSE, expect_left = FALSE;
     float typ_max_val = 0.0, typ_val = 0.0;
     char *units;
+    BOOL tracing = FALSE;
     DS_CREATE(dmin, 16);
     DS_CREATE(dtyp, 16);
     DS_CREATE(dmax, 16);
     DS_CREATE(dtyp_max_str, 16);
     DSTRINGPTR dsp = NULL;
+    PLINE pline = NULL;
+    PLINE *pline_arr = NULL;
 
+    arrlen = num_pindly_entries(pindly_tab);
+    assert(arrlen > 0);
+    pline_arr = TMALLOC(PLINE, arrlen);
     val = lexer_set_start("pindly:", lx);
     val = lexer_scan(lx); // "pindly"
     val = lexer_scan(lx); // ':'
     val = lexer_scan(lx);
-    while (val != '\0') {
+    idx = 0;
+    while (val != '\0') { /* while val */
         if (val == LEX_ID) {
+            expect_left = FALSE;
             if (strcmp(lx->lexer_buf, "delay") == 0) {
                 ds_clear(&dmin);
                 ds_clear(&dtyp);
                 ds_clear(&dmax);
                 in_delay = TRUE;
+            } else if (strcmp(lx->lexer_buf, "setup_hold") == 0
+                || strcmp(lx->lexer_buf, "width") == 0
+                || strcmp(lx->lexer_buf, "freq") == 0
+                || strcmp(lx->lexer_buf, "general") == 0) {
+                break;
             }
-#ifdef TRACE
-            printf("ID: \"%s\"\n", lx->lexer_buf);
+            pline = find_pindly_out_name(pindly_tab, lx->lexer_buf);
+            if (pline) {
+                if (tracing) printf("Case for %s comming\n", pline->out_name);
+                pline_arr[idx++] = pline;
+            }
+            if (tracing) printf("ID: \"%s\"\n", lx->lexer_buf);
         } else if (val == LEX_OTHER) {
-            printf("OTHER: \"%s\"\n", lx->lexer_buf);
+            expect_left = FALSE;
+            if (tracing) printf("OTHER: \"%s\"\n", lx->lexer_buf);
         } else {
-            printf("TOK: %d <%c>\n", val, val);
-#endif
+            if (tracing) printf("TOK: %d <%c>\n", val, val);
+            if (val == '{') {
+                if (expect_left) {
+                    if (tracing) printf("Ready for delays\n");
+                    for (i = 0; i < idx; i++)
+                        if (tracing)
+                            printf("For output %s\n", pline_arr[i]->out_name);
+                }
+                expect_left = FALSE;
+            } else if (val == '=') {
+                expect_left = TRUE;
+            } else if (val == '}') {
+                for (i = 0; i < idx; i++) {
+                    if (tracing) printf("Finished delays for output %s\n",
+                        pline_arr[i]->out_name);
+                    pline_arr[i] = NULL;
+                }
+                idx = 0;
+                expect_left = FALSE;
+                in_delay = FALSE;
+                typ_max_val = 0.0;
+            }
         }
         if (in_delay) {
             switch (which) {
@@ -1574,21 +1724,36 @@ static void gen_output_models(LEXER lx)
                 char *s;
                 s = get_typ_estimate(ds_get_buf(&dmin),
                     ds_get_buf(&dtyp), ds_get_buf(&dmax));
-#ifdef TRACE
-                printf("\tMIN: \"%s\"", ds_get_buf(&dmin));
-                printf(" TYP: \"%s\"", ds_get_buf(&dtyp));
-                printf(" MAX: \"%s\"", ds_get_buf(&dmax));
-                if (s)
-                    printf(" ESTIMATE: \"%s\"\n", s);
-                else
-                    printf(" ESTIMATE: UNKNOWN\n");
-#endif
+                if (tracing) printf("\tMIN: \"%s\"", ds_get_buf(&dmin));
+                if (tracing) printf(" TYP: \"%s\"", ds_get_buf(&dtyp));
+                if (tracing) printf(" MAX: \"%s\"", ds_get_buf(&dmax));
+                if (s) {
+                    if (tracing) printf(" ESTIMATE: \"%s\"\n", s);
+                } else {
+                    if (tracing) printf(" ESTIMATE: UNKNOWN\n");
+                }
                 if (s) {
                     typ_val = strtof(s, &units);
                     if (typ_val > typ_max_val) {
+                        DS_CREATE(delay_string, 64);
+                        ds_clear(&delay_string);
                         ds_clear(&dtyp_max_str);
                         ds_cat_str(&dtyp_max_str, s);
                         typ_max_val = typ_val;
+                        if (ds_get_length(&dtyp_max_str) > 0) {
+                            ds_cat_printf(&delay_string,
+                                "(rise_delay=%s fall_delay=%s)",
+                                ds_get_buf(&dtyp_max_str),
+                                ds_get_buf(&dtyp_max_str));
+                        } else {
+                            ds_cat_printf(&delay_string,
+                                "(rise_delay=10ns fall_delay=10ns)");
+                        }
+                        for (i = 0; i < idx; i++) {
+                            (void) set_delays(ds_get_buf(&delay_string),
+                                pline_arr[i]);
+                        }
+                        ds_free(&delay_string);
                     }
                 }
             }
@@ -1596,21 +1761,13 @@ static void gen_output_models(LEXER lx)
             which = 0;
         }
         val = lexer_scan(lx);
-    }
-    if (ds_get_length(&dtyp_max_str) > 0) {
-        ds_clear(&dmax); // dmax was no longer in use
-        ds_cat_printf(&dmax,
-            ".model d_pindly_buf d_buffer(rise_delay=%s fall_delay=%s)",
-            ds_get_buf(&dtyp_max_str), ds_get_buf(&dtyp_max_str));
-        u_add_instance(ds_get_buf(&dmax));
-    } else {
-        u_add_instance(
-        ".model d_pindly_buf d_buffer(rise_delay=10ns fall_delay=10ns)");
-    }
+    } /* end while val */
+
     ds_free(&dmin);
     ds_free(&dtyp);
     ds_free(&dmax);
     ds_free(&dtyp_max_str);
+    tfree(pline_arr);
 }
 
 BOOL f_pindly(char *line)
@@ -1619,10 +1776,13 @@ BOOL f_pindly(char *line)
     char *endp;
     LEXER lxr;
 
+    PLINE pline = NULL;
+
 #ifdef TRACE
     printf("\nf_pindly: %s\n", line);
 #endif
-    init_ios_tab();
+    init_pindly_tab();
+
     lxr = new_lexer(line);
     current_lexer = lxr;
     t = lexer_scan(lxr); // U*
@@ -1683,7 +1843,8 @@ BOOL f_pindly(char *line)
     for (i = 0; i < num_ios; i++) {
         t = lexer_scan(lxr);
         if (!expect_token(t, LEX_ID, NULL, TRUE)) goto error_return;
-        (void) ios_tab_add(lxr->lexer_buf, TRUE);
+        pline = add_new_pindly_line(pindly_tab);
+        (void) set_in_name(lxr->lexer_buf, pline);
     }
 
     /* num_refs reference nodes which are ignored */
@@ -1692,23 +1853,27 @@ BOOL f_pindly(char *line)
         if (!expect_token(t, LEX_ID, NULL, TRUE)) goto error_return;
     }
     /* num_ios output ids */
+    pline = NULL;
     for (i = 0; i < num_ios; i++) {
         t = lexer_scan(lxr);
         if (!expect_token(t, LEX_ID, NULL, TRUE)) goto error_return;
-        (void) ios_tab_add(lxr->lexer_buf, FALSE);
+        if (i == 0)
+            pline = nth_pindly_entry(pindly_tab, i);
+        else
+            pline = pline->next;
+        (void) set_out_name(lxr->lexer_buf, pline);
     }
 
-    print_ios_tabs();
-    gen_output_buffers();
     gen_output_models(lxr);
+    gen_pindly_buffers();
     delete_lexer(lxr);
-    cleanup_pindly();
+    cleanup_pindly_tab();
     current_lexer = NULL;
     return TRUE;
 
 error_return:
     delete_lexer(lxr);
-    cleanup_pindly();
+    cleanup_pindly_tab();
     current_lexer = NULL;
     return FALSE;
 }
