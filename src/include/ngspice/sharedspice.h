@@ -365,12 +365,16 @@ Commands are executed immediately */
 IMPEXP
 int  ngSpice_Command(char* command);
 
-
 /* get info about a vector */
 IMPEXP
 pvector_info ngGet_Vec_Info(char* vecname);
 
 #ifdef XSPICE
+/* Set the input path for files loaded by code models.
+   If NULL is sent, return the current Infile_Path. */
+IMPEXP
+char* ngCM_Input_Path(const char* path);
+
 /* get info about the event node vector */
 IMPEXP
 pevt_shared_data ngGet_Evt_NodeInfo(char* nodename);
