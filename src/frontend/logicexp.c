@@ -1584,6 +1584,7 @@ static void gen_pindly_buffers(void)
         u_add_instance(ds_get_buf(&dbuf));
         pline = pline->next;
     }
+    ds_free(&dbuf);
 }
 
 static char *get_typ_estimate(char *min, char *typ, char *max)
@@ -1629,10 +1630,9 @@ static char *get_typ_estimate(char *min, char *typ, char *max)
 static void gen_output_models(LEXER lx)
 {
     int val, which = 0, arrlen = 0, idx = 0, i;
-    BOOL in_delay = FALSE, expect_left = FALSE;
+    BOOL in_delay = FALSE;
     float typ_max_val = 0.0, typ_val = 0.0;
     char *units;
-    BOOL tracing = FALSE;
     DS_CREATE(dmin, 16);
     DS_CREATE(dtyp, 16);
     DS_CREATE(dmax, 16);
@@ -1651,7 +1651,6 @@ static void gen_output_models(LEXER lx)
     idx = 0;
     while (val != '\0') { /* while val */
         if (val == LEX_ID) {
-            expect_left = FALSE;
             if (strcmp(lx->lexer_buf, "delay") == 0) {
                 ds_clear(&dmin);
                 ds_clear(&dtyp);
@@ -1665,36 +1664,15 @@ static void gen_output_models(LEXER lx)
             }
             pline = find_pindly_out_name(pindly_tab, lx->lexer_buf);
             if (pline) {
-                if (tracing) printf("Case for %s comming\n", pline->out_name);
                 pline_arr[idx++] = pline;
             }
-            if (tracing) printf("ID: \"%s\"\n", lx->lexer_buf);
-        } else if (val == LEX_OTHER) {
-            expect_left = FALSE;
-            if (tracing) printf("OTHER: \"%s\"\n", lx->lexer_buf);
-        } else {
-            if (tracing) printf("TOK: %d <%c>\n", val, val);
-            if (val == '{') {
-                if (expect_left) {
-                    if (tracing) printf("Ready for delays\n");
-                    for (i = 0; i < idx; i++)
-                        if (tracing)
-                            printf("For output %s\n", pline_arr[i]->out_name);
-                }
-                expect_left = FALSE;
-            } else if (val == '=') {
-                expect_left = TRUE;
-            } else if (val == '}') {
-                for (i = 0; i < idx; i++) {
-                    if (tracing) printf("Finished delays for output %s\n",
-                        pline_arr[i]->out_name);
-                    pline_arr[i] = NULL;
-                }
-                idx = 0;
-                expect_left = FALSE;
-                in_delay = FALSE;
-                typ_max_val = 0.0;
+        } else if (val == '}') {
+            for (i = 0; i < idx; i++) {
+                pline_arr[i] = NULL;
             }
+            idx = 0;
+            in_delay = FALSE;
+            typ_max_val = 0.0;
         }
         if (in_delay) {
             switch (which) {
@@ -1724,14 +1702,6 @@ static void gen_output_models(LEXER lx)
                 char *s;
                 s = get_typ_estimate(ds_get_buf(&dmin),
                     ds_get_buf(&dtyp), ds_get_buf(&dmax));
-                if (tracing) printf("\tMIN: \"%s\"", ds_get_buf(&dmin));
-                if (tracing) printf(" TYP: \"%s\"", ds_get_buf(&dtyp));
-                if (tracing) printf(" MAX: \"%s\"", ds_get_buf(&dmax));
-                if (s) {
-                    if (tracing) printf(" ESTIMATE: \"%s\"\n", s);
-                } else {
-                    if (tracing) printf(" ESTIMATE: UNKNOWN\n");
-                }
                 if (s) {
                     typ_val = strtof(s, &units);
                     if (typ_val > typ_max_val) {
