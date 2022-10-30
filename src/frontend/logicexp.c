@@ -3,6 +3,8 @@
 
     Convert PSpice LOGICEXP logic expressions into XSPICE gates.
     Extract timing delay estimates from PINDLY statements.
+
+    Reference: PSpice A/D Reference Guide version 16.6
 */
 #include <stdio.h>
 #include <stdlib.h>
@@ -1282,6 +1284,13 @@ static void bparse(char *line, BOOL new_lexer)
 }
 /* End of logicexp parser */
 
+/* Start of f_logicexp which is called from udevices.c 
+   See the PSpice reference which describes the LOGICEXP statement syntax.
+   Combinational gates are generated and usually have zero delays.
+   The PINDLY statements generate buffers and tristate buffers
+   which drive the primary outputs from the LOGICEXP outputs.
+   These buffers have their delays set.
+*/
 static LEXER current_lexer = NULL;
 
 static BOOL expect_token(
@@ -1385,7 +1394,13 @@ error_return:
     return FALSE;
 }
 
-/* pindly handling */
+/* Start of f_pindly which is called from udevices.c 
+   See the PSpice reference which describes the PINDLY statement syntax.
+   Note that only two sections, PINDLY: and TRISTATE:, are considered.
+   Typical delays are estimated from the DELAY(...) functions.
+   XSPICE does not have the variety of delays that PSpice supports.
+   Output buffers and tristate buffers are generated.
+*/
 /* C++ with templates would generalize the different TABLEs */
 typedef struct pindly_line *PLINE;
 struct pindly_line {
@@ -1632,6 +1647,7 @@ static char *get_typ_estimate(char *min, char *typ, char *max)
 
 static char *typical_estimate(char *delay_str)
 {
+    /* Input string (t1,t2,t2) */
     int which = 0;
     size_t i;
     char *s;
@@ -1642,8 +1658,7 @@ static char *typical_estimate(char *delay_str)
     ds_clear(&dmin);
     ds_clear(&dtyp);
     ds_clear(&dmax);
-    for (i = 0; i < strlen(delay_str) - 1; i++) {
-        if (i == 0) continue;
+    for (i = 1; i < strlen(delay_str) - 1; i++) {
         if (delay_str[i] == ',') {
             which++;
             continue;
