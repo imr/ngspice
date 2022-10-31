@@ -1241,79 +1241,6 @@ translate(struct card *deck, char *formal, char *actual, char *scname, const cha
         case '$':
             continue;
 
-#ifdef OSDI
-        case 'a':
-            /* translate the instance name according to normal rules */
-            name = gettok(&s);
-
-            translate_inst_name(&buffer, scname, name, NULL);
-            bxx_putc(&buffer, ' ');
-
-            /* Now translate the nodes, looking ahead one token to recognize */
-            /* when we reach the model name which should not be translated   */
-            /* here.                                                         */
-
-            next_name = gettok(&s);
-
-            for (;;) {
-                /* rotate the tokens and get the the next one */
-                if (name)
-                    tfree(name);
-                name = next_name;
-                next_name = gettok(&s);
-
-                /* if next token is NULL, name holds the model name, so exit */
-                if (next_name == NULL)
-                    break;
-
-                /* Process the token in name.  If it is special, then don't */
-                /* translate it.                                            */
-                switch (*name) {
-                case '[':
-                case ']':
-                case '~':
-                    bxx_put_cstring(&buffer, name);
-                    break;
-
-                case '%':
-                    bxx_putc(&buffer, '%');
-                    /* don't translate the port type identifier */
-                    if (name)
-                        tfree(name);
-                    name = next_name;
-                    /* vname requires instance translation of token following */
-                    if (eq(name, "vnam"))
-                        got_vnam = TRUE;
-                    next_name = gettok(&s);
-                    bxx_put_cstring(&buffer, name);
-                    break;
-
-                default:
-                    if (got_vnam) {
-                        /* after %vnam an instance name is following */
-                        translate_inst_name(&buffer, scname, name, NULL);
-                        got_vnam = FALSE;
-                    }
-                    else {
-                        /* must be a node name at this point, so translate it */
-                        translate_node_name(&buffer, scname, name, NULL);
-                    }
-                    break;
-
-                }
-                bxx_putc(&buffer, ' ');
-            }
-
-            /* copy in the last token, which is the model name */
-            if (name) {
-                bxx_put_cstring(&buffer, name);
-                tfree(name);
-            }
-
-            break; /* case 'a' */
-
-
-#endif
 
 #ifdef XSPICE
             /*===================  case A  ====================*/
@@ -1511,6 +1438,10 @@ translate(struct card *deck, char *formal, char *actual, char *scname, const cha
             /* FIXME anothet hack: if no models found for m devices, set number of nodes to 4 */
             if (!modnames && *(c->line) == 'm')
                 nnodes = get_number_terminals(c->line);
+#ifdef OSDI
+            else if (*(c->line) == 'a')
+                nnodes = get_number_terminals(c->line);
+#endif
             else
                 nnodes = numnodes(c->line, subs, modnames);
             while (--nnodes >= 0) {
@@ -1761,8 +1692,11 @@ numnodes(const char *line, struct subs *subs, wordlist const *modnames)
     /* Paolo Nenzi Jan-2001                                              */
 
     /* If model names equal node names, this code will fail! */
-
+#ifdef OSDI
+    if ((c == 'a') ||(c == 'm') || (c == 'p') || (c == 'q') || (c == 'd')) { /* IF this is a mos, cpl, bjt or diode */
+#else
     if ((c == 'm') || (c == 'p') || (c == 'q') || (c == 'd')) { /* IF this is a mos, cpl, bjt or diode */
+#endif
         char *s = nexttok(line);       /* Skip the instance name */
         int gotit = 0;
         int i = 0;
@@ -2335,7 +2269,7 @@ inp_numnodes(char c)
         return (3);
 #ifdef OSDI
     case 'a':
-        return (5);
+        return (7);
 #endif
 
     default:
