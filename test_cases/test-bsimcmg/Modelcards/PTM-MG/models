@@ -1,0 +1,191 @@
+*************ITRS 2011 aligned PTM-MG FinFET models (for Public Release)***********
+* PTM-MG FET Models ITRS Version 2.0 
+* NOTES:
+* This is the beta version of the ITRS 2011 aligned MG (multi-gate) models.
+* The parameters are based on BSIM-CMG 105.03 models for bulk FinFET devices.
+* Parameters are set from ITRS 2011 PIDS tables.
+* LSTP nodes in the models target Ioff=0.1 nA/um where Weff=2*fin_height+fin_width.
+* HP nodes in the models target Ioff=100 nA/um.
+
+*
+* USAGE:
+* Point to the models library file with the tags: PTM<NODE><TYPE>
+* where <NODE> = 20 / 16 / 14 / 10 / 7
+* and <TYPE> = lstp / hp
+* Example: .lib '..PATH../models/itrs_rev2/models' ptm20lstp
+* This will call the FETs for 20nm LSTP node.
+*
+* Transistor calls can be made as follows:
+* The param.inc file contains variables to calculate Effective Width and provide
+* nominal supply voltage. The included variables are:
+* vdd = supply voltage
+* fin_height = Height of the Fin (HFIN)
+* fin_width = Thickness of the Fin (TFIN)
+* lg = Gate Length
+***********************************************************************************
+.LIB ptm20lstp
+
+.subckt nfet d g s x l=lg nfin=1
+.include '../modelfiles/lstp/20nfet.pm'
+mnfet d g s x nfet L=l NFIN=nfin
+.ends nfet
+
+.subckt pfet d g s x l=lg nfin=1
+.include '../modelfiles/lstp/20pfet.pm'
+mpfet d g s x pfet L=l NFIN=nfin
+.ends pfet
+
+.lib '../param.inc' 20nm
+
+.ENDL ptm20lstp
+***********************************************************************************
+.LIB ptm16lstp
+
+.subckt nfet d g s x l=lg nfin=1
+.include '../modelfiles/lstp/16nfet.pm'
+mnfet d g s x nfet L=l NFIN=nfin
+.ends nfet
+
+.subckt pfet d g s x l=lg nfin=1
+.include '../modelfiles/lstp/16pfet.pm'
+mpfet d g s x pfet L=l NFIN=nfin
+.ends pfet
+
+.lib '../param.inc' 16nm
+
+.ENDL ptm16lstp
+***********************************************************************************
+.LIB ptm14lstp
+
+.subckt nfet d g s x l=lg nfin=1
+.include '../modelfiles/lstp/14nfet.pm'
+mnfet d g s x nfet L=l NFIN=nfin
+.ends nfet
+
+.subckt pfet d g s x l=lg nfin=1
+.include '../modelfiles/lstp/14pfet.pm'
+mpfet d g s x pfet L=l NFIN=nfin
+.ends pfet
+
+.lib '../param.inc' 14nm
+
+.ENDL ptm14lstp
+***********************************************************************************
+.LIB ptm10lstp
+
+.subckt nfet d g s x l=lg nfin=1
+.include '../modelfiles/lstp/10nfet.pm'
+mnfet d g s x nfet L=l NFIN=nfin
+.ends nfet
+
+.subckt pfet d g s x l=lg nfin=1
+.include '../modelfiles/lstp/10pfet.pm'
+mpfet d g s x pfet L=l NFIN=nfin
+.ends pfet
+
+.lib '../param.inc' 10nm
+
+.ENDL ptm10lstp
+***********************************************************************************
+.LIB ptm7lstp
+
+.subckt nfet d g s x l=lg nfin=1
+.include '../modelfiles/lstp/7nfet.pm'
+mnfet d g s x nfet L=l NFIN=nfin
+.ends nfet
+
+.subckt pfet d g s x l=lg nfin=1
+.include '../modelfiles/lstp/7pfet.pm'
+mpfet d g s x pfet L=l NFIN=nfin
+.ends pfet
+
+.lib '../param.inc' 7nm
+
+.ENDL ptm7lstp
+
+***********************************************************************************
+.LIB ptm20hp
+
+.subckt nfet d g s x l=lg nfin=1
+.include '../modelfiles/hp/20nfet.pm'
+mnfet d g s x nfet L=l NFIN=nfin
+.ends nfet
+
+.subckt pfet d g s x l=lg nfin=1
+.include '../modelfiles/hp/20pfet.pm'
+mpfet d g s x pfet L=l NFIN=nfin
+.ends pfet
+
+.lib '../param.inc' 20nm
+
+.ENDL ptm20hp
+
+***********************************************************************************
+.LIB ptm16hp
+
+.subckt nfet d g s x l=lg nfin=1
+.include '../modelfiles/hp/16nfet.pm'
+mnfet d g s x nfet L=l NFIN=nfin
+.ends nfet
+
+.subckt pfet d g s x l=lg nfin=1
+.include '../modelfiles/hp/16pfet.pm'
+mpfet d g s x pfet L=l NFIN=nfin
+.ends pfet
+
+.lib '../param.inc' 16nm
+
+.ENDL ptm16hp
+
+***********************************************************************************
+.LIB ptm14hp
+
+.subckt nfet d g s x l=lg nfin=1
+.include '../modelfiles/hp/14nfet.pm'
+mnfet d g s x nfet L=l NFIN=nfin
+.ends nfet
+
+.subckt pfet d g s x l=lg nfin=1
+.include '../modelfiles/hp/14pfet.pm'
+mpfet d g s x pfet L=l NFIN=nfin
+.ends pfet
+
+.lib '../param.inc' 14nm
+
+.ENDL ptm14hp
+
+***********************************************************************************
+.LIB ptm10hp
+
+.subckt nfet d g s x l=lg nfin=1
+.include '../modelfiles/hp/10nfet.pm'
+mnfet d g s x nfet L=l NFIN=nfin
+.ends nfet
+
+.subckt pfet d g s x l=lg nfin=1
+.include '../modelfiles/hp/10pfet.pm'
+mpfet d g s x pfet L=l NFIN=nfin
+.ends pfet
+
+.lib '../param.inc' 10nm
+
+.ENDL ptm10hp
+
+***********************************************************************************
+.LIB ptm7hp
+
+.subckt nfet d g s x l=lg nfin=1
+.include '../modelfiles/hp/7nfet.pm'
+mnfet d g s x nfet L=l NFIN=nfin
+.ends nfet
+
+.subckt pfet d g s x l=lg nfin=1
+.include '../modelfiles/hp/7pfet.pm'
+mpfet d g s x pfet L=l NFIN=nfin
+.ends pfet
+
+.lib '../param.inc' 7nm
+
+.ENDL ptm7hp
+***********************************************************************************
+
