@@ -2055,16 +2055,6 @@ static void inp_chk_for_multi_in_vcvs(struct card *c, int *line_number)
                         (fcn_b = strstr(line, "nor(")) != NULL ||
                         (fcn_b = strstr(line, "or(")) != NULL) &&
                     isspace_c(fcn_b[-1])) {
-                char keep, *comma_ptr, *xy_values1[5], *xy_values2[5];
-                char *out_str, *ctrl_nodes_str,
-                        *xy_values1_b = NULL, *ref_str, *fcn_name,
-                        *fcn_e = NULL, *out_b, *out_e, *ref_e;
-                char *m_instance, *m_model;
-                char *xy_values2_b = NULL, *xy_values1_e = NULL,
-                     *ctrl_nodes_b = NULL, *ctrl_nodes_e = NULL;
-                int xy_count1, xy_count2;
-                bool ok = FALSE;
-
 #ifndef XSPICE
                 fprintf(stderr,
                         "\n"
@@ -2076,7 +2066,16 @@ static void inp_chk_for_multi_in_vcvs(struct card *c, int *line_number)
                         "instructions\n",
                         *line_number, line);
                 controlled_exit(EXIT_BAD);
-#endif
+#else
+                char keep, *comma_ptr, *xy_values1[5], *xy_values2[5];
+                char *out_str, *ctrl_nodes_str,
+                        *xy_values1_b = NULL, *ref_str, *fcn_name,
+                        *fcn_e = NULL, *out_b, *out_e, *ref_e;
+                char *m_instance, *m_model;
+                char *xy_values2_b = NULL, *xy_values1_e = NULL,
+                     *ctrl_nodes_b = NULL, *ctrl_nodes_e = NULL;
+                int xy_count1, xy_count2;
+                bool ok = FALSE;
 
                 do {
                     ref_e = skip_non_ws(line);
@@ -2177,6 +2176,7 @@ static void inp_chk_for_multi_in_vcvs(struct card *c, int *line_number)
                 *c->line = '*';
                 c = insert_new_line(c, m_instance, (*line_number)++, c->linenum_orig);
                 c = insert_new_line(c, m_model, (*line_number)++, c->linenum_orig);
+#endif
             }
         }
     }
@@ -2646,10 +2646,12 @@ static void get_subckts_for_subckt(struct card *start_card, char *subckt_name,
                 char *inst_subckt_name = get_instance_subckt(line);
                 nlist_adjoin(used_subckts, inst_subckt_name);
             }
+#ifndef OSDI
             else if (*line == 'a') {
                 char *model_name = get_adevice_model_name( line, card->level);
                 nlist_adjoin(used_models, model_name);
             }
+#endif // !OSDI
             else if (has_models) {
                 int num_terminals = get_number_terminals(line);
                 if (num_terminals != 0) {
@@ -2732,10 +2734,12 @@ void comment_out_unused_subckt_models(struct card *start_card)
                 char *subckt_name = get_instance_subckt(line);
                 nlist_adjoin(used_subckts, subckt_name);
             }
+#ifndef OSDI
             else if (*line == 'a') {
                 char *model_name = get_adevice_model_name(line, card->level);
                 nlist_adjoin(used_models, model_name);
             }
+#endif // !OSDI
             else if (has_models) {
                 /* This is a preliminary version, until we have found a
                    reliable method to detect the model name out of the input
@@ -4725,6 +4729,13 @@ int get_number_terminals(char *c)
             }
             break;
         }
+#ifdef OSDI
+        case 'a':
+        {
+            return 5;
+            break;
+        }
+#endif
         default:
             return 0;
             break;
