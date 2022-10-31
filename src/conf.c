@@ -12,7 +12,7 @@
 #endif
 
 char	Spice_Version[] = PACKAGE_VERSION;
-char	Spice_Notice[] = "Please file your bug-reports at " BUG_ADDRESS;
+char	Spice_Notice[] = "This build contains only: BJT, MOS1, Ind, Cap, Res, Current & voltage sources!";
 #ifndef _MSC_VER
 char	Spice_Build_Date[] = NGSPICEBUILDDATE;
 #else

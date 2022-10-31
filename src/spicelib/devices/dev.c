@@ -74,156 +74,27 @@ extern struct coreInfo_t  coreInfo; /* cmexport.c */
 #endif
 
 
-#include "asrc/asrcitf.h"
 #include "bjt/bjtitf.h"
-#include "bsim1/bsim1itf.h"
-#include "bsim2/bsim2itf.h"
-#include "bsim3/bsim3itf.h"
-#include "bsim3v0/bsim3v0itf.h"
-#include "bsim3v1/bsim3v1itf.h"
-#include "bsim3v32/bsim3v32itf.h"
-#include "bsim4/bsim4itf.h"
-#include "bsim4v5/bsim4v5itf.h"
-#include "bsim4v6/bsim4v6itf.h"
-#include "bsim4v7/bsim4v7itf.h"
-#include "bsim3soi_pd/b3soipditf.h"
-#include "bsim3soi_fd/b3soifditf.h"
-#include "bsim3soi_dd/b3soidditf.h"
-#include "bsimsoi/b4soiitf.h"
 #include "cap/capitf.h"
-#include "cccs/cccsitf.h"
-#include "ccvs/ccvsitf.h"
-#include "csw/cswitf.h"
 #include "dio/dioitf.h"
-#include "hfet1/hfetitf.h"
-#include "hfet2/hfet2itf.h"
-#include "hicum2/hicum2itf.h"
-#include "hisim2/hsm2itf.h"
-#include "hisimhv1/hsmhvitf.h"
-#include "hisimhv2/hsmhv2itf.h"
 #include "ind/inditf.h"
 #include "isrc/isrcitf.h"
-#include "jfet/jfetitf.h"
-#include "jfet2/jfet2itf.h"
-#include "ltra/ltraitf.h"
-#include "mes/mesitf.h"
-#include "mesa/mesaitf.h"
 #include "mos1/mos1itf.h"
-#include "mos2/mos2itf.h"
-#include "mos3/mos3itf.h"
-#include "mos6/mos6itf.h"
-#include "mos9/mos9itf.h"
-#include "cpl/cplitf.h"
 #include "res/resitf.h"
-#include "soi3/soi3itf.h"
-#include "sw/switf.h"
-#include "tra/traitf.h"
-#include "txl/txlitf.h"
-#include "urc/urcitf.h"
-#include "vbic/vbicitf.h"
-#include "vccs/vccsitf.h"
-#include "vcvs/vcvsitf.h"
 #include "vsrc/vsrcitf.h"
-#include "vdmos/vdmositf.h"
-#ifdef ADMS
-#include "adms/hicum0/hicum0itf.h"
-#include "adms/mextram/bjt504titf.h"
-#include "adms/ekv/ekvitf.h"
-#include "adms/psp102/psp102itf.h"
-#include "adms/psp103/psp103itf.h"
-#include "adms/bsimbulk/bsimbulkitf.h"
-#include "adms/bsimcmg/bsimcmgitf.h"
-#include "adms/r2_cmc/r2_cmcitf.h"
-#endif
-#ifdef CIDER
-/* Numerical devices (Cider integration) */
-#include "nbjt/nbjtitf.h"
-#include "nbjt2/nbjt2itf.h"
-#include "numd/numditf.h"
-#include "numd2/numd2itf.h"
-#include "numos/numositf.h"
-#endif
-#ifdef NDEV
-#include "ndev/ndevitf.h"
-#endif
 
 static SPICEdev *(*static_devices[])(void) = {
     /* URC device MUST precede both resistors and capacitors */
-    get_urc_info,
-    get_asrc_info,
     get_bjt_info,
-    get_bsim1_info,
-    get_bsim2_info,
-    get_bsim3_info,
-    get_bsim3v0_info,
-    get_bsim3v1_info,
-    get_bsim3v32_info,
-    get_b4soi_info,
-    get_bsim4_info,
-    get_bsim4v5_info,
-    get_bsim4v6_info,
-    get_bsim4v7_info,
-    get_b3soipd_info,
-    get_b3soifd_info,
-    get_b3soidd_info,
     get_cap_info,
-    get_cccs_info,
-    get_ccvs_info,
-    get_cpl_info,
-    get_csw_info,
     get_dio_info,
-    get_hfeta_info,
-    get_hfet2_info,
-    get_hicum_info,
-    get_hsm2_info,
-    get_hsmhv_info,
-    get_hsmhv2_info,
     get_ind_info,
     get_mut_info,
     get_isrc_info,
-    get_jfet_info,
-    get_jfet2_info,
-    get_ltra_info,
-    get_mes_info,
-    get_mesa_info,
     get_mos1_info,
-    get_mos2_info,
-    get_mos3_info,
-    get_mos6_info,
-    get_mos9_info,
     get_res_info,
-    get_soi3_info,
-    get_sw_info,
-    get_tra_info,
-    get_txl_info,
-    get_vbic_info,
-    get_vccs_info,
-    get_vcvs_info,
     get_vsrc_info,
-    get_vdmos_info,
 
-#ifdef CIDER
-    get_nbjt_info,
-    get_nbjt2_info,
-    get_numd_info,
-    get_numd2_info,
-    get_numos_info,
-#endif
-
-#ifdef ADMS
-    (SPICEdev *(*)(void)) get_hicum0_info,
-    (SPICEdev *(*)(void)) get_bjt504t_info,
-    (SPICEdev *(*)(void)) get_ekv_info,
-    (SPICEdev *(*)(void)) get_psp102_info,
-    (SPICEdev *(*)(void)) get_psp103_info,
-    (SPICEdev *(*)(void)) get_bsimbulk_info,
-    (SPICEdev *(*)(void)) get_bsimcmg_info,
-    (SPICEdev *(*)(void)) get_r2_cmc_info,
-#endif
-
-#ifdef NDEV
-    get_ndev_info,
-#endif
 
 };
 

@@ -1,15 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
-SUBDIRS = include/ngspice include/cppduals/duals misc maths frontend spicelib
-DIST_SUBDIRS = include/ngspice include/cppduals/duals misc maths frontend spicelib xspice ciderlib
-
-if XSPICE_WANTED
-SUBDIRS += xspice
-endif
-
-if CIDER_WANTED
-SUBDIRS += ciderlib
-endif
+SUBDIRS = include/ngspice misc maths frontend spicelib
+DIST_SUBDIRS = include/ngspice misc maths frontend spicelib
 
 if !TCL_MODULE
 if !SHARED_MODULE
@@ -43,56 +35,13 @@ initdata_DATA += devload devaxis ciderinit
 endif
 
 DYNAMIC_DEVICELIBS =					\
-	spicelib/devices/asrc/libasrc.la		\
 	spicelib/devices/bjt/libbjt.la			\
-	spicelib/devices/bsim1/libbsim1.la		\
-	spicelib/devices/bsim2/libbsim2.la		\
-	spicelib/devices/bsim3/libbsim3.la		\
-	spicelib/devices/bsim3v0/libbsim3v0.la		\
-	spicelib/devices/bsim3v1/libbsim3v1.la		\
-	spicelib/devices/bsim3v32/libbsim3v32.la	\
-	spicelib/devices/bsim4/libbsim4.la		\
-	spicelib/devices/bsim4v5/libbsim4v5.la		\
-	spicelib/devices/bsim4v6/libbsim4v6.la		\
-	spicelib/devices/bsim4v7/libbsim4v7.la		\
 	spicelib/devices/cap/libcap.la			\
-	spicelib/devices/bsim3soi_pd/libbsim3soipd.la	\
-	spicelib/devices/bsim3soi_fd/libbsim3soifd.la	\
-	spicelib/devices/bsim3soi_dd/libbsim3soidd.la	\
-	spicelib/devices/bsimsoi/libbsim4soi.la		\
-	spicelib/devices/cccs/libcccs.la		\
-	spicelib/devices/ccvs/libccvs.la		\
-	spicelib/devices/cpl/libcpl.la			\
-	spicelib/devices/csw/libcsw.la			\
 	spicelib/devices/dio/libdio.la			\
 	spicelib/devices/ind/libind.la			\
 	spicelib/devices/isrc/libisrc.la		\
-	spicelib/devices/hfet1/libhfet.la		\
-	spicelib/devices/hfet2/libhfet2.la		\
-	spicelib/devices/hicum2/libhicum2.la		\
-	spicelib/devices/hisim2/libhisim2.la		\
-	spicelib/devices/hisimhv1/libhisimhv1.la	\
-	spicelib/devices/hisimhv2/libhisimhv2.la	\
-	spicelib/devices/jfet/libjfet.la		\
-	spicelib/devices/jfet2/libjfet2.la		\
-	spicelib/devices/ltra/libltra.la		\
-	spicelib/devices/mes/libmes.la			\
-	spicelib/devices/mesa/libmesa.la		\
 	spicelib/devices/mos1/libmos1.la		\
-	spicelib/devices/mos2/libmos2.la		\
-	spicelib/devices/mos3/libmos3.la		\
-	spicelib/devices/mos6/libmos6.la		\
-	spicelib/devices/mos9/libmos9.la		\
 	spicelib/devices/res/libres.la			\
-	spicelib/devices/soi3/libsoi3.la		\
-	spicelib/devices/sw/libsw.la			\
-	spicelib/devices/txl/libtxl.la			\
-	spicelib/devices/tra/libtra.la			\
-	spicelib/devices/urc/liburc.la			\
-	spicelib/devices/vbic/libvbic.la		\
-	spicelib/devices/vccs/libvccs.la		\
-	spicelib/devices/vcvs/libvcvs.la		\
-	spicelib/devices/vdmos/libvdmos.la		\
 	spicelib/devices/vsrc/libvsrc.la		\
 	@VLADEV@
 
@@ -133,47 +82,15 @@ ngspice_LDADD += \
 	spicelib/devices/dev.lo \
 	$(DYNAMIC_DEVICELIBS)
 
-if NDEV_WANTED
-ngspice_LDADD += spicelib/devices/ndev/libndev.la
-endif
-
-if NUMDEV_WANTED
-ngspice_LDADD += \
-	spicelib/devices/nbjt/libnbjt.la   \
-	spicelib/devices/nbjt2/libnbjt2.la \
-	spicelib/devices/numd/libnumd.la   \
-	spicelib/devices/numd2/libnumd2.la \
-	spicelib/devices/numos/libnumos.la
-endif
-
 ngspice_LDADD += \
 	spicelib/analysis/libckt.la \
 	spicelib/devices/libdev.la
-
-if XSPICE_WANTED
-ngspice_LDADD += \
-	xspice/cm/libcmxsp.la \
-	xspice/mif/libmifxsp.la \
-	xspice/evt/libevtxsp.la \
-	xspice/enh/libenhxsp.la \
-	xspice/ipc/libipcxsp.la \
-	xspice/idn/libidnxsp.la \
-	@XSPICEDLLIBS@
-endif
 
 ngspice_LDADD += \
 	frontend/parser/libparser.la \
 	frontend/numparam/libnumparam.la \
 	frontend/trannoise/libtrannoise.la \
 	spicelib/parser/libinp.la
-
-if CIDER_WANTED
-ngspice_LDADD += \
-	ciderlib/twod/libcidertwod.la     \
-	ciderlib/oned/libcideroned.la     \
-	ciderlib/input/libciderinput.la   \
-	ciderlib/support/libcidersuprt.la
-endif
 
 ngspice_LDADD += \
 	maths/deriv/libderiv.la \
@@ -421,41 +338,15 @@ libspice_la_LIBADD += \
 	spicelib/devices/ndev/libndev.la
 endif
 
-if NUMDEV_WANTED
-libspice_la_LIBADD += \
-	spicelib/devices/nbjt/libnbjt.la   \
-	spicelib/devices/nbjt2/libnbjt2.la \
-	spicelib/devices/numd/libnumd.la   \
-	spicelib/devices/numd2/libnumd2.la \
-	spicelib/devices/numos/libnumos.la
-endif
-
 libspice_la_LIBADD += \
 	spicelib/analysis/libckt.la \
 	spicelib/devices/libdev.la
-
-if XSPICE_WANTED
-libspice_la_LIBADD += \
-	xspice/evt/libevtxsp.la \
-	xspice/enh/libenhxsp.la \
-	xspice/ipc/libipcxsp.la \
-	xspice/idn/libidnxsp.la \
-	@XSPICEDLLIBS@
-endif
 
 libspice_la_LIBADD += \
 	frontend/parser/libparser.la \
 	frontend/numparam/libnumparam.la \
 	frontend/trannoise/libtrannoise.la \
 	spicelib/parser/libinp.la
-
-if CIDER_WANTED
-libspice_la_LIBADD += \
-	ciderlib/twod/libcidertwod.la     \
-	ciderlib/oned/libcideroned.la     \
-	ciderlib/input/libciderinput.la   \
-	ciderlib/support/libcidersuprt.la
-endif
 
 libspice_la_LIBADD += \
 	maths/deriv/libderiv.la \
@@ -526,55 +417,18 @@ libngspice_la_LIBADD = \
 libngspice_la_LIBADD += \
 	frontend/plotting/libplotting.la
 
-if XSPICE_WANTED
-libngspice_la_LIBADD += \
-	xspice/cm/libcmxsp.la \
-	xspice/mif/libmifxsp.la
-endif
-
 libngspice_la_LIBADD += \
 	$(DYNAMIC_DEVICELIBS)
-
-if NDEV_WANTED
-libngspice_la_LIBADD += \
-	spicelib/devices/ndev/libndev.la
-endif
-
-if NUMDEV_WANTED
-libngspice_la_LIBADD += \
-	spicelib/devices/nbjt/libnbjt.la   \
-	spicelib/devices/nbjt2/libnbjt2.la \
-	spicelib/devices/numd/libnumd.la   \
-	spicelib/devices/numd2/libnumd2.la \
-	spicelib/devices/numos/libnumos.la
-endif
 
 libngspice_la_LIBADD += \
 	spicelib/analysis/libckt.la \
 	spicelib/devices/libdev.la
-
-if XSPICE_WANTED
-libngspice_la_LIBADD += \
-	xspice/evt/libevtxsp.la \
-	xspice/enh/libenhxsp.la \
-	xspice/ipc/libipcxsp.la \
-	xspice/idn/libidnxsp.la \
-	@XSPICEDLLIBS@
-endif
 
 libngspice_la_LIBADD += \
 	frontend/parser/libparser.la \
 	frontend/numparam/libnumparam.la \
 	frontend/trannoise/libtrannoise.la \
 	spicelib/parser/libinp.la
-
-if CIDER_WANTED
-libngspice_la_LIBADD += \
-	ciderlib/twod/libcidertwod.la     \
-	ciderlib/oned/libcideroned.la     \
-	ciderlib/input/libciderinput.la   \
-	ciderlib/support/libcidersuprt.la
-endif
 
 libngspice_la_LIBADD += \
 	maths/deriv/libderiv.la \

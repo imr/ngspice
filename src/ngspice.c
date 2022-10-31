@@ -28,7 +28,7 @@ static IFparm nodeParms[] = {
 
 IFsimulator SIMinfo = {
     "ngspice",                           /* my name */
-    "Circuit level simulation program",  /* more about me */
+    "Circuit level simulation program, minimal version",  /* more about me */
     Spice_Version,                       /* my version */
 
     CKTinit,                    /* newCircuit function */

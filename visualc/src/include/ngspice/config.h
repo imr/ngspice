@@ -30,11 +30,11 @@
 
 /* The xspice enhancements */
 /* XSPICE is always included in the Visual Studio compiled executable */
-#define XSPICE 1
+// #define XSPICE 1
 /* don't undef XSPICE, otherwise compilation will fail */
 
 /* The CIDER enhancements */
-#define CIDER 1
+// #define CIDER 1
 /* don't undef CIDER, otherwise compilation will fail */
 
 /* Support for Verilog-A(MS) models */

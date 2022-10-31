@@ -1352,69 +1352,15 @@ AC_CONFIG_FILES([Makefile
                  src/spicelib/Makefile
                  src/spicelib/analysis/Makefile
                  src/spicelib/devices/Makefile
-                 src/spicelib/devices/asrc/Makefile
                  src/spicelib/devices/bjt/Makefile
-                 src/spicelib/devices/bsim1/Makefile
-                 src/spicelib/devices/bsim2/Makefile
-                 src/spicelib/devices/bsim3/Makefile
-                 src/spicelib/devices/bsim3v0/Makefile
-                 src/spicelib/devices/bsim3v1/Makefile
-                 src/spicelib/devices/bsim3v32/Makefile
-                 src/spicelib/devices/bsim4/Makefile
-                 src/spicelib/devices/bsim4v5/Makefile
-                 src/spicelib/devices/bsim4v6/Makefile
-                 src/spicelib/devices/bsim4v7/Makefile
-                 src/spicelib/devices/bsim3soi_pd/Makefile
-                 src/spicelib/devices/bsim3soi_fd/Makefile
-                 src/spicelib/devices/bsim3soi_dd/Makefile
-                 src/spicelib/devices/bsimsoi/Makefile
                  src/spicelib/devices/cap/Makefile
-                 src/spicelib/devices/cccs/Makefile
-                 src/spicelib/devices/ccvs/Makefile
-                 src/spicelib/devices/csw/Makefile
-                 src/spicelib/devices/cpl/Makefile
                  src/spicelib/devices/dio/Makefile
                  src/spicelib/devices/ind/Makefile
                  src/spicelib/devices/isrc/Makefile
-                 src/spicelib/devices/hfet1/Makefile
-                 src/spicelib/devices/hfet2/Makefile
-                 src/spicelib/devices/hicum2/Makefile
-                 src/spicelib/devices/hisim2/Makefile
-                 src/spicelib/devices/hisimhv1/Makefile
-                 src/spicelib/devices/hisimhv2/Makefile
-                 src/spicelib/devices/jfet/Makefile
-                 src/spicelib/devices/jfet2/Makefile
-                 src/spicelib/devices/ltra/Makefile
-                 src/spicelib/devices/mes/Makefile
-                 src/spicelib/devices/mesa/Makefile
                  src/spicelib/devices/mos1/Makefile
-                 src/spicelib/devices/mos2/Makefile
-                 src/spicelib/devices/mos3/Makefile
-                 src/spicelib/devices/mos6/Makefile
-                 src/spicelib/devices/mos9/Makefile
-                 src/spicelib/devices/ndev/Makefile
                  src/spicelib/devices/res/Makefile
-                 src/spicelib/devices/soi3/Makefile
-                 src/spicelib/devices/sw/Makefile
-                 src/spicelib/devices/tra/Makefile
-                 src/spicelib/devices/txl/Makefile
-                 src/spicelib/devices/urc/Makefile
-                 src/spicelib/devices/vbic/Makefile
-                 src/spicelib/devices/vccs/Makefile
-                 src/spicelib/devices/vcvs/Makefile
-                 src/spicelib/devices/vdmos/Makefile
                  src/spicelib/devices/vsrc/Makefile
-                 src/spicelib/devices/nbjt/Makefile
-                 src/spicelib/devices/nbjt2/Makefile
-                 src/spicelib/devices/numd/Makefile
-                 src/spicelib/devices/numd2/Makefile
-                 src/spicelib/devices/numos/Makefile
                  src/spicelib/parser/Makefile
-                 src/ciderlib/Makefile
-                 src/ciderlib/input/Makefile
-                 src/ciderlib/support/Makefile
-                 src/ciderlib/oned/Makefile
-                 src/ciderlib/twod/Makefile
                  src/frontend/Makefile
                  src/frontend/numparam/Makefile
                  src/frontend/help/Makefile
@@ -1434,16 +1380,6 @@ AC_CONFIG_FILES([Makefile
                  src/maths/sparse/Makefile
                  src/maths/dense/Makefile
                  src/misc/Makefile
-                 src/xspice/Makefile
-                 src/xspice/cm/Makefile
-                 src/xspice/cmpp/Makefile
-                 src/xspice/icm/makedefs
-                 src/xspice/icm/GNUmakefile
-                 src/xspice/mif/Makefile
-                 src/xspice/evt/Makefile
-                 src/xspice/enh/Makefile
-                 src/xspice/ipc/Makefile
-                 src/xspice/idn/Makefile
                  tests/Makefile
                  tests/bsim1/Makefile
                  tests/bsim2/Makefile
