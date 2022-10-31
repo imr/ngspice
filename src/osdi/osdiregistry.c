@@ -41,6 +41,7 @@
 
 #undef BOOLEAN
 #include <windows.h>
+#include <shlwapi.h>
 #define OPENLIB(path) LoadLibrary(path)
 #define GET_SYM(lib, sym) ((void *)GetProcAddress(lib, sym))
 char *dlerror(void);
@@ -107,7 +108,7 @@ static char *resolve_path(const char *name) {
 #endif
 
   return (char *)NULL;
-} 
+} /* end of function inp_pathresolve */
 
 static char *resolve_input_path(const char *name) {
   /* if name is an absolute path name,
@@ -195,7 +196,7 @@ static size_t calc_osdi_instance_data_off(const OsdiDescriptor *descr) {
   (OsdiObjectFile) { .num_entries = -1 }
 
 #define EMPTY_OBJECT                                                           \
-  (OsdiObjectFile) {}
+  (OsdiObjectFile) {NULL, 0}
 
 #define ERR_AND_RET                                                            \
   error = dlerror();                                                           \
