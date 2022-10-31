@@ -31,14 +31,36 @@
 #include "osdi.h"
 #include "osdiext.h"
 
-#include "stddef.h"
 #include <stddef.h>
 #include <stdint.h>
 
-typedef struct OsdiModelData {
-  GENmodel gen;
-  max_align_t data;
-} OsdiModelData;
+#ifdef _MSC_VER
+typedef struct {
+    long long __max_align_ll ;
+    long double __max_align_ld;
+    /* _Float128 is defined as a basic type, so max_align_t must be
+       sufficiently aligned for it.  This code must work in C++, so we
+       use __float128 here; that is only available on some
+       architectures, but only on i386 is extra alignment needed for
+       __float128.  */
+#ifdef __i386__
+    __float128 __max_align_f128 __attribute__((__aligned__(__alignof(__float128))));
+#endif
+} max_align_t;
+#endif
+
+#ifdef _MSC_VER
+#define MAX_ALIGN 8
+#else
+#define MAX_ALIGN sizeof(max_align_t)
+#endif
+
+
+#ifndef _MSC_VER
+#define ALIGN(pow) __attribute__((aligned(pow)))
+#else
+#define ALIGN(pow) __declspec(align(pow))
+#endif
 
 typedef struct OsdiExtraInstData {
   double dt;
@@ -47,17 +69,22 @@ typedef struct OsdiExtraInstData {
   bool dt_given;
   bool finish;
 
-} __attribute__((aligned(sizeof(max_align_t)))) OsdiExtraInstData;
+} ALIGN(MAX_ALIGN) OsdiExtraInstData;
 
-size_t osdi_instance_data_off(const OsdiRegistryEntry *entry);
-void *osdi_instance_data(const OsdiRegistryEntry *entry, GENinstance *inst);
-OsdiExtraInstData *osdi_extra_instance_data(const OsdiRegistryEntry *entry,
+typedef struct OsdiModelData {
+  GENmodel gen;
+  max_align_t data;
+} OsdiModelData;
+
+extern size_t osdi_instance_data_off(const OsdiRegistryEntry *entry);
+extern void *osdi_instance_data(const OsdiRegistryEntry *entry, GENinstance *inst);
+extern OsdiExtraInstData *osdi_extra_instance_data(const OsdiRegistryEntry *entry,
                                             GENinstance *inst);
-size_t osdi_model_data_off(void);
-void *osdi_model_data(GENmodel *model);
-void *osdi_model_data_from_inst(GENinstance *inst);
-OsdiRegistryEntry *osdi_reg_entry_model(const GENmodel *model);
-OsdiRegistryEntry *osdi_reg_entry_inst(const GENinstance *inst);
+extern size_t osdi_model_data_off(void);
+extern void *osdi_model_data(GENmodel *model);
+extern void *osdi_model_data_from_inst(GENinstance *inst);
+extern OsdiRegistryEntry *osdi_reg_entry_model(const GENmodel *model);
+extern OsdiRegistryEntry *osdi_reg_entry_inst(const GENinstance *inst);
 
 typedef struct OsdiNgspiceHandle {
   uint32_t kind;
