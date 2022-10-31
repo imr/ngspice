@@ -1,0 +1,43 @@
+ECL DFF HICUM2.4 test case
+*
+V6 D GND dc 0 PULSE(-.25 0 0 1P 1P .25N .50N)   
+V5 D_BAR GND dc 0 PULSE(0 -.25 0 1P 1P .25N .50N)   
+V4 CLK GND dc 0 PULSE(-0.9 -1.2 0 1P 1P .125N .25N)   
+V3 CLK_BAR GND dc 0 PULSE(-1.2 -0.9 0 1P 1P .125N .25N)   
+VVCS NET2 GND DC -0.8 
+R6 GND NET6  800 
+R5 GND NET11  800 
+R4 NET12 VEE  350 
+VVEE VEE GND DC -2.0 
+R3 GND NET10  800 
+R2 NET13 VEE  350 
+R1 GND Q  800 
+XQVLGNPN16 NET7 CLK_BAR NET4 VEE dt hicumL0V1p1_c_sbt
+XQVLGNPN15 NET5 CLK NET3 VEE dt hicumL0V1p1_c_sbt
+XQVLGNPN14 NET1dt Q NET7 VEE dt hicumL0V1p1_c_sbt
+XQVLGNPN13 Q NET6 NET9 VEE dt hicumL0V1p1_c_sbt
+XQVLGNPN12 NET6 NET11 NET5 VEE dt hicumL0V1p1_c_sbt
+XQVLGNPN11 NET11 D_BAR NET8 VEE dt hicumL0V1p1_c_sbt
+XQVLGNPN1dt NET4 NET2 NET13 VEE dt hicumL0V1p1_c_sbt
+XQVLGNPN9 NET3 NET2 NET12 VEE dt hicumL0V1p1_c_sbt
+XQVLGNPN8 NET8 CLK_BAR NET3 VEE dt hicumL0V1p1_c_sbt
+XQVLGNPN7 NET9 CLK NET4 VEE dt hicumL0V1p1_c_sbt
+XQVLGNPN6 Q NET1dt NET7 VEE dt hicumL0V1p1_c_sbt
+XQVLGNPN5 NET1dt NET11 NET9 VEE dt hicumL0V1p1_c_sbt
+XQVLGNPN4 NET11 NET6 NET5 VEE dt hicumL0V1p1_c_sbt
+XQVLGNPN3 NET6 D NET8 VEE dt hicumL0V1p1_c_sbt
+
+Rdt dt 0 1G
+*
+.include Modelcards/model-card-hicumL0V1p11_mod.lib
+.SAVE V(D) V(CLK) V(Q)
+.control
+pre_osdi test_osdi_win/HICUML0-2.osdi
+TRAN 0.25p 5n
+rusage
+set color0=white
+set xbrushwidth=2
+plot V(D) V(CLK) V(Q) ylimit -1.2 0.2
+*quit
+.endc
+.END
