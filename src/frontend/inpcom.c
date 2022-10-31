@@ -4724,9 +4724,24 @@ int get_number_terminals(char *c)
             break;
         }
 #ifdef OSDI
-        case 'a':
+        case 'a': /* Recognize an unknown number of nodes by stopping at tokens with '=' */
         {
-            return 5;
+            i = 0;
+            char* cc, * ccfree;
+            cc = copy(c);
+            /* required to make m= 1 a single token m=1 */
+            ccfree = cc = inp_remove_ws(cc);
+            /* find the first token with "off", "tnodeout", "thermal" or "=" in the line*/
+            while ((i < 20) && (*cc != '\0')) {
+                char* inst = gettok_instance(&cc);
+                strncpy(nam_buf, inst, sizeof(nam_buf) - 1);
+                txfree(inst);
+                if (i > 2 && (strchr(nam_buf, '=')))
+                    break;
+                i++;
+            }
+            tfree(ccfree);
+            return i - 2;
             break;
         }
 #endif
