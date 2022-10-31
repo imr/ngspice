@@ -1241,6 +1241,80 @@ translate(struct card *deck, char *formal, char *actual, char *scname, const cha
         case '$':
             continue;
 
+#ifdef OSDI
+        case 'a':
+            /* translate the instance name according to normal rules */
+            name = gettok(&s);
+
+            translate_inst_name(&buffer, scname, name, NULL);
+            bxx_putc(&buffer, ' ');
+
+            /* Now translate the nodes, looking ahead one token to recognize */
+            /* when we reach the model name which should not be translated   */
+            /* here.                                                         */
+
+            next_name = gettok(&s);
+
+            for (;;) {
+                /* rotate the tokens and get the the next one */
+                if (name)
+                    tfree(name);
+                name = next_name;
+                next_name = gettok(&s);
+
+                /* if next token is NULL, name holds the model name, so exit */
+                if (next_name == NULL)
+                    break;
+
+                /* Process the token in name.  If it is special, then don't */
+                /* translate it.                                            */
+                switch (*name) {
+                case '[':
+                case ']':
+                case '~':
+                    bxx_put_cstring(&buffer, name);
+                    break;
+
+                case '%':
+                    bxx_putc(&buffer, '%');
+                    /* don't translate the port type identifier */
+                    if (name)
+                        tfree(name);
+                    name = next_name;
+                    /* vname requires instance translation of token following */
+                    if (eq(name, "vnam"))
+                        got_vnam = TRUE;
+                    next_name = gettok(&s);
+                    bxx_put_cstring(&buffer, name);
+                    break;
+
+                default:
+                    if (got_vnam) {
+                        /* after %vnam an instance name is following */
+                        translate_inst_name(&buffer, scname, name, NULL);
+                        got_vnam = FALSE;
+                    }
+                    else {
+                        /* must be a node name at this point, so translate it */
+                        translate_node_name(&buffer, scname, name, NULL);
+                    }
+                    break;
+
+                }
+                bxx_putc(&buffer, ' ');
+            }
+
+            /* copy in the last token, which is the model name */
+            if (name) {
+                bxx_put_cstring(&buffer, name);
+                tfree(name);
+            }
+
+            break; /* case 'a' */
+
+
+#endif
+
 #ifdef XSPICE
             /*===================  case A  ====================*/
             /* gtri - add - wbk - 10/23/90 - process A devices specially */
@@ -2259,6 +2333,10 @@ inp_numnodes(char c)
         return (4);
     case 'z':
         return (3);
+#ifdef OSDI
+    case 'a':
+        return (5);
+#endif
 
     default:
         fprintf(cp_err, "Warning: unknown device type: %c\n", c);
