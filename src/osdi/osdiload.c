@@ -36,7 +36,7 @@ char *sim_params[NUM_SIM_PARAMS + 1] = {
     "gdev", "gmin", "tnom", "simulatorVersion", "sourceScaleFactor", NULL};
 char *sim_params_str[1] = {NULL};
 
-double sim_param_vals[NUM_SIM_PARAMS] = {};
+double sim_param_vals[NUM_SIM_PARAMS] = {0,0,0,0,0};
 
 /* values returned by $simparam*/
 OsdiSimParas get_simparams(const CKTcircuit *ckt) {
