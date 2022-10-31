@@ -1,0 +1,46 @@
+.title ECL nor gate ring oscillator, 9 stages, 734 MHz
+.include "model-card-hicumL0V1p11_mod.lib"
+
+.subckt nor in1 in2 a1 a2 vee GND
+XQ1 Net-_R1-Pad2_ IN1 Net-_Q1-Pad3_ VEE DT1 hicumL0V1p1_c_sbt
+XQ2 Net-_R1-Pad2_ IN2 Net-_Q1-Pad3_ VEE DT1 hicumL0V1p1_c_sbt
+XQ3 Net-_R2-Pad2_ Net-_R3-Pad2_ Net-_Q1-Pad3_ VEE DT1 hicumL0V1p1_c_sbt
+XQ4 GND Net-_R2-Pad2_ A1 VEE DT1 hicumL0V1p1_c_sbt
+XQ5 GND Net-_R1-Pad2_ A2 VEE DT1 hicumL0V1p1_c_sbt
+
+Rt1 DT1 0 1G
+
+R1 GND Net-_R1-Pad2_ 220
+R2 GND Net-_R2-Pad2_ 220
+R3 GND Net-_R3-Pad2_ 575
+R4 Net-_R3-Pad2_ VEE 1.92k
+R5 Net-_Q1-Pad3_ VEE 780
+
+Ra1 A1 VEE 510
+Ra2 A2 VEE 510
+.ends
+
+X1 out9 out9 a1 out1 vee gnd nor
+X2 out1 out1 a2 out2 vee gnd nor
+X3 out2 out2 a3 out3 vee gnd nor
+X4 out3 out3 a4 out4 vee gnd nor
+X5 out4 out4 a5 out5 vee gnd nor
+X6 out5 out5 a2 out6 vee gnd nor
+X7 out6 out6 a3 out7 vee gnd nor
+X8 out7 out7 a4 out8 vee gnd nor
+X9 out8 out8 a5 out9 vee gnd nor
+
+V1 VEE GND -5.2
+
+.tran 0.02n 200n
+
+.control
+pre_osdi test_osdi_win/HICUML0-2.osdi
+run
+rusage
+plot out9
+linearize out9
+fft out9
+plot mag(out9) xlimit 0 2G ylimit 0 0.5
+.endc
+.end
