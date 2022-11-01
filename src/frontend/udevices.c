@@ -720,7 +720,7 @@ struct card *replacement_udevice_cards(void)
     }
     if (add_zero_delay_inverter_model) {
         x = create_xlate_translated(
-        ".model d_zero_inv99 d_inverter(rise_delay=1.0e-11 fall_delay=1.0e-11)");
+        ".model d_zero_inv99 d_inverter(rise_delay=1.0e-12 fall_delay=1.0e-12)");
         translated_p = add_xlator(translated_p, x);
     }
     if (add_drive_hilo) {
@@ -729,7 +729,7 @@ struct card *replacement_udevice_cards(void)
         x = create_xlate_translated("a1 0 drive___0 dbuf1");
         translated_p = add_xlator(translated_p, x);
         x = create_xlate_translated(
-        ".model dbuf1 d_buffer(rise_delay=1.0e-11 fall_delay=1.0e-11)");
+        ".model dbuf1 d_buffer(rise_delay=1.0e-12 fall_delay=1.0e-12)");
         translated_p = add_xlator(translated_p, x);
         x = create_xlate_translated(".ends hilo_dollar___lo");
         translated_p = add_xlator(translated_p, x);
@@ -738,7 +738,7 @@ struct card *replacement_udevice_cards(void)
         x = create_xlate_translated("a2 0 drive___1 dinv1");
         translated_p = add_xlator(translated_p, x);
         x = create_xlate_translated(
-        ".model dinv1 d_inverter(rise_delay=1.0e-11 fall_delay=1.0e-11)");
+        ".model dinv1 d_inverter(rise_delay=1.0e-12 fall_delay=1.0e-12)");
         translated_p = add_xlator(translated_p, x);
         x = create_xlate_translated(".ends hilo_dollar___hi");
         translated_p = add_xlator(translated_p, x);
@@ -2504,7 +2504,7 @@ static char *get_estimate(struct timing_data *tdp)
 */
 static char *get_zero_rise_fall(void)
 {
-    return tprintf("(rise_delay=1.0e-11 fall_delay=1.0e-11)");
+    return tprintf("(rise_delay=1.0e-12 fall_delay=1.0e-12)");
 }
 
 static char *get_delays_ugate(char *rem)
@@ -2549,10 +2549,10 @@ static char *get_delays_utgate(char *rem)
         if (strlen(rising) > 0 && strlen(falling) > 0) {
             delays = tprintf("(delay = %s)", rising);
         } else {
-            delays = tprintf("(delay=1.0e-11)");
+            delays = tprintf("(delay=1.0e-12)");
         }
     } else {
-        delays = tprintf("(delay=1.0e-11)");
+        delays = tprintf("(delay=1.0e-12)");
     }
     delete_timing_data(tdp1);
     delete_timing_data(tdp2);
