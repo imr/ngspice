@@ -1,0 +1,21 @@
+* T      d  c  b  a
+* i
+* m
+* e
+0ns      0s 0s 0s 0s
+100ns    0s 0s 0s 1s
+200ns    0s 0s 1s 0s
+300ns    0s 0s 1s 1s
+400ns    0s 1s 0s 0s
+500ns    0s 1s 0s 1s
+600ns    0s 1s 1s 0s
+700ns    0s 1s 1s 1s
+800ns    1s 0s 0s 0s
+900ns    1s 0s 0s 1s
+1.0us    1s 0s 1s 0s
+1.1us    1s 0s 1s 1s
+1.2us    1s 1s 0s 0s
+1.3us    1s 1s 0s 1s
+1.4us    1s 1s 1s 0s
+1.5us    1s 1s 1s 1s
+1.6us    0s 0s 0s 0s

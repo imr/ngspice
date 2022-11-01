@@ -1,0 +1,80 @@
+decoder,cir
+
+*
+* ----------------------------------------------------------- 74145 ------
+*  BCD-To-Decimal Decoders/Drivers
+*
+*  The TTL Logic Data Book, 1988, TI Pages 2-447 to 2-449
+*  bss    3/17/94
+*
+.SUBCKT 74145 A B C D O0 O1 O2 O3 O4 O5 O6 O7 O8 O9
++     optional:  DPWR=$G_DPWR DGND=$G_DGND
++     params:  MNTYMXDLY=0 IO_LEVEL=0
+
+U1LOG LOGICEXP(4,10) DPWR DGND
++     A B C D
++     O0_O O1_O O2_O O3_O O4_O O5_O O6_O O7_O O8_O O9_O
++     D0_GATE IO_STD MNTYMXDLY={MNTYMXDLY} IO_LEVEL={IO_LEVEL}
++
++  LOGIC:
++     abar = {~A}
++     bbar = {~B}
++     cbar = {~C}
++     dbar = {~D}
++     O0_O = {~(abar & bbar & cbar & dbar)}
++     O1_O = {~(A & bbar & cbar & dbar)}
++     O2_O = {~(abar & B & cbar & dbar)}
++     O3_O = {~(A & B & cbar & dbar)}
++     O4_O = {~(abar & bbar & C & dbar)}
++     O5_O = {~(A & bbar & C & dbar)}
++     O6_O = {~(abar & B & C & dbar)}
++     O7_O = {~(A & B & C & dbar)}
++     O8_O = {~(abar & bbar & cbar & D)}
++     O9_O = {~(A & bbar & cbar & D)}
+
+U2DLY PINDLY(10,0,0) DPWR DGND
++     O0_O O1_O O2_O O3_O O4_O O5_O O6_O O7_O O8_O O9_O
++     O0 O1 O2 O3 O4 O5 O6 O7 O8 O9
++     IO_STD MNTYMXDLY={MNTYMXDLY} IO_LEVEL={IO_LEVEL}
++
++  PINDLY:
++     O0 O1 O2 O3 O4 O5 O6 O7 O8 O9 = {
++        CASE(
++          DELAY(-1,-1,50ns))}
+
+.ENDS 74145
+*
+
+* U1 STIM(4,4) $G_DPWR $G_DGND  D C B A
+* + IO_STD IO_LEVEL=0
+* + 0NS 0   LABEL=START   100NS INCR BY 1   200NS GOTO START -1 TIMES   1800NS 0
+
+X14 A B C D O0 O1 O2 O3 O4 O5 O6 O7 O8 O9 74145
+a1 [d c b a] input_vec1
+.model input_vec1 d_source(input_file = "decoder.stim")
+
+.TRAN 4e-008 2U 0
+.save all
+
+.control
+listing
+run
+eprint d c b a
+eprint o0 o1 o2 o3 o4 o5 o6 o7 o8 o9
+* save data to input directory
+cd $inputdir 
+eprvcd a b c d o0 o1 o2 o3 o4 o5 o6 o7 o8 o9 > decoder.vcd
+* plotting the vcd file with GTKWave
+if $oscompiled = 1 | $oscompiled = 8  ; MS Windows
+  shell start gtkwave decoder.vcd --script nggtk.tcl
+else
+  if $oscompiled = 7 ; macOS, manual tweaking required (mark, insert, Zoom Fit)
+    shell open -a gtkwave decoder.vcd
+  else ; Linux and others
+    shell gtkwave decoder.vcd --script nggtk.tcl &
+  end
+end
+quit
+.endc
+
+.END

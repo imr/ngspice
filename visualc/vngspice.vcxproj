@@ -1005,6 +1005,7 @@
     <ClInclude Include="..\src\include\ngspice\ipctiein.h" />
     <ClInclude Include="..\src\include\ngspice\jobdefs.h" />
     <ClInclude Include="..\src\include\ngspice\lsort.h" />
+    <ClInclude Include="..\src\include\ngspice\logicexp.h" />
     <ClInclude Include="..\src\include\ngspice\macros.h" />
     <ClInclude Include="..\src\include\ngspice\material.h" />
     <ClInclude Include="..\src\include\ngspice\matldefs.h" />
@@ -1500,6 +1501,7 @@
     <ClCompile Include="..\src\frontend\interp.c" />
     <ClCompile Include="..\src\frontend\inventory.c" />
     <ClCompile Include="..\src\frontend\linear.c" />
+    <ClCompile Include="..\src\frontend\logicexp.c" />
     <ClCompile Include="..\src\frontend\measure.c" />
     <ClCompile Include="..\src\frontend\misccoms.c" />
     <ClCompile Include="..\src\frontend\miscvars.c" />
