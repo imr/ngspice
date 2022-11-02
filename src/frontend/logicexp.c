@@ -121,6 +121,7 @@ static void delete_sym_tab(SYM_TAB t)
     tfree(t);
 }
 
+#ifdef TABLE_PRINT
 static void print_sym_tab(SYM_TAB t, BOOL with_addr)
 {
     if (t == NULL) { return; }
@@ -133,6 +134,7 @@ static void print_sym_tab(SYM_TAB t, BOOL with_addr)
     printf("\n");
     print_sym_tab(t->right, with_addr);
 }
+#endif
 /* End of btree symbol table */
 
 /* Start of lexical scanner */
@@ -535,7 +537,6 @@ static TLINE tab_find(PTABLE pt, char *str, BOOL start_of_line)
     return NULL;
 }
 
-//#define TABLE_PRINT
 #ifdef TABLE_PRINT
 static void table_print(TLINE first)
 {
@@ -890,9 +891,9 @@ static PTABLE optimize_gen_tab(PTABLE pt)
                 }
             } else if (val == '~') {
                 found_tilde = TRUE;
-                assert(tok_count == 3);
+                if (tok_count != 3) goto quick_return;
             } else if (val == '=') {
-                assert(tok_count == 2);
+                if (tok_count != 2) goto quick_return;
             }
             val = lexer_scan(lxr);
         }
@@ -904,7 +905,6 @@ static PTABLE optimize_gen_tab(PTABLE pt)
             lxr = new_lexer(t->line);
         }
     }
-    ds_free(&alias);
     delete_lexer(lxr);
 
 
@@ -974,7 +974,11 @@ static PTABLE optimize_gen_tab(PTABLE pt)
                     ds_clear(&tmp_name);
                 }
             } else {
-                assert(val != LEX_OTHER);
+                if (val == LEX_OTHER) {
+                    delete_parse_table(new_gen);
+                    new_gen = NULL;
+                    goto quick_return;
+                }
                 if (val == '~') 
                     found_tilde = TRUE;
                 ds_cat_printf(&scratch, "%c ", val);
@@ -1015,15 +1019,13 @@ static PTABLE optimize_gen_tab(PTABLE pt)
             ds_free(&d_buf);
         }
     } // end of while (t) second pass
+
+quick_return:
+    ds_free(&alias);
     ds_free(&scratch);
     ds_free(&non_tmp_name);
     ds_free(&tmp_name);
     delete_lexer(lxr);
-    {
-        int print_it = 0;
-        if (print_it)
-            print_sym_tab(alias_tab, FALSE);
-    }
     delete_sym_tab(alias_tab);
 
     return new_gen;
@@ -1072,26 +1074,27 @@ static void gen_gates(PTABLE gate_tab, SYM_TAB parser_symbols)
                 }
             } else if (val == '~') {
                 found_tilde = TRUE;
-                assert(tok_count == 3);
+                if (tok_count != 3) goto quick_return;
             } else if (val == '=') {
-                assert(tok_count == 2);
+                if (tok_count != 2) goto quick_return;
             } else if (lex_gate_op(val)) {
-                if (gate_op != 0)
-                   assert(val == gate_op);
+                if (gate_op != 0) {
+                   if (val != gate_op) goto quick_return;
+                }
                 gate_op = val;
             } else {
-                assert(FALSE);
+                goto quick_return;
             }
             val = lexer_scan(lxr);
         }
         if (in_count == 1) { // buffer or inverter
-            assert(gate_op == 0);
+            if (gate_op != 0) goto quick_return;
             ds_cat_str(&gate_name, lex_gate_name('~', found_tilde));
         } else if (in_count >= 2) { // AND, OR. XOR and inverses
-            assert(gate_op != 0);
+            if (gate_op == 0) goto quick_return;
             ds_cat_str(&gate_name, lex_gate_name(gate_op, found_tilde));
         } else {
-            assert(FALSE);
+            goto quick_return;
         }
         ds_cat_printf(&instance, "%s ", get_inst_name());
         if (in_count == 1) {
@@ -1107,8 +1110,8 @@ static void gen_gates(PTABLE gate_tab, SYM_TAB parser_symbols)
                 ds_cat_printf(&instance, "%s %s ", tail,
                     ds_get_buf(&out_name));
                 ent = member_sym_tab(tail, parser_symbols);
-                assert(ent);
-                assert(ent->attribute & SYM_INVERTER);
+                if (!ent) goto quick_return;
+                if ((ent->attribute & SYM_INVERTER) == 0) goto quick_return;
                 ent->ref_count--;
             } else {
                 ds_cat_printf(&instance, "%s %s ", ds_get_buf(&in_names),
@@ -1127,11 +1130,14 @@ static void gen_gates(PTABLE gate_tab, SYM_TAB parser_symbols)
         }
         u_add_instance(ds_get_buf(&instance));
     }
+
+quick_return:
     delete_lexer(lxr);
     ds_free(&out_name);
     ds_free(&in_names);
     ds_free(&gate_name);
     ds_free(&instance);
+    return;
 }
 
 /*
@@ -1208,6 +1214,7 @@ static void bevaluate(TLINE t, int deep)
     ds_free(&this);
     ds_free(&other);
     ds_free(&new_line);
+    return;
 }
 
 static void beval_order(void)
@@ -1240,6 +1247,7 @@ static void beval_order(void)
             t = t->next;
         }
     }
+    return;
 }
 
 static void bparse(char *line, BOOL new_lexer)
@@ -1259,7 +1267,7 @@ static void bparse(char *line, BOOL new_lexer)
 
     if (new_lexer)
         lex_init(line);
-    assert(parse_lexer);
+    if (!parse_lexer) return;
     lx = parse_lexer;
     lookahead = lex_set_start("logic:");
     lookahead = lex_scan(); // "logic"
@@ -1275,10 +1283,13 @@ static void bparse(char *line, BOOL new_lexer)
 
         beval_order();
 
+        /* generate gates only when optimizations are successful */
         opt_tab1 = optimize_gen_tab(gen_tab);
-        opt_tab2 = optimize_gen_tab(opt_tab1);
-        if (opt_tab2) {
-            gen_gates(opt_tab2, lx->lexer_sym_tab);
+        if (opt_tab1) {
+            opt_tab2 = optimize_gen_tab(opt_tab1);
+            if (opt_tab2) {
+                gen_gates(opt_tab2, lx->lexer_sym_tab);
+            }
         }
         delete_parse_table(opt_tab1);
         delete_parse_table(opt_tab2);
@@ -1290,6 +1301,7 @@ static void bparse(char *line, BOOL new_lexer)
     gen_models();
     ds_free(&stmt);
     delete_lexer(lx);
+    return;
 }
 /* End of logicexp parser */
 
@@ -1709,7 +1721,13 @@ static BOOL new_gen_output_models(LEXER lx)
     PLINE *pline_arr = NULL;
 
     arrlen = num_pindly_entries(pindly_tab);
-    assert(arrlen > 0);
+    if (arrlen <= 0) {
+        ds_free(&dly);
+        ds_free(&enable_name);
+        ds_free(&last_enable);
+        ds_free(&dtyp_max_str);
+        return FALSE;
+    }
     pline_arr = TMALLOC(PLINE, arrlen);
     ds_clear(&last_enable);
     val = lexer_scan(lx);
