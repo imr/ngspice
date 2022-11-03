@@ -560,7 +560,7 @@ static void aerror(char *s);
 static void amatch(int t);
 static void bexpr(void);
 static void bfactor(void);
-static void bparse(char *line, BOOL new_lexer);
+static BOOL bparse(char *line, BOOL new_lexer);
 
 static int lookahead = 0;
 static int adepth = 0;
@@ -891,9 +891,13 @@ static PTABLE optimize_gen_tab(PTABLE pt)
                 }
             } else if (val == '~') {
                 found_tilde = TRUE;
-                if (tok_count != 3) goto quick_return;
+                if (tok_count != 3) {
+                    goto quick_return;
+                }
             } else if (val == '=') {
-                if (tok_count != 2) goto quick_return;
+                if (tok_count != 2) {
+                    goto quick_return;
+                }
             }
             val = lexer_scan(lxr);
         }
@@ -1250,9 +1254,10 @@ static void beval_order(void)
     return;
 }
 
-static void bparse(char *line, BOOL new_lexer)
+static BOOL bparse(char *line, BOOL new_lexer)
 {
     int stmt_num = 0;
+    BOOL ret_val = TRUE;
     LEXER lx;
     PTABLE opt_tab1 = NULL, opt_tab2 = NULL;
     DS_CREATE(stmt, LEX_BUF_SZ);
@@ -1267,7 +1272,7 @@ static void bparse(char *line, BOOL new_lexer)
 
     if (new_lexer)
         lex_init(line);
-    if (!parse_lexer) return;
+    if (!parse_lexer) return FALSE;
     lx = parse_lexer;
     lookahead = lex_set_start("logic:");
     lookahead = lex_scan(); // "logic"
@@ -1290,10 +1295,15 @@ static void bparse(char *line, BOOL new_lexer)
             if (opt_tab2) {
                 gen_gates(opt_tab2, lx->lexer_sym_tab);
             }
+        } else {
+            ret_val = FALSE;
         }
         delete_parse_table(opt_tab1);
         delete_parse_table(opt_tab2);
         delete_parse_gen_tables();
+        if (!ret_val) {
+            break;
+        }
     }
 
     ds_free(&d_curr_line);
@@ -1301,7 +1311,7 @@ static void bparse(char *line, BOOL new_lexer)
     gen_models();
     ds_free(&stmt);
     delete_lexer(lx);
-    return;
+    return ret_val;
 }
 /* End of logicexp parser */
 
@@ -1348,6 +1358,7 @@ BOOL f_logicexp(char *line)
 {
     int t, num_ins = 0, num_outs = 0, i;
     char *endp;
+    BOOL ret_val = TRUE;
 
     lex_init(line);
     current_lexer = parse_lexer;
@@ -1404,10 +1415,10 @@ BOOL f_logicexp(char *line)
     //printf("TMODEL: %s\n", parse_lexer->lexer_buf);
     (void) add_sym_tab_entry(parse_lexer->lexer_buf,
         SYM_TMODEL, &parse_lexer->lexer_sym_tab);
-    bparse(line, FALSE);
+    ret_val = bparse(line, FALSE);
 
     current_lexer = NULL;
-    return TRUE;
+    return ret_val;
 
 error_return:
     delete_lexer(parse_lexer);
@@ -1737,12 +1748,16 @@ static BOOL new_gen_output_models(LEXER lx)
                 in_pindly = TRUE;
                 in_tristate = FALSE;
                 val = lexer_scan(lx);
-                if (val != ':') goto err_return;
+                if (val != ':') {
+                    goto err_return;
+                }
             } else if (eq(lx->lexer_buf, "tristate")) {
                 in_pindly = FALSE;
                 in_tristate = TRUE;
                 val = lexer_scan(lx);
-                if (val != ':') goto err_return;
+                if (val != ':') {
+                    goto err_return;
+                }
             } else if (eq(lx->lexer_buf, "setup_hold")
                 || eq(lx->lexer_buf, "width")
                 || eq(lx->lexer_buf, "freq")
@@ -1755,16 +1770,21 @@ static BOOL new_gen_output_models(LEXER lx)
             while (val == LEX_ID) {
                 if (prit) printf("pindly out \"%s\"\n", lx->lexer_buf);
                 pline = find_pindly_out_name(pindly_tab, lx->lexer_buf);
-                if (pline)
+                if (pline) {
                     pline_arr[idx++] = pline;
-                else
+                } else {
                     goto err_return;
+                }
                 val = lexer_scan(lx);
             }
             typ_max_val = 0.0;
-            if (val != '=') goto err_return;
+            if (val != '=') {
+                goto err_return;
+            }
             val = lexer_scan(lx);
-            if (val != '{') goto err_return;
+            if (val != '{') {
+                goto err_return;
+            }
             val = lexer_scan(lx);
             while (val != '}') {
                 if (val == LEX_ID) {
@@ -1788,7 +1808,9 @@ static BOOL new_gen_output_models(LEXER lx)
                             if (prit) printf("estimate \"%s\"\n",
                                 typical_estimate(ds_get_buf(&dly)));
                             tmps = typical_estimate(ds_get_buf(&dly));
-                            if (!tmps) goto err_return;
+                            if (!tmps) {
+                                goto err_return;
+                            }
                             typ_val = strtof(tmps, &units);
                             if (typ_val > typ_max_val) {
                                 ds_clear(&delay_string);
@@ -1831,9 +1853,13 @@ static BOOL new_gen_output_models(LEXER lx)
                         invert = TRUE;
                     if (prit) printf("tristate enable %s ", lx->lexer_buf);
                     val = lexer_scan(lx);
-                    if (val != '=') goto err_return;
+                    if (val != '=') {
+                        goto err_return;
+                    }
                     val = lexer_scan(lx);
-                    if (val != LEX_ID) goto err_return;
+                    if (val != LEX_ID) {
+                        goto err_return;
+                    }
                     if (prit) printf("ena \"%s\"\n", lx->lexer_buf);
                     ds_clear(&enable_name);
                     if (invert)
@@ -1845,7 +1871,9 @@ static BOOL new_gen_output_models(LEXER lx)
                 ds_clear(&last_enable);
                 ds_cat_ds(&last_enable, &enable_name);
                 val = lexer_scan(lx);
-                if (val != LEX_ID) goto err_return;
+                if (val != LEX_ID) {
+                    goto err_return;
+                }
             } else if (ds_get_length(&last_enable) > 0) {
                 ds_clear(&enable_name);
                 ds_cat_ds(&enable_name, &last_enable);
@@ -1864,9 +1892,13 @@ static BOOL new_gen_output_models(LEXER lx)
                 val = lexer_scan(lx);
             }
             typ_max_val = 0.0;
-            if (val != '=') goto err_return;
+            if (val != '=') {
+                goto err_return;
+            }
             val = lexer_scan(lx);
-            if (val != '{') goto err_return;
+            if (val != '{') {
+                goto err_return;
+            }
             val = lexer_scan(lx);
             while (val != '}') {
                 if (val == LEX_ID) {
@@ -1890,7 +1922,9 @@ static BOOL new_gen_output_models(LEXER lx)
                             if (prit) printf("estimate \"%s\"\n",
                                 typical_estimate(ds_get_buf(&dly)));
                             tmps = typical_estimate(ds_get_buf(&dly));
-                            if (!tmps) goto err_return;
+                            if (!tmps) {
+                                goto err_return;
+                            }
                             typ_val = strtof(tmps, &units);
                             if (typ_val > typ_max_val) {
                                 ds_clear(&delay_string);

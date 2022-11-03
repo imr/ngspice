@@ -1,0 +1,13 @@
+* T      1   o   a   o
+* i      a   e   1   e
+* m          b
+* e          a
+*            r
+
+0ns      1s  1s  1s  0s
+100ns    1s  0s  1s  1s
+200ns    0s  0s  0s  1s
+300ns    0s  1s  0s  0s
+400ns    1s  1s  1s  0s
+500ns    1s  0s  1s  1s
+600ns    0s  0s  0s  1s
