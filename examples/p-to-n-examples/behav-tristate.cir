@@ -54,7 +54,7 @@ U1 PINDLY(1,1,0) DPWR DGND
 * .SUBCKT 74HCT125 1A 1Y 1OEBAR
 x1 1a 1y oebar 74hct125
 * .SUBCKT 74HC126A A1 Y1 OE1
-x1 a1 y1 oe 74hc126a
+x2 a1 y1 oe 74hc126a
 a_1 [ 1a oebar a1 oe ] input_vec1
 .model input_vec1 d_source(input_file = "behav-tristate.stim")
 
