@@ -9,22 +9,18 @@ Georgia Tech Research Corporation
 Atlanta, Georgia 30332
 PROJECT A-8503-405
                
-
 AUTHORS                      
 
     14 June 1991     Jeffrey P. Murray
 
-
-MODIFICATIONS   
+MODIFICATIONS
 
     27 Sept 1991    Jeffrey P. Murray
-                                   
 
 SUMMARY
 
     This file contains the functional description of the d_buffer
     code model.
-
 
 INTERFACES       
 
@@ -32,13 +28,10 @@ INTERFACES
 
     CMevt.c              void *cm_event_alloc()
                          void *cm_event_get_ptr()
-                         
-
 
 REFERENCED FILES
 
     Inputs from and outputs to ARGS structure.
-                     
 
 NON-STANDARD FEATURES
 
@@ -48,39 +41,23 @@ NON-STANDARD FEATURES
 
 /*=== INCLUDE FILES ====================*/
 
-
-                                      
-
 /*=== CONSTANTS ========================*/
-
-
-
 
 /*=== MACROS ===========================*/
 
-
-
-  
 /*=== LOCAL VARIABLES & TYPEDEFS =======*/                         
 
-
-    
-           
 /*=== FUNCTION PROTOTYPE DEFINITIONS ===*/
 
-
-
-
-                   
 /*==============================================================================
 
 FUNCTION cm_d_buffer()
 
-AUTHORS                      
+AUTHORS
 
     14 Jun 1991     Jeffrey P. Murray
 
-MODIFICATIONS   
+MODIFICATIONS
 
     27 Sep 1991     Jeffrey P. Murray
 
@@ -88,7 +65,7 @@ SUMMARY
 
     This function implements the d_buffer code model.
 
-INTERFACES       
+INTERFACES
 
     FILE                 ROUTINE CALLED     
 
@@ -96,7 +73,7 @@ INTERFACES
                          void *cm_event_get_ptr()
 
 RETURNED VALUE
-    
+
     Returns inputs and outputs via ARGS structure.
 
 GLOBAL VARIABLES
@@ -119,51 +96,51 @@ NON-STANDARD FEATURES
 *   Created 6/14/91               J.P,Murray    *
 ************************************************/
 
+/* Extra state data for inertial delays. */
 
-void cm_d_buffer(ARGS) 
+struct idata {
+    double          when;
+    Digital_State_t prev;
+};
+
+void cm_d_buffer(ARGS)
 
 {
-    /*int                    i;*/   /* generic loop counter index */
-         
-                        
-
     Digital_State_t     *out,   /* temporary output for buffers */
-                    *out_old;   /* previous output for buffers  */                               
-
+                    *out_old;   /* previous output for buffers  */
 
     /** Setup required state variables **/
 
-    if(INIT) {  /* initial pass */ 
+    if(INIT) {  /* initial pass */
 
         /* allocate storage for the outputs */
         cm_event_alloc(0,sizeof(Digital_State_t));
+        if (PARAM(inertial_delay)) {
+            /* Allocate storage for event time. */
+
+            cm_event_alloc(1, sizeof (struct idata));
+            ((struct idata *)cm_event_get_ptr(1, 0))->when = -1.0;
+        }
 
         /* define input loading... */
         LOAD(in) = PARAM(input_load);
 
         /* retrieve storage for the outputs */
         out = out_old = (Digital_State_t *) cm_event_get_ptr(0,0);
-
-    }
-    else {      /* Retrieve previous values */
-                                              
+    } else {      /* Retrieve previous values */
         /* retrieve storage for the outputs */
+
         out = (Digital_State_t *) cm_event_get_ptr(0,0);
         out_old = (Digital_State_t *) cm_event_get_ptr(0,1);
     }
 
-                                      
     /** Check on analysis type **/
 
     if (ANALYSIS == DC) {   /* DC analysis...output w/o delays */
-                                  
         OUTPUT_STATE(out) = *out = INPUT_STATE(in);
-
-    }
-    else {      /* Transient Analysis */
-
+    } else {      /* Transient Analysis */
         switch ( INPUT_STATE(in) ) {
-                                                 
+
         /* fall to zero value */
         case 0: OUTPUT_STATE(out) = *out = ZERO;
                 OUTPUT_DELAY(out) = PARAM(fall_delay);
@@ -173,7 +150,7 @@ void cm_d_buffer(ARGS)
         case 1: OUTPUT_STATE(out) = *out = ONE;
                 OUTPUT_DELAY(out) = PARAM(rise_delay);
                 break;
-                                
+
         /* unknown output */
         default:
                 OUTPUT_STATE(out) = *out = UNKNOWN;
@@ -187,10 +164,27 @@ void cm_d_buffer(ARGS)
                 }   
                 break;
         }
+
+        if (*out == *out_old) {
+            /* output value not changing */
+
+            OUTPUT_CHANGED(out) = FALSE;
+        } else if (PARAM(inertial_delay)) {
+            struct idata *idp;
+
+            idp = (struct idata *)cm_event_get_ptr(1, 0);
+            if (idp->when <= TIME || *out != idp->prev) {
+                /* Normal transition, or output of third value during delay. */
+
+                idp->prev = *out_old;
+                idp->when = TIME + OUTPUT_DELAY(out); // Actual output time
+            } else {
+                /* Changing back: override pending change. */
+
+                OUTPUT_DELAY(out) = (idp->when - TIME) / 2.0; // Override
+                idp->when = -1.0;
+            }
+        }
     }
-
     OUTPUT_STRENGTH(out) = STRONG;
-}       
-
-
-
+}
