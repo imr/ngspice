@@ -571,7 +571,12 @@ MIF_INP2A (
         /* FIXME: preliminary, bug is generated elsewhere */
         if (mdfast->param[i]->is_null && type != 110) {
             if (!param_info->has_default) {
-                char* emessage = tprintf("Parameter %s on model %s has no default", param_info->name, mdfast->gen.GENmodName);
+                char* emessage;
+
+                if (param_info->type == MIF_STRING)
+                    continue;   // Allow NULL
+                emessage = tprintf("Parameter %s on model %s has no default",
+                                   param_info->name, mdfast->gen.GENmodName);
                 LITERR(emessage);
                 tfree(emessage);
                 gc_end();
