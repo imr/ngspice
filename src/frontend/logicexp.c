@@ -138,18 +138,19 @@ static void print_sym_tab(SYM_TAB t, BOOL with_addr)
 /* End of btree symbol table */
 
 /* Start of lexical scanner */
-#include <assert.h>
-#define LEX_ID 256
-#define LEX_OTHER 257
-#define LEX_BUF_SZ 512
+#define LEX_ID       256
+#define LEX_OTHER    257
+#define LEX_BUF_SZ   512
+#define LEX_INIT_SZ  128
 
 typedef struct lexer *LEXER;
 struct lexer {
-    char lexer_buf[LEX_BUF_SZ];
+    char *lexer_buf;
     char *lexer_line;
     int lexer_pos;
     int lexer_back;
     SYM_TAB lexer_sym_tab;
+    size_t lexer_blen;
 };
 
 static LEXER parse_lexer = NULL;
@@ -161,7 +162,9 @@ static LEXER new_lexer(char *line)
     lx->lexer_line = TMALLOC(char, (strlen(line) + 1));
     strcpy(lx->lexer_line, line);
     lx->lexer_pos = lx->lexer_back = 0;
-    lx->lexer_buf[0] = '\0';
+    lx->lexer_blen = LEX_INIT_SZ;
+    lx->lexer_buf = TMALLOC(char, lx->lexer_blen);
+    (void) memset(lx->lexer_buf, 0, lx->lexer_blen);
     lx->lexer_sym_tab = NULL;
     return lx;
 }
@@ -170,6 +173,8 @@ static void delete_lexer(LEXER lx)
 {
     if (!lx)
         return;
+    if (lx->lexer_buf)
+        tfree(lx->lexer_buf);
     if (lx->lexer_line)
         tfree(lx->lexer_line);
     if (lx->lexer_sym_tab)
@@ -321,14 +326,22 @@ static int lexer_scan(LEXER lx)
         else if (lex_oper(c))
             return c;
         else if (lex_ident(c)) {
-            int i = 0;
+            size_t i = 0;
             while (lex_ident(c)) {
+                if (i >= lx->lexer_blen) {
+                    lx->lexer_blen *= 2;
+                    lx->lexer_buf =
+                        TREALLOC(char, lx->lexer_buf, lx->lexer_blen);
+                }
                 lx->lexer_buf[i] = (char) c;
-                assert(i < LEX_BUF_SZ);
                 i++;
                 c = lexer_getchar(lx);
             }
-            assert(i < LEX_BUF_SZ);
+            if (i >= lx->lexer_blen) {
+                lx->lexer_blen *= 2;
+                lx->lexer_buf =
+                    TREALLOC(char, lx->lexer_buf, lx->lexer_blen);
+            }
             lx->lexer_buf[i] = '\0';
             if (c != '\0')
                 lexer_putback(lx);
