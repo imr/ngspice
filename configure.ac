@@ -16,7 +16,7 @@
 # problem to the user.
 AC_PREREQ([2.59])
 
-m4_define([ngspice_major_version], [38])
+m4_define([ngspice_major_version], [38+])
 m4_define([ngspice_minor_version], [0])
 m4_define([ngspice_version],
       [ngspice_major_version])
@@ -118,7 +118,7 @@ LT_INIT([shared static])
 
 LT_NGSPICE_CURRENT=0
 LT_NGSPICE_REVISION=5
-LT_NGSPICE_AGE=0
+LT_NGSPICE_AGE=1
 LIBNGSPICE_SO_VERSION=$LT_NGSPICE_CURRENT.$LT_NGSPICE_REVISION.$LT_NGSPICE_AGE
 
 # Announce the libtool version

@@ -46,6 +46,11 @@ not modify them).
 
 ***************** If XSPICE is enabled *************************************
 **
+ngCM_Input_Path(const char*)
+sets the input path for files loaded by code models.
+If NULL is sent, return the current Infile_Path.
+
+**
 ngGet_Evt_NodeInfo(char*)
 receives the name of a event node vector (may be in the form 'vectorname' or
 <plotname>.vectorname) and returns a pointer to a evt_node_info struct.
@@ -92,7 +97,7 @@ are of type bool if sharedspice.h is used externally.
 */
 
 #ifndef NGSPICE_PACKAGE_VERSION
-#define NGSPICE_PACKAGE_VERSION "38"
+#define NGSPICE_PACKAGE_VERSION "38+"
 #endif
 /* we have NG_BOOL instead of BOOL */
 #ifndef HAS_NG_BOOL
