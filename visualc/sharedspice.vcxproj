@@ -497,6 +497,7 @@
     <ClInclude Include="..\src\include\ngspice\cmconstants.h" />
     <ClInclude Include="..\src\include\ngspice\cmproto.h" />
     <ClInclude Include="..\src\include\ngspice\cmtypes.h" />
+    <ClInclude Include="..\src\include\ngspice\logicexp.h" />
     <ClInclude Include="..\src\include\ngspice\spardefs.h" />
     <ClInclude Include="..\src\include\ngspice\compatmode.h" />
     <ClInclude Include="..\src\include\ngspice\complex.h" />
@@ -1041,6 +1042,7 @@
     <ClCompile Include="..\src\frontend\interp.c" />
     <ClCompile Include="..\src\frontend\inventory.c" />
     <ClCompile Include="..\src\frontend\linear.c" />
+    <ClCompile Include="..\src\frontend\logicexp.c" />
     <ClCompile Include="..\src\frontend\measure.c" />
     <ClCompile Include="..\src\frontend\misccoms.c" />
     <ClCompile Include="..\src\frontend\miscvars.c" />
