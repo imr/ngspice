@@ -382,6 +382,7 @@ typedef struct parse_table *PTABLE;
 struct parse_table {
     TLINE first;
     TLINE last;
+    int num_entries;
 };
 
 static PTABLE parse_tab = NULL;
@@ -392,6 +393,7 @@ static PTABLE new_parse_table(void)
     PTABLE pt;
     pt = TMALLOC(struct parse_table, 1);
     pt->first = pt->last = NULL;
+    pt->num_entries = 0;
     return pt;
 }
 
@@ -462,6 +464,7 @@ static TLINE add_to_parse_table(PTABLE pt, char *line, BOOL ignore_blank)
         pt->last->next = t;
         pt->last = t;
     }
+    pt->num_entries++;
     return t;
 }
 
@@ -1292,6 +1295,10 @@ static BOOL bparse(char *line, BOOL new_lexer)
     lookahead = lex_scan(); // ':'
     lookahead = lex_scan();
     while (lookahead != '\0') {
+#define LOOP_OPT
+#ifdef LOOP_OPT
+        int last_count = 0, curr_count = 0;
+#endif
         init_parse_tables();
         adepth = max_adepth = 0;
         stmt_num++;
@@ -1303,6 +1310,41 @@ static BOOL bparse(char *line, BOOL new_lexer)
 
         /* generate gates only when optimizations are successful */
         opt_tab1 = optimize_gen_tab(gen_tab);
+#ifdef LOOP_OPT
+        last_count = gen_tab->num_entries;
+        if (opt_tab1) {
+            int loop_count = 0;
+            curr_count = opt_tab1->num_entries;
+#ifdef TRACE
+printf("Start opt last_count %d curr_count %d\n", last_count, curr_count);
+#endif
+            opt_tab2 = opt_tab1;
+            while (curr_count > 1 && curr_count < last_count) {
+                loop_count++;
+                last_count = curr_count;
+                opt_tab2 = optimize_gen_tab(opt_tab1);
+                delete_parse_table(opt_tab1);
+                if (!opt_tab2) {
+                    ret_val = FALSE;
+                    break;
+                }
+                opt_tab1 = opt_tab2;
+                curr_count = opt_tab2->num_entries;
+#ifdef TRACE
+printf("Next(%d) opt last_count %d curr_count %d\n", loop_count, last_count, curr_count);
+#endif
+            }
+#ifdef TRACE
+printf("Finish opt last_count %d curr_count %d\n", last_count, curr_count);
+#endif
+            if (opt_tab2) {
+                gen_gates(opt_tab2, lx->lexer_sym_tab);
+                delete_parse_table(opt_tab2);
+            }
+        } else {
+            ret_val = FALSE;
+        }
+#else
         if (opt_tab1) {
             opt_tab2 = optimize_gen_tab(opt_tab1);
             if (opt_tab2) {
@@ -1313,6 +1355,7 @@ static BOOL bparse(char *line, BOOL new_lexer)
         }
         delete_parse_table(opt_tab1);
         delete_parse_table(opt_tab2);
+#endif
         delete_parse_gen_tables();
         if (!ret_val) {
             break;
