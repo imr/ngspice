@@ -1,0 +1,39 @@
+* T      a   a   a   a   b   b   b   b   c
+* i      0   1   2   3   0   1   2   3   i
+* m                                      n
+* e
+
+0ns      0s  0s  0s  0s  0s  0s  0s  0s  0s
+100ns    0s  0s  0s  1s  0s  0s  0s  1s  0s
+200ns    0s  0s  1s  0s  0s  0s  1s  0s  0s
+300ns    0s  0s  1s  1s  0s  0s  1s  1s  0s
+400ns    0s  1s  0s  0s  0s  1s  0s  0s  0s
+500ns    0s  1s  0s  1s  0s  1s  0s  1s  0s
+600ns    0s  1s  1s  0s  0s  1s  1s  0s  0s
+700ns    0s  1s  1s  1s  0s  1s  1s  1s  0s
+800ns    1s  0s  0s  0s  1s  0s  0s  0s  0s
+900ns    1s  0s  0s  1s  1s  0s  0s  1s  0s
+1.0us    1s  0s  1s  0s  1s  0s  1s  0s  0s
+1.1us    1s  0s  1s  1s  1s  0s  1s  1s  0s
+1.2us    1s  1s  0s  0s  1s  1s  0s  0s  0s
+1.3us    1s  1s  0s  1s  1s  1s  0s  1s  0s
+1.4us    1s  1s  1s  0s  1s  1s  1s  0s  0s
+1.5us    1s  1s  1s  1s  1s  1s  1s  1s  0s
+1.6us    0s  0s  0s  0s  0s  0s  0s  0s  0s
+1.7us    0s  0s  0s  0s  0s  0s  0s  0s  1s
+1.8us    0s  0s  0s  1s  0s  0s  0s  1s  1s
+1.9us    0s  0s  1s  0s  0s  0s  1s  0s  1s
+2.0us    0s  0s  1s  1s  0s  0s  1s  1s  1s
+2.1us    0s  1s  0s  0s  0s  1s  0s  0s  1s
+2.2us    0s  1s  0s  1s  0s  1s  0s  1s  1s
+2.3us    0s  1s  1s  0s  0s  1s  1s  0s  1s
+2.4us    0s  1s  1s  1s  0s  1s  1s  1s  1s
+2.5us    1s  0s  0s  0s  1s  0s  0s  0s  1s
+2.6us    1s  0s  0s  1s  1s  0s  0s  1s  1s
+2.7us    1s  0s  1s  0s  1s  0s  1s  0s  1s
+2.8us    1s  0s  1s  1s  1s  0s  1s  1s  1s
+2.9us    1s  1s  0s  0s  1s  1s  0s  0s  1s
+3.0us    1s  1s  0s  1s  1s  1s  0s  1s  1s
+3.1us    1s  1s  1s  0s  1s  1s  1s  0s  1s
+3.2us    1s  1s  1s  1s  1s  1s  1s  1s  1s
+3.3us    0s  0s  0s  0s  0s  0s  0s  0s  1s

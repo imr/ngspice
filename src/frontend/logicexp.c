@@ -553,13 +553,15 @@ static TLINE tab_find(PTABLE pt, char *str, BOOL start_of_line)
     return NULL;
 }
 
-#ifdef TABLE_PRINT
-static void table_print(TLINE first)
+//#define PTABLE_PRINT
+#ifdef PTABLE_PRINT
+static void ptable_print(PTABLE pt)
 {
     TLINE t;
-    if (!first)
+    if (!pt)
         return;
-    t = first;
+    t = pt->first;
+    printf("num_entries %u\n", pt->num_entries);
     while (t) {
         printf("%s\n", t->line);
         t = t->next;
