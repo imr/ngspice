@@ -1,0 +1,82 @@
+Test behav-tristate.cir
+
+* -----------------------------------------------------------74HCT125------
+*** This is not quad
+* Quad Buffer/Line Driver; Tri-State
+* Philips High Speed CMOS Logic Family, 1994, pages 243 to 247
+* jat 9/4/96    
+
+.SUBCKT 74HCT125 1A 1Y 1OEBAR
++ OPTIONAL: DPWR=$G_DPWR DGND=$G_DGND
++ PARAMS: MNTYMXDLY=0 IO_LEVEL=0
+
+U1 PINDLY(1,1,0) DPWR DGND
++ 1A
++ 1OEBAR
++ 1Y
++ IO_HCT MNTYMXDLY={MNTYMXDLY} IO_LEVEL={IO_LEVEL}
++ TRISTATE:
++ ENABLE LO = 1OEBAR
++  1Y = {
++    CASE(
++    TRN_Z$,DELAY(-1,15NS,28NS),
++    TRN_$Z, DELAY(-1,15NS,25NS),
++    (TRN_LH | TRN_HL), DELAY(-1,15NS,25NS),
++    DELAY(-1,16NS,29NS))}
+
+.ENDS 74HCT125
+* -----------------------------------------------------------74HC126A------
+*** This is not quad
+* Quad Tri-State Noninverting Buffers
+* Motorola High-Speed CMOS Data, 1993, pages 5-106 to 5-109
+* jat 9/4/96    
+
+.SUBCKT 74HC126A A1 Y1 OE1
++ OPTIONAL: DPWR=$G_DPWR DGND=$G_DGND
++ PARAMS: MNTYMXDLY=0 IO_LEVEL=0
+
+U1 PINDLY(1,1,0) DPWR DGND
++ A1
++ OE1
++ Y1
++ IO_HC MNTYMXDLY={MNTYMXDLY} IO_LEVEL={IO_LEVEL}
++ TRISTATE:
++ ENABLE HI = OE1
++  Y1 = {
++    CASE(
++    TRN_Z$,DELAY(-1,-1,18NS),
++    TRN_$Z, DELAY(-1,-1,24NS),
++    (TRN_LH | TRN_HL), DELAY(-1,-1,18NS),
++    DELAY(-1,-1,25NS))}
+
+.ENDS 74HC126A
+
+* .SUBCKT 74HCT125 1A 1Y 1OEBAR
+x1 1a 1y oebar 74hct125
+* .SUBCKT 74HC126A A1 Y1 OE1
+x2 a1 y1 oe 74hc126a
+a_1 [ 1a oebar a1 oe ] input_vec1
+.model input_vec1 d_source(input_file = "behav-tristate-pulse.stim")
+
+.tran 0.01ns 1us
+.control
+run
+listing
+edisplay
+eprint 1a oebar 1y a1 oe y1
+* save data to input directory
+cd $inputdir 
+eprvcd 1a 1y oebar a1 y1 oe > behav-tristate-pulse.vcd
+* plotting the vcd file with GTKWave
+if $oscompiled = 1 | $oscompiled = 8  ; MS Windows
+  shell start gtkwave behav-tristate-pulse.vcd --script nggtk.tcl
+else
+  if $oscompiled = 7 ; macOS, manual tweaking required (mark, insert, Zoom Fit)
+    shell open -a gtkwave behav-tristate-pulse.vcd
+  else ; Linux and others
+    shell gtkwave behav-tristate-pulse.vcd --script nggtk.tcl &
+  end
+end
+quit
+.endc
+.end

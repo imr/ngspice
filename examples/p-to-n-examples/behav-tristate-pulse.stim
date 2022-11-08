@@ -1,0 +1,30 @@
+* T      1   o   a   o
+* i      a   e   1   e
+* m          b
+* e          a
+*            r
+
+0ns      1s  1s  1s  0s
+100ns    1s  0s  1s  1s
+152ns    0s  0s  0s  1s
+154ns    1s  0s  1s  1s
+156ns    0s  0s  0s  1s
+158ns    1s  0s  1s  1s
+160ns    0s  0s  0s  1s
+200ns    0s  0s  0s  1s
+300ns    0s  1s  0s  0s
+400ns    1s  1s  1s  0s
+500ns    1s  0s  1s  1s
+600ns    0s  0s  0s  1s
+650ns    1s  0s  1s  1s
+652ns    0s  0s  0s  1s
+654ns    1s  0s  1s  1s
+656ns    0s  0s  0s  1s
+658ns    1s  0s  1s  1s
+660ns    0s  0s  0s  1s
+700ns    1s  0s  1s  1s
+750ns    0s  0s  0s  1s
+752ns    1s  0s  1s  1s
+754ns    0s  0s  0s  1s
+758ns    1s  0s  1s  1s
+850ns    0s  0s  0s  1s
