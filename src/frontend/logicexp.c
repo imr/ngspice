@@ -21,6 +21,9 @@
 #include "ngspice/logicexp.h"
 #include "ngspice/udevices.h"
 
+#define PRINT_ALL    FALSE
+//#define PRINT_ALL    TRUE
+
 /* Start of btree symbol table */
 #define SYM_INPUT       1
 #define SYM_OUTPUT      2
@@ -121,7 +124,6 @@ static void delete_sym_tab(SYM_TAB t)
     tfree(t);
 }
 
-#ifdef TABLE_PRINT
 static void print_sym_tab(SYM_TAB t, BOOL with_addr)
 {
     if (t == NULL) { return; }
@@ -134,7 +136,6 @@ static void print_sym_tab(SYM_TAB t, BOOL with_addr)
     printf("\n");
     print_sym_tab(t->right, with_addr);
 }
-#endif
 /* End of btree symbol table */
 
 /* Start of lexical scanner */
@@ -382,7 +383,7 @@ typedef struct parse_table *PTABLE;
 struct parse_table {
     TLINE first;
     TLINE last;
-    unsigned int num_entries;
+    unsigned int entry_count;
 };
 
 static PTABLE parse_tab = NULL;
@@ -393,7 +394,7 @@ static PTABLE new_parse_table(void)
     PTABLE pt;
     pt = TMALLOC(struct parse_table, 1);
     pt->first = pt->last = NULL;
-    pt->num_entries = 0;
+    pt->entry_count = 0;
     return pt;
 }
 
@@ -464,7 +465,7 @@ static TLINE add_to_parse_table(PTABLE pt, char *line, BOOL ignore_blank)
         pt->last->next = t;
         pt->last = t;
     }
-    pt->num_entries++;
+    pt->entry_count++;
     return t;
 }
 
@@ -553,21 +554,18 @@ static TLINE tab_find(PTABLE pt, char *str, BOOL start_of_line)
     return NULL;
 }
 
-//#define PTABLE_PRINT
-#ifdef PTABLE_PRINT
 static void ptable_print(PTABLE pt)
 {
     TLINE t;
     if (!pt)
         return;
     t = pt->first;
-    printf("num_entries %u\n", pt->num_entries);
+    printf("entry_count %u\n", pt->entry_count);
     while (t) {
         printf("%s\n", t->line);
         t = t->next;
     }
 }
-#endif
 /* End parse table */
 
 /* Start of logicexp parser */
@@ -868,6 +866,7 @@ static PTABLE optimize_gen_tab(PTABLE pt)
     int val, idnum = 0, tok_count = 0;
     SYM_TAB entry = NULL, alias_tab = NULL;
     BOOL found_tilde = FALSE, starts_with_temp = FALSE;
+    BOOL prit = PRINT_ALL;
     PTABLE new_gen = NULL;
     DS_CREATE(scratch, LEX_BUF_SZ);
     DS_CREATE(alias, 64);
@@ -931,6 +930,10 @@ static PTABLE optimize_gen_tab(PTABLE pt)
             delete_lexer(lxr);
             lxr = new_lexer(t->line);
         }
+    }
+    if (prit) {
+        printf("alias_tab:\n");
+        print_sym_tab(alias_tab, FALSE);
     }
     delete_lexer(lxr);
 
@@ -1048,7 +1051,7 @@ static PTABLE optimize_gen_tab(PTABLE pt)
     } // end of while (t) second pass
 
 quick_return:
-    if (new_gen && new_gen->num_entries == 0) {
+    if (new_gen && new_gen->entry_count == 0) {
         delete_parse_table(new_gen);
         new_gen = NULL;
     }
@@ -1289,7 +1292,7 @@ static void beval_order(void)
 static BOOL bparse(char *line, BOOL new_lexer)
 {
     int stmt_num = 0;
-    BOOL ret_val = TRUE;
+    BOOL ret_val = TRUE, prit = PRINT_ALL;
     LEXER lx;
     PTABLE opt_tab1 = NULL, opt_tab2 = NULL;
     DS_CREATE(stmt, LEX_BUF_SZ);
@@ -1322,24 +1325,36 @@ static BOOL bparse(char *line, BOOL new_lexer)
         beval_order();
 
         /* generate gates only when optimizations are successful */
-        last_count = gen_tab->num_entries;
+        if (prit) {
+            printf("gen_tab ");
+            ptable_print(gen_tab);
+        }
+        last_count = gen_tab->entry_count;
         if (last_count == 1) {
             gen_gates(gen_tab, lx->lexer_sym_tab);
         } else if (last_count > 1) {
             opt_tab1 = optimize_gen_tab(gen_tab);
+            if (prit) {
+                printf("opt_tab1 ");
+                ptable_print(opt_tab1);
+            }
             if (opt_tab1) {
-                curr_count = opt_tab1->num_entries;
+                curr_count = opt_tab1->entry_count;
                 opt_tab2 = opt_tab1;
                 while (curr_count > 1 && curr_count < last_count) {
                     last_count = curr_count;
                     opt_tab2 = optimize_gen_tab(opt_tab1);
+                    if (prit) {
+                        printf("opt_tab2 ");
+                        ptable_print(opt_tab2);
+                    }
                     delete_parse_table(opt_tab1);
                     if (!opt_tab2) {
                         ret_val = FALSE;
                         break;
                     }
                     opt_tab1 = opt_tab2;
-                    curr_count = opt_tab2->num_entries;
+                    curr_count = opt_tab2->entry_count;
                 }
                 if (opt_tab2) {
                     gen_gates(opt_tab2, lx->lexer_sym_tab);
@@ -1591,13 +1606,12 @@ static void delete_pindly_table(PINTABLE pint)
     tfree(pint);
 }
 
-//#define TRACE
-#ifdef TRACE
 static void print_pindly_table(PINTABLE pint)
 {
     PLINE p, next;
     if (!pint)
         return;
+    printf("num_entries %d\n", pint->num_entries);
     next = pint->first;
     while (next) {
         p = next;
@@ -1608,7 +1622,6 @@ static void print_pindly_table(PINTABLE pint)
         next = p->next;
     }
 }
-#endif
 
 static PLINE nth_pindly_entry(PINTABLE pint, int n)
 {
@@ -1657,10 +1670,9 @@ static void gen_pindly_buffers(void)
 {
     DS_CREATE(dbuf, 128);
     PLINE pline = NULL;
+    BOOL prit = PRINT_ALL;
 
-#ifdef TRACE
-    print_pindly_table(pindly_tab);
-#endif
+    if (prit) print_pindly_table(pindly_tab);
     pline = pindly_tab->first;
     while (pline) {
         char *iname = NULL;
@@ -1772,7 +1784,7 @@ static BOOL new_gen_output_models(LEXER lx)
 {
     int val, arrlen = 0, idx = 0, i;
     BOOL in_pindly = FALSE, in_tristate = FALSE, in_delay = FALSE;
-    BOOL prit = FALSE;
+    BOOL prit = PRINT_ALL;
     float typ_max_val = 0.0, typ_val = 0.0;
     char *units;
     DS_CREATE(dly, 64);
@@ -1782,6 +1794,14 @@ static BOOL new_gen_output_models(LEXER lx)
     PLINE pline = NULL;
     PLINE *pline_arr = NULL;
 
+    /* NOTE: The delays are specified in a DELAY(t1,t2,t3) function.
+       Beware if the format of t1, t2, t3 changes!
+       Expect t1, t2, t3:
+          -1 or x.y[time_unit] or w[time_unit]
+       where the time_unit is ns, ps, etc. and the same for t1, t2, t3;
+       x.y represents a decimal number; w is an integer.
+       Either numbers can have more that one digit.
+    */
     arrlen = num_pindly_entries(pindly_tab);
     if (arrlen <= 0) {
         ds_free(&dly);
