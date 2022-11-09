@@ -874,8 +874,13 @@ static PTABLE optimize_gen_tab(PTABLE pt)
     DS_CREATE(non_tmp_name, 64);
     DS_CREATE(tmp_name, 64);
 
-    if (!pt || !pt->first)
+    if (!pt || !pt->first) {
+        ds_free(&scratch);
+        ds_free(&alias);
+        ds_free(&non_tmp_name);
+        ds_free(&tmp_name);
         return NULL;
+    }
     t = pt->first;
     lxr = new_lexer(t->line);
     /* Look for tmp... = another_name
@@ -1043,6 +1048,10 @@ static PTABLE optimize_gen_tab(PTABLE pt)
     } // end of while (t) second pass
 
 quick_return:
+    if (new_gen && new_gen->num_entries == 0) {
+        delete_parse_table(new_gen);
+        new_gen = NULL;
+    }
     ds_free(&alias);
     ds_free(&scratch);
     ds_free(&non_tmp_name);
@@ -1069,8 +1078,13 @@ static void gen_gates(PTABLE gate_tab, SYM_TAB parser_symbols)
     DS_CREATE(gate_name, 64);
     DS_CREATE(instance, 128);
 
-    if (!gate_tab || !gate_tab->first)
+    if (!gate_tab || !gate_tab->first) {
+        ds_free(&out_name);
+        ds_free(&in_names);
+        ds_free(&gate_name);
+        ds_free(&instance);
         return;
+    }
     t = gate_tab->first;
     lxr = new_lexer(t->line);
     while (t) {
