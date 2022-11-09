@@ -19,7 +19,7 @@ MODIFICATIONS
 
     23 Aug 1991    Jeffrey P. Murray
     30 Sep 1991    Jeffrey P. Murray
-                                   
+    09 Nov 2022    Holger Vogt
 
 SUMMARY
 
@@ -70,6 +70,10 @@ NON-STANDARD FEATURES
 /*=== LOCAL VARIABLES & TYPEDEFS =======*/                         
 
 
+typedef struct {
+    double *x;
+    double *y;
+} Local_Data_t;
     
            
 /*=== FUNCTION PROTOTYPE DEFINITIONS ===*/
@@ -118,6 +122,26 @@ NON-STANDARD FEATURES
     NONE
 
 ==============================================================================*/
+
+static void cm_d_osc_callback(ARGS,
+        Mif_Callback_Reason_t reason)
+{
+    switch (reason) {
+        case MIF_CB_DESTROY: {
+            Local_Data_t *loc = STATIC_VAR(locdata);
+            if (loc) {
+                if (loc->x)
+                    free(loc->x);
+                if(loc->y)
+                    free(loc->y);
+                free(loc);
+                STATIC_VAR(locdata) = loc = NULL;
+            }
+            break;
+        } /* end of case MIF_CB_DESTROY */
+    } /* end of switch over reason being called */
+} /* end of function cm_d_osc_callback */
+
 
 /*=== CM_D_OSC ROUTINE ===*/
 
@@ -182,7 +206,8 @@ void cm_d_osc(ARGS)
               cntl_size,    /* control array size         */
               freq_size;    /* frequency array size       */
          
-                        
+    Local_Data_t   *loc;    /* Pointer to local static data, not to be included
+                                       in the state vector (save memory!) */                        
 
 
 
@@ -205,7 +230,6 @@ void cm_d_osc(ARGS)
             
     if (INIT) {  /*** Test for INIT == TRUE. If so, allocate storage, etc. ***/
 
-
         /* Allocate storage for internal variables */
         cm_analog_alloc(0, sizeof(double));
         cm_analog_alloc(1, sizeof(double));
@@ -218,14 +242,34 @@ void cm_d_osc(ARGS)
                           
         t3 = (double *) cm_analog_get_ptr(2,0);
 
+        /*** allocate static storage for *loc ***/
+        STATIC_VAR (locdata) = calloc (1 , sizeof ( Local_Data_t ));
+        loc = STATIC_VAR (locdata);
+        CALLBACK = cm_d_osc_callback;
+
+        x = loc->x = (double *) calloc((size_t) cntl_size, sizeof(double));
+        if (!x) {
+            cm_message_send(d_osc_allocation_error);
+            return;
+        }
+        y = loc->y = (double *) calloc((size_t) cntl_size, sizeof(double));
+        if (!y) {
+            cm_message_send(d_osc_allocation_error);
+            if(x)
+                free(x);
+            return;
+        }
+        /* Retrieve x and y values. */
+        for (i=0; i<cntl_size; i++) {
+            x[i] = PARAM(cntl_array[i]);
+            y[i] = PARAM(freq_array[i]);
+        }
     }
 
     else {    /*** This is not an initialization pass...retrieve storage
                    addresses and calculate new outputs, if required. ***/
 
-
         /** Retrieve previous values... **/
-
 
         /* assign internal variables */
         phase = (double *) cm_analog_get_ptr(0,0);
@@ -234,11 +278,7 @@ void cm_d_osc(ARGS)
         t1 = (double *) cm_analog_get_ptr(1,0);
                           
         t3 = (double *) cm_analog_get_ptr(2,0);
-
     }
-
-                
-
 
     switch (CALL_TYPE) {
 
@@ -250,7 +290,6 @@ void cm_d_osc(ARGS)
                                    in AC analysis mode.         */
             
             return; 
-
         }
         else {
 
@@ -269,32 +308,13 @@ void cm_d_osc(ARGS)
                             
                 /* preset time values to harmless values... */
                 *t1 = -1;
-                *t3 = -1;
-                
+                *t3 = -1;               
 
             }
 
-
-            /* Allocate storage for breakpoint domain & freq. range values */
-        
-            x = (double *) calloc((size_t) cntl_size, sizeof(double));
-            if (!x) {
-                cm_message_send(d_osc_allocation_error); 
-                return;
-            }
-        
-            y = (double *) calloc((size_t) freq_size, sizeof(double));
-            if (!y) {
-                cm_message_send(d_osc_allocation_error);  
-                if(x) free(x);
-                return;
-            }
-        
-            /* Retrieve x and y values. */       
-            for (i=0; i<cntl_size; i++) {
-                x[i] = PARAM(cntl_array[i]);
-                y[i] = PARAM(freq_array[i]);
-            }                       
+            loc = STATIC_VAR (locdata);
+            x = loc->x;
+            y = loc->y;                      
                     
             /* Retrieve cntl_input value. */       
             cntl_input = INPUT(cntl_in);
@@ -357,9 +377,7 @@ void cm_d_osc(ARGS)
             
                 if(TIME < *t3) {
                     cm_event_queue(*t3);
-                }
-            
-            			
+                }           			
             } 
             else 
 
@@ -373,7 +391,6 @@ void cm_d_osc(ARGS)
                 if(TIME < *t1) {
 
                     cm_event_queue(*t1);
-
                 }
            	}      
             else {
@@ -388,22 +405,12 @@ void cm_d_osc(ARGS)
                 }
 
                 *t3 = T(1) + (1 - dphase)/freq;
-
-
             }
-
-
-            
-            if(x) free(x);
-            if(y) free(y);
-
-
         }
         break;
                 
 
     case EVENT:    /** discrete call...lots to do **/
-
 
         test_double = TIME;                           
 
@@ -426,21 +433,16 @@ void cm_d_osc(ARGS)
             *t3 = -1;
         }
 
-
-
         /* Calculate the time variables and the output value
            for this iteration */ 	
                 
         /* Output is always set to STRONG */
         OUTPUT_STRENGTH(out) = STRONG;        
 
-
-
         if( *t1 == TIME ) { /* rising edge */
 
             OUTPUT_STATE(out) = ONE;        
             OUTPUT_DELAY(out) = PARAM(rise_delay);        
-
         }
         else {
 
@@ -466,7 +468,6 @@ void cm_d_osc(ARGS)
         }
 
         break;
-
     }
 }             
 
