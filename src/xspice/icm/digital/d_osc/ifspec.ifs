@@ -9,7 +9,7 @@ Atlanta, Georgia 30332
 AUTHORS                      
 
     30 Sept 1991     Jeffrey P. Murray
-
+    09 Nov  2022     Holger Vogt
 
 SUMMARY
 
@@ -73,3 +73,9 @@ Vector:              no                      no
 Vector_Bounds:       -                       -
 Null_Allowed:       yes                     yes 
 
+
+STATIC_VAR_TABLE:
+
+Static_Var_Name:    locdata
+Description:        "local static data"
+Data_Type:          pointer
