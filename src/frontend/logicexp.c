@@ -21,6 +21,7 @@
 #include "ngspice/logicexp.h"
 #include "ngspice/udevices.h"
 
+/* Turn off/on debug tracing */
 #define PRINT_ALL    FALSE
 //#define PRINT_ALL    TRUE
 
@@ -1672,7 +1673,7 @@ static void gen_pindly_buffers(void)
     PLINE pline = NULL;
     BOOL prit = PRINT_ALL;
 
-    if (prit) print_pindly_table(pindly_tab);
+    if (prit) { print_pindly_table(pindly_tab); }
     pline = pindly_tab->first;
     while (pline) {
         char *iname = NULL;
@@ -1839,7 +1840,7 @@ static BOOL new_gen_output_models(LEXER lx)
         }
         if (in_pindly && val == LEX_ID) { // start in_pindly and LEX_ID
             while (val == LEX_ID) {
-                if (prit) printf("pindly out \"%s\"\n", lx->lexer_buf);
+                if (prit) { printf("pindly out \"%s\"\n", lx->lexer_buf); }
                 pline = find_pindly_out_name(pindly_tab, lx->lexer_buf);
                 if (pline) {
                     pline_arr[idx++] = pline;
@@ -1860,7 +1861,7 @@ static BOOL new_gen_output_models(LEXER lx)
             while (val != '}') {
                 if (val == LEX_ID) {
                     if (eq(lx->lexer_buf, "delay")) {
-                        if (prit) printf("Get pindly delay\n");
+                        if (prit) { printf("Get pindly delay\n"); }
                         in_delay = TRUE;
                         ds_clear(&dly);
                     } else {
@@ -1875,9 +1876,11 @@ static BOOL new_gen_output_models(LEXER lx)
                         if (val == ')') {
                             char *tmps;
                             in_delay = FALSE;
-                            if (prit) printf("%s\n", ds_get_buf(&dly));
-                            if (prit) printf("estimate \"%s\"\n",
-                                typical_estimate(ds_get_buf(&dly)));
+                            if (prit) {
+                                printf("%s\n", ds_get_buf(&dly));
+                                printf("estimate \"%s\"\n",
+                                    typical_estimate(ds_get_buf(&dly)));
+                            }
                             tmps = typical_estimate(ds_get_buf(&dly));
                             if (!tmps) {
                                 goto err_return;
@@ -1922,7 +1925,7 @@ static BOOL new_gen_output_models(LEXER lx)
                     BOOL invert = FALSE;
                     if (eq(lx->lexer_buf, "lo"))
                         invert = TRUE;
-                    if (prit) printf("tristate enable %s ", lx->lexer_buf);
+                    if (prit) { printf("tristate enable %s ", lx->lexer_buf); }
                     val = lexer_scan(lx);
                     if (val != '=') {
                         goto err_return;
@@ -1931,7 +1934,7 @@ static BOOL new_gen_output_models(LEXER lx)
                     if (val != LEX_ID) {
                         goto err_return;
                     }
-                    if (prit) printf("ena \"%s\"\n", lx->lexer_buf);
+                    if (prit) { printf("ena \"%s\"\n", lx->lexer_buf); }
                     ds_clear(&enable_name);
                     if (invert)
                         ds_cat_char(&enable_name, '~');
@@ -1952,7 +1955,7 @@ static BOOL new_gen_output_models(LEXER lx)
                 goto err_return;
             }
             while (val == LEX_ID) {
-                if (prit) printf("tristate out \"%s\"\n", lx->lexer_buf);
+                if (prit) { printf("tristate out \"%s\"\n", lx->lexer_buf); }
                 pline = find_pindly_out_name(pindly_tab, lx->lexer_buf);
                 if (pline) {
                     pline_arr[idx++] = pline;
@@ -1974,7 +1977,7 @@ static BOOL new_gen_output_models(LEXER lx)
             while (val != '}') {
                 if (val == LEX_ID) {
                     if (eq(lx->lexer_buf, "delay")) {
-                        if (prit) printf("Get tristate delay\n");
+                        if (prit) { printf("Get tristate delay\n"); }
                         in_delay = TRUE;
                         ds_clear(&dly);
                     } else {
@@ -1989,9 +1992,11 @@ static BOOL new_gen_output_models(LEXER lx)
                         if (val == ')') {
                             char *tmps;
                             in_delay = FALSE;
-                            if (prit) printf("%s\n", ds_get_buf(&dly));
-                            if (prit) printf("estimate \"%s\"\n",
-                                typical_estimate(ds_get_buf(&dly)));
+                            if (prit) {
+                                printf("%s\n", ds_get_buf(&dly));
+                                printf("estimate \"%s\"\n",
+                                    typical_estimate(ds_get_buf(&dly)));
+                            }
                             tmps = typical_estimate(ds_get_buf(&dly));
                             if (!tmps) {
                                 goto err_return;
