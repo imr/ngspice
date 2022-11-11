@@ -78,7 +78,7 @@ PTpower(double arg1, double arg2)
             /* If arg2 is quasi an integer, round it to have pow not fail
                when arg1 is negative. Takes into account the double 
                representation which sometimes differs in the last digit(s). */
-            if (AlmostEqualUlps(trunc(arg2), arg2, 10))
+            if (AlmostEqualUlps(nearbyint(arg2), arg2, 10))
                 res = pow(arg1, round(arg2));
             else
                 /* As per LTSPICE specification for ** */
