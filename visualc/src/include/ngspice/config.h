@@ -29,7 +29,7 @@
 /********* Don't change entries found below ***************************/
 
 /* The xspice enhancements */
-//#define XSPICE 1
+#define XSPICE 1
 
 /* The OSDI enhancements */
 #define OSDI 1
