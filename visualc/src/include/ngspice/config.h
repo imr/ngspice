@@ -29,13 +29,10 @@
 /********* Don't change entries found below ***************************/
 
 /* The xspice enhancements */
-/* XSPICE is always included in the Visual Studio compiled executable */
-#define OSDI 1
-#undef XSPICE
-//#ifndef OSDI
 //#define XSPICE 1
-/* don't undef XSPICE, otherwise compilation will fail */
-//#endif
+
+/* The OSDI enhancements */
+#define OSDI 1
 
 /* The CIDER enhancements */
 #define CIDER 1
