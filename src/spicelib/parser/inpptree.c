@@ -123,7 +123,7 @@ static struct op {
     PT_MINUS,  "-", (void(*)(void)) PTminus}, {
     PT_TIMES,  "*", (void(*)(void)) PTtimes}, {
     PT_DIVIDE, "/", (void(*)(void)) PTdivide}, {
-    PT_POWER,  "^", (void(*)(void)) PTpower}
+    PT_POWER,  "^", (void(*)(void)) PTpowerH}
 };
 
 #define NUM_OPS (int)NUMELEMS(ops)
@@ -330,7 +330,7 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
 #define b  p->right
         if (b->type == PT_CONSTANT) {
             arg1 = PTdifferentiate(a, varnum);
-            if (newcompat.lt) {
+            if (newcompat.hs || newcompat.lt) {
                 newp = mkb(PT_TIMES,
                     mkb(PT_TIMES,
                         mkcon(b->constant),
