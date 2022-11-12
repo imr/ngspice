@@ -23,7 +23,7 @@ Xnot5 in5 vdd vss in not1
 
 .subckt not1 a vdd vss z
 *m01   z a     vdd     vdd pch  l=0.1u  w=1u  as=0.26235  ad=0.26235  ps=2.51   pd=2.51
-amp1  z a     vdd     vdd pch
+nmp1  z a     vdd     vdd pch
 +l=0.1u
 +w=1u
 +sa=0.0e+00
@@ -36,7 +36,7 @@ amp1  z a     vdd     vdd pch
 +lgdrain=1.0e-06
 +mult=1.0e+00
 *m02   z a     vss     vss nch  l=0.1u  w=0.5u as=0.131175 ad=0.131175 ps=1.52   pd=1.52
-amn1  z a     vss     vss nch
+nmn1  z a     vss     vss nch
 +l=0.1u
 +w=1u
 +sa=0.0e+00
