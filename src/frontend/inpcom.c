@@ -10014,7 +10014,8 @@ static char inp_get_elem_ident(char *type)
         return 'm';
     if (cieq(type, "res"))
         return 'r';
-    /* xspice code models do not have unique type names */
+    /* xspice code models do not have unique type names,
+       but could also be a OpenVAF model. */
     else
         return 'a';
 }
@@ -10297,7 +10298,7 @@ void inp_rem_unused_models(struct nscope *root, struct card *deck)
                 struct modellist *m =
                         inp_find_model(card->level, elem_model_name);
                 if (m) {
-                    if (*curr_line != m->elemb)
+                    if (*curr_line != m->elemb && *curr_line != 'n')
                         fprintf(stderr,
                                 "warning, model type mismatch in line\n    "
                                 "%s\n",
