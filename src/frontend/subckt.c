@@ -1438,10 +1438,8 @@ translate(struct card *deck, char *formal, char *actual, char *scname, const cha
             /* FIXME anothet hack: if no models found for m devices, set number of nodes to 4 */
             if (!modnames && *(c->line) == 'm')
                 nnodes = get_number_terminals(c->line);
-#ifdef OSDI
-            else if (*(c->line) == 'a')
+            else if (*(c->line) == 'n')
                 nnodes = get_number_terminals(c->line);
-#endif
             else
                 nnodes = numnodes(c->line, subs, modnames);
             while (--nnodes >= 0) {
@@ -1693,7 +1691,7 @@ numnodes(const char *line, struct subs *subs, wordlist const *modnames)
 
     /* If model names equal node names, this code will fail! */
 #ifdef OSDI
-    if ((c == 'a') ||(c == 'm') || (c == 'p') || (c == 'q') || (c == 'd')) { /* IF this is a mos, cpl, bjt or diode */
+    if ((c == 'n') ||(c == 'm') || (c == 'p') || (c == 'q') || (c == 'd')) { /* IF this is a mos, cpl, bjt or diode */
 #else
     if ((c == 'm') || (c == 'p') || (c == 'q') || (c == 'd')) { /* IF this is a mos, cpl, bjt or diode */
 #endif
@@ -2268,7 +2266,7 @@ inp_numnodes(char c)
     case 'z':
         return (3);
 #ifdef OSDI
-    case 'a':
+    case 'n':
         return (7);
 #endif
 
