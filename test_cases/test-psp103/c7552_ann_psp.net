@@ -89050,20 +89050,20 @@ X7119 g3086_1 vdd gnd g4138_0 not1
 * the components sub circuits: 
 
 .subckt or4 a b c d vdd vss z
-am01 sig8  a     vdd   vdd pch  l=0.12u  w=0.99u  as=0.26235p  ad=0.26235p  ps=2.51u   pd=2.51u
-am02 vdd   a     05    vdd pch  l=0.12u  w=0.99u  as=0.26235p  ad=0.26235p  ps=2.51u   pd=2.51u
-am03 sig1  a     vss   vss nch  l=0.12u  w=0.33u  as=0.08745p  ad=0.08745p  ps=1.19u   pd=1.19u
-am04 n2    b     sig8  vdd pch  l=0.12u  w=0.99u  as=0.26235p  ad=0.26235p  ps=2.51u   pd=2.51u
-am05 05    b     08    vdd pch  l=0.12u  w=0.99u  as=0.26235p  ad=0.26235p  ps=2.51u   pd=2.51u
-am06 vss   b     sig1  vss nch  l=0.12u  w=0.33u  as=0.08745p  ad=0.08745p  ps=1.19u   pd=1.19u
-am07 10    c     n2    vdd pch  l=0.12u  w=0.99u  as=0.26235p  ad=0.26235p  ps=2.51u   pd=2.51u
-am08 08    c     11    vdd pch  l=0.12u  w=0.99u  as=0.26235p  ad=0.26235p  ps=2.51u   pd=2.51u
-am09 sig1  c     vss   vss nch  l=0.12u  w=0.33u  as=0.08745p  ad=0.08745p  ps=1.19u   pd=1.19u
-am10 sig1  d     10    vdd pch  l=0.12u  w=0.99u  as=0.26235p  ad=0.26235p  ps=2.51u   pd=2.51u
-am11 11    d     sig1  vdd pch  l=0.12u  w=0.99u  as=0.26235p  ad=0.26235p  ps=2.51u   pd=2.51u
-am12 vss   d     sig1  vss nch  l=0.12u  w=0.33u  as=0.08745p  ad=0.08745p  ps=1.19u   pd=1.19u
-am13 vdd   sig1  z     vdd pch  l=0.12u  w=0.99u  as=0.26235p  ad=0.26235p  ps=2.51u   pd=2.51u
-am14 vss   sig1  z     vss nch  l=0.12u  w=0.495u as=0.131175p ad=0.131175p ps=1.52u   pd=1.52u
+nm01 sig8  a     vdd   vdd pch  l=0.12u  w=0.99u  as=0.26235p  ad=0.26235p  ps=2.51u   pd=2.51u
+nm02 vdd   a     05    vdd pch  l=0.12u  w=0.99u  as=0.26235p  ad=0.26235p  ps=2.51u   pd=2.51u
+nm03 sig1  a     vss   vss nch  l=0.12u  w=0.33u  as=0.08745p  ad=0.08745p  ps=1.19u   pd=1.19u
+nm04 n2    b     sig8  vdd pch  l=0.12u  w=0.99u  as=0.26235p  ad=0.26235p  ps=2.51u   pd=2.51u
+nm05 05    b     08    vdd pch  l=0.12u  w=0.99u  as=0.26235p  ad=0.26235p  ps=2.51u   pd=2.51u
+nm06 vss   b     sig1  vss nch  l=0.12u  w=0.33u  as=0.08745p  ad=0.08745p  ps=1.19u   pd=1.19u
+nm07 10    c     n2    vdd pch  l=0.12u  w=0.99u  as=0.26235p  ad=0.26235p  ps=2.51u   pd=2.51u
+nm08 08    c     11    vdd pch  l=0.12u  w=0.99u  as=0.26235p  ad=0.26235p  ps=2.51u   pd=2.51u
+nm09 sig1  c     vss   vss nch  l=0.12u  w=0.33u  as=0.08745p  ad=0.08745p  ps=1.19u   pd=1.19u
+nm10 sig1  d     10    vdd pch  l=0.12u  w=0.99u  as=0.26235p  ad=0.26235p  ps=2.51u   pd=2.51u
+nm11 11    d     sig1  vdd pch  l=0.12u  w=0.99u  as=0.26235p  ad=0.26235p  ps=2.51u   pd=2.51u
+nm12 vss   d     sig1  vss nch  l=0.12u  w=0.33u  as=0.08745p  ad=0.08745p  ps=1.19u   pd=1.19u
+nm13 vdd   sig1  z     vdd pch  l=0.12u  w=0.99u  as=0.26235p  ad=0.26235p  ps=2.51u   pd=2.51u
+nm14 vss   sig1  z     vss nch  l=0.12u  w=0.495u as=0.131175p ad=0.131175p ps=1.52u   pd=1.52u
 c4  a     vss   1.356f
 c5  b     vss   1.229f
 c6  c     vss   1.043f
@@ -89072,15 +89072,15 @@ c1  sig1  vss   1.003f
 c3  z     vss   0.701f
 .ends
 .subckt xnr2v0x1 a b vdd vss z
-am01 z     b     sig3  vdd pch  l=0.12u  w=0.99u  as=0.26235p  ad=0.26235p  ps=2.51u   pd=2.51u
-am02 bn    sig3  z     vss nch  l=0.12u  w=0.495u as=0.131175p ad=0.131175p ps=1.52u   pd=1.52u
-am03 sig3  a     vdd   vdd pch  l=0.12u  w=0.99u  as=0.26235p  ad=0.26235p  ps=2.51u   pd=2.51u
-am04 vdd   b     bn    vdd pch  l=0.12u  w=0.99u  as=0.26235p  ad=0.26235p  ps=2.51u   pd=2.51u
-am05 z     bn    sig3  vss nch  l=0.12u  w=0.495u as=0.131175p ad=0.131175p ps=1.52u   pd=1.52u
-am06 vdd   sig3  n1    vdd pch  l=0.12u  w=1.54u  as=0.4081p   ad=0.4081p   ps=3.61u   pd=3.61u
-am07 sig3  a     vss   vss nch  l=0.12u  w=0.495u as=0.131175p ad=0.131175p ps=1.52u   pd=1.52u
-am08 n1    bn    z     vdd pch  l=0.12u  w=1.54u  as=0.4081p   ad=0.4081p   ps=3.61u   pd=3.61u
-am09 vss   b     bn    vss nch  l=0.12u  w=0.495u as=0.131175p ad=0.131175p ps=1.52u   pd=1.52u
+nm01 z     b     sig3  vdd pch  l=0.12u  w=0.99u  as=0.26235p  ad=0.26235p  ps=2.51u   pd=2.51u
+nm02 bn    sig3  z     vss nch  l=0.12u  w=0.495u as=0.131175p ad=0.131175p ps=1.52u   pd=1.52u
+nm03 sig3  a     vdd   vdd pch  l=0.12u  w=0.99u  as=0.26235p  ad=0.26235p  ps=2.51u   pd=2.51u
+nm04 vdd   b     bn    vdd pch  l=0.12u  w=0.99u  as=0.26235p  ad=0.26235p  ps=2.51u   pd=2.51u
+nm05 z     bn    sig3  vss nch  l=0.12u  w=0.495u as=0.131175p ad=0.131175p ps=1.52u   pd=1.52u
+nm06 vdd   sig3  n1    vdd pch  l=0.12u  w=1.54u  as=0.4081p   ad=0.4081p   ps=3.61u   pd=3.61u
+nm07 sig3  a     vss   vss nch  l=0.12u  w=0.495u as=0.131175p ad=0.131175p ps=1.52u   pd=1.52u
+nm08 n1    bn    z     vdd pch  l=0.12u  w=1.54u  as=0.4081p   ad=0.4081p   ps=3.61u   pd=3.61u
+nm09 vss   b     bn    vss nch  l=0.12u  w=0.495u as=0.131175p ad=0.131175p ps=1.52u   pd=1.52u
 c4  a     vss   0.389f
 c2  bn    vss   1.593f
 c5  b     vss   0.840f
@@ -89088,37 +89088,37 @@ c3  sig3  vss   0.618f
 c6  z     vss   0.627f
 .ends
 .subckt nor2 a b vdd vss z
-am01 vdd   a     01    vdd pch  l=0.12u  w=1.54u  as=0.4081p   ad=0.4081p   ps=3.61u   pd=3.61u
-am02 vss   a     z     vss nch  l=0.12u  w=0.44u  as=0.1166p   ad=0.1166p   ps=1.41u   pd=1.41u
-am03 01    b     z     vdd pch  l=0.12u  w=1.54u  as=0.4081p   ad=0.4081p   ps=3.61u   pd=3.61u
-am04 z     b     vss   vss nch  l=0.12u  w=0.44u  as=0.1166p   ad=0.1166p   ps=1.41u   pd=1.41u
+nm01 vdd   a     01    vdd pch  l=0.12u  w=1.54u  as=0.4081p   ad=0.4081p   ps=3.61u   pd=3.61u
+nm02 vss   a     z     vss nch  l=0.12u  w=0.44u  as=0.1166p   ad=0.1166p   ps=1.41u   pd=1.41u
+nm03 01    b     z     vdd pch  l=0.12u  w=1.54u  as=0.4081p   ad=0.4081p   ps=3.61u   pd=3.61u
+nm04 z     b     vss   vss nch  l=0.12u  w=0.44u  as=0.1166p   ad=0.1166p   ps=1.41u   pd=1.41u
 c4  a     vss   0.341f
 c3  b     vss   0.433f
 c2  z     vss   0.677f
 .ends
 .subckt or2 a b vdd vss z
-am01 03    a     vdd   vdd pch  l=0.12u  w=1.155u as=0.306075p ad=0.306075p ps=2.84u   pd=2.84u
-am02 sig1  a     vss   vss nch  l=0.12u  w=0.33u  as=0.08745p  ad=0.08745p  ps=1.19u   pd=1.19u
-am03 sig1  b     03    vdd pch  l=0.12u  w=1.155u as=0.306075p ad=0.306075p ps=2.84u   pd=2.84u
-am04 vss   b     sig1  vss nch  l=0.12u  w=0.33u  as=0.08745p  ad=0.08745p  ps=1.19u   pd=1.19u
-am5  vdd   sig1  z     vdd pch  l=0.12u  w=0.99u  as=0.26235p  ad=0.26235p  ps=2.51u   pd=2.51u
-am6  vss   sig1  z     vss nch  l=0.12u  w=0.495u as=0.131175p ad=0.131175p ps=1.52u   pd=1.52u
+nm01 03    a     vdd   vdd pch  l=0.12u  w=1.155u as=0.306075p ad=0.306075p ps=2.84u   pd=2.84u
+nm02 sig1  a     vss   vss nch  l=0.12u  w=0.33u  as=0.08745p  ad=0.08745p  ps=1.19u   pd=1.19u
+nm03 sig1  b     03    vdd pch  l=0.12u  w=1.155u as=0.306075p ad=0.306075p ps=2.84u   pd=2.84u
+nm04 vss   b     sig1  vss nch  l=0.12u  w=0.33u  as=0.08745p  ad=0.08745p  ps=1.19u   pd=1.19u
+nm5  vdd   sig1  z     vdd pch  l=0.12u  w=0.99u  as=0.26235p  ad=0.26235p  ps=2.51u   pd=2.51u
+nm6  vss   sig1  z     vss nch  l=0.12u  w=0.495u as=0.131175p ad=0.131175p ps=1.52u   pd=1.52u
 c4  a     vss   0.464f
 c5  b     vss   0.507f
 c1  sig1  vss   0.619f
 c3  z     vss   0.593f
 .ends
 .subckt and4 a b c d vdd vss z
-am01 10    a     vdd   vdd pch  l=0.12u  w=0.715u as=0.189475p ad=0.189475p ps=1.96u   pd=1.96u
-am02 n1    a     vss   vss nch  l=0.12u  w=0.88u  as=0.2332p   ad=0.2332p   ps=2.29u   pd=2.29u
-am03 vdd   b     10    vdd pch  l=0.12u  w=0.715u as=0.189475p ad=0.189475p ps=1.96u   pd=1.96u
-am04 sig7  b     n1    vss nch  l=0.12u  w=0.88u  as=0.2332p   ad=0.2332p   ps=2.29u   pd=2.29u
-am05 10    c     vdd   vdd pch  l=0.12u  w=0.715u as=0.189475p ad=0.189475p ps=1.96u   pd=1.96u
-am06 n3    c     sig7  vss nch  l=0.12u  w=0.88u  as=0.2332p   ad=0.2332p   ps=2.29u   pd=2.29u
-am07 vdd   d     10    vdd pch  l=0.12u  w=0.715u as=0.189475p ad=0.189475p ps=1.96u   pd=1.96u
-am08 10    d     n3    vss nch  l=0.12u  w=0.88u  as=0.2332p   ad=0.2332p   ps=2.29u   pd=2.29u
-am09 vdd   10    z     vdd pch  l=0.12u  w=0.99u  as=0.26235p  ad=0.26235p  ps=2.51u   pd=2.51u
-am10 vss   10    z     vss nch  l=0.12u  w=0.495u as=0.131175p ad=0.131175p ps=1.52u   pd=1.52u
+nm01 10    a     vdd   vdd pch  l=0.12u  w=0.715u as=0.189475p ad=0.189475p ps=1.96u   pd=1.96u
+nm02 n1    a     vss   vss nch  l=0.12u  w=0.88u  as=0.2332p   ad=0.2332p   ps=2.29u   pd=2.29u
+nm03 vdd   b     10    vdd pch  l=0.12u  w=0.715u as=0.189475p ad=0.189475p ps=1.96u   pd=1.96u
+nm04 sig7  b     n1    vss nch  l=0.12u  w=0.88u  as=0.2332p   ad=0.2332p   ps=2.29u   pd=2.29u
+nm05 10    c     vdd   vdd pch  l=0.12u  w=0.715u as=0.189475p ad=0.189475p ps=1.96u   pd=1.96u
+nm06 n3    c     sig7  vss nch  l=0.12u  w=0.88u  as=0.2332p   ad=0.2332p   ps=2.29u   pd=2.29u
+nm07 vdd   d     10    vdd pch  l=0.12u  w=0.715u as=0.189475p ad=0.189475p ps=1.96u   pd=1.96u
+nm08 10    d     n3    vss nch  l=0.12u  w=0.88u  as=0.2332p   ad=0.2332p   ps=2.29u   pd=2.29u
+nm09 vdd   10    z     vdd pch  l=0.12u  w=0.99u  as=0.26235p  ad=0.26235p  ps=2.51u   pd=2.51u
+nm10 vss   10    z     vss nch  l=0.12u  w=0.495u as=0.131175p ad=0.131175p ps=1.52u   pd=1.52u
 c4  10    vss   0.940f
 c5  a     vss   0.674f
 c8  b     vss   0.541f
@@ -89127,18 +89127,18 @@ c10 d     vss   0.791f
 c3  z     vss   0.765f
 .ends
 .subckt nor4 a b c d vdd vss z
-am1a 1b    a     vdd   vdd pch  l=0.12u  w=1.375u as=0.364375p ad=0.364375p ps=3.28u   pd=3.28u
-am1b sig8  b     1b    vdd pch  l=0.12u  w=1.375u as=0.364375p ad=0.364375p ps=3.28u   pd=3.28u
-am1c 1d    c     sig8  vdd pch  l=0.12u  w=1.375u as=0.364375p ad=0.364375p ps=3.28u   pd=3.28u
-am1d z     d     1d    vdd pch  l=0.12u  w=1.375u as=0.364375p ad=0.364375p ps=3.28u   pd=3.28u
-am2a vdd   a     2a    vdd pch  l=0.12u  w=0.99u  as=0.26235p  ad=0.26235p  ps=2.51u   pd=2.51u
-am2b 2a    b     sig11 vdd pch  l=0.12u  w=0.99u  as=0.26235p  ad=0.26235p  ps=2.51u   pd=2.51u
-am2c sig11 c     2c    vdd pch  l=0.12u  w=0.99u  as=0.26235p  ad=0.26235p  ps=2.51u   pd=2.51u
-am2d 2c    d     z     vdd pch  l=0.12u  w=0.99u  as=0.26235p  ad=0.26235p  ps=2.51u   pd=2.51u
-am3a z     a     vss   vss nch  l=0.12u  w=0.33u  as=0.08745p  ad=0.08745p  ps=1.19u   pd=1.19u
-am3b vss   b     z     vss nch  l=0.12u  w=0.33u  as=0.08745p  ad=0.08745p  ps=1.19u   pd=1.19u
-am3c z     c     vss   vss nch  l=0.12u  w=0.33u  as=0.08745p  ad=0.08745p  ps=1.19u   pd=1.19u
-am3d vss   d     z     vss nch  l=0.12u  w=0.33u  as=0.08745p  ad=0.08745p  ps=1.19u   pd=1.19u
+nm1a 1b    a     vdd   vdd pch  l=0.12u  w=1.375u as=0.364375p ad=0.364375p ps=3.28u   pd=3.28u
+nm1b sig8  b     1b    vdd pch  l=0.12u  w=1.375u as=0.364375p ad=0.364375p ps=3.28u   pd=3.28u
+nm1c 1d    c     sig8  vdd pch  l=0.12u  w=1.375u as=0.364375p ad=0.364375p ps=3.28u   pd=3.28u
+nm1d z     d     1d    vdd pch  l=0.12u  w=1.375u as=0.364375p ad=0.364375p ps=3.28u   pd=3.28u
+nm2a vdd   a     2a    vdd pch  l=0.12u  w=0.99u  as=0.26235p  ad=0.26235p  ps=2.51u   pd=2.51u
+nm2b 2a    b     sig11 vdd pch  l=0.12u  w=0.99u  as=0.26235p  ad=0.26235p  ps=2.51u   pd=2.51u
+nm2c sig11 c     2c    vdd pch  l=0.12u  w=0.99u  as=0.26235p  ad=0.26235p  ps=2.51u   pd=2.51u
+nm2d 2c    d     z     vdd pch  l=0.12u  w=0.99u  as=0.26235p  ad=0.26235p  ps=2.51u   pd=2.51u
+nm3a z     a     vss   vss nch  l=0.12u  w=0.33u  as=0.08745p  ad=0.08745p  ps=1.19u   pd=1.19u
+nm3b vss   b     z     vss nch  l=0.12u  w=0.33u  as=0.08745p  ad=0.08745p  ps=1.19u   pd=1.19u
+nm3c z     c     vss   vss nch  l=0.12u  w=0.33u  as=0.08745p  ad=0.08745p  ps=1.19u   pd=1.19u
+nm3d vss   d     z     vss nch  l=0.12u  w=0.33u  as=0.08745p  ad=0.08745p  ps=1.19u   pd=1.19u
 c4  a     vss   1.510f
 c3  b     vss   1.102f
 c6  c     vss   0.817f
@@ -89146,20 +89146,20 @@ c5  d     vss   0.806f
 c2  z     vss   0.935f
 .ends
 .subckt not1 a vdd vss z
-am01 vdd   a     z     vdd pch  l=0.12u  w=0.99u  as=0.26235p  ad=0.26235p  ps=2.51u   pd=2.51u
-am02 vss   a     z     vss nch  l=0.12u  w=0.495u as=0.131175p ad=0.131175p ps=1.52u   pd=1.52u
+nm01 vdd   a     z     vdd pch  l=0.12u  w=0.99u  as=0.26235p  ad=0.26235p  ps=2.51u   pd=2.51u
+nm02 vss   a     z     vss nch  l=0.12u  w=0.495u as=0.131175p ad=0.131175p ps=1.52u   pd=1.52u
 c3  a     vss   0.384f
 c2  z     vss   0.576f
 .ends
 .subckt and3 a b c vdd vss z
-am01 08    a     vdd   vdd pch  l=0.12u  w=0.715u as=0.189475p ad=0.189475p ps=1.96u   pd=1.96u
-am02 n1    a     vss   vss nch  l=0.12u  w=0.715u as=0.189475p ad=0.189475p ps=1.96u   pd=1.96u
-am03 vdd   b     08    vdd pch  l=0.12u  w=0.715u as=0.189475p ad=0.189475p ps=1.96u   pd=1.96u
-am04 sig6  b     n1    vss nch  l=0.12u  w=0.715u as=0.189475p ad=0.189475p ps=1.96u   pd=1.96u
-am05 08    c     vdd   vdd pch  l=0.12u  w=0.715u as=0.189475p ad=0.189475p ps=1.96u   pd=1.96u
-am06 08    c     sig6  vss nch  l=0.12u  w=0.715u as=0.189475p ad=0.189475p ps=1.96u   pd=1.96u
-am07 vdd   08    z     vdd pch  l=0.12u  w=0.99u  as=0.26235p  ad=0.26235p  ps=2.51u   pd=2.51u
-am08 vss   08    z     vss nch  l=0.12u  w=0.495u as=0.131175p ad=0.131175p ps=1.52u   pd=1.52u
+nm01 08    a     vdd   vdd pch  l=0.12u  w=0.715u as=0.189475p ad=0.189475p ps=1.96u   pd=1.96u
+nm02 n1    a     vss   vss nch  l=0.12u  w=0.715u as=0.189475p ad=0.189475p ps=1.96u   pd=1.96u
+nm03 vdd   b     08    vdd pch  l=0.12u  w=0.715u as=0.189475p ad=0.189475p ps=1.96u   pd=1.96u
+nm04 sig6  b     n1    vss nch  l=0.12u  w=0.715u as=0.189475p ad=0.189475p ps=1.96u   pd=1.96u
+nm05 08    c     vdd   vdd pch  l=0.12u  w=0.715u as=0.189475p ad=0.189475p ps=1.96u   pd=1.96u
+nm06 08    c     sig6  vss nch  l=0.12u  w=0.715u as=0.189475p ad=0.189475p ps=1.96u   pd=1.96u
+nm07 vdd   08    z     vdd pch  l=0.12u  w=0.99u  as=0.26235p  ad=0.26235p  ps=2.51u   pd=2.51u
+nm08 vss   08    z     vss nch  l=0.12u  w=0.495u as=0.131175p ad=0.131175p ps=1.52u   pd=1.52u
 c4  08    vss   1.142f
 c5  a     vss   0.539f
 c7  b     vss   0.609f
@@ -89167,14 +89167,14 @@ c8  c     vss   0.651f
 c3  z     vss   0.745f
 .ends
 .subckt or3 a b c vdd vss z
-am01 01    a     vdd   vdd pch  l=0.12u  w=1.54u  as=0.4081p   ad=0.4081p   ps=3.61u   pd=3.61u
-am02 sig1  a     vss   vss nch  l=0.12u  w=0.33u  as=0.08745p  ad=0.08745p  ps=1.19u   pd=1.19u
-am03 03    b     01    vdd pch  l=0.12u  w=1.54u  as=0.4081p   ad=0.4081p   ps=3.61u   pd=3.61u
-am04 vss   b     sig1  vss nch  l=0.12u  w=0.33u  as=0.08745p  ad=0.08745p  ps=1.19u   pd=1.19u
-am05 sig1  c     03    vdd pch  l=0.12u  w=1.54u  as=0.4081p   ad=0.4081p   ps=3.61u   pd=3.61u
-am06 sig1  c     vss   vss nch  l=0.12u  w=0.33u  as=0.08745p  ad=0.08745p  ps=1.19u   pd=1.19u
-am07 vdd   sig1  z     vdd pch  l=0.12u  w=1.045u as=0.276925p ad=0.276925p ps=2.62u   pd=2.62u
-am08 vss   sig1  z     vss nch  l=0.12u  w=0.495u as=0.131175p ad=0.131175p ps=1.52u   pd=1.52u
+nm01 01    a     vdd   vdd pch  l=0.12u  w=1.54u  as=0.4081p   ad=0.4081p   ps=3.61u   pd=3.61u
+nm02 sig1  a     vss   vss nch  l=0.12u  w=0.33u  as=0.08745p  ad=0.08745p  ps=1.19u   pd=1.19u
+nm03 03    b     01    vdd pch  l=0.12u  w=1.54u  as=0.4081p   ad=0.4081p   ps=3.61u   pd=3.61u
+nm04 vss   b     sig1  vss nch  l=0.12u  w=0.33u  as=0.08745p  ad=0.08745p  ps=1.19u   pd=1.19u
+nm05 sig1  c     03    vdd pch  l=0.12u  w=1.54u  as=0.4081p   ad=0.4081p   ps=3.61u   pd=3.61u
+nm06 sig1  c     vss   vss nch  l=0.12u  w=0.33u  as=0.08745p  ad=0.08745p  ps=1.19u   pd=1.19u
+nm07 vdd   sig1  z     vdd pch  l=0.12u  w=1.045u as=0.276925p ad=0.276925p ps=2.62u   pd=2.62u
+nm08 vss   sig1  z     vss nch  l=0.12u  w=0.495u as=0.131175p ad=0.131175p ps=1.52u   pd=1.52u
 c4  a     vss   0.544f
 c5  b     vss   0.535f
 c6  c     vss   0.625f
@@ -89182,36 +89182,36 @@ c1  sig1  vss   0.995f
 c3  z     vss   0.544f
 .ends
 .subckt nand2 a b vdd vss z
-am01 vdd   a     z     vdd pch  l=0.12u  w=0.77u  as=0.20405p  ad=0.20405p  ps=2.07u   pd=2.07u
-am02 vss   a     sig3  vss nch  l=0.12u  w=0.66u  as=0.1749p   ad=0.1749p   ps=1.85u   pd=1.85u
-am03 z     b     vdd   vdd pch  l=0.12u  w=0.77u  as=0.20405p  ad=0.20405p  ps=2.07u   pd=2.07u
-am04 sig3  b     z     vss nch  l=0.12u  w=0.66u  as=0.1749p   ad=0.1749p   ps=1.85u   pd=1.85u
+nm01 vdd   a     z     vdd pch  l=0.12u  w=0.77u  as=0.20405p  ad=0.20405p  ps=2.07u   pd=2.07u
+nm02 vss   a     sig3  vss nch  l=0.12u  w=0.66u  as=0.1749p   ad=0.1749p   ps=1.85u   pd=1.85u
+nm03 z     b     vdd   vdd pch  l=0.12u  w=0.77u  as=0.20405p  ad=0.20405p  ps=2.07u   pd=2.07u
+nm04 sig3  b     z     vss nch  l=0.12u  w=0.66u  as=0.1749p   ad=0.1749p   ps=1.85u   pd=1.85u
 c4  a     vss   0.549f
 c5  b     vss   0.578f
 c1  z     vss   0.609f
 .ends
 .subckt and2 a b vdd vss z
-am01 06    a     vdd   vdd pch  l=0.12u  w=0.715u as=0.189475p ad=0.189475p ps=1.96u   pd=1.96u
-am02 n1    a     vss   vss nch  l=0.12u  w=0.605u as=0.160325p ad=0.160325p ps=1.74u   pd=1.74u
-am03 vdd   b     06    vdd pch  l=0.12u  w=0.715u as=0.189475p ad=0.189475p ps=1.96u   pd=1.96u
-am04 06    b     n1    vss nch  l=0.12u  w=0.605u as=0.160325p ad=0.160325p ps=1.74u   pd=1.74u
-am05 vdd   06    z     vdd pch  l=0.12u  w=0.99u  as=0.26235p  ad=0.26235p  ps=2.51u   pd=2.51u
-am06 vss   06    z     vss nch  l=0.12u  w=0.495u as=0.131175p ad=0.131175p ps=1.52u   pd=1.52u
+nm01 06    a     vdd   vdd pch  l=0.12u  w=0.715u as=0.189475p ad=0.189475p ps=1.96u   pd=1.96u
+nm02 n1    a     vss   vss nch  l=0.12u  w=0.605u as=0.160325p ad=0.160325p ps=1.74u   pd=1.74u
+nm03 vdd   b     06    vdd pch  l=0.12u  w=0.715u as=0.189475p ad=0.189475p ps=1.96u   pd=1.96u
+nm04 06    b     n1    vss nch  l=0.12u  w=0.605u as=0.160325p ad=0.160325p ps=1.74u   pd=1.74u
+nm05 vdd   06    z     vdd pch  l=0.12u  w=0.99u  as=0.26235p  ad=0.26235p  ps=2.51u   pd=2.51u
+nm06 vss   06    z     vss nch  l=0.12u  w=0.495u as=0.131175p ad=0.131175p ps=1.52u   pd=1.52u
 c4  06    vss   0.724f
 c5  a     vss   0.663f
 c6  b     vss   0.538f
 c3  z     vss   0.595f
 .ends
 .subckt nor3 a b c vdd vss z
-am01 sig6  a     vdd   vdd pch  l=0.12u  w=1.54u  as=0.4081p   ad=0.4081p   ps=3.61u   pd=3.61u
-am02 vdd   a     02    vdd pch  l=0.12u  w=1.54u  as=0.4081p   ad=0.4081p   ps=3.61u   pd=3.61u
-am03 vss   a     z     vss nch  l=0.12u  w=0.55u  as=0.14575p  ad=0.14575p  ps=1.63u   pd=1.63u
-am04 04    b     sig6  vdd pch  l=0.12u  w=1.54u  as=0.4081p   ad=0.4081p   ps=3.61u   pd=3.61u
-am05 02    b     08    vdd pch  l=0.12u  w=1.54u  as=0.4081p   ad=0.4081p   ps=3.61u   pd=3.61u
-am06 z     b     vss   vss nch  l=0.12u  w=0.55u  as=0.14575p  ad=0.14575p  ps=1.63u   pd=1.63u
-am07 z     c     04    vdd pch  l=0.12u  w=1.54u  as=0.4081p   ad=0.4081p   ps=3.61u   pd=3.61u
-am08 08    c     z     vdd pch  l=0.12u  w=1.54u  as=0.4081p   ad=0.4081p   ps=3.61u   pd=3.61u
-am09 vss   c     z     vss nch  l=0.12u  w=0.55u  as=0.14575p  ad=0.14575p  ps=1.63u   pd=1.63u
+nm01 sig6  a     vdd   vdd pch  l=0.12u  w=1.54u  as=0.4081p   ad=0.4081p   ps=3.61u   pd=3.61u
+nm02 vdd   a     02    vdd pch  l=0.12u  w=1.54u  as=0.4081p   ad=0.4081p   ps=3.61u   pd=3.61u
+nm03 vss   a     z     vss nch  l=0.12u  w=0.55u  as=0.14575p  ad=0.14575p  ps=1.63u   pd=1.63u
+nm04 04    b     sig6  vdd pch  l=0.12u  w=1.54u  as=0.4081p   ad=0.4081p   ps=3.61u   pd=3.61u
+nm05 02    b     08    vdd pch  l=0.12u  w=1.54u  as=0.4081p   ad=0.4081p   ps=3.61u   pd=3.61u
+nm06 z     b     vss   vss nch  l=0.12u  w=0.55u  as=0.14575p  ad=0.14575p  ps=1.63u   pd=1.63u
+nm07 z     c     04    vdd pch  l=0.12u  w=1.54u  as=0.4081p   ad=0.4081p   ps=3.61u   pd=3.61u
+nm08 08    c     z     vdd pch  l=0.12u  w=1.54u  as=0.4081p   ad=0.4081p   ps=3.61u   pd=3.61u
+nm09 vss   c     z     vss nch  l=0.12u  w=0.55u  as=0.14575p  ad=0.14575p  ps=1.63u   pd=1.63u
 c3  a     vss   0.957f
 c4  b     vss   0.895f
 c5  c     vss   0.693f
