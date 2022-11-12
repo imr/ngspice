@@ -2646,12 +2646,10 @@ static void get_subckts_for_subckt(struct card *start_card, char *subckt_name,
                 char *inst_subckt_name = get_instance_subckt(line);
                 nlist_adjoin(used_subckts, inst_subckt_name);
             }
-#ifndef OSDI
             else if (*line == 'a') {
                 char *model_name = get_adevice_model_name( line, card->level);
                 nlist_adjoin(used_models, model_name);
             }
-#endif // !OSDI
             else if (has_models) {
                 int num_terminals = get_number_terminals(line);
                 if (num_terminals != 0) {
@@ -2734,12 +2732,10 @@ void comment_out_unused_subckt_models(struct card *start_card)
                 char *subckt_name = get_instance_subckt(line);
                 nlist_adjoin(used_subckts, subckt_name);
             }
-#ifndef OSDI
             else if (*line == 'a') {
                 char *model_name = get_adevice_model_name(line, card->level);
                 nlist_adjoin(used_models, model_name);
             }
-#endif // !OSDI
             else if (has_models) {
                 /* This is a preliminary version, until we have found a
                    reliable method to detect the model name out of the input
@@ -4730,7 +4726,7 @@ int get_number_terminals(char *c)
             break;
         }
 #ifdef OSDI
-        case 'a': /* Recognize an unknown number of nodes by stopping at tokens with '=' */
+        case 'n': /* Recognize an unknown number of nodes by stopping at tokens with '=' */
         {
             i = 0;
             char* cc, * ccfree;
