@@ -394,6 +394,7 @@ static const char errstr_fmt[] =
     "Unable to find message in dlerr(). System code = %lu";
 static char errstr[sizeof errstr_fmt - 3 + 3 * sizeof(unsigned long)];
 
+#if !defined (XSPICE)
 char *dlerror(void) {
   LPVOID lpMsgBuf;
 
@@ -410,6 +411,7 @@ char *dlerror(void) {
 
   return lpMsgBuf; /* Return the formatted message */
 } /* end of function dlerror */
+#endif
 
 /* Free message related to dynamic loading */
 static void free_dlerr_msg(char *msg) {
