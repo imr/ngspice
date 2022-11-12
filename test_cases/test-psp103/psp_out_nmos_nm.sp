@@ -4,7 +4,7 @@ vd  d 0 dc 0.05
 vg  g 0 dc 0.0
 vs  s 0 dc 0.0
 vb  b 0 dc 0.0
-am1  d g s b nch
+nm1  d g s b nch
 +l=0.1u
 +w=1u
 +sa=0.0e+00
