@@ -13,7 +13,7 @@ VB bb 0 0
 
 *OSDI BSIMBULK:
 *
-A1 dd gg ss bb BSIMBULK_osdi_P W=5e-6 L=5e-7
+N1 dd gg ss bb BSIMBULK_osdi_P W=5e-6 L=5e-7
 
 .control
 pre_osdi test_osdi_win/bsimbulk106.osdi
