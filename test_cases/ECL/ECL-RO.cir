@@ -1,21 +1,21 @@
 .title KiCad schematic
 .include "model-card-hicumL0V1p11_mod.lib"
-XQ5 GND Net-_R1-Pad2_ A2 VEE DT hicumL0V1p1_c_sbt
-Ra2 A2 VEE 510
-Rt1 DT GND 1G
-V3 In2 GND dc -1.75 pulse(-1.75 -0.9 0 1n 1n 2.5u 5u)
-R2 GND Net-_R2-Pad2_ 220
-R3 GND Net-_R3-Pad2_ 575
-R1 GND Net-_R1-Pad2_ 220
-XQ3 Net-_R2-Pad2_ Net-_R3-Pad2_ Net-_Q1-Pad3_ VEE DT hicumL0V1p1_c_sbt
-Ra1 A1 VEE 510
-XQ4 GND Net-_R2-Pad2_ A1 VEE DT hicumL0V1p1_c_sbt
-R4 Net-_R3-Pad2_ VEE 1.92k
-XQ1 Net-_R1-Pad2_ IN1 Net-_Q1-Pad3_ VEE DT hicumL0V1p1_c_sbt
-XQ2 Net-_R1-Pad2_ IN2 Net-_Q1-Pad3_ VEE DT hicumL0V1p1_c_sbt
-R5 Net-_Q1-Pad3_ VEE 780
 V2 IN1 GND dc -1.75 pulse(-1.75 -0.9 0 1n 1n 5u 10u)
 V1 VEE GND -5.2
+Ra1 A1 VEE 510
+XQ5 GND Net-_Q1-Pad1_ A2 VEE DT hicumL0V1p1_c_sbt
+XQ4 GND Net-_Q3-Pad1_ A1 VEE DT hicumL0V1p1_c_sbt
+R4 Net-_Q3-Pad2_ VEE 1.92k
+XQ2 Net-_Q1-Pad1_ IN2 Net-_Q1-Pad3_ VEE DT hicumL0V1p1_c_sbt
+XQ1 Net-_Q1-Pad1_ IN1 Net-_Q1-Pad3_ VEE DT hicumL0V1p1_c_sbt
+R5 Net-_Q1-Pad3_ VEE 780
+XQ3 Net-_Q3-Pad1_ Net-_Q3-Pad2_ Net-_Q1-Pad3_ VEE DT hicumL0V1p1_c_sbt
+R2 GND Net-_Q3-Pad1_ 220
+R1 GND Net-_Q1-Pad1_ 220
+R3 GND Net-_Q3-Pad2_ 575
+Ra2 A2 VEE 510
+V3 In2 GND dc -1.75 pulse(-1.75 -0.9 0 1n 1n 2.5u 5u)
+Rt1 DT GND 1G
 .tran 0.1n 100u
 .control
 pre_osdi test_osdi_win/HICUML0-2.osdi
