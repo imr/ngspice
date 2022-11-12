@@ -1,0 +1,46 @@
+Emulate FMCW RADAR
+* with two controlled digital oscillators
+* signal delay between Vin1 and Vin2 --> frequency shift
+* delay 20m --> shift 900 Hz, 10m --> 450 Hz
+
+.param rdelay = 20m
+
+* emitted signal (repeated frequency ramp)
+Vin1 ain1 0 pulse (-1 1 0 200m 200m 1n 200m)
+aosc1 ain1 dout1 var_clock
+* emulate backscattered signal with delay (due to distant target)
+Vin2 ain2 0 pulse (-1 1 {rdelay} 200m 200m 1n 200m)
+aosc2 ain2 dout2 var_clock
+
+.model var_clock d_osc(cntl_array = [-2 -1 1 2]
++ freq_array = [1e3 1e3 10e3 10e3]
++ duty_cycle = 0.4 init_phase = 180.0
++ rise_delay = 10e-9 fall_delay=8e-9)
+
+** generate the beat frequency
+* AND gate as analog multiplier with i/o amplitude 1
+aand1 [dout1 dout2] mout and1
+.model and1 d_and(rise_delay = 0.5e-9 fall_delay = 0.3e-9
++ input_load = 0.5e-12)
+
+* low pass filter
+Rf1 mout afout 1k
+Cf1 afout 0 1u
+
+.tran 10u 1
+
+.control
+run
+rusage
+plot ain1 ain2 dout1 dout2
+plot mout afout
+plot afout
+* measure the beat frequency (aka instantaneous frequency shift)
+linearize afout
+fft afout
+let mafout = mag(afout)
+plot mafout xlimit 0 1k ylimit 0 0.2
+meas sp maxout max mafout from=10 to=1k
+.endc
+
+.end
