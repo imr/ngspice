@@ -773,7 +773,31 @@ operate(char op, double x, double y)
         x = x / y;
         break;
     case '^':                   /* power */
-        x = pow(fabs(x), y);
+        if (newcompat.hs) {
+            if (x < 0)
+                x = pow(x, round(y));
+            else if (x == 0)
+                x = 0;
+            else
+                x = pow(x, y);
+        }
+        else if (newcompat.lt) {
+            if (x >= 0)
+                x = pow(x, y);
+            else {
+                /* If arg2 is quasi an integer, round it to have pow not fail
+                   when arg1 is negative. Takes into account the double
+                   representation which sometimes differs in the last digit(s). */
+                if (AlmostEqualUlps(nearbyint(y), y, 10))
+                    x = pow(x, round(y));
+                else
+                    /* As per LTSPICE specification for ** */
+                    x = 0;
+            }
+        }
+        else {
+            x = pow(fabs(x), y);
+        }
         break;
     case 'A':                   /* && */
         x = ((x != 0.0) && (y != 0.0)) ? 1.0 : 0.0;
