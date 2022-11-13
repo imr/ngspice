@@ -6,14 +6,14 @@ Georgia Tech Research Corporation
 Atlanta, Georgia 30332
 
 
-AUTHORS                      
+AUTHORS
 
     30 Sept 1991     Jeffrey P. Murray
-
+    09 Nov  2022     Holger Vogt
 
 SUMMARY
 
-    This file contains the interface specification file for the 
+    This file contains the interface specification file for the
     hybrid d_osc code model.
 
 ===============================================================================*/
@@ -40,14 +40,14 @@ Null_Allowed:        no                 no
 
 PARAMETER_TABLE:
 
-Parameter_Name:     cntl_array          freq_array    
+Parameter_Name:     cntl_array          freq_array
 Description:        "control array"     "frequency array"
 Data_Type:          real                real
-Default_Value:      0.0                 1.0e6                
-Limits:             -                   [0 -]                    
+Default_Value:      0.0                 1.0e6
+Limits:             -                   [0 -]
 Vector:              yes                 yes
-Vector_Bounds:       [2 -]               [2 -]                
-Null_Allowed:       no                  no       
+Vector_Bounds:       [2 -]               [2 -]
+Null_Allowed:       no                  no
 
 
 PARAMETER_TABLE:
@@ -59,7 +59,7 @@ Default_Value:      0.5                     0
 Limits:             [1e-6 0.999999]         [-180.0 +360.0]
 Vector:              no                      no
 Vector_Bounds:       -                       -
-Null_Allowed:       yes                     yes 
+Null_Allowed:       yes                     yes
 
 
 PARAMETER_TABLE:
@@ -71,5 +71,11 @@ Default_Value:      1e-9                    1e-9
 Limits:             [0 -]                   [0 -]
 Vector:              no                      no
 Vector_Bounds:       -                       -
-Null_Allowed:       yes                     yes 
+Null_Allowed:       yes                     yes
 
+
+STATIC_VAR_TABLE:
+
+Static_Var_Name:    locdata
+Description:        "local static data"
+Data_Type:          pointer

@@ -8,18 +8,18 @@ Public Domain
 Georgia Tech Research Corporation
 Atlanta, Georgia 30332
 PROJECT A-8503-405
-               
 
-AUTHORS                      
+
+AUTHORS
 
     24 Jul 1991     Jeffrey P. Murray
 
 
-MODIFICATIONS   
+MODIFICATIONS
 
     23 Aug 1991    Jeffrey P. Murray
     30 Sep 1991    Jeffrey P. Murray
-                                   
+    09 Nov 2022    Holger Vogt
 
 SUMMARY
 
@@ -27,12 +27,12 @@ SUMMARY
     functionally describe the d_osc code model.
 
 
-INTERFACES       
+INTERFACES
 
-    FILE                 ROUTINE CALLED     
+    FILE                 ROUTINE CALLED
 
-    CMmacros.h           cm_message_send();                   
-                             
+    CMmacros.h           cm_message_send();
+
     CM.c                 void *cm_analog_alloc()
                          void *cm_analog_get_ptr()
 
@@ -42,7 +42,7 @@ INTERFACES
 REFERENCED FILES
 
     Inputs from and outputs to ARGS structure.
-                     
+
 
 NON-STANDARD FEATURES
 
@@ -55,7 +55,7 @@ NON-STANDARD FEATURES
 #include "d_osc.h"    /*    ...contains macros & type defns.
                                for this model.  7/24/91 - JPM */
 
-                                      
+
 
 /*=== CONSTANTS ========================*/
 
@@ -66,27 +66,31 @@ NON-STANDARD FEATURES
 
 
 
-  
-/*=== LOCAL VARIABLES & TYPEDEFS =======*/                         
+
+/*=== LOCAL VARIABLES & TYPEDEFS =======*/
 
 
-    
-           
+typedef struct {
+    double *x;
+    double *y;
+} Local_Data_t;
+
+
 /*=== FUNCTION PROTOTYPE DEFINITIONS ===*/
 
 
 
 
-                   
+
 /*==============================================================================
 
 FUNCTION cm_d_osc()
 
-AUTHORS                      
+AUTHORS
 
     24 Jul 1991     Jeffrey P. Murray
 
-MODIFICATIONS   
+MODIFICATIONS
 
     30 Sep 1991     Jeffrey P. Murray
 
@@ -94,23 +98,23 @@ SUMMARY
 
     This function implements the d_osc code model.
 
-INTERFACES       
+INTERFACES
 
-    FILE                 ROUTINE CALLED     
+    FILE                 ROUTINE CALLED
 
-    CMmacros.h           cm_message_send();                   
-                             
+    CMmacros.h           cm_message_send();
+
     CM.c                 void *cm_analog_alloc()
                          void *cm_analog_get_ptr()
 
     CMevt.c              void cm_event_queue()
 
 RETURNED VALUE
-    
+
     Returns inputs and outputs via ARGS structure.
 
 GLOBAL VARIABLES
-    
+
     NONE
 
 NON-STANDARD FEATURES
@@ -118,6 +122,26 @@ NON-STANDARD FEATURES
     NONE
 
 ==============================================================================*/
+
+static void cm_d_osc_callback(ARGS,
+        Mif_Callback_Reason_t reason)
+{
+    switch (reason) {
+        case MIF_CB_DESTROY: {
+            Local_Data_t *loc = STATIC_VAR(locdata);
+            if (loc) {
+                if (loc->x)
+                    free(loc->x);
+                if(loc->y)
+                    free(loc->y);
+                free(loc);
+                STATIC_VAR(locdata) = loc = NULL;
+            }
+            break;
+        } /* end of case MIF_CB_DESTROY */
+    } /* end of switch over reason being called */
+} /* end of function cm_d_osc_callback */
+
 
 /*=== CM_D_OSC ROUTINE ===*/
 
@@ -141,7 +165,7 @@ NON-STANDARD FEATURES
 *  I                 |     |              |     |            *
 *  I                       |                    |            *
 *  I                 |     |              |     |            *
-*  I-----------------*-----* - - - - - - - - - -*---------   *   
+*  I-----------------*-----* - - - - - - - - - -*---------   *
 *		   			t1				           t4            *
 *                                                            *
 *                                                            *
@@ -158,7 +182,7 @@ NON-STANDARD FEATURES
 
 #include <stdlib.h>
 
-void cm_d_osc(ARGS) 
+void cm_d_osc(ARGS)
 {
 
     double           *x,    /* analog input value control array */
@@ -166,11 +190,11 @@ void cm_d_osc(ARGS)
              cntl_input,    /* control input value  */
                  *phase,    /* instantaneous phase of the model  */
              *phase_old,    /* previous phase of the model   */
-                    *t1,    /* pointer to t1 value  */   
-                    *t3,    /* pointer to t3 value  */   
-              /*time1,*/    /* variable for calculating new time1 value */   
-              /*time3,*/    /* variable for calculating new time3 value */   
-                   freq = 0.0,    /* instantaneous frequency value    */   
+                    *t1,    /* pointer to t1 value  */
+                    *t3,    /* pointer to t3 value  */
+              /*time1,*/    /* variable for calculating new time1 value */
+              /*time3,*/    /* variable for calculating new time3 value */
+                   freq = 0.0,    /* instantaneous frequency value    */
                  dphase,    /* fractional part into cycle */
              duty_cycle,    /* duty_cycle value */
             test_double,    /* testing variable */
@@ -181,16 +205,17 @@ void cm_d_osc(ARGS)
     int               i,    /* generic loop counter index */
               cntl_size,    /* control array size         */
               freq_size;    /* frequency array size       */
-         
-                        
+
+    Local_Data_t   *loc;    /* Pointer to local static data, not to be included
+                                       in the state vector (save memory!) */
 
 
 
 
     /**** Retrieve frequently used parameters... ****/
 
-    cntl_size = PARAM_SIZE(cntl_array);           
-    freq_size = PARAM_SIZE(freq_array);           
+    cntl_size = PARAM_SIZE(cntl_array);
+    freq_size = PARAM_SIZE(freq_array);
     duty_cycle = PARAM(duty_cycle);
 
 
@@ -202,9 +227,8 @@ void cm_d_osc(ARGS)
 		return;
  	}
 
-            
-    if (INIT) {  /*** Test for INIT == TRUE. If so, allocate storage, etc. ***/
 
+    if (INIT) {  /*** Test for INIT == TRUE. If so, allocate storage, etc. ***/
 
         /* Allocate storage for internal variables */
         cm_analog_alloc(0, sizeof(double));
@@ -215,42 +239,57 @@ void cm_d_osc(ARGS)
         phase = phase_old = (double *) cm_analog_get_ptr(0,0);
 
         t1 = (double *) cm_analog_get_ptr(1,0);
-                          
+
         t3 = (double *) cm_analog_get_ptr(2,0);
 
+        /*** allocate static storage for *loc ***/
+        STATIC_VAR (locdata) = calloc (1 , sizeof ( Local_Data_t ));
+        loc = STATIC_VAR (locdata);
+        CALLBACK = cm_d_osc_callback;
+
+        x = loc->x = (double *) calloc((size_t) cntl_size, sizeof(double));
+        if (!x) {
+            cm_message_send(d_osc_allocation_error);
+            return;
+        }
+        y = loc->y = (double *) calloc((size_t) cntl_size, sizeof(double));
+        if (!y) {
+            cm_message_send(d_osc_allocation_error);
+            if(x)
+                free(x);
+            return;
+        }
+        /* Retrieve x and y values. */
+        for (i=0; i<cntl_size; i++) {
+            x[i] = PARAM(cntl_array[i]);
+            y[i] = PARAM(freq_array[i]);
+        }
     }
 
     else {    /*** This is not an initialization pass...retrieve storage
                    addresses and calculate new outputs, if required. ***/
 
-
         /** Retrieve previous values... **/
-
 
         /* assign internal variables */
         phase = (double *) cm_analog_get_ptr(0,0);
         phase_old = (double *) cm_analog_get_ptr(0,1);
 
         t1 = (double *) cm_analog_get_ptr(1,0);
-                          
+
         t3 = (double *) cm_analog_get_ptr(2,0);
-
     }
-
-                
-
 
     switch (CALL_TYPE) {
 
     case ANALOG:    /** analog call **/
-                                                      
-        test_double = TIME;                           
 
-        if ( AC == ANALYSIS ) { /* this model does not function 
+        test_double = TIME;
+
+        if ( AC == ANALYSIS ) { /* this model does not function
                                    in AC analysis mode.         */
-            
-            return; 
 
+            return;
         }
         else {
 
@@ -260,45 +299,26 @@ void cm_d_osc(ARGS)
                 *phase = PARAM(init_phase);
                 if ( 0 > *phase ) {
                     *phase = *phase + 360.0;
-                } 
+                }
                 *phase = *phase / 360.0;
 
 
                 /* set phase value to init_phase */
                 *phase_old = *phase;
-                            
+
                 /* preset time values to harmless values... */
                 *t1 = -1;
                 *t3 = -1;
-                
 
             }
 
+            loc = STATIC_VAR (locdata);
+            x = loc->x;
+            y = loc->y;
 
-            /* Allocate storage for breakpoint domain & freq. range values */
-        
-            x = (double *) calloc((size_t) cntl_size, sizeof(double));
-            if (!x) {
-                cm_message_send(d_osc_allocation_error); 
-                return;
-            }
-        
-            y = (double *) calloc((size_t) freq_size, sizeof(double));
-            if (!y) {
-                cm_message_send(d_osc_allocation_error);  
-                if(x) free(x);
-                return;
-            }
-        
-            /* Retrieve x and y values. */       
-            for (i=0; i<cntl_size; i++) {
-                x[i] = PARAM(cntl_array[i]);
-                y[i] = PARAM(freq_array[i]);
-            }                       
-                    
-            /* Retrieve cntl_input value. */       
+            /* Retrieve cntl_input value. */
             cntl_input = INPUT(cntl_in);
-        
+
             /* Determine segment boundaries within which cntl_input resides */
         				/*** cntl_input below lowest cntl_voltage ***/
             if (cntl_input <= x[0]) {
@@ -307,61 +327,59 @@ void cm_d_osc(ARGS)
                 freq = y[0] + (cntl_input - x[0]) * slope;
 
             }
-            else 
+            else
                 /*** cntl_input above highest cntl_voltage ***/
-        	
-            if (cntl_input >= x[cntl_size-1]) { 
+
+            if (cntl_input >= x[cntl_size-1]) {
 
                 slope = (y[cntl_size-1] - y[cntl_size-2]) /
                          (x[cntl_size-1] - x[cntl_size-2]);
                 freq = y[cntl_size-1] + (cntl_input - x[cntl_size-1]) * slope;
-        
-            } 
-            else { /*** cntl_input within bounds of end midpoints...   
-                        must determine position progressively & then 
+
+            }
+            else { /*** cntl_input within bounds of end midpoints...
+                        must determine position progressively & then
                         calculate required output.                ***/
-                                           
+
                 for (i=0; i<cntl_size-1; i++) {
-        
-                    if ( (cntl_input < x[i+1]) && (cntl_input >= x[i]) ) { 
-                    		
+
+                    if ( (cntl_input < x[i+1]) && (cntl_input >= x[i]) ) {
+
                         /* Interpolate to the correct frequency value */
-        
-                        freq = ( (cntl_input - x[i]) / (x[i+1] - x[i]) ) * 
-                               ( y[i+1]-y[i] ) + y[i]; 
-                    } 
+
+                        freq = ( (cntl_input - x[i]) / (x[i+1] - x[i]) ) *
+                               ( y[i+1]-y[i] ) + y[i];
+                    }
                 }
             }
-            
+
             /*** If freq < 0.0, clamp to 1e-16 & issue a warning ***/
             if ( 0.0 > freq ) {
                 freq = 1.0e-16;
-                cm_message_send(d_osc_negative_freq_error);  
+                cm_message_send(d_osc_negative_freq_error);
             }
 
 
             /* calculate the instantaneous phase */
             *phase = *phase_old + freq * (TIME - T(1));
-        
+
             /* dphase is the percent into the cycle for
-               the period */	
+               the period */
             dphase = *phase_old - floor(*phase_old);
 
 
             /* Calculate the time variables and the output value
-               for this iteration */ 	
-            
+               for this iteration */
+
             if((*t1 <= TIME) && (TIME <= *t3)) { /* output high */
 
                 *t3 = T(1) + (1 - dphase)/freq;
-            
+
                 if(TIME < *t3) {
                     cm_event_queue(*t3);
                 }
-            
-            			
-            } 
-            else 
+            }
+            else
 
             if((*t3 <= TIME) && (TIME <= *t1)) { /* output low */
 
@@ -369,13 +387,12 @@ void cm_d_osc(ARGS)
             			dphase = dphase - 1.0;
                 }
                 *t1 = T(1) + ( (1.0 - duty_cycle) - dphase)/freq;
-            
+
                 if(TIME < *t1) {
 
                     cm_event_queue(*t1);
-
                 }
-           	}      
+           	}
             else {
 
                 if(dphase > (1.0 - duty_cycle) ) {
@@ -388,66 +405,51 @@ void cm_d_osc(ARGS)
                 }
 
                 *t3 = T(1) + (1 - dphase)/freq;
-
-
             }
-
-
-            
-            if(x) free(x);
-            if(y) free(y);
-
-
         }
         break;
-                
+
 
     case EVENT:    /** discrete call...lots to do **/
 
+        test_double = TIME;
 
-        test_double = TIME;                           
-
-        if ( 0.0 == TIME ) { /* DC analysis...preset values, 
+        if ( 0.0 == TIME ) { /* DC analysis...preset values,
                                 as appropriate.... */
 
             /* retrieve & normalize phase value */
             *phase = PARAM(init_phase);
             if ( 0 > *phase ) {
                 *phase = *phase + 360.0;
-            } 
+            }
             *phase = *phase / 360.0;
 
 
             /* set phase value to init_phase */
             *phase_old = *phase;
-                        
+
             /* preset time values to harmless values... */
             *t1 = -1;
             *t3 = -1;
         }
 
-
-
         /* Calculate the time variables and the output value
-           for this iteration */ 	
-                
+           for this iteration */
+
         /* Output is always set to STRONG */
-        OUTPUT_STRENGTH(out) = STRONG;        
-
-
+        OUTPUT_STRENGTH(out) = STRONG;
 
         if( *t1 == TIME ) { /* rising edge */
 
-            OUTPUT_STATE(out) = ONE;        
-            OUTPUT_DELAY(out) = PARAM(rise_delay);        
-
+            OUTPUT_STATE(out) = ONE;
+            OUTPUT_DELAY(out) = PARAM(rise_delay);
         }
         else {
 
             if ( *t3 == TIME ) { /* falling edge */
 
-                OUTPUT_STATE(out) = ZERO;        
-                OUTPUT_DELAY(out) = PARAM(fall_delay);        
+                OUTPUT_STATE(out) = ZERO;
+                OUTPUT_DELAY(out) = PARAM(fall_delay);
             }
 
             else { /* no change in output */
@@ -457,18 +459,17 @@ void cm_d_osc(ARGS)
                 }
 
                 if ( (*t1 < TIME) && (TIME < *t3) ) {
-                    OUTPUT_STATE(out) = ONE;        
+                    OUTPUT_STATE(out) = ONE;
                 }
                 else {
-                    OUTPUT_STATE(out) = ZERO;        
+                    OUTPUT_STATE(out) = ZERO;
                 }
             }
         }
 
         break;
-
     }
-}             
+}
 
 
 

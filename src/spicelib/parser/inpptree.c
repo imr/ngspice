@@ -123,7 +123,7 @@ static struct op {
     PT_MINUS,  "-", (void(*)(void)) PTminus}, {
     PT_TIMES,  "*", (void(*)(void)) PTtimes}, {
     PT_DIVIDE, "/", (void(*)(void)) PTdivide}, {
-    PT_POWER,  "^", (void(*)(void)) PTpower}
+    PT_POWER,  "^", (void(*)(void)) PTpowerH}
 };
 
 #define NUM_OPS (int)NUMELEMS(ops)
@@ -158,7 +158,6 @@ static struct func {
     { "floor",  PTF_FLOOR,  (void(*)(void)) PTfloor } ,
     { "nint",   PTF_NINT,   (void(*)(void)) PTnint } ,
     { "-",      PTF_UMINUS, (void(*)(void)) PTuminus },
-    /* MW. cif function added */
     { "u2",     PTF_USTEP2, (void(*)(void)) PTustep2},
     { "pwl",    PTF_PWL,    (void(*)(void)) PTpwl},
     { "pwl_derivative", PTF_PWL_DERIVATIVE, (void(*)(void)) PTpwl_derivative},
@@ -331,7 +330,7 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
 #define b  p->right
         if (b->type == PT_CONSTANT) {
             arg1 = PTdifferentiate(a, varnum);
-            if (newcompat.lt) {
+            if (newcompat.hs || newcompat.lt) {
                 newp = mkb(PT_TIMES,
                     mkb(PT_TIMES,
                         mkcon(b->constant),
@@ -545,8 +544,6 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
             arg1 = mkcon(0.0);
             break;
 
-
-            /* MW. PTF_CIF for new cif function */
         case PTF_USTEP2: /* ustep2=uramp(x)-uramp(x-1) ustep2'=ustep(x)-ustep(x-1) */
             arg1 = mkb(PT_MINUS,
                        mkf(PTF_USTEP, p->left),
