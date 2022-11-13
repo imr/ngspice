@@ -86,8 +86,9 @@ ACan(CKTcircuit *ckt, int restart)
                 fprintf(stderr, "ERROR: AC startfreq <= 0\n");
                 return E_PARMVAL;
             }
-            job->ACfreqDelta =
-                exp(log(10.0)/job->ACnumberSteps);
+            double num_steps = floor(fabs(log10(job->ACstopFreq/job->ACstartFreq))*job->ACnumberSteps);
+            job->ACfreqDelta = exp((log(job->ACstopFreq/job->ACstartFreq))/ num_steps);
+
             break;
         case OCTAVE:
             if (job->ACstartFreq <= 0) {
