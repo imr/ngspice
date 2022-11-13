@@ -583,6 +583,16 @@ static int lookahead = 0;
 static int adepth = 0;
 static int max_adepth = 0;
 static DSTRING d_curr_line;
+static int number_of_instances = 0;
+
+static BOOL inverters_needed(void)
+{
+#ifdef LOGICEXP_INVERTERS
+    return TRUE;
+#else
+    return FALSE;
+#endif
+}
 
 static char *get_inst_name(void)
 {
@@ -590,6 +600,7 @@ static char *get_inst_name(void)
     static int number = 0;
     number++;
     (void) sprintf(name, "a_%d", number);
+    number_of_instances++;
     return name;
 }
 
@@ -723,8 +734,9 @@ static void amatch(int t)
 
 static void bfactor(void)
 {
-    /* factor is : [~] (optional) rest
-       where rest is: id (input_name) | ( expr ) | error
+    /* factor is : ['~'] rest
+       where rest is: input_name_id | '(' expr ')' | error
+       [] means optional
     */
     BOOL is_not = FALSE;
     SYM_TAB entry = NULL;
@@ -792,7 +804,9 @@ static void bfactor(void)
 
 static void bexpr(void)
 {
-    /* expr is: factor { gate_op factor } (0 or more times). */
+    /* expr is: factor { gate_op factor }+
+       where {}+ means 0 or more times.
+    */
     bfactor();
 
     while (lex_gate_op(lookahead)) {
@@ -805,7 +819,7 @@ static void bexpr(void)
 
 static void bstmt(void)
 {
-    /* A stmt is: output_name = { expr } */
+    /* A stmt is: output_name_id = '{' expr '}' */
     SYM_TAB entry = NULL;
     LEXER lx = parse_lexer;
     DS_CREATE(tname, 64);
@@ -1010,8 +1024,6 @@ static PTABLE optimize_gen_tab(PTABLE pt)
                     new_gen = NULL;
                     goto quick_return;
                 }
-                if (val == '~') 
-                    found_tilde = TRUE;
                 ds_cat_printf(&scratch, "%c ", val);
             }
             val = lexer_scan(lxr);
@@ -1077,6 +1089,7 @@ static void gen_gates(PTABLE gate_tab, SYM_TAB parser_symbols)
     LEXER lxr = NULL;
     int val, tok_count = 0, gate_op = 0, idnum = 0, in_count = 0;
     BOOL found_tilde = FALSE;
+    BOOL prit = PRINT_ALL;
     DS_CREATE(out_name, 64);
     DS_CREATE(in_names, 64);
     DS_CREATE(gate_name, 64);
@@ -1110,7 +1123,22 @@ static void gen_gates(PTABLE gate_tab, SYM_TAB parser_symbols)
                     ds_cat_str(&out_name, lxr->lexer_buf);
                 } else { // input name
                     in_count++;
-                    ds_cat_printf(&in_names, " %s", lxr->lexer_buf);
+                    if (!inverters_needed()) {
+                        char *tail = NULL;
+                        tail = get_inv_tail(lxr->lexer_buf);
+                        if (tail && strlen(tail) > 0) {
+                            ds_cat_printf(&in_names, " ~%s", tail);
+                            if (prit) {
+                                printf(
+                                "change input name \"%s\" tail \"~%s\"\n",
+                                lxr->lexer_buf, tail);
+                            }
+                        } else {
+                            ds_cat_printf(&in_names, " %s", lxr->lexer_buf);
+                        }
+                    } else {
+                        ds_cat_printf(&in_names, " %s", lxr->lexer_buf);
+                    }
                 }
             } else if (val == '~') {
                 found_tilde = TRUE;
@@ -1150,8 +1178,12 @@ static void gen_gates(PTABLE gate_tab, SYM_TAB parser_symbols)
                 ds_cat_printf(&instance, "%s %s ", tail,
                     ds_get_buf(&out_name));
                 ent = member_sym_tab(tail, parser_symbols);
-                if (!ent) goto quick_return;
-                if ((ent->attribute & SYM_INVERTER) == 0) goto quick_return;
+                if (!ent) {
+                    goto quick_return;
+                }
+                if ((ent->attribute & SYM_INVERTER) == 0) {
+                    goto quick_return;
+                }
                 ent->ref_count--;
             } else {
                 ds_cat_printf(&instance, "%s %s ", ds_get_buf(&in_names),
@@ -1168,7 +1200,9 @@ static void gen_gates(PTABLE gate_tab, SYM_TAB parser_symbols)
             delete_lexer(lxr);
             lxr = new_lexer(t->line);
         }
-        u_add_instance(ds_get_buf(&instance));
+        if (ds_get_length(&instance) > 0) {
+            u_add_instance(ds_get_buf(&instance));
+        }
     }
 
 quick_return:
@@ -1216,10 +1250,11 @@ static void bevaluate(TLINE t, int deep)
     if (strstr(t->line + ds_get_length(&this), " ~ ")) {
         ds_cat_printf(&new_line, "%s =  ~ ", ds_get_buf(&this));
     } else {
-        if (deep == 1)
+        if (deep == 1) {
             ds_cat_printf(&new_line, "%s ", parse_tab->first->line);
-        else
+        } else {
             ds_cat_printf(&new_line, "%s = ", ds_get_buf(&this));
+        }
     }
     t = t->next;
     while (t) {
@@ -1374,7 +1409,8 @@ static BOOL bparse(char *line, BOOL new_lexer)
     }
 
     ds_free(&d_curr_line);
-    gen_inverters(lx->lexer_sym_tab);
+    if (inverters_needed())
+        gen_inverters(lx->lexer_sym_tab);
     gen_models();
     ds_free(&stmt);
     delete_lexer(lx);
