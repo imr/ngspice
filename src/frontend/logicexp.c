@@ -490,7 +490,7 @@ static char *get_temp_from_line(char *line, BOOL begin)
     /* If begin is TRUE then "tmp" must be at the start of line */
     static char lbuf[64];
     char *p, *q;
-    int j;
+    int j = 0;
     p = strstr(line, "tmp");
     if (!p)
         return NULL;
@@ -619,7 +619,7 @@ static char *get_inv_tail(char *str)
 {
     static char lbuf[64];
     char *p = NULL, *q = NULL;
-    int j;
+    int j = 0;
     size_t slen = strlen("inv_out__");
 
     p = strstr(str, "inv_out__");
@@ -820,6 +820,8 @@ static void bexpr(void)
 static void bstmt(void)
 {
     /* A stmt is: output_name_id = '{' expr '}' */
+    BOOL verbose = PRINT_ALL;
+    int end_pos = 0, start_pos = 0;
     SYM_TAB entry = NULL;
     LEXER lx = parse_lexer;
     DS_CREATE(tname, 64);
@@ -834,6 +836,11 @@ static void bstmt(void)
     adepth++;
     if (adepth > max_adepth)
         max_adepth = adepth;
+
+    if (verbose) {
+        start_pos = lx->lexer_pos;
+        printf("* %s", lx->lexer_buf);
+    }
 
     amatch(LEX_ID);
     amatch('=');
@@ -859,6 +866,15 @@ static void bstmt(void)
     ds_cat_printf(&d_curr_line, ") -> %s__%d", ds_get_buf(&tname), adepth);
     (void) ptab_add_line(ds_get_buf(&d_curr_line), TRUE);
     ds_clear(&d_curr_line);
+
+    if (verbose) {
+        DS_CREATE(stmt_str, 128);
+        end_pos = lx->lexer_pos;
+        ds_cat_mem(&stmt_str, &lx->lexer_line[start_pos],
+            (size_t) (end_pos - start_pos));
+        printf("%s\n", ds_get_buf(&stmt_str));
+        ds_free(&stmt_str);
+    }
 
     amatch('}');
 
@@ -1357,6 +1373,12 @@ static BOOL bparse(char *line, BOOL new_lexer)
         ds_clear(&stmt);
         ds_cat_str(&stmt, lx->lexer_buf);
         bstmt();
+
+        if (prit) {
+            printf("START parse_tab\n");
+            ptable_print(parse_tab);
+            printf("END parse_tab\n");
+        }
 
         beval_order();
 
