@@ -8,12 +8,13 @@ VS ss 0 0
 VB bb 0 0
 
 * model definitions:
-*.model bsim4_osdi bsim4va
+*.model BSIMCMG_osdi_N
 .include Modelcards/modelcard.nmos
 
-*OSDI BSIM4:
-* Where to put instance parameters channel width and length?
-N1 dd gg ss bb BSIMCMG_osdi_N ; W=5u L=0.2u
+*OSDI BSIMCMG:
+* Fin thickness, Designed gate length, Number of fins per finger,
+* Number of source diffusion squares, Number of drain diffusion squares
+N1 dd gg ss bb BSIMCMG_osdi_N TFIN=15n L=30n NFIN=10 NRS=1 NRD=1
 
 .control
 pre_osdi test_osdi_win/bsimcmg.osdi
