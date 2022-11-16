@@ -491,7 +491,7 @@
 #define PACKAGE_VERSION VERSION
 
 /* Define if we want predictor algorithm */
-/* #undef PREDICTOR */
+#define PREDICTOR 1
 
 /* Define to 1 if the C compiler supports function prototypes. */
 /* #undef PROTOTYPES */
