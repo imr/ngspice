@@ -12,15 +12,15 @@ VB bb 0 0
 .include Modelcards/model.l
 
 *OSDI BSIMBULK:
-* Where to put instance parameters channel width and length?
-N1 dd gg ss bb BSIMBULK_osdi_N W=5e-6 L=0.5e-6
+N1 dd gg ss bb BSIMBULK_osdi_N W=2000n L=500n
+*N1 dd gg ss bb BSIMBULK_osdi_N W=200n L=50n ; seg fault in descr->setup_instance()
 
 .control
 pre_osdi test_osdi_win/bsimbulk107.osdi
 set xbrushwidth=3
 * a DC sweep: drain, gate
-dc Vd 1.8 0 -0.01 VG 0.2 1.8 0.2 ; Kennlinie nicht o.k.
-*dc Vd 0 1.6 0.01 VG 0.2 1.6 0.2 ; gar nicht o.k.
+dc Vd 1.6 0 -0.01 VG 0.2 1.6 0.2
+*dc Vd 0 1.6 0.01 VG 0.2 1.6 0.2 ; first dc point fails, not o.k.
 * plot source current
 plot i(VS)
 
