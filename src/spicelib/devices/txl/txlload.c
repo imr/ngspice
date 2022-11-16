@@ -296,6 +296,7 @@ copy_tx(TXLine *new, TXLine *old)
 	new->ifImg = old->ifImg;
 	if (new->vi_tail != old->vi_tail) {
 		/* someting wrong */
+		fprintf(stderr, "Error during evaluating TXL line\n");
 		controlled_exit(0);
 	}
 

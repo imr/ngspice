@@ -44,6 +44,7 @@ canonical_name(const char *name, DSTRINGPTR dbuf_p,
         f_ok &= ds_cat_mem(dbuf_p, sz_branch,
                 sizeof sz_branch / sizeof *sz_branch - 1) == DS_E_OK;
         if (!f_ok) {
+            fprintf(stderr, "Error: DS could not convert %s\n", name);
             controlled_exit(-1);
         }
         return ds_get_buf(dbuf_p);
@@ -56,6 +57,7 @@ canonical_name(const char *name, DSTRINGPTR dbuf_p,
         f_ok &= ds_cat_str(dbuf_p, name) == DS_E_OK;
         f_ok &= ds_cat_char(dbuf_p, ')') == DS_E_OK;
         if (!f_ok) {
+            fprintf(stderr, "Error: DS could not convert %s\n", name);
             controlled_exit(-1);
         }
         return ds_get_buf(dbuf_p);
@@ -68,6 +70,7 @@ canonical_name(const char *name, DSTRINGPTR dbuf_p,
      * changing the original, but in the current use cases that is
      * not an issue. */
     if (ds_cat_str(dbuf_p, name) != DS_E_OK) {
+        fprintf(stderr, "Error: DS could not convert %s\n", name);
         controlled_exit(-1);
     }
     return ds_get_buf(dbuf_p);
