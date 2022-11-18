@@ -1307,6 +1307,12 @@ inp_dodeck(
                     if (strstr(dd->line, ".model"))
                         fprintf(stderr, "Warning: Model issue on line %d :\n  %.*s ...\n%s\n",
                                    dd->linenum_orig, 72, dd->line, dd->error);
+                    else if (dd->linenum_orig == 0) {
+                        fprintf(stderr, "Error on line:\n  %s\n%s\n",
+                                   dd->line, dd->error);
+                        have_err = TRUE;
+                        return 1;
+                    }
                     else {
                         fprintf(stderr, "Error on line %d or its substitute:\n  %s\n%s\n",
                                    dd->linenum_orig, dd->line, dd->error);
