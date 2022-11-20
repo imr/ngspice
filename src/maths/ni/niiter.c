@@ -20,6 +20,9 @@ Modified: 2001 AlansFixes
 #include "ngspice/sperror.h"
 #include "ngspice/fteext.h"
 
+/* Limit the number of 'singular matrix' warnings */
+static int msgcount = 0;
+void NIresetwarnmsg(void);
 
 /* NIiter() - return value is non-zero for convergence failure */
 
@@ -31,8 +34,6 @@ NIiter(CKTcircuit *ckt, int maxIter)
 
     int iterno = 0;
     int ipass = 0;
-
-    static int msgcount = 0;
 
     /* some convergence issues that get resolved by increasing max iter */
     if (maxIter < 100)
@@ -283,3 +284,7 @@ NIiter(CKTcircuit *ckt, int maxIter)
     }
     /*NOTREACHED*/
 }
+
+void NIresetwarnmsg(void) {
+    msgcount = 0;
+};
