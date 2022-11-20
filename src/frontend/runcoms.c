@@ -34,6 +34,7 @@ Modified: 2000 AlansFixes
 static int dosim(char *what, wordlist *wl);
 extern struct INPmodel *modtab;
 extern struct dbcomm *dbs;
+extern void NIresetwarnmsg(void);
 
 /* Routines for the commands op, tran, ac, dc, listing, device, state,
  * resume, stop, trace, run, end.  Op, tran, ac, and dc cause the action
@@ -260,6 +261,8 @@ static int dosim(
         ft_setflag = FALSE;  /* Now allow aborts again  */
         return 0;
     }
+
+    NIresetwarnmsg();
 
     /* From now on until the next prompt, an interrupt will just
      * set a flag and let spice finish up, then control will be
