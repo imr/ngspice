@@ -1,0 +1,477 @@
+behav-568  74ALS568a  74F568  74LS568
+
+* ----------------------------------------------------------- 74ALS568A ------
+*  Synchronous 4-Bit Up/Down Binary Counters With 3-State Outputs
+*
+*  The ALS/AS Logic Data Book, 1986, TI Pages 2-425 to 2-433
+*  bss    5/3/94
+*
+.SUBCKT 74ALS568A GBAR U/DB CLK ENTBAR ENPBAR SCLRBAR LOADBAR ACLRBAR 
++     A B C D CCOBAR RCOBAR QA QB QC QD
++     optional:  DPWR=$G_DPWR DGND=$G_DGND
++     params:  MNTYMXDLY=0 IO_LEVEL=0
+
+U1 dff(4) DPWR DGND
++     $D_HI ACLRBAR CLK
++     DA DB DC DD
++     QA_O QB_O QC_O QD_O
++     QABAR QBBAR QCBAR QDBAR
++     D0_EFF IO_ALS00 MNTYMXDLY={MNTYMXDLY} IO_LEVEL={IO_LEVEL}
+
+U2LOG LOGICEXP(18,6) DPWR DGND
++     U/DB CLK ENTBAR ENPBAR SCLRBAR LOADBAR A B C D
++     QA_O QB_O QC_O QD_O QABAR QBBAR QCBAR QDBAR
++     DA DB DC DD RCOBAR_O CCOBAR_O
++     D0_GATE IO_ALS00 MNTYMXDLY={MNTYMXDLY} IO_LEVEL={IO_LEVEL}
++
++  LOGIC:
++     clkbar = {~CLK}
++     sclr = {~SCLRBAR}
++     ub/d = {~U/DB}
++     ent = {~ENTBAR}
++     count = {~(ENTBAR | ENPBAR)}
++     sync2 = {~(sclr | LOADBAR)}
++     sync1 = {~(ENTBAR | ENPBAR | sclr | sync2)}
++     sync3 = {(SCLRBAR & LOADBAR)}
++     fba = {~((QABAR & U/DB) | (QA_O & ub/d))}
++     fbb = {~((QBBAR & U/DB) | (QB_O & ub/d))}
++     fbc = {~((QCBAR & U/DB) | (QC_O & ub/d))}
++     fbd = {~((QDBAR & U/DB) | (QD_O & ub/d))}
++     nand1 = {~(U/DB & fbd)}
++     nand2 = {~(QCBAR & ub/d & QDBAR)}
++     and1a = {(A & sync2)}
++     and2a = {((~sync1) & sync3 & QA_O)}
++     and3a = {((~(QA_O & sync3)) & sync1)}
++     DA = {and1a | and2a | and3a}
++     and1b = {(B & sync2)}
++     and2b = {((~(fba & sync1)) & sync3 & QB_O)}
++     and3b = {(fba & sync1 & nand2 & nand1 & QBBAR)}
++     DB = {and1b | and2b | and3b}
++     and1c = {(C & sync2)}
++     and2c = {((~(fba & fbb & sync1)) & sync3 & QC_O)}
++     and3c = {((~(QC_O & sync3)) & fbb & fba & sync1 & nand2)}
++     DC = {and1c | and2c | and3c}
++     and1d = {(D & sync2)}
++     and2d = {((~(fba & sync1)) & sync3 & QD_O)}
++     and3d = {((~(QD_O & sync3)) & fbc & fbb & fba & sync1)}
++     DD = {and1d | and2d | and3d}
++     RCOBAR_O = {~((U/DB & fbd & fba & ent) | (ent & fba & fbb & fbc & fbd & ub/d))}
++     rco = {~RCOBAR_O}
++     CCOBAR_O = {~(clkbar & count & rco)}
+
+U3DLY PINDLY(6,1,5) DPWR DGND
++     QA_O QB_O QC_O QD_O RCOBAR_O CCOBAR_O
++     GBAR
++     CLK U/DB ENTBAR ENPBAR ACLRBAR
++     QA QB QC QD RCOBAR CCOBAR
++     IO_ALS00 MNTYMXDLY={MNTYMXDLY} IO_LEVEL={IO_LEVEL}
++
++  BOOLEAN:
++     CLOCK = {CHANGED_LH(CLK,0)}
++     CCK1 = {CHANGED(CLK,0)}
++     UPDOWN = {CHANGED(U/DB,0)}
++     ENABT = {CHANGED(ENTBAR,0)}
++     ENABP = {CHANGED(ENPBAR,0)}
++     CLEAR = {CHANGED_HL(ACLRBAR,0)}
++
++  TRISTATE:
++     ENABLE LO=GBAR
++     QA QB QC QD = {
++       CASE(
++         CLEAR & TRN_HL, DELAY(9ns,-1,20ns),
++         CLOCK & TRN_LH, DELAY(4ns,-1,13ns),
++         CLOCK & TRN_HL, DELAY(7ns,-1,16ns),
++         TRN_ZH, DELAY(6ns,-1,18ns),
++         TRN_ZL, DELAY(6ns,-1,24ns),
++         TRN_HZ, DELAY(1ns,-1,10ns),
++         TRN_LZ, DELAY(3ns,-1,13ns),
++         DELAY(10ns,-1,25ns))}
++
++  PINDLY:
++     RCOBAR = {
++       CASE(
++         CLOCK & TRN_LH, DELAY(12ns,-1,28ns),
++         CLOCK & TRN_HL, DELAY(10ns,-1,19ns),
++         UPDOWN & TRN_LH, DELAY(9ns,-1,23ns),
++         UPDOWN & TRN_HL, DELAY(9ns,-1,19ns),
++         ENABT & TRN_LH, DELAY(6ns,-1,15ns),
++         ENABT & TRN_HL, DELAY(4ns,-1,13ns),
++         DELAY(13ns,-1,29ns))}
++
++     CCOBAR = {
++        CASE(
++         ENABT & TRN_LH, DELAY(5ns,-1,13ns),
++         ENABT & TRN_HL, DELAY(9ns,-1,23ns),
++         CCK1 & TRN_LH, DELAY(5ns,-1,13ns),
++         CCK1 & TRN_HL, DELAY(6ns,-1,25ns),
++         ENABP & TRN_LH, DELAY(4ns,-1,12ns),
++         ENABP & TRN_HL, DELAY(5ns,-1,14ns),
++         DELAY(10ns,-1,26ns))}
+
+U4CON CONSTRAINT(11) DPWR DGND
++     ACLRBAR LOADBAR CLK A B C D ENPBAR ENTBAR SCLRBAR U/DB
++     IO_ALS00 IO_LEVEL={IO_LEVEL}
++
++  FREQ:
++     NODE=CLK
++     MAXFREQ=20MEG
++
++  WIDTH:
++     NODE=CLK
++     MIN_HI=25ns
++     MIN_LO=25ns
++
++  WIDTH:
++     NODE=ACLRBAR
++     MIN_LO=15ns
++
++  WIDTH:
++     NODE=LOADBAR
++     MIN_LO=15ns
++
++  SETUP_HOLD:
++     CLOCK LH=CLK
++     DATA(4)=A B C D
++     SETUPTIME=20ns
++     WHEN={SCLRBAR!='0 | ACLRBAR!='0}
++
++  SETUP_HOLD:
++     CLOCK LH=CLK
++     DATA(2)=ENPBAR ENTBAR
++     SETUPTIME_HI=30ns
++     SETUPTIME_LO=20ns
++
++  SETUP_HOLD:
++     CLOCK LH=CLK
++     DATA(2)=SCLRBAR LOADBAR
++     SETUPTIME_LO=15ns
++     SETUPTIME_HI=30ns
++
++  SETUP_HOLD:
++     CLOCK LH=CLK
++     DATA(1)=U/DB
++     SETUPTIME=30ns
++
++  SETUP_HOLD:
++     CLOCK LH=CLK
++     DATA(1)=ACLRBAR
++     SETUPTIME_HI=10ns
+
+.ENDS 74ALS568A
+*
+*
+* ----------------------------------------------------------- 74F568 ------
+*  4-Bit Bidirectional Decade Counters With 3-State Outputs
+*
+*  The FAST TTL Logic Data Book, 1992, Philips Pages 562 to 572
+*  bss    5/3/94
+*	Left out the top AND gate in the feedback for the 2nd D flip-flop
+*	or the logic would be wrong
+*
+.SUBCKT 74F568 OEBAR U/DB CP CETBAR CEPBAR SRBAR PEBAR MRBAR 
++     D0 D1 D2 D3 CCBAR TCBAR Q0 Q1 Q2 Q3
++     optional:  DPWR=$G_DPWR DGND=$G_DGND
++     params:  MNTYMXDLY=0 IO_LEVEL=0
+
+U1 dff(4) DPWR DGND
++     $D_HI MRBAR CP
++     DA DB DC DD
++     Q0_O Q1_O Q2_O Q3_O
++     Q0BAR Q1BAR Q2BAR Q3BAR
++     D0_EFF IO_F MNTYMXDLY={MNTYMXDLY} IO_LEVEL={IO_LEVEL}
+
+U2LOG LOGICEXP(18,6) DPWR DGND
++     U/DB CP CETBAR CEPBAR SRBAR PEBAR D0 D1 D2 D3
++     Q0_O Q1_O Q2_O Q3_O Q0BAR Q1BAR Q2BAR Q3BAR
++     DA DB DC DD TCBAR_O CCBAR_O
++     D0_GATE IO_F MNTYMXDLY={MNTYMXDLY} IO_LEVEL={IO_LEVEL}
++
++  LOGIC:
++     clkbar = {~CP}
++     ub/d = {~U/DB}
++     ent = {~CETBAR}
++     cnt = {~(SRBAR & PEBAR)}
++     cntbar = {~cnt}
++     count = {~(CETBAR | CEPBAR | cnt)}
++     nand0 = {~(D0 & SRBAR)}
++     nand1 = {~(D1 & SRBAR)}
++     nand2 = {~(D2 & SRBAR)}
++     nand3 = {~(D3 & SRBAR)}
++     fb1 = {(U/DB | ub/d)}
+*	Logic added to fb2 and fb3 so C would go to 5 on a count down
++     fb2 = {((Q3BAR & Q0_O & U/DB) | (Q3_O & Q2BAR & Q1BAR & Q0BAR & ub/d) |
++             (Q0BAR & Q1BAR & Q3BAR & Q2_O & ub/d) | (Q1_O & Q0BAR & ub/d))}
++     fb3 = {((Q1_O & Q0_O & U/DB) | (Q2BAR & Q1BAR & Q0BAR & Q3_O & ub/d) | 
++             (Q0BAR & Q1BAR & Q2_O & Q3BAR & ub/d))}
++     fb4 = {((Q0_O & Q3_O & U/DB) | (Q2_O & Q1_O & Q0_O & U/DB) |
++             (Q2BAR & Q1BAR & Q0BAR & ub/d) | (Q0BAR & ub/d & Q3_O))}
++     TCBAR_O = {~((Q3_O & Q2BAR & Q1BAR & U/DB & Q0_O & ent) |
++             (ent & Q0BAR & Q1BAR & Q2BAR & Q3BAR & ub/d))}
++     tc = {~TCBAR_O}
++     CCBAR_O = {~(tc & clkbar & count)}
++     xor0 = {(~(fb1 & count)) ^ Q0_O}
++     xor1 = {(~(fb2 & count)) ^ Q1_O}
++     xor2 = {(~(fb3 & count)) ^ Q2_O}
++     xor3 = {(~(fb4 & count)) ^ Q3_O}
++     DA = {~((xor0 & cntbar) | (nand0 & cnt))}
++     DB = {~((xor1 & cntbar) | (nand1 & cnt))}
++     DC = {~((xor2 & cntbar) | (nand2 & cnt))}
++     DD = {~((xor3 & cntbar) | (nand3 & cnt))}
+
+U3DLY PINDLY(6,1,7) DPWR DGND
++     Q0_O Q1_O Q2_O Q3_O TCBAR_O CCBAR_O
++     OEBAR
++     CP U/DB CETBAR CEPBAR MRBAR SRBAR PEBAR
++     Q0 Q1 Q2 Q3 TCBAR CCBAR
++     IO_F MNTYMXDLY={MNTYMXDLY} IO_LEVEL={IO_LEVEL}
++
++  BOOLEAN:
++     CLOCK = {CHANGED_LH(CP,0)}
++     CCK1 = {CHANGED(CP,0)}
++     UPDOWN = {CHANGED(U/DB,0)}
++     ENABT = {CHANGED(CETBAR,0)}
++     ENABP = {CHANGED(CEPBAR,0)}
++     CLEAR = {CHANGED_HL(MRBAR,0)}
++     SYCLR = {CHANGED(SRBAR,0)}
++     LOAD = {CHANGED(PEBAR,0)}
++
++  TRISTATE:
++     ENABLE LO=OEBAR
++     Q0 Q1 Q2 Q3 = {
++       CASE(
++         CLEAR & TRN_HL, DELAY(6ns,8ns,11ns),
++         CLOCK & TRN_LH, DELAY(3ns,6ns,9.5ns),
++         CLOCK & TRN_HL, DELAY(4ns,7.5ns,11ns),
++         TRN_ZH, DELAY(2ns,4ns,7ns),
++         TRN_ZL, DELAY(4.5ns,6.5ns,9.5ns),
++         TRN_HZ, DELAY(1.5ns,3.5ns,6.5ns),
++         TRN_LZ, DELAY(1.5ns,3.5ns,6ns),
++         DELAY(7ns,9ns,12ns))}
++
++  PINDLY:
++     TCBAR = {
++       CASE(
++         CLEAR, DELAY(8ns,11ns,15ns),
++         CLOCK & TRN_LH, DELAY(5.5ns,10ns,15ns),
++         CLOCK & TRN_HL, DELAY(4ns,7.5ns,11ns),
++         UPDOWN & TRN_LH, DELAY(2.5ns,5ns,9ns),
++         UPDOWN & TRN_HL, DELAY(5ns,10ns,15ns),
++         ENABT & TRN_LH, DELAY(1.5ns,3ns,6ns),
++         ENABT & TRN_HL, DELAY(2.5ns,5ns,8ns),
++         DELAY(9ns,12ns,16ns))}
++
++     CCBAR = {
++        CASE(
++         CLEAR, DELAY(8ns,11ns,15ns),
++         UPDOWN & TRN_LH, DELAY(4.5ns,9ns,12ns),
++         UPDOWN & TRN_HL, DELAY(5ns,11ns,16ns),
++         (ENABT | ENABP) & TRN_LH, DELAY(2ns,4ns,7ns),
++         (ENABT | ENABP) & TRN_HL, DELAY(3.5ns,5.5ns,9ns),
++         CCK1 & TRN_LH, DELAY(2.5ns,4.5ns,7.5ns),
++         CCK1 & TRN_HL, DELAY(2ns,4ns,6.5ns),
++         SYCLR & TRN_LH, DELAY(5.5ns,8ns,11ns),
++         SYCLR & TRN_HL, DELAY(7.5ns,9.5ns,12ns),
++         LOAD & TRN_LH, DELAY(3ns,5ns,8ns),
++         LOAD & TRN_HL, DELAY(4ns,6ns,8.5ns),
++         DELAY(9ns,12ns,16ns))}
+
+U4CON CONSTRAINT(11) DPWR DGND
++     MRBAR PEBAR CP D0 D1 D2 D3 CEPBAR CETBAR SRBAR U/DB
++     IO_F IO_LEVEL={IO_LEVEL}
++
++  WIDTH:
++     NODE=CP
++     MIN_HI=8ns
++     MIN_LO=6ns
++
++  WIDTH:
++     NODE=MRBAR
++     MIN_LO=5ns
++
++  SETUP_HOLD:
++     CLOCK LH=CP
++     DATA(4)=D0 D1 D2 D3
++     SETUPTIME=4.5ns
++     HOLDTIME=2.5ns
++     WHEN={SRBAR!='0 | MRBAR!='0}
++
++  SETUP_HOLD:
++     CLOCK LH=CP
++     DATA(2)=CEPBAR CETBAR
++     SETUPTIME=6ns
++
++  SETUP_HOLD:
++     CLOCK LH=CP
++     DATA(2)=SRBAR PEBAR
++     SETUPTIME=9ns
++
++  SETUP_HOLD:
++     CLOCK LH=CP
++     DATA(1)=U/DB
++     SETUPTIME_HI=12.5ns
++     SETUPTIME_LO=17.5ns
++
++  SETUP_HOLD:
++     CLOCK LH=CP
++     DATA(1)=MRBAR
++     SETUPTIME_HI=7ns
+
+.ENDS 74F568
+
+*-----------------------------------------------------------74LS568------
+
+* Four-Bit Up/Down Counters with Tri-State Outputs
+* Motorola Schottky TTL Data, 1983, pages 4-321 to 4-325
+* jat 8/14/96
+
+.SUBCKT 74LS568 LOADBAR A B C D CEPBAR CETBAR U/DBAR CP YA YB YC YD RCOBAR
++ ACLRBAR SCLRBAR OEBAR CCO
++ OPTIONAL: DPWR=$G_DPWR DGND=$G_DGND
++ PARAMS: MNTYMXDLY=0 IO_LEVEL=0
+
+U1 LOGICEXP(18,6) DPWR DGND
++ A B C D SCLRBAR LOADBAR CEPBAR CETBAR CP U/DBAR Q0 Q1 Q2 Q3 Q0BAR Q1BAR
++ Q2BAR Q3BAR
++ D0 D1 D2 D3 RCOBARO CCOO
++ D0_GATE IO_LS MNTYMXDLY={MNTYMXDLY} IO_LEVEL={IO_LEVEL}
++ LOGIC:
++  CE = {~(CETBAR | CEPBAR)}
++  X1 = {~(Q0BAR & CE)}
++  X2 = {~(Q2BAR & Q3BAR)}
++  X3 = {~(Q0 & CE)}
++  X4 = {~(Q1 & Q0 & CE)}
++  X5 = {~(Q1BAR & Q0BAR & CE)}
++  X6 = {~(Q0BAR & CE)}
++  X7 = {~(Q0 & CE)}
++  D0 = {SCLRBAR & ((LOADBAR & ~CE & Q0) | (A & ~LOADBAR) | (CE & LOADBAR & Q0BAR))}
++  D1 = {SCLRBAR & ((X1 & LOADBAR & Q1 & ~U/DBAR) | (Q1BAR & X2 & ~U/DBAR & LOADBAR & Q0BAR & CE)
++      | (B & ~LOADBAR) | (Q1 & X3 & LOADBAR & U/DBAR) |
++        (Q1BAR & LOADBAR & U/DBAR & CE & Q0 & Q3BAR))}
++  D2 = {SCLRBAR & ((X4 & LOADBAR & U/DBAR & Q2) | (U/DBAR & LOADBAR & Q2BAR & Q1 & Q0 & CE) |
++        (C & ~LOADBAR) | (Q2 & X5 & LOADBAR & ~U/DBAR) |
++        (Q2BAR & ~U/DBAR & CE & LOADBAR & Q1BAR & Q0BAR & Q3))}
++  D3 = {SCLRBAR & ((X6 & LOADBAR & ~U/DBAR & Q3) | (~U/DBAR & LOADBAR & Q3BAR & Q2BAR & Q1BAR & Q0BAR & CE) |
++        (D & ~LOADBAR) | (Q3 & X7 & LOADBAR & U/DBAR) |
++        (Q3BAR & U/DBAR & CE & LOADBAR & Q0 & Q1 & Q2))}
++  RCOBARO = {~((~U/DBAR & ~CETBAR & Q0BAR & Q1BAR & Q2BAR & Q3BAR) |
++               (U/DBAR & ~CETBAR & Q0 & Q3))}
++  CCOO = {~(CE & ~RCOBARO & ~CP)}
+
+U2 DFF(4) DPWR DGND
++ $D_HI ACLRBAR CP
++ D0 D1 D2 D3
++ Q0 Q1 Q2 Q3
++ Q0BAR Q1BAR Q2BAR Q3BAR
++ D0_EFF IO_LS MNTYMXDLY={MNTYMXDLY} IO_LEVEL={IO_LEVEL}
+
+U3 PINDLY(6,1,5) DPWR DGND
++ Q0 Q1 Q2 Q3 RCOBARO CCOO
++ OEBAR
++ CP CETBAR U/DBAR CEPBAR ACLRBAR
++ YA YB YC YD RCOBAR CCO
++ IO_LS MNTYMXDLY={MNTYMXDLY} IO_LEVEL={IO_LEVEL}
++ BOOLEAN:
++  EDGE = {CHANGED_LH(CP,0)}
++  DOWNEDGE = {CHANGED_HL(CP,0)}
++  T = {CHANGED(CETBAR,0)}
++  P = {CHANGED(CEPBAR,0)}
++  UPDOWN = {CHANGED(U/DBAR,0)}
++  ACLEAR = {CHANGED(ACLRBAR,0)}
++ TRISTATE:
++ ENABLE LO = OEBAR
++  YA YB YC YD = {
++    CASE(
++      TRN_ZH, DELAY(-1,10NS,16NS),
++      TRN_ZL, DELAY(-1,17NS,24NS),
++      TRN_HZ, DELAY(-1,20NS,25NS),
++      TRN_LZ, DELAY(-1,17NS,27NS),
++      ACLEAR & (TRN_LH | TRN_HL), DELAY(-1,21NS,32NS),
++      EDGE & TRN_LH, DELAY(-1,15NS,24NS),
++      EDGE & TRN_HL, DELAY(-1,23NS,35NS),
++      DELAY(-1,24NS,36NS))}
++ PINDLY:
++  RCOBAR = {
++    CASE(
++      T & TRN_LH, DELAY(-1,14NS,24NS),
++      T & TRN_HL, DELAY(-1,14NS,24NS),
++      UPDOWN & TRN_LH, DELAY(-1,20NS,30NS),
++      UPDOWN & TRN_HL, DELAY(-1,15NS,24NS),
++      EDGE & TRN_LH, DELAY(-1,25NS,40NS),
++      EDGE & TRN_HL, DELAY(-1,26NS,40NS),
++      DELAY(-1,27NS,41NS))}
++  CCO = {
++    CASE(
++      (T | P) & TRN_LH, DELAY(-1,12NS,20NS),
++      (T | P) & TRN_HL, DELAY(-1,20NS,30NS),
++      DOWNEDGE & TRN_LH, DELAY(-1,17NS,27NS),
++      DOWNEDGE & TRN_HL, DELAY(-1,26NS,40NS),
++      DELAY(-1,27NS,41NS))}
+
+U4 CONSTRAINT(10) DPWR DGND
++ CP A B C D SCLRBAR LOADBAR U/DBAR CETBAR CEPBAR
++ IO_LS IO_LEVEL={IO_LEVEL}
++ FREQ:
++  NODE = CP
++  MAXFREQ = 25MEG
++ WIDTH:
++  NODE  = CP
++  MIN_LO = 30NS
++  MIN_HI = 30NS
++ SETUP_HOLD:
++  CLOCK LH = CP
++  DATA(5) = A B C D SCLRBAR
++  SETUPTIME = 20NS
++ SETUP_HOLD:
++  CLOCK LH = CP
++  DATA(1) = LOADBAR
++  SETUPTIME = 30NS
++ SETUP_HOLD:
++  CLOCK LH = CP
++  DATA(1) = U/DBAR
++  SETUPTIME = 50NS
++ SETUP_HOLD:
++  CLOCK LH = CP
++  DATA(2) = CETBAR CEPBAR
++  SETUPTIME = 32NS
+
+.ENDS 74LS568
+
+
+* .SUBCKT 74ALS568A GBAR U/DB CLK ENTBAR ENPBAR SCLRBAR LOADBAR ACLRBAR 
+* +     A B C D CCOBAR RCOBAR QA QB QC QD
+x1 gb ub clk etbar epbar sclrb loadb mclrb d0 d1 d2 d3 ccobar rcobar qa qb qc qd 74als568a
+
+* .SUBCKT 74F568 OEBAR U/DB CP CETBAR CEPBAR SRBAR PEBAR MRBAR 
+* +     D0 D1 D2 D3 CCBAR TCBAR Q0 Q1 Q2 Q3
+x2 gb ub clk etbar epbar sclrb loadb mclrb d0 d1 d2 d3 ccbar tcbar q0 q1 q2 q3 74f568
+
+* .SUBCKT 74LS568 LOADBAR A B C D CEPBAR CETBAR U/DBAR CP YA YB YC YD RCOBAR
+* + ACLRBAR SCLRBAR OEBAR CCO
+x3 loadb d0 d1 d2 d3 epbar etbar ub clk ya yb yc yd rbar mclrb sclrb gb cco 74ls568
+
+a_1 [ loadb sclrb mclrb clk gb ub d0 d1 d2 d3 epbar etbar ] input_vec1
+.model input_vec1 d_source(input_file = "behav-568.stim")
+
+.tran 0.1ns 8us
+.control
+run
+listing
+* edisplay
+* eprint qd qc qb qa q3 q2 q1 q0 ya yb yc yd
+* save data to input directory
+cd $inputdir 
+eprvcd clk loadb d0 d1 d2 d3 qd qc qb qa q3 q2 q1 q0 ya yb yc yd > behav-568.vcd
+* plotting the vcd file with GTKWave
+if $oscompiled = 1 | $oscompiled = 8  ; MS Windows
+  shell start gtkwave behav-568.vcd --script nggtk.tcl
+else
+  if $oscompiled = 7 ; macOS, manual tweaking required (mark, insert, Zoom Fit)
+    shell open -a gtkwave behav-568.vcd
+  else ; Linux and others
+    shell gtkwave behav-568.vcd --script nggtk.tcl &
+  end
+end
+quit
+.endc
+.end
+
