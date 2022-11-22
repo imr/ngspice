@@ -336,6 +336,7 @@ dicostack_pop(dico_t *dico)
             ds_clear(&param_name);
             if (ds_cat_printf(&param_name, "%s.%s",
                     inst_name, entry->symbol) != DS_E_OK) {
+                fprintf(stderr, "Error: DS could not add string %s\n", inst_name);
                 controlled_exit(-1);
             }
             nupa_add_inst_param(ds_get_buf(&param_name), entry->vl);

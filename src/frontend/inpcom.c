@@ -1273,6 +1273,7 @@ struct inp_read_t inp_read( FILE *fp, int call_depth, const char *dir_name,
                     strcat(buffer, "\n");
                 }
                 else { /* No good way to report this so just die */
+                    fprintf(stderr, "Error: IPC status not o.k.\n");
                     controlled_exit(EXIT_FAILURE);
                 }
             }
@@ -1758,7 +1759,7 @@ static char *inp_pathresolve(const char *name)
             name[2] == DIR_TERM_LINUX) {
         DS_CREATE(ds, 100);
         if (ds_cat_str(&ds, name) != 0) {
-            fprintf(stderr, "Unable to copy string while resolving path");
+            fprintf(stderr, "Error: Unable to copy string while resolving path");
             controlled_exit(EXIT_FAILURE);
         }
         char *const buf = ds_get_buf(&ds);
@@ -1821,7 +1822,7 @@ static char *inp_pathresolve(const char *name)
 
             if (rc_ds != 0) { /* unable to build string */
                 (void) fprintf(cp_err,
-                        "Unable to build path name in inp_pathresolve");
+                        "Error: Unable to build path name in inp_pathresolve");
                 controlled_exit(EXIT_FAILURE);
             }
 
@@ -1873,7 +1874,7 @@ static char *inp_pathresolve_at(const char *name, const char *dir)
         DS_CREATE(ds, 100);
         if (ds_cat_printf(&ds, ".%c%s", DIR_TERM, name) != 0) {
             (void) fprintf(cp_err,
-                    "Unable to build \".\" path name in inp_pathresolve_at");
+                    "Error: Unable to build \".\" path name in inp_pathresolve_at");
             controlled_exit(EXIT_FAILURE);
         }
         char * const r = inp_pathresolve(ds_get_buf(&ds));
@@ -1901,7 +1902,7 @@ static char *inp_pathresolve_at(const char *name, const char *dir)
         rc_ds |= ds_cat_str(&ds, name); /* append the file name */
 
         if (rc_ds != 0) {
-            (void) fprintf(cp_err, "Unable to build \"dir\" path name "
+            (void) fprintf(cp_err, "Error: Unable to build \"dir\" path name "
                     "in inp_pathresolve_at");
             controlled_exit(EXIT_FAILURE);
         }
@@ -3051,7 +3052,7 @@ static void inp_change_quotes(char *s)
 static void add_name(struct names *p, char *name)
 {
     if (p->num_names >= N_SUBCKT_W_PARAMS) {
-        fprintf(stderr, "ERROR, N_SUBCKT_W_PARMS overflow\n");
+        fprintf(stderr, "ERROR: N_SUBCKT_W_PARMS overflow, more than %d subcircuits\n", N_SUBCKT_W_PARAMS);
         controlled_exit(EXIT_FAILURE);
     }
 
@@ -3748,7 +3749,7 @@ static void free_function(struct function *fcn)
 static void new_function_parameter(struct function *fcn, char *parameter)
 {
     if (fcn->num_parameters >= N_PARAMS) {
-        fprintf(stderr, "ERROR, N_PARAMS overflow\n");
+        fprintf(stderr, "ERROR, N_PARAMS overflow, more than %d parameters\n", N_PARAMS);
         controlled_exit(EXIT_FAILURE);
     }
 
@@ -4926,6 +4927,7 @@ static struct card *inp_reorder_params_subckt(
     }
 
     /* the terminating `.ends' deck wasn't found */
+    fprintf(stderr, "Error: Missing .ends statement\n");
     controlled_exit(EXIT_FAILURE);
 }
 
@@ -10091,7 +10093,7 @@ struct nscope *inp_add_levels(struct card *deck)
             }
             else if (ciprefix(".ends", curr_line)) {
                 if (lvl == root) {
-                    fprintf(stderr, ".subckt/.ends not balanced\n");
+                    fprintf(stderr, "Error: .subckt/.ends not balanced\n");
                     controlled_exit(1);
                 }
                 card->level = lvl;

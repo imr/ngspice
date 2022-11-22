@@ -69,6 +69,7 @@ static void vec_rebuild_lookup_table(struct plot *pl)
         for (d = pl->pl_dvecs; d; d = d->v_next) {
             ds_clear(&dbuf);
             if (ds_cat_str_case(&dbuf, d->v_name, ds_case_lower) != DS_E_OK) {
+                fprintf(stderr, "Error: DS could not add string %s\n", d->v_name);
                 controlled_exit(-1);
             }
             char * const lower_name = ds_get_buf(&dbuf);
@@ -181,6 +182,7 @@ static struct dvec *findvec(char *word, struct plot *pl)
 
     DS_CREATE(dbuf, 200); /* make dynamic buffer */
     if (ds_cat_str_case(&dbuf, word, ds_case_lower) != DS_E_OK) {
+        fprintf(stderr, "Error: DS could not add string %s\n", word);
         controlled_exit(-1);
     }
     char * const lower_name = ds_get_buf(&dbuf);
@@ -197,6 +199,7 @@ static struct dvec *findvec(char *word, struct plot *pl)
                 ds_case_lower) == DS_E_OK;
         f_ok &= ds_cat_char(&dbuf, ')') == DS_E_OK;
         if (!f_ok) {
+            fprintf(stderr, "Error: DS could not add string V() around %s\n", word);
             controlled_exit(-1);
         }
         char * const node_name = ds_get_buf(&dbuf);

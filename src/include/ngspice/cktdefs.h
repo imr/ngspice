@@ -480,6 +480,7 @@ extern void NIdestroy(CKTcircuit *);
 extern int NIinit(CKTcircuit  *);
 extern int NIintegrate(CKTcircuit *, double *, double *, double , int);
 extern int NIiter(CKTcircuit * , int);
+extern void NIresetwarnmsg(void);
 extern int NIpzMuller(PZtrial **, PZtrial *);
 extern int NIpzComplex(PZtrial **, PZtrial *);
 extern int NIpzSym(PZtrial **, PZtrial *);

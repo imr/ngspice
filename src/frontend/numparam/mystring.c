@@ -74,6 +74,7 @@ void
 sadd(DSTRINGPTR dstr_p, const char *t)
 {
     if (ds_cat_str(dstr_p, t) != DS_E_OK) {
+        fprintf(stderr, "Error: DS could not add string %s\n", t);
         controlled_exit(-1);
     }
 }
@@ -86,6 +87,7 @@ void
 cadd(DSTRINGPTR dstr_p, char c)
 {
     if (ds_cat_char(dstr_p, c) != DS_E_OK) {
+        fprintf(stderr, "Error: DS could not add character %c\n", c);
         controlled_exit(-1);
     }
 }
@@ -100,6 +102,7 @@ scopyd(DSTRINGPTR dst, const DSTRINGPTR src)  /* returns success flag */
 {
     ds_clear(dst);
     if (ds_cat_ds(dst, src) != DS_E_OK) {
+        fprintf(stderr, "Error: DS could not copy string\n");
         controlled_exit(-1);
     }
 }
@@ -114,6 +117,7 @@ scopys(DSTRINGPTR s, const char *t)     /* returns success flag */
 {
     ds_clear(s);
     if (ds_cat_str(s, t) != DS_E_OK) {
+        fprintf(stderr, "Error: DS could not copy string %s\n", t);
         controlled_exit(-1);
     }
 }
@@ -129,6 +133,7 @@ pscopy(DSTRINGPTR dstr_p, const char *t, const char *stop)
 
     ds_clear(dstr_p);
     if (ds_cat_mem(dstr_p, t, (size_t) (stop - t)) != DS_E_OK) {
+        fprintf(stderr, "Error: DS could not copy partially string %s\n", t);
         controlled_exit(-1);
     }
 

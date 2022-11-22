@@ -110,6 +110,7 @@ char *tvprintf(const char *fmt, va_list args)
          * memory was exhausted) with the old behavior */
 
         if (nchars < 0) {
+            fprintf(stderr, "Error: tvprintf failed\n");
             controlled_exit(-1);
         }
 
