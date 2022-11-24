@@ -482,7 +482,7 @@ static size_t fb_make_space_at_end(FILEBUF *p_fb)
 
     /* Shift data in use to the front of the buffer if not already */
     if (p_dst != p_src) { /* object is not at start of buffer */
-        const size_t n = p_fb->p_data_end - p_src;
+        const size_t n = (size_t)(p_fb->p_data_end - p_src);
         if (n > 0) { /* Will be 0 if skipping whitespace and comments */
             (void) memmove(p_dst, p_src, n);
         }
@@ -528,7 +528,7 @@ static size_t fb_make_space_at_end(FILEBUF *p_fb)
         }
     }
 
-    return p_fb->p_buf_end - p_fb->p_data_end;
+    return (size_t)(p_fb->p_buf_end - p_fb->p_data_end);
 } /* end of function fb_make_space_at_end */
 
 
@@ -689,7 +689,7 @@ static int fb_return_string(FILEBUF *p_fb,
 {
     const char *p_data_start =
             p_fbobj->str_value.sz = p_fb->p_obj_start;
-    p_fbobj->str_value.n_char = p_fb->p_obj_end - p_data_start;
+    p_fbobj->str_value.n_char = (size_t)(p_fb->p_obj_end - p_data_start);
     *p_type_found = BUF_TYPE_STRING;
     return 0;
 } /* end of function fb_return_string */

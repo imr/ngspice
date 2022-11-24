@@ -810,7 +810,7 @@ int main(int argc, char **argv)
     bool qflag = FALSE; /* flag for command completion */
 
     FILE * volatile circuit_file;
-    bool oflag = FALSE;
+    bool volatile oflag = FALSE;
     bool srflag = FALSE;
 
 #ifdef TRACE
