@@ -16,6 +16,7 @@ struct compat
 	bool spe; /* spectre */
 	bool eg; /* EAGLE */
 	bool mc; /* to be set for 'make check' */
+	bool xs; /* XSPICE */
 };
 
 extern struct compat newcompat;
