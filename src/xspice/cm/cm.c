@@ -430,10 +430,12 @@ int cm_analog_set_temp_bkpt(
     }
 
     /* If too close to a permanent breakpoint or the current time, discard it */
-    if( (fabs(time - ckt->CKTbreaks[0]) < ckt->CKTminBreak) ||
-        (fabs(time - ckt->CKTbreaks[1]) < ckt->CKTminBreak) ||
-        (fabs(time - ckt->CKTtime) < ckt->CKTminBreak) )
+    if ((ckt->CKTbreaks &&
+         (fabs(time - ckt->CKTbreaks[0]) < ckt->CKTminBreak ||
+          fabs(time - ckt->CKTbreaks[1]) < ckt->CKTminBreak)) ||
+        fabs(time - ckt->CKTtime) < ckt->CKTminBreak) {
         return(MIF_OK);
+    }
 
     /* If < current dynamic breakpoint, make it the current breakpoint */
     if( time < g_mif_info.breakpoint.current)
