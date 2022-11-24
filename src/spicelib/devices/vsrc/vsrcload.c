@@ -11,6 +11,7 @@ Modified: 2000 AlansFixes
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 #include "ngspice/1-f-code.h"
+#include "ngspice/compatmode.h"
 
 #ifdef XSPICE_EXP
 /* gtri - begin - wbk - modify for supply ramping option */
@@ -98,6 +99,7 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
                         double PHASE;
                         double phase;
                         double deltat;
+                        double tmax = 1e99;
 
                         V1 = here->VSRCcoeffs[0];
                         V2 = here->VSRCcoeffs[1];
@@ -122,29 +124,42 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
                         PHASE = here->VSRCfunctionOrder > 7
                            ? here->VSRCcoeffs[7] : 0.0;
 
-                        /* normalize phase to cycles */
-                        phase = PHASE / 360.0;
-                        phase = fmod(phase, 1.0);
-                        deltat =  phase * PER;
-                        while (deltat > 0)
-                            deltat -= PER;
-                        /* shift time by pase (neg. for pos. phase value) */
-                        time += deltat;
-
-                        if(time > PER) {
-                            /* repeating signal - figure out where we are */
-                            /* in period */
-                            basetime = PER * floor(time/PER);
-                            time -= basetime;
+                        if (newcompat.xs) { /* 7th parameter is PHASE */
+                            /* normalize phase to cycles */
+                            phase = PHASE / 360.0;
+                            phase = fmod(phase, 1.0);
+                            deltat = phase * PER;
+                            while (deltat > 0)
+                                deltat -= PER;
+                            /* shift time by pase (neg. for pos. phase value) */
+                            time += deltat;
                         }
-                        if (time <= 0 || time >= TR + PW + TF) {
+                        else if (PHASE > 0.0) { /* 7th parameter is number of pulses */
+                            tmax = PHASE * PER;
+                        }
+
+                        if (!newcompat.xs && time > tmax) {
                             value = V1;
-                        } else  if (time >= TR && time <= TR + PW) {
-                            value = V2;
-                        } else if (time > 0 && time < TR) {
-                            value = V1 + (V2 - V1) * (time) / TR;
-                        } else { /* time > TR + PW && < TR + PW + TF */
-                            value = V2 + (V1 - V2) * (time - (TR + PW)) / TF;
+                        }
+                        else {
+                            if (time > PER) {
+                                /* repeating signal - figure out where we are */
+                                /* in period */
+                                basetime = PER * floor(time / PER);
+                                time -= basetime;
+                            }
+                            if (time <= 0 || time >= TR + PW + TF) {
+                                value = V1;
+                            }
+                            else  if (time >= TR && time <= TR + PW) {
+                                value = V2;
+                            }
+                            else if (time > 0 && time < TR) {
+                                value = V1 + (V2 - V1) * (time) / TR;
+                            }
+                            else { /* time > TR + PW && < TR + PW + TF */
+                                value = V2 + (V1 - V2) * (time - (TR + PW)) / TF;
+                            }
                         }
                     }
                     break;
