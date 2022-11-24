@@ -471,12 +471,12 @@ EXITPOINT:
 
     /* If error, free model info */
     if (xrc != 0) {
-        free_model_info(n_model_info, p_model_info);
+        free_model_info((int)n_model_info, p_model_info);
         n_model_info = 0;
         p_model_info = (Model_Info_t *) NULL;
     }
 
-    *p_num_model_info = n_model_info;
+    *p_num_model_info = (int)n_model_info;
     *pp_model_info = p_model_info;
 
     return xrc;
@@ -648,12 +648,12 @@ EXITPOINT:
 
     /* If error, free node info */
     if (xrc != 0) {
-        free_node_info(n_node_info, p_node_info);
+        free_node_info((int)n_node_info, p_node_info);
         n_node_info = 0;
         p_node_info = (Node_Info_t *) NULL;
     }
 
-    *p_num_node_info = n_node_info;
+    *p_num_node_info = (int)n_node_info;
     *pp_node_info = p_node_info;
 
     return xrc;
@@ -945,8 +945,8 @@ static int check_uniqueness(
     }
 
     /* Sizes of models and nodes */
-    const unsigned int n_model = (unsigned int) numSPICEmodels + num_models;
-    const unsigned int n_node = (unsigned int) numUDNidentifiers + num_nodes;
+    const unsigned int n_model = (unsigned int)(numSPICEmodels + num_models);
+    const unsigned int n_node = (unsigned int)(numUDNidentifiers + num_nodes);
     const unsigned int n_ks = n_model > n_node ? n_model : n_node;
 
     /* Allocate structure to compare */
@@ -994,8 +994,8 @@ static int check_uniqueness(
             }
 
             /* Test for duplicates */
-            f_have_duplicate |= test_for_duplicates(num_models, p_ks,
-                    &report_error_function_name);
+            f_have_duplicate |= test_for_duplicates((unsigned int)num_models,
+                    p_ks, &report_error_function_name);
         }
     }
 
@@ -1588,14 +1588,14 @@ static int read_udn_type_name(
                         c = fgetc(fp);
                         if(c == '"') {
                             found = true;
-                            if (i >= sizeof name) {
+                            if (i >= (int)sizeof name) {
                                 print_error("name too long");
                                 exit(1);
                             }
                             name[i] = '\0';
                         }
                         else if(c != EOF) {
-                            if (i > sizeof name) {
+                            if (i > (int)sizeof name) {
                                 print_error("name too long");
                                 exit(1);
                             }

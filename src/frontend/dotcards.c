@@ -633,7 +633,9 @@ gettoks(char *s)
 
         /* Transfer i(xx) to xxx#branch only when i is the first
            character of the token or preceeded by a space. */
-        if ((*(l - 1) == 'i' || *(l - 1) == 'I') && (l - 1 == t) || ((l > t + 1) && isspace(*(l-2)))) {
+        if ((*(l - 1) == 'i' ||
+             ((*(l - 1) == 'I') && (l - 1 == t))) ||
+            ((l > t + 1) && isspace(*(l-2)))) {
             char buf[513];
             sprintf(buf, "%s#branch", l + 1);
             wl->wl_word = copy(buf);

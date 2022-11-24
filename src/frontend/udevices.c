@@ -262,6 +262,8 @@ static void clear_name_list(NAME_ENTRY nelist, char *msg)
 #ifdef TRACE
     printf("%s\n", msg);
     print_name_list(nelist);
+#else
+    (void)msg;
 #endif
     for (x = nelist; x; x = next) {
         next = x->next;
@@ -1505,7 +1507,7 @@ static struct instance_hdr *create_instance_header(char *line)
     return hdr;
 }
 
-char *new_inverter(char *iname, char *node, Xlatorp xlp)
+static char *new_inverter(char *iname, char *node, Xlatorp xlp)
 {
     /* Return the name of the output of the new inverter */
     /* tfree the returned string after it has been used by the caller */
@@ -2469,7 +2471,7 @@ static void estimate_typ(struct timing_data *tdp)
         if (strlen(tmpmin) > 0 && strlen(tmpmax) > 0) {
             valmin = strtof(tmpmin, &units1);
             valmax = strtof(tmpmax, &units2);
-            average = (valmin + valmax) / (float)2.0;
+            average = (float)((valmin + valmax) / 2.0);
             tdp->ave = tprintf("%.2f%s", average, units2);
             if (!eq(units1, units2)) {
                 printf("WARNING units do not match\n");
