@@ -773,7 +773,7 @@ char *find_back_assignment(const char *p, const char *start)
 
 /* Set a compatibility flag.
 Currently available are flags for:
-- LTSPICE, HSPICE, Spice3, PSPICE, KiCad, Spectre
+- LTSPICE, HSPICE, Spice3, PSPICE, KiCad, Spectre, XSPICE
 */
 struct compat newcompat;
 static void set_compat_mode(void)
@@ -781,6 +781,7 @@ static void set_compat_mode(void)
     char behaviour[80];
     newcompat.hs = FALSE;
     newcompat.ps = FALSE;
+    newcompat.xs = FALSE;
     newcompat.lt = FALSE;
     newcompat.ki = FALSE;
     newcompat.a = FALSE;
@@ -793,6 +794,8 @@ static void set_compat_mode(void)
             newcompat.isset = newcompat.hs = TRUE; /*HSPICE*/
         if (strstr(behaviour, "ps"))
             newcompat.isset = newcompat.ps = TRUE; /*PSPICE*/
+        if (strstr(behaviour, "xs"))
+            newcompat.isset = newcompat.xs = TRUE; /*XSPICE*/
         if (strstr(behaviour, "lt"))
             newcompat.isset = newcompat.lt = TRUE; /*LTSPICE*/
         if (strstr(behaviour, "ki"))
@@ -820,7 +823,7 @@ static void set_compat_mode(void)
     }
     /* reset everything for 'make check' */
     if (newcompat.mc)
-        newcompat.eg = newcompat.hs = newcompat.spe = newcompat.ps = 
+        newcompat.eg = newcompat.hs = newcompat.spe = newcompat.ps = newcompat.xs = 
         newcompat.ll = newcompat.lt = newcompat.ki = newcompat.a = FALSE;
 }
 
@@ -835,6 +838,8 @@ static void print_compat_mode(void) {
             fprintf(stdout, " hs");
         if (newcompat.ps)
             fprintf(stdout, " ps");
+        if (newcompat.xs)
+            fprintf(stdout, " xs");
         if (newcompat.lt)
             fprintf(stdout, " lt");
         if (newcompat.ki)
