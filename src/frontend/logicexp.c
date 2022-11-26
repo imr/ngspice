@@ -292,6 +292,32 @@ static char *lex_gate_name(int c, BOOL not)
     return buf;
 }
 
+static char *tmodel_gate_name(int c, BOOL not)
+{
+    /* Returns an XSPICE model name for the case where
+       logicexp does not have a corresponding pindly
+       but does have a UGATE timing model (not d0_gate).
+    */
+    static char buf[32];
+    switch (c) {
+    case '&':
+        if (not)
+            sprintf(buf, "dxspice_dly_nand");
+        else
+            sprintf(buf, "dxspice_dly_and");
+        break;
+    case '|':
+        if (not)
+            sprintf(buf, "dxspice_dly_nor");
+        else
+            sprintf(buf, "dxspice_dly_or");
+        break;
+    default:
+        return NULL;
+    }
+    return buf;
+}
+
 static int lex_gate_op(int c)
 {
     switch (c) {
@@ -584,6 +610,7 @@ static int adepth = 0;
 static int max_adepth = 0;
 static DSTRING d_curr_line;
 static int number_of_instances = 0;
+static BOOL use_tmodel_delays = FALSE;
 
 static BOOL inverters_needed(void)
 {
@@ -888,7 +915,7 @@ static PTABLE optimize_gen_tab(PTABLE pt)
 {
     /* This function compacts the gen_tab, returning a new PTABLE.
        Aliases are transformed and removed as described below.
-       Usually, optimized_gen_tab is called a second time on the
+       Usually, optimize_gen_tab is called a second time on the
        PTABLE created by the first call. The algorithm here will
        only transform one level of aliases.
     */
@@ -1131,7 +1158,7 @@ static void gen_gates(PTABLE gate_tab, SYM_TAB parser_symbols)
         tok_count = 0;
         gate_op = 0;
         in_count = 0;
-        while (val != '\0') {
+        while (val != '\0') {  // while val loop
             tok_count++;
             if (val == LEX_ID) {
                 idnum++;
@@ -1170,13 +1197,33 @@ static void gen_gates(PTABLE gate_tab, SYM_TAB parser_symbols)
                 goto quick_return;
             }
             val = lexer_scan(lxr);
-        }
+        }  // end while val loop
+
         if (in_count == 1) { // buffer or inverter
             if (gate_op != 0) goto quick_return;
             ds_cat_str(&gate_name, lex_gate_name('~', found_tilde));
         } else if (in_count >= 2) { // AND, OR. XOR and inverses
             if (gate_op == 0) goto quick_return;
-            ds_cat_str(&gate_name, lex_gate_name(gate_op, found_tilde));
+            if (use_tmodel_delays) {
+                /* This is the case when logicexp has a UGATE
+                   timing model (not d0_gate) and no pindly.
+                */
+                SYM_TAB entry = NULL;
+                char *nm1 = 0;
+                entry = member_sym_tab(ds_get_buf(&out_name), parser_symbols);
+                if (entry && (entry->attribute & SYM_OUTPUT)) {
+                    nm1 = tmodel_gate_name(gate_op, found_tilde);
+                    if (nm1) {
+                        ds_cat_str(&gate_name, nm1);
+                    }
+                }
+                if (!nm1) {
+                    nm1 = lex_gate_name(gate_op, found_tilde);
+                    ds_cat_str(&gate_name, nm1);
+                }
+            } else {
+                ds_cat_str(&gate_name, lex_gate_name(gate_op, found_tilde));
+            }
         } else {
             goto quick_return;
         }
@@ -1537,7 +1584,19 @@ BOOL f_logicexp(char *line)
     /* timing model */
     t = lex_scan();
     if (!expect_token(t, LEX_ID, NULL, TRUE, 12)) goto error_return;
-    //printf("TMODEL: %s\n", parse_lexer->lexer_buf);
+    if (!eq(parse_lexer->lexer_buf, "d0_gate")) {
+        u_add_logicexp_model(parse_lexer->lexer_buf,
+            "d_and", "dxspice_dly_and");
+        u_add_logicexp_model(parse_lexer->lexer_buf,
+            "d_nand", "dxspice_dly_nand");
+        u_add_logicexp_model(parse_lexer->lexer_buf,
+            "d_or", "dxspice_dly_or");
+        u_add_logicexp_model(parse_lexer->lexer_buf,
+            "d_nor", "dxspice_dly_nor");
+        use_tmodel_delays = TRUE;
+    } else {
+        use_tmodel_delays = FALSE;
+    }
     (void) add_sym_tab_entry(parse_lexer->lexer_buf,
         SYM_TMODEL, &parse_lexer->lexer_sym_tab);
     ret_val = bparse(line, FALSE);

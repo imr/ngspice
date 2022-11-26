@@ -777,6 +777,19 @@ void u_add_instance(char *str)
     }
 }
 
+static BOOL gen_timing_model(
+    char *tmodel, char *utype, char *xspice, char *newname, Xlatorp xlp);
+
+void u_add_logicexp_model(char *tmodel, char *xspice_gate, char *model_name)
+{
+    Xlatorp xlp = NULL;
+    xlp = create_xlator();
+    if (gen_timing_model(tmodel, "ugate", xspice_gate, model_name, xlp)) {
+        append_xlator(translated_p, xlp);
+    }
+    delete_xlator(xlp);
+}
+
 void initialize_udevice(char *subckt_line)
 {
     Xlatep xdata;
