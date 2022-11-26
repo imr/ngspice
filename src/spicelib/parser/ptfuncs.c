@@ -4,7 +4,7 @@ Author: 1987 Wayne A. Christopher, U. C. Berkeley CAD Group
 **********/
 
 /*
- * All the functions used in the parse tree.  These functions return HUGE
+ * All the functions used in the B-source parse tree.  These functions return HUGE
  * if their argument is out of range.
  */
 
