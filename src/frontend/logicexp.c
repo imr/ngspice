@@ -312,6 +312,12 @@ static char *tmodel_gate_name(int c, BOOL not)
         else
             sprintf(buf, "dxspice_dly_or");
         break;
+    case '^':
+        if (not)
+            sprintf(buf, "dxspice_dly_xnor");
+        else
+            sprintf(buf, "dxspice_dly_xor");
+        break;
     default:
         return NULL;
     }
@@ -1593,6 +1599,10 @@ BOOL f_logicexp(char *line)
             "d_or", "dxspice_dly_or");
         u_add_logicexp_model(parse_lexer->lexer_buf,
             "d_nor", "dxspice_dly_nor");
+        u_add_logicexp_model(parse_lexer->lexer_buf,
+            "d_xor", "dxspice_dly_xor");
+        u_add_logicexp_model(parse_lexer->lexer_buf,
+            "d_xnor", "dxspice_dly_xnor");
         use_tmodel_delays = TRUE;
     } else {
         use_tmodel_delays = FALSE;
