@@ -1,4 +1,4 @@
-dd test 2 with .func
+ddt test 2 with .func
 
 V1 1 0 dc 0 pulse 0 2 0 1 1 1 4
 
