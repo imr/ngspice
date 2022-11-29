@@ -1,0 +1,14 @@
+dd test
+
+V1 1 0 dc 0 pulse 0 2 0 1 1 1 4
+
+B2 2 0 v = ddt(V(1))
+
+.tran 1m 8
+
+.control
+run
+plot v(1) v(2)
+.endc
+
+.end
