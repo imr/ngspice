@@ -606,18 +606,19 @@ static char *cat2strings(char *s1, char *s2, bool spa)
     else if (s1 == NULL || *s1 == '\0') {
         return copy(s2);
     }
-    size_t lges = strlen(s1) + strlen(s2) + 2;
-    char *nextstr;
-    char *strsum = TMALLOC(char, lges);
+    size_t l1 = strlen(s1);
+    size_t l2 = strlen(s2);
+    char *strsum = TMALLOC(char, l1 + l2 + 2);
     if (spa) {
-        nextstr = memccpy(strsum, s1, '\0', lges);
-        *(nextstr - 1) = ' ';
-        nextstr = memccpy(nextstr, s2, '\0', lges);
+        memcpy(strsum, s1, l1);
+        memcpy(strsum + l1 + 1, s2, l2);
+        strsum[l1] = ' ';
+        strsum[l1 + l2 + 1] = '\0';
     }
     else {
-        nextstr = (char*)memccpy(strsum, s1, '\0', lges) - 1;
-        nextstr = (char*)memccpy(nextstr, s2, '\0', lges) - 1;
-        *nextstr = '\0';
+        memcpy(strsum, s1, l1);
+        memcpy(strsum + l1, s2, l2);
+        strsum[l1 + l2] = '\0';
     }
     return strsum;
 }
