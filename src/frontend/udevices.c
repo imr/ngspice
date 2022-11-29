@@ -2412,7 +2412,7 @@ static struct timing_data *create_min_typ_max(char *prefix, char *rem)
     tdp->estimate = EST_UNK;
 
     strcpy(mntymxstr, prefix);
-    strcat(mntymxstr, "mn=");
+    strcat(mntymxstr, "mn");
     extract_model_param(rem, mntymxstr, buf);
     tdp->min = NULL;
     if (bufsave[0]) {
@@ -2422,7 +2422,7 @@ static struct timing_data *create_min_typ_max(char *prefix, char *rem)
 
     buf = bufsave;
     strcpy(mntymxstr, prefix);
-    strcat(mntymxstr, "ty=");
+    strcat(mntymxstr, "ty");
     extract_model_param(rem, mntymxstr, buf);
     tdp->typ = NULL;
     if (bufsave[0]) {
@@ -2432,7 +2432,7 @@ static struct timing_data *create_min_typ_max(char *prefix, char *rem)
 
     buf = bufsave;
     strcpy(mntymxstr, prefix);
-    strcat(mntymxstr, "mx=");
+    strcat(mntymxstr, "mx");
     extract_model_param(rem, mntymxstr, buf);
     tdp->max = NULL;
     if (bufsave[0]) {
