@@ -78,5 +78,6 @@ double PTle0(double arg);
 double PTceil(double arg);
 double PTfloor(double arg);
 double PTnint(double arg);
+double PTddt(double arg, void* data);
 
 #endif

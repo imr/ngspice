@@ -171,6 +171,7 @@ static struct func {
     { "pwr",    PTF_PWR,    (void(*)(void)) PTpwr},
     { "min",    PTF_MIN,    (void(*)(void)) PTmin},
     { "max",    PTF_MAX,    (void(*)(void)) PTmax},
+    { "ddt",    PTF_DDT,    (void(*)(void)) PTddt},
 } ;
 
 #define NUM_FUNCS (int)NUMELEMS(funcs)
@@ -564,6 +565,11 @@ static INPparseNode *PTdifferentiate(INPparseNode * p, int varnum)
 
         case PTF_PWL_DERIVATIVE: /* d/dvar PWL(var, ...) */
             arg1 = mkcon(0.0);
+            break;
+
+        case PTF_DDT:
+            arg1 = mkcon(0.0);
+            arg1->data = p->data;
             break;
 
         case PTF_MIN:
@@ -1080,6 +1086,20 @@ static INPparseNode *prepare_PTF_PWL(INPparseNode *p)
     return (p);
 }
 
+static INPparseNode* prepare_PTF_DDT(INPparseNode* p)
+{
+    struct ddtdata { int n; double* vals; } *data;
+    int i, ii;
+    /* store 3 recent times and 3 recent values in pairs t0, v0, t1, v1, t2, v2  */
+    i = 0;
+    data = TMALLOC(struct ddtdata, 1);
+    data->vals = TMALLOC(double, 7);
+    for (ii = 0; ii < 7; ii++) {
+        data->vals[ii] = 0;
+    }
+    p->data = (void*)data;
+    return (p);
+}
 
 INPparseNode *PT_mkfnode(const char *fname, INPparseNode * arg)
 {
@@ -1139,6 +1159,9 @@ INPparseNode *PT_mkfnode(const char *fname, INPparseNode * arg)
 
     if(p->funcnum == PTF_PWL)
         p = prepare_PTF_PWL(p);
+
+    if (p->funcnum == PTF_DDT)
+        p = prepare_PTF_DDT(p);
 
     return (p);
 }
@@ -1568,6 +1591,14 @@ void free_tree(INPparseNode *pt)
     if(pt->type == PT_FUNCTION && pt->funcnum == PTF_PWL) {
         struct pwldata { int n; double *vals; } *data = (struct pwldata*)(pt->data);
         if(data) {
+            txfree(data->vals);
+            txfree(data);
+        }
+    }
+
+    if (pt->type == PT_FUNCTION && (pt->funcnum == PTF_DDT)) {
+        struct ddtdata { int n; double* vals; } *data = (struct ddtdata*)(pt->data);
+        if (data) {
             txfree(data->vals);
             txfree(data);
         }
