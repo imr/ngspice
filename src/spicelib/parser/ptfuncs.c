@@ -413,14 +413,17 @@ PTnint(double arg1)
     return nearbyint(arg1);
 }
 
+
+/* Calculate the derivative during a transient simulation.
+   If time == 0, return 0.
+   If not transient sim, return 0.
+   The derivative is then (y2-y1)/(t2-t1).
+   */
 double
 PTddt(double arg, void* data)
 {
     struct ddtdata { int n; double* vals; } *thing = (struct ddtdata*)data;
     double y, time;
-
-    double debarr[7];
-    int i;
 
     CKTcircuit* ckt = ft_curckt->ci_ckt;
 
@@ -431,9 +434,8 @@ PTddt(double arg, void* data)
         return 0;
     }
 
-    if (!(ckt->CKTmode & MODETRAN) /*&& !(ckt->CKTmode & MODEINITTRAN)*/)
+    if (!(ckt->CKTmode & MODETRAN))
         return 0;
-
 
     if (time > thing->vals[0]) {
         thing->vals[4] = thing->vals[2];
@@ -443,23 +445,20 @@ PTddt(double arg, void* data)
         thing->vals[0] = time;
         thing->vals[1] = arg;
 
-        for (i = 0; i < 7; i++)
-            debarr[i] = thing->vals[i];
-
+/*      // Some less effective smoothing option
+        if (thing->vals[2] > 0) {
+            thing->vals[6] = 0.5 * ((arg - thing->vals[3]) / (time - thing->vals[2]) + thing->vals[6]);
+        }
+*/
         if (thing->n > 1) {
-            //       if (thing->vals[2] > 0) {
-           //            debarr[6] = thing->vals[6] = 0.5 * ((arg - thing->vals[3]) / (time - thing->vals[2]) + thing->vals[6]);
-            debarr[6] = thing->vals[6] = (thing->vals[1] - thing->vals[3]) / (thing->vals[2] - thing->vals[4]);
+            thing->vals[6] = (thing->vals[1] - thing->vals[3]) / (thing->vals[2] - thing->vals[4]);
         }
         else {
-            debarr[6] = thing->vals[6] = 0;
-            debarr[3] = thing->vals[3] = arg;
+            thing->vals[6] = 0;
+            thing->vals[3] = arg;
         }
         thing->n += 1;
     }
-
-    for (i = 0; i < 7; i++)
-        debarr[i] = thing->vals[i];
 
     y = thing->vals[6];
 
