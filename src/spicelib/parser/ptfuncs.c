@@ -13,11 +13,9 @@ Author: 1987 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ngspice/fteext.h"
 #include "ngspice/ifsim.h"
 #include "ngspice/inpptree.h"
+#include "ngspice/cktdefs.h"
 #include "inpxx.h"
 #include "ngspice/compatmode.h"
-
-/* XXX These should be in math.h */
-
 
 double PTfudge_factor;
 
@@ -413,4 +411,57 @@ PTnint(double arg1)
      *   rely on default rounding mode of IEEE 754 to do so
      */
     return nearbyint(arg1);
+}
+
+double
+PTddt(double arg, void* data)
+{
+    struct ddtdata { int n; double* vals; } *thing = (struct ddtdata*)data;
+    double y, time;
+
+    double debarr[7];
+    int i;
+
+    CKTcircuit* ckt = ft_curckt->ci_ckt;
+
+    time = ckt->CKTtime;
+
+    if (time == 0) {
+        thing->vals[3] = arg;
+        return 0;
+    }
+
+    if (!(ckt->CKTmode & MODETRAN) /*&& !(ckt->CKTmode & MODEINITTRAN)*/)
+        return 0;
+
+
+    if (time > thing->vals[0]) {
+        thing->vals[4] = thing->vals[2];
+        thing->vals[5] = thing->vals[3];
+        thing->vals[2] = thing->vals[0];
+        thing->vals[3] = thing->vals[1];
+        thing->vals[0] = time;
+        thing->vals[1] = arg;
+
+        for (i = 0; i < 7; i++)
+            debarr[i] = thing->vals[i];
+
+        if (thing->n > 1) {
+            //       if (thing->vals[2] > 0) {
+           //            debarr[6] = thing->vals[6] = 0.5 * ((arg - thing->vals[3]) / (time - thing->vals[2]) + thing->vals[6]);
+            debarr[6] = thing->vals[6] = (thing->vals[1] - thing->vals[3]) / (thing->vals[2] - thing->vals[4]);
+        }
+        else {
+            debarr[6] = thing->vals[6] = 0;
+            debarr[3] = thing->vals[3] = arg;
+        }
+        thing->n += 1;
+    }
+
+    for (i = 0; i < 7; i++)
+        debarr[i] = thing->vals[i];
+
+    y = thing->vals[6];
+
+    return y;
 }
