@@ -2362,22 +2362,28 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
     }
 }
 
-static void extract_model_param(char *rem, char *pname, char *buf)
+static void extract_model_param(char *rem, char *param_name, char *buf)
 {
-    char *p1, *p2, *p3;
+    /* Find the value of timing model parameter 'param_name'
+       in the remainder of the .model line.
+       Expect: param_name zero_or_more_ws '=' zero_or_more_ws value
+    */
+    char *p1 = NULL;
 
-    p1 = strstr(rem, pname);
+    p1 = strstr(rem, param_name);
     if (p1) {
-        p2 = strchr(p1, '=');
-        if (isspace(p2[1])) {
-            p3 = skip_ws(&p2[1]);
-        } else {
-            p3 = &p2[1];
+        p1 += strlen(param_name);
+        p1 = skip_ws(p1);
+        if (p1[0] != '=') {
+            buf[0] = '\0';
+            return;
         }
-        while (!isspace(p3[0]) && p3[0] != ')') {
-            *buf = p3[0];
+        p1++;
+        p1 = skip_ws(p1);
+        while (!isspace(p1[0]) && p1[0] != ')') {
+            *buf = p1[0];
             buf++;
-            p3++;
+            p1++;
         }
         *buf = '\0';
     } else {
