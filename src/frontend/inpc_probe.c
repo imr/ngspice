@@ -1215,23 +1215,25 @@ static char* get_terminal_number(char* element, char* namestr)
    Called from inp.c*/
 void modprobenames(INPtables* tab) {
     GENinstance* GENinst;
-    for (GENinst = tab->defVmod->GENinstances; GENinst; GENinst = GENinst->GENnextInstance) {
-        char* name = GENinst->GENname;
-        if (prefix("vcurr_", name)) {
-            /* copy from char no. 6 to (and excluding) second colon */
-            char* endname = strchr(name, ':');
-            char* endname2 = strchr(endname + 1, ':');
-            /* two-terminal device, one colon, copy all from char no. 6 to (and excluding) colon */
-            if (!endname2) {
-                char* newname = copy_substring(name + 6, endname);
-                memcpy(name, newname, strlen(newname) + 1);
-                tfree(newname);
-            }
-            /* copy from char no. 6 to (and excluding) second colon */
-            else {
-                char* newname = copy_substring(name + 6, endname2);
-                memcpy(name, newname, strlen(newname) + 1);
-                tfree(newname);
+    if (tab->defVmod) {
+        for (GENinst = tab->defVmod->GENinstances; GENinst; GENinst = GENinst->GENnextInstance) {
+            char* name = GENinst->GENname;
+            if (prefix("vcurr_", name)) {
+                /* copy from char no. 6 to (and excluding) second colon */
+                char* endname = strchr(name, ':');
+                char* endname2 = strchr(endname + 1, ':');
+                /* two-terminal device, one colon, copy all from char no. 6 to (and excluding) colon */
+                if (!endname2) {
+                    char* newname = copy_substring(name + 6, endname);
+                    memcpy(name, newname, strlen(newname) + 1);
+                    tfree(newname);
+                }
+                /* copy from char no. 6 to (and excluding) second colon */
+                else {
+                    char* newname = copy_substring(name + 6, endname2);
+                    memcpy(name, newname, strlen(newname) + 1);
+                    tfree(newname);
+                }
             }
         }
     }
