@@ -9,6 +9,7 @@ r2 c vp 1k
 .control
 op
 tran 50p 100n
+set xbrushwidth=2
 plot v(in) v(b) v(c) v(vp)
 settype temperature v(t) 
 plot v(t)
