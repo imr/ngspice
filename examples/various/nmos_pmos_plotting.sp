@@ -1,14 +1,16 @@
-*****Single NMOS and PMOS Transistor For BSIM3 threshold voltage check (Id-Vgs) (Id-Vds) ***
+** Single NMOS and PMOS, BSIM3, (Id-Vgs) (Id-Vds) **
 
 M1 2 1 3 4 n1 W=1u L=0.35u Pd=1.5u Ps=1.5u ad=1.5p as=1.5p
-vgs 1 0 3.5 
-vds 2 0 0.1 
-vss 3 0 0
-vbs 4 0 0
+vgsn 1 0 3.5
+vdsn 102 0 0.1
+Rdn 102 2 1k
+vssn 3 0 0
+vbsn 4 0 0
 
 M2 22 11 33 44 p1 W=2.5u L=0.35u Pd=3u Ps=3u ad=2.5p as=2.5p
-vgsp 11 0 -3.5 
-vdsp 22 0 -0.1 
+vgsp 11 0 -3.5
+vdsp 222 0 -0.1
+Rdp 222 22 1k
 vssp 33 0 0
 vbsp 44 0 0
 
@@ -27,18 +29,18 @@ vbsp 44 0 0
 
 .control
 * various plot font sizes
-dc vgs 0 1.5 0.05 vbs 0 -2.5 -0.5
-plot vss#branch ylabel 'output current'
-set wfont_size=18
-dc vds 0 2 0.05 vgs 0 2 0.4
-plot vss#branch ylabel 'output current'
-set wfont_size=20
-dc vgsp 0 -1.5 -0.05 vbsp 0 2.5 0.5
+dc vgsn 0 1.5 0.02 vbsn 0 -2.5 -0.5
+plot vssn#branch ylabel 'output current'
+set wfont_size=16
+dc vdsn 0 2 0.05 vgsn 0 2 0.4
+plot vssn#branch vs v(2) ylabel 'output current'
+set wfont_size=24
+dc vgsp 0 -1.5 -0.02 vbsp 0 2.5 0.5
 plot vssp#branch ylabel 'output current'
 set wfont=Times
-set wfont_size=18
+set wfont_size=22
 dc vdsp 0 -2 -0.05 vgsp 0 -2 -0.4
-plot vssp#branch ylabel 'output current'
+plot vssp#branch vs v(22) ylabel 'output current'
 .endc
 
 .end
