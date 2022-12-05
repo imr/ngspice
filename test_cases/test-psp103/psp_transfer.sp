@@ -20,9 +20,10 @@ nm1  d g s b nch
 .option temp=21
 .control
 pre_osdi test_osdi_win/psp103.osdi
+set xbrushwidth=2
 dc vg 0 1.5 0.02 vb -3 0 0.5
 plot abs(i(vd))
-dc vg 0 1.5 0.01 vb -3 0 0.5
+dc vg -0.3 1.5 0.01 vb -3 0 0.5
 plot abs(i(vd)) ylog ylimit 1e-12 1e-03
 .endc
 *
