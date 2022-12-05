@@ -5,7 +5,7 @@
 .csparam vcc='Vcc'
 
 * Path to the models
-.include Modelcards/psp103_nmos.mod
+.include Modelcards/psp103_nmos-2.mod
 .include Modelcards/psp103_pmos-2.mod
 
 * the voltage sources: 
@@ -56,6 +56,7 @@ c2  z     vss   0.576f
 pre_osdi test_osdi_win/psp103.osdi
 run
 *set nolegend
+set xbrushwidth=2
 plot in out
 plot dc1.out
 plot dc1.i(Vmeas)
