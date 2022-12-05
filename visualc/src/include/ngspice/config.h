@@ -33,6 +33,9 @@
 #define XSPICE 1
 /* don't undef XSPICE, otherwise compilation will fail */
 
+/* The OSDI enhancements */
+#define OSDI 1
+
 /* The CIDER enhancements */
 #define CIDER 1
 /* don't undef CIDER, otherwise compilation will fail */
