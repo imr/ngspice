@@ -10,6 +10,7 @@ Rdt dt 0 1G
 .control
 pre_osdi test_osdi_win/HICUML0-2.osdi
 dc vb 0.2 1.4 0.01
+set xbrushwidth=2
 plot abs(i(vc)) abs(i(vb)) abs(i(vs)) ylimit 0.1p 100m ylog
 plot abs(i(vc))/abs(i(vb)) vs abs(i(vc)) xlog xlimit 100p 100m  ylimit 0 200 retraceplot
 .endc

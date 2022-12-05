@@ -11,7 +11,7 @@
 ********************************************************************************
 .subckt hicumL0V1p1_c_sbt c b e s dt
 *qhcm0 c b e s dt hic0_full 
-aqhcm0 c b e s dt hic0_full 
+nqhcm0 c b e s dt hic0_full
 *.model hic0_full npn 
 .ends
 .model hic0_full hicumL0va
