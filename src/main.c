@@ -366,6 +366,12 @@ com_snsave(wordlist *wl)
 }
 
 void
+com_optran(wordlist *wl)
+{
+    NG_IGNORE(wl);
+}
+
+void
 SMPprint(SMPmatrix *n1, char *n2)
 {
     NG_IGNORE(n1);
@@ -427,6 +433,12 @@ EVTswitch_plot(CKTcircuit* ckt, const char* plottypename)
     NG_IGNORE(plottypename);
     return 1;
 };
+
+void
+EVTsave(wordlist* wl)
+{
+    NG_IGNORE(wl);
+}
 
 int
 load_opus(const char *name)

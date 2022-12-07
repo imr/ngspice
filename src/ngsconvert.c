@@ -38,6 +38,7 @@ struct plot *plot_cur = NULL;
 int  cp_maxhistlength = 0;
 bool cp_no_histsubst = FALSE;
 struct compat newcompat;
+bool cx_degrees = FALSE;
 
 char *cp_program = "sconvert";
 
