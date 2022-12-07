@@ -2517,6 +2517,23 @@ static char *get_estimate(struct timing_data *tdp)
     return NULL;
 }
 
+static char *larger_delay(char *delay1, char *delay2)
+{
+    float val1, val2;
+    char *units1, *units2;
+
+    val1 = strtof(delay1, &units1);
+    val2 = strtof(delay2, &units2);
+    if (!eq(units1, units2)) {
+        printf("WARNING units do not match\n");
+    }
+    if (val1 >= val2) {
+        return delay1;
+    } else {
+        return delay2;
+    }
+}
+
 /* NOTE
   The get_delays_...() functions calculate estimates of typical delays
   from the Pspice ugate, utgate, ueff, and ugff timing models.
@@ -2584,7 +2601,7 @@ static char *get_delays_ueff(char *rem)
 {
     char *delays = NULL;
     char *clkqrise, *clkqfall, *pcqrise, *pcqfall;
-    char *clkd, *setd, *resetd;
+    char *clkd, *setd, *resetd, *larger;
     struct timing_data *tdp1, *tdp2, *tdp3, *tdp4;
 
     tdp1 = create_min_typ_max("tpclkqlh", rem);
@@ -2601,14 +2618,24 @@ static char *get_delays_ueff(char *rem)
     pcqfall = get_estimate(tdp4);
     clkd = NULL;
     if (clkqrise && strlen(clkqrise) > 0) {
-        clkd = clkqrise;
+        if (clkqfall && strlen(clkqfall) > 0) {
+            larger = larger_delay(clkqrise, clkqfall);
+            clkd = larger;
+        } else {
+            clkd = clkqrise;
+        }
     } else if (clkqfall && strlen(clkqfall) > 0) {
         clkd = clkqfall;
     }
     setd = NULL;
     resetd = NULL;
     if (pcqrise && strlen(pcqrise) > 0) {
-        setd = resetd = pcqrise;
+        if (pcqfall && strlen(pcqfall) > 0) {
+            larger = larger_delay(pcqrise, pcqfall);
+            setd = resetd = larger;
+        } else {
+            setd = resetd = pcqrise;
+        }
     } else if (pcqfall && strlen(pcqfall) > 0) {
         setd = resetd = pcqfall;
     }
