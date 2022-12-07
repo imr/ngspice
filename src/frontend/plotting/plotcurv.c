@@ -20,7 +20,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 static void plotinterval(struct dvec *v, double lo, double hi, register double *coeffs,
                          int degree, bool rotated);
-
+static int get_xdirection(struct dvec *xs, int len, bool mn);
 
 /* Plot the vector v, with scale xs.  If we are doing curve-fitting, then
  * do some tricky stuff.
@@ -146,7 +146,7 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
         Then everything is plotted. */
 
         bool mono = (currentgraph->plottype != PLOT_RETLIN);
-        int dir = 0;
+        int dir = get_xdirection(xs, length, mono);
         for (i = 0; i < length; i++) {
             dx = isreal(xs) ? xs->v_realdata[i] :
                 realpart(xs->v_compdata[i]);
@@ -158,8 +158,6 @@ ft_graf(struct dvec *v, struct dvec *xs, bool nostart)
                 gr_point(v, dx, dy, lx, ly, 0);
             } else {
                 gr_point(v, dx, dy, lx, ly, i);
-                if (!dir)
-                    dir = lx > dx ? -1 : lx < dx ? 1 : 0;
             }
             lx = dx;
             ly = dy;
@@ -357,4 +355,41 @@ plotinterval(struct dvec *v, double lo, double hi, register double *coeffs, int 
         ly = dy;
         /* fprintf(cp_err, "plot (%G, %G)\n\r", dx, dy); */
     }
+}
+
+/* Check if the majority of the x-axis data points are increasing or decreasing.
+   If more than 10% of the data points deviate from the majority direction, issue a warning,
+   if 'retraceplot' is not set.
+*/
+static int get_xdirection(struct dvec* xs, int len, bool mn) {
+    int i, dir = 1, inc = 0, dec = 0;
+    double dx, lx;
+    static bool msgsent = FALSE;
+
+    lx = isreal(xs) ? xs->v_realdata[0] :
+            realpart(xs->v_compdata[0]);
+
+    for (i = 1; i < len; i++) {
+        dx = isreal(xs) ? xs->v_realdata[i] :
+            realpart(xs->v_compdata[i]);
+        if (dx > lx)
+            inc++;
+        else if (dx < lx)
+            dec++;
+        lx = dx;
+    }
+
+    if (inc < 2 && dec < 2)
+        fprintf(stderr, "Warning, (new) x axis seems to have one data point only\n");
+
+    if (mn && !msgsent && (((double)inc / len > 0.1 && inc < dec) || ((double)dec / len > 0.1 && inc > dec))) {
+        fprintf(stderr, "Warning, more than 10%% of scale vector %s data points are not monotonic.\n", xs->v_name);
+        fprintf(stderr, "    Please consider using the 'retraceplot' flag to the plot command to plot all data.\n");
+        msgsent = TRUE;
+    }
+
+    if (inc < dec)
+        dir = -1;
+
+    return dir;
 }

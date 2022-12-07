@@ -11,7 +11,7 @@ EXTRA_DIST = FAQ autogen.sh Stuarts_Poly_Notes  \
 		examples m4 visualc \
 		cross-compile.sh cross-compile-shared.sh \
 		compile_min.sh compile_linux.sh compile_min_shared.sh \
-		compile_linux_shared.sh \
+		compile_linux_shared.sh compile_cyg_make_short_check_64.sh \
 		compile_macos_clang.sh compile_macos_gcc.sh \
 		ngspice.pc.in .gitignore
 
