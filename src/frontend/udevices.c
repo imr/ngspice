@@ -2667,7 +2667,7 @@ static char *get_delays_ugff(char *rem, char *d_name)
     char *delays = NULL, *dname;
     char *tpdqlh, *tpdqhl, *tpgqlh, *tpgqhl, *tppcqlh, *tppcqhl;
     char *d_delay, *enab, *setd, *resetd;
-    char *s1, *s2;
+    char *s1, *s2, *larger;
     struct timing_data *tdp1, *tdp2, *tdp3, *tdp4, *tdp5, *tdp6;
 
     if (eq(d_name, "d_dlatch")) {
@@ -2697,13 +2697,23 @@ static char *get_delays_ugff(char *rem, char *d_name)
     tppcqhl = get_estimate(tdp6);
     d_delay = NULL;
     if (tpdqlh && strlen(tpdqlh) > 0) {
-        d_delay = tpdqlh;
+        if (tpdqhl && strlen(tpdqhl) > 0) {
+            larger = larger_delay(tpdqlh, tpdqhl);
+            d_delay = larger;
+        } else {
+            d_delay = tpdqlh;
+        }
     } else if (tpdqhl && strlen(tpdqhl) > 0) {
         d_delay = tpdqhl;
     }
     enab = NULL;
     if (tpgqlh && strlen(tpgqlh) > 0) {
-        enab = tpgqlh;
+        if (tpgqhl && strlen(tpgqhl) > 0) {
+            larger = larger_delay(tpgqlh, tpgqhl);
+            enab = larger;
+        } else {
+            enab = tpgqlh;
+        }
     } else if (tpgqhl && strlen(tpgqhl) > 0) {
         enab = tpgqhl;
     }
@@ -2723,7 +2733,12 @@ static char *get_delays_ugff(char *rem, char *d_name)
     setd = NULL;
     resetd = NULL;
     if (tppcqlh && strlen(tppcqlh) > 0) {
-        setd = resetd = tppcqlh;
+        if (tppcqhl && strlen(tppcqhl) > 0) {
+            larger = larger_delay(tppcqlh, tppcqhl);
+            setd = resetd = larger;
+        } else {
+            setd = resetd = tppcqlh;
+        }
     } else if (tppcqhl && strlen(tppcqhl) > 0) {
         setd = resetd = tppcqhl;
     }
