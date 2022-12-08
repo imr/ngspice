@@ -2579,51 +2579,6 @@ static char *get_delays_utgate(char *rem)
     struct timing_data *tdp3, *tdp4, *tdp5, *tdp6;
     char *tplz, *tphz, *tpzl, *tpzh, *larger, *larger1, *larger2, *larger3;
 
-    tdp3 = create_min_typ_max("tplz", rem);
-    estimate_typ(tdp3);
-    tplz = get_estimate(tdp3);
-    tdp4 = create_min_typ_max("tphz", rem);
-    estimate_typ(tdp4);
-    tphz = get_estimate(tdp4);
-    larger1 = NULL;
-    if (tplz && strlen(tplz) > 0) {
-        if (tphz && strlen(tphz) > 0) {
-            larger1 = larger_delay(tplz, tphz);
-        } else {
-            larger1 = tplz;
-        }
-    } else if (tphz && strlen(tphz) > 0) {
-        larger1 = tphz;
-    }
-
-    tdp5 = create_min_typ_max("tpzl", rem);
-    estimate_typ(tdp5);
-    tpzl = get_estimate(tdp5);
-    tdp6 = create_min_typ_max("tpzh", rem);
-    estimate_typ(tdp6);
-    tpzh = get_estimate(tdp6);
-    larger2 = NULL;
-    if (tpzl && strlen(tpzl) > 0) {
-        if (tpzh && strlen(tpzh) > 0) {
-            larger2 = larger_delay(tpzl, tpzh);
-        } else {
-            larger2 = tpzl;
-        }
-    } else if (tpzh && strlen(tpzh) > 0) {
-        larger2 = tpzh;
-    }
-
-    larger3 = NULL;
-    if (larger1) {
-        if (larger2) {
-            larger3 = larger_delay(larger1, larger2);
-        } else {
-            larger3 = larger1;
-        }
-    } else if (larger2) {
-        larger3 = larger2;
-    }
-
     tdp1 = create_min_typ_max("tplh", rem);
     estimate_typ(tdp1);
     rising = get_estimate(tdp1);
@@ -2640,18 +2595,64 @@ static char *get_delays_utgate(char *rem)
     } else if (falling && strlen(falling) > 0) {
         delays = tprintf("(delay = %s)", falling);
     } else {
+        /* No lh/hl delays, so try the largest lz/hz/zl/zh delay */
+        tdp3 = create_min_typ_max("tplz", rem);
+        estimate_typ(tdp3);
+        tplz = get_estimate(tdp3);
+        tdp4 = create_min_typ_max("tphz", rem);
+        estimate_typ(tdp4);
+        tphz = get_estimate(tdp4);
+        larger1 = NULL;
+        if (tplz && strlen(tplz) > 0) {
+            if (tphz && strlen(tphz) > 0) {
+                larger1 = larger_delay(tplz, tphz);
+            } else {
+                larger1 = tplz;
+            }
+        } else if (tphz && strlen(tphz) > 0) {
+            larger1 = tphz;
+        }
+
+        tdp5 = create_min_typ_max("tpzl", rem);
+        estimate_typ(tdp5);
+        tpzl = get_estimate(tdp5);
+        tdp6 = create_min_typ_max("tpzh", rem);
+        estimate_typ(tdp6);
+        tpzh = get_estimate(tdp6);
+        larger2 = NULL;
+        if (tpzl && strlen(tpzl) > 0) {
+            if (tpzh && strlen(tpzh) > 0) {
+                larger2 = larger_delay(tpzl, tpzh);
+            } else {
+                larger2 = tpzl;
+            }
+        } else if (tpzh && strlen(tpzh) > 0) {
+            larger2 = tpzh;
+        }
+
+        larger3 = NULL;
+        if (larger1) {
+            if (larger2) {
+                larger3 = larger_delay(larger1, larger2);
+            } else {
+                larger3 = larger1;
+            }
+        } else if (larger2) {
+            larger3 = larger2;
+        }
+
         if (larger3) {
             delays = tprintf("(delay = %s)", larger3);
         } else {
             delays = tprintf("(delay=1.0e-12)");
         }
+        delete_timing_data(tdp3);
+        delete_timing_data(tdp4);
+        delete_timing_data(tdp5);
+        delete_timing_data(tdp6);
     }
     delete_timing_data(tdp1);
     delete_timing_data(tdp2);
-    delete_timing_data(tdp3);
-    delete_timing_data(tdp4);
-    delete_timing_data(tdp5);
-    delete_timing_data(tdp6);
     return delays;
 }
 
