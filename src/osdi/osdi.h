@@ -198,7 +198,7 @@ typedef struct OsdiDescriptor {
                                      double temperature, uint32_t num_terminals,
                                      OsdiSimParas *sim_params, OsdiInitInfo *res);
 
-  uint32_t (*eval)(void *handle, void *inst, void *model, OsdiSimInfo *info);
+  uint32_t (*eval)(void *handle, void *inst, void *model, const OsdiSimInfo *info);
   void (*load_noise)(void *inst, void *model, double freq, double *noise_dens,
                   double *ln_noise_dens);
   void (*load_residual_resist)(void *inst, void* model, double *dst);
