@@ -159,7 +159,7 @@ extern int OSDIask(CKTcircuit *ckt, GENinstance *instPtr, int id,
 
   const OsdiDescriptor *descr = entry->descriptor;
 
-  if (id > (int)(descr->num_params + descr->num_instance_params)) {
+  if (id >= (int)(descr->num_params + descr->num_opvars)) {
     return (E_BADPARM);
   }
   uint32_t flags = ACCESS_FLAG_READ;
