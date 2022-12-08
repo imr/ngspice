@@ -59,7 +59,7 @@ typedef struct OsdiExtraInstData {
   double temp;
   bool temp_given;
   bool dt_given;
-  bool finish;
+  uint32_t eval_flags;
 
 } ALIGN(MAX_ALIGN) OsdiExtraInstData;
 
