@@ -478,6 +478,9 @@ EVTfindvec(char *node) {
     return NULL;
 }
 
+void NIresetwarnmsg(void)
+{}
+
 #endif /* XSPICE */
 
 #endif /* SIMULATOR */
