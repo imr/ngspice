@@ -94,9 +94,8 @@ extern int OSDIparam(int param, IFvalue *value, GENinstance *instPtr,
   OsdiRegistryEntry *entry = osdi_reg_entry_inst(instPtr);
   const OsdiDescriptor *descr = entry->descriptor;
 
-  if (param > (int)descr->num_instance_params) {
-
-    // special handleing for temperature parameters
+  if (param >= (int)descr->num_instance_params) {
+    // special handling for temperature parameters
     OsdiExtraInstData *inst = osdi_extra_instance_data(entry, instPtr);
     if (param == (int)entry->dt) {
       inst->dt = value->rValue;
