@@ -2688,10 +2688,11 @@ static char *get_delays_ueff(char *rem)
     }
     setd = NULL;
     resetd = NULL;
+    /* pcqrise is set_delay, pcqfall is reset_delay */
     if (pcqrise && strlen(pcqrise) > 0) {
         if (pcqfall && strlen(pcqfall) > 0) {
-            larger = larger_delay(pcqrise, pcqfall);
-            setd = resetd = larger;
+            setd = pcqrise;
+            resetd = pcqfall;
         } else {
             setd = resetd = pcqrise;
         }
@@ -2791,10 +2792,11 @@ static char *get_delays_ugff(char *rem, char *d_name)
     }
     setd = NULL;
     resetd = NULL;
+    /* tppcqlh is set_delay, tppcqhl is reset_delay */
     if (tppcqlh && strlen(tppcqlh) > 0) {
         if (tppcqhl && strlen(tppcqhl) > 0) {
-            larger = larger_delay(tppcqlh, tppcqhl);
-            setd = resetd = larger;
+            setd = tppcqlh;
+            resetd = tppcqhl;
         } else {
             setd = resetd = tppcqlh;
         }
