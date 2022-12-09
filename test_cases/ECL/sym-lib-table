@@ -1,3 +1,0 @@
-(sym_lib_table
-  (lib (name "ECL_Bip")(type "KiCad")(uri "${KIPRJMOD}/ECL_Bip.kicad_sym")(options "")(descr ""))
-)
