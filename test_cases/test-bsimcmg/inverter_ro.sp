@@ -11,8 +11,8 @@ Vss   ss      0 0
 
 * --- Inverter Subcircuit ---
 .subckt mg_inv vin vout vdd gnd
-NP1 vout vin vdd vdd BSIMCMG_osdi_P
-NN1 vout vin gnd gnd BSIMCMG_osdi_N
+NP1 vout vin vdd vdd BSIMCMG_osdi_P  TFIN=15n L=40n NFIN=10 NRS=1 NRD=1
+NN1 vout vin gnd gnd BSIMCMG_osdi_N  TFIN=15n L=40n NFIN=10 NRS=1 NRD=1 D=40n
 .ends
 
 * --- Inverter ---
@@ -25,7 +25,7 @@ Xinv5  4 vi supply ss mg_inv
 Xinv6  vi vo supply 0 mg_inv
 
 * --- Transient Analysis ---
-.tran 0.5p 5n
+.tran 0.1p 1n
 
 .control
 pre_osdi test_osdi_win/bsimcmg.osdi
