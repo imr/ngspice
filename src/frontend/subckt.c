@@ -1690,11 +1690,7 @@ numnodes(const char *line, struct subs *subs, wordlist const *modnames)
     /* Paolo Nenzi Jan-2001                                              */
 
     /* If model names equal node names, this code will fail! */
-#ifdef OSDI
-    if ((c == 'n') ||(c == 'm') || (c == 'p') || (c == 'q') || (c == 'd')) { /* IF this is a mos, cpl, bjt or diode */
-#else
     if ((c == 'm') || (c == 'p') || (c == 'q') || (c == 'd')) { /* IF this is a mos, cpl, bjt or diode */
-#endif
         char *s = nexttok(line);       /* Skip the instance name */
         int gotit = 0;
         int i = 0;
@@ -2265,10 +2261,6 @@ inp_numnodes(char c)
         return (4);
     case 'z':
         return (3);
-#ifdef OSDI
-    case 'n':
-        return (7);
-#endif
 
     default:
         fprintf(cp_err, "Warning: unknown device type: %c\n", c);
