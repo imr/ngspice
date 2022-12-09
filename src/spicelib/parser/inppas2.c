@@ -245,6 +245,7 @@ void INPpas2(CKTcircuit *ckt, struct card *data, INPtables * tab, TSKtask *task)
 	case 'B':
 	    /* Bname <node> <node> [V=expr] [I=expr] */
 	    /* Arbitrary source. */
+	    INP2B(ckt, tab, current);
 	    break;
 
 	case '.':   /* .<something> Many possibilities */

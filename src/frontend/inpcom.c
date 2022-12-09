@@ -2406,29 +2406,14 @@ static char *get_model_type(char *line)
 }
 
 
-static char *get_adevice_model_name(char *line, struct nscope *scope)
+static char *get_adevice_model_name(char *line)
 {
-    char *beg_ptr, *end_ptr, *name;
-    int i = 0;
+    char *ptr_end, *ptr_beg;
 
-    beg_ptr = skip_non_ws(line); /* eat device name */
-    beg_ptr = skip_ws(beg_ptr);
+    ptr_end = skip_back_ws(strchr(line, '\0'), line);
+    ptr_beg = skip_back_non_ws(ptr_end, line);
 
-    for (i = 0; i < 30; i++) { /* skip the terminals */
-        end_ptr = skip_non_ws(beg_ptr);
-        name = copy_substring(beg_ptr, end_ptr);
-        if (inp_find_model(scope, name)){
-            return name;
-        }else if (beg_ptr == end_ptr){
-            break;
-        }
-        end_ptr = skip_ws(end_ptr);
-        beg_ptr = end_ptr;
-        
-    }
-
-    
-    return NULL;
+    return copy_substring(ptr_beg, ptr_end);
 }
 
 
@@ -2647,7 +2632,7 @@ static void get_subckts_for_subckt(struct card *start_card, char *subckt_name,
                 nlist_adjoin(used_subckts, inst_subckt_name);
             }
             else if (*line == 'a') {
-                char *model_name = get_adevice_model_name( line, card->level);
+                char *model_name = get_adevice_model_name(line);
                 nlist_adjoin(used_models, model_name);
             }
             else if (has_models) {
@@ -2733,7 +2718,7 @@ void comment_out_unused_subckt_models(struct card *start_card)
                 nlist_adjoin(used_subckts, subckt_name);
             }
             else if (*line == 'a') {
-                char *model_name = get_adevice_model_name(line, card->level);
+                char *model_name = get_adevice_model_name(line);
                 nlist_adjoin(used_models, model_name);
             }
             else if (has_models) {
@@ -10021,7 +10006,7 @@ static char inp_get_elem_ident(char *type)
     if (cieq(type, "res"))
         return 'r';
     /* xspice code models do not have unique type names,
-       but could also be a OpenVAF model. */
+       but could also be an OSDI/OpenVAF model. */
     else
         return 'a';
 }
@@ -10288,12 +10273,9 @@ void inp_rem_unused_models(struct nscope *root, struct card *deck)
         /* num_terminals may be 0 for a elements */
         if ((num_terminals != 0) || (*curr_line == 'a')) {
             char *elem_model_name;
-            if (*curr_line == 'a'){
-                elem_model_name = get_adevice_model_name( curr_line, card->level);
-                if (!elem_model_name){
-                    continue;
-                }
-            }else
+            if (*curr_line == 'a')
+                elem_model_name = get_adevice_model_name(curr_line);
+            else
                 elem_model_name = get_model_name(curr_line, num_terminals);
 
             /* ignore certain cases, for example
@@ -10304,7 +10286,7 @@ void inp_rem_unused_models(struct nscope *root, struct card *deck)
                 struct modellist *m =
                         inp_find_model(card->level, elem_model_name);
                 if (m) {
-                    if (*curr_line != m->elemb && *curr_line != 'n')
+                    if (*curr_line != m->elemb && !(*curr_line == 'n' && m->elemb == 'a'))
                         fprintf(stderr,
                                 "warning, model type mismatch in line\n    "
                                 "%s\n",
