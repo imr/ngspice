@@ -2578,6 +2578,7 @@ static char *get_delays_utgate(char *rem)
     struct timing_data *tdp1, *tdp2;
     struct timing_data *tdp3, *tdp4, *tdp5, *tdp6;
     char *tplz, *tphz, *tpzl, *tpzh, *larger, *larger1, *larger2, *larger3;
+    BOOL use_zdelays = FALSE;
 
     tdp1 = create_min_typ_max("tplh", rem);
     estimate_typ(tdp1);
@@ -2594,7 +2595,7 @@ static char *get_delays_utgate(char *rem)
         }
     } else if (falling && strlen(falling) > 0) {
         delays = tprintf("(delay = %s)", falling);
-    } else {
+    } else if (use_zdelays) {
         /* No lh/hl delays, so try the largest lz/hz/zl/zh delay */
         tdp3 = create_min_typ_max("tplz", rem);
         estimate_typ(tdp3);
@@ -2612,7 +2613,6 @@ static char *get_delays_utgate(char *rem)
         } else if (tphz && strlen(tphz) > 0) {
             larger1 = tphz;
         }
-
         tdp5 = create_min_typ_max("tpzl", rem);
         estimate_typ(tdp5);
         tpzl = get_estimate(tdp5);
@@ -2629,7 +2629,6 @@ static char *get_delays_utgate(char *rem)
         } else if (tpzh && strlen(tpzh) > 0) {
             larger2 = tpzh;
         }
-
         larger3 = NULL;
         if (larger1) {
             if (larger2) {
@@ -2640,7 +2639,6 @@ static char *get_delays_utgate(char *rem)
         } else if (larger2) {
             larger3 = larger2;
         }
-
         if (larger3) {
             delays = tprintf("(delay = %s)", larger3);
         } else {
@@ -2650,6 +2648,8 @@ static char *get_delays_utgate(char *rem)
         delete_timing_data(tdp4);
         delete_timing_data(tdp5);
         delete_timing_data(tdp6);
+    } else { // Not use_zdelays
+        delays = tprintf("(delay=1.0e-12)");
     }
     delete_timing_data(tdp1);
     delete_timing_data(tdp2);
