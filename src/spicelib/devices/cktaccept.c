@@ -44,9 +44,7 @@ CKTaccept(CKTcircuit *ckt)
     }
     ckt->CKTsols[0]=temp;
     size = SMPmatSize(ckt->CKTmatrix);
-    for(i=0;i<=size;i++) {
-        ckt->CKTsols[0][i]=ckt->CKTrhs[i];
-    }
+    memcpy(ckt->CKTsols[0], ckt->CKTrhs, (size + 1)*sizeof(double));
 #endif /* PREDICTOR */
     return(OK);
 }
