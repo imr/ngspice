@@ -21,7 +21,6 @@ libinp_la_SOURCES = \
 		inp2k.c		\
 		inp2l.c		\
 		inp2m.c		\
-		inp2n.c		\
 		inp2o.c		\
 		inp2p.c		\
 		inp2q.c		\
@@ -70,6 +69,11 @@ libinp_la_SOURCES = \
 		ptfuncs.c	\
 		sperror.c	\
 		inpxx.h
+
+		
+if OSDI_WANTED
+libinp_la_SOURCES += inp2n.c
+endif
 
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include -I$(top_srcdir)/src/frontend
 AM_CFLAGS = $(STATIC)
