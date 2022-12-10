@@ -1197,9 +1197,9 @@ if test "x$enable_osdi" = xyes; then
     AS_VAR_POPDEF([CACHEVAR])dnl
     ])dnl AX_CHECK_COMPILE_FLAGS
 
-    AX_CHECK_COMPILE_FLAG([-std=c11], [
-      CFLAGS="$CFLAGS -std=c11"
-      LDLAGS="$LDLAGS -std=c11"
+    AX_CHECK_COMPILE_FLAG([-std=gnu11], [
+      CFLAGS="$CFLAGS -std=gnu11"
+      LDLAGS="$LDLAGS -std=gnu11"
     ], [
       echo "C compiler cannot compile C11 code"
       exit -1
