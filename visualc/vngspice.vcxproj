@@ -2657,7 +2657,6 @@
     <ClCompile Include="..\src\spicelib\devices\vsrc\vsrctemp.c" />
     <ClCompile Include="..\src\spicelib\parser\ifeval.c" />
     <ClCompile Include="..\src\spicelib\parser\ifnewuid.c" />
-    <ClCompile Include="..\src\spicelib\parser\inp2a.c" />
     <ClCompile Include="..\src\spicelib\parser\inp2b.c" />
     <ClCompile Include="..\src\spicelib\parser\inp2c.c" />
     <ClCompile Include="..\src\spicelib\parser\inp2d.c" />
