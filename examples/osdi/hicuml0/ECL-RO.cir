@@ -1,5 +1,5 @@
 .title KiCad schematic
-.include "model-card-hicumL0V1p11_mod.lib"
+.include "Modelcards/model-card-hicumL0V1p11_mod.lib"
 V2 IN1 GND dc -1.75 pulse(-1.75 -0.9 0 1n 1n 5u 10u)
 V1 VEE GND -5.2
 Ra1 A1 VEE 510

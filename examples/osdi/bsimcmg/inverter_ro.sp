@@ -10,9 +10,9 @@ vdd   supply  0 dc=1.0
 Vss   ss      0 0
 
 * --- Inverter Subcircuit ---
-.subckt mg_inv vin vout vdd gnd
+.subckt mg_inv vin vout vdd ss
 NP1 vout vin vdd vdd BSIMCMG_osdi_P  TFIN=15n L=40n NFIN=10 NRS=1 NRD=1
-NN1 vout vin gnd gnd BSIMCMG_osdi_N  TFIN=15n L=40n NFIN=10 NRS=1 NRD=1 D=40n
+NN1 vout vin ss ss BSIMCMG_osdi_N  TFIN=15n L=40n NFIN=10 NRS=1 NRD=1 D=40n
 .ends
 
 * --- Inverter ---
@@ -31,8 +31,8 @@ Xinv6  vi vo supply 0 mg_inv
 pre_osdi test_osdi_win/bsimcmg.osdi
 set xbrushwidth=3
 run
+plot i(vss)
 plot v(vo)
-plot i(vss) i(vdd)
 .endc
 
 .end
