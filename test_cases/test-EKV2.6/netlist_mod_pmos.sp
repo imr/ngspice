@@ -8,7 +8,7 @@ VS ss 0 0
 VB bb 0 0
 
 * model definitions:
-*.model .MODEL NCH EKV_VA type=-1
+*.model .MODEL PCH EKV_VA type=-1
 .include Modelcards/ekv26_0u5.par
 
 *OSDI EKV:
