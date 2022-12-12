@@ -16,10 +16,8 @@ Xnot1 in vdd vss out not1
 *Rout out 0 1k
 
 .subckt not1 a vdd vss z
-*m01   z a     vdd     vdd pch  l=0.1u  w=1u  as=0.26235  ad=0.26235  ps=2.51   pd=2.51
-Np1 z a vdd vdd BSIMBULK_osdi_P W=5e-6 L=5e-7
-*m02   z a     vss     vss nch  l=0.1u  w=0.5u as=0.131175 ad=0.131175 ps=1.52   pd=1.52
-Nn1 z a vss vss BSIMBULK_osdi_N W=5e-6 L=0.5e-6
+Np1 z a vdd vdd BSIMBULK_osdi_P  l=0.1u  w=1u  as=0.26235p  ad=0.26235p  ps=2.51u   pd=2.51u
+Nn1 z a vss vss BSIMBULK_osdi_N l=0.1u  w=0.5u as=0.131175p ad=0.131175p ps=1.52u   pd=1.52u
 c3  a     vss   0.384f
 c2  z     vss   0.576f
 .ends

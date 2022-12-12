@@ -12,8 +12,7 @@ VB bb 0 0
 .include Modelcards/model.l
 
 *OSDI BSIMBULK:
-* Where to put instance parameters channel width and length?
-N1 dd gg ss bb BSIMBULK_osdi_N W=5e-6 L=0.5e-6
+N1 dd gg ss bb BSIMBULK_osdi_N W=500n L=90n
 
 .control
 pre_osdi test_osdi_win/bsimbulk107.osdi
