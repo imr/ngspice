@@ -16,6 +16,10 @@ vbsp 44 0 0
 .model n1 nmos level=49 version=3.3.0 tox=3.5n nch=2.4e17 nsub=5e16 vth0=0.15
 .model p1 pmos level=49 version=3.3.0 tox=3.5n nch=2.5e17 nsub=5e16 vth0=-0.15
 
+* BSIM3v3.3.0 model with parameters provided by Berkeley
+*.include modelcard.nmos
+*.include modelcard.pmos
+
 .control
 set xgridwidth=2
 set xbrushwidth=3
