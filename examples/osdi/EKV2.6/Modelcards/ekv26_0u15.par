@@ -1,0 +1,75 @@
+*** SPICE Models
+*** Models created by Daniel Foty.
+*** (c) 2001, Gilgamesh Associates and EPFL – All rights reserved.
+*** These models are provided without warranty or support.
+*** These models represent a completely fictitious 0.15um process, and do
+*** NOT correspond to any real silicon process. They are provided expressly for
+*** use in the examples provided in this text, and should not be used for any 
+*** real silicon product design.
+*** NMOS EKV MOSFET Model ***************************************************
+*** Level=44 in WinSPICE and ELDO, Level=55 in ADM/HSPICE, Level=5 in PSPICE, 
+*** Level=EKV in Spectre
+*** Lmin=0.15u Wmin=1.05u (If Scale=0.15u then Lmin=1 and Wmin=7)
+*—————
+.MODEL nmos nmos
++ LEVEL=44
+*** Setup Parameters
++ UPDATE=2.6
+*** Process Related Model Parameters
++ COX=9.083E-3 XJ=0.15E-6
+*** Intrinsic Model Parameters
++ VTO=0.4 GAMMA=0.71 PHI=0.97 KP=453E-6
++ E0=88.0E6 UCRIT=4.0E6 
++ DL=-0.05E-6 DW=-0.02E-6
++ LAMBDA = 0.30 LETA=0.28 WETA=0
++ Q0=280E-6 LK=0.5E-6
+*** Substrate Current Parameters
++ IBN=1.0 IBA=200E6 IBB=350E6
+*** Intrinsic Model Temperature Parameters
++ TNOM=27.0 TCV=1.5E-3 BEX=-1.5 UCEX=1.7 IBBT=0
+*** 1/f Noise Model Parameters
++ KF=1E-27 AF=1
+*** Series Resistance and Area Calculation Parameters
++ HDIF=0.24e-6 ACM=3 RSH=5.0 RS=1250.526
++ RD=1250.526 LDIF=0.07e-6
+*** Junction Current Parameters
++ JS=1.0E-6 JSW=5.0E-11 XTI=0 N=1.5
+*** Junction Capacitances Parameters
++ CJ=1.0E-3 CJSW=2.0E-10 CJGATE=5.0E-10
++ MJ=0.5 MJSW=0.3 PB=0.9 PBSW=0.9 FC=0.5
+*** Gate Overlap Capacitances
++ CGSO=3.0E-10 CGDO=3.0E-10 CGBO=3.0E-11
+ 
+*** PMOS EKV MOSFET Model ***************************************************
+*** Level=44 in WinSPICE and ELDO, Level=55 in ADM/HSPICE, Level=5 in PSPICE, 
+*** Level=EKV in Spectre
+*** Lmin=0.15u Wmin=1.05u (If Scale=0.15u then Lmin=1 and Wmin=7)
+*—————
+.MODEL pmos pmos
++ LEVEL = 44
+*** Setup Parameters
++ UPDATE = 2.6
+*** Process Related Model Parameters
++ COX=9.083E-3 XJ=0.15E-6
+*** Intrinsic Model Parameters
++ VTO=-0.4 GAMMA=0.69 PHI=0.87 KP=92.15E-6
++ E0=51.0E6 UCRIT=18.0E6
++ DL=-0.05E-6 DW=-0.03E-6
++ LAMBDA=1.1 LETA=0.45 WETA=0
++ Q0=200E-6 LK=0.6E-6
+*** Substrate Current Parameters 
++ IBN=1.0 IBA=0.0 IBB=300E6 
+*** Intrinsic Model Temperature Parameters 
++ TNOM=25.0 TCV=-1.4E-3 BEX=-1.4 UCEX=2.0 IBBT=0.0 
+*** 1/f Noise Model Parameters 
++ KF=1.0E-28 AF=1 
+*** Series Resistance and Area Calculation Parameters
++ HDIF=0.24E-6 ACM=3 RSH=5.0 RS=3145.263
++ RD=3145.263 LDIF=0.07e-6
+*** Junction Current Parameters
++ JS=1.0E-7 JSW=5.0E-12 XTI=0 N=1.8 
+*** Junction Capacitances Parameters 
++ CJ=1.3E-3 CJSW=2.5E-10 CJGATE=5.5E-10 
++ MJ=0.5 MJSW=0.35 PB=0.9 PBSW=0.9 FC=0.5 
+*** Gate Overlap Capacitances 
++ CGSO=3.2E-10 CGDO=3.2E-10 CGBO=3.0E-11
