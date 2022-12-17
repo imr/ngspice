@@ -1,10 +1,11 @@
 A 'quick and dirty' howto for OpenVAF and OSDI:
 
 Example BSIMBULK
-Tested under MS Windows 10
+Tested under MS Windows 10 and OpenSUSE 15.4
 
 Have OpenVAF compiler available.
-    Sources will be available soon.
+    Executables for download are available at https://openvaf.semimod.de/download/
+    for Linux and MS Windows.
 Download BSIMBULK model from http://www.bsim.berkeley.edu/models/bsimbulk/
 Open bsimbulk.va in a text editor
 Search for the module name, here: 
@@ -40,7 +41,7 @@ NMN1 dd gg ss bb  BSIMBULK_osdi_N W=500n L=90n
 * the .control section
 .control
 * load the model dynamically
-pre_osdi test_osdi_libs/bsimbulk107.osdi
+pre_osdi test_osdi_libs/bsimbulk.osdi
 * the dc simulation
 dc Vg 0 1.5 0.01 Vb 0 -1.6 -0.4
 * plotting
@@ -52,7 +53,7 @@ plot I(Vs)
 
 So we have two OSDI specific actions in the netlist:
 load the model by 
-    pre_osdi test_osdi_libs/bsimbulk107.osdi
+    pre_osdi test_osdi_libs/bsimbulk.osdi
 instantiate the transistor by
     NMN1 dd gg ss bb BSIMBULK_osdi_N W=500n L=90n
 
