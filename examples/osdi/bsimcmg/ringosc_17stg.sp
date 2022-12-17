@@ -45,7 +45,7 @@ Xinv17 17  1 supply 0 mg_inv
 .measure tran delay_per_stage param='period/34'
 
 .control
-pre_osdi test_osdi_win/bsimcmg.osdi
+pre_osdi test_osdi_libs/bsimcmg.osdi
 set xbrushwidth=3
 run
 plot v(1)

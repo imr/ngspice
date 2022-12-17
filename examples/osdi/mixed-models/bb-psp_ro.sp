@@ -67,7 +67,7 @@ c2  z     vss   0.576f
 
 .control
 * Load the models dynamically
-pre_osdi test_osdi_win/bsimbulk107.osdi  test_osdi_win/psp103.osdi
+pre_osdi test_osdi_libs/bsimbulk107.osdi  test_osdi_libs/psp103.osdi
 * Run the simulation
 run
 * Plotting

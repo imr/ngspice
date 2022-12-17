@@ -28,7 +28,7 @@ Xinv6  vi vo supply 0 mg_inv
 .tran 0.1p 1n
 
 .control
-pre_osdi test_osdi_win/bsimcmg.osdi
+pre_osdi test_osdi_libs/bsimcmg.osdi
 set xbrushwidth=3
 run
 plot i(vss)
