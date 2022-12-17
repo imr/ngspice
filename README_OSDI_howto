@@ -1,0 +1,60 @@
+A 'quick and dirty' howto for OpenVAF and OSDI:
+
+Example BSIMBULK
+Tested under MS Windows 10 and OpenSUSE 15.4
+
+Have OpenVAF compiler available.
+    Executables for download are available at https://openvaf.semimod.de/download/
+    for Linux and MS Windows.
+Download BSIMBULK model from http://www.bsim.berkeley.edu/models/bsimbulk/
+Open bsimbulk.va in a text editor
+Search for the module name, here: 
+    module bsimbulk(d, g, s, b, t);
+The module name 'bsimbulk' will become the new model type in the .model statement
+    .model mname type ( pname1 = pval1 pname2 = pval2 ... ).
+Compile  bsimbulk.va with OpenVAF to obtain bsimbulk.osdi
+Put bsimbulk.osdi into directory bsimbulk/test_osdi_libs
+Search for suitable model parameters
+    BSIMBULK107 distro does not contain any parameters
+    BSIMBULK106 does contain a model parameter file model.l among the benchmark tests
+    Put model.l into directory bsimbulk/Modelcards
+    Edit model.l:
+        Check if model type is 'bsimbulk' (it is already)
+        Choose a model name for mname (nch or pch may be o.k., or BSIMBULK_osdi_N or ...)
+        There are NMOS and PMOS parameters in the same file here.
+
+Create a ngspice netlist in directory bsimbulk, e.g. bb_IDvsVG.cir.
+
+*** BSIMBULK107 Id versus Vgs ***
+* the voltage sources
+Vd dd 0 50m
+Vg gg 0 1
+Vs ss 0 0
+Vb bb 0 0
+
+* load the model parameter sets
+.include Modelcards/model.l
+
+* the call to the transistor (OSDI devices always start with N !)
+NMN1 dd gg ss bb  BSIMBULK_osdi_N W=500n L=90n
+
+* the .control section
+.control
+* load the model dynamically
+pre_osdi test_osdi_libs/bsimbulk.osdi
+* the dc simulation
+dc Vg 0 1.5 0.01 Vb 0 -1.6 -0.4
+* plotting
+set xbrushwidth=3
+plot I(Vs)
+.endc
+.end
+*********************************
+
+So we have two OSDI specific actions in the netlist:
+load the model by 
+    pre_osdi test_osdi_libs/bsimbulk.osdi
+instantiate the transistor by
+    NMN1 dd gg ss bb BSIMBULK_osdi_N W=500n L=90n
+
+
