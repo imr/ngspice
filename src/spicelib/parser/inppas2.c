@@ -169,7 +169,7 @@ void INPpas2(CKTcircuit *ckt, struct card *data, INPtables * tab, TSKtask *task)
 	       [IC=<val>,<val>,<val>] */
 	    INP2M(ckt, tab, current);
 	    break;
-#ifdef  NDEV   
+#ifdef  OSDI
 	case 'N':
 	    /* Nname [<node>...]  [<mname>] */
 	    INP2N(ckt, tab, current);

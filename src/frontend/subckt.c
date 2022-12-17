@@ -1241,6 +1241,7 @@ translate(struct card *deck, char *formal, char *actual, char *scname, const cha
         case '$':
             continue;
 
+
 #ifdef XSPICE
             /*===================  case A  ====================*/
             /* gtri - add - wbk - 10/23/90 - process A devices specially */
@@ -1436,6 +1437,8 @@ translate(struct card *deck, char *formal, char *actual, char *scname, const cha
 
             /* FIXME anothet hack: if no models found for m devices, set number of nodes to 4 */
             if (!modnames && *(c->line) == 'm')
+                nnodes = get_number_terminals(c->line);
+            else if (*(c->line) == 'n')
                 nnodes = get_number_terminals(c->line);
             else
                 nnodes = numnodes(c->line, subs, modnames);
@@ -1687,7 +1690,6 @@ numnodes(const char *line, struct subs *subs, wordlist const *modnames)
     /* Paolo Nenzi Jan-2001                                              */
 
     /* If model names equal node names, this code will fail! */
-
     if ((c == 'm') || (c == 'p') || (c == 'q') || (c == 'd')) { /* IF this is a mos, cpl, bjt or diode */
         char *s = nexttok(line);       /* Skip the instance name */
         int gotit = 0;

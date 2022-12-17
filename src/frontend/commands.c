@@ -268,6 +268,12 @@ struct comm spcp_coms[] = {
       NULL,
       "library library ... : Loads the code model libraries." } ,
 #endif
+#ifdef OSDI
+    { "osdi", com_osdi, FALSE, TRUE,
+      { 040000, 040000, 040000, 040000 }, E_BEGINNING, 1, LOTS,
+      NULL,
+      "library library ... : Loads a osdi library." } ,
+#endif
 #ifdef DEVLIB
     { "use", com_use, FALSE, TRUE,
       { 040000, 040000, 040000, 040000 }, E_BEGINNING, 1, LOTS,

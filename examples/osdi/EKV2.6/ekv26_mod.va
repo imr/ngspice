@@ -1,0 +1,922 @@
+/*
+EKV MOS model version 2.6 rev.15 with documentation at: http://ekv.epfl.ch 
+Matthias Bucher, Christophe Lallement, Christian Enz, Fabien Theodoloz, Francois Krummenacher
+Electronics Laboratories, Swiss Federal Institute of Technology Lausanne, Switzerland
+This Verilog-A was developed by Wladek Grabinski with modifications
+by Tiburon Design Automation (www.tiburon-da.com).
+This software has been provided pursuant to a License Agreement containing restrictions on its use.
+It may not be copied or distributed in any form or medium, disclosed to third parties,
+reverse engineered or used in any manner not provided for in said License Agreement 
+except with the prior written authorization.
+Licensed under the Educational Community License, Version 2.0 (the "License"); 
+you may not use this file except in compliance with the License.
+
+You may obtain a copy of the License at http://opensource.org/licenses/ECL-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under 
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+either express or implied. See the License for the specific language governing permissions
+and limitations under the License.
+
+$RCSfile: ekv.va,v $ $Revision: 1.9 $    $Date: 2003/12/17 01:20:10 $
+$RCSfile: ekv.va,v $ $Revision: 2.6.15 $ $Date: 2020/05/29 11:50:10 $
+*/
+/*
+`include "disciplines.vams"
+`include "constants.vams"
+`include "compact.vams"
+*/
+
+//  Macros for the model/instance parameters
+//
+//  MPRxx    model    parameter real
+//  MPIxx    model    parameter integer
+//  IPRxx    instance parameter real
+//  IPIxx    instance parameter integer
+//     ||
+//     cc    closed lower bound, closed upper bound
+//     oo    open   lower bound, open   upper bound
+//     co    closed lower bound, open   upper bound
+//     oc    open   lower bound, closed upper bound
+//     cz    closed lower bound=0, open upper bound=inf
+//     oz    open   lower bound=0, open upper bound=inf
+//     nb    no bounds
+//     ex    no bounds with exclude
+//     sw    switch(integer only, values  0=false  and  1=true)
+//     ty    switch(integer only, values -1=p-type and +1=n-type)
+//
+//  IPM   instance parameter mFactor(multiplicity, implicit for LRM 2.2)
+//  OPP   operating point parameter, includes units and description for printing
+
+`define OPP(nam,uni,des)               (* units=uni, desc=des *)           real    nam;
+`define OPM(nam,uni,des)               (* units=uni, desc=des, multiplicity="multiply" *)  real    nam;
+`define OPD(nam,uni,des)               (* units=uni, desc=des, multiplicity="divide"   *)  real    nam;
+
+`define MPRnb(nam,def,uni,        des) (* units=uni, desc=des *) parameter real    nam=def;
+`define MPRex(nam,def,uni,exc,    des) (* units=uni, desc=des *) parameter real    nam=def exclude exc;
+`define MPRcc(nam,def,uni,lwr,upr,des) (* units=uni, desc=des *) parameter real    nam=def from[lwr:upr];
+`define MPRoo(nam,def,uni,lwr,upr,des) (* units=uni, desc=des *) parameter real    nam=def from(lwr:upr);
+`define MPRco(nam,def,uni,lwr,upr,des) (* units=uni, desc=des *) parameter real    nam=def from[lwr:upr);
+`define MPRoc(nam,def,uni,lwr,upr,des) (* units=uni, desc=des *) parameter real    nam=def from(lwr:upr];
+`define MPRcz(nam,def,uni,        des) (* units=uni, desc=des *) parameter real    nam=def from[  0:inf);
+`define MPRoz(nam,def,uni,        des) (* units=uni, desc=des *) parameter real    nam=def from(  0:inf);
+
+`define MPInb(nam,def,uni,        des) (* units=uni, desc=des *) parameter integer nam=def;
+`define MPIex(nam,def,uni,exc,    des) (* units=uni, desc=des *) parameter integer nam=def exclude exc;
+`define MPIcc(nam,def,uni,lwr,upr,des) (* units=uni, desc=des *) parameter integer nam=def from[lwr:upr];
+`define MPIoo(nam,def,uni,lwr,upr,des) (* units=uni, desc=des *) parameter integer nam=def from(lwr:upr);
+`define MPIco(nam,def,uni,lwr,upr,des) (* units=uni, desc=des *) parameter integer nam=def from[lwr:upr);
+`define MPIoc(nam,def,uni,lwr,upr,des) (* units=uni, desc=des *) parameter integer nam=def from(lwr:upr];
+`define MPIcz(nam,def,uni,        des) (* units=uni, desc=des *) parameter integer nam=def from[  0:inf);
+`define MPIoz(nam,def,uni,        des) (* units=uni, desc=des *) parameter integer nam=def from(  0:inf);
+`define MPIsw(nam,def,uni,        des) (* units=uni, desc=des *) parameter integer nam=def from[  0:  1];
+`define MPIty(nam,def,uni,        des) (* units=uni, desc=des *) parameter integer nam=def from[ -1:  1] exclude 0;
+`define IPRnb(nam,def,uni,        des) (* units=uni, type = "instance", desc=des *) parameter real    nam=def;
+`define IPRex(nam,def,uni,exc,    des) (* units=uni, type = "instance", desc=des *) parameter real    nam=def exclude exc;
+`define IPRcc(nam,def,uni,lwr,upr,des) (* units=uni, type = "instance", desc=des *) parameter real    nam=def from[lwr:upr];
+`define IPRoo(nam,def,uni,lwr,upr,des) (* units=uni, type = "instance", desc=des *) parameter real    nam=def from(lwr:upr);
+`define IPRco(nam,def,uni,lwr,upr,des) (* units=uni, type = "instance", desc=des *) parameter real    nam=def from[lwr:upr);
+`define IPRoc(nam,def,uni,lwr,upr,des) (* units=uni, type = "instance", desc=des *) parameter real    nam=def from(lwr:upr];
+`define IPRcz(nam,def,uni,        des) (* units=uni, type = "instance", desc=des *) parameter real    nam=def from[  0:inf);
+`define IPRoz(nam,def,uni,        des) (* units=uni, type = "instance", desc=des *) parameter real    nam=def from(  0:inf);
+`define IPInb(nam,def,uni,        des) (* units=uni, type = "instance", desc=des *) parameter integer nam=def;
+`define IPIex(nam,def,uni,exc,    des) (* units=uni, type = "instance", desc=des *) parameter integer nam=def exclude exc;
+`define IPIcc(nam,def,uni,lwr,upr,des) (* units=uni, type = "instance", desc=des *) parameter integer nam=def from[lwr:upr];
+`define IPIoo(nam,def,uni,lwr,upr,des) (* units=uni, type = "instance", desc=des *) parameter integer nam=def from(lwr:upr);
+`define IPIco(nam,def,uni,lwr,upr,des) (* units=uni, type = "instance", desc=des *) parameter integer nam=def from[lwr:upr);
+`define IPIoc(nam,def,uni,lwr,upr,des) (* units=uni, type = "instance", desc=des *) parameter integer nam=def from(lwr:upr];
+`define IPIcz(nam,def,uni,        des) (* units=uni, type = "instance", desc=des *) parameter integer nam=def from[  0:inf);
+`define IPIoz(nam,def,uni,        des) (* units=uni, type = "instance", desc=des *) parameter integer nam=def from(  0:inf);
+`define BPRco(nam, def, uni, lwr, upr, des) (* units = uni, type = "instance", desc = des *) parameter real    nam = def from[lwr : upr);
+`define BPRoz(nam, def, uni,           des) (* units = uni, type = "instance", desc = des *) parameter real    nam = def from(0.0 : inf);
+`define BPRcz(nam, def, uni,           des) (* units = uni, type = "instance", desc = des *) parameter real    nam = def from[0.0 : inf);
+`define BPIcc(nam, def, uni, lwr, upr, des) (* units = uni, type = "instance", desc = des *) parameter integer nam = def from[lwr : upr];
+`define BPInb(nam,def,uni,        des) (* units=uni, type = "instance", desc=des *) parameter integer nam=def;
+`define BPRnb(nam,def,uni,        des) (* units=uni, type = "instance", desc=des *) parameter real nam=def;
+
+// includes: in case we do not want to include any other file [AB:040902]
+// we can just add the following section in this file
+// AB: i hope this may help our code to be easily transported
+//----------------------------------------
+// from disciplines.h we need:
+// Electrical
+// Current in amperes
+nature Current
+	units      = "A";
+	access     = I;
+	idt_nature = Charge;
+`ifdef CURRENT_ABSTOL
+	abstol     = `CURRENT_ABSTOL;
+`else
+	abstol     = 1e-12;
+`endif
+endnature
+// Charge in coulombs
+nature Charge
+	units      = "coul";
+	access     = Q;
+	ddt_nature = Current;
+`ifdef CHARGE_ABSTOL
+	abstol     = `CHARGE_ABSTOL;
+`else
+	abstol     = 1e-14;
+`endif
+endnature
+// Potential in volts
+nature Voltage
+	units      = "V";
+	access     = V;
+	idt_nature = Flux;
+`ifdef VOLTAGE_ABSTOL
+	abstol     = `VOLTAGE_ABSTOL;
+`else
+	abstol     = 1e-6;
+`endif
+endnature
+// Flux in Webers
+nature Flux
+	units      = "Wb";
+	access     = Phi;
+	ddt_nature = Voltage;
+`ifdef FLUX_ABSTOL
+	abstol     = `FLUX_ABSTOL;
+`else
+	abstol     = 1e-9;
+`endif
+endnature
+// Conservative discipline
+discipline electrical
+	potential    Voltage;
+	flow         Current;
+enddiscipline
+// Signal flow disciplines
+discipline voltage
+	potential    Voltage;
+enddiscipline
+discipline current
+	potential    Current;
+enddiscipline
+//from constants.h we need
+`define C_EPSSIL                1.03594314e-10
+`define C_EPSOX                 34.5e-12
+`define C_QE                    1.602e-19
+`define C_K                     1.3807e-23
+`define	P_K	1.3806226e-23 
+`define	P_EPS0	8.85418792394420013968e-12 
+`define	P_CELSIUS0	273.15 
+`define POS_MIN         1.0E-6
+`define SQRT2           1.4142135623730950488016887242097
+`define ONE3RD          0.33333333333333333333333333333333
+`define ONESQRT2        0.70710678118654752440084436210485
+//if any other constant is needed it may be copied from the constants.h and be put above.
+//------------------------------------------ end of includes
+`define FWD 1
+`define REV -1
+// AB 040902
+`define NOT_GIVEN -1.0e21
+`define DEFAULT_TNOM 25
+module ekv_va(d,g,s,b);
+    // %%DEVICE_CLASS=MOS(NMOS:TYPE=1,PMOS:TYPE=-1)%%
+    //  Node definitions
+    inout           d,g,s,b;         // external nodes
+    electrical      d,g,s,b;         // external nodes
+    //      Branch definitions
+    branch (d,s)    ds;
+    branch (d,b)    db;
+    branch (s,b)    sb;
+    branch (g,b)    gb;
+    // * Local variables
+    real tmp1, tmp2, tmp3; // temporary variables
+    real VGprime, GAMMAprime;// short and narrow channel effect
+    real VP, VPprime;    // pinch-off voltage
+    real if_, ir, irprime;   // normalized currents
+    real VDSS, VDSSprime;// saturation voltage
+    real deltaL, Leq;    // channel length reduction
+    real beta;           // transconductance factor
+    real n;              // slope factor
+    real Ispec;          // specific current
+    real Vt;             // k*T/q
+    real gm, gms, gmbs, gds;
+    real isub, Isub;
+    real inv_Vt, Vt_01, Vt_2, Vt_4, Vt_Vt, Vt_Vt_2, Vt_Vt_16;
+    real eps_COX, eps_COX_W, eps_COX_L;
+    real Lc, Lc_LAMBDA, IBN_2, T0, T1, eta_qi;
+    real inv_UCRIT, Lc_UCRIT, Lc_IBB, IBA_IBB;
+    integer Mode;
+    real WETA_W, LETA_L;
+    real E0_Q_1, AWL;
+    real T, KP_Weff;
+    real Eg, refEg, deltaT, ratioT, Tnom;
+    real VTO_T, VTO_S, KP_T, UCRIT_T, IBB_T, PHI_T, GAMMA_S;
+    real sqrt_Lprime_Lmin;
+    real GAMMAstar, sqrt_GAMMAstar;
+    real big_sqrt_VP;
+    real big_sqrt_VP0, VP0;
+    real PHI_VD, PHI_VS;
+    real sqrt_PHI;
+    real sqrt_PHI_VP, sqrt_PHI_VD, sqrt_PHI_VS;
+    real sqrt_PHI_VD_Vt, sqrt_PHI_VS_Vt;
+    real Vds, deltaV_2, Vip;
+    real VDSS_sqrt, sqrt_VDSS_deltaV, sqrt_Vds_VDSS_deltaV;
+    real VDSSprime_sqrt, sqrt_VDSSprime_deltaV, sqrt_Vds_VDSSprime_deltaV;
+    real if_ir;
+    real sqrt_if, sqrt_ir, sqrt_irprime;
+    real dif_dv, dir_dv, dirprime_dv;
+    //  Charge related variables
+    real sif, sir, sif2, sir2, sif3, sir3;
+    real sif_sir_2;
+    real qi, qb;
+    real QD, QS, QI, QB, QG;
+    real VP_PHI_eps, sqrt_PHI_VP_2, WLCox;
+    real n_Vt_COX, n_1, n_1_n;
+    //  Variables used for derivatives computation
+    real dVP_dVD, dVP_dVG, dVP_dVS;
+    real dif_dVD, dif_dVS, dif_dVG;
+    real dir_dVD, dir_dVS, dir_dVG;
+    real dVDSS_dVD, dVDSS_dVG, dVDSS_dVS;
+    real ddeltaV_dVD, ddeltaV_dVG, ddeltaV_dVS;
+    real dVip_dVD, dVip_dVG, dVip_dVS;
+    real dVDSSprime_dVD, dVDSSprime_dVG, dVDSSprime_dVS;
+    real dirprime_dVD, dirprime_dVG, dirprime_dVS;
+    real dLeq_dVD, dLeq_dVG, dLeq_dVS;
+    real dbeta_dVD, dbeta_dVG, dbeta_dVS;
+    real VGstar, sqrt_VGstar;
+    real VG, VD, VS;
+    real Von, Vdsat, Id, Ibd;
+    real Gn;
+    real GAMMA_sqrt_PHI, Lmin, Lprime, T0_GAMMA_1, THETA_VP_1, Vc;
+    real Vdsprime, Vt_Vc, dGAMMAprime_dVD, dGAMMAprime_dVG, dGAMMAprime_dVS;
+    real dVPprime_dVD, dVPprime_dVG, dVPprime_dVS, ddeltaL_dVD, ddeltaL_dVG;
+    real ddeltaL_dVS, dn_dVD, dn_dVG, dn_dVS;
+    real log_Vc_Vt, sqrt_PHI_VP0, sqrt_VP_Vt;
+    real Lc_IBB_Vib, Vib, dIsub_factor, exp_ib;
+    real inv_Vib, sqrt_PHI_VP2_2;
+    real V0, deltaVFB, vL;
+    real dQI_dVD, dQI_dVS, dQI_dVG;
+    real dQB_dVD, dQB_dVS, dQB_dVG;
+    real Leff, Weff;
+    real RSeff, RDeff;
+    real yk, z0, zk;
+    real EPSOX, epssil;
+    real ddt_QD, ddt_QS;
+    //DIODES realted variables [AB: 040902]
+    real as_i, ad_i, ps_i, pd_i, v_di_b, v_si_b;
+    real temp_arg, tmp0;
+    real js_t, jsw_t, jswg_t;
+    real pb_t, pbsw_t, pbswg_t;
+    real cj_t, cjsw_t, cjswg_t;
+    real njts_t, njtssw_t, njtsswg_t;
+    real is_d, arg_d, is_s, arg_s;
+    real f_breakdown_d, f_breakdown_s, idb_tun, isb_tun;
+    real csb_d, cssw_d, csswg_d;
+    real csb_s, cssw_s, csswg_s;
+    real qjd, qjs;
+    
+    // parameter definitions
+    parameter integer TYPE = 1 from [-1:1] exclude 0; // NMOS=1, PMOS=-1
+    parameter integer Noise = 1 from [0:1];     // Set to zero to prevent noise calculation
+    parameter real Trise = 0.0 from [-inf:inf]; // Difference sim. temp and device temp [C deg]
+//  parameter real Temp = -`NOT_GIVEN from [`P_CELSIUS0:inf];  // Device temp [C]
+//AB:  the parameter name Temp is not working for no obvious reason; changed to TEMP
+    parameter real TEMP = -`NOT_GIVEN from [`P_CELSIUS0:inf];  // Device temp [C]
+    parameter real TNOM = -`NOT_GIVEN; // Temperature [C]
+
+
+    // Instance parameters
+
+    // - intrinsic model
+`IPRoz( L                 ,1.0e-5                                   ,"m"                                     ,"Length" )
+`IPRoz( W                 ,1.0e-5                                   ,"m"                                     ,"Total width including fingers" )
+`IPIco( M                 ,1                                        ,""            ,1           ,inf         ,"Parallel multiplier" )
+`IPIco( NS                ,1                                        ,""            ,1           ,inf         ,"Series multiplier" )
+`BPRnb( DTEMP             ,0.0                                      ,"K"                                     ,"Offset of device temperature" )
+
+    // - external parasitics
+`IPRcz( AS                ,0.0                                      ,"m^2"                                   ,"Source-to-substrate junction area" )
+`IPRcz( AD                ,0.0                                      ,"m^2"                                   ,"Drain-to-substrate junction area" )
+`IPRcz( PS                ,0.0                                      ,"m"                                     ,"Source-to-substrate junction perimeter" )
+`IPRcz( PD                ,0.0                                      ,"m"                                     ,"Drain-to-substrate junction perimeter" )
+
+`IPRcz( NRS               ,1.0                                      ,""                                      ,"Number of squares in source" )
+`IPRcz( NRD               ,1.0                                      ,""                                      ,"Number of squares in drain" )
+
+
+    // *** Process related parameters
+    parameter real COX = 2.0E-3 from [0.0:inf]; // Gate oxide capacitance per unit area [F]
+    parameter real XJ = 300E-9 from [0.0:inf]; // Junction depth [m]
+    //*** Threshold voltage/substrate effect parameters (long-channel)
+    parameter real VTO = 0.5 from [-inf:inf]; // Long-channel threshold voltage [V]
+    parameter real TCV = 1.0e-3; // Threshold voltage temperature coefficient [V/K]
+    parameter real GAMMA = 0.7 from [0.0:inf]; // Body effect parameter
+    parameter real PHI = 0.5 from [0.2:inf]; // Bulk Fermi potential [V]
+    //*** Mobility parameters (long-channel) ***
+    parameter real KP = 150E-6 from [0.0:inf]; // Transconductance parameter [A/V/V]
+    parameter real BEX = -1.5; // Mobility temperature exponent
+    parameter real THETA = 0.0 from [0.0:inf]; // Mobility reduction coefficient [1/V]
+    parameter real E0 = 1.0E8; // Mobility reduction coefficient [V/m]
+    //*** Velocity sat./channel length mod. parameters (short-channel)
+    parameter real UCRIT = 2.0E6 from [0.0:inf]; // Longitudinal critical field [V/m]
+    parameter real UCEX = 0.8; // Longitudinal critical field temperature exponent
+    parameter real LAMBDA = 0.8 from [0.0:inf]; // Depletion length coefficient (channel length modulation)
+    //*** Process related parameters
+    parameter real DL = -0.01E-6; // Channel width correction [m]
+    parameter real DW = -0.01E-6; // Channel length correction [m]
+    //*** Threshold voltage/substrate effect parameter (narrow-channel)
+    parameter real WETA = 0.2 from [0.0:inf]; // Narrow-channel effect coefficient
+    //*** Threshold voltage/substrate effect parameters (short-channel)
+    parameter real LETA = 0.3 from [0.0:inf]; // Short-channel effect coefficient
+    parameter real Q0 = 230E-6 from [0.0:inf]; // Reverse short channel effect peak charge density
+    parameter real LK = 0.4E-6 from [0.0:inf]; // Reverse short channel effect characteristic length [m]
+    //*** Substrate current parameters
+    parameter real IBA = 5.0E8 from [0.0:inf]; // First impact ionization coefficient [1/m]
+    parameter real IBB = 4.0E8 from [0.0:inf]; // Second impact ionization coefficient [V/m]
+    parameter real IBBT = 9.0e-4; // Temperature coefficient for IBB [1/K]
+    parameter real IBN = 1.0 from [0.0:inf]; // Saturation voltage factor for impact ionization
+    //*** Series resistance parameters
+    parameter real RSH = 0.0 from [0.0:inf]; // Sheet resistance [Ohms]
+    parameter real HDIF = 0.5E-6 from [0.0:inf]; // Sheet resistance multipler
+    //*** for MC analysis fk 25/05/97
+    parameter real AVTO = 1E-6 from [0.0:inf]; // Area related threshold voltage mismatch parameter [Vm]
+    parameter real AKP = 1E-6 from [0.0:inf]; // Area related gain mismatch parameter [m]
+    parameter real AGAMMA = 1E-6 from [0.0:inf]; // Area related body effect mismatch parameter [sqr(V) m]
+    parameter real AF = 1.0 from (0:inf); // Flicker noise exponent
+    parameter real KF = 0.0 from [0:inf); // Flicker noise coefficient
+    //*** JUNCTION DRAIN-BULK AND SOURCE-BULK AREA, CURRENT, CAPACITANCE [AB:040902]
+    parameter real xd_n          = 1.0           from [0.0:inf);
+    parameter real xd_js         = 1.0E-09       from [0.0:inf);
+    parameter real xd_jsw        = 1.0E-12       from [0.0:inf);
+    parameter real xd_jswg       = 1.0E-12       from [0.0:inf);
+    parameter real xd_mj         = 0.900         from [0.0:1.0];
+    parameter real xd_mjsw       = 0.700         from [0.0:1.0];
+    parameter real xd_mjswg      = 0.700         from [0.0:1.0];
+    parameter real xd_pb         = 0.800         from (0.0:inf);
+    parameter real xd_pbsw       = 0.600         from (0.0:inf);
+    parameter real xd_pbswg      = 0.600         from (0.0:inf);
+    parameter real xd_cj         = 1.0E-09       from [0.0:inf);
+    parameter real xd_cjsw       = 1.0E-12       from [0.0:inf);
+    parameter real xd_cjswg      = 1.0E-12       from [0.0:inf);
+    parameter real xd_gmin       = 0.0           from [0.0:inf);
+    parameter real xd_xjbv       = 0.0           from [0.0:inf);
+    parameter real xd_bv         = 10.0          from [0.0:inf);
+    parameter real xd_njts       = 1.0           from [0.0:inf);
+    parameter real xd_njtssw     = 1.0           from [0.0:inf);
+    parameter real xd_njtsswg    = 1.0           from [0.0:inf);
+    parameter real xd_vts        = 0.0           from [0.0:inf);
+    parameter real xd_vtssw      = 0.0           from [0.0:inf);
+    parameter real xd_vtsswg     = 0.0           from [0.0:inf);
+    parameter real tp_xti        = 3.0           from (-inf:inf);
+    parameter real tp_cj         = 0.0           from (-inf:inf);
+    parameter real tp_cjsw       = 0.0           from (-inf:inf);
+    parameter real tp_cjswg      = 0.0           from (-inf:inf);
+    parameter real tp_pb         = 0.0           from (-inf:inf);
+    parameter real tp_pbsw       = 0.0           from (-inf:inf);
+    parameter real tp_pbswg      = 0.0           from (-inf:inf);
+    parameter real tp_njts       = 0.0           from [0.0:inf);
+    parameter real tp_njtssw     = 0.0           from [0.0:inf);
+    parameter real tp_njtsswg    = 0.0           from [0.0:inf);
+    analog begin
+        // Set constant
+        EPSOX  = 3.9 * `P_EPS0;
+        epssil = 11.7 * `P_EPS0;
+        Ibd = 0.0;
+        // The following are necessary to prevent memory states being reserved:
+        THETA_VP_1 = 0.0;
+        VPprime = 0.0;
+        sqrt_VP_Vt = 0.0;
+        // Geometry, voltage and temperature independent model variables
+        eps_COX = epssil/COX;
+        Lc  = sqrt(eps_COX*XJ);
+        Lc_LAMBDA  = Lc * LAMBDA;
+        eps_COX_W = 3.0 * eps_COX * WETA;
+        eps_COX_L = eps_COX * LETA;
+        IBN_2 = IBN + IBN;
+        T0 = COX / (epssil*E0);
+        V0 = (Q0+Q0) / COX;
+        eta_qi = TYPE > 0 ? 0.5 : 0.3333333333333;
+        /* Model working variables, geometry and voltage independent,
+         * which need to be updated after temperature change
+         * EKV model internal variables depending on temperature.
+         */
+        /* If Temp is explicitly specified, use that value
+           otherwise use Tckt+Trise */
+        if (TEMP == -`NOT_GIVEN)	//AB: 040902 Temp -> TEMP
+            T = $temperature + Trise;
+        else
+            T = TEMP + `P_CELSIUS0;	//AB: 040902 Temp -> TEMP
+        if (TNOM == -`NOT_GIVEN)
+            Tnom = `DEFAULT_TNOM + `P_CELSIUS0;
+        else
+            Tnom = TNOM + `P_CELSIUS0;
+        Vt = $vt(T);
+        Vt_01 = 0.1 * Vt;
+        inv_Vt = 1.0 / Vt;
+        Vt_2 = Vt + Vt;
+        Vt_4 = Vt_2 + Vt_2;
+        Vt_Vt = Vt * Vt;
+        Vt_Vt_2 = Vt_Vt + Vt_Vt;
+        Vt_Vt_16 = 16.0 * Vt_Vt;
+ 
+        Eg = 1.16 - 7.02e-4 * T * T / (T + 1108.0);
+        refEg = 1.16 - (7.02e-4*Tnom*Tnom) / (Tnom + 1108.0);
+        deltaT = T - Tnom;
+        ratioT = T / Tnom;
+        VTO_T = VTO - TCV * deltaT;
+        KP_T = KP * pow(ratioT, BEX);
+        UCRIT_T = UCRIT * pow(ratioT, UCEX);
+        IBB_T = IBB * (1.0 + IBBT * deltaT);
+        PHI_T = PHI * ratioT - 3.0 * Vt * ln(ratioT) - refEg * ratioT + Eg;
+        //  !!  mb  99/07/30  prevents PHI from becoming smaller than 0.2
+        tmp1 = 0.2;
+        tmp2 = PHI_T - tmp1;
+        PHI_T = 0.5*(tmp2 + sqrt(tmp2*tmp2 + Vt*Vt)) + tmp1;
+        sqrt_PHI = sqrt(PHI_T);
+        inv_UCRIT = 1.0/UCRIT_T;
+        Lc_UCRIT  = Lc * UCRIT_T;
+        Lc_IBB  = Lc * IBB_T;
+        IBA_IBB = IBA / IBB_T;
+        /* VTO, KP and GAMMA with variation for MC analysis if required.
+         * The default value for model parameters AVTO, AKP and AGAMMA
+         * is set to 1e-6 to allow meaningful sensitivity analysis. Only
+         * the deviation from this value has to be taken into account
+         */
+        // wg: for userc.c and verilog implementations
+        Leff = L + DL;
+        // wg: for userc.c and verilog implementations
+        Weff = W + DW;
+        Vc = UCRIT_T*Leff;   //  NOTE: use L if necessary
+        log_Vc_Vt = Vt*(ln(0.5*Vc*inv_Vt)-0.6);   //    mb  98/02/05  (r1)
+        // de-normalization
+        AWL = 1.0/sqrt(Weff*Leff);
+        if (TYPE > 0)
+            VTO_S  = ((AVTO != 1e-6) ? AWL*(AVTO - 1e-6) + VTO_T : VTO_T);
+        else
+            VTO_S  = ((AVTO != 1e-6) ? AWL*(1e-6 - AVTO) - VTO_T: -VTO_T);
+        KP_Weff = Weff * ((AKP != 1e-6) ? KP_T*(1 + (AKP - 1e-6)*AWL) : KP_T);
+        GAMMA_S = ((AGAMMA !=1e-6) ? GAMMA + (AGAMMA - 1e-6)*AWL : GAMMA);
+        GAMMA_sqrt_PHI = GAMMA_S*sqrt_PHI;
+        /* ************************************
+         *     STATIC MODEL EQUATIONS
+         * *************************************/
+        //  VGprime:
+        if (V0 == 0.0)
+            deltaVFB = 0.0;
+//      else begin  : VGprime		//AB: 040902 VGPrime is also a variable and 
+        else begin  : VGprime_block	//AB: 040902 VGPrime ->  VGprime_block
+            real sqv;
+            // mb  99/03/26  corrected for multiple device number
+            vL = 0.28 * (Leff/(LK*NS) - 0.1);
+            sqv = 1.0 / (1.0 + 0.5*(vL + sqrt(vL*vL + 1.936e-3)));
+            deltaVFB = V0 * sqv * sqv;
+         end
+        VG = TYPE * V(g,b); // wg 22/04/08 corrected for device TYPE
+        VS = TYPE * V(s,b);
+        VD = TYPE * V(d,b);
+        if (VD - VS < 0) begin
+            Mode = `REV;
+            T1 = VS;
+            VS = VD;
+            VD = T1;
+        end
+        else
+            Mode = `FWD;
+        // VGB   = VGS - VBS;
+        // VBD   = VBS - VDS;
+        VGstar = VG - VTO_S - deltaVFB + PHI_T + GAMMA_sqrt_PHI;
+        sqrt_VGstar = sqrt(VGstar*VGstar + 2.0*Vt_Vt_16);
+        VGprime = 0.5*(VGstar + sqrt_VGstar);
+        //  Pinch-off voltage VP, limited to VP >= -PHI
+        PHI_VS = PHI_T+VS;
+        sqrt_PHI_VS_Vt = sqrt(PHI_VS*PHI_VS+Vt_Vt_16);
+        sqrt_PHI_VS = sqrt(0.5*(PHI_VS+sqrt_PHI_VS_Vt));
+        PHI_VD = PHI_T+VD;
+        sqrt_PHI_VD_Vt = sqrt(PHI_VD*PHI_VD+Vt_Vt_16);
+        sqrt_PHI_VD = sqrt(0.5*(PHI_VD+sqrt_PHI_VD_Vt));
+        WETA_W  = eps_COX_W * M / Weff;
+        LETA_L  = eps_COX_L * NS / Leff;
+        // mb: symmetric version of GAMMAprime necessary with charges model
+        big_sqrt_VP0 = sqrt(VGprime + 0.25*GAMMA_S*GAMMA_S);
+        VP0 = VGprime - PHI_T - GAMMA_S*(big_sqrt_VP0 - 0.5*GAMMA_S);
+        sqrt_PHI_VP0 = sqrt(VP0+PHI_T+Vt_01);
+        GAMMAstar = GAMMA_S - LETA_L * (sqrt_PHI_VS+sqrt_PHI_VD) +
+            WETA_W * sqrt_PHI_VP0;
+        // keep GAMMAprime from becoming negative
+        sqrt_GAMMAstar = sqrt(GAMMAstar*GAMMAstar+Vt_01);
+        GAMMAprime = 0.5*(GAMMAstar+sqrt_GAMMAstar);
+        big_sqrt_VP = sqrt(VGprime+0.25*GAMMAprime*GAMMAprime);
+        VP = VGprime-PHI_T-GAMMAprime*(big_sqrt_VP-0.5*GAMMAprime);
+        // Forward normalized current:
+        tmp1  = (VP - VS) * inv_Vt;
+        if (tmp1 > -0.35) begin
+            z0  = 2.0/(1.3 + tmp1 - ln(tmp1 + 1.6));
+            zk  = (2.0 + z0)/(1.0 + tmp1 + ln(z0));
+            yk  = (1.0 + tmp1 + ln(zk))/(2.0 + zk);
+        end else begin
+            if (tmp1 > -15.0) begin
+                z0  = 1.55 + exp(-tmp1);
+                zk  = (2.0 + z0)/(1.0 + tmp1 + ln(z0));
+                yk  = (1.0 + tmp1 + ln(zk))/(2.0 + zk);
+            end else begin
+                if (tmp1 > -23.0) begin
+                    yk  = 1.0/(2.0 + exp(-tmp1));
+                end else begin
+                    yk  = exp(tmp1) + 1E-64;
+                end
+            end
+        end
+        if_     = yk*(1.0 + yk);
+        sqrt_if = sqrt(if_);
+        dif_dv  = yk;
+        //  Saturation voltage:
+        Vt_Vc = Vt / Vc;
+        VDSS_sqrt = sqrt(0.25+sqrt_if*Vt_Vc);
+        VDSS = Vc*(VDSS_sqrt-0.5);
+        Vds = 0.5*(VD-VS);
+        deltaV_2 = Vt_Vt_16*(LAMBDA*(sqrt_if-
+            VDSS*inv_Vt)+15.625e-3);
+        sqrt_VDSS_deltaV = sqrt(VDSS*VDSS+deltaV_2);
+        sqrt_Vds_VDSS_deltaV = sqrt((Vds-VDSS)*(Vds-VDSS)+deltaV_2);
+        Vip = sqrt_VDSS_deltaV-sqrt_Vds_VDSS_deltaV;
+        VDSSprime_sqrt = sqrt(0.25+(sqrt_if-0.75*ln(if_))*Vt_Vc);
+        VDSSprime = Vc*(VDSSprime_sqrt-0.5)+log_Vc_Vt;
+        //  Reverse normalized current:
+        Vdsprime = Vds-VDSSprime;   //    mb  97/07/18  introduced Vdsprime
+        sqrt_VDSSprime_deltaV = sqrt(VDSSprime*VDSSprime+deltaV_2);
+        sqrt_Vds_VDSSprime_deltaV = sqrt(Vdsprime*Vdsprime+deltaV_2);
+        tmp1 = (VP-Vds-VS-sqrt_VDSSprime_deltaV+
+            sqrt_Vds_VDSSprime_deltaV)*inv_Vt;
+        // include -> Charge F(x) interpolate function
+        if (tmp1 > -0.35) begin
+            z0  = 2.0/(1.3 + tmp1 - ln(tmp1 + 1.6));
+            zk  = (2.0 + z0)/(1.0 + tmp1 + ln(z0));
+            yk  = (1.0 + tmp1 + ln(zk))/(2.0 + zk);
+        end else begin
+            if (tmp1 > -15.0) begin
+                z0  = 1.55 + exp(-tmp1);
+                zk  = (2.0 + z0)/(1.0 + tmp1 + ln(z0));
+                yk  = (1.0 + tmp1 + ln(zk))/(2.0 + zk);
+            end else begin
+                if (tmp1 > -23.0) begin
+                    yk  = 1.0/(2.0 + exp(-tmp1));
+                end else begin
+                    yk  = exp(tmp1) + 1E-64;
+                end
+            end
+        end
+        irprime       = yk*(1.0 + yk);
+        sqrt_irprime  = sqrt(irprime);
+        dirprime_dv   = yk;
+        /* Channel length modulation & mobility reduction due
+         * to longitudinal field */
+        deltaL = Lc_LAMBDA*ln(1.0+(Vds-Vip)/Lc_UCRIT);
+        Lprime = Leff-deltaL+(Vds+Vip)*inv_UCRIT;
+        Lmin = 0.1*Leff;
+        sqrt_Lprime_Lmin = sqrt(Lprime*Lprime+Lmin*Lmin);
+        Leq = 0.5*(Lprime+sqrt_Lprime_Lmin);
+        // Transconductance factor:
+        // Mobility reduction due to vertical field
+        // Reverse normalized current:
+        // ratioV_ir
+        tmp1 = (VP - VD) * inv_Vt;
+        if (tmp1 > -0.35) begin
+            z0  = 2.0/(1.3 + tmp1 - ln(tmp1 + 1.6));
+            zk  = (2.0 + z0)/(1.0 + tmp1 + ln(z0));
+            yk  = (1.0 + tmp1 + ln(zk))/(2.0 + zk);
+        end else begin
+            if (tmp1 > -15.0) begin
+                z0  = 1.55 + exp(-tmp1);
+                zk  = (2.0 + z0)/(1.0 + tmp1 + ln(z0));
+                yk  = (1.0 + tmp1 + ln(zk))/(2.0 + zk);
+            end else begin
+                if (tmp1 > -23.0) begin
+                    yk  = 1.0/(2.0 + exp(-tmp1));
+                end else begin
+                    yk  = exp(tmp1) + 1E-64;
+                end
+            end
+        end
+        ir      = yk*(1.0 + yk);
+        sqrt_ir = sqrt(ir);
+        dir_dv  = yk;
+        sif2 = 0.25+if_;
+        sir2 = 0.25+ir;
+        sif = sqrt(sif2);
+        sir = sqrt(sir2);
+        sif_sir_2 = (sif+sir)*(sif+sir);
+        VP_PHI_eps = VP+PHI_T+1.0e-6;
+        sqrt_PHI_VP_2 = 2.0*sqrt(VP_PHI_eps);
+        n_1 = GAMMA_S/sqrt_PHI_VP_2;
+        n_1_n = GAMMA_S/(sqrt_PHI_VP_2 + GAMMA_S);
+        //  Normalized inversion charge  (qi=QI/WLCox)
+        qi = -(1.0+n_1)*Vt*((0.66666666+0.66666666)*
+            (sir2+sir*sif+sif2)/(sif+sir) - 1.0);
+        // Normalized depletion charge (qb=QB/WLCox), for depletion to inversion
+        qb = -0.5*GAMMA_S*sqrt_PHI_VP_2 - n_1_n*qi;
+        if (E0 == 0.0) begin
+            /*  NOTE: this version of the simple mobility model from prior
+             *  versions of the EKV model is reinstated.
+             *  In case E0 is *not* specified, this
+             *  simple mobility model is used according to THETA, if specified.
+             *  VPprime:
+             *  mb  eliminated discontinuity of derivative of 1+THETA*VP
+             */
+             sqrt_VP_Vt = sqrt(VP*VP + Vt_Vt_2);
+             VPprime = 0.5 * (VP + sqrt_VP_Vt);
+             THETA_VP_1 = 1.0+THETA*VPprime;
+             beta = KP_Weff  / (Leq * THETA_VP_1); // mb  97/07/18
+         end
+        else begin
+             /*  new model for mobility reduction, linked to the charges model
+              *  mb  98/10/11  (r10)  introduced fabs(Eeff) (jpm)
+              *  E0_Q_1 = 1.0 + T0 * abs(qb+eta_qi*qi);
+              */
+              if ((qb + eta_qi*qi) > 0.0)
+                  E0_Q_1 = 1.0 + T0*(qb + eta_qi*qi);
+              else
+                  E0_Q_1 = 1.0 - T0*(qb + eta_qi*qi);
+              T0_GAMMA_1 = 1.0 + T0*GAMMA_sqrt_PHI;
+              beta = KP_Weff * T0_GAMMA_1 / (Leq * E0_Q_1);
+        end
+        /* Slope factor: mb introduced new formula to avoid divergence
+         * of n for VP->-PHI  */
+        sqrt_PHI_VP = sqrt(PHI_T+VP+Vt_4);   //    mb  95/12/19  introduced Vt_4
+        n = 1.0 + GAMMA_S/(2.0*sqrt_PHI_VP);
+        //  Drain current:
+        if_ir = if_-irprime;
+        Ispec = Vt_Vt_2 * n * beta;
+        Id = Ispec * if_ir;
+        /* Return threshold voltage
+         * Von = Vth(Vs) = Vto + Gamma*(sqrt(Phi + Vsb)-sqrt(Phi)) */
+        Von = VTO_S + GAMMAprime*(sqrt_PHI_VS - sqrt_PHI);
+        // Return saturation voltage (estimate)
+        Vdsat = Vt * (2.0*sqrt_if + 4.0);
+        // Return equivalent conductance for thermal noise calculation
+        Gn  = beta * abs(qi);
+        /*  Pinch-off voltage derivatives:
+         *  mb  97/09/14  symmetric version of GAMMAprime necessary with
+         *  charges model
+         *  mb  99/05/10  (r12) New VGprime formulation (REVISION III) allows
+         *  VP derivatives to be expressed with a single equation
+         */
+        tmp1 = GAMMAprime / (sqrt_GAMMAstar+sqrt_GAMMAstar);
+        tmp2 = VGprime/sqrt_VGstar;                        //  dVGprime_dVG
+        dGAMMAprime_dVD = -LETA_L * tmp1 * sqrt_PHI_VD / sqrt_PHI_VD_Vt;
+        dGAMMAprime_dVS = -LETA_L * tmp1 * sqrt_PHI_VS / sqrt_PHI_VS_Vt;
+        dGAMMAprime_dVG =  WETA_W * tmp1 * (big_sqrt_VP0-0.5*GAMMA_S) /
+            (big_sqrt_VP0*sqrt_PHI_VP0) * tmp2;
+        tmp3 = (VP+PHI_T) / big_sqrt_VP;
+        dVP_dVD = -tmp3 * dGAMMAprime_dVD;
+        dVP_dVS = -tmp3 * dGAMMAprime_dVS;
+        dVP_dVG = -tmp3 * dGAMMAprime_dVG + (1.0 -
+            GAMMAprime/(big_sqrt_VP+big_sqrt_VP)) * tmp2;
+        //  Forward normalized current derivatives:
+        tmp1 = dif_dv * inv_Vt;   //    mb  95/08/28, 97/04/21
+        dif_dVD = tmp1 * dVP_dVD;
+        dif_dVS = tmp1 * (dVP_dVS-1.0);
+        dif_dVG = tmp1 * dVP_dVG;
+        //  Saturation voltage derivatives:
+        tmp1 = Vt / (4.0*VDSS_sqrt*sqrt_if);
+        dVDSS_dVD = tmp1 * dif_dVD;
+        dVDSS_dVS = tmp1 * dif_dVS;
+        dVDSS_dVG = tmp1 * dif_dVG;
+        //  deltaV derivatives:
+        tmp1 = (Vt_4+Vt_4) * LAMBDA;
+        tmp2 = Vt / (sqrt_if+sqrt_if);
+        ddeltaV_dVD = tmp1 * (dif_dVD*tmp2 - dVDSS_dVD);
+        ddeltaV_dVS = tmp1 * (dif_dVS*tmp2 - dVDSS_dVS);
+        ddeltaV_dVG = tmp1 * (dif_dVG*tmp2 - dVDSS_dVG);
+        //  Vip derivatives:
+        tmp1 = 1.0 / sqrt_VDSS_deltaV;
+        tmp2 = 1.0 / sqrt_Vds_VDSS_deltaV;
+        tmp3 = Vds-VDSS;
+        dVip_dVD = (VDSS*dVDSS_dVD + ddeltaV_dVD) * tmp1 -
+            (tmp3 * (0.5-dVDSS_dVD) + ddeltaV_dVD) * tmp2;
+        dVip_dVS = (VDSS*dVDSS_dVS + ddeltaV_dVS) * tmp1 -
+            (tmp3 * (-0.5-dVDSS_dVS) + ddeltaV_dVS) * tmp2;
+        dVip_dVG = (VDSS*dVDSS_dVG + ddeltaV_dVG) * tmp1 -
+            (tmp3 * -dVDSS_dVG + ddeltaV_dVG) * tmp2;
+        //  VDSSprime derivatives:
+        tmp1 = Vt * (sqrt_if-1.5)/(4.0*VDSSprime_sqrt*if_);
+        dVDSSprime_dVD = tmp1 * dif_dVD;
+        dVDSSprime_dVS = tmp1 * dif_dVS;
+        dVDSSprime_dVG = tmp1 * dif_dVG;
+        //  Reverse normalized current derivatives:
+        tmp1 = dirprime_dv * inv_Vt;   //    mb  95/08/28,  97/04/21
+        tmp2 = 1.0 / sqrt_VDSSprime_deltaV;        //    mb  97/04/21
+        tmp3 = 1.0 / sqrt_Vds_VDSSprime_deltaV;
+        dirprime_dVD = tmp1 * (dVP_dVD-0.5 -
+            (VDSSprime*dVDSSprime_dVD+ddeltaV_dVD) * tmp2 +
+            (Vdsprime*(0.5-dVDSSprime_dVD)+ddeltaV_dVD) * tmp3);
+        dirprime_dVS = tmp1 * (dVP_dVS-0.5 -
+            (VDSSprime*dVDSSprime_dVS+ddeltaV_dVS) * tmp2 +
+            (Vdsprime*(-0.5-dVDSSprime_dVS)+ddeltaV_dVS) * tmp3);
+        dirprime_dVG = tmp1*(dVP_dVG -
+            (VDSSprime*dVDSSprime_dVG+ddeltaV_dVG) * tmp2 +
+            (Vdsprime*(-dVDSSprime_dVG)+ddeltaV_dVG) * tmp3);
+        //  Channel length modulation & mobility reduction derivatives:
+        //  deltaL derivatives:
+        tmp1 = Lc_LAMBDA / (Lc_UCRIT+Vds-Vip);
+        ddeltaL_dVD = tmp1 * (0.5-dVip_dVD);
+        ddeltaL_dVS = tmp1 * (-0.5-dVip_dVS);
+        ddeltaL_dVG = -tmp1 * dVip_dVG;
+        //  Leq derivatives:
+        tmp1 = 1.0 / sqrt_Lprime_Lmin; //  in fact dLeq_dVX/Leq
+        dLeq_dVD = tmp1 * (-ddeltaL_dVD + (0.5+dVip_dVD)*inv_UCRIT);
+        dLeq_dVS = tmp1 * (-ddeltaL_dVS + (-0.5+dVip_dVS)*inv_UCRIT);
+        dLeq_dVG = tmp1 * (-ddeltaL_dVG + dVip_dVG*inv_UCRIT);
+        //  Transconductance factor derivatives:
+        tmp1 = dir_dv*inv_Vt;
+        dir_dVD = tmp1 * (dVP_dVD-1.0);
+        dir_dVS = tmp1 * dVP_dVS;
+        dir_dVG = tmp1 * dVP_dVG;
+        tmp1 = -(1.0+n_1)*Vt*0.66666666/sif_sir_2;
+        tmp2 = tmp1*(sif+2.0*sir);
+        tmp3 = tmp1*(sir+2.0*sif);
+        tmp1 = -n_1*qi/((2.0+n_1+n_1)*VP_PHI_eps);
+        dQI_dVD = tmp1 * dVP_dVD + tmp2 * dif_dVD + tmp3 * dir_dVD;
+        dQI_dVS = tmp1 * dVP_dVS + tmp2 * dif_dVS + tmp3 * dir_dVS;
+        dQI_dVG = tmp1 * dVP_dVG + tmp2 * dif_dVG + tmp3 * dir_dVG;
+        tmp1 = (1.0+n_1)-qi/(2.0*(1.0+n_1)*VP_PHI_eps);
+        dQB_dVD = -n_1_n * (tmp1 * dVP_dVD + dQI_dVD);
+        dQB_dVS = -n_1_n * (tmp1 * dVP_dVS + dQI_dVS);
+        dQB_dVG = -n_1_n * (tmp1 * dVP_dVG + dQI_dVG);
+        if (E0 == 0.0) begin
+            tmp1 = THETA * VPprime / (THETA_VP_1 * sqrt_VP_Vt);
+            //  VPprime derivatives:
+            dVPprime_dVD = tmp1 * dVP_dVD;
+            dVPprime_dVS = tmp1 * dVP_dVS;
+            dVPprime_dVG = tmp1 * dVP_dVG;
+            dbeta_dVD = -dLeq_dVD - dVPprime_dVD;  //  in fact dbeta_dVX / beta
+            dbeta_dVS = -dLeq_dVS - dVPprime_dVS;
+            dbeta_dVG = -dLeq_dVG - dVPprime_dVG;
+        end
+        else begin
+            tmp1 = T0 / E0_Q_1;
+            dbeta_dVD = -dLeq_dVD + tmp1 * (dQB_dVD+eta_qi*dQI_dVD);
+            dbeta_dVS = -dLeq_dVS + tmp1 * (dQB_dVS+eta_qi*dQI_dVS);
+            dbeta_dVG = -dLeq_dVG + tmp1 * (dQB_dVG+eta_qi*dQI_dVG);
+        end
+        //  Slope factor derivatives:
+        tmp1 = -GAMMA_S/(4.0*n*sqrt_PHI_VP*(PHI_T+VP+Vt_4));//    mb  95/12/19
+        dn_dVD = tmp1 * dVP_dVD;
+        dn_dVS = tmp1 * dVP_dVS;
+        dn_dVG = tmp1 * dVP_dVG;
+        //  Transconductances:
+        gds =  Ispec*((dn_dVD + dbeta_dVD)*if_ir + dif_dVD - dirprime_dVD);
+        gms = -Ispec*((dn_dVS + dbeta_dVS)*if_ir + dif_dVS - dirprime_dVS);
+        gm =   Ispec*((dn_dVG + dbeta_dVG)*if_ir + dif_dVG - dirprime_dVG);
+        gmbs = gms - gm - gds;
+        // S/D resistance corrections including W and DW
+        RSeff = (RSH*HDIF)/(Weff-DW);
+        RDeff = (RSH*HDIF)/(Weff-DW);
+        tmp1 = 1.0/(1.0 + gms*RSeff + gds*RDeff);
+        Id = Id*tmp1;
+        /******   Impact ionization current     ******
+         * mb  95/12/19  introduced impact ionization
+         * This current component is flowing from the intrinsic drain terminal
+         * to the bulk (for NMOS) in parallel with the junction current.
+         * The simulator should also take into account the corresponding
+         * conductances.
+         */
+        //  Substrate current:
+        Vib = VD-VS-IBN_2*VDSS;
+        if ((Vib > 0.0) && (IBA_IBB > 0.0)) begin
+            inv_Vib = 1.0/Vib;
+            Lc_IBB_Vib = -Lc_IBB*inv_Vib;
+            if (Lc_IBB_Vib < -35.0) // math precision check
+                Lc_IBB_Vib = -35.0;
+            exp_ib = exp(Lc_IBB_Vib);
+            isub = IBA_IBB*Vib*exp_ib;
+            Isub = isub*Id;
+            dIsub_factor = Isub*inv_Vib*(1.0-Lc_IBB_Vib);
+        end
+        else begin
+            Lc_IBB_Vib = 0.0;
+            Isub = 0.0;
+        end
+        // END: substrate current computation
+        Ibd = Ibd - Isub;
+        // --- Charge calculations ---
+        WLCox = Weff * Leff * COX;
+        sif3 = sif*sif2;
+        sir3 = sir*sir2;
+        tmp1 = sqrt(PHI_T + 0.5 * VP);
+        sqrt_PHI_VP2_2 = tmp1+tmp1;
+        n_Vt_COX = (1.0 + GAMMAprime/sqrt_PHI_VP2_2) * Vt*WLCox;
+        QD = -n_Vt_COX*(0.266666666*(3.0*sir3+6.0*sir2*sif+4.0*
+            sir*sif2+2.0*sif3)/sif_sir_2 - 0.5);
+        QS = -n_Vt_COX*(0.266666666*(3.0*sif3+6.0*sif2*sir+4.0*
+            sif*sir2+2.0*sir3)/sif_sir_2 - 0.5);
+        QI = QS + QD;
+        QB = WLCox * (-0.5*GAMMAprime*sqrt_PHI_VP_2 + VGprime - VGstar) -
+            QI*GAMMAprime/(GAMMAprime+sqrt_PHI_VP2_2);
+        QG = -QI -QB;
+        I(ds) <+ TYPE * Mode * Id;          // wg 22/04/08 corrected for device TYPE
+        ddt_QD = ddt(QD);
+        ddt_QS = ddt(QS);
+        if (Mode == `FWD) begin
+            I(db) <+ TYPE * ddt_QD;         // wg 22/04/08 corrected for device TYPE
+            I(sb) <+ TYPE * ddt_QS;
+            I(db) <+ TYPE * Isub;
+        end
+        else begin
+            I(sb) <+ TYPE * ddt_QD;         // wg 22/04/08 corrected for device TYPE
+            I(db) <+ TYPE * ddt_QS;
+            I(sb) <+ TYPE * Isub;
+        end
+        I(gb) <+ TYPE * ddt(QG);            // wg 22/04/08 corrected for device TYPE
+//      if (Noise) begin : Noise		    //AB: 040902 Noise is also a variable and 
+        if (Noise) begin : Noise_block		//AB: 040902 Noise ->  Noise_block
+            real S_flicker, S_thermal;
+            S_thermal = 4 * `P_K * T * Gn;
+            S_flicker = KF * gm * gm / (Weff * NS * Leff * COX);
+            I(ds) <+ white_noise(S_thermal, "thermal") +
+                flicker_noise(S_flicker, AF, "flicker");
+        end
+        ///////////////////////////////////
+        //EXTRINSIC PART: JUNCTION DIODES//
+        ///////////////////////////////////
+	//diode area and perimeter computation
+        if ((AS == 0.0) && (HDIF>0.0)) as_i = 2.0*HDIF*Weff;
+        else as_i = AS;
+        if ((PS == 0.0) && (HDIF>0.0)) ps_i = 4.0*HDIF+1.0*Weff;
+        else ps_i = PS;
+        if ((AD == 0.0) && (HDIF>0.0)) ad_i = 2.0*HDIF*Weff;
+        else ad_i = AD;
+        if ((PD == 0.0) && (HDIF>0.0)) pd_i = 4.0*HDIF+1.0*Weff;
+        else pd_i = PD;
+	//temperature update for diodes
+        temp_arg = exp((refEg/$vt(Tnom) - Eg/Vt + tp_xti*ln(ratioT))/xd_n);
+        js_t = xd_js*temp_arg;
+        jsw_t = xd_jsw*temp_arg;
+        jswg_t = xd_jswg*temp_arg;
+        pb_t = xd_pb - tp_pb*deltaT;
+        pbsw_t = xd_pbsw - tp_pbsw*deltaT;
+        pbswg_t = xd_pbswg - tp_pbswg*deltaT;
+        cj_t = xd_cj*(1.0+tp_cj*deltaT);
+        cjsw_t = xd_cjsw*(1.0+tp_cjsw*deltaT);
+        cjswg_t = xd_cjswg*(1.0+tp_cjswg*deltaT);
+        njts_t = xd_njts*(1.0+(ratioT-1.0)*tp_njts);
+        njtssw_t = xd_njtssw*(1.0+(ratioT-1.0)*tp_njtssw);
+        njtsswg_t = xd_njtsswg*(1.0+(ratioT-1.0)*tp_njtsswg);
+        //DC
+                v_di_b = TYPE*V(d,b);
+                v_si_b = TYPE*V(s,b);
+        //DRAIN - BULK
+                is_d = js_t*ad_i+jsw_t*pd_i+jswg_t*Weff;
+                arg_d = -v_di_b*ratioT/(Vt*xd_n);
+                if (arg_d < -40.0) arg_d = -40.0;
+		tmp0 = (-v_di_b+xd_bv)*ratioT/(Vt*xd_n);
+		if (tmp0>70) f_breakdown_d = 1.0;
+		else f_breakdown_d = 1.0 + xd_xjbv*exp(-tmp0);
+	// TRAP-ASSISTED TUNNELING CURRENT
+                idb_tun = -Weff*jswg_t*(exp(v_di_b*ratioT/(Vt*njtsswg_t) * xd_vtsswg/max(xd_vtsswg+v_di_b,1.0e-3))-1.0);
+                idb_tun = idb_tun - pd_i*jsw_t*(exp(v_di_b*ratioT/(Vt*njtssw_t) * xd_vtssw/max(xd_vtssw+v_di_b,1.0e-3))-1.0);
+                idb_tun = idb_tun - ad_i*js_t*(exp(v_di_b*ratioT/(Vt*njts_t) * xd_vts/max(xd_vts+v_di_b,1.0e-3))-1.0);
+                I(d,b) <+ (is_d * (1.0 - exp(arg_d))*f_breakdown_d+v_di_b*xd_gmin + idb_tun)*TYPE*M;
+         //SOURCE - BULK
+                is_s = js_t*as_i+jsw_t*ps_i+jswg_t*Weff;
+                arg_s = -v_si_b*ratioT/(Vt*xd_n);
+                if (arg_s < -40.0) arg_s = -40.0;
+		tmp0 = (-v_si_b+xd_bv)*ratioT/(Vt*xd_n);
+		if (tmp0>70) f_breakdown_s = 1.0;
+		else f_breakdown_s = 1.0 + xd_xjbv*exp(-tmp0);
+	// TRAP-ASSISTED TUNNELING CURRENT
+                isb_tun = -Weff*jswg_t*(exp(v_si_b*ratioT/(Vt*njtsswg_t) * xd_vtsswg/max(xd_vtsswg+v_si_b,1.0e-3))-1.0);
+                isb_tun = isb_tun - ps_i*jsw_t*(exp(v_si_b*ratioT/(Vt*njtssw_t) * xd_vtssw/max(xd_vtssw+v_si_b,1.0e-3))-1.0);
+                isb_tun = isb_tun - as_i*js_t*(exp(v_si_b*ratioT/(Vt*njts_t) * xd_vts/max(xd_vts+v_si_b,1.0e-3))-1.0);
+                I(s,b) <+ (is_s * (1.0 - exp(arg_s))*f_breakdown_s+v_si_b*xd_gmin + isb_tun)*TYPE*M;
+	//AC
+	
+	//DRAIN - BULK
+                if (v_di_b>0.0)
+                begin
+                        csb_d  = cj_t   * ad_i * exp(-xd_mj*ln(1.0+v_di_b/pb_t));
+                        cssw_d = cjsw_t * pd_i * exp(-xd_mjsw*ln(1.0+v_di_b/pbsw_t));
+                        csswg_d = cjswg_t * Weff * exp(-xd_mjswg*ln(1.0+v_di_b/pbswg_t));
+                end
+                else
+                begin
+                        csb_d  = cj_t   * ad_i * (1.0 - xd_mj*v_di_b/pb_t);
+                        cssw_d = cjsw_t * pd_i * (1.0 - xd_mjsw*v_di_b/pbsw_t);
+                        csswg_d = cjswg_t * Weff * (1.0 - xd_mjswg*v_di_b/pbswg_t);
+                end
+                qjd = (csb_d+cssw_d+csswg_d) * v_di_b;
+                I(d,b) <+ ddt(qjd)*TYPE*M;
+         //SOURCE - BULK
+                if (v_si_b>0.0)
+                begin
+                        csb_s  = cj_t   * as_i * exp(-xd_mj*ln(1.0+v_si_b/pb_t));
+                        cssw_s = cjsw_t * ps_i * exp(-xd_mjsw*ln(1.0+v_si_b/pbsw_t));
+                        csswg_s = cjswg_t * Weff * exp(-xd_mjswg*ln(1.0+v_si_b/pbswg_t));
+                end
+                else
+                begin
+                        csb_s  = cj_t   * as_i * (1.0 - xd_mj*v_si_b/pb_t);
+                        cssw_s = cjsw_t * ps_i * (1.0 - xd_mjsw*v_si_b/pbsw_t);
+                        csswg_s = cjswg_t * Weff * (1.0 - xd_mjswg*v_si_b/pbswg_t);
+                end
+                qjs = (csb_s+cssw_s+csswg_s) * v_si_b;
+                I(s,b) <+ ddt(qjs)*TYPE*M;
+	//END OF DIODES
+    end
+endmodule

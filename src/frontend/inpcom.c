@@ -11,6 +11,7 @@ Author: 1985 Wayne A. Christopher
 
 /* Note: Must include shlwapi.h before ngspice header defining BOOL due
  * to conflict */
+#include <stdio.h>
 #ifdef _WIN32
 #include <shlwapi.h> /* for definition of PathIsRelativeA() */
 #pragma comment(lib, "Shlwapi.lib")
@@ -1563,6 +1564,8 @@ struct inp_read_t inp_read( FILE *fp, int call_depth, const char *dir_name,
                     !ciprefix("wrdata", buffer) &&
                     !ciprefix(".lib", buffer) && !ciprefix(".inc", buffer) &&
                     !ciprefix("codemodel", buffer) &&
+                    !ciprefix("osdi", buffer) &&
+                    !ciprefix("pre_osdi", buffer) &&
                     !ciprefix("echo", buffer) && !ciprefix("shell", buffer) &&
                     !ciprefix("source", buffer) && !ciprefix("cd ", buffer) &&
                     !ciprefix("load", buffer) && !ciprefix("setcs", buffer)) {
@@ -2052,16 +2055,6 @@ static void inp_chk_for_multi_in_vcvs(struct card *c, int *line_number)
                         (fcn_b = strstr(line, "nor(")) != NULL ||
                         (fcn_b = strstr(line, "or(")) != NULL) &&
                     isspace_c(fcn_b[-1])) {
-                char keep, *comma_ptr, *xy_values1[5], *xy_values2[5];
-                char *out_str, *ctrl_nodes_str,
-                        *xy_values1_b = NULL, *ref_str, *fcn_name,
-                        *fcn_e = NULL, *out_b, *out_e, *ref_e;
-                char *m_instance, *m_model;
-                char *xy_values2_b = NULL, *xy_values1_e = NULL,
-                     *ctrl_nodes_b = NULL, *ctrl_nodes_e = NULL;
-                int xy_count1, xy_count2;
-                bool ok = FALSE;
-
 #ifndef XSPICE
                 fprintf(stderr,
                         "\n"
@@ -2073,7 +2066,16 @@ static void inp_chk_for_multi_in_vcvs(struct card *c, int *line_number)
                         "instructions\n",
                         *line_number, line);
                 controlled_exit(EXIT_BAD);
-#endif
+#else
+                char keep, *comma_ptr, *xy_values1[5], *xy_values2[5];
+                char *out_str, *ctrl_nodes_str,
+                        *xy_values1_b = NULL, *ref_str, *fcn_name,
+                        *fcn_e = NULL, *out_b, *out_e, *ref_e;
+                char *m_instance, *m_model;
+                char *xy_values2_b = NULL, *xy_values1_e = NULL,
+                     *ctrl_nodes_b = NULL, *ctrl_nodes_e = NULL;
+                int xy_count1, xy_count2;
+                bool ok = FALSE;
 
                 do {
                     ref_e = skip_non_ws(line);
@@ -2174,6 +2176,7 @@ static void inp_chk_for_multi_in_vcvs(struct card *c, int *line_number)
                 *c->line = '*';
                 c = insert_new_line(c, m_instance, (*line_number)++, c->linenum_orig);
                 c = insert_new_line(c, m_model, (*line_number)++, c->linenum_orig);
+#endif
             }
         }
     }
@@ -2351,6 +2354,8 @@ static char *get_subckt_model_name(char *line)
 
     name = skip_non_ws(line); // eat .subckt|.model
     name = skip_ws(name);
+
+    
 
     end_ptr = skip_non_ws(name);
 
@@ -4705,6 +4710,28 @@ int get_number_terminals(char *c)
             }
             break;
         }
+#ifdef OSDI
+        case 'n': /* Recognize an unknown number of nodes by stopping at tokens with '=' */
+        {
+            i = 0;
+            char* cc, * ccfree;
+            cc = copy(c);
+            /* required to make m= 1 a single token m=1 */
+            ccfree = cc = inp_remove_ws(cc);
+            /* find the first token with "off", "tnodeout", "thermal" or "=" in the line*/
+            while ((i < 20) && (*cc != '\0')) {
+                char* inst = gettok_instance(&cc);
+                strncpy(nam_buf, inst, sizeof(nam_buf) - 1);
+                txfree(inst);
+                if (i > 2 && (strchr(nam_buf, '=')))
+                    break;
+                i++;
+            }
+            tfree(ccfree);
+            return i - 2;
+            break;
+        }
+#endif
         default:
             return 0;
             break;
@@ -9978,7 +10005,8 @@ static char inp_get_elem_ident(char *type)
         return 'm';
     if (cieq(type, "res"))
         return 'r';
-    /* xspice code models do not have unique type names */
+    /* xspice code models do not have unique type names,
+       but could also be an OSDI/OpenVAF model. */
     else
         return 'a';
 }
@@ -10258,7 +10286,7 @@ void inp_rem_unused_models(struct nscope *root, struct card *deck)
                 struct modellist *m =
                         inp_find_model(card->level, elem_model_name);
                 if (m) {
-                    if (*curr_line != m->elemb)
+                    if (*curr_line != m->elemb && !(*curr_line == 'n' && m->elemb == 'a'))
                         fprintf(stderr,
                                 "warning, model type mismatch in line\n    "
                                 "%s\n",
@@ -10288,7 +10316,7 @@ void inp_rem_unused_models(struct nscope *root, struct card *deck)
  * only correct UTF-8. It also spots UTF-8 sequences that could cause
  * trouble if converted to UTF-16, namely surrogate characters
  * (U+D800..U+DFFF) and non-Unicode positions (U+FFFE..U+FFFF).
- * In addition we check for some ngspice-specific characters like µ etc.*/
+ * In addition we check for some ngspice-specific characters like ï¿½ etc.*/
 #ifndef EXT_ASC
 static unsigned char*
 utf8_check(unsigned char *s)
@@ -10298,12 +10326,12 @@ utf8_check(unsigned char *s)
             /* 0xxxxxxx */
             s++;
         else if (*s == 0xb5) {
-            /* translate ansi micro µ to u */
+            /* translate ansi micro ï¿½ to u */
             *s = 'u';
             s++;
         }
         else if (s[0] == 0xc2 && s[1] == 0xb5) {
-            /* translate utf-8 micro µ to u */
+            /* translate utf-8 micro ï¿½ to u */
             s[0] = 'u';
             /* remove second byte */
             unsigned char *y = s + 1;
