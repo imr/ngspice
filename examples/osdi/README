@@ -12,7 +12,7 @@ Search for the module name, here:
 The module name 'bsimbulk' will become the new model type in the .model statement
     .model mname type ( pname1 = pval1 pname2 = pval2 ... ).
 Compile  bsimbulk.va with OpenVAF to obtain bsimbulk.osdi
-Put bsimbulk.osdi into directory bsimbulk/test_osdi_win
+Put bsimbulk.osdi into directory bsimbulk/test_osdi_libs
 Search for suitable model parameters
     BSIMBULK107 distro does not contain any parameters
     BSIMBULK106 does contain a model parameter file model.l among the benchmark tests
@@ -40,7 +40,7 @@ NMN1 dd gg ss bb  BSIMBULK_osdi_N W=500n L=90n
 * the .control section
 .control
 * load the model dynamically
-pre_osdi test_osdi_win/bsimbulk107.osdi
+pre_osdi test_osdi_libs/bsimbulk107.osdi
 * the dc simulation
 dc Vg 0 1.5 0.01 Vb 0 -1.6 -0.4
 * plotting
@@ -52,7 +52,7 @@ plot I(Vs)
 
 So we have two OSDI specific actions in the netlist:
 load the model by 
-    pre_osdi test_osdi_win/bsimbulk107.osdi
+    pre_osdi test_osdi_libs/bsimbulk107.osdi
 instantiate the transistor by
     NMN1 dd gg ss bb BSIMBULK_osdi_N W=500n L=90n
 

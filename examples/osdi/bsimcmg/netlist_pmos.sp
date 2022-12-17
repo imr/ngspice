@@ -16,7 +16,7 @@ VB bb 0 0
 N1 dd gg ss bb BSIMCMG_osdi_P
 
 .control
-pre_osdi test_osdi_win/bsimcmg.osdi
+pre_osdi test_osdi_libs/bsimcmg.osdi
 set xbrushwidth=3
 * a DC sweep: drain, gate
 dc Vd 0 -1.8 -0.01 VG 0 -1.8 -0.3
