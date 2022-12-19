@@ -28,7 +28,7 @@ c2  z     vss   0.576f
 .dc V1 0 'vcc' 'vcc/100'
 
 .control
-pre_osdi test_osdi_win/ekv26_mod.osdi
+pre_osdi osdi_libs/ekv26_mod.osdi
 run
 *set nolegend
 set xbrushwidth=3

@@ -56,7 +56,7 @@ c2  z     vss   0.576f
 .tran 10p 10n uic
 
 .control
-pre_osdi test_osdi_win/psp103.osdi
+pre_osdi osdi_libs/psp103.osdi
 run
 set xbrushwidth=3
 plot in 

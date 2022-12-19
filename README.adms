@@ -1,5 +1,12 @@
 This document is covered by the Creative Commons Attribution Share-Alike (CC-BY-SA) v4.0. .
 
+As of Jan. 23 ADMS is deprectated and replaced by OpenVAF/OSDI.
+See README_OSDI.md and README_OSDI_howto.
+All references to ADMS will be removed in a future ngspice release.
+
+
+
+
 ***************  Verilog A Device models in ngspice ******************************************
 
 

@@ -8,8 +8,9 @@ VS S 0 0.0
 NQ1 C B 0 S T BJTRF1
 
 .control
-pre_osdi test_osdi_win/bjt504t.osdi
-dc vc 0 6.0 0.05 ib 1u 8u 1u
+pre_osdi osdi_libs/bjt504t.osdi
+dc vc 0 6.0 0.05 ib 0 8u 1u
+set xbrushwidth=2
 plot abs(i(vc)) xlabel Vce title Output-Characteristic
 .endc
 
