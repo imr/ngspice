@@ -15,7 +15,7 @@ VB bb 0 0
 N1 dd gg ss bb nch W=5e-6 L=0.5e-6
 
 .control
-pre_osdi test_osdi_libs/ekv26_mod.osdi
+pre_osdi osdi_libs/ekv26_mod.osdi
 set xbrushwidth=3
 * a DC sweep: drain, gate
 dc Vd 0 1.6 0.01 VG 0 1.6 0.2
