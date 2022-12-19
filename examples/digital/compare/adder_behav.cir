@@ -5,6 +5,6 @@
 .include 74HCng_short_2.lib
 .param vcc=3 tripdt=6n
 
-.include adder_common.inc
+.include ../adder_common.inc
 
 .END
