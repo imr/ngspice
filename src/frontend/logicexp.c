@@ -395,11 +395,12 @@ static int lex_scan(void)
 
 static BOOL lex_all_digits(char *str)
 {
-    size_t i;
-    if (!str || strlen(str) < 1)
-        return FALSE;
-    for (i = 0; i < strlen(str); i++) {
-        if (!isdigit(str[i])) return FALSE;
+    size_t i, slen;
+    if (!str) { return FALSE; }
+    slen = strlen(str);
+    if (slen < 1) { return FALSE; }
+    for (i = 0; i < slen; i++) {
+        if (!isdigit(str[i])) { return FALSE; }
     }
     return TRUE;
 }
@@ -1872,7 +1873,7 @@ static char *typical_estimate(char *delay_str)
 {
     /* Input string (t1,t2,t2) */
     int which = 0;
-    size_t i;
+    size_t i, slen;
     char *s;
     DS_CREATE(dmin, 32);
     DS_CREATE(dtyp, 32);
@@ -1881,7 +1882,8 @@ static char *typical_estimate(char *delay_str)
     ds_clear(&dmin);
     ds_clear(&dtyp);
     ds_clear(&dmax);
-    for (i = 1; i < strlen(delay_str) - 1; i++) {
+    slen = strlen(delay_str) - 1;
+    for (i = 1; i < slen; i++) {
         if (delay_str[i] == ',') {
             which++;
             continue;
@@ -1908,20 +1910,9 @@ static char *typical_estimate(char *delay_str)
     return s;
 }
 
-static BOOL new_gen_output_models(LEXER lx)
+static BOOL extract_delay(
+    LEXER lx, int val, PLINE *pline_arr, int idx, BOOL tri)
 {
-    int val, arrlen = 0, idx = 0, i;
-    BOOL in_pindly = FALSE, in_tristate = FALSE, in_delay = FALSE;
-    BOOL prit = PRINT_ALL;
-    float typ_max_val = 0.0, typ_val = 0.0;
-    char *units;
-    DS_CREATE(dly, 64);
-    DS_CREATE(enable_name, 64);
-    DS_CREATE(last_enable, 64);
-    DS_CREATE(dtyp_max_str, 16);
-    PLINE pline = NULL;
-    PLINE *pline_arr = NULL;
-
     /* NOTE: The delays are specified in a DELAY(t1,t2,t3) function.
        Beware if the format of t1, t2, t3 changes!
        Expect t1, t2, t3:
@@ -1930,12 +1921,110 @@ static BOOL new_gen_output_models(LEXER lx)
        x.y represents a decimal number; w is an integer.
        Either numbers can have more that one digit.
     */
+    BOOL in_delay = FALSE, ret_val = TRUE;
+    int i;
+    BOOL prit = FALSE;
+    float typ_max_val = 0.0, typ_val = 0.0;
+    char *units;
+    DS_CREATE(dly, 64);
+    DS_CREATE(dtyp_max_str, 16);
+
+    if (val != '=') {
+        ds_free(&dly);
+        ds_free(&dtyp_max_str);
+        return FALSE;
+    }
+    val = lexer_scan(lx);
+    if (val != '{') {
+        ds_free(&dly);
+        ds_free(&dtyp_max_str);
+        return FALSE;
+    }
+    val = lexer_scan(lx);
+    while (val != '}') {
+        if (val == LEX_ID) {
+            if (eq(lx->lexer_buf, "delay")) {
+                in_delay = TRUE;
+                ds_clear(&dly);
+            } else {
+                if (in_delay) {
+                    ds_cat_printf(&dly, "%s", lx->lexer_buf);
+                }
+            }
+        } else {
+            if (in_delay) {
+                DS_CREATE(delay_string, 64);
+                ds_cat_printf(&dly, "%c", val);
+                if (val == ')') {
+                    char *tmps;
+                    in_delay = FALSE;
+                    tmps = typical_estimate(ds_get_buf(&dly));
+                    if (!tmps) {
+                        ret_val = FALSE;
+                        break;
+                    }
+                    if (prit) {
+                        printf("%s\n", ds_get_buf(&dly));
+                        printf("estimate \"%s\"\n", tmps);
+                    }
+                    typ_val = strtof(tmps, &units);
+                    if (typ_val > typ_max_val) {
+                        ds_clear(&delay_string);
+                        ds_clear(&dtyp_max_str);
+                        ds_cat_str(&dtyp_max_str, tmps);
+                        typ_max_val = typ_val;
+                        if (ds_get_length(&dtyp_max_str) > 0) {
+                            if (tri) {
+                                ds_cat_printf(&delay_string,
+                                    "(delay=%s)",
+                                    ds_get_buf(&dtyp_max_str));
+                            } else {
+                                ds_cat_printf(&delay_string,
+                                    "(rise_delay=%s fall_delay=%s)",
+                                    ds_get_buf(&dtyp_max_str),
+                                    ds_get_buf(&dtyp_max_str));
+                            }
+                        } else {
+                            printf("WARNING pindly DELAY not found\n");
+                            if (tri) {
+                                ds_cat_printf(&delay_string,
+                                    "(delay=10ns)");
+                            } else {
+                                ds_cat_printf(&delay_string,
+                                    "(rise_delay=10ns fall_delay=10ns)");
+                            }
+                        }
+                        for (i = 0; i < idx; i++) {
+                            (void) set_delays(
+                                ds_get_buf(&delay_string),
+                                pline_arr[i]);
+                        }
+                    }
+                }
+                ds_free(&delay_string);
+            } // end if in_delay
+        }
+        val = lexer_scan(lx);
+    } // end while != '}'
+    ds_free(&dly);
+    ds_free(&dtyp_max_str);
+    return ret_val;
+}
+
+static BOOL new_gen_output_models(LEXER lx)
+{
+    int val, arrlen = 0, idx = 0, i;
+    BOOL in_pindly = FALSE, in_tristate = FALSE;
+    BOOL prit = PRINT_ALL;
+    DS_CREATE(enable_name, 64);
+    DS_CREATE(last_enable, 64);
+    PLINE pline = NULL;
+    PLINE *pline_arr = NULL;
+
     arrlen = num_pindly_entries(pindly_tab);
     if (arrlen <= 0) {
-        ds_free(&dly);
         ds_free(&enable_name);
         ds_free(&last_enable);
-        ds_free(&dtyp_max_str);
         return FALSE;
     }
     pline_arr = TMALLOC(PLINE, arrlen);
@@ -1976,69 +2065,7 @@ static BOOL new_gen_output_models(LEXER lx)
                 }
                 val = lexer_scan(lx);
             }
-            typ_max_val = 0.0;
-            if (val != '=') {
-                goto err_return;
-            }
-            val = lexer_scan(lx);
-            if (val != '{') {
-                goto err_return;
-            }
-            val = lexer_scan(lx);
-            while (val != '}') {
-                if (val == LEX_ID) {
-                    if (eq(lx->lexer_buf, "delay")) {
-                        if (prit) { printf("Get pindly delay\n"); }
-                        in_delay = TRUE;
-                        ds_clear(&dly);
-                    } else {
-                        if (in_delay) {
-                            ds_cat_printf(&dly, "%s", lx->lexer_buf);
-                        }
-                    }
-                } else {
-                    if (in_delay) {
-                        DS_CREATE(delay_string, 64);
-                        ds_cat_printf(&dly, "%c", val);
-                        if (val == ')') {
-                            char *tmps;
-                            in_delay = FALSE;
-                            if (prit) {
-                                printf("%s\n", ds_get_buf(&dly));
-                                printf("estimate \"%s\"\n",
-                                    typical_estimate(ds_get_buf(&dly)));
-                            }
-                            tmps = typical_estimate(ds_get_buf(&dly));
-                            if (!tmps) {
-                                goto err_return;
-                            }
-                            typ_val = strtof(tmps, &units);
-                            if (typ_val > typ_max_val) {
-                                ds_clear(&delay_string);
-                                ds_clear(&dtyp_max_str);
-                                ds_cat_str(&dtyp_max_str, tmps);
-                                typ_max_val = typ_val;
-                                if (ds_get_length(&dtyp_max_str) > 0) {
-                                    ds_cat_printf(&delay_string,
-                                        "(rise_delay=%s fall_delay=%s)",
-                                        ds_get_buf(&dtyp_max_str),
-                                        ds_get_buf(&dtyp_max_str));
-                                } else {
-                                    ds_cat_printf(&delay_string,
-                                        "(rise_delay=10ns fall_delay=10ns)");
-                                }
-                                for (i = 0; i < idx; i++) {
-                                    (void) set_delays(
-                                        ds_get_buf(&delay_string),
-                                        pline_arr[i]);
-                                }
-                            }
-                        }
-                        ds_free(&delay_string);
-                    } // end if in_delay
-                }
-                val = lexer_scan(lx);
-            } // end while != '}'
+            if (!extract_delay(lx, val, pline_arr, idx, FALSE)) goto err_return;
             for (i = 0; i < arrlen; i++) {
                 pline_arr[i] = NULL;
             }
@@ -2092,68 +2119,7 @@ static BOOL new_gen_output_models(LEXER lx)
                 }
                 val = lexer_scan(lx);
             }
-            typ_max_val = 0.0;
-            if (val != '=') {
-                goto err_return;
-            }
-            val = lexer_scan(lx);
-            if (val != '{') {
-                goto err_return;
-            }
-            val = lexer_scan(lx);
-            while (val != '}') {
-                if (val == LEX_ID) {
-                    if (eq(lx->lexer_buf, "delay")) {
-                        if (prit) { printf("Get tristate delay\n"); }
-                        in_delay = TRUE;
-                        ds_clear(&dly);
-                    } else {
-                        if (in_delay) {
-                            ds_cat_printf(&dly, "%s", lx->lexer_buf);
-                        }
-                    }
-                } else {
-                    if (in_delay) {
-                        DS_CREATE(delay_string, 64);
-                        ds_cat_printf(&dly, "%c", val);
-                        if (val == ')') {
-                            char *tmps;
-                            in_delay = FALSE;
-                            if (prit) {
-                                printf("%s\n", ds_get_buf(&dly));
-                                printf("estimate \"%s\"\n",
-                                    typical_estimate(ds_get_buf(&dly)));
-                            }
-                            tmps = typical_estimate(ds_get_buf(&dly));
-                            if (!tmps) {
-                                goto err_return;
-                            }
-                            typ_val = strtof(tmps, &units);
-                            if (typ_val > typ_max_val) {
-                                ds_clear(&delay_string);
-                                ds_clear(&dtyp_max_str);
-                                ds_cat_str(&dtyp_max_str, tmps);
-                                typ_max_val = typ_val;
-                                if (ds_get_length(&dtyp_max_str) > 0) {
-                                    ds_cat_printf(&delay_string,
-                                        "(delay=%s)",
-                                        ds_get_buf(&dtyp_max_str));
-                                } else {
-                                    ds_cat_printf(&delay_string,
-                                    "(delay=10ns)");
-                                }
-                                for (i = 0; i < idx; i++) {
-                                    (void) set_delays(
-                                        ds_get_buf(&delay_string),
-                                        pline_arr[i]);
-                                }
-                            }
-                        }
-                        ds_free(&delay_string);
-                    } // end if in_delay
-                }
-                val = lexer_scan(lx);
-            } // end while != '}'
+            if (!extract_delay(lx, val, pline_arr, idx, TRUE)) goto err_return;
             for (i = 0; i < arrlen; i++) {
                 pline_arr[i] = NULL;
             }
@@ -2161,8 +2127,6 @@ static BOOL new_gen_output_models(LEXER lx)
         }
         val = lexer_scan(lx);
     } // end of outer while loop
-    ds_free(&dly);
-    ds_free(&dtyp_max_str);
     ds_free(&enable_name);
     ds_free(&last_enable);
     tfree(pline_arr);
@@ -2170,8 +2134,6 @@ static BOOL new_gen_output_models(LEXER lx)
 
 err_return:
     printf("ERROR in new_gen_output_models\n");
-    ds_free(&dly);
-    ds_free(&dtyp_max_str);
     ds_free(&enable_name);
     ds_free(&last_enable);
     tfree(pline_arr);
