@@ -16,7 +16,7 @@ VB bb 0 0
 N1 dd gg ss bb BSIMBULK_osdi_P W=500n L=90n
 
 .control
-pre_osdi test_osdi_libs/bsimbulk107.osdi
+pre_osdi osdi_libs/bsimbulk107.osdi
 set xbrushwidth=3
 * a DC sweep: drain, gate
 *op

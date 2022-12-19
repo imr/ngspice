@@ -27,7 +27,7 @@ Xinv5  4 vo supply 0 mg_inv
 .print tran v(vi) v(vo)
 
 .control
-pre_osdi test_osdi_libs/bsimcmg.osdi
+pre_osdi osdi_libs/bsimcmg.osdi
 set xbrushwidth=3
 run
 plot v(vi) v(vo)

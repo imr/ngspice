@@ -23,7 +23,7 @@ nm1  d g s b nch
 *.include Modelcards/psp103_nmos.mod
 
 .control
-pre_osdi test_osdi_libs/psp103.osdi
+pre_osdi osdi_libs/psp103.osdi
 dc vd 0 2.0 0.05 vg 0 1.5 0.25
 plot i(vs)
 dc vg 0 1.5 0.05 vb 0 -3.0 -1
