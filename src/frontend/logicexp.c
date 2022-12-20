@@ -605,7 +605,6 @@ static void ptable_print(PTABLE pt)
 /* Start of logicexp parser */
 static char *get_inst_name(void);
 static char *get_inverter_output_name(char *input);
-static void gen_inverters(SYM_TAB t);
 static void aerror(char *s);
 static void amatch(int t);
 static void bexpr(void);
@@ -618,15 +617,6 @@ static int max_adepth = 0;
 static DSTRING d_curr_line;
 static int number_of_instances = 0;
 static BOOL use_tmodel_delays = FALSE;
-
-static BOOL inverters_needed(void)
-{
-#ifdef LOGICEXP_INVERTERS
-    return TRUE;
-#else
-    return FALSE;
-#endif
-}
 
 static char *get_inst_name(void)
 {
@@ -666,24 +656,6 @@ static char *get_inv_tail(char *str)
     }
     lbuf[j] = '\0';
     return lbuf;
-}
-
-static void gen_inverters(SYM_TAB t)
-{
-    DS_CREATE(instance, 128);
-    if (t == NULL)
-        return;
-    gen_inverters(t->left);
-    if (t->attribute & SYM_INVERTER) {
-        if (t->ref_count >= 1) {
-            ds_clear(&instance);
-            ds_cat_printf(&instance, "%s %s %s d_inv_zero_delay",
-                get_inst_name(), t->name, get_inverter_output_name(t->name));
-            u_add_instance(ds_get_buf(&instance));
-        }
-    }
-    ds_free(&instance);
-    gen_inverters(t->right);
 }
 
 static void gen_models(void)
@@ -1172,19 +1144,15 @@ static void gen_gates(PTABLE gate_tab, SYM_TAB parser_symbols)
                 if (idnum == 1) { //output name
                     ds_cat_str(&out_name, lxr->lexer_buf);
                 } else { // input name
+                    char *tail = NULL;
                     in_count++;
-                    if (!inverters_needed()) {
-                        char *tail = NULL;
-                        tail = get_inv_tail(lxr->lexer_buf);
-                        if (tail && strlen(tail) > 0) {
-                            ds_cat_printf(&in_names, " ~%s", tail);
-                            if (prit) {
-                                printf(
-                                "change input name \"%s\" tail \"~%s\"\n",
-                                lxr->lexer_buf, tail);
-                            }
-                        } else {
-                            ds_cat_printf(&in_names, " %s", lxr->lexer_buf);
+                    tail = get_inv_tail(lxr->lexer_buf);
+                    if (tail && strlen(tail) > 0) {
+                        ds_cat_printf(&in_names, " ~%s", tail);
+                        if (prit) {
+                            printf(
+                            "change input name \"%s\" tail \"~%s\"\n",
+                            lxr->lexer_buf, tail);
                         }
                     } else {
                         ds_cat_printf(&in_names, " %s", lxr->lexer_buf);
@@ -1485,8 +1453,6 @@ static BOOL bparse(char *line, BOOL new_lexer)
     }
 
     ds_free(&d_curr_line);
-    if (inverters_needed())
-        gen_inverters(lx->lexer_sym_tab);
     gen_models();
     ds_free(&stmt);
     delete_lexer(lx);
@@ -1923,7 +1889,7 @@ static BOOL extract_delay(
     */
     BOOL in_delay = FALSE, ret_val = TRUE;
     int i;
-    BOOL prit = FALSE;
+    BOOL prit = PRINT_ALL;
     float typ_max_val = 0.0, typ_val = 0.0;
     char *units;
     DS_CREATE(dly, 64);
