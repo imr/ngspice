@@ -1416,6 +1416,9 @@ int Size_Not_Found, i;
             here->BSIM4v5vth0 += here->BSIM4v5delvto;
             here->BSIM4v5vfb = pParam->BSIM4v5vfb + model->BSIM4v5type * here->BSIM4v5delvto;
 
+            /* low field mobility multiplier */
+            here->BSIM4v5u0temp = pParam->BSIM4v5u0temp * here->BSIM4v5mulu0;
+
             /* Instance variables calculation  */
             T3 = model->BSIM4v5type * here->BSIM4v5vth0
                - here->BSIM4v5vfb - pParam->BSIM4v5phi;

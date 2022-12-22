@@ -52,6 +52,7 @@ IOP( "rbps", BSIM4v6_RBPS,  IF_REAL   , "Body resistance"),
 IOP( "rbpd", BSIM4v6_RBPD,  IF_REAL   , "Body resistance"),
 IOP( "delvto", BSIM4v6_DELVTO,  IF_REAL   , "Zero bias threshold voltage variation"),
 IOPR( "delvt0", BSIM4v6_DELVTO,  IF_REAL   , "Zero bias threshold voltage variation"),
+IOP( "mulu0", BSIM4v6_MULU0, IF_REAL, "Low field mobility multiplier"),
 IOP( "xgw",  BSIM4v6_XGW, IF_REAL, "Distance from gate contact center to device edge"),
 IOP( "ngcon", BSIM4v6_NGCON, IF_REAL, "Number of gate contacts"),
 

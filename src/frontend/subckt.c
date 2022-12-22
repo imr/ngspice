@@ -1960,7 +1960,11 @@ devmodtranslate(struct card *s, char *subname, wordlist * const orig_modnames)
             s->line = copy(bxx_buffer(&buffer));
             break;
 
+           /* 2 or 3 (temp) terminals for diode d, 2 or more for OSDI devices */
         case 'd':
+#ifdef OSDI
+        case 'n':
+#endif
             name = gettok(&t);  /* get refdes */
             bxx_printf(&buffer, "%s ", name);
             tfree(name);
