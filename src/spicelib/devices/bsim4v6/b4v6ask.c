@@ -80,16 +80,16 @@ BSIM4v6instance *here = (BSIM4v6instance*)inst;
         case BSIM4v6_SD:
             value->rValue = here->BSIM4v6sd ;
             return(OK);
-	case BSIM4v6_SCA:
+        case BSIM4v6_SCA:
             value->rValue = here->BSIM4v6sca ;
             return(OK);
-	case BSIM4v6_SCB:
+        case BSIM4v6_SCB:
             value->rValue = here->BSIM4v6scb ;
             return(OK);
-	case BSIM4v6_SCC:
+        case BSIM4v6_SCC:
             value->rValue = here->BSIM4v6scc ;
             return(OK);
-	case BSIM4v6_SC:
+        case BSIM4v6_SC:
             value->rValue = here->BSIM4v6sc ;
             return(OK);
 
@@ -110,6 +110,9 @@ BSIM4v6instance *here = (BSIM4v6instance*)inst;
             return(OK);
         case BSIM4v6_DELVTO:
             value->rValue = here->BSIM4v6delvto;
+            return(OK);
+        case BSIM4v6_MULU0:
+            value->rValue = here->BSIM4v6mulu0;
             return(OK);
         case BSIM4v6_XGW:
             value->rValue = here->BSIM4v6xgw;
