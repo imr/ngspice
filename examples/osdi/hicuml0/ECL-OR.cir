@@ -16,10 +16,12 @@ R3 GND Net-_Q3-Pad2_ 575
 Ra2 A2 VEE 510
 V3 In2 GND dc -1.75 pulse(-1.75 -0.9 0 1n 1n 2.5u 5u)
 Rt1 DT GND 1G
-.tran 0.1n 100u
+.tran 0.3n 100u
 .control
 pre_osdi osdi_libs/HICUML0-2.osdi
 run
+rusage
+set xbrushwidth=2
 plot a1 a2+2 in1+4 in2+6
 .endc
 .end
