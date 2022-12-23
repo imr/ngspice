@@ -38,7 +38,7 @@ cd release64_cyg
 if [ $? -ne 0 ]; then  echo "cd release64_cyg failed"; exit 1 ; fi
 echo
 # You may add  --enable-adms to the following command for adding adms generated devices 
-../configure --with-x=yes --with-readline=yes --disable-debug --enable-cider --enable-openmp  --enable-xspice --enable-shortcheck CFLAGS="-O2 -m64" LDFLAGS="-s -m64"
+../configure --with-x=yes --with-readline=yes --disable-debug --enable-cider --enable-openmp  --enable-xspice --enable-osdi --enable-shortcheck CFLAGS="-O2 -m64" LDFLAGS="-s -m64"
 #../configure --with-x=no --with-readline=yes --disable-debug --enable-xspice --enable-cider --enable-openmp
 
 if [ $? -ne 0 ]; then  echo "../configure failed"; exit 1 ; fi
