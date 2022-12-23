@@ -819,6 +819,10 @@
     (uuid fffeed8b-d6ec-4440-8197-319371f73fce)
   )
 
+  (text "ECL OR - NOR gate" (at 245.364 87.884 0)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid 323369ca-7b3f-476e-866f-1c1d7820c037)
+  )
   (text ".tran 0.1n 100u\n.control\npre_osdi test_osdi_win/HICUML0-2.osdi\nrun\nplot a1 a2+2 in1+4 in2+6\n.endc"
     (at 242.824 120.142 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))
