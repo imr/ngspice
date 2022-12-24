@@ -1100,7 +1100,7 @@ quick_return:
     return new_gen;
 }
 
-static void gen_gates(PTABLE gate_tab, SYM_TAB parser_symbols)
+static BOOL gen_gates(PTABLE gate_tab, SYM_TAB parser_symbols)
 {
     /* gen_gates is called with PTABLE gate_tab being the final
        PTABLE produced by optimize_gen_tab(,..) calls.
@@ -1122,11 +1122,11 @@ static void gen_gates(PTABLE gate_tab, SYM_TAB parser_symbols)
         ds_free(&in_names);
         ds_free(&gate_name);
         ds_free(&instance);
-        return;
+        return FALSE;
     }
     t = gate_tab->first;
     lxr = new_lexer(t->line);
-    while (t) {
+    while (t) { // while t loop
         ds_clear(&out_name);
         ds_clear(&in_names);
         ds_clear(&gate_name);
@@ -1160,25 +1160,25 @@ static void gen_gates(PTABLE gate_tab, SYM_TAB parser_symbols)
                 }
             } else if (val == '~') {
                 found_tilde = TRUE;
-                if (tok_count != 3) goto quick_return;
+                if (tok_count != 3) goto gen_error;
             } else if (val == '=') {
-                if (tok_count != 2) goto quick_return;
+                if (tok_count != 2) goto gen_error;
             } else if (lex_gate_op(val)) {
                 if (gate_op != 0) {
-                   if (val != gate_op) goto quick_return;
+                   if (val != gate_op) goto gen_error;
                 }
                 gate_op = val;
             } else {
-                goto quick_return;
+                goto gen_error;
             }
             val = lexer_scan(lxr);
         }  // end while val loop
 
         if (in_count == 1) { // buffer or inverter
-            if (gate_op != 0) goto quick_return;
+            if (gate_op != 0) goto gen_error;
             ds_cat_str(&gate_name, lex_gate_name('~', found_tilde));
         } else if (in_count >= 2) { // AND, OR. XOR and inverses
-            if (gate_op == 0) goto quick_return;
+            if (gate_op == 0) goto gen_error;
             if (use_tmodel_delays) {
                 /* This is the case when logicexp has a UGATE
                    timing model (not d0_gate) and no pindly.
@@ -1200,7 +1200,7 @@ static void gen_gates(PTABLE gate_tab, SYM_TAB parser_symbols)
                 ds_cat_str(&gate_name, lex_gate_name(gate_op, found_tilde));
             }
         } else {
-            goto quick_return;
+            goto gen_error;
         }
         ds_cat_printf(&instance, "%s ", get_inst_name());
         if (in_count == 1) {
@@ -1217,10 +1217,10 @@ static void gen_gates(PTABLE gate_tab, SYM_TAB parser_symbols)
                     ds_get_buf(&out_name));
                 ent = member_sym_tab(tail, parser_symbols);
                 if (!ent) {
-                    goto quick_return;
+                    goto gen_error;
                 }
                 if ((ent->attribute & SYM_INVERTER) == 0) {
-                    goto quick_return;
+                    goto gen_error;
                 }
                 ent->ref_count--;
             } else {
@@ -1241,15 +1241,22 @@ static void gen_gates(PTABLE gate_tab, SYM_TAB parser_symbols)
         if (ds_get_length(&instance) > 0) {
             u_add_instance(ds_get_buf(&instance));
         }
-    }
+    } // end while t loop
 
-quick_return:
     delete_lexer(lxr);
     ds_free(&out_name);
     ds_free(&in_names);
     ds_free(&gate_name);
     ds_free(&instance);
-    return;
+    return TRUE;
+
+gen_error:
+    delete_lexer(lxr);
+    ds_free(&out_name);
+    ds_free(&in_names);
+    ds_free(&gate_name);
+    ds_free(&instance);
+    return FALSE;
 }
 
 /*
@@ -1387,7 +1394,7 @@ static BOOL bparse(char *line, BOOL new_lexer)
     lookahead = lex_scan(); // "logic"
     lookahead = lex_scan(); // ':'
     lookahead = lex_scan();
-    while (lookahead != '\0') {
+    while (lookahead != '\0') { // while lookahead loop
         unsigned int last_count = 0, curr_count = 0;
         init_parse_tables();
         adepth = max_adepth = 0;
@@ -1411,7 +1418,10 @@ static BOOL bparse(char *line, BOOL new_lexer)
         }
         last_count = gen_tab->entry_count;
         if (last_count == 1) {
-            gen_gates(gen_tab, lx->lexer_sym_tab);
+            ret_val = gen_gates(gen_tab, lx->lexer_sym_tab);
+            if (!ret_val) {
+                printf("ERROR generating gates for logicexp\n");
+            }
         } else if (last_count > 1) {
             opt_tab1 = optimize_gen_tab(gen_tab);
             if (prit) {
@@ -1437,7 +1447,10 @@ static BOOL bparse(char *line, BOOL new_lexer)
                     curr_count = opt_tab2->entry_count;
                 }
                 if (opt_tab2) {
-                    gen_gates(opt_tab2, lx->lexer_sym_tab);
+                    ret_val = gen_gates(opt_tab2, lx->lexer_sym_tab);
+                    if (!ret_val) {
+                        printf("ERROR generating gates for logicexp\n");
+                    }
                     delete_parse_table(opt_tab2);
                 }
             } else {
@@ -1450,7 +1463,7 @@ static BOOL bparse(char *line, BOOL new_lexer)
         if (!ret_val) {
             break;
         }
-    }
+    } // end while lookahead loop
 
     ds_free(&d_curr_line);
     gen_models();
@@ -1579,6 +1592,10 @@ BOOL f_logicexp(char *line)
     ret_val = bparse(line, FALSE);
 
     current_lexer = NULL;
+    if (!ret_val) {
+        printf("ERROR parsing logicexp\n");
+        printf("ERROR in \"%s\"\n", line);
+    }
     return ret_val;
 
 error_return:
@@ -1720,7 +1737,7 @@ static void print_pindly_table(PINTABLE pint)
 
 static PLINE nth_pindly_entry(PINTABLE pint, int n)
 {
-    /* Entries ore from 0 to num_entries - 1 */
+    /* Entries are from 0 to num_entries - 1 */
     PLINE p, next;
     int count = 0;
     if (n < 0) return NULL;
@@ -2099,7 +2116,6 @@ static BOOL new_gen_output_models(LEXER lx)
     return TRUE;
 
 err_return:
-    printf("ERROR in new_gen_output_models\n");
     ds_free(&enable_name);
     ds_free(&last_enable);
     tfree(pline_arr);
@@ -2195,6 +2211,7 @@ BOOL f_pindly(char *line)
     }
 
     if (!new_gen_output_models(lxr)) {
+        printf("ERROR generating models for pindly\n");
         printf("ERROR in \"%s\"\n", line);
         goto error_return;;
     }
