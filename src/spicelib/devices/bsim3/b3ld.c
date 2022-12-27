@@ -479,6 +479,44 @@ for (; model != NULL; model = BSIM3nextModel(model))
                   }
               }
           }
+
+            /* trap-assisted tunneling current enhancement */
+            if ((model->BSIM3acmMod == 12) && (model->BSIM3bsim4diodeGiven))
+            {
+                double t1 = 0.0;
+                if (model->BSIM3jtss > 0.0)
+                {
+                    t1 = exp(-vbs/(model->BSIM3tNjts*model->BSIM3vtm)*(model->BSIM3vtss/(model->BSIM3vtss-vbs)))-1;
+                    here->BSIM3cbs -= here->BSIM3sourceArea * model->BSIM3tJtss * t1;
+                }
+                if (model->BSIM3jtssws > 0.0)
+                {
+                    t1 = exp(-vbs/(model->BSIM3tNjtssw*model->BSIM3vtm)*(model->BSIM3vtssws/(model->BSIM3vtssws-vbs)))-1;
+                    here->BSIM3cbs -= here->BSIM3sourcePerimeter * model->BSIM3tJtssws * t1;
+                }
+                if (model->BSIM3jtsswgs > 0.0)
+                {
+                    t1 = exp(-vbs/(model->BSIM3tNjtsswg*model->BSIM3vtm)*(model->BSIM3vtsswgs/(model->BSIM3vtsswgs-vbs)))-1;
+                    here->BSIM3cbs -= pParam->BSIM3weff * model->BSIM3tJtsswgs * t1;
+                }
+
+                if (model->BSIM3jtsd > 0.0)
+                {
+                    t1 = exp(-vbd/(model->BSIM3tNjtsd*model->BSIM3vtm)*(model->BSIM3vtsd/(model->BSIM3vtsd-vbd)))-1;
+                    here->BSIM3cbd -= here->BSIM3drainArea * model->BSIM3tJtsd * t1;
+                }
+                if (model->BSIM3jtsswd > 0.0)
+                {
+                    t1 = exp(-vbd/(model->BSIM3tNjtsswd*model->BSIM3vtm)*(model->BSIM3vtsswd/(model->BSIM3vtsswd-vbd)))-1;
+                    here->BSIM3cbd -= here->BSIM3drainPerimeter * model->BSIM3tJtsswd * t1;
+                }
+                if (model->BSIM3jtsswgd > 0.0)
+                {
+                    t1 = exp(-vbd/(model->BSIM3tNjtsswgd*model->BSIM3vtm)*(model->BSIM3vtsswgd/(model->BSIM3vtsswgd-vbd)))-1;
+                    here->BSIM3cbd -= pParam->BSIM3weff * model->BSIM3tJtsswgd * t1;
+                }
+            }
+
           /* End of diode DC model */
 
           if (vds >= 0.0)

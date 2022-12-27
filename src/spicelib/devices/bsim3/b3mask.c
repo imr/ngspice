@@ -1318,6 +1318,102 @@ IFvalue *value)
             value->rValue = model->BSIM3vbdrMax;
             return(OK);
 
+
+/* trap-assisted tunneling current enhancement */
+        case BSIM3_MOD_BSIM4DIODE:
+            value->iValue = model->BSIM3bsim4diode;
+            return(OK);
+        case BSIM3_MOD_JTSS:
+            value->rValue = model->BSIM3jtss;
+            return(OK);
+        case BSIM3_MOD_JTSD:
+            value->rValue = model->BSIM3jtsd;
+            return(OK);
+        case BSIM3_MOD_JTSSWS:
+            value->rValue = model->BSIM3jtssws;
+            return(OK);
+        case BSIM3_MOD_JTSSWD:
+            value->rValue = model->BSIM3jtsswd;
+            return(OK);
+        case BSIM3_MOD_JTSSWGS:
+            value->rValue = model->BSIM3jtsswgs;
+            return(OK);
+        case BSIM3_MOD_JTSSWGD:
+            value->rValue = model->BSIM3jtsswgd;
+            return(OK);
+
+        case BSIM3_MOD_NJTS:
+            value->rValue = model->BSIM3njts;
+            return(OK);
+        case BSIM3_MOD_NJTSSW:
+            value->rValue = model->BSIM3njtssw;
+            return(OK);
+        case BSIM3_MOD_NJTSSWG:
+            value->rValue = model->BSIM3njtsswg;
+            return(OK);
+        case BSIM3_MOD_NJTSD:
+            value->rValue = model->BSIM3njtsd;
+            return(OK);
+        case BSIM3_MOD_NJTSSWD:
+            value->rValue = model->BSIM3njtsswd;
+            return(OK);
+        case BSIM3_MOD_NJTSSWGD:
+            value->rValue = model->BSIM3njtsswgd;
+            return(OK);
+
+        case BSIM3_MOD_VTSS:
+            value->rValue = model->BSIM3vtss;
+            return(OK);
+        case BSIM3_MOD_VTSD:
+            value->rValue = model->BSIM3vtsd;
+            return(OK);
+        case BSIM3_MOD_VTSSWS:
+            value->rValue = model->BSIM3vtssws;
+            return(OK);
+        case BSIM3_MOD_VTSSWD:
+            value->rValue = model->BSIM3vtsswd;
+            return(OK);
+        case BSIM3_MOD_VTSSWGS:
+            value->rValue = model->BSIM3vtsswgs;
+            return(OK);
+        case BSIM3_MOD_VTSSWGD:
+            value->rValue = model->BSIM3vtsswgd;
+            return(OK);
+
+        case BSIM3_MOD_XTSS:
+            value->rValue = model->BSIM3xtss;
+            return(OK);
+        case BSIM3_MOD_XTSD:
+            value->rValue = model->BSIM3xtsd;
+            return(OK);
+        case BSIM3_MOD_XTSSWS:
+            value->rValue = model->BSIM3xtssws;
+            return(OK);
+        case BSIM3_MOD_XTSSWD:
+            value->rValue = model->BSIM3xtsswd;
+            return(OK);
+
+        case BSIM3_MOD_TNJTS:
+            value->rValue = model->BSIM3tnjts;
+            return(OK);
+        case BSIM3_MOD_TNJTSSW:
+            value->rValue = model->BSIM3tnjtssw;
+            return(OK);
+        case BSIM3_MOD_TNJTSSWG:
+            value->rValue = model->BSIM3tnjtsswg;
+            return(OK);
+        case BSIM3_MOD_TNJTSD:
+            value->rValue = model->BSIM3tnjtsd;
+            return(OK);
+        case BSIM3_MOD_TNJTSSWD:
+            value->rValue = model->BSIM3tnjtsswd;
+            return(OK);
+        case BSIM3_MOD_TNJTSSWGD:
+            value->rValue = model->BSIM3tnjtsswgd;
+            return(OK);
+
+
+
         default:
             return(E_BADPARM);
     }

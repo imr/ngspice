@@ -512,6 +512,43 @@ IOP("vgbr_max", BSIM3_MOD_VGBR_MAX, IF_REAL, "maximum voltage G-B branch"),
 IOP("vbsr_max", BSIM3_MOD_VBSR_MAX, IF_REAL, "maximum voltage B-S branch"),
 IOP("vbdr_max", BSIM3_MOD_VBDR_MAX, IF_REAL, "maximum voltage B-D branch"),
 
+/* trap-assisted tunneling current enhancement */
+IOP("bsim4diode", BSIM3_MOD_BSIM4DIODE, IF_INTEGER, "flag invoking trap-assisted diode model"),
+IOP("jtss",       BSIM3_MOD_JTSS,       IF_REAL, "Bottom trap-assisted saturation current density"),
+IOP("jtsd",       BSIM3_MOD_JTSD,       IF_REAL, "Bottom trap-assisted saturation current density"),
+IOP("jtssws",     BSIM3_MOD_JTSSWS,     IF_REAL, "STI sidewall trap-assisted saturation current density"),
+IOP("jtsswd",     BSIM3_MOD_JTSSWD,     IF_REAL, "STI sidewall trap-assisted saturation current density"),
+IOP("jtsswgs",    BSIM3_MOD_JTSSWGS,    IF_REAL, "Gate-edge sidewall trap-assisted saturation current density"),
+IOP("jtsswgd",    BSIM3_MOD_JTSSWGD,    IF_REAL, "Gate-edge sidewall trap-assisted saturation current density"),
+
+IOP("njts",       BSIM3_MOD_NJTS,       IF_REAL, "Non-ideality factor for JTSS and JTSD"),
+IOP("njtsd",      BSIM3_MOD_NJTSD,      IF_REAL, "Non-ideality factor for JTSD"),
+IOP("njtssw",     BSIM3_MOD_NJTSSW,     IF_REAL, "Non-ideality factor for JTSSWS and JTSSWD"),
+IOP("njtsswd",    BSIM3_MOD_NJTSSWD,    IF_REAL, "Non-ideality factor for JTSSWS"),
+IOP("njtsswg",    BSIM3_MOD_NJTSSWG,    IF_REAL, "Non-ideality factor for JTSSWGS"),
+IOP("njtsswgd",   BSIM3_MOD_NJTSSWGD,   IF_REAL, "Non-ideality factor for JTSSWGD"),
+
+IOP("vtss",       BSIM3_MOD_VTSS,       IF_REAL, "Bottom source junction trap-assisted current voltage dependent parameter"),
+IOP("vtsd",       BSIM3_MOD_VTSD,       IF_REAL, "Bottom drain junction trap-assisted current voltage dependent parameter"),
+IOP("vtssws",     BSIM3_MOD_VTSSWS,     IF_REAL, "Unit length trap-assisted current voltage dependent parameter for sidewall source junctio"),
+IOP("vtsswd",     BSIM3_MOD_VTSSWD,     IF_REAL, "Unit length trap-assisted current voltage dependent parameter for sidewall drain junction"),
+IOP("vtsswgs",    BSIM3_MOD_VTSSWGS,    IF_REAL, "Unit length trap-assisted current voltage dependent parameter for gate-edge sidewall source junction"),
+IOP("vtsswgd",    BSIM3_MOD_VTSSWGD,    IF_REAL, "Unit length trap-assisted current voltage dependent parameter for gate-edge sidewall drain junction"),
+
+IOP("xtss",       BSIM3_MOD_XTSS,       IF_REAL, "Power dependence of JTSS, JTSD on temperature"),
+IOP("xtsd",       BSIM3_MOD_XTSD,       IF_REAL, "Power dependence of JTSS, JTSD on temperature"),
+IOP("xtssws",     BSIM3_MOD_XTSSWS,     IF_REAL, "Power dependence of JTSSWS, JTSSWD on temperature"),
+IOP("xtsswd",     BSIM3_MOD_XTSSWD,     IF_REAL, "Power dependence of JTSSWS, JTSSWD on temperature"),
+IOP("xtsswgs",    BSIM3_MOD_XTSSWGS,    IF_REAL, "Power dependence of JTSSWGS, JTSSWGD on temperature"),
+IOP("xtsswgd",    BSIM3_MOD_XTSSWGD,    IF_REAL, "Power dependence of JTSSWGS, JTSSWGD on temperature"),
+
+IOP("tnjts",      BSIM3_MOD_TNJTS,      IF_REAL, "Temperature coefficient for NJTS"),
+IOP("tnjtssw",    BSIM3_MOD_TNJTSSW,    IF_REAL, "Temperature coefficient for NJTSD"),
+IOP("tnjtsswg",   BSIM3_MOD_TNJTSSWG,   IF_REAL, "Temperature coefficient for NJTSSW"),
+IOP("tnjtsd",     BSIM3_MOD_TNJTSD,     IF_REAL, "Temperature coefficient for NJTSSWD"),
+IOP("tnjtsswd",   BSIM3_MOD_TNJTSSWD,   IF_REAL, "Temperature coefficient for NJTSSWG"),
+IOP("tnjtsswgd",  BSIM3_MOD_TNJTSSWGD,  IF_REAL, "Temperature coefficient for NJTSSWGD"),
+
 IP( "nmos", BSIM3_MOD_NMOS,  IF_FLAG, "Flag to indicate NMOS"),
 IP( "pmos", BSIM3_MOD_PMOS,  IF_FLAG, "Flag to indicate PMOS"),
 };

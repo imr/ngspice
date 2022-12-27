@@ -919,6 +919,74 @@ BSIM3instance **InstArray;
         if (!model->BSIM3vbdrMaxGiven)
             model->BSIM3vbdrMax = 1e99;
 
+/* trap-assisted tunneling current enhancement */
+        if (!model->BSIM3bsim4diodeGiven)
+            model->BSIM3bsim4diode = 0;
+        if (!model->BSIM3jtssGiven)
+            model->BSIM3jtss = 0.0;
+        if (!model->BSIM3jtsdGiven)
+            model->BSIM3jtsd = model->BSIM3jtss;
+        if (!model->BSIM3jtsswsGiven)
+            model->BSIM3jtssws = 0.0;
+        if (!model->BSIM3jtsswdGiven)
+            model->BSIM3jtsswd = model->BSIM3jtssws;
+        if (!model->BSIM3jtsswgsGiven)
+            model->BSIM3jtsswgs = 0.0;
+        if (!model->BSIM3jtsswgdGiven)
+            model->BSIM3jtsswgd = model->BSIM3jtsswgs;
+
+        if (!model->BSIM3njtsGiven)
+            model->BSIM3njts = 20.0;
+        if (!model->BSIM3njtsswGiven)
+            model->BSIM3njtssw = 20.0;
+        if (!model->BSIM3njtsswgGiven)
+            model->BSIM3njtsswg = 20.0;
+        if (!model->BSIM3njtsdGiven)
+            model->BSIM3njtsd = model->BSIM3njts;
+        if (!model->BSIM3njtsswdGiven)
+            model->BSIM3njtsswd = model->BSIM3njtssw;
+        if (!model->BSIM3njtsswgdGiven)
+            model->BSIM3njtsswgd = model->BSIM3njtsswg;
+
+        if (!model->BSIM3vtssGiven)
+            model->BSIM3vtss = 10.0;
+        if (!model->BSIM3vtsdGiven)
+            model->BSIM3vtsd = model->BSIM3vtss;
+        if (!model->BSIM3vtsswsGiven)
+            model->BSIM3vtssws = 10.0;
+        if (!model->BSIM3vtsswdGiven)
+            model->BSIM3vtsswd = model->BSIM3vtssws;
+        if (!model->BSIM3vtsswgsGiven)
+            model->BSIM3vtsswgs = 10.0;
+        if (!model->BSIM3vtsswgdGiven)
+            model->BSIM3vtsswgd = model->BSIM3vtsswgs;
+
+        if (!model->BSIM3xtssGiven)
+            model->BSIM3xtss = 0.02;
+        if (!model->BSIM3xtsdGiven)
+            model->BSIM3xtsd = 0.02;
+        if (!model->BSIM3xtsswsGiven)
+            model->BSIM3xtssws = 0.02;
+        if (!model->BSIM3xtsswdGiven)
+            model->BSIM3xtsswd = 0.02;
+        if (!model->BSIM3xtsswgsGiven)
+            model->BSIM3xtsswgs = 0.02;
+        if (!model->BSIM3xtsswgdGiven)
+            model->BSIM3xtsswgd = 0.02;
+
+        if (!model->BSIM3tnjtsGiven)
+            model->BSIM3tnjts = 0.0;
+        if (!model->BSIM3tnjtsswGiven)
+            model->BSIM3tnjtssw = 0.0;
+        if (!model->BSIM3tnjtsswgGiven)
+            model->BSIM3tnjtsswg = 0.0;
+        if (!model->BSIM3tnjtsdGiven)
+            model->BSIM3tnjtsd = 0.0;
+        if (!model->BSIM3tnjtsswdGiven)
+            model->BSIM3tnjtsswd = 0.0;
+        if (!model->BSIM3tnjtsswgdGiven)
+            model->BSIM3tnjtsswgd = 0.0;
+
         /* loop through all the instances of the model */
         for (here = BSIM3instances(model); here != NULL ;
              here=BSIM3nextInstance(here))
