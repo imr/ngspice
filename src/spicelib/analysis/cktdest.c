@@ -90,6 +90,13 @@ CKTdestroy(CKTcircuit *ckt)
     FREE(ckt->CKTirhsOld);
     FREE(ckt->CKTirhsSpare);
 
+#ifdef PREDICTOR
+    if(ckt->CKTpred) FREE(ckt->CKTpred);
+    for( i=0;i<8;i++) {
+        if(ckt->CKTsols[i]) FREE(ckt->CKTsols[i]);
+    }
+#endif
+
     FREE(ckt->CKTstat->STATdevNum);
     FREE(ckt->CKTstat);
     FREE(ckt->CKThead);
