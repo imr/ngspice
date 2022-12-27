@@ -606,9 +606,9 @@ static void ptable_print(PTABLE pt)
 static char *get_inst_name(void);
 static char *get_inverter_output_name(char *input);
 static void aerror(char *s);
-static void amatch(int t);
-static void bexpr(void);
-static void bfactor(void);
+static BOOL amatch(int t);
+static BOOL bexpr(void);
+static BOOL bfactor(void);
 static BOOL bparse(char *line, BOOL new_lexer);
 
 static int lookahead = 0;
@@ -617,6 +617,13 @@ static int max_adepth = 0;
 static DSTRING d_curr_line;
 static int number_of_instances = 0;
 static BOOL use_tmodel_delays = FALSE;
+
+static void cleanup_parser(void)
+{
+    delete_lexer(parse_lexer);
+    parse_lexer = NULL;
+    delete_parse_gen_tables();
+}
 
 static char *get_inst_name(void)
 {
@@ -714,7 +721,7 @@ static void aerror(char *s)
 {
     LEXER lx = parse_lexer;
     printf("%s [%s]\n", s, lx->lexer_line + lx->lexer_pos);
-    exit(1);
+    cleanup_parser();
 }
 
 char *get_temp_name(void)
@@ -726,19 +733,28 @@ char *get_temp_name(void)
     return name;
 }
 
-static void amatch(int t)
+static BOOL amatch(int t)
 {
     LEXER lx = parse_lexer;
     if (lookahead == t) {
         lookahead = lex_scan();
     } else {
-        printf("t = '%c' [%d] lookahead = '%c' [%d] lexer_buf %s\n",
+        printf("expect = '%c' [%d] lookahead = '%c' [%d] lexer_buf %s\n",
             t, t, lookahead, lookahead, lx->lexer_buf);
         aerror("amatch: syntax error");
+        return FALSE;
     }
+    return TRUE;
 }
 
-static void bfactor(void)
+#define AMATCH_BFACTOR(n) \
+{ \
+    if (!amatch((n))) { \
+        return FALSE; \
+    } \
+}
+
+static BOOL bfactor(void)
 {
     /* factor is : ['~'] rest
        where rest is: input_name_id | '(' expr ')' | error
@@ -789,7 +805,10 @@ static void bfactor(void)
         ds_clear(&d_curr_line);
 
         lookahead = lex_scan();
-        bexpr();
+        if (!bexpr()) {
+            cleanup_parser();
+            return FALSE;
+        }
 
         (void) ptab_add_line(ds_get_buf(&d_curr_line), TRUE);
         ds_clear(&d_curr_line);
@@ -799,44 +818,62 @@ static void bfactor(void)
         (void) ptab_add_line(ds_get_buf(&d_curr_line), TRUE);
         ds_clear(&d_curr_line);
 
-        amatch(')');
         ds_free(&tmpnam);
+        AMATCH_BFACTOR(')');
 
     } else {
         aerror("bfactor: syntax error");
+        return FALSE;
     }
     adepth--;
+    return TRUE;
 }
 
-static void bexpr(void)
+static BOOL bexpr(void)
 {
     /* expr is: factor { gate_op factor }+
        where {}+ means 0 or more times.
     */
-    bfactor();
+    if (!bfactor()) {
+        cleanup_parser();
+        return FALSE;
+    }
 
     while (lex_gate_op(lookahead)) {
         ds_cat_printf(&d_curr_line, "%c ", lookahead);
 
         lookahead = lex_scan();
-        bfactor();
+        if (!bfactor()) {
+            cleanup_parser();
+            return FALSE;
+        }
     }
+    return TRUE;
 }
 
-static void bstmt(void)
+#define AMATCH_BSTMT(n) \
+{ \
+    if (!amatch((n))) { \
+        ds_free(&tname); ds_free(&assign); \
+        return FALSE; \
+    } \
+}
+
+static BOOL bstmt(void)
 {
     /* A stmt is: output_name_id = '{' expr '}' */
     BOOL verbose = PRINT_ALL;
     int end_pos = 0, start_pos = 0;
     SYM_TAB entry = NULL;
-    LEXER lx = parse_lexer;
     DS_CREATE(tname, 64);
     DS_CREATE(assign, LEX_BUF_SZ);
 
     if (lookahead == LEX_ID) {
-        entry = add_sym_tab_entry(lx->lexer_buf, SYM_ID, &lx->lexer_sym_tab);
+        entry = add_sym_tab_entry(parse_lexer->lexer_buf, SYM_ID,
+            &parse_lexer->lexer_sym_tab);
     } else {
         aerror("bstmt: syntax error");
+        return FALSE;
     }
 
     adepth++;
@@ -844,18 +881,18 @@ static void bstmt(void)
         max_adepth = adepth;
 
     if (verbose) {
-        start_pos = lx->lexer_pos;
-        printf("* %s", lx->lexer_buf);
+        start_pos = parse_lexer->lexer_pos;
+        printf("* %s", parse_lexer->lexer_buf);
     }
 
-    amatch(LEX_ID);
-    amatch('=');
+    AMATCH_BSTMT(LEX_ID);
+    AMATCH_BSTMT('=');
 
     ds_clear(&assign);
     ds_cat_printf(&assign, "%s =", entry->name);
     (void) ptab_add_line(ds_get_buf(&assign), TRUE);
 
-    amatch('{');
+    AMATCH_BSTMT('{');
 
     ds_clear(&tname);
     ds_cat_str(&tname, get_temp_name());
@@ -863,7 +900,12 @@ static void bstmt(void)
     (void) ptab_add_line(ds_get_buf(&d_curr_line), TRUE);
     ds_clear(&d_curr_line);
 
-    bexpr();
+    if (!bexpr()) {
+        cleanup_parser();
+        ds_free(&assign);
+        ds_free(&tname);
+        return FALSE;
+    }
 
     if (ds_get_length(&d_curr_line) > 0) {
         (void) ptab_add_line(ds_get_buf(&d_curr_line), TRUE);
@@ -875,19 +917,19 @@ static void bstmt(void)
 
     if (verbose) {
         DS_CREATE(stmt_str, 128);
-        end_pos = lx->lexer_pos;
-        ds_cat_mem(&stmt_str, &lx->lexer_line[start_pos],
+        end_pos = parse_lexer->lexer_pos;
+        ds_cat_mem(&stmt_str, &parse_lexer->lexer_line[start_pos],
             (size_t) (end_pos - start_pos));
         printf("%s\n", ds_get_buf(&stmt_str));
         ds_free(&stmt_str);
     }
 
-    amatch('}');
+    AMATCH_BSTMT('}');
 
     ds_free(&assign);
     ds_free(&tname);
     adepth--;
-    return;
+    return TRUE;
 }
 
 static PTABLE optimize_gen_tab(PTABLE pt)
@@ -1374,7 +1416,6 @@ static BOOL bparse(char *line, BOOL new_lexer)
 {
     int stmt_num = 0;
     BOOL ret_val = TRUE, prit = PRINT_ALL;
-    LEXER lx;
     PTABLE opt_tab1 = NULL, opt_tab2 = NULL;
     DS_CREATE(stmt, LEX_BUF_SZ);
     char *seed_buf;
@@ -1389,7 +1430,6 @@ static BOOL bparse(char *line, BOOL new_lexer)
     if (new_lexer)
         lex_init(line);
     if (!parse_lexer) return FALSE;
-    lx = parse_lexer;
     lookahead = lex_set_start("logic:");
     lookahead = lex_scan(); // "logic"
     lookahead = lex_scan(); // ':'
@@ -1400,8 +1440,12 @@ static BOOL bparse(char *line, BOOL new_lexer)
         adepth = max_adepth = 0;
         stmt_num++;
         ds_clear(&stmt);
-        ds_cat_str(&stmt, lx->lexer_buf);
-        bstmt();
+        ds_cat_str(&stmt, parse_lexer->lexer_buf);
+        if (!bstmt()) {
+            cleanup_parser();
+            ret_val= FALSE;
+            break;
+        }
 
         if (prit) {
             printf("START parse_tab\n");
@@ -1418,7 +1462,7 @@ static BOOL bparse(char *line, BOOL new_lexer)
         }
         last_count = gen_tab->entry_count;
         if (last_count == 1) {
-            ret_val = gen_gates(gen_tab, lx->lexer_sym_tab);
+            ret_val = gen_gates(gen_tab, parse_lexer->lexer_sym_tab);
             if (!ret_val) {
                 printf("ERROR generating gates for logicexp\n");
             }
@@ -1447,9 +1491,10 @@ static BOOL bparse(char *line, BOOL new_lexer)
                     curr_count = opt_tab2->entry_count;
                 }
                 if (opt_tab2) {
-                    ret_val = gen_gates(opt_tab2, lx->lexer_sym_tab);
+                    ret_val = gen_gates(opt_tab2, parse_lexer->lexer_sym_tab);
                     if (!ret_val) {
-                        printf("ERROR generating gates for logicexp\n");
+                        printf(
+                            "ERROR generating gates for logicexp\n");
                     }
                     delete_parse_table(opt_tab2);
                 }
@@ -1466,9 +1511,10 @@ static BOOL bparse(char *line, BOOL new_lexer)
     } // end while lookahead loop
 
     ds_free(&d_curr_line);
-    gen_models();
+    if (ret_val)
+        gen_models();
     ds_free(&stmt);
-    delete_lexer(lx);
+    cleanup_parser();
     return ret_val;
 }
 /* End of logicexp parser */
@@ -1487,7 +1533,8 @@ static BOOL expect_token(
 {
     if (tok != expected_tok) {
         if (msg) {
-            printf("ERROR expect_token failed tok %d expected_tok %d loc %d\n",
+            printf(
+                "ERROR expect_token failed tok %d expected_tok %d loc %d\n",
                 tok, expected_tok, loc);
         }
         return FALSE;
@@ -1595,6 +1642,7 @@ BOOL f_logicexp(char *line)
     if (!ret_val) {
         printf("ERROR parsing logicexp\n");
         printf("ERROR in \"%s\"\n", line);
+        cleanup_parser();
     }
     return ret_val;
 
