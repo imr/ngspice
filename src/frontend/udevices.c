@@ -3612,16 +3612,25 @@ BOOL u_process_instance(char *nline)
     char *p1, *itype, *xspice;
     struct instance_hdr *hdr = create_instance_header(nline);
     Xlatorp xp = NULL;
+    BOOL behav_ret = TRUE;
 
     itype = hdr->instance_type;
     xspice = find_xspice_for_delay(itype);
     if (!xspice) {
         if (eq(itype, "logicexp")) {
             delete_instance_hdr(hdr);
-            return f_logicexp(nline);
+            behav_ret = f_logicexp(nline);
+            if (!behav_ret && current_subckt && ps_udevice_msgs >= 1) {
+                printf("ERROR in %s\n", current_subckt);
+            }
+            return behav_ret;
         } else if (eq(itype, "pindly")) {
             delete_instance_hdr(hdr);
-            return f_pindly(nline);
+            behav_ret = f_pindly(nline);
+            if (!behav_ret && current_subckt && ps_udevice_msgs >= 1) {
+                printf("ERROR in %s\n", current_subckt);
+            }
+            return behav_ret;
         } else if (eq(itype, "constraint")) {
             delete_instance_hdr(hdr);
             return TRUE;
