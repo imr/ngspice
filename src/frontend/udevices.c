@@ -292,6 +292,10 @@ static void print_name_list(NAME_ENTRY nelist)
 */
 static int ps_port_directions = 0;  // If non-zero list subckt port directions
 static int ps_udevice_msgs = 0;  // Controls the verbosity of U* warnings
+/*
+  If ps_udevice_exit is non-zero then exit when u_process_instance fails
+*/
+static int ps_udevice_exit = 0;
 static NAME_ENTRY new_names_list = NULL;
 static NAME_ENTRY input_names_list = NULL;
 static NAME_ENTRY output_names_list = NULL;
@@ -818,6 +822,12 @@ void initialize_udevice(char *subckt_line)
     */
     if (!cp_getvar("ps_udevice_msgs", CP_NUM, &ps_udevice_msgs, 0)) {
         ps_udevice_msgs = 0;
+    }
+    /*
+      If ps_udevice_exit is non-zero then exit when u_process_instance fails
+    */
+    if (!cp_getvar("ps_udevice_exit", CP_NUM, &ps_udevice_exit, 0)) {
+        ps_udevice_exit = 0;
     }
     if (subckt_line && strncmp(subckt_line, ".subckt", 7) == 0) {
         add_all_port_names(subckt_line);
@@ -3623,12 +3633,20 @@ BOOL u_process_instance(char *nline)
             if (!behav_ret && current_subckt && ps_udevice_msgs >= 1) {
                 printf("ERROR in %s\n", current_subckt);
             }
+            if (!behav_ret && ps_udevice_exit) {
+                fprintf(stderr, "ERROR bad syntax in logicexp\n");
+                controlled_exit(EXIT_FAILURE);
+            }
             return behav_ret;
         } else if (eq(itype, "pindly")) {
             delete_instance_hdr(hdr);
             behav_ret = f_pindly(nline);
             if (!behav_ret && current_subckt && ps_udevice_msgs >= 1) {
                 printf("ERROR in %s\n", current_subckt);
+            }
+            if (!behav_ret && ps_udevice_exit) {
+                fprintf(stderr, "ERROR bad syntax in pindly\n");
+                controlled_exit(EXIT_FAILURE);
             }
             return behav_ret;
         } else if (eq(itype, "constraint")) {
@@ -3657,6 +3675,10 @@ BOOL u_process_instance(char *nline)
         xp = translate_pull(hdr, p1);
     } else {
         delete_instance_hdr(hdr);
+        if (ps_udevice_exit) {
+            fprintf(stderr, "ERROR unknown U* device\n");
+            controlled_exit(EXIT_FAILURE);
+        }
         return FALSE;
     }
     if (xp) {
@@ -3664,6 +3686,10 @@ BOOL u_process_instance(char *nline)
         delete_xlator(xp);
         return TRUE;
     } else {
+        if (ps_udevice_exit) {
+            fprintf(stderr, "ERROR U* device syntax error\n");
+            controlled_exit(EXIT_FAILURE);
+        }
         return FALSE;
     }
 }
