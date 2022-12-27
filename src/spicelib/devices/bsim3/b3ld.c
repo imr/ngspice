@@ -101,7 +101,7 @@ double qgate=0.0, qbulk=0.0, qdrn=0.0, qsrc, qinoi, cqgate, cqbulk, cqdrn;
 double Vds, Vgs, Vbs, Gmbs, FwdSum, RevSum;
 double Vgs_eff, Vfb;
 double Phis, dPhis_dVb, sqrtPhis, dsqrtPhis_dVb, Vth, dVth_dVb, dVth_dVd;
-double Vgst, dVgst_dVg, dVgst_dVb, dVgs_eff_dVg, Nvtm;
+double Vgst, dVgs_eff_dVg, Nvtm;
 double Vtm;
 double n, dn_dVb, dn_dVd, voffcv, noff, dnoff_dVd, dnoff_dVb;
 double ExpArg, V0, CoxWLcen, QovCox, LINK;
@@ -1411,8 +1411,6 @@ for (; model != NULL; model = BSIM3nextModel(model))
               Vth = Vfb + pParam->BSIM3phi + pParam->BSIM3k1ox * sqrtPhis;
               Vgst = Vgs_eff - Vth;
               dVth_dVb = pParam->BSIM3k1ox * dsqrtPhis_dVb;
-              dVgst_dVb = -dVth_dVb;
-              dVgst_dVg = dVgs_eff_dVg;
 
               CoxWL = model->BSIM3cox * pParam->BSIM3weffCV
                     * pParam->BSIM3leffCV;
