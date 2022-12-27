@@ -31,6 +31,18 @@
 #define DELTA_2 0.02
 #define DELTA_3 0.02
 #define DELTA_4 0.02
+#define DEXP(A,B,C) {                                                         \
+        if (A > EXP_THRESHOLD) {                                              \
+            B = MAX_EXP*(1.0+(A)-EXP_THRESHOLD);                              \
+            C = MAX_EXP;                                                      \
+        } else if (A < -EXP_THRESHOLD)  {                                     \
+            B = MIN_EXP;                                                      \
+            C = 0;                                                            \
+        } else   {                                                            \
+            B = exp(A);                                                       \
+            C = B;                                                            \
+        }                                                                     \
+    }
 
 #ifdef USE_OMP
 int BSIM3LoadOMP(BSIM3instance *here, CKTcircuit *ckt);
@@ -480,42 +492,126 @@ for (; model != NULL; model = BSIM3nextModel(model))
               }
           }
 
-            /* trap-assisted tunneling current enhancement */
-            if ((model->BSIM3acmMod == 12) && (model->BSIM3bsim4diodeGiven))
-            {
-                double t1 = 0.0;
-                if (model->BSIM3jtss > 0.0)
-                {
-                    t1 = exp(-vbs/(model->BSIM3tNjts*model->BSIM3vtm)*(model->BSIM3vtss/(model->BSIM3vtss-vbs)))-1;
-                    here->BSIM3cbs -= here->BSIM3sourceArea * model->BSIM3tJtss * t1;
-                }
-                if (model->BSIM3jtssws > 0.0)
-                {
-                    t1 = exp(-vbs/(model->BSIM3tNjtssw*model->BSIM3vtm)*(model->BSIM3vtssws/(model->BSIM3vtssws-vbs)))-1;
-                    here->BSIM3cbs -= here->BSIM3sourcePerimeter * model->BSIM3tJtssws * t1;
-                }
-                if (model->BSIM3jtsswgs > 0.0)
-                {
-                    t1 = exp(-vbs/(model->BSIM3tNjtsswg*model->BSIM3vtm)*(model->BSIM3vtsswgs/(model->BSIM3vtsswgs-vbs)))-1;
-                    here->BSIM3cbs -= pParam->BSIM3weff * model->BSIM3tJtsswgs * t1;
-                }
+        /* trap-assisted tunneling current enhancement */
+        if ((model->BSIM3acmMod == 12) && (model->BSIM3bsim4diodeGiven))
+        {
+            double dT4_dVb, dT5_dVb, dT6_dVb;
+            double Nvtmrss = model->BSIM3vtm * model->BSIM3njtstemp;
+            double Nvtmrsd = model->BSIM3vtm * model->BSIM3njtsdtemp;
+            double Nvtmrssws = model->BSIM3vtm * model->BSIM3njtsswtemp;
+            double Nvtmrsswd = model->BSIM3vtm * model->BSIM3njtsswdtemp;
+            double Nvtmrsswgs = model->BSIM3vtm * model->BSIM3njtsswgtemp;
+            double Nvtmrsswgd = model->BSIM3vtm * model->BSIM3njtsswgdtemp;
 
-                if (model->BSIM3jtsd > 0.0)
-                {
-                    t1 = exp(-vbd/(model->BSIM3tNjtsd*model->BSIM3vtm)*(model->BSIM3vtsd/(model->BSIM3vtsd-vbd)))-1;
-                    here->BSIM3cbd -= here->BSIM3drainArea * model->BSIM3tJtsd * t1;
+            if (model->BSIM3jtss > 0.0)
+            {
+                if ((model->BSIM3vtss - vbs) < (model->BSIM3vtss * 1e-3))
+                {   T9 = 1.0e3;
+                    T0 = - vbs / Nvtmrss * T9;
+                    DEXP(T0, T1, T10);
+                    dT1_dVb = T10 / Nvtmrss * T9;
+                } else {
+                    T9 = 1.0 / (model->BSIM3vtss - vbs);
+                    T0 = -vbs / Nvtmrss * model->BSIM3vtss * T9;
+                    dT0_dVb = model->BSIM3vtss / Nvtmrss * (T9 + vbs * T9 * T9) ;
+                    DEXP(T0, T1, T10);
+                    dT1_dVb = T10 * dT0_dVb;
                 }
-                if (model->BSIM3jtsswd > 0.0)
-                {
-                    t1 = exp(-vbd/(model->BSIM3tNjtsswd*model->BSIM3vtm)*(model->BSIM3vtsswd/(model->BSIM3vtsswd-vbd)))-1;
-                    here->BSIM3cbd -= here->BSIM3drainPerimeter * model->BSIM3tJtsswd * t1;
-                }
-                if (model->BSIM3jtsswgd > 0.0)
-                {
-                    t1 = exp(-vbd/(model->BSIM3tNjtsswgd*model->BSIM3vtm)*(model->BSIM3vtsswgd/(model->BSIM3vtsswgd-vbd)))-1;
-                    here->BSIM3cbd -= pParam->BSIM3weff * model->BSIM3tJtsswgd * t1;
-                }
+                here->BSIM3gbs += here->BSIM3sourceArea * model->BSIM3jtsstemp * dT1_dVb;
+                here->BSIM3cbs -= here->BSIM3sourceArea * model->BSIM3jtsstemp * (T1 - 1.0);
             }
+
+            if (model->BSIM3jtssws > 0.0)
+            {
+                if ((model->BSIM3vtsd - vbd) < (model->BSIM3vtsd * 1e-3) )
+                {   T9 = 1.0e3;
+                    T0 = -vbd / Nvtmrsd * T9;
+                    DEXP(T0, T2, T10);
+                    dT2_dVb = T10 / Nvtmrsd * T9;
+                } else {
+                    T9 = 1.0 / (model->BSIM3vtsd - vbd);
+                    T0 = -vbd / Nvtmrsd * model->BSIM3vtsd * T9;
+                    dT0_dVb = model->BSIM3vtsd / Nvtmrsd * (T9 + vbd * T9 * T9) ;
+                    DEXP(T0, T2, T10);
+                    dT2_dVb = T10 * dT0_dVb;
+                }
+                here->BSIM3gbs += here->BSIM3sourcePerimeter * model->BSIM3jtsswstemp * dT2_dVb;
+                here->BSIM3cbs -= here->BSIM3sourcePerimeter * model->BSIM3jtsswstemp * (T2 - 1.0);
+            }
+
+            if (model->BSIM3jtsswgs > 0.0)
+            {
+                if ((model->BSIM3vtssws - vbs) < (model->BSIM3vtssws * 1e-3) )
+                {   T9 = 1.0e3;
+                    T0 = -vbs / Nvtmrssws * T9;
+                    DEXP(T0, T3, T10);
+                    dT3_dVb = T10 / Nvtmrssws * T9;
+                } else {
+                    T9 = 1.0 / (model->BSIM3vtssws - vbs);
+                    T0 = -vbs / Nvtmrssws * model->BSIM3vtssws * T9;
+                    dT0_dVb = model->BSIM3vtssws / Nvtmrssws * (T9 + vbs * T9 * T9) ;
+                    DEXP(T0, T3, T10);
+                    dT3_dVb = T10 * dT0_dVb;
+                }
+                here->BSIM3gbs += pParam->BSIM3weff * model->BSIM3jtsswgstemp * dT3_dVb; 
+                here->BSIM3cbs -= pParam->BSIM3weff * model->BSIM3jtsswgstemp * (T3 - 1.0); 
+            }
+
+            if (model->BSIM3jtsd > 0.0)
+            {
+                if ((model->BSIM3vtsswd - vbd) < (model->BSIM3vtsswd * 1e-3) )
+                {   T9 = 1.0e3;
+                    T0 = -vbd / Nvtmrsswd * T9;
+                    DEXP(T0, T4, T10);
+                    dT4_dVb = T10 / Nvtmrsswd * T9;
+                } else {
+                    T9 = 1.0 / (model->BSIM3vtsswd - vbd);
+                    T0 = -vbd / Nvtmrsswd * model->BSIM3vtsswd * T9;
+                    dT0_dVb = model->BSIM3vtsswd / Nvtmrsswd * (T9 + vbd * T9 * T9) ;
+                    DEXP(T0, T4, T10);
+                    dT4_dVb = T10 * dT0_dVb;
+                }
+                here->BSIM3gbd += here->BSIM3drainArea * model->BSIM3jtsdtemp * dT4_dVb;
+                here->BSIM3cbd -= here->BSIM3drainArea * model->BSIM3jtsdtemp * (T4 - 1.0); 
+            }
+
+            if (model->BSIM3jtsswd > 0.0)
+            {
+                if ((model->BSIM3vtsswgs - vbs) < (model->BSIM3vtsswgs * 1e-3) )
+                {   T9 = 1.0e3;
+                    T0 = -vbs / Nvtmrsswgs * T9;
+                    DEXP(T0, T5, T10);
+                    dT5_dVb = T10 / Nvtmrsswgs * T9;
+                } else {
+                    T9 = 1.0 / (model->BSIM3vtsswgs - vbs);
+                    T0 = -vbs / Nvtmrsswgs * model->BSIM3vtsswgs * T9;
+                    dT0_dVb = model->BSIM3vtsswgs / Nvtmrsswgs * (T9 + vbs * T9 * T9) ;
+                    DEXP(T0, T5, T10);
+                    dT5_dVb = T10 * dT0_dVb;
+                }
+                here->BSIM3gbd += here->BSIM3drainPerimeter * model->BSIM3jtsswdtemp * dT5_dVb;
+                here->BSIM3cbd -= here->BSIM3drainPerimeter * model->BSIM3jtsswdtemp * (T5 - 1.0);
+            }
+
+            if (model->BSIM3jtsswgd > 0.0)
+            {
+                if ((model->BSIM3vtsswgd - vbd) < (model->BSIM3vtsswgd * 1e-3) )
+                {   T9 = 1.0e3;
+                    T0 = -vbd / Nvtmrsswgd * T9;
+                    DEXP(T0, T6, T10);
+                    dT6_dVb = T10 / Nvtmrsswgd * T9;
+                } else {
+                    T9 = 1.0 / (model->BSIM3vtsswgd - vbd);
+                    T0 = -vbd / Nvtmrsswgd * model->BSIM3vtsswgd * T9;
+                    dT0_dVb = model->BSIM3vtsswgd / Nvtmrsswgd * (T9 + vbd * T9 * T9) ;
+                    DEXP(T0, T6, T10);
+                    dT6_dVb = T10 * dT0_dVb;
+                }
+                here->BSIM3gbd += pParam->BSIM3weff * model->BSIM3jtsswgdtemp * dT6_dVb; 
+                here->BSIM3cbd -= pParam->BSIM3weff * model->BSIM3jtsswgdtemp * (T6 - 1.0); 
+            }
+
+        }
 
           /* End of diode DC model */
 

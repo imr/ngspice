@@ -1861,6 +1861,15 @@ GENmodel *inMod)
             mod->BSIM3xtsswd = value->rValue;
             mod->BSIM3xtsswdGiven = TRUE;
             break;
+        case BSIM3_MOD_XTSSWGS:
+            mod->BSIM3xtsswgs = value->rValue;
+            mod->BSIM3xtsswgsGiven = TRUE;
+            break;
+        case BSIM3_MOD_XTSSWGD:
+            mod->BSIM3xtsswgd = value->rValue;
+            mod->BSIM3xtsswgdGiven = TRUE;
+            break;
+
         case BSIM3_MOD_TNJTS:
             mod->BSIM3tnjts = value->rValue;
             mod->BSIM3tnjtsGiven = TRUE;

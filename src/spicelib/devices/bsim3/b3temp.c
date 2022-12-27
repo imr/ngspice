@@ -28,6 +28,15 @@
 #define MIN_EXP 1.713908431e-15
 #define EXP_THRESHOLD 34.0
 #define Charge_q 1.60219e-19
+#define DEXP(A,B) {                                                        \
+        if (A > EXP_THRESHOLD) {                                           \
+            B = MAX_EXP*(1.0+(A)-EXP_THRESHOLD);                           \
+        } else if (A < -EXP_THRESHOLD)  {                                  \
+            B = MIN_EXP;                                                   \
+        } else   {                                                         \
+            B = exp(A);                                                    \
+        }                                                                  \
+    }
 
 /* ARGSUSED */
 int
@@ -38,7 +47,7 @@ CKTcircuit *ckt)
 BSIM3model *model = (BSIM3model*) inModel;
 BSIM3instance *here;
 struct bsim3SizeDependParam *pSizeDependParamKnot, *pLastKnot, *pParam=NULL;
-double tmp, tmp1, tmp2, tmp3, Eg, Eg0, ni, T0, T1, T2, T3, T4, T5, Ldrn, Wdrn;
+double tmp, tmp1, tmp2, tmp3, Eg, Eg0, ni, T0, T1, T2, T3, T4, T5, T6, T7, T9, Ldrn, Wdrn;
 double delTemp, Temp, TRatio, Inv_L, Inv_W, Inv_LW, Vtm0, Tnom;
 double Nvtm, SourceSatCurrent, DrainSatCurrent;
 int Size_Not_Found, error;
@@ -151,35 +160,33 @@ int Size_Not_Found, error;
         /* trap-assisted tunneling current enhancement */
         if ((model->BSIM3acmMod == 12) && (model->BSIM3bsim4diodeGiven))
         {
-            model->BSIM3tJtss = model->BSIM3jtss
-                                  * exp(model->BSIM3xtss * Eg0 / ((model->BSIM3vtm * TRatio) - 1));
+            T0 = (TRatio - 1.0);
+            model->BSIM3njtstemp = model->BSIM3njts * (1.0 + model->BSIM3tnjts * T0);
+            model->BSIM3njtsdtemp = model->BSIM3njtsd * (1.0 + model->BSIM3tnjtsd * T0);
+            model->BSIM3njtsswtemp = model->BSIM3njtssw * (1.0 + model->BSIM3tnjtssw * T0);
+            model->BSIM3njtsswdtemp = model->BSIM3njtsswd * (1.0 + model->BSIM3tnjtsswd * T0);
+            model->BSIM3njtsswgtemp = model->BSIM3njtsswg * (1.0 + model->BSIM3tnjtsswg * T0);
+            model->BSIM3njtsswgdtemp = model->BSIM3njtsswgd * (1.0 + model->BSIM3tnjtsswgd * T0);
+            T7 = Eg0 / model->BSIM3vtm * T0;
+            T9 = model->BSIM3xtss * T7;
+            DEXP(T9, T1);
+            T9 = model->BSIM3xtsd * T7;
+            DEXP(T9, T2);
+            T9 = model->BSIM3xtssws * T7;
+            DEXP(T9, T3);
+            T9 = model->BSIM3xtsswd * T7;
+            DEXP(T9, T4);
+            T9 = model->BSIM3xtsswgs * T7;
+            DEXP(T9, T5);
+            T9 = model->BSIM3xtsswgd * T7;
+            DEXP(T9, T6);
+            model->BSIM3jtsstemp = T1 * model->BSIM3jtss;
+            model->BSIM3jtsdtemp = T2 * model->BSIM3jtsd;
+            model->BSIM3jtsswstemp = T3 * model->BSIM3jtssws;
+            model->BSIM3jtsswdtemp = T4 * model->BSIM3jtsswd;
+            model->BSIM3jtsswgstemp = T5 * model->BSIM3jtsswgs;
+            model->BSIM3jtsswgdtemp = T6 * model->BSIM3jtsswgd;
 
-            model->BSIM3tJtssws = model->BSIM3jtssws
-                                  * exp(model->BSIM3xtssws * Eg0 / ((model->BSIM3vtm * TRatio) - 1));
-
-            model->BSIM3tJtsswgs = model->BSIM3jtsswgs
-                                  * exp(model->BSIM3xtsswgs * Eg0 / ((model->BSIM3vtm * TRatio) - 1));
-
-            model->BSIM3tJtsd = model->BSIM3jtsd
-                                  * exp(model->BSIM3xtsd * Eg0 / ((model->BSIM3vtm * TRatio) - 1));
-
-            model->BSIM3tJtsswd = model->BSIM3jtsswd
-                                  * exp(model->BSIM3xtsswd * Eg0 / ((model->BSIM3vtm * TRatio) - 1));
-
-            model->BSIM3tJtsswgd = model->BSIM3jtsswgd
-                                  * exp(model->BSIM3xtsswgd * Eg0 / ((model->BSIM3vtm * TRatio) - 1));
-
-            model->BSIM3tNjts = model->BSIM3njts * (1 + model->BSIM3tnjts * (TRatio - 1));
-
-            model->BSIM3tNjtsd = model->BSIM3njtsd * (1 + model->BSIM3tnjtsd * (TRatio - 1));
-
-            model->BSIM3tNjtssw = model->BSIM3njtssw * (1 + model->BSIM3tnjtssw * (TRatio - 1));
-
-            model->BSIM3tNjtsswd = model->BSIM3njtsswd * (1 + model->BSIM3tnjtsswd * (TRatio - 1));
-
-            model->BSIM3tNjtsswg = model->BSIM3njtsswg * (1 + model->BSIM3tnjtsswg * (TRatio - 1));
-
-            model->BSIM3tNjtsswgd = model->BSIM3njtsswgd * (1 + model->BSIM3tnjtsswgd * (TRatio - 1));
         }
 
          /* loop through all the instances of the model */

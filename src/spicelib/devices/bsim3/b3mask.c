@@ -1392,6 +1392,12 @@ IFvalue *value)
         case BSIM3_MOD_XTSSWD:
             value->rValue = model->BSIM3xtsswd;
             return(OK);
+        case BSIM3_MOD_XTSSWGS:
+            value->rValue = model->BSIM3xtsswgs;
+            return(OK);
+        case BSIM3_MOD_XTSSWGD:
+            value->rValue = model->BSIM3xtsswgd;
+            return(OK);
 
         case BSIM3_MOD_TNJTS:
             value->rValue = model->BSIM3tnjts;

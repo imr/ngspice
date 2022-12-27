@@ -918,18 +918,18 @@ typedef struct sBSIM3model
     double BSIM3tnjtsswd;
     double BSIM3tnjtsswgd;
 
-    double BSIM3tJtss;
-    double BSIM3tJtsd;
-    double BSIM3tJtssws;
-    double BSIM3tJtsswd;
-    double BSIM3tJtsswgs;
-    double BSIM3tJtsswgd;
-    double BSIM3tNjts;
-    double BSIM3tNjtssw;
-    double BSIM3tNjtsswg;
-    double BSIM3tNjtsd;
-    double BSIM3tNjtsswd;
-    double BSIM3tNjtsswgd;
+    double BSIM3njtstemp;
+    double BSIM3njtsswtemp;
+    double BSIM3njtsswgtemp;
+    double BSIM3njtsdtemp;
+    double BSIM3njtsswdtemp;
+    double BSIM3njtsswgdtemp;
+    double BSIM3jtsstemp;
+    double BSIM3jtsdtemp;
+    double BSIM3jtsswstemp;
+    double BSIM3jtsswdtemp;
+    double BSIM3jtsswgstemp;
+    double BSIM3jtsswgdtemp;
 
     struct bsim3SizeDependParam *pSizeDependParamKnot;
 
