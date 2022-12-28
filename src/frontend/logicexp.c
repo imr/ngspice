@@ -721,6 +721,7 @@ static void aerror(char *s)
 {
     LEXER lx = parse_lexer;
     printf("%s [%s]\n", s, lx->lexer_line + lx->lexer_pos);
+    fflush(stdout);
     cleanup_parser();
 }
 
@@ -735,12 +736,11 @@ char *get_temp_name(void)
 
 static BOOL amatch(int t)
 {
-    LEXER lx = parse_lexer;
     if (lookahead == t) {
         lookahead = lex_scan();
     } else {
-        printf("expect = '%c' [%d] lookahead = '%c' [%d] lexer_buf %s\n",
-            t, t, lookahead, lookahead, lx->lexer_buf);
+        printf("expect = %d lookahead = %d lexer_buf \"%s\"\n",
+            t, lookahead, parse_lexer->lexer_buf);
         aerror("amatch: syntax error");
         return FALSE;
     }
