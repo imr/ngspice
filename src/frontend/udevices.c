@@ -3593,7 +3593,7 @@ BOOL u_check_instance(char *line)
         }
         if (ps_udevice_msgs >= 1) {
             if (current_subckt && subckt_msg_count == 0) {
-                printf("%s\n", current_subckt);
+                printf("\nWARNING in %s\n", current_subckt);
             }
             subckt_msg_count++;
             printf("WARNING ");
@@ -3630,22 +3630,24 @@ BOOL u_process_instance(char *nline)
         if (eq(itype, "logicexp")) {
             delete_instance_hdr(hdr);
             behav_ret = f_logicexp(nline);
-            if (!behav_ret && current_subckt && ps_udevice_msgs >= 1) {
+            if (!behav_ret && current_subckt) {
                 printf("ERROR in %s\n", current_subckt);
             }
             if (!behav_ret && ps_udevice_exit) {
                 fprintf(stderr, "ERROR bad syntax in logicexp\n");
+                fflush(stdout);
                 controlled_exit(EXIT_FAILURE);
             }
             return behav_ret;
         } else if (eq(itype, "pindly")) {
             delete_instance_hdr(hdr);
             behav_ret = f_pindly(nline);
-            if (!behav_ret && current_subckt && ps_udevice_msgs >= 1) {
+            if (!behav_ret && current_subckt) {
                 printf("ERROR in %s\n", current_subckt);
             }
             if (!behav_ret && ps_udevice_exit) {
                 fprintf(stderr, "ERROR bad syntax in pindly\n");
+                fflush(stdout);
                 controlled_exit(EXIT_FAILURE);
             }
             return behav_ret;
@@ -3676,7 +3678,11 @@ BOOL u_process_instance(char *nline)
     } else {
         delete_instance_hdr(hdr);
         if (ps_udevice_exit) {
+            if (current_subckt) {
+                printf("ERROR in %s\n", current_subckt);
+            }
             fprintf(stderr, "ERROR unknown U* device\n");
+            fflush(stdout);
             controlled_exit(EXIT_FAILURE);
         }
         return FALSE;
@@ -3687,7 +3693,11 @@ BOOL u_process_instance(char *nline)
         return TRUE;
     } else {
         if (ps_udevice_exit) {
+            if (current_subckt) {
+                printf("ERROR in %s\n", current_subckt);
+            }
             fprintf(stderr, "ERROR U* device syntax error\n");
+            fflush(stdout);
             controlled_exit(EXIT_FAILURE);
         }
         return FALSE;
