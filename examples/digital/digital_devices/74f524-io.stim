@@ -1,0 +1,9 @@
+* t     i    i    i    i    i    i    i    i
+* i     o    o    o    o    o    o    o    o
+* m     7    6    5    4    3    2    1    0
+* e
+20ns    1s   0s   0s   0s   0s   0s   1s   1s
+250ns   0s   0s   1s   0s   0s   1s   1s   0s
+350ns   1s   0s   0s   0s   0s   0s   1s   1s
+450ns   1s   1s   0s   0s   0s   1s   1s   0s
+850ns   Uz   Uz   Uz   Uz   Uz   Uz   Uz   Uz

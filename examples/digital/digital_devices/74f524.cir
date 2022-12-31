@@ -1,0 +1,223 @@
+Test 74f524.cir
+
+*-------------------------------------------------------------74F524-----------
+
+* 8 Bit Register Comparator (Open Collector and Tri-State)
+* Philips FAST Logic Databook, 1992, pages 506 to 513
+* jat 7/11/96
+
+.SUBCKT 74F524 S0 S1 SEBAR C/SI I/O0 I/O1 I/O2 I/O3 I/O4 I/O5 I/O6 I/O7
++ CP M C/SO EQ GT LT
++ OPTIONAL: DPWR=$G_DPWR DGND=$G_DGND
++ PARAMS: MNTYMXDLY=0 IO_LEVEL=0
+
+U1 LOGICEXP(22,13) DPWR DGND
++ S0 S1 SEBAR C/SI CP M I/O0 I/O1 I/O2 I/O3 I/O4 I/O5 I/O6 I/O7
++ Q0 Q1 Q2 Q3 Q4 Q5 Q6 Q7
++ C/SOO EQO GTO LTO ENAB D0 D1 D2 D3 D4 D5 D6 D7
++ D0_GATE IO_F MNTYMXDLY={MNTYMXDLY} IO_LEVEL={IO_LEVEL}
++ LOGIC:
++   ENAB = {S1 & ~S0}
++   LOAD = {S0 & S1}
++   SHIFT = {~S1 & S0}
++   D0 = {(Q0 & ~S0) | (I/O0 & LOAD) | (SHIFT & Q1)}
++   D1 = {(Q1 & ~S0) | (I/O1 & LOAD) | (SHIFT & Q2)}
++   D2 = {(Q2 & ~S0) | (I/O2 & LOAD) | (SHIFT & Q3)}
++   D3 = {(Q3 & ~S0) | (I/O3 & LOAD) | (SHIFT & Q4)}
++   D4 = {(Q4 & ~S0) | (I/O4 & LOAD) | (SHIFT & Q5)}
++   D5 = {(Q5 & ~S0) | (I/O5 & LOAD) | (SHIFT & Q6)}
++   D6 = {(Q6 & ~S0) | (I/O6 & LOAD) | (SHIFT & Q7)}
++   D7 = {(Q7 & ~S0) | (I/O7 & LOAD) | (SHIFT & C/SI)}
++   NOR0 = {~(~I/O0 | Q0)}
++   XOR0 = {Q0 ^ ~I/O0}
++   AND0 = {Q0 & ~I/O0}
++   NOR1 = {~(~I/O1 | Q1)}
++   XOR1 = {Q1 ^ ~I/O1}
++   AND1 = {Q1 & ~I/O1}
++   NOR2 = {~(~I/O2 | Q2)}
++   XOR2 = {Q2 ^ ~I/O2}
++   AND2 = {Q2 & ~I/O2}
++   NOR3 = {~(~I/O3 | Q3)}
++   XOR3 = {Q3 ^ ~I/O3}
++   AND3 = {Q3 & ~I/O3}
++   NOR4 = {~(~I/O4 | Q4)}
++   XOR4 = {Q4 ^ ~I/O4}
++   AND4 = {Q4 & ~I/O4}
++   NOR5 = {~(~I/O5 | Q5)}
++   XOR5 = {Q5 ^ ~I/O5}
++   AND5 = {Q5 & ~I/O5}
++   NOR6 = {~(~I/O6 | Q6)}
++   XOR6 = {Q6 ^ ~I/O6}
++   AND6 = {Q6 & ~I/O6}
++   NOR7 = {~((~(~I/O7 ^ ~M)) | (~(Q7 ^ ~M)))}
++   XOR7 = {(~(~I/O7 ^ ~M)) ^ (~(Q7 ^ ~M))}
++   AND7 = {(~(~I/O7 ^ ~M)) & (~(Q7 ^ ~M))}
++   ORA = {(NOR0 & XOR1 & XOR2 & XOR3) | (NOR1 & XOR2 & XOR3) | (XOR3 & NOR2) | NOR3}
++   ORB = {(AND0 & XOR1 & XOR2 & XOR3) | (AND1 & XOR2 & XOR3) | (XOR3 & AND2) | AND3}
++   ORC = {(AND4 & XOR5 & XOR6 & XOR7) | (AND5 & XOR6 & XOR7) | (XOR7 & AND6) | AND7}
++   ORD = {(NOR4 & XOR5 & XOR6 & XOR7) | (NOR5 & XOR6 & XOR7) | (XOR7 & NOR6) | NOR7}
++   NANDLT = {~(XOR4 & XOR7 & XOR5 & XOR6)}
++   ANDDOWN = {C/SI & ~SEBAR}
++   LTO = {(~NANDLT & ORA) | ORD | ~ANDDOWN}
++   GTO = {ORC | ~ANDDOWN | (~NANDLT & ORB)}
++   EQO = {SEBAR | (~NANDLT & (XOR1 & XOR0 & XOR2 & XOR3))}
++   C/SOO = {(SHIFT & Q0) | (~SHIFT & (C/SI & ~NANDLT & XOR0 & XOR1 & XOR2 & XOR3))}
+
+U2 DFF(8) DPWR DGND
++ $D_HI $D_HI CP
++ D0 D1 D2 D3 D4 D5 D6 D7
++ Q0 Q1 Q2 Q3 Q4 Q5 Q6 Q7 
++ $D_NC $D_NC $D_NC $D_NC $D_NC $D_NC $D_NC $D_NC
++ D0_EFF IO_F MNTYMXDLY={MNTYMXDLY} IO_LEVEL={IO_LEVEL}
+
+U3 PINDLY(9,1,12) DPWR DGND
++ Q0 Q1 Q2 Q3 Q4 Q5 Q6 Q7 C/SOO
++ ENAB
++ I/O0 I/O1 I/O2 I/O3 I/O4 I/O5 I/O6 I/O7 CP C/SI S0 S1
++ I/O0 I/O1 I/O2 I/O3 I/O4 I/O5 I/O6 I/O7 C/SO
++ IO_F MNTYMXDLY={MNTYMXDLY} IO_LEVEL={IO_LEVEL}
++ BOOLEAN:
++   DATA = {CHANGED(I/O0,0) | CHANGED(I/O1,0) | CHANGED(I/O2,0) | CHANGED(I/O3,0) |
++           CHANGED(I/O4,0) | CHANGED(I/O5,0) | CHANGED(I/O6,0) | CHANGED(I/O7,0)}
++   EDGE = {CHANGED_LH(CP,0)}
++   CSI = {CHANGED(C/SI,0)}
++   SS = {CHANGED(S0,0) | CHANGED(S1,0)}
++ TRISTATE:
++  ENABLE HI = ENAB
++    I/O0 I/O1 I/O2 I/O3 I/O4 I/O5 I/O6 I/O7 = {
++       CASE(
++         TRN_ZH, DELAY(4.5NS,7NS,13NS),
++         TRN_ZL, DELAY(5.5NS,9NS,15NS),
++         TRN_HZ, DELAY(3NS,5NS,12NS),
++         TRN_LZ, DELAY(4.5NS,8NS,12.5NS),
++         DELAY(6.5NS,10NS,16NS))}
++ PINDLY:
++  C/SO = {
++    CASE(
++      SS & TRN_LH, DELAY(6.5NS,8NS,14.5NS),
++      SS & TRN_HL, DELAY(5.5NS,10NS,17NS),
++      EDGE & (S1 == '1 & S0 == '1) & TRN_LH, DELAY(10NS,16NS,20NS),
++      EDGE & (S1 == '0 & S0 == '1) & TRN_LH, DELAY(5NS,10NS,13NS),
++      EDGE & (S1 == '0 & S0 == '1) & TRN_HL, DELAY(4.5NS,9NS,11.5NS),
++      DATA & TRN_LH, DELAY(7NS,13NS,16NS),
++      DATA & TRN_HL, DELAY(6.5NS,9NS,14NS),
++      CSI & TRN_LH, DELAY(4NS,7NS,11NS),
++      CSI & TRN_HL, DELAY(4NS,7NS,11NS),
++      DELAY(11NS,17NS,21NS))}
+
+U4 PINDLY(3,0,12) DPWR DGND
++ EQO LTO GTO
++ I/O0 I/O1 I/O2 I/O3 I/O4 I/O5 I/O6 I/O7 CP C/SI SEBAR M
++ EQ LT GT
++ IO_F_OC MNTYMXDLY={MNTYMXDLY} IO_LEVEL={IO_LEVEL}
++ BOOLEAN:
++   DATA = {CHANGED(I/O0,0) | CHANGED(I/O1,0) | CHANGED(I/O2,0) | CHANGED(I/O3,0) |
++           CHANGED(I/O4,0) | CHANGED(I/O5,0) | CHANGED(I/O6,0) | CHANGED(I/O7,0)}
++   EDGE = {CHANGED_LH(CP,0)}
++   CSI = {CHANGED(C/SI,0)}
++   SE = {CHANGED(SEBAR,0)}
++   MM = {CHANGED(M,0)}
++ PINDLY:
++  EQ = {
++    CASE(
++      SE & TRN_LH, DELAY(3.5NS,7NS,10.5NS),
++      SE & TRN_HL, DELAY(2.5NS,4.5NS,8NS),
++      EDGE & TRN_LH, DELAY(11NS,17NS,22NS),
++      EDGE & TRN_HL, DELAY(4NS,8NS,14NS),
++      DATA & TRN_LH, DELAY(9NS,11.5NS,17NS),
++      DATA & TRN_HL, DELAY(4.5NS,7.5NS,11NS),
++      DELAY(12NS,18NS,23NS))}
++  GT = {
++    CASE(
++      SE & TRN_LH, DELAY(6NS,8NS,13NS),
++      SE & TRN_HL, DELAY(3.5NS,5NS,8NS),
++      MM & TRN_LH, DELAY(8NS,13NS,18NS),
++      MM & TRN_HL, DELAY(8NS,10NS,15.5NS),
++      EDGE & TRN_LH, DELAY(11NS,16NS,20NS),
++      EDGE & TRN_HL, DELAY(10NS,16.5NS,21NS),
++      DATA & TRN_LH, DELAY(8.5NS,11NS,17NS),
++      DATA & TRN_HL, DELAY(6.5NS,9.5NS,15.5NS),
++      CSI & TRN_LH, DELAY(8NS,10.5NS,16NS),
++      CSI & TRN_HL, DELAY(3NS,4.5NS,8.5NS),
++      DELAY(12NS,17NS,21NS))}
++  LT = {
++    CASE(
++      SE & TRN_LH, DELAY(5NS,8NS,12NS),
++      SE & TRN_HL, DELAY(3.5NS,5.5NS,8NS),
++      MM & TRN_LH, DELAY(10NS,15NS,20NS),
++      MM & TRN_HL, DELAY(6NS,8NS,12NS),
++      EDGE & TRN_LH, DELAY(11NS,16NS,23NS),
++      EDGE & TRN_HL, DELAY(8NS,14NS,18NS),
++      DATA & TRN_LH, DELAY(8NS,11NS,17NS),
++      DATA & TRN_HL, DELAY(6NS,10.5NS,14NS),
++      CSI & TRN_LH, DELAY(8NS,10.5NS,17NS),
++      CSI & TRN_HL, DELAY(3NS,6NS,8.5NS),
++      DELAY(12NS,17NS,24NS))}
+
+
+U5 CONSTRAINT(12) DPWR DGND
++ I/O0 I/O1 I/O2 I/O3 I/O4 I/O5 I/O6 I/O7 CP S0 S1 C/SI
++ IO_F IO_LEVEL={IO_LEVEL}
++ FREQ: 
++   NODE = CP
++   MAXFREQ = 65MEG
++ WIDTH:
++   NODE = CP
++   MIN_HI = 5NS
++   MIN_LO = 10NS
++ SETUP_HOLD:
++   CLOCK LH = CP
++   DATA(8) = I/O0 I/O1 I/O2 I/O3 I/O4 I/O5 I/O6 I/O7
++   SETUPTIME = 6NS
++ SETUP_HOLD:
++   CLOCK LH = CP
++   DATA(2) = S0 S1
++   SETUPTIME_HI = 13.5NS
++   SETUPTIME_LO = 10NS
++ SETUP_HOLD:
++   CLOCK LH = CP
++   DATA(1) = C/SI
++   SETUPTIME = 7NS
+
+.ENDS 74F524
+
+* .SUBCKT 74F524 S0 S1 SEBAR C/SI I/O0 I/O1 I/O2 I/O3 I/O4 I/O5 I/O6 I/O7
+* + CP M C/SO EQ GT LT
+X86 i_s0 i_s1 i_sebar csi io0 io1 io2 io3 io4 io5 io6 io7 cp i_m o_cso o_eq o_gt o_lt 74f524
+
+a1 [cp] in_vec1
+.model in_vec1 d_source(input_file="74f524-cp.stim")
+a2 [io7 io6 io5 io4 io3 io2 io1 io0] in_vec2
+.model in_vec2 d_source(input_file="74f524-io.stim")
+a3 [i_sebar i_m] in_vec3
+.model in_vec3 d_source(input_file="74f524-sem.stim")
+a4 [i_s0 i_s1] in_vec4
+.model in_vec4 d_source(input_file="74f524-s0s1.stim")
+a5 [csi] in_vec5
+.model in_vec5 d_source(input_file="74f524-csi.stim")
+
+.tran 1ns 2us
+.control
+run
+listing
+*edisplay
+eprint io0 io1 io2 io3 io4 io5 io6 io7
+eprint cp i_s0 i_s1 csi i_sebar i_m
+eprint o_cso o_eq o_gt o_lt
+
+* save data to input directory
+cd $inputdir 
+eprvcd io0 io1 io2 io3 io4 io5 io6 io7 cp i_s0 i_s1 csi i_sebar i_m o_cso o_eq o_gt o_lt > 74f524.vcd
+* plotting the vcd file with GTKWave
+if $oscompiled = 1 | $oscompiled = 8  ; MS Windows
+  shell start gtkwave 74f524.vcd --script nggtk.tcl
+else
+  if $oscompiled = 7 ; macOS, manual tweaking required (mark, insert, Zoom Fit)
+    shell open -a gtkwave 74f524.vcd
+  else ; Linux and others
+    shell gtkwave 74f524.vcd --script nggtk.tcl &
+  end
+end
+quit
+.endc
+.end
