@@ -196,7 +196,7 @@ a4 [i_s0 i_s1] in_vec4
 a5 [csi] in_vec5
 .model in_vec5 d_source(input_file="74f524-csi.stim")
 
-.tran 1ns 2us
+.tran 1ns 3us
 .control
 run
 listing

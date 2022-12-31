@@ -2,6 +2,15 @@
 * i     0    1
 * m
 * e
+* load
 15ns    1s   1s
+* hold
 215ns   0s   0s
-1us     0s   1s
+* read
+1000ns  0s   1s
+* shift
+1160ns  1s   0s
+* hold
+2000ns  0s   0s
+* read
+2400ns  0s   1s
