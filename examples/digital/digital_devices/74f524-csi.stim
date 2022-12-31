@@ -2,8 +2,21 @@
 * i     s
 * m     i
 * e
+* csi is used with seb as status truth table entries in hold mode
 10ns    1s
 220ns   0s
 270ns   1s
 620ns   0s
 700ns   1s
+* shift - serial load data
+1170ns  0s
+1270ns  0s
+1370ns  1s
+1470ns  1s
+1570ns  0s
+1670ns  1s
+1770ns  0s
+1870ns  1s
+*
+2040ns  0s
+2240ns  1s

@@ -2,9 +2,16 @@
 * i     e
 * m     b
 * e
+* seb and csi are status truth table entries in hold mode
+* m = 0 magnitude compare
+* m = 1 twos-complement compare
 15ns    1s   0s
 215ns   0s   0s
 300ns   0s   1s
 640ns   1s   1s
 800ns   0s   1s
 900ns   0s   0s
+1160ns  1s   0s
+2000ns  0s   0s
+2100ns  0s   1s
+2200ns  0s   0s

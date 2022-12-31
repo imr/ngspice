@@ -6,4 +6,8 @@
 250ns   0s   0s   1s   0s   0s   1s   1s   0s
 350ns   1s   0s   0s   0s   0s   0s   1s   1s
 450ns   1s   1s   0s   0s   0s   1s   1s   0s
+* float ios before read mode
 850ns   Uz   Uz   Uz   Uz   Uz   Uz   Uz   Uz
+1340ns  0s   0s   0s   0s   0s   0s   1s   1s
+* float ios before read mode
+2300ns  Uz   Uz   Uz   Uz   Uz   Uz   Uz   Uz
