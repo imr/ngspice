@@ -7,5 +7,27 @@
 150ns   0s
 600ns   1s
 650ns   0s
-1.10us  1s
-1.15us  0s
+1100ns  1s
+1150ns  0s
+* shift sequence
+1200ns  1s
+1250ns  0s
+1300ns  1s
+1350ns  0s
+1400ns  1s
+1450ns  0s
+1500ns  1s
+1550ns  0s
+1600ns  1s
+1650ns  0s
+1700ns  1s
+1750ns  0s
+1800ns  1s
+1850ns  0s
+1900ns  1s
+1950ns  0s
+*
+2500ns  1s
+2550ns  0s
+2600ns  1s
+2650ns  0s
