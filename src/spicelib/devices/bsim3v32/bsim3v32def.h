@@ -886,6 +886,56 @@ typedef struct sBSIM3v32model
     double BSIM3v32vbsrMax;
     double BSIM3v32vbdrMax;
 
+/* trap-assisted tunneling current enhancement */
+    int BSIM3v32bsim4diode;
+    double BSIM3v32jtss;
+    double BSIM3v32jtsd;
+    double BSIM3v32jtssws;
+    double BSIM3v32jtsswd;
+    double BSIM3v32jtsswgs;
+    double BSIM3v32jtsswgd;
+
+    double BSIM3v32njts;
+    double BSIM3v32njtssw;
+    double BSIM3v32njtsswg;
+    double BSIM3v32njtsd;
+    double BSIM3v32njtsswd;
+    double BSIM3v32njtsswgd;
+
+    double BSIM3v32vtss;
+    double BSIM3v32vtsd;
+    double BSIM3v32vtssws;
+    double BSIM3v32vtsswd;
+    double BSIM3v32vtsswgs;
+    double BSIM3v32vtsswgd;
+
+    double BSIM3v32xtss;
+    double BSIM3v32xtsd;
+    double BSIM3v32xtssws;
+    double BSIM3v32xtsswd;
+    double BSIM3v32xtsswgs;
+    double BSIM3v32xtsswgd;
+
+    double BSIM3v32tnjts;
+    double BSIM3v32tnjtssw;
+    double BSIM3v32tnjtsswg;
+    double BSIM3v32tnjtsd;
+    double BSIM3v32tnjtsswd;
+    double BSIM3v32tnjtsswgd;
+
+    double BSIM3v32njtstemp;
+    double BSIM3v32njtsswtemp;
+    double BSIM3v32njtsswgtemp;
+    double BSIM3v32njtsdtemp;
+    double BSIM3v32njtsswdtemp;
+    double BSIM3v32njtsswgdtemp;
+    double BSIM3v32jtsstemp;
+    double BSIM3v32jtsdtemp;
+    double BSIM3v32jtsswstemp;
+    double BSIM3v32jtsswdtemp;
+    double BSIM3v32jtsswgstemp;
+    double BSIM3v32jtsswgdtemp;
+
     struct bsim3v32SizeDependParam *pSizeDependParamKnot;
 
 #ifdef USE_OMP
@@ -1341,6 +1391,43 @@ typedef struct sBSIM3v32model
     unsigned  BSIM3v32vgbrMaxGiven  :1;
     unsigned  BSIM3v32vbsrMaxGiven  :1;
     unsigned  BSIM3v32vbdrMaxGiven  :1;
+
+/* trap-assisted tunneling current enhancement */
+    unsigned BSIM3v32bsim4diodeGiven     :1;
+    unsigned BSIM3v32jtssGiven     :1;
+    unsigned BSIM3v32jtsdGiven     :1;
+    unsigned BSIM3v32jtsswsGiven     :1;
+    unsigned BSIM3v32jtsswdGiven     :1;
+    unsigned BSIM3v32jtsswgsGiven     :1;
+    unsigned BSIM3v32jtsswgdGiven     :1;
+
+    unsigned BSIM3v32njtsGiven     :1;
+    unsigned BSIM3v32njtsswGiven     :1;
+    unsigned BSIM3v32njtsswgGiven     :1;
+    unsigned BSIM3v32njtsdGiven     :1;
+    unsigned BSIM3v32njtsswdGiven     :1;
+    unsigned BSIM3v32njtsswgdGiven     :1;
+
+    unsigned BSIM3v32vtssGiven     :1;
+    unsigned BSIM3v32vtsdGiven     :1;
+    unsigned BSIM3v32vtsswsGiven     :1;
+    unsigned BSIM3v32vtsswdGiven     :1;
+    unsigned BSIM3v32vtsswgsGiven     :1;
+    unsigned BSIM3v32vtsswgdGiven     :1;
+
+    unsigned BSIM3v32xtssGiven     :1;
+    unsigned BSIM3v32xtsdGiven     :1;
+    unsigned BSIM3v32xtsswsGiven     :1;
+    unsigned BSIM3v32xtsswdGiven     :1;
+    unsigned BSIM3v32xtsswgsGiven     :1;
+    unsigned BSIM3v32xtsswgdGiven     :1;
+
+    unsigned BSIM3v32tnjtsGiven     :1;
+    unsigned BSIM3v32tnjtsswGiven     :1;
+    unsigned BSIM3v32tnjtsswgGiven     :1;
+    unsigned BSIM3v32tnjtsdGiven     :1;
+    unsigned BSIM3v32tnjtsswdGiven     :1;
+    unsigned BSIM3v32tnjtsswgdGiven     :1;
 
 } BSIM3v32model;
 
@@ -1910,6 +1997,43 @@ typedef struct sBSIM3v32model
 #define BSIM3v32_MOD_VGBR_MAX         809
 #define BSIM3v32_MOD_VBSR_MAX         810
 #define BSIM3v32_MOD_VBDR_MAX         811
+
+/* trap-assisted tunneling current enhancement */
+#define BSIM3v32_MOD_BSIM4DIODE       820
+#define BSIM3v32_MOD_JTSS             821
+#define BSIM3v32_MOD_JTSD             822
+#define BSIM3v32_MOD_JTSSWS           823
+#define BSIM3v32_MOD_JTSSWD           824
+#define BSIM3v32_MOD_JTSSWGS          825
+#define BSIM3v32_MOD_JTSSWGD          826
+
+#define BSIM3v32_MOD_NJTS             827
+#define BSIM3v32_MOD_NJTSSW           828
+#define BSIM3v32_MOD_NJTSSWG          829
+#define BSIM3v32_MOD_NJTSD            830
+#define BSIM3v32_MOD_NJTSSWD          831
+#define BSIM3v32_MOD_NJTSSWGD         832
+
+#define BSIM3v32_MOD_VTSS             833
+#define BSIM3v32_MOD_VTSD             834
+#define BSIM3v32_MOD_VTSSWS           835
+#define BSIM3v32_MOD_VTSSWD           836
+#define BSIM3v32_MOD_VTSSWGS          837
+#define BSIM3v32_MOD_VTSSWGD          838
+
+#define BSIM3v32_MOD_XTSS             839
+#define BSIM3v32_MOD_XTSD             840
+#define BSIM3v32_MOD_XTSSWS           841
+#define BSIM3v32_MOD_XTSSWD           842
+#define BSIM3v32_MOD_XTSSWGS          843
+#define BSIM3v32_MOD_XTSSWGD          844
+
+#define BSIM3v32_MOD_TNJTS            845
+#define BSIM3v32_MOD_TNJTSSW          846
+#define BSIM3v32_MOD_TNJTSSWG         847
+#define BSIM3v32_MOD_TNJTSD           848
+#define BSIM3v32_MOD_TNJTSSWD         849
+#define BSIM3v32_MOD_TNJTSSWGD        850
 
 #include "bsim3v32ext.h"
 

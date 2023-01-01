@@ -1761,6 +1761,136 @@ BSIM3v32mParam(int param, IFvalue *value, GENmodel *inMod)
             mod->BSIM3v32vbdrMaxGiven = TRUE;
             break;
 
+/* trap-assisted tunneling current enhancement */
+        case BSIM3v32_MOD_BSIM4DIODE:
+            mod->BSIM3v32bsim4diode = value->iValue;
+            mod->BSIM3v32bsim4diodeGiven = TRUE;
+            break;
+        case BSIM3v32_MOD_JTSS:
+            mod->BSIM3v32jtss = value->rValue;
+            mod->BSIM3v32jtssGiven = TRUE;
+            break;
+        case BSIM3v32_MOD_JTSD:
+            mod->BSIM3v32jtsd = value->rValue;
+            mod->BSIM3v32jtsdGiven = TRUE;
+            break;
+        case BSIM3v32_MOD_JTSSWS:
+            mod->BSIM3v32jtssws = value->rValue;
+            mod->BSIM3v32jtsswsGiven = TRUE;
+            break;
+        case BSIM3v32_MOD_JTSSWD:
+            mod->BSIM3v32jtsswd = value->rValue;
+            mod->BSIM3v32jtsswdGiven = TRUE;
+            break;
+        case BSIM3v32_MOD_JTSSWGS:
+            mod->BSIM3v32jtsswgs = value->rValue;
+            mod->BSIM3v32jtsswgsGiven = TRUE;
+            break;
+        case BSIM3v32_MOD_JTSSWGD:
+            mod->BSIM3v32jtsswgd = value->rValue;
+            mod->BSIM3v32jtsswgdGiven = TRUE;
+            break;
+
+        case BSIM3v32_MOD_NJTS:
+            mod->BSIM3v32njts = value->rValue;
+            mod->BSIM3v32njtsGiven = TRUE;
+            break;
+        case BSIM3v32_MOD_NJTSSW:
+            mod->BSIM3v32njtssw = value->rValue;
+            mod->BSIM3v32njtsswGiven = TRUE;
+            break;
+        case BSIM3v32_MOD_NJTSSWG:
+            mod->BSIM3v32njtsswg = value->rValue;
+            mod->BSIM3v32njtsswgGiven = TRUE;
+            break;
+        case BSIM3v32_MOD_NJTSD:
+            mod->BSIM3v32njtsd = value->rValue;
+            mod->BSIM3v32njtsdGiven = TRUE;
+            break;
+        case BSIM3v32_MOD_NJTSSWD:
+            mod->BSIM3v32njtsswd = value->rValue;
+            mod->BSIM3v32njtsswdGiven = TRUE;
+            break;
+        case BSIM3v32_MOD_NJTSSWGD:
+            mod->BSIM3v32njtsswgd = value->rValue;
+            mod->BSIM3v32njtsswgdGiven = TRUE;
+            break;
+
+        case BSIM3v32_MOD_VTSS:
+            mod->BSIM3v32vtss = value->rValue;
+            mod->BSIM3v32vtssGiven = TRUE;
+            break;
+        case BSIM3v32_MOD_VTSD:
+            mod->BSIM3v32vtsd = value->rValue;
+            mod->BSIM3v32vtsdGiven = TRUE;
+            break;
+        case BSIM3v32_MOD_VTSSWS:
+            mod->BSIM3v32vtssws = value->rValue;
+            mod->BSIM3v32vtsswsGiven = TRUE;
+            break;
+        case BSIM3v32_MOD_VTSSWD:
+            mod->BSIM3v32vtsswd = value->rValue;
+            mod->BSIM3v32vtsswdGiven = TRUE;
+            break;
+        case BSIM3v32_MOD_VTSSWGS:
+            mod->BSIM3v32vtsswgs = value->rValue;
+            mod->BSIM3v32vtsswgsGiven = TRUE;
+            break;
+        case BSIM3v32_MOD_VTSSWGD:
+            mod->BSIM3v32vtsswgd = value->rValue;
+            mod->BSIM3v32vtsswgdGiven = TRUE;
+            break;
+
+        case BSIM3v32_MOD_XTSS:
+            mod->BSIM3v32xtss = value->rValue;
+            mod->BSIM3v32xtssGiven = TRUE;
+            break;
+        case BSIM3v32_MOD_XTSD:
+            mod->BSIM3v32xtsd = value->rValue;
+            mod->BSIM3v32xtsdGiven = TRUE;
+            break;
+        case BSIM3v32_MOD_XTSSWS:
+            mod->BSIM3v32xtssws = value->rValue;
+            mod->BSIM3v32xtsswsGiven = TRUE;
+            break;
+        case BSIM3v32_MOD_XTSSWD:
+            mod->BSIM3v32xtsswd = value->rValue;
+            mod->BSIM3v32xtsswdGiven = TRUE;
+            break;
+        case BSIM3v32_MOD_XTSSWGS:
+            mod->BSIM3v32xtsswgs = value->rValue;
+            mod->BSIM3v32xtsswgsGiven = TRUE;
+            break;
+        case BSIM3v32_MOD_XTSSWGD:
+            mod->BSIM3v32xtsswgd = value->rValue;
+            mod->BSIM3v32xtsswgdGiven = TRUE;
+            break;
+
+        case BSIM3v32_MOD_TNJTS:
+            mod->BSIM3v32tnjts = value->rValue;
+            mod->BSIM3v32tnjtsGiven = TRUE;
+            break;
+        case BSIM3v32_MOD_TNJTSSW:
+            mod->BSIM3v32tnjtssw = value->rValue;
+            mod->BSIM3v32tnjtsswGiven = TRUE;
+            break;
+        case BSIM3v32_MOD_TNJTSSWG:
+            mod->BSIM3v32tnjtsswg = value->rValue;
+            mod->BSIM3v32tnjtsswgGiven = TRUE;
+            break;
+        case BSIM3v32_MOD_TNJTSD:
+            mod->BSIM3v32tnjtsd = value->rValue;
+            mod->BSIM3v32tnjtsdGiven = TRUE;
+            break;
+        case BSIM3v32_MOD_TNJTSSWD:
+            mod->BSIM3v32tnjtsswd = value->rValue;
+            mod->BSIM3v32tnjtsswdGiven = TRUE;
+            break;
+        case BSIM3v32_MOD_TNJTSSWGD:
+            mod->BSIM3v32tnjtsswgd = value->rValue;
+            mod->BSIM3v32tnjtsswgdGiven = TRUE;
+            break;
+
         case  BSIM3v32_MOD_NMOS  :
             if(value->iValue) {
                 mod->BSIM3v32type = 1;

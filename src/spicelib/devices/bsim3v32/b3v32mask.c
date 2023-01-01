@@ -1312,6 +1312,104 @@ BSIM3v32mAsk (CKTcircuit *ckt, GENmodel *inst, int which, IFvalue *value)
         case BSIM3v32_MOD_VBDR_MAX:
             value->rValue = model->BSIM3v32vbdrMax;
             return(OK);
+/* trap-assisted tunneling current enhancement */
+        case BSIM3v32_MOD_BSIM4DIODE:
+            value->iValue = model->BSIM3v32bsim4diode;
+            return(OK);
+        case BSIM3v32_MOD_JTSS:
+            value->rValue = model->BSIM3v32jtss;
+            return(OK);
+        case BSIM3v32_MOD_JTSD:
+            value->rValue = model->BSIM3v32jtsd;
+            return(OK);
+        case BSIM3v32_MOD_JTSSWS:
+            value->rValue = model->BSIM3v32jtssws;
+            return(OK);
+        case BSIM3v32_MOD_JTSSWD:
+            value->rValue = model->BSIM3v32jtsswd;
+            return(OK);
+        case BSIM3v32_MOD_JTSSWGS:
+            value->rValue = model->BSIM3v32jtsswgs;
+            return(OK);
+        case BSIM3v32_MOD_JTSSWGD:
+            value->rValue = model->BSIM3v32jtsswgd;
+            return(OK);
+
+        case BSIM3v32_MOD_NJTS:
+            value->rValue = model->BSIM3v32njts;
+            return(OK);
+        case BSIM3v32_MOD_NJTSSW:
+            value->rValue = model->BSIM3v32njtssw;
+            return(OK);
+        case BSIM3v32_MOD_NJTSSWG:
+            value->rValue = model->BSIM3v32njtsswg;
+            return(OK);
+        case BSIM3v32_MOD_NJTSD:
+            value->rValue = model->BSIM3v32njtsd;
+            return(OK);
+        case BSIM3v32_MOD_NJTSSWD:
+            value->rValue = model->BSIM3v32njtsswd;
+            return(OK);
+        case BSIM3v32_MOD_NJTSSWGD:
+            value->rValue = model->BSIM3v32njtsswgd;
+            return(OK);
+
+        case BSIM3v32_MOD_VTSS:
+            value->rValue = model->BSIM3v32vtss;
+            return(OK);
+        case BSIM3v32_MOD_VTSD:
+            value->rValue = model->BSIM3v32vtsd;
+            return(OK);
+        case BSIM3v32_MOD_VTSSWS:
+            value->rValue = model->BSIM3v32vtssws;
+            return(OK);
+        case BSIM3v32_MOD_VTSSWD:
+            value->rValue = model->BSIM3v32vtsswd;
+            return(OK);
+        case BSIM3v32_MOD_VTSSWGS:
+            value->rValue = model->BSIM3v32vtsswgs;
+            return(OK);
+        case BSIM3v32_MOD_VTSSWGD:
+            value->rValue = model->BSIM3v32vtsswgd;
+            return(OK);
+
+        case BSIM3v32_MOD_XTSS:
+            value->rValue = model->BSIM3v32xtss;
+            return(OK);
+        case BSIM3v32_MOD_XTSD:
+            value->rValue = model->BSIM3v32xtsd;
+            return(OK);
+        case BSIM3v32_MOD_XTSSWS:
+            value->rValue = model->BSIM3v32xtssws;
+            return(OK);
+        case BSIM3v32_MOD_XTSSWD:
+            value->rValue = model->BSIM3v32xtsswd;
+            return(OK);
+        case BSIM3v32_MOD_XTSSWGS:
+            value->rValue = model->BSIM3v32xtsswgs;
+            return(OK);
+        case BSIM3v32_MOD_XTSSWGD:
+            value->rValue = model->BSIM3v32xtsswgd;
+            return(OK);
+
+        case BSIM3v32_MOD_TNJTS:
+            value->rValue = model->BSIM3v32tnjts;
+            return(OK);
+        case BSIM3v32_MOD_TNJTSSW:
+            value->rValue = model->BSIM3v32tnjtssw;
+            return(OK);
+        case BSIM3v32_MOD_TNJTSSWG:
+            value->rValue = model->BSIM3v32tnjtsswg;
+            return(OK);
+        case BSIM3v32_MOD_TNJTSD:
+            value->rValue = model->BSIM3v32tnjtsd;
+            return(OK);
+        case BSIM3v32_MOD_TNJTSSWD:
+            value->rValue = model->BSIM3v32tnjtsswd;
+            return(OK);
+        case BSIM3v32_MOD_TNJTSSWGD:
+            value->rValue = model->BSIM3v32tnjtsswgd;
+            return(OK);
 
         default:
             return(E_BADPARM);

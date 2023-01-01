@@ -30,6 +30,18 @@
 #define DELTA_2 0.02
 #define DELTA_3 0.02
 #define DELTA_4 0.02
+#define DEXP(A,B,C) {                                                         \
+        if (A > EXP_THRESHOLD) {                                              \
+            B = MAX_EXP*(1.0+(A)-EXP_THRESHOLD);                              \
+            C = MAX_EXP;                                                      \
+        } else if (A < -EXP_THRESHOLD)  {                                     \
+            B = MIN_EXP;                                                      \
+            C = 0;                                                            \
+        } else   {                                                            \
+            B = exp(A);                                                       \
+            C = B;                                                            \
+        }                                                                     \
+    }
 
 #ifdef USE_OMP
 int BSIM3v32LoadOMP(BSIM3v32instance *here, CKTcircuit *ckt);
@@ -499,6 +511,127 @@ for (; model != NULL; model = BSIM3v32nextModel(model))
                   }
               }
           }
+
+        /* trap-assisted tunneling current enhancement */
+        if ((model->BSIM3v32acmMod == 12) && (model->BSIM3v32bsim4diodeGiven))
+        {
+            double dT4_dVb, dT5_dVb, dT6_dVb;
+            double Nvtmrss = model->BSIM3v32vtm * model->BSIM3v32njtstemp;
+            double Nvtmrsd = model->BSIM3v32vtm * model->BSIM3v32njtsdtemp;
+            double Nvtmrssws = model->BSIM3v32vtm * model->BSIM3v32njtsswtemp;
+            double Nvtmrsswd = model->BSIM3v32vtm * model->BSIM3v32njtsswdtemp;
+            double Nvtmrsswgs = model->BSIM3v32vtm * model->BSIM3v32njtsswgtemp;
+            double Nvtmrsswgd = model->BSIM3v32vtm * model->BSIM3v32njtsswgdtemp;
+
+            if (model->BSIM3v32jtss > 0.0)
+            {
+                if ((model->BSIM3v32vtss - vbs) < (model->BSIM3v32vtss * 1e-3))
+                {   T9 = 1.0e3;
+                    T0 = - vbs / Nvtmrss * T9;
+                    DEXP(T0, T1, T10);
+                    dT1_dVb = T10 / Nvtmrss * T9;
+                } else {
+                    T9 = 1.0 / (model->BSIM3v32vtss - vbs);
+                    T0 = -vbs / Nvtmrss * model->BSIM3v32vtss * T9;
+                    dT0_dVb = model->BSIM3v32vtss / Nvtmrss * (T9 + vbs * T9 * T9) ;
+                    DEXP(T0, T1, T10);
+                    dT1_dVb = T10 * dT0_dVb;
+                }
+                here->BSIM3v32gbs += here->BSIM3v32sourceArea * model->BSIM3v32jtsstemp * dT1_dVb;
+                here->BSIM3v32cbs -= here->BSIM3v32sourceArea * model->BSIM3v32jtsstemp * (T1 - 1.0);
+            }
+
+            if (model->BSIM3v32jtssws > 0.0)
+            {
+                if ((model->BSIM3v32vtsd - vbd) < (model->BSIM3v32vtsd * 1e-3) )
+                {   T9 = 1.0e3;
+                    T0 = -vbd / Nvtmrsd * T9;
+                    DEXP(T0, T2, T10);
+                    dT2_dVb = T10 / Nvtmrsd * T9;
+                } else {
+                    T9 = 1.0 / (model->BSIM3v32vtsd - vbd);
+                    T0 = -vbd / Nvtmrsd * model->BSIM3v32vtsd * T9;
+                    dT0_dVb = model->BSIM3v32vtsd / Nvtmrsd * (T9 + vbd * T9 * T9) ;
+                    DEXP(T0, T2, T10);
+                    dT2_dVb = T10 * dT0_dVb;
+                }
+                here->BSIM3v32gbs += here->BSIM3v32sourcePerimeter * model->BSIM3v32jtsswstemp * dT2_dVb;
+                here->BSIM3v32cbs -= here->BSIM3v32sourcePerimeter * model->BSIM3v32jtsswstemp * (T2 - 1.0);
+            }
+
+            if (model->BSIM3v32jtsswgs > 0.0)
+            {
+                if ((model->BSIM3v32vtssws - vbs) < (model->BSIM3v32vtssws * 1e-3) )
+                {   T9 = 1.0e3;
+                    T0 = -vbs / Nvtmrssws * T9;
+                    DEXP(T0, T3, T10);
+                    dT3_dVb = T10 / Nvtmrssws * T9;
+                } else {
+                    T9 = 1.0 / (model->BSIM3v32vtssws - vbs);
+                    T0 = -vbs / Nvtmrssws * model->BSIM3v32vtssws * T9;
+                    dT0_dVb = model->BSIM3v32vtssws / Nvtmrssws * (T9 + vbs * T9 * T9) ;
+                    DEXP(T0, T3, T10);
+                    dT3_dVb = T10 * dT0_dVb;
+                }
+                here->BSIM3v32gbs += pParam->BSIM3v32weff * model->BSIM3v32jtsswgstemp * dT3_dVb; 
+                here->BSIM3v32cbs -= pParam->BSIM3v32weff * model->BSIM3v32jtsswgstemp * (T3 - 1.0); 
+            }
+
+            if (model->BSIM3v32jtsd > 0.0)
+            {
+                if ((model->BSIM3v32vtsswd - vbd) < (model->BSIM3v32vtsswd * 1e-3) )
+                {   T9 = 1.0e3;
+                    T0 = -vbd / Nvtmrsswd * T9;
+                    DEXP(T0, T4, T10);
+                    dT4_dVb = T10 / Nvtmrsswd * T9;
+                } else {
+                    T9 = 1.0 / (model->BSIM3v32vtsswd - vbd);
+                    T0 = -vbd / Nvtmrsswd * model->BSIM3v32vtsswd * T9;
+                    dT0_dVb = model->BSIM3v32vtsswd / Nvtmrsswd * (T9 + vbd * T9 * T9) ;
+                    DEXP(T0, T4, T10);
+                    dT4_dVb = T10 * dT0_dVb;
+                }
+                here->BSIM3v32gbd += here->BSIM3v32drainArea * model->BSIM3v32jtsdtemp * dT4_dVb;
+                here->BSIM3v32cbd -= here->BSIM3v32drainArea * model->BSIM3v32jtsdtemp * (T4 - 1.0); 
+            }
+
+            if (model->BSIM3v32jtsswd > 0.0)
+            {
+                if ((model->BSIM3v32vtsswgs - vbs) < (model->BSIM3v32vtsswgs * 1e-3) )
+                {   T9 = 1.0e3;
+                    T0 = -vbs / Nvtmrsswgs * T9;
+                    DEXP(T0, T5, T10);
+                    dT5_dVb = T10 / Nvtmrsswgs * T9;
+                } else {
+                    T9 = 1.0 / (model->BSIM3v32vtsswgs - vbs);
+                    T0 = -vbs / Nvtmrsswgs * model->BSIM3v32vtsswgs * T9;
+                    dT0_dVb = model->BSIM3v32vtsswgs / Nvtmrsswgs * (T9 + vbs * T9 * T9) ;
+                    DEXP(T0, T5, T10);
+                    dT5_dVb = T10 * dT0_dVb;
+                }
+                here->BSIM3v32gbd += here->BSIM3v32drainPerimeter * model->BSIM3v32jtsswdtemp * dT5_dVb;
+                here->BSIM3v32cbd -= here->BSIM3v32drainPerimeter * model->BSIM3v32jtsswdtemp * (T5 - 1.0);
+            }
+
+            if (model->BSIM3v32jtsswgd > 0.0)
+            {
+                if ((model->BSIM3v32vtsswgd - vbd) < (model->BSIM3v32vtsswgd * 1e-3) )
+                {   T9 = 1.0e3;
+                    T0 = -vbd / Nvtmrsswgd * T9;
+                    DEXP(T0, T6, T10);
+                    dT6_dVb = T10 / Nvtmrsswgd * T9;
+                } else {
+                    T9 = 1.0 / (model->BSIM3v32vtsswgd - vbd);
+                    T0 = -vbd / Nvtmrsswgd * model->BSIM3v32vtsswgd * T9;
+                    dT0_dVb = model->BSIM3v32vtsswgd / Nvtmrsswgd * (T9 + vbd * T9 * T9) ;
+                    DEXP(T0, T6, T10);
+                    dT6_dVb = T10 * dT0_dVb;
+                }
+                here->BSIM3v32gbd += pParam->BSIM3v32weff * model->BSIM3v32jtsswgdtemp * dT6_dVb; 
+                here->BSIM3v32cbd -= pParam->BSIM3v32weff * model->BSIM3v32jtsswgdtemp * (T6 - 1.0); 
+            }
+
+        }
           /* End of diode DC model */
 
           if (vds >= 0.0)

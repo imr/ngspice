@@ -27,6 +27,15 @@
 #define MIN_EXP 1.713908431e-15
 #define EXP_THRESHOLD 34.0
 #define Charge_q 1.60219e-19
+#define DEXP(A,B) {                                                        \
+        if (A > EXP_THRESHOLD) {                                           \
+            B = MAX_EXP*(1.0+(A)-EXP_THRESHOLD);                           \
+        } else if (A < -EXP_THRESHOLD)  {                                  \
+            B = MIN_EXP;                                                   \
+        } else   {                                                         \
+            B = exp(A);                                                    \
+        }                                                                  \
+    }
 
 /* ARGSUSED */
 int
@@ -213,6 +222,39 @@ int Size_Not_Found, error;
              fprintf(stderr, "Temperature effect has caused pbswg to be less than 0.01. Pbswg is clamped to 0.01.\n");
          }
          /* End of junction capacitance */
+
+        /* trap-assisted tunneling current enhancement */
+        if ((model->BSIM3v32acmMod == 12) && (model->BSIM3v32bsim4diodeGiven))
+        {
+            double T6, T7, T9;
+            T0 = (TRatio - 1.0);
+            model->BSIM3v32njtstemp = model->BSIM3v32njts * (1.0 + model->BSIM3v32tnjts * T0);
+            model->BSIM3v32njtsdtemp = model->BSIM3v32njtsd * (1.0 + model->BSIM3v32tnjtsd * T0);
+            model->BSIM3v32njtsswtemp = model->BSIM3v32njtssw * (1.0 + model->BSIM3v32tnjtssw * T0);
+            model->BSIM3v32njtsswdtemp = model->BSIM3v32njtsswd * (1.0 + model->BSIM3v32tnjtsswd * T0);
+            model->BSIM3v32njtsswgtemp = model->BSIM3v32njtsswg * (1.0 + model->BSIM3v32tnjtsswg * T0);
+            model->BSIM3v32njtsswgdtemp = model->BSIM3v32njtsswgd * (1.0 + model->BSIM3v32tnjtsswgd * T0);
+            T7 = Eg0 / model->BSIM3v32vtm * T0;
+            T9 = model->BSIM3v32xtss * T7;
+            DEXP(T9, T1);
+            T9 = model->BSIM3v32xtsd * T7;
+            DEXP(T9, T2);
+            T9 = model->BSIM3v32xtssws * T7;
+            DEXP(T9, T3);
+            T9 = model->BSIM3v32xtsswd * T7;
+            DEXP(T9, T4);
+            T9 = model->BSIM3v32xtsswgs * T7;
+            DEXP(T9, T5);
+            T9 = model->BSIM3v32xtsswgd * T7;
+            DEXP(T9, T6);
+            model->BSIM3v32jtsstemp = T1 * model->BSIM3v32jtss;
+            model->BSIM3v32jtsdtemp = T2 * model->BSIM3v32jtsd;
+            model->BSIM3v32jtsswstemp = T3 * model->BSIM3v32jtssws;
+            model->BSIM3v32jtsswdtemp = T4 * model->BSIM3v32jtsswd;
+            model->BSIM3v32jtsswgstemp = T5 * model->BSIM3v32jtsswgs;
+            model->BSIM3v32jtsswgdtemp = T6 * model->BSIM3v32jtsswgd;
+
+        }
 
          /* loop through all the instances of the model */
                /* MCJ: Length and Width not initialized */
