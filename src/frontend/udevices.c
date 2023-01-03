@@ -10,12 +10,15 @@
     using the previously stored delays.
 
     Some limitations are:
-        No support for logicexp, pindly, and constraint behavioral primitives.
+        No support for DLYLINE, CONSTRAINT, RAM, ROM, STIM, PLAs.
         Approximations to the Pspice timing delays. Typical values for delays
         are estimated. Pspice has a rich set of timing simulation features,
         such as checks for setup/hold violations, minimum pulse width, and
-        hazard detection.
+        hazard detection. These timing simulation features are not available
+        in Xspice.
         Only the common logic gates, flip-flops, and latches are supported.
+        LOGICEXP and PINDLY are supported in logicexp.c through the functions
+        f_logicexp and f_pindly.
 
    First pass through a subcircuit. Call initialize_udevice() and read the
    .model cards by calling u_process_model_line() (or similar) for each card,

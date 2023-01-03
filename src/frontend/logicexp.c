@@ -2,7 +2,8 @@
     logicexp.c
 
     Convert PSpice LOGICEXP logic expressions into XSPICE gates.
-    Extract timing delay estimates from PINDLY statements.
+    Extract typical timing delay estimates from PINDLY statements and
+    insert buffers and tristates with these delays.
 
     Reference: PSpice A/D Reference Guide version 16.6
 */
@@ -1521,10 +1522,17 @@ static BOOL bparse(char *line, BOOL new_lexer)
 
 /* Start of f_logicexp which is called from udevices.c 
    See the PSpice reference which describes the LOGICEXP statement syntax.
-   Combinational gates are generated and usually have zero delays.
+
+   NOTE: Combinational gates are generated and usually have zero delays.
+   In XSPICE, the shortest delays are 1.0e-12 secs, not actually zero.
+
+   Timing delays for LOGICEXP come from an associated PINDLY instance
+   when the timing model is d0_gate. Otherwise the timing model is used
+   for the delay estimates (see f_logicexp).
+
    The PINDLY statements generate buffers and tristate buffers
    which drive the primary outputs from the LOGICEXP outputs.
-   These buffers have their delays set.
+   These buffers and tristates have estimated typical delays.
 */
 static LEXER current_lexer = NULL;
 
@@ -1654,7 +1662,8 @@ error_return:
 
 /* Start of f_pindly which is called from udevices.c 
    See the PSpice reference which describes the PINDLY statement syntax.
-   Note that only two sections, PINDLY: and TRISTATE:, are considered.
+
+   NOTE that only two sections, PINDLY: and TRISTATE:, are considered.
    Typical delays are estimated from the DELAY(...) functions.
    XSPICE does not have the variety of delays that PSpice supports.
    Output buffers and tristate buffers are generated.
