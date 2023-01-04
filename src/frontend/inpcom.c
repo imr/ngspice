@@ -4672,10 +4672,10 @@ int get_number_terminals(char *c)
             while ((i < 12) && (*cc != '\0')) {
                 char* comma;
                 name[i] = gettok_instance(&cc);
-                if (strstr(name[i], "off") || strchr(name[i], '='))
+                if (search_plain_identifier(name[i], "off") || strchr(name[i], '='))
                     j++;
 #ifdef CIDER
-                if (strstr(name[i], "save") || strstr(name[i], "print"))
+                if (search_plain_identifier(name[i], "save") || search_plain_identifier(name[i], "print"))
                     j++;
 #endif
                 /* If we have IC=VBE, VCE instead of IC=VBE,VCE we need to inc
