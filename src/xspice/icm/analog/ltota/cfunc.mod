@@ -105,318 +105,66 @@ NON-STANDARD FEATURES
 
 ==============================================================================*/
 
-/*=== CM_ILIMIT ROUTINE ===*/
+/*=== CM_OTA ROUTINE ===*/
 
 void cm_ota(ARGS)  /* structure holding parms,
                                        inputs, outputs, etc.     */
 {
-* input parameters
-    double Ref, G, Iout, Isource, Isink, Ioffset, Vhigh, Vlow, Rclamp, Epsilon;
-* noise parameters, not yet implemented
-    double EN, ENk, IN, INk, INcm, INcmk;
+// input parameters
+    double ref, g, iout, isource, isink, ioffset, vhigh, vlow, rclamp, epsilon;
+// noise parameters, not yet implemented
+    double en, enk, in, ink, incm, incmk;
 
     double mult, curout, vout;
 
     Mif_Complex_t ac_gain;
 
-
-
-
     /* Retrieve frequently used parameters... */
 
-    Ref = PARAM(Ref);
-    G = PARAM(G);
-    Iout = PARAM(Iout);
-    Isource = PARAM(Isource);
-    Isink = PARAM(Isink);
-    Ioffset = PARAM(Ioffset);
-    Vhigh = PARAM(Vhigh);
-    Vlow = PARAM(Vlow);
-    Rclamp = PARAM(Rclamp);
-    Epsilon = PARAM(Epsilon);
+    ref = PARAM(ref);
+    g = PARAM(g);
+    iout = PARAM(iout);
+    isource = PARAM(isource);
+    isink = PARAM(isink);
+    ioffset = PARAM(ioffset);
+    vhigh = PARAM(vhigh);
+    vlow = PARAM(vlow);
+    rclamp = PARAM(rclamp);
+    epsilon = PARAM(epsilon);
 
-    /* Test to see if in3 or in4 are connected...   */
-    /* if not, assign 1 to muliplier */
+    /* Test to see if in3 or in4 are connected or are not both 0.0 */
+    /* if not, assign 1 to multiplier */
     /* else multiplier equals the difference */
 
-   if ( PORT_NULL(in3) || PORT_NULL(in4) ) {
+   if ( PORT_NULL(in3) || PORT_NULL(in4) || (INPUT(in3) == 0.0 && INPUT(in4) == 0.0)) {
         mult = 1.0;
     }
     else {
         mult = INPUT(in3) - INPUT(in4);
     }
-    
-    curout = (Ref - INPUT(in1) + INPUT(in2)) * mult * G + Ioffset;
+    /* output current */
+    curout = (ref - INPUT(in1) + INPUT(in2)) * mult * g + ioffset;
     
     /* Retrieve frequently used inputs... */
 
-    vout = INPUT(out6);
-
-
-
-
-    /* Compute Veq plus derivatives using climit_fcn */
-
-    if(INIT != 1){
-    /* If reasonable power and voltage values exist (i.e., not INIT)... */
-    /* then calculate expected equivalent voltage values and derivs.    */
-
-	cm_climit_fcn(INPUT(in), in_offset, pos_pwr_in, neg_pwr_in,
-                      0.0, 0.0, v_pwr_range, gain, MIF_FALSE, &veq,
-                      &pveq_pvin, &pveq_pvneg, &pveq_pvpos);
-    }
-    else {
-    /* Initialization pass...set nominal values */
-
-        veq = (pos_pwr_in - neg_pwr_in) / 2.0;
-        pveq_pvin = 0.0;
-        pveq_pvpos = 0.0;
-        pveq_pvneg = 0.0;
-    }
-
-
-    /* Calculate Rout */
-
-    if (r_out_source == r_out_sink) {
-    /* r_out constant => no calculation necessary */
-
-        r_out = r_out_source;
-        pr_out_px = 0.0;
-
-    }
-    else {    /* Interpolate smoothly between sourcing & sinking values */
-    cm_smooth_discontinuity(veq - vout, -r_out_domain, r_out_sink, r_out_domain,
-                   r_out_source, &r_out, &pr_out_px);
-    }
-
-
-
-    /* Calculate i_out & derivatives */
-
-    i_threshold_lower = -i_limit_sink + i_sink_range;
-    i_threshold_upper = i_limit_source - i_source_range;
-
-    i_out = (veq - vout) / r_out;
-    pi_out_pvin = (pveq_pvin/r_out - veq*pr_out_px*pveq_pvin/
-                   (r_out*r_out));
-    pi_out_pvout = (-1.0/r_out - vout*pr_out_px/(r_out*r_out));
-
-    pi_out_ppos_pwr = (pveq_pvpos/r_out - veq*pr_out_px*pveq_pvpos/
-                       (r_out*r_out));
-    pi_out_pneg_pwr = (pveq_pvneg/r_out - veq*pr_out_px*pveq_pvneg/
-                       (r_out*r_out));
-
-
-    /* Preset i_pos_pwr & i_neg_pwr & partials to 0.0 */
-
-    i_pos_pwr = 0.0;
-    pi_pos_pvin = 0.0;
-    pi_pos_pvneg = 0.0;
-    pi_pos_pvpos = 0.0;
-    pi_pos_pvout = 0.0;
-
-
-    i_neg_pwr = 0.0;
-    pi_neg_pvin = 0.0;
-    pi_neg_pvneg = 0.0;
-    pi_neg_pvpos = 0.0;
-    pi_neg_pvout = 0.0;
-
-
-
-
-    /* Determine operating point of i_out for limiting */
-
-    if (i_out < 0.0) {                         /* i_out sinking */
-        if (i_out < i_threshold_lower) {
-            if (i_out < (-i_limit_sink-i_sink_range)) { /* i_out lower-limited */
-                i_out = -i_limit_sink;
-                i_neg_pwr = -i_out;
-                pi_out_pvin = 0.0;
-                pi_out_pvout = 0.0;
-                pi_out_ppos_pwr = 0.0;
-                pi_out_pneg_pwr = 0.0;
-            }
-            else {               /* i_out in lower smoothing region */
-                cm_smooth_corner(i_out,-i_limit_sink,-i_limit_sink,i_sink_range,
-                            0.0,1.0,&i_out,&pi_out_plimit);
-                pi_out_pvin = pi_out_pvin * pi_out_plimit;
-                pi_out_pvout = pi_out_pvout * pi_out_plimit;
-                pi_out_ppos_pwr = pi_out_ppos_pwr * pi_out_plimit;
-                pi_out_pneg_pwr = pi_out_pneg_pwr * pi_out_plimit;
-
-                i_neg_pwr = -i_out;
-                pi_neg_pvin = -pi_out_pvin;
-                pi_neg_pvneg = -pi_out_pneg_pwr;
-                pi_neg_pvpos = -pi_out_ppos_pwr;
-                pi_neg_pvout = -pi_out_pvout;
-            }
-        }
-        else {  /* i_out in lower linear region...calculate i_neg_pwr */
-            if (i_out > -2.0*i_sink_range) {  /* i_out near 0.0...smooth i_neg_pwr */
-                cm_smooth_corner(i_out,-i_sink_range,0.0,i_sink_range,1.0,0.0,
-                            &i_neg_pwr,&pi_neg_plimit);
-                i_neg_pwr = -i_neg_pwr;
-                pi_neg_pvin = -pi_out_pvin * pi_neg_plimit;
-                pi_neg_pvneg = -pi_out_pneg_pwr * pi_neg_plimit;
-                pi_neg_pvpos = -pi_out_ppos_pwr * pi_neg_plimit;
-                pi_neg_pvout = -pi_out_pvout * pi_neg_plimit;
-            }
-            else {
-                i_neg_pwr = -i_out;  /* Not near i_out=0.0 => i_neg_pwr=-i_out */
-                pi_neg_pvin = -pi_out_pvin;
-                pi_neg_pvneg = -pi_out_pneg_pwr;
-                pi_neg_pvpos = -pi_out_ppos_pwr;
-                pi_neg_pvout = -pi_out_pvout;
-            }
-        }
-    }
-    else {                                     /* i_out sourcing */
-        if (i_out > i_threshold_upper) {
-            if (i_out > (i_limit_source + i_source_range)) { /* i_out upper-limited */
-                i_out = i_limit_source;
-                i_pos_pwr = -i_out;
-                pi_out_pvin = 0.0;
-                pi_out_pvout = 0.0;
-                pi_out_ppos_pwr = 0.0;
-                pi_out_pneg_pwr = 0.0;
-            }
-            else {               /* i_out in upper smoothing region */
-                cm_smooth_corner(i_out,i_limit_source,i_limit_source,i_sink_range,
-                            1.0,0.0,&i_out,&pi_out_plimit);
-                pi_out_pvin = pi_out_pvin * pi_out_plimit;
-                pi_out_pvout = pi_out_pvout * pi_out_plimit;
-                pi_out_ppos_pwr = pi_out_ppos_pwr * pi_out_plimit;
-                pi_out_pneg_pwr = pi_out_pneg_pwr * pi_out_plimit;
-
-                i_pos_pwr = -i_out;
-                pi_pos_pvin = -pi_out_pvin;
-                pi_pos_pvneg = -pi_out_pneg_pwr;
-                pi_pos_pvpos = -pi_out_ppos_pwr;
-                pi_pos_pvout = -pi_out_pvout;
-            }
-        }
-        else {  /* i_out in upper linear region...calculate i_pos_pwr */
-            if (i_out < 2.0*i_source_range) { /* i_out near 0.0...smooth i_pos_pwr */
-                cm_smooth_corner(i_out,i_source_range,0.0,i_source_range,0.0,1.0,
-                            &i_pos_pwr,&pi_pos_plimit);
-                i_pos_pwr = -i_pos_pwr;
-                pi_pos_pvin = -pi_out_pvin * pi_pos_plimit;
-                pi_pos_pvneg = -pi_out_pneg_pwr * pi_pos_plimit;
-                pi_pos_pvpos = -pi_out_ppos_pwr * pi_pos_plimit;
-                pi_pos_pvout = -pi_out_pvout * pi_pos_plimit;
-            }
-            else {                   /* Not near i_out=0.0 => i_pos_pwr=-i_out */
-                i_pos_pwr = -i_out;
-                pi_pos_pvin = -pi_out_pvin;
-                pi_pos_pvneg = -pi_out_pneg_pwr;
-                pi_pos_pvpos = -pi_out_ppos_pwr;
-                pi_pos_pvout = -pi_out_pvout;
-            }
-        }
-    }
-
-
-
-
-
+    /* output voltage */
+    vout = INPUT(out7);
+    
+    
+    
+    /* outputs without any limiting */
     if (ANALYSIS != MIF_AC) {     /* DC & Transient Analyses */
+        OUTPUT(out7) = -curout;
 
+        PARTIAL(out7,in1) = mult * g;
+        PARTIAL(out7,in2) = -mult * g;
+        PARTIAL(out7,in3) = (ref - INPUT(in1) + INPUT(in2)) * g;
+        PARTIAL(out7,in4) = -1 * (ref - INPUT(in1) + INPUT(in2)) * g;
 
-        /* Debug line...REMOVE FOR FINAL VERSION!!! */
-        /*OUTPUT(t1) = veq;
-        OUTPUT(t2) = r_out;
-        OUTPUT(t3) = pveq_pvin;
-        OUTPUT(t4) = pveq_pvpos;
-        OUTPUT(t5) = pveq_pvneg;*/
-
-
-        OUTPUT(out) = -i_out;                     /* Remember...current polarity must be    */
-        PARTIAL(out,in) = -pi_out_pvin;           /* reversed for SPICE...all previous code */
-        PARTIAL(out,out) = -pi_out_pvout;         /* assumes i_out positive when EXITING    */
-       											  /* the model and negative when entering.  */
-        										  /* SPICE assumes the opposite, so a       */
-                                                  /* minus sign is added to all currents    */
-                                                  /* and current partials to compensate for */
-                                                  /* this fact....                     JPM  */
-
-        if ( !PORT_NULL(neg_pwr) ) {
-            OUTPUT(neg_pwr) = -i_neg_pwr;
-            PARTIAL(neg_pwr,in) = -pi_neg_pvin;
-            PARTIAL(neg_pwr,out) = -pi_neg_pvout;
-			if(!PORT_NULL(pos_pwr)){
-            	PARTIAL(neg_pwr,pos_pwr) = -pi_neg_pvpos;
-			}
-            PARTIAL(neg_pwr,neg_pwr) = -pi_neg_pvneg;
-        	PARTIAL(out,neg_pwr) = -pi_out_pneg_pwr;
-        }
-
-        if ( !PORT_NULL(pos_pwr) ) {
-            OUTPUT(pos_pwr) = -i_pos_pwr;
-            PARTIAL(pos_pwr,in) = -pi_pos_pvin;
-            PARTIAL(pos_pwr,out) = -pi_pos_pvout;
-            PARTIAL(pos_pwr,pos_pwr) = -pi_pos_pvpos;
-        	if ( !PORT_NULL(neg_pwr) ) {
-            	PARTIAL(pos_pwr,neg_pwr) = -pi_pos_pvneg;
-			}
-        	PARTIAL(out,pos_pwr) = -pi_out_ppos_pwr;
-        }
-
+        PARTIAL(out7,out7) = 0;
     }
-    else {                        /* AC Analysis */
-        ac_gain.real = -pi_out_pvin;
-        ac_gain.imag= 0.0;
-        AC_GAIN(out,in) = ac_gain;
-
-        ac_gain.real = -pi_out_pvout;
-        ac_gain.imag= 0.0;
-        AC_GAIN(out,out) = ac_gain;
-
-        if ( !PORT_NULL(neg_pwr) ) {
-            ac_gain.real = -pi_neg_pvin;
-            ac_gain.imag= 0.0;
-            AC_GAIN(neg_pwr,in) = ac_gain;
-
-            ac_gain.real = -pi_out_pneg_pwr;
-            ac_gain.imag= 0.0;
-            AC_GAIN(out,neg_pwr) = ac_gain;
-
-            ac_gain.real = -pi_neg_pvout;
-            ac_gain.imag= 0.0;
-            AC_GAIN(neg_pwr,out) = ac_gain;
-
-            ac_gain.real = -pi_neg_pvpos;
-            ac_gain.imag= 0.0;
-            AC_GAIN(neg_pwr,pos_pwr) = ac_gain;
-
-            ac_gain.real = -pi_neg_pvneg;
-            ac_gain.imag= 0.0;
-            AC_GAIN(neg_pwr,neg_pwr) = ac_gain;
-        }
 
 
-        if ( !PORT_NULL(pos_pwr) ) {
-            ac_gain.real = -pi_pos_pvin;
-            ac_gain.imag= 0.0;
-            AC_GAIN(pos_pwr,in) = ac_gain;
-
-            ac_gain.real = -pi_out_ppos_pwr;
-            ac_gain.imag= 0.0;
-            AC_GAIN(out,pos_pwr) = ac_gain;
-
-            ac_gain.real = -pi_pos_pvout;
-            ac_gain.imag= 0.0;
-            AC_GAIN(pos_pwr,out) = ac_gain;
-
-            ac_gain.real = -pi_pos_pvpos;
-            ac_gain.imag= 0.0;
-            AC_GAIN(pos_pwr,pos_pwr) = ac_gain;
-
-            ac_gain.real = -pi_pos_pvneg;
-            ac_gain.imag= 0.0;
-            AC_GAIN(pos_pwr,neg_pwr) = ac_gain;
-        }
-    }
 }
 
 

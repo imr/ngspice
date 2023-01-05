@@ -63,8 +63,8 @@ PORT_TABLE:
 Port_Name:             out6             out7
 Description:           "out1"           "out2"
 Direction:             inout            inout
-Default_Type:          g                i
-Allowed_Types:         [g, gd]          [i, id]
+Default_Type:          g                g
+Allowed_Types:         [g, gd]          [g, gd]
 Vector:                 no               no
 Vector_Bounds:          -                -
 Null_Allowed:          yes               no
@@ -82,7 +82,7 @@ Null_Allowed:          yes
 
 PARAMETER_TABLE:
 
-Parameter_Name:     Ref                         G
+Parameter_Name:     ref                         g
 Description:        "input offset"              "gain"
 Data_Type:          real                        real
 Default_Value:      0.0                         1.0e-6
@@ -93,7 +93,7 @@ Null_Allowed:       yes                         yes
 
 PARAMETER_TABLE:
 
-Parameter_Name:     Isource                     Isink
+Parameter_Name:     isource                     isink
 Description:        "current sourcing limit"    "current sinking limit"
 Data_Type:          real                        real
 Default_Value:      10.0e-5                     -10.0e-5
@@ -104,7 +104,7 @@ Null_Allowed:       yes                         yes
 
 PARAMETER_TABLE:
 
-Parameter_Name:     Iout
+Parameter_Name:     iout
 Description:        "current limit"
 Data_Type:          real
 Default_Value:      10.0e-5
@@ -115,7 +115,7 @@ Null_Allowed:       yes
 
 PARAMETER_TABLE:
 
-Parameter_Name:     Asym                        Linear
+Parameter_Name:     asym                        linear
 Description:        "indep. asym. limits"       "disable output limiting"
 Data_Type:          boolean                     boolean
 Default_Value:      FALSE                       FALSE
@@ -126,7 +126,7 @@ Null_Allowed:       yes                         yes
 
 PARAMETER_TABLE:
 
-Parameter_Name:     Ioffset                     PowerUp
+Parameter_Name:     ioffset                     powerup
 Description:        "output offset current"     "Disable pin 7 output current"
 Data_Type:          real                        boolean
 Default_Value:      1e-6                        FALSE
@@ -137,7 +137,7 @@ Null_Allowed:       yes                          yes
 
 PARAMETER_TABLE:
 
-Parameter_Name:     Vhigh                       Vlow
+Parameter_Name:     vhigh                       vlow
 Description:        "pos. rail voltage"         "neg. rail voltage"
 Data_Type:          real                        real
 Default_Value:      2                           0
@@ -148,7 +148,7 @@ Null_Allowed:       yes                         yes
 
 PARAMETER_TABLE:
 
-Parameter_Name:     Rclamp                      Epsilon
+Parameter_Name:     rclamp                      epsilon
 Description:        "clamping res. to rails"    "Rclamp imped. v sm. range"
 Data_Type:          real                        real
 Default_Value:      1.0                         0
@@ -159,7 +159,7 @@ Null_Allowed:       yes                         yes
 
 PARAMETER_TABLE:
 
-Parameter_Name:     EN                          ENk
+Parameter_Name:     en                          enk
 Description:        "voltage noise density"     "voltage noise knee freq."
 Data_Type:          real                        real
 Default_Value:      0                           0
@@ -170,7 +170,7 @@ Null_Allowed:       yes                         yes
 
 PARAMETER_TABLE:
 
-Parameter_Name:     IN                          INk
+Parameter_Name:     in                          ink
 Description:        "current noise density"     "current noise knee freq."
 Data_Type:          real                        real
 Default_Value:      0                           0
@@ -181,7 +181,7 @@ Null_Allowed:       yes                         yes
 
 PARAMETER_TABLE:
 
-Parameter_Name:     INcm                         INcmk
+Parameter_Name:     incm                         incmk
 Description:        "common mode cur. noi dens." "common mode cur. noi knee freq."
 Data_Type:          real                         real
 Default_Value:      1.0                          1.0
