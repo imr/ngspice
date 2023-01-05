@@ -1,0 +1,21 @@
+Test of OTA simple
+
+Aota 1 2 0 0 0 0 7 0 newota
+.model newota ota(g=1m ioffset=200u)
+
+V1 1 0 1
+V2 2 0 0
+V3 3 0 1
+V4 4 0 0
+
+Rload 7 0 1
+
+
+.dc V1 -1 1 0.1
+
+.control
+run
+plot v(7)
+.endc
+
+.end
