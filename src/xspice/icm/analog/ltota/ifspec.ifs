@@ -1,0 +1,191 @@
+/*.......1.........2.........3.........4.........5.........6.........7.........8
+================================================================================
+Public Domain
+
+The ngspice team
+
+
+AUTHORS
+
+     31 Dec 2022    Holger Vogt
+
+
+SUMMARY
+
+    This file contains the interface specification file for the
+    analog ota code model.
+
+===============================================================================*/
+
+NAME_TABLE:
+
+
+C_Function_Name:       cm_ota
+Spice_Model_Name:      ota
+Description:           "LTSPICE compatible OTA"
+
+
+PORT_TABLE:
+
+Port_Name:             in1                 in2
+Description:           "input1"            "input2"
+Direction:             in                 in
+Default_Type:          v                  v
+Allowed_Types:         [v]               [v]
+Vector:                 no                 no
+Vector_Bounds:          -                  -
+Null_Allowed:          no                 no
+
+PORT_TABLE:
+
+Port_Name:             in3                 in4
+Description:           "input3"            "input4"
+Direction:             in                 in
+Default_Type:          v                  v
+Allowed_Types:         [v]               [v]
+Vector:                 no                 no
+Vector_Bounds:          -                  -
+Null_Allowed:          yes               yes
+
+PORT_TABLE:
+
+Port_Name:             in5
+Description:           "input5"
+Direction:             in
+Default_Type:          v
+Allowed_Types:         [v]
+Vector:                 no
+Vector_Bounds:          -
+Null_Allowed:          yes
+
+PORT_TABLE:
+
+Port_Name:             out6             out7
+Description:           "out1"           "out2"
+Direction:             inout            inout
+Default_Type:          g                i
+Allowed_Types:         [g, gd]          [i, id]
+Vector:                 no               no
+Vector_Bounds:          -                -
+Null_Allowed:          yes               no
+
+PORT_TABLE:
+
+Port_Name:             ground8
+Description:           "external ground"
+Direction:             inout
+Default_Type:          g
+Allowed_Types:         [g,gd]
+Vector:                 no
+Vector_Bounds:          -
+Null_Allowed:          yes
+
+PARAMETER_TABLE:
+
+Parameter_Name:     Ref                         G
+Description:        "input offset"              "gain"
+Data_Type:          real                        real
+Default_Value:      0.0                         1.0e-6
+Limits:             -                           -
+Vector:              no                          no
+Vector_Bounds:       -                           -
+Null_Allowed:       yes                         yes
+
+PARAMETER_TABLE:
+
+Parameter_Name:     Isource                     Isink
+Description:        "current sourcing limit"    "current sinking limit"
+Data_Type:          real                        real
+Default_Value:      10.0e-5                     -10.0e-5
+Limits:             [1e-12 -]                   [1e-12 -]
+Vector:              no                          no
+Vector_Bounds:       -                           -
+Null_Allowed:       yes                         yes
+
+PARAMETER_TABLE:
+
+Parameter_Name:     Iout
+Description:        "current limit"
+Data_Type:          real
+Default_Value:      10.0e-5
+Limits:             [1e-12 -]
+Vector:              no
+Vector_Bounds:       -
+Null_Allowed:       yes
+
+PARAMETER_TABLE:
+
+Parameter_Name:     Asym                        Linear
+Description:        "indep. asym. limits"       "disable output limiting"
+Data_Type:          boolean                     boolean
+Default_Value:      FALSE                       FALSE
+Limits:             -                            -
+Vector:              no                          no
+Vector_Bounds:       -                           -
+Null_Allowed:       yes                         yes
+
+PARAMETER_TABLE:
+
+Parameter_Name:     Ioffset                     PowerUp
+Description:        "output offset current"     "Disable pin 7 output current"
+Data_Type:          real                        boolean
+Default_Value:      1e-6                        FALSE
+Limits:             [1e-15 -]                   -
+Vector:              no                          no
+Vector_Bounds:       -                           -
+Null_Allowed:       yes                          yes
+
+PARAMETER_TABLE:
+
+Parameter_Name:     Vhigh                       Vlow
+Description:        "pos. rail voltage"         "neg. rail voltage"
+Data_Type:          real                        real
+Default_Value:      2                           0
+Limits:             -                           -
+Vector:              no                          no
+Vector_Bounds:       -                           -
+Null_Allowed:       yes                         yes
+
+PARAMETER_TABLE:
+
+Parameter_Name:     Rclamp                      Epsilon
+Description:        "clamping res. to rails"    "Rclamp imped. v sm. range"
+Data_Type:          real                        real
+Default_Value:      1.0                         0
+Limits:             [1e-9 1e9]                  [1e-9 1e9]
+Vector:              no                          no
+Vector_Bounds:       -                           -
+Null_Allowed:       yes                         yes
+
+PARAMETER_TABLE:
+
+Parameter_Name:     EN                          ENk
+Description:        "voltage noise density"     "voltage noise knee freq."
+Data_Type:          real                        real
+Default_Value:      0                           0
+Limits:             [1e-15 -]                   [1e-15 -]
+Vector:              no                          no
+Vector_Bounds:       -                           -
+Null_Allowed:       yes                         yes
+
+PARAMETER_TABLE:
+
+Parameter_Name:     IN                          INk
+Description:        "current noise density"     "current noise knee freq."
+Data_Type:          real                        real
+Default_Value:      0                           0
+Limits:             [1e-15 -]                   [1e-15 -]
+Vector:              no                         no
+Vector_Bounds:       -                          -
+Null_Allowed:       yes                         yes
+
+PARAMETER_TABLE:
+
+Parameter_Name:     INcm                         INcmk
+Description:        "common mode cur. noi dens." "common mode cur. noi knee freq."
+Data_Type:          real                         real
+Default_Value:      1.0                          1.0
+Limits:             [1e-15 -]                    [1e-9 1e9]
+Vector:              no                           no
+Vector_Bounds:       -                            -
+Null_Allowed:       yes                          yes
