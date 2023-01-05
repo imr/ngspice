@@ -6,6 +6,7 @@ hyst
 ilimit
 int
 limit
+ltota
 mult
 multi_input_pwl
 oneshot

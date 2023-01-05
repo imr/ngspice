@@ -224,6 +224,8 @@
     <ClCompile Include="icm\analog\int\int-ifspec.c" />
     <ClCompile Include="icm\analog\limit\limit-cfunc.c" />
     <ClCompile Include="icm\analog\limit\limit-ifspec.c" />
+    <ClCompile Include="icm\analog\ltota\ltota-cfunc.c" />
+    <ClCompile Include="icm\analog\ltota\ltota-ifspec.c" />
     <ClCompile Include="icm\analog\mult\mult-cfunc.c" />
     <ClCompile Include="icm\analog\mult\mult-ifspec.c" />
     <ClCompile Include="icm\analog\multi_input_pwl\multi_input_pwl-cfunc.c" />
@@ -273,6 +275,8 @@
     <None Include="..\..\src\xspice\icm\analog\int\ifspec.ifs" />
     <None Include="..\..\src\xspice\icm\analog\limit\cfunc.mod" />
     <None Include="..\..\src\xspice\icm\analog\limit\ifspec.ifs" />
+    <None Include="..\..\src\xspice\icm\analog\ltota\cfunc.mod" />
+    <None Include="..\..\src\xspice\icm\analog\ltota\ifspec.ifs" />
     <None Include="..\..\src\xspice\icm\analog\mult\cfunc.mod" />
     <None Include="..\..\src\xspice\icm\analog\mult\ifspec.ifs" />
     <None Include="..\..\src\xspice\icm\analog\multi_input_pwl\cfunc.mod" />
