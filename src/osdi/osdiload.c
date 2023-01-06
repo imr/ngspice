@@ -60,6 +60,9 @@ static void eval(const OsdiDescriptor *descr, const GENinstance *gen_inst,
 static void load(CKTcircuit *ckt, const GENinstance *gen_inst, void *model,
                  void *inst, OsdiExtraInstData *extra_inst_data, bool is_tran,
                  bool is_init_tran, const OsdiDescriptor *descr) {
+
+  NG_IGNORE(extra_inst_data);
+
   double dump;
   if (is_tran) {
     /* load dc matrix and capacitances (charge derivative multiplied with
@@ -113,10 +116,8 @@ static void load(CKTcircuit *ckt, const GENinstance *gen_inst, void *model,
 }
 
 extern int OSDIload(GENmodel *inModel, CKTcircuit *ckt) {
-  OsdiNgspiceHandle handle;
   GENmodel *gen_model;
   GENinstance *gen_inst;
-  double dump;
 
   bool is_init_smsig = ckt->CKTmode & MODEINITSMSIG;
   bool is_sweep = ckt->CKTmode & MODEDCTRANCURVE;
