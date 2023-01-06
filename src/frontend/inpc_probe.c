@@ -238,6 +238,17 @@ void inp_probe(struct card* deck)
             if (strchr("ehvk", *instname))
                 continue;
 
+            /* exclude a devices (code models may have special characters in their instance line.
+            digital nodes should not get V sources in series anyway.) */
+            if ('a' == *instname)
+                continue;
+
+            /* exclude x devices (Subcircuits may contain digital a devices,
+            and digital nodes should not get V sources in series anyway.),
+            when probe_alli_nox is set in .spiceinit. */
+            if ('x' == *instname && cp_getvar("probe_alli_nox", CP_BOOL, NULL, 0))
+                continue;
+
             /* special treatment for controlled current sources and switches:
                We have three or four tokens until model name, but only the first 2 are relevant nodes. */
             if (strchr("fgsw", *instname))
