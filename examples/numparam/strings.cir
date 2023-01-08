@@ -1,0 +1,42 @@
+Example of string-valued parameters for XSPICE LUT
+
+.param and="0001" or="0111"
+
+* Simple AND gate via parameter.
+
+.model l_and d_lut table_values=and
+aand [ d1 d2 ] o_and l_and
+
+* More usefully, strings may be passed as sub-circuit parameters
+
+xor d1 d2 o_or pgate table=or
+
+.subckt pgate 1 2 out table="0000"
+.model poly d_lut table_values=table
+ap [ 1 2 ] out poly
+.ends
+
+* Strings can be concatenated by .param, but not in .subckt lines or instances.
+
+.param both=or{and}
+xboth d1 d2 d3 o_both pgate3 table=both
+
+.subckt pgate3 1 2 3 out table="00000000"
+.model poly3 d_lut table_values=table
+ap3 [ 1 2 3 ] out poly3
+.ends
+
+* Verify the above with a simple transient simulation.
+
+v1 a1 0 pulse 1 0 0 1n 1n 0.5u 1u
+v2 a2 0 pulse 1 0 0 1n 1n 1u 2u
+v3 a3 0 pulse 1 0 0 1n 1n 2u 4u
+aadc [ a1 a2 a3 ] [ d1 d2 d3 ] adc
+.model adc adc_bridge in_low=0.5 in_high=0.5
+
+.control
+tran 0.1u 4.1u
+plot d1 d2 d3 o_and o_or o_both digitop
+.endc
+.end
+
