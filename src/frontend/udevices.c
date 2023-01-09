@@ -314,7 +314,7 @@ static unsigned int subckt_msg_count = 0;
 static void check_name_unused(char *name)
 {
     if (find_name_entry(name, new_names_list)) {
-        printf("ERROR udevice name %s already used\n", name);
+        fprintf(stderr, "ERROR udevice name %s already used\n", name);
         num_name_collisions++;
     } else {
         if (!new_names_list) {
@@ -329,7 +329,7 @@ static void find_collision(char *name, NAME_ENTRY nelist)
 {
     if (!nelist) { return; }
     if (find_name_entry(name, nelist)) {
-        printf("ERROR name collision: internal node %s "
+        fprintf(stderr, "ERROR name collision: internal node %s "
             "collides with a pin or port\n", name);
         num_name_collisions++;
     }
@@ -3634,7 +3634,7 @@ BOOL u_process_instance(char *nline)
             delete_instance_hdr(hdr);
             behav_ret = f_logicexp(nline);
             if (!behav_ret && current_subckt) {
-                printf("ERROR in %s\n", current_subckt);
+                fprintf(stderr, "ERROR in %s\n", current_subckt);
             }
             if (!behav_ret && ps_udevice_exit) {
                 fprintf(stderr, "ERROR bad syntax in logicexp\n");
@@ -3646,7 +3646,7 @@ BOOL u_process_instance(char *nline)
             delete_instance_hdr(hdr);
             behav_ret = f_pindly(nline);
             if (!behav_ret && current_subckt) {
-                printf("ERROR in %s\n", current_subckt);
+                fprintf(stderr, "ERROR in %s\n", current_subckt);
             }
             if (!behav_ret && ps_udevice_exit) {
                 fprintf(stderr, "ERROR bad syntax in pindly\n");
@@ -3682,7 +3682,7 @@ BOOL u_process_instance(char *nline)
         delete_instance_hdr(hdr);
         if (ps_udevice_exit) {
             if (current_subckt) {
-                printf("ERROR in %s\n", current_subckt);
+                fprintf(stderr, "ERROR in %s\n", current_subckt);
             }
             fprintf(stderr, "ERROR unknown U* device\n");
             fflush(stdout);
@@ -3697,7 +3697,7 @@ BOOL u_process_instance(char *nline)
     } else {
         if (ps_udevice_exit) {
             if (current_subckt) {
-                printf("ERROR in %s\n", current_subckt);
+                fprintf(stderr, "ERROR in %s\n", current_subckt);
             }
             fprintf(stderr, "ERROR U* device syntax error\n");
             fflush(stdout);
