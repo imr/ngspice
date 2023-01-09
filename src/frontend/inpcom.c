@@ -4672,10 +4672,10 @@ int get_number_terminals(char *c)
             while ((i < 12) && (*cc != '\0')) {
                 char* comma;
                 name[i] = gettok_instance(&cc);
-                if (strstr(name[i], "off") || strchr(name[i], '='))
+                if (search_plain_identifier(name[i], "off") || strchr(name[i], '='))
                     j++;
 #ifdef CIDER
-                if (strstr(name[i], "save") || strstr(name[i], "print"))
+                if (search_plain_identifier(name[i], "save") || search_plain_identifier(name[i], "print"))
                     j++;
 #endif
                 /* If we have IC=VBE, VCE instead of IC=VBE,VCE we need to inc
@@ -7006,9 +7006,12 @@ static void inp_poly_err(struct card *card)
 void tprint(struct card *t)
 {
     struct card *tmp;
-
+    static int npr;
+    char outfile[100];
+    sprintf(outfile, "tprint-out%d.txt", npr);
+    npr++;
     /*debug: print into file*/
-    FILE *fd = fopen("tprint-out.txt", "w");
+    FILE *fd = fopen(outfile, "w");
     for (tmp = t; tmp; tmp = tmp->nextcard)
         if (*(tmp->line) != '*')
             fprintf(fd, "%6d  %6d  %s\n", tmp->linenum_orig, tmp->linenum,
