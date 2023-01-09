@@ -643,7 +643,7 @@ static char *get_inverter_output_name(char *input)
     // FIX ME keep this name in the symbol table to ensure uniqueness
     (void) sprintf(buf, "inv_out__%s", input);
     if (member_sym_tab(buf, lx->lexer_sym_tab))
-        printf("ERROR %s is already in use\n", buf);
+        fprintf(stderr, "ERROR %s is already in use\n", buf);
     return buf;
 }
 
@@ -1465,7 +1465,7 @@ static BOOL bparse(char *line, BOOL new_lexer)
         if (last_count == 1) {
             ret_val = gen_gates(gen_tab, parse_lexer->lexer_sym_tab);
             if (!ret_val) {
-                printf("ERROR generating gates for logicexp\n");
+                fprintf(stderr, "ERROR generating gates for logicexp\n");
             }
         } else if (last_count > 1) {
             opt_tab1 = optimize_gen_tab(gen_tab);
@@ -1494,7 +1494,7 @@ static BOOL bparse(char *line, BOOL new_lexer)
                 if (opt_tab2) {
                     ret_val = gen_gates(opt_tab2, parse_lexer->lexer_sym_tab);
                     if (!ret_val) {
-                        printf(
+                        fprintf(stderr,
                             "ERROR generating gates for logicexp\n");
                     }
                     delete_parse_table(opt_tab2);
@@ -1541,7 +1541,7 @@ static BOOL expect_token(
 {
     if (tok != expected_tok) {
         if (msg) {
-            printf(
+            fprintf(stderr,
                 "ERROR expect_token failed tok %d expected_tok %d loc %d\n",
                 tok, expected_tok, loc);
         }
@@ -1554,7 +1554,7 @@ static BOOL expect_token(
                 return TRUE;
             else {
                 if (msg) {
-                    printf(
+                    fprintf(stderr,
                     "ERROR expect_token failed lexer_buf %s expected_str %s loc %d\n",
                         lx->lexer_buf, expected_str, loc);
                 }
@@ -1589,7 +1589,7 @@ BOOL f_logicexp(char *line)
     if (lex_all_digits(parse_lexer->lexer_buf)) {
         num_ins = (int) strtol(parse_lexer->lexer_buf, &endp, 10);
     } else {
-        printf("ERROR logicexp input count is not an integer\n");
+        fprintf(stderr, "ERROR logicexp input count is not an integer\n");
         goto error_return;
     }
     t = lex_scan();
@@ -1599,7 +1599,7 @@ BOOL f_logicexp(char *line)
     if (lex_all_digits(parse_lexer->lexer_buf)) {
         num_outs = (int) strtol(parse_lexer->lexer_buf, &endp, 10);
     } else {
-        printf("ERROR logicexp output count is not an integer\n");
+        fprintf(stderr, "ERROR logicexp output count is not an integer\n");
         goto error_return;
     }
     t = lex_scan();
@@ -1648,8 +1648,8 @@ BOOL f_logicexp(char *line)
 
     current_lexer = NULL;
     if (!ret_val) {
-        printf("ERROR parsing logicexp\n");
-        printf("ERROR in \"%s\"\n", line);
+        fprintf(stderr, "ERROR parsing logicexp\n");
+        fprintf(stderr, "ERROR in \"%s\"\n", line);
         cleanup_parser();
     }
     return ret_val;
@@ -2205,7 +2205,7 @@ BOOL f_pindly(char *line)
     if (lex_all_digits(lxr->lexer_buf)) {
         num_ios = (int) strtol(lxr->lexer_buf, &endp, 10);
     } else {
-        printf("ERROR pindly io count is not an integer\n");
+        fprintf(stderr, "ERROR pindly io count is not an integer\n");
         goto error_return;
     }
 
@@ -2217,7 +2217,7 @@ BOOL f_pindly(char *line)
     if (lex_all_digits(lxr->lexer_buf)) {
         num_ena = (int) strtol(lxr->lexer_buf, &endp, 10);
     } else {
-        printf("ERROR pindly enable count is not an integer\n");
+        fprintf(stderr, "ERROR pindly enable count is not an integer\n");
         goto error_return;
     }
 
@@ -2229,7 +2229,7 @@ BOOL f_pindly(char *line)
     if (lex_all_digits(lxr->lexer_buf)) {
         num_refs = (int) strtol(lxr->lexer_buf, &endp, 10);
     } else {
-        printf("ERROR pindly refs count is not an integer\n");
+        fprintf(stderr, "ERROR pindly refs count is not an integer\n");
         goto error_return;
     }
 
@@ -2268,8 +2268,8 @@ BOOL f_pindly(char *line)
     }
 
     if (!new_gen_output_models(lxr)) {
-        printf("ERROR generating models for pindly\n");
-        printf("ERROR in \"%s\"\n", line);
+        fprintf(stderr, "ERROR generating models for pindly\n");
+        fprintf(stderr, "ERROR in \"%s\"\n", line);
         goto error_return;;
     }
     gen_pindly_buffers();
