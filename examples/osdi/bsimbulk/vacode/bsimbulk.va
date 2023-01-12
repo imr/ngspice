@@ -23,12 +23,12 @@
 Licensed under Educational Community License, Version 2.0 (the "License"); you may
 not use this file except in compliance with the License. You may obtain a copy of the license at
 http://opensource.org/licenses/ECL-2.0
-Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT 
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
 WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations
 under the License.
 The BSIM-BULK standard has been supported by the members of Silicon Integration Initiative's Compact Model Coalition.
 A link to the most recent version of this standard can be found at:
-http://www.si2.org/cmc 
+http://www.si2.org/cmc
 */
 
 `include "constants.vams"
@@ -1737,9 +1737,9 @@ endfunction
 // High Voltage Model Parameters
 
 // --- Mod selectors -----
-`MPIcc( HVMOD          ,0               ,""             ,0           ,1          ,"High Voltage series resistance model, 0: Turn Off 1: Turn On") 
-`MPIcc( HVCAP          ,0               ,""             ,0           ,1          ,"High Voltage capacitance model. 0: Turn Off 1: Turn On") 
-`MPIcc( HVCAPS         ,0               ,""             ,0           ,1          ,"High Voltage capacitance model at source side. 0: Turn Off 1: Turn On") 
+`MPIcc( HVMOD          ,0               ,""             ,0           ,1          ,"High Voltage series resistance model, 0: Turn Off 1: Turn On")
+`MPIcc( HVCAP          ,0               ,""             ,0           ,1          ,"High Voltage capacitance model. 0: Turn Off 1: Turn On")
+`MPIcc( HVCAPS         ,0               ,""             ,0           ,1          ,"High Voltage capacitance model at source side. 0: Turn Off 1: Turn On")
 `MPIcc( IIMOD          ,0               ,""            ,0           ,1           ,"Flag for impact ionization in the drift region 0: Turn-Off,  1: Turn On" )
 
 // --- Other parameters -----
@@ -1754,7 +1754,7 @@ endfunction
 `MPRnb( VFBOV          ,-1              ,"V"                                     ,"Flat-band voltage of the overlap region" )
 `MPRnb( LOVER          ,500n            ,"m"                                     ,"Overlap region length" )
 `MPRnb( LOVERACC       ,LOVER           ,"m"                                     ,"Drift region length" )
-`MPRnb( NDR            ,NDEP            ,"m^3"                                   ,"Drift region doping" )
+`MPRnb( NDR            ,NDEP            ,"1/m^3"                                 ,"Drift region doping" )
 `MPRcz( SLHV           ,0               ,""                                      ,"Parameter and Flag for controlling slope of accumulation region capacitance. 0: Turn-Off,  1: Turn On" )
 `MPRoz( SLHV1          ,1.0             ,""                                      ,"Parameter for slope of the accumulation capacitance " )
 `MPRnb( ALPHADR        ,ALPHA0          ,""                                      ,"First parameter of Iii in the drift region" )
@@ -1938,7 +1938,7 @@ real vth0_well, k2_well, mu_well, Wdrn, local_sca, local_scb, local_scc;
 real ids_edge, ETA0EDGE_t, NFACTOREDGE_t, Vbi_edge, theta_sce_edge, dvth_dibl, dvth_sce, litl_edge, DGAMMAEDGE_i, vdsatedge, Vdsatedge, Vdssate, phib_edge, phib_n_edge, NDEPEDGE_i, gam_edge;
 real vth0_stress_EDGE, k2_stress_EDGE, eta_stress_EDGE;
 
-// 1/f noise model for Edge FET 
+// 1/f noise model for Edge FET
 real nq_edge, qdeff_edge, qs_edge, Leffnoi_edge, Leffnoisq_edge, noia_edge, noib_edge, noic_edge, FNPowerAtedge;
 
 // Below are used by macros by GEOMOD and RGEOMOD
@@ -2632,7 +2632,7 @@ analog begin
     end else begin
         RDrainGeo = 0.0;
     end
-    // Clamping of S/D resistances 
+    // Clamping of S/D resistances
 
     if (RDSMOD == 0) begin
         if (RSourceGeo < minr) begin
@@ -3204,10 +3204,10 @@ analog begin
     // Vth shift for DIBL
     dVth_dibl = -(ETA0_a + ETAB_i * Vbsx) * Vdsx;
     `Smooth2(dVth_dibl, 0.0, 5.0e-5, dVth_dibl)
-    
+
     // Vth shift with temperature
     dvth_temp = (KT1_i + KT1L / Leff + KT2_i * Vbsx) * (pow(TRatio, KT1EXP) - 1.0);
-    
+
 
     // Vth correction for pocket implants
     if (DVTP0_i > 0.0) begin
@@ -3615,8 +3615,8 @@ analog begin
             end
         end
 
-        Rdrain  = Rdrain + rdrift_d;  
-        Rsource = Rsource + rdrift_s;  
+        Rdrain  = Rdrain + rdrift_d;
+        Rsource = Rsource + rdrift_s;
     end
 
     QIOV  = 0;
@@ -3660,7 +3660,7 @@ analog begin
             vgfbdrift = -devsign * V(gm,si) - VFBOV ;
             vgfbdrift = vgfbdrift/Vt;
             `PO_psip(vgfbdrift,gamhv,0,phibHV,psip_k)
-            `BSIM_q(psip_k, phibHV, devsign * V(si,bi)/Vt, gamhv, q_k)           
+            `BSIM_q(psip_k, phibHV, devsign * V(si,bi)/Vt, gamhv, q_k)
 
             `Smooth(psip_k, 1.0, 2.0, psipclamp_hv)
             sqrtpsip_k = sqrt(psipclamp_hv);
@@ -3681,7 +3681,7 @@ analog begin
 
            QIOVS = NF * Wact * LOVERACC * 2 * nq_hv * Vt * T0 * q_k ;
         end
-    end 
+    end
 
 
     Gcrg = 0.0;
@@ -3708,14 +3708,14 @@ analog begin
 
     // Secondary impact ionization in the drift region
     if (HVMOD == 1 && IIMOD == 1) begin
-        Ntot = DRII1 * ids/(NF * Weff * `q  * VDRIFT_t );   
+        Ntot = DRII1 * ids/(NF * Weff * `q  * VDRIFT_t );
         Nextra = Ntot/NDRIFTD - 1;
         `Smooth(Nextra, 0, DELTAII, Nextra)
         Nextra = NDRIFTD * Nextra;
 
         `Smooth(devsign * V(d,bi) - Vdseff - DRII2, 0, 0.05, T2)
         T3 = 2.0 * `q /(EPSRSUB * `EPS0) * Nextra;
-        T3 = T3 * T2;                             
+        T3 = T3 * T2;
 
         if (T3 > BETADR / `EXPL_THRESHOLD) begin
             T1  = -BETADR/T3;
@@ -4008,7 +4008,7 @@ analog begin
     if (SSLMOD != 0) begin
         T1 = pow(NDEP_i / 1.0e23, SSLEXP1);
         T2 = pow(300.0 / DevTemp, SSLEXP2);
-        T3 = (devsign*SSL5 * V(bi,si)) / Vt;         
+        T3 = (devsign*SSL5 * V(bi,si)) / Vt;
         SSL0_NT  = SSL0 * lexp(-T1 * T2);
         SSL1_NT  = SSL1 * T2 * T1;
         PHIB_SSL = SSL3 * tanh(lexp(devsign * SSL4 * (V(gi, bi) - VTH - V(si,bi))));
@@ -4042,7 +4042,7 @@ analog begin
         end else begin
             LH1 = Leff;
             T0 = LH1;
-        end            
+        end
         if(LINTNOI >= T0 / 2.0) begin
             $strobe("Warning: LINTNOI = %e is too large - Leff for noise is negative. Re-setting LINTNOI = 0.", LINTNOI);
             LINTNOI_i = 0.0;
@@ -4158,7 +4158,7 @@ analog begin
         end
         I(di, si) <+ flicker_noise(sigvds*FNPowerAt1Hz, EF, "1overf");
     end
-    
+
     T0         = qia / Esatnoi / Leff;
     T1         = T0 * T0;
     T3         = RNOIA * (1.0 + TNOIA * Leff * T1);
@@ -4233,7 +4233,7 @@ analog begin
     if (IGBMOD != 0) begin
         I(gi, bi) <+ white_noise(2.0 * `q * abs(igb), "igb");
     end
-    
+
     // C-V model
     vgfbCV   = vgfb;
     gamg2    = (2.0 * `q * epssi * NGATE_i) / (Cox * Cox * Vt);
@@ -4281,7 +4281,7 @@ analog begin
         qdsat       = LambdaC_by2 * (qs * qs + qs) / (1.0 + LambdaC_by2 * (1.0 + qs));
         vdsatcv     = psip - 2.0 * phibCV - (2.0 * qdsat + lln((qdsat * 2.0 * nq * inv_gam) * ((qdsat * 2.0 * nq * inv_gam) + (gam / (nq - 1.0)))));
         VdsatCV     = vdsatcv * Vt;
-        
+
         // Normalized charge qdeff at drain end of channel
         `Smooth(VdsatCV - Vs, 0.0, 1e-3, VdssatCV)
         VdssatCV     = VdssatCV / ABULK;
@@ -4397,7 +4397,7 @@ analog begin
     end
     Qovb = -devsign * NF * Lact * CGBO * V(gm, bi);
     Qovg = -(Qovs + Qovd + Qovb);
-        
+
     // Edge FET model
     if (EDGEFET == 1) begin
         phib_edge     = lln(NDEPEDGE_i / ni);
@@ -4436,12 +4436,12 @@ analog begin
         gam_edge          = sqrt(2.0 * `q * epssi * NDEPEDGE_i * inv_nVt) / Cox;
         gam_edge          = gam_edge * (1.0 + DGAMMAEDGE_i);
         inv_gam           = 1.0 / gam_edge;
-        
+
         // psip: pinch-off voltage
         phib_n_edge  = phib_edge / n;
         `PO_psip(vgfb, gam_edge, 0.0, phib_n_edge, psip)
-        
-        
+
+
         `BSIM_q(psip, phib_n_edge, vs, gam_edge, qs_edge)
 
         // Approximate pinch-off voltage
@@ -4466,7 +4466,7 @@ analog begin
         nq_edge  = 1.0 + gam_edge / (sqrtpsip + T2);
         ids_edge = 2.0 * NF * nq_edge * ueff * WEDGE / Leff * Cox * nVt * nVt * ((qs_edge - qdeff_edge) * (1.0 + qs_edge + qdeff_edge)) * Moc;
         ids      = ids_edge + ids;
-        
+
         // Flickernoise calculation for Edge FET
         noia_edge      = NOIA * NEDGE;
         noib_edge      = NOIB * NEDGE;
@@ -4500,7 +4500,7 @@ analog begin
     end
     // End of Edge FET parasitic device drain current model
 
-    
+
     // Charge expressions including fringing and overlap capacitances
     QB = devsign * (QBi + Qovb + Qbsj + Qbdj);
     if (sigvds > 0) begin
@@ -4522,7 +4522,7 @@ analog begin
         if (HVCAPS == 1) begin
             Qovb = Qovb + QIOVS;
             Qovs = Qovs + QBOVS;
-        end 
+        end
     end
 
     // Output
@@ -4604,8 +4604,8 @@ analog begin
     if (sigvds > 0)begin
         GDS   = ddx(IDS, V(di));                     // Output conductance
     end else begin
-        GDS   = ddx(-IDS, V(si)); 
-    end                         
+        GDS   = ddx(-IDS, V(si));
+    end
 
     // Loading variables
     I(gi, bi) <+ ddt(QGI);
@@ -4634,15 +4634,15 @@ analog begin
     end
 
     // External S/D resistances
-    
+
     if (RDSMOD !=2 && RDrainGeo >0) begin
         gdpr = 1.0 / Rdrain;   // Note: gdpr considers all fingers
         I(d, di) <+ V(d, di) * gdpr;
         I(d, di) <+ white_noise(Nt * gdpr, "rd");
     end else begin
         V(d, di) <+ 0.0;
-    end 
-    
+    end
+
     if (RDSMOD !=2 && RSourceGeo >0) begin
         gspr = 1.0 / Rsource;   // Note: gspr considers all fingers
         I(s, si) <+ V(s, si) * gspr;
@@ -4650,8 +4650,8 @@ analog begin
     end else begin
         V(s, si) <+ 0.0;
     end
-        
-        
+
+
     if (RGATEMOD == 0) begin
         V(g, gm) <+ 0.0;
     end else begin: rgate
@@ -4672,7 +4672,7 @@ analog begin
     end else begin
         V(gm, gi) <+ 0.0;
     end
-    
+
     if ((SHMOD != 0) && (RTH0 > 0.0)) begin
         Pdiss = devsign * sigvds * ids * V(di, si);
         if (RDSMOD !=2 && RDrainGeo >0) begin
@@ -4685,7 +4685,7 @@ analog begin
     end else begin
         Temp(t) <+ 0.0;
     end
-        
+
     if (RBODYMOD != 0) begin
         I(bi, sbulk) <+ V(bi, sbulk) * Grbps;
         I(b, sbulk)  <+ V(b, sbulk) * Grbsb;

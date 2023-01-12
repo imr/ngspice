@@ -1,20 +1,20 @@
 /*
-EKV MOS model version 2.6 rev.15 with documentation at: http://ekv.epfl.ch 
+EKV MOS model version 2.6 rev.15 with documentation at: http://ekv.epfl.ch
 Matthias Bucher, Christophe Lallement, Christian Enz, Fabien Theodoloz, Francois Krummenacher
 Electronics Laboratories, Swiss Federal Institute of Technology Lausanne, Switzerland
 This Verilog-A was developed by Wladek Grabinski with modifications
 by Tiburon Design Automation (www.tiburon-da.com).
 This software has been provided pursuant to a License Agreement containing restrictions on its use.
 It may not be copied or distributed in any form or medium, disclosed to third parties,
-reverse engineered or used in any manner not provided for in said License Agreement 
+reverse engineered or used in any manner not provided for in said License Agreement
 except with the prior written authorization.
-Licensed under the Educational Community License, Version 2.0 (the "License"); 
+Licensed under the Educational Community License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 
 You may obtain a copy of the License at http://opensource.org/licenses/ECL-2.0
 
-Unless required by applicable law or agreed to in writing, software distributed under 
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
 either express or implied. See the License for the specific language governing permissions
 and limitations under the License.
 
@@ -102,68 +102,68 @@ $RCSfile: ekv.va,v $ $Revision: 2.6.15 $ $Date: 2020/05/29 11:50:10 $
 // Electrical
 // Current in amperes
 nature Current
-	units      = "A";
-	access     = I;
-	idt_nature = Charge;
+    units      = "A";
+    access     = I;
+    idt_nature = Charge;
 `ifdef CURRENT_ABSTOL
-	abstol     = `CURRENT_ABSTOL;
+    abstol     = `CURRENT_ABSTOL;
 `else
-	abstol     = 1e-12;
+    abstol     = 1e-12;
 `endif
 endnature
 // Charge in coulombs
 nature Charge
-	units      = "coul";
-	access     = Q;
-	ddt_nature = Current;
+    units      = "coul";
+    access     = Q;
+    ddt_nature = Current;
 `ifdef CHARGE_ABSTOL
-	abstol     = `CHARGE_ABSTOL;
+    abstol     = `CHARGE_ABSTOL;
 `else
-	abstol     = 1e-14;
+    abstol     = 1e-14;
 `endif
 endnature
 // Potential in volts
 nature Voltage
-	units      = "V";
-	access     = V;
-	idt_nature = Flux;
+    units      = "V";
+    access     = V;
+    idt_nature = Flux;
 `ifdef VOLTAGE_ABSTOL
-	abstol     = `VOLTAGE_ABSTOL;
+    abstol     = `VOLTAGE_ABSTOL;
 `else
-	abstol     = 1e-6;
+    abstol     = 1e-6;
 `endif
 endnature
 // Flux in Webers
 nature Flux
-	units      = "Wb";
-	access     = Phi;
-	ddt_nature = Voltage;
+    units      = "Wb";
+    access     = Phi;
+    ddt_nature = Voltage;
 `ifdef FLUX_ABSTOL
-	abstol     = `FLUX_ABSTOL;
+    abstol     = `FLUX_ABSTOL;
 `else
-	abstol     = 1e-9;
+    abstol     = 1e-9;
 `endif
 endnature
 // Conservative discipline
 discipline electrical
-	potential    Voltage;
-	flow         Current;
+    potential    Voltage;
+    flow         Current;
 enddiscipline
 // Signal flow disciplines
 discipline voltage
-	potential    Voltage;
+    potential    Voltage;
 enddiscipline
 discipline current
-	potential    Current;
+    potential    Current;
 enddiscipline
 //from constants.h we need
 `define C_EPSSIL                1.03594314e-10
 `define C_EPSOX                 34.5e-12
 `define C_QE                    1.602e-19
 `define C_K                     1.3807e-23
-`define	P_K	1.3806226e-23 
-`define	P_EPS0	8.85418792394420013968e-12 
-`define	P_CELSIUS0	273.15 
+`define P_K 1.3806226e-23
+`define P_EPS0  8.85418792394420013968e-12
+`define P_CELSIUS0  273.15
 `define POS_MIN         1.0E-6
 `define SQRT2           1.4142135623730950488016887242097
 `define ONE3RD          0.33333333333333333333333333333333
@@ -271,7 +271,7 @@ module ekv_va(d,g,s,b);
     real csb_d, cssw_d, csswg_d;
     real csb_s, cssw_s, csswg_s;
     real qjd, qjs;
-    
+
     // parameter definitions
     parameter integer TYPE = 1 from [-1:1] exclude 0; // NMOS=1, PMOS=-1
     parameter integer Noise = 1 from [0:1];     // Set to zero to prevent noise calculation
@@ -399,10 +399,10 @@ module ekv_va(d,g,s,b);
          */
         /* If Temp is explicitly specified, use that value
            otherwise use Tckt+Trise */
-        if (TEMP == -`NOT_GIVEN)	//AB: 040902 Temp -> TEMP
+        if (TEMP == -`NOT_GIVEN)    //AB: 040902 Temp -> TEMP
             T = $temperature + Trise;
         else
-            T = TEMP + `P_CELSIUS0;	//AB: 040902 Temp -> TEMP
+            T = TEMP + `P_CELSIUS0; //AB: 040902 Temp -> TEMP
         if (TNOM == -`NOT_GIVEN)
             Tnom = `DEFAULT_TNOM + `P_CELSIUS0;
         else
@@ -415,7 +415,7 @@ module ekv_va(d,g,s,b);
         Vt_Vt = Vt * Vt;
         Vt_Vt_2 = Vt_Vt + Vt_Vt;
         Vt_Vt_16 = 16.0 * Vt_Vt;
- 
+
         Eg = 1.16 - 7.02e-4 * T * T / (T + 1108.0);
         refEg = 1.16 - (7.02e-4*Tnom*Tnom) / (Tnom + 1108.0);
         deltaT = T - Tnom;
@@ -460,8 +460,8 @@ module ekv_va(d,g,s,b);
         //  VGprime:
         if (V0 == 0.0)
             deltaVFB = 0.0;
-//      else begin  : VGprime		//AB: 040902 VGPrime is also a variable and 
-        else begin  : VGprime_block	//AB: 040902 VGPrime ->  VGprime_block
+//      else begin  : VGprime       //AB: 040902 VGPrime is also a variable and
+        else begin  : VGprime_block //AB: 040902 VGPrime ->  VGprime_block
             real sqv;
             // mb  99/03/26  corrected for multiple device number
             vL = 0.28 * (Leff/(LK*NS) - 0.1);
@@ -824,8 +824,8 @@ module ekv_va(d,g,s,b);
             I(sb) <+ TYPE * Isub;
         end
         I(gb) <+ TYPE * ddt(QG);            // wg 22/04/08 corrected for device TYPE
-//      if (Noise) begin : Noise		    //AB: 040902 Noise is also a variable and 
-        if (Noise) begin : Noise_block		//AB: 040902 Noise ->  Noise_block
+//      if (Noise) begin : Noise            //AB: 040902 Noise is also a variable and
+        if (Noise) begin : Noise_block      //AB: 040902 Noise ->  Noise_block
             real S_flicker, S_thermal;
             S_thermal = 4 * `P_K * T * Gn;
             S_flicker = KF * gm * gm / (Weff * NS * Leff * COX);
@@ -835,7 +835,7 @@ module ekv_va(d,g,s,b);
         ///////////////////////////////////
         //EXTRINSIC PART: JUNCTION DIODES//
         ///////////////////////////////////
-	//diode area and perimeter computation
+    //diode area and perimeter computation
         if ((AS == 0.0) && (HDIF>0.0)) as_i = 2.0*HDIF*Weff;
         else as_i = AS;
         if ((PS == 0.0) && (HDIF>0.0)) ps_i = 4.0*HDIF+1.0*Weff;
@@ -844,7 +844,7 @@ module ekv_va(d,g,s,b);
         else ad_i = AD;
         if ((PD == 0.0) && (HDIF>0.0)) pd_i = 4.0*HDIF+1.0*Weff;
         else pd_i = PD;
-	//temperature update for diodes
+    //temperature update for diodes
         temp_arg = exp((refEg/$vt(Tnom) - Eg/Vt + tp_xti*ln(ratioT))/xd_n);
         js_t = xd_js*temp_arg;
         jsw_t = xd_jsw*temp_arg;
@@ -865,10 +865,10 @@ module ekv_va(d,g,s,b);
                 is_d = js_t*ad_i+jsw_t*pd_i+jswg_t*Weff;
                 arg_d = -v_di_b*ratioT/(Vt*xd_n);
                 if (arg_d < -40.0) arg_d = -40.0;
-		tmp0 = (-v_di_b+xd_bv)*ratioT/(Vt*xd_n);
-		if (tmp0>70) f_breakdown_d = 1.0;
-		else f_breakdown_d = 1.0 + xd_xjbv*exp(-tmp0);
-	// TRAP-ASSISTED TUNNELING CURRENT
+        tmp0 = (-v_di_b+xd_bv)*ratioT/(Vt*xd_n);
+        if (tmp0>70) f_breakdown_d = 1.0;
+        else f_breakdown_d = 1.0 + xd_xjbv*exp(-tmp0);
+    // TRAP-ASSISTED TUNNELING CURRENT
                 idb_tun = -Weff*jswg_t*(exp(v_di_b*ratioT/(Vt*njtsswg_t) * xd_vtsswg/max(xd_vtsswg+v_di_b,1.0e-3))-1.0);
                 idb_tun = idb_tun - pd_i*jsw_t*(exp(v_di_b*ratioT/(Vt*njtssw_t) * xd_vtssw/max(xd_vtssw+v_di_b,1.0e-3))-1.0);
                 idb_tun = idb_tun - ad_i*js_t*(exp(v_di_b*ratioT/(Vt*njts_t) * xd_vts/max(xd_vts+v_di_b,1.0e-3))-1.0);
@@ -877,17 +877,17 @@ module ekv_va(d,g,s,b);
                 is_s = js_t*as_i+jsw_t*ps_i+jswg_t*Weff;
                 arg_s = -v_si_b*ratioT/(Vt*xd_n);
                 if (arg_s < -40.0) arg_s = -40.0;
-		tmp0 = (-v_si_b+xd_bv)*ratioT/(Vt*xd_n);
-		if (tmp0>70) f_breakdown_s = 1.0;
-		else f_breakdown_s = 1.0 + xd_xjbv*exp(-tmp0);
-	// TRAP-ASSISTED TUNNELING CURRENT
+        tmp0 = (-v_si_b+xd_bv)*ratioT/(Vt*xd_n);
+        if (tmp0>70) f_breakdown_s = 1.0;
+        else f_breakdown_s = 1.0 + xd_xjbv*exp(-tmp0);
+    // TRAP-ASSISTED TUNNELING CURRENT
                 isb_tun = -Weff*jswg_t*(exp(v_si_b*ratioT/(Vt*njtsswg_t) * xd_vtsswg/max(xd_vtsswg+v_si_b,1.0e-3))-1.0);
                 isb_tun = isb_tun - ps_i*jsw_t*(exp(v_si_b*ratioT/(Vt*njtssw_t) * xd_vtssw/max(xd_vtssw+v_si_b,1.0e-3))-1.0);
                 isb_tun = isb_tun - as_i*js_t*(exp(v_si_b*ratioT/(Vt*njts_t) * xd_vts/max(xd_vts+v_si_b,1.0e-3))-1.0);
                 I(s,b) <+ (is_s * (1.0 - exp(arg_s))*f_breakdown_s+v_si_b*xd_gmin + isb_tun)*TYPE*M;
-	//AC
-	
-	//DRAIN - BULK
+    //AC
+
+    //DRAIN - BULK
                 if (v_di_b>0.0)
                 begin
                         csb_d  = cj_t   * ad_i * exp(-xd_mj*ln(1.0+v_di_b/pb_t));
@@ -917,6 +917,6 @@ module ekv_va(d,g,s,b);
                 end
                 qjs = (csb_s+cssw_s+csswg_s) * v_si_b;
                 I(s,b) <+ ddt(qjs)*TYPE*M;
-	//END OF DIODES
+    //END OF DIODES
     end
 endmodule
