@@ -1,0 +1,141 @@
+// ****************************************************************************
+// *  BSIM-CMG 111.0.0 released by Harshit Agarwal on 09/12/2019              *
+// *  BSIM Common Multi-Gate Model (Verilog-A)                                *
+// ****************************************************************************
+
+// ****************************************************************************
+// *  Copyright © 2019 University of California                               *
+// *                                                                          *
+// *  Project director: Prof. Chenming Hu                                     *
+// *                                                                          *
+// *  Current developers: Harshit Agarwal (Postdoc)                           *
+// *                      Pragya Kushwaha (Postdoc)                           *
+// *                      Avirup Dasgupta (Postdoc)                           *
+// *                      Yen-Kai Lin (Ph.D. student)                         *
+// *                      Ming-Yen Kao (Ph.D. student)                        *
+// ****************************************************************************
+
+/*
+Licensed under Educational Community License, Version 2.0 (the "License"); you may
+not use this file except in compliance with the License. You may obtain a copy of the license at
+http://opensource.org/licenses/ECL-2.0
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT 
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations
+under the License.
+
+BSIM-CMG model is supported by the members of Silicon Integration Initiative's Compact Model Coalition. A link to the most recent version of this
+standard can be found at: http://www.si2.org/cmc 
+*/
+
+// Source/drain resistances
+Dr = 0.0; Rdrain = 0.0; Rsource = 0.0; Rdsi = 0.0;
+
+// Temperature effects
+CJS_t = 0.0; CJSWS_t = 0.0; CJSWGD_t = 0.0;
+CJD_t = 0.0; CJSWD_t = 0.0; CJSWGS_t = 0.0;
+PBS_t = 0.0; PBSWS_t = 0.0; PBSWGS_t = 0.0;
+PBD_t = 0.0; PBSWD_t = 0.0; PBSWGD_t = 0.0;
+JSS_t = 0.0; JSWS_t = 0.0; JSWGS_t = 0.0;
+JSD_t = 0.0; JSWD_t = 0.0; JSWGD_t = 0.0;
+JTSS_t = 0.0; JTSD_t = 0.0;
+JTSSWS_t = 0.0; JTSSWD_t = 0.0;
+JTSSWGS_t = 0.0; JTSSWGD_t = 0.0;
+NJTS_t = 0.0; NJTSD_t = 0.0;
+NJTSSW_t = 0.0; NJTSSWD_t = 0.0;
+NJTSSWG_t = 0.0; NJTSSWGD_t = 0.0;
+RSDRR_t = 0.0; RDDRR_t = 0.0;
+UAR_t = 0.0; UC_t = 0.0; UCR_t = 0.0; UDR_t = 0.0;
+VSATR_t = 0.0; VSAT1R_t = 0.0; MEXPR_t = 0.0; PTWGR_t = 0.0;
+
+// Quantum mechanical correction
+Tcen0 = 0.0;
+
+// Midpoint potential and charge
+qba = 0.0; u0r = 0.0;
+
+// Geometry-dependent fringe capacitance
+Cfr_geo = 0.0;
+
+// Gate resistance
+ggeltd = 0.0;
+
+// Gate current
+igbinv = 0.0; igbacc = 0.0;
+igbs = 0.0; igbd = 0.0;
+igcs = 0.0; igcd = 0.0;
+igs = 0.0; igd = 0.0;
+
+// GIDL/GISL
+igisl = 0.0; igidl = 0.0;
+
+// Impact ionization current
+Iii = 0.0;
+
+// Accumulation capacitance
+cox_acc = 0.0; qg_acc = 0.0; qb_acc = 0.0;
+
+// Parasitic capacitance
+qgs_ov = 0.0; qgd_ov = 0.0;
+
+// Junction current and capacitance
+Ies = 0.0; Ied = 0.0;
+Czbs = 0.0; Czbssw = 0.0; Czbsswg = 0.0;
+Czbd = 0.0; Czbdsw = 0.0; Czbdswg = 0.0;
+Qesj = 0.0; Qedj = 0.0;
+Isbs = 0.0; Isbd = 0.0;
+Nvtms = 0.0; Nvtmd = 0.0;
+SslpFwd = 0.0; IVjsmFwd = 0.0; VjsmFwd = 0.0; XExpBVS = 0.0;
+SslpRev = 0.0; IVjsmRev = 0.0; VjsmRev = 0.0;
+DslpFwd = 0.0; IVjdmFwd = 0.0; VjdmFwd = 0.0; XExpBVD = 0.0;
+DslpRev = 0.0; IVjdmRev = 0.0; VjdmRev = 0.0;
+vec1s = 0.0; pb21s = 0.0;
+vec2s = 0.0; pb22s = 0.0;
+vec3s = 0.0; pb23s = 0.0;
+vec1d = 0.0; pb21d = 0.0;
+vec2d = 0.0; pb22d = 0.0;
+vec3d = 0.0; pb23d = 0.0;
+
+// NQS gate resistance
+gcrg = 0.0; gtau = 0.0;
+
+// Thermal noise
+sid = 0.0;
+
+// Correlated thermal noise
+Dr0 = 0.0; ctnoi = 0.0; sigrat = 0.0;
+
+// Self-heating
+gth = 0.0; cth = 0.0;
+
+// Short channel effects
+CITR_i = 0.0; CDSCDR_i = 0.0; ETA0R_i = 0.0; DVTSHIFTR_i = 0.0;
+
+// Body effect
+veseff = 0.0;
+PHIBE_i = 0.0; K1_i = 0.0; K11_i = 0.0; K2SAT_i = 0.0; K2SAT1_i = 0.0;
+K2_i = 0.0; K21_i = 0.0;
+
+// Velocity satuation
+VSATR_i = 0.0; VSAT1R_i = 0.0; KSATIVR_i = 0.0; MEXPR_i = 0.0;
+PTWGR_i = 0.0; ATR_i = 0.0;
+
+// Mobility
+U0R_i = 0.0; UPR_i = 0.0; UAR_i = 0.0; UC_i = 0.0; UCR_i = 0.0; EUR_i = 0.0;
+UDR_i = 0.0; UTER_i = 0.0; UTLR_i = 0.0;
+UA1R_i = 0.0; UC1_i = 0.0; UC1R_i = 0.0; UD1R_i = 0.0;
+
+// DIBL
+PDIBL1R_i = 0.0; PDIBL2R_i = 0.0;
+
+// Channel length modulation
+PCLMR_i = 0.0;
+
+// Overlap capacitance
+CGSO_i = 0.0; CGDO_i = 0.0;
+
+// NQS gate resistance model & charge deficit model
+XRCRG1_i = 0.0; XRCRG2_i = 0.0;
+
+// Unified FinFET compact model
+Cins = 0.0; Ach = 0.0; Weff_UFCM = 0.0; rc = 0.0; Qdep_ov_Cins = 0.0;
+qi_acc_for_QM = 0.0; nq = 0.0;

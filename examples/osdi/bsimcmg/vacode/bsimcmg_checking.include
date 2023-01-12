@@ -1,0 +1,399 @@
+// ****************************************************************************
+// *  BSIM-CMG 111.0.0 released by Harshit Agarwal on 09/12/2019              *
+// *  BSIM Common Multi-Gate Model (Verilog-A)                                *
+// ****************************************************************************
+
+// ****************************************************************************
+// *  Copyright © 2019 University of California                               *
+// *                                                                          *
+// *  Project director: Prof. Chenming Hu                                     *
+// *                                                                          *
+// *  Current developers: Harshit Agarwal (Postdoc)                           *
+// *                      Pragya Kushwaha (Postdoc)                           *
+// *                      Avirup Dasgupta (Postdoc)                           *
+// *                      Yen-Kai Lin (Ph.D. student)                         *
+// *                      Ming-Yen Kao (Ph.D. student)                        *
+// ****************************************************************************
+
+/*
+Licensed under Educational Community License, Version 2.0 (the "License"); you may
+not use this file except in compliance with the License. You may obtain a copy of the license at
+http://opensource.org/licenses/ECL-2.0
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT 
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations
+under the License.
+
+BSIM-CMG model is supported by the members of Silicon Integration Initiative's Compact Model Coalition. A link to the most recent version of this
+standard can be found at: http://www.si2.org/cmc 
+*/
+
+// Parameter checking
+if (Leff <= 0.0) begin
+    $strobe("Fatal: Leff = %e is not positive.", Leff);
+    $finish(0);
+end else if (Leff <= 1.0e-9) begin
+    $strobe("Warning: Leff = %e <= 1.0e-9.", Leff);
+end
+
+if (Leff1 <= 0.0) begin
+    $strobe("Fatal: Leff1 = %e is not positive.", Leff1);
+    $finish(0);
+end else if (Leff1 <= 1.0e-9) begin
+    $strobe("Warning: Leff1 = %e <= 1.0e-9.", Leff1);
+end
+
+if (LeffCV <= 1.0e-9) begin
+    $strobe("Warning: LeffCV = %e <= 1.0e-9.", LeffCV);
+end
+
+if (BULKMOD != 0) begin
+    if (LeffCV_acc <= 1.0e-9) begin
+        $strobe("Warning: LeffCV_acc = %e <= 1.0e-9.", LeffCV_acc);
+    end
+end
+
+if (Weff0 <= 1.0e-9) begin
+    $strobe("Warning: Weff0 = %e <= 1.0e-9.", Weff0);
+end
+
+if (WeffCV0 <= 1.0e-9) begin
+    $strobe("Warning: WeffCV0 = %e <= 1.0e-9.", WeffCV0);
+end
+
+if (NBODY_i <= 0.0) begin
+    $strobe("Fatal: NBODY_i = %e is not positive.", NBODY_i);
+    $finish(0);
+end else if (NBODY_i <= 1.0e18) begin
+    $strobe("Warning: NBODY_i = %e m^-3 may be too small.", NBODY_i);
+end
+
+if (NGATE_i < 0.0) begin
+    $strobe("Fatal: NGATE_i = %e is negative.", NGATE_i);
+    $finish(0);
+end else if (NGATE_i != 0.0 && NGATE_i <= 1.0e24) begin
+    $strobe("Warning: NGATE_i = %e may be too small.", NGATE_i);
+end else if (NGATE_i > 1.0e31) begin
+    $strobe("Fatal: NGATE_i = %e is too high.", NGATE_i);
+    $finish(0);
+end
+
+if (DVT0_i < 0.0) begin
+    $strobe("Warning: DVT0_i = %e is negative.", DVT0_i);
+end
+
+if (PHIG_i <= 0.0) begin
+    $strobe("Fatal: PHIG_i = %e is not positive.", PHIG_i);
+    $finish(0);
+end
+
+if (VSAT_i <= 0.0) begin
+    $strobe("Fatal: VSAT_i = %e is not positive.", VSAT_i);
+    $finish(0);
+end
+
+if (VSAT1_i <= 0.0) begin
+    $strobe("Fatal: VSAT1_i = %e is not positive.", VSAT1_i);
+    $finish(0);
+end
+
+if (ASYMMOD != 0 && VSAT1R_i <= 0.0) begin
+    $strobe("Fatal: VSAT1R_i = %e is not positive.", VSAT1R_i);
+    $finish(0);
+end
+
+if (DVT1_i <= 0.0) begin
+    $strobe("Fatal: DVT1_i = %e is not positive.", DVT1_i);
+    $finish(0);
+end
+
+if (DVT1SS_i <= 0.0) begin
+    $strobe("Fatal: DVT1SS_i = %e is not positive.", DVT1SS_i);
+    $finish(0);
+end
+
+if (CDSC_i < 0.0) begin
+    $strobe("Warning: CDSC_i = %e is negative.", CDSC_i);
+end
+
+if (CDSCD_i < 0.0) begin
+    $strobe("Warning: CDSCD_i = %e is negative.", CDSCD_i);
+end
+
+if (ASYMMOD != 0 && CDSCDR_i < 0.0) begin
+    $strobe("Warning: CDSCDR_i = %e is negative.", CDSCDR_i);
+end
+
+if (DSUB_i <= 0.0) begin
+    $strobe("Fatal: DSUB_i = %e is not positive.", DSUB_i);
+    $finish(0);
+end
+
+if (ETA0_i < 0.0) begin
+    $strobe("Warning: ETA0_i = %e is negative, setting it to 0", ETA0_i);
+    ETA0_i = 0.0;
+end
+
+if (ETA0R_i < 0.0) begin
+    $strobe("Warning: ETA0R_i = %e is negative, setting it to 0", ETA0R_i);
+    ETA0R_i = 0.0;
+end
+
+if (LPE0_i < -Leff) begin
+    $strobe("Warning: LPE0_i = %e is less than -Leff. Clipping LPE0_i to 0", LPE0_i);
+    LPE0_i = 0.0;
+end
+
+if (K0SI_i < 0.0) begin
+    $strobe("Warning: K0SI_i = %e is negative, setting it to 0.", K0SI_i);
+    K0SI_i = 0.0;
+end
+
+if (K2SI_i < 0.0) begin
+    $strobe("Warning: K2SI_i = %e is negative, setting it to 0.", K2SI_i);
+    K2SI_i = 0.0;
+end
+
+if (BULKMOD != 0 && PHIBE_i < 0.2) begin
+    $strobe("Warning: PHIBE_i = %e is less than 0.2, setting it to 0.2.", PHIBE_i);
+    PHIBE_i = 0.2;
+end
+
+if (BULKMOD != 0 && PHIBE_i > 1.2) begin
+    $strobe("Warning: PHIBE_i = %e is larger than 1.2, setting it to 1.2.", PHIBE_i);
+    PHIBE_i = 1.2;
+end
+
+if (PSAT_i < 2.0) begin
+    $strobe("Warning: PSAT_i = %e is less than 2.0, setting it to 2.0.", PSAT_i);
+    PSAT_i = 2.0;
+end
+
+if (PSATCV_i < 2.0) begin
+    $strobe("Warning: PSATCV_i = %e is less than 2.0, setting it to 2.0.", PSATCV_i);
+    PSATCV_i = 2.0;
+end
+
+if (U0_i < 0.0) begin
+    $strobe("Warning: U0_i = %e is negative, setting it to the default value.", U0_i);
+    U0_i = 0.03;
+end
+
+if (UA_i < 0.0) begin
+    $strobe("Warning: UA_i = %e is negative, setting it to 0.", UA_i);
+    UA_i = 0.0;
+end
+
+if (EU_i < 0.0) begin
+    $strobe("Warning: EU_i = %e is negative, setting it to 0.", EU_i);
+    EU_i = 0.0;
+end
+
+if (UD_i < 0.0) begin
+    $strobe("Warning: UD_i = %e is negative, setting it to 0.", UD_i);
+    UD_i = 0.0;
+end
+
+if (UCS_i < 0.0) begin
+    $strobe("Warning: UCS_i = %e is negative, setting it to 0.", UCS_i);
+    UCS_i = 0.0;
+end
+
+if (ETAMOB_i < 0.0) begin
+    $strobe("Warning: ETAMOB_i = %e is negative, setting it to 0", ETAMOB_i);
+    ETAMOB_i = 0.0;
+end
+
+RDSWMIN_i = RDSWMIN;
+if (RDSWMIN_i < 0.0) begin
+    $strobe("Warning: RDSWMIN = %e is negative, setting it to 0", RDSWMIN_i);
+    RDSWMIN_i = 0.0;
+end
+
+if (RDSW_i < 0.0) begin
+    $strobe("Warning: RDSW_i = %e is negative, setting it to 0", RDSW_i);
+    RDSW_i = 0.0;
+end
+
+RSWMIN_i = RSWMIN;
+if (RSWMIN_i < 0.0) begin
+    $strobe("Warning: RSWMIN = %e is negative, setting it to 0", RSWMIN_i);
+    RSWMIN_i = 0.0;
+end
+
+if (RSW_i < 0.0) begin
+    $strobe("Warning: RSW_i = %e is negative, setting it to 0", RSW_i);
+    RSW_i = 0.0;
+end
+
+RDWMIN_i = RDWMIN;
+if (RDWMIN_i < 0.0) begin
+    $strobe("Warning: RDWMIN = %e is negative, setting it to 0", RDWMIN_i);
+    RDWMIN_i = 0.0;
+end
+
+if (RDW_i < 0.0) begin
+    $strobe("Warning: RDW_i = %e is negative, setting it to 0", RDW_i);
+    RDW_i = 0.0;
+end
+
+if (PRWGD_i < 0.0) begin
+    $strobe("Warning: PRWGD_i = %e is negative, setting it to 0", PRWGD_i);
+    PRWGD_i = 0.0;
+end
+
+if (PRWGS_i < 0.0) begin
+    $strobe("Warning: PRWGS_i = %e is negative, setting it to 0", PRWGS_i);
+    PRWGS_i = 0.0;
+end
+
+if (PCLM_i < 0.0) begin
+    $strobe("Warning: PCLM_i = %e is negative.", PCLM_i);
+end
+
+if (PDIBL1_i < 0.0) begin
+    $strobe("Warning: PDIBL1_i = %e is negative.", PDIBL1_i);
+end
+
+if (ASYMMOD != 0) begin
+    if (PDIBL1R_i < 0.0) begin
+        $strobe("Warning: PDIBL1R_i = %e is negative.", PDIBL1R_i);
+    end
+    if (PDIBL2R_i < 0.0) begin
+        $strobe("Warning: PDIBL2R_i = %e is negative.", PDIBL2R_i);
+    end
+    if (U0R_i < 0) begin
+        $strobe("Warning: U0R_i = %e is negative, setting it to 0.", U0R_i);
+        U0R_i = 0.0;
+    end
+    if (UAR_i < 0.0) begin
+        $strobe("Warning: UAR_i = %e is negative, setting it to 0.", UAR_i);
+        UAR_i = 0.0;
+    end
+    if (EUR_i < 0.0) begin
+        $strobe("Warning: EUR_i = %e is negative, setting it to 0.", EUR_i);
+        EUR_i = 0.0;
+    end
+    if (UDR_i < 0.0) begin
+        $strobe("Warning: UDR_i = %e is negative, setting it to 0.", UDR_i);
+        UDR_i = 0.0;
+    end
+end
+
+if (PDIBL2_i < 0.0) begin
+    $strobe("Warning: PDIBL2_i = %e is negative.", PDIBL2_i);
+end
+
+if (DROUT_i <= 0.0) begin
+    $strobe("Fatal: DROUT_i = %e is non-positive.", DROUT_i);
+    $finish(0);
+end
+
+if (MEXP_i < 2.0) begin
+    $strobe("Warning: MEXP_i = %e < 2. Setting MEXP_i = 2.", MEXP_i);
+    MEXP_i = 2.0;
+end
+
+if (ASYMMOD != 0) begin
+    if (MEXPR_i < 2.0) begin
+        $strobe("Warning: MEXPR_i = %e < 2. Setting MEXPR_i = 2.", MEXPR_i);
+        MEXPR_i = 2.0;
+    end
+end
+
+if (PTWG_i < 0.0) begin
+    $strobe("Warning: PTWG_i = %e is negative, setting it to 0.", PTWG_i);
+    PTWG_i = 0.0;
+end
+
+if (CGIDL_i < 0.0) begin
+    $strobe("Warning: CGIDL_i = %e < 0. Setting CGIDL_i = 0.", CGIDL_i);
+    CGIDL_i = 0.0;
+end
+
+if (CGISL_i < 0.0) begin
+    $strobe("Warning: CGISL_i = %e < 0. Setting CGISL_i = 0.", CGISL_i);
+    CGISL_i = 0.0;
+end
+
+if (IGBMOD != 0) begin
+    if (NIGBINV_i <= 0.0) begin
+        $strobe("Fatal: NIGBINV_i = %e is non-positive.", NIGBINV_i);
+        $finish(0);
+    end
+    if (NIGBACC_i <= 0.0) begin
+        $strobe("Fatal: NIGBACC_i = %e is non-positive.", NIGBACC_i);
+        $finish(0);
+    end
+end
+
+if (IGCMOD != 0) begin
+    if (POXEDGE_i <= 0.0) begin
+        $strobe("Fatal: POXEDGE_i = %e is non-positive.", POXEDGE_i);
+        $finish(0);
+    end
+    if (PIGCD_i <= 0.0) begin
+        $strobe("Fatal: PIGCD_i = %e is non-positive.", PIGCD_i);
+        $finish(0);
+    end
+end
+
+if (IGCMOD != 0 || IGBMOD != 0) begin
+    if (TOXREF <= 0.0) begin
+        $strobe("Fatal: TOXREF = %e is non-positive.", TOXREF);
+        $finish(0);
+    end
+end
+
+if (LINTIGEN >= (Leff / 2.0)) begin
+    $strobe("Warning: LINTIGEN = %e is too large - Leff for r/g current is negative. Re-setting LINTIGEN = 0.", LINTIGEN);
+    LINTIGEN_i = 0.0;
+end else begin
+    LINTIGEN_i = LINTIGEN;
+end
+
+if (NTGEN_i <= 0.0) begin
+    $strobe("Fatal: NTGEN_i = %e is non-positive.", NTGEN_i);
+    $finish(0);
+end
+
+if (NQSMOD == 1 && XRCRG1_i != 0.0) begin
+    if (XRCRG1_i < 1.0e-3) begin
+        $strobe("Warning: XRCRG1_i = %e. Gate resistance may be too large. Disabling NQS Gate Resistance.", XRCRG1_i);
+        XRCRG1_i = 0.0;
+    end
+end
+
+if (IIMOD == 2) begin
+    if (BETAII0_i < 0.0) begin
+        $strobe("Warning: BETAII0_i = %e is negative.", BETAII0_i);
+    end
+    if (BETAII1_i < 0.0) begin
+        $strobe("Warning: BETAII1_i = %e is negative.", BETAII1_i);
+    end
+    if (BETAII2_i < 0.0) begin
+        $strobe("Warning: BETAII2_i = %e is negative.", BETAII2_i);
+    end
+    if (ESATII_i < 0.0) begin
+        $strobe("Warning: ESATII_i = %e is negative.", ESATII_i);
+    end
+    if (LII_i < 0.0) begin
+        $strobe("Warning: LII_i = %e is negative.", LII_i);
+    end
+    if (SII1_i < 0.0) begin
+        $strobe("Warning: SII1_i = %e is negative.", SII1);
+    end
+    if (SII2_i < 0.0) begin
+        $strobe("Warning: SII2_i = %e is negative.", SII2_i);
+    end
+    if (SIID_i < 0.0) begin
+        $strobe("Warning: SIID_i = %e is negative.", SIID_i);
+    end
+end
+
+if (EF <= 0.0) begin
+    $strobe("Fatal: EF = %e is non-positive.", EF);
+    $finish(0);
+end else if (EF > 2.0) begin
+    $strobe("Fatal: EF = %e > 2.0.", EF);
+    $finish(0);
+end

@@ -1,0 +1,226 @@
+// ****************************************************************************
+// *  BSIM-CMG 111.0.0 released by Harshit Agarwal on 09/12/2019              *
+// *  BSIM Common Multi-Gate Model (Verilog-A)                                *
+// ****************************************************************************
+
+// ****************************************************************************
+// *  Copyright © 2019 University of California                               *
+// *                                                                          *
+// *  Project director: Prof. Chenming Hu                                     *
+// *                                                                          *
+// *  Current developers: Harshit Agarwal (Postdoc)                           *
+// *                      Pragya Kushwaha (Postdoc)                           *
+// *                      Avirup Dasgupta (Postdoc)                           *
+// *                      Yen-Kai Lin (Ph.D. student)                         *
+// *                      Ming-Yen Kao (Ph.D. student)                        *
+// ****************************************************************************
+
+/*
+Licensed under Educational Community License, Version 2.0 (the "License"); you may
+not use this file except in compliance with the License. You may obtain a copy of the license at
+http://opensource.org/licenses/ECL-2.0
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT 
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations
+under the License.
+
+BSIM-CMG model is supported by the members of Silicon Integration Initiative's Compact Model Coalition. A link to the most recent version of this
+standard can be found at: http://www.si2.org/cmc 
+*/
+
+// Variables
+integer devsign;
+real NFINtotal;
+real DevTemp;
+real ids0, ids0_ov_dqi, ids, vgs, vds, vdsx, sigvds, vch, etaiv;
+real vgs_noswap, vds_noswap, vgd_noswap;
+real qd, qg, qs, qb;
+real ni, epssub, epssp, epsratio, Eg, Eg0, Nc;
+real Lg, deltaL, deltaL1, deltaLCV, Leff, Leff_ln, Leff1, LeffCV, LeffCV_acc, Weff0, WeffCV0;
+real cox, cdsc, cbox;
+real phib, deltaPhi;
+real T0, T1, T2, T3, T4, T4a, T5, T6, T7, T8, T9;
+real Vtm, Vtm0, nVtm;
+real beta, beta0;
+real wf, wr;
+real Dr, WeffWRFactor;
+real RSourceGeo, RDrainGeo;
+real Rdrain, Rsource;
+real rdstemp, Rdsi, Rdss;
+real DIBLfactor, PVAGfactor, diffVds, VaDIBL, Vgst2Vtm, Moc, Mclm;
+real MclmCV, inv_MclmCV;
+real Dvsat, Vdsat, inv_MEXP, DvsatCV, Nsat;
+real Esat, EsatL, Esat1, Esat1L, EsatCV, EsatCVL;
+real WVCox, Ta, Tb, Tc;
+
+// Temperature effects
+real Tnom, TRatio, TRatio_m1, dvth_temp, delTemp, ThetaSS;
+real K0_t, K0SI_t, K2SI_t, K1_t, K2SAT_t, A1_t, A2_t;
+real AIGBINV_t, AIGBACC_t, AIGC_t, AIGS_t, AIGD_t;
+real BETA0_t, SII0_t, BGISL_t, BGIDL_t, igtemp, PTWG_t, PTWGR_t;
+real ALPHA0_t, ALPHA1_t, ALPHAII0_t, ALPHAII1_t;
+real CJS_t, CJSWS_t, CJSWGD_t, CJD_t, CJSWD_t, CJSWGS_t;
+real PBS_t, PBSWS_t, PBSWGS_t, PBD_t, PBSWD_t, PBSWGD_t;
+real JSS_t, JSWS_t, JSWGS_t, JSD_t, JSWD_t, JSWGD_t;
+real JTSS_t, JTSD_t, JTSSWS_t, JTSSWD_t, JTSSWGS_t, JTSSWGD_t;
+real NJTS_t, NJTSD_t, NJTSSW_t, NJTSSWD_t, NJTSSWG_t, NJTSSWGD_t;
+real K2_t;
+real K0SISAT_t, K2SISAT_t;
+real ETA0_t, ETA0R_t;
+real RSDR_t, RSDRR_t, RDDR_t, RDDRR_t;
+real UA_t, UAR_t, UC_t, UCR_t, UCS_t, UD_t, UDR_t, U0R_t, ETAMOB_t;
+real VSAT_t, VSATR_t, VSAT1_t, VSAT1R_t, VSATCV_t, MEXP_t, MEXPR_t;
+
+// Surface potential
+real q0;
+real T10, T11, T12, T12a;
+real e0, e1, e2;
+
+// Accumulation model
+real vgsfb, vgsfbeff;
+
+// Short channel effects
+real scl, vbi, phist, dvth_vtroll, dvth_dibl, dvth_rsce, dvth_all;
+real tmp, Theta_SCE, Theta_SW, Theta_DIBL, Theta_RSCE, Theta_DITS;
+
+// Lateral non-uniform doping effect
+real Mnud;
+
+// Body effect for BULKMOD = 1
+real ves, vesx, vesmax, veseff;
+real Mob;
+
+// Quantum mechanical correction
+real coxeff, Tcen0, Tcen, dvch_qm, MTcen;
+real E0, E0prime, E1, E1prime, mx, mxprime, md, mdprime;
+real gprime, gfactor, gam0, gam1, kT;
+
+// Drain saturation voltage
+real Vdseff, qis, qid, qbs, Dmobs;
+
+// Midpoint potential and charge
+real qia, qia2, qba, dqi;
+real qb0;
+real eta_mu, eta_mu_cv, Eeffm, Eeffm_cv, Dmob, Dmob_cv, u0, ueff, u0_a, u0r;
+real Trat_ln, Eeffs, EeffFactor;
+
+// Asymmetry model
+real VSAT1_a, MEXP_a, PTWG_a, RSDR_a, RDDR_a, PDIBL1_a, VSAT_a;
+
+// Geometry-dependent S/D resistance
+real mu_max, mu_rsd, rhorsd, afin, thetarsp;
+real Rsp, lt, arsd_total, prsd_total, alpha;
+real eta, RrsdTML, Rrsdside, Rrsd;
+real Rdsgeo, Arsd, Prsd;
+
+// Geometry-dependent fringe capacitance
+real Hg, Wg, Trsd, Hrsd, Cgg_top, Cgg_side, Cfr_geo, Acorner, Ccorner;
+
+// Gate resistance
+real ggeltd, Rgeltd;
+
+// Gate current
+real Vaux_Igbinv, igbinv, igsd_mult, igsd_mult0, igbs, igbd;
+real Voxacc, Vaux_Igbacc, vfbzb, igbacc;
+real igcs, igcd, igc0, Vdseffx, T1_exp;
+real igisl, igidl, vfbsd, igs, igd, vgs_eff, vgd_eff;
+real Aechvb, Bechvb, Toxratio, Toxratioedge;
+
+// Impact ionization current
+real Iii, Vdiff, Vdsatii, VgsStep, Ratio, ALPHAII;
+
+// Accumulation capacitance
+real cox_acc;
+real qg_acc, qb_acc;
+real vge;
+
+// Parasitic capacitance
+real qgs_ov, qgd_ov, qgs_fr, qgd_fr, qds_fr;
+real qgs_parasitic, qgd_parasitic, Qes, Qed, Qeg;
+real vgs_overlap, vgd_overlap, vge_overlap;
+real cgsp, cgdp, csbox, cdbox, cgbox, vfbsdcv;
+
+// Junction current and capacitance
+real Ies, Ied, ves_jct, ved_jct;
+real Czbs, Czbssw, Czbsswg, Czbd, Czbdsw, Czbdswg;
+real arg, sarg, Qec;
+real Qesj, Qesj1, Qesj2, Qesj3, Qedj, Qedj1, Qedj2, Qedj3;
+real Isbs, Isbd, Nvtms, Nvtmd;
+real SslpRev, IVjsmRev, VjsmRev, SslpFwd, IVjsmFwd, VjsmFwd, XExpBVS;
+real DslpRev, IVjdmRev, VjdmRev, DslpFwd, IVjdmFwd, VjdmFwd, XExpBVD;
+real igentemp, idsgen;
+real vec1s, pb21s, vec2s, pb22s, vec3s, pb23s, vec1d, pb21d, vec2d, pb22d, vec3d, pb23d;
+
+// NQS gate resistance
+real gcrg, gtau, xdpart, IdovVds;
+
+// Flicker noise
+real litl, Esatnoi, Leffnoi, Leffnoisq, DelClm;
+real N0, Nl, Nstar, Ssi, Swi, FNPowerAt1Hz;
+
+// Thermal noise
+real qinv, Gtnoi, sid;
+real gspr, gdpr;
+
+// Correlated thermal noise
+real noiBeta, noiTheta, noiCorr, noiLowId, noiEta, noiWI, noiGd0, Dvsat3;
+real T5_2, T5_3, T5_4, T7_2, T7_3, T7_4, T7_5;
+real etaiv0, ids0_ov_dqi0, Rdsi0, Eeffm0;
+real Mnud0, Mob0, Dmob0, Dvsat0, Dr0;
+real gamma1, gamma2, gamma;
+real delta1, delta2, delta3, delta;
+real epsilon1, epsilon2, epsilon;
+real ctnoi, sigrat;
+
+// Self-heating
+real gth, cth;
+
+// Binning variables
+real Inv_L, Inv_NFIN, Inv_LNFIN;
+real NBODY_i, PHIG_i, CFD_i, CFS_i, COVS_i, COVD_i, CGSO_i, CGDO_i;
+real CGSL_i, CGDL_i, CGBL_i, CKAPPAS_i, CKAPPAD_i, CKAPPAB_i;
+real QMFACTOR_i, QMTCENCV_i, QMTCENCVA_i, KSATIV_i, KSATIVR_i, KSATIV_a;
+real CDSC_i, CDSCD_i, CDSCD_a, CDSCDR_i, CIT_i, DVT0_i, CITR_i, CIT_a;
+real DVT1_i, DVT1SS_i, PHIN_i, ETA0_i, ETA0_a, ETA0R_i, DSUB_i, VSAT_i, VSATR_i;
+real DVTP0_i, DVTP1_i;
+real K0_i, K01_i, K0SI_i, K0SI1_i, K2SI_i, K2SI1_i, PHIBE_i, K1_i, K11_i, K2SAT_i, K2SAT1_i;
+real DELTAVSAT_i, PSAT_i, DELTAVSATCV_i, PSATCV_i, VSAT1_i, VSAT1R_i, PTWG_i, PTWGR_i, VSATCV_i;
+real UP_i, U0_i, U0R_i, ETAMOB_i, NGATE_i, RDSW_i, UPR_i;
+real PRWGS_i, PRWGD_i, WR_i, PDIBL1_i, PDIBL1R_i, PDIBL2_i, PDIBL2R_i, PDIBL2_a;
+real DROUT_i, PVAG_i;
+real AIGBINV_i, AIGBINV1_i, BIGBINV_i, CIGBINV_i, EIGBINV_i, NIGBINV_i;
+real AIGBACC_i, AIGBACC1_i, BIGBACC_i, CIGBACC_i, NIGBACC_i;
+real AIGC_i, AIGC1_i, BIGC_i, CIGC_i, PIGCD_i;
+real AIGS_i, AIGS1_i, BIGS_i, CIGS_i, NTOX_i, POXEDGE_i;
+real AIGD_i, AIGD1_i, BIGD_i, CIGD_i;
+real AGIDL_i, BGIDL_i, CGIDL_i, EGIDL_i, PGIDL_i;
+real AGISL_i, BGISL_i, CGISL_i, EGISL_i, PGISL_i;
+real ALPHA0_i, ALPHA1_i, ALPHAII0_i, ALPHAII1_i, BETA0_i;
+real BETAII0_i, BETAII1_i, BETAII2_i, ESATII_i;
+real LII_i, SII0_i, SII1_i, SII2_i, SIID_i, TII_i;
+real MEXP_i, MEXPR_i;
+real PCLM_i, PCLMG_i, PCLMCV_i, PCLM_a, PCLMR_i;
+real A1_i, A2_i, A11_i, A21_i;
+real K1RSCE_i, LPE0_i, DVTSHIFT_i, DVTSHIFT_a, DVTSHIFTR_i;
+real UA_i, UC_i, EU_i, UD_i, UCS_i, UAR_i, EUR_i, UCR_i, UDR_i, UA_a, UD_a, UC_a, EU_a;
+real UA1_i, UA1R_i, UC1_i, UD1_i, UCSTE_i, UTE_i, UTL_i, EMOBT_i, UC1R_i, UD1R_i, UTER_i, UTLR_i;
+real PTWGT_i;
+real AT_i, ATCV_i, ATR_i;
+real RDW_i, RSW_i;
+real PRT_i, KT1_i, TSS_i, IIT_i, IGT_i, TGIDL_i;
+real NTGEN_i, AIGEN_i, BIGEN_i;
+real K0SISAT_i, K0SISAT1_i;
+real K2SISAT_i, K2SISAT1_i;
+real K2_i, K21_i;
+real XRCRG1_i, XRCRG2_i;
+real LINTIGEN_i;
+real RDSWMIN_i, RDWMIN_i, RSWMIN_i;
+real XL_i, LINT_i, DLBIN_i;
+
+// Unified FinFET compact model
+real Cins, Ach, Weff_UFCM, qdep, rc, vth_fixed_factor_Sub, vth_fixed_factor_SI, qm, qm_ln, Qdep_ov_Cins, qi_acc_for_QM;
+real fieldnormalizationfactor, auxQMfact, QMFACTORCVfinal;
+real psipclamp, sqrtpsip, nq, F0;
+
+// Fringe capacitance
+real Hr, Lr, Hgdelta, Lmax, y, x, Cnon, CcgSat, TT1, Ccg1, r1cf, Rcf, Ccg2;
+real Ccg, C1, C2, C3, Cfglog, dcf, TT0, TT2, Cfgsat, Cfg;

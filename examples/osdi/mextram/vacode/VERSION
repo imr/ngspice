@@ -1,0 +1,134 @@
+// Copyright (c) 2000-2007, NXP Semiconductor
+// Copyright (c) 2007-2014, Delft University of Technology
+// Copyright (c) 2015-2020, Auburn University
+// All rights reserved, see IP_disclaimer_license.txt for further information.
+
+Mextram 505.2 Source Code
+
+Additions and changes compared to 505.1 include:
+
+- A new avalanche factor (Gem) model:
+  swavl = 3, a new avalanche model, exavl is meaningful only when swavl=2 and 3.
+     
+- A switch for turning on and off Gem limiting:
+  swgemlim = 0 turns off Gem limiting.
+  swgemlim = 1 (default) turns on Gem limiting.
+     
+- A new extrinsic diffusion charge model:
+  swqex = 0 (default) uses original Qex model. 
+  swqex = 1 uses new Qex model, new parameters are vdcex and tauex.
+
+- A new exmod = 3 option that removes Fex limiting (Fex = 1.0) in both Qex and XQex.
+
+- A new model parameter issr that describes asymmetry of saturation current "is" between forward and reverse mode. 
+
+- Module name is now appended with "_va" to the model name, bjt505_va, bjt505t_va, bjtd505_va and bjtd505t_va.
+
+- "dt" is now a thermal instead of electrical node.
+
+- "dtemp" and "trise" are added as alias to "dta". 
+
+- gmin implementation is updated following gmin subcommittee recommendation. Simulator “gmin” is used, 0 is used if simulator does not support gmin.
+
+- Flicker noise formulation updated following Geoffrey’s Q2 2020 recommendation.
+
+- A gmin current between CS junction is added when icss > 0.0.
+
+- EB tunneling current calculation is improved to improve stability and convergence at very low reverse bias:
+  Izteb is set to zero for small VEB. Parameter vzmin is added to allow user to specify the minimum junction reverse voltage.
+  Dzeb coding related to zeb and e_zeb is optimized to avoid a division of two zeros of the same order. The new coding produces a higher order zero in the numerator.
+  A zeb offset of 1e-7 is further used to ensure stability.
+
+- CB tunneling current calculation is improved in a similar manner.
+
+- "mult" is now implemented at the branch level instead of parameter level. 
+
+- The gmin current now scales with "mult".
+
+
+
+Mextram 505.1 Source Code
+
+Additions and changes compared to 505.00 are:
+
+- Add CS junction diode knee current ikcs.
+
+- Modified BCS high injection.
+
+- Add breakdown in CB junction leakage and its switch, swjbrcb = 0 (default), and 1.
+
+- Separate Isub into intrinsic Isub_int and extrinsic Isub with parameter xisubi. Isub_int is controlled by Vb2c2 and Isub is controlled by Vb1c4.
+
+- vexlim is set as model parameter.
+
+  `MPRcc( vexlim ,400.0 ,"" ,40 ,400 ,"Upper limit of exp() function argument for convergence" )
+
+Mextram 505.00 Source Code
+
+Additions and changes compared to 504.12.1 are:
+
+- CB junction tunneling current model added.
+
+- vdcs are decoupled for quasi-saturation and C-V. 
+  vdc is dedicated for quasi-saturation. 
+  vdcctc and pc are dedicated for CV.
+  vdcctc is used for CB tunneling.
+
+- Added temperature dependent non-ideality factors in main current, nff and nfr.
+- Diffusion charge and diffusion capacitance expressions are modified accordingly to maintain the same transit time.
+
+- Nonideality factors in ideal base current IB1 and IB1S are added.
+- Side-wall non-ideal base current IB2S are added.
+- Side-wall base current for reliability modeling IBrel is added.
+- Current gains (bf, bri) are no longer used. All base current components have their own saturation current and non-ideality factors where needed.
+
+- Nonideal reverse base current is now formulated the same way as forward non-ideal base current.
+
+- 1/f noise of all ideal base currents is now calculated from kf and af, and placed between B2 and E1.
+- 1/f noise of all non-ideal base currents is now calculated from kfn and afn, and placed between B1 and E1.
+
+- New avalanche current implementation using main current (In) as opposed to Ic1c2 as initiating current, and corresponding changes in Iavl limits.
+- New avalanche factor (Gem) model.
+- swavl, a switch parameter for avalanche factor.
+     swavl = 0, no avalanche current,
+     swavl = 1 (default), a new avalanche model,
+     swavl = 2, Mextram 504 avalanche model. exavl is meaningful only when swavl=2.
+
+- Add vdcctc, diffusion voltage dedicated for CB depletion capacitance.    
+
+- Add switch for Vjunc calculation, swvjunc, swvjunc = 0 (default), 1, and 2 (504). 
+    // Effective collector-base junction capacitance bias switch  
+    if (swvjunc == 0)
+        Vjunc = Vb2c2; 
+    else if (swvjunc == 1)
+        Vjunc = Vb2c1;
+    else if (swvjunc == 2)
+        Vjunc = Vb2c1 + Vxi0;
+        
+- Add switch for transition voltage width Vch in CB capacitance-voltage curve smoothing, swvchc, swvchc=0 (default) and 1 (504).
+    if (swvchc == 0)
+        Vch = vdc_t * 0.1;
+    else    
+        Vch = vdc_t * (0.1 + 2.0 * Ic1c2 / (Ic1c2 + Iqs));     
+    
+- Iex is now corrected to describe extrinsic BC junction current as hole injection into collector (in 504, it was described as electron injection current from collector to extrinsic base - which is not the case for real devices)    
+     
+- iks means now true substrate current's knee.
+
+- Change default value of parameter exsub from 0 to 1.
+
+- Change default range of parameter icss from (-inf, inf) to [0.0, inf) and Isf is directly calculated from icss. 
+
+- p0star and pW clipping restored to solve convergence problems at high VCB.
+
+- Improvement of xext coding to allow xext = 0.
+
+- Types of numerical constants cleaned up.
+
+- Code reformatted to have asymmetric begin / end format.
+
+- Macros are rewritten for consistency. No trailing ";" should be used in macro calling.
+
+- gmin now can take value from both model card and simulator. 
+  gmin explicitly specified on model card has higher priority over gmin from simulator options. 
+

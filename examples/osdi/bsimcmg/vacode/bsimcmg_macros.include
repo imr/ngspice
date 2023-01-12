@@ -1,0 +1,239 @@
+// ****************************************************************************
+// *  BSIM-CMG 111.0.0 released by Harshit Agarwal on 09/12/2019              *
+// *  BSIM Common Multi-Gate Model (Verilog-A)                                *
+// ****************************************************************************
+
+// ****************************************************************************
+// *  Copyright © 2019 University of California                               *
+// *                                                                          *
+// *  Project director: Prof. Chenming Hu                                     *
+// *                                                                          *
+// *  Current developers: Harshit Agarwal (Postdoc)                           *
+// *                      Pragya Kushwaha (Postdoc)                           *
+// *                      Avirup Dasgupta (Postdoc)                           *
+// *                      Yen-Kai Lin (Ph.D. student)                         *
+// *                      Ming-Yen Kao (Ph.D. student)                        *
+// ****************************************************************************
+
+/*
+Licensed under Educational Community License, Version 2.0 (the "License"); you may
+not use this file except in compliance with the License. You may obtain a copy of the license at
+http://opensource.org/licenses/ECL-2.0
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT 
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations
+under the License.
+
+BSIM-CMG model is supported by the members of Silicon Integration Initiative's Compact Model Coalition. A link to the most recent version of this
+standard can be found at: http://www.si2.org/cmc 
+*/
+
+// Model types
+`define ntype 1
+`define ptype -1
+
+// Numerical constants
+`define EXPL_THRESHOLD 80.0
+`define MAX_EXPL 5.540622384e34
+`define MIN_EXPL 1.804851387e-35
+`define N_MINLOG 1.0e-38
+`define LN_N_MINLOG -87.498233534
+`define MEXPQM 4.0
+`define DELTA_1 0.02
+`define DELTA_ASYMM 0.04
+`define CONSTCtoK 273.15
+`define REFTEMP 300.15
+`define ONE_OV_3 0.333333333
+`define TWO_OV_3 0.666666667
+`define FOUR_OV_3 1.333333333
+
+// Physical constants
+`define q 1.60219e-19
+`define EPS0 8.8542e-12
+`define HBAR 1.05457e-34
+`define MEL 9.11e-31
+`define KboQ 8.617087e-5
+
+// Clamped exponential
+`define lexp(x) ((x > `EXPL_THRESHOLD) ? `MAX_EXPL * (1.0 + x - `EXPL_THRESHOLD) : (x < -`EXPL_THRESHOLD) ? `MIN_EXPL : exp(x))
+
+// Clamped logarithm
+`define lln(x) ((x > `N_MINLOG) ? ln(x) : `LN_N_MINLOG)
+
+// Hyperbolic smoothing
+`define hypsmooth(x, c) (0.5 * (x + sqrt(x * x + 4.0 * c * c)))
+
+// Hyperbolic smoothing with a maximum value
+`define hypmax(x, xmin, c) (xmin + 0.5 * (x - xmin - c + sqrt((x - xmin - c) * (x - xmin - c) - 4.0 * xmin * c)))
+
+// Smoothing with a minimum value
+`define smoothminx(x, x0, deltax) (0.5 * (x + x0 + sqrt((x - x0) * (x - x0) + 0.25 * deltax * deltax)))
+
+// Temperature dependence
+`define tempdep(param_t, param_i, t_term) \
+begin \
+    if (TEMPMOD != 0) begin \
+        param_t = param_i + `hypmax(t_term * delTemp, -param_i, 1.0e-6); \
+    end else begin \
+        param_t = param_i * `hypsmooth((1.0 + t_term * delTemp - 1.0e-6), 1.0e-3); \
+    end \
+end
+
+// Binning equations
+`define binning(param_i, r_term, l_term, n_term, p_term) \
+begin \
+    param_i = r_term + Inv_L * l_term + Inv_NFIN * n_term + Inv_LNFIN * p_term; \
+end
+
+// NFIN scaling
+`define nfin_scaling(param_i, n1_term, n2_term) \
+begin \
+    if (n1_term != 0.0) begin \
+        param_i = param_i * (1.0 + n1_term / NFIN * `lln(1.0 + NFIN / n2_term)); \
+    end \
+end
+
+// NFINNOM scaling
+`define nfinnom_scaling(param_i, lt_term) \
+begin \
+    param_i = param_i * (1.0 + (NFIN - NFINNOM) * lt_term * Leff); \
+end
+
+// Length scaling
+`define length_scaling(param, a_term, b_term) \
+begin \
+    param = param + a_term * `lexp(-Leff / b_term); \
+end
+
+// Junction capacitance
+`define juncap_bias_indep(SJ, PB_t, MJ, MJ2, vec, pb2) \
+begin \
+    if (SJ > 0.0) begin \
+        vec = PB_t * (1.0 - pow((1.0 / SJ), (1.0 / MJ))); \
+        pb2 = PB_t * SJ * MJ2 / MJ / pow((1.0 - vec / PB_t), -(1.0 + MJ)); \
+    end \
+end
+
+`define junction_cap(vex, vec, pb2, Cz, PB, SJ, MJ, MJ2, Qej) \
+begin \
+    if (Cz > 0.0) begin \
+        T1 = vex / PB; \
+        if (T1 < 0.9) begin \
+            if (SJ > 0.0) begin \
+                if (vex > vec) begin \
+                    arg = 1.0 - T1; \
+                    if (MJ == 0.5) begin \
+                        sarg = 1.0 / sqrt(arg); \
+                    end else begin \
+                        sarg = pow(arg, -MJ); \
+                    end \
+                    Qej = PB * Cz * (1.0 - arg * sarg) / (1.0 - MJ); \
+                end else begin \
+                    arg = 1.0 - vec / PB; \
+                    if (MJ == 0.5) begin \
+                        sarg = 1.0 / sqrt(arg); \
+                    end else begin \
+                        sarg = pow(arg, -MJ); \
+                    end \
+                    Qec = PB * Cz * (1.0 - arg * sarg) / (1.0 - MJ); \
+                    arg = 1.0 - (vex - vec) / pb2; \
+                    if (MJ2 == 0.5) begin \
+                        sarg = 1.0 / sqrt(arg); \
+                    end else begin \
+                        sarg = pow(arg, -MJ2); \
+                    end \
+                    Qej = Qec + SJ * pb2 * Cz * (1.0 - arg * sarg) / (1.0 - MJ2); \
+                end \
+            end else begin \
+                arg = 1.0 - T1; \
+                if (MJ == 0.5) begin \
+                    sarg = 1.0 / sqrt(arg); \
+                end else begin \
+                    sarg = pow(arg, -MJ); \
+                end \
+                Qej = PB * Cz * (1.0 - arg * sarg) / (1.0 - MJ); \
+            end \
+        end else begin \
+            T2 = pow(0.1, -MJ); \
+            T3 = 1.0 / (1.0 - MJ); \
+            T4 = T2 * (T1 - 1.0) * (5.0 * MJ * (T1 - 1.0) + (1.0 + MJ)); \
+            T5 = T3 * (1.0 - 0.05 * MJ * (1.0 + MJ) * T2); \
+            Qej = PB * Cz * (T4 + T5); \
+        end \
+    end else begin \
+        Qej = 0.0; \
+    end \
+end
+
+// Geometry-dependent fringe capacitance
+`define cfringe_2d(Hg, Hc, Wfin, Cf1, Cgg) \
+begin \
+    Hr = 2.3 + 0.2 * (Hg + TOXP) / Hc; \
+    Lr = 1.05; \
+    Hgdelta = abs(Hg + TOXP - Hc); \
+    Lmax = LSP * Lr; \
+    y = min(Hc, Hg + TOXP); \
+    x = LSP / (Hr + 1.0); \
+    Cnon = 1.7e12; \
+    CcgSat = epssp * (y - x) / LSP; \
+    TT1 = Cnon * CcgSat; \
+    if (TT1 > `EXPL_THRESHOLD) begin \
+        Ccg1 = CcgSat; \
+    end else begin \
+        Ccg1 = 1.0 / Cnon * ln(1.0 + `lexp(TT1)); \
+    end \
+    r1cf = 0.5 * min(Hc / (Hg + TOXP), (Hg + TOXP) / Hc); \
+    Rcf = Hgdelta * r1cf; \
+    Ccg2 = epssp * 2.0 / `M_PI * `lln((LSP + 0.5 * `M_PI * Rcf) / LSP); \
+    Ccg = Wfin * (Ccg1 + Ccg2); \
+    x = Lmax / Hg; \
+    C1 = 4.0 / (sqrt(2.0 * (x + 1.0)) * `M_PI); \
+    C2 = sqrt(TOXP * TOXP + 2.0 * Hg * TOXP + Hg * Hg * (x + 1.0)) * sqrt(x + 1.0) + TOXP + Hg * x + Hg; \
+    C3 = TOXP * sqrt((x + 1.0) * (x + 4.0)) + TOXP * (x + 2.0); \
+    Cfglog = epssp * (C1 * `lln(C2 / C3) + 12.27); \
+    dcf = Hr * Lr; \
+    TT0 = sqrt(dcf * dcf + 1.0); \
+    TT1 = sqrt((dcf * dcf + 1.0) * ((dcf * TOXP) * (dcf * TOXP) + 2.0 * dcf * Lmax * TOXP + (dcf * dcf + 1.0) * Lmax * Lmax)) + dcf * TOXP + dcf * dcf * Lmax + Lmax; \
+    TT2 = (TT0 + 1.0) * (dcf * TOXP); \
+    Cfgsat = 2.0 * epssp * sqrt(2.0) / `M_PI * (Cf1) * dcf / TT0 * `lln(TT1 / TT2); \
+    delta = 1.2e-12; \
+    TT1 = Cfgsat - Cfglog - delta; \
+    Cfg = Wfin * (Cfgsat - 0.5 * (TT1 + sqrt(TT1 * TT1 + 4.0 * delta * Cfgsat))); \
+    Cgg = Ccg + Cfg; \
+end
+
+//  Macros for the model/instance parameters
+//  OPP: operating point parameter, includes units and description for printing
+//  MPRxx: model parameter real
+//  MPIxx: model parameter integer
+//  IPRxx: instance parameter real
+//  IPIxx: instance parameter integer
+//  BPRxx: both model and instance parameter real
+//  BPIxx: both model and instance parameter integer
+//     ||
+//     cc: closed lower bound, closed upper bound
+//     oo: open lower bound, open upper bound
+//     co: closed lower bound, open upper bound
+//     oc: open lower bound, closed upper bound
+//     cz: closed lower bound = 0, open upper bound = inf
+//     oz: open lower bound = 0, open upper bound = inf
+//     nb: no bounds
+//     ex: no bounds with exclude
+//     sw: switch (integer only, values 0 = false and 1 = true)
+//     ty: switch (integer only, values -1 = p-type and +1 = n-type)
+`define OPP(nam, uni, des) (* units = uni, desc = des *) real nam;
+`define OPM(nam,uni,des)   (* units=uni, desc=des, multiplicity="multiply" *)  real    nam;
+`define OPD(nam,uni,des)   (* units=uni, desc=des, multiplicity="divide"   *)  real    nam;
+`define BPRco(nam, def, uni, lwr, upr, des) (* units = uni, type = "instance", desc = des *) parameter real nam = def from[lwr : upr);
+`define BPRoz(nam, def, uni, des) (* units = uni, type = "instance", desc = des *) parameter real nam = def from(0.0 : inf);
+`define BPRcz(nam, def, uni, des) (* units = uni, type = "instance", desc = des *) parameter real nam = def from[0.0 : inf);
+`define BPRnb(nam, def, uni, des) (* units = uni, type = "instance", desc = des *) parameter real nam = def;
+`define BPIcc(nam, def, uni, lwr, upr, des) (* units = uni, type = "instance", desc = des *) parameter integer nam = def from[lwr : upr];
+`define IPIco(nam, def, uni, lwr, upr, des) (* units = uni, type = "instance", desc = des *) parameter integer nam = def from[lwr : upr);
+`define MPRnb(nam, def, uni, des) (* units = uni, desc = des *) parameter real nam = def;
+`define MPRex(nam, def, uni, exc, des) (* units = uni, desc = des *) parameter real nam = def exclude exc;
+`define MPRcc(nam, def, uni, lwr, upr, des) (* units = uni, desc = des *) parameter real nam = def from[lwr : upr];
+`define MPRoo(nam, def, uni, lwr, upr, des) (* units = uni, desc = des *) parameter real nam = def from(lwr : upr);
+`define MPRco(nam, def, uni, lwr, upr, des) (* units = uni, desc = des *) parameter real nam = def from[lwr : upr);
+`define MPRcz(nam, def, uni, des) (* units = uni, desc = des *) parameter real nam = def from[0.0 : inf);
+`define MPRoz(nam, def, uni, des) (* units = uni, desc = des *) parameter real nam = def from(0.0 : inf);
+`define MPIcc(nam, def, uni, lwr, upr, des) (* units = uni, desc = des *) parameter integer nam = def from[lwr : upr];

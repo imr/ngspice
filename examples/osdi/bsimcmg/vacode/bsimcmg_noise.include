@@ -1,0 +1,197 @@
+// ****************************************************************************
+// *  BSIM-CMG 111.0.0 released by Harshit Agarwal on 09/12/2019              *
+// *  BSIM Common Multi-Gate Model (Verilog-A)                                *
+// ****************************************************************************
+
+// ****************************************************************************
+// *  Copyright © 2019 University of California                               *
+// *                                                                          *
+// *  Project director: Prof. Chenming Hu                                     *
+// *                                                                          *
+// *  Current developers: Harshit Agarwal (Postdoc)                           *
+// *                      Pragya Kushwaha (Postdoc)                           *
+// *                      Avirup Dasgupta (Postdoc)                           *
+// *                      Yen-Kai Lin (Ph.D. student)                         *
+// *                      Ming-Yen Kao (Ph.D. student)                        *
+// ****************************************************************************
+
+/*
+Licensed under Educational Community License, Version 2.0 (the "License"); you may
+not use this file except in compliance with the License. You may obtain a copy of the license at
+http://opensource.org/licenses/ECL-2.0
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT 
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations
+under the License.
+
+BSIM-CMG model is supported by the members of Silicon Integration Initiative's Compact Model Coalition. A link to the most recent version of this
+standard can be found at: http://www.si2.org/cmc 
+*/
+
+// Noise model
+Esatnoi = 2.0 * VSAT_a / ueff;
+
+// Flicker noise, Ref: BSIM4
+if (NOIA > 0.0 || NOIB > 0.0 || NOIC > 0.0) begin
+    Leffnoi = Leff - 2.0 * LINTNOI;
+    if (Leffnoi <= 0.0) begin
+        $strobe("Warning: LINTNOI = %e is too large to have positive Leff for noise. Set LINTNOI = 0.", LINTNOI);
+        Leffnoi = Leff;
+    end
+    Leffnoisq = Leffnoi * Leffnoi;
+    if (EM > 0.0) begin
+        T0 = (diffVds / litl + EM) / Esatnoi;
+        DelClm = litl * `lln(T0);
+    end else begin
+        DelClm = 0.0;
+    end
+    T1 = `q * `q * `q * Vtm * abs(ids) * ueff;
+    T2 = 1.0e10 * coxeff * Leffnoisq;
+    N0 = coxeff * qis / `q;
+    Nl = coxeff * qid / `q;
+    Nstar = Vtm / `q * (coxeff + CIT_a);
+    T3 = NOIA * `lln((N0 + Nstar) / (Nl + Nstar));
+    T4 = NOIB * (N0 - Nl);
+    T5 = 0.5 * NOIC * (N0 * N0 - Nl * Nl);
+    T6 = `q * Vtm * ids * ids;
+    T7 = 1.0e10 * Leffnoisq * Weff0 * NFINtotal;
+    T8 = NOIA + NOIB * Nl + NOIC * Nl * Nl;
+    T9 = (Nl + Nstar) * (Nl + Nstar);
+    Ssi = T1 / T2 * (T3 + T4 + T5) + T6 / T7 * DelClm * T8 / T9;
+    T10 = NOIA * `q * Vtm;
+    T11 = Weff0 * NFINtotal * Leffnoi * 1.0e10 * Nstar * Nstar;
+    Swi = T10 / T11 * ids * ids;
+    T1 = Swi + Ssi;
+    if (T1 > 0.0) begin
+        FNPowerAt1Hz = (Ssi * Swi) / T1;
+    end else begin
+        FNPowerAt1Hz = 0.0;
+    end
+end else begin
+    FNPowerAt1Hz = 0.0;
+end
+
+// Thermal noise
+case (TNOIMOD)
+    // Charge-based thermal noise model, Ref: BSIM4
+    0: begin
+        T0 = ueff * qinv;
+        T1 = T0 * Rdsi + Leff * Leff;
+        Gtnoi = (T0 / T1) * NTNOI;
+        sid = 4.0 * Vtm * `q * Gtnoi;
+    end
+    // Correlated thermal noise model, Ref: Chap. 6 of Darsen Lu's Ph.D. thesis
+    1: begin
+        T0 = qia / EsatL;
+        T0 = T0 * T0;
+        // Empirical parameters for short-channel excess noise
+        noiBeta = RNOIA * (1.0 + T0 * TNOIA * Leff);
+        noiTheta = RNOIB * (1.0 + T0 * TNOIB * Leff);
+        noiCorr = RNOIC * (1.0 + T0 * TNOIC * Leff);
+        noiLowId = RNOIK * (1.0 + T0 * TNOIK * Leff);
+        // T1, T2, T3 are all 1.0 by default
+        T1 = 3.0 * noiBeta * noiBeta;
+        T2 = 7.5 * noiTheta * noiTheta;
+        T3 = 2.5298 * noiCorr;
+        // Theoretical equations
+        noiEta = (qid / qis) * (1.0 - Vdseff / Vdsat);
+        Dvsat3 = Dvsat * Dvsat * Dvsat;
+        noiWI = q0 / (q0 + qia);
+        // Mnud at Vds = 0
+        if (K0_t != 0.0) begin
+            T4 = K0_t / (max(0.0, K0SI_t) * qis + 2.0 * nVtm);
+            Mnud0 = `lexp(-T4);
+        end else begin
+            Mnud0 = 1.0;
+        end
+        // Mob at Vds = 0
+        if (BULKMOD == 2) begin
+            T4 = `hypsmooth(K2_t, 1.0e-6);
+            T5 = T4 / (max(0.0, K2SI_t) * qis + 2.0 * nVtm);
+            T6 = sqrt(PHIBE_i - veseff) - sqrt(PHIBE_i);
+            Mob0 = `lexp(-T5 * T6);
+        end else begin
+            Mob0 = 1.0;
+        end
+        // Dmob at Vds = 0
+        Eeffm0 = EeffFactor * (qba + eta_mu * qis);
+        T4 = pow(0.5 * (1.0 + abs(qis / qb0)), UCS_t);
+        if (BULKMOD != 0) begin
+            T5 = (UA_a + UC_a * veseff) * pow(abs(Eeffm0), EU_a) + UD_a / T4;
+        end else begin
+            T5 = UA_a * pow(abs(Eeffm0), EU_a) + UD_a / T4;
+        end
+        Dmob0 = 1.0 + T5;
+        Dmob0 = `smoothminx(Dmob0, 1.0, DMOBCLAMP);
+        Dmob0 = Dmob0 / U0MULT;
+        // Dvsat at Vds = 0
+        Dvsat0 = 1.0 + 0.25 * DVSATCLAMP;
+        // ids0_ov_dqi at Vds = 0
+        etaiv0 = q0 / (q0 + qis);
+        T4 = (2.0 - etaiv0) * nVtm;
+        ids0_ov_dqi0 = qis + T4;
+        // Dr at Vds = 0
+        case (RDSMOD)
+            0: begin
+                T4 = 1.0 + PRWGS_i * qis;
+                T5 = 1.0 / T4;
+                T6 = 0.5 * (T5 + sqrt(T5 * T5 + 0.01));
+                Rdsi0 = rdstemp * (RDSWMIN_i + RDSW_i * T6) * WeffWRFactor;
+                Dr0 = 1.0 + NFINtotal * beta * ids0_ov_dqi0 / (Dmob0 * Dvsat0) * Rdsi0;
+            end
+            1: begin
+                Dr0 = 1.0;
+            end
+            2: begin
+                T4 = 1.0 + PRWGS_i * qis;
+                T5 = 1.0 / T4;
+                T6 = 0.5 * (T5 + sqrt(T5 * T5 + 0.01));
+                Rdsi0 = (RDSWMIN_i + RDSW_i * T6) * WeffWRFactor;
+                Rdsi0 = rdstemp * (RSourceGeo + RDrainGeo +  Rdsi0);
+                Dr0 = 1.0 + NFINtotal * beta * ids0_ov_dqi0 / (Dmob0 * Dvsat0) * Rdsi0;
+            end
+        endcase
+        // Gds at Vds = 0, Moc will always be 1.0 at Vds = 0
+        noiGd0 = NFINtotal * beta * qis * Mnud0 * Mob0 / (Dmob0 * Dvsat0 * Dr0);
+        T4 = 1.0 + noiEta;
+        T5 = 1.0 - noiEta;
+        T6 = (2.0 * noiWI) / qis * nVtm;
+        T7 = T4 + T6;
+        T5_2 = T5 * T5;
+        T5_3 = T5_2 * T5;
+        T5_4 = T5_3 * T5;
+        T7_2 = T7 * T7;
+        T7_3 = T7_2 * T7;
+        T7_4 = T7_3 * T7;
+        T7_5 = T7_4 * T7;
+        // Theoretical Sid for long-channel devices
+        gamma1 = 0.5 * T4;
+        gamma2 = T5_2 / (6.0 * T7);
+        gamma = (Moc / Dvsat) * (gamma1 + gamma2);
+        // Theoretical Sig for long-channel devices
+        delta1 = T4 / T7_2;
+        delta2 = (6.0 * T4 + T6) * T5_2 / (15.0 * T7_4);
+        delta3 = T5_4 / (9.0 * T7_5);
+        delta = (Moc / 6.0) * Dvsat3 * (delta1 - delta2 + delta3);
+        // Theoretical correlated noise between Sid and Sig for long-channel devices
+        epsilon1 = T5 / T7;
+        epsilon2 = T5_3 / (3.0 * T7_3);
+        epsilon = (Moc / 6.0) * Dvsat * (epsilon1 - epsilon2);
+        // Empirical tuning of correlation coefficient between Sid and Sig by T3
+        // ctnoi = 1: fully correlated; ctnoi = 0: uncorrelated
+        ctnoi = T3 * epsilon / sqrt(gamma * delta);
+        if (ctnoi > 1.0) begin
+            ctnoi = 1.0;
+        end else if (ctnoi < 0.0) begin
+            ctnoi = 0.0;
+        end
+        // Empirical tuning of Sid, T1: saturation region, T8: subthreshold and linear region
+        T8 = 1.0 + noiLowId * noiLowId / (TNOIK2 + qia) * (Vdseff / Vdsat);
+        gamma = (Moc / Dvsat) * (T8 * gamma1 + T1 * gamma2);
+        // Sid level
+        sid = 4.0 * Vtm * `q * gamma * noiGd0;
+        // Empirical tuning of Sig by T2, RNOIB = 0 turns Sig off
+        delta = (Moc / 6.0) * Dvsat3 * T2 * (delta1 - delta2 + delta3);
+        // Sig ratio to Sid
+        sigrat = sqrt(delta / gamma) * NFINtotal * coxeff * WeffCV0 * LeffCV / noiGd0;
+    end
+endcase

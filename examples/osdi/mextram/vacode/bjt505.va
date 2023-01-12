@@ -1,0 +1,38 @@
+// Copyright (c) 2000-2007, NXP Semiconductor
+// Copyright (c) 2007-2014, Delft University of Technology
+// Copyright (c) 2015-2020, Auburn University
+// All rights reserved, see IP_NOTICE_DISCLAIMER_LICENSE for further information.
+
+`include "frontdef.inc"
+`define SUBSTRATE
+
+module bjt505_va (c, b, e, s);
+
+    // External ports
+    inout c, b, e, s;
+
+    electrical e, b, c, s;
+
+    // Internal nodes
+    electrical e1, b1, b2, c1, c2, c3, c4;
+
+    // Noise node
+    electrical noi;  // for correlated noise implementation
+
+    `include "parameters.inc"
+    `include "variables.inc"
+    `include "opvars.inc"
+
+    analog begin
+        `include "initialize.inc"
+        `include "tscaling.inc"
+        `include "evaluate.inc"
+        `include "noise.inc"
+        `include "opinfo.inc"
+
+        // The following can be used to print OP-info to std out:
+        // `include "op_print.inc"
+
+    end  // analog
+endmodule
+

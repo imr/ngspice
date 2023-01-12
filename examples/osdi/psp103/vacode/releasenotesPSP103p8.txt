@@ -1,0 +1,263 @@
+﻿
+======================================================================================
+======================================================================================
+                      Silicon Integration Initiative (Si2)
+                    Compact Model Coalition In-Code Statement
+
+  Software is distributed as is, completely without warranty or service support. The
+  Commissariat a l'energie atomique et aux energies alternatives (CEA), NXP
+  Semiconductors, and Delft University of Technology, along with their employees are
+  not liable for the condition or performance of the software.
+
+  NXP Semiconductors, Delft University of Technology, and CEA own the copyright and
+  grant users a perpetual, irrevocable, worldwide, non-exclusive, royalty-free license
+  with respect to the software as set forth below.
+  
+  NXP Semiconductors, Delft University of Technology, and CEA hereby disclaim all
+  implied warranties.
+
+  NXP Semiconductors, Delft University of Technology, and CEA grant the users the right
+  to modify, copy, and redistribute the software and documentation, both within the
+  user's organization and externally, subject to the following restrictions:
+  
+    1. The users agree not to charge for the NXP Semiconductors, Delft University of
+       Technology, and CEA-developed code itself but may charge for additions,
+       extensions, or support.
+
+    2. In any product based on the software, the users agree to acknowledge NXP
+       Semiconductors, Delft University of Technology, and CEA that developed the
+       software. This acknowledgement shall appear in the product documentation.
+
+    3. Redistributions to others of source code and documentation must retain the
+       copyright notice, disclaimer, and list of conditions.
+
+    4. Redistributions to others in binary form must reproduce the copyright notice,
+       disclaimer, and list of conditions in the documentation and/or other materials
+       provided with the distribution.
+
+  CMC In-Code Statement Revision: 103.8.0 (PSP), 07/01/2020
+                                  200.6.1 (JUNCAP),07/01/2020
+
+======================================================================================
+======================================================================================
+
+  Authors: G.D.J. Smit, A.J. Scholten, and D.B.M. Klaassen (NXP Semiconductors)
+           O. Rozeau, S. Martinie and T. Poiroux (CEA-Leti)
+
+  Former contributers:
+           G. Gildenblat, W. Yao, Z. Zhu, X. Li and W. Wu (Arizona State University)
+           R. van Langevelde (Philips Research)
+           R. van der Toorn (Delft University of Technology)
+           J.C. Barbé (CEA-Leti)
+
+  The most recent version of the model code, the documentation, and contact
+  information can be found on:
+
+       http://www.cea.fr/cea-tech/leti/pspsupport
+       
+======================================================================================
+======================================================================================
+
+This package consists of the following files:
+
+     - releasenotesPSP103.txt         This file
+
+     - psp103.va                      Main file for PSP model
+     - psp103t.va                     Main file for PSP model with self heating
+     - psp103_nqs.va                  Main file for PSP model with NQS-effects
+     - juncap200.va                   Main file for JUNCAP2 stand-alone model
+
+     - Common103_macrodefs.include    Common macro definitions
+     - PSP103_macrodefs.include       Macro definitions for PSP
+     - PSP103_module.include          Actual model code for intrinsic MOS model
+     - PSP103_parlist.include         Model parameter list for PSP model
+     - PSP103_scaling.include         Geometry scaling equations for PSP model
+     - PSP103_nqs_macrodefs.include   All macro definitions for PSP-NQS
+     - JUNCAP200_macrodefs.include    Macro definitions for JUNCAP2 model
+     - JUNCAP200_parlist.include      JUNCAP2 parameter list
+     - JUNCAP200_varlist.include      JUNCAP2 variable declarations
+     - JUNCAP200_InitModel.include    JUNCAP2 model initialization code
+
+======================================================================================
+======================================================================================
+
+Usage
+-----
+
+Depending which model one wants to use, one should compile one of the four .va-files
+(psp103.va, psp103t.va, psp103_nqs.va, and juncap200.va). The module names are
+"PSP103VA", "PSP103TVA", and "PSPNQS103VA" (for QS, self heating, and NQS,
+respectively), and "JUNCAP200" for the JUNCAP2-model.
+
+
+======================================================================================
+======================================================================================
+
+Release notes vA-code of PSP 103.8.0 (July 2020)
+---------------------------------------------------------
+
+Changes include:
+    -  New inner fringe charges model with its associated parameters
+    -  Model of overlaps inversion charge with its associated parameters
+    -  New implementation of gmin conductance
+    -  Minor modification on code files organization: The contents of PSP103_ChargesNQS.include
+       and PSP103_InitNQS.include are now calculated as macros in PSP103_nqs_macrodefs.include
+    -  Fix on the sign of flicker noise sources (including edge transistor)
+    -  Minor code cleaning
+
+- PSP103_macrodefs.include:
+    -  GMIN constant is canceled and replaced by a controled variable by the simulator
+    -  TempScaling macro: QMC_i is replaced by QMC (lines 323 and 344). SWEDGE_i is replaced
+       by SWEDGE (line 396)
+    -  SPCalculation macro:
+               -  Initialization of Em, Dm, Pm, qbs and qbd (lines 459 to 464)
+               -  Calculation of qbs and qbd in accumulation (lines 524 and 525)
+               -  Addition of Pd and sqd calculations (lines from 647 to 649, 652, 653, from 666
+                  to 667)
+               -  Calculation of qbd in inversion (line 669)
+               -  Calculation of Vgsinr, Vsginr, Vgdinr and Vdginr (lines 768 to 772)
+
+- PSP103_module.include:
+    -  The unused variable inorm for NQS is removed
+    -  Global declaration of new variables (lines 167 to 168, 185 to 186, 229, 230 to 231 and
+       241): FCGOVACC_p, FCGOVACCD_p, CGOVACCG_p, CINR_p, CINRD_p, DVFBINR_p, FCINRDEP_p,
+       FCINRACC_p, AXINR_p, FCGOVACC_i, FCGOVACCD_i, CGOVACCG_i, CINR_i, CINRD_i, DVFBINR_i,
+       FCINRDEP_i, FCINRACC_i, AXINR_i, dxgb_ov_s, dxgb_ov_d, Vinr_max, ainr, xgb_ov
+    -  New declarations of OP variables related to new features (lines 457 to 466):
+       lp_fcgovacc, lp_fcgovaccd, lp_cgovaccg, lp_cinr, lp_cinrd, lp_dvfbinr, lp_fcinrdep,
+       lp_fcinracc, lp_axinr
+    -  initial_model section:
+        -  Canceled variables related to clipped parameters by using declaration functions:
+           SWGEO_i, SWIGATE_i, SWIMPACT_i, SWGIDL_i, SWJUNCAP_i, SWJUNASYM_i, SWNUD_i,
+           SWEDGE_i, SWDELVTAC_i, SWQSAT_i, SWQPART_i, SWIGN_i, QMC_i, TOXO_i, EPSROXO_i,
+           NSUBO_i, WSEG_i, NPCK_i, WSEGP_i, LPCK_i, TOXOVO_i, TOXOVDO_i, LOV_i, LOVD_i,
+           LP1_i, LP2_i, WBET_i, AXL_i, ALP1L2_i, ALP2L2_i, SAREF_i, SBREF_i, KVSAT_i,
+           LLODKUO_i, WLODKUO_i, LLODVTH_i, WLODVTH_i, LODETAO_i, SCREF_i, WEB_i, WEC_i,
+           RSHG_i, RINT_i, RVPOLY_i, NSUBEDGEO_i, LPEDGE_i, TR_i
+           => these variables <PARNAME>_i are replaced by their associated parameters <PARNAME>
+        -  RSH_i and RSHD_i variables are now calculated in PSP103_scaling.include
+        -  gmin definition using defined value by the simulator (line 624)
+    -  initial_instance section:
+        -  Clipping function are now unused for SCA_i, SCB_, SCC_i (lines 668 to 670)
+        -  Addition of new variables for overlap inversion charge dxgb_ov_th, dxgb_ov_s and
+           dxgb_ov_d (lines 715 and 717)
+        -  Addition of new variables for inner fringe charges Vinr_max and ainr (lines 761 to
+           766)
+        -  The initializations of juncap variables (ysq, terfc, erfcpos, etc.) are now done
+           using a macro JuncapLocalVarInit in JUNCAP200_macrodefs.include (line 926)
+        -  Variables <PARNAME>_i of juncap model are replaced by the model parameters <PARNAME>
+           (lines 939 to 933)
+    -  evaluateblock section:
+        -  Addition of variable declarations related to inner fringe charges and overlap
+           inversion charge (lines 949 to 955)
+    -  evaluateStatic section:
+        -  New variable xgb_ov related to overlap inversion charge (line 1017)
+        -  Calculation of Vgb1_dc, Vgsinr_dc, Vsginr_dc, Vgdinr_dc and Vdginr_dc (lines 1074,
+           from 1097 to 1100)
+    -  evaluateDynamic section:
+        -  Declarations of variables related to inner fringe charges and overlap inversion
+           charge (lines 1316 and 1317)
+        -  Affectations of Vgb1_ac, Vgsinr_ac, Vsginr_ac, Vgdinr_ac and Vdginr_ac (lines 1354, from
+           1367 to 1371, 1378, from 1391 to 1395)
+        -  Part for inner fringe charges calculation (lines 1436 to 1485)
+        -  Part for overlap inversion charge calculation (lines 1490 to 1529)
+    -  evaluateStaticDynamic section:
+        -  Variables declaration for juncap using LocalGlobalVars macro required for some VA compilers
+           (line 1565)
+        -  Initialization of juncap variables using JuncapLocalVarInit macro (line 1568)
+        -  Initalization of NQS using InitNQS macro (line 1609)
+    -  loadStatic section:
+        -  New current schemes of gmin (lines 1656 and 1657)
+    -  loadStaticDynamic section:
+        -  Implementation of NQS charges using CalcChargesNQS macro (line 1668)
+    -  noise section:
+        -  Fix on the sign of flicker noise source (line 1880)
+        -  Fix on the sign of flicker noise source of edge transistor (line 1885)
+    -  OPinfo section:
+        -  Affectations of OP variables lp_fcgovacc, lp_fcgovaccd, lp_cinr, lp_cinrd, lp_dvfbinr
+           lp_fcinrdep, lp_fcinracc, lp_axinr (lines from 2225 to 2227 and from 2229 to 2234)
+
+- PSP103_parlist.include:
+    -  New local parameters for inversion of overlaps: FCGOVACC, FCGOVACCD, CGOVACCG
+    -  New local parameters for inner fringe charges: CINR, CINRD, DVFBINR, FCINRDEP, FCINRACC,
+       AXINR
+    -  New global parameters for inversion of overlaps: FCGOVACCO, FCGOVACCDO, CGOVACCGO
+    -  New global parameters for inner fringe charges: CINRW, CINRDW, DVFBINRO, FCINRDEPO,
+       FCINRACCO, AXINRO
+    -  New binning parameters for inversion of overlaps: POFCGOVACC, POFCGOVACCD, POCGOVACCG
+    -  New binning parameters for inner fringe charges: POCINR, PLCINR, PWCINR, PLWCINR,
+       POCINRD, PLCINRD, PWCINRD, PLWCINRD, POFCINRDEP, POFCINRACC, PODVFBINR, POAXINR
+    -  Fix on SCREF parameter declaration to avoid the null value (division by zero in the code)
+       (line 938)
+
+- PSP103_scaling.include:
+    -  Variables related to clipped global parameters and switches <PARNAME>_i are replaced
+       by their associated parameters <PARNAME>
+    -  New internal local parameters related to inversion of overlaps with associated scaling
+       rules: FCGOVACC_p, FCGOVACCD_p, CGOVACCG_p, FCGOVACC_i, FCGOVACCD_i, CGOVACCG_i
+    -  New internal local parameters related to inner fringe charges with associated scaling
+       rules: CINRD_p, CINR_p, DVFBINR_p, FCINRDEP_p, FCINRACC_p, AXINR_p, CINRD_i, CINR_i,
+       DVFBINR_i, FCINRDEP_i, FCINRACC_i, AXINR_i
+    -  RSH_i, RSHD_i are now calculated in this file
+
+- PSP103_nqs_macrodefs.include:
+    -  Includes PSP103_InitNQS.include file as a new macro called "InitNQS"
+    -  Includes PSP103_ChargesNQS.include file as a new macro called "CalcChargesNQS"
+
+- PSP103_InitNQS.include: canceled file
+
+- PSP103_ChargesNQS.include: canceled file
+
+PSP 103.8.0 is backwards compatible with the previous version, PSP 103.7.0
+
+======================================================================================
+======================================================================================
+
+Release notes vA-code of JUNCAP 200.6.1 (July 2020)
+---------------------------------------------------------
+
+Change includes:
+    -  Fix typo of LS and LG parameter units
+    -  Minor code changes
+
+
+- JUNCAP200_varlist.include:
+    -  Several declaration are canceled related to the simplification of clipped variables
+       (TRJ_i, IMAX_i, FREV_i, IFACTOR_i, CFACTOR_i, etc.)
+    -  Variables declaration using LocalGlobalVars macro is removed
+
+- JUNCAP200_macrodefs.include:
+    -  Addition of local variables initialization: JuncapLocalVarInit macro
+    -  Variables related to clipped parameters and switches <PARNAME>_i are replaced by
+       their associated parameters <PARNAME>
+
+- JUNCAP200_InitModel.include:
+    -  Canceled variables related to clipped parameters by using declaration functions:
+       TRJ_i, IMAX_i, FREV_i, IFACTOR_i, CFACTOR_i, CJORBOT_i, CJORSTI_i,
+       CJORGAT_i, VBIRBOT_i, VBIRSTI_i, VBIRGAT_i, PBOT_i, PSTI_i, PGAT_i, PHIGBOT_i,
+       PHIGSTI_i, PHIGGAT_i, IDSATRBOT_i, IDSATRSTI_i, IDSATRGAT_i, XJUNSTI_i, XJUNGAT_i,
+       CSRHBOT_i, CSRHSTI_i, CSRHGAT_i, CTATBOT_i, CTATSTI_i, CTATGAT_i, MEFFTATBOT_i,
+       MEFFTATSTI_i, MEFFTATGAT_i, CBBTBOT_i, CBBTSTI_i, CBBTGAT_i, FBBTRBOT_i,
+       FBBTRSTI_i, FBBTRGAT_i, STFBBTBOT_i, STFBBTSTI_i, STFBBTGAT_i, VBRBOT_i, VBRSTI_i,
+       VBRGAT_i, PBRBOT_i, PBRSTI_i, PBRGAT_i, VJUNREF_i, FJUNQ_i
+
+- juncap200.va:
+    -  Fix typo of LS and LG parameter units (lines 65 and 66)
+    -  Variables related to clipped parameters and switches <PARNAME>_i are replaced by
+       their associated parameters <PARNAME>
+    -  The initializations of juncap variables (ysq, terfc, erfcpos, etc.) are now done
+       using a macro JuncapLocalVarInit in JUNCAP200_macrodefs.include (line 181)
+    -  Variables declaration for juncap using LocalGlobalVars macro required for some VA compilers
+       (line 211)
+    -  Initialization of juncap variables using JuncapLocalVarInit macro (line 214)
+    -  Initialization of qjunbot, qjunsti and qjungat (lines from 215 to 217)
+
+JUNCAP 200.6.1 is backwards compatible with the previous version, JUNCAP 200.6.0
+
+
+=====================================================================================
+======================================================================================
+The authors want to thank Laurent Lemaitre and Colin McAndrew (Freescale)
+for their help with ADMS and the implementation of the model code. Geoffrey
+Coram (Analog Devices) is acknowledged for input concerning the Verilog-A
+implementation of the model.
