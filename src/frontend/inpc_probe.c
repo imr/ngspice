@@ -315,7 +315,11 @@ void inp_probe(struct card* deck)
                     nodename = get_terminal_name(instname, nodebuf, instances);
                     char* vline = tprintf("vcurr_%s:%s:%s_%s %s %s 0", instname, nodename, thisnode, nodebuf, thisnode, newnode);
                     card = insert_new_line(card, vline, 0, 0);
-
+                    /* special for KiCad: add shunt resistor if thisnode contains 'unconnected' */
+                    if (*instname == 'x' && strstr(thisnode, "unconnected")) {
+                        char *rline = tprintf("R%s %s 0 1e15", thisnode, thisnode);
+                        card = insert_new_line(card, rline, 0, 0);
+                    }
                     char* nodesaves = tprintf("%s:%s#branch", instname, nodename);
                     allsaves = wl_cons(nodesaves, allsaves);
 
