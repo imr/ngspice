@@ -1,0 +1,56 @@
+* Chebyshev low-pass filter
+* code model s_xfer
+* according to ngspice manual chapter 12.2.18
+* and LCR versus Laplace comparison
+
+a12 node1 node2 cheby1
+.model cheby1 s_xfer(num_coeff=[1] den_coeff=[1 1.09773 1.10251]
++ int_ic=[0 0] denormalized_freq=1500)
+
+a14 node1 node3 cheby_LP_3kHz
+.model cheby_LP_3kHz s_xfer(in_offset=0.0 gain=1.0 int_ic=[0 0]
++ num_coeff=[1.0]
++ den_coeff=[1.0 1.42562 1.51620]
++ denormalized_freq=18850) ; for f = 3 kHz
+
+* LCR bandpass filter
+L1 node1 nint1 10m
+C1 nint1 node4 10u
+R1 node4 0 10
+* equivalent filter by Laplace expression
+a16 node1 node5 fil1
+.model fil1 s_xfer  gain=1000 int_ic=[0 0]
++ num_coeff=[1.0 0]
++ den_coeff=[1.0 1e3 1e7]
++ )
+
+* input ac or pulse
+Vin node1 0 dc 0 ac 1 pulse 0 5 0 1u 1u 3m 6m
+
+.control
+set xbrushwidth=2
+ac dec 50 0.01 100k
+let dbnode2=db(v(node2))
+let dbnode3=db(v(node3))
+let dbnode4=db(v(node4))
+let dbnode5=db(v(node5))
+plot dbnode2 dbnode3 
+plot dbnode4 dbnode5+1 ; +1 just to see both overlapping graphs
+plot cph(node2) cph(node3)
+let a12_0db = dbnode2[1]
+let a14_0db = dbnode3[1]
+* 1500/2/PI = 239 Hz
+meas ac fa12_0db when dbnode2=a12_0db fall=last
+* 18850/2/PI = 3 kHz
+meas ac fa14_0db when dbnode3=a14_0db fall=last
+* LCR bandpass 500 Hz BW=159 Hz
+meas ac fil1max max dbnode4
+meas ac fil1max max dbnode5
+* -3dB bandwidth
+let fil1max3db =  fil1max - 3
+meas ac bwfil1 TRIG dbnode5 VAL=fil1max3db RISE=1 TARG dbnode5 VAL=fil1max3db FALL=1
+tran 1u 15m 
+plot node1 node2 node3 node5
+.endc
+
+.end
