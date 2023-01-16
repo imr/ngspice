@@ -293,7 +293,7 @@ int OSDIsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
 
   free(node_ids);
 
-  return (OK);
+  return res;
 }
 
 /* OSDI does not differentiate between setup and temperature update so we just
@@ -363,7 +363,7 @@ extern int OSDItemp(GENmodel *inModel, CKTcircuit *ckt) {
       // TODO check that there are no changes in node collapse?
     }
   }
-  return (OK);
+  return res;
 }
 
 /* delete internal nodes
