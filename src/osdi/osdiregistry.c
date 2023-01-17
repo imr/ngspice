@@ -152,8 +152,8 @@ static char *resolve_input_path(const char *name) {
       if (r)
           return r;
   }
-  /* no inputdir, or not found rel. to inputdir: 
-     search rel. to current working directory */
+  /* no inputdir, or not found relative to inputdir:
+     search relative to current working directory */
   DS_CREATE(ds, 100);
   if (ds_cat_printf(&ds, ".%c%s", DIR_TERM, name) != 0) {
     (void)fprintf(cp_err,
