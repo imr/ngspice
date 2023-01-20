@@ -98,7 +98,7 @@ BSIM3v32instance **InstArray;
          */
 
         if (!model->BSIM3v32toxGiven)
-            model->BSIM3v32tox = 150.0e-10;
+            model->BSIM3v32tox = 100.0e-10;
         model->BSIM3v32cox = 3.453133e-11 / model->BSIM3v32tox;
         if (!model->BSIM3v32toxmGiven)
             model->BSIM3v32toxm = model->BSIM3v32tox;
@@ -130,9 +130,9 @@ BSIM3v32instance **InstArray;
         if (!model->BSIM3v32ketaGiven)
             model->BSIM3v32keta = -0.047;    /* unit  / V */
         if (!model->BSIM3v32nsubGiven)
-            model->BSIM3v32nsub = 6.0e16;   /* unit 1/cm3 */
+            model->BSIM3v32nsub = 5.0e16;   /* unit 1/cm3 */
         if (!model->BSIM3v32npeakGiven)
-            model->BSIM3v32npeak = 1.7e17;   /* unit 1/cm3 */
+            model->BSIM3v32npeak = 1.0e17;   /* unit 1/cm3 */
         if (!model->BSIM3v32ngateGiven)
             model->BSIM3v32ngate = 0;   /* unit 1/cm3 */
         if (!model->BSIM3v32vbmGiven)
