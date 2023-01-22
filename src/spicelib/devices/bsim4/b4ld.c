@@ -24,9 +24,6 @@ http://opensource.org/licenses/ECL-2.0
 Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT 
 WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations
 under the License.
-
-BSIM-CMG model is supported by the members of Silicon Integration Initiative's Compact Model Coalition. A link to the most recent version of this
-standard can be found at: http://www.si2.org/cmc 
 */
 
 /**** OpenMP support ngspice 06/28/2010 ****/
