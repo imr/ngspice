@@ -441,6 +441,10 @@ double  *p_value )   /* OUT - The numerical value     */
             scale_factor = 1.0e-15;
             break;
 
+        case 'a':
+            scale_factor = 1.0e-18;
+            break;
+
         case 'm':
             i++;
             if(i >= len) {

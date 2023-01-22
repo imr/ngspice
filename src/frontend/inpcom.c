@@ -2490,6 +2490,8 @@ static int is_a_modelname(char *s, const char* line)
         case 'P':
         case 'f':
         case 'F':
+        case 'a':
+        case 'A':
             st = st + 1;
             break;
         case 'm':
