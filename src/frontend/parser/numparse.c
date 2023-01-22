@@ -95,6 +95,11 @@ int ft_numparse(char **p_str, bool whole, double *p_val)
         expo = -15.0;
         ++p_cur;
         break;
+    case 'a':
+    case 'A':
+        expo = -18.0;
+        ++p_cur;
+        break;
     case 'm':
     case 'M': {
         char ch_cur;

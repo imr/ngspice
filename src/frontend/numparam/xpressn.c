@@ -610,6 +610,7 @@ parseunit(const char *s)
     case 'N':  return 1e-9;
     case 'P':  return 1e-12;
     case 'F':  return 1e-15;
+    case 'A':  return 1e-18;
     default :  return 1;
     }
 }
