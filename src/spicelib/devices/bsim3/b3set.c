@@ -83,7 +83,7 @@ BSIM3instance **InstArray;
         if (!model->BSIM3versionGiven)
             model->BSIM3version = copy("3.3.0");
         if (!model->BSIM3toxGiven)
-            model->BSIM3tox = 100.0e-10;
+            model->BSIM3tox = 150.0e-10;
         model->BSIM3cox = 3.453133e-11 / model->BSIM3tox;
         if (!model->BSIM3toxmGiven)
             model->BSIM3toxm = model->BSIM3tox;
@@ -115,9 +115,9 @@ BSIM3instance **InstArray;
         if (!model->BSIM3ketaGiven)
             model->BSIM3keta = -0.047;    /* unit  / V */
         if (!model->BSIM3nsubGiven)
-            model->BSIM3nsub = 5.0e16;   /* unit 1/cm3 */
+            model->BSIM3nsub = 6.0e16;   /* unit 1/cm3 */
         if (!model->BSIM3npeakGiven)
-            model->BSIM3npeak = 1.0e17;   /* unit 1/cm3 */
+            model->BSIM3npeak = 1.7e17;   /* unit 1/cm3 */
         if (!model->BSIM3ngateGiven)
             model->BSIM3ngate = 0;   /* unit 1/cm3 */
         if (!model->BSIM3vbmGiven)
