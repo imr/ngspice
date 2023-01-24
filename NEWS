@@ -1,3 +1,27 @@
+Ngspice-39, Jan 31st, 2023
+============
+- New features:
+    + OSDI interface integrated to read und simulate with
+      OpenVAF-compiled Verilog-A compact models delivers
+      access to open CMC models and many others.
+    + Visual Studio 2022 is required.
+    + ADMS is declared deprecated.
+    + Extended support of digital U devices with f_logicexp and f_pindly,
+      ngspice now fully simulates 74xx ICs.
+    + BSIM4 updated to 4.8.2
+    + Examples for Laplace model x_fer added
+    + String-valued parameters enabled
+    + Add --enable-shortcheck as configure option to reduce check time
+    + Add a function ddt (derivative versus time) to the B-source
+    + The 8th parameter on a voltage or current source now is 'number of pulses'
+    + Add a new compatibility mode xs (for XSPICE legacy behavior)
+    + Add new functions for operators x**y or x^y
+
+- Bug fixes:
+    + many bugs fixed and code improvements (see bugs 608 and up)
+    + making error messages more verbose
+    + memory leaks removed
+
 Ngspice-38, Oct 30th, 2022
 ============
 - New features:
