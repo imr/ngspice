@@ -1,5 +1,6 @@
 Model the rossler attractor
 *https://www.glensstuff.com/rosslerattractor/rossler.htm
+* provided by Giles Atkinson
 
 .param a=0.2 b=0.2 c=5.7
 
