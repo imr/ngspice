@@ -815,65 +815,33 @@ will be updated every time the device specific code is altered or changed to ref
 
 13. Verilog-A models
 
-      Configuring ngspice with ADMS (see Readme.adms) following
-      devices are available:
+      ngspice inherits the OSDI interface for compiled Verilog-A models
+      OpenVAF from https://openvaf.semimod.de/ is required to compile
+      LRM2.x-conforming Verilog-A models into shared libraries which
+      may be loaded into ngspice dynamically at run-time.
 
- 13.1 EKV MOS Model
+      The following models have been tested, example netlists are available:
 
-      Ver:    2.6
-      Level:  44
-      Dir:    devices/adms/ekv
-      Status: TO BE TESTED
-
-      EKV version based on a contribution of Ivan Riis Nielsen 11/2006
-
-      Web site at: https://www.epfl.ch/labs/iclab/ekv/model/
-      (The model from https://github.com/ekv26/model is not compatible
-      to the current ngspice adms implementation)
-
-
- 13.2 PSP MOS Model 102
-
-      Ver:    102.1
-      Level:  45
-      Dir:    devices/adms/psp102
-      Status: TO BE TESTED
-
-      Philips SimKit 2.5.
-
- 13.3 PSP MOS Model 103
-
-      Ver:    103.1
-      Level:  69
-      Dir:    devices/adms/psp103
-      Status: TO BE TESTED
-
-      Philips SimKit 2.5.
-
- 13.4 HICUM0 Bipolar Model
-
-      Ver:    Level_0 Version_1.12
-      Level:  7
-      Dir:    devices/adms/hicum0
-      Status: TO BE TESTED
-
-      A simplified version of HICUM Level2 model for BJT
-      Web site at: http://www.iee.et.tu-dresden.de/iee/eb/hic_new
+ 13.1 BSIMBULK 107
+ 13.2 BSIM-CMG
+ 13.3 HICUM L0
+ 13.4 ASM-HEMT
+ 13.5 VBIC
+ 13.6 MEXTRAM 504/505
+ 13.7 PSP 103.8
+ 13.8 r2_cmc
+ 
+      More may be made available, user compiled models are possible as well
+     (See ngspice manual, chapter 13).
 
 
- 13.5 Mextram Bipolar Model
-
-      Ver:    504.6.1
-      Level:  6
-      Dir:    devices/adms/mextram
-      Status: TO BE TESTED
-
-      Web site at: http://mextram.ewi.tudelft.nl/ and http://mextram.sourceforge.net/
-
- 14. XSpice code models, see ngspice manual chapt. 12
+ 14. XSpice code models
+ 
+      more than 100 models are available, please see ngspice manual chapt. 12
  
  15. Digital Building Blocks (U instances)
  
-       U instances are digital primitives which may be used (in proper combination) to
-       model digital devices, e.g. from the 74xx or 40xx families. ngspice maps them
-       onto XSPICE models, which allows a fast event based simulation.
+      U instances are digital primitives which may be used (in proper combination) to
+      model digital devices, e.g. from the 74xx or 40xx families. ngspice maps them
+      onto XSPICE models, which allows a fast event based simulation. Please see the
+      ngspice manual, chapter 14.

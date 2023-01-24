@@ -1,7 +1,7 @@
-  Ngspice F.A.Q.Version 2.8 (ngspice-38 release)
+  Ngspice F.A.Q.Version 2.9 (ngspice-39 release)
 
   Maintained by Holger Vogt
-  Last update: Oct 23 2022
+  Last update: Jan 24 2023
 
   This document contains the Frequently Asked Questions (and Answers)
   for ngspice project.
@@ -123,7 +123,7 @@
   capabilities) and user interface are other goals.
 
 
- 1.6 What you are going to do?
+ 1.6 What are you going to do?
 
   An official roadmap for ngspice was never drawn. Contributions made by
   developers drive ngspice development and the roadmap is built day by
@@ -140,17 +140,17 @@
   + Compact models:  The interest in using ngspice is intimately connected
     to the available models. To provide the latest models available for
     active and passive devices is a fundamental goal of the project. In
-    this direction we are integrating ADMS model compiler into ngspice.
+    this direction we are integrating OSDI interface into ngspice for
+    reading OpenVAF compiled Verilog-A compact models.
 
   + Documentation: Commercial simulators come with very good manuals
     containing tutorials, description of models equations, example of
     use, suggestions, etc. Spice came with little documentation. The
     Spice3f manual, available on the Internet has been used as the basis
-    for the new manual. It will be constantly improved during ngspice
-    development and integrated with the documentation accompanying Xspice
-    and Cider. The ngspice manual today contains description of all
+    for the ngspice manual. It will be constantly improved during ngspice
+    development. The ngspice manual today contains description of all
     features ngspice is offering. It is however not a tutorial of ngspice
-    usage, but there are now several good ones available on the internet
+    usage, but there are several good ones available on the internet
     (see https://ngspice.sourceforge.io/tutorials.html).
 
 
@@ -252,54 +252,20 @@
 
   The latest version released is:
 
-  * ngspice-38 (released on Oct 30 2022)
+  * ngspice-39 (released on Jan 31 2023)
 
 
  2.2.  What are the latest features in the current release?
 
-- New features:
-    + Add multiplier flag 'm' to behavioral capacitor and inductor.
-    + Re-enable dc sweep after transient sim.
-    + When plotting the phase, standard now is "Radiant".
-    + Add Lundin's geometry correction to the inductance formula.
-    + New variable keep#branch to write the current to raw file
-      in the old fashion     	1	v1#branch	current
-    + Translate PSPICE U instances into equivaalent XSPICE code models.
-    + New configure flag --enable-shortcheck to enable a shortened make check
-     (only BSIM3 and BSIM4).
-    + B source will accept parameters in statistical functions like agauss.
-    + WinGUI: Add a button 'Stop' to stop a simulation in intercative
-      or control mode.
-    + Update to the .probe p (power measurement) and .probe alli commands.
-    + Update to XSPICE aswitch and pswitch.
-    + Make FROM/TO work in TRIG/TARG and WHEN variants of .meas/meas command.
-    + Limits to exp function, allow 0 for log (returning -1e99), used
-      when starting iterations.
-    + Insert XSPICE bridging devices automatically when an analogue node
-      has the same name as an XSPICE event node.
-    + New options savecurrents_bsim3, savecurrents_bsim4, savecurrents_mos1.
-    + pwlts: a pwl v/i source with time input, smoothing and limiting
-      functions.
-    + New functions to the Code Model Library: cm_get_node_name()
-      and cm_probe_node().
-    + XSPICE: Add bidirectional digital/analog bridge.
-    + Search for .spiceinit firstly in a user defined directory named in env
-      SPICE_USERINIT_DIR, then in the current directory, then in HOME, then
-      in USERPROFILE.
-    + If compatmode is lt, change the pow(x,y) and x**y functions:
-      If x < 0, output only if y is integer number, otherwise output 0.
-    + Add a limit of 0.999 to bipolar parameters mje, mjc, and mjs.
-
-- Bug fixes:
-    + many bugs fixed and code improvements (see bugs 583 and up)
-    + making error messages more verbose
-    + memory leaks removed
+  Please see file NEWS accompaniing this FAQ.
 
 
  2.3.  What does it look like?
 
   Ngspice, as the original Spice3 (and Xspice and Cider) is a command
-  line simulator, but with a graphics output capability.
+  line simulator, but with a graphics output capability. Excellent
+  open source third party tool for schematic capture (KiCad, XSCHEM, 
+  Qucs-S and others) are available.
 
 
  2.4.  Who are the authors of ngspice?
@@ -384,7 +350,7 @@
 
  4.4.  Disclaimer and Copyright
 
-  Copyright: Holger Vogt, 2022
+  Copyright: Holger Vogt, 2023
   License: Creative Commons Attribution Share-Alike (CC-BY-SA) v4.0.
   This document is provided as is. The information in it is not
   warranted to be correct: you use it at your own risk.
