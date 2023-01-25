@@ -32,7 +32,7 @@ Rdt dt 0 1G
 .include Modelcards/model-card-hicumL0V1p11_mod.lib
 .SAVE V(D) V(CLK) V(Q)
 .control
-pre_osdi osdi_libs/HICUML0-2.osdi
+* pre_osdi ../osdi_libs/HICUML0-2.osdi
 TRAN 0.25p 5n
 rusage
 set color0=white

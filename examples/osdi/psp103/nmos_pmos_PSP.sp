@@ -42,29 +42,29 @@ vbsp 44 0 0
 
 .control
 * Load the models dynamically
-pre_osdi osdi_libs/psp103.osdi
+* pre_osdi ../osdi_libs/psp103.osdi
 set xgridwidth=2
 set xbrushwidth=3
 
 * NMOS
 dc vgsn 0 1.5 0.05 vbsn 0 -1.5 -0.3
-plot vssn#branch ylabel 'Id vs. Vgs, Vbs 0 ... -1.5'
-plot abs(vssn#branch) ylog ylabel 'Id vs. Vgs, Vbs 0 ... -1.5'
+plot vssn#branch ylabel 'Id over Vgs, Vbs 0 ... -1.5'
+plot abs(vssn#branch) ylog ylabel 'Id over Vgs, Vbs 0 ... -1.5'
 dc vdsn 0 1.6 0.01 vgsn 0 1.6 0.2
-plot vssn#branch ylabel 'Id vs. Vds, Vgs 0 ... 1.6'
+plot vssn#branch ylabel 'Id over Vds, Vgs 0 ... 1.6'
 dc vgsn 0 1.5 0.05 temp -40 160 40
-plot vssn#branch ylabel 'Id vs. Vds, Temp. -40 ... 160'
-plot abs(vssn#branch) ylog ylabel 'Id vs. Vds, Temp. -40 ... 160'
+plot vssn#branch ylabel 'Id over Vds, Temp. -40 ... 160'
+plot abs(vssn#branch) ylog ylabel 'Id over Vds, Temp. -40 ... 160'
 
 * PMOS
 dc vgsp 0 -1.5 -0.05 vbsp 0 1.5 0.3
-plot vssp#branch ylabel 'Id vs. Vgs, Vbs 0 ... 1.5'
-plot abs(vssp#branch) ylog ylabel 'Id vs. Vgs, Vbs 0 ... 1.5'
+plot vssp#branch ylabel 'Id over Vgs, Vbs 0 ... 1.5'
+plot abs(vssp#branch) ylog ylabel 'Id over Vgs, Vbs 0 ... 1.5'
 dc vdsp 0 -1.6 -0.01 vgsp 0 -1.6 -0.2
-plot vssp#branch ylabel 'Id vs. Vds, Vgs 0 ... -1.6'
+plot vssp#branch ylabel 'Id over Vds, Vgs 0 ... -1.6'
 dc vgsp 0 -1.5 -0.05 temp -40 160 40
-plot vssp#branch ylabel 'Id vs. Vds, Temp. -40 ... 160'
-plot abs(vssp#branch) ylog ylabel 'Id vs. Vds, Temp. -40 ... 160'
+plot vssp#branch ylabel 'Id over Vds, Temp. -40 ... 160'
+plot abs(vssp#branch) ylog ylabel 'Id over Vds, Temp. -40 ... 160'
 .endc
 
 .end
