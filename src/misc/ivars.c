@@ -11,6 +11,7 @@ char *News_File;
 char *Help_Path;
 char *Lib_Path;
 char *Inp_Path;
+char *Spice_Exec_Path;
 
 
 static void
@@ -102,7 +103,22 @@ ivars(char *argv0)
     env_overr(&temp, "SPICE_ASCIIRAWFILE");
     if(temp)
        AsciiRawFile = atoi(temp);
-    
+
+    /* path of the ngspice executable */
+    Spice_Exec_Path = copy(argv0);
+    /* find the last occurence of "ngspice" in Spice_Exec_Path */
+    char* path_end = strstr(Spice_Exec_Path, "ngspice");
+    if (path_end) {
+        char* exec_only = strstr(path_end + 7, "ngspice");
+        while (exec_only) {
+            path_end = strstr(Spice_Exec_Path, "ngspice");
+            if (path_end)
+                exec_only = strstr(path_end + 7, "ngspice");
+        }
+        if (path_end)
+            *path_end = '\0';
+        fprintf(stdout, "ngspice path %s\n", Spice_Exec_Path);
+    }
 }
 
 void
@@ -113,4 +129,5 @@ destroy_ivars(void)
     tfree(Lib_Path);
     tfree(Spice_Path);
     tfree(Inp_Path);
+    tfree(Spice_Exec_Path);
 }
