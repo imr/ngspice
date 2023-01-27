@@ -14,7 +14,7 @@ set filetype=ascii
 set num_threads=8
 *set interactive
 
-* uncomment if central osdi management is set up
+* comment out if central osdi management is set up
 unset osdi_enabled
 
 * Load the codemodels
