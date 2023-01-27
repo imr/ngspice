@@ -13,7 +13,7 @@ set x11lineararcs
 ** default (if compiled with --enable-openmp) is: 2
 *set num_threads=4
 
-* uncomment if central osdi management is set up
+* comment out if central osdi management is set up
 unset osdi_enabled
 
 * Load the codemodels
