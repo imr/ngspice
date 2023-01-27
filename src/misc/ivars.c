@@ -117,7 +117,6 @@ ivars(char *argv0)
         }
         if (path_end)
             *path_end = '\0';
-        fprintf(stdout, "ngspice path %s\n", Spice_Exec_Path);
     }
 }
 
