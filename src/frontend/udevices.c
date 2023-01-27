@@ -2927,18 +2927,10 @@ static char *get_delays_ugff(char *rem, char *d_name)
 #endif
     }
     if (s1) {
-        if (s2) {
-            delays = tprintf("(%s %s)", s1, s2);
-        } else {
-            delays = tprintf("(%s)", s1);
-        }
+        delays = tprintf("(%s %s)", s1, s2);
         tfree(s1);
     } else {
-        if (s2) {
-            delays = tprintf("(%s)", s2);
-        } else {
-            delays = NULL;
-        }
+        delays = tprintf("(%s)", s2);
     }
     tfree(s2);
     delete_timing_data(tdp1);
