@@ -27,7 +27,7 @@ c2  z     vss   0.576f
 .dc V1 0 'vcc' 'vcc/100'
 
 .control
-pre_osdi osdi_libs/bsimbulk107.osdi
+* pre_osdi  ../osdi_libs/bsimbulk107.osdi ; ./../lib/ngspice/bsimbulk107.osdi
 run
 *set nolegend
 set xbrushwidth=3

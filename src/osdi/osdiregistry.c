@@ -121,47 +121,79 @@ static char *resolve_input_path(const char *name) {
 
   /*
    * If called from a script inputdir != NULL so try relativ to that dir
-   * Otherwise try relativ to the current workdir
+   * Otherwise try relativ to the current workdir and relativ to the
+   * executables path
    */
 
   if (inputdir) {
-    DS_CREATE(ds, 100);
-    int rc_ds = 0;
-    rc_ds |= ds_cat_str(&ds, inputdir);  /* copy the dir name */
-    const size_t n = ds_get_length(&ds); /* end of copied dir name */
+      DS_CREATE(ds, 100);
+      int rc_ds = 0;
+      rc_ds |= ds_cat_str(&ds, inputdir);  /* copy the dir name */
+      const size_t n = ds_get_length(&ds); /* end of copied dir name */
 
-    /* Append a directory separator if not present already */
-    const char ch_last = n > 0 ? inputdir[n - 1] : '\0';
-    if (ch_last != DIR_TERM
+      /* Append a directory separator if not present already */
+      const char ch_last = n > 0 ? inputdir[n - 1] : '\0';
+      if (ch_last != DIR_TERM
 #ifdef _WIN32
-        && ch_last != DIR_TERM_LINUX
+          && ch_last != DIR_TERM_LINUX
 #endif
-    ) {
-      rc_ds |= ds_cat_char(&ds, DIR_TERM);
-    }
-    rc_ds |= ds_cat_str(&ds, name); /* append the file name */
+          ) {
+          rc_ds |= ds_cat_char(&ds, DIR_TERM);
+      }
+      rc_ds |= ds_cat_str(&ds, name); /* append the file name */
 
-    if (rc_ds != 0) {
-      (void)fprintf(cp_err, "Unable to build \"dir\" path name "
-                            "in inp_pathresolve_at");
-      controlled_exit(EXIT_FAILURE);
-    }
+      if (rc_ds != 0) {
+          (void)fprintf(cp_err, "Unable to build \"dir\" path name "
+              "in inp_pathresolve_at");
+          controlled_exit(EXIT_FAILURE);
+      }
 
-    char *const r = resolve_path(ds_get_buf(&ds));
-    ds_free(&ds);
-    return r;
-  } else {
-    DS_CREATE(ds, 100);
-    if (ds_cat_printf(&ds, ".%c%s", DIR_TERM, name) != 0) {
+      char* const r = resolve_path(ds_get_buf(&ds));
+      ds_free(&ds);
+      if (r)
+          return r;
+  }
+
+  if (Spice_Exec_Path && *Spice_Exec_Path) {
+      DS_CREATE(ds, 100);
+      int rc_ds = 0;
+      rc_ds |= ds_cat_str(&ds, Spice_Exec_Path);  /* copy the dir name */
+      const size_t n = ds_get_length(&ds); /* end of copied dir name */
+
+      /* Append a directory separator if not present already */
+      const char ch_last = n > 0 ? Spice_Exec_Path[n - 1] : '\0';
+      if (ch_last != DIR_TERM
+#ifdef _WIN32
+          && ch_last != DIR_TERM_LINUX
+#endif
+          ) {
+          rc_ds |= ds_cat_char(&ds, DIR_TERM);
+      }
+      rc_ds |= ds_cat_str(&ds, name); /* append the file name */
+
+      if (rc_ds != 0) {
+          (void)fprintf(cp_err, "Unable to build \"dir\" path name "
+              "in inp_pathresolve_at");
+          controlled_exit(EXIT_FAILURE);
+      }
+
+      char* const r = resolve_path(ds_get_buf(&ds));
+      ds_free(&ds);
+      if (r)
+          return r;
+  }
+  /* no inputdir, or not found relative to inputdir:
+   search relative to current working directory */
+  DS_CREATE(ds, 100);
+  if (ds_cat_printf(&ds, ".%c%s", DIR_TERM, name) != 0) {
       (void)fprintf(cp_err,
-                    "Unable to build \".\" path name in inp_pathresolve_at");
+          "Unable to build \".\" path name in inp_pathresolve_at");
       controlled_exit(EXIT_FAILURE);
-    }
-    char *const r = resolve_path(ds_get_buf(&ds));
-    ds_free(&ds);
-    if (r != (char *)NULL) {
+  }
+  char* const r = resolve_path(ds_get_buf(&ds));
+  ds_free(&ds);
+  if (r != (char*)NULL) {
       return r;
-    }
   }
 
   return NULL;
@@ -192,7 +224,7 @@ static size_t calc_osdi_instance_data_off(const OsdiDescriptor *descr) {
 
 #define ERR_AND_RET                                                            \
   error = dlerror();                                                           \
-  printf("Error opening osdi lib \"%s\": %s\n", path, error);                  \
+  fprintf(stderr, "Error opening osdi lib \"%s\": %s\n", path, error);                  \
   FREE_DLERR_MSG(error);                                                       \
   return INVALID_OBJECT;
 
@@ -254,7 +286,7 @@ extern OsdiObjectFile load_object_file(const char *input) {
   }
   const char *path = resolve_input_path(input);
   if (!path) {
-    printf("Error opening osdi lib \"%s\": No such file or directory!\n",
+    fprintf(stderr, "Error opening osdi lib \"%s\": No such file or directory!\n",
            input);
     return INVALID_OBJECT;
   }

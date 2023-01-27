@@ -14,8 +14,11 @@ set filetype=ascii
 set num_threads=8
 *set interactive
 
-strcmp __flag $program "ngspice"
-if $__flag = 0
+* comment out if central osdi management is set up
+unset osdi_enabled
+
+* Load the codemodels
+if $?xspice_enabled
 
 * Load the codemodels
  codemodel C:/Spice/lib/ngspice/spice2poly.cm
@@ -25,6 +28,18 @@ if $__flag = 0
  codemodel C:/Spice/lib/ngspice/xtraevt.cm
  codemodel C:/Spice/lib/ngspice/table.cm
 
-
 end
-unset __flag
+
+* Load the OpenVAF/OSDI models
+if $?osdi_enabled
+
+ osdi C:/Spice/lib/ngspice/asmhemt.osdi
+ osdi C:/Spice/lib/ngspice/bjt504t.osdi
+ osdi C:/Spice/lib/ngspice/BSIMBULK107.osdi
+ osdi C:/Spice/lib/ngspice/BSIMCMG.osdi
+ osdi C:/Spice/lib/ngspice/HICUMl0-2.0.osdi
+ osdi C:/Spice/lib/ngspice/psp103.osdi
+ osdi C:/Spice/lib/ngspice/r2_cmc.osdi
+ osdi C:/Spice/lib/ngspice/vbic_4T_et_cf.osdi
+ 
+end

@@ -1,0 +1,21 @@
+Model the rossler attractor
+*https://www.glensstuff.com/rosslerattractor/rossler.htm
+
+.param a=0.2 b=0.2 c=5.7
+
+B1 x 0 i=v(y) + v(z)
+C1 x 0 1 ic=1
+
+B2 y 0 i=-(V(x) + a * v(y))
+C2 y 0 1
+
+B3 z 0 i = -(b + v(z) * (v(x) - c))
+C3 z 0 1
+
+.control
+tran 1m 300 uic
+set nounits
+set nolegend
+plot x vs y retraceplot ylabel x
+.endc
+.end

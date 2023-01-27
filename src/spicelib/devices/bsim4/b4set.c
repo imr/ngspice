@@ -1,62 +1,30 @@
 /* ******************************************************************************
-   *  BSIM4 4.8.1 released by Chetan Kumar Dabhi 2/15/2017                      *
+   *  BSIM4 4.8.2 released by Chetan Kumar Dabhi 01/01/2020                     *
    *  BSIM4 Model Equations                                                     *
    ******************************************************************************
 
    ******************************************************************************
-   *  Copyright 2017 Regents of the University of California.                   *
-   *  All rights reserved.                                                      *
+   *  Copyright (c) 2020 University of California                               *
    *                                                                            *
    *  Project Director: Prof. Chenming Hu.                                      *
+   *  Current developers: Chetan Kumar Dabhi   (Ph.D. student, IIT Kanpur)      *
+   *                      Prof. Yogesh Chauhan (IIT Kanpur)                     *
+   *                      Dr. Pragya Kushwaha  (Postdoc, UC Berkeley)           *
+   *                      Dr. Avirup Dasgupta  (Postdoc, UC Berkeley)           *
+   *                      Ming-Yen Kao         (Ph.D. student, UC Berkeley)     *
    *  Authors: Gary W. Ng, Weidong Liu, Xuemei Xi, Mohan Dunga, Wenwei Yang     *
-   *           Ali Niknejad, Shivendra Singh Parihar, Chetan Kumar Dabhi        *
-   *           Yogesh Singh Chauhan, Sayeef Salahuddin, Chenming Hu             *
-   ******************************************************************************
+   *           Ali Niknejad, Chetan Kumar Dabhi, Yogesh Singh Chauhan,          *
+   *           Sayeef Salahuddin, Chenming Hu                                   * 
+   ******************************************************************************/
 
-   ******************************************************************************
-   *                          CMC In-Code Statement                             *
-   *                                                                            *
-   *  The Developer agrees that the following statement will appear in the      *
-   *  model code that has been adopted as a CMC Standard.                       *
-   *                                                                            *
-   *  Software is distributed as is, completely without warranty or service     *
-   *  support. The University of California and its employees are not liable    *
-   *  for the condition or performance of the software.                         *
-   *                                                                            *
-   *  The University of California owns the copyright and grants users a        *
-   *  perpetual, irrevocable, worldwide, non-exclusive, royalty-free license    *
-   *  with respect to the software as set forth below.                          *
-   *                                                                            *
-   *  The University of California hereby disclaims all implied warranties.     *
-   *                                                                            *
-   *  The University of California grants the users the right to modify,        *
-   *  copy, and redistribute the software and documentation, both within        *
-   *  the user's organization and externally, subject to the following          *
-   *  restrictions:                                                             *
-   *                                                                            *
-   *  1. The users agree not to charge for the University of California code    *
-   *     itself but may charge for additions, extensions, or support.           *
-   *                                                                            *
-   *  2. In any product based on the software, the users agree to               *
-   *     acknowledge the University of California that developed the            *
-   *     software. This acknowledgment shall appear in the product              *
-   *     documentation.                                                         *
-   *                                                                            *
-   *  3. Redistributions to others of source code and documentation must        *
-   *     retain the copyright notice, disclaimer, and list of conditions.       *
-   *                                                                            *
-   *  4. Redistributions to others in binary form must reproduce the            *
-   *     copyright notice, disclaimer, and list of conditions in the            *
-   *     documentation and/or other materials provided with the                 *
-   *     distribution.                                                          *
-   *                                                                            *
-   *  Agreed to on ______Feb. 15, 2017______________                            *
-   *                                                                            *
-   *  By: ____University of California, Berkeley___                             *
-   *      ____Chenming Hu__________________________                             *
-   *      ____Professor in Graduate School ________                             *
-   *                                                                            *
-   ****************************************************************************** */
+/*
+Licensed under Educational Community License, Version 2.0 (the "License"); you may
+not use this file except in compliance with the License. You may obtain a copy of the license at
+http://opensource.org/licenses/ECL-2.0
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT 
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations
+under the License.
+*/
 
 #include "ngspice/ngspice.h"
 #include "ngspice/jobdefs.h"
@@ -245,7 +213,7 @@ BSIM4instance **InstArray;
         }
 
         if (!model->BSIM4versionGiven) 
-            model->BSIM4version = copy("4.8.1");
+            model->BSIM4version = copy("4.8.2");
         if (!model->BSIM4toxrefGiven)
             model->BSIM4toxref = 30.0e-10;
         if (!model->BSIM4eotGiven)
@@ -383,8 +351,9 @@ BSIM4instance **InstArray;
             model->BSIM4eu = (model->BSIM4type == NMOS) ? 1.67 : 1.0;
         if (!model->BSIM4ucsGiven)
             model->BSIM4ucs = (model->BSIM4type == NMOS) ? 1.67 : 1.0;
-        if ((strcmp(model->BSIM4version, "4.8.1")) && (strncmp(model->BSIM4version, "4.81", 4)))
-        {  
+        if ((strcmp(model->BSIM4version, "4.8.1")) && (strncmp(model->BSIM4version, "4.81", 4)) &&
+            (strcmp(model->BSIM4version, "4.8.2")) && (strncmp(model->BSIM4version, "4.82", 4)))
+        {  /* check only for version <= 4.80 */
             if (!model->BSIM4uaGiven)
                 model->BSIM4ua = ((model->BSIM4mobMod == 2)) ? 1.0e-15 : 1.0e-9; /* unit m/V */
             if (!model->BSIM4ucGiven)
@@ -656,6 +625,10 @@ BSIM4instance **InstArray;
             model->BSIM4rnoia = 0.577;
         if (!model->BSIM4rnoibGiven)
             model->BSIM4rnoib = 0.5164;
+        if (!model->BSIM4gidlclampGiven)
+            model->BSIM4gidlclamp = -1e-5;
+        if (!model->BSIM4idovvdscGiven)
+            model->BSIM4idovvdsc = 1e-9;
         if (!model->BSIM4rnoicGiven)
             model->BSIM4rnoic = 0.395;
         if (!model->BSIM4ntnoiGiven)
@@ -2039,15 +2012,10 @@ BSIM4instance **InstArray;
         }
         if (!model->BSIM4dwjGiven)
            model->BSIM4dwj = model->BSIM4dwc;
-        if (!model->BSIM4cfGiven)
-           model->BSIM4cf = 2.0 * model->BSIM4epsrox * EPS0 / PI
-                          * log(1.0 + 0.4e-6 / model->BSIM4toxe);
-
         if (!model->BSIM4xpartGiven)
             model->BSIM4xpart = 0.0;
         if (!model->BSIM4sheetResistanceGiven)
             model->BSIM4sheetResistance = 0.0;
-
         if (!model->BSIM4SunitAreaJctCapGiven)
             model->BSIM4SunitAreaJctCap = 5.0E-4;
         if (!model->BSIM4DunitAreaJctCapGiven)

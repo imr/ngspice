@@ -676,7 +676,7 @@ void *cx_mod(void *data1, void *data2, short int datatype1, short int datatype2,
         int i;
         for (i = 0; i < length; i++) {
             const int r1 = (int) floor(fabs(dd1[i]));
-            rcheck(r1 > 0, "mod");
+            rcheck(r1 >= 0, "mod");
             const int r2 = (int)floor(fabs(dd2[i]));
             rcheck(r2 > 0, "mod");
             const int r3 = r1 % r2;
@@ -705,11 +705,11 @@ void *cx_mod(void *data1, void *data2, short int datatype1, short int datatype2,
                 c2 = cc2[i];
             }
             const int r1 = (int) floor(fabs(realpart(c1)));
-            rcheck(r1 > 0, "mod");
+            rcheck(r1 >= 0, "mod");
             const int r2 = (int) floor(fabs(realpart(c2)));
             rcheck(r2 > 0, "mod");
             const int i1 = (int) floor(fabs(imagpart(c1)));
-            rcheck(i1 > 0, "mod");
+            rcheck(i1 >= 0, "mod");
             const int i2 = (int) floor(fabs(imagpart(c2)));
             rcheck(i2 > 0, "mod");
             const int r3 = r1 % r2;

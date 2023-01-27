@@ -899,6 +899,15 @@ ngSpice_Init(SendChar* printfcn, SendStat* statusfcn, ControlledExit* ngspiceexi
     bool sm = TRUE;
     cp_vset("sharedmode", CP_BOOL, &sm);
 
+    /* set a boolean variable when XSPICE and/or OSDI is enabled,
+       to be used in spinit etc. */
+#if defined(XSPICE)
+    cp_vset("xspice_enabled", CP_BOOL, &sm);
+#endif
+#if defined(OSDI)
+    cp_vset("osdi_enabled", CP_BOOL, &sm);
+#endif
+
     /*parameter fetcher, used in show, alter, altermod */
     if_getparam = spif_getparam_special;
 

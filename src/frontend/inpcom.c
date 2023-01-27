@@ -6015,11 +6015,14 @@ static void inp_compat(struct card *card)
             /* evaluate m */
             char* mstr = eval_m(cut_line, card->line);
 
-            /* white noise model by x2line, x3line, x4line
-               if instance parameter noisy=1 (or noise=1) is set */
-            bool rnoise = FALSE;
+            /* white noise model by x2line, x3line, x4line */
+            /* if variable enable_noisy_r is set */
+            bool rnoise = cp_getvar("enable_noisy_r", CP_BOOL, NULL, 0);
+            /* if instance parameter noisy=1 (or noise=1) is set */
             if (strstr(cut_line, "noisy=1") || strstr(cut_line, "noise=1"))
                 rnoise = TRUE;
+            else if (strstr(cut_line, "noisy=0") || strstr(cut_line, "noise=0"))
+                rnoise = FALSE;
 
             /* tc1, tc2, and m are enabled */
             xline = tprintf("b%s %s %s i = v(%s, %s)/(%s) %s %s reciproctc=1 reciprocm=0",

@@ -1,6 +1,5 @@
-*Sample netlist for BSIM-MG
-* (exec-spice "ngspice %s" t)
-*17-stage ring oscillator
+* Sample netlist for BSIM-CMG
+* 17-stage ring oscillator
 
 .include Modelcards/modelcard.nmos
 .include Modelcards/modelcard.pmos
@@ -36,8 +35,9 @@ Xinv17 17  1 supply 0 mg_inv
 * --- Initial Condition ---
 .ic  v(1)=1
 
-.tran 1p 1n
+.tran 1p 10n
 
+* measure oscillator frequency by period delta t
 .measure tran t1 when v(1)=0.5 cross=1
 .measure tran t2 when v(1)=0.5 cross=7
 .measure tran period param='(t2-t1)/3'
@@ -45,10 +45,16 @@ Xinv17 17  1 supply 0 mg_inv
 .measure tran delay_per_stage param='period/34'
 
 .control
-pre_osdi osdi_libs/bsimcmg.osdi
+* pre_osdi ../osdi_libs/bsimcmg.osdi
 set xbrushwidth=3
 run
-plot v(1)
+rusage time
+plot v(1) xlimit 1n 2n
+* measure oscillator frequency with fft
+fft V(1)
+let magv1 = mag(v(1))
+plot  magv1 xlimit 0 16G
+meas sp fmax max magv1 from=10G to=20G
 .endc
 
 .end
