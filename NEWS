@@ -16,6 +16,12 @@ Ngspice-39, Jan 31st, 2023
     + The 8th parameter on a voltage or current source now is 'number of pulses'
     + Add a new compatibility mode xs (for XSPICE legacy behavior)
     + Add new functions for operators x**y or x^y
+    + Add a user definable variable enable_noisy_r (for .spiceinit)
+    + Replace obscure warning "singular matrix: check nodes mymode1 and mynode1"
+      by "singular matrix: check node mynode1", if both node names are equal.
+    + Preprocessor flag PREDICTOR is enabled
+    + Search path for *.osdi lib files extended: current, inputdir, relative
+      to executable
 
 - Bug fixes:
     + many bugs fixed and code improvements (see bugs 608 and up)
