@@ -63,8 +63,6 @@
 extern struct card* insert_new_line(
     struct card* card, char* line, int linenum, int linenum_orig);
 
-#define USE_SHORTEST_DELAYS
-#define FF_LATCH_DEFAULT_DELAYS
 //#define TRACE
 
 /* device types */
@@ -877,12 +875,8 @@ void initialize_udevice(char *subckt_line)
     model_xlatorp = create_xlator();
     default_models = create_xlator();
     /*  .model d0_gate ugate ()  */
-#ifdef USE_SHORTEST_DELAYS
     xdata = create_xlate("", "(rise_delay=1.0e-12 fall_delay=1.0e-12)",
         "ugate", "", "d0_gate", "");
-#else
-    xdata = create_xlate("", "", "ugate", "", "d0_gate", "");
-#endif
     (void) add_xlator(default_models, xdata);
     /*  .model d0_gff ugff ()  */
     xdata = create_xlate("", "", "ugff", "d_dlatch", "d0_gff", "");
@@ -893,12 +887,8 @@ void initialize_udevice(char *subckt_line)
     xdata = create_xlate("", "", "ueff", "", "d0_eff", "");
     (void) add_xlator(default_models, xdata);
     /*  .model d0_tgate utgate ()  */
-#ifdef USE_SHORTEST_DELAYS
     xdata = create_xlate("", "(delay=1.0e-12)",
         "utgate", "", "d0_tgate", "");
-#else
-    xdata = create_xlate("", "", "utgate", "", "d0_tgate", "");
-#endif
     (void) add_xlator(default_models, xdata);
     /* reset for the new subckt */
     add_zero_delay_inverter_model = FALSE;
@@ -1984,9 +1974,7 @@ static Xlatorp gen_compound_instance(struct compound_instance *compi)
     char *new_inst = NULL, *model_stmt = NULL, *final_model_name = NULL;
     char *new_stmt = NULL, *instance_name = NULL;
     char *tmp;
-#ifdef USE_SHORTEST_DELAYS
     char *zero_delay_str = NULL;
-#endif
     size_t sz = 0;
     Xlatorp xxp = NULL;
     Xlatep xdata = NULL;
@@ -2064,19 +2052,13 @@ static Xlatorp gen_compound_instance(struct compound_instance *compi)
         }
     }
     /* .model statement for the input gates */
-#ifdef USE_SHORTEST_DELAYS
     zero_delay_str = get_zero_rise_fall();
     model_stmt = tprintf(".model %s %s%s",
         model_name, ingates, zero_delay_str);
-#else
-    model_stmt = tprintf(".model %s %s", model_name, ingates);
-#endif
     xdata = create_xlate_translated(model_stmt);
     xxp = add_xlator(xxp, xdata);
     tfree(model_stmt);
-#ifdef USE_SHORTEST_DELAYS
     tfree(zero_delay_str);
-#endif
 
     /* Final OR/NOR, AND/NAND gate */
     final_model_name = tprintf("%s_out", model_name);
@@ -2242,9 +2224,7 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
         } else {
             char *new_model_nm = NULL;
             char *new_stmt = NULL;
-#ifdef USE_SHORTEST_DELAYS
             char *zero_rise_fall = NULL;
-#endif
             /*
              Use connector as original gate output and tristate input;
              tristate has original gate output and utgate delay;
@@ -2258,19 +2238,13 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
             xxp = add_xlator(xxp, xdata);
             tfree(new_stmt);
             /* new model statement e.g.   .model d_au2nand3 d_nand */
-#ifdef USE_SHORTEST_DELAYS
             zero_rise_fall = get_zero_rise_fall();
             new_stmt = tprintf(".model %s %s%s", modelnm, xspice,
                 zero_rise_fall);
-#else
-            new_stmt = tprintf(".model %s %s", modelnm, xspice);
-#endif
             xdata = create_xlate_translated(new_stmt);
             xxp = add_xlator(xxp, xdata);
             tfree(new_stmt);
-#ifdef USE_SHORTEST_DELAYS
             tfree(zero_rise_fall);
-#endif
             /* now the added tristate */
             /* model name of added tristate */
             new_model_nm = tprintf("d_a%s_tribuf", iname);
@@ -2411,19 +2385,13 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
                 char *str1 = NULL, *modname = NULL;
                 if (i == 0) {
                     /* Zero delay model for all original array instances */
-#ifdef USE_SHORTEST_DELAYS
                     char *zero_delay_str = get_zero_rise_fall();
                     str1 = tprintf(".model %s %s%s",
                         primary_model, xspice, zero_delay_str);
-#else
-                    str1 = tprintf(".model %s %s", primary_model, xspice);
-#endif
                     xdata = create_xlate_translated(str1);
                     xxp = add_xlator(xxp, xdata);
                     tfree(str1);
-#ifdef USE_SHORTEST_DELAYS
                     tfree(zero_delay_str);
-#endif
                 }
                 /* model name of added tristate */
                 modname = tprintf("d_a%s_tribuf", iname);
@@ -2633,6 +2601,7 @@ static char *larger_delay(char *delay1, char *delay2)
 */
 static char *get_zero_rise_fall(void)
 {
+    /* The caller needs to tfree the returned string after use */
     return tprintf("(rise_delay=1.0e-12 fall_delay=1.0e-12)");
 }
 
@@ -2793,34 +2762,18 @@ static char *get_delays_ueff(char *rem)
     if (clkd && setd) {
         delays = tprintf("(clk_delay = %s "
             "set_delay = %s reset_delay = %s"
-#ifdef FF_LATCH_DEFAULT_DELAYS
             " rise_delay = 1.0ns fall_delay = 1.0ns)",
-#else
-            " rise_delay = 1.0ns fall_delay = 2.0ns)",
-#endif
             clkd, setd, resetd);
     } else if (clkd) {
         delays = tprintf("(clk_delay = %s"
-#ifdef FF_LATCH_DEFAULT_DELAYS
             " rise_delay = 1.0ns fall_delay = 1.0ns)",
-#else
-            " rise_delay = 1.0ns fall_delay = 2.0ns)",
-#endif
             clkd);
     } else if (setd) {
         delays = tprintf("(set_delay = %s reset_delay = %s"
-#ifdef FF_LATCH_DEFAULT_DELAYS
             " rise_delay = 1.0ns fall_delay = 1.0ns)",
-#else
-            " rise_delay = 1.0ns fall_delay = 2.0ns)",
-#endif
             setd, resetd);
     } else {
-#ifdef FF_LATCH_DEFAULT_DELAYS
         delays = tprintf("(rise_delay = 1.0ns fall_delay = 1.0ns)");
-#else
-        delays = tprintf("(rise_delay = 1.0ns fall_delay = 2.0ns)");
-#endif
     }
     delete_timing_data(tdp1);
     delete_timing_data(tdp2);
@@ -2913,18 +2866,10 @@ static char *get_delays_ugff(char *rem, char *d_name)
     s2 = NULL;
     if (setd) {
         s2 = tprintf("set_delay = %s reset_delay = %s"
-#ifdef FF_LATCH_DEFAULT_DELAYS
             " rise_delay = 1.0ns fall_delay = 1.0ns",
-#else
-            " rise_delay = 1.0ns fall_delay = 2.0ns",
-#endif
             setd, resetd);
     } else {
-#ifdef FF_LATCH_DEFAULT_DELAYS
         s2 = tprintf("rise_delay = 1.0ns fall_delay = 1.0ns");
-#else
-        s2 = tprintf("rise_delay = 1.0ns fall_delay = 2.0ns");
-#endif
     }
     if (s1) {
         delays = tprintf("(%s %s)", s1, s2);
