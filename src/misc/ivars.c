@@ -111,7 +111,7 @@ ivars(char *argv0)
     if (path_end) {
         char* exec_only = strstr(path_end + 7, "ngspice");
         while (exec_only) {
-            path_end = strstr(Spice_Exec_Path, "ngspice");
+            path_end = strstr(exec_only, "ngspice");
             if (path_end)
                 exec_only = strstr(path_end + 7, "ngspice");
         }
