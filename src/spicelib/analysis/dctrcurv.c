@@ -465,6 +465,17 @@ DCtrCurv(CKTcircuit *ckt, int restart)
             DEVices[rcode]->DEVload(job->TRCVvElt[i]->GENmodPtr, ckt);
         } else if (job->TRCVvType[i] == TEMP_CODE) { /* temperature */
             ckt->CKTtemp += job->TRCVvStep[i];
+
+            /* FIXME: Do the Temp check already here for the first time.
+               If the stop criterion is fulfilled, discard Temp evaluation, because
+               CKTtemp may report errors if a large extra Temp step is exercized. */
+            if (SGN(job->TRCVvStep[i]) *
+                ((ckt->CKTtemp - CONSTCtoK) - job->TRCVvStop[i]) > DBL_EPSILON * 1e+03) {
+//                ckt->CKTtemp -= job->TRCVvStep[i]; // Undo the large step
+//                ckt->CKTtemp += SGN(job->TRCVvStep[i]) * DBL_EPSILON * 2e+03; // Add just a small step
+                continue; // Skip model evaluation
+            }
+
             inp_evaluate_temper(ft_curckt);
             CKTtemp(ckt);
         }
