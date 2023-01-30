@@ -137,7 +137,6 @@ libfte_la_SOURCES = \
     linear.c    \
     linear.h    \
     logicexp.c  \
-    logicexp.h  \
     measure.c   \
     misccoms.c  \
     misccoms.h  \
@@ -187,7 +186,6 @@ libfte_la_SOURCES = \
     typesdef.c  \
     typesdef.h  \
     udevices.c  \
-    udevices.h  \
     vectors.c   \
     vectors.h   \
     where.c     \

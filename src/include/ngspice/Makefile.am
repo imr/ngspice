@@ -62,6 +62,7 @@ noinst_HEADERS = \
 	ipcproto.h	\
 	ipctiein.h	\
 	jobdefs.h	\
+	logicexp.h      \
 	lsort.h		\
 	macros.h	\
 	material.h	\
@@ -92,6 +93,7 @@ noinst_HEADERS = \
 	opdefs.h	\
 	optdefs.h	\
 	optndefs.h	\
+	osdiitf.h       \
 	outpdefs.h	\
 	plot.h		\
 	pnode.h		\
