@@ -340,6 +340,7 @@ static int lex_gate_op(int c)
 
 static int lex_ident(int c)
 {
+    /* Pspice and MicroCap are vague about what defines an identifier */
     if (isalnum(c) || c == '_' || c == '/' || c == '-')
         return c;
     else
@@ -1614,6 +1615,7 @@ BOOL f_logicexp(char *line)
         if (!expect_token(t, LEX_ID, NULL, TRUE, 10)) goto error_return;
         (void) add_sym_tab_entry(parse_lexer->lexer_buf,
             SYM_INPUT, &parse_lexer->lexer_sym_tab);
+        u_remember_pin(parse_lexer->lexer_buf, 1);
     }
     /* num_outs output ids */
     for (i = 0; i < num_outs; i++) {
@@ -1621,6 +1623,7 @@ BOOL f_logicexp(char *line)
         if (!expect_token(t, LEX_ID, NULL, TRUE, 11)) goto error_return;
         (void) add_sym_tab_entry(parse_lexer->lexer_buf,
             SYM_OUTPUT, &parse_lexer->lexer_sym_tab);
+        u_remember_pin(parse_lexer->lexer_buf, 2);
     }
     /* timing model */
     t = lex_scan();
@@ -2154,6 +2157,7 @@ static BOOL new_gen_output_models(LEXER lx)
                 if (pline) {
                     pline_arr[idx++] = pline;
                     (void) set_ena_name(ds_get_buf(&enable_name), pline);
+                    u_remember_pin(lx->lexer_buf, 3);
                 } else {
                     goto err_return;
                 }
@@ -2247,6 +2251,7 @@ BOOL f_pindly(char *line)
         if (!expect_token(t, LEX_ID, NULL, TRUE, 61)) goto error_return;
         pline = add_new_pindly_line(pindly_tab);
         (void) set_in_name(lxr->lexer_buf, pline);
+        u_remember_pin(lxr->lexer_buf, 1);
     }
 
     /* num_ena enable nodes which are ignored */
@@ -2254,6 +2259,9 @@ BOOL f_pindly(char *line)
     for (i = 0; i < num_ena + num_refs; i++) {
         t = lexer_scan(lxr);
         if (!expect_token(t, LEX_ID, NULL, TRUE, 62)) goto error_return;
+        if (i < num_ena) {
+            u_remember_pin(lxr->lexer_buf, 1);
+        }
     }
     /* num_ios output ids */
     pline = NULL;
@@ -2265,6 +2273,7 @@ BOOL f_pindly(char *line)
         else
             pline = pline->next;
         (void) set_out_name(lxr->lexer_buf, pline);
+        u_remember_pin(lxr->lexer_buf, 2);
     }
 
     if (!new_gen_output_models(lxr)) {
