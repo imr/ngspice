@@ -593,8 +593,9 @@ libngspice_la_LIBADD += \
 	ciderlib/support/libcidersuprt.la
 endif
 
-
-libngspice_la_LIBADD += osdi/libosdi.la 
+if OSDI_WANTED
+libngspice_la_LIBADD += osdi/libosdi.la
+endif
 
 libngspice_la_LIBADD += \
 	maths/deriv/libderiv.la \
