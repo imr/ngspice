@@ -389,6 +389,22 @@ static void add_port_name(char *name)
     add_pin_name(name, &port_names_list);
 }
 
+void u_remember_pin(char *name, int type)
+{
+    switch (type) {
+    case 1:  add_input_pin(name);
+        break;
+    case 2:  add_output_pin(name);
+        break;
+    case 3:  add_tristate_pin(name);
+        break;
+    case 4:  add_port_name(name);
+        break;
+    default:
+        break;
+    }
+}
+
 static void add_all_port_names(char *subckt_line)
 {
     char *copy_line, *tok, *pos;
@@ -398,7 +414,7 @@ static void add_all_port_names(char *subckt_line)
     }
     if (ps_port_directions & 4) {
         printf("TRANS_IN  %s\n", subckt_line);
-    } else if (ps_port_directions) {
+    } else if (ps_port_directions & 1) {
         printf("%s\n", subckt_line);
     }
     copy_line = tprintf("%s", subckt_line);
@@ -921,7 +937,7 @@ static void determine_port_type(void)
                 port_type = "IN";
             }
         }
-        if (ps_port_directions) {
+        if (ps_port_directions & 1) {
             printf("port: %s %s\n", x->name, port_type);
         }
     }

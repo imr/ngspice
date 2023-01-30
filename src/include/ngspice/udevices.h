@@ -9,5 +9,6 @@ struct card *replacement_udevice_cards(void);
 void cleanup_udevice(void);
 void u_add_instance(char *str);
 void u_add_logicexp_model(char *tmodel, char *xspice_gate, char *model_name);
+void u_remember_pin(char *name, int type);
 
 #endif
