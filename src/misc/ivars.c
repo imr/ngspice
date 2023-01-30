@@ -105,19 +105,23 @@ ivars(char *argv0)
        AsciiRawFile = atoi(temp);
 
     /* path of the ngspice executable */
-    Spice_Exec_Path = copy(argv0);
-    /* find the last occurence of "ngspice" in Spice_Exec_Path */
-    char* path_end = strstr(Spice_Exec_Path, "ngspice");
-    if (path_end) {
-        char* exec_only = strstr(path_end + 7, "ngspice");
-        while (exec_only) {
-            path_end = strstr(exec_only, "ngspice");
+    if (argv0) {
+        Spice_Exec_Path = copy(argv0);
+        /* find the last occurence of "ngspice" in Spice_Exec_Path */
+        char* path_end = strstr(Spice_Exec_Path, "ngspice");
+        if (path_end) {
+            char* exec_only = strstr(path_end + 7, "ngspice");
+            while (exec_only) {
+                path_end = strstr(exec_only, "ngspice");
+                if (path_end)
+                    exec_only = strstr(path_end + 7, "ngspice");
+            }
             if (path_end)
-                exec_only = strstr(path_end + 7, "ngspice");
+                *path_end = '\0';
         }
-        if (path_end)
-            *path_end = '\0';
     }
+    else
+        Spice_Exec_Path = NULL;
 }
 
 void
