@@ -41,12 +41,7 @@ typedef struct {
 } max_align_t;
 #endif
 
-#ifdef _MSC_VER
-#define MAX_ALIGN 8
-#else
-#define MAX_ALIGN sizeof(max_align_t)
-#endif
-
+#define MAX_ALIGN _Alignof(max_align_t)
 
 #ifndef _MSC_VER
 #define ALIGN(pow) __attribute__((aligned(pow)))
