@@ -50,6 +50,18 @@ double osdi_pnjlim(bool init, bool *check, double vnew, double vold, double vt,
   return res;
 }
 
+double osdi_typedpnjlim(bool init, bool *check, double vnew, double vold, double vt,
+                   double vcrit, double type) {
+  if (init) {
+    *check = true;
+    return vcrit;
+  }
+  int icheck = 0;
+  double res = DEVpnjlim(type*vnew, vold, vt, vcrit, &icheck);
+  *check = icheck != 0;
+  return res;
+}
+
 double osdi_limvds(bool init, bool *check, double vnew, double vold) {
   if (init) {
     *check = true;

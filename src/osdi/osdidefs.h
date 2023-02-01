@@ -96,7 +96,8 @@ typedef void (*osdi_log_ptr)(void *handle, char *msg, uint32_t lvl);
 
 double osdi_pnjlim(bool init, bool *icheck, double vnew, double vold, double vt,
                    double vcrit);
-
+double osdi_typedpnjlim(bool init, bool *icheck, double vnew, double vold, double vt,
+                   double vcrit, double type);
 double osdi_limvds(bool init, bool *icheck, double vnew, double vold);
 double osdi_limitlog(bool init, bool *icheck, double vnew, double vold,
                      double LIM_TOL);
