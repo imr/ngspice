@@ -25,6 +25,9 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#ifndef _MSC_VER
+#include <stdalign.h>
+#endif
 
 #ifdef _MSC_VER
 typedef struct {
@@ -44,7 +47,7 @@ typedef struct {
 #ifdef _MSC_VER
 #define MAX_ALIGN 8
 #else
-#define MAX_ALIGN sizeof(max_align_t)
+#define MAX_ALIGN alignof(max_align_t)
 #endif
 
 
