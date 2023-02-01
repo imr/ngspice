@@ -65,7 +65,7 @@ static int write_param_info(IFparm **dst, const OsdiDescriptor *descr,
 
     for (uint32_t j = 0; j < num_names; j++) {
       if (j != 0) {
-        dataType = IF_UNINTERESTING;
+        dataType |= IF_UNINTERESTING;
       }
       char *para_name = copy(para->name[j]);
       strtolower(para_name);
