@@ -1230,7 +1230,7 @@ static char* get_terminal_number(char* element, char* namestr)
    Called from inp.c*/
 void modprobenames(INPtables* tab) {
     GENinstance* GENinst;
-    if (tab->defVmod) {
+    if (tab && tab->defVmod && tab->defVmod->GENinstances) {
         for (GENinst = tab->defVmod->GENinstances; GENinst; GENinst = GENinst->GENnextInstance) {
             char* name = GENinst->GENname;
             if (prefix("vcurr_", name)) {
