@@ -8,10 +8,9 @@
 # Declare 'compile_linux_shared.sh' as being executable and start compiling with
 # './compile_linux_shared.sh' or './compile_linux_shared.sh d' from the ngspice directory.
 # Options:
-# --adms and --enable-adms will install extra HICUM, EKV, PSP and MEXTRAM models via the 
-# adms interface. You need to download and install the *.va files via ng-adms-va.tgz 
-# and have adms installed.
-# Please see the ngspice manual, chapt. 13, for more info on adms.
+# --enable-osdi will add the osdi interface which allows to dynamically load compiled Verilog-A 
+# compact models. Compiling the VA code of the models is done by the OpenVAF compiler.
+# Please see the ngspice manual, chapt. 13, for more info on OSDI/OpenVAF.
 # CIDER, XSPICE, and OpenMP may be selected at will.
 # --disable-debug will give O2 optimization (versus O0 for debug) and removes all debugging info.
 
@@ -37,31 +36,23 @@ fi
 ./autogen.sh
 if [ $? -ne 0 ]; then  echo "./autogen.sh failed"; exit 1 ; fi
 
-# Alternatively, if compiling sources from git, and want to add adms created devices,
-# you may need to uncomment the following two lines (and don't forget to add adms option
-# to the ../configure statement):
-#./autogen.sh --adms
-#if [ $? -ne 0 ]; then  echo "./autogen.sh failed"; exit 1 ; fi
-
 echo
 if test "$1" = "d"; then
    cd debugsh
    if [ $? -ne 0 ]; then  echo "cd debugsh failed"; exit 1 ; fi
   echo "configuring shared lib for 64 bit, debug enabled"
   echo
-# You may add  --enable-adms to the following command for adding adms generated devices.
 # The --prefix (and perhaps --libdir) may be used to determine a different install location
 # (depending on the Linux distribution, and on the calling programs search path).
-  ../configure --with-ngshared --enable-xspice --enable-cider --enable-openmp --prefix=/usr CFLAGS="-g -m64 -O0 -Wall" LDFLAGS="-m64 -g"
+  ../configure --with-ngshared --enable-xspice --enable-cider --enable-openmp --enable-osdi --prefix=/usr CFLAGS="-g -m64 -O0 -Wall" LDFLAGS="-m64 -g"
 else
    cd releasesh
    if [ $? -ne 0 ]; then  echo "cd releasesh failed"; exit 1 ; fi
   echo "configuring shared lib for 64 bit release"
   echo
-# You may add  --enable-adms to the following command for adding adms generated devices.
 # The --prefix (and perhaps --libdir) may be used to determine a different install location
 # (depending on the Linux distribution, and on the calling programs search path).
-  ../configure --with-ngshared --enable-xspice --enable-cider --enable-openmp --disable-debug --prefix=/usr CFLAGS="-m64 -O2" LDFLAGS="-m64 -s"
+  ../configure --with-ngshared --enable-xspice --enable-cider --enable-openmp --disable-debug --enable-osdi --prefix=/usr CFLAGS="-m64 -O2" LDFLAGS="-m64 -s"
 fi
 if [ $? -ne 0 ]; then  echo "../configure failed"; exit 1 ; fi
 
