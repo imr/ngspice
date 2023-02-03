@@ -4534,6 +4534,18 @@ static int inp_get_param_level(
         int param_num, struct dependency *deps, int num_params)
 {
     int i, k, l, level = 0;
+    static int recounter = 0;
+    recounter++;
+
+    if (recounter > 1000) { /* magic number 1000: if larger, stack overflow occurs */
+        fprintf(stderr,
+            "ERROR: A level depth greater 1000 for dependent parameters is not supported!\n");
+        fprintf(stderr,
+            "    You probably do have a circular parameter dependency at line\n");
+        fprintf(stderr,
+            "    %s\n", deps[param_num].card->line);
+        controlled_exit(EXIT_FAILURE);
+    }
 
     if (deps[param_num].level != -1)
         return deps[param_num].level;
@@ -4558,6 +4570,7 @@ static int inp_get_param_level(
     }
 
     deps[param_num].level = level;
+    recounter = 0;
 
     return level;
 }
