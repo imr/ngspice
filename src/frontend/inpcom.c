@@ -4544,11 +4544,14 @@ static int inp_get_param_level(
             "    You probably do have a circular parameter dependency at line\n");
         fprintf(stderr,
             "    %s\n", deps[param_num].card->line);
+        recounter = 0;
         controlled_exit(EXIT_FAILURE);
     }
 
-    if (deps[param_num].level != -1)
+    if (deps[param_num].level != -1) {
+        recounter = 0;
         return deps[param_num].level;
+    }
 
     for (i = 0; deps[param_num].depends_on[i]; i++) {
 
@@ -4560,6 +4563,7 @@ static int inp_get_param_level(
             fprintf(stderr,
                     "ERROR: unable to find dependency parameter for %s!\n",
                     deps[param_num].param_name);
+            recounter = 0;
             controlled_exit(EXIT_FAILURE);
         }
 
