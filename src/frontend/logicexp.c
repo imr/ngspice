@@ -1248,30 +1248,8 @@ static BOOL gen_gates(PTABLE gate_tab, SYM_TAB parser_symbols)
         }
         ds_cat_printf(&instance, "%s ", get_inst_name());
         if (in_count == 1) {
-            /* If the input name is inv_out_<tail> use the <tail>
-               and instantiate an inverter to avoid an extra buffer.
-            */
-            char *tail = NULL;
-            SYM_TAB ent;
-            tail = get_inv_tail(ds_get_buf(&in_names));
-            if (tail && strlen(tail) > 0) {
-                ds_clear(&gate_name);
-                ds_cat_str(&gate_name, lex_gate_name('~', TRUE));
-                ds_cat_printf(&instance, "%s %s ", tail,
-                    ds_get_buf(&out_name));
-                ent = member_sym_tab(tail, parser_symbols);
-                if (!ent) {
-                    goto gen_error;
-                }
-                if ((ent->attribute & SYM_INVERTER) == 0) {
-                    goto gen_error;
-                }
-                ent->ref_count--;
-            } else {
-                ds_cat_printf(&instance, "%s %s ", ds_get_buf(&in_names),
-                    ds_get_buf(&out_name));
-            }
-
+            ds_cat_printf(&instance, "%s %s ", ds_get_buf(&in_names),
+                ds_get_buf(&out_name));
         } else {
             ds_cat_printf(&instance, "[%s ] %s ", ds_get_buf(&in_names),
                 ds_get_buf(&out_name));
