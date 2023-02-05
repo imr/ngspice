@@ -21,7 +21,7 @@ This ensures that netlists can be simulated from any directory
 ## Build Instructions
 
 To compile NGSPICE with OSDI support ensure that the `--enable-predictor` and `--enable-osdi` flags are used.
-The `compile_linus.sh` file enables these flags by default.
+The `compile_linux.sh` file enables these flags by default.
 
 
 ## Example/Test Case

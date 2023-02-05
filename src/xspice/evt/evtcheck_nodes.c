@@ -195,15 +195,10 @@ static struct card *expand_deck(struct card *head)
     struct card  *card, *next;
     char        **pointers;
     int           i, dico;
-    bool          save_debug;
 
-    /* Save the current parameter symbol table and debug global.
-     * Prevent overwriting of debug output in inp_readall().
-     */
+    /* Save the current parameter symbol table. */
 
     dico = nupa_add_dicoslist();
-    save_debug = ft_ngdebug;
-    ft_ngdebug = FALSE;
 
     /* Count the cards, allocate and fill a pointer array. */
 
@@ -226,7 +221,6 @@ static struct card *expand_deck(struct card *head)
     circarray = pointers;
     card = inp_readall(NULL, Infile_Path, FALSE, TRUE, NULL);
     card = inp_subcktexpand(card);
-    ft_ngdebug = save_debug;
 
     /* Destroy the parameter table that was created in subcircuit/parameter
      * expansion and restore the previous version.

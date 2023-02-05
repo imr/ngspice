@@ -1907,10 +1907,10 @@ void create_circbyline(char *line, bool reset, bool lastline)
     }
 
     char *p_src = skip_ws(line);
-    /* return if line is empty */
-    if (*p_src == '\0')
+    /* An empty line may have been received. Skip it. */
+    if (*p_src == '\0') {
         return;
-
+    }
     /* Remove any leading whitespace by shifting */
     if (p_src != line) {
         char *p_dst = line;

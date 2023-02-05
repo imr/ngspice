@@ -2490,6 +2490,8 @@ static int is_a_modelname(char *s, const char* line)
         case 'P':
         case 'f':
         case 'F':
+        case 'a':
+        case 'A':
             st = st + 1;
             break;
         case 'm':
@@ -4534,9 +4536,24 @@ static int inp_get_param_level(
         int param_num, struct dependency *deps, int num_params)
 {
     int i, k, l, level = 0;
+    static int recounter = 0;
+    recounter++;
 
-    if (deps[param_num].level != -1)
+    if (recounter > 1000) { /* magic number 1000: if larger, stack overflow occurs */
+        fprintf(stderr,
+            "ERROR: A level depth greater 1000 for dependent parameters is not supported!\n");
+        fprintf(stderr,
+            "    You probably do have a circular parameter dependency at line\n");
+        fprintf(stderr,
+            "    %s\n", deps[param_num].card->line);
+        recounter = 0;
+        controlled_exit(EXIT_FAILURE);
+    }
+
+    if (deps[param_num].level != -1) {
+        recounter = 0;
         return deps[param_num].level;
+    }
 
     for (i = 0; deps[param_num].depends_on[i]; i++) {
 
@@ -4548,6 +4565,7 @@ static int inp_get_param_level(
             fprintf(stderr,
                     "ERROR: unable to find dependency parameter for %s!\n",
                     deps[param_num].param_name);
+            recounter = 0;
             controlled_exit(EXIT_FAILURE);
         }
 
@@ -4558,6 +4576,7 @@ static int inp_get_param_level(
     }
 
     deps[param_num].level = level;
+    recounter = 0;
 
     return level;
 }

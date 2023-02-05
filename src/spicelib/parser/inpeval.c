@@ -169,6 +169,10 @@ INPevaluate(char **line, int *error, int gobble)
     case 'F':
         expo1 = expo1 - 15;
         break;
+    case 'a':
+    case 'A':
+        expo1 = expo1 - 18;
+        break;
     case 'm':
     case 'M':
         if (((here[1] == 'E') || (here[1] == 'e')) &&
@@ -626,6 +630,10 @@ INPevaluateRKM_C(char** line, int* error, int gobble)
         expo1 = expo1 - 15;
         hasmulti = TRUE;
         break;
+    case 'a':
+    case 'A':
+        expo1 = expo1 - 18;
+        break;
     case 'm':
     case 'M':
         if (((here[1] == 'E') || (here[1] == 'e')) &&
@@ -859,6 +867,10 @@ INPevaluateRKM_L(char** line, int* error, int gobble)
     case 'F':
         expo1 = expo1 - 15;
         hasmulti = TRUE;
+        break;
+    case 'a':
+    case 'A':
+        expo1 = expo1 - 18;
         break;
     case 'm':
     case 'M':

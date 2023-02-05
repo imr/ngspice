@@ -11,7 +11,7 @@ Table of contents
 
   1 Ngspice installation (LINUX)
    1.1 Prerequisites
-   1.2 Install from tarball (e.g. ngspice-36.tar.gz)
+   1.2 Install from tarball (e.g. ngspice-38.tar.gz)
    1.3 Install from git repository
    1.4 ngspice as a shared library
    1.5 Advanced Install
@@ -28,7 +28,7 @@ Table of contents
   8 Operation Controls
   9 NGSPICE COMPILATION UNDER WINDOWS OS
    9.1 How to make ngspice with MINGW and MSYS
-   9.2 make ngspice with MS Visual Studio 2019
+   9.2 make ngspice with MS Visual Studio 2019 or 2022
    9.3 make ngspice with pure CYGWIN
    9.4 ngspice console app with MINGW or CYGWIN
    9.5 cross compiling ngspice for Windows from LINUX
@@ -133,7 +133,7 @@ This file describes the procedures to install ngspice from sources.
  sections titled 'Install from tarball' and 'Advanced Install'.
 
  Download ngspice sources from the git repository as described on the sourceforge project page
- (see http://ngspice.sourceforge.net/download.html and click on the git link)
+ (see https://ngspice.sourceforge.io/download.html and click on the git link)
 
  Now change directories in to the top-level source directory (where this
  INSTALL file can be found).
@@ -240,7 +240,15 @@ This file describes the procedures to install ngspice from sources.
  --with-editline=yes
         Enables the use of the BSD editline library (libedit) instead
         of readline.
-        See http://www.thrysoee.dk/editline/
+        See https://www.thrysoee.dk/editline/
+
+ --enable-shortcheck
+        Enables a 'make check' with strongly reduced runtime. Besides some
+        regression tests only BSIM3 and BSM4 devices are checked.
+
+ --enable-shortcheck
+        Enables a 'make check' with strongly reduced runtime. Besides some
+        regression tests only BSIM3 and BSM4 devices are checked.
 
  --enable-shortcheck
         Enables a 'make check' with strongly reduced runtime. Besides some
@@ -509,7 +517,7 @@ This file describes the procedures to install ngspice from sources.
  $ make install
 
  However, to compile code extracted from the git repository the procedure is
- a little different. Firstly install git, e.g. from http://git-scm.com/download/win
+ a little different. Firstly install git, e.g. from https://git-scm.com/download/win
  To obtain ngspice, you may do the following:
 
  Open the git command window. Go to a directory of your choice, e.g. D:\Spice
@@ -580,7 +588,7 @@ This file describes the procedures to install ngspice from sources.
  script compile_min_shared.sh.
 
 
-9.2 make ngspice with MS Visual Studio 2019
+9.2 make ngspice with MS Visual Studio 2019 and 2022
 
  ngspice may be compiled with MS Visual Studio 2019 or newer.
 
@@ -704,7 +712,7 @@ cross-compile-shared.sh.
 
 10.2 Compile NGSPICE manually from a tarball
  1. Install an X11 interface (like Xquartz)
- 2. Install MacPorts from http://www.macports.org
+ 2. Install MacPorts from https://www.macports.org
  3. Execute this command:
       sudo port install autoconf automake libtool bison flex ncurses
            readline fontconfig freetype libomp xorg-libXaw
@@ -717,7 +725,7 @@ cross-compile-shared.sh.
 
 10.3 Compile NGSPICE manually from git
  1. Install an X11 interface (like Xquartz)
- 2. Install MacPorts from http://www.macports.org
+ 2. Install MacPorts from https://www.macports.org
  3. Execute this command:
       sudo port install automake autoconf libtool bison flex ncurses xorg-libXaw
           readline fontconfig freetype libomp SM ICE

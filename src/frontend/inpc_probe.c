@@ -1030,10 +1030,17 @@ static char *get_terminal_name(char* element, char *numberstr, NGHASHPTR instanc
         for (i = 0; i <= numnodes; i++)
             thisline = nexttok(thisline);
         subcktname = gettok(&thisline);
+
         /*Search for the corresponding .subckt line*/
         struct card_assoc* allsubs = xcard->level->subckts;
+
         while (allsubs) {
             xcardsubsline = allsubs->line->line;
+            /* safeguard against NULL pointers) */
+            if (!subcktname || !allsubs->name) {
+                tfree(subcktname);
+                return tprintf("n%s", numberstr);
+            }
             if (cieq(subcktname, allsubs->name))
                 break;
             allsubs = allsubs->next;
@@ -1230,7 +1237,7 @@ static char* get_terminal_number(char* element, char* namestr)
    Called from inp.c*/
 void modprobenames(INPtables* tab) {
     GENinstance* GENinst;
-    if (tab->defVmod) {
+    if (tab && tab->defVmod && tab->defVmod->GENinstances) {
         for (GENinst = tab->defVmod->GENinstances; GENinst; GENinst = GENinst->GENnextInstance) {
             char* name = GENinst->GENname;
             if (prefix("vcurr_", name)) {

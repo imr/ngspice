@@ -15,7 +15,7 @@
 #define PACKAGE "ngspice"
 
 /* Version number of package */
-#define VERSION "38+"
+#define VERSION "39"
 
 /* Define the directory for executables */
 #define NGSPICEBINDIR "../bin"
@@ -491,7 +491,7 @@
 #define PACKAGE_VERSION VERSION
 
 /* Define if we want predictor algorithm */
-#define PREDICTOR
+/* #undef PREDICTOR */
 
 /* Define to 1 if the C compiler supports function prototypes. */
 /* #undef PROTOTYPES */

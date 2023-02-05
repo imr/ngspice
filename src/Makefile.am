@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
 SUBDIRS = include/ngspice include/cppduals/duals misc maths frontend spicelib
-DIST_SUBDIRS = include/ngspice include/cppduals/duals misc maths frontend spicelib xspice ciderlib
+DIST_SUBDIRS = include/ngspice include/cppduals/duals misc maths frontend spicelib xspice ciderlib osdi
 
 if XSPICE_WANTED
 SUBDIRS += xspice
@@ -593,8 +593,9 @@ libngspice_la_LIBADD += \
 	ciderlib/support/libcidersuprt.la
 endif
 
-
-libngspice_la_LIBADD += osdi/libosdi.la 
+if OSDI_WANTED
+libngspice_la_LIBADD += osdi/libosdi.la
+endif
 
 libngspice_la_LIBADD += \
 	maths/deriv/libderiv.la \

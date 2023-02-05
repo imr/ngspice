@@ -1,3 +1,73 @@
+Ngspice-39, Jan 31st, 2023
+============
+- New features:
+    + OSDI interface integrated to read und simulate with
+      OpenVAF-compiled Verilog-A compact models delivers
+      access to open CMC models and many others.
+    + Visual Studio 2022 is required.
+    + ADMS is declared deprecated.
+    + Extended support of digital U devices with f_logicexp and f_pindly,
+      ngspice now fully simulates 74xx ICs.
+    + BSIM4 updated to 4.8.2
+    + Examples for Laplace model x_fer added
+    + String-valued parameters enabled
+    + Add --enable-shortcheck as configure option to reduce check time
+    + Add a function ddt (derivative versus time) to the B-source
+    + The 8th parameter on a voltage or current source now is 'number of pulses'
+    + Add a new compatibility mode xs (for XSPICE legacy behavior)
+    + Add new functions for operators x**y or x^y
+    + Add a user definable variable enable_noisy_r (for .spiceinit)
+    + Replace obscure warning "singular matrix: check nodes mymode1 and mynode1"
+      by "singular matrix: check node mynode1", if both node names are equal.
+    + Preprocessor flag PREDICTOR is enabled
+    + Search path for *.osdi lib files extended: current, inputdir, relative
+      to executable
+
+- Bug fixes:
+    + many bugs fixed and code improvements (see bugs 608 and up)
+    + making error messages more verbose
+    + memory leaks removed
+
+Ngspice-38, Oct 30th, 2022
+============
+- New features:
+    + Add multiplier flag 'm' to behavioral capacitor and inductor.
+    + Re-enable dc sweep after transient sim.
+    + When plotting the phase, standard now is "Radiant".
+    + Add Lundin's geometry correction to the inductance formula.
+    + New variable keep#branch to write the current to raw file
+      in the old fashion     	1	v1#branch	current
+    + Translate PSPICE U instances into equivaalent XSPICE code models.
+    + New configure flag --enable-shortcheck to enable a shortened make check
+     (only BSIM3 and BSIM4).
+    + B source will accept parameters in statistical functions like agauss.
+    + WinGUI: Add a button 'Stop' to stop a simulation in intercative
+      or control mode.
+    + Update to the .probe p (power measurement) and .probe alli commands.
+    + Update to XSPICE aswitch and pswitch.
+    + Make FROM/TO work in TRIG/TARG and WHEN variants of .meas/meas command.
+    + Limits to exp function, allow 0 for log (returning -1e99), used
+      when starting iterations.
+    + Insert XSPICE bridging devices automatically when an analogue node
+      has the same name as an XSPICE event node.
+    + New options savecurrents_bsim3, savecurrents_bsim4, savecurrents_mos1.
+    + pwlts: a pwl v/i source with time input, smoothing and limiting
+      functions.
+    + New functions to the Code Model Library: cm_get_node_name()
+      and cm_probe_node().
+    + XSPICE: Add bidirectional digital/analog bridge.
+    + Search for .spiceinit firstly in a user defined directory named in env
+      SPICE_USERINIT_DIR, then in the current directory, then in HOME, then
+      in USERPROFILE.
+    + If compatmode is lt, change the pow(x,y) and x**y functions:
+      If x < 0, output only if y is integer number, otherwise output 0.
+    + Add a limit of 0.999 to bipolar parameters mje, mjc, and mjs.
+
+- Bug fixes:
+    + many bugs fixed and code improvements (see bugs 583 and up)
+    + making error messages more verbose
+    + memory leaks removed
+
 Ngspice-37, May 22nd, 2022
 ============
 - New features:

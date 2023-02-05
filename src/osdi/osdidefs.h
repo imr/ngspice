@@ -25,6 +25,9 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#ifndef _MSC_VER
+#include <stdalign.h>
+#endif
 
 #ifdef _MSC_VER
 typedef struct {
@@ -44,7 +47,7 @@ typedef struct {
 #ifdef _MSC_VER
 #define MAX_ALIGN 8
 #else
-#define MAX_ALIGN sizeof(max_align_t)
+#define MAX_ALIGN alignof(max_align_t)
 #endif
 
 
@@ -93,7 +96,8 @@ typedef void (*osdi_log_ptr)(void *handle, char *msg, uint32_t lvl);
 
 double osdi_pnjlim(bool init, bool *icheck, double vnew, double vold, double vt,
                    double vcrit);
-
+double osdi_typedpnjlim(bool init, bool *icheck, double vnew, double vold, double vt,
+                   double vcrit, double type);
 double osdi_limvds(bool init, bool *icheck, double vnew, double vold);
 double osdi_limitlog(bool init, bool *icheck, double vnew, double vold,
                      double LIM_TOL);

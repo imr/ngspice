@@ -9,9 +9,10 @@ Spice3 does not need any introduction, is the most popular circuit
 simulator. In over 30 years of its life Spice3 has become a de-facto
 standard for simulating circuits.
 
-Cider couples Spice3f5 circuit level simulator to DSIM device simulator
-to provide greater simulation accuracy of critical devices. DSIM
-devices are described in terms of their structures and materials.
+Cider couples Spice3f5 circuit level simulator to a device simulator
+to provide greater simulation accuracy of critical devices. So you may
+create device models for diodes, bipolar, JFet and MOSFETs derived 
+from their cross-sectional structures and materials.
 
 Xspice is an extension to Spice3C1 that provides code modelling support
 and simulation of digital components through an embedded event driven
@@ -62,6 +63,6 @@ WEB SITEs:
 --------
 
 This project is hosted on Sourceforge.net.
-The home page is http://ngspice.sourceforge.net
-The page offering source code and user interaction is
- http://sourceforge.net/projects/ngspice
+The home page is https://ngspice.sourceforge.io
+The page offering source code, MS Windows executables, and user interaction is
+https://sourceforge.net/projects/ngspice

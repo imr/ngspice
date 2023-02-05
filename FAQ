@@ -1,7 +1,7 @@
-  Ngspice F.A.Q.Version 2.7 (ngspice-37 release)
+  Ngspice F.A.Q.Version 2.9 (ngspice-39 release)
 
   Maintained by Holger Vogt
-  Last update: May 11 2022
+  Last update: Jan 24 2023
 
   This document contains the Frequently Asked Questions (and Answers)
   for ngspice project.
@@ -123,7 +123,7 @@
   capabilities) and user interface are other goals.
 
 
- 1.6 What you are going to do?
+ 1.6 What are you going to do?
 
   An official roadmap for ngspice was never drawn. Contributions made by
   developers drive ngspice development and the roadmap is built day by
@@ -140,18 +140,18 @@
   + Compact models:  The interest in using ngspice is intimately connected
     to the available models. To provide the latest models available for
     active and passive devices is a fundamental goal of the project. In
-    this direction we are integrating ADMS model compiler into ngspice.
+    this direction we are integrating OSDI interface into ngspice for
+    reading OpenVAF compiled Verilog-A compact models.
 
   + Documentation: Commercial simulators come with very good manuals
     containing tutorials, description of models equations, example of
     use, suggestions, etc. Spice came with little documentation. The
     Spice3f manual, available on the Internet has been used as the basis
-    for the new manual. It will be constantly improved during ngspice
-    development and integrated with the documentation accompanying Xspice
-    and Cider. The ngspice manual today contains description of all
+    for the ngspice manual. It will be constantly improved during ngspice
+    development. The ngspice manual today contains description of all
     features ngspice is offering. It is however not a tutorial of ngspice
-    usage, but there are now several good ones available on the internet
-    (see http://ngspice.sourceforge.net/tutorials.html).
+    usage, but there are several good ones available on the internet
+    (see https://ngspice.sourceforge.io/tutorials.html).
 
 
  1.7 Legal issues
@@ -208,37 +208,40 @@
   web server and then moved to sourceforge. Sourceforge provides an
   archiving service that cam be accessed via the summary page:
 
-  http://sourceforge.net/p/ngspice/mailman/
+  https://sourceforge.net/p/ngspice/mailman/
 
 
  1.11  Where can I get a copy of ngspice?
 
-  You can download ngspice from:
+  You can download ngspice source code or MS Windows executables from:
 
-  http://sourceforge.net/projects/ngspice/files/ng-spice-rework/
+  https://sourceforge.net/projects/ngspice/files/ng-spice-rework/
+  
+  Nearly all distributions for MINGW, Cygwin, Linux, macOS and
+  others offer install-ready copies of ngspice.
 
 
  1.12  Where should I look on the World Wide Web for ngspice stuff?
 
   Look at the official Ngpice Web Page:
 
-  http://ngspice.sourceforge.net
+  https://ngspice.sourceforge.io
 
 
  1.13  Where should I look on the World Wide Web for Spice documentation?
 
   There is a detailed ngspice manual available at:
-  http://ngspice.sourceforge.net/docs.html
+  https://ngspice.sourceforge.io/docs.html
 
   Others docs are assembled at:
-  http://ngspice.sourceforge.net/literature.html
+  https://ngspice.sourceforge.io/literature.html
 
 
  1.14  Are there some (official) tutorials available?
  
   Yes, they are, for ngspice, ngspice within KiCAD and on eletro-thermal
   simulation. You may find them at:
-  http://ngspice.sourceforge.net/tutorials.html
+  https://ngspice.sourceforge.io/tutorials.html
 
 
 
@@ -249,43 +252,20 @@
 
   The latest version released is:
 
-  * ngspice-37 (released on May 22 2022)
+  * ngspice-39 (released on Jan 31 2023)
 
 
  2.2.  What are the latest features in the current release?
 
-- New features:
-    + Reduce XSPICE memory consumption dramatically 
-      (> factor of 10).
-    + Add source stepping to B source
-    + Add 'esave' command to save only specific event nodes.
-    + Accept '.temp=125' or .temp='param'.
-    + Enable output redirection for meas command.
-    + Use total current for diffcap calculation in diode model.
-    + Speed output and reduces file size when plotting large
-      result vectors (Windows).
-    + Enable RKM notation also for inductors (e.g. 1u2 for 1.2u).
-    + Add S parameter simulation (command '.sp').
-    + Add new flag 'digitop' for the 'plot' command.
-    + Add a flag 'alle' (all event nodes) to the plot command.
-    + New code model d_pwm: hybrid oscillator (analg control in,
-      digital out) with PWM.
-    + Make "nogrid" plotting option work.
-    + Add current measurement for all nodes of a device,
-      e.g. .probe i(Q1) will measure Ic, Ib, Ie (and Is).
-    + .probe P(dev): Add measurement of power dissipation in a device.
-    + Add new flags -type and -flags to command devhelp.
-
-- Bug fixes:
-    + many bugs fixed and code improvements (see bugs 557 and up)
-    + making error messages more verbose
-    + memory leaks removed
+  Please see file NEWS accompaniing this FAQ.
 
 
  2.3.  What does it look like?
 
   Ngspice, as the original Spice3 (and Xspice and Cider) is a command
-  line simulator, but with a graphics output capability.
+  line simulator, but with a graphics output capability. Excellent
+  open source third party tool for schematic capture (KiCad, XSCHEM, 
+  Qucs-S and others) are available.
 
 
  2.4.  Who are the authors of ngspice?
@@ -303,7 +283,7 @@
   feature-request and bugs trackers. You can use them or subscribe to
   mailing lists and post there. The former is preferred since almost
   it allows to track all necessary actions upon a bug. The web site at
-  http://ngspice.sourceforge.net/bugrep.html will give you more details.
+  https://ngspice.sourceforge.io/bugrep.html will give you more details.
 
 
  2.6.  How can I join the development?
@@ -370,7 +350,7 @@
 
  4.4.  Disclaimer and Copyright
 
-  Copyright: Holger Vogt, 2022
+  Copyright: Holger Vogt, 2023
   License: Creative Commons Attribution Share-Alike (CC-BY-SA) v4.0.
   This document is provided as is. The information in it is not
   warranted to be correct: you use it at your own risk.

@@ -1,6 +1,6 @@
 Ngspice Licensing
 
-Copyright (c) 2022 by ngspice team
+Copyright (c) 2023 by ngspice team
 All rights reserved.
 
 license for this document: CC-BY-SA v4.0
@@ -15,9 +15,6 @@ The ngspice license is the `Modified BSD' license. This is adopted for all of
 its source code, test and example files except for the files listed below.
 
 ************** files with licenses different to 'Modified BSD' ****************
-
-* ngspice/contrib
-GPL, Public Domain
 
 * ngspice/m4
 unnamed, compatible to DFSG

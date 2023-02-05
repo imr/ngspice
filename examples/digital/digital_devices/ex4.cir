@@ -78,7 +78,8 @@ run
 display
 edisplay
 eprint a b cin sum cout
-*plot cout sum
-quit
+set xbrushwidth=3
+plot a b cin cout sum digitop
+*quit
 .endc
 .end

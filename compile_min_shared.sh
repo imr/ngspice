@@ -51,14 +51,14 @@ if test "$1" = "d"; then
   echo "configuring for 64 bit debug"
   echo
 # You may add  --enable-adms to the following command for adding adms generated devices 
-  ../configure --with-ngshared --enable-xspice --enable-cider --enable-openmp --enable-relpath --disable-debug prefix="C:/Spice64d" CFLAGS="-m64 -g -O0 -Wall" LDFLAGS="-m64"
+  ../configure --with-ngshared --enable-xspice --enable-cider --enable-openmp --enable-osdi --enable-relpath --disable-debug prefix="C:/Spice64d" CFLAGS="-m64 -g -O0 -Wall" LDFLAGS="-m64"
 else
    cd release-sh
    if [ $? -ne 0 ]; then  echo "cd release-sh failed"; exit 1 ; fi
   echo "configuring for 64 bit release"
   echo
 # You may add  --enable-adms to the following command for adding adms generated devices 
-  ../configure --with-ngshared --enable-xspice --enable-cider --enable-openmp --enable-relpath --disable-debug prefix="C:/Spice64" CFLAGS="-m64 -O2" LDFLAGS="-m64 -s"
+  ../configure --with-ngshared --enable-xspice --enable-cider --enable-openmp --enable-osdi --enable-relpath --disable-debug prefix="C:/Spice64" CFLAGS="-m64 -O2" LDFLAGS="-m64 -s"
 fi
 if [ $? -ne 0 ]; then  echo "../configure failed"; exit 1 ; fi
 
