@@ -88,7 +88,7 @@ char *dup_string(const char *str, size_t n_char)
 
 char *tvprintf(const char *fmt, va_list args)
 {
-    char buf[1024];
+    static char buf[1024];
     char *p = buf;
     int size = sizeof(buf);
     int nchars;
