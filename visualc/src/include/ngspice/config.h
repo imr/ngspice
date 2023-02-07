@@ -499,9 +499,6 @@
 /* Define if you want to debug pole-zero analysis */
 /* #undef PZDEBUG */
 
-/* Define as the return type of signal handlers (`int' or `void'). */
-#define RETSIGTYPE void
-
 /* Define to the type of arg 1 for `select'. */
 /* #undef SELECT_TYPE_ARG1 */
 

@@ -20,7 +20,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include "ngspice/sim.h"  /* To get SV_VOLTAGE definition */
 
 
-static RETSIGTYPE sig_matherr(void);
+static void sig_matherr(void);
 static struct dvec *apply_func(struct func *func, struct pnode *arg);
 static struct dvec *ft_ternary(struct pnode *node);
 static char *mkcname(char what, char *v1, char *v2);
@@ -33,7 +33,7 @@ static char *mkcname(char what, char *v1, char *v2);
 
 static JMP_BUF matherrbuf;
 
-static RETSIGTYPE
+static void
 sig_matherr(void)
 {
     fprintf(cp_err, "Error: argument out of range for math function\n");

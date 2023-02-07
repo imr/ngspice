@@ -888,7 +888,6 @@ AM_CONDITIONAL([OLDAPPS], [test "x$enable_oldapps" = xyes])
 
 # Check for a few typdefs:
 AC_TYPE_PID_T
-AC_TYPE_SIGNAL
 
 # sighandler_t is the type of the signal handler on GNU variants,
 # sig_t is the type of a signal handler on 4.4BSD's,
