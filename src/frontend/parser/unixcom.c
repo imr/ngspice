@@ -187,7 +187,7 @@ tryexec(char *name, char *argv[])
 #  endif
 
     int pid, j;
-    RETSIGTYPE (*svint)(), (*svquit)(), (*svtstp)();
+    void (*svint)(), (*svquit)(), (*svtstp)();
 
     pid = vfork();
     if (pid == 0) {

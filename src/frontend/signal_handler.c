@@ -70,7 +70,7 @@ ft_sigintr_cleanup(void)
 
 
 /*  invoke this function upon keyboard interrupt  */
-RETSIGTYPE
+void
 ft_sigintr(void)
 {
     static int interrupt_counter = 0;
@@ -103,7 +103,7 @@ ft_sigintr(void)
 }
 
 
-RETSIGTYPE
+void
 sigfloat(int code)
 {
     fperror("Error", code);
@@ -117,7 +117,7 @@ sigfloat(int code)
 
 #ifdef SIGTSTP
 
-RETSIGTYPE
+void
 sigstop(void)
 {
     gr_clean();
@@ -127,7 +127,7 @@ sigstop(void)
 }
 
 
-RETSIGTYPE
+void
 sigcont(void)
 {
     (void) signal(SIGTSTP, (SIGNAL_FUNCTION) sigstop);
@@ -141,7 +141,7 @@ sigcont(void)
 
 /* Special (void) signal handlers. */
 
-RETSIGTYPE
+void
 sigill(void)
 {
     fprintf(cp_err, "\ninternal error -- illegal instruction\n");
@@ -149,7 +149,7 @@ sigill(void)
 }
 
 
-RETSIGTYPE
+void
 sigbus(void)
 {
     fprintf(cp_err, "\ninternal error -- bus error\n");
@@ -157,7 +157,7 @@ sigbus(void)
 }
 
 
-RETSIGTYPE
+void
 sigsegv(void)
 {
     fprintf(cp_err, "\ninternal error -- segmentation violation\n");
@@ -167,7 +167,7 @@ sigsegv(void)
     fatal();
 }
 
-RETSIGTYPE
+void
 sigsegvsh(void)
 {
     fprintf(cp_err, "\ninternal error -- segmentation violation\n");
@@ -175,7 +175,7 @@ sigsegvsh(void)
 }
 
 
-RETSIGTYPE
+void
 sig_sys(void)
 {
     fprintf(cp_err, "\ninternal error -- bad argument to system call\n");

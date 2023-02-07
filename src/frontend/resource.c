@@ -570,7 +570,7 @@ static int get_sysmem(struct sys_mem *memall)
 static JMP_BUF env;
 
 
-static RETSIGTYPE
+static void
 fault(void)
 {
     signal(SIGSEGV, (SIGNAL_FUNCTION) fault);   /* SysV style */
@@ -586,7 +586,7 @@ baseaddr(void)
 #else
     char *low, *high, *at;
     long x;
-    RETSIGTYPE  (*orig_signal)();
+    void  (*orig_signal)();
 
     if (getenv("SPICE_NO_DATASEG_CHECK"))
         return 0;

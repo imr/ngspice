@@ -101,7 +101,7 @@
 #define HAS_TIME_H
 #define HAS_RLIMIT_
 
-
+#define void void
 
 #ifndef SIGNAL_FUNCTION
 # ifdef HAVE_SIGHANDLER_T
@@ -111,7 +111,7 @@
 # elif HAVE___SIGHANDLER_T
 #  define SIGNAL_FUNCTION __sighandler_t
 # else
-#  define SIGNAL_FUNCTION RETSIGTYPE (*)(int)
+#  define SIGNAL_FUNCTION void (*)(int)
 # endif
 #endif
 

@@ -52,7 +52,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #  define SEEK_SET 0
 #endif
 
-static RETSIGTYPE sigchild(void);
+static void sigchild(void);
 
 struct proc {
     int pr_pid;                 /* The pid of the spice job. */
@@ -163,7 +163,7 @@ com_jobs(wordlist *wl)
 }
 
 
-static RETSIGTYPE
+static void
 sigchild(void)
 {
     numchanged++;
