@@ -181,7 +181,6 @@ static void cm_d_osc_callback(ARGS,
 *                                                            *
 *************************************************************/
 
-#include <stdlib.h>
 
 void cm_d_osc(ARGS)
 {

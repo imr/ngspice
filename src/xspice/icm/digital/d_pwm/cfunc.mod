@@ -184,7 +184,6 @@ static void cm_d_pwm_callback(ARGS,
 *                                                            *
 *************************************************************/
 
-#include <stdlib.h>
 
 void cm_d_pwm(ARGS)
 {
