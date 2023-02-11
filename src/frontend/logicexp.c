@@ -519,11 +519,10 @@ static TLINE gen_tab_add_line(char *line, BOOL ignore_blank)
     return t;
 }
 
-static char *get_temp_from_line(char *line, BOOL begin)
+static char *get_temp_from_line(char *line, BOOL begin, DSTRING *pds)
 {
-    /* First occurrence of "tmp" on the line */
-    /* If begin is TRUE then "tmp" must be at the start of line */
-    static char lbuf[64];
+    /* First occurrence of "tmpx.." on the line, x is a digit */
+    /* If begin is TRUE then "tmpx.." must be at the start of line */
     char *p, *q;
     int j = 0;
     p = strstr(line, "tmp");
@@ -531,41 +530,47 @@ static char *get_temp_from_line(char *line, BOOL begin)
         return NULL;
     if (begin && p != line)
         return NULL;
-    for (q = p, j = 0; isalnum(q[j]) || q[j] == '_'; j++) {
-        if (j >= 63)
-            return NULL;
-        lbuf[j] = q[j];
+    ds_clear(pds);
+    p += 3;
+    if (!isdigit(p[0]))
+        return NULL;
+    ds_cat_str(pds, "tmp");
+    for (q = p, j = 0; isdigit(q[j]) || q[j] == '_'; j++) {
+        ds_cat_char(pds, q[j]);
     }
-    lbuf[j] = '\0';
-    return lbuf;
+    ds_cat_char(pds, '\0');
+    return ds_get_buf(pds);
 }
 
-static char *find_temp_begin(char *line)
+static char *find_temp_begin(char *line, DSTRING *pds)
 {
-    return get_temp_from_line(line, TRUE);
+    return get_temp_from_line(line, TRUE, pds);
 }
 
-static char *find_temp_anywhere(char *line)
+static char *find_temp_anywhere(char *line, DSTRING *pds)
 {
-    return get_temp_from_line(line, FALSE);
+    return get_temp_from_line(line, FALSE, pds);
 }
 
 static int get_temp_depth(char *line)
 {
-    char buf[64];
     char *p, *endp;
-    int depth;
-    p = find_temp_anywhere(line);
+    int depth = -1;
+    DS_CREATE(dstr, 128);
+    p = find_temp_anywhere(line, &dstr);
     if (p) {
+        char *buf;
+        buf = TMALLOC(char, strlen(p) + 1);
         strcpy(buf, p);
         p = strstr(buf + strlen("tmp"), "__");
         if (p) {
             p = p + 2;
             depth = (int) strtol(p, &endp, 10);
-            return depth;
         }
+        tfree(buf);
     }
-    return -1;
+    ds_free(&dstr);
+    return depth;
 }
 
 static TLINE tab_find(PTABLE pt, char *str, BOOL start_of_line)
@@ -606,7 +611,6 @@ static void ptable_print(PTABLE pt)
 
 /* Start of logicexp parser */
 static char *get_inst_name(void);
-static char *get_inverter_output_name(char *input);
 static void aerror(char *s);
 static BOOL amatch(int t);
 static BOOL bexpr(void);
@@ -637,34 +641,31 @@ static char *get_inst_name(void)
     return name;
 }
 
-static char *get_inverter_output_name(char *input)
+static char *get_inverter_output_name(char *input, DSTRING *pds)
 {
-    static char buf[LEX_BUF_SZ];
     LEXER lx = parse_lexer;
     // FIX ME keep this name in the symbol table to ensure uniqueness
-    (void) sprintf(buf, "inv_out__%s", input);
-    if (member_sym_tab(buf, lx->lexer_sym_tab))
-        fprintf(stderr, "ERROR %s is already in use\n", buf);
-    return buf;
+    ds_clear(pds);
+    ds_cat_printf(pds, "inv_out__%s", input);
+    if (member_sym_tab(ds_get_buf(pds), lx->lexer_sym_tab))
+        fprintf(stderr, "ERROR %s is already in use\n", ds_get_buf(pds));
+    return ds_get_buf(pds);
 }
 
-static char *get_inv_tail(char *str)
+static char *get_inv_tail(char *str, DSTRING *pds)
 {
-    static char lbuf[64];
     char *p = NULL, *q = NULL;
     int j = 0;
     size_t slen = strlen("inv_out__");
-
     p = strstr(str, "inv_out__");
     if (!p)
         return NULL;
+    ds_clear(pds);
     for (q = p + slen, j = 0; q[j] != '\0' && !isspace(q[j]); j++) {
-        if (j >= 63)
-            return NULL;
-        lbuf[j] = q[j];
+        ds_cat_char(pds, q[j]);
     }
-    lbuf[j] = '\0';
-    return lbuf;
+    ds_cat_char(pds, '\0');
+    return ds_get_buf(pds);
 }
 
 static void gen_models(void)
@@ -776,8 +777,11 @@ static BOOL bfactor(void)
     if (lookahead == LEX_ID) {
         entry = add_sym_tab_entry(lx->lexer_buf, SYM_ID, &lx->lexer_sym_tab);
         if (is_not) {
+            DS_CREATE(dstr, 128);
+            ds_clear(&dstr);
             ds_cat_printf(&d_curr_line, "%s ",
-                get_inverter_output_name(lx->lexer_buf));
+                get_inverter_output_name(lx->lexer_buf, &dstr));
+            ds_free(&dstr);
             entry->attribute |= SYM_INVERTER;
             entry->ref_count++;
         } else {
@@ -953,12 +957,14 @@ static PTABLE optimize_gen_tab(PTABLE pt)
     DS_CREATE(alias, 64);
     DS_CREATE(non_tmp_name, 64);
     DS_CREATE(tmp_name, 64);
+    DS_CREATE(find_str, 128);
 
     if (!pt || !pt->first) {
         ds_free(&scratch);
         ds_free(&alias);
         ds_free(&non_tmp_name);
         ds_free(&tmp_name);
+        ds_free(&find_str);
         return NULL;
     }
     t = pt->first;
@@ -977,7 +983,7 @@ static PTABLE optimize_gen_tab(PTABLE pt)
         ds_clear(&alias);
         entry = NULL;
         found_tilde = FALSE;
-        if (find_temp_begin(t->line))
+        if (find_temp_begin(t->line, &find_str))
             starts_with_temp = TRUE;
         else
             starts_with_temp = FALSE;
@@ -1041,7 +1047,7 @@ static PTABLE optimize_gen_tab(PTABLE pt)
         val = lexer_scan(lxr);
         idnum = 0;
         entry = NULL;
-        if (find_temp_begin(t->line))
+        if (find_temp_begin(t->line, &find_str))
             starts_with_temp = TRUE;
         else
             starts_with_temp = FALSE;
@@ -1066,12 +1072,12 @@ static PTABLE optimize_gen_tab(PTABLE pt)
                     ds_cat_printf(&scratch, "%s ", lxr->lexer_buf);
                     if (tok_count == 1) {
                         ds_clear(&non_tmp_name);
-                        if (!find_temp_begin(lxr->lexer_buf))
+                        if (!find_temp_begin(lxr->lexer_buf, &find_str))
                             ds_cat_str(&non_tmp_name, lxr->lexer_buf);
                     } else if (tok_count == 3) {
                         if (ds_get_length(&non_tmp_name) > 0) {
                             char *str1 = NULL;
-                            str1 = find_temp_begin(lxr->lexer_buf);
+                            str1 = find_temp_begin(lxr->lexer_buf, &find_str);
                             if (str1) {
                                 ds_clear(&tmp_name);
                                 ds_cat_str(&tmp_name, lxr->lexer_buf);
@@ -1138,6 +1144,7 @@ quick_return:
     ds_free(&scratch);
     ds_free(&non_tmp_name);
     ds_free(&tmp_name);
+    ds_free(&find_str);
     delete_lexer(lxr);
     delete_sym_tab(alias_tab);
 
@@ -1189,8 +1196,9 @@ static BOOL gen_gates(PTABLE gate_tab, SYM_TAB parser_symbols)
                     ds_cat_str(&out_name, lxr->lexer_buf);
                 } else { // input name
                     char *tail = NULL;
+                    DS_CREATE(dstr, 64);
                     in_count++;
-                    tail = get_inv_tail(lxr->lexer_buf);
+                    tail = get_inv_tail(lxr->lexer_buf, &dstr);
                     if (tail && strlen(tail) > 0) {
                         ds_cat_printf(&in_names, " ~%s", tail);
                         if (prit) {
@@ -1201,6 +1209,7 @@ static BOOL gen_gates(PTABLE gate_tab, SYM_TAB parser_symbols)
                     } else {
                         ds_cat_printf(&in_names, " %s", lxr->lexer_buf);
                     }
+                    ds_free(&dstr);
                 }
             } else if (val == '~') {
                 found_tilde = TRUE;
@@ -1306,10 +1315,13 @@ static void bevaluate(TLINE t, int deep)
     DS_CREATE(this, 64);
     DS_CREATE(other, 64);
     DS_CREATE(new_line, LEX_BUF_SZ);
+    DS_CREATE(find_str, 128);
 
-    s = find_temp_begin(t->line);
-    if (!s)
+    s = find_temp_begin(t->line, &find_str);
+    if (!s) {
+        ds_free(&find_str);
         return;
+    }
     ds_clear(&other);
     ds_clear(&new_line);
     ds_clear(&this);
@@ -1325,19 +1337,19 @@ static void bevaluate(TLINE t, int deep)
     }
     t = t->next;
     while (t) {
-        s = find_temp_anywhere(t->line);
+        s = find_temp_anywhere(t->line, &find_str);
         if (s) {
             if (eq(ds_get_buf(&this), s)) {
                 break;
             } else {
                 if (down == 0) {
-                    s = find_temp_begin(t->line);
+                    s = find_temp_begin(t->line, &find_str);
                     ds_clear(&other);
                     ds_cat_str(&other, s);
                     down = 1;
                     ds_cat_printf(&new_line, " %s", ds_get_buf(&other));
                 } else if (down == 1) {
-                    s = find_temp_anywhere(t->line);
+                    s = find_temp_anywhere(t->line, &find_str);
                     if (eq(ds_get_buf(&other), s)) {
                         down = 0;
                         ds_clear(&other);
@@ -1345,7 +1357,7 @@ static void bevaluate(TLINE t, int deep)
                 }
             }
         } else if (down == 0) {
-            s = find_temp_anywhere(t->line);
+            s = find_temp_anywhere(t->line, &find_str);
             if (!s) {
                 ds_cat_printf(&new_line, " %s", t->line);
             }
@@ -1356,6 +1368,7 @@ static void bevaluate(TLINE t, int deep)
     ds_free(&this);
     ds_free(&other);
     ds_free(&new_line);
+    ds_free(&find_str);
     return;
 }
 
@@ -1850,16 +1863,16 @@ static void gen_pindly_buffers(void)
     ds_free(&dbuf);
 }
 
-static char *get_typ_estimate(char *min, char *typ, char *max)
+static char *get_typ_estimate(char *min, char *typ, char *max, DSTRING *pds)
 {
     char *tmpmax = NULL, *tmpmin = NULL;
     float valmin, valmax, average;
     char *units1, *units2;
-    static char tbuf[128];
 
+    ds_clear(pds);
     if (typ && strlen(typ) > 0 && typ[0] != '-') {
-        strcpy(tbuf, typ);
-        return tbuf;
+        ds_cat_str(pds, typ);
+        return ds_get_buf(pds);
     }
     if (max && strlen(max) > 0 && max[0] != '-') {
         tmpmax = max;
@@ -1872,25 +1885,25 @@ static char *get_typ_estimate(char *min, char *typ, char *max)
             valmin = strtof(tmpmin, &units1);
             valmax = strtof(tmpmax, &units2);
             average = (valmin + valmax) / (float)2.0;
-            sprintf(tbuf, "%.2f%s", average, units2);
+            ds_cat_printf(pds, "%.2f%s", average, units2);
             if (!eq(units1, units2)) {
                 printf("WARNING units do not match\n");
             }
-            return tbuf;
+            return ds_get_buf(pds);
         }
     } else if (tmpmax && strlen(tmpmax) > 0) {
-        strcpy(tbuf, tmpmax);
-        return tbuf;
+        ds_cat_str(pds, tmpmax);
+        return ds_get_buf(pds);
     } else if (tmpmin && strlen(tmpmin) > 0) {
-        strcpy(tbuf, tmpmin);
-        return tbuf;
+        ds_cat_str(pds, tmpmin);
+        return ds_get_buf(pds);
     } else {
         return NULL;
     }
     return NULL;
 }
 
-static char *typical_estimate(char *delay_str)
+static char *typical_estimate(char *delay_str, DSTRING *pds)
 {
     /* Input string (t1,t2,t2) */
     int which = 0;
@@ -1924,7 +1937,7 @@ static char *typical_estimate(char *delay_str)
         }
     }
     s = get_typ_estimate(ds_get_buf(&dmin), ds_get_buf(&dtyp),
-        ds_get_buf(&dmax));
+        ds_get_buf(&dmax), pds);
     ds_free(&dmin);
     ds_free(&dtyp);
     ds_free(&dmax);
@@ -1949,16 +1962,19 @@ static BOOL extract_delay(
     char *units;
     DS_CREATE(dly, 64);
     DS_CREATE(dtyp_max_str, 16);
+    DS_CREATE(tmp_ds, 128);
 
     if (val != '=') {
         ds_free(&dly);
         ds_free(&dtyp_max_str);
+        ds_free(&tmp_ds);
         return FALSE;
     }
     val = lexer_scan(lx);
     if (val != '{') {
         ds_free(&dly);
         ds_free(&dtyp_max_str);
+        ds_free(&tmp_ds);
         return FALSE;
     }
     val = lexer_scan(lx);
@@ -1978,10 +1994,12 @@ static BOOL extract_delay(
                 ds_cat_printf(&dly, "%c", val);
                 if (val == ')') {
                     char *tmps;
+                    ds_clear(&tmp_ds);
                     in_delay = FALSE;
-                    tmps = typical_estimate(ds_get_buf(&dly));
+                    tmps = typical_estimate(ds_get_buf(&dly), &tmp_ds);
                     if (!tmps) {
                         ret_val = FALSE;
+                        ds_clear(&tmp_ds);
                         break;
                     }
                     if (prit) {
@@ -2029,6 +2047,7 @@ static BOOL extract_delay(
     } // end while != '}'
     ds_free(&dly);
     ds_free(&dtyp_max_str);
+    ds_free(&tmp_ds);
     return ret_val;
 }
 
