@@ -174,13 +174,13 @@ extern int OSDIload(GENmodel *inModel, CKTcircuit *ckt) {
     sim_info.flags |= CALC_NOISE | ANALYSIS_NOISE;
   }
 
-  int ret = OK;
-
   OsdiRegistryEntry *entry = osdi_reg_entry_model(inModel);
   const OsdiDescriptor *descr = entry->descriptor;
   uint32_t eval_flags = 0;
 
 #ifdef USE_OMP
+  int ret = OK;
+
   /* use openmp 3.0 tasks to parallelize linked list transveral */
 #pragma omp parallel
 #pragma omp single
