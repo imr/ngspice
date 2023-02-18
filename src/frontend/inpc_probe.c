@@ -874,6 +874,12 @@ void inp_probe(struct card* deck)
                 else
                     numnodes = get_number_terminals(thisline);
 
+                if (numnodes < 2) {
+                    fprintf(stderr, "Warning: Power mesasurement not available,\n   .probe %s will be ignored\n", wltmp->wl_word);
+                    tfree(instname);
+                    continue;
+                }
+
                 int err = 0;
                 /* call fcn with power requested */
                 err = setallvsources(tmpcard, instances, instname, numnodes, haveall, TRUE);
@@ -1266,7 +1272,7 @@ void modprobenames(INPtables* tab) {
    If .probe p(Q1) is found, flag power is true, then do additional power calculations:
    Define a reference voltage of an n-terminal device as Vref = (V(1) + V(2) +...+ V(n)) / n  with terminal (node) voltages V(n).
    Calculate power PQ1 = (v(1) - Vref) * i1 + (V(2) - Vref) * i2 + ... + (V(n) - Vref) * in) with terminal currents in.
-   See "Quantities of a Multiterminal Circuit Determined on the Basis of Kirchhoff’s Laws", M. Depenbrock, 
+   See "Quantities of a Multiterminal Circuit Determined on the Basis of Kirchhoffï¿½s Laws", M. Depenbrock, 
    ETEP Vol. 8, No. 4, July/August 1998.
    probe_int_ is used to trigger supressing the vectors when saving the results. Internal vectors thus are
    not saved. */
