@@ -1699,7 +1699,10 @@ get_measure2(
             goto err_ret1;
         }
         // measure targ
-        com_measure_when(measTarg);
+        if (measTarg->m_at == 1e99)
+            com_measure_when(measTarg);
+        else
+            measTarg->m_measured = measTarg->m_at;
 
         if (isnan(measTarg->m_measured)) {
             sprintf(errbuf, "out of interval\n");
