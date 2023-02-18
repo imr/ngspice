@@ -340,7 +340,6 @@ extern OsdiObjectFile load_object_file(const char *input) {
   for (uint32_t i = 0; i < lim_table_len; i++) {
     int expected_args = -1;
     IS_LIM_FUN("pnjlim", 2, osdi_pnjlim)
-    IS_LIM_FUN("typedpnjlim", 3, osdi_typedpnjlim)
     IS_LIM_FUN("limvds", 0, osdi_limvds)
     IS_LIM_FUN("fetlim", 1, osdi_fetlim)
     IS_LIM_FUN("limitlog", 1, osdi_limitlog)
