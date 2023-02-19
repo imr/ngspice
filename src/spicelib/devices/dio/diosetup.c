@@ -180,7 +180,7 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             model->DIOte_max = 1e99;
         }
         if(!model->DIOrecEmissionCoeffGiven) {
-            model->DIOrecEmissionCoeff = 1;
+            model->DIOrecEmissionCoeff = 2;
         }
         if(!model->DIOrecSatCurGiven) {
             model->DIOrecSatCur = 1e-14;
