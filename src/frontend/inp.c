@@ -60,6 +60,7 @@ static char *upper(register char *string);
 static void rem_unused_mos_models(struct card* deck);
 
 extern void com_optran(wordlist * wl);
+extern void tprint(struct card *deck);
 
 
 //void inp_source_recent(void);

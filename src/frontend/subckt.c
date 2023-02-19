@@ -77,6 +77,7 @@ Modified: 2000 AlansFixes
 
 extern void line_free_x(struct card *deck, bool recurse);
 extern int get_number_terminals(char* c);
+extern void tprint(struct card* deck);
 
 #define line_free(line, flag)                   \
     do {                                        \
