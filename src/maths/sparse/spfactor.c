@@ -228,6 +228,11 @@ spOrderAndFactor(MatrixPtr Matrix, RealNumber RHS[], RealNumber RelThreshold,
             INCRESP;
 #endif
             pPivot = Matrix->Diag[Step];
+            if (!pPivot) {
+                fprintf(stderr, "Warning: spfactor.c, 230, Pivot for step = %d not found\n", Step);
+                ReorderingRequired = YES;
+                break; /* for loop */
+            }
             LargestInCol = FindLargestInCol(pPivot->NextInCol);
             if ((LargestInCol * RelThreshold < ELEMENT_MAG(pPivot))) {
                 if (Matrix->Complex)
