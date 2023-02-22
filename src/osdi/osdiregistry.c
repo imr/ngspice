@@ -316,6 +316,8 @@ extern OsdiObjectFile load_object_file(const char *input) {
     return INVALID_OBJECT;
   }
 
+  txfree(path);
+
   GET_CONST(OSDI_NUM_DESCRIPTORS, uint32_t);
   GET_PTR(OSDI_DESCRIPTORS, OsdiDescriptor);
 
