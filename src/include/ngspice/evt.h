@@ -172,7 +172,7 @@ struct Evt_Output_Queue {
     Evt_Output_Event_t  **head;          /* Beginning of linked lists */
     Evt_Output_Event_t  ***current;      /* Beginning of pending events */
     Evt_Output_Event_t  ***last_step;    /* Values of 'current' at last accepted timepoint */
-    Evt_Output_Event_t  **free;          /* Linked lists of items freed by backups */
+    Evt_Output_Event_t  ***free_list;    /* Pointers to linked lists of items freed by backups */
     double              last_time;       /* Time at which last_step was set */
     double              next_time;       /* Earliest next event time in queue */
     int                 num_modified;    /* Number modified since last accepted timepoint */

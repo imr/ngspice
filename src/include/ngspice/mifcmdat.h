@@ -226,6 +226,7 @@ typedef struct Mif_Port_Data_s {
     Mif_Boolean_t   is_null;        /* Set to true if null in SPICE deck  */
     Mif_Value_t     input;          /* The input value                    */
     Mif_Value_t     output;         /* The output value                   */
+    struct Evt_Output_Event *next_event;
     Mif_Partial_t   *partial;       /* Partials for this port wrt inputs  */
     Mif_AC_Gain_t   *ac_gain;       /* AC gains for this port wrt inputs  */
     int             old_input;      /* Index into CKTstate for old input  */

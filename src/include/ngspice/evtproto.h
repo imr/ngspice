@@ -134,5 +134,6 @@ bool Evtcheck_nodes(
     struct INPtables   *stab);           /* Symbol table. */
 
 struct dvec *EVTfindvec(char *node);
+void Evt_purge_free_outputs(void);
 
 #endif

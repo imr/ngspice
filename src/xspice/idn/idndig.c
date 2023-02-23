@@ -345,6 +345,7 @@ Evt_Udn_Info_t idn_digital_info = {
 
 "d",
 "12 state digital data",
+NULL,
 idn_digital_create,
 idn_digital_dismantle,
 idn_digital_initialize,

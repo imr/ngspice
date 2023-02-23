@@ -182,6 +182,7 @@ Evt_Udn_Info_t udn_int_info = {
 
     "int",
     "integer valued data",
+    NULL,
 
     udn_int_create,
     udn_int_dismantle,
