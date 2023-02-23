@@ -126,13 +126,14 @@ void EVTaccept(
     num_modified = output_queue->num_modified;
     /* Loop through list of items modified since last time */
     for(i = 0; i < num_modified; i++) {
-        Evt_Output_Event_t *stale, *next;
+        Evt_Output_Event_t *stale, *next, **free_list;
 
         /* Get the index of the output modified */
         index = output_queue->modified_index[i];
         /* Reset the modified flag */
         output_queue->modified[index] = MIF_FALSE;
         /* Move stale entries to the free list. */
+        free_list = output_queue->free_list[index];
         next = output_queue->head[index];
         while (next) {
             if (next->event_time >= time ||
@@ -141,8 +142,8 @@ void EVTaccept(
             }
             stale = next;
             next = next->next;
-            stale->next = output_queue->free[index];
-            output_queue->free[index] = stale;
+            stale->next = *free_list;
+            *free_list = stale;
         }
         output_queue->head[index] = next;
         if (!next)

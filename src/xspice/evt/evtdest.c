@@ -82,18 +82,11 @@ Evt_Queue_destroy(Evt_Ckt_Data_t *evt, Evt_Queue_t *queue)
             tfree(event);
             event = next;
         }
-        event = output_queue->free[i];
-        while (event) {
-            Evt_Output_Event_t *next = event->next;
-            tfree(event->value);
-            tfree(event);
-            event = next;
-        }
     }
     tfree(output_queue->head);
     tfree(output_queue->current);
     tfree(output_queue->last_step);
-    tfree(output_queue->free);
+    tfree(output_queue->free_list);
 
     tfree(output_queue->modified_index);
     tfree(output_queue->modified);
@@ -101,6 +94,7 @@ Evt_Queue_destroy(Evt_Ckt_Data_t *evt, Evt_Queue_t *queue)
     tfree(output_queue->pending);
     tfree(output_queue->changed_index);
     tfree(output_queue->changed);
+    Evt_purge_free_outputs();
 }
 
 /*
