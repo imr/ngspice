@@ -183,6 +183,7 @@ Evt_Udn_Info_t udn_real_info = {
 
     "real",
     "real valued data",
+    NULL,
 
     udn_real_create,
     udn_real_dismantle,

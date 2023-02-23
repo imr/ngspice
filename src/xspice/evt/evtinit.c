@@ -325,14 +325,13 @@ static int EVTinit_queue(
     CKALLOC(output_queue->head, num_outputs, Evt_Output_Event_t *)
     CKALLOC(output_queue->current, num_outputs, Evt_Output_Event_t **)
     CKALLOC(output_queue->last_step, num_outputs, Evt_Output_Event_t **)
-    CKALLOC(output_queue->free, num_outputs, Evt_Output_Event_t *)
+    CKALLOC(output_queue->free_list, num_outputs, Evt_Output_Event_t **)
     CKALLOC(output_queue->modified_index, num_outputs, int)
     CKALLOC(output_queue->modified, num_outputs, Mif_Boolean_t)
     CKALLOC(output_queue->pending_index, num_outputs, int)
     CKALLOC(output_queue->pending, num_outputs, Mif_Boolean_t)
     CKALLOC(output_queue->changed_index, num_outputs, int)
     CKALLOC(output_queue->changed, num_outputs, Mif_Boolean_t)
-
 
     /* Return */
     return(OK);

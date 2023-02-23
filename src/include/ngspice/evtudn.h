@@ -99,20 +99,22 @@ NON-STANDARD FEATURES
                          void **evt_ipc_val, \
                          int  *evt_ipc_val_size
 
+/* Information about each Digital/User-defined type of node value. */
 
 typedef struct {
-    char          *name;
-    char          *description;
-    void          ((*create)(CREATE_ARGS));
-    void          ((*dismantle)(DISMANTLE_ARGS));
-    void          ((*initialize)(INITIALIZE_ARGS));
-    void          ((*invert)(INVERT_ARGS));
-    void          ((*copy)(COPY_ARGS));
-    void          ((*resolve)(RESOLVE_ARGS));
-    void          ((*compare)(COMPARE_ARGS));
-    void          ((*plot_val)(PLOT_VAL_ARGS));
-    void          ((*print_val)(PRINT_VAL_ARGS));
-    void          ((*ipc_val)(IPC_VAL_ARGS));
+    char                 *name;
+    char                 *description;
+    Evt_Output_Event_t   *free_list;  /* Event structs for these values. */
+    void               ((*create)(CREATE_ARGS));
+    void               ((*dismantle)(DISMANTLE_ARGS));
+    void               ((*initialize)(INITIALIZE_ARGS));
+    void               ((*invert)(INVERT_ARGS));
+    void               ((*copy)(COPY_ARGS));
+    void               ((*resolve)(RESOLVE_ARGS));
+    void               ((*compare)(COMPARE_ARGS));
+    void               ((*plot_val)(PLOT_VAL_ARGS));
+    void               ((*print_val)(PRINT_VAL_ARGS));
+    void               ((*ipc_val)(IPC_VAL_ARGS));
 } Evt_Udn_Info_t;
 
 
