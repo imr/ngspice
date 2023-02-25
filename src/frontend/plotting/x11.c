@@ -1189,6 +1189,9 @@ void RemoveWindow(GRAPH *graph)
         DEVDEP(graph).isopen = 0;
         /* MW. Not sure but DestroyGraph might free() too much - try Xt...() first */
         XtUnmapWidget(DEVDEP(graph).shell);
+#ifdef HAVE_LIBXFT
+        XftDrawDestroy(DEVDEP(graph).draw);
+#endif
         XtDestroyWidget(DEVDEP(graph).shell);
 #ifndef HAVE_LIBXFT
         XFreeFont(display, DEVDEP(graph).font);
@@ -1198,7 +1201,6 @@ void RemoveWindow(GRAPH *graph)
 #ifdef HAVE_LIBXFT
         XftFontClose( display, DEVDEP(graph).font0);
         XftFontClose( display, DEVDEP(graph).font90);
-        XftDrawDestroy(DEVDEP(graph).draw);
         XftColorFree(display, DefaultVisual(display, 0), DEVDEP(graph).cmap, &DEVDEP(graph).color);
 #endif
     }
