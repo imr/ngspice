@@ -61,6 +61,9 @@ struct coreInfo_t {
     const char *  ((*dllitf_cm_get_node_name)(const char *, unsigned int));
     bool          ((*dllitf_cm_probe_node)(unsigned int, unsigned int,
                                            void *));
+        bool      ((*dllitf_cm_schedule_output)(unsigned int, unsigned int,
+                                                double, void *));
+        bool      ((*dllitf_cm_getvar)(char *, enum cp_types, void *, size_t));
 	Complex_t ((*dllitf_cm_complex_set)(double, double));
 	Complex_t ((*dllitf_cm_complex_add)(Complex_t, Complex_t));
 	Complex_t ((*dllitf_cm_complex_subtract)(Complex_t, Complex_t));

@@ -98,6 +98,10 @@ double cm_netlist_get_l(void);
 
 const char *cm_get_node_name(const char *, unsigned int);
 bool        cm_probe_node(unsigned int, unsigned int, void *);
+bool        cm_schedule_output(unsigned int, unsigned int, double, void *);
+
+enum cp_types;
+bool        cm_getvar(char *, enum cp_types, void *, size_t);
 
 Complex_t cm_complex_set(double real, double imag);
 Complex_t cm_complex_add(Complex_t x, Complex_t y);
