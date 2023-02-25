@@ -50,6 +50,7 @@ NON-STANDARD FEATURES
 
 #include "ngspice/mifproto.h"
 #include "ngspice/evtproto.h"
+#include "ngspice/cmproto.h"
 
 
 static void EVTcreate_state(
@@ -126,7 +127,6 @@ int EVTload(
 
     cm_data.circuit.call_type = MIF_EVENT_DRIVEN;
     cm_data.circuit.temperature = ckt->CKTtemp - 273.15;
-
 
     /* Setup data needed by cm_... functions */
 
@@ -455,6 +455,51 @@ static void EVTadd_msg(
 
 }
 
+
+/* This is a code-model library function.  Placed here to use local
+ * static functions.
+ */
+
+bool cm_schedule_output(unsigned int conn_index, unsigned int port_index,
+                        double delay, void *vp)
+{
+    MIFinstance        *instance;
+    Mif_Conn_Data_t    *conn;
+    Mif_Port_Data_t    *port;
+    Evt_Node_Info_t    *node_info;
+    Evt_Output_Event_t *output_event;
+    int                 udn_index;
+
+    if (delay < 0 || g_mif_info.circuit.anal_type != MIF_TRAN)
+        return FALSE;
+    instance = g_mif_info.instance;
+    if (conn_index >= (unsigned int)instance->num_conn)
+        return FALSE;
+    conn = instance->conn[conn_index];
+    if (port_index >= (unsigned int)conn->size)
+        return FALSE;
+    port = conn->port[port_index];
+    if (port->type != MIF_DIGITAL && port->type != MIF_USER_DEFINED)
+        return FALSE;
+
+    /* Get an output structure and copy the new value. */
+
+    output_event = EVTget_output_event(g_mif_info.ckt, port);
+    node_info =
+        g_mif_info.ckt->evt->info.node_table[port->evt_data.node_index];
+    udn_index = node_info->udn_index;
+    g_evt_udn_info[node_info->udn_index]->copy(vp, output_event->value);
+
+    /* Queue the output. */
+
+    if (port->invert)
+        g_evt_udn_info[udn_index]->invert(output_event->value);
+    EVTqueue_output(g_mif_info.ckt, port->evt_data.output_index,
+                    udn_index, output_event,
+                    g_mif_info.circuit.evt_step,
+                    g_mif_info.circuit.evt_step + delay);
+    return TRUE;
+}
 
 /*
 EVTprocess_output
