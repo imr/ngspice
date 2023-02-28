@@ -485,12 +485,15 @@ void gr_point(struct dvec *dv,
     case PLOT_RETLIN:
         /* If it's a linear plot, ignore first point since we don't
            want to connect with oldx and oldy. */
-        if (np)
+        if (np) {
 #ifdef LINE_COMPRESSION_CHECKS
             drawLine(fromx, fromy, tox, toy, dv);
 #else
             drawLine(fromx, fromy, tox, toy);
 #endif
+        } else {
+            LC_flush(); // May be retrace with non-monotonic x-axis
+        }
 
         if ((tics = currentgraph->ticdata) != NULL) {
             for (; *tics < HUGE; tics++)
