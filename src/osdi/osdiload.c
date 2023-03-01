@@ -137,9 +137,7 @@ extern int OSDIload(GENmodel *inModel, CKTcircuit *ckt) {
       .flags = CALC_RESIST_JACOBIAN,
   };
 
-  if (is_init_smsig || is_sweep) {
-    sim_info.flags |= CALC_OP;
-  }
+  sim_info.flags |= CALC_OP;
 
   if (is_dc) {
     sim_info.flags |= ANALYSIS_DC | ANALYSIS_STATIC;
