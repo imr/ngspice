@@ -776,7 +776,7 @@ struct card *replacement_udevice_cards(void)
         translated_p = add_xlator(translated_p, x);
 
     }
-    if (ps_port_directions & 2) {
+    if (current_subckt && (ps_port_directions & 2)) {
         char *tmp = NULL, *pos = NULL, *posp = NULL;
         tmp = TMALLOC(char, strlen(current_subckt) + 1);
         (void) memcpy(tmp, current_subckt, strlen(current_subckt) + 1);
@@ -809,7 +809,7 @@ struct card *replacement_udevice_cards(void)
             nextcard = insert_new_line(nextcard, new_str, 0, 0);
         }
     }
-    if (ps_port_directions & 2) {
+    if (current_subckt && (ps_port_directions & 2)) {
         char *p1 = NULL, *p2 = NULL;
         DS_CREATE(tmpds, 64);
         p1 = strstr(current_subckt, ".subckt");
