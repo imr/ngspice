@@ -16,7 +16,7 @@
 # problem to the user.
 AC_PREREQ([2.59])
 
-m4_define([ngspice_major_version], [39])
+m4_define([ngspice_major_version], [39+])
 m4_define([ngspice_minor_version], [0])
 m4_define([ngspice_version],
       [ngspice_major_version])
@@ -31,7 +31,7 @@ AC_REVISION([$Revision: ngspice_version$])
 AC_CONFIG_SRCDIR([src/ngspice.c])
 
 # Create a configuration header
-AC_CONFIG_HEADER([src/include/ngspice/config.h])
+AC_CONFIG_HEADERS([src/include/ngspice/config.h])
 
 # Initialize automake stuff
 AM_INIT_AUTOMAKE([-Wall -Werror nostdinc serial-tests])
@@ -360,19 +360,11 @@ if test "x$enable_gprof" = xyes; then
 fi
 
 # Checks for ANSI-C header files.
-AC_HEADER_STDC
+
 AC_CHECK_HEADERS([strings.h])
 
 if test "x$enable_ansi" = xyes; then
-    AC_PROG_CC()
-    AC_DIAGNOSE([obsolete], [AM_PROG_CC_STDC:
-	your code should no longer depend upon `am_cv_prog_cc_stdc', but upon
-	`ac_cv_prog_cc_stdc'.  Remove this warning and the assignment when
-	you adjust the code.  You can also remove the above call to
-	AC_PROG_CC if you already called it elsewhere.])
-    am_cv_prog_cc_stdc=$ac_cv_prog_cc_stdc
-
-    if test "x$am_cv_prog_cc_stdc" != xyes ; then
+    if test "x$ac_cv_prog_cc_stdc" != xyes ; then
         AC_MSG_WARN([Failed to find Ansi flag!])
     fi
 fi
@@ -652,15 +644,8 @@ AC_SUBST([TCL_LIB_SPEC])
 #
 #################################################################
 
-
-
 # Checks for programs
-AC_LIBTOOL_WIN32_DLL
-AC_LIBTOOL_DLOPEN
 AM_PROG_CC_C_O
-## AM_PROG_LIBTOOL
-AC_PROG_LIBTOOL
-
 
 # --with-windows : the user wants to use generate the MS WINDOWS GUI executable
 # old command version, deprecated, use --with-wingui
@@ -759,7 +744,6 @@ AC_TYPE_SIZE_T
 # Checks for library functions.
 AC_FUNC_CLOSEDIR_VOID
 AC_FUNC_SELECT_ARGTYPES
-AC_FUNC_SETVBUF_REVERSED
 AC_FUNC_VPRINTF
 
 #  Check if the user wants to use the appropriate rpath commands to compile in
@@ -888,7 +872,6 @@ AM_CONDITIONAL([OLDAPPS], [test "x$enable_oldapps" = xyes])
 
 # Check for a few typdefs:
 AC_TYPE_PID_T
-AC_TYPE_SIGNAL
 
 # sighandler_t is the type of the signal handler on GNU variants,
 # sig_t is the type of a signal handler on 4.4BSD's,
@@ -907,7 +890,6 @@ AC_CHECK_HEADERS([arpa/inet.h netdb.h netinet/in.h stddef.h sys/file.h sys/param
 
 
 # Check time and resources headers and functions:
-AC_HEADER_TIME
 AC_STRUCT_TM
 AC_STRUCT_TIMEZONE
 AC_CHECK_FUNCS([localtime])

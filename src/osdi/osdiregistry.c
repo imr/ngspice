@@ -302,6 +302,7 @@ extern OsdiObjectFile load_object_file(const char *input) {
    * nghash_insert returns NULL if the key (handle) was not already in the table
    * and the data (DUMMYDATA) that was previously insered (!= NULL) otherwise*/
   if (nghash_insert(known_object_files, handle, DUMMYDATA)) {
+    txfree(path);
     return EMPTY_OBJECT;
   }
 
@@ -313,6 +314,7 @@ extern OsdiObjectFile load_object_file(const char *input) {
     printf("NGSPICE only supports OSDI v%d.%d but \"%s\" targets v%d.%d!",
            OSDI_VERSION_MAJOR_CURR, OSDI_VERSION_MINOR_CURR, path,
            OSDI_VERSION_MAJOR, OSDI_VERSION_MINOR);
+    txfree(path);
     return INVALID_OBJECT;
   }
 
@@ -338,7 +340,6 @@ extern OsdiObjectFile load_object_file(const char *input) {
   for (uint32_t i = 0; i < lim_table_len; i++) {
     int expected_args = -1;
     IS_LIM_FUN("pnjlim", 2, osdi_pnjlim)
-    IS_LIM_FUN("typedpnjlim", 3, osdi_typedpnjlim)
     IS_LIM_FUN("limvds", 0, osdi_limvds)
     IS_LIM_FUN("fetlim", 1, osdi_fetlim)
     IS_LIM_FUN("limitlog", 1, osdi_limitlog)
@@ -384,6 +385,7 @@ extern OsdiObjectFile load_object_file(const char *input) {
     };
   }
 
+  txfree(path);
   return (OsdiObjectFile){
       .entrys = dst,
       .num_entries = (int)OSDI_NUM_DESCRIPTORS,

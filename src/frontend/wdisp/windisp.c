@@ -645,14 +645,7 @@ LRESULT CALLBACK PlotWindowProc(HWND hwnd, UINT uMsg,
 
     case WM_CLOSE: /* close window */
     {
-        GRAPH *g = pGraph(hwnd);
 
-        if (g) {
-            /* if g equals currentgraph, reset currentgraph. */
-            if (g == currentgraph)
-                currentgraph = NULL;
-            DestroyGraph(g->graphid);
-        }
     }
     goto WIN_DEFAULT;
 
@@ -1233,6 +1226,13 @@ void RemoveWindow(GRAPH *dgraph)
     wd = pWindowData(dgraph);
     if (wd)
         SendMessage(wd->wnd, WM_CLOSE, (WPARAM) wd->hDC, 0);
+
+    if (dgraph) {
+        /* if g equals currentgraph, reset currentgraph. */
+        if (dgraph == currentgraph)
+            currentgraph = NULL;
+        DestroyGraph(dgraph->graphid);
+    }
 }
 
 

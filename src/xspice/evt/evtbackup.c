@@ -577,7 +577,7 @@ static void EVTbackup_output_queue(
         output = *output_ptr;
 
         while(output) {
-            if (output->posted_time < new_time)
+            if(output->event_time > new_time)
                 break;
             output_ptr = &((*output_ptr)->next);
             output = *output_ptr;
@@ -618,17 +618,26 @@ static void EVTbackup_output_queue(
     }
     output_queue->next_time = next_time;
 
-    /* Update the modified list by looking for any queued events */
-    /* with posted time > last_time */
+    /* Update the modified list by looking for events that were processed
+     * or queued in the current timestep.
+     */
+
     for(i = 0, j = 0; i < num_modified; i++) {
 
         output_index = output_queue->modified_index[i];
         output = *(output_queue->last_step[output_index]);
 
-        while(output) {
-            if(output->posted_time > output_queue->last_time)
-                break;
-            output = output->next;
+        if (output_queue->current[output_index] ==
+            output_queue->last_step[output_index]) {
+            /* Nothing now removed from the queue,
+             * but it may have been modified by an addition.
+	     */
+
+            while(output) {
+                if(output->posted_time > output_queue->last_time)
+                    break;
+                output = output->next;
+            }
         }
 
         if(! output) {

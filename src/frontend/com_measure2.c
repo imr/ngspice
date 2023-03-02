@@ -491,14 +491,13 @@ com_measure_when(
                 crossCnt = 0;
                 if (value < value2) {
                     section = S_BELOW_VAL;
-                    if ((prevValue <= value2) && (value >= value2)) {
+                    if (prevValue >= prevValue2) {
                         fallCnt = 1;
                         crossCnt = 1;
                     }
-
                 } else {
                     section = S_ABOVE_VAL;
-                    if ((prevValue <= value2) && (value >= value2)) {
+                    if (prevValue < prevValue2) {
                         riseCnt = 1;
                         crossCnt = 1;
                     }
@@ -509,14 +508,13 @@ com_measure_when(
                 crossCnt = 0;
                 if (value < meas->m_val) {
                     section = S_BELOW_VAL;
-                    if ((prevValue <= meas->m_val) && (value >= meas->m_val)) {
+                    if (prevValue >= meas->m_val) {
                         fallCnt = 1;
                         crossCnt = 1;
                     }
-
                 } else {
                     section = S_ABOVE_VAL;
-                    if ((prevValue <= meas->m_val) && (value >= meas->m_val)) {
+                    if (prevValue < meas->m_val) {
                         riseCnt = 1;
                         crossCnt = 1;
                     }
@@ -1699,7 +1697,10 @@ get_measure2(
             goto err_ret1;
         }
         // measure targ
-        com_measure_when(measTarg);
+        if (measTarg->m_at == 1e99)
+            com_measure_when(measTarg);
+        else
+            measTarg->m_measured = measTarg->m_at;
 
         if (isnan(measTarg->m_measured)) {
             sprintf(errbuf, "out of interval\n");

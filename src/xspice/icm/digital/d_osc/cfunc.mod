@@ -20,6 +20,7 @@ MODIFICATIONS
     23 Aug 1991    Jeffrey P. Murray
     30 Sep 1991    Jeffrey P. Murray
     09 Nov 2022    Holger Vogt
+    05 Jan 2023    Robert Turnbull
 
 SUMMARY
 
@@ -54,7 +55,7 @@ NON-STANDARD FEATURES
 
 #include "d_osc.h"    /*    ...contains macros & type defns.
                                for this model.  7/24/91 - JPM */
-
+#include <stdlib.h>
 
 
 /*=== CONSTANTS ========================*/
@@ -180,7 +181,6 @@ static void cm_d_osc_callback(ARGS,
 *                                                            *
 *************************************************************/
 
-#include <stdlib.h>
 
 void cm_d_osc(ARGS)
 {

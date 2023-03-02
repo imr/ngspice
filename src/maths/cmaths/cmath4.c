@@ -773,7 +773,9 @@ cx_fft(void *data, short int type, int length, int *newlength, short int *newtyp
         fftw_execute(plan_forward);
 
         scale = (double) fpts - 1.0;
-        for (i = 0; i < fpts; i++) {
+        outdata[0].cx_real = out[0][0]/scale/2.0;
+        outdata[0].cx_imag = 0.0;
+        for (i = 1; i < fpts; i++) {
             outdata[i].cx_real = out[i][0]/scale;
             outdata[i].cx_imag = out[i][1]/scale;
         }
@@ -798,7 +800,7 @@ cx_fft(void *data, short int type, int length, int *newlength, short int *newtyp
 
         scale = (double) fpts - 1.0;
         /* Re(x[0]), Re(x[N/2]), Re(x[1]), Im(x[1]), Re(x[2]), Im(x[2]), ... Re(x[N/2-1]), Im(x[N/2-1]). */
-        outdata[0].cx_real = datax[0]/scale;
+        outdata[0].cx_real = datax[0]/scale/2.0;
         outdata[0].cx_imag = 0.0;
         for (i = 1; i < fpts-1; i++) {
             outdata[i].cx_real = datax[2*i]/scale;

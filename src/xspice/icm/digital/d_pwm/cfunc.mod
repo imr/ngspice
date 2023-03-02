@@ -20,6 +20,7 @@ MODIFICATIONS
     23 Aug 1991    Jeffrey P. Murray
     30 Sep 1991    Jeffrey P. Murray
     06 Oct 2022    Holger Vogt
+    05 Jan 2023    Robert Turnbull
 
 SUMMARY
 
@@ -54,6 +55,7 @@ NON-STANDARD FEATURES
 
 #include "d_pwm.h"    /*    ...contains macros & type defns.
                                for this model.  7/24/91 - JPM */
+#include <stdlib.h>
 
 
 
@@ -182,7 +184,6 @@ static void cm_d_pwm_callback(ARGS,
 *                                                            *
 *************************************************************/
 
-#include <stdlib.h>
 
 void cm_d_pwm(ARGS)
 {

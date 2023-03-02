@@ -198,12 +198,11 @@ This file describes the procedures to install ngspice from sources.
 
  1.5.1 Most useful options:
 
- --enable-adms
-        ADMS is an experimental model compiler that translates
-        Verilog-A compact models into C code that can be compiled into
-        ngspice. This is (as of ngspice-27) still experimental, some
-        features (e.g. noise) are missing. If you want to use it, please
-        refer to the ADMS section on ngspice web site.
+ --enable-osdi
+        Add the OSDI interface to ngspice. This interface allow to dynamically
+        load compiled Veriloag-A compact models. Compiling is done with
+        OpenVAF. Thus for the first time ngspice has access to modern
+        device models like BSOMBULK or BSIM_CMG.
 
  --enable-cider
         Cider is a mixed-level simulator that couples Spice3 and DSIM
@@ -245,6 +244,7 @@ This file describes the procedures to install ngspice from sources.
  --enable-shortcheck
         Enables a 'make check' with strongly reduced runtime. Besides some
         regression tests only BSIM3 and BSM4 devices are checked.
+
 
 1.5.2 Options Specific to Enable Ngspice as a shared library
 
