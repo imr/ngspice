@@ -485,6 +485,7 @@ _cthread_run(void *controls)
 #ifdef HAVE_LIBPTHREAD
     cont_condition = FALSE;
 #endif
+    wl_free(controls);
     return NULL;
 }
 
@@ -608,6 +609,7 @@ exec_controls(wordlist *newcontrols)
     wordlist *wl;
     for (wl = shcontrols; wl; wl = wl->wl_next)
         cp_evloop(wl->wl_word);
+    wl_free(shcontrols);
 #endif
 }
 
