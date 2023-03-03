@@ -2625,6 +2625,7 @@ static char *get_delays_ugate(char *rem)
 {
     char *rising, *falling, *delays = NULL;
     struct timing_data *tdp1, *tdp2;
+    BOOL has_rising = FALSE, has_falling = FALSE;
 
     tdp1 = create_min_typ_max("tplh", rem);
     estimate_typ(tdp1);
@@ -2632,13 +2633,19 @@ static char *get_delays_ugate(char *rem)
     tdp2 = create_min_typ_max("tphl", rem);
     estimate_typ(tdp2);
     falling = get_estimate(tdp2);
-    if (rising && falling) {
-        if (strlen(rising) > 0 && strlen(falling) > 0) {
+    has_rising = (rising && strlen(rising) > 0);
+    has_falling = (falling && strlen(falling) > 0);
+    if (has_rising) {
+        if (has_falling) {
             delays = tprintf("(inertial_delay=true rise_delay = %s fall_delay = %s)",
                             rising, falling);
-        } else {
-            delays = get_zero_rise_fall();
+        } else { /* use rising for both rise/fall */
+            delays = tprintf("(inertial_delay=true rise_delay = %s fall_delay = %s)",
+                            rising, rising);
         }
+    } else if (has_falling) { /* use falling for both rise/fall */
+        delays = tprintf("(inertial_delay=true rise_delay = %s fall_delay = %s)",
+                        falling, falling);
     } else {
         delays = get_zero_rise_fall();
     }
@@ -2655,6 +2662,7 @@ static char *get_delays_utgate(char *rem)
     struct timing_data *tdp3, *tdp4, *tdp5, *tdp6;
     char *tplz, *tphz, *tpzl, *tpzh, *larger, *larger1, *larger2, *larger3;
     BOOL use_zdelays = FALSE;
+    BOOL has_rising = FALSE, has_falling = FALSE;
 
     tdp1 = create_min_typ_max("tplh", rem);
     estimate_typ(tdp1);
@@ -2662,14 +2670,16 @@ static char *get_delays_utgate(char *rem)
     tdp2 = create_min_typ_max("tphl", rem);
     estimate_typ(tdp2);
     falling = get_estimate(tdp2);
-    if (rising && strlen(rising) > 0) {
-        if (falling && strlen(falling) > 0) {
+    has_rising = (rising && strlen(rising) > 0);
+    has_falling = (falling && strlen(falling) > 0);
+    if (has_rising) {
+        if (has_falling) {
             larger = larger_delay(rising, falling);
             delays = tprintf("(inertial_delay=true delay = %s)", larger);
         } else {
             delays = tprintf("(inertial_delay=true delay = %s)", rising);
         }
-    } else if (falling && strlen(falling) > 0) {
+    } else if (has_falling) {
         delays = tprintf("(inertial_delay=true delay = %s)", falling);
     } else if (use_zdelays) {
         /* No lh/hl delays, so try the largest lz/hz/zl/zh delay */
