@@ -674,47 +674,47 @@ static void gen_models(void)
 
     ds_clear(&model);
     ds_cat_printf(&model,
-    ".model d_inv_zero_delay d_inverter(rise_delay=1.0e-12 fall_delay=1.0e-12)");
+    ".model d_inv_zero_delay d_inverter(inertial_delay=true rise_delay=1.0e-12 fall_delay=1.0e-12)");
     u_add_instance(ds_get_buf(&model));
 
     ds_clear(&model);
     ds_cat_printf(&model,
-    ".model d__inverter__1 d_inverter(rise_delay=1.0e-12 fall_delay=1.0e-12)");
+    ".model d__inverter__1 d_inverter(inertial_delay=true rise_delay=1.0e-12 fall_delay=1.0e-12)");
     u_add_instance(ds_get_buf(&model));
 
     ds_clear(&model);
     ds_cat_printf(&model,
-    ".model d__buffer__1 d_buffer(rise_delay=1.0e-12 fall_delay=1.0e-12)");
+    ".model d__buffer__1 d_buffer(inertial_delay=true rise_delay=1.0e-12 fall_delay=1.0e-12)");
     u_add_instance(ds_get_buf(&model));
 
     ds_clear(&model);
     ds_cat_printf(&model,
-    ".model d__nand__1 d_nand(rise_delay=1.0e-12 fall_delay=1.0e-12)");
+    ".model d__nand__1 d_nand(inertial_delay=true rise_delay=1.0e-12 fall_delay=1.0e-12)");
     u_add_instance(ds_get_buf(&model));
 
     ds_clear(&model);
     ds_cat_printf(&model,
-    ".model d__and__1 d_and(rise_delay=1.0e-12 fall_delay=1.0e-12)");
+    ".model d__and__1 d_and(inertial_delay=true rise_delay=1.0e-12 fall_delay=1.0e-12)");
     u_add_instance(ds_get_buf(&model));
 
     ds_clear(&model);
     ds_cat_printf(&model,
-    ".model d__xnor__1 d_xnor(rise_delay=1.0e-12 fall_delay=1.0e-12)");
+    ".model d__xnor__1 d_xnor(inertial_delay=true rise_delay=1.0e-12 fall_delay=1.0e-12)");
     u_add_instance(ds_get_buf(&model));
 
     ds_clear(&model);
     ds_cat_printf(&model,
-    ".model d__xor__1 d_xor(rise_delay=1.0e-12 fall_delay=1.0e-12)");
+    ".model d__xor__1 d_xor(inertial_delay=true rise_delay=1.0e-12 fall_delay=1.0e-12)");
     u_add_instance(ds_get_buf(&model));
 
     ds_clear(&model);
     ds_cat_printf(&model,
-    ".model d__nor__1 d_nor(rise_delay=1.0e-12 fall_delay=1.0e-12)");
+    ".model d__nor__1 d_nor(inertial_delay=true rise_delay=1.0e-12 fall_delay=1.0e-12)");
     u_add_instance(ds_get_buf(&model));
 
     ds_clear(&model);
     ds_cat_printf(&model,
-    ".model d__or__1 d_or(rise_delay=1.0e-12 fall_delay=1.0e-12)");
+    ".model d__or__1 d_or(inertial_delay=true rise_delay=1.0e-12 fall_delay=1.0e-12)");
     u_add_instance(ds_get_buf(&model));
 
     ds_free(&model);
@@ -2015,11 +2015,11 @@ static BOOL extract_delay(
                         if (ds_get_length(&dtyp_max_str) > 0) {
                             if (tri) {
                                 ds_cat_printf(&delay_string,
-                                    "(delay=%s)",
+                                    "(inertial_delay=true delay=%s)",
                                     ds_get_buf(&dtyp_max_str));
                             } else {
                                 ds_cat_printf(&delay_string,
-                                    "(rise_delay=%s fall_delay=%s)",
+                                    "(inertial_delay=true rise_delay=%s fall_delay=%s)",
                                     ds_get_buf(&dtyp_max_str),
                                     ds_get_buf(&dtyp_max_str));
                             }
@@ -2027,10 +2027,10 @@ static BOOL extract_delay(
                             printf("WARNING pindly DELAY not found\n");
                             if (tri) {
                                 ds_cat_printf(&delay_string,
-                                    "(delay=10ns)");
+                                    "(inertial_delay=true delay=10ns)");
                             } else {
                                 ds_cat_printf(&delay_string,
-                                    "(rise_delay=10ns fall_delay=10ns)");
+                                    "(inertial_delay=true rise_delay=10ns fall_delay=10ns)");
                             }
                         }
                         for (i = 0; i < idx; i++) {
