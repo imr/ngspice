@@ -748,7 +748,7 @@ struct card *replacement_udevice_cards(void)
     }
     if (add_zero_delay_inverter_model) {
         x = create_xlate_translated(
-        ".model d_zero_inv99 d_inverter(rise_delay=1.0e-12 fall_delay=1.0e-12)");
+        ".model d_zero_inv99 d_inverter(inertial_delay=true rise_delay=1.0e-12 fall_delay=1.0e-12)");
         translated_p = add_xlator(translated_p, x);
     }
     if (add_drive_hilo) {
@@ -757,7 +757,7 @@ struct card *replacement_udevice_cards(void)
         x = create_xlate_translated("a1 0 drive___0 dbuf1");
         translated_p = add_xlator(translated_p, x);
         x = create_xlate_translated(
-        ".model dbuf1 d_buffer(rise_delay=1.0e-12 fall_delay=1.0e-12)");
+        ".model dbuf1 d_buffer(inertial_delay=true rise_delay=1.0e-12 fall_delay=1.0e-12)");
         translated_p = add_xlator(translated_p, x);
         x = create_xlate_translated(".ends hilo_dollar___lo");
         translated_p = add_xlator(translated_p, x);
@@ -766,7 +766,7 @@ struct card *replacement_udevice_cards(void)
         x = create_xlate_translated("a2 0 drive___1 dinv1");
         translated_p = add_xlator(translated_p, x);
         x = create_xlate_translated(
-        ".model dinv1 d_inverter(rise_delay=1.0e-12 fall_delay=1.0e-12)");
+        ".model dinv1 d_inverter(inertial_delay=true rise_delay=1.0e-12 fall_delay=1.0e-12)");
         translated_p = add_xlator(translated_p, x);
         x = create_xlate_translated(".ends hilo_dollar___hi");
         translated_p = add_xlator(translated_p, x);
@@ -891,7 +891,7 @@ void initialize_udevice(char *subckt_line)
     model_xlatorp = create_xlator();
     default_models = create_xlator();
     /*  .model d0_gate ugate ()  */
-    xdata = create_xlate("", "(rise_delay=1.0e-12 fall_delay=1.0e-12)",
+    xdata = create_xlate("", "(inertial_delay=true rise_delay=1.0e-12 fall_delay=1.0e-12)",
         "ugate", "", "d0_gate", "");
     (void) add_xlator(default_models, xdata);
     /*  .model d0_gff ugff ()  */
@@ -903,7 +903,7 @@ void initialize_udevice(char *subckt_line)
     xdata = create_xlate("", "", "ueff", "", "d0_eff", "");
     (void) add_xlator(default_models, xdata);
     /*  .model d0_tgate utgate ()  */
-    xdata = create_xlate("", "(delay=1.0e-12)",
+    xdata = create_xlate("", "(inertial_delay=true delay=1.0e-12)",
         "utgate", "", "d0_tgate", "");
     (void) add_xlator(default_models, xdata);
     /* reset for the new subckt */
@@ -2618,7 +2618,7 @@ static char *larger_delay(char *delay1, char *delay2)
 static char *get_zero_rise_fall(void)
 {
     /* The caller needs to tfree the returned string after use */
-    return tprintf("(rise_delay=1.0e-12 fall_delay=1.0e-12)");
+    return tprintf("(inertial_delay=true rise_delay=1.0e-12 fall_delay=1.0e-12)");
 }
 
 static char *get_delays_ugate(char *rem)
@@ -2634,7 +2634,7 @@ static char *get_delays_ugate(char *rem)
     falling = get_estimate(tdp2);
     if (rising && falling) {
         if (strlen(rising) > 0 && strlen(falling) > 0) {
-            delays = tprintf("(rise_delay = %s fall_delay = %s)",
+            delays = tprintf("(inertial_delay=true rise_delay = %s fall_delay = %s)",
                             rising, falling);
         } else {
             delays = get_zero_rise_fall();
@@ -2665,12 +2665,12 @@ static char *get_delays_utgate(char *rem)
     if (rising && strlen(rising) > 0) {
         if (falling && strlen(falling) > 0) {
             larger = larger_delay(rising, falling);
-            delays = tprintf("(delay = %s)", larger);
+            delays = tprintf("(inertial_delay=true delay = %s)", larger);
         } else {
-            delays = tprintf("(delay = %s)", rising);
+            delays = tprintf("(inertial_delay=true delay = %s)", rising);
         }
     } else if (falling && strlen(falling) > 0) {
-        delays = tprintf("(delay = %s)", falling);
+        delays = tprintf("(inertial_delay=true delay = %s)", falling);
     } else if (use_zdelays) {
         /* No lh/hl delays, so try the largest lz/hz/zl/zh delay */
         tdp3 = create_min_typ_max("tplz", rem);
@@ -2716,16 +2716,16 @@ static char *get_delays_utgate(char *rem)
             larger3 = larger2;
         }
         if (larger3) {
-            delays = tprintf("(delay = %s)", larger3);
+            delays = tprintf("(inertial_delay=true delay = %s)", larger3);
         } else {
-            delays = tprintf("(delay=1.0e-12)");
+            delays = tprintf("(inertial_delay=true delay=1.0e-12)");
         }
         delete_timing_data(tdp3);
         delete_timing_data(tdp4);
         delete_timing_data(tdp5);
         delete_timing_data(tdp6);
     } else { // Not use_zdelays
-        delays = tprintf("(delay=1.0e-12)");
+        delays = tprintf("(inertial_delay=true delay=1.0e-12)");
     }
     delete_timing_data(tdp1);
     delete_timing_data(tdp2);
