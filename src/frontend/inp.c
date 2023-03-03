@@ -1122,7 +1122,8 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             inputdir = dir_name;
 #endif
             if (cp_getvar("controlswait", CP_BOOL, NULL, 0)) {
-                exec_controls(wl_copy(wl));
+                if (wl)
+                    exec_controls(wl_copy(wl));
                 break;
             }
             else
