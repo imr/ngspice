@@ -2639,13 +2639,13 @@ static char *get_delays_ugate(char *rem)
         if (has_falling) {
             delays = tprintf("(inertial_delay=true rise_delay = %s fall_delay = %s)",
                             rising, falling);
-        } else { /* use rising for both rise/fall */
-            delays = tprintf("(inertial_delay=true rise_delay = %s fall_delay = %s)",
-                            rising, rising);
+        } else {
+            delays = tprintf("(inertial_delay=true rise_delay = %s fall_delay = 1.0e-12)",
+                            rising);
         }
-    } else if (has_falling) { /* use falling for both rise/fall */
-        delays = tprintf("(inertial_delay=true rise_delay = %s fall_delay = %s)",
-                        falling, falling);
+    } else if (has_falling) {
+        delays = tprintf("(inertial_delay=true rise_delay = 1.0e-12 fall_delay = %s)",
+                        falling);
     } else {
         delays = get_zero_rise_fall();
     }
