@@ -313,6 +313,12 @@ void inp_probe(struct card* deck)
                     /* to make the nodes unique */
                     snprintf(nodebuf, 12, "%d", i);
                     nodename = get_terminal_name(instname, nodebuf, instances);
+                    if (!nodename || *nodename == '\0') {
+                        fprintf(stderr, "Warning: Cannot find node name %d in line %s\n", i, curr_line);
+                        fprintf(stderr, "    Instance not ready for .probe command\n");
+                        tfree(thisnode);
+                        continue;
+                    }
                     char* vline = tprintf("vcurr_%s:%s:%s_%s %s %s 0", instname, nodename, thisnode, nodebuf, thisnode, newnode);
                     card = insert_new_line(card, vline, 0, 0);
                     /* special for KiCad: add shunt resistor if thisnode contains 'unconnected' */
@@ -1039,6 +1045,16 @@ static char *get_terminal_name(char* element, char *numberstr, NGHASHPTR instanc
 
         /*Search for the corresponding .subckt line*/
         struct card_assoc* allsubs = xcard->level->subckts;
+
+        if (!allsubs) {
+            char* instline = xcard->line;
+            char* inst = gettok(&instline);
+            fprintf(stderr, "Warning: No .subckt line found during evaluating command .probe (...)!\n");
+            fprintf(stderr, "    failing instance: %s\n", inst);
+            tfree(subcktname);
+            tfree(inst);
+            return tprintf("n%s", numberstr);
+        }
 
         while (allsubs) {
             xcardsubsline = allsubs->line->line;
