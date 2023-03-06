@@ -319,6 +319,12 @@ static char *tmodel_gate_name(int c, BOOL not)
         else
             sprintf(buf, "dxspice_dly_xor");
         break;
+    case '~':
+        if (not)
+            sprintf(buf, "dxspice_dly_inverter");
+        else
+            sprintf(buf, "dxspice_dly_buffer");
+        break;
     default:
         return NULL;
     }
@@ -1229,32 +1235,34 @@ static BOOL gen_gates(PTABLE gate_tab, SYM_TAB parser_symbols)
 
         if (in_count == 1) { // buffer or inverter
             if (gate_op != 0) goto gen_error;
-            ds_cat_str(&gate_name, lex_gate_name('~', found_tilde));
+            gate_op = '~'; // found_tilde specifies inverter or buffer
         } else if (in_count >= 2) { // AND, OR. XOR and inverses
             if (gate_op == 0) goto gen_error;
-            if (use_tmodel_delays) {
-                /* This is the case when logicexp has a UGATE
-                   timing model (not d0_gate) and no pindly.
-                */
-                SYM_TAB entry = NULL;
-                char *nm1 = 0;
-                entry = member_sym_tab(ds_get_buf(&out_name), parser_symbols);
-                if (entry && (entry->attribute & SYM_OUTPUT)) {
-                    nm1 = tmodel_gate_name(gate_op, found_tilde);
-                    if (nm1) {
-                        ds_cat_str(&gate_name, nm1);
-                    }
-                }
-                if (!nm1) {
-                    nm1 = lex_gate_name(gate_op, found_tilde);
-                    ds_cat_str(&gate_name, nm1);
-                }
-            } else {
-                ds_cat_str(&gate_name, lex_gate_name(gate_op, found_tilde));
-            }
         } else {
             goto gen_error;
         }
+
+        if (use_tmodel_delays) {
+            /* This is the case when logicexp has a UGATE
+               timing model (not d0_gate) and no pindly.
+            */
+            SYM_TAB entry = NULL;
+            char *nm1 = 0;
+            entry = member_sym_tab(ds_get_buf(&out_name), parser_symbols);
+            if (entry && (entry->attribute & SYM_OUTPUT)) {
+                nm1 = tmodel_gate_name(gate_op, found_tilde);
+                if (nm1) {
+                    ds_cat_str(&gate_name, nm1);
+                }
+            }
+            if (!nm1) {
+                nm1 = lex_gate_name(gate_op, found_tilde);
+                ds_cat_str(&gate_name, nm1);
+            }
+        } else {
+            ds_cat_str(&gate_name, lex_gate_name(gate_op, found_tilde));
+        }
+
         ds_cat_printf(&instance, "%s ", get_inst_name());
         if (in_count == 1) {
             ds_cat_printf(&instance, "%s %s ", ds_get_buf(&in_names),
@@ -1632,6 +1640,10 @@ BOOL f_logicexp(char *line)
             "d_xor", "dxspice_dly_xor");
         u_add_logicexp_model(parse_lexer->lexer_buf,
             "d_xnor", "dxspice_dly_xnor");
+        u_add_logicexp_model(parse_lexer->lexer_buf,
+            "d_buffer", "dxspice_dly_buffer");
+        u_add_logicexp_model(parse_lexer->lexer_buf,
+            "d_inverter", "dxspice_dly_inverter");
         use_tmodel_delays = TRUE;
     } else {
         use_tmodel_delays = FALSE;
