@@ -4,7 +4,7 @@ Copyright 1990 Regents of the University of California.  All rights reserved.
 Author: 1985 Thomas L. Quarles
 
 Modified to add PS model and new parameter definitions ( Anthony E. Parker ).
-See http://ngspice.sourceforge.net/external-documents/models/psfet.pdf
+See https://ngspice.sourceforge.io/external-documents/models/psfet.pdf
    Copyright 1994  Macquarie University, Sydney Australia.
    10 Feb 1994: Call to PSinstanceinit() added
                 Change gatePotential to phi and used rs and rd for 
