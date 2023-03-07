@@ -75,3 +75,15 @@ Null_Allowed:       yes
 
 
 
+
+PARAMETER_TABLE:
+
+Parameter_Name:     inertial_delay
+Description:        "swallow short pulses"
+Data_Type:          boolean
+Default_Value:      false
+Limits:             -
+Vector:             no
+Vector_Bounds:      -
+Null_Allowed:       yes
+
