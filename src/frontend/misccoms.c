@@ -162,7 +162,7 @@ com_bug(wordlist *wl)
 
     fprintf(cp_out,
             "Please use the ngspice bug tracker at:\n"
-            "http://sourceforge.net/p/ngspice/bugs/\n");
+            "https://sourceforge.net/p/ngspice/bugs/\n");
 }
 
 #endif
