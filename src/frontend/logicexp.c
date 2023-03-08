@@ -347,7 +347,7 @@ static int lex_gate_op(int c)
 static int lex_ident(int c)
 {
     /* Pspice and MicroCap are vague about what defines an identifier */
-    if (isalnum(c) || c == '_' || c == '/' || c == '-')
+    if (isalnum(c) || c == '_' || c == '/' || c == '-' || c == '+')
         return c;
     else
         return 0;
@@ -369,6 +369,11 @@ static int lexer_scan(LEXER lx)
             return c;
         else if (lex_ident(c)) {
             size_t i = 0;
+            if (c == '+') { // an identifier does not begin with '+'
+                lx->lexer_buf[0] = (char) c;
+                lx->lexer_buf[1] = '\0';
+                return LEX_OTHER;
+            }
             while (lex_ident(c)) {
                 if (i >= lx->lexer_blen) {
                     lx->lexer_blen *= 2;
