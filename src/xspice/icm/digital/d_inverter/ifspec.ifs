@@ -52,6 +52,18 @@ Null_Allowed:       yes                         yes
 
 PARAMETER_TABLE:
 
+Parameter_Name:     inertial_delay          family
+Description:        "swallow short pulses"   "Logic family for bridging"
+Data_Type:          boolean                 string
+Default_Value:      false                   -
+Limits:             -                       -
+Vector:             no                      no
+Vector_Bounds:      -                       -
+Null_Allowed:       yes                     yes
+
+
+PARAMETER_TABLE:
+
 Parameter_Name:     input_load
 Description:        "input load value (F)" 
 Data_Type:          real                          
@@ -60,4 +72,11 @@ Limits:             -
 Vector:              no                         
 Vector_Bounds:       -                         
 Null_Allowed:       yes                            
+
+
+STATIC_VAR_TABLE:
+
+Static_Var_Name:    is_inertial
+Data_Type:	    boolean
+Description:        "using inertial delay"
 
