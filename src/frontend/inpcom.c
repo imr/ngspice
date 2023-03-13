@@ -10276,6 +10276,12 @@ void inp_rem_unused_models(struct nscope *root, struct card *deck)
             struct modellist *modl_new;
             modl_new = TMALLOC(struct modellist, 1);
             char *model_type = get_model_type(curr_line);
+            if (!model_type) {
+                fprintf(stderr, "Warning: no model type given in line %s, ignored!\n", curr_line);
+                tfree(modl_new);
+                *curr_line = '*';
+                continue;
+            }
             modl_new->elemb = inp_get_elem_ident(model_type);
             modl_new->modelname = get_subckt_model_name(curr_line);
             modl_new->model = card;
