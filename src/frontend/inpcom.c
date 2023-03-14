@@ -8652,12 +8652,12 @@ static struct card *pspice_compat(struct card *oldcard)
             cut_line = nexttok(cut_line); /* skip .model */
             modname = gettok(&cut_line); /* save model name */
             if (!modname) {
-                fprintf(stderr, "Warning: No model name given for %s\n", curr_line);
+                fprintf(stderr, "Error: No model name given for %s\n", curr_line);
                 controlled_exit(EXIT_BAD);
             }
             modtype = gettok_noparens(&cut_line); /* save model type */
             if (!modtype) {
-                fprintf(stderr, "Warning: No model type given for %s\n", curr_line);
+                fprintf(stderr, "Error: No model type given for %s\n", curr_line);
                 controlled_exit(EXIT_BAD);
             }
             if (cieq(modtype, "NMOS") || cieq(modtype, "PMOS")) {
