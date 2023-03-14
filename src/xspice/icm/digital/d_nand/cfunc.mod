@@ -8,37 +8,31 @@ Public Domain
 Georgia Tech Research Corporation
 Atlanta, Georgia 30332
 PROJECT A-8503-405
-               
 
-AUTHORS                      
+
+AUTHORS
 
     18 June 1991     Jeffrey P. Murray
 
-
-MODIFICATIONS   
+MODIFICATIONS
 
     30 Sept 1991    Jeffrey P. Murray
-                                   
 
 SUMMARY
 
     This file contains the functional description of the d_nand
     code model.
 
+INTERFACES
 
-INTERFACES       
-
-    FILE                 ROUTINE CALLED     
+    FILE                 ROUTINE CALLED
 
     CMevt.c              void *cm_event_alloc()
                          void *cm_event_get_ptr()
-                         
-
 
 REFERENCED FILES
 
     Inputs from and outputs to ARGS structure.
-                     
 
 NON-STANDARD FEATURES
 
@@ -48,38 +42,29 @@ NON-STANDARD FEATURES
 
 /*=== INCLUDE FILES ====================*/
 
-
-                                      
+#include "ngspice/inertial.h"
 
 /*=== CONSTANTS ========================*/
-
-
 
 
 /*=== MACROS ===========================*/
 
 
-
-  
-/*=== LOCAL VARIABLES & TYPEDEFS =======*/                         
+/*=== LOCAL VARIABLES & TYPEDEFS =======*/
 
 
-    
-           
 /*=== FUNCTION PROTOTYPE DEFINITIONS ===*/
-
-
 
 
 /*==============================================================================
 
 FUNCTION cm_d_nand()
 
-AUTHORS                      
+AUTHORS
 
     18 Jun 1991     Jeffrey P. Murray
 
-MODIFICATIONS   
+MODIFICATIONS
 
     30 Sep 1991     Jeffrey P. Murray
 
@@ -87,19 +72,19 @@ SUMMARY
 
     This function implements the d_nand code model.
 
-INTERFACES       
+INTERFACES
 
-    FILE                 ROUTINE CALLED     
+    FILE                 ROUTINE CALLED
 
     CMevt.c              void *cm_event_alloc()
                          void *cm_event_get_ptr()
 
 RETURNED VALUE
-    
+
     Returns inputs and outputs via ARGS structure.
 
 GLOBAL VARIABLES
-    
+
     NONE
 
 NON-STANDARD FEATURES
@@ -118,128 +103,125 @@ NON-STANDARD FEATURES
 *   Created 6/18/91               J.P.Murray    *
 ************************************************/
 
-
-void cm_d_nand(ARGS) 
-
+void cm_d_nand(ARGS)
 {
     int                    i,   /* generic loop counter index */
-	                    size;   /* number of input & output ports */
-         
-                        
+	                size;   /* number of input & output ports */
 
-    Digital_State_t     *out,   /* temporary output for buffers */
-                    *out_old,   /* previous output for buffers  */                               
-                       input;   /* temp storage for input bits  */    
-
+    Digital_State_t      val,   /* Output value. */
+                        *out,   /* temporary output for buffers */
+                       input;   /* temp storage for input bits  */
 
     /** Retrieve size value... **/
     size = PORT_SIZE(in);
 
-                                          
-
     /*** Setup required state variables ***/
 
-    if(INIT) {  /* initial pass */ 
-
+    if(INIT) {  /* initial pass */
         /* allocate storage for the outputs */
-        cm_event_alloc(0,sizeof(Digital_State_t));
+
+        cm_event_alloc(0, sizeof (Digital_State_t));
+
+        /* Inertial delay? */
+
+        STATIC_VAR(is_inertial) =
+            cm_is_inertial(PARAM_NULL(inertial_delay) ? Not_set :
+                         PARAM(inertial_delay));
+        if (STATIC_VAR(is_inertial)) {
+            /* Allocate storage for event time. */
+
+            cm_event_alloc(1, sizeof (struct idata));
+            ((struct idata *)cm_event_get_ptr(1, 0))->when = -1.0;
+        }
+
+        /* Prepare initial output. */
+
+        out = (Digital_State_t *)cm_event_get_ptr(0, 0);
+        *out = (Digital_State_t)(UNKNOWN + 1); // Force initial output.
 
         for (i=0; i<size; i++) LOAD(in[i]) = PARAM(input_load);
-
+    } else {      /* Retrieve previous values */
         /* retrieve storage for the outputs */
-        out = out_old = (Digital_State_t *) cm_event_get_ptr(0,0);
 
-
-    }
-    else {      /* Retrieve previous values */
-                                              
-        /* retrieve storage for the outputs */
         out = (Digital_State_t *) cm_event_get_ptr(0,0);
-        out_old = (Digital_State_t *) cm_event_get_ptr(0,1);
     }
-
-
-                                     
 
     /*** Calculate new output value based on inputs ***/
 
-    *out = ZERO;
+    val = ZERO;
     for (i=0; i<size; i++) {
-
-        /* make sure this input isn't floating... */
-        if ( FALSE == PORT_NULL(in) ) {
-
-            /* if a 0, set *out high */
-            if ( ZERO == (input = INPUT_STATE(in[i])) ) {
-                *out = ONE;
-                break;
-            }
-            else {                    
-                /* if an unknown input, set *out to unknown & break */
-                if ( UNKNOWN == input ) {
-                    *out = UNKNOWN;
-                }
-            }
-        }
-        else {
-            /* at least one port is floating...output is unknown */
-            *out = UNKNOWN;
+        /* if a 0, set *out high */
+        if ( ZERO == (input = INPUT_STATE(in[i])) ) {
+            val = ONE;
             break;
+        } else {
+            /* if an unknown input, set *out to unknown & break */
+            if ( UNKNOWN == input )
+                val = UNKNOWN;
         }
-    }       
-
-
-
-    /*** Determine analysis type and output appropriate values ***/
-
-    if (ANALYSIS == DC) {   /** DC analysis...output w/o delays **/
-                                  
-        OUTPUT_STATE(out) = *out;
-
     }
 
-    else {      /** Transient Analysis **/
+    /*** Check for change and output appropriate values ***/
 
+    if (val == *out) { /* output value is not changing */
+        OUTPUT_CHANGED(out) = FALSE;
+    } else {
+        switch (val) {
 
-        if ( *out != *out_old ) { /* output value is changing */
-
-            switch ( *out ) {
-                                                 
             /* fall to zero value */
-            case 0: OUTPUT_STATE(out) = ZERO;
-                    OUTPUT_DELAY(out) = PARAM(fall_delay);
-                    break;
+        case 0:
+            OUTPUT_DELAY(out) = PARAM(fall_delay);
+            break;
     
             /* rise to one value */
-            case 1: OUTPUT_STATE(out) = ONE;
-                    OUTPUT_DELAY(out) = PARAM(rise_delay);
-                    break;
-                                    
+        case 1:
+            OUTPUT_DELAY(out) = PARAM(rise_delay);
+            break;
+
             /* unknown output */
-            default:
-                    OUTPUT_STATE(out) = *out = UNKNOWN;
-    
-                    /* based on old value, add rise or fall delay */
-                    if (0 == *out_old) {  /* add rising delay */
+        default:
+            /* based on old value, add rise or fall delay */
+            if (0 == *out) {  /* add rising delay */
+                OUTPUT_DELAY(out) = PARAM(rise_delay);
+            } else {                /* add falling delay */
+                OUTPUT_DELAY(out) = PARAM(fall_delay);
+            }
+            break;
+        }
+
+        if (STATIC_VAR(is_inertial) && ANALYSIS == TRANSIENT) {
+            struct idata *idp;
+
+            idp = (struct idata *)cm_event_get_ptr(1, 0);
+            if (idp->when <= TIME) {
+                /* Normal transition. */
+
+                idp->prev = *out;
+                idp->when = TIME + OUTPUT_DELAY(out); // Actual output time
+            } else if (val != idp->prev) {
+                Digital_t ov = {idp->prev, STRONG};
+
+                /* Third value: cancel earlier change and output as usual. */
+
+                cm_schedule_output(1, 0, (idp->when - TIME) / 2.0, &ov);
+		if (val == UNKNOWN) {
+                    /* Delay based in idp->prev, not *out. */
+
+                    if (idp->prev == ZERO)
                         OUTPUT_DELAY(out) = PARAM(rise_delay);
-                    }
-                    else {                /* add falling delay */
+                    else
                         OUTPUT_DELAY(out) = PARAM(fall_delay);
-                    }   
-                    break;
+                }
+                idp->when = TIME + OUTPUT_DELAY(out); // Actual output time
+            } else {
+                /* Changing back: override pending change. */
+
+                OUTPUT_DELAY(out) = (idp->when - TIME) / 2.0; // Override
+		idp->when = -1.0;
             }
         }
-        else {                    /* output value not changing */
-            OUTPUT_CHANGED(out) = FALSE;
-        }
+        *out = val;
+        OUTPUT_STATE(out) = val;
+        OUTPUT_STRENGTH(out) = STRONG;
     }
-
-    OUTPUT_STRENGTH(out) = STRONG;
-
-} 
-
-      
-
-
-
-
+}
