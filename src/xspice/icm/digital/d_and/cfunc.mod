@@ -168,7 +168,7 @@ void cm_d_and(ARGS)
 
     if (val == *out) { /* output value is not changing */
         OUTPUT_CHANGED(out) = FALSE;
-    } else {                    /* output value not changing */
+    } else {
         switch (val) {
 
             /* fall to zero value */
@@ -209,6 +209,14 @@ void cm_d_and(ARGS)
                 /* Third value: cancel earlier change and output as usual. */
 
                 cm_schedule_output(1, 0, (idp->when - TIME) / 2.0, &ov);
+		if (val == UNKNOWN) {
+                    /* Delay based in idp->prev, not *out. */
+
+                    if (idp->prev == ZERO)
+                        OUTPUT_DELAY(out) = PARAM(rise_delay);
+                    else
+                        OUTPUT_DELAY(out) = PARAM(fall_delay);
+                }
                 idp->when = TIME + OUTPUT_DELAY(out); // Actual output time
             } else {
                 /* Changing back: override pending change. */
