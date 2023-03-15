@@ -874,8 +874,13 @@ cx_atanh(void* data, short int type, int length, int* newlength, short int* newt
         ngcomplex_t* cc = (ngcomplex_t*)data;
         int i;
         for (i = 0; i < length; i++) {
+#ifdef _MSC_VER
             _Dcomplex midin = _Cbuild(cc->cx_real, cc->cx_imag);
             _Dcomplex midout = catanh(midin);
+#else
+            double complex midin = cc->cx_real + _Complex_I * cc->cx_imag;
+            double complex midout = catanh(midin);
+#endif
             d[i].cx_real = creal(midout);
             d[i].cx_imag = cimag(midout);
         }
