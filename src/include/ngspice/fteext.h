@@ -74,6 +74,7 @@ extern void *cx_cosh(void *, short int , int , int *, short int *);
 extern void *cx_tan(void *, short int , int , int *, short int *);
 extern void *cx_tanh(void *, short int , int , int *, short int *);
 extern void *cx_atan(void *, short int , int , int *, short int *);
+extern void *cx_atanh(void*, short int, int, int*, short int*);
 extern void *cx_floor(void *, short int , int , int *, short int *);
 extern void *cx_ceil(void *, short int , int , int *, short int *);
 extern void *cx_nint(void *, short int , int , int *, short int *);
