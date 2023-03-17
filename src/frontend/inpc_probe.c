@@ -1264,8 +1264,12 @@ void modprobenames(INPtables* tab) {
             char* name = GENinst->GENname;
             if (prefix("vcurr_", name)) {
                 /* copy from char no. 6 to (and excluding) second colon */
+                char* endname2;
                 char* endname = strchr(name, ':');
-                char* endname2 = strchr(endname + 1, ':');
+                if (endname)
+                    endname2 = strchr(endname + 1, ':');
+                else /* not a single colon, something different? */
+                    continue;
                 /* two-terminal device, one colon, copy all from char no. 6 to (and excluding) colon */
                 if (!endname2) {
                     char* newname = copy_substring(name + 6, endname);
