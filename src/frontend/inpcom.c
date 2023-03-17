@@ -8819,6 +8819,7 @@ static struct card *pspice_compat(struct card *oldcard)
             }
             char *tctok = search_plain_identifier(ntok, "tc");
             if (tctok) {
+                char *tc1, *tc2;
                 char *tctok1 = strchr(tctok, '=');
                 if (tctok1)
                     /* skip '=' */
@@ -8826,8 +8827,23 @@ static struct card *pspice_compat(struct card *oldcard)
                 else
                     /* no '=' found, skip 'tc' */
                     tctok1 = tctok + 2;
-                char *tc1 = gettok_node(&tctok1);
-                char *tc2 = gettok_node(&tctok1);
+                /* tc1 may be an expression, enclosed in {} */
+                if (*tctok1 == '{') {
+                    tc1 = gettok_char(&tctok1, '}', TRUE, TRUE);
+                }
+                else {
+                    tc1 = gettok_node(&tctok1);
+                }
+                /* skip spaces and commas */
+                while (isspace_c(*tctok1) || (*tctok1 == ','))
+                   tctok1++;
+                /* tc2 may be an expression, enclosed in {} */
+                if (*tctok1 == '{') {
+                    tc2 = gettok_char(&tctok1, '}', TRUE, TRUE);
+                }
+                else {
+                    tc2 = gettok_node(&tctok1);
+                }
                 tctok[-1] = '\0';
                 char *newstring;
                 if (tc1 && tc2)
