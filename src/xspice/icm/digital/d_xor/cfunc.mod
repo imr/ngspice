@@ -157,9 +157,7 @@ NON-STANDARD FEATURES
 *   Created 6/18/91               J.P.Murray    *
 ************************************************/
 
-
 void cm_d_xor(ARGS)
-
 {
     int                    i,   /* generic loop counter index */
                         size;   /* number of input & output ports */
@@ -285,8 +283,3 @@ void cm_d_xor(ARGS)
         OUTPUT_STRENGTH(out) = STRONG;
     }
 }
-
-
-
-
-
