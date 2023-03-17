@@ -1272,7 +1272,7 @@ nupa_substitute(dico_t *dico, const char *s, char *r)
             }
 
             if (*kptr == '\0') {
-                err = message(dico, "Closing \"}\" not found.\n");
+                err = message(dico, "Closing \"}\" not found in line fragment\n    {%s.\n", s);
                 goto Lend;
             }
 
