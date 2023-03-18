@@ -5096,6 +5096,8 @@ static int inp_split_multi_param_lines(struct card *card, int line_num)
                             end_param++;
                         if (*end_param == '"')
                             end_param++;
+                    } else if (*end_param == ',' && paren_depth == 0) {
+                        break;
                     } else {
                         while (*end_param != '\0' && *end_param != '"' &&
                                (!isspace_c(*end_param) ||
