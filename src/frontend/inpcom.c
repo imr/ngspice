@@ -5106,11 +5106,11 @@ static int inp_split_multi_param_lines(struct card *card, int line_num)
                                 break;
                             if (*end_param == '{')
                                 ++expression_depth;
-                            if (*end_param == '(')
+                            else if (*end_param == '(')
                                 ++paren_depth;
-                            if (*end_param == '}' && expression_depth > 0)
+                            else if (*end_param == '}' && expression_depth > 0)
                                 --expression_depth;
-                            if (*end_param == ')' && paren_depth > 0)
+                            else if (*end_param == ')' && paren_depth > 0)
                                 --paren_depth;
                             end_param++;
                         }
