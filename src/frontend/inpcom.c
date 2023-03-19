@@ -1538,6 +1538,7 @@ struct inp_read_t inp_read( FILE *fp, int call_depth, const char *dir_name,
             }
             else if (ciprefix("print", buffer) ||
                     ciprefix("eprint", buffer) ||
+                    ciprefix("eprvcd", buffer) ||
                     ciprefix("asciiplot", buffer)) {
                 /* lower case excluded for tokens following output redirection
                  * '>' */
