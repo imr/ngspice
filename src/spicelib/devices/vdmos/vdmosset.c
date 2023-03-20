@@ -44,7 +44,7 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
             model->VDIOjunctionPot = .8;
 
         if (!model->VDIOjunctionCapGiven)
-            model->VDIOjunctionCap = 0.;
+            model->VDIOjunctionCap = 5e-10; /* IRF540, 9540 */
 
         if (!model->VDIOgradCoeffGiven)
             model->VDIOgradCoeff = .5;
