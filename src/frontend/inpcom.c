@@ -9769,8 +9769,14 @@ static struct card *ltspice_compat(struct card *oldcard)
             /* check for the model name */
             int i;
             char *stoks[4];
-            for (i = 0; i < 4; i++)
+            for (i = 0; i < 4; i++) {
                 stoks[i] = gettok_node(&cut_line);
+                if (stoks[i] == NULL) {
+                    fprintf(stderr, "Error in line %d: buggy diode instance line\n    %s\n", card->linenum_orig, card->line);
+                    fprintf(stderr, "At least 'Dxx n1 n2 d' is required.\n");
+                    controlled_exit(EXIT_BAD);
+                }
+            }
             /* rewrite d line and replace it if a model is found */
             if ((nesting > 0) &&
                     find_a_model(modelsfound, stoks[3], subcktline->line)) {
