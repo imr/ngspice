@@ -183,7 +183,6 @@ static int EVTsetup_queues(
 
     Evt_Inst_Event_t    *inst_event;
     Evt_Output_Event_t  *output_event;
-
     void                *ptr;
 
     /* ************************ */
@@ -255,16 +254,9 @@ static int EVTsetup_queues(
             output_event = output_event->next;
             FREE(ptr);
         }
-        output_event = output_queue->free[i];
-        while(output_event) {
-            ptr = output_event;
-            output_event = output_event->next;
-            FREE(ptr);
-        }
         output_queue->head[i] = NULL;
         output_queue->current[i] = &(output_queue->head[i]);
         output_queue->last_step[i] = &(output_queue->head[i]);
-        output_queue->free[i] = NULL;
     }
 
     output_queue->next_time = 0.0;
@@ -274,15 +266,51 @@ static int EVTsetup_queues(
     output_queue->num_pending = 0;
     output_queue->num_changed = 0;
 
-    for(i = 0; i < num_outputs; i++) {
-        output_queue->modified[i] = MIF_FALSE;
-        output_queue->pending[i] = MIF_FALSE;
-        output_queue->changed[i] = MIF_FALSE;
-    }
+    if (num_outputs > 0) {
+        for (i = 0; i < num_outputs; i++) {
+            output_queue->modified[i] = MIF_FALSE;
+            output_queue->pending[i] = MIF_FALSE;
+            output_queue->changed[i] = MIF_FALSE;
+        }
 
-    return(OK);
+        if (output_queue->free_list[0]) {
+            Evt_purge_free_outputs();
+        } else {
+            Evt_Output_Info_t *output_info;
+            Evt_Node_Info_t   *node;
+
+            /* ********************************************************* *
+             * On first call for this circuit, set the free-list pointer
+             * for each output queue.
+             * ********************************************************* */
+
+            output_info = ckt->evt->info.output_list;
+            for (i = 0; i < num_outputs; i++) {
+                node =  ckt->evt->info.node_table[output_info->node_index];
+                output_queue->free_list[i] =
+                    &g_evt_udn_info[node->udn_index]->free_list;
+                output_info = output_info->next;
+            }
+        }
+    }
+    return OK;
 }
 
+void Evt_purge_free_outputs(void)
+{
+    Evt_Output_Event_t  *output_event, *next;
+    int                  i;
+
+    for (i = 0; i < g_evt_num_udn_types; ++i) {
+        output_event = g_evt_udn_info[i]->free_list;
+        while (output_event) {
+            next = output_event->next;
+            tfree(output_event->value);
+            tfree(output_event);
+            output_event = next;
+        }
+    }
+}
 
 
 /*

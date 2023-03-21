@@ -568,8 +568,15 @@ MIF_INP2A (
         param_info = &(DEVices[type]->DEVpublic.param[i]);
 
         if(mdfast->param[i]->is_null) {
+            char* emessage;
+
             if(! param_info->has_default) {
-                LITERR("Parameter on model has no default");
+                if (param_info->type == MIF_STRING)
+                    continue;   // Allow NULL
+                emessage = tprintf("Parameter %s on model %s has no default",
+                                   param_info->name, mdfast->gen.GENmodName);
+                LITERR(emessage);
+                tfree(emessage);
                 gc_end();
                 return;
             } else if((param_info->is_array) && (! param_info->has_conn_ref)) {

@@ -8,7 +8,7 @@
 #ifdef PACKAGE_BUGREPORT
 #define BUG_ADDRESS		PACKAGE_BUGREPORT
 #else
-#define BUG_ADDRESS		"http://ngspice.sourceforge.net/bugrep.html"
+#define BUG_ADDRESS		"https://ngspice.sourceforge.io/bugrep.html"
 #endif
 
 char	Spice_Version[] = PACKAGE_VERSION;
@@ -19,7 +19,7 @@ char	Spice_Build_Date[] = NGSPICEBUILDDATE;
 char	Spice_Build_Date[] = __DATE__"   "__TIME__;
 #endif
 
-char	Spice_Manual[] = "Please get your ngspice manual from http://ngspice.sourceforge.net/docs.html";
+char	Spice_Manual[] = "Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html";
 
 char	*Spice_Exec_Dir	= NGSPICEBINDIR;
 char	*Spice_Lib_Dir	= NGSPICEDATADIR;

@@ -21,6 +21,7 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 
 
 #include <errno.h>
+#include <complex.h>
 
 #include "ngspice/ngspice.h"
 #include "ngspice/memory.h"
@@ -859,6 +860,42 @@ cx_tanh(void *data, short int type, int length, int *newlength, short int *newty
     } else {
         *newtype = VF_COMPLEX;
         return (void *) c_tanh((ngcomplex_t *) data, length);
+    }
+}
+
+/** atanh of a complex vector: use C99 function catanh. */
+void*
+cx_atanh(void* data, short int type, int length, int* newlength, short int* newtype)
+{
+    if (type == VF_COMPLEX) {
+        ngcomplex_t* d = alloc_c(length);
+        *newtype = VF_COMPLEX;
+        *newlength = length;
+        ngcomplex_t* cc = (ngcomplex_t*)data;
+        int i;
+        for (i = 0; i < length; i++) {
+#ifdef _MSC_VER
+            _Dcomplex midin = _Cbuild(degtorad(realpart(cc[i])), degtorad(imagpart(cc[i])));
+            _Dcomplex midout = catanh(midin);
+#else
+            double complex midin = degtorad(realpart(cc[i])) + _Complex_I * degtorad(imagpart(cc[i]));
+            double complex midout = catanh(midin);
+#endif
+            d[i].cx_real = creal(midout);
+            d[i].cx_imag = cimag(midout);
+        }
+        return ((void*)d);
+    }
+    else {
+        double* d = alloc_d(length);
+        *newtype = VF_REAL;
+        *newlength = length;
+        double* cc = (double*)data;
+        int i;
+        for (i = 0; i < length; i++) {
+            d[i] = atanh(cc[i]);
+        }
+        return ((void*)d);
     }
 }
 

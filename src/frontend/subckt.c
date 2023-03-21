@@ -89,11 +89,12 @@ extern void tprint(struct card* deck);
 
 struct subs;
 static struct card *doit(struct card *deck, wordlist *modnames);
-static int translate(struct card *deck, char *formal, char *actual, char *scname,
-                     const char *subname, struct subs *subs, wordlist const *modnames);
+static int translate(struct card *deck, char *formal, int flen, char *actual,
+		char *scname, const char *subname, struct subs *subs,
+		wordlist const *modnames);
 struct bxx_buffer;
 static void finishLine(struct bxx_buffer *dst, char *src, char *scname);
-static int settrans(char *formal, char *actual, const char *subname);
+static int settrans(char *formal, int flen, char *actual, const char *subname);
 static char *gettrans(const char *name, const char *name_end);
 static int numnodes(const char *line, struct subs *subs, wordlist const *modnames);
 static int  numdevs(char *s);
@@ -106,12 +107,12 @@ static int inp_numnodes(char c);
 /*---------------------------------------------------------------------
  * table is used in settrans and gettrans -- it holds the netnames used
  * in the .subckt definition (t_old), and in the subcircuit invocation
- * (t_new)
+ * (t_new).  The table ends when t_old is NULL.
  *--------------------------------------------------------------------*/
 static struct tab {
     char *t_old;
     char *t_new;
-} table[N_GLOBAL_NODES];   /* That had better be enough. */
+} *table;
 
 
 /*---------------------------------------------------------------------
@@ -739,7 +740,7 @@ doit(struct card *deck, wordlist *modnames) {
                     /* now invoke translate, which handles the remainder of the
                      * translation.
                      */
-                    if (!translate(su_deck, sss->su_args, t, scname, sss->su_name, subs, modnames))
+                    if (!translate(su_deck, sss->su_args, sss->su_numargs, t, scname, sss->su_name, subs, modnames))
                         error = 1;
 
                     /* Now splice the decks together. */
@@ -1139,7 +1140,7 @@ translate_inst_name(struct bxx_buffer *buffer, const char *scname, const char *n
 
 
 static int
-translate(struct card *deck, char *formal, char *actual, char *scname, const char *subname, struct subs *subs, wordlist const *modnames)
+translate(struct card *deck, char *formal, int flen, char *actual, char *scname, const char *subname, struct subs *subs, wordlist const *modnames)
 {
     struct card *c;
     struct bxx_buffer buffer;
@@ -1150,7 +1151,7 @@ translate(struct card *deck, char *formal, char *actual, char *scname, const cha
     bxx_init(&buffer);
 
     /* settrans builds the table holding the translated netnames.  */
-    i = settrans(formal, actual, subname);
+    i = settrans(formal, flen, actual, subname);
     if (i < 0) {
         fprintf(stderr,
                 "Too few parameters for subcircuit type \"%s\" (instance: x%s)\n",
@@ -1490,12 +1491,14 @@ translate(struct card *deck, char *formal, char *actual, char *scname, const cha
     }
     rtn = 1;
  quit:
-    for (i = 0; i < N_GLOBAL_NODES; i++) {
+    for (i = 0; ; i++) {
         if (!table[i].t_old && !table[i].t_new)
             break;
         FREE(table[i].t_old);
         FREE(table[i].t_new);
     }
+    FREE(table);
+    table = (struct tab *)NULL;
 
     bxx_free(&buffer);
     return rtn;
@@ -1576,13 +1579,14 @@ finishLine(struct bxx_buffer *t, char *src, char *scname)
  * subname = copy of the subcircuit name
  *------------------------------------------------------------------------------*/
 static int
-settrans(char *formal, char *actual, const char *subname)
+settrans(char *formal, int flen, char *actual, const char *subname)
 {
     int i;
 
-    memset(table, 0, N_GLOBAL_NODES * sizeof(*table));
+    table = TMALLOC(struct tab, flen + 1);
+    memset(table, 0, (size_t)(flen + 1) * sizeof(struct tab));
 
-    for (i = 0; i < N_GLOBAL_NODES; i++) {
+    for (i = 0; i < flen; i++) {
         table[i].t_old = gettok(&formal);
         table[i].t_new = gettok(&actual);
 
@@ -1594,10 +1598,6 @@ settrans(char *formal, char *actual, const char *subname)
             else
                 return 1;       /* Too many actual / too few formal */
         }
-    }
-    if (i == N_GLOBAL_NODES) {
-        fprintf(stderr, "ERROR, N_GLOBAL_NODES overflow\n");
-        controlled_exit(EXIT_FAILURE);
     }
 
     return 0;

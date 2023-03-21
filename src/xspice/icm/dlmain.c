@@ -13,11 +13,13 @@
 #include  <stdlib.h>
 #include  <string.h>
 
+#include "ngspice/cpextern.h"
 #include "ngspice/devdefs.h"
 #include "ngspice/dstring.h"
 #include "ngspice/dllitf.h"
 #include "ngspice/evtudn.h"
 #include "ngspice/inpdefs.h"
+#include "ngspice/inertial.h"
 #include "cmextrn.h"
 #include "udnextrn.h"
 
@@ -348,6 +350,18 @@ bool cm_probe_node(unsigned int  conn_index,
     return coreitf->dllitf_cm_probe_node(conn_index, port_index, value);
 }
 
+bool cm_schedule_output(unsigned int conn_index, unsigned int port_index,
+                        double delay, void *vp)
+{
+    return (coreitf->dllitf_cm_schedule_output)(conn_index, port_index,
+                                                delay, vp);
+}
+
+bool cm_getvar(char *name, enum cp_types type, void *retval, size_t rsize)
+{
+    return (coreitf->dllitf_cm_getvar)(name, type, retval, rsize);
+}
+
 Complex_t cm_complex_set(double real, double imag) {
 	return (coreitf->dllitf_cm_complex_set)(real,imag);
 }
@@ -533,4 +547,25 @@ cm_message_printf(const char *fmt, ...)
     if (p != buf)
         txfree(p);
     return rv;
+}
+
+/* Function used for inertial delay in digital logic models. */
+
+Mif_Boolean_t cm_is_inertial(enum param_vals param)
+{
+    int cvar;
+
+    /* Get the value of the control variable. */
+
+    if (cm_getvar("digital_delay_type", CP_NUM, &cvar, sizeof cvar)) {
+        if (cvar >= OVERRIDE_TRANSPORT) {
+            /* Parameter override. */
+
+            return cvar > OVERRIDE_TRANSPORT;
+        }
+        if (param == Not_set) // Not specified
+            return cvar != DEFAULT_TRANSPORT;
+        return param != Off;
+    }
+    return param == On;
 }

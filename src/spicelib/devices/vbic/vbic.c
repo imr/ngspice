@@ -180,8 +180,11 @@ IFparm VBICmPTable[] = { /* model parameters */
  IOP("vers",  VBIC_MOD_VERS,  IF_REAL, "Revision Version"),
  IOP("vref",  VBIC_MOD_VREF,  IF_REAL, "Reference Version"),
  IOP("vbe_max", VBIC_MOD_VBE_MAX, IF_REAL, "maximum voltage B-E junction"),
+ IOPR("bvbe", VBIC_MOD_VBE_MAX, IF_REAL, "maximum voltage B-E junction"),
  IOP("vbc_max", VBIC_MOD_VBC_MAX, IF_REAL, "maximum voltage B-C junction"),
- IOP("vce_max", VBIC_MOD_VCE_MAX, IF_REAL, "maximum voltage C-E branch")
+ IOPR("bvbc", VBIC_MOD_VBC_MAX, IF_REAL, "maximum voltage B-C junction"),
+ IOP("vce_max", VBIC_MOD_VCE_MAX, IF_REAL, "maximum voltage C-E branch"),
+ IOPR("bvce", VBIC_MOD_VCE_MAX, IF_REAL, "maximum voltage C-E branch")
 };
 
 char *VBICnames[] = {

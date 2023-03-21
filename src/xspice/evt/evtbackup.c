@@ -530,7 +530,7 @@ static void EVTbackup_output_queue(
 
     Evt_Output_Queue_t    *output_queue;
 
-    Evt_Output_Event_t    **output_ptr;
+    Evt_Output_Event_t    **output_ptr, **free_list;
     Evt_Output_Event_t    *output;
 
     double              next_time;
@@ -554,12 +554,13 @@ static void EVTbackup_output_queue(
 
         output_ptr = output_queue->last_step[output_index];
         output = *output_ptr;
+        free_list = output_queue->free_list[output_index];
 
         while(output) {
             if(output->posted_time > new_time) {
                 *output_ptr = output->next;
-                output->next = output_queue->free[output_index];
-                output_queue->free[output_index] = output;
+                output->next = *free_list;
+                *free_list = output;
                 output = *output_ptr;
             }
             else {

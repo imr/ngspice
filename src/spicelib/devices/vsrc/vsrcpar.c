@@ -298,14 +298,19 @@ VSRCparam(int param, IFvalue *value, GENinstance *inst, IFvalue *select)
         {
             here->VSRCportNum = value->iValue;
             here->VSRCportNumGiven = TRUE;
-            here->VSRCisPort = ((here->VSRCportNumGiven) && (here->VSRCportNum > 0) && (here->VSRCportZ0 > 0.0));
+            here->VSRCisPort = (here->VSRCportNum > 0);
+            if (here->VSRCportZ0 <= 0.0) {
+                here->VSRCportZ0 = 50;
+                here->VSRCVAmplitude =
+                    sqrt(here->VSRCportPower * 4.0 * here->VSRCportZ0);
+            }
             break;
         }
         case VSRC_PORTZ0:
         {
             here->VSRCportZ0 = value->rValue;
-            here->VSRCVAmplitude = sqrt(here->VSRCportPower * 4.0 * here->VSRCportZ0);
-            here->VSRCisPort = ((here->VSRCportNumGiven) && (here->VSRCportNum > 0) && (here->VSRCportZ0 > 0.0));
+            here->VSRCVAmplitude =
+                sqrt(here->VSRCportPower * 4.0 * here->VSRCportZ0);
             here->VSRCportZ0Given = TRUE;
             break;
         }

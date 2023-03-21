@@ -32,10 +32,10 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
             model->VDMOStype = NMOS;
 
         if (!model->VDMOStransconductanceGiven)
-            model->VDMOStransconductance = 1;
+            model->VDMOStransconductance = 25 + 10 * model->VDMOStype; /* IRF540, 9540 */
 
         if (!model->VDMOSvth0Given)
-            model->VDMOSvth0 = 0;
+            model->VDMOSvth0 = 3 * model->VDMOStype; /* IRF540, 9540 */
 
         if (!model->VDIOjctSatCurGiven)
             model->VDIOjctSatCur = 1e-14;
@@ -44,7 +44,7 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
             model->VDIOjunctionPot = .8;
 
         if (!model->VDIOjunctionCapGiven)
-            model->VDIOjunctionCap = 0.;
+            model->VDIOjunctionCap = 5e-10; /* IRF540, 9540 */
 
         if (!model->VDIOgradCoeffGiven)
             model->VDIOgradCoeff = .5;
@@ -68,13 +68,13 @@ VDMOSsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
             model->VDMOSfNexp = 1;
 
         if (!model->VDMOScgdminGiven)
-            model->VDMOScgdmin = 0;
+            model->VDMOScgdmin = 2e-11; /* IRF540, 9540 */
 
         if (!model->VDMOScgdmaxGiven)
-            model->VDMOScgdmax = 0;
+            model->VDMOScgdmax = 2e-9; /* IRF540, 9540 */
 
         if (!model->VDMOScgsGiven)
-            model->VDMOScgs = 0;
+            model->VDMOScgs = 1.4e-9; /* IRF540, 9540 */
 
         if (!model->VDMOSaGiven)
             model->VDMOSa = 1.;

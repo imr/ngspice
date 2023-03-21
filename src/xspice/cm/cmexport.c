@@ -3,6 +3,8 @@
 #include "ngspice/cm.h"
 #include "ngspice/dllitf.h"
 
+extern bool cp_getvar(char *, enum cp_types, void *, size_t);
+
 /*how annoying!, needed for structure below*/
 static void *tcalloc(size_t a, size_t b) {
   return tmalloc(a*b);          /* FIXME, tcalloc must zero !?!? */
@@ -60,6 +62,8 @@ struct coreInfo_t  coreInfo =
   cm_netlist_get_l,
   cm_get_node_name,
   cm_probe_node,
+  cm_schedule_output,
+  cp_getvar,
   cm_complex_set,
   cm_complex_add,
   cm_complex_subtract,

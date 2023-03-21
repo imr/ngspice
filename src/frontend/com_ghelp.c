@@ -17,7 +17,7 @@
  * Internet Archive using the link below.
  * https://web.archive.org/web/20180221111839/http://newton.ex.ac.uk/teaching/CDHW/Electronics2/userguide/
  */
-#define BASE_HELP_URL "http://ngspice.sourceforge.net/docs"
+#define BASE_HELP_URL "https://ngspice.sourceforge.io/docs"
 void com_ghelp(wordlist *wl)
 {
 #if defined(HAS_WINGUI) || defined(_MSC_VER) || defined(__MINGW32__) ||\

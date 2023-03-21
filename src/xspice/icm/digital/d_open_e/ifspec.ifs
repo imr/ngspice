@@ -6,14 +6,14 @@ Georgia Tech Research Corporation
 Atlanta, Georgia 30332
 
 
-AUTHORS                      
+AUTHORS
 
     19 Nov 1991     Jeffrey P. Murray
 
 
 SUMMARY
 
-    This file contains the interface specification file for the 
+    This file contains the interface specification file for the
     digital d_open_e code model.
 
 ===============================================================================*/
@@ -32,31 +32,49 @@ Description:         "input"            "output"
 Direction:           in                 out
 Default_Type:        d                  d
 Allowed_Types:       [d]                [d]
-Vector:               no                 no
-Vector_Bounds:        -                  -
+Vector:              no                 no
+Vector_Bounds:       -                  -
 Null_Allowed:        no                 no
 
 
 PARAMETER_TABLE:
 
-Parameter_Name:     rise_delay                  open_delay	
+Parameter_Name:     rise_delay                  open_delay
 Description:        "rise delay"                "open delay"
-Data_Type:          real                        real   
-Default_Value:      1.0e-9                      1.0e-9  
-Limits:             [1e-12 -]                   [1e-12 -]       
-Vector:              no                          no
-Vector_Bounds:       -                           -
-Null_Allowed:       yes                         yes    
+Data_Type:          real                        real
+Default_Value:      1.0e-9                      1.0e-9
+Limits:             [1e-12 -]                   [1e-12 -]
+Vector:             no                          no
+Vector_Bounds:      -                           -
+Null_Allowed:       yes                         yes
 
 
 PARAMETER_TABLE:
 
-Parameter_Name:     input_load
-Description:        "input load value (F)" 
-Data_Type:          real                          
-Default_Value:      1.0e-12                    
-Limits:             -                                 
-Vector:              no                         
-Vector_Bounds:       -                         
-Null_Allowed:       yes                            
+Parameter_Name:     input_load			family
+Description:        "input load value (F)"	"Logic family for bridging"
+Data_Type:          real                        string
+Default_Value:      1.0e-12                     -
+Limits:             -                           -
+Vector:             no                          no
+Vector_Bounds:      -                           -
+Null_Allowed:       yes                         yes
 
+
+PARAMETER_TABLE:
+
+Parameter_Name:     inertial_delay
+Description:        "swallow short pulses"
+Data_Type:          boolean
+Default_Value:      false
+Limits:             -
+Vector:             no
+Vector_Bounds:      -
+Null_Allowed:       yes
+
+
+STATIC_VAR_TABLE:
+
+Static_Var_Name:    is_inertial
+Data_Type:	    boolean
+Description:        "using inertial delay"

@@ -48,27 +48,18 @@ NON-STANDARD FEATURES
 
 /*=== INCLUDE FILES ====================*/
 
-
-                                      
+#include "ngspice/inertial.h"
 
 /*=== CONSTANTS ========================*/
 
 
-
-
 /*=== MACROS ===========================*/
-
-
 
   
 /*=== LOCAL VARIABLES & TYPEDEFS =======*/                         
-
-
     
            
 /*=== FUNCTION PROTOTYPE DEFINITIONS ===*/
-
-
 
 
 /*==============================================================================
@@ -119,126 +110,128 @@ NON-STANDARD FEATURES
 *   Created 6/18/91               J.P.Murray    *
 ************************************************/
 
-
 void cm_d_nor(ARGS) 
 
 {
     int                    i,   /* generic loop counter index */
-	                    size;   /* number of input & output ports */
-         
-                        
+	                size;   /* number of input & output ports */
 
-    Digital_State_t     *out,   /* temporary output for buffers */
-                    *out_old,   /* previous output for buffers  */                               
+    Digital_State_t      val,   /* Output value. */
+                        *out,   /* temporary output for buffers */
                        input;   /* temp storage for input bits  */    
 
 
     /** Retrieve size value... **/
     size = PORT_SIZE(in);
 
-                                          
-
     /*** Setup required state variables ***/
 
-    if(INIT) {  /* initial pass */ 
-
+    if (INIT) {  /* initial pass */ 
         /* allocate storage for the outputs */
-        cm_event_alloc(0,sizeof(Digital_State_t));
+
+        cm_event_alloc(0, sizeof (Digital_State_t));
+
+        /* Inertial delay? */
+
+        STATIC_VAR(is_inertial) =
+            cm_is_inertial(PARAM_NULL(inertial_delay) ? Not_set :
+                         PARAM(inertial_delay));
+        if (STATIC_VAR(is_inertial)) {
+            /* Allocate storage for event time. */
+
+            cm_event_alloc(1, sizeof (struct idata));
+            ((struct idata *)cm_event_get_ptr(1, 0))->when = -1.0;
+        }
+
+        /* Prepare initial output. */
+
+        out = (Digital_State_t *)cm_event_get_ptr(0, 0);
+        *out = (Digital_State_t)(UNKNOWN + 1); // Force initial output.
 
         for (i=0; i<size; i++) LOAD(in[i]) = PARAM(input_load);
-
-        /* retrieve storage for the outputs */
-        out = out_old = (Digital_State_t *) cm_event_get_ptr(0,0);
-
-    }
-    else {      /* Retrieve previous values */
-                                              
+    } else {
         /* retrieve storage for the outputs */
         out = (Digital_State_t *) cm_event_get_ptr(0,0);
-        out_old = (Digital_State_t *) cm_event_get_ptr(0,1);
     }
-
-
                                      
-
     /*** Calculate new output value based on inputs ***/
 
-    *out = ONE;
+    val = ONE;
     for (i=0; i<size; i++) {
+        /* If a 1, set val low, and done. */
 
-        /* make sure this input isn't floating... */
-        if ( FALSE == PORT_NULL(in) ) {
-
-            /* if a 1, set *out low */
-            if ( ONE == (input = INPUT_STATE(in[i])) ) {
-                *out = ZERO;
-                break;
-            }
-            else {                    
-                /* if an unknown input, set *out to unknown & break */
-                if ( UNKNOWN == input ) {
-                    *out = UNKNOWN;
-                }
-            }
-        }
-        else {
-            /* at least one port is floating...output is unknown */
-            *out = UNKNOWN;
+        if ( ONE == (input = INPUT_STATE(in[i])) ) {
+            val = ZERO;
             break;
+        } else {                    
+            /* If an unknown input, set val to unknown. */
+
+            if (UNKNOWN == input)
+                val = UNKNOWN;
         }
     }       
 
+    /*** Check for change and output appropriate values ***/
 
+    if (val == *out) { /* output value is not changing */
+        OUTPUT_CHANGED(out) = FALSE;
+    } else {
+        switch (val) {
 
-    /*** Determine analysis type and output appropriate values ***/
-
-    if (ANALYSIS == DC) {   /** DC analysis...output w/o delays **/
-                                  
-        OUTPUT_STATE(out) = *out;
-
-    }
-
-    else {      /** Transient Analysis **/
-
-
-        if ( *out != *out_old ) { /* output value is changing */
-
-            switch ( *out ) {
-                                                 
             /* fall to zero value */
-            case 0: OUTPUT_STATE(out) = ZERO;
-                    OUTPUT_DELAY(out) = PARAM(fall_delay);
-                    break;
+        case 0:
+            OUTPUT_DELAY(out) = PARAM(fall_delay);
+            break;
     
             /* rise to one value */
-            case 1: OUTPUT_STATE(out) = ONE;
-                    OUTPUT_DELAY(out) = PARAM(rise_delay);
-                    break;
+        case 1:
+            OUTPUT_DELAY(out) = PARAM(rise_delay);
+            break;
                                     
             /* unknown output */
-            default:
-                    OUTPUT_STATE(out) = *out = UNKNOWN;
-    
-                    /* based on old value, add rise or fall delay */
-                    if (0 == *out_old) {  /* add rising delay */
+        default:
+            /* based on old value, add rise or fall delay */
+            if (0 == *out) {  /* add rising delay */
+                OUTPUT_DELAY(out) = PARAM(rise_delay);
+            } else {                /* add falling delay */
+                OUTPUT_DELAY(out) = PARAM(fall_delay);
+            }
+            break;
+        }
+
+        if (STATIC_VAR(is_inertial) && ANALYSIS == TRANSIENT) {
+            struct idata *idp;
+
+            idp = (struct idata *)cm_event_get_ptr(1, 0);
+            if (idp->when <= TIME) {
+                /* Normal transition. */
+
+                idp->prev = *out;
+                idp->when = TIME + OUTPUT_DELAY(out); // Actual output time
+            } else if (val != idp->prev) {
+                Digital_t ov = {idp->prev, STRONG};
+
+                /* Third value: cancel earlier change and output as usual. */
+
+                cm_schedule_output(1, 0, (idp->when - TIME) / 2.0, &ov);
+		if (val == UNKNOWN) {
+                    /* Delay based in idp->prev, not *out. */
+
+                    if (idp->prev == ZERO)
                         OUTPUT_DELAY(out) = PARAM(rise_delay);
-                    }
-                    else {                /* add falling delay */
+                    else
                         OUTPUT_DELAY(out) = PARAM(fall_delay);
-                    }   
-                    break;
+                }
+                idp->when = TIME + OUTPUT_DELAY(out); // Actual output time
+            } else {
+                /* Changing back: override pending change. */
+
+                OUTPUT_DELAY(out) = (idp->when - TIME) / 2.0; // Override
+		idp->when = -1.0;
             }
         }
-        else {                    /* output value not changing */
-            OUTPUT_CHANGED(out) = FALSE;
-        }
+        *out = val;
+        OUTPUT_STATE(out) = val;
+        OUTPUT_STRENGTH(out) = STRONG;
     }
-
-    OUTPUT_STRENGTH(out) = STRONG;
-
-} 
-
-      
-
-
-
+}
