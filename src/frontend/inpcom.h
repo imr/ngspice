@@ -9,4 +9,6 @@
 struct card *insert_new_line(struct card *card, char *line,
                              int linenum, int linenum_orig);
 
+void set_udevices_translated(bool val);
+bool were_udevices_translated(void);
 #endif

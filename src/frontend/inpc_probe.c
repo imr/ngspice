@@ -11,6 +11,7 @@
 #include "ngspice/inpdefs.h"
 #include "ngspice/wordlist.h"
 #include "ngspice/stringskip.h"
+#include "inpcom.h"
 
 void inp_probe(struct card* card);
 void modprobenames(INPtables* tab);
@@ -61,6 +62,9 @@ void inp_probe(struct card* deck)
     /* no .probe command */
     if (probes == NULL)
         return;
+
+    /* If were_udevices_translated() returns TRUE, then you can ignore alli */
+    (void) were_udevices_translated();
 
     /* check for '.save' and (in a .control section) 'save'.
        If not found, add '.save all' */

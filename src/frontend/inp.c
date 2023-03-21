@@ -510,6 +510,10 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
     startTime = seconds();
     /* inp_source() called with fp: load from file, */
     /* called with *fp == NULL and intfile: we want to load circuit from circarray */
+
+    /* Clear the flag indicating U* devices have been translated to Xspice */
+    set_udevices_translated(FALSE);
+
     if (fp || intfile) {
         deck = inp_readall(fp, dir_name, comfile, intfile, &expr_w_temper);
 
