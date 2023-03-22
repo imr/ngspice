@@ -17,14 +17,15 @@ VBICsoaCheck(CKTcircuit *ckt, GENmodel *inModel)
 {
     VBICmodel *model = (VBICmodel *) inModel;
     VBICinstance *here;
-    double vbe, vbc, vce;    /* actual bjt voltages */
+    double vbe, vbc, vce, vsub;    /* actual bjt voltages */
     int maxwarns;
-    static int warns_vbe = 0, warns_vbc = 0, warns_vce = 0;
+    static int warns_vbe = 0, warns_vbc = 0, warns_vce = 0, warns_vsub = 0;
 
     if (!ckt) {
         warns_vbe = 0;
         warns_vbc = 0;
         warns_vce = 0;
+        warns_vsub = 0;
         return OK;
     }
 
@@ -40,6 +41,8 @@ VBICsoaCheck(CKTcircuit *ckt, GENmodel *inModel)
                        ckt->CKTrhsOld [here->VBICcollNode]);
             vce = fabs(ckt->CKTrhsOld [here->VBICcollNode] -
                        ckt->CKTrhsOld [here->VBICemitNode]);
+            vsub = fabs(ckt->CKTrhsOld [here->VBICcollNode] -
+                       ckt->CKTrhsOld [here->VBICsubsNode]);
 
             if (vbe > model->VBICvbeMax)
                 if (warns_vbe < maxwarns) {
@@ -65,6 +68,13 @@ VBICsoaCheck(CKTcircuit *ckt, GENmodel *inModel)
                     warns_vce++;
                 }
 
+            if (vsub > model->VBICvsubMax)
+                if (warns_vsub < maxwarns) {
+                    soa_printf(ckt, (GENinstance*) here,
+                               "|Vce|=%g has exceeded Vce_max=%g\n",
+                               vsub, model->VBICvsubMax);
+                    warns_vsub++;
+                }
         }
     }
 
