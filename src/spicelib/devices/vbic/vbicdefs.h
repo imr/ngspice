@@ -457,6 +457,7 @@ typedef struct sVBICmodel {           /* model structure for a vbic */
     double VBICtempExpAVC;
     double VBICthermalResist;
     double VBICthermalCapacitance;
+    int VBICselft;
     double VBICpunchThroughVoltageBC;
     double VBICdeplCapCoeff1;
     double VBICfixedCapacitanceCS;
@@ -571,6 +572,7 @@ typedef struct sVBICmodel {           /* model structure for a vbic */
     unsigned VBICtempExpNFGiven : 1;
     unsigned VBICtempExpAVCGiven : 1;
     unsigned VBICthermalResistGiven : 1;
+    unsigned VBICselftGiven : 1;
     unsigned VBICthermalCapacitanceGiven : 1;
     unsigned VBICpunchThroughVoltageBCGiven : 1;
     unsigned VBICdeplCapCoeff1Given : 1;
@@ -734,6 +736,7 @@ enum {
     VBIC_MOD_VBE_MAX,
     VBIC_MOD_VBC_MAX,
     VBIC_MOD_VCE_MAX,
+    VBIC_MOD_SELFT,
 };
 
 /* device questions */        
