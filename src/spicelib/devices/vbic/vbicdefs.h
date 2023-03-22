@@ -485,6 +485,7 @@ typedef struct sVBICmodel {           /* model structure for a vbic */
     double VBICvbeMax; /* maximum voltage over B-E junction */
     double VBICvbcMax; /* maximum voltage over B-C junction */
     double VBICvceMax; /* maximum voltage over C-E branch */
+    double VBICvsubMax; /* maximum voltage over C-substrate branch */
 
     unsigned VBICtnomGiven : 1;
     unsigned VBICextCollResistGiven : 1;
@@ -600,6 +601,7 @@ typedef struct sVBICmodel {           /* model structure for a vbic */
     unsigned VBICvbeMaxGiven : 1;
     unsigned VBICvbcMaxGiven : 1;
     unsigned VBICvceMaxGiven : 1;
+    unsigned VBICvsubMaxGiven : 1;
 } VBICmodel;
 
 #ifndef NPN
@@ -736,6 +738,7 @@ enum {
     VBIC_MOD_VBE_MAX,
     VBIC_MOD_VBC_MAX,
     VBIC_MOD_VCE_MAX,
+    VBIC_MOD_VSUB_MAX,
     VBIC_MOD_SELFT,
 };
 
