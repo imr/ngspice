@@ -184,7 +184,8 @@ IFparm VBICmPTable[] = { /* model parameters */
  IOP("vbc_max", VBIC_MOD_VBC_MAX, IF_REAL, "maximum voltage B-C junction"),
  IOPR("bvbc", VBIC_MOD_VBC_MAX, IF_REAL, "maximum voltage B-C junction"),
  IOP("vce_max", VBIC_MOD_VCE_MAX, IF_REAL, "maximum voltage C-E branch"),
- IOPR("bvce", VBIC_MOD_VCE_MAX, IF_REAL, "maximum voltage C-E branch")
+ IOPR("bvce", VBIC_MOD_VCE_MAX, IF_REAL, "maximum voltage C-E branch"),
+ IOP("selft", VBIC_MOD_SELFT, IF_INTEGER, "0: self-heating off, 1: self-heating on")
 };
 
 char *VBICnames[] = {

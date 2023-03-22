@@ -509,6 +509,10 @@ VBICmParam(int param, IFvalue *value, GENmodel *inModel)
             mods->VBICvceMax = value->rValue;
             mods->VBICvceMaxGiven = TRUE;
             break;
+        case VBIC_MOD_SELFT:
+            mods->VBICselft = value->iValue;
+            mods->VBICselftGiven = TRUE;
+            break;
         default:
             return(E_BADPARM);
     }

@@ -369,6 +369,9 @@ VBICmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
             else
                 value->sValue = "pnp";
             return(OK);
+        case VBIC_MOD_SELFT:
+            value->iValue = here->VBICselft;
+            return(OK);
         default:
             return(E_BADPARM);
     }
