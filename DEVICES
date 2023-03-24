@@ -63,11 +63,6 @@ Table of contents
  12.4 BSIMSOI - SOI model (partially/full depleted devices)
  12.5 SOI3 - STAG SOI3 Model
 13. Verilog-A models
- 13.1 EKV MOS model
- 13.2 PSP MOS model 102
- 13.3 PSP MOS model 103
- 13.4 HICUM0 Bipolar Model
- 13.5 Mextram Bipolar Model
 14. XSPICE code models
 15. Digital Building Blocks (U instances)
 
@@ -831,8 +826,8 @@ will be updated every time the device specific code is altered or changed to ref
  13.7 PSP 103.8
  13.8 r2_cmc
  
-      More may be made available, user compiled models are possible as well
-     (See ngspice manual, chapter 13).
+      More models are available at https://github.com/dwarning/VA-Models,
+      user compiled models are possible as well (See ngspice manual, chapter 13).
 
 
  14. XSpice code models

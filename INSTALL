@@ -1,7 +1,7 @@
 Ngspice installation instructions
 =================================
 
-Important notice: since ngspice-35 there has been an update
+Important notice: since ngspice-39 there has been an update
 to the XSPICE code models (analog.cm etc.). Therefore it
 is not sufficient to only re-make the main executable,
 you will have to compile and install the code models as well,
@@ -28,7 +28,7 @@ Table of contents
   8 Operation Controls
   9 NGSPICE COMPILATION UNDER WINDOWS OS
    9.1 How to make ngspice with MINGW and MSYS
-   9.2 make ngspice with MS Visual Studio 2019 or 2022
+   9.2 make ngspice with MS Visual Studio 2022
    9.3 make ngspice with pure CYGWIN
    9.4 ngspice console app with MINGW or CYGWIN
    9.5 cross compiling ngspice for Windows from LINUX
@@ -580,9 +580,9 @@ This file describes the procedures to install ngspice from sources.
  script compile_min_shared.sh.
 
 
-9.2 make ngspice with MS Visual Studio 2019 and 2022
+9.2 make ngspice with MS Visual Studio 2022
 
- ngspice may be compiled with MS Visual Studio 2019 or newer.
+ ngspice may be compiled with MS Visual Studio 2022 or newer.
 
  CIDER and XSPICE are included, the code models for XSPICE
  (*.cm) are made as well.
@@ -594,13 +594,13 @@ This file describes the procedures to install ngspice from sources.
  The directory (visualc) with its files
  vngspice.sln (project starter) and
  vngspice.vcproj (project contents)
- allows to compile and link ngspice with MS Visual Studio 2019.
+ allows to compile and link ngspice with MS Visual Studio 2022.
 
  /visualc/include contains a dedicated config.h file. It contains the
  preprocessor definitions required to properly compile the code.
  strings.h has been necessary during setting up the project.
 
- Install Microsoft Visual Studio 2019 Community with C/C++. For
+ Install Microsoft Visual Studio 2022 Community with C/C++. For
  example, the German edition is available at no cost from
  https://www.visualstudio.com/de/vs/community/.
 
@@ -612,7 +612,7 @@ This file describes the procedures to install ngspice from sources.
 
  Goto  /ngspice/visualc.
 
- Start MS Visual Studio 2019 by double click onto vngspice.sln.
+ Start MS Visual Studio 2022 by double click onto vngspice.sln.
 
  After MS Visual Studio has opened up, select debug or release version
  by checking 'Build' , 'Configuration Manager', 'Debug' or 'ReleaseOmp'.
@@ -722,11 +722,9 @@ cross-compile-shared.sh.
       sudo port install automake autoconf libtool bison flex ncurses xorg-libXaw
           readline fontconfig freetype libomp SM ICE
  4. Execute this command:
-      ./autogen.sh or ./autogen.sh --adms (if you want to enable ADMS)
+      ./autogen.sh
  5. Configure NGSPICE invoking "./configure". A complete set of feature is:
       ./configure --enable-cider --enable-xspice --enable-openmp --enable-pss --with-readline=yes --enable-debug=no
-      or (if you want to enable ADMS)
-      ./configure --enable-adms --enable-cider --enable-xspice --enable-openmp --enable-pss --with-readline=yes --enable-debug=no
  6. Compile NGSPICE invoking "make -j4"
  7. Install NGSPICE invoking "make install" or "sudo make install"
 
@@ -749,7 +747,7 @@ Resulting dependencies of ngspice
     /usr/lib/libSystem.B.dylib
     /usr/local/lib/gcc/11/libgcc_s.1.dylib
 
- 10.5 About compilers
+ 10.4 About compilers
     A compile script compile_macos_clang.sh contains all necessary steps for compiling
     with the Xcode clang/llvm compiler. This compiler however does not support -fopenmp.
     Therefore you may download and install gcc, e.g. from Homebrew and run the new
