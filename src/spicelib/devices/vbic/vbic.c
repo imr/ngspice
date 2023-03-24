@@ -187,6 +187,9 @@ IFparm VBICmPTable[] = { /* model parameters */
  IOPR("bvce", VBIC_MOD_VCE_MAX, IF_REAL, "maximum voltage C-E branch"),
  IOP("vsub_max", VBIC_MOD_VSUB_MAX, IF_REAL, "maximum voltage C-substrate branch"),
  IOPR("bvsub", VBIC_MOD_VSUB_MAX, IF_REAL, "maximum voltage C-substrate branch"),
+ IOP("vbefwd", VBIC_MOD_VBEFWD_MAX, IF_REAL, "maximum forward voltage B-E junction"),
+ IOP("vbcfwd", VBIC_MOD_VBCFWD_MAX, IF_REAL, "maximum forward voltage B-C junction"),
+ IOP("vsubfwd", VBIC_MOD_VSUBFWD_MAX, IF_REAL, "maximum forward voltage C-substrate junction"),
  IOP("selft", VBIC_MOD_SELFT, IF_INTEGER, "0: self-heating off, 1: self-heating on")
 };
 

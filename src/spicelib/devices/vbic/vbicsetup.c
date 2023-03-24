@@ -391,6 +391,18 @@ VBICsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if(!model->VBICvceMaxGiven) {
             model->VBICvceMax = 1e99;
         }
+        if(!model->VBICvsubMaxGiven) {
+            model->VBICvsubMax = 1e99;
+        }
+        if (!model->VBICvbefwdMaxGiven) {
+            model->VBICvbefwdMax = 0.2;
+        }
+        if (!model->VBICvbcfwdMaxGiven) {
+            model->VBICvbcfwdMax = 0.2;
+        }
+        if (!model->VBICvsubfwdMaxGiven) {
+            model->VBICvsubfwdMax = 0.2;
+        }
         if(!model->VBICselftGiven) {
             model->VBICselft = 0;
         }
