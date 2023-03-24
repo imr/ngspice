@@ -102,7 +102,7 @@ VBICsoaCheck(CKTcircuit *ckt, GENmodel *inModel)
                     /*saturation*/
                     if (warns_op < maxwarns) {
                         soa_printf(ckt, (GENinstance*)here,
-                            "device is in sturation\n");
+                            "device is in saturation\n");
                         warns_op++;
                     }
                 }
