@@ -9822,6 +9822,19 @@ static void inp_check_syntax(struct card *deck)
         controlled_exit(EXIT_BAD);
     }
 
+
+    /* When '.probe alli' is set, disable auto bridging and set a flag */
+    for (card = deck; card; card = card->nextcard) {
+        char* cut_line = card->line;
+        if (ciprefix(".probe", cut_line) && search_plain_identifier(cut_line, "alli")) {
+            int i = 0;
+            bool bi = TRUE;
+            cp_vset("auto_bridge", CP_NUM, &i);
+            cp_vset("probe_alli_given", CP_BOOL, &bi);
+            break;
+        }
+    }
+
     for (ii = 0; ii < 10; ii++)
         subs[ii] = NULL;
 

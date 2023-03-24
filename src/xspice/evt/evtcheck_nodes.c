@@ -667,8 +667,13 @@ bool Evtcheck_nodes(
              int nl;
 
              if (strcmp(event_node->name, analog_node->name) == 0) {
-                 if (show == AB_OFF)
+                 if (show == AB_OFF) {
+                     if (cp_getvar("probe_alli_given", CP_BOOL, NULL, 0))
+                         fprintf(stderr, "\nDot command '.probe alli' and digital nodes are not compatible.\n");
+                     FREE(errMsg);
+                     errMsg = copy("Auto bridging is switched off");
                      return FALSE;      // Auto-bridge disabled
+                 }
                  bridge = find_bridge(event_node, ckt, &bridge_list);
                  if (!bridge) {
                     /* Fatal, circuit cannot run. */
