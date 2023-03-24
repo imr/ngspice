@@ -79,8 +79,6 @@ static struct library {
 
 static int num_libraries;
 
-static bool udevices_translated = FALSE;
-
 struct names {
     char *names[N_SUBCKT_W_PARAMS];
     int num_names;
@@ -8352,16 +8350,6 @@ static void rem_double_braces(struct card* newcard)
     }
 }
 
-void set_udevices_translated(bool val)
-{
-    udevices_translated = val;
-}
-
-bool were_udevices_translated(void)
-{
-    return udevices_translated;
-}
-
 #ifdef INTEGRATE_UDEVICES
 static void list_the_cards(struct card *startcard, char *prefix)
 {
@@ -8466,7 +8454,6 @@ static struct card *u_instances(struct card *startcard)
                     if (last_newcard) {
                         last_newcard->nextcard = card; // the .ends card
                     }
-                    set_udevices_translated(TRUE);
                 } else {
                     models_ok = models_not_ok = 0;
                     udev_ok = udev_not_ok = 0;
