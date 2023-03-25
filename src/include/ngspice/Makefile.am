@@ -55,6 +55,7 @@ noinst_HEADERS = \
 	hlpdefs.h	\
 	iferrmsg.h	\
 	ifsim.h		\
+	inertial.h	\
 	inpdefs.h	\
 	inpmacs.h	\
 	inpptree.h	\
