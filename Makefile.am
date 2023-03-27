@@ -4,10 +4,10 @@ SUBDIRS = src man tests
 DIST_SUBDIRS = src man tests
 
 EXTRA_DIST = FAQ autogen.sh Stuarts_Poly_Notes  \
-		ANALYSES BUGS AUTHORS ChangeLog \
-		DEVICES NEWS README README.tcl \
-		README.shared-xspice README.vdmos \
-		README.adms README.utf8 \
+		ANALYSES BUGS AUTHORS INSTALL \
+		DEVICES INTERNALS NEWS README README.tcl README.optran\
+		README.shared-xspice README.vdmos README_OSDI.md\
+		README_OSDI_howto README.cpl-gc README.utf8 \
 		examples m4 visualc \
 		cross-compile.sh cross-compile-shared.sh \
 		compile_min.sh compile_linux.sh compile_min_shared.sh \
