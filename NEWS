@@ -3,7 +3,7 @@ Ngspice-40, Mar 31st, 2023
 - New features:
     + VBIC: Add optional parameters for determining the operation region
     + VBIC: Add bvbe, bvbc, bvce, bvsub as SOA parameters
-    + Add inertal delay to all basic gital code models, make it available
+    + Add inertial delay to all basic digital code models, make it available
       for U devices
     + VDMOS default parameters are now similar to IRF540 IRF9540
     + Add function atanh to .control section
