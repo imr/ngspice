@@ -169,7 +169,6 @@ static void inp_check_syntax(struct card *deck);
 
 static char *inp_spawn_brace(char *s);
 
-static char *inp_pathresolve(const char *name);
 static char *inp_pathresolve_at(const char *name, const char *dir);
 char *search_plain_identifier(char *str, const char *identifier);
 
@@ -1756,7 +1755,7 @@ FILE *inp_pathopen(const char *name, const char *mode)
   if the file isn't in . and it isn't an abs path name.
   *-------------------------------------------------------------------------*/
 
-static char *inp_pathresolve(const char *name)
+char *inp_pathresolve(const char *name)
 {
     struct variable *v;
     struct stat st;

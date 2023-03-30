@@ -8,5 +8,5 @@
 
 struct card *insert_new_line(struct card *card, char *line,
                              int linenum, int linenum_orig);
-
+char *inp_pathresolve(const char *name);
 #endif
