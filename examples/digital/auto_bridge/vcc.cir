@@ -1,0 +1,23 @@
+Level shift by auto-bridges with different VCCs.
+
+* A level shifter made by placing digital buffers in subcircuits.
+
+.param vcc=5 ; Circuit-wide default for auto-bridge levels (not used)
+
+.subckt buffer in out vcc=3 ; These subcircuits default to 3V.
+abuf in out buf
+.ends
+
+.model buf d_buffer
+
+vin in 0 sin(1.5 1.5 100k)
+xb1 in mid buffer        ; ADC bridge with VCC=3V will be used.
+xb2 mid out buffer vcc=6 ; DAC bridge with 6V swing will be used,
+rload out 0 10k          ; Analog node forces bridge insertion,
+
+.control
+tran 100n 30u
+plot in out
+.endc
+.end
+
