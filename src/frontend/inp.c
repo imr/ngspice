@@ -250,7 +250,7 @@ inp_list(FILE *file, struct card *deck, struct card *extras, int type)
                     Xprintf(file, "%s\n", here->error);
             }
             else if ((*here->line != '*') && (type == LS_RUNNABLE)) {
-                Xprintf(file, "%s\n", upper(here->line));
+                Xprintf(file, "%s\n", here->line);
                 if (here->error)
                     Xprintf(file, "%s\n", here->error);
             }
@@ -279,7 +279,7 @@ inp_list(FILE *file, struct card *deck, struct card *extras, int type)
                     continue;
                 if (type == LS_PHYSICAL)
                     Xprintf(file, "%6d : %s\n",
-                            here->linenum, upper(here->line));
+                        here->linenum, upper(here->line));
                 else
                     Xprintf(file, "%s\n", upper(here->line));
                 if (here->error && (type == LS_PHYSICAL))
@@ -291,7 +291,7 @@ inp_list(FILE *file, struct card *deck, struct card *extras, int type)
                         continue;
                     if (type == LS_PHYSICAL)
                         Xprintf(file, "%6d : %s\n",
-                                there->linenum, upper(there->line));
+                            there->linenum, upper(there->line));
                     else
                         Xprintf(file, "%s\n", upper(there->line));
                     if (there->error && (type == LS_PHYSICAL))
