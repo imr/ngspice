@@ -302,6 +302,9 @@ static int ps_udevice_msgs = 0;  // Controls the verbosity of U* warnings
   If ps_udevice_exit is non-zero then exit when u_process_instance fails
 */
 static int ps_udevice_exit = 0;
+static int ps_tpz_delays = 0;  // For tristate delays
+static int ps_with_inverters = 0;  // For ff/latch control inputs
+static int ps_with_tri_inverters = 0;  // For inv3/inv3a data inputs
 static NAME_ENTRY new_names_list = NULL;
 static NAME_ENTRY input_names_list = NULL;
 static NAME_ENTRY output_names_list = NULL;
@@ -880,6 +883,21 @@ void initialize_udevice(char *subckt_line)
     */
     if (!cp_getvar("ps_udevice_exit", CP_NUM, &ps_udevice_exit, 0)) {
         ps_udevice_exit = 0;
+    }
+    /*
+      Use tpzh.., tpzl.., tphz.., tplz.. for tristates
+      if they are the only delays.
+    */
+    if (!cp_getvar("ps_tpz_delays", CP_NUM, &ps_tpz_delays, 0)) {
+        ps_tpz_delays = 0;
+    }
+    /* If non-zero use inverters with ff/latch control inputs */
+    if (!cp_getvar("ps_with_inverters", CP_NUM, &ps_with_inverters, 0)) {
+        ps_with_inverters = 0;
+    }
+    /* If non-zero use inverters for inv3/inv3a, instead use ~ */
+    if (!cp_getvar("ps_with_tri_inverters", CP_NUM, &ps_with_tri_inverters, 0)) {
+        ps_with_tri_inverters = 0;
     }
     if (subckt_line && strncmp(subckt_line, ".subckt", 7) == 0) {
         add_all_port_names(subckt_line);
@@ -1635,7 +1653,7 @@ static BOOL gen_timing_model(
 }
 
 
-static Xlatorp gen_dff_instance(struct dff_instance *ip)
+static Xlatorp gen_dff_instance(struct dff_instance *ip, int withinv)
 {
     char *itype, *iname, **darr, **qarr, **qbarr;
     char *preb, *clrb, *clk, *tmodel, *qout, *qbout;
@@ -1644,8 +1662,12 @@ static Xlatorp gen_dff_instance(struct dff_instance *ip)
     Xlatorp xxp = NULL;
     Xlatep xdata = NULL;
     BOOL need_preb_inv = FALSE, need_clrb_inv = FALSE;
+    DS_CREATE(tmpdstr, 128);
 
-    if (!ip) { return NULL; }
+    if (!ip) {
+        ds_free(&tmpdstr);
+        return NULL;
+    }
     itype = ip->hdrp->instance_type;
     iname = ip->hdrp->instance_name;
     num_gates = ip->num_gates;
@@ -1656,20 +1678,24 @@ static Xlatorp gen_dff_instance(struct dff_instance *ip)
     clrb = ip->clrbar;
 
     xxp = create_xlator();
-    add_input_pin(preb);
     if (eq(preb, "$d_hi")) {
         preb = "NULL";
     } else {
+        add_input_pin(preb);
         need_preb_inv = TRUE;
-        preb = new_inverter(iname, preb, xxp);
+        if (withinv) {
+            preb = new_inverter(iname, preb, xxp);
+        }
     }
 
-    add_input_pin(clrb);
     if (eq(clrb, "$d_hi")) {
         clrb = "NULL";
     } else {
+        add_input_pin(clrb);
         need_clrb_inv = TRUE;
-        clrb = new_inverter(iname, clrb, xxp);
+        if (withinv) {
+            clrb = new_inverter(iname, clrb, xxp);
+        }
     }
 
     clk = ip->clk;
@@ -1679,41 +1705,67 @@ static Xlatorp gen_dff_instance(struct dff_instance *ip)
     modelnm = tprintf("d_a%s_%s", iname, itype);
     for (i = 0; i < num_gates; i++) {
         char *instance_name = NULL;
+        ds_clear(&tmpdstr);
         qout = qarr[i];
-        add_output_pin(qout);
         if (eq(qout, "$d_nc")) {
             qout = "NULL";
+        } else {
+            add_output_pin(qout);
         }
         qbout = qbarr[i];
-        add_output_pin(qbout);
         if (eq(qbout, "$d_nc")) {
             qbout = "NULL";
+        } else {
+            add_output_pin(qbout);
         }
         add_input_pin(darr[i]);
         instance_name = tprintf("a%s_%d", iname, i);
-        s1 = tprintf( "%s  %s  %s  %s  %s  %s  %s  %s",
-            instance_name, darr[i], clk, preb, clrb, qout, qbout, modelnm
-        );
-        xdata = create_xlate_instance(s1, " d_dff", tmodel, modelnm);
-        xxp = add_xlator(xxp, xdata);
-        tfree(s1);
+        if (withinv) {
+            s1 = tprintf( "%s  %s  %s  %s  %s  %s  %s  %s",
+                instance_name, darr[i], clk, preb, clrb, qout, qbout, modelnm
+            );
+            xdata = create_xlate_instance(s1, " d_dff", tmodel, modelnm);
+            xxp = add_xlator(xxp, xdata);
+            tfree(s1);
+        } else {
+            if (need_preb_inv) {
+                ds_cat_printf(&tmpdstr,  "%s  %s  %s  ~%s",
+                    instance_name, darr[i], clk, preb);
+            } else {
+                ds_cat_printf(&tmpdstr,  "%s  %s  %s  %s",
+                    instance_name, darr[i], clk, preb);
+            }
+            if (need_clrb_inv) {
+                ds_cat_printf(&tmpdstr, " ~%s %s %s %s",
+                    clrb, qout, qbout, modelnm);
+            } else {
+                ds_cat_printf(&tmpdstr, " %s %s %s %s",
+                    clrb, qout, qbout, modelnm);
+            }
+            xdata = create_xlate_instance(ds_get_buf(&tmpdstr), " d_dff",
+                tmodel, modelnm);
+            xxp = add_xlator(xxp, xdata);
+        }
         tfree(instance_name);
     }
     if (!gen_timing_model(tmodel, "ueff", "d_dff", modelnm, xxp)) {
         printf("WARNING unable to find tmodel %s for %s d_dff\n",
             tmodel, modelnm);
     }
-    if (need_preb_inv || need_clrb_inv) {
-        add_zero_delay_inverter_model = TRUE;
+    if (withinv) {
+        if (need_preb_inv || need_clrb_inv) {
+            add_zero_delay_inverter_model = TRUE;
+        }
+        if (need_preb_inv) { tfree(preb); }
+        if (need_clrb_inv) { tfree(clrb); }
     }
-    if (need_preb_inv) { tfree(preb); }
-    if (need_clrb_inv) { tfree(clrb); }
+    ds_free(&tmpdstr);
     tfree(modelnm);
 
     return xxp;
 }
 
-static Xlatorp gen_jkff_instance(struct jkff_instance *ip)
+static Xlatorp gen_jkff_instance(struct jkff_instance *ip, int withinv)
 {
     char *itype, *iname, **jarr, **karr, **qarr, **qbarr;
     char *preb, *clrb, *clkb, *tmodel, *qout, *qbout;
@@ -1722,8 +1774,12 @@ static Xlatorp gen_jkff_instance(struct jkff_instance *ip)
     Xlatorp xxp = NULL;
     Xlatep xdata = NULL;
     BOOL need_preb_inv = FALSE, need_clrb_inv = FALSE;
+    DS_CREATE(tmpdstr, 128);
 
-    if (!ip) { return NULL; }
+    if (!ip) {
+        ds_free(&tmpdstr);
+        return NULL;
+    }
     itype = ip->hdrp->instance_type;
     iname = ip->hdrp->instance_name;
     num_gates = ip->num_gates;
@@ -1735,68 +1791,100 @@ static Xlatorp gen_jkff_instance(struct jkff_instance *ip)
     clrb = ip->clrbar;
 
     xxp = create_xlator();
-    add_input_pin(preb);
     if (eq(preb, "$d_hi")) {
         preb = "NULL";
     } else {
+        add_input_pin(preb);
         need_preb_inv = TRUE;
-        preb = new_inverter(iname, preb, xxp);
+        if (withinv) {
+            preb = new_inverter(iname, preb, xxp);
+        }
     }
 
-    add_input_pin(clrb);
     if (eq(clrb, "$d_hi")) {
         clrb = "NULL";
     } else {
+        add_input_pin(clrb);
         need_clrb_inv = TRUE;
-        clrb = new_inverter(iname, clrb, xxp);
+        if (withinv) {
+            clrb = new_inverter(iname, clrb, xxp);
+        }
     }
 
     /* require a positive edge clock */
     clkb = ip->clkbar;
     add_input_pin(clkb);
-    clkb = new_inverter(iname, clkb, xxp);
+    if (withinv) {
+        clkb = new_inverter(iname, clkb, xxp);
+    }
 
     tmodel = ip->tmodel;
     /* model name, same for each jkff */
     modelnm = tprintf("d_a%s_%s", iname, itype);
     for (i = 0; i < num_gates; i++) {
         char *instance_name = NULL;
+        ds_clear(&tmpdstr);
         qout = qarr[i];
-        add_output_pin(qout);
         if (eq(qout, "$d_nc")) {
             qout = "NULL";
+        } else {
+            add_output_pin(qout);
         }
         qbout = qbarr[i];
-        add_output_pin(qbout);
         if (eq(qbout, "$d_nc")) {
             qbout = "NULL";
+        } else {
+            add_output_pin(qbout);
         }
         add_input_pin(jarr[i]);
         add_input_pin(karr[i]);
         instance_name = tprintf("a%s_%d", iname, i);
-        s1 = tprintf("%s  %s  %s  %s  %s  %s  %s  %s  %s",
-            instance_name, jarr[i], karr[i], clkb, preb, clrb,
-            qout, qbout, modelnm
-        );
-        xdata = create_xlate_instance(s1, " d_jkff", tmodel, modelnm);
-        xxp = add_xlator(xxp, xdata);
-        tfree(s1);
+        if (withinv) {
+            s1 = tprintf("%s  %s  %s  %s  %s  %s  %s  %s  %s",
+                instance_name, jarr[i], karr[i], clkb, preb, clrb,
+                qout, qbout, modelnm
+            );
+            xdata = create_xlate_instance(s1, " d_jkff", tmodel, modelnm);
+            xxp = add_xlator(xxp, xdata);
+            tfree(s1);
+        } else {
+            if (need_preb_inv) {
+                ds_cat_printf(&tmpdstr, "%s  %s  %s  ~%s  ~%s",
+                    instance_name, jarr[i], karr[i], clkb, preb);
+            } else {
+                ds_cat_printf(&tmpdstr, "%s  %s  %s  ~%s  %s",
+                    instance_name, jarr[i], karr[i], clkb, preb);
+            }
+            if (need_clrb_inv) {
+                ds_cat_printf(&tmpdstr, " ~%s  %s  %s  %s",
+                    clrb, qout, qbout, modelnm);
+            } else {
+                ds_cat_printf(&tmpdstr, " %s  %s  %s  %s",
+                    clrb, qout, qbout, modelnm);
+            }
+            xdata = create_xlate_instance(ds_get_buf(&tmpdstr), " d_jkff",
+                tmodel, modelnm);
+            xxp = add_xlator(xxp, xdata);
+        }
         tfree(instance_name);
     }
     if (!gen_timing_model(tmodel, "ueff", "d_jkff", modelnm, xxp)) {
         printf("WARNING unable to find tmodel %s for %s d_jkff\n",
             tmodel, modelnm);
     }
-    add_zero_delay_inverter_model = TRUE;
-    tfree(clkb);
-    if (need_preb_inv) { tfree(preb); }
-    if (need_clrb_inv) { tfree(clrb); }
+    if (withinv) {
+        add_zero_delay_inverter_model = TRUE;
+        tfree(clkb);
+        if (need_preb_inv) { tfree(preb); }
+        if (need_clrb_inv) { tfree(clrb); }
+    }
+    ds_free(&tmpdstr);
     tfree(modelnm);
 
     return xxp;
 }
 
-static Xlatorp gen_dltch_instance(struct dltch_instance *ip)
+static Xlatorp gen_dltch_instance(struct dltch_instance *ip, int withinv)
 {
     char *itype, *iname, **darr, **qarr, **qbarr;
     char *preb, *clrb, *gate, *tmodel, *qout, *qbout;
@@ -1817,20 +1905,24 @@ static Xlatorp gen_dltch_instance(struct dltch_instance *ip)
     clrb = ip->clrbar;
 
     xxp = create_xlator();
-    add_input_pin(preb);
     if (eq(preb, "$d_hi")) {
         preb = "NULL";
     } else {
+        add_input_pin(preb);
         need_preb_inv = TRUE;
-        preb = new_inverter(iname, preb, xxp);
+        if (withinv) {
+            preb = new_inverter(iname, preb, xxp);
+        }
     }
 
-    add_input_pin(clrb);
     if (eq(clrb, "$d_hi")) {
         clrb = "NULL";
     } else {
+        add_input_pin(clrb);
         need_clrb_inv = TRUE;
-        clrb = new_inverter(iname, clrb, xxp);
+        if (withinv) {
+            clrb = new_inverter(iname, clrb, xxp);
+        }
     }
     gate = ip->gate;
     add_input_pin(gate);
@@ -1840,31 +1932,49 @@ static Xlatorp gen_dltch_instance(struct dltch_instance *ip)
     for (i = 0; i < num_gates; i++) {
         char *instance_name = NULL;
         qout = qarr[i];
-        add_output_pin(qout);
         instance_name = tprintf("a%s_%d", iname, i);
         if (eq(qout, "$d_nc")) {
             /* NULL not allowed??? */
-            s1 = tprintf("%s  %s  %s  %s  %s  nco_%s_%d",
-                instance_name, darr[i], gate, preb, clrb, iname, i);
             s3 = tprintf("nco_%s_%d", iname, i);
             check_name_unused(s3);
-            tfree(s3);
         } else {
-            s1 = tprintf("%s  %s  %s  %s  %s  %s",
-                instance_name, darr[i], gate, preb, clrb, qout);
+            add_output_pin(qout);
+            s3 = tprintf("%s", qout);
         }
+        if (withinv) {
+            s1 = tprintf("%s  %s  %s  %s  %s  %s",
+                instance_name, darr[i], gate, preb, clrb, s3);
+        } else {
+            if (need_preb_inv) {
+                if (need_clrb_inv) {
+                    s1 = tprintf("%s  %s  %s  ~%s  ~%s %s",
+                        instance_name, darr[i], gate, preb, clrb, s3);
+                } else {
+                    s1 = tprintf("%s  %s  %s  ~%s  %s  %s",
+                        instance_name, darr[i], gate, preb, clrb, s3);
+                }
+            } else if (need_clrb_inv) {
+                s1 = tprintf("%s  %s  %s  %s  ~%s  %s",
+                    instance_name, darr[i], gate, preb, clrb, s3);
+            } else {
+                s1 = tprintf("%s  %s  %s  %s  %s  %s",
+                    instance_name, darr[i], gate, preb, clrb, s3);
+            }
+        }
+        tfree(s3);
         add_input_pin(darr[i]);
         qbout = qbarr[i];
-        add_output_pin(qbout);
         if (eq(qbout, "$d_nc")) {
             /* NULL not allowed??? */
-            s2 = tprintf(" ncn_%s_%d  %s", iname, i, modelnm);
             s3 = tprintf("ncn_%s_%d", iname, i);
             check_name_unused(s3);
-            tfree(s3);
         } else {
-            s2 = tprintf("  %s  %s", qbout, modelnm);
+            add_output_pin(qbout);
+            s3 = tprintf("%s", qbout);
         }
+        s2 = tprintf("  %s  %s", s3, modelnm);
+        tfree(s3);
+
         s3 = tprintf("%s%s", s1, s2);
         xdata = create_xlate_instance(s3, " d_dlatch", tmodel, modelnm);
         xxp = add_xlator(xxp, xdata);
@@ -1877,17 +1987,19 @@ static Xlatorp gen_dltch_instance(struct dltch_instance *ip)
         printf("WARNING unable to find tmodel %s for %s d_dlatch\n",
             tmodel, modelnm);
     }
-    if (need_preb_inv || need_clrb_inv) {
-        add_zero_delay_inverter_model = TRUE;
+    if (withinv) {
+        if (need_preb_inv || need_clrb_inv) {
+            add_zero_delay_inverter_model = TRUE;
+        }
+        if (need_preb_inv) { tfree(preb); }
+        if (need_clrb_inv) { tfree(clrb); }
     }
-    if (need_preb_inv) { tfree(preb); }
-    if (need_clrb_inv) { tfree(clrb); }
     tfree(modelnm);
 
     return xxp;
 }
 
-static Xlatorp gen_srff_instance(struct srff_instance *srffp)
+static Xlatorp gen_srff_instance(struct srff_instance *srffp, int withinv)
 {
     char *itype, *iname, **sarr, **rarr, **qarr, **qbarr;
     char *preb, *clrb, *gate, *tmodel, *qout, *qbout;
@@ -1909,20 +2021,24 @@ static Xlatorp gen_srff_instance(struct srff_instance *srffp)
     clrb = srffp->clrbar;
 
     xxp = create_xlator();
-    add_input_pin(preb);
     if (eq(preb, "$d_hi")) {
         preb = "NULL";
     } else {
+        add_input_pin(preb);
         need_preb_inv = TRUE;
-        preb = new_inverter(iname, preb, xxp);
+        if (withinv) {
+            preb = new_inverter(iname, preb, xxp);
+        }
     }
 
-    add_input_pin(clrb);
     if (eq(clrb, "$d_hi")) {
         clrb = "NULL";
     } else {
+        add_input_pin(clrb);
         need_clrb_inv = TRUE;
-        clrb = new_inverter(iname, clrb, xxp);
+        if (withinv) {
+            clrb = new_inverter(iname, clrb, xxp);
+        }
     }
     gate = srffp->gate;
     add_input_pin(gate);
@@ -1932,32 +2048,51 @@ static Xlatorp gen_srff_instance(struct srff_instance *srffp)
     for (i = 0; i < num_gates; i++) {
         char *instance_name = NULL;
         qout = qarr[i];
-        add_output_pin(qout);
         instance_name = tprintf("a%s_%d", iname, i);
         add_input_pin(sarr[i]);
         add_input_pin(rarr[i]);
         if (eq(qout, "$d_nc")) {
             /* NULL not allowed??? */
-            s1 = tprintf("%s  %s  %s  %s  %s  %s  nco_%s_%d",
-                instance_name, sarr[i], rarr[i], gate, preb, clrb, iname, i);
             s3 = tprintf("nco_%s_%d", iname, i);
             check_name_unused(s3);
-            tfree(s3);
         } else {
-            s1 = tprintf("%s  %s  %s  %s  %s  %s  %s",
-                instance_name, sarr[i], rarr[i], gate, preb, clrb, qout);
+            add_output_pin(qout);
+            s3 = tprintf("%s", qout);
         }
+        if (withinv) {
+            s1 = tprintf("%s  %s  %s  %s  %s  %s  %s",
+                instance_name, sarr[i], rarr[i], gate, preb, clrb, s3);
+        } else {
+            if (need_preb_inv) {
+                if (need_clrb_inv) {
+                    s1 = tprintf("%s  %s  %s  %s  ~%s  ~%s  %s",
+                        instance_name, sarr[i], rarr[i], gate, preb, clrb, s3);
+                } else {
+                    s1 = tprintf("%s  %s  %s  %s  ~%s  %s  %s",
+                        instance_name, sarr[i], rarr[i], gate, preb, clrb, s3);
+                }
+            } else if (need_clrb_inv) {
+                s1 = tprintf("%s  %s  %s  %s  %s  ~%s  %s",
+                    instance_name, sarr[i], rarr[i], gate, preb, clrb, s3);
+            } else {
+                s1 = tprintf("%s  %s  %s  %s  %s  %s  %s",
+                    instance_name, sarr[i], rarr[i], gate, preb, clrb, s3);
+            }
+        }
+        tfree(s3);
+
         qbout = qbarr[i];
-        add_output_pin(qbout);
         if (eq(qbout, "$d_nc")) {
             /* NULL not allowed??? */
-            s2 = tprintf(" ncn_%s_%d  %s", iname, i, modelnm);
             s3 = tprintf("ncn_%s_%d", iname, i);
             check_name_unused(s3);
-            tfree(s3);
         } else {
-            s2 = tprintf("  %s  %s", qbout, modelnm);
+            add_output_pin(qbout);
+            s3 = tprintf("%s", qbout);
         }
+        s2 = tprintf("  %s  %s", s3, modelnm);
+        tfree(s3);
+
         s3 = tprintf("%s%s", s1, s2);
         xdata = create_xlate_instance(s3, " d_srlatch", tmodel, modelnm);
         xxp = add_xlator(xxp, xdata);
@@ -1970,11 +2105,13 @@ static Xlatorp gen_srff_instance(struct srff_instance *srffp)
         printf("WARNING unable to find tmodel %s for %s d_srlatch\n",
             tmodel, modelnm);
     }
-    if (need_preb_inv || need_clrb_inv) {
-        add_zero_delay_inverter_model = TRUE;
+    if (withinv) {
+        if (need_preb_inv || need_clrb_inv) {
+            add_zero_delay_inverter_model = TRUE;
+        }
+        if (need_preb_inv) { tfree(preb); }
+        if (need_clrb_inv) { tfree(clrb); }
     }
-    if (need_preb_inv) { tfree(preb); }
-    if (need_clrb_inv) { tfree(clrb); }
     tfree(modelnm);
 
     return xxp;
@@ -2123,11 +2260,13 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
     BOOL tristate_array = FALSE, simple_array = FALSE;
     BOOL add_tristate = FALSE;
     char *modelnm = NULL, *startvec = NULL, *endvec = NULL;
-    char *input_buf = NULL, *instance_name = NULL;
+    char *instance_name = NULL;
     int i, j, k, width, num_gates, num_ins, num_outs;
-    size_t sz;
     Xlatorp xxp = NULL;
     Xlatep xdata = NULL;
+    int withinv = ps_with_tri_inverters;
+    BOOL inv3_to_buf3 = FALSE;
+    BOOL inv3a_to_buf3a = FALSE;
 
     if (!gip) { return NULL; }
     itype = gip->hdrp->instance_type;
@@ -2158,16 +2297,24 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
 
     if (num_gates == 1) {
         char *inst_begin = NULL;
+        DS_CREATE(input_dstr, 128);
         simple_gate = is_gate(itype);
         tristate_gate = is_tristate(itype);
-        if (!simple_gate && !tristate_gate) { return NULL; }
+        if (!simple_gate && !tristate_gate) {
+            ds_free(&input_dstr);
+            return NULL;
+        }
+
+        inv3_to_buf3 = (!withinv && eq(itype, "inv3"));
         add_tristate = FALSE;
-        if (simple_gate) {
-            xspice = find_xspice_for_delay(itype);
-        } else if (tristate_gate) {
-            xspice = find_xspice_for_delay(itype);
+        xspice = find_xspice_for_delay(itype);
+        if (tristate_gate) {
             if (!eq(itype, "buf3")) {
-                add_tristate = TRUE;
+                if (inv3_to_buf3) {
+                    add_tristate = FALSE;
+                } else {
+                    add_tristate = TRUE;
+                }
             }
         }
         xxp = create_xlator();
@@ -2180,46 +2327,46 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
             endvec = "";
         }
         /* inputs */
-        /* First calculate the space */
-        sz = 0;
+        ds_clear(&input_dstr);
         for (i = 0; i < width; i++) {
-            sz += strlen(inarr[i]) + 4; // Extra 4 spaces separating
-        }
-        input_buf = TMALLOC(char, sz);
-        input_buf[0] = '\0';
-        for (i = 0; i < width; i++) {
-            sprintf(input_buf + strlen(input_buf), " %s", inarr[i]);
+            /* Note that width == 1 for inv3/buf3 */
+            ds_cat_printf(&input_dstr, " %s", inarr[i]);
         }
         /* instance name and inputs */
         /* add the tristate enable if required on original */
         if (enable) {
             if (!add_tristate) {
-                /* Warning: changing the format string affects input_buf sz */
-                inst_begin = tprintf("a%s %s%s%s  %s",
-                    iname, startvec, input_buf, endvec, enable);
+                if (inv3_to_buf3) {
+                    inst_begin = tprintf("a%s %s ~%s %s  %s",
+                        iname, startvec, ds_get_buf(&input_dstr), endvec, enable);
+                } else {
+                    inst_begin = tprintf("a%s %s%s%s  %s",
+                        iname, startvec, ds_get_buf(&input_dstr), endvec, enable);
+                }
             } else {
-                /* Warning: changing the format string affects input_buf sz */
                 inst_begin = tprintf("a%s %s%s%s",
-                    iname, startvec, input_buf, endvec);
+                    iname, startvec, ds_get_buf(&input_dstr), endvec);
             }
         } else {
-            /* Warning: changing the format string affects input_buf sz */
             inst_begin = tprintf("a%s %s%s%s",
-                iname, startvec, input_buf, endvec);
+                iname, startvec, ds_get_buf(&input_dstr), endvec);
         }
-        tfree(input_buf);
-
-        /* connector if required for tristate */
-        connector = tprintf("con_a%s_%s", iname, outarr[0]);
 
         /* keep a copy of the model name of original gate */
-        modelnm = tprintf("d_a%s_%s", iname, itype);
+        if (inv3_to_buf3) {
+            modelnm = tprintf("d_a%s_%s", iname, "buf3");
+        } else {
+            modelnm = tprintf("d_a%s_%s", iname, itype);
+        }
 
         if (!add_tristate) {
             char *instance_stmt = NULL;
             /* add output + model name  => translated instance */
             instance_stmt = tprintf("%s %s %s",
                                     inst_begin, outarr[0], modelnm);
+            if (inv3_to_buf3) {
+                xspice = find_xspice_for_delay("buf3");
+            }
             xdata = create_xlate_instance(instance_stmt,
                                           xspice, tmodel, modelnm);
             xxp = add_xlator(xxp, xdata);
@@ -2230,7 +2377,7 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
                     printf("WARNING unable to find tmodel %s for %s %s\n",
                         tmodel, modelnm, xspice);
                 }
-            } else { /* must be trstate gate buf3 */
+            } else { /* must be tristate gate buf3 */
                 if (!gen_timing_model(tmodel, "utgate", xspice,
                     modelnm, xxp)) {
                     printf("WARNING unable to find tmodel %s for %s %s\n",
@@ -2241,6 +2388,7 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
             char *new_model_nm = NULL;
             char *new_stmt = NULL;
             char *zero_rise_fall = NULL;
+            connector = tprintf("con_a%s_%s", iname, outarr[0]);
             /*
              Use connector as original gate output and tristate input;
              tristate has original gate output and utgate delay;
@@ -2276,24 +2424,28 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
                     tmodel, new_model_nm, xspice);
             }
             tfree(new_model_nm);
+            tfree(connector);
         }
-        tfree(connector);
         tfree(modelnm);
         tfree(inst_begin);
+        ds_free(&input_dstr);
         return xxp;
 
-    } else {
+    } else {  // start of array of gates
         char *primary_model = NULL, *s1 = NULL, *s2 = NULL, *s3 = NULL;
-        int ksave;
+        DS_CREATE(input_dstr, 128);
         /* arrays of gates */
         simple_array = is_gate_array(itype);
         tristate_array = is_tristate_array(itype);
+
+        inv3a_to_buf3a = (!withinv && eq(itype, "inv3a"));
         add_tristate = FALSE;
-        if (simple_array) {
-            xspice = find_xspice_for_delay(itype);
-        } else if (tristate_array) {
-            xspice = find_xspice_for_delay(itype);
+        xspice = find_xspice_for_delay(itype);
+        if (tristate_array) {
             if (eq(itype, "buf3a")) {
+                add_tristate = FALSE;
+            } else if (inv3a_to_buf3a) {
+                xspice = find_xspice_for_delay("buf3a");
                 add_tristate = FALSE;
             } else {
                 add_tristate = TRUE;
@@ -2315,24 +2467,22 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
          primary gates have zero delay models and utgate delay is added
          to the model of a trailing tristate buffer.
         */
-        primary_model = tprintf("d_a%s_%s", iname, itype); 
-        for (i = 0; i < num_gates; i++) {
+        if (inv3a_to_buf3a) {
+            primary_model = tprintf("d_a%s_%s", iname, "buf3a"); 
+        } else {
+            primary_model = tprintf("d_a%s_%s", iname, itype); 
+        }
+        for (i = 0; i < num_gates; i++) {  // start of for each gate
             /* inputs */
-            /* First calculate the space */
-            ksave = k;
-            sz = 0;
+            ds_clear(&input_dstr);
             for (j = 0; j < width; j++) {
                 /* inputs for primary gate */
-                sz += strlen(inarr[k]) + 4; // Extra 4 spaces separating
-                k++;
-            }
-            k = ksave;
-            input_buf = TMALLOC(char, sz);
-            input_buf[0] = '\0';
-            for (j = 0; j < width; j++) {
-                /* inputs for primary gate */
-                /* Warning: changing the format string affects input_buf sz */
-                sprintf(input_buf + strlen(input_buf), " %s", inarr[k]);
+                if (inv3a_to_buf3a && j == 0) {
+                    /* width must be 1 */
+                    ds_cat_printf(&input_dstr, " ~%s", inarr[k]);
+                } else {
+                    ds_cat_printf(&input_dstr, " %s", inarr[k]);
+                }
                 k++;
             }
             /* create new instance name for primary gate */
@@ -2341,12 +2491,12 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
                     /* primary gate instance name + inputs + enable */
                     /* this is the buf3a case */
                     s1 = tprintf("a%s_%d %s%s%s  %s",
-                        iname, i, startvec, input_buf, endvec, enable);
+                        iname, i, startvec, ds_get_buf(&input_dstr), endvec, enable);
                 } else {
                     /* primary gate instance name + inputs */
                     /* enable is added later to trailing tristate buffer */
                     s1 = tprintf("a%s_%d %s%s%s",
-                        iname, i, startvec, input_buf, endvec);
+                        iname, i, startvec, ds_get_buf(&input_dstr), endvec);
                     /* connector if required for tristate */
                     connector = tprintf("con_a%s_%d_%s", iname, i, outarr[i]);
                     check_name_unused(connector);
@@ -2354,9 +2504,8 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
             } else {
                 /* primary gate instance name + inputs */
                 s1 = tprintf("a%s_%d %s%s%s",
-                    iname, i, startvec, input_buf, endvec);
+                    iname, i, startvec, ds_get_buf(&input_dstr), endvec);
             }
-            tfree(input_buf);
             /* output of primary gate */
             if (add_tristate) {
                 s2 = tprintf(" %s %s", connector, primary_model);
@@ -2431,10 +2580,11 @@ static Xlatorp gen_gate_instance(struct gate_instance *gip)
                 tfree(modname);
                 tfree(connector);
             }
-        }
+        }  // end of for each gate
+        ds_free(&input_dstr);
         tfree(primary_model);
         return xxp;
-    }
+    }  // end of array of gates
 }
 
 static void extract_model_param(char *rem, char *param_name, char *buf)
@@ -2681,7 +2831,7 @@ static char *get_delays_utgate(char *rem)
         }
     } else if (has_falling) {
         delays = tprintf("(inertial_delay=true delay = %s)", falling);
-    } else if (use_zdelays) {
+    } else if (use_zdelays || (ps_tpz_delays & 1)) {
         /* No lh/hl delays, so try the largest lz/hz/zl/zh delay */
         tdp3 = create_min_typ_max("tplz", rem);
         estimate_typ(tdp3);
@@ -2734,7 +2884,7 @@ static char *get_delays_utgate(char *rem)
         delete_timing_data(tdp4);
         delete_timing_data(tdp5);
         delete_timing_data(tdp6);
-    } else { // Not use_zdelays
+    } else { // Not use_zdelays or (ps_tpz_delays & 1)
         delays = tprintf("(inertial_delay=true delay=1.0e-12)");
     }
     delete_timing_data(tdp1);
@@ -3579,33 +3729,34 @@ static Xlatorp translate_ff_latch(struct instance_hdr *hdr, char *start)
     struct srff_instance *srffp = NULL;
     struct dltch_instance *dltchp = NULL;
     Xlatorp xp;
+    int withinv = ps_with_inverters;
 
     itype = hdr->instance_type;
     if (eq(itype, "dff")) {
         dffp = add_dff_inout_timing_model(hdr, start);
         if (dffp) {
-            xp = gen_dff_instance(dffp);
+            xp = gen_dff_instance(dffp, withinv);
             delete_dff_instance(dffp);
             return xp;
         }
     } else if (eq(itype, "jkff")) {
         jkffp = add_jkff_inout_timing_model(hdr, start);
         if (jkffp) {
-            xp = gen_jkff_instance(jkffp);
+            xp = gen_jkff_instance(jkffp, withinv);
             delete_jkff_instance(jkffp);
             return xp;
         }
     } else if (eq(itype, "srff")) {
         srffp = add_srff_inout_timing_model(hdr, start);
         if (srffp) {
-            xp = gen_srff_instance(srffp);
+            xp = gen_srff_instance(srffp, withinv);
             delete_srff_instance(srffp);
             return xp;
         }
     } else if (eq(itype, "dltch")) {
         dltchp = add_dltch_inout_timing_model(hdr, start);
         if (dltchp) {
-            xp = gen_dltch_instance(dltchp);
+            xp = gen_dltch_instance(dltchp, withinv);
             delete_dltch_instance(dltchp);
             return xp;
         }
