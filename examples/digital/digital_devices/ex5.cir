@@ -78,7 +78,7 @@ x2 oeb clk 1in 2in 3in 4in 5in 6in 7in 8in q1 q2 q3 q4 q5 q6 q7 q8 74lv574a
 a1 [oeb clk 1in 2in 3in 4in 5in 6in 7in 8in] input_vec1
 .model input_vec1 d_source(input_file = "ex5.stim")
 
-x3 1000 1001 1002 1003 1004 1005 1006 1007 1008 1009 74als242b
+x3 oeb oeb 1in 2in 3in 4in 1006 1007 1008 1009 74als242b
 
 * ----------------------------------------------------------- 74ALS242B ------
 *  Quad Bus Transceivers With 3-State Outputs
@@ -119,12 +119,13 @@ uf2 inv3a(4) DPWR DGND
 .save all
 
 .control
-listing expand
+listing r expand
 run
 *display
 *edisplay
 eprint o1 o2 o3 o4 o5 o6 o7 o8
 eprint q1 q2 q3 q4 q5 q6 q7 q8
+eprint 1006 1007 1008 1009
 *set xbrushwidth=2
 plot  o1 o2 o3 o4 o5 o6 o7 o8 q1 q2 q3 q4 q5 q6 q7 q8 digitop
 *quit
