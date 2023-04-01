@@ -303,6 +303,7 @@ void Evt_purge_free_outputs(void)
 
     for (i = 0; i < g_evt_num_udn_types; ++i) {
         output_event = g_evt_udn_info[i]->free_list;
+        g_evt_udn_info[i]->free_list = NULL;
         while (output_event) {
             next = output_event->next;
             tfree(output_event->value);

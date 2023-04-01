@@ -1,0 +1,11 @@
+* Subcircuit for analogue to digital converter
+
+.subckt bridge_demo_family_d_in in out vcc=3.3
+
+* For no good reason the voltage is reduced before A/D converion
+
+r1 in in2 1k
+r2 in2 0 1k
+adc [ in2 ] [ out ] lv_adc
+.model lv_adc adc_bridge in_low={vcc/4} in_high={vcc/4}
+.ends

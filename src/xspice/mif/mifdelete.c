@@ -43,6 +43,7 @@ NON-STANDARD FEATURES
 
 #include "ngspice/mifproto.h"
 #include "ngspice/mifdefs.h"
+#include "ngspice/evt.h"
 
 #if defined(_MSC_VER) || defined(__MINGW32__)
 #include "ngspice/mifparse.h"
@@ -134,8 +135,16 @@ MIFdelete(GENinstance *gen_inst)
         /* Free the basic port structure allocated in MIFget_port */
         num_port = here->conn[i]->size;
         for (j = 0; j < num_port; j++) {
-            /* Memory allocated in mif_inp2.c */
+            Evt_Output_Event_t *evt;
+
+            /* Memory allocated in mif_inp2.c and evtload.c. */
+
             FREE(here->conn[i]->port[j]->type_str);
+            evt = here->conn[i]->port[j]->next_event;
+            if (evt) {
+                FREE(evt->value);
+                FREE(evt);
+            }
             FREE(here->conn[i]->port[j]);
         }
         FREE(here->conn[i]->port);

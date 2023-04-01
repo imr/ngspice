@@ -24,10 +24,4 @@ To compile NGSPICE with OSDI support ensure that the `--enable-predictor` and `-
 The `compile_linux.sh` file enables these flags by default.
 
 
-## Example/Test Case
-
-A simple handwritten diode can be found in `test_cases/diode/diode.c`.
-In the same directory a script named `test_diode.py` is provided that will compile this model and run some example simulations.
-After the script has finished the compilation result `diode.osdi` and the netlist can then be found in `test_cases/diode/test_osdi`.
-
 

@@ -1,0 +1,43 @@
+  ADDER - 4 BIT ALL-74HC00-GATE BINARY ADDER WITH AUTOMATIC BRIDGING
+  * behavioral gate description
+  * Automatic A/D insertion using bi-directional bridges
+
+* The NAND gates in the adder have a "family" parameter that determines
+* the A/D and D/A bridges that are inserted.  For A/D a subcircuit is
+* used, defined by the file bridge_demo_family_d_in.subcir.  For D/A
+* the following interpreter variable sets up the bridges with non-default
+* output levels.
+
+.control
+pre_set auto_bridge_demo_family_d_out =
++ ( ".model auto_da dac_bridge(out_high='%g-0.7' out_low=0.9 )"
++   "auto_bridge%d [ %s ] [ %s ] auto_da" 1000 )
+.endc
+
+.param vcc=5 tripdt=6n
+
+*
+* 2-input NAND gate
+* vcc 2 /4.5/5 /6
+* tpd 25n/9n/7n/7n
+* tr 19n/7n /  /6n
+
+*** Subcircuit definition: copy of 74HCng_auto.lib with "family" parameter
+
+.SUBCKT 74HC00  in1 in2 out  NVCC NVGND  vcc1={vcc} tripdt1={tripdt}
+.param td1={1e-9*(9-3-3)*4.0/(vcc1-0.5)}
+.param Rout={60*4.0/(vcc1-0.5)} ; standard output driver
+
+a6 [in1 in2] dout nand1
+
+.model nand1 d_nand(rise_delay = {td1} fall_delay = {td1}
++ input_load = 0.5e-12) family="demo_family"
+
+Rout dout out {Rout}
+.ends
+
+.param vcc=3 tripdt=6n
+
+.include ../adder_common.inc
+
+.END

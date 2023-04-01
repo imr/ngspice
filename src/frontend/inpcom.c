@@ -169,7 +169,6 @@ static void inp_check_syntax(struct card *deck);
 
 static char *inp_spawn_brace(char *s);
 
-static char *inp_pathresolve(const char *name);
 static char *inp_pathresolve_at(const char *name, const char *dir);
 char *search_plain_identifier(char *str, const char *identifier);
 
@@ -1756,7 +1755,7 @@ FILE *inp_pathopen(const char *name, const char *mode)
   if the file isn't in . and it isn't an abs path name.
   *-------------------------------------------------------------------------*/
 
-static char *inp_pathresolve(const char *name)
+char *inp_pathresolve(const char *name)
 {
     struct variable *v;
     struct stat st;
@@ -9820,6 +9819,19 @@ static void inp_check_syntax(struct card *deck)
     if (ciprefix(".param", deck->line) || ciprefix(".meas", deck->line)) {
         fprintf(cp_err, "\nError: title line is missing!\n\n");
         controlled_exit(EXIT_BAD);
+    }
+
+
+    /* When '.probe alli' is set, disable auto bridging and set a flag */
+    for (card = deck; card; card = card->nextcard) {
+        char* cut_line = card->line;
+        if (ciprefix(".probe", cut_line) && search_plain_identifier(cut_line, "alli")) {
+            int i = 0;
+            bool bi = TRUE;
+            cp_vset("auto_bridge", CP_NUM, &i);
+            cp_vset("probe_alli_given", CP_BOOL, &bi);
+            break;
+        }
     }
 
     for (ii = 0; ii < 10; ii++)

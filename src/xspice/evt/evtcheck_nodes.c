@@ -32,7 +32,7 @@
 When using XSPICE to simulate digital devices in a mixed-mode simulation,
 bridging devices must be included in the circuit to pass signals between the
 analogue simulator and XSPICE.  Such devices may be included in the netlist,
-or they may can be inserted automatically.  Different types of automatic
+or they can be inserted automatically.  Different types of automatic
 bridge may exist in the same circuit, depending on signal direction and
 characteristics of the connected device, for example digital devices
 powered by differing voltages.  Non-digital XSPICE nodes are supported.
@@ -95,21 +95,26 @@ for device libraries whose devices are defined by subcircuits.
    the enclosing subcircuits for a definition of the parameter.
    If found, set vcc from the parameter.
 
-3: If a command interpreter variable "no_auto_bridge_family": exists, go to
-   step 5.  Search the connected device instances for a parameter,
-   "family" with a string value.  The first one found will be used.
-   If the first character of the value is not '*', the setup card will
-   be ".include bridge_FFFFF_DDD.cir" where FFFFF is the family and
-   DDD is the signal direction for the XSPICE device: "in", "out" or
-   "inout".  The device card will be "Xauto_bridge%d %s %s
-   bridge_FFFFF_DDD vcc=%g", so a suitably parameterised subcircuit
-   must be defined in the included file.
+3: If a command interpreter variable "no_auto_bridge_family": exists,
+   go to step 5.  Search the connected XSPICE device instances for a
+   parameter, "family" with a string value.  The first one found will
+   be used.  If no such instance exists, search for a string-valued
+   parameter, "family", in enclosing subcircuits, as in step 2.  If
+   the first character of the value is not '*', the setup card may be
+   ".include bridge_FFFFF_TTTT_DDD.subcir" where FFFFF is the family,
+   TTTT is as before and DDD is the signal direction for the XSPICE
+   device: "in", "out" or "inout".  This form will be used only when
+   the required file can be found.  In that case, the device card will
+   be "Xauto_bridge%d %s %s bridge_FFFFF_TTTT_DDD vcc=%g", so a
+   suitably parameterised subcircuit must be defined in the included
+   file.
 
-4: If the first character of "family" was '*', look for a variable
-   "auto_bridge_FFFFF_TTTT_DDD" where FFFFF is the family without '*',
-   TTTT is the node type string and DDD is the direction.  So this might be
-   "auto_bridge_74HCT_d_inout" for a digital node.  Use the variable's value
-   as in step 6, proceeding to step 5 if checks fail.
+4: If the first character of "family" was '*', or no file was found,
+   look for a variable "auto_bridge_FFFFF_TTTT_DDD" where FFFFF is the
+   family without '*', TTTT is the node type string and DDD is the
+   direction.  So this might be "auto_bridge_74HCT_d_inout" for a
+   digital node.  Use the variable's value as in step 6, proceeding to
+   step 5 if checks fail.
 
 5: Look for a variable "auto_bridge_TTTT_DDD" where TTTT and DDD are as before.
 
@@ -160,9 +165,9 @@ for device libraries whose devices are defined by subcircuits.
 
    and invoked by:
 
-   set auto_bridge_d_out_30 = ( ".include test_sub.cir"
-   +                            "xauto_buf%d %s %s auto_buf vcc=%g"
-   +                            1 )
+   set auto_bridge_d_out = ( ".include test_sub.subcir"
+   +                         "xauto_buf%d %s %s auto_buf vcc=%g"
+   +                         1 )
 */
 
 /* Working information about a type of bridge. */
@@ -195,10 +200,15 @@ static struct card *expand_deck(struct card *head)
     struct card  *card, *next;
     char        **pointers;
     int           i, dico;
+    bool          save_debug;
 
-    /* Save the current parameter symbol table. */
+    /* Save the current parameter symbol table and debug global.
+     * Prevent overwriting of debug output in inp_readall().
+     */
 
     dico = nupa_add_dicoslist();
+    save_debug = ft_ngdebug;
+    ft_ngdebug = FALSE;
 
     /* Count the cards, allocate and fill a pointer array. */
 
@@ -221,6 +231,7 @@ static struct card *expand_deck(struct card *head)
     circarray = pointers;
     card = inp_readall(NULL, Infile_Path, FALSE, TRUE, NULL);
     card = inp_subcktexpand(card);
+    ft_ngdebug = save_debug;
 
     /* Destroy the parameter table that was created in subcircuit/parameter
      * expansion and restore the previous version.
@@ -479,8 +490,8 @@ static struct bridge *find_bridge(Evt_Node_Info_t  *event_node,
     family = NULL;
     deep = scan_devices(event_node, ckt, &family);
 
-    /* Look for a real parameter (.param type) in the device's subcircuit
-     * and those enclosing it.
+    /* Look for a real parameter (.param type) and perhaps a string-valued
+     * "family" parameter in the device's subcircuit and those enclosing it.
      */
 
     snprintf(buff, sizeof buff, "%s", deep);
@@ -490,7 +501,11 @@ static struct bridge *find_bridge(Evt_Node_Info_t  *event_node,
             snprintf(dot + 1, sizeof buff - (size_t)(dot - buff), "%s", vcc_parm);
             vcc = nupa_get_param(buff, &ok);
         }
-        if (ok)
+        if (!family) {
+            snprintf(dot + 1, sizeof buff - (size_t)(dot - buff), "family");
+            family = nupa_get_string_param(buff);
+        }
+        if (ok && family)
             break;
         *dot = '\0';
         dot = strrchr(buff, '.');
@@ -506,12 +521,29 @@ static struct bridge *find_bridge(Evt_Node_Info_t  *event_node,
         }
     }
 
+    if (!family)
+        family = nupa_get_string_param("family");
     if (family && cp_getvar("no_auto_bridge_family", CP_BOOL, NULL, 0))
         family = NULL;
 
-    if (family && *family == '*') {
-        s_family = family + 1;
-        family = NULL; // Not used for matching.
+    if (family) {
+        if (*family == '*') {
+            s_family = family + 1; // Use variable look-up.
+        } else {
+            char *fam_inc_path;
+
+            /* Check if an include file exists for the family. */
+
+            snprintf(buff, sizeof buff, "bridge_%s_%s_%s.subcir",
+                     family, type_name, dirs[direction]);
+            fam_inc_path = inp_pathresolve(buff);
+            if (fam_inc_path) {
+                tfree(fam_inc_path);
+                s_family = NULL;
+            } else {
+                s_family = family; // Use variable look-up.
+            }
+        }
     } else {
         s_family = NULL;
     }
@@ -523,10 +555,19 @@ static struct bridge *find_bridge(Evt_Node_Info_t  *event_node,
             bridge->direction == direction) {
             if (family) {
                 if (!strcmp(family, bridge->family)) {
-                    /* Return vcc for formatting: requires bridge->max == 1. */
+                    if (!s_family && bridge->max == 1) {
+                        /* Set bridge vcc for formatting. */
 
-                    bridge->vcc = vcc;
-                    break;
+                        bridge->vcc = vcc;
+                        break;
+                    } else {
+                        /* Using cards from variable, or shared sub-circuit:
+                         * vcc must also match.
+                         */
+
+                        if (bridge->vcc == vcc)
+                            break;
+                    }
                 }
             } else if (bridge->vcc == vcc) {            // Match vcc.
                 break;
@@ -538,23 +579,23 @@ static struct bridge *find_bridge(Evt_Node_Info_t  *event_node,
 
     /* Determine if a bridging element exists, starting with the node type. */
 
-    if (family) {
-        /* Use standard pattern for known parts family. */
-
-        snprintf(buff, sizeof buff, ".include bridge_%s_%s.cir",
-                 family, dirs[direction]);
-        setup = copy(buff);
-        snprintf(buff, sizeof buff,
-                 "Xauto_bridge%%d %%s %%s bridge_%s_%s vcc=%%g",
-                 family, dirs[direction]);
-        format = copy(buff);
-        max = 1;
-    } else if (s_family) {
+    if (s_family) {
         /* Family variable lookup. */
 
         snprintf(buff, sizeof buff, "auto_bridge_%s_%s_%s",
                  s_family, type_name, dirs[direction]);
         cp_getvar(buff, CP_LIST, &cvar, sizeof cvar);
+    } else if (family) {
+        /* Use standard pattern for known parts family. */
+
+        snprintf(buff, sizeof buff, ".include bridge_%s_%s_%s.subcir",
+                 family, type_name, dirs[direction]);
+        setup = copy(buff);
+        snprintf(buff, sizeof buff,
+                 "Xauto_bridge%%d %%s %%s bridge_%s_%s_%s vcc=%%g",
+                 family, type_name, dirs[direction]);
+        format = copy(buff);
+        max = 1;
     }
 
     if (!format && !cvar) {
@@ -667,8 +708,13 @@ bool Evtcheck_nodes(
              int nl;
 
              if (strcmp(event_node->name, analog_node->name) == 0) {
-                 if (show == AB_OFF)
+                 if (show == AB_OFF) {
+                     if (cp_getvar("probe_alli_given", CP_BOOL, NULL, 0))
+                         fprintf(stderr, "\nDot command '.probe alli' and digital nodes are not compatible.\n");
+                     FREE(errMsg);
+                     errMsg = copy("Auto bridging is switched off");
                      return FALSE;      // Auto-bridge disabled
+                 }
                  bridge = find_bridge(event_node, ckt, &bridge_list);
                  if (!bridge) {
                     /* Fatal, circuit cannot run. */

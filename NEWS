@@ -1,3 +1,22 @@
+Ngspice-40, Mar 31st, 2023
+============
+- New features:
+    + VBIC: Add optional parameters for determining the operation region
+    + VBIC: Add bvbe, bvbc, bvce, bvsub as SOA parameters
+    + Add inertial delay to all basic digital code models, make it available
+      for U devices
+    + VDMOS default parameters are now similar to IRF540 IRF9540
+    + Add function atanh to .control section
+    + Add a scale factor 'a' (atto, 1e-18)
+
+- Bug fixes:
+    + ngspice-40 is mostly a bug-fix release. In conjunction with KiCad and
+      shared ngspice, inappropriate user inputs have led to crashing ngspice.
+    + bugs no. 331, 619, 620, 624 have been fixed
+    + 9 crash bugs (double delete, access NULL pointer etc) removed which have
+      occurred mostly due to incomplete or faulty inputs.
+    + Memory leaks removed
+
 Ngspice-39, Jan 31st, 2023
 ============
 - New features:

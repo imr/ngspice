@@ -15,7 +15,7 @@
 #define PACKAGE "ngspice"
 
 /* Version number of package */
-#define VERSION "39+"
+#define VERSION "40+"
 
 /* Define the directory for executables */
 #define NGSPICEBINDIR "../bin"
