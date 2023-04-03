@@ -72,7 +72,7 @@ VBICsoaCheck(CKTcircuit *ckt, GENmodel *inModel)
             if (vsub > model->VBICvsubMax)
                 if (warns_vsub < maxwarns) {
                     soa_printf(ckt, (GENinstance*)here,
-                        "|Vce|=%g has exceeded Vce_max=%g\n",
+                        "|Vcs|=%g has exceeded Vcs_max=%g\n",
                         vsub, model->VBICvsubMax);
                     warns_vsub++;
                 }
