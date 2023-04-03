@@ -31,6 +31,7 @@ VSRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *state)
         for (here = VSRCinstances(model); here != NULL ;
                 here=VSRCnextInstance(here)) {
             
+            here->VSRCbreak_time = -1.0;        // To set initial breakpoint
             if(here->VSRCposNode == here->VSRCnegNode) {
                 SPfrontEnd->IFerrorf (ERR_FATAL,
                         "instance %s is a shorted VSRC", here->VSRCname);
