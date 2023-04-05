@@ -721,6 +721,88 @@ static void inp_stitch_continuation_lines(struct card *working)
     }
 }
 
+/* line1
+   + line2
+   ---->
+   line1 line 2
+   Proccedure: store regular card in prev, skip comment lines (*..) and some
+   others
+   */
+static void inp_stitch_continuation_lines_dstring(struct card* working)
+{
+    struct card* prev = NULL;
+    bool firsttime = TRUE;
+
+    DS_CREATE(newline, 200);
+
+    while (working) {
+        char* s, c;
+
+        for (s = working->line; (c = *s) != '\0' && c <= ' '; s++)
+            ;
+
+#ifdef TRACE
+        /* SDB debug statement */
+        printf("In inp_read, processing linked list element line = %d, s = "
+            "%s . . . \n",
+            working->linenum, s);
+#endif
+
+        switch (c) {
+        case '#':
+        case '$':
+        case '*':
+        case '\0':
+            /* skip these cards, and keep prev as the last regular card */
+            working = working->nextcard; /* for these chars, go to next
+                                            card */
+            break;
+
+        case '+': /* handle continuation */
+            if (!prev) {
+                working->error =
+                    copy("Illegal continuation line: ignored.");
+                working = working->nextcard;
+                break;
+            }
+
+            /* We now may have lept over some comment lines, which are
+            located among the continuation lines. We have to delete them
+            here to prevent a memory leak */
+            while (prev->nextcard != working) {
+                struct card* tmpl = prev->nextcard->nextcard;
+                line_free_x(prev->nextcard, FALSE);
+                prev->nextcard = tmpl;
+            }
+
+            if (firsttime) {
+                sadd(&newline, prev->line);
+                firsttime = FALSE;
+            }
+            else {
+                sadd(&newline, s + 1);
+                *s = '*';
+            }
+
+            break;
+
+        default: /* regular one-line card */
+            if (!firsttime) {
+                tfree(prev->line);
+                prev->line = copy(ds_get_buf(&newline));
+                /* reset newline, but keep memory already allocated */
+                newline.length = 0;
+                newline.p_buf[0] = '\0';
+                newline.p_stack_buf[0] = '\0';
+                firsttime = TRUE;
+            }
+            prev = working;
+            working = working->nextcard;
+            break;
+        }
+    }
+}
+
 
 /*
  * search for `=' assignment operator
@@ -1689,7 +1771,8 @@ struct inp_read_t inp_read( FILE *fp, int call_depth, const char *dir_name,
        if this is a command file or called from within a .control section. */
     inp_stripcomments_deck(cc->nextcard, comfile || is_control);
 
-    inp_stitch_continuation_lines(cc->nextcard);
+//    inp_stitch_continuation_lines(cc->nextcard);
+    inp_stitch_continuation_lines_dstring(cc->nextcard);
 
     rv.line_number = line_number;
     rv.cc = cc;
