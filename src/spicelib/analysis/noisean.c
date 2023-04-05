@@ -21,18 +21,28 @@ Modified: 2001 AlansFixes
 #include "vsrc/vsrcdefs.h"
 #include "isrc/isrcdefs.h"
 
-// fixme
-//   ugly hack to work around missing api to specify the "type" of signals
+#ifdef XSPICE
+#include "ngspice/evt.h"
+#include "ngspice/enh.h"
+ /* gtri - add - wbk - 12/19/90 - Add headers */
+#include "ngspice/mif.h"
+#include "ngspice/evtproto.h"
+#include "ngspice/ipctiein.h"
+/* gtri - end - wbk */
+#endif
+
+ // fixme
+ //   ugly hack to work around missing api to specify the "type" of signals
 extern int fixme_onoise_type;
 extern int fixme_inoise_type;
 
 
 int
-NOISEan (CKTcircuit *ckt, int restart)
+NOISEan(CKTcircuit* ckt, int restart)
 {
     /* variable must be static, for continuation of interrupted (Ctrl-C),
     longer lasting noise anlysis */
-    static Ndata *data;
+    static Ndata* data;
 
     double realVal;
     double imagVal;
@@ -44,32 +54,52 @@ NOISEan (CKTcircuit *ckt, int restart)
     double freqTol; /* tolerence parameter for finding final frequency; hack */
     int i, src_type;
 
-    NOISEAN *job = (NOISEAN *) ckt->CKTcurJob;
-    GENinstance *inst = CKTfndDev(ckt, job->input);
+    int numNames;
+    IFuid* nameList;  /* va: tmalloc'ed list of names */
+    static runDesc* noiPlot = NULL;
+    runDesc* plot = NULL;
+
+#ifdef XSPICE
+    /* gtri - add - wbk - 12/19/90 - Add IPC stuff and anal_init and anal_type */
+
+        /* Tell the beginPlot routine what mode we're in */
+    g_ipc.anal_type = IPC_ANAL_NOI;
+
+    /* Tell the code models what mode we're in */
+    g_mif_info.circuit.anal_type = MIF_DC;
+    g_mif_info.circuit.anal_init = MIF_TRUE;
+
+    /* gtri - end - wbk */
+#endif
+
+    NOISEAN* job = (NOISEAN*)ckt->CKTcurJob;
+    GENinstance* inst = CKTfndDev(ckt, job->input);
     bool frequequal = AlmostEqualUlps(job->NstartFreq, job->NstopFreq, 3);
 
-    posOutNode = (job->output) -> number;
-    negOutNode = (job->outputRef) -> number;
+    posOutNode = (job->output)->number;
+    negOutNode = (job->outputRef)->number;
 
     if (job->NnumSteps < 1) {
         SPfrontEnd->IFerrorf(ERR_WARNING,
-                             "Number of steps for noise measurement has to be larger than 0,\n    but currently is %d\n",
-                             job->NnumSteps);
+            "Number of steps for noise measurement has to be larger than 0,\n    but currently is %d\n",
+            job->NnumSteps);
         return(E_PARMVAL);
-    } else if ((job->NnumSteps == 1) && (job->NstpType == LINEAR)) {
+    }
+    else if ((job->NnumSteps == 1) && (job->NstpType == LINEAR)) {
         if (!frequequal) {
             job->NstopFreq = job->NstartFreq;
             SPfrontEnd->IFerrorf(ERR_WARNING,
-                                 "Noise measurement at a single frequency %g only!\n",
-                                 job->NstartFreq);
+                "Noise measurement at a single frequency %g only!\n",
+                job->NstartFreq);
         }
-    } else {
+    }
+    else {
         if (frequequal) {
             job->NstopFreq = job->NstartFreq;
             job->NnumSteps = 1;
             SPfrontEnd->IFerrorf(ERR_WARNING,
-                                 "Noise measurement at a single frequency %g only!\n",
-                                 job->NstartFreq);
+                "Noise measurement at a single frequency %g only!\n",
+                job->NstartFreq);
         }
     }
     /* see if the source specified is AC */
@@ -77,45 +107,47 @@ NOISEan (CKTcircuit *ckt, int restart)
         bool ac_given = FALSE;
 
         if (!inst || inst->GENmodPtr->GENmodType < 0) {
-            SPfrontEnd->IFerrorf (ERR_WARNING,
-                                  "Noise input source %s not in circuit",
-                                  job->input);
+            SPfrontEnd->IFerrorf(ERR_WARNING,
+                "Noise input source %s not in circuit",
+                job->input);
             return E_NOTFOUND;
         }
 
         if (inst->GENmodPtr->GENmodType == CKTtypelook("Vsource")) {
-            ac_given = ((VSRCinstance *)inst) -> VSRCacGiven;
+            ac_given = ((VSRCinstance*)inst)->VSRCacGiven;
             src_type = SV_VOLTAGE;
-        } else if(inst->GENmodPtr->GENmodType == CKTtypelook("Isource")) {
-            ac_given = ((ISRCinstance *)inst) -> ISRCacGiven;
+        }
+        else if (inst->GENmodPtr->GENmodType == CKTtypelook("Isource")) {
+            ac_given = ((ISRCinstance*)inst)->ISRCacGiven;
             src_type = SV_CURRENT;
-        } else {
-            SPfrontEnd->IFerrorf (ERR_WARNING,
-                                  "Noise input source %s is not of proper type",
-                                  job->input);
+        }
+        else {
+            SPfrontEnd->IFerrorf(ERR_WARNING,
+                "Noise input source %s is not of proper type",
+                job->input);
             return E_NOTFOUND;
         }
 
         if (!ac_given) {
-            SPfrontEnd->IFerrorf (ERR_WARNING,
-                                  "Noise input source %s has no AC value",
-                                  job->input);
+            SPfrontEnd->IFerrorf(ERR_WARNING,
+                "Noise input source %s has no AC value",
+                job->input);
             return E_NOACINPUT;
         }
     }
 
-    if ( (job->NsavFstp == 0.0) || restart) { /* va, NsavFstp is double */
+    if ((job->NsavFstp == 0.0) || restart) { /* va, NsavFstp is double */
         switch (job->NstpType) {
 
 
         case DECADE:
-            job->NfreqDelta = exp(log(10.0)/
-                                  job->NnumSteps);
+            job->NfreqDelta = exp(log(10.0) /
+                job->NnumSteps);
             break;
 
         case OCTAVE:
-            job->NfreqDelta = exp(log(2.0)/
-                                  job->NnumSteps);
+            job->NfreqDelta = exp(log(2.0) /
+                job->NnumSteps);
             break;
 
         case LINEAR:
@@ -123,24 +155,98 @@ NOISEan (CKTcircuit *ckt, int restart)
                 job->NfreqDelta = 0;
             else
                 job->NfreqDelta = (job->NstopFreq -
-                                   job->NstartFreq) / (job->NnumSteps - 1);
+                    job->NstartFreq) / (job->NnumSteps - 1);
             break;
 
         default:
             return(E_BADPARM);
         }
 
-        /* error = DCop(ckt); */
-        error = CKTop(ckt, (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITJCT,
-                      (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITFLOAT,
-                      ckt->CKTdcMaxIter);
+#ifdef XSPICE
+        /* gtri - begin - wbk - Call EVTop if event-driven instances exist */
 
-        if (error) return(error);
+        if (ckt->evt->counts.num_insts != 0) {
+            error = EVTop(ckt,
+                (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITJCT,
+                (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITFLOAT,
+                ckt->CKTdcMaxIter,
+                MIF_TRUE);
+            EVTdump(ckt, IPC_ANAL_DCOP, 0.0);
+            EVTop_save(ckt, MIF_TRUE, 0.0);
+        }
+        else
+#endif
+            /* If no event-driven instances, do what SPICE normally does */
+            if (!ckt->CKTnoopac) { /* skip OP if option NOOPAC is set and circuit is linear */
+                error = CKTop(ckt,
+                    (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITJCT,
+                    (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITFLOAT,
+                    ckt->CKTdcMaxIter);
+
+                if (error) {
+                    fprintf(stdout, "\nNOISE operating point failed -\n");
+                    CKTncDump(ckt);
+                    return(error);
+                }
+            }
+            else
+                fprintf(stdout, "\n Linear circuit, option noopac given: no OP analysis\n");
+
+#ifdef XSPICE
+        /* gtri - add - wbk - 12/19/90 - Add IPC stuff */
+
+            /* Send the operating point results for Mspice compatibility */
+        if (g_ipc.enabled)
+        {
+            /* Call CKTnames to get names of nodes/branches used by
+                BeginPlot */
+                /* Probably should free nameList after this block since
+                    called again... */
+            error = CKTnames(ckt, &numNames, &nameList);
+            if (error) return(error);
+
+            /* We have to do a beginPlot here since the data to return is
+             * different for the DCOP than it is for the AC analysis.
+             * Moreover the begin plot has not even been done yet at this
+             * point...
+             */
+            SPfrontEnd->OUTpBeginPlot(ckt, ckt->CKTcurJob,
+                ckt->CKTcurJob->JOBname,
+                NULL, IF_REAL,
+                numNames, nameList, IF_REAL,
+                &noiPlot);
+            txfree(nameList);
+
+            ipc_send_dcop_prefix();
+            CKTdump(ckt, 0.0, noiPlot);
+            ipc_send_dcop_suffix();
+
+            SPfrontEnd->OUTendPlot(noiPlot);
+        }
+        /* gtri - end - wbk */
+#endif
+
 
         /* Patch to noisean.c by Richard D. McRoberts. */
         ckt->CKTmode = (ckt->CKTmode & MODEUIC) | MODEDCOP | MODEINITSMSIG;
         error = CKTload(ckt);
-        if(error) return(error);
+        if (error) return(error);
+
+        error = CKTnames(ckt, &numNames, &nameList);
+        if (error) return(error);
+
+        if (ckt->CKTkeepOpInfo) {
+            /* Dump operating point. */
+            error = SPfrontEnd->OUTpBeginPlot(ckt, ckt->CKTcurJob,
+                "NOISE Operating Point",
+                NULL, IF_REAL,
+                numNames, nameList, IF_REAL,
+                &plot);
+            if (error) return(error);
+            CKTdump(ckt, 0.0, plot);
+            SPfrontEnd->OUTendPlot(plot);
+            plot = NULL;
+        }
 
         data = TMALLOC(Ndata, 1);
         step = 0;
@@ -152,10 +258,10 @@ NOISEan (CKTcircuit *ckt, int restart)
         /* the current front-end needs the namelist to be fully
            declared before an OUTpBeginplot */
 
-        SPfrontEnd->IFnewUid (ckt, &freqUid, NULL, "frequency", UID_OTHER, NULL);
+        SPfrontEnd->IFnewUid(ckt, &freqUid, NULL, "frequency", UID_OTHER, NULL);
 
         data->numPlots = 0;                /* we don't have any plots  yet */
-        error = CKTnoise(ckt,N_DENS,N_OPEN,data);
+        error = CKTnoise(ckt, N_DENS, N_OPEN, data);
         if (error) return(error);
 
         /*
@@ -165,10 +271,10 @@ NOISEan (CKTcircuit *ckt, int restart)
 
         if (src_type == SV_VOLTAGE)
             fixme_inoise_type =
-                data->squared ? SV_SQR_VOLTAGE_DENSITY : SV_VOLTAGE_DENSITY;
+            data->squared ? SV_SQR_VOLTAGE_DENSITY : SV_VOLTAGE_DENSITY;
         else
             fixme_inoise_type =
-                data->squared ? SV_SQR_CURRENT_DENSITY : SV_CURRENT_DENSITY;
+            data->squared ? SV_SQR_CURRENT_DENSITY : SV_CURRENT_DENSITY;
 
         fixme_onoise_type =
             data->squared ? SV_SQR_VOLTAGE_DENSITY : SV_VOLTAGE_DENSITY;
@@ -176,36 +282,37 @@ NOISEan (CKTcircuit *ckt, int restart)
         if (!data->squared)
             for (i = 0; i < data->numPlots; i++)
                 data->squared_value[i] =
-                    ciprefix("inoise", data->namelist[i]) ||
-                    ciprefix("onoise", data->namelist[i]);
+                ciprefix("inoise", data->namelist[i]) ||
+                ciprefix("onoise", data->namelist[i]);
 
-        error = SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
-                                           data->squared
-                                           ? "Noise Spectral Density Curves - (V^2 or A^2)/Hz"
+        error = SPfrontEnd->OUTpBeginPlot(ckt, ckt->CKTcurJob,
+            data->squared
+            ? "Noise Spectral Density Curves - (V^2 or A^2)/Hz"
 
-                                           : "Noise Spectral Density Curves",
-                                           freqUid, IF_REAL,
-                                           data->numPlots, data->namelist, IF_REAL,
-                                           &(data->NplotPtr));
+            : "Noise Spectral Density Curves",
+            freqUid, IF_REAL,
+            data->numPlots, data->namelist, IF_REAL,
+            &(data->NplotPtr));
         if (error) return(error);
 
         if (job->NstpType != LINEAR) {
-            SPfrontEnd->OUTattributes (data->NplotPtr, NULL, OUT_SCALE_LOG, NULL);
+            SPfrontEnd->OUTattributes(data->NplotPtr, NULL, OUT_SCALE_LOG, NULL);
         }
 
-    } else {   /* we must have paused before.  pick up where we left off */
+    }
+    else {   /* we must have paused before.  pick up where we left off */
         step = (int)(job->NsavFstp);
         switch (job->NstpType) {
 
         case DECADE:
         case OCTAVE:
-            data->freq = job->NstartFreq * exp (step *
-                                                log (job->NfreqDelta));
+            data->freq = job->NstartFreq * exp(step *
+                log(job->NfreqDelta));
             break;
 
         case LINEAR:
             data->freq = job->NstartFreq + step *
-                         job->NfreqDelta;
+                job->NfreqDelta;
             break;
 
         default:
@@ -216,11 +323,11 @@ NOISEan (CKTcircuit *ckt, int restart)
         data->outNoiz = job->NsavOnoise;
         data->inNoise = job->NsavInoise;
         /* saj resume rawfile fix*/
-        error = SPfrontEnd->OUTpBeginPlot (NULL, NULL,
-                                           NULL,
-                                           NULL, 0,
-                                           666, NULL, 666,
-                                           &(data->NplotPtr));
+        error = SPfrontEnd->OUTpBeginPlot(NULL, NULL,
+            NULL,
+            NULL, 0,
+            666, NULL, 666,
+            &(data->NplotPtr));
         /*saj*/
     }
 
@@ -238,10 +345,22 @@ NOISEan (CKTcircuit *ckt, int restart)
 
     data->lstFreq = data->freq;
 
+#ifdef XSPICE
+    /* gtri - add - wbk - 12/19/90 - Set anal_init and anal_type */
+
+    g_mif_info.circuit.anal_init = MIF_TRUE;
+
+    /* Tell the code models what mode we're in */
+    /* MIF_NOI is not yet supported by code models, so use their AC capabilities */
+    g_mif_info.circuit.anal_type = MIF_AC;
+
+    /* gtri - end - wbk */
+#endif
+
     /* do the noise analysis over all frequencies */
 
     while (data->freq <= job->NstopFreq + freqTol) {
-        if(SPfrontEnd->IFpauseTest()) {
+        if (SPfrontEnd->IFpauseTest()) {
             job->NsavFstp = step;   /* save our results */
             job->NsavOnoise = data->outNoiz; /* up until now     */
             job->NsavInoise = data->inNoise;
@@ -257,12 +376,12 @@ NOISEan (CKTcircuit *ckt, int restart)
          */
 
         NIacIter(ckt);
-        realVal = ckt->CKTrhsOld [posOutNode]
-                  - ckt->CKTrhsOld [negOutNode];
-        imagVal = ckt->CKTirhsOld [posOutNode]
-                  - ckt->CKTirhsOld [negOutNode];
-        data->GainSqInv = 1.0 / MAX(((realVal*realVal)
-                                     + (imagVal*imagVal)),N_MINGAIN);
+        realVal = ckt->CKTrhsOld[posOutNode]
+            - ckt->CKTrhsOld[negOutNode];
+        imagVal = ckt->CKTirhsOld[posOutNode]
+            - ckt->CKTirhsOld[negOutNode];
+        data->GainSqInv = 1.0 / MAX(((realVal * realVal)
+            + (imagVal * imagVal)), N_MINGAIN);
         data->lnGainInv = log(data->GainSqInv);
 
         /* set up a block of "common" data so we don't have to
@@ -270,13 +389,14 @@ NOISEan (CKTcircuit *ckt, int restart)
          */
 
         data->delFreq = data->freq - data->lstFreq;
-        data->lnFreq = log(MAX(data->freq,N_MINLOG));
-        data->lnLastFreq = log(MAX(data->lstFreq,N_MINLOG));
+        data->lnFreq = log(MAX(data->freq, N_MINLOG));
+        data->lnLastFreq = log(MAX(data->lstFreq, N_MINLOG));
         data->delLnFreq = data->lnFreq - data->lnLastFreq;
 
         if ((job->NStpsSm != 0) && ((step % (job->NStpsSm)) == 0)) {
             data->prtSummary = TRUE;
-        } else {
+        }
+        else {
             data->prtSummary = FALSE;
         }
 
@@ -289,13 +409,13 @@ NOISEan (CKTcircuit *ckt, int restart)
          * it will be given in refVal.rValue (see later)
          */
 
-        NInzIter(ckt,posOutNode,negOutNode);   /* solve the adjoint system */
+        NInzIter(ckt, posOutNode, negOutNode);   /* solve the adjoint system */
 
         /* now we use the adjoint system to calculate the noise
          * contributions of each generator in the circuit
          */
 
-        error = CKTnoise(ckt,N_DENS,N_CALC,data);
+        error = CKTnoise(ckt, N_DENS, N_CALC, data);
         if (error) return(error);
         data->lstFreq = data->freq;
 
@@ -321,23 +441,23 @@ NOISEan (CKTcircuit *ckt, int restart)
             break;
     }
 
-    error = CKTnoise(ckt,N_DENS,N_CLOSE,data);
+    error = CKTnoise(ckt, N_DENS, N_CLOSE, data);
     if (error) return(error);
 
     data->numPlots = 0;
     data->outNumber = 0;
 
     if (job->NstartFreq != job->NstopFreq) {
-        error = CKTnoise(ckt,INT_NOIZ,N_OPEN,data);
+        error = CKTnoise(ckt, INT_NOIZ, N_OPEN, data);
 
         if (error) return(error);
 
         if (src_type == SV_VOLTAGE)
             fixme_inoise_type =
-                data->squared ? SV_SQR_VOLTAGE : SV_VOLTAGE;
+            data->squared ? SV_SQR_VOLTAGE : SV_VOLTAGE;
         else
             fixme_inoise_type =
-                data->squared ? SV_SQR_CURRENT : SV_CURRENT;
+            data->squared ? SV_SQR_CURRENT : SV_CURRENT;
 
         fixme_onoise_type =
             data->squared ? SV_SQR_VOLTAGE : SV_VOLTAGE;
@@ -345,21 +465,21 @@ NOISEan (CKTcircuit *ckt, int restart)
         if (!data->squared)
             for (i = 0; i < data->numPlots; i++)
                 data->squared_value[i] =
-                    ciprefix("inoise", data->namelist[i]) ||
-                    ciprefix("onoise", data->namelist[i]);
+                ciprefix("inoise", data->namelist[i]) ||
+                ciprefix("onoise", data->namelist[i]);
 
-        SPfrontEnd->OUTpBeginPlot (ckt, ckt->CKTcurJob,
-                                   data->squared
-                                   ? "Integrated Noise - V^2 or A^2"
-                                   : "Integrated Noise",
-                                   NULL, 0,
-                                   data->numPlots, data->namelist, IF_REAL,
-                                   &(data->NplotPtr));
+        SPfrontEnd->OUTpBeginPlot(ckt, ckt->CKTcurJob,
+            data->squared
+            ? "Integrated Noise - V^2 or A^2"
+            : "Integrated Noise",
+            NULL, 0,
+            data->numPlots, data->namelist, IF_REAL,
+            &(data->NplotPtr));
 
-        error = CKTnoise(ckt,INT_NOIZ,N_CALC,data);
+        error = CKTnoise(ckt, INT_NOIZ, N_CALC, data);
         if (error) return(error);
 
-        error = CKTnoise(ckt,INT_NOIZ,N_CLOSE,data);
+        error = CKTnoise(ckt, INT_NOIZ, N_CLOSE, data);
         if (error) return(error);
     }
 

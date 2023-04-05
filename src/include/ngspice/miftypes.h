@@ -87,6 +87,7 @@ typedef enum {
     MIF_DC,                /* A DC or DCOP analysis */
     MIF_AC,                /* A swept AC analysis   */
     MIF_TRAN,              /* A transient analysis  */
+    MIF_NOI,               /* A noise analysis  */
 } Mif_Analysis_t;
 
 

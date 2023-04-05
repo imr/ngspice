@@ -1,0 +1,25 @@
+baker-252 enhanced
+* simple noiseless opamp with RC feedback
+* compare E source and code model gain stage
+* ngspice-40+ required
+
+.control
+set sqrnoise
+noise V(vout) Vplus dec 100 1 1000G
+print all
+noise V(vouta) Vplusa dec 100 1 1000G
+print all
+.endc
+
+Vplus Vplus 0 dc 0 ac 1
+Rf vout vminus 100k
+Cf vout vminus 1000p
+Eopamp vout 0 vplus vminus 100Meg
+
+Vplusa Vplusa 0 dc 0 ac 1
+Rfa vouta vminusa 100k
+Cfa vouta vminusa 1000p
+a1 %vd(vplusa, vminusa) vouta amp
+.model amp gain(gain=1e8)
+
+.end
