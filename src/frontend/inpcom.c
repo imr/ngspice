@@ -790,10 +790,7 @@ static void inp_stitch_continuation_lines_dstring(struct card* working)
             if (!firsttime) {
                 tfree(prev->line);
                 prev->line = copy(ds_get_buf(&newline));
-                /* reset newline, but keep memory already allocated */
-                newline.length = 0;
-                newline.p_buf[0] = '\0';
-                newline.p_stack_buf[0] = '\0';
+                ds_clear(&newline);
                 firsttime = TRUE;
             }
             prev = working;
@@ -801,6 +798,7 @@ static void inp_stitch_continuation_lines_dstring(struct card* working)
             break;
         }
     }
+    ds_free(&newline);
 }
 
 
