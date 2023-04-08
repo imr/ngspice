@@ -66,6 +66,7 @@ IFparm VBICpTable[] = { /* parameters */
 
 IFparm VBICmPTable[] = { /* model parameters */
  OP("type",   VBIC_MOD_TYPE,  IF_STRING, "NPN or PNP"),
+ IOP("selft", VBIC_MOD_SELFT, IF_INTEGER, "0: self-heating off, 1: self-heating on"),
  IOPU("npn",  VBIC_MOD_NPN,   IF_FLAG, "NPN type device"),
  IOPU("pnp",  VBIC_MOD_PNP,   IF_FLAG, "PNP type device"),
  IOP("tnom",  VBIC_MOD_TNOM,  IF_REAL, "Parameter measurement temperature"),
@@ -73,6 +74,7 @@ IFparm VBICmPTable[] = { /* model parameters */
  IOP("rcx",   VBIC_MOD_RCX,   IF_REAL, "Extrinsic coll resistance"),
  IOP("rci",   VBIC_MOD_RCI,   IF_REAL, "Intrinsic coll resistance"),
  IOP("vo",    VBIC_MOD_VO,    IF_REAL, "Epi drift saturation voltage"),
+ IOPR("v0",    VBIC_MOD_VO,    IF_REAL, "Epi drift saturation voltage"),
  IOP("gamm",  VBIC_MOD_GAMM,  IF_REAL, "Epi doping parameter"),
  IOP("hrcf",  VBIC_MOD_HRCF,  IF_REAL, "High current RC factor"),
  IOP("rbx",   VBIC_MOD_RBX,   IF_REAL, "Extrinsic base resistance"),
@@ -85,13 +87,16 @@ IFparm VBICmPTable[] = { /* model parameters */
  IOP("nr",    VBIC_MOD_NR,    IF_REAL, "Reverse emission coefficient"),
  IOP("fc",    VBIC_MOD_FC,    IF_REAL, "Fwd bias depletion capacitance limit"),
  IOP("cbeo",  VBIC_MOD_CBEO,  IF_REAL, "Extrinsic B-E overlap capacitance"),
+ IOPR("cbe0",  VBIC_MOD_CBEO,  IF_REAL, "Extrinsic B-E overlap capacitance"),
  IOP("cje",   VBIC_MOD_CJE,   IF_REAL, "Zero bias B-E depletion capacitance"),
  IOP("pe",    VBIC_MOD_PE,    IF_REAL, "B-E built in potential"),
  IOP("me",    VBIC_MOD_ME,    IF_REAL, "B-E junction grading coefficient"),
  IOP("aje",   VBIC_MOD_AJE,   IF_REAL, "B-E capacitance smoothing factor"),
  IOP("cbco",  VBIC_MOD_CBCO,  IF_REAL, "Extrinsic B-C overlap capacitance"),
+ IOPR("cbc0",  VBIC_MOD_CBCO,  IF_REAL, "Extrinsic B-C overlap capacitance"),
  IOP("cjc",   VBIC_MOD_CJC,   IF_REAL, "Zero bias B-C depletion capacitance"),
  IOP("qco",   VBIC_MOD_QCO,   IF_REAL, "Epi charge parameter"),
+ IOPR("qc0",   VBIC_MOD_QCO,   IF_REAL, "Epi charge parameter"),
  IOP("cjep",  VBIC_MOD_CJEP,  IF_REAL, "B-C extrinsic zero bias capacitance"),
  IOP("pc",    VBIC_MOD_PC,    IF_REAL, "B-C built in potential"),
  IOP("mc",    VBIC_MOD_MC,    IF_REAL, "B-C junction grading coefficient"),
@@ -128,20 +133,19 @@ IFparm VBICmPTable[] = { /* model parameters */
  IOP("tf",    VBIC_MOD_TF,    IF_REAL, "Ideal forward transit time"),
  IOP("qtf",   VBIC_MOD_QTF,   IF_REAL, "Variation of TF with base-width modulation"),
  IOP("xtf",   VBIC_MOD_XTF,   IF_REAL, "Coefficient for bias dependence of TF"),
- IOP("vtf",   VBIC_MOD_VTF,   IF_REAL, "Voltage giving VBC dependence of TF"), 
- IOP("itf",   VBIC_MOD_ITF,   IF_REAL, "High current dependence of TF"), 
- IOP("tr",    VBIC_MOD_TR,    IF_REAL, "Ideal reverse transit time"), 
- IOP("td",    VBIC_MOD_TD,    IF_REAL, "Forward excess-phase delay time"), 
+ IOP("vtf",   VBIC_MOD_VTF,   IF_REAL, "Voltage giving VBC dependence of TF"),
+ IOP("itf",   VBIC_MOD_ITF,   IF_REAL, "High current dependence of TF"),
+ IOP("tr",    VBIC_MOD_TR,    IF_REAL, "Ideal reverse transit time"),
+ IOP("td",    VBIC_MOD_TD,    IF_REAL, "Forward excess-phase delay time"),
  IOP("kfn",   VBIC_MOD_KFN,   IF_REAL, "B-E Flicker Noise Coefficient"),
  IOP("afn",   VBIC_MOD_AFN,   IF_REAL, "B-E Flicker Noise Exponent"),
  IOP("bfn",   VBIC_MOD_BFN,   IF_REAL, "B-E Flicker Noise 1/f dependence"),
  IOP("xre",   VBIC_MOD_XRE,   IF_REAL, "Temperature exponent of RE"),
- IOP("xrb",   VBIC_MOD_XRB,   IF_REAL, "Temperature exponent of RB"),
  IOP("xrbi",  VBIC_MOD_XRBI,  IF_REAL, "Temperature exponent of RBI"),
- IOP("xrc",   VBIC_MOD_XRC,   IF_REAL, "Temperature exponent of RC"),
  IOP("xrci",  VBIC_MOD_XRCI,  IF_REAL, "Temperature exponent of RCI"),
  IOP("xrs",   VBIC_MOD_XRS,   IF_REAL, "Temperature exponent of RS"),
  IOP("xvo",   VBIC_MOD_XVO,   IF_REAL, "Temperature exponent of VO"),
+ IOPR("xv0",   VBIC_MOD_XVO,   IF_REAL, "Temperature exponent of VO"),
  IOP("ea",    VBIC_MOD_EA,    IF_REAL, "Activation energy for IS"),
  IOP("eaie",  VBIC_MOD_EAIE,  IF_REAL, "Activation energy for IBEI"),
  IOP("eaic",  VBIC_MOD_EAIC,  IF_REAL, "Activation energy for IBCI/IBEIP"),
@@ -163,7 +167,9 @@ IFparm VBICmPTable[] = { /* model parameters */
  IOP("nkf",   VBIC_MOD_NKF,   IF_REAL, "High current beta rolloff"),
  IOP("xikf",  VBIC_MOD_XIKF,  IF_REAL, "Temperature exponent of IKF"),
  IOP("xrcx",  VBIC_MOD_XRCX,  IF_REAL, "Temperature exponent of RCX"),
+ IOPR("xrc",  VBIC_MOD_XRCX,  IF_REAL, "Temperature exponent of RCX"),
  IOP("xrbx",  VBIC_MOD_XRBX,  IF_REAL, "Temperature exponent of RBX"),
+ IOPR("xrb",  VBIC_MOD_XRBX,  IF_REAL, "Temperature exponent of RBX"),
  IOP("xrbp",  VBIC_MOD_XRBP,  IF_REAL, "Temperature exponent of RBP"),
  IOP("isrr",  VBIC_MOD_ISRR,  IF_REAL, "Separate IS for fwd and rev"),
  IOP("xisr",  VBIC_MOD_XISR,  IF_REAL, "Temperature exponent of ISR"),
@@ -189,8 +195,7 @@ IFparm VBICmPTable[] = { /* model parameters */
  IOPR("bvsub", VBIC_MOD_VSUB_MAX, IF_REAL, "maximum voltage C-substrate branch"),
  IOP("vbefwd", VBIC_MOD_VBEFWD_MAX, IF_REAL, "maximum forward voltage B-E junction"),
  IOP("vbcfwd", VBIC_MOD_VBCFWD_MAX, IF_REAL, "maximum forward voltage B-C junction"),
- IOP("vsubfwd", VBIC_MOD_VSUBFWD_MAX, IF_REAL, "maximum forward voltage C-substrate junction"),
- IOP("selft", VBIC_MOD_SELFT, IF_INTEGER, "0: self-heating off, 1: self-heating on")
+ IOP("vsubfwd", VBIC_MOD_VSUBFWD_MAX, IF_REAL, "maximum forward voltage C-substrate junction")
 };
 
 char *VBICnames[] = {
@@ -202,8 +207,8 @@ char *VBICnames[] = {
 };
 
 
-int	VBICnSize = NUMELEMS(VBICnames);
-int	VBICpTSize = NUMELEMS(VBICpTable);
-int	VBICmPTSize = NUMELEMS(VBICmPTable);
-int	VBICiSize = sizeof(VBICinstance);
-int	VBICmSize = sizeof(VBICmodel);
+int VBICnSize = NUMELEMS(VBICnames);
+int VBICpTSize = NUMELEMS(VBICpTable);
+int VBICmPTSize = NUMELEMS(VBICmPTable);
+int VBICiSize = sizeof(VBICinstance);
+int VBICmSize = sizeof(VBICmodel);

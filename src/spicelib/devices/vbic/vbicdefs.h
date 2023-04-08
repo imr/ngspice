@@ -369,7 +369,7 @@ typedef struct sVBICmodel {           /* model structure for a vbic */
 #define VBICmodName gen.GENmodName
 
     int VBICtype;
-
+    int VBICselft;
     double VBICtnom;
     double VBICextCollResist;
     double VBICintCollResist;
@@ -437,9 +437,7 @@ typedef struct sVBICmodel {           /* model structure for a vbic */
     double VBICfNexpA;
     double VBICfNexpB;
     double VBICtempExpRE;
-    double VBICtempExpRB;
     double VBICtempExpRBI;
-    double VBICtempExpRC;
     double VBICtempExpRCI;
     double VBICtempExpRS;
     double VBICtempExpVO;
@@ -457,7 +455,6 @@ typedef struct sVBICmodel {           /* model structure for a vbic */
     double VBICtempExpAVC;
     double VBICthermalResist;
     double VBICthermalCapacitance;
-    int VBICselft;
     double VBICpunchThroughVoltageBC;
     double VBICdeplCapCoeff1;
     double VBICfixedCapacitanceCS;
@@ -490,6 +487,7 @@ typedef struct sVBICmodel {           /* model structure for a vbic */
     double VBICvbefwdMax; /* maximum forward voltage over C-E branch */
     double VBICvsubfwdMax; /* maximum forward voltage over C-substrate branch */
 
+    unsigned VBICselftGiven : 1;
     unsigned VBICtnomGiven : 1;
     unsigned VBICextCollResistGiven : 1;
     unsigned VBICintCollResistGiven : 1;
@@ -576,7 +574,6 @@ typedef struct sVBICmodel {           /* model structure for a vbic */
     unsigned VBICtempExpNFGiven : 1;
     unsigned VBICtempExpAVCGiven : 1;
     unsigned VBICthermalResistGiven : 1;
-    unsigned VBICselftGiven : 1;
     unsigned VBICthermalCapacitanceGiven : 1;
     unsigned VBICpunchThroughVoltageBCGiven : 1;
     unsigned VBICdeplCapCoeff1Given : 1;
@@ -751,7 +748,7 @@ enum {
     VBIC_MOD_SELFT,
 };
 
-/* device questions */        
+/* device questions */
 enum {
     VBIC_QUEST_FT = 221,
     VBIC_QUEST_COLLNODE,
