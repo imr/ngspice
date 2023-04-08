@@ -130,6 +130,8 @@ libfte_la_SOURCES = \
     inp.h       \
     inpcom.c    \
     inpcom.h    \
+    inpcompat.c \
+    inpcompat.h \
     inpc_probe.c    \
     interp.c    \
     interp.h    \
