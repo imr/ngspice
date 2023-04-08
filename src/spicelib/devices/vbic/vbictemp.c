@@ -41,7 +41,7 @@ VBICtemp(GENmodel *inModel, CKTcircuit *ckt)
             if(here->VBICdtempGiven) here->VBICtemp = here->VBICtemp + here->VBICdtemp;
 
             TAMB = here->VBICtemp - CONSTCtoK;
-            
+
             pnom[0] = model->VBICtnom;
             pnom[1] = model->VBICextCollResist;
             pnom[2] = model->VBICintCollResist;
@@ -150,9 +150,9 @@ VBICtemp(GENmodel *inModel, CKTcircuit *ckt)
             pnom[105] = model->VBIClocTempDiff;
             pnom[106] = model->VBICrevVersion;
             pnom[107] = model->VBICrefVersion;
-            
+
             iret = vbic_4T_et_cf_t(p,pnom,&TAMB);
-            
+
             here->VBICtextCollResist = p[1];
             here->VBICtintCollResist = p[2];
             here->VBICtepiSatVoltage = p[3];

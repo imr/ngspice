@@ -128,10 +128,10 @@ IFparm VBICmPTable[] = { /* model parameters */
  IOP("tf",    VBIC_MOD_TF,    IF_REAL, "Ideal forward transit time"),
  IOP("qtf",   VBIC_MOD_QTF,   IF_REAL, "Variation of TF with base-width modulation"),
  IOP("xtf",   VBIC_MOD_XTF,   IF_REAL, "Coefficient for bias dependence of TF"),
- IOP("vtf",   VBIC_MOD_VTF,   IF_REAL, "Voltage giving VBC dependence of TF"), 
- IOP("itf",   VBIC_MOD_ITF,   IF_REAL, "High current dependence of TF"), 
- IOP("tr",    VBIC_MOD_TR,    IF_REAL, "Ideal reverse transit time"), 
- IOP("td",    VBIC_MOD_TD,    IF_REAL, "Forward excess-phase delay time"), 
+ IOP("vtf",   VBIC_MOD_VTF,   IF_REAL, "Voltage giving VBC dependence of TF"),
+ IOP("itf",   VBIC_MOD_ITF,   IF_REAL, "High current dependence of TF"),
+ IOP("tr",    VBIC_MOD_TR,    IF_REAL, "Ideal reverse transit time"),
+ IOP("td",    VBIC_MOD_TD,    IF_REAL, "Forward excess-phase delay time"),
  IOP("kfn",   VBIC_MOD_KFN,   IF_REAL, "B-E Flicker Noise Coefficient"),
  IOP("afn",   VBIC_MOD_AFN,   IF_REAL, "B-E Flicker Noise Exponent"),
  IOP("bfn",   VBIC_MOD_BFN,   IF_REAL, "B-E Flicker Noise 1/f dependence"),
@@ -202,8 +202,8 @@ char *VBICnames[] = {
 };
 
 
-int	VBICnSize = NUMELEMS(VBICnames);
-int	VBICpTSize = NUMELEMS(VBICpTable);
-int	VBICmPTSize = NUMELEMS(VBICmPTable);
-int	VBICiSize = sizeof(VBICinstance);
-int	VBICmSize = sizeof(VBICmodel);
+int VBICnSize = NUMELEMS(VBICnames);
+int VBICpTSize = NUMELEMS(VBICpTable);
+int VBICmPTSize = NUMELEMS(VBICmPTable);
+int VBICiSize = sizeof(VBICinstance);
+int VBICmSize = sizeof(VBICmodel);

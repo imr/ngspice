@@ -5,7 +5,7 @@ Model Author: 1995 Colin McAndrew Motorola
 Spice3 Implementation: 2003 Dietmar Warning DAnalyse GmbH
 **********/
 
-/* 
+/*
  * This routine should only be called when circuit topology
  * changes, since its computations do not depend on most
  * device or model parameters, only on topology (as
@@ -23,8 +23,8 @@ Spice3 Implementation: 2003 Dietmar Warning DAnalyse GmbH
 
 int
 VBICsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
-        /* load the VBIC structure with those pointers needed later 
-         * for fast matrix loading 
+        /* load the VBIC structure with those pointers needed later
+         * for fast matrix loading
          */
 {
     VBICmodel *model = (VBICmodel*)inModel;
@@ -435,8 +435,8 @@ VBICsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 if (ckt->CKTcopyNodesets) {
                   if (CKTinst2Node(ckt,here,1,&tmpNode,&tmpName)==OK) {
                      if (tmpNode->nsGiven) {
-                       tmp->nodeset=tmpNode->nodeset; 
-                       tmp->nsGiven=tmpNode->nsGiven; 
+                       tmp->nodeset=tmpNode->nodeset;
+                       tmp->nsGiven=tmpNode->nsGiven;
                     }
                   }
                 }
@@ -450,8 +450,8 @@ VBICsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 if (ckt->CKTcopyNodesets) {
                   if (CKTinst2Node(ckt,here,2,&tmpNode,&tmpName)==OK) {
                      if (tmpNode->nsGiven) {
-                       tmp->nodeset=tmpNode->nodeset; 
-                       tmp->nsGiven=tmpNode->nsGiven; 
+                       tmp->nodeset=tmpNode->nodeset;
+                       tmp->nsGiven=tmpNode->nsGiven;
                      }
                   }
                 }
@@ -465,8 +465,8 @@ VBICsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 if (ckt->CKTcopyNodesets) {
                   if (CKTinst2Node(ckt,here,3,&tmpNode,&tmpName)==OK) {
                      if (tmpNode->nsGiven) {
-                       tmp->nodeset=tmpNode->nodeset; 
-                       tmp->nsGiven=tmpNode->nsGiven; 
+                       tmp->nodeset=tmpNode->nodeset;
+                       tmp->nsGiven=tmpNode->nsGiven;
                      }
                   }
                 }
@@ -480,8 +480,8 @@ VBICsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
                 if (ckt->CKTcopyNodesets) {
                   if (CKTinst2Node(ckt,here,4,&tmpNode,&tmpName)==OK) {
                      if (tmpNode->nsGiven) {
-                       tmp->nodeset=tmpNode->nodeset; 
-                       tmp->nsGiven=tmpNode->nsGiven; 
+                       tmp->nodeset=tmpNode->nodeset;
+                       tmp->nsGiven=tmpNode->nsGiven;
                      }
                   }
                 }
@@ -505,19 +505,19 @@ VBICsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             if(here->VBICcollCINode == 0) {
                 error = CKTmkVolt(ckt, &tmp, here->VBICname, "collCI");
                 if(error) return(error);
-                here->VBICcollCINode = tmp->number;  
+                here->VBICcollCINode = tmp->number;
             }
 
             if(here->VBICbaseBPNode == 0) {
                 error = CKTmkVolt(ckt, &tmp, here->VBICname, "baseBP");
                 if(error) return(error);
-                here->VBICbaseBPNode = tmp->number;  
+                here->VBICbaseBPNode = tmp->number;
             }
 
             if(here->VBICbaseBINode == 0) {
                 error = CKTmkVolt(ckt, &tmp, here->VBICname, "baseBI");
                 if(error) return(error);
-                here->VBICbaseBINode = tmp->number;  
+                here->VBICbaseBINode = tmp->number;
             }
 
 /* macro to make elements with built in test for out of memory */

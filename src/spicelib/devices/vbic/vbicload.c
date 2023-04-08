@@ -40,8 +40,8 @@ int vbic_4T_et_cf_fj(double *,
 
 int
 VBICload(GENmodel *inModel, CKTcircuit *ckt)
-        /* actually load the current resistance value into the 
-         * sparse matrix previously provided 
+        /* actually load the current resistance value into the
+         * sparse matrix previously provided
          */
 {
     VBICmodel *model = (VBICmodel*)inModel;
@@ -292,7 +292,7 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                     *(ckt->CKTrhsOld+here->VBICsubsSINode));
                 if (here->VBIC_selfheat)
                     Vrth = *(ckt->CKTstate1 + here->VBICvrth);
-            } else if((ckt->CKTmode & MODEINITJCT) && 
+            } else if((ckt->CKTmode & MODEINITJCT) &&
                     (ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC)){
                 Vbe=model->VBICtype*here->VBICicVBE;
                 Vbei=Vbex=Vbe;
@@ -348,104 +348,104 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                         *(ckt->CKTstate0 + here->VBICvrth) =
                                 *(ckt->CKTstate1 + here->VBICvrth);
                     }
-                    *(ckt->CKTstate0 + here->VBICvbei) = 
+                    *(ckt->CKTstate0 + here->VBICvbei) =
                             *(ckt->CKTstate1 + here->VBICvbei);
-                    *(ckt->CKTstate0 + here->VBICvbex) = 
+                    *(ckt->CKTstate0 + here->VBICvbex) =
                             *(ckt->CKTstate1 + here->VBICvbex);
-                    *(ckt->CKTstate0 + here->VBICvbci) = 
+                    *(ckt->CKTstate0 + here->VBICvbci) =
                             *(ckt->CKTstate1 + here->VBICvbci);
-                    *(ckt->CKTstate0 + here->VBICvbcx) = 
+                    *(ckt->CKTstate0 + here->VBICvbcx) =
                             *(ckt->CKTstate1 + here->VBICvbcx);
-                    *(ckt->CKTstate0 + here->VBICvbep) = 
+                    *(ckt->CKTstate0 + here->VBICvbep) =
                             *(ckt->CKTstate1 + here->VBICvbep);
-                    *(ckt->CKTstate0 + here->VBICvrci) = 
+                    *(ckt->CKTstate0 + here->VBICvrci) =
                             *(ckt->CKTstate1 + here->VBICvrci);
-                    *(ckt->CKTstate0 + here->VBICvrbi) = 
+                    *(ckt->CKTstate0 + here->VBICvrbi) =
                             *(ckt->CKTstate1 + here->VBICvrbi);
-                    *(ckt->CKTstate0 + here->VBICvrbp) = 
+                    *(ckt->CKTstate0 + here->VBICvrbp) =
                             *(ckt->CKTstate1 + here->VBICvrbp);
-                    *(ckt->CKTstate0 + here->VBICvbcp) = 
+                    *(ckt->CKTstate0 + here->VBICvbcp) =
                             *(ckt->CKTstate1 + here->VBICvbcp);
-                    *(ckt->CKTstate0 + here->VBICibe) = 
+                    *(ckt->CKTstate0 + here->VBICibe) =
                             *(ckt->CKTstate1 + here->VBICibe);
-                    *(ckt->CKTstate0 + here->VBICibe_Vbei) = 
+                    *(ckt->CKTstate0 + here->VBICibe_Vbei) =
                             *(ckt->CKTstate1 + here->VBICibe_Vbei);
-                    *(ckt->CKTstate0 + here->VBICibex) = 
+                    *(ckt->CKTstate0 + here->VBICibex) =
                             *(ckt->CKTstate1 + here->VBICibex);
-                    *(ckt->CKTstate0 + here->VBICibex_Vbex) = 
+                    *(ckt->CKTstate0 + here->VBICibex_Vbex) =
                             *(ckt->CKTstate1 + here->VBICibex_Vbex);
-                    *(ckt->CKTstate0 + here->VBICitzf) = 
+                    *(ckt->CKTstate0 + here->VBICitzf) =
                             *(ckt->CKTstate1 + here->VBICitzf);
-                    *(ckt->CKTstate0 + here->VBICitzf_Vbei) = 
+                    *(ckt->CKTstate0 + here->VBICitzf_Vbei) =
                             *(ckt->CKTstate1 + here->VBICitzf_Vbei);
-                    *(ckt->CKTstate0 + here->VBICitzf_Vbci) = 
+                    *(ckt->CKTstate0 + here->VBICitzf_Vbci) =
                             *(ckt->CKTstate1 + here->VBICitzf_Vbci);
-                    *(ckt->CKTstate0 + here->VBICitzr) = 
+                    *(ckt->CKTstate0 + here->VBICitzr) =
                             *(ckt->CKTstate1 + here->VBICitzr);
-                    *(ckt->CKTstate0 + here->VBICitzr_Vbei) = 
+                    *(ckt->CKTstate0 + here->VBICitzr_Vbei) =
                             *(ckt->CKTstate1 + here->VBICitzf_Vbei);
-                    *(ckt->CKTstate0 + here->VBICitzr_Vbci) = 
+                    *(ckt->CKTstate0 + here->VBICitzr_Vbci) =
                             *(ckt->CKTstate1 + here->VBICitzr_Vbci);
-                    *(ckt->CKTstate0 + here->VBICibc) = 
+                    *(ckt->CKTstate0 + here->VBICibc) =
                             *(ckt->CKTstate1 + here->VBICibc);
-                    *(ckt->CKTstate0 + here->VBICibc_Vbci) = 
+                    *(ckt->CKTstate0 + here->VBICibc_Vbci) =
                             *(ckt->CKTstate1 + here->VBICibc_Vbci);
-                    *(ckt->CKTstate0 + here->VBICibc_Vbei) = 
+                    *(ckt->CKTstate0 + here->VBICibc_Vbei) =
                             *(ckt->CKTstate1 + here->VBICibc_Vbei);
-                    *(ckt->CKTstate0 + here->VBICibep) = 
+                    *(ckt->CKTstate0 + here->VBICibep) =
                             *(ckt->CKTstate1 + here->VBICibep);
-                    *(ckt->CKTstate0 + here->VBICibep_Vbep) = 
+                    *(ckt->CKTstate0 + here->VBICibep_Vbep) =
                             *(ckt->CKTstate1 + here->VBICibep_Vbep);
-                    *(ckt->CKTstate0 + here->VBICirci) = 
+                    *(ckt->CKTstate0 + here->VBICirci) =
                             *(ckt->CKTstate1 + here->VBICirci);
-                    *(ckt->CKTstate0 + here->VBICirci_Vrci) = 
+                    *(ckt->CKTstate0 + here->VBICirci_Vrci) =
                             *(ckt->CKTstate1 + here->VBICirci_Vrci);
-                    *(ckt->CKTstate0 + here->VBICirci_Vbci) = 
+                    *(ckt->CKTstate0 + here->VBICirci_Vbci) =
                             *(ckt->CKTstate1 + here->VBICirci_Vbci);
-                    *(ckt->CKTstate0 + here->VBICirci_Vbcx) = 
+                    *(ckt->CKTstate0 + here->VBICirci_Vbcx) =
                             *(ckt->CKTstate1 + here->VBICirci_Vbcx);
-                    *(ckt->CKTstate0 + here->VBICirbi) = 
+                    *(ckt->CKTstate0 + here->VBICirbi) =
                             *(ckt->CKTstate1 + here->VBICirbi);
-                    *(ckt->CKTstate0 + here->VBICirbi_Vrbi) = 
+                    *(ckt->CKTstate0 + here->VBICirbi_Vrbi) =
                             *(ckt->CKTstate1 + here->VBICirbi_Vrbi);
-                    *(ckt->CKTstate0 + here->VBICirbi_Vbei) = 
+                    *(ckt->CKTstate0 + here->VBICirbi_Vbei) =
                             *(ckt->CKTstate1 + here->VBICirbi_Vbei);
-                    *(ckt->CKTstate0 + here->VBICirbi_Vbci) = 
+                    *(ckt->CKTstate0 + here->VBICirbi_Vbci) =
                             *(ckt->CKTstate1 + here->VBICirbi_Vbci);
-                    *(ckt->CKTstate0 + here->VBICirbp) = 
+                    *(ckt->CKTstate0 + here->VBICirbp) =
                             *(ckt->CKTstate1 + here->VBICirbp);
-                    *(ckt->CKTstate0 + here->VBICirbp_Vrbp) = 
+                    *(ckt->CKTstate0 + here->VBICirbp_Vrbp) =
                             *(ckt->CKTstate1 + here->VBICirbp_Vrbp);
-                    *(ckt->CKTstate0 + here->VBICirbp_Vbep) = 
+                    *(ckt->CKTstate0 + here->VBICirbp_Vbep) =
                             *(ckt->CKTstate1 + here->VBICirbp_Vbep);
-                    *(ckt->CKTstate0 + here->VBICirbp_Vbci) = 
+                    *(ckt->CKTstate0 + here->VBICirbp_Vbci) =
                             *(ckt->CKTstate1 + here->VBICirbp_Vbci);
-                    *(ckt->CKTstate0 + here->VBICibcp) = 
+                    *(ckt->CKTstate0 + here->VBICibcp) =
                             *(ckt->CKTstate1 + here->VBICibcp);
-                    *(ckt->CKTstate0 + here->VBICibcp_Vbcp) = 
+                    *(ckt->CKTstate0 + here->VBICibcp_Vbcp) =
                             *(ckt->CKTstate1 + here->VBICibcp_Vbcp);
-                    *(ckt->CKTstate0 + here->VBICiccp) = 
+                    *(ckt->CKTstate0 + here->VBICiccp) =
                             *(ckt->CKTstate1 + here->VBICiccp);
-                    *(ckt->CKTstate0 + here->VBICiccp_Vbep) = 
+                    *(ckt->CKTstate0 + here->VBICiccp_Vbep) =
                             *(ckt->CKTstate1 + here->VBICiccp_Vbep);
-                    *(ckt->CKTstate0 + here->VBICiccp_Vbci) = 
+                    *(ckt->CKTstate0 + here->VBICiccp_Vbci) =
                             *(ckt->CKTstate1 + here->VBICiccp_Vbci);
-                    *(ckt->CKTstate0 + here->VBICiccp_Vbcp) = 
+                    *(ckt->CKTstate0 + here->VBICiccp_Vbcp) =
                             *(ckt->CKTstate1 + here->VBICiccp_Vbcp);
-                    *(ckt->CKTstate0 + here->VBICgqbeo) = 
+                    *(ckt->CKTstate0 + here->VBICgqbeo) =
                             *(ckt->CKTstate1 + here->VBICgqbeo);
-                    *(ckt->CKTstate0 + here->VBICgqbco) = 
+                    *(ckt->CKTstate0 + here->VBICgqbco) =
                             *(ckt->CKTstate1 + here->VBICgqbco);
-                    *(ckt->CKTstate0 + here->VBICircx_Vrcx) = 
+                    *(ckt->CKTstate0 + here->VBICircx_Vrcx) =
                             *(ckt->CKTstate1 + here->VBICircx_Vrcx);
-                    *(ckt->CKTstate0 + here->VBICirbx_Vrbx) = 
+                    *(ckt->CKTstate0 + here->VBICirbx_Vrbx) =
                             *(ckt->CKTstate1 + here->VBICirbx_Vrbx);
-                    *(ckt->CKTstate0 + here->VBICirs_Vrs) = 
+                    *(ckt->CKTstate0 + here->VBICirs_Vrs) =
                             *(ckt->CKTstate1 + here->VBICirs_Vrs);
-                    *(ckt->CKTstate0 + here->VBICire_Vre) = 
+                    *(ckt->CKTstate0 + here->VBICire_Vre) =
                             *(ckt->CKTstate1 + here->VBICire_Vre);
                     if (here->VBIC_selfheat)
-                        *(ckt->CKTstate0 + here->VBICqcth) = 
+                        *(ckt->CKTstate0 + here->VBICqcth) =
                                 *(ckt->CKTstate1 + here->VBICqcth);
                 } else {
 #endif /* PREDICTOR */
@@ -515,17 +515,17 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                 if (here->VBIC_selfheat)
                     Vrth = *(ckt->CKTrhsOld + here->VBICtempNode);
 
-                ibehat = *(ckt->CKTstate0 + here->VBICibe) + 
+                ibehat = *(ckt->CKTstate0 + here->VBICibe) +
                          *(ckt->CKTstate0 + here->VBICibe_Vbei)*delvbei;
-                ibexhat = *(ckt->CKTstate0 + here->VBICibex) + 
+                ibexhat = *(ckt->CKTstate0 + here->VBICibex) +
                          *(ckt->CKTstate0 + here->VBICibex_Vbex)*delvbex;
-                itzfhat = *(ckt->CKTstate0 + here->VBICitzf) + 
+                itzfhat = *(ckt->CKTstate0 + here->VBICitzf) +
                          *(ckt->CKTstate0 + here->VBICitzf_Vbei)*delvbei + *(ckt->CKTstate0 + here->VBICitzf_Vbci)*delvbci;
-                itzrhat = *(ckt->CKTstate0 + here->VBICitzr) + 
+                itzrhat = *(ckt->CKTstate0 + here->VBICitzr) +
                          *(ckt->CKTstate0 + here->VBICitzr_Vbei)*delvbei + *(ckt->CKTstate0 + here->VBICitzr_Vbci)*delvbci;
-                ibchat = *(ckt->CKTstate0 + here->VBICibc) + 
+                ibchat = *(ckt->CKTstate0 + here->VBICibc) +
                          *(ckt->CKTstate0 + here->VBICibc_Vbei)*delvbei + *(ckt->CKTstate0 + here->VBICibc_Vbci)*delvbci;
-                ibephat = *(ckt->CKTstate0 + here->VBICibep) + 
+                ibephat = *(ckt->CKTstate0 + here->VBICibep) +
                          *(ckt->CKTstate0 + here->VBICibep_Vbep)*delvbep;
                 ircihat = *(ckt->CKTstate0 + here->VBICirci) + *(ckt->CKTstate0 + here->VBICirci_Vrci)*delvrci +
                          *(ckt->CKTstate0 + here->VBICirci_Vbcx)*delvbcx + *(ckt->CKTstate0 + here->VBICirci_Vbci)*delvbci;
@@ -533,9 +533,9 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                          *(ckt->CKTstate0 + here->VBICirbi_Vbei)*delvbei + *(ckt->CKTstate0 + here->VBICirbi_Vbci)*delvbci;
                 irbphat = *(ckt->CKTstate0 + here->VBICirbp) + *(ckt->CKTstate0 + here->VBICirbp_Vrbp)*delvrbp +
                          *(ckt->CKTstate0 + here->VBICirbp_Vbep)*delvbep + *(ckt->CKTstate0 + here->VBICirbp_Vbci)*delvbci;
-                ibcphat = *(ckt->CKTstate0 + here->VBICibcp) + 
+                ibcphat = *(ckt->CKTstate0 + here->VBICibcp) +
                          *(ckt->CKTstate0 + here->VBICibcp_Vbcp)*delvbcp;
-                iccphat = *(ckt->CKTstate0 + here->VBICiccp) + *(ckt->CKTstate0 + here->VBICiccp_Vbep)*delvbep + 
+                iccphat = *(ckt->CKTstate0 + here->VBICiccp) + *(ckt->CKTstate0 + here->VBICiccp_Vbep)*delvbep +
                          *(ckt->CKTstate0 + here->VBICiccp_Vbci)*delvbci + *(ckt->CKTstate0 + here->VBICiccp_Vbcp)*delvbcp;
                 /*
                  *    bypass if solution has not changed
@@ -573,47 +573,47 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                     if( (fabs(delvbcp) < ckt->CKTreltol*MAX(fabs(Vbcp),
                             fabs(*(ckt->CKTstate0 + here->VBICvbcp)))+
                             ckt->CKTvoltTol) )
-                    if( (fabs(ibehat-*(ckt->CKTstate0 + here->VBICibe)) < 
+                    if( (fabs(ibehat-*(ckt->CKTstate0 + here->VBICibe)) <
                             ckt->CKTreltol* MAX(fabs(ibehat),
                             fabs(*(ckt->CKTstate0 + here->VBICibe)))+
                             ckt->CKTabstol) )
-                    if( (fabs(ibexhat-*(ckt->CKTstate0 + here->VBICibex)) < 
+                    if( (fabs(ibexhat-*(ckt->CKTstate0 + here->VBICibex)) <
                             ckt->CKTreltol* MAX(fabs(ibexhat),
                             fabs(*(ckt->CKTstate0 + here->VBICibex)))+
                             ckt->CKTabstol) )
-                    if( (fabs(itzfhat-*(ckt->CKTstate0 + here->VBICitzf)) < 
+                    if( (fabs(itzfhat-*(ckt->CKTstate0 + here->VBICitzf)) <
                             ckt->CKTreltol* MAX(fabs(itzfhat),
                             fabs(*(ckt->CKTstate0 + here->VBICitzf)))+
                             ckt->CKTabstol) )
-                    if( (fabs(itzrhat-*(ckt->CKTstate0 + here->VBICitzr)) < 
+                    if( (fabs(itzrhat-*(ckt->CKTstate0 + here->VBICitzr)) <
                             ckt->CKTreltol* MAX(fabs(itzrhat),
                             fabs(*(ckt->CKTstate0 + here->VBICitzr)))+
                             ckt->CKTabstol) )
-                    if( (fabs(ibchat-*(ckt->CKTstate0 + here->VBICibc)) < 
+                    if( (fabs(ibchat-*(ckt->CKTstate0 + here->VBICibc)) <
                             ckt->CKTreltol* MAX(fabs(ibchat),
                             fabs(*(ckt->CKTstate0 + here->VBICibc)))+
                             ckt->CKTabstol) )
-                    if( (fabs(ibephat-*(ckt->CKTstate0 + here->VBICibep)) < 
+                    if( (fabs(ibephat-*(ckt->CKTstate0 + here->VBICibep)) <
                             ckt->CKTreltol* MAX(fabs(ibephat),
                             fabs(*(ckt->CKTstate0 + here->VBICibep)))+
                             ckt->CKTabstol) )
-                    if( (fabs(ircihat-*(ckt->CKTstate0 + here->VBICirci)) < 
+                    if( (fabs(ircihat-*(ckt->CKTstate0 + here->VBICirci)) <
                             ckt->CKTreltol* MAX(fabs(ircihat),
                             fabs(*(ckt->CKTstate0 + here->VBICirci)))+
                             ckt->CKTabstol) )
-                    if( (fabs(irbihat-*(ckt->CKTstate0 + here->VBICirbi)) < 
+                    if( (fabs(irbihat-*(ckt->CKTstate0 + here->VBICirbi)) <
                             ckt->CKTreltol* MAX(fabs(irbihat),
                             fabs(*(ckt->CKTstate0 + here->VBICirbi)))+
                             ckt->CKTabstol) )
-                    if( (fabs(irbphat-*(ckt->CKTstate0 + here->VBICirbp)) < 
+                    if( (fabs(irbphat-*(ckt->CKTstate0 + here->VBICirbp)) <
                             ckt->CKTreltol* MAX(fabs(irbphat),
                             fabs(*(ckt->CKTstate0 + here->VBICirbp)))+
                             ckt->CKTabstol) )
-                    if( (fabs(ibcphat-*(ckt->CKTstate0 + here->VBICibcp)) < 
+                    if( (fabs(ibcphat-*(ckt->CKTstate0 + here->VBICibcp)) <
                             ckt->CKTreltol* MAX(fabs(ibcphat),
                             fabs(*(ckt->CKTstate0 + here->VBICibcp)))+
                             ckt->CKTabstol) )
-                    if( (fabs(iccphat-*(ckt->CKTstate0 + here->VBICiccp)) < 
+                    if( (fabs(iccphat-*(ckt->CKTstate0 + here->VBICiccp)) <
                             ckt->CKTreltol* MAX(fabs(iccphat),
                             fabs(*(ckt->CKTstate0 + here->VBICiccp)))+
                             ckt->CKTabstol) ) {

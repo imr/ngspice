@@ -751,7 +751,7 @@ enum {
     VBIC_MOD_SELFT,
 };
 
-/* device questions */        
+/* device questions */
 enum {
     VBIC_QUEST_FT = 221,
     VBIC_QUEST_COLLNODE,
