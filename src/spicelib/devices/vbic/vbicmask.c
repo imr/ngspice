@@ -225,14 +225,8 @@ VBICmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
         case VBIC_MOD_XRE:
             value->rValue = here->VBICtempExpRE;
             return(OK);
-        case VBIC_MOD_XRB:
-            value->rValue = here->VBICtempExpRB;
-            return(OK);
         case VBIC_MOD_XRBI:
             value->rValue = here->VBICtempExpRBI;
-            return(OK);
-        case VBIC_MOD_XRC:
-            value->rValue = here->VBICtempExpRC;
             return(OK);
         case VBIC_MOD_XRCI:
             value->rValue = here->VBICtempExpRCI;
