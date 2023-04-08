@@ -209,6 +209,7 @@ struct name_entry {
 };
 
 static char *get_zero_rise_fall(void);
+static char *get_name_hilo(char *tok_str);
 
 #ifdef TRACE
 static void print_name_list(NAME_ENTRY nelist);
@@ -2126,13 +2127,16 @@ static Xlatorp gen_compound_instance(struct compound_instance *compi)
     char *model_name = NULL, *inst = NULL, **connector = NULL;
     char *new_inst = NULL, *model_stmt = NULL, *final_model_name = NULL;
     char *new_stmt = NULL, *instance_name = NULL;
-    char *tmp;
+    char *high_name = NULL, *low_name = NULL;
     char *zero_delay_str = NULL;
-    size_t sz = 0;
     Xlatorp xxp = NULL;
     Xlatep xdata = NULL;
+    DS_CREATE(tmp_dstr, 128);
 
-    if (!compi) { return NULL; }
+    if (!compi) {
+        ds_free(&tmp_dstr);
+        return NULL;
+    }
     itype = compi->hdrp->instance_type;
     inst = compi->hdrp->instance_name;
     if (eq(itype, "aoi")) {
@@ -2152,6 +2156,7 @@ static Xlatorp gen_compound_instance(struct compound_instance *compi)
         ingates = "d_or";
         logic_val = "$d_lo";
     } else {
+        ds_free(&tmp_dstr);
         return NULL;
     }
     inarr = compi->inputs;
@@ -2164,33 +2169,38 @@ static Xlatorp gen_compound_instance(struct compound_instance *compi)
     xxp = create_xlator();
     k = 0;
     for (i = 0; i < num_gates; i++) {
-        for (j = 0; j < width; j++) {
-            sz += strlen(inarr[k]) + 8; // Room for space between each name
-            k++;
-        }
-    }
-    tmp = TMALLOC(char, sz);
-    tmp[0] = '\0';
-    k = 0;
-    for (i = 0; i < num_gates; i++) {
+        ds_clear(&tmp_dstr);
         connector[i] = tprintf("con_%s_%d", inst, i);
         check_name_unused(connector[i]);
         num_ins_kept = 0;
-        tmp[0] = '\0';
         /* $d_hi AND gate inputs are ignored */
         /* $d_lo OR gate inputs are ignored */
         for (j = 0; j < width; j++) {
             if (!eq(inarr[k], logic_val)) {
                 num_ins_kept++;
-                sprintf(tmp + strlen(tmp), " %s", inarr[k]);
-                add_input_pin(inarr[k]);
+                if (eq(inarr[k], "$d_hi")) {
+                /* This must be a 1 input on an OR gate of oa/oai */
+                    if (!high_name) {
+                        high_name = get_name_hilo("$d_hi");
+                    }
+                    ds_cat_printf(&tmp_dstr, " %s", high_name);
+                } else if (eq(inarr[k], "$d_lo")) {
+                /* This must be a 0 input on an AND gate of ao/aoi */
+                    if (!low_name) {
+                        low_name = get_name_hilo("$d_lo");
+                    }
+                    ds_cat_printf(&tmp_dstr, " %s", low_name);
+                } else {
+                    ds_cat_printf(&tmp_dstr, " %s", inarr[k]);
+                    add_input_pin(inarr[k]);
+                }
             }
             k++;
         }
         if (num_ins_kept >= 2) {
             instance_name = tprintf("a%s_%d", inst, i);
             new_inst = tprintf("%s [%s ] %s %s", instance_name,
-                tmp, connector[i], model_name);
+                ds_get_buf(&tmp_dstr), connector[i], model_name);
             xdata = create_xlate_translated(new_inst);
             xxp = add_xlator(xxp, xdata);
             tfree(new_inst);
@@ -2201,7 +2211,22 @@ static Xlatorp gen_compound_instance(struct compound_instance *compi)
               directly to the OR/NOR, AND/NAND final gate.
             */
             tfree(connector[i]);
-            connector[i] = tprintf("%s", tmp);
+            connector[i] = tprintf("%s", ds_get_buf(&tmp_dstr));
+        } else {
+            tfree(connector[i]);
+            if (eq(ingates, "d_or")) {
+            /* Current oa/oai input OR gate has all 0 inputs, so drive 0 */
+                if (!low_name) {
+                    low_name = get_name_hilo("$d_lo");
+                }
+                connector[i] = tprintf("%s", low_name);
+            } else {
+            /* Current ao/aoi input AND gate has all 1 inputs, so drive 1 */
+                if (!high_name) {
+                    high_name = get_name_hilo("$d_hi");
+                }
+                connector[i] = tprintf("%s", high_name);
+            }
         }
     }
     /* .model statement for the input gates */
@@ -2215,27 +2240,19 @@ static Xlatorp gen_compound_instance(struct compound_instance *compi)
 
     /* Final OR/NOR, AND/NAND gate */
     final_model_name = tprintf("%s_out", model_name);
-    tfree(tmp);
-
-    sz = 0;
+    ds_clear(&tmp_dstr);
     for (i = 0; i < num_gates; i++) {
-        sz += strlen(connector[i]) + 8; // Room for space between each name
-    }
-    tmp = TMALLOC(char, sz);
-    tmp[0] = '\0';
-    for (i = 0; i < num_gates; i++) {
-        sprintf(tmp + strlen(tmp), " %s", connector[i]);
+        ds_cat_printf(&tmp_dstr, " %s", connector[i]);
     }
     /* instance statement for the final gate */
     add_output_pin(output);
     instance_name = tprintf("a%s_out", inst);
     new_stmt = tprintf("%s [%s ] %s %s",
-        instance_name, tmp, output, final_model_name);
+        instance_name, ds_get_buf(&tmp_dstr), output, final_model_name);
     xdata = create_xlate_translated(new_stmt);
     xxp = add_xlator(xxp, xdata);
     tfree(new_stmt);
     tfree(instance_name);
-    tfree(tmp);
     /* timing model for output gate */
     if (!gen_timing_model(tmodel, "ugate", outgate,
             final_model_name, xxp)) {
@@ -2249,6 +2266,9 @@ static Xlatorp gen_compound_instance(struct compound_instance *compi)
     }
     if (connector) { tfree(connector); }
     tfree(model_name);
+    if (high_name) { tfree(high_name); }
+    if (low_name) { tfree(low_name); }
+    ds_free(&tmp_dstr);
     return xxp;
 }
 
