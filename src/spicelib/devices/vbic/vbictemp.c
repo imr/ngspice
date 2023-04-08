@@ -42,7 +42,7 @@ VBICtemp(GENmodel *inModel, CKTcircuit *ckt)
 
             TAMB = here->VBICtemp - CONSTCtoK;
 
-            memcpy (&pnom, &model->VBICtnom, 108*8);
+            memcpy (&pnom, &model->VBICtnom, sizeof(pnom));
 
             iret = vbic_4T_et_cf_t(p,pnom,&TAMB);
 

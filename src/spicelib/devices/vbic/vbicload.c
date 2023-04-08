@@ -129,7 +129,7 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
             /*
              *   model parameters
              */
-            memcpy (&p, &model->VBICtnom, 108*8);
+            memcpy (&p, &model->VBICtnom, sizeof(p));
 
             p[0] = here->VBICtemp - CONSTCtoK + p[105];
             /* temperature dependent parameter are already calculated */
