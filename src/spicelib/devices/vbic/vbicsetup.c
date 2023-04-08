@@ -469,7 +469,7 @@ VBICsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             }
 
             if(model->VBICselftGiven)
-                if(model->VBICselft == 1)
+                if((model->VBICselft == 1) && (model->VBICthermalResistGiven) && (model->VBICthermalResist > 0.0))
                     here->VBIC_selfheat = 1;
                 else
                     here->VBIC_selfheat = 0;
