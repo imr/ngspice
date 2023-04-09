@@ -685,7 +685,8 @@ static void inp_stitch_continuation_lines(struct card* working)
                 firsttime = FALSE;
             }
             else {
-                sadd(&newline, s + 1);
+                *s = ' ';
+                sadd(&newline, s);
                 *s = '*';
             }
 
