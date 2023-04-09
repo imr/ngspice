@@ -2170,8 +2170,6 @@ static Xlatorp gen_compound_instance(struct compound_instance *compi)
     k = 0;
     for (i = 0; i < num_gates; i++) {
         ds_clear(&tmp_dstr);
-        connector[i] = tprintf("con_%s_%d", inst, i);
-        check_name_unused(connector[i]);
         num_ins_kept = 0;
         /* $d_hi AND gate inputs are ignored */
         /* $d_lo OR gate inputs are ignored */
@@ -2198,6 +2196,8 @@ static Xlatorp gen_compound_instance(struct compound_instance *compi)
             k++;
         }
         if (num_ins_kept >= 2) {
+            connector[i] = tprintf("con_%s_%d", inst, i);
+            check_name_unused(connector[i]);
             instance_name = tprintf("a%s_%d", inst, i);
             new_inst = tprintf("%s [%s ] %s %s", instance_name,
                 ds_get_buf(&tmp_dstr), connector[i], model_name);
@@ -2210,10 +2210,8 @@ static Xlatorp gen_compound_instance(struct compound_instance *compi)
               connector[i] is the remaining input connected
               directly to the OR/NOR, AND/NAND final gate.
             */
-            tfree(connector[i]);
             connector[i] = tprintf("%s", ds_get_buf(&tmp_dstr));
         } else {
-            tfree(connector[i]);
             if (eq(ingates, "d_or")) {
             /* Current oa/oai input OR gate has all 0 inputs, so drive 0 */
                 if (!low_name) {
