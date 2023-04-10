@@ -30,7 +30,7 @@ VBICacLoad(GENmodel *inModel, CKTcircuit *ckt)
     ,Ibcp_Vbcp,Iccp_Vbep,Irs_Vrs,Iccp_Vbci,Iccp_Vbcp;
     double XQbe_Vbei, XQbe_Vbci, XQbex_Vbex, XQbc_Vbci,
            XQbcx_Vbcx, XQbep_Vbep, XQbep_Vbci,
-           XQbcp_Vbcp;
+           XQbcp_Vbcp, XQbeo_Vbe, XQbco_Vbc;
 
     /*  loop through all the models */
     for( ; model != NULL; model = VBICnextModel(model)) {
@@ -229,6 +229,8 @@ c           The complex part
             XQbep_Vbep = *(ckt->CKTstate0 + here->VBICcqbep) * ckt->CKTomega;
             XQbep_Vbci = *(ckt->CKTstate0 + here->VBICcqbepci) * ckt->CKTomega;
             XQbcp_Vbcp = *(ckt->CKTstate0 + here->VBICcqbcp) * ckt->CKTomega;
+            XQbeo_Vbe  = *(ckt->CKTstate0 + here->VBICcqbeo) * ckt->CKTomega;
+            XQbco_Vbc  = *(ckt->CKTstate0 + here->VBICcqbco) * ckt->CKTomega;
 /*
 c   Stamp element: Qbe
 */
@@ -279,6 +281,21 @@ c   Stamp element: Qbcp
             *(here->VBICsubsSIBaseBPPtr + 1) += -XQbcp_Vbcp;
             *(here->VBICbaseBPSubsSIPtr + 1) += -XQbcp_Vbcp;
             *(here->VBICbaseBPBaseBPPtr + 1) +=  XQbcp_Vbcp;
+/*
+c   Stamp element: Qbeo
+*/
+            *(here->VBICbaseBasePtr + 1) +=  XQbeo_Vbe;
+            *(here->VBICemitEmitPtr + 1) +=  XQbeo_Vbe;
+            *(here->VBICbaseEmitPtr + 1) += -XQbeo_Vbe;
+            *(here->VBICemitBasePtr + 1) += -XQbeo_Vbe;
+/*
+c   Stamp element: Qbco
+*/
+            *(here->VBICbaseBasePtr + 1) +=  XQbco_Vbc;
+            *(here->VBICcollCollPtr + 1) +=  XQbco_Vbc;
+            *(here->VBICbaseCollPtr + 1) += -XQbco_Vbc;
+            *(here->VBICcollBasePtr + 1) += -XQbco_Vbc;
+
 
         }
     }
