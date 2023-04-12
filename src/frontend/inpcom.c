@@ -707,6 +707,10 @@ static void inp_stitch_continuation_lines(struct card* working)
             break;
         }
     }
+    if (!firsttime) {
+        tfree(prev->line);
+        prev->line = copy(ds_get_buf(&newline));
+    }
     ds_free(&newline);
 }
 #else
@@ -1089,7 +1093,8 @@ struct card *inp_readall(FILE *fp, const char *dir_name,
 
     rv = inp_read(fp, 0, dir_name, comfile, intfile);
     cc = rv.cc;
-    tprint(cc);
+//    tprint(cc);
+
     /* files starting with *ng_script are user supplied command files */
     if (cc && ciprefix("*ng_script", cc->line))
         comfile = TRUE;
@@ -1773,7 +1778,9 @@ struct inp_read_t inp_read( FILE *fp, int call_depth, const char *dir_name,
        if this is a command file or called from within a .control section. */
     inp_stripcomments_deck(cc->nextcard, comfile || is_control);
 
+//    tprint(cc);
     inp_stitch_continuation_lines(cc->nextcard);
+//    tprint(cc);
 
     rv.line_number = line_number;
     rv.cc = cc;
