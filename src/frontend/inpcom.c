@@ -136,7 +136,6 @@ static void inp_reorder_params(
 static int inp_split_multi_param_lines(struct card *deck, int line_number);
 static void inp_sort_params(struct card *param_cards,
         struct card *card_bf_start, struct card *s_c, struct card *e_c);
-char *inp_remove_ws(char *s);
 static void inp_compat(struct card *deck);
 static void inp_bsource_compat(struct card *deck);
 static bool inp_temper_compat(struct card *card);
@@ -167,7 +166,6 @@ static void inp_check_syntax(struct card *deck);
 static char *inp_spawn_brace(char *s);
 
 static char *inp_pathresolve_at(const char *name, const char *dir);
-char *search_plain_identifier(char *str, const char *identifier);
 
 struct nscope *inp_add_levels(struct card *deck);
 static struct card_assoc *find_subckt(struct nscope *scope, const char *name);
@@ -184,8 +182,6 @@ static void inp_get_w_l_x(struct card* oldcard);
 static char* eval_m(char* line, char* tline);
 static char* eval_tc(char* line, char* tline);
 static char* eval_mvalue(char* line, char* tline);
-
-static void rem_double_braces(struct card* card);
 
 extern void inp_probe(struct card* card);
 #ifndef EXT_ASC
