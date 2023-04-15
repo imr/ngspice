@@ -404,6 +404,8 @@ void cm_d_pwm(ARGS)
 
                 *t3 = T(1) + (1 - dphase)/frequency;
             }
+            cm_analog_set_temp_bkpt(*t1);
+            cm_analog_set_temp_bkpt(*t3);
         }
         break;
 
