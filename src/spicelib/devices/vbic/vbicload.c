@@ -75,8 +75,8 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
     ,Iccp_Vbci,Iccp_Vbcp,Irs,Irs_Vrs,Irs_Vrth=0.0,Qbcp,Qbcp_Vrth
     ,Qbcp_Vbcp,Irth,Irth_Vrth=0.0,Ith=0.0,Ith_Vrth=0.0,Ith_Vbei=0.0,Ith_Vbci=0.0
     ,Ith_Vcei=0.0,Ith_Vbex=0.0,Ith_Vbep=0.0,Ith_Vrs=0.0,Ith_Vbcp=0.0,Ith_Vcep=0.0,Ith_Vrcx=0.0
-    ,Ith_Vrci=0.0,Ith_Vbcx=0.0,Ith_Vrbx=0.0,Ith_Vrbi=0.0,Ith_Vre=0.0,Ith_Vrbp=0.0,Qcth
-    ,Qcth_Vrth,SCALE;
+    ,Ith_Vrci=0.0,Ith_Vbcx=0.0,Ith_Vrbx=0.0,Ith_Vrbi=0.0,Ith_Vre=0.0,Ith_Vrbp=0.0,Qcth=0.0
+    ,Qcth_Vrth=0.0,SCALE;
     int iret;
     double vce;
 #ifndef PREDICTOR
@@ -714,7 +714,8 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
                 here->VBICcapbcx = Qbcx_Vbcx;
                 here->VBICcapbep = Qbep_Vbep;
                 here->VBICcapbcp = Qbcp_Vbcp;
-                here->VBICcapcth = Qcth_Vrth;
+                if (here->VBIC_selfheat)
+                    here->VBICcapcth = Qcth_Vrth;
 
                 /*
                  *   store small-signal parameters
@@ -894,9 +895,11 @@ VBICload(GENmodel *inModel, CKTcircuit *ckt)
             *(ckt->CKTstate0 + here->VBICirbx_Vrbx) = Irbx_Vrbx;
             *(ckt->CKTstate0 + here->VBICirs_Vrs)   = Irs_Vrs;
             *(ckt->CKTstate0 + here->VBICire_Vre)   = Ire_Vre;
-            *(ckt->CKTstate0 + here->VBICcqcth)     = Icth;
-            *(ckt->CKTstate0 + here->VBICicth_Vrth) = Icth_Vrth;
-
+            if (here->VBIC_selfheat)
+            {
+                *(ckt->CKTstate0 + here->VBICcqcth)     = Icth;
+                *(ckt->CKTstate0 + here->VBICicth_Vrth) = Icth_Vrth;
+            }
 load:
             /*
              *  load current excitation vector and matrix
