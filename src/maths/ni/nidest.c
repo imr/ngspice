@@ -16,7 +16,6 @@ Author: 1985 Thomas L. Quarles
 void
 NIdestroy(CKTcircuit *ckt)
 {
-    int i;
     if (ckt->CKTmatrix)
 	SMPdestroy(ckt->CKTmatrix);
     ckt->CKTmatrix = NULL;
@@ -36,7 +35,7 @@ NIdestroy(CKTcircuit *ckt)
 #endif
 #ifdef PREDICTOR
     if(ckt->CKTpred) FREE(ckt->CKTpred);
-    for( i=0;i<8;i++) {
+    for(int i=0;i<8;i++) {
         if(ckt->CKTsols[i]) FREE(ckt->CKTsols[i]);
     }
 #endif
