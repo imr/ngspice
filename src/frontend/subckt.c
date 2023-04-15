@@ -1147,7 +1147,9 @@ translate(struct card *deck, char *formal, int flen, char *actual, char *scname,
     char *next_name, *name, *t, *nametofree, *paren_ptr;
     int nnodes, i, dim;
     int rtn = 0;
-
+#ifdef XSPICE
+    bool got_vnam = FALSE;
+#endif
     bxx_init(&buffer);
 
     /* settrans builds the table holding the translated netnames.  */
@@ -1247,8 +1249,6 @@ translate(struct card *deck, char *formal, int flen, char *actual, char *scname,
             /*===================  case A  ====================*/
             /* gtri - add - wbk - 10/23/90 - process A devices specially */
             /* since they have a more involved and variable length node syntax */
-
-        bool got_vnam = FALSE;
 
         case 'a':
 
