@@ -657,7 +657,7 @@ resume:
 
         /* supply ramping, when opramptime > 0 */
         if (opramptime > 0)
-            ckt->CKTsrcFact = MIN(1., optime / opramptime);
+            ckt->CKTsrcFact = 0.5 * (1 - cos(M_PI * optime / opramptime));
 
         ckt->CKTdeltaOld[0]=ckt->CKTdelta;
         NIcomCof(ckt);
