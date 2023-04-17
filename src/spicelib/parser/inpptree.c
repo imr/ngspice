@@ -1107,8 +1107,14 @@ INPparseNode *PT_mkfnode(const char *fname, INPparseNode * arg)
     INPparseNode *p;
     char buf[128];
 
+    if (!fname) {
+        fprintf(stderr, "Error: bogus function name \n");
+        return mkfirst(NULL, arg);
+    }
+
     /* Make sure the case is ok. */
-    (void) strcpy(buf, fname);
+    (void)strncpy(buf, fname, 127);
+    buf[127] = 0;
     strtolower(buf);
 
     if(!strcmp("ternary_fcn", buf)) {
@@ -1142,7 +1148,6 @@ INPparseNode *PT_mkfnode(const char *fname, INPparseNode * arg)
         fprintf(stderr, "Error: no such function '%s'\n", buf);
         if (ft_stricterror)
             controlled_exit(EXIT_BAD);
-
         return mkfirst(NULL, arg);
     }
 
@@ -1250,7 +1255,8 @@ INPparseNode *PT_mksnode(const char *string, void *ckt)
     INPparseNode *p;
 
     /* Make sure the case is ok. */
-    (void) strcpy(buf, string);
+    (void) strncpy(buf, string, 127);
+    buf[127] = 0;
     strtolower(buf);
 
     p = TMALLOC(INPparseNode, 1);
