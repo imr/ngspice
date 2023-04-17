@@ -29,16 +29,13 @@ CKTinit(CKTcircuit **ckt)		/* new circuit to create */
     CKTcircuit *sckt = TMALLOC(CKTcircuit, 1);
     *ckt = sckt;
     if (sckt == NULL)
-	return(E_NOMEM);
-/* gtri - begin - dynamically allocate the array of model lists */
-/* CKThead used to be statically sized in CKTdefs.h, but has been changed */
-/* to a ** pointer */
+        return(E_NOMEM);
+
+    /* dynamically allocate the array of model lists */
     sckt->CKThead = TMALLOC(GENmodel *, DEVmaxnum);
-    if(sckt->CKThead == NULL) return(E_NOMEM);
-/* gtri - end   - dynamically allocate the array of model lists */
+    if(sckt->CKThead == NULL)
+        return(E_NOMEM);
 
-
-	
     for (i = 0; i < DEVmaxnum; i++)
         sckt->CKThead[i] = NULL;
 
