@@ -100,6 +100,11 @@ void com_optran(wordlist* wl) {
         getdata = TRUE;
     }
 
+    if (!getdata && !ft_curckt) {
+        /* no circuit, but optran already set */
+        return;
+    }
+
     int saved = errno;
     errno = 0;
     nooptran = FALSE;
