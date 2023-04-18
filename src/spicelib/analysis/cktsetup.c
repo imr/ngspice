@@ -14,6 +14,7 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/cktdefs.h"
 #include "ngspice/devdefs.h"
 #include "ngspice/sperror.h"
+#include "ngspice/fteext.h"
 
 #ifdef XSPICE
 #include "ngspice/enh.h"
@@ -43,6 +44,20 @@ CKTsetup(CKTcircuit *ckt)
  /* gtri - end - Setup for adding rshunt option resistors */
 #endif
     SMPmatrix *matrix;
+
+    if (!ckt->CKThead) {
+        fprintf(stderr, "Error: No model list found, device setup not possible!\n");
+        if (ft_stricterror)
+            controlled_exit(EXIT_BAD);
+        return E_PANIC;
+    }
+    if (!DEVices) {
+        fprintf(stderr, "Error: No device list found, device setup not possible!\n");
+        if (ft_stricterror)
+            controlled_exit(EXIT_BAD);
+        return E_PANIC;
+    }
+
     ckt->CKTnumStates=0;
 
 #ifdef WANT_SENSE2
@@ -57,7 +72,9 @@ CKTsetup(CKTcircuit *ckt)
         return E_NOCHANGE;
 
     error = NIinit(ckt);
-    if (error) return(error);
+    if (error) 
+        return(error);
+
     ckt->CKTisSetup = 1;
 
     matrix = ckt->CKTmatrix;
