@@ -625,6 +625,94 @@ static char *cat2strings(char *s1, char *s2, bool spa)
 }
 #endif
 
+/* .param line1param
+   + line2param
+   ---->
+   .param line1param
+   .param line2param
+   */
+static void inp_stitch_continuation_lines_param(struct card* working)
+{
+    struct card* prev = NULL;
+    char* oldline;
+
+    while (working) {
+        char* s, c;
+
+        for (s = working->line; (c = *s) != '\0' && c <= ' '; s++)
+            ;
+
+#ifdef TRACE
+        /* SDB debug statement */
+        printf("In inp_read, processing linked list element line = %d, s = "
+            "%s . . . \n",
+            working->linenum, s);
+#endif
+
+        switch (c) {
+        case '#':
+        case '$':
+        case '*':
+        case '\0':
+            /* skip these cards, and keep prev as the last regular card */
+            working = working->nextcard; /* for these chars, go to next
+                                            card */
+            break;
+
+        case '+': /* handle continuation of .param lines only */
+            if (!prev) {
+                working->error =
+                    copy("Illegal continuation line: ignored.");
+                working = working->nextcard;
+                break;
+            }
+
+            /* only handle .param continuation lines */
+            if(!ciprefix(".param", prev->line)) {
+                working = working->nextcard;
+                break;
+            }
+
+            /* comment out lines containing only .param */
+            if(cieq(prev->line, ".param")) {
+                prev->line[0] = '*';
+            }
+
+            /* We now may have lept over some comment lines, which are
+            located among the continuation lines. We have to delete them
+            here to prevent a memory leak */
+            while (prev->nextcard != working) {
+                struct card* tmpl = prev->nextcard->nextcard;
+                line_free_x(prev->nextcard, FALSE);
+                prev->nextcard = tmpl;
+            }
+
+            oldline = working->line;
+#if defined (_MSC_VER)
+            /* vsnprintf (used by tprintf) in Windows is efficient, VS2019 arb. referencevalue 7,
+               cat2strings() yields ref. speed value 12 only, CYGWIN is 12 in both cases,
+               MINGW is 36. */
+            working->line = tprintf(".param %s", s + 1);
+#else
+            /* vsnprintf in Linux is very inefficient, ref. value 24
+               cat2strings() is efficient with  ref. speed value 6,
+               MINGW is 12 */
+            working->line = cat2strings(".param", s + 1, TRUE);
+#endif
+            tfree(oldline);
+
+
+            break;
+
+        default: /* regular one-line card */
+            prev = working;
+            working = working->nextcard;
+            break;
+        }
+    }
+}
+
+
 #if 1
 /* line1
    + line2
@@ -685,8 +773,10 @@ static void inp_stitch_continuation_lines(struct card* working)
                 firsttime = FALSE;
             }
             else {
+                /* replace '+' by space */
                 *s = ' ';
                 sadd(&newline, s);
+                /* mark for later removal */
                 *s = '*';
             }
 
@@ -698,6 +788,7 @@ static void inp_stitch_continuation_lines(struct card* working)
                 prev->line = copy(ds_get_buf(&newline));
                 ds_clear(&newline);
                 firsttime = TRUE;
+                /* remove final used '+' line, if regular line is following */
                 struct card* tmpl = prev->nextcard->nextcard;
                 line_free_x(prev->nextcard, FALSE);
                 prev->nextcard = tmpl;
@@ -707,6 +798,7 @@ static void inp_stitch_continuation_lines(struct card* working)
             break;
         }
     }
+    /* remove final used '+' line when no regular line is following */
     if (!firsttime) {
         tfree(prev->line);
         prev->line = copy(ds_get_buf(&newline));
@@ -1779,6 +1871,7 @@ struct inp_read_t inp_read( FILE *fp, int call_depth, const char *dir_name,
     inp_stripcomments_deck(cc->nextcard, comfile || is_control);
 
 //    tprint(cc);
+//    inp_stitch_continuation_lines_param(cc->nextcard);
     inp_stitch_continuation_lines(cc->nextcard);
 //    tprint(cc);
 
