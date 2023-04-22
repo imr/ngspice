@@ -615,16 +615,19 @@ static char *cat2strings(char *s1, char *s2, bool spa)
 /* line1
    + line2
    ---->
-   line1 line 2
+   line1 line2
    Proccedure: store regular card in prev, skip comment lines (*..) and some
-   others
+   others, add tokens from + lines to prev using dstring.
    */
-static void inp_stitch_continuation_lines(struct card *working)
+static void inp_stitch_continuation_lines(struct card* working)
 {
-    struct card *prev = NULL;
+    struct card* prev = NULL;
+    bool firsttime = TRUE;
+
+    DS_CREATE(newline, 200);
 
     while (working) {
-        char *s, c, *buffer;
+        char* s, c;
 
         for (s = working->line; (c = *s) != '\0' && c <= ' '; s++)
             ;
@@ -632,81 +635,74 @@ static void inp_stitch_continuation_lines(struct card *working)
 #ifdef TRACE
         /* SDB debug statement */
         printf("In inp_read, processing linked list element line = %d, s = "
-               "%s . . . \n",
-                working->linenum, s);
+            "%s . . . \n",
+            working->linenum, s);
 #endif
 
         switch (c) {
-            case '#':
-            case '$':
-            case '*':
-            case '\0':
-                /* skip these cards, and keep prev as the last regular card */
-                working = working->nextcard; /* for these chars, go to next
-                                                card */
-                break;
+        case '#':
+        case '$':
+        case '*':
+        case '\0':
+            /* skip these cards, and keep prev as the last regular card */
+            working = working->nextcard; /* for these chars, go to next
+                                            card */
+            break;
 
-            case '+': /* handle continuation */
-                if (!prev) {
-                    working->error =
-                            copy("Illegal continuation line: ignored.");
-                    working = working->nextcard;
-                    break;
-                }
-
-                /* We now may have lept over some comment lines, which are
-                located among the continuation lines. We have to delete them
-                here to prevent a memory leak */
-                while (prev->nextcard != working) {
-                    struct card *tmpl = prev->nextcard->nextcard;
-                    line_free_x(prev->nextcard, FALSE);
-                    prev->nextcard = tmpl;
-                }
-
-                /* create buffer and write last and current line into it.
-                   When reading a PDK, the following may be called more than 1e6 times. */
-#if defined (_MSC_VER)
-                /* vsnprintf (used by tprintf) in Windows is efficient, VS2019 arb. referencevalue 7,
-                   cat2strings() yields ref. speed value 12 only, CYGWIN is 12 in both cases,
-                   MINGW is 36. */
-                buffer = tprintf("%s %s", prev->line, s + 1);
-#else
-                /* vsnprintf in Linux is very inefficient, ref. value 24
-                   cat2strings() is efficient with  ref. speed value 6,
-                   MINGW is 12 */
-                buffer = cat2strings(prev->line, s + 1, TRUE);
-#endif
-                /* replace prev->line by buffer */
-                s = prev->line;
-                prev->line = buffer;
-                prev->nextcard = working->nextcard;
-                working->nextcard = NULL;
-                /* add original line to prev->actualLine */
-                if (prev->actualLine) {
-                    struct card *end;
-                    for (end = prev->actualLine; end->nextcard;
-                            end = end->nextcard)
-                        ;
-                    end->nextcard = working;
-                    tfree(s);
-                }
-                else {
-                    prev->actualLine =
-                            insert_new_line(NULL, s, prev->linenum, 0);
-                    prev->actualLine->level = prev->level;
-                    prev->actualLine->nextcard = working;
-                }
-                working = prev->nextcard;
-                break;
-
-            default: /* regular one-line card */
-                prev = working;
+        case '+': /* handle continuation */
+            if (!prev) {
+                working->error =
+                    copy("Illegal continuation line: ignored.");
                 working = working->nextcard;
                 break;
+            }
+
+            /* We now may have lept over some comment lines, which are
+            located among the continuation lines. We have to delete them
+            here to prevent a memory leak */
+            while (prev->nextcard != working) {
+                struct card* tmpl = prev->nextcard->nextcard;
+                line_free_x(prev->nextcard, FALSE);
+                prev->nextcard = tmpl;
+            }
+
+            if (firsttime) {
+                sadd(&newline, prev->line);
+                firsttime = FALSE;
+            }
+            else {
+                /* replace '+' by space */
+                *s = ' ';
+                sadd(&newline, s);
+                /* mark for later removal */
+                *s = '*';
+            }
+
+            break;
+
+        default: /* regular one-line card */
+            if (!firsttime) {
+                tfree(prev->line);
+                prev->line = copy(ds_get_buf(&newline));
+                ds_clear(&newline);
+                firsttime = TRUE;
+                /* remove final used '+' line, if regular line is following */
+                struct card* tmpl = prev->nextcard->nextcard;
+                line_free_x(prev->nextcard, FALSE);
+                prev->nextcard = tmpl;
+            }
+            prev = working;
+            working = working->nextcard;
+            break;
         }
     }
+    /* remove final used '+' line when no regular line is following */
+    if (!firsttime) {
+        tfree(prev->line);
+        prev->line = copy(ds_get_buf(&newline));
+    }
+    ds_free(&newline);
 }
-
 
 /*
  * search for `=' assignment operator
