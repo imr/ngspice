@@ -175,6 +175,7 @@ static struct modellist *inp_find_model(
         struct nscope *scope, const char *name);
 
 void tprint(struct card *deck);
+static char* libprint(struct card* t, const char *dir);
 
 static void inp_repair_dc_ps(struct card* oldcard);
 static void inp_get_w_l_x(struct card* oldcard);
@@ -3292,13 +3293,23 @@ static struct card *expand_section_ref(struct card *c, const char *dir_name)
  *    every library section reference (when the given section_name_ === NULL)
  * or
  *    just those references occuring in the given library section definition
+ *
+ * Command .libsave saves the loaded and parsed lib, to be read by .include
  */
 
 static void expand_section_references(struct card *c, const char *dir_name)
 {
-    for (; c; c = c->nextcard)
-        if (ciprefix(".lib", c->line))
+    for (; c; c = c->nextcard) {
+        struct card* p = c;
+        if (ciprefix(".libsave", c->line)) {
             c = expand_section_ref(c, dir_name);
+            char *filename = libprint(p, dir_name);
+            fprintf(stdout, "\nLibrary\n%s\nsaved to %s\n", p->line + 9, filename);
+            tfree(filename);
+        }
+        else if (ciprefix(".lib", c->line))
+            c = expand_section_ref(c, dir_name);
+    }
 }
 
 
@@ -6912,6 +6923,24 @@ static void inp_poly_err(struct card *card)
 }
 
 #endif
+
+/* Print the parsed library to lib_out?.lib, with ? a growing number
+   if multiple libs are saved in a single run. */
+static char* libprint(struct card* t, const char *dir_name)
+{
+    struct card* tmp;
+    static int npr = 1;
+    char *outfile = tprintf("%s/lib_out%d.lib", dir_name, npr);
+    npr++;
+    FILE* fd = fopen(outfile, "w");
+    if (fd) {
+        for (tmp = t; tmp; tmp = tmp->nextcard)
+            if (*(tmp->line) != '*')
+                fprintf(fd, "%s\n", tmp->line);
+        fclose(fd);
+    }
+    return outfile;
+}
 
 
 /* Used for debugging. You may add
