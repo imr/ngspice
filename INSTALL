@@ -18,7 +18,7 @@ Table of contents
     1.5.1 Most useful options
     1.5.2 Options Specific to Enable Ngspice as a shared library
     1.5.3 Options Useful for Debugging Ngspice
-   1.6 Installation on Red Hat, Oracle or Centos Linux
+   1.6 Installation on Red Hat, Oracle or CentOS Linux
   2 Compilers and Options
   3 Compiling For Multiple Architectures
   4 Installation Names
@@ -97,7 +97,7 @@ This file describes the procedures to install ngspice from sources.
  compile_linux.sh within the terminal window by ./compile_linux.sh. Admin
  rights are required to allow the installation included in the script.
 
- Centos users may need to add -std=c99 to the CFLAGS in the ../configure
+ CentOS users may need to add -std=c99 to the CFLAGS in the ../configure
  statement.
 
  If you want to compile ngspice manually, you should be able to do:
@@ -323,7 +323,7 @@ This file describes the procedures to install ngspice from sources.
  problem yourself, then the development team will love to hear from you.
 
 
-1.6 Installation on Red Hat, Oracle or Centos
+1.6 Installation on Red Hat, Oracle or CentOS
 
  These OSs, widely distributed among commercial users, but offering
  only an old gcc compiler, e.g. version 4.8, will require some
@@ -331,7 +331,7 @@ This file describes the procedures to install ngspice from sources.
  Hat Like Distributions.pdf", provided by Justin Fisher, available with
  the ngspice distribution.
 
- Centos users may need to add -std=c99 to the CFLAGS in their ../configure
+ CentOS users may need to add -std=c99 to the CFLAGS in their ../configure
  statement.
 
 
