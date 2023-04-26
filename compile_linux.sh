@@ -9,7 +9,7 @@
 # for details please see the ngspice manual, chapt. 32.1.
 # Declare 'compile_linux.sh' executable and start compiling with
 # './compile_linux.sh' or './compile_linux.sh d' from the ngspice directory.
-#  Centos users may need to add -std=c99 to the CFLAGS in the ../configure
+#  CentOS users may need to add -std=c99 to the CFLAGS in the ../configure
 #  statement.
 # Options:
 # --enable-osdi will enable the OSDI interface, which, in conjuction with the
