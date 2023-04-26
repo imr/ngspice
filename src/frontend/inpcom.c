@@ -6925,7 +6925,7 @@ static void inp_poly_err(struct card *card)
 #endif
 
 /* Print the parsed library to lib_out?.lib, with ? a growing number
-   if multiple libs are saved in a single run. */
+   if multiple libs are saved in a single run. Don't save the .libsave line.*/
 static char* libprint(struct card* t, const char *dir_name)
 {
     struct card* tmp;
@@ -6935,9 +6935,12 @@ static char* libprint(struct card* t, const char *dir_name)
     FILE* fd = fopen(outfile, "w");
     if (fd) {
         for (tmp = t; tmp; tmp = tmp->nextcard)
-            if (*(tmp->line) != '*')
+            if (*(tmp->line) != '*' && !ciprefix(".libsave", tmp->line))
                 fprintf(fd, "%s\n", tmp->line);
         fclose(fd);
+    }
+    else {
+        fprintf(stderr, "Warning: Can't open file %s \n    command .libsave ignored!\n", outfile);
     }
     return outfile;
 }
