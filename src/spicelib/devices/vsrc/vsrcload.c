@@ -320,6 +320,8 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
                                     here->VSRCcoeffs[here->VSRCrBreakpt];
                                 time -= period * floor(time / period);
                             } else {
+                                value =
+                                    here->VSRCcoeffs[here->VSRCfunctionOrder - 1];
                                 break;
                             }
                         }
