@@ -33,7 +33,7 @@ Author: 1988 Jeffrey M. Hsu
 
 static void gr_start_internal(struct dvec *dv, bool copyvec);
 static int iplot(struct plot *pl, int id);
-static void set(struct plot *plot, struct dbcomm *db, bool unset, short mode);
+static void set(struct plot *plot, struct dbcomm *db, bool value, short mode);
 static char *getitright(char *buf, double num);
 
 /* for legends, set in gr_start, reset in gr_iplot and gr_init */
@@ -918,7 +918,8 @@ static int iplot(struct plot *pl, int id)
 
         if (ft_grdb) {
             fprintf(cp_err,
-                    "iplot: after 5, xlims = %G, %G, ylims = %G, %G\n",
+                    "iplot: after" #IPOINTMIN
+                    ", xlims = %G, %G, ylims = %G, %G\n",
                     xlims[0], xlims[1], ylims[0], ylims[1]);
         }
 
@@ -1094,17 +1095,17 @@ static int iplot(struct plot *pl, int id)
 }
 
 
-static void set(struct plot *plot, struct dbcomm *db, bool unset, short mode)
+static void set(struct plot *plot, struct dbcomm *db, bool value, short mode)
 {
     struct dvec *v;
     struct dbcomm *dc;
 
     if (db->db_type == DB_IPLOTALL || db->db_type == DB_TRACEALL) {
         for (v = plot->pl_dvecs; v; v = v->v_next)
-            if (unset)
-                v->v_flags &= (short) ~mode;
-            else
+            if (value)
                 v->v_flags |= mode;
+            else
+                v->v_flags &= (short) ~mode;
         return;
     }
 
@@ -1113,17 +1114,17 @@ static void set(struct plot *plot, struct dbcomm *db, bool unset, short mode)
             continue;
         v = vec_fromplot(dc->db_nodename1, plot);
         if (!v || v->v_plot != plot) {
-            if (!eq(dc->db_nodename1, "0") && !unset) {
+            if (!eq(dc->db_nodename1, "0") && value) {
                 fprintf(cp_err, "Warning: node %s non-existent in %s.\n",
                         dc->db_nodename1, plot->pl_name);
                 /* note: XXX remove it from dbs, so won't get further errors */
             }
             continue;
         }
-        if (unset)
-            v->v_flags &= (short) ~mode;
-        else
+        if (value)
             v->v_flags |= mode;
+        else
+            v->v_flags &= (short) ~mode;
     }
 }
 
@@ -1176,7 +1177,9 @@ void gr_iplot(struct plot *plot)
                 PushGraphContext(gr);
             }
 
-            set(plot, db, FALSE, VF_PLOT);
+            /* Temporarily set plot flag on matching vector. */
+
+            set(plot, db, TRUE, VF_PLOT);
 
             dontpop = 0;
             if (iplot(plot, db->db_graphid)) {
@@ -1185,7 +1188,7 @@ void gr_iplot(struct plot *plot)
                 dontpop = 1;
             }
 
-            set(plot, db, TRUE, VF_PLOT);
+            set(plot, db, FALSE, VF_PLOT);
 
             if (!dontpop && db->db_graphid)
                 PopGraphContext();
@@ -1195,7 +1198,7 @@ void gr_iplot(struct plot *plot)
             struct dvec *v, *u;
             int len;
 
-            set(plot, db, FALSE, VF_PRINT);
+            set(plot, db, TRUE, VF_PRINT);
 
             len = plot->pl_scale->v_length;
 
@@ -1251,7 +1254,7 @@ void gr_iplot(struct plot *plot)
                     printf("\n");
                 }
             }
-            set(plot, db, TRUE, VF_PRINT);
+            set(plot, db, FALSE, VF_PRINT);
         }
     }
 }
