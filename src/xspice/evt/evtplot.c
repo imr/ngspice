@@ -88,11 +88,13 @@ struct dvec *EVTfindvec(
   int  udn_index;
   int  num_events;
 
-  Mif_Boolean_t   found;
+  Mif_Boolean_t     found;
+  Evt_Ckt_Data_t   *evt;
+  CKTcircuit       *ckt;
   Evt_Node_Info_t **node_table;
-  Evt_Node_t      *head;
-  Evt_Node_t      *event;
-
+  Evt_Node_t       *head;
+  Evt_Node_t       *event;
+ 
   double *anal_point_vec;
   double *value_vec;
   double value = 0;
@@ -102,13 +104,16 @@ struct dvec *EVTfindvec(
 
   /* Exit immediately if event-driven stuff not allocated yet, */
   /* or if number of event nodes is zero. */
-  if(! g_mif_info.ckt)
+
+  ckt = g_mif_info.ckt;
+  if(! ckt)
     return(NULL);
-  if(! g_mif_info.ckt->evt)
+  evt = ckt->evt;
+  if(! evt)
     return(NULL);
-  if(! g_mif_info.ckt->evt->info.node_table)
+  if(! evt->info.node_table)
     return(NULL);
-  if(g_mif_info.ckt->evt->counts.num_nodes == 0)
+  if(evt->counts.num_nodes == 0)
     return(NULL);
 
   /* Make a copy of the node name. */
@@ -134,8 +139,8 @@ struct dvec *EVTfindvec(
   }
 
   /* Look for node name in the event-driven node list */
-  num_nodes = g_mif_info.ckt->evt->counts.num_nodes;
-  node_table = g_mif_info.ckt->evt->info.node_table;
+  num_nodes = evt->counts.num_nodes;
+  node_table = evt->info.node_table;
 
   for(i = 0, found = MIF_FALSE; i < num_nodes; i++) {
     if(cieq(name, node_table[i]->name)) {
@@ -152,14 +157,14 @@ struct dvec *EVTfindvec(
   /* Get the UDN type index */
   udn_index = node_table[i]->udn_index;
 
-  if (!g_mif_info.ckt->evt->data.node) {
+  if (!evt->data.node) {
 //    fprintf(stderr, "Warning: No event data available! \n   Simulation not yet run?\n");
     tfree(name);
     return(NULL);
   }
 
   /* Count the number of events */
-  head = g_mif_info.ckt->evt->data.node->head[i];
+  head = evt->data.node->head[i];
 
   for(event = head, num_events = 0; event; event = event->next)
     num_events++;
@@ -170,8 +175,7 @@ struct dvec *EVTfindvec(
 
   /* Iterate through the events and fill the arrays. */
   /* Note that we create vertical segments every time an event occurs. */
-  /* Need to modify this in the future to complete the vector out to the */
-  /* last analysis point... */
+
   for(i = 0, event = head; event; event = event->next) {
 
     /* If not first point, put the second value of the horizontal line in the vectors */
@@ -193,6 +197,11 @@ struct dvec *EVTfindvec(
     i++;
 
   }
+
+  /* Add one more point so that the line will extend to the end of the plot. */
+
+  anal_point_vec[i] = ckt->CKTtime;
+  value_vec[i++] = value;
 
   /* Allocate dvec structures and assign the vectors into them. */
   /* See FTE/OUTinterface.c:plotInit() for initialization example. */
