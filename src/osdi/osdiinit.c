@@ -32,7 +32,7 @@
  * descr->param_opvar to the internal ngspice representation (IFparm).
  */
 static int write_param_info(IFparm **dst, const OsdiDescriptor *descr,
-                            uint32_t start, uint32_t end) {
+                            uint32_t start, uint32_t end, bool has_m) {
   for (uint32_t i = start; i < end; i++) {
     OsdiParamOpvar *para = &descr->param_opvar[i];
     uint32_t num_names = para->num_alias + 1;
@@ -68,12 +68,23 @@ static int write_param_info(IFparm **dst, const OsdiDescriptor *descr,
         dataType |= IF_UNINTERESTING;
       }
       char *para_name = copy(para->name[j]);
+      if (para_name[0] == '$') {
+        para_name[0] = '_';
+      }
       strtolower(para_name);
       (*dst)[j] = (IFparm){.keyword = para_name,
                            .id = (int)i,
                            .description = para->description,
                            .dataType = dataType};
     }
+    if (!has_m && !strcmp(para->name[0], "$mfactor")) {
+      (*dst)[num_names] = (IFparm){.keyword = "m",
+                                   .id = (int)i,
+                                   .description = para->description,
+                                   .dataType = dataType};
+      *dst += 1;
+    }
+
     *dst += num_names;
   }
 
@@ -110,6 +121,10 @@ extern SPICEdev *osdi_create_spicedev(const OsdiRegistryEntry *entry) {
     *num_instance_para_names += 1;
   }
 
+  if (!entry->has_m) {
+    *num_instance_para_names += 1;
+  }
+
   IFparm *instance_para_names = TMALLOC(IFparm, *num_instance_para_names);
   IFparm *dst = instance_para_names;
 
@@ -124,9 +139,9 @@ extern SPICEdev *osdi_create_spicedev(const OsdiRegistryEntry *entry) {
                       "Instance temperature"};
     dst += 1;
   }
-  write_param_info(&dst, descr, 0, descr->num_instance_params);
+  write_param_info(&dst, descr, 0, descr->num_instance_params, entry->has_m);
   write_param_info(&dst, descr, descr->num_params,
-                   descr->num_params + descr->num_opvars);
+                   descr->num_params + descr->num_opvars, true);
 
   // allocate and fill model params
   int *num_model_para_names = TMALLOC(int, 1);
@@ -135,7 +150,8 @@ extern SPICEdev *osdi_create_spicedev(const OsdiRegistryEntry *entry) {
   }
   IFparm *model_para_names = TMALLOC(IFparm, *num_model_para_names);
   dst = model_para_names;
-  write_param_info(&dst, descr, descr->num_instance_params, descr->num_params);
+  write_param_info(&dst, descr, descr->num_instance_params, descr->num_params,
+                   true);
 
   // Allocate SPICE device
   SPICEdev *OSDIinfo = TMALLOC(SPICEdev, 1);
@@ -180,8 +196,6 @@ extern SPICEdev *osdi_create_spicedev(const OsdiRegistryEntry *entry) {
   OSDIinfo->DEVacLoad = OSDIacLoad;
   OSDIinfo->DEVpzLoad = OSDIpzLoad;
   OSDIinfo->DEVtrunc = OSDItrunc;
-
-
 
   return OSDIinfo;
 }
