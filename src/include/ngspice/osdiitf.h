@@ -19,6 +19,7 @@ typedef struct OsdiRegistryEntry {
   uint32_t inst_offset;
   uint32_t dt;
   uint32_t temp;
+  bool has_m;
 } OsdiRegistryEntry;
 
 typedef struct OsdiObjectFile {
