@@ -53,7 +53,8 @@ INPgetValue(CKTcircuit *ckt, char **line, int type, INPtables *tab)
             list[temp.v.numValue - 1] = tmp;
             tmp = INPevaluate(line, &error, 1);
         }
-        if (error && ft_ngdebug && !eq(*line, "") && !prefix(")", *line)) {
+        if (error && ft_ngdebug && !eq(*line, "") && !prefix(")", *line) &&
+            temp.v.numValue > 1) {
             fprintf(stderr, "\nWarning: Reading a vector without limiting parens may be dangerous\n%s\nat\n", compline);
             fprintf(stderr, "%*s%s\n", (int)(*line - compline)," ", *line);
         }
@@ -76,7 +77,8 @@ INPgetValue(CKTcircuit *ckt, char **line, int type, INPtables *tab)
             ilist[temp.v.numValue - 1] = (int) floor(0.5 + tmp);
             tmp = INPevaluate(line, &error, 1);
         }
-        if (error && ft_ngdebug && !eq(*line, "") && !prefix(")", *line)) {
+        if (error && ft_ngdebug && !eq(*line, "") && !prefix(")", *line) &&
+            temp.v.numValue > 1) {
             fprintf(stderr, "\nWarning: Reading a vector without limiting parens may be dangerous\n%s\nat\n", compline);
             fprintf(stderr, "%*s%s\n", (int)(*line - compline), " ", *line);
         }
