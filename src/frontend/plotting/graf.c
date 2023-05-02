@@ -32,7 +32,6 @@ Author: 1988 Jeffrey M. Hsu
 
 
 static void gr_start_internal(struct dvec *dv, bool copyvec);
-static int iplot(struct plot *pl, int id);
 static void set(struct plot *plot, struct dbcomm *db, bool value, short mode);
 static char *getitright(char *buf, double num);
 
@@ -844,28 +843,31 @@ void gr_restoretext(GRAPH *graph)
  * XXX Or maybe even something more drastic ??
  * It would be better to associate a color with an instance using a
  * vector than the vector itself, for which color is something artificial. */
-static int iplot(struct plot *pl, int id)
+static int iplot(struct plot *pl, struct dbcomm *db)
 {
-    int len = pl->pl_scale->v_length;
+    double window;
+    int    len = pl->pl_scale->v_length;
 
     if (ft_grdb) {
         fprintf(cp_err, "Entering iplot, len = %d\n", len);
     }
 
     /* Do simple check for exit first */
-    if (len < IPOINTMIN) { /* Nothing yet */
+
+    window = db->db_value1;
+    if (len < 2 || (window == 0.0 && len < IPOINTMIN)) { /* Nothing yet */
         return 0;
     }
 
-    struct dvec *v, *xs = pl->pl_scale;
-    double *lims, dy;
-    double start, stop, step;
-    bool changed = FALSE;
-    int yt;
-    double xlims[2], ylims[2];
+    struct dvec   *v, *xs = pl->pl_scale;
+    double        *lims, dy;
+    double         start, stop, step;
+    bool           changed = FALSE;
+    int            id, yt;
+    double         xlims[2], ylims[2];
     static REQUEST reqst = { checkup_option, NULL };
-    int inited = 0;
-    int n_vec_plot = 0;
+    int            inited = 0;
+    int            n_vec_plot = 0;
 
     /* Exit if nothing is being plotted */
     for (v = pl->pl_dvecs; v; v = v->v_next) {
@@ -878,7 +880,8 @@ static int iplot(struct plot *pl, int id)
         return 0;
     }
 
-    if (len == IPOINTMIN || !id) { /* Do initialization */
+    id = db->db_graphid;
+    if (!id) { /* Do initialization */
         unsigned int  index, node_len;
         char          commandline[4196];
 
@@ -889,6 +892,14 @@ static int iplot(struct plot *pl, int id)
         lims = ft_minmax(xs, TRUE);
         xlims[0] = lims[0];
         xlims[1] = lims[1];
+        if (window) {
+            if (xlims[1] - xlims[0] > window) {
+                xlims[1] += window / 3.0;       // Assume increasing scale.
+                xlims[0] = xlims[1] - window;
+            } else {
+                xlims[1] = xlims[0] + window;
+            }
+        }
         ylims[0] = HUGE;
         ylims[1] = -ylims[0];
         for (v = pl->pl_dvecs; v; v = v->v_next) {
@@ -918,8 +929,7 @@ static int iplot(struct plot *pl, int id)
 
         if (ft_grdb) {
             fprintf(cp_err,
-                    "iplot: after" #IPOINTMIN
-                    ", xlims = %G, %G, ylims = %G, %G\n",
+                    "iplot: at start xlims = %G, %G, ylims = %G, %G\n",
                     xlims[0], xlims[1], ylims[0], ylims[1]);
         }
 
@@ -944,9 +954,9 @@ static int iplot(struct plot *pl, int id)
         }
         inited = 1;
 
-    }
-    else {
+    } else {
         /* plot the last points and resize if needed */
+
         Input(&reqst, NULL);
 
         /* Window was closed? */
@@ -955,6 +965,7 @@ static int iplot(struct plot *pl, int id)
             return 0;
 
         /* First see if we have to make the screen bigger */
+
         dy = (isreal(xs) ? xs->v_realdata[len - 1] :
               realpart(xs->v_compdata[len - 1]));
         if (ft_grdb) {
@@ -965,8 +976,10 @@ static int iplot(struct plot *pl, int id)
             stop = HUGE;
             start = - stop;
         }
+
         /* checking for x lo */
-        while (dy < currentgraph->data.xmin) {
+
+        if (dy < currentgraph->data.xmin) {
             changed = TRUE;
             if (ft_grdb) {
                 fprintf(cp_err, "resize: xlo %G -> %G\n",
@@ -975,20 +988,25 @@ static int iplot(struct plot *pl, int id)
                         (currentgraph->data.xmax - currentgraph->data.xmin)
                         * XFACTOR);
             }
+
             /* set the new x lo value */
-            currentgraph->data.xmin -=
-                    (currentgraph->data.xmax - currentgraph->data.xmin)
-                    * XFACTOR;
-            if (currentgraph->data.xmin < start) {
-                currentgraph->data.xmin = start;
-                break;
+
+            if (window) {
+                currentgraph->data.xmin = dy - (window / 3.0);
+            } else {
+                currentgraph->data.xmin -=
+                    (currentgraph->data.xmax - currentgraph->data.xmin) *
+                        XFACTOR;
             }
+            if (currentgraph->data.xmin < start)
+                currentgraph->data.xmin = start;
         }
-        if (currentgraph->data.xmax < currentgraph->data.xmin) {
-            currentgraph->data.xmax = currentgraph->data.xmin;
-        }
+
         /* checking for x hi */
-        while (dy > currentgraph->data.xmax) {
+
+        if (window && changed) {
+            currentgraph->data.xmax = currentgraph->data.xmin + window;
+        } else if (dy > currentgraph->data.xmax) {
             changed = TRUE;
             if (ft_grdb) {
                 fprintf(cp_err, "resize: xhi %G -> %G\n",
@@ -997,16 +1015,26 @@ static int iplot(struct plot *pl, int id)
                         (currentgraph->data.xmax - currentgraph->data.xmin)
                         * XFACTOR);
             }
+
             /* set the new x hi value */
-            currentgraph->data.xmax +=
-                (currentgraph->data.xmax - currentgraph->data.xmin) *
-                XFACTOR;
-            if (currentgraph->data.xmax > stop) {
-                currentgraph->data.xmax = stop;
-                break;
+
+            if (window) {
+                currentgraph->data.xmax = dy + (window / 3.0);
+                currentgraph->data.xmin = currentgraph->data.xmax - window;
+            } else {
+                currentgraph->data.xmax +=
+                    (currentgraph->data.xmax - currentgraph->data.xmin) *
+                        XFACTOR;
             }
+            if (currentgraph->data.xmax > stop)
+                currentgraph->data.xmax = stop;
         }
+
+        if (currentgraph->data.xmax < currentgraph->data.xmin)
+            currentgraph->data.xmax = currentgraph->data.xmin;
+
         /* checking for all y values */
+
         for (v = pl->pl_dvecs; v; v = v->v_next) {
             if (!(v->v_flags & VF_PLOT)) {
                 continue;
@@ -1035,10 +1063,9 @@ static int iplot(struct plot *pl, int id)
                 /* currentgraph->data.ymin = dy;
                   currentgraph->data.ymin *= (1 + YFACTOR); */
             }
-            if (currentgraph->data.ymax < currentgraph->data.ymin) {
-                currentgraph->data.ymax = currentgraph->data.ymin;
-            }
+
             /* checking for y hi */
+
             while (dy > currentgraph->data.ymax) {
                 changed = TRUE;
                 if (ft_grdb) {
@@ -1050,14 +1077,17 @@ static int iplot(struct plot *pl, int id)
                 }
                 /* set the new y hi value */
                 currentgraph->data.ymax +=
-                    (currentgraph->data.ymax - currentgraph->data.ymin)
-                    * YFACTOR;
+                    (currentgraph->data.ymax - currentgraph->data.ymin) *
+                        YFACTOR;
                 /* currentgraph->data.ymax +=
                   (dy - currentgraph->data.ymax) * YFACTOR;*/
                 /* currentgraph->data.ymax = dy;
                   currentgraph->data.ymax *= (1 + YFACTOR); */
             }
         }
+
+        if (currentgraph->data.ymax < currentgraph->data.ymin)
+            currentgraph->data.ymax = currentgraph->data.ymin;
 
         if (changed) {
             /* Redraw everything. */
@@ -1182,7 +1212,7 @@ void gr_iplot(struct plot *plot)
             set(plot, db, TRUE, VF_PLOT);
 
             dontpop = 0;
-            if (iplot(plot, db->db_graphid)) {
+            if (iplot(plot, db)) {
                 /* graph just assigned */
                 db->db_graphid = currentgraph->graphid;
                 dontpop = 1;
