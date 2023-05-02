@@ -205,7 +205,26 @@ com_iplot(wordlist *wl)
     /* settrace(wl, VF_PLOT); */
 
     struct dbcomm *d, *td, *currentdb = NULL;
-    char *s;
+    double         window;
+    char          *s;
+
+    /* Look for "-w window-size" at the front, indicating a windowed iplot. */
+
+    if (wl->wl_next && !strcmp("-w", wl->wl_word)) {
+        char *cp;
+        int   error;
+
+        wl = wl->wl_next;
+        cp = wl->wl_word;
+        window = INPevaluate(&cp, &error, 0);
+        if (error || window <= 0) {
+            fprintf(cp_err, "Incremental plot width must be positive.\n");
+            return;
+        }
+        wl = wl->wl_next;
+    } else {
+        window = 0.0;
+    }
 
     /* We use a modified ad-hoc algorithm here where db_also denotes
        vectors on the same command line and db_next denotes
@@ -215,6 +234,7 @@ com_iplot(wordlist *wl)
         d = TMALLOC(struct dbcomm, 1);
         d->db_analysis = NULL;
         d->db_number = debugnumber++;
+        d->db_value1 = window; // Field re-use
         if (eq(s, "all")) {
             d->db_type = DB_IPLOTALL;
         } else {
