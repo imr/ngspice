@@ -126,6 +126,32 @@ void SMPconvertCOOtoCSC (SMPmatrix *Matrix)
     KluLinkedListCOO *current, *temp ;
     unsigned int *Ap_COO, current_group, i, j ;
 
+    if (Matrix->SMPkluMatrix->KLUmatrixLinkedListNZ == 0) {
+        /* Assign N and NZ */
+        Matrix->SMPkluMatrix->KLUmatrixN = 0 ;
+        Matrix->SMPkluMatrix->KLUmatrixNZ = 0 ;
+
+        /* Allocate Diag Gmin CSC Vector */
+        Matrix->SMPkluMatrix->KLUmatrixDiag = NULL ;
+
+        /* Allocate the temporary COO Column Index */
+        Ap_COO = NULL ;
+
+        /* Allocate the needed KLU data structures */
+        Matrix->SMPkluMatrix->KLUmatrixAp = (int *) malloc (sizeof (int)) ;
+        Matrix->SMPkluMatrix->KLUmatrixAi = NULL ;
+        Matrix->SMPkluMatrix->KLUmatrixBindStructCOO = NULL ;
+        Matrix->SMPkluMatrix->KLUmatrixAx = NULL ;
+        Matrix->SMPkluMatrix->KLUmatrixAxComplex = NULL ;
+        Matrix->SMPkluMatrix->KLUmatrixIntermediate = NULL ;
+        Matrix->SMPkluMatrix->KLUmatrixIntermediateComplex = NULL ;
+
+        /* Set the Matrix as Real */
+        Matrix->SMPkluMatrix->KLUmatrixIsComplex = KLUmatrixReal ;
+
+        return ;
+    }
+
     /* Allocate the compressed COO elements */
     MatrixCOO = (Element *) malloc (Matrix->SMPkluMatrix->KLUmatrixLinkedListNZ * sizeof (Element)) ;
 
@@ -1181,8 +1207,13 @@ SMPgetError (SMPmatrix *Matrix, int *Col, int *Row)
 {
     if (Matrix->CKTkluMODE)
     {
-        *Row = Matrix->SMPkluMatrix->KLUmatrixCommon->singular_col + 1 ;
-        *Col = Matrix->SMPkluMatrix->KLUmatrixCommon->singular_col + 1 ;
+        if (Matrix->SMPkluMatrix->KLUmatrixNZ == 0) {
+            *Row = 0 ;
+            *Col = 0 ;
+        } else {
+            *Row = Matrix->SMPkluMatrix->KLUmatrixCommon->singular_col + 1 ;
+            *Col = Matrix->SMPkluMatrix->KLUmatrixCommon->singular_col + 1 ;
+        }
     } else {
         spWhereSingular (Matrix->SPmatrix, Row, Col) ;
     }
