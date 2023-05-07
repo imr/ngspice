@@ -479,17 +479,26 @@ static void EVTbackup_inst_queue(
     }
     inst_queue->next_time = next_time;
 
-    /* Update the modified list by looking for any queued events */
-    /* with posted time > last_time */
+    /* Update the modified list by looking for events that were processed
+     * or queued in the current timestep.
+     */
+
     for(i = 0, j = 0; i < num_modified; i++) {
 
         inst_index = inst_queue->modified_index[i];
         inst = *(inst_queue->last_step[inst_index]);
 
-        while(inst) {
-            if(inst->posted_time > inst_queue->last_time)
-                break;
-            inst = inst->next;
+        if (inst_queue->current[inst_index] ==
+            inst_queue->last_step[inst_index]) {
+            /* Nothing now removed from the queue,
+             * but it may have been modified by an addition.
+             */
+
+            while (inst) {
+                if (inst->posted_time > inst_queue->last_time)
+                    break;
+                inst = inst->next;
+            }
         }
 
         if(! inst) {
