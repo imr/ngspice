@@ -21,6 +21,19 @@ extern double logb(double);
 #include "ngspice/wstdio.h"
 #endif
 
+#include "ngspice/mif.h"
+#include "ngspice/evt.h"
+
+static int
+CircuitIsDigital (void)
+{
+#ifdef XSPICE
+    return g_mif_info.ckt && g_mif_info.ckt->evt && g_mif_info.ckt->evt->counts.num_nodes != 0 ;
+#else
+    return 0 ;
+#endif
+}
+
 static void LoadGmin_CSC (double **diag, unsigned int n, double Gmin) ;
 static void LoadGmin (SMPmatrix *eMatrix, double Gmin) ;
 
@@ -464,6 +477,11 @@ SMPcLUfac (SMPmatrix *Matrix, double PivTol)
 
     if (Matrix->CKTkluMODE)
     {
+        if (CircuitIsDigital() && Matrix->SMPkluMatrix->KLUmatrixN == 0) {
+          // XSPICE pure digital circuits produce empty KLU matrix
+          return 0 ;
+        }
+
         ret = klu_z_refactor (Matrix->SMPkluMatrix->KLUmatrixAp, Matrix->SMPkluMatrix->KLUmatrixAi, Matrix->SMPkluMatrix->KLUmatrixAxComplex,
                               Matrix->SMPkluMatrix->KLUmatrixSymbolic, Matrix->SMPkluMatrix->KLUmatrixNumeric, Matrix->SMPkluMatrix->KLUmatrixCommon) ;
 
@@ -478,7 +496,7 @@ SMPcLUfac (SMPmatrix *Matrix, double PivTol)
             }
             if (Matrix->SMPkluMatrix->KLUmatrixCommon->status == KLU_EMPTY_MATRIX)
             {
-                fprintf (stderr, "Warning (ReFactor Complex): KLU Matrix is empty\n") ;
+                fprintf (stderr, "Error (ReFactor Complex): KLU Matrix is empty\n") ;
                 return 0 ;
             }
             if (Matrix->SMPkluMatrix->KLUmatrixNumeric == NULL) {
@@ -508,6 +526,11 @@ SMPluFac (SMPmatrix *Matrix, double PivTol, double Gmin)
 
     if (Matrix->CKTkluMODE)
     {
+        if (CircuitIsDigital() && Matrix->SMPkluMatrix->KLUmatrixN == 0) {
+          // XSPICE pure digital circuits produce empty KLU matrix
+          return 0 ;
+        }
+
         if (Matrix->SMPkluMatrix->KLUloadDiagGmin) {
             LoadGmin_CSC (Matrix->SMPkluMatrix->KLUmatrixDiag, Matrix->SMPkluMatrix->KLUmatrixN, Gmin) ;
         }
@@ -526,7 +549,7 @@ SMPluFac (SMPmatrix *Matrix, double PivTol, double Gmin)
             }
             if (Matrix->SMPkluMatrix->KLUmatrixCommon->status == KLU_EMPTY_MATRIX)
             {
-                fprintf (stderr, "Warning (ReFactor): KLU Matrix is empty\n") ;
+                fprintf (stderr, "Error (ReFactor): KLU Matrix is empty\n") ;
                 return 0 ;
             }
             if (Matrix->SMPkluMatrix->KLUmatrixNumeric == NULL) {
@@ -553,6 +576,11 @@ SMPluFacKLUforCIDER (SMPmatrix *Matrix)
 
     if (Matrix->CKTkluMODE)
     {
+        if (CircuitIsDigital() && Matrix->SMPkluMatrix->KLUmatrixN == 0) {
+          // XSPICE pure digital circuits produce empty KLU matrix
+          return 0 ;
+        }
+
         if (Matrix->SMPkluMatrix->KLUmatrixIsComplex) {
             ret = klu_z_refactor (Matrix->SMPkluMatrix->KLUmatrixAp, Matrix->SMPkluMatrix->KLUmatrixAi, Matrix->SMPkluMatrix->KLUmatrixAxComplex,
                                   Matrix->SMPkluMatrix->KLUmatrixSymbolic, Matrix->SMPkluMatrix->KLUmatrixNumeric, Matrix->SMPkluMatrix->KLUmatrixCommon) ;
@@ -584,7 +612,7 @@ SMPluFacKLUforCIDER (SMPmatrix *Matrix)
             }
             if (Matrix->SMPkluMatrix->KLUmatrixCommon->status == KLU_EMPTY_MATRIX)
             {
-                fprintf (stderr, "Warning (ReFactor for CIDER): KLU Matrix is empty\n") ;
+                fprintf (stderr, "Error (ReFactor for CIDER): KLU Matrix is empty\n") ;
                 return 0 ;
             }
             if (Matrix->SMPkluMatrix->KLUmatrixNumeric == NULL) {
@@ -609,6 +637,11 @@ SMPcReorder (SMPmatrix *Matrix, double PivTol, double PivRel, int *NumSwaps)
 {
     if (Matrix->CKTkluMODE)
     {
+        if (CircuitIsDigital() && Matrix->SMPkluMatrix->KLUmatrixN == 0) {
+          // XSPICE pure digital circuits produce empty KLU matrix
+          return 0 ;
+        }
+
         Matrix->SMPkluMatrix->KLUmatrixCommon->tol = PivRel ;
 
         if (Matrix->SMPkluMatrix->KLUmatrixNumeric != NULL) {
@@ -629,7 +662,7 @@ SMPcReorder (SMPmatrix *Matrix, double PivTol, double PivRel, int *NumSwaps)
                 fprintf (stderr, "Error (Factor Complex): KLUcommon object is NULL. A problem occurred\n") ;
             }
             if (Matrix->SMPkluMatrix->KLUmatrixCommon->status == KLU_EMPTY_MATRIX) {
-                fprintf (stderr, "Warning (Factor Complex): KLU Matrix is empty\n") ;
+                fprintf (stderr, "Error (Factor Complex): KLU Matrix is empty\n") ;
                 return 0 ;
             }
             if (Matrix->SMPkluMatrix->KLUmatrixSymbolic == NULL) {
@@ -656,6 +689,11 @@ SMPreorder (SMPmatrix *Matrix, double PivTol, double PivRel, double Gmin)
 {
     if (Matrix->CKTkluMODE)
     {
+        if (CircuitIsDigital() && Matrix->SMPkluMatrix->KLUmatrixN == 0) {
+          // XSPICE pure digital circuits produce empty KLU matrix
+          return 0 ;
+        }
+
         if (Matrix->SMPkluMatrix->KLUloadDiagGmin) {
             LoadGmin_CSC (Matrix->SMPkluMatrix->KLUmatrixDiag, Matrix->SMPkluMatrix->KLUmatrixN, Gmin) ;
         }
@@ -680,7 +718,7 @@ SMPreorder (SMPmatrix *Matrix, double PivTol, double PivRel, double Gmin)
                 fprintf (stderr, "Error (Factor): KLUcommon object is NULL. A problem occurred\n") ;
             }
             if (Matrix->SMPkluMatrix->KLUmatrixCommon->status == KLU_EMPTY_MATRIX) {
-                fprintf (stderr, "Warning (Factor): KLU Matrix is empty\n") ;
+                fprintf (stderr, "Error (Factor): KLU Matrix is empty\n") ;
                 return 0 ;
             }
             if (Matrix->SMPkluMatrix->KLUmatrixSymbolic == NULL) {
@@ -707,6 +745,11 @@ SMPreorderKLUforCIDER (SMPmatrix *Matrix)
 
     if (Matrix->CKTkluMODE)
     {
+        if (CircuitIsDigital() && Matrix->SMPkluMatrix->KLUmatrixN == 0) {
+          // XSPICE pure digital circuits produce empty KLU matrix
+          return 0 ;
+        }
+
         if (Matrix->SMPkluMatrix->KLUmatrixNumeric != NULL) {
             klu_free_numeric (&(Matrix->SMPkluMatrix->KLUmatrixNumeric), Matrix->SMPkluMatrix->KLUmatrixCommon) ;
         }
@@ -743,7 +786,7 @@ SMPreorderKLUforCIDER (SMPmatrix *Matrix)
                 fprintf (stderr, "Error (Factor for CIDER): KLUcommon object is NULL. A problem occurred\n") ;
             }
             if (Matrix->SMPkluMatrix->KLUmatrixCommon->status == KLU_EMPTY_MATRIX) {
-                fprintf (stderr, "Warning (Factor for CIDER): KLU Matrix is empty\n") ;
+                fprintf (stderr, "Error (Factor for CIDER): KLU Matrix is empty\n") ;
                 return 0 ;
             }
             if (Matrix->SMPkluMatrix->KLUmatrixSymbolic == NULL) {
@@ -841,37 +884,40 @@ SMPsolve (SMPmatrix *Matrix, double RHS[], double Spare[])
 
     if (Matrix->CKTkluMODE)
     {
-        if (Matrix->SMPkluMatrix->KLUmatrixN != 0) {
-            for (i = 0 ; i < Matrix->SMPkluMatrix->KLUmatrixN ; i++) {
-                Matrix->SMPkluMatrix->KLUmatrixIntermediate [i] = RHS [i + 1] ;
+        if (CircuitIsDigital() && Matrix->SMPkluMatrix->KLUmatrixN == 0) {
+          // XSPICE pure digital circuits produce empty KLU matrix
+          return ;
+        }
+
+        for (i = 0 ; i < Matrix->SMPkluMatrix->KLUmatrixN ; i++) {
+            Matrix->SMPkluMatrix->KLUmatrixIntermediate [i] = RHS [i + 1] ;
+        }
+
+        ret = klu_solve (Matrix->SMPkluMatrix->KLUmatrixSymbolic, Matrix->SMPkluMatrix->KLUmatrixNumeric, (int)Matrix->SMPkluMatrix->KLUmatrixN, 1,
+                         Matrix->SMPkluMatrix->KLUmatrixIntermediate, Matrix->SMPkluMatrix->KLUmatrixCommon) ;
+
+        if (ret == 0)
+        {
+            if (Matrix->SMPkluMatrix->KLUmatrixCommon->status == KLU_SINGULAR) {
+                fprintf (stderr, "Warning (Solve): KLU Matrix is SINGULAR\n") ;
             }
-
-            ret = klu_solve (Matrix->SMPkluMatrix->KLUmatrixSymbolic, Matrix->SMPkluMatrix->KLUmatrixNumeric, (int)Matrix->SMPkluMatrix->KLUmatrixN, 1,
-                             Matrix->SMPkluMatrix->KLUmatrixIntermediate, Matrix->SMPkluMatrix->KLUmatrixCommon) ;
-
-            if (ret == 0)
+            if (Matrix->SMPkluMatrix->KLUmatrixCommon == NULL) {
+                fprintf (stderr, "Error (Solve): KLUcommon object is NULL. A problem occurred\n") ;
+            }
+            if (Matrix->SMPkluMatrix->KLUmatrixCommon->status == KLU_EMPTY_MATRIX)
             {
-                if (Matrix->SMPkluMatrix->KLUmatrixCommon->status == KLU_SINGULAR) {
-                    fprintf (stderr, "Warning (Solve): KLU Matrix is SINGULAR\n") ;
-                }
-                if (Matrix->SMPkluMatrix->KLUmatrixCommon == NULL) {
-                    fprintf (stderr, "Error (Solve): KLUcommon object is NULL. A problem occurred\n") ;
-                }
-                if (Matrix->SMPkluMatrix->KLUmatrixCommon->status == KLU_EMPTY_MATRIX)
-                {
-                    fprintf (stderr, "Warning (Solve): KLU Matrix is empty\n") ;
-                }
-                if (Matrix->SMPkluMatrix->KLUmatrixNumeric == NULL) {
-                    fprintf (stderr, "Error (Solve): KLUnumeric object is NULL. A problem occurred\n") ;
-                }
-                if (Matrix->SMPkluMatrix->KLUmatrixSymbolic == NULL) {
-                    fprintf (stderr, "Error (Solve): KLUsymbolic object is NULL. A problem occurred\n") ;
-                }
+                fprintf (stderr, "Error (Solve): KLU Matrix is empty\n") ;
             }
+            if (Matrix->SMPkluMatrix->KLUmatrixNumeric == NULL) {
+                fprintf (stderr, "Error (Solve): KLUnumeric object is NULL. A problem occurred\n") ;
+            }
+            if (Matrix->SMPkluMatrix->KLUmatrixSymbolic == NULL) {
+                fprintf (stderr, "Error (Solve): KLUsymbolic object is NULL. A problem occurred\n") ;
+            }
+        }
 
-            for (i = 0 ; i < Matrix->SMPkluMatrix->KLUmatrixN ; i++) {
-                RHS [i + 1] = Matrix->SMPkluMatrix->KLUmatrixIntermediate [i] ;
-            }
+        for (i = 0 ; i < Matrix->SMPkluMatrix->KLUmatrixN ; i++) {
+            RHS [i + 1] = Matrix->SMPkluMatrix->KLUmatrixIntermediate [i] ;
         }
     } else {
         spSolve (Matrix->SPmatrix, RHS, RHS, NULL, NULL) ;
@@ -1117,6 +1163,11 @@ SMPpreOrder (SMPmatrix *Matrix)
 {
     if (Matrix->CKTkluMODE)
     {
+        if (CircuitIsDigital() && Matrix->SMPkluMatrix->KLUmatrixN == 0) {
+          // XSPICE pure digital circuits produce empty KLU matrix
+          return 0 ;
+        }
+
         Matrix->SMPkluMatrix->KLUmatrixSymbolic = klu_analyze ((int)Matrix->SMPkluMatrix->KLUmatrixN, Matrix->SMPkluMatrix->KLUmatrixAp,
                                                                Matrix->SMPkluMatrix->KLUmatrixAi, Matrix->SMPkluMatrix->KLUmatrixCommon) ;
 
@@ -1124,7 +1175,7 @@ SMPpreOrder (SMPmatrix *Matrix)
         {
             if (Matrix->SMPkluMatrix->KLUmatrixCommon->status == KLU_EMPTY_MATRIX)
             {
-                fprintf (stderr, "Warning (PreOrder): KLU Matrix is empty\n") ;
+                fprintf (stderr, "Error (PreOrder): KLU Matrix is empty\n") ;
                 return 0 ;
             } else {
                 fprintf (stderr, "Error (PreOrder): KLUsymbolic object is NULL. A problem occurred\n") ;
