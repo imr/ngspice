@@ -20,6 +20,7 @@ cp_init(void)
    cp_chars[128]
    cp_maxhistlength (set to 10000 in com_history.c)
    cp_curin, cp_curout, cp_curerr (defined in streams.c)
+   cp_no_histsubst
 */
 {
     cp_vset("history", CP_NUM, &cp_maxhistlength);
@@ -27,6 +28,10 @@ cp_init(void)
     cp_curin = stdin;
     cp_curout = stdout;
     cp_curerr = stderr;
+
+    /* Enable history substitution */
+    if (cp_getvar("histsubst", CP_BOOL, NULL, 0))
+        cp_no_histsubst = FALSE;
 
     /* io redirection in streams.c:
        cp_in set to cp_curin etc. */

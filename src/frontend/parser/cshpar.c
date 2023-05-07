@@ -37,8 +37,8 @@ Author: 1985 Wayne A. Christopher, U. C. Berkeley CAD Group
 #include <sys/wait.h>
 #endif
 
-
-bool cp_no_histsubst = FALSE; /* perform history substitution by default */
+/* perform history substitution only when variable 'histsubst' is set */
+bool cp_no_histsubst = TRUE;
 
 /* Things go as follows:
  * (1) Read the line and do some initial quoting (by setting the 8th bit),
