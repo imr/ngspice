@@ -232,16 +232,16 @@ NOISEan(CKTcircuit* ckt, int restart)
         error = CKTload(ckt);
         if (error) return(error);
 
-        error = CKTnames(ckt, &numNames, &nameList);
-        if (error) return(error);
-
         if (ckt->CKTkeepOpInfo) {
+            error = CKTnames(ckt, &numNames, &nameList);
+            if (error) return(error);
             /* Dump operating point. */
             error = SPfrontEnd->OUTpBeginPlot(ckt, ckt->CKTcurJob,
                 "NOISE Operating Point",
                 NULL, IF_REAL,
                 numNames, nameList, IF_REAL,
                 &plot);
+            txfree(nameList);
             if (error) return(error);
             CKTdump(ckt, 0.0, plot);
             SPfrontEnd->OUTendPlot(plot);
