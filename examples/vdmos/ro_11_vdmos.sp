@@ -18,17 +18,18 @@ xinv7 9 8 1 0 inv
 xinv8 10 9 1 0 inv
 xinv9 2 10 1 0 inv
 
-.model  N1  vdmos cgdmin=0.05p cgdmax=0.2p a=1.2 cgs=0.15p rg=10 kp=1e-5 rb=1e7 cjo=1n ksubthres=0.2
-.model  P1  vdmos cgdmin=0.05p cgdmax=0.2p a=1.2 cgs=0.15p rg=10 kp=1e-5 rb=1e7 cjo=1n pchan ksubthres=0.2
+.model  N1  vdmos vto=1 cgdmin=0.05p cgdmax=0.2p a=1.2 cgs=0.15p rg=10 kp=1e-5 rb=1e7 cjo=1n ksubthres=0.2
+.model  P1  vdmos vto=-1  cgdmin=0.05p cgdmax=0.2p a=1.2 cgs=0.15p rg=10 kp=1e-5 rb=1e7 cjo=1n pchan ksubthres=0.2
 
-.tran 0.1n 5u
+.tran 0.1n 10u
+.ic v(6)=2.5
 
 .control
 
 run
 rusage
 * current and output in a single plot
-plot v(6) 1000*(-I(vdd)) ylimit -1 6
+plot v(6) 50000*(-I(vdd)) ylimit -1 6
 .endc
 
 .end
