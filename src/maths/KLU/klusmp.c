@@ -1727,8 +1727,8 @@ SMPfindElt (SMPmatrix *eMatrix, int Row, int Col, int CreateIfMissing)
 
         Row = Row - 1 ;
         Col = Col - 1 ;
-        if ((Row < 0) || (Col < 0)) {
-            printf ("Information: Cannot find an element with row '%d' and column '%d' in the KLU matrix\n", Row, Col) ;
+        if (Col < 0) {
+//            printf ("Information: Cannot find an element with row '%d' and column '%d' in the KLU matrix\n", Row, Col) ;
             return NULL ;
         }
         for (i = eMatrix->SMPkluMatrix->KLUmatrixAp [Col] ; i < eMatrix->SMPkluMatrix->KLUmatrixAp [Col + 1] ; i++) {
@@ -1738,6 +1738,7 @@ SMPfindElt (SMPmatrix *eMatrix, int Row, int Col, int CreateIfMissing)
                 } else if (eMatrix->SMPkluMatrix->KLUmatrixIsComplex == KLUMatrixComplex) {
                     return (SMPelement *) &(eMatrix->SMPkluMatrix->KLUmatrixAxComplex [2 * i]) ;
                 } else {
+                    printf ("Information: Cannot find an element with row '%d' and column '%d' in the KLU matrix\n", Row, Col) ;
                     return NULL ;
                 }
             }
