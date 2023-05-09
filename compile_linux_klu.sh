@@ -22,16 +22,15 @@
 
 SECONDS=0
 
+# We need to remove all remnants of a previous compile
 if test "$1" = "d"; then
-   if [ ! -d "debug" ]; then
-      mkdir debug
-      if [ $? -ne 0 ]; then  echo "mkdir debug failed"; exit 1 ; fi
-   fi   
+   rm -f -r debug
+   mkdir debug
+   if [ $? -ne 0 ]; then  echo "mkdir debug failed"; exit 1 ; fi   
 else
-   if [ ! -d "release" ]; then
-      mkdir release
-      if [ $? -ne 0 ]; then  echo "mkdir release failed"; exit 1 ; fi
-   fi
+   rm -f -r release
+   mkdir release
+   if [ $? -ne 0 ]; then  echo "mkdir release failed"; exit 1 ; fi
 fi
 
 # If compiling sources from tarball, you may comment out the following two lines:
