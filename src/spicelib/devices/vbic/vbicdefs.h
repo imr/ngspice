@@ -321,13 +321,17 @@ typedef struct sVBICinstance {
     BindElement *VBICbaseBPtempBinding ;
     BindElement *VBICemitEItempBinding ;
     BindElement *VBICsubsSItempBinding ;
+    BindElement *VBICtempCollBinding ;
     BindElement *VBICtempCollCIBinding ;
     BindElement *VBICtempCollCXBinding ;
     BindElement *VBICtempBaseBIBinding ;
+    BindElement *VBICtempBaseBinding ;
     BindElement *VBICtempBaseBXBinding ;
     BindElement *VBICtempBaseBPBinding ;
+    BindElement *VBICtempEmitBinding ;
     BindElement *VBICtempEmitEIBinding ;
     BindElement *VBICtempSubsBinding ;
+    BindElement *VBICtempSubsSIBinding ;
     BindElement *VBICtempTempBinding ;
 #endif
 
