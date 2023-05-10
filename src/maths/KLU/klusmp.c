@@ -489,6 +489,8 @@ SMPcLUfac (SMPmatrix *Matrix, double PivTol)
         {
             if (Matrix->SMPkluMatrix->KLUmatrixCommon->status == KLU_SINGULAR) {
                 fprintf (stderr, "Warning (ReFactor Complex): KLU Matrix is SINGULAR\n") ;
+                fprintf (stderr, "  Numerical Rank: %d\n", Matrix->SMPkluMatrix->KLUmatrixCommon->numerical_rank) ;
+                fprintf (stderr, "  Singular Node: %d\n", Matrix->SMPkluMatrix->KLUmatrixCommon->singular_col + 1) ;
                 return E_SINGULAR ;
             }
             if (Matrix->SMPkluMatrix->KLUmatrixCommon == NULL) {
@@ -542,6 +544,8 @@ SMPluFac (SMPmatrix *Matrix, double PivTol, double Gmin)
         {
             if (Matrix->SMPkluMatrix->KLUmatrixCommon->status == KLU_SINGULAR) {
                 fprintf (stderr, "Warning (ReFactor): KLU Matrix is SINGULAR\n") ;
+                fprintf (stderr, "  Numerical Rank: %d\n", Matrix->SMPkluMatrix->KLUmatrixCommon->numerical_rank) ;
+                fprintf (stderr, "  Singular Node: %d\n", Matrix->SMPkluMatrix->KLUmatrixCommon->singular_col + 1) ;
                 return E_SINGULAR ;
             }
             if (Matrix->SMPkluMatrix->KLUmatrixCommon == NULL) {
@@ -605,6 +609,8 @@ SMPluFacKLUforCIDER (SMPmatrix *Matrix)
         {
             if (Matrix->SMPkluMatrix->KLUmatrixCommon->status == KLU_SINGULAR) {
                 fprintf (stderr, "Warning (ReFactor for CIDER): KLU Matrix is SINGULAR\n") ;
+                fprintf (stderr, "  Numerical Rank: %d\n", Matrix->SMPkluMatrix->KLUmatrixCommon->numerical_rank) ;
+                fprintf (stderr, "  Singular Node: %d\n", Matrix->SMPkluMatrix->KLUmatrixCommon->singular_col + 1) ;
                 return E_SINGULAR ;
             }
             if (Matrix->SMPkluMatrix->KLUmatrixCommon == NULL) {
@@ -655,7 +661,9 @@ SMPcReorder (SMPmatrix *Matrix, double PivTol, double PivRel, int *NumSwaps)
         {
             if (Matrix->SMPkluMatrix->KLUmatrixCommon->status == KLU_SINGULAR) {
                 fprintf (stderr, "Warning (Factor Complex): KLU Matrix is SINGULAR\n") ;
-                return 0 ;
+                fprintf (stderr, "  Numerical Rank: %d\n", Matrix->SMPkluMatrix->KLUmatrixCommon->numerical_rank) ;
+                fprintf (stderr, "  Singular Node: %d\n", Matrix->SMPkluMatrix->KLUmatrixCommon->singular_col + 1) ;
+                return E_SINGULAR ;
             }
             if (Matrix->SMPkluMatrix->KLUmatrixCommon == NULL) {
                 fprintf (stderr, "Error (Factor Complex): KLUnumeric object is NULL. A problem occurred\n") ;
@@ -711,7 +719,9 @@ SMPreorder (SMPmatrix *Matrix, double PivTol, double PivRel, double Gmin)
         {
             if (Matrix->SMPkluMatrix->KLUmatrixCommon->status == KLU_SINGULAR) {
                 fprintf (stderr, "Warning (Factor): KLU Matrix is SINGULAR\n") ;
-                return 0 ;
+                fprintf (stderr, "  Numerical Rank: %d\n", Matrix->SMPkluMatrix->KLUmatrixCommon->numerical_rank) ;
+                fprintf (stderr, "  Singular Node: %d\n", Matrix->SMPkluMatrix->KLUmatrixCommon->singular_col + 1) ;
+                return E_SINGULAR ;
             }
             if (Matrix->SMPkluMatrix->KLUmatrixCommon == NULL) {
                 fprintf (stderr, "Error (Factor): KLUnumeric object is NULL. A problem occurred\n") ;
@@ -779,7 +789,9 @@ SMPreorderKLUforCIDER (SMPmatrix *Matrix)
         {
             if (Matrix->SMPkluMatrix->KLUmatrixCommon->status == KLU_SINGULAR) {
                 fprintf (stderr, "Warning (Factor for CIDER): KLU Matrix is SINGULAR\n") ;
-                return 0 ;
+                fprintf (stderr, "  Numerical Rank: %d\n", Matrix->SMPkluMatrix->KLUmatrixCommon->numerical_rank) ;
+                fprintf (stderr, "  Singular Node: %d\n", Matrix->SMPkluMatrix->KLUmatrixCommon->singular_col + 1) ;
+                return E_SINGULAR ;
             }
             if (Matrix->SMPkluMatrix->KLUmatrixCommon == NULL) {
                 fprintf (stderr, "Error (Factor for CIDER): KLUnumeric object is NULL. A problem occurred\n") ;
@@ -900,6 +912,8 @@ SMPsolve (SMPmatrix *Matrix, double RHS[], double Spare[])
         {
             if (Matrix->SMPkluMatrix->KLUmatrixCommon->status == KLU_SINGULAR) {
                 fprintf (stderr, "Warning (Solve): KLU Matrix is SINGULAR\n") ;
+                fprintf (stderr, "  Numerical Rank: %d\n", Matrix->SMPkluMatrix->KLUmatrixCommon->numerical_rank) ;
+                fprintf (stderr, "  Singular Node: %d\n", Matrix->SMPkluMatrix->KLUmatrixCommon->singular_col + 1) ;
             }
             if (Matrix->SMPkluMatrix->KLUmatrixCommon == NULL) {
                 fprintf (stderr, "Error (Solve): KLUcommon object is NULL. A problem occurred\n") ;
