@@ -164,14 +164,14 @@ void com_optran(wordlist* wl) {
     if (err || (*stpstr != '\0'))
         goto bugquit;
     if (opstepsize > opfinaltime) {
-        fprintf(stderr, "Error: Step size larger than final time.\n");
+        fprintf(stderr, "Error: Optran step size larger than final time.\n");
         goto bugquit;
     }
     if (opstepsize > opfinaltime/50.) {
-        fprintf(stderr, "Warning: Step size potentially too small.\n");
+        fprintf(stderr, "Warning: Optran step size potentially too small.\n");
     }
     if (opramptime > opfinaltime) {
-        fprintf(stderr, "Error: Ramp time larger than final time.\n");
+        fprintf(stderr, "Error: Optran ramp time larger than final time.\n");
         goto bugquit;
     }
     /* optran deselected by setting opstepsize to 0 */
