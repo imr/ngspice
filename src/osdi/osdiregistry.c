@@ -9,11 +9,13 @@
  * Author: Pascal Kuthe <pascal.kuthe@semimod.de>
  */
 
+#include "ngspice/config.h"
 #include "ngspice/hash.h"
 #include "ngspice/memory.h"
 #include "ngspice/stringutil.h"
 #include "osdidefs.h"
 
+#include <stddef.h>
 #include <sys/stat.h>
 
 #include "osdi.h"
@@ -199,6 +201,13 @@ static char *resolve_input_path(const char *name) {
   return NULL;
 } /* end of function inp_pathresolve_at */
 
+static size_t pad_to_align(size_t alignment, size_t size) {
+  size_t padding = alignment - size % alignment;
+  if (padding == alignment) {
+    return 0;
+  }
+  return padding + size;
+}
 /**
  * Calculates the offset that the OSDI instance data has from the beginning of
  * the instance data allocated by ngspice. This offset is non trivial because
@@ -209,12 +218,20 @@ static char *resolve_input_path(const char *name) {
 static size_t calc_osdi_instance_data_off(const OsdiDescriptor *descr) {
   size_t res = sizeof(GENinstance) /* generic data */
                + descr->num_terminals * sizeof(int);
-  size_t padding = sizeof(max_align_t) - res % sizeof(max_align_t);
-  if (padding == sizeof(max_align_t)) {
-    padding = 0;
-  }
-  return res + padding;
+#ifdef KLU
+  res = pad_to_align(alignof(double *), res);
+  res += ((size_t)descr->num_jacobian_entries) * 2 * sizeof(double *);
+#endif
+  return pad_to_align(alignof(max_align_t), res);
 }
+
+#ifdef KLU
+static size_t calc_osdi_instance_matrix_off(const OsdiDescriptor *descr) {
+  size_t res = sizeof(GENinstance) /* generic data */
+               + descr->num_terminals * sizeof(int);
+  return pad_to_align(alignof(double *), res);
+}
+#endif
 
 #define INVALID_OBJECT                                                         \
   (OsdiObjectFile) { .num_entries = -1 }
@@ -386,6 +403,11 @@ extern OsdiObjectFile load_object_file(const char *input) {
         .dt = dt,
         .temp = temp,
         .has_m = has_m,
+
+#ifdef KLU
+        .matrix_ptr_offset = (uint32_t)calc_osdi_instance_matrix_off(descr),
+#endif
+
     };
   }
 
@@ -399,6 +421,15 @@ extern OsdiObjectFile load_object_file(const char *input) {
 inline size_t osdi_instance_data_off(const OsdiRegistryEntry *entry) {
   return entry->inst_offset;
 }
+#ifdef KLU
+inline size_t osdi_instance_matrix_ptr_off(const OsdiRegistryEntry *entry) {
+  return entry->matrix_ptr_offset;
+}
+inline double **osdi_instance_matrix_ptr(const OsdiRegistryEntry *entry,
+                                         GENinstance *inst) {
+  return (double **)(((char *)inst) + osdi_instance_matrix_ptr_off(entry));
+}
+#endif
 
 inline void *osdi_instance_data(const OsdiRegistryEntry *entry,
                                 GENinstance *inst) {

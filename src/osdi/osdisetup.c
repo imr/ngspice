@@ -10,6 +10,7 @@
  */
 
 #include "ngspice/iferrmsg.h"
+#include "ngspice/klu.h"
 #include "ngspice/memory.h"
 #include "ngspice/ngspice.h"
 #include "ngspice/typedefs.h"
@@ -408,3 +409,123 @@ extern int OSDIunsetup(GENmodel *inModel, CKTcircuit *ckt) {
   }
   return (OK);
 }
+#ifdef KLU
+#include "ngspice/klu-binding.h"
+static int init_matrix_klu(SMPmatrix *matrix, const OsdiDescriptor *descr,
+                           void *inst, double **inst_matrix_ptrs) {
+  BindElement tmp;
+  BindElement *matched;
+  BindElement *bindings = matrix->SMPkluMatrix->KLUmatrixBindStructCOO;
+  size_t nz = (size_t)matrix->SMPkluMatrix->KLUmatrixLinkedListNZ;
+  uint32_t *node_mapping =
+      (uint32_t *)(((char *)inst) + descr->node_mapping_offset);
+  double **jacobian_ptr_resist =
+      (double **)(((char *)inst) + descr->jacobian_ptr_resist_offset);
+
+  for (uint32_t i = 0; i < descr->num_jacobian_entries; i++) {
+    uint32_t equation = descr->jacobian_entries[i].nodes.node_1;
+    uint32_t unkown = descr->jacobian_entries[i].nodes.node_2;
+    equation = node_mapping[equation];
+    unkown = node_mapping[unkown];
+    if (equation != 0 && unkown != 0) {
+      tmp.COO = jacobian_ptr_resist[i];
+      tmp.CSC = NULL;
+      tmp.CSC_Complex = NULL;
+      matched = (BindElement *)bsearch(&tmp, bindings, nz, sizeof(BindElement),
+                                       BindCompare);
+      if (matched == NULL) {
+        printf("Ptr %p not found in BindStruct Table\n",
+               jacobian_ptr_resist[i]);
+        return (E_PANIC);
+      }
+      uint32_t react_off = descr->jacobian_entries[i].react_ptr_off;
+      // complex number for ac analysis
+      if (react_off != UINT32_MAX) {
+        double **jacobian_ptr_react = (double **)(((char *)inst) + react_off);
+        *jacobian_ptr_react = matched->CSC_Complex + 1;
+      }
+      jacobian_ptr_resist[i] = matched->CSC;
+      inst_matrix_ptrs[2 * i] = matched->CSC;
+      inst_matrix_ptrs[2 * i + 1] = matched->CSC_Complex;
+    }
+  }
+  return (OK);
+}
+
+static int update_matrix_klu(const OsdiDescriptor *descr, void *inst,
+                             double **inst_matrix_ptrs, bool complex) {
+  uint32_t *node_mapping =
+      (uint32_t *)(((char *)inst) + descr->node_mapping_offset);
+  double **jacobian_ptr_resist =
+      (double **)(((char *)inst) + descr->jacobian_ptr_resist_offset);
+
+  for (uint32_t i = 0; i < descr->num_jacobian_entries; i++) {
+    uint32_t equation = descr->jacobian_entries[i].nodes.node_1;
+    uint32_t unkown = descr->jacobian_entries[i].nodes.node_2;
+    equation = node_mapping[equation];
+    unkown = node_mapping[unkown];
+    if (equation != 0 && unkown != 0) {
+      jacobian_ptr_resist[i] = inst_matrix_ptrs[2 * i + complex];
+    }
+  }
+  return (OK);
+}
+
+int OSDIbindCSC(GENmodel *inModel, CKTcircuit *ckt) {
+
+  OsdiRegistryEntry *entry = osdi_reg_entry_model(inModel);
+  const OsdiDescriptor *descr = entry->descriptor;
+  GENmodel *gen_model;
+  GENinstance *gen_inst;
+
+  /* setup a temporary buffer */
+  uint32_t *node_ids = TMALLOC(uint32_t, descr->num_nodes);
+
+  for (gen_model = inModel; gen_model; gen_model = gen_model->GENnextModel) {
+    void *model = osdi_model_data(gen_model);
+    for (gen_inst = gen_model->GENinstances; gen_inst;
+         gen_inst = gen_inst->GENnextInstance) {
+      void *inst = osdi_instance_data(entry, gen_inst);
+      double **matrix_ptrs = osdi_instance_matrix_ptr(entry, gen_inst);
+      int err = init_matrix_klu(ckt->CKTmatrix, descr, inst, matrix_ptrs);
+      if (err != (OK)) {
+        return err;
+      }
+    }
+  }
+
+  return (OK);
+}
+int OSDIupdateCSC(GENmodel *inModel, CKTcircuit *ckt, bool complex) {
+
+  OsdiRegistryEntry *entry = osdi_reg_entry_model(inModel);
+  const OsdiDescriptor *descr = entry->descriptor;
+  GENmodel *gen_model;
+  GENinstance *gen_inst;
+
+  /* setup a temporary buffer */
+  uint32_t *node_ids = TMALLOC(uint32_t, descr->num_nodes);
+
+  for (gen_model = inModel; gen_model; gen_model = gen_model->GENnextModel) {
+    void *model = osdi_model_data(gen_model);
+    for (gen_inst = gen_model->GENinstances; gen_inst;
+         gen_inst = gen_inst->GENnextInstance) {
+      void *inst = osdi_instance_data(entry, gen_inst);
+      double **matrix_ptrs = osdi_instance_matrix_ptr(entry, gen_inst);
+      int err = update_matrix_klu(descr, inst, matrix_ptrs, complex);
+      if (err != (OK)) {
+        return err;
+      }
+    }
+  }
+
+  return (OK);
+}
+int OSDIbindCSCComplexToReal(GENmodel *inModel, CKTcircuit *ckt) {
+  OSDIupdateCSC(inModel, ckt, false);
+}
+
+int OSDIbindCSCComplex(GENmodel *inModel, CKTcircuit *ckt) {
+  OSDIupdateCSC(inModel, ckt, true);
+}
+#endif
