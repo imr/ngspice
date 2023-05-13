@@ -46,6 +46,7 @@ typedef struct {
 
 #ifdef _MSC_VER
 #define MAX_ALIGN 8
+#define alignof sizeof
 #else
 #define MAX_ALIGN alignof(max_align_t)
 #endif
