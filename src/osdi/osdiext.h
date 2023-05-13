@@ -26,7 +26,13 @@ extern int OSDIload(GENmodel *, CKTcircuit *);
 extern int OSDItemp(GENmodel *, CKTcircuit *);
 extern int OSDIacLoad(GENmodel *, CKTcircuit *);
 extern int OSDItrunc(GENmodel *, CKTcircuit *, double *);
-extern int OSDIpzLoad(GENmodel*, CKTcircuit*, SPcomplex*);
+extern int OSDIpzLoad(GENmodel *, CKTcircuit *, SPcomplex *);
+
+#ifdef KLU
+extern int OSDIbindCSC(GENmodel *inModel, CKTcircuit *ckt);
+extern int OSDIbindCSCComplexToReal(GENmodel *inModel, CKTcircuit *ckt);
+extern int OSDIbindCSCComplex(GENmodel *inModel, CKTcircuit *ckt);
+#endif
 
 /* extern int OSDIconvTest(GENmodel*,CKTcircuit*); */
 /* extern int OSDImDelete(GENmodel*); */
