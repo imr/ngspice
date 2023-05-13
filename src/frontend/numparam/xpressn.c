@@ -1611,8 +1611,12 @@ nupa_subcktcall(dico_t *dico, const char *s, const char *x,
                     jp = getexpress(dico, NULL, &ustr, jp);
                 } else {
                     jp++;
-                    if ((unsigned char) (*kp) > ' ')
-                        message(dico, "Subckt call, symbol %c not understood\n", *kp);
+                    if ((unsigned char)(*kp) > ' ') {
+                        fprintf(stderr, "Error in line: %s\n", x);
+                        fprintf(stderr, "    near %s\n", kp);
+                        message(dico, "Subckt call, symbol %c not understood\n\n", *kp);
+
+                    }
                 }
 
                 /* Substitute the parameter for one of the '$' characters
