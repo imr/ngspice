@@ -4483,13 +4483,17 @@ static int inp_get_param_level(
     return level;
 }
 
-
+/* Return the number of terminals for a given device, characterized by
+   the first letter of its instance line. Returns 0 upon error. */
 int get_number_terminals(char *c)
 {
     int i, j, k;
     char *name[12];
     char nam_buf[128];
     bool area_found = FALSE;
+
+    if (!c)
+        return 0;
 
     switch (*c) {
         case 'r':
