@@ -1112,6 +1112,11 @@ INPparseNode *PT_mkfnode(const char *fname, INPparseNode * arg)
         return mkfirst(NULL, arg);
     }
 
+    if (!arg) {
+        fprintf(stderr, "Error: bad function arguments \n");
+        return mkfirst(NULL, arg);
+    }
+
     /* Make sure the case is ok. */
     (void)strncpy(buf, fname, 127);
     buf[127] = 0;
