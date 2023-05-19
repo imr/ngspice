@@ -42,7 +42,7 @@ VSRCload(GENmodel *inModel, CKTcircuit *ckt)
                 here=VSRCnextInstance(here)) {
 
 #ifndef RFSPICE
-            * (here->VSRCposIbrPtr) += 1.0;
+            *(here->VSRCposIbrPtr) += 1.0;
             *(here->VSRCnegIbrPtr) -= 1.0;
             *(here->VSRCibrPosPtr) += 1.0;
             *(here->VSRCibrNegPtr) -= 1.0;

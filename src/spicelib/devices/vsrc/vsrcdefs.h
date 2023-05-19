@@ -117,6 +117,13 @@ typedef struct sVSRCinstance {
     BindElement *VSRCibrNegBinding ;
     BindElement *VSRCibrPosBinding ;
     BindElement *VSRCibrIbrBinding ;
+
+#ifdef RFSPICE
+    BindElement *VSRCposPosBinding ;
+    BindElement *VSRCresResBinding ;
+    BindElement *VSRCposResBinding ;
+    BindElement *VSRCresPosBinding ;
+#endif
 #endif
 
 } VSRCinstance ;
