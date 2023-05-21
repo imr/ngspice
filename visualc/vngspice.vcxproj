@@ -942,7 +942,6 @@
     <ClInclude Include="..\src\frontend\variable.h" />
     <ClInclude Include="..\src\frontend\vectors.h" />
     <ClInclude Include="..\src\frontend\wdisp\ftegraf.h" />
-    <ClInclude Include="..\src\frontend\wdisp\wincolor.h" />
     <ClInclude Include="..\src\frontend\wdisp\windisp.h" />
     <ClInclude Include="..\src\frontend\wdisp\winprint.h" />
     <ClInclude Include="..\src\frontend\where.h" />
