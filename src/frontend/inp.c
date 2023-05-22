@@ -900,17 +900,18 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
                     dd->line[0] = '*';
                     s = skip_ws(dd->line + 8);
                     while (s && *s) {
+                        char* nexttoken = s;
                         cstoken[0] = gettok_char(&s, '=', FALSE, FALSE);
                         cstoken[1] = gettok_char(&s, '=', TRUE, FALSE);
                         cstoken[2] = gettok(&s);
                         /* guard against buggy input line */
                         if (!cstoken[0] || !cstoken[1] || !cstoken[2] || strchr(cstoken[2],'=')) {
+                            fprintf(stderr, "Warning: bad csparam definition, %s skipped!\n", nexttoken);
+                            fprintf(stderr, "    See line %d, .%s\n\n", dd->linenum, dd->line + 1);
                             tfree(cstoken[0]);
                             tfree(cstoken[1]);
                             tfree(cstoken[2]);
-                            fprintf(stderr, "Warning: bad csparam definition, skipped!\n");
-                            fprintf(stderr, "    in line %d, .%s\n\n", dd->linenum, dd->line + 1);
-                            continue;
+                            break;
                         }
                         for (i = 3; --i >= 0; ) {
                             wlist = wl_cons(cstoken[i], wlist);
