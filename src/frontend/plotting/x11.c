@@ -449,17 +449,24 @@ X11_NewViewport(GRAPH *graph)
 
     static Arg formargs[ ] = {
         { XtNleft, (XtArgVal) XtChainLeft },
-        { XtNresizable, (XtArgVal) TRUE }
+        { XtNresizable, (XtArgVal) TRUE },
+        { XtNbackground, (XtArgVal) 0x191942} // MidnightBlue
     };
     static Arg bboxargs[ ] = {
         { XtNfromHoriz, (XtArgVal) NULL },
         { XtNbottom, (XtArgVal) XtChainTop },
         { XtNtop, (XtArgVal) XtChainTop },
         { XtNleft, (XtArgVal) XtChainRight },
-        { XtNright, (XtArgVal) XtChainRight }
+        { XtNright, (XtArgVal) XtChainRight },
+        { XtNbackground, (XtArgVal) 0xbebebe}
+    };
+    static Arg quitbuttonargs[ ] = {
+        { XtNlabel, (XtArgVal) "Quit" },
+        { XtNbackground, (XtArgVal) 0xff4500} // OrangeRed
     };
     static Arg buttonargs[ ] = {
-        { XtNlabel, (XtArgVal) NULL }
+        { XtNlabel, (XtArgVal) NULL },
+        { XtNbackground, (XtArgVal) 0x87cefa} // LightSkyBlue
     };
     static Arg viewargs[] = {
         { XtNresizable, (XtArgVal) TRUE },
@@ -500,21 +507,18 @@ X11_NewViewport(GRAPH *graph)
         ("buttonbox", boxWidgetClass, DEVDEP(graph).form, bboxargs, XtNumber(bboxargs));
 
     /* set up buttons */
-    XtSetArg(buttonargs[0], XtNlabel, "Quit");
-    XtSetArg(bboxargs[1], XtNfromVert, NULL);
     DEVDEP(graph).buttons[0] = XtCreateManagedWidget
-        ("quit", commandWidgetClass, DEVDEP(graph).buttonbox, buttonargs, 1);
+        ("quit", commandWidgetClass, DEVDEP(graph).buttonbox, quitbuttonargs, 2);
     XtAddCallback(DEVDEP(graph).buttons[0], XtNcallback, killwin, graph);
 
     XtSetArg(buttonargs[0], XtNlabel, "PostScript");
-    XtSetArg(bboxargs[1], XtNfromVert, DEVDEP(graph).buttons[0]);
     DEVDEP(graph).buttons[1] = XtCreateManagedWidget
-        ("hardcopy", commandWidgetClass, DEVDEP(graph).buttonbox, buttonargs, 1);
+        ("hardcopy", commandWidgetClass, DEVDEP(graph).buttonbox, buttonargs, 2);
     XtAddCallback(DEVDEP(graph).buttons[1], XtNcallback, hardcopy, graph);
 
     XtSetArg(buttonargs[0], XtNlabel, "SVG");
     DEVDEP(graph).buttons[2] = XtCreateManagedWidget(
-        "SVG", commandWidgetClass, DEVDEP(graph).buttonbox, buttonargs, 1);
+        "SVG", commandWidgetClass, DEVDEP(graph).buttonbox, buttonargs, 2);
     XtAddCallback(DEVDEP(graph).buttons[2], XtNcallback, hardcopySVG, graph);
 
     /* set up fonts */
