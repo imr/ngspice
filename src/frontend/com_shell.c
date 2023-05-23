@@ -14,13 +14,14 @@
 #ifdef _WIN32
 #define SHELL "cmd /k"
 #else
-#define SHELL "/bin/csh"
+#define SHELL "/bin/sh"
 #endif
 
 /* Fork a shell. */
 void
 com_shell(wordlist *wl)
 {
+    int   status;
     char *shell = NULL;
 
     shell = getenv("SHELL");
@@ -61,16 +62,20 @@ com_shell(wordlist *wl)
     /* Easier to forget about changing the io descriptors. */
     if (wl) {
         char * const com = wl_flatten(wl);
-        if (system(com) == -1) {
+
+        status = system(com);
+        if (status == -1) {
             (void) fprintf(cp_err, "Unable to execute \"%s\".\n", com);
         }
         txfree(com);
     }
     else {
-        if (system(shell) == -1) {
+        status = system(shell);
+        if (status == -1) {
             (void) fprintf(cp_err, "Unable to execute \"%s\".\n", shell);
         }
     }
+    cp_vset("shellstatus", CP_NUM, &status);
 #endif
 
 } /* end of function com_shell */
